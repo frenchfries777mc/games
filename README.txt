@@ -16,3 +16,8 @@ Frenchfries777 게임 허브 사이트
   - Stickseum 플레이 버튼은 https://frenchfries777mc.github.io/stickseum/ 로 가요.
   - Crown Envoy 플레이 버튼은 https://frenchfries777mc.github.io/crownenvoy/ 로 가요.
   - Beaconfall 플레이 버튼은 https://frenchfries777mc.github.io/beaconfall/ 로 가요.
+
+ff-profile.js
+  세 게임이 같이 쓰는 Frenchfries777 프로필 카드예요. Crown Envoy와 Beaconfall이
+  https://frenchfries777mc.github.io/games/ff-profile.js 주소로 불러 써요.
+  (이 파일도 index.html과 같은 곳에 올려 주세요)
