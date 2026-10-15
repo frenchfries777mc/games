@@ -3,6 +3,58 @@
   {
    "date": "2026-10-15",
    "build": "",
+   "title": "도전과제 창 · 사진 표시",
+   "items": [
+    "프로필 카드 🏆 도전과제 버튼 추가",
+    "도전과제를 큰 창에서 허브 · Stickseum · Crown Envoy · Beaconfall 순으로 보도록 수정",
+    "게시판 사진 있는 글에 📷 사진 있음 표시 추가"
+   ],
+   "tr": {
+    "en": {
+     "title": "Achievements window · photo tag",
+     "items": [
+      "🏆 Achievements button on the profile card",
+      "Achievements now open in a big window: hub, Stickseum, Crown Envoy, Beaconfall",
+      "📷 Photo tag on board posts with pictures"
+     ]
+    },
+    "es": {
+     "title": "Ventana de logros · etiqueta de foto",
+     "items": [
+      "Botón 🏆 Logros en la tarjeta de perfil",
+      "Los logros se abren en una ventana grande: inicio, Stickseum, Crown Envoy, Beaconfall",
+      "Etiqueta 📷 en publicaciones con fotos"
+     ]
+    },
+    "fr": {
+     "title": "Fenêtre des succès · étiquette photo",
+     "items": [
+      "Bouton 🏆 Succès sur la carte de profil",
+      "Les succès s’ouvrent dans une grande fenêtre : accueil, Stickseum, Crown Envoy, Beaconfall",
+      "Étiquette 📷 sur les messages avec photos"
+     ]
+    },
+    "de": {
+     "title": "Erfolge-Fenster · Foto-Hinweis",
+     "items": [
+      "🏆 Erfolge-Knopf auf der Profilkarte",
+      "Erfolge öffnen sich in einem großen Fenster: Startseite, Stickseum, Crown Envoy, Beaconfall",
+      "📷-Hinweis bei Beiträgen mit Fotos"
+     ]
+    },
+    "ja": {
+     "title": "実績ウィンドウ・写真表示",
+     "items": [
+      "プロフィールカードに🏆実績ボタンを追加",
+      "実績を大きなウィンドウで ハブ・Stickseum・Crown Envoy・Beaconfall の順に表示",
+      "写真付きの投稿に📷表示を追加"
+     ]
+    }
+   }
+  },
+  {
+   "date": "2026-10-15",
+   "build": "",
    "title": "소개글 · 칭호 · 평점 · 같이 하기 · 테마",
    "items": [
     "프로필 카드 한 줄 소개 · 대표 게임 ⭐ 추가",
