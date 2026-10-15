@@ -178,8 +178,9 @@ function paint(){
     })(s);
   }
   if(typeof badge==='function') try{ badge(); }catch(e){}
+  if(typeof socialPaint==='function') try{ socialPaint(); }catch(e){}
 }
-function closeMenus(){ var ms=document.querySelectorAll('.ffa-menu'); for(var i=0;i<ms.length;i++) ms[i].style.display='none'; }
+function closeMenus(){ var ms=document.querySelectorAll('.ffa-menu,.ffa-notes'); for(var i=0;i<ms.length;i++) ms[i].style.display='none'; }
 document.addEventListener('click', closeMenus);
 document.addEventListener('keydown', function(e){ if(e.key==='Escape'){ closeMenus(); close(); } });
 
@@ -331,12 +332,14 @@ function fpaint(){
   section(F.inc, friends.filter(function(f){ return f.incoming; }), function(f){ return row(f.name,f.otherId,[[F.accept,function(){ return respond(f.rowId,true); },'p'],[F.decline,function(){ return respond(f.rowId,false); }]]); });
   var acc=friends.filter(function(f){ return f.status==='accepted'; }).sort(function(a,b){ return (online(b)-online(a))||a.name.localeCompare(b.name,'ko'); });
   if(acc.length) section(F.list, acc, function(f){ var d=row(f.name,f.otherId,[[F.card,function(){ openProfile(f.otherId); return null; }]],presText(f));
+      var dm=document.createElement('button'); dm.type='button'; dm.className='dmb'; dm.textContent='💬'; dm.title=N.msg; dm.setAttribute('aria-label',N.msg); var un=dmUnread[f.otherId]||0; if(un){ var bg=document.createElement('span'); bg.className='ffa-badge'; bg.textContent=un>9?'9+':String(un); dm.appendChild(bg); } dm.onclick=function(e){ e.stopPropagation(); openDM(f.otherId); }; d.appendChild(dm);
       if(online(f)) d.classList.add('on');
       var rm=document.createElement('button'); rm.type='button'; rm.textContent=F.remove;
       rm.onclick=async function(e){ e.stopPropagation(); if(fbusy) return; if(!rm.dataset.sure){ rm.dataset.sure='1'; rm.textContent=F.sure; setTimeout(function(){ if(rm.isConnected&&!fbusy){ delete rm.dataset.sure; rm.textContent=F.remove; } },3000); return; } fbusy=true; rm.disabled=true; var r; try{ r=await removeRow(f.rowId); }catch(x){ r={error:x}; } fbusy=false; if(r&&r.error) toastErr(); fpaint(); };
       d.appendChild(rm); return d; });
   else { var h=document.createElement('h4'); h.textContent=F.list; ls.appendChild(h); var e=document.createElement('div'); e.className='e'; e.textContent=F.empty; ls.appendChild(e); }
   section(F.out, friends.filter(function(f){ return f.outgoing; }), function(f){ return row(f.name,f.otherId,[[F.cancel,function(){ return respond(f.rowId,false); }]],F.sent); });
+  section(N.blist, Object.keys(blocks), function(id){ return row(noteNames[id]||'???',id,[[N.unblock,function(){ return block(id,false); }]]); });
 }
 async function openFriends(){ if(!sb) return; if(!user) return openLogin(); closeMenus(); var el=fmodal(); el.style.display='flex'; fpaint(); await loadFriends(); fpaint(); }
 subs.push(function(u){ friends=[]; badge(); watchFriends(); if(u) loadFriends().then(function(){ fpaint(); var n=incomingCount(); if(n){ var f=friends.filter(function(x){ return x.incoming; })[0]; toast(n>1?fmt(F.toast,f.name)+' (+'+(n-1)+')':fmt(F.toast,f.name)); } }); else { var el=document.getElementById('ffaFriends'); if(el) el.style.display='none'; } });
@@ -354,6 +357,167 @@ subs.push(function(u){ if(u) syncHub(); });
 
 if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', paint); else paint();
 
+/* ---- 🔔 notifications, 1:1 messages, block and report (supabase-ff-social.sql) ----
+   The bell sits next to the nickname on the hub and every game site; a message window opens from the friends list. */
+var NL={
+ ko:{blist:'차단한 사람',bell:'알림',none:'새 알림이 없어요.',comment:'{0}님이 내 글에 댓글을 남겼어요',like:'{0}님이 내 글을 좋아해요',friend:'{0}님이 친구 요청을 보냈어요',dm:'{0}님이 메시지를 보냈어요',
+     feedback:'보낸 피드백을 관리자가 확인했어요',report:'보낸 신고를 관리자가 처리했어요',clear:'모두 지우기',msg:'💬 메시지',dmPh:'메시지 보내기',send:'보내기',dmEmpty:'아직 나눈 메시지가 없어요.',
+     dmOnly:'친구끼리만 메시지를 보낼 수 있어요.',block:'🚫 차단',unblock:'차단 풀기',blocked:'차단한 사람이에요. 이 사람의 글과 채팅은 보이지 않아요.',report_:'🚩 신고',
+     rTitle:'신고하기',rWhy:'이유',r1:'스팸 · 광고',r2:'욕설 · 괴롭힘',r3:'부적절한 사진',r4:'기타',rMore:'자세히 (선택)',rBlock:'이 사람도 차단하기',rSend:'신고 보내기',rDone:'신고했어요. 관리자가 확인할게요.',
+     sureBlock:'정말 차단할까요?',blockedT:'차단했어요',err:'처리하지 못했어요. 잠시 뒤 다시 해 주세요.',notReady:'아직 준비 중이에요.'},
+ en:{blist:'Blocked',bell:'Notifications',none:'No new notifications.',comment:'{0} commented on your post',like:'{0} liked your post',friend:'{0} sent you a friend request',dm:'{0} sent you a message',
+     feedback:'The admin has seen your feedback',report:'The admin has handled your report',clear:'Clear all',msg:'💬 Message',dmPh:'Send a message',send:'Send',dmEmpty:'No messages yet.',
+     dmOnly:'Only friends can message each other.',block:'🚫 Block',unblock:'Unblock',blocked:'You blocked this person. Their posts and chat are hidden.',report_:'🚩 Report',
+     rTitle:'Report',rWhy:'Reason',r1:'Spam · ads',r2:'Abuse · harassment',r3:'Inappropriate photo',r4:'Other',rMore:'Details (optional)',rBlock:'Also block this person',rSend:'Send report',rDone:'Reported. The admin will take a look.',
+     sureBlock:'Block for sure?',blockedT:'Blocked',err:'Something went wrong. Try again soon.',notReady:'Not ready yet.'},
+ es:{blist:'Bloqueados',bell:'Avisos',none:'No hay avisos nuevos.',comment:'{0} comentó tu publicación',like:'A {0} le gustó tu publicación',friend:'{0} te envió una solicitud de amistad',dm:'{0} te envió un mensaje',
+     feedback:'El administrador vio tus comentarios',report:'El administrador revisó tu denuncia',clear:'Borrar todo',msg:'💬 Mensaje',dmPh:'Envía un mensaje',send:'Enviar',dmEmpty:'Aún no hay mensajes.',
+     dmOnly:'Solo los amigos pueden enviarse mensajes.',block:'🚫 Bloquear',unblock:'Desbloquear',blocked:'Bloqueaste a esta persona. Sus publicaciones y su chat están ocultos.',report_:'🚩 Denunciar',
+     rTitle:'Denunciar',rWhy:'Motivo',r1:'Spam · anuncios',r2:'Insultos · acoso',r3:'Foto inapropiada',r4:'Otro',rMore:'Detalles (opcional)',rBlock:'Bloquear también a esta persona',rSend:'Enviar denuncia',rDone:'Denuncia enviada. El administrador la revisará.',
+     sureBlock:'¿Bloquear de verdad?',blockedT:'Bloqueado',err:'Algo salió mal. Inténtalo de nuevo.',notReady:'Aún no está listo.'},
+ fr:{blist:'Bloqués',bell:'Notifications',none:'Aucune nouvelle notification.',comment:'{0} a commenté ton message',like:'{0} aime ton message',friend:'{0} t’a envoyé une demande d’ami',dm:'{0} t’a envoyé un message',
+     feedback:'L’admin a vu ton avis',report:'L’admin a traité ton signalement',clear:'Tout effacer',msg:'💬 Message',dmPh:'Envoyer un message',send:'Envoyer',dmEmpty:'Pas encore de messages.',
+     dmOnly:'Seuls les amis peuvent s’écrire.',block:'🚫 Bloquer',unblock:'Débloquer',blocked:'Tu as bloqué cette personne. Ses messages et son chat sont masqués.',report_:'🚩 Signaler',
+     rTitle:'Signaler',rWhy:'Raison',r1:'Spam · pub',r2:'Insultes · harcèlement',r3:'Photo inappropriée',r4:'Autre',rMore:'Détails (facultatif)',rBlock:'Bloquer aussi cette personne',rSend:'Envoyer',rDone:'Signalé. L’admin va vérifier.',
+     sureBlock:'Vraiment bloquer ?',blockedT:'Bloqué',err:'Un problème est survenu. Réessaie bientôt.',notReady:'Pas encore prêt.'},
+ de:{blist:'Blockiert',bell:'Benachrichtigungen',none:'Keine neuen Benachrichtigungen.',comment:'{0} hat deinen Beitrag kommentiert',like:'{0} gefällt dein Beitrag',friend:'{0} hat dir eine Freundschaftsanfrage geschickt',dm:'{0} hat dir eine Nachricht geschickt',
+     feedback:'Der Admin hat dein Feedback gesehen',report:'Der Admin hat deine Meldung bearbeitet',clear:'Alle löschen',msg:'💬 Nachricht',dmPh:'Nachricht senden',send:'Senden',dmEmpty:'Noch keine Nachrichten.',
+     dmOnly:'Nur Freunde können sich schreiben.',block:'🚫 Blockieren',unblock:'Entblocken',blocked:'Du hast diese Person blockiert. Ihre Beiträge und ihr Chat sind ausgeblendet.',report_:'🚩 Melden',
+     rTitle:'Melden',rWhy:'Grund',r1:'Spam · Werbung',r2:'Beleidigung · Belästigung',r3:'Unangemessenes Foto',r4:'Sonstiges',rMore:'Details (optional)',rBlock:'Diese Person auch blockieren',rSend:'Meldung senden',rDone:'Gemeldet. Der Admin schaut es sich an.',
+     sureBlock:'Wirklich blockieren?',blockedT:'Blockiert',err:'Das hat nicht geklappt. Bitte gleich nochmal.',notReady:'Noch nicht bereit.'},
+ ja:{blist:'ブロック中',bell:'お知らせ',none:'新しいお知らせはありません。',comment:'{0}さんがあなたの投稿にコメントしました',like:'{0}さんがあなたの投稿にいいねしました',friend:'{0}さんからフレンド申請が届きました',dm:'{0}さんからメッセージが届きました',
+     feedback:'送ったフィードバックを管理者が確認しました',report:'送った通報を管理者が処理しました',clear:'すべて消す',msg:'💬 メッセージ',dmPh:'メッセージを送る',send:'送信',dmEmpty:'まだメッセージはありません。',
+     dmOnly:'フレンド同士だけメッセージを送れます。',block:'🚫 ブロック',unblock:'ブロック解除',blocked:'ブロックした人です。この人の投稿とチャットは表示されません。',report_:'🚩 通報',
+     rTitle:'通報する',rWhy:'理由',r1:'スパム・宣伝',r2:'暴言・嫌がらせ',r3:'不適切な写真',r4:'その他',rMore:'詳しく（任意）',rBlock:'この人もブロックする',rSend:'通報を送る',rDone:'通報しました。管理者が確認します。',
+     sureBlock:'本当にブロックしますか？',blockedT:'ブロックしました',err:'処理できませんでした。少し後でもう一度お試しください。',notReady:'まだ準備中です。'}
+};
+var N=NL[lang()]||NL.en, notes=[], noteNames={}, noteChan=null, blocks={}, dmUnread={}, dmWith=null, dmRows=[], dmPoll=null;
+var NCSS='[data-ff-account] .ffa-wrap{white-space:nowrap}.ffa-bell{position:relative;background:#10131b;color:#eef0f5;border:1px solid #2b3245;border-radius:9px;padding:6px 9px;font-size:15px;cursor:pointer;margin-right:6px;line-height:1.2;vertical-align:middle}.ffa-bell:hover{border-color:#ffc93c}'+
+ '.ffa-bell .ffa-nb{position:absolute;top:-6px;right:-6px;margin:0}'+
+ '.ffa-notes{position:absolute;right:0;top:calc(100% + 6px);width:min(340px,calc(100vw - 24px));max-height:min(420px,70vh);overflow:auto;background:#10131b;border:1px solid #2b3245;border-radius:12px;padding:6px;z-index:2147482000;box-shadow:0 12px 30px rgba(0,0,0,.45);display:none;text-align:left;font-family:system-ui,-apple-system,"Noto Sans KR",sans-serif}'+
+ '.ffa-notes h5{margin:4px 8px 6px;font-size:13px;color:#8a93a6;display:flex;justify-content:space-between}.ffa-notes h5 a{color:#8a93a6;cursor:pointer;font-weight:600}'+
+ '.ffa-notes .nt{display:block;width:100%;text-align:left;background:none;border:0;color:#eef0f5;font:inherit;font-size:13.5px;padding:9px 10px;border-radius:8px;cursor:pointer;line-height:1.4}.ffa-notes .nt:hover{background:#1b2030}.ffa-notes .nt.new{background:rgba(255,196,61,.10)}'+
+ '.ffa-notes .nt small{display:block;color:#8a93a6;font-size:11.5px;margin-top:2px}.ffa-notes .e{color:#8a93a6;font-size:13px;padding:12px 10px}'+
+ '#ffaDM,#ffaRep{position:fixed;inset:0;z-index:2147482450;background:rgba(5,6,10,.72);display:none;align-items:center;justify-content:center;padding:16px;font-family:system-ui,-apple-system,"Noto Sans KR",sans-serif}'+
+ '#ffaDM .b,#ffaRep .b{width:100%;max-width:420px;max-height:calc(100vh - 32px);display:flex;flex-direction:column;background:#10131b;border:1px solid #2b3245;border-radius:16px;padding:16px;color:#eef0f5;box-shadow:0 20px 50px rgba(0,0,0,.5);box-sizing:border-box}'+
+ '#ffaDM .hd{display:flex;align-items:center;gap:8px;margin-bottom:8px}#ffaDM .hd b{flex:1;font-size:17px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;cursor:pointer}'+
+ '#ffaDM .hd button,#ffaRep button.x{background:none;border:0;color:#8a93a6;font-size:13px;cursor:pointer;padding:4px 6px;border-radius:6px}#ffaDM .hd button:hover{color:#eef0f5;background:#1b2030}#ffaDM .hd .x,#ffaRep .x{font-size:20px;line-height:1}'+
+ '#ffaDM .ms{flex:1;min-height:240px;height:50vh;overflow-y:auto;display:flex;flex-direction:column;gap:6px;padding:4px 2px;overscroll-behavior:contain}'+
+ '#ffaDM .m{max-width:80%;align-self:flex-start;background:#1a2030;border:1px solid #2b3245;border-radius:12px;padding:7px 11px;font-size:14.5px;white-space:pre-wrap;word-break:break-word}#ffaDM .m.me{align-self:flex-end;background:rgba(255,196,61,.16);border-color:rgba(255,196,61,.35)}'+
+ '#ffaDM .m small{display:block;color:#8a93a6;font-size:11px;margin-top:2px}#ffaDM .e,#ffaRep .e{color:#8a93a6;font-size:13px;padding:8px 2px}#ffaDM .w{color:#ff9b7a;font-size:13px;min-height:0}'+
+ '#ffaDM form{display:flex;gap:8px;margin-top:8px}#ffaDM input,#ffaRep textarea,#ffaRep select{flex:1;width:100%;box-sizing:border-box;padding:10px 12px;border-radius:9px;border:1px solid #2b3245;background:#08090d;color:#eef0f5;font:inherit;font-size:16px}'+
+ '#ffaDM form button,#ffaRep .go{border:0;border-radius:9px;padding:9px 14px;font:inherit;font-size:14px;font-weight:800;cursor:pointer;background:linear-gradient(135deg,#ffc93c,#ff8a3d);color:#1a1206;white-space:nowrap}'+
+ '#ffaRep h3{margin:0 0 10px;font-size:18px;display:flex;justify-content:space-between}#ffaRep label{display:block;font-size:13px;color:#8a93a6;margin:8px 0 4px}#ffaRep .ck{display:flex;gap:8px;align-items:center;color:#eef0f5;font-size:14px;margin:10px 0}#ffaRep .ck input{width:auto}#ffaRep .go{margin-top:8px}#ffaRep .m{color:#ffd36b;font-size:13.5px;min-height:0;margin-top:8px}'+
+ '#ffaFriends .row .nm{min-width:64px}#ffaFriends .row .tg{flex-shrink:1;min-width:0}#ffaFriends .row .dmb{position:relative}#ffaFriends .row .dmb .ffa-badge{position:absolute;top:-7px;right:-7px;margin:0}';
+function ncss(){ fcss(); if(document.getElementById('ffaNCss')) return; var s=document.createElement('style'); s.id='ffaNCss'; s.textContent=NCSS; document.head.appendChild(s); }
+function ago2(iso){ var t=Date.parse(iso), m=Math.max(0,Math.round((Date.now()-t)/60000)); return m<1?F.now:(m<60?fmt(F.mn,m):(m<1440?fmt(F.hr,Math.round(m/60)):fmt(F.dy,Math.round(m/1440)))); }
+function noteText(n){ var nm=noteNames[n.actor_id]||'???', t=N[n.kind]||''; return fmt(t,nm); }
+async function loadNotes(){
+  if(!sb||!user){ notes=[]; return; }
+  try{ var r=await sb.from('ff_notes').select('*').eq('user_id',user.id).order('created_at',{ascending:false}).limit(40); if(r.error) return; notes=r.data||[]; }catch(e){ return; }
+  var ids=notes.map(function(n){ return n.actor_id; }).filter(function(x,i,a){ return x&&!noteNames[x]&&a.indexOf(x)===i; });
+  if(ids.length){ var p=await sb.from('profiles').select('id,username,display_name').in('id',ids); ((p&&p.data)||[]).forEach(function(x){ noteNames[x.id]=nickOf(x); }); }
+  bellBadge();
+}
+async function loadBlocks(){ blocks={}; if(!sb||!user) return; try{ var r=await sb.from('ff_blocks').select('blocked_id').eq('user_id',user.id); ((r&&!r.error&&r.data)||[]).forEach(function(x){ blocks[x.blocked_id]=1; }); }catch(e){}
+  var ids=Object.keys(blocks).filter(function(x){ return !noteNames[x]; }); if(ids.length) try{ var p=await sb.from('profiles').select('id,username,display_name').in('id',ids); ((p&&p.data)||[]).forEach(function(x){ noteNames[x.id]=nickOf(x); }); }catch(e){}
+  blocksChanged(); fpaint(); }
+async function loadDmUnread(){ dmUnread={}; if(!sb||!user) return; try{ var r=await sb.from('ff_dm').select('sender_id').eq('recipient_id',user.id).is('read_at',null).limit(500); ((r&&!r.error&&r.data)||[]).forEach(function(x){ dmUnread[x.sender_id]=(dmUnread[x.sender_id]||0)+1; }); }catch(e){} }
+function unreadNotes(){ return notes.filter(function(n){ return !n.read; }).length; }
+function bellBadge(){ var n=unreadNotes(), bs=document.querySelectorAll('.ffa-nb'); for(var i=0;i<bs.length;i++){ bs[i].textContent=n>9?'9+':String(n); bs[i].style.display=n?'':'none'; } }
+function socialPaint(){
+  if(!user) return; ncss();
+  var ws=document.querySelectorAll('[data-ff-account] .ffa-wrap'); for(var i=0;i<ws.length;i++){ var w=ws[i]; if(w.querySelector('.ffa-bell')) continue;
+    var b=document.createElement('button'); b.type='button'; b.className='ffa-bell'; b.title=N.bell; b.setAttribute('aria-label',N.bell); b.innerHTML='🔔<i class="ffa-badge ffa-nb" style="display:none;font-style:normal"></i>';
+    var panel=document.createElement('span'); panel.className='ffa-notes'; w.insertBefore(panel, w.firstChild); w.insertBefore(b, w.firstChild);
+    (function(b,panel){ b.onclick=function(e){ e.stopPropagation(); var open=panel.style.display==='block'; closeMenus(); if(open) return; panel.style.display='block'; paintNotes(panel); markRead(); }; panel.onclick=function(e){ e.stopPropagation(); }; })(b,panel); }
+  bellBadge();
+}
+function paintNotes(panel){
+  panel.innerHTML='<h5><span>🔔 '+esc(N.bell)+'</span>'+(notes.length?'<a data-a="clear">'+esc(N.clear)+'</a>':'')+'</h5>';
+  if(!notes.length){ panel.insertAdjacentHTML('beforeend','<div class="e">'+esc(N.none)+'</div>'); }
+  notes.forEach(function(n){ var b=document.createElement('button'); b.type='button'; b.className='nt'+(n.read?'':' new'); b.innerHTML=esc(noteText(n))+'<small>'+esc(ago2(n.created_at))+'</small>'; b.onclick=function(){ closeMenus(); goNote(n); }; panel.appendChild(b); });
+  var c=panel.querySelector('[data-a=clear]'); if(c) c.onclick=async function(){ try{ await sb.from('ff_notes').delete().eq('user_id',user.id); }catch(e){} notes=[]; bellBadge(); paintNotes(panel); };
+}
+async function markRead(){ if(!unreadNotes()) return; var ids=notes.filter(function(n){ return !n.read; }).map(function(n){ return n.id; }); notes.forEach(function(n){ n.read=true; }); bellBadge(); try{ await sb.from('ff_notes').update({read:true}).in('id',ids); }catch(e){} }
+function goNote(n){
+  var hubUrl=HUB;
+  if(n.kind==='friend') return openFriends();
+  if(n.kind==='dm') return openDM(n.actor_id);
+  if(n.kind==='comment'||n.kind==='like'){ if(onHub&&window.FFHub) return FFHub.openPost(n.ref); location.href=hubUrl+'?post='+encodeURIComponent(n.ref)+'#community'; return; }
+  if(onHub&&window.FFHub) return FFHub.tab('fb'); location.href=hubUrl+'#feedback';
+}
+function watchNotes(){
+  if(noteChan){ try{ sb.removeChannel(noteChan); }catch(e){} noteChan=null; }
+  if(!sb||!user) return;
+  try{ noteChan=sb.channel('ffa-notes-'+user.id)
+    .on('postgres_changes',{event:'INSERT',schema:'public',table:'ff_notes',filter:'user_id=eq.'+user.id},function(pl){ loadNotes().then(function(){ var n=pl&&pl.new; if(n&&n.kind!=='friend'){ toast(noteText(n)); var tt=document.getElementById('ffaToast'); if(tt) tt.querySelector('button').onclick=function(){ tt.remove(); goNote(n); }; } }); })
+    .on('postgres_changes',{event:'INSERT',schema:'public',table:'ff_dm',filter:'recipient_id=eq.'+user.id},function(pl){ var m=pl&&pl.new; if(!m) return; if(dmWith===m.sender_id){ if(!dmRows.some(function(x){ return x.id===m.id; })) dmRows.push(m); paintDM(); seenDM(); } else { dmUnread[m.sender_id]=(dmUnread[m.sender_id]||0)+1; fpaint(); } })
+    .subscribe(); }catch(e){}
+}
+/* block / report */
+function isBlocked(id){ return !!blocks[id]; }
+function blocksChanged(){ try{ window.dispatchEvent(new Event('ffblocks')); }catch(e){} }
+async function block(id, on){ if(!sb||!user||!id||id===user.id) return {error:true}; var r=on===false?await sb.from('ff_blocks').delete().eq('user_id',user.id).eq('blocked_id',id):await sb.from('ff_blocks').insert({blocked_id:id});
+  if(!r.error){ if(on===false) delete blocks[id]; else blocks[id]=1; blocksChanged(); } return r; }
+function openReport(o){ /* o: {kind:'post'|'comment'|'chat'|'user', id, user, text} */
+  if(!sb) return; if(!user) return openLogin(); ncss();
+  var el=document.getElementById('ffaRep'); if(!el){ el=document.createElement('div'); el.id='ffaRep'; el.setAttribute('data-notr',''); document.body.appendChild(el); el.addEventListener('click',function(e){ if(e.target===el) el.style.display='none'; }); }
+  el.innerHTML='<form class="b"><h3><span>'+esc(N.rTitle)+'</span><button type="button" class="x">×</button></h3><label>'+esc(N.rWhy)+'</label><select name="w"><option>'+esc(N.r1)+'</option><option>'+esc(N.r2)+'</option><option>'+esc(N.r3)+'</option><option>'+esc(N.r4)+'</option></select>'+
+    '<label>'+esc(N.rMore)+'</label><textarea name="d" rows="3" maxlength="400"></textarea>'+(o.user&&o.user!==user.id?'<label class="ck"><input type="checkbox" name="b"> '+esc(N.rBlock)+'</label>':'')+'<button class="go">'+esc(N.rSend)+'</button><div class="m"></div></form>';
+  el.style.display='flex'; el.querySelector('.x').onclick=function(){ el.style.display='none'; };
+  el.querySelector('form').onsubmit=async function(e){ e.preventDefault(); var f=this, m=f.querySelector('.m'), go=f.querySelector('.go'); go.disabled=true;
+    var reason=f.w.value+(f.d.value.trim()?' - '+f.d.value.trim():'');
+    var r=await sb.from('ff_reports').insert({kind:o.kind, target_id:o.id||null, target_user:o.user||null, reason:reason.slice(0,500), snapshot:String(o.text||'').slice(0,600)});
+    if(r.error){ go.disabled=false; m.textContent=/does not exist|schema cache|PGRST20/i.test(String(r.error.message||'')+' '+r.error.code)?N.notReady:(/too many/i.test(String(r.error.message))?N.err:N.err); return; }
+    if(f.b&&f.b.checked) await block(o.user);
+    m.textContent=N.rDone; setTimeout(function(){ el.style.display='none'; },1400); };
+}
+/* 1:1 messages (friends only) */
+function dmModal(){
+  ncss(); var el=document.getElementById('ffaDM'); if(el) return el;
+  el=document.createElement('div'); el.id='ffaDM'; el.setAttribute('data-notr','');
+  el.innerHTML='<div class="b"><div class="hd"><b></b><button type="button" class="rp"></button><button type="button" class="bk"></button><button type="button" class="x" aria-label="'+esc(T.close)+'">×</button></div><div class="ms"></div><div class="w"></div><form><input maxlength="1000" autocomplete="off"><button></button></form></div>';
+  document.body.appendChild(el);
+  el.addEventListener('click',function(e){ if(e.target===el) closeDM(); }); el.querySelector('.x').onclick=closeDM;
+  el.querySelector('.hd b').onclick=function(){ if(dmWith) openProfile(dmWith); };
+  el.querySelector('form').onsubmit=async function(e){ e.preventDefault(); var i=this.querySelector('input'), v=i.value.trim(); if(!v||!dmWith) return; i.value='';
+    var r=await sb.from('ff_dm').insert({recipient_id:dmWith, body:v}).select().single(); var w=el.querySelector('.w');
+    if(r.error){ i.value=v; w.textContent=/row-level|policy/i.test(String(r.error.message||''))?N.dmOnly:(/does not exist|schema cache|PGRST20/i.test(String(r.error.message||'')+' '+r.error.code)?N.notReady:N.err); return; }
+    w.textContent=''; if(r.data&&!dmRows.some(function(x){ return x.id===r.data.id; })) dmRows.push(r.data); paintDM(); };
+  return el;
+}
+function closeDM(){ var el=document.getElementById('ffaDM'); if(el) el.style.display='none'; dmWith=null; clearInterval(dmPoll); dmPoll=null; }
+async function openDM(id){
+  if(!sb) return; if(!user) return openLogin(); closeMenus(); var el=dmModal(); dmWith=id; dmRows=[];
+  var nm=noteNames[id]; var f=friends.filter(function(x){ return x.otherId===id; })[0]; if(f) nm=f.name;
+  if(!nm){ try{ var p=await sb.from('profiles').select('id,username,display_name').eq('id',id).single(); nm=p&&p.data?nickOf(p.data):'???'; }catch(e){ nm='???'; } }
+  el.querySelector('.hd b').textContent=nm; el.querySelector('input').placeholder=N.dmPh; el.querySelector('form button').textContent=N.send;
+  var rp=el.querySelector('.rp'), bk=el.querySelector('.bk'); rp.textContent=N.report_; bk.textContent=isBlocked(id)?N.unblock:N.block;
+  rp.onclick=function(){ openReport({kind:'user', user:id, text:dmRows.filter(function(x){ return x.sender_id===id; }).slice(-3).map(function(x){ return x.body; }).join(' / ')}); };
+  bk.onclick=async function(){ if(isBlocked(id)){ await block(id,false); bk.textContent=N.block; paintDM(); return; } if(!bk.dataset.s){ bk.dataset.s=1; bk.textContent=N.sureBlock; setTimeout(function(){ delete bk.dataset.s; if(!isBlocked(id)) bk.textContent=N.block; },3000); return; } delete bk.dataset.s; await block(id); bk.textContent=N.unblock; paintDM(); };
+  el.querySelector('.w').textContent=''; el.style.display='flex'; paintDM(); await pullDM(); seenDM();
+  clearInterval(dmPoll); dmPoll=setInterval(function(){ if(dmWith&&document.visibilityState!=='hidden') pullDM().then(seenDM); }, 6000);
+  setTimeout(function(){ try{ el.querySelector('input').focus(); }catch(e){} },30);
+}
+async function pullDM(){
+  if(!dmWith) return; var me=user.id, o=dmWith;
+  var r=await sb.from('ff_dm').select('*').or('and(sender_id.eq.'+me+',recipient_id.eq.'+o+'),and(sender_id.eq.'+o+',recipient_id.eq.'+me+')').order('created_at',{ascending:false}).limit(100);
+  if(r.error){ var el=document.getElementById('ffaDM'); if(el) el.querySelector('.w').textContent=/does not exist|schema cache|PGRST20/i.test(String(r.error.message||'')+' '+r.error.code)?N.notReady:''; return; }
+  if(dmWith!==o) return; dmRows=(r.data||[]).reverse(); paintDM();
+}
+async function seenDM(){ if(!dmWith) return; var o=dmWith; delete dmUnread[o]; fpaint(); try{ await sb.from('ff_dm').update({read_at:new Date().toISOString()}).eq('recipient_id',user.id).eq('sender_id',o).is('read_at',null); }catch(e){} }
+function paintDM(){
+  var el=document.getElementById('ffaDM'); if(!el||!dmWith) return; var box=el.querySelector('.ms'), stick=box.scrollHeight-box.scrollTop-box.clientHeight<60||!box.dataset.once; box.innerHTML='';
+  if(isBlocked(dmWith)){ box.innerHTML='<div class="e">'+esc(N.blocked)+'</div>'; return; }
+  if(!dmRows.length) box.innerHTML='<div class="e">'+esc(N.dmEmpty)+'</div>';
+  dmRows.forEach(function(m){ var d=document.createElement('div'); d.className='m'+(m.sender_id===user.id?' me':''); d.textContent=m.body; var s=document.createElement('small'); s.textContent=ago2(m.created_at); d.appendChild(s); box.appendChild(d); });
+  if(stick){ box.dataset.once=1; box.scrollTop=box.scrollHeight; }
+}
+subs.push(function(u){ notes=[]; blocks={}; dmUnread={}; bellBadge(); watchNotes(); if(u){ loadBlocks(); loadDmUnread().then(fpaint); loadNotes().then(function(){ socialPaint(); }); } else closeDM(); });
+setInterval(function(){ if(user) loadNotes().catch(function(){}); }, 5*60*1000);
+
 window.FFAuth={ ready:ready, client:function(){ return sb; }, user:function(){ return user; }, profile:function(){ return prof; }, nickname:nick,
-  onChange:function(f){ if(typeof f==='function') subs.push(f); }, openLogin:openLogin, openProfile:openProfile, openFriends:openFriends, friends:function(){ return friends.slice(); }, signOut:signOut, refresh:paint, syncHub:syncHub };
+  onChange:function(f){ if(typeof f==='function') subs.push(f); }, openLogin:openLogin, openProfile:openProfile, openFriends:openFriends, friends:function(){ return friends.slice(); }, signOut:signOut, refresh:paint, syncHub:syncHub,
+  openDM:openDM, openReport:openReport, block:block, isBlocked:isBlocked, blocked:function(){ return Object.assign({},blocks); } };
 })();
