@@ -3,6 +3,76 @@
   {
    "date": "2026-10-15",
    "build": "",
+   "title": "소개글 · 칭호 · 평점 · 같이 하기 · 테마",
+   "items": [
+    "프로필 카드 한 줄 소개 · 대표 게임 ⭐ 추가",
+    "허브 도전과제로 여는 🏷️ 칭호 추가 (카드와 닉네임 옆)",
+    "게임 소개 칸 ★ 평점 · 한줄평 추가",
+    "🎮 같이 하기 탭 추가 (방 모집, 2시간 동안 보임)",
+    "⚙️ 설정: 다크 · 라이트 테마와 글자 크기 추가",
+    "작은 사진도 게시판 · 채팅 칸에 맞게 자동으로 커지도록 수정"
+   ],
+   "tr": {
+    "en": {
+     "title": "Bio · titles · ratings · play together · theme",
+     "items": [
+      "One-line bio and ⭐ favourite game on the profile card",
+      "🏷️ Titles unlocked with hub achievements (on the card and next to nicknames)",
+      "★ Ratings and one-line reviews on the game cards",
+      "🎮 Play together tab (room posts, shown for 2 hours)",
+      "⚙️ Settings: dark · light theme and text size",
+      "Small photos now scale up to fit the board and chat"
+     ]
+    },
+    "es": {
+     "title": "Presentación · títulos · valoraciones · jugar juntos · tema",
+     "items": [
+      "Presentación de una línea y ⭐ juego favorito en la tarjeta",
+      "🏷️ Títulos desbloqueados con logros del inicio (en la tarjeta y junto al apodo)",
+      "★ Valoraciones y reseñas en las fichas de los juegos",
+      "🎮 Pestaña Jugar juntos (salas, visibles 2 horas)",
+      "⚙️ Ajustes: tema oscuro · claro y tamaño del texto",
+      "Las fotos pequeñas se ajustan al tablón y al chat"
+     ]
+    },
+    "fr": {
+     "title": "Présentation · titres · notes · jouer ensemble · thème",
+     "items": [
+      "Présentation en une ligne et ⭐ jeu préféré sur la carte",
+      "🏷️ Titres débloqués avec les succès de l’accueil (sur la carte et à côté du pseudo)",
+      "★ Notes et avis sur les fiches des jeux",
+      "🎮 Onglet Jouer ensemble (salons, visibles 2 heures)",
+      "⚙️ Réglages : thème sombre · clair et taille du texte",
+      "Les petites photos s’agrandissent pour remplir le forum et le chat"
+     ]
+    },
+    "de": {
+     "title": "Vorstellung · Titel · Bewertungen · Zusammen spielen · Design",
+     "items": [
+      "Einzeilige Vorstellung und ⭐ Lieblingsspiel auf der Profilkarte",
+      "🏷️ Titel über Startseiten-Erfolge (auf der Karte und neben dem Namen)",
+      "★ Bewertungen und Kurzkritiken bei den Spielen",
+      "🎮 Tab Zusammen spielen (Raumsuche, 2 Stunden sichtbar)",
+      "⚙️ Einstellungen: dunkles · helles Design und Textgröße",
+      "Kleine Fotos werden im Forum und Chat passend vergrößert"
+     ]
+    },
+    "ja": {
+     "title": "自己紹介・称号・評価・一緒に遊ぶ・テーマ",
+     "items": [
+      "プロフィールカードにひとこと紹介と⭐お気に入りのゲームを追加",
+      "ハブ実績で開く🏷️称号を追加（カードとニックネームの横）",
+      "ゲーム紹介に★評価とひとこと感想を追加",
+      "🎮一緒に遊ぶタブを追加（ルーム募集、2時間表示）",
+      "⚙️設定：ダーク・ライトテーマと文字の大きさを追加",
+      "小さい写真も掲示板・チャットに合わせて自動で大きくなるよう修正"
+     ]
+    }
+   }
+  },
+  {
+   "date": "2026-10-15",
+   "build": "",
    "title": "랭킹 · 인기 게임 · 갤러리 · 투표 · 카드 꾸미기",
    "items": [
     "🏆 게임 랭킹 추가 (Crown Envoy부터)",
