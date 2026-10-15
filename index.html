@@ -164,7 +164,7 @@ if(document.readyState==='loading') document.addEventListener('DOMContentLoaded'
   @media(max-width:860px){ .why{grid-template-columns:1fr;} }
   @media(max-width:380px){ .games{grid-template-columns:1fr;} }
   @media(max-width:520px){ .bf h2{font-size:22px;}
-    .wrap{padding:0 16px;} header nav{display:none;} .hero{padding:38px 0 24px;} .hero p{font-size:16.5px;}
+    .wrap{padding:0 16px;} header nav{display:none;} header{gap:8px;} .logo{font-size:16px; gap:8px; min-width:0; flex:1 1 auto;} .logo span:last-child{min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;} header .right{flex:0 0 auto;} .logo .fry{width:30px; height:30px; font-size:17px;} .langSel{margin-left:0; padding:6px 6px;} .ffa-wrap{margin-left:8px !important;} .ffa-chip{max-width:118px !important;} .ffa-btn{padding:7px 10px !important;} .hero{padding:38px 0 24px;} .hero p{font-size:16.5px;}
     .body{padding:4px 18px 20px;} .st h2,.ce h2{font-size:36px;}
     .play{flex:1; justify-content:center;} .sub{flex:1; justify-content:center;}
   }
@@ -174,7 +174,7 @@ if(document.readyState==='loading') document.addEventListener('DOMContentLoaded'
 <div class="wrap">
   <header>
     <a class="logo" href="./"><span class="fry">🍟</span><span>FRENCHFRIES<b>777</b></span></a>
-    <div class="right"><nav><a href="#games">게임</a><a href="https://github.com/frenchfries777mc" target="_blank" rel="noopener">GitHub</a></nav><span data-lang-slot></span></div>
+    <div class="right"><nav><a href="#games">게임</a><a href="https://github.com/frenchfries777mc" target="_blank" rel="noopener">GitHub</a></nav><span data-lang-slot></span><span data-ff-account></span></div>
   </header>
 
   <section class="hero">
@@ -256,5 +256,6 @@ if(document.readyState==='loading') document.addEventListener('DOMContentLoaded'
 
   <footer><span>Made by Frenchfries777 with Claude AI</span><a href="https://github.com/frenchfries777mc" target="_blank" rel="noopener">github.com/frenchfries777mc</a></footer>
 </div>
+<script src="ff-auth.js"></script>
 </body>
 </html>
