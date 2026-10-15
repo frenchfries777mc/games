@@ -139,9 +139,9 @@ h3{font-size:12px;letter-spacing:.08em;color:var(--ink2);margin:6px 0 0;font-wei
 <div id="app">
   <header>
     <div class="logo"><i></i>철도 회사</div>
-    <div class="stat"><small>자금</small><b id="sMoney">₩0</b></div>
+    <div class="stat"><small>자금</small><b id="sMoney">C0</b></div>
     <div class="stat"><small>초당 수익</small><b id="sRate">0</b></div>
-    <div class="stat"><small id="lValue">회사 가치</small><b id="sValue">₩0</b></div>
+    <div class="stat"><small id="lValue">회사 가치</small><b id="sValue">C0</b></div>
     <div class="stat"><small>누적 승객</small><b id="sPax">0</b></div>
     <div class="spacer"></div>
     <div class="speed" id="speed">
@@ -316,8 +316,8 @@ const ACH=[
   {id:'trains10',ic:'10',n:'열차 부자',d:'열차 10대 운행하기'},
   {id:'transfer',ic:'환',n:'환승역',d:'역을 환승역으로 키우기'},
   {id:'pax10k',ic:'만',n:'승객 1만 명',d:'누적 승객 10,000명'},
-  {id:'money100k',ic:'₩',n:'금고 가득',d:'자금 ₩100,000 모으기'},
-  {id:'value1m',ic:'백',n:'백만 회사',d:'회사 가치 ₩1,000,000 달성'},
+  {id:'money100k',ic:'C',n:'금고 가득',d:'자금 C100,000 모으기'},
+  {id:'value1m',ic:'백',n:'백만 회사',d:'회사 가치 C1,000,000 달성'},
 ];
 const STATION_N=['간이역','일반역','환승역'],STATION_CAP=[60,150,300],STATION_GEN=[1,1.3,1.7];
 const LINE_COLORS=['#0b57a4','#3aa143','#e8711c','#7a3e9d','#00a5b5','#d1356e','#8c6b1f','#2e7d6b','#c99a12','#4b5bd6','#b8442a','#5a8f29'];
@@ -412,8 +412,8 @@ function fmt(n){n=Math.round(n);const neg=n<0;n=Math.abs(n);let s;
   if(n>=1e8)s=(n/1e8).toFixed(n>=1e9?1:2).replace(/\.?0+$/,'')+'억';
   else if(n>=1e4)s=(n/1e4).toFixed(n>=1e6?0:1).replace(/\.0$/,'')+'만';
   else s=n.toLocaleString('ko-KR');
-  return (neg?'-':'')+'₩'+s;}
-const fmtShort=n=>'₩'+Math.round(n).toLocaleString('ko-KR');
+  return (neg?'-':'')+'C'+s;}
+const fmtShort=n=>'C'+Math.round(n).toLocaleString('ko-KR');
 
 /* ================= 업적 ================= */
 function unlock(id){if(inMP()||S.ach[id])return;S.ach[id]=Date.now();const a=ACH.find(x=>x.id===id);toast('업적 달성 <b>'+a.n+'</b>');save();pushAch();if(curTab==='ach')render();}
