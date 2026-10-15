@@ -190,32 +190,32 @@ var FL={
      accept:'수락',decline:'거절',cancel:'취소',remove:'삭제',sure:'정말 삭제?',inc:'받은 요청',out:'보낸 요청',list:'친구 목록',
      empty:'아직 친구가 없어요. 닉네임으로 찾아보세요.',none:'그 닉네임을 가진 사람이 없어요.',short:'두 글자 이상 입력해 주세요.',
      needNick:'친구가 나를 찾을 수 있게 닉네임을 정해 주세요.',nickPh:'닉네임 (최대 12자)',save:'저장',err:'처리하지 못했어요. 잠시 뒤 다시 해 주세요.',
-     toast:'{0}님이 친구 요청을 보냈어요',view:'보기',card:'프로필'},
+     toast:'{0}님이 친구 요청을 보냈어요',view:'보기',card:'프로필',playing:'🟢 {0} 하는 중',ago:'{0} · {1} 전',mn:'{0}분',hr:'{0}시간',dy:'{0}일',now:'방금'},
  en:{friends:'👥 Friends',ftitle:'Friends',fnote:'Friends you make here are friends in every game too.',search:'Find friends by nickname',add:'Add friend',sent:'Request sent',isFriend:'Friend',
      accept:'Accept',decline:'Decline',cancel:'Cancel',remove:'Remove',sure:'Remove?',inc:'Requests for you',out:'Sent requests',list:'Friends',
      empty:'No friends yet. Search by nickname.',none:'Nobody has that nickname.',short:'Type at least two characters.',
      needNick:'Pick a nickname so friends can find you.',nickPh:'Nickname (up to 12)',save:'Save',err:'Something went wrong. Try again soon.',
-     toast:'{0} sent you a friend request',view:'View',card:'Profile'},
+     toast:'{0} sent you a friend request',view:'View',card:'Profile',playing:'🟢 Playing {0}',ago:'{0} · {1} ago',mn:'{0}m',hr:'{0}h',dy:'{0}d',now:'just now'},
  es:{friends:'👥 Amigos',ftitle:'Amigos',fnote:'Los amigos que hagas aquí también son amigos en todos los juegos.',search:'Buscar amigos por apodo',add:'Agregar',sent:'Solicitud enviada',isFriend:'Amigo',
      accept:'Aceptar',decline:'Rechazar',cancel:'Cancelar',remove:'Eliminar',sure:'¿Eliminar?',inc:'Solicitudes recibidas',out:'Solicitudes enviadas',list:'Amigos',
      empty:'Aún no tienes amigos. Busca por apodo.',none:'Nadie tiene ese apodo.',short:'Escribe al menos dos caracteres.',
      needNick:'Elige un apodo para que tus amigos te encuentren.',nickPh:'Apodo (hasta 12)',save:'Guardar',err:'Algo salió mal. Inténtalo de nuevo.',
-     toast:'{0} te envió una solicitud de amistad',view:'Ver',card:'Perfil'},
+     toast:'{0} te envió una solicitud de amistad',view:'Ver',card:'Perfil',playing:'🟢 Jugando a {0}',ago:'{0} · hace {1}',mn:'{0} min',hr:'{0} h',dy:'{0} d',now:'ahora'},
  fr:{friends:'👥 Amis',ftitle:'Amis',fnote:'Les amis ajoutés ici sont aussi tes amis dans chaque jeu.',search:'Chercher un ami par pseudo',add:'Ajouter',sent:'Demande envoyée',isFriend:'Ami',
      accept:'Accepter',decline:'Refuser',cancel:'Annuler',remove:'Retirer',sure:'Retirer ?',inc:'Demandes reçues',out:'Demandes envoyées',list:'Amis',
      empty:'Pas encore d’amis. Cherche par pseudo.',none:'Personne n’a ce pseudo.',short:'Tape au moins deux caractères.',
      needNick:'Choisis un pseudo pour que tes amis te trouvent.',nickPh:'Pseudo (12 max.)',save:'Enregistrer',err:'Un problème est survenu. Réessaie bientôt.',
-     toast:'{0} t’a envoyé une demande d’ami',view:'Voir',card:'Profil'},
+     toast:'{0} t’a envoyé une demande d’ami',view:'Voir',card:'Profil',playing:'🟢 Joue à {0}',ago:'{0} · il y a {1}',mn:'{0} min',hr:'{0} h',dy:'{0} j',now:'à l’instant'},
  de:{friends:'👥 Freunde',ftitle:'Freunde',fnote:'Freunde von hier sind auch in jedem Spiel deine Freunde.',search:'Freunde per Nickname suchen',add:'Anfragen',sent:'Anfrage gesendet',isFriend:'Freund',
      accept:'Annehmen',decline:'Ablehnen',cancel:'Zurückziehen',remove:'Entfernen',sure:'Entfernen?',inc:'Erhaltene Anfragen',out:'Gesendete Anfragen',list:'Freunde',
      empty:'Noch keine Freunde. Such per Nickname.',none:'Niemand hat diesen Nickname.',short:'Mindestens zwei Zeichen eingeben.',
      needNick:'Wähle einen Nickname, damit Freunde dich finden.',nickPh:'Nickname (max. 12)',save:'Speichern',err:'Das hat nicht geklappt. Bitte gleich nochmal.',
-     toast:'{0} hat dir eine Freundschaftsanfrage geschickt',view:'Ansehen',card:'Profil'},
+     toast:'{0} hat dir eine Freundschaftsanfrage geschickt',view:'Ansehen',card:'Profil',playing:'🟢 Spielt {0}',ago:'{0} · vor {1}',mn:'{0} Min.',hr:'{0} Std.',dy:'{0} T.',now:'gerade'},
  ja:{friends:'👥 フレンド',ftitle:'フレンド',fnote:'ここでなったフレンドは、ゲームの中でもフレンドです。',search:'ニックネームでフレンドを探す',add:'フレンド申請',sent:'申請済み',isFriend:'フレンド',
      accept:'承認',decline:'拒否',cancel:'取り消し',remove:'削除',sure:'本当に削除？',inc:'届いた申請',out:'送った申請',list:'フレンド一覧',
      empty:'まだフレンドがいません。ニックネームで探してみましょう。',none:'そのニックネームの人はいません。',short:'2文字以上入力してください。',
      needNick:'フレンドが見つけられるようにニックネームを決めてください。',nickPh:'ニックネーム（12文字まで）',save:'保存',err:'処理できませんでした。少し後でもう一度お試しください。',
-     toast:'{0}さんからフレンド申請が届きました',view:'見る',card:'プロフィール'}
+     toast:'{0}さんからフレンド申請が届きました',view:'見る',card:'プロフィール',playing:'🟢 {0} をプレイ中',ago:'{0} · {1}前',mn:'{0}分',hr:'{0}時間',dy:'{0}日',now:'たった今'}
 };
 var F=FL[lang()]||FL.en;
 var TTL=3*60*60*1000, friends=[], frChan=null, frExpireAt=0;
@@ -230,10 +230,18 @@ async function loadFriends(){
   var rows=((r&&r.data)||[]).filter(function(x){ return !(x.status==='pending'&&expired(x)); });
   var ids=[]; rows.forEach(function(x){ var o=x.requester_id===me?x.addressee_id:x.requester_id; if(ids.indexOf(o)<0) ids.push(o); });
   var names={}; if(ids.length){ var p=await sb.from('profiles').select('id,username,display_name').in('id',ids); ((p&&p.data)||[]).forEach(function(x){ names[x.id]=nickOf(x); }); }
+  var acc=rows.filter(function(x){ return x.status==='accepted'; }).map(function(x){ return x.requester_id===me?x.addressee_id:x.requester_id; }), pres={};
+  if(acc.length){ try{ var pr=await sb.from('ff_presence').select('user_id,game,at').in('user_id',acc); ((pr&&!pr.error&&pr.data)||[]).forEach(function(x){ pres[x.user_id]=x; }); }catch(e){} }   // (empty before supabase-ff-hub.sql is run)
   friends=rows.map(function(x){ var o=x.requester_id===me?x.addressee_id:x.requester_id;
-    return {rowId:x.id, status:x.status, otherId:o, name:names[o]||'???', incoming:x.addressee_id===me&&x.status==='pending', outgoing:x.requester_id===me&&x.status==='pending'}; });
+    return {rowId:x.id, status:x.status, otherId:o, name:names[o]||'???', incoming:x.addressee_id===me&&x.status==='pending', outgoing:x.requester_id===me&&x.status==='pending', pres:pres[o]||null}; });
   badge(); return friends;
 }
+/* what a friend is playing: "🟢 Stickseum 하는 중" while the game is open (it pings every minute), else the last game and how long ago */
+var GNAME={stickseum:'Stickseum',crownenvoy:'Crown Envoy',beaconfall:'Beaconfall'};
+function online(f){ var t=f&&f.pres&&Date.parse(f.pres.at); return !!(t&&Date.now()-t<150000); }
+function presText(f){ var p=f&&f.pres; if(!p) return ''; var g=GNAME[p.game]||p.game, t=Date.parse(p.at); if(!t) return '';
+  var m=Math.max(0,Math.round((Date.now()-t)/60000)); if(online(f)) return fmt(F.playing,g);
+  var a=m<1?F.now:(m<60?fmt(F.mn,m):(m<60*24?fmt(F.hr,Math.round(m/60)):fmt(F.dy,Math.round(m/1440)))); return m<1?g+' · '+a:fmt(F.ago,g).replace('{1}',a); }
 function incomingCount(){ return friends.filter(function(f){ return f.incoming; }).length; }
 function badge(){ var n=incomingCount(), bs=document.querySelectorAll('.ffa-badge'); for(var i=0;i<bs.length;i++){ bs[i].textContent=n>9?'9+':String(n); bs[i].style.display=n?'':'none'; } }
 function watchFriends(){
@@ -266,7 +274,7 @@ var FCSS='.ffa-badge{display:inline-block;min-width:18px;height:18px;line-height
  '#ffaFriends input{width:100%;box-sizing:border-box;padding:10px 12px;border-radius:9px;border:1px solid #2b3245;background:#08090d;color:#eef0f5;font:inherit;font-size:16px}#ffaFriends input:focus{outline:none;border-color:#ffc93c}'+
  '#ffaFriends .row{display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:9px;background:#151a25;margin-top:6px}#ffaFriends .row .nm{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:700;font-size:14px;cursor:pointer}'+
  '#ffaFriends .row button,#ffaFriends .nk button{border:0;border-radius:7px;padding:6px 10px;font:inherit;font-size:13px;font-weight:700;cursor:pointer;background:#232a3a;color:#eef0f5;white-space:nowrap}'+
- '#ffaFriends .row button.p,#ffaFriends .nk button{background:linear-gradient(135deg,#ffc93c,#ff8a3d);color:#1a1206}#ffaFriends .row button:disabled{opacity:.6;cursor:default}#ffaFriends .row .tg{font-size:12px;color:#8a93a6;white-space:nowrap}'+
+ '#ffaFriends .row button.p,#ffaFriends .nk button{background:linear-gradient(135deg,#ffc93c,#ff8a3d);color:#1a1206}#ffaFriends .row button:disabled{opacity:.6;cursor:default}#ffaFriends .row .tg{font-size:12px;color:#8a93a6;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:45%}#ffaFriends .row.on .tg{color:#7dff9b;font-weight:700}'+
  '#ffaFriends .e{color:#8a93a6;font-size:13px;padding:8px 2px}#ffaFriends .nk{display:flex;gap:8px;margin:0 0 6px}#ffaFriends .nk input{flex:1}#ffaFriends .x{float:right;background:none;border:0;color:#8a93a6;font-size:20px;cursor:pointer;line-height:1}'+
  '#ffaToast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);z-index:2147482600;background:#10131b;border:1px solid #ffc93c;color:#eef0f5;border-radius:12px;padding:10px 14px;font:600 14px system-ui,sans-serif;box-shadow:0 12px 30px rgba(0,0,0,.45);display:flex;gap:10px;align-items:center;max-width:calc(100vw - 32px)}'+
  '#ffaToast button{border:0;border-radius:7px;padding:5px 10px;font:inherit;font-size:13px;font-weight:800;cursor:pointer;background:linear-gradient(135deg,#ffc93c,#ff8a3d);color:#1a1206}';
@@ -321,8 +329,9 @@ function fpaint(){
   var ls=el.querySelector('.lists'); ls.innerHTML='';
   function section(title, items, mk){ if(!items.length) return; var h=document.createElement('h4'); h.textContent=title+' ('+items.length+')'; ls.appendChild(h); items.forEach(function(f){ ls.appendChild(mk(f)); }); }
   section(F.inc, friends.filter(function(f){ return f.incoming; }), function(f){ return row(f.name,f.otherId,[[F.accept,function(){ return respond(f.rowId,true); },'p'],[F.decline,function(){ return respond(f.rowId,false); }]]); });
-  var acc=friends.filter(function(f){ return f.status==='accepted'; }).sort(function(a,b){ return a.name.localeCompare(b.name,'ko'); });
-  if(acc.length) section(F.list, acc, function(f){ var d=row(f.name,f.otherId,[[F.card,function(){ openProfile(f.otherId); return null; }]]);
+  var acc=friends.filter(function(f){ return f.status==='accepted'; }).sort(function(a,b){ return (online(b)-online(a))||a.name.localeCompare(b.name,'ko'); });
+  if(acc.length) section(F.list, acc, function(f){ var d=row(f.name,f.otherId,[[F.card,function(){ openProfile(f.otherId); return null; }]],presText(f));
+      if(online(f)) d.classList.add('on');
       var rm=document.createElement('button'); rm.type='button'; rm.textContent=F.remove;
       rm.onclick=async function(e){ e.stopPropagation(); if(fbusy) return; if(!rm.dataset.sure){ rm.dataset.sure='1'; rm.textContent=F.sure; setTimeout(function(){ if(rm.isConnected&&!fbusy){ delete rm.dataset.sure; rm.textContent=F.remove; } },3000); return; } fbusy=true; rm.disabled=true; var r; try{ r=await removeRow(f.rowId); }catch(x){ r={error:x}; } fbusy=false; if(r&&r.error) toastErr(); fpaint(); };
       d.appendChild(rm); return d; });
@@ -332,9 +341,19 @@ function fpaint(){
 async function openFriends(){ if(!sb) return; if(!user) return openLogin(); closeMenus(); var el=fmodal(); el.style.display='flex'; fpaint(); await loadFriends(); fpaint(); }
 subs.push(function(u){ friends=[]; badge(); watchFriends(); if(u) loadFriends().then(function(){ fpaint(); var n=incomingCount(); if(n){ var f=friends.filter(function(x){ return x.incoming; })[0]; toast(n>1?fmt(F.toast,f.name)+' (+'+(n-1)+')':fmt(F.toast,f.name)); } }); else { var el=document.getElementById('ffaFriends'); if(el) el.style.display='none'; } });
 setInterval(function(){ if(user) loadFriends().then(fpaint).catch(function(){}); }, 10*60*1000);
+setInterval(function(){ var el=document.getElementById('ffaFriends'); if(user&&el&&el.style.display!=='none') loadFriends().then(fpaint).catch(function(){}); }, 60*1000);
+
+/* hub achievements: worked out from this account's games, friends and posts, then saved so others see them on the card (ff-profile.js) */
+var hubT=null;
+function syncHub(){ clearTimeout(hubT); hubT=setTimeout(function(){ if(!sb||!user) return; profileLib().then(function(ok){ if(ok&&window.FFProfile.syncHub) window.FFProfile.syncHub(sb, user.id); }); }, 1500); }
+subs.push(function(u){ if(u) syncHub(); });
+
+/* a shared card link: <hub>/?card=<login id> opens that person's profile card */
+(function(){ var m=/[?&]card=([^&#]+)/.exec(location.search); if(!m) return; var id=decodeURIComponent(m[1]).slice(0,32);
+  ready.then(async function(){ if(!sb) return; try{ var r=await sb.from('profiles').select('id').ilike('username', likeEsc(id)).limit(1); var row=r&&r.data&&r.data[0]; if(row) openProfile(row.id); }catch(e){} }); })();
 
 if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', paint); else paint();
 
 window.FFAuth={ ready:ready, client:function(){ return sb; }, user:function(){ return user; }, profile:function(){ return prof; }, nickname:nick,
-  onChange:function(f){ if(typeof f==='function') subs.push(f); }, openLogin:openLogin, openProfile:openProfile, openFriends:openFriends, friends:function(){ return friends.slice(); }, signOut:signOut, refresh:paint };
+  onChange:function(f){ if(typeof f==='function') subs.push(f); }, openLogin:openLogin, openProfile:openProfile, openFriends:openFriends, friends:function(){ return friends.slice(); }, signOut:signOut, refresh:paint, syncHub:syncHub };
 })();
