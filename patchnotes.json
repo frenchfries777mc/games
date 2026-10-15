@@ -3,64 +3,6 @@
   {
    "date": "2026-10-15",
    "build": "",
-   "title": "새 게임 철도 회사",
-   "items": [
-    "🚆 철도 회사 게임 카드 추가",
-    "뉴스에 철도 회사 패치노트 추가",
-    "프로필 🏆 도전과제 창에 철도 회사 도전과제 추가",
-    "철도 회사 도전과제 돈 단위를 C로 수정"
-   ],
-   "tr": {
-    "en": {
-     "title": "New game: Rail Company",
-     "items": [
-      "🚆 Rail Company game card",
-      "Rail Company patch notes in the news",
-      "Rail Company achievements in the profile 🏆 window",
-      "Rail Company achievements now use C as the money unit"
-     ]
-    },
-    "es": {
-     "title": "Nuevo juego: Compañía ferroviaria",
-     "items": [
-      "Tarjeta del juego 🚆 Compañía ferroviaria",
-      "Notas de Compañía ferroviaria en las noticias",
-      "Logros de Compañía ferroviaria en la ventana 🏆 del perfil",
-      "Los logros de Compañía ferroviaria usan C como moneda"
-     ]
-    },
-    "fr": {
-     "title": "Nouveau jeu : Compagnie ferroviaire",
-     "items": [
-      "Carte du jeu 🚆 Compagnie ferroviaire",
-      "Notes de Compagnie ferroviaire dans les actualités",
-      "Succès de Compagnie ferroviaire dans la fenêtre 🏆 du profil",
-      "Les succès de Compagnie ferroviaire utilisent C comme monnaie"
-     ]
-    },
-    "de": {
-     "title": "Neues Spiel: Eisenbahngesellschaft",
-     "items": [
-      "🚆 Spielkarte für Eisenbahngesellschaft",
-      "Patchnotes der Eisenbahngesellschaft in den News",
-      "Erfolge der Eisenbahngesellschaft im 🏆-Fenster des Profils",
-      "Erfolge der Eisenbahngesellschaft nutzen C als Währung"
-     ]
-    },
-    "ja": {
-     "title": "新作 鉄道会社",
-     "items": [
-      "🚆 鉄道会社のゲームカードを追加",
-      "ニュースに鉄道会社のパッチノートを追加",
-      "プロフィールの🏆実績ウィンドウに鉄道会社の実績を追加",
-      "鉄道会社の実績のお金の単位をCに修正"
-     ]
-    }
-   }
-  },
-  {
-   "date": "2026-10-15",
-   "build": "",
    "title": "친구 소식 · 검색 · 이모지 반응",
    "items": [
     "👥 친구 소식 탭 추가 (친구의 도전과제 · 새 게임 · 새 글, 최근 2주)",
