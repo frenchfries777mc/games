@@ -3,6 +3,58 @@
   {
    "date": "2026-10-15",
    "build": "",
+   "title": "친구 소식 · 검색 · 이모지 반응",
+   "items": [
+    "👥 친구 소식 탭 추가 (친구의 도전과제 · 새 게임 · 새 글, 최근 2주)",
+    "게시판 🔍 검색 추가 (제목 · 내용)",
+    "글 · 댓글 · 채팅에 😂😮😢🔥❤️👏 반응 추가"
+   ],
+   "tr": {
+    "en": {
+     "title": "Friends feed · search · emoji reactions",
+     "items": [
+      "👥 Friends tab (friends' achievements, new games and posts from the last 2 weeks)",
+      "🔍 Board search (title and text)",
+      "😂😮😢🔥❤️👏 reactions on posts, comments and chat"
+     ]
+    },
+    "es": {
+     "title": "Amigos · búsqueda · reacciones",
+     "items": [
+      "Pestaña 👥 Amigos (logros, juegos nuevos y publicaciones de tus amigos, últimas 2 semanas)",
+      "🔍 Búsqueda en el tablón (título y texto)",
+      "Reacciones 😂😮😢🔥❤️👏 en publicaciones, comentarios y chat"
+     ]
+    },
+    "fr": {
+     "title": "Amis · recherche · réactions",
+     "items": [
+      "Onglet 👥 Amis (succès, nouveaux jeux et messages de tes amis, 2 dernières semaines)",
+      "🔍 Recherche dans le forum (titre et texte)",
+      "Réactions 😂😮😢🔥❤️👏 sur les messages, commentaires et le chat"
+     ]
+    },
+    "de": {
+     "title": "Freunde · Suche · Emoji-Reaktionen",
+     "items": [
+      "👥 Freunde-Tab (Erfolge, neue Spiele und Beiträge deiner Freunde, letzte 2 Wochen)",
+      "🔍 Forensuche (Titel und Text)",
+      "😂😮😢🔥❤️👏 Reaktionen auf Beiträge, Kommentare und Chat"
+     ]
+    },
+    "ja": {
+     "title": "フレンド近況・検索・リアクション",
+     "items": [
+      "👥 フレンドタブを追加（フレンドの実績・新しいゲーム・投稿、最近2週間）",
+      "掲示板に🔍検索を追加（タイトル・本文）",
+      "投稿・コメント・チャットに😂😮😢🔥❤️👏リアクションを追加"
+     ]
+    }
+   }
+  },
+  {
+   "date": "2026-10-15",
+   "build": "",
    "title": "Games · Educations 전환",
    "items": [
     "상단 Games · Educations 전환 버튼 추가"

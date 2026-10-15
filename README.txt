@@ -19,6 +19,7 @@ Frenchfries777 게임 허브 사이트
   supabase-ff-social.sql        🔔 알림함 · 공지 배너 · 좋아요 · 친구 1:1 메시지 · 신고 · 차단용 SQL (supabase-ff-hub.sql 다음에 실행)
   supabase-ff-extra.sql         프로필 카드 꾸미기 · 이번 주 인기 게임 · 투표용 SQL (supabase-ff-hub.sql 다음에 실행). 게임 랭킹은 crownenvoy 저장소의 supabase-ff-rank.sql
   supabase-ff-more.sql          프로필 소개글 · 대표 게임 · 칭호, 게임 평점 · 한줄평, 같이 하기(방 모집)용 SQL (supabase-ff-hub.sql 다음에 실행)
+  supabase-ff-react.sql         글 · 댓글 · 채팅 이모지 반응용 SQL (supabase-ff-hub.sql 다음에 실행)
   patchnotes.json               허브 패치노트 (뉴스에 '허브'로 나오고, 뉴스의 '허브 패치노트 →'에서 전체 목록)
 
 [ 플레이 버튼 주소 ]
