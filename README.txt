@@ -26,6 +26,7 @@ Frenchfries777 게임 허브 사이트
   로그인 버튼이 들어갈 자리에:   <span data-ff-account></span>
   </body> 바로 앞에:            <script src="https://frenchfries777mc.github.io/games/ff-auth.js"></script>
   로그인 전에는 "로그인" 버튼, 로그인 후에는 닉네임이 보여요. 닉네임을 누르면 친구, 프로필 카드, 로그아웃이 나와요.
+  허브가 아닌 페이지에는 그 옆에 '← 허브' 버튼도 붙어요(휴대폰에서는 화면 왼쪽 아래). 빼려면 자리에 data-ff-nohub.
 
 [ 친구 ]
   친구는 Stickseum과 같은 friendships 표를 써요. 그래서 허브나 게임 사이트에서 맺은 친구는 게임 안에서도 친구예요.
