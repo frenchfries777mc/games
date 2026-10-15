@@ -3,6 +3,70 @@
   {
    "date": "2026-10-15",
    "build": "",
+   "title": "랭킹 · 인기 게임 · 갤러리 · 투표 · 카드 꾸미기",
+   "items": [
+    "🏆 게임 랭킹 추가 (Crown Envoy부터)",
+    "🔥 이번 주 인기 게임 추가",
+    "🖼️ 게임 사진만 모은 갤러리 탭 추가",
+    "📊 투표 탭 추가 (관리자가 올림)",
+    "🎨 프로필 카드 배경 · 테두리 꾸미기 추가 (허브 도전과제로 열림)"
+   ],
+   "tr": {
+    "en": {
+     "title": "Ranking · popular games · gallery · polls · card looks",
+     "items": [
+      "🏆 Game ranking added (Crown Envoy first)",
+      "🔥 Popular games this week added",
+      "🖼️ Gallery tab with only game photos added",
+      "📊 Polls tab added (posted by the admin)",
+      "🎨 Profile card backgrounds · borders added (unlocked with hub achievements)"
+     ]
+    },
+    "es": {
+     "title": "Clasificación · juegos populares · galería · encuestas · tarjeta",
+     "items": [
+      "🏆 Clasificación de juegos (primero Crown Envoy)",
+      "🔥 Juegos populares de la semana",
+      "🖼️ Pestaña de galería solo con fotos de juegos",
+      "📊 Pestaña de encuestas (las publica el admin)",
+      "🎨 Fondos y bordes para la tarjeta (se desbloquean con logros del inicio)"
+     ]
+    },
+    "fr": {
+     "title": "Classement · jeux populaires · galerie · sondages · carte",
+     "items": [
+      "🏆 Classement des jeux (Crown Envoy d’abord)",
+      "🔥 Jeux populaires de la semaine",
+      "🖼️ Onglet galerie avec seulement les photos de jeux",
+      "📊 Onglet sondages (publiés par l’admin)",
+      "🎨 Fonds et bordures de carte (débloqués avec les succès de l’accueil)"
+     ]
+    },
+    "de": {
+     "title": "Rangliste · beliebte Spiele · Galerie · Umfragen · Kartenlook",
+     "items": [
+      "🏆 Spiel-Rangliste (zuerst Crown Envoy)",
+      "🔥 Beliebte Spiele der Woche",
+      "🖼️ Galerie-Tab nur mit Spielfotos",
+      "📊 Umfrage-Tab (vom Admin gepostet)",
+      "🎨 Hintergründe und Rahmen für die Profilkarte (mit Startseiten-Erfolgen freigeschaltet)"
+     ]
+    },
+    "ja": {
+     "title": "ランキング・人気ゲーム・ギャラリー・投票・カードの見た目",
+     "items": [
+      "🏆 ゲームランキングを追加（まずCrown Envoy）",
+      "🔥 今週の人気ゲームを追加",
+      "🖼️ ゲームの写真だけのギャラリータブを追加",
+      "📊 投票タブを追加（管理者が出す）",
+      "🎨 プロフィールカードの背景・枠を追加（ハブ実績で開く）"
+     ]
+    }
+   }
+  },
+  {
+   "date": "2026-10-15",
+   "build": "",
    "title": "알림함 · 공지 · 좋아요 · 메시지 · 신고 · 차단",
    "items": [
     "🔔 알림함 추가 (댓글, 좋아요, 친구 요청, 메시지, 피드백 확인)",
