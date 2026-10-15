@@ -10,6 +10,8 @@ Frenchfries777 게임 허브 사이트
   ff-auth.js          Frenchfries777 계정 로그인 버튼과 로그인 창 (허브·게임 사이트 공용)
   ff-lang.js          언어 설정을 허브·게임 사이트·게임이 같이 쓰게 맞춰 주는 스크립트
   supabase-ff-achievements.sql  프로필 카드의 게임별 도전과제 진행상황용 SQL (Supabase에서 한 번 실행)
+  supabase-ff-ach-list.sql      카드 아래 도전과제 목록 · 달성 비율용 SQL (위 SQL 다음에 한 번 실행)
+  ach/<게임>.json               카드에 보이는 각 게임의 도전과제 목록 (이름 · 아이콘 · 설명, 6개 언어)
 
 [ 플레이 버튼 주소 ]
   - Stickseum   https://frenchfries777mc.github.io/stickseum/
@@ -26,6 +28,7 @@ Frenchfries777 게임 허브 사이트
   로그인 버튼이 들어갈 자리에:   <span data-ff-account></span>
   </body> 바로 앞에:            <script src="https://frenchfries777mc.github.io/games/ff-auth.js"></script>
   로그인 전에는 "로그인" 버튼, 로그인 후에는 닉네임이 보여요. 닉네임을 누르면 친구, 프로필 카드, 로그아웃이 나와요.
+  허브가 아닌 페이지에는 그 옆에 '← 허브' 버튼도 붙어요(휴대폰에서는 화면 왼쪽 아래). 빼려면 자리에 data-ff-nohub.
 
 [ 친구 ]
   친구는 Stickseum과 같은 friendships 표를 써요. 그래서 허브나 게임 사이트에서 맺은 친구는 게임 안에서도 친구예요.
@@ -45,3 +48,6 @@ Frenchfries777 게임 허브 사이트
   supabase-ff-achievements.sql을 실행한 뒤, 각 게임이 도전과제를 달성할 때(또는 로그인할 때):
     FFProfile.setAchievements(sb, 'crownenvoy', 달성한 수, 전체 수);   // 'stickseum' | 'crownenvoy' | 'beaconfall'
   Stickseum은 게임이 이미 올리는 기록으로도 보여요.
+  카드를 아래로 내리면 게임별 도전과제 목록이 나와요: 달성한 것(✓), 그리고 전체 플레이어 중 몇 %가 달성했는지.
+  달성한 id 목록도 같이 올려 주면 정확해요:  FFProfile.setAchievements(sb, 'crownenvoy', 달성한 수, 전체 수, ['first_game', ...])
+  게임에 도전과제를 추가하면 ach/<게임>.json 도 고쳐요 (게임 파일에서 다시 뽑는 도구: Stickseum 작업 폴더의 tools/extract_ach.js).
