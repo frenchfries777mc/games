@@ -84,6 +84,12 @@ if(document.readyState==='loading') document.addEventListener('DOMContentLoaded'
   .logo b{color:var(--fry); font-weight:700;}
   header nav a{color:var(--dim); text-decoration:none; font-size:15px; margin-left:18px;}
   header nav a:hover{color:var(--text);}
+  .swr{margin:0 auto 0 20px;} header nav{white-space:nowrap;} @media(max-width:1400px){ header nav a{margin-left:14px;} header nav a[href^="https://github"]{display:none;} }
+  .sw{display:inline-flex; padding:3px; border-radius:99px; border:1px solid var(--line); background:var(--panel);}
+  .sw a{font-family:'Oswald',sans-serif; font-weight:600; font-size:13.5px; letter-spacing:.06em; text-transform:uppercase; color:var(--dim); text-decoration:none; padding:4px 13px; border-radius:99px; transition:color .15s,background .15s;}
+  .sw a:hover{color:var(--text);}
+  .sw a.on{background:linear-gradient(90deg,var(--fry),var(--fry2)); color:#1c1405;}
+  @media(max-width:520px){ header{flex-wrap:wrap;} .swr{order:3; flex:1 0 100%; margin:14px 0 0;} }
   header .right{display:flex; align-items:center;}
   .langSel{background:var(--panel); color:var(--dim); border:1px solid var(--line); border-radius:8px; padding:6px 9px; font:inherit; font-size:14px; cursor:pointer; margin-left:16px;}
   .langSel:hover{color:var(--text); border-color:var(--fry);}
@@ -294,6 +300,7 @@ if(document.readyState==='loading') document.addEventListener('DOMContentLoaded'
 <div class="wrap">
   <header>
     <a class="logo" href="./"><span class="fry">🍟</span><span>FRENCHFRIES<b>777</b></span></a>
+    <div class="swr"><span class="sw" data-notr><a class="on" href="./" aria-current="page">Games</a><a href="https://frenchfries777mc.github.io/educations/">Educations</a></span></div>
     <div class="right"><nav><a href="#games">게임</a><a href="#ranking">랭킹</a><a href="#community">커뮤니티</a><a href="#news">뉴스</a><a href="https://github.com/frenchfries777mc" target="_blank" rel="noopener">GitHub</a></nav><span data-lang-slot></span><span data-ff-account></span></div>
   </header>
   <div id="annBar"></div>
