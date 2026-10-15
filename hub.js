@@ -1,6 +1,6 @@
 /* Frenchfries777 허브: 커뮤니티(게시판 · 채팅 · 피드백/버그 신고)와 아래쪽 뉴스(세 게임의 패치노트)
    글자는 한국어로 쓰고, 허브의 번역 스크립트(<script id="i18n">)가 다른 언어로 바꿔요. 사람들이 쓴 글은 data-notr 로 번역하지 않아요.
-   필요한 SQL: supabase-ff-hub.sql, supabase-ff-images.sql, supabase-ff-social.sql */
+   필요한 SQL: supabase-ff-hub.sql, supabase-ff-images.sql, supabase-ff-social.sql, supabase-ff-extra.sql (+ crownenvoy/supabase-ff-rank.sql) */
 (function(){
 'use strict';
 var SI=window.SI18N||{lang:'ko',F:function(t){ var a=arguments; return String(t).replace(/\{(\d)\}/g,function(_,n){ return a[+n+1]; }); }};
@@ -88,7 +88,7 @@ window.addEventListener('ffblocks',function(){ if(tab==='board') listPosts(); el
 function hubSync(){ try{ if(window.FFAuth&&FFAuth.syncHub) FFAuth.syncHub(); }catch(e){} }
 function setTab(t){ tab=t; var bs=document.querySelectorAll('.cm-tabs button'); for(var i=0;i<bs.length;i++) bs[i].classList.toggle('on',bs[i].getAttribute('data-t')===t);
   var ps=document.querySelectorAll('.cm-p'); for(var j=0;j<ps.length;j++) ps[j].style.display=ps[j].getAttribute('data-p')===t?'':'none';
-  if(t==='board') board(); else if(t==='chat') chat(); else feedback(); }
+  if(t==='board') board(); else if(t==='chat') chat(); else if(t==='gal') gallery(); else if(t==='poll') polls(); else feedback(); }
 function scrollToCm(){ var c=$('#community'); if(c) c.scrollIntoView({behavior:'smooth',block:'start'}); }
 
 /* ---- 사진: 줄여서(긴 쪽 1600px) Supabase 저장소 'ff-images/<내 id>/' 에 올리고, 글 · 채팅에는 주소만 저장 (supabase-ff-images.sql) ---- */
@@ -252,6 +252,88 @@ function watchChat(){
   chatPoll=setInterval(function(){ if(tab==='chat'&&!chatLive&&document.visibilityState!=='hidden') pullChat(); }, 8000);     // if live updates are not available
 }
 
+/* ===================== 랭킹: 이번 주 인기 게임 (ff_week_games) · 게임별 점수 순위 (ff_rank) ===================== */
+var rkGame='crownenvoy';
+async function weekGames(){
+  var box=$('#weekList'); if(!box||!sb) return;
+  var r=await sb.rpc('ff_week_games'); if(r.error){ box.innerHTML='<div class="cm-e">'+esc(errText(r.error))+'</div>'; return; }
+  var rows=(r.data||[]).filter(function(x){ return GAMES[x.game]; }).sort(function(a,b){ return (b.players-a.players)||(b.last_week-a.last_week); });
+  var top=Math.max(1,Math.max.apply(null,rows.map(function(x){ return x.players; }).concat([0])));
+  box.innerHTML=rows.map(function(x,i){ var G=GAMES[x.game], diff=x.players-(x.last_week||0);
+    return '<div class="wk '+G.cls+'"><span class="no">'+(i+1)+'</span><span class="gn">'+esc(G.name)+'</span><span class="pc">'+esc(F('{0}명',x.players))+
+      (diff?'<small class="'+(diff>0?'up':'dn')+'">'+(diff>0?'▲ ':'▼ ')+Math.abs(diff)+'</small>':'<small>–</small>')+'</span><span class="bar"><u style="width:'+(100*x.players/top).toFixed(1)+'%"></u></span></div>'; }).join('')||'<div class="cm-e">아직 기록이 없어요.</div>';
+}
+async function ranking(){
+  var box=$('#rankList'); if(!box||!sb) return; var g=rkGame;
+  var r=await sb.from('ff_rank').select('user_id,points,wins,games').eq('game',g).order('points',{ascending:false}).order('wins',{ascending:false}).limit(20);
+  if(g!==rkGame) return;
+  if(r.error){ box.innerHTML='<div class="cm-e">'+esc(errText(r.error))+'</div>'; return; }
+  var rows=r.data||[]; await loadNames(rows.map(function(x){ return x.user_id; }));
+  if(!rows.length){ box.innerHTML='<div class="cm-e">'+(g==='crownenvoy'?'아직 순위가 없어요. 게임을 끝내면 점수가 쌓여요.':'이 게임은 아직 랭킹에 점수를 보내지 않아요.')+'</div>'; return; }
+  var h='<table class="rkt"><tr><th></th><th>닉네임</th><th>점수</th><th>승리</th><th>판</th></tr>';
+  rows.forEach(function(x,i){ h+='<tr class="'+(i<3?'t'+(i+1):'')+(me&&x.user_id===me.id?' me':'')+'"><td>'+(i<3?['🥇','🥈','🥉'][i]:i+1)+'</td><td>'+who(x.user_id)+'</td><td class="pt" data-notr>'+x.points+'</td><td data-notr>'+x.wins+'</td><td data-notr>'+x.games+'</td></tr>'; });
+  h+='</table>';
+  if(me&&!rows.some(function(x){ return x.user_id===me.id; })){
+    var mine=await sb.from('ff_rank').select('points').eq('game',g).eq('user_id',me.id).limit(1), mp=mine&&mine.data&&mine.data[0];
+    if(mp){ var above=await sb.from('ff_rank').select('user_id',{count:'exact',head:true}).eq('game',g).gt('points',mp.points); if(above&&above.count!=null) h+='<div class="rk-me">'+esc(F('내 순위: {0}위 · {1}점',above.count+1,mp.points))+'</div>'; }
+  }
+  box.innerHTML=h;
+}
+
+/* ---- 스크린샷 갤러리: 게임 글에 올라온 사진만 모아서 (누르면 그 글이 열려요) ---- */
+var gFilter='all';
+async function gallery(){
+  var p=$('.cm-p[data-p=gal]'); if(!p) return;
+  if(!p.dataset.ready){ p.dataset.ready='1';
+    p.innerHTML='<div class="cm-bar"><div class="cm-f"><button data-f="all" class="on">전체</button><button data-f="stickseum">Stickseum</button><button data-f="crownenvoy">Crown Envoy</button><button data-f="beaconfall">Beaconfall</button></div></div><p class="cm-note">게임 글에 올라온 사진만 모았어요. 사진을 누르면 그 글이 열려요.</p><div class="gl"></div>';
+    p.querySelector('.cm-f').onclick=function(e){ var b=e.target.closest('button'); if(!b) return; gFilter=b.getAttribute('data-f'); [].forEach.call(this.children,function(x){ x.classList.toggle('on',x===b); }); gallery(); };
+  }
+  var G=p.querySelector('.gl'); if(!sb) return;
+  if(!IMG){ G.innerHTML='<div class="cm-e">'+esc(errText({message:'does not exist'}))+'</div>'; return; }
+  var q=sb.from('ff_posts').select('id,user_id,game,title,images,created_at').neq('images','{}'), gf=gFilter;
+  q=gf==='all'?q.neq('game','free'):q.eq('game',gf); var r=await q.order('created_at',{ascending:false}).limit(60); if(gf!==gFilter) return;
+  if(r.error){ G.innerHTML='<div class="cm-e">'+esc(errText(r.error))+'</div>'; return; }
+  var tiles=[]; (r.data||[]).filter(function(x){ return !blocked(x.user_id); }).forEach(function(x){ (x.images||[]).filter(okImg).forEach(function(u){ tiles.push({x:x,u:u}); }); });
+  G.innerHTML=tiles.length?'':'<div class="cm-e">아직 올라온 게임 사진이 없어요. 게시판에 게임 사진을 올려 보세요!</div>';
+  tiles.slice(0,120).forEach(function(t){ var a=document.createElement('a'); a.innerHTML='<img alt="" loading="lazy"><span class="cap">'+gameTag(t.x.game)+'<b data-notr></b></span>'; a.querySelector('img').src=t.u; a.querySelector('b').textContent=t.x.title;
+    a.onclick=function(e){ e.preventDefault(); openPostById(t.x.id); scrollToCm(); }; G.appendChild(a); });
+}
+
+/* ---- 투표 (관리자가 올리고, 한 사람 한 표. 다시 누르면 바꿀 수 있어요) ---- */
+async function polls(){
+  var p=$('.cm-p[data-p=poll]'); if(!p) return;
+  if(!p.dataset.ready){ p.dataset.ready='1'; p.innerHTML='<div class="pls"></div><div class="cm-pa"></div>'; }
+  var Lst=p.querySelector('.pls'), A=p.querySelector('.cm-pa'); if(!sb) return;
+  var r=await sb.from('ff_polls').select('*').order('created_at',{ascending:false}).limit(admin?30:10);
+  if(r.error){ Lst.innerHTML='<div class="cm-e">'+esc(errText(r.error))+'</div>'; A.innerHTML=''; return; }
+  var rows=(r.data||[]).filter(function(x){ return admin||x.active; }), ids=rows.map(function(x){ return x.id; }), cnt={}, mine={};
+  if(ids.length){ var c=await sb.rpc('ff_poll_counts',{p_ids:ids}); ((c&&c.data)||[]).forEach(function(x){ (cnt[x.poll_id]=cnt[x.poll_id]||{})[x.choice]=x.votes; });
+    if(me){ var v=await sb.from('ff_votes').select('poll_id,choice').eq('user_id',me.id).in('poll_id',ids); ((v&&v.data)||[]).forEach(function(x){ mine[x.poll_id]=x.choice; }); } }
+  Lst.innerHTML=rows.length?'':'<div class="cm-e">지금 진행 중인 투표가 없어요.</div>';
+  rows.forEach(function(x){ var C=cnt[x.id]||{}, tot=0, open=x.active&&(!x.ends_at||Date.parse(x.ends_at)>Date.now()), my=mine.hasOwnProperty(x.id)?mine[x.id]:null, show=my!=null||!open||admin;
+    x.options.forEach(function(o,i){ tot+=C[i]||0; });
+    var d=document.createElement('div'); d.className='pl'+(open?'':' closed');
+    d.innerHTML='<h4 data-notr></h4><div class="cm-meta">'+esc(F('{0}명 참여',tot))+(x.ends_at?' · <span>'+esc(open?F('{0}까지',String(x.ends_at).slice(5,10).replace('-','/')):'마감')+'</span>':(open?'':' · <span>마감</span>'))+(my==null&&open?' · <span>눌러서 투표하세요</span>':'')+'</div>';
+    d.querySelector('h4').textContent=x.question;
+    x.options.forEach(function(o,i){ var n=C[i]||0, pc=tot?Math.round(100*n/tot):0, b=document.createElement('button'); b.type='button'; b.className='po'+(my===i?' mine':''); b.disabled=!open;
+      b.innerHTML=(show?'<i class="fill" style="width:'+pc+'%"></i>':'')+'<span data-notr></span>'+(show?'<span class="pv" data-notr>'+pc+'% · '+n+'</span>':''); b.querySelector('span').textContent=(my===i?'✓ ':'')+o;
+      b.onclick=async function(){ if(!me) return login(); if(my===i) return; b.disabled=true; var q=await sb.rpc('ff_vote',{p_poll:x.id, p_choice:i}); if(q.error){ b.disabled=false; d.querySelector('.cm-meta').textContent=errText(q.error); return; } hubSync(); polls(); };
+      d.appendChild(b); });
+    if(admin){ var ac=document.createElement('div'); ac.className='cm-acts2';
+      var t=document.createElement('button'); t.className='cm-btn2'; t.textContent=x.active?'마감하기':'다시 열기'; t.onclick=async function(){ await sb.from('ff_polls').update({active:!x.active}).eq('id',x.id); polls(); };
+      var del=document.createElement('button'); del.className='cm-btn2'; del.textContent='삭제'; del.onclick=async function(){ if(!del.dataset.s){ del.dataset.s=1; del.textContent='정말 삭제할까요?'; return; } await sb.from('ff_polls').delete().eq('id',x.id); polls(); };
+      ac.appendChild(t); ac.appendChild(del); d.appendChild(ac); }
+    Lst.appendChild(d); });
+  if(!admin){ A.innerHTML=''; return; }
+  if(!A.dataset.ready){ A.dataset.ready='1';
+    A.innerHTML='<h4 class="cm-ph4">📊 투표 올리기 (관리자)</h4><form class="cm-w"><input name="q" maxlength="200" placeholder="질문" required><textarea name="o" rows="4" placeholder="보기를 한 줄에 하나씩 (2~6개)"></textarea><input name="e" type="date" title="끝나는 날 (비우면 계속)"><div class="cm-m"></div><div class="cm-acts"><button class="cm-btn">올리기</button></div></form>';
+    A.querySelector('form').onsubmit=async function(e){ e.preventDefault(); var f=this, m=f.querySelector('.cm-m'), q=f.q.value.trim(), o=f.o.value.split('\n').map(function(x){ return x.trim().slice(0,80); }).filter(Boolean);
+      if(!q) return; if(o.length<2||o.length>6){ m.textContent='보기는 2~6개로 적어 주세요.'; return; }
+      var r2=await sb.from('ff_polls').insert({question:q, options:o, ends_at:f.e.value?new Date(f.e.value+'T23:59:59').toISOString():null}); if(r2.error){ m.textContent=errText(r2.error); return; }
+      f.reset(); m.textContent='올렸어요.'; polls(); };
+  }
+}
+
 /* ---- 피드백 · 버그 신고 ---- */
 var KIND={bug:'🐞 버그',idea:'💡 아이디어',other:'💬 기타'}, GN={hub:'허브',stickseum:'Stickseum',crownenvoy:'Crown Envoy',beaconfall:'Beaconfall'};
 async function feedback(){
@@ -332,19 +414,20 @@ function annAdmin(){
 async function refreshUser(){
   me=window.FFAuth&&FFAuth.user&&FFAuth.user(); admin=false;
   if(me&&sb){ try{ var r=await sb.rpc('ff_is_admin'); admin=!!(r&&r.data===true); }catch(e){} }
-  paintSend(); setTab(tab); loadAnn();
+  paintSend(); setTab(tab); loadAnn(); weekGames(); ranking();
 }
 /* 다른 페이지 · 알림에서 열기: ?post=글번호 , #feedback , #hubnotes */
 function openPostById(id){ id=+id; if(!id) return; bOpen=id; bScroll=true; if(tab!=='board') setTab('board'); else listPosts(); }
 window.FFHub={ openPost:function(id){ openPostById(id); scrollToCm(); }, tab:function(t){ setTab(t); scrollToCm(); } };
 function fromUrl(){
   var m=/[?&]post=(\d+)/.exec(location.search); if(m){ bOpen=+m[1]; bScroll=true; tab='board'; try{ history.replaceState(null,'',location.pathname+'#community'); }catch(e){} }
-  if(location.hash==='#feedback') tab='fb';
+  if(location.hash==='#feedback') tab='fb'; else if(location.hash==='#gallery') tab='gal'; else if(location.hash==='#poll') tab='poll';
 }
 window.addEventListener('hashchange',function(){ if(location.hash==='#hubnotes') openHubNotes(); else if(location.hash==='#feedback'){ setTab('fb'); scrollToCm(); } });
 function start(){
   fromUrl(); loadNews().then(function(){ if(location.hash==='#hubnotes') openHubNotes(); });
   if(tab==='fb'){ setTimeout(scrollToCm,300); } var hb=$('#hubNotesBtn'); if(hb) hb.onclick=function(e){ e.preventDefault(); openHubNotes(); };
+  var rf=$('.rk-f'); if(rf) rf.onclick=function(e){ var b=e.target.closest('button'); if(!b) return; rkGame=b.getAttribute('data-g'); [].forEach.call(this.children,function(x){ x.classList.toggle('on',x===b); }); ranking(); };
   var tabs=$('.cm-tabs'); if(tabs) tabs.onclick=function(e){ var b=e.target.closest('button'); if(b) setTab(b.getAttribute('data-t')); };
   var go=function(){ if(!window.FFAuth){ setTimeout(go,200); return; } FFAuth.ready.then(function(){ sb=client(); refreshUser(); FFAuth.onChange(function(){ setTimeout(refreshUser,50); }); }); };
   go();
