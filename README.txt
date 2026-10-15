@@ -11,7 +11,10 @@ Frenchfries777 게임 허브 사이트
   ff-lang.js          언어 설정을 허브·게임 사이트·게임이 같이 쓰게 맞춰 주는 스크립트
   supabase-ff-achievements.sql  프로필 카드의 게임별 도전과제 진행상황용 SQL (Supabase에서 한 번 실행)
   supabase-ff-ach-list.sql      카드 아래 도전과제 목록 · 달성 비율용 SQL (위 SQL 다음에 한 번 실행)
-  ach/<게임>.json               카드에 보이는 각 게임의 도전과제 목록 (이름 · 아이콘 · 설명, 6개 언어)
+  ach/<게임>.json               카드에 보이는 각 게임의 도전과제 목록 (이름 · 아이콘 · 설명, 6개 언어). ach/hub.json 은 허브 도전과제
+  hub.js                        허브의 커뮤니티(게시판 · 채팅 · 피드백/버그 신고)와 아래쪽 뉴스(세 게임 패치노트 모음)
+  ff-presence.js                게임을 하는 동안 친구 목록에 "🟢 ○○ 하는 중"을 띄워요 (ff-lang.js 가 게임 화면에서 불러요)
+  supabase-ff-hub.sql           커뮤니티 · 친구 접속 표시 · 허브 도전과제용 SQL (맨 아래 줄에 내 아이디를 넣으면 관리자가 돼요)
 
 [ 플레이 버튼 주소 ]
   - Stickseum   https://frenchfries777mc.github.io/stickseum/
@@ -51,3 +54,11 @@ Frenchfries777 게임 허브 사이트
   카드를 아래로 내리면 게임별 도전과제 목록이 나와요: 달성한 것(✓), 그리고 전체 플레이어 중 몇 %가 달성했는지.
   달성한 id 목록도 같이 올려 주면 정확해요:  FFProfile.setAchievements(sb, 'crownenvoy', 달성한 수, 전체 수, ['first_game', ...])
   게임에 도전과제를 추가하면 ach/<게임>.json 도 고쳐요 (게임 파일에서 다시 뽑는 도구: Stickseum 작업 폴더의 tools/extract_ach.js).
+
+[ 커뮤니티 · 뉴스 ]
+  게시판, 채팅, 피드백/버그 신고는 로그인한 사람만 쓸 수 있고, 도배는 서버에서 막아요.
+  피드백은 보낸 사람과 관리자만 봐요. 관리자는 허브의 피드백 탭에서 받은 피드백을 보고, 아무 글 · 댓글 · 채팅을 지울 수 있어요.
+  뉴스는 각 게임 사이트의 patchnotes.json 을 읽어서 최신순으로 보여줘요. 게임 쪽에서 패치노트만 쓰면 허브에도 자동으로 떠요.
+
+[ 프로필 카드 링크 ]
+  https://frenchfries777mc.github.io/games/?card=<로그인 아이디>  를 열면 그 사람의 카드가 열려요. 카드의 "🔗 링크" 버튼이 이 주소를 복사해요.

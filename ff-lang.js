@@ -32,5 +32,8 @@ function sync(){
   return lang;
 }
 var now=sync();
+/* 게임 화면이면 친구에게 "지금 하는 게임"을 알리는 ff-presence.js 도 불러요 */
+try{ var me=document.currentScript, base=(me&&me.src)?me.src.replace(/[^\/]*$/,''):'https://frenchfries777mc.github.io/games/';
+  if(!window.FFPresence && /\.html$/i.test(location.pathname) && !/\/games\//.test(location.pathname)){ var ps=document.createElement('script'); ps.src=base+'ff-presence.js'; ps.async=true; (document.head||document.documentElement).appendChild(ps); } }catch(e){}
 window.FFLang={ get:function(){ return now; }, set:function(l){ set(l); now=l; }, sync:function(){ now=sync()||now; return now; } };
 })();
