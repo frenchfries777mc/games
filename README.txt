@@ -8,6 +8,8 @@ Frenchfries777 게임 허브 사이트
   beaconfall.webp     Beaconfall 미리보기 그림
   ff-profile.js       세 게임이 같이 쓰는 Frenchfries777 프로필 카드
   ff-auth.js          Frenchfries777 계정 로그인 버튼과 로그인 창 (허브·게임 사이트 공용)
+  ff-lang.js          언어 설정을 허브·게임 사이트·게임이 같이 쓰게 맞춰 주는 스크립트
+  supabase-ff-achievements.sql  프로필 카드의 게임별 도전과제 진행상황용 SQL (Supabase에서 한 번 실행)
 
 [ 플레이 버튼 주소 ]
   - Stickseum   https://frenchfries777mc.github.io/stickseum/
@@ -33,3 +35,13 @@ Frenchfries777 게임 허브 사이트
   supabase.createClient(URL, KEY)를 옵션 없이(또는 storageKey를 바꾸지 않고) 만들고,
   시작할 때 sb.auth.getSession()으로 로그인 상태를 확인하면 자동 로그인이 돼요.
   Crown Envoy는 지금 로그인을 따로('ce_sb') 저장해서, 이 기본 위치를 쓰도록 바꿔야 이어져요.
+
+[ 언어 공유 ]
+  게임마다 언어를 저장하는 이름이 달라요(arenaClashLang, ce_lang, cq_lang, beaconfallSiteLang, Beaconfall 설정 안의 lang).
+  ff-lang.js가 이 이름들을 같은 언어로 맞춰요. 어느 한 곳에서 바꾸면, ff-lang.js나 ff-auth.js가 있는 페이지가 열릴 때 전부 그 언어가 돼요.
+  가장 확실하게 하려면 각 사이트·게임의 <head> 맨 앞에:  <script src="https://frenchfries777mc.github.io/games/ff-lang.js"></script>
+
+[ 프로필 카드의 도전과제 ]
+  supabase-ff-achievements.sql을 실행한 뒤, 각 게임이 도전과제를 달성할 때(또는 로그인할 때):
+    FFProfile.setAchievements(sb, 'crownenvoy', 달성한 수, 전체 수);   // 'stickseum' | 'crownenvoy' | 'beaconfall'
+  Stickseum은 게임이 이미 올리는 기록으로도 보여요.
