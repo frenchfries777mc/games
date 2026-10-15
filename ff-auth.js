@@ -19,32 +19,32 @@ var L={
      title:'Frenchfries777 계정',sub:'Stickseum, Crown Envoy, Beaconfall 모두 같은 계정이에요. 여기서 로그인하면 게임에서도 로그인된 채로 시작해요.',
      badId:'아이디는 영문/숫자/밑줄 3~16자로 해주세요.',badPw:'비밀번호는 6자 이상으로 해주세요.',taken:'이미 있는 아이디예요.',cred:'아이디 또는 비밀번호가 틀렸어요.',
      rate:'로그인을 너무 많이 시도했어요. 몇 분 뒤에 다시 해 주세요.',net:'서버에 연결하지 못했어요. 인터넷을 확인해 주세요.',fail:'로그인하지 못했어요.',
-     noAcc:'계정이 없나요?',hasAcc:'이미 계정이 있나요?',close:'닫기',hi:'{0}님'},
+     noAcc:'계정이 없나요?',hasAcc:'이미 계정이 있나요?',close:'닫기',hi:'{0}님',hub:'허브',hubT:'Frenchfries777 허브로 돌아가기'},
  en:{login:'Log in',signup:'Create account',logout:'Log out',card:'🪪 Profile card',id:'Username (letters/numbers, 3–16)',pw:'Password (6+ characters)',busy:'Working...',
      title:'Frenchfries777 account',sub:'Stickseum, Crown Envoy and Beaconfall share one account. Log in here and the games start logged in too.',
      badId:'Use 3–16 letters, numbers or underscores.',badPw:'Use at least 6 characters.',taken:'That username is taken.',cred:'Wrong username or password.',
      rate:'Too many tries. Please wait a few minutes.',net:'Could not reach the server. Check your connection.',fail:'Could not log in.',
-     noAcc:'No account yet?',hasAcc:'Already have an account?',close:'Close',hi:'{0}'},
+     noAcc:'No account yet?',hasAcc:'Already have an account?',close:'Close',hi:'{0}',hub:'Hub',hubT:'Back to the Frenchfries777 hub'},
  es:{login:'Iniciar sesión',signup:'Crear cuenta',logout:'Cerrar sesión',card:'🪪 Tarjeta de perfil',id:'Usuario (letras/números, 3–16)',pw:'Contraseña (6+ caracteres)',busy:'Procesando...',
      title:'Cuenta Frenchfries777',sub:'Stickseum, Crown Envoy y Beaconfall comparten una cuenta. Inicia sesión aquí y los juegos empiezan con la sesión iniciada.',
      badId:'Usa de 3 a 16 letras, números o guiones bajos.',badPw:'Usa al menos 6 caracteres.',taken:'Ese usuario ya existe.',cred:'Usuario o contraseña incorrectos.',
      rate:'Demasiados intentos. Espera unos minutos.',net:'No se pudo conectar con el servidor.',fail:'No se pudo iniciar sesión.',
-     noAcc:'¿No tienes cuenta?',hasAcc:'¿Ya tienes cuenta?',close:'Cerrar',hi:'{0}'},
+     noAcc:'¿No tienes cuenta?',hasAcc:'¿Ya tienes cuenta?',close:'Cerrar',hi:'{0}',hub:'Inicio',hubT:'Volver al inicio de Frenchfries777'},
  fr:{login:'Se connecter',signup:'Créer un compte',logout:'Se déconnecter',card:'🪪 Carte de profil',id:'Identifiant (lettres/chiffres, 3–16)',pw:'Mot de passe (6+ caractères)',busy:'Traitement...',
      title:'Compte Frenchfries777',sub:'Stickseum, Crown Envoy et Beaconfall partagent un seul compte. Connecte-toi ici et les jeux démarrent déjà connectés.',
      badId:'Utilise 3 à 16 lettres, chiffres ou tirets bas.',badPw:'Au moins 6 caractères.',taken:'Cet identifiant est déjà pris.',cred:'Identifiant ou mot de passe incorrect.',
      rate:'Trop de tentatives. Réessaie dans quelques minutes.',net:'Impossible de joindre le serveur.',fail:'Connexion impossible.',
-     noAcc:'Pas encore de compte ?',hasAcc:'Déjà un compte ?',close:'Fermer',hi:'{0}'},
+     noAcc:'Pas encore de compte ?',hasAcc:'Déjà un compte ?',close:'Fermer',hi:'{0}',hub:'Accueil',hubT:'Retour à l’accueil Frenchfries777'},
  de:{login:'Anmelden',signup:'Konto erstellen',logout:'Abmelden',card:'🪪 Profilkarte',id:'Benutzername (Buchstaben/Zahlen, 3–16)',pw:'Passwort (mind. 6 Zeichen)',busy:'Wird bearbeitet...',
      title:'Frenchfries777-Konto',sub:'Stickseum, Crown Envoy und Beaconfall nutzen ein Konto. Hier anmelden und die Spiele starten schon angemeldet.',
      badId:'3–16 Buchstaben, Zahlen oder Unterstriche.',badPw:'Mindestens 6 Zeichen.',taken:'Dieser Name ist vergeben.',cred:'Benutzername oder Passwort falsch.',
      rate:'Zu viele Versuche. Bitte ein paar Minuten warten.',net:'Server nicht erreichbar.',fail:'Anmeldung fehlgeschlagen.',
-     noAcc:'Noch kein Konto?',hasAcc:'Schon ein Konto?',close:'Schließen',hi:'{0}'},
+     noAcc:'Noch kein Konto?',hasAcc:'Schon ein Konto?',close:'Schließen',hi:'{0}',hub:'Start',hubT:'Zurück zur Frenchfries777-Startseite'},
  ja:{login:'ログイン',signup:'アカウント作成',logout:'ログアウト',card:'🪪 プロフィールカード',id:'ID（英数字、3〜16文字）',pw:'パスワード（6文字以上）',busy:'処理中...',
      title:'Frenchfries777アカウント',sub:'Stickseum、Crown Envoy、Beaconfallは同じアカウントです。ここでログインすると、ゲームもログインした状態で始まります。',
      badId:'IDは英数字とアンダーバーで3〜16文字にしてください。',badPw:'パスワードは6文字以上にしてください。',taken:'そのIDはすでに使われています。',cred:'IDまたはパスワードが違います。',
      rate:'試行回数が多すぎます。数分後にもう一度お試しください。',net:'サーバーに接続できませんでした。',fail:'ログインできませんでした。',
-     noAcc:'アカウントがありませんか？',hasAcc:'すでにアカウントがありますか？',close:'閉じる',hi:'{0}さん'}
+     noAcc:'アカウントがありませんか？',hasAcc:'すでにアカウントがありますか？',close:'閉じる',hi:'{0}さん',hub:'ハブ',hubT:'Frenchfries777 ハブに戻る'}
 };
 function lang(){ var c=[]; try{ var s=localStorage.getItem('arenaClashLang'); if(s) c.push(s); }catch(e){} try{ c=c.concat(navigator.languages||[navigator.language||'']); }catch(e){}
   for(var i=0;i<c.length;i++){ var b=String(c[i]||'').toLowerCase().split('-')[0]; if(L[b]) return b; } return 'en'; }
@@ -112,6 +112,9 @@ async function signOut(){ try{ if(sb) await sb.auth.signOut({scope:'local'}); }c
 /* ---- UI ---- */
 var CSS='.ffa-btn{display:inline-flex;align-items:center;gap:6px;background:linear-gradient(135deg,#ffc93c,#ff8a3d);color:#1a1206;border:0;border-radius:9px;padding:7px 13px;font:inherit;font-size:14px;font-weight:800;cursor:pointer;white-space:nowrap}'+
  '.ffa-btn:hover{filter:brightness(1.06)}.ffa-wrap{position:relative;display:inline-block;margin-left:16px}'+
+ '.ffa-hub{display:inline-flex!important;align-items:center;gap:5px;margin-left:16px;background:#10131b;color:#eef0f5;border:1px solid #2b3245;border-radius:9px;padding:6px 11px;font-size:14px;font-weight:700;text-decoration:none;white-space:nowrap;vertical-align:middle}'+
+ '.ffa-hub:hover{border-color:#ffc93c;color:#ffc93c}.ffa-hub+.ffa-wrap{margin-left:8px}'+
+ '@media(max-width:620px){.ffa-hub{position:fixed;left:12px;bottom:12px;z-index:2147481000;margin:0;padding:9px 14px;border-radius:999px;box-shadow:0 6px 18px rgba(0,0,0,.45)}.ffa-hub+.ffa-wrap{margin-left:16px}}'+
  '.ffa-chip{display:inline-flex;align-items:center;gap:7px;background:#10131b;color:#eef0f5;border:1px solid #2b3245;border-radius:9px;padding:6px 11px;font:inherit;font-size:14px;font-weight:700;cursor:pointer;max-width:180px}'+
  '.ffa-chip span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.ffa-chip:hover{border-color:#ffc93c}'+
  '.ffa-menu{position:absolute;right:0;top:calc(100% + 6px);background:#10131b;border:1px solid #2b3245;border-radius:10px;padding:6px;min-width:170px;z-index:2147482000;box-shadow:0 12px 30px rgba(0,0,0,.45);display:none}'+
@@ -157,12 +160,15 @@ function close(){ var el=document.getElementById('ffaModal'); if(el) el.style.di
 function profileLib(){ return loadScript(BASE+'ff-profile.js', function(){ return !!window.FFProfile; }); }
 async function openProfile(uid){ if(!sb) return; if(!uid&&!user) return openLogin(); if(await profileLib()) window.FFProfile.open(sb, uid||user.id); }
 
+/* 게임 사이트(허브가 아닌 페이지)에는 계정 버튼 옆에 '← 허브' 버튼을 붙여요. 빼고 싶으면 자리에 data-ff-nohub */
+var HUB=BASE, onHub=location.href.indexOf(HUB)===0;
+function hubLink(s){ return (onHub||s.hasAttribute('data-ff-nohub'))?'':'<a class="ffa-hub" href="'+esc(HUB)+'" title="'+esc(T.hubT)+'" aria-label="'+esc(T.hubT)+'">\u2190<span class="t">'+esc(T.hub)+'</span></a>'; }
 function paint(){
   css(); var slots=document.querySelectorAll('[data-ff-account]');
   for(var i=0;i<slots.length;i++){
     var s=slots[i]; s.setAttribute('data-notr','');
-    if(!user){ s.innerHTML='<span class="ffa-wrap"><button type="button" class="ffa-btn">🍟 '+esc(T.login)+'</button></span>'; s.querySelector('button').onclick=function(){ openLogin(); }; continue; }
-    s.innerHTML='<span class="ffa-wrap"><button type="button" class="ffa-chip" aria-haspopup="true">🍟 <span>'+esc(fmt(T.hi,nick()))+'</span><i class="ffa-badge" style="display:none;font-style:normal"></i> ▾</button>'+
+    if(!user){ s.innerHTML=hubLink(s)+'<span class="ffa-wrap"><button type="button" class="ffa-btn">🍟 '+esc(T.login)+'</button></span>'; s.querySelector('button').onclick=function(){ openLogin(); }; continue; }
+    s.innerHTML=hubLink(s)+'<span class="ffa-wrap"><button type="button" class="ffa-chip" aria-haspopup="true">🍟 <span>'+esc(fmt(T.hi,nick()))+'</span><i class="ffa-badge" style="display:none;font-style:normal"></i> ▾</button>'+
       '<span class="ffa-menu" role="menu"><button type="button" data-a="friends">'+esc(F.friends)+'<span class="ffa-badge" style="display:none"></span></button><button type="button" data-a="card">'+esc(T.card)+'</button><button type="button" data-a="out">'+esc(T.logout)+'</button></span></span>';
     (function(s){ var menu=s.querySelector('.ffa-menu');
       s.querySelector('.ffa-chip').onclick=function(e){ e.stopPropagation(); var open=menu.style.display==='block'; closeMenus(); menu.style.display=open?'none':'block'; };
