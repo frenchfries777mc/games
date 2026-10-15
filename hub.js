@@ -14,7 +14,7 @@ function ago(iso){ var t=Date.parse(iso); if(!t) return ''; var m=Math.round((Da
 
 /* ===================== 뉴스: 세 게임과 허브의 패치노트 중 가장 최근 6개 ===================== */
 var NEWS_N=6, news=[], hubNotes=[];
-var NSRC={hub:{name:'허브',cls:'g0',site:'./'},stickseum:GAMES.stickseum,crownenvoy:GAMES.crownenvoy,beaconfall:GAMES.beaconfall};
+var NSRC={hub:{name:'허브',cls:'g0',site:'./'},stickseum:GAMES.stickseum,crownenvoy:GAMES.crownenvoy,beaconfall:GAMES.beaconfall,railway:{name:'철도 회사',cls:'g4',site:'./railway/'}};
 function trNote(n, N){
   if(LANG==='ko') return {title:n.title, items:n.items||[]};
   if(n.tr&&n.tr[LANG]) return {title:n.tr[LANG].title||n.title, items:n.tr[LANG].items||n.items||[]};
@@ -27,7 +27,7 @@ function siteDict(g){ return fetch(GAMES[g].site+'i18n.js',{cache:'no-cache'}).t
 function loadNews(){
   var box=$('#newsList'); if(!box) return Promise.resolve();
   return Promise.all(Object.keys(NSRC).map(function(g){
-    return Promise.all([fetch(NSRC[g].site+'patchnotes.json',{cache:'no-cache'}).then(function(r){ return r.ok?r.json():null; },function(){ return null; }), LANG==='ko'||g==='stickseum'||g==='hub'?null:siteDict(g)])
+    return Promise.all([fetch(NSRC[g].site+'patchnotes.json',{cache:'no-cache'}).then(function(r){ return r.ok?r.json():null; },function(){ return null; }), LANG==='ko'||!GAMES[g]||g==='stickseum'?null:siteDict(g)])
       .then(function(x){ var d=x[0]; return ((d&&d.notes)||[]).map(function(n,i){ var t=trNote(n,x[1]); return {g:g, i:i, date:n.date||'', build:n.build||'', title:t.title, items:t.items}; }); });
   })).then(function(all){ hubNotes=all[0]; news=[].concat.apply([],all).sort(function(a,b){ return (b.date>a.date?1:b.date<a.date?-1:0)||(a.i-b.i); }); paintNews(); });
 }
@@ -297,7 +297,7 @@ function watchChat(){
 /* ---- 친구 소식: 친구가 최근 2주 동안 달성한 도전과제 · 처음 시작한 게임 · 쓴 글 ---- */
 var achCat={};
 function achMap(g){ if(!achCat[g]) achCat[g]=fetch('ach/'+g+'.json').then(function(r){ return r.ok?r.json():null; }).then(function(j){ var m={}; ((j&&j.list)||[]).forEach(function(a){ m[a.id]=a; }); return m; }).catch(function(){ return {}; }); return achCat[g]; }
-function feedTag(g){ return g==='hub'?'<span class="tag">허브</span>':gameTag(g); }
+function feedTag(g){ return g==='hub'?'<span class="tag">허브</span>':(g==='railway'?'<span class="tag g4">철도 회사</span>':gameTag(g)); }
 async function feed(){
   var p=$('.cm-p[data-p=feed]'); if(!p||!sb) return;
   if(!me){ p.innerHTML='<div class="cm-e">로그인하면 친구 소식을 볼 수 있어요.</div>'; return; }
