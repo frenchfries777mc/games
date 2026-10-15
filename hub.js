@@ -60,6 +60,29 @@ function setTab(t){ tab=t; var bs=document.querySelectorAll('.cm-tabs button'); 
   var ps=document.querySelectorAll('.cm-p'); for(var j=0;j<ps.length;j++) ps[j].style.display=ps[j].getAttribute('data-p')===t?'':'none';
   if(t==='board') board(); else if(t==='chat') chat(); else feedback(); }
 
+/* ---- 사진: 줄여서(긴 쪽 1600px) Supabase 저장소 'ff-images/<내 id>/' 에 올리고, 글 · 채팅에는 주소만 저장 (supabase-ff-images.sql) ---- */
+var PUB='https://kebsbuvuutilitwlvxzv.supabase.co/storage/v1/object/public/ff-images/', IMG=true;     // IMG=false: the images column is not there yet
+function okImg(u){ return typeof u==='string'&&u.indexOf(PUB)===0&&/^[0-9a-f-]{36}\/[A-Za-z0-9._-]{1,80}$/.test(u.slice(PUB.length)); }
+function imgsHtml(a, cls){ a=(a||[]).filter(okImg); if(!a.length) return ''; return '<div class="'+cls+'">'+a.map(function(u){ return '<a href="'+esc(u)+'" target="_blank" rel="noopener"><img src="'+esc(u)+'" alt="" loading="lazy"></a>'; }).join('')+'</div>'; }
+function shrink(file){ return new Promise(function(res,rej){
+  if(!file||!/^image\//.test(file.type)) return rej('type');
+  if(file.type==='image/gif'){ return file.size<=3145728?res(file):rej('big'); }                     // keep GIFs moving
+  var u=URL.createObjectURL(file), im=new Image();
+  im.onload=function(){ var k=Math.min(1,1600/Math.max(im.naturalWidth,im.naturalHeight)), c=document.createElement('canvas'); c.width=Math.max(1,Math.round(im.naturalWidth*k)); c.height=Math.max(1,Math.round(im.naturalHeight*k));
+    c.getContext('2d').drawImage(im,0,0,c.width,c.height); URL.revokeObjectURL(u);
+    c.toBlob(function(b){ if(b&&b.type==='image/webp'&&b.size<=3145728) return res(b); c.toBlob(function(j){ j&&j.size<=3145728?res(j):rej('big'); },'image/jpeg',0.85); },'image/webp',0.85); };
+  im.onerror=function(){ URL.revokeObjectURL(u); rej('type'); }; im.src=u; }); }
+async function upload(file){
+  var b=await shrink(file), ext={'image/webp':'webp','image/jpeg':'jpg','image/png':'png','image/gif':'gif'}[b.type]||'jpg';
+  var name=me.id+'/'+Date.now().toString(36)+'-'+Math.random().toString(36).slice(2,8)+'.'+ext;
+  var r=await sb.storage.from('ff-images').upload(name, b, {contentType:b.type, cacheControl:'31536000', upsert:false});
+  if(r.error) throw r.error; return PUB+name;
+}
+function imgErr(e){ return e==='big'?'사진이 너무 커요. (3MB까지)':(e==='type'?'사진 파일만 올릴 수 있어요.':(/bucket|not found|row-level|policy/i.test(String((e&&e.message)||e))?'아직 준비 중이에요. (관리자가 Supabase에 SQL을 실행하면 열려요)':errText(e))); }
+function filesOf(ev){ var out=[], it=(ev.clipboardData&&ev.clipboardData.files)||[]; for(var i=0;i<it.length;i++) if(/^image\//.test(it[i].type)) out.push(it[i]); return out; }
+/* select with the images column, or without it before supabase-ff-images.sql is run */
+async function sel(table, cols, build){ var r=await build(sb.from(table).select(IMG?cols+',images':cols)); if(r.error&&IMG&&/images/.test(String(r.error.message||''))){ IMG=false; r=await build(sb.from(table).select(cols)); } return r; }
+
 /* ---- 게시판 ---- */
 var bFilter='all', bLimit=20, bOpen=null, bWriting=false;
 var GOPT='<option value="free">자유</option><option value="stickseum">Stickseum</option><option value="crownenvoy">Crown Envoy</option><option value="beaconfall">Beaconfall</option>';
@@ -68,38 +91,45 @@ async function board(){
   var p=$('.cm-p[data-p=board]'); if(!p) return;
   if(!p.dataset.ready){ p.dataset.ready='1';
     p.innerHTML='<div class="cm-bar"><div class="cm-f"><button data-f="all" class="on">전체</button><button data-f="free">자유</button><button data-f="stickseum">Stickseum</button><button data-f="crownenvoy">Crown Envoy</button><button data-f="beaconfall">Beaconfall</button></div><button class="cm-btn cm-new">✏️ 글쓰기</button></div>'+
-      '<form class="cm-w" style="display:none"><select name="g">'+GOPT+'</select><input name="t" maxlength="80" placeholder="제목" required><textarea name="b" maxlength="4000" rows="6" placeholder="내용" required></textarea><div class="cm-m"></div><div class="cm-acts"><button type="button" class="cm-btn2 cm-cancel">취소</button><button class="cm-btn">올리기</button></div></form>'+
+      '<form class="cm-w" style="display:none"><select name="g">'+GOPT+'</select><input name="t" maxlength="80" placeholder="제목" required><textarea name="b" maxlength="4000" rows="6" placeholder="내용"></textarea><div class="cm-pv"></div><div class="cm-m"></div><div class="cm-acts"><label class="cm-btn2 cm-pick">🖼️ 사진<input type="file" accept="image/*" multiple hidden></label><span class="cm-sp"></span><button type="button" class="cm-btn2 cm-cancel">취소</button><button class="cm-btn">올리기</button></div></form>'+
       '<div class="cm-list"></div><button class="cm-btn2 cm-more" style="display:none">더 보기</button>';
     p.querySelector('.cm-f').onclick=function(e){ var b=e.target.closest('button'); if(!b) return; bFilter=b.getAttribute('data-f'); bLimit=20; [].forEach.call(this.children,function(x){ x.classList.toggle('on',x===b); }); listPosts(); };
     p.querySelector('.cm-new').onclick=function(){ if(!me) return login(); var w=p.querySelector('.cm-w'); w.style.display=w.style.display==='none'?'':'none'; if(w.style.display==='') w.t.focus(); };
-    p.querySelector('.cm-cancel').onclick=function(){ p.querySelector('.cm-w').style.display='none'; };
+    p.querySelector('.cm-cancel').onclick=function(){ p.querySelector('.cm-w').style.display='none'; pend=[]; paintPend(); };
+    var pick=p.querySelector('.cm-pick input'); pick.onchange=function(){ addPend([].slice.call(this.files||[])); this.value=''; };
+    p.querySelector('.cm-w textarea').addEventListener('paste',function(e){ var fs=filesOf(e); if(fs.length){ e.preventDefault(); addPend(fs); } });
     p.querySelector('.cm-more').onclick=function(){ bLimit+=20; listPosts(); };
     p.querySelector('.cm-w').onsubmit=async function(e){ e.preventDefault(); var f=this, m=f.querySelector('.cm-m'); if(!me) return login(); if(bWriting) return;
-      var t=f.t.value.trim(), b=f.b.value.trim(); if(!t||!b) return; bWriting=true; m.textContent='';
-      var r=await sb.from('ff_posts').insert({title:t, body:b, game:f.g.value}); bWriting=false;
-      if(r.error){ m.textContent=errText(r.error); return; } f.reset(); f.style.display='none'; hubSync(); listPosts(); };
+      var t=f.t.value.trim(), b=f.b.value.trim(); if(!t){ f.t.focus(); return; } if(!b&&!pend.length){ f.b.focus(); return; } bWriting=true; m.textContent='';
+      var urls=[]; if(pend.length){ m.textContent='사진 올리는 중...'; try{ for(var i=0;i<pend.length;i++) urls.push(await upload(pend[i].f)); }catch(x){ bWriting=false; m.textContent=imgErr(x); return; } }
+      var row={title:t, body:b, game:f.g.value}; if(urls.length) row.images=urls;
+      var r=await sb.from('ff_posts').insert(row); bWriting=false;
+      if(r.error){ m.textContent=errText(r.error); return; } m.textContent=''; f.reset(); pend=[]; paintPend(); f.style.display='none'; hubSync(); listPosts(); };
   }
   listPosts();
 }
+var pend=[];
+function addPend(fs){ var m=$('.cm-p[data-p=board] .cm-w .cm-m'); fs.forEach(function(f){ if(pend.length>=4){ if(m) m.textContent='사진은 4장까지 넣을 수 있어요.'; return; } if(!/^image\//.test(f.type)) return; pend.push({f:f, u:URL.createObjectURL(f)}); }); paintPend(); }
+function paintPend(){ var v=$('.cm-p[data-p=board] .cm-pv'); if(!v) return; v.innerHTML='';
+  pend.forEach(function(x,i){ var d=document.createElement('div'); d.className='cm-pi'; d.innerHTML='<img alt=""><button type="button" title="빼기">×</button>'; d.querySelector('img').src=x.u;
+    d.querySelector('button').onclick=function(){ URL.revokeObjectURL(x.u); pend.splice(i,1); paintPend(); }; v.appendChild(d); }); }
 async function listPosts(){
   var p=$('.cm-p[data-p=board]'), L=p&&p.querySelector('.cm-list'); if(!L||!sb) return;
-  var q=sb.from('ff_posts').select('id,user_id,game,title,body,created_at').order('created_at',{ascending:false}).range(0,bLimit);
-  if(bFilter!=='all') q=q.eq('game',bFilter);
-  var r=await q; if(r.error){ L.innerHTML='<div class="cm-e">'+esc(errText(r.error))+'</div>'; return; }
+  var r=await sel('ff_posts','id,user_id,game,title,body,created_at',function(q){ q=q.order('created_at',{ascending:false}).range(0,bLimit); return bFilter!=='all'?q.eq('game',bFilter):q; }); if(r.error){ L.innerHTML='<div class="cm-e">'+esc(errText(r.error))+'</div>'; return; }
   var rows=r.data||[], more=rows.length>bLimit; rows=rows.slice(0,bLimit);
   var cnt={}; if(rows.length){ var c=await sb.from('ff_comments').select('post_id').in('post_id',rows.map(function(x){ return x.id; })).limit(2000); ((c&&c.data)||[]).forEach(function(x){ cnt[x.post_id]=(cnt[x.post_id]||0)+1; }); }
   await loadNames(rows.map(function(x){ return x.user_id; }));
   L.innerHTML=rows.length?'':'<div class="cm-e">아직 글이 없어요. 첫 글을 써 보세요!</div>';
   rows.forEach(function(x){ var d=document.createElement('div'); d.className='cm-post'+(bOpen===x.id?' open':''); d.dataset.id=x.id;
-    d.innerHTML='<div class="cm-ph">'+gameTag(x.game)+'<b class="cm-t" data-notr>'+esc(x.title)+'</b>'+(cnt[x.id]?'<span class="cm-c">💬 '+cnt[x.id]+'</span>':'')+'</div>'+
+    d.innerHTML='<div class="cm-ph">'+gameTag(x.game)+'<b class="cm-t" data-notr>'+esc(x.title)+'</b>'+((x.images||[]).length?'<span class="cm-c">🖼️ '+x.images.length+'</span>':'')+(cnt[x.id]?'<span class="cm-c">💬 '+cnt[x.id]+'</span>':'')+'</div>'+
       '<div class="cm-meta">'+who(x.user_id)+' · <span>'+esc(ago(x.created_at))+'</span></div><div class="cm-body"></div>';
     d.querySelector('.cm-ph').onclick=function(){ bOpen=bOpen===x.id?null:x.id; d.classList.toggle('open',bOpen===x.id); if(bOpen===x.id) openPost(d,x); };
     L.appendChild(d); if(bOpen===x.id) openPost(d,x); });
   p.querySelector('.cm-more').style.display=more?'':'none';
 }
 async function openPost(d, x){
-  var B=d.querySelector('.cm-body'); B.innerHTML='<div class="cm-txt" data-notr></div><div class="cm-acts2"></div><div class="cm-cms"></div><form class="cm-cf"><input maxlength="1000" placeholder="댓글 달기"><button class="cm-btn">등록</button></form><div class="cm-m"></div>';
-  B.querySelector('.cm-txt').textContent=x.body;
+  var B=d.querySelector('.cm-body'); B.innerHTML='<div class="cm-txt" data-notr></div>'+imgsHtml(x.images,'cm-gal')+'<div class="cm-acts2"></div><div class="cm-cms"></div><form class="cm-cf"><input maxlength="1000" placeholder="댓글 달기"><button class="cm-btn">등록</button></form><div class="cm-m"></div>';
+  B.querySelector('.cm-txt').textContent=x.body; if(!x.body) B.querySelector('.cm-txt').style.display='none';
   if(me&&(me.id===x.user_id||admin)){ var del=document.createElement('button'); del.className='cm-btn2'; del.textContent='글 삭제'; del.onclick=async function(){ if(!del.dataset.s){ del.dataset.s=1; del.textContent='정말 삭제할까요?'; return; } var r=await sb.from('ff_posts').delete().eq('id',x.id); if(r.error) B.querySelector('.cm-m').textContent=errText(r.error); else { bOpen=null; listPosts(); } }; B.querySelector('.cm-acts2').appendChild(del); }
   var cf=B.querySelector('.cm-cf'); cf.onsubmit=async function(e){ e.preventDefault(); if(!me) return login(); var v=cf.querySelector('input').value.trim(); if(!v) return;
     var r=await sb.from('ff_comments').insert({post_id:x.id, body:v}); if(r.error){ B.querySelector('.cm-m').textContent=errText(r.error); return; } cf.reset(); hubSync(); comments(B,x); };
@@ -118,15 +148,20 @@ var chatRows=[], chatChan=null, chatPoll=null, chatLive=false;
 async function chat(){
   var p=$('.cm-p[data-p=chat]'); if(!p) return;
   if(!p.dataset.ready){ p.dataset.ready='1';
-    p.innerHTML='<div class="cm-chat"></div><form class="cm-cf cm-send"><input maxlength="300" placeholder="메시지 보내기" autocomplete="off"><button class="cm-btn">보내기</button></form><div class="cm-m"></div>';
-    p.querySelector('.cm-send').onsubmit=async function(e){ e.preventDefault(); if(!me) return login(); var i=this.querySelector('input'), v=i.value.trim(); if(!v) return; i.value='';
+    p.innerHTML='<div class="cm-chat"></div><form class="cm-cf cm-send"><label class="cm-btn2 cm-pick" title="사진 보내기">🖼️<input type="file" accept="image/*" hidden></label><input maxlength="300" placeholder="메시지 보내기" autocomplete="off"><button class="cm-btn">보내기</button></form><div class="cm-m"></div>';
+    p.querySelector('.cm-send').onsubmit=async function(e){ e.preventDefault(); if(!me) return login(); var i=this.querySelector('input:not([type=file])'), v=i.value.trim(); if(!v) return; i.value='';
       var r=await sb.from('ff_chat').insert({body:v}); var m=p.querySelector('.cm-m'); m.textContent=r.error?errText(r.error):''; if(r.error){ i.value=v; return; } hubSync(); if(!chatLive) pullChat(); };
+    var sendImg=async function(file){ if(!me) return login(); var m=p.querySelector('.cm-m'), i=p.querySelector('.cm-send input:not([type=file])'), v=i.value.trim(); m.textContent='사진 올리는 중...';
+      var u; try{ u=await upload(file); }catch(x){ m.textContent=imgErr(x); return; }
+      var r=await sb.from('ff_chat').insert({body:v, images:[u]}); m.textContent=r.error?errText(r.error):''; if(r.error) return; i.value=''; hubSync(); if(!chatLive) pullChat(); };
+    p.querySelector('.cm-send .cm-pick input').onchange=function(){ var f=this.files&&this.files[0]; this.value=''; if(f) sendImg(f); };
+    p.querySelector('.cm-send input:not([type=file])').addEventListener('paste',function(e){ var fs=filesOf(e); if(fs.length){ e.preventDefault(); sendImg(fs[0]); } });
   }
   paintSend(); await pullChat(); watchChat();
 }
-function paintSend(){ var p=$('.cm-p[data-p=chat]'); if(!p) return; var i=p.querySelector('.cm-send input'); if(i) i.placeholder=me?'메시지 보내기':'로그인하면 채팅할 수 있어요'; }
+function paintSend(){ var p=$('.cm-p[data-p=chat]'); if(!p) return; var i=p.querySelector('.cm-send input:not([type=file])'); if(i) i.placeholder=me?'메시지 보내기':'로그인하면 채팅할 수 있어요'; }
 async function pullChat(){
-  if(!sb) return; var r=await sb.from('ff_chat').select('id,user_id,body,created_at').order('created_at',{ascending:false}).limit(60);
+  if(!sb) return; var r=await sel('ff_chat','id,user_id,body,created_at',function(q){ return q.order('created_at',{ascending:false}).limit(60); });
   var p=$('.cm-p[data-p=chat]'); if(r.error){ p.querySelector('.cm-chat').innerHTML='<div class="cm-e">'+esc(errText(r.error))+'</div>'; return; }
   chatRows=(r.data||[]).reverse(); await loadNames(chatRows.map(function(x){ return x.user_id; })); paintChat();
 }
@@ -134,10 +169,13 @@ function paintChat(){
   var box=$('.cm-p[data-p=chat] .cm-chat'); if(!box) return; var stick=box.scrollHeight-box.scrollTop-box.clientHeight<60;
   box.innerHTML=chatRows.length?'':'<div class="cm-e">아직 메시지가 없어요. 먼저 인사해 보세요!</div>';
   chatRows.forEach(function(x){ var d=document.createElement('div'); d.className='cm-msg'+(me&&x.user_id===me.id?' mine':'');
-    d.innerHTML='<div class="cm-meta">'+who(x.user_id)+' · <span>'+esc(ago(x.created_at))+'</span></div><div class="cm-bub" data-notr></div>'; d.querySelector('.cm-bub').textContent=x.body;
+    d.innerHTML='<div class="cm-meta">'+who(x.user_id)+' · <span>'+esc(ago(x.created_at))+'</span></div><div class="cm-bub" data-notr></div>'; var bub=d.querySelector('.cm-bub'); bub.textContent=x.body;
+    var ih=imgsHtml(x.images,'cm-cimg'); if(ih){ bub.insertAdjacentHTML('beforeend',ih); if(!x.body) bub.classList.add('only'); [].forEach.call(bub.querySelectorAll('img'),function(im){ im.onload=function(){ if(box.dataset.stick==='1') box.scrollTop=box.scrollHeight; }; }); }
     if(me&&(me.id===x.user_id||admin)){ var b=document.createElement('button'); b.className='cm-x'; b.title='삭제'; b.textContent='×'; b.onclick=async function(){ await sb.from('ff_chat').delete().eq('id',x.id); chatRows=chatRows.filter(function(y){ return y.id!==x.id; }); paintChat(); }; d.appendChild(b); }
     box.appendChild(d); });
   if(stick||!box.dataset.once){ box.dataset.once=1; box.scrollTop=box.scrollHeight; }
+  box.dataset.stick=(stick||box.scrollHeight-box.scrollTop-box.clientHeight<60)?'1':'0';
+  if(!box.dataset.sl){ box.dataset.sl=1; box.addEventListener('scroll',function(){ box.dataset.stick=box.scrollHeight-box.scrollTop-box.clientHeight<60?'1':'0'; }); }
 }
 function watchChat(){
   if(chatChan||!sb) return;
