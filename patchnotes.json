@@ -3,6 +3,46 @@
   {
    "date": "2026-10-15",
    "build": "",
+   "title": "Games · Educations 전환",
+   "items": [
+    "상단 Games · Educations 전환 버튼 추가"
+   ],
+   "tr": {
+    "en": {
+     "title": "Games · Educations switch",
+     "items": [
+      "Games · Educations switch at the top"
+     ]
+    },
+    "es": {
+     "title": "Cambio Games · Educations",
+     "items": [
+      "Botón para cambiar entre Games y Educations arriba"
+     ]
+    },
+    "fr": {
+     "title": "Bascule Games · Educations",
+     "items": [
+      "Bouton pour passer de Games à Educations en haut"
+     ]
+    },
+    "de": {
+     "title": "Games · Educations-Umschalter",
+     "items": [
+      "Umschalter zwischen Games und Educations oben"
+     ]
+    },
+    "ja": {
+     "title": "Games・Educations 切り替え",
+     "items": [
+      "上部に Games・Educations 切り替えボタンを追加"
+     ]
+    }
+   }
+  },
+  {
+   "date": "2026-10-15",
+   "build": "",
    "title": "도전과제 창 · 사진 표시",
    "items": [
     "프로필 카드 🏆 도전과제 버튼 추가",
