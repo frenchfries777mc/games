@@ -160,20 +160,173 @@ function paint(){
   for(var i=0;i<slots.length;i++){
     var s=slots[i]; s.setAttribute('data-notr','');
     if(!user){ s.innerHTML='<span class="ffa-wrap"><button type="button" class="ffa-btn">🍟 '+esc(T.login)+'</button></span>'; s.querySelector('button').onclick=function(){ openLogin(); }; continue; }
-    s.innerHTML='<span class="ffa-wrap"><button type="button" class="ffa-chip" aria-haspopup="true">🍟 <span>'+esc(fmt(T.hi,nick()))+'</span> ▾</button>'+
-      '<span class="ffa-menu" role="menu"><button type="button" data-a="card">'+esc(T.card)+'</button><button type="button" data-a="out">'+esc(T.logout)+'</button></span></span>';
+    s.innerHTML='<span class="ffa-wrap"><button type="button" class="ffa-chip" aria-haspopup="true">🍟 <span>'+esc(fmt(T.hi,nick()))+'</span><i class="ffa-badge" style="display:none;font-style:normal"></i> ▾</button>'+
+      '<span class="ffa-menu" role="menu"><button type="button" data-a="friends">'+esc(F.friends)+'<span class="ffa-badge" style="display:none"></span></button><button type="button" data-a="card">'+esc(T.card)+'</button><button type="button" data-a="out">'+esc(T.logout)+'</button></span></span>';
     (function(s){ var menu=s.querySelector('.ffa-menu');
       s.querySelector('.ffa-chip').onclick=function(e){ e.stopPropagation(); var open=menu.style.display==='block'; closeMenus(); menu.style.display=open?'none':'block'; };
+      menu.querySelector('[data-a=friends]').onclick=function(){ closeMenus(); openFriends(); };
       menu.querySelector('[data-a=card]').onclick=function(){ closeMenus(); openProfile(); };
       menu.querySelector('[data-a=out]').onclick=function(){ closeMenus(); signOut(); };
     })(s);
   }
+  if(typeof badge==='function') try{ badge(); }catch(e){}
 }
 function closeMenus(){ var ms=document.querySelectorAll('.ffa-menu'); for(var i=0;i<ms.length;i++) ms[i].style.display='none'; }
 document.addEventListener('click', closeMenus);
 document.addEventListener('keydown', function(e){ if(e.key==='Escape'){ closeMenus(); close(); } });
+
+/* ---- friends: the same friendships table as the games, so a friend made here is a friend inside every game ----
+   (requests nobody answered within 3 hours run out, like in Stickseum: expire_requests() in supabase-request-expiry.sql) */
+var FL={
+ ko:{friends:'👥 친구',ftitle:'친구',fnote:'여기서 맺은 친구는 게임 안에서도 친구예요.',search:'닉네임으로 친구 찾기',add:'친구 요청',sent:'요청 보냄',isFriend:'친구',
+     accept:'수락',decline:'거절',cancel:'취소',remove:'삭제',sure:'정말 삭제?',inc:'받은 요청',out:'보낸 요청',list:'친구 목록',
+     empty:'아직 친구가 없어요. 닉네임으로 찾아보세요.',none:'그 닉네임을 가진 사람이 없어요.',short:'두 글자 이상 입력해 주세요.',
+     needNick:'친구가 나를 찾을 수 있게 닉네임을 정해 주세요.',nickPh:'닉네임 (최대 12자)',save:'저장',err:'처리하지 못했어요. 잠시 뒤 다시 해 주세요.',
+     toast:'{0}님이 친구 요청을 보냈어요',view:'보기',card:'프로필'},
+ en:{friends:'👥 Friends',ftitle:'Friends',fnote:'Friends you make here are friends in every game too.',search:'Find friends by nickname',add:'Add friend',sent:'Request sent',isFriend:'Friend',
+     accept:'Accept',decline:'Decline',cancel:'Cancel',remove:'Remove',sure:'Remove?',inc:'Requests for you',out:'Sent requests',list:'Friends',
+     empty:'No friends yet. Search by nickname.',none:'Nobody has that nickname.',short:'Type at least two characters.',
+     needNick:'Pick a nickname so friends can find you.',nickPh:'Nickname (up to 12)',save:'Save',err:'Something went wrong. Try again soon.',
+     toast:'{0} sent you a friend request',view:'View',card:'Profile'},
+ es:{friends:'👥 Amigos',ftitle:'Amigos',fnote:'Los amigos que hagas aquí también son amigos en todos los juegos.',search:'Buscar amigos por apodo',add:'Agregar',sent:'Solicitud enviada',isFriend:'Amigo',
+     accept:'Aceptar',decline:'Rechazar',cancel:'Cancelar',remove:'Eliminar',sure:'¿Eliminar?',inc:'Solicitudes recibidas',out:'Solicitudes enviadas',list:'Amigos',
+     empty:'Aún no tienes amigos. Busca por apodo.',none:'Nadie tiene ese apodo.',short:'Escribe al menos dos caracteres.',
+     needNick:'Elige un apodo para que tus amigos te encuentren.',nickPh:'Apodo (hasta 12)',save:'Guardar',err:'Algo salió mal. Inténtalo de nuevo.',
+     toast:'{0} te envió una solicitud de amistad',view:'Ver',card:'Perfil'},
+ fr:{friends:'👥 Amis',ftitle:'Amis',fnote:'Les amis ajoutés ici sont aussi tes amis dans chaque jeu.',search:'Chercher un ami par pseudo',add:'Ajouter',sent:'Demande envoyée',isFriend:'Ami',
+     accept:'Accepter',decline:'Refuser',cancel:'Annuler',remove:'Retirer',sure:'Retirer ?',inc:'Demandes reçues',out:'Demandes envoyées',list:'Amis',
+     empty:'Pas encore d’amis. Cherche par pseudo.',none:'Personne n’a ce pseudo.',short:'Tape au moins deux caractères.',
+     needNick:'Choisis un pseudo pour que tes amis te trouvent.',nickPh:'Pseudo (12 max.)',save:'Enregistrer',err:'Un problème est survenu. Réessaie bientôt.',
+     toast:'{0} t’a envoyé une demande d’ami',view:'Voir',card:'Profil'},
+ de:{friends:'👥 Freunde',ftitle:'Freunde',fnote:'Freunde von hier sind auch in jedem Spiel deine Freunde.',search:'Freunde per Nickname suchen',add:'Anfragen',sent:'Anfrage gesendet',isFriend:'Freund',
+     accept:'Annehmen',decline:'Ablehnen',cancel:'Zurückziehen',remove:'Entfernen',sure:'Entfernen?',inc:'Erhaltene Anfragen',out:'Gesendete Anfragen',list:'Freunde',
+     empty:'Noch keine Freunde. Such per Nickname.',none:'Niemand hat diesen Nickname.',short:'Mindestens zwei Zeichen eingeben.',
+     needNick:'Wähle einen Nickname, damit Freunde dich finden.',nickPh:'Nickname (max. 12)',save:'Speichern',err:'Das hat nicht geklappt. Bitte gleich nochmal.',
+     toast:'{0} hat dir eine Freundschaftsanfrage geschickt',view:'Ansehen',card:'Profil'},
+ ja:{friends:'👥 フレンド',ftitle:'フレンド',fnote:'ここでなったフレンドは、ゲームの中でもフレンドです。',search:'ニックネームでフレンドを探す',add:'フレンド申請',sent:'申請済み',isFriend:'フレンド',
+     accept:'承認',decline:'拒否',cancel:'取り消し',remove:'削除',sure:'本当に削除？',inc:'届いた申請',out:'送った申請',list:'フレンド一覧',
+     empty:'まだフレンドがいません。ニックネームで探してみましょう。',none:'そのニックネームの人はいません。',short:'2文字以上入力してください。',
+     needNick:'フレンドが見つけられるようにニックネームを決めてください。',nickPh:'ニックネーム（12文字まで）',save:'保存',err:'処理できませんでした。少し後でもう一度お試しください。',
+     toast:'{0}さんからフレンド申請が届きました',view:'見る',card:'プロフィール'}
+};
+var F=FL[lang()]||FL.en;
+var TTL=3*60*60*1000, friends=[], frChan=null, frExpireAt=0;
+function nickOf(p){ var n=p&&typeof p.display_name==='string'?p.display_name.trim():''; return n||(p&&p.username)||'???'; }
+function likeEsc(s){ return String(s).replace(/[\\%_]/g,function(m){ return '\\'+m; }); }
+function expired(r){ var t=r&&r.created_at?Date.parse(r.created_at):NaN; return isFinite(t)&&Date.now()-t>TTL; }
+async function expireReq(force){ if(!sb||!user||(!force&&Date.now()-frExpireAt<60000)) return; frExpireAt=Date.now(); try{ await sb.rpc('expire_requests'); }catch(e){} }
+async function loadFriends(){
+  if(!sb||!user){ friends=[]; return friends; }
+  await expireReq();
+  var me=user.id, r=await sb.from('friendships').select('*').or('requester_id.eq.'+me+',addressee_id.eq.'+me);
+  var rows=((r&&r.data)||[]).filter(function(x){ return !(x.status==='pending'&&expired(x)); });
+  var ids=[]; rows.forEach(function(x){ var o=x.requester_id===me?x.addressee_id:x.requester_id; if(ids.indexOf(o)<0) ids.push(o); });
+  var names={}; if(ids.length){ var p=await sb.from('profiles').select('id,username,display_name').in('id',ids); ((p&&p.data)||[]).forEach(function(x){ names[x.id]=nickOf(x); }); }
+  friends=rows.map(function(x){ var o=x.requester_id===me?x.addressee_id:x.requester_id;
+    return {rowId:x.id, status:x.status, otherId:o, name:names[o]||'???', incoming:x.addressee_id===me&&x.status==='pending', outgoing:x.requester_id===me&&x.status==='pending'}; });
+  badge(); return friends;
+}
+function incomingCount(){ return friends.filter(function(f){ return f.incoming; }).length; }
+function badge(){ var n=incomingCount(), bs=document.querySelectorAll('.ffa-badge'); for(var i=0;i<bs.length;i++){ bs[i].textContent=n>9?'9+':String(n); bs[i].style.display=n?'':'none'; } }
+function watchFriends(){
+  if(frChan){ try{ sb.removeChannel(frChan); }catch(e){} frChan=null; }
+  if(!sb||!user) return;
+  try{
+    frChan=sb.channel('ffa-friendreq-'+user.id)
+      .on('postgres_changes',{event:'INSERT',schema:'public',table:'friendships',filter:'addressee_id=eq.'+user.id},function(pl){ loadFriends().then(function(){ var f=friends.filter(function(x){ return pl&&pl.new&&x.rowId===pl.new.id; })[0]; if(f) toast(fmt(F.toast,f.name)); fpaint(); }); })
+      .on('postgres_changes',{event:'UPDATE',schema:'public',table:'friendships'},function(){ loadFriends().then(fpaint); })
+      .on('postgres_changes',{event:'DELETE',schema:'public',table:'friendships'},function(){ loadFriends().then(fpaint); })
+      .subscribe();
+  }catch(e){}
+}
+async function searchUsers(q){
+  q=String(q||'').trim(); if(q.length<2||!sb||!user) return [];
+  var r=await sb.from('profiles').select('id,username,display_name').ilike('display_name','%'+likeEsc(q)+'%').neq('id',user.id).limit(30);
+  var lq=q.toLowerCase(), rows=((r&&r.data)||[]).filter(function(u){ return u&&u.display_name; });
+  function rank(u){ var n=u.display_name.toLowerCase(); return n===lq?0:(n.indexOf(lq)===0?1:2); }
+  return rows.sort(function(a,b){ return rank(a)-rank(b)||String(a.display_name).localeCompare(String(b.display_name),'ko'); }).slice(0,8);
+}
+async function request(id){ await expireReq(true); var r=await sb.from('friendships').insert({requester_id:user.id, addressee_id:id}); await loadFriends(); return r; }
+async function respond(rowId, ok){ var r=ok?await sb.from('friendships').update({status:'accepted'}).eq('id',rowId):await sb.from('friendships').delete().eq('id',rowId); await loadFriends(); return r; }
+async function removeRow(rowId){ var r=await sb.from('friendships').delete().eq('id',rowId); await loadFriends(); return r; }
+async function setNick(n){ n=String(n||'').trim().slice(0,12); if(!n) return {error:true}; var r=await sb.from('profiles').update({display_name:n}).eq('id',user.id); if(r&&r.error) return {error:true}; prof=Object.assign({},prof||{},{display_name:n}); paint(); return {ok:true}; }
+
+var FCSS='.ffa-badge{display:inline-block;min-width:18px;height:18px;line-height:18px;border-radius:9px;background:#ff5a4f;color:#fff;font-size:11px;font-weight:800;text-align:center;padding:0 5px;margin-left:6px;box-sizing:border-box}'+
+ '#ffaFriends{position:fixed;inset:0;z-index:2147482400;background:rgba(5,6,10,.72);display:none;align-items:center;justify-content:center;padding:16px;font-family:system-ui,-apple-system,"Noto Sans KR",sans-serif}'+
+ '#ffaFriends .b{width:100%;max-width:400px;max-height:calc(100vh - 32px);overflow:auto;background:#10131b;border:1px solid #2b3245;border-radius:16px;padding:20px;color:#eef0f5;box-shadow:0 20px 50px rgba(0,0,0,.5);box-sizing:border-box}'+
+ '#ffaFriends h3{margin:0 0 4px;font-size:19px}#ffaFriends .n{margin:0 0 14px;color:#8a93a6;font-size:13px}#ffaFriends h4{margin:16px 0 6px;font-size:13px;color:#8a93a6;font-weight:700}'+
+ '#ffaFriends input{width:100%;box-sizing:border-box;padding:10px 12px;border-radius:9px;border:1px solid #2b3245;background:#08090d;color:#eef0f5;font:inherit;font-size:16px}#ffaFriends input:focus{outline:none;border-color:#ffc93c}'+
+ '#ffaFriends .row{display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:9px;background:#151a25;margin-top:6px}#ffaFriends .row .nm{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:700;font-size:14px;cursor:pointer}'+
+ '#ffaFriends .row button,#ffaFriends .nk button{border:0;border-radius:7px;padding:6px 10px;font:inherit;font-size:13px;font-weight:700;cursor:pointer;background:#232a3a;color:#eef0f5;white-space:nowrap}'+
+ '#ffaFriends .row button.p,#ffaFriends .nk button{background:linear-gradient(135deg,#ffc93c,#ff8a3d);color:#1a1206}#ffaFriends .row button:disabled{opacity:.6;cursor:default}#ffaFriends .row .tg{font-size:12px;color:#8a93a6;white-space:nowrap}'+
+ '#ffaFriends .e{color:#8a93a6;font-size:13px;padding:8px 2px}#ffaFriends .nk{display:flex;gap:8px;margin:0 0 6px}#ffaFriends .nk input{flex:1}#ffaFriends .x{float:right;background:none;border:0;color:#8a93a6;font-size:20px;cursor:pointer;line-height:1}'+
+ '#ffaToast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);z-index:2147482600;background:#10131b;border:1px solid #ffc93c;color:#eef0f5;border-radius:12px;padding:10px 14px;font:600 14px system-ui,sans-serif;box-shadow:0 12px 30px rgba(0,0,0,.45);display:flex;gap:10px;align-items:center;max-width:calc(100vw - 32px)}'+
+ '#ffaToast button{border:0;border-radius:7px;padding:5px 10px;font:inherit;font-size:13px;font-weight:800;cursor:pointer;background:linear-gradient(135deg,#ffc93c,#ff8a3d);color:#1a1206}';
+function fcss(){ if(document.getElementById('ffaFCss')) return; var s=document.createElement('style'); s.id='ffaFCss'; s.textContent=FCSS; document.head.appendChild(s); }
+function toast(text){
+  fcss(); var old=document.getElementById('ffaToast'); if(old) old.remove();
+  var t=document.createElement('div'); t.id='ffaToast'; t.setAttribute('data-notr',''); t.innerHTML='<span>👋 '+esc(text)+'</span><button type="button">'+esc(F.view)+'</button>';
+  t.querySelector('button').onclick=function(){ t.remove(); openFriends(); };
+  document.body.appendChild(t); setTimeout(function(){ if(t.parentNode) t.remove(); },8000);
+}
+var fq='', fres=null, fbusy=false;
+function fmodal(){
+  fcss(); var el=document.getElementById('ffaFriends'); if(el) return el;
+  el=document.createElement('div'); el.id='ffaFriends'; el.setAttribute('data-notr','');
+  el.innerHTML='<div class="b"><button type="button" class="x" aria-label="'+esc(T.close)+'">×</button><h3>'+esc(F.ftitle)+'</h3><div class="n">'+esc(F.fnote)+'</div><div class="nkBox"></div>'+
+    '<input class="q" type="search" autocomplete="off" spellcheck="false" maxlength="16" placeholder="'+esc(F.search)+'"><div class="res"></div><div class="lists"></div></div>';
+  document.body.appendChild(el);
+  el.addEventListener('click',function(e){ if(e.target===el) el.style.display='none'; });
+  el.querySelector('.x').onclick=function(){ el.style.display='none'; };
+  var timer=null; el.querySelector('.q').oninput=function(){ fq=this.value; clearTimeout(timer); timer=setTimeout(runSearch,300); };
+  return el;
+}
+async function runSearch(){ var q=fq.trim(); if(!q){ fres=null; return fpaint(); } if(q.length<2){ fres='short'; return fpaint(); } var mine=q; var r=await searchUsers(q); if(fq.trim()===mine){ fres=r; fpaint(); } }
+function relation(id){ for(var i=0;i<friends.length;i++) if(friends[i].otherId===id) return friends[i]; return null; }
+function act(btn, fn){ btn.onclick=async function(e){ e.stopPropagation(); if(fbusy) return; fbusy=true; btn.disabled=true; var r; try{ r=await fn(); }catch(x){ r={error:x}; } fbusy=false; if(r&&r.error) toastErr(); fpaint(); }; }
+function toastErr(){ var el=document.getElementById('ffaFriends'); var m=el&&el.querySelector('.res'); if(m){ var d=document.createElement('div'); d.className='e'; d.textContent=F.err; m.prepend(d); } }
+function row(name, id, btns, tag){
+  var d=document.createElement('div'); d.className='row';
+  d.innerHTML='<span class="nm"></span>'+(tag?'<span class="tg"></span>':''); d.querySelector('.nm').textContent=name; if(tag) d.querySelector('.tg').textContent=tag;
+  d.querySelector('.nm').onclick=function(){ openProfile(id); };
+  (btns||[]).forEach(function(b){ var x=document.createElement('button'); x.type='button'; x.textContent=b[0]; if(b[2]) x.className=b[2]; if(b[1]) act(x,b[1]); else x.disabled=true; d.appendChild(x); });
+  return d;
+}
+function fpaint(){
+  var el=document.getElementById('ffaFriends'); if(!el||el.style.display==='none') return;
+  if(!user){ el.style.display='none'; return; }
+  var nk=el.querySelector('.nkBox'); nk.innerHTML='';
+  if(!(prof&&prof.display_name&&String(prof.display_name).trim())){
+    nk.innerHTML='<div class="n">'+esc(F.needNick)+'</div><div class="nk"><input maxlength="12" placeholder="'+esc(F.nickPh)+'"><button type="button">'+esc(F.save)+'</button></div>';
+    var inp=nk.querySelector('input'); act(nk.querySelector('button'), function(){ return setNick(inp.value); });
+  }
+  var res=el.querySelector('.res'); res.innerHTML='';
+  if(fres==='short'){ res.innerHTML='<div class="e">'+esc(F.short)+'</div>'; }
+  else if(Array.isArray(fres)){
+    if(!fres.length) res.innerHTML='<div class="e">'+esc(F.none)+'</div>';
+    fres.forEach(function(u){ var r=relation(u.id), name=nickOf(u);
+      if(!r) res.appendChild(row(name,u.id,[[F.add,function(){ return request(u.id); },'p']]));
+      else if(r.status==='accepted') res.appendChild(row(name,u.id,[],F.isFriend));
+      else if(r.incoming) res.appendChild(row(name,u.id,[[F.accept,function(){ return respond(r.rowId,true); },'p'],[F.decline,function(){ return respond(r.rowId,false); }]]));
+      else res.appendChild(row(name,u.id,[],F.sent)); });
+  }
+  var ls=el.querySelector('.lists'); ls.innerHTML='';
+  function section(title, items, mk){ if(!items.length) return; var h=document.createElement('h4'); h.textContent=title+' ('+items.length+')'; ls.appendChild(h); items.forEach(function(f){ ls.appendChild(mk(f)); }); }
+  section(F.inc, friends.filter(function(f){ return f.incoming; }), function(f){ return row(f.name,f.otherId,[[F.accept,function(){ return respond(f.rowId,true); },'p'],[F.decline,function(){ return respond(f.rowId,false); }]]); });
+  var acc=friends.filter(function(f){ return f.status==='accepted'; }).sort(function(a,b){ return a.name.localeCompare(b.name,'ko'); });
+  if(acc.length) section(F.list, acc, function(f){ var d=row(f.name,f.otherId,[[F.card,function(){ openProfile(f.otherId); return null; }]]);
+      var rm=document.createElement('button'); rm.type='button'; rm.textContent=F.remove;
+      rm.onclick=async function(e){ e.stopPropagation(); if(fbusy) return; if(!rm.dataset.sure){ rm.dataset.sure='1'; rm.textContent=F.sure; setTimeout(function(){ if(rm.isConnected&&!fbusy){ delete rm.dataset.sure; rm.textContent=F.remove; } },3000); return; } fbusy=true; rm.disabled=true; var r; try{ r=await removeRow(f.rowId); }catch(x){ r={error:x}; } fbusy=false; if(r&&r.error) toastErr(); fpaint(); };
+      d.appendChild(rm); return d; });
+  else { var h=document.createElement('h4'); h.textContent=F.list; ls.appendChild(h); var e=document.createElement('div'); e.className='e'; e.textContent=F.empty; ls.appendChild(e); }
+  section(F.out, friends.filter(function(f){ return f.outgoing; }), function(f){ return row(f.name,f.otherId,[[F.cancel,function(){ return respond(f.rowId,false); }]],F.sent); });
+}
+async function openFriends(){ if(!sb) return; if(!user) return openLogin(); closeMenus(); var el=fmodal(); el.style.display='flex'; fpaint(); await loadFriends(); fpaint(); }
+subs.push(function(u){ friends=[]; badge(); watchFriends(); if(u) loadFriends().then(function(){ fpaint(); var n=incomingCount(); if(n){ var f=friends.filter(function(x){ return x.incoming; })[0]; toast(n>1?fmt(F.toast,f.name)+' (+'+(n-1)+')':fmt(F.toast,f.name)); } }); else { var el=document.getElementById('ffaFriends'); if(el) el.style.display='none'; } });
+setInterval(function(){ if(user) loadFriends().then(fpaint).catch(function(){}); }, 10*60*1000);
+
 if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', paint); else paint();
 
 window.FFAuth={ ready:ready, client:function(){ return sb; }, user:function(){ return user; }, profile:function(){ return prof; }, nickname:nick,
-  onChange:function(f){ if(typeof f==='function') subs.push(f); }, openLogin:openLogin, openProfile:openProfile, signOut:signOut, refresh:paint };
+  onChange:function(f){ if(typeof f==='function') subs.push(f); }, openLogin:openLogin, openProfile:openProfile, openFriends:openFriends, friends:function(){ return friends.slice(); }, signOut:signOut, refresh:paint };
 })();
