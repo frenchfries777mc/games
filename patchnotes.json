@@ -1,0 +1,398 @@
+{
+ "notes": [
+  {
+   "date": "2026-10-15",
+   "build": "",
+   "title": "알림함 · 공지 · 좋아요 · 메시지 · 신고 · 차단",
+   "items": [
+    "🔔 알림함 추가 (댓글, 좋아요, 친구 요청, 메시지, 피드백 확인)",
+    "허브 맨 위 공지 · 이벤트 배너 추가 (관리자만 올림)",
+    "게시판 글 👍 좋아요와 🔥 인기글 추가",
+    "친구끼리 💬 1:1 메시지 추가",
+    "글 · 댓글 · 채팅 🚩 신고와 🚫 차단 추가",
+    "뉴스를 게임 상관없이 가장 최근 업데이트 6개로 수정",
+    "허브 패치노트 추가"
+   ],
+   "tr": {
+    "en": {
+     "title": "Notifications · notices · likes · messages · report · block",
+     "items": [
+      "🔔 Notifications added (comments, likes, friend requests, messages, feedback seen)",
+      "Notice · event banner at the top of the hub added (admin only)",
+      "👍 Likes and 🔥 popular posts on the board added",
+      "💬 1:1 messages between friends added",
+      "🚩 Report and 🚫 block for posts, comments and chat added",
+      "News now shows the 6 latest updates from any game",
+      "Hub patch notes added"
+     ]
+    },
+    "es": {
+     "title": "Avisos · anuncios · me gusta · mensajes · denuncias · bloqueo",
+     "items": [
+      "🔔 Bandeja de avisos (comentarios, me gusta, solicitudes, mensajes, comentarios revisados)",
+      "Banner de avisos · eventos arriba del inicio (solo admin)",
+      "👍 Me gusta y 🔥 publicaciones populares en el tablón",
+      "💬 Mensajes 1:1 entre amigos",
+      "🚩 Denunciar y 🚫 bloquear en publicaciones, comentarios y chat",
+      "Las noticias muestran las 6 actualizaciones más recientes de cualquier juego",
+      "Notas del inicio añadidas"
+     ]
+    },
+    "fr": {
+     "title": "Notifications · annonces · j’aime · messages · signalement · blocage",
+     "items": [
+      "🔔 Notifications (commentaires, j’aime, demandes d’ami, messages, avis lus)",
+      "Bannière d’annonce · d’événement en haut de l’accueil (admin seulement)",
+      "👍 J’aime et 🔥 messages populaires sur le forum",
+      "💬 Messages privés entre amis",
+      "🚩 Signaler et 🚫 bloquer sur messages, commentaires et chat",
+      "Les actus montrent les 6 dernières mises à jour, tous jeux confondus",
+      "Notes de l’accueil ajoutées"
+     ]
+    },
+    "de": {
+     "title": "Benachrichtigungen · Hinweise · Likes · Nachrichten · Melden · Blockieren",
+     "items": [
+      "🔔 Benachrichtigungen (Kommentare, Likes, Freundschaftsanfragen, Nachrichten, gelesenes Feedback)",
+      "Hinweis- · Event-Banner oben auf der Startseite (nur Admin)",
+      "👍 Likes und 🔥 beliebte Beiträge im Forum",
+      "💬 Private Nachrichten unter Freunden",
+      "🚩 Melden und 🚫 Blockieren bei Beiträgen, Kommentaren und Chat",
+      "News zeigen die 6 neuesten Updates aller Spiele",
+      "Patchnotes der Startseite hinzugefügt"
+     ]
+    },
+    "ja": {
+     "title": "お知らせ箱・告知・いいね・メッセージ・通報・ブロック",
+     "items": [
+      "🔔 お知らせ箱を追加（コメント、いいね、フレンド申請、メッセージ、フィードバック確認）",
+      "ハブ上部の告知・イベントバナーを追加（管理者のみ）",
+      "掲示板の👍いいねと🔥人気投稿を追加",
+      "フレンド同士の💬1対1メッセージを追加",
+      "投稿・コメント・チャットの🚩通報と🚫ブロックを追加",
+      "ニュースをゲームに関係なく最新アップデート6件に変更",
+      "ハブのパッチノートを追加"
+     ]
+    }
+   }
+  },
+  {
+   "date": "2026-10-15",
+   "build": "",
+   "title": "사진 올리기",
+   "items": [
+    "게시판 글에 사진 4장까지 추가",
+    "채팅에 사진 보내기 추가",
+    "Stickseum 새 도전과제 반영"
+   ],
+   "tr": {
+    "en": {
+     "title": "Photo uploads",
+     "items": [
+      "Up to 4 photos per board post added",
+      "Photos in chat added",
+      "New Stickseum achievement added to the card"
+     ]
+    },
+    "es": {
+     "title": "Subir fotos",
+     "items": [
+      "Hasta 4 fotos por publicación",
+      "Fotos en el chat",
+      "Nuevo logro de Stickseum en la tarjeta"
+     ]
+    },
+    "fr": {
+     "title": "Envoi de photos",
+     "items": [
+      "Jusqu’à 4 photos par message du forum",
+      "Photos dans le chat",
+      "Nouveau succès Stickseum sur la carte"
+     ]
+    },
+    "de": {
+     "title": "Fotos hochladen",
+     "items": [
+      "Bis zu 4 Fotos pro Forenbeitrag",
+      "Fotos im Chat",
+      "Neuer Stickseum-Erfolg auf der Karte"
+     ]
+    },
+    "ja": {
+     "title": "写真のアップロード",
+     "items": [
+      "掲示板の投稿に写真4枚まで追加",
+      "チャットで写真を送る機能を追加",
+      "Stickseumの新しい実績を反映"
+     ]
+    }
+   }
+  },
+  {
+   "date": "2026-10-15",
+   "build": "",
+   "title": "커뮤니티 · 뉴스 · 친구 접속",
+   "items": [
+    "📋 게시판, 💬 채팅, 📮 피드백 · 버그 신고 추가",
+    "아래쪽 뉴스에 게임 업데이트 소식 추가",
+    "친구 목록에 지금 하는 게임 🟢 표시 추가",
+    "허브 도전과제 15개 추가",
+    "프로필 카드 공유 링크 추가"
+   ],
+   "tr": {
+    "en": {
+     "title": "Community · news · friends online",
+     "items": [
+      "📋 Board, 💬 chat and 📮 feedback · bug reports added",
+      "Game update news at the bottom added",
+      "🟢 What friends are playing now in the friends list",
+      "15 hub achievements added",
+      "Profile card share link added"
+     ]
+    },
+    "es": {
+     "title": "Comunidad · noticias · amigos conectados",
+     "items": [
+      "📋 Tablón, 💬 chat y 📮 comentarios · errores",
+      "Noticias de los juegos abajo",
+      "🟢 A qué juegan tus amigos ahora",
+      "15 logros del inicio",
+      "Enlace para compartir la tarjeta"
+     ]
+    },
+    "fr": {
+     "title": "Communauté · actus · amis en ligne",
+     "items": [
+      "📋 Forum, 💬 chat et 📮 avis · bugs",
+      "Actus des jeux en bas de page",
+      "🟢 À quoi jouent tes amis en ce moment",
+      "15 succès de l’accueil",
+      "Lien de partage de la carte"
+     ]
+    },
+    "de": {
+     "title": "Community · News · Freunde online",
+     "items": [
+      "📋 Forum, 💬 Chat und 📮 Feedback · Fehlermeldungen",
+      "Spiel-News unten auf der Seite",
+      "🟢 Was Freunde gerade spielen",
+      "15 Erfolge der Startseite",
+      "Link zum Teilen der Karte"
+     ]
+    },
+    "ja": {
+     "title": "コミュニティ・ニュース・フレンドの接続",
+     "items": [
+      "📋掲示板、💬チャット、📮フィードバック・バグ報告を追加",
+      "下にゲームのアップデートニュースを追加",
+      "フレンド一覧に今遊んでいるゲーム🟢表示を追加",
+      "ハブ実績15個を追加",
+      "プロフィールカードの共有リンクを追加"
+     ]
+    }
+   }
+  },
+  {
+   "date": "2026-10-15",
+   "build": "",
+   "title": "도전과제 목록 · 허브 버튼",
+   "items": [
+    "프로필 카드에 게임별 도전과제 목록과 전체 달성률 추가",
+    "프로필 카드 스크롤 추가",
+    "게임 사이트에 ← 허브 버튼 추가"
+   ],
+   "tr": {
+    "en": {
+     "title": "Achievement list · hub button",
+     "items": [
+      "Per-game achievement list and global unlock rates on the card",
+      "Scrolling profile card",
+      "← Hub button on the game sites"
+     ]
+    },
+    "es": {
+     "title": "Lista de logros · botón de inicio",
+     "items": [
+      "Lista de logros por juego y porcentaje global en la tarjeta",
+      "Tarjeta con desplazamiento",
+      "Botón ← Inicio en las webs de los juegos"
+     ]
+    },
+    "fr": {
+     "title": "Liste des succès · bouton accueil",
+     "items": [
+      "Liste des succès par jeu et taux global sur la carte",
+      "Carte de profil défilante",
+      "Bouton ← Accueil sur les sites des jeux"
+     ]
+    },
+    "de": {
+     "title": "Erfolgsliste · Start-Knopf",
+     "items": [
+      "Erfolgsliste pro Spiel und globale Quote auf der Karte",
+      "Scrollbare Profilkarte",
+      "← Start-Knopf auf den Spielseiten"
+     ]
+    },
+    "ja": {
+     "title": "実績一覧・ハブボタン",
+     "items": [
+      "プロフィールカードにゲーム別の実績一覧と全体達成率を追加",
+      "プロフィールカードのスクロールを追加",
+      "ゲームサイトに← ハブボタンを追加"
+     ]
+    }
+   }
+  },
+  {
+   "date": "2026-10-15",
+   "build": "",
+   "title": "언어 공유 · 도전과제 진행상황",
+   "items": [
+    "허브에서 고른 언어가 모든 게임에 적용",
+    "프로필 카드에 게임별 도전과제 진행상황 추가"
+   ],
+   "tr": {
+    "en": {
+     "title": "Shared language · achievement progress",
+     "items": [
+      "The language picked on the hub applies to every game",
+      "Per-game achievement progress on the card"
+     ]
+    },
+    "es": {
+     "title": "Idioma compartido · progreso de logros",
+     "items": [
+      "El idioma elegido en el inicio se aplica a todos los juegos",
+      "Progreso de logros por juego en la tarjeta"
+     ]
+    },
+    "fr": {
+     "title": "Langue partagée · progression des succès",
+     "items": [
+      "La langue choisie sur l’accueil s’applique à tous les jeux",
+      "Progression des succès par jeu sur la carte"
+     ]
+    },
+    "de": {
+     "title": "Gemeinsame Sprache · Erfolgsfortschritt",
+     "items": [
+      "Die auf der Startseite gewählte Sprache gilt in allen Spielen",
+      "Erfolgsfortschritt pro Spiel auf der Karte"
+     ]
+    },
+    "ja": {
+     "title": "言語の共有・実績の進み具合",
+     "items": [
+      "ハブで選んだ言語がすべてのゲームに適用",
+      "プロフィールカードにゲーム別の実績の進み具合を追加"
+     ]
+    }
+   }
+  },
+  {
+   "date": "2026-10-15",
+   "build": "",
+   "title": "계정 · 친구 · 프로필 카드",
+   "items": [
+    "Frenchfries777 계정 로그인 추가 (허브에서 로그인하면 모든 게임에서 로그인)",
+    "친구 목록 추가 (게임 안 친구와 같음)",
+    "프로필 카드 추가"
+   ],
+   "tr": {
+    "en": {
+     "title": "Account · friends · profile card",
+     "items": [
+      "Frenchfries777 account login (log in on the hub, logged in everywhere)",
+      "Friends list (same friends as in the games)",
+      "Profile card added"
+     ]
+    },
+    "es": {
+     "title": "Cuenta · amigos · tarjeta de perfil",
+     "items": [
+      "Inicio de sesión con cuenta Frenchfries777 (entras en el inicio y en todos los juegos)",
+      "Lista de amigos (los mismos que en los juegos)",
+      "Tarjeta de perfil"
+     ]
+    },
+    "fr": {
+     "title": "Compte · amis · carte de profil",
+     "items": [
+      "Connexion au compte Frenchfries777 (connecté partout depuis l’accueil)",
+      "Liste d’amis (les mêmes que dans les jeux)",
+      "Carte de profil"
+     ]
+    },
+    "de": {
+     "title": "Konto · Freunde · Profilkarte",
+     "items": [
+      "Anmeldung mit Frenchfries777-Konto (einmal auf der Startseite, überall angemeldet)",
+      "Freundesliste (dieselben Freunde wie in den Spielen)",
+      "Profilkarte"
+     ]
+    },
+    "ja": {
+     "title": "アカウント・フレンド・プロフィールカード",
+     "items": [
+      "Frenchfries777アカウントのログインを追加（ハブでログインすると全ゲームでログイン）",
+      "フレンド一覧を追加（ゲーム内のフレンドと同じ）",
+      "プロフィールカードを追加"
+     ]
+    }
+   }
+  },
+  {
+   "date": "2026-10-15",
+   "build": "",
+   "title": "허브 첫 공개",
+   "items": [
+    "Frenchfries777 허브 사이트 공개",
+    "Stickseum, Crown Envoy, Beaconfall 게임 소개 추가",
+    "6개 언어 지원"
+   ],
+   "tr": {
+    "en": {
+     "title": "Hub launch",
+     "items": [
+      "Frenchfries777 hub site launched",
+      "Stickseum, Crown Envoy and Beaconfall added",
+      "6 languages supported"
+     ]
+    },
+    "es": {
+     "title": "Lanzamiento del inicio",
+     "items": [
+      "Se abre el sitio de inicio de Frenchfries777",
+      "Stickseum, Crown Envoy y Beaconfall",
+      "6 idiomas"
+     ]
+    },
+    "fr": {
+     "title": "Lancement de l’accueil",
+     "items": [
+      "Ouverture du site d’accueil Frenchfries777",
+      "Stickseum, Crown Envoy et Beaconfall",
+      "6 langues"
+     ]
+    },
+    "de": {
+     "title": "Start der Startseite",
+     "items": [
+      "Frenchfries777-Startseite online",
+      "Stickseum, Crown Envoy und Beaconfall",
+      "6 Sprachen"
+     ]
+    },
+    "ja": {
+     "title": "ハブ公開",
+     "items": [
+      "Frenchfries777ハブサイト公開",
+      "Stickseum、Crown Envoy、Beaconfallの紹介を追加",
+      "6言語に対応"
+     ]
+    }
+   }
+  }
+ ]
+}

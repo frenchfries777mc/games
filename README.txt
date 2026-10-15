@@ -12,10 +12,12 @@ Frenchfries777 게임 허브 사이트
   supabase-ff-achievements.sql  프로필 카드의 게임별 도전과제 진행상황용 SQL (Supabase에서 한 번 실행)
   supabase-ff-ach-list.sql      카드 아래 도전과제 목록 · 달성 비율용 SQL (위 SQL 다음에 한 번 실행)
   ach/<게임>.json               카드에 보이는 각 게임의 도전과제 목록 (이름 · 아이콘 · 설명, 6개 언어). ach/hub.json 은 허브 도전과제
-  hub.js                        허브의 커뮤니티(게시판 · 채팅 · 피드백/버그 신고)와 아래쪽 뉴스(세 게임 패치노트 모음)
+  hub.js                        허브의 커뮤니티(게시판 · 채팅 · 피드백/버그 신고 · 신고 목록)와 맨 위 공지 배너, 아래쪽 뉴스(게임 + 허브 패치노트 중 최근 6개)
   ff-presence.js                게임을 하는 동안 친구 목록에 "🟢 ○○ 하는 중"을 띄워요 (ff-lang.js 가 게임 화면에서 불러요)
   supabase-ff-hub.sql           커뮤니티 · 친구 접속 표시 · 허브 도전과제용 SQL (맨 아래 줄에 내 아이디를 넣으면 관리자가 돼요)
   supabase-ff-images.sql        게시판 · 채팅 사진 올리기용 SQL (사진 저장소 ff-images, 위 SQL 다음에 실행)
+  supabase-ff-social.sql        🔔 알림함 · 공지 배너 · 좋아요 · 친구 1:1 메시지 · 신고 · 차단용 SQL (supabase-ff-hub.sql 다음에 실행)
+  patchnotes.json               허브 패치노트 (뉴스에 '허브'로 나오고, 뉴스의 '허브 패치노트 →'에서 전체 목록)
 
 [ 플레이 버튼 주소 ]
   - Stickseum   https://frenchfries777mc.github.io/stickseum/
