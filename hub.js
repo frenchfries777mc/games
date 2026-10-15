@@ -1,6 +1,6 @@
 /* Frenchfries777 허브: 커뮤니티(게시판 · 채팅 · 피드백/버그 신고)와 아래쪽 뉴스(세 게임의 패치노트)
    글자는 한국어로 쓰고, 허브의 번역 스크립트(<script id="i18n">)가 다른 언어로 바꿔요. 사람들이 쓴 글은 data-notr 로 번역하지 않아요.
-   필요한 SQL: supabase-ff-hub.sql, supabase-ff-images.sql, supabase-ff-social.sql, supabase-ff-extra.sql (+ crownenvoy/supabase-ff-rank.sql) */
+   필요한 SQL: supabase-ff-hub.sql, supabase-ff-images.sql, supabase-ff-social.sql, supabase-ff-extra.sql, supabase-ff-more.sql (+ crownenvoy/supabase-ff-rank.sql) */
 (function(){
 'use strict';
 var SI=window.SI18N||{lang:'ko',F:function(t){ var a=arguments; return String(t).replace(/\{(\d)\}/g,function(_,n){ return a[+n+1]; }); }};
@@ -79,8 +79,11 @@ function errText(e){ var m=String((e&&(e.message||e.details))||e||'');
 async function loadNames(ids){
   ids=ids.filter(function(id,i){ return id&&!names[id]&&ids.indexOf(id)===i; }); if(!ids.length||!sb) return;
   try{ var r=await sb.from('profiles').select('id,username,display_name').in('id',ids); ((r&&r.data)||[]).forEach(function(p){ names[p.id]=(p.display_name&&String(p.display_name).trim())||p.username||'???'; }); }catch(e){}
+  if(CARDS) try{ var c=await sb.from('ff_card').select('user_id,title').in('user_id',ids); if(c.error) CARDS=false; ((c&&c.data)||[]).forEach(function(x){ if(TNAME[x.title]) titles[x.user_id]=x.title; }); }catch(e){}
 }
-function who(id){ return '<a class="who" data-uid="'+esc(id)+'" data-notr>'+esc(names[id]||'???')+'</a>'; }
+/* 칭호 (ff-profile.js 의 TITLES 와 같은 id, supabase-ff-more.sql) */
+var titles={}, CARDS=true, TNAME={newbie:'새내기',traveler:'여행자',explorer:'탐험가',friendly:'다정한 친구',popular:'인기쟁이',writer:'글쟁이',commenter:'댓글러',chatter:'수다쟁이',helper:'도우미',allround:'만능',collector:'수집가',master:'달인',legend:'전설'};
+function who(id){ var t=titles[id]; return '<a class="who" data-uid="'+esc(id)+'" data-notr>'+esc(names[id]||'???')+'</a>'+(t?' <span class="ttl">🏷️ <span>'+esc(TNAME[t])+'</span></span>':''); }
 document.addEventListener('click',function(e){ var a=e.target.closest&&e.target.closest('a.who[data-uid]'); if(a&&window.FFAuth){ e.preventDefault(); FFAuth.openProfile(a.getAttribute('data-uid')); } });
 function blocked(id){ try{ return !!(window.FFAuth&&FFAuth.isBlocked&&FFAuth.isBlocked(id)); }catch(e){ return false; } }
 function report(o){ if(!me) return login(); if(window.FFAuth&&FFAuth.openReport) FFAuth.openReport(o); }
@@ -88,13 +91,13 @@ window.addEventListener('ffblocks',function(){ if(tab==='board') listPosts(); el
 function hubSync(){ try{ if(window.FFAuth&&FFAuth.syncHub) FFAuth.syncHub(); }catch(e){} }
 function setTab(t){ tab=t; var bs=document.querySelectorAll('.cm-tabs button'); for(var i=0;i<bs.length;i++) bs[i].classList.toggle('on',bs[i].getAttribute('data-t')===t);
   var ps=document.querySelectorAll('.cm-p'); for(var j=0;j<ps.length;j++) ps[j].style.display=ps[j].getAttribute('data-p')===t?'':'none';
-  if(t==='board') board(); else if(t==='chat') chat(); else if(t==='gal') gallery(); else if(t==='poll') polls(); else feedback(); }
+  if(t==='board') board(); else if(t==='chat') chat(); else if(t==='lfg') lfg(); else if(t==='gal') gallery(); else if(t==='poll') polls(); else feedback(); }
 function scrollToCm(){ var c=$('#community'); if(c) c.scrollIntoView({behavior:'smooth',block:'start'}); }
 
 /* ---- 사진: 줄여서(긴 쪽 1600px) Supabase 저장소 'ff-images/<내 id>/' 에 올리고, 글 · 채팅에는 주소만 저장 (supabase-ff-images.sql) ---- */
 var PUB='https://kebsbuvuutilitwlvxzv.supabase.co/storage/v1/object/public/ff-images/', IMG=true;     // IMG=false: the images column is not there yet
 function okImg(u){ return typeof u==='string'&&u.indexOf(PUB)===0&&/^[0-9a-f-]{36}\/[A-Za-z0-9._-]{1,80}$/.test(u.slice(PUB.length)); }
-function imgsHtml(a, cls){ a=(a||[]).filter(okImg); if(!a.length) return ''; return '<div class="'+cls+'">'+a.map(function(u){ return '<a href="'+esc(u)+'" target="_blank" rel="noopener"><img src="'+esc(u)+'" alt="" loading="lazy"></a>'; }).join('')+'</div>'; }
+function imgsHtml(a, cls){ a=(a||[]).filter(okImg); if(!a.length) return ''; return '<div class="'+cls+' n'+Math.min(a.length,4)+'">'+a.map(function(u){ return '<a href="'+esc(u)+'" target="_blank" rel="noopener"><img src="'+esc(u)+'" alt="" loading="lazy"></a>'; }).join('')+'</div>'; }
 function shrink(file){ return new Promise(function(res,rej){
   if(!file||!/^image\//.test(file.type)) return rej('type');
   if(file.type==='image/gif'){ return file.size<=3145728?res(file):rej('big'); }                     // keep GIFs moving
@@ -334,6 +337,70 @@ async function polls(){
   }
 }
 
+/* ---- 방 모집: "지금 같이 할 사람" (2시간 동안 보여요, supabase-ff-more.sql) ---- */
+var lfgChan=null, lfgTimer=null;
+async function lfg(){
+  var p=$('.cm-p[data-p=lfg]'); if(!p) return;
+  if(!p.dataset.ready){ p.dataset.ready='1';
+    p.innerHTML='<p class="cm-note">같이 할 사람을 찾아요. 방 링크를 붙이면 누르는 사람이 바로 그 방으로 들어가요. 2시간이 지나면 사라져요.</p>'+
+      '<form class="cm-w lf-w"><div class="cm-row"><select name="g"><option value="stickseum">Stickseum</option><option value="crownenvoy">Crown Envoy</option><option value="beaconfall">Beaconfall</option></select></div>'+
+      '<input name="n" maxlength="100" placeholder="예: 팀전 2명 더 구해요!" required><input name="l" maxlength="300" placeholder="방 링크 (https://..., 선택)"><div class="cm-m"></div><div class="cm-acts"><button class="cm-btn">🎮 모집 올리기</button></div></form><div class="lf-list"></div>';
+    p.querySelector('.lf-w').onsubmit=async function(e){ e.preventDefault(); if(!me) return login(); var f=this, m=f.querySelector('.cm-m'), n=f.n.value.trim(), l=f.l.value.trim(); if(!n) return;
+      if(l&&!/^https:\/\//.test(l)){ m.textContent='링크는 https:// 로 시작해야 해요.'; return; }
+      var r=await sb.from('ff_lfg').insert({game:f.g.value, note:n, link:l||null}); if(r.error){ m.textContent=errText(r.error); return; } f.n.value=''; f.l.value=''; m.textContent=''; hubSync(); lfgList(); };
+    if(sb&&!lfgChan) try{ lfgChan=sb.channel('ff-hub-lfg').on('postgres_changes',{event:'*',schema:'public',table:'ff_lfg'},function(){ if(tab==='lfg') lfgList(); }).subscribe(); }catch(e){}
+    lfgTimer=setInterval(function(){ if(tab==='lfg'&&document.visibilityState!=='hidden') lfgList(); }, 60000);
+  }
+  lfgList();
+}
+async function lfgList(){
+  var L=$('.cm-p[data-p=lfg] .lf-list'); if(!L||!sb) return;
+  var r=await sb.from('ff_lfg').select('*').gt('created_at',new Date(Date.now()-2*3600e3).toISOString()).order('created_at',{ascending:false}).limit(50);
+  if(r.error){ L.innerHTML='<div class="cm-e">'+esc(errText(r.error))+'</div>'; return; }
+  var rows=(r.data||[]).filter(function(x){ return !blocked(x.user_id); }); await loadNames(rows.map(function(x){ return x.user_id; }));
+  L.innerHTML=rows.length?'':'<div class="cm-e">지금 모집 중인 방이 없어요. 먼저 올려 보세요!</div>';
+  rows.forEach(function(x){ var G=GAMES[x.game], d=document.createElement('div'); d.className='lf';
+    d.innerHTML='<div class="lf-h">'+gameTag(x.game)+'<span class="cm-meta">'+who(x.user_id)+' · <span>'+esc(ago(x.created_at))+'</span></span></div><div class="lf-n" data-notr></div><div class="cm-acts2"></div>';
+    d.querySelector('.lf-n').textContent=x.note;
+    var a=document.createElement('a'); a.className='cm-btn lf-go'; a.target='_blank'; a.rel='noopener'; a.href=x.link&&/^https:\/\//.test(x.link)?x.link:(G?G.site:'#'); a.textContent=x.link?'🚪 참가하기':'🎮 게임 열기'; d.querySelector('.cm-acts2').appendChild(a);
+    if(me&&(me.id===x.user_id||admin)){ var del=document.createElement('button'); del.className='cm-btn2'; del.textContent='내리기'; del.onclick=async function(){ await sb.from('ff_lfg').delete().eq('id',x.id); lfgList(); }; d.querySelector('.cm-acts2').appendChild(del); }
+    else if(me) d.querySelector('.cm-acts2').appendChild(reportBtn({kind:'user', user:x.user_id, text:x.note}));
+    L.appendChild(d); });
+}
+
+/* ===================== 게임 평점 · 한줄평 (게임 소개 칸의 ★ 버튼, supabase-ff-more.sql) ===================== */
+var RCLS={stickseum:'st',crownenvoy:'ce',beaconfall:'bf'}, rsum={};
+function stars(n){ var f=Math.round(n||0), o=''; for(var i=1;i<=5;i++) o+=i<=f?'★':'☆'; return o; }
+async function ratings(){
+  Object.keys(RCLS).forEach(function(g){ var acts=document.querySelector('.game.'+RCLS[g]+' .acts'); if(!acts||acts.querySelector('.rate')) return;
+    var b=document.createElement('button'); b.type='button'; b.className='sub rate'; b.innerHTML='<span class="rs">☆☆☆☆☆</span> <span class="rn" data-notr></span>'; b.onclick=function(){ openRate(g); }; acts.appendChild(b); });
+  if(!sb) return; var r=await sb.rpc('ff_rating_summary'); rsum={}; ((r&&!r.error&&r.data)||[]).forEach(function(x){ rsum[x.game]=x; });
+  Object.keys(RCLS).forEach(function(g){ var b=document.querySelector('.game.'+RCLS[g]+' .rate'); if(!b) return; var x=rsum[g];
+    b.querySelector('.rs').textContent=x?stars(x.avg):'☆☆☆☆☆'; b.querySelector('.rn').textContent=x?(Number(x.avg).toFixed(1)+' ('+x.votes+')'):''; b.title=r&&r.error?errText(r.error):''; });
+}
+async function openRate(g){
+  var el=$('#rateBox'); if(!el){ el=document.createElement('div'); el.id='rateBox'; el.className='hn-bg'; document.body.appendChild(el); el.addEventListener('click',function(e){ if(e.target===el||e.target.closest('.hn-x')) el.style.display='none'; }); }
+  var G=GAMES[g], x=rsum[g];
+  el.innerHTML='<div class="hn-b"><div class="hn-h"><b data-notr>'+esc(G.name)+'</b><button type="button" class="hn-x" aria-label="닫기">×</button></div>'+
+    '<div class="rt-sum"><span class="rt-big" data-notr>'+(x?Number(x.avg).toFixed(1):'–')+'</span><span class="rt-st" data-notr>'+stars(x&&x.avg)+'</span><span class="cm-meta">'+esc(F('{0}명이 평가했어요',x?x.votes:0))+'</span></div>'+
+    '<form class="cm-w rt-w"><div class="rt-pick">'+[1,2,3,4,5].map(function(n){ return '<button type="button" data-s="'+n+'">☆</button>'; }).join('')+'</div><input name="v" maxlength="100" placeholder="한줄평 (100자까지, 선택)"><div class="cm-m"></div><div class="cm-acts"><button class="cm-btn">평가 남기기</button></div></form><div class="rt-list"></div></div>';
+  el.style.display='flex';
+  var pick=0, f=el.querySelector('.rt-w'), bs=f.querySelectorAll('[data-s]');
+  function paint(){ [].forEach.call(bs,function(b){ var n=+b.getAttribute('data-s'); b.textContent=n<=pick?'★':'☆'; b.classList.toggle('on',n<=pick); }); }
+  [].forEach.call(bs,function(b){ b.onclick=function(){ pick=+b.getAttribute('data-s'); paint(); }; });
+  if(me){ var mine=await sb.from('ff_ratings').select('stars,review').eq('game',g).eq('user_id',me.id).limit(1); var m0=mine&&mine.data&&mine.data[0]; if(m0){ pick=m0.stars; f.v.value=m0.review||''; paint(); } }
+  f.onsubmit=async function(e){ e.preventDefault(); if(!me) return login(); var m=f.querySelector('.cm-m'); if(!pick){ m.textContent='별을 눌러 점수를 골라 주세요.'; return; }
+    var r=await sb.from('ff_ratings').upsert({game:g, user_id:me.id, stars:pick, review:f.v.value.trim().slice(0,100), updated_at:new Date().toISOString()});
+    if(r.error){ m.textContent=errText(r.error); return; } m.textContent='고마워요!'; hubSync(); await ratings(); openRate(g); };
+  var L=el.querySelector('.rt-list'), r=await sb.from('ff_ratings').select('user_id,stars,review,updated_at').eq('game',g).order('updated_at',{ascending:false}).limit(30);
+  if(r.error){ L.innerHTML='<div class="cm-e">'+esc(errText(r.error))+'</div>'; return; }
+  var rows=(r.data||[]).filter(function(y){ return !blocked(y.user_id); }); await loadNames(rows.map(function(y){ return y.user_id; }));
+  L.innerHTML=rows.length?'':'<div class="cm-e">아직 평가가 없어요. 첫 평가를 남겨 보세요!</div>';
+  rows.forEach(function(y){ var d=document.createElement('div'); d.className='cm-cm'; d.innerHTML='<div class="cm-meta"><span class="rt-st" data-notr>'+stars(y.stars)+'</span> '+who(y.user_id)+' · <span>'+esc(ago(y.updated_at))+'</span></div><div class="cm-ct" data-notr></div>'; d.querySelector('.cm-ct').textContent=y.review||''; if(!y.review) d.querySelector('.cm-ct').remove();
+    if(admin&&(!me||me.id!==y.user_id)){ var x2=document.createElement('button'); x2.className='cm-x'; x2.title='삭제'; x2.textContent='×'; x2.onclick=async function(){ await sb.from('ff_ratings').delete().eq('game',g).eq('user_id',y.user_id); await ratings(); openRate(g); }; d.appendChild(x2); }
+    L.appendChild(d); });
+}
+
 /* ---- 피드백 · 버그 신고 ---- */
 var KIND={bug:'🐞 버그',idea:'💡 아이디어',other:'💬 기타'}, GN={hub:'허브',stickseum:'Stickseum',crownenvoy:'Crown Envoy',beaconfall:'Beaconfall'};
 async function feedback(){
@@ -414,14 +481,14 @@ function annAdmin(){
 async function refreshUser(){
   me=window.FFAuth&&FFAuth.user&&FFAuth.user(); admin=false;
   if(me&&sb){ try{ var r=await sb.rpc('ff_is_admin'); admin=!!(r&&r.data===true); }catch(e){} }
-  paintSend(); setTab(tab); loadAnn(); weekGames(); ranking();
+  paintSend(); setTab(tab); loadAnn(); weekGames(); ranking(); ratings();
 }
 /* 다른 페이지 · 알림에서 열기: ?post=글번호 , #feedback , #hubnotes */
 function openPostById(id){ id=+id; if(!id) return; bOpen=id; bScroll=true; if(tab!=='board') setTab('board'); else listPosts(); }
 window.FFHub={ openPost:function(id){ openPostById(id); scrollToCm(); }, tab:function(t){ setTab(t); scrollToCm(); } };
 function fromUrl(){
   var m=/[?&]post=(\d+)/.exec(location.search); if(m){ bOpen=+m[1]; bScroll=true; tab='board'; try{ history.replaceState(null,'',location.pathname+'#community'); }catch(e){} }
-  if(location.hash==='#feedback') tab='fb'; else if(location.hash==='#gallery') tab='gal'; else if(location.hash==='#poll') tab='poll';
+  if(location.hash==='#feedback') tab='fb'; else if(location.hash==='#lfg') tab='lfg'; else if(location.hash==='#gallery') tab='gal'; else if(location.hash==='#poll') tab='poll';
 }
 window.addEventListener('hashchange',function(){ if(location.hash==='#hubnotes') openHubNotes(); else if(location.hash==='#feedback'){ setTab('fb'); scrollToCm(); } });
 function start(){
