@@ -23,7 +23,11 @@ Frenchfries777 게임 허브 사이트
 [ 게임 사이트에 로그인 버튼 붙이기 ]
   로그인 버튼이 들어갈 자리에:   <span data-ff-account></span>
   </body> 바로 앞에:            <script src="https://frenchfries777mc.github.io/games/ff-auth.js"></script>
-  로그인 전에는 "로그인" 버튼, 로그인 후에는 닉네임이 보여요. 닉네임을 누르면 프로필 카드와 로그아웃이 나와요.
+  로그인 전에는 "로그인" 버튼, 로그인 후에는 닉네임이 보여요. 닉네임을 누르면 친구, 프로필 카드, 로그아웃이 나와요.
+
+[ 친구 ]
+  친구는 Stickseum과 같은 friendships 표를 써요. 그래서 허브나 게임 사이트에서 맺은 친구는 게임 안에서도 친구예요.
+  닉네임(profiles.display_name)으로 찾고, 답이 없는 요청은 3시간 뒤에 사라져요(Stickseum과 같은 규칙).
 
 [ 게임 파일 쪽 조건 ]
   supabase.createClient(URL, KEY)를 옵션 없이(또는 storageKey를 바꾸지 않고) 만들고,
