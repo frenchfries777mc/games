@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Frenchfries777 Wiki</title>
+<meta name="description" content="Stickseum · Crown Envoy · Beaconfall 공략 위키. 누구나 읽고, 로그인하면 고칠 수 있어요.">
+<meta property="og:title" content="Frenchfries777 Wiki"><meta property="og:description" content="Stickseum · Crown Envoy · Beaconfall 공략 위키"><meta property="og:type" content="website">
+<meta name="theme-color" content="#08090d">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&family=Noto+Sans+KR:wght@400;500;700;900&display=swap" rel="stylesheet">
+<script src="../ff-lang.js"></script>
+<style>
+  :root{ --bg:#08090d; --panel:#10131b; --panel2:#0b0d13; --line:#222837; --text:#eef0f5; --dim:#8a93a6; --fry:#ffc93c; --fry2:#ff8a3d; --g1:#3ee0c4; --g2:#e8c25a; --g3:#ffae5a; }
+  html[data-ff-theme=light]{ --bg:#f6f3ec; --panel:#ffffff; --panel2:#faf8f3; --line:#e2dccf; --text:#1f1b14; --dim:#6d6658; --g1:#0f8a77; --g2:#8a6c14; --g3:#a0600c; }
+  *{box-sizing:border-box;}
+  html,body{margin:0; padding:0; background:var(--bg); color:var(--text);}
+  body{font-family:'Noto Sans KR','Apple SD Gothic Neo','Malgun Gothic',system-ui,sans-serif; font-size:16px; line-height:1.6; min-height:100vh;
+    padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
+    background-image:radial-gradient(ellipse 900px 520px at 10% -10%, rgba(255,201,60,.10), transparent 60%), radial-gradient(ellipse 800px 600px at 110% 30%, rgba(255,77,94,.07), transparent 60%);
+    background-attachment:fixed;}
+  html[data-ff-theme=light] body{background-image:radial-gradient(ellipse 900px 520px at 10% -10%, rgba(255,201,60,.22), transparent 60%);}
+  a{color:var(--fry);}
+  button{font:inherit;}
+  .wrap{max-width:1180px; margin:0 auto; padding:0 22px;}
+  header{display:flex; align-items:center; justify-content:space-between; gap:12px; padding:22px 0 0;}
+  .logo{display:flex; align-items:center; gap:10px; font-family:'Oswald',sans-serif; font-weight:600; font-size:20px; letter-spacing:.04em; color:var(--text); text-decoration:none; min-width:0;}
+  .logo .fry{width:34px; height:34px; border-radius:9px; display:grid; place-items:center; font-size:20px; background:linear-gradient(135deg,var(--fry),var(--fry2)); box-shadow:0 6px 18px rgba(255,160,60,.25); flex:0 0 auto;}
+  .logo b{color:var(--fry); font-weight:700;} .logo i{font-style:normal; color:var(--dim); font-weight:500; margin-left:6px;}
+  header .right{display:flex; align-items:center; gap:8px; flex:0 0 auto;} header .ffa-wrap{white-space:nowrap;}
+  .back{color:var(--dim); text-decoration:none; font-size:14.5px; border:1px solid var(--line); border-radius:9px; padding:6px 11px; background:var(--panel); white-space:nowrap;} .back:hover{color:var(--text); border-color:var(--fry);}
+  .langSel{background:var(--panel); color:var(--dim); border:1px solid var(--line); border-radius:8px; padding:6px 9px; font:inherit; font-size:14px; cursor:pointer;}
+  .langSel:hover{color:var(--text); border-color:var(--fry);}
+  .hero{padding:34px 0 18px; display:flex; justify-content:space-between; align-items:flex-end; gap:20px; flex-wrap:wrap;}
+  .hero h1{font-family:'Oswald','Noto Sans KR',sans-serif; font-weight:700; font-size:clamp(34px,5.4vw,56px); line-height:1.05; margin:0; text-transform:uppercase;}
+  .hero h1 span{background:linear-gradient(90deg,var(--fry),var(--fry2)); -webkit-background-clip:text; background-clip:text; color:transparent;}
+  .hero p{color:var(--dim); margin:8px 0 0; max-width:52ch;}
+  .srch{position:relative; flex:0 1 360px; min-width:240px;}
+  .srch input{width:100%; background:var(--panel); color:var(--text); border:1px solid var(--line); border-radius:12px; padding:11px 14px 11px 40px; font:inherit; font-size:16px;}
+  .srch input:focus{outline:none; border-color:var(--fry);} .srch::before{content:'🔍'; position:absolute; left:13px; top:50%; transform:translateY(-50%); font-size:15px; opacity:.7;}
+  .tabs{display:flex; gap:8px; flex-wrap:wrap; margin:6px 0 16px;}
+  .tabs button{display:flex; align-items:center; gap:8px; background:var(--panel); color:var(--dim); border:1px solid var(--line); border-radius:99px; padding:8px 16px; font-size:15px; font-weight:700; cursor:pointer;}
+  .tabs button .n{font-size:12px; font-weight:700; color:var(--dim); background:rgba(127,127,127,.14); border-radius:99px; padding:0 7px;}
+  .tabs button:hover{color:var(--text);}
+  .tabs button.on{color:#1a1206; background:linear-gradient(135deg,var(--fry),var(--fry2)); border-color:transparent;} .tabs button.on .n{color:#1a1206; background:rgba(0,0,0,.12);}
+  .lay{display:grid; grid-template-columns:240px minmax(0,1fr) 210px; gap:16px; align-items:start; padding-bottom:60px;}
+  .side,.toc{background:var(--panel); border:1px solid var(--line); border-radius:14px; padding:8px; position:sticky; top:12px; max-height:calc(100vh - 24px); overflow:auto;}
+  .side h4,.toc h4{margin:6px 10px 6px; font-size:12.5px; letter-spacing:.08em; text-transform:uppercase; color:var(--dim);}
+  .side button{display:block; width:100%; text-align:left; background:none; border:0; color:var(--text); font-size:14.5px; padding:7px 10px; border-radius:9px; cursor:pointer; line-height:1.35;}
+  .side button:hover{background:rgba(127,127,127,.09);} .side button.on{background:rgba(255,196,61,.14); color:var(--fry); font-weight:700;}
+  html[data-ff-theme=light] .side button.on{color:#b06a00;}
+  .side .new{color:var(--dim); border-top:1px solid var(--line); border-radius:0; margin-top:6px; padding-top:10px;}
+  .toc a{display:block; color:var(--dim); text-decoration:none; font-size:13.5px; padding:5px 10px; border-radius:8px; line-height:1.35;} .toc a:hover{color:var(--text); background:rgba(127,127,127,.09);}
+  .toc:empty{display:none;}
+  .page{background:var(--panel); border:1px solid var(--line); border-radius:16px; padding:22px 26px; min-height:300px; min-width:0;}
+  .ph{display:flex; justify-content:space-between; align-items:flex-start; gap:10px; flex-wrap:wrap;} .ph h2{margin:0; font-size:27px; line-height:1.25;}
+  .crumb{color:var(--dim); font-size:13px; margin-bottom:4px;} .crumb b{color:var(--g)}
+  .acts{display:flex; gap:6px; flex-wrap:wrap;}
+  .btn{background:linear-gradient(135deg,var(--fry),var(--fry2)); color:#1a1206; border:0; border-radius:9px; padding:9px 15px; font-size:14.5px; font-weight:800; cursor:pointer; white-space:nowrap;}
+  .btn2{background:var(--panel2); color:var(--text); border:1px solid var(--line); border-radius:9px; padding:7px 12px; font-size:14px; font-weight:700; cursor:pointer; white-space:nowrap;} .btn2:hover{border-color:var(--fry);}
+  .note{margin:12px 0 0; padding:9px 12px; border-radius:10px; background:rgba(255,196,61,.08); border:1px solid rgba(255,196,61,.28); color:var(--dim); font-size:13.5px;}
+  .note button{background:none; border:0; color:var(--fry); cursor:pointer; font-weight:700; padding:0; margin-left:6px;}
+  .txt{line-height:1.8; font-size:16px; margin-top:10px; overflow-wrap:anywhere;}
+  .txt h3{font-size:19px; margin:26px 0 6px; color:var(--fry); scroll-margin-top:14px;} html[data-ff-theme=light] .txt h3{color:#b06a00;}
+  .txt p{margin:9px 0;} .txt ul,.txt ol{margin:6px 0; padding-left:24px;} .txt li{margin:3px 0;} .txt b{color:var(--text);}
+  .txt mark{background:rgba(255,201,60,.35); color:inherit; border-radius:3px;}
+  .meta{color:var(--dim); font-size:13px; margin-top:22px; padding-top:12px; border-top:1px solid var(--line); display:flex; justify-content:space-between; gap:8px; flex-wrap:wrap;}
+  .pn{display:flex; justify-content:space-between; gap:10px; margin-top:16px;} .pn button{flex:1 1 0; max-width:48%; text-align:left; background:var(--panel2); border:1px solid var(--line); border-radius:12px; padding:10px 14px; color:var(--text); cursor:pointer;} .pn button:hover{border-color:var(--fry);} .pn button.nx{text-align:right; margin-left:auto;} .pn small{display:block; color:var(--dim); font-size:12px;}
+  .e{color:var(--dim); padding:10px 2px;}
+  .w{display:flex; flex-direction:column; gap:8px; margin-top:10px;}
+  .w input,.w textarea{width:100%; background:var(--panel2); color:var(--text); border:1px solid var(--line); border-radius:10px; padding:10px 12px; font:inherit; font-size:16px;}
+  .w textarea{resize:vertical; line-height:1.65; min-height:340px;} .w input:focus,.w textarea:focus{outline:none; border-color:var(--fry);}
+  .w .help{color:var(--dim); font-size:13px;} .w .m{color:#ff9b7a; font-size:13.5px;} .w .m:empty{display:none;}
+  .w .row{display:flex; justify-content:space-between; gap:8px; flex-wrap:wrap;} .w .row .acts{margin-left:auto;}
+  .prev{border:1px dashed var(--line); border-radius:12px; padding:4px 16px;}
+  .hr{border-top:1px solid var(--line); padding:12px 0; display:flex; flex-direction:column; gap:8px;} .hr .txt{background:var(--panel2); border-radius:10px; padding:6px 14px; margin:0;}
+  .hr .hm{color:var(--dim); font-size:13.5px;}
+  .res{display:flex; flex-direction:column; gap:8px;} .res button{text-align:left; background:var(--panel2); border:1px solid var(--line); border-radius:12px; padding:11px 14px; color:var(--text); cursor:pointer;} .res button:hover{border-color:var(--fry);}
+  .res .rt{font-weight:700;} .res .rg{font-size:12px; font-weight:700; margin-right:8px;} .res .rs{color:var(--dim); font-size:13.5px; margin-top:3px; display:block;} .res mark{background:rgba(255,201,60,.35); color:inherit; border-radius:3px;}
+  .g-stickseum{--g:var(--g1);} .g-crownenvoy{--g:var(--g2);} .g-beaconfall{--g:var(--g3);} .rg{color:var(--g);}
+  .mnav{display:none;}
+  footer{color:var(--dim); font-size:13px; text-align:center; padding:0 0 40px;}
+  @media(max-width:1080px){ .lay{grid-template-columns:220px minmax(0,1fr);} .toc{display:none;} }
+  @media(max-width:760px){
+    .wrap{padding:0 16px;} header{flex-wrap:wrap;} .logo{font-size:17px;} .logo i{display:none;}
+    .hero{padding:22px 0 12px;} .srch{flex:1 1 100%;}
+    .lay{grid-template-columns:1fr;} .side{display:none;}
+    .mnav{display:block; margin-bottom:12px;} .mnav select{width:100%; background:var(--panel); color:var(--text); border:1px solid var(--line); border-radius:12px; padding:11px 12px; font:inherit; font-size:16px;}
+    .page{padding:16px 16px;} .ph h2{font-size:23px;} .tabs button{padding:7px 12px; font-size:14px;}
+    .back .t{display:none;}
+    header .right{flex:1 1 100%; flex-wrap:wrap; justify-content:flex-end; row-gap:8px;} .langSel{max-width:96px;}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <a class="logo" href="./"><span class="fry">📖</span><span>FRENCHFRIES<b>777</b><i>WIKI</i></span></a>
+    <div class="right"><a class="back" href="../" data-u="hub">← <span class="t">허브</span></a><span id="langSlot"></span><span data-ff-account data-ff-nohub></span></div>
+  </header>
+
+  <section class="hero">
+    <div><h1>Game <span>Wiki</span></h1><p data-u="sub">누구나 읽을 수 있고, 로그인하면 고치거나 새 글을 쓸 수 있어요.</p></div>
+    <label class="srch"><input id="q" type="search" autocomplete="off" data-up="search" placeholder="위키 검색"></label>
+  </section>
+
+  <nav class="tabs" id="tabs"></nav>
+  <div class="mnav"><select id="mnav" aria-label="pages"></select></div>
+  <div class="lay">
+    <aside class="side" id="side"></aside>
+    <main class="page" id="page"><div class="e" data-u="loading">불러오는 중…</div></main>
+    <aside class="toc" id="toc"></aside>
+  </div>
+</div>
+<footer>Frenchfries777 Wiki · <a href="../">frenchfries777mc.github.io/games</a></footer>
+<script src="../ff-auth.js"></script>
+<script src="wiki.js"></script>
+</body>
+</html>

@@ -553,72 +553,6 @@ async function online(){
 function onlineLoop(){ clearInterval(onlT); online(); onlT=setInterval(function(){ if(document.visibilityState==='visible') online(); },60000); }
 document.addEventListener('visibilitychange',function(){ if(document.visibilityState==='visible') online(); });
 
-/* ===================== 게임 공략 위키 (ff_wiki · ff_wiki_hist · ff_wiki_save) ===================== */
-var wiki={game:'stickseum', slug:null, pages:[], err:''};
-function wikiInline(s){ return s.replace(/\*\*([^*]+)\*\*/g,'<b>$1</b>'); }
-function wikiHtml(t){ var out='', list=null, para=[];
-  function flushP(){ if(para.length){ out+='<p>'+para.join('<br>')+'</p>'; para=[]; } }
-  function flushL(){ if(list){ out+='</'+list+'>'; list=null; } }
-  String(t||'').split('\n').forEach(function(raw){ var l=raw.replace(/\s+$/,''), e=wikiInline(esc(l)), m;
-    if(/^##\s+/.test(l)){ flushP(); flushL(); out+='<h3>'+wikiInline(esc(l.replace(/^##\s+/,'')))+'</h3>'; }
-    else if((m=/^\s*-\s+(.*)$/.exec(l))){ flushP(); if(list!=='ul'){ flushL(); out+='<ul>'; list='ul'; } out+='<li>'+wikiInline(esc(m[1]))+'</li>'; }
-    else if((m=/^\s*\d+\.\s+(.*)$/.exec(l))){ flushP(); if(list!=='ol'){ flushL(); out+='<ol>'; list='ol'; } out+='<li>'+wikiInline(esc(m[1]))+'</li>'; }
-    else if(!l.trim()){ flushP(); flushL(); }
-    else { flushL(); para.push(e); } });
-  flushP(); flushL(); return out; }
-async function wikiLoad(){
-  var box=$('#wiki .wi-b'); if(!box) return; if(!sb){ box.innerHTML='<div class="cm-e">불러오는 중…</div>'; return; }
-  var r=await sb.from('ff_wiki').select('game,slug,title,sort,updated_at').eq('game',wiki.game).order('sort').order('title').limit(200);
-  if(r.error){ box.innerHTML='<div class="cm-e">'+esc(errText(r.error))+'</div>'; return; }
-  wiki.pages=r.data||[]; if(!wiki.slug||!wiki.pages.some(function(p){ return p.slug===wiki.slug; })) wiki.slug=wiki.pages[0]?wiki.pages[0].slug:null;
-  wikiPaint();
-}
-async function wikiPaint(mode){
-  var box=$('#wiki .wi-b'); if(!box) return;
-  var nav='<nav class="wi-nav">'+wiki.pages.map(function(p){ return '<button type="button" data-s="'+esc(p.slug)+'" class="'+(p.slug===wiki.slug?'on':'')+'" data-notr>'+esc(p.title)+'</button>'; }).join('')+
-    '<button type="button" class="wi-new" data-new="1">＋ 새 글</button></nav>';
-  box.innerHTML=nav+'<article class="wi-page"><div class="cm-e">불러오는 중…</div></article>';
-  var A=box.querySelector('.wi-page');
-  if(mode==='new') return wikiEdit(A,null);
-  if(!wiki.slug){ A.innerHTML='<div class="cm-e">아직 글이 없어요. 첫 글을 써 보세요!</div>'; return; }
-  var r=await sb.from('ff_wiki').select('game,slug,title,body,updated_by,updated_at').eq('game',wiki.game).eq('slug',wiki.slug).limit(1), p=r&&r.data&&r.data[0];
-  if(!p){ A.innerHTML='<div class="cm-e">'+esc(r&&r.error?errText(r.error):'글을 찾지 못했어요.')+'</div>'; return; }
-  if(p.updated_by) await loadNames([p.updated_by]);
-  A.innerHTML='<div class="wi-h"><h3 data-notr>'+esc(p.title)+'</h3><div class="wi-acts"><button type="button" class="cm-btn2 wi-ed">✏️ 고치기</button><button type="button" class="cm-btn2 wi-hi">🕘 기록</button>'+(admin?'<button type="button" class="cm-btn2 wi-del">삭제</button>':'')+'</div></div>'+
-    '<div class="wi-txt" data-notr>'+wikiHtml(p.body)+'</div><div class="cm-meta wi-meta">'+(p.updated_by?who(p.updated_by)+' · ':'')+'<span>'+esc(F('{0} 수정',ago(p.updated_at)))+'</span></div>';
-  A.querySelector('.wi-ed').onclick=function(){ if(!me) return login(); wikiEdit(A,p); };
-  A.querySelector('.wi-hi').onclick=function(){ wikiHist(A,p); };
-  var del=A.querySelector('.wi-del'); if(del) del.onclick=async function(){ if(!del.dataset.s){ del.dataset.s=1; del.textContent='정말 삭제할까요?'; return; } await sb.from('ff_wiki').delete().eq('game',p.game).eq('slug',p.slug); wiki.slug=null; wikiLoad(); };
-}
-function wikiEdit(A,p){
-  if(!me) return login();
-  A.innerHTML='<form class="cm-w wi-w"><input name="t" maxlength="60" placeholder="제목" required><textarea name="b" rows="16" maxlength="20000" placeholder="내용"></textarea>'+
-    '<div class="wi-help">## 소제목 · - 목록 · 1. 순서 목록 · **굵게**</div><div class="cm-m"></div><div class="cm-acts"><button type="button" class="cm-btn2 wi-cancel">취소</button><button class="cm-btn">저장</button></div></form>';
-  var f=A.querySelector('form'); f.t.value=p?p.title:''; f.b.value=p?p.body:'';
-  f.querySelector('.wi-cancel').onclick=function(){ wikiPaint(); };
-  f.onsubmit=async function(e){ e.preventDefault(); var m=f.querySelector('.cm-m'), t=f.t.value.trim(); if(!t){ m.textContent='제목을 적어 주세요.'; return; }
-    var slug=p?p.slug:('p'+Date.now().toString(36));
-    var r=await sb.rpc('ff_wiki_save',{p_game:wiki.game, p_slug:slug, p_title:t, p_body:f.b.value});
-    if(r.error){ m.textContent=errText(r.error); return; } wiki.slug=slug; hubSync(); wikiLoad(); };
-}
-async function wikiHist(A,p){
-  var r=await sb.from('ff_wiki_hist').select('id,title,body,user_id,created_at').eq('game',p.game).eq('slug',p.slug).order('created_at',{ascending:false}).limit(20);
-  var rows=(r&&r.data)||[]; await loadNames(rows.map(function(x){ return x.user_id; }));
-  A.innerHTML='<div class="wi-h"><h3>🕘 고친 기록</h3><div class="wi-acts"><button type="button" class="cm-btn2 wi-back">← 글로 돌아가기</button></div></div><div class="wi-hl"></div>';
-  A.querySelector('.wi-back').onclick=function(){ wikiPaint(); };
-  var L=A.querySelector('.wi-hl'); if(!rows.length){ L.innerHTML='<div class="cm-e">아직 기록이 없어요.</div>'; return; }
-  rows.forEach(function(x,i){ var d=document.createElement('div'); d.className='wi-hr';
-    d.innerHTML='<div class="cm-meta">'+(x.user_id?who(x.user_id)+' · ':'')+'<span>'+esc(ago(x.created_at))+'</span>'+(i===0?' · <span>지금 버전</span>':'')+'</div><div class="wi-acts"><button type="button" class="cm-btn2 wi-v">보기</button>'+(i&&me?'<button type="button" class="cm-btn2 wi-r">이 버전으로 되돌리기</button>':'')+'</div><div class="wi-txt" style="display:none" data-notr></div>';
-    d.querySelector('.wi-v').onclick=function(){ var t=d.querySelector('.wi-txt'); if(t.style.display==='none'){ t.innerHTML=wikiHtml(x.body); t.style.display=''; } else t.style.display='none'; };
-    var rb=d.querySelector('.wi-r'); if(rb) rb.onclick=async function(){ var rr=await sb.rpc('ff_wiki_save',{p_game:p.game, p_slug:p.slug, p_title:x.title, p_body:x.body}); if(rr.error){ rb.textContent=errText(rr.error); return; } wikiPaint(); };
-    L.appendChild(d); });
-}
-function wikiStart(){
-  var s=$('#wiki'); if(!s) return;
-  s.querySelector('.wi-tabs').onclick=function(e){ var b=e.target.closest('button[data-g]'); if(!b) return; wiki.game=b.getAttribute('data-g'); wiki.slug=null; [].forEach.call(this.children,function(x){ x.classList.toggle('on',x===b); }); wikiLoad(); };
-  s.querySelector('.wi-b').addEventListener('click',function(e){ var b=e.target.closest('.wi-nav button'); if(!b) return; if(b.getAttribute('data-new')) return wikiPaint('new'); wiki.slug=b.getAttribute('data-s'); wikiPaint(); });
-}
-
 /* ===================== @멘션: 자동완성 · 강조 (알림은 supabase-ff-coin.sql 의 트리거) ===================== */
 function mnHtml(t){ return esc(t).replace(/(^|[\s(])(@[^\s@<>&]{1,24})/g,'$1<b class="mn">$2</b>'); }
 function setMn(el, t){ if(!el) return; if(/@/.test(t||'')) el.innerHTML=mnHtml(t); else el.textContent=t; }
@@ -728,7 +662,7 @@ function annAdmin(){
 async function refreshUser(){
   me=window.FFAuth&&FFAuth.user&&FFAuth.user(); admin=false;
   if(me&&sb){ try{ var r=await sb.rpc('ff_is_admin'); admin=!!(r&&r.data===true); }catch(e){} }
-  paintSend(); setTab(tab); loadAnn(); ranking(); coinDaily(); onlineLoop(); wikiLoad(); if(location.hash==='#coin') setTimeout(openCoin,400);
+  paintSend(); setTab(tab); loadAnn(); ranking(); coinDaily(); onlineLoop(); if(location.hash==='#coin') setTimeout(openCoin,400);
 }
 /* 다른 페이지 · 알림에서 열기: ?post=글번호 , #feedback , #hubnotes */
 function openPostById(id){ id=+id; if(!id) return; bOpen=id; bScroll=true; if(tab!=='board') setTab('board'); else listPosts(); }
@@ -743,7 +677,6 @@ function start(){
   if(location.hash==='#poll') setTimeout(openPolls,400);
   if(tab==='fb'){ setTimeout(scrollToCm,300); } var hb=$('#hubNotesBtn'); if(hb) hb.onclick=function(e){ e.preventDefault(); openHubNotes(); };
   var rf=$('.rk-f'); if(rf) rf.onclick=function(e){ var b=e.target.closest('button'); if(!b) return; rkGame=b.getAttribute('data-g'); [].forEach.call(this.children,function(x){ x.classList.toggle('on',x===b); }); ranking(); };
-  wikiStart();
   var tabs=$('.cm-tabs'); if(tabs) tabs.onclick=function(e){ var b=e.target.closest('button'); if(b) setTab(b.getAttribute('data-t')); };
   var go=function(){ if(!window.FFAuth){ setTimeout(go,200); return; } FFAuth.ready.then(function(){ sb=client(); refreshUser(); FFAuth.onChange(function(){ setTimeout(refreshUser,50); }); }); };
   go();

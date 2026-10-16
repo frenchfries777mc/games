@@ -23,6 +23,7 @@ Frenchfries777 게임 허브 사이트
   supabase-ff-coin.sql          🪙 Hub Coin (매일 출석 +10, 게임 재화로 환전) · @멘션 알림용 SQL (supabase-ff-social.sql 다음에 실행)
                                 게임 쪽: 로그인 뒤 sb.rpc('ff_coin_claim',{p_game:'stickseum'}) → 받은 숫자만큼 재화를 더해요. 환전 비율은 ff_coin_rates 표
   supabase-ff-wiki.sql          📅 출석 7일 보너스 · 코인 선물 · 공략 위키 · 지금 접속 중 SQL (supabase-ff-coin.sql 다음에 실행)
+  wiki/                         📖 공략 위키 사이트 (/games/wiki/). 글 원문은 Supabase ff_wiki, 번역은 wiki/tr/<언어>.json (원문 해시 h 가 맞을 때만 번역을 보여 줘요)
   patchnotes.json               허브 패치노트 (뉴스에 '허브'로 나오고, 뉴스의 '허브 패치노트 →'에서 전체 목록)
 
 [ 플레이 버튼 주소 ]
