@@ -330,17 +330,8 @@ async function feed(){
     L.appendChild(d); });
 }
 
-/* ===================== 랭킹: 이번 주 인기 게임 (ff_week_games) · 게임별 점수 순위 (ff_rank) ===================== */
+/* ===================== 랭킹: 게임별 점수 순위 (ff_rank) ===================== */
 var rkGame='crownenvoy';
-async function weekGames(){
-  var box=$('#weekList'); if(!box||!sb) return;
-  var r=await sb.rpc('ff_week_games'); if(r.error){ box.innerHTML='<div class="cm-e">'+esc(errText(r.error))+'</div>'; return; }
-  var rows=(r.data||[]).filter(function(x){ return GAMES[x.game]; }).sort(function(a,b){ return (b.players-a.players)||(b.last_week-a.last_week); });
-  var top=Math.max(1,Math.max.apply(null,rows.map(function(x){ return x.players; }).concat([0])));
-  box.innerHTML=rows.map(function(x,i){ var G=GAMES[x.game], diff=x.players-(x.last_week||0);
-    return '<div class="wk '+G.cls+'"><span class="no">'+(i+1)+'</span><span class="gn">'+esc(G.name)+'</span><span class="pc">'+esc(F('{0}명',x.players))+
-      (diff?'<small class="'+(diff>0?'up':'dn')+'">'+(diff>0?'▲ ':'▼ ')+Math.abs(diff)+'</small>':'<small>–</small>')+'</span><span class="bar"><u style="width:'+(100*x.players/top).toFixed(1)+'%"></u></span></div>'; }).join('')||'<div class="cm-e">아직 기록이 없어요.</div>';
-}
 async function ranking(){
   var box=$('#rankList'); if(!box||!sb) return; var g=rkGame;
   var r=await sb.from('ff_rank').select('user_id,points,wins,games').eq('game',g).order('points',{ascending:false}).order('wins',{ascending:false}).limit(20);
@@ -443,39 +434,6 @@ async function lfgList(){
     L.appendChild(d); });
 }
 
-/* ===================== 게임 평점 · 한줄평 (게임 소개 칸의 ★ 버튼, supabase-ff-more.sql) ===================== */
-var RCLS={stickseum:'st',crownenvoy:'ce',beaconfall:'bf'}, rsum={};
-function stars(n){ var f=Math.round(n||0), o=''; for(var i=1;i<=5;i++) o+=i<=f?'★':'☆'; return o; }
-async function ratings(){
-  Object.keys(RCLS).forEach(function(g){ var acts=document.querySelector('.game.'+RCLS[g]+' .acts'); if(!acts||acts.querySelector('.rate')) return;
-    var b=document.createElement('button'); b.type='button'; b.className='sub rate'; b.innerHTML='<span class="rs">☆☆☆☆☆</span> <span class="rn" data-notr></span>'; b.onclick=function(){ openRate(g); }; acts.appendChild(b); });
-  if(!sb) return; var r=await sb.rpc('ff_rating_summary'); rsum={}; ((r&&!r.error&&r.data)||[]).forEach(function(x){ rsum[x.game]=x; });
-  Object.keys(RCLS).forEach(function(g){ var b=document.querySelector('.game.'+RCLS[g]+' .rate'); if(!b) return; var x=rsum[g];
-    b.querySelector('.rs').textContent=x?stars(x.avg):'☆☆☆☆☆'; b.querySelector('.rn').textContent=x?(Number(x.avg).toFixed(1)+' ('+x.votes+')'):''; b.title=r&&r.error?errText(r.error):''; });
-}
-async function openRate(g){
-  var el=$('#rateBox'); if(!el){ el=document.createElement('div'); el.id='rateBox'; el.className='hn-bg'; document.body.appendChild(el); el.addEventListener('click',function(e){ if(e.target===el||e.target.closest('.hn-x')) el.style.display='none'; }); }
-  var G=GAMES[g], x=rsum[g];
-  el.innerHTML='<div class="hn-b"><div class="hn-h"><b data-notr>'+esc(G.name)+'</b><button type="button" class="hn-x" aria-label="닫기">×</button></div>'+
-    '<div class="rt-sum"><span class="rt-big" data-notr>'+(x?Number(x.avg).toFixed(1):'–')+'</span><span class="rt-st" data-notr>'+stars(x&&x.avg)+'</span><span class="cm-meta">'+esc(F('{0}명이 평가했어요',x?x.votes:0))+'</span></div>'+
-    '<form class="cm-w rt-w"><div class="rt-pick">'+[1,2,3,4,5].map(function(n){ return '<button type="button" data-s="'+n+'">☆</button>'; }).join('')+'</div><input name="v" maxlength="100" placeholder="한줄평 (100자까지, 선택)"><div class="cm-m"></div><div class="cm-acts"><button class="cm-btn">평가 남기기</button></div></form><div class="rt-list"></div></div>';
-  el.style.display='flex';
-  var pick=0, f=el.querySelector('.rt-w'), bs=f.querySelectorAll('[data-s]');
-  function paint(){ [].forEach.call(bs,function(b){ var n=+b.getAttribute('data-s'); b.textContent=n<=pick?'★':'☆'; b.classList.toggle('on',n<=pick); }); }
-  [].forEach.call(bs,function(b){ b.onclick=function(){ pick=+b.getAttribute('data-s'); paint(); }; });
-  if(me){ var mine=await sb.from('ff_ratings').select('stars,review').eq('game',g).eq('user_id',me.id).limit(1); var m0=mine&&mine.data&&mine.data[0]; if(m0){ pick=m0.stars; f.v.value=m0.review||''; paint(); } }
-  f.onsubmit=async function(e){ e.preventDefault(); if(!me) return login(); var m=f.querySelector('.cm-m'); if(!pick){ m.textContent='별을 눌러 점수를 골라 주세요.'; return; }
-    var r=await sb.from('ff_ratings').upsert({game:g, user_id:me.id, stars:pick, review:f.v.value.trim().slice(0,100), updated_at:new Date().toISOString()});
-    if(r.error){ m.textContent=errText(r.error); return; } m.textContent='고마워요!'; hubSync(); await ratings(); openRate(g); };
-  var L=el.querySelector('.rt-list'), r=await sb.from('ff_ratings').select('user_id,stars,review,updated_at').eq('game',g).order('updated_at',{ascending:false}).limit(30);
-  if(r.error){ L.innerHTML='<div class="cm-e">'+esc(errText(r.error))+'</div>'; return; }
-  var rows=(r.data||[]).filter(function(y){ return !blocked(y.user_id); }); await loadNames(rows.map(function(y){ return y.user_id; }));
-  L.innerHTML=rows.length?'':'<div class="cm-e">아직 평가가 없어요. 첫 평가를 남겨 보세요!</div>';
-  rows.forEach(function(y){ var d=document.createElement('div'); d.className='cm-cm'; d.innerHTML='<div class="cm-meta"><span class="rt-st" data-notr>'+stars(y.stars)+'</span> '+who(y.user_id)+' · <span>'+esc(ago(y.updated_at))+'</span></div><div class="cm-ct" data-notr></div>'; d.querySelector('.cm-ct').textContent=y.review||''; if(!y.review) d.querySelector('.cm-ct').remove();
-    if(admin&&(!me||me.id!==y.user_id)){ var x2=document.createElement('button'); x2.className='cm-x'; x2.title='삭제'; x2.textContent='×'; x2.onclick=async function(){ await sb.from('ff_ratings').delete().eq('game',g).eq('user_id',y.user_id); await ratings(); openRate(g); }; d.appendChild(x2); }
-    L.appendChild(d); });
-}
-
 /* ---- 피드백 · 버그 신고 ---- */
 var KIND={bug:'🐞 버그',idea:'💡 아이디어',other:'💬 기타'}, GN={hub:'허브',stickseum:'Stickseum',crownenvoy:'Crown Envoy',beaconfall:'Beaconfall'};
 async function feedback(){
@@ -556,7 +514,7 @@ function annAdmin(){
 async function refreshUser(){
   me=window.FFAuth&&FFAuth.user&&FFAuth.user(); admin=false;
   if(me&&sb){ try{ var r=await sb.rpc('ff_is_admin'); admin=!!(r&&r.data===true); }catch(e){} }
-  paintSend(); setTab(tab); loadAnn(); weekGames(); ranking(); ratings();
+  paintSend(); setTab(tab); loadAnn(); ranking();
 }
 /* 다른 페이지 · 알림에서 열기: ?post=글번호 , #feedback , #hubnotes */
 function openPostById(id){ id=+id; if(!id) return; bOpen=id; bScroll=true; if(tab!=='board') setTab('board'); else listPosts(); }

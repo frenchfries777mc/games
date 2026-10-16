@@ -84,6 +84,7 @@ if(document.readyState==='loading') document.addEventListener('DOMContentLoaded'
   .logo b{color:var(--fry); font-weight:700;}
   header nav a{color:var(--dim); text-decoration:none; font-size:15px; margin-left:18px;}
   header nav a:hover{color:var(--text);}
+  header .right{flex:0 0 auto;} header .ffa-wrap{white-space:nowrap;} @media(max-width:1180px){ header nav a{margin-left:11px; font-size:14px;} .swr{margin-left:14px;} } @media(max-width:960px) and (min-width:521px){ header nav{display:none;} }
   .swr{margin:0 auto 0 20px;} header nav{white-space:nowrap;} @media(max-width:1400px){ header nav a{margin-left:14px;} header nav a[href^="https://github"]{display:none;} }
   .sw{display:inline-flex; padding:3px; border-radius:99px; border:1px solid var(--line); background:var(--panel);}
   .sw a{font-family:'Oswald',sans-serif; font-weight:600; font-size:13.5px; letter-spacing:.06em; text-transform:uppercase; color:var(--dim); text-decoration:none; padding:4px 13px; border-radius:99px; transition:color .15s,background .15s;}
@@ -270,7 +271,7 @@ if(document.readyState==='loading') document.addEventListener('DOMContentLoaded'
   .hn-h{display:flex; justify-content:space-between; align-items:center; font-size:19px; margin-bottom:6px;} .hn-x{background:none; border:0; color:var(--dim); font-size:24px; cursor:pointer; line-height:1;}
   .hn-n{border-top:1px solid var(--line); padding:12px 0 6px;} .hn-n h3{margin:4px 0 6px; font-size:16.5px;} .hn-n ul{margin:0; padding-left:18px; color:#b7bfcf; font-size:14.5px;} .hn-n li{margin:3px 0;}
   #hubNotesBtn{margin-left:6px; font-size:inherit;}
-  .rk-g{display:grid; grid-template-columns:1fr 1.3fr; gap:14px;} .rk-c{background:var(--panel); border:1px solid var(--line); border-radius:16px; padding:16px 18px;}
+  .rk-g{display:grid; grid-template-columns:1fr; gap:14px;} .rk-c{background:var(--panel); border:1px solid var(--line); border-radius:16px; padding:16px 18px;}
   .rk-c h3{margin:0 0 4px; font-size:18px;} .rk-n{color:var(--dim); font-size:13px; margin:0 0 10px;} .rk-f{margin:6px 0 10px; display:flex; flex-wrap:wrap; gap:6px;} .rk-f button{padding:6px 12px; font-size:13.5px;}
   .wk{display:grid; grid-template-columns:28px 1fr auto; gap:4px 10px; align-items:center; padding:9px 4px; border-top:1px solid var(--line);} .wk:first-child{border-top:0;}
   .wk .no{font-family:'Oswald',sans-serif; font-size:22px; color:var(--dim); text-align:center;} .wk:first-child .no{color:var(--fry);}
@@ -317,7 +318,7 @@ if(document.readyState==='loading') document.addEventListener('DOMContentLoaded'
 <div class="wrap">
   <header>
     <a class="logo" href="./"><span class="fry">🍟</span><span>FRENCHFRIES<b>777</b></span></a>
-    <div class="swr"><span class="sw" data-notr><a class="on" href="./" aria-current="page">Games</a><a href="https://frenchfries777mc.github.io/educations/">Educations</a></span></div>
+    <div class="swr"><span class="sw" data-notr><a class="on" href="./" aria-current="page">Games</a><a href="https://frenchfries777mc.github.io/educations/">Educations</a><a href="https://frenchfries777mc.github.io/tools/">Tools</a></span></div>
     <div class="right"><nav><a href="#games">게임</a><a href="#ranking">랭킹</a><a href="#community">커뮤니티</a><a href="#news">뉴스</a><a href="https://github.com/frenchfries777mc" target="_blank" rel="noopener">GitHub</a></nav><span data-lang-slot></span><span data-ff-account></span></div>
   </header>
   <div id="annBar"></div>
@@ -402,7 +403,6 @@ if(document.readyState==='loading') document.addEventListener('DOMContentLoaded'
   <section class="rk" id="ranking">
     <h2 class="sh">랭킹</h2>
     <div class="rk-g">
-      <div class="rk-c"><h3>🔥 이번 주 인기 게임</h3><p class="rk-n">최근 7일 동안 게임을 한 사람 수예요.</p><div id="weekList"></div></div>
       <div class="rk-c"><h3>🏆 게임 랭킹</h3><div class="cm-f rk-f"><button data-g="crownenvoy" class="on">Crown Envoy</button><button data-g="stickseum">Stickseum</button><button data-g="beaconfall">Beaconfall</button></div><div id="rankList"></div></div>
     </div>
   </section>
