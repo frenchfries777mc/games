@@ -3,6 +3,64 @@
   {
    "date": "2026-10-16",
    "build": "",
+   "title": "위키 사이트",
+   "items": [
+    "📖 공략 위키를 별도 사이트로 분리 (frenchfries777mc.github.io/games/wiki)",
+    "위키 글 64개로 확대 (Stickseum 20 · Crown Envoy 21 · Beaconfall 23), 게임 코드 기준으로 틀린 내용 수정",
+    "위키 글 6개 언어 번역 추가",
+    "위키 검색 · 목차 · 미리보기 · 이전/다음 글 추가"
+   ],
+   "tr": {
+    "en": {
+     "title": "Wiki site",
+     "items": [
+      "📖 The guide wiki moved to its own site (frenchfries777mc.github.io/games/wiki)",
+      "Wiki grown to 64 pages (Stickseum 20 · Crown Envoy 21 · Beaconfall 23), errors fixed against the game code",
+      "Wiki pages translated into 6 languages",
+      "Wiki search, table of contents, preview and previous/next page"
+     ]
+    },
+    "es": {
+     "title": "Sitio de la wiki",
+     "items": [
+      "📖 La wiki de guías tiene su propio sitio (frenchfries777mc.github.io/games/wiki)",
+      "La wiki crece a 64 páginas (Stickseum 20 · Crown Envoy 21 · Beaconfall 23), con errores corregidos según el código del juego",
+      "Páginas de la wiki traducidas a 6 idiomas",
+      "Búsqueda, índice, vista previa y página anterior/siguiente en la wiki"
+     ]
+    },
+    "fr": {
+     "title": "Site du wiki",
+     "items": [
+      "📖 Le wiki des guides a son propre site (frenchfries777mc.github.io/games/wiki)",
+      "Le wiki passe à 64 pages (Stickseum 20 · Crown Envoy 21 · Beaconfall 23), erreurs corrigées d’après le code des jeux",
+      "Pages du wiki traduites en 6 langues",
+      "Recherche, sommaire, aperçu et page précédente/suivante dans le wiki"
+     ]
+    },
+    "de": {
+     "title": "Wiki-Seite",
+     "items": [
+      "📖 Das Guide-Wiki hat eine eigene Seite (frenchfries777mc.github.io/games/wiki)",
+      "Wiki auf 64 Seiten erweitert (Stickseum 20 · Crown Envoy 21 · Beaconfall 23), Fehler anhand des Spielcodes korrigiert",
+      "Wiki-Seiten in 6 Sprachen übersetzt",
+      "Wiki-Suche, Inhaltsverzeichnis, Vorschau und vorherige/nächste Seite"
+     ]
+    },
+    "ja": {
+     "title": "Wikiサイト",
+     "items": [
+      "📖 攻略Wikiを専用サイトに分離 (frenchfries777mc.github.io/games/wiki)",
+      "Wikiの記事を64本に拡充 (Stickseum 20・Crown Envoy 21・Beaconfall 23)、ゲームのコードに基づいて誤りを修正",
+      "Wikiの記事を6言語に翻訳",
+      "Wiki検索・目次・プレビュー・前後の記事を追加"
+     ]
+    }
+   }
+  },
+  {
+   "date": "2026-10-16",
+   "build": "",
    "title": "출석 달력 · 코인 선물 · 공략 위키",
    "items": [
     "📅 출석 달력 추가 (이번 달 출석 도장, 7일 연속 출석마다 보너스 20코인)",
