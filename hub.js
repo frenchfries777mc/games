@@ -1,6 +1,6 @@
 /* Frenchfries777 허브: 커뮤니티(게시판 · 채팅 · 피드백/버그 신고)와 아래쪽 뉴스(세 게임의 패치노트)
    글자는 한국어로 쓰고, 허브의 번역 스크립트(<script id="i18n">)가 다른 언어로 바꿔요. 사람들이 쓴 글은 data-notr 로 번역하지 않아요.
-   필요한 SQL: supabase-ff-hub.sql, supabase-ff-images.sql, supabase-ff-social.sql, supabase-ff-extra.sql, supabase-ff-more.sql, supabase-ff-react.sql, supabase-ff-coin.sql (+ crownenvoy/supabase-ff-rank.sql) */
+   필요한 SQL: supabase-ff-hub.sql, supabase-ff-images.sql, supabase-ff-social.sql, supabase-ff-extra.sql, supabase-ff-more.sql, supabase-ff-react.sql, supabase-ff-coin.sql, supabase-ff-wiki.sql (+ crownenvoy/supabase-ff-rank.sql) */
 (function(){
 'use strict';
 var SI=window.SI18N||{lang:'ko',F:function(t){ var a=arguments; return String(t).replace(/\{(\d)\}/g,function(_,n){ return a[+n+1]; }); }};
@@ -437,7 +437,7 @@ async function lfgList(){
 /* ===================== Hub Coin: 매일 출석 +10 · 게임 재화로 환전 (supabase-ff-coin.sql) ===================== */
 var coin={n:null, streak:0, today:false, err:''}, UNIT={gold:'골드',coin:'코인',coins:'코인'};
 function unitName(u){ var k=UNIT[u]||u; return SI.T?SI.T(k):k; }
-function coinPop(n){ var el=document.createElement('div'); el.className='coin-pop'; el.innerHTML='🪙 <b data-notr>+'+n+'</b> Hub Coin'; document.body.appendChild(el); setTimeout(function(){ el.classList.add('go'); },30); setTimeout(function(){ el.remove(); },2600); }
+function coinPop(n){ var el=document.createElement('div'); el.className='coin-pop'; el.innerHTML='🪙 <b data-notr>+'+n+'</b> Hub Coin'+(n>10?' <span class="cp-b">🔥 7일 연속 보너스!</span>':''); document.body.appendChild(el); setTimeout(function(){ el.classList.add('go'); },30); setTimeout(function(){ el.remove(); },2600); }
 async function coinDaily(){
   coin={n:null, streak:0, today:false, err:''}; paintCoin(); if(!me||!sb) return;
   var r=await sb.rpc('ff_coin_daily');
@@ -450,8 +450,8 @@ function paintCoin(){
   if(!me){ b.innerHTML='<span class="cb-i">🪙</span><span class="cb-t"><b>Hub Coin</b><span class="cb-s">로그인하면 매일 10 Hub Coin을 받아요</span></span><button type="button" class="cm-btn cb-go">로그인</button>'; b.querySelector('.cb-go').onclick=login; return; }
   if(coin.err){ b.innerHTML='<span class="cb-i">🪙</span><span class="cb-t"><b>Hub Coin</b><span class="cb-s">'+esc(coin.err)+'</span></span>'; return; }
   b.innerHTML='<span class="cb-i">🪙</span><span class="cb-t"><b>Hub Coin <span class="cb-n" data-notr>'+(coin.n==null?'…':coin.n)+'</span></b>'+
-    '<span class="cb-s">'+(coin.today?'<span>✓ 오늘 출석 완료</span>':'')+(coin.streak>1?' · <span>'+esc(F('{0}일 연속',coin.streak))+'</span>':'')+'</span></span><button type="button" class="cm-btn cb-go">환전하기</button>';
-  b.querySelector('.cb-go').onclick=openCoin;
+    '<span class="cb-s">'+(coin.today?'<span>✓ 오늘 출석 완료</span>':'')+(coin.streak>1?' · <span>'+esc(F('{0}일 연속',coin.streak))+'</span>':'')+'</span></span><button type="button" class="cm-btn2 cb-cal">📅 달력</button><button type="button" class="cm-btn cb-go">환전하기</button>';
+  b.querySelector('.cb-go').onclick=openCoin; b.querySelector('.cb-cal').onclick=function(){ openCal(); };
 }
 async function openCoin(){
   if(!me) return login();
@@ -480,11 +480,135 @@ async function openCoin(){
       if(r.error){ m.textContent=/not enough/i.test(r.error.message||'')?'코인이 모자라요.':errText(r.error); return; }
       var y=(r.data||[])[0]||{}; coin.n=y.coins; paintCoin(); openCoin().then(function(){ var m2=$('#coinBox .cx-wait'); if(m2) m2.insertAdjacentHTML('afterbegin','<div class="cx-ok">'+esc(F('{0}에 들어가면 받아요: {1} {2}',G.name,y.amount,unitName(x.unit)))+'</div>'); }); };
     L.appendChild(d); });
+  L.appendChild(giftForm());
   var w=await sb.from('ff_coin_out').select('game,amount').eq('claimed',false), W=el.querySelector('.cx-wait'), sum={};
   ((w&&w.data)||[]).forEach(function(z){ sum[z.game]=(sum[z.game]||0)+z.amount; });
   W.innerHTML=Object.keys(sum).map(function(g){ var u=(rates.filter(function(x){ return x.game===g; })[0]||{}).unit||''; return '<div class="cx-pend">'+esc(F('{0} 접속하면 받을 {1}: {2}',(GAMES[g]||{name:g}).name,unitName(u),sum[g]))+'</div>'; }).join('');
-  var lg=await sb.from('ff_coin_log').select('delta,reason,game,created_at').order('created_at',{ascending:false}).limit(12), LG=el.querySelector('.cx-log');
-  var rows=(lg&&lg.data)||[]; LG.innerHTML=rows.length?rows.map(function(z){ return '<div class="cx-l"><span>'+(z.reason==='daily'?'📅 출석':z.reason==='exchange'?'🔁 '+esc(F('{0} 환전',(GAMES[z.game]||{name:z.game}).name)):'🎁 관리자')+'</span><span class="cx-d '+(z.delta>0?'up':'dn')+'" data-notr>'+(z.delta>0?'+':'')+z.delta+'</span><small>'+esc(ago(z.created_at))+'</small></div>'; }).join(''):'<div class="cm-e">아직 기록이 없어요.</div>';
+  var lg=await sb.from('ff_coin_log').select('delta,reason,game,other_id,created_at').order('created_at',{ascending:false}).limit(12), LG=el.querySelector('.cx-log');
+  var rows=(lg&&lg.data)||[]; await loadNames(rows.map(function(z){ return z.other_id; }).filter(Boolean)); LG.innerHTML=rows.length?rows.map(function(z){ return '<div class="cx-l"><span>'+(z.reason==='daily'?'📅 출석':z.reason==='streak'?'🔥 7일 연속 보너스':z.reason==='gift_in'?'🎁 '+esc(F('{0}님에게 받음',names[z.other_id]||'???')):z.reason==='gift_out'?'🎁 '+esc(F('{0}님에게 보냄',names[z.other_id]||'???')):z.reason==='exchange'?'🔁 '+esc(F('{0} 환전',(GAMES[z.game]||{name:z.game}).name)):'🎁 관리자')+'</span><span class="cx-d '+(z.delta>0?'up':'dn')+'" data-notr>'+(z.delta>0?'+':'')+z.delta+'</span><small>'+esc(ago(z.created_at))+'</small></div>'; }).join(''):'<div class="cm-e">아직 기록이 없어요.</div>';
+}
+
+/* ===================== 출석 달력 (ff_coin_log 의 daily 기록, 7일 연속마다 +20) ===================== */
+var calM=null;
+function kstDay(t){ return new Date(Date.parse(t)+9*3600e3).toISOString().slice(0,10); }
+async function openCal(off){
+  if(!me) return login();
+  var now=new Date(Date.now()+9*3600e3); if(calM==null||off==null) calM={y:now.getUTCFullYear(), m:now.getUTCMonth()}; else { calM.m+=off; if(calM.m<0){ calM.m=11; calM.y--; } if(calM.m>11){ calM.m=0; calM.y++; } }
+  var el=$('#calBox'); if(!el){ el=document.createElement('div'); el.id='calBox'; el.className='hn-bg'; document.body.appendChild(el); el.addEventListener('click',function(e){ if(e.target===el||e.target.closest('.hn-x')) el.style.display='none'; var b=e.target.closest('[data-cm]'); if(b) openCal(+b.getAttribute('data-cm')); }); }
+  var y=calM.y, m=calM.m, first=new Date(Date.UTC(y,m,1)), days=new Date(Date.UTC(y,m+1,0)).getUTCDate();
+  var from=new Date(Date.UTC(y,m,1)-9*3600e3).toISOString(), to=new Date(Date.UTC(y,m+1,1)-9*3600e3).toISOString();
+  el.style.display='flex';
+  el.innerHTML='<div class="hn-b cal-b"><div class="hn-h"><b>📅 출석 달력</b><button type="button" class="hn-x" aria-label="닫기">×</button></div><div class="cm-e">불러오는 중…</div></div>';
+  var r=await sb.from('ff_coin_log').select('reason,created_at').in('reason',['daily','streak']).gte('created_at',from).lt('created_at',to).limit(100);
+  var got={}, bon={}; ((r&&r.data)||[]).forEach(function(z){ var d=+kstDay(z.created_at).slice(8,10); if(z.reason==='daily') got[d]=1; else bon[d]=1; });
+  var today=(now.getUTCFullYear()===y&&now.getUTCMonth()===m)?now.getUTCDate():0, cells='', n=Object.keys(got).length;
+  for(var i=0;i<first.getUTCDay();i++) cells+='<span class="cal-d e"></span>';
+  for(var d=1;d<=days;d++) cells+='<span class="cal-d'+(got[d]?' ok':'')+(d===today?' td':'')+(bon[d]?' bn':'')+'" data-notr><i>'+d+'</i>'+(bon[d]?'🔥':got[d]?'🪙':'')+'</span>';
+  var left=7-((coin.streak||0)%7);
+  el.querySelector('.hn-b').innerHTML='<div class="hn-h"><b>📅 출석 달력</b><button type="button" class="hn-x" aria-label="닫기">×</button></div>'+
+    '<div class="cal-nav"><button type="button" class="cm-btn2" data-cm="-1">‹</button><b data-notr>'+y+'. '+(m+1)+'</b><button type="button" class="cm-btn2" data-cm="1">›</button></div>'+
+    '<div class="cal-g">'+['일','월','화','수','목','금','토'].map(function(w){ return '<span class="cal-w">'+w+'</span>'; }).join('')+cells+'</div>'+
+    '<div class="cal-s"><span>'+esc(F('이번 달 출석 {0}일',n))+'</span><span>'+esc(F('{0}일 연속',coin.streak||0))+'</span></div>'+
+    '<div class="cal-tip">'+esc(F('7일 연속 출석하면 보너스 +20! (다음 보너스까지 {0}일)',left))+'</div>';
+}
+
+/* ===================== Hub Coin 선물 (supabase-ff-wiki.sql 의 ff_coin_gift) ===================== */
+function giftForm(){
+  var fr=[]; try{ fr=((window.FFAuth&&FFAuth.friends&&FFAuth.friends())||[]).filter(function(f){ return f.status==='accepted'; }); }catch(e){}
+  var d=document.createElement('form'); d.className='cx-r cx-gift';
+  d.innerHTML='<div class="cx-g"><b>🎁 친구에게 보내기</b><span class="cx-rt">하루 100개까지</span></div>'+
+    (fr.length?'<div class="cx-in"><select class="cx-fr">'+fr.map(function(f){ return '<option value="'+esc(f.otherId)+'" data-notr>'+esc(f.name)+'</option>'; }).join('')+'</select><input type="number" inputmode="numeric" min="1" max="100" step="1" value="10"></div><div class="cx-go"><span></span><button class="cm-btn">보내기</button></div><div class="cm-m"></div>'
+      :'<div class="cm-e">친구를 추가하면 코인을 보낼 수 있어요.</div>');
+  d.onsubmit=async function(e){ e.preventDefault(); var m=d.querySelector('.cm-m'), to=d.querySelector('.cx-fr').value, n=Math.floor(+d.querySelector('input').value||0);
+    if(n<1||n>100){ m.textContent='1~100개 사이로 적어 주세요.'; return; } if(n>(coin.n||0)){ m.textContent='코인이 모자라요.'; return; }
+    var r=await sb.rpc('ff_coin_gift',{p_to:to, p_coins:n});
+    if(r.error){ var t=r.error.message||''; m.textContent=/daily gift/i.test(t)?'오늘은 더 보낼 수 없어요. (하루 100개까지)':/not enough/i.test(t)?'코인이 모자라요.':/not friends/i.test(t)?'친구에게만 보낼 수 있어요.':errText(r.error); return; }
+    coin.n=r.data; paintCoin(); var nm=d.querySelector('.cx-fr').selectedOptions[0].textContent;
+    openCoin().then(function(){ var w=$('#coinBox .cx-wait'); if(w) w.insertAdjacentHTML('afterbegin','<div class="cx-ok">'+esc(F('{0}님에게 {1}개를 보냈어요.',nm,n))+'</div>'); }); };
+  return d;
+}
+
+/* ===================== 지금 접속 중 (ff_online · ff_online_friends · ff_hub_ping) ===================== */
+var onlT=null, PLACE={hub:'허브'};
+async function online(){
+  var b=$('#onlineBar'); if(!b||!sb) return;
+  if(me&&document.visibilityState==='visible'){ try{ await sb.rpc('ff_hub_ping'); }catch(e){} }
+  var r=await sb.rpc('ff_online'); if(r.error){ b.innerHTML=''; return; }
+  var c={}; (r.data||[]).forEach(function(x){ c[x.place]=x.people; });
+  var html='<span class="on-dot"></span><b>'+esc(F('지금 {0}명 접속 중',c.all||0))+'</b>';
+  ['stickseum','crownenvoy','beaconfall','hub'].forEach(function(g){ if(c[g]) html+='<span class="on-c">'+(g==='hub'?'<span>허브</span>':'<span data-notr>'+esc(GAMES[g].name)+'</span>')+' <b data-notr>'+c[g]+'</b></span>'; });
+  if(me){ var f=await sb.rpc('ff_online_friends'), rows=((f&&!f.error&&f.data)||[]).filter(function(x){ return !blocked(x.user_id); });
+    if(rows.length){ await loadNames(rows.map(function(x){ return x.user_id; }));
+      html+='<span class="on-f"><span>친구</span> '+rows.slice(0,8).map(function(x){ var g=GAMES[x.place]; return '<a class="who on-p" data-uid="'+esc(x.user_id)+'" data-notr title="'+esc(g?g.name:'Hub')+'">'+esc(names[x.user_id]||'???')+'<small>'+esc(g?g.name:'Hub')+'</small></a>'; }).join('')+(rows.length>8?'<span>+'+(rows.length-8)+'</span>':'')+'</span>'; } }
+  b.innerHTML=html;
+}
+function onlineLoop(){ clearInterval(onlT); online(); onlT=setInterval(function(){ if(document.visibilityState==='visible') online(); },60000); }
+document.addEventListener('visibilitychange',function(){ if(document.visibilityState==='visible') online(); });
+
+/* ===================== 게임 공략 위키 (ff_wiki · ff_wiki_hist · ff_wiki_save) ===================== */
+var wiki={game:'stickseum', slug:null, pages:[], err:''};
+function wikiInline(s){ return s.replace(/\*\*([^*]+)\*\*/g,'<b>$1</b>'); }
+function wikiHtml(t){ var out='', list=null, para=[];
+  function flushP(){ if(para.length){ out+='<p>'+para.join('<br>')+'</p>'; para=[]; } }
+  function flushL(){ if(list){ out+='</'+list+'>'; list=null; } }
+  String(t||'').split('\n').forEach(function(raw){ var l=raw.replace(/\s+$/,''), e=wikiInline(esc(l)), m;
+    if(/^##\s+/.test(l)){ flushP(); flushL(); out+='<h3>'+wikiInline(esc(l.replace(/^##\s+/,'')))+'</h3>'; }
+    else if((m=/^\s*-\s+(.*)$/.exec(l))){ flushP(); if(list!=='ul'){ flushL(); out+='<ul>'; list='ul'; } out+='<li>'+wikiInline(esc(m[1]))+'</li>'; }
+    else if((m=/^\s*\d+\.\s+(.*)$/.exec(l))){ flushP(); if(list!=='ol'){ flushL(); out+='<ol>'; list='ol'; } out+='<li>'+wikiInline(esc(m[1]))+'</li>'; }
+    else if(!l.trim()){ flushP(); flushL(); }
+    else { flushL(); para.push(e); } });
+  flushP(); flushL(); return out; }
+async function wikiLoad(){
+  var box=$('#wiki .wi-b'); if(!box) return; if(!sb){ box.innerHTML='<div class="cm-e">불러오는 중…</div>'; return; }
+  var r=await sb.from('ff_wiki').select('game,slug,title,sort,updated_at').eq('game',wiki.game).order('sort').order('title').limit(200);
+  if(r.error){ box.innerHTML='<div class="cm-e">'+esc(errText(r.error))+'</div>'; return; }
+  wiki.pages=r.data||[]; if(!wiki.slug||!wiki.pages.some(function(p){ return p.slug===wiki.slug; })) wiki.slug=wiki.pages[0]?wiki.pages[0].slug:null;
+  wikiPaint();
+}
+async function wikiPaint(mode){
+  var box=$('#wiki .wi-b'); if(!box) return;
+  var nav='<nav class="wi-nav">'+wiki.pages.map(function(p){ return '<button type="button" data-s="'+esc(p.slug)+'" class="'+(p.slug===wiki.slug?'on':'')+'" data-notr>'+esc(p.title)+'</button>'; }).join('')+
+    '<button type="button" class="wi-new" data-new="1">＋ 새 글</button></nav>';
+  box.innerHTML=nav+'<article class="wi-page"><div class="cm-e">불러오는 중…</div></article>';
+  var A=box.querySelector('.wi-page');
+  if(mode==='new') return wikiEdit(A,null);
+  if(!wiki.slug){ A.innerHTML='<div class="cm-e">아직 글이 없어요. 첫 글을 써 보세요!</div>'; return; }
+  var r=await sb.from('ff_wiki').select('game,slug,title,body,updated_by,updated_at').eq('game',wiki.game).eq('slug',wiki.slug).limit(1), p=r&&r.data&&r.data[0];
+  if(!p){ A.innerHTML='<div class="cm-e">'+esc(r&&r.error?errText(r.error):'글을 찾지 못했어요.')+'</div>'; return; }
+  if(p.updated_by) await loadNames([p.updated_by]);
+  A.innerHTML='<div class="wi-h"><h3 data-notr>'+esc(p.title)+'</h3><div class="wi-acts"><button type="button" class="cm-btn2 wi-ed">✏️ 고치기</button><button type="button" class="cm-btn2 wi-hi">🕘 기록</button>'+(admin?'<button type="button" class="cm-btn2 wi-del">삭제</button>':'')+'</div></div>'+
+    '<div class="wi-txt" data-notr>'+wikiHtml(p.body)+'</div><div class="cm-meta wi-meta">'+(p.updated_by?who(p.updated_by)+' · ':'')+'<span>'+esc(F('{0} 수정',ago(p.updated_at)))+'</span></div>';
+  A.querySelector('.wi-ed').onclick=function(){ if(!me) return login(); wikiEdit(A,p); };
+  A.querySelector('.wi-hi').onclick=function(){ wikiHist(A,p); };
+  var del=A.querySelector('.wi-del'); if(del) del.onclick=async function(){ if(!del.dataset.s){ del.dataset.s=1; del.textContent='정말 삭제할까요?'; return; } await sb.from('ff_wiki').delete().eq('game',p.game).eq('slug',p.slug); wiki.slug=null; wikiLoad(); };
+}
+function wikiEdit(A,p){
+  if(!me) return login();
+  A.innerHTML='<form class="cm-w wi-w"><input name="t" maxlength="60" placeholder="제목" required><textarea name="b" rows="16" maxlength="20000" placeholder="내용"></textarea>'+
+    '<div class="wi-help">## 소제목 · - 목록 · 1. 순서 목록 · **굵게**</div><div class="cm-m"></div><div class="cm-acts"><button type="button" class="cm-btn2 wi-cancel">취소</button><button class="cm-btn">저장</button></div></form>';
+  var f=A.querySelector('form'); f.t.value=p?p.title:''; f.b.value=p?p.body:'';
+  f.querySelector('.wi-cancel').onclick=function(){ wikiPaint(); };
+  f.onsubmit=async function(e){ e.preventDefault(); var m=f.querySelector('.cm-m'), t=f.t.value.trim(); if(!t){ m.textContent='제목을 적어 주세요.'; return; }
+    var slug=p?p.slug:('p'+Date.now().toString(36));
+    var r=await sb.rpc('ff_wiki_save',{p_game:wiki.game, p_slug:slug, p_title:t, p_body:f.b.value});
+    if(r.error){ m.textContent=errText(r.error); return; } wiki.slug=slug; hubSync(); wikiLoad(); };
+}
+async function wikiHist(A,p){
+  var r=await sb.from('ff_wiki_hist').select('id,title,body,user_id,created_at').eq('game',p.game).eq('slug',p.slug).order('created_at',{ascending:false}).limit(20);
+  var rows=(r&&r.data)||[]; await loadNames(rows.map(function(x){ return x.user_id; }));
+  A.innerHTML='<div class="wi-h"><h3>🕘 고친 기록</h3><div class="wi-acts"><button type="button" class="cm-btn2 wi-back">← 글로 돌아가기</button></div></div><div class="wi-hl"></div>';
+  A.querySelector('.wi-back').onclick=function(){ wikiPaint(); };
+  var L=A.querySelector('.wi-hl'); if(!rows.length){ L.innerHTML='<div class="cm-e">아직 기록이 없어요.</div>'; return; }
+  rows.forEach(function(x,i){ var d=document.createElement('div'); d.className='wi-hr';
+    d.innerHTML='<div class="cm-meta">'+(x.user_id?who(x.user_id)+' · ':'')+'<span>'+esc(ago(x.created_at))+'</span>'+(i===0?' · <span>지금 버전</span>':'')+'</div><div class="wi-acts"><button type="button" class="cm-btn2 wi-v">보기</button>'+(i&&me?'<button type="button" class="cm-btn2 wi-r">이 버전으로 되돌리기</button>':'')+'</div><div class="wi-txt" style="display:none" data-notr></div>';
+    d.querySelector('.wi-v').onclick=function(){ var t=d.querySelector('.wi-txt'); if(t.style.display==='none'){ t.innerHTML=wikiHtml(x.body); t.style.display=''; } else t.style.display='none'; };
+    var rb=d.querySelector('.wi-r'); if(rb) rb.onclick=async function(){ var rr=await sb.rpc('ff_wiki_save',{p_game:p.game, p_slug:p.slug, p_title:x.title, p_body:x.body}); if(rr.error){ rb.textContent=errText(rr.error); return; } wikiPaint(); };
+    L.appendChild(d); });
+}
+function wikiStart(){
+  var s=$('#wiki'); if(!s) return;
+  s.querySelector('.wi-tabs').onclick=function(e){ var b=e.target.closest('button[data-g]'); if(!b) return; wiki.game=b.getAttribute('data-g'); wiki.slug=null; [].forEach.call(this.children,function(x){ x.classList.toggle('on',x===b); }); wikiLoad(); };
+  s.querySelector('.wi-b').addEventListener('click',function(e){ var b=e.target.closest('.wi-nav button'); if(!b) return; if(b.getAttribute('data-new')) return wikiPaint('new'); wiki.slug=b.getAttribute('data-s'); wikiPaint(); });
 }
 
 /* ===================== @멘션: 자동완성 · 강조 (알림은 supabase-ff-coin.sql 의 트리거) ===================== */
@@ -596,11 +720,11 @@ function annAdmin(){
 async function refreshUser(){
   me=window.FFAuth&&FFAuth.user&&FFAuth.user(); admin=false;
   if(me&&sb){ try{ var r=await sb.rpc('ff_is_admin'); admin=!!(r&&r.data===true); }catch(e){} }
-  paintSend(); setTab(tab); loadAnn(); ranking(); coinDaily();
+  paintSend(); setTab(tab); loadAnn(); ranking(); coinDaily(); onlineLoop(); wikiLoad(); if(location.hash==='#coin') setTimeout(openCoin,400);
 }
 /* 다른 페이지 · 알림에서 열기: ?post=글번호 , #feedback , #hubnotes */
 function openPostById(id){ id=+id; if(!id) return; bOpen=id; bScroll=true; if(tab!=='board') setTab('board'); else listPosts(); }
-window.FFHub={ openPost:function(id){ openPostById(id); scrollToCm(); }, tab:function(t){ setTab(t); scrollToCm(); } };
+window.FFHub={ openPost:function(id){ openPostById(id); scrollToCm(); }, tab:function(t){ setTab(t); scrollToCm(); }, coin:function(){ openCoin(); } };
 function fromUrl(){
   var m=/[?&]post=(\d+)/.exec(location.search); if(m){ bOpen=+m[1]; bScroll=true; tab='board'; try{ history.replaceState(null,'',location.pathname+'#community'); }catch(e){} }
   if(location.hash==='#feedback') tab='fb'; else if(location.hash==='#lfg') tab='lfg'; else if(location.hash==='#gallery') tab='gal'; else if(location.hash==='#poll') tab='poll'; else if(location.hash==='#friends') tab='feed'; else if(location.hash==='#chat') tab='chat';
@@ -610,6 +734,7 @@ function start(){
   fromUrl(); loadNews().then(function(){ if(location.hash==='#hubnotes') openHubNotes(); });
   if(tab==='fb'){ setTimeout(scrollToCm,300); } var hb=$('#hubNotesBtn'); if(hb) hb.onclick=function(e){ e.preventDefault(); openHubNotes(); };
   var rf=$('.rk-f'); if(rf) rf.onclick=function(e){ var b=e.target.closest('button'); if(!b) return; rkGame=b.getAttribute('data-g'); [].forEach.call(this.children,function(x){ x.classList.toggle('on',x===b); }); ranking(); };
+  wikiStart();
   var tabs=$('.cm-tabs'); if(tabs) tabs.onclick=function(e){ var b=e.target.closest('button'); if(b) setTab(b.getAttribute('data-t')); };
   var go=function(){ if(!window.FFAuth){ setTimeout(go,200); return; } FFAuth.ready.then(function(){ sb=client(); refreshUser(); FFAuth.onChange(function(){ setTimeout(refreshUser,50); }); }); };
   go();

@@ -3,6 +3,64 @@
   {
    "date": "2026-10-16",
    "build": "",
+   "title": "출석 달력 · 코인 선물 · 공략 위키",
+   "items": [
+    "📅 출석 달력 추가 (이번 달 출석 도장, 7일 연속 출석마다 보너스 20코인)",
+    "🎁 친구에게 Hub Coin 선물하기 추가 (하루 100개까지)",
+    "📖 게임 공략 위키 추가 (Stickseum · Crown Envoy · Beaconfall, 로그인하면 누구나 수정, 수정 기록)",
+    "🟢 지금 접속 중 표시 추가 (접속 인원, 접속한 친구)"
+   ],
+   "tr": {
+    "en": {
+     "title": "Attendance calendar · Coin gifts · Game wiki",
+     "items": [
+      "📅 Attendance calendar (monthly stamps, +20 bonus coins every 7-day streak)",
+      "🎁 Gift Hub Coin to friends (up to 100 a day)",
+      "📖 Game guide wiki (Stickseum · Crown Envoy · Beaconfall; anyone logged in can edit, with history)",
+      "🟢 Online now (people online, friends online)"
+     ]
+    },
+    "es": {
+     "title": "Calendario de asistencia · Regalo de monedas · Wiki",
+     "items": [
+      "📅 Calendario de asistencia (sellos del mes, +20 monedas cada racha de 7 días)",
+      "🎁 Regala Hub Coin a amigos (hasta 100 al día)",
+      "📖 Wiki de guías (Stickseum · Crown Envoy · Beaconfall; cualquiera con sesión puede editar, con historial)",
+      "🟢 Conectados ahora (personas y amigos conectados)"
+     ]
+    },
+    "fr": {
+     "title": "Calendrier de présence · Cadeaux de pièces · Wiki",
+     "items": [
+      "📅 Calendrier de présence (tampons du mois, +20 pièces bonus à chaque série de 7 jours)",
+      "🎁 Offrir des Hub Coin à des amis (jusqu’à 100 par jour)",
+      "📖 Wiki des guides (Stickseum · Crown Envoy · Beaconfall ; toute personne connectée peut modifier, avec historique)",
+      "🟢 En ligne maintenant (personnes et amis en ligne)"
+     ]
+    },
+    "de": {
+     "title": "Anwesenheitskalender · Münzgeschenke · Wiki",
+     "items": [
+      "📅 Anwesenheitskalender (Monatsstempel, +20 Bonusmünzen bei jeder 7-Tage-Serie)",
+      "🎁 Hub Coin an Freunde verschenken (bis zu 100 pro Tag)",
+      "📖 Spiel-Wiki (Stickseum · Crown Envoy · Beaconfall; alle Angemeldeten können bearbeiten, mit Verlauf)",
+      "🟢 Jetzt online (Personen und Freunde online)"
+     ]
+    },
+    "ja": {
+     "title": "出席カレンダー・コインギフト・攻略Wiki",
+     "items": [
+      "📅 出席カレンダーを追加 (今月のスタンプ、7日連続出席ごとにボーナス20コイン)",
+      "🎁 フレンドへの Hub Coin ギフトを追加 (1日100枚まで)",
+      "📖 ゲーム攻略Wikiを追加 (Stickseum・Crown Envoy・Beaconfall、ログインすれば誰でも編集、編集履歴)",
+      "🟢 オンライン表示を追加 (接続人数、接続中のフレンド)"
+     ]
+    }
+   }
+  },
+  {
+   "date": "2026-10-16",
+   "build": "",
    "title": "Hub Coin · @멘션",
    "items": [
     "🪙 Hub Coin 추가 (매일 허브에 오면 10개, 연속 출석 표시)",
