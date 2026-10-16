@@ -20,6 +20,8 @@ Frenchfries777 게임 허브 사이트
   supabase-ff-extra.sql         프로필 카드 꾸미기 · 이번 주 인기 게임 · 투표용 SQL (supabase-ff-hub.sql 다음에 실행). 게임 랭킹은 crownenvoy 저장소의 supabase-ff-rank.sql
   supabase-ff-more.sql          프로필 소개글 · 대표 게임 · 칭호, 게임 평점 · 한줄평, 같이 하기(방 모집)용 SQL (supabase-ff-hub.sql 다음에 실행)
   supabase-ff-react.sql         글 · 댓글 · 채팅 이모지 반응용 SQL (supabase-ff-hub.sql 다음에 실행)
+  supabase-ff-coin.sql          🪙 Hub Coin (매일 출석 +10, 게임 재화로 환전) · @멘션 알림용 SQL (supabase-ff-social.sql 다음에 실행)
+                                게임 쪽: 로그인 뒤 sb.rpc('ff_coin_claim',{p_game:'stickseum'}) → 받은 숫자만큼 재화를 더해요. 환전 비율은 ff_coin_rates 표
   patchnotes.json               허브 패치노트 (뉴스에 '허브'로 나오고, 뉴스의 '허브 패치노트 →'에서 전체 목록)
 
 [ 플레이 버튼 주소 ]
