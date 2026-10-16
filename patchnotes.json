@@ -3,6 +3,64 @@
   {
    "date": "2026-10-16",
    "build": "",
+   "title": "위키 배치 개편",
+   "items": [
+    "위키 배치를 일반 위키 형태로 변경 (왼쪽 메뉴 · 위쪽 탭)",
+    "대문 · 최근 바뀜 · 임의 문서 추가",
+    "게임별 문서 목록 표 추가",
+    "소제목 옆 [고치기] 추가, 목차를 본문 안으로 이동"
+   ],
+   "tr": {
+    "en": {
+     "title": "Wiki layout update",
+     "items": [
+      "Wiki layout changed to a classic wiki (left menu, top tabs)",
+      "Main page, Recent changes and Random page added",
+      "Page list table for each game added",
+      "[Edit] link next to each heading added, contents box moved into the page"
+     ]
+    },
+    "es": {
+     "title": "Nuevo diseño de la wiki",
+     "items": [
+      "Diseño de la wiki cambiado a una wiki clásica (menú a la izquierda, pestañas arriba)",
+      "Portada, Cambios recientes y Página aleatoria añadidos",
+      "Tabla de páginas de cada juego añadida",
+      "Enlace [Editar] junto a cada subtítulo añadido, índice movido dentro de la página"
+     ]
+    },
+    "fr": {
+     "title": "Nouvelle disposition du wiki",
+     "items": [
+      "Disposition du wiki passée à un wiki classique (menu à gauche, onglets en haut)",
+      "Accueil, Modifications récentes et Page au hasard ajoutés",
+      "Tableau des pages de chaque jeu ajouté",
+      "Lien [Modifier] à côté de chaque sous-titre ajouté, sommaire déplacé dans la page"
+     ]
+    },
+    "de": {
+     "title": "Neues Wiki-Layout",
+     "items": [
+      "Wiki-Layout auf klassisches Wiki umgestellt (Menü links, Tabs oben)",
+      "Hauptseite, Letzte Änderungen und Zufällige Seite hinzugefügt",
+      "Seitentabelle für jedes Spiel hinzugefügt",
+      "[Bearbeiten]-Link neben jeder Überschrift hinzugefügt, Inhaltsverzeichnis in die Seite verschoben"
+     ]
+    },
+    "ja": {
+     "title": "Wikiレイアウト変更",
+     "items": [
+      "Wikiのレイアウトを一般的なWiki形式に変更（左メニュー・上タブ）",
+      "メインページ・最近の更新・おまかせ表示を追加",
+      "ゲームごとの記事一覧表を追加",
+      "見出しの横に[編集]を追加、目次を本文内に移動"
+     ]
+    }
+   }
+  },
+  {
+   "date": "2026-10-16",
+   "build": "",
    "title": "위키 사이트",
    "items": [
     "📖 공략 위키를 별도 사이트로 분리 (frenchfries777mc.github.io/games/wiki)",
