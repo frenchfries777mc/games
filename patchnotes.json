@@ -3,6 +3,64 @@
   {
    "date": "2026-10-16",
    "build": "",
+   "title": "Tools 바로가기 · 정리",
+   "items": [
+    "Games · Educations 옆에 Tools 바로가기 추가",
+    "이번 주 인기 게임 삭제",
+    "게임 별점 · 한줄평 삭제",
+    "좁은 화면에서 위쪽 메뉴 줄바꿈 수정"
+   ],
+   "tr": {
+    "en": {
+     "title": "Tools link · cleanup",
+     "items": [
+      "Tools link next to Games · Educations",
+      "Removed popular this week",
+      "Removed game ratings and reviews",
+      "Fixed the top menu wrapping on narrow screens"
+     ]
+    },
+    "es": {
+     "title": "Enlace a Tools · limpieza",
+     "items": [
+      "Enlace a Tools junto a Games · Educations",
+      "Eliminado populares esta semana",
+      "Eliminadas las valoraciones y reseñas",
+      "Corregido el menú superior en pantallas estrechas"
+     ]
+    },
+    "fr": {
+     "title": "Lien Tools · nettoyage",
+     "items": [
+      "Lien Tools à côté de Games · Educations",
+      "Populaires de la semaine supprimé",
+      "Notes et avis des jeux supprimés",
+      "Menu du haut corrigé sur petits écrans"
+     ]
+    },
+    "de": {
+     "title": "Tools-Link · Aufräumen",
+     "items": [
+      "Tools-Link neben Games · Educations",
+      "Diese Woche beliebt entfernt",
+      "Spielbewertungen entfernt",
+      "Oberes Menü auf schmalen Bildschirmen korrigiert"
+     ]
+    },
+    "ja": {
+     "title": "Tools リンク・整理",
+     "items": [
+      "Games・Educations の横に Tools リンクを追加",
+      "今週の人気ゲームを削除",
+      "ゲームの評価・ひとこと感想を削除",
+      "狭い画面での上部メニューの折り返しを修正"
+     ]
+    }
+   }
+  },
+  {
+   "date": "2026-10-16",
+   "build": "",
    "title": "게임 사이트 라이트 테마",
    "items": [
     "Stickseum · Crown Envoy · Beaconfall 사이트에 라이트 테마 적용",
