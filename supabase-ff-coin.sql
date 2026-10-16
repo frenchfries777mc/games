@@ -42,7 +42,8 @@ drop policy if exists ff_coin_rates_read on public.ff_coin_rates;
 create policy ff_coin_rates_read on public.ff_coin_rates for select using (true);
 drop policy if exists ff_coin_rates_admin on public.ff_coin_rates;
 create policy ff_coin_rates_admin on public.ff_coin_rates for all using (public.ff_is_admin()) with check (public.ff_is_admin());
-insert into public.ff_coin_rates (game, unit, per_coin) values ('stickseum', 'gold', 10) on conflict (game) do nothing;
+insert into public.ff_coin_rates (game, unit, per_coin) values ('stickseum', 'gold', 5)
+  on conflict (game) do update set per_coin = excluded.per_coin, unit = excluded.unit;
 
 -- 환전한 재화가 게임에 들어가기를 기다리는 곳. 게임이 ff_coin_claim 으로 한 번만 받아 가요
 create table if not exists public.ff_coin_out (
