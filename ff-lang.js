@@ -39,10 +39,29 @@ try{ var me=document.currentScript, base=(me&&me.src)?me.src.replace(/[^\/]*$/,'
    <html> 에 data-ff-theme="dark|light" 와 data-ff-size="s|m|l|xl" 를 붙이고, 허브와 게임 사이트(게임 화면은 빼고)는 크기만큼 확대해요.
    라이트 색은 각 페이지 CSS 가 html[data-ff-theme=light] 로 정해요. */
 var TK='ff.theme', SK='ff.size', ZOOM={s:0.9,m:1,l:1.12,xl:1.25};
-function isSite(){ var p=location.pathname||''; return !/\.html$/i.test(p) || /\/index\.html$/i.test(p); }
+/* game site pages that get a light look here (their own CSS only has the dark one): 'site' or 'site/page' */
+function sitePage(){ var m=/\/(stickseum|crownenvoy|beaconfall)\/(?:(index|codex|ranking|balance)\.html)?$/i.exec(location.pathname||''); return m?m[1].toLowerCase()+'/'+(m[2]||'index').toLowerCase():''; }
+function isSite(){ var p=location.pathname||''; return !/\.html$/i.test(p) || /\/index\.html$/i.test(p) || !!sitePage(); }
+var L='html[data-ff-theme=light]', LIGHT={
+  stickseum: L+'{--bg:#f4f5f9;--bg2:#eceff5;--panel:#fff;--panel-2:#f0f2f7;--line:#d8dde7;--text:#151922;--text-dim:#5b6476;--red:#e23446;--teal:#0e9f88;--gold:#a87b00;color-scheme:light}'+
+    L+' .btn.play,'+L+' .chip.on{color:#fff}'+L+' .tag,'+L+' .ab .k{color:#fff}'+L+' .bar .mid{background:rgba(0,0,0,.25)}',
+  crownenvoy: L+'{--ink:#f6f1e4;--panel:#fffaf0;--panel2:#efe6d0;--line:#d8c9a4;--text:#2a2216;--muted:#6b604c;--gold:#a37b1c;--gold2:#8a6514;--blue:#2350b8;color-scheme:light}'+
+    L+' .hero,'+L+' .top .mark{color:#ece5d2}'+L+' .top .mark b{color:#d4af4f}'+L+' .btn{color:#ece5d2}'+L+' .btn.dl:hover{background:#14264a}'+L+' .hero .meta b{color:#f2dc94}'+
+    L+' .mapbox{color:#ece5d2}'+L+' .mapbox .tpl b{color:#d4af4f}'+L+' .tag{color:#fff}'+L+' .err{color:#b4412f}',
+  beaconfall: L+'{--ink:#efe9d6;--cream:#2a2414;--gold:#80611a;--sky:#16719e;--btn:rgba(255,251,238,.92);--panel:rgba(255,251,238,.93);color-scheme:light}'+
+    L+' #bgshade{background:linear-gradient(180deg,rgba(250,246,232,.4),rgba(250,246,232,.74) 50%,rgba(250,246,232,.9))}'+
+    L+' .pb{box-shadow:4px 4px 0 rgba(60,45,10,.28)}'+L+' .top .pb{box-shadow:3px 3px 0 rgba(60,45,10,.28)}'+L+' .pb:hover,'+L+' .pb.on,'+L+' .pb.big:hover,'+L+' .tabs .pb.on{color:#fff}'+
+    L+' h1,'+L+' h2,'+L+' .hero p,'+L+' .hero .meta,'+L+' .note,'+L+' .ft,'+L+' .vtxt,'+L+' .nl ul,'+L+' details p,'+L+' ol.st,'+L+' footer,'+L+' .sub,'+L+' .cnt,'+L+' .grp{text-shadow:2px 2px 0 rgba(255,255,255,.7)}'+
+    L+' .hero h1{text-shadow:4px 4px 0 rgba(255,255,255,.75),0 0 30px rgba(255,255,255,.6)}'+L+' #shot{box-shadow:5px 5px 0 rgba(60,45,10,.28)}'+L+' .err{color:#b4412f}',
+  'beaconfall/codex': L+' body{background:linear-gradient(180deg,rgba(250,246,232,.78),rgba(250,246,232,.94)),url(shot-camp.png) center/cover fixed}'+
+    L+' input.q,'+L+' .cats .pb{box-shadow:2px 2px 0 rgba(60,45,10,.28)}'+L+' .card{border-color:rgba(128,97,26,.4)}'+L+' .rc{border-color:rgba(128,97,26,.3)}'+L+' .sl{background:rgba(128,97,26,.12)}'+
+    L+' .rn{color:#5a5040}'+L+' .wh.bk{border-color:#c0407a;color:#c0407a}'+L+' #det .box{background:#fffbee;box-shadow:6px 6px 0 rgba(60,45,10,.3)}'+L+' .dh img{background:rgba(128,97,26,.1)}'+L+' .src{background:rgba(0,0,0,.05)}'
+};
+function lightCss(){ var k=sitePage(); if(!k||document.getElementById('ff-light')) return; var css=(LIGHT[k.split('/')[0]]||'')+(LIGHT[k]||''); if(!css) return;
+  var st=document.createElement('style'); st.id='ff-light'; st.textContent=css; (document.head||document.documentElement).appendChild(st); }      // a page's own html[data-ff-theme=light] rules can still override these
 function tget(){ var t='dark', z='m'; try{ if(localStorage.getItem(TK)==='light') t='light'; var v=localStorage.getItem(SK); if(ZOOM[v]) z=v; }catch(e){} return {theme:t, size:z}; }
 function tapply(){ var st=tget(), h=document.documentElement; h.setAttribute('data-ff-theme',st.theme); h.setAttribute('data-ff-size',st.size); if(isSite()) h.style.zoom=ZOOM[st.size]===1?'':String(ZOOM[st.size]); }
-tapply();
+tapply(); try{ lightCss(); }catch(e){}
 window.addEventListener('storage',function(e){ if(e.key===TK||e.key===SK){ tapply(); try{ window.dispatchEvent(new Event('fftheme')); }catch(x){} } });
 window.FFTheme={ get:tget, sizes:Object.keys(ZOOM), set:function(t,z){ try{ if(t==='dark'||t==='light') localStorage.setItem(TK,t); if(ZOOM[z]) localStorage.setItem(SK,z); }catch(e){} tapply(); try{ window.dispatchEvent(new Event('fftheme')); }catch(e){} } };
 window.FFLang={ get:function(){ return now; }, set:function(l){ set(l); now=l; }, sync:function(){ now=sync()||now; return now; } };
