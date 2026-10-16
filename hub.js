@@ -91,7 +91,7 @@ window.addEventListener('ffblocks',function(){ if(tab==='board') listPosts(); el
 function hubSync(){ try{ if(window.FFAuth&&FFAuth.syncHub) FFAuth.syncHub(); }catch(e){} }
 function setTab(t){ tab=t; var bs=document.querySelectorAll('.cm-tabs button'); for(var i=0;i<bs.length;i++) bs[i].classList.toggle('on',bs[i].getAttribute('data-t')===t);
   var ps=document.querySelectorAll('.cm-p'); for(var j=0;j<ps.length;j++) ps[j].style.display=ps[j].getAttribute('data-p')===t?'':'none';
-  if(t==='board') board(); else if(t==='chat') chat(); else if(t==='lfg') lfg(); else if(t==='gal') gallery(); else if(t==='poll') polls(); else if(t==='feed') feed(); else feedback(); }
+  if(t==='board') board(); else if(t==='chat') chat(); else if(t==='lfg') lfg(); else if(t==='gal') gallery(); else if(t==='poll'){ tab='board'; openPolls(); return board(); } else if(t==='feed') feed(); else feedback(); }
 function scrollToCm(){ var c=$('#community'); if(c) c.scrollIntoView({behavior:'smooth',block:'start'}); }
 
 /* ---- 사진: 줄여서(긴 쪽 1600px) Supabase 저장소 'ff-images/<내 id>/' 에 올리고, 글 · 채팅에는 주소만 저장 (supabase-ff-images.sql) ---- */
@@ -368,7 +368,15 @@ async function gallery(){
     a.onclick=function(e){ e.preventDefault(); openPostById(t.x.id); scrollToCm(); }; G.appendChild(a); });
 }
 
-/* ---- 투표 (관리자가 올리고, 한 사람 한 표. 다시 누르면 바꿀 수 있어요) ---- */
+/* ---- 투표 (관리자가 올리고, 한 사람 한 표. 다시 누르면 바꿀 수 있어요) ----
+   커뮤니티 탭이 아니라 따로 창으로 열려요. 열 투표가 있을 때만 계정 버튼 왼쪽에 📊 버튼이 떠요 (ff-auth.js) */
+function openPolls(){
+  var el=$('#pollBox'); if(!el){ el=document.createElement('div'); el.id='pollBox'; el.className='hn-bg'; document.body.appendChild(el);
+    el.innerHTML='<div class="hn-b pol-b"><div class="hn-h"><b>📊 투표</b><button type="button" class="hn-x" aria-label="닫기">×</button></div><div class="cm-p" data-p="poll"></div></div>';
+    el.addEventListener('click',function(e){ if(e.target===el||e.target.closest('.hn-x')){ el.style.display='none'; if(location.hash==='#poll') try{ history.replaceState(null,'',location.pathname); }catch(_){} } }); }
+  el.style.display='flex'; polls();
+}
+function pollCheck(){ try{ if(window.FFAuth&&FFAuth.pollCheck) FFAuth.pollCheck(); }catch(e){} }
 async function polls(){
   var p=$('.cm-p[data-p=poll]'); if(!p) return;
   if(!p.dataset.ready){ p.dataset.ready='1'; p.innerHTML='<div class="pls"></div><div class="cm-pa"></div>'; }
@@ -386,11 +394,11 @@ async function polls(){
     d.querySelector('h4').textContent=x.question;
     x.options.forEach(function(o,i){ var n=C[i]||0, pc=tot?Math.round(100*n/tot):0, b=document.createElement('button'); b.type='button'; b.className='po'+(my===i?' mine':''); b.disabled=!open;
       b.innerHTML=(show?'<i class="fill" style="width:'+pc+'%"></i>':'')+'<span data-notr></span>'+(show?'<span class="pv" data-notr>'+pc+'% · '+n+'</span>':''); b.querySelector('span').textContent=(my===i?'✓ ':'')+o;
-      b.onclick=async function(){ if(!me) return login(); if(my===i) return; b.disabled=true; var q=await sb.rpc('ff_vote',{p_poll:x.id, p_choice:i}); if(q.error){ b.disabled=false; d.querySelector('.cm-meta').textContent=errText(q.error); return; } hubSync(); polls(); };
+      b.onclick=async function(){ if(!me) return login(); if(my===i) return; b.disabled=true; var q=await sb.rpc('ff_vote',{p_poll:x.id, p_choice:i}); if(q.error){ b.disabled=false; d.querySelector('.cm-meta').textContent=errText(q.error); return; } hubSync(); polls(); pollCheck(); };
       d.appendChild(b); });
     if(admin){ var ac=document.createElement('div'); ac.className='cm-acts2';
-      var t=document.createElement('button'); t.className='cm-btn2'; t.textContent=x.active?'마감하기':'다시 열기'; t.onclick=async function(){ await sb.from('ff_polls').update({active:!x.active}).eq('id',x.id); polls(); };
-      var del=document.createElement('button'); del.className='cm-btn2'; del.textContent='삭제'; del.onclick=async function(){ if(!del.dataset.s){ del.dataset.s=1; del.textContent='정말 삭제할까요?'; return; } await sb.from('ff_polls').delete().eq('id',x.id); polls(); };
+      var t=document.createElement('button'); t.className='cm-btn2'; t.textContent=x.active?'마감하기':'다시 열기'; t.onclick=async function(){ await sb.from('ff_polls').update({active:!x.active}).eq('id',x.id); polls(); pollCheck(); };
+      var del=document.createElement('button'); del.className='cm-btn2'; del.textContent='삭제'; del.onclick=async function(){ if(!del.dataset.s){ del.dataset.s=1; del.textContent='정말 삭제할까요?'; return; } await sb.from('ff_polls').delete().eq('id',x.id); polls(); pollCheck(); };
       ac.appendChild(t); ac.appendChild(del); d.appendChild(ac); }
     Lst.appendChild(d); });
   if(!admin){ A.innerHTML=''; return; }
@@ -399,7 +407,7 @@ async function polls(){
     A.querySelector('form').onsubmit=async function(e){ e.preventDefault(); var f=this, m=f.querySelector('.cm-m'), q=f.q.value.trim(), o=f.o.value.split('\n').map(function(x){ return x.trim().slice(0,80); }).filter(Boolean);
       if(!q) return; if(o.length<2||o.length>6){ m.textContent='보기는 2~6개로 적어 주세요.'; return; }
       var r2=await sb.from('ff_polls').insert({question:q, options:o, ends_at:f.e.value?new Date(f.e.value+'T23:59:59').toISOString():null}); if(r2.error){ m.textContent=errText(r2.error); return; }
-      f.reset(); m.textContent='올렸어요.'; polls(); };
+      f.reset(); m.textContent='올렸어요.'; polls(); pollCheck(); };
   }
 }
 
@@ -724,14 +732,15 @@ async function refreshUser(){
 }
 /* 다른 페이지 · 알림에서 열기: ?post=글번호 , #feedback , #hubnotes */
 function openPostById(id){ id=+id; if(!id) return; bOpen=id; bScroll=true; if(tab!=='board') setTab('board'); else listPosts(); }
-window.FFHub={ openPost:function(id){ openPostById(id); scrollToCm(); }, tab:function(t){ setTab(t); scrollToCm(); }, coin:function(){ openCoin(); } };
+window.FFHub={ openPost:function(id){ openPostById(id); scrollToCm(); }, tab:function(t){ setTab(t); scrollToCm(); }, coin:function(){ openCoin(); }, polls:function(){ openPolls(); } };
 function fromUrl(){
   var m=/[?&]post=(\d+)/.exec(location.search); if(m){ bOpen=+m[1]; bScroll=true; tab='board'; try{ history.replaceState(null,'',location.pathname+'#community'); }catch(e){} }
-  if(location.hash==='#feedback') tab='fb'; else if(location.hash==='#lfg') tab='lfg'; else if(location.hash==='#gallery') tab='gal'; else if(location.hash==='#poll') tab='poll'; else if(location.hash==='#friends') tab='feed'; else if(location.hash==='#chat') tab='chat';
+  if(location.hash==='#feedback') tab='fb'; else if(location.hash==='#lfg') tab='lfg'; else if(location.hash==='#gallery') tab='gal'; else if(location.hash==='#friends') tab='feed'; else if(location.hash==='#chat') tab='chat';
 }
-window.addEventListener('hashchange',function(){ if(location.hash==='#hubnotes') openHubNotes(); else if(location.hash==='#feedback'){ setTab('fb'); scrollToCm(); } });
+window.addEventListener('hashchange',function(){ if(location.hash==='#poll') openPolls(); else if(location.hash==='#hubnotes') openHubNotes(); else if(location.hash==='#feedback'){ setTab('fb'); scrollToCm(); } });
 function start(){
   fromUrl(); loadNews().then(function(){ if(location.hash==='#hubnotes') openHubNotes(); });
+  if(location.hash==='#poll') setTimeout(openPolls,400);
   if(tab==='fb'){ setTimeout(scrollToCm,300); } var hb=$('#hubNotesBtn'); if(hb) hb.onclick=function(e){ e.preventDefault(); openHubNotes(); };
   var rf=$('.rk-f'); if(rf) rf.onclick=function(e){ var b=e.target.closest('button'); if(!b) return; rkGame=b.getAttribute('data-g'); [].forEach.call(this.children,function(x){ x.classList.toggle('on',x===b); }); ranking(); };
   wikiStart();
