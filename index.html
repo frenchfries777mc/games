@@ -323,6 +323,7 @@ if(document.readyState==='loading') document.addEventListener('DOMContentLoaded'
   .gl img{width:100%; height:100%; object-fit:cover; display:block; transition:transform .2s;} .gl a:hover img{transform:scale(1.04);}
   .gl .cap{position:absolute; left:0; right:0; bottom:0; padding:18px 9px 7px; font-size:12.5px; background:linear-gradient(transparent,rgba(0,0,0,.85)); color:#fff; display:flex; gap:6px; align-items:center;} .gl .cap b{flex:1; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
   .gl .cap .tag{font-size:11px; padding:1px 7px;}
+  .pol-b{max-width:540px; max-height:88vh; overflow:auto;} .pol-b .cm-p,html[data-ff-theme=light] .pol-b .cm-p{border:0; padding:0; background:none; box-shadow:none; margin:0;} .pol-b .cm-pa:not(:empty){margin-top:14px;}
   .pl{background:#141925; border-radius:12px; padding:14px; margin-top:10px;} .pl:first-child{margin-top:0;} .pl h4{margin:0 0 4px; font-size:16.5px;} .pl .cm-meta{margin:0 0 8px;}
   .po{position:relative; display:block; width:100%; text-align:left; background:#0b0d13; border:1px solid var(--line); border-radius:10px; padding:10px 12px; margin-top:6px; color:var(--text); font:inherit; font-size:14.5px; cursor:pointer; overflow:hidden;}
   .po:disabled{cursor:default;} .po .fill{position:absolute; inset:0 auto 0 0; background:rgba(255,196,61,.16);} .po.mine{border-color:var(--fry);} .po.mine .fill{background:rgba(255,196,61,.30);}
@@ -456,13 +457,12 @@ if(document.readyState==='loading') document.addEventListener('DOMContentLoaded'
 
   <section class="cm" id="community">
     <h2 class="sh">커뮤니티</h2>
-    <div class="cm-tabs"><button data-t="board" class="on">📋 게시판</button><button data-t="chat">💬 채팅</button><button data-t="feed">👥 친구 소식</button><button data-t="lfg">🎮 같이 하기</button><button data-t="gal">🖼️ 갤러리</button><button data-t="poll">📊 투표</button><button data-t="fb">📮 피드백 · 버그 신고</button></div>
+    <div class="cm-tabs"><button data-t="board" class="on">📋 게시판</button><button data-t="chat">💬 채팅</button><button data-t="feed">👥 친구 소식</button><button data-t="lfg">🎮 같이 하기</button><button data-t="gal">🖼️ 갤러리</button><button data-t="fb">📮 피드백 · 버그 신고</button></div>
     <div class="cm-p" data-p="board"></div>
     <div class="cm-p" data-p="chat" style="display:none"></div>
     <div class="cm-p" data-p="feed" style="display:none"></div>
     <div class="cm-p" data-p="lfg" style="display:none"></div>
     <div class="cm-p" data-p="gal" style="display:none"></div>
-    <div class="cm-p" data-p="poll" style="display:none"></div>
     <div class="cm-p" data-p="fb" style="display:none"></div>
   </section>
 
