@@ -9,7 +9,7 @@ var U={
  ko:{hub:'허브',sub:'누구나 읽을 수 있고, 로그인하면 고치거나 새 글을 쓸 수 있어요.',search:'위키 검색',loading:'불러오는 중…',pages:'글 목록',toc:'목차',newp:'＋ 새 글',
   edit:'✏️ 고치기',hist:'🕘 기록',del:'삭제',delSure:'정말 삭제할까요?',empty:'아직 글이 없어요. 첫 글을 써 보세요!',nf:'글을 찾지 못했어요.',edited:'{0} 수정',seed:'처음 쓴 글',
   trNote:'번역본이에요.',orig:'한국어 원문 보기',showTr:'번역 보기',koOnly:'이 글은 최근에 고쳐져서 지금은 한국어 원문으로만 볼 수 있어요.',editKo:'고치기는 한국어 원문으로 해요.',
-  title:'제목',body:'내용',help:'## 소제목 · - 목록 · 1. 순서 목록 · **굵게**',prev:'미리보기',write:'쓰기',cancel:'취소',save:'저장',needT:'제목을 적어 주세요.',
+  title:'제목',body:'내용',help:'## 소제목 · - 목록 · 1. 순서 목록 · **굵게** · :: 항목 = 값 (정보 상자)',prev:'미리보기',write:'쓰기',cancel:'취소',save:'저장',needT:'제목을 적어 주세요.',
   histT:'🕘 고친 기록',back:'← 글로 돌아가기',noHist:'아직 기록이 없어요.',cur:'지금 버전',view:'보기',restore:'이 버전으로 되돌리기',
   res:'"{0}" 검색 결과 {1}개',noRes:'검색 결과가 없어요.',pv:'이전 글',nx:'다음 글',fast:'너무 빨리 쓰고 있어요. 잠시 뒤에 다시 해 주세요.',err:'처리하지 못했어요. 잠시 뒤 다시 해 주세요.',
   justNow:'방금',min:'{0}분 전',hr:'{0}시간 전',day:'{0}일 전',lang:'언어',
@@ -17,7 +17,7 @@ var U={
  en:{hub:'Hub',sub:'Anyone can read it. Log in to fix a page or write a new one.',search:'Search the wiki',loading:'Loading…',pages:'Pages',toc:'Contents',newp:'＋ New page',
   edit:'✏️ Edit',hist:'🕘 History',del:'Delete',delSure:'Really delete?',empty:'No pages yet. Write the first one!',nf:'Page not found.',edited:'Edited {0}',seed:'Original page',
   trNote:'This is a translation.',orig:'Show the Korean original',showTr:'Show translation',koOnly:'This page was edited recently, so for now it is only available in the Korean original.',editKo:'Edits are made to the Korean original.',
-  title:'Title',body:'Text',help:'## heading · - list · 1. numbered list · **bold**',prev:'Preview',write:'Write',cancel:'Cancel',save:'Save',needT:'Please enter a title.',
+  title:'Title',body:'Text',help:'## heading · - list · 1. numbered list · **bold** · :: key = value (info box)',prev:'Preview',write:'Write',cancel:'Cancel',save:'Save',needT:'Please enter a title.',
   histT:'🕘 Edit history',back:'← Back to the page',noHist:'No history yet.',cur:'current version',view:'View',restore:'Restore this version',
   res:'{1} results for "{0}"',noRes:'No results.',pv:'Previous',nx:'Next',fast:'You are editing too fast. Please try again in a moment.',err:'Something went wrong. Please try again soon.',
   justNow:'just now',min:'{0} min ago',hr:'{0} h ago',day:'{0} days ago',lang:'Language',
@@ -25,7 +25,7 @@ var U={
  es:{hub:'Hub',sub:'Cualquiera puede leerla. Inicia sesión para corregir una página o escribir una nueva.',search:'Buscar en la wiki',loading:'Cargando…',pages:'Páginas',toc:'Contenido',newp:'＋ Página nueva',
   edit:'✏️ Editar',hist:'🕘 Historial',del:'Eliminar',delSure:'¿Eliminar de verdad?',empty:'Aún no hay páginas. ¡Escribe la primera!',nf:'No se encontró la página.',edited:'Editada {0}',seed:'Página original',
   trNote:'Esto es una traducción.',orig:'Ver el original en coreano',showTr:'Ver traducción',koOnly:'Esta página se editó hace poco, así que por ahora solo está en el original coreano.',editKo:'Las ediciones se hacen en el original coreano.',
-  title:'Título',body:'Texto',help:'## subtítulo · - lista · 1. lista numerada · **negrita**',prev:'Vista previa',write:'Escribir',cancel:'Cancelar',save:'Guardar',needT:'Escribe un título.',
+  title:'Título',body:'Texto',help:'## subtítulo · - lista · 1. lista numerada · **negrita** · :: dato = valor (cuadro de datos)',prev:'Vista previa',write:'Escribir',cancel:'Cancelar',save:'Guardar',needT:'Escribe un título.',
   histT:'🕘 Historial de cambios',back:'← Volver a la página',noHist:'Aún no hay historial.',cur:'versión actual',view:'Ver',restore:'Restaurar esta versión',
   res:'{1} resultados para "{0}"',noRes:'Sin resultados.',pv:'Anterior',nx:'Siguiente',fast:'Estás editando demasiado rápido. Inténtalo de nuevo en un momento.',err:'Algo salió mal. Inténtalo de nuevo pronto.',
   justNow:'ahora mismo',min:'hace {0} min',hr:'hace {0} h',day:'hace {0} días',lang:'Idioma',
@@ -33,7 +33,7 @@ var U={
  fr:{hub:'Hub',sub:'Tout le monde peut la lire. Connecte-toi pour corriger une page ou en écrire une nouvelle.',search:'Rechercher dans le wiki',loading:'Chargement…',pages:'Pages',toc:'Sommaire',newp:'＋ Nouvelle page',
   edit:'✏️ Modifier',hist:'🕘 Historique',del:'Supprimer',delSure:'Vraiment supprimer ?',empty:'Pas encore de page. Écris la première !',nf:'Page introuvable.',edited:'Modifiée {0}',seed:'Page d’origine',
   trNote:'Ceci est une traduction.',orig:'Voir l’original coréen',showTr:'Voir la traduction',koOnly:'Cette page a été modifiée récemment, elle n’est donc disponible pour l’instant qu’en coréen.',editKo:'Les modifications se font sur l’original coréen.',
-  title:'Titre',body:'Texte',help:'## sous-titre · - liste · 1. liste numérotée · **gras**',prev:'Aperçu',write:'Écrire',cancel:'Annuler',save:'Enregistrer',needT:'Indique un titre.',
+  title:'Titre',body:'Texte',help:'## sous-titre · - liste · 1. liste numérotée · **gras** · :: clé = valeur (encadré)',prev:'Aperçu',write:'Écrire',cancel:'Annuler',save:'Enregistrer',needT:'Indique un titre.',
   histT:'🕘 Historique des modifications',back:'← Retour à la page',noHist:'Pas encore d’historique.',cur:'version actuelle',view:'Voir',restore:'Restaurer cette version',
   res:'{1} résultats pour « {0} »',noRes:'Aucun résultat.',pv:'Précédente',nx:'Suivante',fast:'Tu modifies trop vite. Réessaie dans un instant.',err:'Une erreur est survenue. Réessaie bientôt.',
   justNow:'à l’instant',min:'il y a {0} min',hr:'il y a {0} h',day:'il y a {0} jours',lang:'Langue',
@@ -41,7 +41,7 @@ var U={
  de:{hub:'Hub',sub:'Alle können es lesen. Melde dich an, um eine Seite zu verbessern oder eine neue zu schreiben.',search:'Wiki durchsuchen',loading:'Lädt…',pages:'Seiten',toc:'Inhalt',newp:'＋ Neue Seite',
   edit:'✏️ Bearbeiten',hist:'🕘 Verlauf',del:'Löschen',delSure:'Wirklich löschen?',empty:'Noch keine Seiten. Schreib die erste!',nf:'Seite nicht gefunden.',edited:'Bearbeitet {0}',seed:'Ursprüngliche Seite',
   trNote:'Dies ist eine Übersetzung.',orig:'Koreanisches Original anzeigen',showTr:'Übersetzung anzeigen',koOnly:'Diese Seite wurde kürzlich bearbeitet und ist daher vorerst nur im koreanischen Original verfügbar.',editKo:'Bearbeitet wird das koreanische Original.',
-  title:'Titel',body:'Text',help:'## Überschrift · - Liste · 1. nummerierte Liste · **fett**',prev:'Vorschau',write:'Schreiben',cancel:'Abbrechen',save:'Speichern',needT:'Bitte gib einen Titel ein.',
+  title:'Titel',body:'Text',help:'## Überschrift · - Liste · 1. nummerierte Liste · **fett** · :: Feld = Wert (Infobox)',prev:'Vorschau',write:'Schreiben',cancel:'Abbrechen',save:'Speichern',needT:'Bitte gib einen Titel ein.',
   histT:'🕘 Bearbeitungsverlauf',back:'← Zurück zur Seite',noHist:'Noch kein Verlauf.',cur:'aktuelle Version',view:'Ansehen',restore:'Diese Version wiederherstellen',
   res:'{1} Ergebnisse für „{0}“',noRes:'Keine Ergebnisse.',pv:'Zurück',nx:'Weiter',fast:'Du bearbeitest zu schnell. Versuch es gleich noch einmal.',err:'Etwas ist schiefgelaufen. Versuch es bald noch einmal.',
   justNow:'gerade eben',min:'vor {0} Min.',hr:'vor {0} Std.',day:'vor {0} Tagen',lang:'Sprache',
@@ -49,7 +49,7 @@ var U={
  ja:{hub:'ハブ',sub:'誰でも読めます。ログインすると記事を直したり、新しく書いたりできます。',search:'Wikiを検索',loading:'読み込み中…',pages:'記事一覧',toc:'目次',newp:'＋ 新しい記事',
   edit:'✏️ 編集',hist:'🕘 履歴',del:'削除',delSure:'本当に削除しますか？',empty:'まだ記事がありません。最初の記事を書いてみましょう！',nf:'記事が見つかりません。',edited:'{0}に編集',seed:'最初の記事',
   trNote:'翻訳版です。',orig:'韓国語の原文を見る',showTr:'翻訳を見る',koOnly:'この記事は最近編集されたため、今は韓国語の原文でのみ読めます。',editKo:'編集は韓国語の原文に対して行います。',
-  title:'タイトル',body:'本文',help:'## 見出し · - リスト · 1. 番号付きリスト · **太字**',prev:'プレビュー',write:'書く',cancel:'キャンセル',save:'保存',needT:'タイトルを入力してください。',
+  title:'タイトル',body:'本文',help:'## 見出し · - リスト · 1. 番号付きリスト · **太字** · :: 項目 = 値 (情報ボックス)',prev:'プレビュー',write:'書く',cancel:'キャンセル',save:'保存',needT:'タイトルを入力してください。',
   histT:'🕘 編集履歴',back:'← 記事に戻る',noHist:'まだ履歴がありません。',cur:'現在の版',view:'見る',restore:'この版に戻す',
   res:'「{0}」の検索結果 {1}件',noRes:'検索結果がありません。',pv:'前の記事',nx:'次の記事',fast:'編集が速すぎます。少し待ってからもう一度お試しください。',err:'処理できませんでした。しばらくしてからもう一度お試しください。',
   justNow:'たった今',min:'{0}分前',hr:'{0}時間前',day:'{0}日前',lang:'言語',
@@ -71,16 +71,19 @@ var sb=null, me=null, admin=false, all=[], TR={}, names={}, game='stickseum', sl
 /* ---- 아주 작은 글 형식: ## 소제목, - 목록, 1. 순서 목록, **굵게** ---- */
 function inl(s,hl){ s=esc(s).replace(/\*\*([^*]+)\*\*/g,'<b>$1</b>'); return hl?mark(s,hl):s; }
 function mark(html,q){ if(!q) return html; var e=esc(q).replace(/[.*+?^${}()|[\]\\]/g,'\\$&'); try{ return html.replace(new RegExp('(^|>)([^<]*)','g'),function(_,a,b){ return a+b.replace(new RegExp(e,'gi'),function(x){ return '<mark>'+x+'</mark>'; }); }); }catch(err){ return html; } }
-function render(text,hl){ var out='', list=null, para=[], heads=[];
+function render(text,hl){ var out='', list=null, para=[], heads=[], info=[];
   function fp(){ if(para.length){ out+='<p>'+para.join('<br>')+'</p>'; para=[]; } }
   function fl(){ if(list){ out+='</'+list+'>'; list=null; } }
   String(text||'').replace(/\r/g,'').split('\n').forEach(function(raw){ var l=raw.replace(/\s+$/,''), m;
-    if(/^#{2,3}\s+/.test(l)){ fp(); fl(); var h=l.replace(/^#{2,3}\s+/,''), id='h'+heads.length; heads.push([id,h.replace(/\*\*/g,'')]); out+='<h3 id="'+id+'"><span>'+inl(h,hl)+'</span></h3>'; }
+    if((m=/^::\s*([^=]+?)\s*=\s*(.*)$/.exec(l))){ info.push([m[1],m[2]]); }
+    else if(/^#{2,3}\s+/.test(l)){ fp(); fl(); var h=l.replace(/^#{2,3}\s+/,''), id='h'+heads.length; heads.push([id,h.replace(/\*\*/g,'')]); out+='<h3 id="'+id+'"><span>'+inl(h,hl)+'</span></h3>'; }
     else if((m=/^\s*[-•]\s+(.*)$/.exec(l))){ fp(); if(list!=='ul'){ fl(); out+='<ul>'; list='ul'; } out+='<li>'+inl(m[1],hl)+'</li>'; }
     else if((m=/^\s*\d+[.)]\s+(.*)$/.exec(l))){ fp(); if(list!=='ol'){ fl(); out+='<ol>'; list='ol'; } out+='<li>'+inl(m[1],hl)+'</li>'; }
     else if(!l.trim()){ fp(); fl(); }
     else { fl(); para.push(inl(l,hl)); } });
-  fp(); fl(); return {html:out, heads:heads}; }
+  fp(); fl(); return {html:out, heads:heads, info:info}; }
+/* 정보 상자: 본문의 ':: 항목 = 값' 줄들을 오른쪽 상자로 */
+function ibox(title,info){ return info.length?'<aside class="ibox"><div class="ibh">'+esc(title)+'</div><table>'+info.map(function(r){ return '<tr><th>'+inl(r[0])+'</th><td>'+inl(r[1])+'</td></tr>'; }).join('')+'</table></aside>':''; }
 
 /* ---- 보이는 글 (번역이 원문과 맞으면 번역) ---- */
 function trOf(p){ if(lang==='ko') return null; var x=TR[p.game+'/'+p.slug]; if(!x||!x.t) return null; return x.h===fnv(p.title+'\n'+p.body)?x:'stale'; }
@@ -88,7 +91,7 @@ function shown(p){ var x=trOf(p); if(x&&x!=='stale'&&!showOrig) return {title:x.
 function titleOf(p){ var x=trOf(p); return (x&&x!=='stale')?x.t:p.title; }
 function pagesOf(g){ return all.filter(function(p){ return p.game===g; }).sort(function(a,b){ return (a.sort-b.sort)||String(a.title).localeCompare(String(b.title)); }); }
 function descOf(p){ var x=trOf(p), b=(x&&x!=='stale')?x.b:p.body, ls=String(b).replace(/\r/g,'').split('\n');
-  for(var i=0;i<ls.length;i++){ var l=ls[i].trim(); if(!l||/^#{2,3}\s/.test(l)) continue; l=l.replace(/\*\*/g,'').replace(/^[-•]\s+|^\d+[.)]\s+/,''); return l.length>90?l.slice(0,88)+'…':l; } return ''; }
+  for(var i=0;i<ls.length;i++){ var l=ls[i].trim(); if(!l||/^#{2,3}\s|^::/.test(l)) continue; l=l.replace(/\*\*/g,'').replace(/^[-•]\s+|^\d+[.)]\s+/,''); return l.length>90?l.slice(0,88)+'…':l; } return ''; }
 
 function ago(ts){ var d=(Date.now()-Date.parse(ts))/1000; if(!(d>=0)) return ''; if(d<60) return t('justNow'); if(d<3600) return t('min',Math.floor(d/60)); if(d<86400) return t('hr',Math.floor(d/3600)); if(d<8*86400) return t('day',Math.floor(d/86400));
   try{ return new Date(ts).toLocaleDateString(lang); }catch(e){ return String(ts).slice(0,10); } }
@@ -138,6 +141,7 @@ function table(ps){ return '<table class="wt"><tr><th>'+esc(t('colP'))+'</th><th
 /* ---- 화면 ---- */
 async function paint(){
   paintSide(); document.body.classList.remove('navOpen'); var A=$('#page');
+  document.body.setAttribute('data-g',(!query&&!sp)?game:'');
   if(query) return paintSearch();
   if(sp==='main') return paintMain();
   if(sp==='recent') return paintRecent();
@@ -159,7 +163,7 @@ async function paint(){
     body=k<0?body+toc:body.slice(0,k)+toc+body.slice(k); }
   A.className='page g-'+game;
   A.innerHTML=head(s.title)+'<div class="hat">'+t('hatG','<b>'+esc(gameName(game))+'</b>')+'</div>'+note+
-    '<div class="txt">'+body+'</div><div class="meta"><span>'+esc(who(p.updated_by))+' · '+esc(t('edited',ago(p.updated_at)))+'</span></div>'+
+    '<div class="txt">'+ibox(s.title,r.info)+body+'</div><div class="meta"><span>'+esc(who(p.updated_by))+' · '+esc(t('edited',ago(p.updated_at)))+'</span></div>'+
     '<div class="pn">'+(i>0?'<a href="#'+game+'/'+esc(ps[i-1].slug)+'"><small>← '+esc(t('pv'))+'</small>'+esc(titleOf(ps[i-1]))+'</a>':'')+(i<ps.length-1?'<a class="nx" href="#'+game+'/'+esc(ps[i+1].slug)+'"><small>'+esc(t('nx'))+' →</small>'+esc(titleOf(ps[i+1]))+'</a>':'')+'</div>';
   putLang();
 }
@@ -196,7 +200,7 @@ function edit(p){
   putLang();
   var f=A.querySelector('form'); f.t.placeholder=t('title'); f.b.placeholder=t('body'); f.t.value=p?p.title:''; f.b.value=p?p.body:'';
   var pv=f.querySelector('.prev'), pb=f.querySelector('.pvb');
-  pb.onclick=function(){ var on=pv.style.display==='none'; pv.style.display=on?'':'none'; f.b.style.display=on?'none':''; pb.textContent=on?t('write'):t('prev'); if(on) pv.innerHTML=render(f.b.value).html; };
+  pb.onclick=function(){ var on=pv.style.display==='none'; pv.style.display=on?'':'none'; f.b.style.display=on?'none':''; pb.textContent=on?t('write'):t('prev'); if(on){ var rr=render(f.b.value); pv.innerHTML=ibox(f.t.value,rr.info)+rr.html; } };
   f.querySelector('.cn').onclick=function(){ view='read'; paint(); };
   f.onsubmit=async function(e){ e.preventDefault(); var m=f.querySelector('.m'), ti=f.t.value.trim(); if(!ti){ m.textContent=t('needT'); return; }
     var s=p?p.slug:('p'+Date.now().toString(36)); var bt=f.querySelector('.btn'); bt.disabled=true;
@@ -214,12 +218,12 @@ async function hist(p){
   var H=A.querySelector('.hl'); if(!rows.length){ H.innerHTML='<div class="e">'+esc(t('noHist'))+'</div>'; return; }
   rows.forEach(function(x,i){ var d=document.createElement('div'); d.className='hr';
     d.innerHTML='<div class="hm">'+esc(who(x.user_id))+' · '+esc(ago(x.created_at))+(i===0?' · <b>'+esc(t('cur'))+'</b>':'')+'</div><div class="acts"><button type="button" class="btn2 v">'+esc(t('view'))+'</button>'+(i&&me?'<button type="button" class="btn2 rs">'+esc(t('restore'))+'</button>':'')+'</div><div class="txt" style="display:none"></div>';
-    d.querySelector('.v').onclick=function(){ var tx=d.querySelector('.txt'); if(tx.style.display==='none'){ tx.innerHTML='<p><b>'+esc(x.title)+'</b></p>'+render(x.body).html; tx.style.display=''; } else tx.style.display='none'; };
+    d.querySelector('.v').onclick=function(){ var tx=d.querySelector('.txt'); if(tx.style.display==='none'){ var rr=render(x.body); tx.innerHTML='<p><b>'+esc(x.title)+'</b></p>'+ibox(x.title,rr.info)+rr.html; tx.style.display=''; } else tx.style.display='none'; };
     var rb=d.querySelector('.rs'); if(rb) rb.onclick=async function(){ rb.disabled=true; var q=await sb.rpc('ff_wiki_save',{p_game:p.game, p_slug:p.slug, p_title:x.title, p_body:x.body}); if(q.error){ rb.disabled=false; rb.textContent=errText(q.error); return; } view='read'; await load(); };
     H.appendChild(d); });
 }
 async function del(p,b){ if(!b.dataset.s){ b.dataset.s=1; b.textContent=t('delSure'); return; } var q=await sb.from('ff_wiki').delete().eq('game',p.game).eq('slug',p.slug); if(q.error){ b.textContent=errText(q.error); return; } slug=null; view='read'; await load(); }
-function snippet(text,q){ var plain=String(text).replace(/\*\*/g,'').replace(/^#{2,3}\s+|^\s*[-•]\s+|^\s*\d+[.)]\s+/gm,'').replace(/\s+/g,' '), i=plain.toLowerCase().indexOf(q.toLowerCase());
+function snippet(text,q){ var plain=String(text).replace(/^::.*$/gm,'').replace(/\*\*/g,'').replace(/^#{2,3}\s+|^\s*[-•]\s+|^\s*\d+[.)]\s+/gm,'').replace(/\s+/g,' '), i=plain.toLowerCase().indexOf(q.toLowerCase());
   if(i<0) return esc(plain.slice(0,110))+(plain.length>110?'…':''); var a=Math.max(0,i-45), s=plain.slice(a,i+q.length+75);
   return (a?'…':'')+mark(esc(s),q)+(i+q.length+75<plain.length?'…':''); }
 function paintSearch(){
@@ -238,7 +242,7 @@ function clearQ(){ query=''; $('#q').value=''; }
 document.addEventListener('click',function(e){
   var b=e.target.closest('[data-v]'); if(b){ var v=b.getAttribute('data-v'), p=curPage(); if(!p) return;
     if(v==='del') return del(p,b); if(v==='edit'&&!me) return login(); view=v; paint(); window.scrollTo(0,0); return; }
-  b=e.target.closest('[data-new]'); if(b){ clearQ(); if(!me) return login(); sp=null; game=b.getAttribute('data-new'); slug=null; setHash(); paintSide(); document.body.classList.remove('navOpen'); edit(null); window.scrollTo(0,0); return; }
+  b=e.target.closest('[data-new]'); if(b){ clearQ(); if(!me) return login(); sp=null; game=b.getAttribute('data-new'); slug=null; setHash(); paintSide(); document.body.setAttribute('data-g',game); document.body.classList.remove('navOpen'); edit(null); window.scrollTo(0,0); return; }
   b=e.target.closest('[data-rand]'); if(b){ if(!all.length) return; var p=all[Math.floor(Math.random()*all.length)]; clearQ(); location.hash='#'+p.game+'/'+p.slug; return; }
   b=e.target.closest('[data-orig]'); if(b){ showOrig=b.getAttribute('data-orig')==='1'; paint(); return; }
   b=e.target.closest('.toc a[data-h]'); if(b){ e.preventDefault(); var h=document.getElementById(b.getAttribute('data-h')); if(h) h.scrollIntoView({behavior:'smooth',block:'start'}); return; }
