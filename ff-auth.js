@@ -390,32 +390,32 @@ function setFill(p){
 }
 
 var NL={
- ko:{blist:'차단한 사람',bell:'알림',none:'새 알림이 없어요.',comment:'{0}님이 내 글에 댓글을 남겼어요',like:'{0}님이 내 글을 좋아해요',friend:'{0}님이 친구 요청을 보냈어요',dm:'{0}님이 메시지를 보냈어요',
+ ko:{blist:'차단한 사람',bell:'알림',none:'새 알림이 없어요.',mention:'{0}님이 나를 언급했어요',mentionc:'{0}님이 채팅에서 나를 불렀어요',comment:'{0}님이 내 글에 댓글을 남겼어요',like:'{0}님이 내 글을 좋아해요',friend:'{0}님이 친구 요청을 보냈어요',dm:'{0}님이 메시지를 보냈어요',
      feedback:'보낸 피드백을 관리자가 확인했어요',report:'보낸 신고를 관리자가 처리했어요',clear:'모두 지우기',msg:'💬 메시지',dmPh:'메시지 보내기',send:'보내기',dmEmpty:'아직 나눈 메시지가 없어요.',
      dmOnly:'친구끼리만 메시지를 보낼 수 있어요.',block:'🚫 차단',unblock:'차단 풀기',blocked:'차단한 사람이에요. 이 사람의 글과 채팅은 보이지 않아요.',report_:'🚩 신고',
      rTitle:'신고하기',rWhy:'이유',r1:'스팸 · 광고',r2:'욕설 · 괴롭힘',r3:'부적절한 사진',r4:'기타',rMore:'자세히 (선택)',rBlock:'이 사람도 차단하기',rSend:'신고 보내기',rDone:'신고했어요. 관리자가 확인할게요.',
      sureBlock:'정말 차단할까요?',blockedT:'차단했어요',err:'처리하지 못했어요. 잠시 뒤 다시 해 주세요.',notReady:'아직 준비 중이에요.'},
- en:{blist:'Blocked',bell:'Notifications',none:'No new notifications.',comment:'{0} commented on your post',like:'{0} liked your post',friend:'{0} sent you a friend request',dm:'{0} sent you a message',
+ en:{blist:'Blocked',bell:'Notifications',none:'No new notifications.',mention:'{0} mentioned you',mentionc:'{0} mentioned you in chat',comment:'{0} commented on your post',like:'{0} liked your post',friend:'{0} sent you a friend request',dm:'{0} sent you a message',
      feedback:'The admin has seen your feedback',report:'The admin has handled your report',clear:'Clear all',msg:'💬 Message',dmPh:'Send a message',send:'Send',dmEmpty:'No messages yet.',
      dmOnly:'Only friends can message each other.',block:'🚫 Block',unblock:'Unblock',blocked:'You blocked this person. Their posts and chat are hidden.',report_:'🚩 Report',
      rTitle:'Report',rWhy:'Reason',r1:'Spam · ads',r2:'Abuse · harassment',r3:'Inappropriate photo',r4:'Other',rMore:'Details (optional)',rBlock:'Also block this person',rSend:'Send report',rDone:'Reported. The admin will take a look.',
      sureBlock:'Block for sure?',blockedT:'Blocked',err:'Something went wrong. Try again soon.',notReady:'Not ready yet.'},
- es:{blist:'Bloqueados',bell:'Avisos',none:'No hay avisos nuevos.',comment:'{0} comentó tu publicación',like:'A {0} le gustó tu publicación',friend:'{0} te envió una solicitud de amistad',dm:'{0} te envió un mensaje',
+ es:{blist:'Bloqueados',bell:'Avisos',none:'No hay avisos nuevos.',mention:'{0} te mencionó',mentionc:'{0} te mencionó en el chat',comment:'{0} comentó tu publicación',like:'A {0} le gustó tu publicación',friend:'{0} te envió una solicitud de amistad',dm:'{0} te envió un mensaje',
      feedback:'El administrador vio tus comentarios',report:'El administrador revisó tu denuncia',clear:'Borrar todo',msg:'💬 Mensaje',dmPh:'Envía un mensaje',send:'Enviar',dmEmpty:'Aún no hay mensajes.',
      dmOnly:'Solo los amigos pueden enviarse mensajes.',block:'🚫 Bloquear',unblock:'Desbloquear',blocked:'Bloqueaste a esta persona. Sus publicaciones y su chat están ocultos.',report_:'🚩 Denunciar',
      rTitle:'Denunciar',rWhy:'Motivo',r1:'Spam · anuncios',r2:'Insultos · acoso',r3:'Foto inapropiada',r4:'Otro',rMore:'Detalles (opcional)',rBlock:'Bloquear también a esta persona',rSend:'Enviar denuncia',rDone:'Denuncia enviada. El administrador la revisará.',
      sureBlock:'¿Bloquear de verdad?',blockedT:'Bloqueado',err:'Algo salió mal. Inténtalo de nuevo.',notReady:'Aún no está listo.'},
- fr:{blist:'Bloqués',bell:'Notifications',none:'Aucune nouvelle notification.',comment:'{0} a commenté ton message',like:'{0} aime ton message',friend:'{0} t’a envoyé une demande d’ami',dm:'{0} t’a envoyé un message',
+ fr:{blist:'Bloqués',bell:'Notifications',none:'Aucune nouvelle notification.',mention:'{0} t’a mentionné',mentionc:'{0} t’a mentionné dans le chat',comment:'{0} a commenté ton message',like:'{0} aime ton message',friend:'{0} t’a envoyé une demande d’ami',dm:'{0} t’a envoyé un message',
      feedback:'L’admin a vu ton avis',report:'L’admin a traité ton signalement',clear:'Tout effacer',msg:'💬 Message',dmPh:'Envoyer un message',send:'Envoyer',dmEmpty:'Pas encore de messages.',
      dmOnly:'Seuls les amis peuvent s’écrire.',block:'🚫 Bloquer',unblock:'Débloquer',blocked:'Tu as bloqué cette personne. Ses messages et son chat sont masqués.',report_:'🚩 Signaler',
      rTitle:'Signaler',rWhy:'Raison',r1:'Spam · pub',r2:'Insultes · harcèlement',r3:'Photo inappropriée',r4:'Autre',rMore:'Détails (facultatif)',rBlock:'Bloquer aussi cette personne',rSend:'Envoyer',rDone:'Signalé. L’admin va vérifier.',
      sureBlock:'Vraiment bloquer ?',blockedT:'Bloqué',err:'Un problème est survenu. Réessaie bientôt.',notReady:'Pas encore prêt.'},
- de:{blist:'Blockiert',bell:'Benachrichtigungen',none:'Keine neuen Benachrichtigungen.',comment:'{0} hat deinen Beitrag kommentiert',like:'{0} gefällt dein Beitrag',friend:'{0} hat dir eine Freundschaftsanfrage geschickt',dm:'{0} hat dir eine Nachricht geschickt',
+ de:{blist:'Blockiert',bell:'Benachrichtigungen',none:'Keine neuen Benachrichtigungen.',mention:'{0} hat dich erwähnt',mentionc:'{0} hat dich im Chat erwähnt',comment:'{0} hat deinen Beitrag kommentiert',like:'{0} gefällt dein Beitrag',friend:'{0} hat dir eine Freundschaftsanfrage geschickt',dm:'{0} hat dir eine Nachricht geschickt',
      feedback:'Der Admin hat dein Feedback gesehen',report:'Der Admin hat deine Meldung bearbeitet',clear:'Alle löschen',msg:'💬 Nachricht',dmPh:'Nachricht senden',send:'Senden',dmEmpty:'Noch keine Nachrichten.',
      dmOnly:'Nur Freunde können sich schreiben.',block:'🚫 Blockieren',unblock:'Entblocken',blocked:'Du hast diese Person blockiert. Ihre Beiträge und ihr Chat sind ausgeblendet.',report_:'🚩 Melden',
      rTitle:'Melden',rWhy:'Grund',r1:'Spam · Werbung',r2:'Beleidigung · Belästigung',r3:'Unangemessenes Foto',r4:'Sonstiges',rMore:'Details (optional)',rBlock:'Diese Person auch blockieren',rSend:'Meldung senden',rDone:'Gemeldet. Der Admin schaut es sich an.',
      sureBlock:'Wirklich blockieren?',blockedT:'Blockiert',err:'Das hat nicht geklappt. Bitte gleich nochmal.',notReady:'Noch nicht bereit.'},
- ja:{blist:'ブロック中',bell:'お知らせ',none:'新しいお知らせはありません。',comment:'{0}さんがあなたの投稿にコメントしました',like:'{0}さんがあなたの投稿にいいねしました',friend:'{0}さんからフレンド申請が届きました',dm:'{0}さんからメッセージが届きました',
+ ja:{blist:'ブロック中',bell:'お知らせ',none:'新しいお知らせはありません。',mention:'{0}さんがあなたをメンションしました',mentionc:'{0}さんがチャットであなたを呼びました',comment:'{0}さんがあなたの投稿にコメントしました',like:'{0}さんがあなたの投稿にいいねしました',friend:'{0}さんからフレンド申請が届きました',dm:'{0}さんからメッセージが届きました',
      feedback:'送ったフィードバックを管理者が確認しました',report:'送った通報を管理者が処理しました',clear:'すべて消す',msg:'💬 メッセージ',dmPh:'メッセージを送る',send:'送信',dmEmpty:'まだメッセージはありません。',
      dmOnly:'フレンド同士だけメッセージを送れます。',block:'🚫 ブロック',unblock:'ブロック解除',blocked:'ブロックした人です。この人の投稿とチャットは表示されません。',report_:'🚩 通報',
      rTitle:'通報する',rWhy:'理由',r1:'スパム・宣伝',r2:'暴言・嫌がらせ',r3:'不適切な写真',r4:'その他',rMore:'詳しく（任意）',rBlock:'この人もブロックする',rSend:'通報を送る',rDone:'通報しました。管理者が確認します。',
@@ -474,7 +474,8 @@ function goNote(n){
   var hubUrl=HUB;
   if(n.kind==='friend') return openFriends();
   if(n.kind==='dm') return openDM(n.actor_id);
-  if(n.kind==='comment'||n.kind==='like'){ if(onHub&&window.FFHub) return FFHub.openPost(n.ref); location.href=hubUrl+'?post='+encodeURIComponent(n.ref)+'#community'; return; }
+  if(n.kind==='mentionc'){ if(onHub&&window.FFHub) return FFHub.tab('chat'); location.href=hubUrl+'#chat'; return; }
+  if(n.kind==='comment'||n.kind==='like'||n.kind==='mention'){ if(onHub&&window.FFHub) return FFHub.openPost(n.ref); location.href=hubUrl+'?post='+encodeURIComponent(n.ref)+'#community'; return; }
   if(onHub&&window.FFHub) return FFHub.tab('fb'); location.href=hubUrl+'#feedback';
 }
 function watchNotes(){
