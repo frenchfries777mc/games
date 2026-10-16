@@ -1,6 +1,52 @@
 {
  "notes": [
   {
+   "date": "2026-10-16",
+   "build": "",
+   "title": "게임 사이트 라이트 테마",
+   "items": [
+    "Stickseum · Crown Envoy · Beaconfall 사이트에 라이트 테마 적용",
+    "허브에서 바꾼 다크/라이트 설정이 게임 사이트에도 반영"
+   ],
+   "tr": {
+    "en": {
+     "title": "Light theme on game sites",
+     "items": [
+      "Light theme on the Stickseum, Crown Envoy and Beaconfall sites",
+      "The dark/light setting from the hub now applies to game sites"
+     ]
+    },
+    "es": {
+     "title": "Tema claro en los sitios de juegos",
+     "items": [
+      "Tema claro en los sitios de Stickseum, Crown Envoy y Beaconfall",
+      "El ajuste oscuro/claro del hub ahora se aplica a los sitios de juegos"
+     ]
+    },
+    "fr": {
+     "title": "Thème clair sur les sites des jeux",
+     "items": [
+      "Thème clair sur les sites de Stickseum, Crown Envoy et Beaconfall",
+      "Le réglage sombre/clair du hub s'applique aux sites des jeux"
+     ]
+    },
+    "de": {
+     "title": "Helles Design auf Spieleseiten",
+     "items": [
+      "Helles Design auf den Seiten von Stickseum, Crown Envoy und Beaconfall",
+      "Die Dunkel/Hell-Einstellung des Hubs gilt jetzt auch für Spieleseiten"
+     ]
+    },
+    "ja": {
+     "title": "ゲームサイトのライトテーマ",
+     "items": [
+      "Stickseum・Crown Envoy・Beaconfall のサイトにライトテーマを適用",
+      "ハブのダーク/ライト設定がゲームサイトにも反映"
+     ]
+    }
+   }
+  },
+  {
    "date": "2026-10-15",
    "build": "",
    "title": "친구 소식 · 검색 · 이모지 반응",
