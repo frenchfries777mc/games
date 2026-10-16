@@ -180,6 +180,7 @@ function paint(){
   if(typeof badge==='function') try{ badge(); }catch(e){}
   if(typeof socialPaint==='function') try{ socialPaint(); }catch(e){}
   try{ setPaint(); }catch(e){}
+  try{ votePaint(); }catch(e){}
 }
 function closeMenus(){ var ms=document.querySelectorAll('.ffa-menu,.ffa-notes'); for(var i=0;i<ms.length;i++) ms[i].style.display='none'; }
 document.addEventListener('click', closeMenus);
@@ -549,7 +550,40 @@ function paintDM(){
 subs.push(function(u){ notes=[]; blocks={}; dmUnread={}; bellBadge(); watchNotes(); if(u){ loadBlocks(); loadDmUnread().then(fpaint); loadNotes().then(function(){ socialPaint(); }); } else closeDM(); });
 setInterval(function(){ if(user) loadNotes().catch(function(){}); }, 5*60*1000);
 
-window.FFAuth={ ready:ready, client:function(){ return sb; }, user:function(){ return user; }, profile:function(){ return prof; }, nickname:nick,
+/* ---- 📊 투표 버튼: 열린 투표가 있을 때만 계정 버튼 왼쪽에 떠요 (관리자는 투표를 올릴 수 있게 늘 보여요).
+   아직 안 한 투표가 있으면 빨간 숫자. 누르면 허브의 투표 창 (다른 사이트에서는 허브로 이동) ---- */
+var VT={ko:'투표',en:'Vote',es:'Votar',fr:'Vote',de:'Umfrage',ja:'投票'}, vState={show:false, todo:0};
+async function pollCheck(){
+  if(!sb) return; var st={show:false, todo:0};
+  try{
+    var r=await sb.from('ff_polls').select('id,ends_at').eq('active',true).limit(30), now=Date.now();
+    var open=((r&&!r.error&&r.data)||[]).filter(function(x){ return !x.ends_at||Date.parse(x.ends_at)>now; }).map(function(x){ return x.id; });
+    st.show=open.length>0;
+    if(user){
+      if(open.length){ var v=await sb.from('ff_votes').select('poll_id').eq('user_id',user.id).in('poll_id',open); var done={}; ((v&&!v.error&&v.data)||[]).forEach(function(x){ done[x.poll_id]=1; }); st.todo=open.filter(function(id){ return !done[id]; }).length; }
+      if(!st.show){ var a=await sb.rpc('ff_is_admin'); if(a&&a.data===true) st.show=true; }
+    }
+  }catch(e){}
+  vState=st; votePaint();
+}
+function votePaint(){
+  if(!document.getElementById('ffa-vcss')){ var c=document.createElement('style'); c.id='ffa-vcss';
+    c.textContent='.ffa-vote{position:relative;background:#10131b;color:#eef0f5;border:1px solid #2b3245;border-radius:9px;padding:6px 9px;font-size:15px;cursor:pointer;margin-right:6px;line-height:1.2;vertical-align:middle;font-family:inherit}.ffa-vote:hover{border-color:#ffc93c}.ffa-vote .t{font-size:13px;font-weight:700;margin-left:4px}.ffa-vote .ffa-vb{position:absolute;top:-6px;right:-6px;margin:0;display:inline-block;min-width:18px;height:18px;line-height:18px;border-radius:9px;background:#ff5a4f;color:#fff;font-size:11px;font-weight:800;text-align:center;padding:0 5px;box-sizing:border-box}@media(max-width:560px){.ffa-vote .t{display:none}}html[data-ff-theme=light] .ffa-vote{background:#fff;color:#1d2130;border-color:#d8d2c4}';
+    document.head.appendChild(c); }
+  var ws=document.querySelectorAll('[data-ff-account] .ffa-wrap');
+  for(var i=0;i<ws.length;i++){ var w=ws[i], b=w.querySelector('.ffa-vote');
+    if(!vState.show){ if(b) b.remove(); continue; }
+    if(!b){ b=document.createElement('button'); b.type='button'; b.className='ffa-vote';
+      b.onclick=function(e){ e.stopPropagation(); closeMenus(); if(onHub&&window.FFHub&&FFHub.polls) return FFHub.polls(); location.href=HUB+'#poll'; };
+      var me=w.querySelector('.ffa-chip,.ffa-btn'); w.insertBefore(b, me||null); }
+    var t=VT[lang()]||VT.en; b.title=t; b.setAttribute('aria-label',t);
+    b.innerHTML='📊<span class="t">'+esc(t)+'</span>'+(vState.todo?'<i class="ffa-vb" style="font-style:normal">'+(vState.todo>9?'9+':vState.todo)+'</i>':''); }
+}
+subs.push(function(){ pollCheck(); });
+setInterval(function(){ if(document.visibilityState!=='hidden') pollCheck(); }, 5*60*1000);
+document.addEventListener('visibilitychange', function(){ if(document.visibilityState==='visible') pollCheck(); });
+
+window.FFAuth={ ready:ready, pollCheck:pollCheck, client:function(){ return sb; }, user:function(){ return user; }, profile:function(){ return prof; }, nickname:nick,
   onChange:function(f){ if(typeof f==='function') subs.push(f); }, openLogin:openLogin, openProfile:openProfile, openFriends:openFriends, friends:function(){ return friends.slice(); }, signOut:signOut, refresh:paint, syncHub:syncHub,
   openDM:openDM, openReport:openReport, block:block, isBlocked:isBlocked, blocked:function(){ return Object.assign({},blocks); } };
 })();
