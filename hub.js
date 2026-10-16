@@ -672,7 +672,75 @@ function fromUrl(){
   if(location.hash==='#feedback') tab='fb'; else if(location.hash==='#lfg') tab='lfg'; else if(location.hash==='#gallery') tab='gal'; else if(location.hash==='#friends') tab='feed'; else if(location.hash==='#chat') tab='chat';
 }
 window.addEventListener('hashchange',function(){ if(location.hash==='#poll') openPolls(); else if(location.hash==='#hubnotes') openHubNotes(); else if(location.hash==='#feedback'){ setTab('fb'); scrollToCm(); } });
+/* ===== 게임 배너 슬라이드 + 게임별 분위기 (body[data-g] 로 배경 색이 바뀜) ===== */
+function banner(){
+  var B=$('#bnr'); if(!B) return; var S=B.querySelectorAll('.sl'), D=B.querySelectorAll('.dots button'), cur=0, timer=null, hoverG=null;
+  function amb(){ document.body.setAttribute('data-g',hoverG||S[cur].getAttribute('data-g')); }
+  function show(i){ cur=(i+S.length)%S.length; for(var k=0;k<S.length;k++){ S[k].classList.toggle('on',k===cur); D[k].classList.toggle('on',k===cur); }
+    var im=S[cur].querySelector('img'); if(im&&im.loading==='lazy') im.loading='eager'; amb(); }
+  function play(){ clearInterval(timer); if(window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches) return; timer=setInterval(function(){ if(!document.hidden) show(cur+1); },6000); }
+  B.querySelector('.pv').onclick=function(){ show(cur-1); play(); }; B.querySelector('.nx').onclick=function(){ show(cur+1); play(); };
+  [].forEach.call(D,function(d,i){ d.onclick=function(){ show(i); play(); }; });
+  B.addEventListener('mouseenter',function(){ clearInterval(timer); }); B.addEventListener('mouseleave',play);
+  var x0=null; B.addEventListener('touchstart',function(e){ x0=e.touches[0].clientX; clearInterval(timer); },{passive:true});
+  B.addEventListener('touchend',function(e){ if(x0==null) return; var dx=e.changedTouches[0].clientX-x0; x0=null; if(Math.abs(dx)>40) show(cur+(dx<0?1:-1)); play(); },{passive:true});
+  var CG={st:'stickseum',ce:'crownenvoy',bf:'beaconfall'};
+  [].forEach.call(document.querySelectorAll('.games .game'),function(a){ var g=null; for(var c in CG) if(a.classList.contains(c)) g=CG[c]; if(!g) return;
+    a.addEventListener('mouseenter',function(){ hoverG=g; amb(); }); a.addEventListener('mouseleave',function(){ hoverG=null; amb(); }); });
+  show(0); play();
+}
+
+/* ===== 통합 검색: 게임 · 위키 · 게시판 ===== */
+var SX={wiki:null, tr:null, seq:0, sel:-1};
+var SGAMES=[['stickseum','Stickseum','g1','https://frenchfries777mc.github.io/stickseum/','친구들과 실시간으로 붙는 스틱맨 난투','스틱맨 난투 액션 stickman brawl'],
+  ['crownenvoy','Crown Envoy','g2','https://frenchfries777mc.github.io/crownenvoy/','외교와 전쟁으로 제국을 키우는 턴제 전략','외교 전쟁 전략 diplomacy war strategy'],
+  ['beaconfall','Beaconfall','g3','https://frenchfries777mc.github.io/beaconfall/','외계 행성에서 살아남아 탈출하는 생존 제작','생존 제작 픽셀 survival crafting pixel']];
+function sfnv(s){ var h=0x811c9dc5; for(var i=0;i<s.length;i++){ h^=s.charCodeAt(i); h=Math.imul(h,0x01000193)>>>0; } return ('0000000'+h.toString(16)).slice(-8); }
+function smark(t,q){ var e=esc(t); if(!q) return e; var r=esc(q).replace(/[.*+?^${}()|[\]\\]/g,'\\$&'); try{ return e.replace(new RegExp(r,'gi'),function(x){ return '<mark>'+x+'</mark>'; }); }catch(_){ return e; } }
+function splain(b){ return String(b||'').replace(/^::.*$/gm,'').replace(/\*\*/g,'').replace(/^#{2,3}\s+|^\s*[-•]\s+|^\s*\d+[.)]\s+/gm,'').replace(/\s+/g,' ').trim(); }
+function ssnip(b,q){ var p=splain(b), i=p.toLowerCase().indexOf(q.toLowerCase()); if(i<0) return smark(p.slice(0,90),''); var a=Math.max(0,i-30); return (a?'…':'')+smark(p.slice(a,i+q.length+60),q); }
+async function sxLoad(){
+  if(SX.wiki||!sb) return;
+  var trP=LANG==='ko'?Promise.resolve({}):fetch('wiki/tr/'+LANG+'.json').then(function(r){ return r.ok?r.json():{}; }).catch(function(){ return {}; });
+  var r=await sb.from('ff_wiki').select('game,slug,title,body').limit(500); SX.tr=await trP;
+  SX.wiki=((r&&r.data)||[]).map(function(p){ var x=SX.tr[p.game+'/'+p.slug], ok=x&&x.t&&x.h===sfnv(p.title+'\n'+p.body); return {game:p.game, slug:p.slug, title:ok?x.t:p.title, body:ok?x.b:p.body, ko:p.title+'\n'+p.body}; });
+}
+function openSearch(){
+  var el=$('#srxBox'); if(!el){ el=document.createElement('div'); el.id='srxBox'; el.className='hn-bg srx'; document.body.appendChild(el);
+    el.innerHTML='<div class="hn-b"><div class="hn-h"><b>🔍 '+esc(F('검색'))+'</b><button type="button" class="hn-x" aria-label="'+esc(F('닫기'))+'">×</button></div><input type="search" autocomplete="off" placeholder="'+esc(F('게임, 위키, 게시판 글 검색'))+'"><div class="srs"></div></div>';
+    el.addEventListener('click',function(e){ if(e.target===el||e.target.closest('.hn-x')) closeSearch(); var a=e.target.closest('[data-post]'); if(a){ e.preventDefault(); closeSearch(); if(window.FFHub) FFHub.openPost(+a.getAttribute('data-post')); } });
+    var inp=el.querySelector('input'), qt=null;
+    inp.addEventListener('input',function(){ clearTimeout(qt); qt=setTimeout(function(){ runSearch(inp.value); },180); });
+    inp.addEventListener('keydown',function(e){ var rs=el.querySelectorAll('.sr'); if(!rs.length) return;
+      if(e.key==='ArrowDown'||e.key==='ArrowUp'){ e.preventDefault(); SX.sel=(SX.sel+(e.key==='ArrowDown'?1:-1)+rs.length)%rs.length; [].forEach.call(rs,function(r,i){ r.classList.toggle('sel',i===SX.sel); }); rs[SX.sel].scrollIntoView({block:'nearest'}); }
+      else if(e.key==='Enter'){ e.preventDefault(); (rs[SX.sel<0?0:SX.sel]).click(); } }); }
+  el.style.display='flex'; var i=el.querySelector('input'); i.focus(); i.select(); sxLoad().then(function(){ if(i.value) runSearch(i.value); });
+}
+function closeSearch(){ var el=$('#srxBox'); if(el&&el.style.display!=='none'){ el.style.display='none'; var i=el.querySelector('input'); if(i) i.blur(); } }
+async function runSearch(v){
+  var el=$('#srxBox'), R=el&&el.querySelector('.srs'); if(!R) return; var q=String(v||'').trim(), my=++SX.seq; SX.sel=-1;
+  if(!q){ R.innerHTML=''; return; } var ql=q.toLowerCase(), h='';
+  var gs=SGAMES.filter(function(g){ return (g[1]+' '+F(g[4])+' '+g[4]+' '+g[5]).toLowerCase().indexOf(ql)>=0; });
+  if(gs.length) h+='<div class="sg"><h4>'+esc(F('게임'))+'</h4>'+gs.map(function(g){ return '<a class="sr" href="'+g[3]+'"><b class="'+g[2]+'">'+smark(g[1],q)+'</b><small>'+esc(F(g[4]))+'</small></a>'; }).join('')+'</div>';
+  var ws=(SX.wiki||[]).map(function(p){ var sc=0; if(p.title.toLowerCase().indexOf(ql)>=0) sc+=10; if(p.body.toLowerCase().indexOf(ql)>=0) sc+=2; if(!sc&&p.ko.toLowerCase().indexOf(ql)>=0) sc+=1; return {p:p,sc:sc}; })
+    .filter(function(x){ return x.sc; }).sort(function(a,b){ return b.sc-a.sc; }).slice(0,8);
+  if(ws.length) h+='<div class="sg"><h4>'+esc(F('위키'))+'</h4>'+ws.map(function(x){ var g=GAMES[x.p.game]||{name:x.p.game,cls:''}; return '<a class="sr" href="wiki/#'+x.p.game+'/'+encodeURIComponent(x.p.slug)+'"><span class="gt '+g.cls+'">'+esc(g.name)+'</span><b>'+smark(x.p.title,q)+'</b><small>'+ssnip(x.p.body,q)+'</small></a>'; }).join('')+'</div>';
+  R.innerHTML=h||'<div class="se">…</div>';
+  var ps=[]; if(sb){ var w=q.replace(/[,()%*\\"]/g,' ').trim(); if(w){ try{ var r=await sb.from('ff_posts').select('id,game,title,body,created_at').or('title.ilike.%'+w+'%,body.ilike.%'+w+'%').order('created_at',{ascending:false}).limit(6); ps=(r&&r.data)||[]; }catch(e){} } }
+  if(my!==SX.seq) return;
+  if(ps.length) h+='<div class="sg"><h4>'+esc(F('게시판'))+'</h4>'+ps.map(function(x){ var g=GAMES[x.game]; return '<a class="sr" href="?post='+x.id+'" data-post="'+x.id+'" data-notr>'+(g?'<span class="gt '+g.cls+'">'+esc(g.name)+'</span>':'')+'<b>'+smark(x.title,q)+'</b><small>'+ssnip(x.body,q)+'</small></a>'; }).join('')+'</div>';
+  R.innerHTML=h||'<div class="se">'+esc(F('검색 결과가 없어요.'))+'</div>';
+}
+function searchInit(){
+  var b=$('#srxBtn'); if(b) b.onclick=openSearch;
+  document.addEventListener('keydown',function(e){ var t=e.target, typing=t&&(t.tagName==='INPUT'||t.tagName==='TEXTAREA'||t.isContentEditable);
+    if((e.key==='k'||e.key==='K')&&(e.ctrlKey||e.metaKey)){ e.preventDefault(); openSearch(); }
+    else if(e.key==='/'&&!typing){ e.preventDefault(); openSearch(); }
+    else if(e.key==='Escape'){ closeSearch(); } });
+}
+
 function start(){
+  banner(); searchInit();
   fromUrl(); loadNews().then(function(){ if(location.hash==='#hubnotes') openHubNotes(); });
   if(location.hash==='#poll') setTimeout(openPolls,400);
   if(tab==='fb'){ setTimeout(scrollToCm,300); } var hb=$('#hubNotesBtn'); if(hb) hb.onclick=function(e){ e.preventDefault(); openHubNotes(); };

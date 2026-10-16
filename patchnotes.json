@@ -3,6 +3,70 @@
   {
    "date": "2026-10-16",
    "build": "",
+   "title": "게임 배너 · 통합 검색 · 정보 상자",
+   "items": [
+    "허브 맨 위 게임 배너 슬라이드 추가",
+    "배너와 게임 카드에 맞춰 바뀌는 게임별 배경 색 추가 (위키 문서도 게임 색으로 표시)",
+    "위키 64개 문서에 정보 상자 추가",
+    "🔍 통합 검색 추가 (게임 · 위키 · 게시판, / 또는 Ctrl+K)",
+    "링크 공유 미리보기 이미지 추가 (허브 · 위키 · 세 게임)"
+   ],
+   "tr": {
+    "en": {
+     "title": "Game banner · Search · Info boxes",
+     "items": [
+      "Game banner slideshow added at the top of the hub",
+      "Game color backgrounds added that follow the banner and game cards (wiki pages also use the game's color)",
+      "Info boxes added to all 64 wiki pages",
+      "🔍 Site-wide search added (games, wiki, board; / or Ctrl+K)",
+      "Link preview images added for sharing (hub, wiki and all three games)"
+     ]
+    },
+    "es": {
+     "title": "Banner de juegos · Búsqueda · Cuadros de datos",
+     "items": [
+      "Carrusel de juegos añadido arriba del hub",
+      "Fondos con el color de cada juego según el banner y las tarjetas (las páginas de la wiki también usan el color del juego)",
+      "Cuadros de datos añadidos a las 64 páginas de la wiki",
+      "🔍 Búsqueda global añadida (juegos, wiki, foro; / o Ctrl+K)",
+      "Imágenes de vista previa al compartir enlaces (hub, wiki y los tres juegos)"
+     ]
+    },
+    "fr": {
+     "title": "Bannière · Recherche · Encadrés",
+     "items": [
+      "Bannière de jeux défilante ajoutée en haut du hub",
+      "Fonds aux couleurs de chaque jeu selon la bannière et les cartes (les pages du wiki aussi)",
+      "Encadrés ajoutés aux 64 pages du wiki",
+      "🔍 Recherche globale ajoutée (jeux, wiki, forum ; / ou Ctrl+K)",
+      "Images d’aperçu des liens partagés ajoutées (hub, wiki et les trois jeux)"
+     ]
+    },
+    "de": {
+     "title": "Spielbanner · Suche · Infoboxen",
+     "items": [
+      "Spielbanner-Slideshow oben im Hub hinzugefügt",
+      "Hintergründe in Spielfarben passend zu Banner und Spielkarten hinzugefügt (auch auf Wiki-Seiten)",
+      "Infoboxen auf allen 64 Wiki-Seiten hinzugefügt",
+      "🔍 Seitenweite Suche hinzugefügt (Spiele, Wiki, Forum; / oder Strg+K)",
+      "Vorschaubilder für geteilte Links hinzugefügt (Hub, Wiki und alle drei Spiele)"
+     ]
+    },
+    "ja": {
+     "title": "ゲームバナー・統合検索・情報ボックス",
+     "items": [
+      "ハブ上部にゲームバナーのスライドを追加",
+      "バナーとゲームカードに合わせて変わるゲーム別の背景色を追加（Wikiの記事もゲームの色で表示）",
+      "Wikiの全64記事に情報ボックスを追加",
+      "🔍 統合検索を追加（ゲーム・Wiki・掲示板、/ または Ctrl+K）",
+      "リンク共有時のプレビュー画像を追加（ハブ・Wiki・3つのゲーム）"
+     ]
+    }
+   }
+  },
+  {
+   "date": "2026-10-16",
+   "build": "",
    "title": "위키 배치 개편",
    "items": [
     "위키 배치를 일반 위키 형태로 변경 (왼쪽 메뉴 · 위쪽 탭)",
