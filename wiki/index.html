@@ -5,7 +5,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Frenchfries777 Wiki</title>
 <meta name="description" content="Stickseum · Crown Envoy · Beaconfall 공략 위키. 누구나 읽고, 로그인하면 고칠 수 있어요.">
-<meta property="og:title" content="Frenchfries777 Wiki"><meta property="og:description" content="Stickseum · Crown Envoy · Beaconfall 공략 위키"><meta property="og:type" content="website">
+<meta property="og:title" content="Frenchfries777 Wiki"><meta property="og:description" content="Stickseum · Crown Envoy · Beaconfall 공략 위키. 누구나 읽고, 로그인하면 고칠 수 있어요."><meta property="og:type" content="website">
+<meta property="og:url" content="https://frenchfries777mc.github.io/games/wiki/"><meta property="og:site_name" content="Frenchfries777"><meta property="og:image" content="https://frenchfries777mc.github.io/games/og/wiki.jpg"><meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image"><meta name="twitter:image" content="https://frenchfries777mc.github.io/games/og/wiki.jpg">
 <meta name="theme-color" content="#08090d">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -92,6 +94,24 @@
   .res{display:flex; flex-direction:column; gap:8px; margin-top:12px;} .res a{display:block; text-decoration:none; background:var(--panel2); border:1px solid var(--line); border-radius:12px; padding:11px 14px; color:var(--text);} .res a:hover{border-color:var(--fry);}
   .res .rt{font-weight:700;} .rg{font-size:12px; font-weight:700; margin-right:8px; color:var(--g);} .res .rs{color:var(--dim); font-size:13.5px; margin-top:3px; display:block;} .res mark{background:rgba(255,201,60,.35); color:inherit; border-radius:3px;}
   .g-stickseum{--g:var(--g1);} .g-crownenvoy{--g:var(--g2);} .g-beaconfall{--g:var(--g3);}
+  /* 정보 상자 */
+  .ibox{float:right; clear:right; width:300px; max-width:100%; margin:4px 0 14px 20px; background:var(--panel2); border:1px solid var(--line); border-radius:12px; overflow:hidden; font-size:14px; line-height:1.5;}
+  .ibox .ibh{background:linear-gradient(135deg,var(--fry),var(--fry2)); color:#1a1206; font-weight:800; text-align:center; padding:8px 10px; font-size:15.5px;}
+  .ibox table{width:100%; border-collapse:collapse;} .ibox th,.ibox td{padding:7px 10px; border-top:1px solid var(--line); text-align:left; vertical-align:top;}
+  .ibox th{width:42%; color:var(--dim); font-weight:700;} .ibox td{color:var(--text);}
+  .txt::after{content:''; display:block; clear:both;}
+  /* 게임별 색 테마 */
+  body{transition:background-color .4s;}
+  body[data-g=stickseum]{--fry:#3ee0c4; --fry2:#2fb0e8; background-image:radial-gradient(ellipse 900px 520px at 10% -10%, rgba(62,224,196,.14), transparent 60%), radial-gradient(ellipse 800px 600px at 110% 30%, rgba(47,176,232,.09), transparent 60%);}
+  body[data-g=crownenvoy]{--fry:#e8c25a; --fry2:#c98f2c; background-image:radial-gradient(ellipse 900px 520px at 10% -10%, rgba(232,194,90,.15), transparent 60%), radial-gradient(ellipse 800px 600px at 110% 30%, rgba(160,60,60,.10), transparent 60%);}
+  body[data-g=beaconfall]{--fry:#ffae5a; --fry2:#ff6f3d; background-image:radial-gradient(ellipse 900px 520px at 10% -10%, rgba(255,174,90,.15), transparent 60%), radial-gradient(ellipse 800px 600px at 110% 30%, rgba(90,200,120,.08), transparent 60%);}
+  html[data-ff-theme=light] body[data-g=stickseum]{--fry:#0f8a77; --fry2:#1279a8; background-image:radial-gradient(ellipse 900px 520px at 10% -10%, rgba(62,224,196,.22), transparent 60%);}
+  html[data-ff-theme=light] body[data-g=crownenvoy]{--fry:#8a6c14; --fry2:#a5701c; background-image:radial-gradient(ellipse 900px 520px at 10% -10%, rgba(232,194,90,.28), transparent 60%);}
+  html[data-ff-theme=light] body[data-g=beaconfall]{--fry:#a0600c; --fry2:#c4521f; background-image:radial-gradient(ellipse 900px 520px at 10% -10%, rgba(255,174,90,.28), transparent 60%);}
+  html[data-ff-theme=light] body[data-g] .txt h3, html[data-ff-theme=light] body[data-g] .box a.on{color:var(--fry);}
+  html[data-ff-theme=light] body[data-g] .btn, html[data-ff-theme=light] body[data-g] .ibox .ibh{color:#fff;}
+  body[data-g] .box a.on{background:color-mix(in srgb, var(--fry) 16%, transparent);}
+  @media(max-width:620px){ .ibox{float:none; width:100%; margin:6px 0 14px;} }
   footer{color:var(--dim); font-size:13px; text-align:center; padding:22px 0 30px;}
   @media(max-width:860px){
     .shell{grid-template-columns:1fr; padding:0 16px;}
