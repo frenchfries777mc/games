@@ -3,6 +3,46 @@
   {
    "date": "2026-10-17",
    "build": "",
+   "title": "Stickseum MVP 투표 개편 위키 갱신",
+   "items": [
+    "Stickseum MVP 투표 개편(승리 화면 뒤 큰 투표창, 알림과 경험치 50) 설명 수정 (v253)"
+   ],
+   "tr": {
+    "en": {
+     "title": "Stickseum MVP vote overhaul wiki update",
+     "items": [
+      "Updated the Stickseum MVP vote overhaul (large vote window after the victory screen, notice and 50 XP) (v253)"
+     ]
+    },
+    "es": {
+     "title": "Wiki del rediseño de la votación MVP de Stickseum",
+     "items": [
+      "Se actualizó el rediseño de la votación MVP de Stickseum (ventana grande tras la victoria, aviso y 50 de experiencia) (v253)"
+     ]
+    },
+    "fr": {
+     "title": "Wiki de la refonte du vote MVP de Stickseum",
+     "items": [
+      "Mise à jour de la refonte du vote MVP de Stickseum (grande fenêtre après la victoire, avis et 50 XP) (v253)"
+     ]
+    },
+    "de": {
+     "title": "Wiki zur überarbeiteten MVP-Abstimmung von Stickseum",
+     "items": [
+      "Überarbeitete MVP-Abstimmung von Stickseum aktualisiert (großes Fenster nach dem Sieg, Hinweis und 50 EP) (v253)"
+     ]
+    },
+    "ja": {
+     "title": "StickseumのMVP投票刷新をウィキに反映",
+     "items": [
+      "StickseumのMVP投票の刷新（勝利画面のあとの大きな投票ウィンドウ、通知と経験値50）の説明を修正（v253）"
+     ]
+    }
+   }
+  },
+  {
+   "date": "2026-10-17",
+   "build": "",
    "title": "Beaconfall 인트로 위키 추가",
    "items": [
     "Beaconfall 인트로를 건너뛸 수 없다는 설명 추가 (v0.3)"
