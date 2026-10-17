@@ -76,6 +76,7 @@ function render(text,hl){ var out='', list=null, para=[], heads=[], info=[];
   function fl(){ if(list){ out+='</'+list+'>'; list=null; } }
   String(text||'').replace(/\r/g,'').split('\n').forEach(function(raw){ var l=raw.replace(/\s+$/,''), m;
     if((m=/^::\s*([^=]+?)\s*=\s*(.*)$/.exec(l))){ info.push([m[1],m[2]]); }
+    else if((m=/^!(img\/[a-z0-9_-]+\.(?:webp|png|jpg))$/.exec(l))){ fp(); fl(); out+='<img class="chi" src="'+m[1]+'" alt="" loading="lazy">'; }
     else if(/^#{2,3}\s+/.test(l)){ fp(); fl(); var h=l.replace(/^#{2,3}\s+/,''), id='h'+heads.length; heads.push([id,h.replace(/\*\*/g,'')]); out+='<h3 id="'+id+'"><span>'+inl(h,hl)+'</span></h3>'; }
     else if((m=/^\s*[-•]\s+(.*)$/.exec(l))){ fp(); if(list!=='ul'){ fl(); out+='<ul>'; list='ul'; } out+='<li>'+inl(m[1],hl)+'</li>'; }
     else if((m=/^\s*\d+[.)]\s+(.*)$/.exec(l))){ fp(); if(list!=='ol'){ fl(); out+='<ol>'; list='ol'; } out+='<li>'+inl(m[1],hl)+'</li>'; }
