@@ -3,45 +3,45 @@
   {
    "date": "2026-10-17",
    "build": "",
-   "title": "위쪽 버튼 묶음·라운지 메뉴",
+   "title": "위쪽 버튼 묶음·라운지 페이지",
    "items": [
     "위쪽 오른쪽 버튼(코인·설정·알림·투표·계정)을 한 배경으로 묶음",
-    "라운지 메뉴 추가 (음악, 패치노트, 풀밭에서 커피 마시는 픽셀 장면)"
+    "라운지 페이지 추가 (제목 위에 앉아 커피를 홀짝이는 픽셀 감자튀김, 패치노트·음악으로 이동)"
    ],
    "tr": {
     "en": {
-     "title": "Grouped top buttons, Lounge menu",
+     "title": "Grouped top buttons, Lounge page",
      "items": [
       "Top-right buttons (coin, settings, alerts, vote, account) grouped on one background",
-      "Lounge menu added (Music, Patch notes, pixel scene of coffee on the grass)"
+      "Lounge page added (a pixel fries mascot sipping coffee on the title; go to Patch notes or Music)"
      ]
     },
     "es": {
-     "title": "Botones superiores agrupados, menú Sala",
+     "title": "Botones superiores agrupados, página Sala",
      "items": [
       "Botones de arriba a la derecha (monedas, ajustes, avisos, votación, cuenta) en un solo fondo",
-      "Menú Sala añadido (Música, Notas de versión, escena pixelada de café en el césped)"
+      "Página Sala añadida (una mascota de papas pixelada tomando café sobre el título; ir a Notas de versión o Música)"
      ]
     },
     "fr": {
-     "title": "Boutons du haut regroupés, menu Salon",
+     "title": "Boutons du haut regroupés, page Salon",
      "items": [
       "Boutons en haut à droite (pièces, réglages, alertes, vote, compte) regroupés sur un seul fond",
-      "Menu Salon ajouté (Musique, Notes de version, scène pixel d'un café sur l'herbe)"
+      "Page Salon ajoutée (une mascotte frites en pixels sirote un café sur le titre ; accès aux notes de version et à la musique)"
      ]
     },
     "de": {
-     "title": "Obere Buttons gruppiert, Lounge-Menü",
+     "title": "Obere Buttons gruppiert, Lounge-Seite",
      "items": [
       "Buttons oben rechts (Münzen, Einstellungen, Hinweise, Abstimmung, Konto) auf einem Hintergrund gruppiert",
-      "Lounge-Menü hinzugefügt (Musik, Patchnotes, Pixelszene mit Kaffee auf der Wiese)"
+      "Lounge-Seite hinzugefügt (ein Pixel-Pommes-Maskottchen schlürft Kaffee auf dem Titel; weiter zu Patchnotes oder Musik)"
      ]
     },
     "ja": {
-     "title": "上部ボタンをまとめ、ラウンジメニュー",
+     "title": "上部ボタンをまとめ、ラウンジページ",
      "items": [
       "右上のボタン(コイン・設定・通知・投票・アカウント)を一つの背景にまとめた",
-      "ラウンジメニューを追加 (音楽、パッチノート、草原でコーヒーを飲むドット絵)"
+      "ラウンジページを追加 (タイトルの上でコーヒーをすするドット絵のポテト、パッチノート・音楽へ移動)"
      ]
     }
    }
