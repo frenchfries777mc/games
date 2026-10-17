@@ -3,6 +3,64 @@
   {
    "date": "2026-10-17",
    "build": "",
+   "title": "Beaconfall 위키 자동화·회로 문서",
+   "items": [
+    "Beaconfall 위키에 자동화 가이드 문서 추가",
+    "Beaconfall 위키에 신호와 회로 문서 추가",
+    "자동화 팁과 회로 예시 추가",
+    "자동화 관련 안내 문구 수정"
+   ],
+   "tr": {
+    "en": {
+     "title": "Beaconfall wiki: automation & circuits",
+     "items": [
+      "Added Automation Guide page to the Beaconfall wiki",
+      "Added Signals & Circuits page to the Beaconfall wiki",
+      "Added automation tips and circuit examples",
+      "Fixed automation-related notes"
+     ]
+    },
+    "es": {
+     "title": "Wiki de Beaconfall: automatización y circuitos",
+     "items": [
+      "Página Guía de automatización añadida a la wiki de Beaconfall",
+      "Página Señales y circuitos añadida a la wiki de Beaconfall",
+      "Consejos de automatización y ejemplos de circuitos añadidos",
+      "Notas sobre automatización corregidas"
+     ]
+    },
+    "fr": {
+     "title": "Wiki Beaconfall : automatisation et circuits",
+     "items": [
+      "Page Guide de l'automatisation ajoutée au wiki Beaconfall",
+      "Page Signaux et circuits ajoutée au wiki Beaconfall",
+      "Conseils d'automatisation et exemples de circuits ajoutés",
+      "Notes sur l'automatisation corrigées"
+     ]
+    },
+    "de": {
+     "title": "Beaconfall-Wiki: Automatisierung & Schaltkreise",
+     "items": [
+      "Seite Automatisierungsleitfaden zum Beaconfall-Wiki hinzugefügt",
+      "Seite Signale & Schaltkreise zum Beaconfall-Wiki hinzugefügt",
+      "Automatisierungstipps und Schaltungsbeispiele hinzugefügt",
+      "Hinweise zur Automatisierung korrigiert"
+     ]
+    },
+    "ja": {
+     "title": "Beaconfall Wiki：自動化と回路",
+     "items": [
+      "Beaconfall Wikiに自動化ガイドのページを追加",
+      "Beaconfall Wikiに信号と回路のページを追加",
+      "自動化のコツと回路の例を追加",
+      "自動化に関する案内文を修正"
+     ]
+    }
+   }
+  },
+  {
+   "date": "2026-10-17",
+   "build": "",
    "title": "위키 문체 변경",
    "items": [
     "위키 64개 문서 문체를 '~이다.' 체로 변경",
