@@ -3,6 +3,52 @@
   {
    "date": "2026-10-17",
    "build": "",
+   "title": "Tools Fry Sheet v16~v17, 사이트 v6 위키 갱신",
+   "items": [
+    "Fry Sheet AI 창 탭 순서(수식, 그래프, 표, 질문·요약)와 수식 탭 먼저 열기, 번역 요청 수식 설명 추가",
+    "Tools 소개와 Block HTML, Fry Slides, Fry Lab AI 설명에 시험 기능 안내 추가"
+   ],
+   "tr": {
+    "en": {
+     "title": "Wiki update: Tools Fry Sheet v16-v17 and site v6",
+     "items": [
+      "Added Fry Sheet AI window tab order (formula, chart, table, ask & summarize), formula tab opening first, and translation-request formula notes",
+      "Added experimental-feature notes to the Tools intro and the Block HTML, Fry Slides and Fry Lab AI pages"
+     ]
+    },
+    "es": {
+     "title": "Actualización de la wiki: Tools Fry Sheet v16-v17 y sitio v6",
+     "items": [
+      "Añadido el orden de pestañas de la ventana de IA de Fry Sheet (fórmula, gráfico, tabla, preguntar y resumir), la pestaña de fórmula al abrir y notas sobre fórmulas para traducir",
+      "Añadidas notas de función experimental en la introducción de Tools y en las páginas de IA de Block HTML, Fry Slides y Fry Lab"
+     ]
+    },
+    "fr": {
+     "title": "Mise à jour du wiki : Tools Fry Sheet v16-v17 et site v6",
+     "items": [
+      "Ajout de l'ordre des onglets de la fenêtre IA de Fry Sheet (formule, graphique, tableau, question et résumé), de l'ouverture sur l'onglet formule et des notes sur les formules de traduction",
+      "Ajout de notes sur la fonction expérimentale dans l'introduction de Tools et les pages IA de Block HTML, Fry Slides et Fry Lab"
+     ]
+    },
+    "de": {
+     "title": "Wiki-Update: Tools Fry Sheet v16-v17 und Seite v6",
+     "items": [
+      "Reihenfolge der Tabs im KI-Fenster von Fry Sheet (Formel, Diagramm, Tabelle, Fragen & zusammenfassen), Start mit dem Formel-Tab und Hinweise zu Übersetzungsformeln ergänzt",
+      "Hinweise zur Testfunktion in der Tools-Einführung und auf den KI-Seiten von Block HTML, Fry Slides und Fry Lab ergänzt"
+     ]
+    },
+    "ja": {
+     "title": "Wiki更新：Tools Fry Sheet v16〜v17とサイトv6",
+     "items": [
+      "Fry SheetのAIウィンドウのタブ順（数式・グラフ・表・質問要約）、数式タブから開くこと、翻訳依頼の数式の説明を追加",
+      "ToolsのはじめにとBlock HTML・Fry Slides・Fry LabのAIページに試験機能の案内を追加"
+     ]
+    }
+   }
+  },
+  {
+   "date": "2026-10-17",
+   "build": "",
    "title": "Tools Fry Sheet·Fry Slides, Stickseum build 264, Crown Envoy build 35 위키 갱신",
    "items": [
     "Fry Sheet 피벗 표, 셀 합치기, 이름 붙인 범위, 데이터 정리, 칸 안 미니 그래프와 아이콘 설명 추가",
