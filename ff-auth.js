@@ -221,6 +221,34 @@ function pwOn(){ try{ return localStorage.getItem('arenaClashPwOpt')!=='0'; }cat
 function pwGet(){ try{ var o=JSON.parse(localStorage.getItem('arenaClashPw')||'null'); return o&&o.p?o:null; }catch(e){ return null; } }
 function pwSave(id,p){ if(!pwOn()) return; try{ localStorage.setItem('arenaClashPw',JSON.stringify({u:String(id||'').trim().toLowerCase(),p:p})); }catch(e){} }
 function pwClear(){ try{ localStorage.removeItem('arenaClashPw'); }catch(e){} }
+/* ---- developers: ff_devs (supabase-ff-dev.sql). 'owner' designates 'dev' accounts; both get a title badge ---- */
+var DEVL={ko:{o:'총괄 개발자',d:'개발자',h:'개발자 지정',ph:'아이디 입력',add:'지정',del:'해제',none:'지정된 개발자가 없어요.',ok:'지정했어요.',rm:'해제했어요.',nouser:'그 아이디를 찾지 못했어요.',own:'이미 총괄 개발자예요.',err:'처리하지 못했어요. (SQL을 실행했는지 확인해 주세요)',note:'지정된 개발자는 다른 사람을 지정할 수 없어요.'},
+ en:{o:'Lead Developer',d:'Developer',h:'Designate developers',ph:'Username',add:'Add',del:'Remove',none:'No developers yet.',ok:'Added.',rm:'Removed.',nouser:'No such username.',own:'Already the lead developer.',err:'Failed. (Was the SQL run?)',note:'Designated developers cannot designate others.'},
+ es:{o:'Desarrollador jefe',d:'Desarrollador',h:'Designar desarrolladores',ph:'Usuario',add:'Añadir',del:'Quitar',none:'Aún no hay desarrolladores.',ok:'Añadido.',rm:'Quitado.',nouser:'Usuario no encontrado.',own:'Ya es el desarrollador jefe.',err:'Error. (¿Se ejecutó el SQL?)',note:'Los desarrolladores designados no pueden designar a otros.'},
+ fr:{o:'Développeur en chef',d:'Développeur',h:'Désigner des développeurs',ph:'Identifiant',add:'Ajouter',del:'Retirer',none:'Aucun développeur.',ok:'Ajouté.',rm:'Retiré.',nouser:'Identifiant introuvable.',own:'Déjà développeur en chef.',err:'Échec. (Le SQL a-t-il été exécuté ?)',note:'Les développeurs désignés ne peuvent pas en désigner d’autres.'},
+ de:{o:'Chefentwickler',d:'Entwickler',h:'Entwickler ernennen',ph:'Benutzername',add:'Hinzufügen',del:'Entfernen',none:'Noch keine Entwickler.',ok:'Hinzugefügt.',rm:'Entfernt.',nouser:'Benutzername nicht gefunden.',own:'Bereits Chefentwickler.',err:'Fehlgeschlagen. (SQL ausgeführt?)',note:'Ernannte Entwickler können keine weiteren ernennen.'},
+ ja:{o:'総括開発者',d:'開発者',h:'開発者の指定',ph:'ユーザー名',add:'指定',del:'解除',none:'指定された開発者はいません。',ok:'指定しました。',rm:'解除しました。',nouser:'そのIDが見つかりません。',own:'すでに総括開発者です。',err:'失敗しました。(SQLを実行しましたか?)',note:'指定された開発者は他の人を指定できません。'}};
+var devMap=null;
+function DL(){ return DEVL[lang()]||DEVL.en; }
+async function loadDevs(force){ if(devMap&&!force) return devMap; devMap={}; if(!sb) return devMap;
+  try{ var r=await sb.from('ff_devs').select('user_id,role'); ((r&&r.data)||[]).forEach(function(x){ devMap[x.user_id]=x.role; }); }catch(e){} return devMap; }
+function devRole(id){ return (devMap&&devMap[id])||null; }
+function devBadge(id){ var r=devRole(id); if(!r) return ''; var L=DL();
+  return ' <span class="ffdev" data-notr style="font-size:11.5px;font-weight:700;color:'+(r==='owner'?'#ffe08a':'#9fd0ff')+';background:'+(r==='owner'?'rgba(255,196,61,.16)':'rgba(90,160,255,.16)')+';border:1px solid '+(r==='owner'?'rgba(255,196,61,.5)':'rgba(90,160,255,.45)')+';border-radius:99px;padding:1px 7px;white-space:nowrap">'+(r==='owner'?'👑 '+esc(L.o):'🛠️ '+esc(L.d))+'</span>'; }
+async function devPanel(el,say){ var L=DL(), box=el.querySelector('#aDevBox'); if(!box) return; await loadDevs(true);
+  if(devRole(user.id)!=='owner') { box.innerHTML=''; return; }
+  var ids=Object.keys(devMap).filter(function(i){ return devMap[i]==='dev'; }), nm={};
+  if(ids.length){ try{ var r=await sb.from('profiles').select('id,username,display_name').in('id',ids); ((r&&r.data)||[]).forEach(function(p){ nm[p.id]=p.username; }); }catch(e){} }
+  box.innerHTML='<h4>'+esc(L.h)+'</h4><input type="text" id="aDevId" maxlength="16" autocapitalize="off" spellcheck="false" placeholder="'+esc(L.ph)+'"><button type="button" class="ffa-btn" id="aDevGo">'+esc(L.add)+'</button><div class="m" id="aDevM"></div><p>'+esc(L.note)+'</p>'+
+   '<div id="aDevList">'+(ids.length?ids.map(function(i){ return '<div class="row" style="align-items:center;margin-bottom:6px"><span style="flex:1;font-size:14px">🛠️ '+esc(nm[i]||'???')+'</span><button type="button" class="ffa-btn" data-u="'+esc(nm[i]||'')+'" style="flex:0 0 auto">'+esc(L.del)+'</button></div>'; }).join(''):'<p>'+esc(L.none)+'</p>')+'</div>';
+  async function run(u,on){ if(!u) return; var r=await sb.rpc('ff_dev_set',{p_username:u,p_on:on}), v=r&&r.data;
+    if(r.error||(v!=='ok'&&v!=='nouser'&&v!=='owner')) return say('aDevM',L.err);
+    if(v==='nouser') return say('aDevM',L.nouser); if(v==='owner') return say('aDevM',L.own);
+    await devPanel(el,say); say('aDevM',on?L.ok:L.rm,true); }
+  box.querySelector('#aDevGo').onclick=function(){ run(box.querySelector('#aDevId').value.trim(),true); };
+  box.querySelectorAll('[data-u]').forEach(function(b){ b.onclick=function(){ run(b.dataset.u,false); }; });
+}
+
 function closeAcct(){ var el=document.getElementById('ffaAcct'); if(el) el.style.display='none'; }
 function openAcct(){
   if(!user) return openLogin(); if(!sb) return;
@@ -239,7 +267,7 @@ function openAcct(){
    '<h4>'+esc(A.id.replace(/\s*\(.*$/,''))+'</h4><input type="text" id="aId" maxlength="16" autocapitalize="off" spellcheck="false" placeholder="'+esc(A.id)+'"><p>'+esc(A.idNote)+'</p><button type="button" class="ffa-btn" id="aIdGo">'+esc(A.save)+'</button><div class="m" id="aIdM"></div>'+
    '<h4>'+esc(A.pwT)+'</h4><div id="aPwBox"></div>'+
    '<div class="pwr"><input type="password" id="aNew" autocomplete="new-password" placeholder="'+esc(A.newPw)+'"><button type="button" class="eye" aria-label="'+esc(A.show)+'">👁</button></div><button type="button" class="ffa-btn" id="aPwGo">'+esc(A.chg)+'</button><div class="m" id="aPwM"></div>'+
-   '<label class="k"><input type="checkbox" id="aKeep"> '+esc(A.keep)+'</label><p>'+esc(A.keepN)+'</p></div>';
+   '<label class="k"><input type="checkbox" id="aKeep"> '+esc(A.keep)+'</label><p>'+esc(A.keepN)+'</p><div id="aDevBox"></div></div>';
   document.body.appendChild(el);
   var $=function(i){ return el.querySelector('#'+i); }, curId=(prof&&prof.username)||String(user.email||'').split('@')[0];
   function say(i,t,ok){ var m=$(i); m.textContent=t; m.className='m'+(ok?' ok':''); }
@@ -255,7 +283,7 @@ function openAcct(){
     b.querySelector('[data-k=c]').onclick=function(){ var done=function(){ say('aPwM',A.copied,true); };
       try{ navigator.clipboard.writeText(o.p).then(done,function(){ shown=true; draw(); }); }catch(e){ shown=true; draw(); } };
     draw(); }
-  pwBox();
+  pwBox(); devPanel(el,say);
   $('aKeep').onchange=function(){ try{ localStorage.setItem('arenaClashPwOpt',this.checked?'1':'0'); }catch(e){} if(!this.checked){ pwClear(); pwBox(); } };
   $('aNickGo').onclick=async function(){ var n=$('aNick').value.trim().slice(0,12); if(!n) return say('aNickM',A.badNick);
     if(n===((prof&&prof.display_name)||'')) return say('aNickM',A.same,true);
@@ -681,5 +709,5 @@ document.addEventListener('visibilitychange', function(){ if(document.visibility
 
 window.FFAuth={ ready:ready, pollCheck:pollCheck, client:function(){ return sb; }, user:function(){ return user; }, profile:function(){ return prof; }, nickname:nick,
   onChange:function(f){ if(typeof f==='function') subs.push(f); }, openLogin:openLogin, openProfile:openProfile, openFriends:openFriends, friends:function(){ return friends.slice(); }, signOut:signOut, refresh:paint, syncHub:syncHub,
-  openDM:openDM, openReport:openReport, block:block, isBlocked:isBlocked, blocked:function(){ return Object.assign({},blocks); } };
+  openDM:openDM, openReport:openReport, loadDevs:loadDevs, devRole:devRole, devBadge:devBadge, block:block, isBlocked:isBlocked, blocked:function(){ return Object.assign({},blocks); } };
 })();
