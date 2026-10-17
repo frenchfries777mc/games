@@ -3,6 +3,52 @@
   {
    "date": "2026-10-17",
    "build": "",
+   "title": "Tools · Stickseum 위키 갱신",
+   "items": [
+    "Tools 위키에 Fry Sheet 문서 관리·행열 고정·원화/달러 서식, Fry Slides 템플릿·그림·발표 기능, Block HTML 프로젝트 관리·로그 칸 추가",
+    "Stickseum 위키에 v247 봇전 MVP, v248 레이드 졸개 이름 반영"
+   ],
+   "tr": {
+    "en": {
+     "title": "Tools · Stickseum wiki update",
+     "items": [
+      "Added to the Tools wiki: Fry Sheet document manager, frozen rows and columns and won/dollar formats; Fry Slides templates, pictures and presenting features; Block HTML project manager and log area",
+      "Added Stickseum v247 bot-match MVP and v248 raid minion names to the Stickseum wiki"
+     ]
+    },
+    "es": {
+     "title": "Actualización de la wiki de Tools y Stickseum",
+     "items": [
+      "Añadido a la wiki de Tools: administrador de documentos de Fry Sheet, filas y columnas inmovilizadas y formatos de won y dólar; plantillas, imágenes y funciones de presentación de Fry Slides; administrador de proyectos y área de registro de Block HTML",
+      "Añadidos a la wiki de Stickseum el MVP en partidas con bots (v247) y los nombres de los esbirros del asalto (v248)"
+     ]
+    },
+    "fr": {
+     "title": "Mise à jour du wiki Tools et Stickseum",
+     "items": [
+      "Ajouts au wiki Tools : gestionnaire de documents de Fry Sheet, lignes et colonnes figées et formats won et dollar ; modèles, images et fonctions de présentation de Fry Slides ; gestionnaire de projets et zone de journal de Block HTML",
+      "Ajout au wiki Stickseum du MVP contre des bots (v247) et des noms des sbires du raid (v248)"
+     ]
+    },
+    "de": {
+     "title": "Tools- und Stickseum-Wiki aktualisiert",
+     "items": [
+      "Im Tools-Wiki ergänzt: Dokumentverwaltung, fixierte Zeilen und Spalten und Won-/Dollar-Formate in Fry Sheet; Vorlagen, Bilder und Präsentationsfunktionen in Fry Slides; Projektverwaltung und Protokollbereich in Block HTML",
+      "Im Stickseum-Wiki ergänzt: MVP bei Bot-Matches (v247) und Namen der Raid-Schergen (v248)"
+     ]
+    },
+    "ja": {
+     "title": "ToolsとStickseumのWiki更新",
+     "items": [
+      "Tools Wikiに、Fry Sheetの文書管理・行と列の固定・ウォン/ドル形式、Fry Slidesのテンプレート・画像・発表機能、Block HTMLのプロジェクト管理・ログ欄を追加",
+      "Stickseum Wikiに、v247のボット戦MVPとv248のレイド手下の名前を反映"
+     ]
+    }
+   }
+  },
+  {
+   "date": "2026-10-17",
+   "build": "",
    "title": "Stickseum · Beaconfall 위키 갱신",
    "items": [
     "Stickseum 위키 보스 레이드를 v246에 맞게 수정 (제한 시간 3분, 보스 체력, 새 무기)",
