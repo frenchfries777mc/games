@@ -3,6 +3,58 @@
   {
    "date": "2026-10-17",
    "build": "",
+   "title": "퀘스트·개발자 일지·업데이트 투표",
+   "items": [
+    "오늘의 퀘스트 추가 (게임·게시판·채팅·투표 중 3개, 코인 보상)",
+    "게시판에 개발자 일지 분류 추가 (개발자만 작성)",
+    "개발자가 올리는 다음 업데이트 투표 추가"
+   ],
+   "tr": {
+    "en": {
+     "title": "Quests, dev log and update votes",
+     "items": [
+      "Added daily quests (3 of: play, board, chat, vote) with coin rewards",
+      "Added a Dev log category to the board (developers only)",
+      "Added next-update votes posted by developers"
+     ]
+    },
+    "es": {
+     "title": "Misiones, diario y votos",
+     "items": [
+      "Añadidas misiones diarias (3 de: jugar, foro, chat, votar) con monedas",
+      "Añadida la categoría Diario de desarrollo (solo desarrolladores)",
+      "Añadidos votos para la próxima actualización"
+     ]
+    },
+    "fr": {
+     "title": "Quêtes, journal et votes",
+     "items": [
+      "Ajout des quêtes du jour (3 parmi : jouer, forum, chat, vote) avec pièces",
+      "Ajout de la catégorie Journal de dev (développeurs uniquement)",
+      "Ajout des votes pour la prochaine mise à jour"
+     ]
+    },
+    "de": {
+     "title": "Quests, Dev-Log und Update-Votes",
+     "items": [
+      "Tägliche Quests (3 aus: spielen, Forum, Chat, Abstimmen) mit Münzen",
+      "Kategorie Dev-Log im Forum (nur Entwickler)",
+      "Abstimmungen über das nächste Update von Entwicklern"
+     ]
+    },
+    "ja": {
+     "title": "クエスト・開発日誌・更新投票",
+     "items": [
+      "デイリークエストを追加(プレイ・掲示板・チャット・投票から3つ、コイン報酬)",
+      "掲示板に開発日誌カテゴリを追加(開発者のみ)",
+      "開発者が出す次のアップデート投票を追加"
+     ]
+    }
+   }
+  },
+  {
+   "date": "2026-10-17",
+   "build": "",
    "title": "프로필 카드 개발자 호칭",
    "items": [
     "프로필 카드에 개발자 호칭(총괄 개발자, 개발자) 표시 추가"
