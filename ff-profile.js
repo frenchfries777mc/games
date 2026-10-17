@@ -51,7 +51,8 @@ async function fetchData(sb, uid){
   ((a&&!a.error&&a.data)||[]).forEach(function(r){ (ids[r.game]=ids[r.game]||{})[r.ach_id]=1; });
   var deco=null; try{ var dc=await sb.from('ff_deco').select('bg,fr').eq('user_id',uid).limit(1); if(dc&&!dc.error&&dc.data&&dc.data[0]) deco=dc.data[0]; }catch(e){}      // (empty before supabase-ff-extra.sql is run)
   var card=null; try{ var cd=await sb.from('ff_card').select('bio,fav,title').eq('user_id',uid).limit(1); if(cd&&!cd.error&&cd.data&&cd.data[0]) card=cd.data[0]; }catch(e){}      // (empty before supabase-ff-more.sql is run)
-  return {profile:(p&&p.data)||{id:uid}, played:played, ach:ach, ids:ids, deco:deco, card:card};
+  var dev=null; try{ var dv=await sb.from('ff_devs').select('role').eq('user_id',uid).limit(1); if(dv&&!dv.error&&dv.data&&dv.data[0]) dev=dv.data[0].role; }catch(e){}      // (empty before supabase-ff-dev.sql is run)
+  return {profile:(p&&p.data)||{id:uid}, played:played, ach:ach, ids:ids, deco:deco, card:card, dev:dev};
 }
 
 /* ---- card looks unlocked by hub achievements (ff_deco in supabase-ff-extra.sql; keep the "need" numbers in step with ff_deco_need there) ---- */
@@ -395,6 +396,7 @@ async function draw(cv, d, o){
   c.save(); if(gl){ c.shadowColor=gl.color; c.shadowBlur=gl.blur*1.6; } c.fillStyle='#000'; rrect(c,AX,AY,AS,AS,20); c.fill(); c.restore();
   c.save(); rrect(c,AX,AY,AS,AS,20); c.clip(); c.drawImage(a,AX,AY,AS,AS); c.restore();
   c.save(); rrect(c,AX,AY,AS,AS,20); c.lineWidth=fr?5:2; c.strokeStyle=fr?(fr.cls==='pfrRainbow'?rainbow(c,AX,AX+AS):fr.color):'rgba(255,255,255,.18)'; c.stroke(); c.restore();
+  if(d.dev){ var DVN={owner:{ko:'총괄 개발자',en:'Lead Developer',es:'Desarrollador jefe',fr:'Développeur en chef',de:'Chefentwickler',ja:'総括開発者'},dev:{ko:'개발자',en:'Developer',es:'Desarrollador',fr:'Développeur',de:'Entwickler',ja:'開発者'}}[d.dev]; if(DVN){ var dl=(d.dev==='owner'?'👑 ':'🛠️ ')+(DVN[lang(o)]||DVN.en); c.save(); c.font='800 13px system-ui, sans-serif'; c.textAlign='left'; var dw=c.measureText(dl).width+20; rrect(c,HX+12,HY+12,dw,26,13); c.fillStyle=d.dev==='owner'?'rgba(255,196,61,.2)':'rgba(90,160,255,.2)'; c.fill(); c.lineWidth=1.5; c.strokeStyle=d.dev==='owner'?'rgba(255,196,61,.75)':'rgba(120,180,255,.7)'; c.stroke(); c.fillStyle=d.dev==='owner'?'#ffe08a':'#b5d8ff'; c.fillText(dl,HX+22,HY+30); c.restore(); } }
   // the name in the name colour (the clan is Stickseum-only, so it is not on the shared card)
   var CD=d.card||{}, TT=CD.title&&titleOf(CD.title), bio=String(CD.bio||'').trim(), lg=lang(o);
   var name=String(pr.display_name||pr.username||T.player).slice(0,16), ny=AY+AS+(bio||TT?38:46), fs=29;
