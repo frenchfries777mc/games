@@ -3,6 +3,52 @@
   {
    "date": "2026-10-17",
    "build": "",
+   "title": "처음 닉네임은 아이디로",
+   "items": [
+    "새로 가입하면 닉네임이 처음에는 아이디와 같게 정해짐 (내 계정에서 바꿀 수 있음)",
+    "GitHub·Google 첫 로그인 창에서 닉네임 칸 제거"
+   ],
+   "tr": {
+    "en": {
+     "title": "First nickname is the username",
+     "items": [
+      "New accounts start with the nickname set to the username (changeable in My account)",
+      "Removed the nickname box from the first GitHub/Google login window"
+     ]
+    },
+    "es": {
+     "title": "El apodo inicial es el usuario",
+     "items": [
+      "Las cuentas nuevas empiezan con el apodo igual al usuario (se cambia en Mi cuenta)",
+      "Se quitó el campo de apodo de la primera ventana con GitHub/Google"
+     ]
+    },
+    "fr": {
+     "title": "Le pseudo initial est l’identifiant",
+     "items": [
+      "Les nouveaux comptes commencent avec le pseudo égal à l’identifiant (modifiable dans Mon compte)",
+      "Champ pseudo retiré de la première fenêtre GitHub/Google"
+     ]
+    },
+    "de": {
+     "title": "Erster Spitzname ist der Benutzername",
+     "items": [
+      "Neue Konten starten mit dem Spitznamen gleich dem Benutzernamen (änderbar in Mein Konto)",
+      "Spitznamenfeld im ersten GitHub-/Google-Fenster entfernt"
+     ]
+    },
+    "ja": {
+     "title": "最初のニックネームはID",
+     "items": [
+      "新規登録するとニックネームは最初IDと同じになります(マイアカウントで変更可)",
+      "初回GitHub・Googleログイン画面からニックネーム欄を削除"
+     ]
+    }
+   }
+  },
+  {
+   "date": "2026-10-17",
+   "build": "",
    "title": "위키 21시 묶음",
    "items": [
     "Beaconfall 위키 13문서 수정, 새 문서 3개 (공허의 군주와 진엔딩, 정착지와 주민, 건축과 청사진)",
