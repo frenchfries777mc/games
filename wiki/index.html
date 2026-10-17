@@ -46,6 +46,7 @@
   .mainc{min-width:0; padding-bottom:40px;}
   .top{display:flex; align-items:center; justify-content:flex-end; gap:10px; padding:16px 0 4px; flex-wrap:wrap;}
   .top .ffa-wrap{white-space:nowrap;}
+  .hubBtn{margin-right:auto; display:inline-flex; align-items:center; gap:6px; color:var(--text); text-decoration:none; font-size:14px; font-weight:600; background:var(--panel); border:1px solid var(--line); border-radius:99px; padding:6px 13px;} .hubBtn:hover{border-color:var(--g4,#6aa8ff);} .hubBtn::before{content:"\1F35F";}
   .menuBtn{display:none; background:var(--panel); color:var(--text); border:1px solid var(--line); border-radius:9px; padding:6px 11px; cursor:pointer; margin-right:auto;}
   .srch{position:relative; flex:0 1 320px; min-width:200px;}
   .srch input{width:100%; background:var(--panel); color:var(--text); border:1px solid var(--line); border-radius:10px; padding:8px 12px 8px 36px; font:inherit; font-size:15px;}
@@ -123,7 +124,7 @@
     .side{display:none; position:static; max-height:none; padding:12px 0 0;}
     body.navOpen .side{display:flex;}
     .logo{flex-direction:row; justify-content:center;} .logo .fry{width:40px; height:40px; font-size:22px; border-radius:11px;} .logo i{display:inline; margin-left:6px;}
-    .menuBtn{display:block;}
+    .menuBtn{display:block; margin-right:0;}
     .top{padding-top:12px;} .srch{flex:1 1 100%; order:3;}
     .page{padding:16px 16px 20px;} .ph h1{font-size:25px;}
     .ptabs a,.ptabs button{padding:6px 11px; font-size:13.5px;}
@@ -137,6 +138,7 @@
   <div class="mainc">
     <div class="top">
       <button type="button" class="menuBtn" id="menuBtn" aria-label="menu">☰</button>
+      <a class="hubBtn" href="../" data-u="hub">허브</a>
       <label class="srch"><input id="q" type="search" autocomplete="off" placeholder="위키 검색"></label>
       <span data-ff-account data-ff-nohub></span>
     </div>
