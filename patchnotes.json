@@ -3,6 +3,52 @@
   {
    "date": "2026-10-17",
    "build": "",
+   "title": "Stickseum 배경음악·Beaconfall 음량 위키 갱신",
+   "items": [
+    "Stickseum 배경음악(로비·대전 곡, 켜기/끄기, 소리 조절) 설명 추가 (v254)",
+    "Beaconfall 배경음악 소리를 줄인 내용 추가"
+   ],
+   "tr": {
+    "en": {
+     "title": "Stickseum music and Beaconfall volume wiki update",
+     "items": [
+      "Added Stickseum background music (lobby and battle tracks, on/off, volume) (v254)",
+      "Added that the Beaconfall background music volume was lowered"
+     ]
+    },
+    "es": {
+     "title": "Wiki de música de Stickseum y volumen de Beaconfall",
+     "items": [
+      "Se añadió la música de fondo de Stickseum (pistas de vestíbulo y batalla, activar/desactivar, volumen) (v254)",
+      "Se añadió que se bajó el volumen de la música de fondo de Beaconfall"
+     ]
+    },
+    "fr": {
+     "title": "Wiki de la musique de Stickseum et du volume de Beaconfall",
+     "items": [
+      "Ajout de la musique de fond de Stickseum (morceaux de salon et de combat, activation, volume) (v254)",
+      "Ajout de la baisse du volume de la musique de fond de Beaconfall"
+     ]
+    },
+    "de": {
+     "title": "Wiki zu Stickseum-Musik und Beaconfall-Lautstärke",
+     "items": [
+      "Hintergrundmusik von Stickseum ergänzt (Lobby- und Kampfstück, An/Aus, Lautstärke) (v254)",
+      "Ergänzt, dass die Lautstärke der Hintergrundmusik in Beaconfall gesenkt wurde"
+     ]
+    },
+    "ja": {
+     "title": "Stickseumの背景音楽とBeaconfallの音量をウィキに反映",
+     "items": [
+      "Stickseumの背景音楽（ロビーと対戦の曲、オン/オフ、音量調整）の説明を追加（v254）",
+      "Beaconfallの背景音楽の音量を小さくした内容を追加"
+     ]
+    }
+   }
+  },
+  {
+   "date": "2026-10-17",
+   "build": "",
    "title": "Crown Envoy 탐험과 유물 위키 추가",
    "items": [
     "Crown Envoy 탐험 3종과 유물 8종 설명 추가 (v0.3 b27)"
