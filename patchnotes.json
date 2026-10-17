@@ -3,6 +3,58 @@
   {
    "date": "2026-10-17",
    "build": "",
+   "title": "Stickseum build 259·260 위키 갱신",
+   "items": [
+    "버튼 클릭 소리가 \"톡\" 소리로 바뀐 내용 수정",
+    "온라인 방에 사람이 1명뿐이면 약 1.5초 만에 봇이 채워지는 내용 추가",
+    "패치 기록에 build 259, 260 추가"
+   ],
+   "tr": {
+    "en": {
+     "title": "Stickseum build 259·260 wiki update",
+     "items": [
+      "Updated the button click sound to the \"tok\" sound",
+      "Added that bots fill an online room in about 1.5 seconds when only one person is in it",
+      "Added builds 259 and 260 to the patch history"
+     ]
+    },
+    "es": {
+     "title": "Wiki de Stickseum build 259·260",
+     "items": [
+      "Se actualizó el sonido de clic de los botones al \"toc\"",
+      "Se añadió que los bots llenan una sala en línea en unos 1,5 segundos si solo hay una persona",
+      "Se añadieron las build 259 y 260 al historial de parches"
+     ]
+    },
+    "fr": {
+     "title": "Wiki de Stickseum build 259·260",
+     "items": [
+      "Mise à jour du son de clic des boutons en « toc »",
+      "Ajout du remplissage par des bots en environ 1,5 seconde quand une seule personne est dans la salle en ligne",
+      "Ajout des builds 259 et 260 à l'historique des patchs"
+     ]
+    },
+    "de": {
+     "title": "Stickseum build 259·260 Wiki-Update",
+     "items": [
+      "Klickton der Knöpfe auf das „Tock“ aktualisiert",
+      "Ergänzt, dass Bots einen Online-Raum nach etwa 1,5 Sekunden auffüllen, wenn nur eine Person darin ist",
+      "build 259 und 260 in die Patch-Historie aufgenommen"
+     ]
+    },
+    "ja": {
+     "title": "Stickseum build 259·260 ウィキ更新",
+     "items": [
+      "ボタンのクリック音を「コッ」という音に更新",
+      "オンラインの部屋に人が1人だけのとき約1.5秒でボットが埋める内容を追加",
+      "パッチ履歴にbuild 259と260を追加"
+     ]
+    }
+   }
+  },
+  {
+   "date": "2026-10-17",
+   "build": "",
    "title": "음악 감상실 추가",
    "items": [
     "음악 감상실 추가: Stickseum·Crown Envoy·Beaconfall 배경음악 14곡을 한곳에서 듣기 (반복·다음 곡 버튼)",
