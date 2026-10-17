@@ -3,6 +3,64 @@
   {
    "date": "2026-10-17",
    "build": "",
+   "title": "허브 내 계정 창 추가",
+   "items": [
+    "계정 메뉴에 내 계정 추가",
+    "닉네임·아이디 변경 추가",
+    "저장된 비밀번호 보기·복사·변경 추가",
+    "로그인 창에 비밀번호 보기 버튼 추가"
+   ],
+   "tr": {
+    "en": {
+     "title": "My account window added to the hub",
+     "items": [
+      "Added My account to the account menu",
+      "Added nickname and username changes",
+      "Added view, copy and change for the stored password",
+      "Added a show-password button to the login window"
+     ]
+    },
+    "es": {
+     "title": "Ventana Mi cuenta añadida al hub",
+     "items": [
+      "Añadido Mi cuenta al menú de cuenta",
+      "Añadido el cambio de apodo y usuario",
+      "Añadido ver, copiar y cambiar la contraseña guardada",
+      "Añadido botón de mostrar contraseña en el inicio de sesión"
+     ]
+    },
+    "fr": {
+     "title": "Fenêtre Mon compte ajoutée au hub",
+     "items": [
+      "Ajout de Mon compte au menu du compte",
+      "Ajout du changement de pseudo et d'identifiant",
+      "Ajout de l'affichage, de la copie et du changement du mot de passe enregistré",
+      "Ajout d'un bouton d'affichage du mot de passe à la connexion"
+     ]
+    },
+    "de": {
+     "title": "Fenster Mein Konto im Hub hinzugefügt",
+     "items": [
+      "Mein Konto zum Kontomenü hinzugefügt",
+      "Ändern von Spitzname und Benutzername hinzugefügt",
+      "Anzeigen, Kopieren und Ändern des gespeicherten Passworts hinzugefügt",
+      "Passwort-anzeigen-Knopf im Login-Fenster hinzugefügt"
+     ]
+    },
+    "ja": {
+     "title": "ハブにマイアカウント画面を追加",
+     "items": [
+      "アカウントメニューにマイアカウントを追加",
+      "ニックネーム・ID変更を追加",
+      "保存したパスワードの表示・コピー・変更を追加",
+      "ログイン画面にパスワード表示ボタンを追加"
+     ]
+    }
+   }
+  },
+  {
+   "date": "2026-10-17",
+   "build": "",
    "title": "Stickseum 캐릭터 승률 위키 추가",
    "items": [
     "Stickseum 캐릭터 문서 25명에 봇 측정 승률 추가(build 254 기준)",
