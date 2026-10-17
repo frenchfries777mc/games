@@ -4,8 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Frenchfries777 Wiki</title>
-<meta name="description" content="Stickseum · Crown Envoy · Beaconfall 공략 위키. 누구나 읽고, 로그인하면 고칠 수 있다.">
-<meta property="og:title" content="Frenchfries777 Wiki"><meta property="og:description" content="Stickseum · Crown Envoy · Beaconfall 공략 위키. 누구나 읽고, 로그인하면 고칠 수 있다."><meta property="og:type" content="website">
+<meta name="description" content="Stickseum · Crown Envoy · Beaconfall 공략과 Tools · Educations 사용법 위키. 누구나 읽고, 로그인하면 고칠 수 있다.">
+<meta property="og:title" content="Frenchfries777 Wiki"><meta property="og:description" content="Stickseum · Crown Envoy · Beaconfall 공략과 Tools · Educations 사용법 위키. 누구나 읽고, 로그인하면 고칠 수 있다."><meta property="og:type" content="website">
 <meta property="og:url" content="https://frenchfries777mc.github.io/games/wiki/"><meta property="og:site_name" content="Frenchfries777"><meta property="og:image" content="https://frenchfries777mc.github.io/games/og/wiki.jpg"><meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image"><meta name="twitter:image" content="https://frenchfries777mc.github.io/games/og/wiki.jpg">
 <meta name="theme-color" content="#08090d">
@@ -14,8 +14,8 @@
 <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&family=Noto+Sans+KR:wght@400;500;700;900&display=swap" rel="stylesheet">
 <script src="../ff-lang.js"></script>
 <style>
-  :root{ --bg:#08090d; --panel:#10131b; --panel2:#0b0d13; --line:#222837; --text:#eef0f5; --dim:#8a93a6; --fry:#ffc93c; --fry2:#ff8a3d; --g1:#3ee0c4; --g2:#e8c25a; --g3:#ffae5a; }
-  html[data-ff-theme=light]{ --bg:#f6f3ec; --panel:#ffffff; --panel2:#faf8f3; --line:#e2dccf; --text:#1f1b14; --dim:#6d6658; --g1:#0f8a77; --g2:#8a6c14; --g3:#a0600c; }
+  :root{ --bg:#08090d; --panel:#10131b; --panel2:#0b0d13; --line:#222837; --text:#eef0f5; --dim:#8a93a6; --fry:#ffc93c; --fry2:#ff8a3d; --g1:#3ee0c4; --g2:#e8c25a; --g3:#ffae5a; --g4:#6aa8ff; --g5:#9be564; }
+  html[data-ff-theme=light]{ --bg:#f6f3ec; --panel:#ffffff; --panel2:#faf8f3; --line:#e2dccf; --text:#1f1b14; --dim:#6d6658; --g1:#0f8a77; --g2:#8a6c14; --g3:#a0600c; --g4:#1f5fbf; --g5:#3f7d12; }
   *{box-sizing:border-box;}
   html,body{margin:0; padding:0; background:var(--bg); color:var(--text);}
   body{font-family:'Noto Sans KR','Apple SD Gothic Neo','Malgun Gothic',system-ui,sans-serif; font-size:16px; line-height:1.6; min-height:100vh;
@@ -81,6 +81,7 @@
   .wt{width:100%; border-collapse:collapse; margin:10px 0 6px; font-size:15px;}
   .wt th,.wt td{border:1px solid var(--line); padding:8px 12px; text-align:left; vertical-align:top;}
   .wt th{background:var(--panel2); font-size:14px;} .wt td:first-child{white-space:nowrap; font-weight:700;} .wt td:first-child a{text-decoration:none;} .wt td:last-child{color:var(--dim);}
+  .wt td{overflow-wrap:anywhere;} @media(max-width:700px){ .wt{table-layout:fixed;} .wt td:first-child{white-space:normal; width:38%;} }
   .rc{list-style:none; padding:0; margin:6px 0 14px;} .rc li{padding:6px 0; border-bottom:1px dashed var(--line); font-size:14.5px;} .rc .tm{color:var(--dim); font-variant-numeric:tabular-nums; margin-right:6px;} .rc a{font-weight:700; text-decoration:none;} .rc .who{color:var(--dim);}
   .e{color:var(--dim); padding:10px 2px;}
   .w{display:flex; flex-direction:column; gap:8px; margin-top:12px;}
@@ -93,7 +94,7 @@
   .hr .hm{color:var(--dim); font-size:13.5px;}
   .res{display:flex; flex-direction:column; gap:8px; margin-top:12px;} .res a{display:block; text-decoration:none; background:var(--panel2); border:1px solid var(--line); border-radius:12px; padding:11px 14px; color:var(--text);} .res a:hover{border-color:var(--fry);}
   .res .rt{font-weight:700;} .rg{font-size:12px; font-weight:700; margin-right:8px; color:var(--g);} .res .rs{color:var(--dim); font-size:13.5px; margin-top:3px; display:block;} .res mark{background:rgba(255,201,60,.35); color:inherit; border-radius:3px;}
-  .g-stickseum{--g:var(--g1);} .g-crownenvoy{--g:var(--g2);} .g-beaconfall{--g:var(--g3);}
+  .g-stickseum{--g:var(--g1);} .g-crownenvoy{--g:var(--g2);} .g-beaconfall{--g:var(--g3);} .g-tools{--g:var(--g4);} .g-educations{--g:var(--g5);}
   /* 정보 상자 */
   .ibox{float:right; clear:right; width:300px; max-width:100%; margin:4px 0 14px 20px; background:var(--panel2); border:1px solid var(--line); border-radius:12px; overflow:hidden; font-size:14px; line-height:1.5;}
   .ibox .ibh{background:linear-gradient(135deg,var(--fry),var(--fry2)); color:#1a1206; font-weight:800; text-align:center; padding:8px 10px; font-size:15.5px;}
@@ -105,6 +106,10 @@
   body[data-g=stickseum]{--fry:#3ee0c4; --fry2:#2fb0e8; background-image:radial-gradient(ellipse 900px 520px at 10% -10%, rgba(62,224,196,.14), transparent 60%), radial-gradient(ellipse 800px 600px at 110% 30%, rgba(47,176,232,.09), transparent 60%);}
   body[data-g=crownenvoy]{--fry:#e8c25a; --fry2:#c98f2c; background-image:radial-gradient(ellipse 900px 520px at 10% -10%, rgba(232,194,90,.15), transparent 60%), radial-gradient(ellipse 800px 600px at 110% 30%, rgba(160,60,60,.10), transparent 60%);}
   body[data-g=beaconfall]{--fry:#ffae5a; --fry2:#ff6f3d; background-image:radial-gradient(ellipse 900px 520px at 10% -10%, rgba(255,174,90,.15), transparent 60%), radial-gradient(ellipse 800px 600px at 110% 30%, rgba(90,200,120,.08), transparent 60%);}
+  body[data-g=tools]{--fry:#6aa8ff; --fry2:#4a7bf0; background-image:radial-gradient(ellipse 900px 520px at 10% -10%, rgba(106,168,255,.15), transparent 60%), radial-gradient(ellipse 800px 600px at 110% 30%, rgba(74,123,240,.09), transparent 60%);}
+  body[data-g=educations]{--fry:#9be564; --fry2:#4fc47a; background-image:radial-gradient(ellipse 900px 520px at 10% -10%, rgba(155,229,100,.14), transparent 60%), radial-gradient(ellipse 800px 600px at 110% 30%, rgba(79,196,122,.09), transparent 60%);}
+  html[data-ff-theme=light] body[data-g=tools]{--fry:#1f5fbf; --fry2:#2a4fc0; background-image:radial-gradient(ellipse 900px 520px at 10% -10%, rgba(106,168,255,.25), transparent 60%);}
+  html[data-ff-theme=light] body[data-g=educations]{--fry:#3f7d12; --fry2:#2a8a52; background-image:radial-gradient(ellipse 900px 520px at 10% -10%, rgba(155,229,100,.3), transparent 60%);}
   html[data-ff-theme=light] body[data-g=stickseum]{--fry:#0f8a77; --fry2:#1279a8; background-image:radial-gradient(ellipse 900px 520px at 10% -10%, rgba(62,224,196,.22), transparent 60%);}
   html[data-ff-theme=light] body[data-g=crownenvoy]{--fry:#8a6c14; --fry2:#a5701c; background-image:radial-gradient(ellipse 900px 520px at 10% -10%, rgba(232,194,90,.28), transparent 60%);}
   html[data-ff-theme=light] body[data-g=beaconfall]{--fry:#a0600c; --fry2:#c4521f; background-image:radial-gradient(ellipse 900px 520px at 10% -10%, rgba(255,174,90,.28), transparent 60%);}
