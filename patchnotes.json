@@ -3,6 +3,46 @@
   {
    "date": "2026-10-17",
    "build": "",
+   "title": "Beaconfall 위키 갱신",
+   "items": [
+    "Beaconfall 컨트롤 문서에 Ctrl+커서 블록 선택, F 상호작용·부수기 추가"
+   ],
+   "tr": {
+    "en": {
+     "title": "Beaconfall wiki update",
+     "items": [
+      "Added Ctrl+cursor block selection and F interact/break to the Beaconfall controls page"
+     ]
+    },
+    "es": {
+     "title": "Actualización de la wiki de Beaconfall",
+     "items": [
+      "Añadida la selección de bloques con Ctrl+cursor y F para interactuar o romper en la página de controles de Beaconfall"
+     ]
+    },
+    "fr": {
+     "title": "Mise à jour du wiki Beaconfall",
+     "items": [
+      "Ajout de la sélection de blocs avec Ctrl+curseur et de F pour interagir ou casser sur la page des commandes de Beaconfall"
+     ]
+    },
+    "de": {
+     "title": "Beaconfall-Wiki aktualisiert",
+     "items": [
+      "Blockauswahl mit Ctrl+Cursor und F zum Interagieren oder Abbauen auf der Beaconfall-Steuerungsseite ergänzt"
+     ]
+    },
+    "ja": {
+     "title": "Beaconfall Wiki更新",
+     "items": [
+      "Beaconfallの操作ページにCtrl+カーソルでのブロック選択と、Fでの操作・破壊を追加"
+     ]
+    }
+   }
+  },
+  {
+   "date": "2026-10-17",
+   "build": "",
    "title": "Tools · Educations 위키",
    "items": [
     "위키에 Tools 문서 16개 추가 (Fry Sheet, Block HTML, Fry Slides, Fry Lab, 공통 AI 설정 등)",
