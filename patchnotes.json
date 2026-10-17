@@ -3,6 +3,46 @@
   {
    "date": "2026-10-17",
    "build": "",
+   "title": "Stickseum 모바일 조작 위키 갱신",
+   "items": [
+    "Stickseum 모바일 조작(자동 조준, 💨 버튼, 버튼 배치) 설명 수정"
+   ],
+   "tr": {
+    "en": {
+     "title": "Stickseum mobile controls wiki update",
+     "items": [
+      "Updated the Stickseum mobile controls (auto aim, 💨 button, button layout)"
+     ]
+    },
+    "es": {
+     "title": "Wiki de controles móviles de Stickseum",
+     "items": [
+      "Se actualizaron los controles móviles de Stickseum (puntería automática, botón 💨, disposición de botones)"
+     ]
+    },
+    "fr": {
+     "title": "Wiki des commandes mobiles de Stickseum",
+     "items": [
+      "Mise à jour des commandes mobiles de Stickseum (visée automatique, bouton 💨, disposition des boutons)"
+     ]
+    },
+    "de": {
+     "title": "Wiki zur Handy-Steuerung von Stickseum",
+     "items": [
+      "Handy-Steuerung von Stickseum aktualisiert (Auto-Zielen, 💨-Knopf, Knopf-Layout)"
+     ]
+    },
+    "ja": {
+     "title": "Stickseumのモバイル操作ウィキを更新",
+     "items": [
+      "Stickseumのモバイル操作（自動照準、💨ボタン、ボタン配置）の説明を修正"
+     ]
+    }
+   }
+  },
+  {
+   "date": "2026-10-17",
+   "build": "",
    "title": "Beaconfall·Stickseum 위키 갱신",
    "items": [
     "Beaconfall 멀티플레이 초대 링크·방 참가, 도감 섬 탭 설명 추가",
