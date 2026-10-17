@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Frenchfries777 Patch Notes</title>
+<meta name="description" content="Stickseum · Crown Envoy · Beaconfall · 허브의 패치노트를 한곳에 모았다.">
+<meta name="theme-color" content="#08090d">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&family=Noto+Sans+KR:wght@400;500;700;900&display=swap" rel="stylesheet">
+<script src="../ff-lang.js"></script>
+<style>
+  :root{ --bg:#08090d; --panel:#10131b; --line:#222837; --text:#eef0f5; --dim:#8a93a6; --fry:#ffc93c; --fry2:#ff8a3d; --g0:#ff8fc2; --g1:#3ee0c4; --g2:#e8c25a; --g3:#ffae5a; --g4:#6aa8ff; }
+  html[data-ff-theme=light]{ --bg:#f6f3ec; --panel:#ffffff; --line:#e2dccf; --text:#1f1b14; --dim:#6d6658; --g0:#b8326f; --g1:#0f8a77; --g2:#8a6c14; --g3:#a0600c; --g4:#1f5fbf; }
+  *{box-sizing:border-box;}
+  html,body{margin:0; padding:0; background:var(--bg); color:var(--text);}
+  body{font-family:'Noto Sans KR','Apple SD Gothic Neo','Malgun Gothic',system-ui,sans-serif; font-size:16px; line-height:1.6; min-height:100vh;
+    padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
+    background-image:radial-gradient(ellipse 900px 520px at 10% -10%, rgba(255,201,60,.10), transparent 60%), radial-gradient(ellipse 800px 600px at 110% 30%, rgba(255,77,94,.07), transparent 60%); background-attachment:fixed;}
+  html[data-ff-theme=light] body{background-image:radial-gradient(ellipse 900px 520px at 10% -10%, rgba(255,201,60,.22), transparent 60%);}
+  a{color:var(--fry);}
+  .wrap{max-width:860px; margin:0 auto; padding:0 16px 60px;}
+  .top{display:flex; align-items:center; gap:10px; padding:16px 0 4px; flex-wrap:wrap;}
+  .hubBtn{margin-right:auto; display:inline-flex; align-items:center; gap:6px; color:var(--text); text-decoration:none; font-size:14px; font-weight:600; background:var(--panel); border:1px solid var(--line); border-radius:99px; padding:6px 13px;}
+  .hubBtn:hover{border-color:var(--fry); color:var(--fry);}
+  .langSel{background:var(--panel); color:var(--dim); border:1px solid var(--line); border-radius:8px; padding:5px 8px; font:inherit; font-size:13.5px; cursor:pointer;}
+  h1{font-family:'Oswald','Noto Sans KR',sans-serif; font-size:34px; margin:18px 0 4px; letter-spacing:.02em;}
+  h1 b{color:var(--fry);}
+  .lead{margin:0 0 16px; color:var(--dim); font-size:15px;}
+  .bar{display:flex; flex-wrap:wrap; gap:8px; align-items:center; margin-bottom:14px;}
+  .chip{background:var(--panel); color:var(--dim); border:1px solid var(--line); border-radius:99px; padding:5px 13px; font:inherit; font-size:14px; font-weight:700; cursor:pointer;}
+  .chip:hover{color:var(--text);} .chip.on{color:#1a1206; background:linear-gradient(135deg,var(--fry),var(--fry2)); border-color:transparent;}
+  .srch{flex:1 1 200px; min-width:180px; background:var(--panel); color:var(--text); border:1px solid var(--line); border-radius:10px; padding:8px 12px; font:inherit; font-size:15px;}
+  .srch:focus{outline:none; border-color:var(--fry);}
+  .day{margin:22px 0 8px; font-size:13px; letter-spacing:.08em; color:var(--dim); font-weight:700;}
+  .card{background:var(--panel); border:1px solid var(--line); border-left:4px solid var(--c,var(--fry)); border-radius:12px; padding:12px 16px; margin-bottom:10px;}
+  .card .h{display:flex; flex-wrap:wrap; gap:8px; align-items:center; font-size:13px; color:var(--dim);}
+  .card .g{color:var(--c,var(--fry)); font-weight:800;}
+  .card h3{margin:4px 0 4px; font-size:17.5px; line-height:1.4;}
+  .card ul{margin:0; padding-left:20px;} .card li{margin:1px 0; font-size:15px;}
+  .empty,.err{color:var(--dim); text-align:center; padding:30px 0;}
+  .more{display:block; margin:14px auto 0; background:var(--panel); color:var(--text); border:1px solid var(--line); border-radius:10px; padding:9px 22px; font:inherit; font-weight:700; cursor:pointer;}
+  .more:hover{border-color:var(--fry);}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top"><a class="hubBtn" id="hubBtn" href="../">← <span></span></a><span data-ff-account></span><select class="langSel" id="lang"></select></div>
+  <h1>Patch <b>Notes</b></h1>
+  <p class="lead" id="lead"></p>
+  <div class="bar" id="bar"></div>
+  <div id="list"></div>
+</div>
+<script src="../ff-auth.js"></script>
+<script>
+(function(){
+'use strict';
+var LN=['ko','en','es','fr','de','ja'], NAMES={ko:'한국어',en:'English',es:'Español',fr:'Français',de:'Deutsch',ja:'日本語'};
+var U={
+ ko:{hub:'허브',lead:'Stickseum · Crown Envoy · Beaconfall · 허브의 패치노트를 한곳에 모았다.',all:'전체',hubN:'허브',search:'패치노트 검색',empty:'찾는 패치노트가 없다.',err:'패치노트를 불러오지 못했다.',more:'더 보기',items:'{0}개'},
+ en:{hub:'Hub',lead:'Patch notes of Stickseum, Crown Envoy, Beaconfall and the hub in one place.',all:'All',hubN:'Hub',search:'Search patch notes',empty:'No patch notes found.',err:'Could not load the patch notes.',more:'Show more',items:'{0} items'},
+ es:{hub:'Hub',lead:'Las notas de parche de Stickseum, Crown Envoy, Beaconfall y el hub en un solo lugar.',all:'Todo',hubN:'Hub',search:'Buscar notas de parche',empty:'No se encontraron notas de parche.',err:'No se pudieron cargar las notas de parche.',more:'Ver más',items:'{0} elementos'},
+ fr:{hub:'Hub',lead:'Les notes de mise à jour de Stickseum, Crown Envoy, Beaconfall et du hub au même endroit.',all:'Tout',hubN:'Hub',search:'Rechercher dans les notes',empty:'Aucune note trouvée.',err:'Impossible de charger les notes.',more:'Voir plus',items:'{0} éléments'},
+ de:{hub:'Hub',lead:'Die Patchnotes von Stickseum, Crown Envoy, Beaconfall und dem Hub an einem Ort.',all:'Alle',hubN:'Hub',search:'Patchnotes durchsuchen',empty:'Keine Patchnotes gefunden.',err:'Die Patchnotes konnten nicht geladen werden.',more:'Mehr anzeigen',items:'{0} Einträge'},
+ ja:{hub:'ハブ',lead:'Stickseum・Crown Envoy・Beaconfall・ハブのパッチノートを1か所にまとめました。',all:'すべて',hubN:'ハブ',search:'パッチノートを検索',empty:'パッチノートが見つかりません。',err:'パッチノートを読み込めませんでした。',more:'もっと見る',items:'{0}件'}};
+function detect(){ var c=[]; try{ var s=localStorage.getItem('arenaClashLang'); if(s) c.push(s); }catch(e){} try{ c=c.concat(navigator.languages||[navigator.language||'']); }catch(e){}
+  for(var i=0;i<c.length;i++){ var k=String(c[i]).slice(0,2).toLowerCase(); if(LN.indexOf(k)>=0) return k; } return 'ko'; }
+var lang=detect(), T=U[lang];
+var SRC=[{k:'hub',name:'허브',c:'--g0',url:'../patchnotes.json'},{k:'stickseum',name:'Stickseum',c:'--g1',url:'../../stickseum/patchnotes.json'},
+         {k:'crownenvoy',name:'Crown Envoy',c:'--g2',url:'../../crownenvoy/patchnotes.json'},{k:'beaconfall',name:'Beaconfall',c:'--g3',url:'../../beaconfall/patchnotes.json'}];
+function $(s){ return document.querySelector(s); }
+function esc(s){ return String(s==null?'':s).replace(/[&<>"']/g,function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); }
+var all=[], sel='all', q='', shown=30, failed=0;
+function tr(n){ var t=lang!=='ko'&&n.tr&&n.tr[lang]; return {title:(t&&t.title)||n.title||'', items:(t&&t.items)||n.items||[]}; }
+function paintBar(){
+  var h='<button type="button" class="chip'+(sel==='all'?' on':'')+'" data-k="all">'+esc(T.all)+'</button>'+SRC.map(function(s){ return '<button type="button" class="chip'+(sel===s.k?' on':'')+'" data-k="'+s.k+'">'+esc(s.k==='hub'?T.hubN:s.name)+'</button>'; }).join('')+
+    '<input class="srch" id="q" type="search" placeholder="'+esc(T.search)+'" value="'+esc(q)+'">';
+  $('#bar').innerHTML=h;
+  $('#q').oninput=function(){ q=this.value; shown=30; paintList(); };
+  var bs=document.querySelectorAll('#bar .chip'); for(var i=0;i<bs.length;i++) bs[i].onclick=function(){ sel=this.getAttribute('data-k'); shown=30; paintBar(); paintList(); try{ history.replaceState(null,'','#'+sel); }catch(e){} };
+  var el=$('#q'); }
+function paintList(){
+  var box=$('#list'), ql=q.trim().toLowerCase();
+  var rows=all.filter(function(n){ return (sel==='all'||n.g===sel)&&(!ql||(n.t.title+' '+n.t.items.join(' ')+' '+n.build).toLowerCase().indexOf(ql)>=0); });
+  if(!rows.length){ box.innerHTML='<div class="'+(failed&&!all.length?'err':'empty')+'">'+esc(failed&&!all.length?T.err:T.empty)+'</div>'; return; }
+  var out='', last='';
+  rows.slice(0,shown).forEach(function(n){
+    if(n.date!==last){ last=n.date; out+='<div class="day">'+esc(n.date)+'</div>'; }
+    out+='<article class="card" style="--c:var('+n.s.c+')"><div class="h"><span class="g">'+esc(n.g==='hub'?(lang==='ko'?'허브':T.hubN):n.s.name)+'</span>'+(n.build?'<span>'+esc(n.build)+'</span>':'')+'<span>'+esc(T.items.replace('{0}',n.t.items.length))+'</span></div>'+
+      '<h3>'+esc(n.t.title)+'</h3><ul>'+n.t.items.map(function(x){ return '<li>'+esc(x)+'</li>'; }).join('')+'</ul></article>'; });
+  if(rows.length>shown) out+='<button type="button" class="more" id="more">'+esc(T.more)+'</button>';
+  box.innerHTML=out; var m=$('#more'); if(m) m.onclick=function(){ shown+=30; paintList(); };
+}
+function load(){
+  return Promise.all(SRC.map(function(s,si){ return fetch(s.url,{cache:'no-cache'}).then(function(r){ return r.ok?r.json():null; },function(){ return null; }).then(function(d){
+    if(!d){ failed++; return []; } return (d.notes||[]).map(function(n,i){ return {g:s.k,s:s,i:i,si:si,date:n.date||'',build:n.build||'',t:tr(n)}; }); }); }))
+  .then(function(l){ all=[].concat.apply([],l).sort(function(a,b){ return (b.date>a.date?1:b.date<a.date?-1:0)||(a.si-b.si)||(a.i-b.i); }); paintList(); });
+}
+(function init(){
+  document.documentElement.lang=lang; $('#hubBtn span').textContent=T.hub; $('#lead').textContent=T.lead;
+  var ls=$('#lang'); ls.innerHTML=LN.map(function(k){ return '<option value="'+k+'"'+(k===lang?' selected':'')+'>'+NAMES[k]+'</option>'; }).join('');
+  ls.onchange=function(){ try{ localStorage.setItem('arenaClashLang',this.value); }catch(e){} location.reload(); };
+  var h=(location.hash||'').slice(1); if(SRC.some(function(s){ return s.k===h; })) sel=h;
+  paintBar(); load();
+})();
+})();
+</script>
+</body>
+</html>
