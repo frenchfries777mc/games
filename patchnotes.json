@@ -3,6 +3,52 @@
   {
    "date": "2026-10-17",
    "build": "",
+   "title": "Stickseum 캐릭터 고르기·전체 캐릭터 문서에 외형 추가",
+   "items": [
+    "캐릭터 고르기 문서의 제임스에 외형 추가",
+    "전체 캐릭터 한눈에 문서의 25명에 외형 추가"
+   ],
+   "tr": {
+    "en": {
+     "title": "Stickseum: appearance added to the character guide and full list",
+     "items": [
+      "Added James' appearance to the character guide",
+      "Added appearance for all 25 characters to the full character list"
+     ]
+    },
+    "es": {
+     "title": "Stickseum: aspecto añadido a la guía de personajes y a la lista completa",
+     "items": [
+      "Añadido el aspecto de James a la guía de personajes",
+      "Añadido el aspecto de los 25 personajes a la lista completa de personajes"
+     ]
+    },
+    "fr": {
+     "title": "Stickseum : apparence ajoutée au guide et à la liste complète des personnages",
+     "items": [
+      "Ajout de l'apparence de James au guide des personnages",
+      "Ajout de l'apparence des 25 personnages à la liste complète"
+     ]
+    },
+    "de": {
+     "title": "Stickseum: Aussehen in Charakterguide und Gesamtliste ergänzt",
+     "items": [
+      "Aussehen von James im Charakterguide ergänzt",
+      "Aussehen aller 25 Charaktere in der Gesamtliste ergänzt"
+     ]
+    },
+    "ja": {
+     "title": "Stickseum：キャラクター選びと全キャラ一覧に外見を追加",
+     "items": [
+      "キャラクター選びのページのジェームズに外見を追加",
+      "全キャラ一覧の25人に外見を追加"
+     ]
+    }
+   }
+  },
+  {
+   "date": "2026-10-17",
+   "build": "",
    "title": "Stickseum 캐릭터 문서 외형·패시브 추가",
    "items": [
     "Stickseum 캐릭터 문서에 25명의 외형(기본 스킨) 추가",
