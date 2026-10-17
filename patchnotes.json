@@ -3,55 +3,43 @@
   {
    "date": "2026-10-17",
    "build": "",
-   "title": "허브 첫 화면 정리",
+   "title": "허브 아래 링크 추가",
    "items": [
-    "허브 첫 화면 정리 (제목 크기 줄이고 계정 안내와 Hub Coin을 한 줄로 합침)",
-    "게임 카드 정리 (설명 3줄, 불릿 2개로 줄여 세 카드 모양 통일)",
     "허브 맨 아래 링크 추가 (패치노트, 위키, 음악, 피드백, GitHub)",
     "영어 등 다른 언어에서 위쪽 메뉴 '음악'이 번역되지 않던 문제 수정"
    ],
    "tr": {
     "en": {
-     "title": "Hub first screen cleanup",
+     "title": "Hub footer links",
      "items": [
-      "Hub first screen tidied (smaller title, account note and Hub Coin merged into one row)",
-      "Game cards tidied (3-line intro, 2 bullets so all three cards match)",
       "Footer links added (patch notes, wiki, music, feedback, GitHub)",
       "Fixed the top menu item 'music' not being translated in other languages"
      ]
     },
     "es": {
-     "title": "Primera pantalla del hub ordenada",
+     "title": "Enlaces al pie del hub",
      "items": [
-      "Primera pantalla del hub ordenada (título más pequeño, aviso de cuenta y Hub Coin en una fila)",
-      "Tarjetas de juegos ordenadas (intro de 3 líneas y 2 viñetas para que las tres coincidan)",
       "Enlaces al pie añadidos (notas de versión, wiki, música, comentarios, GitHub)",
       "Corregido que el menú superior 'música' no se traducía en otros idiomas"
      ]
     },
     "fr": {
-     "title": "Premier écran du hub rangé",
+     "title": "Liens de pied de page du hub",
      "items": [
-      "Premier écran du hub rangé (titre plus petit, compte et Hub Coin sur une ligne)",
-      "Cartes de jeux rangées (intro de 3 lignes et 2 puces pour que les trois soient pareilles)",
       "Liens de pied de page ajoutés (notes de version, wiki, musique, avis, GitHub)",
       "Correction : le menu du haut « musique » n'était pas traduit dans les autres langues"
      ]
     },
     "de": {
-     "title": "Hub-Startbildschirm aufgeräumt",
+     "title": "Fußzeilen-Links im Hub",
      "items": [
-      "Hub-Startbildschirm aufgeräumt (kleinerer Titel, Konto-Hinweis und Hub Coin in einer Zeile)",
-      "Spielkarten aufgeräumt (3 Zeilen Intro, 2 Punkte, damit alle drei gleich aussehen)",
       "Links in der Fußzeile hinzugefügt (Patchnotes, Wiki, Musik, Feedback, GitHub)",
       "Behoben: Menüpunkt 'Musik' oben wurde in anderen Sprachen nicht übersetzt"
      ]
     },
     "ja": {
-     "title": "ハブの最初の画面を整理",
+     "title": "ハブ下部のリンク",
      "items": [
-      "ハブの最初の画面を整理 (タイトルを小さくし、アカウント案内とHub Coinを1行に統合)",
-      "ゲームカードを整理 (説明3行・箇条書き2つで3枚の形をそろえた)",
       "ページ下部にリンクを追加 (パッチノート、Wiki、音楽、フィードバック、GitHub)",
       "他の言語で上部メニューの「音楽」が翻訳されない問題を修正"
      ]
