@@ -3,6 +3,64 @@
   {
    "date": "2026-10-17",
    "build": "",
+   "title": "Tools Fry Sheet·Fry Slides, Stickseum build 264, Crown Envoy build 35 위키 갱신",
+   "items": [
+    "Fry Sheet 피벗 표, 셀 합치기, 이름 붙인 범위, 데이터 정리, 칸 안 미니 그래프와 아이콘 설명 추가",
+    "Fry Slides 슬라이드 모아 보기, 펜과 형광펜, 발표자 화면, 표 붙여넣기, 링크와 QR 공유 설명 추가",
+    "Stickseum 방 찾기 속도 향상과 폭탄 돌리기 소리 추가, 패치 기록에 build 264 추가",
+    "Crown Envoy 휴전회의와 점령지 지키기 설명 추가, 세계 회의 설명 삭제"
+   ],
+   "tr": {
+    "en": {
+     "title": "Wiki update: Tools Fry Sheet and Fry Slides, Stickseum build 264, Crown Envoy build 35",
+     "items": [
+      "Added Fry Sheet pivot tables, merge cells, named ranges, data cleanup, and in-cell mini charts and icons",
+      "Added Fry Slides slide overview, pen and highlighter, presenter view, pasting a table, and sharing by link and QR",
+      "Added Stickseum's faster room search and Bomb Pass sounds, and build 264 in the patch history",
+      "Added Crown Envoy's truce council and protecting captured land, and removed the world council"
+     ]
+    },
+    "es": {
+     "title": "Wiki: Tools Fry Sheet y Fry Slides, Stickseum build 264, Crown Envoy build 35",
+     "items": [
+      "Se añadieron a Fry Sheet las tablas dinámicas, combinar celdas, rangos con nombre, limpieza de datos y minigráficos e iconos en celdas",
+      "Se añadieron a Fry Slides la vista general, lápiz y resaltador, vista del presentador, pegar una tabla y compartir por enlace y QR",
+      "Se añadieron la búsqueda de sala más rápida y los sonidos de la patata caliente en Stickseum, y la build 264 en el historial",
+      "Se añadieron el consejo de alto el fuego y la protección de tierras ocupadas en Crown Envoy, y se quitó el consejo mundial"
+     ]
+    },
+    "fr": {
+     "title": "Wiki : Tools Fry Sheet et Fry Slides, Stickseum build 264, Crown Envoy build 35",
+     "items": [
+      "Ajout à Fry Sheet des tableaux croisés, de la fusion de cellules, des plages nommées, du nettoyage des données et des mini-graphiques et icônes",
+      "Ajout à Fry Slides de la vue d'ensemble, du stylo et du surligneur, de la vue de l'orateur, du collage de tableau et du partage par lien et QR",
+      "Ajout de la recherche de salle plus rapide et des sons de la patate chaude dans Stickseum, et de la build 264 dans l'historique",
+      "Ajout du conseil de trêve et de la protection des terres conquises dans Crown Envoy, et suppression du conseil mondial"
+     ]
+    },
+    "de": {
+     "title": "Wiki: Tools Fry Sheet und Fry Slides, Stickseum build 264, Crown Envoy build 35",
+     "items": [
+      "Fry Sheet um Pivot-Tabellen, Zellen verbinden, benannte Bereiche, Datenbereinigung sowie Minidiagramme und Symbole ergänzt",
+      "Fry Slides um Folienübersicht, Stift und Textmarker, Referentenansicht, Tabelle einfügen und Teilen per Link und QR ergänzt",
+      "Stickseums schnellere Raumsuche und Töne bei Bombe weitergeben sowie build 264 in der Patch-Historie ergänzt",
+      "Crown Envoys Waffenstillstandsrat und Schutz eroberter Gebiete ergänzt und den Weltrat entfernt"
+     ]
+    },
+    "ja": {
+     "title": "ウィキ更新：Tools Fry SheetとFry Slides、Stickseum build 264、Crown Envoy build 35",
+     "items": [
+      "Fry Sheetにピボットテーブル、セルの結合、名前を付けた範囲、データ整理、セル内のミニグラフとアイコンを追加",
+      "Fry Slidesにスライド一覧表示、ペンと蛍光ペン、発表者画面、表の貼り付け、リンクとQRの共有を追加",
+      "Stickseumの部屋探しの高速化と爆弾回しの音、パッチ履歴のbuild 264を追加",
+      "Crown Envoyの休戦会議と占領地の守りを追加し、世界会議を削除"
+     ]
+    }
+   }
+  },
+  {
+   "date": "2026-10-17",
+   "build": "",
    "title": "Stickseum build 263 위키 갱신",
    "items": [
     "배틀로얄 문서에 봇의 보급 상자 먹기와 위험지대 복귀 추가",
