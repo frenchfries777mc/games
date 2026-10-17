@@ -104,7 +104,7 @@ async function signUp(id, pw){
   if(!pw||pw.length<6) return {error:T.badPw};
   var r=await sb.auth.signUp({email:emailFor(id), password:pw});
   if(r.error) return {error:/already|registered/i.test(r.error.message)?T.taken:errText(r.error)};
-  var p=await sb.from('profiles').insert({id:r.data.user.id, username:id});
+  var p=await sb.from('profiles').insert({id:r.data.user.id, username:id, display_name:id.slice(0,12)});
   if(p.error) return {error:T.taken};
   pwSave(id,pw); await setUser(r.data.user); return {ok:true};
 }
@@ -112,22 +112,22 @@ async function signUp(id, pw){
    gets its own login ID + nickname the first time (profiles row), and an old ID account can link them in My account ---- */
 var OAL={
  ko:{or:'또는',gh:'GitHub로 계속하기',gg:'Google로 계속하기',off:'아직 이 로그인 방법이 켜져 있지 않아요.',
-     setT:'아이디 정하기',setP:'처음 오셨네요. 게임과 친구 찾기에 쓸 아이디와 닉네임을 정해 주세요.',nick:'닉네임 (최대 12자)',go:'시작하기',later:'취소하고 로그아웃',
+     setT:'아이디 정하기',setP:'처음 오셨네요. 게임과 친구 찾기에 쓸 아이디를 정해 주세요. 닉네임은 처음에 아이디로 정해져요(내 계정에서 바꿀 수 있어요).',nick:'닉네임 (최대 12자)',go:'시작하기',later:'취소하고 로그아웃',
      linkT:'연결된 로그인',linkP:'연결해 두면 아이디·비밀번호 대신 이 버튼으로도 같은 계정에 로그인해요.',link:'연결',linked:'✓ 연결됨',pwSoc:'이 계정은 GitHub나 Google 버튼으로 로그인해요.',linkErr:'연결하지 못했어요. 이미 다른 계정에 연결된 것일 수 있어요.'},
  en:{or:'or',gh:'Continue with GitHub',gg:'Continue with Google',off:'This login method is not turned on yet.',
-     setT:'Pick a username',setP:'Welcome! Pick the username and nickname you will use in the games and for friends.',nick:'Nickname (up to 12)',go:'Start',later:'Cancel and log out',
+     setT:'Pick a username',setP:'Welcome! Pick the username you will use in the games and for friends. Your nickname starts as your username (change it in My account).',nick:'Nickname (up to 12)',go:'Start',later:'Cancel and log out',
      linkT:'Linked logins',linkP:'Once linked, this button logs you into the same account instead of your username and password.',link:'Link',linked:'✓ Linked',pwSoc:'This account logs in with the GitHub or Google button.',linkErr:'Could not link. It may already belong to another account.'},
  es:{or:'o',gh:'Continuar con GitHub',gg:'Continuar con Google',off:'Este método de inicio aún no está activado.',
-     setT:'Elige un usuario',setP:'¡Bienvenido! Elige el usuario y el apodo para los juegos y los amigos.',nick:'Apodo (máx. 12)',go:'Empezar',later:'Cancelar y cerrar sesión',
+     setT:'Elige un usuario',setP:'¡Bienvenido! Elige el usuario para los juegos y los amigos. El apodo empieza igual que el usuario (cámbialo en Mi cuenta).',nick:'Apodo (máx. 12)',go:'Empezar',later:'Cancelar y cerrar sesión',
      linkT:'Inicios vinculados',linkP:'Al vincularlo, este botón entra en la misma cuenta sin usuario ni contraseña.',link:'Vincular',linked:'✓ Vinculado',pwSoc:'Esta cuenta entra con el botón de GitHub o Google.',linkErr:'No se pudo vincular. Puede que ya pertenezca a otra cuenta.'},
  fr:{or:'ou',gh:'Continuer avec GitHub',gg:'Continuer avec Google',off:'Ce mode de connexion n’est pas encore activé.',
-     setT:'Choisis un identifiant',setP:'Bienvenue ! Choisis l’identifiant et le pseudo pour les jeux et les amis.',nick:'Pseudo (12 max)',go:'Commencer',later:'Annuler et se déconnecter',
+     setT:'Choisis un identifiant',setP:'Bienvenue ! Choisis l’identifiant pour les jeux et les amis. Le pseudo commence comme l’identifiant (modifiable dans Mon compte).',nick:'Pseudo (12 max)',go:'Commencer',later:'Annuler et se déconnecter',
      linkT:'Connexions liées',linkP:'Une fois lié, ce bouton ouvre le même compte sans identifiant ni mot de passe.',link:'Lier',linked:'✓ Lié',pwSoc:'Ce compte se connecte avec le bouton GitHub ou Google.',linkErr:'Liaison impossible. Il appartient peut-être déjà à un autre compte.'},
  de:{or:'oder',gh:'Weiter mit GitHub',gg:'Weiter mit Google',off:'Diese Anmeldeart ist noch nicht eingeschaltet.',
-     setT:'Benutzernamen wählen',setP:'Willkommen! Wähle Benutzername und Spitzname für die Spiele und Freunde.',nick:'Spitzname (max. 12)',go:'Los geht’s',later:'Abbrechen und abmelden',
+     setT:'Benutzernamen wählen',setP:'Willkommen! Wähle den Benutzernamen für die Spiele und Freunde. Der Spitzname startet als Benutzername (änderbar in Mein Konto).',nick:'Spitzname (max. 12)',go:'Los geht’s',later:'Abbrechen und abmelden',
      linkT:'Verknüpfte Anmeldungen',linkP:'Verknüpft meldet dich dieser Knopf ohne Benutzername und Passwort im selben Konto an.',link:'Verknüpfen',linked:'✓ Verknüpft',pwSoc:'Dieses Konto meldet sich mit dem GitHub- oder Google-Knopf an.',linkErr:'Verknüpfen fehlgeschlagen. Es gehört vielleicht schon zu einem anderen Konto.'},
  ja:{or:'または',gh:'GitHubで続ける',gg:'Googleで続ける',off:'このログイン方法はまだ有効になっていません。',
-     setT:'IDを決める',setP:'はじめまして。ゲームとフレンド検索で使うIDとニックネームを決めてください。',nick:'ニックネーム(12文字まで)',go:'はじめる',later:'やめてログアウト',
+     setT:'IDを決める',setP:'はじめまして。ゲームとフレンド検索で使うIDを決めてください。ニックネームは最初はIDになります(マイアカウントで変更できます)。',nick:'ニックネーム(12文字まで)',go:'はじめる',later:'やめてログアウト',
      linkT:'連携したログイン',linkP:'連携すると、IDとパスワードの代わりにこのボタンで同じアカウントにログインできます。',link:'連携',linked:'✓ 連携済み',pwSoc:'このアカウントはGitHubかGoogleのボタンでログインします。',linkErr:'連携できませんでした。別のアカウントに連携済みかもしれません。'}
 };
 function OA(){ return OAL[lang()]||OAL.en; }
@@ -148,21 +148,20 @@ function suggestId(u){ var md=(u&&u.user_metadata)||{}, s=String(md.user_name||m
 function openSetup(){
   if(!user||prof||isIdAcct(user)) return; css();
   var O=OA(), el=document.getElementById('ffaSetup'); if(el) el.remove();
-  var md=user.user_metadata||{}, nk=String(md.full_name||md.name||md.user_name||'').trim().slice(0,12);
   el=document.createElement('div'); el.id='ffaSetup'; el.setAttribute('data-notr','');
   el.innerHTML='<form class="b"><h3>'+esc(O.setT)+'</h3><p>'+esc(O.setP)+'</p>'+
     '<input name="u" autocapitalize="off" spellcheck="false" maxlength="16" placeholder="'+esc(T.id)+'">'+
-    '<input name="n" maxlength="12" placeholder="'+esc(O.nick)+'"><div class="m"></div>'+
+    '<div class="m"></div>'+
     '<button type="submit" class="ffa-btn go">'+esc(O.go)+'</button><div class="sw"><a>'+esc(O.later)+'</a></div></form>';
   document.body.appendChild(el);
-  var f=el.querySelector('form'), m=el.querySelector('.m'); f.u.value=suggestId(user); f.n.value=nk;
+  var f=el.querySelector('form'), m=el.querySelector('.m'); f.u.value=suggestId(user);
   el.querySelector('.sw a').onclick=function(){ el.remove(); signOut(); };
-  f.onsubmit=async function(e){ e.preventDefault(); var id=f.u.value.trim(), n=f.n.value.trim().slice(0,12), go=el.querySelector('.go');
+  f.onsubmit=async function(e){ e.preventDefault(); var id=f.u.value.trim(), go=el.querySelector('.go');
     if(!/^[a-zA-Z0-9_]{3,16}$/.test(id)){ m.textContent=T.badId; return; }
     go.disabled=true; m.textContent=T.busy;
     try{ var d=await sb.from('profiles').select('id').ilike('username',likeEsc(id)).limit(1);
       if(d&&d.data&&d.data.length){ m.textContent=T.taken; return; }
-      var r=await sb.from('profiles').insert({id:user.id, username:id, display_name:n||id});
+      var r=await sb.from('profiles').insert({id:user.id, username:id, display_name:id.slice(0,12)});
       if(r.error){ m.textContent=/duplicate|unique|23505/i.test(JSON.stringify(r.error))?T.taken:T.fail; return; }
       el.remove(); await setUser(user);
     }catch(x){ m.textContent=T.fail; } finally{ go.disabled=false; } };
