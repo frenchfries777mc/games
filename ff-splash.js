@@ -27,7 +27,7 @@ var P=[
  ['사과해요! 난 키위할테니...'],
  ['나쁜사람만 보이는 글씨!','Only bad people can see this text!','¡Solo la gente mala puede ver este texto!','Seules les mauvaises personnes voient ce texte !','Nur böse Menschen können diesen Text sehen!','悪い人にしか見えない文字！']
 ];
-function lang(){ var l='ko'; try{ l=(window.FFLang&&FFLang.get())||document.documentElement.lang||'ko'; }catch(e){} l=String(l).slice(0,2); return L.indexOf(l)<0?'en':l; }
+function lang(){ var l='ko'; try{ l=document.documentElement.lang||(window.FFLang&&FFLang.get())||'ko'; }catch(e){} l=String(l).slice(0,2); return L.indexOf(l)<0?'en':l; }
 function pick(l){
   var i=L.indexOf(l), out=[];
   P.forEach(function(p){
