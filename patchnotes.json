@@ -3,6 +3,46 @@
   {
    "date": "2026-10-17",
    "build": "",
+   "title": "Stickseum 온라인 렉 개선 위키 갱신",
+   "items": [
+    "Stickseum 온라인 렉 줄이기(부드러운 위치 표시, 상태 전송 횟수 증가) 설명 추가 (build 257)"
+   ],
+   "tr": {
+    "en": {
+     "title": "Stickseum online lag wiki update",
+     "items": [
+      "Added the Stickseum online lag fix (smooth positions, more state updates) (build 257)"
+     ]
+    },
+    "es": {
+     "title": "Wiki del lag en línea de Stickseum",
+     "items": [
+      "Se añadió la mejora del lag en línea de Stickseum (posiciones suaves, más envíos de estado) (build 257)"
+     ]
+    },
+    "fr": {
+     "title": "Wiki du lag en ligne de Stickseum",
+     "items": [
+      "Ajout de la réduction du lag en ligne de Stickseum (positions fluides, plus d'envois d'état) (build 257)"
+     ]
+    },
+    "de": {
+     "title": "Wiki zum Online-Lag von Stickseum",
+     "items": [
+      "Verbesserung des Online-Lags in Stickseum ergänzt (weiche Positionen, mehr Zustandsübertragungen) (build 257)"
+     ]
+    },
+    "ja": {
+     "title": "Stickseumのオンラインラグ改善をウィキに反映",
+     "items": [
+      "Stickseumのオンラインのラグ軽減（なめらかな位置表示、状態送信回数の増加）の説明を追加（build 257）"
+     ]
+    }
+   }
+  },
+  {
+   "date": "2026-10-17",
+   "build": "",
    "title": "Stickseum 빌드 표기·클릭 소리 위키 갱신",
    "items": [
     "Stickseum 빌드 표기(build N)와 버튼 클릭 소리 설명 추가 (build 256)"
