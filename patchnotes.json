@@ -3,6 +3,52 @@
   {
    "date": "2026-10-17",
    "build": "",
+   "title": "도전과제 이름 변경 반영",
+   "items": [
+    "미니게임 마스터 도전과제 이름 수정 (모드 수집가)",
+    "위키 Stickseum 업적 목록 이름 수정"
+   ],
+   "tr": {
+    "en": {
+     "title": "Achievement rename applied",
+     "items": [
+      "Minigame Master achievement renamed (Mode Collector)",
+      "Wiki Stickseum achievement list name updated"
+     ]
+    },
+    "es": {
+     "title": "Cambio de nombre de logro aplicado",
+     "items": [
+      "Logro Maestro de minijuegos renombrado (Coleccionista de modos)",
+      "Nombre actualizado en la lista de logros de Stickseum de la wiki"
+     ]
+    },
+    "fr": {
+     "title": "Renommage de succès appliqué",
+     "items": [
+      "Succès Maître des mini-jeux renommé (Collectionneur de modes)",
+      "Nom mis à jour dans la liste des succès Stickseum du wiki"
+     ]
+    },
+    "de": {
+     "title": "Erfolgsumbenennung übernommen",
+     "items": [
+      "Erfolg Minispiel-Meister umbenannt (Modussammler)",
+      "Name in der Stickseum-Erfolgsliste des Wikis aktualisiert"
+     ]
+    },
+    "ja": {
+     "title": "実績名の変更を反映",
+     "items": [
+      "ミニゲームマスター実績の名前を変更 (モードコレクター)",
+      "WikiのStickseum実績リストの名前を更新"
+     ]
+    }
+   }
+  },
+  {
+   "date": "2026-10-17",
+   "build": "",
    "title": "위키 모드 이름 정리",
    "items": [
     "위키 Stickseum 문서의 클래식·미니게임 구분 표현 정리 (모드 14개, 특별 모드·일일 모드 기준)"
