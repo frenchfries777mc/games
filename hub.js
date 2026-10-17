@@ -7,6 +7,8 @@ var SI=window.SI18N||{lang:'ko',F:function(t){ var a=arguments; return String(t)
 var LANG=SI.lang||'ko', F=SI.F;
 var GAMES={stickseum:{name:'Stickseum',cls:'g1',site:'../stickseum/'},crownenvoy:{name:'Crown Envoy',cls:'g2',site:'../crownenvoy/'},beaconfall:{name:'Beaconfall',cls:'g3',site:'../beaconfall/'}};
 function $(s,r){ return (r||document).querySelector(s); }
+/* 허브 첫 페이지와 커뮤니티 페이지(community/)가 같은 파일을 써요. ROOT = 허브 맨 위 경로 */
+var CMP=!!document.getElementById('community'), ROOT=document.body.getAttribute('data-root')||'', CMURL=CMP?'':ROOT+'community/';
 function esc(s){ return String(s==null?'':s).replace(/[&<>"']/g,function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); }
 function ago(iso){ var t=Date.parse(iso); if(!t) return ''; var m=Math.round((Date.now()-t)/60000);
   if(m<1) return '방금'; if(m<60) return F('{0}분 전',m); if(m<1440) return F('{0}시간 전',Math.round(m/60)); if(m<1440*7) return F('{0}일 전',Math.round(m/1440));
@@ -336,7 +338,7 @@ function watchChat(){
 
 /* ---- 친구 소식: 친구가 최근 2주 동안 달성한 도전과제 · 처음 시작한 게임 · 쓴 글 ---- */
 var achCat={};
-function achMap(g){ if(!achCat[g]) achCat[g]=fetch('ach/'+g+'.json').then(function(r){ return r.ok?r.json():null; }).then(function(j){ var m={}; ((j&&j.list)||[]).forEach(function(a){ m[a.id]=a; }); return m; }).catch(function(){ return {}; }); return achCat[g]; }
+function achMap(g){ if(!achCat[g]) achCat[g]=fetch(ROOT+'ach/'+g+'.json').then(function(r){ return r.ok?r.json():null; }).then(function(j){ var m={}; ((j&&j.list)||[]).forEach(function(a){ m[a.id]=a; }); return m; }).catch(function(){ return {}; }); return achCat[g]; }
 function feedTag(g){ return g==='hub'?'<span class="tag">허브</span>':gameTag(g); }
 async function feed(){
   var p=$('.cm-p[data-p=feed]'); if(!p||!sb) return;
@@ -493,7 +495,13 @@ async function coinDaily(){
   var x=(r.data||[])[0]||{}; coin.n=x.coins||0; coin.streak=x.streak||0; coin.today=true; paintCoin();
   if(x.got>0){ coinPop(x.got); hubSync(); }
 }
+function coinChip(){
+  var c=$('#coinChip'), d=$('#coinDd'); if(!c||!d) return;
+  c.onclick=function(e){ e.stopPropagation(); var o=d.hidden; d.hidden=!o; c.setAttribute('aria-expanded',o?'true':'false'); };
+  document.addEventListener('click',function(e){ if(!d.hidden&&!d.contains(e.target)&&!c.contains(e.target)){ d.hidden=true; c.setAttribute('aria-expanded','false'); } });
+}
 function paintCoin(){
+  var cn=$('#coinChipN'); if(cn) cn.textContent=(me&&coin.n!=null)?coin.n:(me?'…':'0');
   var b=$('#coinBar'); if(!b) return;
   if(!me){ b.innerHTML='<span class="cb-i">🪙</span><span class="cb-t"><b>Hub Coin</b><span class="cb-s">로그인하면 매일 10 Hub Coin을 받아요</span></span><button type="button" class="cm-btn cb-go">로그인</button>'; b.querySelector('.cb-go').onclick=login; return; }
   if(coin.err){ b.innerHTML='<span class="cb-i">🪙</span><span class="cb-t"><b>Hub Coin</b><span class="cb-s">'+esc(coin.err)+'</span></span>'; return; }
@@ -721,11 +729,12 @@ function annAdmin(){
 async function refreshUser(){
   me=window.FFAuth&&FFAuth.user&&FFAuth.user(); admin=false;
   if(me&&sb){ try{ var r=await sb.rpc('ff_is_admin'); admin=!!(r&&r.data===true); }catch(e){} }
-  paintSend(); setTab(tab); loadAnn(); loadFollows(); ranking(); coinDaily(); onlineLoop(); if(location.hash==='#coin') setTimeout(openCoin,400);
+  if(CMP){ paintSend(); setTab(tab); } loadAnn(); loadFollows(); ranking(); coinDaily(); onlineLoop(); if(location.hash==='#coin') setTimeout(openCoin,400);
 }
 /* 다른 페이지 · 알림에서 열기: ?post=글번호 , #feedback , #hubnotes */
 function openPostById(id){ id=+id; if(!id) return; bOpen=id; bScroll=true; if(tab!=='board') setTab('board'); else listPosts(); }
-window.FFHub={ openPost:function(id){ openPostById(id); scrollToCm(); }, tab:function(t){ setTab(t); scrollToCm(); }, coin:function(){ openCoin(); }, polls:function(){ openPolls(); } };
+var CMH={chat:'#chat',fb:'#feedback',lfg:'#lfg',gal:'#gallery',feed:'#friends'};
+window.FFHub={ openPost:function(id){ if(!CMP){ location.href=CMURL+'?post='+encodeURIComponent(id); return; } openPostById(id); scrollToCm(); }, tab:function(t){ if(!CMP){ location.href=CMURL+(CMH[t]||''); return; } setTab(t); scrollToCm(); }, coin:function(){ openCoin(); }, polls:function(){ openPolls(); } };
 function fromUrl(){
   var m=/[?&]post=(\d+)/.exec(location.search); if(m){ bOpen=+m[1]; bScroll=true; tab='board'; try{ history.replaceState(null,'',location.pathname+'#community'); }catch(e){} }
   if(location.hash==='#feedback') tab='fb'; else if(location.hash==='#lfg') tab='lfg'; else if(location.hash==='#gallery') tab='gal'; else if(location.hash==='#friends') tab='feed'; else if(location.hash==='#chat') tab='chat';
@@ -761,7 +770,7 @@ function splain(b){ return String(b||'').replace(/^::.*$/gm,'').replace(/\*\*/g,
 function ssnip(b,q){ var p=splain(b), i=p.toLowerCase().indexOf(q.toLowerCase()); if(i<0) return smark(p.slice(0,90),''); var a=Math.max(0,i-30); return (a?'…':'')+smark(p.slice(a,i+q.length+60),q); }
 async function sxLoad(){
   if(SX.wiki||!sb) return;
-  var trP=LANG==='ko'?Promise.resolve({}):fetch('wiki/tr/'+LANG+'.json').then(function(r){ return r.ok?r.json():{}; }).catch(function(){ return {}; });
+  var trP=LANG==='ko'?Promise.resolve({}):fetch(ROOT+'wiki/tr/'+LANG+'.json').then(function(r){ return r.ok?r.json():{}; }).catch(function(){ return {}; });
   var r=await sb.from('ff_wiki').select('game,slug,title,body').limit(500); SX.tr=await trP;
   SX.wiki=((r&&r.data)||[]).map(function(p){ var x=SX.tr[p.game+'/'+p.slug], ok=x&&x.t&&x.h===sfnv(p.title+'\n'+p.body); return {game:p.game, slug:p.slug, title:ok?x.t:p.title, body:ok?x.b:p.body, ko:p.title+'\n'+p.body}; });
 }
@@ -784,11 +793,11 @@ async function runSearch(v){
   if(gs.length) h+='<div class="sg"><h4>'+esc(F('게임'))+'</h4>'+gs.map(function(g){ return '<a class="sr" href="'+g[3]+'"><b class="'+g[2]+'">'+smark(g[1],q)+'</b><small>'+esc(F(g[4]))+'</small></a>'; }).join('')+'</div>';
   var ws=(SX.wiki||[]).map(function(p){ var sc=0; if(p.title.toLowerCase().indexOf(ql)>=0) sc+=10; if(p.body.toLowerCase().indexOf(ql)>=0) sc+=2; if(!sc&&p.ko.toLowerCase().indexOf(ql)>=0) sc+=1; return {p:p,sc:sc}; })
     .filter(function(x){ return x.sc; }).sort(function(a,b){ return b.sc-a.sc; }).slice(0,8);
-  if(ws.length) h+='<div class="sg"><h4>'+esc(F('위키'))+'</h4>'+ws.map(function(x){ var g=GAMES[x.p.game]||WIKIX[x.p.game]||{name:x.p.game,cls:''}; return '<a class="sr" href="wiki/#'+x.p.game+'/'+encodeURIComponent(x.p.slug)+'"><span class="gt '+g.cls+'">'+esc(g.name)+'</span><b>'+smark(x.p.title,q)+'</b><small>'+ssnip(x.p.body,q)+'</small></a>'; }).join('')+'</div>';
+  if(ws.length) h+='<div class="sg"><h4>'+esc(F('위키'))+'</h4>'+ws.map(function(x){ var g=GAMES[x.p.game]||WIKIX[x.p.game]||{name:x.p.game,cls:''}; return '<a class="sr" href="'+ROOT+'wiki/#'+x.p.game+'/'+encodeURIComponent(x.p.slug)+'"><span class="gt '+g.cls+'">'+esc(g.name)+'</span><b>'+smark(x.p.title,q)+'</b><small>'+ssnip(x.p.body,q)+'</small></a>'; }).join('')+'</div>';
   R.innerHTML=h||'<div class="se">…</div>';
   var ps=[]; if(sb){ var w=q.replace(/[,()%*\\"]/g,' ').trim(); if(w){ try{ var r=await sb.from('ff_posts').select('id,game,title,body,created_at').or('title.ilike.%'+w+'%,body.ilike.%'+w+'%').order('created_at',{ascending:false}).limit(6); ps=(r&&r.data)||[]; }catch(e){} } }
   if(my!==SX.seq) return;
-  if(ps.length) h+='<div class="sg"><h4>'+esc(F('게시판'))+'</h4>'+ps.map(function(x){ var g=GAMES[x.game]; return '<a class="sr" href="?post='+x.id+'" data-post="'+x.id+'" data-notr>'+(g?'<span class="gt '+g.cls+'">'+esc(g.name)+'</span>':'')+'<b>'+smark(x.title,q)+'</b><small>'+ssnip(x.body,q)+'</small></a>'; }).join('')+'</div>';
+  if(ps.length) h+='<div class="sg"><h4>'+esc(F('게시판'))+'</h4>'+ps.map(function(x){ var g=GAMES[x.game]; return '<a class="sr" href="'+CMURL+'?post='+x.id+'" data-post="'+x.id+'" data-notr>'+(g?'<span class="gt '+g.cls+'">'+esc(g.name)+'</span>':'')+'<b>'+smark(x.title,q)+'</b><small>'+ssnip(x.body,q)+'</small></a>'; }).join('')+'</div>';
   R.innerHTML=h||'<div class="se">'+esc(F('검색 결과가 없어요.'))+'</div>';
 }
 function searchInit(){
@@ -800,7 +809,8 @@ function searchInit(){
 }
 
 function start(){
-  banner(); searchInit();
+  if(!CMP&&(/[?&]post=\d+/.test(location.search)||/^#(feedback|lfg|gallery|friends|chat|community)$/.test(location.hash))){ location.replace(CMURL+location.search+(location.hash==='#community'?'':location.hash)); return; }
+  coinChip(); banner(); searchInit();
   fromUrl(); loadNews().then(function(){ if(location.hash==='#hubnotes') openHubNotes(); });
   if(location.hash==='#poll') setTimeout(openPolls,400);
   if(tab==='fb'){ setTimeout(scrollToCm,300); } var hb=$('#hubNotesBtn'); if(hb) hb.onclick=function(e){ e.preventDefault(); openHubNotes(); };
