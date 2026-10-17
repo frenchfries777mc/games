@@ -3,6 +3,46 @@
   {
    "date": "2026-10-17",
    "build": "",
+   "title": "Stickseum 레이드 MVP 위키 갱신",
+   "items": [
+    "Stickseum 보스 레이드 MVP 투표(아군과 봇 참여) 설명 추가"
+   ],
+   "tr": {
+    "en": {
+     "title": "Stickseum raid MVP wiki update",
+     "items": [
+      "Added the Stickseum boss raid MVP vote (allies and bots take part)"
+     ]
+    },
+    "es": {
+     "title": "Wiki del MVP de asalto de Stickseum",
+     "items": [
+      "Se añadió la votación de MVP del asalto a jefes de Stickseum (participan aliados y bots)"
+     ]
+    },
+    "fr": {
+     "title": "Wiki du MVP de raid de Stickseum",
+     "items": [
+      "Ajout du vote MVP du raid de boss de Stickseum (alliés et bots participent)"
+     ]
+    },
+    "de": {
+     "title": "Wiki zum Raid-MVP von Stickseum",
+     "items": [
+      "MVP-Abstimmung im Boss-Raid von Stickseum ergänzt (Verbündete und Bots nehmen teil)"
+     ]
+    },
+    "ja": {
+     "title": "StickseumレイドMVPのウィキ更新",
+     "items": [
+      "Stickseumのボスレイドで行うMVP投票（味方とボットが参加）の説明を追加"
+     ]
+    }
+   }
+  },
+  {
+   "date": "2026-10-17",
+   "build": "",
    "title": "Crown Envoy 불가사의 위키 추가",
    "items": [
     "Crown Envoy 불가사의 6종, 건설 규칙, 승점 설명 추가 (v0.3 b24)"
