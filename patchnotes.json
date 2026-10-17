@@ -3,6 +3,52 @@
   {
    "date": "2026-10-17",
    "build": "",
+   "title": "패치노트 사이트 추가",
+   "items": [
+    "허브·Stickseum·Crown Envoy·Beaconfall 패치노트를 한곳에 모은 사이트 추가",
+    "게임별 보기와 검색 추가"
+   ],
+   "tr": {
+    "en": {
+     "title": "Patch notes site added",
+     "items": [
+      "Added a site that gathers the hub, Stickseum, Crown Envoy and Beaconfall patch notes in one place",
+      "Added per-game filters and search"
+     ]
+    },
+    "es": {
+     "title": "Sitio de notas de parche añadido",
+     "items": [
+      "Añadido un sitio que reúne las notas de parche del hub, Stickseum, Crown Envoy y Beaconfall",
+      "Añadidos filtros por juego y búsqueda"
+     ]
+    },
+    "fr": {
+     "title": "Site des notes de mise à jour ajouté",
+     "items": [
+      "Ajout d'un site qui réunit les notes du hub, de Stickseum, Crown Envoy et Beaconfall",
+      "Ajout des filtres par jeu et de la recherche"
+     ]
+    },
+    "de": {
+     "title": "Patchnotes-Seite hinzugefügt",
+     "items": [
+      "Eine Seite hinzugefügt, die die Patchnotes von Hub, Stickseum, Crown Envoy und Beaconfall bündelt",
+      "Filter pro Spiel und Suche hinzugefügt"
+     ]
+    },
+    "ja": {
+     "title": "パッチノートサイトを追加",
+     "items": [
+      "ハブ・Stickseum・Crown Envoy・Beaconfallのパッチノートを1か所にまとめたサイトを追加",
+      "ゲーム別表示と検索を追加"
+     ]
+    }
+   }
+  },
+  {
+   "date": "2026-10-17",
+   "build": "",
    "title": "Stickseum 위키 캐릭터 문서 정리",
    "items": [
     "근접·총·투척·특수 캐릭터 문서와 전체 캐릭터 한눈에 문서 삭제",
