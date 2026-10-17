@@ -3,6 +3,58 @@
   {
    "date": "2026-10-17",
    "build": "",
+   "title": "Tools 내장 AI v11·Stickseum build 262 위키 갱신",
+   "items": [
+    "FF777 모델 문서에 3차 학습 자료 증가와 tarius 1.2 개명 예정 추가",
+    "Stickseum 온라인 방 봇 즉시 채우기 설명 수정",
+    "Stickseum 패치 기록에 build 262 추가"
+   ],
+   "tr": {
+    "en": {
+     "title": "Tools built-in AI v11 and Stickseum build 262 wiki update",
+     "items": [
+      "Added the larger third-round training material and the planned tarius 1.2 rename to the FF777 models page",
+      "Updated how bots fill online rooms immediately in Stickseum",
+      "Added build 262 to the Stickseum patch history"
+     ]
+    },
+    "es": {
+     "title": "Wiki: IA integrada v11 de Tools y Stickseum build 262",
+     "items": [
+      "Se añadió a la página de modelos FF777 el mayor material de la tercera ronda y el cambio de nombre previsto de tarius a 1.2",
+      "Se actualizó cómo los bots llenan de inmediato las salas en línea en Stickseum",
+      "Se añadió la build 262 al historial de parches de Stickseum"
+     ]
+    },
+    "fr": {
+     "title": "Wiki : IA intégrée v11 de Tools et Stickseum build 262",
+     "items": [
+      "Ajout à la page des modèles FF777 du matériel plus riche de la troisième phase et du renommage prévu de tarius en 1.2",
+      "Mise à jour du remplissage immédiat des salles en ligne par des bots dans Stickseum",
+      "Ajout de la build 262 à l'historique des patchs de Stickseum"
+     ]
+    },
+    "de": {
+     "title": "Wiki: Tools-KI v11 und Stickseum build 262",
+     "items": [
+      "Größeres Material der dritten Runde und die geplante Umbenennung von tarius in 1.2 auf der FF777-Modellseite ergänzt",
+      "Sofortiges Auffüllen von Online-Räumen mit Bots in Stickseum aktualisiert",
+      "build 262 in die Patch-Historie von Stickseum aufgenommen"
+     ]
+    },
+    "ja": {
+     "title": "Tools内蔵AI v11とStickseum build 262のウィキ更新",
+     "items": [
+      "FF777モデルの文書に3回目の学習資料の増加とtarius 1.2への改名予定を追加",
+      "Stickseumのオンラインの部屋でボットがすぐ埋める説明を更新",
+      "Stickseumのパッチ履歴にbuild 262を追加"
+     ]
+    }
+   }
+  },
+  {
+   "date": "2026-10-17",
+   "build": "",
    "title": "위키에 허브 문서 추가",
    "items": [
     "위키에 Hub 항목 추가",
