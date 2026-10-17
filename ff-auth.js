@@ -167,15 +167,6 @@ function openSetup(){
       el.remove(); await setUser(user);
     }catch(x){ m.textContent=T.fail; } finally{ go.disabled=false; } };
 }
-/* My account: link GitHub/Google to the current account (Supabase "manual linking" must be on) */
-function linkPanel(el, say){
-  var box=el.querySelector('#aLinkBox'); if(!box) return; var O=OA(), ids=(user&&user.identities)||[];
-  box.innerHTML='<h4>'+esc(O.linkT)+'</h4><p>'+esc(O.linkP)+'</p>'+OAP.map(function(x){ var on=ids.some(function(i){ return i.provider===x[0]; });
-    return '<div class="ffa-lk">'+x[2]+'<span>'+esc(x[0]==='github'?'GitHub':'Google')+'</span>'+(on?'<b>'+esc(O.linked)+'</b>':'<button type="button" class="ffa-btn" data-p="'+x[0]+'">'+esc(O.link)+'</button>')+'</div>'; }).join('')+'<div class="m" id="aLinkM"></div>';
-  box.querySelectorAll('button[data-p]').forEach(function(b){ b.onclick=async function(){ say('aLinkM',T.busy,true);
-    try{ var r=await sb.auth.linkIdentity({provider:b.getAttribute('data-p'), options:{redirectTo:backUrl()}}); if(r&&r.error) say('aLinkM',/manual linking|not enabled|provider/i.test(r.error.message||'')?O.off:O.linkErr); }
-    catch(e){ say('aLinkM',O.linkErr); } }; });
-}
 async function signOut(){ pwClear(); try{ if(sb) await sb.auth.signOut({scope:'local'}); }catch(e){} await setUser(null); }   // 'local': only this browser, other devices stay logged in
 
 /* ---- UI ---- */
@@ -201,6 +192,7 @@ var CSS='.ffa-btn{display:inline-flex;align-items:center;gap:6px;background:line
  '#ffaSetup .b{width:100%;max-width:360px;background:#10131b;border:1px solid #2b3245;border-radius:16px;padding:22px;color:#eef0f5;box-shadow:0 20px 50px rgba(0,0,0,.5)}#ffaSetup h3{margin:0 0 6px;font-size:19px}#ffaSetup p{margin:0 0 16px;color:#8a93a6;font-size:13px;line-height:1.5}'+
  '#ffaSetup input{display:block;width:100%;box-sizing:border-box;margin:0 0 10px;padding:11px 12px;border-radius:9px;border:1px solid #2b3245;background:#08090d;color:#eef0f5;font:inherit;font-size:16px}#ffaSetup input:focus{outline:none;border-color:#ffc93c}'+
  '#ffaSetup .ffa-btn{width:100%;justify-content:center;padding:11px;font-size:15px}#ffaSetup .m{min-height:18px;font-size:13px;color:#ff9b7a;margin:0 0 10px}#ffaSetup .sw{margin-top:14px;text-align:center;font-size:13px}#ffaSetup .sw a{color:#8a93a6;cursor:pointer;text-decoration:underline}'+
+ '#ffaModal .ffa-in .ffa-oa span{display:none}#ffaModal .ffa-in .ffa-oa{display:inline-flex;width:44px;height:40px;padding:0;margin:0 4px}#ffaModal .ffa-in .oas{text-align:center}#ffaModal .ffa-in .or{margin:12px 0 8px}'+
  '.ffa-lk{display:flex;align-items:center;gap:9px;margin:0 0 8px;padding:8px 10px;border:1px solid #2b3245;border-radius:9px;background:#08090d}.ffa-lk span{flex:1;font-weight:700;font-size:14px}.ffa-lk b{color:#7ddc8a;font-size:13px}.ffa-lk .ffa-btn{padding:6px 12px;font-size:13px}'+
  '#ffaModal .sw a{color:#ffc93c;cursor:pointer;margin-left:4px}#ffaModal .x{float:right;background:none;border:0;color:#8a93a6;font-size:20px;cursor:pointer;line-height:1}';
 function css(){ if(document.getElementById('ffaCss')) return; var s=document.createElement('style'); s.id='ffaCss'; s.textContent=CSS; document.head.appendChild(s); }
@@ -212,7 +204,7 @@ function modal(){
   el.innerHTML='<form class="b" autocomplete="on"><button type="button" class="x" aria-label="'+esc(T.close)+'">×</button><h3></h3><p>'+esc(T.sub)+'</p>'+
     '<input name="username" autocomplete="username" autocapitalize="off" spellcheck="false" maxlength="16" placeholder="'+esc(T.id)+'">'+
     '<div class="pwr"><input name="password" type="password" placeholder="'+esc(T.pw)+'"><button type="button" class="eye" aria-label="'+esc(AL().show)+'">👁</button></div>'+
-    '<div class="m"></div><button type="submit" class="ffa-btn go"></button><div class="or">'+esc(OA().or)+'</div>'+oaBtns()+'<div class="sw"><span></span><a></a></div></form>';
+    '<div class="m"></div><button type="submit" class="ffa-btn go"></button><div class="or">'+esc(OA().or)+'</div>'+'<div class="oas">'+oaBtns()+'</div><div class="sw"><span></span><a></a></div></form>';
   document.body.appendChild(el);
   el.addEventListener('click',function(e){ if(e.target===el) close(); });
   el.querySelector('.x').onclick=close;
@@ -232,7 +224,8 @@ function modal(){
 }
 function fill(){ var el=modal(); el.querySelector('h3').textContent=mode==='in'?T.title:T.signup; el.querySelector('.go').textContent=mode==='in'?T.login:T.signup;
   el.querySelector('.sw span').textContent=mode==='in'?T.noAcc:T.hasAcc; el.querySelector('.sw a').textContent=mode==='in'?T.signup:T.login;
-  el.querySelector('input[name=password]').setAttribute('autocomplete',mode==='in'?'current-password':'new-password'); el.querySelector('.m').textContent=''; }
+  el.querySelector('input[name=password]').setAttribute('autocomplete',mode==='in'?'current-password':'new-password'); el.querySelector('.m').textContent='';
+  el.querySelector('form').classList.toggle('ffa-in',mode==='in'); }
 function openLogin(m){ mode=m==='up'?'up':'in'; fill(); var el=modal(); el.style.display='flex'; setTimeout(function(){ try{ el.querySelector('input').focus(); }catch(e){} },30); }
 function close(){ var el=document.getElementById('ffaModal'); if(el) el.style.display='none'; }
 
@@ -344,7 +337,7 @@ function openAcct(){
    '<h4>'+esc(A.id.replace(/\s*\(.*$/,''))+'</h4><input type="text" id="aId" maxlength="16" autocapitalize="off" spellcheck="false" placeholder="'+esc(A.id)+'"><p>'+esc(A.idNote)+'</p><button type="button" class="ffa-btn" id="aIdGo">'+esc(A.save)+'</button><div class="m" id="aIdM"></div>'+
    '<h4>'+esc(A.pwT)+'</h4><div id="aPwBox"></div>'+
    '<div class="pwr"><input type="password" id="aNew" autocomplete="new-password" placeholder="'+esc(A.newPw)+'"><button type="button" class="eye" aria-label="'+esc(A.show)+'">👁</button></div><button type="button" class="ffa-btn" id="aPwGo">'+esc(A.chg)+'</button><div class="m" id="aPwM"></div>'+
-   '<label class="k"><input type="checkbox" id="aKeep"> '+esc(A.keep)+'</label><p>'+esc(A.keepN)+'</p><div id="aLinkBox"></div><div id="aDevBox"></div></div>';
+   '<label class="k"><input type="checkbox" id="aKeep"> '+esc(A.keep)+'</label><p>'+esc(A.keepN)+'</p><div id="aDevBox"></div></div>';
   document.body.appendChild(el);
   var $=function(i){ return el.querySelector('#'+i); }, curId=(prof&&prof.username)||String(user.email||'').split('@')[0];
   function say(i,t,ok){ var m=$(i); m.textContent=t; m.className='m'+(ok?' ok':''); }
@@ -360,7 +353,7 @@ function openAcct(){
     b.querySelector('[data-k=c]').onclick=function(){ var done=function(){ say('aPwM',A.copied,true); };
       try{ navigator.clipboard.writeText(o.p).then(done,function(){ shown=true; draw(); }); }catch(e){ shown=true; draw(); } };
     draw(); }
-  pwBox(); devPanel(el,say); linkPanel(el,say);
+  pwBox(); devPanel(el,say);
   if(!isIdAcct(user)){ var pb=$('aPwBox'); pb.innerHTML='<p>'+esc(OA().pwSoc)+'</p>'; ['aNew','aPwGo','aPwM','aKeep'].forEach(function(i){ var x=$(i); x=i==='aNew'?x.parentNode:(i==='aKeep'?x.parentNode:x); x.style.display='none'; var nx=x.nextElementSibling; if(i==='aKeep'&&nx) nx.style.display='none'; }); }
   $('aKeep').onchange=function(){ try{ localStorage.setItem('arenaClashPwOpt',this.checked?'1':'0'); }catch(e){} if(!this.checked){ pwClear(); pwBox(); } };
   $('aNickGo').onclick=async function(){ var n=$('aNick').value.trim().slice(0,12); if(!n) return say('aNickM',A.badNick);
