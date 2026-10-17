@@ -3,6 +3,58 @@
   {
    "date": "2026-10-17",
    "build": "",
+   "title": "위쪽 버튼 묶음·라운지 페이지·스플래시 문구",
+   "items": [
+    "위쪽 오른쪽 버튼(코인·설정·알림·투표·계정)을 한 배경으로 묶음",
+    "라운지 페이지 추가 (양 끝까지 이어진 풀밭에 기대 앉아 커피를 홀짝이는 픽셀 감자튀김, 패치노트·음악으로 이동)",
+    "큰 제목 옆에 30도 기울어진 스플래시 문구 추가 (들어올 때마다 바뀜)"
+   ],
+   "tr": {
+    "en": {
+     "title": "Grouped top buttons, Lounge page, splash text",
+     "items": [
+      "Top-right buttons (coin, settings, alerts, vote, account) grouped on one background",
+      "Lounge page added (a pixel fries mascot sipping coffee on a grass strip running edge to edge; go to Patch notes or Music)",
+      "Tilted splash text next to the big title (changes on every visit)"
+     ]
+    },
+    "es": {
+     "title": "Botones agrupados, página Sala, frases splash",
+     "items": [
+      "Botones de arriba a la derecha (monedas, ajustes, avisos, votación, cuenta) en un solo fondo",
+      "Página Sala añadida (una mascota de papas pixelada tomando café sobre una franja de césped de lado a lado; ir a Notas de versión o Música)",
+      "Frase splash inclinada junto al título (cambia en cada visita)"
+     ]
+    },
+    "fr": {
+     "title": "Boutons regroupés, page Salon, phrases splash",
+     "items": [
+      "Boutons en haut à droite (pièces, réglages, alertes, vote, compte) regroupés sur un seul fond",
+      "Page Salon ajoutée (une mascotte frites en pixels sirote un café sur une bande d'herbe d'un bord à l'autre ; accès aux notes de version et à la musique)",
+      "Phrase splash inclinée à côté du grand titre (change à chaque visite)"
+     ]
+    },
+    "de": {
+     "title": "Gruppierte Buttons, Lounge-Seite, Splash-Sprüche",
+     "items": [
+      "Buttons oben rechts (Münzen, Einstellungen, Hinweise, Abstimmung, Konto) auf einem Hintergrund gruppiert",
+      "Lounge-Seite hinzugefügt (ein Pixel-Pommes-Maskottchen schlürft Kaffee auf einem Grasstreifen von Rand zu Rand; weiter zu Patchnotes oder Musik)",
+      "Schräger Splash-Spruch neben dem großen Titel (wechselt bei jedem Besuch)"
+     ]
+    },
+    "ja": {
+     "title": "上部ボタン・ラウンジページ・スプラッシュ文",
+     "items": [
+      "右上のボタン(コイン・設定・通知・投票・アカウント)を一つの背景にまとめた",
+      "ラウンジページを追加 (端まで続く草原でコーヒーをすするドット絵のポテト、パッチノート・音楽へ移動)",
+      "大きなタイトルの横に斜めのスプラッシュ文を追加 (訪れるたびに変わる)"
+     ]
+    }
+   }
+  },
+  {
+   "date": "2026-10-17",
+   "build": "",
    "title": "허브 로고·위쪽 메뉴 정리·커뮤니티 페이지",
    "items": [
     "Frenchfries777 로고 추가 (위쪽 메뉴, 첫 화면, 계정 안내, 777 아래 웃는 입)",
