@@ -3,6 +3,98 @@
   {
    "date": "2026-10-17",
    "build": "",
+   "title": "Crown Envoy 불가사의 위키 추가",
+   "items": [
+    "Crown Envoy 불가사의 6종, 건설 규칙, 승점 설명 추가 (v0.3 b24)"
+   ],
+   "tr": {
+    "en": {
+     "title": "Crown Envoy wonders added to the wiki",
+     "items": [
+      "Added the six Crown Envoy wonders, building rules and victory points (v0.3 b24)"
+     ]
+    },
+    "es": {
+     "title": "Maravillas de Crown Envoy en la wiki",
+     "items": [
+      "Se añadieron las seis maravillas de Crown Envoy, las reglas de construcción y los puntos de victoria (v0.3 b24)"
+     ]
+    },
+    "fr": {
+     "title": "Merveilles de Crown Envoy dans le wiki",
+     "items": [
+      "Ajout des six merveilles de Crown Envoy, des règles de construction et des points de victoire (v0.3 b24)"
+     ]
+    },
+    "de": {
+     "title": "Crown-Envoy-Weltwunder im Wiki",
+     "items": [
+      "Die sechs Weltwunder von Crown Envoy, Bauregeln und Siegpunkte ergänzt (v0.3 b24)"
+     ]
+    },
+    "ja": {
+     "title": "Crown Envoyの不思議をウィキに追加",
+     "items": [
+      "Crown Envoyの不思議6種、建設ルール、勝利点の説明を追加（v0.3 b24）"
+     ]
+    }
+   }
+  },
+  {
+   "date": "2026-10-17",
+   "build": "",
+   "title": "접속 표시 빠르게 갱신",
+   "items": [
+    "창을 닫으면 지금 접속 중 표시에서 바로 빠지도록 변경",
+    "신호가 끊기면 100초 뒤에 빠지도록 변경 (기존 2분)",
+    "허브의 접속 표시를 20초마다 갱신"
+   ],
+   "tr": {
+    "en": {
+     "title": "Faster online status",
+     "items": [
+      "Closing the window now removes you from the online status right away",
+      "Without a signal you are removed after 100 seconds (was 2 minutes)",
+      "The hub online status refreshes every 20 seconds"
+     ]
+    },
+    "es": {
+     "title": "Estado en línea más rápido",
+     "items": [
+      "Al cerrar la ventana se sale del estado en línea al instante",
+      "Sin señal, se sale tras 100 segundos (antes 2 minutos)",
+      "El estado en línea del hub se actualiza cada 20 segundos"
+     ]
+    },
+    "fr": {
+     "title": "Statut en ligne plus rapide",
+     "items": [
+      "Fermer la fenêtre retire immédiatement du statut en ligne",
+      "Sans signal, on est retiré après 100 secondes (avant 2 minutes)",
+      "Le statut en ligne du hub se met à jour toutes les 20 secondes"
+     ]
+    },
+    "de": {
+     "title": "Schnellerer Online-Status",
+     "items": [
+      "Beim Schließen des Fensters verschwindest du sofort aus dem Online-Status",
+      "Ohne Signal verschwindest du nach 100 Sekunden (vorher 2 Minuten)",
+      "Der Online-Status im Hub wird alle 20 Sekunden aktualisiert"
+     ]
+    },
+    "ja": {
+     "title": "接続表示を素早く更新",
+     "items": [
+      "ウィンドウを閉じると、すぐに接続中の表示から外れるように変更",
+      "信号が途切れると100秒後に外れるように変更（以前は2分）",
+      "ハブの接続表示を20秒ごとに更新"
+     ]
+    }
+   }
+  },
+  {
+   "date": "2026-10-17",
+   "build": "",
    "title": "Stickseum 모바일 조작 위키 갱신",
    "items": [
     "Stickseum 모바일 조작(자동 조준, 💨 버튼, 버튼 배치) 설명 수정"

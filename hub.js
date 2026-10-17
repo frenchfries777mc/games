@@ -550,8 +550,10 @@ async function online(){
       html+='<span class="on-f"><span>친구</span> '+rows.slice(0,8).map(function(x){ var g=GAMES[x.place]; return '<a class="who on-p" data-uid="'+esc(x.user_id)+'" data-notr title="'+esc(g?g.name:'Hub')+'">'+esc(names[x.user_id]||'???')+'<small>'+esc(g?g.name:'Hub')+'</small></a>'; }).join('')+(rows.length>8?'<span>+'+(rows.length-8)+'</span>':'')+'</span>'; } }
   b.innerHTML=html;
 }
-function onlineLoop(){ clearInterval(onlT); online(); onlT=setInterval(function(){ if(document.visibilityState==='visible') online(); },60000); }
+function onlineLoop(){ clearInterval(onlT); online(); onlT=setInterval(function(){ if(document.visibilityState==='visible') online(); },20000); }
 document.addEventListener('visibilitychange',function(){ if(document.visibilityState==='visible') online(); });
+/* 허브를 닫으면 바로 접속 표시에서 빠져요 (ff_leave) */
+window.addEventListener('pagehide',function(){ try{ var t=JSON.parse(localStorage.getItem('sb-kebsbuvuutilitwlvxzv-auth-token')||'null'); if(t&&t.access_token) fetch('https://kebsbuvuutilitwlvxzv.supabase.co/rest/v1/rpc/ff_leave',{method:'POST',headers:{'apikey':'sb_publishable_4Egu0zm3p6cxWGvP_-GlIw_mlCpO1Nf','Authorization':'Bearer '+t.access_token,'Content-Type':'application/json'},body:'{}',keepalive:true}).catch(function(){}); }catch(e){} });
 
 /* ===================== @멘션: 자동완성 · 강조 (알림은 supabase-ff-coin.sql 의 트리거) ===================== */
 function mnHtml(t){ return esc(t).replace(/(^|[\s(])(@[^\s@<>&]{1,24})/g,'$1<b class="mn">$2</b>'); }
