@@ -3,6 +3,52 @@
   {
    "date": "2026-10-17",
    "build": "",
+   "title": "Stickseum 캐릭터 문서 외형·패시브 추가",
+   "items": [
+    "Stickseum 캐릭터 문서에 25명의 외형(기본 스킨) 추가",
+    "쿠루스 패시브 항목 분리, 어둠 탈출 최대 피해 90 안내 추가"
+   ],
+   "tr": {
+    "en": {
+     "title": "Stickseum character pages: appearance and passive added",
+     "items": [
+      "Added appearance (default skin) for all 25 characters to the Stickseum character pages",
+      "Split out Kurus' passive and added the 90 maximum Shadow Burst damage to the tip"
+     ]
+    },
+    "es": {
+     "title": "Páginas de personajes de Stickseum: aspecto y pasiva añadidos",
+     "items": [
+      "Añadido el aspecto (skin básica) de los 25 personajes a las páginas de personajes de Stickseum",
+      "Separada la pasiva de Kurus y añadido el daño máximo de 90 de la Salida oscura en el consejo"
+     ]
+    },
+    "fr": {
+     "title": "Pages des personnages de Stickseum : apparence et passif ajoutés",
+     "items": [
+      "Ajout de l'apparence (skin de base) des 25 personnages aux pages de personnages de Stickseum",
+      "Passif de Kurus mis à part et dégâts maximaux de 90 de la Sortie des ténèbres ajoutés à l'astuce"
+     ]
+    },
+    "de": {
+     "title": "Stickseum-Charakterseiten: Aussehen und Passiv ergänzt",
+     "items": [
+      "Aussehen (Standard-Skin) aller 25 Charaktere zu den Stickseum-Charakterseiten hinzugefügt",
+      "Kurus' Passiv abgesetzt und den Höchstschaden von 90 beim Dunkelausbruch im Tipp ergänzt"
+     ]
+    },
+    "ja": {
+     "title": "Stickseumキャラクターページ：外見とパッシブを追加",
+     "items": [
+      "Stickseumのキャラクターページに25人の外見（基本スキン）を追加",
+      "クルスのパッシブを分け、闇脱出の最大ダメージ90をコツに追記"
+     ]
+    }
+   }
+  },
+  {
+   "date": "2026-10-17",
+   "build": "",
    "title": "Tools Fry Slides v11, Stickseum build 265 위키 갱신",
    "items": [
     "Fry Slides 새 레이아웃 살아있는 화면(Block HTML, Fry Lab, HTML 넣기)과 한계 설명 추가",
