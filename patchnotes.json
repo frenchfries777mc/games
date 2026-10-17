@@ -3,6 +3,52 @@
   {
    "date": "2026-10-17",
    "build": "",
+   "title": "Crown Envoy 세계 회의·Stickseum 인트로 위키 추가",
+   "items": [
+    "Crown Envoy 세계 회의(안건 3종), 봇 휴전 판단, 인트로 고정 설명 추가 (v0.3 b26)",
+    "Stickseum 인트로 건너뛰기 불가 설명 추가 (v252)"
+   ],
+   "tr": {
+    "en": {
+     "title": "Crown Envoy world council and Stickseum intro added to the wiki",
+     "items": [
+      "Added the Crown Envoy world council (three agendas), bot truce judgment and fixed intro (v0.3 b26)",
+      "Added that the Stickseum intro cannot be skipped (v252)"
+     ]
+    },
+    "es": {
+     "title": "Consejo mundial de Crown Envoy e intro de Stickseum en la wiki",
+     "items": [
+      "Se añadieron el consejo mundial de Crown Envoy (tres temas), el juicio de tregua de los bots y la intro fija (v0.3 b26)",
+      "Se añadió que la intro de Stickseum no se puede saltar (v252)"
+     ]
+    },
+    "fr": {
+     "title": "Conseil mondial de Crown Envoy et intro de Stickseum dans le wiki",
+     "items": [
+      "Ajout du conseil mondial de Crown Envoy (trois sujets), du jugement de trêve des bots et de l'intro fixe (v0.3 b26)",
+      "Ajout que l'intro de Stickseum ne peut pas être passée (v252)"
+     ]
+    },
+    "de": {
+     "title": "Crown-Envoy-Weltrat und Stickseum-Intro im Wiki",
+     "items": [
+      "Weltrat von Crown Envoy (drei Tagesordnungspunkte), Waffenstillstandsurteil der Bots und festes Intro ergänzt (v0.3 b26)",
+      "Ergänzt, dass das Intro von Stickseum nicht überspringbar ist (v252)"
+     ]
+    },
+    "ja": {
+     "title": "Crown Envoyの世界会議とStickseumのイントロをウィキに追加",
+     "items": [
+      "Crown Envoyの世界会議（議題3種）、ボットの停戦判断、イントロ固定の説明を追加（v0.3 b26）",
+      "Stickseumのイントロを飛ばせないことを追加（v252）"
+     ]
+    }
+   }
+  },
+  {
+   "date": "2026-10-17",
+   "build": "",
    "title": "Beaconfall 참가 요청 위키 추가",
    "items": [
     "Beaconfall 친구에게 참가 요청(수락·거절)과 복사 버튼 안내 설명 추가 (v0.3)"
