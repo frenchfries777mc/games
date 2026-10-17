@@ -3,6 +3,52 @@
   {
    "date": "2026-10-17",
    "build": "",
+   "title": "Tools 위키 단축키·테마 설명 보강",
+   "items": [
+    "Fry Sheet 단축키 Ctrl+; · Alt+= · Ctrl+Shift+L 동작 설명 추가",
+    "Fry Slides 테마 12종 이름 추가"
+   ],
+   "tr": {
+    "en": {
+     "title": "Tools wiki shortcut and theme details",
+     "items": [
+      "Added what the Fry Sheet shortcuts Ctrl+; · Alt+= · Ctrl+Shift+L do",
+      "Added the names of the 12 Fry Slides themes"
+     ]
+    },
+    "es": {
+     "title": "Wiki de Tools: atajos y temas",
+     "items": [
+      "Se añadió qué hacen los atajos de Fry Sheet Ctrl+; · Alt+= · Ctrl+Mayús+L",
+      "Se añadieron los nombres de los 12 temas de Fry Slides"
+     ]
+    },
+    "fr": {
+     "title": "Wiki de Tools : raccourcis et thèmes",
+     "items": [
+      "Ajout du rôle des raccourcis Fry Sheet Ctrl+; · Alt+= · Ctrl+Maj+L",
+      "Ajout des noms des 12 thèmes de Fry Slides"
+     ]
+    },
+    "de": {
+     "title": "Tools-Wiki: Tastenkürzel und Designs",
+     "items": [
+      "Funktion der Fry-Sheet-Kürzel Strg+; · Alt+= · Strg+Umschalt+L ergänzt",
+      "Namen der 12 Fry-Slides-Designs ergänzt"
+     ]
+    },
+    "ja": {
+     "title": "Toolsウィキのショートカットとテーマ補足",
+     "items": [
+      "Fry SheetのショートカットCtrl+; ・Alt+= ・Ctrl+Shift+Lの動作を追加",
+      "Fry Slidesのテーマ12種の名前を追加"
+     ]
+    }
+   }
+  },
+  {
+   "date": "2026-10-17",
+   "build": "",
    "title": "Tools Fry Slides v4 · Block HTML v10 위키 갱신",
    "items": [
     "Fry Slides 새 레이아웃 6종과 새 테마, 슬라이드 옵션, 발표 도우미 설명 추가",
