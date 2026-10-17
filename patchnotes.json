@@ -3,6 +3,46 @@
   {
    "date": "2026-10-17",
    "build": "",
+   "title": "허브 캐릭터 수 표기 수정",
+   "items": [
+    "허브 Stickseum 카드 캐릭터 수 수정 (24명 → 25명)"
+   ],
+   "tr": {
+    "en": {
+     "title": "Hub character count fix",
+     "items": [
+      "Hub Stickseum card character count fixed (24 → 25)"
+     ]
+    },
+    "es": {
+     "title": "Corrección del número de personajes",
+     "items": [
+      "Número de personajes corregido en la tarjeta de Stickseum del hub (24 → 25)"
+     ]
+    },
+    "fr": {
+     "title": "Correction du nombre de personnages",
+     "items": [
+      "Nombre de personnages corrigé sur la carte Stickseum du hub (24 → 25)"
+     ]
+    },
+    "de": {
+     "title": "Korrektur der Charakteranzahl",
+     "items": [
+      "Charakteranzahl auf der Stickseum-Karte im Hub korrigiert (24 → 25)"
+     ]
+    },
+    "ja": {
+     "title": "キャラクター数の表記修正",
+     "items": [
+      "ハブのStickseumカードのキャラクター数を修正 (24人 → 25人)"
+     ]
+    }
+   }
+  },
+  {
+   "date": "2026-10-17",
+   "build": "",
    "title": "계절 테마와 폰용 하단 메뉴",
    "items": [
     "허브 계절 테마 추가 (봄·여름·가을·겨울과 핼러윈·크리스마스·새해에 맞춰 배경 색과 떨어지는 그림이 바뀜)",
