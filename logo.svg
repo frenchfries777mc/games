@@ -14,5 +14,9 @@
   </g>
   <path d="M26 56 Q60 66 94 56 L86 104 Q60 110 34 104 Z" fill="url(#bx)" stroke="#8e0f22" stroke-width="2" stroke-linejoin="round"/>
   <path d="M30 60 Q60 69 90 60 L89 66 Q60 75 31 66 Z" fill="#fff" fill-opacity=".18"/>
-  <text x="60" y="95" text-anchor="middle" font-family="Oswald,Impact,'Arial Black',sans-serif" font-weight="700" font-size="24" fill="#fff4d6" letter-spacing="1">777</text>
+  <g font-family="Oswald,Impact,'Arial Black',sans-serif" font-weight="700" text-anchor="middle">
+    <text x="45" y="96" font-size="20" fill="#fff4d6">7</text>
+    <text x="60" y="99" font-size="31" fill="#ffd23c" stroke="#7a1020" stroke-width="1.6" paint-order="stroke">7</text>
+    <text x="75" y="96" font-size="20" fill="#fff4d6">7</text>
+  </g>
 </svg>
