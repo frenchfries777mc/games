@@ -3,6 +3,46 @@
   {
    "date": "2026-10-17",
    "build": "",
+   "title": "Crown Envoy 탐험과 유물 위키 추가",
+   "items": [
+    "Crown Envoy 탐험 3종과 유물 8종 설명 추가 (v0.3 b27)"
+   ],
+   "tr": {
+    "en": {
+     "title": "Crown Envoy expeditions and relics added to the wiki",
+     "items": [
+      "Added the three Crown Envoy expeditions and eight relics (v0.3 b27)"
+     ]
+    },
+    "es": {
+     "title": "Expediciones y reliquias de Crown Envoy en la wiki",
+     "items": [
+      "Se añadieron las tres expediciones y las ocho reliquias de Crown Envoy (v0.3 b27)"
+     ]
+    },
+    "fr": {
+     "title": "Expéditions et reliques de Crown Envoy dans le wiki",
+     "items": [
+      "Ajout des trois expéditions et des huit reliques de Crown Envoy (v0.3 b27)"
+     ]
+    },
+    "de": {
+     "title": "Crown-Envoy-Expeditionen und -Relikte im Wiki",
+     "items": [
+      "Die drei Expeditionen und acht Relikte von Crown Envoy ergänzt (v0.3 b27)"
+     ]
+    },
+    "ja": {
+     "title": "Crown Envoyの探検と遺物をウィキに追加",
+     "items": [
+      "Crown Envoyの探検3種と遺物8種の説明を追加（v0.3 b27）"
+     ]
+    }
+   }
+  },
+  {
+   "date": "2026-10-17",
+   "build": "",
    "title": "Stickseum MVP 투표 개편 위키 갱신",
    "items": [
     "Stickseum MVP 투표 개편(승리 화면 뒤 큰 투표창, 알림과 경험치 50) 설명 수정 (v253)"
