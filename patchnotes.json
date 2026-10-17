@@ -3,6 +3,52 @@
   {
    "date": "2026-10-17",
    "build": "",
+   "title": "위키 Tools·Stickseum 변경 반영",
+   "items": [
+    "위키 Tools 문서 반영 (Fry Lab 실험 갤러리와 약 182가지 실험, Fry Sheet 엑셀 호환, FF777 모델 1.2, Block HTML AI 변환)",
+    "위키 Stickseum 문서 반영 (깃발 뺏기 봇, 클랜 이름·태그 변경, 닉네임 통일, 연습 모드 피해 표시, build 266~268)"
+   ],
+   "tr": {
+    "en": {
+     "title": "Wiki update for Tools and Stickseum",
+     "items": [
+      "Wiki Tools pages updated (Fry Lab gallery with about 182 experiments, Fry Sheet Excel compatibility, FF777 1.2, Block HTML AI conversion)",
+      "Wiki Stickseum pages updated (Capture the Flag bots, clan name and tag editing, unified nicknames, practice mode damage display, builds 266-268)"
+     ]
+    },
+    "es": {
+     "title": "Wiki actualizada: Tools y Stickseum",
+     "items": [
+      "Páginas de Tools actualizadas (galería de Fry Lab con unos 182 experimentos, compatibilidad de Fry Sheet con Excel, FF777 1.2, conversión de IA en Block HTML)",
+      "Páginas de Stickseum actualizadas (bots de Captura la bandera, nombre y etiqueta del clan, apodos unificados, daño en modo práctica, builds 266-268)"
+     ]
+    },
+    "fr": {
+     "title": "Wiki mis à jour : Tools et Stickseum",
+     "items": [
+      "Pages Tools mises à jour (galerie Fry Lab avec environ 182 expériences, compatibilité Excel de Fry Sheet, FF777 1.2, conversion IA de Block HTML)",
+      "Pages Stickseum mises à jour (bots de Capture du drapeau, nom et tag du clan, pseudos unifiés, dégâts en mode entraînement, builds 266-268)"
+     ]
+    },
+    "de": {
+     "title": "Wiki-Update für Tools und Stickseum",
+     "items": [
+      "Tools-Seiten aktualisiert (Fry-Lab-Galerie mit etwa 182 Experimenten, Excel-Kompatibilität von Fry Sheet, FF777 1.2, KI-Umwandlung in Block HTML)",
+      "Stickseum-Seiten aktualisiert (Flaggenraub-Bots, Clanname und Tag, einheitliche Spitznamen, Schadensanzeige im Übungsmodus, builds 266-268)"
+     ]
+    },
+    "ja": {
+     "title": "ウィキにToolsとStickseumの変更を反映",
+     "items": [
+      "ウィキのTools文書を更新（Fry Labのギャラリーと約182種類の実験、Fry SheetのExcel互換、FF777 1.2、Block HTMLのAI変換）",
+      "ウィキのStickseum文書を更新（旗取りのボット、クラン名・タグの変更、ニックネームの統一、練習モードのダメージ表示、build 266〜268）"
+     ]
+    }
+   }
+  },
+  {
+   "date": "2026-10-17",
+   "build": "",
    "title": "퀘스트·개발자 일지·업데이트 투표",
    "items": [
     "오늘의 퀘스트 추가 (게임·게시판·채팅·투표 중 3개, 코인 보상)",
