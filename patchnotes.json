@@ -3,6 +3,46 @@
   {
    "date": "2026-10-17",
    "build": "",
+   "title": "Beaconfall 인트로 위키 추가",
+   "items": [
+    "Beaconfall 인트로를 건너뛸 수 없다는 설명 추가 (v0.3)"
+   ],
+   "tr": {
+    "en": {
+     "title": "Beaconfall intro added to the wiki",
+     "items": [
+      "Added that the Beaconfall intro cannot be skipped (v0.3)"
+     ]
+    },
+    "es": {
+     "title": "Intro de Beaconfall en la wiki",
+     "items": [
+      "Se añadió que la intro de Beaconfall no se puede saltar (v0.3)"
+     ]
+    },
+    "fr": {
+     "title": "Intro de Beaconfall dans le wiki",
+     "items": [
+      "Ajout que l'intro de Beaconfall ne peut pas être passée (v0.3)"
+     ]
+    },
+    "de": {
+     "title": "Beaconfall-Intro im Wiki",
+     "items": [
+      "Ergänzt, dass das Intro von Beaconfall nicht überspringbar ist (v0.3)"
+     ]
+    },
+    "ja": {
+     "title": "Beaconfallのイントロをウィキに追加",
+     "items": [
+      "Beaconfallのイントロを飛ばせないことを追加（v0.3）"
+     ]
+    }
+   }
+  },
+  {
+   "date": "2026-10-17",
+   "build": "",
    "title": "Beaconfall 계절별 배경음악 위키 추가",
    "items": [
     "Beaconfall 계절별 배경음악과 3초 전환 설명 추가 (v0.3)"
