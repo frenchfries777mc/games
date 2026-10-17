@@ -3,6 +3,52 @@
   {
    "date": "2026-10-17",
    "build": "",
+   "title": "Tools Block HTML v15 위키 갱신",
+   "items": [
+    "Block HTML AI가 같은 말을 반복하면 멈추고 다시 받는 설명 추가",
+    "Block HTML, Fry Slides, Fry Lab AI 버튼 설명을 황금색 버튼으로 수정"
+   ],
+   "tr": {
+    "en": {
+     "title": "Wiki update: Tools Block HTML v15",
+     "items": [
+      "Added a note that Block HTML AI is stopped and re-asked when it repeats itself",
+      "Corrected the AI button description on Block HTML, Fry Slides and Fry Lab to the gold button"
+     ]
+    },
+    "es": {
+     "title": "Actualización de la wiki: Tools Block HTML v15",
+     "items": [
+      "Añadida una nota de que la IA de Block HTML se detiene y se vuelve a pedir cuando se repite",
+      "Corregida la descripción del botón de IA en Block HTML, Fry Slides y Fry Lab al botón dorado"
+     ]
+    },
+    "fr": {
+     "title": "Mise à jour du wiki : Tools Block HTML v15",
+     "items": [
+      "Ajout d'une note : l'IA de Block HTML est arrêtée et réinterrogée quand elle se répète",
+      "Description du bouton IA corrigée en bouton doré dans Block HTML, Fry Slides et Fry Lab"
+     ]
+    },
+    "de": {
+     "title": "Wiki-Update: Tools Block HTML v15",
+     "items": [
+      "Hinweis ergänzt, dass die KI von Block HTML bei Wiederholungen gestoppt und neu gefragt wird",
+      "Beschreibung der KI-Schaltfläche in Block HTML, Fry Slides und Fry Lab auf die goldene Schaltfläche korrigiert"
+     ]
+    },
+    "ja": {
+     "title": "Wiki更新：Tools Block HTML v15",
+     "items": [
+      "Block HTMLのAIが同じ言葉を繰り返したら止めて聞き直す説明を追加",
+      "Block HTML・Fry Slides・Fry LabのAIボタンの説明を金色のボタンに修正"
+     ]
+    }
+   }
+  },
+  {
+   "date": "2026-10-17",
+   "build": "",
    "title": "Tools Fry Sheet v16~v17, 사이트 v6 위키 갱신",
    "items": [
     "Fry Sheet AI 창 탭 순서(수식, 그래프, 표, 질문·요약)와 수식 탭 먼저 열기, 번역 요청 수식 설명 추가",
