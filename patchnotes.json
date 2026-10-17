@@ -3,6 +3,58 @@
   {
    "date": "2026-10-17",
    "build": "",
+   "title": "Crown Envoy 영토 통합 위키 갱신",
+   "items": [
+    "세계 지도 영토 수(907개)와 영토 통합 설명 추가",
+    "합쳐진 영토의 수입·징집 한도와 저장 게임 변환 설명 추가",
+    "최신 빌드를 build 31로 수정"
+   ],
+   "tr": {
+    "en": {
+     "title": "Crown Envoy territory merge wiki update",
+     "items": [
+      "Added the world map territory count (907) and the territory merge",
+      "Added merged territory income, conscription limit and saved game conversion",
+      "Latest build changed to build 31"
+     ]
+    },
+    "es": {
+     "title": "Wiki de la fusión de territorios de Crown Envoy",
+     "items": [
+      "Se añadió el número de territorios del mapa mundial (907) y la fusión",
+      "Se añadieron ingresos, límite de reclutamiento y conversión de partidas guardadas",
+      "Última compilación cambiada a build 31"
+     ]
+    },
+    "fr": {
+     "title": "Wiki de la fusion des territoires de Crown Envoy",
+     "items": [
+      "Ajout du nombre de territoires de la carte du monde (907) et de la fusion",
+      "Ajout du revenu, de la limite de conscription et de la conversion des sauvegardes",
+      "Dernier build changé en build 31"
+     ]
+    },
+    "de": {
+     "title": "Crown Envoy Wiki zur Gebietszusammenlegung",
+     "items": [
+      "Gebietszahl der Weltkarte (907) und die Zusammenlegung ergänzt",
+      "Einkommen, Rekrutierungslimit und Umwandlung von Spielständen ergänzt",
+      "Neuester Build auf build 31 geändert"
+     ]
+    },
+    "ja": {
+     "title": "Crown Envoy 領土統合のWiki更新",
+     "items": [
+      "世界マップの領土数（907か所）と領土統合の説明を追加",
+      "統合領土の収入・徴兵上限とセーブデータの扱いを追加",
+      "最新ビルドをbuild 31に修正"
+     ]
+    }
+   }
+  },
+  {
+   "date": "2026-10-17",
+   "build": "",
    "title": "Crown Envoy 세계 회의 위키 갱신",
    "items": [
     "세계 회의 새 창과 찬성/반대 표결 설명으로 교체",
