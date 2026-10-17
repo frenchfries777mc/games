@@ -14,8 +14,8 @@
 <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&family=Noto+Sans+KR:wght@400;500;700;900&display=swap" rel="stylesheet">
 <script src="../ff-lang.js"></script>
 <style>
-  :root{ --bg:#08090d; --panel:#10131b; --panel2:#0b0d13; --line:#222837; --text:#eef0f5; --dim:#8a93a6; --fry:#ffc93c; --fry2:#ff8a3d; --g1:#3ee0c4; --g2:#e8c25a; --g3:#ffae5a; --g4:#6aa8ff; --g5:#9be564; }
-  html[data-ff-theme=light]{ --bg:#f6f3ec; --panel:#ffffff; --panel2:#faf8f3; --line:#e2dccf; --text:#1f1b14; --dim:#6d6658; --g1:#0f8a77; --g2:#8a6c14; --g3:#a0600c; --g4:#1f5fbf; --g5:#3f7d12; }
+  :root{ --bg:#08090d; --panel:#10131b; --panel2:#0b0d13; --line:#222837; --text:#eef0f5; --dim:#8a93a6; --fry:#ffc93c; --fry2:#ff8a3d; --g1:#3ee0c4; --g2:#e8c25a; --g3:#ffae5a; --g4:#6aa8ff; --g5:#9be564; --g6:#ff8fc2; }
+  html[data-ff-theme=light]{ --bg:#f6f3ec; --panel:#ffffff; --panel2:#faf8f3; --line:#e2dccf; --text:#1f1b14; --dim:#6d6658; --g1:#0f8a77; --g2:#8a6c14; --g3:#a0600c; --g4:#1f5fbf; --g5:#3f7d12; --g6:#b8326f; }
   *{box-sizing:border-box;}
   html,body{margin:0; padding:0; background:var(--bg); color:var(--text);}
   body{font-family:'Noto Sans KR','Apple SD Gothic Neo','Malgun Gothic',system-ui,sans-serif; font-size:16px; line-height:1.6; min-height:100vh;
@@ -95,7 +95,7 @@
   .hr .hm{color:var(--dim); font-size:13.5px;}
   .res{display:flex; flex-direction:column; gap:8px; margin-top:12px;} .res a{display:block; text-decoration:none; background:var(--panel2); border:1px solid var(--line); border-radius:12px; padding:11px 14px; color:var(--text);} .res a:hover{border-color:var(--fry);}
   .res .rt{font-weight:700;} .rg{font-size:12px; font-weight:700; margin-right:8px; color:var(--g);} .res .rs{color:var(--dim); font-size:13.5px; margin-top:3px; display:block;} .res mark{background:rgba(255,201,60,.35); color:inherit; border-radius:3px;}
-  .g-stickseum{--g:var(--g1);} .g-crownenvoy{--g:var(--g2);} .g-beaconfall{--g:var(--g3);} .g-tools{--g:var(--g4);} .g-educations{--g:var(--g5);}
+  .g-stickseum{--g:var(--g1);} .g-crownenvoy{--g:var(--g2);} .g-beaconfall{--g:var(--g3);} .g-tools{--g:var(--g4);} .g-educations{--g:var(--g5);} .g-hub{--g:var(--g6);}
   /* 정보 상자 */
   .ibox{float:right; clear:right; width:300px; max-width:100%; margin:4px 0 14px 20px; background:var(--panel2); border:1px solid var(--line); border-radius:12px; overflow:hidden; font-size:14px; line-height:1.5;}
   .ibox .ibh{background:linear-gradient(135deg,var(--fry),var(--fry2)); color:#1a1206; font-weight:800; text-align:center; padding:8px 10px; font-size:15.5px;}
@@ -109,6 +109,8 @@
   body[data-g=beaconfall]{--fry:#ffae5a; --fry2:#ff6f3d; background-image:radial-gradient(ellipse 900px 520px at 10% -10%, rgba(255,174,90,.15), transparent 60%), radial-gradient(ellipse 800px 600px at 110% 30%, rgba(90,200,120,.08), transparent 60%);}
   body[data-g=tools]{--fry:#6aa8ff; --fry2:#4a7bf0; background-image:radial-gradient(ellipse 900px 520px at 10% -10%, rgba(106,168,255,.15), transparent 60%), radial-gradient(ellipse 800px 600px at 110% 30%, rgba(74,123,240,.09), transparent 60%);}
   body[data-g=educations]{--fry:#9be564; --fry2:#4fc47a; background-image:radial-gradient(ellipse 900px 520px at 10% -10%, rgba(155,229,100,.14), transparent 60%), radial-gradient(ellipse 800px 600px at 110% 30%, rgba(79,196,122,.09), transparent 60%);}
+  body[data-g=hub]{--fry:#ff8fc2; --fry2:#e8589a; background-image:radial-gradient(ellipse 900px 520px at 10% -10%, rgba(255,143,194,.14), transparent 60%), radial-gradient(ellipse 800px 600px at 110% 30%, rgba(232,88,154,.09), transparent 60%);}
+  html[data-ff-theme=light] body[data-g=hub]{--fry:#b8326f; --fry2:#d04a88; background-image:radial-gradient(ellipse 900px 520px at 10% -10%, rgba(255,143,194,.3), transparent 60%);}
   html[data-ff-theme=light] body[data-g=tools]{--fry:#1f5fbf; --fry2:#2a4fc0; background-image:radial-gradient(ellipse 900px 520px at 10% -10%, rgba(106,168,255,.25), transparent 60%);}
   html[data-ff-theme=light] body[data-g=educations]{--fry:#3f7d12; --fry2:#2a8a52; background-image:radial-gradient(ellipse 900px 520px at 10% -10%, rgba(155,229,100,.3), transparent 60%);}
   html[data-ff-theme=light] body[data-g=stickseum]{--fry:#0f8a77; --fry2:#1279a8; background-image:radial-gradient(ellipse 900px 520px at 10% -10%, rgba(62,224,196,.22), transparent 60%);}
