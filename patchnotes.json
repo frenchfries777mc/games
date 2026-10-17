@@ -3,6 +3,52 @@
   {
    "date": "2026-10-17",
    "build": "",
+   "title": "Stickseum 배틀로얄 개편 위키 추가",
+   "items": [
+    "배틀로얄·듀오의 위험지대와 보급 상자, 넓어진 시작 위치 설명 추가",
+    "최신 빌드를 build 258로 수정"
+   ],
+   "tr": {
+    "en": {
+     "title": "Stickseum Battle Royale overhaul wiki",
+     "items": [
+      "Added the danger zone, supply crates and wider starting positions for Battle Royale and Duo",
+      "Latest build changed to build 258"
+     ]
+    },
+    "es": {
+     "title": "Wiki de la reforma del battle royale de Stickseum",
+     "items": [
+      "Se añadieron la zona de peligro, las cajas de suministros y las posiciones iniciales más amplias del battle royale y los dúos",
+      "Última compilación cambiada a build 258"
+     ]
+    },
+    "fr": {
+     "title": "Wiki de la refonte du battle royale de Stickseum",
+     "items": [
+      "Ajout de la zone de danger, des caisses de ravitaillement et des positions de départ élargies du battle royale et du duo",
+      "Dernière build changée en build 258"
+     ]
+    },
+    "de": {
+     "title": "Stickseum Wiki zur Battle-Royale-Überarbeitung",
+     "items": [
+      "Gefahrenzone, Versorgungskisten und weitere Startpositionen für Battle Royale und Duo ergänzt",
+      "Neuester Build auf build 258 geändert"
+     ]
+    },
+    "ja": {
+     "title": "Stickseum バトルロイヤル刷新のWiki追加",
+     "items": [
+      "バトルロイヤル・デュオの危険地帯、補給箱、広がった開始位置を追加",
+      "最新ビルドをbuild 258に修正"
+     ]
+    }
+   }
+  },
+  {
+   "date": "2026-10-17",
+   "build": "",
    "title": "Crown Envoy 이스탄불 지역 이름 위키 갱신",
    "items": [
     "이스탄불 일대 지역 이름(1453년 전 Constantinople, 이후 Istanbul) 설명 추가",
