@@ -156,11 +156,15 @@ async function sel(table, cols, build){ var r=await build(sb.from(table).select(
 /* ---- 게시판 ---- */
 var bFilter='all', bQuery='', bLimit=20, bOpen=null, bWriting=false, bScroll=false, likes={}, myLikes={}, LIKES=true;
 var GOPT='<option value="free">자유</option><option value="stickseum">Stickseum</option><option value="crownenvoy">Crown Envoy</option><option value="beaconfall">Beaconfall</option>';
-function gameTag(g){ return g==='free'?'<span class="tag">자유</span>':(GAMES[g]?'<span class="tag '+GAMES[g].cls+'">'+esc(GAMES[g].name)+'</span>':''); }
+function gameTag(g){ if(g==='devlog') return '<span class="tag">🛠️ 개발자 일지</span>'; return g==='free'?'<span class="tag">자유</span>':(GAMES[g]?'<span class="tag '+GAMES[g].cls+'">'+esc(GAMES[g].name)+'</span>':''); }
+async function devOpt(){
+  try{ if(!me||!window.FFAuth||!FFAuth.loadDevs) return; await FFAuth.loadDevs(); var s=document.querySelector('.cm-p[data-p=board] form.cm-w select[name=g]'); if(s&&FFAuth.devRole(me.id)&&!s.querySelector('option[value=devlog]')){ var o=document.createElement('option'); o.value='devlog'; o.textContent='🛠️ 개발자 일지'; s.appendChild(o); } }catch(e){}
+}
 async function board(){
   var p=$('.cm-p[data-p=board]'); if(!p) return;
+  devOpt();
   if(!p.dataset.ready){ p.dataset.ready='1';
-    p.innerHTML='<div class="cm-bar"><div class="cm-f"><button data-f="all" class="on">전체</button><button data-f="hot">🔥 인기</button><button data-f="free">자유</button><button data-f="stickseum">Stickseum</button><button data-f="crownenvoy">Crown Envoy</button><button data-f="beaconfall">Beaconfall</button></div><button class="cm-btn cm-new">✏️ 글쓰기</button></div>'+
+    p.innerHTML='<div class="cm-bar"><div class="cm-f"><button data-f="all" class="on">전체</button><button data-f="hot">🔥 인기</button><button data-f="free">자유</button><button data-f="stickseum">Stickseum</button><button data-f="crownenvoy">Crown Envoy</button><button data-f="beaconfall">Beaconfall</button><button data-f="devlog">🛠️ 개발자 일지</button></div><button class="cm-btn cm-new">✏️ 글쓰기</button></div>'+
       '<form class="cm-q" role="search"><input type="search" maxlength="40" placeholder="🔍 제목 · 내용으로 글 찾기" autocomplete="off"></form>'+
       '<form class="cm-w" style="display:none"><select name="g">'+GOPT+'</select><input name="t" maxlength="80" placeholder="제목" required><textarea name="b" maxlength="4000" rows="6" placeholder="내용"></textarea><div class="cm-pv"></div><div class="cm-m"></div><div class="cm-acts"><label class="cm-btn2 cm-pick">🖼️ 사진<input type="file" accept="image/*" multiple hidden></label><span class="cm-sp"></span><button type="button" class="cm-btn2 cm-cancel">취소</button><button class="cm-btn">올리기</button></div></form>'+
       '<div class="cm-list"></div><button class="cm-btn2 cm-more" style="display:none">더 보기</button>';
@@ -419,30 +423,30 @@ async function polls(){
   var Lst=p.querySelector('.pls'), A=p.querySelector('.cm-pa'); if(!sb) return;
   var r=await sb.from('ff_polls').select('*').order('created_at',{ascending:false}).limit(admin?30:10);
   if(r.error){ Lst.innerHTML='<div class="cm-e">'+esc(errText(r.error))+'</div>'; A.innerHTML=''; return; }
-  var rows=(r.data||[]).filter(function(x){ return admin||x.active; }), ids=rows.map(function(x){ return x.id; }), cnt={}, mine={};
+  var isDev=!!(me&&window.FFAuth&&FFAuth.devRole&&FFAuth.devRole(me.id)), rows=(r.data||[]).filter(function(x){ return admin||x.active||(me&&x.created_by===me.id); }), ids=rows.map(function(x){ return x.id; }), cnt={}, mine={};
   if(ids.length){ var c=await sb.rpc('ff_poll_counts',{p_ids:ids}); ((c&&c.data)||[]).forEach(function(x){ (cnt[x.poll_id]=cnt[x.poll_id]||{})[x.choice]=x.votes; });
     if(me){ var v=await sb.from('ff_votes').select('poll_id,choice').eq('user_id',me.id).in('poll_id',ids); ((v&&v.data)||[]).forEach(function(x){ mine[x.poll_id]=x.choice; }); } }
   Lst.innerHTML=rows.length?'':'<div class="cm-e">지금 진행 중인 투표가 없어요.</div>';
   rows.forEach(function(x){ var C=cnt[x.id]||{}, tot=0, open=x.active&&(!x.ends_at||Date.parse(x.ends_at)>Date.now()), my=mine.hasOwnProperty(x.id)?mine[x.id]:null, show=my!=null||!open||admin;
     x.options.forEach(function(o,i){ tot+=C[i]||0; });
     var d=document.createElement('div'); d.className='pl'+(open?'':' closed');
-    d.innerHTML='<h4 data-notr></h4><div class="cm-meta">'+esc(F('{0}명 참여',tot))+(x.ends_at?' · <span>'+esc(open?F('{0}까지',String(x.ends_at).slice(5,10).replace('-','/')):'마감')+'</span>':(open?'':' · <span>마감</span>'))+(my==null&&open?' · <span>눌러서 투표하세요</span>':'')+'</div>';
+    d.innerHTML=(x.kind==='update'?'<div class="cm-meta"><span>🛠️ 다음 업데이트 투표</span></div>':'')+'<h4 data-notr></h4><div class="cm-meta">'+esc(F('{0}명 참여',tot))+(x.ends_at?' · <span>'+esc(open?F('{0}까지',String(x.ends_at).slice(5,10).replace('-','/')):'마감')+'</span>':(open?'':' · <span>마감</span>'))+(my==null&&open?' · <span>눌러서 투표하세요</span>':'')+'</div>';
     d.querySelector('h4').textContent=x.question;
     x.options.forEach(function(o,i){ var n=C[i]||0, pc=tot?Math.round(100*n/tot):0, b=document.createElement('button'); b.type='button'; b.className='po'+(my===i?' mine':''); b.disabled=!open;
       b.innerHTML=(show?'<i class="fill" style="width:'+pc+'%"></i>':'')+'<span data-notr></span>'+(show?'<span class="pv" data-notr>'+pc+'% · '+n+'</span>':''); b.querySelector('span').textContent=(my===i?'✓ ':'')+o;
       b.onclick=async function(){ if(!me) return login(); if(my===i) return; b.disabled=true; var q=await sb.rpc('ff_vote',{p_poll:x.id, p_choice:i}); if(q.error){ b.disabled=false; d.querySelector('.cm-meta').textContent=errText(q.error); return; } hubSync(); polls(); pollCheck(); };
       d.appendChild(b); });
-    if(admin){ var ac=document.createElement('div'); ac.className='cm-acts2';
+    if(admin||(me&&x.kind==='update'&&x.created_by===me.id&&isDev)){ var ac=document.createElement('div'); ac.className='cm-acts2';
       var t=document.createElement('button'); t.className='cm-btn2'; t.textContent=x.active?'마감하기':'다시 열기'; t.onclick=async function(){ await sb.from('ff_polls').update({active:!x.active}).eq('id',x.id); polls(); pollCheck(); };
       var del=document.createElement('button'); del.className='cm-btn2'; del.textContent='삭제'; del.onclick=async function(){ if(!del.dataset.s){ del.dataset.s=1; del.textContent='정말 삭제할까요?'; return; } await sb.from('ff_polls').delete().eq('id',x.id); polls(); pollCheck(); };
       ac.appendChild(t); ac.appendChild(del); d.appendChild(ac); }
     Lst.appendChild(d); });
-  if(!admin){ A.innerHTML=''; return; }
+  if(!admin&&!isDev){ A.innerHTML=''; return; }
   if(!A.dataset.ready){ A.dataset.ready='1';
-    A.innerHTML='<h4 class="cm-ph4">📊 투표 올리기 (관리자)</h4><form class="cm-w"><input name="q" maxlength="200" placeholder="질문" required><textarea name="o" rows="4" placeholder="보기를 한 줄에 하나씩 (2~6개)"></textarea><select name="e" title="끝나는 때"><option value="">끝나는 때: 계속 열어 두기</option><option value="1">1일 뒤에 끝나요</option><option value="7">1주 뒤에 끝나요</option></select><div class="cm-m"></div><div class="cm-acts"><button class="cm-btn">올리기</button></div></form>';
+    A.innerHTML='<h4 class="cm-ph4">'+(admin?'📊 투표 올리기 (관리자)':'🛠️ 다음 업데이트 투표 올리기')+'</h4><form class="cm-w"><input name="q" maxlength="200" placeholder="질문" required><textarea name="o" rows="4" placeholder="보기를 한 줄에 하나씩 (2~6개)"></textarea>'+(admin?'<select name="k" title="종류"><option value="poll">종류: 일반 투표</option><option value="update">종류: 다음 업데이트 투표</option></select>':'')+'<select name="e" title="끝나는 때"><option value="">끝나는 때: 계속 열어 두기</option><option value="1">1일 뒤에 끝나요</option><option value="7">1주 뒤에 끝나요</option></select><div class="cm-m"></div><div class="cm-acts"><button class="cm-btn">올리기</button></div></form>';
     A.querySelector('form').onsubmit=async function(e){ e.preventDefault(); var f=this, m=f.querySelector('.cm-m'), q=f.q.value.trim(), o=f.o.value.split('\n').map(function(x){ return x.trim().slice(0,80); }).filter(Boolean);
       if(!q) return; if(o.length<2||o.length>6){ m.textContent='보기는 2~6개로 적어 주세요.'; return; }
-      var r2=await sb.from('ff_polls').insert({question:q, options:o, ends_at:f.e.value?new Date(Date.now()+f.e.value*864e5).toISOString():null}); if(r2.error){ m.textContent=errText(r2.error); return; }
+      var r2=await sb.from('ff_polls').insert({question:q, options:o, kind:(admin?(f.k&&f.k.value==='update'?'update':'poll'):'update'), ends_at:f.e.value?new Date(Date.now()+f.e.value*864e5).toISOString():null}); if(r2.error){ m.textContent=errText(r2.error); return; }
       f.reset(); m.textContent='올렸어요.'; polls(); pollCheck(); };
   }
 }
@@ -497,13 +501,30 @@ function paintCoin(){
     '<span class="cb-s">'+(coin.today?'<span>✓ 오늘 출석 완료</span>':'')+(coin.streak>1?' · <span>'+esc(F('{0}일 연속',coin.streak))+'</span>':'')+'</span></span><button type="button" class="cm-btn2 cb-cal">📅 달력</button><button type="button" class="cm-btn cb-go">환전하기</button>';
   b.querySelector('.cb-go').onclick=openCoin; b.querySelector('.cb-cal').onclick=function(){ openCal(); };
 }
+var QN={play:'게임 1판 하기',board:'게시판에 글이나 댓글 쓰기',chat:'채팅에 한마디 하기',vote:'투표 참여하기'};
+async function questBox(el){
+  var Q=el.querySelector('.cx-q'); if(!Q||!sb) return;
+  var r=await sb.rpc('ff_quest_status');
+  if(r.error){ Q.innerHTML='<div class="cm-e">'+esc(errText(r.error))+'</div>'; return; }
+  var rows=r.data||[], n=rows.filter(function(x){ return x.claimed; }).length;
+  Q.innerHTML='<div class="cm-note">하나 끝낼 때마다 5코인, 3개를 모두 받으면 5코인을 더 받아요. (한국 시간 기준으로 매일 바뀌어요)</div>';
+  rows.forEach(function(x){ var d=document.createElement('div'); d.className='cx-l';
+    var b=x.claimed?'<span class="cx-d up">✓ 받음</span>':(x.done?'<button type="button" class="cm-btn2">5코인 받기</button>':'<small>아직이에요</small>');
+    d.innerHTML='<span>'+(x.done?'✅ ':'⬜ ')+esc(QN[x.qid]||x.qid)+'</span>'+b;
+    var bt=d.querySelector('button'); if(bt) bt.onclick=async function(){ bt.disabled=true; var c=await sb.rpc('ff_quest_claim',{p_qid:x.qid});
+      if(c.error){ bt.disabled=false; bt.textContent='다시 눌러 주세요'; return; }
+      var y=(c.data||[])[0]||{}; if(y.coins!=null){ coin.n=y.coins; paintCoin(); } if(y.got>0) coinPop(y.got); hubSync(); openCoin(); };
+    Q.appendChild(d); });
+  if(n>=rows.length&&rows.length) Q.insertAdjacentHTML('beforeend','<div class="cx-ok">🎉 오늘 퀘스트를 모두 끝냈어요!</div>');
+}
 async function openCoin(){
   if(!me) return login();
   var el=$('#coinBox'); if(!el){ el=document.createElement('div'); el.id='coinBox'; el.className='hn-bg'; document.body.appendChild(el); el.addEventListener('click',function(e){ if(e.target===el||e.target.closest('.hn-x')) el.style.display='none'; }); }
   el.innerHTML='<div class="hn-b"><div class="hn-h"><b>🪙 Hub Coin 환전</b><button type="button" class="hn-x" aria-label="닫기">×</button></div>'+
     '<div class="cx-have">갖고 있는 코인 <b data-notr>'+(coin.n||0)+'</b></div><div class="cx-list"><div class="cm-e">불러오는 중…</div></div><div class="cx-wait"></div>'+
+    '<h4 class="cm-ph4">📋 오늘의 퀘스트</h4><div class="cx-q"><div class="cm-e">불러오는 중…</div></div>'+
     '<h4 class="cm-ph4">최근 기록</h4><div class="cx-log"></div></div>';
-  el.style.display='flex';
+  el.style.display='flex'; questBox(el);
   var L=el.querySelector('.cx-list'), rr=await sb.from('ff_coin_rates').select('game,unit,per_coin').eq('active',true);
   if(rr.error){ L.innerHTML='<div class="cm-e">'+esc(errText(rr.error))+'</div>'; return; }
   var rates=(rr.data||[]); L.innerHTML=rates.length?'':'<div class="cm-e">아직 바꿀 수 있는 게임이 없어요.</div>';
@@ -529,7 +550,7 @@ async function openCoin(){
   ((w&&w.data)||[]).forEach(function(z){ sum[z.game]=(sum[z.game]||0)+z.amount; });
   W.innerHTML=Object.keys(sum).map(function(g){ var u=(rates.filter(function(x){ return x.game===g; })[0]||{}).unit||''; return '<div class="cx-pend">'+esc(F('{0} 접속하면 받을 {1}: {2}',(GAMES[g]||{name:g}).name,unitName(u),sum[g]))+'</div>'; }).join('');
   var lg=await sb.from('ff_coin_log').select('delta,reason,game,other_id,created_at').order('created_at',{ascending:false}).limit(12), LG=el.querySelector('.cx-log');
-  var rows=(lg&&lg.data)||[]; await loadNames(rows.map(function(z){ return z.other_id; }).filter(Boolean)); LG.innerHTML=rows.length?rows.map(function(z){ return '<div class="cx-l"><span>'+(z.reason==='daily'?'📅 출석':z.reason==='streak'?'🔥 7일 연속 보너스':z.reason==='gift_in'?'🎁 '+esc(F('{0}님에게 받음',names[z.other_id]||'???')):z.reason==='gift_out'?'🎁 '+esc(F('{0}님에게 보냄',names[z.other_id]||'???')):z.reason==='exchange'?'🔁 '+esc(F('{0} 환전',(GAMES[z.game]||{name:z.game}).name)):'🎁 관리자')+'</span><span class="cx-d '+(z.delta>0?'up':'dn')+'" data-notr>'+(z.delta>0?'+':'')+z.delta+'</span><small>'+esc(ago(z.created_at))+'</small></div>'; }).join(''):'<div class="cm-e">아직 기록이 없어요.</div>';
+  var rows=(lg&&lg.data)||[]; await loadNames(rows.map(function(z){ return z.other_id; }).filter(Boolean)); LG.innerHTML=rows.length?rows.map(function(z){ return '<div class="cx-l"><span>'+(z.reason==='daily'?'📅 출석':z.reason==='quest'?'📋 퀘스트':z.reason==='streak'?'🔥 7일 연속 보너스':z.reason==='gift_in'?'🎁 '+esc(F('{0}님에게 받음',names[z.other_id]||'???')):z.reason==='gift_out'?'🎁 '+esc(F('{0}님에게 보냄',names[z.other_id]||'???')):z.reason==='exchange'?'🔁 '+esc(F('{0} 환전',(GAMES[z.game]||{name:z.game}).name)):'🎁 관리자')+'</span><span class="cx-d '+(z.delta>0?'up':'dn')+'" data-notr>'+(z.delta>0?'+':'')+z.delta+'</span><small>'+esc(ago(z.created_at))+'</small></div>'; }).join(''):'<div class="cm-e">아직 기록이 없어요.</div>';
 }
 
 /* ===================== 출석 달력 (ff_coin_log 의 daily 기록, 7일 연속마다 +20) ===================== */
