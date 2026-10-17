@@ -3,6 +3,58 @@
   {
    "date": "2026-10-17",
    "build": "",
+   "title": "Stickseum 캐릭터 문서 하나로 합치기",
+   "items": [
+    "총·근접·투척·특수 캐릭터 문서를 캐릭터 문서 하나로 합침",
+    "캐릭터마다 그림, 패시브, 스킨 추가",
+    "암살자 패시브(대쉬 쿨타임 0.7초) 추가"
+   ],
+   "tr": {
+    "en": {
+     "title": "Stickseum character pages merged into one",
+     "items": [
+      "Merged the gun, melee, throwing and special character pages into one Characters page",
+      "Added a picture, passive and skins for every character",
+      "Added the Assassin passive (0.7 s dash cooldown)"
+     ]
+    },
+    "es": {
+     "title": "Páginas de personajes de Stickseum unidas en una",
+     "items": [
+      "Unidas las páginas de armas de fuego, cuerpo a cuerpo, lanzamiento y especiales en una sola página de Personajes",
+      "Añadidos imagen, pasiva y skins de cada personaje",
+      "Añadida la pasiva del Asesino (enfriamiento de dash de 0,7 s)"
+     ]
+    },
+    "fr": {
+     "title": "Pages de personnages Stickseum réunies en une",
+     "items": [
+      "Fusion des pages armes à feu, mêlée, lancer et spéciaux en une seule page Personnages",
+      "Ajout d'une image, du passif et des skins pour chaque personnage",
+      "Ajout du passif de l'Assassin (recharge du dash de 0,7 s)"
+     ]
+    },
+    "de": {
+     "title": "Stickseum-Charakterseiten zu einer zusammengeführt",
+     "items": [
+      "Die Seiten für Schusswaffen, Nahkampf, Wurf und Spezial zu einer Charakterseite zusammengeführt",
+      "Bild, Passiv und Skins für jeden Charakter hinzugefügt",
+      "Passiv des Assassinen hinzugefügt (Dash-Abklingzeit 0,7 s)"
+     ]
+    },
+    "ja": {
+     "title": "Stickseumのキャラクターページを1つに統合",
+     "items": [
+      "銃・近接・投てき・特殊のキャラクターページを1つのキャラクターページに統合",
+      "キャラクターごとに絵・パッシブ・スキンを追加",
+      "暗殺者のパッシブ（ダッシュのクールタイム0.7秒）を追加"
+     ]
+    }
+   }
+  },
+  {
+   "date": "2026-10-17",
+   "build": "",
    "title": "Stickseum 캐릭터별 문서 25개 추가",
    "items": [
     "캐릭터마다 문서를 따로 만들고 외형 그림 추가",
