@@ -3,6 +3,52 @@
   {
    "date": "2026-10-17",
    "build": "",
+   "title": "Tools Fry Slides v11, Stickseum build 265 위키 갱신",
+   "items": [
+    "Fry Slides 새 레이아웃 살아있는 화면(Block HTML, Fry Lab, HTML 넣기)과 한계 설명 추가",
+    "Stickseum 쿠루스 어둠 탈출 대상 범위 설명 수정, 패치 기록에 build 265 추가"
+   ],
+   "tr": {
+    "en": {
+     "title": "Wiki update: Tools Fry Slides v11, Stickseum build 265",
+     "items": [
+      "Added the new Fry Slides Live screen layout (Block HTML, Fry Lab, HTML) and its limits",
+      "Updated Kurus Shadow Burst range in Stickseum and added build 265 to the patch history"
+     ]
+    },
+    "es": {
+     "title": "Actualización de la wiki: Tools Fry Slides v11, Stickseum build 265",
+     "items": [
+      "Añadido el nuevo diseño Pantalla viva de Fry Slides (Block HTML, Fry Lab, HTML) y sus límites",
+      "Actualizado el alcance de la Salida oscura de Kurus en Stickseum y añadido build 265 al historial de cambios"
+     ]
+    },
+    "fr": {
+     "title": "Mise à jour du wiki : Tools Fry Slides v11, Stickseum build 265",
+     "items": [
+      "Ajout de la nouvelle mise en page Écran vivant de Fry Slides (Block HTML, Fry Lab, HTML) et de ses limites",
+      "Portée de la Sortie des ténèbres de Kurus mise à jour dans Stickseum et build 265 ajoutée à l'historique"
+     ]
+    },
+    "de": {
+     "title": "Wiki-Update: Tools Fry Slides v11, Stickseum build 265",
+     "items": [
+      "Neues Fry-Slides-Layout Lebendiger Bildschirm (Block HTML, Fry Lab, HTML) samt Grenzen ergänzt",
+      "Reichweite des Dunkelausbruchs von Kurus in Stickseum aktualisiert und build 265 in den Patchverlauf aufgenommen"
+     ]
+    },
+    "ja": {
+     "title": "Wiki更新：Tools Fry Slides v11、Stickseum build 265",
+     "items": [
+      "Fry Slidesの新レイアウト「ライブ画面」（Block HTML、Fry Lab、HTML）と制限の説明を追加",
+      "Stickseumのクルスの闇脱出の範囲の説明を修正し、パッチ履歴にbuild 265を追加"
+     ]
+    }
+   }
+  },
+  {
+   "date": "2026-10-17",
+   "build": "",
    "title": "Tools Block HTML v15 위키 갱신",
    "items": [
     "Block HTML AI가 같은 말을 반복하면 멈추고 다시 받는 설명 추가",
