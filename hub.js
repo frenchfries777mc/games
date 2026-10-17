@@ -403,10 +403,10 @@ async function polls(){
     Lst.appendChild(d); });
   if(!admin){ A.innerHTML=''; return; }
   if(!A.dataset.ready){ A.dataset.ready='1';
-    A.innerHTML='<h4 class="cm-ph4">📊 투표 올리기 (관리자)</h4><form class="cm-w"><input name="q" maxlength="200" placeholder="질문" required><textarea name="o" rows="4" placeholder="보기를 한 줄에 하나씩 (2~6개)"></textarea><input name="e" type="date" title="끝나는 날 (비우면 계속)"><div class="cm-m"></div><div class="cm-acts"><button class="cm-btn">올리기</button></div></form>';
+    A.innerHTML='<h4 class="cm-ph4">📊 투표 올리기 (관리자)</h4><form class="cm-w"><input name="q" maxlength="200" placeholder="질문" required><textarea name="o" rows="4" placeholder="보기를 한 줄에 하나씩 (2~6개)"></textarea><select name="e" title="끝나는 때"><option value="">끝나는 때: 계속 열어 두기</option><option value="1">1일 뒤에 끝나요</option><option value="7">1주 뒤에 끝나요</option></select><div class="cm-m"></div><div class="cm-acts"><button class="cm-btn">올리기</button></div></form>';
     A.querySelector('form').onsubmit=async function(e){ e.preventDefault(); var f=this, m=f.querySelector('.cm-m'), q=f.q.value.trim(), o=f.o.value.split('\n').map(function(x){ return x.trim().slice(0,80); }).filter(Boolean);
       if(!q) return; if(o.length<2||o.length>6){ m.textContent='보기는 2~6개로 적어 주세요.'; return; }
-      var r2=await sb.from('ff_polls').insert({question:q, options:o, ends_at:f.e.value?new Date(f.e.value+'T23:59:59').toISOString():null}); if(r2.error){ m.textContent=errText(r2.error); return; }
+      var r2=await sb.from('ff_polls').insert({question:q, options:o, ends_at:f.e.value?new Date(Date.now()+f.e.value*864e5).toISOString():null}); if(r2.error){ m.textContent=errText(r2.error); return; }
       f.reset(); m.textContent='올렸어요.'; polls(); pollCheck(); };
   }
 }
@@ -641,11 +641,11 @@ async function repList(){
 function annAdmin(){
   var P=$('.cm-p[data-p=fb] .cm-ann'); if(!P) return; if(!admin){ P.innerHTML=''; return; }
   if(!P.dataset.ready){ P.dataset.ready='1';
-    P.innerHTML='<h4>📢 공지 · 이벤트 올리기 (관리자)</h4><form class="cm-w"><div class="cm-row"><select name="k"><option value="notice">📢 공지</option><option value="event">🎉 이벤트</option></select><input name="e" type="date" title="끝나는 날 (비우면 계속)"></div>'+
+    P.innerHTML='<h4>📢 공지 · 이벤트 올리기 (관리자)</h4><form class="cm-w"><div class="cm-row"><select name="k"><option value="notice">📢 공지</option><option value="event">🎉 이벤트</option></select><select name="e" title="끝나는 때"><option value="">끝나는 때: 계속 열어 두기</option><option value="1">1일 뒤에 끝나요</option><option value="7">1주 뒤에 끝나요</option></select></div>'+
       '<input name="b" maxlength="300" placeholder="허브 맨 위에 보일 내용" required><input name="l" maxlength="300" placeholder="링크 (https://..., 선택)"><div class="cm-m"></div><div class="cm-acts"><button class="cm-btn">올리기</button></div></form><div class="cm-al"></div>';
     P.querySelector('form').onsubmit=async function(e){ e.preventDefault(); var f=this, m=f.querySelector('.cm-m'), b=f.b.value.trim(), l=f.l.value.trim(); if(!b) return;
       if(l&&!/^https:\/\//.test(l)){ m.textContent='링크는 https:// 로 시작해야 해요.'; return; }
-      var row={kind:f.k.value, body:b, link:l||null, ends_at:f.e.value?new Date(f.e.value+'T23:59:59').toISOString():null};
+      var row={kind:f.k.value, body:b, link:l||null, ends_at:f.e.value?new Date(Date.now()+f.e.value*864e5).toISOString():null};
       var r=await sb.from('ff_announce').insert(row); if(r.error){ m.textContent=errText(r.error); return; } f.reset(); m.textContent='올렸어요.'; loadAnn(); };
   }
   var Lst=P.querySelector('.cm-al'); Lst.innerHTML='';
