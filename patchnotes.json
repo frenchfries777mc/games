@@ -8,7 +8,8 @@
     "Frenchfries777 로고 추가 (위쪽 메뉴와 첫 화면)",
     "위쪽 버튼 정리 (위키·커뮤니티·음악만 남기고 언어 선택은 맨 아래로)",
     "Hub Coin을 위쪽 메뉴로 이동 (누르면 출석·달력·환전)",
-    "커뮤니티를 별도 페이지로 분리 (게시판, 채팅, 친구 소식, 같이 하기, 갤러리, 피드백)"
+    "커뮤니티를 별도 페이지로 분리 (게시판, 채팅, 친구 소식, 같이 하기, 갤러리, 피드백)",
+    "허브를 켜 둔 채 날짜가 바뀌면 출석 코인 자동 지급"
    ],
    "tr": {
     "en": {
@@ -17,7 +18,8 @@
       "Frenchfries777 logo added (top bar and first screen)",
       "Top bar simplified (only Wiki, Community and Music; language picker moved to the bottom)",
       "Hub Coin moved to the top bar (tap for attendance, calendar and exchange)",
-      "Community moved to its own page (board, chat, friend news, play together, gallery, feedback)"
+      "Community moved to its own page (board, chat, friend news, play together, gallery, feedback)",
+      "Daily Hub Coin is given automatically when the date changes while the hub is open"
      ]
     },
     "es": {
@@ -26,7 +28,8 @@
       "Logo de Frenchfries777 añadido (barra superior y primera pantalla)",
       "Barra superior simplificada (solo Wiki, Comunidad y Música; idioma abajo)",
       "Hub Coin en la barra superior (toca para asistencia, calendario y cambio)",
-      "La comunidad tiene su propia página (tablón, chat, amigos, jugar juntos, galería, comentarios)"
+      "La comunidad tiene su propia página (tablón, chat, amigos, jugar juntos, galería, comentarios)",
+      "La Hub Coin diaria se da sola al cambiar la fecha con el hub abierto"
      ]
     },
     "fr": {
@@ -35,7 +38,8 @@
       "Logo Frenchfries777 ajouté (barre du haut et premier écran)",
       "Barre du haut simplifiée (Wiki, Communauté et Musique ; langue en bas)",
       "Hub Coin dans la barre du haut (présence, calendrier et échange)",
-      "La communauté a sa propre page (forum, chat, amis, jouer ensemble, galerie, avis)"
+      "La communauté a sa propre page (forum, chat, amis, jouer ensemble, galerie, avis)",
+      "La Hub Coin du jour est donnée automatiquement au changement de date si le hub est ouvert"
      ]
     },
     "de": {
@@ -44,7 +48,8 @@
       "Frenchfries777-Logo hinzugefügt (Kopfzeile und Startbildschirm)",
       "Kopfzeile vereinfacht (nur Wiki, Community und Musik; Sprache nach unten)",
       "Hub Coin in der Kopfzeile (Anwesenheit, Kalender und Tausch)",
-      "Community hat eine eigene Seite (Forum, Chat, Freunde, Zusammen spielen, Galerie, Feedback)"
+      "Community hat eine eigene Seite (Forum, Chat, Freunde, Zusammen spielen, Galerie, Feedback)",
+      "Täglicher Hub Coin kommt automatisch, wenn das Datum wechselt, während der Hub offen ist"
      ]
     },
     "ja": {
@@ -53,7 +58,8 @@
       "Frenchfries777のロゴを追加 (上部メニューと最初の画面)",
       "上部ボタンを整理 (Wiki・コミュニティ・音楽のみ、言語選択は下へ)",
       "Hub Coinを上部メニューへ移動 (押すと出席・カレンダー・両替)",
-      "コミュニティを別ページに分離 (掲示板・チャット・フレンド・一緒に遊ぶ・ギャラリー・フィードバック)"
+      "コミュニティを別ページに分離 (掲示板・チャット・フレンド・一緒に遊ぶ・ギャラリー・フィードバック)",
+      "ハブを開いたまま日付が変わると出席コインを自動で付与"
      ]
     }
    }

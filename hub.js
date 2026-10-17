@@ -494,7 +494,12 @@ async function coinDaily(){
   if(r.error){ coin.err=errText(r.error); paintCoin(); return; }
   var x=(r.data||[])[0]||{}; coin.n=x.coins||0; coin.streak=x.streak||0; coin.today=true; paintCoin();
   if(x.got>0){ coinPop(x.got); hubSync(); }
+  coinDay=kstNow();
 }
+/* 페이지를 켜 둔 채 날짜(한국 시간)가 바뀌면 출석 코인을 자동으로 받아요 */
+var coinDay='';
+function kstNow(){ return new Date(Date.now()+9*3600e3).toISOString().slice(0,10); }
+function coinWatch(){ var chk=function(){ if(me&&sb&&coinDay&&coinDay!==kstNow()) coinDaily(); }; setInterval(chk,30000); document.addEventListener('visibilitychange',function(){ if(document.visibilityState==='visible') chk(); }); }
 function coinChip(){
   var c=$('#coinChip'), d=$('#coinDd'); if(!c||!d) return;
   c.onclick=function(e){ e.stopPropagation(); var o=d.hidden; d.hidden=!o; c.setAttribute('aria-expanded',o?'true':'false'); };
@@ -810,7 +815,7 @@ function searchInit(){
 
 function start(){
   if(!CMP&&(/[?&]post=\d+/.test(location.search)||/^#(feedback|lfg|gallery|friends|chat|community)$/.test(location.hash))){ location.replace(CMURL+location.search+(location.hash==='#community'?'':location.hash)); return; }
-  coinChip(); banner(); searchInit();
+  coinChip(); coinWatch(); banner(); searchInit();
   fromUrl(); loadNews().then(function(){ if(location.hash==='#hubnotes') openHubNotes(); });
   if(location.hash==='#poll') setTimeout(openPolls,400);
   if(tab==='fb'){ setTimeout(scrollToCm,300); } var hb=$('#hubNotesBtn'); if(hb) hb.onclick=function(e){ e.preventDefault(); openHubNotes(); };
