@@ -23,7 +23,12 @@ function ping(){
   var t=token(); if(!t||Date.now()-last<50000) return; last=Date.now();
   fetch(URL_+'/rest/v1/rpc/ff_ping',{method:'POST',headers:{'apikey':KEY,'Authorization':'Bearer '+t,'Content-Type':'application/json'},body:JSON.stringify({p_game:game}),keepalive:true}).catch(function(){});
 }
+/* 창을 닫거나 다른 페이지로 가면 바로 접속 표시에서 빠져요 */
+function leave(){ var t=token(); if(!t) return; last=0;
+  fetch(URL_+'/rest/v1/rpc/ff_leave',{method:'POST',headers:{'apikey':KEY,'Authorization':'Bearer '+t,'Content-Type':'application/json'},body:'{}',keepalive:true}).catch(function(){}); }
+window.addEventListener('pagehide', leave);
 setTimeout(ping, 4000);
 setInterval(ping, 60000);
 document.addEventListener('visibilitychange', function(){ if(document.visibilityState==='visible') ping(); });
+window.addEventListener('pageshow', function(e){ if(e.persisted) ping(); });
 })();
