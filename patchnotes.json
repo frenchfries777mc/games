@@ -3,6 +3,52 @@
   {
    "date": "2026-10-17",
    "build": "",
+   "title": "Tools · Crown Envoy 위키 갱신",
+   "items": [
+    "Tools 위키에 tarius 2차 학습, 패치노트 페이지 안내 추가",
+    "Crown Envoy 위키에 0.3 버전 안내 추가"
+   ],
+   "tr": {
+    "en": {
+     "title": "Tools · Crown Envoy wiki update",
+     "items": [
+      "Added tarius second-round training and the patch notes page to the Tools wiki",
+      "Added the 0.3 version info to the Crown Envoy wiki"
+     ]
+    },
+    "es": {
+     "title": "Actualización de la wiki de Tools y Crown Envoy",
+     "items": [
+      "Añadidos el segundo entrenamiento de tarius y la página de notas de versión a la wiki de Tools",
+      "Añadida la información de la versión 0.3 a la wiki de Crown Envoy"
+     ]
+    },
+    "fr": {
+     "title": "Mise à jour du wiki Tools et Crown Envoy",
+     "items": [
+      "Ajout du deuxième entraînement de tarius et de la page des notes de version au wiki Tools",
+      "Ajout des informations sur la version 0.3 au wiki Crown Envoy"
+     ]
+    },
+    "de": {
+     "title": "Tools- und Crown-Envoy-Wiki aktualisiert",
+     "items": [
+      "Zweite Trainingsrunde von tarius und Patchnotes-Seite im Tools-Wiki ergänzt",
+      "Infos zur Version 0.3 im Crown-Envoy-Wiki ergänzt"
+     ]
+    },
+    "ja": {
+     "title": "ToolsとCrown EnvoyのWiki更新",
+     "items": [
+      "Tools Wikiにtariusの2回目の学習とパッチノートページの案内を追加",
+      "Crown Envoy Wikiに0.3バージョンの案内を追加"
+     ]
+    }
+   }
+  },
+  {
+   "date": "2026-10-17",
+   "build": "",
    "title": "위키 허브 버튼",
    "items": [
     "위키 상단에 허브로 돌아가는 버튼 추가"
