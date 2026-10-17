@@ -83,7 +83,9 @@ function render(text,hl){ var out='', list=null, para=[], heads=[], info=[];
     else { fl(); para.push(inl(l,hl)); } });
   fp(); fl(); return {html:out, heads:heads, info:info}; }
 /* 정보 상자: 본문의 ':: 항목 = 값' 줄들을 오른쪽 상자로 */
-function ibox(title,info){ return info.length?'<aside class="ibox"><div class="ibh">'+esc(title)+'</div><table>'+info.map(function(r){ return '<tr><th>'+inl(r[0])+'</th><td>'+inl(r[1])+'</td></tr>'; }).join('')+'</table></aside>':''; }
+function ibox(title,info){ var img='', rows=[];
+  info.forEach(function(r){ if(r[0].toLowerCase()==='image'){ var u=String(r[1]).trim(); if(/^img\/[a-z0-9_-]+\.(webp|png|jpg)$/.test(u)) img='<div class="ibi"><img src="'+u+'" alt="'+esc(title)+'" loading="lazy"></div>'; } else rows.push(r); });
+  return (img||rows.length)?'<aside class="ibox"><div class="ibh">'+esc(title)+'</div>'+img+(rows.length?'<table>'+rows.map(function(r){ return '<tr><th>'+inl(r[0])+'</th><td>'+inl(r[1])+'</td></tr>'; }).join('')+'</table>':'')+'</aside>':''; }
 
 /* ---- 보이는 글 (번역이 원문과 맞으면 번역) ---- */
 function trOf(p){ if(lang==='ko') return null; var x=TR[p.game+'/'+p.slug]; if(!x||!x.t) return null; return x.h===fnv(p.title+'\n'+p.body)?x:'stale'; }

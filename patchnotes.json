@@ -3,6 +3,58 @@
   {
    "date": "2026-10-17",
    "build": "",
+   "title": "Stickseum 캐릭터별 문서 25개 추가",
+   "items": [
+    "캐릭터마다 문서를 따로 만들고 외형 그림 추가",
+    "외형·일반 공격·스킬·궁극기·패시브·스킨·팁·승률 정리",
+    "위키 정보 상자에 그림 표시 기능 추가"
+   ],
+   "tr": {
+    "en": {
+     "title": "25 Stickseum character pages added",
+     "items": [
+      "Added a separate page with an appearance picture for every character",
+      "Organized appearance, basic attack, skill, ultimate, passive, skins, tips and win rate",
+      "Added picture support to the wiki info box"
+     ]
+    },
+    "es": {
+     "title": "25 páginas de personajes de Stickseum añadidas",
+     "items": [
+      "Añadida una página aparte con imagen del aspecto para cada personaje",
+      "Organizados aspecto, ataque básico, habilidad, definitiva, pasiva, skins, consejos y tasa de victorias",
+      "Añadido soporte de imágenes en el cuadro de información de la wiki"
+     ]
+    },
+    "fr": {
+     "title": "25 pages de personnages Stickseum ajoutées",
+     "items": [
+      "Ajout d'une page séparée avec une image de l'apparence pour chaque personnage",
+      "Apparence, attaque normale, compétence, ultime, passif, skins, conseils et taux de victoire organisés",
+      "Ajout des images dans l'encadré d'informations du wiki"
+     ]
+    },
+    "de": {
+     "title": "25 Stickseum-Charakterseiten hinzugefügt",
+     "items": [
+      "Für jeden Charakter eine eigene Seite mit Bild des Aussehens hinzugefügt",
+      "Aussehen, Normalangriff, Fähigkeit, Ultimate, Passiv, Skins, Tipps und Siegquote geordnet",
+      "Bildunterstützung im Infokasten des Wikis hinzugefügt"
+     ]
+    },
+    "ja": {
+     "title": "Stickseumキャラクター別ページ25件を追加",
+     "items": [
+      "キャラクターごとに外見の絵つきの専用ページを追加",
+      "外見・通常攻撃・スキル・アルティメット・パッシブ・スキン・コツ・勝率を整理",
+      "Wikiの情報ボックスに画像表示を追加"
+     ]
+    }
+   }
+  },
+  {
+   "date": "2026-10-17",
+   "build": "",
    "title": "허브 내 계정 창 추가",
    "items": [
     "계정 메뉴에 내 계정 추가",
