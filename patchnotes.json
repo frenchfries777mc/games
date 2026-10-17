@@ -3,6 +3,58 @@
   {
    "date": "2026-10-17",
    "build": "",
+   "title": "Crown Envoy 세계 회의 위키 갱신",
+   "items": [
+    "세계 회의 새 창과 찬성/반대 표결 설명으로 교체",
+    "참석 확률 공식 갱신",
+    "최신 빌드를 build 30으로 수정"
+   ],
+   "tr": {
+    "en": {
+     "title": "Crown Envoy world council wiki update",
+     "items": [
+      "Replaced with the new council window and for/against voting",
+      "Updated the attendance chance formula",
+      "Latest build changed to build 30"
+     ]
+    },
+    "es": {
+     "title": "Wiki del consejo mundial de Crown Envoy",
+     "items": [
+      "Sustituido por la nueva ventana del consejo y la votación a favor/en contra",
+      "Fórmula de probabilidad de asistencia actualizada",
+      "Última compilación cambiada a build 30"
+     ]
+    },
+    "fr": {
+     "title": "Wiki du conseil mondial de Crown Envoy",
+     "items": [
+      "Remplacé par la nouvelle fenêtre du conseil et le vote pour/contre",
+      "Formule de chance de présence mise à jour",
+      "Dernier build changé en build 30"
+     ]
+    },
+    "de": {
+     "title": "Crown Envoy Wiki zum Weltrat",
+     "items": [
+      "Durch das neue Ratsfenster und die Dafür/Dagegen-Abstimmung ersetzt",
+      "Formel der Anwesenheitschance aktualisiert",
+      "Neuester Build auf build 30 geändert"
+     ]
+    },
+    "ja": {
+     "title": "Crown Envoy 世界会議のWiki更新",
+     "items": [
+      "新しい会議ウィンドウと賛成/反対の採決の説明に差し替え",
+      "出席確率の式を更新",
+      "最新ビルドをbuild 30に修正"
+     ]
+    }
+   }
+  },
+  {
+   "date": "2026-10-17",
+   "build": "",
    "title": "Beaconfall 친구 참가 요청·초대 위키 갱신",
    "items": [
     "방이 열려 있는 친구에게도 참가 요청을 보내는 설명 추가",
