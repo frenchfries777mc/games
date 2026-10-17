@@ -3,6 +3,46 @@
   {
    "date": "2026-10-17",
    "build": "",
+   "title": "FF777 모델 위키 갱신",
+   "items": [
+    "FF777 모델 문서에 3차 학습 자료와 학습 저장 방식 추가"
+   ],
+   "tr": {
+    "en": {
+     "title": "FF777 models wiki update",
+     "items": [
+      "Added the third-round training material and how training is saved to the FF777 models page"
+     ]
+    },
+    "es": {
+     "title": "Actualización de la wiki de modelos FF777",
+     "items": [
+      "Añadidos a la página de modelos FF777 el material de la tercera ronda de entrenamiento y cómo se guarda el entrenamiento"
+     ]
+    },
+    "fr": {
+     "title": "Mise à jour du wiki des modèles FF777",
+     "items": [
+      "Ajout à la page des modèles FF777 des données de la troisième phase d'entraînement et de la façon dont l'entraînement est sauvegardé"
+     ]
+    },
+    "de": {
+     "title": "FF777-Modelle-Wiki aktualisiert",
+     "items": [
+      "Auf der FF777-Modellseite das Material der dritten Trainingsrunde und die Art der Trainingsspeicherung ergänzt"
+     ]
+    },
+    "ja": {
+     "title": "FF777モデルのWiki更新",
+     "items": [
+      "FF777モデルのページに、3回目の学習資料と学習の保存方法を追加"
+     ]
+    }
+   }
+  },
+  {
+   "date": "2026-10-17",
+   "build": "",
    "title": "Tools 위키 갱신",
    "items": [
     "Block HTML 위키에 움직이기·커서 따라다니기·닿았나·가두기 블록과 AI 잘못된 블록 처리 추가",
