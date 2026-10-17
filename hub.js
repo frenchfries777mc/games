@@ -1,6 +1,6 @@
 /* Frenchfries777 허브: 커뮤니티(게시판 · 채팅 · 피드백/버그 신고)와 아래쪽 뉴스(세 게임의 패치노트)
    글자는 한국어로 쓰고, 허브의 번역 스크립트(<script id="i18n">)가 다른 언어로 바꿔요. 사람들이 쓴 글은 data-notr 로 번역하지 않아요.
-   필요한 SQL: supabase-ff-hub.sql, supabase-ff-images.sql, supabase-ff-social.sql, supabase-ff-extra.sql, supabase-ff-more.sql, supabase-ff-react.sql, supabase-ff-coin.sql, supabase-ff-wiki.sql (+ crownenvoy/supabase-ff-rank.sql) */
+   필요한 SQL: supabase-ff-hub.sql, supabase-ff-images.sql, supabase-ff-social.sql, supabase-ff-extra.sql, supabase-ff-more.sql, supabase-ff-react.sql, supabase-ff-coin.sql, supabase-ff-wiki.sql, supabase-ff-follow.sql (+ crownenvoy/supabase-ff-rank.sql) */
 (function(){
 'use strict';
 var SI=window.SI18N||{lang:'ko',F:function(t){ var a=arguments; return String(t).replace(/\{(\d)\}/g,function(_,n){ return a[+n+1]; }); }};
@@ -13,7 +13,7 @@ function ago(iso){ var t=Date.parse(iso); if(!t) return ''; var m=Math.round((Da
   return new Date(t).toISOString().slice(0,10); }
 
 /* ===================== 뉴스: 세 게임과 허브의 패치노트 중 가장 최근 6개 ===================== */
-var NEWS_N=6, news=[], hubNotes=[];
+var NEWS_N=6, news=[], hubNotes=[], notesBy={};
 var NSRC={hub:{name:'허브',cls:'g0',site:'./'},stickseum:GAMES.stickseum,crownenvoy:GAMES.crownenvoy,beaconfall:GAMES.beaconfall};
 function trNote(n, N){
   if(LANG==='ko') return {title:n.title, items:n.items||[]};
@@ -28,17 +28,52 @@ function loadNews(){
   var box=$('#newsList'); if(!box) return Promise.resolve();
   return Promise.all(Object.keys(NSRC).map(function(g){
     return Promise.all([fetch(NSRC[g].site+'patchnotes.json',{cache:'no-cache'}).then(function(r){ return r.ok?r.json():null; },function(){ return null; }), LANG==='ko'||!GAMES[g]||g==='stickseum'?null:siteDict(g)])
-      .then(function(x){ var d=x[0]; return ((d&&d.notes)||[]).map(function(n,i){ var t=trNote(n,x[1]); return {g:g, i:i, date:n.date||'', build:n.build||'', title:t.title, items:t.items}; }); });
-  })).then(function(all){ hubNotes=all[0]; news=[].concat.apply([],all).sort(function(a,b){ return (b.date>a.date?1:b.date<a.date?-1:0)||(a.i-b.i); }); paintNews(); });
+      .then(function(x){ var d=x[0]; return ((d&&d.notes)||[]).map(function(n,i){ var t=trNote(n,x[1]); return {g:g, i:i, date:n.date||'', build:n.build||'', title:t.title, items:t.items, key:(n.date||'')+'|'+(n.build||'')+'|'+(n.title||'')}; }); });
+  })).then(function(all){ hubNotes=all[0]; all.forEach(function(l){ if(l[0]) notesBy[l[0].g]=l.map(function(n){ return n.key; }); }); news=[].concat.apply([],all).sort(function(a,b){ return (b.date>a.date?1:b.date<a.date?-1:0)||(a.i-b.i); }); paintNews(); paintFollow(); });
 }
 function paintNews(){
   var box=$('#newsList'); if(!box) return;
   if(!news.length){ box.innerHTML='<div class="cm-e">아직 소식이 없어요.</div>'; return; }
   box.innerHTML=news.slice(0,NEWS_N).map(function(n){ var G=NSRC[n.g], it=n.items.slice(0,4);
-    return '<article class="nw '+G.cls+'"><div class="nh"><span class="ng">'+esc(G.name)+'</span><span class="nd" data-notr>'+esc(n.date)+(n.build?' · '+esc(n.build):'')+'</span></div>'+
+    return '<article class="nw '+G.cls+'"><div class="nh"><span class="ng">'+esc(G.name)+'</span>'+(isNew(n)?'<span class="nnew">'+esc(F('새 패치노트'))+'</span>':'')+'<span class="nd" data-notr>'+esc(n.date)+(n.build?' · '+esc(n.build):'')+'</span></div>'+
       '<h3 data-notr>'+esc(n.title)+'</h3><ul data-notr>'+it.map(function(x){ return '<li>'+esc(x)+'</li>'; }).join('')+'</ul>'+
       (n.items.length>4?'<div class="nmore">'+esc(F('외 {0}개',n.items.length-4))+'</div>':'')+
       (n.g==='hub'?'<a class="nl" href="#hubnotes">패치노트 전체 보기 →</a>':'<a class="nl" href="'+G.site+'#notes">패치노트 전체 보기 →</a>')+'</article>'; }).join('');
+}
+
+/* ---- 게임별 소식 받기: 구독한 게임에 새 패치노트가 올라오면 뉴스에 표시 (supabase-ff-follow.sql) ---- */
+var FOLLOW_G=['stickseum','crownenvoy','beaconfall'], follows={}, followOK=true;
+function unseenN(g){ if(follows[g]===undefined||!follows[g]) return 0; var l=notesBy[g]||[]; for(var i=0;i<l.length;i++) if(l[i]===follows[g]) return i; return 0; }
+function isNew(n){ return follows[n.g]!==undefined&&n.i<unseenN(n.g); }
+async function loadFollows(){
+  follows={}; followOK=true;
+  if(me&&sb){ try{ var r=await sb.from('ff_follow').select('game,seen'); if(r.error) followOK=false; else (r.data||[]).forEach(function(x){ follows[x.game]=x.seen||''; }); }catch(e){ followOK=false; } }
+  paintFollow(); paintNews();
+}
+function paintFollow(){
+  var box=$('#followBar'); if(!box) return;
+  if(!followOK){ box.innerHTML=''; return; }
+  if(!me){ box.innerHTML='<span>'+esc(F('로그인하면 게임별로 새 패치노트를 알려 줘요.'))+'</span>'; return; }
+  var total=0;
+  box.innerHTML=FOLLOW_G.map(function(g){ var G=GAMES[g], on=follows[g]!==undefined, n=on?unseenN(g):0; total+=n;
+    return '<button type="button" class="fchip'+(on?' on':'')+'" data-g="'+g+'">'+esc(G.name)+' 🔔 '+esc(F(on?'받는 중':'소식 받기'))+(n?'<i class="fnb">'+n+'</i>':'')+'</button>'; }).join('')+
+    (total?'<div class="fmsg">'+esc(F('구독한 게임에 새 소식 {0}개가 있어요.',total))+'<a data-a="seen">'+esc(F('읽음으로 표시'))+'</a></div>':'');
+  [].forEach.call(box.querySelectorAll('.fchip'),function(b){ b.onclick=function(){ toggleFollow(b.getAttribute('data-g')); }; });
+  var s=box.querySelector('[data-a=seen]'); if(s) s.onclick=markSeen;
+}
+async function toggleFollow(g){
+  if(!me) return login();
+  try{
+    if(follows[g]!==undefined){ var d=await sb.from('ff_follow').delete().eq('game',g); if(d.error) return; delete follows[g]; }
+    else { var k=(notesBy[g]||[])[0]||'', u=await sb.from('ff_follow').upsert({user_id:me.id,game:g,seen:k},{onConflict:'user_id,game'}); if(u.error) return; follows[g]=k; }
+  }catch(e){ return; }
+  paintFollow(); paintNews();
+}
+async function markSeen(){
+  var rows=[]; Object.keys(follows).forEach(function(g){ var k=(notesBy[g]||[])[0]; if(k&&unseenN(g)){ rows.push({user_id:me.id,game:g,seen:k}); } });
+  if(!rows.length) return;
+  try{ var r=await sb.from('ff_follow').upsert(rows,{onConflict:'user_id,game'}); if(r.error) return; }catch(e){ return; }
+  rows.forEach(function(x){ follows[x.game]=x.seen; }); paintFollow(); paintNews();
 }
 /* 허브 패치노트 전체 목록 (뉴스의 '허브 패치노트' 버튼, 또는 주소 끝 #hubnotes) */
 function openHubNotes(){
@@ -664,7 +699,7 @@ function annAdmin(){
 async function refreshUser(){
   me=window.FFAuth&&FFAuth.user&&FFAuth.user(); admin=false;
   if(me&&sb){ try{ var r=await sb.rpc('ff_is_admin'); admin=!!(r&&r.data===true); }catch(e){} }
-  paintSend(); setTab(tab); loadAnn(); ranking(); coinDaily(); onlineLoop(); if(location.hash==='#coin') setTimeout(openCoin,400);
+  paintSend(); setTab(tab); loadAnn(); loadFollows(); ranking(); coinDaily(); onlineLoop(); if(location.hash==='#coin') setTimeout(openCoin,400);
 }
 /* 다른 페이지 · 알림에서 열기: ?post=글번호 , #feedback , #hubnotes */
 function openPostById(id){ id=+id; if(!id) return; bOpen=id; bScroll=true; if(tab!=='board') setTab('board'); else listPosts(); }
