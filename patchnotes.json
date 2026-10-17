@@ -3,6 +3,52 @@
   {
    "date": "2026-10-17",
    "build": "",
+   "title": "Stickseum 캐릭터 승률 위키 추가",
+   "items": [
+    "Stickseum 캐릭터 문서 25명에 봇 측정 승률 추가(build 254 기준)",
+    "전체 캐릭터 한눈에 문서에 캐릭터별 승률 추가"
+   ],
+   "tr": {
+    "en": {
+     "title": "Stickseum character win rates added to the wiki",
+     "items": [
+      "Added bot-tested win rates (as of build 254) for all 25 characters on the character pages",
+      "Added each character's win rate to the full character list"
+     ]
+    },
+    "es": {
+     "title": "Tasas de victorias de los personajes de Stickseum añadidas a la wiki",
+     "items": [
+      "Añadidas las tasas de victorias medidas con bots (build 254) de los 25 personajes en sus páginas",
+      "Añadida la tasa de victorias de cada personaje a la lista completa"
+     ]
+    },
+    "fr": {
+     "title": "Taux de victoire des personnages de Stickseum ajoutés au wiki",
+     "items": [
+      "Ajout des taux de victoire mesurés avec des bots (build 254) pour les 25 personnages sur leurs pages",
+      "Ajout du taux de victoire de chaque personnage à la liste complète"
+     ]
+    },
+    "de": {
+     "title": "Siegquoten der Stickseum-Charaktere im Wiki ergänzt",
+     "items": [
+      "Per Bot gemessene Siegquoten (Stand build 254) aller 25 Charaktere auf den Charakterseiten ergänzt",
+      "Siegquote jedes Charakters in der Gesamtliste ergänzt"
+     ]
+    },
+    "ja": {
+     "title": "StickseumキャラクターのWiki勝率を追加",
+     "items": [
+      "キャラクターページの25人にボット測定の勝率（build 254基準）を追加",
+      "全キャラ一覧に各キャラクターの勝率を追加"
+     ]
+    }
+   }
+  },
+  {
+   "date": "2026-10-17",
+   "build": "",
    "title": "Stickseum 캐릭터 고르기·전체 캐릭터 문서에 외형 추가",
    "items": [
     "캐릭터 고르기 문서의 제임스에 외형 추가",
