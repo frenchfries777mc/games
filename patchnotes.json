@@ -3,6 +3,64 @@
   {
    "date": "2026-10-17",
    "build": "",
+   "title": "설정 사이트, 위쪽 버튼 정리",
+   "items": [
+    "⚙️ 버튼을 없애고 메뉴 오른쪽 끝에 설정 글자 링크 추가",
+    "설정 사이트 추가 (다크/라이트·글자 크기, 언어, 계정, 알림 종류 켜고 끄기)",
+    "Hub Coin 칩을 계정 칩 바로 옆으로 이동",
+    "휴대폰에서는 알림과 설정을 계정 메뉴 안으로 이동"
+   ],
+   "tr": {
+    "en": {
+     "title": "Settings site and tidier top buttons",
+     "items": [
+      "Removed the ⚙️ button and added a Settings text link at the right end of the menu",
+      "New Settings site (dark/light and text size, language, account, which notifications to show)",
+      "Hub Coin chip moved right next to the account chip",
+      "On phones, notifications and settings moved into the account menu"
+     ]
+    },
+    "es": {
+     "title": "Sitio de ajustes y botones superiores más ordenados",
+     "items": [
+      "Se quitó el botón ⚙️ y se añadió un enlace de texto Ajustes al final del menú",
+      "Nuevo sitio de ajustes (oscuro/claro y tamaño del texto, idioma, cuenta, qué notificaciones mostrar)",
+      "El chip de Hub Coin pasó justo al lado del chip de la cuenta",
+      "En el móvil, notificaciones y ajustes pasaron al menú de la cuenta"
+     ]
+    },
+    "fr": {
+     "title": "Site de réglages et boutons du haut rangés",
+     "items": [
+      "Bouton ⚙️ supprimé, lien texte Réglages ajouté au bout du menu",
+      "Nouveau site de réglages (sombre/clair et taille du texte, langue, compte, notifications à afficher)",
+      "La pastille Hub Coin est maintenant juste à côté de celle du compte",
+      "Sur téléphone, notifications et réglages passent dans le menu du compte"
+     ]
+    },
+    "de": {
+     "title": "Einstellungsseite und aufgeräumte Buttons oben",
+     "items": [
+      "⚙️-Button entfernt, Textlink Einstellungen am Ende des Menüs",
+      "Neue Einstellungsseite (Dunkel/Hell und Textgröße, Sprache, Konto, welche Benachrichtigungen erscheinen)",
+      "Hub-Coin-Chip direkt neben den Konto-Chip verschoben",
+      "Auf dem Handy liegen Benachrichtigungen und Einstellungen im Kontomenü"
+     ]
+    },
+    "ja": {
+     "title": "設定サイトと上部ボタンの整理",
+     "items": [
+      "⚙️ボタンをなくし、メニューの右端に「設定」の文字リンクを追加",
+      "設定サイトを追加(ダーク/ライトと文字の大きさ、言語、アカウント、通知の種類のオン/オフ)",
+      "Hub Coinチップをアカウントチップのすぐ隣に移動",
+      "スマホでは通知と設定をアカウントメニューの中に移動"
+     ]
+    }
+   }
+  },
+  {
+   "date": "2026-10-17",
+   "build": "",
    "title": "처음 닉네임은 아이디로",
    "items": [
     "새로 가입하면 닉네임이 처음에는 아이디와 같게 정해짐 (내 계정에서 바꿀 수 있음)",

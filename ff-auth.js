@@ -192,6 +192,7 @@ var CSS='.ffa-btn{display:inline-flex;align-items:center;gap:6px;background:line
  '#ffaSetup input{display:block;width:100%;box-sizing:border-box;margin:0 0 10px;padding:11px 12px;border-radius:9px;border:1px solid #2b3245;background:#08090d;color:#eef0f5;font:inherit;font-size:16px}#ffaSetup input:focus{outline:none;border-color:#ffc93c}'+
  '#ffaSetup .ffa-btn{width:100%;justify-content:center;padding:11px;font-size:15px}#ffaSetup .m{min-height:18px;font-size:13px;color:#ff9b7a;margin:0 0 10px}#ffaSetup .sw{margin-top:14px;text-align:center;font-size:13px}#ffaSetup .sw a{color:#8a93a6;cursor:pointer;text-decoration:underline}'+
  '#ffaModal .ffa-in .ffa-oa span{display:none}#ffaModal .ffa-in .ffa-oa{display:inline-flex;width:44px;height:40px;padding:0;margin:0 4px}#ffaModal .ffa-in .oas{text-align:center}#ffaModal .ffa-in .or{margin:12px 0 8px}'+
+ '.ffa-menu .ffa-ph{display:none}@media(max-width:620px){.ffa-menu .ffa-ph{display:block}.ffa-bell,.ffa-vote{display:none!important}.ffa-menu .ffa-ph .ffa-badge{position:static;margin-left:6px}.ffa-nbc{position:absolute;top:-4px;right:-4px;margin:0;min-width:8px;width:8px;height:8px;padding:0;font-size:0;border-radius:50%}}'+
  '.ffa-lk{display:flex;align-items:center;gap:9px;margin:0 0 8px;padding:8px 10px;border:1px solid #2b3245;border-radius:9px;background:#08090d}.ffa-lk span{flex:1;font-weight:700;font-size:14px}.ffa-lk b{color:#7ddc8a;font-size:13px}.ffa-lk .ffa-btn{padding:6px 12px;font-size:13px}'+
  '#ffaModal .sw a{color:#ffc93c;cursor:pointer;margin-left:4px}#ffaModal .x{float:right;background:none;border:0;color:#8a93a6;font-size:20px;cursor:pointer;line-height:1}';
 function css(){ if(document.getElementById('ffaCss')) return; var s=document.createElement('style'); s.id='ffaCss'; s.textContent=CSS; document.head.appendChild(s); }
@@ -232,20 +233,22 @@ function profileLib(){ return loadScript(BASE+'ff-profile.js?v=20261017d', funct
 async function openProfile(uid){ if(!sb) return; if(!uid&&!user) return openLogin(); if(await profileLib()) window.FFProfile.open(sb, uid||user.id); }
 
 /* 게임 사이트(허브가 아닌 페이지)에는 계정 버튼 옆에 '← 허브' 버튼을 붙여요. 빼고 싶으면 자리에 data-ff-nohub */
-var HUB=BASE, onHub=location.href.indexOf(HUB)===0;
+var HUB=BASE, onHub=location.href.indexOf(HUB)===0, SETURL=HUB+'settings/';
 function hubLink(s){ return (onHub||s.hasAttribute('data-ff-nohub'))?'':'<a class="ffa-hub" href="'+esc(HUB)+'" title="'+esc(T.hubT)+'" aria-label="'+esc(T.hubT)+'">\u2190<span class="t">'+esc(T.hub)+'</span></a>'; }
 function paint(){
   css(); var slots=document.querySelectorAll('[data-ff-account]');
   for(var i=0;i<slots.length;i++){
     var s=slots[i]; s.setAttribute('data-notr','');
     if(!user){ s.innerHTML=hubLink(s)+'<span class="ffa-wrap"><button type="button" class="ffa-btn">🍟 '+esc(T.login)+'</button></span>'; s.querySelector('button').onclick=function(){ openLogin(); }; continue; }
-    s.innerHTML=hubLink(s)+'<span class="ffa-wrap"><button type="button" class="ffa-chip" aria-haspopup="true">🍟 <span>'+esc(fmt(T.hi,nick()))+'</span><i class="ffa-badge" style="display:none;font-style:normal"></i> ▾</button>'+
-      '<span class="ffa-menu" role="menu"><button type="button" data-a="friends">'+esc(F.friends)+'<span class="ffa-badge" style="display:none"></span></button><button type="button" data-a="card">'+esc(T.card)+'</button><button type="button" data-a="acct">'+esc(AL().menu)+'</button><button type="button" data-a="out">'+esc(T.logout)+'</button></span></span>';
+    s.innerHTML=hubLink(s)+'<span class="ffa-wrap"><button type="button" class="ffa-chip" aria-haspopup="true">🍟 <span>'+esc(fmt(T.hi,nick()))+'</span><i class="ffa-badge" style="display:none;font-style:normal"></i><i class="ffa-badge ffa-nb ffa-nbc" style="display:none;font-style:normal"></i> ▾</button>'+
+      '<span class="ffa-menu" role="menu"><button type="button" data-a="friends">'+esc(F.friends)+'<span class="ffa-badge" style="display:none"></span></button><button type="button" data-a="card">'+esc(T.card)+'</button><button type="button" data-a="acct">'+esc(AL().menu)+'</button><button type="button" data-a="notes" class="ffa-ph">🔔 '+esc(N.bell)+'<span class="ffa-badge ffa-nb" style="display:none"></span></button><button type="button" data-a="set" class="ffa-ph">'+esc('⚙️ '+S_.set)+'</button><button type="button" data-a="out">'+esc(T.logout)+'</button></span></span>';
     (function(s){ var menu=s.querySelector('.ffa-menu');
       s.querySelector('.ffa-chip').onclick=function(e){ e.stopPropagation(); var open=menu.style.display==='block'; closeMenus(); menu.style.display=open?'none':'block'; };
       menu.querySelector('[data-a=friends]').onclick=function(){ closeMenus(); openFriends(); };
       menu.querySelector('[data-a=card]').onclick=function(){ closeMenus(); openProfile(); };
-      menu.querySelector('[data-a=acct]').onclick=function(){ closeMenus(); openAcct(); };
+      menu.querySelector('[data-a=acct]').onclick=function(){ closeMenus(); location.href=SETURL+'#account'; };
+      menu.querySelector('[data-a=set]').onclick=function(){ closeMenus(); location.href=SETURL; };
+      menu.querySelector('[data-a=notes]').onclick=function(e){ e.stopPropagation(); closeMenus(); var w=s.querySelector('.ffa-wrap'), pn=w&&w.querySelector('.ffa-notes'); if(!pn) return; pn.style.display='block'; paintNotes(pn); markRead(); };
       menu.querySelector('[data-a=out]').onclick=function(){ closeMenus(); signOut(); };
     })(s);
   }
@@ -260,27 +263,27 @@ document.addEventListener('keydown', function(e){ if(e.key==='Escape'){ closeMen
 
 /* ---- my account: nickname, login ID, password (same stored-password option as the games: localStorage arenaClashPw / arenaClashPwOpt) ---- */
 var ALT={
- ko:{menu:'⚙️ 내 계정',title:'내 계정',show:'비밀번호 보기',nick:'닉네임 (최대 12자)',id:'아이디 (영문/숫자, 3~16자)',save:'저장',saved:'저장했어요.',same:'바뀐 게 없어요.',
+ ko:{menu:'👤 내 계정',title:'내 계정',show:'비밀번호 보기',nick:'닉네임 (최대 12자)',id:'아이디 (영문/숫자, 3~16자)',save:'저장',saved:'저장했어요.',same:'바뀐 게 없어요.',
      pwT:'비밀번호',pwNone:'이 기기에는 저장된 비밀번호가 없어요. 다시 로그인하면 저장돼요.',view:'보기',hide:'숨기기',copy:'복사',copied:'복사했어요.',
      newPw:'새 비밀번호 (6~72자)',chg:'비밀번호 변경',keep:'이 기기에 비밀번호 기억하기',keepN:'서버에는 비밀번호가 저장되지 않아요(볼 수 없음). 이 기기의 브라우저에만 저장돼요.',
      badNick:'닉네임을 입력해 주세요.',badPw:'비밀번호는 6~72자로 해주세요.',idDone:'아이디를 바꿨어요. 다음부터 새 아이디로 로그인해요.',pwDone:'비밀번호를 바꿨어요.',err:'처리하지 못했어요. 잠시 뒤 다시 해 주세요.',idNote:'아이디를 바꾸면 모든 게임에서 새 아이디로 로그인해요.'},
- en:{menu:'⚙️ My account',title:'My account',show:'Show password',nick:'Nickname (up to 12)',id:'Username (letters/numbers, 3–16)',save:'Save',saved:'Saved.',same:'Nothing changed.',
+ en:{menu:'👤 My account',title:'My account',show:'Show password',nick:'Nickname (up to 12)',id:'Username (letters/numbers, 3–16)',save:'Save',saved:'Saved.',same:'Nothing changed.',
      pwT:'Password',pwNone:'No password is stored on this device. Log in again to store it.',view:'Show',hide:'Hide',copy:'Copy',copied:'Copied.',
      newPw:'New password (6–72)',chg:'Change password',keep:'Remember my password on this device',keepN:'The server never stores a readable password. It is kept only in this browser.',
      badNick:'Type a nickname.',badPw:'Password must be 6–72 characters.',idDone:'Username changed. Use the new one next time.',pwDone:'Password changed.',err:'Something went wrong. Try again soon.',idNote:'The new username works in every game.'},
- es:{menu:'⚙️ Mi cuenta',title:'Mi cuenta',show:'Mostrar contraseña',nick:'Apodo (máx. 12)',id:'Usuario (letras/números, 3–16)',save:'Guardar',saved:'Guardado.',same:'Sin cambios.',
+ es:{menu:'👤 Mi cuenta',title:'Mi cuenta',show:'Mostrar contraseña',nick:'Apodo (máx. 12)',id:'Usuario (letras/números, 3–16)',save:'Guardar',saved:'Guardado.',same:'Sin cambios.',
      pwT:'Contraseña',pwNone:'No hay contraseña guardada en este dispositivo. Inicia sesión de nuevo para guardarla.',view:'Ver',hide:'Ocultar',copy:'Copiar',copied:'Copiado.',
      newPw:'Nueva contraseña (6–72)',chg:'Cambiar contraseña',keep:'Recordar mi contraseña en este dispositivo',keepN:'El servidor nunca guarda una contraseña legible. Solo se guarda en este navegador.',
      badNick:'Escribe un apodo.',badPw:'La contraseña debe tener 6–72 caracteres.',idDone:'Usuario cambiado. Usa el nuevo la próxima vez.',pwDone:'Contraseña cambiada.',err:'Algo salió mal. Inténtalo de nuevo.',idNote:'El nuevo usuario sirve en todos los juegos.'},
- fr:{menu:'⚙️ Mon compte',title:'Mon compte',show:'Afficher le mot de passe',nick:'Pseudo (12 max)',id:'Identifiant (lettres/chiffres, 3–16)',save:'Enregistrer',saved:'Enregistré.',same:'Rien n\'a changé.',
+ fr:{menu:'👤 Mon compte',title:'Mon compte',show:'Afficher le mot de passe',nick:'Pseudo (12 max)',id:'Identifiant (lettres/chiffres, 3–16)',save:'Enregistrer',saved:'Enregistré.',same:'Rien n\'a changé.',
      pwT:'Mot de passe',pwNone:'Aucun mot de passe enregistré sur cet appareil. Reconnectez-vous pour l\'enregistrer.',view:'Voir',hide:'Masquer',copy:'Copier',copied:'Copié.',
      newPw:'Nouveau mot de passe (6–72)',chg:'Changer le mot de passe',keep:'Retenir mon mot de passe sur cet appareil',keepN:'Le serveur ne garde jamais de mot de passe lisible. Il reste seulement dans ce navigateur.',
      badNick:'Saisissez un pseudo.',badPw:'Le mot de passe doit faire 6–72 caractères.',idDone:'Identifiant changé. Utilisez le nouveau la prochaine fois.',pwDone:'Mot de passe changé.',err:'Une erreur est survenue. Réessayez.',idNote:'Le nouvel identifiant fonctionne dans tous les jeux.'},
- de:{menu:'⚙️ Mein Konto',title:'Mein Konto',show:'Passwort anzeigen',nick:'Spitzname (max. 12)',id:'Benutzername (Buchstaben/Zahlen, 3–16)',save:'Speichern',saved:'Gespeichert.',same:'Nichts geändert.',
+ de:{menu:'👤 Mein Konto',title:'Mein Konto',show:'Passwort anzeigen',nick:'Spitzname (max. 12)',id:'Benutzername (Buchstaben/Zahlen, 3–16)',save:'Speichern',saved:'Gespeichert.',same:'Nichts geändert.',
      pwT:'Passwort',pwNone:'Auf diesem Gerät ist kein Passwort gespeichert. Melde dich neu an, um es zu speichern.',view:'Anzeigen',hide:'Verbergen',copy:'Kopieren',copied:'Kopiert.',
      newPw:'Neues Passwort (6–72)',chg:'Passwort ändern',keep:'Passwort auf diesem Gerät merken',keepN:'Der Server speichert nie ein lesbares Passwort. Es bleibt nur in diesem Browser.',
      badNick:'Gib einen Spitznamen ein.',badPw:'Das Passwort braucht 6–72 Zeichen.',idDone:'Benutzername geändert. Nutze beim nächsten Mal den neuen.',pwDone:'Passwort geändert.',err:'Etwas ist schiefgelaufen. Versuch es gleich nochmal.',idNote:'Der neue Benutzername gilt in allen Spielen.'},
- ja:{menu:'⚙️ マイアカウント',title:'マイアカウント',show:'パスワードを表示',nick:'ニックネーム(12文字まで)',id:'ユーザーID(英数字、3〜16文字)',save:'保存',saved:'保存しました。',same:'変更はありません。',
+ ja:{menu:'👤 マイアカウント',title:'マイアカウント',show:'パスワードを表示',nick:'ニックネーム(12文字まで)',id:'ユーザーID(英数字、3〜16文字)',save:'保存',saved:'保存しました。',same:'変更はありません。',
      pwT:'パスワード',pwNone:'この端末には保存されたパスワードがありません。もう一度ログインすると保存されます。',view:'表示',hide:'隠す',copy:'コピー',copied:'コピーしました。',
      newPw:'新しいパスワード(6〜72文字)',chg:'パスワードを変更',keep:'この端末にパスワードを記憶する',keepN:'サーバーは読めるパスワードを保存しません。このブラウザにだけ保存されます。',
      badNick:'ニックネームを入力してください。',badPw:'パスワードは6〜72文字にしてください。',idDone:'IDを変更しました。次回から新しいIDでログインします。',pwDone:'パスワードを変更しました。',err:'失敗しました。しばらくしてからもう一度お試しください。',idNote:'新しいIDはすべてのゲームで使えます。'}
@@ -319,16 +322,17 @@ async function devPanel(el,say){ var L=DL(), box=el.querySelector('#aDevBox'); i
 }
 
 function closeAcct(){ var el=document.getElementById('ffaAcct'); if(el) el.style.display='none'; }
-function openAcct(){
+function openAcct(host){
   if(!user) return openLogin(); if(!sb) return;
   css(); var A=AL(), el=document.getElementById('ffaAcct'); if(el) el.remove();
-  el=document.createElement('div'); el.id='ffaAcct'; el.setAttribute('data-notr','');
-  el.style.cssText='position:fixed;inset:0;z-index:2147482500;background:rgba(5,6,10,.72);display:flex;align-items:center;justify-content:center;padding:16px;font-family:system-ui,-apple-system,"Noto Sans KR",sans-serif;overflow:auto';
+  el=document.createElement('div'); el.id='ffaAcct'; el.setAttribute('data-notr',''); if(host) el.className='inl';
+  el.style.cssText=host?'font-family:system-ui,-apple-system,"Noto Sans KR",sans-serif':'position:fixed;inset:0;z-index:2147482500;background:rgba(5,6,10,.72);display:flex;align-items:center;justify-content:center;padding:16px;font-family:system-ui,-apple-system,"Noto Sans KR",sans-serif;overflow:auto';
   el.innerHTML='<style>#ffaAcct .b{width:100%;max-width:380px;max-height:100%;overflow:auto;background:#10131b;border:1px solid #2b3245;border-radius:16px;padding:22px;color:#eef0f5;box-shadow:0 20px 50px rgba(0,0,0,.5)}'+
    '#ffaAcct h3{margin:0 0 12px;font-size:19px}#ffaAcct h4{margin:16px 0 8px;font-size:14px;color:#ffc93c}#ffaAcct p{margin:0 0 8px;color:#8a93a6;font-size:12.5px;line-height:1.5}'+
    '#ffaAcct input[type=text],#ffaAcct input[type=password]{display:block;width:100%;box-sizing:border-box;margin:0 0 8px;padding:10px 12px;border-radius:9px;border:1px solid #2b3245;background:#08090d;color:#eef0f5;font:inherit;font-size:16px}'+
    '#ffaAcct input:focus{outline:none;border-color:#ffc93c}#ffaAcct .row{display:flex;gap:6px}#ffaAcct .row .ffa-btn{flex:1;justify-content:center;padding:9px}'+
    '#ffaAcct .m{min-height:18px;font-size:13px;color:#ff9b7a;margin:8px 0 0}#ffaAcct .m.ok{color:#7ddc8a}#ffaAcct .x{float:right;background:none;border:0;color:#8a93a6;font-size:20px;cursor:pointer;line-height:1}'+
+   '#ffaAcct.inl .b{max-width:none;max-height:none;overflow:visible;background:none;border:0;box-shadow:none;padding:0;color:inherit}#ffaAcct.inl .x,#ffaAcct.inl h3{display:none}#ffaAcct.inl h4:first-of-type{margin-top:0}'+
    '#ffaAcct .pv{font-family:ui-monospace,monospace;background:#08090d;border:1px solid #2b3245;border-radius:9px;padding:10px 12px;margin-bottom:8px;word-break:break-all;font-size:15px}'+
    '#ffaAcct label.k{display:flex;gap:8px;align-items:center;font-size:13.5px;margin:10px 0 4px}</style>'+
    '<div class="b"><button type="button" class="x" aria-label="'+esc(T.close)+'">×</button><h3>'+esc(A.title)+'</h3>'+
@@ -337,11 +341,11 @@ function openAcct(){
    '<h4>'+esc(A.pwT)+'</h4><div id="aPwBox"></div>'+
    '<div class="pwr"><input type="password" id="aNew" autocomplete="new-password" placeholder="'+esc(A.newPw)+'"><button type="button" class="eye" aria-label="'+esc(A.show)+'">👁</button></div><button type="button" class="ffa-btn" id="aPwGo">'+esc(A.chg)+'</button><div class="m" id="aPwM"></div>'+
    '<label class="k"><input type="checkbox" id="aKeep"> '+esc(A.keep)+'</label><p>'+esc(A.keepN)+'</p><div id="aDevBox"></div></div>';
-  document.body.appendChild(el);
+  (host||document.body).appendChild(el);
   var $=function(i){ return el.querySelector('#'+i); }, curId=(prof&&prof.username)||String(user.email||'').split('@')[0];
   function say(i,t,ok){ var m=$(i); m.textContent=t; m.className='m'+(ok?' ok':''); }
   $('aNick').value=(prof&&prof.display_name)||''; $('aId').value=curId; $('aKeep').checked=pwOn();
-  el.addEventListener('click',function(e){ if(e.target===el) closeAcct(); }); el.querySelector('.x').onclick=closeAcct;
+  if(!host) el.addEventListener('click',function(e){ if(e.target===el) closeAcct(); }); el.querySelector('.x').onclick=closeAcct;
   el.querySelector('.eye').onclick=function(){ var i=$('aNew'); i.type=i.type==='password'?'text':'password'; };
   function pwBox(){ var o=pwGet(), b=$('aPwBox'), shown=false;
     if(!o){ b.innerHTML='<p>'+esc(A.pwNone)+'</p>'; return; }
@@ -571,6 +575,7 @@ var SCSS='.ffa-set{background:#10131b;color:#eef0f5;border:1px solid #2b3245;bor
  '.ffa-setp b{display:block;font-size:13px;color:#8a93a6;margin:6px 0 6px}.ffa-setp .g{display:flex;flex-wrap:wrap;gap:6px}.ffa-setp .g button{flex:1;background:#1b2030;color:#eef0f5;border:1px solid #2b3245;border-radius:8px;padding:7px 8px;font:inherit;font-size:13.5px;font-weight:700;cursor:pointer;white-space:nowrap}'+
  '.ffa-setp .ffa-lg button{flex:1 1 30%}.ffa-setp .g button.on{background:linear-gradient(135deg,#ffc93c,#ff8a3d);color:#1a1206;border-color:transparent}.ffa-setp small{display:block;color:#8a93a6;font-size:12px;margin-top:8px}';
 function setPaint(){
+  return; /* ⚙️ button replaced by the 설정 text link and /settings/ */
   if(!window.FFTheme) return; if(!document.getElementById('ffaSCss')){ var st=document.createElement('style'); st.id='ffaSCss'; st.textContent=SCSS; document.head.appendChild(st); }
   var ws=document.querySelectorAll('[data-ff-account] .ffa-wrap'); for(var i=0;i<ws.length;i++){ var w=ws[i]; if(w.querySelector('.ffa-set')) continue;
     var b=document.createElement('button'); b.type='button'; b.className='ffa-set'; b.textContent='⚙️'; b.title=S_.set; b.setAttribute('aria-label',S_.set);
@@ -642,7 +647,7 @@ function ago2(iso){ var t=Date.parse(iso), m=Math.max(0,Math.round((Date.now()-t
 function noteText(n){ var nm=noteNames[n.actor_id]||'???', t=N[n.kind]||''; return fmt(t,nm); }
 async function loadNotes(){
   if(!sb||!user){ notes=[]; return; }
-  try{ var r=await sb.from('ff_notes').select('*').eq('user_id',user.id).order('created_at',{ascending:false}).limit(40); if(r.error) return; notes=r.data||[]; }catch(e){ return; }
+  try{ var r=await sb.from('ff_notes').select('*').eq('user_id',user.id).order('created_at',{ascending:false}).limit(40); if(r.error) return; notes=(r.data||[]).filter(function(n){ return npOn(n.kind); }); }catch(e){ return; }
   var ids=notes.map(function(n){ return n.actor_id; }).filter(function(x,i,a){ return x&&!noteNames[x]&&a.indexOf(x)===i; });
   if(ids.length){ var p=await sb.from('profiles').select('id,username,display_name').in('id',ids); ((p&&p.data)||[]).forEach(function(x){ noteNames[x.id]=nickOf(x); }); }
   bellBadge();
@@ -651,6 +656,10 @@ async function loadBlocks(){ blocks={}; if(!sb||!user) return; try{ var r=await 
   var ids=Object.keys(blocks).filter(function(x){ return !noteNames[x]; }); if(ids.length) try{ var p=await sb.from('profiles').select('id,username,display_name').in('id',ids); ((p&&p.data)||[]).forEach(function(x){ noteNames[x.id]=nickOf(x); }); }catch(e){}
   blocksChanged(); fpaint(); }
 async function loadDmUnread(){ dmUnread={}; if(!sb||!user) return; try{ var r=await sb.from('ff_dm').select('sender_id').eq('recipient_id',user.id).is('read_at',null).limit(500); ((r&&!r.error&&r.data)||[]).forEach(function(x){ dmUnread[x.sender_id]=(dmUnread[x.sender_id]||0)+1; }); }catch(e){} }
+var NGRP={mentionc:'mention',feedback:'admin',report:'admin'};
+function npGet(){ try{ return JSON.parse(localStorage.getItem('ffNotePrefs')||'{}')||{}; }catch(e){ return {}; } }
+function npSet(k,on){ var p=npGet(); if(on) delete p[k]; else p[k]=false; try{ localStorage.setItem('ffNotePrefs',JSON.stringify(p)); }catch(e){} }
+function npOn(kind){ return npGet()[NGRP[kind]||kind]!==false; }
 function unreadNotes(){ return notes.filter(function(n){ return !n.read; }).length; }
 function bellBadge(){ var n=unreadNotes(), bs=document.querySelectorAll('.ffa-nb'); for(var i=0;i<bs.length;i++){ bs[i].textContent=n>9?'9+':String(n); bs[i].style.display=n?'':'none'; } }
 function socialPaint(){
@@ -681,7 +690,7 @@ function watchNotes(){
   if(noteChan){ try{ sb.removeChannel(noteChan); }catch(e){} noteChan=null; }
   if(!sb||!user) return;
   try{ noteChan=sb.channel('ffa-notes-'+user.id)
-    .on('postgres_changes',{event:'INSERT',schema:'public',table:'ff_notes',filter:'user_id=eq.'+user.id},function(pl){ loadNotes().then(function(){ var n=pl&&pl.new; if(n&&n.kind!=='friend'){ toast(noteText(n)); var tt=document.getElementById('ffaToast'); if(tt) tt.querySelector('button').onclick=function(){ tt.remove(); goNote(n); }; } }); })
+    .on('postgres_changes',{event:'INSERT',schema:'public',table:'ff_notes',filter:'user_id=eq.'+user.id},function(pl){ loadNotes().then(function(){ var n=pl&&pl.new; if(n&&n.kind!=='friend'&&npOn(n.kind)&&npGet().toast!==false){ toast(noteText(n)); var tt=document.getElementById('ffaToast'); if(tt) tt.querySelector('button').onclick=function(){ tt.remove(); goNote(n); }; } }); })
     .on('postgres_changes',{event:'INSERT',schema:'public',table:'ff_dm',filter:'recipient_id=eq.'+user.id},function(pl){ var m=pl&&pl.new; if(!m) return; if(dmWith===m.sender_id){ if(!dmRows.some(function(x){ return x.id===m.id; })) dmRows.push(m); paintDM(); seenDM(); } else { dmUnread[m.sender_id]=(dmUnread[m.sender_id]||0)+1; fpaint(); } })
     .subscribe(); }catch(e){}
 }
@@ -782,5 +791,5 @@ document.addEventListener('visibilitychange', function(){ if(document.visibility
 
 window.FFAuth={ ready:ready, pollCheck:pollCheck, client:function(){ return sb; }, user:function(){ return user; }, profile:function(){ return prof; }, nickname:nick,
   onChange:function(f){ if(typeof f==='function') subs.push(f); }, openLogin:openLogin, openProfile:openProfile, openFriends:openFriends, friends:function(){ return friends.slice(); }, signOut:signOut, refresh:paint, syncHub:syncHub,
-  openDM:openDM, openReport:openReport, loadDevs:loadDevs, devRole:devRole, devBadge:devBadge, block:block, isBlocked:isBlocked, blocked:function(){ return Object.assign({},blocks); } };
+  openDM:openDM, openReport:openReport, openAcct:openAcct, notePrefs:{get:npGet,set:npSet}, lang:lang, loadDevs:loadDevs, devRole:devRole, devBadge:devBadge, block:block, isBlocked:isBlocked, blocked:function(){ return Object.assign({},blocks); } };
 })();
