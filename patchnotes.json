@@ -3,6 +3,58 @@
   {
    "date": "2026-10-17",
    "build": "",
+   "title": "Tools Fry Sheet v10 위키 갱신",
+   "items": [
+    "열 필터, 조건부 서식, 드롭다운 목록, 셀 메모, 서식 템플릿 4종 설명 추가",
+    "날짜·통계 함수와 새 단축키, 채우기 핸들 설명 추가",
+    "AI 창이 X 버튼으로만 닫히는 동작 추가"
+   ],
+   "tr": {
+    "en": {
+     "title": "Tools Fry Sheet v10 wiki update",
+     "items": [
+      "Added column filters, conditional formatting, dropdown lists, cell notes and 4 format templates",
+      "Added date and statistics functions, new shortcuts and the fill handle",
+      "Added that the AI window closes only with its X button"
+     ]
+    },
+    "es": {
+     "title": "Wiki de Tools Fry Sheet v10",
+     "items": [
+      "Se añadieron filtros de columna, formato condicional, listas desplegables, notas de celda y 4 plantillas de formato",
+      "Se añadieron funciones de fecha y estadísticas, nuevos atajos y el controlador de relleno",
+      "Se añadió que la ventana de IA solo se cierra con su botón X"
+     ]
+    },
+    "fr": {
+     "title": "Wiki de Tools Fry Sheet v10",
+     "items": [
+      "Ajout des filtres de colonne, de la mise en forme conditionnelle, des listes déroulantes, des notes de cellule et de 4 modèles de mise en forme",
+      "Ajout des fonctions de date et statistiques, de nouveaux raccourcis et de la poignée de recopie",
+      "Ajout du fait que la fenêtre IA ne se ferme qu'avec son bouton X"
+     ]
+    },
+    "de": {
+     "title": "Tools Fry Sheet v10 Wiki",
+     "items": [
+      "Spaltenfilter, bedingte Formatierung, Dropdown-Listen, Zellnotizen und 4 Formatvorlagen ergänzt",
+      "Datums- und Statistikfunktionen, neue Tastenkürzel und das Ausfüllkästchen ergänzt",
+      "Ergänzt, dass sich das KI-Fenster nur mit der X-Schaltfläche schließen lässt"
+     ]
+    },
+    "ja": {
+     "title": "Tools Fry Sheet v10のWiki更新",
+     "items": [
+      "列フィルター、条件付き書式、ドロップダウンリスト、セルメモ、書式テンプレート4種を追加",
+      "日付・統計関数、新しいショートカット、フィルハンドルを追加",
+      "AIウィンドウが×ボタンでのみ閉じる動作を追加"
+     ]
+    }
+   }
+  },
+  {
+   "date": "2026-10-17",
+   "build": "",
    "title": "Stickseum 배틀로얄 개편 위키 추가",
    "items": [
     "배틀로얄·듀오의 위험지대와 보급 상자, 넓어진 시작 위치 설명 추가",
