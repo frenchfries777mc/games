@@ -3,6 +3,52 @@
   {
    "date": "2026-10-17",
    "build": "",
+   "title": "Crown Envoy 이스탄불 지역 이름 위키 갱신",
+   "items": [
+    "이스탄불 일대 지역 이름(1453년 전 Constantinople, 이후 Istanbul) 설명 추가",
+    "최신 빌드를 build 34로 수정"
+   ],
+   "tr": {
+    "en": {
+     "title": "Crown Envoy Istanbul region name wiki update",
+     "items": [
+      "Added the Istanbul region name (Constantinople before 1453, Istanbul after)",
+      "Latest build changed to build 34"
+     ]
+    },
+    "es": {
+     "title": "Wiki del nombre de la región de Estambul en Crown Envoy",
+     "items": [
+      "Se añadió el nombre de la región de Estambul (Constantinople antes de 1453, Istanbul después)",
+      "Última compilación cambiada a build 34"
+     ]
+    },
+    "fr": {
+     "title": "Wiki du nom de la région d'Istanbul dans Crown Envoy",
+     "items": [
+      "Ajout du nom de la région d'Istanbul (Constantinople avant 1453, Istanbul après)",
+      "Dernier build changé en build 34"
+     ]
+    },
+    "de": {
+     "title": "Crown Envoy Wiki zum Namen der Istanbul-Region",
+     "items": [
+      "Name der Istanbul-Region ergänzt (vor 1453 Constantinople, danach Istanbul)",
+      "Neuester Build auf build 34 geändert"
+     ]
+    },
+    "ja": {
+     "title": "Crown Envoy イスタンブール地域名のWiki更新",
+     "items": [
+      "イスタンブール一帯の地域名（1453年前はConstantinople、以後はIstanbul）を追加",
+      "最新ビルドをbuild 34に修正"
+     ]
+    }
+   }
+  },
+  {
+   "date": "2026-10-17",
+   "build": "",
    "title": "Crown Envoy 건물 2개 위키 추가",
    "items": [
     "대장간·대학 건물 설명 추가",
