@@ -3,6 +3,58 @@
   {
    "date": "2026-10-17",
    "build": "",
+   "title": "Beaconfall 배경음악·Stickseum build 261 위키 갱신",
+   "items": [
+    "Beaconfall 섬별 배경음악, 밤과 비 효과음, Web Audio 음량 조절 설명 추가",
+    "Stickseum MVP 투표가 팀전 한정으로 바뀐 내용 수정",
+    "Stickseum 패치 기록에 build 261 추가"
+   ],
+   "tr": {
+    "en": {
+     "title": "Beaconfall music and Stickseum build 261 wiki update",
+     "items": [
+      "Added Beaconfall's per-island music, night and rain sounds, and Web Audio volume control",
+      "Updated the Stickseum MVP vote, which is now for team modes only",
+      "Added build 261 to the Stickseum patch history"
+     ]
+    },
+    "es": {
+     "title": "Wiki: música de Beaconfall y Stickseum build 261",
+     "items": [
+      "Se añadieron la música por isla de Beaconfall, los sonidos de noche y lluvia y el control de volumen con Web Audio",
+      "Se actualizó la votación de MVP de Stickseum, que ahora es solo para modos por equipos",
+      "Se añadió la build 261 al historial de parches de Stickseum"
+     ]
+    },
+    "fr": {
+     "title": "Wiki : musique de Beaconfall et Stickseum build 261",
+     "items": [
+      "Ajout de la musique par île de Beaconfall, des sons de nuit et de pluie et du réglage du volume via Web Audio",
+      "Mise à jour du vote MVP de Stickseum, désormais réservé aux modes par équipes",
+      "Ajout de la build 261 à l'historique des patchs de Stickseum"
+     ]
+    },
+    "de": {
+     "title": "Wiki: Beaconfall-Musik und Stickseum build 261",
+     "items": [
+      "Inselmusik, Nacht- und Regengeräusche und Web-Audio-Lautstärke von Beaconfall ergänzt",
+      "MVP-Abstimmung von Stickseum aktualisiert, sie gibt es nur noch in Teammodi",
+      "build 261 in die Patch-Historie von Stickseum aufgenommen"
+     ]
+    },
+    "ja": {
+     "title": "Beaconfallの音楽とStickseum build 261のウィキ更新",
+     "items": [
+      "Beaconfallの島ごとの背景音楽、夜と雨の音、Web Audioの音量調節を追加",
+      "StickseumのMVP投票がチーム戦だけになった内容に更新",
+      "Stickseumのパッチ履歴にbuild 261を追加"
+     ]
+    }
+   }
+  },
+  {
+   "date": "2026-10-17",
+   "build": "",
    "title": "Stickseum build 259·260 위키 갱신",
    "items": [
     "버튼 클릭 소리가 \"톡\" 소리로 바뀐 내용 수정",
