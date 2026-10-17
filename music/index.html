@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Frenchfries777 Music</title>
+<meta name="description" content="Stickseum · Crown Envoy · Beaconfall의 배경음악을 한곳에서 듣는 음악 감상실.">
+<meta property="og:title" content="Frenchfries777 Music"><meta property="og:description" content="Stickseum · Crown Envoy · Beaconfall의 배경음악을 한곳에서 듣는 음악 감상실."><meta property="og:type" content="website">
+<meta property="og:url" content="https://frenchfries777mc.github.io/games/music/"><meta property="og:site_name" content="Frenchfries777"><meta property="og:image" content="https://frenchfries777mc.github.io/games/og/hub.jpg">
+<meta name="theme-color" content="#08090d">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&family=Noto+Sans+KR:wght@400;500;700;900&display=swap" rel="stylesheet">
+<script src="../ff-lang.js"></script>
+<style>
+  :root{ --bg:#08090d; --panel:#10131b; --line:#222837; --text:#eef0f5; --dim:#8a93a6; --fry:#ffc93c; --fry2:#ff8a3d; }
+  html[data-ff-theme=light]{ --bg:#f6f3ec; --panel:#ffffff; --line:#e2dccf; --text:#1f1b14; --dim:#6d6658; }
+  *{box-sizing:border-box;}
+  html,body{margin:0; padding:0; background:var(--bg); color:var(--text);}
+  body{font-family:'Noto Sans KR','Apple SD Gothic Neo','Malgun Gothic',system-ui,sans-serif; font-size:16px; line-height:1.6; min-height:100vh;
+    padding:env(safe-area-inset-top,0px) 0 calc(96px + env(safe-area-inset-bottom,0px));
+    background-image:radial-gradient(ellipse 900px 520px at 10% -10%, rgba(255,201,60,.10), transparent 60%), radial-gradient(ellipse 800px 600px at 110% 30%, rgba(255,77,94,.07), transparent 60%);
+    background-attachment:fixed;}
+  html[data-ff-theme=light] body{background-image:radial-gradient(ellipse 900px 520px at 10% -10%, rgba(255,201,60,.22), transparent 60%);}
+  a{color:var(--fry);} button{font:inherit;}
+  .wrap{max-width:980px; margin:0 auto; padding:0 16px;}
+  header{display:flex; align-items:center; gap:12px; padding:18px 0 8px; flex-wrap:wrap;}
+  .logo{display:flex; align-items:center; gap:10px; text-decoration:none; color:var(--text); font-family:'Oswald',sans-serif; font-weight:600; font-size:20px; letter-spacing:.04em;}
+  .logo .fry{width:40px; height:40px; border-radius:11px; display:grid; place-items:center; font-size:22px; background:linear-gradient(135deg,var(--fry),var(--fry2));}
+  .logo b{color:var(--fry);}
+  header .sp{flex:1;}
+  .hubBtn{color:var(--text); text-decoration:none; border:1px solid var(--line); background:var(--panel); border-radius:9px; padding:6px 12px; font-size:14px;}
+  h1{font-family:'Oswald','Noto Sans KR',sans-serif; font-size:clamp(28px,6vw,42px); margin:18px 0 4px; letter-spacing:.02em;}
+  .lead{color:var(--dim); margin:0 0 22px;}
+  h2{font-size:20px; margin:28px 0 10px; display:flex; align-items:center; gap:10px;}
+  h2 img{width:34px; height:34px; border-radius:8px; object-fit:cover;}
+  h2 a{font-size:13px; font-weight:500; margin-left:auto;}
+  .list{display:grid; gap:10px;}
+  .tr{display:grid; grid-template-columns:44px minmax(0,1fr) auto; gap:12px; align-items:center; background:var(--panel); border:1px solid var(--line); border-radius:12px; padding:10px 14px;}
+  .tr.on{border-color:var(--fry); box-shadow:0 0 0 1px var(--fry) inset;}
+  .pb{width:44px; height:44px; border-radius:50%; border:0; background:linear-gradient(135deg,var(--fry),var(--fry2)); color:#1a1206; font-size:18px; cursor:pointer; display:grid; place-items:center;}
+  .nm{font-weight:700;} .ds{color:var(--dim); font-size:14px;}
+  .tm{color:var(--dim); font-size:13px; font-variant-numeric:tabular-nums; white-space:nowrap;}
+  .bar{position:fixed; left:0; right:0; bottom:0; background:var(--panel); border-top:1px solid var(--line); padding:10px 16px calc(10px + env(safe-area-inset-bottom,0px)); display:none;}
+  .bar.show{display:block;}
+  .bar .in{max-width:980px; margin:0 auto; display:grid; grid-template-columns:auto minmax(0,1fr) auto; gap:12px; align-items:center;}
+  .bar .t{font-weight:700; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
+  .bar input[type=range]{width:100%; accent-color:var(--fry);}
+  .bar .ctl{display:flex; gap:6px; align-items:center;}
+  .bar button{border:1px solid var(--line); background:none; color:var(--text); border-radius:8px; padding:5px 10px; cursor:pointer;}
+  .bar button.on{border-color:var(--fry); color:var(--fry);}
+  footer{color:var(--dim); font-size:13px; margin:36px 0 10px; text-align:center;}
+  @media (max-width:560px){ .tr{grid-template-columns:44px minmax(0,1fr);} .tm{grid-column:2;} .bar .in{grid-template-columns:minmax(0,1fr) auto;} .bar .t{grid-column:1/-1;} }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <a class="logo" href="../"><span class="fry">🍟</span><span><b>Frenchfries777</b> Music</span></a>
+    <span class="sp"></span>
+    <a class="hubBtn" href="../" data-u="hub">허브</a>
+  </header>
+  <h1 data-u="title">음악 감상실</h1>
+  <p class="lead" data-u="lead">게임에 나오는 배경음악을 모아 두었어요. 눌러서 들어 보세요.</p>
+  <div id="games"></div>
+  <footer>Frenchfries777 · <a href="../">frenchfries777mc.github.io/games</a></footer>
+</div>
+<div class="bar" id="bar"><div class="in">
+  <div class="t" id="barT"></div>
+  <input type="range" id="seek" min="0" max="1000" value="0" aria-label="seek">
+  <div class="ctl"><span class="tm" id="barTm">0:00</span><button id="loopBtn" data-u="loop">반복</button><button id="nextBtn" data-u="next">다음 ▶</button></div>
+</div></div>
+<script>
+(function(){
+'use strict';
+/* 곡 목록: 각 게임 사이트에 있는 mp3를 그대로 재생해요. 게임에 곡이 추가되면 여기에 한 줄 더하면 돼요 */
+var SITE='https://frenchfries777mc.github.io/';
+var GAMES=[
+  {id:'stickseum', name:'Stickseum', img:'../stickseum.webp', url:SITE+'stickseum/', tracks:[
+    {f:SITE+'stickseum/music-lobby.mp3', n:'로비', d:'메뉴와 대기실에서 나오는 잔잔한 곡'},
+    {f:SITE+'stickseum/music-battle.mp3', n:'대전', d:'대전 중에 나오는 빠른 전투 곡'}]},
+  {id:'crownenvoy', name:'Crown Envoy', img:'../crown-envoy.webp', url:SITE+'crownenvoy/', tracks:[
+    {f:SITE+'crownenvoy/CrownEnvoy-music.mp3', n:'전투', d:'게임 중 번갈아 나오는 전투 음악'},
+    {f:SITE+'crownenvoy/CrownEnvoy-music2.mp3', n:'궁정', d:'하프시코드와 현악기로 된 궁정풍 곡'}]},
+  {id:'beaconfall', name:'Beaconfall', img:'../beaconfall.webp', url:SITE+'beaconfall/', tracks:[
+    {f:SITE+'beaconfall/bgm-spring.mp3', n:'봄', d:'봄 계절 곡'},
+    {f:'beaconfall-summer.mp3', n:'여름 · 로비', d:'여름과 로비에서 나오는 원래 곡'},
+    {f:SITE+'beaconfall/bgm-autumn.mp3', n:'가을', d:'가을 계절 곡'},
+    {f:SITE+'beaconfall/bgm-winter.mp3', n:'겨울', d:'겨울 계절 곡'},
+    {f:SITE+'beaconfall/bgm-volcano.mp3', n:'화산섬', d:'북소리와 금관악기'},
+    {f:SITE+'beaconfall/bgm-ice.mp3', n:'얼음섬', d:'맑은 종소리'},
+    {f:SITE+'beaconfall/bgm-jungle.mp3', n:'정글섬 · 맹그로브섬', d:'마림바와 봉고'},
+    {f:SITE+'beaconfall/bgm-desert.mp3', n:'사막섬 · 메사섬', d:'중동풍 현악기와 손북'},
+    {f:SITE+'beaconfall/bgm-night.mp3', n:'밤 소리', d:'파도와 풀벌레 (환경음)'},
+    {f:SITE+'beaconfall/bgm-rain.mp3', n:'빗소리', d:'비와 폭풍우 (환경음)'}]}
+];
+var TR={
+  en:{hub:'Hub',title:'Music Room',lead:'The background music from our games, all in one place. Tap to listen.',loop:'Repeat',next:'Next ▶',play:'Play','게임 사이트':'Game site',
+    '로비':'Lobby','대전':'Battle','전투':'Battle','궁정':'Court','봄':'Spring','여름 · 로비':'Summer · Lobby','가을':'Autumn','겨울':'Winter','화산섬':'Volcano Island','얼음섬':'Ice Island','정글섬 · 맹그로브섬':'Jungle · Mangrove Islands','사막섬 · 메사섬':'Desert · Mesa Islands','밤 소리':'Night','빗소리':'Rain',
+    '메뉴와 대기실에서 나오는 잔잔한 곡':'Calm track for menus and waiting rooms','대전 중에 나오는 빠른 전투 곡':'Fast track during matches','게임 중 번갈아 나오는 전투 음악':'Battle music that alternates during the game','하프시코드와 현악기로 된 궁정풍 곡':'Courtly harpsichord and strings','봄 계절 곡':'Spring season track','여름과 로비에서 나오는 원래 곡':'The original track for summer and the lobby','가을 계절 곡':'Autumn season track','겨울 계절 곡':'Winter season track','북소리와 금관악기':'Drums and brass','맑은 종소리':'Clear bells','마림바와 봉고':'Marimba and bongos','중동풍 현악기와 손북':'Middle-Eastern strings and frame drum','파도와 풀벌레 (환경음)':'Waves and insects (ambience)','비와 폭풍우 (환경음)':'Rain and storms (ambience)'},
+  es:{hub:'Hub',title:'Sala de música',lead:'La música de fondo de nuestros juegos, en un solo lugar. Toca para escuchar.',loop:'Repetir',next:'Siguiente ▶',play:'Reproducir','게임 사이트':'Sitio del juego',
+    '로비':'Lobby','대전':'Combate','전투':'Batalla','궁정':'Corte','봄':'Primavera','여름 · 로비':'Verano · Lobby','가을':'Otoño','겨울':'Invierno','화산섬':'Isla volcánica','얼음섬':'Isla de hielo','정글섬 · 맹그로브섬':'Islas jungla · manglar','사막섬 · 메사섬':'Islas desierto · mesa','밤 소리':'Noche','빗소리':'Lluvia',
+    '메뉴와 대기실에서 나오는 잔잔한 곡':'Pista tranquila de menús y salas','대전 중에 나오는 빠른 전투 곡':'Pista rápida durante las partidas','게임 중 번갈아 나오는 전투 음악':'Música de batalla que se alterna en la partida','하프시코드와 현악기로 된 궁정풍 곡':'Pieza cortesana de clavecín y cuerdas','봄 계절 곡':'Pista de primavera','여름과 로비에서 나오는 원래 곡':'Pista original de verano y lobby','가을 계절 곡':'Pista de otoño','겨울 계절 곡':'Pista de invierno','북소리와 금관악기':'Tambores y metales','맑은 종소리':'Campanas claras','마림바와 봉고':'Marimba y bongós','중동풍 현악기와 손북':'Cuerdas orientales y pandero','파도와 풀벌레 (환경음)':'Olas e insectos (ambiente)','비와 폭풍우 (환경음)':'Lluvia y tormenta (ambiente)'},
+  fr:{hub:'Hub',title:'Salle de musique',lead:'La musique de fond de nos jeux, réunie au même endroit. Touchez pour écouter.',loop:'Répéter',next:'Suivant ▶',play:'Lire','게임 사이트':'Site du jeu',
+    '로비':'Salon','대전':'Combat','전투':'Bataille','궁정':'Cour','봄':'Printemps','여름 · 로비':'Été · Salon','가을':'Automne','겨울':'Hiver','화산섬':'Île volcanique','얼음섬':'Île de glace','정글섬 · 맹그로브섬':'Îles jungle · mangrove','사막섬 · 메사섬':'Îles désert · mesa','밤 소리':'Nuit','빗소리':'Pluie',
+    '메뉴와 대기실에서 나오는 잔잔한 곡':'Morceau calme des menus et salons','대전 중에 나오는 빠른 전투 곡':'Morceau rapide pendant les matchs','게임 중 번갈아 나오는 전투 음악':'Musique de bataille en alternance','하프시코드와 현악기로 된 궁정풍 곡':'Air de cour au clavecin et aux cordes','봄 계절 곡':'Morceau du printemps','여름과 로비에서 나오는 원래 곡':'Morceau d’origine de l’été et du salon','가을 계절 곡':'Morceau de l’automne','겨울 계절 곡':'Morceau de l’hiver','북소리와 금관악기':'Tambours et cuivres','맑은 종소리':'Cloches claires','마림바와 봉고':'Marimba et bongos','중동풍 현악기와 손북':'Cordes orientales et tambour sur cadre','파도와 풀벌레 (환경음)':'Vagues et insectes (ambiance)','비와 폭풍우 (환경음)':'Pluie et orage (ambiance)'},
+  de:{hub:'Hub',title:'Musikraum',lead:'Die Hintergrundmusik unserer Spiele an einem Ort. Tippen zum Anhören.',loop:'Wiederholen',next:'Weiter ▶',play:'Abspielen','게임 사이트':'Spielseite',
+    '로비':'Lobby','대전':'Kampf','전투':'Schlacht','궁정':'Hof','봄':'Frühling','여름 · 로비':'Sommer · Lobby','가을':'Herbst','겨울':'Winter','화산섬':'Vulkaninsel','얼음섬':'Eisinsel','정글섬 · 맹그로브섬':'Dschungel- · Mangroveninsel','사막섬 · 메사섬':'Wüsten- · Mesainsel','밤 소리':'Nacht','빗소리':'Regen',
+    '메뉴와 대기실에서 나오는 잔잔한 곡':'Ruhiges Stück für Menüs und Warteräume','대전 중에 나오는 빠른 전투 곡':'Schnelles Stück im Match','게임 중 번갈아 나오는 전투 음악':'Kampfmusik im Wechsel','하프시코드와 현악기로 된 궁정풍 곡':'Höfisches Stück mit Cembalo und Streichern','봄 계절 곡':'Frühlingsstück','여름과 로비에서 나오는 원래 곡':'Ursprüngliches Stück für Sommer und Lobby','가을 계절 곡':'Herbststück','겨울 계절 곡':'Winterstück','북소리와 금관악기':'Trommeln und Blechbläser','맑은 종소리':'Klare Glocken','마림바와 봉고':'Marimba und Bongos','중동풍 현악기와 손북':'Orientalische Saiten und Rahmentrommel','파도와 풀벌레 (환경음)':'Wellen und Insekten (Ambiente)','비와 폭풍우 (환경음)':'Regen und Sturm (Ambiente)'},
+  ja:{hub:'ハブ',title:'音楽室',lead:'ゲームのBGMを一か所に集めました。タップして聴いてみてください。',loop:'リピート',next:'次へ ▶',play:'再生','게임 사이트':'ゲームサイト',
+    '로비':'ロビー','대전':'対戦','전투':'戦闘','궁정':'宮廷','봄':'春','여름 · 로비':'夏 · ロビー','가을':'秋','겨울':'冬','화산섬':'火山島','얼음섬':'氷の島','정글섬 · 맹그로브섬':'ジャングル島 · マングローブ島','사막섬 · 메사섬':'砂漠島 · メサ島','밤 소리':'夜','빗소리':'雨',
+    '메뉴와 대기실에서 나오는 잔잔한 곡':'メニューと待機室の落ち着いた曲','대전 중에 나오는 빠른 전투 곡':'対戦中の速い曲','게임 중 번갈아 나오는 전투 음악':'ゲーム中に交互に流れる戦闘曲','하프시코드와 현악기로 된 궁정풍 곡':'チェンバロと弦楽器の宮廷風の曲','봄 계절 곡':'春の曲','여름과 로비에서 나오는 원래 곡':'夏とロビーの元の曲','가을 계절 곡':'秋の曲','겨울 계절 곡':'冬の曲','북소리와 금관악기':'太鼓と金管楽器','맑은 종소리':'澄んだ鐘','마림바와 봉고':'マリンバとボンゴ','중동풍 현악기와 손북':'中東風の弦楽器とフレームドラム','파도와 풀벌레 (환경음)':'波と虫の声（環境音）','비와 폭풍우 (환경음)':'雨と嵐（環境音）'}
+};
+var lang='ko'; try{ if(window.FFLang){ var l=FFLang.get(); if(TR[l]) lang=l; } }catch(e){}
+document.documentElement.lang=lang;
+function t(s){ return lang!=='ko'&&TR[lang][s]||s; }
+document.querySelectorAll('[data-u]').forEach(function(el){ var k=el.getAttribute('data-u'); if(lang!=='ko'&&TR[lang][k]) el.textContent=TR[lang][k]; });
+if(lang!=='ko') document.title='Frenchfries777 Music';
+function esc(s){ return String(s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];}); }
+var all=[], box=document.getElementById('games'), h='';
+GAMES.forEach(function(g){
+  h+='<h2><img src="'+g.img+'" alt="">'+esc(g.name)+'<a href="'+g.url+'">'+esc(t('게임 사이트'))+' →</a></h2><div class="list">';
+  g.tracks.forEach(function(tk){ var i=all.length; all.push({f:tk.f,n:g.name+' · '+t(tk.n)});
+    h+='<div class="tr" id="tr'+i+'"><button class="pb" data-i="'+i+'" aria-label="'+esc(t('play'))+'">▶</button><div><div class="nm">'+esc(t(tk.n))+'</div><div class="ds">'+esc(t(tk.d))+'</div></div><span class="tm" id="tm'+i+'">–:––</span></div>'; });
+  h+='</div>';
+});
+box.innerHTML=h;
+var au=new Audio(), cur=-1, loop=false; au.preload='none';
+var bar=document.getElementById('bar'), seek=document.getElementById('seek'), barT=document.getElementById('barT'), barTm=document.getElementById('barTm'), loopBtn=document.getElementById('loopBtn');
+function fmt(s){ if(!isFinite(s)) return '–:––'; s=Math.floor(s); return Math.floor(s/60)+':'+String(s%60).padStart(2,'0'); }
+function mark(){ all.forEach(function(_,i){ var r=document.getElementById('tr'+i); r.classList.toggle('on',i===cur); r.querySelector('.pb').textContent=(i===cur&&!au.paused)?'❚❚':'▶'; }); }
+function play(i){
+  if(i===cur){ if(au.paused) au.play().catch(function(){}); else au.pause(); return; }
+  cur=i; au.src=all[i].f; au.loop=loop; au.play().catch(function(){}); barT.textContent=all[i].n; bar.classList.add('show'); mark();
+}
+box.addEventListener('click',function(e){ var b=e.target.closest('.pb'); if(b) play(+b.getAttribute('data-i')); });
+au.addEventListener('play',mark); au.addEventListener('pause',mark);
+au.addEventListener('loadedmetadata',function(){ var el=document.getElementById('tm'+cur); if(el) el.textContent=fmt(au.duration); });
+au.addEventListener('timeupdate',function(){ if(au.duration){ seek.value=Math.round(au.currentTime/au.duration*1000); barTm.textContent=fmt(au.currentTime)+' / '+fmt(au.duration); } });
+au.addEventListener('ended',function(){ if(!loop) play((cur+1)%all.length); });
+seek.addEventListener('input',function(){ if(au.duration) au.currentTime=seek.value/1000*au.duration; });
+loopBtn.addEventListener('click',function(){ loop=!loop; au.loop=loop; loopBtn.classList.toggle('on',loop); });
+document.getElementById('nextBtn').addEventListener('click',function(){ play((cur+1)%all.length); });
+})();
+</script>
+</body>
+</html>
