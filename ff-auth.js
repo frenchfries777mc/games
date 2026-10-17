@@ -72,6 +72,7 @@ async function setUser(u){
   user=u||null; prof=null;
   if(user){ try{ var r=await sb.from('profiles').select('username,display_name').eq('id',user.id).single(); prof=(r&&r.data)||null; }catch(e){} }
   paint(); subs.forEach(function(f){ try{ f(user, prof); }catch(e){} });
+  if(user&&!prof&&!isIdAcct(user)) setTimeout(openSetup,0);
 }
 function nick(){ return (prof&&(prof.display_name||prof.username)) || (user&&String(user.email||'').split('@')[0]) || ''; }
 
@@ -107,6 +108,65 @@ async function signUp(id, pw){
   if(p.error) return {error:T.taken};
   pwSave(id,pw); await setUser(r.data.user); return {ok:true};
 }
+/* ---- GitHub / Google login (Supabase OAuth). Providers must be turned on in the Supabase dashboard; a social account
+   gets its own login ID + nickname the first time (profiles row), and an old ID account can link them in My account ---- */
+var OAL={
+ ko:{or:'또는',gh:'GitHub로 계속하기',gg:'Google로 계속하기',off:'아직 이 로그인 방법이 켜져 있지 않아요.',
+     setT:'아이디 정하기',setP:'처음 오셨네요. 게임과 친구 찾기에 쓸 아이디와 닉네임을 정해 주세요.',nick:'닉네임 (최대 12자)',go:'시작하기',later:'취소하고 로그아웃',
+     linkT:'연결된 로그인',linkP:'연결해 두면 아이디·비밀번호 대신 이 버튼으로도 같은 계정에 로그인해요.',link:'연결',linked:'✓ 연결됨',pwSoc:'이 계정은 GitHub나 Google 버튼으로 로그인해요.',linkErr:'연결하지 못했어요. 이미 다른 계정에 연결된 것일 수 있어요.'},
+ en:{or:'or',gh:'Continue with GitHub',gg:'Continue with Google',off:'This login method is not turned on yet.',
+     setT:'Pick a username',setP:'Welcome! Pick the username and nickname you will use in the games and for friends.',nick:'Nickname (up to 12)',go:'Start',later:'Cancel and log out',
+     linkT:'Linked logins',linkP:'Once linked, this button logs you into the same account instead of your username and password.',link:'Link',linked:'✓ Linked',pwSoc:'This account logs in with the GitHub or Google button.',linkErr:'Could not link. It may already belong to another account.'},
+ es:{or:'o',gh:'Continuar con GitHub',gg:'Continuar con Google',off:'Este método de inicio aún no está activado.',
+     setT:'Elige un usuario',setP:'¡Bienvenido! Elige el usuario y el apodo para los juegos y los amigos.',nick:'Apodo (máx. 12)',go:'Empezar',later:'Cancelar y cerrar sesión',
+     linkT:'Inicios vinculados',linkP:'Al vincularlo, este botón entra en la misma cuenta sin usuario ni contraseña.',link:'Vincular',linked:'✓ Vinculado',pwSoc:'Esta cuenta entra con el botón de GitHub o Google.',linkErr:'No se pudo vincular. Puede que ya pertenezca a otra cuenta.'},
+ fr:{or:'ou',gh:'Continuer avec GitHub',gg:'Continuer avec Google',off:'Ce mode de connexion n’est pas encore activé.',
+     setT:'Choisis un identifiant',setP:'Bienvenue ! Choisis l’identifiant et le pseudo pour les jeux et les amis.',nick:'Pseudo (12 max)',go:'Commencer',later:'Annuler et se déconnecter',
+     linkT:'Connexions liées',linkP:'Une fois lié, ce bouton ouvre le même compte sans identifiant ni mot de passe.',link:'Lier',linked:'✓ Lié',pwSoc:'Ce compte se connecte avec le bouton GitHub ou Google.',linkErr:'Liaison impossible. Il appartient peut-être déjà à un autre compte.'},
+ de:{or:'oder',gh:'Weiter mit GitHub',gg:'Weiter mit Google',off:'Diese Anmeldeart ist noch nicht eingeschaltet.',
+     setT:'Benutzernamen wählen',setP:'Willkommen! Wähle Benutzername und Spitzname für die Spiele und Freunde.',nick:'Spitzname (max. 12)',go:'Los geht’s',later:'Abbrechen und abmelden',
+     linkT:'Verknüpfte Anmeldungen',linkP:'Verknüpft meldet dich dieser Knopf ohne Benutzername und Passwort im selben Konto an.',link:'Verknüpfen',linked:'✓ Verknüpft',pwSoc:'Dieses Konto meldet sich mit dem GitHub- oder Google-Knopf an.',linkErr:'Verknüpfen fehlgeschlagen. Es gehört vielleicht schon zu einem anderen Konto.'},
+ ja:{or:'または',gh:'GitHubで続ける',gg:'Googleで続ける',off:'このログイン方法はまだ有効になっていません。',
+     setT:'IDを決める',setP:'はじめまして。ゲームとフレンド検索で使うIDとニックネームを決めてください。',nick:'ニックネーム(12文字まで)',go:'はじめる',later:'やめてログアウト',
+     linkT:'連携したログイン',linkP:'連携すると、IDとパスワードの代わりにこのボタンで同じアカウントにログインできます。',link:'連携',linked:'✓ 連携済み',pwSoc:'このアカウントはGitHubかGoogleのボタンでログインします。',linkErr:'連携できませんでした。別のアカウントに連携済みかもしれません。'}
+};
+function OA(){ return OAL[lang()]||OAL.en; }
+var OAP=[['github','gh','<svg viewBox="0 0 16 16" width="18" height="18" fill="currentColor" aria-hidden="true"><path d="M8 0a8 8 0 0 0-2.53 15.59c.4.07.55-.17.55-.38v-1.33c-2.23.48-2.7-1.07-2.7-1.07-.36-.92-.89-1.17-.89-1.17-.73-.5.05-.49.05-.49.8.06 1.23.83 1.23.83.72 1.22 1.87.87 2.33.66.07-.52.28-.87.5-1.07-1.78-.2-3.65-.89-3.65-3.95 0-.87.31-1.59.83-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.22 2.2.82a7.6 7.6 0 0 1 4 0c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.52.56.83 1.28.83 2.15 0 3.07-1.87 3.75-3.66 3.95.29.25.54.73.54 1.48v2.2c0 .21.15.46.55.38A8 8 0 0 0 8 0z"/></svg>'],
+ ['google','gg','<svg viewBox="0 0 48 48" width="18" height="18" aria-hidden="true"><path fill="#FFC107" d="M43.6 20.5H42V20H24v8h11.3C33.7 32.7 29.2 36 24 36c-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.8 1.2 7.9 3.1l5.7-5.7C34 6.1 29.3 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20 20-8.9 20-20c0-1.3-.1-2.4-.4-3.5z"/><path fill="#FF3D00" d="M6.3 14.7l6.6 4.8C14.7 15.1 19 12 24 12c3.1 0 5.8 1.2 7.9 3.1l5.7-5.7C34 6.1 29.3 4 24 4 16.3 4 9.7 8.3 6.3 14.7z"/><path fill="#4CAF50" d="M24 44c5.2 0 9.9-2 13.4-5.2l-6.2-5.2C29.2 35.1 26.7 36 24 36c-5.2 0-9.6-3.3-11.3-8l-6.5 5C9.5 39.6 16.2 44 24 44z"/><path fill="#1976D2" d="M43.6 20.5H42V20H24v8h11.3c-.8 2.2-2.2 4.2-4.1 5.6l6.2 5.2C37 39.2 44 34 44 24c0-1.3-.1-2.4-.4-3.5z"/></svg>']];
+function backUrl(){ return location.origin+location.pathname+location.search; }   // no #hash: Supabase puts its tokens there
+function isIdAcct(u){ return /@arenaclash\.local$/i.test(String((u&&u.email)||'')); }
+function oaBtns(){ return OAP.map(function(x){ return '<button type="button" class="ffa-oa" data-p="'+x[0]+'">'+x[2]+'<span>'+esc(OA()[x[1]])+'</span></button>'; }).join(''); }
+function oaErr(e){ return /not enabled|unsupported provider|provider is not/i.test(String((e&&e.message)||''))?OA().off:errText(e); }
+async function oauth(p, m){
+  if(!sb){ if(m) m.textContent=T.net; return; }
+  if(m) m.textContent=T.busy;
+  try{ var r=await sb.auth.signInWithOAuth({provider:p, options:{redirectTo:backUrl()}}); if(r&&r.error&&m) m.textContent=oaErr(r.error); }   // on success the page leaves for GitHub/Google
+  catch(e){ if(m) m.textContent=oaErr(e); }
+}
+/* the first visit after a GitHub/Google login: no profiles row yet, so ask for a login ID (unique, like the ID accounts) and a nickname */
+function suggestId(u){ var md=(u&&u.user_metadata)||{}, s=String(md.user_name||md.preferred_username||String(u.email||'').split('@')[0]||'').replace(/[^a-zA-Z0-9_]/g,'').slice(0,16); return s.length>=3?s:''; }
+function openSetup(){
+  if(!user||prof||isIdAcct(user)) return; css();
+  var O=OA(), el=document.getElementById('ffaSetup'); if(el) el.remove();
+  var md=user.user_metadata||{}, nk=String(md.full_name||md.name||md.user_name||'').trim().slice(0,12);
+  el=document.createElement('div'); el.id='ffaSetup'; el.setAttribute('data-notr','');
+  el.innerHTML='<form class="b"><h3>'+esc(O.setT)+'</h3><p>'+esc(O.setP)+'</p>'+
+    '<input name="u" autocapitalize="off" spellcheck="false" maxlength="16" placeholder="'+esc(T.id)+'">'+
+    '<input name="n" maxlength="12" placeholder="'+esc(O.nick)+'"><div class="m"></div>'+
+    '<button type="submit" class="ffa-btn go">'+esc(O.go)+'</button><div class="sw"><a>'+esc(O.later)+'</a></div></form>';
+  document.body.appendChild(el);
+  var f=el.querySelector('form'), m=el.querySelector('.m'); f.u.value=suggestId(user); f.n.value=nk;
+  el.querySelector('.sw a').onclick=function(){ el.remove(); signOut(); };
+  f.onsubmit=async function(e){ e.preventDefault(); var id=f.u.value.trim(), n=f.n.value.trim().slice(0,12), go=el.querySelector('.go');
+    if(!/^[a-zA-Z0-9_]{3,16}$/.test(id)){ m.textContent=T.badId; return; }
+    go.disabled=true; m.textContent=T.busy;
+    try{ var d=await sb.from('profiles').select('id').ilike('username',likeEsc(id)).limit(1);
+      if(d&&d.data&&d.data.length){ m.textContent=T.taken; return; }
+      var r=await sb.from('profiles').insert({id:user.id, username:id, display_name:n||id});
+      if(r.error){ m.textContent=/duplicate|unique|23505/i.test(JSON.stringify(r.error))?T.taken:T.fail; return; }
+      el.remove(); await setUser(user);
+    }catch(x){ m.textContent=T.fail; } finally{ go.disabled=false; } };
+}
 async function signOut(){ pwClear(); try{ if(sb) await sb.auth.signOut({scope:'local'}); }catch(e){} await setUser(null); }   // 'local': only this browser, other devices stay logged in
 
 /* ---- UI ---- */
@@ -126,6 +186,14 @@ var CSS='.ffa-btn{display:inline-flex;align-items:center;gap:6px;background:line
  '#ffaModal input:focus{outline:none;border-color:#ffc93c}#ffaModal .ffa-btn{width:100%;justify-content:center;padding:11px;font-size:15px}'+
  '#ffaModal .m{min-height:18px;font-size:13px;color:#ff9b7a;margin:0 0 10px}#ffaModal .sw{margin-top:14px;text-align:center;font-size:13px;color:#8a93a6}'+
  '#ffaModal .pwr,#ffaAcct .pwr{position:relative}#ffaModal .pwr input,#ffaAcct .pwr input{padding-right:44px}#ffaModal .eye,#ffaAcct .eye{position:absolute;right:4px;top:3px;width:38px;height:38px;background:none;border:0;font-size:18px;cursor:pointer;opacity:.7}'+
+ '#ffaModal .or,#ffaSetup .or{display:flex;align-items:center;gap:10px;margin:14px 0 10px;color:#8a93a6;font-size:12px}#ffaModal .or:before,#ffaModal .or:after{content:"";flex:1;height:1px;background:#2b3245}'+
+ '.ffa-oa{display:flex;width:100%;align-items:center;justify-content:center;gap:9px;margin:0 0 8px;padding:10px;border-radius:9px;border:1px solid #2b3245;background:#08090d;color:#eef0f5;font:inherit;font-size:14.5px;font-weight:700;cursor:pointer}.ffa-oa:hover{border-color:#ffc93c}'+
+ '#ffaSetup{position:fixed;inset:0;z-index:2147482600;background:rgba(5,6,10,.8);display:flex;align-items:center;justify-content:center;padding:16px;font-family:system-ui,-apple-system,"Noto Sans KR",sans-serif}'+
+ '#ffaSetup .b{width:100%;max-width:360px;background:#10131b;border:1px solid #2b3245;border-radius:16px;padding:22px;color:#eef0f5;box-shadow:0 20px 50px rgba(0,0,0,.5)}#ffaSetup h3{margin:0 0 6px;font-size:19px}#ffaSetup p{margin:0 0 16px;color:#8a93a6;font-size:13px;line-height:1.5}'+
+ '#ffaSetup input{display:block;width:100%;box-sizing:border-box;margin:0 0 10px;padding:11px 12px;border-radius:9px;border:1px solid #2b3245;background:#08090d;color:#eef0f5;font:inherit;font-size:16px}#ffaSetup input:focus{outline:none;border-color:#ffc93c}'+
+ '#ffaSetup .ffa-btn{width:100%;justify-content:center;padding:11px;font-size:15px}#ffaSetup .m{min-height:18px;font-size:13px;color:#ff9b7a;margin:0 0 10px}#ffaSetup .sw{margin-top:14px;text-align:center;font-size:13px}#ffaSetup .sw a{color:#8a93a6;cursor:pointer;text-decoration:underline}'+
+ '#ffaModal .ffa-in .ffa-oa span{display:none}#ffaModal .ffa-in .ffa-oa{display:inline-flex;width:44px;height:40px;padding:0;margin:0 4px}#ffaModal .ffa-in .oas{text-align:center}#ffaModal .ffa-in .or{margin:12px 0 8px}'+
+ '.ffa-lk{display:flex;align-items:center;gap:9px;margin:0 0 8px;padding:8px 10px;border:1px solid #2b3245;border-radius:9px;background:#08090d}.ffa-lk span{flex:1;font-weight:700;font-size:14px}.ffa-lk b{color:#7ddc8a;font-size:13px}.ffa-lk .ffa-btn{padding:6px 12px;font-size:13px}'+
  '#ffaModal .sw a{color:#ffc93c;cursor:pointer;margin-left:4px}#ffaModal .x{float:right;background:none;border:0;color:#8a93a6;font-size:20px;cursor:pointer;line-height:1}';
 function css(){ if(document.getElementById('ffaCss')) return; var s=document.createElement('style'); s.id='ffaCss'; s.textContent=CSS; document.head.appendChild(s); }
 
@@ -136,12 +204,13 @@ function modal(){
   el.innerHTML='<form class="b" autocomplete="on"><button type="button" class="x" aria-label="'+esc(T.close)+'">×</button><h3></h3><p>'+esc(T.sub)+'</p>'+
     '<input name="username" autocomplete="username" autocapitalize="off" spellcheck="false" maxlength="16" placeholder="'+esc(T.id)+'">'+
     '<div class="pwr"><input name="password" type="password" placeholder="'+esc(T.pw)+'"><button type="button" class="eye" aria-label="'+esc(AL().show)+'">👁</button></div>'+
-    '<div class="m"></div><button type="submit" class="ffa-btn go"></button><div class="sw"><span></span><a></a></div></form>';
+    '<div class="m"></div><button type="submit" class="ffa-btn go"></button><div class="or">'+esc(OA().or)+'</div>'+'<div class="oas">'+oaBtns()+'</div><div class="sw"><span></span><a></a></div></form>';
   document.body.appendChild(el);
   el.addEventListener('click',function(e){ if(e.target===el) close(); });
   el.querySelector('.x').onclick=close;
   el.querySelector('.eye').onclick=function(){ var i=el.querySelector('input[name=password]'); i.type=i.type==='password'?'text':'password'; };
   el.querySelector('.sw a').onclick=function(){ mode=mode==='in'?'up':'in'; fill(); };
+  el.querySelectorAll('.ffa-oa').forEach(function(b){ b.onclick=function(){ oauth(b.getAttribute('data-p'), el.querySelector('.m')); }; });
   el.querySelector('form').onsubmit=async function(e){
     e.preventDefault(); var f=e.target, m=el.querySelector('.m'), go=el.querySelector('.go');
     if(!sb){ m.textContent=T.net; return; }
@@ -155,7 +224,8 @@ function modal(){
 }
 function fill(){ var el=modal(); el.querySelector('h3').textContent=mode==='in'?T.title:T.signup; el.querySelector('.go').textContent=mode==='in'?T.login:T.signup;
   el.querySelector('.sw span').textContent=mode==='in'?T.noAcc:T.hasAcc; el.querySelector('.sw a').textContent=mode==='in'?T.signup:T.login;
-  el.querySelector('input[name=password]').setAttribute('autocomplete',mode==='in'?'current-password':'new-password'); el.querySelector('.m').textContent=''; }
+  el.querySelector('input[name=password]').setAttribute('autocomplete',mode==='in'?'current-password':'new-password'); el.querySelector('.m').textContent='';
+  el.querySelector('form').classList.toggle('ffa-in',mode==='in'); }
 function openLogin(m){ mode=m==='up'?'up':'in'; fill(); var el=modal(); el.style.display='flex'; setTimeout(function(){ try{ el.querySelector('input').focus(); }catch(e){} },30); }
 function close(){ var el=document.getElementById('ffaModal'); if(el) el.style.display='none'; }
 
@@ -284,6 +354,7 @@ function openAcct(){
       try{ navigator.clipboard.writeText(o.p).then(done,function(){ shown=true; draw(); }); }catch(e){ shown=true; draw(); } };
     draw(); }
   pwBox(); devPanel(el,say);
+  if(!isIdAcct(user)){ var pb=$('aPwBox'); pb.innerHTML='<p>'+esc(OA().pwSoc)+'</p>'; ['aNew','aPwGo','aPwM','aKeep'].forEach(function(i){ var x=$(i); x=i==='aNew'?x.parentNode:(i==='aKeep'?x.parentNode:x); x.style.display='none'; var nx=x.nextElementSibling; if(i==='aKeep'&&nx) nx.style.display='none'; }); }
   $('aKeep').onchange=function(){ try{ localStorage.setItem('arenaClashPwOpt',this.checked?'1':'0'); }catch(e){} if(!this.checked){ pwClear(); pwBox(); } };
   $('aNickGo').onclick=async function(){ var n=$('aNick').value.trim().slice(0,12); if(!n) return say('aNickM',A.badNick);
     if(n===((prof&&prof.display_name)||'')) return say('aNickM',A.same,true);
@@ -295,8 +366,8 @@ function openAcct(){
     try{
       var up=await sb.from('profiles').update({username:id}).eq('id',user.id);
       if(up.error) return say(m,/duplicate|unique|23505/i.test(JSON.stringify(up.error))?T.taken:A.err);
-      var ch=await sb.auth.updateUser({email:emailFor(id)});
-      if(ch.error){ await sb.from('profiles').update({username:curId}).eq('id',user.id);
+      var ch=isIdAcct(user)?await sb.auth.updateUser({email:emailFor(id)}):{};   // GitHub/Google accounts keep their real e-mail
+      if(ch&&ch.error){ await sb.from('profiles').update({username:curId}).eq('id',user.id);
         return say(m,/already|registered|exists/i.test(ch.error.message||'')?T.taken:A.err); }
       var o=pwGet(); if(o) pwSave(id,o.p);
       prof=Object.assign({},prof||{},{username:id}); curId=id; paint(); say(m,A.idDone,true);
@@ -487,18 +558,19 @@ if(document.readyState==='loading') document.addEventListener('DOMContentLoaded'
    The bell sits next to the nickname on the hub and every game site; a message window opens from the friends list. */
 /* ---- ⚙️ settings: theme and text size (FFTheme in ff-lang.js), the same on the hub and every game site ---- */
 var SL={
- ko:{set:'설정',theme:'테마',dark:'🌙 다크',light:'☀️ 라이트',size:'글자 크기',s:'작게',m:'보통',l:'크게',xl:'아주 크게',note:'허브와 게임 사이트에 같이 적용돼요.'},
- en:{set:'Settings',theme:'Theme',dark:'🌙 Dark',light:'☀️ Light',size:'Text size',s:'Small',m:'Normal',l:'Large',xl:'Extra large',note:'Applies to the hub and the game sites.'},
- es:{set:'Ajustes',theme:'Tema',dark:'🌙 Oscuro',light:'☀️ Claro',size:'Tamaño del texto',s:'Pequeño',m:'Normal',l:'Grande',xl:'Muy grande',note:'Se aplica al inicio y a las webs de los juegos.'},
- fr:{set:'Réglages',theme:'Thème',dark:'🌙 Sombre',light:'☀️ Clair',size:'Taille du texte',s:'Petit',m:'Normal',l:'Grand',xl:'Très grand',note:'S’applique à l’accueil et aux sites des jeux.'},
- de:{set:'Einstellungen',theme:'Design',dark:'🌙 Dunkel',light:'☀️ Hell',size:'Textgröße',s:'Klein',m:'Normal',l:'Groß',xl:'Sehr groß',note:'Gilt für die Startseite und die Spielseiten.'},
- ja:{set:'設定',theme:'テーマ',dark:'🌙 ダーク',light:'☀️ ライト',size:'文字の大きさ',s:'小',m:'標準',l:'大',xl:'特大',note:'ハブとゲームサイトに一緒に適用されます。'}
+ ko:{lang:'언어',set:'설정',theme:'테마',dark:'🌙 다크',light:'☀️ 라이트',size:'글자 크기',s:'작게',m:'보통',l:'크게',xl:'아주 크게',note:'허브와 게임 사이트에 같이 적용돼요.'},
+ en:{lang:'Language',set:'Settings',theme:'Theme',dark:'🌙 Dark',light:'☀️ Light',size:'Text size',s:'Small',m:'Normal',l:'Large',xl:'Extra large',note:'Applies to the hub and the game sites.'},
+ es:{lang:'Idioma',set:'Ajustes',theme:'Tema',dark:'🌙 Oscuro',light:'☀️ Claro',size:'Tamaño del texto',s:'Pequeño',m:'Normal',l:'Grande',xl:'Muy grande',note:'Se aplica al inicio y a las webs de los juegos.'},
+ fr:{lang:'Langue',set:'Réglages',theme:'Thème',dark:'🌙 Sombre',light:'☀️ Clair',size:'Taille du texte',s:'Petit',m:'Normal',l:'Grand',xl:'Très grand',note:'S’applique à l’accueil et aux sites des jeux.'},
+ de:{lang:'Sprache',set:'Einstellungen',theme:'Design',dark:'🌙 Dunkel',light:'☀️ Hell',size:'Textgröße',s:'Klein',m:'Normal',l:'Groß',xl:'Sehr groß',note:'Gilt für die Startseite und die Spielseiten.'},
+ ja:{lang:'言語',set:'設定',theme:'テーマ',dark:'🌙 ダーク',light:'☀️ ライト',size:'文字の大きさ',s:'小',m:'標準',l:'大',xl:'特大',note:'ハブとゲームサイトに一緒に適用されます。'}
 };
 var S_=SL[lang()]||SL.en;
+var LANGS=[['ko','한국어'],['en','English'],['es','Español'],['fr','Français'],['de','Deutsch'],['ja','日本語']];
 var SCSS='.ffa-set{background:#10131b;color:#eef0f5;border:1px solid #2b3245;border-radius:9px;padding:6px 9px;font-size:15px;cursor:pointer;margin-right:6px;line-height:1.2;vertical-align:middle}.ffa-set:hover{border-color:#ffc93c}'+
  '.ffa-setp{position:absolute;right:0;top:calc(100% + 6px);width:min(280px,calc(100vw - 24px));background:#10131b;border:1px solid #2b3245;border-radius:12px;padding:10px 12px;z-index:2147482000;box-shadow:0 12px 30px rgba(0,0,0,.45);display:none;text-align:left;color:#eef0f5;font-family:system-ui,-apple-system,"Noto Sans KR",sans-serif;white-space:normal}'+
  '.ffa-setp b{display:block;font-size:13px;color:#8a93a6;margin:6px 0 6px}.ffa-setp .g{display:flex;flex-wrap:wrap;gap:6px}.ffa-setp .g button{flex:1;background:#1b2030;color:#eef0f5;border:1px solid #2b3245;border-radius:8px;padding:7px 8px;font:inherit;font-size:13.5px;font-weight:700;cursor:pointer;white-space:nowrap}'+
- '.ffa-setp .g button.on{background:linear-gradient(135deg,#ffc93c,#ff8a3d);color:#1a1206;border-color:transparent}.ffa-setp small{display:block;color:#8a93a6;font-size:12px;margin-top:8px}';
+ '.ffa-setp .ffa-lg button{flex:1 1 30%}.ffa-setp .g button.on{background:linear-gradient(135deg,#ffc93c,#ff8a3d);color:#1a1206;border-color:transparent}.ffa-setp small{display:block;color:#8a93a6;font-size:12px;margin-top:8px}';
 function setPaint(){
   if(!window.FFTheme) return; if(!document.getElementById('ffaSCss')){ var st=document.createElement('style'); st.id='ffaSCss'; st.textContent=SCSS; document.head.appendChild(st); }
   var ws=document.querySelectorAll('[data-ff-account] .ffa-wrap'); for(var i=0;i<ws.length;i++){ var w=ws[i]; if(w.querySelector('.ffa-set')) continue;
@@ -509,7 +581,9 @@ function setPaint(){
 function setFill(p){
   var cur=FFTheme.get();
   p.innerHTML='<b>'+esc(S_.theme)+'</b><div class="g"><button type="button" data-th="dark">'+esc(S_.dark)+'</button><button type="button" data-th="light">'+esc(S_.light)+'</button></div>'+
-    '<b>'+esc(S_.size)+'</b><div class="g">'+FFTheme.sizes.map(function(z){ return '<button type="button" data-sz="'+z+'">'+esc(S_[z])+'</button>'; }).join('')+'</div><small>'+esc(S_.note)+'</small>';
+    '<b>'+esc(S_.size)+'</b><div class="g">'+FFTheme.sizes.map(function(z){ return '<button type="button" data-sz="'+z+'">'+esc(S_[z])+'</button>'; }).join('')+'</div>'+
+    '<b>'+esc(S_.lang)+'</b><div class="g ffa-lg">'+LANGS.map(function(x){ return '<button type="button" data-lg="'+x[0]+'">'+esc(x[1])+'</button>'; }).join('')+'</div><small>'+esc(S_.note)+'</small>';
+  [].forEach.call(p.querySelectorAll('[data-lg]'),function(x){ var l=x.getAttribute('data-lg'); x.classList.toggle('on',l===lang()); x.onclick=function(){ if(l===lang()) return; try{ localStorage.setItem('arenaClashLang',l); }catch(e){} try{ if(window.FFLang) FFLang.set(l); }catch(e){} location.reload(); }; });
   [].forEach.call(p.querySelectorAll('[data-th]'),function(x){ x.classList.toggle('on',x.getAttribute('data-th')===cur.theme); x.onclick=function(){ FFTheme.set(x.getAttribute('data-th')); setFill(p); }; });
   [].forEach.call(p.querySelectorAll('[data-sz]'),function(x){ x.classList.toggle('on',x.getAttribute('data-sz')===cur.size); x.onclick=function(){ FFTheme.set(null,x.getAttribute('data-sz')); setFill(p); }; });
 }
