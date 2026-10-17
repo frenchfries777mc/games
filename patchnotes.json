@@ -3,6 +3,46 @@
   {
    "date": "2026-10-17",
    "build": "",
+   "title": "위키 모드 이름 정리",
+   "items": [
+    "위키 Stickseum 문서의 클래식·미니게임 구분 표현 정리 (모드 14개, 특별 모드·일일 모드 기준)"
+   ],
+   "tr": {
+    "en": {
+     "title": "Wiki mode name cleanup",
+     "items": [
+      "Wiki Stickseum pages no longer use the old Classic/Minigame split (14 modes, Special Modes and Daily Modes)"
+     ]
+    },
+    "es": {
+     "title": "Limpieza de nombres de modos en la wiki",
+     "items": [
+      "Las páginas de Stickseum ya no usan la antigua división Clásico/Minijuego (14 modos, modos especiales y modos diarios)"
+     ]
+    },
+    "fr": {
+     "title": "Nettoyage des noms de modes du wiki",
+     "items": [
+      "Les pages Stickseum n'utilisent plus l'ancienne séparation Classique/Mini-jeu (14 modes, modes spéciaux et modes du jour)"
+     ]
+    },
+    "de": {
+     "title": "Wiki: Modusnamen bereinigt",
+     "items": [
+      "Die Stickseum-Seiten nutzen die alte Trennung Klassisch/Minispiel nicht mehr (14 Modi, Spezialmodi und Tagesmodi)"
+     ]
+    },
+    "ja": {
+     "title": "Wikiのモード名整理",
+     "items": [
+      "WikiのStickseumページから旧来のクラシック/ミニゲーム区分の表現を整理 (14モード、特別モード・デイリーモード)"
+     ]
+    }
+   }
+  },
+  {
+   "date": "2026-10-17",
+   "build": "",
    "title": "위키 Tools·Stickseum 변경 반영",
    "items": [
     "위키 Tools 문서 반영 (Fry Lab 실험 갤러리와 약 182가지 실험, Fry Sheet 엑셀 호환, FF777 모델 1.2, Block HTML AI 변환)",
