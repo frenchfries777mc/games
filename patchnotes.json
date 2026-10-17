@@ -3,6 +3,58 @@
   {
    "date": "2026-10-17",
    "build": "",
+   "title": "Tools Fry Slides v4 · Block HTML v10 위키 갱신",
+   "items": [
+    "Fry Slides 새 레이아웃 6종과 새 테마, 슬라이드 옵션, 발표 도우미 설명 추가",
+    "Fry Slides AI 새로 만들기·고치기·뒤에 추가와 표·그래프 PPTX 반영 설명 추가",
+    "Block HTML 페이지 블록 바깥의 화면 블록도 나타나는 동작으로 수정"
+   ],
+   "tr": {
+    "en": {
+     "title": "Tools Fry Slides v4 · Block HTML v10 wiki update",
+     "items": [
+      "Added the 6 new layouts, new themes, slide options and presenter helper to Fry Slides",
+      "Added AI create/fix/add-after and table and chart PPTX export to Fry Slides",
+      "Updated Block HTML: blocks left outside the page block now appear too"
+     ]
+    },
+    "es": {
+     "title": "Wiki de Tools Fry Slides v4 · Block HTML v10",
+     "items": [
+      "Se añadieron a Fry Slides 6 diseños nuevos, temas nuevos, opciones de diapositiva y ayuda del presentador",
+      "Se añadieron a Fry Slides la IA de crear, corregir y añadir después, y tablas y gráficos en PPTX",
+      "Block HTML actualizado: los bloques fuera del bloque página ahora también aparecen"
+     ]
+    },
+    "fr": {
+     "title": "Wiki de Tools Fry Slides v4 · Block HTML v10",
+     "items": [
+      "Ajout à Fry Slides de 6 nouvelles mises en page, de nouveaux thèmes, d'options de diapositive et de l'aide du présentateur",
+      "Ajout à Fry Slides de l'IA créer, corriger et ajouter après, et des tableaux et graphiques dans le PPTX",
+      "Block HTML mis à jour : les blocs restés hors du bloc page apparaissent désormais aussi"
+     ]
+    },
+    "de": {
+     "title": "Tools Fry Slides v4 · Block HTML v10 Wiki-Update",
+     "items": [
+      "Fry Slides um 6 neue Layouts, neue Designs, Folienoptionen und Präsentationshilfe ergänzt",
+      "Fry Slides um KI Neu erstellen, Verbessern, Hinten anfügen sowie Tabellen und Diagramme im PPTX ergänzt",
+      "Block HTML aktualisiert: Blöcke außerhalb des Seiten-Blocks erscheinen jetzt auch"
+     ]
+    },
+    "ja": {
+     "title": "Tools Fry Slides v4 · Block HTML v10 ウィキ更新",
+     "items": [
+      "Fry Slidesに新レイアウト6種、新テーマ、スライドオプション、発表ヘルパーを追加",
+      "Fry SlidesにAIの新規作成・修正・後ろに追加と、表・グラフのPPTX反映を追加",
+      "Block HTMLでページブロックの外のブロックも表示される動作に更新"
+     ]
+    }
+   }
+  },
+  {
+   "date": "2026-10-17",
+   "build": "",
    "title": "Tools Fry Sheet v10 위키 갱신",
    "items": [
     "열 필터, 조건부 서식, 드롭다운 목록, 셀 메모, 서식 템플릿 4종 설명 추가",
