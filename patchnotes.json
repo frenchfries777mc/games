@@ -1,6 +1,52 @@
 {
  "notes": [
   {
+   "date": "2026-10-17",
+   "build": "",
+   "title": "위키 문체 변경",
+   "items": [
+    "위키 64개 문서 문체를 '~이다.' 체로 변경",
+    "위키 안내 문구 문체 변경"
+   ],
+   "tr": {
+    "en": {
+     "title": "Wiki writing style",
+     "items": [
+      "All 64 Korean wiki pages rewritten in plain encyclopedia style",
+      "Wiki notice texts rewritten in the same style"
+     ]
+    },
+    "es": {
+     "title": "Estilo de la wiki",
+     "items": [
+      "Las 64 páginas coreanas de la wiki reescritas en estilo enciclopédico",
+      "Textos de aviso de la wiki en el mismo estilo"
+     ]
+    },
+    "fr": {
+     "title": "Style du wiki",
+     "items": [
+      "Les 64 pages coréennes du wiki réécrites en style encyclopédique",
+      "Textes d’information du wiki dans le même style"
+     ]
+    },
+    "de": {
+     "title": "Wiki-Schreibstil",
+     "items": [
+      "Alle 64 koreanischen Wiki-Seiten im sachlichen Lexikonstil neu geschrieben",
+      "Hinweistexte im Wiki im selben Stil"
+     ]
+    },
+    "ja": {
+     "title": "Wikiの文体変更",
+     "items": [
+      "韓国語Wikiの全64記事を「〜である」調に変更",
+      "Wikiの案内文も同じ文体に変更"
+     ]
+    }
+   }
+  },
+  {
    "date": "2026-10-16",
    "build": "",
    "title": "게임 배너 · 통합 검색 · 정보 상자",
