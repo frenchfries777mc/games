@@ -3,6 +3,46 @@
   {
    "date": "2026-10-17",
    "build": "",
+   "title": "Beaconfall 참가 요청 위키 추가",
+   "items": [
+    "Beaconfall 친구에게 참가 요청(수락·거절)과 복사 버튼 안내 설명 추가 (v0.3)"
+   ],
+   "tr": {
+    "en": {
+     "title": "Beaconfall join requests added to the wiki",
+     "items": [
+      "Added Beaconfall join requests to friends (accept or decline) and the copy button notice (v0.3)"
+     ]
+    },
+    "es": {
+     "title": "Solicitudes de unión de Beaconfall en la wiki",
+     "items": [
+      "Se añadieron las solicitudes de unión a amigos de Beaconfall (aceptar o rechazar) y el aviso de los botones de copiar (v0.3)"
+     ]
+    },
+    "fr": {
+     "title": "Demandes de participation Beaconfall dans le wiki",
+     "items": [
+      "Ajout des demandes de participation aux amis de Beaconfall (accepter ou refuser) et de l'indication des boutons de copie (v0.3)"
+     ]
+    },
+    "de": {
+     "title": "Beaconfall-Beitrittsanfragen im Wiki",
+     "items": [
+      "Beitrittsanfragen an Freunde in Beaconfall (annehmen oder ablehnen) und Hinweis der Kopier-Schaltflächen ergänzt (v0.3)"
+     ]
+    },
+    "ja": {
+     "title": "Beaconfallの参加リクエストをウィキに追加",
+     "items": [
+      "Beaconfallのフレンドへの参加リクエスト（承認・拒否）とコピーボタンの表示の説明を追加（v0.3）"
+     ]
+    }
+   }
+  },
+  {
+   "date": "2026-10-17",
+   "build": "",
    "title": "Crown Envoy 전투 대형 위키 추가",
    "items": [
     "Crown Envoy 전투 대형(방진·쐐기·횡대)과 시나리오 삭제·시작 연도 표시 설명 추가 (v0.3 b25)"
