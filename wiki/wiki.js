@@ -4,7 +4,7 @@
    원문이 고쳐져서 해시가 달라지면 번역 대신 한국어 원문을 보여 줘요. 번역을 다시 만들면 h 를 새 원문으로 계산해요 (fnv 아래). */
 (function(){
 var LANGS=['ko','en','es','fr','de','ja'], NAMES={ko:'한국어',en:'English',es:'Español',fr:'Français',de:'Deutsch',ja:'日本語'};
-var GAMES=[['stickseum','Stickseum'],['crownenvoy','Crown Envoy'],['beaconfall','Beaconfall'],['tools','Tools'],['educations','Educations']];
+var GAMES=[['stickseum','Stickseum'],['crownenvoy','Crown Envoy'],['beaconfall','Beaconfall'],['tools','Tools'],['educations','Educations'],['hub','Hub']];
 var U={
  ko:{hub:'허브',sub:'누구나 읽을 수 있고, 로그인하면 문서를 고치거나 새로 쓸 수 있다.',search:'위키 검색',loading:'불러오는 중…',pages:'글 목록',toc:'목차',newp:'＋ 새 글',
   edit:'✏️ 고치기',hist:'🕘 기록',del:'삭제',delSure:'정말 삭제할까요?',empty:'아직 문서가 없다.',nf:'문서를 찾지 못했다.',edited:'{0} 수정',seed:'처음 쓴 글',

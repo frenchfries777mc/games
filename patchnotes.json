@@ -3,6 +3,58 @@
   {
    "date": "2026-10-17",
    "build": "",
+   "title": "위키에 허브 문서 추가",
+   "items": [
+    "위키에 Hub 항목 추가",
+    "허브 사이트 안내 문서 추가",
+    "음악 감상실 문서 추가"
+   ],
+   "tr": {
+    "en": {
+     "title": "Hub pages added to the wiki",
+     "items": [
+      "Added a Hub section to the wiki",
+      "Added the About the hub site page",
+      "Added the Music room page"
+     ]
+    },
+    "es": {
+     "title": "Páginas del hub añadidas a la wiki",
+     "items": [
+      "Se añadió una sección Hub a la wiki",
+      "Se añadió la página Guía del sitio hub",
+      "Se añadió la página Sala de música"
+     ]
+    },
+    "fr": {
+     "title": "Pages du hub ajoutées au wiki",
+     "items": [
+      "Ajout d'une section Hub au wiki",
+      "Ajout de la page Guide du site hub",
+      "Ajout de la page Salle de musique"
+     ]
+    },
+    "de": {
+     "title": "Hub-Seiten im Wiki ergänzt",
+     "items": [
+      "Abschnitt Hub im Wiki ergänzt",
+      "Seite Hub-Seite im Überblick ergänzt",
+      "Seite Musikraum ergänzt"
+     ]
+    },
+    "ja": {
+     "title": "ウィキにハブの文書を追加",
+     "items": [
+      "ウィキにHubの項目を追加",
+      "ハブサイトの案内の文書を追加",
+      "音楽鑑賞室の文書を追加"
+     ]
+    }
+   }
+  },
+  {
+   "date": "2026-10-17",
+   "build": "",
    "title": "Beaconfall 배경음악·Stickseum build 261 위키 갱신",
    "items": [
     "Beaconfall 섬별 배경음악, 밤과 비 효과음, Web Audio 음량 조절 설명 추가",
