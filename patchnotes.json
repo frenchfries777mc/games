@@ -3,6 +3,52 @@
   {
    "date": "2026-10-17",
    "build": "",
+   "title": "게임별 소식 받기 추가",
+   "items": [
+    "뉴스에서 게임마다 '소식 받기'를 켜면 새 패치노트 수와 NEW 표시를 보여 주는 기능 추가",
+    "'읽음으로 표시'로 새 소식 표시 지우기 추가"
+   ],
+   "tr": {
+    "en": {
+     "title": "Per-game update subscriptions added",
+     "items": [
+      "Added 'Get updates' for each game in the news, showing the number of new patch notes and a NEW mark",
+      "Added 'Mark as read' to clear the new-update marks"
+     ]
+    },
+    "es": {
+     "title": "Suscripción a novedades por juego",
+     "items": [
+      "Se añadió «Recibir novedades» por juego en las noticias, con el número de notas de parche nuevas y una marca NUEVO",
+      "Se añadió «Marcar como leído» para borrar las marcas"
+     ]
+    },
+    "fr": {
+     "title": "Abonnement aux nouveautés par jeu",
+     "items": [
+      "Ajout de « Suivre » pour chaque jeu dans les actualités, avec le nombre de nouvelles notes de patch et une marque NOUVEAU",
+      "Ajout de « Marquer comme lu » pour effacer les marques"
+     ]
+    },
+    "de": {
+     "title": "Update-Abos pro Spiel hinzugefügt",
+     "items": [
+      "In den Neuigkeiten gibt es pro Spiel „Updates erhalten“ mit der Zahl neuer Patchnotes und einer NEU-Markierung",
+      "„Als gelesen markieren“ löscht die Markierungen"
+     ]
+    },
+    "ja": {
+     "title": "ゲームごとのお知らせ購読を追加",
+     "items": [
+      "ニュースでゲームごとに「お知らせを受け取る」をオンにすると、新しいパッチノート数と新着表示が出る機能を追加",
+      "「既読にする」で新着表示を消せるように追加"
+     ]
+    }
+   }
+  },
+  {
+   "date": "2026-10-17",
+   "build": "",
    "title": "Beaconfall 사진 모드·월드 카드 위키 추가",
    "items": [
     "사진 모드(📷 버튼으로 화면 저장·공유) 설명 추가",
