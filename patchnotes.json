@@ -3,6 +3,58 @@
   {
    "date": "2026-10-17",
    "build": "",
+   "title": "Crown Envoy 인구·난민·국기·난이도 위키 추가",
+   "items": [
+    "인구 지수와 난민 이동 설명 추가",
+    "시나리오 편집기 국기·난이도 설정 설명 추가",
+    "빌드 표기를 'build 29' 형식으로 수정"
+   ],
+   "tr": {
+    "en": {
+     "title": "Crown Envoy population, refugees, flags and difficulty wiki",
+     "items": [
+      "Added population index and refugee movement",
+      "Added flag and difficulty settings in the scenario editor",
+      "Build display changed to the 'build 29' format"
+     ]
+    },
+    "es": {
+     "title": "Wiki de población, refugiados, banderas y dificultad de Crown Envoy",
+     "items": [
+      "Se añadió el índice de población y el movimiento de refugiados",
+      "Se añadieron la bandera y la dificultad en el editor de escenarios",
+      "Formato de compilación cambiado a «build 29»"
+     ]
+    },
+    "fr": {
+     "title": "Wiki population, réfugiés, drapeaux et difficulté de Crown Envoy",
+     "items": [
+      "Ajout de l'indice de population et des déplacements de réfugiés",
+      "Ajout du drapeau et de la difficulté dans l'éditeur de scénarios",
+      "Affichage du build changé au format « build 29 »"
+     ]
+    },
+    "de": {
+     "title": "Crown Envoy Wiki zu Bevölkerung, Flüchtlingen, Flaggen und Schwierigkeit",
+     "items": [
+      "Bevölkerungsindex und Flüchtlingsbewegung ergänzt",
+      "Flagge und Schwierigkeit im Szenario-Editor ergänzt",
+      "Build-Anzeige auf das Format „build 29“ umgestellt"
+     ]
+    },
+    "ja": {
+     "title": "Crown Envoy 人口・難民・国旗・難易度のWiki追加",
+     "items": [
+      "人口指数と難民の移動を追加",
+      "シナリオエディターの国旗・難易度設定を追加",
+      "ビルド表記を「build 29」の形式に修正"
+     ]
+    }
+   }
+  },
+  {
+   "date": "2026-10-17",
+   "build": "",
    "title": "Stickseum 온라인 렉 개선 위키 갱신",
    "items": [
     "Stickseum 온라인 렉 줄이기(부드러운 위치 표시, 상태 전송 횟수 증가) 설명 추가 (build 257)"
