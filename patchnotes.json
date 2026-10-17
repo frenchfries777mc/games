@@ -3,6 +3,46 @@
   {
    "date": "2026-10-17",
    "build": "",
+   "title": "위키 그림 표시 수정",
+   "items": [
+    "위키 캐릭터 그림이 글자로 보이던 문제 수정"
+   ],
+   "tr": {
+    "en": {
+     "title": "Wiki picture display fix",
+     "items": [
+      "Fixed wiki character pictures showing as text"
+     ]
+    },
+    "es": {
+     "title": "Corrección de imágenes en la wiki",
+     "items": [
+      "Corregidas las imágenes de personajes de la wiki que se veían como texto"
+     ]
+    },
+    "fr": {
+     "title": "Correction de l'affichage des images du wiki",
+     "items": [
+      "Correction des images de personnages du wiki qui s'affichaient comme du texte"
+     ]
+    },
+    "de": {
+     "title": "Wiki-Bildanzeige korrigiert",
+     "items": [
+      "Charakterbilder im Wiki, die als Text angezeigt wurden, korrigiert"
+     ]
+    },
+    "ja": {
+     "title": "Wikiの画像表示を修正",
+     "items": [
+      "Wikiのキャラクター画像が文字で表示される問題を修正"
+     ]
+    }
+   }
+  },
+  {
+   "date": "2026-10-17",
+   "build": "",
    "title": "패치노트 사이트 추가",
    "items": [
     "허브·Stickseum·Crown Envoy·Beaconfall 패치노트를 한곳에 모은 사이트 추가",
