@@ -3,6 +3,82 @@
   {
    "date": "2026-10-17",
    "build": "",
+   "title": "Tools · Educations 위키",
+   "items": [
+    "위키에 Tools 문서 16개 추가 (Fry Sheet, Block HTML, Fry Slides, Fry Lab, 공통 AI 설정 등)",
+    "위키에 Educations 문서 7개 추가 (교실에서 쓰기, 게임별 안내)",
+    "위키 사이드바·검색·메인에 Tools · Educations 추가, 색 테마 추가",
+    "Stickseum 위키 최신 빌드(v245)까지 반영",
+    "Crown Envoy 위키 최신 빌드(b20)까지 반영",
+    "Beaconfall 위키 상자·도감 안내 추가",
+    "위키 문서 목록 표가 좁은 화면에서 넘치던 문제 수정"
+   ],
+   "tr": {
+    "en": {
+     "title": "Tools & Educations wiki",
+     "items": [
+      "Added 16 Tools pages to the wiki (Fry Sheet, Block HTML, Fry Slides, Fry Lab, shared AI settings and more)",
+      "Added 7 Educations pages to the wiki (classroom use, game guides)",
+      "Added Tools and Educations to the wiki sidebar, search and main page, with color themes",
+      "Stickseum wiki updated through the latest build (v245)",
+      "Crown Envoy wiki updated through the latest build (b20)",
+      "Added chest and codex notes to the Beaconfall wiki",
+      "Fixed the wiki page list table overflowing on narrow screens"
+     ]
+    },
+    "es": {
+     "title": "Wiki de Tools y Educations",
+     "items": [
+      "16 páginas de Tools añadidas a la wiki (Fry Sheet, Block HTML, Fry Slides, Fry Lab, ajustes de IA comunes y más)",
+      "7 páginas de Educations añadidas a la wiki (uso en clase, guías de juegos)",
+      "Tools y Educations añadidos a la barra lateral, la búsqueda y la página principal, con temas de color",
+      "Wiki de Stickseum actualizada hasta la última versión (v245)",
+      "Wiki de Crown Envoy actualizada hasta la última versión (b20)",
+      "Notas sobre cofres y códice añadidas a la wiki de Beaconfall",
+      "Corregida la tabla de páginas de la wiki que se desbordaba en pantallas estrechas"
+     ]
+    },
+    "fr": {
+     "title": "Wiki Tools et Educations",
+     "items": [
+      "16 pages Tools ajoutées au wiki (Fry Sheet, Block HTML, Fry Slides, Fry Lab, réglages d'IA communs, etc.)",
+      "7 pages Educations ajoutées au wiki (utilisation en classe, guides des jeux)",
+      "Tools et Educations ajoutés à la barre latérale, à la recherche et à la page principale, avec des thèmes de couleur",
+      "Wiki de Stickseum mis à jour jusqu'à la dernière version (v245)",
+      "Wiki de Crown Envoy mis à jour jusqu'à la dernière version (b20)",
+      "Notes sur les coffres et le codex ajoutées au wiki de Beaconfall",
+      "Correction du tableau des pages du wiki qui débordait sur les écrans étroits"
+     ]
+    },
+    "de": {
+     "title": "Tools- und Educations-Wiki",
+     "items": [
+      "16 Tools-Seiten zum Wiki hinzugefügt (Fry Sheet, Block HTML, Fry Slides, Fry Lab, gemeinsame KI-Einstellungen u. a.)",
+      "7 Educations-Seiten zum Wiki hinzugefügt (Einsatz im Unterricht, Spielanleitungen)",
+      "Tools und Educations in Seitenleiste, Suche und Hauptseite aufgenommen, mit Farbthemen",
+      "Stickseum-Wiki bis zum neuesten Build (v245) aktualisiert",
+      "Crown-Envoy-Wiki bis zum neuesten Build (b20) aktualisiert",
+      "Hinweise zu Truhen und Kodex im Beaconfall-Wiki ergänzt",
+      "Seitenlisten-Tabelle des Wikis läuft auf schmalen Bildschirmen nicht mehr über"
+     ]
+    },
+    "ja": {
+     "title": "Tools・Educations Wiki",
+     "items": [
+      "WikiにToolsの記事を16件追加（Fry Sheet、Block HTML、Fry Slides、Fry Lab、共通AI設定など）",
+      "WikiにEducationsの記事を7件追加（授業での使い方、ゲーム別ガイド）",
+      "Wikiのサイドバー・検索・メインにToolsとEducationsを追加、カラーテーマも追加",
+      "Stickseum Wikiを最新ビルド（v245）まで反映",
+      "Crown Envoy Wikiを最新ビルド（b20）まで反映",
+      "Beaconfall Wikiに宝箱と図鑑の案内を追加",
+      "Wikiの記事一覧の表が狭い画面ではみ出す問題を修正"
+     ]
+    }
+   }
+  },
+  {
+   "date": "2026-10-17",
+   "build": "",
    "title": "Beaconfall 위키 자동화·회로 문서",
    "items": [
     "Beaconfall 위키에 자동화 가이드 문서 추가",
