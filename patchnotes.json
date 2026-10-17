@@ -3,6 +3,52 @@
   {
    "date": "2026-10-17",
    "build": "",
+   "title": "라운지 갤러리·설정에서 언어 선택",
+   "items": [
+    "라운지에 갤러리 추가 (Stickseum, Crown Envoy, Beaconfall의 멋진 장면, 누르면 크게 보기)",
+    "⚙️ 설정에서 언어 선택 (아래쪽 언어 선택칸은 없앰)"
+   ],
+   "tr": {
+    "en": {
+     "title": "Lounge gallery, language in settings",
+     "items": [
+      "Gallery added to the Lounge (best scenes from Stickseum, Crown Envoy and Beaconfall; tap to enlarge)",
+      "Choose the language in ⚙️ settings (the language box at the bottom was removed)"
+     ]
+    },
+    "es": {
+     "title": "Galería de la Sala, idioma en ajustes",
+     "items": [
+      "Galería añadida a la Sala (mejores escenas de Stickseum, Crown Envoy y Beaconfall; toca para ampliar)",
+      "Elige el idioma en ⚙️ ajustes (se quitó el selector de abajo)"
+     ]
+    },
+    "fr": {
+     "title": "Galerie du Salon, langue dans les réglages",
+     "items": [
+      "Galerie ajoutée au Salon (plus belles scènes de Stickseum, Crown Envoy et Beaconfall ; touchez pour agrandir)",
+      "Choix de la langue dans ⚙️ réglages (le sélecteur du bas a été retiré)"
+     ]
+    },
+    "de": {
+     "title": "Lounge-Galerie, Sprache in den Einstellungen",
+     "items": [
+      "Galerie in der Lounge (schönste Szenen aus Stickseum, Crown Envoy und Beaconfall; antippen zum Vergrößern)",
+      "Sprache in den ⚙️ Einstellungen wählen (das Sprachfeld unten wurde entfernt)"
+     ]
+    },
+    "ja": {
+     "title": "ラウンジのギャラリー・設定で言語選択",
+     "items": [
+      "ラウンジにギャラリーを追加 (Stickseum・Crown Envoy・Beaconfallの名場面、押すと拡大)",
+      "⚙️ 設定で言語を選択 (下の言語選択欄は削除)"
+     ]
+    }
+   }
+  },
+  {
+   "date": "2026-10-17",
+   "build": "",
    "title": "라운지 감자튀김 얼굴",
    "items": [
     "라운지 감자튀김의 777과 입을 몸통 각도에 맞춤"

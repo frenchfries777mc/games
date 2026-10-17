@@ -487,18 +487,19 @@ if(document.readyState==='loading') document.addEventListener('DOMContentLoaded'
    The bell sits next to the nickname on the hub and every game site; a message window opens from the friends list. */
 /* ---- ⚙️ settings: theme and text size (FFTheme in ff-lang.js), the same on the hub and every game site ---- */
 var SL={
- ko:{set:'설정',theme:'테마',dark:'🌙 다크',light:'☀️ 라이트',size:'글자 크기',s:'작게',m:'보통',l:'크게',xl:'아주 크게',note:'허브와 게임 사이트에 같이 적용돼요.'},
- en:{set:'Settings',theme:'Theme',dark:'🌙 Dark',light:'☀️ Light',size:'Text size',s:'Small',m:'Normal',l:'Large',xl:'Extra large',note:'Applies to the hub and the game sites.'},
- es:{set:'Ajustes',theme:'Tema',dark:'🌙 Oscuro',light:'☀️ Claro',size:'Tamaño del texto',s:'Pequeño',m:'Normal',l:'Grande',xl:'Muy grande',note:'Se aplica al inicio y a las webs de los juegos.'},
- fr:{set:'Réglages',theme:'Thème',dark:'🌙 Sombre',light:'☀️ Clair',size:'Taille du texte',s:'Petit',m:'Normal',l:'Grand',xl:'Très grand',note:'S’applique à l’accueil et aux sites des jeux.'},
- de:{set:'Einstellungen',theme:'Design',dark:'🌙 Dunkel',light:'☀️ Hell',size:'Textgröße',s:'Klein',m:'Normal',l:'Groß',xl:'Sehr groß',note:'Gilt für die Startseite und die Spielseiten.'},
- ja:{set:'設定',theme:'テーマ',dark:'🌙 ダーク',light:'☀️ ライト',size:'文字の大きさ',s:'小',m:'標準',l:'大',xl:'特大',note:'ハブとゲームサイトに一緒に適用されます。'}
+ ko:{lang:'언어',set:'설정',theme:'테마',dark:'🌙 다크',light:'☀️ 라이트',size:'글자 크기',s:'작게',m:'보통',l:'크게',xl:'아주 크게',note:'허브와 게임 사이트에 같이 적용돼요.'},
+ en:{lang:'Language',set:'Settings',theme:'Theme',dark:'🌙 Dark',light:'☀️ Light',size:'Text size',s:'Small',m:'Normal',l:'Large',xl:'Extra large',note:'Applies to the hub and the game sites.'},
+ es:{lang:'Idioma',set:'Ajustes',theme:'Tema',dark:'🌙 Oscuro',light:'☀️ Claro',size:'Tamaño del texto',s:'Pequeño',m:'Normal',l:'Grande',xl:'Muy grande',note:'Se aplica al inicio y a las webs de los juegos.'},
+ fr:{lang:'Langue',set:'Réglages',theme:'Thème',dark:'🌙 Sombre',light:'☀️ Clair',size:'Taille du texte',s:'Petit',m:'Normal',l:'Grand',xl:'Très grand',note:'S’applique à l’accueil et aux sites des jeux.'},
+ de:{lang:'Sprache',set:'Einstellungen',theme:'Design',dark:'🌙 Dunkel',light:'☀️ Hell',size:'Textgröße',s:'Klein',m:'Normal',l:'Groß',xl:'Sehr groß',note:'Gilt für die Startseite und die Spielseiten.'},
+ ja:{lang:'言語',set:'設定',theme:'テーマ',dark:'🌙 ダーク',light:'☀️ ライト',size:'文字の大きさ',s:'小',m:'標準',l:'大',xl:'特大',note:'ハブとゲームサイトに一緒に適用されます。'}
 };
 var S_=SL[lang()]||SL.en;
+var LANGS=[['ko','한국어'],['en','English'],['es','Español'],['fr','Français'],['de','Deutsch'],['ja','日本語']];
 var SCSS='.ffa-set{background:#10131b;color:#eef0f5;border:1px solid #2b3245;border-radius:9px;padding:6px 9px;font-size:15px;cursor:pointer;margin-right:6px;line-height:1.2;vertical-align:middle}.ffa-set:hover{border-color:#ffc93c}'+
  '.ffa-setp{position:absolute;right:0;top:calc(100% + 6px);width:min(280px,calc(100vw - 24px));background:#10131b;border:1px solid #2b3245;border-radius:12px;padding:10px 12px;z-index:2147482000;box-shadow:0 12px 30px rgba(0,0,0,.45);display:none;text-align:left;color:#eef0f5;font-family:system-ui,-apple-system,"Noto Sans KR",sans-serif;white-space:normal}'+
  '.ffa-setp b{display:block;font-size:13px;color:#8a93a6;margin:6px 0 6px}.ffa-setp .g{display:flex;flex-wrap:wrap;gap:6px}.ffa-setp .g button{flex:1;background:#1b2030;color:#eef0f5;border:1px solid #2b3245;border-radius:8px;padding:7px 8px;font:inherit;font-size:13.5px;font-weight:700;cursor:pointer;white-space:nowrap}'+
- '.ffa-setp .g button.on{background:linear-gradient(135deg,#ffc93c,#ff8a3d);color:#1a1206;border-color:transparent}.ffa-setp small{display:block;color:#8a93a6;font-size:12px;margin-top:8px}';
+ '.ffa-setp .ffa-lg button{flex:1 1 30%}.ffa-setp .g button.on{background:linear-gradient(135deg,#ffc93c,#ff8a3d);color:#1a1206;border-color:transparent}.ffa-setp small{display:block;color:#8a93a6;font-size:12px;margin-top:8px}';
 function setPaint(){
   if(!window.FFTheme) return; if(!document.getElementById('ffaSCss')){ var st=document.createElement('style'); st.id='ffaSCss'; st.textContent=SCSS; document.head.appendChild(st); }
   var ws=document.querySelectorAll('[data-ff-account] .ffa-wrap'); for(var i=0;i<ws.length;i++){ var w=ws[i]; if(w.querySelector('.ffa-set')) continue;
@@ -509,7 +510,9 @@ function setPaint(){
 function setFill(p){
   var cur=FFTheme.get();
   p.innerHTML='<b>'+esc(S_.theme)+'</b><div class="g"><button type="button" data-th="dark">'+esc(S_.dark)+'</button><button type="button" data-th="light">'+esc(S_.light)+'</button></div>'+
-    '<b>'+esc(S_.size)+'</b><div class="g">'+FFTheme.sizes.map(function(z){ return '<button type="button" data-sz="'+z+'">'+esc(S_[z])+'</button>'; }).join('')+'</div><small>'+esc(S_.note)+'</small>';
+    '<b>'+esc(S_.size)+'</b><div class="g">'+FFTheme.sizes.map(function(z){ return '<button type="button" data-sz="'+z+'">'+esc(S_[z])+'</button>'; }).join('')+'</div>'+
+    '<b>'+esc(S_.lang)+'</b><div class="g ffa-lg">'+LANGS.map(function(x){ return '<button type="button" data-lg="'+x[0]+'">'+esc(x[1])+'</button>'; }).join('')+'</div><small>'+esc(S_.note)+'</small>';
+  [].forEach.call(p.querySelectorAll('[data-lg]'),function(x){ var l=x.getAttribute('data-lg'); x.classList.toggle('on',l===lang()); x.onclick=function(){ if(l===lang()) return; try{ localStorage.setItem('arenaClashLang',l); }catch(e){} try{ if(window.FFLang) FFLang.set(l); }catch(e){} location.reload(); }; });
   [].forEach.call(p.querySelectorAll('[data-th]'),function(x){ x.classList.toggle('on',x.getAttribute('data-th')===cur.theme); x.onclick=function(){ FFTheme.set(x.getAttribute('data-th')); setFill(p); }; });
   [].forEach.call(p.querySelectorAll('[data-sz]'),function(x){ x.classList.toggle('on',x.getAttribute('data-sz')===cur.size); x.onclick=function(){ FFTheme.set(null,x.getAttribute('data-sz')); setFill(p); }; });
 }
