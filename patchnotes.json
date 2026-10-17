@@ -3,6 +3,46 @@
   {
    "date": "2026-10-17",
    "build": "",
+   "title": "Beaconfall 위키 갱신",
+   "items": [
+    "Beaconfall 위키 시작하기에 사이트 도감의 재료 계산기 탭 안내 추가"
+   ],
+   "tr": {
+    "en": {
+     "title": "Beaconfall wiki update",
+     "items": [
+      "Added the Material calculator tab of the site compendium to the Beaconfall getting-started page"
+     ]
+    },
+    "es": {
+     "title": "Actualización de la wiki de Beaconfall",
+     "items": [
+      "Añadida la pestaña Calculadora de materiales del compendio del sitio a la página de inicio de Beaconfall"
+     ]
+    },
+    "fr": {
+     "title": "Mise à jour du wiki Beaconfall",
+     "items": [
+      "Ajout de l'onglet Calculateur de matériaux du codex du site à la page de démarrage de Beaconfall"
+     ]
+    },
+    "de": {
+     "title": "Beaconfall-Wiki aktualisiert",
+     "items": [
+      "Tab Materialrechner des Website-Lexikons auf der Beaconfall-Startseite ergänzt"
+     ]
+    },
+    "ja": {
+     "title": "Beaconfall Wiki更新",
+     "items": [
+      "Beaconfallのはじめにページに、サイト図鑑の素材計算タブの案内を追加"
+     ]
+    }
+   }
+  },
+  {
+   "date": "2026-10-17",
+   "build": "",
    "title": "Tools · Stickseum 위키 갱신",
    "items": [
     "Tools 위키에 Fry Sheet 문서 관리·행열 고정·원화/달러 서식, Fry Slides 템플릿·그림·발표 기능, Block HTML 프로젝트 관리·로그 칸 추가",
