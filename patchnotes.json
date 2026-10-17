@@ -3,6 +3,46 @@
   {
    "date": "2026-10-17",
    "build": "",
+   "title": "끝나는 때 고르기",
+   "items": [
+    "투표와 공지·이벤트 올리기에서 끝나는 때를 계속, 1일 뒤, 1주 뒤 중에서 고르도록 변경"
+   ],
+   "tr": {
+    "en": {
+     "title": "Choosing the end time",
+     "items": [
+      "When posting a poll, notice or event, the end time is now chosen from keep open, in 1 day or in 1 week"
+     ]
+    },
+    "es": {
+     "title": "Elegir cuándo termina",
+     "items": [
+      "Al publicar una encuesta, aviso o evento, el final se elige entre dejar abierto, en 1 día o en 1 semana"
+     ]
+    },
+    "fr": {
+     "title": "Choix de la fin",
+     "items": [
+      "Lors de la publication d'un sondage, d'une annonce ou d'un événement, la fin se choisit parmi laisser ouvert, dans 1 jour ou dans 1 semaine"
+     ]
+    },
+    "de": {
+     "title": "Ende auswählen",
+     "items": [
+      "Beim Erstellen von Umfrage, Ankündigung oder Event wird das Ende jetzt aus offen lassen, in 1 Tag oder in 1 Woche gewählt"
+     ]
+    },
+    "ja": {
+     "title": "終了時期の選択",
+     "items": [
+      "投票やお知らせ・イベントを投稿するとき、終了時期を「続ける・1日後・1週間後」から選ぶように変更"
+     ]
+    }
+   }
+  },
+  {
+   "date": "2026-10-17",
+   "build": "",
    "title": "FF777 모델 위키 갱신",
    "items": [
     "FF777 모델 문서에 3차 학습 자료와 학습 저장 방식 추가"
