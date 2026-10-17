@@ -93,7 +93,7 @@ function errText(e){ var m=String((e&&e.message)||''), c=String((e&&(e.code||e.e
 async function signIn(id, pw){
   var email=emailFor(String(id||'').trim()), err=null, vs=pwVariants(pw);
   for(var i=0;i<vs.length;i++){ var r; try{ r=await sb.auth.signInWithPassword({email:email, password:vs[i]}); }catch(e){ r={error:{message:String(e&&e.message||e)}}; }
-    if(!r.error){ await setUser(r.data.user); return {ok:true}; }
+    if(!r.error){ pwSave(id,vs[i]); await setUser(r.data.user); return {ok:true}; }
     err=r.error; if(errText(err)!==T.cred) break; }
   return {error:errText(err)};
 }
@@ -105,9 +105,9 @@ async function signUp(id, pw){
   if(r.error) return {error:/already|registered/i.test(r.error.message)?T.taken:errText(r.error)};
   var p=await sb.from('profiles').insert({id:r.data.user.id, username:id});
   if(p.error) return {error:T.taken};
-  await setUser(r.data.user); return {ok:true};
+  pwSave(id,pw); await setUser(r.data.user); return {ok:true};
 }
-async function signOut(){ try{ if(sb) await sb.auth.signOut({scope:'local'}); }catch(e){} await setUser(null); }   // 'local': only this browser, other devices stay logged in
+async function signOut(){ pwClear(); try{ if(sb) await sb.auth.signOut({scope:'local'}); }catch(e){} await setUser(null); }   // 'local': only this browser, other devices stay logged in
 
 /* ---- UI ---- */
 var CSS='.ffa-btn{display:inline-flex;align-items:center;gap:6px;background:linear-gradient(135deg,#ffc93c,#ff8a3d);color:#1a1206;border:0;border-radius:9px;padding:7px 13px;font:inherit;font-size:14px;font-weight:800;cursor:pointer;white-space:nowrap}'+
@@ -125,6 +125,7 @@ var CSS='.ffa-btn{display:inline-flex;align-items:center;gap:6px;background:line
  '#ffaModal input{display:block;width:100%;box-sizing:border-box;margin:0 0 10px;padding:11px 12px;border-radius:9px;border:1px solid #2b3245;background:#08090d;color:#eef0f5;font:inherit;font-size:16px}'+
  '#ffaModal input:focus{outline:none;border-color:#ffc93c}#ffaModal .ffa-btn{width:100%;justify-content:center;padding:11px;font-size:15px}'+
  '#ffaModal .m{min-height:18px;font-size:13px;color:#ff9b7a;margin:0 0 10px}#ffaModal .sw{margin-top:14px;text-align:center;font-size:13px;color:#8a93a6}'+
+ '#ffaModal .pwr,#ffaAcct .pwr{position:relative}#ffaModal .pwr input,#ffaAcct .pwr input{padding-right:44px}#ffaModal .eye,#ffaAcct .eye{position:absolute;right:4px;top:3px;width:38px;height:38px;background:none;border:0;font-size:18px;cursor:pointer;opacity:.7}'+
  '#ffaModal .sw a{color:#ffc93c;cursor:pointer;margin-left:4px}#ffaModal .x{float:right;background:none;border:0;color:#8a93a6;font-size:20px;cursor:pointer;line-height:1}';
 function css(){ if(document.getElementById('ffaCss')) return; var s=document.createElement('style'); s.id='ffaCss'; s.textContent=CSS; document.head.appendChild(s); }
 
@@ -134,11 +135,12 @@ function modal(){
   el=document.createElement('div'); el.id='ffaModal'; el.setAttribute('data-notr','');
   el.innerHTML='<form class="b" autocomplete="on"><button type="button" class="x" aria-label="'+esc(T.close)+'">×</button><h3></h3><p>'+esc(T.sub)+'</p>'+
     '<input name="username" autocomplete="username" autocapitalize="off" spellcheck="false" maxlength="16" placeholder="'+esc(T.id)+'">'+
-    '<input name="password" type="password" placeholder="'+esc(T.pw)+'">'+
+    '<div class="pwr"><input name="password" type="password" placeholder="'+esc(T.pw)+'"><button type="button" class="eye" aria-label="'+esc(AL().show)+'">👁</button></div>'+
     '<div class="m"></div><button type="submit" class="ffa-btn go"></button><div class="sw"><span></span><a></a></div></form>';
   document.body.appendChild(el);
   el.addEventListener('click',function(e){ if(e.target===el) close(); });
   el.querySelector('.x').onclick=close;
+  el.querySelector('.eye').onclick=function(){ var i=el.querySelector('input[name=password]'); i.type=i.type==='password'?'text':'password'; };
   el.querySelector('.sw a').onclick=function(){ mode=mode==='in'?'up':'in'; fill(); };
   el.querySelector('form').onsubmit=async function(e){
     e.preventDefault(); var f=e.target, m=el.querySelector('.m'), go=el.querySelector('.go');
@@ -169,11 +171,12 @@ function paint(){
     var s=slots[i]; s.setAttribute('data-notr','');
     if(!user){ s.innerHTML=hubLink(s)+'<span class="ffa-wrap"><button type="button" class="ffa-btn">🍟 '+esc(T.login)+'</button></span>'; s.querySelector('button').onclick=function(){ openLogin(); }; continue; }
     s.innerHTML=hubLink(s)+'<span class="ffa-wrap"><button type="button" class="ffa-chip" aria-haspopup="true">🍟 <span>'+esc(fmt(T.hi,nick()))+'</span><i class="ffa-badge" style="display:none;font-style:normal"></i> ▾</button>'+
-      '<span class="ffa-menu" role="menu"><button type="button" data-a="friends">'+esc(F.friends)+'<span class="ffa-badge" style="display:none"></span></button><button type="button" data-a="card">'+esc(T.card)+'</button><button type="button" data-a="out">'+esc(T.logout)+'</button></span></span>';
+      '<span class="ffa-menu" role="menu"><button type="button" data-a="friends">'+esc(F.friends)+'<span class="ffa-badge" style="display:none"></span></button><button type="button" data-a="card">'+esc(T.card)+'</button><button type="button" data-a="acct">'+esc(AL().menu)+'</button><button type="button" data-a="out">'+esc(T.logout)+'</button></span></span>';
     (function(s){ var menu=s.querySelector('.ffa-menu');
       s.querySelector('.ffa-chip').onclick=function(e){ e.stopPropagation(); var open=menu.style.display==='block'; closeMenus(); menu.style.display=open?'none':'block'; };
       menu.querySelector('[data-a=friends]').onclick=function(){ closeMenus(); openFriends(); };
       menu.querySelector('[data-a=card]').onclick=function(){ closeMenus(); openProfile(); };
+      menu.querySelector('[data-a=acct]').onclick=function(){ closeMenus(); openAcct(); };
       menu.querySelector('[data-a=out]').onclick=function(){ closeMenus(); signOut(); };
     })(s);
   }
@@ -184,7 +187,100 @@ function paint(){
 }
 function closeMenus(){ var ms=document.querySelectorAll('.ffa-menu,.ffa-notes'); for(var i=0;i<ms.length;i++) ms[i].style.display='none'; }
 document.addEventListener('click', closeMenus);
-document.addEventListener('keydown', function(e){ if(e.key==='Escape'){ closeMenus(); close(); } });
+document.addEventListener('keydown', function(e){ if(e.key==='Escape'){ closeMenus(); close(); closeAcct(); } });
+
+/* ---- my account: nickname, login ID, password (same stored-password option as the games: localStorage arenaClashPw / arenaClashPwOpt) ---- */
+var ALT={
+ ko:{menu:'⚙️ 내 계정',title:'내 계정',show:'비밀번호 보기',nick:'닉네임 (최대 12자)',id:'아이디 (영문/숫자, 3~16자)',save:'저장',saved:'저장했어요.',same:'바뀐 게 없어요.',
+     pwT:'비밀번호',pwNone:'이 기기에는 저장된 비밀번호가 없어요. 다시 로그인하면 저장돼요.',view:'보기',hide:'숨기기',copy:'복사',copied:'복사했어요.',
+     newPw:'새 비밀번호 (6~72자)',chg:'비밀번호 변경',keep:'이 기기에 비밀번호 기억하기',keepN:'서버에는 비밀번호가 저장되지 않아요(볼 수 없음). 이 기기의 브라우저에만 저장돼요.',
+     badNick:'닉네임을 입력해 주세요.',badPw:'비밀번호는 6~72자로 해주세요.',idDone:'아이디를 바꿨어요. 다음부터 새 아이디로 로그인해요.',pwDone:'비밀번호를 바꿨어요.',err:'처리하지 못했어요. 잠시 뒤 다시 해 주세요.',idNote:'아이디를 바꾸면 모든 게임에서 새 아이디로 로그인해요.'},
+ en:{menu:'⚙️ My account',title:'My account',show:'Show password',nick:'Nickname (up to 12)',id:'Username (letters/numbers, 3–16)',save:'Save',saved:'Saved.',same:'Nothing changed.',
+     pwT:'Password',pwNone:'No password is stored on this device. Log in again to store it.',view:'Show',hide:'Hide',copy:'Copy',copied:'Copied.',
+     newPw:'New password (6–72)',chg:'Change password',keep:'Remember my password on this device',keepN:'The server never stores a readable password. It is kept only in this browser.',
+     badNick:'Type a nickname.',badPw:'Password must be 6–72 characters.',idDone:'Username changed. Use the new one next time.',pwDone:'Password changed.',err:'Something went wrong. Try again soon.',idNote:'The new username works in every game.'},
+ es:{menu:'⚙️ Mi cuenta',title:'Mi cuenta',show:'Mostrar contraseña',nick:'Apodo (máx. 12)',id:'Usuario (letras/números, 3–16)',save:'Guardar',saved:'Guardado.',same:'Sin cambios.',
+     pwT:'Contraseña',pwNone:'No hay contraseña guardada en este dispositivo. Inicia sesión de nuevo para guardarla.',view:'Ver',hide:'Ocultar',copy:'Copiar',copied:'Copiado.',
+     newPw:'Nueva contraseña (6–72)',chg:'Cambiar contraseña',keep:'Recordar mi contraseña en este dispositivo',keepN:'El servidor nunca guarda una contraseña legible. Solo se guarda en este navegador.',
+     badNick:'Escribe un apodo.',badPw:'La contraseña debe tener 6–72 caracteres.',idDone:'Usuario cambiado. Usa el nuevo la próxima vez.',pwDone:'Contraseña cambiada.',err:'Algo salió mal. Inténtalo de nuevo.',idNote:'El nuevo usuario sirve en todos los juegos.'},
+ fr:{menu:'⚙️ Mon compte',title:'Mon compte',show:'Afficher le mot de passe',nick:'Pseudo (12 max)',id:'Identifiant (lettres/chiffres, 3–16)',save:'Enregistrer',saved:'Enregistré.',same:'Rien n\'a changé.',
+     pwT:'Mot de passe',pwNone:'Aucun mot de passe enregistré sur cet appareil. Reconnectez-vous pour l\'enregistrer.',view:'Voir',hide:'Masquer',copy:'Copier',copied:'Copié.',
+     newPw:'Nouveau mot de passe (6–72)',chg:'Changer le mot de passe',keep:'Retenir mon mot de passe sur cet appareil',keepN:'Le serveur ne garde jamais de mot de passe lisible. Il reste seulement dans ce navigateur.',
+     badNick:'Saisissez un pseudo.',badPw:'Le mot de passe doit faire 6–72 caractères.',idDone:'Identifiant changé. Utilisez le nouveau la prochaine fois.',pwDone:'Mot de passe changé.',err:'Une erreur est survenue. Réessayez.',idNote:'Le nouvel identifiant fonctionne dans tous les jeux.'},
+ de:{menu:'⚙️ Mein Konto',title:'Mein Konto',show:'Passwort anzeigen',nick:'Spitzname (max. 12)',id:'Benutzername (Buchstaben/Zahlen, 3–16)',save:'Speichern',saved:'Gespeichert.',same:'Nichts geändert.',
+     pwT:'Passwort',pwNone:'Auf diesem Gerät ist kein Passwort gespeichert. Melde dich neu an, um es zu speichern.',view:'Anzeigen',hide:'Verbergen',copy:'Kopieren',copied:'Kopiert.',
+     newPw:'Neues Passwort (6–72)',chg:'Passwort ändern',keep:'Passwort auf diesem Gerät merken',keepN:'Der Server speichert nie ein lesbares Passwort. Es bleibt nur in diesem Browser.',
+     badNick:'Gib einen Spitznamen ein.',badPw:'Das Passwort braucht 6–72 Zeichen.',idDone:'Benutzername geändert. Nutze beim nächsten Mal den neuen.',pwDone:'Passwort geändert.',err:'Etwas ist schiefgelaufen. Versuch es gleich nochmal.',idNote:'Der neue Benutzername gilt in allen Spielen.'},
+ ja:{menu:'⚙️ マイアカウント',title:'マイアカウント',show:'パスワードを表示',nick:'ニックネーム(12文字まで)',id:'ユーザーID(英数字、3〜16文字)',save:'保存',saved:'保存しました。',same:'変更はありません。',
+     pwT:'パスワード',pwNone:'この端末には保存されたパスワードがありません。もう一度ログインすると保存されます。',view:'表示',hide:'隠す',copy:'コピー',copied:'コピーしました。',
+     newPw:'新しいパスワード(6〜72文字)',chg:'パスワードを変更',keep:'この端末にパスワードを記憶する',keepN:'サーバーは読めるパスワードを保存しません。このブラウザにだけ保存されます。',
+     badNick:'ニックネームを入力してください。',badPw:'パスワードは6〜72文字にしてください。',idDone:'IDを変更しました。次回から新しいIDでログインします。',pwDone:'パスワードを変更しました。',err:'失敗しました。しばらくしてからもう一度お試しください。',idNote:'新しいIDはすべてのゲームで使えます。'}
+};
+function AL(){ var t=(typeof ALT!=='undefined'&&ALT)||null; return t?(t[lang()]||t.en):{menu:'⚙️',show:''}; }
+function pwOn(){ try{ return localStorage.getItem('arenaClashPwOpt')!=='0'; }catch(e){ return true; } }
+function pwGet(){ try{ var o=JSON.parse(localStorage.getItem('arenaClashPw')||'null'); return o&&o.p?o:null; }catch(e){ return null; } }
+function pwSave(id,p){ if(!pwOn()) return; try{ localStorage.setItem('arenaClashPw',JSON.stringify({u:String(id||'').trim().toLowerCase(),p:p})); }catch(e){} }
+function pwClear(){ try{ localStorage.removeItem('arenaClashPw'); }catch(e){} }
+function closeAcct(){ var el=document.getElementById('ffaAcct'); if(el) el.style.display='none'; }
+function openAcct(){
+  if(!user) return openLogin(); if(!sb) return;
+  css(); var A=AL(), el=document.getElementById('ffaAcct'); if(el) el.remove();
+  el=document.createElement('div'); el.id='ffaAcct'; el.setAttribute('data-notr','');
+  el.style.cssText='position:fixed;inset:0;z-index:2147482500;background:rgba(5,6,10,.72);display:flex;align-items:center;justify-content:center;padding:16px;font-family:system-ui,-apple-system,"Noto Sans KR",sans-serif;overflow:auto';
+  el.innerHTML='<style>#ffaAcct .b{width:100%;max-width:380px;max-height:100%;overflow:auto;background:#10131b;border:1px solid #2b3245;border-radius:16px;padding:22px;color:#eef0f5;box-shadow:0 20px 50px rgba(0,0,0,.5)}'+
+   '#ffaAcct h3{margin:0 0 12px;font-size:19px}#ffaAcct h4{margin:16px 0 8px;font-size:14px;color:#ffc93c}#ffaAcct p{margin:0 0 8px;color:#8a93a6;font-size:12.5px;line-height:1.5}'+
+   '#ffaAcct input[type=text],#ffaAcct input[type=password]{display:block;width:100%;box-sizing:border-box;margin:0 0 8px;padding:10px 12px;border-radius:9px;border:1px solid #2b3245;background:#08090d;color:#eef0f5;font:inherit;font-size:16px}'+
+   '#ffaAcct input:focus{outline:none;border-color:#ffc93c}#ffaAcct .row{display:flex;gap:6px}#ffaAcct .row .ffa-btn{flex:1;justify-content:center;padding:9px}'+
+   '#ffaAcct .m{min-height:18px;font-size:13px;color:#ff9b7a;margin:8px 0 0}#ffaAcct .m.ok{color:#7ddc8a}#ffaAcct .x{float:right;background:none;border:0;color:#8a93a6;font-size:20px;cursor:pointer;line-height:1}'+
+   '#ffaAcct .pv{font-family:ui-monospace,monospace;background:#08090d;border:1px solid #2b3245;border-radius:9px;padding:10px 12px;margin-bottom:8px;word-break:break-all;font-size:15px}'+
+   '#ffaAcct label.k{display:flex;gap:8px;align-items:center;font-size:13.5px;margin:10px 0 4px}</style>'+
+   '<div class="b"><button type="button" class="x" aria-label="'+esc(T.close)+'">×</button><h3>'+esc(A.title)+'</h3>'+
+   '<h4>'+esc(A.nick.replace(/\s*\(.*$/,''))+'</h4><input type="text" id="aNick" maxlength="12" placeholder="'+esc(A.nick)+'"><button type="button" class="ffa-btn" id="aNickGo">'+esc(A.save)+'</button><div class="m" id="aNickM"></div>'+
+   '<h4>'+esc(A.id.replace(/\s*\(.*$/,''))+'</h4><input type="text" id="aId" maxlength="16" autocapitalize="off" spellcheck="false" placeholder="'+esc(A.id)+'"><p>'+esc(A.idNote)+'</p><button type="button" class="ffa-btn" id="aIdGo">'+esc(A.save)+'</button><div class="m" id="aIdM"></div>'+
+   '<h4>'+esc(A.pwT)+'</h4><div id="aPwBox"></div>'+
+   '<div class="pwr"><input type="password" id="aNew" autocomplete="new-password" placeholder="'+esc(A.newPw)+'"><button type="button" class="eye" aria-label="'+esc(A.show)+'">👁</button></div><button type="button" class="ffa-btn" id="aPwGo">'+esc(A.chg)+'</button><div class="m" id="aPwM"></div>'+
+   '<label class="k"><input type="checkbox" id="aKeep"> '+esc(A.keep)+'</label><p>'+esc(A.keepN)+'</p></div>';
+  document.body.appendChild(el);
+  var $=function(i){ return el.querySelector('#'+i); }, curId=(prof&&prof.username)||String(user.email||'').split('@')[0];
+  function say(i,t,ok){ var m=$(i); m.textContent=t; m.className='m'+(ok?' ok':''); }
+  $('aNick').value=(prof&&prof.display_name)||''; $('aId').value=curId; $('aKeep').checked=pwOn();
+  el.addEventListener('click',function(e){ if(e.target===el) closeAcct(); }); el.querySelector('.x').onclick=closeAcct;
+  el.querySelector('.eye').onclick=function(){ var i=$('aNew'); i.type=i.type==='password'?'text':'password'; };
+  function pwBox(){ var o=pwGet(), b=$('aPwBox'), shown=false;
+    if(!o){ b.innerHTML='<p>'+esc(A.pwNone)+'</p>'; return; }
+    b.innerHTML='<div class="pv"></div><div class="row"><button type="button" class="ffa-btn" data-k="v"></button><button type="button" class="ffa-btn" data-k="c">'+esc(A.copy)+'</button></div>';
+    var pv=b.querySelector('.pv'), vb=b.querySelector('[data-k=v]');
+    function draw(){ pv.textContent=shown?o.p:'•'.repeat(Math.min(o.p.length,16)); vb.textContent=shown?A.hide:A.view; }
+    vb.onclick=function(){ shown=!shown; draw(); };
+    b.querySelector('[data-k=c]').onclick=function(){ var done=function(){ say('aPwM',A.copied,true); };
+      try{ navigator.clipboard.writeText(o.p).then(done,function(){ shown=true; draw(); }); }catch(e){ shown=true; draw(); } };
+    draw(); }
+  pwBox();
+  $('aKeep').onchange=function(){ try{ localStorage.setItem('arenaClashPwOpt',this.checked?'1':'0'); }catch(e){} if(!this.checked){ pwClear(); pwBox(); } };
+  $('aNickGo').onclick=async function(){ var n=$('aNick').value.trim().slice(0,12); if(!n) return say('aNickM',A.badNick);
+    if(n===((prof&&prof.display_name)||'')) return say('aNickM',A.same,true);
+    var r=await setNick(n); say('aNickM',r&&r.ok?A.saved:A.err,r&&r.ok); };
+  $('aIdGo').onclick=async function(){ var id=$('aId').value.trim(), m='aIdM';
+    if(!/^[a-zA-Z0-9_]{3,16}$/.test(id)) return say(m,T.badId);
+    if(id.toLowerCase()===String(curId).toLowerCase() && id===curId) return say(m,A.same,true);
+    this.disabled=true;
+    try{
+      var up=await sb.from('profiles').update({username:id}).eq('id',user.id);
+      if(up.error) return say(m,/duplicate|unique|23505/i.test(JSON.stringify(up.error))?T.taken:A.err);
+      var ch=await sb.auth.updateUser({email:emailFor(id)});
+      if(ch.error){ await sb.from('profiles').update({username:curId}).eq('id',user.id);
+        return say(m,/already|registered|exists/i.test(ch.error.message||'')?T.taken:A.err); }
+      var o=pwGet(); if(o) pwSave(id,o.p);
+      prof=Object.assign({},prof||{},{username:id}); curId=id; paint(); say(m,A.idDone,true);
+    }catch(e){ say(m,A.err); } finally{ this.disabled=false; } };
+  $('aPwGo').onclick=async function(){ var p=$('aNew').value;
+    if(!p||p.length<6||p.length>72) return say('aPwM',A.badPw);
+    this.disabled=true;
+    try{ var r=await sb.auth.updateUser({password:p});
+      if(r.error) return say('aPwM',A.err);
+      pwSave(curId,p); $('aNew').value=''; pwBox(); say('aPwM',A.pwDone,true);
+    }catch(e){ say('aPwM',A.err); } finally{ this.disabled=false; } };
+}
 
 /* ---- friends: the same friendships table as the games, so a friend made here is a friend inside every game ----
    (requests nobody answered within 3 hours run out, like in Stickseum: expire_requests() in supabase-request-expiry.sql) */
