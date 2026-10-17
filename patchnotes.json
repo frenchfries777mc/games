@@ -3,6 +3,52 @@
   {
    "date": "2026-10-17",
    "build": "",
+   "title": "Tools Block HTML v11~v13·내장 AI v12~v13 위키 갱신",
+   "items": [
+    "Block HTML 한 블록씩 실행, 내 그림 안내 문구, 그림 썸네일 테두리, 새 예제 설명 추가",
+    "내장 AI 틀린 곳 고치기와 AI 요청 기록 설명 추가"
+   ],
+   "tr": {
+    "en": {
+     "title": "Tools Block HTML v11~v13 and built-in AI v12~v13 wiki update",
+     "items": [
+      "Added run one block at a time, the My picture hint, picture thumbnail borders and the new example to Block HTML",
+      "Added fixing mistakes and the AI request history to the built-in AI"
+     ]
+    },
+    "es": {
+     "title": "Wiki: Block HTML v11~v13 e IA integrada v12~v13 de Tools",
+     "items": [
+      "Se añadieron a Block HTML ejecutar un bloque cada vez, la indicación de Mi dibujo, el borde de las miniaturas y el nuevo ejemplo",
+      "Se añadieron a la IA integrada la corrección de errores y el historial de peticiones"
+     ]
+    },
+    "fr": {
+     "title": "Wiki : Block HTML v11~v13 et IA intégrée v12~v13 de Tools",
+     "items": [
+      "Ajout à Block HTML de l'exécution bloc par bloc, de l'indication Mon dessin, de la bordure des miniatures et du nouvel exemple",
+      "Ajout à l'IA intégrée de la correction des erreurs et de l'historique des demandes"
+     ]
+    },
+    "de": {
+     "title": "Wiki: Tools Block HTML v11~v13 und integrierte KI v12~v13",
+     "items": [
+      "Block HTML um Blockweises Ausführen, den Hinweis bei Mein Bild, Rahmen der Bildvorschauen und das neue Beispiel ergänzt",
+      "Integrierte KI um Fehlerkorrektur und den Verlauf der KI-Anfragen ergänzt"
+     ]
+    },
+    "ja": {
+     "title": "Tools Block HTML v11~v13と内蔵AI v12~v13のウィキ更新",
+     "items": [
+      "Block HTMLに1ブロックずつ実行、わたしの絵の案内、絵のサムネイルの枠、新しい例を追加",
+      "内蔵AIに間違いの修正とAI依頼の履歴を追加"
+     ]
+    }
+   }
+  },
+  {
+   "date": "2026-10-17",
+   "build": "",
    "title": "Tools 내장 AI v11·Stickseum build 262 위키 갱신",
    "items": [
     "FF777 모델 문서에 3차 학습 자료 증가와 tarius 1.2 개명 예정 추가",
