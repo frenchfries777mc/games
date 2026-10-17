@@ -3,6 +3,58 @@
   {
    "date": "2026-10-17",
    "build": "",
+   "title": "Crown Envoy 역사 템플릿 3개 위키 추가",
+   "items": [
+    "로마의 몰락·백년전쟁·오스만의 부상 템플릿 설명 추가",
+    "역사 템플릿 수를 19개로 수정",
+    "최신 빌드를 build 32로 수정"
+   ],
+   "tr": {
+    "en": {
+     "title": "Crown Envoy 3 new historical templates wiki",
+     "items": [
+      "Added The Fall of Rome, The Hundred Years' War and The Rise of the Ottomans",
+      "Historical template count changed to 19",
+      "Latest build changed to build 32"
+     ]
+    },
+    "es": {
+     "title": "Wiki de 3 nuevas plantillas históricas de Crown Envoy",
+     "items": [
+      "Se añadieron La caída de Roma, La guerra de los Cien Años y El ascenso otomano",
+      "Número de plantillas históricas cambiado a 19",
+      "Última compilación cambiada a build 32"
+     ]
+    },
+    "fr": {
+     "title": "Wiki des 3 nouveaux modèles historiques de Crown Envoy",
+     "items": [
+      "Ajout de La chute de Rome, La guerre de Cent Ans et L'essor des Ottomans",
+      "Nombre de modèles historiques changé en 19",
+      "Dernier build changé en build 32"
+     ]
+    },
+    "de": {
+     "title": "Crown Envoy Wiki zu 3 neuen historischen Vorlagen",
+     "items": [
+      "Der Fall Roms, Der Hundertjährige Krieg und Der Aufstieg der Osmanen ergänzt",
+      "Anzahl der historischen Vorlagen auf 19 geändert",
+      "Neuester Build auf build 32 geändert"
+     ]
+    },
+    "ja": {
+     "title": "Crown Envoy 歴史テンプレート3つのWiki追加",
+     "items": [
+      "ローマの滅亡・百年戦争・オスマンの台頭を追加",
+      "歴史テンプレートの数を19個に修正",
+      "最新ビルドをbuild 32に修正"
+     ]
+    }
+   }
+  },
+  {
+   "date": "2026-10-17",
+   "build": "",
    "title": "Crown Envoy 영토 통합 위키 갱신",
    "items": [
     "세계 지도 영토 수(907개)와 영토 통합 설명 추가",
