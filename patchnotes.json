@@ -3,6 +3,52 @@
   {
    "date": "2026-10-17",
    "build": "",
+   "title": "Crown Envoy 건물 2개 위키 추가",
+   "items": [
+    "대장간·대학 건물 설명 추가",
+    "최신 빌드를 build 33으로 수정"
+   ],
+   "tr": {
+    "en": {
+     "title": "Crown Envoy two new buildings wiki",
+     "items": [
+      "Added the Smithy and University buildings",
+      "Latest build changed to build 33"
+     ]
+    },
+    "es": {
+     "title": "Wiki de 2 nuevos edificios de Crown Envoy",
+     "items": [
+      "Se añadieron los edificios Herrería y Universidad",
+      "Última compilación cambiada a build 33"
+     ]
+    },
+    "fr": {
+     "title": "Wiki des 2 nouveaux bâtiments de Crown Envoy",
+     "items": [
+      "Ajout des bâtiments Forge et Université",
+      "Dernier build changé en build 33"
+     ]
+    },
+    "de": {
+     "title": "Crown Envoy Wiki zu 2 neuen Gebäuden",
+     "items": [
+      "Die Gebäude Schmiede und Universität ergänzt",
+      "Neuester Build auf build 33 geändert"
+     ]
+    },
+    "ja": {
+     "title": "Crown Envoy 建物2つのWiki追加",
+     "items": [
+      "鍛冶場・大学の建物を追加",
+      "最新ビルドをbuild 33に修正"
+     ]
+    }
+   }
+  },
+  {
+   "date": "2026-10-17",
+   "build": "",
    "title": "게임별 소식 받기 추가",
    "items": [
     "뉴스에서 게임마다 '소식 받기'를 켜면 새 패치노트 수와 NEW 표시를 보여 주는 기능 추가",
