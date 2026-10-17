@@ -3,6 +3,52 @@
   {
    "date": "2026-10-17",
    "build": "",
+   "title": "Beaconfall 사진 모드·월드 카드 위키 추가",
+   "items": [
+    "사진 모드(📷 버튼으로 화면 저장·공유) 설명 추가",
+    "월드 카드(통계 창에서 한 장 카드 이미지로 저장·공유) 설명 추가"
+   ],
+   "tr": {
+    "en": {
+     "title": "Beaconfall photo mode and world card wiki",
+     "items": [
+      "Added photo mode (save or share the screen with the 📷 button)",
+      "Added the world card (save or share a single card image from the stats window)"
+     ]
+    },
+    "es": {
+     "title": "Wiki del modo foto y la tarjeta del mundo de Beaconfall",
+     "items": [
+      "Se añadió el modo foto (guardar o compartir la pantalla con el botón 📷)",
+      "Se añadió la tarjeta del mundo (guardar o compartir una imagen desde las estadísticas)"
+     ]
+    },
+    "fr": {
+     "title": "Wiki du mode photo et de la carte du monde de Beaconfall",
+     "items": [
+      "Ajout du mode photo (enregistrer ou partager l'écran avec le bouton 📷)",
+      "Ajout de la carte du monde (enregistrer ou partager une image depuis les statistiques)"
+     ]
+    },
+    "de": {
+     "title": "Beaconfall Wiki zu Fotomodus und Welt-Karte",
+     "items": [
+      "Fotomodus ergänzt (Bildschirm mit der 📷-Schaltfläche speichern oder teilen)",
+      "Welt-Karte ergänzt (als einzelnes Kartenbild aus dem Statistikfenster speichern oder teilen)"
+     ]
+    },
+    "ja": {
+     "title": "Beaconfall フォトモード・ワールドカードのWiki追加",
+     "items": [
+      "フォトモード（📷ボタンで画面を保存・共有）を追加",
+      "ワールドカード（統計ウィンドウから1枚のカード画像として保存・共有）を追加"
+     ]
+    }
+   }
+  },
+  {
+   "date": "2026-10-17",
+   "build": "",
    "title": "Crown Envoy 역사 템플릿 3개 위키 추가",
    "items": [
     "로마의 몰락·백년전쟁·오스만의 부상 템플릿 설명 추가",
