@@ -3,6 +3,46 @@
   {
    "date": "2026-10-17",
    "build": "",
+   "title": "Stickseum 빌드 표기·클릭 소리 위키 갱신",
+   "items": [
+    "Stickseum 빌드 표기(build N)와 버튼 클릭 소리 설명 추가 (build 256)"
+   ],
+   "tr": {
+    "en": {
+     "title": "Stickseum build format and click sound wiki update",
+     "items": [
+      "Added the Stickseum build format (build N) and the button click sound (build 256)"
+     ]
+    },
+    "es": {
+     "title": "Wiki del formato de compilación y sonido de clic de Stickseum",
+     "items": [
+      "Se añadieron el formato de compilación (build N) y el sonido de clic de botón de Stickseum (build 256)"
+     ]
+    },
+    "fr": {
+     "title": "Wiki du format de build et du clic de Stickseum",
+     "items": [
+      "Ajout du format de build (build N) et du son de clic des boutons de Stickseum (build 256)"
+     ]
+    },
+    "de": {
+     "title": "Wiki zu Stickseum-Buildformat und Klickgeräusch",
+     "items": [
+      "Buildformat (build N) und Klickgeräusch der Knöpfe von Stickseum ergänzt (build 256)"
+     ]
+    },
+    "ja": {
+     "title": "Stickseumのビルド表記とクリック音をウィキに反映",
+     "items": [
+      "Stickseumのビルド表記（build N）とボタンのクリック音の説明を追加（build 256）"
+     ]
+    }
+   }
+  },
+  {
+   "date": "2026-10-17",
+   "build": "",
    "title": "Crown Envoy 배경음악 위키 추가",
    "items": [
     "Crown Envoy 배경음악(전투 음악과 잔잔한 기타 곡 번갈아 재생) 설명 추가 (v0.3 b28)"
