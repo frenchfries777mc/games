@@ -3,6 +3,58 @@
   {
    "date": "2026-10-17",
    "build": "",
+   "title": "위키 21시 묶음",
+   "items": [
+    "Beaconfall 위키 13문서 수정, 새 문서 3개 (공허의 군주와 진엔딩, 정착지와 주민, 건축과 청사진)",
+    "Crown Envoy 위키 7문서, Tools Block HTML 위키 3문서, Stickseum 패치 기록 수정",
+    "Beaconfall 업적 목록 58개로 갱신"
+   ],
+   "tr": {
+    "en": {
+     "title": "Wiki batch (21:00)",
+     "items": [
+      "13 Beaconfall wiki pages updated, 3 new pages (Void Lord and true ending, Settlements and villagers, Building and blueprints)",
+      "7 Crown Envoy pages, 3 Tools Block HTML pages and the Stickseum patch history updated",
+      "Beaconfall achievement list updated to 58"
+     ]
+    },
+    "es": {
+     "title": "Lote de la wiki (21:00)",
+     "items": [
+      "13 páginas de Beaconfall actualizadas, 3 nuevas (Señor del Vacío y final verdadero, Asentamientos y aldeanos, Construcción y planos)",
+      "7 páginas de Crown Envoy, 3 de Block HTML y el historial de Stickseum actualizados",
+      "Lista de logros de Beaconfall actualizada a 58"
+     ]
+    },
+    "fr": {
+     "title": "Lot du wiki (21h)",
+     "items": [
+      "13 pages Beaconfall mises à jour, 3 nouvelles (Seigneur du Vide et vraie fin, Colonies et habitants, Construction et plans)",
+      "7 pages Crown Envoy, 3 pages Block HTML et l’historique Stickseum mis à jour",
+      "Liste des succès Beaconfall passée à 58"
+     ]
+    },
+    "de": {
+     "title": "Wiki-Paket (21 Uhr)",
+     "items": [
+      "13 Beaconfall-Seiten aktualisiert, 3 neue (Leerenfürst und wahres Ende, Siedlungen und Bewohner, Bauen und Baupläne)",
+      "7 Crown-Envoy-Seiten, 3 Block-HTML-Seiten und die Stickseum-Patchhistorie aktualisiert",
+      "Beaconfall-Erfolgsliste auf 58 erweitert"
+     ]
+    },
+    "ja": {
+     "title": "Wikiまとめ更新(21時)",
+     "items": [
+      "Beaconfallのページ13件を更新、新ページ3件(虚空の君主と真エンド、定住地と住民、建築と設計図)",
+      "Crown Envoy 7件、Tools Block HTML 3件、Stickseumのパッチ履歴を更新",
+      "Beaconfallの実績リストを58個に更新"
+     ]
+    }
+   }
+  },
+  {
+   "date": "2026-10-17",
+   "build": "",
    "title": "GitHub·Google 로그인",
    "items": [
     "계정 만들기 화면에 GitHub, Google로 계속하기 버튼 추가 (로그인 화면에는 작은 아이콘)",
