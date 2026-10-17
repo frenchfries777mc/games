@@ -3,6 +3,46 @@
   {
    "date": "2026-10-17",
    "build": "",
+   "title": "Beaconfall 계절별 배경음악 위키 추가",
+   "items": [
+    "Beaconfall 계절별 배경음악과 3초 전환 설명 추가 (v0.3)"
+   ],
+   "tr": {
+    "en": {
+     "title": "Beaconfall seasonal music added to the wiki",
+     "items": [
+      "Added Beaconfall seasonal background music and the 3-second crossfade (v0.3)"
+     ]
+    },
+    "es": {
+     "title": "Música por estación de Beaconfall en la wiki",
+     "items": [
+      "Se añadieron la música de fondo por estación de Beaconfall y el fundido de 3 segundos (v0.3)"
+     ]
+    },
+    "fr": {
+     "title": "Musique saisonnière de Beaconfall dans le wiki",
+     "items": [
+      "Ajout de la musique de fond par saison de Beaconfall et du fondu de 3 secondes (v0.3)"
+     ]
+    },
+    "de": {
+     "title": "Beaconfall-Jahreszeitenmusik im Wiki",
+     "items": [
+      "Hintergrundmusik je Jahreszeit in Beaconfall und die 3-Sekunden-Überblendung ergänzt (v0.3)"
+     ]
+    },
+    "ja": {
+     "title": "Beaconfallの季節別BGMをウィキに追加",
+     "items": [
+      "Beaconfallの季節別背景音楽と3秒の切り替えの説明を追加（v0.3）"
+     ]
+    }
+   }
+  },
+  {
+   "date": "2026-10-17",
+   "build": "",
    "title": "Crown Envoy 세계 회의·Stickseum 인트로 위키 추가",
    "items": [
     "Crown Envoy 세계 회의(안건 3종), 봇 휴전 판단, 인트로 고정 설명 추가 (v0.3 b26)",
