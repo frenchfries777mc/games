@@ -3,6 +3,52 @@
   {
    "date": "2026-10-17",
    "build": "",
+   "title": "Stickseum 위키 캐릭터 문서 정리",
+   "items": [
+    "근접·총·투척·특수 캐릭터 문서와 전체 캐릭터 한눈에 문서 삭제",
+    "캐릭터 문서 하나만 남김"
+   ],
+   "tr": {
+    "en": {
+     "title": "Stickseum wiki character pages cleaned up",
+     "items": [
+      "Removed the melee, gun, throwing and special character pages and the full character list page",
+      "Kept only the Characters page"
+     ]
+    },
+    "es": {
+     "title": "Limpieza de las páginas de personajes de la wiki de Stickseum",
+     "items": [
+      "Eliminadas las páginas de cuerpo a cuerpo, armas de fuego, lanzamiento y especiales y la lista completa de personajes",
+      "Solo queda la página Personajes"
+     ]
+    },
+    "fr": {
+     "title": "Nettoyage des pages de personnages du wiki Stickseum",
+     "items": [
+      "Suppression des pages mêlée, armes à feu, lancer et spéciaux et de la liste complète des personnages",
+      "Seule la page Personnages est conservée"
+     ]
+    },
+    "de": {
+     "title": "Stickseum-Wiki: Charakterseiten aufgeräumt",
+     "items": [
+      "Die Seiten für Nahkampf, Schusswaffen, Wurf und Spezial sowie die Gesamtliste der Charaktere entfernt",
+      "Nur die Charakterseite bleibt"
+     ]
+    },
+    "ja": {
+     "title": "Stickseum Wikiのキャラクターページを整理",
+     "items": [
+      "近接・銃・投てき・特殊のキャラクターページと全キャラクター一覧ページを削除",
+      "キャラクターページ1つだけを残しました"
+     ]
+    }
+   }
+  },
+  {
+   "date": "2026-10-17",
+   "build": "",
    "title": "Stickseum 캐릭터 문서 하나로 합치기",
    "items": [
     "총·근접·투척·특수 캐릭터 문서를 캐릭터 문서 하나로 합침",
