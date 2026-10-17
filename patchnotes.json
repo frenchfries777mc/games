@@ -3,6 +3,52 @@
   {
    "date": "2026-10-17",
    "build": "",
+   "title": "계절 테마와 폰용 하단 메뉴",
+   "items": [
+    "허브 계절 테마 추가 (봄·여름·가을·겨울과 핼러윈·크리스마스·새해에 맞춰 배경 색과 떨어지는 그림이 바뀜)",
+    "화면이 좁을 때 하단 메뉴 추가 (게임·랭킹·위키·커뮤니티·내 정보)"
+   ],
+   "tr": {
+    "en": {
+     "title": "Seasonal theme and bottom tab bar",
+     "items": [
+      "Seasonal hub theme (background tint and falling decorations change for spring, summer, autumn, winter, Halloween, Christmas and New Year)",
+      "Bottom tab bar on narrow screens (Games, Ranking, Wiki, Community, Me)"
+     ]
+    },
+    "es": {
+     "title": "Tema de temporada y barra inferior",
+     "items": [
+      "Tema de temporada en el hub (el color de fondo y las decoraciones cambian en primavera, verano, otoño, invierno, Halloween, Navidad y Año Nuevo)",
+      "Barra de pestañas inferior en pantallas estrechas (Juegos, Clasificación, Wiki, Comunidad, Yo)"
+     ]
+    },
+    "fr": {
+     "title": "Thème de saison et barre d'onglets en bas",
+     "items": [
+      "Thème saisonnier du hub (teinte du fond et décorations changent au printemps, été, automne, hiver, Halloween, Noël et Nouvel An)",
+      "Barre d'onglets en bas sur petits écrans (Jeux, Classement, Wiki, Communauté, Moi)"
+     ]
+    },
+    "de": {
+     "title": "Jahreszeiten-Thema und untere Tab-Leiste",
+     "items": [
+      "Jahreszeiten-Thema im Hub (Hintergrundfarbe und fallende Deko wechseln zu Frühling, Sommer, Herbst, Winter, Halloween, Weihnachten und Neujahr)",
+      "Untere Tab-Leiste auf schmalen Bildschirmen (Spiele, Rangliste, Wiki, Community, Ich)"
+     ]
+    },
+    "ja": {
+     "title": "季節テーマと下部メニュー",
+     "items": [
+      "ハブに季節テーマを追加 (春・夏・秋・冬、ハロウィン、クリスマス、お正月で背景色と降る飾りが変わる)",
+      "画面が狭いときの下部メニューを追加 (ゲーム・ランキング・Wiki・コミュニティ・マイ)"
+     ]
+    }
+   }
+  },
+  {
+   "date": "2026-10-17",
+   "build": "",
    "title": "도전과제 이름 변경 반영",
    "items": [
     "미니게임 마스터 도전과제 이름 수정 (모드 수집가)",
