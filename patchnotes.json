@@ -3,6 +3,52 @@
   {
    "date": "2026-10-17",
    "build": "",
+   "title": "위쪽 버튼 묶음·라운지 메뉴",
+   "items": [
+    "위쪽 오른쪽 버튼(코인·설정·알림·투표·계정)을 한 배경으로 묶음",
+    "라운지 메뉴 추가 (음악, 패치노트)"
+   ],
+   "tr": {
+    "en": {
+     "title": "Grouped top buttons, Lounge menu",
+     "items": [
+      "Top-right buttons (coin, settings, alerts, vote, account) grouped on one background",
+      "Lounge menu added (Music, Patch notes)"
+     ]
+    },
+    "es": {
+     "title": "Botones superiores agrupados, menú Sala",
+     "items": [
+      "Botones de arriba a la derecha (monedas, ajustes, avisos, votación, cuenta) en un solo fondo",
+      "Menú Sala añadido (Música, Notas de versión)"
+     ]
+    },
+    "fr": {
+     "title": "Boutons du haut regroupés, menu Salon",
+     "items": [
+      "Boutons en haut à droite (pièces, réglages, alertes, vote, compte) regroupés sur un seul fond",
+      "Menu Salon ajouté (Musique, Notes de version)"
+     ]
+    },
+    "de": {
+     "title": "Obere Buttons gruppiert, Lounge-Menü",
+     "items": [
+      "Buttons oben rechts (Münzen, Einstellungen, Hinweise, Abstimmung, Konto) auf einem Hintergrund gruppiert",
+      "Lounge-Menü hinzugefügt (Musik, Patchnotes)"
+     ]
+    },
+    "ja": {
+     "title": "上部ボタンをまとめ、ラウンジメニュー",
+     "items": [
+      "右上のボタン(コイン・設定・通知・投票・アカウント)を一つの背景にまとめた",
+      "ラウンジメニューを追加 (音楽、パッチノート)"
+     ]
+    }
+   }
+  },
+  {
+   "date": "2026-10-17",
+   "build": "",
    "title": "허브 로고·위쪽 메뉴 정리·커뮤니티 페이지",
    "items": [
     "Frenchfries777 로고 추가 (위쪽 메뉴, 첫 화면, 계정 안내, 777 아래 웃는 입)",

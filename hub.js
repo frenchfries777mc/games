@@ -283,6 +283,7 @@ function paintRx(bar, kind, id){
 }
 function closeRx(){ [].forEach.call(document.querySelectorAll('.rx-p'),function(x){ x.hidden=true; }); }
 document.addEventListener('click',function(e){ if(!(e.target.closest&&e.target.closest('.rx-w'))) closeRx(); });
+document.addEventListener('click',function(e){ var ds=document.querySelectorAll('details.nd[open]'); for(var i=0;i<ds.length;i++) if(!ds[i].contains(e.target)) ds[i].open=false; });
 async function toggleRx(kind, id, e){
   var o=rx[kind+':'+id]||(rx[kind+':'+id]={}), v=o[e]||(o[e]={n:0,me:false}), on=!v.me;
   var r=on?await sb.from('ff_reacts').insert({kind:kind, target:id, emoji:e}):await sb.from('ff_reacts').delete().eq('kind',kind).eq('target',id).eq('user_id',me.id).eq('emoji',e);
