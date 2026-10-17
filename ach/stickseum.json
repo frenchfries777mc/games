@@ -1,1 +1,499 @@
-{"game":"stickseum","list":[{"id":"first_kill","icon":"🎯","n":{"ko":"첫 처치","en":"First Takedown","fr":"Première élimination","de":"Erster Kill","es":"Primera baja","ja":"初撃破"}},{"id":"kills_10","icon":"🎯","n":{"ko":"학살자의 시작","en":"The Slayer Begins","fr":"Le début du massacre","de":"Beginn des Schlächters","es":"El inicio del masacrador","ja":"殺戮者の始まり"}},{"id":"kills_50","icon":"⚔️","n":{"ko":"숙련된 전사","en":"Seasoned Warrior","fr":"Guerrier aguerri","de":"Erfahrener Krieger","es":"Guerrero experimentado","ja":"熟練の戦士"}},{"id":"kills_100","icon":"💯","n":{"ko":"백발백중","en":"Sharpshooter","fr":"Tir infaillible","de":"Immer ein Treffer","es":"Puntería perfecta","ja":"百発百中"}},{"id":"first_win","icon":"🏆","n":{"ko":"첫 승리","en":"First Win","fr":"Première victoire","de":"Erster Sieg","es":"Primera victoria","ja":"初勝利"}},{"id":"wins_10","icon":"🏆","n":{"ko":"연승 가도","en":"Winning Streak","fr":"Série de victoires","de":"Siegesserie","es":"Racha de victorias","ja":"連勝街道"}},{"id":"wins_30","icon":"👑","n":{"ko":"챔피언","en":"Champion","fr":"Champion","de":"Champion","es":"Campeón","ja":"チャンピオン"}},{"id":"dmg_1000","icon":"💥","n":{"ko":"파괴자","en":"Destroyer","fr":"Destructeur","de":"Zerstörer","es":"Destructor","ja":"破壊者"}},{"id":"dmg_10000","icon":"☄️","n":{"ko":"재앙","en":"Calamity","fr":"Catastrophe","de":"Katastrophe","es":"Calamidad","ja":"災厄"}},{"id":"assists_20","icon":"🤝","n":{"ko":"든든한 지원군","en":"Trusty Backup","fr":"Un soutien fiable","de":"Zuverlässige Verstärkung","es":"Refuerzo fiable","ja":"頼れる助っ人"}},{"id":"matches_100","icon":"🎮","n":{"ko":"단골 손님","en":"Regular","fr":"Habitué","de":"Stammgast","es":"Cliente habitual","ja":"常連客"}},{"id":"all_classic","icon":"🗺️","n":{"ko":"만능 플레이어","en":"All-Round Player","fr":"Polyvalent","de":"Allrounder","es":"Jugador polivalente","ja":"オールラウンダー"}},{"id":"all_minigame","icon":"🎲","n":{"ko":"미니게임 마스터","en":"Minigame Master","fr":"Maître des mini-jeux","de":"Minispiel-Meister","es":"Maestro de minijuegos","ja":"ミニゲームマスター"}},{"id":"pro_gamer","icon":"🏅","n":{"ko":"진정한 프로게이머","en":"True Pro Gamer","fr":"Vrai pro gamer","de":"Echter Profi-Gamer","es":"Auténtico Pro Gamer","ja":"真のプロゲーマー"}},{"id":"level_10","icon":"⭐","n":{"ko":"성장하는 전사","en":"Growing Warrior","fr":"Guerrier en progression","de":"Wachsender Krieger","es":"Guerrero en crecimiento","ja":"成長する戦士"}},{"id":"level_25","icon":"🌟","n":{"ko":"베테랑","en":"Veteran","fr":"Vétéran","de":"Veteran","es":"Veterano","ja":"ベテラン"}},{"id":"ff_all3","icon":"🍟","n":{"ko":"Frenchfries777 탐험가","en":"Frenchfries777 Explorer","fr":"Explorateur Frenchfries777","de":"Frenchfries777-Entdecker","es":"Explorador de Frenchfries777","ja":"Frenchfries777探検家"}},{"id":"ch_dagger_ult10","icon":"🥷","n":{"ko":"은신의 고수","en":"Master of Stealth","fr":"Maître du camouflage","de":"Meister der Tarnung","es":"Maestro del sigilo","ja":"ステルスの達人"}},{"id":"ch_sword_skill20","icon":"🌀","n":{"ko":"멀미 유발","en":"May cause motion sickness","fr":"Provoque le mal des transports","de":"Übelkeit","es":"Provoca mareo","ja":"酔いを誘発"}},{"id":"ch_lightsaber_ult10","icon":"⚡","n":{"ko":"번개는 한번 친 곳에 9번 더 친다"}},{"id":"ch_horemheb_skill15","icon":"🔱","n":{"ko":"왕의 쇠스랑은 돌아오지 않는다","en":"The King's Pitchfork Never Returns","fr":"La fourche du roi ne revient pas","de":"Die Mistgabel des Königs kehrt nie zurück","es":"La horca del rey no regresa","ja":"王の熊手は戻ってこない"}},{"id":"ch_bow_skill10","icon":"🕺","n":{"ko":"마이클 잭슨","en":"Michael Jackson","fr":"Michael Jackson","de":"Michael Jackson","es":"Michael Jackson","ja":"マイケル・ジャクソン"}},{"id":"ch_magiccard_ult10","icon":"🎩","n":{"ko":"탈출의 고수","en":"Escape Artist","fr":"Maître de l'évasion","de":"Meister der Flucht","es":"Maestro de la huida","ja":"脱出の達人"}},{"id":"ch_pistol_skill15","icon":"🔫","n":{"ko":"손이 안 보이는 총잡이","en":"The Gunslinger with Invisible Hands","fr":"Le pistolero à la main invisible","de":"Revolverheld mit unsichtbarer Hand","es":"Pistolero de manos invisibles","ja":"手が見えないガンマン"}},{"id":"ch_smg_skill15","icon":"🌫️","n":{"ko":"안개 속의 요원","en":"Agent in the Fog","fr":"L'agent dans la brume","de":"Agent im Nebel","es":"Agente entre la niebla","ja":"霧の中のエージェント"}},{"id":"ch_bat_ult6","icon":"⚾","n":{"ko":"끝내기 홈런","en":"Walk-off Home Run","fr":"Coup de circuit final","de":"Walk-off-Homerun","es":"Home run decisivo","ja":"サヨナラホームラン"}},{"id":"ch_boomerang_ult6","icon":"🪃","n":{"ko":"부메랑 효과","en":"Boomerang effect","fr":"Effet du boomerang","de":"Bumerang-Effekt","es":"Efecto del bumerán","ja":"ブーメラン効果"}},{"id":"ch_shuriken_skill15","icon":"💨","n":{"ko":"닌자는 잔상을 남긴다","en":"The Ninja leaves afterimages","fr":"Le ninja laisse une image rémanente","de":"Der Ninja hinterlässt Nachbilder","es":"El ninja deja imágenes residuales","ja":"忍者は残像を残す"}},{"id":"ch_shotgun_skill15","icon":"🚪","n":{"ko":"보안관의 노크","en":"Sheriff's Knock","fr":"Le coup du shérif","de":"Klopfen des Sheriffs","es":"Toque del sheriff","ja":"保安官のノック"}},{"id":"ch_rifle_ult6","icon":"🛩️","n":{"ko":"융단 폭격 요청","en":"Call in Carpet Bombing","fr":"Appel de bombardement massif","de":"Flächenbombardement anfordern","es":"Pedir bombardeo en alfombra","ja":"絨毯爆撃を要請"}},{"id":"ch_gloves_skill15","icon":"🥊","n":{"ko":"하늘로 보내드립니다","en":"Sending you to the sky","fr":"On t'envoie au ciel","de":"Wir schicken dich in den Himmel","es":"Te enviamos al cielo","ja":"天国へお送りします"}},{"id":"ch_grenade_skill20","icon":"💥","n":{"ko":"폭발 점프 중독","en":"Blast Jump Addict","fr":"Accro au saut explosif","de":"Explosionssprung-Sucht","es":"Adicto al salto explosivo","ja":"爆発ジャンプ中毒"}},{"id":"ch_bazooka_ult6","icon":"🎯","n":{"ko":"미사일은 내 친구","en":"Missiles Are My Friends","fr":"Les missiles sont mes amis","de":"Raketen sind meine Freunde","es":"Los misiles son mis amigos","ja":"ミサイルは友達"}},{"id":"ch_dracula_ult5","icon":"🦇","n":{"ko":"나는 박쥐다","en":"I Am a Bat","fr":"Je suis une chauve-souris","de":"Ich bin eine Fledermaus","es":"Soy un murciélago","ja":"俺はコウモリだ"}},{"id":"ch_gambler_skill20","icon":"🪙","n":{"ko":"앞면이면 내 승리","en":"Heads means I win","fr":"Face = victoire pour moi","de":"Bei Kopf gewinne ich","es":"Si sale cara, gano yo","ja":"表なら私の勝ち"}},{"id":"ch_wizard_ult6","icon":"🔮","n":{"ko":"마법진 수집가","en":"Magic Circle Collector","fr":"Collectionneur de cercles magiques","de":"Zauberkreis-Sammler","es":"Coleccionista de círculos mágicos","ja":"魔法陣コレクター"}},{"id":"ch_flamethrower_skill15","icon":"🔥","n":{"ko":"불장난은 위험해요","en":"Playing with fire is dangerous","fr":"Jouer avec le feu est dangereux","de":"Spiel nicht mit dem Feuer","es":"Jugar con fuego es peligroso","ja":"火遊びは危険です"}},{"id":"ch_portalgun_skill12","icon":"⏪","n":{"ko":"Ctrl + Z"}},{"id":"ch_vacuum_skill20","icon":"🧹","n":{"ko":"흡입력이 변하지 않는 청소부","en":"The Cleaner With Unchanging Suction","fr":"Aspirateur à puissance constante","de":"Reiniger mit konstanter Saugkraft","es":"Limpiador de succión constante","ja":"吸引力が変わらない清掃員"}},{"id":"ch_pirate_ult6","icon":"🏴‍☠️","n":{"ko":"바다의 포대장","en":"Captain of the Guns","fr":"Capitaine des canons","de":"Kanonenkapitän","es":"Capitán de los cañones","ja":"海の砲台長"}},{"id":"ch_samurai_skill15","icon":"⚔️","n":{"ko":"일섬","en":"One Flash","fr":"Un éclair","de":"Ein Blitz","es":"Un destello","ja":"一閃"}},{"id":"ch_kurus_ult6","icon":"🌑","n":{"ko":"늪 속의 그림자","en":"Shadow in the Swamp","fr":"Ombre du marais","de":"Schatten im Sumpf","es":"Sombra del pantano","ja":"沼の中の影"}}]}
+{
+ "game": "stickseum",
+ "list": [
+  {
+   "id": "first_kill",
+   "icon": "🎯",
+   "n": {
+    "ko": "첫 처치",
+    "en": "First Takedown",
+    "fr": "Première élimination",
+    "de": "Erster Kill",
+    "es": "Primera baja",
+    "ja": "初撃破"
+   }
+  },
+  {
+   "id": "kills_10",
+   "icon": "🎯",
+   "n": {
+    "ko": "학살자의 시작",
+    "en": "The Slayer Begins",
+    "fr": "Le début du massacre",
+    "de": "Beginn des Schlächters",
+    "es": "El inicio del masacrador",
+    "ja": "殺戮者の始まり"
+   }
+  },
+  {
+   "id": "kills_50",
+   "icon": "⚔️",
+   "n": {
+    "ko": "숙련된 전사",
+    "en": "Seasoned Warrior",
+    "fr": "Guerrier aguerri",
+    "de": "Erfahrener Krieger",
+    "es": "Guerrero experimentado",
+    "ja": "熟練の戦士"
+   }
+  },
+  {
+   "id": "kills_100",
+   "icon": "💯",
+   "n": {
+    "ko": "백발백중",
+    "en": "Sharpshooter",
+    "fr": "Tir infaillible",
+    "de": "Immer ein Treffer",
+    "es": "Puntería perfecta",
+    "ja": "百発百中"
+   }
+  },
+  {
+   "id": "first_win",
+   "icon": "🏆",
+   "n": {
+    "ko": "첫 승리",
+    "en": "First Win",
+    "fr": "Première victoire",
+    "de": "Erster Sieg",
+    "es": "Primera victoria",
+    "ja": "初勝利"
+   }
+  },
+  {
+   "id": "wins_10",
+   "icon": "🏆",
+   "n": {
+    "ko": "연승 가도",
+    "en": "Winning Streak",
+    "fr": "Série de victoires",
+    "de": "Siegesserie",
+    "es": "Racha de victorias",
+    "ja": "連勝街道"
+   }
+  },
+  {
+   "id": "wins_30",
+   "icon": "👑",
+   "n": {
+    "ko": "챔피언",
+    "en": "Champion",
+    "fr": "Champion",
+    "de": "Champion",
+    "es": "Campeón",
+    "ja": "チャンピオン"
+   }
+  },
+  {
+   "id": "dmg_1000",
+   "icon": "💥",
+   "n": {
+    "ko": "파괴자",
+    "en": "Destroyer",
+    "fr": "Destructeur",
+    "de": "Zerstörer",
+    "es": "Destructor",
+    "ja": "破壊者"
+   }
+  },
+  {
+   "id": "dmg_10000",
+   "icon": "☄️",
+   "n": {
+    "ko": "재앙",
+    "en": "Calamity",
+    "fr": "Catastrophe",
+    "de": "Katastrophe",
+    "es": "Calamidad",
+    "ja": "災厄"
+   }
+  },
+  {
+   "id": "assists_20",
+   "icon": "🤝",
+   "n": {
+    "ko": "든든한 지원군",
+    "en": "Trusty Backup",
+    "fr": "Un soutien fiable",
+    "de": "Zuverlässige Verstärkung",
+    "es": "Refuerzo fiable",
+    "ja": "頼れる助っ人"
+   }
+  },
+  {
+   "id": "matches_100",
+   "icon": "🎮",
+   "n": {
+    "ko": "단골 손님",
+    "en": "Regular",
+    "fr": "Habitué",
+    "de": "Stammgast",
+    "es": "Cliente habitual",
+    "ja": "常連客"
+   }
+  },
+  {
+   "id": "all_classic",
+   "icon": "🗺️",
+   "n": {
+    "ko": "만능 플레이어",
+    "en": "All-Round Player",
+    "fr": "Polyvalent",
+    "de": "Allrounder",
+    "es": "Jugador polivalente",
+    "ja": "オールラウンダー"
+   }
+  },
+  {
+   "id": "all_minigame",
+   "icon": "🎲",
+   "n": {
+    "ko": "모드 수집가",
+    "en": "Mode Collector",
+    "fr": "Collectionneur de modes",
+    "de": "Modussammler",
+    "es": "Coleccionista de modos",
+    "ja": "モードコレクター"
+   }
+  },
+  {
+   "id": "pro_gamer",
+   "icon": "🏅",
+   "n": {
+    "ko": "진정한 프로게이머",
+    "en": "True Pro Gamer",
+    "fr": "Vrai pro gamer",
+    "de": "Echter Profi-Gamer",
+    "es": "Auténtico Pro Gamer",
+    "ja": "真のプロゲーマー"
+   }
+  },
+  {
+   "id": "level_10",
+   "icon": "⭐",
+   "n": {
+    "ko": "성장하는 전사",
+    "en": "Growing Warrior",
+    "fr": "Guerrier en progression",
+    "de": "Wachsender Krieger",
+    "es": "Guerrero en crecimiento",
+    "ja": "成長する戦士"
+   }
+  },
+  {
+   "id": "level_25",
+   "icon": "🌟",
+   "n": {
+    "ko": "베테랑",
+    "en": "Veteran",
+    "fr": "Vétéran",
+    "de": "Veteran",
+    "es": "Veterano",
+    "ja": "ベテラン"
+   }
+  },
+  {
+   "id": "ff_all3",
+   "icon": "🍟",
+   "n": {
+    "ko": "Frenchfries777 탐험가",
+    "en": "Frenchfries777 Explorer",
+    "fr": "Explorateur Frenchfries777",
+    "de": "Frenchfries777-Entdecker",
+    "es": "Explorador de Frenchfries777",
+    "ja": "Frenchfries777探検家"
+   }
+  },
+  {
+   "id": "ch_dagger_ult10",
+   "icon": "🥷",
+   "n": {
+    "ko": "은신의 고수",
+    "en": "Master of Stealth",
+    "fr": "Maître du camouflage",
+    "de": "Meister der Tarnung",
+    "es": "Maestro del sigilo",
+    "ja": "ステルスの達人"
+   }
+  },
+  {
+   "id": "ch_sword_skill20",
+   "icon": "🌀",
+   "n": {
+    "ko": "멀미 유발",
+    "en": "May cause motion sickness",
+    "fr": "Provoque le mal des transports",
+    "de": "Übelkeit",
+    "es": "Provoca mareo",
+    "ja": "酔いを誘発"
+   }
+  },
+  {
+   "id": "ch_lightsaber_ult10",
+   "icon": "⚡",
+   "n": {
+    "ko": "번개는 한번 친 곳에 9번 더 친다"
+   }
+  },
+  {
+   "id": "ch_horemheb_skill15",
+   "icon": "🔱",
+   "n": {
+    "ko": "왕의 쇠스랑은 돌아오지 않는다",
+    "en": "The King's Pitchfork Never Returns",
+    "fr": "La fourche du roi ne revient pas",
+    "de": "Die Mistgabel des Königs kehrt nie zurück",
+    "es": "La horca del rey no regresa",
+    "ja": "王の熊手は戻ってこない"
+   }
+  },
+  {
+   "id": "ch_bow_skill10",
+   "icon": "🕺",
+   "n": {
+    "ko": "마이클 잭슨",
+    "en": "Michael Jackson",
+    "fr": "Michael Jackson",
+    "de": "Michael Jackson",
+    "es": "Michael Jackson",
+    "ja": "マイケル・ジャクソン"
+   }
+  },
+  {
+   "id": "ch_magiccard_ult10",
+   "icon": "🎩",
+   "n": {
+    "ko": "탈출의 고수",
+    "en": "Escape Artist",
+    "fr": "Maître de l'évasion",
+    "de": "Meister der Flucht",
+    "es": "Maestro de la huida",
+    "ja": "脱出の達人"
+   }
+  },
+  {
+   "id": "ch_pistol_skill15",
+   "icon": "🔫",
+   "n": {
+    "ko": "손이 안 보이는 총잡이",
+    "en": "The Gunslinger with Invisible Hands",
+    "fr": "Le pistolero à la main invisible",
+    "de": "Revolverheld mit unsichtbarer Hand",
+    "es": "Pistolero de manos invisibles",
+    "ja": "手が見えないガンマン"
+   }
+  },
+  {
+   "id": "ch_smg_skill15",
+   "icon": "🌫️",
+   "n": {
+    "ko": "안개 속의 요원",
+    "en": "Agent in the Fog",
+    "fr": "L'agent dans la brume",
+    "de": "Agent im Nebel",
+    "es": "Agente entre la niebla",
+    "ja": "霧の中のエージェント"
+   }
+  },
+  {
+   "id": "ch_bat_ult6",
+   "icon": "⚾",
+   "n": {
+    "ko": "끝내기 홈런",
+    "en": "Walk-off Home Run",
+    "fr": "Coup de circuit final",
+    "de": "Walk-off-Homerun",
+    "es": "Home run decisivo",
+    "ja": "サヨナラホームラン"
+   }
+  },
+  {
+   "id": "ch_boomerang_ult6",
+   "icon": "🪃",
+   "n": {
+    "ko": "부메랑 효과",
+    "en": "Boomerang effect",
+    "fr": "Effet du boomerang",
+    "de": "Bumerang-Effekt",
+    "es": "Efecto del bumerán",
+    "ja": "ブーメラン効果"
+   }
+  },
+  {
+   "id": "ch_shuriken_skill15",
+   "icon": "💨",
+   "n": {
+    "ko": "닌자는 잔상을 남긴다",
+    "en": "The Ninja leaves afterimages",
+    "fr": "Le ninja laisse une image rémanente",
+    "de": "Der Ninja hinterlässt Nachbilder",
+    "es": "El ninja deja imágenes residuales",
+    "ja": "忍者は残像を残す"
+   }
+  },
+  {
+   "id": "ch_shotgun_skill15",
+   "icon": "🚪",
+   "n": {
+    "ko": "보안관의 노크",
+    "en": "Sheriff's Knock",
+    "fr": "Le coup du shérif",
+    "de": "Klopfen des Sheriffs",
+    "es": "Toque del sheriff",
+    "ja": "保安官のノック"
+   }
+  },
+  {
+   "id": "ch_rifle_ult6",
+   "icon": "🛩️",
+   "n": {
+    "ko": "융단 폭격 요청",
+    "en": "Call in Carpet Bombing",
+    "fr": "Appel de bombardement massif",
+    "de": "Flächenbombardement anfordern",
+    "es": "Pedir bombardeo en alfombra",
+    "ja": "絨毯爆撃を要請"
+   }
+  },
+  {
+   "id": "ch_gloves_skill15",
+   "icon": "🥊",
+   "n": {
+    "ko": "하늘로 보내드립니다",
+    "en": "Sending you to the sky",
+    "fr": "On t'envoie au ciel",
+    "de": "Wir schicken dich in den Himmel",
+    "es": "Te enviamos al cielo",
+    "ja": "天国へお送りします"
+   }
+  },
+  {
+   "id": "ch_grenade_skill20",
+   "icon": "💥",
+   "n": {
+    "ko": "폭발 점프 중독",
+    "en": "Blast Jump Addict",
+    "fr": "Accro au saut explosif",
+    "de": "Explosionssprung-Sucht",
+    "es": "Adicto al salto explosivo",
+    "ja": "爆発ジャンプ中毒"
+   }
+  },
+  {
+   "id": "ch_bazooka_ult6",
+   "icon": "🎯",
+   "n": {
+    "ko": "미사일은 내 친구",
+    "en": "Missiles Are My Friends",
+    "fr": "Les missiles sont mes amis",
+    "de": "Raketen sind meine Freunde",
+    "es": "Los misiles son mis amigos",
+    "ja": "ミサイルは友達"
+   }
+  },
+  {
+   "id": "ch_dracula_ult5",
+   "icon": "🦇",
+   "n": {
+    "ko": "나는 박쥐다",
+    "en": "I Am a Bat",
+    "fr": "Je suis une chauve-souris",
+    "de": "Ich bin eine Fledermaus",
+    "es": "Soy un murciélago",
+    "ja": "俺はコウモリだ"
+   }
+  },
+  {
+   "id": "ch_gambler_skill20",
+   "icon": "🪙",
+   "n": {
+    "ko": "앞면이면 내 승리",
+    "en": "Heads means I win",
+    "fr": "Face = victoire pour moi",
+    "de": "Bei Kopf gewinne ich",
+    "es": "Si sale cara, gano yo",
+    "ja": "表なら私の勝ち"
+   }
+  },
+  {
+   "id": "ch_wizard_ult6",
+   "icon": "🔮",
+   "n": {
+    "ko": "마법진 수집가",
+    "en": "Magic Circle Collector",
+    "fr": "Collectionneur de cercles magiques",
+    "de": "Zauberkreis-Sammler",
+    "es": "Coleccionista de círculos mágicos",
+    "ja": "魔法陣コレクター"
+   }
+  },
+  {
+   "id": "ch_flamethrower_skill15",
+   "icon": "🔥",
+   "n": {
+    "ko": "불장난은 위험해요",
+    "en": "Playing with fire is dangerous",
+    "fr": "Jouer avec le feu est dangereux",
+    "de": "Spiel nicht mit dem Feuer",
+    "es": "Jugar con fuego es peligroso",
+    "ja": "火遊びは危険です"
+   }
+  },
+  {
+   "id": "ch_portalgun_skill12",
+   "icon": "⏪",
+   "n": {
+    "ko": "Ctrl + Z"
+   }
+  },
+  {
+   "id": "ch_vacuum_skill20",
+   "icon": "🧹",
+   "n": {
+    "ko": "흡입력이 변하지 않는 청소부",
+    "en": "The Cleaner With Unchanging Suction",
+    "fr": "Aspirateur à puissance constante",
+    "de": "Reiniger mit konstanter Saugkraft",
+    "es": "Limpiador de succión constante",
+    "ja": "吸引力が変わらない清掃員"
+   }
+  },
+  {
+   "id": "ch_pirate_ult6",
+   "icon": "🏴‍☠️",
+   "n": {
+    "ko": "바다의 포대장",
+    "en": "Captain of the Guns",
+    "fr": "Capitaine des canons",
+    "de": "Kanonenkapitän",
+    "es": "Capitán de los cañones",
+    "ja": "海の砲台長"
+   }
+  },
+  {
+   "id": "ch_samurai_skill15",
+   "icon": "⚔️",
+   "n": {
+    "ko": "일섬",
+    "en": "One Flash",
+    "fr": "Un éclair",
+    "de": "Ein Blitz",
+    "es": "Un destello",
+    "ja": "一閃"
+   }
+  },
+  {
+   "id": "ch_kurus_ult6",
+   "icon": "🌑",
+   "n": {
+    "ko": "늪 속의 그림자",
+    "en": "Shadow in the Swamp",
+    "fr": "Ombre du marais",
+    "de": "Schatten im Sumpf",
+    "es": "Sombra del pantano",
+    "ja": "沼の中の影"
+   }
+  }
+ ]
+}
