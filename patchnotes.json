@@ -3,6 +3,52 @@
   {
    "date": "2026-10-17",
    "build": "",
+   "title": "Beaconfall 친구 참가 요청·초대 위키 갱신",
+   "items": [
+    "방이 열려 있는 친구에게도 참가 요청을 보내는 설명 추가",
+    "접속 중인 친구에게 초대 버튼이 항상 보이는 설명 추가"
+   ],
+   "tr": {
+    "en": {
+     "title": "Beaconfall friend join request and invite wiki update",
+     "items": [
+      "Added that join requests can be sent to friends whose room is open",
+      "Added that the Invite button is always shown for online friends"
+     ]
+    },
+    "es": {
+     "title": "Wiki de solicitudes de unión e invitaciones de Beaconfall",
+     "items": [
+      "Se añadió que se pueden enviar solicitudes a amigos con sala abierta",
+      "Se añadió que el botón Invitar siempre aparece con amigos conectados"
+     ]
+    },
+    "fr": {
+     "title": "Wiki des demandes et invitations d'amis de Beaconfall",
+     "items": [
+      "Ajout des demandes pour rejoindre envoyées aux amis dont la salle est ouverte",
+      "Ajout du bouton Inviter toujours affiché pour les amis en ligne"
+     ]
+    },
+    "de": {
+     "title": "Beaconfall Wiki zu Beitrittsanfragen und Einladungen",
+     "items": [
+      "Beitrittsanfragen an Freunde mit offenem Raum ergänzt",
+      "Einladen-Schaltfläche bei Online-Freunden immer sichtbar ergänzt"
+     ]
+    },
+    "ja": {
+     "title": "Beaconfall 友達の参加リクエスト・招待のWiki更新",
+     "items": [
+      "部屋が開いている友達にも参加リクエストを送れることを追加",
+      "オンラインの友達に招待ボタンが常に表示されることを追加"
+     ]
+    }
+   }
+  },
+  {
+   "date": "2026-10-17",
+   "build": "",
    "title": "Crown Envoy 인구·난민·국기·난이도 위키 추가",
    "items": [
     "인구 지수와 난민 이동 설명 추가",
