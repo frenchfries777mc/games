@@ -691,6 +691,7 @@ function banner(){
 }
 
 /* ===== 통합 검색: 게임 · 위키 · 게시판 ===== */
+var WIKIX={tools:{name:'Tools',cls:'g4'},educations:{name:'Educations',cls:'g5'}};
 var SX={wiki:null, tr:null, seq:0, sel:-1};
 var SGAMES=[['stickseum','Stickseum','g1','https://frenchfries777mc.github.io/stickseum/','친구들과 실시간으로 붙는 스틱맨 난투','스틱맨 난투 액션 stickman brawl'],
   ['crownenvoy','Crown Envoy','g2','https://frenchfries777mc.github.io/crownenvoy/','외교와 전쟁으로 제국을 키우는 턴제 전략','외교 전쟁 전략 diplomacy war strategy'],
@@ -724,7 +725,7 @@ async function runSearch(v){
   if(gs.length) h+='<div class="sg"><h4>'+esc(F('게임'))+'</h4>'+gs.map(function(g){ return '<a class="sr" href="'+g[3]+'"><b class="'+g[2]+'">'+smark(g[1],q)+'</b><small>'+esc(F(g[4]))+'</small></a>'; }).join('')+'</div>';
   var ws=(SX.wiki||[]).map(function(p){ var sc=0; if(p.title.toLowerCase().indexOf(ql)>=0) sc+=10; if(p.body.toLowerCase().indexOf(ql)>=0) sc+=2; if(!sc&&p.ko.toLowerCase().indexOf(ql)>=0) sc+=1; return {p:p,sc:sc}; })
     .filter(function(x){ return x.sc; }).sort(function(a,b){ return b.sc-a.sc; }).slice(0,8);
-  if(ws.length) h+='<div class="sg"><h4>'+esc(F('위키'))+'</h4>'+ws.map(function(x){ var g=GAMES[x.p.game]||{name:x.p.game,cls:''}; return '<a class="sr" href="wiki/#'+x.p.game+'/'+encodeURIComponent(x.p.slug)+'"><span class="gt '+g.cls+'">'+esc(g.name)+'</span><b>'+smark(x.p.title,q)+'</b><small>'+ssnip(x.p.body,q)+'</small></a>'; }).join('')+'</div>';
+  if(ws.length) h+='<div class="sg"><h4>'+esc(F('위키'))+'</h4>'+ws.map(function(x){ var g=GAMES[x.p.game]||WIKIX[x.p.game]||{name:x.p.game,cls:''}; return '<a class="sr" href="wiki/#'+x.p.game+'/'+encodeURIComponent(x.p.slug)+'"><span class="gt '+g.cls+'">'+esc(g.name)+'</span><b>'+smark(x.p.title,q)+'</b><small>'+ssnip(x.p.body,q)+'</small></a>'; }).join('')+'</div>';
   R.innerHTML=h||'<div class="se">…</div>';
   var ps=[]; if(sb){ var w=q.replace(/[,()%*\\"]/g,' ').trim(); if(w){ try{ var r=await sb.from('ff_posts').select('id,game,title,body,created_at').or('title.ilike.%'+w+'%,body.ilike.%'+w+'%').order('created_at',{ascending:false}).limit(6); ps=(r&&r.data)||[]; }catch(e){} } }
   if(my!==SX.seq) return;
