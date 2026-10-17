@@ -3,6 +3,58 @@
   {
    "date": "2026-10-17",
    "build": "",
+   "title": "Stickseum build 263 위키 갱신",
+   "items": [
+    "배틀로얄 문서에 봇의 보급 상자 먹기와 위험지대 복귀 추가",
+    "봇 설명에 5초 안에 무기 고르기 추가",
+    "패치 기록에 build 263 추가"
+   ],
+   "tr": {
+    "en": {
+     "title": "Stickseum build 263 wiki update",
+     "items": [
+      "Added bots picking up supply crates and returning from the danger zone to the Battle Royale page",
+      "Added bots choosing weapons within 5 seconds to the bot description",
+      "Added build 263 to the patch history"
+     ]
+    },
+    "es": {
+     "title": "Wiki de Stickseum build 263",
+     "items": [
+      "Se añadió a la página de battle royale que los bots recogen cajas de suministros y vuelven de la zona de peligro",
+      "Se añadió a la descripción de los bots que eligen arma en 5 segundos",
+      "Se añadió la build 263 al historial de parches"
+     ]
+    },
+    "fr": {
+     "title": "Wiki de Stickseum build 263",
+     "items": [
+      "Ajout à la page battle royale des bots qui ramassent les caisses et reviennent de la zone de danger",
+      "Ajout à la description des bots du choix de l'arme en 5 secondes",
+      "Ajout de la build 263 à l'historique des patchs"
+     ]
+    },
+    "de": {
+     "title": "Stickseum build 263 Wiki-Update",
+     "items": [
+      "Auf der Battle-Royale-Seite ergänzt, dass Bots Versorgungskisten aufnehmen und aus der Gefahrenzone zurückkehren",
+      "Bei der Bot-Beschreibung ergänzt, dass sie ihre Waffe in 5 Sekunden wählen",
+      "build 263 in die Patch-Historie aufgenommen"
+     ]
+    },
+    "ja": {
+     "title": "Stickseum build 263のウィキ更新",
+     "items": [
+      "バトルロイヤルの文書にボットの補給箱取りと危険地帯からの復帰を追加",
+      "ボットの説明に5秒以内の武器選びを追加",
+      "パッチ履歴にbuild 263を追加"
+     ]
+    }
+   }
+  },
+  {
+   "date": "2026-10-17",
+   "build": "",
    "title": "Tools Block HTML v11~v13·내장 AI v12~v13 위키 갱신",
    "items": [
     "Block HTML 한 블록씩 실행, 내 그림 안내 문구, 그림 썸네일 테두리, 새 예제 설명 추가",
