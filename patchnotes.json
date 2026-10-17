@@ -6,42 +6,48 @@
    "title": "개발자 지정 기능 추가",
    "items": [
     "총괄 개발자 계정이 다른 사람을 개발자로 지정·해제하는 기능 추가",
-    "개발자 호칭(총괄 개발자, 개발자) 표시 추가"
+    "개발자 호칭(총괄 개발자, 개발자) 표시 추가",
+    "옛 스크립트가 남아 개발자 지정 칸이 안 보이던 문제 수정"
    ],
    "tr": {
     "en": {
      "title": "Developer designation added",
      "items": [
       "Added: the lead developer account can designate and remove developers",
-      "Added developer titles (Lead Developer, Developer)"
+      "Added developer titles (Lead Developer, Developer)",
+      "Fixed the designation panel not showing because of a cached old script"
      ]
     },
     "es": {
      "title": "Designación de desarrolladores",
      "items": [
       "Añadido: la cuenta del desarrollador jefe puede designar y quitar desarrolladores",
-      "Añadidos los títulos de desarrollador (Desarrollador jefe, Desarrollador)"
+      "Añadidos los títulos de desarrollador (Desarrollador jefe, Desarrollador)",
+      "Corregido: el panel no aparecía por un script antiguo en caché"
      ]
     },
     "fr": {
      "title": "Désignation des développeurs",
      "items": [
       "Ajout : le compte du développeur en chef peut désigner et retirer des développeurs",
-      "Ajout des titres de développeur (Développeur en chef, Développeur)"
+      "Ajout des titres de développeur (Développeur en chef, Développeur)",
+      "Correction : le panneau ne s’affichait pas à cause d’un ancien script en cache"
      ]
     },
     "de": {
      "title": "Entwickler ernennen",
      "items": [
       "Neu: Das Chefentwickler-Konto kann Entwickler ernennen und entfernen",
-      "Neu: Entwickler-Titel (Chefentwickler, Entwickler)"
+      "Neu: Entwickler-Titel (Chefentwickler, Entwickler)",
+      "Behoben: Panel fehlte wegen eines zwischengespeicherten alten Skripts"
      ]
     },
     "ja": {
      "title": "開発者の指定を追加",
      "items": [
       "総括開発者アカウントが他の人を開発者に指定・解除できる機能を追加",
-      "開発者の称号(総括開発者、開発者)の表示を追加"
+      "開発者の称号(総括開発者、開発者)の表示を追加",
+      "古いスクリプトのキャッシュで指定欄が表示されない問題を修正"
      ]
     }
    }
