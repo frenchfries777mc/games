@@ -3,6 +3,52 @@
   {
    "date": "2026-10-17",
    "build": "",
+   "title": "Beaconfall·Stickseum 위키 갱신",
+   "items": [
+    "Beaconfall 멀티플레이 초대 링크·방 참가, 도감 섬 탭 설명 추가",
+    "Stickseum 봇전 MVP 투표 내용 수정"
+   ],
+   "tr": {
+    "en": {
+     "title": "Beaconfall and Stickseum wiki update",
+     "items": [
+      "Added the Beaconfall multiplayer invite link, joining a room, and the codex island tab",
+      "Updated the Stickseum MVP vote against bots"
+     ]
+    },
+    "es": {
+     "title": "Wiki de Beaconfall y Stickseum actualizada",
+     "items": [
+      "Se añadieron el enlace de invitación y unirse a una sala de Beaconfall, y la pestaña de islas del códice",
+      "Se actualizó la votación de MVP contra bots de Stickseum"
+     ]
+    },
+    "fr": {
+     "title": "Wiki Beaconfall et Stickseum mis à jour",
+     "items": [
+      "Ajout du lien d'invitation et de la jonction de salle de Beaconfall, ainsi que de l'onglet îles du codex",
+      "Mise à jour du vote MVP contre des bots de Stickseum"
+     ]
+    },
+    "de": {
+     "title": "Wiki zu Beaconfall und Stickseum aktualisiert",
+     "items": [
+      "Einladungslink und Raumbeitritt in Beaconfall sowie der Inseln-Tab im Kodex ergänzt",
+      "MVP-Abstimmung gegen Bots in Stickseum aktualisiert"
+     ]
+    },
+    "ja": {
+     "title": "BeaconfallとStickseumのウィキを更新",
+     "items": [
+      "Beaconfallのマルチ招待リンク・部屋参加と、図鑑の島タブの説明を追加",
+      "StickseumのボットとのMVP投票の内容を修正"
+     ]
+    }
+   }
+  },
+  {
+   "date": "2026-10-17",
+   "build": "",
    "title": "끝나는 때 고르기",
    "items": [
     "투표와 공지·이벤트 올리기에서 끝나는 때를 계속, 1일 뒤, 1주 뒤 중에서 고르도록 변경"
