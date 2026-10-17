@@ -3,6 +3,46 @@
   {
    "date": "2026-10-17",
    "build": "",
+   "title": "위키 허브 버튼",
+   "items": [
+    "위키 상단에 허브로 돌아가는 버튼 추가"
+   ],
+   "tr": {
+    "en": {
+     "title": "Wiki hub button",
+     "items": [
+      "Added a back-to-hub button at the top of the wiki"
+     ]
+    },
+    "es": {
+     "title": "Botón del hub en la wiki",
+     "items": [
+      "Añadido un botón para volver al hub en la parte superior de la wiki"
+     ]
+    },
+    "fr": {
+     "title": "Bouton hub du wiki",
+     "items": [
+      "Ajout d'un bouton de retour au hub en haut du wiki"
+     ]
+    },
+    "de": {
+     "title": "Hub-Button im Wiki",
+     "items": [
+      "Button zurück zum Hub oben im Wiki ergänzt"
+     ]
+    },
+    "ja": {
+     "title": "Wikiのハブボタン",
+     "items": [
+      "Wikiの上部にハブへ戻るボタンを追加"
+     ]
+    }
+   }
+  },
+  {
+   "date": "2026-10-17",
+   "build": "",
    "title": "Beaconfall 위키 갱신",
    "items": [
     "Beaconfall 컨트롤 문서에 Ctrl+커서 블록 선택, F 상호작용·부수기 추가"
