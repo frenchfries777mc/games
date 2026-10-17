@@ -3,6 +3,52 @@
   {
    "date": "2026-10-17",
    "build": "",
+   "title": "Tools 위키 갱신",
+   "items": [
+    "Block HTML 위키에 움직이기·커서 따라다니기·닿았나·가두기 블록과 AI 잘못된 블록 처리 추가",
+    "FF777 모델 문서에 tarius 1.1과 모델 이름 표시 반영"
+   ],
+   "tr": {
+    "en": {
+     "title": "Tools wiki update",
+     "items": [
+      "Added move, follow-cursor, touching and keep-inside blocks and invalid-block handling to the Block HTML wiki",
+      "Reflected tarius 1.1 and the model name display on the FF777 models page"
+     ]
+    },
+    "es": {
+     "title": "Actualización de la wiki de Tools",
+     "items": [
+      "Añadidos a la wiki de Block HTML los bloques de mover, seguir el cursor, tocar y mantener dentro, y el tratamiento de bloques no válidos de la IA",
+      "Reflejados tarius 1.1 y la visualización del nombre del modelo en la página de modelos FF777"
+     ]
+    },
+    "fr": {
+     "title": "Mise à jour du wiki Tools",
+     "items": [
+      "Ajout au wiki Block HTML des blocs déplacer, suivre le curseur, toucher et garder dans l'écran, et du traitement des blocs invalides de l'IA",
+      "tarius 1.1 et l'affichage du nom du modèle reflétés sur la page des modèles FF777"
+     ]
+    },
+    "de": {
+     "title": "Tools-Wiki aktualisiert",
+     "items": [
+      "Im Block-HTML-Wiki Bewegen-, Cursor-folgen-, Berührt- und Einsperren-Blöcke sowie den Umgang mit ungültigen KI-Blöcken ergänzt",
+      "tarius 1.1 und die Anzeige des Modellnamens auf der FF777-Modellseite übernommen"
+     ]
+    },
+    "ja": {
+     "title": "Tools Wiki更新",
+     "items": [
+      "Block HTML Wikiに、動かす・カーソルを追いかける・触れた・閉じ込めるブロックと、AIの誤ったブロックの扱いを追加",
+      "FF777モデルのページにtarius 1.1とモデル名の表示を反映"
+     ]
+    }
+   }
+  },
+  {
+   "date": "2026-10-17",
+   "build": "",
    "title": "Beaconfall 위키 갱신",
    "items": [
     "Beaconfall 위키 시작하기에 사이트 도감의 재료 계산기 탭 안내 추가"
