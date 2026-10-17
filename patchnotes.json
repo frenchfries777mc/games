@@ -3,6 +3,70 @@
   {
    "date": "2026-10-17",
    "build": "",
+   "title": "허브 로고·위쪽 메뉴 정리·커뮤니티 페이지",
+   "items": [
+    "Frenchfries777 로고 추가 (위쪽 메뉴, 첫 화면, 계정 안내, 777 아래 웃는 입)",
+    "위쪽 버튼 정리 (위키·커뮤니티·음악만 남기고 언어 선택은 맨 아래로)",
+    "Hub Coin을 위쪽 메뉴로 이동 (누르면 출석·달력·환전)",
+    "커뮤니티를 별도 페이지로 분리 (게시판, 채팅, 친구 소식, 같이 하기, 갤러리, 피드백)",
+    "허브를 켜 둔 채 날짜가 바뀌면 출석 코인 자동 지급"
+   ],
+   "tr": {
+    "en": {
+     "title": "Hub logo, simpler top bar, community page",
+     "items": [
+      "Frenchfries777 logo added (top bar, first screen, account box; smiling mouth under 777)",
+      "Top bar simplified (only Wiki, Community and Music; language picker moved to the bottom)",
+      "Hub Coin moved to the top bar (tap for attendance, calendar and exchange)",
+      "Community moved to its own page (board, chat, friend news, play together, gallery, feedback)",
+      "Daily Hub Coin is given automatically when the date changes while the hub is open"
+     ]
+    },
+    "es": {
+     "title": "Logo del hub, barra superior simple, página de comunidad",
+     "items": [
+      "Logo de Frenchfries777 añadido (barra superior, primera pantalla, cuadro de cuenta; boca sonriente bajo 777)",
+      "Barra superior simplificada (solo Wiki, Comunidad y Música; idioma abajo)",
+      "Hub Coin en la barra superior (toca para asistencia, calendario y cambio)",
+      "La comunidad tiene su propia página (tablón, chat, amigos, jugar juntos, galería, comentarios)",
+      "La Hub Coin diaria se da sola al cambiar la fecha con el hub abierto"
+     ]
+    },
+    "fr": {
+     "title": "Logo du hub, barre du haut simplifiée, page communauté",
+     "items": [
+      "Logo Frenchfries777 ajouté (barre du haut, premier écran, encadré compte ; bouche souriante sous 777)",
+      "Barre du haut simplifiée (Wiki, Communauté et Musique ; langue en bas)",
+      "Hub Coin dans la barre du haut (présence, calendrier et échange)",
+      "La communauté a sa propre page (forum, chat, amis, jouer ensemble, galerie, avis)",
+      "La Hub Coin du jour est donnée automatiquement au changement de date si le hub est ouvert"
+     ]
+    },
+    "de": {
+     "title": "Hub-Logo, schlankere Kopfzeile, Community-Seite",
+     "items": [
+      "Frenchfries777-Logo hinzugefügt (Kopfzeile, Startbildschirm, Konto-Box; lächelnder Mund unter 777)",
+      "Kopfzeile vereinfacht (nur Wiki, Community und Musik; Sprache nach unten)",
+      "Hub Coin in der Kopfzeile (Anwesenheit, Kalender und Tausch)",
+      "Community hat eine eigene Seite (Forum, Chat, Freunde, Zusammen spielen, Galerie, Feedback)",
+      "Täglicher Hub Coin kommt automatisch, wenn das Datum wechselt, während der Hub offen ist"
+     ]
+    },
+    "ja": {
+     "title": "ハブのロゴ・上部メニュー整理・コミュニティページ",
+     "items": [
+      "Frenchfries777のロゴを追加 (上部メニュー・最初の画面・アカウント案内、777の下に笑顔の口)",
+      "上部ボタンを整理 (Wiki・コミュニティ・音楽のみ、言語選択は下へ)",
+      "Hub Coinを上部メニューへ移動 (押すと出席・カレンダー・両替)",
+      "コミュニティを別ページに分離 (掲示板・チャット・フレンド・一緒に遊ぶ・ギャラリー・フィードバック)",
+      "ハブを開いたまま日付が変わると出席コインを自動で付与"
+     ]
+    }
+   }
+  },
+  {
+   "date": "2026-10-17",
+   "build": "",
    "title": "허브 아래 링크 추가",
    "items": [
     "허브 맨 아래 링크 추가 (패치노트, 위키, 음악, 피드백, GitHub)",
