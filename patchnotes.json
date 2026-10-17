@@ -3,6 +3,46 @@
   {
    "date": "2026-10-17",
    "build": "",
+   "title": "프로필 카드 개발자 호칭",
+   "items": [
+    "프로필 카드에 개발자 호칭(총괄 개발자, 개발자) 표시 추가"
+   ],
+   "tr": {
+    "en": {
+     "title": "Developer title on profile card",
+     "items": [
+      "Added developer titles (Lead Developer, Developer) to the profile card"
+     ]
+    },
+    "es": {
+     "title": "Título de desarrollador en la tarjeta",
+     "items": [
+      "Añadidos los títulos de desarrollador a la tarjeta de perfil"
+     ]
+    },
+    "fr": {
+     "title": "Titre de développeur sur la carte",
+     "items": [
+      "Ajout des titres de développeur sur la carte de profil"
+     ]
+    },
+    "de": {
+     "title": "Entwickler-Titel auf der Profilkarte",
+     "items": [
+      "Entwickler-Titel wurden zur Profilkarte hinzugefügt"
+     ]
+    },
+    "ja": {
+     "title": "プロフィールカードに開発者の称号",
+     "items": [
+      "プロフィールカードに開発者の称号を表示"
+     ]
+    }
+   }
+  },
+  {
+   "date": "2026-10-17",
+   "build": "",
    "title": "개발자 지정 기능 추가",
    "items": [
     "총괄 개발자 계정이 다른 사람을 개발자로 지정·해제하는 기능 추가",
