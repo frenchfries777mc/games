@@ -3,6 +3,46 @@
   {
    "date": "2026-10-17",
    "build": "",
+   "title": "Crown Envoy 전투 대형 위키 추가",
+   "items": [
+    "Crown Envoy 전투 대형(방진·쐐기·횡대)과 시나리오 삭제·시작 연도 표시 설명 추가 (v0.3 b25)"
+   ],
+   "tr": {
+    "en": {
+     "title": "Crown Envoy battle formations added to the wiki",
+     "items": [
+      "Added Crown Envoy battle formations (phalanx, wedge, line), scenario deletion and start-year display (v0.3 b25)"
+     ]
+    },
+    "es": {
+     "title": "Formaciones de Crown Envoy en la wiki",
+     "items": [
+      "Se añadieron las formaciones de batalla de Crown Envoy (falange, cuña, línea), la eliminación de escenarios y el año de inicio (v0.3 b25)"
+     ]
+    },
+    "fr": {
+     "title": "Formations de Crown Envoy dans le wiki",
+     "items": [
+      "Ajout des formations de bataille de Crown Envoy (phalange, coin, ligne), de la suppression de scénarios et de l'année de départ (v0.3 b25)"
+     ]
+    },
+    "de": {
+     "title": "Crown-Envoy-Schlachtformationen im Wiki",
+     "items": [
+      "Schlachtformationen von Crown Envoy (Phalanx, Keil, Linie), Szenario-Löschen und Startjahr ergänzt (v0.3 b25)"
+     ]
+    },
+    "ja": {
+     "title": "Crown Envoyの戦闘陣形をウィキに追加",
+     "items": [
+      "Crown Envoyの戦闘陣形（方陣・楔・横隊）、シナリオ削除、開始年表示の説明を追加（v0.3 b25）"
+     ]
+    }
+   }
+  },
+  {
+   "date": "2026-10-17",
+   "build": "",
    "title": "Stickseum 레이드 MVP 위키 갱신",
    "items": [
     "Stickseum 보스 레이드 MVP 투표(아군과 봇 참여) 설명 추가"
