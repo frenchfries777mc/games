@@ -3,6 +3,52 @@
   {
    "date": "2026-10-17",
    "build": "",
+   "title": "음악 감상실 추가",
+   "items": [
+    "음악 감상실 추가: Stickseum·Crown Envoy·Beaconfall 배경음악 14곡을 한곳에서 듣기 (반복·다음 곡 버튼)",
+    "위쪽 메뉴에 '음악' 링크 추가"
+   ],
+   "tr": {
+    "en": {
+     "title": "Music Room added",
+     "items": [
+      "Music Room added: listen to 14 background tracks from Stickseum, Crown Envoy and Beaconfall in one place (repeat and next buttons)",
+      "Added a 'Music' link to the top menu"
+     ]
+    },
+    "es": {
+     "title": "Sala de música añadida",
+     "items": [
+      "Sala de música añadida: escucha 14 pistas de Stickseum, Crown Envoy y Beaconfall en un solo lugar (botones de repetir y siguiente)",
+      "Enlace 'Música' en el menú superior"
+     ]
+    },
+    "fr": {
+     "title": "Salle de musique ajoutée",
+     "items": [
+      "Salle de musique ajoutée : écoutez 14 morceaux de Stickseum, Crown Envoy et Beaconfall au même endroit (boutons répéter et suivant)",
+      "Lien « Musique » ajouté au menu du haut"
+     ]
+    },
+    "de": {
+     "title": "Musikraum hinzugefügt",
+     "items": [
+      "Musikraum hinzugefügt: 14 Stücke aus Stickseum, Crown Envoy und Beaconfall an einem Ort anhören (Wiederholen und Weiter)",
+      "Link „Musik“ im oberen Menü"
+     ]
+    },
+    "ja": {
+     "title": "音楽室を追加",
+     "items": [
+      "音楽室を追加：Stickseum・Crown Envoy・BeaconfallのBGM14曲を一か所で聴ける（リピート・次へボタン）",
+      "上のメニューに「音楽」リンクを追加"
+     ]
+    }
+   }
+  },
+  {
+   "date": "2026-10-17",
+   "build": "",
    "title": "Tools Fry Slides v4 · Block HTML v10 위키 갱신",
    "items": [
     "Fry Slides 새 레이아웃 6종과 새 테마, 슬라이드 옵션, 발표 도우미 설명 추가",
