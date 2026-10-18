@@ -37,3 +37,5 @@ patchnotes.json | v302 items[2] | 승리 포즈에도 무지개·반짝임 색 �
 patchnotes.json | v302 items[3] | 폭탄 돌리기에서 체력 옆 무기 표시 숨김, 봇이 폭탄을 든 사람을 계속 피해 다님 | build 302 | 2026-10-18
 patchnotes.json | v302 items[4] | 좀비게임에서 사람 봇이 거리와 무기에 상관없이 좀비를 피해 도망침 | build 302 | 2026-10-18
 patchnotes.json | v302 title | 피사로 보강과 봇 도망 | build 302 | 2026-10-18
+patchnotes.json | v303 title | 피사로 기세 초기화 | build 303 | 2026-10-18
+patchnotes.json | v303 items[0] | 토너먼트·듀얼에서 다음 라운드가 시작되면 피사로 궁극기 중첩이 초기화됨 | build 303 | 2026-10-18
