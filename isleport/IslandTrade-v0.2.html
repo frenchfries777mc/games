@@ -376,6 +376,8 @@ const TECHS=[
  {id:'feed',n:P('좋은 먹이','Better feed'),d:P('동물이 15% 빨리 자라요','Animals produce 15% faster'),cost:400,req:null},
  {id:'bigpen',n:P('큰 우리','Larger pens'),d:P('동물 우리에서 1개씩 더 나와요','+1 output per cycle'),cost:1200,req:'feed'},
  {id:'hands',n:P('빠른 손','Quick hands'),d:P('가공이 15% 빨라요','Crafting 15% faster'),cost:500,req:null},
+ {id:'autofeed',n:P('재료 자동 투입','Auto feed'),d:P('건물이 창고에서 재료를 알아서 가져가요. 밀이 방앗간에서 쓰이고, 밀가루가 빵집에서 쓰이는 것까지 스스로 이어져요','Buildings pull ingredients from the warehouse by themselves, so wheat to flour to bread chains on its own'),cost:1000,req:'hands'},
+ {id:'autocarry',n:P('완성품 자동 운반','Auto carry'),d:P('다 만든 것을 창고로 알아서 옮겨요','Finished goods go to the warehouse by themselves'),cost:1800,req:'autofeed'},
  {id:'skill',n:P('숙련','Mastery'),d:P('가공이 15% 더 빨라요','Crafting another 15% faster'),cost:1500,req:'hands'},
  {id:'hull',n:P('튼튼한 배','Sturdy hulls'),d:P('배가 20% 빨라요','Ships 20% faster'),cost:800,req:null},
  {id:'nav',n:P('항해술','Navigation'),d:P('배가 15% 더 빨라요','Ships another 15% faster'),cost:2500,req:'hull'},
@@ -427,6 +429,7 @@ const TUT=[
  ['다 자라면 밭을 눌러 수확해요',s=>s.stats.harvest>=1],
  ['마을 장터에서 수확한 것을 팔아요',s=>(s.stats.shop||0)>=1],
  ['항구에서 배에 짐을 싣고 보내요',s=>s.stats.sailed>=1]];
+const OUTMAX=12,BUILD=1;
 const hasB=(s,b)=>s.slots.some(x=>x&&x.b===b);
 const rankOf=e=>{let r=0;RANKS.forEach((x,i)=>{if(e>=x[0])r=i;});return r;};
 /* 업적: id, 이름, 설명, 조건 */
@@ -548,11 +551,16 @@ A('nw1m',P('백만장자','Millionaire'),P('재산 1,000,000 모으기','Reach a
 const CROPK=Object.keys(CROPS),SPEC=['goldbarley','pomegranate','saffron','cloudcotton','seaweed','dragonfruit'],CROPK17=CROPK.filter(c=>!SPEC.includes(c));
 const ACHN={};ACH.forEach(a=>ACHN[a.id]=a);
 const NOTES=[
- {date:'2026-10-18',build:'v0.2',title:P('큰 항해','The big voyage'),items:[
+ {date:'2026-10-18',build:'v0.2 build 1',title:P('다듬기','Polish'),items:[
   P('새로 시작하면 긴 설명 대신 화면 아래에 지금 할 일 한 줄이 나와요. 밭 심기, 수확, 판매, 출항 순서로 안내하고, 건너뛸 수 있어요','New games show one short step at a time instead of a long guide'),
   P('"빈 밭 모두 심기"와 "모두 수확"은 연구 "모두 심기", "모두 수확"으로 해금해요','"Plant in all empty fields" and "Collect all" now unlock through research'),
   P('연구창이 마인드맵처럼 한가운데에서 가지를 뻗는 나무로 바뀌었어요. 앞 연구를 끝내면 그 가장자리의 연구를 시작할 수 있어요','The research window is now a branching tree: finish a research to open the ones at its edge'),
+  P('가공은 처음에 손으로 해요. 건물을 눌러 재료를 넣고, 다 만들면 완성품을 꺼내 창고로 옮겨요. 연구 "재료 자동 투입"과 "완성품 자동 운반"으로 자동화해요','Processing starts by hand: load ingredients into a building and carry the goods out. Research Auto feed and Auto carry to automate it'),
   P('로비의 글씨를 키웠어요','Lobby text is bigger'),
+  P('건물을 지을 때 공사 시간이 걸려요. 터 닦기, 기둥, 지붕 순서로 올라가고, 단계를 올릴 때도 공사를 해요. 공사 중에는 건물을 쓸 수 없어요','Buildings now take time to construct, rising from foundation to frame to roof. Upgrades also take time, and the building is unusable meanwhile'),
+  P('화면 이름 옆에 "v0.2 build 1"처럼 빌드 번호가 보여요','The build number now shows next to the version, like v0.2 build 1'),
+ ]},
+ {date:'2026-10-18',build:'v0.2',title:P('큰 항해','The big voyage'),items:[
   P('같은 브라우저에서 계정이 겹치지 않아요. 계정마다 저장이 따로이고, 탭마다 다른 계정으로 로그인할 수 있어요','Accounts no longer overlap in one browser. Each account has its own save, and each tab can log in as a different account'),
   P('밭을 눌렀을 때 "모든 밭 다시 심기"를 켜면 수확한 밭에 씨앗을 자동으로 다시 심어요 (연구 "자동 파종" 필요)','Turn on "Replant in every field" in a field menu to auto-replant after harvest (needs the Auto-sowing research)'),
   P('건물이 더 정교해졌어요. 뾰족한 지붕, 기와 결, 굴뚝, 창틀과 문을 새로 그렸어요','Buildings are more detailed, with proper pitched roofs, shingles, chimneys, window frames and doors'),
@@ -617,7 +625,7 @@ function fresh(){return {v:2,money:250,plots:Array(48).fill(null),own:startOwn()
 const hasT=id=>!!(S&&S.techs[id]);
 const gold=()=>Math.floor(S.money);
 const inv=id=>S.inv[id]||0;
-const bldLv=b=>S.slots.reduce((a,p)=>a+(p&&p.b===b?p.lv:0),0);
+const bldLv=b=>S.slots.reduce((a,p)=>a+(p&&p.b===b&&!consLeft(p)?p.lv:0),0);
 const capOf=()=>30+(hasT('wh2')?40:0)+50*bldLv('warehouse')+25*(S.whUp||0);
 const WHMAX=10,whCost=()=>Math.round(120*Math.pow(1.6,S.whUp||0));
 function upWh(){if((S.whUp||0)>=WHMAX||S.money<whCost())return false;spend(whCost());S.whUp=(S.whUp||0)+1;sfx('build');return true;}
@@ -684,13 +692,20 @@ const penXY=(i,mid)=>{const c=i%4,r=Math.floor(i/4);const x=20+c*134,y=322+r*76;
 /* ---- 마을 ---- */
 const slotCost=()=>200+150*(S.su-6);
 function buySlot(){const c=slotCost();if(S.su>=16||S.money<c)return;spend(c);S.su++;sfx('build');}
-function buildB(i,b){const B=BLD[b];if(!isUnl(b))return;if(S.slots[i]||i>=S.su||S.money<B.cost||rankOf(S.stats.earned)<B.rank)return;spend(B.cost);S.slots[i]={b,lv:1,r:-1,end:0,cur:0,paid:B.cost,g:null,acc:0};sfx('build');}
+function buildB(i,b){const B=BLD[b];if(!isUnl(b))return;if(S.slots[i]||i>=S.su||S.money<B.cost||rankOf(S.stats.earned)<B.rank)return;spend(B.cost);S.slots[i]={b,lv:1,r:-1,end:0,cur:0,paid:B.cost,g:null,acc:0,in:{},out:{}};startCons(S.slots[i],bldMs(B.cost),false);sfx('build');}
+const bldMs=cost=>Math.round((15+cost/12)*1000);
+function startCons(p,ms,upg){p.cdur=ms;p.cend=NOW()+ms;p.upg=!!upg;}
+const consLeft=p=>p&&p.cend?Math.max(0,p.cend-NOW()):0;
 const bldUp=p=>Math.round(BLD[p.b].cost*(p.lv===1?1.5:3));
-function upB(i){const p=S.slots[i];if(!p||p.lv>=3||S.money<bldUp(p))return;const c=bldUp(p);spend(c);p.paid+=c;p.lv++;sfx('build');}
+function upB(i){const p=S.slots[i];if(!p||p.lv>=3||S.money<bldUp(p)||consLeft(p))return;const c=bldUp(p);spend(c);p.paid+=c;p.lv++;startCons(p,Math.round(bldMs(BLD[p.b].cost)*0.6*p.lv),true);sfx('build');}
 function demolish(i){const p=S.slots[i];if(!p)return;S.money+=p.paid*0.5;S.assets-=p.paid;S.slots[i]=null;}
 const slotXY=i=>{const c=i%4,r=Math.floor(i/4);return [396+c*80,24+r*60];};
 const bldSpd=p=>[1,1.4,2][p.lv-1]/((hasT('hands')?.85:1)*(hasT('skill')?.85:1)*(hasT('conveyor')?.8:1));
 function canRec(rec){return rec[0].every(([g,n])=>inv(g)>=n);}
+const outN=p=>{let n=0;for(const k in (p.out||{}))n+=p.out[k];return n;};
+function canBld(p,rec){return hasT('autofeed')?canRec(rec):rec[0].every(([g,n])=>((p.in||{})[g]||0)>=n);}
+function bldLoad(p,ri){const rec=BLD[p.b].rec[ri];p.in=p.in||{};let b=0;while(b<5&&rec[0].every(([g,n])=>inv(g)>=n)){rec[0].forEach(([g,n])=>{S.inv[g]=inv(g)-n;p.in[g]=(p.in[g]||0)+n;});b++;}return b;}
+function bldTake(p){let n=0;for(const k in (p.out||{})){const a=addInv(k,p.out[k]);if(a>0){p.out[k]-=a;n+=a;}if(p.out[k]<=0)delete p.out[k];}return n;}
 /* ---- 배 ---- */
 const yardLv=()=>bldLv('shipyard');
 const shipPrice=ty=>Math.round(SHIPS[ty].cost*(1-.08*yardLv())*(ty===0?1+.5*(S.ships.length-1):1));
@@ -756,10 +771,14 @@ function tick(dt){if(!S)return;const t=NOW();rescue(dt);
     if(p.end){if(t>=p.end){p.done=(p.done||0)+penYield(p);p.end=0;if(p.done>penYield(p)*4)p.done=penYield(p)*4;}}
     else if(!p.done||p.done<penYield(p)*3){if(!A.feed||inv(A.feed[0])>=A.feed[1]){if(A.feed)S.inv[A.feed[0]]-=A.feed[1];p.end=t+penMs(p);}}});
   S.slots.forEach(p=>{if(!p)return;const B=BLD[p.b];
+    if(p.cend){if(t<p.cend)return;p.cend=0;toast(T('{0} 공사가 끝났어요','{0} is finished',tx(B.n)));sfx('ach');}
     if(B.util){if(p.b==='stall'&&p.g&&inv(p.g)>0){p.acc+=dt;const iv=6/p.lv;if(p.acc>=iv){p.acc=0;S.inv[p.g]=inv(p.g)-1;const r=Math.round(GI[p.g].base*0.9*(1+0.1*(p.lv-1)));S.money+=r;S.stats.earned+=r;}}return;}
-    if(p.end){const rec=B.rec[p.cur];if(t>=p.end&&inv(rec[1])<capOf()){addInv(rec[1],rec[2]);S.made[rec[1]]=(S.made[rec[1]]||0)+rec[2];p.end=0;}}
-    else{let ri=p.r;if(ri<0||ri>=B.rec.length||!canRec(B.rec[ri])){if(p.r<0){ri=B.rec.findIndex(canRec);}else ri=-1;}
-      if(ri>=0&&inv(B.rec[ri][1])<capOf()){const rec=B.rec[ri];rec[0].forEach(([g,n])=>{S.inv[g]=inv(g)-n;});p.cur=ri;p.end=t+rec[3]*1000/bldSpd(p);}}});
+    const AF=hasT('autofeed'),AC=hasT('autocarry');p.in=p.in||{};p.out=p.out||{};
+    if(AC&&outN(p)>0)bldTake(p);
+    if(AF)for(const g in p.in){if(p.in[g]>0){addInv(g,p.in[g]);}delete p.in[g];}
+    if(p.end){const rec=B.rec[p.cur];if(t>=p.end){if(AC){if(inv(rec[1])<capOf()){addInv(rec[1],rec[2]);S.made[rec[1]]=(S.made[rec[1]]||0)+rec[2];p.end=0;}}else if(outN(p)<OUTMAX){p.out[rec[1]]=(p.out[rec[1]]||0)+rec[2];S.made[rec[1]]=(S.made[rec[1]]||0)+rec[2];p.end=0;}}}
+    else{const can=r=>canBld(p,r);let ri=p.r;if(ri<0||ri>=B.rec.length||!can(B.rec[ri])){if(p.r<0){ri=B.rec.findIndex(can);}else ri=-1;}
+      if(ri>=0&&(AC?inv(B.rec[ri][1])<capOf():outN(p)<OUTMAX)){const rec=B.rec[ri];rec[0].forEach(([g,n])=>{if(AF)S.inv[g]=inv(g)-n;else p.in[g]-=n;});p.cur=ri;p.end=t+rec[3]*1000/bldSpd(p);}}});
   S.ships.forEach(s=>{if(s.st!=='sail')return;if(s.pirAt&&t>=s.pirAt&&!s.back&&cargoN(s.cargo)>0)pirates(s);if(t>=s.t1){if(!s.back)arrive(s);else dock(s);}});
   // 반복 항해
   S.ships.forEach(s=>{if(s.st==='dock'&&s.rep&&s.last&&t>(s.repT||0)){s.repT=t+4000;const cg={};let room=shipCap(s);for(const k in s.last.cargo){const q=Math.min(s.last.cargo[k],inv(k),room);if(q>0){cg[k]=q;room-=q;}}const by={};for(const k in s.last.buy)by[k]=s.last.buy[k];if(cargoN(cg)+cargoN(by)>0)dispatch(s.id,s.last.p,cg,by);}});
@@ -1349,6 +1368,12 @@ function drawSlot(i,t){const [x,y]=slotXY(i),p=S.slots[i];
   if(!p){R(x+16,y+44,42,2,'rgba(0,0,0,.12)');for(let q=0;q<4;q++)R(x+20+q*9,y+38,4,6,'#9a6a36');R(x+18,y+40,38,1,'#9a6a36');return;}
   const B=BLD[p.b],working=!!p.end,bx=x+14,by=y+20;
   R(x+10,y+44,56,2,'rgba(0,0,0,.18)');
+  const cl=consLeft(p);if(cl>0&&!p.upg){const pr=1-cl/p.cdur;R(bx+4,by+22,40,5,'#8a8a82');R(bx+4,by+26,40,1,'#5a5a54');
+   if(pr>.25){for(let q=0;q<4;q++)R(bx+6+q*11,by+4,2,19,'#a8784a');}
+   if(pr>.5){R(bx+6,by+4,35,2,'#a8784a');R(bx+6,by+13,35,2,'#a8784a');R(bx+8,by+6,31,7,'#cdbf9a');}
+   if(pr>.75){R(bx+8,by+6,31,17,'#cdbf9a');roofG(R,bx+23,by+2,36,8,B.roof);}
+   R(bx+46,by+16,8,8,'#6a4a2a');R(bx+47,by+13,6,3,'#8a6238');
+   R(x+16,y+47,42,3,'#2a1608');R(x+16,y+47,Math.floor(42*pr),3,'#f2c75a');return;}
   switch(p.b){
    case 'mill':{R(bx+8,by-6,24,32,'#cdbf9a');R(bx+8,by+22,24,4,'#a89a74');for(let q=0;q<10;q++)R(bx+8+q*2,by-6+q%2,2,0,'#000');roofG(R,bx+20,by-6,28,9,B.roof);R(bx+16,by+14,8,12,'#5a3414');
      const a=t*(working?1.6:.25);for(let k=0;k<4;k++){const aa=a+k*Math.PI/2;line(bx+20,by-3,bx+20+Math.cos(aa)*15,by-3+Math.sin(aa)*15,'#e8dcc0');line(bx+20+1,by-3,bx+21+Math.cos(aa)*15,by-3+Math.sin(aa)*15,'#8a7a5a');}R(bx+19,by-4,3,3,'#5a3414');break;}
@@ -1366,11 +1391,13 @@ function drawSlot(i,t){const [x,y]=slotXY(i),p=S.slots[i];
      if(p.b==='press'){R(bx+40,by+16,9,8,'#a8a8a0');R(bx+42,by+13,5,4,'#7a7a74');}
      if(p.b==='dairy'){R(bx+38,by+14,8,10,'#f4f4f0');R(bx+40,by+16,3,3,'#5a3a22');}
      if(p.b==='tailor'){R(bx+40,by+12,3,12,'#d8c0a0');R(bx+38,by+14,7,6,'#d8509a');}}}
+  if(cl>0&&p.upg){const pr=1-cl/p.cdur;for(let q=0;q<3;q++)line(bx+2,by+4+q*8,bx+44,by+4+q*8,'#a8784a');R(bx+2,by+2,2,26,'#a8784a');R(bx+43,by+2,2,26,'#a8784a');R(x+16,y+47,42,3,'#2a1608');R(x+16,y+47,Math.floor(42*pr),3,'#f2c75a');}
   // 단계, 이름표
   for(let q=0;q<p.lv;q++)R(x+14+q*5,y+4,3,3,'#f2c75a');
   if(!B.util){const rec=B.rec[working?p.cur:(p.r>=0?p.r:0)];R(x+3,y+36,10,10,'rgba(0,0,0,.45)');ico(rec[1],x+4,y+37);
     if(working){const pr=1-(p.end-NOW())/(rec[3]*1000/bldSpd(p));R(x+16,y+47,42,2,'#2a1608');R(x+16,y+47,Math.max(0,Math.min(42,Math.floor(42*pr))),2,'#f2c75a');}
-    else if(p.r<0||canRec(rec)){}else{R(x+60,y+36,10,10,'rgba(0,0,0,.45)');R(x+63,y+39,4,4,'#e0553f');}}
+    else if(canBld(p,rec)||(p.r<0&&!hasT('autofeed')&&false)){}else{R(x+60,y+36,10,10,'rgba(0,0,0,.45)');R(x+63,y+39,4,4,'#e0553f');}}
+  if(!B.util&&outN(p)>0){R(x+60,y+22,10,10,'rgba(0,0,0,.45)');R(x+63,y+25,4,4,'#6fcf6a');}
   if(p.b==='stall'&&p.g&&inv(p.g)<=0){R(x+60,y+36,10,10,'rgba(0,0,0,.45)');R(x+63,y+39,4,4,'#e0553f');}
 }
 /* ---- 사람, 마차 ---- */
@@ -1611,7 +1638,7 @@ function renderTitle(){const sv=loadSave();
    <button class="tb sm" data-act="m:login">${UID?esc(UNAME||T('내 계정','My account')):T('로그인','Log in')}</button>
    <button class="tb sm" data-act="m:help">${T('하는 법','How to play')}</button><button class="tb sm" data-act="m:notes">${T('패치노트','Patch notes')}</button>
    <select id="langSel" class="tb sm" onchange="setLang(this.value);renderTitle()">${LANGS.map(l=>`<option value="${l}" ${l===LANG?'selected':''}>${LANGN[l]}</option>`).join('')}</select></div>
-   <div class="tfoot">${UNAME?esc(UNAME)+' ('+T('Frenchfries777 계정','Frenchfries777 account')+')':T('Frenchfries777 계정으로 로그인하면 프로필 카드에 업적이 올라가요','Log in with your Frenchfries777 account to show goals on your profile card')}</div>`;}
+   <div class="tfoot">v0.2 build ${BUILD}<br>${UNAME?esc(UNAME)+' ('+T('Frenchfries777 계정','Frenchfries777 account')+')':T('Frenchfries777 계정으로 로그인하면 프로필 카드에 업적이 올라가요','Log in with your Frenchfries777 account to show goals on your profile card')}</div>`;}
 function showTitle(){$('title').hidden=false;$('modal').hidden=true;closePop();renderTitle();$('backBtn')&&($('backBtn').hidden=true);}
 ACT.newgame=(a,b)=>{if(b.dataset.arm){try{localStorage.removeItem(SAVEK());}catch(e){}startSingle(false);}else{b.dataset.arm=1;b.textContent=T('정말 지울까요? 한 번 더','Really delete? Press again');}};
 ACT.single=()=>startSingle(true);
@@ -1715,13 +1742,17 @@ function recText(rec){return rec[0].map(([g,n])=>GN(g)+' '+n).join(' + ')+' → 
 function popSlot(i,x,y){popAct={};const p=S.slots[i],rk=rankOf(S.stats.earned);let h='';
   if(i>=S.su){const c=slotCost();h=`<h4>${T('빈 땅','Empty lot')}</h4>`+(i===S.su?opt(T('터 닦기','Clear lot'),fmt(c)+UG(),()=>{buySlot();closePop();},S.money<c):`<div class="muted">${T('앞의 터부터 열어야 해요','Open earlier lots first')}</div>`);}
   else if(!p){h=`<h4>${T('건물 짓기','Build')}</h4>`+BK.map(b=>{const B=BLD[b],ul=isUnl(b),lock=rk<B.rank;return opt(tx(B.n),!ul?'🔒 '+tx(PORTS[LOCKP[b]].n):lock?tx(RANKS[B.rank][1]):fmt(B.cost)+UG(),()=>{buildB(i,b);closePop();},!ul||lock||S.money<B.cost);}).join('');}
+  else if(consLeft(p)){const B=BLD[p.b];h=`<h4>${tx(B.n)}</h4><div class="muted">${p.upg?T('단계를 올리는 중이에요','Upgrading'):T('짓는 중이에요','Under construction')} · ${Math.ceil(consLeft(p)/1000)}${T('초','s')}</div>`+opt(T('허물기','Demolish'),fmt(p.paid*0.5)+UG(),()=>{demolish(i);closePop();});}
   else{const B=BLD[p.b];h=`<h4>${tx(B.n)} ${T('{0}단계','Lv {0}',p.lv)}</h4>`;
     if(B.util){h+=`<div class="muted">${tx(B.d)}</div>`;
       if(p.b==='stall'){h+=`<div class="muted" style="margin-top:4px">${p.g?T('파는 중: {0}','Selling: {0}',GN(p.g)):T('팔 물건을 고르세요','Pick a good to sell')}</div>`;GOODS.filter(q=>inv(q.id)>0).slice(0,12).forEach(q=>{h+=opt(gi(q.id)+GN(q.id),String(inv(q.id)),()=>{p.g=q.id;popSlot(i,x,y);});});if(p.g)h+=opt(T('그만 팔기','Stop'),'',()=>{p.g=null;popSlot(i,x,y);});}
       if(p.b==='shipyard')h+=opt(T('배 사기','Buy ships'),'',()=>{closePop();openModal('yard');});}
-    else{h+=`<div class="muted">${T('재료가 창고에 있으면 알아서 만들어요','Works automatically when ingredients are in the warehouse')}</div>`;
-      h+=opt(T('자동 고르기','Auto pick'),p.r<0?'✔':'',()=>{p.r=-1;popSlot(i,x,y);});
-      B.rec.forEach((rec,ri)=>{h+=opt(gi(rec[1])+GN(rec[1]),(p.r===ri?'✔ ':'')+recText(rec),()=>{p.r=ri;popSlot(i,x,y);});});}
+    else{const AF=hasT('autofeed'),AC=hasT('autocarry'),hop=Object.keys(p.in||{}).filter(k=>p.in[k]>0).map(k=>GN(k)+' '+p.in[k]).join(', '),ot=Object.keys(p.out||{}).filter(k=>p.out[k]>0).map(k=>GN(k)+' '+p.out[k]).join(', ');
+      h+=`<div class="muted">${AF&&AC?T('재료가 창고에 있으면 알아서 만들고 창고로 옮겨요','Works automatically when ingredients are in the warehouse'):T('만들 것을 눌러 재료를 넣으면 만들어요. 완성품은 직접 꺼내요. 연구로 자동화할 수 있어요','Tap a recipe to load its ingredients. Take the goods out by hand. Research can automate it')}</div>`;
+      if(!AF)h+=`<div class="muted">${T('넣은 재료: {0}','Loaded: {0}',hop||T('없음','none'))}</div>`;
+      if(!AC){h+=`<div class="muted">${T('완성품: {0}','Ready: {0}',ot||T('없음','none'))}</div>`;if(ot)h+=opt(T('완성품 창고로 옮기기','Move goods to warehouse'),'',()=>{const n=bldTake(p);if(!n)toast(T('창고가 가득 찼어요','Warehouse is full'));popSlot(i,x,y);});}
+      if(AF)h+=opt(T('자동 고르기','Auto pick'),p.r<0?'✔':'',()=>{p.r=-1;popSlot(i,x,y);});
+      B.rec.forEach((rec,ri)=>{h+=opt(gi(rec[1])+GN(rec[1]),(p.r===ri?'✔ ':'')+recText(rec),()=>{p.r=ri;if(!AF){const n=bldLoad(p,ri);if(!n)toast(T('창고에 재료가 모자라요','Not enough ingredients in the warehouse'));}popSlot(i,x,y);});});}
     if(p.lv<3)h+=opt(T('단계 올리기','Upgrade'),fmt(bldUp(p))+UG(),()=>{upB(i);popSlot(i,x,y);},S.money<bldUp(p));
     h+=opt(T('허물기','Demolish'),fmt(p.paid*0.5)+UG(),()=>{demolish(i);closePop();});}
   showPop(h,x,y);}
@@ -1945,7 +1976,7 @@ MODS.notes=()=>{let h=`<h2>${T('패치노트','Patch notes')}</h2><div class="no
 MODS.help=()=>`<h2>${T('하는 법','How to play')}</h2><div class="note"><ul>
  <li>${T('<b>밭</b>: 빈 밭을 눌러 작물을 심고, 다 자라면 눌러서 수확해요. 계절마다 자라는 속도가 달라요. 과일나무는 한 번 심으면 계속 열려요.','<b>Fields</b>: tap an empty field to sow; tap it again when ripe. Growth speed changes with the seasons. Fruit trees keep bearing.')}</li>
  <li>${T('<b>목장</b>: 닭장, 양 우리, 소 외양간에는 먹이를 주고, 낚시터는 먹이가 필요 없어요. 단계를 올리면 더 빨리, 더 많이 나와요.','<b>Ranch</b>: coops, sheepfolds and barns eat feed; fishing huts need none. Upgrades make them faster and richer.')}</li>
- <li>${T('<b>마을</b>: 건물을 지으면 재료가 창고에 있을 때 알아서 가공해요. 건물을 누르면 만들 것을 고를 수 있어요. 가판대는 물건을 조금씩 팔고, 방문 상인은 값을 더 쳐줘요.','<b>Town</b>: workshops craft automatically when ingredients are in stock. Tap one to choose a recipe. Stalls sell slowly; visiting traders pay extra.')}</li>
+ <li>${T('<b>마을</b>: 건물을 누르고 만들 것을 고르면 창고의 재료를 넣어 가공해요. 완성품은 직접 꺼내 창고로 옮겨요. 연구로 이 일을 자동화할 수 있어요. 가판대는 물건을 조금씩 팔고, 방문 상인은 값을 더 쳐줘요.','<b>Town</b>: workshops craft automatically when ingredients are in stock. Tap one to choose a recipe. Stalls sell slowly; visiting traders pay extra.')}</li>
  <li>${T('<b>바다</b>: 출항에서 배에 짐을 싣고 항구로 보내요. 항구마다 값이 달라요. 같은 물건을 많이 팔면 값이 내려가고 시간이 지나면 돌아와요. 향신료, 비단 같은 수입품은 항구에서 사 와요.','<b>Sea</b>: load a ship and send it to a port. Prices differ per port; selling a lot lowers the price, which recovers over time. Buy imports like spice and silk at ports.')}</li>
  <li>${T('항구 <b>계약</b>을 채우면 보상과 평판을 얻어요. 평판이 높으면 팔 때 더 받아요.','Fill port <b>contracts</b> for rewards and reputation; higher reputation pays more.')}</li>
  <li>${T('<b>연구</b>, <b>은행</b>, <b>공공 공사</b>로 더 키울 수 있어요. 해적이 나올 수 있으니 배에 호위를 달아 보세요.','Use <b>research</b>, the <b>bank</b> and <b>shared projects</b> to grow. Pirates may attack; add escorts.')}</li>
@@ -2126,7 +2157,7 @@ function loop(now){const dt=Math.min(1,(now-last)/1000);last=now;
   requestAnimationFrame(loop);}
 document.addEventListener('pointerdown',()=>{if(S){auCtx();if(AU.mus)musicStart();}},{once:false});
 initLang();fit();initAuth();applyStatic();showTitle();requestAnimationFrame(loop);
-window.__it={get UID(){return UID;},set UID(v){UID=v;},SAVEK,capOf,upWh,setAutoAll,harvest,plant,SAIL,openModal,SECRET,addMap,crewCands,crewHire,crewTick,crewV,stockAdd,storeTick,storeCollect,storeSetMult,coGen,coDonate,coApply,secretBuy,secretPrice,helmBottles,get CO(){return CO;},set CO(v){CO=v;},codexTier,plotXY,decoSpot,DECO,placeDeco,PL,ISLE,OX,OY,HOME,get MOD(){return typeof MOD!=="undefined"?MOD:null;},HEL,startHelm,endHelm,helmAct,isUnl,unlockItem,buySeed,tx,NOTES,VIS,LT,startVisit,leaveVisit,ltRequest,ltAnswer,ltSet,ltReady,ltUnready,ltCancel,mpLeave,mySnap,hireWorker,get S(){return S;},set S(v){S=v;},set OFF(v){OFF=v;},get OFF(){return OFF;},get DEM(){return DEM;},get PROJ(){return PROJ;},MP,migrate,tick,startSingle,startMP,setView,dispatch,harvestAll,plant,buildB,buildPen,buyShip,quote,GOODS,PORTS,ACH,BLD,CROPS,ANIM,TECHS,QUESTS,PROJECTS,netWorth,openDispatch,offerTo,answerOffer,raid,onMsg,research,donate,listAuction,bidAuction,sendChat,genContract,genVisitor,sellVisitor,rankOf,harvest,collectPen,upB,upPen,buyPlot,sellPlot,buyPenSlot,buySlot,borrow,repay,get LANG(){return LANG;},setLang,T,EN,save,loadSave,get VIEW(){return VIEW;},PL,KEYS,JOY,interactNear,objs,openModal,get MOD(){return MOD;},ACT,dispatchRaw:dispatch,GI,hist:HIST,season,weather,SHIPS};
+window.__it={bldLoad,bldTake,outN,get UID(){return UID;},set UID(v){UID=v;},SAVEK,capOf,upWh,setAutoAll,harvest,plant,SAIL,openModal,SECRET,addMap,crewCands,crewHire,crewTick,crewV,stockAdd,storeTick,storeCollect,storeSetMult,coGen,coDonate,coApply,secretBuy,secretPrice,helmBottles,get CO(){return CO;},set CO(v){CO=v;},codexTier,plotXY,decoSpot,DECO,placeDeco,PL,ISLE,OX,OY,HOME,get MOD(){return typeof MOD!=="undefined"?MOD:null;},HEL,startHelm,endHelm,helmAct,isUnl,unlockItem,buySeed,tx,NOTES,VIS,LT,startVisit,leaveVisit,ltRequest,ltAnswer,ltSet,ltReady,ltUnready,ltCancel,mpLeave,mySnap,hireWorker,get S(){return S;},set S(v){S=v;},set OFF(v){OFF=v;},get OFF(){return OFF;},get DEM(){return DEM;},get PROJ(){return PROJ;},MP,migrate,tick,startSingle,startMP,setView,dispatch,harvestAll,plant,buildB,buildPen,buyShip,quote,GOODS,PORTS,ACH,BLD,CROPS,ANIM,TECHS,QUESTS,PROJECTS,netWorth,openDispatch,offerTo,answerOffer,raid,onMsg,research,donate,listAuction,bidAuction,sendChat,genContract,genVisitor,sellVisitor,rankOf,harvest,collectPen,upB,upPen,buyPlot,sellPlot,buyPenSlot,buySlot,borrow,repay,get LANG(){return LANG;},setLang,T,EN,save,loadSave,get VIEW(){return VIEW;},PL,KEYS,JOY,interactNear,objs,openModal,get MOD(){return MOD;},ACT,dispatchRaw:dispatch,GI,hist:HIST,season,weather,SHIPS};
 
 </script>
 </body>
