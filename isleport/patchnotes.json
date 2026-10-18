@@ -5,6 +5,8 @@
    "build": "v0.2",
    "title": "큰 항해",
    "items": [
+    "새로 시작하면 긴 설명 대신 화면 아래에 지금 할 일 한 줄이 나와요. 밭 심기, 수확, 판매, 출항 순서로 안내하고, 건너뛸 수 있어요",
+    "로비의 글씨를 키웠어요",
     "같은 브라우저에서 계정이 겹치지 않아요. 계정마다 저장이 따로이고, 탭마다 다른 계정으로 로그인할 수 있어요",
     "밭을 눌렀을 때 \"모든 밭 다시 심기\"를 켜면 수확한 밭에 씨앗을 자동으로 다시 심어요 (연구 \"자동 파종\" 필요)",
     "건물이 더 정교해졌어요. 뾰족한 지붕, 기와 결, 굴뚝, 창틀과 문을 새로 그렸어요",
@@ -54,6 +56,8 @@
     "en": {
      "title": "The big voyage",
      "items": [
+      "New games show one short step at a time instead of a long guide",
+      "Lobby text is bigger",
       "Accounts no longer overlap in one browser. Each account has its own save, and each tab can log in as a different account",
       "Turn on \"Replant in every field\" in a field menu to auto-replant after harvest (needs the Auto-sowing research)",
       "Buildings are more detailed, with proper pitched roofs, shingles, chimneys, window frames and doors",
@@ -103,6 +107,8 @@
     "ja": {
      "title": "大航海",
      "items": [
+      "New games show one short step at a time instead of a long guide",
+      "Lobby text is bigger",
       "同じブラウザでもアカウントが重ならなくなりました。アカウントごとにセーブが別で、タブごとに別のアカウントでログインできます",
       "畑のメニューで「すべての畑で再び植える」をオンにすると、収穫後に自動で種を植え直します(研究「自動播種」が必要)",
       "建物がより精巧になりました。とがった屋根、瓦の質感、煙突、窓枠とドアを描き直しました",
@@ -152,6 +158,8 @@
     "es": {
      "title": "El gran viaje",
      "items": [
+      "New games show one short step at a time instead of a long guide",
+      "Lobby text is bigger",
       "Las cuentas ya no se mezclan en un mismo navegador. Cada cuenta tiene su propio guardado y cada pestaña puede iniciar sesión con otra cuenta",
       "Activa «Replantar en todos los campos» en el menú de un campo para replantar solo tras la cosecha (requiere la investigación Siembra automática)",
       "Los edificios tienen más detalle: tejados a dos aguas, tejas, chimeneas, marcos de ventana y puertas nuevos",
@@ -201,6 +209,8 @@
     "fr": {
      "title": "La grande traversée",
      "items": [
+      "New games show one short step at a time instead of a long guide",
+      "Lobby text is bigger",
       "Les comptes ne se mélangent plus dans un même navigateur. Chaque compte a sa propre sauvegarde et chaque onglet peut se connecter avec un autre compte",
       "Activez « Replanter dans tous les champs » dans le menu d’un champ pour replanter après la récolte (recherche Semis automatique requise)",
       "Les bâtiments sont plus détaillés : toits en pente, tuiles, cheminées, cadres de fenêtres et portes redessinés",
@@ -250,6 +260,8 @@
     "de": {
      "title": "Die große Fahrt",
      "items": [
+      "New games show one short step at a time instead of a long guide",
+      "Lobby text is bigger",
       "Konten überschneiden sich im selben Browser nicht mehr. Jedes Konto hat einen eigenen Spielstand, und jeder Tab kann mit einem anderen Konto angemeldet sein",
       "Schalte im Feldmenü „In allen Feldern neu pflanzen“ ein, um nach der Ernte automatisch neu zu pflanzen (Forschung Auto-Aussaat nötig)",
       "Gebäude sind detaillierter: Giebeldächer, Schindeln, Schornsteine, Fensterrahmen und Türen neu gezeichnet",
