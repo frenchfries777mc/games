@@ -2,6 +2,52 @@
  "notes": [
   {
    "date": "2026-10-18",
+   "build": "v0.2 build 3",
+   "title": "항구 건물",
+   "items": [
+    "우리 항구에 건물이 생겼어요. 항만 사무소(배와 계약), 해운 창고, 어시장, 등대, 크레인이 부두 옆에 있어요",
+    "섬에 상륙하면 부두 옆에 그 섬의 항구 건물이 있어요"
+   ],
+   "tr": {
+    "en": {
+     "title": "Harbor buildings",
+     "items": [
+      "Your harbor now has buildings: a harbor office (ships and contracts), a cargo shed, a fish market, a lighthouse and a crane beside the piers",
+      "Each island you land on now has its own harbor building next to the pier"
+     ]
+    },
+    "ja": {
+     "title": "Harbor buildings",
+     "items": [
+      "Your harbor now has buildings: a harbor office (ships and contracts), a cargo shed, a fish market, a lighthouse and a crane beside the piers",
+      "Each island you land on now has its own harbor building next to the pier"
+     ]
+    },
+    "es": {
+     "title": "Harbor buildings",
+     "items": [
+      "Your harbor now has buildings: a harbor office (ships and contracts), a cargo shed, a fish market, a lighthouse and a crane beside the piers",
+      "Each island you land on now has its own harbor building next to the pier"
+     ]
+    },
+    "fr": {
+     "title": "Harbor buildings",
+     "items": [
+      "Your harbor now has buildings: a harbor office (ships and contracts), a cargo shed, a fish market, a lighthouse and a crane beside the piers",
+      "Each island you land on now has its own harbor building next to the pier"
+     ]
+    },
+    "de": {
+     "title": "Harbor buildings",
+     "items": [
+      "Your harbor now has buildings: a harbor office (ships and contracts), a cargo shed, a fish market, a lighthouse and a crane beside the piers",
+      "Each island you land on now has its own harbor building next to the pier"
+     ]
+    }
+   }
+  },
+  {
+   "date": "2026-10-18",
    "build": "v0.2 build 2",
    "title": "섬 상륙",
    "items": [
