@@ -3900,6 +3900,7 @@ const THEMES = {
   icelake:    {name:'얼음 호수', bgA:'#2a4a66', bgB:'#0c1a2a', ground:'#7fb7d6', plat:'#a9d8ee', platEdge:'#5d97b8', stripe:'#e8fbff'},
   dungeon:    {name:'지하 감옥', bgA:'#2b2a33', bgB:'#0b0b10', ground:'#3a3944', plat:'#5a5866', platEdge:'#26252d', stripe:'#8a8a9c'},
   swamp:      {name:'어둠의 늪', bgA:'#21173a', bgB:'#08050f', ground:'#2b2238', plat:'#43345c', platEdge:'#1c1429', stripe:'#a77bff'},
+  waterfall:  {name:'폭포 절벽', bgA:'#12452f', bgB:'#04160e', ground:'#35502a', plat:'#6f8f48', platEdge:'#2c411d', stripe:'#e3c46a'},
   steampunk:  {name:'스팀펑크',   bgA:'#3a2f28', bgB:'#120e0a', ground:'#4a3626', plat:'#7a5c38', platEdge:'#3d2a18', stripe:'#d4a24c'},
   collapsebridge:{name:'무너지는 다리', bgA:'#4a2f4f', bgB:'#150c1a', ground:'#3b2c20', plat:'#8a6238', platEdge:'#4a3018', stripe:'#ffb347'},
   lavaland:   {name:'화산 지대',   bgA:'#4a1a10', bgB:'#14060a', ground:'#3a1f18', plat:'#5c3a30', platEdge:'#2a1410', stripe:'#ff6a2a'},
@@ -4036,6 +4037,17 @@ MAP_TEMPLATES['swamp'] = {
   ])).concat([{x:1060,y:510,w:280,h:24}]),                                                                      // the one platform in the middle, reached from the high step on either side
   spawns:[{x:200,y:890},{x:420,y:890},{x:640,y:890},{x:1760,y:890},{x:1980,y:890},{x:2200,y:890},{x:230,y:780},{x:2170,y:780}]
 };
+MAP_TEMPLATES['waterfall'] = {
+  id:'waterfall', name:THEMES.waterfall.name, maxPlayers:8, arenaW:2400, arenaH:1000, theme:THEMES.waterfall, hazard:'waterfall',
+  platforms:[{x:0,y:900,w:2400,h:100}].concat(mirrorPl(2400,[
+    {x:120,y:800,w:200,h:24},{x:340,y:700,w:180,h:24},{x:560,y:600,w:150,h:24},                                // each bank: three steps up (rise 100, gap 20-60)
+    {x:790,y:650,w:110,h:24},{x:760,y:520,w:80,h:24}                                                            // the ledge half behind the fall, and the cliff top beside it (rise 130)
+  ])).concat([{x:960,y:520,w:480,h:24},{x:1060,y:400,w:280,h:24}]),                                             // the middle ledge between the two falls, and the peak above it
+  spawns:[{x:200,y:890},{x:420,y:890},{x:640,y:890},{x:1760,y:890},{x:1980,y:890},{x:2200,y:890},{x:230,y:790},{x:2170,y:790}]
+};
+const WF_FALLS=[{x:840,w:120},{x:1440,w:120}], WF_LIFT=3200, WF_MAX_UP=480, WF_TOP=340, WF_POOL={x:700,w:1000}, WF_SLOW=0.8;   // 폭포 절벽: a player in the air inside a fall is carried up (to about WF_TOP); the shallows on the floor slow everybody by 20%
+function inWaterfall(p){ if(!MAP || MAP.hazard!=='waterfall') return false; for(const z of WF_FALLS) if(p.x>=z.x && p.x<=z.x+z.w) return true; return false; }
+function inShallows(p){ return !!MAP && MAP.hazard==='waterfall' && p.grounded && Math.abs(p.y-MAP.platforms[0].y)<=2 && p.x>=WF_POOL.x && p.x<=WF_POOL.x+WF_POOL.w; }
 const SWAMP_POOLS=[{x:760,w:880}], SWAMP_SLOW=0.67;      // the big bog on the floor of 어둠의 늪 (between the banks): everybody on it is 33% slower and sees only around himself
 function inSwamp(p){ if(!MAP || MAP.hazard!=='swamp' || !p.grounded || Math.abs(p.y-MAP.platforms[0].y)>2) return false; for(const z of SWAMP_POOLS) if(p.x>=z.x && p.x<=z.x+z.w) return true; return false; }
 // Kurus' darkness on the ground: the owner runs faster on it, his opponents are slower and see only around themselves (host: darkPools; the view comes from the snapshot's darkView)
@@ -4218,6 +4230,19 @@ function drawMapHazards(){
     if(st===2){ ctx.fillStyle='#0f3b66'; ctx.fillRect(Z.x-Z.r,gy,Z.r*2,100);
       ctx.fillStyle='#2a8fd6'; ctx.beginPath(); ctx.moveTo(Z.x-Z.r,gy+6); for(let x=-Z.r;x<=Z.r;x+=20) ctx.lineTo(Z.x+x,gy+2+Math.sin(x/18+now/180)*5); ctx.lineTo(Z.x+Z.r,gy+100); ctx.lineTo(Z.x-Z.r,gy+100); ctx.closePath(); ctx.fill();
       ctx.fillStyle='rgba(200,235,255,0.7)'; for(let i=0;i<5;i++){ ctx.beginPath(); ctx.arc(Z.x-120+i*60+Math.sin(now/200+i)*6, gy-((now/9+i*40)%50), 4, 0, 7); ctx.fill(); } }
+    ctx.restore();
+  } else if(MAP.hazard==='waterfall'){
+    ctx.save(); const gy=MAP.platforms[0].y;
+    ctx.fillStyle='rgba(40,150,200,0.35)'; ctx.beginPath(); ctx.moveTo(WF_POOL.x,gy+2);
+    for(let x=0;x<=WF_POOL.w;x+=14) ctx.lineTo(WF_POOL.x+x, gy-3+Math.sin(now/260+x/30)*1.5);
+    ctx.lineTo(WF_POOL.x+WF_POOL.w,gy+100); ctx.lineTo(WF_POOL.x,gy+100); ctx.closePath(); ctx.fill();
+    for(const z of WF_FALLS){
+      const g=ctx.createLinearGradient(z.x,0,z.x+z.w,0); g.addColorStop(0,'rgba(170,225,255,0.25)'); g.addColorStop(0.5,'rgba(220,245,255,0.5)'); g.addColorStop(1,'rgba(170,225,255,0.25)');
+      ctx.fillStyle=g; ctx.fillRect(z.x,WF_TOP-30,z.w,gy-WF_TOP+30);
+      ctx.strokeStyle='rgba(255,255,255,0.75)'; ctx.lineWidth=2;
+      for(let i=0;i<9;i++){ const sx=z.x+8+i*(z.w-16)/8, off=((now/5+i*97)%380); for(let k=0;k<3;k++){ const yy=gy-((off+k*127)%(gy-WF_TOP+30)); ctx.beginPath(); ctx.moveTo(sx,yy); ctx.lineTo(sx+Math.sin(now/200+i)*2,yy-26); ctx.stroke(); } }
+      ctx.fillStyle='rgba(235,250,255,0.55)'; for(let i=0;i<7;i++){ ctx.beginPath(); ctx.arc(z.x+z.w/2+Math.sin(now/230+i*1.7)*(z.w*0.6), gy-4-((now/11+i*23)%22), 4+i%3, 0, 7); ctx.fill(); }
+    }
     ctx.restore();
   } else if(MAP.hazard==='swamp'){
     ctx.save(); const gy=MAP.platforms[0].y;
@@ -4659,7 +4684,7 @@ function shuffle(arr){ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.
 /* ===== the version of this file =====
    Players with different versions CAN meet and play together: the automatic matchmaking uses the same room names for every version (online-<mode>-<map>-<slot>), and nobody is refused because of a different build.
    The build is only sent along with the join message and the lobby (for information); the corner of the screen shows it. */
-const GAME_BUILD='build 2026-10-18-v303';
+const GAME_BUILD='build 2026-10-18-v304';
 const GAME_VERSION='0.8', GAME_VERSION_NAME='황금을 찾아서';   // 게임 버전 이름: versions.json의 title과 같게 (빌드마다 바꾸지 않음)
 const WEEKLY_EVENTS=[
   {id:'lowg',    name:'저중력 난투', desc:'몸이 둥실둥실, 중력이 약해진 난투', rules:{grav:0.6}},
@@ -4852,6 +4877,7 @@ function stepPhysics(p, input, dt){
   let spd = MOVE_SPEED;
   if(p.slowed) spd*=0.5;
   if(p.sandSlowed) spd*=SAND_SLOW_MULT;      // the sandstorm: only 30% of the speed
+  if(!batting && inShallows(p)) spd*=WF_SLOW;   // 폭포 절벽: the shallows
   if(!batting && inSwamp(p)) spd*=SWAMP_SLOW;   // 어둠의 늪: the bog on the floor
   spd*=darkFootMult(p);                          // Kurus' darkness: faster for him, slower for his opponents
   if(p.hasted) spd*=(p.batRun ? BAT_ULT_SPEED_MULT : 1.5);   // hunter skill (the baseball player's ultimate runs twice as fast)
@@ -4901,6 +4927,7 @@ function stepPhysics(p, input, dt){
   } else {
     if(input.jump && p.grounded){ p.vy=JUMP_VELOCITY; p.grounded=false; }
     p.vy = clamp((p.vy||0)+GRAVITY*roomRules.grav*dt, -Infinity, MAX_FALL);
+    if(!p.grounded && p.y>WF_TOP && inWaterfall(p)) p.vy=Math.max(-WF_MAX_UP, p.vy-WF_LIFT*dt);      // 폭포 절벽: the current carries everybody in the air upward
     p.y += p.vy*dt;
     box=getBox(p);
     p.grounded=false;
@@ -8214,12 +8241,12 @@ let mapOrder=[], mapCarouselIdx=0;
 function buildMapOrder(){
   mapOrder=[];
   for(const shapeId in SHAPE_THEMES) for(const themeKey of SHAPE_THEMES[shapeId]) mapOrder.push(shapeId+'_'+themeKey);
-  mapOrder.push('steampunk'); mapOrder.push('skyport'); mapOrder.push('colosseum'); mapOrder.push('lifttower'); mapOrder.push('stormship'); mapOrder.push('pipefactory'); mapOrder.push('mine'); mapOrder.push('icelake'); mapOrder.push('dungeon'); mapOrder.push('swamp'); mapOrder.push('collapsebridge'); mapOrder.push('lavaland'); mapOrder.push('ruins'); mapOrder.push('mirrormaze');
+  mapOrder.push('steampunk'); mapOrder.push('skyport'); mapOrder.push('colosseum'); mapOrder.push('lifttower'); mapOrder.push('stormship'); mapOrder.push('pipefactory'); mapOrder.push('mine'); mapOrder.push('icelake'); mapOrder.push('dungeon'); mapOrder.push('swamp'); mapOrder.push('waterfall'); mapOrder.push('collapsebridge'); mapOrder.push('lavaland'); mapOrder.push('ruins'); mapOrder.push('mirrormaze');
   mapOrder.push('mega_arena');
 }
-const shapeLabel={canyon:'4인 맵',tower:'6인 맵',grid:'8인 맵',steampunk:'6인 맵',skyport:'8인 맵',colosseum:'8인 맵',lifttower:'8인 맵',stormship:'8인 맵',pipefactory:'8인 맵',mine:'8인 맵',icelake:'8인 맵',dungeon:'8인 맵',swamp:'8인 맵',collapsebridge:'8인 맵',lavaland:'8인 맵',ruins:'8인 맵',mirrormaze:'6인 맵',parkour1:'파쿠르',parkour2:'파쿠르',parkour3:'파쿠르',parkour4:'파쿠르'};
+const shapeLabel={canyon:'4인 맵',tower:'6인 맵',grid:'8인 맵',steampunk:'6인 맵',skyport:'8인 맵',colosseum:'8인 맵',lifttower:'8인 맵',stormship:'8인 맵',pipefactory:'8인 맵',mine:'8인 맵',icelake:'8인 맵',dungeon:'8인 맵',swamp:'8인 맵',waterfall:'8인 맵',collapsebridge:'8인 맵',lavaland:'8인 맵',ruins:'8인 맵',mirrormaze:'6인 맵',parkour1:'파쿠르',parkour2:'파쿠르',parkour3:'파쿠르',parkour4:'파쿠르'};
 const mapSelectBtn=document.getElementById('mapSelectBtn');
-const MAP_GIMMICKS={collapsebridge:['🌉 무너지는 다리 판자','🌊 강물 (25 피해)'], lavaland:['🌋 용암 웅덩이 (30 피해)'], ruins:['🧱 기둥과 벽 엄폐물'], mirrormaze:['🪞 좌우 대칭 미로'], swamp:['🟣 중앙 늪 (이동속도 33% 감소 · 시야 제한)'], stormship:['🌊 흔들리는 갑판','🌊 파도'], pipefactory:['➡️ 컨베이어','💨 증기 분출'], mine:['🛒 광차 (50 피해)','🔦 정전'], icelake:['🧊 미끄러운 얼음','💧 얼음 깨짐'], dungeon:['🚪 철창 문 개폐'], steampunk:['⚙️ 움직이는 발판'], skyport:['↔️ 움직이는 발판'], lifttower:['↔️ 움직이는 발판'], colosseum:['🏟️ 계단식 구조']};
+const MAP_GIMMICKS={collapsebridge:['🌉 무너지는 다리 판자','🌊 강물 (25 피해)'], lavaland:['🌋 용암 웅덩이 (30 피해)'], ruins:['🧱 기둥과 벽 엄폐물'], mirrormaze:['🪞 좌우 대칭 미로'], waterfall:['🌊 폭포 물살 (공중에서 위로 떠오름)','💧 얕은 물 (이동속도 20% 감소)'], swamp:['🟣 중앙 늪 (이동속도 33% 감소 · 시야 제한)'], stormship:['🌊 흔들리는 갑판','🌊 파도'], pipefactory:['➡️ 컨베이어','💨 증기 분출'], mine:['🛒 광차 (50 피해)','🔦 정전'], icelake:['🧊 미끄러운 얼음','💧 얼음 깨짐'], dungeon:['🚪 철창 문 개폐'], steampunk:['⚙️ 움직이는 발판'], skyport:['↔️ 움직이는 발판'], lifttower:['↔️ 움직이는 발판'], colosseum:['🏟️ 계단식 구조']};
 function mapGimmickTags(id){
   const t=MAP_TEMPLATES[id]; if(!t) return [];
   if(MAP_GIMMICKS[id]) return MAP_GIMMICKS[id];
