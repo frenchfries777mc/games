@@ -1,18 +1,29 @@
 {
  "name": "Stickseum",
- "latest": "0.7",
+ "latest": "0.8",
  "latestFile": "Stickseum-latest.html",
- "updated": "2026-10-17",
+ "updated": "2026-10-18",
  "versions": [
+  {
+   "version": "0.8",
+   "date": "2026-10-18",
+   "file": "Stickseum-v0.8.html",
+   "title": "황금을 찾아서",
+   "summary": "새 캐릭터 피사로(창·하늘의 십자가·중첩 궁극기)\n팀전 금지 캐릭터를 팀원마다 선택\n봇 순간이동·MVP 투표 카드·계정별 진행 상황 분리·클랜 검색 정렬",
+   "latest": true,
+   "size": 2350443,
+   "sha256": "ef9ae1961299",
+   "build": "v300"
+  },
   {
    "version": "0.7",
    "date": "2026-10-15",
    "file": "Stickseum-v0.7.html",
    "title": "어둠의 늪",
    "summary": "새 캐릭터 쿠루스·신규 맵 어둠의 늪·보스 레이드 개편·MVP 투표 개편·Hub Coin 환전·모바일 조작 개선·배틀로얄·듀오 개편·온라인 렉 감소·봇 개선·클랜 이름·태그 변경·닉네임 통일·연습 모드 DPS 표시·밸런스 페이지·모드 구분 정리·신규 맵 4종·색약 모드·게임패드",
-   "latest": true,
-   "size": 2343910,
-   "sha256": "7ba8a7ebcf4f",
+   "latest": false,
+   "size": 2343916,
+   "sha256": "9e1991e25fd5",
    "build": "v299"
   },
   {
