@@ -3,6 +3,52 @@
   {
    "date": "2026-10-18",
    "build": "",
+   "title": "게임 사이트에도 테마 색 적용",
+   "items": [
+    "Stickseum, Crown Envoy, Beaconfall 사이트 페이지에 노랑, 빨강, 파랑 테마가 적용된다",
+    "하양(라이트) 모드에서 Stickseum 제목과 로고가 어두워 안 보이던 문제 수정"
+   ],
+   "tr": {
+    "en": {
+     "title": "Theme colors on the game sites too",
+     "items": [
+      "The yellow, red and blue themes now apply to the Stickseum, Crown Envoy and Beaconfall site pages",
+      "Fixed the Stickseum title and logo being too dark to read in light mode"
+     ]
+    },
+    "es": {
+     "title": "Colores de tema también en los sitios de juegos",
+     "items": [
+      "Los temas amarillo, rojo y azul ahora se aplican a las páginas de Stickseum, Crown Envoy y Beaconfall",
+      "Corregido el título y el logo de Stickseum, demasiado oscuros en modo claro"
+     ]
+    },
+    "fr": {
+     "title": "Couleurs de thème aussi sur les sites des jeux",
+     "items": [
+      "Les thèmes jaune, rouge et bleu s'appliquent maintenant aux pages de Stickseum, Crown Envoy et Beaconfall",
+      "Correction du titre et du logo de Stickseum, trop sombres en mode clair"
+     ]
+    },
+    "de": {
+     "title": "Designfarben jetzt auch auf den Spielseiten",
+     "items": [
+      "Die Designs Gelb, Rot und Blau gelten jetzt auch für die Seiten von Stickseum, Crown Envoy und Beaconfall",
+      "Der Stickseum-Titel und das Logo waren im hellen Modus zu dunkel und sind behoben"
+     ]
+    },
+    "ja": {
+     "title": "ゲームサイトにもテーマ色を適用",
+     "items": [
+      "黄・赤・青のテーマをStickseum、Crown Envoy、Beaconfallのサイトページにも適用",
+      "ライトモードでStickseumのタイトルとロゴが暗くて見えない問題を修正"
+     ]
+    }
+   }
+  },
+  {
+   "date": "2026-10-18",
+   "build": "",
    "title": "테마 색 추가 (노랑, 빨강, 파랑)",
    "items": [
     "설정의 테마에 노랑, 빨강, 파랑이 생겼다 (배경색이 바뀐다)",
