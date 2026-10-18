@@ -80,10 +80,6 @@ h2{display:inline-block;margin:0 0 14px;padding:4px 18px;font:700 26px Galmuri,m
 .tips li{padding:16px 18px;font-size:14.5px;counter-increment:t}
 .tips li::before{content:counter(t);display:inline-block;background:var(--gold);color:#1a1203;font:700 13px Galmuri,monospace;padding:0 7px;margin:0 8px 8px 0}
 /* 갤러리 */
-.gal{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:20px}
-.gal figure{margin:0;position:relative;aspect-ratio:16/9;background:#000;overflow:hidden}
-.gal img{width:100%;height:100%;object-fit:cover}
-.gal figcaption{position:absolute;left:8px;bottom:8px;background:var(--panel);border:2px solid var(--line);padding:0 10px;font-size:13px;color:var(--tx)}
 /* 버전 */
 .vl{display:grid;gap:20px}
 .tv{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:4px 18px;align-items:center;padding:14px 18px}
@@ -117,7 +113,7 @@ footer{padding:44px 0 50px;color:var(--mu);font-size:13px;text-align:center}
 .err{color:#f08a6a}
 @media (max-width:860px){
  .grid,.tips{grid-template-columns:1fr}
- .gal{grid-template-columns:1fr}
+
  .two{grid-template-columns:1fr}
  .stats{grid-template-columns:1fr 1fr}
  .tv{grid-template-columns:1fr}.tv .go{grid-column:1;grid-row:auto}
@@ -128,7 +124,7 @@ footer{padding:44px 0 50px;color:var(--mu);font-size:13px;text-align:center}
 <body>
 <div class="top" id="topbar"><div class="wrap">
  <a class="logo" href="#top">Isleport</a>
- <nav class="nav"><a href="#feat" data-i="f_h"></a><a href="#guide" data-i="n_guide"></a><a href="#shots" data-i="shots_h"></a><a href="#vers" data-i="n_ver"></a><a href="#notes" data-i="n_notes"></a><a href="#help" data-i="n_help"></a></nav>
+ <nav class="nav"><a href="#feat" data-i="f_h"></a><a href="#guide" data-i="n_guide"></a><a href="#vers" data-i="n_ver"></a><a href="#notes" data-i="n_notes"></a><a href="#help" data-i="n_help"></a></nav>
  <select class="lang" id="lg" aria-label="Language"></select>
  <span data-ff-account></span>
 </div></div>
@@ -158,10 +154,6 @@ footer{padding:44px 0 50px;color:var(--mu);font-size:13px;text-align:center}
  <h2 data-i="g_h"></h2><p class="sub2" data-i="g_note"></p>
  <div class="tabs" id="gcats"></div>
  <ul class="tips" id="gtips"></ul>
-</section>
-<section id="shots">
- <h2 data-i="shots_h"></h2><p class="sub2" data-i="shots_note"></p>
- <div class="gal" id="gal"></div>
 </section>
 <section id="notes">
  <h2 data-i="nt_h"></h2>
@@ -193,13 +185,10 @@ function pick(){let s=null;try{s=localStorage.getItem(KEY);}catch(e){}
  return 'ko';}
 let LANG=pick(),DATA=FALLBACK,NDATA={notes:[]};
 const t=(k,v)=>{const e=I.D[k];let s=(e&&(e[LANG]||e.ko))||'';if(v)for(const q in v)s=s.split('{'+q+'}').join(v[q]);return s;};
-const SHOTS=['harbor','town','sea'];
 /* 특징 카드: 화면 일부를 잘라 보여 줘요 */
 const FEAT=[['f1','ft1','farm','8% 22%'],['f2','ft2','town','70% 20%'],['f3','ft3','sea','30% 55%'],['f4','ft4','harbor','88% 45%'],['f5','ft5','ranch','30% 40%'],['f6','ft6','square','78% 60%']];
 const fg=document.getElementById('fgrid');
-FEAT.forEach(([b,h,s,o])=>{const c=document.createElement('div');c.className='fc box';c.innerHTML='<div class="tx"><h3 data-i="'+h+'"></h3><p data-i="'+b+'"></p></div>';fg.appendChild(c);});
-const gal=document.getElementById('gal');
-SHOTS.forEach(k=>{const f=document.createElement('figure');f.className='box';f.dataset.k=k;f.innerHTML='<img src="shot-'+k+'.png" alt="" loading="lazy"><figcaption></figcaption>';gal.appendChild(f);});
+FEAT.forEach(([b,h,s,o])=>{const c=document.createElement('div');c.className='fc box';c.innerHTML='<div class="im"><img src="shot-'+s+'.png" alt="" style="--o:'+o+'" loading="lazy"></div><div class="tx"><h3 data-i="'+h+'"></h3><p data-i="'+b+'"></p></div>';fg.appendChild(c);});
 const gcats=document.getElementById('gcats'),gtips=document.getElementById('gtips');let GI=0;
 const GUIDE=[['gc1',['gt1a','gt1b','gt1c']],['gc2',['gt2a','gt2b','gt2c']],['gc3',['gt3a','gt3b','gt3c']],['gc4',['gt4a','gt4b','gt4c']],['gc5',['gt5a','gt5b','gt5c']]];
 GUIDE.forEach((g,i)=>{const b=document.createElement('button');b.className='pb sm';b.onclick=()=>{GI=i;guide();};gcats.appendChild(b);});
@@ -234,7 +223,6 @@ function applyLang(){
  document.documentElement.lang=LANG;lg.value=LANG;
  document.querySelectorAll('[data-i]').forEach(e=>{e.textContent=t(e.dataset.i);});
  document.title=t('title');const m=document.querySelector('meta[name=description]');if(m)m.content=t('desc');
- gal.querySelectorAll('figure').forEach(c=>c.querySelector('figcaption').textContent=t('pl_'+c.dataset.k));
  guide();render(DATA);renderNotes(NDATA);
 }
 applyLang();
