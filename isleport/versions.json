@@ -1,0 +1,60 @@
+{
+ "name": "Isleport",
+ "latest": "0.2",
+ "latestFile": "IslandTrade-v0.2.html",
+ "updated": "2026-10-18",
+ "versions": [
+  {
+   "version": "0.2",
+   "date": "2026-10-18",
+   "file": "IslandTrade-v0.2.html",
+   "title": "큰 항해",
+   "summary": "캐릭터를 직접 조종하고, 하나로 이어진 섬 지도에서 키우고 팔고, 배를 몰아 다른 섬과 비밀 섬을 찾아가는 버전",
+   "latest": true,
+   "size": 461184,
+   "sha256": "943a28dc74aa",
+   "tr": {
+    "title": {
+     "en": "The big voyage",
+     "ja": "大航海",
+     "es": "La gran travesía",
+     "fr": "La grande traversée",
+     "de": "Die große Fahrt"
+    },
+    "summary": {
+     "en": "Steer your character directly, farm and sell on one connected island map, and sail to other islands and secret islands",
+     "ja": "キャラクターを直接操作し、つながった島の地図で育てて売り、船で他の島や秘密の島へ行けるバージョン",
+     "es": "Controla al personaje, cultiva y vende en un solo mapa de isla y navega a otras islas e islas secretas",
+     "fr": "Contrôlez votre personnage, cultivez et vendez sur une carte d’île unique et naviguez vers d’autres îles et des îles secrètes",
+     "de": "Figur direkt steuern, auf einer zusammenhängenden Inselkarte anbauen und verkaufen und zu anderen und geheimen Inseln segeln"
+    }
+   }
+  },
+  {
+   "version": "0.1",
+   "date": "2026-10-18",
+   "file": "IslandTrade-v0.1.html",
+   "title": "첫 출항",
+   "summary": "밭, 목장, 항구 무역과 멀티플레이 방 코드가 있는 첫 공개",
+   "latest": false,
+   "size": 57379,
+   "sha256": "37a9bb37a7bc",
+   "tr": {
+    "title": {
+     "en": "First sailing",
+     "ja": "初出航",
+     "es": "Primera travesía",
+     "fr": "Premier départ",
+     "de": "Erste Fahrt"
+    },
+    "summary": {
+     "en": "First release with fields, a ranch, harbor trade and multiplayer room codes",
+     "ja": "畑、牧場、港の貿易、マルチプレイのルームコードがある最初の公開",
+     "es": "Primera versión con campos, rancho, comercio portuario y códigos de sala multijugador",
+     "fr": "Première version avec champs, ranch, commerce portuaire et codes de salle multijoueur",
+     "de": "Erste Version mit Feldern, Ranch, Hafenhandel und Mehrspieler-Raumcodes"
+    }
+   }
+  }
+ ]
+}
