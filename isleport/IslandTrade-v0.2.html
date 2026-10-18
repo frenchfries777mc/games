@@ -88,6 +88,17 @@ input[type=range]{width:100%}
 .ach{display:flex;gap:8px;align-items:center;padding:4px 0;border-bottom:1px dashed #5a3a1c}.ach.got b{color:var(--gold)}.ach:not(.got){opacity:.5}
 .ach .ic{width:26px;height:26px;flex:none;border:2px solid var(--line);background:#120a04;display:flex;align-items:center;justify-content:center;font:9px var(--px);color:var(--gold)}
 .note h4{margin:8px 0 3px;font:10px var(--px);color:var(--gold)}.note li{margin:2px 0}
+.panel.wide{width:min(1000px,98vw)}
+.tmap{position:relative;overflow:auto;height:min(64vh,540px);background:#150c05;border:2px solid #4a2e14;border-radius:6px;cursor:grab;-webkit-overflow-scrolling:touch}
+.tin{position:relative}.tin svg{position:absolute;left:0;top:0}
+.tin .e{stroke:#4a2e14;stroke-width:3;stroke-dasharray:6 6}.tin .e.a{stroke:#c9a24a;stroke-dasharray:none}.tin .e.d{stroke:#f2c75a;stroke-width:5;stroke-dasharray:none}
+.tc{position:absolute;transform:translate(-50%,-50%);background:#f2c75a;color:#2a1f0c;font:700 15px var(--ko);padding:14px 18px;border-radius:50%;border:4px solid #8a6238;box-shadow:0 0 0 3px #000}
+.tn2{position:absolute;transform:translate(-50%,-50%);width:122px;min-height:48px;padding:4px 6px;border-radius:6px;border:2px solid #4a2e14;background:#1a0f06;color:#8a7a5a;font:inherit;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;line-height:1.25}
+.tn2 b{font-size:13px;font-weight:700}.tn2 small{font-size:12px}
+.tn2.s1{background:#3a2412;border-color:#c9a24a;color:#f3e4b0}
+.tn2.s1.can{border-color:#f2c75a;color:#fff;box-shadow:0 0 0 2px #f2c75a,0 0 14px rgba(242,199,90,.6)}
+.tn2.s2{background:#6b4a14;border-color:#f2c75a;color:#fff}
+.tn2.sel{outline:3px solid #fff;outline-offset:2px}
 .card{display:flex;gap:8px;align-items:center;background:#1a0f06;border:1px solid #4a2e14;border-radius:4px;padding:5px 7px;margin:3px 0}
 .card .grow{flex:1;min-width:0}
 .card.on{border-color:var(--gold);background:#2e2010}
@@ -360,6 +371,8 @@ const TECHS=[
  {id:'manure',n:P('거름','Fertilizer'),d:P('작물이 10% 더 빨리 자라요','Crops grow another 10% faster'),cost:600,req:'plow'},
  {id:'bigharv',n:P('큰 수확','Bumper harvest'),d:P('수확할 때 1개씩 더 나와요','+1 per harvest'),cost:1500,req:'manure'},
  {id:'auto',n:P('자동 파종','Auto-sowing'),d:P('수확하고 다시 심기를 쓸 수 있어요. 자라는 밭을 눌러 "수확하고 다시 심기"나 "모든 밭 다시 심기"를 켜면, 수확할 때마다 씨앗 1개를 들여 알아서 다시 심어요','Unlocks replant after harvest. Open a growing field and switch on Replant (or Replant in every field): each harvest then re-sows by itself using one seed'),cost:300,req:null},
+ {id:'sowall',n:P('모두 심기','Sow all'),d:P('밭을 눌러 "빈 밭 모두 심기"를 쓸 수 있어요. 빈 밭마다 씨앗을 한 번에 심어요','Unlocks "Plant in all empty fields" in the field menu'),cost:250,req:'plow'},
+ {id:'reapall',n:P('모두 수확','Reap all'),d:P('헛간과 H 키로 "모두 수확"을 쓸 수 있어요. 다 자란 작물과 동물 산물을 한 번에 거둬요','Unlocks "Collect all" at the barn and with the H key'),cost:800,req:'sowall'},
  {id:'feed',n:P('좋은 먹이','Better feed'),d:P('동물이 15% 빨리 자라요','Animals produce 15% faster'),cost:400,req:null},
  {id:'bigpen',n:P('큰 우리','Larger pens'),d:P('동물 우리에서 1개씩 더 나와요','+1 output per cycle'),cost:1200,req:'feed'},
  {id:'hands',n:P('빠른 손','Quick hands'),d:P('가공이 15% 빨라요','Crafting 15% faster'),cost:500,req:null},
@@ -537,6 +550,8 @@ const ACHN={};ACH.forEach(a=>ACHN[a.id]=a);
 const NOTES=[
  {date:'2026-10-18',build:'v0.2',title:P('큰 항해','The big voyage'),items:[
   P('새로 시작하면 긴 설명 대신 화면 아래에 지금 할 일 한 줄이 나와요. 밭 심기, 수확, 판매, 출항 순서로 안내하고, 건너뛸 수 있어요','New games show one short step at a time instead of a long guide'),
+  P('"빈 밭 모두 심기"와 "모두 수확"은 연구 "모두 심기", "모두 수확"으로 해금해요','"Plant in all empty fields" and "Collect all" now unlock through research'),
+  P('연구창이 마인드맵처럼 한가운데에서 가지를 뻗는 나무로 바뀌었어요. 앞 연구를 끝내면 그 가장자리의 연구를 시작할 수 있어요','The research window is now a branching tree: finish a research to open the ones at its edge'),
   P('로비의 글씨를 키웠어요','Lobby text is bigger'),
   P('같은 브라우저에서 계정이 겹치지 않아요. 계정마다 저장이 따로이고, 탭마다 다른 계정으로 로그인할 수 있어요','Accounts no longer overlap in one browser. Each account has its own save, and each tab can log in as a different account'),
   P('밭을 눌렀을 때 "모든 밭 다시 심기"를 켜면 수확한 밭에 씨앗을 자동으로 다시 심어요 (연구 "자동 파종" 필요)','Turn on "Replant in every field" in a field menu to auto-replant after harvest (needs the Auto-sowing research)'),
@@ -1602,7 +1617,7 @@ ACT.newgame=(a,b)=>{if(b.dataset.arm){try{localStorage.removeItem(SAVEK());}catc
 ACT.single=()=>startSingle(true);
 ACT.tutskip=()=>{if(S){S.tut=-1;updateHud();}};
 ACT.seaback=()=>{if(VIEW==='helm'){if(HEL.near&&HEL.near.k==='home')endHelm();else toast(T('우리 항구 가까이에서 내릴 수 있어요','Return near your harbor to dock'));}else if(VIEW==='visit')leaveVisit();else setView('land');};
-ACT.harvestAll=()=>{if(S){harvestAll();updateHud();if(MOD&&MOD.type==='menu')closeModal();}};
+ACT.harvestAll=()=>{if(S){if(!hasT('reapall')){toast(T('연구 "모두 수확"이 필요해요','Needs the "Reap all" research'));return;}harvestAll();updateHud();if(MOD&&MOD.type==='menu')closeModal();}};
 ACT.menu=()=>{save();if(MP.on)mpLeave();S=null;applyStatic();showTitle();};
 ACT.leave=()=>mpLeave(T('연결을 끊었어요','Disconnected'));
 ACT.mclose=()=>closeModal();
@@ -1633,7 +1648,7 @@ function activate(o){const sx=(PL.x-Math.round(CAM.x))*SC,sy=(PL.y-12-Math.round
   else if(o.k==='slot')popSlot(o.i,sx,sy);else if(o.k==='vis')popVisitor(sx,sy);else if(o.k==='harbor')popHarbor(sx,sy);
   else if(o.k==='deco'){const d=S.deco[o.i];if(d)popList(tx(DECO[d.k].n),[[T('치우기','Pick up'),'+'+Math.floor(DECO[d.k].cost/2)+UG(),()=>{removeDeco(o.i);updateHud();}]],sx,sy);}
   else if(o.k==='home'){const it=[[T('꾸미기','Decorate'),S.deco.length+'/'+DECOMAX,()=>openModal('deco')],hasT('hire')?[T('일꾼 고용','Hire workers'),S.wk+'/'+WKMAX,()=>openModal('crew')]:null,[T('통계','Stats'),'',()=>openModal('stats')],[T('업적','Goals'),'',()=>openModal('ach')],[T('도감','Codex'),'',()=>openModal('codex')],[T('계정','Account'),UID?(UNAME||''):'',()=>openModal('login')],[T('설정','Settings'),'',()=>openModal('settings')],[T('하는 법','How to play'),'',()=>openModal('help')],[T('다른 섬과 연결','Connect to others'),MP.on?T('연결됨','On'):'',()=>openModal('mp')],[T('처음으로','Title'),'',()=>ACT.menu()]].filter(Boolean);popList(T('집','Home'),it,sx,sy);}
-  else if(o.k==='barn')popList(T('창고','Warehouse'),[[T('창고','Warehouse'),'',()=>openModal('wh')],[T('창고 늘리기','Expand warehouse'),(S.whUp||0)>=WHMAX?T('최대','Max'):fmt(whCost())+UG(),()=>{openModal('wh');}],[T('모두 수확','Collect all'),'',()=>{harvestAll();}]],sx,sy);
+  else if(o.k==='barn')popList(T('창고','Warehouse'),[[T('창고','Warehouse'),'',()=>openModal('wh')],[T('창고 늘리기','Expand warehouse'),(S.whUp||0)>=WHMAX?T('최대','Max'):fmt(whCost())+UG(),()=>{openModal('wh');}],].concat(hasT('reapall')?[[T('모두 수확','Collect all'),'',()=>{harvestAll();}]]:[]),sx,sy);
   else if(o.k==='lab')popList(T('연구','Research'),[[T('연구','Research'),'',()=>openModal('tech')]],sx,sy);
   else if(o.k==='bank')popList(T('은행·계약','Bank & contracts'),[[T('계약','Contracts'),String(S.contracts.length),()=>openModal('contracts')],[T('은행','Bank'),'',()=>openModal('bank')]],sx,sy);
   else if(o.k==='board'){const it=[[T('마을 대형 주문','Town big order'),CO.cur?'!':'',()=>openModal('coorder')],[T('공공 공사','Projects'),'',()=>openModal('proj')],[T('다른 섬과 연결','Connect to others'),MP.inbox.length?'!':(MP.on?T('연결됨','On'):''),()=>openModal('mp')]];if(MP.on)it.push([T('경매장','Auction house'),'',()=>openModal('auction')],[T('채팅','Chat'),'',()=>{MP.unread=0;openModal('chat');}]);popList(T('게시판','Notice board'),it,sx,sy);}}
@@ -1675,7 +1690,7 @@ function cropOpt(i,gid){const c=CROPS[gid],y=c.y+(hasT('bigharv')?1:0);return op
 function popPlot(i,x,y){popAct={};const p=S.plots[i];let h='';
   if(!S.own[i]){const c=plotCost();h=`<h4>${T('잡초 밭','Weedy field')}</h4><div class="muted">${T('풀을 걷어내면 쓸 수 있어요','Clear the weeds to use it')}</div>`+(S.pu<48?opt(T('땅 열기','Clear land'),fmt(c)+UG(),()=>{buyPlot(i);closePop();},S.money<c):'');}
   else if(!p){h=`<h4>${T('빈 밭','Empty field')} <span class="muted">${tx(SEASONS[season()])}</span></h4>`+CROPK.filter(c=>isUnl(c)&&!CROPS[c].per).map(c=>cropOpt(i,c)).join('')+`<div class="muted" style="margin:6px 0 2px">${T('과일나무 (한 번 심으면 계속 열려요)','Fruit trees (replant not needed)')}</div>`+CROPK.filter(c=>isUnl(c)&&CROPS[c].per).map(c=>cropOpt(i,c)).join('');
-    const cc=CROPS[lastCrop],emp=S.plots.filter((q,k)=>S.own[k]&&!q).length;h+=opt(T('{0}(으)로 빈 밭 모두 심기','Plant {0} in all empty fields',GN(lastCrop)),`${Math.min(emp,seedN(lastCrop))}/${emp}`,()=>{for(let k=0;k<48;k++)if(S.own[k]&&!S.plots[k]&&seedN(lastCrop)>0)plant(k,lastCrop);closePop();},seedN(lastCrop)<1);h+=`<div class="muted" style="margin:4px 0">${T('씨앗은 마을 입구의 종자 상점에서 살 수 있어요','Buy seeds at the seed shop by the town gate')}</div>`;if(hasT('auto'))h+=opt(T('모든 밭 다시 심기','Replant in every field'),S.autoAll?T('켜짐','On'):T('꺼짐','Off'),()=>{setAutoAll(!S.autoAll);popPlot(i,x,y);});h+=opt(T('밭 팔기','Sell field'),fmt(plotSell())+UG(),()=>{sellPlot(i);closePop();},S.pu<=4);}
+    const cc=CROPS[lastCrop],emp=S.plots.filter((q,k)=>S.own[k]&&!q).length;if(hasT('sowall'))h+=opt(T('{0}(으)로 빈 밭 모두 심기','Plant {0} in all empty fields',GN(lastCrop)),`${Math.min(emp,seedN(lastCrop))}/${emp}`,()=>{for(let k=0;k<48;k++)if(S.own[k]&&!S.plots[k]&&seedN(lastCrop)>0)plant(k,lastCrop);closePop();},seedN(lastCrop)<1);h+=`<div class="muted" style="margin:4px 0">${T('씨앗은 마을 입구의 종자 상점에서 살 수 있어요','Buy seeds at the seed shop by the town gate')}</div>`;if(hasT('auto'))h+=opt(T('모든 밭 다시 심기','Replant in every field'),S.autoAll?T('켜짐','On'):T('꺼짐','Off'),()=>{setAutoAll(!S.autoAll);popPlot(i,x,y);});h+=opt(T('밭 팔기','Sell field'),fmt(plotSell())+UG(),()=>{sellPlot(i);closePop();},S.pu<=4);}
   else{const gd=GI[p.g],left=Math.max(0,Math.ceil((p.dur-(NOW()-p.t0))/1000));h=`<h4>${gi(p.g)}${GN(p.g)}</h4><div class="muted">${T('{0}초 뒤 수확','Ready in {0}s',left)}</div>`;
     if(!CROPS[p.g].per)h+=hasT('auto')?opt(T('수확하고 다시 심기','Replant after harvest'),p.auto?T('켜짐','On'):T('꺼짐','Off'),()=>{p.auto=!p.auto;popPlot(i,x,y);}):`<div class="muted" style="margin:4px 0">${T('연구 "자동 파종"을 하면 다시 심기를 쓸 수 있어요','Research "Auto-sowing" to replant automatically')}</div>`;
     if(hasT('auto')&&!CROPS[p.g].per)h+=opt(T('모든 밭 다시 심기','Replant in every field'),S.autoAll?T('켜짐','On'):T('꺼짐','Off'),()=>{setAutoAll(!S.autoAll);popPlot(i,x,y);})+`<div class="muted" style="margin:2px 0 4px">${T('다시 심을 때마다 씨앗이 1개씩 들어요','Each replant uses one seed')}</div>`;
@@ -1784,10 +1799,10 @@ function updateHud(){if(!S)return;$('hud').hidden=false;const tu=$('tut'),on=S.t
 $('roomTag').hidden=!MP.on;if(MP.on)$('roomTag').textContent=T('방 {0}','Room {0}',MP.code);}
 /* ---- 창 ---- */
 let MODAL_CLOSABLE=true,MOD=null,MODS={};
-function modal(html,closable=true){MODAL_CLOSABLE=closable&&!(MOD&&MODAL_LOCK[MOD.type]);$('mbody').innerHTML=html;$('modal').hidden=false;}
+function modal(html,closable=true){MODAL_CLOSABLE=closable&&!(MOD&&MODAL_LOCK[MOD.type]);$('mbody').innerHTML=html;$('mbody').classList.toggle('wide',!!(MOD&&MOD.type==='tech'));$('modal').hidden=false;}
 function closeModal(){$('modal').hidden=true;MOD=null;}
-function openModal(type,o){MOD=Object.assign({type},o||{});if(type==='livetrade')MOD.noclose=1;renderModal();}
-function renderModal(){if(!MOD)return;const f=MODS[MOD.type];if(!f)return;const st=$('mbody').scrollTop;const html0=f(MOD);if(LIVEW.includes(MOD.type))MOD._sig=html0;modal(html0+(MOD.noclose?'':`<div class="btns" style="margin-top:10px"><button class="pb dark" data-act="mclose">${T('닫기','Close')}</button></div>`));$('mbody').scrollTop=st;if(MOD.type==='chat')fillChat();}
+function openModal(type,o){if(type==='tech')TMAP.x=null;MOD=Object.assign({type},o||{});if(type==='livetrade')MOD.noclose=1;renderModal();}
+function renderModal(){if(!MOD)return;const f=MODS[MOD.type];if(!f)return;const st=$('mbody').scrollTop;const tm0=$('tmap');if(tm0&&MOD.type==='tech'){TMAP.x=tm0.scrollLeft;TMAP.y=tm0.scrollTop;}const html0=f(MOD);if(LIVEW.includes(MOD.type))MOD._sig=html0;modal(html0+(MOD.noclose?'':`<div class="btns" style="margin-top:10px"><button class="pb dark" data-act="mclose">${T('닫기','Close')}</button></div>`));$('mbody').scrollTop=st;if(MOD.type==='tech')placeTmap();if(MOD.type==='chat')fillChat();}
 const MODAL_LOCK={livetrade:1};
 ACT.m=a=>{if(!S&&a!=='help'&&a!=='notes'&&a!=='settings'&&a!=='login')return;if(a==='chat')MP.unread=0;openModal(a);};
 $('modal').addEventListener('pointerdown',e=>{if(e.target===$('modal')&&MODAL_CLOSABLE)closeModal();});
@@ -1876,7 +1891,28 @@ $('mbody').addEventListener('input',e=>{if(!MOD||MOD.type!=='proj')return;if(e.t
 ACT.don=a=>{const [i,v]=a.split(':');if(donate(+i,+v))toast(T('기부했어요. 고마워요!','Donated. Thank you!'));updateHud();renderModal();};
 ACT.dong=a=>{const sel=$('pdG');if(sel)PD.g=sel.value;if(donate(+a,0,PD.g,PD.n))toast(T('기부했어요. 고마워요!','Donated. Thank you!'));else toast(T('물건이 모자라요','Not enough goods'));updateHud();renderModal();};
 /* 연구 */
-MODS.tech=()=>{let h=`<h2>${T('연구','Research')}</h2>`;TECHS.forEach(t=>{const done=S.techs[t.id],lock=t.req&&!S.techs[t.req];h+=`<div class="card ${done?'on':''}"><div class="grow"><b>${tx(t.n)}</b> ${done?'✔':''}<div class="muted">${tx(t.d)}${lock?' · '+T('먼저: {0}','Needs: {0}',tx(TI[t.req].n)):''}</div></div>${done?'':`<button class="pb sm gold" data-act="tech:${t.id}" ${lock||S.money<t.cost?'disabled':''}>${fmt(t.cost)}</button>`}</div>`;});return h;};
+let TMAP={x:null,y:null,sel:null,L:null};
+function techLayout(){if(TMAP.L)return TMAP.L;const kids={};TECHS.forEach(t=>{(kids[t.req||'']=kids[t.req||'']||[]).push(t.id);});
+  const wt=id=>{const k=kids[id]||[];return k.length?k.reduce((a,c)=>a+wt(c),0):1;};
+  const roots=kids[''],tot=roots.reduce((a,c)=>a+wt(c),0),R0=210,DR=150,pos={};let maxR=0;
+  const place=(id,a0,a1,dp)=>{const a=(a0+a1)/2,r=R0+dp*DR;pos[id]={x:Math.cos(a)*r,y:Math.sin(a)*r};maxR=Math.max(maxR,r);const k=kids[id]||[],w=k.reduce((s,c)=>s+wt(c),0);let cur=a0;k.forEach(c=>{const span=(a1-a0)*wt(c)/w;place(c,cur,cur+span,dp+1);cur+=span;});};
+  let cur=-Math.PI/2;roots.forEach(r=>{const span=Math.PI*2*wt(r)/tot;place(r,cur,cur+span,0);cur+=span;});
+  const half=maxR+90;return TMAP.L={pos,half};}
+MODS.tech=()=>{const L=techLayout(),W=L.half*2,cx=L.half,cy=L.half;let ln='',nd='';
+  const st=t=>S.techs[t.id]?2:(!t.req||S.techs[t.req])?1:0;
+  TECHS.forEach(t=>{const p=L.pos[t.id],q=t.req?L.pos[t.req]:{x:0,y:0},par=t.req?TI[t.req]:null,cls=S.techs[t.id]?'d':(!par||S.techs[par.id])?'a':'l';
+    ln+=`<line class="e ${cls}" x1="${cx+q.x}" y1="${cy+q.y}" x2="${cx+p.x}" y2="${cy+p.y}"/>`;});
+  TECHS.forEach(t=>{const p=L.pos[t.id],s=st(t),can=s===1&&S.money>=t.cost;
+    nd+=`<button class="tn2 s${s}${can?' can':''}${TMAP.sel===t.id?' sel':''}" data-act="tsel:${t.id}" style="left:${cx+p.x}px;top:${cy+p.y}px"><b>${tx(t.n)}</b><small>${S.techs[t.id]?'✔':fmt(t.cost)}</small></button>`;});
+  const t=TMAP.sel?TI[TMAP.sel]:null;let info=`<div class="muted">${T('연구를 눌러 보세요. 끝낸 연구 가장자리의 연구를 시작할 수 있어요','Tap a research. Finishing one opens the ones at its edge')}</div>`;
+  if(t){const done=S.techs[t.id],lock=t.req&&!S.techs[t.req];info=`<div class="card ${done?'on':''}"><div class="grow"><b>${tx(t.n)}</b> ${done?'✔':''}<div class="muted">${tx(t.d)}${lock?' · '+T('먼저: {0}','Needs: {0}',tx(TI[t.req].n)):''}</div></div>${done?'':`<button class="pb sm gold" data-act="tech:${t.id}" ${lock||S.money<t.cost?'disabled':''}>${fmt(t.cost)}</button>`}</div>`;}
+  return `<h2>${T('연구','Research')} <small class="muted">${Object.keys(S.techs).length}/${TECHS.length}</small></h2><div class="tmap" id="tmap"><div class="tin" style="width:${W}px;height:${W}px"><svg width="${W}" height="${W}">${ln}</svg><div class="tc" style="left:${cx}px;top:${cy}px">${T('연구','Research')}</div>${nd}</div></div><div id="tinfo" style="margin-top:8px">${info}</div>`;};
+function placeTmap(){const m=$('tmap');if(!m)return;if(TMAP.x==null){TMAP.x=Math.max(0,(m.scrollWidth-m.clientWidth)/2);TMAP.y=Math.max(0,(m.scrollHeight-m.clientHeight)/2);}m.scrollLeft=TMAP.x;m.scrollTop=TMAP.y;}
+ACT.tsel=a=>{TMAP.sel=a;renderModal();};
+let TDRAG=null;document.addEventListener('pointerdown',e=>{const m=e.target.closest&&e.target.closest('#tmap');if(!m||e.pointerType==='touch'||e.button)return;TDRAG={m,x:e.clientX,y:e.clientY,sx:m.scrollLeft,sy:m.scrollTop,mv:false};});
+document.addEventListener('pointermove',e=>{if(!TDRAG)return;const dx=e.clientX-TDRAG.x,dy=e.clientY-TDRAG.y;if(Math.abs(dx)+Math.abs(dy)>5)TDRAG.mv=true;if(TDRAG.mv){TDRAG.m.scrollLeft=TDRAG.sx-dx;TDRAG.m.scrollTop=TDRAG.sy-dy;}});
+document.addEventListener('pointerup',()=>{if(TDRAG&&TDRAG.mv){const d=TDRAG;setTimeout(()=>{},0);window.__tmoved=Date.now();}TDRAG=null;});
+document.addEventListener('click',e=>{if(window.__tmoved&&Date.now()-window.__tmoved<80&&e.target.closest&&e.target.closest('#tmap')){e.stopPropagation();e.preventDefault();}},true);
 ACT.tech=a=>{research(a);updateHud();renderModal();};
 /* 은행 */
 MODS.bank=()=>{const mx=loanMax();return `<h2>${T('은행','Bank')}</h2><div class="muted">${T('이자는 1분에 1%씩 붙어요. 계급이 오르면 더 많이 빌릴 수 있어요','Interest is 1% per minute. A higher rank lets you borrow more')}</div>
