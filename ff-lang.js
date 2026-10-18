@@ -73,11 +73,34 @@ var A='html[data-ff-accent=', ACC={
     A+'red]{--ink:#3f1a20;--panel:rgba(47,19,23,.9);--btn:rgba(47,19,23,.82)}'+A+'red] #bgshade{background:linear-gradient(180deg,rgba(63,26,32,.45),rgba(63,26,32,.78) 50%,rgba(63,26,32,.92))}'+
     A+'blue]{--ink:#2d4b78;--panel:rgba(36,63,103,.9);--btn:rgba(36,63,103,.82)}'+A+'blue] #bgshade{background:linear-gradient(180deg,rgba(45,75,120,.45),rgba(45,75,120,.78) 50%,rgba(45,75,120,.92))}'
 };
+/* top bar: the same places on every site. The language, hub, bell and account buttons stay in ONE row at the right edge whatever the width, login state, nickname or language is;
+   menu links that do not fit are hidden (or scroll in their own row), never pushed the buttons to a second line. Written as 'html body ...' so a page's own rules lose ties. */
+function siteName(){ var m=/\/(stickseum|crownenvoy|beaconfall|isleport|educations|tools)\//i.exec(location.pathname||''); return m?m[1].toLowerCase():'hub'; }
+var B='html body ', BAR={
+  all: B+'[data-ff-account]{flex:none}',
+  stickseum: B+'.topbar{flex-wrap:nowrap;align-items:flex-start}'+B+'.topbar .right{flex:none;margin-left:auto}'+B+'.topbar .wordmark{min-width:0;white-space:nowrap}'+
+    '@media(max-width:620px){'+B+'.topbar{align-items:center}'+B+'.topbar .wordmark{font-size:20px}'+B+'.topbar .right{flex-wrap:nowrap}}',
+  crownenvoy: B+'.top .wrap{flex-wrap:nowrap}'+B+'.top .mark{white-space:nowrap}'+B+'.top nav{display:flex;align-items:center;flex:none;white-space:nowrap}'+
+    '@media(max-width:1000px){'+B+'.top nav a{display:none}}'+
+    '@media(max-width:620px){'+B+'.top .mark{font-size:18px}'+B+'.lang{max-width:84px;margin-inline-start:0}'+B+'.top nav [data-ff-account]{margin-left:8px!important}'+B+'.ffa-wrap{margin-left:0}}',
+  beaconfall: B+'.top .wrap{flex-wrap:nowrap;align-items:center}'+B+'.top .nav{flex:1 1 auto;min-width:0;flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none}'+B+'.top .nav::-webkit-scrollbar{display:none}'+B+'.top .nav .pb{flex:none;white-space:nowrap}'+
+    B+'.top .lg{flex:none;flex-wrap:nowrap}'+B+'.top .lg .pb{white-space:nowrap}'+
+    '@media(max-width:620px){'+B+'.top .wrap{flex-wrap:wrap;row-gap:8px}'+B+'.top .nav{order:3;flex:1 0 100%}'+B+'.top .lg{flex:1 1 0;min-width:0;overflow-x:auto;scrollbar-width:none}'+B+'.top .lg::-webkit-scrollbar{display:none}'+B+'.top .lg .pb{flex:none}}',
+  isleport: B+'.top .wrap{flex-wrap:nowrap;align-items:center}'+B+'.top .logo{flex:none}'+B+'.top .nav{flex:1 1 auto;min-width:0;display:flex;flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none}'+B+'.top .nav::-webkit-scrollbar{display:none}'+B+'.top .nav a{flex:none;white-space:nowrap}'+
+    B+'.top .lang{flex:none}'+
+    '@media(max-width:620px){'+B+'.top .wrap{flex-wrap:wrap;row-gap:0}'+B+'.top .logo{margin-right:auto}'+B+'.top .nav{order:3;flex:1 0 100%}}',
+  hub: B+'header{flex-wrap:nowrap}'+B+'header .right{flex:none}'+B+'header .right nav{white-space:nowrap}'+
+    '@media(max-width:960px){'+B+'header nav{display:none}}'+
+    '@media(max-width:700px){'+B+'header{flex-wrap:wrap;row-gap:0}'+B+'.swr{order:3;flex:1 0 100%;margin:14px 0 0}}'
+};
+BAR.educations=BAR.tools=BAR.hub;
+function barCss(){ if(document.getElementById('ff-bar')) return; var n=siteName(); try{ document.documentElement.setAttribute('data-ff-site',n); }catch(e){}
+  var css=(BAR.all||'')+(BAR[n]||''); var st=document.createElement('style'); st.id='ff-bar'; st.textContent=css; (document.head||document.documentElement).appendChild(st); }
 function lightCss(){ var k=sitePage(); if(!k||document.getElementById('ff-light')) return; var css=(LIGHT[k.split('/')[0]]||'')+(LIGHT[k]||'')+(ACC[k.split('/')[0]]||''); if(!css) return;
   var st=document.createElement('style'); st.id='ff-light'; st.textContent=css; (document.head||document.documentElement).appendChild(st); }      // a page's own html[data-ff-theme=light] rules can still override these
 function tget(){ var t='dark', z='m'; try{ var tv=localStorage.getItem(TK); if(THEMES.indexOf(tv)>=0) t=tv; var v=localStorage.getItem(SK); if(ZOOM[v]) z=v; }catch(e){} return {theme:t, size:z}; }
 function tapply(){ var st=tget(), h=document.documentElement; h.setAttribute('data-ff-theme',(st.theme==='light'||st.theme==='yellow')?'light':'dark'); if(st.theme==='yellow'||st.theme==='red'||st.theme==='blue') h.setAttribute('data-ff-accent',st.theme); else h.removeAttribute('data-ff-accent'); h.setAttribute('data-ff-size',st.size); if(isSite()) h.style.zoom=ZOOM[st.size]===1?'':String(ZOOM[st.size]); }
-tapply(); try{ lightCss(); }catch(e){}
+tapply(); try{ lightCss(); }catch(e){} try{ barCss(); }catch(e){}
 window.addEventListener('storage',function(e){ if(e.key===TK||e.key===SK){ tapply(); try{ window.dispatchEvent(new Event('fftheme')); }catch(x){} } });
 window.FFTheme={ get:tget, sizes:Object.keys(ZOOM), set:function(t,z){ try{ if(THEMES.indexOf(t)>=0) localStorage.setItem(TK,t); if(ZOOM[z]) localStorage.setItem(SK,z); }catch(e){} tapply(); try{ window.dispatchEvent(new Event('fftheme')); }catch(e){} } };
 window.FFLang={ get:function(){ return now; }, set:function(l){ set(l); now=l; }, sync:function(){ now=sync()||now; return now; } };
