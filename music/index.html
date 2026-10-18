@@ -139,6 +139,15 @@ box.addEventListener('click',function(e){ var b=e.target.closest('.pb'); if(b) p
 au.addEventListener('play',mark); au.addEventListener('pause',mark);
 au.addEventListener('loadedmetadata',function(){ var el=document.getElementById('tm'+cur); if(el) el.textContent=fmt(au.duration); });
 au.addEventListener('timeupdate',function(){ if(au.duration){ seek.value=Math.round(au.currentTime/au.duration*1000); barTm.textContent=fmt(au.currentTime)+' / '+fmt(au.duration); } });
+/* 재생 시간은 처음부터 보이게: 곡마다 길이(메타데이터)만 미리 읽는다 */
+(function(){ var dur={}, q=all.map(function(_,i){ return i; });
+  function show(i){ var el=document.getElementById('tm'+i); if(el&&dur[all[i].f]) el.textContent=fmt(dur[all[i].f]); }
+  function next(){ if(!q.length) return; var i=q.shift(), f=all[i].f;
+    if(dur[f]){ show(i); return next(); }
+    var a=new Audio(), done=false; a.preload='metadata';
+    function fin(){ if(done) return; done=true; clearTimeout(tm); if(isFinite(a.duration)&&a.duration>0){ dur[f]=a.duration; show(i); } a.removeAttribute('src'); a.load(); next(); }
+    var tm=setTimeout(fin,8000); a.addEventListener('loadedmetadata',fin); a.addEventListener('error',fin); a.src=f; }
+  next(); next(); })();
 au.addEventListener('ended',function(){ if(!loop) play((cur+1)%all.length); });
 seek.addEventListener('input',function(){ if(au.duration) au.currentTime=seek.value/1000*au.duration; });
 loopBtn.addEventListener('click',function(){ loop=!loop; au.loop=loop; loopBtn.classList.toggle('on',loop); });
