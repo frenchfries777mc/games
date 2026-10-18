@@ -28,3 +28,6 @@ game strings | pizarro 이름·스킬·궁극기·도감 설명 (Stickseum-v0.7.
 patchnotes.json | v300 items[0] (맨 앞에 추가) | 게임 버전 0.8 '황금을 찾아서' 시작 | build 300 | 2026-10-18
 versions.json | 0.8 title | 황금을 찾아서 | build 300 | 2026-10-18
 versions.json | 0.8 summary | 새 캐릭터 피사로(창·하늘의 십자가·중첩 궁극기) / 팀전 금지 캐릭터를 팀원마다 선택 / 봇 순간이동·MVP 투표 카드·계정별 진행 상황 분리·클랜 검색 정렬 | build 300 | 2026-10-18
+patchnotes.json | v301 title | 피사로 이모티콘과 찌르기 연출 | build 301 | 2026-10-18
+patchnotes.json | v301 items[0] | 피사로의 이모티콘을 호렘헵과 다른 헬멧 모양으로 변경 | build 301 | 2026-10-18
+patchnotes.json | v301 items[1] | 피사로의 찌르기 연출을 창 대신 앞으로 뻗는 바람줄기로 변경 | build 301 | 2026-10-18
