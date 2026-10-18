@@ -49,3 +49,4 @@
 - crownenvoy/patchnotes.json·i18n.js | N["b60"] 제목과 항목 5개 (en·es·fr·de·ja·ar 칸에 한국어 임시 입력) | 체험판 12턴 제한·국기 변경·끊김 개선 | b60 | 2026-10-18
 - educations/index.html | 검색 창 문구 | "🔍 검색" / "프로그램, 게임 검색" / "교육 게임" / "게임" / "검색 결과가 없어요." / "허브에서 위키와 게시판도 검색해 보세요" / 돋보기 버튼 "검색" / 프로그램 설명 5줄 | educations#41 | 2026-10-18
 - ach/stickseum.json | 도전과제 이름 ch_pizarro_skill15 | "신의 이름으로" (en·fr·de·es·ja 칸 비어 있음, 한국어로 대체 표시) | hub | 2026-10-18
+- educations/proverb/index.html | 속담 탐정 한국어 문구 전체 (화면 문구, 속담 49개와 뜻, 관용구 29개와 뜻) | 속담 탐정 | educations#42 | 2026-10-18
