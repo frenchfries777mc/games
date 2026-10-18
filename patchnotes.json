@@ -3,6 +3,64 @@
   {
    "date": "2026-10-18",
    "build": "",
+   "title": "테마 색 추가 (노랑, 빨강, 파랑)",
+   "items": [
+    "설정의 테마에 노랑, 빨강, 파랑이 생겼다 (배경색이 바뀐다)",
+    "검정(다크)과 하양(라이트)은 그대로",
+    "허브, 커뮤니티, 라운지, 갤러리, 설정 페이지에 적용",
+    "라이트 모드에서 Stickseum 카드 제목이 어두워 안 보이던 문제 수정"
+   ],
+   "tr": {
+    "en": {
+     "title": "Theme colors added (yellow, red, blue)",
+     "items": [
+      "Settings theme now has yellow, red and blue (the background color changes)",
+      "Black (dark) and white (light) stay as they were",
+      "Applied to the hub, community, lounge, gallery and settings pages",
+      "Fixed the Stickseum card title being too dark to read in light mode"
+     ]
+    },
+    "es": {
+     "title": "Nuevos colores de tema (amarillo, rojo, azul)",
+     "items": [
+      "El tema de Ajustes ahora incluye amarillo, rojo y azul (cambia el color de fondo)",
+      "Negro (oscuro) y blanco (claro) siguen igual",
+      "Se aplica al inicio, la comunidad, el salón, la galería y los ajustes",
+      "Corregido el título de la tarjeta de Stickseum, demasiado oscuro en modo claro"
+     ]
+    },
+    "fr": {
+     "title": "Nouvelles couleurs de thème (jaune, rouge, bleu)",
+     "items": [
+      "Le thème des réglages propose maintenant jaune, rouge et bleu (la couleur de fond change)",
+      "Noir (sombre) et blanc (clair) restent inchangés",
+      "Appliqué à l'accueil, la communauté, le salon, la galerie et les réglages",
+      "Correction du titre de la carte Stickseum, trop sombre en mode clair"
+     ]
+    },
+    "de": {
+     "title": "Neue Designfarben (Gelb, Rot, Blau)",
+     "items": [
+      "Das Design in den Einstellungen bietet jetzt Gelb, Rot und Blau (die Hintergrundfarbe ändert sich)",
+      "Schwarz (dunkel) und Weiß (hell) bleiben wie bisher",
+      "Gilt für Hub, Community, Lounge, Galerie und Einstellungen",
+      "Der Stickseum-Kartentitel war im hellen Modus zu dunkel und ist behoben"
+     ]
+    },
+    "ja": {
+     "title": "テーマ色を追加(黄・赤・青)",
+     "items": [
+      "設定のテーマに黄・赤・青が加わりました(背景色が変わります)",
+      "黒(ダーク)と白(ライト)は今までどおり",
+      "ハブ、コミュニティ、ラウンジ、ギャラリー、設定ページに適用",
+      "ライトモードでStickseumカードのタイトルが暗くて見えない問題を修正"
+     ]
+    }
+   }
+  },
+  {
+   "date": "2026-10-18",
+   "build": "",
    "title": "위키 묶음 반영 (Beaconfall 71, Crown Envoy 52, Stickseum 284, Tools 외)",
    "items": [
     "위키 번역(5개 언어) 반영",

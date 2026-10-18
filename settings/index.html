@@ -306,7 +306,7 @@ if(document.readyState==='loading') document.addEventListener('DOMContentLoaded'
   .cm-gal.n1{grid-template-columns:1fr;} .cm-gal.n2,.cm-gal.n4{grid-template-columns:repeat(2,1fr);} .cm-gal.n3{grid-template-columns:repeat(3,1fr);} .cm-gal.n1 img{aspect-ratio:auto; max-height:560px; object-fit:contain;} .cm-gal.n2 img,.cm-gal.n3 img,.cm-gal.n4 img{aspect-ratio:1; height:auto;}
   .cm-gal img{width:100%; max-height:420px; object-fit:cover; border-radius:10px; display:block; border:1px solid var(--line); background:#0b0d13;}
   .cm-cimg img{display:block; width:240px; max-width:100%; height:auto; object-fit:contain; max-height:260px; border-radius:9px; margin-top:6px;} .cm-bub.only .cm-cimg img{margin-top:0;} .cm-bub.only{padding:5px;}
-  .nw.g0{border-top:3px solid #ffc93c;} .nw.g0 .ng{color:#ffc93c;}
+  .nw.g0{border-top:3px solid var(--fry,#ffc93c);} .nw.g0 .ng{color:var(--fry,#ffc93c);}
   #annBar:empty{display:none;} #annBar{display:flex; flex-direction:column; gap:8px; margin:6px 0 4px;}
   .ann{display:flex; align-items:center; flex-wrap:wrap; gap:6px 10px; padding:11px 40px 11px 14px; border-radius:12px; position:relative; font-size:15px; border:1px solid rgba(255,196,61,.35); background:linear-gradient(135deg,rgba(255,201,60,.14),rgba(255,138,61,.10));}
   .ann.ev{border-color:rgba(125,255,155,.35); background:linear-gradient(135deg,rgba(125,255,155,.12),rgba(63,224,197,.08));}
@@ -344,10 +344,10 @@ if(document.readyState==='loading') document.addEventListener('DOMContentLoaded'
   .ttl{font-size:11.5px; font-weight:700; color:#ffd36b; background:rgba(255,196,61,.12); border-radius:99px; padding:1px 7px; white-space:nowrap;}
   .lf{background:#141925; border-radius:12px; padding:12px 14px; margin-top:8px;} .lf-h{display:flex; align-items:center; gap:8px; flex-wrap:wrap;} .lf-h .cm-meta{margin:0;} .lf-n{font-size:15.5px; margin:6px 0 2px; word-break:break-word;}
   .lf .cm-acts2{display:flex; gap:8px; align-items:center;} .lf-go{text-decoration:none; display:inline-block; margin-top:10px;}
-  .rate{cursor:pointer; font:inherit; gap:6px;} .rate .rs{color:#ffc93c; letter-spacing:1px;} .rate .rn{font-size:13.5px; opacity:.85;}
+  .rate{cursor:pointer; font:inherit; gap:6px;} .rate .rs{color:var(--fry,#ffc93c); letter-spacing:1px;} .rate .rn{font-size:13.5px; opacity:.85;}
   .st .rate{color:#e8eaf0; border-color:#232c3d; background:#171f2e;} .ce .rate{color:#f2dc94; border-color:#2a3f68; background:#14233f;} .bf .rate{color:#f3e4b0; border-color:#8a6238; background:#3a2814; border-radius:4px;}
-  .rt-sum{display:flex; align-items:center; gap:10px; margin:6px 0 10px;} .rt-big{font-size:34px; font-weight:800; font-family:'Oswald',sans-serif;} .rt-st{color:#ffc93c; letter-spacing:1px;}
-  .rt-pick{display:flex; gap:4px;} .rt-pick button{background:none; border:0; font-size:30px; color:#ffc93c; cursor:pointer; padding:0 2px; line-height:1;}
+  .rt-sum{display:flex; align-items:center; gap:10px; margin:6px 0 10px;} .rt-big{font-size:34px; font-weight:800; font-family:'Oswald',sans-serif;} .rt-st{color:var(--fry,#ffc93c); letter-spacing:1px;}
+  .rt-pick{display:flex; gap:4px;} .rt-pick button{background:none; border:0; font-size:30px; color:var(--fry,#ffc93c); cursor:pointer; padding:0 2px; line-height:1;}
   /* light theme (⚙️ settings, FFTheme in ff-lang.js) */
   html[data-ff-theme=light]{--bg:#f6f3ec; --panel:#ffffff; --line:#e2dccf; --text:#1f1b14; --dim:#6d6658;}
   html[data-ff-theme=light] body{background-image:radial-gradient(ellipse 900px 520px at 10% -10%, rgba(255,201,60,.22), transparent 60%), radial-gradient(ellipse 800px 600px at 110% 30%, rgba(255,77,94,.10), transparent 60%);}
@@ -406,6 +406,13 @@ if(document.readyState==='loading') document.addEventListener('DOMContentLoaded'
   .srx .se{color:var(--dim); font-size:14px; padding:14px 2px 4px;}
   html[data-ff-theme=light] .srx input, html[data-ff-theme=light] .srx .sr{background:#faf8f3;} html[data-ff-theme=light] .srx .g4{color:#1f5fbf;} html[data-ff-theme=light] .srx .g5{color:#3f7d12;} html[data-ff-theme=light] .srx .g1{color:#0f8a77;} html[data-ff-theme=light] .srx .g2{color:#8a6c14;} html[data-ff-theme=light] .srx .g3{color:#a0600c;}
   html[data-ff-theme=light] .bnr{border-color:#d9d2c3;}
+  /* background-colour themes (⚙️ settings): yellow = light look on yellow, red/blue = dark look on red/blue (data-ff-accent set by FFTheme in ff-lang.js) */
+  html[data-ff-theme=light] .st h2{color:#fff;}
+  html[data-ff-accent=yellow]{--bg:#efe2ad; --panel:#faf3d2; --line:#d6c780; --text:#2b2410; --dim:#6b6240; --fry:#c97a1a; --fry2:#e0a14a;}
+  html[data-ff-accent=red]{--bg:#3f1a20; --panel:#2f1317; --line:#6a2f38; --text:#f8ecec; --dim:#c9a3a8; --fry:#ff8a8f; --fry2:#ffb199;}
+  html[data-ff-accent=blue]{--bg:#2d4b78; --panel:#243f67; --line:#4b6b9d; --text:#eef3fb; --dim:#b8c7de; --fry:#f0c46a; --fry2:#e8a05e;}
+  html[data-ff-accent] body{background-image:radial-gradient(ellipse 900px 520px at 10% -10%, rgba(255,255,255,.22), transparent 60%), radial-gradient(ellipse 800px 600px at 110% 30%, rgba(0,0,0,.14), transparent 60%);}
+
 
   footer .fl{display:flex; flex-wrap:wrap; gap:6px 18px;} footer .fl a{text-decoration:none;} footer .fl a:hover{color:var(--text);}
 
@@ -466,12 +473,12 @@ if(document.readyState==='loading') document.addEventListener('DOMContentLoaded'
   .st-g{display:flex; flex-wrap:wrap; gap:8px;}
   .st-g button{flex:0 1 auto; min-width:92px; padding:10px 16px; border-radius:10px; border:1px solid var(--line); background:transparent; color:var(--text); font:inherit; font-size:15px; font-weight:700; cursor:pointer;}
   .st-g button:hover{border-color:var(--fry);}
-  .st-g button.on{background:linear-gradient(135deg,#ffc93c,#ff8a3d); color:#1a1206; border-color:transparent;}
+  .st-g button.on{background:linear-gradient(135deg,var(--fry,#ffc93c),var(--fry2,#ff8a3d)); color:#1a1206; border-color:transparent;}
   .st-t{display:flex; align-items:center; justify-content:space-between; gap:14px; padding:12px 0; border-top:1px solid var(--line);} .st-t:first-of-type{border-top:0; padding-top:0;}
   .st-t b{display:block; font-size:15px;} .st-t span{display:block; color:var(--dim); font-size:13px; margin-top:2px;}
   .st-sw{position:relative; flex:0 0 auto; width:46px; height:26px; border-radius:99px; border:0; background:var(--line); cursor:pointer; padding:0; transition:background .15s;}
   .st-sw::after{content:""; position:absolute; top:3px; left:3px; width:20px; height:20px; border-radius:50%; background:#fff; transition:left .15s;}
-  .st-sw.on{background:linear-gradient(135deg,#ffc93c,#ff8a3d);} .st-sw.on::after{left:23px;}
+  .st-sw.on{background:linear-gradient(135deg,var(--fry,#ffc93c),var(--fry2,#ff8a3d));} .st-sw.on::after{left:23px;}
   .st-back{display:flex; width:max-content; align-items:center; gap:6px; color:var(--dim); text-decoration:none; font-size:15px; margin:0 0 12px;} .st-back:hover{color:var(--text);}
   .st-login{display:flex; align-items:center; gap:14px; flex-wrap:wrap;}
   #ffaAcct.inl h4{color:var(--fry);} #ffaAcct.inl p{color:var(--dim);}
@@ -496,42 +503,42 @@ if(document.readyState==='loading') document.addEventListener('DOMContentLoaded'
   (function(){ function boot(){
   var T={
    ko:{back:'돌아가기',sub:'화면, 언어, 계정, 알림을 한곳에서 바꿔요. 허브, 게임, 교육, 도구 사이트에 같이 적용돼요.',
-       disp:'화면',theme:'테마',dark:'🌙 다크',light:'☀️ 라이트',size:'글자 크기',s:'작게',m:'보통',l:'크게',xl:'아주 크게',
+       disp:'화면',theme:'테마',dark:'🌙 다크',light:'☀️ 라이트',yellow:'🟡 노랑',red:'🔴 빨강',blue:'🔵 파랑',size:'글자 크기',s:'작게',m:'보통',l:'크게',xl:'아주 크게',
        lang:'언어',langN:'바꾸면 페이지를 다시 불러와요.',acct:'계정',needLogin:'로그인하면 닉네임, 아이디, 비밀번호를 바꿀 수 있어요.',login:'로그인',
        note:'알림',noteN:'이 브라우저에만 적용돼요. 끈 종류는 알림 창과 팝업에 나오지 않아요.',
        comment:'댓글',commentD:'내 글에 댓글이 달렸을 때',like:'좋아요',likeD:'내 글을 좋아할 때',mention:'언급',mentionD:'글이나 채팅에서 나를 불렀을 때',
        friend:'친구 요청',friendD:'친구 요청을 받았을 때',dm:'메시지',dmD:'친구가 메시지를 보냈을 때',coin:'Hub Coin 선물',coinD:'친구가 코인을 보냈을 때',
        admin:'관리자 답변',adminD:'보낸 피드백이나 신고를 관리자가 확인했을 때',toast:'화면 팝업',toastD:'새 알림이 오면 화면 아래에 잠깐 알려 줘요'},
    en:{back:'Back',sub:'Change the look, language, account and notifications in one place. It applies to the hub, games, educations and tools.',
-       disp:'Display',theme:'Theme',dark:'🌙 Dark',light:'☀️ Light',size:'Text size',s:'Small',m:'Normal',l:'Large',xl:'Extra large',
+       disp:'Display',theme:'Theme',dark:'🌙 Dark',light:'☀️ Light',yellow:'🟡 Yellow',red:'🔴 Red',blue:'🔵 Blue',size:'Text size',s:'Small',m:'Normal',l:'Large',xl:'Extra large',
        lang:'Language',langN:'The page reloads when you change it.',acct:'Account',needLogin:'Log in to change your nickname, username and password.',login:'Log in',
        note:'Notifications',noteN:'Applies to this browser only. Kinds you turn off do not show in the bell or as pop-ups.',
        comment:'Comments',commentD:'When someone comments on my post',like:'Likes',likeD:'When someone likes my post',mention:'Mentions',mentionD:'When someone mentions me in a post or chat',
        friend:'Friend requests',friendD:'When I get a friend request',dm:'Messages',dmD:'When a friend sends me a message',coin:'Hub Coin gifts',coinD:'When a friend sends me coins',
        admin:'Admin replies',adminD:'When the admin has seen my feedback or report',toast:'Pop-ups',toastD:'Show a short pop-up at the bottom for new notifications'},
    es:{back:'Volver',sub:'Cambia el aspecto, el idioma, la cuenta y las notificaciones en un solo lugar. Se aplica al inicio, los juegos, educaciones y herramientas.',
-       disp:'Pantalla',theme:'Tema',dark:'🌙 Oscuro',light:'☀️ Claro',size:'Tamaño del texto',s:'Pequeño',m:'Normal',l:'Grande',xl:'Muy grande',
+       disp:'Pantalla',theme:'Tema',dark:'🌙 Oscuro',light:'☀️ Claro',yellow:'🟡 Amarillo',red:'🔴 Rojo',blue:'🔵 Azul',size:'Tamaño del texto',s:'Pequeño',m:'Normal',l:'Grande',xl:'Muy grande',
        lang:'Idioma',langN:'La página se recarga al cambiarlo.',acct:'Cuenta',needLogin:'Inicia sesión para cambiar tu apodo, usuario y contraseña.',login:'Iniciar sesión',
        note:'Notificaciones',noteN:'Solo en este navegador. Los tipos desactivados no aparecen en la campana ni como avisos.',
        comment:'Comentarios',commentD:'Cuando comentan mi publicación',like:'Me gusta',likeD:'Cuando le gusta mi publicación',mention:'Menciones',mentionD:'Cuando me mencionan en una publicación o chat',
        friend:'Solicitudes de amistad',friendD:'Cuando recibo una solicitud',dm:'Mensajes',dmD:'Cuando un amigo me escribe',coin:'Regalos de Hub Coin',coinD:'Cuando un amigo me envía monedas',
        admin:'Respuestas del admin',adminD:'Cuando el admin revisó mi comentario o denuncia',toast:'Avisos emergentes',toastD:'Mostrar un aviso breve abajo con cada notificación'},
    fr:{back:'Retour',sub:'Change l’apparence, la langue, le compte et les notifications au même endroit. S’applique à l’accueil, aux jeux, aux éducations et aux outils.',
-       disp:'Affichage',theme:'Thème',dark:'🌙 Sombre',light:'☀️ Clair',size:'Taille du texte',s:'Petit',m:'Normal',l:'Grand',xl:'Très grand',
+       disp:'Affichage',theme:'Thème',dark:'🌙 Sombre',light:'☀️ Clair',yellow:'🟡 Jaune',red:'🔴 Rouge',blue:'🔵 Bleu',size:'Taille du texte',s:'Petit',m:'Normal',l:'Grand',xl:'Très grand',
        lang:'Langue',langN:'La page se recharge après le changement.',acct:'Compte',needLogin:'Connecte-toi pour changer ton pseudo, ton identifiant et ton mot de passe.',login:'Se connecter',
        note:'Notifications',noteN:'Seulement dans ce navigateur. Les types désactivés n’apparaissent ni dans la cloche ni en fenêtre.',
        comment:'Commentaires',commentD:'Quand on commente mon message',like:'J’aime',likeD:'Quand on aime mon message',mention:'Mentions',mentionD:'Quand on me mentionne dans un message ou le chat',
        friend:'Demandes d’ami',friendD:'Quand je reçois une demande',dm:'Messages',dmD:'Quand un ami m’écrit',coin:'Cadeaux de Hub Coin',coinD:'Quand un ami m’envoie des pièces',
        admin:'Réponses de l’admin',adminD:'Quand l’admin a vu mon retour ou mon signalement',toast:'Fenêtres d’alerte',toastD:'Afficher une courte alerte en bas à chaque notification'},
    de:{back:'Zurück',sub:'Aussehen, Sprache, Konto und Benachrichtigungen an einem Ort ändern. Gilt für Start, Spiele, Bildung und Werkzeuge.',
-       disp:'Anzeige',theme:'Design',dark:'🌙 Dunkel',light:'☀️ Hell',size:'Textgröße',s:'Klein',m:'Normal',l:'Groß',xl:'Sehr groß',
+       disp:'Anzeige',theme:'Design',dark:'🌙 Dunkel',light:'☀️ Hell',yellow:'🟡 Gelb',red:'🔴 Rot',blue:'🔵 Blau',size:'Textgröße',s:'Klein',m:'Normal',l:'Groß',xl:'Sehr groß',
        lang:'Sprache',langN:'Die Seite lädt nach der Änderung neu.',acct:'Konto',needLogin:'Melde dich an, um Spitzname, Benutzername und Passwort zu ändern.',login:'Anmelden',
        note:'Benachrichtigungen',noteN:'Gilt nur für diesen Browser. Ausgeschaltete Arten erscheinen weder in der Glocke noch als Hinweis.',
        comment:'Kommentare',commentD:'Wenn jemand meinen Beitrag kommentiert',like:'Gefällt mir',likeD:'Wenn jemandem mein Beitrag gefällt',mention:'Erwähnungen',mentionD:'Wenn mich jemand in einem Beitrag oder Chat erwähnt',
        friend:'Freundschaftsanfragen',friendD:'Wenn ich eine Anfrage bekomme',dm:'Nachrichten',dmD:'Wenn mir ein Freund schreibt',coin:'Hub-Coin-Geschenke',coinD:'Wenn mir ein Freund Münzen schickt',
        admin:'Admin-Antworten',adminD:'Wenn der Admin mein Feedback oder meine Meldung gesehen hat',toast:'Hinweisfenster',toastD:'Bei neuen Benachrichtigungen kurz unten einblenden'},
    ja:{back:'戻る',sub:'見た目、言語、アカウント、通知を一か所で変えられます。ハブ、ゲーム、教育、ツールに一緒に適用されます。',
-       disp:'画面',theme:'テーマ',dark:'🌙 ダーク',light:'☀️ ライト',size:'文字の大きさ',s:'小',m:'標準',l:'大',xl:'特大',
+       disp:'画面',theme:'テーマ',dark:'🌙 ダーク',light:'☀️ ライト',yellow:'🟡 黄',red:'🔴 赤',blue:'🔵 青',size:'文字の大きさ',s:'小',m:'標準',l:'大',xl:'特大',
        lang:'言語',langN:'変更するとページを再読み込みします。',acct:'アカウント',needLogin:'ログインするとニックネーム、ID、パスワードを変えられます。',login:'ログイン',
        note:'通知',noteN:'このブラウザだけに適用されます。オフにした種類はベルにもポップアップにも出ません。',
        comment:'コメント',commentD:'自分の投稿にコメントがついたとき',like:'いいね',likeD:'自分の投稿にいいねされたとき',mention:'メンション',mentionD:'投稿やチャットで呼ばれたとき',
@@ -546,7 +553,7 @@ if(document.readyState==='loading') document.addEventListener('DOMContentLoaded'
   $('stBackT').textContent=t.back; $('stSub').textContent=t.sub;
   /* back: to the page we came from when it is one of our sites, else the hub */
   (function(){ var r=''; try{ r=document.referrer||''; }catch(e){} if(/^https:\/\/frenchfries777mc\.github\.io\//.test(r)&&r.indexOf('/settings/')<0) $('stBack').href=r; })();
-  function theme(){ var c=window.FFTheme?FFTheme.get():{theme:'dark',size:'m'}; $('display').innerHTML='<h2>'+esc(t.disp)+'</h2><h3>'+esc(t.theme)+'</h3><div class="st-g"><button type="button" data-th="dark">'+esc(t.dark)+'</button><button type="button" data-th="light">'+esc(t.light)+'</button></div>'+
+  function theme(){ var c=window.FFTheme?FFTheme.get():{theme:'dark',size:'m'}; $('display').innerHTML='<h2>'+esc(t.disp)+'</h2><h3>'+esc(t.theme)+'</h3><div class="st-g">'+['dark','yellow','red','blue','light'].map(function(k){ return '<button type="button" data-th="'+k+'">'+esc(t[k])+'</button>'; }).join('')+'</div>'+
     '<h3>'+esc(t.size)+'</h3><div class="st-g">'+(window.FFTheme?FFTheme.sizes:['s','m','l','xl']).map(function(z){ return '<button type="button" data-sz="'+z+'">'+esc(t[z]||z)+'</button>'; }).join('')+'</div>';
     [].forEach.call($('display').querySelectorAll('[data-th]'),function(x){ x.classList.toggle('on',x.getAttribute('data-th')===c.theme); x.onclick=function(){ FFTheme.set(x.getAttribute('data-th')); theme(); }; });
     [].forEach.call($('display').querySelectorAll('[data-sz]'),function(x){ x.classList.toggle('on',x.getAttribute('data-sz')===c.size); x.onclick=function(){ FFTheme.set(null,x.getAttribute('data-sz')); theme(); }; }); }
