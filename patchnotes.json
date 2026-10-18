@@ -1,6 +1,116 @@
 {
  "notes": [
   {
+   "date": "2026-10-18",
+   "build": "",
+   "title": "위키 묶음 반영 (Stickseum 273, Block HTML v35, Fry Sheet v23 외)",
+   "items": [
+    "Stickseum 위키: 새 맵 4개(맵 27개), 설정(배터리 절약·색약·게임패드), 비공개 플레이 안내, 패치 기록 273",
+    "Crown Envoy 위키: 전투 음악과 전쟁 행진곡 번갈아 나옴 안내",
+    "Tools 위키 12문서: Block HTML v25~35, Fry Sheet v19~23, Fry Slides v12~18, Fry Lab v11, 자체 AI v21 반영"
+   ],
+   "tr": {
+    "en": {
+     "title": "Wiki update (Stickseum 273, Block HTML v35, Fry Sheet v23 and more)",
+     "items": [
+      "Stickseum wiki: 4 new maps (27 total), settings (battery saver, colorblind mode, gamepad), private play note, patch history up to 273",
+      "Crown Envoy wiki: battle music and war march now alternate",
+      "Tools wiki, 12 pages: Block HTML v25-35, Fry Sheet v19-23, Fry Slides v12-18, Fry Lab v11, own AI v21"
+     ]
+    },
+    "es": {
+     "title": "Wiki actualizada (Stickseum 273, Block HTML v35, Fry Sheet v23 y más)",
+     "items": [
+      "Wiki de Stickseum: 4 mapas nuevos (27 en total), ajustes (ahorro de batería, modo daltónico, mando), nota de juego privado, historial hasta 273",
+      "Wiki de Crown Envoy: la música de batalla y la marcha de guerra se alternan",
+      "Wiki de Tools, 12 páginas: Block HTML v25-35, Fry Sheet v19-23, Fry Slides v12-18, Fry Lab v11, IA propia v21"
+     ]
+    },
+    "fr": {
+     "title": "Wiki mis à jour (Stickseum 273, Block HTML v35, Fry Sheet v23 et plus)",
+     "items": [
+      "Wiki Stickseum : 4 nouvelles cartes (27 au total), réglages (économie de batterie, mode daltonien, manette), note sur le jeu privé, historique jusqu’à 273",
+      "Wiki Crown Envoy : la musique de combat et la marche de guerre alternent",
+      "Wiki Tools, 12 pages : Block HTML v25-35, Fry Sheet v19-23, Fry Slides v12-18, Fry Lab v11, IA maison v21"
+     ]
+    },
+    "de": {
+     "title": "Wiki aktualisiert (Stickseum 273, Block HTML v35, Fry Sheet v23 u. a.)",
+     "items": [
+      "Stickseum-Wiki: 4 neue Karten (27 insgesamt), Einstellungen (Akkusparmodus, Farbenblind-Modus, Gamepad), Hinweis zu privaten Spielen, Patchverlauf bis 273",
+      "Crown-Envoy-Wiki: Kampfmusik und Kriegsmarsch wechseln sich ab",
+      "Tools-Wiki, 12 Seiten: Block HTML v25-35, Fry Sheet v19-23, Fry Slides v12-18, Fry Lab v11, eigene KI v21"
+     ]
+    },
+    "ja": {
+     "title": "Wiki更新(Stickseum 273、Block HTML v35、Fry Sheet v23など)",
+     "items": [
+      "Stickseum Wiki: 新マップ4つ(計27)、設定(バッテリー節約・色覚モード・ゲームパッド)、プライベート플レイの案内、パッチ履歴を273まで",
+      "Crown Envoy Wiki: 戦闘曲と戦争行進曲が交互に流れる",
+      "Tools Wiki 12ページ: Block HTML v25〜35、Fry Sheet v19〜23、Fry Slides v12〜18、Fry Lab v11、自前AI v21"
+     ]
+    }
+   }
+  },
+  {
+   "date": "2026-10-17",
+   "build": "",
+   "title": "설정 사이트, 위쪽 버튼 정리",
+   "items": [
+    "⚙️ 버튼을 없애고 메뉴 오른쪽 끝에 설정 글자 링크 추가",
+    "설정 사이트 추가 (다크/라이트·글자 크기, 언어, 계정, 알림 종류 켜고 끄기)",
+    "Hub Coin 칩을 계정 칩 바로 옆으로 이동",
+    "휴대폰에서는 알림과 설정을 계정 메뉴 안으로 이동"
+   ],
+   "tr": {
+    "en": {
+     "title": "Settings site and tidier top buttons",
+     "items": [
+      "Removed the ⚙️ button and added a Settings text link at the right end of the menu",
+      "New Settings site (dark/light and text size, language, account, which notifications to show)",
+      "Hub Coin chip moved right next to the account chip",
+      "On phones, notifications and settings moved into the account menu"
+     ]
+    },
+    "es": {
+     "title": "Sitio de ajustes y botones superiores más ordenados",
+     "items": [
+      "Se quitó el botón ⚙️ y se añadió un enlace de texto Ajustes al final del menú",
+      "Nuevo sitio de ajustes (oscuro/claro y tamaño del texto, idioma, cuenta, qué notificaciones mostrar)",
+      "El chip de Hub Coin pasó justo al lado del chip de la cuenta",
+      "En el móvil, notificaciones y ajustes pasaron al menú de la cuenta"
+     ]
+    },
+    "fr": {
+     "title": "Site de réglages et boutons du haut rangés",
+     "items": [
+      "Bouton ⚙️ supprimé, lien texte Réglages ajouté au bout du menu",
+      "Nouveau site de réglages (sombre/clair et taille du texte, langue, compte, notifications à afficher)",
+      "La pastille Hub Coin est maintenant juste à côté de celle du compte",
+      "Sur téléphone, notifications et réglages passent dans le menu du compte"
+     ]
+    },
+    "de": {
+     "title": "Einstellungsseite und aufgeräumte Buttons oben",
+     "items": [
+      "⚙️-Button entfernt, Textlink Einstellungen am Ende des Menüs",
+      "Neue Einstellungsseite (Dunkel/Hell und Textgröße, Sprache, Konto, welche Benachrichtigungen erscheinen)",
+      "Hub-Coin-Chip direkt neben den Konto-Chip verschoben",
+      "Auf dem Handy liegen Benachrichtigungen und Einstellungen im Kontomenü"
+     ]
+    },
+    "ja": {
+     "title": "設定サイトと上部ボタンの整理",
+     "items": [
+      "⚙️ボタンをなくし、メニューの右端に「設定」の文字リンクを追加",
+      "設定サイトを追加(ダーク/ライトと文字の大きさ、言語、アカウント、通知の種類のオン/オフ)",
+      "Hub Coinチップをアカウントチップのすぐ隣に移動",
+      "スマホでは通知と設定をアカウントメニューの中に移動"
+     ]
+    }
+   }
+  },
+  {
    "date": "2026-10-17",
    "build": "",
    "title": "처음 닉네임은 아이디로",
