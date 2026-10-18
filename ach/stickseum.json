@@ -152,7 +152,7 @@
     "ko": "모드 수집가",
     "en": "Mode Collector",
     "fr": "Collectionneur de modes",
-    "de": "Modussammler",
+    "de": "Modus-Sammler",
     "es": "Coleccionista de modos",
     "ja": "モードコレクター"
    }
@@ -246,6 +246,13 @@
     "de": "Die Mistgabel des Königs kehrt nie zurück",
     "es": "La horca del rey no regresa",
     "ja": "王の熊手は戻ってこない"
+   }
+  },
+  {
+   "id": "ch_pizarro_skill15",
+   "icon": "✝️",
+   "n": {
+    "ko": "신의 이름으로"
    }
   },
   {
