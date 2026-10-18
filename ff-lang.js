@@ -44,7 +44,7 @@ function sitePage(){ var m=/\/(stickseum|crownenvoy|beaconfall)\/(?:(index|codex
 function isSite(){ var p=location.pathname||''; return !/\.html$/i.test(p) || /\/index\.html$/i.test(p) || !!sitePage(); }
 var L='html[data-ff-theme=light]', LIGHT={
   stickseum: L+'{--bg:#f4f5f9;--bg2:#eceff5;--panel:#fff;--panel-2:#f0f2f7;--line:#d8dde7;--text:#151922;--text-dim:#5b6476;--red:#e23446;--teal:#0e9f88;--gold:#a87b00;color-scheme:light}'+
-    L+' .btn.play,'+L+' .chip.on{color:#fff}'+L+' .tag,'+L+' .ab .k{color:#fff}'+L+' .bar .mid{background:rgba(0,0,0,.25)}',
+    L+' .wordmark,'+L+' .hero h1{color:#fff}'+L+' .btn.play,'+L+' .chip.on{color:#fff}'+L+' .tag,'+L+' .ab .k{color:#fff}'+L+' .bar .mid{background:rgba(0,0,0,.25)}',
   crownenvoy: L+'{--ink:#f6f1e4;--panel:#fffaf0;--panel2:#efe6d0;--line:#d8c9a4;--text:#2a2216;--muted:#6b604c;--gold:#a37b1c;--gold2:#8a6514;--blue:#2350b8;color-scheme:light}'+
     L+' .hero,'+L+' .top .mark{color:#ece5d2}'+L+' .top .mark b{color:#d4af4f}'+L+' .btn{color:#ece5d2}'+L+' .btn.dl:hover{background:#14264a}'+L+' .hero .meta b{color:#f2dc94}'+
     L+' .mapbox{color:#ece5d2}'+L+' .mapbox .tpl b{color:#d4af4f}'+L+' .tag{color:#fff}'+L+' .err{color:#b4412f}',
@@ -57,7 +57,23 @@ var L='html[data-ff-theme=light]', LIGHT={
     L+' input.q,'+L+' .cats .pb{box-shadow:2px 2px 0 rgba(60,45,10,.28)}'+L+' .card{border-color:rgba(128,97,26,.4)}'+L+' .rc{border-color:rgba(128,97,26,.3)}'+L+' .sl{background:rgba(128,97,26,.12)}'+
     L+' .rn{color:#5a5040}'+L+' .wh.bk{border-color:#c0407a;color:#c0407a}'+L+' #det .box{background:#fffbee;box-shadow:6px 6px 0 rgba(60,45,10,.3)}'+L+' .dh img{background:rgba(128,97,26,.1)}'+L+' .src{background:rgba(0,0,0,.05)}'
 };
-function lightCss(){ var k=sitePage(); if(!k||document.getElementById('ff-light')) return; var css=(LIGHT[k.split('/')[0]]||'')+(LIGHT[k]||''); if(!css) return;
+/* background-colour themes on the game site pages (yellow rides on the light rules above, red and blue on the dark ones); same palettes as the hub */
+var A='html[data-ff-accent=', ACC={
+  stickseum: A+'yellow]{--bg:#efe2ad;--bg2:#e6d79b;--panel:#faf3d2;--panel-2:#f3e8b8;--line:#d6c780;--text:#2b2410;--text-dim:#6b6240}'+
+    A+'red]{--bg:#3f1a20;--bg2:#36161b;--panel:#2f1317;--panel-2:#3a181e;--line:#6a2f38;--text:#f8ecec;--text-dim:#c9a3a8}'+
+    A+'blue]{--bg:#2d4b78;--bg2:#27426b;--panel:#243f67;--panel-2:#2b4a78;--line:#4b6b9d;--text:#eef3fb;--text-dim:#b8c7de}'+
+    A+'red] .heroBg::after{background:linear-gradient(90deg,rgba(63,26,32,.82),rgba(63,26,32,.56) 55%,rgba(63,26,32,.34))}'+
+    A+'blue] .heroBg::after{background:linear-gradient(90deg,rgba(45,75,120,.82),rgba(45,75,120,.56) 55%,rgba(45,75,120,.34))}',
+  crownenvoy: A+'yellow]{--ink:#efe2ad;--panel:#faf3d2;--panel2:#f1e4b0;--line:#d6c780;--text:#2b2410;--muted:#6b6240}'+
+    A+'red]{--ink:#3f1a20;--panel:#2f1317;--panel2:#3a181e;--line:#6a2f38;--text:#f8ecec;--muted:#c9a3a8}'+
+    A+'blue]{--ink:#2d4b78;--panel:#243f67;--panel2:#2b4a78;--line:#4b6b9d;--text:#eef3fb;--muted:#b8c7de}'+
+    A+'red] .hero{background-color:#3f1a20}'+A+'red] .hero::after{background:linear-gradient(180deg,#3f1a2099 0%,#3f1a2033 35%,#3f1a20ee 88%,#3f1a20 100%)}'+
+    A+'blue] .hero{background-color:#2d4b78}'+A+'blue] .hero::after{background:linear-gradient(180deg,#2d4b7899 0%,#2d4b7833 35%,#2d4b78ee 88%,#2d4b78 100%)}',
+  beaconfall: A+'yellow]{--ink:#efe2ad;--panel:rgba(250,243,210,.93);--btn:rgba(250,243,210,.92)}'+A+'yellow] #bgshade{background:linear-gradient(180deg,rgba(239,226,173,.4),rgba(239,226,173,.74) 50%,rgba(239,226,173,.9))}'+
+    A+'red]{--ink:#3f1a20;--panel:rgba(47,19,23,.9);--btn:rgba(47,19,23,.82)}'+A+'red] #bgshade{background:linear-gradient(180deg,rgba(63,26,32,.45),rgba(63,26,32,.78) 50%,rgba(63,26,32,.92))}'+
+    A+'blue]{--ink:#2d4b78;--panel:rgba(36,63,103,.9);--btn:rgba(36,63,103,.82)}'+A+'blue] #bgshade{background:linear-gradient(180deg,rgba(45,75,120,.45),rgba(45,75,120,.78) 50%,rgba(45,75,120,.92))}'
+};
+function lightCss(){ var k=sitePage(); if(!k||document.getElementById('ff-light')) return; var css=(LIGHT[k.split('/')[0]]||'')+(LIGHT[k]||'')+(ACC[k.split('/')[0]]||''); if(!css) return;
   var st=document.createElement('style'); st.id='ff-light'; st.textContent=css; (document.head||document.documentElement).appendChild(st); }      // a page's own html[data-ff-theme=light] rules can still override these
 function tget(){ var t='dark', z='m'; try{ var tv=localStorage.getItem(TK); if(THEMES.indexOf(tv)>=0) t=tv; var v=localStorage.getItem(SK); if(ZOOM[v]) z=v; }catch(e){} return {theme:t, size:z}; }
 function tapply(){ var st=tget(), h=document.documentElement; h.setAttribute('data-ff-theme',(st.theme==='light'||st.theme==='yellow')?'light':'dark'); if(st.theme==='yellow'||st.theme==='red'||st.theme==='blue') h.setAttribute('data-ff-accent',st.theme); else h.removeAttribute('data-ff-accent'); h.setAttribute('data-ff-size',st.size); if(isSite()) h.style.zoom=ZOOM[st.size]===1?'':String(ZOOM[st.size]); }
