@@ -3,6 +3,168 @@
   {
    "date": "2026-10-18",
    "build": "",
+   "title": "테마 색 추가 (노랑, 빨강, 파랑)",
+   "items": [
+    "설정의 테마에 노랑, 빨강, 파랑이 생겼다 (배경색이 바뀐다)",
+    "검정(다크)과 하양(라이트)은 그대로",
+    "허브, 커뮤니티, 라운지, 갤러리, 설정 페이지에 적용",
+    "라이트 모드에서 Stickseum 카드 제목이 어두워 안 보이던 문제 수정"
+   ],
+   "tr": {
+    "en": {
+     "title": "Theme colors added (yellow, red, blue)",
+     "items": [
+      "Settings theme now has yellow, red and blue (the background color changes)",
+      "Black (dark) and white (light) stay as they were",
+      "Applied to the hub, community, lounge, gallery and settings pages",
+      "Fixed the Stickseum card title being too dark to read in light mode"
+     ]
+    },
+    "es": {
+     "title": "Nuevos colores de tema (amarillo, rojo, azul)",
+     "items": [
+      "El tema de Ajustes ahora incluye amarillo, rojo y azul (cambia el color de fondo)",
+      "Negro (oscuro) y blanco (claro) siguen igual",
+      "Se aplica al inicio, la comunidad, el salón, la galería y los ajustes",
+      "Corregido el título de la tarjeta de Stickseum, demasiado oscuro en modo claro"
+     ]
+    },
+    "fr": {
+     "title": "Nouvelles couleurs de thème (jaune, rouge, bleu)",
+     "items": [
+      "Le thème des réglages propose maintenant jaune, rouge et bleu (la couleur de fond change)",
+      "Noir (sombre) et blanc (clair) restent inchangés",
+      "Appliqué à l'accueil, la communauté, le salon, la galerie et les réglages",
+      "Correction du titre de la carte Stickseum, trop sombre en mode clair"
+     ]
+    },
+    "de": {
+     "title": "Neue Designfarben (Gelb, Rot, Blau)",
+     "items": [
+      "Das Design in den Einstellungen bietet jetzt Gelb, Rot und Blau (die Hintergrundfarbe ändert sich)",
+      "Schwarz (dunkel) und Weiß (hell) bleiben wie bisher",
+      "Gilt für Hub, Community, Lounge, Galerie und Einstellungen",
+      "Der Stickseum-Kartentitel war im hellen Modus zu dunkel und ist behoben"
+     ]
+    },
+    "ja": {
+     "title": "テーマ色を追加(黄・赤・青)",
+     "items": [
+      "設定のテーマに黄・赤・青が加わりました(背景色が変わります)",
+      "黒(ダーク)と白(ライト)は今までどおり",
+      "ハブ、コミュニティ、ラウンジ、ギャラリー、設定ページに適用",
+      "ライトモードでStickseumカードのタイトルが暗くて見えない問題を修正"
+     ]
+    }
+   }
+  },
+  {
+   "date": "2026-10-18",
+   "build": "",
+   "title": "위키 묶음 반영 (Beaconfall 71, Crown Envoy 52, Stickseum 284, Tools 외)",
+   "items": [
+    "위키 번역(5개 언어) 반영",
+    "새 문서: Beaconfall 스킨 상점과 BeaCoin, Crown Envoy CrownCoin",
+    "Beaconfall 구르기와 샌드박스, Crown Envoy 사관학교·대사관·포위망, Stickseum 캐릭터 조정, Tools 모두의 그림과 AI 미리 불러오기 안내"
+   ],
+   "tr": {
+    "en": {
+     "title": "Wiki batch (Beaconfall 71, Crown Envoy 52, Stickseum 284, Tools and more)",
+     "items": [
+      "Wiki translations (5 languages) added",
+      "New pages: Beaconfall Skin Shop and BeaCoin, Crown Envoy CrownCoin",
+      "Beaconfall roll and sandbox, Crown Envoy military academy, embassy and encirclement, Stickseum character tuning, Tools shared drawings and AI preload"
+     ]
+    },
+    "es": {
+     "title": "Lote de wiki (Beaconfall 71, Crown Envoy 52, Stickseum 284, Tools y más)",
+     "items": [
+      "Traducciones de la wiki (5 idiomas) añadidas",
+      "Páginas nuevas: tienda de skins y BeaCoin de Beaconfall, CrownCoin de Crown Envoy",
+      "Voltereta y sandbox de Beaconfall, academia militar, embajada y cerco en Crown Envoy, ajustes de personajes de Stickseum, dibujos compartidos y precarga de IA en Tools"
+     ]
+    },
+    "fr": {
+     "title": "Lot wiki (Beaconfall 71, Crown Envoy 52, Stickseum 284, Tools et plus)",
+     "items": [
+      "Traductions du wiki (5 langues) ajoutées",
+      "Nouvelles pages : boutique de skins et BeaCoin de Beaconfall, CrownCoin de Crown Envoy",
+      "Roulade et bac à sable de Beaconfall, académie militaire, ambassade et encerclement de Crown Envoy, ajustements de personnages de Stickseum, dessins partagés et préchargement IA de Tools"
+     ]
+    },
+    "de": {
+     "title": "Wiki-Paket (Beaconfall 71, Crown Envoy 52, Stickseum 284, Tools u. a.)",
+     "items": [
+      "Wiki-Übersetzungen (5 Sprachen) hinzugefügt",
+      "Neue Seiten: Beaconfall Skin-Shop und BeaCoin, Crown Envoy CrownCoin",
+      "Beaconfall Rolle und Sandbox, Crown Envoy Militärakademie, Botschaft und Einkesselung, Stickseum Charakteranpassungen, Tools geteilte Bilder und KI-Vorladen"
+     ]
+    },
+    "ja": {
+     "title": "Wiki反映 (Beaconfall 71、Crown Envoy 52、Stickseum 284、Toolsほか)",
+     "items": [
+      "Wikiの翻訳(5言語)を反映",
+      "新ページ: BeaconfallのスキンショップとBeaCoin、Crown EnvoyのCrownCoin",
+      "Beaconfallの回避とサンドボックス、Crown Envoyの士官学校・大使館・包囲網、Stickseumのキャラ調整、Toolsのみんなの絵とAI事前読み込みの案内"
+     ]
+    }
+   }
+  },
+  {
+   "date": "2026-10-18",
+   "build": "",
+   "title": "Hub Coin 환전 창 짧게 정리",
+   "items": [
+    "환전 창을 환전, 선물, 퀘스트, 기록 탭으로 나눠 한 번에 한 칸만 표시",
+    "환전은 게임 이름을 골라 한 카드로 바꾸는 방식",
+    "받을 퀘스트 보상이 있으면 퀘스트 탭에 빨간 점 표시"
+   ],
+   "tr": {
+    "en": {
+     "title": "Shorter Hub Coin window",
+     "items": [
+      "The window is split into Exchange, Gift, Quests and History tabs, one shown at a time",
+      "Exchange uses one card with a game picker",
+      "A red dot on the Quests tab shows when a reward is ready"
+     ]
+    },
+    "es": {
+     "title": "Ventana de Hub Coin más corta",
+     "items": [
+      "La ventana se divide en pestañas Canjear, Regalo, Misiones e Historial, una a la vez",
+      "Canjear usa una tarjeta con selector de juego",
+      "Un punto rojo en Misiones indica una recompensa lista"
+     ]
+    },
+    "fr": {
+     "title": "Fenêtre Hub Coin plus courte",
+     "items": [
+      "La fenêtre est divisée en onglets Échanger, Cadeau, Quêtes et Historique, un seul affiché à la fois",
+      "L'échange utilise une seule carte avec un sélecteur de jeu",
+      "Un point rouge sur Quêtes indique une récompense prête"
+     ]
+    },
+    "de": {
+     "title": "Kürzeres Hub-Coin-Fenster",
+     "items": [
+      "Das Fenster ist in die Tabs Tauschen, Geschenk, Aufgaben und Verlauf geteilt, jeweils einer sichtbar",
+      "Tauschen nutzt eine Karte mit Spielauswahl",
+      "Ein roter Punkt bei Aufgaben zeigt eine bereite Belohnung"
+     ]
+    },
+    "ja": {
+     "title": "Hub Coin交換ウィンドウを短く整理",
+     "items": [
+      "ウィンドウを交換、ギフト、クエスト、記録のタブに分け、1つずつ表示",
+      "交換はゲームを選ぶ1枚のカードで行います",
+      "受け取れる報酬があるとクエストタブに赤い点が出ます"
+     ]
+    }
+   }
+  },
+  {
+   "date": "2026-10-18",
+   "build": "",
    "title": "음악 페이지 재생 시간 미리 표시",
    "items": [
     "음악 페이지 곡 목록에 재생 시간이 처음부터 표시"
