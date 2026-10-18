@@ -63,31 +63,31 @@
      ]
     },
     "ja": {
-     "title": "Landing",
+     "title": "島に上陸",
      "items": [
-      "Sailing to an island now lets you land on its own map: Goldport has wheat fields and a windmill, Redport an apple orchard, Violetport vineyards and a villa, Cloudport cotton and sheep, Blue Bay a fishing village on a bay, Spiceport bazaar tents, Coral Cay coral pools, Amber Isle a resin forest, and Ruin Atoll old pillars and an altar",
-      "Walk around to pick up local goods, trade and unlock at the market building, and return to your ship from the pier"
+      "自分で航海して島に着くと、その島のマップに上陸できます。島ごとに形も景色も違います：黄金港は麦畑と風車、赤港はりんご園、紫港はぶどう畑と石の屋敷、白雲港は綿花畑と羊、青の湾は漁村と入り江、香辛港は市場のテント、サンゴ島はサンゴの潮だまり、琥珀島は松やにの森、遺跡の環礁は古い柱と祭壇です",
+      "島を歩き回ってキラキラ光る特産品を拾えます。市場の建物で交易と解放を、桟橋から船に戻ります"
      ]
     },
     "es": {
-     "title": "Landing",
+     "title": "Desembarco",
      "items": [
-      "Sailing to an island now lets you land on its own map: Goldport has wheat fields and a windmill, Redport an apple orchard, Violetport vineyards and a villa, Cloudport cotton and sheep, Blue Bay a fishing village on a bay, Spiceport bazaar tents, Coral Cay coral pools, Amber Isle a resin forest, and Ruin Atoll old pillars and an altar",
-      "Walk around to pick up local goods, trade and unlock at the market building, and return to your ship from the pier"
+      "Al llegar navegando a una isla, ahora desembarcas en su propio mapa. Cada isla tiene su forma y paisaje: Puerto Dorado, trigales y un molino de viento; Puerto Rojo, un huerto de manzanos; Puerto Violeta, viñedos y una casona de piedra; Puerto Nube, algodonales y ovejas; Bahía Azul, un pueblo pesquero en su bahía; Puerto Especia, tiendas de bazar; Cayo de Coral, pozas de coral; Isla de Ámbar, un bosque de resina; y Atolón de las Ruinas, columnas antiguas y un altar",
+      "Recorre la isla a pie para recoger especialidades que brillan, comercia y desbloquea en el edificio del mercado y vuelve al barco desde el muelle"
      ]
     },
     "fr": {
-     "title": "Landing",
+     "title": "Accostage",
      "items": [
-      "Sailing to an island now lets you land on its own map: Goldport has wheat fields and a windmill, Redport an apple orchard, Violetport vineyards and a villa, Cloudport cotton and sheep, Blue Bay a fishing village on a bay, Spiceport bazaar tents, Coral Cay coral pools, Amber Isle a resin forest, and Ruin Atoll old pillars and an altar",
-      "Walk around to pick up local goods, trade and unlock at the market building, and return to your ship from the pier"
+      "En naviguant jusqu’à une île, tu accostes désormais sur sa propre carte. Chaque île a sa forme et son paysage : Port-Or, des champs de blé et un moulin à vent ; Port-Rouge, un verger de pommiers ; Port-Violet, des vignes et un manoir de pierre ; Port-Nuage, des champs de coton et des moutons ; Baie Bleue, un village de pêcheurs dans sa baie ; Port-Épice, des tentes de bazar ; Îlot de Corail, des bassins de corail ; Île d’Ambre, une forêt de résine ; Atoll des Ruines, de vieux piliers et un autel",
+      "Parcours l’île à pied pour ramasser les spécialités qui brillent, commerce et débloque au bâtiment du marché, et regagne ton navire depuis le quai"
      ]
     },
     "de": {
-     "title": "Landing",
+     "title": "Landgang",
      "items": [
-      "Sailing to an island now lets you land on its own map: Goldport has wheat fields and a windmill, Redport an apple orchard, Violetport vineyards and a villa, Cloudport cotton and sheep, Blue Bay a fishing village on a bay, Spiceport bazaar tents, Coral Cay coral pools, Amber Isle a resin forest, and Ruin Atoll old pillars and an altar",
-      "Walk around to pick up local goods, trade and unlock at the market building, and return to your ship from the pier"
+      "Segelst du selbst zu einer Insel, landest du jetzt auf ihrer eigenen Karte. Jede Insel sieht anders aus: Goldhafen mit Weizenfeldern und Windmühle, Rothafen mit Apfelgarten, Violetthafen mit Weinbergen und Steinvilla, Wolkenhafen mit Baumwollfeldern und Schafen, Blaue Bucht mit Fischerdorf an der Bucht, Gewürzhafen mit Basarzelten, Korallen-Eiland mit Korallenbecken, Bernsteininsel mit Harzwald und Ruinen-Atoll mit alten Säulen und Altar",
+      "Lauf über die Insel und sammle glitzernde Spezialitäten, handle und schalte im Marktgebäude frei und kehre über den Steg zum Schiff zurück"
      ]
     }
    }
@@ -119,51 +119,51 @@
      ]
     },
     "ja": {
-     "title": "Polish",
+     "title": "仕上げ",
      "items": [
-      "New games show one short step at a time instead of a long guide",
-      "\"Plant in all empty fields\" and \"Collect all\" now unlock through research",
-      "The research window is now a branching tree: finish a research to open the ones at its edge",
-      "Processing starts by hand: load ingredients into a building and carry the goods out. Research Auto feed and Auto carry to automate it",
-      "Lobby text is bigger",
-      "Buildings now take time to construct, rising from foundation to frame to roof. Upgrades also take time, and the building is unusable meanwhile",
-      "The build number now shows next to the version, like v0.2 build 1"
+      "新しく始めると、長い説明の代わりに画面下に今やることが1行で出ます。植える、収穫、販売、出航の順に案内し、スキップもできます",
+      "「空き畑すべてに植える」と「すべて収穫」は、研究「まとめて植える」「すべて収穫」で解放します",
+      "研究画面が、マインドマップのように中央から枝を伸ばすツリーになりました。前の研究を終えると、そのとなりの研究を始められます",
+      "加工は最初は手作業です。建物をタップして材料を入れ、できたら完成品を取り出して倉庫へ運びます。研究「材料の自動投入」と「完成品の自動運搬」で自動化できます",
+      "ロビーの文字を大きくしました",
+      "建物を建てるには工事の時間がかかります。整地、柱、屋根の順に建ち、アップグレードのときも工事をします。工事中は建物を使えません",
+      "画面名の横に「v0.2 build 1」のようにビルド番号が表示されます"
      ]
     },
     "es": {
-     "title": "Polish",
+     "title": "Pulido",
      "items": [
-      "New games show one short step at a time instead of a long guide",
-      "\"Plant in all empty fields\" and \"Collect all\" now unlock through research",
-      "The research window is now a branching tree: finish a research to open the ones at its edge",
-      "Processing starts by hand: load ingredients into a building and carry the goods out. Research Auto feed and Auto carry to automate it",
-      "Lobby text is bigger",
-      "Buildings now take time to construct, rising from foundation to frame to roof. Upgrades also take time, and the building is unusable meanwhile",
-      "The build number now shows next to the version, like v0.2 build 1"
+      "Al empezar una partida, en lugar de una guía larga verás abajo una sola línea con lo que toca hacer: sembrar, cosechar, vender y zarpar. Puedes saltarla",
+      "«Plantar en todos los campos vacíos» y «Recoger todo» ahora se desbloquean con las investigaciones «Sembrar todo» y «Recoger todo»",
+      "La ventana de investigación ahora es un árbol que se ramifica desde el centro, como un mapa mental. Al terminar una investigación puedes empezar las que están a su lado",
+      "Al principio se fabrica a mano: toca un edificio para cargar ingredientes y, al terminar, saca los productos y llévalos al almacén. Automatízalo con las investigaciones «Carga automática» y «Transporte automático»",
+      "El texto del vestíbulo es más grande",
+      "Construir edificios ahora lleva tiempo: cimientos, estructura y tejado. Las mejoras también requieren obras, y durante ellas no puedes usar el edificio",
+      "El número de build aparece junto a la versión, como «v0.2 build 1»"
      ]
     },
     "fr": {
-     "title": "Polish",
+     "title": "Finitions",
      "items": [
-      "New games show one short step at a time instead of a long guide",
-      "\"Plant in all empty fields\" and \"Collect all\" now unlock through research",
-      "The research window is now a branching tree: finish a research to open the ones at its edge",
-      "Processing starts by hand: load ingredients into a building and carry the goods out. Research Auto feed and Auto carry to automate it",
-      "Lobby text is bigger",
-      "Buildings now take time to construct, rising from foundation to frame to roof. Upgrades also take time, and the building is unusable meanwhile",
-      "The build number now shows next to the version, like v0.2 build 1"
+      "En nouvelle partie, au lieu d’un long guide, une seule ligne en bas de l’écran indique quoi faire : semer, récolter, vendre puis appareiller. Tu peux la passer",
+      "« Planter dans tous les champs vides » et « Tout récolter » se débloquent désormais avec les recherches « Tout semer » et « Tout récolter »",
+      "La fenêtre de recherche devient un arbre qui se ramifie depuis le centre, comme une carte mentale. Termine une recherche pour lancer celles qui la bordent",
+      "La transformation se fait d’abord à la main : touche un bâtiment pour charger les ingrédients, puis sors les produits finis et range-les dans l’entrepôt. Automatise avec les recherches « Chargement auto » et « Transport auto »",
+      "Le texte du hall est plus grand",
+      "Construire un bâtiment prend désormais du temps : fondations, charpente puis toit. Les améliorations demandent aussi des travaux, et le bâtiment est inutilisable pendant ce temps",
+      "Le numéro de build s’affiche à côté de la version, par exemple « v0.2 build 1 »"
      ]
     },
     "de": {
-     "title": "Polish",
+     "title": "Feinschliff",
      "items": [
-      "New games show one short step at a time instead of a long guide",
-      "\"Plant in all empty fields\" and \"Collect all\" now unlock through research",
-      "The research window is now a branching tree: finish a research to open the ones at its edge",
-      "Processing starts by hand: load ingredients into a building and carry the goods out. Research Auto feed and Auto carry to automate it",
-      "Lobby text is bigger",
-      "Buildings now take time to construct, rising from foundation to frame to roof. Upgrades also take time, and the building is unusable meanwhile",
-      "The build number now shows next to the version, like v0.2 build 1"
+      "Neue Spiele zeigen statt einer langen Anleitung unten eine Zeile mit dem nächsten Schritt: pflanzen, ernten, verkaufen, lossegeln. Sie lässt sich überspringen",
+      "„Alle leeren Felder bepflanzen“ und „Alles abholen“ werden jetzt über die Forschungen „Alles säen“ und „Alles abholen“ freigeschaltet",
+      "Das Forschungsfenster ist jetzt ein Baum, der sich wie eine Mindmap von der Mitte aus verzweigt. Schließe eine Forschung ab, um die angrenzenden zu starten",
+      "Verarbeitung geschieht anfangs von Hand: Tippe auf ein Gebäude, fülle Zutaten ein und bringe die fertigen Waren ins Lager. Mit den Forschungen „Automatisches Befüllen“ und „Automatischer Transport“ läuft es von selbst",
+      "Die Schrift in der Lobby ist größer",
+      "Gebäude brauchen jetzt Bauzeit: Fundament, Gerüst, dann Dach. Auch Ausbauten erfordern Bauarbeiten, und währenddessen ist das Gebäude nicht nutzbar",
+      "Die Build-Nummer steht jetzt neben der Version, etwa „v0.2 build 1“"
      ]
     }
    }

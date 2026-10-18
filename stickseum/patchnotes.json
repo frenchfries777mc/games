@@ -14,7 +14,39 @@
    "title": "폭포 절벽 맵",
    "items": [
     "새 맵 폭포 절벽 추가: 8인 맵, 양쪽 절벽 계단과 두 줄기 폭포 폭포 안에서 공중에 뜨면 위로 떠오르는 물살 바닥 가운데 얕은 물에서 이동속도 20% 감소 폭포 뒤쪽에 숨을 수 있는 발판"
-   ]
+   ],
+   "tr": {
+    "en": {
+     "title": "Waterfall Cliffs map",
+     "items": [
+      "New map Waterfall Cliffs: an 8-player map with cliff steps on both sides and two waterfalls · Inside a waterfall, the current lifts you up while you are in the air · Shallow water in the middle of the floor cuts move speed by 20% · Platforms behind the waterfalls to hide on"
+     ]
+    },
+    "es": {
+     "title": "Mapa Acantilado de la cascada",
+     "items": [
+      "Nuevo mapa Acantilado de la cascada: mapa de 8 jugadores con escalones en los acantilados de ambos lados y dos cascadas · Dentro de una cascada, la corriente te eleva si estás en el aire · El agua poco profunda en el centro del suelo reduce la velocidad de movimiento un 20 % · Plataformas detrás de las cascadas para esconderse"
+     ]
+    },
+    "fr": {
+     "title": "Carte Falaises de la cascade",
+     "items": [
+      "Nouvelle carte Falaises de la cascade : carte à 8 joueurs avec des marches dans les falaises des deux côtés et deux cascades · Dans une cascade, le courant vous soulève quand vous êtes en l’air · L’eau peu profonde au milieu du sol réduit la vitesse de déplacement de 20 % · Des plateformes derrière les cascades pour se cacher"
+     ]
+    },
+    "de": {
+     "title": "Karte Wasserfallklippen",
+     "items": [
+      "Neue Karte Wasserfallklippen: 8-Spieler-Karte mit Klippenstufen auf beiden Seiten und zwei Wasserfällen · In einem Wasserfall trägt dich die Strömung nach oben, wenn du in der Luft bist · Flaches Wasser in der Mitte des Bodens senkt das Lauftempo um 20 % · Plattformen hinter den Wasserfällen zum Verstecken"
+     ]
+    },
+    "ja": {
+     "title": "滝の崖マップ",
+     "items": [
+      "新マップ「滝の崖」追加: 8人マップ、両側の崖の階段と2本の滝 · 滝の中で空中にいると上へ押し上げる水流 · 床の中央の浅瀬で移動速度20%低下 · 滝の裏に隠れられる足場"
+     ]
+    }
+   }
   },
   {
    "date": "2026-10-18",
@@ -22,7 +54,39 @@
    "title": "피사로 기세 초기화",
    "items": [
     "토너먼트·듀얼에서 다음 라운드가 시작되면 피사로 궁극기 중첩이 초기화됨"
-   ]
+   ],
+   "tr": {
+    "en": {
+     "title": "Pizarro’s Momentum reset",
+     "items": [
+      "In Tournament and Duel, Pizarro’s ultimate stacks reset when the next round starts"
+     ]
+    },
+    "es": {
+     "title": "Reinicio del ímpetu de Pizarro",
+     "items": [
+      "En Torneo y Duelo, las acumulaciones de la definitiva de Pizarro se reinician al empezar la siguiente ronda"
+     ]
+    },
+    "fr": {
+     "title": "Réinitialisation de l’élan de Pizarro",
+     "items": [
+      "En Tournoi et en Duel, les cumuls de l’ultime de Pizarro sont réinitialisés au début de la manche suivante"
+     ]
+    },
+    "de": {
+     "title": "Pizarros Schwung wird zurückgesetzt",
+     "items": [
+      "In Turnier und Duell werden Pizarros Ultimate-Stapel zu Beginn der nächsten Runde zurückgesetzt"
+     ]
+    },
+    "ja": {
+     "title": "ピサロの勢いのリセット",
+     "items": [
+      "トーナメント・デュエルで次のラウンドが始まるとピサロの必殺技の重ねがけがリセット"
+     ]
+    }
+   }
   },
   {
    "date": "2026-10-18",
@@ -34,7 +98,59 @@
     "승리 포즈에도 무지개·반짝임 색 효과 적용",
     "폭탄 돌리기에서 체력 옆 무기 표시 숨김, 봇이 폭탄을 든 사람을 계속 피해 다님",
     "좀비게임에서 사람 봇이 거리와 무기에 상관없이 좀비를 피해 도망침"
-   ]
+   ],
+   "tr": {
+    "en": {
+     "title": "Pizarro buff and fleeing bots",
+     "items": [
+      "Pizarro restores 30 HP when using his ultimate",
+      "Character cards that used to show an emoji now show the actual character (when no skin is equipped)",
+      "Rainbow and sparkle colour effects now also apply to the victory pose",
+      "Hot Potato hides the weapon label next to HP, and bots keep running away from whoever holds the bomb",
+      "In Zombie Game, human bots flee from zombies whatever the distance or weapon"
+     ]
+    },
+    "es": {
+     "title": "Mejora de Pizarro y bots que huyen",
+     "items": [
+      "Pizarro recupera 30 de vida al usar su definitiva",
+      "Las tarjetas de personaje que mostraban un emoji ahora muestran al personaje real (sin aspecto equipado)",
+      "Los efectos de color arcoíris y brillante también se aplican a la pose de victoria",
+      "En Pasa la bomba se oculta el indicador de arma junto a la vida y los bots huyen todo el rato de quien lleva la bomba",
+      "En el Juego de zombis, los bots humanos huyen de los zombis sin importar la distancia ni el arma"
+     ]
+    },
+    "fr": {
+     "title": "Renfort de Pizarro et bots qui fuient",
+     "items": [
+      "Pizarro récupère 30 PV en utilisant son ultime",
+      "Les cartes de personnage qui affichaient un emoji montrent désormais le vrai personnage (sans skin équipé)",
+      "Les effets de couleur arc-en-ciel et scintillante s’appliquent aussi à la pose de victoire",
+      "En Patate chaude, l’affichage de l’arme à côté des PV est masqué et les bots fuient sans cesse le porteur de la bombe",
+      "En mode zombie, les bots humains fuient les zombies quelles que soient la distance et l’arme"
+     ]
+    },
+    "de": {
+     "title": "Pizarro-Buff und fliehende Bots",
+     "items": [
+      "Pizarro heilt beim Einsatz seines Ultimates 30 LP",
+      "Charakterkarten, die ein Emoji zeigten, zeigen jetzt den echten Charakter (ohne angelegten Skin)",
+      "Regenbogen- und Glitzerfarbeffekte gelten jetzt auch für die Siegerpose",
+      "Bei Bombe weiterreichen ist die Waffenanzeige neben dem Leben ausgeblendet, und Bots weichen dem Bombenträger ständig aus",
+      "Im Zombie-Spiel fliehen menschliche Bots vor Zombies, egal wie weit weg und mit welcher Waffe"
+     ]
+    },
+    "ja": {
+     "title": "ピサロの強化とボットの逃走",
+     "items": [
+      "ピサロが必殺技を使うと体力30回復",
+      "絵文字で表示されていたキャラクターカードに実際のキャラクターの姿を表示（スキン未装着時）",
+      "勝利ポーズにもレインボー・キラキラ色の効果を適用",
+      "爆弾回しで体力の横の武器表示を非表示に、ボットが爆弾を持つ人をずっと避けて逃げる",
+      "ゾンビゲームで人間側のボットが距離や武器に関係なくゾンビから逃げる"
+     ]
+    }
+   }
   },
   {
    "date": "2026-10-18",
@@ -43,7 +159,44 @@
    "items": [
     "피사로의 이모티콘을 호렘헵과 다른 헬멧 모양으로 변경",
     "피사로의 찌르기 연출을 창 대신 앞으로 뻗는 바람줄기로 변경"
-   ]
+   ],
+   "tr": {
+    "en": {
+     "title": "Pizarro’s emoji and thrust effect",
+     "items": [
+      "Pizarro’s emoji is now a helmet that looks different from Horemheb’s",
+      "Pizarro’s thrust now shows a gust of wind shooting forward instead of the spear"
+     ]
+    },
+    "es": {
+     "title": "Emoji de Pizarro y efecto de estocada",
+     "items": [
+      "El emoji de Pizarro ahora es un casco distinto del de Horemheb",
+      "La estocada de Pizarro ahora muestra una ráfaga de viento que sale hacia delante en lugar de la lanza"
+     ]
+    },
+    "fr": {
+     "title": "Emoji de Pizarro et effet d’estoc",
+     "items": [
+      "L’emoji de Pizarro est désormais un casque différent de celui d’Horemheb",
+      "L’estoc de Pizarro montre désormais un jet de vent vers l’avant au lieu de la lance"
+     ]
+    },
+    "de": {
+     "title": "Pizarros Emoji und Stoßeffekt",
+     "items": [
+      "Pizarros Emoji ist jetzt ein Helm, der sich von Horemhebs unterscheidet",
+      "Pizarros Stoß zeigt jetzt statt des Speers einen nach vorn schießenden Windstoß"
+     ]
+    },
+    "ja": {
+     "title": "ピサロの絵文字と突きの演出",
+     "items": [
+      "ピサロの絵文字をホルエムヘブとは違うヘルメットの形に変更",
+      "ピサロの突きの演出を槍の代わりに前へ伸びる風の筋に変更"
+     ]
+    }
+   }
   },
   {
    "date": "2026-10-18",
@@ -54,7 +207,54 @@
     "새 캐릭터 피사로 추가: 창으로 앞쪽을 찔러 상대를 멀리 밀어내는 중거리 근접 공격, 헬멧 착용",
     "스킬 하늘의 십자가: 조준한 곳에 십자가가 떨어져 맞은 적은 20 피해와 1초 기절, 맞은 아군과 자신은 체력 20 회복",
     "궁극기 정복자의 기세: 공격력 15% 증가, 공격·스킬·궁극기 쿨타임과 대쉬 충전 12% 단축, 최대 4번 중첩, 죽으면 초기화"
-   ]
+   ],
+   "tr": {
+    "en": {
+     "title": "New character: Pizarro",
+     "items": [
+      "Game version 0.8 ‘In Search of Gold’ begins",
+      "New character Pizarro: a mid-range melee attack that thrusts a spear forward and pushes opponents far away; wears a helmet",
+      "Skill Cross from the Sky: a cross falls where you aim; enemies hit take 20 damage and a 1s stun, allies hit and Pizarro himself restore 20 HP",
+      "Ultimate Conqueror’s Momentum: 15% more attack, 12% shorter attack, skill and ultimate cooldowns and dash recharge; stacks up to 4 times and resets on death"
+     ]
+    },
+    "es": {
+     "title": "Nuevo personaje: Pizarro",
+     "items": [
+      "Comienza la versión 0.8 del juego, «En busca del oro»",
+      "Nuevo personaje Pizarro: un ataque cuerpo a cuerpo de alcance medio que clava la lanza hacia delante y empuja lejos a los rivales; lleva casco",
+      "Habilidad Cruz del cielo: cae una cruz donde apuntas; los enemigos alcanzados reciben 20 de daño y 1 s de aturdimiento, y los aliados alcanzados y él mismo recuperan 20 de vida",
+      "Definitiva Ímpetu del conquistador: 15 % más de ataque, un 12 % menos de enfriamiento de ataque, habilidad y definitiva y de recarga de embestida; se acumula hasta 4 veces y se reinicia al morir"
+     ]
+    },
+    "fr": {
+     "title": "Nouveau personnage : Pizarro",
+     "items": [
+      "Début de la version 0.8 du jeu, « À la recherche de l’or »",
+      "Nouveau personnage Pizarro : une attaque de mêlée à moyenne portée qui frappe d’estoc avec une lance et repousse les adversaires au loin ; porte un casque",
+      "Compétence Croix céleste : une croix tombe là où vous visez ; les ennemis touchés subissent 20 dégâts et 1 s d’étourdissement, les alliés touchés et lui-même récupèrent 20 PV",
+      "Ultime Élan du conquérant : +15 % d’attaque, recharges de l’attaque, de la compétence et de l’ultime et recharge du dash réduites de 12 % ; cumulable jusqu’à 4 fois, réinitialisé à la mort"
+     ]
+    },
+    "de": {
+     "title": "Neuer Charakter: Pizarro",
+     "items": [
+      "Spielversion 0.8 „Auf der Suche nach Gold“ beginnt",
+      "Neuer Charakter Pizarro: ein Nahkampfangriff mittlerer Reichweite, der mit dem Speer nach vorn stößt und Gegner weit wegschleudert; trägt einen Helm",
+      "Fähigkeit Kreuz vom Himmel: Ein Kreuz fällt auf die Zielstelle; getroffene Gegner erleiden 20 Schaden und 1 s Betäubung, getroffene Verbündete und er selbst heilen 20 LP",
+      "Ultimate Schwung des Eroberers: 15 % mehr Angriff, 12 % kürzere Abklingzeiten für Angriff, Fähigkeit und Ultimate sowie Dash-Aufladung; bis zu 4-mal stapelbar, Reset beim Tod"
+     ]
+    },
+    "ja": {
+     "title": "新キャラクター ピサロ",
+     "items": [
+      "ゲームバージョン0.8「黄金を求めて」開始",
+      "新キャラクター ピサロを追加: 槍で前方を突いて相手を遠くへ押し出す中距離の近接攻撃、ヘルメット着用",
+      "スキル「天の十字架」: 狙った場所に十字架が落ち、当たった敵は20ダメージと1秒スタン、当たった味方と自分は体力20回復",
+      "必殺技「征服者の勢い」: 攻撃力15%増加、攻撃・スキル・必殺技のクールタイムとダッシュのチャージ12%短縮、最大4回まで重なり、倒されるとリセット"
+     ]
+    }
+   }
   },
   {
    "date": "2026-10-18",
@@ -63,7 +263,44 @@
    "items": [
     "팀전에서 팀원마다 금지할 캐릭터를 하나씩 직접 선택",
     "금지는 상대 팀 전체에 적용되고 모든 금지가 선택 창에 표시"
-   ]
+   ],
+   "tr": {
+    "en": {
+     "title": "Team Battle bans reworked",
+     "items": [
+      "In Team Battle, every teammate now picks one character to ban",
+      "Bans apply to the whole other team, and every ban is shown on the select screen"
+     ]
+    },
+    "es": {
+     "title": "Nuevos vetos en el modo por equipos",
+     "items": [
+      "En el modo por equipos, cada miembro del equipo elige un personaje para vetar",
+      "Los vetos se aplican a todo el equipo rival y todos se muestran en la pantalla de selección"
+     ]
+    },
+    "fr": {
+     "title": "Refonte des bannissements en mode équipes",
+     "items": [
+      "En mode équipes, chaque coéquipier choisit lui-même un personnage à bannir",
+      "Les bannissements s’appliquent à toute l’équipe adverse et tous s’affichent à l’écran de sélection"
+     ]
+    },
+    "de": {
+     "title": "Neue Sperren im Teamkampf",
+     "items": [
+      "Im Teamkampf wählt jetzt jedes Teammitglied selbst einen Charakter zum Sperren",
+      "Sperren gelten für das ganze gegnerische Team, und alle Sperren werden bei der Auswahl angezeigt"
+     ]
+    },
+    "ja": {
+     "title": "チーム戦の禁止キャラクターを刷新",
+     "items": [
+      "チーム戦でチームメンバーがそれぞれ禁止するキャラクターを1体ずつ選ぶ",
+      "禁止は相手チーム全員に適用され、すべての禁止が選択画面に表示"
+     ]
+    }
+   }
   },
   {
    "date": "2026-10-18",
@@ -71,7 +308,39 @@
    "title": "캐릭터 선택 창의 무지개 색",
    "items": [
     "캐릭터 선택 창의 내 캐릭터가 무지개·반짝이는 색이면 색이 계속 바뀌며 빛나는 효과 표시"
-   ]
+   ],
+   "tr": {
+    "en": {
+     "title": "Rainbow colour on the character select screen",
+     "items": [
+      "If your character has a rainbow or sparkling colour, it now keeps changing colour and glows on the character select screen"
+     ]
+    },
+    "es": {
+     "title": "Color arcoíris en la selección de personaje",
+     "items": [
+      "Si tu personaje tiene un color arcoíris o brillante, en la selección de personaje cambia de color sin parar y brilla"
+     ]
+    },
+    "fr": {
+     "title": "Couleur arc-en-ciel à l’écran de sélection",
+     "items": [
+      "Si votre personnage a une couleur arc-en-ciel ou scintillante, il change de couleur en continu et brille à l’écran de sélection"
+     ]
+    },
+    "de": {
+     "title": "Regenbogenfarbe bei der Charakterwahl",
+     "items": [
+      "Hat dein Charakter eine Regenbogen- oder Glitzerfarbe, wechselt er bei der Charakterwahl ständig die Farbe und leuchtet"
+     ]
+    },
+    "ja": {
+     "title": "キャラクター選択画面のレインボーカラー",
+     "items": [
+      "キャラクター選択画面で自分のキャラクターがレインボー・キラキラ色なら、色が変わり続けて光る効果を表示"
+     ]
+    }
+   }
   },
   {
    "date": "2026-10-18",
@@ -81,7 +350,49 @@
     "MVP 투표 카드의 세로 길이와 캐릭터 모습을 더 크게 표시",
     "클랜 찾기 목록에서 개발자가 있는 클랜을 위쪽에 표시",
     "대기실 플레이어 목록의 색 표시가 무지개·반짝이는 색이면 효과가 나타남"
-   ]
+   ],
+   "tr": {
+    "en": {
+     "title": "Bigger MVP cards, clan search order, rainbow colours",
+     "items": [
+      "MVP vote cards are taller and show the character bigger",
+      "Clans with a developer are listed at the top of the clan search",
+      "Rainbow and sparkling colours now show their effect in the lobby player list"
+     ]
+    },
+    "es": {
+     "title": "Tarjetas MVP más grandes, orden en la búsqueda de clanes y colores arcoíris",
+     "items": [
+      "Las tarjetas de la votación MVP son más altas y muestran al personaje más grande",
+      "En la búsqueda de clanes, los clanes con un desarrollador aparecen arriba",
+      "Los colores arcoíris y brillantes ahora muestran su efecto en la lista de jugadores de la sala de espera"
+     ]
+    },
+    "fr": {
+     "title": "Cartes MVP agrandies, tri de la recherche de clans, couleurs arc-en-ciel",
+     "items": [
+      "Les cartes du vote MVP sont plus hautes et montrent le personnage en plus grand",
+      "Dans la recherche de clans, les clans avec un développeur apparaissent en haut",
+      "Les couleurs arc-en-ciel et scintillantes affichent leur effet dans la liste des joueurs du salon"
+     ]
+    },
+    "de": {
+     "title": "Größere MVP-Karten, Sortierung der Clansuche, Regenbogenfarben",
+     "items": [
+      "Die Karten der MVP-Wahl sind höher und zeigen den Charakter größer",
+      "In der Clansuche stehen Clans mit einem Entwickler ganz oben",
+      "Regenbogen- und Glitzerfarben zeigen jetzt ihren Effekt in der Spielerliste der Lobby"
+     ]
+    },
+    "ja": {
+     "title": "MVPカードの拡大、クラン検索の並び順、レインボーカラー表示",
+     "items": [
+      "MVP投票カードの縦の長さとキャラクターの姿をより大きく表示",
+      "クラン検索の一覧で開発者がいるクランを上の方に表示",
+      "待機室のプレイヤー一覧で色がレインボー・キラキラ色なら効果が表示される"
+     ]
+    }
+   }
   },
   {
    "date": "2026-10-18",
@@ -90,7 +401,44 @@
    "items": [
     "서바이벌에서 죽으면 탈락 화면이 뜨고 바로 나가거나 관전을 고를 수 있음",
     "서바이벌·파쿠르·숨바꼭질에서 체력 옆의 무기 표시 제거"
-   ]
+   ],
+   "tr": {
+    "en": {
+     "title": "Leaving after elimination in Survival, weapon label cleanup",
+     "items": [
+      "Dying in Survival now shows an elimination screen where you can leave right away or spectate",
+      "Removed the weapon label next to HP in Survival, Parkour and Hide and Seek"
+     ]
+    },
+    "es": {
+     "title": "Salir tras la eliminación en Supervivencia y menos indicadores de arma",
+     "items": [
+      "Al morir en Supervivencia aparece una pantalla de eliminación donde puedes salir enseguida o mirar la partida",
+      "Se quitó el indicador de arma junto a la vida en Supervivencia, Parkour y Escondite"
+     ]
+    },
+    "fr": {
+     "title": "Quitter après l’élimination en Survie, affichage de l’arme allégé",
+     "items": [
+      "Mourir en Survie affiche un écran d’élimination pour quitter tout de suite ou regarder la partie",
+      "Suppression de l’affichage de l’arme à côté des PV en Survie, Parkour et Cache-cache"
+     ]
+    },
+    "de": {
+     "title": "Verlassen nach dem Ausscheiden im Überleben, Waffenanzeige aufgeräumt",
+     "items": [
+      "Wer im Überleben stirbt, sieht jetzt einen Ausscheiden-Bildschirm und kann sofort gehen oder zuschauen",
+      "Waffenanzeige neben dem Leben in Überleben, Parkour und Verstecken spielen entfernt"
+     ]
+    },
+    "ja": {
+     "title": "サバイバル脱落後の退出と武器表示の整理",
+     "items": [
+      "サバイバルで倒されると脱落画面が出て、すぐに退出するか観戦するかを選べる",
+      "サバイバル・パルクール・かくれんぼで体力の横の武器表示を削除"
+     ]
+    }
+   }
   },
   {
    "date": "2026-10-18",
@@ -99,7 +447,44 @@
    "items": [
     "MVP 투표 카드를 한 줄로 나란히 세로로 길게 배치",
     "카드 맨 위에 캐릭터 모습(색, 스킨, 무기) 표시"
-   ]
+   ],
+   "tr": {
+    "en": {
+     "title": "MVP vote cards redesigned",
+     "items": [
+      "MVP vote cards now sit side by side in one row as tall cards",
+      "The top of each card shows the character (colour, skin, weapon)"
+     ]
+    },
+    "es": {
+     "title": "Nuevas tarjetas de votación MVP",
+     "items": [
+      "Las tarjetas de la votación MVP se colocan en una sola fila, una al lado de otra y alargadas en vertical",
+      "En la parte superior de cada tarjeta se ve el personaje (color, aspecto, arma)"
+     ]
+    },
+    "fr": {
+     "title": "Refonte des cartes du vote MVP",
+     "items": [
+      "Les cartes du vote MVP sont alignées côte à côte sur une seule rangée, en format vertical",
+      "Le haut de chaque carte montre le personnage (couleur, skin, arme)"
+     ]
+    },
+    "de": {
+     "title": "Neue Karten bei der MVP-Wahl",
+     "items": [
+      "Die Karten der MVP-Wahl stehen jetzt nebeneinander in einer Reihe, als hohe Karten",
+      "Oben auf jeder Karte ist der Charakter zu sehen (Farbe, Skin, Waffe)"
+     ]
+    },
+    "ja": {
+     "title": "MVP投票カードを刷新",
+     "items": [
+      "MVP投票カードを横一列に並べ、縦長に配置",
+      "カードの一番上にキャラクターの姿（色・スキン・武器）を表示"
+     ]
+    }
+   }
   },
   {
    "date": "2026-10-18",
@@ -109,7 +494,49 @@
     "봇이 순간이동 사용: 체력이 낮고 적이 가까우면 먼 발판으로 이동, 점령 지점이 멀면 지점으로 이동, 근접 봇은 먼 상대 옆으로 이동",
     "용암 웅덩이 안으로는 이동하지 않음",
     "전체 밸런스 재측정"
-   ]
+   ],
+   "tr": {
+    "en": {
+     "title": "Bots teleport",
+     "items": [
+      "Bots now use Teleport: to a far platform when low on HP with an enemy close, to the capture point when it is far away, and melee bots next to distant opponents",
+      "They never teleport into a lava pool",
+      "Full balance re-measured"
+     ]
+    },
+    "es": {
+     "title": "Los bots se teletransportan",
+     "items": [
+      "Los bots ahora usan el teletransporte: a una plataforma lejana si tienen poca vida y un enemigo cerca, al punto de captura si está lejos, y los bots cuerpo a cuerpo junto a rivales lejanos",
+      "Nunca se teletransportan dentro de un charco de lava",
+      "Nueva medición de todo el equilibrio"
+     ]
+    },
+    "fr": {
+     "title": "Les bots se téléportent",
+     "items": [
+      "Les bots utilisent maintenant la téléportation : vers une plateforme éloignée quand leurs PV sont bas et qu’un ennemi est proche, vers le point de capture quand il est loin, et les bots de mêlée à côté des adversaires éloignés",
+      "Ils ne se téléportent jamais dans une mare de lave",
+      "Nouvelle mesure de tout l’équilibrage"
+     ]
+    },
+    "de": {
+     "title": "Bots teleportieren sich",
+     "items": [
+      "Bots nutzen jetzt Teleport: bei wenig Leben und nahem Gegner auf eine ferne Plattform, zum Eroberungspunkt, wenn er weit weg ist, und Nahkampf-Bots neben weit entfernte Gegner",
+      "Sie teleportieren sich nie in eine Lavapfütze",
+      "Gesamte Balance neu gemessen"
+     ]
+    },
+    "ja": {
+     "title": "ボットのテレポート",
+     "items": [
+      "ボットがテレポートを使うように変更: 体力が低く敵が近いと遠い足場へ、占領ポイントが遠いとポイントへ、近接ボットは遠くの相手のそばへ移動",
+      "溶岩だまりの中には移動しない",
+      "全体のバランスを再測定"
+     ]
+    }
+   }
   },
   {
    "date": "2026-10-18",
