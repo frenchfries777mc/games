@@ -3,6 +3,46 @@
   {
    "date": "2026-10-18",
    "build": "",
+   "title": "음악 페이지 로고",
+   "items": [
+    "음악 페이지 위쪽 이모티콘을 허브 로고 그림으로 교체"
+   ],
+   "tr": {
+    "en": {
+     "title": "Music page logo",
+     "items": [
+      "Replaced the emoji at the top of the music page with the hub logo"
+     ]
+    },
+    "es": {
+     "title": "Logotipo de la página de música",
+     "items": [
+      "El emoji de la parte superior de la página de música se reemplaza por el logotipo del hub"
+     ]
+    },
+    "fr": {
+     "title": "Logo de la page musique",
+     "items": [
+      "L'émoji en haut de la page musique est remplacé par le logo du hub"
+     ]
+    },
+    "de": {
+     "title": "Logo der Musikseite",
+     "items": [
+      "Das Emoji oben auf der Musikseite wurde durch das Hub-Logo ersetzt"
+     ]
+    },
+    "ja": {
+     "title": "音楽ページのロゴ",
+     "items": [
+      "音楽ページ上部の絵文字をハブのロゴ画像に置き換え"
+     ]
+    }
+   }
+  },
+  {
+   "date": "2026-10-18",
+   "build": "",
    "title": "위키 묶음 반영 (Stickseum 280, Crown Envoy 45, Beaconfall 67, Tools 외)",
    "items": [
     "위키 번역(5개 언어)과 Beaconfall 업적 2개(하늘 요새, 하늘의 주인) 반영",
