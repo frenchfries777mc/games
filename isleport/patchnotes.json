@@ -2,6 +2,52 @@
  "notes": [
   {
    "date": "2026-10-18",
+   "build": "v0.2 build 2",
+   "title": "섬 상륙",
+   "items": [
+    "직접 항해로 섬에 닿으면 그 섬의 맵으로 상륙해요. 섬마다 모양과 풍경이 달라요: 황금항은 밀밭과 풍차, 붉은항은 사과 과수원, 보랏항은 포도밭과 돌 저택, 흰구름항은 목화밭과 양, 푸른만은 어촌과 만, 향신항은 시장 천막, 산호섬은 산호 웅덩이, 호박섬은 송진 숲, 유적 환초는 옛 기둥과 제단이에요",
+    "섬을 걸어 다니며 반짝이는 특산물을 주울 수 있고, 시장 건물에서 교역과 해금을, 부두에서 배로 돌아가요"
+   ],
+   "tr": {
+    "en": {
+     "title": "Landing",
+     "items": [
+      "Sailing to an island now lets you land on its own map: Goldport has wheat fields and a windmill, Redport an apple orchard, Violetport vineyards and a villa, Cloudport cotton and sheep, Blue Bay a fishing village on a bay, Spiceport bazaar tents, Coral Cay coral pools, Amber Isle a resin forest, and Ruin Atoll old pillars and an altar",
+      "Walk around to pick up local goods, trade and unlock at the market building, and return to your ship from the pier"
+     ]
+    },
+    "ja": {
+     "title": "Landing",
+     "items": [
+      "Sailing to an island now lets you land on its own map: Goldport has wheat fields and a windmill, Redport an apple orchard, Violetport vineyards and a villa, Cloudport cotton and sheep, Blue Bay a fishing village on a bay, Spiceport bazaar tents, Coral Cay coral pools, Amber Isle a resin forest, and Ruin Atoll old pillars and an altar",
+      "Walk around to pick up local goods, trade and unlock at the market building, and return to your ship from the pier"
+     ]
+    },
+    "es": {
+     "title": "Landing",
+     "items": [
+      "Sailing to an island now lets you land on its own map: Goldport has wheat fields and a windmill, Redport an apple orchard, Violetport vineyards and a villa, Cloudport cotton and sheep, Blue Bay a fishing village on a bay, Spiceport bazaar tents, Coral Cay coral pools, Amber Isle a resin forest, and Ruin Atoll old pillars and an altar",
+      "Walk around to pick up local goods, trade and unlock at the market building, and return to your ship from the pier"
+     ]
+    },
+    "fr": {
+     "title": "Landing",
+     "items": [
+      "Sailing to an island now lets you land on its own map: Goldport has wheat fields and a windmill, Redport an apple orchard, Violetport vineyards and a villa, Cloudport cotton and sheep, Blue Bay a fishing village on a bay, Spiceport bazaar tents, Coral Cay coral pools, Amber Isle a resin forest, and Ruin Atoll old pillars and an altar",
+      "Walk around to pick up local goods, trade and unlock at the market building, and return to your ship from the pier"
+     ]
+    },
+    "de": {
+     "title": "Landing",
+     "items": [
+      "Sailing to an island now lets you land on its own map: Goldport has wheat fields and a windmill, Redport an apple orchard, Violetport vineyards and a villa, Cloudport cotton and sheep, Blue Bay a fishing village on a bay, Spiceport bazaar tents, Coral Cay coral pools, Amber Isle a resin forest, and Ruin Atoll old pillars and an altar",
+      "Walk around to pick up local goods, trade and unlock at the market building, and return to your ship from the pier"
+     ]
+    }
+   }
+  },
+  {
+   "date": "2026-10-18",
    "build": "v0.2 build 1",
    "title": "다듬기",
    "items": [
