@@ -3261,7 +3261,7 @@ function xmPickZone(prev){
   return {x:pl.x+pl.w/2, y:pl.y, w:Math.min(260,pl.w+40)};
 }
 function xmSetWeapon(p,w,t){
-  p.weapon=w; p.chips=0; p.vacuumStacks=0; p.darkSub=null; p.darkArmUntil=0; p.flaming=false; p.flameHeldSince=null; p.ultOn=false; p.ultPending=null; p.batting=false; p.batUntil=0;
+  p.weapon=w; p.chips=0; p.vacuumStacks=0; p.pzStacks=0; p.darkSub=null; p.darkArmUntil=0; p.flaming=false; p.flameHeldSince=null; p.ultOn=false; p.ultPending=null; p.batting=false; p.batUntil=0;
   p.lastUlt=t/1000; p.lastSkill=t/1000;
   if(p.alive) pushFx('spark', p.x, p.y-44, t, {ang:-Math.PI/2, color:'#ffd34d'});
 }
@@ -4659,7 +4659,7 @@ function shuffle(arr){ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.
 /* ===== the version of this file =====
    Players with different versions CAN meet and play together: the automatic matchmaking uses the same room names for every version (online-<mode>-<map>-<slot>), and nobody is refused because of a different build.
    The build is only sent along with the join message and the lobby (for information); the corner of the screen shows it. */
-const GAME_BUILD='build 2026-10-18-v302';
+const GAME_BUILD='build 2026-10-18-v303';
 const GAME_VERSION='0.8', GAME_VERSION_NAME='황금을 찾아서';   // 게임 버전 이름: versions.json의 title과 같게 (빌드마다 바꾸지 않음)
 const WEEKLY_EVENTS=[
   {id:'lowg',    name:'저중력 난투', desc:'몸이 둥실둥실, 중력이 약해진 난투', rules:{grav:0.6}},
@@ -5281,7 +5281,7 @@ function tnResetFighter(p){
   const sp=spawnPoint(); p.x=sp.x; p.y=sp.y; p.vx=0; p.vy=0; p.kbX=0; p.spin=0; p.spinAngle=0; p.hp=ruleHp(); p.alive=true; p.respawnAt=0;
   p.lastDash=clock; p.lastTeleport=clock; p.lastUlt=clock; p.lastSkill=clock; p.skillUses=0; p.ultUses=0; p.lastShot=0;
   p.buffs={}; p.barrier=null; p.buff=null; p.hasted=false; p.focusOn=false; p.ultPending=null; p.rushUntil=0; p.invisUntil=0; p.burn=null; p.batUntil=0; p.batting=false; p.slowUntil=0; p.slowed=false; p.stunUntil=0; p.stunned=false;
-  p.flameHeldSince=null; p.flameOverheatUntil=0; p.flaming=false; p.portalPair=null; p.portalCooldownUntil=0; p.vacuumStacks=0; p.chips=0; p.freeVolleys=0; p.teleportChannel=null; p.dmgBy={}; p.darkSub=null; p.darkArmUntil=0; p.darkLand=null;
+  p.flameHeldSince=null; p.flameOverheatUntil=0; p.flaming=false; p.portalPair=null; p.portalCooldownUntil=0; p.vacuumStacks=0; p.chips=0; p.freeVolleys=0; p.teleportChannel=null; p.dmgBy={}; p.darkSub=null; p.darkArmUntil=0; p.darkLand=null;  p.pzStacks=0;
   pushFx('respawn', p.x, p.y-30, performance.now(), {color:p.color, ta:p.id});
 }
 
@@ -6408,7 +6408,7 @@ function practiceSetWeapon(wid){
   const me=players[myId]; if(!practiceMode || !me || !SELECTABLE_WEAPONS.includes(wid)) return;
   me.weapon=wid; me.pick=wid; me.weaponChosen=true;
   me.lastShot=-9999; me.lastUlt=-9999; me.lastSkill=-9999; me.buffs={}; me.barrier=null; me.hist=[]; me.stunUntil=0; me.stunned=false; me.cardSlowUntil=0; me.cardSlowed=false; swordEnd(me); me.ultPending=null; me.rushUntil=0; me.invisUntil=0; me.burn=null; me.batUntil=0; me.batting=false; me.batDamageDealt=0;
-  me.boomerangOut=false; me.boomerangReadyAt=0; me.flaming=false; me.flameHeldSince=null; me.flameOverheatUntil=0; me.portalPair=null; me.vacuumStacks=0; me.darkSub=null; me.darkArmUntil=0; me.chips=0; me.freeVolleys=0; me.teleportChannel=null; me.gambleDouble=false;
+  me.boomerangOut=false; me.boomerangReadyAt=0; me.flaming=false; me.pzStacks=0; me.flameHeldSince=null; me.flameOverheatUntil=0; me.portalPair=null; me.vacuumStacks=0; me.darkSub=null; me.darkArmUntil=0; me.chips=0; me.freeVolleys=0; me.teleportChannel=null; me.gambleDouble=false;
   if(me.flameShield){ const wi=walls.indexOf(me.flameShield); if(wi!==-1) walls.splice(wi,1); me.flameShield=null; }
   bullets=bullets.filter(b=>b.owner!==myId);
   practiceCfg.wid=wid; savePracticeCfg();
@@ -13589,7 +13589,7 @@ function finishDuelRepick(){
     if(gameMode!=='tournament'){ p.duelUsed=(p.duelUsed||[]); if(p.weapon && !p.duelUsed.includes(p.weapon)) p.duelUsed.push(p.weapon); }
     p.lastDash=clock; p.lastTeleport=clock; p.lastUlt=clock; p.lastSkill=clock; p.skillUses=0; p.ultUses=0; p.lastShot=0;
     p.buffs={}; p.barrier=null; p.buff=null; p.hasted=false; p.focusOn=false; p.ultPending=null; p.rushUntil=0; p.invisUntil=0; p.burn=null; p.batUntil=0; p.batting=false; p.slowUntil=0; p.slowed=false;
-    p.flameHeldSince=null; p.flameOverheatUntil=0; p.flaming=false; p.portalPair=null; p.portalCooldownUntil=0; p.vacuumStacks=0; p.chips=0; p.freeVolleys=0; p.darkSub=null; p.darkArmUntil=0; p.darkLand=null;
+    p.flameHeldSince=null; p.flameOverheatUntil=0; p.flaming=false; p.portalPair=null; p.portalCooldownUntil=0; p.vacuumStacks=0; p.pzStacks=0; p.chips=0; p.freeVolleys=0; p.darkSub=null; p.darkArmUntil=0; p.darkLand=null;
   }
   }catch(e){ recordDiagError('duel-finish', e); console.error('[duel] re-pick finish:', e); }
   duelPick=false;
