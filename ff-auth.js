@@ -234,7 +234,7 @@ function profileLib(){ return loadScript(BASE+'ff-profile.js?v=20261017d', funct
 async function openProfile(uid){ if(!sb) return; if(!uid&&!user) return openLogin(); if(await profileLib()) window.FFProfile.open(sb, uid||user.id); }
 
 /* 게임 사이트(허브가 아닌 페이지)에는 계정 버튼 옆에 '← 허브' 버튼을 붙여요. 빼고 싶으면 자리에 data-ff-nohub */
-var HUB=BASE, onHub=location.href.indexOf(HUB)===0, SETURL=HUB+'settings/';
+var HUB=BASE, onHub=location.href.indexOf(HUB)===0 && !/\/(stickseum|crownenvoy|beaconfall|isleport|educations|tools)\//i.test(location.pathname||''), SETURL=HUB+'settings/';
 function hubLink(s){ return (onHub||s.hasAttribute('data-ff-nohub'))?'':'<a class="ffa-hub" href="'+esc(HUB)+'" title="'+esc(T.hubT)+'" aria-label="'+esc(T.hubT)+'">\u2190<span class="t">'+esc(T.hub)+'</span></a>'; }
 function paint(){
   css(); var slots=document.querySelectorAll('[data-ff-account]');
