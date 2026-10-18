@@ -33,10 +33,10 @@ Frenchfries777 게임 허브 사이트
   - Beaconfall  https://frenchfries777mc.github.io/games/beaconfall/
 
 [ 게임·도구 사이트 폴더 (2026-10-18부터 이 저장소 안에 있어요) ]
-  stickseum/  beaconfall/  crownenvoy/  educations/  tools/  isleport/
-  - 예전 저장소(stickseum, beaconfall, crownenvoy, educations, tools)에서 옮겨 왔어요. 이제 파일은 이 폴더들에 올려요.
+  stickseum/  beaconfall/  crownenvoy/  isleport/
+  - 예전 저장소(stickseum, beaconfall, crownenvoy)에서 옮겨 왔어요. 이제 파일은 이 폴더들에 올려요.
   - 주소는 https://frenchfries777mc.github.io/games/<폴더 이름>/ 이에요.
-  - Tools 학습용 GitHub Actions 는 .github/workflows/ 에 있고 tools/ 안에서 실행돼요 (저장소 비밀 HF_TOKEN 필요).
+  - Educations(frenchfries777mc.github.io/educations/)와 Tools(frenchfries777mc.github.io/tools/)는 게임이 아니라서 각자 저장소와 주소를 그대로 써요.
 
 [ 로그인이 이어지는 원리 ]
   허브와 세 게임은 모두 frenchfries777mc.github.io 아래에 있어서 브라우저 저장소를 같이 써요.
