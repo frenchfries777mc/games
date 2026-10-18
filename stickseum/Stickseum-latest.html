@@ -1121,7 +1121,7 @@ function cleanOpts(o){ return {balance:!!(o&&o.balance), vote:!!(o&&o.vote)}; }
 function ruleHp(){ return Math.round(MAX_HP*roomRules.hp); }
 const MOVE_SPEED = 250, JUMP_VELOCITY = -680;
 const DASH_FORCE = 700, DASH_CD = 1.5;
-const PZ_MAX=4, PZ_DMG_STEP=0.15, PZ_CD_STEP=0.12;       // 피사로: the ultimate stacks (up to 4): +15% damage and 12% shorter cooldowns (attack, skill, ultimate, dash) each; dying resets it
+const PZ_MAX=4, PZ_DMG_STEP=0.15, PZ_CD_STEP=0.12, PZ_ULT_HEAL=30;       // 피사로: the ultimate stacks (up to 4): +15% damage and 12% shorter cooldowns (attack, skill, ultimate, dash) each; dying resets it
 function pzStacks(p){ return (p && p.weapon==='pizarro' && p.pzStacks) ? Math.min(PZ_MAX, p.pzStacks) : 0; }
 function pzCdMult(p){ return 1-PZ_CD_STEP*pzStacks(p); }
 function dashCdOf(p){ const w=WEAPONS[p && p.weapon], base=(w && w.dashCd!==undefined) ? w.dashCd : DASH_CD; return base*((p && p.isZombie) ? ZOMBIE_DASH_CD_MULT : 1)*pzCdMult(p); }   // how long a player waits between dashes (a zombie: half of it)
@@ -1241,7 +1241,7 @@ function pirateFlyVel(p, ax, ay){      // launch velocity of the cannon ride: to
   return {vx:Math.cos(a)*PIRATE_FLY_SPEED, vy:Math.sin(a)*PIRATE_FLY_SPEED};
 }
 const ULTS = {
-  pizarro:  {name:'정복자의 기세', desc:'공격력 +15%, 쿨타임(공격·스킬·궁극기)과 대쉬 충전 12% 단축이 중첩됨 (최대 4번, 죽으면 초기화)'},
+  pizarro:  {name:'정복자의 기세', desc:'체력 30 회복 + 공격력 +15%, 쿨타임(공격·스킬·궁극기)과 대쉬 충전 12% 단축이 중첩됨 (최대 4번, 죽으면 초기화)'},
   pistol:   {name:'강화탄',       desc:'다음 발사 때 데미지 66의 크고 빠른 탄환 1발'},
   rifle:    {name:'미사일 폭격',   desc:'랜덤 3곳에 미사일이 떨어짐 (발판 통과, 나는 피해 없음)'},
   smg:      {name:'방벽',         desc:'3.5초간 플레이어와 탄환을 막는 벽 (내 탄환은 통과)'},
@@ -1860,7 +1860,7 @@ function showAchievementToast(a, heading){
 }
 function setWeaponLabel(wid){        // the character next to "체력" in the HUD (survival, parkour and hide and seek have no characters, so nothing is shown there)
   const el=document.getElementById('weaponLabel'), sep=document.getElementById('weaponSep'), w=WEAPONS[wid]; if(!el) return;
-  if(gameMode==='survival' || gameMode==='parkour' || gameMode==='hideseek'){ el.textContent=''; if(sep) sep.style.display='none'; return; }
+  if(gameMode==='survival' || gameMode==='parkour' || gameMode==='hideseek' || gameMode==='hotpotato'){ el.textContent=''; if(sep) sep.style.display='none'; return; }
   if(sep) sep.style.display='';
   if(w) el.innerHTML=escapeHtmlText(w.emoji+' '+w.name)+charTierTagHtml(wid);
 }
@@ -4659,7 +4659,7 @@ function shuffle(arr){ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.
 /* ===== the version of this file =====
    Players with different versions CAN meet and play together: the automatic matchmaking uses the same room names for every version (online-<mode>-<map>-<slot>), and nobody is refused because of a different build.
    The build is only sent along with the join message and the lobby (for information); the corner of the screen shows it. */
-const GAME_BUILD='build 2026-10-18-v301';
+const GAME_BUILD='build 2026-10-18-v302';
 const GAME_VERSION='0.8', GAME_VERSION_NAME='황금을 찾아서';   // 게임 버전 이름: versions.json의 title과 같게 (빌드마다 바꾸지 않음)
 const WEEKLY_EVENTS=[
   {id:'lowg',    name:'저중력 난투', desc:'몸이 둥실둥실, 중력이 약해진 난투', rules:{grav:0.6}},
@@ -9522,8 +9522,10 @@ function winPoseStart(){
     c.clearRect(0,0,W,H);
     for(const q of conf){ q.y+=q.vy*dt; q.x+=q.vx*dt; q.r+=q.vr*dt; if(q.y>H+10){ q.y=-10; q.x=Math.random()*W; } c.save(); c.translate(q.x,q.y); c.rotate(q.r); c.fillStyle=q.col; c.fillRect(-q.w/2,-q.h/2,q.w,q.h*Math.abs(Math.cos(q.r*2))+1); c.restore(); }
     c.save(); c.translate(W/2, H-24); c.scale(1.9,1.9);
-    c.shadowColor=col; c.shadowBlur=10; c.strokeStyle=col; c.fillStyle=col; c.lineWidth=5; c.lineCap='round'; c.lineJoin='round';
+    const shn=(wp.cos&&wp.cos.col&&COSMETICS[wp.cos.col]&&COSMETICS[wp.cos.col].shine)?wp.cos.col:null, cc=shn?bodyShineColor(shn, now, 0):col;      // a rainbow / silver / gold body keeps shining while it cheers
+    c.shadowColor=cc; c.shadowBlur=shn?14:10; c.strokeStyle=cc; c.fillStyle=cc; c.lineWidth=5; c.lineCap='round'; c.lineJoin='round';
     drawWinPose(c, pose, t, wid, tint);                                             // the winner's own pose (만세 when none is equipped)
+    if(shn){ c.shadowBlur=0; drawShineGlints(c, now, 0); }
     c.restore();
     requestAnimationFrame(frame);
   })(last);
@@ -10043,11 +10045,29 @@ function drawWeaponPortrait(wid){
   if(_shn){ c.shadowBlur=0; c.save(); c.translate(0,0); drawShineGlints(c, performance.now(), 0); c.restore(); }
   c.restore();
 }
+function drawCharIcon(cv, wid){          // a small picture of the character itself (head gear, body colour, weapon in hand): used where a character without a skin used to show only its emoji
+  cv.width=112; cv.height=112; const c=cv.getContext('2d'); c.clearRect(0,0,112,112);
+  const _ec=getEquippedCos(), shn=(_ec.col&&COSMETICS[_ec.col]&&COSMETICS[_ec.col].shine)?_ec.col:null;
+  const col=shn ? bodyShineColor(shn, performance.now(), 0) : ((players[myId] && players[myId].color) || cosBaseColor(_ec) || '#3fe0c5');
+  c.save(); c.translate(44,98); c.scale(1.0,1.0);
+  const HIP=-22, SH=-42, HEADCY=-52, HEADR=9;
+  if(wid==='dracula') drawDraculaCape(c,-1,3,SH,undefined);
+  c.strokeStyle=col; c.fillStyle=col; c.lineWidth=5; c.lineCap='round'; c.lineJoin='round';
+  c.beginPath(); c.moveTo(0,HIP); c.lineTo(-7,0); c.stroke();
+  c.beginPath(); c.moveTo(0,HIP); c.lineTo(7,0); c.stroke();
+  c.beginPath(); c.moveTo(0,HIP); c.lineTo(0,SH); c.stroke();
+  c.beginPath(); c.arc(0,HEADCY,HEADR,0,7); c.fill();
+  if(WEAPON_PERSONA_NAME[wid]) drawWeaponPersona(c,wid,0,HEADCY,HEADR,SH,undefined);
+  const ax=0.9, ay=0.28;
+  c.beginPath(); c.moveTo(0,SH+6); c.lineTo(ax*24, SH+6+ay*24); c.stroke();
+  drawHeldWeapon(c, wid, ax, ay, ax*24, SH+6+ay*24, 0);
+  c.restore();
+}
 function setWeaponIcon(el, wid){
   const wi=el.querySelector('.wi'); if(!wi) return;
   const sid=(getEquippedCos().skin||{})[wid];
   if(sid && COSMETICS[sid]){ wi.textContent=''; const cv=document.createElement('canvas'); cv.style.cssText='width:56px; height:56px; display:block; margin:-6px auto -4px;'; try{ drawItemPreview(cv,sid); wi.appendChild(cv); }catch(e){ wi.textContent=WEAPONS[wid].emoji; } }
-  else wi.textContent=WEAPONS[wid].emoji;
+  else { wi.textContent=''; const cv=document.createElement('canvas'); cv.style.cssText='width:56px; height:56px; display:block; margin:-6px auto -4px;'; try{ drawCharIcon(cv,wid); wi.appendChild(cv); }catch(e){ wi.textContent=WEAPONS[wid].emoji; } }
 }
 function renderWeaponUI(){
   const st=weaponUI.state, bm=weaponBanMode(), sel=bm?weaponUI.banSel:weaponUI.selected;
@@ -10377,7 +10397,7 @@ function rifleBarrageXs(ax){                // three missiles around the point
 function magiccardTarget(p, ax, ay){ return hasAim(ax,ay) ? pickTarget(p, ax, ay) : nearestEnemyOf(p); }
 const ARM_FIRE_ULTS={pistol:1, bazooka:1, shuriken:1};   // ultimates that arm the next shot: a click while holding the key also fires that shot at the click
 const ULT_IMPL = {
-  pizarro(p,tSec,tMs){ p.pzStacks=Math.min(PZ_MAX,(p.pzStacks||0)+1); pushFx('spark', p.x, p.y-60, tMs, {ang:-Math.PI/2, color:'#ffd34d'}); pushFx('skill', p.x, p.y-70, tMs, {color:'#ffd34d', name:'기세 '+p.pzStacks+'/'+PZ_MAX}); },
+  pizarro(p,tSec,tMs){ p.pzStacks=Math.min(PZ_MAX,(p.pzStacks||0)+1); { const before=p.hp; p.hp=Math.min(maxHpFor(p), p.hp+PZ_ULT_HEAL); if(p.hp>before) pushFx('heal', p.x, p.y-70, tMs, {v:Math.round(p.hp-before)}); } pushFx('spark', p.x, p.y-60, tMs, {ang:-Math.PI/2, color:'#ffd34d'}); pushFx('skill', p.x, p.y-70, tMs, {color:'#ffd34d', name:'기세 '+p.pzStacks+'/'+PZ_MAX}); },
   pistol(p){ p.ultPending='pistol'; },
   magiccard(p,tSec,tMs,ax,ay){
     const tg=magiccardTarget(p, ax, ay); if(!tg) return false;
@@ -11772,11 +11792,10 @@ function botBrainHotpotato(p, ai, t, inp, navBusy){
   const holder=players[bombHolderId];                           // somebody else holds it: stay away from them (a person slips up now and then, so does a bot)
   if(!holder || !holder.alive){ const g=botRoamGoal(p, ai, t); return {goalX:g.x, goalY:g.y, noCombat:true}; }
   const d=dist(p.x,p.y,holder.x,holder.y);
-  if(d>360) return {goalX:p.x, goalY:p.y, noCombat:true};       // far away: no need to run yet
-  if(Math.random()>ai.skill+0.1) return {goalX:ai.goalX!==undefined?ai.goalX:p.x, goalY:ai.goalY!==undefined?ai.goalY:p.y, noCombat:true};   // a moment of hesitation: keep the old plan
-  if(!navBusy && dashReady && d<150 && Math.random()<0.4){ inp.left=p.x<holder.x; inp.right=p.x>=holder.x; inp.dash=true; }
+  if(Math.random()>0.5+ai.skill*0.5 && d>200) return {goalX:ai.goalX!==undefined?ai.goalX:p.x, goalY:ai.goalY!==undefined?ai.goalY:p.y, noCombat:true};   // rare hesitation, only when the holder is not close
+  if(!navBusy && dashReady && d<220 && Math.random()<0.6){ inp.left=p.x<holder.x; inp.right=p.x>=holder.x; inp.dash=true; }
   let best=null, bs=-1e9;                                       // the platform whose middle is farthest from the holder (without a long trek)
-  for(const pl of MAP.platforms){ if(pl.w<50) continue; const cx=pl.x+pl.w/2, dd=dist(cx,pl.y,holder.x,holder.y), trek=dist(cx,pl.y,p.x,p.y); const s=dd-0.45*trek; if(s>bs){ bs=s; best={x:cx,y:pl.y}; } }
+  for(const pl of MAP.platforms){ if(pl.w<50) continue; const cx=pl.x+pl.w/2, dd=dist(cx,pl.y,holder.x,holder.y), trek=dist(cx,pl.y,p.x,p.y); const s=dd-0.3*trek; if(s>bs){ bs=s; best={x:cx,y:pl.y}; } }
   if(best) return {goalX:best.x, goalY:best.y, noCombat:true};
   const away=p.x+(p.x>=holder.x?1:-1)*260;
   return {goalX:clamp(away,60,MAP.arenaW-60), goalY:p.y, noCombat:true};
@@ -12067,8 +12086,8 @@ function botThink(p, t, dt){
         } else if(!wantRetreat){ ai.retreatSince=null; }
         else retreat=false;                                                                                   // wants to, but is in its stand-your-ground phase
       }
-      const zFlee = gameMode==='zombie' && !p.isZombie && target.isZombie && (d<BOT_ZOMBIE_FLEE_R || botCloseRange(p.weapon));   // zombie game: a human bot keeps away from zombies (a close-range one never walks up to them)
-      if(zFlee){ const fg=botZombieFleeGoal(p, ai, t); goalX=fg.x; goalY=fg.y; ai.rangeMode='back'; if(d<200 && !navBusy && Math.random()<0.35) inp.dash=true; }
+      const zFlee = gameMode==='zombie' && !p.isZombie && target.isZombie;   // zombie game: a human bot keeps away from zombies (a close-range one never walks up to them)
+      if(zFlee){ const fg=botZombieFleeGoal(p, ai, t); goalX=fg.x; goalY=fg.y; ai.rangeMode='back'; if(d<260 && !navBusy && Math.random()<0.5) inp.dash=true; }
       else if(gameMode==='conquest' && cq && !BOT_CONQUEST_FOCUS && d>=420){ goalX=cq.zone.x; goalY=cq.zone.y; }   // (the old rule: only when nobody is close)
       else if(lowHp && d<380 && retreat){ goalX=p.x-Math.sign(dx||1)*240; goalY=p.y; if(!navBusy && Math.random()<0.2) inp.dash=true; } // hurt: back off
       else if(d>band.max || (BOT_CALM && ai.rangeMode==='close' && d>band.max*0.8)){ ai.rangeMode='close'; goalX=target.x; goalY=target.y; }   // too far: close in (and keep going until comfortably inside, so it does not turn around at the very edge of its range)
