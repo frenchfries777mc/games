@@ -1,0 +1,1235 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>행성 탐사</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Orbit&family=IBM+Plex+Sans+KR:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: probe console. Thin instrument strip on top; explore = planet viewfinder + log on the left, the one active task on the right; settle = request queue beside the planet table. Single deliberate dark look (deep space). */
+:root {
+  --void: #070920;
+  --panel: #0a0e2bd9;
+  --panel-2: #10163acc;
+  --hair: #8fb4ff1f;
+  --hair-2: #8fb4ff3d;
+  --text: #e9edff;
+  --dim: #aab3e0;
+  --faint: #6f78ad;
+  --ice: #9fe3ff;
+  --signal: #ffb547;
+  --sea: #52a6ff;
+  --ok: #67e3a7;
+  --bad: #ff7a7a;
+  --f-display: "Orbit", "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
+  --f-body: "IBM Plex Sans KR", "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
+  --f-mono: "JetBrains Mono", ui-monospace, Menlo, Consolas, monospace;
+  color-scheme: dark;
+}
+html, body { min-height: 100%; }
+body {
+  background: var(--void);
+  background-image:
+    radial-gradient(900px 600px at 85% -5%, #3b2a8a88, transparent 70%),
+    radial-gradient(800px 700px at 0% 100%, #0f4a7a66, transparent 70%),
+    radial-gradient(600px 400px at 40% 50%, #2a1a5a44, transparent 70%);
+  background-attachment: fixed;
+  color: var(--text); font-family: var(--f-body); font-size: 16px; line-height: 1.6;
+}
+* { box-sizing: border-box; }
+button, input, select { font: inherit; color: inherit; }
+button { cursor: pointer; }
+:focus-visible { outline: 2px solid var(--ice); outline-offset: 2px; }
+.wrap {
+  max-width: 1360px; margin: 0 auto;
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: 28px 72px; display: flex; flex-direction: column; gap: 22px;
+}
+h1, h2, h3 { font-family: var(--f-display); font-weight: 400; margin: 0; text-wrap: balance; letter-spacing: .01em; word-spacing: -.22em; }
+input[type=number]::-webkit-inner-spin-button, input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+input[type=number] { -moz-appearance: textfield; appearance: textfield; }
+h1 { font-size: clamp(44px, 9vw, 76px); line-height: 1.05; }
+h2 { font-size: 24px; line-height: 1.25; }
+h3 { font-size: 18px; line-height: 1.3; }
+p { margin: 0; }
+.dim { color: var(--dim); }
+.mono { font-family: var(--f-mono); font-variant-numeric: tabular-nums; }
+.label, .code { font-family: var(--f-mono); font-size: 12px; letter-spacing: .14em; text-transform: uppercase; color: var(--faint); }
+.label { font-family: var(--f-body); letter-spacing: .02em; text-transform: none; font-size: 14px; color: var(--dim); }
+.row { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+
+/* Buttons */
+.btn { border: 1px solid var(--hair-2); background: transparent; border-radius: 6px; padding: 8px 16px; min-height: 42px; transition: background .15s, border-color .15s, color .15s; }
+.btn:hover:not([disabled]) { border-color: var(--ice); color: var(--ice); }
+.btn.primary { background: var(--signal); color: #241500; border-color: var(--signal); font-weight: 600; }
+.btn.primary:hover:not([disabled]) { background: #ffc56e; color: #241500; border-color: #ffc56e; }
+.btn.danger { border-color: transparent; color: var(--faint); }
+.btn.danger:hover:not([disabled]) { color: var(--bad); border-color: var(--bad); }
+.btn.on { border-color: var(--ice); color: var(--ice); background: #9fe3ff14; }
+.btn.sm { min-height: 34px; padding: 4px 12px; font-size: 14px; }
+.btn.ghost { border-color: transparent; color: var(--dim); }
+.btn.ghost:hover:not([disabled]) { border-color: transparent; color: var(--text); text-decoration: underline; }
+.btn.big { font-size: 18px; padding: 14px 28px; align-self: flex-start; font-family: var(--f-display); font-weight: 400; word-spacing: -.22em; }
+.btn[disabled] { opacity: .35; cursor: not-allowed; }
+.seg { align-self: flex-start; display: inline-flex; border: 1px solid var(--hair-2); border-radius: 6px; overflow: hidden; flex-wrap: wrap; }
+.seg .btn { border: 0; border-radius: 0; min-height: 36px; }
+.seg .btn + .btn { border-left: 1px solid var(--hair-2); }
+.seg .btn.on { background: var(--ice); color: #06142a; }
+
+/* Panels: hairline frame with corner ticks */
+.box { position: relative; background: var(--panel); border: 1px solid var(--hair); border-radius: 4px; padding: 22px; display: flex; flex-direction: column; gap: 16px; min-width: 0; backdrop-filter: blur(10px); }
+.box::before, .box::after { content: ""; position: absolute; width: 12px; height: 12px; border-color: var(--ice); border-style: solid; opacity: .7; pointer-events: none; }
+.box::before { top: -1px; left: -1px; border-width: 1px 0 0 1px; }
+.box::after { bottom: -1px; right: -1px; border-width: 0 1px 1px 0; }
+.phead { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; padding-bottom: 12px; border-bottom: 1px solid var(--hair); flex-wrap: wrap; }
+.chip { font-size: 13px; padding: 2px 9px; border-radius: 4px; border: 1px solid var(--hair-2); background: transparent; white-space: nowrap; }
+.chip.need { border-color: #ffb54766; color: var(--signal); }
+.chip.yes { border-color: #67e3a766; color: var(--ok); }
+.chip.no { border-color: #ff7a7a66; color: var(--bad); }
+.kicker { color: var(--signal); font-family: var(--f-mono); font-size: 12px; letter-spacing: .3em; }
+
+/* HUD strip */
+.hud { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 10; background: color-mix(in srgb, var(--void) 86%, transparent); backdrop-filter: blur(10px); border-bottom: 1px solid var(--hair); }
+.hud .inner { max-width: 1360px; margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); padding-block: 10px; display: flex; gap: 6px 0; align-items: center; flex-wrap: wrap; }
+.hud b { font-family: var(--f-display); font-weight: 400; font-size: 16px; letter-spacing: .04em; padding-right: 20px; margin-right: 4px; border-right: 1px solid var(--hair-2); }
+.stat { display: inline-flex; gap: 8px; align-items: center; font-size: 13px; color: var(--faint); padding: 0 16px; border-right: 1px solid var(--hair); }
+.stat:last-child { border-right: 0; }
+.stat .v { font-family: var(--f-mono); color: var(--text); font-size: 14px; }
+.hearts { color: var(--bad); letter-spacing: 3px; font-size: 14px; }
+.hearts .off { color: var(--faint); opacity: .5; }
+.hudbar { width: 90px; height: 4px; background: #ffffff14; overflow: hidden; }
+.hudbar i { display: block; height: 100%; background: var(--ice); }
+.hudbar i.full { background: var(--bad); }
+
+/* Explore */
+.mission { display: flex; justify-content: space-between; align-items: flex-end; gap: 16px 28px; flex-wrap: wrap; }
+.mission h1 { font-size: clamp(40px, 6vw, 64px); }
+.mission .code { display: block; margin-bottom: 6px; }
+.explore { display: grid; grid-template-columns: minmax(0, 380px) minmax(0, 1fr); gap: 22px; align-items: start; }
+@media (max-width: 900px) { .explore { grid-template-columns: minmax(0, 1fr); } .explore > :first-child { order: 2; } }
+.side { display: flex; flex-direction: column; gap: 22px; min-width: 0; }
+.scope { position: relative; aspect-ratio: 1; width: 100%; max-width: 100%; }
+.scope canvas { width: 100%; height: 100%; display: block; }
+.trail { display: flex; gap: 6px; align-items: center; }
+.trail span { width: 22px; height: 3px; background: #ffffff26; }
+.trail span.done { background: var(--ice); }
+.trail span.now { background: var(--signal); width: 40px; }
+.stepper { display: flex; list-style: none; margin: 0; padding: 0; flex-wrap: wrap; counter-reset: s; }
+.stepper li { display: inline-flex; gap: 8px; align-items: center; padding: 8px 16px 8px 0; margin-right: 16px; color: var(--faint); font-size: 14px; border-bottom: 2px solid var(--hair); }
+.stepper li span { font-family: var(--f-mono); font-size: 12px; }
+.stepper li.now { color: var(--text); border-color: var(--signal); }
+.stepper li.now span { color: var(--signal); }
+.stepper li.done { color: var(--dim); border-color: var(--ice); }
+.stepper li.done span { color: var(--ice); }
+.stage { gap: 20px; min-height: 340px; }
+.stage .phead h3 { font-size: 22px; }
+.bulbs { display: flex; gap: 8px; flex-wrap: wrap; }
+.bulb { display: flex; flex-direction: column; align-items: center; gap: 6px; }
+button.b { padding: 0; cursor: pointer; } button.b:disabled { cursor: default; }
+.bulb .b { width: 48px; height: 56px; border-radius: 4px; border: 1px solid var(--hair-2); background: #050717; display: grid; place-items: center; font-family: var(--f-mono); font-size: 18px; color: var(--faint); }
+.bulb .b.lit { background: linear-gradient(#ffd07e, var(--signal)); border-color: var(--signal); color: #2a1800; box-shadow: 0 0 18px #ffb54766, inset 0 1px 0 #fff6; }
+.bulb small { font-family: var(--f-mono); font-size: 12px; color: var(--faint); }
+.sig { display: flex; flex-direction: column; gap: 18px; }
+.decode-in { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+.num-in { width: 140px; padding: 10px 14px; font-size: 22px; border-radius: 6px; border: 1px solid var(--hair-2); background: #050717; font-family: var(--f-mono); }
+.num-in:focus { border-color: var(--ice); outline: none; box-shadow: 0 0 0 3px #9fe3ff22; }
+.opts { display: flex; flex-direction: column; gap: 10px; }
+.opts .row > .label { min-width: 70px; }
+.formula { font-family: var(--f-mono); font-size: 14px; color: var(--ice); border-left: 2px solid var(--ice); padding: 4px 12px; overflow-x: auto; white-space: nowrap; background: #9fe3ff0d; }
+canvas.view { width: min(100%, 260px); max-width: 100%; aspect-ratio: 1; border-radius: 4px; border: 1px solid var(--hair-2); background: #050717; image-rendering: pixelated; }
+canvas.wave { width: 100%; max-width: 520px; aspect-ratio: 460 / 150; border-radius: 4px; border: 1px solid var(--hair-2); background: #050717; }
+.msg { min-height: 1.5em; font-size: 15px; font-family: var(--f-mono); }
+.msg:empty { display: none; }
+.msg.ok { color: var(--ok); } .msg.bad { color: var(--bad); } .msg.info { color: var(--signal); }
+.sum-row { display: flex; justify-content: space-between; align-items: center; gap: 10px; padding: 10px 0; border-top: 1px solid var(--hair); flex-wrap: wrap; }
+.sum-row:first-of-type { border-top: 0; }
+.stored { display: flex; flex-direction: column; gap: 2px; font-size: 14px; }
+.stored > .row { justify-content: space-between; }
+.meter { height: 4px; background: #ffffff14; }
+.meter i { display: block; height: 100%; background: var(--ice); }
+@media (max-width: 520px) { .bulbs { gap: 4px; flex-wrap: nowrap; } .bulb .b { width: 36px; height: 44px; font-size: 15px; } .bulb small { font-size: 10px; } .box { padding: 18px; } }
+
+/* Settle */
+.desk { display: grid; grid-template-columns: minmax(0, 300px) minmax(0, 1fr); gap: 22px; align-items: start; }
+@media (max-width: 900px) { .desk { grid-template-columns: minmax(0, 1fr); } }
+.window { position: sticky; top: calc(env(safe-area-inset-top, 0px) + 64px); }
+@media (max-width: 900px) { .window { position: static; } }
+.req { display: flex; flex-direction: column; gap: 10px; padding: 14px; border: 1px solid var(--hair); border-radius: 4px; cursor: pointer; transition: border-color .15s, background .15s; }
+.req:hover { border-color: var(--hair-2); }
+.req.sel { border-color: var(--ice); background: #9fe3ff0d; }
+.req.done { opacity: .6; }
+.alien { width: 64px; height: 64px; border-radius: 50% 50% 46% 46%; position: relative; flex: none; box-shadow: inset -6px -8px 0 #00000033; }
+.alien::before, .alien::after { content: ""; position: absolute; top: 36%; width: 10px; height: 13px; border-radius: 50%; background: #0c0f2e; }
+.alien::before { left: 27%; } .alien::after { right: 27%; }
+.alien.mood-angry::before, .alien.mood-angry::after { height: 5px; top: 42%; border-radius: 2px; }
+@keyframes bob { 50% { transform: translateY(-4px); } }
+.alien.idle { animation: bob 2.2s ease-in-out infinite; }
+.filters { display: flex; flex-wrap: wrap; gap: 10px 18px; align-items: center; font-size: 14px; }
+.filters label { display: inline-flex; gap: 6px; align-items: center; color: var(--dim); }
+.filters input { width: 60px; padding: 5px 8px; border-radius: 4px; border: 1px solid var(--hair-2); background: #050717; font-family: var(--f-mono); font-size: 14px; }
+.filters select { padding: 5px 8px; border-radius: 4px; border: 1px solid var(--hair-2); background: #050717; font-size: 14px; }
+.tbl-wrap { overflow-x: auto; border-top: 1px solid var(--hair-2); }
+table.pt { border-collapse: collapse; width: 100%; min-width: 860px; font-variant-numeric: tabular-nums; }
+.pt th, .pt td { padding: 12px 10px; text-align: left; border-bottom: 1px solid var(--hair); white-space: nowrap; vertical-align: middle; }
+.pt th { color: var(--faint); font-weight: 400; font-family: var(--f-mono); font-size: 12px; letter-spacing: .06em; }
+.pt th button { border: 0; background: none; padding: 0; color: inherit; font: inherit; }
+.pt th button:hover { color: var(--ice); }
+.pt td.mono { font-size: 16px; }
+.pt tbody tr:last-child td { border-bottom: 0; }
+.pt tr.pick { cursor: pointer; }
+.pt tr.pick:hover td { background: #9fe3ff0a; }
+.pt td.unk { color: var(--dim); }
+.pt .bin { font-family: var(--f-mono); font-size: 13px; color: var(--signal); letter-spacing: .05em; }
+.thumb { width: 40px; height: 40px; border-radius: 3px; border: 1px solid var(--hair-2); image-rendering: pixelated; cursor: zoom-in; }
+.mini { width: 72px; height: 30px; border-radius: 3px; border: 1px solid var(--hair-2); cursor: zoom-in; background: #050717; }
+.cellflex { display: inline-flex; gap: 8px; align-items: center; }
+
+.rcard { border: 1px solid var(--hair-2); border-radius: 4px; padding: 18px; display: flex; flex-direction: column; gap: 14px; background: #9fe3ff08; }
+.rc-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 14px 20px; }
+.rc-cell { display: flex; flex-direction: column; gap: 2px; }
+.rc-cell b { font-size: 20px; font-weight: 500; }
+.colpick .btn { min-height: 32px; }
+/* Modal */
+.modal { position: fixed; inset: 0; z-index: 50; background: #04051acc; backdrop-filter: blur(4px); display: grid; place-items: center; padding: max(16px, env(safe-area-inset-top, 0px)) max(16px, env(safe-area-inset-right, 0px)) max(16px, env(safe-area-inset-bottom, 0px)) max(16px, env(safe-area-inset-left, 0px)); }
+.modal .box { width: min(560px, 100%); max-height: 100%; overflow: auto; background: #0a0e2b; }
+
+/* Report, shop and end */
+.shop { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 12px; }
+.item { border: 1px solid var(--hair); border-radius: 4px; padding: 16px; display: flex; flex-direction: column; gap: 8px; align-items: flex-start; }
+.item h3 { font-size: 17px; }
+.item .price { font-family: var(--f-mono); color: var(--signal); }
+.item.owned { border-color: #67e3a766; }
+.lessons { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 12px; }
+.lessons > div { border: 1px solid var(--hair); border-radius: 4px; padding: 16px; font-size: 15px; color: var(--dim); }
+.lessons b { display: block; color: var(--text); font-family: var(--f-display); font-weight: 400; font-size: 17px; margin-bottom: 2px; }
+
+/* Home: big centered title over a ringed planet, menu on the left */
+canvas.stars { position: fixed; inset: 0; width: 100vw; height: 100vh; z-index: -1; pointer-events: none; }
+.home { position: relative; min-height: calc(100dvh - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px)); display: grid; place-items: center; overflow: hidden;
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); padding-block: 24px; }
+.home-planet { position: absolute; width: min(140vw, 1100px); max-width: none; aspect-ratio: 1; left: 50%; top: 50%; transform: translate(-50%, -50%); opacity: .55; pointer-events: none; }
+.home-title { position: relative; text-align: center; display: flex; flex-direction: column; gap: 14px; }
+.home-title h1 { font-size: clamp(64px, 14vw, 172px); line-height: .95; letter-spacing: .04em; text-shadow: 0 0 50px #6f8cff88; }
+.home-kicker { font-family: var(--f-mono); letter-spacing: .6em; color: var(--ice); font-size: clamp(11px, 1.3vw, 14px); padding-left: .6em; }
+.home-menu { position: absolute; left: max(40px, env(safe-area-inset-left, 0px)); top: 50%; transform: translateY(-50%); display: flex; flex-direction: column; gap: 4px; align-items: flex-start; z-index: 2; }
+.menu-btn { word-spacing: -.22em; display: flex; align-items: center; gap: 14px; min-width: 220px; text-align: left; padding: 12px 0; border: 0; background: none; font-family: var(--f-display); font-size: 24px; color: var(--dim); transition: color .15s, gap .15s; }
+.menu-btn::before { content: ""; width: 22px; height: 1px; background: currentColor; transition: width .15s; }
+.menu-btn:hover { color: var(--text); }
+.menu-btn:hover::before { width: 36px; }
+.menu-btn.primary { color: var(--signal); }
+.menu-btn.primary::before { height: 2px; }
+.menu-best { color: var(--faint); font-size: 13px; padding: 10px 0 0 36px; font-family: var(--f-mono); }
+@media (max-width: 1180px) {
+  .home-menu { top: auto; bottom: max(36px, env(safe-area-inset-bottom, 0px)); transform: none; }
+}
+@media (max-width: 700px) {
+  .home { place-items: start center; padding-top: 20vh; }
+  .home-menu { left: max(24px, env(safe-area-inset-left, 0px)); }
+}
+.home-title h1 { word-spacing: -.32em; }
+@media (max-width: 600px) {
+  .hud b, .hudbar { display: none; }
+  .hud .inner { flex-wrap: nowrap; overflow-x: auto; }
+  .stat { padding: 0 10px; font-size: 12px; white-space: nowrap; }
+  .stat:first-of-type { padding-left: 0; }
+  .stat .v { font-size: 13px; }
+  .stepper { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); width: 100%; }
+  .stepper li { margin-right: 6px; padding-right: 0; font-size: 12px; flex-direction: column; align-items: flex-start; gap: 0; }
+  .stage { min-height: 0; }
+}
+
+/* Archive */
+.modal .box.arc { width: min(980px, 100%); }
+.hud-arc { margin-left: auto; white-space: nowrap; flex: none; }
+.modal .box.arc { height: min(860px, 100%); }
+.arc-body { flex: 1; min-height: 0; overflow: auto; display: flex; flex-direction: column; gap: 18px; padding-right: 4px; }
+.chart .mm rect { fill: #0a0e2b; stroke: #8fb4ff3d; stroke-width: 1.2; }
+.chart .mm text { fill: #e9edff; font-size: 14px; }
+.chart .mm.root rect { fill: #ffb547; stroke: #ffb547; }
+.chart .mm.root text { fill: #241500; font-weight: 600; font-size: 15px; }
+.chart .mm.sec rect { stroke: #9fe3ff; fill: #9fe3ff1a; }
+.chart .mm.sec text { fill: #9fe3ff; }
+.chart .mm.settled rect { stroke: #67e3a7; }
+.chart .mm.num rect { stroke: #9fe3ff99; }
+.chart .mm.wrong rect { stroke: #ff7a7a; } .chart .mm.wrong text { fill: #ff7a7a; }
+.chart .mm.home rect { stroke: #67e3a7; }
+.chart g[data-pid], .chart .pickable { cursor: pointer; }
+.chart text.pickable:hover, .chart g.pickable:hover text { fill: #9fe3ff; text-decoration: underline; }
+.chart .pickable:focus { outline: none; } .chart text.pickable:focus, .chart g.pickable:focus text { fill: #9fe3ff; }
+.chart g[data-pid]:hover rect, .chart g[data-pid]:focus rect { stroke: #9fe3ff; fill: #9fe3ff22; }
+.chart g[data-pid]:focus { outline: none; }
+.chart .mm-link { fill: none; stroke: #8fb4ff4d; stroke-width: 1.5; }
+.chart .mm-link.thick { stroke: #9fe3ff88; stroke-width: 2.5; }
+
+.chart { width: 100%; max-width: var(--w); overflow-x: auto; margin-inline: auto; }
+.chart svg { display: block; width: 100%; height: auto; min-width: 520px; font-family: var(--f-body); }
+.chart .grid { stroke: #8fb4ff1f; stroke-width: 1; }
+.chart .axis { stroke: #8fb4ff66; stroke-width: 1.5; }
+.chart .tick { fill: #6f78ad; font-size: 12px; font-family: var(--f-mono); }
+.chart .lab { fill: #aab3e0; font-size: 14px; }
+.chart .val { fill: #e9edff; font-size: 13px; font-family: var(--f-mono); }
+.chart .bar { fill: #9fe3ff; }
+.chart .bar.wrong { fill: #ff7a7a; }
+.chart .pname { fill: #e9edff; font-size: 13px; }
+.chart .pt-w, .dot.pt-w { fill: #52a6ff; background: #52a6ff; }
+.chart .pt-d, .dot.pt-d { fill: #c99a5b; background: #c99a5b; }
+.chart .pt-n, .dot.pt-n { fill: #6f78ad; background: #6f78ad; }
+.chart circle.pt-w, .chart circle.pt-d, .chart circle.pt-n { stroke: #070920; stroke-width: 2; }
+.dot { display: inline-block; width: 10px; height: 10px; border-radius: 50%; }
+.chart .uni { fill: none; stroke: #8fb4ff3d; }
+.chart .va { fill: #52a6ff1f; stroke: #52a6ff; stroke-width: 1.5; }
+.chart .vb { fill: #67e3a71a; stroke: #67e3a7; stroke-width: 1.5; }
+.chart .vc { fill: #ffb5471a; stroke: #ffb547; stroke-width: 1.5; }
+.chart .setlab { fill: #e9edff; font-size: 15px; font-weight: 600; }
+.sheet-head { display: flex; flex-wrap: wrap; gap: 10px 24px; align-items: flex-end; }
+.sheet-head .label b { color: var(--text); font-weight: 500; }
+.name-in { background: none; border: 0; border-bottom: 1px solid var(--hair-2); padding: 4px 2px; width: 160px; font-size: 16px; }
+.sheet h3 { font-size: 16px; }
+@media print {
+  :root { --text: #111; --dim: #333; --faint: #555; --hair: #bbb; --hair-2: #888; --ice: #111; --signal: #111; --ok: #0a6b3d; --bad: #c62828; color-scheme: light; }
+  @page { margin: 14mm; }
+  body { background: #fff !important; font-size: 12px; }
+  .no-print, #modal, .hud, canvas.stars { display: none !important; }
+  .name-in { border-bottom-color: #111; }
+  .wrap { padding: 0 !important; max-width: none !important; }
+  .box { background: none; border: 0; padding: 0; backdrop-filter: none; gap: 10px; }
+  .box::before, .box::after { display: none; }
+  .rcard { background: none; padding: 10px; }
+  .rc-cell b { font-size: 15px; }
+  .tbl-wrap { overflow: visible; }
+  .pt { min-width: 0 !important; width: 100%; }
+  .pt th, .pt td { padding: 5px 6px; }
+  .pt td.mono { font-size: 12px; }
+  .sheet section { break-inside: avoid; }
+}
+@media (prefers-reduced-motion: reduce) { * { animation: none !important; transition: none !important; } }
+</style>
+
+</head>
+<body>
+<div id="app"></div>
+<div id="modal"></div>
+
+<script>
+(() => {
+"use strict";
+/* ---------- helpers ---------- */
+const $ = (sel, r = document) => r.querySelector(sel);
+function h(tag, props, ...kids) {
+  const e = document.createElement(tag);
+  for (const [k, v] of Object.entries(props || {})) {
+    if (v == null || v === false) continue;
+    if (k === "class") e.className = v;
+    else if (k === "style") e.style.cssText = v;
+    else if (k.startsWith("on")) e.addEventListener(k.slice(2).toLowerCase(), v);
+    else if (k in e && typeof v !== "string") e[k] = v;
+    else e.setAttribute(k, v === true ? "" : v);
+  }
+  for (const c of kids.flat(Infinity)) { if (c == null || c === false) continue; e.append(c.nodeType ? c : document.createTextNode(String(c))); }
+  return e;
+}
+const SVGNS = "http://www.w3.org/2000/svg";
+function s(tag, attrs, txt) { const e = document.createElementNS(SVGNS, tag); for (const k in attrs) if (attrs[k] != null) e.setAttribute(k, attrs[k]); if (txt != null) e.textContent = txt; return e; }
+const fmt = n => Math.round(n).toLocaleString("ko-KR");
+const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+let rnd = Math.random;
+function seeded(seed) { let a = seed >>> 0; return () => { a |= 0; a = a + 0x6D2B79F5 | 0; let t = Math.imul(a ^ a >>> 15, 1 | a); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
+const pick = a => a[Math.floor(rnd() * a.length)];
+const ri = (a, b) => a + Math.floor(rnd() * (b - a + 1));
+const bin8 = n => n.toString(2).padStart(8, "0");
+
+/* ---------- save ---------- */
+const SAVE_KEY = "planet-search-v2";
+let save = { best: 0, runs: 0 };
+try { save = Object.assign(save, JSON.parse(localStorage.getItem(SAVE_KEY)) || {}); } catch (e) {}
+const persist = () => { try { localStorage.setItem(SAVE_KEY, JSON.stringify(save)); } catch (e) {} };
+
+/* ---------- media: photos ---------- */
+// 0 space, 1 land, 2 water, 3 ice
+function planetClass(kind, x, y) {
+  const dx = x - 0.5, dy = y - 0.5;
+  if (dx * dx + dy * dy > 0.42 * 0.42) return 0;
+  if (kind === "ocean") { if (y < 0.16) return 3; return (Math.hypot(x - 0.66, y - 0.42) < 0.17 || Math.hypot(x - 0.38, y - 0.72) < 0.1) ? 1 : 2; }
+  if (kind === "lake") { if (y < 0.14) return 3; return Math.hypot(x - 0.5625, y - 0.3125) < 0.075 ? 2 : 1; }
+  if (kind === "ice") return (y < 0.45 || Math.hypot(x - 0.35, y - 0.7) < 0.12) ? 3 : 1;
+  return 1;
+}
+const PAL2 = ["#090b1c", "#c99a5b", "#3d8bff", "#e8eef7"], PAL1 = ["#090b1c", "#e8eef7"];
+function drawPhoto(cv, kind, res, bits) {
+  const ctx = cv.getContext("2d"), S = cv.width, cs = S / res;
+  for (let j = 0; j < res; j++) for (let i = 0; i < res; i++) {
+    const c = planetClass(kind, (i + .5) / res, (j + .5) / res);
+    ctx.fillStyle = bits === 1 ? PAL1[c ? 1 : 0] : PAL2[c];
+    ctx.fillRect(Math.floor(i * cs), Math.floor(j * cs), Math.ceil(cs), Math.ceil(cs));
+  }
+}
+/* ---------- media: sound ---------- */
+function wave(kind, t) {
+  const base = 0.06 * Math.sin(2 * Math.PI * 2 * t);
+  if (kind === "quiet") return base;
+  if (kind === "wind") return 0.55 * Math.sin(2 * Math.PI * 1.5 * t) + 0.25 * Math.sin(2 * Math.PI * 3.3 * t + 1);
+  if (kind === "storm") { const ph = ((t % .25) + .25) % .25; return base + (Math.abs(ph - .125) < .014 ? .95 * (Math.floor(t * 4) % 2 ? -1 : 1) : 0); }
+  return 0;
+}
+const quant = (v, bits) => { const half = 2 ** bits / 2; return clamp(Math.round(v * half), -half, half - 1) / half; };
+const sampleSound = (kind, rate, bits) => Array.from({ length: rate }, (_, k) => quant(wave(kind, k / rate), bits));
+function drawWave(cv, samples, rate, bits, mini) {
+  const ctx = cv.getContext("2d"), W = cv.width, H = cv.height, pad = mini ? 3 : 10;
+  ctx.fillStyle = "#090b1c"; ctx.fillRect(0, 0, W, H);
+  if (!mini) { ctx.strokeStyle = "#353c80"; ctx.lineWidth = 1; const L = 2 ** bits; for (let i = 0; i <= L; i++) { const y = H / 2 - (i - L / 2) / (L / 2) * (H / 2 - pad); ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(W, y); ctx.stroke(); } }
+  const yOf = v => H / 2 - v * (H / 2 - pad);
+  ctx.strokeStyle = "#52a6ff"; ctx.lineWidth = mini ? 1.5 : 2.5; ctx.beginPath();
+  samples.forEach((v, k) => { const x0 = k / rate * W, x1 = (k + 1) / rate * W; k ? ctx.lineTo(x0, yOf(v)) : ctx.moveTo(x0, yOf(v)); ctx.lineTo(x1, yOf(v)); });
+  ctx.stroke();
+  if (!mini) { ctx.fillStyle = "#ffb547"; samples.forEach((v, k) => { ctx.beginPath(); ctx.arc(k / rate * W, yOf(v), 3, 0, 7); ctx.fill(); }); }
+}
+let actx = null;
+function playSound(samples, rate) {
+  try {
+    actx = actx || new (window.AudioContext || window.webkitAudioContext)();
+    if (actx.state === "suspended") actx.resume();
+    const sr = actx.sampleRate, buf = actx.createBuffer(1, sr * 2, sr), d = buf.getChannelData(0); let lp = 0;
+    for (let i = 0; i < d.length; i++) { const t = (i / sr) % 1, a = Math.abs(samples[Math.min(samples.length - 1, Math.floor(t * rate))]); lp += (Math.random() * 2 - 1 - lp) * .25; d[i] = a * lp * .9 + .015 * Math.sin(2 * Math.PI * 110 * i / sr); }
+    const src = actx.createBufferSource(); src.buffer = buf; src.connect(actx.destination); src.start();
+  } catch (e) {}
+}
+/* ---------- media: video ---------- */
+// 0 sky, 1 ground, 2 danger, 3 cloud
+function scene(kind, t, x, y) {
+  const g = 0.68 + 0.04 * Math.sin(x * 9);
+  if (kind === "volcano") {
+    if (t >= 1.15 && t < 1.35 && Math.abs(x - .5) < .1 + (.36 - y) * .4 && y > .06 && y <= .4) return 2;
+    if (y > .36 + 1.25 * Math.abs(x - .5) || y > g) return 1;
+    return Math.hypot((x - .8) / 1.8, y - .2) < .07 ? 3 : 0;
+  }
+  if (kind === "lightning") {
+    if (y > g) return 1;
+    if (y < .22 + .04 * Math.sin(x * 12 + t * 3)) return 3;
+    if ((t % .6) < .3 && Math.abs(x - (.45 + .08 * Math.sin(y * 20))) < .05) return 2;
+    return 0;
+  }
+  if (y > g) return 1;
+  return Math.hypot((x - (.15 + .22 * t)) / 2, y - .25) < .07 ? 3 : 0;
+}
+const PALV = ["#1b2350", "#7a6a55", "#ff5a3c", "#cfd6ea"];
+function drawFrame(cv, kind, t, res) {
+  const ctx = cv.getContext("2d"), S = cv.width, cs = S / res;
+  for (let j = 0; j < res; j++) for (let i = 0; i < res; i++) { ctx.fillStyle = PALV[scene(kind, t, (i + .5) / res, (j + .5) / res)]; ctx.fillRect(Math.floor(i * cs), Math.floor(j * cs), Math.ceil(cs), Math.ceil(cs)); }
+}
+function videoPlayer(kind, fps, res) {
+  const cv = h("canvas", { class: "view", width: 240, height: 240 });
+  const n = fps * 3;
+  const slider = h("input", { type: "range", min: 0, max: n - 1, value: 0, style: "width:min(100%,240px)", "aria-label": "프레임" });
+  const lab = h("span", { class: "mono dim", style: "font-size:13px" });
+  let timer = null;
+  const show = () => { const i = +slider.value, t = i / fps; drawFrame(cv, kind, t, res); lab.textContent = `${i + 1}/${n}프레임 · ${t.toFixed(1)}초`; };
+  const stop = () => { if (timer) clearInterval(timer); timer = null; };
+  slider.oninput = () => { stop(); show(); };
+  const play = h("button", { class: "btn sm", onclick: () => { stop(); slider.value = 0; show(); timer = setInterval(() => { if (+slider.value >= n - 1 || !cv.isConnected) return stop(); slider.value = +slider.value + 1; show(); }, 1000 / fps); } }, "▶ 재생");
+  show();
+  return h("div", { style: "display:flex;flex-direction:column;gap:6px" }, cv, slider, h("div", { class: "row" }, play, lab));
+}
+
+/* ---------- world generation ---------- */
+const SYL = ["케", "플", "라", "오", "르", "테", "니", "브", "실", "바", "텔", "루", "스", "마", "카", "에", "코", "보", "타", "미", "아", "델", "이", "온", "주", "노", "하", "가", "렌", "포"];
+function planetName(used) { let n; do { n = pick(SYL) + pick(SYL) + (rnd() < .4 ? pick(SYL) : "") + " " + pick(["b", "c", "d", "e"]); } while (used.has(n)); used.add(n); return n; }
+// numeric signals, each sent as 8 bits
+const SIG = [
+  { k: "temp", t: "온도", u: "℃" }, { k: "grav", t: "중력", u: "" }, { k: "oxy", t: "산소", u: "%" },
+  { k: "rad", t: "방사선", u: "" },
+];
+function makePlanet(id, used) {
+  const water = rnd() < .5;
+  const video = rnd() < .5 ? "calm" : pick(["volcano", "lightning"]);
+  return { id, name: planetName(used), visited: false,
+    t: { temp: pick([ri(0, 9), ri(10, 30), ri(10, 30), ri(31, 39), ri(40, 90)]), grav: ri(2, 28), oxy: pick([ri(0, 9), ri(10, 19), ri(20, 35)]),
+      rad: ri(5, 140),
+      water, photo: water ? pick(["ocean", "lake"]) : pick(["desert", "ice"]), sound: rnd() < .5 ? "quiet" : pick(["wind", "storm"]), video, danger: video !== "calm" },
+    dec: {}, data: {}, note: {} };
+}
+
+/* ---------- aliens ---------- */
+const SPECIES = [
+  ["솔라리", "#ff9a4d"], ["아쿠아", "#52a6ff"], ["무온", "#b48cff"], ["케르", "#5ee0a0"], ["펠리", "#7fd4ff"],
+  ["글로", "#ffd166"], ["텔리", "#ff7fb0"], ["바르", "#c3e88d"], ["노바", "#f78c6c"], ["시엘", "#89ddff"],
+];
+const LINES = ["새 집을 찾고 있어요.", "아이들이 셋이에요. 꼭 맞는 곳이면 좋겠어요.", "빨리 정해 주세요, 줄이 길어요!", "지난 행성은 정말 끔찍했어요.", "고향과 비슷한 곳이면 좋겠네요.", "이번엔 실수 없이 부탁해요."];
+function condsFor(p) {
+  const t = p.t, out = [];
+  if (t.temp >= 40) out.push({ k: "temp", label: "온도 40℃ 이상", test: q => q.t.temp >= 40 });
+  else if (t.temp >= 30) out.push({ k: "temp", label: "온도 30℃ 이상", test: q => q.t.temp >= 30 });
+  else if (t.temp >= 10) out.push({ k: "temp", label: "온도 10~30℃", test: q => q.t.temp >= 10 && q.t.temp <= 30 });
+  else out.push({ k: "temp", label: "온도 10℃ 미만", test: q => q.t.temp < 10 });
+  const g = Math.max(5, Math.ceil(t.grav / 5) * 5);
+  out.push({ k: "grav", label: `중력 ${g} 이하`, test: q => q.t.grav <= g });
+  if (t.oxy >= 20) out.push({ k: "oxy", label: "산소 20% 이상", test: q => q.t.oxy >= 20 });
+  else if (t.oxy >= 10) out.push({ k: "oxy", label: "산소 10% 이상", test: q => q.t.oxy >= 10 });
+  else out.push({ k: "oxy", label: "산소 10% 미만", test: q => q.t.oxy < 10 });
+  const r = Math.ceil(t.rad / 20) * 20;
+  out.push({ k: "rad", label: `방사선 ${r} 이하`, test: q => q.t.rad <= r });
+  out.push(t.water ? { k: "water", label: "물 필요", test: q => q.t.water } : { k: "water", label: "물 없는 곳", test: q => !q.t.water });
+  if (t.sound === "quiet") out.push({ k: "sound", label: "조용한 곳", test: q => q.t.sound === "quiet" });
+  if (!t.danger) out.push({ k: "danger", label: "위험 없음", test: q => !q.t.danger });
+  return out;
+}
+function makeAliens(planetList, sector) {
+  // Every request is built from one real planet of this sector, so each has at least one planet that fits.
+  const visited = planetList.filter(p => p.visited).sort(() => rnd() - .5);
+  const n = Math.min(sector + 1, visited.length), out = [];
+  for (let i = 0; i < n; i++) {
+    const [name, color] = pick(SPECIES);
+    const conds = condsFor(visited[i]);
+    const want = Math.min(conds.length, sector + 1);
+    const chosen = [];
+    const special = conds.filter(c => ["water", "sound", "danger"].includes(c.k));
+    if (special.length && rnd() < .8) chosen.push(pick(special));
+    while (chosen.length < want) { const pool = conds.filter(c => !chosen.includes(c)); chosen.push(pool[Math.floor(rnd() * pool.length)]); }
+    out.push({ name, color, line: pick(LINES), conds: chosen });
+  }
+  return out;
+}
+
+/* ---------- game state ---------- */
+const UPG = [
+  { k: "store", t: "대용량 저장 장치", d: "섹터마다 저장 용량 +3,000비트", c: 40 },
+  { k: "range", t: "장거리 탐사기", d: "섹터마다 행성 +2", c: 50 },
+  { k: "auto", t: "자동 해독기", d: "이진수 신호를 10진수로 바로 바꿔 줘요", c: 70 },
+  { k: "mic", t: "고속 마이크", d: "초당 40번 표본화를 쓸 수 있어요", c: 50 },
+  { k: "cam", t: "고속 영상 카메라", d: "초당 5장, 10장 촬영을 쓸 수 있어요", c: 50 },
+  { k: "cryo", t: "냉동 수면실", d: "배정 못 한 종족이 다음 섹터까지 기다려요", c: 40 },
+];
+let G = null;
+const hashStr = t => { let x = 2166136261; for (const ch of String(t)) x = Math.imul(x ^ ch.codePointAt(0), 16777619) >>> 0; return x; };
+function newRun(seed, code) {
+  rnd = seed != null ? seeded(seed) : Math.random;
+  G = { code: code || null, sector: 1, hearts: 3, credits: 0, upg: {}, colonies: [], waiting: [], all: [], tot: { dec: 0, ok: 0, bits: 0, reply: 0, replyOk: 0 }, opt: { res: 8, bits: 2, rate: 10, qb: 2, fps: 2, vres: 8 } };
+  startSector();
+}
+function startSector() {
+  if (G.code) rnd = seeded(hashStr(G.code) + G.sector * 1013);
+  G.sec = { dec: 0, ok: 0, ex: null, scans: { photo: [], sound: [], video: [] }, bits: 0, reply: null };
+  (G.hist = G.hist || []).push(G.sec);
+  const used = new Set(G.colonies.map(c => c.planet.name));
+  G.list = Array.from({ length: 5 + (G.upg.range ? 2 : 0) }, (_, i) => makePlanet(`P${G.sector}${i}`, used));
+  G.idx = -1; G.storeMax = 4000 + (G.upg.store ? 3000 : 0);
+  nextPlanet();
+}
+const planets = () => G.list;
+const dataCost = d => d ? d.cost : 0;
+const storeUsed = () => planets().reduce((a, p) => a + (p.visited ? SIG.length * 8 : 0) + dataCost(p.data.photo) + dataCost(p.data.sound) + dataCost(p.data.video), 0);
+
+/* ---------- HUD ---------- */
+function hud(title) {
+  const used = G.list ? storeUsed() : 0;
+  return h("div", { class: "hud" }, h("div", { class: "inner" },
+    h("b", {}, title),
+    h("span", { class: "stat" }, "섹터", h("span", { class: "v" }, `${G.sector}/3`)),
+    G.code ? h("span", { class: "stat" }, "반 코드", h("span", { class: "v" }, G.code)) : null,
+    h("span", { class: "stat hearts", "aria-label": `신뢰 ${G.hearts}` }, [0, 1, 2].map(i => h("span", { class: i < G.hearts ? "" : "off" }, "♥"))),
+    h("span", { class: "stat" }, "저장", h("span", { class: "hudbar" }, h("i", { class: used >= G.storeMax ? "full" : "", style: `width:${clamp(used / G.storeMax * 100, 0, 100)}%` })), h("span", { class: "v" }, `${fmt(used)}/${fmt(G.storeMax)}`)),
+    h("span", { class: "stat" }, "크레딧", h("span", { class: "v" }, G.credits)),
+    h("span", { class: "stat" }, "인구", h("span", { class: "v" }, totalPop())),
+    G.all && G.all.length ? h("button", { class: "btn sm hud-arc", id: "open-archive", onclick: openArchive }, "탐사 기록") : null));
+}
+
+/* ---------- explore ---------- */
+function nextPlanet() {
+  G.idx++;
+  if (G.idx >= G.list.length) return settle();
+  const p = G.list[G.idx];
+  p.visited = true; p.sector = G.sector;
+  if (!G.all.includes(p)) G.all.push(p);
+  if (G.upg.auto) for (const s of SIG) p.dec[s.k] = p.t[s.k];
+  explore();
+}
+const STEPS = [["decode", "신호 해독"], ["photo", "물 찾기"], ["sound", "소리 듣기"], ["video", "위험 찾기"]];
+function stageOf(p) {
+  if (SIG.some(sg => p.dec[sg.k] == null)) return "decode";
+  for (const k of ["photo", "sound", "video"]) if (p.note[NOTE[k].key] == null && !p.skip[k]) return k;
+  return "done";
+}
+function explore(flash) {
+  const p = G.list[G.idx], last = G.idx === G.list.length - 1;
+  p.skip = p.skip || {};
+  const st = stageOf(p);
+  const pad = n => String(n).padStart(2, "0");
+  const trail = h("div", { class: "trail", "aria-label": `행성 ${G.idx + 1} / ${G.list.length}` }, G.list.map((q, i) => h("span", { class: i < G.idx ? "done" : i === G.idx ? "now" : "" })));
+  const si = st === "done" ? STEPS.length : STEPS.findIndex(x => x[0] === st);
+  const stepper = h("ol", { class: "stepper", "aria-label": "조사 단계" }, STEPS.map(([k, t], i) => h("li", { class: i < si ? "done" : i === si ? "now" : "" }, h("span", {}, i < si ? "✓" : pad(i + 1)), t)));
+  const scope = h("canvas", { width: 760, height: 760, "aria-hidden": "true" });
+  $("#app").replaceChildren(hud("탐사"), h("div", { class: "wrap" },
+    h("div", { class: "mission" },
+      h("div", { style: "display:flex;flex-direction:column;gap:12px;min-width:0" },
+        h("div", {}, h("span", { class: "code" }, `섹터 ${G.sector} · 행성 ${pad(G.idx + 1)} / ${pad(G.list.length)}`), h("h1", {}, p.name)), trail),
+      stepper),
+    h("div", { class: "explore" },
+      h("div", { class: "side" }, h("div", { class: "box" }, h("div", { class: "scope" }, scope), summaryPanel(p, st)), storedList()),
+      stagePanel(p, st, flash, last))));
+  drawScope(scope, p);
+  const f = $(".stage input.num-in"); if (f) f.focus({ preventScroll: true });
+}
+function drawScope(cv, p) {
+  const ctx = cv.getContext("2d"), W = cv.width, c = W / 2, r = W * 0.3;
+  let hs = 0; for (const ch of p.name) hs = (hs * 31 + ch.charCodeAt(0)) >>> 0;
+  const R = seeded(hs), hue = 200 + R() * 80, tilt = (R() - .5) * .8, ring = R() < .45;
+  ctx.clearRect(0, 0, W, W);
+  ctx.strokeStyle = "rgba(159,227,255,.18)"; ctx.lineWidth = 1.5;
+  for (const k of [1.25, 1.55]) { ctx.beginPath(); ctx.arc(c, c, r * k, 0, 7); ctx.stroke(); }
+  ctx.setLineDash([4, 10]);
+  ctx.beginPath(); ctx.moveTo(c, W * .04); ctx.lineTo(c, W * .96); ctx.moveTo(W * .04, c); ctx.lineTo(W * .96, c); ctx.stroke();
+  ctx.setLineDash([]);
+  ctx.strokeStyle = "rgba(159,227,255,.6)"; ctx.lineWidth = 2;
+  for (let i = 0; i < 360; i += 10) { const a = i * Math.PI / 180, l = i % 90 === 0 ? 18 : 8; ctx.beginPath(); ctx.moveTo(c + Math.cos(a) * r * 1.55, c + Math.sin(a) * r * 1.55); ctx.lineTo(c + Math.cos(a) * (r * 1.55 - l), c + Math.sin(a) * (r * 1.55 - l)); ctx.stroke(); }
+  const drawRing = front => { ctx.save(); ctx.translate(c, c); ctx.rotate(tilt); ctx.strokeStyle = `hsla(${hue},70%,80%,.55)`; ctx.lineWidth = 6; ctx.beginPath(); ctx.ellipse(0, 0, r * 1.7, r * .34, 0, front ? 0 : Math.PI, front ? Math.PI : Math.PI * 2); ctx.stroke(); ctx.restore(); };
+  if (ring) drawRing(false);
+  const body = ctx.createRadialGradient(c - r * .4, c - r * .45, r * .05, c, c, r);
+  body.addColorStop(0, `hsl(${hue},45%,34%)`); body.addColorStop(.6, `hsl(${hue},55%,14%)`); body.addColorStop(1, "#04051a");
+  ctx.fillStyle = body; ctx.beginPath(); ctx.arc(c, c, r, 0, 7); ctx.fill();
+  ctx.save(); ctx.beginPath(); ctx.arc(c, c, r, 0, 7); ctx.clip();
+  ctx.strokeStyle = `hsla(${hue},80%,80%,.16)`; ctx.lineWidth = 1.5;
+  for (let i = -3; i <= 3; i++) { ctx.beginPath(); ctx.ellipse(c, c + i * r * .27, Math.sqrt(Math.max(0, 1 - (i * .27) ** 2)) * r, r * .06, 0, 0, 7); ctx.stroke(); }
+  for (let i = 1; i < 6; i++) { ctx.beginPath(); ctx.ellipse(c, c, r * Math.abs(Math.cos(i * Math.PI / 6)), r, 0, 0, 7); ctx.stroke(); }
+  ctx.restore();
+  ctx.strokeStyle = `hsla(${hue},90%,82%,.9)`; ctx.lineWidth = 3; ctx.shadowColor = `hsl(${hue},90%,70%)`; ctx.shadowBlur = 24;
+  ctx.beginPath(); ctx.arc(c, c, r, Math.PI * .95, Math.PI * 1.75); ctx.stroke(); ctx.shadowBlur = 0;
+  if (ring) drawRing(true);
+  ctx.fillStyle = "rgba(170,179,224,.8)"; ctx.font = `${W * .026}px "JetBrains Mono", monospace`;
+  ctx.fillText(`TGT ${p.id}`, W * .05, W * .07);
+  ctx.textAlign = "right"; ctx.fillText(`${SIG.filter(sg => p.dec[sg.k] != null).length}/${SIG.length} SIG`, W * .95, W * .07);
+  ctx.fillText(`SECTOR ${G.sector}`, W * .95, W * .96);
+}
+function stagePanel(p, st, flash, last) {
+  const bad = flash && /실패|모자라/.test(flash);
+  const msg = h("p", { class: "msg " + (bad ? "bad" : "ok"), role: "status" }, flash || "");
+  if (st === "decode") {
+    const n = SIG.filter(sg => p.dec[sg.k] != null).length, sg = SIG.find(x => p.dec[x.k] == null);
+    return h("div", { class: "box stage" }, h("div", { class: "phead" }, h("h3", {}, `${sg.t} 신호 해독`), h("span", { class: "code" }, `신호 ${n + 1} / ${SIG.length}`)),
+      sigRow(p, sg), msg);
+  }
+  if (st === "done") return h("div", { class: "box stage" }, h("div", { class: "phead" }, h("h3", {}, "조사 완료"), h("span", { class: "code" }, `${p.name}`)), msg,
+    h("p", { class: "dim" }, last ? "이 섹터의 마지막 행성이에요." : `남은 행성 ${G.list.length - G.idx - 1}개`),
+    h("button", { class: "btn primary big", id: "next-planet", onclick: nextPlanet }, last ? "정거장으로 →" : "다음 행성으로 →"));
+  const k = st, d = p.data[k];
+  const go = h("button", { class: "btn" + (d ? "" : " primary"), id: `scan-${k}`, onclick: () => { explore(scanOne(p, k) ? `${MEDIA[k]} 수신 완료` : "저장 공간이 모자라요"); } }, d ? "다시 스캔" : `${MEDIA[k]} 스캔`);
+  const skip = h("button", { class: "btn ghost", id: `skip-${k}`, onclick: () => { p.skip[k] = true; explore(); } }, "건너뛰기");
+  return h("div", { class: "box stage" },
+    h("div", { class: "phead" }, h("h3", {}, STEPS.find(x => x[0] === k)[1]), h("span", { class: "code" }, d ? `${MEDIA[k]} · ${fmt(d.cost)}비트` : MEDIA[k])),
+    gearFor(k),
+    h("div", { class: "row" }, go, skip),
+    msg,
+    d ? [mediaView(p, k), noteRow(p, k, () => explore(`${NOTE[k].q} 기록 완료`))] : null);
+}
+function summaryPanel(p, st) {
+  const line = (t, body, again) => h("div", { class: "sum-row" }, h("span", { class: "label" }, t), h("span", { class: "row", style: "gap:8px" }, body, again));
+  const sigs = SIG.map(sg => {
+    const v = p.dec[sg.k];
+    return line(sg.t, v == null ? h("span", { class: "mono", style: "color:var(--faint)" }, "— —") : h("span", { class: "mono", style: `font-size:17px;color:${v === p.t[sg.k] ? "var(--text)" : "var(--bad)"}` }, `${v}${sg.u}`), null);
+  });
+  const media = ["photo", "sound", "video"].map(k => {
+    const N = NOTE[k], v = p.note[N.key];
+    let body;
+    if (v != null) body = h("span", { class: "chip" }, N.opts.find(o => o[0] === v)[1]);
+    else if (p.skip[k]) body = h("span", { class: "mono", style: "color:var(--faint)" }, "건너뜀");
+    else body = h("span", { class: "mono", style: "color:var(--faint)" }, "— —");
+    const again = (v != null || p.skip[k]) && st !== k ? h("button", { class: "btn sm ghost", onclick: () => { delete p.note[N.key]; delete p.skip[k]; explore(); } }, "다시") : null;
+    return line(MEDIA[k], body, again);
+  });
+  return h("div", { style: "display:flex;flex-direction:column" }, sigs, h("div", { style: "height:10px;border-bottom:1px solid var(--hair-2)" }), media);
+}
+function sigRow(p, sg) {
+  const k = sg.k, v = p.t[k];
+  const bulbs = h("div", { class: "bulbs" }, Array.from({ length: 8 }, (_, i) => { const b = 7 - i, lit = (v >> b) & 1; return h("div", { class: "bulb" }, h("div", { class: "b" + (lit ? " lit" : "") }, lit), h("small", {}, 2 ** b)); }));
+  const inp = h("input", { class: "num-in", type: "number", inputmode: "numeric", id: `dec-${p.id}-${k}`, "aria-label": `${sg.t} 10진수`, placeholder: "10진수" });
+  const ok = h("button", { class: "btn primary" }, "해독");
+  ok.onclick = () => { if (inp.value === "") return; p.dec[k] = +inp.value;
+    G.sec.dec++; G.tot.dec++; if (+inp.value === v) { G.sec.ok++; G.tot.ok++; G.sec.ex = G.sec.ex || { t: sg.t, v }; } explore(+inp.value === v ? `${sg.t}: ${bin8(v)}₍₂₎ = ${v}` : `${sg.t}: 해독 실패`); };
+  inp.onkeydown = e => { if (e.key === "Enter") ok.click(); };
+  return h("div", { class: "sig" }, bulbs, h("div", { class: "decode-in" }, inp, h("span", { class: "mono dim" }, sg.u || ""), ok));
+}
+const MEDIA = { photo: "사진", sound: "소리", video: "영상" };
+function costOf(k) {
+  const o = G.opt;
+  if (k === "photo") return o.res * o.res * o.bits;
+  if (k === "sound") return o.rate * o.qb;
+  return o.vres * o.vres * 2 * o.fps * 3;
+}
+function formulaOf(k) {
+  const o = G.opt;
+  if (k === "photo") return `${o.res}×${o.res}픽셀 × ${o.bits}비트 = ${fmt(costOf(k))}비트`;
+  if (k === "sound") return `1초 × 초당 ${o.rate}번 × ${o.qb}비트 = ${fmt(costOf(k))}비트`;
+  return `${o.vres}×${o.vres} × 2비트 × 초당 ${o.fps}장 × 3초 = ${fmt(costOf(k))}비트`;
+}
+function scanOne(p, k) {
+  const o = G.opt, cost = costOf(k);
+  if (cost > G.storeMax - storeUsed() + dataCost(p.data[k])) return false;
+  if (k === "photo") p.data.photo = { res: o.res, bits: o.bits, cost };
+  else if (k === "sound") p.data.sound = { rate: o.rate, bits: o.qb, cost, s: sampleSound(p.t.sound, o.rate, o.qb) };
+  else p.data.video = { fps: o.fps, res: o.vres, cost };
+  G.sec.scans[k].push(formulaOf(k)); G.sec.bits += cost; G.tot.bits += cost;
+  return true;
+}
+function gearFor(k) {
+  const o = G.opt;
+  if (o.rate === 40 && !G.upg.mic) o.rate = 10;
+  if (o.fps > 2 && !G.upg.cam) o.fps = 2;
+  const choice = (label, key, opts) => h("div", { class: "row" }, h("span", { class: "label" }, label), h("div", { class: "seg" }, opts.map(([v, t, lock]) =>
+    h("button", { class: "btn sm" + (o[key] === v ? " on" : ""), disabled: !!lock, title: lock ? "정비소 업그레이드 필요" : null, onclick: () => { o[key] = v; explore(); } }, t, lock ? " 🔒" : ""))));
+  const rows = k === "photo" ? [choice("해상도", "res", [[8, "8×8"], [16, "16×16"]]), choice("색", "bits", [[1, "1비트"], [2, "2비트"]])]
+    : k === "sound" ? [choice("표본화", "rate", [[4, "초당 4번"], [10, "초당 10번"], [40, "초당 40번", !G.upg.mic]]), choice("양자화", "qb", [[2, "2비트"], [4, "4비트"]])]
+    : [choice("초당", "fps", [[1, "1장"], [2, "2장"], [5, "5장", !G.upg.cam], [10, "10장", !G.upg.cam]]), choice("해상도", "vres", [[8, "8×8"], [16, "16×16"]])];
+  return h("div", { class: "opts" }, rows, h("p", { class: "formula" }, formulaOf(k)));
+}
+function mediaView(p, k) {
+  const d = p.data[k];
+  if (k === "photo") { const cv = h("canvas", { class: "view", width: 240, height: 240 }); drawPhoto(cv, p.t.photo, d.res, d.bits); return h("div", { class: "row", style: "align-items:flex-end" }, cv, h("span", { class: "dim", style: "font-size:13px" }, "우주 · 땅 · ", h("b", { style: "color:#3d8bff" }, "물"), " · 얼음")); }
+  if (k === "sound") { const cv = h("canvas", { class: "wave", width: 460, height: 150 }); drawWave(cv, d.s, d.rate, d.bits); return h("div", { style: "display:flex;flex-direction:column;gap:6px" }, cv, h("div", {}, h("button", { class: "btn sm", onclick: () => playSound(d.s, d.rate) }, "▶ 들어 보기"))); }
+  return videoPlayer(p.t.video, d.fps, d.res);
+}
+const NOTE = {
+  photo: { key: "water", q: "물", opts: [[true, "물 있음"], [false, "물 없음"]] },
+  sound: { key: "sound", q: "소리", opts: [["quiet", "조용함"], ["loud", "시끄러움"]] },
+  video: { key: "danger", q: "위험", opts: [[true, "위험 있음"], [false, "위험 없음"]] },
+};
+function noteRow(p, k, rerender) {
+  const N = NOTE[k];
+  rerender = rerender || (() => explore("기록 완료"));
+  return h("div", { class: "row", style: "padding-top:14px;border-top:1px solid var(--hair)" }, h("span", { class: "label", style: "min-width:70px" }, "기록"), h("div", { class: "seg" }, N.opts.map(([v, t]) =>
+    h("button", { class: "btn sm" + (p.note[N.key] === v ? " on" : ""), onclick: () => { p.note[N.key] = v; rerender(); } }, t))));
+}
+function storedList() {
+  const rows = [], used = storeUsed();
+  for (const p of planets()) for (const k of ["photo", "sound", "video"]) if (p.data[k]) rows.push([p, k]);
+  return h("div", { class: "box" }, h("div", { class: "phead" }, h("h3", {}, "저장 장치"), h("span", { class: "mono dim", style: "font-size:13px" }, `${fmt(used)} / ${fmt(G.storeMax)}비트`)),
+    h("div", { class: "meter" }, h("i", { style: `width:${clamp(used / G.storeMax * 100, 0, 100)}%;${used >= G.storeMax ? "background:var(--bad)" : ""}` })),
+    rows.length ? h("div", { class: "stored" }, rows.map(([p, k]) => h("div", { class: "row" },
+      h("span", {}, `${p.name} · ${MEDIA[k]}`), h("span", { class: "row" }, h("span", { class: "mono dim", style: "font-size:13px" }, `${fmt(p.data[k].cost)}비트`),
+        h("button", { class: "btn sm danger", "aria-label": `${p.name} ${MEDIA[k]} 지우기`, onclick: () => { delete p.data[k]; explore(`${p.name} ${MEDIA[k]} 삭제`); } }, "지우기")))))
+      : h("p", { class: "dim", style: "font-size:14px" }, "저장된 자료 없음"));
+}
+
+/* ---------- settle ---------- */
+const FIX = { temp: "온도 조절 돔", grav: "중력 보조복", oxy: "산소 조절기", rad: "방사선 차폐막", water: "물 관리 시설", sound: "방음벽", danger: "재난 방어막" };
+const FIX_COST = 35;
+const takenBy = p => (G.colonies.find(c => c.alive && c.planet === p) || G.settle?.groups.find(g => g.planet === p));
+function settle() {
+  if (G.code) rnd = seeded(hashStr(G.code) + G.sector * 7919);
+  const fresh = makeAliens(planets(), G.sector).map(a => ({ ...a, pop: ri(80, 140), planet: null }));
+  const groups = [...(G.waiting || []).map(g => ({ ...g, planet: null })), ...fresh];
+  G.waiting = [];
+  G.settle = { groups, sel: 0, sort: null, dir: 1, view: "table", f: { water: "all", sound: "all", danger: "all" } };
+  renderSettle();
+}
+function renderSettle(flash) {
+  const S = G.settle;
+  const win = h("div", { class: "box window" });
+  const tableBox = h("div", { class: "box", id: "settle-table" });
+  $("#app").replaceChildren(hud("정착"), h("div", { class: "wrap" }, h("div", { class: "desk" }, win, tableBox)));
+  drawTable(tableBox);
+  const msg = h("p", { class: "msg info", role: "status", id: "settle-msg" }, flash || "");
+  const left = S.groups.filter(g => !g.planet).length;
+  win.append(
+    h("div", { class: "phead" }, h("h2", {}, "이주 신청"), h("span", { class: "code" }, `${S.groups.length}무리`)),
+    h("div", { style: "display:flex;flex-direction:column;gap:10px" }, S.groups.map((g, i) => h("div", { class: "req" + (i === S.sel ? " sel" : "") + (g.planet ? " done" : ""), tabindex: "0", role: "button", "aria-pressed": String(i === S.sel), "data-group": i,
+      onclick: () => { S.sel = i; renderSettle(); }, onkeydown: e => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); S.sel = i; renderSettle(); } } },
+      h("div", { class: "row", style: "flex-wrap:nowrap;gap:12px" }, h("div", { class: "alien" + (i === S.sel ? " idle" : ""), style: `background:${g.color};width:44px;height:44px` }),
+        h("div", { style: "min-width:0" }, h("h3", {}, `${g.name}족 `, h("span", { class: "mono dim", style: "font-size:14px" }, `${g.pop}명`)),
+          h("p", { class: "dim", style: "font-size:13px" }, g.planet ? `→ ${g.planet.name}` : `"${g.line}"`))),
+      h("div", { class: "row" }, g.conds.map(c => h("span", { class: "chip need" }, c.label)),
+        g.planet ? h("button", { class: "btn sm", onclick: e => { e.stopPropagation(); g.planet = null; S.sel = i; renderSettle(); } }, "배정 취소") : null)))),
+    msg,
+    h("button", { class: "btn primary big", id: "settle-done", style: "align-self:stretch", onclick: finishSettle }, "정착 시작"),
+    ...(left ? [h("p", { class: "dim", style: "font-size:14px;text-align:center" }, `배정 못 한 ${left}무리는 ${G.upg.cryo ? "냉동 수면실에서 기다려요" : "떠나요"}`)] : []));
+}
+function assign(p) {
+  const S = G.settle, g = S.groups[S.sel];
+  if (!g) return;
+  const owner = takenBy(p);
+  if (owner && owner !== g) { renderSettle(`${p.name}에는 이미 ${owner.name}족이 살고 있어요.`); return; }
+  g.planet = p;
+  const next = S.groups.findIndex(x => !x.planet);
+  if (next >= 0) S.sel = next;
+  renderSettle(`${g.name}족을 ${p.name}에 배정했어요.`);
+}
+function finishSettle() {
+  const S = G.settle;
+  for (const g of S.groups) {
+    if (g.planet) G.colonies.push({ name: g.name, color: g.color, conds: g.conds, pop: g.pop, start: g.pop, planet: g.planet, fixes: {}, known: {}, alive: true, sector: G.sector });
+    else if (G.upg.cryo) G.waiting.push(g);
+  }
+  G.settle = null;
+  replySignal();
+}
+function replySignal() {
+  const mine = G.colonies.filter(c => c.sector === G.sector && c.alive);
+  if (!mine.length) return report();
+  const col = mine[Math.floor(Math.random() * mine.length)], target = clamp(Math.round(col.pop), 1, 255);
+  const bits = [0, 0, 0, 0, 0, 0, 0, 0];
+  const box = h("div", { class: "box stage" });
+  const draw = (result) => {
+    const cells = h("div", { class: "bulbs" }, bits.map((b, i) => h("div", { class: "bulb" },
+      h("button", { class: "b" + (b ? " lit" : ""), id: `rb-${i}`, disabled: !!result, "aria-pressed": String(!!b), "aria-label": `${2 ** (7 - i)} 자리`, onclick: () => { bits[i] ^= 1; draw(); } }, b), h("small", {}, 2 ** (7 - i)))));
+    const sent = bits.reduce((a, b, i) => a + b * 2 ** (7 - i), 0);
+    box.replaceChildren(...[
+      h("div", { class: "phead" }, h("h3", {}, "답장 신호"), h("span", { class: "code" }, `${col.name}족 이주선`)),
+      h("p", {}, `${col.name}족이 ${col.planet.name}에 내렸어요. 정착 인구 `, h("b", { class: "mono", style: "font-size:22px;color:var(--signal)" }, target), "명을 이진수로 보내 확인해 주세요."),
+      cells,
+      result ? h("p", { class: "msg " + (result === "ok" ? "ok" : "bad") }, result === "ok" ? `수신 확인! ${bin8(target)}₍₂₎ = ${target} · 보너스 +15 크레딧` : `보낸 신호 ${bin8(sent)}₍₂₎ = ${sent} · 정답은 ${bin8(target)}₍₂₎`) : null,
+      result ? h("button", { class: "btn primary big", id: "to-report", onclick: report }, "보고서 보기 →")
+        : h("button", { class: "btn primary big", id: "send-reply", onclick: () => { const ok = sent === target; G.sec.reply = { target, sent, ok }; G.tot.reply++; if (ok) { G.tot.replyOk++; G.credits += 15; } draw(ok ? "ok" : "bad"); } }, "신호 보내기")].filter(Boolean));
+  };
+  draw();
+  $("#app").replaceChildren(hud("답장 신호"), h("div", { class: "wrap" }, h("div", { style: "max-width:760px;width:100%" }, box)));
+  window.scrollTo(0, 0);
+}
+const COLS = [...SIG.map(sg => ({ k: sg.k, t: sg.t })), { k: "water", t: "물" }, { k: "sound", t: "소리" }, { k: "danger", t: "위험" }];
+function drawTable(box) {
+  const D = G.settle, f = D.f;
+  G.cols = G.cols || [];
+  const rows0 = planets().filter(p => p.visited);
+  const redraw = () => { box.replaceChildren(); drawTable(box); };
+  const views = [["table", "표"], ["venn", "벤 다이어그램"], ["scatter", "산점도"]];
+  box.append(h("div", { class: "phead" }, h("h2", {}, "행성 자료"), h("div", { class: "seg" }, views.map(([k, t]) =>
+    h("button", { class: "btn sm" + (D.view === k ? " on" : ""), id: `sv-${k}`, onclick: () => { D.view = k; redraw(); } }, t)))));
+  const label = p => { const o = takenBy(p); return o ? `${p.name} · ${o.name}족` : p.name; };
+  if (D.view === "venn") { box.append(arcVenn(rows0, assign, label)); return; }
+  if (D.view === "scatter") { box.append(arcScatter(redraw, rows0, assign, label)); return; }
+  const on = k => G.cols.includes(k);
+  box.append(h("div", { class: "row colpick" }, h("span", { class: "label", style: "min-width:44px" }, "열"), h("div", { class: "seg" }, COLS.map(c =>
+    h("button", { class: "btn sm" + (on(c.k) ? " on" : ""), id: `col-${c.k}`, "aria-pressed": String(on(c.k)), onclick: () => { G.cols = on(c.k) ? G.cols.filter(x => x !== c.k) : COLS.map(x => x.k).filter(x => x === c.k || G.cols.includes(x)); redraw(); } }, c.t)))));
+  const sigs = SIG.filter(sg => on(sg.k));
+  const num = (p, k) => p.dec[k];
+  const pass = p => {
+    for (const sg of sigs) {
+      const lo = f[sg.k + "Min"], hi = f[sg.k + "Max"];
+      if (lo !== "" && lo != null && !(num(p, sg.k) >= +lo)) return false;
+      if (hi !== "" && hi != null && !(num(p, sg.k) <= +hi)) return false;
+    }
+    for (const k of ["water", "sound", "danger"]) if (on(k) && f[k] !== "all" && String(p.note[k]) !== f[k]) return false;
+    return true;
+  };
+  const rows = rows0.filter(pass);
+  if (D.sort && on(D.sort)) rows.sort((x, y) => { const u = num(x, D.sort), v = num(y, D.sort); if (u == null) return 1; if (v == null) return -1; return (u - v) * D.dir; });
+  const srt = (k, t) => h("button", { onclick: () => { if (D.sort === k) D.dir = -D.dir; else { D.sort = k; D.dir = 1; } redraw(); } }, t, D.sort === k ? (D.dir > 0 ? " ▲" : " ▼") : " ↕");
+  const numCell = (p, k) => p.dec[k] != null ? h("td", { class: "mono", style: p.dec[k] === p.t[k] ? null : "color:var(--bad)" }, p.dec[k]) : h("td", {}, h("span", { class: "bin" }, bin8(p.t[k])));
+  const chip = (v, yes, no) => v == null ? h("span", { class: "chip" }, "기록 없음") : h("span", { class: "chip", style: "color:var(--text)" }, v === true || v === "quiet" ? yes : no);
+  const zoom = (p, k) => e => { e.stopPropagation(); openModal(p, k); };
+  const tbody = h("tbody", {}, rows.map(p => {
+    const ph = p.data.photo, so = p.data.sound, vi = p.data.video, owner = takenBy(p);
+    let phEl = null, soEl = null;
+    if (ph) { phEl = h("canvas", { class: "thumb", width: 64, height: 64, onclick: zoom(p, "photo"), title: "크게 보기" }); drawPhoto(phEl, p.t.photo, ph.res, ph.bits); }
+    if (so) { soEl = h("canvas", { class: "mini", width: 144, height: 60, onclick: zoom(p, "sound"), title: "크게 보기" }); drawWave(soEl, so.s, so.rate, so.bits, true); }
+    const pickRow = () => assign(p);
+    return h("tr", { class: "pick", tabindex: "0", "data-name": p.name, onclick: pickRow, onkeydown: e => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); pickRow(); } } },
+      h("td", {}, p.name), sigs.map(sg => numCell(p, sg.k)),
+      on("water") ? h("td", {}, h("span", { class: "cellflex" }, phEl, chip(p.note.water, "물 있음", "물 없음"))) : null,
+      on("sound") ? h("td", {}, h("span", { class: "cellflex" }, soEl, chip(p.note.sound, "조용함", "시끄러움"))) : null,
+      on("danger") ? h("td", {}, h("span", { class: "cellflex" }, vi ? h("button", { class: "btn sm", "aria-label": `${p.name} 영상 보기`, onclick: zoom(p, "video") }, "▶") : null, chip(p.note.danger, "위험 있음", "위험 없음"))) : null,
+      h("td", {}, owner ? h("span", { class: "chip", style: `border-color:${owner.color};color:${owner.color}` }, `${owner.name}족`) : h("span", { class: "dim" }, "비어 있음")));
+  }));
+  const ncol = 2 + G.cols.length;
+  if (!rows.length) tbody.append(h("tr", {}, h("td", { colspan: ncol, class: "unk" }, rows0.length ? "필터에 맞는 행성이 없어요." : "이번 섹터에서 다녀온 행성이 없어요.")));
+  const inp = (k, ph, lab) => h("input", { type: "number", inputmode: "numeric", placeholder: ph, value: f[k] ?? "", id: `flt-${k}`, "aria-label": `${lab} ${ph}`, onchange: e => { f[k] = e.target.value; redraw(); } });
+  const sel = (k, lab, opts) => h("label", {}, lab, h("select", { id: `flt-${k}`, "aria-label": lab, onchange: e => { f[k] = e.target.value; redraw(); } },
+    [["all", "전체"], ...opts].map(([v, t]) => h("option", { value: v, selected: f[k] === v }, t))));
+  const filters = [...sigs.map(sg => h("label", {}, sg.t, inp(sg.k + "Min", "최소", sg.t), "~", inp(sg.k + "Max", "최대", sg.t))),
+    on("water") ? sel("water", "물", [["true", "있음"], ["false", "없음"]]) : null, on("sound") ? sel("sound", "소리", [["quiet", "조용함"], ["loud", "시끄러움"]]) : null, on("danger") ? sel("danger", "위험", [["false", "없음"], ["true", "있음"]]) : null].filter(Boolean);
+  if (filters.length) box.append(h("div", { class: "filters" }, filters));
+  box.append(
+    h("div", { class: "tbl-wrap" }, h("table", { class: "pt", style: `min-width:${Math.min(860, 260 + G.cols.length * 90)}px` },
+      h("thead", {}, h("tr", {}, h("th", { scope: "col" }, "행성"), sigs.map(sg => h("th", { scope: "col" }, srt(sg.k, sg.t + (sg.u ? ` ${sg.u}` : "")))),
+        on("water") ? h("th", { scope: "col" }, "사진 · 물") : null, on("sound") ? h("th", { scope: "col" }, "소리") : null, on("danger") ? h("th", { scope: "col" }, "영상 · 위험") : null, h("th", { scope: "col" }, "정착"))), tbody)));
+}
+function openModal(p, k) {
+  const close = () => $("#modal").replaceChildren();
+  const rerender = () => { close(); if (G.settle) renderSettle(); };
+  const box = h("div", { class: "box", role: "dialog", "aria-modal": "true", "aria-label": `${p.name} 자료` },
+    h("div", { class: "row", style: "justify-content:space-between" }, h("h3", {}, p.name), h("button", { class: "btn sm", onclick: close }, "닫기")),
+    mediaView(p, k), noteRow(p, k, rerender));
+  $("#modal").replaceChildren(h("div", { class: "modal", onclick: e => { if (e.target.classList.contains("modal")) close(); } }, box));
+}
+
+/* ---------- colony years ---------- */
+function eventText(col, k) {
+  const t = col.planet.t;
+  if (k === "water") return t.water ? "물이 넘쳐 마을이 잠겼어요." : "물이 없어 농사를 망쳤어요.";
+  if (k === "danger") return t.video === "volcano" ? "화산이 폭발했어요! 마을 절반이 대피했어요." : "번개가 마을을 덮쳤어요!";
+  if (k === "sound") return t.sound === "storm" ? "밤마다 폭풍 소리에 아무도 잠을 못 자요." : "바람 소리가 너무 시끄러워 다들 지쳤어요.";
+  if (k === "temp") return `기온이 ${t.temp}℃라서 주민들이 견디기 힘들어해요.`;
+  if (k === "oxy") return `산소가 ${t.oxy}%라서 숨쉬기가 힘들어요.`;
+  if (k === "rad") return `방사선 ${t.rad} 때문에 병에 걸린 주민이 늘었어요.`;
+  return `중력이 ${t.grav}라서 다들 몸이 아파요.`;
+}
+function report() {
+  const YEARS = 3, cards = [];
+  let income = 0;
+  for (const col of G.colonies.filter(c => c.alive)) {
+    const before = Math.round(col.pop), lines = [];
+    for (let y = 1; y <= YEARS; y++) {
+      const fails = col.conds.filter(c => !c.test(col.planet) && !col.fixes[c.k]);
+      if (!fails.length) { col.pop *= 1.2; if (y === YEARS && !lines.length) lines.push(["ok", "모두 만족하며 잘 지내요."]); }
+      else {
+        col.pop *= Math.pow(0.75, fails.length);
+        let fresh = false;
+        for (const f of fails) if (!col.known[f.k]) { col.known[f.k] = true; fresh = true; lines.push(["bad", `${y}년째: ${eventText(col, f.k)}`]); }
+        if (!fresh && !lines.length) lines.push(["bad", `문제가 계속돼요. ${fails.map(f => FIX[f.k]).join(", ")}이(가) 필요해요.`]);
+      }
+    }
+    const after = Math.round(col.pop);
+    if (after < 25) { col.alive = false; G.hearts--; lines.push(["bad", "정착지가 무너져 남은 주민들이 떠났어요. 신뢰 -1"]); }
+    else income += Math.floor(after / 10);
+    cards.push({ col, before, after, lines });
+  }
+  G.credits += income;
+  if (G.hearts <= 0) return gameOver("정착지가 너무 많이 무너져 이주 위원회가 당신을 해고했어요.");
+  $("#app").replaceChildren(hud("정착지 보고서"), h("div", { class: "wrap" },
+    h("div", { class: "box" }, h("h2", {}, `${YEARS}년이 흘렀어요`), h("p", { class: "mono", style: "color:var(--signal)" }, `세금 +${income} 크레딧`)),
+    sectorRecap(),
+    cards.length ? h("div", { class: "lessons" }, cards.map(({ col, before, after, lines }) => h("div", { style: "display:flex;flex-direction:column;gap:6px" },
+      h("div", { class: "row", style: "flex-wrap:nowrap;gap:10px" }, h("div", { class: "alien" + (after < before ? " mood-angry" : ""), style: `background:${col.color};width:40px;height:40px` }),
+        h("b", {}, `${col.name}족 · ${col.planet.name}`)),
+      h("span", { class: "mono", style: `color:${after >= before ? "var(--ok)" : "var(--bad)"}` }, `인구 ${before} → ${col.alive ? after : 0}`),
+      lines.map(([k, t]) => h("span", { style: `color:${k === "ok" ? "var(--ok)" : "var(--bad)"}` }, t)))))
+      : h("p", { class: "dim" }, "아직 정착지가 없어요."),
+    h("div", { class: "row" }, h("button", { class: "btn primary", id: "to-shop", onclick: shop }, G.sector >= 3 ? "항해 결과 보기" : "정비소로"))));
+  window.scrollTo(0, 0);
+}
+function resultCard() {
+  const T = G.tot, notes = [], pct = (a, b) => b ? `${Math.round(a / b * 100)}%` : "—";
+  for (const p of G.all) for (const k of ["photo", "sound", "video"]) { const key = NOTE[k].key, v = p.note[key]; if (v != null) notes.push(key === "sound" ? (v === "quiet") === (p.t.sound === "quiet") : v === p.t[key]); }
+  const good = notes.filter(Boolean).length, alive = G.colonies.filter(c => c.alive).length;
+  const cell = (t, v) => h("div", { class: "rc-cell" }, h("span", { class: "label" }, t), h("b", { class: "mono" }, v));
+  return h("div", { class: "rcard", id: "result-card" },
+    h("div", { class: "row", style: "justify-content:space-between" }, h("span", { class: "code" }, "결과 카드"), h("span", { class: "code" }, `${G.code ? `반 코드 ${G.code} · ` : ""}${new Date().toLocaleDateString("ko-KR")}`)),
+    h("div", { class: "rc-grid" },
+      cell("이진수 해독", `${T.ok}/${T.dec} (${pct(T.ok, T.dec)})`), cell("기록 정확도", `${good}/${notes.length} (${pct(good, notes.length)})`),
+      cell("답장 신호", `${T.replyOk}/${T.reply}`), cell("사용한 데이터", `${fmt(T.bits)}비트`),
+      cell("조사한 행성", `${G.all.length}개`), cell("정착 성공", `${alive}/${G.colonies.length}곳`), cell("총 인구", `${totalPop()}명`)));
+}
+function sectorRecap() {
+  const S = G.sec, line = (t, v) => h("div", { class: "sum-row" }, h("span", { class: "label" }, t), h("span", { class: "mono", style: "text-align:right" }, v));
+  const media = k => { const a = S.scans[k]; return a.length ? `${a.length}번 · 마지막 ${a[a.length - 1]}` : "스캔 안 함"; };
+  return h("div", { class: "box" }, h("div", { class: "phead" }, h("h3", {}, `섹터 ${G.sector} 데이터 정리`), h("span", { class: "code" }, `저장 ${fmt(S.bits)}비트 사용`)),
+    h("div", {},
+      line("이진수 해독", `${S.ok} / ${S.dec} 정답${S.ex ? ` · 예) ${bin8(S.ex.v)}₍₂₎ = ${S.ex.v}` : ""}`),
+      line("사진", media("photo")), line("소리", media("sound")), line("영상", media("video")),
+      line("답장 신호", S.reply ? (S.reply.ok ? `${S.reply.target} → ${bin8(S.reply.target)}₍₂₎ 성공` : `${S.reply.target}를 ${bin8(S.reply.sent)}₍₂₎로 보냄 · 정답 ${bin8(S.reply.target)}₍₂₎`) : "없음")));
+}
+const totalPop = () => Math.round(G.colonies.filter(c => c.alive).reduce((a, c) => a + c.pop, 0));
+
+/* ---------- shop / end ---------- */
+function shop() {
+  if (G.sector >= 3) return endRun(true);
+  const troubled = G.colonies.filter(c => c.alive && c.conds.some(k => G.colonies && c.known[k.k] && !c.fixes[k.k]));
+  const fixes = troubled.length ? h("div", { class: "shop" }, troubled.flatMap(c => c.conds.filter(k => c.known[k.k] && !c.fixes[k.k]).map(k =>
+    h("div", { class: "item" }, h("h3", {}, FIX[k.k]), h("p", { class: "dim", style: "font-size:14px" }, `${c.name}족 · ${c.planet.name}: ${eventText(c, k.k)}`),
+      h("button", { class: "btn sm", disabled: G.credits < FIX_COST, onclick: () => { G.credits -= FIX_COST; c.fixes[k.k] = true; shop(); } }, h("span", { class: "price" }, `${FIX_COST} 크레딧`), " 짓기")))))
+    : h("p", { class: "dim" }, "고칠 문제가 있는 정착지가 없어요.");
+  const items = h("div", { class: "shop" }, UPG.map(u => {
+    const owned = G.upg[u.k];
+    return h("div", { class: "item" + (owned ? " owned" : "") }, h("h3", {}, u.t), h("p", { class: "dim", style: "font-size:14px" }, u.d),
+      owned ? h("span", { class: "chip yes" }, "장착됨") : h("button", { class: "btn sm", disabled: G.credits < u.c, onclick: () => { G.credits -= u.c; G.upg[u.k] = true; shop(); } }, h("span", { class: "price" }, `${u.c} 크레딧`), " 구매"));
+  }));
+  $("#app").replaceChildren(hud("정비소"), h("div", { class: "wrap" },
+    h("div", { class: "box" }, h("h2", {}, "정착지 시설"), fixes),
+    h("div", { class: "box" }, h("h2", {}, "탐사선 장비"), items),
+    h("div", { class: "row" }, h("button", { class: "btn primary", id: "next-sector", onclick: () => { G.sector++; startSector(); } }, `섹터 ${G.sector + 1}로 출발`))));
+  window.scrollTo(0, 0);
+}
+const LESSONS = [
+  ["이진수", "켜진 전구(1)의 자릿값을 더하면 10진수가 돼요. 8비트로는 0~255까지 나타낼 수 있어요."],
+  ["사진", "사진 용량 = 가로 픽셀 × 세로 픽셀 × 색 비트. 해상도가 낮으면 작은 호수를 놓치고, 1비트(2색)로는 물과 땅이 구분되지 않아요."],
+  ["소리", "소리 용량 = 시간 × 초당 표본화 횟수 × 양자화 비트. 듬성듬성 재면 짧은 폭풍 소리를 놓쳐요."],
+  ["영상", "영상 용량 = 프레임 한 장 크기 × 초당 프레임 수 × 시간. 프레임이 적으면 짧은 화산 폭발을 놓쳐요."],
+  ["데이터 구조화", "사진·소리·영상을 보고 '물 있음' 같은 값으로 기록해야 표에서 비교하고 거를 수 있어요."],
+  ["표", "행성마다 온도, 중력, 산소, 방사선, 물, 소리, 위험을 한 줄로 정리하면 정렬과 필터로 조건에 맞는 행성을 바로 찾을 수 있어요."],
+];
+function endRun(won, why) {
+  const score = totalPop();
+  save.runs++; const newBest = score > save.best; if (newBest) save.best = score; persist();
+  G.end = { won, why, score, newBest };
+  endScreen();
+}
+function endScreen() {
+  const { won, why, score, newBest } = G.end, alive = G.colonies.filter(c => c.alive).length;
+  $("#app").replaceChildren(h("div", { class: "wrap" },
+    h("div", { class: "box" },
+      h("span", { class: "kicker" }, won ? "항해 완료" : "항해 실패"),
+      h("h1", { style: "font-size:clamp(40px,9vw,64px)" }, won ? "세 섹터 모두 통과!" : "이주선 귀환"),
+      why ? h("p", { class: "msg bad" }, why) : null,
+      h("p", { class: "mono", style: "font-size:20px" }, `총 인구 ${score}${newBest ? " · 최고 기록!" : ""}`),
+      h("p", { class: "dim" }, `살아남은 정착지 ${alive} / ${G.colonies.length}곳 · 최고 기록 ${save.best}명`),
+      resultCard(),
+      h("div", { class: "row" }, h("button", { class: "btn primary", onclick: () => newRun() }, "새 항해 시작"), h("button", { class: "btn", id: "to-sheet", onclick: sheet }, "결과지"), h("button", { class: "btn", onclick: home }, "처음 화면"), G.all.length ? h("button", { class: "btn", onclick: openArchive }, "탐사 기록 보기") : null)),
+    h("div", { class: "box" }, h("h3", {}, "이번 항해에서 쓴 데이터 지식"), h("div", { class: "lessons" }, LESSONS.map(([t, d]) => h("div", {}, h("b", {}, t), d))))));
+  window.scrollTo(0, 0);
+}
+const gameOver = why => endRun(false, why);
+function sheet() {
+  const name = h("input", { class: "name-in", id: "sheet-name", type: "text", maxlength: 20, placeholder: "이름 쓰기", "aria-label": "이름", value: G.name || "" });
+  name.oninput = () => { G.name = name.value; };
+  const fit = G.colonies.filter(c => c.conds.every(k => k.test(c.planet))).length;
+  const th = t => h("th", { scope: "col" }, t), td = v => h("td", { class: "mono" }, v);
+  const sectors = h("div", { class: "tbl-wrap" }, h("table", { class: "pt", style: "min-width:620px" },
+    h("thead", {}, h("tr", {}, ["섹터", "이진수 해독", "사진", "소리", "영상", "사용 비트", "답장 신호"].map(th))),
+    h("tbody", {}, (G.hist || []).map((S, i) => h("tr", {}, td(i + 1), td(`${S.ok}/${S.dec}`),
+      ["photo", "sound", "video"].map(k => td(S.scans[k].length ? `${S.scans[k].length}번` : "—")), td(fmt(S.bits)),
+      td(S.reply ? (S.reply.ok ? "성공" : "실패") : "—"))))));
+  const cols = G.cols && G.cols.length ? COLS.filter(c => G.cols.includes(c.k)).map(c => c.t).join(", ") : "고르지 않음";
+  const sec = (t, ...kids) => h("section", { style: "display:flex;flex-direction:column;gap:10px;min-width:0" }, h("h3", {}, t), ...kids);
+  $("#app").replaceChildren(h("div", { class: "wrap" },
+    h("div", { class: "box sheet", id: "sheet" },
+      h("span", { class: "kicker" }, "행성 탐사 결과지"),
+      h("div", { class: "sheet-head" },
+        h("label", { class: "label row", style: "gap:8px" }, "이름", name),
+        G.code ? h("span", { class: "label" }, "반 코드 ", h("b", {}, G.code)) : null,
+        h("span", { class: "label" }, "날짜 ", h("b", {}, new Date().toLocaleDateString("ko-KR"))),
+        h("span", { class: "label" }, "결과 ", h("b", {}, G.end.won ? "세 섹터 통과" : `섹터 ${G.sector}에서 귀환`))),
+      resultCard(),
+      sec("이주 신청 배정", h("p", {}, `조건을 모두 맞춘 배정 ${fit} / ${G.colonies.length}곳`)),
+      sec("섹터별 기록", sectors),
+      sec("표 설계", h("p", {}, `직접 고른 열: ${cols}`)),
+      sec("조사한 행성", G.all.length ? arcTable() : h("p", { class: "dim" }, "조사한 행성이 없어요."), h("p", { class: "dim", style: "font-size:13px" }, "빨간 값은 해독이 틀린 값이에요.")),
+      h("div", { class: "row no-print" }, h("button", { class: "btn primary", id: "print-sheet", onclick: () => window.print() }, "인쇄하기"), h("button", { class: "btn", id: "sheet-back", onclick: endScreen }, "돌아가기")))));
+  window.scrollTo(0, 0);
+}
+
+function home() {
+  $("#app").replaceChildren(h("main", { class: "home" },
+    h("canvas", { class: "home-planet", width: 640, height: 640, "aria-hidden": "true" }),
+    h("div", { class: "home-title" }, h("span", { class: "home-kicker" }, "PLANET SEARCH"), h("h1", {}, "행성 탐사")),
+    h("nav", { class: "home-menu", "aria-label": "메뉴" },
+      h("button", { class: "menu-btn primary", id: "start", onclick: () => newRun() }, "항해 시작"),
+      h("button", { class: "menu-btn", id: "class-code", onclick: classCode }, "반 코드로 시작"),
+      h("button", { class: "menu-btn", id: "notes", onclick: dataNotes }, "데이터 노트"),
+      save.best ? h("span", { class: "menu-best mono" }, `최고 기록 ${save.best}명`) : null)));
+  drawHomePlanet($(".home-planet"));
+  window.scrollTo(0, 0);
+}
+function classCode() {
+  const close = () => $("#modal").replaceChildren();
+  const inp = h("input", { class: "num-in", id: "code-in", type: "text", maxlength: 12, placeholder: "예: 1-3반", "aria-label": "반 코드", style: "width:220px;font-size:20px" });
+  const msg = h("p", { class: "msg bad", role: "status" });
+  const go = () => { const c = inp.value.trim(); if (!c) { msg.textContent = "반 코드를 입력해 주세요."; return; } close(); newRun(null, c); };
+  inp.onkeydown = e => { if (e.key === "Enter") go(); };
+  $("#modal").replaceChildren(h("div", { class: "modal", onclick: e => { if (e.target.classList.contains("modal")) close(); } },
+    h("div", { class: "box", role: "dialog", "aria-modal": "true", "aria-label": "반 코드로 시작" },
+      h("div", { class: "phead" }, h("h2", {}, "반 코드로 시작"), h("button", { class: "btn sm", onclick: close }, "닫기")),
+      h("p", { class: "dim" }, "같은 코드를 넣은 사람은 모두 같은 행성과 같은 이주 신청을 만나요."),
+      h("div", { class: "decode-in" }, inp, h("button", { class: "btn primary", id: "code-go", onclick: go }, "항해 시작")), msg)));
+  inp.focus();
+}
+function dataNotes() {
+  const close = () => $("#modal").replaceChildren();
+  $("#modal").replaceChildren(h("div", { class: "modal", onclick: e => { if (e.target.classList.contains("modal")) close(); } },
+    h("div", { class: "box", role: "dialog", "aria-modal": "true", "aria-label": "데이터 노트", style: "width:min(720px,100%)" },
+      h("div", { class: "row", style: "justify-content:space-between" }, h("h2", {}, "데이터 노트"), h("button", { class: "btn sm", onclick: close }, "닫기")),
+      h("div", { class: "lessons" }, LESSONS.map(([t, d]) => h("div", {}, h("b", {}, t), d))))));
+}
+function drawHomePlanet(cv) {
+  if (!cv) return;
+  const ctx = cv.getContext("2d"), W = cv.width, c = W / 2, r = W * 0.29;
+  const glow = ctx.createRadialGradient(c, c, r * 0.9, c, c, r * 1.35);
+  glow.addColorStop(0, "#5b7cff55"); glow.addColorStop(1, "#5b7cff00");
+  ctx.fillStyle = glow; ctx.fillRect(0, 0, W, W);
+  ctx.save(); ctx.beginPath(); ctx.arc(c, c, r, 0, 7); ctx.clip();
+  const body = ctx.createRadialGradient(c - r * .35, c - r * .4, r * .1, c, c, r);
+  body.addColorStop(0, "#6fa8ff"); body.addColorStop(.55, "#2f4fb8"); body.addColorStop(1, "#141a52");
+  ctx.fillStyle = body; ctx.fillRect(0, 0, W, W);
+  const R = seeded(7);
+  for (let i = 0; i < 14; i++) { ctx.fillStyle = `rgba(201,154,91,${.35 + R() * .3})`; ctx.beginPath(); ctx.ellipse(c - r + R() * r * 2, c - r + R() * r * 2, r * (.08 + R() * .2), r * (.05 + R() * .12), R() * 3, 0, 7); ctx.fill(); }
+  const shade = ctx.createRadialGradient(c - r * .5, c - r * .5, r * .2, c + r * .2, c + r * .2, r * 1.2);
+  shade.addColorStop(0, "#00000000"); shade.addColorStop(1, "#000018dd");
+  ctx.fillStyle = shade; ctx.fillRect(0, 0, W, W); ctx.restore();
+  ctx.strokeStyle = "#ffd59a88"; ctx.lineWidth = 3;
+  ctx.beginPath(); ctx.ellipse(c, c, r * 1.55, r * .32, -.35, Math.PI * 1.04, Math.PI * 1.96); ctx.stroke();
+  ctx.save(); ctx.beginPath(); ctx.rect(0, 0, W, W); ctx.arc(c, c, r, 0, 7, true); ctx.clip("evenodd");
+  ctx.beginPath(); ctx.ellipse(c, c, r * 1.55, r * .32, -.35, 0, Math.PI); ctx.stroke(); ctx.restore();
+}
+
+/* ---------- archive: every planet the player measured, as a table and diagrams ---------- */
+const ARC = { tab: "table", bar: "temp", x: "temp", y: "oxy", focus: null };
+const esc = t => String(t).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]);
+function openArchive() {
+  const close = () => $("#modal").replaceChildren();
+  const tabBar = h("div", { class: "seg" });
+  const body = h("div", { class: "arc-body" });
+  const box = h("div", { class: "box arc", role: "dialog", "aria-modal": "true", "aria-label": "탐사 기록" },
+    h("div", { class: "phead" }, h("h2", {}, "탐사 기록"), h("div", { class: "row" }, h("span", { class: "code" }, `행성 ${G.all.length}개`), h("button", { class: "btn sm", id: "close-archive", onclick: close }, "닫기"))),
+    tabBar, body);
+  const draw = () => {
+    const tabs = [["table", "표"], ["bar", "막대그래프"], ["scatter", "산점도"], ["venn", "벤 다이어그램"], ["mind", "마인드맵"]];
+    const view = ARC.tab === "table" ? arcTable() : ARC.tab === "bar" ? arcBar(draw) : ARC.tab === "scatter" ? arcScatter(draw) : ARC.tab === "venn" ? arcVenn() : arcMind(draw);
+    tabBar.replaceChildren(...tabs.map(([k, t]) => h("button", { class: "btn sm" + (ARC.tab === k ? " on" : ""), id: `arc-${k}`, onclick: () => { ARC.tab = k; draw(); } }, t)));
+    body.replaceChildren(view); body.scrollTop = 0;
+  };
+  draw();
+  $("#modal").replaceChildren(h("div", { class: "modal", onclick: e => { if (e.target.classList.contains("modal")) close(); } }, box));
+}
+const noteText = (p, k) => { const N = NOTE[k], v = p.note[N.key]; return v == null ? null : N.opts.find(o => o[0] === v)[1]; };
+const settler = p => { const c = G.colonies.find(c => c.planet === p); return c ? (c.alive ? `${c.name}족` : `${c.name}족 (떠남)`) : null; };
+function arcTable() {
+  const cell = (p, k) => { const v = p.dec[k], sg = SIG.find(x => x.k === k); return h("td", { class: "mono", style: v === p.t[k] ? null : "color:var(--bad)" }, v == null ? "—" : `${v}${sg.u}`); };
+  return h("div", { class: "tbl-wrap" }, h("table", { class: "pt", style: "min-width:760px" },
+    h("thead", {}, h("tr", {}, ["섹터", "행성", ...SIG.map(sg => sg.t + (sg.u ? ` ${sg.u}` : "")), "물", "소리", "위험", "정착"].map(t => h("th", { scope: "col" }, t)))),
+    h("tbody", {}, G.all.map(p => h("tr", {}, h("td", { class: "mono" }, p.sector), h("td", {}, p.name), SIG.map(sg => cell(p, sg.k)),
+      ["photo", "sound", "video"].map(k => h("td", {}, noteText(p, k) || h("span", { class: "dim" }, "—"))),
+      h("td", {}, settler(p) || h("span", { class: "dim" }, "—")))))));
+}
+function pickSeg(label, key, redraw) {
+  return h("div", { class: "row" }, h("span", { class: "label", style: "min-width:44px" }, label), h("div", { class: "seg" }, SIG.map(sg =>
+    h("button", { class: "btn sm" + (ARC[key] === sg.k ? " on" : ""), onclick: () => { ARC[key] = sg.k; redraw(); } }, sg.t))));
+}
+const svgBox = (svg, w) => { const d = h("div", { class: "chart", style: `--w:${w}px` }); d.innerHTML = svg; return d; };
+function arcBar(redraw) {
+  const k = ARC.bar, sg = SIG.find(x => x.k === k), rows = G.all.filter(p => p.dec[k] != null);
+  const max = Math.max(1, ...rows.map(p => p.dec[k])), nice = Math.ceil(max / 10) * 10;
+  const L = 120, R = 60, W = 720, bh = 22, gap = 10, T = 30, H = T + rows.length * (bh + gap) + 10;
+  const x = v => L + (W - L - R) * v / nice;
+  let svg = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="${esc(sg.t)} 막대그래프">`;
+  for (let i = 0; i <= 4; i++) { const v = nice * i / 4, xx = x(v); svg += `<line class="grid" x1="${xx}" y1="${T - 8}" x2="${xx}" y2="${H - 6}"/><text class="tick" x="${xx}" y="${T - 14}" text-anchor="middle">${Math.round(v)}</text>`; }
+  rows.forEach((p, i) => {
+    const y = T + i * (bh + gap), v = p.dec[k], wrong = v !== p.t[k];
+    svg += `<text class="lab" x="${L - 12}" y="${y + bh * .72}" text-anchor="end">${esc(p.name)}</text><rect class="${wrong ? "bar wrong" : "bar"}" x="${L}" y="${y}" width="${Math.max(2, x(v) - L)}" height="${bh}" rx="2"/><text class="val" x="${x(v) + 8}" y="${y + bh * .72}">${v}${esc(sg.u)}</text>`;
+  });
+  svg += "</svg>";
+  return h("div", { style: "display:flex;flex-direction:column;gap:14px;min-width:0" }, pickSeg("값", "bar", redraw),
+    rows.length ? svgBox(svg, W) : h("p", { class: "dim" }, "아직 해독한 값이 없어요."));
+}
+function arcScatter(redraw, list = G.all, onPick, label = p => p.name) {
+  const kx = ARC.x, ky = ARC.y, sx = SIG.find(s => s.k === kx), sy = SIG.find(s => s.k === ky);
+  const rows = list.filter(p => p.dec[kx] != null && p.dec[ky] != null);
+  const W = 760, H = 460, L = 60, R = 90, T = 24, B = 56;
+  const mx = Math.ceil(Math.max(1, ...rows.map(p => p.dec[kx])) / 10) * 10, my = Math.ceil(Math.max(1, ...rows.map(p => p.dec[ky])) / 10) * 10;
+  const X = v => L + (W - L - R) * v / mx, Y = v => H - B - (H - T - B) * v / my;
+  let svg = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="${esc(sx.t)}와 ${esc(sy.t)} 산점도">`;
+  for (let i = 0; i <= 4; i++) {
+    const vx = mx * i / 4, vy = my * i / 4;
+    svg += `<line class="grid" x1="${X(vx)}" y1="${T}" x2="${X(vx)}" y2="${H - B}"/><text class="tick" x="${X(vx)}" y="${H - B + 20}" text-anchor="middle">${Math.round(vx)}</text>`;
+    svg += `<line class="grid" x1="${L}" y1="${Y(vy)}" x2="${W - R}" y2="${Y(vy)}"/><text class="tick" x="${L - 10}" y="${Y(vy) + 4}" text-anchor="end">${Math.round(vy)}</text>`;
+  }
+  svg += `<line class="axis" x1="${L}" y1="${H - B}" x2="${W - R}" y2="${H - B}"/><line class="axis" x1="${L}" y1="${T}" x2="${L}" y2="${H - B}"/>`;
+  svg += `<text class="lab" x="${(L + W - R) / 2}" y="${H - 12}" text-anchor="middle">${esc(sx.t)}${sx.u ? ` (${esc(sx.u)})` : ""} →</text>`;
+  svg += `<text class="lab" x="16" y="${(T + H - B) / 2}" text-anchor="middle" transform="rotate(-90 16 ${(T + H - B) / 2})">${esc(sy.t)}${sy.u ? ` (${esc(sy.u)})` : ""} →</text>`;
+  for (const p of rows) {
+    const w = p.note.water, cls = w === true ? "pt-w" : w === false ? "pt-d" : "pt-n";
+    const cx = X(p.dec[kx]), cy = Y(p.dec[ky]);
+    svg += `<g ${onPick ? `data-pick="${p.id}" class="pickable" tabindex="0" role="button"` : ""}><circle class="${cls}" cx="${cx}" cy="${cy}" r="7"/><text class="pname" x="${cx + 11}" y="${cy + 4}">${esc(label(p))}</text></g>`;
+  }
+  svg += "</svg>";
+  const key = (cls, t) => h("span", { class: "row", style: "gap:6px" }, h("i", { class: "dot " + cls }), t);
+  const sbox = rows.length ? pickable(svgBox(svg, W), list, onPick) : null;
+  return h("div", { style: "display:flex;flex-direction:column;gap:14px;min-width:0" }, pickSeg("가로", "x", redraw), pickSeg("세로", "y", redraw),
+    h("div", { class: "row dim", style: "gap:16px;font-size:14px" }, key("pt-w", "물 있음"), key("pt-d", "물 없음"), key("pt-n", "기록 없음")),
+    sbox || h("p", { class: "dim" }, "아직 해독한 값이 없어요."));
+}
+function pickable(box, list, onPick) {
+  if (!onPick) return box;
+  const fire = e => { const g = e.target.closest("[data-pick]"); if (!g) return; const p = list.find(q => q.id === g.dataset.pick); if (p) onPick(p); };
+  box.addEventListener("click", fire);
+  box.addEventListener("keydown", e => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); fire(e); } });
+  return box;
+}
+function arcVenn(list = G.all, onPick, label = p => p.name) {
+  const W = 720, H = 600, r = 150, cA = [270, 200], cB = [450, 200], cC = [360, 350];
+  const sets = [["water", true, "물 있음", cA, "va"], ["sound", "quiet", "조용함", cB, "vb"], ["danger", false, "위험 없음", cC, "vc"]];
+  const known = list.filter(p => sets.every(([k]) => p.note[k] != null)), unknown = list.filter(p => !known.includes(p));
+  const spots = { "100": [195, 160], "010": [525, 160], "001": [360, 445], "110": [360, 150], "101": [275, 315], "011": [445, 315], "111": [360, 255] };
+  const groups = {}, outside = [];
+  for (const p of known) { const code = sets.map(([k, v]) => p.note[k] === v ? 1 : 0).join(""); if (code === "000") outside.push(p); else (groups[code] = groups[code] || []).push(p); }
+  let svg = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="물, 소리, 위험 벤 다이어그램">`;
+  svg += `<rect class="uni" x="4" y="4" width="${W - 8}" height="${H - 8}" rx="6"/><text class="tick" x="20" y="28">조사한 행성 전체</text>`;
+  for (const [, , t, [x, y], cls] of sets) svg += `<circle class="${cls}" cx="${x}" cy="${y}" r="${r}"/>`;
+  svg += `<text class="setlab" x="${cA[0] - r + 10}" y="${cA[1] - r + 26}">물 있음</text><text class="setlab" x="${cB[0] + r - 10}" y="${cB[1] - r + 26}" text-anchor="end">조용함</text><text class="setlab" x="${cC[0]}" y="${cC[1] + r + 26}" text-anchor="middle">위험 없음</text>`;
+  for (const [code, grp] of Object.entries(groups)) {
+    const [x, y] = spots[code], top = y - (grp.length - 1) * 9;
+    grp.forEach((p, i) => { svg += `<text class="pname${onPick ? " pickable" : ""}" ${onPick ? `data-pick="${p.id}" tabindex="0" role="button"` : ""} x="${x}" y="${top + i * 18 + 4}" text-anchor="middle">${esc(label(p))}</text>`; });
+  }
+  outside.forEach((p, i) => { svg += `<text class="pname${onPick ? " pickable" : ""}" ${onPick ? `data-pick="${p.id}" tabindex="0" role="button"` : ""} x="${W - 24}" y="${H - 24 - (outside.length - 1 - i) * 18}" text-anchor="end">${esc(label(p))}</text>`; });
+  svg += "</svg>";
+  return h("div", { style: "display:flex;flex-direction:column;gap:12px;min-width:0" }, pickable(svgBox(svg, W), list, onPick),
+    unknown.length ? h("p", { class: "dim", style: "font-size:14px" }, `기록이 빠져 다이어그램에 넣지 못한 행성: ${unknown.map(p => p.name).join(", ")}`) : null);
+}
+
+function arcMind(redraw) {
+  const W = 760, H = 600, cx = W / 2, cy = H / 2;
+  const tw = t => [...String(t)].reduce((a, ch) => a + (/[ -~]/.test(ch) ? 8 : 14), 0);
+  const node = (x, y, t, cls, extra = "") => { const w = tw(t) + 24; return `<g class="mm ${cls}" ${extra}><rect x="${x - w / 2}" y="${y - 15}" width="${w}" height="30" rx="15"/><text x="${x}" y="${y + 5}" text-anchor="middle">${esc(t)}</text></g>`; };
+  const link = (x1, y1, x2, y2, cls = "") => { const mx = (x1 + x2) / 2, my = (y1 + y2) / 2; return `<path class="mm-link ${cls}" d="M${x1},${y1} Q${mx + (y2 - y1) * .12},${my - (x2 - x1) * .12} ${x2},${y2}"/>`; };
+  let svg = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="탐사 기록 마인드맵">`, links = "", nodes = "";
+  const p = ARC.focus && G.all.find(q => q.id === ARC.focus);
+  if (!p) {
+    const secs = [...new Set(G.all.map(q => q.sector))];
+    nodes += node(cx, cy, "조사한 행성", "root");
+    secs.forEach((sec, si) => {
+      const a = -Math.PI / 2 + si * 2 * Math.PI / Math.max(secs.length, 1), sx = cx + Math.cos(a) * 130, sy = cy + Math.sin(a) * 110;
+      links += link(cx, cy, sx, sy, "thick");
+      nodes += node(sx, sy, `섹터 ${sec}`, "sec");
+      const list = G.all.filter(q => q.sector === sec), span = secs.length === 1 ? Math.PI * 1.6 : Math.min(Math.PI * 2 / secs.length * .86, list.length * .3);
+      list.forEach((q, i) => {
+        const b = a + (list.length === 1 ? 0 : -span / 2 + span * i / (list.length - 1)), px = cx + Math.cos(b) * 290, py = cy + Math.sin(b) * 245;
+        links += link(sx, sy, px, py);
+        nodes += node(px, py, q.name, "leaf" + (settler(q) ? " settled" : ""), `data-pid="${q.id}" tabindex="0" role="button"`);
+      });
+    });
+  } else {
+    nodes += node(cx, cy, p.name, "root");
+    const items = [...SIG.map(sg => [p.dec[sg.k] == null ? `${sg.t} —` : `${sg.t} ${p.dec[sg.k]}${sg.u}`, p.dec[sg.k] === p.t[sg.k] ? "num" : "num wrong"]),
+      ...["photo", "sound", "video"].map(k => [noteText(p, k) || `${NOTE[k].q} 기록 없음`, "note"]),
+      [settler(p) ? `정착: ${settler(p)}` : "정착 안 함", settler(p) ? "home" : ""], [`섹터 ${p.sector}`, "sec"]];
+    items.forEach(([t, cls], i) => {
+      const a = -Math.PI / 2 + i * 2 * Math.PI / items.length, x = cx + Math.cos(a) * 250, y = cy + Math.sin(a) * 205;
+      links += link(cx, cy, x, y);
+      nodes += node(x, y, t, "leaf " + cls);
+    });
+  }
+  svg += links + nodes + "</svg>";
+  const box = svgBox(svg, W);
+  box.addEventListener("click", e => { const g = e.target.closest("[data-pid]"); if (g) { ARC.focus = g.dataset.pid; redraw(); } });
+  box.addEventListener("keydown", e => { const g = e.target.closest("[data-pid]"); if (g && (e.key === "Enter" || e.key === " ")) { e.preventDefault(); ARC.focus = g.dataset.pid; redraw(); } });
+  return h("div", { style: "display:flex;flex-direction:column;gap:12px;min-width:0" },
+    h("div", { class: "row", style: "justify-content:space-between" }, h("span", { class: "dim", style: "font-size:14px" }, p ? `${p.name}의 기록` : "행성을 누르면 그 행성의 기록이 펼쳐져요."),
+      p ? h("button", { class: "btn sm", id: "mind-back", onclick: () => { ARC.focus = null; redraw(); } }, "← 전체 보기") : null),
+    box);
+}
+/* ---------- starfield ---------- */
+(function starfield() {
+  const cv = h("canvas", { class: "stars", "aria-hidden": "true" });
+  document.body.prepend(cv);
+  const ctx = cv.getContext("2d");
+  let W, H, stars = [];
+  const still = window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches;
+  function size() {
+    const d = Math.min(2, window.devicePixelRatio || 1);
+    W = cv.width = innerWidth * d; H = cv.height = innerHeight * d;
+    stars = Array.from({ length: Math.round(innerWidth * innerHeight / 2600) }, () => ({ x: Math.random() * W, y: Math.random() * H, z: .3 + Math.random() * .7, p: Math.random() * 6 }));
+  }
+  function frame(t) {
+    ctx.clearRect(0, 0, W, H);
+    for (const st of stars) {
+      if (!still) { st.x -= st.z * .25; if (st.x < 0) st.x += W; }
+      const a = .35 + .65 * st.z * (still ? 1 : .6 + .4 * Math.sin(t / 900 + st.p));
+      ctx.fillStyle = `rgba(230,236,255,${a})`;
+      ctx.fillRect(st.x, st.y, st.z * 2.2, st.z * 2.2);
+    }
+    if (!still) requestAnimationFrame(frame);
+  }
+  size(); addEventListener("resize", size); requestAnimationFrame(frame);
+})();
+home();
+window.__ps = { get G() { return G; }, newRun, planets, nextPlanet, totalPop, makeAliens };
+})();
+</script>
+
+<a id="ffBack" href="../" aria-label="Educations"><span class="ffb-i">🍟</span><span class="ffb-t">Educations</span></a>
+<style>
+#ffBack{position:fixed;left:12px;bottom:12px;z-index:99999;display:flex;align-items:center;gap:8px;padding:5px 12px 5px 5px;border-radius:14px;background:rgba(20,20,22,.88);color:#fff;font:600 13px/1 system-ui,-apple-system,"Noto Sans KR",sans-serif;text-decoration:none;border:1px solid rgba(255,255,255,.18);box-shadow:0 6px 18px rgba(0,0,0,.35);backdrop-filter:blur(6px)}
+#ffBack .ffb-i{width:32px;height:32px;border-radius:9px;display:grid;place-items:center;font-size:18px;background:linear-gradient(135deg,#ffb23f,#ff5d8f)}
+#ffBack:hover{border-color:#ffb23f}
+@media(max-width:520px){#ffBack .ffb-t{display:none}#ffBack{padding:5px}}
+</style>
+<script>(function(){try{var m={en:'Back to Educations',fr:'Retour à Educations',de:'Zurück zu Educations',es:'Volver a Educations',ja:'Educationsに戻る',ko:'Educations로 돌아가기'};var l=localStorage.getItem('arenaClashLang')||'ko';var a=document.getElementById('ffBack');var t=m[l]||m.ko;a.title=t;a.setAttribute('aria-label',t)}catch(e){}})();</script>
+</body>
+</html>

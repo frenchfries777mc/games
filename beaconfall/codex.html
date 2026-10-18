@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<script src="https://frenchfries777mc.github.io/games/ff-lang.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>BEACONFALL · 도감</title>
+<meta name="theme-color" content="#14527e">
+<style>
+@font-face{font-family:Galmuri;src:url(Galmuri11.woff2) format('woff2');font-weight:400;font-display:swap}
+@font-face{font-family:Galmuri;src:url(Galmuri11-Bold.woff2) format('woff2');font-weight:700;font-display:swap}
+:root{--ink:#0b1626;--cream:#f4ecd0;--gold:#e9d9a4;--sky:#9ae0ff;--btn:rgba(14,18,30,.78);--panel:rgba(10,16,28,.86)}
+*{box-sizing:border-box}
+html{background:var(--ink)}
+html,body{margin:0;color:var(--cream);font-family:Galmuri,'Noto Sans KR','Hiragino Sans','Malgun Gothic',monospace;font-size:15px;line-height:1.6}
+body{background:linear-gradient(180deg,rgba(6,16,30,.55),rgba(6,16,30,.9)),url(shot-camp.png) center/cover fixed;min-height:100vh}
+img{image-rendering:pixelated;image-rendering:crisp-edges}
+a{color:inherit}
+.wrap{max-width:960px;margin:0 auto;padding:0 16px}
+.pb{display:inline-block;padding:8px 14px;border:3px solid var(--gold);border-radius:0;background:var(--btn);color:var(--cream);font:700 14px/1.2 inherit;text-decoration:none;cursor:pointer;box-shadow:4px 4px 0 #000b;text-align:center}
+.pb:hover,.pb.on{background:var(--gold);color:#10141f}
+.pb:active{transform:translate(3px,3px);box-shadow:1px 1px 0 #000b}
+.row{display:flex;flex-wrap:wrap;gap:8px}
+.top{padding:12px 0 6px}
+.top .wrap{display:flex;flex-wrap:wrap;gap:8px;justify-content:space-between;align-items:center}
+.top .pb{padding:6px 10px;font-size:13px;border-width:2px;box-shadow:3px 3px 0 #000b}
+h1{margin:18px 0 4px;font-size:clamp(30px,7vw,52px);letter-spacing:.06em;line-height:1.1;text-shadow:4px 4px 0 #000}
+.sub{margin:0 0 16px;color:var(--gold);font-size:13px;text-shadow:2px 2px 0 #000}
+.tabs{margin:6px 0 14px}
+.tabs .pb{border-color:var(--sky)}
+.tabs .pb.on{background:var(--sky)}
+input.q{width:100%;padding:10px 12px;border:3px solid var(--gold);background:var(--panel);color:var(--cream);font:15px inherit;box-shadow:4px 4px 0 #000b;outline:none;margin:0 0 12px}
+.cats{margin:0 0 14px}
+.cats .pb{padding:5px 9px;font-size:12px;border-width:2px;box-shadow:2px 2px 0 #000b}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(96px,1fr));gap:8px}
+.card{display:flex;flex-direction:column;align-items:center;gap:4px;padding:8px 4px;border:2px solid #e9d9a466;background:var(--panel);cursor:pointer;font-size:12px;text-align:center;line-height:1.3;color:var(--cream)}
+.card:hover{border-color:var(--gold)}
+.card img{width:40px;height:40px}
+.cnt{color:var(--gold);font-size:12px;margin:0 0 8px;text-shadow:2px 2px 0 #000}
+/* 레시피 */
+.grp{margin:18px 0 6px;font-size:16px;text-shadow:2px 2px 0 #000;color:var(--gold)}
+.rc{display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px;padding:8px 10px;border:2px solid #e9d9a444;background:var(--panel);margin:0 0 6px}
+.rc .res{display:flex;align-items:center;gap:6px;min-width:140px;cursor:pointer;font-weight:700}
+.rc .res img{width:28px;height:28px}
+.slots{display:flex;gap:3px;flex-wrap:wrap}
+.sl{position:relative;width:30px;height:30px;border:2px solid #00000088;background:#e9d9a41f;display:flex;align-items:center;justify-content:center;cursor:pointer}
+.sl img{width:22px;height:22px}
+.sl b{position:absolute;right:1px;bottom:-2px;font-size:10px;text-shadow:1px 1px 0 #000,-1px -1px 0 #000}
+.sl.e{cursor:default;opacity:.45}
+.wh{font-size:11px;padding:2px 6px;border:1px solid var(--sky);color:var(--sky);white-space:nowrap}
+.wh.bk{border-color:#ffb0d0;color:#ffb0d0}
+.rn{flex-basis:100%;font-size:12px;color:#d9cfb0;margin-top:-2px}
+.isl{grid-template-columns:repeat(auto-fill,minmax(150px,1fr))}
+.isl .card{padding:0 0 8px;overflow:hidden}
+.isl .card img{width:100%;height:84px;object-fit:cover;image-rendering:pixelated}
+.ishot{width:100%;max-height:200px;object-fit:cover;image-rendering:pixelated;border:2px solid #e9d9a444;margin:0 0 6px}
+.ln{display:flex;flex-wrap:wrap;gap:6px 12px;font-size:13px;margin:0 0 4px}
+.ln span b{color:var(--gold)}
+/* 계산기 */
+.cbar{display:flex;align-items:center;gap:10px;margin:16px 0 10px;flex-wrap:wrap}
+.cbar img{width:40px;height:40px;background:#e9d9a41a;border:2px solid #e9d9a444}
+.cbar b{font-size:18px}
+.cbar input{width:84px;padding:6px 8px;border:3px solid var(--gold);background:var(--panel);color:var(--cream);font:15px inherit}
+.card.sel{border-color:var(--gold);background:#e9d9a426}
+.card .bn{color:var(--gold);font-weight:700;font-size:14px}
+.cst{display:flex;align-items:center;gap:10px;padding:6px 10px;border:2px solid #e9d9a444;background:var(--panel);margin:0 0 6px;cursor:pointer}
+.cst img{width:28px;height:28px}
+.cst span{margin-left:auto;font-size:12px;color:var(--sky)}
+/* 공략 */
+.gl{list-style:none;padding:0;margin:14px 0 0;display:grid;gap:8px}
+.gl li{background:var(--panel);border-left:4px solid var(--gold);padding:8px 12px}
+/* 상세 */
+#det{position:fixed;inset:0;z-index:20;background:#000a;display:none;align-items:flex-start;justify-content:center;overflow:auto;padding:28px 12px}
+#det.on{display:flex}
+#det .box{width:min(640px,100%);background:#141c2c;border:3px solid var(--gold);box-shadow:6px 6px 0 #000;padding:16px 16px 18px;position:relative}
+#det .x{position:absolute;right:10px;top:10px}
+.dh{display:flex;align-items:center;gap:12px;margin:0 40px 10px 0}
+.dh img{width:64px;height:64px;background:#e9d9a41a;border:2px solid #e9d9a444}
+.dh h2{margin:0;font-size:22px}
+.tags{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 10px}
+.tags span{font-size:12px;padding:2px 8px;border:1px solid var(--gold);color:var(--gold)}
+.sec{margin:14px 0 6px;font-size:14px;color:var(--sky)}
+.src{font-size:13px;margin:0 0 6px;padding:6px 10px;background:#ffffff0d}
+.uses{display:flex;flex-wrap:wrap;gap:6px}
+.uses .card{width:86px}
+.none{font-size:13px;opacity:.7}
+footer{padding:40px 0 30px;color:var(--gold);font-size:12px;text-shadow:2px 2px 0 #000}
+</style>
+</head>
+<body>
+<div class="top"><div class="wrap">
+ <a class="pb" href="index.html" data-t="home"></a>
+ <div class="row" id="lg"></div>
+ <span data-ff-account></span>
+</div></div>
+<div class="wrap">
+ <h1 data-t="title"></h1>
+ <p class="sub" data-t="sub"></p>
+ <div class="row tabs" id="tabs">
+  <button class="pb" data-tab="items" data-t="t_items"></button>
+  <button class="pb" data-tab="recipes" data-t="t_recipes"></button>
+  <button class="pb" data-tab="isl" data-t="t_isl"></button>
+  <button class="pb" data-tab="calc" data-t="t_calc"></button>
+  <button class="pb" data-tab="guide" data-t="t_guide"></button>
+ </div>
+ <div id="v_items">
+  <input class="q" id="qi" autocomplete="off">
+  <div class="row cats" id="cats"></div>
+  <div class="cnt" id="icnt"></div>
+  <div class="grid" id="igrid"></div>
+ </div>
+ <div id="v_recipes" hidden>
+  <input class="q" id="qr" autocomplete="off">
+  <div id="rlist"></div>
+ </div>
+ <div id="v_isl" hidden>
+  <div class="grid isl" id="igr"></div>
+ </div>
+ <div id="v_calc" hidden>
+  <input class="q" id="qc" autocomplete="off">
+  <div class="grid" id="cgrid"></div>
+  <div id="cres"></div>
+ </div>
+ <div id="v_guide" hidden>
+  <div class="row" id="gcats"></div>
+  <ul class="gl" id="gtips"></ul>
+ </div>
+ <footer>BEACONFALL · <span data-t="foot"></span></footer>
+</div>
+<div id="det"><div class="box" id="dbox"></div></div>
+<script src="i18n.js"></script>
+<script src="codex-data.js"></script>
+<script>
+const C=window.CODEX,I=window.I18N,LS=['ko','en','fr','de','es','ja'];
+const NAMES={ko:'한국어',en:'English',fr:'Français',de:'Deutsch',es:'Español',ja:'日本語'};
+const T={
+ home:['← 홈','← Home','← Accueil','← Start','← Inicio','← ホーム'],
+ title:['도감','Codex','Encyclopédie','Lexikon','Enciclopedia','図鑑'],
+ sub:['모든 아이템, 레시피, 공략을 한곳에서 찾아보세요','Every item, recipe and tip in one place','Tous les objets, recettes et astuces au même endroit','Alle Gegenstände, Rezepte und Tipps an einem Ort','Todos los objetos, recetas y consejos en un solo lugar','すべてのアイテム・レシピ・攻略をひとまとめに'],
+ t_items:['아이템','Items','Objets','Gegenstände','Objetos','アイテム'],
+ t_recipes:['레시피','Recipes','Recettes','Rezepte','Recetas','レシピ'],
+ t_guide:['공략','Guide','Guide','Guide','Guía','攻略'],
+ t_calc:['재료 계산기','Calculator','Calculateur','Rechner','Calculadora','材料計算'],
+ q_calc:['만들고 싶은 아이템 이름','Item you want to make','Objet à fabriquer','Gegenstand, den du herstellen willst','Objeto que quieres fabricar','作りたいアイテム名'],
+ c_qty:['개수','Amount','Quantité','Anzahl','Cantidad','個数'],
+ c_base:['필요한 재료','Materials needed','Matériaux nécessaires','Benötigte Materialien','Materiales necesarios','必要な材料'],
+ c_steps:['만드는 순서','Crafting order','Ordre de fabrication','Herstellungsreihenfolge','Orden de fabricación','作る順番'],
+ c_times:['{n}번 제작','Craft {n}×','Fabriquer {n} fois','{n}× herstellen','Fabricar {n} veces','{n}回作る'],
+ c_note:['채집하거나 상점·몬스터·상자에서 얻는 재료까지 풀어서 계산해요. 여러 레시피가 있으면 첫 번째 레시피로 계산해요.','Counted down to items you gather or get from shops, monsters and chests. If there are several recipes, the first one is used.','Calculé jusqu\'aux objets récoltés ou obtenus en boutique, sur les monstres et dans les coffres. La première recette est utilisée s\'il y en a plusieurs.','Gerechnet bis zu Dingen, die man sammelt oder in Läden, von Monstern und aus Truhen bekommt. Bei mehreren Rezepten gilt das erste.','Se calcula hasta lo que se recolecta o se consigue en tiendas, monstruos y cofres. Con varias recetas se usa la primera.','採集、またはお店・モンスター・宝箱で手に入る材料まで分解して計算します。レシピが複数ある場合は最初のものを使います。'],
+ c_pick:['위에서 아이템을 골라 보세요','Pick an item above','Choisis un objet ci-dessus','Wähle oben einen Gegenstand','Elige un objeto arriba','上でアイテムを選んでください'],
+ t_isl:['섬','Islands','Îles','Inseln','Islas','島'],
+ i_trees:['나무','Trees','Arbres','Bäume','Árboles','木'],
+ i_ore:['바위·광석','Rocks & ore','Rochers et minerais','Felsen & Erz','Rocas y mena','岩・鉱石'],
+ i_mon:['몬스터','Monsters','Monstres','Monster','Monstruos','モンスター'],
+ i_boss:['보스','Boss','Boss','Boss','Jefe','ボス'],
+ i_drop:['드롭: {s}','Drops: {s}','Butin : {s}','Beute: {s}','Botín: {s}','ドロップ: {s}'],
+ i_dens:['바위가 {s}','Rocks are {s}','Rochers : {s}','Felsen: {s}','Rocas: {s}','岩は{s}'],
+ i_d1:['드물어요','rare','rares','selten','escasas','少ない'],
+ i_d2:['보통이에요','average','moyens','durchschnittlich','normales','普通'],
+ i_d3:['많아요','plentiful','nombreux','zahlreich','abundantes','多い'],
+ i_orep:['바위 중 {s}','Of all rocks: {s}','Parmi les rochers : {s}','Von allen Felsen: {s}','De todas las rocas: {s}','岩のうち {s}'],
+ i_clay:['바위를 캐면 점토가 나올 때가 많아요 (70%)','Mining rocks often gives clay (70%)','Les rochers donnent souvent de l\'argile (70 %)','Beim Abbau gibt es oft Ton (70 %)','Las rocas suelen dar arcilla (70 %)','岩を掘ると粘土が出やすい (70%)'],
+ i_cry:['바위를 캐면 수정이 나올 때가 있어요 (35%)','Mining rocks sometimes gives crystal (35%)','Les rochers donnent parfois du cristal (35 %)','Beim Abbau gibt es manchmal Kristall (35 %)','Las rocas a veces dan cristal (35 %)','岩を掘ると水晶が出ることがある (35%)'],
+ i_frost:['바위를 캐면 서리 조각이 나올 때가 있어요 (50%)','Mining rocks sometimes gives frost shards (50%)','Les rochers donnent parfois des éclats de givre (50 %)','Beim Abbau gibt es manchmal Frostsplitter (50 %)','Las rocas a veces dan fragmentos de escarcha (50 %)','岩を掘ると霜のかけらが出ることがある (50%)'],
+ i_camp:['시작섬 평지에는 바위·광물이 없어요. 산에서만 나와요.','The start island has no rocks or ore on flat ground, only on mountains.','L\'île de départ n\'a ni rochers ni minerais en plaine, seulement en montagne.','Auf der Startinsel gibt es im Flachland keine Felsen oder Erze, nur in den Bergen.','En la isla inicial no hay rocas ni mena en el llano, solo en las montañas.','最初の島の平地には岩も鉱石もありません。山にだけあります。'],
+ i_vil:['안전한 섬이에요. 몬스터가 나오지 않고 주민 상점이 있어요.','A safe island: no monsters, with villager shops.','Une île sûre : pas de monstres, avec des boutiques de villageois.','Eine sichere Insel: keine Monster, dafür Dorfläden.','Una isla segura: sin monstruos y con tiendas de aldeanos.','安全な島です。モンスターは出ず、村人の店があります。'],
+ i_ph:['(아래 섬에 따라 보스가 나와요)','','','','',''],
+ q_items:['아이템 이름으로 찾기','Search items by name','Chercher un objet','Gegenstand suchen','Buscar objeto','アイテム名で検索'],
+ q_recipes:['결과물이나 재료 이름으로 찾기','Search by result or ingredient','Chercher par résultat ou ingrédient','Nach Ergebnis oder Zutat suchen','Buscar por resultado o ingrediente','完成品か材料の名前で検索'],
+ count:['{n}개','{n} items','{n} objets','{n} Gegenstände','{n} objetos','{n}個'],
+ c_all:['전체','All','Tout','Alle','Todo','すべて'],
+ c_mat:['재료','Materials','Matériaux','Materialien','Materiales','素材'],
+ c_tool:['도구·무기','Tools & weapons','Outils et armes','Werkzeuge & Waffen','Herramientas y armas','道具・武器'],
+ c_armor:['갑옷','Armor','Armures','Rüstung','Armadura','防具'],
+ c_build:['설치·건축','Placeable','À poser','Platzierbar','Colocables','設置・建築'],
+ c_food:['음식','Food','Nourriture','Essen','Comida','食べ物'],
+ c_fish:['물고기','Fish','Poissons','Fische','Peces','魚'],
+ c_pot:['물약·룬','Potions & runes','Potions et runes','Tränke & Runen','Pociones y runas','ポーション・ルーン'],
+ make:['만드는 법','How to make','Fabrication','Herstellung','Cómo fabricar','作り方'],
+ get:['얻는 곳','Where to get','Où l\'obtenir','Fundort','Dónde conseguir','入手方法'],
+ uses:['재료로 쓰이는 곳','Used to make','Sert à fabriquer','Wird verwendet für','Se usa para','材料として使う'],
+ none_get:['채집하거나 몬스터·상자에서 얻어요','Gathered, or dropped by monsters and chests','Récolté, ou obtenu des monstres et coffres','Gesammelt oder von Monstern und Truhen','Se recolecta o lo sueltan monstruos y cofres','採集、またはモンスターや宝箱から入手'],
+ none_use:['다른 레시피에 쓰이지 않아요','Not used in other recipes','Utilisé dans aucune recette','In keinem Rezept verwendet','No se usa en otras recetas','他のレシピには使いません'],
+ tg_place:['설치 가능','Placeable','À poser','Platzierbar','Colocable','設置できる'],
+ tg_dur:['내구도 {n}','Durability {n}','Durabilité {n}','Haltbarkeit {n}','Durabilidad {n}','耐久度 {n}'],
+ tg_max:['최대 {n}개','Stacks to {n}','Max {n}','Stapel {n}','Máx. {n}','最大 {n}個'],
+ tg_food:['체력 +{n}','Heals {n}','Soigne {n}','Heilt {n}','Cura {n}','体力 +{n}'],
+ s_fish_sea:['바다 낚시','Sea fishing','Pêche en mer','Meeresangeln','Pesca en el mar','海釣り'],
+ s_fish_river:['강 낚시','River fishing','Pêche en rivière','Flussangeln','Pesca en el río','川釣り'],
+ s_mob:['몬스터: {s}','Monster: {s}','Monstre : {s}','Monster: {s}','Monstruo: {s}','モンスター: {s}'],
+ s_boss:['보스: {s}','Boss: {s}','Boss : {s}','Boss: {s}','Jefe: {s}','ボス: {s}'],
+ s_loot:['보물 상자','Treasure chests','Coffres au trésor','Schatztruhen','Cofres del tesoro','宝箱'],
+ s_shop:['마을 상점 · {n}개 {p}동전','Village shop · {n} for {p} coins','Boutique du village · {n} pour {p} pièces','Dorfladen · {n} für {p} Münzen','Tienda del pueblo · {n} por {p} monedas','村の店・{n}個 {p}コイン'],
+ s_crop:['밭에 심어 수확 ({s})','Grow on farmland ({s})','Cultiver sur une terre ({s})','Auf dem Acker anbauen ({s})','Cultivar en tierra ({s})','畑で栽培 ({s})'],
+ s_alch:['연금술대: {s}','Alchemy table: {s}','Table d\'alchimie : {s}','Alchemietisch: {s}','Mesa de alquimia: {s}','錬金台: {s}'],
+ s_armor:['갑옷 작업대: {s} {n}개 (두드려 만든 품질에 따라 ★1~3)','Armor bench: {n} {s} (★1–3 by forging quality)','Établi d\'armure : {n} {s} (★1–3 selon la forge)','Rüstungswerkbank: {n} {s} (★1–3 je nach Schmiedequalität)','Banco de armaduras: {n} {s} (★1–3 según la forja)','防具台: {s} {n}個 (鍛えた品質で★1〜3)'],
+ s_book:['📕 {s} 필요','📕 Needs {s}','📕 Nécessite {s}','📕 Benötigt {s}','📕 Requiere {s}','📕 {s} が必要'],
+ tool:['도구 필요: {s}','Needs tool: {s}','Outil requis : {s}','Werkzeug nötig: {s}','Requiere: {s}','必要な道具: {s}'],
+ foot:['게임 데이터에서 그대로 가져온 도감이에요','Built straight from the game data','Généré à partir des données du jeu','Direkt aus den Spieldaten erstellt','Generado con los datos del juego','ゲームのデータから作った図鑑です']
+};
+const KEY='beaconfallSiteLang';
+function pick(){let s=null;try{s=localStorage.getItem(KEY);}catch(e){}
+ if(s&&LS.includes(s))return s;
+ for(const x of (navigator.languages&&navigator.languages.length?navigator.languages:[navigator.language||'ko'])){const b=String(x).toLowerCase().split('-')[0];if(LS.includes(b))return b;}
+ return 'en';}
+let LANG=pick();
+const esc=s=>String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const t=(k,v)=>{let s=(T[k]&&(T[k][LS.indexOf(LANG)]||T[k][0]))||k;if(v)for(const q in v)s=s.split('{'+q+'}').join(v[q]);return s;};
+const tr=s=>!s?'':LANG==='ko'?s:((C.tr[s]&&C.tr[s][LANG])||s);
+const nm=id=>C.items[id]?tr(C.items[id].n):id;
+const ic=id=>C.items[id]?C.items[id].ic:'';
+const IDS=Object.keys(C.items);
+const FISH=new Map(C.fish),LOOT=new Set(C.loot),ALCH=new Map(C.alch.map(a=>[a.id,a.ing]));
+const POTS=new Set(C.alch.map(a=>a.id));
+function cat(id){
+ const it=C.items[id];
+ if(id.startsWith('ar_'))return 'armor';
+ if(FISH.has(id))return 'fish';
+ if(POTS.has(id)||id.startsWith('rune_')||id.startsWith('pot_'))return 'pot';
+ if(it.fd)return 'food';
+ if(it.du)return 'tool';
+ if(it.pl)return 'build';
+ return 'mat';
+}
+const CATS=['all','mat','tool','armor','build','food','fish','pot'];
+let CAT='all',TAB='items';
+// 재료 → 레시피, 결과 → 레시피
+const MADE={},USED={};
+C.recipes.forEach((r,i)=>{
+ r.o.forEach(([id])=>(MADE[id]=MADE[id]||[]).push(i));
+ const seen=new Set();
+ r.p.forEach(p=>{if(!p)return;const ids=Array.isArray(p)?[p[0]]:p.a;ids.forEach(id=>{if(!seen.has(id)){seen.add(id);(USED[id]=USED[id]||[]).push(i);}});});
+});
+for(const [id,ing] of ALCH)ing.forEach(x=>{(USED[x]=USED[x]||[]);});
+function slotHTML(p){
+ if(!p)return '<span class="sl e"></span>';
+ const id=Array.isArray(p)?p[0]:p.a[0],n=Array.isArray(p)?p[1]:p.n,alt=Array.isArray(p)?nm(id):p.a.map(nm).join(' / ');
+ return `<span class="sl" data-id="${esc(id)}" title="${esc(alt)}"><img src="${ic(id)}" alt=""><b>${n>1?n:''}</b></span>`;
+}
+function recipeHTML(i){
+ const r=C.recipes[i],o=r.o[0];if(!o)return '';
+ let last=r.p.length;while(last>0&&!r.p[last-1])last--;
+ const slots=r.p.slice(0,Math.max(last,1)).map(slotHTML).join('');
+ const outs=r.o.map(([id,n])=>`<span class="res" data-id="${esc(id)}"><img src="${ic(id)}" alt="">${esc(nm(id))}${n>1?' ×'+n:''}</span>`).join('');
+ const note=[r.t?tr(r.t):'',r.tl?t('tool',{s:nm(r.tl)}):''].filter(Boolean).join(' · ');
+ return `<div class="rc">${outs}<span class="wh">${esc(tr(r.w))}</span>${r.bk?`<span class="wh bk">${esc(t('s_book',{s:tr(r.bk)}))}</span>`:''}<span class="slots">${slots}</span>${note?`<div class="rn">${esc(note)}</div>`:''}</div>`;
+}
+function card(id){return `<button class="card" data-id="${esc(id)}"><img src="${ic(id)}" alt="" loading="lazy">${esc(nm(id))}</button>`;}
+function renderItems(){
+ const q=document.getElementById('qi').value.trim().toLowerCase();
+ const list=IDS.filter(id=>(CAT==='all'||cat(id)===CAT)&&(!q||nm(id).toLowerCase().includes(q)||C.items[id].n.includes(q)));
+ document.getElementById('icnt').textContent=t('count',{n:list.length});
+ document.getElementById('igrid').innerHTML=list.map(card).join('');
+ document.getElementById('cats').innerHTML=CATS.map(c=>`<button class="pb${c===CAT?' on':''}" data-cat="${c}">${esc(t('c_'+c))}</button>`).join('');
+}
+function renderRecipes(){
+ const q=document.getElementById('qr').value.trim().toLowerCase();
+ const hit=r=>!q||r.o.some(([id])=>nm(id).toLowerCase().includes(q)||C.items[id]&&C.items[id].n.includes(q))||r.p.some(p=>p&&(Array.isArray(p)?[p[0]]:p.a).some(id=>nm(id).toLowerCase().includes(q)||(C.items[id]&&C.items[id].n.includes(q))));
+ const groups=new Map();
+ C.recipes.forEach((r,i)=>{if(!r.o.length||!hit(r))return;(groups.get(r.g)||groups.set(r.g,[]).get(r.g)).push(i);});
+ let h='';for(const [g,arr] of groups)h+=`<div class="grp">${esc(tr(g))}</div>`+arr.map(recipeHTML).join('');
+ document.getElementById('rlist').innerHTML=h||`<p class="none">—</p>`;
+}
+/* 섬: 나무·광석 비율은 게임 코드의 값이에요 */
+const SPN={oak:['참나무','Oak','Chêne','Eiche','Roble','ナラ'],zelkova:['느티나무','Zelkova','Zelkova','Zelkove','Zelkova','ケヤキ'],maple:['단풍나무','Maple','Érable','Ahorn','Arce','カエデ'],pine:['소나무','Pine','Pin','Kiefer','Pino','マツ'],shrub:['관목','Shrub','Arbuste','Strauch','Arbusto','低木'],cactus:['선인장','Cactus','Cactus','Kaktus','Cactus','サボテン'],palm:['야자나무','Palm','Palmier','Palme','Palmera','ヤシ'],mangrove:['맹그로브','Mangrove','Palétuvier','Mangrove','Mangle','マングローブ'],dead:['고사목','Dead tree','Arbre mort','Toter Baum','Árbol muerto','枯れ木'],snowpine:['설송','Snow pine','Pin des neiges','Schneekiefer','Pino nevado','雪松']};
+const ISL=[
+ {k:'camp',n:'시작섬',tr:[['oak'],['zelkova'],['maple'],['pine'],['shrub']],ore:[.003,.012,.015],rk:.35,mon:'슬라임',note:'i_camp'},
+ {k:'forest',n:'숲섬',tr:[['pine',55],['oak',17],['zelkova',18],['maple',10]],ore:[.003,.012,.015],rk:.3,mon:'늑대',boss:'늑대왕'},
+ {k:'desert',n:'사막섬',tr:[['cactus',70],['dead',15],['shrub',15]],ore:[0,.01,.02],rk:.25,mon:'전갈',boss:'거대 전갈'},
+ {k:'volcano',n:'화산섬',tr:[['dead',80],['shrub',20]],ore:[.01,.016,.022],rk:.26,mon:'불의 정령',boss:'불꽃 거인'},
+ {k:'jungle',n:'정글섬',tr:[['palm',60],['zelkova',25],['shrub',15]],ore:[.003,.012,.015],rk:.3,mon:'거미',boss:'독거미 여왕'},
+ {k:'mesa',n:'메사섬',tr:[['dead',40],['cactus',40],['shrub',20]],ore:[.005,.07,.04],rk:.55,mon:'뱀',boss:'모래뱀',note:'i_clay'},
+ {k:'stone',n:'돌섬',tr:[['pine',60],['shrub',40]],ore:[.01,.04,.06,.06],rk:.6,mon:'골렘',boss:'바위 거인',note:'i_cry'},
+ {k:'mangrove',n:'맹그로브섬',tr:[['mangrove',80],['shrub',20]],ore:[.003,.012,.015],rk:.25,mon:'악어',boss:'늪 악어왕'},
+ {k:'ice',n:'얼음섬',tr:[['snowpine',85],['shrub',15]],ore:[.004,.03,.05],rk:.5,mon:'설인',boss:'대설인',note:'i_frost'},
+ {k:'village',n:'마을섬',vil:1}
+];
+const spn=k=>SPN[k][LS.indexOf(LANG)]||SPN[k][0];
+const inm=ko=>(I.NM[ko]&&I.NM[ko][LANG])||ko;
+const mobRow=ko=>{const m=C.mobs.find(x=>x[0]===ko);return `<div class="src"><b>${esc(tr(ko))}</b>${m&&m[1].length?' · '+esc(t('i_drop',{s:m[1].map(nm).join(', ')})):''}</div>`;};
+function openIsland(k){
+ const o=ISL.find(x=>x.k===k);if(!o)return;ISH=k;
+ let h=`<button class="pb x" data-close>✕</button><div class="dh"><img src="shot-${o.k}.png" alt="" style="image-rendering:pixelated"><h2>${esc(inm(o.n))}</h2></div>`;
+ if(o.vil)h+=`<div class="src">${esc(t('i_vil'))}</div>`;
+ else{
+  h+=`<div class="sec">${esc(t('i_trees'))}</div><div class="ln">${o.tr.map(([sp,p])=>`<span>${esc(spn(sp))}${p?' <b>'+p+'%</b>':''}</span>`).join('')}</div>`;
+  const nmz=[['iron',2],['copper',1],['gold',0],['zinc',3]],ore=nmz.filter(([,i])=>o.ore[i]).sort((a,b)=>o.ore[b[1]]-o.ore[a[1]]);
+  h+=`<div class="sec">${esc(t('i_ore'))}</div><div class="ln"><span>${esc(t('i_orep',{s:''}).trim())}</span>${ore.map(([id,i])=>`<span>${esc(nm(id))} <b>${+(o.ore[i]*100).toFixed(1)}%</b></span>`).join('')}</div>`;
+  h+=`<div class="none">${esc(t('i_dens',{s:t(o.rk>=.5?'i_d3':o.rk>=.3?'i_d2':'i_d1')}))}</div>`;
+  if(o.note)h+=`<div class="src" style="margin-top:8px">${esc(t(o.note))}</div>`;
+  h+=`<div class="sec">${esc(t('i_mon'))}</div>${mobRow(o.mon)}`;
+  if(o.boss)h+=`<div class="sec">${esc(t('i_boss'))}</div>${mobRow(o.boss)}`;
+ }
+ document.getElementById('dbox').innerHTML=h;
+ document.getElementById('det').classList.add('on');document.getElementById('det').scrollTop=0;
+}
+let ISH=null;
+function renderIsl(){
+ document.getElementById('igr').innerHTML=ISL.map(o=>`<button class="card" data-isl="${o.k}"><img src="shot-${o.k}.png" alt="" loading="lazy">${esc(inm(o.n))}</button>`).join('');
+}
+let CI=null,CQ=1;
+function calcPlan(id,qty){
+ const base=new Map(),steps=new Map();
+ const go=(id,n,path)=>{
+  const ms=MADE[id],r=ms&&!(C.gather[id]&&C.gather[id].length)&&path.length<10&&!path.includes(id)?C.recipes[ms.find(i=>!C.recipes[i].bk)??ms[0]]:null;
+  if(!r){base.set(id,(base.get(id)||0)+n);return;}
+  const oc=(r.o.find(o=>o[0]===id)||[0,1])[1]||1,crafts=Math.ceil(n/oc),ing=new Map();
+  r.p.forEach(p=>{if(!p)return;const x=Array.isArray(p)?p[0]:p.a[0],k=Array.isArray(p)?p[1]:p.n;ing.set(x,(ing.get(x)||0)+k);});
+  for(const [x,k] of ing)go(x,k*crafts,path.concat(id));
+  const st=steps.get(id);if(st)st.crafts+=crafts;else steps.set(id,{id,crafts,w:r.w});   // 재료를 먼저 만들도록 아래부터 쌓아요
+ };
+ go(id,qty,[]);
+ return {base,steps:[...steps.values()]};
+}
+function renderCalc(){
+ const q=document.getElementById('qc').value.trim().toLowerCase();
+ const list=Object.keys(MADE).filter(id=>C.items[id]&&(!q||nm(id).toLowerCase().includes(q)||C.items[id].n.includes(q))).slice(0,q?60:24);
+ document.getElementById('cgrid').innerHTML=list.map(id=>`<button class="card${id===CI?' sel':''}" data-calc="${esc(id)}"><img src="${ic(id)}" alt="" loading="lazy">${esc(nm(id))}</button>`).join('');
+ const box=document.getElementById('cres');
+ if(!CI){box.innerHTML=`<p class="none" style="margin-top:14px">${esc(t('c_pick'))}</p>`;return;}
+ const pl=calcPlan(CI,CQ);
+ box.innerHTML=`<div class="cbar"><img src="${ic(CI)}" alt=""><b>${esc(nm(CI))}</b><label>${esc(t('c_qty'))} <input type="number" id="cq" min="1" max="9999" value="${CQ}"></label></div>`
+  +`<div class="sec">${esc(t('c_base'))}</div><div class="grid">${[...pl.base].map(([id,n])=>`<button class="card" data-id="${esc(id)}"><img src="${ic(id)}" alt="" loading="lazy">${esc(nm(id))}<span class="bn">×${n}</span></button>`).join('')}</div>`
+  +(pl.steps.length?`<div class="sec">${esc(t('c_steps'))}</div>${pl.steps.map(s=>`<div class="cst" data-id="${esc(s.id)}"><img src="${ic(s.id)}" alt="">${esc(nm(s.id))} · ${esc(t('c_times',{n:s.crafts}))}<span>${esc(tr(s.w))}</span></div>`).join('')}`:'')
+  +`<p class="none" style="margin-top:14px">${esc(t('c_note'))}</p>`;
+}
+let GI=0;
+function renderGuide(){
+ const g=I.G||[];
+ document.getElementById('gcats').innerHTML=g.map((x,i)=>`<button class="pb${i===GI?' on':''}" data-g="${i}">${esc(x.n[LANG]||x.n.ko)}</button>`).join('');
+ document.getElementById('gtips').innerHTML=g[GI]?g[GI].i.map(x=>'<li>'+esc(x[LANG]||x.ko)+'</li>').join(''):'';
+}
+function sources(id){
+ const out=[];
+ const fh=FISH.get(id);if(fh)out.push(t(fh==='sea'?'s_fish_sea':'s_fish_river'));
+ (C.gather[id]||[]).forEach(g=>out.push(tr(g)));
+ for(const [mn,its,boss] of C.mobs)if(its.includes(id))out.push(t(boss?'s_boss':'s_mob',{s:tr(mn)}));
+ if(LOOT.has(id))out.push(t('s_loot'));
+ for(const [sid,n,p] of C.shops)if(sid===id)out.push(t('s_shop',{n,p}));
+ for(const [seed,o] of C.crops)if(o===id||seed===id)out.push(t('s_crop',{s:nm(seed)}));
+ if(ALCH.has(id))out.push(t('s_alch',{s:ALCH.get(id).map(nm).join(' + ')}));
+ if(id.startsWith('ar_')){const [,pc,mat]=id.split('_');const P=C.armor.pieces.find(x=>x.k===pc);if(P)out.push(t('s_armor',{s:nm((C.armor.mi||{})[mat]||mat),n:P.n}));}
+ return [...new Set(out)];
+}
+function openItem(id){
+ const it=C.items[id];if(!it)return;
+ const tags=[];if(it.pl)tags.push(t('tg_place'));if(it.du)tags.push(t('tg_dur',{n:it.du}));if(it.fd)tags.push(t('tg_food',{n:it.fd}));if(it.mx&&!it.du)tags.push(t('tg_max',{n:it.mx}));
+ const made=(MADE[id]||[]).map(recipeHTML).join('');
+ const src=sources(id).map(s=>`<div class="src">${esc(s)}</div>`).join('');
+ const used=[...new Set((USED[id]||[]).flatMap(i=>C.recipes[i].o.map(o=>o[0])))];
+ for(const [aid,ing] of ALCH)if(ing.includes(id)&&!used.includes(aid))used.push(aid);
+ let h=`<button class="pb x" data-close>✕</button><div class="dh"><img src="${it.ic}" alt=""><h2>${esc(nm(id))}</h2></div>`;
+ if(tags.length)h+=`<div class="tags">${tags.map(x=>`<span>${esc(x)}</span>`).join('')}</div>`;
+ if(made)h+=`<div class="sec">${esc(t('make'))}</div>${made}`;
+ h+=`<div class="sec">${esc(t('get'))}</div>${src||(made?'':`<div class="none">${esc(t('none_get'))}</div>`)}`;
+ if(!src&&made)h=h.replace(`<div class="sec">${esc(t('get'))}</div>`,'');
+ h+=`<div class="sec">${esc(t('uses'))}</div>${used.length?`<div class="uses">${used.map(card).join('')}</div>`:`<div class="none">${esc(t('none_use'))}</div>`}`;
+ document.getElementById('dbox').innerHTML=h;
+ document.getElementById('det').classList.add('on');
+ document.getElementById('det').scrollTop=0;
+ if(location.hash!=='#'+id)history.replaceState(null,'','#'+id);
+}
+function closeItem(){document.getElementById('det').classList.remove('on');history.replaceState(null,'',location.pathname+(TAB!=='items'?'#'+TAB:''));}
+function setTab(tb){
+ TAB=tb;
+ for(const k of ['items','recipes','isl','calc','guide'])document.getElementById('v_'+k).hidden=k!==tb;
+ document.querySelectorAll('#tabs .pb').forEach(b=>b.classList.toggle('on',b.dataset.tab===tb));
+ if(tb==='recipes')renderRecipes();else if(tb==='isl')renderIsl();else if(tb==='calc')renderCalc();else if(tb==='guide')renderGuide();else renderItems();
+}
+function applyLang(){
+ document.documentElement.lang=LANG;
+ document.querySelectorAll('[data-t]').forEach(el=>el.textContent=t(el.dataset.t));
+ document.title='BEACONFALL · '+t('title');
+ document.getElementById('qi').placeholder=t('q_items');document.getElementById('qr').placeholder=t('q_recipes');document.getElementById('qc').placeholder=t('q_calc');
+ document.getElementById('lg').innerHTML=LS.map(l=>`<button class="pb${l===LANG?' on':''}" data-l="${l}">${NAMES[l]}</button>`).join('');
+ setTab(TAB);
+ const d=document.getElementById('det');if(d.classList.contains('on')){const id=decodeURIComponent(location.hash.slice(1));if(C.items[id])openItem(id);else if(ISH&&TAB==='isl')openIsland(ISH);}
+}
+document.addEventListener('click',e=>{
+ const el=e.target.closest('[data-l],[data-tab],[data-cat],[data-g],[data-calc],[data-isl],[data-id],[data-close],#det');if(!el)return;
+ if(el.id==='det'){if(e.target===el)closeItem();return;}
+ if(el.dataset.l){LANG=el.dataset.l;try{localStorage.setItem(KEY,LANG);if(window.FFLang)FFLang.set(LANG);}catch(x){}applyLang();return;}
+ if(el.dataset.tab){setTab(el.dataset.tab);history.replaceState(null,'',el.dataset.tab==='items'?location.pathname:'#'+el.dataset.tab);return;}
+ if(el.dataset.cat){CAT=el.dataset.cat;renderItems();return;}
+ if(el.dataset.g){GI=+el.dataset.g;renderGuide();return;}
+ if(el.dataset.calc){CI=el.dataset.calc;renderCalc();return;}
+ if(el.dataset.isl){openIsland(el.dataset.isl);return;}
+ if(el.hasAttribute('data-close')){closeItem();return;}
+ if(el.dataset.id)openItem(el.dataset.id);
+});
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeItem();});
+document.getElementById('qi').addEventListener('input',renderItems);
+document.getElementById('qr').addEventListener('input',renderRecipes);
+document.getElementById('qc').addEventListener('input',renderCalc);
+document.addEventListener('input',e=>{if(e.target.id==='cq'){CQ=Math.max(1,Math.min(9999,+e.target.value||1));const v=e.target.value;renderCalc();const n=document.getElementById('cq');n.value=v;n.focus();}});
+{const h=decodeURIComponent(location.hash.slice(1));if(h==='recipes'||h==='guide'||h==='calc'||h==='isl')TAB=h;applyLang();if(C.items[h])openItem(h);}
+</script>
+<script src="https://frenchfries777mc.github.io/games/ff-auth.js"></script>
+</body>
+</html>
