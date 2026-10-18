@@ -3,6 +3,46 @@
   {
    "date": "2026-10-18",
    "build": "",
+   "title": "음악 페이지 재생 시간 미리 표시",
+   "items": [
+    "음악 페이지 곡 목록에 재생 시간이 처음부터 표시"
+   ],
+   "tr": {
+    "en": {
+     "title": "Track lengths shown up front on the music page",
+     "items": [
+      "The music page track list now shows each track's length from the start"
+     ]
+    },
+    "es": {
+     "title": "Duración de las canciones visible desde el inicio",
+     "items": [
+      "La lista de la página de música muestra la duración de cada canción desde el principio"
+     ]
+    },
+    "fr": {
+     "title": "Durée des morceaux affichée dès le départ",
+     "items": [
+      "La liste de la page musique affiche la durée de chaque morceau dès l'ouverture"
+     ]
+    },
+    "de": {
+     "title": "Titellängen sofort sichtbar",
+     "items": [
+      "Die Titelliste der Musikseite zeigt die Länge jedes Titels von Anfang an"
+     ]
+    },
+    "ja": {
+     "title": "曲の長さを最初から表示",
+     "items": [
+      "音楽ページの曲リストに再生時間が最初から表示されます"
+     ]
+    }
+   }
+  },
+  {
+   "date": "2026-10-18",
+   "build": "",
    "title": "음악 페이지 로고",
    "items": [
     "음악 페이지 위쪽 이모티콘을 허브 로고 그림으로 교체"
