@@ -3,6 +3,46 @@
   {
    "date": "2026-10-18",
    "build": "",
+   "title": "게임 카드 최근 패치 줄 제거",
+   "items": [
+    "게임 카드에 마우스를 올리면 뜨던 최근 패치 한 줄 제거"
+   ],
+   "tr": {
+    "en": {
+     "title": "Removed latest patch line on game cards",
+     "items": [
+      "Removed the latest patch line that appeared when hovering a game card"
+     ]
+    },
+    "es": {
+     "title": "Se quita la línea de último parche en las tarjetas",
+     "items": [
+      "Se quita la línea de último parche que aparecía al pasar el cursor por una tarjeta"
+     ]
+    },
+    "fr": {
+     "title": "Ligne de dernier patch retirée des cartes",
+     "items": [
+      "Retrait de la ligne de dernier patch affichée au survol d'une carte"
+     ]
+    },
+    "de": {
+     "title": "Letzte Patch-Zeile von den Karten entfernt",
+     "items": [
+      "Die beim Überfahren einer Karte angezeigte letzte Patch-Zeile wurde entfernt"
+     ]
+    },
+    "ja": {
+     "title": "ゲームカードの最新パッチ表示を削除",
+     "items": [
+      "カードにカーソルを合わせると出ていた最新パッチの1行を削除"
+     ]
+    }
+   }
+  },
+  {
+   "date": "2026-10-18",
+   "build": "",
    "title": "게임 카드 꾸미기, 구역 제목 정리",
    "items": [
     "게임 카드마다 위쪽 포인트 색 줄 추가",
