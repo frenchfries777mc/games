@@ -1121,7 +1121,10 @@ function cleanOpts(o){ return {balance:!!(o&&o.balance), vote:!!(o&&o.vote)}; }
 function ruleHp(){ return Math.round(MAX_HP*roomRules.hp); }
 const MOVE_SPEED = 250, JUMP_VELOCITY = -680;
 const DASH_FORCE = 700, DASH_CD = 1.5;
-function dashCdOf(p){ const w=WEAPONS[p && p.weapon], base=(w && w.dashCd!==undefined) ? w.dashCd : DASH_CD; return base*((p && p.isZombie) ? ZOMBIE_DASH_CD_MULT : 1); }   // how long a player waits between dashes (a zombie: half of it)
+const PZ_MAX=4, PZ_DMG_STEP=0.15, PZ_CD_STEP=0.12;       // 피사로: the ultimate stacks (up to 4): +15% damage and 12% shorter cooldowns (attack, skill, ultimate, dash) each; dying resets it
+function pzStacks(p){ return (p && p.weapon==='pizarro' && p.pzStacks) ? Math.min(PZ_MAX, p.pzStacks) : 0; }
+function pzCdMult(p){ return 1-PZ_CD_STEP*pzStacks(p); }
+function dashCdOf(p){ const w=WEAPONS[p && p.weapon], base=(w && w.dashCd!==undefined) ? w.dashCd : DASH_CD; return base*((p && p.isZombie) ? ZOMBIE_DASH_CD_MULT : 1)*pzCdMult(p); }   // how long a player waits between dashes (a zombie: half of it)
 let TELEPORT_CD = 10;   // (a `let` only so the practice mode can shorten it)
 const PROJECTILE_GRAVITY = 700;
 const PLAYER_W = 26, PLAYER_H = 58;
@@ -1143,6 +1146,8 @@ const WEAPONS = {
             desc:'데미지 26 · 쿨타임 1.1초 · 사거리 100 · 광선검을 휘둘러 맞은 상대를 크게 날려보냄 · 휘두른 순간부터 0.25초 동안 날아오는 투사체를 쏜 사람에게 튕겨내고, 단거리 공격도 막아내고, 막아내면 쿨타임 없이 한 번 더 휘두를 수 있음 (공격받기 0.25초 전에 눌러야 함)'},
   horemheb:{id:'horemheb', name:'쇠스랑', emoji:'🔱', kind:'melee', dmg:34, cd:0.55, range:105, shape:'pitchfork',
             desc:'데미지 34 · 쿨타임 0.55초 · 사거리 105 · 쇠스랑을 휘둘러 근접 공격'},
+  pizarro: {id:'pizarro', name:'창',       emoji:'🔱', kind:'melee',    dmg:27, cd:0.55, range:160, shape:'spear', thrust:true, kbMult:2.6,
+            desc:'데미지 27 · 쿨타임 0.55초 · 사거리 160 · 앞으로 창을 찔러 상대를 멀리 밀어냄 · 궁극기를 쓸수록 강해짐(죽으면 초기화)'},
   sword:   {id:'sword',   name:'칼',       emoji:'🗡️', kind:'melee',    dmg:32, cd:0.5,  range:100, shape:'blade',
             desc:'데미지 32 · 쿨타임 0.5초 · 사거리 100 · 빠르고 날카로운 근접 베기'},
   bat:     {id:'bat',     name:'방망이',   emoji:'🏏', kind:'melee',    dmg:43, cd:0,  range:105, shape:'club',
@@ -1236,6 +1241,7 @@ function pirateFlyVel(p, ax, ay){      // launch velocity of the cannon ride: to
   return {vx:Math.cos(a)*PIRATE_FLY_SPEED, vy:Math.sin(a)*PIRATE_FLY_SPEED};
 }
 const ULTS = {
+  pizarro:  {name:'정복자의 기세', desc:'공격력 +15%, 쿨타임(공격·스킬·궁극기)과 대쉬 충전 12% 단축이 중첩됨 (최대 4번, 죽으면 초기화)'},
   pistol:   {name:'강화탄',       desc:'다음 발사 때 데미지 66의 크고 빠른 탄환 1발'},
   rifle:    {name:'미사일 폭격',   desc:'랜덤 3곳에 미사일이 떨어짐 (발판 통과, 나는 피해 없음)'},
   smg:      {name:'방벽',         desc:'3.5초간 플레이어와 탄환을 막는 벽 (내 탄환은 통과)'},
@@ -1406,10 +1412,10 @@ const SFX_DEFS={
   ult_power: {clip:'ultp', offs:[0], vol:0.85}
 };
 // which kind of cast sound each weapon's ultimate makes: power = self buff / transformation, shield = field / wall / magic, blast = offensive barrage
-const ULT_SFX={pistol:'ult_power', bat:'ult_power', shuriken:'ult_power', dagger:'ult_power', dracula:'ult_power', gloves:'ult_power', bazooka:'ult_power',
+const ULT_SFX={pizarro:'ult_power', pistol:'ult_power', bat:'ult_power', shuriken:'ult_power', dagger:'ult_power', dracula:'ult_power', gloves:'ult_power', bazooka:'ult_power',
   smg:'ult_shield', magiccard:'ult_shield', gambler:'ult_shield', wizard:'ult_shield', flamethrower:'ult_shield', portalgun:'ult_shield',
   rifle:'ult_blast', sword:'ult_blast', lightsaber:'ult_blast', horemheb:'ult_blast', bow:'ult_blast', boomerang:'ult_blast', shotgun:'ult_blast', grenade:'ult_blast', vacuum:'ult_blast', pirate:'ult_blast', samurai:'ult_blast', kurus:'ult_power'};
-const WEAPON_SFX={pistol:'pistol', rifle:'rifle', smg:'smg', bow:'bow', wizard:'wizard', sword:'sword', horemheb:'sword', lightsaber:'portal', vacuum:'vacuum', portalgun:'portal',
+const WEAPON_SFX={pizarro:'sword', pistol:'pistol', rifle:'rifle', smg:'smg', bow:'bow', wizard:'wizard', sword:'sword', horemheb:'sword', lightsaber:'portal', vacuum:'vacuum', portalgun:'portal',
   magiccard:'magiccard', bat:'bat', boomerang:'boomerang', shuriken:'shuriken', shotgun:'shotgun', gloves:'gloves', grenade:'grenade', bazooka:'bazooka', dagger:'dagger', dracula:'dracula', pirate:'pirate', samurai:'samurai', kurus:'grenade', gambler:'pistol'}; // weapons that sound off in tryFire (dice and flame are hooked where they actually happen)
 const FLAME_SFX_INTERVAL=0.97; // fire clip is ~1.1s long with 0.12s faded ends -> re-trigger slightly early so consecutive chunks crossfade
 const SFX_MAX_VOICES=16;       // hard cap on simultaneous sounds so a 32-player brawl can't pile up into noise
@@ -1790,6 +1796,7 @@ const CHAR_ACHIEVEMENTS=[
   ['sword',       'skill', 20, '멀미 유발',                      '🌀', 200],
   ['lightsaber',  'ult',   10, '번개는 한번 친 곳에 9번 더 친다', '⚡', 250],
   ['horemheb',    'skill', 15, '왕의 쇠스랑은 돌아오지 않는다', '🔱', 150],
+  ['pizarro',     'skill', 15, '신의 이름으로',                '✝️', 150],
   ['bow',         'skill', 10, '마이클 잭슨',                    '🕺', 150],
   ['magiccard',   'ult',   10, '탈출의 고수',                    '🎩', 250],
   ['pistol',      'skill', 15, '손이 안 보이는 총잡이',          '🔫', 150],
@@ -2565,7 +2572,7 @@ function nameColorFor(id){
 function clanBadgeHtml(emb,col,size){ size=size||16; if(!emb) return ''; const c=(typeof clanSafeColor==='function')?clanSafeColor(col):'#3fe0c5', e=(typeof clanSafeEmblem==='function')?clanSafeEmblem(emb):'🏰'; return '<span style="display:inline-flex; align-items:center; justify-content:center; width:'+size+'px; height:'+size+'px; border-radius:50%; background:'+c+'33; border:1.5px solid '+c+'; font-size:'+Math.round(size*0.6)+'px; margin-right:4px; vertical-align:middle;">'+e+'</span>'; }
 function nameWithStyleHtml(name, nameCosId, emb, col, tag, cname){ return clanBadgeHtml(emb,col,16)+(tag?'<span style="color:#fff; margin-right:3px;">['+escapeHtmlText(tag)+']</span>':'')+(cname?'<span style="color:#fff; margin-right:6px; font-weight:700;">'+escapeHtmlText(cname)+'</span>':'')+'<span '+(nameCosId==='name_rainbow'?'class="nmRainbow" style="font-weight:700;"':'style="color:'+nameColorFor(nameCosId)+'; font-weight:700;"')+'>'+escapeHtmlText(name)+'</span>'; }
 const WEAPON_PERSONA_NAME = {
-  horemheb:'호렘헵', lightsaber:'자다이', pistol:'제임스', smg:'특수요원', bow:'로빈 후드', sword:'기사', bat:'야구선수', boomerang:'사냥꾼',
+  pizarro:'피사로', horemheb:'호렘헵', lightsaber:'자다이', pistol:'제임스', smg:'특수요원', bow:'로빈 후드', sword:'기사', bat:'야구선수', boomerang:'사냥꾼',
   shuriken:'닌자', shotgun:'보안관', rifle:'군인', gloves:'복서', grenade:'폭발광',
   bazooka:'중화기병', dagger:'암살자', magiccard:'마술사', dracula:'드라큘라', gambler:'도박사', wizard:'마법사', flamethrower:'학살자', portalgun:'차원여행자', vacuum:'청소부', pirate:'해적', samurai:'사무라이', kurus:'쿠루스'
 };
@@ -2595,6 +2602,15 @@ function drawWeaponPersona(c,wid,hx,hy,r,shy,tint){
       c.beginPath(); c.arc(hx,hy-1,r+2,Math.PI,0); c.fill(); c.fillRect(hx-r-2,hy-1,(r+2)*2,4);
       c.fillStyle='#20242c'; c.fillRect(hx-r-1,hy-1.5,(r+2)*2-2,1.6);
       break;
+    case 'pizarro': {             // 피사로: a steel morion helmet (high comb, curved brim)
+      const steel=tint||'#aeb6c2';
+      c.fillStyle=steel; c.beginPath(); c.arc(hx,hy-1,r+1.6,Math.PI,0); c.lineTo(hx+r+1.6,hy+1); c.lineTo(hx-r-1.6,hy+1); c.closePath(); c.fill();
+      c.strokeStyle='#6f7886'; c.lineWidth=1.4; c.lineCap='round';
+      c.beginPath(); c.moveTo(hx-r-4,hy+1.5); c.quadraticCurveTo(hx,hy+4,hx+r+4,hy+1.5); c.stroke();
+      c.fillStyle='#d9dee6'; c.beginPath(); c.moveTo(hx-r*0.9,hy-r-0.5); c.quadraticCurveTo(hx,hy-r*2.5,hx+r*0.9,hy-r-0.5); c.closePath(); c.fill();
+      c.fillStyle='#c9a463'; c.fillRect(hx-1,hy-r*1.6,2,r*0.9);
+      break;
+    }
     case 'horemheb': {            // 호렘헵: the striped royal headcloth (nemes) with the golden cobra, and a gold brow band
       const cloth=tint||'#2f5fd0', gold='#f2c230', top=hy-r*1.95;
       c.fillStyle=cloth;
@@ -4643,8 +4659,8 @@ function shuffle(arr){ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.
 /* ===== the version of this file =====
    Players with different versions CAN meet and play together: the automatic matchmaking uses the same room names for every version (online-<mode>-<map>-<slot>), and nobody is refused because of a different build.
    The build is only sent along with the join message and the lobby (for information); the corner of the screen shows it. */
-const GAME_BUILD='build 2026-10-18-v299';
-const GAME_VERSION='0.7', GAME_VERSION_NAME='어둠의 늪';   // 게임 버전 이름: versions.json의 title과 같게 (빌드마다 바꾸지 않음)
+const GAME_BUILD='build 2026-10-18-v300';
+const GAME_VERSION='0.8', GAME_VERSION_NAME='황금을 찾아서';   // 게임 버전 이름: versions.json의 title과 같게 (빌드마다 바꾸지 않음)
 const WEEKLY_EVENTS=[
   {id:'lowg',    name:'저중력 난투', desc:'몸이 둥실둥실, 중력이 약해진 난투', rules:{grav:0.6}},
   {id:'tank',    name:'탱크 파티',   desc:'체력은 3배, 넉백은 절반', rules:{hp:3, kb:0.5}},
@@ -8720,10 +8736,11 @@ function migTakeover(){
     for(const k of ['x','y','vx','angle','grounded','hp','kills','deaths','alive','weapon','team','spinAngle']) if(s[k]!==undefined) p[k]=s[k];   // (the newest snapshot beats the older state)
     if(p.grounded) p.vy=0;
     if(!s.alive) p.respawnAt = (s.respawnIn===-1) ? Infinity : nowS+(s.respawnIn||0);
+    p.pzStacks=s.pz||0;
     if(Number.isFinite(s.dashCdRemain)) p.lastDash=nowS-(dashCdOf(p)-s.dashCdRemain);
     if(Number.isFinite(s.teleportCdRemain)) p.lastTeleport=nowS-(TELEPORT_CD-s.teleportCdRemain);
-    if(Number.isFinite(s.ultCdRemain)) p.lastUlt=nowS-(ULT_CD-s.ultCdRemain);
-    if(Number.isFinite(s.skillCdRemain)) p.lastSkill=nowS-(SKILL_CD-s.skillCdRemain);
+    if(Number.isFinite(s.ultCdRemain)) p.lastUlt=nowS-(ultCdOf(p)-s.ultCdRemain);
+    if(Number.isFinite(s.skillCdRemain)) p.lastSkill=nowS-(skillCdOf(p)-s.skillCdRemain);
   }
   players=np;
   bullets=[]; effects=[]; particles=[]; effectLocalTimes={}; hostTimers=[];
@@ -10360,6 +10377,7 @@ function rifleBarrageXs(ax){                // three missiles around the point
 function magiccardTarget(p, ax, ay){ return hasAim(ax,ay) ? pickTarget(p, ax, ay) : nearestEnemyOf(p); }
 const ARM_FIRE_ULTS={pistol:1, bazooka:1, shuriken:1};   // ultimates that arm the next shot: a click while holding the key also fires that shot at the click
 const ULT_IMPL = {
+  pizarro(p,tSec,tMs){ p.pzStacks=Math.min(PZ_MAX,(p.pzStacks||0)+1); pushFx('spark', p.x, p.y-60, tMs, {ang:-Math.PI/2, color:'#ffd34d'}); pushFx('skill', p.x, p.y-70, tMs, {color:'#ffd34d', name:'기세 '+p.pzStacks+'/'+PZ_MAX}); },
   pistol(p){ p.ultPending='pistol'; },
   magiccard(p,tSec,tMs,ax,ay){
     const tg=magiccardTarget(p, ax, ay); if(!tg) return false;
@@ -10511,7 +10529,7 @@ function tryUltimate(p, tMs, aimX, aimY, viaClick){
   if(p.darkSub){ darkEmerge(p, tMs, true); return; }              // 쿠루스 inside his darkness: the ultimate is now 어둠 탈출 (always ready)
   if(isStunned(p, tMs/1000)) return;
   const tSec=tMs/1000;
-  if(tSec-(p.lastUlt===undefined?-9999:p.lastUlt) < ULT_CD) return;
+  if(tSec-(p.lastUlt===undefined?-9999:p.lastUlt) < ultCdOf(p)) return;
   const impl=ULT_IMPL[p.weapon]; if(!impl) return;
   if(impl(p,tSec,tMs,aimX,aimY)===false) return; // e.g. sword with no target: cooldown is not spent
   p.lastUlt=tSec;
@@ -10535,8 +10553,11 @@ const BAT_ULT_HASTE_SEC=2.5, BAT_ULT_SPEED_MULT=2;
 const BOOMERANG_BACK_MULT=1.0;   // the returning boomerang's damage (was half of the throw)
 const BOOMERANG_OUT_SEC=0.5;      // how long a boomerang flies out before it turns back (was 0.35: about 245 away, now about 350)
 let SKILL_CD=5;
+function skillCdOf(p){ return SKILL_CD*pzCdMult(p); }
+function ultCdOf(p){ return ULT_CD*pzCdMult(p); }
 const PRACTICE_SKILL_CD=2;
 const SKILLS={
+  pizarro:  {name:'하늘의 십자가', kind:'hit', desc:'조준한 곳에 십자가가 떨어져 맞은 적에게 20 피해와 1초 기절, 맞은 아군과 나는 체력 20 회복'},
   pistol:   {name:'속사',        kind:'buff', desc:'1.8초 동안 연사 속도 2배'},
   smg:      {name:'연막탄',      kind:'hit',  desc:'주변 적을 2.5초 동안 둔화'},
   bow:      {name:'백스텝',      kind:'move', desc:'뒤로 도약하며 활 재장전이 즉시 끝남'},
@@ -10697,7 +10718,21 @@ function skillHitFront(p, tMs, dirX, o){   // the nearest enemy in a box in fron
   if(best) skillDamage(p, best, o.dmg, tMs, o);
   return best;
 }
+const PZ_CROSS_HALF=90, PZ_CROSS_DMG=20, PZ_CROSS_STUN=1, PZ_CROSS_HEAL=20, PZ_CROSS_DUR=0.7;   // 피사로's skill: the cross from the sky
 const SKILL_IMPL={
+  pizarro(p,tSec,tMs,ax,ay){
+    const spot=wizardCircleSpot(p, ax, ay), sx=spot.x, iy=spot.y;
+    pushFx('crossfall', sx, iy, tMs, {dur:PZ_CROSS_DUR});
+    hostTimers.push({ta:fxActor, at:tSec+PZ_CROSS_DUR, fn:(tt)=>{
+      for(const id in players){
+        const t=players[id]; if(!t.alive || t.x===undefined || t.darkSub) continue;
+        if(Math.abs(t.x-sx)>PZ_CROSS_HALF || t.y<iy-340 || t.y>iy+60) continue;
+        if(id===p.id || isAlly(p,t)){ const before=t.hp; t.hp=Math.min(maxHpFor(t), t.hp+PZ_CROSS_HEAL); pushFx('heal', t.x, t.y-70, tt, {v:Math.round(t.hp-before)}); }
+        else if(!t.swordCharge){ skillDamage(p, t, PZ_CROSS_DMG, tt, {stun:PZ_CROSS_STUN}); }
+      }
+      pushFx('crosshit', sx, iy, tt, {});
+    }});
+  },
   pistol(p,tSec){ skillSetBuff(p,'rapid',1.8,tSec); return true; },
   smg(p,tSec,tMs){ const n=skillPulse(p,tMs,{r:230, slow:2.5}); if(n>0) pushFx('skillring', p.x, p.y-30, tMs, {color:'#9aa3b2', r:230}); return n>0; },
   bow(p,tSec,tMs,ax){ const d=skillAimDir(p,ax); p.kbX=-d*560; p.vy=-430; p.grounded=false; p.lastShot=-9999; return true; },
@@ -10795,7 +10830,7 @@ function trySkill(p, tMs, aimX, aimY){
   if(p.darkSub) return;                                                             // inside the darkness: no skill
   const tSec=tMs/1000;
   if(p.weapon==='sword' && p.swordCharge){ swordEnd(p); return; }                                      // the knight's skill key again = stop charging
-  if(tSec-(p.lastSkill===undefined?-9999:p.lastSkill) < SKILL_CD) return;
+  if(tSec-(p.lastSkill===undefined?-9999:p.lastSkill) < skillCdOf(p)) return;
   const impl=SKILL_IMPL[p.weapon]; if(!impl) return;
   if(impl(p,tSec,tMs,aimX,aimY)===false) return;                                   // nothing to use it on: the cooldown is not spent
   p.lastSkill=tSec;
@@ -10850,6 +10885,7 @@ function abilityPreviewOps(action, p, mx, my){
       case 'lightsaber': { const d=skillAimDir(p,mx); ops.push({t:'rect', x:d>0?p.x:p.x-120, y:p.y-90, w:120, h:90}); break; }
       case 'kurus': { const d=skillAimDir(p,mx); ops.push({t:'rect', x:d>0?p.x:p.x-DARK_SWORD_RANGE, y:p.y-90, w:DARK_SWORD_RANGE, h:90}); break; }
       case 'horemheb': ops.push(ray(ang, 740)); break;
+      case 'pizarro': { const sp=wizardCircleSpot(p, mx, my); ops.push({t:'rect', x:sp.x-PZ_CROSS_HALF, y:sp.y-340, w:PZ_CROSS_HALF*2, h:400}); ops.push({t:'ellipse', x:sp.x, y:sp.y, rx:PZ_CROSS_HALF, ry:14}); break; }
       case 'shuriken': { const a=Math.atan2(my-cy, mx-p.x), best=skillMoveSpot(p, p.x+Math.cos(a)*230, p.y+Math.sin(a)*230); ops.push({t:'line', x1:p.x, y1:p.y-30, x2:best.x, y2:best.y-30, dash:true}); ops.push(mark(best.x, best.y-30, 20)); break; }
       case 'dagger': { const t=nearestEnemyOf(p); if(t && Math.hypot(t.x-p.x,t.y-p.y)<=330){ ops.push({t:'line', x1:cx, y1:cy, x2:t.x, y2:t.y-30, dash:true}); ops.push(mark(t.x, t.y-30, 40)); } break; }
       case 'magiccard': ops.push(ray(ang, 820)); break;
@@ -10872,8 +10908,8 @@ function abilityReadyFor(action, p){
   const tSec=performance.now()/1000, since=(t)=>tSec-(t===undefined?-9999:t), w=WEAPONS[p.weapon];
   if(action==='dash') return since(p.lastDash) >= dashCdOf(p);
   if(action==='teleport') return since(p.lastTeleport) >= TELEPORT_CD;
-  if(action==='ultimate') return !!p.darkSub || since(p.lastUlt) >= ULT_CD;
-  if(action==='skill') return since(p.lastSkill) >= SKILL_CD;
+  if(action==='ultimate') return !!p.darkSub || since(p.lastUlt) >= ultCdOf(p);
+  if(action==='skill') return since(p.lastSkill) >= skillCdOf(p);
   return true;
 }
 function drawAbilityPreview(){
@@ -11014,7 +11050,7 @@ function processFlamethrower(p, tMs, dt){
 function meleeAttack(p, angle, w, tMs){
   const homerun = (w.id==='bat' && p.ultPending==='bat');
   const batBoost = (w.lifesteal && p.batUntil && tMs/1000 < p.batUntil);
-  let dmg = w.dmg * (batBoost ? BAT_DMG_MULT : 1);
+  let dmg = w.dmg * (batBoost ? BAT_DMG_MULT : 1) * (1+PZ_DMG_STEP*pzStacks(p));
   if(p.wizBuff) dmg*=WIZ_DMG_MULT;
   if(p.isZombie) dmg*=ZOMBIE_DMG_MULT;
   let hitAny=false;
@@ -11023,7 +11059,9 @@ function meleeAttack(p, angle, w, tMs){
     const target=players[id];
     if(!target.alive || id===p.id || isAlly(p,target) || target.swordCharge || target.darkSub) continue;
     const cy=target.y-PLAYER_H/2;
-    if(dist(p.x,p.y-PLAYER_H/2, target.x, cy) <= w.range){
+    let inReach=dist(p.x,p.y-PLAYER_H/2, target.x, cy) <= w.range;
+    if(inReach && w.thrust){ const rx=target.x-p.x, ry=cy-(p.y-PLAYER_H/2), ca=Math.cos(angle), sa=Math.sin(angle), along=rx*ca+ry*sa, perp=Math.abs(rx*sa-ry*ca); inReach = along>-14 && perp<=40; }      // the spear: a straight thrust in front
+    if(inReach){
       if(target.deflectUntil>tMs/1000){          // the lightsaber's window is open: the close-range hit is blocked, no damage either way (the saber's owner gets a free swing)
         pushFx('spark', target.x, cy, tMs, {ang:Math.atan2(cy-(p.y-PLAYER_H/2), target.x-p.x), color:'#7fe3ff'});
         saberDeflectWon(target);
@@ -11125,7 +11163,7 @@ function tryFire(p, angle, tMs){
   }
   const free = (w.kind==='cards' && p.freeVolleys>0 && p.freeUntil>tSec); // combo reward: 3 volleys that ignore the cooldown
   const rush = (w.id==='gloves' && p.rushUntil>tSec); // ultimate: triple attack speed
-  const cdEff = (free ? 0.15 : (rush ? w.cd/3-0.002 : w.cd)) * (p.isZombie?ZOMBIE_CD_MULT:1) * (skillHasBuff(p,'rapid',tSec)?0.5:1);   // pistol skill: double fire rate
+  const cdEff = (free ? 0.15 : (rush ? w.cd/3-0.002 : w.cd)) * (p.isZombie?ZOMBIE_CD_MULT:1) * pzCdMult(p) * (skillHasBuff(p,'rapid',tSec)?0.5:1);   // pistol skill: double fire rate
   if(tSec - p.lastShot < cdEff) return;
   if(free) p.freeVolleys--;
   p.lastShot = tSec;
@@ -11683,6 +11721,7 @@ function botWantsSkill(p, target, d, tSec){
     case 'bow': return d<280 || (hurt && d<420);
     case 'sword': return d<900 && Math.abs(target.y-p.y)<110 && !p.swordCharge;   // a 3 second charge: worth it from a long way off (same level), and never while already charging
     case 'lightsaber': return d<115;                                  // the thrust only reaches up close
+    case 'pizarro': return d<520 && Math.abs(target.y-p.y)<130;                    // the cross falls where the enemy stands
     case 'horemheb': return d>=170 && d<=640 && Math.abs(target.y-p.y)<150;       // the throw: from a distance, on about the same level
     case 'bat': return botIncomingShot(p, 230);
     case 'boomerang': return d>380 || hurt;
@@ -12044,12 +12083,12 @@ function botThink(p, t, dt){
         const dcd=dashCdOf(p);
         if(tSec-(p.lastDash===undefined?-9999:p.lastDash)>=dcd && Math.random()<0.75){ inp.left=target.x<p.x; inp.right=target.x>=p.x; inp.dash=true; }
       }
-      if(tSec-(p.lastUlt===undefined?-9999:p.lastUlt)>=ULT_CD && tSec>=ai.ultAt && d<650 && botUltSensible(p, target) && Math.random()<dif.ult){ tryUltimate(p, t, target.x, target.y-30); ai.ultAt=tSec+1.5; }
+      if(tSec-(p.lastUlt===undefined?-9999:p.lastUlt)>=ultCdOf(p) && tSec>=ai.ultAt && d<650 && botUltSensible(p, target) && Math.random()<dif.ult){ tryUltimate(p, t, target.x, target.y-30); ai.ultAt=tSec+1.5; }
       if(p.weapon==='lightsaber' && !mb && tSec>=(ai.deflectAt||0) && botIncomingShot(p, 150) && Math.random()<0.2+0.7*ai.skill){      // a shot is about to arrive: swing now so the 0.25 s window is open when it does
     let sh=null, sd=1e9; for(const b of bullets){ if(b.dmgless || b.owner===p.id) continue; const ow=players[b.owner]; if(ow && isAlly(p,ow)) continue; const dd=Math.hypot(b.x-p.x, b.y-(p.y-40)); if(dd<sd){ sd=dd; sh=b; } }
     if(sh){ const a=Math.atan2(sh.y-(p.y-40), sh.x-p.x); p.input.angle=a; tryFire(p, a, t); ai.deflectAt=tSec+0.9; }
   }
-  if(!mb && SKILLS[p.weapon] && tSec-(p.lastSkill===undefined?-9999:p.lastSkill)>=SKILL_CD && tSec>=(ai.skillAt||0) && Math.random()<dif.useSkill && botWantsSkill(p, target, d, tSec)){ trySkill(p, t, target.x, target.y-30); ai.skillAt=tSec+1.2; }   // the character skill, used when it makes sense for that character
+  if(!mb && SKILLS[p.weapon] && tSec-(p.lastSkill===undefined?-9999:p.lastSkill)>=skillCdOf(p) && tSec>=(ai.skillAt||0) && Math.random()<dif.useSkill && botWantsSkill(p, target, d, tSec)){ trySkill(p, t, target.x, target.y-30); ai.skillAt=tSec+1.2; }   // the character skill, used when it makes sense for that character
       if(d<=band.max && p.grounded && Math.random()<0.035) ai.hopAt=t;                                       // an occasional hop makes a bot harder to hit
     } else if(gameMode==='conquest' && cq){ goalX=cq.zone.x; goalY=cq.zone.y; }
     else { const g=botRoamGoal(p, ai, t); goalX=g.x; goalY=g.y; }
@@ -12183,6 +12222,7 @@ function botConquestGoal(p, ai, target, d, lowHp, band){
 // Is this a good moment for the bot to spend its ultimate? (almost always yes; the bat form is the exception)
 function botUltSensible(p, target){
   if(p.weapon==='kurus'){ const d=Math.hypot(target.x-p.x,target.y-p.y); return !!darkPoolUnder(p, true) && (p.hp<maxHpFor(p)*0.55 || botIncomingShot(p, 220) || d<260); }   // only where it can sink right away
+  if(p.weapon==='pizarro') return (p.pzStacks||0)<PZ_MAX;       // the stacking buff: worth casting until it is full
   if(p.weapon==='horemheb') return Math.hypot(target.x-p.x,target.y-p.y)<640 && Math.abs(target.y-p.y)<150;       // the sandstorm reaches 1150 in front, but a bot only uses an ultimate within 650 anyway: on the same level
   return true;      // (Dracula used to skip the bat form against someone far below: a bat could not sink. Now it can - with S - so it is worth it anywhere)
 }
@@ -12860,9 +12900,9 @@ function hostTick(dt,t){
         dashCdRemain: Math.max(0, dashCdOf(p) - (t/1000-(p.lastDash===undefined?-9999:p.lastDash))),
         teleportCdRemain: Math.max(0, TELEPORT_CD - (t/1000-(p.lastTeleport===undefined?-9999:p.lastTeleport))),
         fireCdRemain: p.fireCdRemain||0,
-        ultCdRemain: p.darkSub ? 0 : Math.max(0, ULT_CD - (t/1000-(p.lastUlt===undefined?-9999:p.lastUlt))), darkSub:p.darkSub?1:0, darkArm:(p.darkArmUntil>t/1000)?1:0,
-        skillCdRemain: Math.max(0, SKILL_CD - (t/1000-(p.lastSkill===undefined?-9999:p.lastSkill))), buff:p.buff||null, skillUses:p.skillUses||0, ultUses:p.ultUses||0,
-        ultOn:!!p.ultOn, invis:!!p.invis, burning:!!p.burning, slowed:!!p.slowed, stunned:!!p.stunned, cardSlowed:!!p.cardSlowed, bladeSpin:!!p.bladeSpin, swordCharging:!!p.swordCharge, cannonFlying:!!p.cannonFly, chips:p.chips||0, cannonAng:p.cannonFly?Math.round(Math.atan2(p.vy||0,p.cannonFly.vx)*100)/100:0, totalDamageDealt:p.totalDamageDealt||0, channeling:!!p.teleportChannel, flaming:!!p.flaming, portalPair:p.portalPair||null, batting:!!p.batting, vacuumStacks:p.vacuumStacks||0, isZombie:!!p.isZombie, parkourItem:!!p.parkourItem, hsHiding:!!p.hsHiding, hsDisguiseW:p.hsDisguiseW, hsDisguiseH:p.hsDisguiseH, isSeeker:!!p.isSeeker,
+        ultCdRemain: p.darkSub ? 0 : Math.max(0, ultCdOf(p) - (t/1000-(p.lastUlt===undefined?-9999:p.lastUlt))), darkSub:p.darkSub?1:0, darkArm:(p.darkArmUntil>t/1000)?1:0,
+        skillCdRemain: Math.max(0, skillCdOf(p) - (t/1000-(p.lastSkill===undefined?-9999:p.lastSkill))), buff:p.buff||null, skillUses:p.skillUses||0, ultUses:p.ultUses||0,
+        pz:p.pzStacks||0, ultOn:!!p.ultOn, invis:!!p.invis, burning:!!p.burning, slowed:!!p.slowed, stunned:!!p.stunned, cardSlowed:!!p.cardSlowed, bladeSpin:!!p.bladeSpin, swordCharging:!!p.swordCharge, cannonFlying:!!p.cannonFly, chips:p.chips||0, cannonAng:p.cannonFly?Math.round(Math.atan2(p.vy||0,p.cannonFly.vx)*100)/100:0, totalDamageDealt:p.totalDamageDealt||0, channeling:!!p.teleportChannel, flaming:!!p.flaming, portalPair:p.portalPair||null, batting:!!p.batting, vacuumStacks:p.vacuumStacks||0, isZombie:!!p.isZombie, parkourItem:!!p.parkourItem, hsHiding:!!p.hsHiding, hsDisguiseW:p.hsDisguiseW, hsDisguiseH:p.hsDisguiseH, isSeeker:!!p.isSeeker,
         isHost:p.isHost,clan:p.clan||'',joinOrder:p.joinOrder,weapon:p.weapon,team:p.team,spinAngle:p.spinAngle,cos:p.cos,isBoss:p.isBoss?1:0,isMinion:p.isMinion?1:0,bt:p.bt,bossMaxHp:p.bossMaxHp,emIdx:p.emIdx,emRem:(p.emUntil?Math.max(0,Math.round((p.emUntil-t/1000)*20)/20):0)})),
       cq: (gameMode==='conquest' && cq) ? {s:cq.scores, h:cq.holder, c:cq.contested} : undefined,
       xm: (xm && xmV) ? xmV : undefined,
@@ -12910,6 +12950,7 @@ function broadcastKillEvent(victim, killerName, killerX, killerY, killerColor, t
   attachKillScene(killerId||null, victim.id, t);
 }
 function handleDeath(p, killer, t, killerNameFallback){
+  p.pzStacks=0;                                   // 피사로 loses the stacks of his ultimate when he dies
   p.alive=false; p.deaths++; p.hp=0;
   if(gameMode==='zombie' && killer && killer.isZombie) p.diedToZombie=true;
   p.vx=0; p.vy=0; p.kbX=0; p.spin=0; p.spinAngle=0; // stop the corpse instead of freezing mid-knockback/mid-spin
@@ -13779,7 +13820,7 @@ function recordReplayScene(t){
     const w=WEAPONS[p.weapon], dashCd=dashCdOf(p), bi=p.buff?BUFF_ORDER.indexOf(p.buff)+1:0;
     fr.p[id]=[p.x, p.y, p.vx||0, p.angle||0, p.hp, replayFlagsOf(p), bi, p.vacuumStacks||0, p.spinAngle||0,
       Math.max(0, dashCd-(tS-(p.lastDash===undefined?-9999:p.lastDash))), Math.max(0, TELEPORT_CD-(tS-(p.lastTeleport===undefined?-9999:p.lastTeleport))),
-      Math.max(0, ULT_CD-(tS-(p.lastUlt===undefined?-9999:p.lastUlt))), Math.max(0, SKILL_CD-(tS-(p.lastSkill===undefined?-9999:p.lastSkill)))];
+      Math.max(0, ultCdOf(p)-(tS-(p.lastUlt===undefined?-9999:p.lastUlt))), Math.max(0, skillCdOf(p)-(tS-(p.lastSkill===undefined?-9999:p.lastSkill)))];
     if(p.portalPair) fr.pp.push([id, p.portalPair.a.x, p.portalPair.a.y, p.portalPair.b.x, p.portalPair.b.y]);
   }
   for(const b of bullets){
@@ -14345,6 +14386,12 @@ function drawHeldWeapon(c, weaponId, ax, ay, hx, hy, swingProg){
       c.setLineDash([2.5,2.8]); c.beginPath(); c.arc(14,0,4,0,7); c.stroke(); c.setLineDash([]);
       break;
     }
+    case 'spear': {                                                       // a long wooden shaft with a steel head
+      c.lineCap='round'; c.strokeStyle='#8a5a2b'; c.lineWidth=3; c.beginPath(); c.moveTo(-12,0); c.lineTo(30,0); c.stroke();
+      c.fillStyle='#dfe4ec'; c.beginPath(); c.moveTo(30,-4); c.lineTo(43,0); c.lineTo(30,4); c.closePath(); c.fill();
+      c.fillStyle='#c9a463'; c.fillRect(26,-2.6,3,5.2);
+      break;
+    }
     case 'pitchfork': {                                                   // a wooden shaft with a three-pronged iron head
       c.lineCap='round'; c.strokeStyle='#8a5a2b'; c.lineWidth=3.2; c.beginPath(); c.moveTo(-8,0); c.lineTo(28,0); c.stroke();
       c.strokeStyle='#d6dae3'; c.lineWidth=2.4; c.beginPath(); c.moveTo(28,-6.5); c.lineTo(28,6.5); c.stroke();                                 // the crossbar
@@ -14520,7 +14567,8 @@ function dmgText(x,y,v,col){
   }
   addP({x:x+RND(-8,8),y:y-18,vx:RND(-22,22),vy:-95,drag:1.3,life:0.85,size:12+Math.min(13,v/3),color:'#ffffff',outline:col||'#000',shape:'text',add:false,text:String(Math.round(v)), dmgSum:v, x0:x, y0:y});
 }
-const ULT_THEMES={   // colours (3) + an extra flavour per character for the ultimate burst; f = the tint of the screen flash
+const ULT_THEMES={
+  pizarro:{c:['#ffd34d','#ffffff','#c9a463'],k:'wave',f:'255,230,170'},   // colours (3) + an extra flavour per character for the ultimate burst; f = the tint of the screen flash
   _:{c:['#ffd23f','#ff6fb5','#35e0ff'],k:'',f:'255,235,180'},
   pistol:{c:['#ffd23f','#ff8a2b','#fff1a8'],k:'',f:'255,225,150'}, rifle:{c:['#8dff5a','#ffd23f','#ff8a2b'],k:'fire',f:'220,255,170'},
   smg:{c:['#35e0ff','#7fa6ff','#ffffff'],k:'',f:'190,240,255'}, magiccard:{c:['#b45cff','#ff6fd8','#ffd23f'],k:'card',f:'235,190,255'},
@@ -14798,6 +14846,16 @@ function spawnFx(e){
     case 'stun':
       addP({x:x,y:y+16,life:.35,color:'#ffe066',shape:'ring',r0:6,r1:44,lw:4});
       burst(x,y+10,12,{a0:0,a1:6.28,s0:50,s1:150,l0:.3,l1:.6,z0:2,z1:4,colors:['#ffe066','#ffffff'],grav:0,drag:2.2,shape:'dot',add:true});
+      break;
+    case 'crossfall':
+      addP({x:x,y:y,life:e.dur||0.7,color:'#fff0b0',shape:'bigcross',add:false});
+      addP({x:x,y:y,life:e.dur||0.7,color:'#ffd34d',shape:'warn'});
+      break;
+    case 'crosshit':
+      addP({x:x,y:y,life:.28,color:'#ffffff',shape:'flash',size:150});
+      addP({x:x,y:y,life:.5,color:'#ffe08a',shape:'ring',r0:8,r1:PZ_CROSS_HALF*2,lw:8});
+      burst(x,y,22,{a0:-3.3,a1:0.15,s0:120,s1:520,l0:.4,l1:.9,z0:2,z1:4,colors:['#ffffff','#ffd34d','#fff0b0'],grav:700,drag:1.2,shape:'streak'});
+      shakeFrom(x,y,10,600);
       break;
     case 'swordfall':
       addP({x:x,y:y,life:e.dur||0.7,color:'#dfe9ff',shape:'bigsword',add:false});
@@ -15172,6 +15230,9 @@ function drawParticles(){
         case 'warn': { const blink=0.35+0.5*Math.abs(Math.sin(t*16)); ctx.globalAlpha=blink; ctx.strokeStyle=q.color; ctx.lineWidth=3;
           ctx.beginPath(); ctx.arc(q.x,q.y,34,0,7); ctx.stroke(); ctx.beginPath(); ctx.arc(q.x,q.y,16,0,7); ctx.stroke();
           ctx.setLineDash([8,10]); ctx.beginPath(); ctx.moveTo(q.x,q.y-460); ctx.lineTo(q.x,q.y); ctx.stroke(); ctx.setLineDash([]); break; }
+        case 'bigcross': { const ease=Math.pow(t,1.6), topY=q.y-620*(1-ease); ctx.save(); ctx.translate(q.x,topY); ctx.globalAlpha=Math.min(1,0.3+t*1.4);
+          ctx.fillStyle='#e9d9a3'; ctx.strokeStyle='#8a6a2b'; ctx.lineWidth=3; ctx.fillRect(-9,-150,18,150); ctx.strokeRect(-9,-150,18,150); ctx.fillRect(-42,-112,84,18); ctx.strokeRect(-42,-112,84,18);
+          ctx.globalCompositeOperation='lighter'; ctx.fillStyle='rgba(255,224,138,0.28)'; ctx.beginPath(); ctx.arc(0,-100,90,0,7); ctx.fill(); ctx.restore(); break; }
         case 'bigsword': { const ease=Math.pow(t,1.6); const tipY=q.y-620*(1-ease); ctx.save(); ctx.translate(q.x,tipY); ctx.globalAlpha=Math.min(1,0.25+t*1.4);
           const gl=ctx.createRadialGradient(0,-160,10,0,-160,190); gl.addColorStop(0,'rgba(159,194,255,0.45)'); gl.addColorStop(1,'rgba(159,194,255,0)');
           ctx.globalCompositeOperation='lighter'; ctx.fillStyle=gl; ctx.beginPath(); ctx.arc(0,-160,190,0,7); ctx.fill(); ctx.globalCompositeOperation='source-over';
@@ -15186,7 +15247,7 @@ function drawParticles(){
   }
   ctx.restore();
 }
-const MELEE_DRAW_RANGE={blade:85, club:82, dagger:40, fist:45, saber:100, pitchfork:105, hook:55, katana:90};   // the reach the swing graphics were drawn for
+const MELEE_DRAW_RANGE={spear:160, blade:85, club:82, dagger:40, fist:45, saber:100, pitchfork:105, hook:55, katana:90};   // the reach the swing graphics were drawn for
 function drawProjectile(b){
   drawTrail(b);
   const w = WEAPONS[b.wid];
@@ -15262,6 +15323,14 @@ function drawProjectile(b){
       ctx.strokeStyle=hexA(b.color,0.55); ctx.lineWidth=4; ctx.beginPath(); ctx.arc(0,0,r,a0,a1); ctx.stroke();
       ctx.strokeStyle='#ffffff'; ctx.lineWidth=3; ctx.beginPath(); ctx.arc(0,0,r,Math.max(a0,a1-0.8),a1); ctx.stroke();
       if(prog>0 && prog<1){ const wa=ang+a1; addP({x:b.x+Math.cos(wa)*r*rs,y:b.y+Math.sin(wa)*r*rs,vx:RND(-70,70),vy:RND(-70,70),life:RND(.18,.32),size:RND(1.5,2.8),color:'#ffffff',drag:3}); }
+      break;
+    }
+    case 'spear': {                                                       // the thrust: the spear shoots forward to its full reach and comes back
+      const prog=b.life0 ? clamp(1-(b.life/b.life0),0,1) : 1, ext=prog<0.45 ? prog/0.45 : 1-(prog-0.45)/0.55*0.9, tip=24+((w&&w.range||160)-24-14)*ext;
+      ctx.lineCap='round'; ctx.save(); ctx.globalCompositeOperation='lighter';
+      ctx.strokeStyle=hexA('#fff0b0',0.35*(1-prog)); ctx.lineWidth=12; ctx.beginPath(); ctx.moveTo(tip-60,0); ctx.lineTo(tip,0); ctx.stroke(); ctx.restore();
+      ctx.strokeStyle='#8a5a2b'; ctx.lineWidth=3; ctx.beginPath(); ctx.moveTo(tip-66,0); ctx.lineTo(tip,0); ctx.stroke();
+      ctx.fillStyle='#dfe4ec'; ctx.beginPath(); ctx.moveTo(tip,-4.5); ctx.lineTo(tip+15,0); ctx.lineTo(tip,4.5); ctx.closePath(); ctx.fill();
       break;
     }
     case 'pitchfork': {                                                   // the swing of the pitchfork: a sand-coloured arc in the owner's colour with three little tines at its head
@@ -15511,7 +15580,7 @@ function drawOverheadExtras(p, HEADCY){
     ctx.fillStyle = TEAM_COLORS[p.team % TEAM_COLORS.length];
     ctx.beginPath(); ctx.arc(p.x-24, p.y+HEADCY-21, 4, 0, 7); ctx.fill();
   }
-  const skRemain = isHost ? Math.max(0, SKILL_CD-(performance.now()/1000-(p.lastSkill===undefined?-9999:p.lastSkill))) : p.skillCdRemain;
+  const skRemain = isHost ? Math.max(0, skillCdOf(p)-(performance.now()/1000-(p.lastSkill===undefined?-9999:p.lastSkill))) : p.skillCdRemain;
   const abilities=[['#3fe0c5', p.dashCdRemain], ['#c17bff', p.teleportCdRemain], ['#ffd34d', p.ultCdRemain], ['#7ef0a8', SKILLS[p.weapon] ? skRemain : 99]];
   const dotY=p.y+HEADCY-25, dotSpacing=11, startX=p.x-dotSpacing*1.5;
   for(let i=0;i<4;i++){
@@ -15852,8 +15921,8 @@ function render(fxDt){
       document.getElementById('ultWrap').style.display = hasUlt ? '' : 'none';
       if(hasUlt){
         const ud=me.darkSub ? {name:DARK_ESCAPE_NAME} : (ULTS[me.weapon]||{name:''});
-        const uRemain = me.darkSub ? 0 : (isHost ? Math.max(0, ULT_CD-(performance.now()/1000-(me.lastUlt===undefined?-9999:me.lastUlt))) : (me.ultCdRemain||0));
-        const uFrac = clamp(1-uRemain/ULT_CD, 0, 1);
+        const uRemain = me.darkSub ? 0 : (isHost ? Math.max(0, ultCdOf(me)-(performance.now()/1000-(me.lastUlt===undefined?-9999:me.lastUlt))) : (me.ultCdRemain||0));
+        const uFrac = clamp(1-uRemain/ultCdOf(me), 0, 1);
         document.getElementById('ultFill').style.width=(uFrac*100)+'%';
         document.getElementById('ultLabel').textContent = uRemain>0.05 ? ('궁극기 '+ud.name+' '+uRemain.toFixed(1)+'초') : ('궁극기 (R) '+ud.name+' 준비됨');
         document.getElementById('ultWrap').classList.toggle('ready', uRemain<=0.05);
@@ -15863,8 +15932,8 @@ function render(fxDt){
       const sd=SKILLS[me.weapon], hasSkill=!!sd && !(MODES[gameMode]||{}).noWeapon && !(MODES[gameMode]||{}).noAbility;
       const sw=document.getElementById('skillWrap'); sw.style.display = hasSkill ? '' : 'none';
       if(hasSkill){
-        const sRemain = isHost ? Math.max(0, SKILL_CD-(performance.now()/1000-(me.lastSkill===undefined?-9999:me.lastSkill))) : (me.skillCdRemain||0);
-        document.getElementById('skillFill').style.width=(clamp(1-sRemain/SKILL_CD,0,1)*100)+'%';
+        const sRemain = isHost ? Math.max(0, skillCdOf(me)-(performance.now()/1000-(me.lastSkill===undefined?-9999:me.lastSkill))) : (me.skillCdRemain||0);
+        document.getElementById('skillFill').style.width=(clamp(1-sRemain/skillCdOf(me),0,1)*100)+'%';
         document.getElementById('skillLabel').textContent = sRemain>0.05 ? ('스킬 '+sd.name+' '+sRemain.toFixed(1)) : ('스킬 ('+codeToLabel(keyBindings.skill)+') '+sd.name);
         sw.classList.toggle('ready', sRemain<=0.05);
       }
@@ -15934,7 +16003,7 @@ function abilityRemains(p){
     return {
       dash: Math.max(0, dashCd-(now-(p.lastDash===undefined?-9999:p.lastDash))),
       tp: Math.max(0, TELEPORT_CD-(now-(p.lastTeleport===undefined?-9999:p.lastTeleport))),
-      ult: Math.max(0, ULT_CD-(now-(p.lastUlt===undefined?-9999:p.lastUlt)))
+      ult: Math.max(0, ultCdOf(p)-(now-(p.lastUlt===undefined?-9999:p.lastUlt)))
     };
   }
   return { dash:p.dashCdRemain||0, tp:p.teleportCdRemain||0, ult:p.ultCdRemain||0 };
