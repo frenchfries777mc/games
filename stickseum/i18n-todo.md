@@ -1,45 +1,5 @@
 # 번역 대기 목록 (한국어만 개발, 하루에 한 번 번역 스레드가 처리)
 형식: 파일 | 키 | 한국어 문구 | 바뀐 빌드 | 날짜
 
-patchnotes.json | v294 title | 봇의 순간이동 | build 294 | 2026-10-18
-patchnotes.json | v294 items[0] | 봇이 순간이동 사용: 체력이 낮고 적이 가까우면 먼 발판으로 이동, 점령 지점이 멀면 지점으로 이동, 근접 봇은 먼 상대 옆으로 이동 | build 294 | 2026-10-18
-patchnotes.json | v294 items[1] | 용암 웅덩이 안으로는 이동하지 않음 | build 294 | 2026-10-18
-patchnotes.json | v294 items[2] | 전체 밸런스 재측정 | build 294 | 2026-10-18
-patchnotes.json | v295 title | MVP 투표 카드 개편 | build 295 | 2026-10-18
-patchnotes.json | v295 items[0] | MVP 투표 카드를 한 줄로 나란히 세로로 길게 배치 | build 295 | 2026-10-18
-patchnotes.json | v295 items[1] | 카드 맨 위에 캐릭터 모습(색, 스킨, 무기) 표시 | build 295 | 2026-10-18
-patchnotes.json | v296 title | 서바이벌 탈락 후 나가기와 무기 표시 정리 | build 296 | 2026-10-18
-patchnotes.json | v296 items[0] | 서바이벌에서 죽으면 탈락 화면이 뜨고 바로 나가거나 관전을 고를 수 있음 | build 296 | 2026-10-18
-patchnotes.json | v296 items[1] | 서바이벌·파쿠르·숨바꼭질에서 체력 옆의 무기 표시 제거 | build 296 | 2026-10-18
-patchnotes.json | v297 title | MVP 카드 확대, 클랜 검색 정렬, 무지개 색 표시 | build 297 | 2026-10-18
-patchnotes.json | v297 items[0] | MVP 투표 카드의 세로 길이와 캐릭터 모습을 더 크게 표시 | build 297 | 2026-10-18
-patchnotes.json | v297 items[1] | 클랜 찾기 목록에서 개발자가 있는 클랜을 위쪽에 표시 | build 297 | 2026-10-18
-patchnotes.json | v297 items[2] | 대기실 플레이어 목록의 색 표시가 무지개·반짝이는 색이면 효과가 나타남 | build 297 | 2026-10-18
-patchnotes.json | v298 title | 캐릭터 선택 창의 무지개 색 | build 298 | 2026-10-18
-patchnotes.json | v298 items[0] | 캐릭터 선택 창의 내 캐릭터가 무지개·반짝이는 색이면 색이 계속 바뀌며 빛나는 효과 표시 | build 298 | 2026-10-18
-patchnotes.json | v299 title | 팀전 금지 캐릭터 개편 | build 299 | 2026-10-18
-patchnotes.json | v299 items[0] | 팀전에서 팀원마다 금지할 캐릭터를 하나씩 직접 선택 | build 299 | 2026-10-18
-patchnotes.json | v299 items[1] | 금지는 상대 팀 전체에 적용되고 모든 금지가 선택 창에 표시 | build 299 | 2026-10-18
-patchnotes.json | v300 title | 새 캐릭터 피사로 | build 300 | 2026-10-18
-patchnotes.json | v300 items[0] | 새 캐릭터 피사로 추가: 창으로 앞쪽을 찔러 상대를 멀리 밀어내는 중거리 근접 공격, 헬멧 착용 | build 300 | 2026-10-18
-patchnotes.json | v300 items[1] | 스킬 하늘의 십자가: 조준한 곳에 십자가가 떨어져 맞은 적은 20 피해와 1초 기절, 맞은 아군과 자신은 체력 20 회복 | build 300 | 2026-10-18
-patchnotes.json | v300 items[2] | 궁극기 정복자의 기세: 공격력 15% 증가, 공격·스킬·궁극기 쿨타임과 대쉬 충전 12% 단축, 최대 4번 중첩, 죽으면 초기화 | build 300 | 2026-10-18
-game strings | pizarro 이름·스킬·궁극기·도감 설명 (Stickseum-v0.7.html WEAPONS/SKILLS/ULTS, WEAPON_PERSONA_NAME, 업적 '신의 이름으로') | 창 / 하늘의 십자가 / 정복자의 기세 | build 300 | 2026-10-18
-patchnotes.json | v300 items[0] (맨 앞에 추가) | 게임 버전 0.8 '황금을 찾아서' 시작 | build 300 | 2026-10-18
-versions.json | 0.8 title | 황금을 찾아서 | build 300 | 2026-10-18
-versions.json | 0.8 summary | 새 캐릭터 피사로(창·하늘의 십자가·중첩 궁극기) / 팀전 금지 캐릭터를 팀원마다 선택 / 봇 순간이동·MVP 투표 카드·계정별 진행 상황 분리·클랜 검색 정렬 | build 300 | 2026-10-18
-patchnotes.json | v301 title | 피사로 이모티콘과 찌르기 연출 | build 301 | 2026-10-18
-patchnotes.json | v301 items[0] | 피사로의 이모티콘을 호렘헵과 다른 헬멧 모양으로 변경 | build 301 | 2026-10-18
-patchnotes.json | v301 items[1] | 피사로의 찌르기 연출을 창 대신 앞으로 뻗는 바람줄기로 변경 | build 301 | 2026-10-18
-patchnotes.json | v302 items[0] | 피사로 궁극기 사용 시 체력 30 회복 | build 302 | 2026-10-18
-patchnotes.json | v302 items[1] | 이모티콘으로 표시되던 캐릭터 카드에 실제 캐릭터 모습 표시(스킨 미착용 시) | build 302 | 2026-10-18
-patchnotes.json | v302 items[2] | 승리 포즈에도 무지개·반짝임 색 효과 적용 | build 302 | 2026-10-18
-patchnotes.json | v302 items[3] | 폭탄 돌리기에서 체력 옆 무기 표시 숨김, 봇이 폭탄을 든 사람을 계속 피해 다님 | build 302 | 2026-10-18
-patchnotes.json | v302 items[4] | 좀비게임에서 사람 봇이 거리와 무기에 상관없이 좀비를 피해 도망침 | build 302 | 2026-10-18
-patchnotes.json | v302 title | 피사로 보강과 봇 도망 | build 302 | 2026-10-18
-patchnotes.json | v303 title | 피사로 기세 초기화 | build 303 | 2026-10-18
-patchnotes.json | v303 items[0] | 토너먼트·듀얼에서 다음 라운드가 시작되면 피사로 궁극기 중첩이 초기화됨 | build 303 | 2026-10-18
-patchnotes.json | v304 title | 폭포 절벽 맵 | build 304 | 2026-10-18
-patchnotes.json | v304 items[0] | 새 맵 폭포 절벽 추가: 8인 맵, 양쪽 절벽 계단과 두 줄기 폭포 폭포 안에서 공중에 뜨면 위로 떠오르는 물살 바닥 가운데 얕은 물에서 이동속도 20% 감소 폭포 뒤쪽에 숨을 수 있는 발판 | build 304 | 2026-10-18
 patchnotes.json | v305 title | 피사로 보강 | build 305 | 2026-10-18
 patchnotes.json | v305 items[0] | 피사로 단계 수치 변경: 공격력 24·30·36·42, 공격 쿨타임 0.6·0.5·0.4·0.3초, 대쉬 쿨타임 3·1.5·0.7·0.4초, 궁극기 최대 3번 중첩(4단계), 4단계 이동속도 125% 피사로 황금 약탈 추가: 처치·어시스트로 황금 표식 3개를 모으면 다음 찌르기가 두 배 거리로 뻗음 피사로 돌격 찌르기 추가: 대쉬 직후 첫 찌르기는 더 멀리 밀어내고 0.2초 비틀거리게 함 피사로 기세 연출 추가: 중첩마다 황금빛 기운과 투구 깃털이 커지고 4단계에는 발밑에 불꽃 캐릭터 카드 그림을 머리와 목만 크게 보이게 변경, 무지개·반짝임 색이 카드에서도 움직임 | build 305 | 2026-10-18
