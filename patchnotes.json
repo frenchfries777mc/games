@@ -3,6 +3,58 @@
   {
    "date": "2026-10-18",
    "build": "",
+   "title": "위키 묶음 반영 (Stickseum 280, Crown Envoy 45, Beaconfall 67, Tools 외)",
+   "items": [
+    "위키 번역(5개 언어)과 Beaconfall 업적 2개(하늘 요새, 하늘의 주인) 반영",
+    "새 문서: Beaconfall 하늘 요새와 하늘 수호자",
+    "Stickseum 캐릭터 금지와 선택 XP, Crown Envoy 콘스탄티노플과 휴전회의 되받아 요구, Tools 기능 찾기와 오브젝트, 행성 탐사 결과지와 SpeedCode 콤보 안내"
+   ],
+   "tr": {
+    "en": {
+     "title": "Wiki batch (Stickseum 280, Crown Envoy 45, Beaconfall 67, Tools and more)",
+     "items": [
+      "Wiki translations (5 languages) and 2 Beaconfall achievements (Sky Fortress, Master of the Sky) added",
+      "New page: Beaconfall Sky Fortress and Sky Guardian",
+      "Stickseum character bans and pick XP, Crown Envoy Constantinople and truce re-demands, Tools feature search and objects, Planet Search result sheet and SpeedCode combo"
+     ]
+    },
+    "es": {
+     "title": "Lote de wiki (Stickseum 280, Crown Envoy 45, Beaconfall 67, Tools y más)",
+     "items": [
+      "Traducciones de la wiki (5 idiomas) y 2 logros de Beaconfall (Fortaleza del cielo, Señor del cielo)",
+      "Página nueva: Beaconfall, Fortaleza del cielo y Guardián del cielo",
+      "Prohibición de personajes y XP de selección en Stickseum, Constantinopla y nuevas demandas en Crown Envoy, búsqueda de funciones y objetos en Tools, hoja de resultados de Exploración planetaria y combo de SpeedCode"
+     ]
+    },
+    "fr": {
+     "title": "Lot wiki (Stickseum 280, Crown Envoy 45, Beaconfall 67, Tools et plus)",
+     "items": [
+      "Traductions du wiki (5 langues) et 2 succès Beaconfall (Forteresse céleste, Maître du ciel)",
+      "Nouvelle page : Beaconfall, Forteresse céleste et Gardien du ciel",
+      "Bannissement de personnages et XP de choix dans Stickseum, Constantinople et nouvelles exigences dans Crown Envoy, recherche de fonctions et objets dans Tools, fiche de résultats d'Exploration planétaire et combo SpeedCode"
+     ]
+    },
+    "de": {
+     "title": "Wiki-Paket (Stickseum 280, Crown Envoy 45, Beaconfall 67, Tools u. a.)",
+     "items": [
+      "Wiki-Übersetzungen (5 Sprachen) und 2 Beaconfall-Erfolge (Himmelsfestung, Herr des Himmels)",
+      "Neue Seite: Beaconfall Himmelsfestung und Himmelswächter",
+      "Charakter-Banns und Auswahl-XP in Stickseum, Konstantinopel und erneute Forderungen in Crown Envoy, Funktionssuche und Objekte in Tools, Ergebnisblatt der Planetenerkundung und SpeedCode-Combo"
+     ]
+    },
+    "ja": {
+     "title": "Wiki反映 (Stickseum 280、Crown Envoy 45、Beaconfall 67、Toolsほか)",
+     "items": [
+      "Wikiの翻訳(5言語)とBeaconfallの実績2つ(空の要塞、空の主)を反映",
+      "新ページ: Beaconfallの空の要塞と空の守護者",
+      "Stickseumのキャラ禁止と選択XP、Crown Envoyのコンスタンティノープルと停戦会議の再要求、Toolsの機能検索とオブジェクト、惑星探査の結果シートとSpeedCodeのコンボ"
+     ]
+    }
+   }
+  },
+  {
+   "date": "2026-10-18",
+   "build": "",
    "title": "갤러리 Beaconfall 사진 교체",
    "items": [
     "Beaconfall 사진을 새 사진으로 교체 (화산 테두리 없앰)",
