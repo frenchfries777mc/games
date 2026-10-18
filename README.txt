@@ -17,7 +17,7 @@ Frenchfries777 게임 허브 사이트
   supabase-ff-hub.sql           커뮤니티 · 친구 접속 표시 · 허브 도전과제용 SQL (맨 아래 줄에 내 아이디를 넣으면 관리자가 돼요)
   supabase-ff-images.sql        게시판 · 채팅 사진 올리기용 SQL (사진 저장소 ff-images, 위 SQL 다음에 실행)
   supabase-ff-social.sql        🔔 알림함 · 공지 배너 · 좋아요 · 친구 1:1 메시지 · 신고 · 차단용 SQL (supabase-ff-hub.sql 다음에 실행)
-  supabase-ff-extra.sql         프로필 카드 꾸미기 · 이번 주 인기 게임 · 투표용 SQL (supabase-ff-hub.sql 다음에 실행). 게임 랭킹은 crownenvoy 저장소의 supabase-ff-rank.sql
+  supabase-ff-extra.sql         프로필 카드 꾸미기 · 이번 주 인기 게임 · 투표용 SQL (supabase-ff-hub.sql 다음에 실행). 게임 랭킹은 crownenvoy/ 폴더의 supabase-ff-rank.sql
   supabase-ff-more.sql          프로필 소개글 · 대표 게임 · 칭호, 게임 평점 · 한줄평, 같이 하기(방 모집)용 SQL (supabase-ff-hub.sql 다음에 실행)
   supabase-ff-react.sql         글 · 댓글 · 채팅 이모지 반응용 SQL (supabase-ff-hub.sql 다음에 실행)
   supabase-ff-coin.sql          🪙 Hub Coin (매일 출석 +10, 게임 재화로 환전) · @멘션 알림용 SQL (supabase-ff-social.sql 다음에 실행)
@@ -28,9 +28,15 @@ Frenchfries777 게임 허브 사이트
   patchnotes.json               허브 패치노트 (뉴스에 '허브'로 나오고, 뉴스의 '허브 패치노트 →'에서 전체 목록)
 
 [ 플레이 버튼 주소 ]
-  - Stickseum   https://frenchfries777mc.github.io/stickseum/
-  - Crown Envoy https://frenchfries777mc.github.io/crownenvoy/
-  - Beaconfall  https://frenchfries777mc.github.io/beaconfall/
+  - Stickseum   https://frenchfries777mc.github.io/games/stickseum/
+  - Crown Envoy https://frenchfries777mc.github.io/games/crownenvoy/
+  - Beaconfall  https://frenchfries777mc.github.io/games/beaconfall/
+
+[ 게임·도구 사이트 폴더 (2026-10-18부터 이 저장소 안에 있어요) ]
+  stickseum/  beaconfall/  crownenvoy/  educations/  tools/  isleport/
+  - 예전 저장소(stickseum, beaconfall, crownenvoy, educations, tools)에서 옮겨 왔어요. 이제 파일은 이 폴더들에 올려요.
+  - 주소는 https://frenchfries777mc.github.io/games/<폴더 이름>/ 이에요.
+  - Tools 학습용 GitHub Actions 는 .github/workflows/ 에 있고 tools/ 안에서 실행돼요 (저장소 비밀 HF_TOKEN 필요).
 
 [ 로그인이 이어지는 원리 ]
   허브와 세 게임은 모두 frenchfries777mc.github.io 아래에 있어서 브라우저 저장소를 같이 써요.

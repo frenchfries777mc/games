@@ -5,7 +5,7 @@
 'use strict';
 var SI=window.SI18N||{lang:'ko',F:function(t){ var a=arguments; return String(t).replace(/\{(\d)\}/g,function(_,n){ return a[+n+1]; }); }};
 var LANG=SI.lang||'ko', F=SI.F;
-var GAMES={stickseum:{name:'Stickseum',cls:'g1',site:'../stickseum/'},crownenvoy:{name:'Crown Envoy',cls:'g2',site:'../crownenvoy/'},beaconfall:{name:'Beaconfall',cls:'g3',site:'../beaconfall/'}};
+var GAMES={stickseum:{name:'Stickseum',cls:'g1',site:'https://frenchfries777mc.github.io/games/stickseum/'},crownenvoy:{name:'Crown Envoy',cls:'g2',site:'https://frenchfries777mc.github.io/games/crownenvoy/'},beaconfall:{name:'Beaconfall',cls:'g3',site:'https://frenchfries777mc.github.io/games/beaconfall/'}};
 function $(s,r){ return (r||document).querySelector(s); }
 /* 허브 첫 페이지와 커뮤니티 페이지(community/)가 같은 파일을 써요. ROOT = 허브 맨 위 경로 */
 var CMP=!!document.getElementById('community'), ROOT=document.body.getAttribute('data-root')||'', CMURL=CMP?'':ROOT+'community/';
@@ -780,9 +780,9 @@ function banner(){
 /* ===== 통합 검색: 게임 · 위키 · 게시판 ===== */
 var WIKIX={tools:{name:'Tools',cls:'g4'},educations:{name:'Educations',cls:'g5'}};
 var SX={wiki:null, tr:null, seq:0, sel:-1};
-var SGAMES=[['stickseum','Stickseum','g1','https://frenchfries777mc.github.io/stickseum/','친구들과 실시간으로 붙는 스틱맨 난투','스틱맨 난투 액션 stickman brawl'],
-  ['crownenvoy','Crown Envoy','g2','https://frenchfries777mc.github.io/crownenvoy/','외교와 전쟁으로 제국을 키우는 턴제 전략','외교 전쟁 전략 diplomacy war strategy'],
-  ['beaconfall','Beaconfall','g3','https://frenchfries777mc.github.io/beaconfall/','외계 행성에서 살아남아 탈출하는 생존 제작','생존 제작 픽셀 survival crafting pixel']];
+var SGAMES=[['stickseum','Stickseum','g1','https://frenchfries777mc.github.io/games/stickseum/','친구들과 실시간으로 붙는 스틱맨 난투','스틱맨 난투 액션 stickman brawl'],
+  ['crownenvoy','Crown Envoy','g2','https://frenchfries777mc.github.io/games/crownenvoy/','외교와 전쟁으로 제국을 키우는 턴제 전략','외교 전쟁 전략 diplomacy war strategy'],
+  ['beaconfall','Beaconfall','g3','https://frenchfries777mc.github.io/games/beaconfall/','외계 행성에서 살아남아 탈출하는 생존 제작','생존 제작 픽셀 survival crafting pixel']];
 function sfnv(s){ var h=0x811c9dc5; for(var i=0;i<s.length;i++){ h^=s.charCodeAt(i); h=Math.imul(h,0x01000193)>>>0; } return ('0000000'+h.toString(16)).slice(-8); }
 function smark(t,q){ var e=esc(t); if(!q) return e; var r=esc(q).replace(/[.*+?^${}()|[\]\\]/g,'\\$&'); try{ return e.replace(new RegExp(r,'gi'),function(x){ return '<mark>'+x+'</mark>'; }); }catch(_){ return e; } }
 function splain(b){ return String(b||'').replace(/^::.*$/gm,'').replace(/\*\*/g,'').replace(/^#{2,3}\s+|^\s*[-•]\s+|^\s*\d+[.)]\s+/gm,'').replace(/\s+/g,' ').trim(); }
