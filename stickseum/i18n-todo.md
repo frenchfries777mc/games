@@ -39,3 +39,5 @@ patchnotes.json | v302 items[4] | 좀비게임에서 사람 봇이 거리와 무
 patchnotes.json | v302 title | 피사로 보강과 봇 도망 | build 302 | 2026-10-18
 patchnotes.json | v303 title | 피사로 기세 초기화 | build 303 | 2026-10-18
 patchnotes.json | v303 items[0] | 토너먼트·듀얼에서 다음 라운드가 시작되면 피사로 궁극기 중첩이 초기화됨 | build 303 | 2026-10-18
+patchnotes.json | v304 title | 폭포 절벽 맵 | build 304 | 2026-10-18
+patchnotes.json | v304 items[0] | 새 맵 폭포 절벽 추가: 8인 맵, 양쪽 절벽 계단과 두 줄기 폭포 폭포 안에서 공중에 뜨면 위로 떠오르는 물살 바닥 가운데 얕은 물에서 이동속도 20% 감소 폭포 뒤쪽에 숨을 수 있는 발판 | build 304 | 2026-10-18
