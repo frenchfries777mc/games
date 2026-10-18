@@ -67,8 +67,8 @@ var U={
 function detect(){ var c=[]; try{ var s=localStorage.getItem('arenaClashLang'); if(s) c.push(s); }catch(e){} try{ c=c.concat(navigator.languages||[navigator.language||'']); }catch(e){}
   for(var i=0;i<c.length;i++){ var k=String(c[i]).slice(0,2).toLowerCase(); if(LN.indexOf(k)>=0) return k; } return 'ko'; }
 var lang=detect(), T=U[lang];
-var SRC=[{k:'hub',name:'허브',c:'--g0',url:'../patchnotes.json'},{k:'stickseum',name:'Stickseum',c:'--g1',url:'../../stickseum/patchnotes.json'},
-         {k:'crownenvoy',name:'Crown Envoy',c:'--g2',url:'../../crownenvoy/patchnotes.json'},{k:'beaconfall',name:'Beaconfall',c:'--g3',url:'../../beaconfall/patchnotes.json'}];
+var SRC=[{k:'hub',name:'허브',c:'--g0',url:'../patchnotes.json'},{k:'stickseum',name:'Stickseum',c:'--g1',url:'../stickseum/patchnotes.json'},
+         {k:'crownenvoy',name:'Crown Envoy',c:'--g2',url:'../crownenvoy/patchnotes.json'},{k:'beaconfall',name:'Beaconfall',c:'--g3',url:'../beaconfall/patchnotes.json'}];
 function $(s){ return document.querySelector(s); }
 function esc(s){ return String(s==null?'':s).replace(/[&<>"']/g,function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); }
 var all=[], sel='all', q='', shown=30, failed=0;

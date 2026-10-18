@@ -1,0 +1,41 @@
+{
+ "name": "BEACONFALL",
+ "latest": "0.3",
+ "latestFile": "BEACONFALL-v0.3.html",
+ "updated": "2026-10-17",
+ "versions": [
+  {
+   "version": "0.3",
+   "date": "2026-10-17",
+   "file": "BEACONFALL-v0.3.html",
+   "title": "도감·멀티 안정화·블록 선택",
+   "summary": "사이트 도감, 상자 랜덤 배치, 멀티플레이 참가자 문제 수정, Ctrl+커서 블록 선택, 코드 정리",
+   "latest": true,
+   "size": 3236622,
+   "sha256": "25e72b59bca3",
+   "build": 72
+  },
+  {
+   "version": "0.2",
+   "date": "2026-10-15",
+   "file": "BEACONFALL-v0.2.html",
+   "title": "인트로·계정 저장·채팅",
+   "summary": "인트로, Frenchfries777 계정 저장, 친구 바로 참가, 멀티 채팅(T), 확대·축소, 업적 20개 추가",
+   "latest": false,
+   "size": 3074953,
+   "sha256": "b010c734731a",
+   "build": 32
+  },
+  {
+   "version": "0.1",
+   "date": "2026-10-14",
+   "file": "BEACONFALL-v0.1.html",
+   "title": "첫 공개",
+   "summary": "30개의 섬이 떠 있는 바다에서 짓고, 만들고, 탐험하는 협동 생존. 던전·보스·해적섬·마을섬, 최대 멀티플레이, 모바일 터치 조작, 6개 언어",
+   "latest": false,
+   "size": 2993237,
+   "sha256": "6730194a251d",
+   "build": 6
+  }
+ ]
+}
