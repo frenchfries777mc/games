@@ -34,7 +34,9 @@ a{color:inherit}
 .top{padding:12px 0 6px}
 .top .wrap{display:flex;flex-wrap:wrap;gap:8px;justify-content:space-between}
 .top .pb{padding:6px 10px;font-size:13px;border-width:2px;box-shadow:3px 3px 0 #000b}
-.top .nav,.top .lg{display:flex;flex-wrap:wrap;gap:8px}
+.top .nav{display:flex;flex-wrap:wrap;gap:8px}
+.top .lang option{background:#0e121e;color:#f4ecd0}
+.top .lang{background:var(--btn);color:var(--cream);border:2px solid var(--gold);border-radius:0;padding:5px 8px;font:inherit;font-size:13px;cursor:pointer;box-shadow:3px 3px 0 #000b}
 /* 히어로 */
 .hero{min-height:min(88vh,760px);display:flex;flex-direction:column;justify-content:center;gap:18px;padding:40px 0 30px}
 .hero h1{margin:0;font-size:clamp(38px,10.5vw,104px);letter-spacing:.06em;line-height:1;font-weight:700;text-shadow:4px 4px 0 #000,0 0 30px #000a}
@@ -84,7 +86,7 @@ footer{padding:50px 0 40px;color:var(--gold);font-size:13px;text-shadow:2px 2px 
  <div class="nav">
   <a class="pb" href="#play" data-i="n_play"></a><a class="pb" href="#versions" data-i="n_ver"></a><a class="pb" href="#notes" data-i="n_notes"></a><a class="pb" href="#guide" data-i="n_guide"></a><a class="pb" href="#islands" data-i="n_isl"></a><a class="pb" href="#items" data-i="n_items"></a><a class="pb" href="codex.html" data-i="n_codex"></a><a class="pb" href="#help" data-i="n_help"></a>
  </div>
- <div class="lg" id="lg"></div>
+ <select class="lang" id="lg" aria-label="Language"></select>
  <span data-ff-account></span>
 </div></div>
 <div class="wrap">
@@ -144,7 +146,7 @@ footer{padding:50px 0 40px;color:var(--gold);font-size:13px;text-shadow:2px 2px 
 </div>
 <script src="i18n.js"></script>
 <script>
-const FALLBACK={"latest":"0.3","latestFile":"BEACONFALL-v0.3.html","updated":"2026-10-17","versions":[{"version":"0.3","build":72,"date":"2026-10-17","file":"BEACONFALL-v0.3.html","title":"도감·멀티 안정화·블록 선택","summary":"사이트 도감, 상자 랜덤 배치, 멀티플레이 참가자 문제 수정, Ctrl+커서 블록 선택, 코드 정리","latest":true,"size":0},{"version":"0.2","build":32,"date":"2026-10-15","file":"BEACONFALL-v0.2.html","title":"인트로·계정 저장·채팅","summary":"인트로, Frenchfries777 계정 저장, 친구 바로 참가, 멀티 채팅(T), 확대·축소, 업적 20개 추가","latest":false,"size":0},{"version":"0.1","build":6,"date":"2026-10-14","file":"BEACONFALL-v0.1.html","title":"첫 공개","summary":"30개의 섬이 떠 있는 바다에서 짓고, 만들고, 탐험하는 협동 생존.","latest":false,"size":0}]};
+const FALLBACK={"latest":"0.3","latestFile":"BEACONFALL-v0.3.html","updated":"2026-10-17","versions":[{"version":"0.3","build":73,"date":"2026-10-17","file":"BEACONFALL-v0.3.html","title":"도감·멀티 안정화·블록 선택","summary":"사이트 도감, 상자 랜덤 배치, 멀티플레이 참가자 문제 수정, Ctrl+커서 블록 선택, 코드 정리","latest":true,"size":0},{"version":"0.2","build":32,"date":"2026-10-15","file":"BEACONFALL-v0.2.html","title":"인트로·계정 저장·채팅","summary":"인트로, Frenchfries777 계정 저장, 친구 바로 참가, 멀티 채팅(T), 확대·축소, 업적 20개 추가","latest":false,"size":0},{"version":"0.1","build":6,"date":"2026-10-14","file":"BEACONFALL-v0.1.html","title":"첫 공개","summary":"30개의 섬이 떠 있는 바다에서 짓고, 만들고, 탐험하는 협동 생존.","latest":false,"size":0}]};
 const NOTES_FALLBACK={notes:[]};
 const I=window.I18N,esc=s=>String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const mb=n=>!n?'':(n>=1048576?(n/1048576).toFixed(1)+' MB':Math.round(n/1024)+' KB');
@@ -209,12 +211,13 @@ function renderNotes(d){
 }
 /* 언어 */
 const lg=document.getElementById('lg');
-I.L.forEach(l=>{const b=document.createElement('button');b.className='pb';b.dataset.l=l;b.textContent=NAMES[l];b.onclick=()=>{LANG=l;try{localStorage.setItem(KEY,l);if(window.FFLang)FFLang.set(l);}catch(e){}applyLang();};lg.appendChild(b);});
+I.L.forEach(l=>{const o=document.createElement('option');o.value=l;o.textContent=NAMES[l];lg.appendChild(o);});
+lg.onchange=()=>{LANG=lg.value;try{localStorage.setItem(KEY,LANG);if(window.FFLang)FFLang.set(LANG);}catch(e){}applyLang();};
 function applyLang(){
  document.documentElement.lang=LANG;
  document.querySelectorAll('[data-i]').forEach(e=>{e.textContent=t(e.dataset.i);});document.querySelectorAll('[data-ph]').forEach(e=>{e.placeholder=t(e.dataset.ph);});
  document.title=t('title');const m=document.querySelector('meta[name=description]');if(m)m.content=t('desc');
- lg.querySelectorAll('.pb').forEach(b=>b.classList.toggle('on',b.dataset.l===LANG));
+ lg.value=LANG;
  labels();guide();render(DATA);renderNotes(NDATA);
 }
 applyLang();
