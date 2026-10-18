@@ -1,6 +1,58 @@
 {
  "notes": [
   {
+   "date": "2026-10-18",
+   "build": "",
+   "title": "위키 묶음 반영 (Stickseum 273, Block HTML v35, Fry Sheet v23 외)",
+   "items": [
+    "Stickseum 위키: 새 맵 4개(맵 27개), 설정(배터리 절약·색약·게임패드), 비공개 플레이 안내, 패치 기록 273",
+    "Crown Envoy 위키: 전투 음악과 전쟁 행진곡 번갈아 나옴 안내",
+    "Tools 위키 12문서: Block HTML v25~35, Fry Sheet v19~23, Fry Slides v12~18, Fry Lab v11, 자체 AI v21 반영"
+   ],
+   "tr": {
+    "en": {
+     "title": "Wiki update (Stickseum 273, Block HTML v35, Fry Sheet v23 and more)",
+     "items": [
+      "Stickseum wiki: 4 new maps (27 total), settings (battery saver, colorblind mode, gamepad), private play note, patch history up to 273",
+      "Crown Envoy wiki: battle music and war march now alternate",
+      "Tools wiki, 12 pages: Block HTML v25-35, Fry Sheet v19-23, Fry Slides v12-18, Fry Lab v11, own AI v21"
+     ]
+    },
+    "es": {
+     "title": "Wiki actualizada (Stickseum 273, Block HTML v35, Fry Sheet v23 y más)",
+     "items": [
+      "Wiki de Stickseum: 4 mapas nuevos (27 en total), ajustes (ahorro de batería, modo daltónico, mando), nota de juego privado, historial hasta 273",
+      "Wiki de Crown Envoy: la música de batalla y la marcha de guerra se alternan",
+      "Wiki de Tools, 12 páginas: Block HTML v25-35, Fry Sheet v19-23, Fry Slides v12-18, Fry Lab v11, IA propia v21"
+     ]
+    },
+    "fr": {
+     "title": "Wiki mis à jour (Stickseum 273, Block HTML v35, Fry Sheet v23 et plus)",
+     "items": [
+      "Wiki Stickseum : 4 nouvelles cartes (27 au total), réglages (économie de batterie, mode daltonien, manette), note sur le jeu privé, historique jusqu’à 273",
+      "Wiki Crown Envoy : la musique de combat et la marche de guerre alternent",
+      "Wiki Tools, 12 pages : Block HTML v25-35, Fry Sheet v19-23, Fry Slides v12-18, Fry Lab v11, IA maison v21"
+     ]
+    },
+    "de": {
+     "title": "Wiki aktualisiert (Stickseum 273, Block HTML v35, Fry Sheet v23 u. a.)",
+     "items": [
+      "Stickseum-Wiki: 4 neue Karten (27 insgesamt), Einstellungen (Akkusparmodus, Farbenblind-Modus, Gamepad), Hinweis zu privaten Spielen, Patchverlauf bis 273",
+      "Crown-Envoy-Wiki: Kampfmusik und Kriegsmarsch wechseln sich ab",
+      "Tools-Wiki, 12 Seiten: Block HTML v25-35, Fry Sheet v19-23, Fry Slides v12-18, Fry Lab v11, eigene KI v21"
+     ]
+    },
+    "ja": {
+     "title": "Wiki更新(Stickseum 273、Block HTML v35、Fry Sheet v23など)",
+     "items": [
+      "Stickseum Wiki: 新マップ4つ(計27)、設定(バッテリー節約・色覚モード・ゲームパッド)、プライベート플レイの案内、パッチ履歴を273まで",
+      "Crown Envoy Wiki: 戦闘曲と戦争行進曲が交互に流れる",
+      "Tools Wiki 12ページ: Block HTML v25〜35、Fry Sheet v19〜23、Fry Slides v12〜18、Fry Lab v11、自前AI v21"
+     ]
+    }
+   }
+  },
+  {
    "date": "2026-10-17",
    "build": "",
    "title": "설정 사이트, 위쪽 버튼 정리",
