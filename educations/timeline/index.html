@@ -1,0 +1,1058 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+<title>Timeline Battle</title>
+<link rel="icon" href="../logo.svg">
+<meta name="description" content="사건 카드를 연표의 알맞은 자리에 끼워 넣는 역사 대결 게임">
+<meta name="theme-color" content="#efe4cf">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=Nanum+Myeongjo:wght@700;800&family=Gowun+Batang:wght@400;700&family=IBM+Plex+Mono:wght@500;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/peerjs@1.5.4/dist/peerjs.min.js"></script>
+<style>
+  /* museum archive: aged paper, ink, burgundy stamps, brass */
+  :root{ --paper:#efe4cf; --paper2:#f7f0e2; --card:#fbf7ee; --ink:#2a1f17; --ink2:#5c4a3b; --mute:#8b7763; --rule:#cdbb9c; --wine:#8c2f39; --wine2:#a8434e; --brass:#b0832c; --ok:#2f7d55; --bad:#b3262f; }
+  *{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
+  html,body{margin:0; padding:0; background:var(--paper); color:var(--ink);}
+  body{font-family:'Gowun Batang','Nanum Myeongjo',Georgia,serif; font-size:17px; line-height:1.55; min-height:100vh; min-height:100dvh;
+    padding:env(safe-area-inset-top,0px) env(safe-area-inset-right,0px) env(safe-area-inset-bottom,0px) env(safe-area-inset-left,0px); overflow-x:hidden;
+    background:
+      radial-gradient(ellipse 80% 60% at 10% 0%, rgba(255,250,236,.9), transparent 60%),
+      radial-gradient(ellipse 70% 60% at 100% 100%, rgba(176,131,44,.16), transparent 60%),
+      radial-gradient(circle at 30% 70%, rgba(92,74,59,.05) 0 1px, transparent 1.5px) 0 0/7px 7px,
+      var(--paper);}
+  body::before{content:''; position:fixed; inset:0; pointer-events:none; z-index:0; box-shadow:inset 0 0 140px rgba(92,60,30,.22);}
+  .wrap{position:relative; z-index:1; max-width:1240px; margin:0 auto; padding:0 22px;}
+  button,input{font:inherit; color:inherit;}
+  button{cursor:pointer; touch-action:manipulation;}
+  header{display:flex; align-items:center; justify-content:space-between; padding:16px 0 0; gap:12px; border-bottom:1px solid var(--rule); padding-bottom:12px;}
+  .logo{display:flex; align-items:center; gap:10px; color:var(--ink); text-decoration:none; font-family:'Playfair Display',serif; font-weight:700; font-size:18px; letter-spacing:.02em;}
+  .logo .fry{width:30px; height:30px; border-radius:50%; display:grid; place-items:center; font-size:16px; background:var(--card); border:1px solid var(--rule);}
+  .logo img.lg{width:30px; height:30px; display:block; flex:0 0 auto; border-radius:9px; filter:drop-shadow(0 6px 14px rgba(255,160,60,.25));}
+  .logo b{color:var(--wine);}
+  .net{font-size:13px; color:var(--mute); display:flex; align-items:center; gap:7px; white-space:nowrap; font-family:'IBM Plex Mono',monospace;}
+  .net i{width:8px; height:8px; border-radius:50%; background:var(--rule); display:inline-block;}
+  .net.on i{background:var(--ok);} .net.off i{background:var(--bad);}
+  @media(max-width:420px){ .net span{display:none;} }
+  .langSel{background:var(--card); color:var(--ink2); border:1px solid var(--rule); border-radius:4px; padding:5px 8px; font-size:14px; cursor:pointer; font-family:inherit;}
+  .screen{display:none; padding:26px 0 44px; animation:fade .3s ease;}
+  .screen.on{display:block;}
+  @keyframes fade{from{opacity:0;} to{opacity:1;}}
+  .row{display:flex; gap:10px; align-items:center; flex-wrap:wrap;}
+  .hide{display:none !important;}
+  .center{text-align:center;}
+  .msg{min-height:22px; margin-top:8px; font-size:15px; color:var(--bad);}
+  .msg.info{color:var(--mute);}
+  .kicker{font-family:'IBM Plex Mono',monospace; font-size:12.5px; letter-spacing:.22em; text-transform:uppercase; color:var(--wine);}
+
+  /* buttons: stamped labels */
+  .btn{display:inline-flex; align-items:center; justify-content:center; gap:8px; border-radius:3px; padding:13px 22px; font-family:'Nanum Myeongjo',serif; font-weight:800; font-size:17px; border:1.5px solid var(--ink); background:transparent; color:var(--ink); transition:background .12s, transform .1s; letter-spacing:.02em;}
+  .btn:active{transform:translateY(1px);}
+  .btn:hover{background:rgba(42,31,23,.06);}
+  .btn.main{background:var(--wine); border-color:var(--wine); color:#fbf2e4; box-shadow:0 2px 0 #5d1d25;}
+  .btn.main:hover{background:var(--wine2);}
+  .btn.sm{padding:8px 14px; font-size:15px;}
+  .btn[disabled]{opacity:.4; pointer-events:none;}
+  .inp{width:100%; background:transparent; border:0; border-bottom:2px solid var(--ink); padding:8px 2px; font-size:22px; outline:none; font-family:'Nanum Myeongjo',serif; font-weight:700; color:var(--ink);}
+  .inp::placeholder{color:#b3a088; font-weight:400;}
+  .inp:focus{border-color:var(--wine);}
+  .inp.code{font-family:'IBM Plex Mono',monospace; letter-spacing:.35em; text-transform:uppercase; text-align:center; font-size:26px; width:190px;}
+  .seg{display:inline-flex; gap:0; border:1.5px solid var(--ink); border-radius:3px; overflow:hidden;}
+  .seg button{border:0; background:none; padding:7px 16px; font-weight:700; font-size:15px; color:var(--ink2); border-right:1px solid var(--rule);}
+  .seg button:last-child{border-right:0;}
+  .seg button.on{background:var(--ink); color:var(--paper2);}
+
+  /* HOME */
+  .hero{display:grid; grid-template-columns:minmax(0,1.15fr) minmax(0,.85fr); gap:40px; align-items:end; margin-top:18px;}
+  @media(max-width:860px){ .hero{grid-template-columns:1fr; gap:22px;} }
+  .title{margin:10px 0 0; font-family:'Playfair Display',serif; font-weight:900; font-size:clamp(54px,9vw,112px); line-height:.92; letter-spacing:-.01em; color:var(--ink);}
+  .title em{font-style:italic; color:var(--wine); font-weight:700;}
+  .subt{font-family:'Nanum Myeongjo',serif; font-weight:800; font-size:clamp(20px,2.6vw,28px); margin-top:12px; color:var(--ink2);}
+  .desk{background:var(--card); border:1px solid var(--rule); padding:24px 24px 20px; box-shadow:0 1px 0 #fff inset, 0 18px 40px rgba(92,60,30,.16); position:relative;}
+  .desk::before{content:''; position:absolute; inset:6px; border:1px solid var(--rule); pointer-events:none;}
+  .desk label{display:block; font-family:'IBM Plex Mono',monospace; font-size:12px; letter-spacing:.2em; color:var(--mute); text-transform:uppercase;}
+  .nameRow{display:flex; gap:10px; align-items:end; margin-top:2px;}
+  .dice{border:1.5px solid var(--ink); background:none; border-radius:3px; width:46px; height:46px; font-size:20px; flex:none;}
+  .menu{display:grid; gap:10px; margin-top:22px;}
+  .menu .btn{justify-content:space-between; width:100%; padding:15px 18px;}
+  .menu .btn small{font-family:'IBM Plex Mono',monospace; font-weight:500; font-size:13px; opacity:.85;}
+  .joinRow{display:flex; gap:10px; align-items:end; justify-content:space-between; margin-top:4px; padding:14px 2px 0; border-top:1px dashed var(--rule);}
+  .joinRow label{margin-bottom:4px;}
+  /* exhibit strip on home */
+  .exhibit{margin-top:40px; position:relative; overflow:hidden; padding:30px 0 6px;}
+  .exhibit::before{content:''; position:absolute; left:0; right:0; top:82px; height:3px; background:var(--ink);}
+  .exTrack{display:flex; gap:26px; width:max-content; animation:drift 80s linear infinite;}
+  @keyframes drift{to{transform:translateX(-50%);}}
+  .exItem{width:150px; flex:none; text-align:center;}
+  .exItem .yr{font-family:'IBM Plex Mono',monospace; font-weight:700; font-size:14px; color:var(--wine); height:24px;}
+  .exItem .pin{width:14px; height:14px; border-radius:50%; background:var(--paper); border:3px solid var(--ink); margin:18px auto 14px;}
+  .exItem .lbl{font-size:14px; line-height:1.35; color:var(--ink2);}
+  .exItem .e{font-size:26px; display:block; margin-bottom:4px;}
+
+  /* LOBBY: museum ticket + guestbook */
+  .lobby{display:grid; grid-template-columns:380px minmax(0,1fr); gap:30px; align-items:start;}
+  @media(max-width:860px){ .lobby{grid-template-columns:1fr;} }
+  .ticket{position:relative; background:var(--wine); color:#fbf2e4; padding:22px 26px; border-radius:6px;
+    -webkit-mask:radial-gradient(circle 12px at 0 50%, transparent 98%, #000) left/51% 100% no-repeat, radial-gradient(circle 12px at 100% 50%, transparent 98%, #000) right/51% 100% no-repeat;
+            mask:radial-gradient(circle 12px at 0 50%, transparent 98%, #000) left/51% 100% no-repeat, radial-gradient(circle 12px at 100% 50%, transparent 98%, #000) right/51% 100% no-repeat;}
+  .ticket small{font-family:'IBM Plex Mono',monospace; letter-spacing:.25em; font-size:12px; opacity:.8;}
+  .ticket .cd{font-family:'IBM Plex Mono',monospace; font-weight:700; font-size:clamp(48px,8vw,70px); letter-spacing:.14em; line-height:1.1; margin:4px 0;}
+  .ticket .lnk{font-size:13px; opacity:.85; word-break:break-all; border-top:1px dashed rgba(251,242,228,.5); padding-top:10px; margin-top:6px; font-family:'IBM Plex Mono',monospace;}
+  .ticket .lnk button{background:none; border:1px solid rgba(251,242,228,.6); color:#fbf2e4; border-radius:3px; padding:2px 9px; margin-left:6px; font-size:12px;}
+  .setBox{margin-top:18px; display:grid; gap:14px;}
+  .setRow{display:flex; align-items:center; gap:12px; flex-wrap:wrap;}
+  .setRow > span{min-width:70px; font-weight:700; color:var(--ink2);}
+  .book{background:var(--card); border:1px solid var(--rule); padding:22px 26px; min-height:260px; box-shadow:0 14px 30px rgba(92,60,30,.12);
+    background-image:repeating-linear-gradient(180deg, transparent 0 37px, rgba(140,47,57,.18) 37px 38px); background-position:0 52px;}
+  .book h3{margin:0 0 10px; font-family:'Nanum Myeongjo',serif; font-weight:800; font-size:22px; display:flex; align-items:baseline; gap:10px;}
+  .book h3 b{color:var(--wine); font-family:'IBM Plex Mono',monospace;}
+  .chips{columns:3 160px; column-gap:22px;}
+  .chip{display:block; line-height:38px; height:38px; font-size:18px; font-family:'Nanum Myeongjo',serif; font-weight:700; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; animation:ink .4s ease;}
+  .chip::before{content:'— '; color:var(--mute);}
+  .chip.me{color:var(--wine);}
+  @keyframes ink{from{opacity:0; letter-spacing:.2em;} to{opacity:1;}}
+  .waitDots::after{content:''; animation:dots 1.4s steps(4) infinite;}
+  @keyframes dots{0%{content:'';}25%{content:'.';}50%{content:'..';}75%{content:'...';}}
+
+  /* GAME */
+  .hud{display:flex; align-items:center; gap:22px; flex-wrap:wrap; border-bottom:1px solid var(--rule); padding-bottom:12px;}
+  .stat{display:flex; flex-direction:column;}
+  .stat small{font-family:'IBM Plex Mono',monospace; font-size:11.5px; letter-spacing:.18em; text-transform:uppercase; color:var(--mute);}
+  .stat b{font-family:'Playfair Display',serif; font-weight:900; font-size:30px; line-height:1.05;}
+  .stat.time b{font-family:'IBM Plex Mono',monospace; font-weight:700; font-size:26px; color:var(--wine);}
+  .stat.time.low b{color:var(--bad); animation:blink 1s infinite;}
+  .stat .hearts{color:var(--wine); letter-spacing:3px; font-size:24px; font-family:inherit;}
+  .stat .hearts i{font-style:normal; color:#d6c7ae;}
+  @keyframes blink{50%{opacity:.4;}}
+  .hud .sp{flex:1;}
+  .tbar{height:3px; background:var(--rule); margin-top:-1px;}
+  .tbar i{display:block; height:100%; background:var(--wine); transition:width .25s linear;}
+  .strip{display:flex; gap:18px; margin-top:10px; font-size:15px; flex-wrap:wrap;}
+  .strip .brow{display:flex; gap:6px; align-items:baseline; white-space:nowrap;}
+  .strip .brow .rk{font-family:'IBM Plex Mono',monospace; color:var(--mute); font-size:13px;}
+  .strip .brow .nm{font-weight:700; max-width:120px; overflow:hidden; text-overflow:ellipsis;}
+  .strip .brow .sc{font-family:'IBM Plex Mono',monospace; color:var(--wine); font-size:14px;}
+  .strip .brow .sc small{display:none;}
+  .strip .brow.me .nm{color:var(--wine); text-decoration:underline;}
+  .stage{display:grid; grid-template-columns:auto minmax(0,1fr); gap:30px; align-items:center; margin-top:20px;}
+  @media(max-width:700px){ .stage{grid-template-columns:1fr; gap:10px; position:sticky; top:0; z-index:5; background:var(--paper); padding:8px 0 10px; margin-top:8px; border-bottom:1px solid var(--rule);} }
+  .ev{width:250px; background:var(--card); padding:12px 12px 16px; box-shadow:0 2px 0 #fff inset, 0 16px 34px rgba(92,60,30,.25); transform:rotate(-2deg); position:relative; text-align:center;}
+  .ev::after{content:''; position:absolute; top:-10px; left:50%; width:70px; height:22px; transform:translateX(-50%) rotate(3deg); background:rgba(214,190,140,.7);}
+  .ev .em{height:150px; display:grid; place-items:center; font-size:84px; background:linear-gradient(160deg,#e8dbc0,#d9c6a2); border:1px solid var(--rule);}
+  .ev .tt{font-family:'Nanum Myeongjo',serif; font-weight:800; font-size:21px; margin-top:12px; line-height:1.3; word-break:keep-all;}
+  .ev .yr{font-family:'IBM Plex Mono',monospace; color:var(--wine); font-weight:700; margin-top:6px; letter-spacing:.2em;}
+  .ev.in{animation:deal .4s ease;}
+  .ev.bad{animation:shake .45s ease;}
+  @keyframes deal{from{transform:translateY(-30px) rotate(-8deg); opacity:0;} to{transform:rotate(-2deg); opacity:1;}}
+  @keyframes shake{20%,60%{transform:translateX(-12px) rotate(-4deg);}40%,80%{transform:translateX(12px) rotate(1deg);}}
+  @media(max-width:700px){ .ev{width:auto; display:grid; grid-template-columns:72px minmax(0,1fr); gap:12px; align-items:center; text-align:left; padding:8px; transform:none;} .ev::after{display:none;} .ev .em{height:72px; font-size:42px;} .ev .tt{margin:0; font-size:18px;} .ev .yr{display:none;} .ev.in{animation:none;} }
+  .side .q{font-family:'Playfair Display',serif; font-style:italic; font-weight:700; font-size:clamp(24px,3vw,34px); color:var(--ink2);}
+  .fb.ok{color:var(--ok);} .fb.bad{color:var(--bad);}
+  .fb .pts{font-family:'IBM Plex Mono',monospace; margin-left:8px;}
+  .left{font-family:'IBM Plex Mono',monospace; font-size:13px; color:var(--mute); margin-top:4px; letter-spacing:.05em;}
+  @media(max-width:700px){ .side .q{display:none;} .fb{margin:0; font-size:15px;} }
+
+  /* horizontal timeline rail */
+  .tlWrap{margin-top:22px; overflow-x:auto; overflow-y:hidden; -webkit-overflow-scrolling:touch; padding:6px 0 14px; scroll-behavior:smooth;}
+  .tl{position:relative; display:flex; align-items:stretch; width:max-content; min-width:100%; height:330px; padding:0 30px;}
+  .tl::before{content:''; position:absolute; left:0; right:0; top:50%; height:3px; margin-top:-1.5px; background:var(--ink);}
+  .gap{position:relative; flex:none; width:54px; border:0; background:none; padding:0;}
+  .gap span{position:absolute; left:50%; top:50%; width:36px; height:36px; margin:-18px 0 0 -18px; border-radius:50%; background:var(--paper2); border:2px dashed var(--brass); color:var(--brass); font-size:0; display:grid; place-items:center; transition:all .12s;}
+  .gap span::before{content:'+'; font-size:22px; font-weight:700; line-height:1;}
+  .gap::after{content:''; position:absolute; left:50%; top:16%; bottom:16%; width:0; border-left:2px dashed transparent; transition:border-color .12s;}
+  .gap:hover span,.gap:focus-visible span{background:var(--wine); border-style:solid; border-color:var(--wine); color:#fff; transform:scale(1.15);}
+  .gap:hover::after{border-color:rgba(140,47,57,.4);}
+  .tl.lock .gap{pointer-events:none;} .tl.lock .gap span{opacity:.35;}
+  .tc{position:relative; flex:none; width:150px;}
+  .tc .dot{position:absolute; left:50%; top:50%; width:16px; height:16px; margin:-8px 0 0 -8px; border-radius:50%; background:var(--ink); border:3px solid var(--paper);}
+  .tc .y{position:absolute; left:0; right:0; text-align:center; font-family:'IBM Plex Mono',monospace; font-weight:700; font-size:16px; color:var(--wine); line-height:1.15;}
+  .tc .y small{display:block; font-size:11px; color:var(--mute); letter-spacing:.06em;}
+  .tc .bx{position:absolute; left:6px; right:6px; background:var(--card); border:1px solid var(--rule); padding:10px 8px; text-align:center; font-family:'Nanum Myeongjo',serif; font-weight:800; font-size:14.5px; line-height:1.3; word-break:keep-all; box-shadow:0 8px 18px rgba(92,60,30,.14);}
+  .tc .bx .e{display:block; font-size:30px; margin-bottom:4px;}
+  .tc .bx::after{content:''; position:absolute; left:50%; width:1.5px; height:20px; background:var(--ink2);}
+  .tc.up .bx{bottom:calc(50% + 22px);} .tc.up .bx::after{top:100%;} .tc.up .y{top:calc(50% + 16px);}
+  .tc.dn .bx{top:calc(50% + 22px);} .tc.dn .bx::after{bottom:100%;} .tc.dn .y{bottom:calc(50% + 16px);}
+  .tc.new .bx{border:2px solid var(--ok); animation:hang .5s ease;}
+  .tc.new .dot{background:var(--ok);}
+  .tc.ghost .bx{border:2px solid var(--bad); background:#f7dfdc; color:var(--bad);}
+  .tc.ghost .dot{background:var(--bad);} .tc.ghost .y{color:var(--bad);}
+  .tc.ghost{animation:ghost 1.6s ease forwards;}
+  @keyframes hang{from{transform:translateY(-14px) rotate(-3deg); opacity:0;} to{transform:none; opacity:1;}}
+  @keyframes ghost{0%{opacity:0;} 15%{opacity:1;} 80%{opacity:1;} 100%{opacity:0;}}
+  .done{align-self:center; padding:0 26px; color:var(--mute); font-style:italic;}
+  /* phones: vertical rail */
+  @media(max-width:700px){
+    .tlWrap{overflow:visible;}
+    .tl{flex-direction:column; width:auto; height:auto; padding:0 0 0 0;}
+    .tl::before{left:76px; right:auto; top:0; bottom:0; width:3px; height:auto; margin:0;}
+    .gap{width:100%; height:44px;}
+    .gap span{left:77px; top:50%;}
+    .gap::after{display:none;}
+    .tc{width:100%; min-height:62px; display:grid; grid-template-columns:64px 26px minmax(0,1fr); align-items:center; gap:0;}
+    .tc .dot{position:static; margin:0 0 0 4px; justify-self:start;}
+    .tc .y{position:static !important; text-align:right; padding-right:8px; font-size:14px;}
+    .tc .bx{position:static !important; display:flex; align-items:center; gap:8px; text-align:left; margin-left:10px; font-size:15px;}
+    .tc .bx .e{display:inline; font-size:22px; margin:0;}
+    .tc .bx::after{display:none;}
+  }
+  .countdown{position:fixed; inset:0; display:none; place-items:center; background:rgba(239,228,207,.9); z-index:20;}
+  .countdown.on{display:grid;}
+  .countdown b{font-family:'Playfair Display',serif; font-weight:900; font-size:min(42vw,260px); color:var(--wine); animation:cnt 1s ease infinite;}
+  @keyframes cnt{0%{transform:scale(1.3); opacity:0;}20%{opacity:1; transform:scale(1);}100%{opacity:.2;}}
+
+  /* WATCH board + results: ledger */
+  .ledger{margin-top:20px; columns:2 340px; column-gap:40px;}
+  .brow{display:grid; grid-template-columns:34px minmax(0,1fr) auto; gap:10px; align-items:baseline; padding:9px 2px; border-bottom:1px solid var(--rule); break-inside:avoid; position:relative;}
+  .brow .bar{display:none;}
+  .brow .rk{font-family:'Playfair Display',serif; font-weight:900; font-size:20px; color:var(--mute);}
+  .brow .nm{font-family:'Nanum Myeongjo',serif; font-weight:800; font-size:18px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
+  .brow .sc{font-family:'IBM Plex Mono',monospace; font-weight:700; color:var(--wine); font-size:17px;}
+  .brow .sc small{color:var(--mute); font-size:12px; margin-left:6px;}
+  .brow.r1 .rk{color:var(--brass);} .brow.off{opacity:.45;}
+  .podium{display:flex; justify-content:center; align-items:flex-end; gap:16px; margin:24px 0 6px;}
+  .pod{flex:0 1 190px; text-align:center;}
+  .pod .who{font-family:'Nanum Myeongjo',serif; font-weight:800; font-size:18px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
+  .pod .pts{font-family:'IBM Plex Mono',monospace; color:var(--mute); font-size:13px; margin-bottom:8px;}
+  .pod .blkp{display:grid; place-items:start center; padding-top:12px; font-family:'Playfair Display',serif; font-weight:900; font-size:44px; color:var(--paper2); background:var(--ink); animation:rise .7s ease backwards; clip-path:polygon(6% 0,94% 0,100% 100%,0 100%);}
+  .pod.p1 .blkp{height:170px; background:var(--wine); animation-delay:.5s;}
+  .pod.p2 .blkp{height:120px; animation-delay:.25s;}
+  .pod.p3 .blkp{height:88px; background:var(--ink2);}
+  @keyframes rise{from{transform:scaleY(0); transform-origin:bottom;} to{transform:scaleY(1); transform-origin:bottom;}}
+  .myRes{text-align:center; margin:16px 0 0; font-size:19px; font-family:'Nanum Myeongjo',serif; font-weight:800;}
+  .myRes b{color:var(--wine); font-family:'Playfair Display',serif; font-size:30px;}
+  .tblWrap{max-height:46vh; overflow:auto; margin-top:20px; border-top:3px double var(--ink); border-bottom:3px double var(--ink);}
+  .resTbl{width:100%; border-collapse:collapse; font-size:16px;}
+  .resTbl th{font-family:'IBM Plex Mono',monospace; font-size:11.5px; letter-spacing:.15em; text-transform:uppercase; color:var(--mute); text-align:left; padding:10px; border-bottom:1px solid var(--ink);}
+  .resTbl td{padding:9px 10px; border-bottom:1px solid var(--rule);}
+  .resTbl td.n{font-family:'IBM Plex Mono',monospace; font-weight:700;}
+  .resTbl tr.me td{color:var(--wine); font-weight:700;}
+  .secT{font-family:'Playfair Display',serif; font-weight:900; font-size:28px; margin:34px 0 14px;}
+  .secT small{display:block; font-family:'Nanum Myeongjo',serif; font-size:16px; color:var(--mute); font-weight:700;}
+  .hard{display:grid; grid-template-columns:repeat(auto-fill,minmax(190px,1fr)); gap:18px;}
+  .hard .h{background:var(--card); padding:10px 10px 14px; box-shadow:0 10px 22px rgba(92,60,30,.16); text-align:center; position:relative;}
+  .hard .h:nth-child(odd){transform:rotate(-1.5deg);} .hard .h:nth-child(even){transform:rotate(1.2deg);}
+  .hard .h .e{display:grid; place-items:center; height:90px; font-size:50px; background:linear-gradient(160deg,#e8dbc0,#d9c6a2);}
+  .hard .h .t{font-family:'Nanum Myeongjo',serif; font-weight:800; margin-top:8px; line-height:1.3;}
+  .hard .h .y{font-family:'IBM Plex Mono',monospace; color:var(--wine); font-weight:700; font-size:14px;}
+  .hard .h .m{position:absolute; top:-10px; right:-10px; width:52px; height:52px; border-radius:50%; background:var(--bad); color:#fff; display:grid; place-items:center; font-family:'IBM Plex Mono',monospace; font-weight:700; font-size:14px; line-height:1.05; text-align:center; transform:rotate(12deg); box-shadow:0 4px 10px rgba(0,0,0,.2);}
+  .hard .h .m small{display:block; font-size:9px;}
+  .soloRes{text-align:center; margin-top:10px;}
+  .soloRes .big{font-family:'Playfair Display',serif; font-weight:900; font-size:clamp(80px,14vw,140px); color:var(--wine); line-height:1;}
+  .soloRes p{color:var(--ink2); margin:10px 0 0; font-size:18px;}
+  .soloRes .nb{display:inline-block; margin-top:14px; padding:6px 16px; border:2px solid var(--ok); color:var(--ok); font-family:'Nanum Myeongjo',serif; font-weight:800; transform:rotate(-3deg);}
+
+  /* card tag, drag, note panel, era markers, pop-up, my timeline */
+  .ev{touch-action:none; cursor:grab; user-select:none; -webkit-user-select:none;}
+  .ev .tag{position:absolute; top:20px; left:20px; z-index:1; font-family:'IBM Plex Mono',monospace; font-size:11px; font-weight:700; letter-spacing:.12em; padding:2px 7px; color:#fbf2e4; background:var(--ink2); transform:rotate(-4deg);}
+  .ev .tag.k{background:var(--wine);} .ev .tag.w{background:#3f5d7a;} .ev .tag.s{background:#4d6b3c;}
+  .ev.lift{opacity:.25;}
+  .drag{position:fixed; z-index:40; pointer-events:none; width:170px; background:var(--card); padding:8px 8px 10px; text-align:center; box-shadow:0 22px 40px rgba(60,35,15,.35); transform:translate(-50%,-60%) rotate(-4deg); font-family:'Nanum Myeongjo',serif; font-weight:800; font-size:15px; line-height:1.3; word-break:keep-all;}
+  .drag .em{height:84px; display:grid; place-items:center; font-size:46px; background:linear-gradient(160deg,#e8dbc0,#d9c6a2); margin-bottom:6px;}
+  .gap.hot span{background:var(--wine); border-style:solid; border-color:var(--wine); color:#fff; transform:scale(1.3);}
+  .gap.hot::after{border-color:rgba(140,47,57,.5);}
+  .tl.dragging .gap span{border-color:var(--wine); animation:pulse 1s ease infinite;}
+  @keyframes pulse{50%{transform:scale(1.12);}}
+  .hint{font-size:15px; color:var(--mute); margin-top:4px;}
+  .note{margin-top:14px; max-width:560px; background:var(--card); border:1px solid var(--rule); border-left:5px solid var(--ok); padding:12px 16px 12px 14px; position:relative; animation:slide .35s ease; box-shadow:0 10px 24px rgba(92,60,30,.12);}
+  .note.bad{border-left-color:var(--bad);}
+  .note .st{position:absolute; right:12px; top:-12px; font-family:'Nanum Myeongjo',serif; font-weight:800; font-size:15px; padding:2px 10px; border:2px solid var(--ok); color:var(--ok); background:var(--card); transform:rotate(4deg);}
+  .note.bad .st{border-color:var(--bad); color:var(--bad);}
+  .note .hd{display:flex; align-items:center; gap:10px; font-family:'Nanum Myeongjo',serif; font-weight:800; font-size:18px; line-height:1.3; padding-right:70px;}
+  .note .hd .e{font-size:28px;}
+  .note .hd .yy{font-family:'IBM Plex Mono',monospace; color:var(--wine); font-size:15px; white-space:nowrap;}
+  .note.bad .hd .yy{color:var(--bad);}
+  .note .fx{margin-top:6px; color:var(--ink2); font-size:16px; line-height:1.5;}
+  .note .stk{display:inline-block; margin-left:8px; font-family:'IBM Plex Mono',monospace; font-size:13px; color:var(--brass);}
+  @keyframes slide{from{opacity:0; transform:translateY(8px);} to{opacity:1; transform:none;}}
+  @media(max-width:700px){ .hud{gap:12px; flex-wrap:nowrap;} .hud .btn.sm{padding:8px 10px;} .sndBtn{width:40px;} .ev .tag{top:4px; left:4px; font-size:9px; padding:1px 5px;} .hint{display:none;} .note{margin-top:2px; padding:8px 10px 8px 10px;} .note .st{top:-10px; font-size:13px;} .note .hd{font-size:15px; padding-right:60px;} .note .hd .e{font-size:20px;} .note .fx{font-size:14px; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden;} }
+  .era{position:relative; flex:none; width:0;}
+  .era::before{content:''; position:absolute; top:8px; bottom:8px; left:0; border-left:1.5px dotted var(--brass);}
+  .era span{position:absolute; top:0; left:6px; font-family:'IBM Plex Mono',monospace; font-size:12px; font-weight:700; letter-spacing:.06em; color:var(--brass); white-space:nowrap;}
+  .tc .bx{cursor:pointer;}
+  .tc .bx:hover{border-color:var(--brass);}
+  @media(max-width:700px){ .era{width:100%; height:26px;} .era::before{top:50%; bottom:auto; left:0; right:0; border-left:0; border-top:1.5px dotted var(--brass);} .era span{top:50%; left:90px; transform:translateY(-50%); background:var(--paper); padding:0 8px;} }
+  .pop{position:fixed; inset:0; z-index:35; display:none; place-items:center; background:rgba(42,31,23,.35); padding:20px;}
+  .pop.on{display:grid; animation:fade .2s ease;}
+  .pbx{width:min(420px,100%); background:var(--card); padding:14px 14px 18px; box-shadow:0 24px 60px rgba(42,31,23,.4); text-align:center; transform:rotate(-1deg); position:relative;}
+  .pbx .em{height:150px; display:grid; place-items:center; font-size:84px; background:linear-gradient(160deg,#e8dbc0,#d9c6a2);}
+  .pbx .tg{font-family:'IBM Plex Mono',monospace; font-size:12px; letter-spacing:.14em; color:var(--mute); margin-top:12px;}
+  .pbx .tt{font-family:'Nanum Myeongjo',serif; font-weight:800; font-size:23px; line-height:1.3; margin-top:2px; word-break:keep-all;}
+  .pbx .yy{font-family:'IBM Plex Mono',monospace; font-weight:700; color:var(--wine); margin-top:4px;}
+  .pbx .fx{margin-top:10px; font-size:17px; color:var(--ink2); line-height:1.55; text-align:left; border-top:1px dashed var(--rule); padding-top:10px;}
+  .pbx .x{position:absolute; top:6px; right:6px; width:36px; height:36px; border:0; background:var(--card); border-radius:50%; font-size:18px; box-shadow:0 2px 6px rgba(0,0,0,.15);}
+  .sndBtn{width:44px; padding:8px 0;}
+  .mytl{overflow-x:auto; -webkit-overflow-scrolling:touch; padding:4px 0 10px;}
+  .mytl .tl{height:300px;}
+  .mytl .tc.miss .bx{border-color:var(--bad); color:var(--bad);}
+  .hard .h{cursor:pointer;}
+  .hard .h .f{font-size:14px; color:var(--ink2); margin-top:6px; line-height:1.45; text-align:left;}
+  @media(max-width:700px){ .mytl{max-height:60vh; overflow-y:auto;} .mytl .tl{height:auto;} }
+  .toast{position:fixed; left:50%; bottom:calc(20px + env(safe-area-inset-bottom,0px)); transform:translateX(-50%) translateY(20px); background:var(--ink); color:var(--paper2); border-radius:3px; padding:10px 18px; font-size:15px; opacity:0; transition:all .25s; z-index:30; pointer-events:none; max-width:90vw;}
+  .toast.on{opacity:1; transform:translateX(-50%);}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <a class="logo" href="../"><img class="lg" src="../logo.svg" alt="" width="30" height="30"><span>Frenchfries<b>777</b></span></a>
+    <div class="row" style="gap:12px; flex-wrap:nowrap"><div class="net" id="net"><i></i><span id="netTxt">오프라인</span></div><select class="langSel" id="langSel" aria-label="언어"><option value="ko">한국어</option><option value="en">English</option><option value="fr">Français</option><option value="de">Deutsch</option><option value="es">Español</option><option value="ja">日本語</option></select></div>
+  </header>
+
+  <!-- HOME -->
+  <section class="screen on" id="sHome">
+    <div class="hero">
+      <div>
+        <div class="kicker">Educations · History</div>
+        <h1 class="title">Timeline<br><em>Battle</em></h1>
+        <div class="subt">역사 타임라인 배틀</div>
+      </div>
+      <div class="desk">
+        <label for="nameIn">이름</label>
+        <div class="nameRow"><input class="inp" id="nameIn" maxlength="16" placeholder="이름을 입력하세요" autocomplete="off"><button class="dice" id="diceBtn" title="무작위 이름">🎲</button></div>
+        <div class="menu">
+          <button class="btn main" id="soloBtn"><span>혼자 하기</span><small id="soloBest"></small></button>
+          <button class="btn" id="hostBtn"><span>방 만들기</span><small>≤ 40</small></button>
+        </div>
+        <div class="joinRow">
+          <div><label for="codeIn">방 코드</label><input class="inp code" id="codeIn" maxlength="5" placeholder="•••••" autocomplete="off" autocapitalize="characters" spellcheck="false"></div>
+          <button class="btn" id="joinBtn">참가</button>
+        </div>
+        <div class="msg" id="homeMsg"></div>
+      </div>
+    </div>
+    <div class="exhibit" aria-hidden="true"><div class="exTrack" id="ticker"></div></div>
+  </section>
+
+  <!-- LOBBY -->
+  <section class="screen" id="sLobby">
+    <div class="lobby">
+      <div>
+        <div class="ticket">
+          <small>방 코드</small>
+          <div class="cd" id="lobbyCode">-----</div>
+          <div class="lnk" id="lobbyLink"></div>
+        </div>
+        <div id="hostSet" class="setBox hide">
+          <div class="setRow"><span>시간</span><div class="seg" id="segTime"><button data-v="180">3분</button><button data-v="300" class="on">5분</button><button data-v="480">8분</button></div></div>
+          <div class="setRow"><span>방장</span><div class="seg" id="segHostPlay"><button data-v="0" class="on">순위판만 보기</button><button data-v="1">나도 참가</button></div></div>
+          <button class="btn main" id="startBtn" disabled>시작</button>
+        </div>
+        <div id="guestWait" class="setBox hide">
+          <div style="font-family:'Nanum Myeongjo',serif;font-weight:800;font-size:19px">방장이 시작하기를 기다리는 중<span class="waitDots"></span></div>
+          <div class="msg info" id="guestSet"></div>
+        </div>
+      </div>
+      <div class="book">
+        <h3>참가자 <b id="pNum">0</b><small style="color:var(--mute);font-size:14px">/ 40</small></h3>
+        <div class="chips" id="chips"></div>
+      </div>
+    </div>
+    <div class="row" style="margin-top:24px"><input class="inp" id="renameIn" maxlength="16" placeholder="내 이름" autocomplete="off" style="max-width:220px;font-size:18px"><button class="btn sm" id="renameBtn">이름 바꾸기</button><button class="btn sm" id="leaveBtn" style="margin-left:auto">나가기</button></div>
+  </section>
+
+  <!-- GAME -->
+  <section class="screen" id="sGame">
+    <div class="hud">
+      <button class="btn sm solo" id="gQuit">← 그만하기</button>
+      <div class="stat"><small>점수</small><b id="gScore">0</b></div>
+      <div class="stat"><small>연속</small><b id="gStreak">0</b></div>
+      <div class="stat solo"><small>목숨</small><b class="hearts" id="gHearts"></b></div>
+      <div class="stat time race" id="gTimeBox"><small>남은 시간</small><b id="gTime">0:00</b></div>
+      <div class="stat race"><small>순위</small><b id="gRank">-</b></div>
+      <div class="sp"></div>
+      <button class="btn sm sndBtn" id="sndBtn" aria-label="소리">🔊</button>
+      <button class="btn sm hide" id="endNow2">지금 끝내기</button>
+    </div>
+    <div class="tbar race"><i id="gBar"></i></div>
+    <div class="strip race" id="gStrip"></div>
+    <div class="stage">
+      <div class="ev" id="ev"></div>
+      <div class="side">
+        <div class="q">언제 일어났을까?</div>
+        <div class="hint">카드를 연표로 끌어다 놓거나, 연표의 + 를 누르세요</div>
+        <div class="note hide" id="fb"></div>
+        <div class="left" id="gLeft"></div>
+      </div>
+    </div>
+    <div class="tlWrap" id="tlWrap"><div class="tl" id="tl"></div></div>
+  </section>
+
+  <!-- HOST WATCH -->
+  <section class="screen" id="sWatch">
+    <div class="hud">
+      <div class="stat"><small>방 코드</small><b id="wCode" style="font-family:'IBM Plex Mono',monospace;color:var(--wine)">-----</b></div>
+      <div class="stat time" id="wTimeBox"><small>남은 시간</small><b id="wTime">0:00</b></div>
+      <div class="stat"><small>전체 정답</small><b id="wTotal">0</b></div>
+      <div class="sp"></div>
+      <button class="btn sm" id="endNowBtn">지금 끝내기</button>
+    </div>
+    <div class="tbar"><i id="wBar"></i></div>
+    <div class="ledger" id="wBoard"></div>
+  </section>
+
+  <!-- RESULT -->
+  <section class="screen" id="sResult">
+    <div class="kicker center">Timeline Battle</div>
+    <h1 class="title center" style="font-size:clamp(48px,8vw,90px)">결과</h1>
+    <div id="raceRes">
+      <div class="podium" id="podium"></div>
+      <div class="myRes" id="myRes"></div>
+      <div class="tblWrap"><table class="resTbl"><thead><tr><th>순위</th><th>이름</th><th>점수</th><th>정답</th><th>정확도</th><th>최고 연속</th></tr></thead><tbody id="resBody"></tbody></table></div>
+    </div>
+    <div id="soloRes" class="soloRes"></div>
+    <div id="myTlWrap" class="hide"><h3 class="secT">내가 만든 연표<small>카드를 누르면 설명을 볼 수 있어요</small></h3><div class="mytl"><div class="tl" id="myTl"></div></div></div>
+    <div id="hardWrap"><h3 class="secT"><span id="hardT">가장 많이 틀린 사건</span></h3><div class="hard" id="hard"></div></div>
+    <div class="row" style="margin-top:28px; justify-content:center">
+      <button class="btn main hide" id="againBtn">다시 하기</button>
+      <button class="btn" id="homeBtn">처음으로</button>
+    </div>
+    <div class="msg info center" id="resWait"></div>
+  </section>
+</div>
+
+<div class="countdown" id="cd"><b id="cdNum">3</b></div>
+<div class="toast" id="toast"></div>
+<div class="pop" id="pop"><div class="pbx" id="popBox"></div></div>
+
+<script>
+(function(){
+'use strict';
+var MAX_PLAYERS = 40, PREFIX = 'ff-timeline-', CODE_CH = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789', SAVE_KEY = 'timeline.v1', LIVES = 3;
+var $ = function(id){ return document.getElementById(id); };
+var qs = new URLSearchParams(location.search);
+
+var I18N = {"3분": ["3 min", "3 min", "3 Min.", "3 min", "3分"], "5분": ["5 min", "5 min", "5 Min.", "5 min", "5分"], "8분": ["8 min", "8 min", "8 Min.", "8 min", "8分"], "{0}점": ["{0} pts", "{0} pts", "{0} Pkt.", "{0} pts", "{0}点"], "결과": ["Results", "Résultats", "Ergebnis", "Resultados", "結果"], "결과를 기다리는 중": ["Waiting for results", "En attente des résultats", "Warte auf das Ergebnis", "Esperando resultados", "結果を待っています"], "나가기": ["Leave", "Quitter", "Verlassen", "Salir", "退出"], "나도 참가": ["Play too", "Jouer aussi", "Mitspielen", "Jugar también", "自分も参加"], "남은 시간": ["Time left", "Temps restant", "Restzeit", "Tiempo restante", "残り時間"], "내 이름": ["My name", "Mon nom", "Mein Name", "Mi nombre", "自分の名前"], "다시 연결 중": ["Reconnecting", "Reconnexion", "Verbinde neu", "Reconectando", "再接続中"], "다시 하기": ["Play again", "Rejouer", "Nochmal", "Otra vez", "もう一度"], "링크를 복사했어요": ["Link copied", "Lien copié", "Link kopiert", "Enlace copiado", "リンクをコピーしました"], "무작위 이름": ["Random name", "Nom aléatoire", "Zufälliger Name", "Nombre aleatorio", "ランダムな名前"], "방 만들기": ["Create room", "Créer une salle", "Raum erstellen", "Crear sala", "ルームを作る"], "방 코드": ["Room code", "Code de la salle", "Raumcode", "Código de sala", "ルームコード"], "방 코드 5자리를 입력하세요.": ["Enter the 5-character room code.", "Entrez le code à 5 caractères.", "Gib den 5-stelligen Raumcode ein.", "Escribe el código de 5 caracteres.", "5文字のルームコードを入力してください。"], "방에 연결하는 중...": ["Connecting to room...", "Connexion à la salle...", "Verbinde mit dem Raum...", "Conectando a la sala...", "ルームに接続中..."], "방을 만드는 중...": ["Creating room...", "Création de la salle...", "Raum wird erstellt...", "Creando sala...", "ルームを作成中..."], "방을 만들지 못했어요 ({0}). 잠시 후 다시 해 보세요.": ["Couldn't create the room ({0}). Try again shortly.", "Impossible de créer la salle ({0}). Réessayez bientôt.", "Raum konnte nicht erstellt werden ({0}). Versuch es gleich nochmal.", "No se pudo crear la sala ({0}). Inténtalo en un momento.", "ルームを作れませんでした({0})。少し後でもう一度試してください。"], "방을 찾을 수 없어요. 코드를 확인하세요.": ["Room not found. Check the code.", "Salle introuvable. Vérifiez le code.", "Raum nicht gefunden. Prüfe den Code.", "Sala no encontrada. Revisa el código.", "ルームが見つかりません。コードを確認してください。"], "방이 가득 찼어요 (최대 40명).": ["The room is full (max 40).", "La salle est pleine (40 max).", "Der Raum ist voll (max. 40).", "La sala está llena (máx. 40).", "ルームが満員です(最大40人)。"], "방장": ["Host", "Hôte", "Gastgeber", "Anfitrión", "ホスト"], "방장과 연결 끊김": ["Host disconnected", "Hôte déconnecté", "Gastgeber getrennt", "Anfitrión desconectado", "ホストと切断"], "방장과 연결이 끊겼어요": ["Lost connection to the host", "Connexion à l'hôte perdue", "Verbindung zum Gastgeber verloren", "Se perdió la conexión con el anfitrión", "ホストとの接続が切れました"], "방장이 다시 시작하면 대기실로 이동해요.": ["You'll go to the lobby when the host starts again.", "Vous irez au salon quand l'hôte relancera.", "Wenn der Gastgeber neu startet, geht es zur Lobby.", "Irás a la sala de espera cuando el anfitrión vuelva a empezar.", "ホストが再開するとロビーに移動します。"], "방장이 시작하기를 기다리는 중": ["Waiting for the host to start", "En attente du lancement par l'hôte", "Warten auf den Start durch den Gastgeber", "Esperando a que el anfitrión empiece", "ホストの開始を待っています"], "복사": ["Copy", "Copier", "Kopieren", "Copiar", "コピー"], "서버 연결 끊김": ["Server disconnected", "Serveur déconnecté", "Server getrennt", "Servidor desconectado", "サーバー切断"], "순위": ["Rank", "Rang", "Rang", "Puesto", "順位"], "순위판만 보기": ["Watch the board", "Voir le classement", "Nur Rangliste", "Solo ver el ranking", "ランキングを見る"], "시간": ["Time", "Temps", "Zeit", "Tiempo", "時間"], "시간 종료": ["Time's up", "Temps écoulé", "Zeit um", "Se acabó", "時間切れ"], "시작": ["Start", "Commencer", "Start", "Empezar", "スタート"], "아직 아무도 없어요": ["No one yet", "Personne pour l'instant", "Noch niemand da", "Aún no hay nadie", "まだ誰もいません"], "언어": ["Language", "Langue", "Sprache", "Idioma", "言語"], "연결 도구를 불러오지 못했어요. 인터넷 연결을 확인하고 새로고침하세요.": ["Couldn't load the connection tool. Check your internet and refresh.", "Impossible de charger l'outil de connexion. Vérifiez Internet et actualisez.", "Das Verbindungstool konnte nicht geladen werden. Prüfe das Internet und lade neu.", "No se pudo cargar la herramienta de conexión. Revisa internet y recarga.", "接続ツールを読み込めませんでした。ネット接続を確認して再読み込みしてください。"], "연결 시간이 초과됐어요. 코드를 확인하고 다시 해 보세요.": ["Connection timed out. Check the code and try again.", "Délai dépassé. Vérifiez le code et réessayez.", "Zeitüberschreitung. Prüfe den Code und versuch es nochmal.", "Tiempo agotado. Revisa el código e inténtalo de nuevo.", "接続がタイムアウトしました。コードを確認してもう一度試してください。"], "연결됨": ["Connected", "Connecté", "Verbunden", "Conectado", "接続中"], "연결하지 못했어요 ({0}).": ["Couldn't connect ({0}).", "Connexion impossible ({0}).", "Verbindung fehlgeschlagen ({0}).", "No se pudo conectar ({0}).", "接続できませんでした({0})。"], "오프라인": ["Offline", "Hors ligne", "Offline", "Sin conexión", "オフライン"], "이름": ["Name", "Nom", "Name", "Nombre", "名前"], "이름 바꾸기": ["Rename", "Renommer", "Umbenennen", "Cambiar nombre", "名前を変更"], "이름을 먼저 입력하세요.": ["Enter your name first.", "Entrez d'abord votre nom.", "Gib zuerst deinen Namen ein.", "Escribe primero tu nombre.", "先に名前を入力してください。"], "이름을 바꿨어요": ["Name changed", "Nom modifié", "Name geändert", "Nombre cambiado", "名前を変更しました"], "이름을 입력하세요": ["Enter your name", "Entrez votre nom", "Gib deinen Namen ein", "Escribe tu nombre", "名前を入力"], "점수": ["Score", "Score", "Punkte", "Puntos", "スコア"], "지금 끝내기": ["End now", "Terminer", "Jetzt beenden", "Terminar ya", "今すぐ終了"], "참가": ["Join", "Rejoindre", "Beitreten", "Entrar", "参加"], "참가자": ["Players", "Joueurs", "Spieler", "Jugadores", "参加者"], "참가자를 기다리는 중": ["Waiting for players", "En attente de joueurs", "Warte auf Spieler", "Esperando jugadores", "参加者を待っています"], "처음으로": ["Home", "Accueil", "Startseite", "Inicio", "最初へ"], "플레이어": ["Player", "Joueur", "Spieler", "Jugador", "プレイヤー"], "혼자 하기": ["Solo", "Solo", "Allein spielen", "Solo", "ひとりで遊ぶ"], "🏆 우승! ": ["🏆 Winner! ", "🏆 Victoire ! ", "🏆 Sieg! ", "🏆 ¡Victoria! ", "🏆 優勝! "], "{0}명 중": ["of {0}", "sur {0}", "von {0}", "de {0}", "{0}人中"], "{0}위 · {1}점 · 정답 {2}개": ["Rank {0} · {1} pts · {2} correct", "Rang {0} · {1} pts · {2} bonnes réponses", "Rang {0} · {1} Pkt. · {2} richtig", "Puesto {0} · {1} pts · {2} aciertos", "{0}位 · {1}点 · 正解 {2}個"], "← 그만하기": ["← Stop", "← Arrêter", "← Aufhören", "← Parar", "← やめる"], "가장 많이 틀린 사건": ["Most missed events", "Événements les plus ratés", "Am häufigsten verfehlt", "Eventos más fallados", "いちばん間違えた出来事"], "과학·발명": ["Science", "Sciences", "Wissenschaft", "Ciencia", "科学・発明"], "남은 카드 {0}장": ["{0} cards left", "{0} cartes restantes", "Noch {0} Karten", "Quedan {0} cartas", "残り{0}枚"], "모두": ["All", "Tout", "Alle", "Todo", "すべて"], "모든 카드를 놓았어요": ["All cards placed", "Toutes les cartes sont posées", "Alle Karten gelegt", "Todas las cartas colocadas", "全部のカードを置きました"], "목숨": ["Lives", "Vies", "Leben", "Vidas", "ライフ"], "세계사": ["World", "Monde", "Welt", "Mundo", "世界史"], "여기": ["here", "ici", "hier", "aquí", "ここ"], "연속": ["Streak", "Série", "Serie", "Racha", "連続"], "전체 정답": ["Total correct", "Bonnes réponses", "Richtig gesamt", "Aciertos totales", "合計正解"], "정답": ["Correct", "Justes", "Richtig", "Aciertos", "正解"], "정확도": ["Accuracy", "Précision", "Genauigkeit", "Precisión", "正確さ"], "최고 {0}점": ["Best {0}", "Record {0}", "Rekord {0}", "Récord {0}", "最高 {0}点"], "최고 기록!": ["New best!", "Nouveau record !", "Neuer Rekord!", "¡Nuevo récord!", "最高記録!"], "최고 연속": ["Best streak", "Meilleure série", "Beste Serie", "Mejor racha", "最高連続"], "카드": ["Cards", "Cartes", "Karten", "Cartas", "カード"], "한국사": ["Korea", "Corée", "Korea", "Corea", "韓国史"], "언제 일어났을까?": ["When did it happen?", "Quand est-ce arrivé ?", "Wann war das?", "¿Cuándo ocurrió?", "いつ起きた?"], "정답 {0}개 · 최고 연속 {1}": ["{0} correct · best streak {1}", "{0} bonnes réponses · meilleure série {1}", "{0} richtig · beste Serie {1}", "{0} aciertos · mejor racha {1}", "正解 {0}個 · 最高連続 {1}"], "역사 타임라인 배틀": ["History Timeline Battle", "Bataille de la frise chronologique", "Zeitleisten-Duell", "Batalla de la línea del tiempo", "歴史タイムラインバトル"], "카드를 연표로 끌어다 놓거나, 연표의 + 를 누르세요": ["Drag the card onto the timeline, or tap a +", "Faites glisser la carte sur la frise, ou touchez un +", "Ziehe die Karte auf den Zeitstrahl oder tippe auf ein +", "Arrastra la carta a la línea del tiempo o toca un +", "カードを年表へドラッグするか、＋をタップ"], "틀렸어요": ["Wrong", "Raté", "Falsch", "Fallo", "ざんねん"], "{0}연속!": ["{0} in a row!", "{0} d'affilée !", "{0} in Folge!", "¡{0} seguidas!", "{0}連続！"], "닫기": ["Close", "Fermer", "Schließen", "Cerrar", "閉じる"], "소리": ["Sound", "Son", "Ton", "Sonido", "サウンド"], "다시 볼 카드": ["Cards to review", "Cartes à revoir", "Karten zum Wiederholen", "Cartas para repasar", "復習するカード"], "내가 만든 연표": ["My timeline", "Ma frise", "Meine Zeitleiste", "Mi línea del tiempo", "わたしの年表"], "카드를 누르면 설명을 볼 수 있어요": ["Tap a card to read about it", "Touchez une carte pour en savoir plus", "Tippe auf eine Karte, um mehr zu lesen", "Toca una carta para saber más", "カードをタップすると説明が見られます"]};
+var RNAMES = {"ko": [["빠른", "날쌘", "똑똑한", "용감한", "반짝이는", "조용한", "신비한", "번개", "졸린", "배고픈", "씩씩한", "은하"], ["고양이", "로봇", "외계인", "비트", "해커", "우주인", "탐험가", "부엉이", "펭귄", "드론", "혜성", "다람쥐"]], "en": [["Swift", "Clever", "Brave", "Shiny", "Quiet", "Mystic", "Sleepy", "Hungry", "Bold", "Cosmic", "Lucky", "Turbo"], ["Cat", "Robot", "Alien", "Bit", "Hacker", "Astronaut", "Explorer", "Owl", "Penguin", "Drone", "Comet", "Squirrel"]], "fr": [["Chat", "Robot", "Alien", "Bit", "Hacker", "Astronaute", "Explorateur", "Hibou", "Pingouin", "Drone", "Comète", "Écureuil"], ["rapide", "malin", "brave", "brillant", "calme", "mystique", "endormi", "affamé", "hardi", "cosmique", "chanceux", "turbo"]], "de": [["Flinke", "Kluge", "Mutige", "Leuchtende", "Stille", "Mystische", "Müde", "Hungrige", "Kühne", "Kosmische", "Glückliche", "Turbo"], ["Katze", "Robo", "Alien", "Bit", "Hackerin", "Astronautin", "Forscherin", "Eule", "Pinguin", "Drohne", "Rakete", "Maus"]], "es": [["Gato", "Robot", "Alien", "Bit", "Hacker", "Astronauta", "Explorador", "Búho", "Pingüino", "Dron", "Cometa", "Ardilla"], ["veloz", "listo", "valiente", "brillante", "tranquilo", "místico", "dormido", "hambriento", "audaz", "cósmico", "afortunado", "turbo"]], "ja": [["すばやい", "かしこい", "勇敢な", "きらめく", "しずかな", "ふしぎな", "ねむい", "はらぺこ", "元気な", "銀河の", "ラッキー", "ターボ"], ["ネコ", "ロボ", "宇宙人", "ビット", "ハッカー", "宇宙飛行士", "探検家", "フクロウ", "ペンギン", "ドローン", "彗星", "リス"]]};
+var EV = [["k", -2333, 1, "🐻", "고조선 건국", "Founding of Gojoseon", "Fondation de Gojoseon", "Gründung von Gojoseon", "Fundación de Gojoseon", "古朝鮮の建国"], ["k", -57, 0, "🌅", "신라 건국", "Founding of Silla", "Fondation de Silla", "Gründung von Silla", "Fundación de Silla", "新羅の建国"], ["k", -37, 0, "🏹", "고구려 건국", "Founding of Goguryeo", "Fondation de Goguryeo", "Gründung von Goguryeo", "Fundación de Goguryeo", "高句麗の建国"], ["k", -18, 0, "🏯", "백제 건국", "Founding of Baekje", "Fondation de Baekje", "Gründung von Baekje", "Fundación de Baekje", "百済の建国"], ["k", 372, 0, "🪷", "고구려 불교 수용", "Goguryeo adopts Buddhism", "Le Goguryeo adopte le bouddhisme", "Goguryeo übernimmt den Buddhismus", "Goguryeo adopta el budismo", "高句麗が仏教を受け入れる"], ["k", 391, 0, "👑", "광개토대왕 즉위", "King Gwanggaeto takes the throne", "Le roi Gwanggaeto monte sur le trône", "König Gwanggaeto besteigt den Thron", "El rey Gwanggaeto sube al trono", "広開土王の即位"], ["k", 612, 0, "🌊", "살수 대첩", "Battle of Salsu", "Bataille de Salsu", "Schlacht am Salsu", "Batalla de Salsu", "薩水大捷"], ["k", 660, 0, "🍂", "백제 멸망", "Fall of Baekje", "Chute de Baekje", "Untergang von Baekje", "Caída de Baekje", "百済の滅亡"], ["k", 668, 0, "🥀", "고구려 멸망", "Fall of Goguryeo", "Chute de Goguryeo", "Untergang von Goguryeo", "Caída de Goguryeo", "高句麗の滅亡"], ["k", 676, 0, "🤝", "신라의 삼국 통일", "Silla unifies the Three Kingdoms", "Silla unifie les Trois Royaumes", "Silla vereint die Drei Reiche", "Silla unifica los Tres Reinos", "新羅の三国統一"], ["k", 698, 0, "🐎", "발해 건국", "Founding of Balhae", "Fondation de Balhae", "Gründung von Balhae", "Fundación de Balhae", "渤海の建国"], ["k", 751, 0, "🛕", "불국사 창건", "Bulguksa Temple is built", "Construction du temple Bulguksa", "Bau des Bulguksa-Tempels", "Construcción del templo Bulguksa", "仏国寺の創建"], ["k", 828, 0, "⛵", "장보고의 청해진 설치", "Jang Bogo sets up Cheonghaejin", "Jang Bogo fonde Cheonghaejin", "Jang Bogo gründet Cheonghaejin", "Jang Bogo establece Cheonghaejin", "張保皐が清海鎮を設置"], ["k", 918, 0, "🏛️", "고려 건국", "Founding of Goryeo", "Fondation de Goryeo", "Gründung von Goryeo", "Fundación de Goryeo", "高麗の建国"], ["k", 958, 0, "📜", "고려 과거제 실시", "Goryeo starts state exams", "Goryeo instaure les examens d'État", "Goryeo führt Staatsprüfungen ein", "Goryeo inicia los exámenes de Estado", "高麗で科挙を実施"], ["k", 993, 0, "🗣️", "서희의 외교 담판", "Seo Hui's diplomatic talks", "Négociations de Seo Hui", "Seo Huis diplomatische Verhandlungen", "Negociaciones de Seo Hui", "徐熙の外交談判"], ["k", 1019, 0, "⚔️", "귀주 대첩", "Battle of Gwiju", "Bataille de Gwiju", "Schlacht von Gwiju", "Batalla de Gwiju", "亀州大捷"], ["k", 1231, 0, "🐴", "몽골의 고려 침입 시작", "Mongols begin invading Goryeo", "Les Mongols envahissent Goryeo", "Die Mongolen fallen in Goryeo ein", "Los mongoles invaden Goryeo", "モンゴルの高麗侵入開始"], ["k", 1251, 0, "📚", "팔만대장경 완성", "Tripitaka Koreana completed", "Achèvement du Tripitaka Koreana", "Tripitaka Koreana fertiggestellt", "Se completa el Tripitaka Koreana", "八万大蔵経の完成"], ["k", 1377, 0, "🖨️", "직지 금속 활자 인쇄", "Jikji printed with metal type", "Le Jikji imprimé en caractères métalliques", "Jikji mit Metalllettern gedruckt", "Se imprime el Jikji con tipos metálicos", "直指を金属活字で印刷"], ["k", 1388, 0, "🔙", "위화도 회군", "Retreat from Wihwado", "Retraite de Wihwado", "Rückzug von Wihwado", "Retirada de Wihwado", "威化島回軍"], ["k", 1392, 0, "🏯", "조선 건국", "Founding of Joseon", "Fondation de Joseon", "Gründung von Joseon", "Fundación de Joseon", "朝鮮の建国"], ["k", 1441, 0, "🌧️", "측우기 제작", "Rain gauge invented", "Invention du pluviomètre", "Regenmesser erfunden", "Se inventa el pluviómetro", "測雨器の製作"], ["k", 1446, 0, "🔤", "훈민정음 반포", "Hangeul is proclaimed", "Proclamation du hangeul", "Hangeul wird verkündet", "Se proclama el hangul", "訓民正音の頒布"], ["k", 1592, 0, "🐢", "임진왜란 시작", "Imjin War begins", "Début de la guerre d'Imjin", "Beginn des Imjin-Krieges", "Comienza la guerra de Imjin", "壬辰倭乱の始まり"], ["k", 1610, 0, "💊", "동의보감 완성", "Donguibogam completed", "Achèvement du Donguibogam", "Donguibogam fertiggestellt", "Se completa el Donguibogam", "東医宝鑑の完成"], ["k", 1636, 0, "❄️", "병자호란", "Second Manchu invasion", "Seconde invasion mandchoue", "Zweite Mandschu-Invasion", "Segunda invasión manchú", "丙子胡乱"], ["k", 1776, 0, "📖", "정조 즉위", "King Jeongjo takes the throne", "Le roi Jeongjo monte sur le trône", "König Jeongjo besteigt den Thron", "El rey Jeongjo sube al trono", "正祖の即位"], ["k", 1796, 0, "🏰", "수원 화성 완공", "Hwaseong Fortress completed", "Achèvement de la forteresse de Hwaseong", "Festung Hwaseong fertiggestellt", "Se completa la fortaleza de Hwaseong", "水原華城の完成"], ["k", 1863, 0, "🧓", "흥선대원군 집권", "Heungseon Daewongun takes power", "Heungseon Daewongun prend le pouvoir", "Heungseon Daewongun übernimmt die Macht", "Heungseon Daewongun toma el poder", "興宣大院君の執権"], ["k", 1876, 0, "⚓", "강화도 조약", "Treaty of Ganghwa", "Traité de Ganghwa", "Vertrag von Ganghwa", "Tratado de Ganghwa", "江華島条約"], ["k", 1894, 0, "🌾", "동학 농민 운동", "Donghak Peasant Revolution", "Révolution paysanne Donghak", "Donghak-Bauernrevolution", "Revolución campesina Donghak", "東学農民運動"], ["k", 1897, 0, "🦅", "대한제국 수립", "Korean Empire proclaimed", "Proclamation de l'Empire coréen", "Ausrufung des Koreanischen Kaiserreichs", "Se proclama el Imperio coreano", "大韓帝国の成立"], ["k", 1910, 0, "⛓️", "국권 피탈", "Japan annexes Korea", "Annexion de la Corée par le Japon", "Japan annektiert Korea", "Japón anexiona Corea", "韓国併合"], ["k", 1919, 0, "🇰🇷", "3·1 운동", "March 1st Movement", "Mouvement du 1er Mars", "Bewegung des 1. März", "Movimiento del 1 de marzo", "三・一運動"], ["k", 1920, 0, "🌲", "청산리 대첩", "Battle of Cheongsanri", "Bataille de Cheongsanri", "Schlacht von Cheongsanri", "Batalla de Cheongsanri", "青山里戦闘"], ["k", 1945, 0, "🎉", "광복", "Liberation of Korea", "Libération de la Corée", "Befreiung Koreas", "Liberación de Corea", "光復(解放)"], ["k", 1948, 0, "🏛️", "대한민국 정부 수립", "Republic of Korea government founded", "Fondation du gouvernement de la République de Corée", "Gründung der Regierung der Republik Korea", "Se funda el gobierno de la República de Corea", "大韓民国政府の樹立"], ["k", 1950, 0, "💥", "6·25 전쟁 발발", "Korean War breaks out", "Début de la guerre de Corée", "Ausbruch des Koreakriegs", "Estalla la guerra de Corea", "朝鮮戦争の勃発"], ["k", 1960, 0, "✊", "4·19 혁명", "April 19 Revolution", "Révolution du 19 avril", "Aprilrevolution", "Revolución del 19 de abril", "四・一九革命"], ["k", 1970, 0, "🛣️", "경부고속도로 개통", "Seoul–Busan expressway opens", "Ouverture de l'autoroute Séoul–Busan", "Autobahn Seoul–Busan eröffnet", "Se abre la autopista Seúl–Busan", "京釜高速道路の開通"], ["k", 1980, 0, "🕯️", "5·18 민주화 운동", "May 18 Democratic Uprising", "Soulèvement démocratique du 18 mai", "Demokratiebewegung vom 18. Mai", "Levantamiento democrático del 18 de mayo", "五・一八民主化運動"], ["k", 1987, 0, "📣", "6월 민주 항쟁", "June Democratic Struggle", "Lutte démocratique de juin", "Demokratiebewegung im Juni", "Lucha democrática de junio", "六月民主抗争"], ["k", 1988, 0, "🏅", "서울 올림픽", "Seoul Olympics", "Jeux olympiques de Séoul", "Olympische Spiele in Seoul", "Juegos Olímpicos de Seúl", "ソウルオリンピック"], ["k", 1997, 0, "📉", "외환 위기", "Financial crisis hits Korea", "La crise financière frappe la Corée", "Finanzkrise trifft Korea", "La crisis financiera golpea a Corea", "通貨危機(IMF危機)"], ["k", 2000, 0, "🕊️", "첫 남북 정상 회담", "First inter-Korean summit", "Premier sommet intercoréen", "Erstes innerkoreanisches Gipfeltreffen", "Primera cumbre intercoreana", "初の南北首脳会談"], ["k", 2002, 0, "⚽", "한일 월드컵", "Korea–Japan World Cup", "Coupe du monde Corée–Japon", "WM in Korea und Japan", "Mundial Corea–Japón", "日韓ワールドカップ"], ["w", -2560, 1, "🔺", "쿠푸왕의 대피라미드", "Great Pyramid of Khufu", "Grande pyramide de Khéops", "Cheops-Pyramide", "Gran Pirámide de Keops", "クフ王の大ピラミッド"], ["w", -1754, 1, "⚖️", "함무라비 법전", "Code of Hammurabi", "Code de Hammurabi", "Codex Hammurapi", "Código de Hammurabi", "ハンムラビ法典"], ["w", -776, 0, "🏃", "첫 고대 올림픽", "First ancient Olympic Games", "Premiers Jeux olympiques antiques", "Erste antike Olympische Spiele", "Primeros Juegos Olímpicos antiguos", "最初の古代オリンピック"], ["w", -490, 0, "🏺", "마라톤 전투", "Battle of Marathon", "Bataille de Marathon", "Schlacht bei Marathon", "Batalla de Maratón", "マラトンの戦い"], ["w", -334, 0, "🐎", "알렉산드로스의 동방 원정", "Alexander begins his eastern campaign", "Alexandre part en campagne vers l'Est", "Alexanders Feldzug nach Osten beginnt", "Alejandro inicia su campaña al Oriente", "アレクサンドロスの東方遠征"], ["w", -221, 0, "🐉", "진시황의 중국 통일", "Qin Shi Huang unifies China", "Qin Shi Huang unifie la Chine", "Qin Shihuangdi eint China", "Qin Shi Huang unifica China", "秦の始皇帝が中国を統一"], ["w", -44, 0, "🗡️", "카이사르 암살", "Julius Caesar is assassinated", "Assassinat de Jules César", "Ermordung Julius Caesars", "Asesinato de Julio César", "カエサルの暗殺"], ["w", 476, 0, "🏚️", "서로마 제국 멸망", "Fall of the Western Roman Empire", "Chute de l'Empire romain d'Occident", "Untergang des Weströmischen Reichs", "Caída del Imperio romano de Occidente", "西ローマ帝国の滅亡"], ["w", 622, 0, "🌙", "무함마드의 헤지라", "Muhammad's Hijra", "L'Hégire de Mahomet", "Hidschra Mohammeds", "La Hégira de Mahoma", "ムハンマドのヒジュラ"], ["w", 800, 0, "👑", "카롤루스 대제 대관", "Charlemagne crowned emperor", "Couronnement de Charlemagne", "Kaiserkrönung Karls des Großen", "Coronación de Carlomagno", "カール大帝の戴冠"], ["w", 1096, 0, "🛡️", "제1차 십자군", "First Crusade", "Première croisade", "Erster Kreuzzug", "Primera cruzada", "第1回十字軍"], ["w", 1206, 0, "🏇", "칭기즈 칸 즉위", "Genghis Khan becomes Great Khan", "Gengis Khan devient Grand Khan", "Dschingis Khan wird Großkhan", "Gengis Kan se convierte en Gran Kan", "チンギス・ハンの即位"], ["w", 1215, 0, "📜", "마그나 카르타", "Magna Carta", "Magna Carta", "Magna Carta", "Carta Magna", "マグナ・カルタ"], ["w", 1347, 0, "🐀", "흑사병 유럽 확산", "Black Death reaches Europe", "La peste noire atteint l'Europe", "Der Schwarze Tod erreicht Europa", "La peste negra llega a Europa", "黒死病がヨーロッパに広がる"], ["w", 1453, 0, "🏰", "콘스탄티노폴리스 함락", "Fall of Constantinople", "Chute de Constantinople", "Fall Konstantinopels", "Caída de Constantinopla", "コンスタンティノープルの陥落"], ["w", 1492, 0, "⛵", "콜럼버스 아메리카 도착", "Columbus reaches the Americas", "Colomb atteint l'Amérique", "Kolumbus erreicht Amerika", "Colón llega a América", "コロンブスがアメリカに到達"], ["w", 1517, 0, "✝️", "루터의 종교 개혁", "Luther starts the Reformation", "Luther lance la Réforme", "Luther beginnt die Reformation", "Lutero inicia la Reforma", "ルターの宗教改革"], ["w", 1533, 0, "🏔️", "잉카 제국 멸망", "Fall of the Inca Empire", "Chute de l'Empire inca", "Untergang des Inkareichs", "Caída del Imperio inca", "インカ帝国の滅亡"], ["w", 1588, 0, "🚢", "스페인 무적함대 패배", "Defeat of the Spanish Armada", "Défaite de l'Invincible Armada", "Niederlage der Spanischen Armada", "Derrota de la Armada Invencible", "スペイン無敵艦隊の敗北"], ["w", 1688, 0, "🎩", "명예혁명", "Glorious Revolution", "Glorieuse Révolution", "Glorreiche Revolution", "Revolución Gloriosa", "名誉革命"], ["w", 1776, 0, "🗽", "미국 독립 선언", "US Declaration of Independence", "Déclaration d'indépendance des États-Unis", "Unabhängigkeitserklärung der USA", "Declaración de Independencia de EE. UU.", "アメリカ独立宣言"], ["w", 1789, 0, "🇫🇷", "프랑스 혁명", "French Revolution", "Révolution française", "Französische Revolution", "Revolución francesa", "フランス革命"], ["w", 1804, 0, "🎖️", "나폴레옹 황제 즉위", "Napoleon becomes emperor", "Napoléon devient empereur", "Napoleon wird Kaiser", "Napoleón se convierte en emperador", "ナポレオンの皇帝即位"], ["w", 1840, 0, "⛴️", "아편 전쟁", "Opium War", "Guerre de l'opium", "Opiumkrieg", "Guerra del Opio", "アヘン戦争"], ["w", 1863, 0, "⛓️", "링컨의 노예 해방 선언", "Lincoln's Emancipation Proclamation", "Proclamation d'émancipation de Lincoln", "Lincolns Emanzipationsproklamation", "Proclamación de Emancipación de Lincoln", "リンカンの奴隷解放宣言"], ["w", 1868, 0, "🎌", "메이지 유신", "Meiji Restoration", "Restauration Meiji", "Meiji-Restauration", "Restauración Meiji", "明治維新"], ["w", 1911, 0, "🏮", "신해혁명", "Xinhai Revolution", "Révolution Xinhai", "Xinhai-Revolution", "Revolución de Xinhai", "辛亥革命"], ["w", 1914, 0, "💣", "제1차 세계 대전 시작", "World War I begins", "Début de la Première Guerre mondiale", "Beginn des Ersten Weltkriegs", "Comienza la Primera Guerra Mundial", "第一次世界大戦の開始"], ["w", 1917, 0, "🚩", "러시아 혁명", "Russian Revolution", "Révolution russe", "Russische Revolution", "Revolución rusa", "ロシア革命"], ["w", 1929, 0, "📉", "세계 대공황", "Great Depression begins", "Début de la Grande Dépression", "Beginn der Weltwirtschaftskrise", "Comienza la Gran Depresión", "世界恐慌"], ["w", 1939, 0, "✈️", "제2차 세계 대전 시작", "World War II begins", "Début de la Seconde Guerre mondiale", "Beginn des Zweiten Weltkriegs", "Comienza la Segunda Guerra Mundial", "第二次世界大戦の開始"], ["w", 1945, 0, "🌐", "국제 연합(UN) 창설", "United Nations founded", "Création de l'ONU", "Gründung der Vereinten Nationen", "Se funda la ONU", "国際連合の設立"], ["w", 1947, 0, "🪔", "인도 독립", "Indian independence", "Indépendance de l'Inde", "Unabhängigkeit Indiens", "Independencia de la India", "インドの独立"], ["w", 1949, 0, "⭐", "중화인민공화국 수립", "People's Republic of China founded", "Fondation de la République populaire de Chine", "Gründung der Volksrepublik China", "Se funda la República Popular China", "中華人民共和国の成立"], ["w", 1962, 0, "🚀", "쿠바 미사일 위기", "Cuban Missile Crisis", "Crise des missiles de Cuba", "Kubakrise", "Crisis de los misiles de Cuba", "キューバ危機"], ["w", 1969, 0, "🌕", "아폴로 11호 달 착륙", "Apollo 11 Moon landing", "Apollo 11 se pose sur la Lune", "Mondlandung von Apollo 11", "Llegada del Apolo 11 a la Luna", "アポロ11号の月面着陸"], ["w", 1989, 0, "🧱", "베를린 장벽 붕괴", "Fall of the Berlin Wall", "Chute du mur de Berlin", "Fall der Berliner Mauer", "Caída del Muro de Berlín", "ベルリンの壁の崩壊"], ["w", 1991, 0, "🏳️", "소련 해체", "Dissolution of the Soviet Union", "Dissolution de l'URSS", "Auflösung der Sowjetunion", "Disolución de la Unión Soviética", "ソ連の解体"], ["w", 1994, 0, "🌈", "만델라 대통령 취임", "Mandela becomes president", "Mandela devient président", "Mandela wird Präsident", "Mandela se convierte en presidente", "マンデラの大統領就任"], ["w", 2001, 0, "🏙️", "9·11 테러", "September 11 attacks", "Attentats du 11 septembre", "Terroranschläge vom 11. September", "Atentados del 11 de septiembre", "アメリカ同時多発テロ"], ["s", -3200, 1, "✍️", "쐐기 문자의 등장", "Cuneiform writing appears", "Apparition de l'écriture cunéiforme", "Keilschrift entsteht", "Aparece la escritura cuneiforme", "楔形文字の登場"], ["s", -300, 1, "📐", "유클리드의 원론", "Euclid's Elements", "Les Éléments d'Euclide", "Euklids Elemente", "Los Elementos de Euclides", "ユークリッドの『原論』"], ["s", -240, 1, "🌍", "에라토스테네스의 지구 둘레 측정", "Eratosthenes measures the Earth", "Ératosthène mesure la Terre", "Eratosthenes vermisst die Erde", "Eratóstenes mide la Tierra", "エラトステネスが地球の大きさを測る"], ["s", 105, 0, "📄", "채륜의 종이 개량", "Cai Lun improves paper", "Cai Lun améliore le papier", "Cai Lun verbessert das Papier", "Cai Lun mejora el papel", "蔡倫が紙を改良"], ["s", 1455, 1, "📖", "구텐베르크 성경 인쇄", "Gutenberg Bible printed", "Impression de la Bible de Gutenberg", "Druck der Gutenberg-Bibel", "Se imprime la Biblia de Gutenberg", "グーテンベルク聖書の印刷"], ["s", 1543, 0, "☀️", "코페르니쿠스의 지동설", "Copernicus: the Earth orbits the Sun", "Copernic : la Terre tourne autour du Soleil", "Kopernikus: Die Erde kreist um die Sonne", "Copérnico: la Tierra gira alrededor del Sol", "コペルニクスの地動説"], ["s", 1609, 0, "🔭", "갈릴레이의 망원경 관측", "Galileo observes with a telescope", "Galilée observe au télescope", "Galilei beobachtet mit dem Fernrohr", "Galileo observa con el telescopio", "ガリレイの望遠鏡観測"], ["s", 1687, 0, "🍎", "뉴턴의 프린키피아", "Newton's Principia", "Les Principia de Newton", "Newtons Principia", "Los Principia de Newton", "ニュートンの『プリンキピア』"], ["s", 1769, 0, "⚙️", "와트의 증기 기관 개량", "Watt improves the steam engine", "Watt améliore la machine à vapeur", "Watt verbessert die Dampfmaschine", "Watt mejora la máquina de vapor", "ワットが蒸気機関を改良"], ["s", 1796, 0, "💉", "제너의 종두법", "Jenner's smallpox vaccine", "Le vaccin de Jenner contre la variole", "Jenners Pockenimpfung", "La vacuna de Jenner contra la viruela", "ジェンナーの種痘法"], ["s", 1825, 0, "🚂", "첫 증기 기관차 철도", "First steam railway", "Premier chemin de fer à vapeur", "Erste Dampfeisenbahn", "Primer ferrocarril de vapor", "最初の蒸気機関車の鉄道"], ["s", 1844, 0, "📨", "모스의 전신", "Morse telegraph message", "Message télégraphique de Morse", "Morses Telegrafennachricht", "Mensaje telegráfico de Morse", "モールスの電信"], ["s", 1859, 0, "🐢", "다윈의 종의 기원", "Darwin's On the Origin of Species", "L'Origine des espèces de Darwin", "Darwins Über die Entstehung der Arten", "El origen de las especies de Darwin", "ダーウィンの『種の起源』"], ["s", 1869, 0, "🧪", "멘델레예프의 주기율표", "Mendeleev's periodic table", "Tableau périodique de Mendeleïev", "Mendelejews Periodensystem", "Tabla periódica de Mendeléyev", "メンデレーエフの周期表"], ["s", 1876, 0, "☎️", "벨의 전화기", "Bell's telephone", "Le téléphone de Bell", "Bells Telefon", "El teléfono de Bell", "ベルの電話機"], ["s", 1879, 0, "💡", "에디슨의 전구", "Edison's light bulb", "L'ampoule d'Edison", "Edisons Glühbirne", "La bombilla de Edison", "エジソンの電球"], ["s", 1886, 0, "🚗", "벤츠의 자동차", "Benz's motor car", "L'automobile de Benz", "Benz' Motorwagen", "El automóvil de Benz", "ベンツの自動車"], ["s", 1895, 0, "🩻", "뢴트겐의 X선 발견", "Röntgen discovers X-rays", "Röntgen découvre les rayons X", "Röntgen entdeckt die Röntgenstrahlen", "Röntgen descubre los rayos X", "レントゲンがX線を発見"], ["s", 1898, 0, "☢️", "퀴리 부부의 라듐 발견", "The Curies discover radium", "Les Curie découvrent le radium", "Die Curies entdecken Radium", "Los Curie descubren el radio", "キュリー夫妻がラジウムを発見"], ["s", 1903, 0, "🛩️", "라이트 형제의 첫 비행", "Wright brothers' first flight", "Premier vol des frères Wright", "Erster Flug der Brüder Wright", "Primer vuelo de los hermanos Wright", "ライト兄弟の初飛行"], ["s", 1905, 0, "🧠", "아인슈타인의 특수 상대성 이론", "Einstein's special relativity", "Relativité restreinte d'Einstein", "Einsteins spezielle Relativitätstheorie", "Relatividad especial de Einstein", "アインシュタインの特殊相対性理論"], ["s", 1926, 0, "📺", "텔레비전 첫 공개 시연", "First public TV demonstration", "Première démonstration publique de la télévision", "Erste öffentliche Fernsehvorführung", "Primera demostración pública de televisión", "テレビの初公開実験"], ["s", 1928, 0, "🧫", "플레밍의 페니실린 발견", "Fleming discovers penicillin", "Fleming découvre la pénicilline", "Fleming entdeckt das Penicillin", "Fleming descubre la penicilina", "フレミングがペニシリンを発見"], ["s", 1946, 0, "🖥️", "에니악 컴퓨터", "ENIAC computer", "L'ordinateur ENIAC", "Der Computer ENIAC", "La computadora ENIAC", "コンピュータENIAC"], ["s", 1953, 0, "🧬", "DNA 이중 나선 구조 발견", "DNA double helix discovered", "Découverte de la double hélice d'ADN", "Entdeckung der DNA-Doppelhelix", "Se descubre la doble hélice del ADN", "DNAの二重らせん構造の発見"], ["s", 1957, 0, "🛰️", "스푸트니크 1호 발사", "Sputnik 1 launched", "Lancement de Spoutnik 1", "Start von Sputnik 1", "Lanzamiento del Sputnik 1", "スプートニク1号の打ち上げ"], ["s", 1971, 0, "📧", "첫 이메일", "First email", "Premier e-mail", "Erste E-Mail", "Primer correo electrónico", "最初の電子メール"], ["s", 1973, 0, "📞", "휴대 전화 첫 통화", "First mobile phone call", "Premier appel sur téléphone portable", "Erster Handyanruf", "Primera llamada con teléfono móvil", "携帯電話での初通話"], ["s", 1977, 0, "💾", "애플 II 개인용 컴퓨터", "Apple II personal computer", "L'ordinateur personnel Apple II", "Der Heimcomputer Apple II", "La computadora personal Apple II", "パソコンApple II"], ["s", 1990, 0, "🌌", "허블 우주 망원경 발사", "Hubble Space Telescope launched", "Lancement du télescope Hubble", "Start des Hubble-Weltraumteleskops", "Lanzamiento del telescopio Hubble", "ハッブル宇宙望遠鏡の打ち上げ"], ["s", 1991, 0, "🕸️", "월드 와이드 웹 공개", "World Wide Web goes public", "Le Web devient public", "Das World Wide Web wird öffentlich", "La World Wide Web se hace pública", "ワールド・ワイド・ウェブの公開"], ["s", 2003, 0, "🔬", "인간 게놈 지도 완성", "Human genome mapped", "Séquençage du génome humain achevé", "Menschliches Genom entschlüsselt", "Se completa el mapa del genoma humano", "ヒトゲノム解読の完了"], ["s", 2007, 0, "📱", "첫 아이폰", "First iPhone", "Premier iPhone", "Erstes iPhone", "Primer iPhone", "初代iPhone"], ["s", 2016, 0, "🤖", "알파고와 이세돌의 대국", "AlphaGo vs. Lee Sedol", "AlphaGo contre Lee Sedol", "AlphaGo gegen Lee Sedol", "AlphaGo contra Lee Sedol", "アルファ碁と李世乭の対局"]];
+var FACTS = {"0": ["단군왕검이 세운 우리 역사 최초의 국가이다.", "Said to be founded by Dangun Wanggeom, it was the first state in Korean history.", "Fondé selon la tradition par Dangun Wanggeom, c'est le premier État de l'histoire coréenne.", "Der Überlieferung nach von Dangun Wanggeom gegründet, war es der erste Staat der koreanischen Geschichte.", "Según la tradición lo fundó Dangun Wanggeom y fue el primer Estado de la historia coreana.", "檀君王倹が建てたとされる、朝鮮史上最初の国家である。"], "1": ["박혁거세가 세웠으며 훗날 삼국을 통일했다.", "Founded by Bak Hyeokgeose, Silla later unified the Three Kingdoms.", "Fondé par Bak Hyeokgeose, Silla unifia plus tard les Trois Royaumes.", "Von Bak Hyeokgeose gegründet, einte Silla später die Drei Reiche.", "Fundado por Bak Hyeokgeose, Silla unificó más tarde los Tres Reinos.", "朴赫居世が建て、のちに三国を統一した。"], "2": ["주몽이 세웠으며 만주와 한반도 북부를 다스린 강국이 되었다.", "Founded by Jumong, it grew into a strong kingdom ruling Manchuria and northern Korea.", "Fondé par Jumong, il devint un royaume puissant régnant sur la Mandchourie et le nord de la Corée.", "Von Jumong gegründet, wurde es ein starkes Reich über die Mandschurei und Nordkorea.", "Fundado por Jumong, se convirtió en un reino poderoso en Manchuria y el norte de Corea.", "朱蒙が建て、満州と朝鮮半島北部を治める強国となった。"], "3": ["온조가 한강 유역에 세운 나라이다.", "It was founded by Onjo in the Han River basin.", "Il fut fondé par Onjo dans le bassin du fleuve Han.", "Es wurde von Onjo am Fluss Han gegründet.", "Fue fundado por Onjo en la cuenca del río Han.", "温祚が漢江流域に建てた国である。"], "4": ["소수림왕이 불교를 받아들여 왕권과 사상을 하나로 모았다.", "King Sosurim accepted Buddhism to unite the people and strengthen royal power.", "Le roi Sosurim adopta le bouddhisme pour unir le peuple et renforcer le pouvoir royal.", "König Sosurim nahm den Buddhismus an, um das Volk zu einen und die Königsmacht zu stärken.", "El rey Sosurim adoptó el budismo para unir al pueblo y reforzar el poder real.", "小獣林王が仏教を受け入れ、王権の強化と人々の統合を図った。"], "5": ["영토를 크게 넓혔고 그 업적은 광개토대왕릉비에 새겨졌다.", "He greatly expanded the kingdom, and his deeds were carved on the Gwanggaeto Stele.", "Il agrandit fortement le royaume et ses exploits furent gravés sur la stèle de Gwanggaeto.", "Er vergrößerte das Reich stark, seine Taten wurden auf der Gwanggaeto-Stele verewigt.", "Amplió mucho el reino y sus hazañas se grabaron en la estela de Gwanggaeto.", "領土を大きく広げ、その業績は広開土王碑に刻まれた。"], "6": ["을지문덕이 수나라 대군을 살수에서 크게 물리쳤다.", "General Eulji Mundeok crushed a huge Sui Chinese army at the Salsu River.", "Le général Eulji Mundeok écrasa une immense armée chinoise des Sui sur la rivière Salsu.", "General Eulji Mundeok schlug ein riesiges chinesisches Sui-Heer am Fluss Salsu.", "El general Eulji Mundeok derrotó a un enorme ejército chino Sui en el río Salsu.", "乙支文徳が隋の大軍を薩水で大いに打ち破った。"], "7": ["나당 연합군의 공격으로 수도 사비성이 함락되었다.", "The capital Sabi fell to the allied armies of Silla and Tang China.", "La capitale Sabi tomba face aux armées alliées de Silla et de la Chine des Tang.", "Die Hauptstadt Sabi fiel an die verbündeten Heere von Silla und Tang-China.", "La capital Sabi cayó ante los ejércitos aliados de Silla y la China Tang.", "新羅と唐の連合軍の攻撃で都の泗沘城が陥落した。"], "8": ["나당 연합군에 평양성이 함락되며 멸망했다.", "It fell when Pyongyang was captured by the allied forces of Silla and Tang.", "Il disparut quand Pyongyang fut prise par les forces alliées de Silla et des Tang.", "Es ging unter, als Pjöngjang von Silla und den Tang erobert wurde.", "Cayó cuando las fuerzas aliadas de Silla y Tang tomaron Pyongyang.", "新羅と唐の連合軍に平壌城を落とされ滅亡した。"], "9": ["신라가 당나라 군대를 몰아내고 삼국 통일을 이루었다.", "Silla drove out the Tang army and completed the unification.", "Silla chassa l'armée des Tang et acheva l'unification.", "Silla vertrieb das Tang-Heer und vollendete die Einigung.", "Silla expulsó al ejército Tang y completó la unificación.", "新羅が唐の軍を追い出し、三国統一を成し遂げた。"], "10": ["대조영이 고구려 유민과 말갈인을 이끌고 세웠다.", "Dae Joyeong founded it, leading Goguryeo refugees and Mohe people.", "Dae Joyeong le fonda à la tête de réfugiés de Goguryeo et de Mohe.", "Dae Joyeong gründete es mit Flüchtlingen aus Goguryeo und Mohe.", "Dae Joyeong lo fundó al frente de refugiados de Goguryeo y del pueblo mohe.", "大祚栄が高句麗の遺民と靺鞨人を率いて建てた。"], "11": ["김대성이 짓기 시작했으며 다보탑과 석가탑이 있다.", "Begun by Kim Daeseong, it is home to the Dabotap and Seokgatap pagodas.", "Commencé par Kim Daeseong, il abrite les pagodes Dabotap et Seokgatap.", "Von Kim Daeseong begonnen, beherbergt er die Pagoden Dabotap und Seokgatap.", "Iniciado por Kim Daeseong, alberga las pagodas Dabotap y Seokgatap.", "金大城が建て始め、多宝塔と釈迦塔がある。"], "12": ["장보고가 완도에 청해진을 두고 해상 무역을 장악했다.", "Jang Bogo built a base on Wando and dominated sea trade in East Asia.", "Jang Bogo établit une base à Wando et domina le commerce maritime en Asie de l'Est.", "Jang Bogo errichtete auf Wando eine Basis und beherrschte den Seehandel Ostasiens.", "Jang Bogo creó una base en Wando y dominó el comercio marítimo de Asia oriental.", "張保皐が莞島に清海鎮を置き、東アジアの海上交易を支配した。"], "13": ["왕건이 세웠으며 후삼국을 다시 하나로 통일했다.", "Founded by Wang Geon, it reunited the Later Three Kingdoms.", "Fondé par Wang Geon, il réunifia les Trois Royaumes postérieurs.", "Von Wang Geon gegründet, einte es die Späteren Drei Reiche wieder.", "Fundado por Wang Geon, reunificó los Tres Reinos Posteriores.", "王建が建て、後三国を再び統一した。"], "14": ["광종이 시험을 통해 관리를 뽑는 제도를 처음 도입했다.", "King Gwangjong began choosing officials through exams instead of family ties.", "Le roi Gwangjong commença à choisir les fonctionnaires par examen plutôt que par naissance.", "König Gwangjong ließ Beamte erstmals per Prüfung statt nach Herkunft auswählen.", "El rey Gwangjong empezó a elegir funcionarios por examen y no por linaje.", "光宗が試験で官吏を選ぶ制度を初めて導入した。"], "15": ["거란과 담판을 지어 싸우지 않고 강동 6주를 얻었다.", "Through talks with the Khitan, Seo Hui gained six regions without a battle.", "Par la négociation avec les Khitans, Seo Hui obtint six régions sans combattre.", "Durch Verhandlungen mit den Kitan gewann Seo Hui sechs Gebiete ohne Kampf.", "Negociando con los kitán, Seo Hui obtuvo seis regiones sin luchar.", "契丹と談判し、戦わずに江東六州を得た。"], "16": ["강감찬이 귀주에서 거란군을 크게 무찔렀다.", "General Gang Gam-chan won a great victory over the Khitan army at Gwiju.", "Le général Gang Gam-chan remporta une grande victoire sur les Khitans à Gwiju.", "General Gang Gam-chan besiegte das Kitan-Heer bei Gwiju vernichtend.", "El general Gang Gam-chan logró una gran victoria sobre los kitán en Gwiju.", "姜邯賛が亀州で契丹軍を大いに打ち破った。"], "17": ["고려는 강화도로 도읍을 옮겨 몽골에 오랫동안 맞섰다.", "Goryeo moved its capital to Ganghwa Island and resisted the Mongols for decades.", "Goryeo transféra sa capitale sur l'île de Ganghwa et résista aux Mongols pendant des décennies.", "Goryeo verlegte die Hauptstadt auf die Insel Ganghwa und trotzte den Mongolen jahrzehntelang.", "Goryeo trasladó su capital a la isla de Ganghwa y resistió a los mongoles durante décadas.", "高麗は江華島に都を移し、長くモンゴルに抵抗した。"], "18": ["8만 장이 넘는 목판에 몽골을 물리치려는 염원을 담아 새겼다.", "Over 80,000 woodblocks were carved, praying for Buddha's help against the Mongols.", "Plus de 80 000 planches furent gravées pour implorer l'aide de Bouddha contre les Mongols.", "Über 80.000 Holzdruckplatten wurden geschnitzt, als Gebet um Hilfe gegen die Mongolen.", "Se tallaron más de 80.000 planchas de madera pidiendo ayuda a Buda contra los mongoles.", "8万枚を超える版木に、モンゴル撃退の願いを込めて刻んだ。"], "19": ["청주 흥덕사에서 찍은 현존하는 세계에서 가장 오래된 금속 활자본이다.", "Printed at Heungdeoksa in Cheongju, it is the oldest surviving book printed with metal type.", "Imprimé au temple Heungdeoksa de Cheongju, c'est le plus ancien livre existant en caractères métalliques.", "In Heungdeoksa in Cheongju gedruckt, ist es das älteste erhaltene Buch mit Metalllettern.", "Impreso en Heungdeoksa, Cheongju, es el libro más antiguo conservado con tipos metálicos.", "清州の興徳寺で刷られた、現存する世界最古の金属活字本である。"], "20": ["이성계가 요동 정벌 중 군대를 돌려 권력을 잡았다.", "Yi Seong-gye turned his army back from a campaign and seized power.", "Yi Seong-gye fit demi-tour avec son armée en pleine campagne et prit le pouvoir.", "Yi Seong-gye kehrte mit seinem Heer mitten im Feldzug um und ergriff die Macht.", "Yi Seong-gye dio media vuelta con su ejército en plena campaña y tomó el poder.", "李成桂が遼東遠征の途中で軍を引き返し、権力を握った。"], "21": ["이성계가 세우고 도읍을 한양으로 옮겼다.", "Founded by Yi Seong-gye, Joseon moved its capital to Hanyang, today's Seoul.", "Fondé par Yi Seong-gye, Joseon installa sa capitale à Hanyang, l'actuelle Séoul.", "Von Yi Seong-gye gegründet, verlegte Joseon die Hauptstadt nach Hanyang, dem heutigen Seoul.", "Fundado por Yi Seong-gye, Joseon trasladó su capital a Hanyang, la actual Seúl.", "李成桂が建て、都を漢陽(現在のソウル)に移した。"], "22": ["세종 때 만들어 전국의 비 내린 양을 재었다.", "Made under King Sejong, it measured rainfall across the whole country.", "Créé sous le roi Sejong, il mesurait les pluies dans tout le pays.", "Unter König Sejong gebaut, maß er den Niederschlag im ganzen Land.", "Creado bajo el rey Sejong, medía la lluvia en todo el país.", "世宗の時代に作られ、全国の雨量を測った。"], "23": ["세종이 백성이 쉽게 익히도록 만든 우리 고유의 문자이다.", "King Sejong created this alphabet so ordinary people could learn to read easily.", "Le roi Sejong créa cet alphabet pour que le peuple apprenne facilement à lire.", "König Sejong schuf diese Schrift, damit einfache Leute leicht lesen lernen konnten.", "El rey Sejong creó este alfabeto para que el pueblo aprendiera a leer fácilmente.", "世宗が民が簡単に学べるようにつくった固有の文字である。"], "24": ["이순신이 이끄는 수군이 바다에서 일본군을 연이어 무찔렀다.", "Admiral Yi Sun-sin's navy defeated the Japanese at sea again and again.", "La flotte de l'amiral Yi Sun-sin battit les Japonais en mer à maintes reprises.", "Die Flotte von Admiral Yi Sun-sin besiegte die Japaner auf See immer wieder.", "La flota del almirante Yi Sun-sin derrotó a los japoneses en el mar una y otra vez.", "李舜臣率いる水軍が海で日本軍を次々と破った。"], "25": ["허준이 우리 실정에 맞는 의학 지식을 모아 엮었다.", "Heo Jun compiled medical knowledge suited to Korea into this famous book.", "Heo Jun rassembla dans ce célèbre livre un savoir médical adapté à la Corée.", "Heo Jun sammelte in diesem berühmten Werk auf Korea zugeschnittenes medizinisches Wissen.", "Heo Jun reunió en este famoso libro saberes médicos adaptados a Corea.", "許浚が朝鮮の実情に合った医学知識をまとめた。"], "26": ["인조가 남한산성에서 버티다 결국 청나라에 항복했다.", "King Injo held out at Namhansanseong Fortress but finally surrendered to Qing.", "Le roi Injo résista à la forteresse de Namhansanseong mais se rendit aux Qing.", "König Injo hielt sich in der Festung Namhansanseong, ergab sich aber den Qing.", "El rey Injo resistió en la fortaleza de Namhansanseong, pero se rindió a los Qing.", "仁祖が南漢山城で抵抗したが、結局清に降伏した。"], "27": ["규장각을 세우고 탕평책으로 개혁 정치를 펼쳤다.", "He founded the royal library Gyujanggak and led reforms balancing rival factions.", "Il fonda la bibliothèque royale Gyujanggak et mena des réformes en équilibrant les factions.", "Er gründete die Königsbibliothek Gyujanggak und reformierte, indem er Fraktionen ausglich.", "Fundó la biblioteca real Gyujanggak e impulsó reformas equilibrando las facciones.", "奎章閣を設け、蕩平策で改革政治を行った。"], "28": ["정약용이 설계에 참여했고 거중기를 써서 쌓았다.", "Jeong Yak-yong helped design it, and a crane-like lifting device was used to build it.", "Jeong Yak-yong participa à sa conception et une grue de levage servit à la bâtir.", "Jeong Yak-yong half beim Entwurf, beim Bau kam ein kranartiges Hebegerät zum Einsatz.", "Jeong Yak-yong ayudó a diseñarla y se construyó con una grúa elevadora.", "丁若鏞が設計に関わり、挙重機を使って築かれた。"], "29": ["경복궁을 다시 짓고 서양과의 통상 수교를 거부했다.", "He rebuilt Gyeongbokgung Palace and refused trade with Western powers.", "Il reconstruisit le palais Gyeongbokgung et refusa le commerce avec l'Occident.", "Er ließ den Palast Gyeongbokgung wieder aufbauen und lehnte Handel mit dem Westen ab.", "Reconstruyó el palacio Gyeongbokgung y rechazó el comercio con Occidente.", "景福宮を再建し、西洋との通商を拒んだ。"], "30": ["일본과 맺은 최초의 근대적 조약이자 불평등 조약이다.", "It was Korea's first modern treaty, signed with Japan, and it was unequal.", "Ce fut le premier traité moderne de la Corée, signé avec le Japon, et il était inégal.", "Es war Koreas erster moderner Vertrag, mit Japan geschlossen und ungleich.", "Fue el primer tratado moderno de Corea, firmado con Japón, y era desigual.", "日本と結んだ最初の近代的条約であり、不平等条約である。"], "31": ["전봉준이 이끈 농민군이 탐관오리와 외세에 맞섰다.", "Peasants led by Jeon Bong-jun rose up against corrupt officials and foreign powers.", "Des paysans menés par Jeon Bong-jun se soulevèrent contre les fonctionnaires corrompus et l'étranger.", "Bauern unter Jeon Bong-jun erhoben sich gegen korrupte Beamte und fremde Mächte.", "Campesinos liderados por Jeon Bong-jun se alzaron contra funcionarios corruptos y potencias extranjeras.", "全琫準率いる農民軍が腐敗した役人と外国勢力に立ち向かった。"], "32": ["고종이 황제로 즉위하며 자주 독립국임을 알렸다.", "Gojong became emperor to declare Korea a fully independent nation.", "Gojong devint empereur pour proclamer la Corée nation pleinement indépendante.", "Gojong wurde Kaiser, um Korea als völlig unabhängigen Staat zu erklären.", "Gojong se proclamó emperador para declarar a Corea nación plenamente independiente.", "高宗が皇帝に即位し、自主独立国であることを示した。"], "33": ["일본이 한국의 주권을 빼앗아 식민 통치를 시작했다.", "Japan took away Korea's sovereignty and began colonial rule.", "Le Japon priva la Corée de sa souveraineté et imposa sa domination coloniale.", "Japan nahm Korea die Souveränität und begann die Kolonialherrschaft.", "Japón arrebató la soberanía a Corea y comenzó el dominio colonial.", "日本が韓国の主権を奪い、植民地支配を始めた。"], "34": ["전국에서 만세 시위가 일어나 임시 정부 수립으로 이어졌다.", "Nationwide cries for independence led to the founding of a Provisional Government.", "Des manifestations pour l'indépendance dans tout le pays menèrent à un gouvernement provisoire.", "Landesweite Unabhängigkeitsproteste führten zur Gründung einer Exilregierung.", "Protestas por la independencia en todo el país llevaron a crear un Gobierno Provisional.", "全国で独立万歳を叫ぶデモが起こり、臨時政府の樹立につながった。"], "35": ["김좌진, 홍범도 등이 이끈 독립군이 일본군을 크게 이겼다.", "Independence fighters led by Kim Jwa-jin and Hong Beom-do defeated the Japanese army.", "Des combattants menés par Kim Jwa-jin et Hong Beom-do vainquirent l'armée japonaise.", "Unabhängigkeitskämpfer unter Kim Jwa-jin und Hong Beom-do besiegten das japanische Heer.", "Combatientes liderados por Kim Jwa-jin y Hong Beom-do vencieron al ejército japonés.", "金佐鎮や洪範図らが率いる独立軍が日本軍に大勝した。"], "36": ["일본의 항복으로 35년간의 식민 지배에서 벗어났다.", "Japan's surrender ended 35 years of colonial rule over Korea.", "La capitulation du Japon mit fin à 35 ans de domination coloniale.", "Japans Kapitulation beendete 35 Jahre Kolonialherrschaft über Korea.", "La rendición de Japón puso fin a 35 años de dominio colonial.", "日本の降伏により、35年間の植民地支配から解放された。"], "37": ["이승만이 초대 대통령으로 취임했다.", "Syngman Rhee took office as the first president.", "Syngman Rhee devint le premier président.", "Syngman Rhee wurde erster Präsident.", "Syngman Rhee asumió como primer presidente.", "李承晩が初代大統領に就任した。"], "38": ["북한의 남침으로 시작되어 정전 협정으로 멈췄다.", "It began with North Korea's invasion of the South and was halted by an armistice.", "Elle commença par l'invasion du Sud par le Nord et fut stoppée par un armistice.", "Er begann mit dem Einmarsch Nordkoreas in den Süden und endete mit einem Waffenstillstand.", "Empezó con la invasión del Sur por el Norte y se detuvo con un armisticio.", "北朝鮮の南侵で始まり、休戦協定で止まった。"], "39": ["학생과 시민이 부정 선거에 맞서 이승만 정부를 물러나게 했다.", "Students and citizens protested a rigged election and forced Syngman Rhee to resign.", "Étudiants et citoyens dénoncèrent une élection truquée et poussèrent Syngman Rhee à démissionner.", "Studenten und Bürger protestierten gegen Wahlbetrug und zwangen Syngman Rhee zum Rücktritt.", "Estudiantes y ciudadanos protestaron contra un fraude electoral y forzaron la dimisión de Syngman Rhee.", "学生と市民が不正選挙に抗議し、李承晩政権を退陣させた。"], "40": ["서울과 부산을 이어 경제 성장의 대동맥이 되었다.", "Linking Seoul and Busan, it became the main artery of Korea's economic growth.", "Reliant Séoul à Busan, elle devint l'artère principale de la croissance coréenne.", "Sie verband Seoul und Busan und wurde zur Hauptader des Wirtschaftswachstums.", "Al unir Seúl y Busan, se convirtió en la arteria principal del crecimiento económico.", "ソウルと釜山を結び、経済成長の大動脈となった。"], "41": ["광주 시민들이 신군부의 계엄에 맞서 민주주의를 외쳤다.", "Citizens of Gwangju stood up for democracy against martial law imposed by the military.", "Les habitants de Gwangju défendirent la démocratie contre la loi martiale imposée par l'armée.", "Die Bürger von Gwangju traten gegen das Kriegsrecht des Militärs für Demokratie ein.", "Los ciudadanos de Gwangju defendieron la democracia frente a la ley marcial militar.", "光州の市民が新軍部の戒厳令に立ち向かい民主主義を訴えた。"], "42": ["시민들의 시위로 대통령 직선제 개헌을 이끌어 냈다.", "Mass protests won a constitutional change so citizens could directly elect the president.", "Des manifestations massives obtinrent l'élection du président au suffrage direct.", "Massenproteste erzwangen eine Verfassungsänderung zur direkten Präsidentenwahl.", "Las protestas masivas lograron una reforma para elegir al presidente por voto directo.", "市民のデモにより、大統領直接選挙制への改憲を勝ち取った。"], "43": ["냉전 속에서도 동서 양 진영이 함께 참가한 대회였다.", "Despite the Cold War, nations from both East and West took part together.", "Malgré la guerre froide, des pays de l'Est et de l'Ouest y participèrent ensemble.", "Trotz des Kalten Krieges nahmen Länder aus Ost und West gemeinsam teil.", "Pese a la Guerra Fría, países del Este y del Oeste participaron juntos.", "冷戦下でも東西両陣営の国々がそろって参加した大会だった。"], "44": ["IMF의 구제 금융을 받았고 국민들은 금 모으기 운동을 벌였다.", "Korea received an IMF bailout, and citizens donated gold to help the country.", "La Corée reçut un plan de sauvetage du FMI et les citoyens donnèrent leur or.", "Korea erhielt Hilfe vom IWF, und die Bürger spendeten ihr Gold.", "Corea recibió un rescate del FMI y los ciudadanos donaron su oro.", "IMFの支援を受け、国民は金を集める運動を行った。"], "45": ["김대중 대통령과 김정일 위원장이 평양에서 처음 만났다.", "President Kim Dae-jung and leader Kim Jong-il met for the first time in Pyongyang.", "Le président Kim Dae-jung et le dirigeant Kim Jong-il se rencontrèrent pour la première fois à Pyongyang.", "Präsident Kim Dae-jung und Machthaber Kim Jong-il trafen sich erstmals in Pjöngjang.", "El presidente Kim Dae-jung y el líder Kim Jong-il se reunieron por primera vez en Pyongyang.", "金大中大統領と金正日国防委員長が平壌で初めて会談した。"], "46": ["한국과 일본이 함께 열었고 한국은 4강에 올랐다.", "Korea and Japan co-hosted it, and Korea reached the semifinals.", "La Corée et le Japon l'organisèrent ensemble et la Corée atteignit les demi-finales.", "Korea und Japan richteten sie gemeinsam aus, Korea erreichte das Halbfinale.", "Corea y Japón la organizaron juntos y Corea llegó a semifinales.", "韓国と日本が共同開催し、韓国はベスト4に進んだ。"], "47": ["고대 7대 불가사의 중 유일하게 지금까지 남아 있다.", "It is the only one of the Seven Wonders of the Ancient World still standing.", "C'est la seule des Sept Merveilles du monde antique encore debout.", "Es ist das einzige der Sieben Weltwunder der Antike, das noch steht.", "Es la única de las Siete Maravillas del mundo antiguo que sigue en pie.", "古代世界の七不思議のうち、今も残る唯一のものである。"], "48": ["바빌로니아 왕이 만든 법전으로 눈에는 눈 원칙으로 유명하다.", "This Babylonian law code is famous for the rule of an eye for an eye.", "Ce code babylonien est célèbre pour la règle œil pour œil.", "Dieses babylonische Gesetzbuch ist berühmt für den Grundsatz Auge um Auge.", "Este código babilonio es famoso por la regla de ojo por ojo.", "バビロニアの王が定めた法典で、目には目をの原則で有名である。"], "49": ["그리스 올림피아에서 제우스를 기리며 열렸다.", "They were held at Olympia in Greece to honor the god Zeus.", "Ils se tenaient à Olympie, en Grèce, en l'honneur de Zeus.", "Sie fanden in Olympia in Griechenland zu Ehren von Zeus statt.", "Se celebraban en Olimpia, Grecia, en honor a Zeus.", "ギリシアのオリンピアで、ゼウスをたたえて開かれた。"], "50": ["아테네가 페르시아군을 물리쳤고 마라톤 경기의 유래가 되었다.", "Athens defeated Persia here, and the battle inspired the marathon race.", "Athènes y battit les Perses, et la bataille inspira la course du marathon.", "Athen besiegte hier die Perser, die Schlacht inspirierte den Marathonlauf.", "Atenas venció a los persas y la batalla inspiró la carrera de maratón.", "アテネがペルシア軍を破り、マラソン競技の由来となった。"], "51": ["페르시아를 정복하고 인도까지 나아가 헬레니즘 문화를 퍼뜨렸다.", "He conquered Persia, reached India, and spread Hellenistic culture.", "Il conquit la Perse, atteignit l'Inde et répandit la culture hellénistique.", "Er eroberte Persien, gelangte bis Indien und verbreitete die hellenistische Kultur.", "Conquistó Persia, llegó a la India y difundió la cultura helenística.", "ペルシアを征服してインドまで進み、ヘレニズム文化を広めた。"], "52": ["문자, 화폐, 도량형을 통일하고 황제라는 칭호를 처음 썼다.", "He standardized writing, coins, and measures and was the first to use the title emperor.", "Il unifia l'écriture, la monnaie et les mesures et fut le premier à porter le titre d'empereur.", "Er vereinheitlichte Schrift, Münzen und Maße und nannte sich als Erster Kaiser.", "Unificó la escritura, la moneda y las medidas y fue el primero en llamarse emperador.", "文字、貨幣、度量衡を統一し、初めて皇帝の称号を用いた。"], "53": ["원로원 의원들에게 암살당했고 이후 로마는 제정으로 나아갔다.", "He was killed by senators, and Rome soon moved from republic to empire.", "Il fut tué par des sénateurs, et Rome passa bientôt de la république à l'empire.", "Er wurde von Senatoren ermordet, bald wurde Rom von der Republik zum Kaiserreich.", "Lo mataron unos senadores y Roma pronto pasó de república a imperio.", "元老院議員に暗殺され、その後ローマは帝政へと進んだ。"], "54": ["게르만 용병 대장 오도아케르가 마지막 황제를 폐위했다.", "The Germanic leader Odoacer removed the last Western Roman emperor.", "Le chef germanique Odoacre déposa le dernier empereur romain d'Occident.", "Der germanische Anführer Odoaker setzte den letzten weströmischen Kaiser ab.", "El jefe germánico Odoacro depuso al último emperador romano de Occidente.", "ゲルマン人の傭兵隊長オドアケルが最後の皇帝を退位させた。"], "55": ["무함마드가 메카에서 메디나로 옮겨 갔고 이슬람력의 기원이 되었다.", "Muhammad moved from Mecca to Medina, and this marks year one of the Islamic calendar.", "Mahomet quitta La Mecque pour Médine, ce qui marque l'an un du calendrier musulman.", "Mohammed zog von Mekka nach Medina, damit beginnt der islamische Kalender.", "Mahoma se trasladó de La Meca a Medina, lo que marca el año uno del calendario islámico.", "ムハンマドがメッカからメディナへ移り、イスラーム暦の始まりとなった。"], "56": ["교황 레오 3세가 로마에서 서로마 황제의 관을 씌워 주었다.", "Pope Leo III crowned him emperor of the Romans in Rome.", "Le pape Léon III le couronna empereur des Romains à Rome.", "Papst Leo III. krönte ihn in Rom zum Kaiser der Römer.", "El papa León III lo coronó emperador de los romanos en Roma.", "教皇レオ3世がローマで西ローマ皇帝の冠を授けた。"], "57": ["교황 우르바누스 2세의 호소로 시작되어 예루살렘을 점령했다.", "Called by Pope Urban II, it ended with the capture of Jerusalem.", "Lancée à l'appel du pape Urbain II, elle aboutit à la prise de Jérusalem.", "Auf Aufruf von Papst Urban II. begonnen, endete er mit der Einnahme Jerusalems.", "Convocada por el papa Urbano II, terminó con la toma de Jerusalén.", "教皇ウルバヌス2世の呼びかけで始まり、イェルサレムを占領した。"], "58": ["몽골 부족을 통일하고 거대한 몽골 제국의 기틀을 닦았다.", "He united the Mongol tribes and laid the foundation of the vast Mongol Empire.", "Il unifia les tribus mongoles et posa les bases de l'immense Empire mongol.", "Er einte die mongolischen Stämme und legte den Grundstein des riesigen Mongolenreichs.", "Unió a las tribus mongolas y sentó las bases del inmenso Imperio mongol.", "モンゴルの部族を統一し、巨大なモンゴル帝国の基礎を築いた。"], "59": ["잉글랜드 존 왕이 귀족들의 요구로 왕권을 제한하는 문서에 서명했다.", "King John of England was forced by his barons to accept limits on royal power.", "Le roi Jean d'Angleterre dut accepter, sous la pression des barons, des limites à son pouvoir.", "König Johann von England musste auf Druck der Barone Grenzen seiner Macht anerkennen.", "El rey Juan de Inglaterra tuvo que aceptar, ante sus barones, límites a su poder.", "イングランドのジョン王が貴族の要求で王権を制限する文書に署名した。"], "60": ["유럽 인구의 약 3분의 1이 목숨을 잃었다.", "About one third of Europe's population died.", "Environ un tiers de la population européenne mourut.", "Etwa ein Drittel der Bevölkerung Europas starb.", "Murió cerca de un tercio de la población de Europa.", "ヨーロッパの人口のおよそ3分の1が命を失った。"], "61": ["오스만 제국이 점령하며 비잔티움 제국이 멸망했다.", "The Ottoman Empire captured the city, ending the Byzantine Empire.", "L'Empire ottoman prit la ville, mettant fin à l'Empire byzantin.", "Das Osmanische Reich eroberte die Stadt und beendete das Byzantinische Reich.", "El Imperio otomano tomó la ciudad y puso fin al Imperio bizantino.", "オスマン帝国が占領し、ビザンツ帝国が滅亡した。"], "62": ["스페인의 후원으로 대서양을 건너 아메리카에 도착했다.", "Sponsored by Spain, he crossed the Atlantic and reached the Americas.", "Financé par l'Espagne, il traversa l'Atlantique et atteignit l'Amérique.", "Von Spanien unterstützt, überquerte er den Atlantik und erreichte Amerika.", "Con el apoyo de España, cruzó el Atlántico y llegó a América.", "スペインの支援で大西洋を横断し、アメリカに到達した。"], "63": ["95개조 반박문으로 면벌부 판매를 비판했다.", "His 95 Theses criticized the selling of indulgences by the Church.", "Ses 95 thèses dénonçaient la vente des indulgences par l'Église.", "Seine 95 Thesen kritisierten den Ablasshandel der Kirche.", "Sus 95 tesis criticaban la venta de indulgencias por la Iglesia.", "95か条の論題で贖宥状の販売を批判した。"], "64": ["스페인의 피사로가 적은 병력으로 잉카 제국을 정복했다.", "The Spaniard Pizarro conquered the Inca Empire with a small force.", "L'Espagnol Pizarro conquit l'Empire inca avec une petite troupe.", "Der Spanier Pizarro eroberte das Inkareich mit einer kleinen Truppe.", "El español Pizarro conquistó el Imperio inca con un pequeño ejército.", "スペインのピサロが少ない兵でインカ帝国を征服した。"], "65": ["엘리자베스 1세의 잉글랜드가 스페인 함대를 물리쳤다.", "Elizabeth I's England defeated the great Spanish fleet.", "L'Angleterre d'Élisabeth Ire vainquit la grande flotte espagnole.", "Das England Elisabeths I. besiegte die große spanische Flotte.", "La Inglaterra de Isabel I derrotó a la gran flota española.", "エリザベス1世のイングランドがスペイン艦隊を破った。"], "66": ["피를 흘리지 않고 왕을 바꾸었고 이어 권리 장전이 승인되었다.", "England changed kings without bloodshed, and the Bill of Rights followed.", "L'Angleterre changea de roi sans effusion de sang, puis adopta la Déclaration des droits.", "England wechselte ohne Blutvergießen den König, danach folgte die Bill of Rights.", "Inglaterra cambió de rey sin derramar sangre y luego aprobó la Declaración de Derechos.", "血を流さずに王が交代し、続いて権利の章典が承認された。"], "67": ["토머스 제퍼슨이 기초했으며 모든 사람은 평등하게 태어났다고 밝혔다.", "Written mainly by Thomas Jefferson, it declared that all men are created equal.", "Rédigée surtout par Thomas Jefferson, elle affirme que tous les hommes naissent égaux.", "Vor allem von Thomas Jefferson verfasst, erklärte sie alle Menschen für gleich geschaffen.", "Redactada sobre todo por Thomas Jefferson, afirmó que todos los hombres son creados iguales.", "トマス・ジェファソンが起草し、すべての人は平等につくられたと宣言した。"], "68": ["파리 시민들이 바스티유 감옥을 습격하며 시작되었다.", "It began when the people of Paris stormed the Bastille prison.", "Elle commença quand les Parisiens prirent la prison de la Bastille.", "Sie begann mit dem Sturm der Pariser auf das Gefängnis Bastille.", "Comenzó cuando el pueblo de París asaltó la prisión de la Bastilla.", "パリ市民がバスティーユ牢獄を襲撃して始まった。"], "69": ["나폴레옹 법전을 펴내 근대 민법의 본보기를 만들었다.", "He issued the Napoleonic Code, a model for modern civil law.", "Il promulgua le Code civil, modèle du droit civil moderne.", "Er erließ den Code civil, ein Vorbild für das moderne Zivilrecht.", "Promulgó el Código Napoleónico, modelo del derecho civil moderno.", "ナポレオン法典を定め、近代民法の手本をつくった。"], "70": ["청이 영국에 패해 난징 조약으로 홍콩을 넘겨주었다.", "Qing China lost to Britain and gave up Hong Kong in the Treaty of Nanjing.", "La Chine des Qing perdit face aux Britanniques et céda Hong Kong par le traité de Nankin.", "Qing-China verlor gegen Großbritannien und trat im Vertrag von Nanking Hongkong ab.", "La China Qing perdió ante Gran Bretaña y cedió Hong Kong en el Tratado de Nankín.", "清がイギリスに敗れ、南京条約で香港を譲った。"], "71": ["남북 전쟁 중 반란을 일으킨 남부 지역 노예의 해방을 선언했다.", "During the Civil War, it declared enslaved people in the rebel South to be free.", "Pendant la guerre de Sécession, elle déclara libres les esclaves du Sud rebelle.", "Im Bürgerkrieg erklärte sie die Versklavten im abtrünnigen Süden für frei.", "Durante la Guerra de Secesión, declaró libres a los esclavos del Sur rebelde.", "南北戦争中、反乱した南部の奴隷の解放を宣言した。"], "72": ["일본이 서양 문물을 받아들여 근대 국가로 빠르게 바뀌었다.", "Japan adopted Western ideas and technology and quickly became a modern state.", "Le Japon adopta idées et techniques occidentales et devint vite un État moderne.", "Japan übernahm westliche Ideen und Technik und wurde rasch ein moderner Staat.", "Japón adoptó ideas y técnicas occidentales y se modernizó rápidamente.", "日本が西洋の文物を取り入れ、急速に近代国家へと変わった。"], "73": ["쑨원을 중심으로 청나라가 무너지고 중화민국이 세워졌다.", "Inspired by Sun Yat-sen, it toppled the Qing dynasty and created the Republic of China.", "Inspirée par Sun Yat-sen, elle renversa les Qing et créa la République de Chine.", "Inspiriert von Sun Yat-sen stürzte sie die Qing-Dynastie und schuf die Republik China.", "Inspirada por Sun Yat-sen, derrocó a los Qing y creó la República de China.", "孫文を中心に清朝が倒れ、中華民国が建てられた。"], "74": ["사라예보에서 오스트리아 황태자가 암살된 사건이 계기였다.", "It was sparked by the assassination of Austria's heir in Sarajevo.", "Elle fut déclenchée par l'assassinat de l'héritier autrichien à Sarajevo.", "Auslöser war das Attentat auf den österreichischen Thronfolger in Sarajevo.", "La desencadenó el asesinato del heredero austriaco en Sarajevo.", "サラエボでオーストリアの皇位継承者が暗殺された事件がきっかけだった。"], "75": ["레닌이 이끈 볼셰비키가 세계 최초의 사회주의 정부를 세웠다.", "Lenin's Bolsheviks set up the world's first socialist government.", "Les bolcheviks de Lénine fondèrent le premier gouvernement socialiste du monde.", "Lenins Bolschewiki errichteten die erste sozialistische Regierung der Welt.", "Los bolcheviques de Lenin crearon el primer gobierno socialista del mundo.", "レーニン率いるボリシェヴィキが世界初の社会主義政府を樹立した。"], "76": ["미국 주식 시장의 폭락으로 시작되어 전 세계로 퍼졌다.", "It started with a stock market crash in the United States and spread worldwide.", "Elle commença par un krach boursier aux États-Unis et s'étendit au monde entier.", "Sie begann mit einem Börsenkrach in den USA und breitete sich weltweit aus.", "Comenzó con un desplome de la bolsa en Estados Unidos y se extendió al mundo.", "アメリカの株価大暴落から始まり、世界中に広がった。"], "77": ["독일이 폴란드를 침공하며 시작되었다.", "It began when Germany invaded Poland.", "Elle commença quand l'Allemagne envahit la Pologne.", "Er begann mit dem deutschen Überfall auf Polen.", "Empezó cuando Alemania invadió Polonia.", "ドイツのポーランド侵攻で始まった。"], "78": ["세계 평화와 안전을 지키기 위해 51개국으로 출범했다.", "It started with 51 member nations to keep world peace and security.", "Elle débuta avec 51 pays membres pour préserver la paix et la sécurité mondiales.", "Sie begann mit 51 Mitgliedstaaten, um Frieden und Sicherheit zu sichern.", "Comenzó con 51 países miembros para mantener la paz y la seguridad mundiales.", "世界の平和と安全を守るため、51か国で発足した。"], "79": ["간디의 비폭력 운동 끝에 영국으로부터 독립했다.", "After Gandhi's nonviolent movement, India won independence from Britain.", "Après le mouvement non violent de Gandhi, l'Inde obtint son indépendance du Royaume-Uni.", "Nach Gandhis gewaltfreier Bewegung wurde Indien von Großbritannien unabhängig.", "Tras el movimiento no violento de Gandhi, la India se independizó del Reino Unido.", "ガンディーの非暴力運動の末、イギリスから独立した。"], "80": ["마오쩌둥이 베이징 톈안먼에서 수립을 선포했다.", "Mao Zedong proclaimed its founding at Tiananmen in Beijing.", "Mao Zedong proclama sa fondation sur la place Tian'anmen à Pékin.", "Mao Zedong rief sie am Tiananmen in Peking aus.", "Mao Zedong proclamó su fundación en Tiananmén, Pekín.", "毛沢東が北京の天安門で建国を宣言した。"], "81": ["소련의 쿠바 미사일 배치로 미국과 소련이 핵전쟁 직전까지 갔다.", "Soviet missiles in Cuba brought the US and the USSR to the brink of nuclear war.", "Des missiles soviétiques à Cuba amenèrent les États-Unis et l'URSS au bord de la guerre nucléaire.", "Sowjetische Raketen auf Kuba brachten USA und UdSSR an den Rand eines Atomkriegs.", "Los misiles soviéticos en Cuba llevaron a EE. UU. y la URSS al borde de la guerra nuclear.", "ソ連のキューバへのミサイル配備で、米ソが核戦争寸前まで至った。"], "82": ["닐 암스트롱이 인류 최초로 달에 발을 디뎠다.", "Neil Armstrong became the first person to walk on the Moon.", "Neil Armstrong devint le premier homme à marcher sur la Lune.", "Neil Armstrong betrat als erster Mensch den Mond.", "Neil Armstrong fue el primer ser humano en pisar la Luna.", "ニール・アームストロングが人類で初めて月面に降り立った。"], "83": ["냉전의 상징이 무너졌고 이듬해 독일이 통일되었다.", "A symbol of the Cold War fell, and Germany reunified the next year.", "Un symbole de la guerre froide tomba et l'Allemagne fut réunifiée l'année suivante.", "Ein Symbol des Kalten Krieges fiel, im Jahr darauf wurde Deutschland wiedervereinigt.", "Cayó un símbolo de la Guerra Fría y Alemania se reunificó al año siguiente.", "冷戦の象徴が崩れ、翌年ドイツが統一された。"], "84": ["15개 공화국이 독립하며 냉전이 막을 내렸다.", "Fifteen republics became independent, and the Cold War came to an end.", "Quinze républiques devinrent indépendantes et la guerre froide prit fin.", "Fünfzehn Republiken wurden unabhängig, und der Kalte Krieg endete.", "Quince repúblicas se independizaron y la Guerra Fría terminó.", "15の共和国が独立し、冷戦が終わった。"], "85": ["인종 차별 정책이 끝난 뒤 남아공 최초의 흑인 대통령이 되었다.", "After apartheid ended, he became South Africa's first Black president.", "Après la fin de l'apartheid, il devint le premier président noir d'Afrique du Sud.", "Nach dem Ende der Apartheid wurde er Südafrikas erster schwarzer Präsident.", "Tras el fin del apartheid, fue el primer presidente negro de Sudáfrica.", "アパルトヘイト撤廃後、南アフリカ初の黒人大統領となった。"], "86": ["납치된 여객기가 뉴욕 세계 무역 센터 등에 충돌했다.", "Hijacked airliners crashed into the World Trade Center in New York and other targets.", "Des avions détournés percutèrent le World Trade Center à New York et d'autres cibles.", "Entführte Flugzeuge stürzten in das World Trade Center in New York und andere Ziele.", "Aviones secuestrados se estrellaron contra el World Trade Center de Nueva York y otros objetivos.", "乗っ取られた旅客機がニューヨークの世界貿易センタービルなどに突入した。"], "87": ["메소포타미아의 수메르인이 점토판에 새긴 문자이다.", "The Sumerians of Mesopotamia pressed this script into clay tablets.", "Les Sumériens de Mésopotamie imprimaient cette écriture dans des tablettes d'argile.", "Die Sumerer Mesopotamiens drückten diese Schrift in Tontafeln.", "Los sumerios de Mesopotamia grababan esta escritura en tablillas de arcilla.", "メソポタミアのシュメール人が粘土板に刻んだ文字である。"], "88": ["기하학을 정의와 공리로 정리해 2천 년 넘게 교과서로 쓰였다.", "It built geometry from definitions and axioms and was used as a textbook for over 2,000 years.", "Il fonda la géométrie sur des définitions et des axiomes et servit de manuel pendant plus de 2 000 ans.", "Es baute die Geometrie auf Definitionen und Axiomen auf und war über 2.000 Jahre ein Lehrbuch.", "Construyó la geometría con definiciones y axiomas y fue libro de texto durante más de 2.000 años.", "幾何学を定義と公理から体系化し、2000年以上教科書として使われた。"], "89": ["두 도시의 그림자 각도 차이로 지구 둘레를 꽤 정확히 계산했다.", "Using shadow angles in two cities, he calculated the Earth's size quite accurately.", "Grâce aux angles des ombres dans deux villes, il calcula assez précisément la taille de la Terre.", "Mit Schattenwinkeln in zwei Städten berechnete er den Erdumfang recht genau.", "Con los ángulos de las sombras en dos ciudades, calculó con bastante precisión el tamaño de la Tierra.", "2つの都市の影の角度の差から、地球の周囲をかなり正確に計算した。"], "90": ["나무껍질, 삼베, 헌 그물로 값싸고 쓰기 좋은 종이를 만들었다.", "He made cheap, practical paper from tree bark, hemp, and old fishing nets.", "Il fabriqua un papier bon marché et pratique avec de l'écorce, du chanvre et de vieux filets.", "Er stellte billiges, praktisches Papier aus Baumrinde, Hanf und alten Fischernetzen her.", "Fabricó papel barato y práctico con corteza, cáñamo y viejas redes de pesca.", "樹皮や麻くず、古い漁網から安くて使いやすい紙を作った。"], "91": ["금속 활자 인쇄기로 책을 대량으로 찍어 지식 확산을 이끌었다.", "His metal type printing press made books in large numbers and spread knowledge across Europe.", "Sa presse à caractères métalliques produisit des livres en masse et diffusa le savoir en Europe.", "Seine Druckerpresse mit Metalllettern machte Bücher massenhaft verfügbar und verbreitete Wissen.", "Su imprenta de tipos metálicos produjo libros en masa y difundió el saber por Europa.", "金属活字の印刷機で本を大量に刷り、知識の普及を導いた。"], "92": ["지구가 태양 주위를 돈다는 주장을 담은 책을 펴냈다.", "He published a book arguing that the Earth goes around the Sun.", "Il publia un livre affirmant que la Terre tourne autour du Soleil.", "Er veröffentlichte ein Buch, wonach sich die Erde um die Sonne dreht.", "Publicó un libro que sostenía que la Tierra gira alrededor del Sol.", "地球が太陽の周りを回るという説を記した本を出版した。"], "93": ["망원경으로 달의 울퉁불퉁한 표면과 목성의 위성을 관측했다.", "With his telescope he saw mountains on the Moon and moons orbiting Jupiter.", "Avec sa lunette, il vit des montagnes sur la Lune et des satellites autour de Jupiter.", "Mit seinem Fernrohr sah er Berge auf dem Mond und Monde um Jupiter.", "Con su telescopio vio montañas en la Luna y lunas girando alrededor de Júpiter.", "望遠鏡で月の凹凸のある表面や木星の衛星を観測した。"], "94": ["운동 법칙과 만유인력 법칙을 수학으로 설명했다.", "It explained the laws of motion and universal gravitation with mathematics.", "Il expliqua par les mathématiques les lois du mouvement et la gravitation universelle.", "Es erklärte die Bewegungsgesetze und die allgemeine Gravitation mathematisch.", "Explicó con matemáticas las leyes del movimiento y la gravitación universal.", "運動の法則と万有引力の法則を数学で説明した。"], "95": ["별도의 응축기를 달아 증기 기관의 효율을 크게 높였다.", "Adding a separate condenser, he made the steam engine far more efficient.", "Avec un condenseur séparé, il rendit la machine à vapeur bien plus efficace.", "Mit einem separaten Kondensator machte er die Dampfmaschine viel effizienter.", "Al añadir un condensador separado, hizo la máquina de vapor mucho más eficiente.", "分離凝縮器を付け、蒸気機関の効率を大きく高めた。"], "96": ["소의 우두를 이용해 천연두를 예방하는 방법을 개발했다.", "He used cowpox to protect people from smallpox, the first vaccine.", "Il utilisa la vaccine des vaches pour protéger de la variole, le premier vaccin.", "Er nutzte Kuhpocken zum Schutz vor Pocken, der ersten Impfung.", "Usó la viruela de las vacas para proteger de la viruela humana, la primera vacuna.", "牛痘を使って天然痘を予防する方法を開発した。"], "97": ["영국 스톡턴과 달링턴 사이를 증기 기관차가 달렸다.", "Steam locomotives ran between Stockton and Darlington in England.", "Des locomotives à vapeur circulèrent entre Stockton et Darlington, en Angleterre.", "Dampflokomotiven fuhren zwischen Stockton und Darlington in England.", "Locomotoras de vapor circularon entre Stockton y Darlington, en Inglaterra.", "イギリスのストックトンとダーリントンの間を蒸気機関車が走った。"], "98": ["점과 선으로 된 부호로 먼 곳까지 전선으로 메시지를 보냈다.", "Using a code of dots and dashes, messages were sent far away by wire.", "Grâce à un code de points et de traits, on envoya des messages au loin par fil.", "Mit einem Code aus Punkten und Strichen wurden Nachrichten per Draht weit verschickt.", "Con un código de puntos y rayas se enviaron mensajes lejanos por cable.", "点と線の符号を使い、電線で遠くまで通信を送った。"], "99": ["자연 선택에 의한 생물 진화론을 제시했다.", "It presented the theory of evolution by natural selection.", "Il présenta la théorie de l'évolution par la sélection naturelle.", "Es stellte die Evolutionstheorie durch natürliche Selektion vor.", "Presentó la teoría de la evolución por selección natural.", "自然選択による生物の進化論を示した。"], "100": ["원소를 규칙적으로 배열하고 아직 발견되지 않은 원소의 자리를 비워 두었다.", "He arranged the elements in order and left gaps for elements not yet discovered.", "Il ordonna les éléments et laissa des cases vides pour ceux encore inconnus.", "Er ordnete die Elemente und ließ Lücken für noch unentdeckte Elemente.", "Ordenó los elementos y dejó huecos para los aún no descubiertos.", "元素を規則的に並べ、未発見の元素の場所を空けておいた。"], "101": ["전화기 특허를 받아 목소리를 전선으로 전하는 시대를 열었다.", "He patented the telephone, opening an era of sending voices by wire.", "Il breveta le téléphone et ouvrit l'ère de la voix transmise par fil.", "Er ließ das Telefon patentieren und eröffnete das Zeitalter der Sprachübertragung per Draht.", "Patentó el teléfono y abrió la era de transmitir la voz por cable.", "電話機の特許を取り、声を電線で伝える時代を開いた。"], "102": ["오래 켜지는 실용적인 탄소 필라멘트 전구를 만들었다.", "He made a practical, long-lasting light bulb with a carbon filament.", "Il mit au point une ampoule pratique et durable à filament de carbone.", "Er entwickelte eine praktische, langlebige Glühbirne mit Kohlefaden.", "Creó una bombilla práctica y duradera con filamento de carbono.", "長持ちする実用的な炭素フィラメント電球をつくった。"], "103": ["가솔린 엔진을 단 세 바퀴 자동차로 특허를 받았다.", "He patented a three-wheeled car powered by a gasoline engine.", "Il breveta une voiture à trois roues mue par un moteur à essence.", "Er ließ ein dreirädriges Auto mit Benzinmotor patentieren.", "Patentó un coche de tres ruedas con motor de gasolina.", "ガソリンエンジンを積んだ三輪自動車で特許を取った。"], "104": ["몸속 뼈를 볼 수 있는 X선을 발견해 첫 노벨 물리학상을 받았다.", "His X-rays let doctors see bones, and he won the first Nobel Prize in Physics.", "Ses rayons X permirent de voir les os, et il reçut le premier prix Nobel de physique.", "Seine Röntgenstrahlen machten Knochen sichtbar, er erhielt den ersten Physik-Nobelpreis.", "Sus rayos X permitieron ver los huesos y ganó el primer Nobel de Física.", "体内の骨を見られるX線を発見し、最初のノーベル物理学賞を受けた。"], "105": ["방사성 원소 라듐과 폴로늄을 발견했다.", "They discovered the radioactive elements radium and polonium.", "Ils découvrirent les éléments radioactifs radium et polonium.", "Sie entdeckten die radioaktiven Elemente Radium und Polonium.", "Descubrieron los elementos radiactivos radio y polonio.", "放射性元素のラジウムとポロニウムを発見した。"], "106": ["엔진 달린 비행기로 약 12초 동안 하늘을 날았다.", "Their engine-powered airplane stayed in the air for about 12 seconds.", "Leur avion à moteur resta en l'air environ 12 secondes.", "Ihr motorgetriebenes Flugzeug blieb etwa 12 Sekunden in der Luft.", "Su avión con motor se mantuvo en el aire unos 12 segundos.", "エンジン付きの飛行機で約12秒間空を飛んだ。"], "107": ["빛의 속도는 일정하고 시간과 공간은 상대적임을 밝혔다.", "It showed that the speed of light is constant and that time and space are relative.", "Elle montra que la vitesse de la lumière est constante et que le temps et l'espace sont relatifs.", "Sie zeigte, dass die Lichtgeschwindigkeit konstant ist und Zeit und Raum relativ sind.", "Mostró que la velocidad de la luz es constante y que el tiempo y el espacio son relativos.", "光の速さは一定で、時間と空間は相対的であることを示した。"], "108": ["존 로지 베어드가 런던에서 움직이는 영상을 전송해 보였다.", "John Logie Baird showed moving images sent by television in London.", "John Logie Baird montra à Londres des images animées transmises par télévision.", "John Logie Baird führte in London übertragene bewegte Bilder vor.", "John Logie Baird mostró en Londres imágenes en movimiento transmitidas por televisión.", "ジョン・ロジー・ベアードがロンドンで動く映像を送って見せた。"], "109": ["푸른곰팡이가 세균을 죽이는 것을 우연히 발견해 첫 항생제로 이어졌다.", "He noticed by chance that a mold killed bacteria, leading to the first antibiotic.", "Il remarqua par hasard qu'une moisissure tuait les bactéries, d'où le premier antibiotique.", "Er bemerkte zufällig, dass ein Schimmelpilz Bakterien tötete, der Weg zum ersten Antibiotikum.", "Notó por casualidad que un moho mataba bacterias, lo que llevó al primer antibiótico.", "アオカビが細菌を殺すことを偶然発見し、最初の抗生物質につながった。"], "110": ["진공관 약 1만 8천 개를 쓴 초기 전자식 범용 컴퓨터이다.", "It was an early general-purpose electronic computer using about 18,000 vacuum tubes.", "Ce fut un des premiers ordinateurs électroniques polyvalents, avec environ 18 000 tubes.", "Er war ein früher elektronischer Universalrechner mit rund 18.000 Elektronenröhren.", "Fue una de las primeras computadoras electrónicas de uso general, con unos 18.000 tubos.", "約1万8千本の真空管を使った初期の電子式汎用コンピュータである。"], "111": ["왓슨과 크릭이 DNA가 이중 나선 구조임을 밝혔다.", "Watson and Crick showed that DNA has a double helix structure.", "Watson et Crick montrèrent que l'ADN a une structure en double hélice.", "Watson und Crick zeigten, dass die DNA eine Doppelhelix ist.", "Watson y Crick mostraron que el ADN tiene estructura de doble hélice.", "ワトソンとクリックがDNAの二重らせん構造を明らかにした。"], "112": ["소련이 쏘아 올린 최초의 인공위성으로 우주 경쟁이 시작되었다.", "The Soviet Union launched the first artificial satellite, starting the space race.", "L'Union soviétique lança le premier satellite artificiel, lançant la course à l'espace.", "Die Sowjetunion startete den ersten künstlichen Satelliten und eröffnete den Wettlauf ins All.", "La Unión Soviética lanzó el primer satélite artificial e inició la carrera espacial.", "ソ連が打ち上げた世界初の人工衛星で、宇宙開発競争が始まった。"], "113": ["레이 톰린슨이 @ 기호를 써서 다른 컴퓨터로 메일을 보냈다.", "Ray Tomlinson used the @ sign to send mail to another computer.", "Ray Tomlinson utilisa le signe @ pour envoyer un message à un autre ordinateur.", "Ray Tomlinson nutzte das @-Zeichen, um Post an einen anderen Computer zu senden.", "Ray Tomlinson usó el signo @ para enviar correo a otra computadora.", "レイ・トムリンソンが@記号を使い、別のコンピュータにメールを送った。"], "114": ["모토로라의 마틴 쿠퍼가 뉴욕 거리에서 첫 통화를 했다.", "Martin Cooper of Motorola made the first call on a New York street.", "Martin Cooper, de Motorola, passa le premier appel dans une rue de New York.", "Martin Cooper von Motorola telefonierte als Erster auf einer Straße in New York.", "Martin Cooper, de Motorola, hizo la primera llamada en una calle de Nueva York.", "モトローラのマーティン・クーパーがニューヨークの路上で初めて通話した。"], "115": ["스티브 워즈니악이 설계했으며 개인용 컴퓨터 대중화를 이끌었다.", "Designed by Steve Wozniak, it helped make personal computers popular.", "Conçu par Steve Wozniak, il aida à populariser l'ordinateur personnel.", "Von Steve Wozniak entworfen, machte er den Personal Computer populär.", "Diseñado por Steve Wozniak, ayudó a popularizar el ordenador personal.", "スティーブ・ウォズニアックが設計し、パソコンの普及を導いた。"], "116": ["대기권 밖에서 우주를 관측해 우주의 나이를 밝히는 데 기여했다.", "Observing from above the atmosphere, it helped measure the age of the universe.", "Observant au-dessus de l'atmosphère, il aida à mesurer l'âge de l'Univers.", "Von oberhalb der Atmosphäre half es, das Alter des Universums zu bestimmen.", "Observando sobre la atmósfera, ayudó a medir la edad del universo.", "大気圏外から宇宙を観測し、宇宙の年齢の解明に貢献した。"], "117": ["팀 버너스리가 만든 웹이 누구나 쓸 수 있도록 공개되었다.", "Tim Berners-Lee's web was opened up for anyone to use.", "Le Web de Tim Berners-Lee fut ouvert à tous.", "Das Web von Tim Berners-Lee wurde für alle zugänglich gemacht.", "La web de Tim Berners-Lee se abrió para que cualquiera la usara.", "ティム・バーナーズ＝リーが作ったウェブが誰でも使えるよう公開された。"], "118": ["인간 DNA를 이루는 약 30억 쌍의 염기 서열을 해독했다.", "Scientists read the sequence of about 3 billion base pairs in human DNA.", "Les scientifiques lurent la séquence d'environ 3 milliards de paires de bases de l'ADN humain.", "Forscher entschlüsselten die Abfolge von rund 3 Milliarden Basenpaaren der menschlichen DNA.", "Los científicos leyeron la secuencia de unos 3.000 millones de pares de bases del ADN humano.", "人間のDNAを構成する約30億塩基対の配列を解読した。"], "119": ["터치스크린 중심의 스마트폰 시대를 열었다.", "It opened the era of touchscreen smartphones.", "Il ouvrit l'ère des smartphones à écran tactile.", "Es eröffnete das Zeitalter der Touchscreen-Smartphones.", "Abrió la era de los teléfonos inteligentes con pantalla táctil.", "タッチスクリーン中心のスマートフォン時代を開いた。"], "120": ["구글 딥마인드의 인공지능이 이세돌 9단을 4대 1로 이겼다.", "Google DeepMind's AI beat Go master Lee Sedol four games to one.", "L'IA de Google DeepMind battit le maître de go Lee Sedol quatre parties à une.", "Die KI von Google DeepMind schlug Go-Meister Lee Sedol mit vier zu eins.", "La IA de Google DeepMind venció al maestro de go Lee Sedol cuatro partidas a una.", "グーグル・ディープマインドのAIが囲碁の李世乭九段に4勝1敗で勝った。"]};
+var LANGS=['ko','en','fr','de','es','ja'], LIDX={en:0,fr:1,de:2,es:3,ja:4}, LKEY='arenaClashLang';
+var lang = (function(){
+  var v=null; try{ v=localStorage.getItem(LKEY); }catch(e){}
+  if(LANGS.indexOf(v)>=0) return v;
+  var c=[]; try{ c=navigator.languages&&navigator.languages.length?navigator.languages:[navigator.language||'']; }catch(e){}
+  for(var i=0;i<c.length;i++){ var b=String(c[i]||'').toLowerCase().split('-')[0]; if(LANGS.indexOf(b)>=0) return b; }
+  return 'en';
+})();
+function tr(k){
+  var s = k;
+  if(lang!=='ko'){ var a=I18N[k]; if(a && a[LIDX[lang]]) s=a[LIDX[lang]]; }
+  var args=arguments;
+  return s.replace(/\{(\d)\}/g, function(_,n){ var v=args[+n+1]; return v==null?'':String(v); });
+}
+var ORIG = new WeakMap(), TATTR=['placeholder','title','aria-label'];
+function translateStatic(){
+  document.documentElement.lang = lang;
+  var w=document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT, null), n, list=[];
+  while((n=w.nextNode())) list.push(n);
+  list.forEach(function(t){
+    if(t.parentNode && /^(SCRIPT|STYLE|OPTION)$/.test(t.parentNode.nodeName)) return;
+    if(t.parentNode && t.parentNode.closest && t.parentNode.closest('#tl,#ev,#hard,#fb')) return;
+    var o = ORIG.has(t) ? ORIG.get(t) : t.nodeValue;
+    var k=o.trim(); if(!k || !I18N[k]) return;
+    ORIG.set(t, o); t.nodeValue = o.replace(k, tr(k));
+  });
+  document.querySelectorAll('[placeholder],[title],[aria-label]').forEach(function(el){
+    TATTR.forEach(function(a){ var key='data-ko-'+a, o=el.getAttribute(key)||el.getAttribute(a); if(o && I18N[o]){ el.setAttribute(key,o); el.setAttribute(a,tr(o)); } });
+  });
+}
+// event helpers
+function evTitle(i){ var e=EV[i]; return lang==='ko' ? e[4] : e[5+LIDX[lang]]; }
+function evYear(i){ return EV[i][1]; }
+function evFact(i){ var f=FACTS[i]; if(!f) return ''; return lang==='ko' ? f[0] : (f[1+LIDX[lang]]||f[1]); }
+// plain year markers on the rail (BC, from 1, 1000, 1500, 1800, 1900, 2000)
+var ERA_Y=[-1e9,1,1000,1500,1800,1900,2000];
+function eraOf(i){ var y=evYear(i), e=0; for(var k=0;k<ERA_Y.length;k++) if(y>=ERA_Y[k]) e=k; return e; }
+function eraLabel(e){
+  if(!e) return {ko:'기원전',ja:'紀元前',fr:'av. J.-C.',de:'v. Chr.',es:'a. C.',en:'BC'}[lang];
+  var y=ERA_Y[e];
+  return {ko:y+'년 ~',ja:y+'年〜',fr:'Dès '+y,de:'Ab '+y,es:'Desde '+y,en:'From '+y}[lang];
+}
+// one timeline card; data-c lets a tap open its story
+function tcHtml(c, side, cls){ return '<div class="tc '+side+(cls||'')+'" data-c="'+c+'"><div class="y">'+yearHtml(c)+'</div><div class="dot"></div><div class="bx"><span class="e">'+EV[c][3]+'</span><span>'+esc(evTitle(c))+'</span></div></div>'; }
+function eraHtml(e){ return '<div class="era"><span>'+esc(eraLabel(e))+'</span></div>'; }
+// small sounds made on the fly; muted state is remembered
+var SND = (function(){
+  var ac=null, on = (function(){ try{ return localStorage.getItem('timeline.snd')!=='0'; }catch(e){ return true; } })();
+  function ctx(){ if(!ac){ try{ ac=new (window.AudioContext||window.webkitAudioContext)(); }catch(e){ ac=null; } } if(ac && ac.state==='suspended') ac.resume(); return ac; }
+  function tone(f, t0, dur, type, vol){ var a=ctx(); if(!a) return; var o=a.createOscillator(), g=a.createGain(), t=a.currentTime+t0; o.type=type||'sine'; o.frequency.setValueAtTime(f,t); g.gain.setValueAtTime(0.0001,t); g.gain.exponentialRampToValueAtTime(vol||.18,t+.01); g.gain.exponentialRampToValueAtTime(0.0001,t+dur); o.connect(g); g.connect(a.destination); o.start(t); o.stop(t+dur+.02); }
+  return {
+    get on(){ return on; },
+    toggle:function(){ on=!on; try{ localStorage.setItem('timeline.snd', on?'1':'0'); }catch(e){} if(on) ctx(); return on; },
+    ok:function(streak){ if(!on) return; var b=523*Math.pow(1.06, Math.min(streak,8)); tone(b,0,.18,'triangle'); tone(b*1.5,.08,.26,'triangle'); },
+    bad:function(){ if(!on) return; tone(196,0,.25,'sawtooth',.08); tone(147,.12,.32,'sawtooth',.08); },
+    pick:function(){ if(!on) return; tone(880,0,.05,'square',.04); },
+    end:function(){ if(!on) return; [523,659,784,1046].forEach(function(f,i){ tone(f,i*.12,.3,'triangle',.14); }); }
+  };
+})();
+function fmtYear(i){
+  var y=EV[i][1], ap=EV[i][2], a=Math.abs(y), bc=y<0, s;
+  switch(lang){
+    case 'ko': s=(bc?'기원전 ':'')+a+'년'; if(ap) s='약 '+s; break;
+    case 'ja': s=(bc?'紀元前':'')+a+'年'; if(ap) s='約'+s; break;
+    case 'fr': s=a+(bc?' av. J.-C.':''); if(ap) s='v. '+s; break;
+    case 'de': s=a+(bc?' v. Chr.':''); if(ap) s='um '+s; break;
+    case 'es': s=a+(bc?' a. C.':''); if(ap) s='h. '+s; break;
+    default: s=a+(bc?' BC':''); if(ap) s='c. '+s;
+  }
+  return s;
+}
+function yearHtml(i){ // two lines for the timeline column
+  var y=EV[i][1], ap=EV[i][2], a=Math.abs(y), bc=y<0, top=String(a), sub='';
+  var pre={ko:'약',ja:'約',fr:'v.',de:'um',es:'h.',en:'c.'}[lang], bcs={ko:'기원전',ja:'紀元前',fr:'av. J.-C.',de:'v. Chr.',es:'a. C.',en:'BC'}[lang];
+  if(bc) sub=bcs; if(ap) sub=pre+(sub?' '+sub:'');
+  return (sub?'<small>'+esc(sub)+'</small>':'')+top;
+}
+var DECK_NAME={k:'한국사',w:'세계사',s:'과학·발명',a:'모두'};
+function deckIdx(d){ var out=[]; EV.forEach(function(e,i){ if(d==='a' || e[0]===d) out.push(i); }); return out; }
+function rng(seed){ var a=seed>>>0; return function(){ a=(a+0x6D2B79F5)|0; var t=Math.imul(a^(a>>>15),1|a); t=(t+Math.imul(t^(t>>>7),61|t))^t; return ((t^(t>>>14))>>>0)/4294967296; }; }
+function makeSeq(deck, seed){
+  var a=deckIdx(deck), r=rng(seed);
+  for(var i=a.length-1;i>0;i--){ var j=Math.floor(r()*(i+1)), t=a[i]; a[i]=a[j]; a[j]=t; }
+  return a;
+}
+// placed: card indices in time order. pos = gap index 0..placed.length
+function fits(placed, pos, c){
+  var y=evYear(c);
+  if(pos<0 || pos>placed.length) return false;
+  if(pos>0 && evYear(placed[pos-1])>y) return false;
+  if(pos<placed.length && evYear(placed[pos])<y) return false;
+  return true;
+}
+function rightPos(placed, c){ var y=evYear(c), p=0; while(p<placed.length && evYear(placed[p])<=y) p++; return p; }
+function ptsFor(streak){ return 100 + Math.min(streak-1,5)*20; } // streak counts this answer
+
+function peerOpts(){
+  var o = { debug:0, config:{ iceServers:[{urls:'stun:stun.l.google.com:19302'},{urls:'stun:global.stun.twilio.com:3478'}] } };
+  var ps = qs.get('ps');
+  if(ps){ var m = ps.match(/^([^:\/]+)(?::(\d+))?(\/.*)?$/); if(m){ o.host=m[1]; o.port=+(m[2]||443); o.path=m[3]||'/'; o.secure = location.protocol==='https:'; } }
+  return o;
+}
+function lsGet(k){ try{ return localStorage.getItem(k); }catch(e){ return null; } }
+function lsSet(k,v){ try{ localStorage.setItem(k,v); }catch(e){} }
+var token = lsGet('timeline.token');
+if(!token){ token = Math.random().toString(36).slice(2)+Date.now().toString(36); lsSet('timeline.token', token); }
+function esc(s){ return String(s).replace(/[&<>"']/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); }
+function show(id){ document.querySelectorAll('.screen').forEach(function(s){ s.classList.toggle('on', s.id===id); }); window.scrollTo(0,0); }
+var toastT;
+function toast(t){ var el=$('toast'); el.textContent=t; el.classList.add('on'); clearTimeout(toastT); toastT=setTimeout(function(){ el.classList.remove('on'); }, 2400); }
+var netNow=['','오프라인'];
+function setNet(state, txt){ netNow=[state,txt]; var n=$('net'); n.className='net'+(state?' '+state:''); $('netTxt').textContent=tr(txt); }
+function fmt(ms){ var s=Math.max(0,Math.ceil(ms/1000)); return Math.floor(s/60)+':'+String(s%60).padStart(2,'0'); }
+function cleanName(n){ n=String(n||'').replace(/\s+/g,' ').trim().slice(0,16); return n || tr('플레이어'); }
+
+// =====================================================================
+// STATE
+// =====================================================================
+var S = {
+  role:null, peer:null, code:'', name:'',
+  settings:{ time:300, deck:'a', hostPlay:0 },
+  phase:'idle', mode:null, endAt:0, totalMs:0,
+  seed:0, seq:[],
+  me:null,            // my play: {placed, i, score, correct, wrong, streak, best, last, lives, done}
+  players:{}, conn:null, board:null, tally:{}
+};
+var save = (function(){ try{ var v=JSON.parse(lsGet(SAVE_KEY)||'{}'); if(v && typeof v==='object') return v; }catch(e){} return {}; })();
+save.best = save.best || {};
+var soloDeck = 'a';
+function newPlay(){ return { placed:[S.seq[0]], i:1, score:0, correct:0, wrong:0, streak:0, best:0, last:0, lives:LIVES, done:false }; }
+// applies one answer to a play record; shared by host check and local play
+function applyAns(p, pos){
+  var c=S.seq[p.i], ok=fits(p.placed, pos, c), r={ c:c, ok:ok, pts:0, at:0 };
+  if(ok){ p.placed.splice(pos,0,c); p.streak++; p.best=Math.max(p.best,p.streak); r.pts=ptsFor(p.streak); p.score+=r.pts; p.correct++; p.last=Date.now(); r.at=pos; }
+  else { p.streak=0; p.wrong++; p.lives--; r.at=rightPos(p.placed, c); }
+  p.i++;
+  if(p.i>=S.seq.length) p.done=true;
+  return r;
+}
+
+// =====================================================================
+// HOME
+// =====================================================================
+(function(){
+  var picks=[], all=deckIdx('a'); while(picks.length<14){ var c=all[Math.floor(Math.random()*all.length)]; if(!picks.some(function(p){ return evYear(p)===evYear(c); })) picks.push(c); }
+  picks.sort(function(a,b){ return evYear(a)-evYear(b); });
+  var s=picks.map(function(i){ return '<div class="exItem"><div class="yr">'+esc(fmtYear(i))+'</div><div class="pin"></div><div class="lbl"><span class="e">'+EV[i][3]+'</span>'+esc(evTitle(i))+'</div></div>'; }).join('');
+  $('ticker').innerHTML=s+s;
+})();
+$('nameIn').value = lsGet('timeline.name') || '';
+$('diceBtn').onclick=function(){ var L=RNAMES[lang]||RNAMES.en, pick=function(a){ return a[Math.floor(Math.random()*a.length)]; }; var n; do { n=pick(L[0])+' '+pick(L[1]); } while(n.length>16); $('nameIn').value = n; };
+$('langSel').value = lang;
+$('langSel').onchange = function(){
+  lang = this.value; try{ localStorage.setItem(LKEY, lang); }catch(e){}
+  translateStatic(); setNet(netNow[0], netNow[1]); renderHome();
+  if(S.phase==='lobby'){ if(S.role==='guest') renderGuestSet(); renderChips(); }
+  if($('sGame').classList.contains('on')) { renderCur(); renderTl(); renderHud(); }
+};
+function renderHome(){
+  var b=save.best.a; $('soloBest').textContent = b ? tr('최고 {0}점', b) : '';
+}
+translateStatic(); renderHome();
+if(qs.get('room')) $('codeIn').value = qs.get('room').toUpperCase().slice(0,5);
+
+function needName(){
+  var n = $('nameIn').value.trim();
+  if(!n){ $('homeMsg').className='msg'; $('homeMsg').textContent=tr('이름을 먼저 입력하세요.'); $('nameIn').focus(); return null; }
+  n = cleanName(n); lsSet('timeline.name', n); $('homeMsg').textContent=''; return n;
+}
+$('codeIn').addEventListener('input', function(){ this.value=this.value.toUpperCase().replace(/[^A-Z0-9]/g,''); });
+$('codeIn').addEventListener('keydown', function(e){ if(e.key==='Enter') $('joinBtn').click(); });
+$('hostBtn').onclick = function(){ var n=needName(); if(n) startHost(n); };
+$('joinBtn').onclick = function(){
+  var n=needName(); if(!n) return;
+  var c=$('codeIn').value.trim().toUpperCase();
+  if(c.length!==5){ $('homeMsg').className='msg'; $('homeMsg').textContent=tr('방 코드 5자리를 입력하세요.'); return; }
+  startGuest(n, c);
+};
+$('soloBtn').onclick = startSolo;
+function busy(on){ ['hostBtn','joinBtn','soloBtn'].forEach(function(id){ $(id).disabled=on; }); }
+function destroyPeer(){ if(S.peer){ try{ S.peer.destroy(); }catch(e){} } S.peer=null; S.conn=null; S.players={}; setNet('', '오프라인'); }
+function goHome(){ destroyPeer(); clearTimers(); S.role=null; S.phase='idle'; S.mode=null; busy(false); renderHome(); show('sHome'); }
+function noPeerLib(){ if(window.Peer) return false; $('homeMsg').className='msg'; $('homeMsg').textContent=tr('연결 도구를 불러오지 못했어요. 인터넷 연결을 확인하고 새로고침하세요.'); return true; }
+
+// =====================================================================
+// SOLO
+// =====================================================================
+function startSolo(){
+  destroyPeer(); clearTimers();
+  S.role='solo'; S.mode='solo'; S.phase='play'; S.settings.deck=soloDeck;
+  S.seed=(Math.random()*4294967296)>>>0; S.seq=makeSeq(soloDeck, S.seed); S.me=newPlay();
+  enterGame();
+}
+$('gQuit').onclick = function(){ if(S.mode==='solo' && S.phase==='play') endSolo(); };
+function endSolo(){
+  S.phase='result';
+  var m=S.me, d=S.settings.deck, rec = !save.best[d] || m.score>save.best[d];
+  if(rec && m.score>0){ save.best[d]=m.score; lsSet(SAVE_KEY, JSON.stringify(save)); }
+  $('raceRes').classList.add('hide'); $('soloRes').classList.remove('hide');
+  $('soloRes').innerHTML='<div class="big">'+m.score+'</div><p>'+esc(tr('정답 {0}개 · 최고 연속 {1}', m.correct, m.best))+'</p>'+(rec&&m.score>0?'<span class="nb">'+esc(tr('최고 기록!'))+'</span>':'');
+  var miss=S.missList||[];
+  SND.end();
+  renderMyTl();
+  renderHard(miss.map(function(c){ return { c:c, m:1, n:1 }; }), true);
+  $('againBtn').classList.remove('hide'); $('resWait').textContent='';
+  show('sResult');
+}
+
+// =====================================================================
+// GAME SCREEN (solo + race)
+// =====================================================================
+var lockT=null, inputLock=false, ghost=null;
+function enterGame(){
+  S.missList=[]; ghost=null; inputLock=false;
+  document.querySelectorAll('#sGame .solo').forEach(function(el){ el.classList.toggle('hide', S.mode!=='solo'); });
+  document.querySelectorAll('#sGame .race').forEach(function(el){ el.classList.toggle('hide', S.mode!=='race'); });
+  $('endNow2').classList.toggle('hide', !(S.mode==='race' && S.role==='host'));
+  $('fb').className='note hide'; $('fb').innerHTML='';
+  renderHud(); renderCur(true); renderTl(); show('sGame');
+}
+function renderHud(){
+  var m=S.me; if(!m) return;
+  $('gScore').textContent=m.score; $('gStreak').textContent=m.streak;
+  var h=''; for(var i=0;i<LIVES;i++) h+= i<m.lives?'♥':'<i>♥</i>'; $('gHearts').innerHTML=h;
+  $('gLeft').textContent = m.done ? '' : tr('남은 카드 {0}장', S.seq.length-m.i);
+}
+function renderCur(deal){
+  var m=S.me, el=$('ev');
+  if(m.done){ el.className='ev'; el.innerHTML='<div class="em">🏁</div><div class="tt">'+esc(tr('모든 카드를 놓았어요'))+'</div>'; return; }
+  var c=S.seq[m.i];
+  el.className='ev'+(deal?' in':'');
+  el.innerHTML='<div class="tag '+EV[c][0]+'">'+esc(tr(DECK_NAME[EV[c][0]]))+'</div><div class="em">'+EV[c][3]+'</div><div class="tt">'+esc(evTitle(c))+'</div><div class="yr">????</div>';
+}
+function renderTl(newAt){
+  var m=S.me, h='', placed=m.placed, canPlay=S.phase==='play' && !m.done && !(S.mode==='solo' && m.lives<=0), k=0;
+  function card(c, cls){ return tcHtml(c, (k++)%2?'dn':'up', cls); }
+  var era=-1;
+  for(var p=0;p<=placed.length;p++){
+    if(ghost && ghost.at===p) h+=card(ghost.c, ' ghost');
+    if(p<placed.length && eraOf(placed[p])!==era){ era=eraOf(placed[p]); h+=eraHtml(era); }
+    h+='<button class="gap" data-p="'+p+'" aria-label="'+esc(tr('여기'))+'"><span></span></button>';
+    if(p<placed.length) h+=card(placed[p], newAt===p?' new':'');
+  }
+  if(m.done) h+='<div class="done">'+esc(tr('결과를 기다리는 중'))+'</div>';
+  var tl=$('tl'); tl.innerHTML=h; tl.classList.toggle('lock', !canPlay || inputLock);
+}
+$('tl').addEventListener('click', function(e){
+  var b=e.target.closest('.tc'); if(b && !b.classList.contains('ghost')){ openPop(+b.dataset.c); return; }
+  var g=e.target.closest('.gap'); if(!g || inputLock || S.phase!=='play') return;
+  var m=S.me; if(!m || m.done) return;
+  place(+g.dataset.p);
+});
+function noteFor(r, streak){
+  var fb=$('fb'), f=evFact(r.c);
+  var st = r.ok ? tr('정답')+' +'+r.pts : tr('틀렸어요');
+  fb.className='note'+(r.ok?'':' bad');
+  fb.innerHTML='<div class="st">'+esc(st)+'</div><div class="hd"><span class="e">'+EV[r.c][3]+'</span><span>'+esc(evTitle(r.c))+' <span class="yy">'+esc(fmtYear(r.c))+'</span>'+(r.ok && streak>=3?'<span class="stk">🔥 '+esc(tr('{0}연속!', streak))+'</span>':'')+'</span></div>'+(f?'<div class="fx">'+esc(f)+'</div>':'');
+  void fb.offsetWidth; fb.style.animation='none'; void fb.offsetWidth; fb.style.animation='';
+}
+function openPop(c){
+  if(!EV[c]) return;
+  var f=evFact(c);
+  $('popBox').innerHTML='<button class="x" aria-label="'+esc(tr('닫기'))+'">✕</button><div class="em">'+EV[c][3]+'</div><div class="tg">'+esc(tr(DECK_NAME[EV[c][0]]))+'</div><div class="tt">'+esc(evTitle(c))+'</div><div class="yy">'+esc(fmtYear(c))+'</div>'+(f?'<div class="fx">'+esc(f)+'</div>':'');
+  $('pop').classList.add('on');
+}
+$('pop').addEventListener('click', function(e){ if(e.target.closest('.x') || !e.target.closest('.pbx')) $('pop').classList.remove('on'); });
+$('sndBtn').onclick=function(){ this.textContent = SND.toggle() ? '🔊' : '🔇'; };
+$('sndBtn').textContent = SND.on ? '🔊' : '🔇';
+
+// drag the card onto the timeline (touch and mouse); a plain tap on a gap still works
+(function(){
+  var ev=$('ev'), wrap=$('tlWrap'), tl=$('tl'), d=null, raf=0;
+  function canDrag(){ var m=S.me; return S.phase==='play' && m && !m.done && !inputLock && !(S.mode==='solo' && m.lives<=0); }
+  function gapAt(x,y){
+    var el=document.elementFromPoint(x,y), g=el && el.closest && el.closest('.gap');
+    if(g) return g;
+    // snap to the nearest gap within reach
+    var best=null, bd=90*90;
+    tl.querySelectorAll('.gap').forEach(function(b){ var r=b.getBoundingClientRect(), cx=r.left+r.width/2, cy=r.top+r.height/2, dd=(cx-x)*(cx-x)+(cy-y)*(cy-y); if(dd<bd){ bd=dd; best=b; } });
+    return best;
+  }
+  function edge(){
+    if(!d) return;
+    var vertical = getComputedStyle(tl).flexDirection==='column', sp=0;
+    if(vertical){ var H=window.innerHeight; if(d.y>H-70) sp=Math.min(18,(d.y-(H-70))/3); else if(d.y<70 && d.y>0) sp=-Math.min(18,(70-d.y)/3); if(sp) window.scrollBy(0,sp); }
+    else { var r=wrap.getBoundingClientRect(); if(d.x>r.right-80) sp=Math.min(22,(d.x-(r.right-80))/3); else if(d.x<r.left+80) sp=-Math.min(22,(r.left+80-d.x)/3); if(sp) wrap.scrollLeft+=sp; }
+    if(sp) hover();
+    raf=requestAnimationFrame(edge);
+  }
+  function hover(){ var g=gapAt(d.x,d.y); if(g!==d.hot){ if(d.hot) d.hot.classList.remove('hot'); d.hot=g; if(g){ g.classList.add('hot'); SND.pick(); } } }
+  ev.addEventListener('pointerdown', function(e){
+    if(!canDrag() || (e.pointerType==='mouse' && e.button!==0)) return;
+    var c=S.seq[S.me.i];
+    d={ id:e.pointerId, x:e.clientX, y:e.clientY, sx:e.clientX, sy:e.clientY, on:false, hot:null, c:c };
+    try{ ev.setPointerCapture(e.pointerId); }catch(er){}
+  });
+  ev.addEventListener('pointermove', function(e){
+    if(!d || e.pointerId!==d.id) return;
+    d.x=e.clientX; d.y=e.clientY;
+    if(!d.on){
+      if(Math.abs(d.x-d.sx)+Math.abs(d.y-d.sy)<8) return;
+      d.on=true; ev.classList.add('lift'); tl.classList.add('dragging');
+      var g=document.createElement('div'); g.className='drag'; g.innerHTML='<div class="em">'+EV[d.c][3]+'</div>'+esc(evTitle(d.c)); document.body.appendChild(g); d.ghost=g;
+      raf=requestAnimationFrame(edge);
+    }
+    d.ghost.style.left=d.x+'px'; d.ghost.style.top=d.y+'px';
+    hover(); e.preventDefault();
+  });
+  function finish(e, drop){
+    if(!d || (e && e.pointerId!==d.id)) return;
+    cancelAnimationFrame(raf);
+    var hot=d.hot, was=d.on;
+    if(d.ghost) d.ghost.remove(); if(hot) hot.classList.remove('hot');
+    ev.classList.remove('lift'); tl.classList.remove('dragging'); d=null;
+    if(drop && was && hot && canDrag()) place(+hot.dataset.p);
+  }
+  ev.addEventListener('pointerup', function(e){ finish(e, true); });
+  ev.addEventListener('pointercancel', function(e){ finish(e, false); });
+})();
+
+function place(pos){
+  if(S.phase!=='play' || !S.me || S.me.done || inputLock) return;
+  var m=S.me, i=m.i, r=applyAns(m, pos);
+  if(S.mode==='race'){
+    if(S.role==='guest') send(S.conn, { t:'ans', i:i, pos:pos });
+    else if(S.role==='host'){ tallyAns(r.c, r.ok); boardDirty=true; }
+  }
+  var fb=$('fb');
+  noteFor(r, m.streak);
+  if(r.ok){
+    SND.ok(m.streak);
+    ghost=null; renderTl(r.at);
+    var nw=$('tl').querySelector('.tc.new'); if(nw) nw.scrollIntoView({block:'nearest', inline:'center', behavior:'smooth'});
+    renderCur(true);
+  } else {
+    S.missList.push(r.c); SND.bad();
+    $('ev').className='ev bad';
+    inputLock=true; ghost={ c:r.c, at:r.at }; renderTl();
+    var gh=$('tl').querySelector('.tc.ghost'); if(gh) gh.scrollIntoView({block:'nearest', inline:'center', behavior:'smooth'});
+    clearTimeout(lockT);
+    lockT=setTimeout(function(){ inputLock=false; ghost=null; if(S.phase==='play' || S.phase==='count'){ renderCur(true); renderTl(); } if(S.mode==='solo' && m.lives<=0) endSolo(); }, 1700);
+  }
+  renderHud();
+  if(S.mode==='solo' && m.done && m.lives>0) setTimeout(endSolo, 900);
+}
+
+// =====================================================================
+// RACE
+// =====================================================================
+function newCode(){ var s=''; for(var i=0;i<5;i++) s+=CODE_CH[Math.floor(Math.random()*CODE_CH.length)]; return s; }
+function startHost(name, tries){
+  if(noPeerLib()) return;
+  tries = tries||0; busy(true);
+  $('homeMsg').className='msg info'; $('homeMsg').textContent=tr('방을 만드는 중...');
+  destroyPeer();
+  S.role='host'; S.name=name; S.code=newCode(); S.players={};
+  var p = new Peer(PREFIX+S.code, peerOpts()); S.peer=p;
+  p.on('open', function(){ $('homeMsg').textContent=''; busy(false); setNet('on','연결됨'); enterLobby(); });
+  p.on('connection', onGuestConn);
+  p.on('disconnected', function(){ if(S.peer===p && !p.destroyed){ setNet('off','다시 연결 중'); setTimeout(function(){ if(S.peer===p && !p.destroyed) p.reconnect(); }, 1000); } });
+  p.on('error', function(err){
+    if(S.peer!==p) return;
+    if(err.type==='unavailable-id' && tries<5){ startHost(name, tries+1); return; }
+    if(S.phase==='idle'){ $('homeMsg').className='msg'; $('homeMsg').textContent=tr('방을 만들지 못했어요 ({0}). 잠시 후 다시 해 보세요.', err.type); busy(false); destroyPeer(); }
+    else if(err.type==='network' || err.type==='server-error' || err.type==='socket-error'){ setNet('off','서버 연결 끊김'); }
+  });
+}
+function onGuestConn(conn){
+  conn.on('data', function(d){ handleHostMsg(conn, d); });
+  conn.on('close', function(){ dropConn(conn); });
+  conn.on('error', function(){ dropConn(conn); });
+}
+function dropConn(conn){ for(var t in S.players){ var pl=S.players[t]; if(pl.conn===conn){ pl.online=false; pl.conn=null; } } if(S.phase==='lobby') renderChips(); boardDirty=true; }
+function send(conn, m){ if(conn && conn.open){ try{ conn.send(m); }catch(e){} } }
+function broadcast(m){ for(var t in S.players){ send(S.players[t].conn, m); } }
+function onlineCount(){ var c=0; for(var t in S.players) if(S.players[t].online) c++; return c; }
+function uniqueName(name, tok){
+  var base=name, n=name, i=2, taken=function(x){ if(S.settings.hostPlay && x===S.name && tok!==token) return true; for(var t in S.players) if(t!==tok && S.players[t].name===x) return true; return false; };
+  while(taken(n)){ n=base.slice(0,14)+' '+i; i++; }
+  return n;
+}
+function tallyAns(c, ok){ var t=S.tally[c]||(S.tally[c]={n:0,m:0}); t.n++; if(!ok) t.m++; }
+function handleHostMsg(conn, d){
+  if(!d || typeof d!=='object') return;
+  if(d.t==='hello'){
+    var tok = String(d.token||'').slice(0,40) || conn.peer;
+    var pl = S.players[tok];
+    if(!pl){
+      if(Object.keys(S.players).length >= MAX_PLAYERS){
+        var freed=false;
+        if(S.phase==='lobby'){ for(var t in S.players){ if(!S.players[t].online){ delete S.players[t]; freed=true; break; } } }
+        if(!freed){ send(conn,{t:'full'}); setTimeout(function(){ conn.close(); }, 500); return; }
+      }
+      pl = S.players[tok] = { name:'', conn:null, online:true, play: S.seq.length?newPlay():null };
+    }
+    if(pl.conn && pl.conn!==conn){ try{ pl.conn.close(); }catch(e){} }
+    pl.conn=conn; pl.online=true; conn._tok=tok;
+    pl.name = uniqueName(cleanName(d.name), tok);
+    if((S.phase==='play'||S.phase==='count') && !pl.play) pl.play=newPlay();
+    send(conn, { t:'welcome', name:pl.name, settings:S.settings, phase:S.phase, remain:S.endAt-Date.now(), total:S.totalMs, seed:S.seed, play:pl.play });
+    if(S.phase==='result') send(conn, endMsg());
+    if(S.phase==='lobby') renderChips();
+    boardDirty=true;
+    return;
+  }
+  var pl2 = S.players[conn._tok]; if(!pl2) return;
+  if(d.t==='rename' && S.phase==='lobby'){ pl2.name = uniqueName(cleanName(d.name), conn._tok); send(conn, { t:'named', name:pl2.name }); renderChips(); return; }
+  if(d.t==='ans' && S.phase==='play' && pl2.play && !pl2.play.done && (d.i|0)===pl2.play.i){
+    var r=applyAns(pl2.play, d.pos|0); tallyAns(r.c, r.ok); boardDirty=true;
+  }
+}
+function enterLobby(){
+  S.phase='lobby'; S.mode=null;
+  $('lobbyCode').textContent = S.code;
+  var isHost = S.role==='host';
+  $('hostSet').classList.toggle('hide', !isHost);
+  $('guestWait').classList.toggle('hide', isHost);
+  if(isHost){
+    var url = location.origin+location.pathname+'?room='+S.code+(qs.get('ps')?'&ps='+encodeURIComponent(qs.get('ps')):'');
+    $('lobbyLink').innerHTML = esc(url.replace(/^https?:\/\//,''))+'<button id="copyLnk">'+tr('복사')+'</button>';
+    $('copyLnk').onclick=function(){ (navigator.clipboard ? navigator.clipboard.writeText(url) : Promise.reject()).then(function(){ toast(tr('링크를 복사했어요')); }, function(){ toast(url); }); };
+    syncSegs();
+    for(var t in S.players){ var p=S.players[t]; if(!p.online) delete S.players[t]; else p.play=null; }
+    broadcast({ t:'lobby', settings:S.settings });
+  } else { $('lobbyLink').textContent=''; renderGuestSet(); }
+  $('renameIn').value = S.name;
+  renderChips(); show('sLobby');
+}
+function renderGuestSet(){ $('guestSet').textContent = fmt(S.settings.time*1000); }
+function bindSeg(id, key, str){
+  $(id).addEventListener('click', function(e){
+    var b=e.target.closest('button'); if(!b) return;
+    S.settings[key] = str ? b.dataset.v : +b.dataset.v; syncSegs(); renderChips();
+    broadcast({ t:'lobby', settings:S.settings });
+  });
+}
+bindSeg('segTime','time'); bindSeg('segHostPlay','hostPlay');
+function syncSegs(){ [['segTime','time'],['segHostPlay','hostPlay']].forEach(function(a){ $(a[0]).querySelectorAll('button').forEach(function(b){ b.classList.toggle('on', String(b.dataset.v)===String(S.settings[a[1]])); }); }); }
+var lobbyNames=[], guestCount=0;
+function renderChips(){
+  var names=[];
+  if(S.role==='host'){
+    if(S.settings.hostPlay) names.push({n:S.name, me:true});
+    for(var t in S.players){ var p=S.players[t]; if(p.online) names.push({n:p.name}); }
+    broadcast({ t:'players', names:names.map(function(x){ return x.n; }), guests:onlineCount() });
+    guestCount = onlineCount();
+    $('startBtn').disabled = names.length===0;
+  } else names = lobbyNames.map(function(n){ return {n:n, me:n===S.name}; });
+  $('pNum').textContent = guestCount;
+  $('chips').innerHTML = names.map(function(x){ return '<span class="chip'+(x.me?' me':'')+'">'+esc(x.n)+'</span>'; }).join('') || '<span class="msg info">'+tr('아직 아무도 없어요')+'</span>';
+}
+$('startBtn').onclick = function(){
+  if(S.role!=='host') return;
+  var cdMs=3000; S.seed=(Math.random()*4294967296)>>>0; S.seq=makeSeq(S.settings.deck, S.seed); S.tally={};
+  for(var t in S.players) S.players[t].play=newPlay();
+  broadcast({ t:'start', cd:cdMs, dur:S.settings.time*1000, settings:S.settings, seed:S.seed });
+  beginRace(cdMs, S.settings.time*1000);
+};
+$('leaveBtn').onclick = goHome;
+$('renameBtn').onclick = function(){
+  var n=$('renameIn').value.trim(); if(!n || S.phase!=='lobby') return;
+  n=cleanName(n);
+  if(S.role==='host'){ S.name=n; lsSet('timeline.name', n); renderChips(); toast(tr('이름을 바꿨어요')); }
+  else send(S.conn, { t:'rename', name:n });
+};
+$('renameIn').addEventListener('keydown', function(e){ if(e.key==='Enter') $('renameBtn').click(); });
+$('endNow2').onclick = $('endNowBtn').onclick = function(){ if(S.role==='host' && S.phase==='play') finishRace(); };
+
+function startGuest(name, code){
+  if(noPeerLib()) return;
+  busy(true); $('homeMsg').className='msg info'; $('homeMsg').textContent=tr('방에 연결하는 중...');
+  destroyPeer();
+  S.role='guest'; S.name=name; S.code=code;
+  var p = new Peer(peerOpts()); S.peer=p;
+  var tm = setTimeout(function(){ if(S.peer===p && S.phase==='idle'){ $('homeMsg').className='msg'; $('homeMsg').textContent=tr('연결 시간이 초과됐어요. 코드를 확인하고 다시 해 보세요.'); busy(false); destroyPeer(); } }, 15000);
+  p.on('open', function(){ connectHost(p, tm); });
+  p.on('disconnected', function(){ if(S.peer===p && !p.destroyed) setTimeout(function(){ if(S.peer===p && !p.destroyed) p.reconnect(); }, 1000); });
+  p.on('error', function(err){
+    if(S.peer!==p) return;
+    if(S.phase==='idle'){ clearTimeout(tm); $('homeMsg').className='msg'; $('homeMsg').textContent = err.type==='peer-unavailable' ? tr('방을 찾을 수 없어요. 코드를 확인하세요.') : tr('연결하지 못했어요 ({0}).', err.type); busy(false); destroyPeer(); }
+    else if(err.type==='peer-unavailable'){ setNet('off','방장과 연결 끊김'); }
+  });
+}
+var retryT=null, retries=0;
+function connectHost(p, tm){
+  var c = p.connect(PREFIX+S.code, { reliable:true });
+  c.on('open', function(){ clearTimeout(tm); retries=0; S.conn=c; setNet('on','연결됨'); send(c, { t:'hello', name:S.name, token:token }); });
+  c.on('data', function(d){ handleGuestMsg(d); });
+  c.on('close', function(){
+    if(S.conn!==c || S.peer!==p) return;
+    S.conn=null; setNet('off','방장과 연결 끊김');
+    if(S.phase!=='idle' && retries<8){ retries++; clearTimeout(retryT); retryT=setTimeout(function(){ if(S.peer===p) connectHost(p); }, 1500); }
+    else if(S.phase==='lobby'){ toast(tr('방장과 연결이 끊겼어요')); goHome(); }
+  });
+}
+function handleGuestMsg(d){
+  if(!d || typeof d!=='object') return;
+  switch(d.t){
+    case 'full': $('homeMsg').className='msg'; $('homeMsg').textContent=tr('방이 가득 찼어요 (최대 40명).'); busy(false); destroyPeer(); show('sHome'); break;
+    case 'welcome':
+      S.name=d.name; S.settings=d.settings; busy(false); $('homeMsg').textContent='';
+      if(d.phase==='play'){
+        if(S.phase!=='play'){ S.seed=d.seed>>>0; S.seq=makeSeq(S.settings.deck, S.seed); beginRace(0, Math.max(0,d.remain), d.total, d.play); }
+      } else if(d.phase==='lobby' && S.phase!=='lobby') enterLobby();
+      break;
+    case 'lobby': S.settings=d.settings; if(S.phase!=='lobby') enterLobby(); else renderGuestSet(); break;
+    case 'named': S.name=d.name; lsSet('timeline.name', d.name); $('renameIn').value=d.name; renderChips(); toast(tr('이름을 바꿨어요')); break;
+    case 'players': lobbyNames=d.names||[]; guestCount=d.guests|0; if(S.phase==='lobby') renderChips(); break;
+    case 'start': S.settings=d.settings; S.seed=d.seed>>>0; S.seq=makeSeq(S.settings.deck, S.seed); beginRace(d.cd, d.dur); break;
+    case 'board': S.board=d; renderStrip(); break;
+    case 'end': showResult(d); break;
+  }
+}
+
+var timers=[], tickT=null, boardT=null, boardDirty=false;
+function clearTimers(){ timers.forEach(clearTimeout); timers=[]; clearInterval(tickT); clearInterval(boardT); clearTimeout(lockT); inputLock=false; $('cd').classList.remove('on'); }
+function iPlay(){ return S.role!=='host' || !!S.settings.hostPlay; }
+function validPlay(p){ // restored state from the host
+  if(!p || !Array.isArray(p.placed)) return null;
+  return { placed:p.placed.map(Number), i:p.i|0, score:p.score|0, correct:p.correct|0, wrong:p.wrong|0, streak:p.streak|0, best:p.best|0, last:p.last||0, lives:LIVES, done:!!p.done };
+}
+function beginRace(cdMs, durMs, totalMs, resume){
+  clearTimers();
+  var now=Date.now();
+  S.endAt=now+cdMs+durMs; S.totalMs=totalMs||durMs;
+  S.mode='race'; S.board=null;
+  S.me = validPlay(resume) || newPlay();
+  S.phase = cdMs>0 ? 'count' : 'play';
+  if(iPlay()){ $('gStrip').innerHTML=''; $('gRank').textContent='-'; enterGame(); }
+  else { $('wCode').textContent=S.code; $('wBoard').innerHTML=''; show('sWatch'); }
+  if(cdMs>0){
+    $('cd').classList.add('on');
+    (function step(k){ $('cdNum').textContent=k; $('cdNum').style.animation='none'; void $('cdNum').offsetWidth; $('cdNum').style.animation=''; if(k>1) timers.push(setTimeout(function(){ step(k-1); }, 1000)); })(Math.round(cdMs/1000));
+    timers.push(setTimeout(function(){ $('cd').classList.remove('on'); S.phase='play'; if(iPlay()) renderTl(); }, cdMs));
+  }
+  tickT=setInterval(tick, 250); tick();
+  if(S.role==='host'){ boardDirty=true; boardT=setInterval(function(){ if(boardDirty){ boardDirty=false; pushBoard(); } }, 800); }
+}
+function tick(){
+  var left=S.endAt-Date.now(), txt=fmt(Math.min(left, S.totalMs)), pct=Math.max(0,Math.min(1,left/S.totalMs))*100;
+  $('gTime').textContent=txt; $('wTime').textContent=txt; $('gBar').style.width=pct+'%'; $('wBar').style.width=pct+'%';
+  var low=left<=15000; $('gTimeBox').classList.toggle('low',low); $('wTimeBox').classList.toggle('low',low);
+  if(left<=0 && S.phase==='play'){
+    if(S.role==='host') finishRace();
+    else { S.phase='wait'; $('fb').className='fb'; $('fb').textContent=tr('시간 종료'); renderTl(); }
+  }
+}
+function entries(){
+  var arr=[];
+  for(var t in S.players){ var p=S.players[t], q=p.play; if(!q) continue; if(p.online || q.score>0) arr.push({ n:p.name, s:q.score, c:q.correct, w:q.wrong, b:q.best, l:q.last||Infinity, o:p.online, t:t }); }
+  if(S.settings.hostPlay && S.me) arr.push({ n:S.name, s:S.me.score, c:S.me.correct, w:S.me.wrong, b:S.me.best, l:S.me.last||Infinity, o:true, t:token });
+  arr.sort(function(a,b){ return b.s-a.s || a.l-b.l || a.n.localeCompare(b.n); });
+  var rk=0, prev=null;
+  arr.forEach(function(e,i){ if(!prev || e.s!==prev.s || e.l!==prev.l) rk=i+1; e.r=rk; prev=e; });
+  return arr;
+}
+function rowHtml(e, max, me){
+  return '<div class="brow'+(me?' me':'')+(e.r<=3?' r'+e.r:'')+(e.o===false?' off':'')+'"><div class="bar" style="width:'+(max?Math.round(e.s/max*100):0)+'%"></div><div class="rk">'+e.r+'</div><div class="nm">'+esc(e.n)+'</div><div class="sc">'+e.s+'<small>✓'+e.c+'</small></div></div>';
+}
+function pushBoard(){
+  var r=entries(), max=r.length?r[0].s:0, top=r.slice(0,5), total=0;
+  r.forEach(function(e){ total+=e.c; });
+  r.forEach(function(e){ var p=S.players[e.t]; if(p && p.conn && p.conn.open) send(p.conn, { t:'board', top:top.map(function(x){ return { r:x.r, n:x.n, s:x.s, c:x.c, me:x.t===e.t }; }), max:max, n:r.length, me:{ r:e.r, s:e.s } }); });
+  $('wTotal').textContent=total;
+  $('wBoard').innerHTML = r.map(function(e){ return rowHtml(e, max, false); }).join('') || '<div class="msg info">'+tr('참가자를 기다리는 중')+'</div>';
+  if(S.settings.hostPlay){ var mine=r.filter(function(e){ return e.t===token; })[0]; S.board={ top:top.map(function(x){ return { r:x.r, n:x.n, s:x.s, c:x.c, me:x.t===token }; }), max:max, n:r.length, me:mine?{ r:mine.r, s:mine.s }:null }; renderStrip(); }
+}
+function renderStrip(){ var b=S.board; if(!b) return; $('gStrip').innerHTML=b.top.map(function(e){ return rowHtml(e, b.max, e.me); }).join(''); if(b.me) $('gRank').textContent=b.me.r+'/'+b.n; }
+function endMsg(){
+  var r=entries().map(function(e){ return { r:e.r, n:e.n, s:e.s, c:e.c, w:e.w, b:e.b, t:e.t }; });
+  var hard=Object.keys(S.tally).map(Number).filter(function(c){ return S.tally[c].m>0; }).map(function(c){ return { c:c, m:S.tally[c].m, n:S.tally[c].n }; });
+  hard.sort(function(a,b){ return b.m-a.m || (b.m/b.n)-(a.m/a.n); });
+  return { t:'end', ranking:r, hard:hard.slice(0,6) };
+}
+function finishRace(){ clearTimers(); S.phase='result'; var m=endMsg(); broadcast(m); showResult(m); }
+function renderHard(list, solo){
+  $('hardWrap').classList.toggle('hide', !list.length);
+  $('hardT').textContent = tr(solo ? '다시 볼 카드' : '가장 많이 틀린 사건');
+  $('hard').innerHTML = list.map(function(h){
+    var c=h.c; if(!EV[c]) return '';
+    var f=evFact(c);
+    return '<div class="h" data-c="'+c+'"><span class="e">'+EV[c][3]+'</span><div><div class="t">'+esc(evTitle(c))+'</div><div class="y">'+esc(fmtYear(c))+'</div>'+(f?'<div class="f">'+esc(f)+'</div>':'')+'</div>'+(solo?'':'<div class="m">'+h.m+'<small>'+esc(tr('{0}명 중', h.n))+'</small></div>')+'</div>';
+  }).join('');
+}
+// the timeline this player built, plus the cards they missed where they belong
+function renderMyTl(){
+  var m=S.me, ok = m && (S.mode==='solo' || iPlay()) && m.placed && m.placed.length>1;
+  $('myTlWrap').classList.toggle('hide', !ok);
+  if(!ok){ $('myTl').innerHTML=''; return; }
+  var miss=(S.missList||[]).filter(function(c){ return m.placed.indexOf(c)<0; });
+  var all=m.placed.concat(miss).sort(function(a,b){ return evYear(a)-evYear(b); }), h='', era=-1;
+  all.forEach(function(c, k){ if(eraOf(c)!==era){ era=eraOf(c); h+=eraHtml(era); } h+=tcHtml(c, k%2?'dn':'up', miss.indexOf(c)>=0?' miss':''); });
+  $('myTl').innerHTML=h;
+}
+$('myTl').addEventListener('click', function(e){ var b=e.target.closest('.tc'); if(b) openPop(+b.dataset.c); });
+$('hard').addEventListener('click', function(e){ var b=e.target.closest('.h'); if(b) openPop(+b.dataset.c); });
+function showResult(d){
+  clearTimers(); S.phase='result';
+  $('raceRes').classList.remove('hide'); $('soloRes').classList.add('hide');
+  var r=d.ranking||[];
+  var p=function(i, cls){ var e=r[i]; if(!e) return '<div class="pod '+cls+'" style="visibility:hidden"><div class="blkp"></div></div>'; return '<div class="pod '+cls+'"><div class="who">'+esc(e.n)+'</div><div class="pts">'+tr('{0}점', e.s)+'</div><div class="blkp">'+e.r+'</div></div>'; };
+  $('podium').innerHTML = p(1,'p2')+p(0,'p1')+p(2,'p3');
+  var mine = r.filter(function(e){ return e.t===token || (S.role==='guest' && e.n===S.name); })[0];
+  $('myRes').innerHTML = mine ? (mine.r===1?tr('🏆 우승! '):'')+tr('{0}위 · {1}점 · 정답 {2}개', '<b>'+mine.r+'</b>', '<b>'+mine.s+'</b>', mine.c) : '';
+  $('resBody').innerHTML = r.map(function(e){ var acc=(e.c+e.w)?Math.round(e.c/(e.c+e.w)*100)+'%':'-'; return '<tr'+(mine&&e===mine?' class="me"':'')+'><td class="n">'+e.r+'</td><td>'+esc(e.n)+'</td><td class="n">'+e.s+'</td><td class="n">'+e.c+'</td><td>'+acc+'</td><td class="n">'+e.b+'</td></tr>'; }).join('');
+  renderMyTl();
+  renderHard(d.hard||[], false);
+  SND.end();
+  $('againBtn').classList.toggle('hide', S.role!=='host');
+  $('resWait').textContent = S.role==='guest' ? tr('방장이 다시 시작하면 대기실로 이동해요.') : '';
+  show('sResult');
+}
+$('againBtn').onclick = function(){ if(S.role==='host') enterLobby(); else if(S.role==='solo') startSolo(); };
+$('homeBtn').onclick = goHome;
+window.addEventListener('beforeunload', function(e){ if(S.role==='host' && S.phase!=='idle' && onlineCount()>0){ e.preventDefault(); e.returnValue=''; } });
+
+window.__tl = { S:S, EV:EV, makeSeq:makeSeq, rightPos:rightPos, place:function(p){ place(p); }, right:function(){ return rightPos(S.me.placed, S.seq[S.me.i]); } };
+})();
+</script>
+<a id="ffBack" href="../" aria-label="Educations"><span class="ffb-i">🍟</span><span class="ffb-t">Educations</span></a>
+<style>
+#ffBack{position:fixed;left:12px;bottom:12px;z-index:99999;display:flex;align-items:center;gap:8px;padding:5px 12px 5px 5px;border-radius:14px;background:rgba(20,20,22,.88);color:#fff;font:600 13px/1 system-ui,-apple-system,"Noto Sans KR",sans-serif;text-decoration:none;border:1px solid rgba(255,255,255,.18);box-shadow:0 6px 18px rgba(0,0,0,.35);backdrop-filter:blur(6px)}
+#ffBack .ffb-i{width:32px;height:32px;border-radius:9px;display:grid;place-items:center;font-size:18px;background:linear-gradient(135deg,#ffb23f,#ff5d8f)}
+#ffBack:hover{border-color:#ffb23f}
+@media(max-width:520px){#ffBack .ffb-t{display:none}#ffBack{padding:5px}}
+</style>
+<script>(function(){try{var m={en:'Back to Educations',fr:'Retour à Educations',de:'Zurück zu Educations',es:'Volver a Educations',ja:'Educationsに戻る',ko:'Educations로 돌아가기'};var l=localStorage.getItem('arenaClashLang')||'ko';var a=document.getElementById('ffBack');var t=m[l]||m.ko;a.title=t;a.setAttribute('aria-label',t)}catch(e){}})();</script>
+</body>
+</html>
