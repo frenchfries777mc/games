@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>순위표 · Stickseum</title>
+<meta name="description" content="Stickseum 랭크전 시즌 순위와 클랜 순위">
+<meta name="theme-color" content="#0a0b0f">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://frenchfries777mc.github.io/games/ff-lang.js"></script>
+<script src="site-i18n.js"></script>
+<style>
+  :root{ --bg:#0a0b0f; --bg2:#0e1420; --panel:#121825; --panel-2:#171f2e; --line:#232c3d; --text:#e8eaf0; --text-dim:#8893a6; --red:#ff4d5e; --teal:#3fe0c5; --gold:#ffd34d; --green:#4ade80; }
+  *{box-sizing:border-box;}
+  html,body{margin:0; padding:0; background:var(--bg); color:var(--text); min-height:100%;}
+  body{ font-family:'Rajdhani','Noto Sans KR','Apple SD Gothic Neo','Malgun Gothic',sans-serif; font-size:17px; line-height:1.55;
+    padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
+    background-image: radial-gradient(ellipse 900px 500px at 20% -10%, rgba(255,77,94,.12), transparent 60%), radial-gradient(ellipse 700px 500px at 100% 10%, rgba(63,224,197,.09), transparent 55%), linear-gradient(var(--bg), var(--bg2)); background-attachment:fixed; }
+  .wrap{max-width:980px; margin:0 auto; padding:0 18px;}
+  h1,h2,h3{font-family:'Oswald','Noto Sans KR',sans-serif; margin:0; letter-spacing:.01em;}
+  a{color:var(--teal);}
+  .topbar{display:flex; align-items:center; justify-content:space-between; gap:12px; padding:22px 0 10px; flex-wrap:wrap;}
+  .wordmark{font-family:'Oswald',sans-serif; font-weight:600; font-size:21px; letter-spacing:.03em; color:var(--text); text-decoration:none;}
+  .wordmark b{color:var(--red); font-weight:700;}
+  .topbar nav{display:flex; gap:4px; overflow-x:auto; max-width:100%;}
+  .topbar nav a{color:var(--text-dim); text-decoration:none; font-size:15px; padding:6px 10px; border-radius:7px; white-space:nowrap;}
+  .topbar nav a:hover{color:var(--text);}
+  .topbar [data-ff-account]{display:inline-flex; align-items:center; white-space:nowrap;}
+  .topbar{align-items:flex-start; flex-wrap:nowrap;} .topbar .right{row-gap:8px;} .topbar nav{order:3; flex-basis:100%; justify-content:flex-end;}   /* not enough room for one row: the menu goes under the language and account buttons */
+  .topbar nav a.on{color:var(--text); background:var(--panel); border:1px solid var(--line);}
+  .langSel{background:var(--panel); color:var(--text-dim); border:1px solid var(--line); border-radius:7px; padding:5px 8px; font:inherit; font-size:14px; cursor:pointer; margin-left:6px;}
+  .langSel:hover{color:var(--text); border-color:var(--teal);}
+  .topbar .right{display:flex; align-items:center; gap:4px; max-width:100%; min-width:0; flex-wrap:wrap; justify-content:flex-end;}   /* no overflow here: it would clip the account menu */
+  .head{padding:22px 0 4px;}
+  .head h1{font-size:clamp(32px,6vw,48px); font-weight:700; text-transform:uppercase; line-height:1.05;}
+  .head p{color:var(--text-dim); margin:10px 0 0; font-size:17px; max-width:62ch;}
+  .rule{height:2px; background:linear-gradient(90deg,var(--red),transparent 40%); margin:9px 0 18px; border:0;}
+  section{margin-top:34px;}
+  section h2{font-size:23px; text-transform:uppercase; letter-spacing:.03em;}
+  .panel{background:var(--panel); border:1px solid var(--line); border-radius:12px;}
+  .chips{display:flex; flex-wrap:wrap; gap:8px; margin:18px 0 14px;}
+  .chip{background:var(--panel); border:1px solid var(--line); color:var(--text-dim); border-radius:99px; padding:6px 14px; font:inherit; font-size:15px; font-weight:600; cursor:pointer;}
+  .chip:hover{color:var(--text);}
+  .chip.on{background:var(--teal); border-color:var(--teal); color:#07201b;}
+  input.search{background:var(--panel); border:1px solid var(--line); color:var(--text); border-radius:99px; padding:6px 14px; font:inherit; font-size:15px; min-width:0; flex:1 1 160px; max-width:260px;}
+  input.search:focus{outline:none; border-color:var(--teal);}
+  .muted{color:var(--text-dim);}
+  .err{color:var(--red); padding:14px 0;}
+  footer{margin:56px 0 40px; color:var(--text-dim); font-size:14px; border-top:1px solid var(--line); padding-top:18px;}
+  @media(max-width:620px){ .wrap{padding:0 16px;} .topbar{padding-top:16px;} .topbar nav a{padding:6px 8px; font-size:14px;} }
+  .bar2{display:flex; flex-wrap:wrap; gap:8px; align-items:center; margin:18px 0 14px;}
+  select.chip{appearance:none; -webkit-appearance:none; padding-right:28px; background-image:linear-gradient(45deg,transparent 50%,var(--text-dim) 50%),linear-gradient(135deg,var(--text-dim) 50%,transparent 50%); background-position:calc(100% - 15px) 50%,calc(100% - 10px) 50%; background-size:5px 5px; background-repeat:no-repeat;}
+  .podium{display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin-bottom:12px;}
+  .pod{padding:14px 12px; text-align:center; position:relative; overflow:hidden;}
+  .pod .md{font-size:30px; line-height:1;}
+  .pod .n{font-weight:700; font-size:19px; margin-top:6px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
+  .pod .r{font-family:'Oswald',sans-serif; font-size:26px; font-weight:600;}
+  .pod .t{font-size:14px; font-weight:700;}
+  .pod.p1{border-color:rgba(255,211,77,.6); background:linear-gradient(180deg,rgba(255,211,77,.12),var(--panel) 70%);}
+  .list{padding:4px 0;}
+  .row{display:grid; grid-template-columns:40px 1fr 110px 80px 90px; gap:10px; align-items:center; padding:9px 16px; border-bottom:1px solid var(--line);}
+  .row:last-child{border-bottom:0;}
+  .row.hd{color:var(--text-dim); font-size:13px; font-weight:700; text-transform:uppercase; letter-spacing:.04em;}
+  .row.hd .num{font-family:inherit; font-size:13px;}
+  .row.me{background:rgba(63,224,197,.10);}
+  .rk{font-family:'Oswald',sans-serif; color:var(--text-dim); font-size:18px; text-align:right;}
+  .nm{font-weight:700; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
+  .nm small{color:var(--text-dim); font-weight:500; margin-left:6px;}
+  .num{font-family:'Oswald',sans-serif; font-size:18px; text-align:right;}
+  .dim{color:var(--text-dim); font-size:14.5px; text-align:right;}
+  .tier{font-weight:800; font-size:14.5px;}
+  .tag{display:inline-block; font-size:12px; font-weight:700; border-radius:5px; padding:0 6px; margin-right:6px; color:#0a0b0f;}
+  .empty{padding:26px 18px; text-align:center; color:var(--text-dim);}
+  .tiers{display:flex; flex-wrap:wrap; gap:6px 14px; font-size:14px; color:var(--text-dim); margin-top:10px;}
+  @media(max-width:620px){
+    .row{grid-template-columns:28px 1fr 64px 62px; gap:8px; padding:8px 10px;}
+    .row .c4{display:none;}
+    .podium{gap:6px;} .pod{padding:10px 6px;} .pod .n{font-size:15px;} .pod .r{font-size:20px;} .pod .md{font-size:24px;}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="topbar"><a class="wordmark" href="index.html">STICK<b>SEUM</b></a><div class="right"><nav><a href="index.html">홈</a><a href="codex.html">캐릭터 도감</a><a class="on" href="ranking.html">순위표</a><a href="balance.html">밸런스</a></nav><span data-lang-slot></span><span data-ff-account></span></div></div>
+  <div class="head">
+    <h1>순위표</h1>
+    <p>랭크전 시즌 순위와 클랜 순위예요. 시즌은 한국 시간으로 매달 1일에 새로 시작해요.</p>
+  </div>
+  <div class="bar2" id="tabs"></div>
+  <div id="out"><div class="empty">불러오는 중...</div></div>
+  <div class="tiers" id="tiers"></div>
+  <footer>랭크전은 Frenchfries777 계정으로 로그인한 두 사람이 1대1로 겨루는 모드예요. 이기면 점수가 오르고 지면 내려가요. 처음 점수는 1000점이에요.</footer>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+const SUPABASE_URL = "https://kebsbuvuutilitwlvxzv.supabase.co";
+const SUPABASE_KEY = "sb_publishable_4Egu0zm3p6cxWGvP_-GlIw_mlCpO1Nf";
+const TIERS = [{"min":0,"name":"브론즈","color":"#c47a3d"},{"min":950,"name":"실버","color":"#c7ccd6"},{"min":1050,"name":"골드","color":"#ffd34d"},{"min":1150,"name":"플래티넘","color":"#4dd9ff"},{"min":1250,"name":"다이아","color":"#7bf3ff"},{"min":1400,"name":"마스터","color":"#ff5fd2"},{"min":1550,"name":"그랜드 마스터","color":"#ff5252"}];
+let sb = null; try { if (window.supabase) sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY); } catch (e) {}
+window.FFAuthClient = sb;   // ff-auth.js 로그인 버튼이 같은 클라이언트를 쓰도록
+const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+const safeColor = c => /^#[0-9a-fA-F]{3,8}$/.test(c || '') ? c : '#3fe0c5';
+const tierOf = r => { let t = TIERS[0]; for (const x of TIERS) if ((+r || 0) >= x.min) t = x; return t; };
+const seasonKey = d => new Date(d + 9 * 3600 * 1000).toISOString().slice(0, 7);
+const seasons = []; { const now = new Date(Date.now() + 9 * 3600 * 1000); for (let i = 0; i < 6; i++){ const d = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth() - i, 1)); seasons.push(d.toISOString().slice(0, 7)); } }
+let tab = 'ranked', season = seasons[0], myId = null;
+document.getElementById('tiers').innerHTML = TIERS.map(t => '<span><b style="color:' + safeColor(t.color) + '">' + esc(t.name) + '</b> ' + t.min + '+</span>').join('');
+function tabs(){
+  const el = document.getElementById('tabs'); el.innerHTML = '';
+  [['ranked', '🏆 랭크전'], ['clan', '🏰 클랜']].forEach(([k, label]) => { const b = document.createElement('button'); b.className = 'chip' + (tab === k ? ' on' : ''); b.textContent = label; b.onclick = () => { tab = k; tabs(); load(); }; el.appendChild(b); });
+  if (tab === 'ranked'){
+    const s = document.createElement('select'); s.className = 'chip'; s.setAttribute('aria-label', '시즌');
+    seasons.forEach((k, i) => { const o = document.createElement('option'); o.value = k; o.textContent = SI18N.F('{0}년 {1}월 시즌', k.slice(0, 4), +k.slice(5)) + (i === 0 ? SI18N.T(' (진행 중)') : ''); if (k === season) o.selected = true; s.appendChild(o); });
+    s.onchange = () => { season = s.value; load(); }; el.appendChild(s);
+  }
+}
+const out = h => { document.getElementById('out').innerHTML = h; };
+const fail = () => out('<div class="panel empty">순위를 불러오지 못했어요. 잠시 뒤 다시 열어주세요.</div>');
+let seq = 0;
+async function load(){
+  const my = ++seq;
+  if (!sb){ fail(); return; }
+  out('<div class="panel empty">불러오는 중...</div>');
+  try {
+    if (tab === 'ranked'){
+      const r = await sb.from('ranked_ratings').select('user_id,name,rating,wins,losses').eq('season', season).order('rating', {ascending: false}).order('updated_at', {ascending: true}).limit(100);
+      if (my !== seq) return; if (r.error) throw r.error;
+      ranked(r.data || []);
+    } else {
+      const r = await sb.from('clans').select('id,name,tag,wins,score,emblem,color,clan_members(count)').order('score', {ascending: false}).limit(50);
+      if (my !== seq) return; if (r.error) throw r.error;
+      clans(await devFirst(r.data || []));
+    }
+  } catch (e) { if (my === seq) fail(); }
+}
+const medal = i => ['🥇', '🥈', '🥉'][i] || '';
+const ranksBy = (rows, key) => rows.map((x, i) => { let r = i; while (r > 0 && (+rows[r - 1][key] || 0) === (+x[key] || 0)) r--; return r + 1; });      // same score = same place (1, 1, 3 ...)
+function ranked(rows){
+  if (!rows.length){ out('<div class="panel empty">이 시즌에는 아직 랭크전 기록이 없어요.</div>'); return; }
+  const rk = ranksBy(rows, 'rating');
+  let h = '<div class="podium">';
+  rows.slice(0, 3).forEach((x, i) => { const t = tierOf(x.rating); h += '<div class="panel pod' + (rk[i] === 1 ? ' p1' : '') + '"><div class="md">' + medal(rk[i] - 1) + '</div><div class="n">' + (x.name ? '<span data-notr>' + esc(x.name) + '</span>' : esc(SI18N.T('이름 없음'))) + '</div><div class="r">' + x.rating + '</div><div class="t" style="color:' + safeColor(t.color) + '">' + esc(t.name) + '</div></div>'; });
+  h += '</div><div class="panel list"><div class="row hd"><span class="rk">#</span><span>플레이어</span><span>티어</span><span class="num">점수</span><span class="dim c4">전적</span></div>';
+  rows.forEach((x, i) => {
+    const t = tierOf(x.rating), w = +x.wins || 0, l = +x.losses || 0, pct = (w + l) ? Math.round(w * 100 / (w + l)) : 0;
+    h += '<div class="row' + (myId && x.user_id === myId ? ' me' : '') + '"><span class="rk">' + rk[i] + '</span><span class="nm">' + (x.name ? '<span data-notr>' + esc(x.name) + '</span>' : esc(SI18N.T('이름 없음'))) + (myId && x.user_id === myId ? '<small>나</small>' : '') + '</span>'
+      + '<span class="tier" style="color:' + safeColor(t.color) + '">' + esc(t.name) + '</span><span class="num">' + x.rating + '</span><span class="dim c4">' + SI18N.F('{0}승 {1}패 · {2}%', w, l, pct) + '</span></div>';
+  });
+  out(h + '</div>');
+}
+// clans with a developer (ff_devs) go above the others with the same score
+async function devFirst(rows){
+  try {
+    const d = await sb.from('ff_devs').select('user_id'); const ids = ((d && d.data) || []).map(x => x.user_id); if (!ids.length) return rows;
+    const m = await sb.from('clan_members').select('clan_id').in('user_id', ids); const has = new Set(((m && m.data) || []).map(x => x.clan_id));
+    if (!has.size) return rows;
+    return rows.map((x, i) => [x, i]).sort((a, b) => ((+b[0].score || 0) - (+a[0].score || 0)) || ((has.has(b[0].id) ? 1 : 0) - (has.has(a[0].id) ? 1 : 0)) || (a[1] - b[1])).map(p => p[0]);
+  } catch (e) { return rows; }
+}
+function clans(rows){
+  if (!rows.length){ out('<div class="panel empty">아직 클랜이 없어요.</div>'); return; }
+  let h = '<div class="panel list"><div class="row hd"><span class="rk">#</span><span>클랜</span><span class="dim">인원</span><span class="num">점수</span><span class="dim c4">승리</span></div>';
+  const rk = ranksBy(rows, 'score');
+  rows.forEach((x, i) => {
+    const n = (x.clan_members && x.clan_members[0] && x.clan_members[0].count) || 0, col = safeColor(x.color);
+    h += '<div class="row"><span class="rk">' + (medal(rk[i] - 1) || rk[i]) + '</span><span class="nm"><span class="tag" style="background:' + col + '">' + esc(x.tag) + '</span><span data-notr>' + esc((x.emblem || '') + ' ' + (x.name || '')) + '</span></span>'
+      + '<span class="dim">' + SI18N.F('{0}명', n) + '</span><span class="num">' + (+x.score || 0) + '</span><span class="dim c4">' + SI18N.F('{0}승', +x.wins || 0) + '</span></div>';
+  });
+  out(h + '</div>');
+}
+tabs();
+(async () => { try { if (sb){ const s = await sb.auth.getSession(); myId = s && s.data && s.data.session && s.data.session.user ? s.data.session.user.id : null; } } catch (e) {} load(); })();
+</script>
+<script src="https://frenchfries777mc.github.io/games/ff-auth.js"></script>
+</body>
+</html>

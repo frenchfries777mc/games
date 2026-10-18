@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<script src="https://frenchfries777mc.github.io/games/ff-lang.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>BEACONFALL</title>
+<meta name="description" content="외계 원시 행성에 갇힌 채 재료를 모아 장비를 만들고, 신호기를 완성해 탈출하는 픽셀 생존 제작 게임. 브라우저에서 바로, 친구와 함께.">
+<meta property="og:title" content="BEACONFALL"><meta property="og:description" content="외계 행성에서 살아남아 신호기를 완성하고 탈출하는 픽셀 생존 제작 게임."><meta property="og:type" content="website"><meta property="og:url" content="https://frenchfries777mc.github.io/games/beaconfall/"><meta property="og:site_name" content="Frenchfries777"><meta property="og:image" content="https://frenchfries777mc.github.io/games/og/beaconfall.jpg"><meta property="og:image:width" content="1200"><meta property="og:image:height" content="630"><meta name="twitter:card" content="summary_large_image"><meta name="twitter:image" content="https://frenchfries777mc.github.io/games/og/beaconfall.jpg"><meta name="theme-color" content="#14527e">
+<style>
+@font-face{font-family:Galmuri;src:url(Galmuri11.woff2) format('woff2');font-weight:400;font-display:swap}
+@font-face{font-family:Galmuri;src:url(Galmuri11-Bold.woff2) format('woff2');font-weight:700;font-display:swap}
+:root{--ink:#0b1626;--cream:#f4ecd0;--gold:#e9d9a4;--sky:#9ae0ff;--btn:rgba(14,18,30,.78)}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+html{background:var(--ink)}
+html,body{margin:0;color:var(--cream);font-family:Galmuri,'Noto Sans KR','Hiragino Sans','Malgun Gothic',monospace;font-size:15px;line-height:1.7}
+img,canvas{image-rendering:pixelated;image-rendering:crisp-edges}
+a{color:inherit}
+.wrap{max-width:960px;margin:0 auto;padding:0 18px}
+/* 배경: 게임 화면이 천천히 바뀜 */
+#bg{position:fixed;inset:0;z-index:-2;background:var(--ink)}
+#bg img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity 1.6s}
+#bg img.on{opacity:1}
+#bgshade{position:fixed;inset:0;z-index:-1;background:linear-gradient(180deg,rgba(6,16,30,.3),rgba(6,16,30,.62) 50%,rgba(6,16,30,.82))}
+/* 픽셀 버튼 (박스 없이 버튼만) */
+.pb{display:inline-block;padding:10px 16px;border:3px solid var(--gold);border-radius:0;background:var(--btn);color:var(--cream);font:700 15px/1.2 inherit;text-decoration:none;cursor:pointer;box-shadow:4px 4px 0 #000b;text-align:center}
+.pb:hover,.pb.on{background:var(--gold);color:#10141f}
+.pb:active{transform:translate(3px,3px);box-shadow:1px 1px 0 #000b}
+.pb.big{font-size:21px;padding:16px 28px;border-color:var(--sky)}
+.pb.big:hover{background:var(--sky)}
+.row{display:flex;flex-wrap:wrap;gap:10px}
+/* 위쪽 버튼줄 */
+.top{padding:12px 0 6px}
+.top .wrap{display:flex;flex-wrap:wrap;gap:8px;justify-content:space-between}
+.top .pb{padding:6px 10px;font-size:13px;border-width:2px;box-shadow:3px 3px 0 #000b}
+.top .nav,.top .lg{display:flex;flex-wrap:wrap;gap:8px}
+/* 히어로 */
+.hero{min-height:min(88vh,760px);display:flex;flex-direction:column;justify-content:center;gap:18px;padding:40px 0 30px}
+.hero h1{margin:0;font-size:clamp(38px,10.5vw,104px);letter-spacing:.06em;line-height:1;font-weight:700;text-shadow:4px 4px 0 #000,0 0 30px #000a}
+.hero p{margin:0;max-width:30em;font-size:clamp(15px,2.4vw,19px);text-shadow:2px 2px 0 #000}
+.hero .meta{font-size:13px;color:var(--gold);text-shadow:2px 2px 0 #000}
+section{padding:46px 0 8px}
+h2{margin:0 0 6px;font-size:24px;text-shadow:3px 3px 0 #000;letter-spacing:.04em}
+h2::before{content:"■ ";color:var(--gold)}
+.note{margin:0 0 16px;color:var(--gold);font-size:13px;text-shadow:2px 2px 0 #000}
+.ft{list-style:none;padding:0;margin:0;display:grid;gap:6px;text-shadow:2px 2px 0 #000}
+.ft li::before{content:"▸ ";color:var(--gold)}
+/* 섬 보기 */
+#shot{display:block;width:100%;aspect-ratio:429/242;object-fit:cover;border:3px solid var(--gold);box-shadow:5px 5px 0 #000b;margin-top:16px;background:#000}
+/* 아이템 */
+.items{display:grid;grid-template-columns:repeat(auto-fill,minmax(98px,1fr));gap:10px}
+.items .pb{display:flex;flex-direction:column;align-items:center;gap:6px;padding:10px 4px;font-size:12px;font-weight:400}
+.items img{width:48px;height:48px}
+/* 버전 · 패치노트 */
+.gl{margin-top:18px;gap:12px}
+.gl li{max-width:42em}
+.vl{display:flex;flex-direction:column;gap:10px}
+.vrow{display:flex;flex-wrap:wrap;align-items:center;gap:10px}
+.vrow .pb{font-size:14px;padding:8px 12px}
+.vcol{display:inline-flex;flex-direction:column;align-items:flex-start;gap:4px}
+.vb{font-size:12px;opacity:.8;text-shadow:2px 2px 0 #000;padding-left:2px}
+.vtxt{text-shadow:2px 2px 0 #000;margin:4px 0 0;max-width:38em}
+.nl{display:flex;flex-direction:column;gap:10px}
+.nl ul{margin:8px 0 4px 18px;padding:0;text-shadow:2px 2px 0 #000}
+.nl li{margin:3px 0}
+.nlh{text-align:left;width:100%}
+.nlh small{opacity:.7;margin-left:8px}
+details{margin:0 0 10px}
+summary{list-style:none;cursor:pointer}
+summary::-webkit-details-marker{display:none}
+details p{margin:8px 2px 4px;text-shadow:2px 2px 0 #000;max-width:40em}
+ol.st{padding:0 0 0 24px;margin:0;text-shadow:2px 2px 0 #000;display:grid;gap:8px}
+footer{padding:50px 0 40px;color:var(--gold);font-size:13px;text-shadow:2px 2px 0 #000}
+.err{color:#ffb0a8}
+.joinrow{margin:12px 0 0;gap:8px;justify-content:center}
+.jin{width:min(260px,60vw);padding:8px 10px;border:3px solid var(--gold);background:var(--panel);color:var(--cream);font:15px inherit;box-shadow:4px 4px 0 #000b;outline:none}
+.jin::placeholder{color:#e9d9a488}
+</style>
+</head>
+<body>
+<div id="bg"></div><div id="bgshade"></div>
+<div class="top"><div class="wrap">
+ <div class="nav">
+  <a class="pb" href="#play" data-i="n_play"></a><a class="pb" href="#versions" data-i="n_ver"></a><a class="pb" href="#notes" data-i="n_notes"></a><a class="pb" href="#guide" data-i="n_guide"></a><a class="pb" href="#islands" data-i="n_isl"></a><a class="pb" href="#items" data-i="n_items"></a><a class="pb" href="codex.html" data-i="n_codex"></a><a class="pb" href="#help" data-i="n_help"></a>
+ </div>
+ <div class="lg" id="lg"></div>
+ <span data-ff-account></span>
+</div></div>
+<div class="wrap">
+<header class="hero" id="play">
+ <h1>BEACONFALL</h1>
+ <p data-i="sub"></p>
+ <div class="row">
+  <a class="pb big" id="playBtn" href="BEACONFALL-v0.3.html" data-i="b_play"></a>
+  <a class="pb big" id="dlBtn" href="BEACONFALL-v0.3.html" download="BEACONFALL-v0.3.html" data-i="b_dl" style="border-color:var(--gold)"></a>
+ </div>
+ <div class="row joinrow"><input class="jin" id="joinAddr" maxlength="24" autocomplete="off" spellcheck="false" data-ph="j_ph"><a class="pb" id="joinBtn" href="#play" data-i="j_btn"></a></div>
+ <div class="meta" id="heroMeta" data-i="loading"></div>
+</header>
+<section id="versions">
+ <h2 data-i="v_h"></h2>
+ <div class="vl" id="latestBox"></div>
+ <h3 style="margin:22px 0 10px;font-size:16px;text-shadow:2px 2px 0 #000" data-i="v_past"></h3>
+ <div class="vl" id="historyBox"></div>
+</section>
+<section id="notes">
+ <h2 data-i="nt_h"></h2>
+ <div class="nl" id="notesBox"></div>
+ <button class="pb" id="notesMore" style="display:none;margin-top:10px" data-i="nt_more"></button>
+</section>
+<section>
+ <h2 data-i="f_h"></h2>
+ <ul class="ft"><li data-i="f1"></li><li data-i="f2"></li><li data-i="f3"></li><li data-i="f4"></li><li data-i="f5"></li><li data-i="f6"></li></ul>
+</section>
+<section id="guide">
+ <h2 data-i="g_h"></h2>
+ <div class="note" data-i="g_note"></div>
+ <div class="row" id="gcats"></div>
+ <ul class="ft gl" id="gtips"></ul>
+</section>
+<section id="islands">
+ <h2 data-i="i_h"></h2>
+ <div class="note" data-i="i_note"></div>
+ <div class="row" id="biomes"></div>
+ <img id="shot" alt="" src="shot-camp.png">
+</section>
+<section id="items">
+ <h2 data-i="a_h"></h2>
+ <div class="items" id="itemGrid"></div>
+ <a class="pb" href="codex.html" data-i="a_all" style="margin-top:14px"></a>
+</section>
+<section id="help">
+ <h2 data-i="h_h"></h2>
+ <ol class="st"><li data-i="h1"></li><li data-i="h2"></li><li data-i="h3"></li></ol>
+</section>
+<section>
+ <h2 data-i="q_h"></h2>
+ <details><summary class="pb" data-i="q1"></summary><p data-i="a1"></p></details>
+ <details><summary class="pb" data-i="q2"></summary><p data-i="a2"></p></details>
+ <details><summary class="pb" data-i="q3"></summary><p data-i="a3"></p></details>
+</section>
+<footer><span data-i="foot"></span> · <span id="footVer"></span></footer>
+</div>
+<script src="i18n.js"></script>
+<script>
+const FALLBACK={"latest":"0.3","latestFile":"BEACONFALL-v0.3.html","updated":"2026-10-17","versions":[{"version":"0.3","build":72,"date":"2026-10-17","file":"BEACONFALL-v0.3.html","title":"도감·멀티 안정화·블록 선택","summary":"사이트 도감, 상자 랜덤 배치, 멀티플레이 참가자 문제 수정, Ctrl+커서 블록 선택, 코드 정리","latest":true,"size":0},{"version":"0.2","build":32,"date":"2026-10-15","file":"BEACONFALL-v0.2.html","title":"인트로·계정 저장·채팅","summary":"인트로, Frenchfries777 계정 저장, 친구 바로 참가, 멀티 채팅(T), 확대·축소, 업적 20개 추가","latest":false,"size":0},{"version":"0.1","build":6,"date":"2026-10-14","file":"BEACONFALL-v0.1.html","title":"첫 공개","summary":"30개의 섬이 떠 있는 바다에서 짓고, 만들고, 탐험하는 협동 생존.","latest":false,"size":0}]};
+const NOTES_FALLBACK={notes:[]};
+const I=window.I18N,esc=s=>String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const mb=n=>!n?'':(n>=1048576?(n/1048576).toFixed(1)+' MB':Math.round(n/1024)+' KB');
+const NAMES={ko:'한국어',en:'English',fr:'Français',de:'Deutsch',es:'Español',ja:'日本語'};
+const KEY='beaconfallSiteLang';
+function pick(){let s=null;try{s=localStorage.getItem(KEY);}catch(e){}
+ if(s&&I.L.includes(s))return s;
+ for(const x of (navigator.languages&&navigator.languages.length?navigator.languages:[navigator.language||'ko'])){const b=String(x).toLowerCase().split('-')[0];if(I.L.includes(b))return b;}
+ return 'en';}
+let LANG=pick(),DATA=FALLBACK,NDATA=NOTES_FALLBACK;
+let LATEST_FILE=FALLBACK.latestFile;
+const t=(k,v)=>{const e=I.D[k];let s=(e&&(e[LANG]||e.ko))||'';if(v)for(const q in v)s=s.split('{'+q+'}').join(v[q]);return s;};
+const nm=ko=>{const e=I.NM[ko];return (e&&e[LANG])||ko;};
+const tv=(ver,f,ko)=>{const e=I.V[ver];return (e&&e[f]&&(e[f][LANG]||e[f].ko))||ko;};
+/* 친구 방 바로 참가: 방 주소를 넣으면 게임이 열리면서 그 방에 참가해요 */
+{const ja=document.getElementById('joinAddr'),jb=document.getElementById('joinBtn');
+ ja.addEventListener('input',()=>{ja.value=ja.value.replace(/[^a-zA-Z0-9_-]/g,'').slice(0,24);});
+ jb.addEventListener('click',e=>{const v=ja.value;if(!/^[a-zA-Z0-9_-]{3,24}$/.test(v)){e.preventDefault();ja.focus();return;}jb.href=LATEST_FILE+'?join='+encodeURIComponent(v);});}
+/* 배경 */
+const SHOTS=['camp','village','ice','volcano','desert','jungle','stone','mangrove','mesa','forest'];
+const bg=document.getElementById('bg');
+SHOTS.forEach((n,i)=>{const im=document.createElement('img');im.src='shot-'+n+'.png';im.alt='';if(!i)im.className='on';bg.appendChild(im);});
+let bi=0;setInterval(()=>{const l=bg.children;l[bi].classList.remove('on');bi=(bi+1)%l.length;l[bi].classList.add('on');},7000);
+/* 섬 */
+const BIO=[['camp','시작섬'],['village','마을섬'],['forest','숲섬'],['desert','사막섬'],['volcano','화산섬'],['jungle','정글섬'],['mesa','메사섬'],['stone','돌섬'],['mangrove','맹그로브섬'],['ice','얼음섬']];
+const biomes=document.getElementById('biomes');
+BIO.forEach(([k,n],i)=>{const b=document.createElement('button');b.className='pb'+(i?'':' on');b.dataset.k=k;b.onclick=()=>{document.getElementById('shot').src='shot-'+k+'.png';biomes.querySelectorAll('.pb').forEach(x=>x.classList.toggle('on',x===b));};biomes.appendChild(b);});
+/* 공략 */
+const gcats=document.getElementById('gcats'),gtips=document.getElementById('gtips');let GI=0;
+I.G.forEach((g,i)=>{const b=document.createElement('button');b.className='pb';b.onclick=()=>{GI=i;guide();};gcats.appendChild(b);});
+function guide(){const g=I.G;gcats.querySelectorAll('.pb').forEach((b,i)=>{b.textContent=g[i].n[LANG]||g[i].n.ko;b.classList.toggle('on',i===GI);});
+ gtips.innerHTML=g[GI].i.map(x=>'<li>'+esc(x[LANG]||x.ko)+'</li>').join('');}
+/* 아이템 */
+const ITEMS=[['rune_fire','화염의 룬'],['rune_ice','냉기의 룬'],['pot_heal','회복 물약'],['pot_might','괴력 물약'],['alchemy','연금솥'],['runetable','룬 제단'],['furnace','용광로'],['gold_ingot','금 주괴'],['trap','덫'],['balloon','열기구'],['boat','보트'],['island_map','섬 지도'],['compass','나침반'],['pearl','진주'],['coral','산호'],['stall','가판대'],['mailbox','우체통'],['monument','방명록 비석'],['bread','빵'],['stew','스튜'],['steak','구운 고기']];
+const grid=document.getElementById('itemGrid');
+ITEMS.forEach(([id,n])=>{const b=document.createElement('button');b.className='pb';b.dataset.n=n;b.innerHTML='<img src="i-'+id+'.png" alt=""><span></span>';grid.appendChild(b);});
+function labels(){biomes.querySelectorAll('.pb').forEach((b,i)=>b.textContent=nm(BIO[i][1]));grid.querySelectorAll('.pb').forEach(b=>b.lastChild.textContent=nm(b.dataset.n));}
+/* 버전 */
+function render(d){
+ DATA=d;const list=Array.isArray(d.versions)?d.versions:[];
+ if(!list.length){document.getElementById('latestBox').innerHTML='<div class="err">'+t('v_none')+'</div>';return;}
+ const latest=list.find(v=>v.latest)||list[0],rest=list.filter(v=>v!==latest);
+ document.getElementById('playBtn').href=d.latestFile||latest.file;LATEST_FILE=d.latestFile||latest.file;
+ const dl=document.getElementById('dlBtn');dl.href=latest.file;dl.setAttribute('download',latest.file.split('/').pop());
+ document.getElementById('heroMeta').textContent=t('meta',{v:latest.version,d:latest.date,s:mb(latest.size)||'—'});
+ document.getElementById('footVer').textContent=t('foot_v',{v:latest.version,d:d.updated||latest.date});
+ const row=(v,tag)=>'<div><div class="vrow"><span class="vcol"><span class="pb on">'+(tag?t('v_latest')+' ':'')+'v'+esc(v.version)+'</span>'+(v.build?'<small class="vb">build '+esc(v.build)+'</small>':'')+'</span><span>'+esc(v.date)+(v.size?' · '+mb(v.size):'')+'</span><a class="pb" href="'+esc(v.file)+'">'+t('b_play')+'</a><a class="pb" href="'+esc(v.file)+'" download="'+esc(v.file.split('/').pop())+'">'+t('b_dl')+'</a></div><p class="vtxt"><b>'+esc(tv(v.version,'title',v.title))+'</b> — '+esc(tv(v.version,'summary',v.summary))+'</p></div>';
+ document.getElementById('latestBox').innerHTML=row(latest,true);
+ document.getElementById('historyBox').innerHTML=rest.map(v=>row(v,false)).join('')||'<span style="text-shadow:2px 2px 0 #000">—</span>';
+}
+const SHOWN=5;
+function renderNotes(d){
+ NDATA=d;const list=(d&&Array.isArray(d.notes))?d.notes:[],box=document.getElementById('notesBox'),more=document.getElementById('notesMore');
+ if(!list.length){box.innerHTML='<span style="text-shadow:2px 2px 0 #000">'+t('nt_none')+'</span>';more.style.display='none';return;}
+ const all=box.dataset.all==='1',sh=all?list:list.slice(0,SHOWN);
+ box.innerHTML=sh.map((n,ni)=>{const k='v'+String(n.build||'').replace(/^v/,''),e=I.N[k];
+  const title=(e&&e.title&&(e.title[LANG]||e.title.ko))||n.title;
+  const items=(n.items||[]).map((x,ix)=>{const it=e&&e.items&&e.items[ix];return (it&&(it[LANG]||it.ko))||x;});
+  return '<details'+(ni?'':' open')+'><summary class="pb nlh">'+esc(title)+'<small>'+esc(n.date)+(n.build?' · '+esc(n.build):'')+'</small></summary><ul>'+items.map(i=>'<li>'+esc(i)+'</li>').join('')+'</ul></details>';}).join('');
+ more.style.display=(!all&&list.length>SHOWN)?'':'none';
+ more.onclick=()=>{box.dataset.all='1';renderNotes(d);};
+}
+/* 언어 */
+const lg=document.getElementById('lg');
+I.L.forEach(l=>{const b=document.createElement('button');b.className='pb';b.dataset.l=l;b.textContent=NAMES[l];b.onclick=()=>{LANG=l;try{localStorage.setItem(KEY,l);if(window.FFLang)FFLang.set(l);}catch(e){}applyLang();};lg.appendChild(b);});
+function applyLang(){
+ document.documentElement.lang=LANG;
+ document.querySelectorAll('[data-i]').forEach(e=>{e.textContent=t(e.dataset.i);});document.querySelectorAll('[data-ph]').forEach(e=>{e.placeholder=t(e.dataset.ph);});
+ document.title=t('title');const m=document.querySelector('meta[name=description]');if(m)m.content=t('desc');
+ lg.querySelectorAll('.pb').forEach(b=>b.classList.toggle('on',b.dataset.l===LANG));
+ labels();guide();render(DATA);renderNotes(NDATA);
+}
+applyLang();
+fetch('patchnotes.json',{cache:'no-store'}).then(r=>r.ok?r.json():Promise.reject()).then(renderNotes).catch(()=>{});
+fetch('versions.json',{cache:'no-store'}).then(r=>r.ok?r.json():Promise.reject()).then(render).catch(()=>{});
+</script>
+<script src="https://frenchfries777mc.github.io/games/ff-auth.js"></script>
+</body>
+</html>
