@@ -3,6 +3,52 @@
   {
    "date": "2026-10-18",
    "build": "",
+   "title": "갤러리 Beaconfall 사진 교체",
+   "items": [
+    "Beaconfall 사진을 새 사진으로 교체 (화산 테두리 없앰)",
+    "폐허 섬, 하늘 요새, 하늘 섬, 가을 숲 사진 7장 추가"
+   ],
+   "tr": {
+    "en": {
+     "title": "Gallery: new Beaconfall pictures",
+     "items": [
+      "Beaconfall pictures replaced with new ones (volcano without the square border)",
+      "Added 7 pictures: Ruin Island, Sky Fortress, Sky Island, autumn forest"
+     ]
+    },
+    "es": {
+     "title": "Galería: nuevas fotos de Beaconfall",
+     "items": [
+      "Fotos de Beaconfall reemplazadas por otras nuevas (volcán sin borde cuadrado)",
+      "Se añaden 7 fotos: isla en ruinas, fortaleza del cielo, isla del cielo y bosque de otoño"
+     ]
+    },
+    "fr": {
+     "title": "Galerie : nouvelles images de Beaconfall",
+     "items": [
+      "Images de Beaconfall remplacées par de nouvelles (volcan sans bordure carrée)",
+      "Ajout de 7 images : île en ruine, forteresse céleste, île céleste, forêt d'automne"
+     ]
+    },
+    "de": {
+     "title": "Galerie: neue Beaconfall-Bilder",
+     "items": [
+      "Beaconfall-Bilder durch neue ersetzt (Vulkan ohne eckigen Rand)",
+      "7 Bilder hinzugefügt: Ruineninsel, Himmelsfestung, Himmelsinsel, Herbstwald"
+     ]
+    },
+    "ja": {
+     "title": "ギャラリー: Beaconfallの写真を入れ替え",
+     "items": [
+      "Beaconfallの写真を新しい写真に入れ替え (火山の四角い縁を削除)",
+      "廃墟島、空の要塞、空の島、秋の森の写真を7枚追加"
+     ]
+    }
+   }
+  },
+  {
+   "date": "2026-10-18",
+   "build": "",
    "title": "게임 카드 최근 패치 줄 제거",
    "items": [
     "게임 카드에 마우스를 올리면 뜨던 최근 패치 한 줄 제거"
