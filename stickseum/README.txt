@@ -13,7 +13,7 @@ Stickseum 사이트 (정적 사이트: 서버 프로그램이 필요 없어요)
   ranking.html               랭크전·클랜 순위표 페이지 (Supabase에서 읽어요)
   balance.html               캐릭터별 승률과 수치 변경 기록 페이지
   site-i18n.js               사이트 번역 (6개 언어, 브라우저 언어로 자동 선택, 게임과 같은 언어 설정 사용)
-  Stickseum-v0.1 ~ v0.7.html 각 버전의 게임 파일
+  Stickseum-v0.1 ~ v0.8.html 각 버전의 게임 파일
   Stickseum-latest.html      최신 버전의 복사본 ("바로 플레이"가 이 파일을 열어요)
 
 [ 올리는 방법: GitHub Pages ]
@@ -24,7 +24,7 @@ Stickseum 사이트 (정적 사이트: 서버 프로그램이 필요 없어요)
   5. 주소:  https://내아이디.github.io/저장소이름/    (1~2분 뒤 열려요, Ctrl+F5로 새로고침)
 
 [ 새 버전을 낼 때 ]
-  1. 새 게임 파일을 Stickseum-v0.7.html 처럼 올리기
+  1. 새 게임 파일을 Stickseum-v0.8.html 처럼 올리기
   2. 같은 내용을 Stickseum-latest.html 로도 덮어쓰기 (같은 이름으로 올리면 교체돼요)
   3. versions.json 맨 위에 새 항목을 추가하고 이전 최신 항목의 "latest" 를 false 로, latest 값과 latestFile 을 바꾸기
      (저한테 새 버전을 알려 주시면 versions.json 까지 고친 파일을 만들어 드려요)
