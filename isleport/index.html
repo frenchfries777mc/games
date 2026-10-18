@@ -57,6 +57,7 @@ a{color:inherit}
 .pb.huge{font-size:clamp(24px,4.4vw,38px);padding:22px 56px;border-bottom-width:9px;border-radius:7px;box-shadow:0 6px 0 rgba(0,0,0,.4),0 0 0 4px rgba(0,0,0,.35)}
 .pb.huge:active{border-bottom-width:4px;transform:translateY(5px)}
 .pb.huge::before{content:"▶ "}
+.pb.huge.nodot::before{content:none}
 .pb.sm{font-size:13px;padding:6px 12px;border-bottom-width:4px}
 .meta{margin-top:16px;font-size:13px;color:inherit;text-shadow:2px 2px 0 #000}
 /* 구역 */
@@ -81,7 +82,6 @@ h2{display:inline-block;margin:0 0 14px;padding:4px 18px;font:700 26px Galmuri,m
 /* 갤러리 */
 .gal{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:20px}
 .gal figure{margin:0;position:relative;aspect-ratio:16/9;background:#000;overflow:hidden}
-.gal figure:first-child{grid-column:span 2;grid-row:span 2;aspect-ratio:auto}
 .gal img{width:100%;height:100%;object-fit:cover}
 .gal figcaption{position:absolute;left:8px;bottom:8px;background:var(--panel);border:2px solid var(--line);padding:0 10px;font-size:13px;color:var(--tx)}
 /* 버전 */
@@ -117,7 +117,7 @@ footer{padding:44px 0 50px;color:var(--mu);font-size:13px;text-align:center}
 .err{color:#f08a6a}
 @media (max-width:860px){
  .grid,.tips{grid-template-columns:1fr}
- .gal{grid-template-columns:1fr 1fr}.gal figure:first-child{grid-column:span 2;grid-row:auto;aspect-ratio:16/9}
+ .gal{grid-template-columns:1fr}
  .two{grid-template-columns:1fr}
  .stats{grid-template-columns:1fr 1fr}
  .tv{grid-template-columns:1fr}.tv .go{grid-column:1;grid-row:auto}
@@ -139,12 +139,16 @@ footer{padding:44px 0 50px;color:var(--mu);font-size:13px;text-align:center}
   <div class="sub" data-i="sub"></div>
   <div class="btns">
    <a class="pb gold huge" id="playBtn" href="IslandTrade-v0.2.html" data-i="b_play"></a>
-   <a class="pb dark" id="dlBtn" href="IslandTrade-v0.2.html" download="IslandTrade-v0.2.html" data-i="b_dl"></a>
+   <a class="pb dark huge nodot" id="dlBtn" href="IslandTrade-v0.2.html" download="IslandTrade-v0.2.html" data-i="b_dl"></a>
   </div>
   <div class="meta" id="heroMeta"></div>
  </div>
 </header>
 <div class="wrap">
+<section id="vers" style="padding-top:36px">
+ <h2 data-i="v_h"></h2>
+ <div class="vl" id="vbox"></div>
+</section>
 <div class="stats"><div class="box" data-i="st1"></div><div class="box" data-i="st2"></div><div class="box" data-i="st3"></div><div class="box" data-i="st4"></div></div>
 <section id="feat">
  <h2 data-i="f_h"></h2>
@@ -158,10 +162,6 @@ footer{padding:44px 0 50px;color:var(--mu);font-size:13px;text-align:center}
 <section id="shots">
  <h2 data-i="shots_h"></h2><p class="sub2" data-i="shots_note"></p>
  <div class="gal" id="gal"></div>
-</section>
-<section id="vers">
- <h2 data-i="v_h"></h2>
- <div class="vl" id="vbox"></div>
 </section>
 <section id="notes">
  <h2 data-i="nt_h"></h2>
@@ -193,11 +193,11 @@ function pick(){let s=null;try{s=localStorage.getItem(KEY);}catch(e){}
  return 'ko';}
 let LANG=pick(),DATA=FALLBACK,NDATA={notes:[]};
 const t=(k,v)=>{const e=I.D[k];let s=(e&&(e[LANG]||e.ko))||'';if(v)for(const q in v)s=s.split('{'+q+'}').join(v[q]);return s;};
-const SHOTS=['harbor','farm','ranch','town','square','sea'];
+const SHOTS=['harbor','town','sea'];
 /* 특징 카드: 화면 일부를 잘라 보여 줘요 */
 const FEAT=[['f1','ft1','farm','8% 22%'],['f2','ft2','town','70% 20%'],['f3','ft3','sea','30% 55%'],['f4','ft4','harbor','88% 45%'],['f5','ft5','ranch','30% 40%'],['f6','ft6','square','78% 60%']];
 const fg=document.getElementById('fgrid');
-FEAT.forEach(([b,h,s,o])=>{const c=document.createElement('div');c.className='fc box';c.innerHTML='<div class="im"><img src="shot-'+s+'.png" alt="" style="--o:'+o+'" loading="lazy"></div><div class="tx"><h3 data-i="'+h+'"></h3><p data-i="'+b+'"></p></div>';fg.appendChild(c);});
+FEAT.forEach(([b,h,s,o])=>{const c=document.createElement('div');c.className='fc box';c.innerHTML='<div class="tx"><h3 data-i="'+h+'"></h3><p data-i="'+b+'"></p></div>';fg.appendChild(c);});
 const gal=document.getElementById('gal');
 SHOTS.forEach(k=>{const f=document.createElement('figure');f.className='box';f.dataset.k=k;f.innerHTML='<img src="shot-'+k+'.png" alt="" loading="lazy"><figcaption></figcaption>';gal.appendChild(f);});
 const gcats=document.getElementById('gcats'),gtips=document.getElementById('gtips');let GI=0;
