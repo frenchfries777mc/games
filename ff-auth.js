@@ -293,6 +293,13 @@ function pwOn(){ try{ return localStorage.getItem('arenaClashPwOpt')!=='0'; }cat
 function pwGet(){ try{ var o=JSON.parse(localStorage.getItem('arenaClashPw')||'null'); return o&&o.p?o:null; }catch(e){ return null; } }
 function pwSave(id,p){ if(!pwOn()) return; try{ localStorage.setItem('arenaClashPw',JSON.stringify({u:String(id||'').trim().toLowerCase(),p:p})); }catch(e){} }
 function pwClear(){ try{ localStorage.removeItem('arenaClashPw'); }catch(e){} }
+/* per-account local settings: stored as <name>:<user id> so two accounts on one browser never share them. Logged out = the old plain <name> key. The first account to log in after this change adopts the old shared value (nothing is deleted). */
+function userKey(base){
+  if(!user) return base;
+  var k=base+':'+user.id;
+  try{ if(localStorage.getItem(k)==null){ var old=localStorage.getItem(base), flag=base+'.adopted'; if(old!=null&&!localStorage.getItem(flag)){ localStorage.setItem(k,old); localStorage.setItem(flag,user.id); } } }catch(e){}
+  return k;
+}
 /* ---- developers: ff_devs (supabase-ff-dev.sql). 'owner' designates 'dev' accounts; both get a title badge ---- */
 var DEVL={ko:{o:'총괄 개발자',d:'개발자',h:'개발자 지정',ph:'아이디 입력',add:'지정',del:'해제',none:'지정된 개발자가 없어요.',ok:'지정했어요.',rm:'해제했어요.',nouser:'그 아이디를 찾지 못했어요.',own:'이미 총괄 개발자예요.',err:'처리하지 못했어요. (SQL을 실행했는지 확인해 주세요)',note:'지정된 개발자는 다른 사람을 지정할 수 없어요.'},
  en:{o:'Lead Developer',d:'Developer',h:'Designate developers',ph:'Username',add:'Add',del:'Remove',none:'No developers yet.',ok:'Added.',rm:'Removed.',nouser:'No such username.',own:'Already the lead developer.',err:'Failed. (Was the SQL run?)',note:'Designated developers cannot designate others.'},
@@ -657,8 +664,8 @@ async function loadBlocks(){ blocks={}; if(!sb||!user) return; try{ var r=await 
   blocksChanged(); fpaint(); }
 async function loadDmUnread(){ dmUnread={}; if(!sb||!user) return; try{ var r=await sb.from('ff_dm').select('sender_id').eq('recipient_id',user.id).is('read_at',null).limit(500); ((r&&!r.error&&r.data)||[]).forEach(function(x){ dmUnread[x.sender_id]=(dmUnread[x.sender_id]||0)+1; }); }catch(e){} }
 var NGRP={mentionc:'mention',feedback:'admin',report:'admin'};
-function npGet(){ try{ return JSON.parse(localStorage.getItem('ffNotePrefs')||'{}')||{}; }catch(e){ return {}; } }
-function npSet(k,on){ var p=npGet(); if(on) delete p[k]; else p[k]=false; try{ localStorage.setItem('ffNotePrefs',JSON.stringify(p)); }catch(e){} }
+function npGet(){ try{ return JSON.parse(localStorage.getItem(userKey('ffNotePrefs'))||'{}')||{}; }catch(e){ return {}; } }
+function npSet(k,on){ var p=npGet(); if(on) delete p[k]; else p[k]=false; try{ localStorage.setItem(userKey('ffNotePrefs'),JSON.stringify(p)); }catch(e){} }
 function npOn(kind){ return npGet()[NGRP[kind]||kind]!==false; }
 function unreadNotes(){ return notes.filter(function(n){ return !n.read; }).length; }
 function bellBadge(){ var n=unreadNotes(), bs=document.querySelectorAll('.ffa-nb'); for(var i=0;i<bs.length;i++){ bs[i].textContent=n>9?'9+':String(n); bs[i].style.display=n?'':'none'; } }
@@ -791,5 +798,5 @@ document.addEventListener('visibilitychange', function(){ if(document.visibility
 
 window.FFAuth={ ready:ready, pollCheck:pollCheck, client:function(){ return sb; }, user:function(){ return user; }, profile:function(){ return prof; }, nickname:nick,
   onChange:function(f){ if(typeof f==='function') subs.push(f); }, openLogin:openLogin, openProfile:openProfile, openFriends:openFriends, friends:function(){ return friends.slice(); }, signOut:signOut, refresh:paint, syncHub:syncHub,
-  openDM:openDM, openReport:openReport, openAcct:openAcct, notePrefs:{get:npGet,set:npSet}, lang:lang, loadDevs:loadDevs, devRole:devRole, devBadge:devBadge, block:block, isBlocked:isBlocked, blocked:function(){ return Object.assign({},blocks); } };
+  openDM:openDM, openReport:openReport, openAcct:openAcct, notePrefs:{get:npGet,set:npSet}, userKey:userKey, lang:lang, loadDevs:loadDevs, devRole:devRole, devBadge:devBadge, block:block, isBlocked:isBlocked, blocked:function(){ return Object.assign({},blocks); } };
 })();

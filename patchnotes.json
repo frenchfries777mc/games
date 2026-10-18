@@ -3,6 +3,52 @@
   {
    "date": "2026-10-18",
    "build": "",
+   "title": "같은 브라우저의 두 계정 설정 분리",
+   "items": [
+    "알림 끄기 설정과 닫은 공지 목록이 계정마다 따로 저장된다",
+    "기존 값은 지워지지 않고 처음 로그인하는 계정이 이어받는다"
+   ],
+   "tr": {
+    "en": {
+     "title": "Separate settings for two accounts in one browser",
+     "items": [
+      "Notification switches and dismissed announcements are now saved per account",
+      "Existing values are kept; the first account to log in takes them over"
+     ]
+    },
+    "es": {
+     "title": "Ajustes separados para dos cuentas en un mismo navegador",
+     "items": [
+      "Los avisos desactivados y los anuncios cerrados ahora se guardan por cuenta",
+      "Los valores existentes se conservan; la primera cuenta que inicie sesión los hereda"
+     ]
+    },
+    "fr": {
+     "title": "Réglages séparés pour deux comptes dans un même navigateur",
+     "items": [
+      "Les notifications désactivées et les annonces fermées sont maintenant enregistrées par compte",
+      "Les valeurs existantes sont conservées ; le premier compte qui se connecte les reprend"
+     ]
+    },
+    "de": {
+     "title": "Getrennte Einstellungen für zwei Konten im selben Browser",
+     "items": [
+      "Abgeschaltete Benachrichtigungen und geschlossene Ankündigungen werden jetzt pro Konto gespeichert",
+      "Vorhandene Werte bleiben erhalten; das erste Konto, das sich anmeldet, übernimmt sie"
+     ]
+    },
+    "ja": {
+     "title": "同じブラウザの2つのアカウントで設定を分離",
+     "items": [
+      "通知のオフ設定と閉じたお知らせの一覧がアカウントごとに保存されます",
+      "既存の値は消えず、最初にログインしたアカウントが引き継ぎます"
+     ]
+    }
+   }
+  },
+  {
+   "date": "2026-10-18",
+   "build": "",
    "title": "게임 사이트에도 테마 색 적용",
    "items": [
     "Stickseum, Crown Envoy, Beaconfall 사이트 페이지에 노랑, 빨강, 파랑 테마가 적용된다",
