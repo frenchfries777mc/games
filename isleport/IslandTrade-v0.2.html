@@ -429,7 +429,7 @@ const TUT=[
  ['다 자라면 밭을 눌러 수확해요',s=>s.stats.harvest>=1],
  ['마을 장터에서 수확한 것을 팔아요',s=>(s.stats.shop||0)>=1],
  ['항구에서 배에 짐을 싣고 보내요',s=>s.stats.sailed>=1]];
-const OUTMAX=12,BUILD=2;
+const OUTMAX=12,BUILD=3;
 const hasB=(s,b)=>s.slots.some(x=>x&&x.b===b);
 const rankOf=e=>{let r=0;RANKS.forEach((x,i)=>{if(e>=x[0])r=i;});return r;};
 /* 업적: id, 이름, 설명, 조건 */
@@ -551,6 +551,10 @@ A('nw1m',P('백만장자','Millionaire'),P('재산 1,000,000 모으기','Reach a
 const CROPK=Object.keys(CROPS),SPEC=['goldbarley','pomegranate','saffron','cloudcotton','seaweed','dragonfruit'],CROPK17=CROPK.filter(c=>!SPEC.includes(c));
 const ACHN={};ACH.forEach(a=>ACHN[a.id]=a);
 const NOTES=[
+ {date:'2026-10-18',build:'v0.2 build 3',title:P('항구 건물','Harbor buildings'),items:[
+  P('우리 항구에 건물이 생겼어요. 항만 사무소(배와 계약), 해운 창고, 어시장, 등대, 크레인이 부두 옆에 있어요','Your harbor now has buildings: a harbor office (ships and contracts), a cargo shed, a fish market, a lighthouse and a crane beside the piers'),
+  P('섬에 상륙하면 부두 옆에 그 섬의 항구 건물이 있어요','Each island you land on now has its own harbor building next to the pier'),
+ ]},
  {date:'2026-10-18',build:'v0.2 build 2',title:P('섬 상륙','Landing'),items:[
   P('직접 항해로 섬에 닿으면 그 섬의 맵으로 상륙해요. 섬마다 모양과 풍경이 달라요: 황금항은 밀밭과 풍차, 붉은항은 사과 과수원, 보랏항은 포도밭과 돌 저택, 흰구름항은 목화밭과 양, 푸른만은 어촌과 만, 향신항은 시장 천막, 산호섬은 산호 웅덩이, 호박섬은 송진 숲, 유적 환초는 옛 기둥과 제단이에요','Sailing to an island now lets you land on its own map: Goldport has wheat fields and a windmill, Redport an apple orchard, Violetport vineyards and a villa, Cloudport cotton and sheep, Blue Bay a fishing village on a bay, Spiceport bazaar tents, Coral Cay coral pools, Amber Isle a resin forest, and Ruin Atoll old pillars and an altar'),
   P('섬을 걸어 다니며 반짝이는 특산물을 주울 수 있고, 시장 건물에서 교역과 해금을, 부두에서 배로 돌아가요','Walk around to pick up local goods, trade and unlock at the market building, and return to your ship from the pier'),
@@ -1203,6 +1207,14 @@ function buildWorld(sn){
   houseK(k,606,336,56,30,'#d4ccb4','#3a6fb8',{shut:'#2a4a7a'});for(let q=0;q<3;q++){k.fillStyle='#f0ecdc';k.fillRect(612+q*18,340,3,24);k.fillStyle='rgba(0,0,0,.12)';k.fillRect(614+q*18,340,1,24);}k.fillStyle='#f2c75a';k.fillRect(626,330,12,3);k.fillStyle='#8a5a1a';k.fillRect(628,331,8,1);k.fillStyle='#fff';k.fillRect(630,346,8,5);k.fillStyle='#d9443a';k.fillRect(631,347,6,3);
   for(let q=0;q<4;q++){k.fillStyle='#a8743a';k.fillRect(590+q*9,392+(q%2)*5,8,8);k.fillStyle='#7a5224';k.fillRect(590+q*9,392+(q%2)*5,8,1);}
   k.fillStyle='#8a5a2a';for(let q=0;q<5;q++)k.fillRect(640+q*7,404,5,7);k.fillStyle='#e8d8b0';k.fillRect(640,402,36,2);
+  // 항구 건물: 항만 사무소, 해운 창고, 어시장, 등대, 크레인
+  houseK(k,642,432,50,28,'#e8dcc0','#c0452f',{shut:'#7a3a28'});k.fillStyle='#5a3414';k.fillRect(690,414,1,18);k.fillStyle='#e0553f';k.fillRect(691,415,8,5);k.fillStyle='#f2c75a';k.fillRect(691,418,8,1);
+  k.fillStyle='#f0ecdc';k.fillRect(652,446,10,10);k.fillStyle='#3a6fb8';k.fillRect(654,448,6,6);
+  k.fillStyle='rgba(0,0,0,.18)';k.fillRect(634,508,72,3);k.fillStyle='#8a97a0';k.fillRect(636,484,66,24);k.fillStyle='#6a757d';for(let q=0;q<66;q+=4)k.fillRect(636+q,484,1,24);k.fillStyle='#5f6a72';k.fillRect(633,478,72,7);k.fillStyle='#4a545a';k.fillRect(633,478,72,2);
+  k.fillStyle='#3a2a1a';k.fillRect(644,492,14,16);k.fillRect(664,492,14,16);k.fillRect(684,492,12,16);k.fillStyle='#5a4630';k.fillRect(648,492,1,16);k.fillRect(668,492,1,16);
+  for(let q=0;q<3;q++){const sx0=598+q*16;for(let j=0;j<4;j++){k.fillStyle=j%2?'#f4efe0':'#3c8ac8';k.fillRect(sx0+j*3.5,516,3.5,4);}k.fillStyle='#c8a070';k.fillRect(sx0,520,14,8);k.fillStyle='#8aa0b0';k.fillRect(sx0+2,522,10,2);k.fillStyle='#d8d8d0';k.fillRect(sx0+3,525,3,1);k.fillRect(sx0+8,525,3,1);}
+  for(let q=0;q<30;q++){const w=11-Math.floor(q/6);k.fillStyle=(Math.floor(q/6)%2)?'#c8402a':'#f0ecdc';k.fillRect(718-w/2,478+q,w,1);}k.fillStyle='#2a2a30';k.fillRect(712,472,12,6);k.fillStyle='#c8402a';k.fillRect(710,470,16,2);k.fillStyle='#e8e0a0';k.fillRect(714,474,8,4);k.fillStyle='#3a2412';k.fillRect(716,500,5,8);
+  k.fillStyle='#6a5a3a';k.fillRect(722,392,3,30);k.fillRect(716,392,15,2);k.fillStyle='#8a7a5a';k.fillRect(724,394,1,26);k.fillRect(704,392,14,2);k.fillStyle='#3a2a1a';k.fillRect(705,394,1,14);k.fillStyle='#a8743a';k.fillRect(702,408,7,6);
   for(let i=0;i<8;i++){const y=330+i*28,x0=Math.floor(coastX(y))-16;k.fillStyle='#8a5a2a';k.fillRect(x0,y-3,780-x0,7);k.fillStyle='#a8743a';k.fillRect(x0,y-3,780-x0,1);k.fillStyle='#5a3414';for(let q=x0;q<780;q+=4)k.fillRect(q,y-3,1,7);k.fillStyle='#4a2e14';k.fillRect(778,y-4,3,9);land(x0,y-3,785-x0,7);}
   // 나루터 표지
   k.fillStyle='#5a3414';k.fillRect(718,312,2,12);k.fillStyle='#d9c391';k.fillRect(712,308,14,7);
@@ -1611,7 +1623,7 @@ function present(){cx.imageSmoothingEnabled=false;cx.clearRect(0,0,cv.width,cv.h
       else if(!p)label('+',sx(x+37),sy(y+30),'#ffe27a');
       else label(tx(BLD[p.b].n),sx(x+37),sy(y+51));}
     if(MP.on)for(const pid in MP.guests){const q=MP.guests[pid];label(q.name,sx(q.dx||q.x),sy((q.dy||q.y)-20),'#cfe');}
-    label(T('집','Home'),sx(54),sy(236),'#fff6b0');label(T('창고','Warehouse'),sx(118),sy(240),'#fff6b0');label(T('연구','Research'),sx(265),sy(228),'#fff6b0');label(T('은행·계약','Bank & contracts'),sx(634),sy(312),'#fff6b0');label(T('게시판','Notice board'),sx(448),sy(278),'#fff6b0');if(MP.on&&MP.inbox.length)label('!',sx(448),sy(268),'#ffe27a');
+    label(T('집','Home'),sx(54),sy(236),'#fff6b0');label(T('창고','Warehouse'),sx(118),sy(240),'#fff6b0');label(T('연구','Research'),sx(265),sy(228),'#fff6b0');label(T('은행·계약','Bank & contracts'),sx(634),sy(312),'#fff6b0');label(T('항만 사무소','Harbor office'),sx(667),sy(426),'#fff6b0');label(T('해운 창고','Cargo shed'),sx(670),sy(474),'#fff6b0');label(T('어시장','Fish market'),sx(622),sy(510),'#fff6b0');label(T('등대','Lighthouse'),sx(718),sy(466),'#fff6b0');label(T('게시판','Notice board'),sx(448),sy(278),'#fff6b0');if(MP.on&&MP.inbox.length)label('!',sx(448),sy(268),'#ffe27a');
     if(S.visitor)label(T('방문 상인','Trader'),sx(513),sy(280),'#ffe27a');
     const sail=S.ships.filter(s=>s.st==='sail').length;if(sail)label(T('항해 중 {0}척','{0} at sea',sail),sx(752),sy(306),'#ffe27a');
     const now=performance.now();for(let i=FL.length-1;i>=0;i--){const f=FL[i],a=(now-f.t)/1400;if(a>1){FL.splice(i,1);continue;}cx.globalAlpha=1-a;cx.font=(7*SC)+'px "Press Start 2P",Gugi,monospace';label(f.txt,sx(f.x),sy(f.y-a*18),f.col);cx.globalAlpha=1;}}
@@ -1666,7 +1678,7 @@ function objs(){const o=[];if(VIEW==='sea'||VIEW==='helm'||VIEW==='isl'||!S)retu
   for(let i=0;i<12;i++){const [x,y]=penXY(i);o.push({k:'pen',i,x,y,w:PEN_W,h:PEN_H,r:6});}
   for(let i=0;i<16;i++){const [x,y]=slotXY(i);o.push({k:'slot',i,x:x+8,y:y+4,w:58,h:46,r:9});}
   if(S.visitor)o.push({k:'vis',x:500,y:286,w:44,h:30,r:9});
-  o.push({k:'store',x:292,y:282,w:30,h:30,r:10},{k:'shop',x:386,y:282,w:36,h:30,r:10},{k:'seeds',x:328,y:282,w:36,h:30,r:10});o.push({k:'harbor',x:704,y:322,w:96,h:238,r:8});
+  o.push({k:'store',x:292,y:282,w:30,h:30,r:10},{k:'shop',x:386,y:282,w:36,h:30,r:10},{k:'seeds',x:328,y:282,w:36,h:30,r:10});o.push({k:'harbor',x:704,y:322,w:96,h:238,r:8});o.push({k:'hoffice',x:642,y:432,w:50,h:30,r:8},{k:'hshed',x:634,y:480,w:72,h:30,r:8},{k:'fishmkt',x:598,y:514,w:46,h:16,r:8},{k:'hlight',x:710,y:470,w:16,h:40,r:8});
   S.deco.forEach((d,i)=>o.push({k:'deco',i,x:d.x-5,y:d.y-8,w:10,h:10,r:7}));avObjs(o);o.push({k:'home',x:26,y:246,w:56,h:44,r:8},{k:'barn',x:90,y:248,w:56,h:42,r:8},{k:'lab',x:252,y:236,w:26,h:38,r:8},{k:'bank',x:598,y:318,w:72,h:52,r:8},{k:'board',x:432,y:282,w:30,h:26,r:9});return o;}
 const rectDist=(px,py,o)=>Math.hypot(Math.max(o.x-px,0,px-(o.x+o.w)),Math.max(o.y-py,0,py-(o.y+o.h)));
 function hitObj(vx,vy){let hb=null;for(const o of objs()){const p=o.k==='slot'?4:0;if(vx>=o.x-p&&vx<o.x+o.w+p&&vy>=o.y-p&&vy<o.y+o.h+p){if(o.k==='harbor')hb=o;else return o;}}return hb;}
@@ -1677,6 +1689,10 @@ function activate(o){const sx=(PL.x-Math.round(CAM.x))*SC,sy=(PL.y-12-Math.round
   else if(o.k==='store')popList(T('내 가게','My shop'),[[T('가게 관리','Manage shop'),S.store.till>=1?fmt(Math.floor(S.store.till))+UG():'',()=>openModal('store')]],sx,sy);
   else if(o.k==='seeds')popList(T('종자 상점','Seed shop'),[[T('씨앗 사기','Buy seeds'),'',()=>openModal('seeds')]],sx,sy);
   else if(o.k==='shop')popList(T('장터','Market'),[[T('물건 팔기','Sell goods'),'',()=>openModal('market')]],sx,sy);
+  else if(o.k==='hoffice')popList(T('항만 사무소','Harbor office'),[[T('배','Ships'),String(S.ships.length),()=>openModal('fleet')],[T('계약','Contracts'),String(S.contracts.length),()=>openModal('contracts')]],sx,sy);
+  else if(o.k==='hshed')popList(T('해운 창고','Cargo shed'),[[T('창고','Warehouse'),'',()=>openModal('wh')]],sx,sy);
+  else if(o.k==='fishmkt'){toast(T('어부들이 갓 잡은 생선을 늘어놓았어요','Fishers lay out the fresh catch'));}
+  else if(o.k==='hlight'){toast(T('밤마다 불을 밝혀 배들이 길을 찾아요','It lights up each night to guide the ships'));}
   else if(o.k==='slot')popSlot(o.i,sx,sy);else if(o.k==='vis')popVisitor(sx,sy);else if(o.k==='harbor')popHarbor(sx,sy);
   else if(o.k==='deco'){const d=S.deco[o.i];if(d)popList(tx(DECO[d.k].n),[[T('치우기','Pick up'),'+'+Math.floor(DECO[d.k].cost/2)+UG(),()=>{removeDeco(o.i);updateHud();}]],sx,sy);}
   else if(o.k==='home'){const it=[[T('꾸미기','Decorate'),S.deco.length+'/'+DECOMAX,()=>openModal('deco')],hasT('hire')?[T('일꾼 고용','Hire workers'),S.wk+'/'+WKMAX,()=>openModal('crew')]:null,[T('통계','Stats'),'',()=>openModal('stats')],[T('업적','Goals'),'',()=>openModal('ach')],[T('도감','Codex'),'',()=>openModal('codex')],[T('계정','Account'),UID?(UNAME||''):'',()=>openModal('login')],[T('설정','Settings'),'',()=>openModal('settings')],[T('하는 법','How to play'),'',()=>openModal('help')],[T('다른 섬과 연결','Connect to others'),MP.on?T('연결됨','On'):'',()=>openModal('mp')],[T('처음으로','Title'),'',()=>ACT.menu()]].filter(Boolean);popList(T('집','Home'),it,sx,sy);}
@@ -2178,6 +2194,7 @@ const ISLES=[
  /* 8 유적 환초 */{seed:97,sea:'#1f7aa0',grass:['#7aa66a','#6c985c'],beach:'#e0d2a8',amp:[.05,.07,.06],ph:[1.0,2.0,.3],ax:.78,ay:.72,ruin:1,
   mk:['유적 제단','#b8b8a8'],lm:['가라앉은 마을','물 아래로 옛 집터와 길이 비쳐 보여요.'],
   feat:[['pillar',8],['wall',5],['palm',4],['rune',3]],fg:[],ground:'#a8a890',secret:'relic'}];
+const ISLHB=[['항구 일꾼 집','곡식 포대를 배에 싣는 일꾼들이 쉬어 가는 집이에요.','#a8784a'],['과일 상자 창고','갓 딴 사과가 상자째 배를 기다려요.','#c0452f'],['와인 통 창고','부두 옆에서 와인 통을 굴려 배에 실어요.','#7a3e9d'],['솜 창고','솜 포대가 구름처럼 쌓여 있어요.','#8ab0e0'],['어부의 집','새벽마다 어부들이 그물을 챙겨 나가요.','#3a6fb8'],['세관 초소','먼 바다에서 온 배의 짐을 확인하는 곳이에요.','#e07a2a'],['조개 오두막','주운 조개를 말려 두는 오두막이에요.','#f08aa0'],['채집꾼 오두막','호박을 캐는 사람들이 쉬어 가는 오두막이에요.','#8a6a32'],['탐사대 천막','유적을 조사하는 사람들이 머무는 천막이에요.','#b8b8a8']];
 const isI=id=>{if(id<6)return id;return 6+['coral','amber','relic'].indexOf(id);};
 function islRng(s){let a=s|0;return()=>{a=(a+0x6D2B79F5)|0;let t=Math.imul(a^(a>>>15),1|a);t=(t+Math.imul(t^(t>>>7),61|t))^t;return((t^(t>>>14))>>>0)/4294967296;};}
 function islQ(th,x,y){const dx=(x-IW/2)/(IW*.4*th.ax),dy=(y-IH/2)/(IH*.4*th.ay),d=Math.hypot(dx,dy),a=Math.atan2(dy,dx);
@@ -2210,6 +2227,11 @@ function buildIsl(k){const th=ISLES[k],rnd=islRng(th.seed),c=document.createElem
   const pier=(x,y,len)=>{for(let i=0;i<len;i++){IR(x-i*3,y,3,6,i%2?'#a0764a':'#8a6238');}IR(x-len*3,y-1,2,8,'#5a3a1e');IR(x-len*3+6,y+7,2,3,'#5a3a1e');};
   pier(dx0+10,dy0,9);
   objs.push({k:'dock',x:dx0-24,y:dy0-4,w:32,h:12,r:12,msg:'E: 배로 돌아가기'});lab.push([T('배로 돌아가기','Back to ship'),dx0-12,dy0-9,'#cfe8ff']);
+  /* 항구 건물: 부두 옆 */
+  {const hb=ISLHB[k],hx=dx0+16,hy=dy0-30;IR(hx-1,hy+16,24,2,'rgba(0,0,0,.2)');if(k===8){IR(hx,hy+6,22,10,'#d8d0b0');IR(hx-1,hy+2,24,5,hb[2]);IR(hx+8,hy-2,6,5,'#8a8a7a');IR(hx+9,hy+9,5,7,'#4a3a2a');}
+    else{IR(hx,hy+6,22,10,'#d8c9a0');IR(hx-2,hy+2,26,5,hb[2]);IR(hx,hy-1,22,4,hb[2]);IR(hx+8,hy+9,6,7,'#4a2e18');IR(hx+2,hy+9,4,4,'#8ab8d8');IR(hx+16,hy+9,4,4,'#8ab8d8');}
+    IR(hx+24,hy+10,6,6,'#a0764a');IR(hx+24,hy+10,6,1,'#c09060');IR(hx+26,hy+5,5,5,'#8a5a2a');
+    block(hx-2,hy-1,34,18);objs.push({k:'lm',x:hx-2,y:hy-1,w:34,h:18,r:9,msg:hb[1]});lab.push([hb[0],hx+11,hy-8,'#e8dcc0']);}
   /* 시장 */
   const mx=IW/2-14,my=IH/2-18;
   IR(mx-3,my+26,38,3,'rgba(0,0,0,.2)');IR(mx,my+8,30,18,'#d8c9a0');IR(mx,my+22,30,4,'#b8a97e');IR(mx+12,my+14,7,12,'#5a3a1e');IR(mx+3,my+12,6,6,'#8ab8d8');IR(mx+22,my+12,6,6,'#8ab8d8');
