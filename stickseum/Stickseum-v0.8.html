@@ -1146,7 +1146,7 @@ const WEAPONS = {
             desc:'데미지 26 · 쿨타임 1.1초 · 사거리 100 · 광선검을 휘둘러 맞은 상대를 크게 날려보냄 · 휘두른 순간부터 0.25초 동안 날아오는 투사체를 쏜 사람에게 튕겨내고, 단거리 공격도 막아내고, 막아내면 쿨타임 없이 한 번 더 휘두를 수 있음 (공격받기 0.25초 전에 눌러야 함)'},
   horemheb:{id:'horemheb', name:'쇠스랑', emoji:'🔱', kind:'melee', dmg:34, cd:0.55, range:105, shape:'pitchfork',
             desc:'데미지 34 · 쿨타임 0.55초 · 사거리 105 · 쇠스랑을 휘둘러 근접 공격'},
-  pizarro: {id:'pizarro', name:'창',       emoji:'🔱', kind:'melee',    dmg:27, cd:0.55, range:160, shape:'spear', thrust:true, kbMult:2.6,
+  pizarro: {id:'pizarro', name:'창',       emoji:'🪖', kind:'melee',    dmg:27, cd:0.55, range:160, shape:'spear', thrust:true, kbMult:2.6,
             desc:'데미지 27 · 쿨타임 0.55초 · 사거리 160 · 앞으로 창을 찔러 상대를 멀리 밀어냄 · 궁극기를 쓸수록 강해짐(죽으면 초기화)'},
   sword:   {id:'sword',   name:'칼',       emoji:'🗡️', kind:'melee',    dmg:32, cd:0.5,  range:100, shape:'blade',
             desc:'데미지 32 · 쿨타임 0.5초 · 사거리 100 · 빠르고 날카로운 근접 베기'},
@@ -4659,7 +4659,7 @@ function shuffle(arr){ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.
 /* ===== the version of this file =====
    Players with different versions CAN meet and play together: the automatic matchmaking uses the same room names for every version (online-<mode>-<map>-<slot>), and nobody is refused because of a different build.
    The build is only sent along with the join message and the lobby (for information); the corner of the screen shows it. */
-const GAME_BUILD='build 2026-10-18-v300';
+const GAME_BUILD='build 2026-10-18-v301';
 const GAME_VERSION='0.8', GAME_VERSION_NAME='황금을 찾아서';   // 게임 버전 이름: versions.json의 title과 같게 (빌드마다 바꾸지 않음)
 const WEEKLY_EVENTS=[
   {id:'lowg',    name:'저중력 난투', desc:'몸이 둥실둥실, 중력이 약해진 난투', rules:{grav:0.6}},
@@ -15325,12 +15325,18 @@ function drawProjectile(b){
       if(prog>0 && prog<1){ const wa=ang+a1; addP({x:b.x+Math.cos(wa)*r*rs,y:b.y+Math.sin(wa)*r*rs,vx:RND(-70,70),vy:RND(-70,70),life:RND(.18,.32),size:RND(1.5,2.8),color:'#ffffff',drag:3}); }
       break;
     }
-    case 'spear': {                                                       // the thrust: the spear shoots forward to its full reach and comes back
-      const prog=b.life0 ? clamp(1-(b.life/b.life0),0,1) : 1, ext=prog<0.45 ? prog/0.45 : 1-(prog-0.45)/0.55*0.9, tip=24+((w&&w.range||160)-24-14)*ext;
+    case 'spear': {                                                       // the thrust is drawn as a rush of wind (no spear flies): tapered streaks race out to the full reach and fade
+      const prog=b.life0 ? clamp(1-(b.life/b.life0),0,1) : 1, reach=(w&&w.range||160), ext=Math.min(1,prog/0.5), fade=1-prog;
       ctx.lineCap='round'; ctx.save(); ctx.globalCompositeOperation='lighter';
-      ctx.strokeStyle=hexA('#fff0b0',0.35*(1-prog)); ctx.lineWidth=12; ctx.beginPath(); ctx.moveTo(tip-60,0); ctx.lineTo(tip,0); ctx.stroke(); ctx.restore();
-      ctx.strokeStyle='#8a5a2b'; ctx.lineWidth=3; ctx.beginPath(); ctx.moveTo(tip-66,0); ctx.lineTo(tip,0); ctx.stroke();
-      ctx.fillStyle='#dfe4ec'; ctx.beginPath(); ctx.moveTo(tip,-4.5); ctx.lineTo(tip+15,0); ctx.lineTo(tip,4.5); ctx.closePath(); ctx.fill();
+      const streaks=[[0,26,0.55],[-9,20,0.4],[9,20,0.4],[-16,12,0.25],[16,12,0.25]];
+      for(const [off,len,al] of streaks){
+        const head=20+(reach-20)*ext, tail=Math.max(8, head-len*3.2*(0.6+0.4*ext)), wob=Math.sin(prog*9+off)*2.2;
+        const g=ctx.createLinearGradient(tail,0,head,0); g.addColorStop(0,'rgba(255,255,255,0)'); g.addColorStop(1,hexA('#eaf6ff',al*fade+0.05));
+        ctx.strokeStyle=g; ctx.lineWidth=Math.max(1.4,6-Math.abs(off)*0.18); ctx.beginPath(); ctx.moveTo(tail,off*0.55); ctx.quadraticCurveTo((tail+head)/2,off+wob,head,off*0.35); ctx.stroke();
+      }
+      ctx.strokeStyle=hexA('#ffffff',0.55*fade); ctx.lineWidth=2; ctx.beginPath(); ctx.arc(20+(reach-20)*ext,0,6+10*ext,-1.1,1.1); ctx.stroke();      // the little shock arc at the tip
+      ctx.restore();
+      if(prog>0 && prog<1) addP({x:b.x+Math.cos(ang)*(20+(reach-20)*ext)*rs,y:b.y+Math.sin(ang)*(20+(reach-20)*ext)*rs,vx:RND(-90,90),vy:RND(-90,90),life:RND(.15,.3),size:RND(1.4,2.6),color:'#eaf6ff',drag:3});
       break;
     }
     case 'pitchfork': {                                                   // the swing of the pitchfork: a sand-coloured arc in the owner's colour with three little tines at its head
