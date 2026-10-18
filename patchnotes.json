@@ -3,6 +3,58 @@
   {
    "date": "2026-10-18",
    "build": "",
+   "title": "Hub Coin 환전 창 짧게 정리",
+   "items": [
+    "환전 창을 환전, 선물, 퀘스트, 기록 탭으로 나눠 한 번에 한 칸만 표시",
+    "환전은 게임 이름을 골라 한 카드로 바꾸는 방식",
+    "받을 퀘스트 보상이 있으면 퀘스트 탭에 빨간 점 표시"
+   ],
+   "tr": {
+    "en": {
+     "title": "Shorter Hub Coin window",
+     "items": [
+      "The window is split into Exchange, Gift, Quests and History tabs, one shown at a time",
+      "Exchange uses one card with a game picker",
+      "A red dot on the Quests tab shows when a reward is ready"
+     ]
+    },
+    "es": {
+     "title": "Ventana de Hub Coin más corta",
+     "items": [
+      "La ventana se divide en pestañas Canjear, Regalo, Misiones e Historial, una a la vez",
+      "Canjear usa una tarjeta con selector de juego",
+      "Un punto rojo en Misiones indica una recompensa lista"
+     ]
+    },
+    "fr": {
+     "title": "Fenêtre Hub Coin plus courte",
+     "items": [
+      "La fenêtre est divisée en onglets Échanger, Cadeau, Quêtes et Historique, un seul affiché à la fois",
+      "L'échange utilise une seule carte avec un sélecteur de jeu",
+      "Un point rouge sur Quêtes indique une récompense prête"
+     ]
+    },
+    "de": {
+     "title": "Kürzeres Hub-Coin-Fenster",
+     "items": [
+      "Das Fenster ist in die Tabs Tauschen, Geschenk, Aufgaben und Verlauf geteilt, jeweils einer sichtbar",
+      "Tauschen nutzt eine Karte mit Spielauswahl",
+      "Ein roter Punkt bei Aufgaben zeigt eine bereite Belohnung"
+     ]
+    },
+    "ja": {
+     "title": "Hub Coin交換ウィンドウを短く整理",
+     "items": [
+      "ウィンドウを交換、ギフト、クエスト、記録のタブに分け、1つずつ表示",
+      "交換はゲームを選ぶ1枚のカードで行います",
+      "受け取れる報酬があるとクエストタブに赤い点が出ます"
+     ]
+    }
+   }
+  },
+  {
+   "date": "2026-10-18",
+   "build": "",
    "title": "음악 페이지 재생 시간 미리 표시",
    "items": [
     "음악 페이지 곡 목록에 재생 시간이 처음부터 표시"

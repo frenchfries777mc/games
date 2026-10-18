@@ -514,12 +514,13 @@ function paintCoin(){
     '<span class="cb-s">'+(coin.today?'<span>✓ 오늘 출석 완료</span>':'')+(coin.streak>1?' · <span>'+esc(F('{0}일 연속',coin.streak))+'</span>':'')+'</span></span><button type="button" class="cm-btn2 cb-cal">📅 달력</button><button type="button" class="cm-btn cb-go">환전하기</button>';
   b.querySelector('.cb-go').onclick=openCoin; b.querySelector('.cb-cal').onclick=function(){ openCal(); };
 }
+var coinTab='ex', coinGame='';
 var QN={play:'게임 1판 하기',board:'게시판에 글이나 댓글 쓰기',chat:'채팅에 한마디 하기',vote:'투표 참여하기'};
 async function questBox(el){
   var Q=el.querySelector('.cx-q'); if(!Q||!sb) return;
   var r=await sb.rpc('ff_quest_status');
   if(r.error){ Q.innerHTML='<div class="cm-e">'+esc(errText(r.error))+'</div>'; return; }
-  var rows=r.data||[], n=rows.filter(function(x){ return x.claimed; }).length;
+  var rows=r.data||[], n=rows.filter(function(x){ return x.claimed; }).length, dot=el.querySelector('.cx-dot'); if(dot) dot.hidden=!rows.some(function(x){ return x.done&&!x.claimed; });
   Q.innerHTML='<div class="cm-note">하나 끝낼 때마다 5코인, 3개를 모두 받으면 5코인을 더 받아요. (한국 시간 기준으로 매일 바뀌어요)</div>';
   rows.forEach(function(x){ var d=document.createElement('div'); d.className='cx-l';
     var b=x.claimed?'<span class="cx-d up">✓ 받음</span>':(x.done?'<button type="button" class="cm-btn2">5코인 받기</button>':'<small>아직이에요</small>');
@@ -534,14 +535,25 @@ async function openCoin(){
   if(!me) return login();
   var el=$('#coinBox'); if(!el){ el=document.createElement('div'); el.id='coinBox'; el.className='hn-bg'; document.body.appendChild(el); el.addEventListener('click',function(e){ if(e.target===el||e.target.closest('.hn-x')) el.style.display='none'; }); }
   el.innerHTML='<div class="hn-b"><div class="hn-h"><b>🪙 Hub Coin 환전</b><button type="button" class="hn-x" aria-label="닫기">×</button></div>'+
-    '<div class="cx-have">갖고 있는 코인 <b data-notr>'+(coin.n||0)+'</b></div><div class="cx-list"><div class="cm-e">불러오는 중…</div></div><div class="cx-wait"></div>'+
-    '<h4 class="cm-ph4">📋 오늘의 퀘스트</h4><div class="cx-q"><div class="cm-e">불러오는 중…</div></div>'+
-    '<h4 class="cm-ph4">최근 기록</h4><div class="cx-log"></div></div>';
+    '<div class="cx-have">갖고 있는 코인 <b data-notr>'+(coin.n||0)+'</b></div>'+
+    '<div class="cx-tabs"><button type="button" data-t="ex">환전</button><button type="button" data-t="gift">🎁 선물</button><button type="button" data-t="q">📋 퀘스트<i class="cx-dot" hidden></i></button><button type="button" data-t="log">기록</button></div>'+
+    '<div class="cx-pane" data-p="ex"><div class="cx-games"></div><div class="cx-list"><div class="cm-e">불러오는 중…</div></div><div class="cx-wait"></div></div>'+
+    '<div class="cx-pane" data-p="gift"></div>'+
+    '<div class="cx-pane" data-p="q"><div class="cx-q"><div class="cm-e">불러오는 중…</div></div></div>'+
+    '<div class="cx-pane" data-p="log"><div class="cx-log"></div></div></div>';
+  var tabs=el.querySelector('.cx-tabs');
+  function setTab(t){ coinTab=t; tabs.querySelectorAll('button').forEach(function(b){ b.classList.toggle('on',b.getAttribute('data-t')===t); }); el.querySelectorAll('.cx-pane').forEach(function(pn){ pn.hidden=pn.getAttribute('data-p')!==t; }); }
+  tabs.onclick=function(e){ var b=e.target.closest('button[data-t]'); if(b) setTab(b.getAttribute('data-t')); };
+  setTab(coinTab);
   el.style.display='flex'; questBox(el);
   var L=el.querySelector('.cx-list'), rr=await sb.from('ff_coin_rates').select('game,unit,per_coin').eq('active',true);
   if(rr.error){ L.innerHTML='<div class="cm-e">'+esc(errText(rr.error))+'</div>'; return; }
   var rates=(rr.data||[]); L.innerHTML=rates.length?'':'<div class="cm-e">아직 바꿀 수 있는 게임이 없어요.</div>';
-  rates.forEach(function(x){ var G=GAMES[x.game]||{name:x.game,cls:''}, d=document.createElement('form'); d.className='cx-r '+(G.cls||'');
+  if(!rates.some(function(x){ return x.game===coinGame; })) coinGame=rates.length?rates[0].game:'';
+  var GC=el.querySelector('.cx-games'); GC.innerHTML=rates.length>1?rates.map(function(x){ return '<button type="button" data-g="'+esc(x.game)+'" data-notr>'+esc((GAMES[x.game]||{name:x.game}).name)+'</button>'; }).join(''):'';
+  function pickGame(g){ coinGame=g; GC.querySelectorAll('button').forEach(function(b){ b.classList.toggle('on',b.getAttribute('data-g')===g); }); L.querySelectorAll('form[data-g]').forEach(function(f){ f.hidden=f.getAttribute('data-g')!==g; }); }
+  GC.onclick=function(e){ var b=e.target.closest('button[data-g]'); if(b) pickGame(b.getAttribute('data-g')); };
+  rates.forEach(function(x){ var G=GAMES[x.game]||{name:x.game,cls:''}, d=document.createElement('form'); d.className='cx-r '+(G.cls||''); d.setAttribute('data-g',x.game);
     d.innerHTML='<div class="cx-g"><b data-notr>'+esc(G.name)+'</b><span class="cx-rt">'+esc(F('코인 1개 = {0} {1}',x.per_coin,unitName(x.unit)))+'</span></div>'+
       '<div class="cx-in"><button type="button" class="cm-btn2" data-a="-1">−</button><input type="number" inputmode="numeric" min="1" step="1" value="'+Math.min(10,Math.max(1,coin.n||1))+'"><button type="button" class="cm-btn2" data-a="1">+</button>'+
       '<button type="button" class="cm-btn2" data-v="10">10</button><button type="button" class="cm-btn2" data-v="all">전부</button></div>'+
@@ -558,7 +570,8 @@ async function openCoin(){
       if(r.error){ m.textContent=/not enough/i.test(r.error.message||'')?'코인이 모자라요.':errText(r.error); return; }
       var y=(r.data||[])[0]||{}; coin.n=y.coins; paintCoin(); openCoin().then(function(){ var m2=$('#coinBox .cx-wait'); if(m2) m2.insertAdjacentHTML('afterbegin','<div class="cx-ok">'+esc(F('{0}에 들어가면 받아요: {1} {2}',G.name,y.amount,unitName(x.unit)))+'</div>'); }); };
     L.appendChild(d); });
-  L.appendChild(giftForm());
+  pickGame(coinGame);
+  el.querySelector('[data-p=gift]').appendChild(giftForm());
   var w=await sb.from('ff_coin_out').select('game,amount').eq('claimed',false), W=el.querySelector('.cx-wait'), sum={};
   ((w&&w.data)||[]).forEach(function(z){ sum[z.game]=(sum[z.game]||0)+z.amount; });
   W.innerHTML=Object.keys(sum).map(function(g){ var u=(rates.filter(function(x){ return x.game===g; })[0]||{}).unit||''; return '<div class="cx-pend">'+esc(F('{0} 접속하면 받을 {1}: {2}',(GAMES[g]||{name:g}).name,unitName(u),sum[g]))+'</div>'; }).join('');
