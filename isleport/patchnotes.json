@@ -2,6 +2,58 @@
  "notes": [
   {
    "date": "2026-10-18",
+   "build": "v0.2 build 5",
+   "title": "은행 확장",
+   "items": [
+    "은행에서 주식을 사고팔 수 있어요. 곡물·과수원·와인·직물·수산·무역 여섯 종목이 있어요",
+    "은행에 돈을 맡길 수 있어요. 1분에 0.2% 이자가 붙고 언제든 찾을 수 있어요",
+    "대출은 같은 은행 창의 대출 탭으로 옮겼어요"
+   ],
+   "tr": {
+    "en": {
+     "title": "Bank expansion",
+     "items": [
+      "You can now buy and sell stocks at the bank: grain, orchard, wine, textile, fishing and trade",
+      "You can deposit money at the bank: 0.2% interest per minute, withdraw anytime",
+      "Loans moved to the Loan tab of the same bank window"
+     ]
+    },
+    "ja": {
+     "title": "Bank expansion",
+     "items": [
+      "You can now buy and sell stocks at the bank: grain, orchard, wine, textile, fishing and trade",
+      "You can deposit money at the bank: 0.2% interest per minute, withdraw anytime",
+      "Loans moved to the Loan tab of the same bank window"
+     ]
+    },
+    "es": {
+     "title": "Bank expansion",
+     "items": [
+      "You can now buy and sell stocks at the bank: grain, orchard, wine, textile, fishing and trade",
+      "You can deposit money at the bank: 0.2% interest per minute, withdraw anytime",
+      "Loans moved to the Loan tab of the same bank window"
+     ]
+    },
+    "fr": {
+     "title": "Bank expansion",
+     "items": [
+      "You can now buy and sell stocks at the bank: grain, orchard, wine, textile, fishing and trade",
+      "You can deposit money at the bank: 0.2% interest per minute, withdraw anytime",
+      "Loans moved to the Loan tab of the same bank window"
+     ]
+    },
+    "de": {
+     "title": "Bank expansion",
+     "items": [
+      "You can now buy and sell stocks at the bank: grain, orchard, wine, textile, fishing and trade",
+      "You can deposit money at the bank: 0.2% interest per minute, withdraw anytime",
+      "Loans moved to the Loan tab of the same bank window"
+     ]
+    }
+   }
+  },
+  {
+   "date": "2026-10-18",
    "build": "v0.2 build 3",
    "title": "항구 건물",
    "items": [
