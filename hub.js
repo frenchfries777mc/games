@@ -90,7 +90,8 @@ document.addEventListener('keydown',function(e){ if(e.key==='Escape') closeHubNo
 
 /* ===================== 공지 · 이벤트 배너 (관리자만 올리고, 닫으면 그 공지는 다시 안 보여요) ===================== */
 var ANN_KEY='ff.annHide', anns=[];
-function annHidden(){ try{ return JSON.parse(localStorage.getItem(ANN_KEY)||'[]'); }catch(e){ return []; } }
+function annKey(){ return window.FFAuth&&FFAuth.userKey?FFAuth.userKey(ANN_KEY):ANN_KEY; }
+function annHidden(){ try{ return JSON.parse(localStorage.getItem(annKey())||'[]'); }catch(e){ return []; } }
 async function loadAnn(){
   if(!sb) return; var r=await sb.from('ff_announce').select('*').order('created_at',{ascending:false}).limit(50); if(r.error){ anns=[]; paintAnn(); return; }
   anns=r.data||[]; paintAnn(); if(admin) annAdmin();
@@ -102,7 +103,7 @@ function paintAnn(){
   box.innerHTML=live.map(function(a){ return '<div class="ann '+(a.kind==='event'?'ev':'nt')+'"><span class="ak">'+(a.kind==='event'?'🎉 이벤트':'📢 공지')+'</span><span class="ab" data-notr>'+esc(a.body)+'</span>'+
     (a.link?'<a class="al" href="'+esc(a.link)+'" target="_blank" rel="noopener">자세히 →</a>':'')+(a.ends_at?'<span class="ae">'+esc(F('{0}까지',String(a.ends_at).slice(5,10).replace('-','/')))+'</span>':'')+
     '<button type="button" class="ax" data-id="'+a.id+'" aria-label="닫기">×</button></div>'; }).join('');
-  [].forEach.call(box.querySelectorAll('.ax'),function(b){ b.onclick=function(){ var h=annHidden(); h.push(+b.getAttribute('data-id')); try{ localStorage.setItem(ANN_KEY,JSON.stringify(h.slice(-50))); }catch(e){} paintAnn(); }; });
+  [].forEach.call(box.querySelectorAll('.ax'),function(b){ b.onclick=function(){ var h=annHidden(); h.push(+b.getAttribute('data-id')); try{ localStorage.setItem(annKey(),JSON.stringify(h.slice(-50))); }catch(e){} paintAnn(); }; });
 }
 
 /* ===================== 커뮤니티 ===================== */
