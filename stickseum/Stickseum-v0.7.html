@@ -4643,7 +4643,7 @@ function shuffle(arr){ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.
 /* ===== the version of this file =====
    Players with different versions CAN meet and play together: the automatic matchmaking uses the same room names for every version (online-<mode>-<map>-<slot>), and nobody is refused because of a different build.
    The build is only sent along with the join message and the lobby (for information); the corner of the screen shows it. */
-const GAME_BUILD='build 2026-10-18-v297';
+const GAME_BUILD='build 2026-10-18-v299';
 const GAME_VERSION='0.7', GAME_VERSION_NAME='어둠의 늪';   // 게임 버전 이름: versions.json의 title과 같게 (빌드마다 바꾸지 않음)
 const WEEKLY_EVENTS=[
   {id:'lowg',    name:'저중력 난투', desc:'몸이 둥실둥실, 중력이 약해진 난투', rules:{grav:0.6}},
@@ -9707,7 +9707,7 @@ function banEligible(){       // duel (also the ranked one) and team battle, nor
 function banActive(){ return !!(weaponPhase && weaponPhase.ban && !weaponPhase.ban.done); }
 function initBanStage(){
   const ph=weaponPhase; ph.ban={ends:Date.now()+BAN_MS, picks:{}, banner:{}, botAt:{}, done:false}; ph.deadline+=BAN_MS;
-  for(const p of Object.values(players)){ const k=banSideKey(p); if(!p.isBot && !ph.ban.banner[k]) ph.ban.banner[k]=p.id; }
+  for(const p of Object.values(players)){ const k=banSideKey(p); if(!p.isBot){ (ph.ban.banner[k]=ph.ban.banner[k]||[]).push(p.id); } }       // (every person of a side bans one character of his own)
   for(const p of Object.values(players)){ const k=banSideKey(p); if(!ph.ban.banner[k] && ph.ban.botAt[k]===undefined) ph.ban.botAt[k]=Date.now()+1500+Math.random()*3500; }       // (a side with only bots: they ban at random, after a moment, so the people can see it happen)
   for(const p of Object.values(players)) if(p.isBot && p.pickAt!==undefined){ p.pickAt+=BAN_MS; p.lockAt+=BAN_MS; }
 }
@@ -9716,24 +9716,24 @@ function botBanTick(){          // the bot-only sides ban once their moment has 
   for(const k in b.botAt){ if(b.picks[k]===undefined && (Date.now()>=b.botAt[k] || Date.now()>=b.ends-200)){ b.picks[k]=SELECTABLE_WEAPONS[Math.floor(Math.random()*SELECTABLE_WEAPONS.length)]; any=true; } }
   return any;
 }
-function endBanStage(){ if(!banActive()) return; botBanTick(); weaponPhase.ban.done=true; matchBans=Object.assign({}, weaponPhase.ban.picks); broadcastWeaponState(); }
+function endBanStage(){ if(!banActive()) return; botBanTick(); weaponPhase.ban.done=true; matchBans={}; for(const x in weaponPhase.ban.picks){ const w=weaponPhase.ban.picks[x]; if(!w) continue; const k=players[x]?banSideKey(players[x]):x; (matchBans[k]=matchBans[k]||[]); if(!matchBans[k].includes(w)) matchBans[k].push(w); } broadcastWeaponState(); }
 function banStageCheck(){
   if(!banActive()) return;
   const b=weaponPhase.ban, live=new Set(Object.values(players).map(banSideKey));
   for(const k in b.botAt){ if(b.picks[k]===undefined) return; }
-  for(const k in b.banner){ if(!live.has(k) || !players[b.banner[k]]) continue; if(b.picks[k]===undefined) return; }       // (a side whose banner is gone is not waited for)
+  for(const k in b.banner){ if(!live.has(k)) continue; for(const id of b.banner[k]){ if(players[id] && b.picks[id]===undefined) return; } }       // (a person who is gone is not waited for)
   endBanStage();
 }
 function hostWeaponBan(pid, wid){
   const p=players[pid]; if(!p || !banActive() || weaponPhase.revealing || !SELECTABLE_WEAPONS.includes(wid)) return;
   const k=banSideKey(p), b=weaponPhase.ban;
-  if(b.banner[k]!==pid || b.picks[k]!==undefined) return;
-  b.picks[k]=wid; broadcastWeaponState(); banStageCheck();
+  if(!(b.banner[k]||[]).includes(pid) || b.picks[pid]!==undefined) return;
+  b.picks[pid]=wid; broadcastWeaponState(); banStageCheck();
 }
 let matchBans=null;      // {side: banned character} once the ban stage is over; it holds for one pick (a duel has a new ban stage before every round)
 function oppBansFor(p){
   if(!matchBans) return [];
-  const k=banSideKey(p); return Object.keys(matchBans).filter(x=>x!==k).map(x=>matchBans[x]).filter(Boolean);
+  const k=banSideKey(p); return [].concat(...Object.keys(matchBans).filter(x=>x!==k).map(x=>matchBans[x]||[])).filter(Boolean);
 }
 function takenByTeam(p,wid){
   if(oppBansFor(p).includes(wid)) return true;                              // banned by the other side
@@ -9749,7 +9749,7 @@ function weaponStateFor(p){
   }
   const bn=weaponPhase && weaponPhase.ban, bk=banSideKey(p);
   return {t:'weaponState', picks:picks, count:Object.values(players).filter(o=>o.weaponChosen).length, total:Object.keys(players).length, dup:dupRuleOn(p), banned:(duelPick&&p.duelUsed)?p.duelUsed:[],
-    ban:bn?{on:!bn.done, ends:bn.ends, can:bn.banner[bk]===p.id, mine:bn.picks[bk]||null, opp:Object.keys(bn.picks).some(x=>x!==bk), oppPick:((bn.picks[bk]!==undefined||bn.done)?(Object.keys(bn.picks).filter(x=>x!==bk).map(x=>bn.picks[x])[0]||null):null)}:null, ob:oppBansFor(p)};
+    ban:bn?{on:!bn.done, ends:bn.ends, can:(bn.banner[bk]||[]).includes(p.id), mine:bn.picks[p.id]||null, opp:Object.keys(bn.picks).some(x=>(players[x]?banSideKey(players[x]):x)!==bk), oppPick:((bn.picks[p.id]!==undefined||bn.done)?[...new Set(Object.keys(bn.picks).filter(x=>(players[x]?banSideKey(players[x]):x)!==bk).map(x=>bn.picks[x]).filter(Boolean))]:[])}:null, ob:oppBansFor(p)};
 }
 function broadcastWeaponState(){
   for(const pid in players){
@@ -9955,7 +9955,7 @@ function enterWeaponPhase(deadline, wmode, offer, banEnds){
     if(weaponBanMode()){
       const bs=Math.max(0, Math.ceil(((weaponUI.state&&weaponUI.state.ban?weaponUI.state.ban.ends:weaponUI.banEnds)-Date.now())/1000));
       const sb=weaponUI.state&&weaponUI.state.ban;
-      timerEl.textContent = !sb ? '' : (sb.mine ? ('금지 완료! 상대를 기다리는 중... ('+bs+'초)') : (sb.can ? (bs+'초 안에 금지할 캐릭터를 정하세요 (안 정하면 금지 없음)') : ('팀장이 금지할 캐릭터를 정하는 중이에요 ('+bs+'초)')));
+      timerEl.textContent = !sb ? '' : (sb.mine ? ('금지 완료! 상대를 기다리는 중... ('+bs+'초)') : (sb.can ? (bs+'초 안에 금지할 캐릭터를 정하세요 (안 정하면 금지 없음)') : ('금지할 캐릭터를 정하는 중이에요 ('+bs+'초)')));
       return;
     }
     const secs=Math.max(0, Math.ceil((weaponUI.deadline-Date.now())/1000));
@@ -9998,13 +9998,18 @@ function applyWeaponState(st){
   document.querySelectorAll('#weaponGrid .wpnCard').forEach(el=>{ const w=el.dataset.wid, b=bn.includes(w), o=ob.includes(w); el.style.opacity=(b||o)?'0.3':''; el.style.pointerEvents=(b||o)?'none':''; el.title=o?'상대가 금지한 캐릭터예요':(b?'이미 사용한 무기예요':''); });
 }
 function drawWeaponPortrait(wid){
+  clearTimeout(drawWeaponPortrait._t);
   const canvas=document.getElementById('weaponPortraitCanvas');
   const c=canvas.getContext('2d');
   c.clearRect(0,0,canvas.width,canvas.height);
   if(!wid || !WEAPONS[wid]) return;
-  const col=(players[myId] && players[myId].color) || '#3fe0c5';
+  let col=(players[myId] && players[myId].color) || '#3fe0c5';
+  const _ec=getEquippedCos(), _shn=(_ec.col&&COSMETICS[_ec.col]&&COSMETICS[_ec.col].shine)?_ec.col:null;
+  clearTimeout(drawWeaponPortrait._t);
+  if(_shn){ col=bodyShineColor(_shn, performance.now(), 0); drawWeaponPortrait._t=setTimeout(()=>{ const cv=document.getElementById('weaponPortraitCanvas'); if(cv && cv.getClientRects().length) drawWeaponPortrait(wid); }, 50); }   // (a shiny color keeps moving in the pick window)
   c.save();
   c.translate(canvas.width/2, canvas.height*0.7);
+  if(_shn) c.shadowColor=col, c.shadowBlur=12;
   c.scale(1.8,1.8);
   const HIP=-22, SH=-42, HEADCY=-52, HEADR=9;
   const _sk=(getEquippedCos().skin||{})[wid], _tint=(_sk&&COSMETICS[_sk])?COSMETICS[_sk].tint:undefined;
@@ -10018,6 +10023,7 @@ function drawWeaponPortrait(wid){
   const ax=0.9, ay=0.28;
   c.beginPath(); c.moveTo(0,SH+6); c.lineTo(ax*24, SH+6+ay*24); c.stroke();
   drawHeldWeapon(c, wid, ax, ay, ax*24, SH+6+ay*24, 0);
+  if(_shn){ c.shadowBlur=0; c.save(); c.translate(0,0); drawShineGlints(c, performance.now(), 0); c.restore(); }
   c.restore();
 }
 function setWeaponIcon(el, wid){
@@ -10063,8 +10069,8 @@ function renderWeaponUI(){
     const chip=document.createElement('div'); chip.className='teamChip'; chip.style.borderColor='#d11a24';
     const dot=document.createElement('span'); dot.className='dot'; dot.style.background='#d11a24';
     const nm=document.createElement('span'); nm.textContent='상대 진영';
-    const s2=document.createElement('span'); s2.className='st'; const ow=st.ban.oppPick;
-    s2.textContent = ow&&WEAPONS[ow] ? ('🚫 금지: '+WEAPONS[ow].emoji+' '+(WEAPON_PERSONA_NAME[ow]||WEAPONS[ow].name)) : (st.ban.mine ? '🚫 금지할 캐릭터 정하는 중...' : '🚫 우리 쪽이 정하면 보여요');
+    const s2=document.createElement('span'); s2.className='st'; const ows=[].concat(st.ban.oppPick||[]).filter(x=>WEAPONS[x]), ow=ows[0];
+    s2.textContent = ow ? ('🚫 금지: '+ows.map(x=>WEAPONS[x].emoji+' '+(WEAPON_PERSONA_NAME[x]||WEAPONS[x].name)).join(', ')) : (st.ban.mine ? '🚫 금지할 캐릭터 정하는 중...' : '🚫 우리 쪽이 정하면 보여요');
     chip.appendChild(dot); chip.appendChild(nm); chip.appendChild(s2); box.appendChild(chip);
   }
   const det=document.getElementById('weaponDetail');
