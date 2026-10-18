@@ -3,6 +3,58 @@
   {
    "date": "2026-10-18",
    "build": "",
+   "title": "게임 카드 꾸미기, 구역 제목 정리",
+   "items": [
+    "게임 카드마다 위쪽 포인트 색 줄 추가",
+    "게임 카드에 마우스를 올리면 최근 패치 한 줄 표시 (폰은 항상 표시)",
+    "구역 제목 왼쪽에 색 막대를 넣고 간격과 글자 크기 통일"
+   ],
+   "tr": {
+    "en": {
+     "title": "Game card polish, section titles",
+     "items": [
+      "Accent color bar on top of each game card",
+      "Hover a game card to see its latest patch line (always shown on phones)",
+      "Color bar before section titles, spacing and text sizes unified"
+     ]
+    },
+    "es": {
+     "title": "Tarjetas de juego y títulos de sección",
+     "items": [
+      "Barra de color en la parte superior de cada tarjeta",
+      "Al pasar el cursor por una tarjeta se ve su último parche (siempre visible en móvil)",
+      "Barra de color antes de los títulos de sección, espacios y tamaños unificados"
+     ]
+    },
+    "fr": {
+     "title": "Cartes de jeu et titres de section",
+     "items": [
+      "Barre de couleur en haut de chaque carte",
+      "Au survol d'une carte, la dernière ligne de patch s'affiche (toujours visible sur mobile)",
+      "Barre de couleur devant les titres de section, espaces et tailles harmonisés"
+     ]
+    },
+    "de": {
+     "title": "Spielkarten und Abschnittstitel",
+     "items": [
+      "Farbleiste oben auf jeder Spielkarte",
+      "Beim Überfahren einer Karte erscheint die letzte Patch-Zeile (am Handy immer sichtbar)",
+      "Farbbalken vor Abschnittstiteln, Abstände und Schriftgrößen vereinheitlicht"
+     ]
+    },
+    "ja": {
+     "title": "ゲームカードと見出しの整理",
+     "items": [
+      "各ゲームカードの上に色のライン",
+      "カードにカーソルを合わせると最新パッチを1行表示 (スマホは常に表示)",
+      "見出しの前に色の棒、余白と文字サイズを統一"
+     ]
+    }
+   }
+  },
+  {
+   "date": "2026-10-18",
+   "build": "",
    "title": "위키 묶음 반영 (Stickseum 273, Block HTML v35, Fry Sheet v23 외)",
    "items": [
     "Stickseum 위키: 새 맵 4개(맵 27개), 설정(배터리 절약·색약·게임패드), 비공개 플레이 안내, 패치 기록 273",

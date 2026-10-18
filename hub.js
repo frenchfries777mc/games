@@ -33,7 +33,11 @@ function loadNews(){
       .then(function(x){ var d=x[0]; return ((d&&d.notes)||[]).map(function(n,i){ var t=trNote(n,x[1]); return {g:g, i:i, date:n.date||'', build:n.build||'', title:t.title, items:t.items, key:(n.date||'')+'|'+(n.build||'')+'|'+(n.title||'')}; }); });
   })).then(function(all){ hubNotes=all[0]; all.forEach(function(l){ if(l[0]) notesBy[l[0].g]=l.map(function(n){ return n.key; }); }); news=[].concat.apply([],all).sort(function(a,b){ return (b.date>a.date?1:b.date<a.date?-1:0)||(a.i-b.i); }); paintNews(); paintFollow(); });
 }
+function paintGameNotes(){
+  var seen={}; news.forEach(function(n){ if(seen[n.g]) return; seen[n.g]=1; var e=document.querySelector('.gnote[data-g="'+n.g+'"]'); if(e) e.innerHTML='<b>'+esc(F('최근 패치'))+' · '+esc(n.date)+'</b>'+esc(n.title); });
+}
 function paintNews(){
+  paintGameNotes();
   var box=$('#newsList'); if(!box) return;
   if(!news.length){ box.innerHTML='<div class="cm-e">아직 소식이 없어요.</div>'; return; }
   box.innerHTML=news.slice(0,NEWS_N).map(function(n){ var G=NSRC[n.g], it=n.items.slice(0,4);
