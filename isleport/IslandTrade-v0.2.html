@@ -19,6 +19,9 @@ button{font:inherit;cursor:pointer}
 #app{height:100%;display:flex;flex-direction:column}
 #hud{position:absolute;left:0;top:0;right:0;z-index:3;pointer-events:none;display:flex;align-items:flex-start;gap:12px;padding:calc(8px + env(safe-area-inset-top,0px)) max(10px,env(safe-area-inset-right,0px)) 0 max(10px,env(safe-area-inset-left,0px));text-shadow:0 1px 0 #000,0 0 4px #000}
 #hud .hl{display:flex;flex-direction:column;gap:3px;min-width:0}
+#tut{position:absolute;left:50%;bottom:calc(14px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);z-index:4;background:#2a190b;border:3px solid var(--gold);border-radius:6px;box-shadow:0 4px 0 #000;padding:10px 16px;font-size:clamp(16px,2.2vw,21px);color:#fff;max-width:92%;display:flex;gap:12px;align-items:center;flex-wrap:wrap;justify-content:center;text-align:center}
+#tut .tn{color:var(--gold);font-family:var(--px);font-size:.8em}
+#tut button{font-size:13px;padding:3px 10px}
 #hud .gold1{font:15px var(--px);color:var(--gold);white-space:nowrap}
 #hud .sm1{font-size:12px;color:var(--text)}
 #hud .qline{font-size:12px;color:#c8f0a0;max-width:min(420px,60vw)}
@@ -101,21 +104,21 @@ input[type=range]{width:100%}
 #title .panel{position:absolute;inset:0;width:auto;max-height:none;background:none;border:0;box-shadow:none;padding:0;overflow:hidden;display:block;text-align:left}
 #title .tcen{position:absolute;left:0;right:0;top:16%;text-align:center;pointer-events:none}
 #title h1{margin:0;font:clamp(28px,6.2vw,76px) var(--px);color:var(--gold);text-shadow:5px 5px 0 #5a3414,0 0 28px rgba(242,199,90,.45);letter-spacing:4px;line-height:1.25}
-#title .sub{margin-top:14px;color:#fff;font-size:clamp(13px,1.8vw,19px);text-shadow:0 2px 0 #000,0 0 8px #000}
+#title .sub{margin-top:14px;color:#fff;font-size:clamp(16px,2.4vw,26px);text-shadow:0 2px 0 #000,0 0 8px #000}
 #title .tmenu{position:absolute;right:max(5vw,env(safe-area-inset-right,0px));top:50%;transform:translateY(-4%);display:flex;flex-direction:column;align-items:flex-end;gap:4px}
-#title .tb{background:none;border:0;color:#fff;font:clamp(18px,2.6vw,28px) var(--ko);padding:5px 2px;text-shadow:0 2px 0 #000,0 0 10px #000;cursor:pointer;text-align:right}
+#title .tb{background:none;border:0;color:#fff;font:clamp(24px,3.6vw,40px) var(--ko);padding:5px 2px;text-shadow:0 2px 0 #000,0 0 10px #000;cursor:pointer;text-align:right}
 #title .tb:hover,#title .tb:focus-visible{color:var(--gold);outline:none}
-#title .tb.sm{font-size:clamp(14px,1.8vw,19px);color:#e8dcc0}
+#title .tb.sm{font-size:clamp(18px,2.5vw,27px);color:#e8dcc0}
 #title select.tb{appearance:none;-webkit-appearance:none;width:auto;border:0;background:none;padding:5px 2px;direction:rtl}
 #title select.tb option{background:#2a190b;color:#fff;direction:ltr}
-#title .tfoot{position:absolute;left:0;right:0;bottom:calc(14px + env(safe-area-inset-bottom,0px));text-align:center;color:#e8dcc0;font-size:12px;text-shadow:0 1px 0 #000,0 0 6px #000}
+#title .tfoot{position:absolute;left:0;right:0;bottom:calc(14px + env(safe-area-inset-bottom,0px));text-align:center;color:#e8dcc0;font-size:clamp(14px,1.6vw,18px);text-shadow:0 1px 0 #000,0 0 6px #000}
 @media (max-width:600px){#title .tcen{top:10%}#title .tmenu{top:auto;bottom:70px;transform:none}}
 .mgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:6px}.mgrid .pb{padding:9px 6px}
 </style>
 </head>
 <body>
 <div id="app">
-  <div id="main"><div id="stage"><canvas id="cv"></canvas><div id="hud"></div><div id="pop" hidden></div><div id="joy" hidden><i></i></div><button id="actBtn" class="pb big gold" data-act="act" hidden></button></div></div>
+  <div id="main"><div id="stage"><canvas id="cv"></canvas><div id="hud"></div><div id="tut" hidden></div><div id="pop" hidden></div><div id="joy" hidden><i></i></div><button id="actBtn" class="pb big gold" data-act="act" hidden></button></div></div>
   <div id="toast"></div>
 </div>
 <div id="title" class="ov"><div class="panel" id="tbody"></div></div>
@@ -406,6 +409,11 @@ const QUESTS=[
  [P('밭을 24칸으로 넓히세요','Open 24 fields'),s=>s.pu>=24,4000],
  [P('일꾼을 한 명 고용하세요','Hire a worker'),s=>(s.wk||0)>=1,6000],
  [P('가공품을 서로 다른 15가지 만드세요','Make 15 kinds of processed goods'),s=>Object.keys(s.made).length>=15,9000]];
+const TUT=[
+ ['밭을 눌러 씨앗을 심어요',s=>s.stats.planted>=1],
+ ['다 자라면 밭을 눌러 수확해요',s=>s.stats.harvest>=1],
+ ['마을 장터에서 수확한 것을 팔아요',s=>(s.stats.shop||0)>=1],
+ ['항구에서 배에 짐을 싣고 보내요',s=>s.stats.sailed>=1]];
 const hasB=(s,b)=>s.slots.some(x=>x&&x.b===b);
 const rankOf=e=>{let r=0;RANKS.forEach((x,i)=>{if(e>=x[0])r=i;});return r;};
 /* 업적: id, 이름, 설명, 조건 */
@@ -528,6 +536,8 @@ const CROPK=Object.keys(CROPS),SPEC=['goldbarley','pomegranate','saffron','cloud
 const ACHN={};ACH.forEach(a=>ACHN[a.id]=a);
 const NOTES=[
  {date:'2026-10-18',build:'v0.2',title:P('큰 항해','The big voyage'),items:[
+  P('새로 시작하면 긴 설명 대신 화면 아래에 지금 할 일 한 줄이 나와요. 밭 심기, 수확, 판매, 출항 순서로 안내하고, 건너뛸 수 있어요','New games show one short step at a time instead of a long guide'),
+  P('로비의 글씨를 키웠어요','Lobby text is bigger'),
   P('같은 브라우저에서 계정이 겹치지 않아요. 계정마다 저장이 따로이고, 탭마다 다른 계정으로 로그인할 수 있어요','Accounts no longer overlap in one browser. Each account has its own save, and each tab can log in as a different account'),
   P('밭을 눌렀을 때 "모든 밭 다시 심기"를 켜면 수확한 밭에 씨앗을 자동으로 다시 심어요 (연구 "자동 파종" 필요)','Turn on "Replant in every field" in a field menu to auto-replant after harvest (needs the Auto-sowing research)'),
   P('건물이 더 정교해졌어요. 뾰족한 지붕, 기와 결, 굴뚝, 창틀과 문을 새로 그렸어요','Buildings are more detailed, with proper pitched roofs, shingles, chimneys, window frames and doors'),
@@ -747,6 +757,7 @@ function tick(dt){if(!S)return;const t=NOW();rescue(dt);
   // 계급
   const rk=rankOf(S.stats.earned);if(rk>S.rank){S.rank=rk;rankUp(rk);}
   // 퀘스트
+  if(S.tut>=0&&S.tut<TUT.length&&TUT[S.tut][1](S)){S.tut++;if(S.tut>=TUT.length){S.tut=-1;toast(T('안내가 끝났어요! 위의 ★ 과제를 따라가 보세요','Guide done! Follow the ★ quests at the top','' ));}else sfx('ach');}
   if(S.quest<QUESTS.length){const q=QUESTS[S.quest];if(q[1](S)){S.money+=q[2];toast(T('과제 완료! +{0} 금화','Quest complete! +{0} gold',fmt(q[2])));sfx('ach');S.quest++;}}
   // 시장
   if(!MP.on||MP.host){const rec=PROJ.done[1]?0.02:0.01;PORTS.forEach((_,p)=>GOODS.forEach((_,g)=>{DEM[p][g]+=(1-DEM[p][g])*rec*dt;}));
@@ -1589,6 +1600,7 @@ function renderTitle(){const sv=loadSave();
 function showTitle(){$('title').hidden=false;$('modal').hidden=true;closePop();renderTitle();$('backBtn')&&($('backBtn').hidden=true);}
 ACT.newgame=(a,b)=>{if(b.dataset.arm){try{localStorage.removeItem(SAVEK());}catch(e){}startSingle(false);}else{b.dataset.arm=1;b.textContent=T('정말 지울까요? 한 번 더','Really delete? Press again');}};
 ACT.single=()=>startSingle(true);
+ACT.tutskip=()=>{if(S){S.tut=-1;updateHud();}};
 ACT.seaback=()=>{if(VIEW==='helm'){if(HEL.near&&HEL.near.k==='home')endHelm();else toast(T('우리 항구 가까이에서 내릴 수 있어요','Return near your harbor to dock'));}else if(VIEW==='visit')leaveVisit();else setView('land');};
 ACT.harvestAll=()=>{if(S){harvestAll();updateHud();if(MOD&&MOD.type==='menu')closeModal();}};
 ACT.menu=()=>{save();if(MP.on)mpLeave();S=null;applyStatic();showTitle();};
@@ -1765,7 +1777,7 @@ document.addEventListener('pointerdown',()=>{PTRDOWN=true;},true);document.addEv
 function renderSide(force){if(!S||!MOD||!LIVEW.includes(MOD.type)||$('modal').hidden)return;if(PTRDOWN&&!force)return;const f=MODS[MOD.type];if(!f)return;const html=f(MOD);if(!force&&html===MOD._sig)return;MOD._sig=html;renderModal();}
 ACT.go=a=>openDispatch(+a);ACT.rep=a=>{const s=S.ships.find(x=>x.id===+a);if(s){s.rep=!s.rep;s.repT=0;}renderSide(true);};ACT.cap=a=>{upCap(S.ships.find(s=>s.id===+a));updateHud();renderSide(true);};ACT.esc=a=>{upEsc(S.ships.find(s=>s.id===+a));updateHud();renderSide(true);};
 ACT.yes=a=>{answerOffer(a,true);renderSide(true);};ACT.no=a=>{answerOffer(a,false);renderSide(true);};ACT.trade=a=>openTrade(a);ACT.visit=a=>startVisit(a);ACT.ltreq=a=>{ltRequest(a);};
-function updateHud(){if(!S)return;$('hud').hidden=false;$('sMoney').textContent=fmt(S.money);
+function updateHud(){if(!S)return;$('hud').hidden=false;const tu=$('tut'),on=S.tut>=0&&S.tut<TUT.length&&!MP.on;if(on){const h=`<span class="tn">${S.tut+1}/${TUT.length}</span> ${T(TUT[S.tut][0],TUT[S.tut][0])} <button class="tb sm" data-act="tutskip">${T('건너뛰기','건너뛰기')}</button>`;if(tu.dataset.h!==h){tu.dataset.h=h;tu.innerHTML=h;}}tu.hidden=!on;$('sMoney').textContent=fmt(S.money);
   const rk=rankOf(S.stats.earned),nx=RANKS[rk+1],cur=RANKS[rk][0];$('sRank').textContent=tx(RANKS[rk][1]);$('sRankBar').style.width=(nx?Math.min(100,(S.stats.earned-cur)/(nx[0]-cur)*100):100)+'%';
   $('sSeason').textContent=tx(SEASONS[season()])+' · '+seasonLeft()+'s';const w=weather();$('sWx').textContent=w==='rain'?T('비','Rain'):w==='snow'?T('눈','Snow'):nightF()>.5?T('밤','Night'):T('맑음','Clear');
   const q=S.quest<QUESTS.length?QUESTS[S.quest]:null;$('sQuest').textContent=q?'★ '+tx(q[0])+' (+'+fmt(q[2])+')':'';
@@ -2067,7 +2079,7 @@ ACT.mpjoin=()=>{const c=$('mCode').value.trim().toUpperCase();if(c.length!==4){t
 function startSingle(cont){const sv=cont?loadSave():null;
   if(sv){S=sv.S;DEM=sv.DEM;EV=sv.EV||[];PROJ=sv.PROJ||freshProj();CO=sv.CO||freshCO();}else{S=fresh();DEM=newDem();EV=[];PROJ=freshProj();CO=freshCO();}
   if(MP.on)mpLeave();HEL.on=false;VIS.on=false;VIS.S=null;LT.on=false;LT.out=null;MP.ltIn=null;MP.guests={};MP.seenG={};MP.seenV={};VIEW='land';$('title').hidden=true;$('modal').hidden=true;applyStatic();markOnce();setView('land');fit();placePlayer();updateHud();syncAch();save();auCtx();musicStart();
-  if(!sv)openModal('help');
+  if(!sv)S.tut=0;
   else if(S.savedAt){const mins=Math.floor((Date.now()-S.savedAt)/60000);if(mins>=2)setTimeout(()=>toast(T('{0}분 만에 돌아왔어요! 그동안 배와 공방이 일했어요','Welcome back after {0} min! Ships and workshops kept working',mins)),600);}}
 window.addEventListener('resize',()=>fit());
 new ResizeObserver(()=>fit()).observe($('stage'));
