@@ -1125,9 +1125,8 @@ const PZ_MAX=3, PZ_DMG=[24,30,36,42], PZ_ATK_CD=[0.6,0.5,0.4,0.3], PZ_DASH_CD=[3
 const KAN_POISON_DPS=2, KAN_POISON_SEC=3, KAN_POISON_MAX=4, KAN_TRAP_SEC=10, KAN_TRAP_R=75, KAN_TRAP_MAX=2, KAN_ULT_SEC=5, KAN_ULT_CD_MULT=0.6;      // 칸: every dart adds a poison stack (2 damage a second each, up to 4, the 3 s timer restarts); the frog trap poisons and slows; the wings fly for 5 s and shoot three darts at once
 let poisonZones=[];
 function applyPoison(p, ownerId, ownerName, stacks, tMs){ if(!p || !p.alive) return; const tS=tMs/1000, cur=(p.poison && p.poison.until>tS)?p.poison.stacks:0; p.poison={until:tS+KAN_POISON_SEC, stacks:Math.min(KAN_POISON_MAX,cur+(stacks||1)), owner:ownerId, ownerName:ownerName}; }
-const PZ_GOLD_NEED=3, PZ_LUNGE_WIN=0.7, PZ_LUNGE_KB=1.3, PZ_LUNGE_STUN=0.2;       // 황금 약탈: 3 marks (kill/assist) make the next thrust twice as long; 돌격 찌르기: the first thrust within 0.7 s after a dash shoves harder and staggers       // 피사로: the ultimate stacks (up to 4): +15% damage and 12% shorter cooldowns (attack, skill, ultimate, dash) each; dying resets it
+const PZ_LUNGE_WIN=0.7, PZ_LUNGE_KB=1.3, PZ_LUNGE_STUN=0.2;       // 돌격 찌르기: the first thrust within 0.7 s after a dash shoves harder and staggers       // 피사로: the ultimate stacks (up to 4): +15% damage and 12% shorter cooldowns (attack, skill, ultimate, dash) each; dying resets it
 function pzStacks(p){ return (p && p.weapon==='pizarro' && p.pzStacks) ? Math.min(PZ_MAX, p.pzStacks) : 0; }
-function pzGoldAdd(p,tMs){ if(!p || p.weapon!=='pizarro' || !p.alive) return; p.pzGold=Math.min(PZ_GOLD_NEED,(p.pzGold||0)+1); pushFx('skill', p.x, p.y-84, tMs, {color:'#ffd34d', name:(p.pzGold>=PZ_GOLD_NEED?'황금 약탈 준비!':'황금 '+p.pzGold+'/'+PZ_GOLD_NEED)}); }
 function pzCdMult(p){ return 1-PZ_CD_STEP*pzStacks(p); }
 function dashCdOf(p){ if(p && p.weapon==='pizarro') return PZ_DASH_CD[pzStacks(p)]; const w=WEAPONS[p && p.weapon], base=(w && w.dashCd!==undefined) ? w.dashCd : DASH_CD; return base*((p && p.isZombie) ? ZOMBIE_DASH_CD_MULT : 1)*pzCdMult(p); }   // how long a player waits between dashes (a zombie: half of it)
 let TELEPORT_CD = 10;   // (a `let` only so the practice mode can shorten it)
@@ -3297,7 +3296,7 @@ function xmPickZone(prev){
   return {x:pl.x+pl.w/2, y:pl.y, w:Math.min(260,pl.w+40)};
 }
 function xmSetWeapon(p,w,t){
-  p.weapon=w; p.chips=0; p.vacuumStacks=0; p.pzStacks=0; p.pzGold=0; p.darkSub=null; p.darkArmUntil=0; p.flaming=false; p.flameHeldSince=null; p.ultOn=false; p.ultPending=null; p.batting=false; p.batUntil=0;
+  p.weapon=w; p.chips=0; p.vacuumStacks=0; p.pzStacks=0; p.pzMarkUntil=0; p.darkSub=null; p.darkArmUntil=0; p.flaming=false; p.flameHeldSince=null; p.ultOn=false; p.ultPending=null; p.batting=false; p.batUntil=0;
   p.lastUlt=t/1000; p.lastSkill=t/1000;
   if(p.alive) pushFx('spark', p.x, p.y-44, t, {ang:-Math.PI/2, color:'#ffd34d'});
 }
@@ -4720,7 +4719,7 @@ function shuffle(arr){ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.
 /* ===== the version of this file =====
    Players with different versions CAN meet and play together: the automatic matchmaking uses the same room names for every version (online-<mode>-<map>-<slot>), and nobody is refused because of a different build.
    The build is only sent along with the join message and the lobby (for information); the corner of the screen shows it. */
-const GAME_BUILD='build 2026-10-18-v314';
+const GAME_BUILD='build 2026-10-18-v315';
 const GAME_VERSION='0.8', GAME_VERSION_NAME='황금을 찾아서';   // 게임 버전 이름: versions.json의 title과 같게 (빌드마다 바꾸지 않음)
 const WEEKLY_EVENTS=[
   {id:'lowg',    name:'저중력 난투', desc:'몸이 둥실둥실, 중력이 약해진 난투', rules:{grav:0.6}},
@@ -5346,7 +5345,7 @@ function tnResetFighter(p){
   const sp=spawnPoint(); p.x=sp.x; p.y=sp.y; p.vx=0; p.vy=0; p.kbX=0; p.spin=0; p.spinAngle=0; p.hp=ruleHp(); p.alive=true; p.respawnAt=0;
   p.lastDash=clock; p.lastTeleport=clock; p.lastUlt=clock; p.lastSkill=clock; p.skillUses=0; p.ultUses=0; p.lastShot=0;
   p.buffs={}; p.barrier=null; p.buff=null; p.hasted=false; p.focusOn=false; p.ultPending=null; p.rushUntil=0; p.invisUntil=0; p.burn=null; p.poison=null; p.kanWingsUntil=0; p.batUntil=0; p.batting=false; p.slowUntil=0; p.slowed=false; p.stunUntil=0; p.stunned=false;
-  p.flameHeldSince=null; p.flameOverheatUntil=0; p.flaming=false; p.portalPair=null; p.portalCooldownUntil=0; p.vacuumStacks=0; p.chips=0; p.freeVolleys=0; p.teleportChannel=null; p.dmgBy={}; p.darkSub=null; p.darkArmUntil=0; p.darkLand=null;  p.pzStacks=0; p.pzGold=0;
+  p.flameHeldSince=null; p.flameOverheatUntil=0; p.flaming=false; p.portalPair=null; p.portalCooldownUntil=0; p.vacuumStacks=0; p.chips=0; p.freeVolleys=0; p.teleportChannel=null; p.dmgBy={}; p.darkSub=null; p.darkArmUntil=0; p.darkLand=null;  p.pzStacks=0; p.pzMarkUntil=0;
   pushFx('respawn', p.x, p.y-30, performance.now(), {color:p.color, ta:p.id});
 }
 
@@ -6473,7 +6472,7 @@ function practiceSetWeapon(wid){
   const me=players[myId]; if(!practiceMode || !me || !SELECTABLE_WEAPONS.includes(wid)) return;
   me.weapon=wid; me.pick=wid; me.weaponChosen=true;
   me.lastShot=-9999; me.lastUlt=-9999; me.lastSkill=-9999; me.buffs={}; me.barrier=null; me.hist=[]; me.stunUntil=0; me.stunned=false; me.cardSlowUntil=0; me.cardSlowed=false; swordEnd(me); me.ultPending=null; me.rushUntil=0; me.invisUntil=0; me.burn=null; me.batUntil=0; me.batting=false; me.batDamageDealt=0;
-  me.boomerangOut=false; me.boomerangReadyAt=0; me.flaming=false; me.pzStacks=0; me.pzGold=0; me.flameHeldSince=null; me.flameOverheatUntil=0; me.portalPair=null; me.vacuumStacks=0; me.darkSub=null; me.darkArmUntil=0; me.chips=0; me.freeVolleys=0; me.teleportChannel=null; me.gambleDouble=false;
+  me.boomerangOut=false; me.boomerangReadyAt=0; me.flaming=false; me.pzStacks=0; me.pzMarkUntil=0; me.flameHeldSince=null; me.flameOverheatUntil=0; me.portalPair=null; me.vacuumStacks=0; me.darkSub=null; me.darkArmUntil=0; me.chips=0; me.freeVolleys=0; me.teleportChannel=null; me.gambleDouble=false;
   if(me.flameShield){ const wi=walls.indexOf(me.flameShield); if(wi!==-1) walls.splice(wi,1); me.flameShield=null; }
   bullets=bullets.filter(b=>b.owner!==myId);
   practiceCfg.wid=wid; savePracticeCfg();
@@ -8801,7 +8800,7 @@ function migTakeover(){
     for(const k of ['x','y','vx','angle','grounded','hp','kills','deaths','alive','weapon','team','spinAngle']) if(s[k]!==undefined) p[k]=s[k];   // (the newest snapshot beats the older state)
     if(p.grounded) p.vy=0;
     if(!s.alive) p.respawnAt = (s.respawnIn===-1) ? Infinity : nowS+(s.respawnIn||0);
-    p.pzStacks=s.pz||0; p.pzGold=s.pg||0;
+    p.pzStacks=s.pz||0; p.pm=s.pm||0;
     if(Number.isFinite(s.dashCdRemain)) p.lastDash=nowS-(dashCdOf(p)-s.dashCdRemain);
     if(Number.isFinite(s.teleportCdRemain)) p.lastTeleport=nowS-(TELEPORT_CD-s.teleportCdRemain);
     if(Number.isFinite(s.ultCdRemain)) p.lastUlt=nowS-(ultCdOf(p)-s.ultCdRemain);
@@ -10633,7 +10632,7 @@ function skillCdOf(p){ return SKILL_CD*pzCdMult(p); }
 function ultCdOf(p){ return ULT_CD*pzCdMult(p); }
 const PRACTICE_SKILL_CD=2;
 const SKILLS={
-  pizarro:  {name:'하늘의 십자가', kind:'hit', desc:'조준한 곳에 십자가가 떨어져 맞은 적에게 20 피해와 1초 기절, 맞은 아군과 나는 체력 20 회복'},
+  pizarro:  {name:'하늘의 십자가', kind:'hit', desc:'조준한 곳에 십자가가 떨어져 맞은 적에게 20 피해와 1초 기절, 맞은 아군과 나는 체력 20 회복 (기세 단계마다 범위가 넓어지고 피해 20→25→30→35, 기절 1→1.1→1.3→1.5초) · 맞은 적에게는 3초 동안 표식이 남아 다음 창 공격이 8 피해를 더 줌'},
   kan:      {name:'독두꺼비 함정', kind:'hit', desc:'내 발밑에 독두꺼비 함정을 설치 (10초 지속, 최대 2개) · 들어온 적에게 독이 쌓이고 이동 속도가 느려짐'},
   pistol:   {name:'속사',        kind:'buff', desc:'1.8초 동안 연사 속도 2배'},
   smg:      {name:'연막탄',      kind:'hit',  desc:'주변 적을 2.5초 동안 둔화'},
@@ -10795,7 +10794,7 @@ function skillHitFront(p, tMs, dirX, o){   // the nearest enemy in a box in fron
   if(best) skillDamage(p, best, o.dmg, tMs, o);
   return best;
 }
-const PZ_CROSS_HALF=90, PZ_CROSS_DMG=20, PZ_CROSS_STUN=1, PZ_CROSS_HEAL=20, PZ_CROSS_DUR=0.7;   // 피사로's skill: the cross from the sky
+const PZ_CROSS_HALF=[90,100,110,125], PZ_CROSS_DMG=[20,25,30,35], PZ_CROSS_STUN=[1,1.1,1.3,1.5], PZ_CROSS_HEAL=20, PZ_CROSS_DUR=0.7, PZ_MARK_SEC=3, PZ_MARK_DMG=8;   // 피사로's skill: the cross from the sky, bigger / harder / longer stun with every stage of his ultimate; whoever it hits is marked for 3 s and the next thrust on them hurts 8 more
 const SKILL_IMPL={
   kan(p,tSec,tMs){
     const mine=poisonZones.filter(z=>z.owner===p.id);
@@ -10805,16 +10804,16 @@ const SKILL_IMPL={
     return true;
   },
   pizarro(p,tSec,tMs,ax,ay){
-    const spot=wizardCircleSpot(p, ax, ay), sx=spot.x, iy=spot.y;
-    pushFx('crossfall', sx, iy, tMs, {dur:PZ_CROSS_DUR});
+    const spot=wizardCircleSpot(p, ax, ay), sx=spot.x, iy=spot.y, st=pzStacks(p), half=PZ_CROSS_HALF[st], cdmg=PZ_CROSS_DMG[st], cstun=PZ_CROSS_STUN[st];
+    pushFx('crossfall', sx, iy, tMs, {dur:PZ_CROSS_DUR, hw:half});
     hostTimers.push({ta:fxActor, at:tSec+PZ_CROSS_DUR, fn:(tt)=>{
       for(const id in players){
         const t=players[id]; if(!t.alive || t.x===undefined || t.darkSub) continue;
-        if(Math.abs(t.x-sx)>PZ_CROSS_HALF || t.y<iy-340 || t.y>iy+60) continue;
+        if(Math.abs(t.x-sx)>half || t.y<iy-340 || t.y>iy+60) continue;
         if(id===p.id || isAlly(p,t)){ const before=t.hp; t.hp=Math.min(maxHpFor(t), t.hp+PZ_CROSS_HEAL); pushFx('heal', t.x, t.y-70, tt, {v:Math.round(t.hp-before)}); }
-        else if(!t.swordCharge){ skillDamage(p, t, PZ_CROSS_DMG, tt, {stun:PZ_CROSS_STUN}); }
+        else if(!t.swordCharge){ skillDamage(p, t, cdmg, tt, {stun:cstun}); if(t.hp>0){ t.pzMarkUntil=tt/1000+PZ_MARK_SEC; t.pzMarkBy=p.id; } }
       }
-      pushFx('crosshit', sx, iy, tt, {});
+      pushFx('crosshit', sx, iy, tt, {hw:half});
     }});
   },
   pistol(p,tSec){ skillSetBuff(p,'rapid',1.8,tSec); return true; },
@@ -10969,7 +10968,7 @@ function abilityPreviewOps(action, p, mx, my){
       case 'lightsaber': { const d=skillAimDir(p,mx); ops.push({t:'rect', x:d>0?p.x:p.x-120, y:p.y-90, w:120, h:90}); break; }
       case 'kurus': { const d=skillAimDir(p,mx); ops.push({t:'rect', x:d>0?p.x:p.x-DARK_SWORD_RANGE, y:p.y-90, w:DARK_SWORD_RANGE, h:90}); break; }
       case 'horemheb': ops.push(ray(ang, 740)); break;
-      case 'pizarro': { const sp=wizardCircleSpot(p, mx, my); ops.push({t:'rect', x:sp.x-PZ_CROSS_HALF, y:sp.y-340, w:PZ_CROSS_HALF*2, h:400}); ops.push({t:'ellipse', x:sp.x, y:sp.y, rx:PZ_CROSS_HALF, ry:14}); break; }
+      case 'pizarro': { const sp=wizardCircleSpot(p, mx, my), hf=PZ_CROSS_HALF[pzStacks(p)]; ops.push({t:'rect', x:sp.x-hf, y:sp.y-340, w:hf*2, h:400}); ops.push({t:'ellipse', x:sp.x, y:sp.y, rx:hf, ry:14}); break; }
       case 'shuriken': { const a=Math.atan2(my-cy, mx-p.x), best=skillMoveSpot(p, p.x+Math.cos(a)*230, p.y+Math.sin(a)*230); ops.push({t:'line', x1:p.x, y1:p.y-30, x2:best.x, y2:best.y-30, dash:true}); ops.push(mark(best.x, best.y-30, 20)); break; }
       case 'dagger': { const t=nearestEnemyOf(p); if(t && Math.hypot(t.x-p.x,t.y-p.y)<=330){ ops.push({t:'line', x1:cx, y1:cy, x2:t.x, y2:t.y-30, dash:true}); ops.push(mark(t.x, t.y-30, 40)); } break; }
       case 'magiccard': ops.push(ray(ang, 820)); break;
@@ -11138,10 +11137,8 @@ function meleeAttack(p, angle, w, tMs){
   if(p.wizBuff) dmg*=WIZ_DMG_MULT;
   if(p.isZombie) dmg*=ZOMBIE_DMG_MULT;
   let hitAny=false;
-  const goldLong = (w.id==='pizarro' && (p.pzGold||0)>=PZ_GOLD_NEED);                                   // 황금 약탈: this thrust reaches twice as far
   const lunge = (w.id==='pizarro' && p.lastDash!==undefined && tMs/1000-p.lastDash<=PZ_LUNGE_WIN && p.pzLungeDash!==p.lastDash);     // 돌격 찌르기: the first thrust right after a dash
-  const reachR = w.range*(goldLong?2:1);
-  if(goldLong) p.pzGold=0;
+  const reachR = w.range;
   if(lunge) p.pzLungeDash=p.lastDash;
   if(w.deflectSec){ p.deflectUntil=tMs/1000+w.deflectSec; p.deflectGot=false; }      // the lightsaber: for a moment after the swing everything shot at its owner is knocked back at the shooter
   for(const id in players){
@@ -11156,10 +11153,11 @@ function meleeAttack(p, angle, w, tMs){
         saberDeflectWon(target);
         continue;
       }
-      const dealt = absorbIntoShield(target, dmg);
+      let dmgT=dmg; if(w.id==='pizarro' && target.pzMarkUntil>tMs/1000 && target.pzMarkBy===p.id){ dmgT+=PZ_MARK_DMG; target.pzMarkUntil=0; pushFx('spark', target.x, cy-20, tMs, {ang:-Math.PI/2, color:'#ffd34d'}); }      // the cross's mark: this thrust hurts more, and the mark is used up
+      const dealt = absorbIntoShield(target, dmgT);
       target.hp -= dealt; markHit(target, p.id, tMs, dealt);
-      pushFx('hit', target.x, cy, tMs, {color:p.color, ang:Math.atan2(cy-(p.y-PLAYER_H/2), target.x-p.x), v:dmg, el:dmgTypeOf(p.weapon)});
-      applyHitKnockback(target, target.x-p.x, cy-(p.y-PLAYER_H/2), dmg, homerun?7.5:(w.kbMult? w.kbMult*(lunge?PZ_LUNGE_KB:1) : undefined));
+      pushFx('hit', target.x, cy, tMs, {color:p.color, ang:Math.atan2(cy-(p.y-PLAYER_H/2), target.x-p.x), v:dmgT, el:dmgTypeOf(p.weapon)});
+      applyHitKnockback(target, target.x-p.x, cy-(p.y-PLAYER_H/2), dmgT, homerun?7.5:(w.kbMult? w.kbMult*(lunge?PZ_LUNGE_KB:1) : undefined));
       if(lunge && target.hp>0) stunPlayer(target, PZ_LUNGE_STUN, tMs);
       hitAny=true;
       if(w.lifesteal){
@@ -11175,7 +11173,7 @@ function meleeAttack(p, angle, w, tMs){
   if(homerun && hitAny) p.ultPending=null;
   const ax=Math.cos(angle), ay=Math.sin(angle);
   const swingLife=Math.min(0.28, Math.max(0.12, w.cd));
-  bullets.push({x:p.x+ax*30, y:(p.y-30)+ay*30, vx:0, vy:0, life:swingLife, life0:swingLife, color:p.color, dmgless:true, wid:w.id, swingAngle:angle, ult:goldLong||undefined, reach:goldLong?reachR:undefined});
+  bullets.push({x:p.x+ax*30, y:(p.y-30)+ay*30, vx:0, vy:0, life:swingLife, life0:swingLife, color:p.color, dmgless:true, wid:w.id, swingAngle:angle});
 }
 function absorbIntoShield(target, dmg){
   if(!target.flameShield || dmg<=0) return dmg;
@@ -13001,7 +12999,7 @@ function hostTick(dt,t){
         fireCdRemain: p.fireCdRemain||0,
         ultCdRemain: p.darkSub ? 0 : Math.max(0, ultCdOf(p) - (t/1000-(p.lastUlt===undefined?-9999:p.lastUlt))), darkSub:p.darkSub?1:0, darkArm:(p.darkArmUntil>t/1000)?1:0,
         skillCdRemain: Math.max(0, skillCdOf(p) - (t/1000-(p.lastSkill===undefined?-9999:p.lastSkill))), buff:p.buff||null, skillUses:p.skillUses||0, ultUses:p.ultUses||0,
-        pz:p.pzStacks||0, pg:p.pzGold||0, ultOn:!!p.ultOn, invis:!!p.invis, burning:!!p.burning, poisoned:!!p.poisoned, kw:(p.kanWingsUntil>t/1000)?1:0, slowed:!!p.slowed, stunned:!!p.stunned, cardSlowed:!!p.cardSlowed, bladeSpin:!!p.bladeSpin, swordCharging:!!p.swordCharge, cannonFlying:!!p.cannonFly, chips:p.chips||0, cannonAng:p.cannonFly?Math.round(Math.atan2(p.vy||0,p.cannonFly.vx)*100)/100:0, totalDamageDealt:p.totalDamageDealt||0, channeling:!!p.teleportChannel, flaming:!!p.flaming, portalPair:p.portalPair||null, batting:!!p.batting, vacuumStacks:p.vacuumStacks||0, isZombie:!!p.isZombie, parkourItem:!!p.parkourItem, hsHiding:!!p.hsHiding, hsDisguiseW:p.hsDisguiseW, hsDisguiseH:p.hsDisguiseH, isSeeker:!!p.isSeeker,
+        pz:p.pzStacks||0, pm:(p.pzMarkUntil>t/1000)?1:0, ultOn:!!p.ultOn, invis:!!p.invis, burning:!!p.burning, poisoned:!!p.poisoned, kw:(p.kanWingsUntil>t/1000)?1:0, slowed:!!p.slowed, stunned:!!p.stunned, cardSlowed:!!p.cardSlowed, bladeSpin:!!p.bladeSpin, swordCharging:!!p.swordCharge, cannonFlying:!!p.cannonFly, chips:p.chips||0, cannonAng:p.cannonFly?Math.round(Math.atan2(p.vy||0,p.cannonFly.vx)*100)/100:0, totalDamageDealt:p.totalDamageDealt||0, channeling:!!p.teleportChannel, flaming:!!p.flaming, portalPair:p.portalPair||null, batting:!!p.batting, vacuumStacks:p.vacuumStacks||0, isZombie:!!p.isZombie, parkourItem:!!p.parkourItem, hsHiding:!!p.hsHiding, hsDisguiseW:p.hsDisguiseW, hsDisguiseH:p.hsDisguiseH, isSeeker:!!p.isSeeker,
         isHost:p.isHost,clan:p.clan||'',joinOrder:p.joinOrder,weapon:p.weapon,team:p.team,spinAngle:p.spinAngle,cos:p.cos,isBoss:p.isBoss?1:0,isMinion:p.isMinion?1:0,bt:p.bt,bossMaxHp:p.bossMaxHp,emIdx:p.emIdx,emRem:(p.emUntil?Math.max(0,Math.round((p.emUntil-t/1000)*20)/20):0)})),
       cq: (gameMode==='conquest' && cq) ? {s:cq.scores, h:cq.holder, c:cq.contested} : undefined,
       xm: (xm && xmV) ? xmV : undefined,
@@ -13050,12 +13048,11 @@ function broadcastKillEvent(victim, killerName, killerX, killerY, killerColor, t
   attachKillScene(killerId||null, victim.id, t);
 }
 function handleDeath(p, killer, t, killerNameFallback){
-  p.pzStacks=0; p.pzGold=0;                                   // 피사로 loses the stacks of his ultimate when he dies
+  p.pzStacks=0; p.pzMarkUntil=0;                                   // 피사로 loses the stacks of his ultimate when he dies
   p.alive=false; p.deaths++; p.hp=0;
   if(gameMode==='zombie' && killer && killer.isZombie) p.diedToZombie=true;
   p.vx=0; p.vy=0; p.kbX=0; p.spin=0; p.spinAngle=0; // stop the corpse instead of freezing mid-knockback/mid-spin
   if(killer) killer.kills++;
-  if(killer && killer.id!==p.id && !isAlly(killer,p)) pzGoldAdd(killer, t);      // 피사로: a gold mark for a kill
   if(p.ai && killer && killer.id!==p.id) p.ai.grudge=killer.id;                       // (only the avenger uses it)
   if(killer && killer.ai && killer.ai.grudge===p.id) killer.ai.grudge=null;         // revenge taken
   const killerName = killer ? killer.name : (killerNameFallback || '지형');
@@ -13082,7 +13079,7 @@ function handleDeath(p, killer, t, killerNameFallback){
     const nowS=t/1000;
     for(const aid in (p.dmgBy||{})){
       if(aid===killer.id || aid===p.id || !players[aid]) continue;
-      if(nowS-p.dmgBy[aid]<=ASSIST_WINDOW){ players[aid].assistN=(players[aid].assistN||0)+1; awardGold(aid, ASSIST_GOLD, '어시스트'); pzGoldAdd(players[aid], t); }
+      if(nowS-p.dmgBy[aid]<=ASSIST_WINDOW){ players[aid].assistN=(players[aid].assistN||0)+1; awardGold(aid, ASSIST_GOLD, '어시스트'); }
     }
   }
   p.dmgBy={};
@@ -13671,7 +13668,7 @@ function finishDuelRepick(){
     if(gameMode!=='tournament'){ p.duelUsed=(p.duelUsed||[]); if(p.weapon && !p.duelUsed.includes(p.weapon)) p.duelUsed.push(p.weapon); }
     p.lastDash=clock; p.lastTeleport=clock; p.lastUlt=clock; p.lastSkill=clock; p.skillUses=0; p.ultUses=0; p.lastShot=0;
     p.buffs={}; p.barrier=null; p.buff=null; p.hasted=false; p.focusOn=false; p.ultPending=null; p.rushUntil=0; p.invisUntil=0; p.burn=null; p.poison=null; p.kanWingsUntil=0; p.batUntil=0; p.batting=false; p.slowUntil=0; p.slowed=false;
-    p.flameHeldSince=null; p.flameOverheatUntil=0; p.flaming=false; p.portalPair=null; p.portalCooldownUntil=0; p.vacuumStacks=0; p.pzStacks=0; p.pzGold=0; p.chips=0; p.freeVolleys=0; p.darkSub=null; p.darkArmUntil=0; p.darkLand=null;
+    p.flameHeldSince=null; p.flameOverheatUntil=0; p.flaming=false; p.portalPair=null; p.portalCooldownUntil=0; p.vacuumStacks=0; p.pzStacks=0; p.pzMarkUntil=0; p.chips=0; p.freeVolleys=0; p.darkSub=null; p.darkArmUntil=0; p.darkLand=null;
   }
   }catch(e){ recordDiagError('duel-finish', e); console.error('[duel] re-pick finish:', e); }
   duelPick=false;
@@ -14957,12 +14954,12 @@ function spawnFx(e){
       burst(x,y+10,12,{a0:0,a1:6.28,s0:50,s1:150,l0:.3,l1:.6,z0:2,z1:4,colors:['#ffe066','#ffffff'],grav:0,drag:2.2,shape:'dot',add:true});
       break;
     case 'crossfall':
-      addP({x:x,y:y,life:e.dur||0.7,color:'#fff0b0',shape:'bigcross',add:false});
-      addP({x:x,y:y,life:e.dur||0.7,color:'#ffd34d',shape:'warn'});
+      addP({x:x,y:y,life:e.dur||0.7,color:'#fff0b0',shape:'bigcross',add:false,sc:(e.hw||90)/90});
+      addP({x:x,y:y,life:e.dur||0.7,color:'#ffd34d',shape:'warn',hw:e.hw});
       break;
     case 'crosshit':
       addP({x:x,y:y,life:.28,color:'#ffffff',shape:'flash',size:150});
-      addP({x:x,y:y,life:.5,color:'#ffe08a',shape:'ring',r0:8,r1:PZ_CROSS_HALF*2,lw:8});
+      addP({x:x,y:y,life:.5,color:'#ffe08a',shape:'ring',r0:8,r1:(e.hw||PZ_CROSS_HALF[0])*2,lw:8});
       burst(x,y,22,{a0:-3.3,a1:0.15,s0:120,s1:520,l0:.4,l1:.9,z0:2,z1:4,colors:['#ffffff','#ffd34d','#fff0b0'],grav:700,drag:1.2,shape:'streak'});
       shakeFrom(x,y,10,600);
       break;
@@ -15361,9 +15358,9 @@ function drawParticles(){
         case 'text': ctx.globalAlpha=Math.min(1,a*2.2); ctx.font='800 '+Math.round(q.size)+'px Rajdhani'; ctx.textAlign='center';
           ctx.lineWidth=4; ctx.strokeStyle='rgba(0,0,0,0.75)'; ctx.strokeText(q.text,q.x,q.y); ctx.fillStyle=q.color; ctx.fillText(q.text,q.x,q.y); break;
         case 'warn': { const blink=0.35+0.5*Math.abs(Math.sin(t*16)); ctx.globalAlpha=blink; ctx.strokeStyle=q.color; ctx.lineWidth=3;
-          ctx.beginPath(); ctx.arc(q.x,q.y,34,0,7); ctx.stroke(); ctx.beginPath(); ctx.arc(q.x,q.y,16,0,7); ctx.stroke();
+          ctx.beginPath(); ctx.arc(q.x,q.y,34,0,7); ctx.stroke(); ctx.beginPath(); ctx.arc(q.x,q.y,16,0,7); ctx.stroke(); if(q.hw){ ctx.beginPath(); ctx.ellipse(q.x,q.y,q.hw,14,0,0,7); ctx.stroke(); }
           ctx.setLineDash([8,10]); ctx.beginPath(); ctx.moveTo(q.x,q.y-460); ctx.lineTo(q.x,q.y); ctx.stroke(); ctx.setLineDash([]); break; }
-        case 'bigcross': { const ease=Math.pow(t,1.6), topY=q.y-620*(1-ease); ctx.save(); ctx.translate(q.x,topY); ctx.globalAlpha=Math.min(1,0.3+t*1.4);
+        case 'bigcross': { const ease=Math.pow(t,1.6), topY=q.y-620*(1-ease); ctx.save(); ctx.translate(q.x,topY); if(q.sc) ctx.scale(q.sc,q.sc); ctx.globalAlpha=Math.min(1,0.3+t*1.4);
           ctx.fillStyle='#e9d9a3'; ctx.strokeStyle='#8a6a2b'; ctx.lineWidth=3; ctx.fillRect(-9,-150,18,150); ctx.strokeRect(-9,-150,18,150); ctx.fillRect(-42,-112,84,18); ctx.strokeRect(-42,-112,84,18);
           ctx.globalCompositeOperation='lighter'; ctx.fillStyle='rgba(255,224,138,0.28)'; ctx.beginPath(); ctx.arc(0,-100,90,0,7); ctx.fill(); ctx.restore(); break; }
         case 'bigsword': { const ease=Math.pow(t,1.6); const tipY=q.y-620*(1-ease); ctx.save(); ctx.translate(q.x,tipY); ctx.globalAlpha=Math.min(1,0.25+t*1.4);
@@ -15589,7 +15586,7 @@ function drawBoss(p){
 function mixHex(a,b,t){ const pa=/^#([0-9a-f]{6})$/i.exec(a||''), pb=/^#([0-9a-f]{6})$/i.exec(b||''); if(!pa||!pb) return a; const A=parseInt(pa[1],16), B=parseInt(pb[1],16); let o=0; for(let k=16;k>=0;k-=8){ const x=(A>>k)&255, y=(B>>k)&255; o=(o<<8)|Math.round(x+(y-x)*t); } return '#'+('000000'+o.toString(16)).slice(-6); }
 let _pcg=0, _pcgAt=0; function playerCountForGlow(){ const n=performance.now(); if(n-_pcgAt>1000){ _pcgAt=n; _pcg=Object.keys(players).length; } return _pcg; }
 function drawPizarroAura(c, p, now){
-  const n=Math.min(PZ_MAX,p.pzStacks||0), g=Math.min(PZ_GOLD_NEED,p.pzGold||0);
+  const n=Math.min(PZ_MAX,p.pzStacks||0);
   if(n>0){
     const pulse=0.85+0.15*Math.sin(now/180), r=24+n*9;
     c.save(); c.globalCompositeOperation='lighter';
@@ -15598,7 +15595,12 @@ function drawPizarroAura(c, p, now){
     if(n>=PZ_MAX){ for(let i=0;i<5;i++){ const fx=(i-2)*8+Math.sin(now/90+i*2)*1.5, fh=10+((now/60+i*7)%9); c.fillStyle='rgba(255,'+(150+i*18)+',60,0.75)'; c.beginPath(); c.moveTo(fx-3,0); c.quadraticCurveTo(fx,-fh*0.6,fx+Math.sin(now/70+i)*2,-fh); c.quadraticCurveTo(fx+1,-fh*0.4,fx+3,0); c.closePath(); c.fill(); } }
     c.restore();
   }
-  if(g>0){ for(let i=0;i<g;i++){ const a=now/500+i*2.094, x=Math.cos(a)*18, y=-120+Math.sin(a)*4; c.fillStyle='#ffd34d'; c.strokeStyle='#8a5a00'; c.lineWidth=1; c.beginPath(); c.arc(x,y,4,0,7); c.fill(); c.stroke(); } }
+}
+function drawPizarroMark(c, now){        // the cross's mark: a small golden cross floating over the head
+  const y=-92+Math.sin(now/180)*2.5;
+  c.save(); c.translate(0,y); c.globalAlpha=0.9; c.fillStyle='#ffd34d'; c.strokeStyle='#8a5a00'; c.lineWidth=1.2;
+  c.fillRect(-2.2,-9,4.4,18); c.strokeRect(-2.2,-9,4.4,18); c.fillRect(-7,-4.5,14,4.2); c.strokeRect(-7,-4.5,14,4.2);
+  c.restore();
 }
 function drawPizarroPlume(c, hx, hy, r, n){
   if(!n) return;
@@ -15634,6 +15636,7 @@ function drawStickman(p){
   const luxLv=(skinId && COSMETICS[skinId] && COSMETICS[skinId].lux) || 0, luxNow=performance.now(), luxSeed=((p.id||'').length*7+((p.id||'x').charCodeAt(0)||0))%97;
   if(luxLv && p.alive!==false) drawSkinLux(ctx, luxLv, skinTint, luxNow, luxSeed, 'back');
   if(p.kw && p.alive!==false) drawKanWings(ctx, luxNow);
+  if(p.pm && p.alive!==false) drawPizarroMark(ctx, luxNow);
   if(p.weapon==='pizarro' && p.alive!==false) drawPizarroAura(ctx, p, luxNow);      // 기세: a golden glow that grows with every stack, flames at the feet at the 4th, gold marks over the head      // a tier skin: the aura, the sunburst and the rings behind the body
   if(p.invis) ctx.globalAlpha=0.35;
   if(p.cannonFlying && p.alive){            // the pirate rides a cannon: a barrel under the feet, pointing along the flight
