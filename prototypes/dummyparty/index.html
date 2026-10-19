@@ -3,6 +3,340 @@
 <head>
 <meta charset="UTF-8">
 <script src="https://frenchfries777mc.github.io/games/ff-lang.js"></script>
+<script>
+/* 화면 번역 (한국어 원문은 그대로 두고, 다른 언어일 때만 화면에 보이는 글자를 바꿔요).
+   언어: 사이트 공용 설정(ff-lang.js, localStorage 'arenaClashLang')을 따르고, 없으면 브라우저 언어.
+   DOM 글자·placeholder·confirm, 캔버스 fillText/strokeText/measureText를 바꿔 끼워요. 게임 로직 값(이름, 메시지 키)은 건드리지 않아요.
+   순서: [en, es, fr, de, ja] */
+(function () {
+  var LANGS = ['ko', 'en', 'es', 'fr', 'de', 'ja'], lang = null;
+  try { if (window.FFLang) lang = FFLang.get(); } catch (e) { }
+  if (LANGS.indexOf(lang) < 0) { try { lang = localStorage.getItem('arenaClashLang'); } catch (e) { } }
+  if (LANGS.indexOf(lang) < 0) {
+    lang = 'en';
+    try { var c = (navigator.languages && navigator.languages.length) ? navigator.languages : [navigator.language || '']; for (var i = 0; i < c.length; i++) { var b = String(c[i] || '').toLowerCase().split('-')[0]; if (LANGS.indexOf(b) >= 0) { lang = b; break; } } } catch (e) { }
+  }
+  window.DP_LANG = lang;
+  if (lang === 'ko') return;
+  var LI = LANGS.indexOf(lang) - 1;
+  document.documentElement.lang = lang;
+  var D = {
+    /* 첫 화면 */
+    '하얀 마네킹들의 엉망진창 미니게임 대결': ['A chaotic minigame showdown of white mannequins', 'Un caótico duelo de minijuegos entre maniquíes blancos', 'Un duel de mini-jeux complètement fou entre mannequins blancs', 'Ein chaotisches Minispiel-Duell weißer Schaufensterpuppen', '白いマネキンたちのめちゃくちゃミニゲーム対決'],
+    '내 이름': ['My name', 'Mi nombre', 'Mon nom', 'Mein Name', '自分の名前'],
+    '이름 (12자까지)': ['Name (up to 12 characters)', 'Nombre (hasta 12 caracteres)', 'Nom (12 caractères max)', 'Name (bis zu 12 Zeichen)', '名前（12文字まで）'],
+    '방 만들기': ['Create room', 'Crear sala', 'Créer une salle', 'Raum erstellen', '部屋を作る'],
+    '봇이랑 하기': ['Play with bots', 'Jugar con bots', 'Jouer avec des bots', 'Mit Bots spielen', 'ボットと遊ぶ'],
+    '친구 방에 들어가기': ["Join a friend's room", 'Entrar en la sala de un amigo', "Rejoindre la salle d'un ami", 'Raum eines Freundes beitreten', '友だちの部屋に入る'],
+    '방 코드': ['Room code', 'Código de sala', 'Code de salle', 'Raumcode', 'ルームコード'],
+    '들어가기': ['Join', 'Entrar', 'Rejoindre', 'Beitreten', '入る'],
+    '패치노트': ['Patch notes', 'Notas del parche', 'Notes de mise à jour', 'Patchnotes', 'パッチノート'],
+    '꾸미기와 이모트': ['Cosmetics and emotes', 'Accesorios y emotes', 'Accessoires et emotes', 'Kosmetik und Emotes', '着せ替えとエモート'],
+    '화면 꾸미기': ['Visual makeover', 'Lavado de cara visual', 'Refonte visuelle', 'Optisches Facelift', '見た目のリニューアル'],
+    '첫 시험판': ['First test build', 'Primera versión de prueba', "Première version d'essai", 'Erste Testversion', '最初の試作版'],
+    'Frenchfries777 계정 로그인 추가 (로그인하면 닉네임을 이름으로 사용)': ['Added Frenchfries777 account login (your nickname is used as your name when logged in)', 'Inicio de sesión con cuenta de Frenchfries777 (al iniciar sesión se usa tu apodo como nombre)', 'Connexion avec un compte Frenchfries777 (une fois connecté, ton pseudo sert de nom)', 'Anmeldung mit Frenchfries777-Konto hinzugefügt (angemeldet wird dein Spitzname als Name verwendet)', 'Frenchfries777アカウントのログインを追加（ログインするとニックネームを名前として使用）'],
+    '꾸미기: 모자 9종, 안경 5종 (라운드에서 1등을 할수록 열림)': ['Cosmetics: 9 hats and 5 glasses (unlocked by winning rounds)', 'Accesorios: 9 sombreros y 5 gafas (se desbloquean ganando rondas)', 'Accessoires : 9 chapeaux et 5 lunettes (débloqués en gagnant des manches)', 'Kosmetik: 9 Hüte und 5 Brillen (werden durch Rundensiege freigeschaltet)', '着せ替え：帽子9種、メガネ5種（ラウンドで1位を取るほど解放）'],
+    '이모트 5종 추가 (키보드 1~5 또는 화면 아래 버튼)': ['Added 5 emotes (keys 1–5 or the buttons at the bottom of the screen)', '5 emotes nuevos (teclas 1–5 o los botones de abajo)', '5 emotes ajoutées (touches 1 à 5 ou boutons en bas de l\'écran)', '5 Emotes hinzugefügt (Tasten 1–5 oder Knöpfe unten am Bildschirm)', 'エモート5種を追加（キーボード1〜5または画面下のボタン）'],
+    '꼴찌 부스터: 점수가 가장 낮은 사람은 다음 판에서 더 빨리 움직임': ['Last-place boost: the player with the lowest score moves faster in the next game', 'Impulso para el último: quien tenga menos puntos se mueve más rápido en la siguiente partida', 'Coup de pouce au dernier : le joueur avec le moins de points va plus vite à la partie suivante', 'Letzter-Platz-Boost: Wer die wenigsten Punkte hat, bewegt sich im nächsten Spiel schneller', '最下位ブースト：スコアが一番低い人は次のゲームで速く動ける'],
+    '첫 화면에 전적 표시 (우승, 라운드 1등, 경기 수)': ['Your record on the home screen (match wins, round wins, matches played)', 'Tu historial en la pantalla de inicio (victorias, rondas ganadas, partidas jugadas)', "Ton palmarès sur l'écran d'accueil (victoires, manches gagnées, parties jouées)", 'Deine Bilanz auf dem Startbildschirm (Siege, Rundensiege, gespielte Matches)', 'ホーム画面に戦績を表示（優勝、ラウンド1位、試合数）'],
+    '무너지는 발판 칸 수 대폭 증가 (19×10)와 용암 동굴 맵': ['Crumbling Tiles now has far more tiles (19×10) and a lava cave map', 'Baldosas que se rompen ahora tiene muchas más baldosas (19×10) y un mapa de cueva de lava', 'Dalles effondrables : bien plus de dalles (19×10) et une carte de grotte de lave', 'Bröckelnde Platten: viel mehr Platten (19×10) und eine Lavahöhlen-Karte', '崩れる足場のマス数を大幅に増加（19×10）、溶岩洞窟マップ'],
+    '10개 맵 전부 새로 그림 (관중석, 야자수 섬, 링, 정원 미로, 서커스, 우노 테이블 등)': ['All 10 maps redrawn (stands, palm island, ring, garden maze, circus, Uno table and more)', 'Los 10 mapas redibujados (gradas, isla con palmeras, ring, laberinto de jardín, circo, mesa de Uno y más)', 'Les 10 cartes redessinées (tribunes, île à palmiers, ring, labyrinthe-jardin, cirque, table de Uno, etc.)', 'Alle 10 Karten neu gezeichnet (Tribünen, Palmeninsel, Ring, Gartenlabyrinth, Zirkus, Uno-Tisch u. a.)', '10マップすべてを描き直し（観客席、ヤシの島、リング、庭の迷路、サーカス、UNOテーブルなど）'],
+    '글자 대신 아이콘·말풍선·이펙트로 표현 (무기, 아이템, 카드 효과, 시작 안내)': ['Icons, speech bubbles and effects instead of text (weapons, items, card effects, start tips)', 'Iconos, bocadillos y efectos en lugar de texto (armas, objetos, efectos de cartas, consejos de inicio)', 'Icônes, bulles et effets à la place du texte (armes, objets, effets de cartes, conseils de départ)', 'Symbole, Sprechblasen und Effekte statt Text (Waffen, Gegenstände, Karteneffekte, Starthinweise)', '文字の代わりにアイコン・吹き出し・エフェクトで表現（武器、アイテム、カード効果、開始案内）'],
+    '타격·폭발·물보라 효과와 화면 흔들림 추가': ['Added hit, explosion and splash effects and screen shake', 'Efectos de golpe, explosión y salpicadura, y temblor de pantalla', "Effets de coup, d'explosion et d'éclaboussure, et tremblement de l'écran", 'Treffer-, Explosions- und Spritzeffekte sowie Bildschirmwackeln hinzugefügt', '打撃・爆発・水しぶきのエフェクトと画面の揺れを追加'],
+    '마네킹 미니게임 10개 추가 (장애물 달리기, 섬 밀치기, 싸우기, 병맛 미로, 체스 대난투, 폭탄 돌리기, 병맛 우노, 쇼윈도 얼음땡, 무너지는 발판, 컨베이어 서바이벌)': ['10 mannequin minigames (Obstacle Race, Island Shove, Brawl, Wacky Maze, Chess Brawl, Hot Bomb, Wacky Uno, Shop Window Freeze, Crumbling Tiles, Conveyor Survival)', '10 minijuegos de maniquíes (Carrera de obstáculos, Empujones en la isla, Pelea, Laberinto absurdo, Ajedrez a golpes, Bomba caliente, Uno absurdo, Congelados en el escaparate, Baldosas que se rompen, Supervivencia en la cinta)', '10 mini-jeux de mannequins (Course d\'obstacles, Bousculade sur l\'île, Bagarre, Labyrinthe loufoque, Échecs-bagarre, Bombe à refiler, Uno loufoque, Statues en vitrine, Dalles effondrables, Survie sur tapis roulant)', '10 Puppen-Minispiele (Hindernislauf, Inselschubsen, Prügelei, Verrücktes Labyrinth, Schach-Keilerei, Heiße Bombe, Verrücktes Uno, Schaufenster-Stopp, Bröckelnde Platten, Fließband-Überleben)', 'マネキンのミニゲーム10種を追加（障害物レース、島の押し出し、乱闘、へんてこ迷路、チェス大乱闘、爆弾回し、へんてこUNO、ショーウィンドウだるまさん、崩れる足場、コンベアサバイバル）'],
+    '방 코드로 최대 8명 멀티플레이, 빈자리는 봇으로 채우기': ['Up to 8-player multiplayer with a room code; bots fill empty seats', 'Multijugador de hasta 8 con código de sala; los bots ocupan los huecos', "Multijoueur jusqu'à 8 avec un code de salle ; les bots remplissent les places vides", 'Mehrspieler für bis zu 8 per Raumcode; Bots füllen freie Plätze', 'ルームコードで最大8人マルチプレイ、空き席はボットが埋める'],
+    '판마다 10개 중 5개를 무작위로 골라 점수를 합산': ['Each match picks 5 of the 10 at random and adds up the scores', 'Cada partida elige al azar 5 de los 10 y suma los puntos', 'Chaque partie tire 5 jeux sur 10 au hasard et additionne les points', 'Jedes Match wählt zufällig 5 der 10 aus und zählt die Punkte zusammen', '毎回10種から5種をランダムに選び、スコアを合計'],
+    'PC 키보드와 휴대폰 터치 조작 지원': ['Supports PC keyboard and phone touch controls', 'Compatible con teclado de PC y controles táctiles en el móvil', 'Clavier sur PC et commandes tactiles sur téléphone', 'Unterstützt PC-Tastatur und Touch-Steuerung am Handy', 'PCのキーボードとスマホのタッチ操作に対応'],
+    '2~8명': ['2–8 players', '2–8 jugadores', '2 à 8 joueurs', '2–8 Spieler', '2〜8人'],
+    '← 프로토타입 목록': ['← Prototypes', '← Prototipos', '← Prototypes', '← Prototypen', '← プロトタイプ一覧'],
+    '프로토타입': ['prototype', 'prototipo', 'prototype', 'Prototyp', 'プロトタイプ'],
+    /* 대기실 */
+    '← 나가기': ['← Leave', '← Salir', '← Quitter', '← Verlassen', '← 退出'],
+    '나가기': ['Leave', 'Salir', 'Quitter', 'Verlassen', '退出'],
+    '대기실': ['Lobby', 'Sala de espera', "Salle d'attente", 'Warteraum', '待合室'],
+    '초대 링크 복사': ['Copy invite link', 'Copiar enlace de invitación', "Copier le lien d'invitation", 'Einladungslink kopieren', '招待リンクをコピー'],
+    '봇': ['Bot', 'Bot', 'Bot', 'Bot', 'ボット'],
+    '빈자리를 봇이 채워요': ['Bots fill empty seats', 'Los bots ocupan los huecos', 'Les bots remplissent les places vides', 'Bots füllen freie Plätze', '空き席はボットが埋めます'],
+    '시작하기': ['Start', 'Empezar', 'Commencer', 'Starten', 'スタート'],
+    '방장이 시작하기를 누르면 바로 시작해요.': ['The game starts as soon as the host presses Start.', 'La partida empieza en cuanto el anfitrión pulse Empezar.', "La partie commence dès que l'hôte appuie sur Commencer.", 'Das Spiel beginnt, sobald der Host auf Starten drückt.', 'ホストがスタートを押すとすぐに始まります。'],
+    '혼자 하기': ['Solo', 'En solitario', 'En solo', 'Allein', 'ひとりで'],
+    '나': ['me', 'yo', 'moi', 'ich', '自分'],
+    '(나)': ['(me)', '(yo)', '(moi)', '(ich)', '(自分)'],
+    '(봇)': ['(bot)', '(bot)', '(bot)', '(Bot)', '(ボット)'],
+    '2명 이상이어야 시작할 수 있어요. 봇을 넣어도 돼요.': ['You need at least 2 players to start. Bots count too.', 'Se necesitan al menos 2 jugadores para empezar. Los bots también cuentan.', 'Il faut au moins 2 joueurs pour commencer. Les bots comptent aussi.', 'Zum Starten braucht es mindestens 2 Spieler. Bots zählen auch.', '2人以上で始められます。ボットを入れてもOKです。'],
+    /* 게임 화면 */
+    '소리': ['Sound', 'Sonido', 'Son', 'Ton', '音'],
+    '소리 켬': ['Sound on', 'Sonido sí', 'Son activé', 'Ton an', '音 オン'],
+    '소리 끔': ['Sound off', 'Sonido no', 'Son coupé', 'Ton aus', '音 オフ'],
+    '끝!': ['Done!', '¡Fin!', 'Terminé !', 'Ende!', '終了！'],
+    '최종 결과': ['Final results', 'Resultado final', 'Résultats finaux', 'Endergebnis', '最終結果'],
+    '한 번 더': ['Play again', 'Otra vez', 'Encore une', 'Nochmal', 'もう一回'],
+    '로비로': ['To lobby', 'A la sala', 'Au salon', 'Zur Lobby', 'ロビーへ'],
+    '방장이 다음 경기를 고르는 중이에요.': ['The host is choosing the next match.', 'El anfitrión está eligiendo la siguiente partida.', "L'hôte choisit la prochaine partie.", 'Der Host wählt das nächste Match.', 'ホストが次の試合を選んでいます。'],
+    '나갈까요?': ['Leave the game?', '¿Salir de la partida?', 'Quitter la partie ?', 'Spiel verlassen?', '退出しますか？'],
+    '화면의 카드를 눌러요': ['Tap the cards on screen', 'Toca las cartas en pantalla', "Touche les cartes à l'écran", 'Tippe auf die Karten', '画面のカードをタップ'],
+    '왼쪽 아래를 끌어서 이동': ['Drag bottom-left to move', 'Arrastra abajo a la izquierda para moverte', 'Glisse en bas à gauche pour bouger', 'Unten links ziehen zum Bewegen', '左下をドラッグして移動'],
+    '방향키로 이동': ['arrow keys to move', 'flechas para moverte', 'flèches pour bouger', 'Pfeiltasten zum Bewegen', '方向キーで移動'],
+    'A 버튼': ['A button', 'botón A', 'bouton A', 'A-Taste', 'Aボタン'],
+    'B 버튼': ['B button', 'botón B', 'bouton B', 'B-Taste', 'Bボタン'],
+    '스페이스': ['Space', 'Espacio', 'Espace', 'Leertaste', 'スペース'],
+    /* 홈·연결 메시지 */
+    '연결 도구를 불러오지 못했어요. 인터넷 연결을 확인하고 새로고침하세요.': ["Couldn't load the connection tool. Check your internet connection and refresh.", 'No se pudo cargar la herramienta de conexión. Revisa tu conexión a internet y recarga.', "Impossible de charger l'outil de connexion. Vérifie ta connexion internet et actualise.", 'Das Verbindungstool konnte nicht geladen werden. Prüfe deine Internetverbindung und lade neu.', '接続ツールを読み込めませんでした。インターネット接続を確認して再読み込みしてください。'],
+    '방을 만드는 중...': ['Creating room...', 'Creando sala...', 'Création de la salle...', 'Raum wird erstellt...', '部屋を作成中...'],
+    '방에 들어가는 중...': ['Joining room...', 'Entrando en la sala...', 'Connexion à la salle...', 'Raum wird betreten...', '部屋に入っています...'],
+    '연결 시간이 초과됐어요. 코드를 확인하고 다시 해 보세요.': ['Connection timed out. Check the code and try again.', 'Se agotó el tiempo de conexión. Revisa el código e inténtalo de nuevo.', 'Délai de connexion dépassé. Vérifie le code et réessaie.', 'Zeitüberschreitung. Prüfe den Code und versuche es erneut.', '接続がタイムアウトしました。コードを確認してもう一度試してください。'],
+    '방장과 연결이 끊겼어요.': ['Lost connection to the host.', 'Se perdió la conexión con el anfitrión.', "Connexion avec l'hôte perdue.", 'Verbindung zum Host verloren.', 'ホストとの接続が切れました。'],
+    '그 코드의 방이 없어요. 코드를 확인하세요.': ["There's no room with that code. Check the code.", 'No hay ninguna sala con ese código. Revisa el código.', "Aucune salle avec ce code. Vérifie le code.", 'Es gibt keinen Raum mit diesem Code. Prüfe den Code.', 'そのコードの部屋はありません。コードを確認してください。'],
+    '이미 게임이 진행 중이에요. 다음 판에 들어와 주세요.': ['A game is already in progress. Please join the next one.', 'Ya hay una partida en curso. Entra en la siguiente.', 'Une partie est déjà en cours. Rejoins la suivante.', 'Es läuft bereits ein Spiel. Bitte tritt beim nächsten bei.', 'すでにゲームが進行中です。次の回に参加してください。'],
+    '방이 가득 찼어요 (최대 8명).': ['The room is full (max 8 players).', 'La sala está llena (máx. 8 jugadores).', 'La salle est pleine (8 joueurs max).', 'Der Raum ist voll (max. 8 Spieler).', '部屋が満員です（最大8人）。'],
+    '이름을 먼저 입력하세요.': ['Enter your name first.', 'Escribe primero tu nombre.', "Entre d'abord ton nom.", 'Gib zuerst deinen Namen ein.', '先に名前を入力してください。'],
+    '방 코드 5자리를 입력하세요.': ['Enter the 5-character room code.', 'Escribe el código de sala de 5 caracteres.', 'Entre le code de salle à 5 caractères.', 'Gib den 5-stelligen Raumcode ein.', '5文字のルームコードを入力してください。'],
+    '링크를 복사했어요.': ['Link copied.', 'Enlace copiado.', 'Lien copié.', 'Link kopiert.', 'リンクをコピーしました。'],
+    '마네킹': ['Mannequin', 'Maniquí', 'Mannequin', 'Puppe', 'マネキン'],
+    /* 플레이어 색 */
+    '빨강': ['Red', 'Rojo', 'Rouge', 'Rot', '赤'],
+    '파랑': ['Blue', 'Azul', 'Bleu', 'Blau', '青'],
+    '노랑': ['Yellow', 'Amarillo', 'Jaune', 'Gelb', '黄'],
+    '초록': ['Green', 'Verde', 'Vert', 'Grün', '緑'],
+    '보라': ['Purple', 'Morado', 'Violet', 'Lila', '紫'],
+    '주황': ['Orange', 'Naranja', 'Orange', 'Orange', 'オレンジ'],
+    '민트': ['Mint', 'Menta', 'Menthe', 'Mint', 'ミント'],
+    '분홍': ['Pink', 'Rosa', 'Rose', 'Rosa', 'ピンク'],
+    /* 봇 이름 */
+    '멍때리는 마네킹': ['Spaced-Out Dummy', 'Maniquí Despistado', 'Mannequin Dans la Lune', 'Verträumte Puppe', 'ぼーっとマネキン'],
+    '쇼윈도 출신': ['Shop Window Alum', 'Exescaparate', 'Ex-Vitrine', 'Ex-Schaufenster', 'ショーウィンドウ出身'],
+    '팔 하나 없는 애': ['One-Arm Kid', 'El Manco', 'Le Manchot', 'Einarm', '片腕くん'],
+    '반짝이 머리': ['Shiny Head', 'Cabeza Brillante', 'Tête Brillante', 'Glanzkopf', 'ピカピカ頭'],
+    '흐물이': ['Floppy', 'Blandito', 'Mollasson', 'Wabbel', 'ぐにゃぐにゃ'],
+    '삐걱이': ['Creaky', 'Crujidos', 'Grinçant', 'Knarzi', 'ギシギシ'],
+    '하얀 콩': ['White Bean', 'Judía Blanca', 'Haricot Blanc', 'Weiße Bohne', '白い豆'],
+    '백화점 탈주범': ['Mall Escapee', 'Fugado del Centro Comercial', 'Évadé du Grand Magasin', 'Kaufhaus-Ausbrecher', 'デパート脱走犯'],
+    '자세 장인': ['Pose Master', 'Maestro de Poses', 'Maître de la Pose', 'Posen-Profi', 'ポーズ職人'],
+    '석고상 친구': ['Plaster Pal', 'Colega de Yeso', 'Pote en Plâtre', 'Gips-Kumpel', '石膏像の友'],
+    '무표정': ['Poker Face', 'Cara de Póquer', 'Visage Impassible', 'Pokerface', '無表情'],
+    '대머리 신사': ['Bald Gentleman', 'Caballero Calvo', 'Gentleman Chauve', 'Glatzkopf-Gentleman', 'ハゲ紳士'],
+    /* 미니게임 이름 */
+    '장애물 달리기': ['Obstacle Race', 'Carrera de obstáculos', "Course d'obstacles", 'Hindernislauf', '障害物レース'],
+    '섬 밀치기': ['Island Shove', 'Empujones en la isla', "Bousculade sur l'île", 'Inselschubsen', '島の押し出し'],
+    '싸우기': ['Brawl', 'Pelea', 'Bagarre', 'Prügelei', '乱闘'],
+    '병맛 미로': ['Wacky Maze', 'Laberinto absurdo', 'Labyrinthe loufoque', 'Verrücktes Labyrinth', 'へんてこ迷路'],
+    '체스 대난투': ['Chess Brawl', 'Ajedrez a golpes', 'Échecs-bagarre', 'Schach-Keilerei', 'チェス大乱闘'],
+    '폭탄 돌리기': ['Hot Bomb', 'Bomba caliente', 'Bombe à refiler', 'Heiße Bombe', '爆弾回し'],
+    '병맛 우노': ['Wacky Uno', 'Uno absurdo', 'Uno loufoque', 'Verrücktes Uno', 'へんてこUNO'],
+    '쇼윈도 얼음땡': ['Shop Window Freeze', 'Congelados en el escaparate', 'Statues en vitrine', 'Schaufenster-Stopp', 'ショーウィンドウだるまさん'],
+    '무너지는 발판': ['Crumbling Tiles', 'Baldosas que se rompen', 'Dalles effondrables', 'Bröckelnde Platten', '崩れる足場'],
+    '컨베이어 서바이벌': ['Conveyor Survival', 'Supervivencia en la cinta', 'Survie sur tapis roulant', 'Fließband-Überleben', 'コンベアサバイバル'],
+    /* 미니게임 설명·조작 */
+    '결승선까지 달려요. 상대 앞에 바나나를 던져서 방해해도 돼요.': ['Run to the finish line. You can throw bananas in front of others to trip them up.', 'Corre hasta la meta. Puedes lanzar plátanos delante de los demás para estorbarlos.', "Cours jusqu'à l'arrivée. Tu peux lancer des bananes devant les autres pour les gêner.", 'Lauf zur Ziellinie. Du darfst Bananen vor die anderen werfen, um sie zu stören.', 'ゴールまで走ろう。相手の前にバナナを投げて邪魔してもOK。'],
+    '허들은 점프로 넘고, 진흙은 피해요. 바나나를 밟으면 미끄러져요.': ['Jump over hurdles and avoid the mud. Step on a banana and you slip.', 'Salta las vallas y evita el barro. Si pisas un plátano, resbalas.', 'Saute les haies et évite la boue. Marcher sur une banane fait glisser.', 'Spring über Hürden und meide den Schlamm. Auf Bananen rutschst du aus.', 'ハードルはジャンプで越えて、泥は避けよう。バナナを踏むと滑るよ。'],
+    '점프': ['Jump', 'Saltar', 'Sauter', 'Springen', 'ジャンプ'],
+    '바나나': ['Banana', 'Plátano', 'Banane', 'Banane', 'バナナ'],
+    '결승': ['FINISH', 'META', 'ARRIVÉE', 'ZIEL', 'ゴール'],
+    '사방이 바다예요. 상대를 밀어서 바다에 빠뜨리고 끝까지 남아요.': ["It's sea all around. Push others into the water and be the last one standing.", 'Hay mar por todas partes. Empuja a los demás al agua y sé el último en pie.', "La mer tout autour. Pousse les autres à l'eau et sois le dernier debout.", 'Ringsum ist Meer. Schubs die anderen ins Wasser und bleib als Letzter übrig.', 'まわりは全部海。相手を押して海に落とし、最後まで残ろう。'],
+    '섬은 시간이 지나면 점점 작아져요. 밀치기는 잠깐 쉬어야 다시 쓸 수 있어요.': ['The island shrinks over time. Shove needs a short cooldown before you can use it again.', 'La isla se encoge con el tiempo. Empujar necesita un momento de recarga.', "L'île rétrécit avec le temps. La poussée a un court temps de recharge.", 'Die Insel schrumpft mit der Zeit. Schubsen braucht kurz Abklingzeit.', '島は時間とともに小さくなる。押し出しは少し待たないと再使用できない。'],
+    '밀치기': ['Shove', 'Empujar', 'Pousser', 'Schubsen', '押す'],
+    '바닥에서 랜덤 무기가 계속 나와요. 주워서 휘두르고, 마지막까지 서 있어요.': ['Random weapons keep popping up from the floor. Grab one, swing it and be the last one standing.', 'Del suelo no paran de salir armas al azar. Cógelas, úsalas y aguanta en pie hasta el final.', "Des armes au hasard apparaissent sans cesse au sol. Ramasse-les, frappe et reste debout jusqu'au bout.", 'Aus dem Boden tauchen ständig zufällige Waffen auf. Schnapp sie dir, schlag zu und bleib bis zum Schluss stehen.', '床からランダムな武器が次々に出てくる。拾って振り回し、最後まで立っていよう。'],
+    '무기 상자 위로 걸어가면 주워요. 쓰면 쓸수록 닳아서 없어져요.': ['Walk over a weapon crate to pick it up. Weapons wear out the more you use them.', 'Pasa por encima de una caja de armas para cogerla. Se gastan cuanto más las usas.', "Marche sur une caisse d'armes pour la ramasser. Les armes s'usent à force de servir.", 'Lauf über eine Waffenkiste, um sie aufzuheben. Waffen nutzen sich mit der Zeit ab.', '武器の箱の上を歩くと拾える。使うほどすり減ってなくなる。'],
+    '공격': ['Attack', 'Atacar', 'Attaquer', 'Angreifen', '攻撃'],
+    '무기 버리기': ['Drop weapon', 'Soltar arma', "Lâcher l'arme", 'Waffe ablegen', '武器を捨てる'],
+    '미로 한가운데에 먼저 도착해요. 곳곳에 이상한 물건이 떨어져 있어요.': ['Be first to reach the center of the maze. Strange items are lying all over.', 'Llega el primero al centro del laberinto. Hay objetos raros por todas partes.', 'Sois le premier au centre du labyrinthe. Des objets bizarres traînent partout.', 'Erreiche als Erster die Mitte des Labyrinths. Überall liegen seltsame Gegenstände.', '迷路の真ん中に一番乗りしよう。あちこちに変な物が落ちている。'],
+    '물건은 밟으면 바로 써져요. 좋은 것도 나쁜 것도, 쓸데없는 것도 있어요.': ['Items activate as soon as you step on them. Some are good, some bad, some useless.', 'Los objetos se activan al pisarlos. Hay buenos, malos e inútiles.', 'Les objets se déclenchent dès que tu marches dessus. Il y en a des bons, des mauvais et des inutiles.', 'Gegenstände wirken, sobald du drauftrittst. Manche sind gut, manche schlecht, manche nutzlos.', '物は踏むとすぐ発動。良い物も悪い物も、役に立たない物もある。'],
+    '각자 체스 말 하나가 돼요. 상대 칸으로 들어가면 그 말의 무기로 싸워요.': ["Everyone becomes a chess piece. Move onto someone's square and you fight with your pieces' weapons.", 'Cada uno es una pieza de ajedrez. Si entras en la casilla de otro, lucháis con las armas de vuestras piezas.', "Chacun devient une pièce d'échecs. Entre sur la case d'un autre et vous vous battez avec les armes de vos pièces.", 'Jeder wird zu einer Schachfigur. Ziehst du auf ein besetztes Feld, kämpft ihr mit den Waffen eurer Figuren.', 'それぞれチェスの駒になる。相手のマスに入ると駒の武器で戦う。'],
+    '내 차례에 갈 수 있는 칸(노란 점)을 눌러요. 싸움에서 지면 판에서 빠져요.': ["On your turn, tap a square you can move to (yellow dot). Lose a fight and you're off the board.", 'En tu turno, toca una casilla a la que puedas moverte (punto amarillo). Si pierdes un duelo, sales del tablero.', "À ton tour, touche une case accessible (point jaune). Perds un combat et tu quittes l'échiquier.", 'Tippe in deinem Zug auf ein erreichbares Feld (gelber Punkt). Wer einen Kampf verliert, fliegt vom Brett.', '自分の番に行けるマス（黄色い点）をタップ。戦いに負けると盤から外れる。'],
+    '폭탄을 든 사람이 다른 사람에게 닿으면 폭탄이 넘어가요. 터질 때 들고 있으면 탈락!': ["When the bomb holder touches someone, the bomb passes to them. Holding it when it blows? You're out!", 'Si quien lleva la bomba toca a alguien, se la pasa. ¡Si la tienes cuando explota, quedas eliminado!', "Quand le porteur de la bombe touche quelqu'un, la bombe passe. Tu l'as quand elle explose ? Éliminé !", 'Berührt der Bombenträger jemanden, wandert die Bombe weiter. Wer sie beim Explodieren hält, fliegt raus!', '爆弾を持った人が誰かに触れると爆弾が移る。爆発したときに持っていたら脱落！'],
+    '폭탄을 든 사람은 조금 더 빨라요. 돌진으로 도망가거나 쫓아가요.': ['The bomb holder is a bit faster. Dash to escape or give chase.', 'Quien lleva la bomba va un poco más rápido. Embiste para huir o perseguir.', 'Le porteur de la bombe est un peu plus rapide. Fonce pour fuir ou poursuivre.', 'Der Bombenträger ist etwas schneller. Sprinte, um zu fliehen oder zu jagen.', '爆弾を持った人は少し速い。ダッシュで逃げたり追いかけたりしよう。'],
+    '돌진': ['Dash', 'Embestir', 'Foncer', 'Sprint', 'ダッシュ'],
+    '카드 7장으로 시작해요. 손패를 가장 먼저 비우면 이겨요. 이상한 카드가 섞여 있어요.': ['Start with 7 cards. First to empty their hand wins. Some strange cards are mixed in.', 'Empiezas con 7 cartas. Gana quien primero se quede sin cartas. Hay cartas raras mezcladas.', 'On commence avec 7 cartes. Le premier à vider sa main gagne. Des cartes bizarres sont mélangées.', 'Jeder startet mit 7 Karten. Wer zuerst keine mehr hat, gewinnt. Seltsame Karten sind dabei.', '手札7枚でスタート。最初に手札をなくした人の勝ち。変なカードが混ざっている。'],
+    '같은 색이나 같은 숫자를 내요. 낼 게 없으면 더미를 눌러 한 장 뽑아요.': ["Play a card of the same color or number. If you can't, tap the deck to draw one.", 'Juega una carta del mismo color o número. Si no puedes, toca el mazo para robar una.', 'Joue une carte de même couleur ou de même chiffre. Sinon, touche la pioche pour en tirer une.', 'Leg eine Karte gleicher Farbe oder Zahl. Wenn nicht, tippe auf den Stapel und zieh eine.', '同じ色か同じ数字を出そう。出せなければ山札をタップして1枚引く。'],
+    '경비원 몰래 긴 복도를 지나 출구까지 가요. 손전등이 비출 때 움직이면 처음으로 돌아가요.': ["Sneak past the guard down the long corridor to the exit. Move while the flashlight is on you and you're back to the start.", 'Cruza el largo pasillo hasta la salida sin que te vea el guardia. Si te mueves bajo la linterna, vuelves al principio.', "Traverse le long couloir jusqu'à la sortie sans te faire voir du gardien. Bouge sous la lampe et tu retournes au départ.", 'Schleich am Wachmann vorbei durch den langen Flur zum Ausgang. Bewegst du dich im Taschenlampenlicht, geht es zurück zum Start.', '警備員にばれないよう長い廊下を抜けて出口へ。懐中電灯に照らされて動くとスタートに戻る。'],
+    '경비원이 돌아보면 멈춰요! 불이 꺼지면 다시 움직여요.': ['Freeze when the guard turns around! Move again when the light goes off.', '¡Quieto cuando el guardia se gire! Muévete otra vez cuando se apague la luz.', "Fige-toi quand le gardien se retourne ! Repars quand la lumière s'éteint.", 'Erstarre, wenn sich der Wachmann umdreht! Beweg dich wieder, wenn das Licht ausgeht.', '警備員が振り向いたら止まれ！ 明かりが消えたらまた動こう。'],
+    '출구': ['EXIT', 'SALIDA', 'SORTIE', 'AUSGANG', '出口'],
+    '출발': ['START', 'SALIDA', 'DÉPART', 'START', 'スタート'],
+    '걸렸다!': ['Caught!', '¡Pillado!', 'Repéré !', 'Erwischt!', '見つかった！'],
+    '멈춰!': ['Freeze!', '¡Quieto!', 'Stop !', 'Stopp!', '止まれ！'],
+    '돌아본다...': ['Turning...', 'Se gira...', 'Il se retourne...', 'Dreht sich um...', '振り向く...'],
+    '딴청 중': ['Not looking', 'Distraído', 'Distrait', 'Abgelenkt', 'よそ見中'],
+    '밟은 발판이 곧 부서져요. 계속 움직여서 마지막까지 바닥에 남아요.': ['Tiles you step on soon crumble. Keep moving and be the last one on the floor.', 'Las baldosas que pisas se rompen enseguida. Muévete sin parar y sé el último en pie.', 'Les dalles sur lesquelles tu marches se brisent vite. Bouge sans arrêt et reste le dernier debout.', 'Platten, auf die du trittst, zerbröckeln bald. Bleib in Bewegung und als Letzter auf dem Boden.', '踏んだ足場はすぐ崩れる。動き続けて最後まで床に残ろう。'],
+    '밀치기로 남을 발판 없는 곳으로 보낼 수 있어요.': ['You can shove others off where there are no tiles.', 'Puedes empujar a los demás hacia donde no hay baldosas.', "Tu peux pousser les autres là où il n'y a plus de dalles.", 'Du kannst andere dorthin schubsen, wo keine Platten mehr sind.', '押し出しで相手を足場のない所へ送れる。'],
+    '공장 벨트가 점점 빨라져요. 상자를 피하면서 용광로에 빠지지 않고 버텨요.': ['The factory belt keeps speeding up. Dodge the crates and hold on without falling into the furnace.', 'La cinta de la fábrica va cada vez más rápido. Esquiva las cajas y aguanta sin caer al horno.', "Le tapis de l'usine accélère sans cesse. Évite les caisses et tiens bon sans tomber dans le haut-fourneau.", 'Das Fabrikband wird immer schneller. Weich den Kisten aus und fall nicht in den Hochofen.', '工場のベルトがどんどん速くなる。箱をよけながら溶鉱炉に落ちずに耐えよう。'],
+    '상자는 점프로 넘어요. 부딪히면 팔다리가 떨어져 나가요.': ['Jump over the crates. Hit one and you lose an arm or a leg.', 'Salta las cajas. Si chocas, pierdes brazos o piernas.', 'Saute par-dessus les caisses. Si tu en touches une, tu perds un bras ou une jambe.', 'Spring über die Kisten. Bei einem Zusammenstoß fallen Arme oder Beine ab.', '箱はジャンプで越えよう。ぶつかると手足が取れる。'],
+    '용광로': ['Furnace', 'Horno', 'Haut-fourneau', 'Hochofen', '溶鉱炉'],
+    '벨트 속도': ['Belt speed', 'Velocidad', 'Vitesse', 'Tempo', 'ベルト速度'],
+    /* 무기 */
+    '야구방망이': ['Baseball bat', 'Bate de béisbol', 'Batte de baseball', 'Baseballschläger', 'バット'],
+    '프라이팬': ['Frying pan', 'Sartén', 'Poêle', 'Bratpfanne', 'フライパン'],
+    '바게트': ['Baguette', 'Baguette', 'Baguette', 'Baguette', 'バゲット'],
+    '모루': ['Anvil', 'Yunque', 'Enclume', 'Amboss', '金床'],
+    '고무 닭': ['Rubber chicken', 'Pollo de goma', 'Poulet en caoutchouc', 'Gummihuhn', 'ゴムのニワトリ'],
+    '토마토 발사기': ['Tomato launcher', 'Lanzatomates', 'Lance-tomates', 'Tomatenwerfer', 'トマト発射機'],
+    '수박 폭탄': ['Watermelon bomb', 'Bomba sandía', 'Bombe pastèque', 'Melonenbombe', 'スイカ爆弾'],
+    /* 미로 물건 */
+    '순간이동 양말': ['Teleport sock', 'Calcetín teletransportador', 'Chaussette de téléportation', 'Teleport-Socke', '瞬間移動の靴下'],
+    '거꾸로 장화': ['Backwards boots', 'Botas al revés', "Bottes à l'envers", 'Verkehrt-Stiefel', 'あべこべ長靴'],
+    '미끄러운 바나나': ['Slippery banana', 'Plátano resbaladizo', 'Banane glissante', 'Rutschige Banane', 'つるつるバナナ'],
+    '로켓 슬리퍼': ['Rocket slippers', 'Pantuflas cohete', 'Chaussons-fusées', 'Raketen-Pantoffeln', 'ロケットスリッパ'],
+    '경찰 호루라기': ['Police whistle', 'Silbato de policía', 'Sifflet de police', 'Polizeipfeife', '警察の笛'],
+    '세금 고지서': ['Tax bill', 'Factura de impuestos', "Avis d'impôt", 'Steuerbescheid', '税金の請求書'],
+    '벽 뚫는 숟가락': ['Wall-digging spoon', 'Cuchara perforamuros', 'Cuillère perce-mur', 'Wand-Durchbruch-Löffel', '壁を掘るスプーン'],
+    '구멍 난 양말 한 짝': ['One holey sock', 'Un calcetín agujereado', 'Une chaussette trouée', 'Eine löchrige Socke', '穴あき靴下片方'],
+    '수상한 열쇠': ['Suspicious key', 'Llave sospechosa', 'Clé suspecte', 'Verdächtiger Schlüssel', '怪しい鍵'],
+    /* 체스 */
+    '왕': ['King', 'Rey', 'Roi', 'König', 'キング'],
+    '여왕': ['Queen', 'Reina', 'Reine', 'Dame', 'クイーン'],
+    '성': ['Rook', 'Torre', 'Tour', 'Turm', 'ルーク'],
+    '주교': ['Bishop', 'Alfil', 'Fou', 'Läufer', 'ビショップ'],
+    '기사': ['Knight', 'Caballo', 'Cavalier', 'Springer', 'ナイト'],
+    '병사': ['Pawn', 'Peón', 'Pion', 'Bauer', 'ポーン'],
+    '왕의 홀': ['Royal scepter', 'Cetro real', 'Sceptre royal', 'Königszepter', '王の笏'],
+    '마법봉': ['Magic wand', 'Varita mágica', 'Baguette magique', 'Zauberstab', '魔法の杖'],
+    '철퇴': ['Mace', 'Maza', 'Masse', 'Streitkolben', 'メイス'],
+    '지팡이 빔': ['Staff beam', 'Rayo de báculo', 'Rayon de crosse', 'Stabstrahl', '杖ビーム'],
+    '창': ['Spear', 'Lanza', 'Lance', 'Speer', '槍'],
+    '결투 중!': ['Duel!', '¡Duelo!', 'Duel !', 'Duell!', '決闘中！'],
+    '내 차례! 칸을 눌러요': ['Your turn! Tap a square', '¡Tu turno! Toca una casilla', 'À toi ! Touche une case', 'Dein Zug! Tippe auf ein Feld', '自分の番！ マスをタップ'],
+    '폭탄이 내 손에! 누구한테든 닿아요!': ["You've got the bomb! Touch anyone!", '¡Tienes la bomba! ¡Toca a quien sea!', "Tu as la bombe ! Touche quelqu'un !", 'Du hast die Bombe! Berühr irgendwen!', '爆弾は自分の手に！ 誰かにタッチ！'],
+    /* 우노 */
+    '건너뛰기': ['Skip', 'Salta', 'Passe', 'Aussetzen', 'スキップ'],
+    '방향 바꿈': ['Reverse', 'Cambio de sentido', 'Inversion', 'Richtungswechsel', 'リバース'],
+    '무지개': ['Rainbow', 'Arcoíris', 'Arc-en-ciel', 'Regenbogen', 'レインボー'],
+    '무지개 +4': ['Rainbow +4', 'Arcoíris +4', 'Arc-en-ciel +4', 'Regenbogen +4', 'レインボー +4'],
+    '손패 바꾸기': ['Hand swap', 'Cambio de mano', 'Échange de main', 'Handtausch', '手札交換'],
+    '모두 뽑기': ['Everyone draws', 'Todos roban', 'Tout le monde pioche', 'Alle ziehen', 'みんなで引く'],
+    '뒤죽박죽': ['Topsy-turvy', 'Patas arriba', 'Sens dessus dessous', 'Kunterbunt', 'ごちゃまぜ'],
+    '머리 빼기': ['Head pop', 'Sin cabeza', 'Tête qui saute', 'Kopf ab', '頭はずし'],
+    '시간 정지': ['Time stop', 'Tiempo parado', 'Arrêt du temps', 'Zeitstopp', '時間停止'],
+    '카드 훔치기': ['Card steal', 'Robo de carta', 'Vol de carte', 'Kartenklau', 'カード泥棒'],
+    '내 손패와 아무나의 손패를 맞바꿔요': ['Swap your hand with a random player', 'Cambia tu mano con la de alguien al azar', "Échange ta main avec celle d'un joueur au hasard", 'Tausche deine Hand mit einem zufälligen Spieler', '自分の手札を誰かの手札と交換'],
+    '나만 빼고 모두 한 장씩 뽑아요': ['Everyone but you draws a card', 'Todos menos tú roban una carta', 'Tout le monde sauf toi pioche une carte', 'Alle außer dir ziehen eine Karte', '自分以外の全員が1枚ずつ引く'],
+    '방향이 바뀌고 다음 사람이 한 장 뽑아요': ['Direction flips and the next player draws one', 'Cambia el sentido y el siguiente roba una', 'Le sens change et le joueur suivant pioche une carte', 'Die Richtung wechselt und der Nächste zieht eine', '向きが変わり、次の人が1枚引く'],
+    '내 손에서 두 장이 사라져요': ['Two cards vanish from your hand', 'Dos cartas desaparecen de tu mano', 'Deux cartes disparaissent de ta main', 'Zwei Karten verschwinden aus deiner Hand', '自分の手札が2枚消える'],
+    '한 번 더 내요': ['Play again', 'Vuelves a jugar', 'Rejoue', 'Nochmal legen', 'もう1回出せる'],
+    '다음 사람의 카드를 한 장 뺏어요': ['Steal a card from the next player', 'Roba una carta al siguiente', 'Vole une carte au joueur suivant', 'Klau dem Nächsten eine Karte', '次の人のカードを1枚奪う'],
+    '시작!': ['Go!', '¡Empieza!', "C'est parti !", 'Los!', 'スタート！'],
+    ': 카드를 뽑았어요': [': drew a card', ': robó una carta', ' : a pioché une carte', ': hat eine Karte gezogen', '：カードを引いた'],
+    ': 시간이 지나 한 장 뽑았어요': [': ran out of time and drew one', ': se le acabó el tiempo y robó una', ' : temps écoulé, a pioché une carte', ': Zeit abgelaufen, eine Karte gezogen', '：時間切れで1枚引いた'],
+    '더미': ['Deck', 'Mazo', 'Pioche', 'Stapel', '山札'],
+    '→ 방향': ['→ Direction', '→ Sentido', '→ Sens', '→ Richtung', '→ 向き'],
+    '← 방향': ['← Direction', '← Sentido', '← Sens', '← Richtung', '← 向き'],
+    '바꿀 색을 골라요': ['Pick a new color', 'Elige el nuevo color', 'Choisis la nouvelle couleur', 'Wähle eine neue Farbe', '変える色を選ぼう'],
+    /* 시작 안내 */
+    '결승선까지 먼저! 바나나로 방해': ['First to the finish! Trip them with bananas', '¡El primero a la meta! Estorba con plátanos', "Premier à l'arrivée ! Gêne avec des bananes", 'Zuerst ins Ziel! Stör mit Bananen', 'ゴールに一番乗り！ バナナで邪魔'],
+    '밀쳐서 바다로 보내요': ['Shove them into the sea', 'Empújalos al mar', 'Pousse-les à la mer', 'Schubs sie ins Meer', '押して海に落とそう'],
+    '무기를 주워 마지막까지': ['Grab weapons and last till the end', 'Coge armas y aguanta hasta el final', "Ramasse des armes et tiens jusqu'au bout", 'Waffen schnappen und bis zum Schluss durchhalten', '武器を拾って最後まで'],
+    '한가운데 왕관으로!': ['To the crown in the center!', '¡A la corona del centro!', 'Vers la couronne au centre !', 'Zur Krone in der Mitte!', '真ん中の王冠へ！'],
+    '칸을 눌러 움직이고, 부딪히면 결투': ['Tap squares to move; collide to duel', 'Toca casillas para moverte; si chocáis, duelo', 'Touche les cases pour bouger ; collision = duel', 'Tippe Felder zum Ziehen; bei Zusammenstoß Duell', 'マスをタップして移動、ぶつかったら決闘'],
+    '폭탄을 몸으로 넘겨요': ['Pass the bomb by touch', 'Pasa la bomba tocando', 'Refile la bombe en touchant', 'Gib die Bombe per Berührung weiter', '体当たりで爆弾を渡そう'],
+    '카드를 먼저 다 내요': ['Get rid of your cards first', 'Quédate sin cartas el primero', 'Vide ta main en premier', 'Werde zuerst alle Karten los', '先にカードを出し切ろう'],
+    '불이 켜지면 멈춰요': ['Freeze when the light is on', 'Quieto cuando se encienda la luz', "Fige-toi quand la lumière s'allume", 'Erstarre, wenn das Licht angeht', '明かりがついたら止まれ'],
+    '밟은 발판이 부서져요': ['Tiles crumble when stepped on', 'Las baldosas se rompen al pisarlas', 'Les dalles se brisent sous tes pieds', 'Betretene Platten zerbröckeln', '踏んだ足場は崩れる'],
+    '상자는 점프로, 벨트에 버텨요': ['Jump the crates and hold on to the belt', 'Salta las cajas y aguanta en la cinta', 'Saute les caisses et tiens bon sur le tapis', 'Spring über Kisten und halte dich auf dem Band', '箱はジャンプ、ベルトの上で耐えよう'],
+    '새 미니게임 6개': ['6 new minigames', '6 minijuegos nuevos', '6 nouveaux mini-jeux', '6 neue Minispiele', '新ミニゲーム6種'],
+    '미니게임 6개 추가: 의자 뺏기, 사진 찍기, 박스 탈출, 줄다리기, 마네킹 숨바꼭질, 볼풀 대작전': ['6 new minigames: Musical Chairs, Photo Shoot, Box Escape, Tug of War, Mannequin Hide-and-Seek, Ball Pit Battle', '6 minijuegos nuevos: Sillas musicales, Sesión de fotos, Escape de la caja, Tira y afloja, Escondite de maniquíes, Batalla en la piscina de bolas', '6 nouveaux mini-jeux : Chaises musicales, Séance photo, Évasion du carton, Tir à la corde, Cache-cache mannequins, Bataille dans la piscine à balles', '6 neue Minispiele: Reise nach Jerusalem, Fotoshooting, Kistenflucht, Tauziehen, Puppen-Versteckspiel, Bällebad-Schlacht', 'ミニゲーム6種を追加：椅子取りゲーム、写真撮影、段ボール脱出、綱引き、マネキンかくれんぼ、ボールプール大作戦'],
+    '이제 16개 중 5개가 무작위로 나와요': ['Now 5 of 16 are picked at random', 'Ahora salen 5 de 16 al azar', 'Désormais, 5 jeux sur 16 sont tirés au hasard', 'Jetzt werden 5 von 16 zufällig gewählt', '16種から5種がランダムに出るように'],
+    '의자 뺏기': ['Musical Chairs', 'Sillas musicales', 'Chaises musicales', 'Reise nach Jerusalem', '椅子取りゲーム'],
+    '사진 찍기': ['Photo Shoot', 'Sesión de fotos', 'Séance photo', 'Fotoshooting', '写真撮影'],
+    '박스 탈출': ['Box Escape', 'Escape de la caja', 'Évasion du carton', 'Kistenflucht', '段ボール脱出'],
+    '줄다리기': ['Tug of War', 'Tira y afloja', 'Tir à la corde', 'Tauziehen', '綱引き'],
+    '마네킹 숨바꼭질': ['Mannequin Hide-and-Seek', 'Escondite de maniquíes', 'Cache-cache mannequins', 'Puppen-Versteckspiel', 'マネキンかくれんぼ'],
+    '볼풀 대작전': ['Ball Pit Battle', 'Batalla en la piscina de bolas', 'Bataille dans la piscine à balles', 'Bällebad-Schlacht', 'ボールプール大作戦'],
+    '음악이 멈추면 의자에 앉아요. 의자는 항상 한 개 모자라요.': ['When the music stops, sit on a chair. There is always one chair too few.', 'Cuando pare la música, siéntate en una silla. Siempre falta una.', "Quand la musique s'arrête, assieds-toi sur une chaise. Il en manque toujours une.", 'Wenn die Musik stoppt, setz dich auf einen Stuhl. Es fehlt immer einer.', '音楽が止まったら椅子に座ろう。椅子はいつも1つ足りない。'],
+    '음악이 나올 때 의자 주변을 돌다가, 멈추면 빈 의자로 달려요. 밀치기도 돼요.': ['Circle the chairs while the music plays, then run to an empty one when it stops. Shoving is allowed.', 'Da vueltas a las sillas mientras suena la música y corre a una libre cuando pare. Se vale empujar.', "Tourne autour des chaises pendant la musique, puis cours vers une chaise libre quand elle s'arrête. Pousser est permis.", 'Lauf um die Stühle, solange Musik läuft, und renn zu einem freien, wenn sie stoppt. Schubsen ist erlaubt.', '音楽の間は椅子のまわりを回り、止まったら空いた椅子へ走ろう。押してもOK。'],
+    '조명이 비추는 곳에 서서 가만히 포즈를 잡아요. 셔터가 터질 때 움직이면 흔들린 사진이 돼요.': ['Stand in the spotlight and hold a pose. Move when the shutter clicks and the photo comes out blurry.', 'Ponte bajo el foco y mantén la pose. Si te mueves cuando salta el obturador, la foto sale movida.', "Place-toi sous le projecteur et garde la pose. Si tu bouges au déclic, la photo est floue.", 'Stell dich ins Scheinwerferlicht und halte die Pose. Bewegst du dich beim Auslösen, wird das Foto verwackelt.', 'スポットライトの中に立ってじっとポーズ。シャッターの瞬間に動くとブレた写真になる。'],
+    '불빛 안으로 이동한 뒤 포즈 버튼을 누른 채 멈춰요. 밀치기로 남을 불빛 밖으로 보낼 수도 있어요.': ['Move into the light, then hold the Pose button and stay still. You can also shove others out of the light.', 'Entra en la luz, mantén pulsado Posar y no te muevas. También puedes empujar a otros fuera de la luz.', 'Entre dans la lumière, maintiens le bouton Pose et ne bouge plus. Tu peux aussi pousser les autres hors de la lumière.', 'Geh ins Licht, halte die Pose-Taste gedrückt und bleib still. Du kannst andere auch aus dem Licht schubsen.', '光の中に入ったらポーズボタンを押したまま止まろう。押し出しでほかの人を光の外へ出すこともできる。'],
+    '포즈': ['Pose', 'Posar', 'Pose', 'Pose', 'ポーズ'],
+    '택배 상자 속에서 시작해요. 상자를 부수고 지게차에 잡히기 전에 출구로 달려요.': ['You start inside a parcel box. Break out and run to the exit before the forklift gets you.', 'Empiezas dentro de una caja de paquetería. Rómpela y corre a la salida antes de que te pille la carretilla.', "Tu commences dans un carton de livraison. Casse-le et cours vers la sortie avant que le chariot élévateur t'attrape.", 'Du startest in einem Paketkarton. Brich aus und renn zum Ausgang, bevor dich der Gabelstapler erwischt.', '宅配の段ボールの中からスタート。箱を壊して、フォークリフトに捕まる前に出口へ走ろう。'],
+    '시작하면 버튼을 마구 눌러 상자를 부숴요. 쌓인 상자는 돌아가고, 대시로 따라잡아요.': ['Mash the button at the start to break the box. Go around stacked boxes and dash to catch up.', 'Al empezar, pulsa el botón sin parar para romper la caja. Rodea las cajas apiladas y usa el impulso para alcanzar a los demás.', 'Au départ, martèle le bouton pour casser le carton. Contourne les piles de cartons et utilise le sprint pour rattraper les autres.', 'Hämmere zu Beginn auf die Taste, um die Kiste zu zerbrechen. Lauf um gestapelte Kisten herum und hol mit dem Sprint auf.', 'スタートしたらボタン連打で箱を壊そう。積まれた箱は回り込み、ダッシュで追いつこう。'],
+    '두드리기 · 점프': ['Mash · Jump', 'Golpear · Saltar', 'Taper · Sauter', 'Hämmern · Springen', '連打・ジャンプ'],
+    '대시': ['Dash', 'Impulso', 'Sprint', 'Sprint', 'ダッシュ'],
+    '모두가 서로 다른 방향으로 줄을 당겨요. 줄 가운데 매듭을 내 자리로 끌어와요.': ['Everyone pulls the rope in a different direction. Drag the knot in the middle over to your spot.', 'Cada uno tira de la cuerda en una dirección distinta. Arrastra el nudo del centro hasta tu lado.', 'Chacun tire la corde dans une direction différente. Ramène le nœud du milieu jusqu’à ta place.', 'Alle ziehen in verschiedene Richtungen am Seil. Zieh den Knoten in der Mitte zu deinem Platz.', 'みんなが別々の方向に綱を引く。真ん中の結び目を自分の場所まで引き寄せよう。'],
+    '버튼을 마구 눌러 당겨요. 매듭이 내 자리에 닿으면 1등, 다음 사람을 위해 매듭이 가운데로 돌아가요.': ['Mash the button to pull. When the knot reaches your spot you place, and the knot goes back to the middle for the others.', 'Pulsa el botón sin parar para tirar. Si el nudo llega a tu lado, quedas clasificado y el nudo vuelve al centro para los demás.', "Martèle le bouton pour tirer. Quand le nœud atteint ta place, tu es classé et le nœud revient au milieu pour les autres.", 'Hämmere auf die Taste, um zu ziehen. Erreicht der Knoten deinen Platz, bist du platziert und der Knoten kehrt für die anderen in die Mitte zurück.', 'ボタン連打で引こう。結び目が自分の場所に届いたら順位確定、次の人のために結び目は真ん中に戻る。'],
+    '당기기': ['Pull', 'Tirar', 'Tirer', 'Ziehen', '引く'],
+    '한 명이 술래예요. 숨는 사람은 전시된 마네킹들 사이에서 가만히 서서 진짜 마네킹인 척해요.': ["One player is the seeker. Hiders stand still among the display mannequins and pretend to be real ones.", 'Uno la liga. Los demás se quedan quietos entre los maniquíes expuestos y fingen ser maniquíes de verdad.', "Un joueur cherche. Les autres restent immobiles parmi les mannequins exposés et font semblant d'en être.", 'Einer sucht. Die anderen stehen still zwischen den ausgestellten Puppen und tun so, als wären sie echte.', '1人が鬼。隠れる人は展示マネキンの間でじっと立ち、本物のマネキンのふりをする。'],
+    '숨는 사람은 멈추면 이름과 목도리가 사라져요. 술래는 의심되는 마네킹 옆에서 잡기 버튼을 눌러요. 가짜를 잡으면 잠시 멈춰요.': ["When hiders stand still their name and scarf disappear. The seeker presses Grab next to a suspicious mannequin. Grab a real one and you're frozen for a moment.", 'Al quedarse quietos, a los que se esconden se les oculta el nombre y la bufanda. Quien la liga pulsa Atrapar junto a un maniquí sospechoso. Si atrapas uno de verdad, te quedas parado un momento.', "Quand ils s'immobilisent, le nom et l'écharpe des cachés disparaissent. Le chercheur appuie sur Attraper près d'un mannequin suspect. S'il attrape un vrai mannequin, il est figé un instant.", 'Wer sich versteckt und stillsteht, verliert Namen und Schal. Der Sucher drückt neben einer verdächtigen Puppe auf Fangen. Erwischt er eine echte, ist er kurz eingefroren.', '隠れる人は止まると名前とマフラーが消える。鬼は怪しいマネキンの横で捕まえるボタンを押す。ハズレを捕まえると少し動けなくなる。'],
+    '잡기': ['Grab', 'Atrapar', 'Attraper', 'Fangen', '捕まえる'],
+    '공이 가득한 풀장이에요. 공을 가장 많이 모아요. 다른 사람이 모은 공을 뺏을 수도 있어요.': ['A pool full of balls. Collect the most balls. You can also steal balls others have collected.', 'Una piscina llena de bolas. Reúne el mayor número de bolas. También puedes robar las que han reunido otros.', "Une piscine pleine de balles. Ramasse le plus de balles possible. Tu peux aussi voler celles des autres.", 'Ein Becken voller Bälle. Sammle die meisten Bälle. Du kannst auch Bälle anderer klauen.', 'ボールがいっぱいのプール。一番多くボールを集めよう。ほかの人が集めたボールを奪うこともできる。'],
+    '공 위를 지나면 주워요. 황금 공은 5개 값이에요. 가까운 사람에게 뺏기를 쓰면 공을 가져와요.': ['Run over balls to pick them up. A golden ball is worth 5. Use Steal on someone nearby to take their balls.', 'Pasa por encima de las bolas para cogerlas. Una bola dorada vale 5. Usa Robar con alguien cercano para quitarle bolas.', "Passe sur les balles pour les ramasser. Une balle dorée vaut 5. Utilise Voler sur quelqu'un de proche pour lui prendre des balles.", 'Lauf über Bälle, um sie aufzusammeln. Ein goldener Ball zählt 5. Nutze Klauen bei jemandem in der Nähe, um seine Bälle zu nehmen.', 'ボールの上を通ると拾える。金のボールは5個分。近くの人に奪うを使うとボールを取れる。'],
+    '뺏기': ['Steal', 'Robar', 'Voler', 'Klauen', '奪う'],
+    '음악이 멈추면 의자에 앉아요': ['Sit when the music stops', 'Siéntate cuando pare la música', "Assieds-toi quand la musique s'arrête", 'Setz dich, wenn die Musik stoppt', '音楽が止まったら座ろう'],
+    '불빛 안에서 포즈, 셔터 때 멈춰요': ['Pose in the light, freeze at the shutter', 'Posa en la luz y quieto al disparar', 'Pose dans la lumière, fige-toi au déclic', 'Posieren im Licht, beim Auslösen stillhalten', '光の中でポーズ、シャッターで止まる'],
+    '상자를 부수고 지게차에서 도망': ['Break the box and flee the forklift', 'Rompe la caja y huye de la carretilla', 'Casse le carton et fuis le chariot', 'Kiste zerbrechen und dem Stapler entkommen', '箱を壊してフォークリフトから逃げろ'],
+    '버튼을 마구 눌러 줄을 당겨요': ['Mash the button to pull the rope', 'Pulsa sin parar para tirar de la cuerda', 'Martèle le bouton pour tirer la corde', 'Hämmere auf die Taste und zieh am Seil', 'ボタン連打で綱を引こう'],
+    '가짜 마네킹 사이에 숨어요': ['Hide among the fake mannequins', 'Escóndete entre los maniquíes', 'Cache-toi parmi les mannequins', 'Versteck dich zwischen den Puppen', 'マネキンの間に隠れよう'],
+    '공을 모으고 뺏어요': ['Collect and steal balls', 'Reúne y roba bolas', 'Ramasse et vole des balles', 'Bälle sammeln und klauen', 'ボールを集めて奪おう'],
+    /* 꾸미기 */
+    '모자': ['hat', 'sombrero', 'chapeau', 'Hut', '帽子'],
+    '안경': ['glasses', 'gafas', 'lunettes', 'Brille', 'メガネ']
+  };
+  var R = [
+    [/^(\d+) \/ (\d+) 판 결과$/, ['Round $1/$2 results', 'Resultados de la ronda $1/$2', 'Résultats de la manche $1/$2', 'Ergebnis Runde $1/$2', '第$1/$2戦の結果']],
+    [/^(.+) 우승!$/, ['$1 is the champion!', '¡$1 es el campeón!', '$1 remporte la partie !', '$1 ist Champion!', '$1の優勝！']],
+    [/^(.+) 승리!$/, ['$1 wins!', '¡Gana $1!', '$1 gagne !', '$1 gewinnt!', '$1の勝ち！']],
+    [/^내 차례! 카드를 내거나 더미를 눌러요 \((\d+)\)$/, ['Your turn! Play a card or tap the deck ($1)', '¡Tu turno! Juega una carta o toca el mazo ($1)', 'À toi ! Joue une carte ou touche la pioche ($1)', 'Dein Zug! Leg eine Karte oder tippe auf den Stapel ($1)', '自分の番！ カードを出すか山札をタップ ($1)']],
+    [/^(.+)님 차례 \((\d+)\)$/, ["$1's turn ($2)", 'Turno de $1 ($2)', 'Au tour de $1 ($2)', '$1 ist dran ($2)', '$1さんの番 ($2)']],
+    [/^(.+)님 차례$/, ["$1's turn", 'Turno de $1', 'Au tour de $1', '$1 ist dran', '$1さんの番']],
+    [/^(.+)님이 폭탄을 들고 있어요$/, ['$1 has the bomb', '$1 tiene la bomba', '$1 a la bombe', '$1 hat die Bombe', '$1さんが爆弾を持っている']],
+    [/ → (.+)님과 교환$/, [' → swapped with $1', ' → cambió con $1', ' → échange avec $1', ' → getauscht mit $1', ' → $1さんと交換']],
+    [/^(.+)님이 나가서 봇이 대신해요\.$/, ['$1 left, so a bot takes over.', '$1 se fue; un bot ocupa su lugar.', '$1 est parti, un bot prend sa place.', '$1 ist gegangen, ein Bot übernimmt.', '$1さんが抜けたのでボットが代わります。']],
+    [/^라운드에서 (\d+)번 1등 하면 열려요\.$/, ['Unlocks after $1 round wins.', 'Se desbloquea al ganar $1 rondas.', 'Se débloque après $1 manches gagnées.', 'Wird nach $1 Rundensiegen freigeschaltet.', 'ラウンドで$1回1位になると解放。']],
+    [/^새 꾸미기 (\d+)개가 열렸어요!$/, ['$1 new cosmetics unlocked!', '¡$1 accesorios nuevos desbloqueados!', '$1 nouveaux accessoires débloqués !', '$1 neue Kosmetik freigeschaltet!', '新しい着せ替えが$1個解放！']],
+    [/^방을 만들지 못했어요 \((.*)\)\. 잠시 후 다시 해 보세요\.$/, ["Couldn't create the room ($1). Try again in a moment.", 'No se pudo crear la sala ($1). Inténtalo de nuevo en un momento.', 'Impossible de créer la salle ($1). Réessaie dans un instant.', 'Raum konnte nicht erstellt werden ($1). Versuch es gleich nochmal.', '部屋を作れませんでした ($1)。少ししてからもう一度試してください。']],
+    [/^연결하지 못했어요 \((.*)\)\.$/, ["Couldn't connect ($1).", 'No se pudo conectar ($1).', 'Connexion impossible ($1).', 'Verbindung fehlgeschlagen ($1).', '接続できませんでした ($1)。']],
+    [/^내 차례엔 노란 칸을 누르고, 결투에서는 이동 \+ (.+)으로 공격$/, ['On your turn tap a yellow square; in duels move + $1 to attack', 'En tu turno toca una casilla amarilla; en duelo muévete y usa $1 para atacar', 'À ton tour, touche une case jaune ; en duel, bouge + $1 pour attaquer', 'Tippe in deinem Zug auf ein gelbes Feld; im Duell bewegen + $1 zum Angreifen', '自分の番は黄色いマスをタップ、決闘では移動 + $1で攻撃']],
+    [/판마다 (\d+)개 미니게임 중 (\d+)개/, ['$2 of $1 minigames per match', '$2 de $1 minijuegos por partida', '$2 mini-jeux sur $1 par partie', '$2 von $1 Minispielen pro Match', '毎回$1種のミニゲームから$2種']],
+    [/^내 카드 (\d+)장$/, ['My cards: $1', 'Mis cartas: $1', 'Mes cartes : $1', 'Meine Karten: $1', '自分のカード $1枚']],
+    [/^봇 (\d+)$/, ['Bot $1', 'Bot $1', 'Bot $1', 'Bot $1', 'ボット $1']],
+    [/(\d+)점/g, ['$1 pts', '$1 pts', '$1 pts', '$1 Pkt.', '$1点']],
+    [/(\d+)장/g, ['$1 cards', '$1 cartas', '$1 cartes', '$1 Karten', '$1枚']],
+    [/(\d+)승/g, ['$1 wins', '$1 vict.', '$1 vict.', '$1 Siege', '$1勝']],
+    [/(\d+)초/g, ['$1s', '$1 s', '$1 s', '$1 s', '$1秒']]
+  ];
+  var HAN = /[가-힣]/, keys = Object.keys(D).sort(function (a, b) { return b.length - a.length; });
+  var esc = function (k) { return k.replace(/[.*+?^${}()|[\]\\\/]/g, '\\$&'); };
+  var RX = new RegExp(keys.map(function (k) { return k.length <= 2 ? '(?<![가-힣])' + esc(k) + '(?![가-힣])' : esc(k); }).join('|'), 'g');
+  var cache = new Map();
+  function T(s) {
+    if (typeof s !== 'string' || !HAN.test(s)) return s;
+    var c = cache.get(s); if (c !== undefined) return c;
+    var m = /^(\s*)([\s\S]*?)(\s*)$/.exec(s), core = m[2], out, e = D[core];
+    if (e) out = e[LI];
+    else {
+      out = core;
+      for (var i = 0; i < R.length; i++) out = out.replace(R[i][0], R[i][1][LI]);
+      out = out.replace(RX, function (x) { return D[x] ? D[x][LI] : x; });
+    }
+    out = m[1] + out + m[3];
+    if (cache.size > 5000) cache.clear();
+    cache.set(s, out); return out;
+  }
+  window.DP_T = T;
+  /* 캔버스 글자 */
+  var P = CanvasRenderingContext2D.prototype;
+  ['fillText', 'strokeText', 'measureText'].forEach(function (f) {
+    var o = P[f]; P[f] = function (s) { var a = Array.prototype.slice.call(arguments); a[0] = T(typeof s === 'string' ? s : String(s)); return o.apply(this, a); };
+  });
+  /* 대화상자 */
+  var oc = window.confirm, oa = window.alert;
+  window.confirm = function (m) { return oc.call(window, T(m)); };
+  window.alert = function (m) { return oa.call(window, T(m)); };
+  /* DOM 글자와 속성 */
+  var last = new WeakMap(), ATTR = ['placeholder', 'title', 'aria-label', 'alt'];
+  function txtNode(n) { var v = n.nodeValue, pe = n.parentNode; if (pe && /^(SCRIPT|STYLE|TEXTAREA)$/.test(pe.nodeName)) return; if (last.get(n) === v || !HAN.test(v)) return; var t = T(v); last.set(n, t); if (t !== v) n.nodeValue = t; }
+  function el(e) {
+    if (e.nodeType === 3) { txtNode(e); return; }
+    if (e.nodeType !== 1 || e.tagName === 'SCRIPT' || e.tagName === 'STYLE') return;
+    for (var i = 0; i < ATTR.length; i++) { var v = e.getAttribute(ATTR[i]); if (v && HAN.test(v)) e.setAttribute(ATTR[i], T(v)); }
+    for (var c = e.firstChild; c; c = c.nextSibling) el(c);
+  }
+  new MutationObserver(function (ms) {
+    ms.forEach(function (m) {
+      if (m.type === 'characterData') txtNode(m.target);
+      else if (m.type === 'attributes') el(m.target);
+      else m.addedNodes.forEach(el);
+    });
+  }).observe(document.documentElement, { childList: true, subtree: true, characterData: true, attributes: true, attributeFilter: ATTR });
+  if (document.body) el(document.body);
+})();
+</script>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
 <title>Dummy Party</title>
 <meta name="theme-color" content="#2a2118">
@@ -161,7 +495,7 @@ body.playing #emoBar{display:flex}
    <div class="row"><input id="codeIn" maxlength="5" placeholder="방 코드" autocomplete="off"><button class="pb dark" id="joinBtn" style="flex:0 0 auto">들어가기</button></div>
    <div class="msg" id="homeMsg"></div>
   </div>
-  <details class="notes"><summary>패치노트 · v0.1 (build 4)</summary>
+  <details class="notes"><summary>패치노트 · v0.1 (build 5)</summary>
    <b>2026-10-19 · v0.1 build 4 · 새 미니게임 6개</b>
    <ul><li>미니게임 6개 추가: 의자 뺏기, 사진 찍기, 박스 탈출, 줄다리기, 마네킹 숨바꼭질, 볼풀 대작전</li><li>이제 16개 중 5개가 무작위로 나와요</li></ul>
    <b>2026-10-19 · v0.1 build 3 · 꾸미기와 이모트</b>
@@ -170,7 +504,7 @@ body.playing #emoBar{display:flex}
    <ul><li>무너지는 발판 칸 수 대폭 증가 (19×10)와 용암 동굴 맵</li><li>10개 맵 전부 새로 그림 (관중석, 야자수 섬, 링, 정원 미로, 서커스, 우노 테이블 등)</li><li>글자 대신 아이콘·말풍선·이펙트로 표현 (무기, 아이템, 카드 효과, 시작 안내)</li><li>타격·폭발·물보라 효과와 화면 흔들림 추가</li></ul>
    <b>2026-10-19 · v0.1 build 1 · 첫 시험판</b>
    <ul><li>마네킹 미니게임 10개 추가 (장애물 달리기, 섬 밀치기, 싸우기, 병맛 미로, 체스 대난투, 폭탄 돌리기, 병맛 우노, 쇼윈도 얼음땡, 무너지는 발판, 컨베이어 서바이벌)</li><li>방 코드로 최대 8명 멀티플레이, 빈자리는 봇으로 채우기</li><li>판마다 10개 중 5개를 무작위로 골라 점수를 합산</li><li>PC 키보드와 휴대폰 터치 조작 지원</li></ul></details>
-  <p class="foot">2~8명 · 판마다 16개 미니게임 중 5개 · 프로토타입 v0.1 b4 · <a href="../">← 프로토타입 목록</a></p>
+  <p class="foot">2~8명 · 판마다 16개 미니게임 중 5개 · 프로토타입 v0.1 b5 · <a href="../">← 프로토타입 목록</a></p>
  </div>
 </section>
 
