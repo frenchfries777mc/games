@@ -16,7 +16,39 @@
    "title": "계정 주소 이전 대비",
    "items": [
     "로그인 시 새 계정 주소(frenchfries777.com)도 시도 (옛 주소 우선)"
-   ]
+   ],
+   "tr": {
+    "en": {
+     "title": "Preparing for the account address move",
+     "items": [
+      "Login now also tries the new account address (frenchfries777.com) (the old address is tried first)"
+     ]
+    },
+    "es": {
+     "title": "Preparación para el cambio de dirección de las cuentas",
+     "items": [
+      "Al iniciar sesión también se prueba la nueva dirección de cuenta (frenchfries777.com) (primero se prueba la antigua)"
+     ]
+    },
+    "fr": {
+     "title": "Préparation au changement d’adresse des comptes",
+     "items": [
+      "La connexion essaie aussi la nouvelle adresse de compte (frenchfries777.com) (l’ancienne adresse est essayée en premier)"
+     ]
+    },
+    "de": {
+     "title": "Vorbereitung auf den Umzug der Kontoadresse",
+     "items": [
+      "Beim Anmelden wird jetzt auch die neue Kontoadresse (frenchfries777.com) versucht (die alte Adresse zuerst)"
+     ]
+    },
+    "ja": {
+     "title": "アカウントアドレス移行への備え",
+     "items": [
+      "ログイン時に新しいアカウントアドレス（frenchfries777.com）も試す（旧アドレスを優先）"
+     ]
+    }
+   }
   },
   {
    "date": "2026-10-19",
@@ -26,7 +58,49 @@
     "좀비 게임 사람 체력 2배 (600)",
     "좀비 피해 6배→1.2배, 속도 1.45배→1.05배, 체력 900→400",
     "좀비 대시 쿨·회복 속도 보통으로 조정"
-   ]
+   ],
+   "tr": {
+    "en": {
+     "title": "Zombie Game balance",
+     "items": [
+      "Humans in Zombie Game have double HP (600)",
+      "Zombie damage 6× → 1.2×, speed 1.45× → 1.05×, HP 900 → 400",
+      "Zombie dash cooldown and healing speed set to normal"
+     ]
+    },
+    "es": {
+     "title": "Equilibrio del Juego de zombis",
+     "items": [
+      "Los humanos del Juego de zombis tienen el doble de vida (600)",
+      "Daño de los zombis ×6 → ×1,2, velocidad ×1,45 → ×1,05, vida 900 → 400",
+      "Enfriamiento de la embestida y velocidad de curación de los zombis ajustados a lo normal"
+     ]
+    },
+    "fr": {
+     "title": "Équilibrage du mode zombie",
+     "items": [
+      "Les humains du mode zombie ont deux fois plus de PV (600)",
+      "Dégâts des zombies ×6 → ×1,2, vitesse ×1,45 → ×1,05, PV 900 → 400",
+      "Recharge du dash et vitesse de soin des zombies ramenées à la normale"
+     ]
+    },
+    "de": {
+     "title": "Balance im Zombie-Spiel",
+     "items": [
+      "Menschen haben im Zombie-Spiel doppelt so viele LP (600)",
+      "Zombie-Schaden 6× → 1,2×, Tempo 1,45× → 1,05×, LP 900 → 400",
+      "Dash-Abklingzeit und Heilungstempo der Zombies auf normal gesetzt"
+     ]
+    },
+    "ja": {
+     "title": "ゾンビゲームのバランス",
+     "items": [
+      "ゾンビゲームの人間の体力が2倍（600）",
+      "ゾンビのダメージ6倍→1.2倍、速度1.45倍→1.05倍、体力900→400",
+      "ゾンビのダッシュのクールタイム・回復速度を通常に調整"
+     ]
+    }
+   }
   },
   {
    "date": "2026-10-19",
@@ -35,7 +109,44 @@
    "items": [
     "피사로 십자가 기절 시간 전 단계 1초 고정",
     "호렘헵 궁극기 넉백 10배, 기절 시간 2배, 범위 1.5배, 피해 3배 강화"
-   ]
+   ],
+   "tr": {
+    "en": {
+     "title": "Horemheb ultimate buff",
+     "items": [
+      "Pizarro’s cross stun is now fixed at 1s at every stage",
+      "Horemheb’s ultimate: 10× knockback, 2× stun time, 1.5× area, 3× damage"
+     ]
+    },
+    "es": {
+     "title": "Mejora de la definitiva de Horemheb",
+     "items": [
+      "El aturdimiento de la cruz de Pizarro queda fijo en 1 s en todas las etapas",
+      "Definitiva de Horemheb reforzada: retroceso ×10, duración del aturdimiento ×2, área ×1,5, daño ×3"
+     ]
+    },
+    "fr": {
+     "title": "Renforcement de l’ultime d’Horemheb",
+     "items": [
+      "L’étourdissement de la croix de Pizarro est désormais fixé à 1 s à tous les paliers",
+      "Ultime d’Horemheb renforcé : recul ×10, durée d’étourdissement ×2, zone ×1,5, dégâts ×3"
+     ]
+    },
+    "de": {
+     "title": "Buff für Horemhebs Ultimate",
+     "items": [
+      "Die Betäubung durch Pizarros Kreuz beträgt jetzt auf jeder Stufe fest 1 s",
+      "Horemhebs Ultimate verstärkt: 10-facher Rückstoß, doppelte Betäubungsdauer, 1,5-facher Bereich, dreifacher Schaden"
+     ]
+    },
+    "ja": {
+     "title": "ホルエムヘブの必殺技強化",
+     "items": [
+      "ピサロの十字架のスタン時間を全段階で1秒に固定",
+      "ホルエムヘブの必殺技を強化: ノックバック10倍、スタン時間2倍、範囲1.5倍、ダメージ3倍"
+     ]
+    }
+   }
   },
   {
    "date": "2026-10-19",
@@ -44,7 +155,44 @@
    "items": [
     "피사로 스킬 수치 조정 (피해 20→22→25→28, 기절 1→1.3초, 표식 추가 피해 5)",
     "설정 화면에 사이트로 돌아가기 버튼 추가"
-   ]
+   ],
+   "tr": {
+    "en": {
+     "title": "Pizarro tweaks and a settings screen button",
+     "items": [
+      "Pizarro skill values adjusted (damage 20→22→25→28, stun 1→1.3s, mark bonus damage 5)",
+      "Added a Back to site button to the settings screen"
+     ]
+    },
+    "es": {
+     "title": "Ajustes de Pizarro y botón en la pantalla de ajustes",
+     "items": [
+      "Valores de la habilidad de Pizarro ajustados (daño 20→22→25→28, aturdimiento 1→1,3 s, daño extra de la marca 5)",
+      "Se añade el botón Volver al sitio en la pantalla de ajustes"
+     ]
+    },
+    "fr": {
+     "title": "Ajustements de Pizarro et bouton dans les paramètres",
+     "items": [
+      "Valeurs de la compétence de Pizarro ajustées (dégâts 20→22→25→28, étourdissement 1→1,3 s, dégâts bonus de la marque 5)",
+      "Ajout d’un bouton Retour au site dans l’écran des paramètres"
+     ]
+    },
+    "de": {
+     "title": "Pizarro-Anpassungen und Button im Einstellungsbildschirm",
+     "items": [
+      "Werte von Pizarros Fähigkeit angepasst (Schaden 20→22→25→28, Betäubung 1→1,3 s, Zusatzschaden der Markierung 5)",
+      "Button „Zurück zur Website“ im Einstellungsbildschirm hinzugefügt"
+     ]
+    },
+    "ja": {
+     "title": "ピサロの調整と設定画面のボタン",
+     "items": [
+      "ピサロのスキルの数値を調整（ダメージ20→22→25→28、スタン1→1.3秒、印の追加ダメージ5）",
+      "設定画面に「サイトに戻る」ボタンを追加"
+     ]
+    }
+   }
   },
   {
    "date": "2026-10-19",
@@ -54,7 +202,49 @@
     "피사로 스킬이 기세 단계에 따라 강해짐 (피해 20→25→30→35, 기절 1→1.5초, 범위 확대)",
     "피사로 스킬에 맞은 적에게 표식 추가 (3초 안에 창 공격 시 8 피해 추가)",
     "피사로 황금 표식 시스템 삭제"
-   ]
+   ],
+   "tr": {
+    "en": {
+     "title": "Pizarro skill rework",
+     "items": [
+      "Pizarro’s skill gets stronger with his Momentum stage (damage 20→25→30→35, stun 1→1.5s, larger area)",
+      "Enemies hit by Pizarro’s skill now get a mark (a spear attack within 3s deals 8 extra damage)",
+      "Removed Pizarro’s gold mark system"
+     ]
+    },
+    "es": {
+     "title": "Rediseño de la habilidad de Pizarro",
+     "items": [
+      "La habilidad de Pizarro se refuerza según su etapa de Ímpetu (daño 20→25→30→35, aturdimiento 1→1,5 s, área mayor)",
+      "Los enemigos alcanzados por la habilidad de Pizarro reciben una marca (un ataque de lanza en 3 s causa 8 de daño extra)",
+      "Se elimina el sistema de marcas de oro de Pizarro"
+     ]
+    },
+    "fr": {
+     "title": "Refonte de la compétence de Pizarro",
+     "items": [
+      "La compétence de Pizarro se renforce selon son palier d’Élan (dégâts 20→25→30→35, étourdissement 1→1,5 s, zone agrandie)",
+      "Les ennemis touchés par la compétence de Pizarro reçoivent une marque (une attaque à la lance dans les 3 s inflige 8 dégâts de plus)",
+      "Suppression du système de marques d’or de Pizarro"
+     ]
+    },
+    "de": {
+     "title": "Überarbeitung von Pizarros Fähigkeit",
+     "items": [
+      "Pizarros Fähigkeit wird mit seiner Schwung-Stufe stärker (Schaden 20→25→30→35, Betäubung 1→1,5 s, größerer Bereich)",
+      "Von Pizarros Fähigkeit getroffene Gegner erhalten eine Markierung (ein Speerangriff innerhalb von 3 s verursacht 8 zusätzlichen Schaden)",
+      "Pizarros Goldmarken-System entfernt"
+     ]
+    },
+    "ja": {
+     "title": "ピサロのスキル改編",
+     "items": [
+      "ピサロのスキルが勢いの段階に応じて強くなる（ダメージ20→25→30→35、スタン1→1.5秒、範囲拡大）",
+      "ピサロのスキルが当たった敵に印を追加（3秒以内に槍で攻撃すると8ダメージ追加）",
+      "ピサロの黄金の印システムを削除"
+     ]
+    }
+   }
   },
   {
    "date": "2026-10-19",
@@ -64,7 +254,49 @@
     "새 캐릭터 칸 추가 (마야 독침 사수, 독침대롱·독두꺼비 함정·케찰코아틀의 날개)",
     "독 피해 추가 (독 중첩, 진한 초록 숫자)",
     "피사로 스킨 추가 (황금빛·흑강철 모리온 투구, 황금 약탈자의 투구, 다이아·그랜드 마스터 전용 2종)"
-   ]
+   ],
+   "tr": {
+    "en": {
+     "title": "Kan joins, plus Pizarro skins",
+     "items": [
+      "New character Kan (a Maya poison dart shooter: Blowgun · Poison Toad Trap · Wings of Quetzalcoatl)",
+      "New poison damage (poison stacks, dark green numbers)",
+      "New Pizarro skins (Golden and Black Steel Morion Helms, Gold Plunderer’s Helm, and 2 exclusive to Diamond and Grandmaster)"
+     ]
+    },
+    "es": {
+     "title": "Llega Kan y aspectos de Pizarro",
+     "items": [
+      "Nuevo personaje Kan (tirador maya de dardos venenosos: Cerbatana · Trampa del sapo venenoso · Alas de Quetzalcoatl)",
+      "Nuevo daño de veneno (acumulaciones de veneno, números en verde oscuro)",
+      "Nuevos aspectos de Pizarro (Yelmos morrión dorado y de acero negro, Yelmo del saqueador de oro y 2 exclusivos de Diamante y Gran maestro)"
+     ]
+    },
+    "fr": {
+     "title": "Arrivée de Kan et skins de Pizarro",
+     "items": [
+      "Nouveau personnage Kan (tireur maya de fléchettes empoisonnées : Sarbacane · Piège du crapaud venimeux · Ailes de Quetzalcoatl)",
+      "Nouveaux dégâts de poison (cumuls de poison, chiffres vert foncé)",
+      "Nouveaux skins de Pizarro (Morions doré et d’acier noir, Heaume du pilleur d’or, et 2 exclusifs Diamant et Grand Maître)"
+     ]
+    },
+    "de": {
+     "title": "Kan kommt, dazu Pizarro-Skins",
+     "items": [
+      "Neuer Charakter Kan (ein Maya-Giftpfeilschütze: Blasrohr · Giftkrötenfalle · Flügel des Quetzalcoatl)",
+      "Neuer Giftschaden (Giftstapel, dunkelgrüne Zahlen)",
+      "Neue Pizarro-Skins (goldener und schwarzstählerner Morionhelm, Helm des Goldplünderers und 2 exklusive für Diamant und Großmeister)"
+     ]
+    },
+    "ja": {
+     "title": "カン追加とピサロのスキン",
+     "items": [
+      "新キャラクター カンを追加（マヤの毒矢の射手、吹き矢・毒ガエルの罠・ケツァルコアトルの翼）",
+      "毒ダメージを追加（毒の重ねがけ、濃い緑の数字）",
+      "ピサロのスキンを追加（黄金・黒鋼のモリオン兜、黄金略奪者の兜、ダイヤ・グランドマスター専用2種）"
+     ]
+    }
+   }
   },
   {
    "date": "2026-10-19",
@@ -72,7 +304,39 @@
    "title": "폭발 무기 오류 수정",
    "items": [
     "중화기병·폭발광 등 폭발 무기의 폭발이 오류로 피해를 주지 못하던 문제 수정"
-   ]
+   ],
+   "tr": {
+    "en": {
+     "title": "Explosive weapon fix",
+     "items": [
+      "Fixed a bug where the explosions of explosive weapons such as Heavy Gunner and Explosion Maniac dealt no damage"
+     ]
+    },
+    "es": {
+     "title": "Corrección de armas explosivas",
+     "items": [
+      "Corregido un error por el que las explosiones de armas explosivas como Artillero pesado o Destello explosivo no causaban daño"
+     ]
+    },
+    "fr": {
+     "title": "Correction des armes explosives",
+     "items": [
+      "Correction d’un bug qui empêchait les explosions des armes explosives comme le Fantassin lourd ou l’Éclat explosif d’infliger des dégâts"
+     ]
+    },
+    "de": {
+     "title": "Fehlerbehebung bei Explosivwaffen",
+     "items": [
+      "Fehler behoben, durch den die Explosionen von Explosivwaffen wie Schwerer Infanterist und Explosionswahn keinen Schaden verursachten"
+     ]
+    },
+    "ja": {
+     "title": "爆発武器の不具合修正",
+     "items": [
+      "重火器兵・爆発光などの爆発武器の爆発が不具合でダメージを与えられなかった問題を修正"
+     ]
+    }
+   }
   },
   {
    "date": "2026-10-19",
@@ -80,7 +344,39 @@
    "title": "캐릭터 카드 디자인 통일",
    "items": [
     "스킨 있는 카드와 없는 카드의 그림 크기·모양·색 통일"
-   ]
+   ],
+   "tr": {
+    "en": {
+     "title": "Unified character card design",
+     "items": [
+      "Cards with and without a skin now use the same art size, shape and colours"
+     ]
+    },
+    "es": {
+     "title": "Diseño unificado de cartas de personaje",
+     "items": [
+      "Las cartas con y sin aspecto usan ahora el mismo tamaño, forma y colores de dibujo"
+     ]
+    },
+    "fr": {
+     "title": "Design unifié des cartes de personnage",
+     "items": [
+      "Les cartes avec et sans skin utilisent désormais la même taille, la même forme et les mêmes couleurs d’illustration"
+     ]
+    },
+    "de": {
+     "title": "Einheitliches Design der Charakterkarten",
+     "items": [
+      "Karten mit und ohne Skin haben jetzt dieselbe Bildgröße, Form und Farben"
+     ]
+    },
+    "ja": {
+     "title": "キャラクターカードのデザイン統一",
+     "items": [
+      "スキンありのカードとなしのカードで絵の大きさ・形・色を統一"
+     ]
+    }
+   }
   },
   {
    "date": "2026-10-19",
@@ -89,7 +385,44 @@
    "items": [
     "피해 종류별 숫자 색 구분 (불 피해 빨간색, 독 피해 진한 초록색, 전기 피해 노란색)",
     "화염방사기 궁극기 방패가 아군과 나는 밀지 않고 통과하게 수정"
-   ]
+   ],
+   "tr": {
+    "en": {
+     "title": "Damage type colours and flame shield",
+     "items": [
+      "Damage numbers are coloured by damage type (fire damage red, poison damage dark green, electric damage yellow)",
+      "The Flamethrower ultimate’s shield now lets allies and you pass through instead of pushing them"
+     ]
+    },
+    "es": {
+     "title": "Colores por tipo de daño y escudo de llamas",
+     "items": [
+      "Los números de daño tienen color según su tipo (daño de fuego en rojo, daño de veneno en verde oscuro, daño eléctrico en amarillo)",
+      "El escudo de la definitiva del Lanzallamas ya no empuja a tus aliados ni a ti: ahora lo atravesáis"
+     ]
+    },
+    "fr": {
+     "title": "Couleurs des types de dégâts et bouclier de flammes",
+     "items": [
+      "Les chiffres de dégâts sont colorés selon leur type (dégâts de feu en rouge, dégâts de poison en vert foncé, dégâts électriques en jaune)",
+      "Le bouclier de l’ultime du Lance-flammes laisse désormais passer vos alliés et vous au lieu de vous repousser"
+     ]
+    },
+    "de": {
+     "title": "Farben je Schadensart und Flammenschild",
+     "items": [
+      "Schadenszahlen sind nach Schadensart gefärbt (Feuerschaden rot, Giftschaden dunkelgrün, Elektroschaden gelb)",
+      "Der Schild des Flammenwerfer-Ultimates lässt Verbündete und dich jetzt durch, statt euch wegzuschieben"
+     ]
+    },
+    "ja": {
+     "title": "ダメージの種類の色と炎の盾",
+     "items": [
+      "ダメージの種類ごとに数字の色を区別（炎ダメージは赤、毒ダメージは濃い緑、電気ダメージは黄色）",
+      "火炎放射器の必殺技の盾が味方と自分を押さずに通り抜けられるように修正"
+     ]
+    }
+   }
   },
   {
    "date": "2026-10-19",
@@ -97,7 +430,39 @@
    "title": "피사로 궁극기 회복 강화",
    "items": [
     "피사로가 최종 단계(4단계)에서 궁극기를 쓰면 체력 50 회복 (이전 단계는 30)"
-   ]
+   ],
+   "tr": {
+    "en": {
+     "title": "Pizarro ultimate heal buff",
+     "items": [
+      "Pizarro restores 50 HP when he uses his ultimate at the final stage (stage 4) (30 at earlier stages)"
+     ]
+    },
+    "es": {
+     "title": "Más curación en la definitiva de Pizarro",
+     "items": [
+      "Pizarro recupera 50 de vida al usar su definitiva en la etapa final (etapa 4) (30 en las etapas anteriores)"
+     ]
+    },
+    "fr": {
+     "title": "Soin de l’ultime de Pizarro renforcé",
+     "items": [
+      "Pizarro récupère 50 PV en utilisant son ultime au dernier palier (palier 4) (30 aux paliers précédents)"
+     ]
+    },
+    "de": {
+     "title": "Stärkere Heilung von Pizarros Ultimate",
+     "items": [
+      "Pizarro heilt 50 LP, wenn er sein Ultimate auf der letzten Stufe (Stufe 4) einsetzt (30 auf den Stufen davor)"
+     ]
+    },
+    "ja": {
+     "title": "ピサロの必殺技の回復強化",
+     "items": [
+      "ピサロが最終段階（4段階）で必殺技を使うと体力50回復（それ以前の段階は30）"
+     ]
+    }
+   }
   },
   {
    "date": "2026-10-19",
@@ -107,7 +472,49 @@
     "Stickseum 모든 페이지의 위쪽 메뉴 이름·순서·글꼴 통일",
     "밸런스 그래프가 최근 빌드 8개만 보이고 좌우로 끌어 나머지를 확인",
     "캐릭터 카드의 무지개·은색·금색 효과 제거"
-   ]
+   ],
+   "tr": {
+    "en": {
+     "title": "Unified menus, graph and card colours",
+     "items": [
+      "The top menu on every Stickseum page now uses the same names, order and font",
+      "The balance graph shows only the 8 latest builds; drag left and right to see the rest",
+      "Removed the rainbow, silver and gold effects from character cards"
+     ]
+    },
+    "es": {
+     "title": "Menús unificados, gráfico y colores de cartas",
+     "items": [
+      "El menú superior de todas las páginas de Stickseum usa ahora los mismos nombres, orden y tipografía",
+      "El gráfico de equilibrio muestra solo las 8 compilaciones más recientes; arrastra a izquierda y derecha para ver el resto",
+      "Se eliminan los efectos arcoíris, plateado y dorado de las cartas de personaje"
+     ]
+    },
+    "fr": {
+     "title": "Menus unifiés, graphique et couleurs des cartes",
+     "items": [
+      "Le menu du haut de toutes les pages de Stickseum utilise désormais les mêmes noms, le même ordre et la même police",
+      "Le graphique d’équilibrage n’affiche que les 8 dernières builds ; faites-le glisser à gauche et à droite pour voir le reste",
+      "Suppression des effets arc-en-ciel, argent et or des cartes de personnage"
+     ]
+    },
+    "de": {
+     "title": "Einheitliche Menüs, Diagramm und Kartenfarben",
+     "items": [
+      "Das obere Menü aller Stickseum-Seiten hat jetzt dieselben Namen, dieselbe Reihenfolge und dieselbe Schrift",
+      "Das Balance-Diagramm zeigt nur die 8 neuesten Builds; nach links und rechts ziehen, um den Rest zu sehen",
+      "Regenbogen-, Silber- und Goldeffekte auf Charakterkarten entfernt"
+     ]
+    },
+    "ja": {
+     "title": "メニューの統一・グラフ・カードの色",
+     "items": [
+      "Stickseumの全ページで上部メニューの名前・順番・フォントを統一",
+      "バランスのグラフは最新8ビルドだけを表示し、左右にドラッグして残りを確認",
+      "キャラクターカードのレインボー・銀色・金色の効果を削除"
+     ]
+    }
+   }
   },
   {
    "date": "2026-10-18",
@@ -115,7 +522,39 @@
    "title": "포탈건과 마술사 조정",
    "items": [
     "포탈건 데미지 12 → 15 포탈건 탄환이 발판 아랫면에 맞으면 통과하던 문제 수정 (아래로 튕김) 마술사 일반 공격 쿨타임 1.0초 → 0.9초 마술사 스킬 카드 일렬 발사 5장 → 4장"
-   ]
+   ],
+   "tr": {
+    "en": {
+     "title": "Portal Gun and Magician tweaks",
+     "items": [
+      "Portal Gun damage 12 → 15 · Fixed Portal Gun shots passing through when they hit the underside of a platform (they now bounce downward) · Magician basic attack cooldown 1.0s → 0.9s · Magician skill fires 4 cards in a row instead of 5"
+     ]
+    },
+    "es": {
+     "title": "Ajustes de Pistola de portales y Mago ilusionista",
+     "items": [
+      "Daño de la Pistola de portales 12 → 15 · Corregido que los disparos de la Pistola de portales atravesaran la cara inferior de las plataformas (ahora rebotan hacia abajo) · Enfriamiento del ataque básico del Mago ilusionista 1,0 s → 0,9 s · La habilidad del Mago ilusionista dispara 4 cartas en fila en lugar de 5"
+     ]
+    },
+    "fr": {
+     "title": "Ajustements du Pistolet à portails et de l’Illusionniste",
+     "items": [
+      "Dégâts du Pistolet à portails 12 → 15 · Correction des tirs du Pistolet à portails qui traversaient le dessous des plateformes (ils rebondissent désormais vers le bas) · Recharge de l’attaque de base de l’Illusionniste 1,0 s → 0,9 s · La compétence de l’Illusionniste lance 4 cartes en ligne au lieu de 5"
+     ]
+    },
+    "de": {
+     "title": "Anpassungen an Portalkanone und Zauberer",
+     "items": [
+      "Schaden der Portalkanone 12 → 15 · Behoben: Geschosse der Portalkanone flogen durch die Unterseite von Plattformen (sie prallen jetzt nach unten ab) · Abklingzeit des Standardangriffs des Zauberers 1,0 s → 0,9 s · Die Fähigkeit des Zauberers feuert 4 statt 5 Karten in einer Reihe"
+     ]
+    },
+    "ja": {
+     "title": "ポータルガンとマジシャンの調整",
+     "items": [
+      "ポータルガンのダメージ12 → 15 · ポータルガンの弾が足場の下面に当たるとすり抜けていた問題を修正（下に跳ね返る） · マジシャンの通常攻撃クールタイム1.0秒 → 0.9秒 · マジシャンのスキルで一列に飛ばすカードを5枚 → 4枚"
+     ]
+    }
+   }
   },
   {
    "date": "2026-10-18",
@@ -123,7 +562,39 @@
    "title": "피사로 찌르기 보강",
    "items": [
     "피사로 찌르기가 발판 너머의 상대를 맞히지 않도록 변경"
-   ]
+   ],
+   "tr": {
+    "en": {
+     "title": "Pizarro thrust fix",
+     "items": [
+      "Pizarro’s thrust no longer hits opponents on the other side of a platform"
+     ]
+    },
+    "es": {
+     "title": "Ajuste de la estocada de Pizarro",
+     "items": [
+      "La estocada de Pizarro ya no alcanza a rivales al otro lado de una plataforma"
+     ]
+    },
+    "fr": {
+     "title": "Retouche de l’estoc de Pizarro",
+     "items": [
+      "L’estoc de Pizarro ne touche plus les adversaires de l’autre côté d’une plateforme"
+     ]
+    },
+    "de": {
+     "title": "Pizarros Stoß angepasst",
+     "items": [
+      "Pizarros Stoß trifft keine Gegner mehr auf der anderen Seite einer Plattform"
+     ]
+    },
+    "ja": {
+     "title": "ピサロの突きの調整",
+     "items": [
+      "ピサロの突きが足場の向こう側の相手に当たらないように変更"
+     ]
+    }
+   }
   },
   {
    "date": "2026-10-18",
@@ -131,7 +602,39 @@
    "title": "피사로 보강",
    "items": [
     "피사로 단계 수치 변경: 공격력 24·30·36·42, 공격 쿨타임 0.6·0.5·0.4·0.3초, 대쉬 쿨타임 3·1.5·0.7·0.4초, 궁극기 최대 3번 중첩(4단계), 4단계 이동속도 125% 피사로 황금 약탈 추가: 처치·어시스트로 황금 표식 3개를 모으면 다음 찌르기가 두 배 거리로 뻗음 피사로 돌격 찌르기 추가: 대쉬 직후 첫 찌르기는 더 멀리 밀어내고 0.2초 비틀거리게 함 피사로 기세 연출 추가: 중첩마다 황금빛 기운과 투구 깃털이 커지고 4단계에는 발밑에 불꽃 캐릭터 카드 그림을 머리와 목만 크게 보이게 변경, 무지개·반짝임 색이 카드에서도 움직임"
-   ]
+   ],
+   "tr": {
+    "en": {
+     "title": "Pizarro buff",
+     "items": [
+      "Pizarro’s stage stats changed: attack 24·30·36·42, attack cooldown 0.6·0.5·0.4·0.3s, dash cooldown 3·1.5·0.7·0.4s, ultimate stacks up to 3 times (stage 4), 125% move speed at stage 4 · New Pizarro Golden Plunder: collect 3 gold marks from kills and assists and your next thrust reaches twice as far · New Pizarro Charging Thrust: the first thrust right after a dash pushes farther and makes the target stagger for 0.2s · New Pizarro Momentum effects: his golden aura and helmet plume grow with each stack, with flames at his feet at stage 4 · Character card art now shows a large close-up of just the head and neck, and rainbow and sparkle colours now move on cards too"
+     ]
+    },
+    "es": {
+     "title": "Mejora de Pizarro",
+     "items": [
+      "Cambios en las etapas de Pizarro: ataque 24·30·36·42, enfriamiento de ataque 0,6·0,5·0,4·0,3 s, enfriamiento de embestida 3·1,5·0,7·0,4 s, la definitiva se acumula hasta 3 veces (etapa 4) y velocidad de movimiento del 125 % en la etapa 4 · Nuevo Saqueo de oro de Pizarro: al reunir 3 marcas de oro con eliminaciones y asistencias, la siguiente estocada llega el doble de lejos · Nueva Estocada de carga de Pizarro: la primera estocada justo después de una embestida empuja más lejos y hace tambalearse al rival 0,2 s · Nuevos efectos de Ímpetu de Pizarro: con cada acumulación crecen el aura dorada y el penacho del yelmo, y en la etapa 4 aparecen llamas a sus pies · El dibujo de las cartas de personaje ahora muestra en grande solo la cabeza y el cuello, y los colores arcoíris y brillantes también se mueven en las cartas"
+     ]
+    },
+    "fr": {
+     "title": "Renforcement de Pizarro",
+     "items": [
+      "Statistiques des paliers de Pizarro modifiées : attaque 24·30·36·42, recharge de l’attaque 0,6·0,5·0,4·0,3 s, recharge du dash 3·1,5·0,7·0,4 s, ultime cumulable jusqu’à 3 fois (palier 4), vitesse de déplacement de 125 % au palier 4 · Nouveau Pillage d’or de Pizarro : réunissez 3 marques d’or grâce aux éliminations et aux assistances et votre prochain estoc porte deux fois plus loin · Nouvel Estoc de charge de Pizarro : le premier estoc juste après un dash repousse plus loin et fait chanceler la cible 0,2 s · Nouveaux effets d’Élan de Pizarro : son aura dorée et le panache de son casque grandissent à chaque cumul, avec des flammes à ses pieds au palier 4 · L’illustration des cartes de personnage montre désormais la tête et le cou en gros plan, et les couleurs arc-en-ciel et scintillantes bougent aussi sur les cartes"
+     ]
+    },
+    "de": {
+     "title": "Pizarro-Buff",
+     "items": [
+      "Pizarros Stufenwerte geändert: Angriff 24·30·36·42, Angriffs-Abklingzeit 0,6·0,5·0,4·0,3 s, Dash-Abklingzeit 3·1,5·0,7·0,4 s, Ultimate bis zu 3-mal stapelbar (Stufe 4), 125 % Lauftempo auf Stufe 4 · Neu: Pizarros Goldraub – sammle durch Kills und Assists 3 Goldmarken, dann reicht dein nächster Stoß doppelt so weit · Neu: Pizarros Sturmstoß – der erste Stoß direkt nach einem Dash schleudert weiter und lässt das Ziel 0,2 s taumeln · Neu: Pizarros Schwung-Effekte – goldene Aura und Helmbusch wachsen mit jedem Stapel, auf Stufe 4 lodern Flammen zu seinen Füßen · Charakterkartenbilder zeigen jetzt nur Kopf und Hals groß, und Regenbogen- und Glitzerfarben bewegen sich jetzt auch auf den Karten"
+     ]
+    },
+    "ja": {
+     "title": "ピサロの強化",
+     "items": [
+      "ピサロの段階ごとの数値を変更: 攻撃力24・30・36・42、攻撃クールタイム0.6・0.5・0.4・0.3秒、ダッシュのクールタイム3・1.5・0.7・0.4秒、必殺技は最大3回まで重なる（4段階）、4段階で移動速度125% · ピサロの「黄金の略奪」を追加: キル・アシストで黄金の印を3つ集めると次の突きが2倍の距離まで伸びる · ピサロの「突撃の突き」を追加: ダッシュ直後の最初の突きはより遠くへ押し出し、0.2秒よろめかせる · ピサロの勢いの演出を追加: 重なるたびに黄金のオーラと兜の羽根飾りが大きくなり、4段階では足元に炎 · キャラクターカードの絵を頭と首だけ大きく見せるように変更、レインボー・キラキラの色がカードでも動く"
+     ]
+    }
+   }
   },
   {
    "date": "2026-10-18",
