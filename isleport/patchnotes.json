@@ -2,6 +2,58 @@
  "notes": [
   {
    "date": "2026-10-19",
+   "build": "v0.2 build 25",
+   "title": "선로를 달리는 기차",
+   "items": [
+    "기차를 타면 역에서 출발한 기차가 선로를 따라 터널로 들어가요. 화면이 기차를 따라가요",
+    "지방 역에는 같은 선로로 기차가 들어와 멈춰요. 돌아올 때도 기차가 떠나고 우리 역으로 들어와요",
+    "지방 지역도 섬과 같은 3.5배 크기예요"
+   ],
+   "tr": {
+    "en": {
+     "title": "Train on real rails",
+     "items": [
+      "Boarding makes the train pull out of the station, run down the rails and into the tunnel, with the camera following",
+      "At the provincial station the train rolls in on the same line; going home it leaves and pulls into your station",
+      "Provinces are 3.5x larger, like the islands"
+     ]
+    },
+    "ja": {
+     "title": "Train on real rails",
+     "items": [
+      "Boarding makes the train pull out of the station, run down the rails and into the tunnel, with the camera following",
+      "At the provincial station the train rolls in on the same line; going home it leaves and pulls into your station",
+      "Provinces are 3.5x larger, like the islands"
+     ]
+    },
+    "es": {
+     "title": "Train on real rails",
+     "items": [
+      "Boarding makes the train pull out of the station, run down the rails and into the tunnel, with the camera following",
+      "At the provincial station the train rolls in on the same line; going home it leaves and pulls into your station",
+      "Provinces are 3.5x larger, like the islands"
+     ]
+    },
+    "fr": {
+     "title": "Train on real rails",
+     "items": [
+      "Boarding makes the train pull out of the station, run down the rails and into the tunnel, with the camera following",
+      "At the provincial station the train rolls in on the same line; going home it leaves and pulls into your station",
+      "Provinces are 3.5x larger, like the islands"
+     ]
+    },
+    "de": {
+     "title": "Train on real rails",
+     "items": [
+      "Boarding makes the train pull out of the station, run down the rails and into the tunnel, with the camera following",
+      "At the provincial station the train rolls in on the same line; going home it leaves and pulls into your station",
+      "Provinces are 3.5x larger, like the islands"
+     ]
+    }
+   }
+  },
+  {
+   "date": "2026-10-19",
    "build": "v0.2 build 24",
    "title": "섬 상륙 맵 대확장",
    "items": [
