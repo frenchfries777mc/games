@@ -2,6 +2,58 @@
  "notes": [
   {
    "date": "2026-10-19",
+   "build": "v0.2 build 30",
+   "title": "주택가와 마을의 움직임",
+   "items": [
+    "호수 서쪽에 울타리와 정원이 있는 주택가가 생겼어요. 굴뚝에서 연기가 올라요",
+    "주민들이 길과 광장, 공원, 다리를 걸어 다녀요. 공원에는 나비가 날아요",
+    "밤에는 가로등과 창문에 불이 켜져요"
+   ],
+   "tr": {
+    "en": {
+     "title": "Homes and a lively town",
+     "items": [
+      "A residential quarter with fences and gardens; chimneys smoke",
+      "Residents stroll the streets, plaza, park and bridge; butterflies flutter in the park",
+      "Street lamps and windows light up at night"
+     ]
+    },
+    "ja": {
+     "title": "Homes and a lively town",
+     "items": [
+      "A residential quarter with fences and gardens; chimneys smoke",
+      "Residents stroll the streets, plaza, park and bridge; butterflies flutter in the park",
+      "Street lamps and windows light up at night"
+     ]
+    },
+    "es": {
+     "title": "Homes and a lively town",
+     "items": [
+      "A residential quarter with fences and gardens; chimneys smoke",
+      "Residents stroll the streets, plaza, park and bridge; butterflies flutter in the park",
+      "Street lamps and windows light up at night"
+     ]
+    },
+    "fr": {
+     "title": "Homes and a lively town",
+     "items": [
+      "A residential quarter with fences and gardens; chimneys smoke",
+      "Residents stroll the streets, plaza, park and bridge; butterflies flutter in the park",
+      "Street lamps and windows light up at night"
+     ]
+    },
+    "de": {
+     "title": "Homes and a lively town",
+     "items": [
+      "A residential quarter with fences and gardens; chimneys smoke",
+      "Residents stroll the streets, plaza, park and bridge; butterflies flutter in the park",
+      "Street lamps and windows light up at night"
+     ]
+    }
+   }
+  },
+  {
+   "date": "2026-10-19",
    "build": "v0.2 build 29",
    "title": "마을 건물과 납품 가게",
    "items": [
