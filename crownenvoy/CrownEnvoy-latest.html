@@ -383,7 +383,7 @@ window.ceReload=function(){try{sessionStorage.setItem('ce_noIntro','1');}catch(e
 try{if(sessionStorage.getItem('ce_noIntro')){sessionStorage.removeItem('ce_noIntro');el.style.display='none';go();}}catch(e){}})();</script>
 <div id="app">
  <div id="lobby" class="screen">
-  <canvas id="lobbyBg"></canvas><canvas id="lobbyWar"></canvas><div id="verTag">v0.3 · build 65</div>
+  <canvas id="lobbyBg"></canvas><canvas id="lobbyWar"></canvas><div id="verTag">v0.3 · build 66</div>
   <header class="brand"><h1>Crown Envoy</h1><div class="sub"><i></i>DIPLOMACY · WAR · EMPIRE<i></i></div></header>
   <div id="lobbyRight">
    <div id="lobbyHome" class="modes">
@@ -6093,7 +6093,8 @@ let S=null,TOK=null,mode='in',busy=false,msg='',ok=false;
 /* 로그인 정보는 허브·다른 게임과 같은 supabase-js 기본 칸(STORE)에 있다. 라이브러리가 뜨기 전에도 이름이 보이도록 먼저 살짝 읽어 둔다 */
 try{const j=JSON.parse(localStorage.getItem(STORE)||'null');const u=j&&(j.user||(j.currentSession&&j.currentSession.user));if(u&&u.id)S={user:u,prof:null};}catch(e){}
 
-const emailFor=u=>String(u).toLowerCase().replace(/[^a-z0-9_]/g,'')+'@arenaclash.local';
+const ID_DOM='arenaclash.local',ID_DOM_NEW='frenchfries777.com';   // 가입은 ID_DOM, 로그인은 ID_DOM 다음 ID_DOM_NEW 순서로 시도 (도메인 이전 중)
+const emailFor=(u,d)=>String(u).toLowerCase().replace(/[^a-z0-9_]/g,'')+'@'+(d||ID_DOM);
 const ID_RE=/^[a-zA-Z0-9_]{3,16}$/;
 const dname=u=>{if(!u)return '';const pf=(S&&S.prof)||{};return pf.display_name||pf.username||(u.email||'').split('@')[0]||'';};
 
@@ -6153,7 +6154,7 @@ async function go(){if(busy)return;const id=(($('#aEm')||{}).value||'').trim(),p
       if(!r.data||!r.data.session)throw new Error('signup failed');
       try{await c.from('profiles').insert({id:r.data.user.id,username:id});}catch(e){}
       onSession(r.data.session);await loadProf();}
-    else{const r=await c.auth.signInWithPassword({email:em,password:pw});if(r.error)throw r.error;onSession(r.data.session);await loadProf();}
+    else{let r=await c.auth.signInWithPassword({email:em,password:pw});if(r.error&&/invalid/i.test(String(r.error.message||'')+' '+String(r.error.code||'')))r=await c.auth.signInWithPassword({email:emailFor(id,ID_DOM_NEW),password:pw});if(r.error)throw r.error;onSession(r.data.session);await loadProf();}
     paint();close();mark();
   }catch(e){msg=errKo(e);ok=false;draw();}
   busy=false;}
