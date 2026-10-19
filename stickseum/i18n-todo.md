@@ -7,3 +7,7 @@ patchnotes.json | v307 title | 피사로 찌르기 보강 | build 307 | 2026-10-
 patchnotes.json | v307 items[0] | 피사로 찌르기가 발판 너머의 상대를 맞히지 않도록 변경 | build 307 | 2026-10-18
 patchnotes.json | v308 title | 포탈건과 마술사 조정 | build 308 | 2026-10-18
 patchnotes.json | v308 items[0] | 포탈건 데미지 12 → 15 포탈건 탄환이 발판 아랫면에 맞으면 통과하던 문제 수정 (아래로 튕김) 마술사 일반 공격 쿨타임 1.0초 → 0.9초 마술사 스킬 카드 일렬 발사 5장 → 4장 | build 308 | 2026-10-18
+patchnotes.json | v309 title | 메뉴 통일·그래프·카드 색 | build 309 | 2026-10-18
+patchnotes.json | v309 items[0] | Stickseum 모든 페이지의 위쪽 메뉴 이름·순서·글꼴 통일 | build 309 | 2026-10-18
+patchnotes.json | v309 items[1] | 밸런스 그래프가 최근 빌드 8개만 보이고 좌우로 끌어 나머지를 확인 | build 309 | 2026-10-18
+patchnotes.json | v309 items[2] | 캐릭터 카드의 무지개·은색·금색 효과 제거 | build 309 | 2026-10-18

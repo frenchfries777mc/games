@@ -25,7 +25,7 @@
   .wordmark{font-family:'Oswald',sans-serif; font-weight:600; font-size:21px; letter-spacing:.03em; color:var(--text); text-decoration:none;}
   .wordmark b{color:var(--red); font-weight:700;}
   .topbar nav{display:flex; gap:4px; overflow-x:auto; max-width:100%;}
-  .topbar nav a{color:var(--text-dim); text-decoration:none; font-size:15px; padding:6px 10px; border-radius:7px; white-space:nowrap;}
+  .topbar nav a{color:var(--text-dim); text-decoration:none; font-size:15px; padding:6px 10px; border-radius:7px; white-space:nowrap; border:1px solid transparent;}
   .topbar nav a:hover{color:var(--text);}
   .topbar [data-ff-account]{display:inline-flex; align-items:center; white-space:nowrap;}
   .topbar{align-items:flex-start; flex-wrap:nowrap;} .topbar .right{row-gap:8px;} .topbar nav{order:3; flex-basis:100%; justify-content:flex-end;}   /* not enough room for one row: the menu goes under the language and account buttons */
@@ -83,7 +83,7 @@
 </head>
 <body>
 <div class="wrap">
-  <div class="topbar"><a class="wordmark" href="index.html">STICK<b>SEUM</b></a><div class="right"><nav><a href="index.html">홈</a><a href="codex.html">캐릭터 도감</a><a class="on" href="ranking.html">순위표</a><a href="balance.html">밸런스</a></nav><span data-lang-slot></span><span data-ff-account></span></div></div>
+  <div class="topbar"><a class="wordmark" href="index.html">STICK<b>SEUM</b></a><div class="right"><nav><a href="index.html#play">플레이</a><a href="codex.html">캐릭터 도감</a><a class="on" href="ranking.html">순위표</a><a href="balance.html">밸런스</a><a href="index.html#notes">패치노트</a><a href="index.html#help">도움말</a></nav><span data-lang-slot></span><span data-ff-account></span></div></div>
   <div class="head">
     <h1>순위표</h1>
     <p>랭크전 시즌 순위와 클랜 순위예요. 시즌은 한국 시간으로 매달 1일에 새로 시작해요.</p>
