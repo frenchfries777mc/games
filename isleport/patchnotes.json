@@ -2,6 +2,52 @@
  "notes": [
   {
    "date": "2026-10-19",
+   "build": "v0.2 build 8",
+   "title": "항구 음악",
+   "items": [
+    "Isleport 전용 배경음악이 생겼어요. 기타와 전자 피아노가 어우러진 느긋한 곡이에요",
+    "음악 파일이 게임 옆에 따로 있어요. 파일을 못 불러오면 예전처럼 만들어 내는 음악이 나와요"
+   ],
+   "tr": {
+    "en": {
+     "title": "Harbor music",
+     "items": [
+      "Isleport now has its own background music: a relaxed track with guitar and electric piano",
+      "The music is a separate file next to the game; if it can't be loaded, the old generated music plays instead"
+     ]
+    },
+    "ja": {
+     "title": "Harbor music",
+     "items": [
+      "Isleport now has its own background music: a relaxed track with guitar and electric piano",
+      "The music is a separate file next to the game; if it can't be loaded, the old generated music plays instead"
+     ]
+    },
+    "es": {
+     "title": "Harbor music",
+     "items": [
+      "Isleport now has its own background music: a relaxed track with guitar and electric piano",
+      "The music is a separate file next to the game; if it can't be loaded, the old generated music plays instead"
+     ]
+    },
+    "fr": {
+     "title": "Harbor music",
+     "items": [
+      "Isleport now has its own background music: a relaxed track with guitar and electric piano",
+      "The music is a separate file next to the game; if it can't be loaded, the old generated music plays instead"
+     ]
+    },
+    "de": {
+     "title": "Harbor music",
+     "items": [
+      "Isleport now has its own background music: a relaxed track with guitar and electric piano",
+      "The music is a separate file next to the game; if it can't be loaded, the old generated music plays instead"
+     ]
+    }
+   }
+  },
+  {
+   "date": "2026-10-19",
    "build": "v0.2 build 7",
    "title": "마을 회관, 낚시, 개간, 도전 과제",
    "items": [
