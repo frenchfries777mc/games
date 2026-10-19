@@ -2,6 +2,58 @@
  "notes": [
   {
    "date": "2026-10-19",
+   "build": "v0.2 build 24",
+   "title": "섬 상륙 맵 대확장",
+   "items": [
+    "상륙했을 때 섬이 가로세로 3.5배, 넓이로는 약 12배 커졌어요",
+    "밭·나무·장식과 광석, 줍는 특산물이 훨씬 많아졌어요",
+    "섬이 넓어진 만큼 걷는 속도도 조금 빨라졌어요"
+   ],
+   "tr": {
+    "en": {
+     "title": "Bigger islands",
+     "items": [
+      "Landed islands are 3.5x wider and taller, about 12x the area",
+      "Fields, trees, decor, ore and pick-up goods are far more plentiful",
+      "Walking is a bit faster to match the size"
+     ]
+    },
+    "ja": {
+     "title": "Bigger islands",
+     "items": [
+      "Landed islands are 3.5x wider and taller, about 12x the area",
+      "Fields, trees, decor, ore and pick-up goods are far more plentiful",
+      "Walking is a bit faster to match the size"
+     ]
+    },
+    "es": {
+     "title": "Bigger islands",
+     "items": [
+      "Landed islands are 3.5x wider and taller, about 12x the area",
+      "Fields, trees, decor, ore and pick-up goods are far more plentiful",
+      "Walking is a bit faster to match the size"
+     ]
+    },
+    "fr": {
+     "title": "Bigger islands",
+     "items": [
+      "Landed islands are 3.5x wider and taller, about 12x the area",
+      "Fields, trees, decor, ore and pick-up goods are far more plentiful",
+      "Walking is a bit faster to match the size"
+     ]
+    },
+    "de": {
+     "title": "Bigger islands",
+     "items": [
+      "Landed islands are 3.5x wider and taller, about 12x the area",
+      "Fields, trees, decor, ore and pick-up goods are far more plentiful",
+      "Walking is a bit faster to match the size"
+     ]
+    }
+   }
+  },
+  {
+   "date": "2026-10-19",
    "build": "v0.2 build 23",
    "title": "내 섬이 대륙으로",
    "items": [
