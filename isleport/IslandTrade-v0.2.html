@@ -434,7 +434,7 @@ const TUT=[
  [P('다 자라면 밭을 눌러 수확해요','When it is grown, tap the field to harvest'),s=>s.stats.harvest>=1],
  [P('마을 장터에서 수확한 것을 팔아요','Sell your harvest at the town market'),s=>(s.stats.shop||0)>=1],
  [P('항구에서 배에 짐을 싣고 보내요','Load a ship at the harbor and send it off'),s=>s.stats.sailed>=1]];
-const OUTMAX=12,BUILD=13;
+const OUTMAX=12,BUILD=14;
 const hasB=(s,b)=>s.slots.some(x=>x&&x.b===b);
 const rankOf=e=>{let r=0;RANKS.forEach((x,i)=>{if(e>=x[0])r=i;});return r;};
 /* 업적: id, 이름, 설명, 조건 */
@@ -556,13 +556,16 @@ A('nw1m',P('백만장자','Millionaire'),P('재산 1,000,000 모으기','Reach a
 const CROPK=Object.keys(CROPS),SPEC=['goldbarley','pomegranate','saffron','cloudcotton','seaweed','dragonfruit'],CROPK17=CROPK.filter(c=>!SPEC.includes(c));
 const ACHN={};ACH.forEach(a=>ACHN[a.id]=a);
 const NOTES=[
+ {date:'2026-10-19',build:'v0.2 build 14',title:P('NPC 이름 정리','NPC names'),items:[
+  P('섬 주민과 이야기 속 NPC의 이름을 신문 속 인물처럼 서양식 이름으로 바꿨어요','Island residents and story NPCs now have names in the same style as the newspaper characters')
+ ]},
  {date:'2026-10-19',build:'v0.2 build 13',title:P('기차역과 내륙 지방','Train station and inland provinces'),items:[
   P('홈 섬 장터 옆에 기차역이 생겼어요. 기차를 타고 내륙의 세 지방으로 갈 수 있어요','A train station stands by the market. Ride to three inland provinces'),
   P('푸른 고원(계급 1), 소나무 숲마을(계급 2), 붉은 산맥 역참(계급 3)이 있고, 각각 걸어 다닐 수 있는 지도와 시장, 주민이 있어요','Blue Highlands (rank 1), Pine Forest Village (rank 2) and Red Ridge Depot (rank 3), each with a walkable map, market and resident'),
   P('지방 시장에서 물건을 비싸게 팔고, 그 지방의 특산품을 싸게 살 수 있어요','Sell goods dear at provincial markets and buy local specialties cheaply'),
  ]},
  {date:'2026-10-19',build:'v0.2 build 12',title:P('NPC와 이야기','NPCs and a story'),items:[
-  P('섬에 말을 걸 수 있는 NPC 셋이 생겼어요. 밭 옆의 보리 할멈, 부두의 항해사 오르간, 장터의 상인 미라예요','Three talkable NPCs: Granny Bori by the fields, navigator Organ at the pier and merchant Mira at the market'),
+  P('섬에 말을 걸 수 있는 NPC 셋이 생겼어요. 밭 옆의 마사 할멈, 부두의 항해사 오르간, 장터의 상인 미라예요','Three talkable NPCs: Granny Bori by the fields, navigator Organ at the pier and merchant Mira at the market'),
   P('할아버지의 낡은 장부를 따라가는 여덟 장짜리 이야기가 생겼어요. 목표를 이루고 다시 찾아가면 이야기가 이어져요','An eight-chapter story about your grandfather\'s old ledger: reach each goal and talk again to continue'),
   P('이야기 끝에서 고르는 선택에 따라 영구 보너스가 달라져요','Your final choice decides a permanent bonus'),
   P('이야기 사이사이에 NPC가 팁을 한마디씩 들려줘요. 각 섬의 주민도 모습을 드러냈어요','NPCs share a tip between story beats; island residents now stand by their landmarks'),
@@ -6947,18 +6950,18 @@ const muN=()=>Object.keys(S.mu.don).length;
 function muDonate(g){if(S.mu.don[g]||inv(g)<1)return;S.inv[g]--;S.mu.don[g]=1;sfx('ach');toast(T('{0}을(를) 전시했어요','Displayed {0}',GN(g)));}
 function muTick(t){const m=S.mu;if(!m.t)m.t=t;const dt=Math.min(t-m.t,3600000);m.t=t;m.till+=muN()*0.5*dt/60000*(S.story&&S.story.end===1?1.5:1);}
 const NPCS=[
- {n:'방앗간 주인 보리',st:[['올해 밀가루 주문이 밀려서 손이 모자라요. 밀 15개만 가져다주실래요?',{wheat:15}],['덕분에 살았어요! 이번엔 빵을 맛보고 싶다는 손님이 있어요. 빵 4개를 부탁해요.',{bread:4}],['마지막 부탁이에요. 저희 집 풍차가 오래돼서 감자 전골로 인부들을 먹여야 해요. 감자 20개 구해 주세요.',{potato:20}]]},
- {n:'과수원지기 사과',st:[['첫 서리가 오기 전에 사과를 더 따야 해요. 사과 12개를 나눠 주세요.',{apple:12}],['사과 잼이 동나서 단골이 화났어요. 잼 3병 부탁해요.',{jam:3}],['올해 사과 파이 대회에 나가요. 파이 2개만 구해 주실 수 있어요?',{pie:2}]]},
- {n:'양조장 주인 포도',st:[['올해 포도가 풍년이라 통이 모자라요. 포도 15개를 가져와 주세요.',{grape:15}],['와인 숙성 중에 손님이 왔어요. 시음용 와인 2병을 부탁해요.',{wine:2}],['저택 지하를 정리하다 보니 올리브유가 필요해요. 올리브유 3개를 구해 주세요.',{oil:3}]]},
- {n:'양치기 솜이',st:[['양들이 털갈이를 해요. 양모 8개를 모아 베틀로 보내 주세요.',{wool:8}],['구름처럼 가벼운 옷감을 짜고 싶어요. 옷감 3개만 부탁해요.',{cloth:3}],['차 한잔하며 쉬고 싶어요. 꿀 5개와 차 5개를 구해 주실래요?',{honey:5,tea:5}]]},
- {n:'어부 닻돌',st:[['오늘 만선인데 소금이 떨어졌어요. 소금 10개만 가져다주세요.',{salt:10}],['절임을 해서 오래 두고 싶어요. 통조림 4개를 부탁해요.',{canned:4}],['마지막으로 초밥을 먹어 보고 싶어요. 초밥 2개를 구해 주세요.',{sushi:2}]]},
- {n:'향신 상인 후추',st:[['멀리서 온 손님이 향신료를 찾아요. 향신료 6개를 부탁해요.',{spice:6}],['커피 향이 그리워요. 커피콩 5개만 가져다주세요.',{coffee:5}],['비단 한 필이 있으면 최고의 선물이 돼요. 비단 2개를 구해 주세요.',{silk:2}]]},
- {n:'다이버 파랑',st:[['산호섬 바닥에서 숨을 오래 참기 힘들어요. 생선 8개를 구워 먹게 가져다주세요.',{fish:8}],['바다 속에서 해초를 모으고 있어요. 해초 6개를 부탁해요.',{seaweed:6}],['마지막으로 진주 한 알을 보고 싶어요. 진주 1개를 구해 주세요.',{pearl:1}]]},
- {n:'채집꾼 호박',st:[['호박섬은 호박이 주인이에요. 호박 10개를 모아 오면 파이를 구워 줄게요.',{pumpkin:10}],['호박 사이에서 반짝이는 게 보여요. 호박 보석 2개를 가져다주세요.',{amber:2}],['이 섬의 비밀을 알려 줄게요. 먼저 달걀 10개를 부탁해요.',{egg:10}]]},
- {n:'고고학자 이끼',st:[['유적을 조사하는데 간식이 필요해요. 빵 5개를 부탁해요.',{bread:5}],['오래된 목걸이가 묻혀 있대요. 목걸이 1개를 구해 보여 주세요.',{necklace:1}],['마지막으로 지도 위에 향신료 흔적이 있어요. 향신료 4개를 부탁해요.',{spice:4}]]},
- {n:'목동 하늘',st:[['고원의 양들이 털을 뽑아 달래요. 양모 10개만 가져다주세요.',{wool:10}],['산바람이 차서 따뜻한 우유가 필요해요. 우유 8개를 부탁해요.',{milk:8}],['장터에 내놓을 치즈를 만들고 싶어요. 치즈 3개를 구해 주세요.',{cheese:3}]]},
- {n:'나무꾼 소나무',st:[['겨울나기 준비 중이에요. 소금 10개만 가져다주세요.',{salt:10}],['숲 속 벌통을 지키는 중이에요. 꿀 6개를 모아 와 주세요.',{honey:6}],['일이 끝나면 한잔하고 싶어요. 벌꿀술 2개를 부탁해요.',{mead:2}]]},
- {n:'역장 철수',st:[['역참에 온 손님들이 배가 고파요. 빵 8개를 부탁해요.',{bread:8}],['추운 날엔 스튜가 최고예요. 스튜 3개를 구해 주세요.',{stew:3}],['열차 손님에게 보여 줄 호박 보석 3개를 구해 주세요.',{amber:3}]]}];
+ {n:'방앗간 주인 마르코',st:[['올해 밀가루 주문이 밀려서 손이 모자라요. 밀 15개만 가져다주실래요?',{wheat:15}],['덕분에 살았어요! 이번엔 빵을 맛보고 싶다는 손님이 있어요. 빵 4개를 부탁해요.',{bread:4}],['마지막 부탁이에요. 저희 집 풍차가 오래돼서 감자 전골로 인부들을 먹여야 해요. 감자 20개 구해 주세요.',{potato:20}]]},
+ {n:'과수원지기 엘라',st:[['첫 서리가 오기 전에 사과를 더 따야 해요. 사과 12개를 나눠 주세요.',{apple:12}],['사과 잼이 동나서 단골이 화났어요. 잼 3병 부탁해요.',{jam:3}],['올해 사과 파이 대회에 나가요. 파이 2개만 구해 주실 수 있어요?',{pie:2}]]},
+ {n:'양조장 주인 빈센트',st:[['올해 포도가 풍년이라 통이 모자라요. 포도 15개를 가져와 주세요.',{grape:15}],['와인 숙성 중에 손님이 왔어요. 시음용 와인 2병을 부탁해요.',{wine:2}],['저택 지하를 정리하다 보니 올리브유가 필요해요. 올리브유 3개를 구해 주세요.',{oil:3}]]},
+ {n:'양치기 니나',st:[['양들이 털갈이를 해요. 양모 8개를 모아 베틀로 보내 주세요.',{wool:8}],['구름처럼 가벼운 옷감을 짜고 싶어요. 옷감 3개만 부탁해요.',{cloth:3}],['차 한잔하며 쉬고 싶어요. 꿀 5개와 차 5개를 구해 주실래요?',{honey:5,tea:5}]]},
+ {n:'어부 호세',st:[['오늘 만선인데 소금이 떨어졌어요. 소금 10개만 가져다주세요.',{salt:10}],['절임을 해서 오래 두고 싶어요. 통조림 4개를 부탁해요.',{canned:4}],['마지막으로 초밥을 먹어 보고 싶어요. 초밥 2개를 구해 주세요.',{sushi:2}]]},
+ {n:'향신 상인 라지',st:[['멀리서 온 손님이 향신료를 찾아요. 향신료 6개를 부탁해요.',{spice:6}],['커피 향이 그리워요. 커피콩 5개만 가져다주세요.',{coffee:5}],['비단 한 필이 있으면 최고의 선물이 돼요. 비단 2개를 구해 주세요.',{silk:2}]]},
+ {n:'다이버 마리나',st:[['산호섬 바닥에서 숨을 오래 참기 힘들어요. 생선 8개를 구워 먹게 가져다주세요.',{fish:8}],['바다 속에서 해초를 모으고 있어요. 해초 6개를 부탁해요.',{seaweed:6}],['마지막으로 진주 한 알을 보고 싶어요. 진주 1개를 구해 주세요.',{pearl:1}]]},
+ {n:'채집꾼 루카',st:[['호박섬은 호박이 주인이에요. 호박 10개를 모아 오면 파이를 구워 줄게요.',{pumpkin:10}],['호박 사이에서 반짝이는 게 보여요. 호박 보석 2개를 가져다주세요.',{amber:2}],['이 섬의 비밀을 알려 줄게요. 먼저 달걀 10개를 부탁해요.',{egg:10}]]},
+ {n:'고고학자 헨리',st:[['유적을 조사하는데 간식이 필요해요. 빵 5개를 부탁해요.',{bread:5}],['오래된 목걸이가 묻혀 있대요. 목걸이 1개를 구해 보여 주세요.',{necklace:1}],['마지막으로 지도 위에 향신료 흔적이 있어요. 향신료 4개를 부탁해요.',{spice:4}]]},
+ {n:'목동 샘',st:[['고원의 양들이 털을 뽑아 달래요. 양모 10개만 가져다주세요.',{wool:10}],['산바람이 차서 따뜻한 우유가 필요해요. 우유 8개를 부탁해요.',{milk:8}],['장터에 내놓을 치즈를 만들고 싶어요. 치즈 3개를 구해 주세요.',{cheese:3}]]},
+ {n:'나무꾼 잭',st:[['겨울나기 준비 중이에요. 소금 10개만 가져다주세요.',{salt:10}],['숲 속 벌통을 지키는 중이에요. 꿀 6개를 모아 와 주세요.',{honey:6}],['일이 끝나면 한잔하고 싶어요. 벌꿀술 2개를 부탁해요.',{mead:2}]]},
+ {n:'역장 윌리엄',st:[['역참에 온 손님들이 배가 고파요. 빵 8개를 부탁해요.',{bread:8}],['추운 날엔 스튜가 최고예요. 스튜 3개를 구해 주세요.',{stew:3}],['열차 손님에게 보여 줄 호박 보석 3개를 구해 주세요.',{amber:3}]]}];
 const npcStep=pi=>S.npc[pi]||0;
 const npcRw=need=>{let v=0;for(const k in need)v+=GI[k].base*need[k];return Math.round(v*1.8);};
 function npcGive(pi){const N=NPCS[pi];if(!N)return;const st=npcStep(pi);if(st>=3)return;const need=N.st[st][1];for(const k in need)if(inv(k)<need[k]){toast(T('재료가 모자라요','Not enough goods'));return;}for(const k in need)S.inv[k]-=need[k];const rw=npcRw(need);S.money+=rw;S.npc[pi]=st+1;S.stats.npcDone=(S.stats.npcDone||0)+1;toast(T('{0}에게 건네주었어요! 보상 {1}','Delivered to {0}! Reward {1}',N.n,fmt(rw)));if(st===2){addMap(1);toast(T('{0}이(가) 낡은 지도를 건네요','{0} hands you an old map',N.n));}sfx('ach');}
@@ -6974,7 +6977,7 @@ function pickUp(){const M=S.mine,u=PICKUP[M.pick];if(!u||S.money<u.g||M.ing.iron
 function reinforce(s){const lv=s.rf||0,u=RFC[lv];if(!u)return false;const M=S.mine;if(S.money<u.g||M.ing.iron<u.iron||M.ore.stone<u.stone||M.ing.copper<(u.copper||0))return false;S.money-=u.g;M.ing.iron-=u.iron;M.ore.stone-=u.stone;M.ing.copper-=(u.copper||0);s.rf=lv+1;sfx('build');return true;}
 const hurryN=p=>Math.max(1,Math.ceil(consLeft(p)/15000));
 function hurry(i){const p=S.slots[i];if(!p||!consLeft(p))return;const n=hurryN(p);if(S.mine.ing.iron<n)return;S.mine.ing.iron-=n;p.cend=NOW();sfx('build');}
-const STN={g:{n:'보리 할멈',x:186,y:296,c:['#a06a8a','#e8c0d0']},o:{n:'항해사 오르간',x:692,y:392,c:['#3a5a7a','#8ab0d0']},m:{n:'상인 미라',x:440,y:314,c:['#c0452f','#f0a070']}};
+const STN={g:{n:'마사 할멈',x:186,y:296,c:['#a06a8a','#e8c0d0']},o:{n:'항해사 오르간',x:692,y:392,c:['#3a5a7a','#8ab0d0']},m:{n:'상인 미라',x:440,y:314,c:['#c0452f','#f0a070']}};
 const STAMB={g:['올해는 비가 많이 올 모양이야. 우산 대신 농사 일기를 챙기렴.','닭이 알을 안 낳는다고? 먹이를 줬는지부터 확인해 보렴.','연구를 하면 심기와 수확을 한 번에 할 수 있다더구나. 요즘 것들은 편하겠어.','옛날엔 감자 하나로 사흘을 버텼지. 지금은 빵이 있으니 얼마나 좋니.','회관에서 도전을 받아 보렴. 해냈을 때 맛이 쏠쏠하단다.'],
  o:['바다는 거짓말을 안 해. 폭풍이 오면 호위를 단단히 해 두게.','해적이 나오면 호위가 많을수록 유리하다네. 은행에서 보험도 들 수 있지.','향신항까지 가려면 계급이 높아야 하지. 서두르지 말게.','갈매기가 낮게 날면 비가 오는 거야. 내 무릎도 그렇고.','숨은 섬들은 지도 석 장마다 하나씩 나타난다네. 곡괭이도 챙겨 가게.'],
  m:['장터의 시세는 늘 오르락내리락해요. 신문에 힌트가 있죠. 틀릴 때도 있지만.','식당에 요리가 쌓여 있으면 손님이 줄을 서요. 평판이 중요하죠.','박물관 세트를 채우면 영구 보너스가 있대요. 진주는 꼭 챙기세요.','계약은 믿음이에요. 한 번 맺었으면 끝까지 해내는 사람이 오래 가요.']};
