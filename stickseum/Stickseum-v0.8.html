@@ -1261,7 +1261,7 @@ const ULTS = {
   gambler:  {name:'삼중 도박',     desc:'주사위 3개를 한번에 굴려 효과를 연속 적용 (가진 칩 2개당 주사위 +1, 최대 +3, 칩 모두 사용)\n1:가까운 적에게 25 피해 · 2:가까운 적 둔화 · 3:가까운 적에게 38 피해 · 4:체력 15 회복 · 5:랜덤 위치로 이동 · 6:다음 굴림 2배'},
   wizard:   {name:'마법진',       desc:'자신의 위치에 거대한 마법진 소환(8초): 나와 아군은 공격력 증가 + 초당 8 회복, 안에 들어온 적은 지속 피해'},
   sword:    {name:'천검',         desc:'하늘에서 대형검이 상대를 내리찍음'},
-  horemheb: {name:'모래바람',     desc:'앞쪽 멀리(1150)까지 거센 모래바람을 일으켜 범위 안의 상대에게 12 피해를 주고 강하게 밀치며 1초 동안 기절시키고, 3.5초 동안 이동속도를 크게(70%) 줄임'},
+  horemheb: {name:'모래바람',     desc:'앞쪽 멀리(1725)까지 거센 모래바람을 일으켜 범위 안의 상대에게 36 피해를 주고 아주 강하게 밀치며 2초 동안 기절시키고, 3.5초 동안 이동속도를 크게(70%) 줄임'},
   lightsaber:{name:'포스 라이트닝', desc:'가장 가까운 상대에게 내 손에서 상대의 머리까지 이어지는 번개를 쏘아 15 피해를 주고, 곧바로 그 상대 곁으로 이동'},
   bazooka:  {name:'유도탄',       desc:'다음 공격이 적을 추적하는 유도탄'},
   bow:      {name:'불화살',       desc:'불화살 3발 동시 발사, 맞으면 지속 피해'},
@@ -4721,7 +4721,7 @@ function shuffle(arr){ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.
 /* ===== the version of this file =====
    Players with different versions CAN meet and play together: the automatic matchmaking uses the same room names for every version (online-<mode>-<map>-<slot>), and nobody is refused because of a different build.
    The build is only sent along with the join message and the lobby (for information); the corner of the screen shows it. */
-const GAME_BUILD='build 2026-10-18-v316';
+const GAME_BUILD='build 2026-10-18-v317';
 const GAME_VERSION='0.8', GAME_VERSION_NAME='황금을 찾아서';   // 게임 버전 이름: versions.json의 title과 같게 (빌드마다 바꾸지 않음)
 const WEEKLY_EVENTS=[
   {id:'lowg',    name:'저중력 난투', desc:'몸이 둥실둥실, 중력이 약해진 난투', rules:{grav:0.6}},
@@ -10509,7 +10509,7 @@ const ULT_IMPL = {
     return true; },
   pirate(p,tSec,tMs){ turrets=turrets.filter(z=>z.owner!==p.id); turrets.push({owner:p.id, team:p.team, x:p.x, y:p.y, until:tSec+PIRATE_TURRET_SEC, next:tSec+0.7, ang:(Math.cos(p.angle||0)>=0)?-0.6:Math.PI+0.6}); pushFx('skillring', p.x, p.y-24, tMs, {color:'#ffb347', r:60}); pushFx('sfx', p.x, p.y-30, tMs, {name:'explosion'}); },
   wizard(p,tSec,tMs,ax,ay){ const sp=wizardCircleSpot(p, ax, ay); magicCircles.push({owner:p.id, team:p.team, x:sp.x, y:sp.y, r:WIZ_CIRCLE_R, until:tSec+WIZ_CIRCLE_SEC}); pushFx('magiccircle', sp.x, sp.y, tMs, {}); },
-  horemheb(p,tSec,tMs,ax){         // the sandstorm: a gust far in front of him (1150 long, 240 high): 12 damage, a hard push, a 1 second stun, and 70% less speed for 3.5 s
+  horemheb(p,tSec,tMs,ax){         // the sandstorm: a gust far in front of him (1725 long, 360 high): 36 damage, a 10x push, a 2 second stun, and 70% less speed for 3.5 s
     const dir=skillAimDir(p, ax), x0=p.x, x1=p.x+dir*SANDSTORM_LEN, cy=p.y-PLAYER_H/2;
     for(const id in players){
       const t=players[id]; if(!t.alive || id===p.id || t.x===undefined || isAlly(p,t) || t.swordCharge || t.darkSub) continue;
@@ -10634,7 +10634,7 @@ function skillCdOf(p){ return SKILL_CD*pzCdMult(p); }
 function ultCdOf(p){ return ULT_CD*pzCdMult(p); }
 const PRACTICE_SKILL_CD=2;
 const SKILLS={
-  pizarro:  {name:'하늘의 십자가', kind:'hit', desc:'조준한 곳에 십자가가 떨어져 맞은 적에게 20 피해와 1초 기절, 맞은 아군과 나는 체력 20 회복 (기세 단계마다 범위가 넓어지고 피해 20→22→25→28, 기절 1→1.1→1.2→1.3초) · 맞은 적에게는 3초 동안 표식이 남아 다음 창 공격이 5 피해를 더 줌'},
+  pizarro:  {name:'하늘의 십자가', kind:'hit', desc:'조준한 곳에 십자가가 떨어져 맞은 적에게 20 피해와 1초 기절, 맞은 아군과 나는 체력 20 회복 (기세 단계마다 범위가 넓어지고 피해 20→22→25→28) · 맞은 적에게는 3초 동안 표식이 남아 다음 창 공격이 5 피해를 더 줌'},
   kan:      {name:'독두꺼비 함정', kind:'hit', desc:'내 발밑에 독두꺼비 함정을 설치 (10초 지속, 최대 2개) · 들어온 적에게 독이 쌓이고 이동 속도가 느려짐'},
   pistol:   {name:'속사',        kind:'buff', desc:'1.8초 동안 연사 속도 2배'},
   smg:      {name:'연막탄',      kind:'hit',  desc:'주변 적을 2.5초 동안 둔화'},
@@ -10663,7 +10663,7 @@ const SKILLS={
   kurus:    {name:'어둠의 검',   kind:'hit',  desc:'어둠의 검을 휘둘러(사거리는 칼보다 조금 김) 맞은 상대에게 10 피해 + 매우 큰 넉백 + 1초 기절 · 상대가 떨어져 착지한 자리에 어둠이 생김 · 빗나가도 쿨타임은 다시 돌기 시작함'}
 };
 const SKILL_SFX={buff:'skill_buff', hit:'skill_hit', move:'skill_move'};
-const SANDSTORM_LEN=1150, SANDSTORM_H=240, SANDSTORM_KB=900, SANDSTORM_SLOW_SEC=3.5, SAND_SLOW_MULT=0.3, SANDSTORM_DMG=12, SANDSTORM_STUN=1.0;     // the sandstorm of 호렘헵: reach, height, push, how long and how much it slows
+const SANDSTORM_LEN=1725, SANDSTORM_H=360, SANDSTORM_KB=9000, SANDSTORM_SLOW_SEC=3.5, SAND_SLOW_MULT=0.3, SANDSTORM_DMG=36, SANDSTORM_STUN=2.0;     // the sandstorm of 호렘헵: reach, height, push, how long and how much it slows
 const BUFF_ORDER=['barrier','guard','reflect','focus','rapid','haste'];
 const BUFF_COLORS={barrier:'#c17bff', guard:'#6ec6ff', reflect:'#ffffff', focus:'#ff8a3d', rapid:'#ffd34d', haste:'#7ef0a8'};
 function skillHasBuff(p, name, tSec){ return !!(p && p.buffs && p.buffs[name]>tSec); }
@@ -10796,7 +10796,7 @@ function skillHitFront(p, tMs, dirX, o){   // the nearest enemy in a box in fron
   if(best) skillDamage(p, best, o.dmg, tMs, o);
   return best;
 }
-const PZ_CROSS_HALF=[90,100,110,125], PZ_CROSS_DMG=[20,22,25,28], PZ_CROSS_STUN=[1,1.1,1.2,1.3], PZ_CROSS_HEAL=20, PZ_CROSS_DUR=0.7, PZ_MARK_SEC=3, PZ_MARK_DMG=5;   // 피사로's skill: the cross from the sky, bigger / harder / longer stun with every stage of his ultimate; whoever it hits is marked for 3 s and the next thrust on them hurts 5 more
+const PZ_CROSS_HALF=[90,100,110,125], PZ_CROSS_DMG=[20,22,25,28], PZ_CROSS_STUN=[1,1,1,1], PZ_CROSS_HEAL=20, PZ_CROSS_DUR=0.7, PZ_MARK_SEC=3, PZ_MARK_DMG=5;   // 피사로's skill: the cross from the sky, bigger / harder / longer stun with every stage of his ultimate; whoever it hits is marked for 3 s and the next thrust on them hurts 5 more
 const SKILL_IMPL={
   kan(p,tSec,tMs){
     const mine=poisonZones.filter(z=>z.owner===p.id);
