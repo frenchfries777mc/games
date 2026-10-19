@@ -2,6 +2,64 @@
  "notes": [
   {
    "date": "2026-10-19",
+   "build": "v0.2 build 28",
+   "title": "마을이 남쪽으로 넓어졌어요",
+   "items": [
+    "철로 남쪽으로 새 땅이 펼쳐졌어요. 맵이 두 배 가까이 넓어졌어요",
+    "시계탑이 있는 분수 광장이 생겼어요. 분수에 소원을 빌 수 있어요",
+    "벤치와 꽃밭이 있는 공원이 생겼어요",
+    "호수와 나무다리가 생겼어요. 호수에는 오리가 헤엄쳐요"
+   ],
+   "tr": {
+    "en": {
+     "title": "The town grows south",
+     "items": [
+      "New land opens south of the rails, nearly doubling the map",
+      "A fountain plaza with a clock tower. Make a wish at the fountain",
+      "A park with benches and flower beds",
+      "A lake with a wooden bridge, and ducks swimming on it"
+     ]
+    },
+    "ja": {
+     "title": "The town grows south",
+     "items": [
+      "New land opens south of the rails, nearly doubling the map",
+      "A fountain plaza with a clock tower. Make a wish at the fountain",
+      "A park with benches and flower beds",
+      "A lake with a wooden bridge, and ducks swimming on it"
+     ]
+    },
+    "es": {
+     "title": "The town grows south",
+     "items": [
+      "New land opens south of the rails, nearly doubling the map",
+      "A fountain plaza with a clock tower. Make a wish at the fountain",
+      "A park with benches and flower beds",
+      "A lake with a wooden bridge, and ducks swimming on it"
+     ]
+    },
+    "fr": {
+     "title": "The town grows south",
+     "items": [
+      "New land opens south of the rails, nearly doubling the map",
+      "A fountain plaza with a clock tower. Make a wish at the fountain",
+      "A park with benches and flower beds",
+      "A lake with a wooden bridge, and ducks swimming on it"
+     ]
+    },
+    "de": {
+     "title": "The town grows south",
+     "items": [
+      "New land opens south of the rails, nearly doubling the map",
+      "A fountain plaza with a clock tower. Make a wish at the fountain",
+      "A park with benches and flower beds",
+      "A lake with a wooden bridge, and ducks swimming on it"
+     ]
+    }
+   }
+  },
+  {
+   "date": "2026-10-19",
    "build": "v0.2 build 27",
    "title": "사이트로 돌아가기",
    "items": [
