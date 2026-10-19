@@ -4680,6 +4680,10 @@ function safeSend(conn, data){
    could otherwise interrupt delivery to OTHER connections' handlers - one bad message or a messy
    disconnect should never be able to take the whole room down with it. */
 function safeHandler(fn){ return function(...args){ try{ return fn.apply(this, args); }catch(e){ console.error('[handler]', e); } }; }
+function snapshotBacklogged(){      // true when a client's data channel holds more than ~48 KB that has not left yet
+  for(const id in conns){ const c=conns[id]; const dc=c && c.dataChannel; if(dc && dc.bufferedAmount>49152) return true; }
+  return false;
+}
 function broadcastAll(msg){ for(const id in conns) safeSend(conns[id], msg); }
 let effectLocalTimes={}; // client-side only: maps effect id -> this tab's own performance.now() at first sight
 let localInput={left:false,right:false,jump:false,down:false,up:false,angle:0,shoot:false,dash:false};
@@ -4721,7 +4725,7 @@ function shuffle(arr){ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.
 /* ===== the version of this file =====
    Players with different versions CAN meet and play together: the automatic matchmaking uses the same room names for every version (online-<mode>-<map>-<slot>), and nobody is refused because of a different build.
    The build is only sent along with the join message and the lobby (for information); the corner of the screen shows it. */
-const GAME_BUILD='build 2026-10-18-v319';
+const GAME_BUILD='build 2026-10-18-v320';
 const GAME_VERSION='0.8', GAME_VERSION_NAME='황금을 찾아서';   // 게임 버전 이름: versions.json의 title과 같게 (빌드마다 바꾸지 않음)
 const WEEKLY_EVENTS=[
   {id:'lowg',    name:'저중력 난투', desc:'몸이 둥실둥실, 중력이 약해진 난투', rules:{grav:0.6}},
@@ -6681,7 +6685,7 @@ try{ if(window.supabase) sb=window.supabase.createClient(SUPABASE_URL, SUPABASE_
 let sbUser=null; // {id, username}
 let presenceChannel=null, friendReqChannel=null, inviteChannel=null;
 let friendsCache=[];
-const SB_EMAIL_DOMAIN='arenaclash.local', SB_EMAIL_DOMAIN_NEW='frenchfries777.com';   // sign-up still uses the old domain; a login tries it first and then the new one (accounts are being moved)
+const SB_EMAIL_DOMAIN='frenchfries777.com', SB_EMAIL_DOMAIN_OLD='arenaclash.local';   // sign-up and login use the new domain; a login that is refused there tries the old one as a safety net
 function sbEmailFor(u, dom){ return u.toLowerCase().replace(/[^a-z0-9_]/g,'')+'@'+(dom||SB_EMAIL_DOMAIN); }
 async function sbSignUp(username, password, remember){
   username=username.trim();
@@ -6720,7 +6724,7 @@ function sbAuthErrorInfo(error){
 async function sbSignIn(username, password, remember){
   const uname=String(username==null?'':username).trim();
   let data=null, error=null, used=password;
-  for(const dom of [SB_EMAIL_DOMAIN, SB_EMAIL_DOMAIN_NEW]){                                      // the old domain first; "wrong credentials" there means the account may already be on the new one
+  for(const dom of [SB_EMAIL_DOMAIN, SB_EMAIL_DOMAIN_OLD]){                                      // the new domain first; "wrong credentials" there means the account may still be on the old one
     const email=sbEmailFor(uname, dom);
     for(const v of passwordVariants(password)){
       let r; try{ r=await sb.auth.signInWithPassword({ email, password:v }); }catch(e){ r={data:null, error:{message:String(e&&e.message||e), status:0}}; }
@@ -12671,6 +12675,7 @@ function brzHud(){
   else { const m=full?'s':'c'; if(el.dataset.m!==m){ el.dataset.m=m; el.innerHTML=full?'<span>\u26a0\ufe0f 위험지대 시작</span>':'<span>\u26a0\ufe0f 위험지대가 좁아지는 중 · 붉은 곳은 피해</span>'; } }
   el.style.display='block';
 }
+function snapR(v,k){ return (typeof v==='number' && isFinite(v)) ? Math.round(v*k)/k : v; }      // snapshot numbers: a few decimals are enough on the other side, and long floats made every snapshot much bigger
 function hostTick(dt,t){
   fxActor=null;
   if(gameMode==='ffa' && matchTimerEndsAt!==null && Date.now()>=matchTimerEndsAt && !matchEnded){ endFFAMatchByKills(); }
@@ -12996,16 +13001,17 @@ function hostTick(dt,t){
   hostTick._acc+=dt;
   if(effects.length) effects = effects.filter(e => t/1000 - e.born < 1.6);
   if(hostTick._acc >= 1/(Object.keys(players).length<=8?30:SNAPSHOT_HZ)){
+    if(hostTick._acc < 0.4 && snapshotBacklogged()) return;           // a client's connection still has the last snapshots waiting: sending more only makes the lag grow, so wait (never longer than 0.4 s)
     hostTick._acc=0;
     const snap={t:'state',
-      players:Object.values(players).map(p=>({id:p.id,name:p.name,color:p.color,x:p.x,y:p.y,vx:p.vx,angle:p.angle,grounded:p.grounded,
+      players:Object.values(players).map(p=>({id:p.id,name:p.name,color:p.color,x:snapR(p.x,10),y:snapR(p.y,10),vx:snapR(p.vx,10),angle:snapR(p.angle,1000),grounded:p.grounded,
         hp:p.hp,kills:p.kills,deaths:p.deaths,alive:p.alive,respawnAt:p.respawnAt,
-        respawnIn: p.alive ? 0 : (p.respawnAt===Infinity ? -1 : Math.max(0, p.respawnAt - t/1000)),
-        dashCdRemain: Math.max(0, dashCdOf(p) - (t/1000-(p.lastDash===undefined?-9999:p.lastDash))),
-        teleportCdRemain: Math.max(0, TELEPORT_CD - (t/1000-(p.lastTeleport===undefined?-9999:p.lastTeleport))),
-        fireCdRemain: p.fireCdRemain||0,
-        ultCdRemain: p.darkSub ? 0 : Math.max(0, ultCdOf(p) - (t/1000-(p.lastUlt===undefined?-9999:p.lastUlt))), darkSub:p.darkSub?1:0, darkArm:(p.darkArmUntil>t/1000)?1:0,
-        skillCdRemain: Math.max(0, skillCdOf(p) - (t/1000-(p.lastSkill===undefined?-9999:p.lastSkill))), buff:p.buff||null, skillUses:p.skillUses||0, ultUses:p.ultUses||0,
+        respawnIn: p.alive ? 0 : (p.respawnAt===Infinity ? -1 : snapR(Math.max(0, p.respawnAt - t/1000),20)),
+        dashCdRemain: snapR(Math.max(0, dashCdOf(p) - (t/1000-(p.lastDash===undefined?-9999:p.lastDash))),20),
+        teleportCdRemain: snapR(Math.max(0, TELEPORT_CD - (t/1000-(p.lastTeleport===undefined?-9999:p.lastTeleport))),20),
+        fireCdRemain: snapR(p.fireCdRemain||0,20),
+        ultCdRemain: p.darkSub ? 0 : snapR(Math.max(0, ultCdOf(p) - (t/1000-(p.lastUlt===undefined?-9999:p.lastUlt))),20), darkSub:p.darkSub?1:0, darkArm:(p.darkArmUntil>t/1000)?1:0,
+        skillCdRemain: snapR(Math.max(0, skillCdOf(p) - (t/1000-(p.lastSkill===undefined?-9999:p.lastSkill))),20), buff:p.buff||null, skillUses:p.skillUses||0, ultUses:p.ultUses||0,
         pz:p.pzStacks||0, pm:(p.pzMarkUntil>t/1000)?1:0, ultOn:!!p.ultOn, invis:!!p.invis, burning:!!p.burning, poisoned:!!p.poisoned, kw:(p.kanWingsUntil>t/1000)?1:0, slowed:!!p.slowed, stunned:!!p.stunned, cardSlowed:!!p.cardSlowed, bladeSpin:!!p.bladeSpin, swordCharging:!!p.swordCharge, cannonFlying:!!p.cannonFly, chips:p.chips||0, cannonAng:p.cannonFly?Math.round(Math.atan2(p.vy||0,p.cannonFly.vx)*100)/100:0, totalDamageDealt:p.totalDamageDealt||0, channeling:!!p.teleportChannel, flaming:!!p.flaming, portalPair:p.portalPair||null, batting:!!p.batting, vacuumStacks:p.vacuumStacks||0, isZombie:!!p.isZombie, parkourItem:!!p.parkourItem, hsHiding:!!p.hsHiding, hsDisguiseW:p.hsDisguiseW, hsDisguiseH:p.hsDisguiseH, isSeeker:!!p.isSeeker,
         isHost:p.isHost,clan:p.clan||'',joinOrder:p.joinOrder,weapon:p.weapon,team:p.team,spinAngle:p.spinAngle,cos:p.cos,isBoss:p.isBoss?1:0,isMinion:p.isMinion?1:0,bt:p.bt,bossMaxHp:p.bossMaxHp,emIdx:p.emIdx,emRem:(p.emUntil?Math.max(0,Math.round((p.emUntil-t/1000)*20)/20):0)})),
       cq: (gameMode==='conquest' && cq) ? {s:cq.scores, h:cq.holder, c:cq.contested} : undefined,
