@@ -430,7 +430,7 @@ const TUT=[
  [P('다 자라면 밭을 눌러 수확해요','When it is grown, tap the field to harvest'),s=>s.stats.harvest>=1],
  [P('마을 장터에서 수확한 것을 팔아요','Sell your harvest at the town market'),s=>(s.stats.shop||0)>=1],
  [P('항구에서 배에 짐을 싣고 보내요','Load a ship at the harbor and send it off'),s=>s.stats.sailed>=1]];
-const OUTMAX=12,BUILD=10;
+const OUTMAX=12,BUILD=11;
 const hasB=(s,b)=>s.slots.some(x=>x&&x.b===b);
 const rankOf=e=>{let r=0;RANKS.forEach((x,i)=>{if(e>=x[0])r=i;});return r;};
 /* 업적: id, 이름, 설명, 조건 */
@@ -552,6 +552,9 @@ A('nw1m',P('백만장자','Millionaire'),P('재산 1,000,000 모으기','Reach a
 const CROPK=Object.keys(CROPS),SPEC=['goldbarley','pomegranate','saffron','cloudcotton','seaweed','dragonfruit'],CROPK17=CROPK.filter(c=>!SPEC.includes(c));
 const ACHN={};ACH.forEach(a=>ACHN[a.id]=a);
 const NOTES=[
+ {date:'2026-10-19',build:'v0.2 build 11',title:P('새 항구 음악','New harbor music'),items:[
+  P('Isleport 배경음악을 새 곡으로 바꿨어요. 기타와 피아노, 현악이 겹쳐지는 느긋한 곡이에요','Isleport\'s background music is a new track: a relaxed layering of guitar, piano and strings'),
+ ]},
  {date:'2026-10-19',build:'v0.2 build 10',title:P('광산섬','Mine isle'),items:[
   P('지도를 모아 찾는 새 섬, 광산섬이 생겼어요. 섬을 걸어 다니며 바위를 쳐서 돌, 철광석, 구리 광석, 보석 원석을 캐요','A new isle to discover: the Mine Isle. Walk around and strike rocks for stone, iron ore, copper ore and gem ore'),
   P('제련소에서 광석을 철괴와 구리괴로 녹이고, 광부 상점에서 팔거나 곡괭이를 강화해요','Smelt ore into iron and copper ingots, sell at the miners\' store, or upgrade your pickaxe'),
@@ -7374,7 +7377,7 @@ function musicTick(){if(!AU.mus||!AU.ctx||AU.ctx.state!=='running'||!S)return;co
     else if(rnd()<.8)tone(note(deg+Math.floor(rnd()*7),sn===1?1:0),t,beat*1.4,'triangle',.1,AU.mg);
     AU.next+=beat;AU.step++;}}
 /* 음악 파일: 게임 옆의 isleport-music.mp3를 불러와 반복해요 (게임 파일을 작게 두려고 따로 둬요). 파일을 못 불러오면 위의 만들어 내는 음악으로 대신해요 */
-const MFILE='isleport-music.mp3',MALT='https://frenchfries777mc.github.io/games/isleport/',MLOOP=62.6087;   // MLOOP: 24마디 길이(초), 끝과 처음이 이어져요
+const MFILE='isleport-music.mp3?v=11',MALT='https://frenchfries777mc.github.io/games/isleport/',MLOOP=96;   // MLOOP: 32마디 길이(초), 끝과 처음이 이어져요
 AU.file={st:0};
 function musicFile(){const F=AU.file;if(F.st)return;F.st=1;const get=u=>fetch(u).then(r=>{if(!r.ok)throw new Error(r.status);return r.arrayBuffer();});
   get(MFILE).catch(()=>get(MALT+MFILE)).then(ab=>new Promise((ok,no)=>AU.ctx.decodeAudioData(ab,ok,no))).then(buf=>{
