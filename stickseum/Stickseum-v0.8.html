@@ -4686,7 +4686,7 @@ function shuffle(arr){ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.
 /* ===== the version of this file =====
    Players with different versions CAN meet and play together: the automatic matchmaking uses the same room names for every version (online-<mode>-<map>-<slot>), and nobody is refused because of a different build.
    The build is only sent along with the join message and the lobby (for information); the corner of the screen shows it. */
-const GAME_BUILD='build 2026-10-18-v306';
+const GAME_BUILD='build 2026-10-18-v307';
 const GAME_VERSION='0.8', GAME_VERSION_NAME='황금을 찾아서';   // 게임 버전 이름: versions.json의 title과 같게 (빌드마다 바꾸지 않음)
 const WEEKLY_EVENTS=[
   {id:'lowg',    name:'저중력 난투', desc:'몸이 둥실둥실, 중력이 약해진 난투', rules:{grav:0.6}},
@@ -11110,7 +11110,7 @@ function meleeAttack(p, angle, w, tMs){
     if(!target.alive || id===p.id || isAlly(p,target) || target.swordCharge || target.darkSub) continue;
     const cy=target.y-PLAYER_H/2;
     let inReach=dist(p.x,p.y-PLAYER_H/2, target.x, cy) <= reachR;
-    if(inReach && w.thrust){ const rx=target.x-p.x, ry=cy-(p.y-PLAYER_H/2), ca=Math.cos(angle), sa=Math.sin(angle), along=rx*ca+ry*sa, perp=Math.abs(rx*sa-ry*ca); inReach = along>-14 && perp<=40; }      // the spear: a straight thrust in front
+    if(inReach && w.thrust){ const rx=target.x-p.x, ry=cy-(p.y-PLAYER_H/2), ca=Math.cos(angle), sa=Math.sin(angle), along=rx*ca+ry*sa, perp=Math.abs(rx*sa-ry*ca); inReach = along>-14 && perp<=40 && !botLineBlocked(p.x, p.y-PLAYER_H/2, target.x, cy); }      // the spear: a straight thrust in front (a platform between the two stops it)
     if(inReach){
       if(target.deflectUntil>tMs/1000){          // the lightsaber's window is open: the close-range hit is blocked, no damage either way (the saber's owner gets a free swing)
         pushFx('spark', target.x, cy, tMs, {ang:Math.atan2(cy-(p.y-PLAYER_H/2), target.x-p.x), color:'#7fe3ff'});
