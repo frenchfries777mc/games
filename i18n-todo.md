@@ -27,3 +27,4 @@
 
 - isleport/patchnotes.json | build 11 항목 3번째 (ja·es·fr·de 칸에 영어 임시 입력) | 배경음악이 세 곡으로 늘어서 번갈아 나와요. 새 곡은 패드와 피아노, 유리 종소리가 넓게 퍼지는 차분한 느린 곡이에요 | 음악 스레드 | 2026-10-19
 - beaconfall/patchnotes.json·i18n.js | N["v0.3"].items 맨 위 항목 (en·es·fr·de·ja 칸에 한국어 임시 입력) | 로비 음악이 봄·여름·가을·겨울 곡 중에서 무작위로 하나 재생됨 (로비로 돌아올 때마다 새로 뽑음) | b74 | 2026-10-19
+- wiki (DB ff_wiki) | 2026-10-19 18시 묶음 batch29에서 바뀐 한국어 문서 5개 (stickseum all-characters·patch-history, beaconfall survival-tips, hub music-room, tools blocks-reference) | 원문은 wiki-src/all.ko.json, 번역본 wiki/tr은 해당 문서가 한국어로 대체 표시 | batch29 | 2026-10-19
