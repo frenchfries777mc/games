@@ -2,6 +2,52 @@
  "notes": [
   {
    "date": "2026-10-19",
+   "build": "v0.2 build 26",
+   "title": "연구: 무한 씨앗",
+   "items": [
+    "연구에 무한 씨앗이 생겼어요. 연구하면 씨앗이 줄지 않아 사지 않고도 해금한 작물을 마음껏 심어요",
+    "감독관 연구 뒤에 열려요"
+   ],
+   "tr": {
+    "en": {
+     "title": "Research: Endless seeds",
+     "items": [
+      "New research Endless seeds: seeds no longer run out, so you can plant any unlocked crop without buying them",
+      "It unlocks after Overseer"
+     ]
+    },
+    "ja": {
+     "title": "Research: Endless seeds",
+     "items": [
+      "New research Endless seeds: seeds no longer run out, so you can plant any unlocked crop without buying them",
+      "It unlocks after Overseer"
+     ]
+    },
+    "es": {
+     "title": "Research: Endless seeds",
+     "items": [
+      "New research Endless seeds: seeds no longer run out, so you can plant any unlocked crop without buying them",
+      "It unlocks after Overseer"
+     ]
+    },
+    "fr": {
+     "title": "Research: Endless seeds",
+     "items": [
+      "New research Endless seeds: seeds no longer run out, so you can plant any unlocked crop without buying them",
+      "It unlocks after Overseer"
+     ]
+    },
+    "de": {
+     "title": "Research: Endless seeds",
+     "items": [
+      "New research Endless seeds: seeds no longer run out, so you can plant any unlocked crop without buying them",
+      "It unlocks after Overseer"
+     ]
+    }
+   }
+  },
+  {
+   "date": "2026-10-19",
    "build": "v0.2 build 25",
    "title": "선로를 달리는 기차",
    "items": [
