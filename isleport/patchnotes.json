@@ -15,27 +15,27 @@
      ]
     },
     "ja": {
-     "title": "Login on the new account address",
+     "title": "新しいアカウントアドレスでログイン",
      "items": [
-      "Login now uses the new account address first and falls back to the old one. Your ID and password stay the same"
+      "ログインは新しいアカウントアドレスを先に使い、だめなら古いアドレスでもう一度試します。IDとパスワードはそのままです"
      ]
     },
     "es": {
-     "title": "Login on the new account address",
+     "title": "Inicio de sesión con la nueva dirección de cuenta",
      "items": [
-      "Login now uses the new account address first and falls back to the old one. Your ID and password stay the same"
+      "El inicio de sesión usa primero la nueva dirección de cuenta y, si falla, vuelve a probar con la antigua. Tu ID y contraseña no cambian"
      ]
     },
     "fr": {
-     "title": "Login on the new account address",
+     "title": "Connexion avec la nouvelle adresse de compte",
      "items": [
-      "Login now uses the new account address first and falls back to the old one. Your ID and password stay the same"
+      "La connexion utilise d’abord la nouvelle adresse de compte, puis réessaie avec l’ancienne en cas d’échec. Ton identifiant et ton mot de passe ne changent pas"
      ]
     },
     "de": {
-     "title": "Login on the new account address",
+     "title": "Anmeldung über die neue Kontoadresse",
      "items": [
-      "Login now uses the new account address first and falls back to the old one. Your ID and password stay the same"
+      "Die Anmeldung nutzt zuerst die neue Kontoadresse und versucht es bei Fehlschlag mit der alten. ID und Passwort bleiben gleich"
      ]
     }
    }
@@ -55,27 +55,27 @@
      ]
     },
     "ja": {
-     "title": "Account domain move prep",
+     "title": "アカウントのドメイン移行準備",
      "items": [
-      "Login now also tries the new account address. Keep using the same ID and password"
+      "ログイン時に新しいアカウントアドレスでも試します。IDとパスワードはそのまま使えます"
      ]
     },
     "es": {
-     "title": "Account domain move prep",
+     "title": "Preparación del cambio de dominio de cuentas",
      "items": [
-      "Login now also tries the new account address. Keep using the same ID and password"
+      "Al iniciar sesión también se prueba la nueva dirección de cuenta. Sigue usando el mismo ID y contraseña"
      ]
     },
     "fr": {
-     "title": "Account domain move prep",
+     "title": "Préparation du changement de domaine des comptes",
      "items": [
-      "Login now also tries the new account address. Keep using the same ID and password"
+      "À la connexion, la nouvelle adresse de compte est aussi essayée. Garde le même identifiant et mot de passe"
      ]
     },
     "de": {
-     "title": "Account domain move prep",
+     "title": "Vorbereitung des Kontodomain-Umzugs",
      "items": [
-      "Login now also tries the new account address. Keep using the same ID and password"
+      "Beim Anmelden wird auch die neue Kontoadresse versucht. ID und Passwort bleiben dieselben"
      ]
     }
    }
@@ -99,35 +99,35 @@
      ]
     },
     "ja": {
-     "title": "Homes and a lively town",
+     "title": "住宅街と町のにぎわい",
      "items": [
-      "A residential quarter with fences and gardens; chimneys smoke",
-      "Residents stroll the streets, plaza, park and bridge; butterflies flutter in the park",
-      "Street lamps and windows light up at night"
+      "湖の西に、柵と庭のある住宅街ができました。煙突から煙が上ります",
+      "住民が道や広場、公園、橋を歩き回ります。公園にはチョウが舞います",
+      "夜には街灯と窓に明かりがともります"
      ]
     },
     "es": {
-     "title": "Homes and a lively town",
+     "title": "Barrio residencial y un pueblo con vida",
      "items": [
-      "A residential quarter with fences and gardens; chimneys smoke",
-      "Residents stroll the streets, plaza, park and bridge; butterflies flutter in the park",
-      "Street lamps and windows light up at night"
+      "Al oeste del lago hay un barrio con vallas y jardines. Las chimeneas echan humo",
+      "Los vecinos pasean por calles, la plaza, el parque y el puente. En el parque revolotean mariposas",
+      "De noche se encienden las farolas y las ventanas"
      ]
     },
     "fr": {
-     "title": "Homes and a lively town",
+     "title": "Quartier résidentiel et village animé",
      "items": [
-      "A residential quarter with fences and gardens; chimneys smoke",
-      "Residents stroll the streets, plaza, park and bridge; butterflies flutter in the park",
-      "Street lamps and windows light up at night"
+      "À l’ouest du lac, un quartier résidentiel avec clôtures et jardins. Les cheminées fument",
+      "Les habitants se promènent dans les rues, sur la place, au parc et sur le pont. Des papillons volent dans le parc",
+      "La nuit, les réverbères et les fenêtres s’allument"
      ]
     },
     "de": {
-     "title": "Homes and a lively town",
+     "title": "Wohnviertel und lebendiges Dorf",
      "items": [
-      "A residential quarter with fences and gardens; chimneys smoke",
-      "Residents stroll the streets, plaza, park and bridge; butterflies flutter in the park",
-      "Street lamps and windows light up at night"
+      "Westlich des Sees gibt es ein Wohnviertel mit Zäunen und Gärten. Aus den Schornsteinen steigt Rauch",
+      "Bewohner spazieren durch Straßen, über Platz, Park und Brücke. Im Park flattern Schmetterlinge",
+      "Nachts leuchten Straßenlaternen und Fenster"
      ]
     }
    }
@@ -151,35 +151,35 @@
      ]
     },
     "ja": {
-     "title": "Town buildings and delivery shops",
+     "title": "町の建物と納品の店",
      "items": [
-      "A school, library, hospital, fire station, police station and theater line the plaza",
-      "Restaurant row and a bakery: deliver dishes and ingredients for money",
-      "Regulars grow with deliveries, raising rewards up to 20%"
+      "広場の北に学校、図書館、病院、消防署、警察署、劇場が建ちました。タップして見て回れます",
+      "レストラン街とパン屋ができました。料理や材料を納品してお金を稼ぎます",
+      "納品を重ねると常連が増え、報酬が最大20%まで上がります"
      ]
     },
     "es": {
-     "title": "Town buildings and delivery shops",
+     "title": "Edificios del pueblo y tiendas de pedidos",
      "items": [
-      "A school, library, hospital, fire station, police station and theater line the plaza",
-      "Restaurant row and a bakery: deliver dishes and ingredients for money",
-      "Regulars grow with deliveries, raising rewards up to 20%"
+      "Al norte de la plaza hay escuela, biblioteca, hospital, bomberos, comisaría y teatro. Tócalos para echar un vistazo",
+      "Llegan la calle de restaurantes y una panadería: entrega platos o ingredientes para ganar dinero",
+      "Con cada entrega ganas clientes habituales y la recompensa sube hasta un 20%"
      ]
     },
     "fr": {
-     "title": "Town buildings and delivery shops",
+     "title": "Bâtiments du village et boutiques de livraison",
      "items": [
-      "A school, library, hospital, fire station, police station and theater line the plaza",
-      "Restaurant row and a bakery: deliver dishes and ingredients for money",
-      "Regulars grow with deliveries, raising rewards up to 20%"
+      "Au nord de la place : école, bibliothèque, hôpital, caserne de pompiers, commissariat et théâtre. Touche-les pour les visiter",
+      "Une rue des restaurants et une boulangerie : livre des plats ou des ingrédients pour gagner de l’argent",
+      "Plus tu livres, plus tu as d’habitués : les récompenses montent jusqu’à 20 %"
      ]
     },
     "de": {
-     "title": "Town buildings and delivery shops",
+     "title": "Dorfgebäude und Lieferläden",
      "items": [
-      "A school, library, hospital, fire station, police station and theater line the plaza",
-      "Restaurant row and a bakery: deliver dishes and ingredients for money",
-      "Regulars grow with deliveries, raising rewards up to 20%"
+      "Nördlich des Platzes stehen Schule, Bibliothek, Krankenhaus, Feuerwache, Polizei und Theater. Tippe sie an, um dich umzusehen",
+      "Restaurantmeile und Bäckerei: Liefere Gerichte oder Zutaten und verdiene Geld",
+      "Mit jeder Lieferung wachsen die Stammkunden, und die Belohnung steigt um bis zu 20%"
      ]
     }
    }
@@ -205,39 +205,39 @@
      ]
     },
     "ja": {
-     "title": "The town grows south",
+     "title": "町が南に広がりました",
      "items": [
-      "New land opens south of the rails, nearly doubling the map",
-      "A fountain plaza with a clock tower. Make a wish at the fountain",
-      "A park with benches and flower beds",
-      "A lake with a wooden bridge, and ducks swimming on it"
+      "線路の南に新しい土地が広がりました。マップがほぼ2倍の広さになりました",
+      "時計塔のある噴水広場ができました。噴水で願い事ができます",
+      "ベンチと花壇のある公園ができました",
+      "湖と木の橋ができました。湖ではアヒルが泳いでいます"
      ]
     },
     "es": {
-     "title": "The town grows south",
+     "title": "El pueblo crece hacia el sur",
      "items": [
-      "New land opens south of the rails, nearly doubling the map",
-      "A fountain plaza with a clock tower. Make a wish at the fountain",
-      "A park with benches and flower beds",
-      "A lake with a wooden bridge, and ducks swimming on it"
+      "Al sur de las vías se abre tierra nueva: el mapa casi duplica su tamaño",
+      "Una plaza con fuente y torre del reloj. Pide un deseo en la fuente",
+      "Un parque con bancos y parterres",
+      "Un lago con puente de madera y patos nadando"
      ]
     },
     "fr": {
-     "title": "The town grows south",
+     "title": "Le village s’agrandit vers le sud",
      "items": [
-      "New land opens south of the rails, nearly doubling the map",
-      "A fountain plaza with a clock tower. Make a wish at the fountain",
-      "A park with benches and flower beds",
-      "A lake with a wooden bridge, and ducks swimming on it"
+      "Au sud des rails s’ouvre un nouveau terrain : la carte double presque",
+      "Une place avec fontaine et tour de l’horloge. Fais un vœu à la fontaine",
+      "Un parc avec des bancs et des parterres de fleurs",
+      "Un lac avec un pont en bois, et des canards qui nagent"
      ]
     },
     "de": {
-     "title": "The town grows south",
+     "title": "Das Dorf wächst nach Süden",
      "items": [
-      "New land opens south of the rails, nearly doubling the map",
-      "A fountain plaza with a clock tower. Make a wish at the fountain",
-      "A park with benches and flower beds",
-      "A lake with a wooden bridge, and ducks swimming on it"
+      "Südlich der Gleise öffnet sich neues Land, die Karte ist fast doppelt so groß",
+      "Ein Brunnenplatz mit Uhrturm. Wünsch dir etwas am Brunnen",
+      "Ein Park mit Bänken und Blumenbeeten",
+      "Ein See mit Holzbrücke, auf dem Enten schwimmen"
      ]
     }
    }
@@ -257,27 +257,27 @@
      ]
     },
     "ja": {
-     "title": "Back to the site",
+     "title": "サイトに戻る",
      "items": [
-      "Settings now has a \"Back to site\" button that saves and returns to the games site"
+      "設定画面に「サイトに戻る」ボタンができました。押すとセーブしてゲームサイトに戻ります"
      ]
     },
     "es": {
-     "title": "Back to the site",
+     "title": "Volver al sitio",
      "items": [
-      "Settings now has a \"Back to site\" button that saves and returns to the games site"
+      "Ajustes tiene un botón «Volver al sitio» que guarda y vuelve a la web del juego"
      ]
     },
     "fr": {
-     "title": "Back to the site",
+     "title": "Retour au site",
      "items": [
-      "Settings now has a \"Back to site\" button that saves and returns to the games site"
+      "Les réglages ont un bouton « Retour au site » qui sauvegarde et revient au site du jeu"
      ]
     },
     "de": {
-     "title": "Back to the site",
+     "title": "Zurück zur Seite",
      "items": [
-      "Settings now has a \"Back to site\" button that saves and returns to the games site"
+      "In den Einstellungen gibt es die Schaltfläche „Zurück zur Seite“: Sie speichert und kehrt zur Spieleseite zurück"
      ]
     }
    }
@@ -299,31 +299,31 @@
      ]
     },
     "ja": {
-     "title": "Research: Endless seeds",
+     "title": "研究：無限の種",
      "items": [
-      "New research Endless seeds: seeds no longer run out, so you can plant any unlocked crop without buying them",
-      "It unlocks after Overseer"
+      "研究に「無限の種」が加わりました。研究すると種が減らず、買わなくても解放した作物を好きなだけ植えられます",
+      "監督の研究の後に解放されます"
      ]
     },
     "es": {
-     "title": "Research: Endless seeds",
+     "title": "Investigación: Semillas infinitas",
      "items": [
-      "New research Endless seeds: seeds no longer run out, so you can plant any unlocked crop without buying them",
-      "It unlocks after Overseer"
+      "Nueva investigación Semillas infinitas: las semillas ya no se gastan y puedes plantar cualquier cultivo desbloqueado sin comprarlas",
+      "Se desbloquea después de Capataz"
      ]
     },
     "fr": {
-     "title": "Research: Endless seeds",
+     "title": "Recherche : Graines infinies",
      "items": [
-      "New research Endless seeds: seeds no longer run out, so you can plant any unlocked crop without buying them",
-      "It unlocks after Overseer"
+      "Nouvelle recherche Graines infinies : les graines ne s’épuisent plus, plante toute culture débloquée sans en acheter",
+      "Se débloque après Contremaître"
      ]
     },
     "de": {
-     "title": "Research: Endless seeds",
+     "title": "Forschung: Endlose Samen",
      "items": [
-      "New research Endless seeds: seeds no longer run out, so you can plant any unlocked crop without buying them",
-      "It unlocks after Overseer"
+      "Neue Forschung Endlose Samen: Samen verbrauchen sich nicht mehr, du pflanzt jede freigeschaltete Sorte, ohne zu kaufen",
+      "Wird nach Aufseher freigeschaltet"
      ]
     }
    }
@@ -347,35 +347,35 @@
      ]
     },
     "ja": {
-     "title": "Train on real rails",
+     "title": "線路を走る汽車",
      "items": [
-      "Boarding makes the train pull out of the station, run down the rails and into the tunnel, with the camera following",
-      "At the provincial station the train rolls in on the same line; going home it leaves and pulls into your station",
-      "Provinces are 3.5x larger, like the islands"
+      "汽車に乗ると、駅を出た汽車が線路を走ってトンネルに入ります。画面が汽車を追いかけます",
+      "地方の駅には同じ線路で汽車が入ってきて止まります。帰りも汽車が出発して、こちらの駅に入ってきます",
+      "地方のマップも島と同じく3.5倍の大きさです"
      ]
     },
     "es": {
-     "title": "Train on real rails",
+     "title": "Un tren sobre raíles",
      "items": [
-      "Boarding makes the train pull out of the station, run down the rails and into the tunnel, with the camera following",
-      "At the provincial station the train rolls in on the same line; going home it leaves and pulls into your station",
-      "Provinces are 3.5x larger, like the islands"
+      "Al subir, el tren sale de la estación, recorre las vías y entra en el túnel, y la cámara lo sigue",
+      "En la estación provincial el tren llega por la misma vía y se detiene; al volver sale y entra en tu estación",
+      "Las provincias también son 3,5 veces más grandes, como las islas"
      ]
     },
     "fr": {
-     "title": "Train on real rails",
+     "title": "Un train sur de vrais rails",
      "items": [
-      "Boarding makes the train pull out of the station, run down the rails and into the tunnel, with the camera following",
-      "At the provincial station the train rolls in on the same line; going home it leaves and pulls into your station",
-      "Provinces are 3.5x larger, like the islands"
+      "En montant, le train quitte la gare, suit les rails et entre dans le tunnel, la caméra le suit",
+      "À la gare de province, le train arrive par la même voie et s’arrête ; au retour il repart et entre dans ta gare",
+      "Les provinces sont aussi 3,5 fois plus grandes, comme les îles"
      ]
     },
     "de": {
-     "title": "Train on real rails",
+     "title": "Ein Zug auf echten Schienen",
      "items": [
-      "Boarding makes the train pull out of the station, run down the rails and into the tunnel, with the camera following",
-      "At the provincial station the train rolls in on the same line; going home it leaves and pulls into your station",
-      "Provinces are 3.5x larger, like the islands"
+      "Beim Einsteigen fährt der Zug aus dem Bahnhof über die Schienen in den Tunnel, die Kamera folgt ihm",
+      "Am Provinzbahnhof fährt der Zug auf demselben Gleis ein und hält; zurück fährt er ab und in deinen Bahnhof ein",
+      "Die Provinzen sind wie die Inseln 3,5-mal so groß"
      ]
     }
    }
@@ -399,35 +399,35 @@
      ]
     },
     "ja": {
-     "title": "Bigger islands",
+     "title": "上陸マップの大拡張",
      "items": [
-      "Landed islands are 3.5x wider and taller, about 12x the area",
-      "Fields, trees, decor, ore and pick-up goods are far more plentiful",
-      "Walking is a bit faster to match the size"
+      "上陸したときの島が縦横3.5倍、面積では約12倍になりました",
+      "畑・木・飾りや鉱石、拾える特産品がずっと多くなりました",
+      "島が広くなった分、歩く速さも少し上がりました"
      ]
     },
     "es": {
-     "title": "Bigger islands",
+     "title": "Islas mucho más grandes",
      "items": [
-      "Landed islands are 3.5x wider and taller, about 12x the area",
-      "Fields, trees, decor, ore and pick-up goods are far more plentiful",
-      "Walking is a bit faster to match the size"
+      "Las islas a las que desembarcas son 3,5 veces más anchas y altas, unas 12 veces el área",
+      "Hay muchos más campos, árboles, adornos, minerales y productos para recoger",
+      "Para compensar, caminas un poco más rápido"
      ]
     },
     "fr": {
-     "title": "Bigger islands",
+     "title": "Des îles bien plus grandes",
      "items": [
-      "Landed islands are 3.5x wider and taller, about 12x the area",
-      "Fields, trees, decor, ore and pick-up goods are far more plentiful",
-      "Walking is a bit faster to match the size"
+      "Les îles où tu débarques sont 3,5 fois plus larges et plus hautes, environ 12 fois la surface",
+      "Champs, arbres, décors, minerai et objets à ramasser sont bien plus nombreux",
+      "Pour suivre, tu marches un peu plus vite"
      ]
     },
     "de": {
-     "title": "Bigger islands",
+     "title": "Viel größere Inseln",
      "items": [
-      "Landed islands are 3.5x wider and taller, about 12x the area",
-      "Fields, trees, decor, ore and pick-up goods are far more plentiful",
-      "Walking is a bit faster to match the size"
+      "Inseln beim Anlanden sind 3,5-mal so breit und hoch, etwa 12-mal so groß",
+      "Felder, Bäume, Deko, Erz und Sammelwaren gibt es jetzt viel mehr",
+      "Passend dazu läufst du etwas schneller"
      ]
     }
    }
@@ -449,31 +449,31 @@
      ]
     },
     "ja": {
-     "title": "Home continent",
+     "title": "わが島が大陸に",
      "items": [
-      "On the sea chart, your home isle is now a large continent with wider forests and villages",
-      "Coral Cay moved to the sea south of the continent"
+      "海図で自分の島が大きな大陸に変わりました。山や森や村がもっと広く広がります",
+      "サンゴ島の位置を大陸の南の海に移しました"
      ]
     },
     "es": {
-     "title": "Home continent",
+     "title": "Tu isla es un continente",
      "items": [
-      "On the sea chart, your home isle is now a large continent with wider forests and villages",
-      "Coral Cay moved to the sea south of the continent"
+      "En la carta náutica tu isla es ahora un gran continente, con montañas, bosques y pueblos más amplios",
+      "Cayo de Coral se trasladó al mar al sur del continente"
      ]
     },
     "fr": {
-     "title": "Home continent",
+     "title": "Ton île devient un continent",
      "items": [
-      "On the sea chart, your home isle is now a large continent with wider forests and villages",
-      "Coral Cay moved to the sea south of the continent"
+      "Sur la carte marine, ton île est devenue un grand continent, avec montagnes, forêts et villages plus vastes",
+      "L’Îlot de Corail a été déplacé dans la mer au sud du continent"
      ]
     },
     "de": {
-     "title": "Home continent",
+     "title": "Deine Insel wird ein Kontinent",
      "items": [
-      "On the sea chart, your home isle is now a large continent with wider forests and villages",
-      "Coral Cay moved to the sea south of the continent"
+      "Auf der Seekarte ist deine Insel jetzt ein großer Kontinent mit weiteren Bergen, Wäldern und Dörfern",
+      "Das Korallen-Eiland liegt jetzt im Meer südlich des Kontinents"
      ]
     }
    }
@@ -495,31 +495,31 @@
      ]
     },
     "ja": {
-     "title": "Newsstand",
+     "title": "新聞スタンド",
      "items": [
-      "A newsstand opened in town instead of the bank tab. Buy a copy for 3 gold and it opens right away",
-      "The paper has a masthead, a headline, price tables, forecasts, news, a dad joke and classifieds"
+      "銀行の代わりに町に新聞スタンドができました。3ゴールドで1部買うとすぐに新聞が広がります",
+      "本物の新聞のように、題字と見出し、相場表、予想、ニュース欄、おやじギャグ、広告が載っています"
      ]
     },
     "es": {
-     "title": "Newsstand",
+     "title": "Quiosco",
      "items": [
-      "A newsstand opened in town instead of the bank tab. Buy a copy for 3 gold and it opens right away",
-      "The paper has a masthead, a headline, price tables, forecasts, news, a dad joke and classifieds"
+      "En lugar de la pestaña del banco, hay un quiosco en el pueblo. Compra un ejemplar por 3 de oro y se abre al instante",
+      "Como un periódico de verdad: cabecera, titular, tabla de precios, previsiones, noticias, un chiste y anuncios"
      ]
     },
     "fr": {
-     "title": "Newsstand",
+     "title": "Kiosque à journaux",
      "items": [
-      "A newsstand opened in town instead of the bank tab. Buy a copy for 3 gold and it opens right away",
-      "The paper has a masthead, a headline, price tables, forecasts, news, a dad joke and classifieds"
+      "Un kiosque à journaux remplace l’onglet de la banque. Achète un exemplaire pour 3 or et il s’ouvre aussitôt",
+      "Comme un vrai journal : titre, gros titre, cours, prévisions, nouvelles, une blague et petites annonces"
      ]
     },
     "de": {
-     "title": "Newsstand",
+     "title": "Zeitungskiosk",
      "items": [
-      "A newsstand opened in town instead of the bank tab. Buy a copy for 3 gold and it opens right away",
-      "The paper has a masthead, a headline, price tables, forecasts, news, a dad joke and classifieds"
+      "Statt des Bank-Tabs gibt es im Dorf einen Zeitungskiosk. Kauf eine Ausgabe für 3 Gold, sie öffnet sich sofort",
+      "Wie eine echte Zeitung: Titelkopf, Schlagzeile, Kurstabelle, Prognosen, Nachrichten, ein Witz und Anzeigen"
      ]
     }
    }
@@ -543,35 +543,35 @@
      ]
     },
     "ja": {
-     "title": "Volcano Isle",
+     "title": "火山島",
      "items": [
-      "Collect more map pieces to find Volcano Isle, where you mine obsidian, sulfur and rubies",
-      "A red circle on the ground means lava is about to burst. Step out of it or lose gold",
-      "Sell minerals at the volcano store, or craft heat-proof gloves to mine faster and take less lava damage"
+      "地図の欠片をもっと集めると、新しい島・火山島が現れます。黒曜石、硫黄、ルビーが掘れます",
+      "地面に赤い円が光ったら、もうすぐ溶岩が噴き出します。円の外へ逃げないとゴールドを失います",
+      "火山の鉱夫の店で鉱物を売ったり、鉱物とゴールドで耐熱手袋を作ったりすると、一度に多く掘れてやけどのダメージが減ります"
      ]
     },
     "es": {
-     "title": "Volcano Isle",
+     "title": "Isla Volcán",
      "items": [
-      "Collect more map pieces to find Volcano Isle, where you mine obsidian, sulfur and rubies",
-      "A red circle on the ground means lava is about to burst. Step out of it or lose gold",
-      "Sell minerals at the volcano store, or craft heat-proof gloves to mine faster and take less lava damage"
+      "Reúne más fragmentos de mapa para encontrar la Isla Volcán, donde extraes obsidiana, azufre y rubíes",
+      "Un círculo rojo en el suelo avisa de que la lava va a estallar. Sal de él o perderás oro",
+      "Vende minerales en la tienda del volcán, o fabrica guantes ignífugos para picar más rápido y quemarte menos"
      ]
     },
     "fr": {
-     "title": "Volcano Isle",
+     "title": "Île du Volcan",
      "items": [
-      "Collect more map pieces to find Volcano Isle, where you mine obsidian, sulfur and rubies",
-      "A red circle on the ground means lava is about to burst. Step out of it or lose gold",
-      "Sell minerals at the volcano store, or craft heat-proof gloves to mine faster and take less lava damage"
+      "Rassemble plus de fragments de carte pour trouver l’Île du Volcan, où tu extrais obsidienne, soufre et rubis",
+      "Un cercle rouge au sol annonce une éruption de lave. Sors-en ou tu perds de l’or",
+      "Vends tes minéraux à la boutique du volcan, ou fabrique des gants résistants à la chaleur pour miner plus vite et moins te brûler"
      ]
     },
     "de": {
-     "title": "Volcano Isle",
+     "title": "Vulkaninsel",
      "items": [
-      "Collect more map pieces to find Volcano Isle, where you mine obsidian, sulfur and rubies",
-      "A red circle on the ground means lava is about to burst. Step out of it or lose gold",
-      "Sell minerals at the volcano store, or craft heat-proof gloves to mine faster and take less lava damage"
+      "Sammle mehr Kartenstücke, um die Vulkaninsel zu finden. Dort baust du Obsidian, Schwefel und Rubine ab",
+      "Ein roter Kreis am Boden heißt: Gleich bricht Lava aus. Verlass ihn, sonst verlierst du Gold",
+      "Verkaufe Mineralien im Vulkanladen oder fertige hitzefeste Handschuhe, um schneller abzubauen und weniger Brandschaden zu nehmen"
      ]
     }
    }
@@ -597,39 +597,39 @@
      ]
     },
     "ja": {
-     "title": "Outskirts station and a grand museum",
+     "title": "郊外の駅と壮大な博物館",
      "items": [
-      "The station moved to the southern outskirts, rebuilt large with a clock tower, a covered platform and a train",
-      "Rails run west from the station into a tunnel, and the same line continues from each provincial station",
-      "The museum was rebuilt as a grand building with columns and a pediment",
-      "The map grew a little to the south"
+      "駅を町の南の郊外へ移し、大きく建て直しました。時計塔と屋根付きのホーム、機関車と客車があります",
+      "駅から西へ線路が果てしなく続き、トンネルに入ります。地方の駅にも同じ線路が海の上へ続きます",
+      "博物館を柱と破風屋根のある壮大な建物に建て直しました",
+      "マップが南に少し広がりました"
      ]
     },
     "es": {
-     "title": "Outskirts station and a grand museum",
+     "title": "Estación en las afueras y un gran museo",
      "items": [
-      "The station moved to the southern outskirts, rebuilt large with a clock tower, a covered platform and a train",
-      "Rails run west from the station into a tunnel, and the same line continues from each provincial station",
-      "The museum was rebuilt as a grand building with columns and a pediment",
-      "The map grew a little to the south"
+      "La estación se trasladó a las afueras del sur y se reconstruyó en grande, con torre del reloj, andén cubierto, locomotora y vagones",
+      "Desde la estación las vías van hacia el oeste hasta un túnel; en cada estación provincial la misma vía sigue sobre el mar",
+      "El museo se reconstruyó como un gran edificio con columnas y frontón",
+      "El mapa se amplió un poco hacia el sur"
      ]
     },
     "fr": {
-     "title": "Outskirts station and a grand museum",
+     "title": "Gare en périphérie et grand musée",
      "items": [
-      "The station moved to the southern outskirts, rebuilt large with a clock tower, a covered platform and a train",
-      "Rails run west from the station into a tunnel, and the same line continues from each provincial station",
-      "The museum was rebuilt as a grand building with columns and a pediment",
-      "The map grew a little to the south"
+      "La gare a été déplacée en périphérie sud et reconstruite en grand : tour de l’horloge, quai couvert, locomotive et wagons",
+      "Depuis la gare, les rails filent vers l’ouest jusqu’à un tunnel ; la même voie continue au-dessus de la mer dans chaque gare de province",
+      "Le musée a été reconstruit en un grand édifice à colonnes et fronton",
+      "La carte s’est un peu agrandie vers le sud"
      ]
     },
     "de": {
-     "title": "Outskirts station and a grand museum",
+     "title": "Bahnhof am Stadtrand und ein prächtiges Museum",
      "items": [
-      "The station moved to the southern outskirts, rebuilt large with a clock tower, a covered platform and a train",
-      "Rails run west from the station into a tunnel, and the same line continues from each provincial station",
-      "The museum was rebuilt as a grand building with columns and a pediment",
-      "The map grew a little to the south"
+      "Der Bahnhof wurde an den südlichen Stadtrand verlegt und groß neu gebaut: mit Uhrturm, überdachtem Bahnsteig, Lok und Waggons",
+      "Vom Bahnhof führen die Schienen nach Westen in einen Tunnel; an jedem Provinzbahnhof läuft dasselbe Gleis übers Meer weiter",
+      "Das Museum wurde als prächtiger Bau mit Säulen und Giebel neu errichtet",
+      "Die Karte wurde etwas nach Süden erweitert"
      ]
     }
    }
@@ -653,35 +653,35 @@
      ]
     },
     "ja": {
-     "title": "Festivals, real estate and merchants guild",
+     "title": "季節の祭り、不動産、商人ギルド",
      "items": [
-      "Enter the seasonal festival at the town hall: submit goods, compete for prize money and trophies",
-      "Buy lots, build houses, shops or mansions and collect rent that follows the market index",
-      "Join the merchants guild, fulfill requests and rise in rank for better sale prices"
+      "町役場で季節ごとに開かれる祭りに参加できます。料理や特産品を出品してほかの参加者と点数を競い、賞金とトロフィーをもらいます",
+      "町役場で不動産事務所を開けます。空き地を買って住宅・商店・屋敷を建てると家賃がたまります。相場によって家賃と地価が変わります",
+      "商人ギルドに加入してギルドの依頼をこなすと貢献度がたまり、等級が上がるほど売値が上がります"
      ]
     },
     "es": {
-     "title": "Festivals, real estate and merchants guild",
+     "title": "Festivales, inmobiliaria y gremio de mercaderes",
      "items": [
-      "Enter the seasonal festival at the town hall: submit goods, compete for prize money and trophies",
-      "Buy lots, build houses, shops or mansions and collect rent that follows the market index",
-      "Join the merchants guild, fulfill requests and rise in rank for better sale prices"
+      "En el ayuntamiento puedes entrar al festival de cada estación: presenta platos o especialidades, compite por puntos y gana premios y trofeos",
+      "En el ayuntamiento abres la inmobiliaria: compra solares, construye casas, tiendas o mansiones y cobra alquiler; alquiler y precio del suelo siguen al mercado",
+      "Únete al gremio de mercaderes y cumple encargos para sumar contribución; cuanto más rango, mejores precios de venta"
      ]
     },
     "fr": {
-     "title": "Festivals, real estate and merchants guild",
+     "title": "Fêtes, immobilier et guilde des marchands",
      "items": [
-      "Enter the seasonal festival at the town hall: submit goods, compete for prize money and trophies",
-      "Buy lots, build houses, shops or mansions and collect rent that follows the market index",
-      "Join the merchants guild, fulfill requests and rise in rank for better sale prices"
+      "À la mairie, participe à la fête de chaque saison : présente des plats ou des spécialités, affronte les autres concurrents et gagne prix et trophées",
+      "À la mairie, ouvre l’agence immobilière : achète des terrains, bâtis maisons, boutiques ou manoirs et touche des loyers qui suivent le marché",
+      "Rejoins la guilde des marchands et remplis ses commandes pour gagner de la contribution ; plus ton rang monte, mieux tu vends"
      ]
     },
     "de": {
-     "title": "Festivals, real estate and merchants guild",
+     "title": "Feste, Immobilien und Händlergilde",
      "items": [
-      "Enter the seasonal festival at the town hall: submit goods, compete for prize money and trophies",
-      "Buy lots, build houses, shops or mansions and collect rent that follows the market index",
-      "Join the merchants guild, fulfill requests and rise in rank for better sale prices"
+      "Im Rathaus kannst du am Fest jeder Jahreszeit teilnehmen: Reiche Gerichte oder Spezialitäten ein, tritt gegen andere an und gewinne Preisgeld und Pokale",
+      "Im Rathaus öffnest du das Immobilienbüro: Kaufe Grundstücke, baue Häuser, Läden oder Villen und kassiere Miete; Miete und Bodenpreis folgen dem Markt",
+      "Tritt der Händlergilde bei und erfülle Aufträge für Beitragspunkte; je höher dein Rang, desto besser deine Verkaufspreise"
      ]
     }
    }
@@ -707,39 +707,39 @@
      ]
     },
     "ja": {
-     "title": "Post office and inn",
+     "title": "郵便局と宿屋",
      "items": [
-      "A post office opened by the harbor. Send parcels to ports and provinces and collect replies and rewards",
-      "The more parcels you send, the faster replies arrive",
-      "An inn opened next to it. Travelers pay for rooms, and dishes from the diner earn tips",
-      "The inn upgrades to level 3, and guests come more often once you have taken a train"
+      "港のそばに郵便局ができました。港や地方に小包を送り、返事と報酬を受け取ります",
+      "小包をたくさん送るほど返事が早く届きます",
+      "郵便局の隣に宿屋ができました。旅人が泊まるたびに宿泊料がたまり、食堂の料理を出すとチップがもらえます",
+      "宿屋はLv 3まで育てられ、汽車に乗ったことがあると客がもっと頻繁に来ます"
      ]
     },
     "es": {
-     "title": "Post office and inn",
+     "title": "Correos y posada",
      "items": [
-      "A post office opened by the harbor. Send parcels to ports and provinces and collect replies and rewards",
-      "The more parcels you send, the faster replies arrive",
-      "An inn opened next to it. Travelers pay for rooms, and dishes from the diner earn tips",
-      "The inn upgrades to level 3, and guests come more often once you have taken a train"
+      "Junto al puerto abrió una oficina de correos: envía paquetes a puertos y provincias y recibe respuestas y recompensas",
+      "Cuantos más paquetes envíes, antes llegan las respuestas",
+      "Al lado abrió una posada: cada viajero que se aloja paga la habitación, y si le sirves un plato del restaurante deja propina",
+      "La posada sube hasta el nivel 3, y los huéspedes vienen más a menudo si ya has viajado en tren"
      ]
     },
     "fr": {
-     "title": "Post office and inn",
+     "title": "Poste et auberge",
      "items": [
-      "A post office opened by the harbor. Send parcels to ports and provinces and collect replies and rewards",
-      "The more parcels you send, the faster replies arrive",
-      "An inn opened next to it. Travelers pay for rooms, and dishes from the diner earn tips",
-      "The inn upgrades to level 3, and guests come more often once you have taken a train"
+      "Un bureau de poste a ouvert près du port : envoie des colis aux ports et aux provinces et reçois réponses et récompenses",
+      "Plus tu envoies de colis, plus les réponses arrivent vite",
+      "Une auberge a ouvert à côté : chaque voyageur paie sa chambre, et servir un plat du restaurant rapporte un pourboire",
+      "L’auberge monte jusqu’au niveau 3, et les clients viennent plus souvent si tu as déjà pris le train"
      ]
     },
     "de": {
-     "title": "Post office and inn",
+     "title": "Post und Gasthaus",
      "items": [
-      "A post office opened by the harbor. Send parcels to ports and provinces and collect replies and rewards",
-      "The more parcels you send, the faster replies arrive",
-      "An inn opened next to it. Travelers pay for rooms, and dishes from the diner earn tips",
-      "The inn upgrades to level 3, and guests come more often once you have taken a train"
+      "Am Hafen hat eine Post eröffnet: Schicke Pakete an Häfen und Provinzen und erhalte Antworten und Belohnungen",
+      "Je mehr Pakete du schickst, desto schneller kommen Antworten",
+      "Daneben gibt es ein Gasthaus: Jeder Reisende zahlt fürs Zimmer, und ein Gericht aus dem Restaurant bringt Trinkgeld",
+      "Das Gasthaus lässt sich bis Stufe 3 ausbauen, und Gäste kommen öfter, wenn du schon Zug gefahren bist"
      ]
     }
    }
@@ -759,27 +759,27 @@
      ]
     },
     "ja": {
-     "title": "Port names",
+     "title": "港の名前の整理",
      "items": [
-      "Three ports renamed after their specialties: Lavender Port, Cotton Port and Salt Bay"
+      "紫港、白雲港、青の湾の名前を特産品に合わせてラベンダーポート、コットンポート、ソルトベイに変えました"
      ]
     },
     "es": {
-     "title": "Port names",
+     "title": "Nombres de puertos",
      "items": [
-      "Three ports renamed after their specialties: Lavender Port, Cotton Port and Salt Bay"
+      "Puerto Violeta, Puerto Nube y Bahía Azul pasan a llamarse, según sus especialidades, Lavender Port, Cotton Port y Salt Bay"
      ]
     },
     "fr": {
-     "title": "Port names",
+     "title": "Noms des ports",
      "items": [
-      "Three ports renamed after their specialties: Lavender Port, Cotton Port and Salt Bay"
+      "Port-Violet, Port-Nuage et Baie Bleue prennent les noms de leurs spécialités : Lavender Port, Cotton Port et Salt Bay"
      ]
     },
     "de": {
-     "title": "Port names",
+     "title": "Hafennamen",
      "items": [
-      "Three ports renamed after their specialties: Lavender Port, Cotton Port and Salt Bay"
+      "Violetthafen, Wolkenhafen und Blaue Bucht heißen nach ihren Spezialitäten jetzt Lavender Port, Cotton Port und Salt Bay"
      ]
     }
    }
@@ -799,27 +799,27 @@
      ]
     },
     "ja": {
-     "title": "Port name",
+     "title": "港の名前の整理",
      "items": [
-      "Redport now has a Korean name that matches its English one"
+      "赤港の名前をレッドポートに変えました"
      ]
     },
     "es": {
-     "title": "Port name",
+     "title": "Nombres de puertos",
      "items": [
-      "Redport now has a Korean name that matches its English one"
+      "Puerto Rojo pasa a llamarse Redport"
      ]
     },
     "fr": {
-     "title": "Port name",
+     "title": "Noms des ports",
      "items": [
-      "Redport now has a Korean name that matches its English one"
+      "Port-Rouge s’appelle désormais Redport"
      ]
     },
     "de": {
-     "title": "Port name",
+     "title": "Hafennamen",
      "items": [
-      "Redport now has a Korean name that matches its English one"
+      "Rothafen heißt jetzt Redport"
      ]
     }
    }
@@ -839,27 +839,27 @@
      ]
     },
     "ja": {
-     "title": "Province names",
+     "title": "地方の名前の整理",
      "items": [
-      "Inland provinces are now named Blue Hills, Pinewood and Red Ridge"
+      "内陸の地方の名前をブルーヒルズ高原、パインウッド村、レッドリッジ宿場に変えました"
      ]
     },
     "es": {
-     "title": "Province names",
+     "title": "Nombres de provincias",
      "items": [
-      "Inland provinces are now named Blue Hills, Pinewood and Red Ridge"
+      "Las provincias del interior ahora se llaman Meseta de Blue Hills, Aldea Pinewood y Posta de Red Ridge"
      ]
     },
     "fr": {
-     "title": "Province names",
+     "title": "Noms des provinces",
      "items": [
-      "Inland provinces are now named Blue Hills, Pinewood and Red Ridge"
+      "Les provinces de l’intérieur s’appellent désormais Plateau de Blue Hills, Village de Pinewood et Relais de Red Ridge"
      ]
     },
     "de": {
-     "title": "Province names",
+     "title": "Provinznamen",
      "items": [
-      "Inland provinces are now named Blue Hills, Pinewood and Red Ridge"
+      "Die Provinzen im Landesinneren heißen jetzt Hochland Blue Hills, Dorf Pinewood und Station Red Ridge"
      ]
     }
    }
@@ -879,27 +879,27 @@
      ]
     },
     "ja": {
-     "title": "NPC names",
+     "title": "NPCの名前の整理",
      "items": [
-      "Island residents and story NPCs now have names in the same style as the newspaper characters"
+      "島の住民と物語のNPCの名前を、新聞の登場人物のように西洋風の名前に変えました"
      ]
     },
     "es": {
-     "title": "NPC names",
+     "title": "Nombres de los PNJ",
      "items": [
-      "Island residents and story NPCs now have names in the same style as the newspaper characters"
+      "Los vecinos de las islas y los PNJ de la historia tienen ahora nombres occidentales, como los personajes del periódico"
      ]
     },
     "fr": {
-     "title": "NPC names",
+     "title": "Noms des PNJ",
      "items": [
-      "Island residents and story NPCs now have names in the same style as the newspaper characters"
+      "Les habitants des îles et les PNJ de l’histoire portent désormais des noms occidentaux, comme les personnages du journal"
      ]
     },
     "de": {
-     "title": "NPC names",
+     "title": "NPC-Namen",
      "items": [
-      "Island residents and story NPCs now have names in the same style as the newspaper characters"
+      "Inselbewohner und Story-NPCs tragen jetzt westliche Namen wie die Figuren aus der Zeitung"
      ]
     }
    }
@@ -923,35 +923,35 @@
      ]
     },
     "ja": {
-     "title": "Train station and inland provinces",
+     "title": "駅と内陸の地方",
      "items": [
-      "A train station stands by the market. Ride to three inland provinces",
-      "Blue Highlands (rank 1), Pine Forest Village (rank 2) and Red Ridge Depot (rank 3), each with a walkable map, market and resident",
-      "Sell goods dear at provincial markets and buy local specialties cheaply"
+      "ホーム島の市場の隣に駅ができました。汽車に乗って内陸の3つの地方へ行けます",
+      "ブルーヒルズ高原（ランク1）、パインウッド村（ランク2）、レッドリッジ宿場（ランク3）があり、それぞれ歩けるマップと市場、住民がいます",
+      "地方の市場では品物を高く売り、その地方の特産品を安く買えます"
      ]
     },
     "es": {
-     "title": "Train station and inland provinces",
+     "title": "Estación de tren y provincias del interior",
      "items": [
-      "A train station stands by the market. Ride to three inland provinces",
-      "Blue Highlands (rank 1), Pine Forest Village (rank 2) and Red Ridge Depot (rank 3), each with a walkable map, market and resident",
-      "Sell goods dear at provincial markets and buy local specialties cheaply"
+      "Junto al mercado de tu isla hay una estación de tren: viaja a tres provincias del interior",
+      "Meseta de Blue Hills (rango 1), Aldea Pinewood (rango 2) y Posta de Red Ridge (rango 3), cada una con mapa para caminar, mercado y vecinos",
+      "En los mercados provinciales vendes caro y compras barato sus especialidades"
      ]
     },
     "fr": {
-     "title": "Train station and inland provinces",
+     "title": "Gare et provinces de l’intérieur",
      "items": [
-      "A train station stands by the market. Ride to three inland provinces",
-      "Blue Highlands (rank 1), Pine Forest Village (rank 2) and Red Ridge Depot (rank 3), each with a walkable map, market and resident",
-      "Sell goods dear at provincial markets and buy local specialties cheaply"
+      "Une gare se dresse à côté du marché de ton île : prends le train vers trois provinces de l’intérieur",
+      "Plateau de Blue Hills (rang 1), Village de Pinewood (rang 2) et Relais de Red Ridge (rang 3), chacun avec une carte à parcourir, un marché et des habitants",
+      "Aux marchés de province, vends cher et achète leurs spécialités à bas prix"
      ]
     },
     "de": {
-     "title": "Train station and inland provinces",
+     "title": "Bahnhof und Provinzen im Landesinneren",
      "items": [
-      "A train station stands by the market. Ride to three inland provinces",
-      "Blue Highlands (rank 1), Pine Forest Village (rank 2) and Red Ridge Depot (rank 3), each with a walkable map, market and resident",
-      "Sell goods dear at provincial markets and buy local specialties cheaply"
+      "Neben dem Markt deiner Insel steht ein Bahnhof: Fahr mit dem Zug in drei Provinzen im Landesinneren",
+      "Hochland Blue Hills (Rang 1), Dorf Pinewood (Rang 2) und Station Red Ridge (Rang 3), jeweils mit begehbarer Karte, Markt und Bewohnern",
+      "Auf Provinzmärkten verkaufst du teuer und kaufst ihre Spezialitäten günstig"
      ]
     }
    }
@@ -977,39 +977,39 @@
      ]
     },
     "ja": {
-     "title": "NPCs and a story",
+     "title": "NPCと物語",
      "items": [
-      "Three talkable NPCs: Granny Bori by the fields, navigator Organ at the pier and merchant Mira at the market",
-      "An eight-chapter story about your grandfather's old ledger: reach each goal and talk again to continue",
-      "Your final choice decides a permanent bonus",
-      "NPCs share a tip between story beats; island residents now stand by their landmarks"
+      "島に話しかけられるNPCが3人できました。畑のそばのマーサばあさん、桟橋の航海士オルガン、市場の商人ミラです",
+      "おじいさんの古い帳簿をたどる8章の物語ができました。目標を達成してまた訪ねると物語が続きます",
+      "物語の最後に選ぶ選択によって永続ボーナスが変わります",
+      "物語の合間にNPCがひとことずつヒントを教えてくれます。各島の住民も姿を見せました"
      ]
     },
     "es": {
-     "title": "NPCs and a story",
+     "title": "PNJ y una historia",
      "items": [
-      "Three talkable NPCs: Granny Bori by the fields, navigator Organ at the pier and merchant Mira at the market",
-      "An eight-chapter story about your grandfather's old ledger: reach each goal and talk again to continue",
-      "Your final choice decides a permanent bonus",
-      "NPCs share a tip between story beats; island residents now stand by their landmarks"
+      "Tres PNJ con los que hablar: la abuela Martha junto a los campos, el navegante Organ en el muelle y la mercader Mira en el mercado",
+      "Una historia de ocho capítulos sobre el viejo libro de cuentas de tu abuelo: cumple cada objetivo y vuelve a hablar para continuar",
+      "Tu elección final decide una bonificación permanente",
+      "Entre capítulo y capítulo los PNJ te dan consejos, y los vecinos de cada isla ya se dejan ver"
      ]
     },
     "fr": {
-     "title": "NPCs and a story",
+     "title": "PNJ et une histoire",
      "items": [
-      "Three talkable NPCs: Granny Bori by the fields, navigator Organ at the pier and merchant Mira at the market",
-      "An eight-chapter story about your grandfather's old ledger: reach each goal and talk again to continue",
-      "Your final choice decides a permanent bonus",
-      "NPCs share a tip between story beats; island residents now stand by their landmarks"
+      "Trois PNJ à qui parler : Mamie Martha près des champs, le navigateur Organ sur le quai et la marchande Mira au marché",
+      "Une histoire en huit chapitres autour du vieux registre de ton grand-père : atteins chaque objectif et reviens parler pour continuer",
+      "Ton choix final décide d’un bonus permanent",
+      "Entre deux chapitres, les PNJ glissent un conseil, et les habitants de chaque île se montrent enfin"
      ]
     },
     "de": {
-     "title": "NPCs and a story",
+     "title": "NPCs und eine Geschichte",
      "items": [
-      "Three talkable NPCs: Granny Bori by the fields, navigator Organ at the pier and merchant Mira at the market",
-      "An eight-chapter story about your grandfather's old ledger: reach each goal and talk again to continue",
-      "Your final choice decides a permanent bonus",
-      "NPCs share a tip between story beats; island residents now stand by their landmarks"
+      "Drei NPCs zum Ansprechen: Oma Martha bei den Feldern, Navigator Organ am Steg und Händlerin Mira auf dem Markt",
+      "Eine Geschichte in acht Kapiteln um das alte Kontobuch deines Großvaters: Erfülle jedes Ziel und sprich erneut, um weiterzumachen",
+      "Deine letzte Entscheidung bestimmt einen dauerhaften Bonus",
+      "Zwischen den Kapiteln geben NPCs Tipps, und die Bewohner jeder Insel zeigen sich"
      ]
     }
    }
@@ -1031,31 +1031,31 @@
      ]
     },
     "ja": {
-     "title": "New harbor music",
+     "title": "新しい港の音楽",
      "items": [
-      "Isleport's background music is a new track: a relaxed layering of guitar, piano and strings",
-      "The background music now has two tracks that take turns; the new one is a relaxed mix of synth pad and piano"
+      "Isleportのバックグラウンド音楽を新しい曲に変えました。ギターとピアノ、弦楽器が重なるのんびりした曲です",
+      "バックグラウンド音楽が2曲になり、交互に流れます。新曲はシンセパッドとピアノが溶け合うのんびりした曲です"
      ]
     },
     "es": {
-     "title": "New harbor music",
+     "title": "Nueva música del puerto",
      "items": [
-      "Isleport's background music is a new track: a relaxed layering of guitar, piano and strings",
-      "The background music now has two tracks that take turns; the new one is a relaxed mix of synth pad and piano"
+      "La música de fondo de Isleport es un tema nuevo: una pieza relajada donde se superponen guitarra, piano y cuerdas",
+      "Ahora hay dos temas de fondo que se alternan; el nuevo es una pieza relajada de pad de sintetizador y piano"
      ]
     },
     "fr": {
-     "title": "New harbor music",
+     "title": "Nouvelle musique du port",
      "items": [
-      "Isleport's background music is a new track: a relaxed layering of guitar, piano and strings",
-      "The background music now has two tracks that take turns; the new one is a relaxed mix of synth pad and piano"
+      "La musique de fond d’Isleport est un nouveau morceau : un air détendu où se mêlent guitare, piano et cordes",
+      "La musique de fond compte maintenant deux morceaux qui alternent ; le nouveau est un air détendu de nappes de synthé et de piano"
      ]
     },
     "de": {
-     "title": "New harbor music",
+     "title": "Neue Hafenmusik",
      "items": [
-      "Isleport's background music is a new track: a relaxed layering of guitar, piano and strings",
-      "The background music now has two tracks that take turns; the new one is a relaxed mix of synth pad and piano"
+      "Die Hintergrundmusik von Isleport ist ein neues Stück: entspannt, mit Gitarre, Klavier und Streichern übereinander",
+      "Es gibt jetzt zwei Hintergrundstücke im Wechsel; das neue ist ein entspanntes Stück aus Synth-Pad und Klavier"
      ]
     }
    }
@@ -1081,39 +1081,39 @@
      ]
     },
     "ja": {
-     "title": "Mine isle",
+     "title": "鉱山島",
      "items": [
-      "A new isle to discover: the Mine Isle. Walk around and strike rocks for stone, iron ore, copper ore and gem ore",
-      "Smelt ore into iron and copper ingots, sell at the miners' store, or upgrade your pickaxe",
-      "Ships can get steel reinforcement for more hold and speed",
-      "Use iron ingots to finish a building under construction at once"
+      "地図を集めて見つける新しい島、鉱山島ができました。島を歩き回って岩を叩き、石、鉄鉱石、銅鉱石、宝石の原石を掘ります",
+      "製錬所で鉱石を鉄インゴットと銅インゴットに溶かし、鉱夫の店で売ったり、つるはしを強化したりします",
+      "船に鋼鉄の補強を付けられます。積み荷と速さが増えます",
+      "工事中の建物に鉄インゴットを使うとすぐに完成させられます"
      ]
     },
     "es": {
-     "title": "Mine isle",
+     "title": "Isla Mina",
      "items": [
-      "A new isle to discover: the Mine Isle. Walk around and strike rocks for stone, iron ore, copper ore and gem ore",
-      "Smelt ore into iron and copper ingots, sell at the miners' store, or upgrade your pickaxe",
-      "Ships can get steel reinforcement for more hold and speed",
-      "Use iron ingots to finish a building under construction at once"
+      "Una nueva isla que descubrir con mapas: la Isla Mina. Recórrela y golpea rocas para sacar piedra, mineral de hierro, mineral de cobre y gemas en bruto",
+      "Funde el mineral en lingotes de hierro y cobre en la fundición, y véndelos en la tienda minera o mejora tu pico",
+      "Los barcos pueden llevar refuerzo de acero: más bodega y más velocidad",
+      "Usa lingotes de hierro para terminar al instante un edificio en obras"
      ]
     },
     "fr": {
-     "title": "Mine isle",
+     "title": "Île de la Mine",
      "items": [
-      "A new isle to discover: the Mine Isle. Walk around and strike rocks for stone, iron ore, copper ore and gem ore",
-      "Smelt ore into iron and copper ingots, sell at the miners' store, or upgrade your pickaxe",
-      "Ships can get steel reinforcement for more hold and speed",
-      "Use iron ingots to finish a building under construction at once"
+      "Une nouvelle île à découvrir grâce aux cartes : l’Île de la Mine. Parcours-la et frappe les rochers pour obtenir pierre, minerai de fer, minerai de cuivre et gemmes brutes",
+      "À la fonderie, fonds le minerai en lingots de fer et de cuivre, puis vends-les à la boutique des mineurs ou améliore ta pioche",
+      "Les navires peuvent recevoir un renfort d’acier : plus de cale et plus de vitesse",
+      "Utilise des lingots de fer pour terminer aussitôt un bâtiment en chantier"
      ]
     },
     "de": {
-     "title": "Mine isle",
+     "title": "Mineninsel",
      "items": [
-      "A new isle to discover: the Mine Isle. Walk around and strike rocks for stone, iron ore, copper ore and gem ore",
-      "Smelt ore into iron and copper ingots, sell at the miners' store, or upgrade your pickaxe",
-      "Ships can get steel reinforcement for more hold and speed",
-      "Use iron ingots to finish a building under construction at once"
+      "Eine neue Insel, die du mit Karten findest: die Mineninsel. Lauf herum und schlag auf Felsen für Stein, Eisenerz, Kupfererz und Rohedelsteine",
+      "In der Schmelze schmilzt du Erz zu Eisen- und Kupferbarren, verkaufst sie im Bergmannsladen oder verbesserst deine Spitzhacke",
+      "Schiffe können eine Stahlverstärkung bekommen: mehr Laderaum und mehr Tempo",
+      "Mit Eisenbarren stellst du ein Gebäude im Bau sofort fertig"
      ]
     }
    }
@@ -1139,39 +1139,39 @@
      ]
     },
     "ja": {
-     "title": "Diner, museum and resident requests",
+     "title": "食堂、博物館、住民の依頼",
      "items": [
-      "A diner opened by the market: cook dishes and serve customer orders",
-      "Upgrade the diner for new dishes; better reputation brings more customers",
-      "A museum: displays earn admission fees and complete sets give permanent bonuses",
-      "Landmarks on islands now host a resident who asks for favors; finish three for a map"
+      "市場の隣に食堂ができました。材料で料理を作って客の注文に応えます",
+      "食堂のレベルを上げると新しい料理が解放され、評判が上がると客がもっと頻繁に来ます",
+      "博物館ができました。品物を展示すると入館料がたまり、セットをそろえると永続ボーナスがもらえます",
+      "島に上陸してランドマークをタップすると住民が頼み事をします。3回聞いてあげると地図がもらえます"
      ]
     },
     "es": {
-     "title": "Diner, museum and resident requests",
+     "title": "Restaurante, museo y encargos de vecinos",
      "items": [
-      "A diner opened by the market: cook dishes and serve customer orders",
-      "Upgrade the diner for new dishes; better reputation brings more customers",
-      "A museum: displays earn admission fees and complete sets give permanent bonuses",
-      "Landmarks on islands now host a resident who asks for favors; finish three for a map"
+      "Junto al mercado abrió un restaurante: cocina con tus ingredientes y atiende los pedidos",
+      "Sube de nivel el restaurante para nuevos platos; con más reputación vienen más clientes",
+      "Un museo: las piezas expuestas generan entradas y las colecciones completas dan bonificaciones permanentes",
+      "Desembarca y toca un monumento: un vecino te pedirá favores; cumple tres y te dará un mapa"
      ]
     },
     "fr": {
-     "title": "Diner, museum and resident requests",
+     "title": "Restaurant, musée et demandes des habitants",
      "items": [
-      "A diner opened by the market: cook dishes and serve customer orders",
-      "Upgrade the diner for new dishes; better reputation brings more customers",
-      "A museum: displays earn admission fees and complete sets give permanent bonuses",
-      "Landmarks on islands now host a resident who asks for favors; finish three for a map"
+      "Un restaurant a ouvert près du marché : cuisine avec tes ingrédients et sers les commandes des clients",
+      "Améliore le restaurant pour débloquer des plats ; une meilleure réputation attire plus de clients",
+      "Un musée : les objets exposés rapportent des entrées et les collections complètes donnent des bonus permanents",
+      "Débarque et touche un monument : un habitant te demande des services ; rends-en trois pour obtenir une carte"
      ]
     },
     "de": {
-     "title": "Diner, museum and resident requests",
+     "title": "Restaurant, Museum und Bitten der Bewohner",
      "items": [
-      "A diner opened by the market: cook dishes and serve customer orders",
-      "Upgrade the diner for new dishes; better reputation brings more customers",
-      "A museum: displays earn admission fees and complete sets give permanent bonuses",
-      "Landmarks on islands now host a resident who asks for favors; finish three for a map"
+      "Neben dem Markt hat ein Restaurant eröffnet: Koche mit deinen Zutaten und bediene die Bestellungen",
+      "Baue das Restaurant aus für neue Gerichte; mehr Ansehen bringt mehr Gäste",
+      "Ein Museum: Ausstellungsstücke bringen Eintritt, vollständige Sammlungen dauerhafte Boni",
+      "Lande an und tippe auf ein Wahrzeichen: Ein Bewohner bittet dich um Gefallen; erfülle drei für eine Karte"
      ]
     }
    }
@@ -1193,31 +1193,31 @@
      ]
     },
     "ja": {
-     "title": "Harbor music",
+     "title": "港の音楽",
      "items": [
-      "Isleport now has its own background music: a relaxed track with guitar and electric piano",
-      "The music is a separate file next to the game; if it can't be loaded, the old generated music plays instead"
+      "Isleport専用のバックグラウンド音楽ができました。ギターとエレクトリックピアノが溶け合うのんびりした曲です",
+      "音楽ファイルはゲームの隣に別にあります。ファイルを読み込めないときは、以前のように自動生成の音楽が流れます"
      ]
     },
     "es": {
-     "title": "Harbor music",
+     "title": "Música del puerto",
      "items": [
-      "Isleport now has its own background music: a relaxed track with guitar and electric piano",
-      "The music is a separate file next to the game; if it can't be loaded, the old generated music plays instead"
+      "Isleport tiene su propia música de fondo: un tema relajado con guitarra y piano eléctrico",
+      "La música es un archivo aparte junto al juego; si no se puede cargar, suena la música generada de antes"
      ]
     },
     "fr": {
-     "title": "Harbor music",
+     "title": "Musique du port",
      "items": [
-      "Isleport now has its own background music: a relaxed track with guitar and electric piano",
-      "The music is a separate file next to the game; if it can't be loaded, the old generated music plays instead"
+      "Isleport a sa propre musique de fond : un air détendu avec guitare et piano électrique",
+      "La musique est un fichier à part à côté du jeu ; s’il ne se charge pas, l’ancienne musique générée prend le relais"
      ]
     },
     "de": {
-     "title": "Harbor music",
+     "title": "Hafenmusik",
      "items": [
-      "Isleport now has its own background music: a relaxed track with guitar and electric piano",
-      "The music is a separate file next to the game; if it can't be loaded, the old generated music plays instead"
+      "Isleport hat jetzt eigene Hintergrundmusik: ein entspanntes Stück mit Gitarre und E-Piano",
+      "Die Musik ist eine eigene Datei neben dem Spiel; lässt sie sich nicht laden, läuft wie früher die erzeugte Musik"
      ]
     }
    }
@@ -1243,39 +1243,39 @@
      ]
     },
     "ja": {
-     "title": "Town hall, fishing, reclamation and challenges",
+     "title": "町役場、釣り、開墾、チャレンジ",
      "items": [
-      "A town hall now stands near the farm: challenges and the back-hill reclamation open from it",
-      "Fishing huts now have a timing mini-game; catches depend on season and weather",
-      "Back-hill reclamation: clear forest and rocks for gold to gain 12 more fields",
-      "Challenges: finish three timed goals for gold and titles"
+      "家の隣に町役場ができました。チャレンジと裏山の開墾地はここから開きます",
+      "釣り場で「釣りをする」を押すと、タイミング釣りのミニゲームができます。季節と天気によって釣れるものが変わります",
+      "裏山の開墾地ができました。お金を払って森と岩を片付けると、畑を12マス多く使えます",
+      "チャレンジができました。3つの目標を制限時間内に達成すると金貨と称号がもらえます"
      ]
     },
     "es": {
-     "title": "Town hall, fishing, reclamation and challenges",
+     "title": "Ayuntamiento, pesca, roturación y desafíos",
      "items": [
-      "A town hall now stands near the farm: challenges and the back-hill reclamation open from it",
-      "Fishing huts now have a timing mini-game; catches depend on season and weather",
-      "Back-hill reclamation: clear forest and rocks for gold to gain 12 more fields",
-      "Challenges: finish three timed goals for gold and titles"
+      "Junto a tu casa hay un ayuntamiento: desde allí abres los desafíos y la roturación de la colina",
+      "En el puesto de pesca, pulsa Pescar para jugar a un minijuego de puntería; lo que pescas depende de la estación y el tiempo",
+      "Roturación de la colina: paga para despejar bosque y rocas y gana 12 campos más",
+      "Desafíos: cumple tres objetivos a tiempo para ganar oro y títulos"
      ]
     },
     "fr": {
-     "title": "Town hall, fishing, reclamation and challenges",
+     "title": "Mairie, pêche, défrichage et défis",
      "items": [
-      "A town hall now stands near the farm: challenges and the back-hill reclamation open from it",
-      "Fishing huts now have a timing mini-game; catches depend on season and weather",
-      "Back-hill reclamation: clear forest and rocks for gold to gain 12 more fields",
-      "Challenges: finish three timed goals for gold and titles"
+      "Une mairie se dresse près de ta maison : défis et défrichage de la colline s’ouvrent depuis là",
+      "Au coin de pêche, touche Pêcher pour un mini-jeu de timing ; les prises dépendent de la saison et de la météo",
+      "Défrichage de la colline : paie pour dégager forêt et rochers et obtiens 12 champs de plus",
+      "Défis : atteins trois objectifs dans le temps imparti pour gagner de l’or et des titres"
      ]
     },
     "de": {
-     "title": "Town hall, fishing, reclamation and challenges",
+     "title": "Rathaus, Angeln, Rodung und Herausforderungen",
      "items": [
-      "A town hall now stands near the farm: challenges and the back-hill reclamation open from it",
-      "Fishing huts now have a timing mini-game; catches depend on season and weather",
-      "Back-hill reclamation: clear forest and rocks for gold to gain 12 more fields",
-      "Challenges: finish three timed goals for gold and titles"
+      "Neben deinem Haus steht ein Rathaus: Dort öffnest du Herausforderungen und die Rodung am Hinterberg",
+      "Am Angelplatz startet „Angeln“ ein Timing-Minispiel; der Fang hängt von Jahreszeit und Wetter ab",
+      "Rodung am Hinterberg: Bezahle, um Wald und Felsen zu räumen, und erhalte 12 weitere Felder",
+      "Herausforderungen: Erfülle drei Ziele in der Zeit für Gold und Titel"
      ]
     }
    }
@@ -1301,39 +1301,39 @@
      ]
     },
     "ja": {
-     "title": "Price paper and trade insurance",
+     "title": "相場新聞と貿易保険",
      "items": [
-      "The bank has a Paper tab: current stock prices, a forecast until the next issue, last issue's results and market news",
-      "The paper also carries silly news and dad jokes",
-      "Port booms, festivals, storms and pirate raids now move related stocks",
-      "The bank offers trade insurance: pirate losses are refunded at 70% of their value"
+      "銀行に相場新聞タブができました。現在の株価、次号までの予想、前号の予想結果、市場ニュースが載っています",
+      "新聞には変なニュースやおやじギャグも載っています",
+      "港の豊作・祭り・嵐や海賊の襲撃が関連する株価に影響します",
+      "銀行に貿易保険ができました。加入しておくと海賊に奪われた荷物の代金の70%が戻ってきます"
      ]
     },
     "es": {
-     "title": "Price paper and trade insurance",
+     "title": "Periódico de precios y seguro comercial",
      "items": [
-      "The bank has a Paper tab: current stock prices, a forecast until the next issue, last issue's results and market news",
-      "The paper also carries silly news and dad jokes",
-      "Port booms, festivals, storms and pirate raids now move related stocks",
-      "The bank offers trade insurance: pirate losses are refunded at 70% of their value"
+      "El banco tiene una pestaña de periódico: precios actuales, previsión hasta el próximo número, resultados del anterior y noticias del mercado",
+      "El periódico también trae noticias curiosas y chistes",
+      "Las bonanzas, fiestas y tormentas de los puertos y los ataques piratas mueven las acciones relacionadas",
+      "El banco ofrece seguro comercial: si los piratas te roban, recuperas el 70% del valor"
      ]
     },
     "fr": {
-     "title": "Price paper and trade insurance",
+     "title": "Journal des cours et assurance commerciale",
      "items": [
-      "The bank has a Paper tab: current stock prices, a forecast until the next issue, last issue's results and market news",
-      "The paper also carries silly news and dad jokes",
-      "Port booms, festivals, storms and pirate raids now move related stocks",
-      "The bank offers trade insurance: pirate losses are refunded at 70% of their value"
+      "La banque a un onglet Journal : cours actuels, prévisions jusqu’au prochain numéro, résultats du précédent et nouvelles du marché",
+      "Le journal publie aussi des nouvelles loufoques et des blagues",
+      "Les bonnes récoltes, fêtes, tempêtes et attaques de pirates font bouger les actions liées",
+      "La banque propose une assurance commerciale : 70 % de la valeur volée par les pirates t’est remboursée"
      ]
     },
     "de": {
-     "title": "Price paper and trade insurance",
+     "title": "Kurszeitung und Handelsversicherung",
      "items": [
-      "The bank has a Paper tab: current stock prices, a forecast until the next issue, last issue's results and market news",
-      "The paper also carries silly news and dad jokes",
-      "Port booms, festivals, storms and pirate raids now move related stocks",
-      "The bank offers trade insurance: pirate losses are refunded at 70% of their value"
+      "Die Bank hat einen Zeitungs-Tab: aktuelle Kurse, Prognose bis zur nächsten Ausgabe, Ergebnisse der letzten und Marktnachrichten",
+      "Die Zeitung bringt auch skurrile Meldungen und Witze",
+      "Boom, Feste, Stürme und Piratenangriffe in den Häfen bewegen die passenden Aktien",
+      "Die Bank bietet eine Handelsversicherung: 70% des von Piraten geraubten Werts werden erstattet"
      ]
     }
    }
@@ -1357,35 +1357,35 @@
      ]
     },
     "ja": {
-     "title": "Bank expansion",
+     "title": "銀行の拡張",
      "items": [
-      "You can now buy and sell stocks at the bank: grain, orchard, wine, textile, fishing and trade",
-      "You can deposit money at the bank: 0.2% interest per minute, withdraw anytime",
-      "Loans moved to the Loan tab of the same bank window"
+      "銀行で株を売買できます。穀物・果樹園・ワイン・織物・水産・貿易の6銘柄があります",
+      "銀行にお金を預けられます。1分に0.2%の利息が付き、いつでも引き出せます",
+      "ローンは同じ銀行画面のローンタブに移しました"
      ]
     },
     "es": {
-     "title": "Bank expansion",
+     "title": "Ampliación del banco",
      "items": [
-      "You can now buy and sell stocks at the bank: grain, orchard, wine, textile, fishing and trade",
-      "You can deposit money at the bank: 0.2% interest per minute, withdraw anytime",
-      "Loans moved to the Loan tab of the same bank window"
+      "Ahora puedes comprar y vender acciones en el banco: cereal, huerto, vino, textil, pesca y comercio",
+      "Puedes depositar dinero en el banco: 0,2% de interés por minuto y retiras cuando quieras",
+      "Los préstamos pasan a la pestaña Préstamo de la misma ventana del banco"
      ]
     },
     "fr": {
-     "title": "Bank expansion",
+     "title": "Extension de la banque",
      "items": [
-      "You can now buy and sell stocks at the bank: grain, orchard, wine, textile, fishing and trade",
-      "You can deposit money at the bank: 0.2% interest per minute, withdraw anytime",
-      "Loans moved to the Loan tab of the same bank window"
+      "Tu peux acheter et vendre des actions à la banque : céréales, verger, vin, textile, pêche et commerce",
+      "Tu peux déposer de l’argent à la banque : 0,2 % d’intérêts par minute, retrait à tout moment",
+      "Les prêts sont dans l’onglet Prêt de la même fenêtre de banque"
      ]
     },
     "de": {
-     "title": "Bank expansion",
+     "title": "Bank-Erweiterung",
      "items": [
-      "You can now buy and sell stocks at the bank: grain, orchard, wine, textile, fishing and trade",
-      "You can deposit money at the bank: 0.2% interest per minute, withdraw anytime",
-      "Loans moved to the Loan tab of the same bank window"
+      "Du kannst jetzt Aktien an der Bank kaufen und verkaufen: Getreide, Obstgarten, Wein, Textil, Fischerei und Handel",
+      "Du kannst Geld bei der Bank anlegen: 0,2% Zinsen pro Minute, jederzeit abhebbar",
+      "Kredite sind jetzt im Kredit-Tab desselben Bankfensters"
      ]
     }
    }
@@ -1407,31 +1407,31 @@
      ]
     },
     "ja": {
-     "title": "Harbor buildings",
+     "title": "港の建物",
      "items": [
-      "Your harbor now has buildings: a harbor office (ships and contracts), a cargo shed, a fish market, a lighthouse and a crane beside the piers",
-      "Each island you land on now has its own harbor building next to the pier"
+      "わが港に建物ができました。港湾事務所（船と契約）、海運倉庫、魚市場、灯台、クレーンが桟橋のそばにあります",
+      "島に上陸すると、桟橋のそばにその島の港の建物があります"
      ]
     },
     "es": {
-     "title": "Harbor buildings",
+     "title": "Edificios del puerto",
      "items": [
-      "Your harbor now has buildings: a harbor office (ships and contracts), a cargo shed, a fish market, a lighthouse and a crane beside the piers",
-      "Each island you land on now has its own harbor building next to the pier"
+      "Tu puerto tiene edificios: oficina portuaria (barcos y contratos), almacén naval, lonja, faro y grúa junto a los muelles",
+      "Cada isla en la que desembarcas tiene su propio edificio portuario junto al muelle"
      ]
     },
     "fr": {
-     "title": "Harbor buildings",
+     "title": "Bâtiments du port",
      "items": [
-      "Your harbor now has buildings: a harbor office (ships and contracts), a cargo shed, a fish market, a lighthouse and a crane beside the piers",
-      "Each island you land on now has its own harbor building next to the pier"
+      "Ton port a des bâtiments : capitainerie (navires et contrats), entrepôt maritime, criée, phare et grue près des quais",
+      "Chaque île où tu débarques a son propre bâtiment portuaire près du quai"
      ]
     },
     "de": {
-     "title": "Harbor buildings",
+     "title": "Hafengebäude",
      "items": [
-      "Your harbor now has buildings: a harbor office (ships and contracts), a cargo shed, a fish market, a lighthouse and a crane beside the piers",
-      "Each island you land on now has its own harbor building next to the pier"
+      "Dein Hafen hat Gebäude: Hafenamt (Schiffe und Aufträge), Frachtlager, Fischmarkt, Leuchtturm und Kran an den Stegen",
+      "Jede Insel, auf der du anlandest, hat ein eigenes Hafengebäude am Steg"
      ]
     }
    }
@@ -1455,28 +1455,28 @@
     "ja": {
      "title": "島に上陸",
      "items": [
-      "Sailing to an island now lets you land on its own map: Goldport has wheat fields and a windmill, Redport an apple orchard, Violetport vineyards and a villa, Cloudport cotton and sheep, Blue Bay a fishing village on a bay, Spiceport bazaar tents, Coral Cay coral pools, Amber Isle a resin forest, and Ruin Atoll old pillars and an altar",
+      "自分で航海して島に着くと、その島のマップに上陸します。島ごとに形と景色が違います：黄金港は麦畑と風車、レッドポートはりんご園、ラベンダーポートはぶどう畑と石の屋敷、コットンポートは綿花畑と羊、ソルトベイは漁村と入り江、香辛港は市場のテント、サンゴ島はサンゴの池、琥珀島は松やにの森、遺跡の環礁は古い柱と祭壇です",
       "島を歩き回ってキラキラ光る特産品を拾えます。市場の建物で交易と解放を、桟橋から船に戻ります"
      ]
     },
     "es": {
      "title": "Desembarco",
      "items": [
-      "Sailing to an island now lets you land on its own map: Goldport has wheat fields and a windmill, Redport an apple orchard, Violetport vineyards and a villa, Cloudport cotton and sheep, Blue Bay a fishing village on a bay, Spiceport bazaar tents, Coral Cay coral pools, Amber Isle a resin forest, and Ruin Atoll old pillars and an altar",
+      "Al llegar navegando a una isla desembarcas en su propio mapa. Cada isla es distinta: Puerto Dorado tiene trigales y molino, Redport un manzanar, Lavender Port viñedos y una villa de piedra, Cotton Port algodón y ovejas, Salt Bay un pueblo pesquero en una bahía, Puerto Especia tiendas de bazar, Cayo de Coral pozas de coral, Isla de Ámbar un bosque de resina y Atolón de las Ruinas viejas columnas y un altar",
       "Recorre la isla a pie para recoger especialidades que brillan, comercia y desbloquea en el edificio del mercado y vuelve al barco desde el muelle"
      ]
     },
     "fr": {
      "title": "Accostage",
      "items": [
-      "Sailing to an island now lets you land on its own map: Goldport has wheat fields and a windmill, Redport an apple orchard, Violetport vineyards and a villa, Cloudport cotton and sheep, Blue Bay a fishing village on a bay, Spiceport bazaar tents, Coral Cay coral pools, Amber Isle a resin forest, and Ruin Atoll old pillars and an altar",
+      "En naviguant jusqu’à une île, tu débarques sur sa propre carte. Chaque île est différente : Port-Or a des champs de blé et un moulin, Redport un verger de pommiers, Lavender Port des vignes et une villa de pierre, Cotton Port du coton et des moutons, Salt Bay un village de pêcheurs dans une baie, Port-Épice des tentes de bazar, l’Îlot de Corail des bassins de corail, l’Île d’Ambre une forêt de résine et l’Atoll des Ruines de vieux piliers et un autel",
       "Parcours l’île à pied pour ramasser les spécialités qui brillent, commerce et débloque au bâtiment du marché, et regagne ton navire depuis le quai"
      ]
     },
     "de": {
      "title": "Landgang",
      "items": [
-      "Sailing to an island now lets you land on its own map: Goldport has wheat fields and a windmill, Redport an apple orchard, Violetport vineyards and a villa, Cloudport cotton and sheep, Blue Bay a fishing village on a bay, Spiceport bazaar tents, Coral Cay coral pools, Amber Isle a resin forest, and Ruin Atoll old pillars and an altar",
+      "Segelst du selbst zu einer Insel, landest du auf ihrer eigenen Karte. Jede sieht anders aus: Goldhafen hat Weizenfelder und eine Windmühle, Redport einen Apfelgarten, Lavender Port Weinberge und eine Steinvilla, Cotton Port Baumwolle und Schafe, Salt Bay ein Fischerdorf an einer Bucht, Gewürzhafen Basarzelte, das Korallen-Eiland Korallenbecken, die Bernsteininsel einen Harzwald und das Ruinen-Atoll alte Säulen und einen Altar",
       "Lauf über die Insel und sammle glitzernde Spezialitäten, handle und schalte im Marktgebäude frei und kehre über den Steg zum Schiff zurück"
      ]
     }
