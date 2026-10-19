@@ -49,3 +49,7 @@ Stickseum-v0.8.html | ULTS.horemheb desc | 앞쪽 멀리(1725)까지 거센 모�
 patchnotes.json | v317 title | 호렘헵 궁극기 강화 | build 317 | 2026-10-19
 patchnotes.json | v317 items[0] | 피사로 십자가 기절 시간 전 단계 1초 고정 | build 317 | 2026-10-19
 patchnotes.json | v317 items[1] | 호렘헵 궁극기 넉백 10배, 기절 시간 2배, 범위 1.5배, 피해 3배 강화 | build 317 | 2026-10-19
+patchnotes.json | v318 title | 좀비 게임 밸런스 | build 318 | 2026-10-19
+patchnotes.json | v318 items[0] | 좀비 게임 사람 체력 2배 (600) | build 318 | 2026-10-19
+patchnotes.json | v318 items[1] | 좀비 피해 6배→1.2배, 속도 1.45배→1.05배, 체력 900→400 | build 318 | 2026-10-19
+patchnotes.json | v318 items[2] | 좀비 대시 쿨·회복 속도 보통으로 조정 | build 318 | 2026-10-19
