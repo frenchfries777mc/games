@@ -134,6 +134,18 @@
     .ptabs a,.ptabs button{padding:6px 11px; font-size:13.5px;}
     .langSel{max-width:110px;}
   }
+  /* 꾸미기: 제목 띠, 둥근 표, 문서 카드 느낌 */
+  .page{box-shadow:0 14px 40px rgba(0,0,0,.16);}
+  .txt h3{border-bottom:0; border-left:5px solid var(--g,var(--fry)); border-radius:0 9px 9px 0; padding:4px 0 4px 12px; background:linear-gradient(90deg,color-mix(in srgb,var(--g,var(--fry)) 14%,transparent),transparent 72%);}
+  .txt h3 a{font-size:inherit;}
+  .wt{border-collapse:separate; border-spacing:0; border:1px solid var(--line); border-radius:12px; overflow:hidden;}
+  .wt th,.wt td{border:0; border-top:1px solid var(--line);} .wt tr:first-child th{border-top:0;}
+  .wt th:first-child,.wt td:first-child{border-right:1px solid var(--line);}
+  .wt tr:not(:first-child){transition:background .12s;} .wt tr:not(:first-child):hover{background:color-mix(in srgb,var(--fry) 8%,transparent);}
+  .g-stickseum + .wt tr:not(:first-child):hover{background:color-mix(in srgb,#3ee0c4 9%,transparent);} .g-crownenvoy + .wt tr:not(:first-child):hover{background:color-mix(in srgb,#e8c25a 9%,transparent);} .g-beaconfall + .wt tr:not(:first-child):hover{background:color-mix(in srgb,#ffae5a 9%,transparent);} .g-tools + .wt tr:not(:first-child):hover{background:color-mix(in srgb,#6aa8ff 9%,transparent);} .g-educations + .wt tr:not(:first-child):hover{background:color-mix(in srgb,#9be564 9%,transparent);} .g-hub + .wt tr:not(:first-child):hover{background:color-mix(in srgb,#ff8fc2 9%,transparent);}
+  .g-stickseum + .wt td:first-child a{color:var(--g1);} .g-crownenvoy + .wt td:first-child a{color:var(--g2);} .g-beaconfall + .wt td:first-child a{color:var(--g3);} .g-tools + .wt td:first-child a{color:var(--g4);} .g-educations + .wt td:first-child a{color:var(--g5);} .g-hub + .wt td:first-child a{color:var(--g6);}
+  .ibox{box-shadow:0 8px 24px rgba(0,0,0,.18);} .toc{border-left:4px solid var(--fry);}
+  .res a,.pn a{transition:transform .12s,border-color .12s;} .res a:hover,.pn a:hover{transform:translateY(-1px);}
 </style>
 </head>
 <body>
