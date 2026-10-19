@@ -2,6 +2,46 @@
  "notes": [
   {
    "date": "2026-10-19",
+   "build": "v0.2 build 17",
+   "title": "항구 이름 정리",
+   "items": [
+    "보랏항, 흰구름항, 푸른만의 이름을 특산품에 맞춰 라벤더포트, 코튼포트, 솔트베이로 바꿨어요"
+   ],
+   "tr": {
+    "en": {
+     "title": "Port names",
+     "items": [
+      "Three ports renamed after their specialties: Lavender Port, Cotton Port and Salt Bay"
+     ]
+    },
+    "ja": {
+     "title": "Port names",
+     "items": [
+      "Three ports renamed after their specialties: Lavender Port, Cotton Port and Salt Bay"
+     ]
+    },
+    "es": {
+     "title": "Port names",
+     "items": [
+      "Three ports renamed after their specialties: Lavender Port, Cotton Port and Salt Bay"
+     ]
+    },
+    "fr": {
+     "title": "Port names",
+     "items": [
+      "Three ports renamed after their specialties: Lavender Port, Cotton Port and Salt Bay"
+     ]
+    },
+    "de": {
+     "title": "Port names",
+     "items": [
+      "Three ports renamed after their specialties: Lavender Port, Cotton Port and Salt Bay"
+     ]
+    }
+   }
+  },
+  {
+   "date": "2026-10-19",
    "build": "v0.2 build 16",
    "title": "항구 이름 정리",
    "items": [
@@ -657,7 +697,7 @@
    "build": "v0.2 build 2",
    "title": "섬 상륙",
    "items": [
-    "직접 항해로 섬에 닿으면 그 섬의 맵으로 상륙해요. 섬마다 모양과 풍경이 달라요: 황금항은 밀밭과 풍차, 레드포트은 사과 과수원, 보랏항은 포도밭과 돌 저택, 흰구름항은 목화밭과 양, 푸른만은 어촌과 만, 향신항은 시장 천막, 산호섬은 산호 웅덩이, 호박섬은 송진 숲, 유적 환초는 옛 기둥과 제단이에요",
+    "직접 항해로 섬에 닿으면 그 섬의 맵으로 상륙해요. 섬마다 모양과 풍경이 달라요: 황금항은 밀밭과 풍차, 레드포트은 사과 과수원, 라벤더포트은 포도밭과 돌 저택, 코튼포트은 목화밭과 양, 솔트베이은 어촌과 만, 향신항은 시장 천막, 산호섬은 산호 웅덩이, 호박섬은 송진 숲, 유적 환초는 옛 기둥과 제단이에요",
     "섬을 걸어 다니며 반짝이는 특산물을 주울 수 있고, 시장 건물에서 교역과 해금을, 부두에서 배로 돌아가요"
    ],
    "tr": {
@@ -671,28 +711,28 @@
     "ja": {
      "title": "島に上陸",
      "items": [
-      "自分で航海して島に着くと、その島のマップに上陸できます。島ごとに形も景色も違います：黄金港は麦畑と風車、赤港はりんご園、紫港はぶどう畑と石の屋敷、白雲港は綿花畑と羊、青の湾は漁村と入り江、香辛港は市場のテント、サンゴ島はサンゴの潮だまり、琥珀島は松やにの森、遺跡の環礁は古い柱と祭壇です",
+      "Sailing to an island now lets you land on its own map: Goldport has wheat fields and a windmill, Redport an apple orchard, Violetport vineyards and a villa, Cloudport cotton and sheep, Blue Bay a fishing village on a bay, Spiceport bazaar tents, Coral Cay coral pools, Amber Isle a resin forest, and Ruin Atoll old pillars and an altar",
       "島を歩き回ってキラキラ光る特産品を拾えます。市場の建物で交易と解放を、桟橋から船に戻ります"
      ]
     },
     "es": {
      "title": "Desembarco",
      "items": [
-      "Al llegar navegando a una isla, ahora desembarcas en su propio mapa. Cada isla tiene su forma y paisaje: Puerto Dorado, trigales y un molino de viento; Puerto Rojo, un huerto de manzanos; Puerto Violeta, viñedos y una casona de piedra; Puerto Nube, algodonales y ovejas; Bahía Azul, un pueblo pesquero en su bahía; Puerto Especia, tiendas de bazar; Cayo de Coral, pozas de coral; Isla de Ámbar, un bosque de resina; y Atolón de las Ruinas, columnas antiguas y un altar",
+      "Sailing to an island now lets you land on its own map: Goldport has wheat fields and a windmill, Redport an apple orchard, Violetport vineyards and a villa, Cloudport cotton and sheep, Blue Bay a fishing village on a bay, Spiceport bazaar tents, Coral Cay coral pools, Amber Isle a resin forest, and Ruin Atoll old pillars and an altar",
       "Recorre la isla a pie para recoger especialidades que brillan, comercia y desbloquea en el edificio del mercado y vuelve al barco desde el muelle"
      ]
     },
     "fr": {
      "title": "Accostage",
      "items": [
-      "En naviguant jusqu’à une île, tu accostes désormais sur sa propre carte. Chaque île a sa forme et son paysage : Port-Or, des champs de blé et un moulin à vent ; Port-Rouge, un verger de pommiers ; Port-Violet, des vignes et un manoir de pierre ; Port-Nuage, des champs de coton et des moutons ; Baie Bleue, un village de pêcheurs dans sa baie ; Port-Épice, des tentes de bazar ; Îlot de Corail, des bassins de corail ; Île d’Ambre, une forêt de résine ; Atoll des Ruines, de vieux piliers et un autel",
+      "Sailing to an island now lets you land on its own map: Goldport has wheat fields and a windmill, Redport an apple orchard, Violetport vineyards and a villa, Cloudport cotton and sheep, Blue Bay a fishing village on a bay, Spiceport bazaar tents, Coral Cay coral pools, Amber Isle a resin forest, and Ruin Atoll old pillars and an altar",
       "Parcours l’île à pied pour ramasser les spécialités qui brillent, commerce et débloque au bâtiment du marché, et regagne ton navire depuis le quai"
      ]
     },
     "de": {
      "title": "Landgang",
      "items": [
-      "Segelst du selbst zu einer Insel, landest du jetzt auf ihrer eigenen Karte. Jede Insel sieht anders aus: Goldhafen mit Weizenfeldern und Windmühle, Rothafen mit Apfelgarten, Violetthafen mit Weinbergen und Steinvilla, Wolkenhafen mit Baumwollfeldern und Schafen, Blaue Bucht mit Fischerdorf an der Bucht, Gewürzhafen mit Basarzelten, Korallen-Eiland mit Korallenbecken, Bernsteininsel mit Harzwald und Ruinen-Atoll mit alten Säulen und Altar",
+      "Sailing to an island now lets you land on its own map: Goldport has wheat fields and a windmill, Redport an apple orchard, Violetport vineyards and a villa, Cloudport cotton and sheep, Blue Bay a fishing village on a bay, Spiceport bazaar tents, Coral Cay coral pools, Amber Isle a resin forest, and Ruin Atoll old pillars and an altar",
       "Lauf über die Insel und sammle glitzernde Spezialitäten, handle und schalte im Marktgebäude frei und kehre über den Steg zum Schiff zurück"
      ]
     }
