@@ -2,6 +2,64 @@
  "notes": [
   {
    "date": "2026-10-19",
+   "build": "v0.2 build 12",
+   "title": "NPC와 이야기",
+   "items": [
+    "섬에 말을 걸 수 있는 NPC 셋이 생겼어요. 밭 옆의 보리 할멈, 부두의 항해사 오르간, 장터의 상인 미라예요",
+    "할아버지의 낡은 장부를 따라가는 여덟 장짜리 이야기가 생겼어요. 목표를 이루고 다시 찾아가면 이야기가 이어져요",
+    "이야기 끝에서 고르는 선택에 따라 영구 보너스가 달라져요",
+    "이야기 사이사이에 NPC가 팁을 한마디씩 들려줘요. 각 섬의 주민도 모습을 드러냈어요"
+   ],
+   "tr": {
+    "en": {
+     "title": "NPCs and a story",
+     "items": [
+      "Three talkable NPCs: Granny Bori by the fields, navigator Organ at the pier and merchant Mira at the market",
+      "An eight-chapter story about your grandfather's old ledger: reach each goal and talk again to continue",
+      "Your final choice decides a permanent bonus",
+      "NPCs share a tip between story beats; island residents now stand by their landmarks"
+     ]
+    },
+    "ja": {
+     "title": "NPCs and a story",
+     "items": [
+      "Three talkable NPCs: Granny Bori by the fields, navigator Organ at the pier and merchant Mira at the market",
+      "An eight-chapter story about your grandfather's old ledger: reach each goal and talk again to continue",
+      "Your final choice decides a permanent bonus",
+      "NPCs share a tip between story beats; island residents now stand by their landmarks"
+     ]
+    },
+    "es": {
+     "title": "NPCs and a story",
+     "items": [
+      "Three talkable NPCs: Granny Bori by the fields, navigator Organ at the pier and merchant Mira at the market",
+      "An eight-chapter story about your grandfather's old ledger: reach each goal and talk again to continue",
+      "Your final choice decides a permanent bonus",
+      "NPCs share a tip between story beats; island residents now stand by their landmarks"
+     ]
+    },
+    "fr": {
+     "title": "NPCs and a story",
+     "items": [
+      "Three talkable NPCs: Granny Bori by the fields, navigator Organ at the pier and merchant Mira at the market",
+      "An eight-chapter story about your grandfather's old ledger: reach each goal and talk again to continue",
+      "Your final choice decides a permanent bonus",
+      "NPCs share a tip between story beats; island residents now stand by their landmarks"
+     ]
+    },
+    "de": {
+     "title": "NPCs and a story",
+     "items": [
+      "Three talkable NPCs: Granny Bori by the fields, navigator Organ at the pier and merchant Mira at the market",
+      "An eight-chapter story about your grandfather's old ledger: reach each goal and talk again to continue",
+      "Your final choice decides a permanent bonus",
+      "NPCs share a tip between story beats; island residents now stand by their landmarks"
+     ]
+    }
+   }
+  },
+  {
+   "date": "2026-10-19",
    "build": "v0.2 build 11",
    "title": "새 항구 음악",
    "items": [
