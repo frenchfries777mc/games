@@ -2,6 +2,52 @@
  "notes": [
   {
    "date": "2026-10-19",
+   "build": "v0.2 build 22",
+   "title": "신문 가판대",
+   "items": [
+    "은행 대신 마을에 신문 가판대가 생겼어요. 3골드에 한 부를 사면 신문이 바로 펼쳐져요",
+    "진짜 신문처럼 제호와 머리기사, 시세표, 예측, 소식란, 아재개그, 광고가 실려요"
+   ],
+   "tr": {
+    "en": {
+     "title": "Newsstand",
+     "items": [
+      "A newsstand opened in town instead of the bank tab. Buy a copy for 3 gold and it opens right away",
+      "The paper has a masthead, a headline, price tables, forecasts, news, a dad joke and classifieds"
+     ]
+    },
+    "ja": {
+     "title": "Newsstand",
+     "items": [
+      "A newsstand opened in town instead of the bank tab. Buy a copy for 3 gold and it opens right away",
+      "The paper has a masthead, a headline, price tables, forecasts, news, a dad joke and classifieds"
+     ]
+    },
+    "es": {
+     "title": "Newsstand",
+     "items": [
+      "A newsstand opened in town instead of the bank tab. Buy a copy for 3 gold and it opens right away",
+      "The paper has a masthead, a headline, price tables, forecasts, news, a dad joke and classifieds"
+     ]
+    },
+    "fr": {
+     "title": "Newsstand",
+     "items": [
+      "A newsstand opened in town instead of the bank tab. Buy a copy for 3 gold and it opens right away",
+      "The paper has a masthead, a headline, price tables, forecasts, news, a dad joke and classifieds"
+     ]
+    },
+    "de": {
+     "title": "Newsstand",
+     "items": [
+      "A newsstand opened in town instead of the bank tab. Buy a copy for 3 gold and it opens right away",
+      "The paper has a masthead, a headline, price tables, forecasts, news, a dad joke and classifieds"
+     ]
+    }
+   }
+  },
+  {
+   "date": "2026-10-19",
    "build": "v0.2 build 21",
    "title": "화산섬",
    "items": [
