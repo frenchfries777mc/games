@@ -30,3 +30,7 @@
 - wiki (DB ff_wiki) | 2026-10-19 18시 묶음 batch29에서 바뀐 한국어 문서 5개 (stickseum all-characters·patch-history, beaconfall survival-tips, hub music-room, tools blocks-reference) | 원문은 wiki-src/all.ko.json, 번역본 wiki/tr은 해당 문서가 한국어로 대체 표시 | batch29 | 2026-10-19
 
 - isleport/patchnotes.json | build 11 항목 4번째 (ja·es·fr·de 칸에 영어 임시 입력) | 배경음악이 네 곡으로 늘어났어요. 새 곡은 박자가 빠르고 하나의 화음 위에서 가볍게 흐르는 곡이에요 | 음악 스레드 | 2026-10-19
+
+## Crown Envoy (b63)
+- crownenvoy/patchnotes.json·i18n.js | N["b63"] 제목 "승리·패배 음악"과 항목 2개 (en·es·fr·de·ja·ar 칸에 한국어 임시 입력) | 게임이 끝나면 승리했을 땐 금관 팡파르가, 졌을 땐 느린 피아노 곡이 한 번 흘러요 / 음악 파일이 게임 옆에 따로 있어요. 파일을 못 불러오면 조용히 넘어가요 | b63 | 2026-10-19
+- beaconfall/patchnotes.json·i18n.js | N["v0.3"].items 맨 아래 항목 (en·es·fr·de·ja 칸에 한국어 임시 입력) | 폭풍우가 오면 계절 곡이 거의 사라지고 낮은 패드와 천둥이 깔리는 폭풍우 곡이 흘러요 | b75 | 2026-10-19
