@@ -77,9 +77,9 @@ async function setUser(u){
 function nick(){ return (prof&&(prof.display_name||prof.username)) || (user&&String(user.email||'').split('@')[0]) || ''; }
 
 /* ---- the same login rules as the games (id -> internal e-mail, typo-tolerant password) ---- */
-/* ID accounts are stored as <id>@<domain>. The domain is moving arenaclash.local -> frenchfries777.com: sign-in accepts both while
-   the DB is converted, and ID_DOM is the one domain new/renamed accounts use (flip it to the new one AFTER the SQL has run). */
-var ID_DOM='arenaclash.local', ID_DOM_OLD=['arenaclash.local','frenchfries777.com'];
+/* ID accounts are stored as <id>@<domain>. The domain is moving arenaclash.local -> frenchfries777.com (DB converted): sign-in still accepts both;
+   ID_DOM is the one domain new/renamed accounts use. */
+var ID_DOM='frenchfries777.com', ID_DOM_OLD=['arenaclash.local','frenchfries777.com'];
 function idLocal(u){ return String(u).toLowerCase().replace(/[^a-z0-9_]/g,''); }
 function emailFor(u){ return idLocal(u)+'@'+ID_DOM; }
 function emailsFor(u){ var l=idLocal(u), out=[emailFor(u)]; ID_DOM_OLD.forEach(function(d){ var e=l+'@'+d; if(out.indexOf(e)<0) out.push(e); }); return out; }
