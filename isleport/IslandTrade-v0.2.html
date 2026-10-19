@@ -328,7 +328,7 @@ const PROVS=[
  {n:P('파인우드 마을','Pine Forest Village'),d:P('소나무 숲 속의 조용한 나무꾼 마을이에요','A quiet logging village among pines'),rank:2,fare:60,ms:3200,want:['salt','tea','coffee','canned','jam'],sell:['honey','mead','pork','ham']},
  {n:P('레드리지 역참','Red Ridge Depot'),d:P('붉은 바위산 아래의 역참 마을이에요','A depot town below red cliffs'),rank:3,fare:100,ms:3600,want:['bread','wine','canned','cheese','clothes'],sell:['salt','amber','curry','stew']}];
 const SECRET=[
- {id:'coral',n:P('산호섬','Coral Cay'),d:P('산호초에 둘러싸인 작은 섬','A tiny isle ringed by coral'),x:44,y:150,r:11,g:'coral'},
+ {id:'coral',n:P('산호섬','Coral Cay'),d:P('산호초에 둘러싸인 작은 섬','A tiny isle ringed by coral'),x:170,y:192,r:11,g:'coral'},
  {id:'amber',n:P('호박섬','Amber Isle'),d:P('나무 진액이 굳은 호박이 나는 섬','An isle where amber washes ashore'),x:314,y:150,r:11,g:'amber'},
  {id:'relic',n:P('유적 환초','Ruin Atoll'),d:P('가라앉은 옛 마을이 있는 환초','An atoll with a sunken old town'),x:60,y:48,r:11,g:'relic'},
  {id:'mine',n:P('광산섬','Mine Isle'),d:P('바위산에서 광석이 나는 섬','A rocky isle full of ore'),x:352,y:196,r:11,g:'amber'},
@@ -363,7 +363,7 @@ const PORTS=[
 PORTS.forEach((p,pi)=>{p.pf=GOODS.map(g=>{let f=0.92+0.2*hashf(pi*37+g.i,5);if(p.prod.includes(g.id))f=0.72+0.06*hashf(pi,g.i);if(p.want.includes(g.id))f=1.3+0.1*hashf(g.i,pi);return f;});});
 function hashf(a,b){let h=(a*374761393+b*668265263)|0;h=(h^(h>>>13))*1274126177|0;return ((h^(h>>>16))>>>0)/4294967296;}
 const WW=336,WH=208,COLS=6,HOME=[112,112];
-const HOMES=[[70,112],[34,44],[34,180],[70,24],[70,200],[16,112],[104,14],[104,200]];
+const HOMES=[[56,112],[34,44],[34,180],[70,24],[70,200],[10,196],[104,14],[104,200]];
 const PCOLS=['#f2c75a','#e0553f','#4fa3e0','#6fcf6a','#c46ee0','#f08a2a','#4fe0c8','#e0e0e0'];
 const SELLDROP=0.975,BUYRISE=1.02,RAID_COST=100,RAID_CD=45000,SEASON_MS=240000;
 /* 계급 */
@@ -435,7 +435,7 @@ const TUT=[
  [P('다 자라면 밭을 눌러 수확해요','When it is grown, tap the field to harvest'),s=>s.stats.harvest>=1],
  [P('마을 장터에서 수확한 것을 팔아요','Sell your harvest at the town market'),s=>(s.stats.shop||0)>=1],
  [P('항구에서 배에 짐을 싣고 보내요','Load a ship at the harbor and send it off'),s=>s.stats.sailed>=1]];
-const OUTMAX=12,BUILD=22;
+const OUTMAX=12,BUILD=23;
 const hasB=(s,b)=>s.slots.some(x=>x&&x.b===b);
 const rankOf=e=>{let r=0;RANKS.forEach((x,i)=>{if(e>=x[0])r=i;});return r;};
 /* 업적: id, 이름, 설명, 조건 */
@@ -557,6 +557,10 @@ A('nw1m',P('백만장자','Millionaire'),P('재산 1,000,000 모으기','Reach a
 const CROPK=Object.keys(CROPS),SPEC=['goldbarley','pomegranate','saffron','cloudcotton','seaweed','dragonfruit'],CROPK17=CROPK.filter(c=>!SPEC.includes(c));
 const ACHN={};ACH.forEach(a=>ACHN[a.id]=a);
 const NOTES=[
+ {date:'2026-10-19',build:'v0.2 build 23',title:P('내 섬이 대륙으로','Home continent'),items:[
+  P('해도에서 내 섬이 큰 대륙으로 바뀌었어요. 산과 숲과 마을이 더 넓게 펼쳐져요','On the sea chart, your home isle is now a large continent with wider forests and villages'),
+  P('산호섬 위치를 대륙 남쪽 바다로 옮겼어요','Coral Cay moved to the sea south of the continent')
+ ]},
  {date:'2026-10-19',build:'v0.2 build 22',title:P('신문 가판대','Newsstand'),items:[
   P('은행 대신 마을에 신문 가판대가 생겼어요. 3골드에 한 부를 사면 신문이 바로 펼쳐져요','A newsstand opened in town instead of the bank tab. Buy a copy for 3 gold and it opens right away'),
   P('진짜 신문처럼 제호와 머리기사, 시세표, 예측, 소식란, 아재개그, 광고가 실려요','The paper has a masthead, a headline, price tables, forecasts, news, a dad joke and classifieds')
@@ -7666,7 +7670,7 @@ function buildWorld(sn){
 /* ---- 바다 ---- */
 function buildSea(sn){
   const c=document.createElement('canvas');c.width=VW;c.height=VH;const k=c.getContext('2d'),im=k.createImageData(VW,VH),d=new Uint32Array(im.data.buffer),mask=new Uint8Array(VW*VH),P=SP[sn];
-  const islands=[{x:OX+HOMES[0][0],y:OY+HOMES[0][1],rx:34,ry:30}].concat(PORTS.map(p=>({x:OX+p.x,y:OY+p.y,rx:p.r,ry:p.r*0.8}))).concat(HOMES.slice(1).map(h=>({x:OX+h[0],y:OY+h[1],rx:9,ry:7})));
+  const islands=[[52,112,50,44],[34,90,30,24],[38,136,32,24],[86,112,24,16],[60,86,26,14]].map(e=>({x:OX+e[0],y:OY+e[1],rx:e[2],ry:e[3]})).concat(PORTS.map(p=>({x:OX+p.x,y:OY+p.y,rx:p.r,ry:p.r*0.8}))).concat(HOMES.slice(1).map(h=>({x:OX+h[0],y:OY+h[1],rx:9,ry:7})));
   const C={deep1:rgb('#1b4f7a'),deep2:rgb('#1e5784'),sh1:rgb('#2f78a8'),sh2:rgb('#3688b8'),foam:rgb('#cfe9f2'),sand1:rgb(P.sand[0]),sand2:rgb(P.sand[1]),wet:rgb(P.sand[2]),gr1:rgb(P.g[0]),gr2:rgb(P.g[1]),gr3:rgb(P.g[2])};
   if(sn===3){C.deep1=rgb('#1f4a6c');C.deep2=rgb('#225278');}
   for(let y=0;y<VH;y++)for(let x=0;x<VW;x++){let dd=9,n=(h2(x>>2,y>>2,7)-.5)*0.12+Math.sin(x*.06+y*.04)*0.03;
@@ -7682,7 +7686,8 @@ function buildSea(sn){
   k.putImageData(im,0,0);
   const inIsle=(x,y)=>mask[Math.min(VH-1,Math.max(0,y))*VW+Math.min(VW-1,Math.max(0,x))]===2;
   // 내 섬: 나무와 집
-  for(let i=0;i<40;i++){const x=OX+HOMES[0][0]-30+Math.floor(h2(i,1,80)*60),y=OY+HOMES[0][1]-26+Math.floor(h2(i,2,80)*52);if(inIsle(x,y)&&!(x>OX+HOMES[0][0]-10&&x<OX+HOMES[0][0]+16&&y>OY+HOMES[0][1]-12&&y<OY+HOMES[0][1]+12))treeAt(k,x,y,0,sn,7);}
+  for(let i=0;i<420;i++){const x=OX+HOMES[0][0]-52+Math.floor(h2(i,1,80)*112),y=OY+HOMES[0][1]-46+Math.floor(h2(i,2,80)*92);if(inIsle(x,y)&&!(x>OX+HOMES[0][0]-10&&x<OX+HOMES[0][0]+16&&y>OY+HOMES[0][1]-12&&y<OY+HOMES[0][1]+12)&&!(y>OY+HOMES[0][1]-5&&y<OY+HOMES[0][1]+5&&x>OX+HOMES[0][0])&&!(Math.abs(x-(OX+32))<10&&Math.abs(y-(OY+100))<8)&&!(Math.abs(x-(OX+80))<10&&Math.abs(y-(OY+126))<8))treeAt(k,x,y,0,sn,7);}
+  houseK(k,OX+26,OY+96,14,9,'#d8c898','#a8483a');houseK(k,OX+74,OY+122,14,9,'#e6d6aa','#4a6a9a');
   houseK(k,OX+HOMES[0][0]-8,OY+HOMES[0][1]-6,16,10,'#e0d0a0','#b8442e');
   k.fillStyle='#8a5a2a';k.fillRect(OX+HOMES[0][0]+20,OY+HOMES[0][1]-2,OX+HOME[0]-OX-HOMES[0][0]-18,4);k.fillStyle='#5a3414';for(let q=OX+HOMES[0][0]+20;q<OX+HOME[0]-4;q+=4)k.fillRect(q,OY+HOMES[0][1]-2,1,4);
   // 항구 마을
@@ -8053,7 +8058,7 @@ function present(){cx.imageSmoothingEnabled=false;cx.clearRect(0,0,cv.width,cv.h
   if(VIEW==='sea'||VIEW==='helm'){cx.font=fnt(7);(S.found||[]).forEach(id=>{const q=secretOf(id);label(tx(q.n),(OX+q.x)*SC,(OY+q.y+q.r*.7+7)*SC,'#cfeaff');});const rk=rankOf(S.stats.earned);PORTS.forEach((p,i)=>{const x=(OX+p.x)*SC,y=(OY+p.y+p.r*0.8+7)*SC;const lock=rk<p.rank;label(lock?tx(p.n)+' ('+tx(RANKS[p.rank][1])+')':tx(p.n),x,y,lock?'#9aa4b0':null);
       const ev=EV.filter(e=>e.p===i&&e.until>NOW());if(ev.length)label(ev.map(e=>({boom:T('수요↑','Demand+'),fest:T('축제','Festival'),storm:T('폭풍','Storm')}[e.kind])).join(' '),x,y+8*SC,'#ffd27a');
       if(!lock&&S.contracts.some(c=>c.p===i))label('!',(OX+p.x)*SC,(OY+p.y-p.r*.8-5)*SC,'#ffe27a');});
-    label(T('내 섬','My isle'),(OX+HOMES[0][0])*SC,(OY+HOMES[0][1]-36)*SC);
+    label(T('내 섬','My isle'),(OX+HOMES[0][0])*SC,(OY+HOMES[0][1]-52)*SC);
     if(MP.on)for(const pid in MP.players){const p=MP.players[pid];if(pid===MP.me||!HOMES[p.slot||1])continue;label(p.name,(OX+HOMES[p.slot||1][0])*SC,(OY+HOMES[p.slot||1][1]+12)*SC,PCOLS[(p.slot||1)%8]);}}
   else{const cx0=Math.round(CAM.x),cy0=Math.round(CAM.y),sx=x=>(x-cx0)*SC,sy=y=>(y-cy0)*SC;cx.font=fnt(6);
     // 지역 이름

@@ -2,6 +2,52 @@
  "notes": [
   {
    "date": "2026-10-19",
+   "build": "v0.2 build 23",
+   "title": "내 섬이 대륙으로",
+   "items": [
+    "해도에서 내 섬이 큰 대륙으로 바뀌었어요. 산과 숲과 마을이 더 넓게 펼쳐져요",
+    "산호섬 위치를 대륙 남쪽 바다로 옮겼어요"
+   ],
+   "tr": {
+    "en": {
+     "title": "Home continent",
+     "items": [
+      "On the sea chart, your home isle is now a large continent with wider forests and villages",
+      "Coral Cay moved to the sea south of the continent"
+     ]
+    },
+    "ja": {
+     "title": "Home continent",
+     "items": [
+      "On the sea chart, your home isle is now a large continent with wider forests and villages",
+      "Coral Cay moved to the sea south of the continent"
+     ]
+    },
+    "es": {
+     "title": "Home continent",
+     "items": [
+      "On the sea chart, your home isle is now a large continent with wider forests and villages",
+      "Coral Cay moved to the sea south of the continent"
+     ]
+    },
+    "fr": {
+     "title": "Home continent",
+     "items": [
+      "On the sea chart, your home isle is now a large continent with wider forests and villages",
+      "Coral Cay moved to the sea south of the continent"
+     ]
+    },
+    "de": {
+     "title": "Home continent",
+     "items": [
+      "On the sea chart, your home isle is now a large continent with wider forests and villages",
+      "Coral Cay moved to the sea south of the continent"
+     ]
+    }
+   }
+  },
+  {
+   "date": "2026-10-19",
    "build": "v0.2 build 22",
    "title": "신문 가판대",
    "items": [
