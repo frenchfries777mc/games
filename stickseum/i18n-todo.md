@@ -17,3 +17,5 @@ patchnotes.json | v310 items[0] | 피사로가 최종 단계(4단계)에서 궁�
 patchnotes.json | v311 title | 피해 종류 색과 화염 방패 | build 311 | 2026-10-18
 patchnotes.json | v311 items[0] | 피해 종류별 숫자 색 구분 (불 피해 빨간색, 독 피해 진한 초록색, 전기 피해 노란색) | build 311 | 2026-10-18
 patchnotes.json | v311 items[1] | 화염방사기 궁극기 방패가 아군과 나는 밀지 않고 통과하게 수정 | build 311 | 2026-10-18
+patchnotes.json | v312 title | 캐릭터 카드 디자인 통일 | build 312 | 2026-10-18
+patchnotes.json | v312 items[0] | 스킨 있는 카드와 없는 카드의 그림 크기·모양·색 통일 | build 312 | 2026-10-18
