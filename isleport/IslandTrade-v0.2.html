@@ -403,6 +403,7 @@ const TECHS=[
  {id:'conveyor',n:P('컨베이어','Conveyor belts'),d:P('공방이 20% 더 빨라요','Workshops 20% faster'),cost:5000,req:'skill'},
  {id:'logistics',n:P('물류망','Logistics'),d:P('배가 15% 더 빨라요','Ships another 15% faster'),cost:9000,req:'nav'},
  {id:'monopoly',n:P('독점 계약','Exclusive deals'),d:P('팔 때 5% 더 받아요','+5% when selling'),cost:20000,req:'bigdeal'},
+ {id:'infseed',n:P('무한 씨앗','Endless seeds'),d:P('씨앗이 줄지 않아요. 씨앗을 사지 않아도 어떤 작물이든 마음껏 심어요','Seeds never run out. Plant any unlocked crop without buying seeds'),cost:15000,req:'overseer'},
  {id:'broker',n:P('계약 전문가','Contract broker'),d:P('계약 보상이 25% 늘어요','Contract rewards +25%'),cost:2000,req:'haggle'}];
 const TI={};TECHS.forEach(t=>TI[t.id]=t);
 /* 함께 짓는 공사 (멀티: 방 전체가 모아요) */
@@ -435,7 +436,7 @@ const TUT=[
  [P('다 자라면 밭을 눌러 수확해요','When it is grown, tap the field to harvest'),s=>s.stats.harvest>=1],
  [P('마을 장터에서 수확한 것을 팔아요','Sell your harvest at the town market'),s=>(s.stats.shop||0)>=1],
  [P('항구에서 배에 짐을 싣고 보내요','Load a ship at the harbor and send it off'),s=>s.stats.sailed>=1]];
-const OUTMAX=12,BUILD=25;
+const OUTMAX=12,BUILD=26;
 const hasB=(s,b)=>s.slots.some(x=>x&&x.b===b);
 const rankOf=e=>{let r=0;RANKS.forEach((x,i)=>{if(e>=x[0])r=i;});return r;};
 /* 업적: id, 이름, 설명, 조건 */
@@ -557,6 +558,10 @@ A('nw1m',P('백만장자','Millionaire'),P('재산 1,000,000 모으기','Reach a
 const CROPK=Object.keys(CROPS),SPEC=['goldbarley','pomegranate','saffron','cloudcotton','seaweed','dragonfruit'],CROPK17=CROPK.filter(c=>!SPEC.includes(c));
 const ACHN={};ACH.forEach(a=>ACHN[a.id]=a);
 const NOTES=[
+ {date:'2026-10-19',build:'v0.2 build 26',title:P('연구: 무한 씨앗','Research: Endless seeds'),items:[
+  P('연구에 무한 씨앗이 생겼어요. 연구하면 씨앗이 줄지 않아 사지 않고도 해금한 작물을 마음껏 심어요','New research Endless seeds: seeds no longer run out, so you can plant any unlocked crop without buying them'),
+  P('감독관 연구 뒤에 열려요','It unlocks after Overseer')
+ ]},
  {date:'2026-10-19',build:'v0.2 build 25',title:P('선로를 달리는 기차','Train on real rails'),items:[
   P('기차를 타면 역에서 출발한 기차가 선로를 따라 터널로 들어가요. 화면이 기차를 따라가요','Boarding makes the train pull out of the station, run down the rails and into the tunnel, with the camera following'),
   P('지방 역에는 같은 선로로 기차가 들어와 멈춰요. 돌아올 때도 기차가 떠나고 우리 역으로 들어와요','At the provincial station the train rolls in on the same line; going home it leaves and pulls into your station'),
@@ -6886,15 +6891,16 @@ function sellPlot(i){if(!S.own[i]||S.plots[i]||S.pu<=4)return;const v=plotSell()
 function growMs(g){const c=CROPS[g];let sg=c.sg[season()];if(season()===3&&hasT('greenhouse'))sg=1+(sg-1)*.25;return c.grow*1000*sg*(hasT('plow')?.9:1)*(hasT('manure')?.9:1)*(hasT('sprinkler')?.88:1);}
 const isUnl=id=>!!(S.unl&&(S.unl.legacy||S.unl[id]))||BASE_CROPS.includes(id)||BASE_BLD.includes(id);
 function unlockItem(pi,id){const O=ISLE[pi],o=O.c.concat(O.b).find(q=>q[0]===id);if(!o||isUnl(id)||S.money<o[1])return false;S.money-=o[1];S.unl[id]=1;S.stats.unlocks=(S.stats.unlocks||0)+1;sfx('ach');toast(T('해금했어요: <b>{0}</b>','Unlocked: <b>{0}</b>',BLD[id]?tx(BLD[id].n):GN(id)));return true;}
-const seedN=g=>(S.seeds&&S.seeds[g])||0;
+const seedN=g=>hasT('infseed')?99999:(S.seeds&&S.seeds[g])||0;
+const seedS=g=>hasT('infseed')?'∞':seedN(g);
 function buySeed(g,n){const c=CROPS[g];if(!c)return 0;n=Math.min(n,Math.floor(S.money/c.seed));if(n<=0)return 0;S.money-=c.seed*n;S.seeds[g]=seedN(g)+n;S.stats.seedBuy=(S.stats.seedBuy||0)+n;sfx('coin');return n;}
-function plant(i,g){const c=CROPS[g];if(S.plots[i]||!S.own[i]||seedN(g)<1||!isUnl(g))return false;S.seeds[g]--;S.plots[i]={k:'crop',g,t0:NOW(),dur:growMs(g),auto:!!(S.autoAll&&hasT('auto'))};S.stats.planted++;S.codex[g]=1;S.lastCrop=g;sfx('plant');return true;}
+function plant(i,g){const c=CROPS[g];if(S.plots[i]||!S.own[i]||seedN(g)<1||!isUnl(g))return false;if(!hasT('infseed'))S.seeds[g]--;S.plots[i]={k:'crop',g,t0:NOW(),dur:growMs(g),auto:!!(S.autoAll&&hasT('auto'))};S.stats.planted++;S.codex[g]=1;S.lastCrop=g;sfx('plant');return true;}
 const ripe=p=>p&&p.k==='crop'&&NOW()-p.t0>=p.dur;
 function harvest(i,silent){const p=S.plots[i];if(!ripe(p))return 0;const c=CROPS[p.g],g=GI[p.g],y=c.y+(hasT('bigharv')?1:0),a=addInv(g.id,y);
   if(a<=0){if(!silent)toast(T('창고가 가득 찼어요','Warehouse is full'));return 0;}
   S.stats.harvest+=a;S.stats.crops[g.id]=1;if(i<48){const [x,yy]=plotXY(i);float(x+21,yy+6,'+'+a+' '+GN(g.id),g.pal[0]);}
   if(c.per){p.t0=NOW();p.dur=growMs(p.g);}
-  else if(p.auto&&hasT('auto')&&seedN(p.g)>0){S.seeds[p.g]--;p.t0=NOW();p.dur=growMs(p.g);S.stats.planted++;}else S.plots[i]=null;
+  else if(p.auto&&hasT('auto')&&seedN(p.g)>0){if(!hasT('infseed'))S.seeds[p.g]--;p.t0=NOW();p.dur=growMs(p.g);S.stats.planted++;}else S.plots[i]=null;
   sfx('harvest');return a;}
 function harvestAll(){let n=0;S.pens.forEach((p,i)=>{if(p&&p.done)n+=collectPen(i,true)?1:0;});for(let i=0;i<48;i++)if(S.own[i])n+=harvest(i,true)?1:0;n+=hillHarvestAll();if(!n)toast(T('수확할 것이 없어요','Nothing to collect'));}
 /* ---- 목장 ---- */
@@ -8206,7 +8212,7 @@ function closePop(){$('pop').hidden=true;POPOPEN=false;}
 function opt(label,sub,fn,dis){const id=rid();popAct[id]=fn;return `<button class="opt" data-a="${id}" ${dis?'disabled':''}><span>${label}</span><small>${sub||''}</small></button>`;}
 $('pop').addEventListener('click',e=>{const b=e.target.closest('[data-a]');if(!b||b.disabled)return;const f=popAct[b.dataset.a];if(f){sfx('click');f();updateHud();renderSide(true);}});
 let lastCrop='wheat';
-function cropOpt(i,gid){const c=CROPS[gid],y=c.y+(hasT('bigharv')?1:0);return opt(gi(gid)+GN(gid),`${T('씨앗','Seeds')} ${seedN(gid)} · ${Math.round(growMs(gid)/1000)}s · ${y}${c.per?' ♻':''}`,()=>{if(plant(i,gid))lastCrop=gid;closePop();},seedN(gid)<1);}
+function cropOpt(i,gid){const c=CROPS[gid],y=c.y+(hasT('bigharv')?1:0);return opt(gi(gid)+GN(gid),`${T('씨앗','Seeds')} ${seedS(gid)} · ${Math.round(growMs(gid)/1000)}s · ${y}${c.per?' ♻':''}`,()=>{if(plant(i,gid))lastCrop=gid;closePop();},seedN(gid)<1);}
 function popPlot(i,x,y){popAct={};const p=S.plots[i];let h='';
   if(!S.own[i]){const c=plotCost();h=`<h4>${T('잡초 밭','Weedy field')}</h4><div class="muted">${T('풀을 걷어내면 쓸 수 있어요','Clear the weeds to use it')}</div>`+(S.pu<48?opt(T('땅 열기','Clear land'),fmt(c)+UG(),()=>{buyPlot(i);closePop();},S.money<c):'');}
   else if(!p){h=`<h4>${T('빈 밭','Empty field')} <span class="muted">${tx(SEASONS[season()])}</span></h4>`+CROPK.filter(c=>isUnl(c)&&!CROPS[c].per).map(c=>cropOpt(i,c)).join('')+`<div class="muted" style="margin:6px 0 2px">${T('과일나무 (한 번 심으면 계속 열려요)','Fruit trees (replant not needed)')}</div>`+CROPK.filter(c=>isUnl(c)&&CROPS[c].per).map(c=>cropOpt(i,c)).join('');
@@ -8480,7 +8486,7 @@ MODS.hill=m=>{const t=NOW(),sel=m.crop||S.lastCrop,seeds=Object.keys(CROPS).filt
     return `<button class="pb" style="height:64px" disabled>${gi(p.g,22)}<br><small>${Math.max(0,Math.ceil((p.t0+p.dur-t)/1000))}s</small></button>`;};
   return `<h2>${T('뒷산 개간지','Back hill')}</h2><div class="muted">${T('숲과 바위를 치우면 밭이 돼요. 한 번에 한 곳씩 개간해요. 다음 개간 비용 {0}, 시간 {1}초','Clear forest and rocks to get a field, one at a time. Next: {0} gold, {1}s',fmt(hillCost()),Math.round(hillMs()/1000))}</div>
   <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin:8px 0">${S.hill.map((h,j)=>tile(j)).join('')}</div>
-  <h5>${T('심을 작물','Crop to plant')}</h5><div class="btns">${seeds.length?seeds.map(g=>`<button class="pb sm ${m.crop===g?'gold':''}" data-act="hcrop:${g}">${gi(g,16)} ${GN(g)} ${seedN(g)}</button>`).join(''):`<span class="muted">${T('씨앗이 없어요. 종자 상점에서 사요','No seeds. Buy some at the seed shop')}</span>`}</div>
+  <h5>${T('심을 작물','Crop to plant')}</h5><div class="btns">${seeds.length?seeds.map(g=>`<button class="pb sm ${m.crop===g?'gold':''}" data-act="hcrop:${g}">${gi(g,16)} ${GN(g)} ${seedS(g)}</button>`).join(''):`<span class="muted">${T('씨앗이 없어요. 종자 상점에서 사요','No seeds. Buy some at the seed shop')}</span>`}</div>
   <div class="btns" style="margin-top:6px"><button class="pb sm gold" data-act="hall">${T('모두 수확','Harvest all')}</button></div>`;};
 ACT.hclr=a=>{hillStart(+a);updateHud();renderModal();};
 ACT.hplant=a=>{if(MOD.crop)plant(48+ +a,MOD.crop);updateHud();renderModal();};
