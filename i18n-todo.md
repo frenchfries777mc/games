@@ -63,3 +63,4 @@
 
 ## Crown Envoy (b67)
 - crownenvoy/patchnotes.json·i18n.js | N["b67"] 제목 "계정 주소 이전"과 항목 1개 (en·es·fr·de·ja·ar 칸에 한국어 임시 입력) | 계정 가입·로그인 주소를 새 주소로 전환 (이전 계정도 계속 로그인 가능) | b67 | 2026-10-19
+- beaconfall/patchnotes.json·i18n.js | N["v0.3"].items 맨 위 항목 (en·es·fr·de·ja 칸에 한국어 임시 입력) | 가입과 로그인 계정 도메인을 @frenchfries777.com으로 바꿈 (안전망으로 옛 @arenaclash.local 계정도 로그인 가능) | b78 | 2026-10-19
