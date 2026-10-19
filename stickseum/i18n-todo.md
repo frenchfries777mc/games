@@ -53,3 +53,5 @@ patchnotes.json | v318 title | 좀비 게임 밸런스 | build 318 | 2026-10-19
 patchnotes.json | v318 items[0] | 좀비 게임 사람 체력 2배 (600) | build 318 | 2026-10-19
 patchnotes.json | v318 items[1] | 좀비 피해 6배→1.2배, 속도 1.45배→1.05배, 체력 900→400 | build 318 | 2026-10-19
 patchnotes.json | v318 items[2] | 좀비 대시 쿨·회복 속도 보통으로 조정 | build 318 | 2026-10-19
+patchnotes.json | v319 title | 계정 주소 이전 대비 | build 319 | 2026-10-19
+patchnotes.json | v319 items[0] | 로그인 시 새 계정 주소(frenchfries777.com)도 시도 (옛 주소 우선) | build 319 | 2026-10-19
