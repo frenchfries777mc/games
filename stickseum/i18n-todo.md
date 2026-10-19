@@ -55,3 +55,7 @@ patchnotes.json | v318 items[1] | 좀비 피해 6배→1.2배, 속도 1.45배→
 patchnotes.json | v318 items[2] | 좀비 대시 쿨·회복 속도 보통으로 조정 | build 318 | 2026-10-19
 patchnotes.json | v319 title | 계정 주소 이전 대비 | build 319 | 2026-10-19
 patchnotes.json | v319 items[0] | 로그인 시 새 계정 주소(frenchfries777.com)도 시도 (옛 주소 우선) | build 319 | 2026-10-19
+patchnotes.json | v320 title | 계정 주소 이전·접속 렉 줄이기 | build 320 | 2026-10-19
+patchnotes.json | v320 items[0] | 가입·로그인 계정 주소를 frenchfries777.com으로 변경 (옛 주소 재시도 유지) | build 320 | 2026-10-19
+patchnotes.json | v320 items[1] | 접속자 전송 지연 시 스냅샷 대기 (인원 많은 게임 렉 완화) | build 320 | 2026-10-19
+patchnotes.json | v320 items[2] | 스냅샷 숫자 소수점 정리 (전송량 감소) | build 320 | 2026-10-19
