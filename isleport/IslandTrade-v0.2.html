@@ -435,7 +435,7 @@ const TUT=[
  [P('다 자라면 밭을 눌러 수확해요','When it is grown, tap the field to harvest'),s=>s.stats.harvest>=1],
  [P('마을 장터에서 수확한 것을 팔아요','Sell your harvest at the town market'),s=>(s.stats.shop||0)>=1],
  [P('항구에서 배에 짐을 싣고 보내요','Load a ship at the harbor and send it off'),s=>s.stats.sailed>=1]];
-const OUTMAX=12,BUILD=21;
+const OUTMAX=12,BUILD=22;
 const hasB=(s,b)=>s.slots.some(x=>x&&x.b===b);
 const rankOf=e=>{let r=0;RANKS.forEach((x,i)=>{if(e>=x[0])r=i;});return r;};
 /* 업적: id, 이름, 설명, 조건 */
@@ -557,6 +557,10 @@ A('nw1m',P('백만장자','Millionaire'),P('재산 1,000,000 모으기','Reach a
 const CROPK=Object.keys(CROPS),SPEC=['goldbarley','pomegranate','saffron','cloudcotton','seaweed','dragonfruit'],CROPK17=CROPK.filter(c=>!SPEC.includes(c));
 const ACHN={};ACH.forEach(a=>ACHN[a.id]=a);
 const NOTES=[
+ {date:'2026-10-19',build:'v0.2 build 22',title:P('신문 가판대','Newsstand'),items:[
+  P('은행 대신 마을에 신문 가판대가 생겼어요. 3골드에 한 부를 사면 신문이 바로 펼쳐져요','A newsstand opened in town instead of the bank tab. Buy a copy for 3 gold and it opens right away'),
+  P('진짜 신문처럼 제호와 머리기사, 시세표, 예측, 소식란, 아재개그, 광고가 실려요','The paper has a masthead, a headline, price tables, forecasts, news, a dad joke and classifieds')
+ ]},
  {date:'2026-10-19',build:'v0.2 build 21',title:P('화산섬','Volcano Isle'),items:[
   P('지도 조각을 더 모으면 새 섬 화산섬이 나타나요. 흑요석, 유황, 홍옥을 캘 수 있어요','Collect more map pieces to find Volcano Isle, where you mine obsidian, sulfur and rubies'),
   P('땅에 붉은 원이 번쩍이면 곧 용암이 터져요. 원 밖으로 피하지 않으면 골드를 잃어요','A red circle on the ground means lava is about to burst. Step out of it or lose gold'),
@@ -7611,6 +7615,13 @@ function buildWorld(sn){
   k.fillStyle='#e0c050';k.fillRect(222,276,14,10);k.fillStyle='#c0a030';k.fillRect(222,281,14,1);k.fillRect(224,276,2,10);
   houseK(k,292,248,44,24,sn===3?'#ece6d8':'#d8cfb8','#4a6a9a',{shut:'#2a3a5a'});k.fillStyle='#5a3414';k.fillRect(318,230,1,18);k.fillStyle='#3a6fb8';k.fillRect(319,231,8,5);k.fillStyle='#f2c75a';k.fillRect(319,233,8,1);
   houseK(k,466,282,44,22,'#e8d0a8','#c0452f',{chim:1,shut:'#7a4a22'});k.fillStyle='#f2c75a';k.fillRect(482,274,12,5);k.fillStyle='#8a2a1a';k.fillRect(482,278,12,1);
+  // 신문 가판대
+  k.fillStyle='rgba(0,0,0,.16)';k.fillRect(564,354,32,3);k.fillStyle='#7a5a3a';k.fillRect(568,340,24,14);k.fillStyle='#5a3a1e';k.fillRect(568,340,24,1);k.fillStyle='#a8784a';k.fillRect(566,346,28,3);
+  for(let q=0;q<7;q++){k.fillStyle=q%2?'#f4efe0':'#2f6a4a';k.fillRect(565+q*4,333,4,7);}k.fillStyle='rgba(0,0,0,.22)';k.fillRect(565,340,28,1);
+  k.fillStyle='#5a3a1e';k.fillRect(565,340,2,15);k.fillRect(591,340,2,15);
+  for(let q=0;q<4;q++){k.fillStyle=q%2?'#e8e0c8':'#f4efe0';k.fillRect(570+q*5,342,4,4);k.fillStyle='#2a2418';k.fillRect(571+q*5,343,2,1);}
+  k.fillStyle='#f4efe0';k.fillRect(573,350,16,4);k.fillStyle='#2a2418';k.fillRect(575,351,12,1);k.fillRect(575,353,8,1);
+  k.fillStyle='#5a3414';k.fillRect(596,332,1,14);k.fillStyle='#c8402a';k.fillRect(597,332,6,4);k.fillStyle='#d8d0b8';k.fillRect(596,346,5,8);k.fillStyle='#2a2418';k.fillRect(597,348,3,1);k.fillRect(597,350,3,1);
   // 숙소, 우체국
   houseK(k,574,430,50,22,'#e8d8b8','#8a5a3a',{chim:1,shut:'#5a3a22'});k.fillStyle='#5a3a1e';k.fillRect(600,420,1,10);k.fillStyle='#f2c75a';k.fillRect(596,421,10,5);k.fillStyle='#8a2a1a';k.fillRect(598,423,6,1);k.fillStyle='#f0ecdc';k.fillRect(580,444,5,5);k.fillRect(612,444,5,5);
   houseK(k,574,474,50,22,'#e4e0d8','#c0452f',{shut:'#7a3a28'});k.fillStyle='#fffefa';k.fillRect(598,466,12,4);k.fillStyle='#3a6fb8';k.fillRect(601,467,6,2);k.fillStyle='#c8402a';k.fillRect(628,484,5,9);k.fillStyle='#a02818';k.fillRect(628,484,5,2);k.fillStyle='#3a2412';k.fillRect(630,493,1,5);
@@ -8057,7 +8068,7 @@ function present(){cx.imageSmoothingEnabled=false;cx.clearRect(0,0,cv.width,cv.h
       else if(!p)label('+',sx(x+37),sy(y+30),'#ffe27a');
       else label(tx(BLD[p.b].n),sx(x+37),sy(y+51));}
     if(MP.on)for(const pid in MP.guests){const q=MP.guests[pid];label(q.name,sx(q.dx||q.x),sy((q.dy||q.y)-20),'#cfe');}
-    label(T('집','Home'),sx(54),sy(236),'#fff6b0');Object.keys(STN).forEach(id=>{const n=STN[id],mk=stMark(id);label(n.n,sx(n.x),sy(n.y-22),'#fff6b0');if(mk)label(mk,sx(n.x),sy(n.y-30+Math.round(Math.sin(performance.now()/250))),mk==='…'?'#cfd8e0':'#ffe27a');});label(T('회관','Hall'),sx(314),sy(242),'#fff6b0');label(T('기차역','Station'),sx(262),sy(572),'#fff6b0');label(T('숙소','Inn'),sx(599),sy(412),'#fff6b0');label(T('우체국','Post office'),sx(599),sy(456),'#fff6b0');label(T('식당','Diner'),sx(488),sy(272),'#fff6b0');label(T('박물관','Museum'),sx(583),sy(252),'#fff6b0');label(T('창고','Warehouse'),sx(118),sy(240),'#fff6b0');label(T('연구','Research'),sx(265),sy(228),'#fff6b0');label(T('은행·계약','Bank & contracts'),sx(634),sy(312),'#fff6b0');label(T('항만 사무소','Harbor office'),sx(667),sy(426),'#fff6b0');label(T('해운 창고','Cargo shed'),sx(670),sy(474),'#fff6b0');label(T('어시장','Fish market'),sx(622),sy(510),'#fff6b0');label(T('등대','Lighthouse'),sx(718),sy(466),'#fff6b0');label(T('게시판','Notice board'),sx(448),sy(278),'#fff6b0');if(MP.on&&MP.inbox.length)label('!',sx(448),sy(268),'#ffe27a');
+    label(T('집','Home'),sx(54),sy(236),'#fff6b0');Object.keys(STN).forEach(id=>{const n=STN[id],mk=stMark(id);label(n.n,sx(n.x),sy(n.y-22),'#fff6b0');if(mk)label(mk,sx(n.x),sy(n.y-30+Math.round(Math.sin(performance.now()/250))),mk==='…'?'#cfd8e0':'#ffe27a');});label(T('회관','Hall'),sx(314),sy(242),'#fff6b0');label(T('기차역','Station'),sx(262),sy(572),'#fff6b0');label(T('숙소','Inn'),sx(599),sy(412),'#fff6b0');label(T('신문 가판대','Newsstand'),sx(580),sy(326),'#fff6b0');label(T('우체국','Post office'),sx(599),sy(456),'#fff6b0');label(T('식당','Diner'),sx(488),sy(272),'#fff6b0');label(T('박물관','Museum'),sx(583),sy(252),'#fff6b0');label(T('창고','Warehouse'),sx(118),sy(240),'#fff6b0');label(T('연구','Research'),sx(265),sy(228),'#fff6b0');label(T('은행·계약','Bank & contracts'),sx(634),sy(312),'#fff6b0');label(T('항만 사무소','Harbor office'),sx(667),sy(426),'#fff6b0');label(T('해운 창고','Cargo shed'),sx(670),sy(474),'#fff6b0');label(T('어시장','Fish market'),sx(622),sy(510),'#fff6b0');label(T('등대','Lighthouse'),sx(718),sy(466),'#fff6b0');label(T('게시판','Notice board'),sx(448),sy(278),'#fff6b0');if(MP.on&&MP.inbox.length)label('!',sx(448),sy(268),'#ffe27a');
     if(S.visitor)label(T('방문 상인','Trader'),sx(513),sy(280),'#ffe27a');
     const sail=S.ships.filter(s=>s.st==='sail').length;if(sail)label(T('항해 중 {0}척','{0} at sea',sail),sx(752),sy(306),'#ffe27a');
     const now=performance.now();for(let i=FL.length-1;i>=0;i--){const f=FL[i],a=(now-f.t)/1400;if(a>1){FL.splice(i,1);continue;}cx.globalAlpha=1-a;cx.font=(7*SC)+'px "Press Start 2P",Gugi,monospace';label(f.txt,sx(f.x),sy(f.y-a*18),f.col);cx.globalAlpha=1;}}
@@ -8113,7 +8124,7 @@ function objs(){const o=[];if(VIEW==='sea'||VIEW==='helm'||VIEW==='isl'||!S)retu
   for(let i=0;i<16;i++){const [x,y]=slotXY(i);o.push({k:'slot',i,x:x+8,y:y+4,w:58,h:46,r:9});}
   if(S.visitor)o.push({k:'vis',x:500,y:286,w:44,h:30,r:9});
   o.push({k:'store',x:292,y:282,w:30,h:30,r:10},{k:'shop',x:386,y:282,w:36,h:30,r:10},{k:'seeds',x:328,y:282,w:36,h:30,r:10});o.push({k:'harbor',x:704,y:322,w:96,h:238,r:8});o.push({k:'hoffice',x:642,y:432,w:50,h:30,r:8},{k:'hshed',x:634,y:480,w:72,h:30,r:8},{k:'fishmkt',x:598,y:514,w:46,h:16,r:8},{k:'hlight',x:710,y:470,w:16,h:40,r:8});
-  S.deco.forEach((d,i)=>o.push({k:'deco',i,x:d.x-5,y:d.y-8,w:10,h:10,r:7}));avObjs(o);o.push({k:'home',x:26,y:246,w:56,h:44,r:8},{k:'barn',x:90,y:248,w:56,h:42,r:8},{k:'hall',x:290,y:244,w:50,h:30,r:8},{k:'station',x:176,y:586,w:170,h:78,r:10},...Object.keys(STN).map(id=>({k:'npc',id,x:STN[id].x-6,y:STN[id].y-17,w:12,h:17,r:16})),{k:'diner',x:464,y:280,w:48,h:26,r:8},{k:'museum',x:526,y:256,w:116,h:50,r:10},{k:'lab',x:252,y:236,w:26,h:38,r:8},{k:'bank',x:598,y:318,w:72,h:52,r:8},{k:'inn',x:572,y:416,w:54,h:38,r:10},{k:'post',x:572,y:460,w:54,h:38,r:10},{k:'board',x:432,y:282,w:30,h:26,r:9});return o;}
+  S.deco.forEach((d,i)=>o.push({k:'deco',i,x:d.x-5,y:d.y-8,w:10,h:10,r:7}));avObjs(o);o.push({k:'home',x:26,y:246,w:56,h:44,r:8},{k:'barn',x:90,y:248,w:56,h:42,r:8},{k:'hall',x:290,y:244,w:50,h:30,r:8},{k:'station',x:176,y:586,w:170,h:78,r:10},...Object.keys(STN).map(id=>({k:'npc',id,x:STN[id].x-6,y:STN[id].y-17,w:12,h:17,r:16})),{k:'diner',x:464,y:280,w:48,h:26,r:8},{k:'museum',x:526,y:256,w:116,h:50,r:10},{k:'lab',x:252,y:236,w:26,h:38,r:8},{k:'bank',x:598,y:318,w:72,h:52,r:8},{k:'news',x:562,y:322,w:32,h:34,r:10},{k:'inn',x:572,y:416,w:54,h:38,r:10},{k:'post',x:572,y:460,w:54,h:38,r:10},{k:'board',x:432,y:282,w:30,h:26,r:9});return o;}
 const rectDist=(px,py,o)=>Math.hypot(Math.max(o.x-px,0,px-(o.x+o.w)),Math.max(o.y-py,0,py-(o.y+o.h)));
 function hitObj(vx,vy){let hb=null;for(const o of objs()){const p=o.k==='slot'?4:0;if(vx>=o.x-p&&vx<o.x+o.w+p&&vy>=o.y-p&&vy<o.y+o.h+p){if(o.k==='harbor')hb=o;else return o;}}return hb;}
 function activate(o){const sx=(PL.x-Math.round(CAM.x))*SC,sy=(PL.y-12-Math.round(CAM.y))*SC;
@@ -8121,6 +8132,7 @@ function activate(o){const sx=(PL.x-Math.round(CAM.x))*SC,sy=(PL.y-12-Math.round
   if(o.k==='plot'){const p=S.plots[o.i];if(ripe(p)){harvest(o.i);closePop();return;}popPlot(o.i,sx,sy);}
   else if(o.k==='pen'){const p=S.pens[o.i];if(p&&p.done>0){collectPen(o.i);closePop();return;}popPen(o.i,sx,sy);}
   else if(o.k==='store')popList(T('내 가게','My shop'),[[T('가게 관리','Manage shop'),S.store.till>=1?fmt(Math.floor(S.store.till))+UG():'',()=>openModal('store')]],sx,sy);
+  else if(o.k==='news')popList(T('신문 가판대','Newsstand'),[[T('신문 한 부 사기','Buy a paper'),'3'+UG(),()=>buyPaper()]],sx,sy);
   else if(o.k==='inn')popList(T('숙소','Inn'),[[T('숙소 열기','Open the inn'),S.inn.g.length+'/'+innRooms(),()=>openModal('inn')]],sx,sy);
   else if(o.k==='post'){const rd=S.post.snt.filter(r=>r.at<=NOW()).length;popList(T('우체국','Post office'),[[T('우체국 열기','Open the post office'),rd?T('답장 {0}','{0} replies',rd):'',()=>openModal('post')]],sx,sy);}
   else if(o.k==='station')popList(T('기차역','Train station'),[[T('기차 타기','Take a train'),'',()=>openModal('station')]],sx,sy);
@@ -8411,7 +8423,7 @@ document.addEventListener('click',e=>{if(window.__tmoved&&Date.now()-window.__tm
 ACT.tech=a=>{research(a);updateHud();renderModal();};
 /* 은행 */
 MODS.bank=m=>{ensureBank(S);const tab=m.tab||'loan';
-  const tabs=`<div class="btns">${[['loan','대출','Loan'],['dep','예금','Deposit'],['stk','주식','Stocks'],['paper','신문'+(S.paper&&!S.paper.seen?' ●':''),'Paper'+(S.paper&&!S.paper.seen?' ●':'')],['ins','보험','Insurance']].map(([k,ko,en])=>`<button class="pb sm ${tab===k?'gold':''}" data-act="btab:${k}">${T(ko,en)}</button>`).join('')}</div>`;
+  const tabs=`<div class="btns">${[['loan','대출','Loan'],['dep','예금','Deposit'],['stk','주식','Stocks'],['ins','보험','Insurance']].map(([k,ko,en])=>`<button class="pb sm ${tab===k?'gold':''}" data-act="btab:${k}">${T(ko,en)}</button>`).join('')}</div>`;
   let body='';
   if(tab==='loan'){const mx=loanMax();body=`<div class="muted">${T('이자는 1분에 1%씩 붙어요. 계급이 오르면 더 많이 빌릴 수 있어요','Interest is 1% per minute. A higher rank lets you borrow more')}</div>
   <div class="card"><div class="grow">${T('빚','Debt')}: <b class="${S.loan>0?'bad':''}">${fmt(S.loan)}</b><div class="muted">${T('빌릴 수 있는 한도 {0}','Limit {0}',fmt(mx))}</div></div></div>
@@ -8421,15 +8433,6 @@ MODS.bank=m=>{ensureBank(S);const tab=m.tab||'loan';
   <div class="card"><div class="grow">${T('예금','Deposit')}: <b>${fmt(S.dep)}</b><div class="muted">${T('가진 돈 {0}','Cash {0}',fmt(S.money))}</div></div></div>
   <h5>${T('맡기기','Deposit')}</h5><div class="btns">${[500,2000,10000].map(v=>`<button class="pb sm" data-act="dput:${v}" ${S.money<v?'disabled':''}>${fmt(v)}</button>`).join('')}<button class="pb sm gold" data-act="dput:all" ${S.money<1?'disabled':''}>${T('모두 맡기기','All in')}</button></div>
   <h5>${T('찾기','Withdraw')}</h5><div class="btns">${[500,2000,10000].map(v=>`<button class="pb sm" data-act="dget:${v}" ${S.dep<v?'disabled':''}>${fmt(v)}</button>`).join('')}<button class="pb sm gold" data-act="dget:all" ${S.dep<=0?'disabled':''}>${T('모두 찾기','Withdraw all')}</button></div>`;}
-  else if(tab==='paper'){const pp=S.paper,k=S.stk;pp.seen=1;
-    const row=x=>{const p=k.p[x.id],h=k.h[x.id],ch=(p/h[0]-1)*100,up=ch>=0;return `<div class="card"><div class="grow"><b>${T(x.ko,x.en)}</b></div><span style="${up?'color:#e0605a':'color:#5a8fe0'}">${fmt(p)} (${up?'+':''}${ch.toFixed(1)}%)</span></div>`;};
-    body=`<div class="muted">${T('제 {0}호 · 3분마다 새 호가 나와요','No. {0} · a new issue every 3 minutes',pp.no)}</div>
-    <h5>${T('현재 시세','Current prices')}</h5>${STK.map(row).join('')}
-    <h5>${T('다음 호까지 예측','Forecast')}</h5>${pp.fc.map(f=>`<div class="card"><div class="grow">🔮 <b>${STKN(f.id)}</b> ${f.d>0?T('오를 것 같아요','looks set to rise'):T('내릴 것 같아요','looks set to fall')}</div></div>`).join('')}<div class="muted">${T('예측은 틀릴 수도 있어요','Forecasts can be wrong')}</div>
-    ${pp.prev?`<h5>${T('지난 호 예측 결과','Last issue')}</h5>${pp.prev.map(f=>`<div class="card"><div class="grow">${STKN(f.id)} ${f.d>0?T('상승','up'):T('하락','down')} → <b class="${f.hit?'':'bad'}">${f.hit?T('적중','Hit'):T('빗나감','Miss')}</b></div></div>`).join('')}`:''}
-    <h5>${T('시장 소식','Market news')}</h5>${k.news.length?k.news.slice(0,5).map(n=>`<div class="card"><div class="grow">${n.s}</div></div>`).join(''):`<div class="muted">${T('아직 큰 소식이 없어요','No big news yet')}</div>`}
-    <h5>${T('오늘의 엉뚱한 소식','Strange news')}</h5>${pp.x.map(i=>`<div class="card"><div class="grow">${NEWSX[i]}</div></div>`).join('')}
-    <h5>${T('오늘의 아재개그','Dad joke')}</h5><div class="card"><div class="grow">${JOKES[pp.j][0]} <b>${JOKES[pp.j][1]}</b></div></div>`;}
   else if(tab==='ins'){const on=S.ins.until>NOW(),left=Math.max(0,Math.ceil((S.ins.until-NOW())/1000));body=`<div class="muted">${T('해적에게 짐을 빼앗기면 빼앗긴 짐 값의 70%를 돌려받아요. 보험료는 배 값의 5%이고 10분 동안 유효해요','Pirate losses are refunded at 70% of their value. Premium is 5% of ship value for 10 minutes')}</div>
   <div class="card"><div class="grow">${T('상태','Status')}: <b>${on?T('가입 중 ({0}초 남음)','Active ({0}s left)',left):T('미가입','Not insured')}</b><div class="muted">${T('보험료 {0} · 지금까지 받은 보험금 {1}','Premium {0} · paid out so far {1}',fmt(insCost()),fmt(S.stats.insPaid||0))}</div></div></div>
   <div class="btns"><button class="pb sm gold" data-act="insbuy" ${S.money<insCost()?'disabled':''}>${on?T('10분 연장','Extend 10 min'):T('가입하기','Buy cover')}</button><button class="pb sm ${S.ins.auto?'gold':''}" data-act="insauto">${T('자동 갱신','Auto-renew')}: ${S.ins.auto?T('켜짐','On'):T('꺼짐','Off')}</button></div>`;}
@@ -8522,6 +8525,31 @@ ACT.board=a=>{const q=PROVS[+a];if(rankOf(S.stats.earned)<q.rank||S.money<q.fare
 function trainRide(i){const q=PROVS[i],el=document.createElement('div');el.style.cssText='position:fixed;inset:0;z-index:99;background:linear-gradient(#a8d0f0,#e8f0d8 70%,#6a8a4a);overflow:hidden;display:flex;align-items:center;justify-content:center;font-family:Gugi,"Malgun Gothic",sans-serif';
   el.innerHTML='<style>@keyframes trk{from{transform:translateX(-30vw)}to{transform:translateX(130vw)}}@keyframes rl{from{background-position:0 0}to{background-position:-80px 0}}</style><div style="position:absolute;left:0;right:0;bottom:24%;height:6px;background:repeating-linear-gradient(90deg,#5a3a1e 0 8px,transparent 8px 20px);animation:rl .25s linear infinite"></div><div style="position:absolute;bottom:26%;font-size:64px;animation:trk '+(q.ms/1000)+'s linear forwards">🚂🚃🚃</div><div style="position:absolute;top:18%;font-size:22px;color:#2a3a4a;text-shadow:0 1px #fff">'+T('{0}행 기차를 타고 가는 중…','Riding to {0}…',tx(q.n))+'</div>';
   document.body.appendChild(el);sfx('click');setTimeout(()=>{el.remove();enterIsl('prov'+i);},q.ms);}
+/* 신문 가판대 */
+function buyPaper(){if(S.money<3){toast(T('3골드가 모자라요','You need 3 gold'));return;}S.money-=3;sfx('coin');updateHud();openModal('paper');}
+const PAPERADS=[['우체국','소포를 보내면 답장과 함께 두둑한 답례가 와요. 우체부 구함!','Post office: send parcels and get replies. Carriers wanted!'],['숙소','푹신한 침대와 따뜻한 수프. 지친 여행자를 환영합니다.','Inn: soft beds and warm soup for weary travelers.'],['상인 길드','함께하면 판로가 넓어집니다. 신규 회원 모집.','Merchants guild: new members welcome.'],['부동산','빈 땅 팝니다. 월세 받으며 느긋하게 사세요.','Real estate: lots for sale. Live on rent.'],['기차 여행','푸른 고원으로 떠나는 당일 기차 여행. 운임은 역에서 문의.','Train trips to the highlands. Ask at the station.'],['식당','오늘의 요리 있음. 손님이 줄을 서요.','Diner: dish of the day available.']];
+const SNM=['봄','여름','가을','겨울'],SNE=['Spring','Summer','Autumn','Winter'];
+MODS.paper=()=>{ensureBank(S);const pp=S.paper,k=S.stk,sn=season();
+  const chg=x=>(k.p[x.id]/k.h[x.id][0]-1)*100;let top=STK[0];STK.forEach(x=>{if(Math.abs(chg(x))>Math.abs(chg(top)))top=x;});const tc=chg(top);
+  const head=Math.abs(tc)<.3?T('항구는 오늘도 조용하다','The harbor stays calm today'):tc>0?T('{0} 주가 {1}% 급등','{0} shares jump {1}%',tx([top.ko,top.en]),Math.abs(tc).toFixed(1)):T('{0} 주가 {1}% 하락','{0} shares slide {1}%',tx([top.ko,top.en]),Math.abs(tc).toFixed(1));
+  const ad=PAPERADS[(pp.no+sn)%PAPERADS.length],ad2=PAPERADS[(pp.no*3+1)%PAPERADS.length];
+  const serif="font-family:Batang,'Noto Serif KR','Nanum Myeongjo',Georgia,serif;",rule='border-top:1px solid #6a5a3a;margin:8px 0 6px;';
+  const art=(t,b)=>`<div style="margin-bottom:8px"><div style="font-weight:700;font-size:13px;line-height:1.25">${t}</div><div style="font-size:12px;line-height:1.5;margin-top:2px">${b}</div></div>`;
+  const tick=STK.map(x=>{const c=chg(x),up=c>=0;return `<div style="display:flex;justify-content:space-between;font-size:12px;border-bottom:1px dotted #8a7a5a;padding:1px 0"><span>${T(x.ko,x.en)}</span><span>${fmt(k.p[x.id])} <b style="color:${up?'#b02a22':'#2a4a9a'}">${up?'▲':'▼'}${Math.abs(c).toFixed(1)}%</b></span></div>`;}).join('');
+  return `<div style="${serif}background:#efe6cc;color:#2a2418;padding:10px 12px;border:3px double #2a2418;max-height:70vh;overflow:auto">
+  <div style="text-align:center;font-size:11px;letter-spacing:2px;display:flex;justify-content:space-between"><span>${T('제 {0}호','No. {0}',pp.no)}</span><span>${T('{0}호 · 섬 상회','{0} Edition',T(SNM[sn],SNE[sn]))}</span><span>${T('3골드','3 gold')}</span></div>
+  <div style="text-align:center;font-size:26px;font-weight:900;letter-spacing:6px;border-top:2px solid #2a2418;border-bottom:2px solid #2a2418;margin:4px 0;padding:2px 0">${T('섬 상회 일보','THE ISLEPORT TIMES')}</div>
+  <div style="text-align:center;font-size:18px;font-weight:800;line-height:1.3;margin:8px 0 2px">${head}</div>
+  <div style="text-align:center;font-size:11px;font-style:italic">${T('상인들은 다음 호 예측에 귀를 기울이고 있다','Merchants watch the forecast for the next issue')}</div>
+  <div style="${rule}"></div>
+  <div style="column-width:150px;column-gap:14px;column-rule:1px solid #8a7a5a">
+   <div style="break-inside:avoid;margin-bottom:8px"><div style="font-weight:800;font-size:12px;letter-spacing:2px;border-bottom:1px solid #2a2418;margin-bottom:3px">${T('시세표','PRICES')}</div>${tick}</div>
+   <div style="break-inside:avoid;margin-bottom:8px"><div style="font-weight:800;font-size:12px;letter-spacing:2px;border-bottom:1px solid #2a2418;margin-bottom:3px">${T('다음 호 예측','FORECAST')}</div>${pp.fc.map(f=>`<div style="font-size:12px;line-height:1.5">🔮 ${STKN(f.id)}: ${f.d>0?T('오를 전망','expected to rise'):T('내릴 전망','expected to fall')}</div>`).join('')}<div style="font-size:10px;font-style:italic;margin-top:2px">${T('※ 예측은 틀릴 수 있습니다','* Forecasts may be wrong')}</div>${pp.prev?`<div style="font-size:11px;margin-top:4px">${T('지난 호','Last issue')}: ${pp.prev.map(f=>STKN(f.id)+' '+(f.hit?T('적중','hit'):T('빗나감','miss'))).join(' · ')}</div>`:''}</div>
+   <div style="break-inside:avoid;margin-bottom:8px"><div style="font-weight:800;font-size:12px;letter-spacing:2px;border-bottom:1px solid #2a2418;margin-bottom:3px">${T('시장 소식','MARKET NEWS')}</div>${k.news.length?k.news.slice(0,4).map(n=>`<div style="font-size:12px;line-height:1.5;margin-bottom:3px">· ${n.s}</div>`).join(''):`<div style="font-size:12px">${T('큰 소식은 없다','No big news today')}</div>`}</div>
+   <div style="break-inside:avoid;margin-bottom:8px"><div style="font-weight:800;font-size:12px;letter-spacing:2px;border-bottom:1px solid #2a2418;margin-bottom:3px">${T('사회면','TOWN')}</div>${pp.x.map(i=>art(T('[속보]','[FLASH]'),NEWSX[i])).join('')}</div>
+   <div style="break-inside:avoid;margin-bottom:8px;border:1px solid #2a2418;padding:4px 6px"><div style="font-weight:800;font-size:11px;letter-spacing:2px;text-align:center">${T('오늘의 유머','HUMOR')}</div><div style="font-size:12px;line-height:1.5">${JOKES[pp.j][0]}<br><b>${JOKES[pp.j][1]}</b></div></div>
+   <div style="break-inside:avoid;margin-bottom:8px;border:1px dashed #6a5a3a;padding:4px 6px"><div style="font-weight:800;font-size:11px;letter-spacing:2px;text-align:center">${T('광고','CLASSIFIEDS')}</div><div style="font-size:11px;line-height:1.5"><b>${ad[0]}</b> ${tx([ad[1],ad[2]])}</div><div style="font-size:11px;line-height:1.5;margin-top:3px"><b>${ad2[0]}</b> ${tx([ad2[1],ad2[2]])}</div></div>
+  </div></div>`;};
 /* 화산섬 */
 MODS.vol=()=>{const V=S.vol,u=VGL[V.gl];
   return `<h2>${T('화산 광부 상점','Volcano store')}</h2><div class="muted">${T('용암 관측소가 위험 신호를 보내요. 내열 장갑 {0}단계 · 화상 피해 {1}','Heat-proof gloves Lv {0} · burn damage {1}',V.gl,fmt(volBurn())+UG())}</div>
