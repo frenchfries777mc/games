@@ -1119,7 +1119,7 @@ function cleanRules(r){ const o={}; for(const k in RULE_DEFAULT){ const v=r&&+r[
 function rulesAreCustom(r){ r=r||roomRules; for(const k in RULE_DEFAULT) if(r[k]!==RULE_DEFAULT[k]) return true; return false; }
 let roomOpts={balance:false, vote:false}, selectedOpts={balance:false, vote:false};      // private-room extras: automatic team balance, map vote
 function cleanOpts(o){ return {balance:!!(o&&o.balance), vote:!!(o&&o.vote)}; }
-function ruleHp(){ return Math.round(MAX_HP*roomRules.hp); }
+function ruleHp(){ return Math.round(MAX_HP*roomRules.hp*(gameMode==='zombie'?2:1)); }   // zombie game: humans get double health
 const MOVE_SPEED = 250, JUMP_VELOCITY = -680;
 const DASH_FORCE = 700, DASH_CD = 1.5;
 const PZ_MAX=3, PZ_DMG=[24,30,36,42], PZ_ATK_CD=[0.6,0.5,0.4,0.3], PZ_DASH_CD=[3,1.5,0.7,0.4], PZ_CD_STEP=0.12, PZ_ULT_HEAL=30, PZ_ULT_HEAL_MAX=50, PZ_MAX_SPEED=1.25;       // 피사로 has four stages (the start, then one per ultimate): damage, attack cooldown and dash cooldown come from these tables; the skill and ultimate cooldowns are 12% shorter per stage; the last stage also runs at 125% speed       // (+5 damage per stack; at the 4th stack: a 0.5 s dash and 125% speed)
@@ -3111,9 +3111,9 @@ const MODES = {
 };
 const MODE_ORDER = ['ffa','br','duo','team','duel','conquest'];
 const ZOMBIE_DURATION = 120, ZOMBIE_COLOR = '#1f6b2e';
-const ZOMBIE_SPEED_MULT = 1.45, ZOMBIE_MAX_HP = 900, ZOMBIE_DMG_MULT = 6, ZOMBIE_CD_MULT = 0.8;     // (was 1.3 and 1.25)
+const ZOMBIE_SPEED_MULT = 1.05, ZOMBIE_MAX_HP = 400, ZOMBIE_DMG_MULT = 1.2, ZOMBIE_CD_MULT = 1;     // (was 1.3 and 1.25)
 // ...and the other zombie advantages: a dash that is ready twice as fast, a faster resting heal (starts after 1.5 s instead of 3 s, and +10 hp instead of +5 every half second), and NO knockback at all
-const ZOMBIE_DASH_CD_MULT = 0.5, ZOMBIE_REST_SEC = 1.5, ZOMBIE_REST_AMOUNT = 10;
+const ZOMBIE_DASH_CD_MULT = 1, ZOMBIE_REST_SEC = 3, ZOMBIE_REST_AMOUNT = 5;
 const HOTPOTATO_DURATION = 20, HOTPOTATO_PASS_RANGE = 90, HOTPOTATO_PASS_HALF_ANGLE = 0.5, HOTPOTATO_ROUND_GAP = 3;
 const HIDESEEK_HIDE_SEC = 10, HIDESEEK_SEEK_SEC = 90, HIDESEEK_PLAT_W = 90, HIDESEEK_PLAT_H = 22, HIDESEEK_FREEMOVE_SPEED = 260;
 const MOVING_PLAT_LAND_LENIENCY = 46; // extra horizontal forgiveness when landing on a moving platform - must comfortably exceed the largest amplitude a moving parkour platform ever oscillates by (currently up to 35px), so a jump timed for its validated base position always lands even at the far end of its swing, with real margin to spare
@@ -4721,7 +4721,7 @@ function shuffle(arr){ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.
 /* ===== the version of this file =====
    Players with different versions CAN meet and play together: the automatic matchmaking uses the same room names for every version (online-<mode>-<map>-<slot>), and nobody is refused because of a different build.
    The build is only sent along with the join message and the lobby (for information); the corner of the screen shows it. */
-const GAME_BUILD='build 2026-10-18-v317';
+const GAME_BUILD='build 2026-10-18-v318';
 const GAME_VERSION='0.8', GAME_VERSION_NAME='황금을 찾아서';   // 게임 버전 이름: versions.json의 title과 같게 (빌드마다 바꾸지 않음)
 const WEEKLY_EVENTS=[
   {id:'lowg',    name:'저중력 난투', desc:'몸이 둥실둥실, 중력이 약해진 난투', rules:{grav:0.6}},
