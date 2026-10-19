@@ -217,9 +217,9 @@ async function listPosts(){
   var cnt={}; if(rows.length){ var c=await sb.from('ff_comments').select('post_id').in('post_id',rows.map(function(x){ return x.id; })).limit(2000); ((c&&c.data)||[]).forEach(function(x){ cnt[x.post_id]=(cnt[x.post_id]||0)+1; }); }
   await loadNames(rows.map(function(x){ return x.user_id; }));
   L.innerHTML=rows.length?'':'<div class="cm-e">'+(bQuery?'검색 결과가 없어요.':(bFilter==='hot'?'아직 좋아요를 받은 글이 없어요.':'아직 글이 없어요. 첫 글을 써 보세요!'))+'</div>';
-  rows.forEach(function(x){ var d=document.createElement('div'); d.className='cm-post'+(bOpen===x.id?' open':''); d.dataset.id=x.id;
+  rows.forEach(function(x){ var d=document.createElement('div'); d.className='cm-post'+(bOpen===x.id?' open':''); d.dataset.id=x.id; d.dataset.g=x.game||'';
     d.innerHTML='<div class="cm-ph">'+gameTag(x.game)+'<b class="cm-t" data-notr>'+mark(x.title)+'</b>'+((x.images||[]).length?'<span class="cm-pic">📷 '+F('사진 {0}장',x.images.length)+'</span>':'')+(cnt[x.id]?'<span class="cm-c">💬 '+cnt[x.id]+'</span>':'')+(likes[x.id]?'<span class="cm-c cm-lc">👍 '+likes[x.id]+'</span>':'')+'</div>'+
-      '<div class="cm-meta">'+who(x.user_id)+' · <span>'+esc(ago(x.created_at))+'</span></div><div class="cm-body"></div>';
+      '<div class="cm-meta">'+who(x.user_id)+' · <span>'+esc(ago(x.created_at))+'</span></div>'+((x.body||'').trim()?'<div class="cm-ex">'+esc(String(x.body).replace(/\s+/g,' ').trim().slice(0,90))+'</div>':'')+'<div class="cm-body"></div>';
     d.querySelector('.cm-ph').onclick=function(){ bOpen=bOpen===x.id?null:x.id; d.classList.toggle('open',bOpen===x.id); if(bOpen===x.id) openPost(d,x); };
     L.appendChild(d); if(bOpen===x.id){ openPost(d,x); if(bScroll){ bScroll=false; setTimeout(function(){ d.scrollIntoView({behavior:'smooth',block:'center'}); },60); } } });
   p.querySelector('.cm-more').style.display=more?'':'none';
