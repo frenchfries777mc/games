@@ -2,6 +2,58 @@
  "notes": [
   {
    "date": "2026-10-19",
+   "build": "v0.2 build 29",
+   "title": "마을 건물과 납품 가게",
+   "items": [
+    "광장 북쪽에 학교, 도서관, 병원, 소방서, 경찰서, 극장이 들어섰어요. 눌러서 둘러볼 수 있어요",
+    "식당가와 제과점이 생겼어요. 요리나 재료를 납품해서 돈을 벌어요",
+    "납품을 거듭하면 단골이 늘어 보상이 최대 20%까지 올라요"
+   ],
+   "tr": {
+    "en": {
+     "title": "Town buildings and delivery shops",
+     "items": [
+      "A school, library, hospital, fire station, police station and theater line the plaza",
+      "Restaurant row and a bakery: deliver dishes and ingredients for money",
+      "Regulars grow with deliveries, raising rewards up to 20%"
+     ]
+    },
+    "ja": {
+     "title": "Town buildings and delivery shops",
+     "items": [
+      "A school, library, hospital, fire station, police station and theater line the plaza",
+      "Restaurant row and a bakery: deliver dishes and ingredients for money",
+      "Regulars grow with deliveries, raising rewards up to 20%"
+     ]
+    },
+    "es": {
+     "title": "Town buildings and delivery shops",
+     "items": [
+      "A school, library, hospital, fire station, police station and theater line the plaza",
+      "Restaurant row and a bakery: deliver dishes and ingredients for money",
+      "Regulars grow with deliveries, raising rewards up to 20%"
+     ]
+    },
+    "fr": {
+     "title": "Town buildings and delivery shops",
+     "items": [
+      "A school, library, hospital, fire station, police station and theater line the plaza",
+      "Restaurant row and a bakery: deliver dishes and ingredients for money",
+      "Regulars grow with deliveries, raising rewards up to 20%"
+     ]
+    },
+    "de": {
+     "title": "Town buildings and delivery shops",
+     "items": [
+      "A school, library, hospital, fire station, police station and theater line the plaza",
+      "Restaurant row and a bakery: deliver dishes and ingredients for money",
+      "Regulars grow with deliveries, raising rewards up to 20%"
+     ]
+    }
+   }
+  },
+  {
+   "date": "2026-10-19",
    "build": "v0.2 build 28",
    "title": "마을이 남쪽으로 넓어졌어요",
    "items": [
