@@ -36,7 +36,7 @@ patchnotes.json | v314 title | 칸 추가와 피사로 스킨 | build 314 | 2026
 patchnotes.json | v314 items[0] | 새 캐릭터 칸 추가 (마야 독침 사수, 독침대롱·독두꺼비 함정·케찰코아틀의 날개) | build 314 | 2026-10-19
 patchnotes.json | v314 items[1] | 독 피해 추가 (독 중첩, 진한 초록 숫자) | build 314 | 2026-10-19
 patchnotes.json | v314 items[2] | 피사로 스킨 추가 (황금빛·흑강철 모리온 투구, 황금 약탈자의 투구, 다이아·그랜드 마스터 전용 2종) | build 314 | 2026-10-19
-Stickseum-v0.8.html | SKILLS.pizarro.desc | 조준한 곳에 십자가가 떨어져 맞은 적에게 20 피해와 1초 기절, 맞은 아군과 나는 체력 20 회복 (기세 단계마다 범위가 넓어지고 피해 20→22→25→28, 기절 1→1.1→1.2→1.3초) · 맞은 적에게는 3초 동안 표식이 남아 다음 창 공격이 5 피해를 더 줌 | build 315 | 2026-10-19
+Stickseum-v0.8.html | SKILLS.pizarro.desc | 조준한 곳에 십자가가 떨어져 맞은 적에게 20 피해와 1초 기절, 맞은 아군과 나는 체력 20 회복 (기세 단계마다 범위가 넓어지고 피해 20→22→25→28) · 맞은 적에게는 3초 동안 표식이 남아 다음 창 공격이 5 피해를 더 줌 | build 315 | 2026-10-19
 patchnotes.json | v315 title | 피사로 스킬 개편 | build 315 | 2026-10-19
 patchnotes.json | v315 items[0] | 피사로 스킬이 기세 단계에 따라 강해짐 (피해 20→25→30→35, 기절 1→1.5초, 범위 확대) | build 315 | 2026-10-19
 patchnotes.json | v315 items[1] | 피사로 스킬에 맞은 적에게 표식 추가 (3초 안에 창 공격 시 8 피해 추가) | build 315 | 2026-10-19
@@ -45,3 +45,7 @@ Stickseum-v0.8.html | settingsToSiteBtn | 사이트로 돌아가기 | build 316 
 patchnotes.json | v316 title | 피사로 조정과 설정 화면 버튼 | build 316 | 2026-10-19
 patchnotes.json | v316 items[0] | 피사로 스킬 수치 조정 (피해 20→22→25→28, 기절 1→1.3초, 표식 추가 피해 5) | build 316 | 2026-10-19
 patchnotes.json | v316 items[1] | 설정 화면에 사이트로 돌아가기 버튼 추가 | build 316 | 2026-10-19
+Stickseum-v0.8.html | ULTS.horemheb desc | 앞쪽 멀리(1725)까지 거센 모래바람을 일으켜 범위 안의 상대에게 36 피해를 주고 아주 강하게 밀치며 2초 동안 기절시키고, 3.5초 동안 이동속도를 크게(70%) 줄임 | build 317 | 2026-10-19
+patchnotes.json | v317 title | 호렘헵 궁극기 강화 | build 317 | 2026-10-19
+patchnotes.json | v317 items[0] | 피사로 십자가 기절 시간 전 단계 1초 고정 | build 317 | 2026-10-19
+patchnotes.json | v317 items[1] | 호렘헵 궁극기 넉백 10배, 기절 시간 2배, 범위 1.5배, 피해 3배 강화 | build 317 | 2026-10-19
