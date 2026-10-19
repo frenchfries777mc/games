@@ -1,6 +1,64 @@
 {
  "notes": [
   {
+   "date": "2026-10-19",
+   "build": "v0.2 build 6",
+   "title": "시세 신문과 무역 보험",
+   "items": [
+    "은행에 시세 신문 탭이 생겼어요. 현재 주식 시세, 다음 호까지의 예측, 지난 호 예측 결과, 시장 소식이 실려요",
+    "신문에는 엉뚱한 소식과 아재개그도 실려요",
+    "항구의 풍년·축제·폭풍과 해적 습격이 관련 주식 가격에 영향을 줘요",
+    "은행에 무역 보험이 생겼어요. 가입해 두면 해적에게 빼앗긴 짐 값의 70%를 돌려받아요"
+   ],
+   "tr": {
+    "en": {
+     "title": "Price paper and trade insurance",
+     "items": [
+      "The bank has a Paper tab: current stock prices, a forecast until the next issue, last issue's results and market news",
+      "The paper also carries silly news and dad jokes",
+      "Port booms, festivals, storms and pirate raids now move related stocks",
+      "The bank offers trade insurance: pirate losses are refunded at 70% of their value"
+     ]
+    },
+    "ja": {
+     "title": "Price paper and trade insurance",
+     "items": [
+      "The bank has a Paper tab: current stock prices, a forecast until the next issue, last issue's results and market news",
+      "The paper also carries silly news and dad jokes",
+      "Port booms, festivals, storms and pirate raids now move related stocks",
+      "The bank offers trade insurance: pirate losses are refunded at 70% of their value"
+     ]
+    },
+    "es": {
+     "title": "Price paper and trade insurance",
+     "items": [
+      "The bank has a Paper tab: current stock prices, a forecast until the next issue, last issue's results and market news",
+      "The paper also carries silly news and dad jokes",
+      "Port booms, festivals, storms and pirate raids now move related stocks",
+      "The bank offers trade insurance: pirate losses are refunded at 70% of their value"
+     ]
+    },
+    "fr": {
+     "title": "Price paper and trade insurance",
+     "items": [
+      "The bank has a Paper tab: current stock prices, a forecast until the next issue, last issue's results and market news",
+      "The paper also carries silly news and dad jokes",
+      "Port booms, festivals, storms and pirate raids now move related stocks",
+      "The bank offers trade insurance: pirate losses are refunded at 70% of their value"
+     ]
+    },
+    "de": {
+     "title": "Price paper and trade insurance",
+     "items": [
+      "The bank has a Paper tab: current stock prices, a forecast until the next issue, last issue's results and market news",
+      "The paper also carries silly news and dad jokes",
+      "Port booms, festivals, storms and pirate raids now move related stocks",
+      "The bank offers trade insurance: pirate losses are refunded at 70% of their value"
+     ]
+    }
+   }
+  },
+  {
    "date": "2026-10-18",
    "build": "v0.2 build 5",
    "title": "은행 확장",
