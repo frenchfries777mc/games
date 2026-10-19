@@ -366,7 +366,7 @@ html:not(.introDone) #ui,html:not(.introDone) #authgate,html:not(.introDone) #au
     <button class="btn" data-act="skins"><span class="arrow">▶</span>스킨 상점<span class="en">SKIN SHOP</span></button>
     <button class="btn" data-act="stats"><span class="arrow">▶</span>통계<span class="en">STATS</span></button>
     <button class="btn" data-act="settings"><span class="arrow">▶</span>설정<span class="en">SETTINGS</span></button>
-    <p class="foot">v0.3<br>build 77</p>
+    <p class="foot">v0.3<br>build 78</p>
   </nav>
 </div>
 
@@ -11811,7 +11811,7 @@ window.bfFrRender=frRender;
 setInterval(()=>{const b=document.getElementById('frbox');if(b&&!(document.activeElement&&document.activeElement.id==='fradd'))frRender();},5000);
 setInterval(()=>{if(window.bfUid&&!document.hidden)frLoad();},60000);
 window.bfUser=null;
-const ID_DOM='arenaclash.local',ID_DOM_NEW='frenchfries777.com';   // 계정 도메인 이전 중: 가입은 ID_DOM, 로그인은 ID_DOM을 먼저 시도하고 없으면 ID_DOM_NEW로 다시 시도
+const ID_DOM='frenchfries777.com',ID_DOM_OLD='arenaclash.local';   // 계정 도메인: 가입·로그인은 ID_DOM, 안전망으로 로그인 실패 시 옛 ID_DOM_OLD로 다시 시도
 const emailFor=(u,d)=>u.toLowerCase().replace(/[^a-z0-9_]/g,'')+'@'+(d||ID_DOM);
 const say=(t,ok)=>{msg.textContent=t||'';msg.className=ok?'ok':'';};
 const busy=b=>{bl.disabled=bs.disabled=b;};
@@ -11837,7 +11837,7 @@ async function login(){
  busy(true);say('로그인 중…',true);
  try{
   let r=await sb.auth.signInWithPassword({email:emailFor(u),password:p});
-  if(r.error&&(r.error.code==='invalid_credentials'||/invalid login/i.test(String(r.error.message||'')))){const r2=await sb.auth.signInWithPassword({email:emailFor(u,ID_DOM_NEW),password:p});if(!r2.error)r=r2;}
+  if(r.error&&(r.error.code==='invalid_credentials'||/invalid login/i.test(String(r.error.message||'')))){const r2=await sb.auth.signInWithPassword({email:emailFor(u,ID_DOM_OLD),password:p});if(!r2.error)r=r2;}
   if(r.error){say(errText(r.error));busy(false);return;}
   let name=u;try{const q=await sb.from('profiles').select('username').eq('id',r.data.user.id).single();if(q.data&&q.data.username)name=q.data.username;}catch(e){}
   say('');busy(false);enter(name,r.data.user.id);
