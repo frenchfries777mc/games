@@ -2,6 +2,58 @@
  "notes": [
   {
    "date": "2026-10-19",
+   "build": "v0.2 build 21",
+   "title": "화산섬",
+   "items": [
+    "지도 조각을 더 모으면 새 섬 화산섬이 나타나요. 흑요석, 유황, 홍옥을 캘 수 있어요",
+    "땅에 붉은 원이 번쩍이면 곧 용암이 터져요. 원 밖으로 피하지 않으면 골드를 잃어요",
+    "화산 광부 상점에서 광물을 팔고, 광물과 골드로 내열 장갑을 만들면 한 번에 더 캐고 화상 피해가 줄어요"
+   ],
+   "tr": {
+    "en": {
+     "title": "Volcano Isle",
+     "items": [
+      "Collect more map pieces to find Volcano Isle, where you mine obsidian, sulfur and rubies",
+      "A red circle on the ground means lava is about to burst. Step out of it or lose gold",
+      "Sell minerals at the volcano store, or craft heat-proof gloves to mine faster and take less lava damage"
+     ]
+    },
+    "ja": {
+     "title": "Volcano Isle",
+     "items": [
+      "Collect more map pieces to find Volcano Isle, where you mine obsidian, sulfur and rubies",
+      "A red circle on the ground means lava is about to burst. Step out of it or lose gold",
+      "Sell minerals at the volcano store, or craft heat-proof gloves to mine faster and take less lava damage"
+     ]
+    },
+    "es": {
+     "title": "Volcano Isle",
+     "items": [
+      "Collect more map pieces to find Volcano Isle, where you mine obsidian, sulfur and rubies",
+      "A red circle on the ground means lava is about to burst. Step out of it or lose gold",
+      "Sell minerals at the volcano store, or craft heat-proof gloves to mine faster and take less lava damage"
+     ]
+    },
+    "fr": {
+     "title": "Volcano Isle",
+     "items": [
+      "Collect more map pieces to find Volcano Isle, where you mine obsidian, sulfur and rubies",
+      "A red circle on the ground means lava is about to burst. Step out of it or lose gold",
+      "Sell minerals at the volcano store, or craft heat-proof gloves to mine faster and take less lava damage"
+     ]
+    },
+    "de": {
+     "title": "Volcano Isle",
+     "items": [
+      "Collect more map pieces to find Volcano Isle, where you mine obsidian, sulfur and rubies",
+      "A red circle on the ground means lava is about to burst. Step out of it or lose gold",
+      "Sell minerals at the volcano store, or craft heat-proof gloves to mine faster and take less lava damage"
+     ]
+    }
+   }
+  },
+  {
+   "date": "2026-10-19",
    "build": "v0.2 build 20",
    "title": "외곽 기차역과 웅장한 박물관",
    "items": [
