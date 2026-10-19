@@ -2,6 +2,58 @@
  "notes": [
   {
    "date": "2026-10-19",
+   "build": "v0.2 build 19",
+   "title": "계절 축제, 부동산, 상인 길드",
+   "items": [
+    "마을 회관에서 계절마다 열리는 축제에 참가할 수 있어요. 요리나 특산물을 출품해 다른 참가자와 점수를 겨루고 상금과 트로피를 받아요",
+    "마을 회관에서 부동산 사무소를 열 수 있어요. 빈 땅을 사서 주택, 상가, 저택을 지으면 월세가 쌓여요. 시세에 따라 월세와 땅값이 달라져요",
+    "상인 길드에 가입해서 길드 의뢰를 해결하면 공헌도가 쌓이고, 등급이 오를수록 판매 가격이 올라가요"
+   ],
+   "tr": {
+    "en": {
+     "title": "Festivals, real estate and merchants guild",
+     "items": [
+      "Enter the seasonal festival at the town hall: submit goods, compete for prize money and trophies",
+      "Buy lots, build houses, shops or mansions and collect rent that follows the market index",
+      "Join the merchants guild, fulfill requests and rise in rank for better sale prices"
+     ]
+    },
+    "ja": {
+     "title": "Festivals, real estate and merchants guild",
+     "items": [
+      "Enter the seasonal festival at the town hall: submit goods, compete for prize money and trophies",
+      "Buy lots, build houses, shops or mansions and collect rent that follows the market index",
+      "Join the merchants guild, fulfill requests and rise in rank for better sale prices"
+     ]
+    },
+    "es": {
+     "title": "Festivals, real estate and merchants guild",
+     "items": [
+      "Enter the seasonal festival at the town hall: submit goods, compete for prize money and trophies",
+      "Buy lots, build houses, shops or mansions and collect rent that follows the market index",
+      "Join the merchants guild, fulfill requests and rise in rank for better sale prices"
+     ]
+    },
+    "fr": {
+     "title": "Festivals, real estate and merchants guild",
+     "items": [
+      "Enter the seasonal festival at the town hall: submit goods, compete for prize money and trophies",
+      "Buy lots, build houses, shops or mansions and collect rent that follows the market index",
+      "Join the merchants guild, fulfill requests and rise in rank for better sale prices"
+     ]
+    },
+    "de": {
+     "title": "Festivals, real estate and merchants guild",
+     "items": [
+      "Enter the seasonal festival at the town hall: submit goods, compete for prize money and trophies",
+      "Buy lots, build houses, shops or mansions and collect rent that follows the market index",
+      "Join the merchants guild, fulfill requests and rise in rank for better sale prices"
+     ]
+    }
+   }
+  },
+  {
+   "date": "2026-10-19",
    "build": "v0.2 build 18",
    "title": "우체국과 숙소",
    "items": [
