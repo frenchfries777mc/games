@@ -2,6 +2,64 @@
  "notes": [
   {
    "date": "2026-10-19",
+   "build": "v0.2 build 20",
+   "title": "외곽 기차역과 웅장한 박물관",
+   "items": [
+    "기차역을 마을 남쪽 외곽으로 옮기고 크게 새로 지었어요. 시계탑과 지붕 달린 승강장, 기관차와 객차가 있어요",
+    "역에서 서쪽으로 선로가 끝없이 이어져 터널로 들어가요. 지방 역에도 같은 선로가 바다 위로 이어져요",
+    "박물관을 기둥과 박공 지붕이 있는 웅장한 건물로 새로 지었어요",
+    "맵이 남쪽으로 조금 넓어졌어요"
+   ],
+   "tr": {
+    "en": {
+     "title": "Outskirts station and a grand museum",
+     "items": [
+      "The station moved to the southern outskirts, rebuilt large with a clock tower, a covered platform and a train",
+      "Rails run west from the station into a tunnel, and the same line continues from each provincial station",
+      "The museum was rebuilt as a grand building with columns and a pediment",
+      "The map grew a little to the south"
+     ]
+    },
+    "ja": {
+     "title": "Outskirts station and a grand museum",
+     "items": [
+      "The station moved to the southern outskirts, rebuilt large with a clock tower, a covered platform and a train",
+      "Rails run west from the station into a tunnel, and the same line continues from each provincial station",
+      "The museum was rebuilt as a grand building with columns and a pediment",
+      "The map grew a little to the south"
+     ]
+    },
+    "es": {
+     "title": "Outskirts station and a grand museum",
+     "items": [
+      "The station moved to the southern outskirts, rebuilt large with a clock tower, a covered platform and a train",
+      "Rails run west from the station into a tunnel, and the same line continues from each provincial station",
+      "The museum was rebuilt as a grand building with columns and a pediment",
+      "The map grew a little to the south"
+     ]
+    },
+    "fr": {
+     "title": "Outskirts station and a grand museum",
+     "items": [
+      "The station moved to the southern outskirts, rebuilt large with a clock tower, a covered platform and a train",
+      "Rails run west from the station into a tunnel, and the same line continues from each provincial station",
+      "The museum was rebuilt as a grand building with columns and a pediment",
+      "The map grew a little to the south"
+     ]
+    },
+    "de": {
+     "title": "Outskirts station and a grand museum",
+     "items": [
+      "The station moved to the southern outskirts, rebuilt large with a clock tower, a covered platform and a train",
+      "Rails run west from the station into a tunnel, and the same line continues from each provincial station",
+      "The museum was rebuilt as a grand building with columns and a pediment",
+      "The map grew a little to the south"
+     ]
+    }
+   }
+  },
+  {
+   "date": "2026-10-19",
    "build": "v0.2 build 19",
    "title": "계절 축제, 부동산, 상인 길드",
    "items": [
