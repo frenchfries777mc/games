@@ -2,6 +2,64 @@
  "notes": [
   {
    "date": "2026-10-19",
+   "build": "v0.2 build 7",
+   "title": "마을 회관, 낚시, 개간, 도전 과제",
+   "items": [
+    "집 옆에 마을 회관이 생겼어요. 도전 과제와 뒷산 개간지를 여기서 열어요",
+    "낚시터에서 낚시하기를 누르면 타이밍 낚시 미니게임을 할 수 있어요. 계절과 날씨에 따라 낚이는 것이 달라요",
+    "뒷산 개간지가 생겼어요. 돈을 내고 숲과 바위를 치우면 밭 12칸을 더 쓸 수 있어요",
+    "도전 과제가 생겼어요. 세 가지 목표를 제한 시간 안에 이루면 금화와 칭호를 받아요"
+   ],
+   "tr": {
+    "en": {
+     "title": "Town hall, fishing, reclamation and challenges",
+     "items": [
+      "A town hall now stands near the farm: challenges and the back-hill reclamation open from it",
+      "Fishing huts now have a timing mini-game; catches depend on season and weather",
+      "Back-hill reclamation: clear forest and rocks for gold to gain 12 more fields",
+      "Challenges: finish three timed goals for gold and titles"
+     ]
+    },
+    "ja": {
+     "title": "Town hall, fishing, reclamation and challenges",
+     "items": [
+      "A town hall now stands near the farm: challenges and the back-hill reclamation open from it",
+      "Fishing huts now have a timing mini-game; catches depend on season and weather",
+      "Back-hill reclamation: clear forest and rocks for gold to gain 12 more fields",
+      "Challenges: finish three timed goals for gold and titles"
+     ]
+    },
+    "es": {
+     "title": "Town hall, fishing, reclamation and challenges",
+     "items": [
+      "A town hall now stands near the farm: challenges and the back-hill reclamation open from it",
+      "Fishing huts now have a timing mini-game; catches depend on season and weather",
+      "Back-hill reclamation: clear forest and rocks for gold to gain 12 more fields",
+      "Challenges: finish three timed goals for gold and titles"
+     ]
+    },
+    "fr": {
+     "title": "Town hall, fishing, reclamation and challenges",
+     "items": [
+      "A town hall now stands near the farm: challenges and the back-hill reclamation open from it",
+      "Fishing huts now have a timing mini-game; catches depend on season and weather",
+      "Back-hill reclamation: clear forest and rocks for gold to gain 12 more fields",
+      "Challenges: finish three timed goals for gold and titles"
+     ]
+    },
+    "de": {
+     "title": "Town hall, fishing, reclamation and challenges",
+     "items": [
+      "A town hall now stands near the farm: challenges and the back-hill reclamation open from it",
+      "Fishing huts now have a timing mini-game; catches depend on season and weather",
+      "Back-hill reclamation: clear forest and rocks for gold to gain 12 more fields",
+      "Challenges: finish three timed goals for gold and titles"
+     ]
+    }
+   }
+  },
+  {
+   "date": "2026-10-19",
    "build": "v0.2 build 6",
    "title": "시세 신문과 무역 보험",
    "items": [
