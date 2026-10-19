@@ -326,7 +326,8 @@ const CREWNAMES=['Mina','Joon','Haru','Sol','Lena','Marco','Yuri','Otto','Nami',
 const SECRET=[
  {id:'coral',n:P('산호섬','Coral Cay'),d:P('산호초에 둘러싸인 작은 섬','A tiny isle ringed by coral'),x:44,y:150,r:11,g:'coral'},
  {id:'amber',n:P('호박섬','Amber Isle'),d:P('나무 진액이 굳은 호박이 나는 섬','An isle where amber washes ashore'),x:314,y:150,r:11,g:'amber'},
- {id:'relic',n:P('유적 환초','Ruin Atoll'),d:P('가라앉은 옛 마을이 있는 환초','An atoll with a sunken old town'),x:60,y:48,r:11,g:'relic'}];
+ {id:'relic',n:P('유적 환초','Ruin Atoll'),d:P('가라앉은 옛 마을이 있는 환초','An atoll with a sunken old town'),x:60,y:48,r:11,g:'relic'},
+ {id:'mine',n:P('광산섬','Mine Isle'),d:P('바위산에서 광석이 나는 섬','A rocky isle full of ore'),x:352,y:196,r:11,g:'amber'}];
 /* 마을 대형 주문 */
 const COMAX=1;
 const DECOMAX=80;
@@ -429,7 +430,7 @@ const TUT=[
  [P('다 자라면 밭을 눌러 수확해요','When it is grown, tap the field to harvest'),s=>s.stats.harvest>=1],
  [P('마을 장터에서 수확한 것을 팔아요','Sell your harvest at the town market'),s=>(s.stats.shop||0)>=1],
  [P('항구에서 배에 짐을 싣고 보내요','Load a ship at the harbor and send it off'),s=>s.stats.sailed>=1]];
-const OUTMAX=12,BUILD=9;
+const OUTMAX=12,BUILD=10;
 const hasB=(s,b)=>s.slots.some(x=>x&&x.b===b);
 const rankOf=e=>{let r=0;RANKS.forEach((x,i)=>{if(e>=x[0])r=i;});return r;};
 /* 업적: id, 이름, 설명, 조건 */
@@ -551,6 +552,12 @@ A('nw1m',P('백만장자','Millionaire'),P('재산 1,000,000 모으기','Reach a
 const CROPK=Object.keys(CROPS),SPEC=['goldbarley','pomegranate','saffron','cloudcotton','seaweed','dragonfruit'],CROPK17=CROPK.filter(c=>!SPEC.includes(c));
 const ACHN={};ACH.forEach(a=>ACHN[a.id]=a);
 const NOTES=[
+ {date:'2026-10-19',build:'v0.2 build 10',title:P('광산섬','Mine isle'),items:[
+  P('지도를 모아 찾는 새 섬, 광산섬이 생겼어요. 섬을 걸어 다니며 바위를 쳐서 돌, 철광석, 구리 광석, 보석 원석을 캐요','A new isle to discover: the Mine Isle. Walk around and strike rocks for stone, iron ore, copper ore and gem ore'),
+  P('제련소에서 광석을 철괴와 구리괴로 녹이고, 광부 상점에서 팔거나 곡괭이를 강화해요','Smelt ore into iron and copper ingots, sell at the miners\' store, or upgrade your pickaxe'),
+  P('배에 강철 보강을 달 수 있어요. 짐칸과 속도가 늘어요','Ships can get steel reinforcement for more hold and speed'),
+  P('공사 중인 건물에 철괴를 써서 바로 끝낼 수 있어요','Use iron ingots to finish a building under construction at once'),
+ ]},
  {date:'2026-10-19',build:'v0.2 build 9',title:P('식당, 박물관, 주민 의뢰','Diner, museum and resident requests'),items:[
   P('시장 옆에 식당이 생겼어요. 재료로 요리를 만들어 손님 주문을 받아요','A diner opened by the market: cook dishes and serve customer orders'),
   P('식당 단계를 올리면 새 요리가 열리고, 평판이 오르면 손님이 더 자주 와요','Upgrade the diner for new dishes; better reputation brings more customers'),
@@ -6787,8 +6794,8 @@ const stormAt=p=>{const t=NOW();return EV.some(e=>e.p===p&&e.kind==='storm'&&e.u
 const dist=p=>Math.hypot(PORTS[p].x-HOME[0],PORTS[p].y-HOME[1]);
 const crewV=tr=>S.cwOK===false?0:(S.crew||[]).reduce((a,c)=>a+(c.tr===tr?CREWT[tr].v*CREWP[c.pe].e:0),0);
 const spdMult=()=>1+crewV('nav')+(hasT('hull')?.2:0)+(hasT('nav')?.15:0)+(hasT('logistics')?.15:0)+bldLv('lighthouse')*0.06+(PROJ.done[0]?.12:0)+(muSet('far')?.03:0);
-const travel=(p,s)=>Math.round(dist(p)/(SHIPS[s?s.ty:0].spd*spdMult())*(stormAt(p)?1.5:1)*1000);
-const shipCap=s=>Math.round(SHIPS[s.ty].cap*(1+0.25*s.cl+crewV('carry'))*(hasT('hold')?1.2:1)*(PROJ.done[3]?1.15:1));
+const travel=(p,s)=>Math.round(dist(p)/(SHIPS[s?s.ty:0].spd*spdMult()*(1+0.04*(s&&s.rf||0)))*(stormAt(p)?1.5:1)*1000);
+const shipCap=s=>Math.round(SHIPS[s.ty].cap*(1+0.25*s.cl+crewV('carry')+0.08*(s.rf||0))*(hasT('hold')?1.2:1)*(PROJ.done[3]?1.15:1));
 const escOf=s=>s.esc+SHIPS[s.ty].esc0;
 const cargoN=c=>c?Object.values(c).reduce((a,b)=>a+b,0):0;
 function netWorth(){if(!S)return 0;let v=S.money+S.assets*0.5-S.loan+(S.dep||0)+stkValue();GOODS.forEach(g=>{v+=inv(g.id)*g.base;});S.ships.forEach(s=>{if(s.cargo)for(const k in s.cargo)v+=s.cargo[k]*GI[k].base;});return v;}
@@ -6933,6 +6940,18 @@ const NPCS=[
 const npcStep=pi=>S.npc[pi]||0;
 const npcRw=need=>{let v=0;for(const k in need)v+=GI[k].base*need[k];return Math.round(v*1.8);};
 function npcGive(pi){const N=NPCS[pi];if(!N)return;const st=npcStep(pi);if(st>=3)return;const need=N.st[st][1];for(const k in need)if(inv(k)<need[k]){toast(T('재료가 모자라요','Not enough goods'));return;}for(const k in need)S.inv[k]-=need[k];const rw=npcRw(need);S.money+=rw;S.npc[pi]=st+1;S.stats.npcDone=(S.stats.npcDone||0)+1;toast(T('{0}에게 건네주었어요! 보상 {1}','Delivered to {0}! Reward {1}',N.n,fmt(rw)));if(st===2){addMap(1);toast(T('{0}이(가) 낡은 지도를 건네요','{0} hands you an old map',N.n));}sfx('ach');}
+const MORE=[['stone','돌','Stone',5],['iron','철광석','Iron ore',18],['copper','구리 광석','Copper ore',26],['gem','보석 원석','Gem ore',240]];
+const MING=[['iron','철괴','Iron ingot',60,2,15],['copper','구리괴','Copper ingot',85,2,25]];
+const mineHits=()=>Math.max(1,3-S.mine.pick);
+const PICKUP=[{i:4,c:0,g:400},{i:6,c:6,g:1500}];
+const RFC=[{iron:3,stone:10,g:500},{iron:6,copper:2,stone:20,g:1500},{iron:10,copper:6,stone:30,g:4000}];
+function mineYield(t){const M=S.mine;let n=t==='stone'?2+Math.floor(Math.random()*3):t==='gem'?1:1+Math.floor(Math.random()*2);n+=M.pick;M.ore[t]=(M.ore[t]||0)+n;S.stats.mined=(S.stats.mined||0)+1;return n;}
+function smelt(k,all){const M=S.mine,r=MING.find(x=>x[0]===k);let n=all?Math.min(Math.floor(M.ore[k]/r[4]),Math.floor(S.money/r[5])):1;if(n<1||M.ore[k]<r[4]*n||S.money<r[5]*n)return;M.ore[k]-=r[4]*n;S.money-=r[5]*n;M.ing[k]+=n;sfx('build');}
+function sellMine(kind,k){const M=S.mine,tab=kind==='ore'?M.ore:M.ing,p=(kind==='ore'?MORE:MING).find(x=>x[0]===k)[3],n=tab[k]||0;if(n<1)return;tab[k]=0;S.money+=p*n;S.stats.earned+=p*n;sfx('coin');}
+function pickUp(){const M=S.mine,u=PICKUP[M.pick];if(!u||S.money<u.g||M.ing.iron<u.i||M.ing.copper<u.c)return;S.money-=u.g;M.ing.iron-=u.i;M.ing.copper-=u.c;M.pick++;sfx('ach');}
+function reinforce(s){const lv=s.rf||0,u=RFC[lv];if(!u)return false;const M=S.mine;if(S.money<u.g||M.ing.iron<u.iron||M.ore.stone<u.stone||M.ing.copper<(u.copper||0))return false;S.money-=u.g;M.ing.iron-=u.iron;M.ore.stone-=u.stone;M.ing.copper-=(u.copper||0);s.rf=lv+1;sfx('build');return true;}
+const hurryN=p=>Math.max(1,Math.ceil(consLeft(p)/15000));
+function hurry(i){const p=S.slots[i];if(!p||!consLeft(p))return;const n=hurryN(p);if(S.mine.ing.iron<n)return;S.mine.ing.iron-=n;p.cend=NOW();sfx('build');}
 const HN=12;
 const hillN=()=>S.hill.filter(x=>x===1).length;
 const hillCost=()=>Math.round(300*(1+hillN()*0.7)),hillMs=()=>20000+hillN()*6000;
@@ -6966,7 +6985,7 @@ function fishCatch(q){const sn=season(),rn=weather()==='rain',x=q==='perfect'?2:
   if(id==='boot'){const g=6*x;S.money+=g;return {id,txt:T('낡은 장화를 건졌어요. 고물값 {0}','You hooked an old boot. Scrap {0}',g)};}
   if(id==='chest'){const g=Math.round((120+Math.random()*200)*x);S.money+=g;sfx('ach');return {id,txt:T('가라앉은 보물 상자를 건졌어요! +{0}','A sunken chest! +{0}',g)};}
   const a=addInv(id,n);if(id==='pearl')sfx('ach');return {id,txt:a>0?T('{0} {1}개를 낚았어요','Caught {0} x{1}',GN(id),a):T('창고가 가득 차서 놓쳤어요','Warehouse full, lost it')};}
-function ensureBank(s){if(s.dep==null)s.dep=0;if(!s.stk){const p={},h={};STK.forEach(x=>{p[x.id]=x.base;h[x.id]=[x.base];});s.stk={t:NOW(),p,h,hold:{}};}const k=s.stk;if(!k.drift)k.drift={};if(!k.mom)k.mom={};if(!k.news)k.news=[];if(!s.ins)s.ins={until:0,auto:0};if(s.paper===undefined)s.paper=null;if(!s.hill)s.hill=Array(HN).fill(0);while(s.plots.length<48+HN)s.plots.push(null);while(s.own.length<48+HN)s.own.push(0);if(!s.chal)s.chal={n:0,slots:[null,null,null]};if(!s.dn)s.dn={lv:1,rep:0,orders:[],stock:{},cook:null,next:0,served:0};if(!s.mu)s.mu={don:{},till:0,t:0};if(!s.npc)s.npc={};}
+function ensureBank(s){if(s.dep==null)s.dep=0;if(!s.stk){const p={},h={};STK.forEach(x=>{p[x.id]=x.base;h[x.id]=[x.base];});s.stk={t:NOW(),p,h,hold:{}};}const k=s.stk;if(!k.drift)k.drift={};if(!k.mom)k.mom={};if(!k.news)k.news=[];if(!s.ins)s.ins={until:0,auto:0};if(s.paper===undefined)s.paper=null;if(!s.hill)s.hill=Array(HN).fill(0);while(s.plots.length<48+HN)s.plots.push(null);while(s.own.length<48+HN)s.own.push(0);if(!s.chal)s.chal={n:0,slots:[null,null,null]};if(!s.dn)s.dn={lv:1,rep:0,orders:[],stock:{},cook:null,next:0,served:0};if(!s.mu)s.mu={don:{},till:0,t:0};if(!s.npc)s.npc={};if(!s.mine)s.mine={ore:{stone:0,iron:0,copper:0,gem:0},ing:{iron:0,copper:0},pick:0};}
 const depCap=()=>loanMax()*3;
 function stkStep(){const k=S.stk;STK.forEach(x=>{let p=k.p[x.id];const z=Math.random()+Math.random()+Math.random()-1.5;let r=z*x.vol+Math.log(x.base/p)*0.02;{const dr=k.drift[x.id];if(dr&&dr.until>NOW())r+=dr.d*0.005;const mo=k.mom[x.id]||0;r+=mo;k.mom[x.id]=mo*0.85;}if(Math.random()<0.012)r+=(Math.random()<0.5?-1:1)*0.1;p=Math.max(x.base*0.35,Math.min(x.base*3,p*Math.exp(r)));k.p[x.id]=p;const h=k.h[x.id];h.push(p);if(h.length>40)h.shift();});}
 const GSTK=(()=>{const m={};const L={grain:['wheat','potato','corn','carrot','rice','sugarcane','flour','bread'],orch:['apple','tomato','pumpkin','strawberry','pepper','olive','pie','jam','sauce','oil'],wine:['grape','wine','rum','mead','sake'],tex:['cotton','wool','cloth','clothes','fine','silk','dyedcloth','hanbok','cloudcotton'],fish:['fish','canned','sushi','pearl','seaweed','coral']};for(const k in L)L[k].forEach(g=>m[g]=k);return m;})();
@@ -7733,7 +7752,7 @@ function drawStore(t){const bx=292,by=284,st=S.store||{},fx=st.fx&&NOW()-st.fx<2
   R(bx+9,by-9,10,5,'#5a3414');R(bx+10,by-8,8,3,'#f2c75a');
   if(fx){person(bx-8,by+14,'#d86a8a',1,t,'#e8d0a0');R(bx+12,by+3-Math.round((NOW()-st.fx)/500),3,2,'#f2c75a');}
   if(st.till>=1)R(bx+22,by+13,4,3,'#f2c75a');}
-function drawSecrets(t){(S.found||[]).forEach(id=>{const sc=secretOf(id),x=OX+sc.x,y=OY+sc.y,r=sc.r;
+function drawSecrets(t){(S.found||[]).forEach(id=>{const sc=secretOf(id),x=OX+sc.x,y=OY+sc.y,r=sc.r;if(id==='mine'){g.fillStyle='rgba(120,200,230,.35)';g.beginPath();g.ellipse(x,y+2,r+4,r*.7+3,0,0,6.3);g.fill();g.fillStyle='#cfc6a4';g.beginPath();g.ellipse(x,y,r,r*.7,0,0,6.3);g.fill();g.fillStyle='#6a6a68';g.beginPath();g.moveTo(x-8,y+2);g.lineTo(x-1,y-10);g.lineTo(x+8,y+2);g.fill();g.fillStyle='#8a8a86';g.beginPath();g.moveTo(x-1,y-10);g.lineTo(x+3,y-4);g.lineTo(x-2,y-3);g.fill();g.fillStyle='#e0602a';g.fillRect(Math.round(x+2),Math.round(y-2),2,2);return;}
   g.fillStyle='rgba(120,200,230,.35)';g.beginPath();g.ellipse(x,y+2,r+4,r*.7+3,0,0,6.3);g.fill();
   g.fillStyle='#e8d8a0';g.beginPath();g.ellipse(x,y,r,r*.7,0,0,6.3);g.fill();g.fillStyle='#8ac060';g.beginPath();g.ellipse(x,y-1,r-4,r*.7-3,0,0,6.3);g.fill();
   R(Math.round(x-1),Math.round(y-9),2,9,'#6b4423');R(Math.round(x-5),Math.round(y-11),11,3,'#2f7a36');R(Math.round(x-3),Math.round(y-13),7,2,'#43a04a');
@@ -8017,7 +8036,7 @@ function recText(rec){return rec[0].map(([g,n])=>GN(g)+' '+n).join(' + ')+' → 
 function popSlot(i,x,y){popAct={};const p=S.slots[i],rk=rankOf(S.stats.earned);let h='';
   if(i>=S.su){const c=slotCost();h=`<h4>${T('빈 땅','Empty lot')}</h4>`+(i===S.su?opt(T('터 닦기','Clear lot'),fmt(c)+UG(),()=>{buySlot();closePop();},S.money<c):`<div class="muted">${T('앞의 터부터 열어야 해요','Open earlier lots first')}</div>`);}
   else if(!p){h=`<h4>${T('건물 짓기','Build')}</h4>`+BK.map(b=>{const B=BLD[b],ul=isUnl(b),lock=rk<B.rank;return opt(tx(B.n),!ul?'🔒 '+tx(PORTS[LOCKP[b]].n):lock?tx(RANKS[B.rank][1]):fmt(B.cost)+UG(),()=>{buildB(i,b);closePop();},!ul||lock||S.money<B.cost);}).join('');}
-  else if(consLeft(p)){const B=BLD[p.b];h=`<h4>${tx(B.n)}</h4><div class="muted">${p.upg?T('단계를 올리는 중이에요','Upgrading'):T('짓는 중이에요','Under construction')} · ${Math.ceil(consLeft(p)/1000)}${T('초','s')}</div>`+opt(T('허물기','Demolish'),fmt(p.paid*0.5)+UG(),()=>{demolish(i);closePop();});}
+  else if(consLeft(p)){const B=BLD[p.b];h=`<h4>${tx(B.n)}</h4><div class="muted">${p.upg?T('단계를 올리는 중이에요','Upgrading'):T('짓는 중이에요','Under construction')} · ${Math.ceil(consLeft(p)/1000)}${T('초','s')}</div>`+opt(T('철괴로 서두르기','Rush with iron'),T('철괴 {0}개','{0} iron ingots',hurryN(p)),()=>{hurry(i);closePop();},S.mine.ing.iron<hurryN(p))+opt(T('허물기','Demolish'),fmt(p.paid*0.5)+UG(),()=>{demolish(i);closePop();});}
   else{const B=BLD[p.b];h=`<h4>${tx(B.n)} ${T('{0}단계','Lv {0}',p.lv)}</h4>`;
     if(B.util){h+=`<div class="muted">${tx(B.d)}</div>`;
       if(p.b==='stall'){h+=`<div class="muted" style="margin-top:4px">${p.g?T('파는 중: {0}','Selling: {0}',GN(p.g)):T('팔 물건을 고르세요','Pick a good to sell')}</div>`;GOODS.filter(q=>inv(q.id)>0).slice(0,12).forEach(q=>{h+=opt(gi(q.id)+GN(q.id),String(inv(q.id)),()=>{p.g=q.id;popSlot(i,x,y);});});if(p.g)h+=opt(T('그만 팔기','Stop'),'',()=>{p.g=null;popSlot(i,x,y);});}
@@ -8075,6 +8094,7 @@ function boxShips(){let h='';
     if(s.st==='dock')h+=`<button class="pb sm gold" data-act="go:${s.id}">${T('출항','Sail')}</button>`;
     if(s.last)h+=`<button class="pb sm ${s.rep?'gold':''}" data-act="rep:${s.id}">↻ ${T('반복','Repeat')}</button>`;
     if(s.cl<3)h+=`<button class="pb sm" data-act="cap:${s.id}" ${S.money<CAP_COST[s.cl]?'disabled':''}>${T('용량','Hold')} ${fmt(CAP_COST[s.cl])}</button>`;
+    if((s.rf||0)<3){const u=RFC[s.rf||0];h+=`<button class="pb sm" data-act="rf:${s.id}" ${S.money<u.g||S.mine.ing.iron<u.iron||S.mine.ore.stone<u.stone||S.mine.ing.copper<(u.copper||0)?'disabled':''}>${T('강철 보강','Reinforce')} ${(s.rf||0)+1}/3</button>`;}
     if(s.esc<3)h+=`<button class="pb sm" data-act="esc:${s.id}" ${S.money<ESC_COST[s.esc]?'disabled':''}>${T('호위','Escort')} ${fmt(ESC_COST[s.esc])}</button>`;
     h+='</div></div>';});
   h+=`<div class="btns"><button class="pb sm" data-act="m:yard" ${S.ships.length>=MAXSHIPS?'disabled':''}>${T('배 사기','Buy ship')}</button></div></div>`;
@@ -8096,7 +8116,7 @@ function boxEv(){let h='';
 const LIVEW=['wh','fleet','contracts','mp','bank','hill','chal','diner','museum'];let PTRDOWN=false;
 document.addEventListener('pointerdown',()=>{PTRDOWN=true;},true);document.addEventListener('pointerup',()=>{PTRDOWN=false;},true);document.addEventListener('pointercancel',()=>{PTRDOWN=false;},true);
 function renderSide(force){if(!S||!MOD||!LIVEW.includes(MOD.type)||$('modal').hidden)return;if(PTRDOWN&&!force)return;const f=MODS[MOD.type];if(!f)return;const html=f(MOD);if(!force&&html===MOD._sig)return;MOD._sig=html;renderModal();}
-ACT.go=a=>openDispatch(+a);ACT.rep=a=>{const s=S.ships.find(x=>x.id===+a);if(s){s.rep=!s.rep;s.repT=0;}renderSide(true);};ACT.cap=a=>{upCap(S.ships.find(s=>s.id===+a));updateHud();renderSide(true);};ACT.esc=a=>{upEsc(S.ships.find(s=>s.id===+a));updateHud();renderSide(true);};
+ACT.rf=a=>{reinforce(S.ships.find(x=>x.id===+a));updateHud();renderSide(true);};ACT.go=a=>openDispatch(+a);ACT.rep=a=>{const s=S.ships.find(x=>x.id===+a);if(s){s.rep=!s.rep;s.repT=0;}renderSide(true);};ACT.cap=a=>{upCap(S.ships.find(s=>s.id===+a));updateHud();renderSide(true);};ACT.esc=a=>{upEsc(S.ships.find(s=>s.id===+a));updateHud();renderSide(true);};
 ACT.yes=a=>{answerOffer(a,true);renderSide(true);};ACT.no=a=>{answerOffer(a,false);renderSide(true);};ACT.trade=a=>openTrade(a);ACT.visit=a=>startVisit(a);ACT.ltreq=a=>{ltRequest(a);};
 function updateHud(){if(!S)return;$('hud').hidden=false;const tu=$('tut'),on=S.tut>=0&&S.tut<TUT.length&&!MP.on;if(on){const h=`<span class="tn">${S.tut+1}/${TUT.length}</span> ${tx(TUT[S.tut][0])} <button class="tb sm" data-act="tutskip">${T('건너뛰기','Skip')}</button>`;if(tu.dataset.h!==h){tu.dataset.h=h;tu.innerHTML=h;}}tu.hidden=!on;$('sMoney').textContent=fmt(S.money);
   const rk=rankOf(S.stats.earned),nx=RANKS[rk+1],cur=RANKS[rk][0];$('sRank').textContent=tx(RANKS[rk][1]);$('sRankBar').style.width=(nx?Math.min(100,(S.stats.earned-cur)/(nx[0]-cur)*100):100)+'%';
@@ -8304,6 +8324,15 @@ MODS.npc=m=>{const N=NPCS[m.pi],st=npcStep(m.pi);if(!N)return '';
   let b;if(st>=3)b=`<div class="card"><div class="grow">${T('세 가지 부탁을 모두 들어줬어요. 고마워요!','You did all three favors. Thank you!')}</div></div>`;else{const [say,need]=N.st[st],ok=Object.keys(need).every(k=>inv(k)>=need[k]);b=`<div class="card" style="display:block"><div>${T(say,say)}</div><div class="muted" style="margin-top:4px">${Object.keys(need).map(k=>GN(k)+' '+inv(k)+'/'+need[k]).join(', ')} · ${T('보상 {0}','Reward {0}',fmt(npcRw(need)))}${st===2?' + '+T('낡은 지도','an old map'):''}</div><div class="btns" style="margin-top:6px"><button class="pb sm gold" data-act="npcgive:${m.pi}" ${ok?'':'disabled'}>${T('건네주기','Hand over')}</button></div></div>`;}
   return `<h2>${T(N.n,N.n)}</h2><div class="muted">${m.msg||''}</div><div class="muted">${T('부탁 {0}/3','Favor {0}/3',Math.min(3,st+(st<3?1:0)))}</div>${b}`;};
 ACT.npcgive=a=>{npcGive(+a);updateHud();renderModal();};
+/* 광산섬 */
+MODS.mine=()=>{const M=S.mine,u=PICKUP[M.pick];
+  return `<h2>${T('광부 상점·제련소','Miners store & smelter')}</h2><div class="muted">${T('섬을 걸어 다니며 바위를 쳐서 광석을 캐요. 곡괭이를 강화하면 덜 쳐도 되고 더 많이 나와요','Strike rocks around the isle for ore. A better pickaxe needs fewer hits and yields more')}</div>
+  <h5>${T('광석','Ore')}</h5>${MORE.map(r=>`<div class="card"><div class="grow"><b>${T(r[1],r[2])}</b> ${M.ore[r[0]]||0}<div class="muted">${T('개당 {0}','{0} each',r[3])}${UG()}</div></div>${MING.find(x=>x[0]===r[0])?`<button class="pb sm" data-act="smelt:${r[0]}:1" ${(M.ore[r[0]]||0)<2||S.money<MING.find(x=>x[0]===r[0])[5]?'disabled':''}>${T('녹이기','Smelt')}</button><button class="pb sm" data-act="smelt:${r[0]}:all" ${(M.ore[r[0]]||0)<2?'disabled':''}>${T('모두 녹이기','Smelt all')}</button>`:''}<button class="pb sm gold" data-act="mnsell:ore:${r[0]}" ${(M.ore[r[0]]||0)<1?'disabled':''}>${T('팔기','Sell')}</button></div>`).join('')}
+  <div class="muted">${T('철광석·구리 광석 2개와 수수료 15·25{0}로 괴 1개를 만들어요','2 ore + a 15/25{0} fee make 1 ingot',UG())}</div>
+  <h5>${T('괴','Ingots')}</h5>${MING.map(r=>`<div class="card"><div class="grow"><b>${T(r[1],r[2])}</b> ${M.ing[r[0]]||0}<div class="muted">${T('개당 {0}','{0} each',r[3])}${UG()}</div></div><button class="pb sm gold" data-act="mnsell:ing:${r[0]}" ${(M.ing[r[0]]||0)<1?'disabled':''}>${T('팔기','Sell')}</button></div>`).join('')}
+  <div class="muted">${T('철괴는 배 강철 보강과 공사 서두르기에 써요. 팔지 말고 모아 두세요','Keep ingots for ship reinforcement and rushing construction')}</div>
+  <h5>${T('곡괭이','Pickaxe')} ${T('{0}단계','Lv {0}',M.pick+1)}</h5>${u?`<div class="card"><div class="grow">${T('다음 단계: 철괴 {0}{1}, {2}','Next: {0} iron{1}, {2}',u.i,u.c?T(', 구리괴 {0}',', {0} copper',u.c):'',fmt(u.g)+UG())}<div class="muted">${T('치는 횟수 {0}번 → {1}번, 캐는 양 +1','Hits {0} → {1}, yield +1',mineHits(),mineHits()-1)}</div></div><button class="pb sm gold" data-act="pickup" ${S.money<u.g||M.ing.iron<u.i||M.ing.copper<u.c?'disabled':''}>${T('강화','Upgrade')}</button></div>`:`<div class="muted">${T('가장 좋은 곡괭이예요','Best pickaxe')}</div>`}`;};
+ACT.smelt=a=>{const [k,n]=a.split(':');smelt(k,n==='all');updateHud();renderModal();};ACT.mnsell=a=>{const [kind,k]=a.split(':');sellMine(kind,k);updateHud();renderModal();};ACT.pickup=()=>{pickUp();updateHud();renderModal();};
 /* 도감 */
 MODS.codex=()=>{const cn=Object.keys(S.codex).length,tr=codexTier(S);let h=`<h2>${T('도감','Codex')} <span class="muted" style="font-family:var(--ko)">${GOODS.filter(g0=>S.codex[g0.id]).length}/${GOODS.length}</span></h2><div class="box"><div class="row"><span><b>${T('도감 등급 {0}','Codex tier {0}',tr)}</b> <small class="muted">${T('팔 때 +{0}%','Sell +{0}%',(tr*0.4).toFixed(1))}</small></span><span class="muted">${T('다음 등급까지 {0}개','{0} more for next tier',10-cn%10)}</span></div><div class="muted">${T('등급이 오르면 꾸미기 물건이 풀려요','Higher tiers unlock decorations')}: ${Object.keys(DECO).filter(k=>DECO[k].need).map(k=>tx(DECO[k].n)+(cn>=DECO[k].need?' ✔':' ('+DECO[k].need+')')).join(', ')}</div></div>`;
   GOODS.forEach(g0=>{const seen=S.codex[g0.id];if(!seen){h+=`<div class="card" style="opacity:.55"><div class="gi" style="background:#120a04"></div><div class="grow">???</div></div>`;return;}
@@ -8525,9 +8554,12 @@ const ISLES=[
   feat:[['pine',22],['amber',8],['stump',4]],fg:[],ground:'#6a7a42',secret:'amber'},
  /* 8 유적 환초 */{seed:97,sea:'#1f7aa0',grass:['#7aa66a','#6c985c'],beach:'#e0d2a8',amp:[.05,.07,.06],ph:[1.0,2.0,.3],ax:.78,ay:.72,ruin:1,
   mk:[P('유적 제단','Ruined altar'),'#b8b8a8'],lm:[P('가라앉은 마을','Sunken village'),P('물 아래로 옛 집터와 길이 비쳐 보여요.','Old house foundations and paths shimmer under the water.')],
-  feat:[['pillar',8],['wall',5],['palm',4],['rune',3]],fg:[],ground:'#a8a890',secret:'relic'}];
-const ISLHB=[['항구 일꾼 집','곡식 포대를 배에 싣는 일꾼들이 쉬어 가는 집이에요.','#a8784a'],['과일 상자 창고','갓 딴 사과가 상자째 배를 기다려요.','#c0452f'],['와인 통 창고','부두 옆에서 와인 통을 굴려 배에 실어요.','#7a3e9d'],['솜 창고','솜 포대가 구름처럼 쌓여 있어요.','#8ab0e0'],['어부의 집','새벽마다 어부들이 그물을 챙겨 나가요.','#3a6fb8'],['세관 초소','먼 바다에서 온 배의 짐을 확인하는 곳이에요.','#e07a2a'],['조개 오두막','주운 조개를 말려 두는 오두막이에요.','#f08aa0'],['채집꾼 오두막','호박을 캐는 사람들이 쉬어 가는 오두막이에요.','#8a6a32'],['탐사대 천막','유적을 조사하는 사람들이 머무는 천막이에요.','#b8b8a8']];
-const isI=id=>{if(id<6)return id;return 6+['coral','amber','relic'].indexOf(id);};
+  feat:[['pillar',8],['wall',5],['palm',4],['rune',3]],fg:[],ground:'#a8a890',secret:'relic'},
+ /* 9 광산섬 */{seed:131,sea:'#1f6a92',grass:['#7a8a5a','#6e7e50'],beach:'#cfc6a4',amp:[.08,.06,.09],ph:[.9,2.3,1.6],ax:.84,ay:.8,
+  mk:[P('광부 상점','Miners store'),'#8a8a96'],lm:[P('제련소','Smelter'),P('붉은 불꽃이 밤낮없이 광석을 녹여요.','A red fire melts ore day and night.')],
+  feat:[['pine',9],['stump',5],['wall',3],['hut',2]],fg:[],ground:'#7a7a72',secret:'mine',mine:1}];
+const ISLHB=[['항구 일꾼 집','곡식 포대를 배에 싣는 일꾼들이 쉬어 가는 집이에요.','#a8784a'],['과일 상자 창고','갓 딴 사과가 상자째 배를 기다려요.','#c0452f'],['와인 통 창고','부두 옆에서 와인 통을 굴려 배에 실어요.','#7a3e9d'],['솜 창고','솜 포대가 구름처럼 쌓여 있어요.','#8ab0e0'],['어부의 집','새벽마다 어부들이 그물을 챙겨 나가요.','#3a6fb8'],['세관 초소','먼 바다에서 온 배의 짐을 확인하는 곳이에요.','#e07a2a'],['조개 오두막','주운 조개를 말려 두는 오두막이에요.','#f08aa0'],['채집꾼 오두막','호박을 캐는 사람들이 쉬어 가는 오두막이에요.','#8a6a32'],['탐사대 천막','유적을 조사하는 사람들이 머무는 천막이에요.','#b8b8a8'],['짐꾼 오두막','광석 수레가 부두로 줄지어 내려와요.','#8a8a96']];
+const isI=id=>{if(id<6)return id;return 6+['coral','amber','relic','mine'].indexOf(id);};
 function islRng(s){let a=s|0;return()=>{a=(a+0x6D2B79F5)|0;let t=Math.imul(a^(a>>>15),1|a);t=(t+Math.imul(t^(t>>>7),61|t))^t;return((t^(t>>>14))>>>0)/4294967296;};}
 function islQ(th,x,y){const dx=(x-IW/2)/(IW*.4*th.ax),dy=(y-IH/2)/(IH*.4*th.ay),d=Math.hypot(dx,dy),a=Math.atan2(dy,dx);
   let r=1+th.amp[0]*Math.sin(2*a+th.ph[0])+th.amp[1]*Math.sin(3*a+th.ph[1])+th.amp[2]*Math.sin(5*a+th.ph[2]);
@@ -8581,6 +8613,7 @@ function buildIsl(k){const th=ISLES[k],rnd=islRng(th.seed),c=document.createElem
   else if(k===5){for(let i=0;i<6;i++)IR(lx+i*6,ly+4,6,10,['#d8402a','#f2c75a','#3c8ac8','#8a46b0','#e07a2a','#6fcf6a'][i]);IR(lx-1,ly,38,5,'#f4efe0');IR(lx+2,ly+14,5,12,'#5a3a1e');IR(lx+28,ly+14,5,12,'#5a3a1e');for(let i=0;i<4;i++)IR(lx+3+i*8,ly+18,6,6,['#e0b030','#c04020','#e08030','#a08050'][i]);}
   else if(k===6){for(let i=0;i<7;i++){const a=i*.9,rx=lx+16+Math.cos(a)*10,ry=ly+16+Math.sin(a)*7;IR(rx,ry,5,5,['#f08aa0','#f0a05a','#e06ab0'][i%3]);IR(rx+1,ry-3,3,4,['#f08aa0','#f0a05a','#e06ab0'][i%3]);}IR(lx+8,ly+10,16,12,'#2aaac8');fx.push({t:'twink',x:lx+16,y:ly+16,c:'#fff'});}
   else if(k===7){IR(lx+4,ly+8,26,18,'#6a4a22');for(let i=0;i<9;i++)IR(lx+6+(i%3)*8,ly+10+Math.floor(i/3)*5,6,4,['#e8a22a','#f2c040','#d8821a'][i%3]);fx.push({t:'glow',x:lx+17,y:ly+16,c:'#ffd070'});}
+  else if(k===9){IR(lx,ly+10,34,16,'#5a5a58');IR(lx-1,ly+6,36,5,'#7a7a78');IR(lx+22,ly-12,8,20,'#6a6a68');IR(lx+22,ly-14,8,3,'#3a3a38');IR(lx+8,ly+14,10,12,'#e0602a');IR(lx+10,ly+16,6,8,'#f2c75a');fx.push({t:'smoke',x:lx+26,y:ly-14});fx.push({t:'glow',x:lx+13,y:ly+20,c:'#ff8a3a'});}
   else{for(let i=0;i<6;i++){const a=i*1.05;IR(lx+16+Math.cos(a)*13,ly+16+Math.sin(a)*9,4,12,'#c8c8b8');IR(lx+15+Math.cos(a)*13,ly+14+Math.sin(a)*9,6,2,'#a8a898');}IR(lx+12,ly+12,8,8,'#8a8a7a');fx.push({t:'glow',x:lx+16,y:ly+16,c:'#9ae8ff'});}
   block(lx,ly+4,34,24);objs.push({k:'lm',npc:1,x:lx,y:ly+4,w:34,h:24,r:10,msg:tx(th.lm[1])});lab.push([tx(th.lm[0]),lx+17,ly-8,'#e8dcc0']);
   /* 꾸밈 */
@@ -8634,8 +8667,15 @@ function buildIsl(k){const th=ISLES[k],rnd=islRng(th.seed),c=document.createElem
 function enterIsl(id){const k=isI(id),th=ISLES[k];if(!ISL.cache)ISL.cache={};if(!ISL.cache[k])ISL.cache[k]=buildIsl(k);const b=ISL.cache[k];
   Object.assign(ISL,{on:true,k,th,img:b.img,mask:b.mask,objs:b.objs,obs:b.obs,lab:b.lab,fx:b.fx,goal:null,near:null,mv:0,dir:1,walk:0,id});
   const d=b.objs.find(o=>o.k==='dock');ISL.x=d.x+d.w+8;ISL.y=d.y+d.h/2+2;
+  ISL.nodes=[];ISL.nodeT=0;if(th.mine){ISL.objs=b.objs.slice();for(let i=0;i<8;i++)spawnNode();}
   ISL.fg=[];ISL.fgT=0;ISL.hint=true;VIEW='isl';closePop();closeModal();HOVER=-1;const bb=$('backBtn');if(bb)bb.hidden=false;
   toast(T('{0}에 상륙했어요! 걸어서 둘러보세요','Landed on {0}! Walk around',tx(k<6?PORTS[k].n:secretOf(th.secret).n)));}
+function spawnNode(){const th=ISL.th;for(let t=0;t<120;t++){const x=Math.floor(IW*.14+Math.random()*IW*.72),y=Math.floor(IH*.14+Math.random()*IH*.72);if(!(ISL.mask[y*IW+x]>=2&&islWalk(x,y)&&islWalk(x+10,y)&&islWalk(x,y+9)&&islWalk(x+10,y+9)))continue;
+    if(ISL.objs.some(o=>x<o.x+o.w+6&&x+16>o.x&&y<o.y+o.h+6&&y+15>o.y))continue;if(Math.hypot(x-ISL.x,y-ISL.y)<26)continue;
+    const r=Math.random(),ty=r<.45?'stone':r<.75?'iron':r<.93?'copper':'gem',n={k:'ore',t:ty,x,y,w:10,h:9,r:8,hp:0,fl:0};ISL.nodes.push(n);ISL.objs.push(n);return;}}
+function mineHit(o){o.hp++;o.fl=performance.now();sfx('click');const need=mineHits();
+  if(o.hp>=need){const n=mineYield(o.t);ISL.nodes=ISL.nodes.filter(q=>q!==o);ISL.objs=ISL.objs.filter(q=>q!==o);const m=MORE.find(x=>x[0]===o.t);toast(T('{0} {1}개를 캤어요','Mined {1} {0}',T(m[1],m[2]),n));sfx('coin');if(o.t==='gem')sfx('ach');ISL.nodeT=Math.max(ISL.nodeT,3);}
+  else toast(T('탕! ({0}/{1})','Clang! ({0}/{1})',o.hp,need));}
 function leaveIsl(){ISL.on=false;VIEW='helm';ISL.goal=null;const bb=$('backBtn');if(bb)bb.hidden=false;toast(T('다시 배에 탔어요','Back on the ship'));}
 function islWalk(x,y){const ix=Math.round(x),iy=Math.round(y);if(ix<2||iy<2||ix>=IW-2||iy>=IH-2)return false;if(ISL.mask[iy*IW+ix]<2)return false;
   for(const o of ISL.obs)if(x>=o.x&&x<=o.x+o.w&&y>=o.y&&y<=o.y+o.h)return false;return true;}
@@ -8649,12 +8689,15 @@ function moveIsl(dt){if(!$('modal').hidden)return;let vx=0,vy=0;
   const mv=Math.hypot(ISL.x-ox,ISL.y-oy);ISL.mv=mv>sp*dt*.2?1:0;if(ISL.mv)ISL.walk+=dt;
   if(ISL.goal){ISL.stuck=(ISL.stuck||0)+(mv<sp*dt*.3?dt:-(ISL.stuck||0));if(ISL.stuck>.35){ISL.goal=null;ISL.stuck=0;}}else ISL.stuck=0;
   ISL.near=islNear();
+  if(ISL.th.mine&&ISL.nodes.length<8){ISL.nodeT-=dt;if(ISL.nodeT<=0){ISL.nodeT=8;spawnNode();}}
   /* 특산물 줍기 */
   if(ISL.th.fg&&ISL.th.fg.length){ISL.fgT-=dt;if(ISL.fg.length<5&&ISL.fgT<=0){ISL.fgT=ISL.fg.length?7:.2;for(let t=0;t<50;t++){const x=IW*.12+Math.random()*IW*.76,y=IH*.12+Math.random()*IH*.76;
         if(ISL.mask[Math.round(y)*IW+Math.round(x)]>=2&&islWalk(x,y)&&Math.hypot(x-ISL.x,y-ISL.y)>30){ISL.fg.push({x,y,g:ISL.th.fg[Math.floor(Math.random()*ISL.th.fg.length)]});break;}}}
     for(let i=ISL.fg.length-1;i>=0;i--){const f=ISL.fg[i];if(Math.hypot(ISL.x-f.x-4,ISL.y-f.y-4)<7){ISL.fg.splice(i,1);const n=1+Math.floor(Math.random()*2),a=addInv(f.g,n);if(a>0){toast(T('{0} {1}개를 주웠어요','Picked up {1} {0}',GN(f.g),a));sfx('coin');}else toast(T('창고가 가득 찼어요','Warehouse is full'));}}}}
 function islAct(o){o=o||ISL.near;if(!o){toast(T('건물이나 부두 가까이로 가 보세요','Walk to a building or the pier'));return;}
   if(o.k==='dock'){leaveIsl();return;}
+  if(o.k==='ore'){mineHit(o);return;}
+  if((o.k==='market'||(o.k==='lm'&&ISL.th.mine))&&ISL.th.mine){openModal('mine');return;}
   if(o.k==='market'){if(ISL.th.secret)openModal('secret',{id:ISL.th.secret});else openModal('isle',{pi:ISL.k});return;}
   if(o.k==='lm'){if(o.npc&&NPCS[ISL.k]){openModal('npc',{pi:ISL.k,msg:o.msg});sfx('click');}else{toast(o.msg);sfx('click');}}}
 function drawIsl(t){const th=ISL.th;g.fillStyle=th.sea;g.fillRect(0,0,VW,VH);
@@ -8663,6 +8706,8 @@ function drawIsl(t){const th=ISL.th;g.fillStyle=th.sea;g.fillRect(0,0,VW,VH);
   const f=Math.floor(t*1.5);g.fillStyle='rgba(235,248,255,.5)';for(let i=0;i<70;i++){const x=Math.floor(h2(i,f,41)*IW),y=Math.floor(h2(i,f,42)*IH);if(ISL.mask[y*IW+x]<=1)g.fillRect(x,y,2,1);}
   /* 특산물 */
   ISL.fg.forEach(q=>{const b=Math.round(Math.sin(t*4+q.x)*1);R(q.x+1,q.y+9,6,1,'rgba(0,0,0,.25)');ico(q.g,q.x,q.y+b);});
+  /* 광석 */
+  if(ISL.nodes)ISL.nodes.forEach(n=>{const sh=performance.now()-n.fl<160?(Math.floor(performance.now()/40)%2?1:-1):0,x=n.x+sh,y=n.y,fc={stone:'#c8c8c0',iron:'#b87a4a',copper:'#e08a3a',gem:'#5ae0e8'}[n.t];R(x,y+7,11,2,'rgba(0,0,0,.25)');R(x+1,y+2,9,6,'#7a7a76');R(x+2,y,7,3,'#8a8a86');R(x+3,y+3,2,2,fc);R(x+7,y+4,2,2,fc);if(n.t==='gem'||n.t==='copper')R(x+5,y+1,2,2,fc);if(n.hp)R(x+1,y+6,9,1,'#4a4a48');});
   /* 움직임 */
   ISL.fx.forEach(e=>{
     if(e.t==='mill'){const a=t*1.2;for(let k=0;k<4;k++){const aa=a+k*Math.PI/2;g.strokeStyle='#e8dcc0';g.lineWidth=1.5;g.beginPath();g.moveTo(e.x,e.y);g.lineTo(e.x+Math.cos(aa)*13,e.y+Math.sin(aa)*13);g.stroke();}R(e.x-1,e.y-1,3,3,'#5a3414');}
@@ -8680,7 +8725,7 @@ function drawIsl(t){const th=ISL.th;g.fillStyle=th.sea;g.fillRect(0,0,VW,VH);
 function islLabels(){cx.textBaseline='middle';cx.textAlign='center';const fnt=n=>(n*SC)+'px Gugi,"Malgun Gothic",sans-serif';
   const th=ISL.th,nm=ISL.k<6?tx(PORTS[ISL.k].n):tx(secretOf(th.secret).n);cx.font=fnt(9);label(nm,VW*SC/2,12*SC,'#fff6b0');
   cx.font=fnt(6);ISL.lab.forEach(l=>label(l[0],(l[1]-ISL.cx)*SC,(l[2]-ISL.cy)*SC,l[3]));
-  cx.font=fnt(7);const n=ISL.near,msg=n?(n.k==='dock'?T('E: 배로 돌아가기','E: back to ship'):n.k==='market'?T('E: {0}','E: {0}',tx(th.mk[0])):T('E: 둘러보기','E: look')):T('걸어서 섬을 둘러보세요. 반짝이는 물건을 주울 수 있어요','Walk around. Pick up the shiny things');
+  cx.font=fnt(7);const n=ISL.near,msg=n?(n.k==='dock'?T('E: 배로 돌아가기','E: back to ship'):n.k==='market'?T('E: {0}','E: {0}',tx(th.mk[0])):n.k==='ore'?T('E: 캐기','E: mine'):T('E: 둘러보기','E: look')):T('걸어서 섬을 둘러보세요. 반짝이는 물건을 주울 수 있어요','Walk around. Pick up the shiny things');
   label(msg,VW*SC/2,(VH-14)*SC,n?'#fff6b0':'#d8e8f0');}
 
 /* ================= 시작, 루프 ================= */

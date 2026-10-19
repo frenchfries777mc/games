@@ -2,6 +2,64 @@
  "notes": [
   {
    "date": "2026-10-19",
+   "build": "v0.2 build 10",
+   "title": "광산섬",
+   "items": [
+    "지도를 모아 찾는 새 섬, 광산섬이 생겼어요. 섬을 걸어 다니며 바위를 쳐서 돌, 철광석, 구리 광석, 보석 원석을 캐요",
+    "제련소에서 광석을 철괴와 구리괴로 녹이고, 광부 상점에서 팔거나 곡괭이를 강화해요",
+    "배에 강철 보강을 달 수 있어요. 짐칸과 속도가 늘어요",
+    "공사 중인 건물에 철괴를 써서 바로 끝낼 수 있어요"
+   ],
+   "tr": {
+    "en": {
+     "title": "Mine isle",
+     "items": [
+      "A new isle to discover: the Mine Isle. Walk around and strike rocks for stone, iron ore, copper ore and gem ore",
+      "Smelt ore into iron and copper ingots, sell at the miners' store, or upgrade your pickaxe",
+      "Ships can get steel reinforcement for more hold and speed",
+      "Use iron ingots to finish a building under construction at once"
+     ]
+    },
+    "ja": {
+     "title": "Mine isle",
+     "items": [
+      "A new isle to discover: the Mine Isle. Walk around and strike rocks for stone, iron ore, copper ore and gem ore",
+      "Smelt ore into iron and copper ingots, sell at the miners' store, or upgrade your pickaxe",
+      "Ships can get steel reinforcement for more hold and speed",
+      "Use iron ingots to finish a building under construction at once"
+     ]
+    },
+    "es": {
+     "title": "Mine isle",
+     "items": [
+      "A new isle to discover: the Mine Isle. Walk around and strike rocks for stone, iron ore, copper ore and gem ore",
+      "Smelt ore into iron and copper ingots, sell at the miners' store, or upgrade your pickaxe",
+      "Ships can get steel reinforcement for more hold and speed",
+      "Use iron ingots to finish a building under construction at once"
+     ]
+    },
+    "fr": {
+     "title": "Mine isle",
+     "items": [
+      "A new isle to discover: the Mine Isle. Walk around and strike rocks for stone, iron ore, copper ore and gem ore",
+      "Smelt ore into iron and copper ingots, sell at the miners' store, or upgrade your pickaxe",
+      "Ships can get steel reinforcement for more hold and speed",
+      "Use iron ingots to finish a building under construction at once"
+     ]
+    },
+    "de": {
+     "title": "Mine isle",
+     "items": [
+      "A new isle to discover: the Mine Isle. Walk around and strike rocks for stone, iron ore, copper ore and gem ore",
+      "Smelt ore into iron and copper ingots, sell at the miners' store, or upgrade your pickaxe",
+      "Ships can get steel reinforcement for more hold and speed",
+      "Use iron ingots to finish a building under construction at once"
+     ]
+    }
+   }
+  },
+  {
+   "date": "2026-10-19",
    "build": "v0.2 build 9",
    "title": "식당, 박물관, 주민 의뢰",
    "items": [
