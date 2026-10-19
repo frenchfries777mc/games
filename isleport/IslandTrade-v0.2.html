@@ -435,7 +435,7 @@ const TUT=[
  [P('다 자라면 밭을 눌러 수확해요','When it is grown, tap the field to harvest'),s=>s.stats.harvest>=1],
  [P('마을 장터에서 수확한 것을 팔아요','Sell your harvest at the town market'),s=>(s.stats.shop||0)>=1],
  [P('항구에서 배에 짐을 싣고 보내요','Load a ship at the harbor and send it off'),s=>s.stats.sailed>=1]];
-const OUTMAX=12,BUILD=24;
+const OUTMAX=12,BUILD=25;
 const hasB=(s,b)=>s.slots.some(x=>x&&x.b===b);
 const rankOf=e=>{let r=0;RANKS.forEach((x,i)=>{if(e>=x[0])r=i;});return r;};
 /* 업적: id, 이름, 설명, 조건 */
@@ -557,6 +557,11 @@ A('nw1m',P('백만장자','Millionaire'),P('재산 1,000,000 모으기','Reach a
 const CROPK=Object.keys(CROPS),SPEC=['goldbarley','pomegranate','saffron','cloudcotton','seaweed','dragonfruit'],CROPK17=CROPK.filter(c=>!SPEC.includes(c));
 const ACHN={};ACH.forEach(a=>ACHN[a.id]=a);
 const NOTES=[
+ {date:'2026-10-19',build:'v0.2 build 25',title:P('선로를 달리는 기차','Train on real rails'),items:[
+  P('기차를 타면 역에서 출발한 기차가 선로를 따라 터널로 들어가요. 화면이 기차를 따라가요','Boarding makes the train pull out of the station, run down the rails and into the tunnel, with the camera following'),
+  P('지방 역에는 같은 선로로 기차가 들어와 멈춰요. 돌아올 때도 기차가 떠나고 우리 역으로 들어와요','At the provincial station the train rolls in on the same line; going home it leaves and pulls into your station'),
+  P('지방 지역도 섬과 같은 3.5배 크기예요','Provinces are 3.5x larger, like the islands')
+ ]},
  {date:'2026-10-19',build:'v0.2 build 24',title:P('섬 상륙 맵 대확장','Bigger islands'),items:[
   P('상륙했을 때 섬이 가로세로 3.5배, 넓이로는 약 12배 커졌어요','Landed islands are 3.5x wider and taller, about 12x the area'),
   P('밭·나무·장식과 광석, 줍는 특산물이 훨씬 많아졌어요','Fields, trees, decor, ore and pick-up goods are far more plentiful'),
@@ -7650,8 +7655,6 @@ function buildWorld(sn){
   k.fillStyle='#fffdf5';k.beginPath();k.arc(262,600,5,0,6.3);k.fill();k.fillStyle='#2a2a2e';k.fillRect(262,596,1,5);k.fillRect(262,600,3,1);
   k.fillStyle='#3a5a7a';k.fillRect(246,632,5,12);k.fillRect(274,632,5,12);k.fillStyle='#8ab0d0';k.fillRect(247,633,3,5);k.fillRect(275,633,3,5);k.fillStyle='#4a3a2a';k.fillRect(258,636,9,14);k.fillStyle='#fffdf5';[238,282].forEach(cx=>{k.fillRect(cx,632,3,18);k.fillStyle='#d8d0b8';k.fillRect(cx+2,632,1,18);k.fillStyle='#fffdf5';});
   k.fillStyle='#8a5a3a';k.fillRect(176,654,172,3);k.fillStyle='#a8352a';k.fillRect(176,657,172,2);k.fillStyle='#5a3414';for(let q=178;q<348;q+=24)k.fillRect(q,654,2,8);
-  k.fillStyle='#2a2a2e';k.fillRect(290,656,28,15);k.fillRect(292,650,6,8);k.fillStyle='#c8402a';k.fillRect(290,666,28,3);k.fillStyle='#e8d890';k.fillRect(308,659,7,5);
-  [198,228,258].forEach(x0=>{k.fillStyle='#3a6a9a';k.fillRect(x0,657,28,13);k.fillStyle='#d8402a';k.fillRect(x0,665,28,3);k.fillStyle='#e8e4d8';for(let q=0;q<4;q++)k.fillRect(x0+3+q*6,660,4,4);k.fillStyle='#2a2a2e';k.fillRect(x0+3,670,5,2);k.fillRect(x0+20,670,5,2);});
   // 풍차 (탑)
   k.fillStyle='#cdbf9a';k.fillRect(264,254,8,26);k.fillStyle='#a89a74';k.fillRect(263,278,10,3);roofG(kRect(k),268,255,11,6,'#a8784a');
   // 마을 광장 가로등, 벤치
@@ -7948,9 +7951,14 @@ function seasonV(){const sn=season();return (SF.prev!=null&&SF.cur===sn&&NOW()-S
 function drawScene(kind,x,y){const sn=season();if(SF.cur!==sn){if(SF.cur>=0){SF.prev=SF.cur;SF.t0=NOW();}SF.cur=sn;}
   const sc=sceneImg(kind).c,f=SF.prev!=null?(NOW()-SF.t0)/SFADE:1,pv=SF.prev!=null&&terr[kind+SF.prev];
   if(f<1&&pv){g.drawImage(pv.c,x,y);g.globalAlpha=f*f*(3-2*f);g.drawImage(sc,x,y);g.globalAlpha=1;}else g.drawImage(sc,x,y);}
+function trainSprite(rf,x,y){for(let i=0;i<5;i++){const cx=x+i*32,lo=i===0||i===4,l=i===0;
+  if(lo){rf(cx,y,28,15,'#2a2a2e');rf(cx+(l?4:18),y-6,6,8,'#2a2a2e');rf(cx,y+10,28,3,'#c8402a');rf(cx+(l?2:19),y+3,7,5,'#e8d890');rf(cx+(l?14:6),y+3,8,5,'#3a3a40');}
+  else{rf(cx,y+1,28,13,'#3a6a9a');rf(cx,y+9,28,3,'#d8402a');for(let q=0;q<4;q++)rf(cx+3+q*6,y+4,4,4,'#e8e4d8');}
+  rf(cx+3,y+14,5,2,'#2a2a2e');rf(cx+20,y+14,5,2,'#2a2a2e');if(i<4)rf(cx+28,y+9,4,2,'#2a2a2e');}}
 function drawWorldDyn(t){
   const x0=Math.round(CAM.x)-130,y0=Math.round(CAM.y)-80,x1=x0+VW+260,y1=y0+VH+160;const vis=(x,y,w,h)=>x+w>x0&&x<x1&&y+h>y0&&y<y1;
   worldSparkles(t);
+  if(vis(0,640,800,40)){g.save();g.beginPath();g.rect(15,600,900,100);g.clip();trainSprite(R,RIDE.on?Math.round(RIDE.x):186,656);g.restore();}
   // 풍차 날개, 굴뚝 연기
   const wx=268,wy=256,a=t*0.7;for(let k=0;k<4;k++){const aa=a+k*Math.PI/2;line(wx,wy,wx+Math.cos(aa)*14,wy+Math.sin(aa)*14,'#e8dcc0');}R(wx-1,wy-1,3,3,'#5a3414');smoke(40,238,t,3);
   for(let i=0;i<48;i++){const [x,y]=plotXY(i);if(vis(x,y,PS[0],PS[1]))drawPlot(i,t);}
@@ -7962,7 +7970,7 @@ function drawWorldDyn(t){
   for(let i=0;i<4;i++){const gx=((t*10+i*210)%(WLD_W+40))-20,gy=40+i*130+Math.sin(t*1.5+i)*6,fl=Math.floor(t*5+i)%2;if(gx>600){R(gx,gy,2,1,'#fff');R(gx-2,gy+(fl?-1:1),2,1,'#fff');R(gx+2,gy+(fl?-1:1),2,1,'#fff');}}
   S.ships.forEach((s,i)=>{if(s.st==='dock')ship(796,334+i*28,-1,PCOLS[0],t*2+s.id,s.ty);});
   Object.keys(STN).forEach(id=>{const n=STN[id],sw=Math.round(Math.sin(t*.6+n.x)*1);if(vis(n.x-10,n.y-26,20,30))drawAvatar(n.x+sw,n.y,id==='o'?-1:1,0,0,n.c[0],n.c[1]);});
-  if(PL.near)highlightObj(PL.near);drawPlayer(t);
+  if(PL.near)highlightObj(PL.near);if(!RIDE.on)drawPlayer(t);
   {const nf=nightF();if(nf>.03)nightWorld(nf);}
 }
 /* ---- 바다 ---- */
@@ -8022,6 +8030,7 @@ function drawAvatar(x,y,dir,mv,walk,c1,c2){x=Math.round(x);y=Math.round(y);const
   R(x-3,y-9,6,5,c1);R(x-3,y-9,6,1,c2);R(x-4,y-8+s,1,3,'#f0c8a0');R(x+3,y-8+(1-s),1,3,'#f0c8a0');
   R(x-2,y-13,5,4,'#f0c8a0');R(x+(dir>0?1:-1),y-12,1,1,'#2a1608');
   R(x-4,y-14,9,2,'#e8c24a');R(x-2,y-16,5,2,'#e8c24a');R(x-2,y-15,5,1,'#b8932a');}
+const RIDE={on:false,x:186};
 function drawPlayer(t){drawAvatar(PL.x,PL.y,PL.dir,PL.mv,PL.walk,'#3a78c8','#5a98e8');}
 const AVC=[['#3a78c8','#5a98e8'],['#c8483a','#e8685a'],['#3aa860','#5ac880'],['#a860c8','#c880e8'],['#c8a03a','#e8c05a'],['#3ab0b0','#5ad0d0'],['#c86aa0','#e88ac0'],['#7a7a88','#9a9aa8']];
 function drawOthers(t){const sm=(o,x,y)=>{if(o.dx==null){o.dx=x;o.dy=y;}o.dx+=(x-o.dx)*.35;o.dy+=(y-o.dy)*.35;};
@@ -8167,7 +8176,7 @@ function popList(title,items,x,y){popAct={};let h=`<h4>${title}</h4>`;items.forE
 function placePlayer(){PL.x=371;PL.y=300;PL.goal=null;PL.near=null;updateCam(0,true);}
 function nearObj(){let best=null,bd=1e9;for(const o of objs()){const d=rectDist(PL.x,PL.y,o);if(d<=o.r&&d<bd){bd=d;best=o;}}return best;}
 const KEYS={};let JOY={x:0,y:0};
-function movePlayer(dt){if(!S||!$('modal').hidden)return;if(VIEW==='isl'){moveIsl(dt);return;}if(VIEW==='helm'){moveHelm(dt);return;}if(VIEW==='sea')return;let vx=0,vy=0;
+function movePlayer(dt){if(!S||!$('modal').hidden)return;if(RIDE.on){rideTick(dt);return;}if(VIEW==='isl'){moveIsl(dt);return;}if(VIEW==='helm'){moveHelm(dt);return;}if(VIEW==='sea')return;let vx=0,vy=0;
   if(KEYS.ArrowLeft||KEYS.a)vx-=1;if(KEYS.ArrowRight||KEYS.d)vx+=1;if(KEYS.ArrowUp||KEYS.w)vy-=1;if(KEYS.ArrowDown||KEYS.s)vy+=1;
   vx+=JOY.x;vy+=JOY.y;
   if(vx||vy){PL.goal=null;const m=Math.hypot(vx,vy);if(m>1){vx/=m;vy/=m;}if(POPOPEN&&(KEYS.ArrowLeft||KEYS.ArrowRight||KEYS.ArrowUp||KEYS.ArrowDown||KEYS.a||KEYS.d||KEYS.w||KEYS.s||Math.hypot(JOY.x,JOY.y)>.4))closePop();}
@@ -8532,9 +8541,14 @@ MODS.story=()=>{const st=S.story,c=CHAPS[st.ch];let h=`<h2>${T('이야기','Stor
 /* 기차역 */
 MODS.station=()=>{const rk=rankOf(S.stats.earned);return `<h2>${T('기차역','Train station')}</h2><div class="muted">${T('기차를 타고 내륙의 지방으로 가요. 지방 시장은 항구와 값이 달라요','Ride inland. Provincial markets pay differently from the ports')}</div>`+PROVS.map((q,i)=>{const ok=rk>=q.rank;return `<div class="card"><div class="grow"><b>${tx(q.n)}</b><div class="muted">${tx(q.d)} · ${T('요금 {0}','Fare {0}',q.fare)}${UG()}${ok?'':' · '+T('계급 {0} 필요','Needs rank {0}',q.rank)}</div></div><button class="pb sm gold" data-act="board:${i}" ${ok&&S.money>=q.fare?'':'disabled'}>${T('타기','Board')}</button></div>`;}).join('');};
 ACT.board=a=>{const q=PROVS[+a];if(rankOf(S.stats.earned)<q.rank||S.money<q.fare)return;S.money-=q.fare;S.stats.trains=(S.stats.trains||0)+1;updateHud();closeModal();trainRide(+a);};
-function trainRide(i){const q=PROVS[i],el=document.createElement('div');el.style.cssText='position:fixed;inset:0;z-index:99;background:linear-gradient(#a8d0f0,#e8f0d8 70%,#6a8a4a);overflow:hidden;display:flex;align-items:center;justify-content:center;font-family:Gugi,"Malgun Gothic",sans-serif';
-  el.innerHTML='<style>@keyframes trk{from{transform:translateX(-30vw)}to{transform:translateX(130vw)}}@keyframes rl{from{background-position:0 0}to{background-position:-80px 0}}</style><div style="position:absolute;left:0;right:0;bottom:24%;height:6px;background:repeating-linear-gradient(90deg,#5a3a1e 0 8px,transparent 8px 20px);animation:rl .25s linear infinite"></div><div style="position:absolute;bottom:26%;font-size:64px;animation:trk '+(q.ms/1000)+'s linear forwards">🚂🚃🚃</div><div style="position:absolute;top:18%;font-size:22px;color:#2a3a4a;text-shadow:0 1px #fff">'+T('{0}행 기차를 타고 가는 중…','Riding to {0}…',tx(q.n))+'</div>';
-  document.body.appendChild(el);sfx('click');setTimeout(()=>{el.remove();enterIsl('prov'+i);},q.ms);}
+function trainFade(on){let el=$('trainfade');if(on){if(!el){el=document.createElement('div');el.id='trainfade';el.style.cssText='position:fixed;inset:0;z-index:98;background:#000;opacity:0;transition:opacity .6s;pointer-events:none';document.body.appendChild(el);el.getBoundingClientRect();}el.style.opacity='1';}else if(el){el.style.opacity='0';setTimeout(()=>{const e=$('trainfade');if(e&&e.style.opacity==='0')e.remove();},700);}}
+function trainRide(i){Object.assign(RIDE,{on:true,ph:'wait',t:0,x:186,i,D:2.2+i*.4});PL.goal=null;PL.x=262;PL.y=664;closePop();sfx('click');toast(T('{0}행 기차가 곧 출발해요','The train to {0} departs soon',tx(PROVS[i].n)));}
+function rideTick(dt){RIDE.t+=dt;const ph=RIDE.ph;
+  if(ph==='wait'){if(RIDE.t>.9){RIDE.ph='go';RIDE.t=0;sfx('click');}}
+  else if(ph==='go'){const p=Math.min(1,RIDE.t/RIDE.D);RIDE.x=186-356*p*p;PL.x=RIDE.x+78;PL.y=664;if(p>=1){RIDE.ph='dark';RIDE.t=0;trainFade(true);}}
+  else if(ph==='dark'){if(RIDE.t>.9){RIDE.on=false;enterIsl('prov'+RIDE.i,1);trainFade(false);}}
+  else if(ph==='in'){const p=Math.min(1,RIDE.t/2.2),e=1-(1-p)*(1-p);RIDE.x=-170+356*e;PL.x=RIDE.x+78;PL.y=664;if(p>=1){RIDE.on=false;PL.x=262;PL.y=660;PL.goal=null;PL.dir=1;updateCam(0,true);sfx('coin');toast(T('기차역에 도착했어요','Arrived at the station'));}}}
+
 /* 신문 가판대 */
 function buyPaper(){if(S.money<3){toast(T('3골드가 모자라요','You need 3 gold'));return;}S.money-=3;sfx('coin');updateHud();openModal('paper');}
 const PAPERADS=[['우체국','소포를 보내면 답장과 함께 두둑한 답례가 와요. 우체부 구함!','Post office: send parcels and get replies. Carriers wanted!'],['숙소','푹신한 침대와 따뜻한 수프. 지친 여행자를 환영합니다.','Inn: soft beds and warm soup for weary travelers.'],['상인 길드','함께하면 판로가 넓어집니다. 신규 회원 모집.','Merchants guild: new members welcome.'],['부동산','빈 땅 팝니다. 월세 받으며 느긋하게 사세요.','Real estate: lots for sale. Live on rent.'],['기차 여행','푸른 고원으로 떠나는 당일 기차 여행. 운임은 역에서 문의.','Train trips to the highlands. Ask at the station.'],['식당','오늘의 요리 있음. 손님이 줄을 서요.','Diner: dish of the day available.']];
@@ -8953,9 +8967,10 @@ function buildIsl(k){const th=ISLES[k],rnd=islRng(th.seed),c=document.createElem
   if(th.ruin){for(let i=0;i<42;i++){const a=i*.15,x=IW/2+Math.cos(a)*IW*.4*th.ax*1.02,y=IH/2+Math.sin(a)*IH*.4*th.ay*1.02;if(mask[Math.round(y)*IW+Math.round(x)]===1)IR(x,y,5,3,'rgba(200,210,200,.5)');}}
   return {img:c,mask,objs,obs,lab,fx};}
 /* 풀숲과 바위는 흩뿌려서 심심하지 않게 */
-function enterIsl(id){const k=isI(id),th=ISLES[k];if(!ISL.cache)ISL.cache={};if(!ISL.cache[k])ISL.cache[k]=buildIsl(k);const b=ISL.cache[k];
+function enterIsl(id,arrive){const k=isI(id),th=ISLES[k];if(!ISL.cache)ISL.cache={};if(!ISL.cache[k])ISL.cache[k]=buildIsl(k);const b=ISL.cache[k];
   Object.assign(ISL,{on:true,k,th,img:b.img,mask:b.mask,objs:b.objs,obs:b.obs,lab:b.lab,fx:b.fx,goal:null,near:null,mv:0,dir:1,walk:0,id});
   const d=b.objs.find(o=>o.k==='dock');ISL.x=d.x+d.w+8;ISL.y=d.y+d.h/2+2;
+  ISL.tr=null;ISL.arr=false;ISL.dep=false;if(th.inland){const px=d.x+34,py=d.y+4;ISL.tr={x:-180,y:py-5,tx:px+12-156};if(arrive){ISL.arr=true;ISL.at=0;ISL.x=px;ISL.y=py-6;}else ISL.tr.x=ISL.tr.tx;}
   ISL.nodes=[];ISL.nodeT=0;if(th.mine||th.volc){ISL.objs=b.objs.slice();for(let i=0;i<24;i++)spawnNode();}ISL.lava=[];ISL.lavaT=5;ISL.burn=0;
   ISL.fg=[];ISL.fgT=0;ISL.hint=true;VIEW='isl';closePop();closeModal();HOVER=-1;const bb=$('backBtn');if(bb)bb.hidden=false;
   toast(T('{0}에 상륙했어요! 걸어서 둘러보세요','Landed on {0}! Walk around',tx(th.prov!=null?PROVS[th.prov].n:k<6?PORTS[k].n:secretOf(th.secret).n)));}
@@ -8971,11 +8986,14 @@ function lavaTick(dt){const L=ISL.lava||(ISL.lava=[]);ISL.lavaT=(ISL.lavaT==null
 function mineHit(o){o.hp++;o.fl=performance.now();sfx('click');const need=mineHits();
   if(o.hp>=need){const n=mineYield(o.t);ISL.nodes=ISL.nodes.filter(q=>q!==o);ISL.objs=ISL.objs.filter(q=>q!==o);const m=MORE.find(x=>x[0]===o.t);toast(T('{0} {1}개를 캤어요','Mined {1} {0}',T(m[1],m[2]),n));sfx('coin');if(o.t==='gem')sfx('ach');ISL.nodeT=Math.max(ISL.nodeT,3);}
   else toast(T('탕! ({0}/{1})','Clang! ({0}/{1})',o.hp,need));}
-function leaveIsl(){if(ISL.th&&ISL.th.inland){ISL.on=false;VIEW='land';ISL.goal=null;PL.x=262;PL.y=660;PL.goal=null;updateCam(0,true);const bb0=$('backBtn');if(bb0)bb0.hidden=true;toast(T('기차역으로 돌아왔어요','Back at the station'));return;}ISL.on=false;VIEW='helm';ISL.goal=null;const bb=$('backBtn');if(bb)bb.hidden=false;toast(T('다시 배에 탔어요','Back on the ship'));}
+function islTrainTick(dt){const T0=ISL.tr;if(!T0)return;
+  if(ISL.arr){ISL.at+=dt;const p=Math.min(1,ISL.at/2.6),e=1-(1-p)*(1-p);T0.x=-180+(T0.tx+180)*e;if(p>=1){ISL.arr=false;const d=ISL.objs.find(o=>o.k==='dock');ISL.x=d.x+d.w+8;ISL.y=d.y+d.h/2+2;sfx('coin');}}
+  else if(ISL.dep){ISL.at+=dt;if(ISL.at<.8)return;const p=Math.min(1,(ISL.at-.8)/2.4);T0.x=T0.tx-(T0.tx+190)*p*p;ISL.x=T0.x+78;ISL.y=T0.y+8;if(p>=1&&!ISL.fin){ISL.fin=1;trainFade(true);setTimeout(()=>{ISL.fin=0;ISL.dep=false;ISL.on=false;VIEW='land';ISL.goal=null;const bb0=$('backBtn');if(bb0)bb0.hidden=true;Object.assign(RIDE,{on:true,ph:'in',t:0,x:-170});PL.x=-92;PL.y=664;PL.goal=null;updateCam(0,true);trainFade(false);},800);}}}
+function leaveIsl(){if(ISL.th&&ISL.th.inland){if(ISL.dep||ISL.arr)return;ISL.dep=true;ISL.at=0;ISL.goal=null;ISL.near=null;toast(T('기차가 출발해요!','The train is leaving!'));sfx('click');return;}ISL.on=false;VIEW='helm';ISL.goal=null;const bb=$('backBtn');if(bb)bb.hidden=false;toast(T('다시 배에 탔어요','Back on the ship'));}
 function islWalk(x,y){const ix=Math.round(x),iy=Math.round(y);if(ix<2||iy<2||ix>=IW-2||iy>=IH-2)return false;if(ISL.mask[iy*IW+ix]<2)return false;
   for(const o of ISL.obs)if(x>=o.x&&x<=o.x+o.w&&y>=o.y&&y<=o.y+o.h)return false;return true;}
 function islNear(){let best=null,bd=1e9;for(const o of ISL.objs){const d=rectDist(ISL.x,ISL.y,o);if(d<=o.r&&d<bd){bd=d;best=o;}}return best;}
-function moveIsl(dt){if(!$('modal').hidden)return;let vx=0,vy=0;
+function moveIsl(dt){if(ISL.arr||ISL.dep){islTrainTick(dt);return;}if(!$('modal').hidden)return;let vx=0,vy=0;
   if(KEYS.ArrowLeft||KEYS.a)vx-=1;if(KEYS.ArrowRight||KEYS.d)vx+=1;if(KEYS.ArrowUp||KEYS.w)vy-=1;if(KEYS.ArrowDown||KEYS.s)vy+=1;vx+=JOY.x;vy+=JOY.y;
   if(vx||vy){ISL.goal=null;const m=Math.hypot(vx,vy);if(m>1){vx/=m;vy/=m;}}
   else if(ISL.goal){const dx=ISL.goal.x-ISL.x,dy=ISL.goal.y-ISL.y,d=Math.hypot(dx,dy);if(d<1.5){const o=ISL.goal.o;ISL.goal=null;if(o)islAct(o);}else{vx=dx/d;vy=dy/d;}}
@@ -9022,7 +9040,8 @@ function drawIsl(t){const th=ISL.th;g.fillStyle=th.sea;g.fillRect(0,0,VW,VH);
      else{const a=Math.max(0,1-(q.t-1.6)/.5);g.fillStyle='rgba(255,138,42,'+(.9*a).toFixed(2)+')';g.beginPath();g.arc(q.x,q.y,q.r,0,6.3);g.fill();g.fillStyle='rgba(255,240,170,'+a.toFixed(2)+')';g.beginPath();g.arc(q.x,q.y,q.r*.5,0,6.3);g.fill();}});
   /* 물가의 갈매기 */
   for(let q=0;q<2;q++){const gx=(t*14+q*220)%(IW+40)-20,gy=30+q*70+Math.sin(t*2+q)*6;R(gx,gy,2,1,'#fff');R(gx+2,gy-1,2,1,'#fff');R(gx+4,gy,2,1,'#fff');}
-  drawAvatar(ISL.x,ISL.y,ISL.dir,ISL.mv,ISL.walk,'#3a78c8','#5a98e8');
+  if(ISL.tr)trainSprite(R,Math.round(ISL.tr.x),ISL.tr.y);
+  if(!ISL.arr&&!ISL.dep)drawAvatar(ISL.x,ISL.y,ISL.dir,ISL.mv,ISL.walk,'#3a78c8','#5a98e8');
    if(ISL.burn>0){g.fillStyle='rgba(255,40,20,'+Math.min(.3,ISL.burn).toFixed(2)+')';g.fillRect(cxp,cyp,VW,VH);}
   g.restore();
   if(ISL.near){g.strokeStyle='rgba(255,246,176,'+(.5+.4*Math.sin(t*5)).toFixed(2)+')';g.lineWidth=1;const o=ISL.near;g.strokeRect(Math.round(o.x-ISL.cx)+.5,Math.round(o.y-ISL.cy)+.5,o.w,o.h);}}
