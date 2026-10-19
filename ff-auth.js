@@ -195,6 +195,15 @@ var CSS='.ffa-btn{display:inline-flex;align-items:center;gap:6px;background:line
  '.ffa-menu .ffa-ph{display:none}@media(max-width:620px){.ffa-menu .ffa-ph{display:block}.ffa-bell,.ffa-vote{display:none!important}.ffa-menu .ffa-ph .ffa-badge{position:static;margin-left:6px}.ffa-nbc{position:absolute;top:-4px;right:-4px;margin:0;min-width:8px;width:8px;height:8px;padding:0;font-size:0;border-radius:50%}}'+
  '.ffa-lk{display:flex;align-items:center;gap:9px;margin:0 0 8px;padding:8px 10px;border:1px solid #2b3245;border-radius:9px;background:#08090d}.ffa-lk span{flex:1;font-weight:700;font-size:14px}.ffa-lk b{color:#7ddc8a;font-size:13px}.ffa-lk .ffa-btn{padding:6px 12px;font-size:13px}'+
  '#ffaModal .sw a{color:var(--fry,#ffc93c);cursor:pointer;margin-left:4px}#ffaModal .x{float:right;background:none;border:0;color:#8a93a6;font-size:20px;cursor:pointer;line-height:1}'+
+ '#ffaModal,#ffaSetup,#ffaFriends,#ffaDM,#ffaRep{-webkit-backdrop-filter:blur(5px);backdrop-filter:blur(5px)}'+
+ '#ffaModal .b,#ffaSetup .b,#ffaFriends .b,#ffaDM .b,#ffaRep .b{animation:ffaPop .18s ease-out;position:relative;overflow:hidden}'+
+ '#ffaModal .b:before,#ffaSetup .b:before,#ffaFriends .b:before,#ffaDM .b:before,#ffaRep .b:before{content:"";position:absolute;left:0;right:0;top:0;height:3px;background:linear-gradient(90deg,var(--fry,#ffc93c),var(--fry2,#ff8a3d))}'+
+ '@keyframes ffaPop{from{opacity:0;transform:translateY(8px) scale(.97)}to{opacity:1;transform:none}}'+
+ '#ffaModal h3,#ffaSetup h3{font-weight:800;letter-spacing:-.01em}#ffaModal .m,#ffaSetup .m{min-height:8px}'+
+ '#ffaModal .x{width:30px;height:30px;border-radius:50%;margin:-6px -6px 0 0;transition:background .15s,color .15s}#ffaModal .x:hover{background:rgba(255,255,255,.1);color:#fff}'+
+ '#ffaModal .sw,#ffaSetup .sw{display:block;border:0;background:none;box-shadow:none;border-radius:0;padding:0;height:auto;width:auto;min-width:0;margin:14px 0 0;text-align:center;font-size:13px;color:#8a93a6}'+
+ '#ffaModal .sw a{font-weight:800}#ffaModal .ffa-oa{transition:border-color .15s,transform .15s}#ffaModal .ffa-oa:hover{transform:translateY(-1px)}'+
+ '@media(prefers-reduced-motion:reduce){#ffaModal .b,#ffaSetup .b,#ffaFriends .b,#ffaDM .b,#ffaRep .b{animation:none}}'+
  '@media(max-width:620px){[data-ff-account] .ffa-btn,.ffa-chip{width:104px;max-width:104px}}';
 function css(){ if(document.getElementById('ffaCss')) return; var s=document.createElement('style'); s.id='ffaCss'; s.textContent=CSS; document.head.appendChild(s); }
 
