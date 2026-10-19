@@ -435,7 +435,7 @@ const TUT=[
  [P('다 자라면 밭을 눌러 수확해요','When it is grown, tap the field to harvest'),s=>s.stats.harvest>=1],
  [P('마을 장터에서 수확한 것을 팔아요','Sell your harvest at the town market'),s=>(s.stats.shop||0)>=1],
  [P('항구에서 배에 짐을 싣고 보내요','Load a ship at the harbor and send it off'),s=>s.stats.sailed>=1]];
-const OUTMAX=12,BUILD=23;
+const OUTMAX=12,BUILD=24;
 const hasB=(s,b)=>s.slots.some(x=>x&&x.b===b);
 const rankOf=e=>{let r=0;RANKS.forEach((x,i)=>{if(e>=x[0])r=i;});return r;};
 /* 업적: id, 이름, 설명, 조건 */
@@ -557,6 +557,11 @@ A('nw1m',P('백만장자','Millionaire'),P('재산 1,000,000 모으기','Reach a
 const CROPK=Object.keys(CROPS),SPEC=['goldbarley','pomegranate','saffron','cloudcotton','seaweed','dragonfruit'],CROPK17=CROPK.filter(c=>!SPEC.includes(c));
 const ACHN={};ACH.forEach(a=>ACHN[a.id]=a);
 const NOTES=[
+ {date:'2026-10-19',build:'v0.2 build 24',title:P('섬 상륙 맵 대확장','Bigger islands'),items:[
+  P('상륙했을 때 섬이 가로세로 3.5배, 넓이로는 약 12배 커졌어요','Landed islands are 3.5x wider and taller, about 12x the area'),
+  P('밭·나무·장식과 광석, 줍는 특산물이 훨씬 많아졌어요','Fields, trees, decor, ore and pick-up goods are far more plentiful'),
+  P('섬이 넓어진 만큼 걷는 속도도 조금 빨라졌어요','Walking is a bit faster to match the size')
+ ]},
  {date:'2026-10-19',build:'v0.2 build 23',title:P('내 섬이 대륙으로','Home continent'),items:[
   P('해도에서 내 섬이 큰 대륙으로 바뀌었어요. 산과 숲과 마을이 더 넓게 펼쳐져요','On the sea chart, your home isle is now a large continent with wider forests and villages'),
   P('산호섬 위치를 대륙 남쪽 바다로 옮겼어요','Coral Cay moved to the sea south of the continent')
@@ -8795,7 +8800,7 @@ ACT.mpmake=()=>startMP(true,Math.random().toString(36).slice(2,6).toUpperCase())
 ACT.mpjoin=()=>{const c=$('mCode').value.trim().toUpperCase();if(c.length!==4){toast(T('코드는 4글자예요','The code is 4 letters'));return;}startMP(false,c);};
 
 /* ================= 섬 상륙 맵: 섬마다 모양과 풍경이 달라요 ================= */
-const IW=520,IH=340;
+const ISC=3.5,IW=Math.round(520*ISC),IH=Math.round(340*ISC),ICNT=6;let SPOTR=0;
 const ISL={on:false,k:-1,x:0,y:0,dir:1,mv:0,walk:0,goal:null,near:null,img:null,mask:null,objs:[],obs:[],fg:[],lab:[],th:null,fx:[],t0:0};
 const ISLES=[
  /* 0 황금항: 곡창 */{seed:11,sea:'#2a7aa8',grass:['#8fae45','#7f9e3a'],beach:'#e6d08a',amp:[.10,.07,.05],ph:[.4,1.7,2.9],ax:1,ay:.82,
@@ -8845,7 +8850,7 @@ const isI=id=>{if(typeof id==='string'&&id.indexOf('prov')===0)return 10+(+id.sl
 function islRng(s){let a=s|0;return()=>{a=(a+0x6D2B79F5)|0;let t=Math.imul(a^(a>>>15),1|a);t=(t+Math.imul(t^(t>>>7),61|t))^t;return((t^(t>>>14))>>>0)/4294967296;};}
 function islQ(th,x,y){const dx=(x-IW/2)/(IW*.4*th.ax),dy=(y-IH/2)/(IH*.4*th.ay),d=Math.hypot(dx,dy),a=Math.atan2(dy,dx);
   let r=1+th.amp[0]*Math.sin(2*a+th.ph[0])+th.amp[1]*Math.sin(3*a+th.ph[1])+th.amp[2]*Math.sin(5*a+th.ph[2]);
-  let q=d/r;if(th.bay){const bx=(x-IW*.5)/46,by=(y-IH*.76)/34,bd=Math.hypot(bx,by);if(bd<.78)return 1.15;if(bd<1)return .95;if(bd<1.3)q=Math.max(q,.8);}
+  let q=d/r;if(th.bay){const bx=(x-IW*.5)/(46*ISC),by=(y-IH*.76)/(34*ISC),bd=Math.hypot(bx,by);if(bd<.78)return 1.15;if(bd<1)return .95;if(bd<1.3)q=Math.max(q,.8);}
   return q;}
 function buildIsl(k){const th=ISLES[k],rnd=islRng(th.seed),c=document.createElement('canvas');c.width=IW;c.height=IH;const ic=c.getContext('2d');
   const IR=(x,y,w,h,col)=>{ic.fillStyle=col;ic.fillRect(Math.round(x),Math.round(y),w,h);};
@@ -8865,7 +8870,7 @@ function buildIsl(k){const th=ISLES[k],rnd=islRng(th.seed),c=document.createElem
   const spot=(w,h,q0,tries)=>{for(let t=0;t<(tries||80);t++){const x=Math.floor(IW*.14+rnd()*IW*.72),y=Math.floor(IH*.14+rnd()*IH*.72);
       if(!(free(x,y,q0)&&free(x+w,y,q0)&&free(x,y+h,q0)&&free(x+w,y+h,q0)))continue;
       if(obs.some(o=>x<o.x+o.w+3&&x+w+3>o.x&&y<o.y+o.h+3&&y+h+3>o.y))continue;
-      if(Math.hypot(x+w/2-IW/2,y+h/2-IH/2)<34)continue;
+      if(Math.hypot(x+w/2-IW/2,y+h/2-IH/2)<34)continue;if(SPOTR&&Math.hypot(x+w/2-IW/2,y+h/2-IH/2)>SPOTR)continue;
       return [x,y];}return null;};
   const block=(x,y,w,h)=>obs.push({x,y,w,h});
   /* 부두: 서쪽 바닷가 */
@@ -8884,7 +8889,7 @@ function buildIsl(k){const th=ISLES[k],rnd=islRng(th.seed),c=document.createElem
   for(let i=0;i<8;i++){IR(mx-2+i*4.5,my+3,4.5,6,i%2?th.mk[1]:'#f4efe0');}IR(mx-2,my+9,36,2,'rgba(0,0,0,.25)');
   block(mx-2,my+3,36,25);objs.push({k:'market',x:mx-2,y:my+3,w:36,h:26,r:10});lab.push([tx(th.mk[0]),mx+16,my-3,'#ffe27a']);
   /* 랜드마크 */
-  const lp=spot(34,28,.6)||spot(34,28,.7)||spot(34,28,.8,200)||[IW/2+28,IH/2-30];const lx=lp[0],ly=lp[1];
+  SPOTR=240;const lp=spot(34,28,.6,300)||spot(34,28,.7)||spot(34,28,.8,200)||[IW/2+28,IH/2-30];SPOTR=0;const lx=lp[0],ly=lp[1];
   IR(lx-2,ly+26,38,3,'rgba(0,0,0,.2)');
   const kind=th.feat[0][0];
   if(k===0){IR(lx+8,ly,18,26,'#cdbf9a');IR(lx+8,ly+22,18,4,'#a89a74');for(let i=0;i<9;i++)IR(lx+6+i*2,ly-6+Math.abs(i-4),2,6,'#a8784a');IR(lx+14,ly+14,6,12,'#5a3414');fx.push({t:'mill',x:lx+17,y:ly-2});}
@@ -8942,16 +8947,16 @@ function buildIsl(k){const th=ISLES[k],rnd=islRng(th.seed),c=document.createElem
       else if(type==='wall'){IR(x,y+4,14,6,'#b8b8a8');for(let j=0;j<5;j++)IR(x+j*3,y+4+(j%2),2,2,'#8a8a7a');IR(x+8,y,6,4,'#b8b8a8');block(x,y,14,10);}
       else if(type==='rune'){IR(x,y,10,10,'#8a8a7a');IR(x+1,y+1,8,8,'#a8a898');IR(x+4,y+2,2,6,'#9ae8ff');IR(x+2,y+4,6,2,'#9ae8ff');fx.push({t:'glow',x:x+5,y:y+5,c:'#9ae8ff',s:.5});}
     }};
-  th.feat.forEach(([type,n])=>place(type,n));
+  th.feat.forEach(([type,n])=>place(type,n*ICNT));
   /* 바닷가 장식 */
-  for(let i=0;i<40;i++){const x=Math.floor(rnd()*IW),y=Math.floor(rnd()*IH),q=islQ(th,x,y);if(q>.76&&q<.88){IR(x,y,2,1,'rgba(255,255,255,.35)');}}
-  if(th.ruin){for(let i=0;i<14;i++){const a=i*.45,x=IW/2+Math.cos(a)*IW*.4*th.ax*1.02,y=IH/2+Math.sin(a)*IH*.4*th.ay*1.02;if(mask[Math.round(y)*IW+Math.round(x)]===1)IR(x,y,5,3,'rgba(200,210,200,.5)');}}
+  for(let i=0;i<480;i++){const x=Math.floor(rnd()*IW),y=Math.floor(rnd()*IH),q=islQ(th,x,y);if(q>.76&&q<.88){IR(x,y,2,1,'rgba(255,255,255,.35)');}}
+  if(th.ruin){for(let i=0;i<42;i++){const a=i*.15,x=IW/2+Math.cos(a)*IW*.4*th.ax*1.02,y=IH/2+Math.sin(a)*IH*.4*th.ay*1.02;if(mask[Math.round(y)*IW+Math.round(x)]===1)IR(x,y,5,3,'rgba(200,210,200,.5)');}}
   return {img:c,mask,objs,obs,lab,fx};}
 /* 풀숲과 바위는 흩뿌려서 심심하지 않게 */
 function enterIsl(id){const k=isI(id),th=ISLES[k];if(!ISL.cache)ISL.cache={};if(!ISL.cache[k])ISL.cache[k]=buildIsl(k);const b=ISL.cache[k];
   Object.assign(ISL,{on:true,k,th,img:b.img,mask:b.mask,objs:b.objs,obs:b.obs,lab:b.lab,fx:b.fx,goal:null,near:null,mv:0,dir:1,walk:0,id});
   const d=b.objs.find(o=>o.k==='dock');ISL.x=d.x+d.w+8;ISL.y=d.y+d.h/2+2;
-  ISL.nodes=[];ISL.nodeT=0;if(th.mine||th.volc){ISL.objs=b.objs.slice();for(let i=0;i<8;i++)spawnNode();}ISL.lava=[];ISL.lavaT=5;ISL.burn=0;
+  ISL.nodes=[];ISL.nodeT=0;if(th.mine||th.volc){ISL.objs=b.objs.slice();for(let i=0;i<24;i++)spawnNode();}ISL.lava=[];ISL.lavaT=5;ISL.burn=0;
   ISL.fg=[];ISL.fgT=0;ISL.hint=true;VIEW='isl';closePop();closeModal();HOVER=-1;const bb=$('backBtn');if(bb)bb.hidden=false;
   toast(T('{0}에 상륙했어요! 걸어서 둘러보세요','Landed on {0}! Walk around',tx(th.prov!=null?PROVS[th.prov].n:k<6?PORTS[k].n:secretOf(th.secret).n)));}
 function spawnNode(){const th=ISL.th;for(let t=0;t<120;t++){const x=Math.floor(IW*.14+Math.random()*IW*.72),y=Math.floor(IH*.14+Math.random()*IH*.72);if(!(ISL.mask[y*IW+x]>=2&&islWalk(x,y)&&islWalk(x+10,y)&&islWalk(x,y+9)&&islWalk(x+10,y+9)))continue;
@@ -8974,15 +8979,15 @@ function moveIsl(dt){if(!$('modal').hidden)return;let vx=0,vy=0;
   if(KEYS.ArrowLeft||KEYS.a)vx-=1;if(KEYS.ArrowRight||KEYS.d)vx+=1;if(KEYS.ArrowUp||KEYS.w)vy-=1;if(KEYS.ArrowDown||KEYS.s)vy+=1;vx+=JOY.x;vy+=JOY.y;
   if(vx||vy){ISL.goal=null;const m=Math.hypot(vx,vy);if(m>1){vx/=m;vy/=m;}}
   else if(ISL.goal){const dx=ISL.goal.x-ISL.x,dy=ISL.goal.y-ISL.y,d=Math.hypot(dx,dy);if(d<1.5){const o=ISL.goal.o;ISL.goal=null;if(o)islAct(o);}else{vx=dx/d;vy=dy/d;}}
-  const sp=62*(hasT('boots')?1.25:1),ox=ISL.x,oy=ISL.y;
+  const sp=96*(hasT('boots')?1.25:1),ox=ISL.x,oy=ISL.y;
   if(vx||vy){const nx=ISL.x+vx*sp*dt,ny=ISL.y+vy*sp*dt;if(islWalk(nx,ISL.y))ISL.x=nx;if(islWalk(ISL.x,ny))ISL.y=ny;if(vx)ISL.dir=vx>0?1:-1;}
   const mv=Math.hypot(ISL.x-ox,ISL.y-oy);ISL.mv=mv>sp*dt*.2?1:0;if(ISL.mv)ISL.walk+=dt;
   if(ISL.goal){ISL.stuck=(ISL.stuck||0)+(mv<sp*dt*.3?dt:-(ISL.stuck||0));if(ISL.stuck>.35){ISL.goal=null;ISL.stuck=0;}}else ISL.stuck=0;
   ISL.near=islNear();
   if(ISL.th.volc)lavaTick(dt);
-  if((ISL.th.mine||ISL.th.volc)&&ISL.nodes.length<8){ISL.nodeT-=dt;if(ISL.nodeT<=0){ISL.nodeT=8;spawnNode();}}
+  if((ISL.th.mine||ISL.th.volc)&&ISL.nodes.length<24){ISL.nodeT-=dt;if(ISL.nodeT<=0){ISL.nodeT=3;spawnNode();}}
   /* 특산물 줍기 */
-  if(ISL.th.fg&&ISL.th.fg.length){ISL.fgT-=dt;if(ISL.fg.length<5&&ISL.fgT<=0){ISL.fgT=ISL.fg.length?7:.2;for(let t=0;t<50;t++){const x=IW*.12+Math.random()*IW*.76,y=IH*.12+Math.random()*IH*.76;
+  if(ISL.th.fg&&ISL.th.fg.length){ISL.fgT-=dt;if(ISL.fg.length<16&&ISL.fgT<=0){ISL.fgT=ISL.fg.length?2.5:.2;for(let t=0;t<50;t++){const x=IW*.12+Math.random()*IW*.76,y=IH*.12+Math.random()*IH*.76;
         if(ISL.mask[Math.round(y)*IW+Math.round(x)]>=2&&islWalk(x,y)&&Math.hypot(x-ISL.x,y-ISL.y)>30){ISL.fg.push({x,y,g:ISL.th.fg[Math.floor(Math.random()*ISL.th.fg.length)]});break;}}}
     for(let i=ISL.fg.length-1;i>=0;i--){const f=ISL.fg[i];if(Math.hypot(ISL.x-f.x-4,ISL.y-f.y-4)<7){ISL.fg.splice(i,1);const n=1+Math.floor(Math.random()*2),a=addInv(f.g,n);if(a>0){toast(T('{0} {1}개를 주웠어요','Picked up {1} {0}',GN(f.g),a));sfx('coin');}else toast(T('창고가 가득 찼어요','Warehouse is full'));}}}}
 function islAct(o){o=o||ISL.near;if(!o){toast(T('건물이나 부두 가까이로 가 보세요','Walk to a building or the pier'));return;}
