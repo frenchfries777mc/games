@@ -248,8 +248,11 @@ if(document.readyState==='loading') document.addEventListener('DOMContentLoaded'
   .cm-m{min-height:0; color:#ff9b7a; font-size:13.5px;} .cm-m:empty{display:none;}
   .cm-e{color:var(--dim); font-size:14.5px; padding:10px 2px;}
   .cm-note{color:var(--dim); font-size:14.5px; margin:0 0 10px;}
-  .cm-post{border-top:1px solid var(--line); padding:10px 4px;}
-  .cm-post:first-child{border-top:0;}
+  .cm-post{border:1px solid var(--line); border-left:4px solid var(--dim); border-radius:12px; padding:11px 14px 12px; margin:0 0 9px; background:rgba(127,127,127,.05); transition:transform .15s,border-color .15s,background .15s,box-shadow .15s;}
+  .cm-post:hover{transform:translateY(-1px); background:rgba(127,127,127,.09); box-shadow:0 8px 22px rgba(0,0,0,.18);}
+  .cm-post[data-g=stickseum]{border-left-color:#3ee0c4;} .cm-post[data-g=crownenvoy]{border-left-color:#e8c25a;} .cm-post[data-g=beaconfall]{border-left-color:#ffae5a;} .cm-post[data-g=devlog]{border-left-color:#ff8fc2;} .cm-post[data-g=isleport]{border-left-color:#6aa8ff;}
+  .cm-post.open{border-color:var(--fry); border-left-color:var(--fry);}
+  .cm-ex{margin-top:5px; color:var(--dim); font-size:14px; line-height:1.5; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;} .cm-post.open .cm-ex{display:none;}
   .cm-ph{display:flex; align-items:center; gap:8px; cursor:pointer;}
   .cm-t{flex:1; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; font-size:16px;}
   .cm-post.open .cm-t{white-space:normal;}
@@ -435,6 +438,7 @@ if(document.readyState==='loading') document.addEventListener('DOMContentLoaded'
   .tb{position:relative;} .tb .cchip{margin-left:0; order:5;}
   .tb [data-ff-account],.tb [data-ff-account] .ffa-wrap{display:contents;} .tb .ffa-chip,.tb .ffa-btn{order:6;}
   .tb .cc-b,.tb .ffa-set,.tb .ffa-bell,.tb .ffa-vote,.tb .ffa-chip{background:transparent!important; border:0!important; margin:0!important; border-radius:9px!important; padding:6px 10px!important;}
+  html[data-ff-theme=light] .tb .ffa-chip{color:var(--text)!important;}
   .tb .cc-b:hover,.tb .ffa-set:hover,.tb .ffa-bell:hover,.tb .ffa-vote:hover,.tb .ffa-chip:hover{background:rgba(255,201,60,.12)!important;}
   .tb .ffa-btn{margin-left:2px; border-radius:9px;}
   @media(max-width:520px){ .tb{margin-left:8px;} .tb .cc-b,.tb .ffa-set,.tb .ffa-bell,.tb .ffa-vote,.tb .ffa-chip{padding:6px 7px!important;} }
