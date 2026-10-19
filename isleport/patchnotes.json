@@ -2,6 +2,64 @@
  "notes": [
   {
    "date": "2026-10-19",
+   "build": "v0.2 build 18",
+   "title": "우체국과 숙소",
+   "items": [
+    "항구 쪽에 우체국이 생겼어요. 항구와 지방으로 소포를 보내고 답장과 보상을 받아요",
+    "소포를 많이 보낼수록 답장이 빨라져요",
+    "우체국 옆에 숙소가 생겼어요. 여행자가 묵을 때마다 숙박비가 쌓이고, 식당 요리를 내가면 팁을 받아요",
+    "숙소는 3단계까지 키울 수 있고, 기차를 타 본 적이 있으면 손님이 더 자주 와요"
+   ],
+   "tr": {
+    "en": {
+     "title": "Post office and inn",
+     "items": [
+      "A post office opened by the harbor. Send parcels to ports and provinces and collect replies and rewards",
+      "The more parcels you send, the faster replies arrive",
+      "An inn opened next to it. Travelers pay for rooms, and dishes from the diner earn tips",
+      "The inn upgrades to level 3, and guests come more often once you have taken a train"
+     ]
+    },
+    "ja": {
+     "title": "Post office and inn",
+     "items": [
+      "A post office opened by the harbor. Send parcels to ports and provinces and collect replies and rewards",
+      "The more parcels you send, the faster replies arrive",
+      "An inn opened next to it. Travelers pay for rooms, and dishes from the diner earn tips",
+      "The inn upgrades to level 3, and guests come more often once you have taken a train"
+     ]
+    },
+    "es": {
+     "title": "Post office and inn",
+     "items": [
+      "A post office opened by the harbor. Send parcels to ports and provinces and collect replies and rewards",
+      "The more parcels you send, the faster replies arrive",
+      "An inn opened next to it. Travelers pay for rooms, and dishes from the diner earn tips",
+      "The inn upgrades to level 3, and guests come more often once you have taken a train"
+     ]
+    },
+    "fr": {
+     "title": "Post office and inn",
+     "items": [
+      "A post office opened by the harbor. Send parcels to ports and provinces and collect replies and rewards",
+      "The more parcels you send, the faster replies arrive",
+      "An inn opened next to it. Travelers pay for rooms, and dishes from the diner earn tips",
+      "The inn upgrades to level 3, and guests come more often once you have taken a train"
+     ]
+    },
+    "de": {
+     "title": "Post office and inn",
+     "items": [
+      "A post office opened by the harbor. Send parcels to ports and provinces and collect replies and rewards",
+      "The more parcels you send, the faster replies arrive",
+      "An inn opened next to it. Travelers pay for rooms, and dishes from the diner earn tips",
+      "The inn upgrades to level 3, and guests come more often once you have taken a train"
+     ]
+    }
+   }
+  },
+  {
+   "date": "2026-10-19",
    "build": "v0.2 build 17",
    "title": "항구 이름 정리",
    "items": [
