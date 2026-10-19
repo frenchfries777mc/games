@@ -11,3 +11,6 @@ patchnotes.json | v309 title | 메뉴 통일·그래프·카드 색 | build 309 
 patchnotes.json | v309 items[0] | Stickseum 모든 페이지의 위쪽 메뉴 이름·순서·글꼴 통일 | build 309 | 2026-10-18
 patchnotes.json | v309 items[1] | 밸런스 그래프가 최근 빌드 8개만 보이고 좌우로 끌어 나머지를 확인 | build 309 | 2026-10-18
 patchnotes.json | v309 items[2] | 캐릭터 카드의 무지개·은색·금색 효과 제거 | build 309 | 2026-10-18
+Stickseum-v0.8.html | 피사로 능력 설명 | 체력 30 회복(최종 단계에서 쓰면 50) + 공격력 24→30→36→42 ... | build 310 | 2026-10-18
+patchnotes.json | v310 title | 피사로 궁극기 회복 강화 | build 310 | 2026-10-18
+patchnotes.json | v310 items[0] | 피사로가 최종 단계(4단계)에서 궁극기를 쓰면 체력 50 회복 (이전 단계는 30) | build 310 | 2026-10-18
