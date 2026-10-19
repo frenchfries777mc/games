@@ -4,6 +4,11 @@
 한 줄 형식: `파일 또는 위키 문서 | 키 또는 내용 | 한국어 문구 | 바뀐 PR | 날짜`. 처리가 끝난 줄은 지운다.
 한국어로만 바뀐 문서는 다른 언어 화면에서 한국어가 그대로 보인다. (위키는 번역 글의 해시가 다르면 한국어 원문을 보여 준다.)
 
+## Dummy Party 프로토타입 (v0.1 build 1)
+
+- prototypes/dummyparty/index.html | 게임 화면 전체 | 한국어만 있음 (프로토타입이라 번역 보류, 이름·방 코드·미니게임 설명·카드 이름·패치노트 포함) | dummyparty v0.1 b1 | 2026-10-19
+- prototypes/index.html | 소개 문장과 카드 | "첫 프로토타입으로 Dummy Party가 올라왔어요." / 카드 "Dummy Party" "하얀 마네킹으로 즐기는 병맛 미니게임 멀티 대결이에요." | dummyparty v0.1 b1 | 2026-10-19
+
 ## 위키 (batch27, 2026-10-18)
 위키 한국어 본문은 /mnt/project-files/frenchfries777-hub/wiki-src/all.ko.json 에 있고, 바뀐 내용은 batch27-notes.md 에 있다. batch26까지의 번역은 wiki/tr 에 들어갔다(games 저장소, 2026-10-18 번역 묶음).
 
