@@ -46,3 +46,5 @@
 ## Crown Envoy (b65)
 - crownenvoy/patchnotes.json·i18n.js | N["b65"] 제목 "사이트로 돌아가기"와 항목 1개 (en·es·fr·de·ja·ar 칸에 한국어 임시 입력) | 기록·설정 화면에 "사이트로 돌아가기" 버튼 추가 | b65 | 2026-10-19
 - crownenvoy/CrownEnvoy-v0.3.html | 기록·설정 메뉴 "사이트로 돌아가기" 줄 설명 ("Frenchfries777 게임 사이트(허브)로 가요. …")과 버튼 "돌아가기", 확인창 "게임을 나가 사이트로 돌아갈까요?" | 한국어 고정 문구 | b65 | 2026-10-19
+- beaconfall/BEACONFALL-v0.3.html | 설정 화면 버튼 `사이트로 돌아가기` (I18N_D 사전에 번역 추가 필요) | 사이트로 돌아가기 | b76 | 2026-10-19
+- beaconfall/patchnotes.json·i18n.js | N["v0.3"].items 맨 위 항목 (en·es·fr·de·ja 칸에 한국어 임시 입력) | 설정 화면에 '사이트로 돌아가기' 버튼 추가 (누르면 게임 허브로 이동) | b76 | 2026-10-19
