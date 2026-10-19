@@ -430,7 +430,7 @@ const TUT=[
  [P('다 자라면 밭을 눌러 수확해요','When it is grown, tap the field to harvest'),s=>s.stats.harvest>=1],
  [P('마을 장터에서 수확한 것을 팔아요','Sell your harvest at the town market'),s=>(s.stats.shop||0)>=1],
  [P('항구에서 배에 짐을 싣고 보내요','Load a ship at the harbor and send it off'),s=>s.stats.sailed>=1]];
-const OUTMAX=12,BUILD=11;
+const OUTMAX=12,BUILD=12;
 const hasB=(s,b)=>s.slots.some(x=>x&&x.b===b);
 const rankOf=e=>{let r=0;RANKS.forEach((x,i)=>{if(e>=x[0])r=i;});return r;};
 /* 업적: id, 이름, 설명, 조건 */
@@ -552,6 +552,12 @@ A('nw1m',P('백만장자','Millionaire'),P('재산 1,000,000 모으기','Reach a
 const CROPK=Object.keys(CROPS),SPEC=['goldbarley','pomegranate','saffron','cloudcotton','seaweed','dragonfruit'],CROPK17=CROPK.filter(c=>!SPEC.includes(c));
 const ACHN={};ACH.forEach(a=>ACHN[a.id]=a);
 const NOTES=[
+ {date:'2026-10-19',build:'v0.2 build 12',title:P('NPC와 이야기','NPCs and a story'),items:[
+  P('섬에 말을 걸 수 있는 NPC 셋이 생겼어요. 밭 옆의 보리 할멈, 부두의 항해사 오르간, 장터의 상인 미라예요','Three talkable NPCs: Granny Bori by the fields, navigator Organ at the pier and merchant Mira at the market'),
+  P('할아버지의 낡은 장부를 따라가는 여덟 장짜리 이야기가 생겼어요. 목표를 이루고 다시 찾아가면 이야기가 이어져요','An eight-chapter story about your grandfather\'s old ledger: reach each goal and talk again to continue'),
+  P('이야기 끝에서 고르는 선택에 따라 영구 보너스가 달라져요','Your final choice decides a permanent bonus'),
+  P('이야기 사이사이에 NPC가 팁을 한마디씩 들려줘요. 각 섬의 주민도 모습을 드러냈어요','NPCs share a tip between story beats; island residents now stand by their landmarks'),
+ ]},
  {date:'2026-10-19',build:'v0.2 build 11',title:P('새 항구 음악','New harbor music'),items:[
   P('Isleport 배경음악을 새 곡으로 바꿨어요. 기타와 피아노, 현악이 겹쳐지는 느긋한 곡이에요','Isleport\'s background music is a new track: a relaxed layering of guitar, piano and strings'),
  ]},
@@ -6790,7 +6796,7 @@ const repLv=r=>Math.min(10,Math.floor(Math.sqrt((r||0)/3)));
 const seasonMod=gi=>{const s=SSN[GOODS[gi].id];return s?s[season()]:1;};
 function quote(p,gi){let m=PORTS[p].pf[gi]*DEM[p][gi]*seasonMod(gi);const t=NOW();EV.forEach(e=>{if(e.p===p&&e.until>t){if(e.kind==='boom'&&e.g===gi)m*=1.6;if(e.kind==='fest')m*=1.2;}});return GOODS[gi].base*m;}
 const sellDrop=()=>PROJ.done[1]?0.982:SELLDROP;
-const sellMult=p=>1+repLv(S.rep[p])*0.015+crewV('trade')+codexTier(S)*0.004+(hasT('haggle')?.05:0)+(hasT('bigdeal')?.05:0)+(hasT('monopoly')?.05:0)+(PROJ.done[2]?.05:0)+(muSet('spec')?.02:0);
+const sellMult=p=>1+repLv(S.rep[p])*0.015+crewV('trade')+codexTier(S)*0.004+(hasT('haggle')?.05:0)+(hasT('bigdeal')?.05:0)+(hasT('monopoly')?.05:0)+(PROJ.done[2]?.05:0)+(muSet('spec')?.02:0)+(S.story&&S.story.end===2?.03:0);
 function revenue(p,gi,n){let r=0,m=quote(p,gi);const d=sellDrop();for(let i=0;i<n;i++){r+=m;m*=d;}return r*sellMult(p);}
 function buyCost(p,gi,n){let r=0,m=quote(p,gi)*1.2;for(let i=0;i<n;i++){r+=m;m*=BUYRISE;}return r;}
 const stormAt=p=>{const t=NOW();return EV.some(e=>e.p===p&&e.kind==='storm'&&e.until>t);};
@@ -6929,7 +6935,7 @@ const MUSETS=[
 const muSet=id=>{if(!S||!S.mu)return false;const m=MUSETS.find(x=>x.id===id);return m.items.every(g=>S.mu.don[g]);};
 const muN=()=>Object.keys(S.mu.don).length;
 function muDonate(g){if(S.mu.don[g]||inv(g)<1)return;S.inv[g]--;S.mu.don[g]=1;sfx('ach');toast(T('{0}을(를) 전시했어요','Displayed {0}',GN(g)));}
-function muTick(t){const m=S.mu;if(!m.t)m.t=t;const dt=Math.min(t-m.t,3600000);m.t=t;m.till+=muN()*0.5*dt/60000;}
+function muTick(t){const m=S.mu;if(!m.t)m.t=t;const dt=Math.min(t-m.t,3600000);m.t=t;m.till+=muN()*0.5*dt/60000*(S.story&&S.story.end===1?1.5:1);}
 const NPCS=[
  {n:'방앗간 주인 보리',st:[['올해 밀가루 주문이 밀려서 손이 모자라요. 밀 15개만 가져다주실래요?',{wheat:15}],['덕분에 살았어요! 이번엔 빵을 맛보고 싶다는 손님이 있어요. 빵 4개를 부탁해요.',{bread:4}],['마지막 부탁이에요. 저희 집 풍차가 오래돼서 감자 전골로 인부들을 먹여야 해요. 감자 20개 구해 주세요.',{potato:20}]]},
  {n:'과수원지기 사과',st:[['첫 서리가 오기 전에 사과를 더 따야 해요. 사과 12개를 나눠 주세요.',{apple:12}],['사과 잼이 동나서 단골이 화났어요. 잼 3병 부탁해요.',{jam:3}],['올해 사과 파이 대회에 나가요. 파이 2개만 구해 주실 수 있어요?',{pie:2}]]},
@@ -6955,6 +6961,30 @@ function pickUp(){const M=S.mine,u=PICKUP[M.pick];if(!u||S.money<u.g||M.ing.iron
 function reinforce(s){const lv=s.rf||0,u=RFC[lv];if(!u)return false;const M=S.mine;if(S.money<u.g||M.ing.iron<u.iron||M.ore.stone<u.stone||M.ing.copper<(u.copper||0))return false;S.money-=u.g;M.ing.iron-=u.iron;M.ore.stone-=u.stone;M.ing.copper-=(u.copper||0);s.rf=lv+1;sfx('build');return true;}
 const hurryN=p=>Math.max(1,Math.ceil(consLeft(p)/15000));
 function hurry(i){const p=S.slots[i];if(!p||!consLeft(p))return;const n=hurryN(p);if(S.mine.ing.iron<n)return;S.mine.ing.iron-=n;p.cend=NOW();sfx('build');}
+const STN={g:{n:'보리 할멈',x:186,y:296,c:['#a06a8a','#e8c0d0']},o:{n:'항해사 오르간',x:692,y:392,c:['#3a5a7a','#8ab0d0']},m:{n:'상인 미라',x:440,y:314,c:['#c0452f','#f0a070']}};
+const STAMB={g:['올해는 비가 많이 올 모양이야. 우산 대신 농사 일기를 챙기렴.','닭이 알을 안 낳는다고? 먹이를 줬는지부터 확인해 보렴.','연구를 하면 심기와 수확을 한 번에 할 수 있다더구나. 요즘 것들은 편하겠어.','옛날엔 감자 하나로 사흘을 버텼지. 지금은 빵이 있으니 얼마나 좋니.','회관에서 도전을 받아 보렴. 해냈을 때 맛이 쏠쏠하단다.'],
+ o:['바다는 거짓말을 안 해. 폭풍이 오면 호위를 단단히 해 두게.','해적이 나오면 호위가 많을수록 유리하다네. 은행에서 보험도 들 수 있지.','향신항까지 가려면 계급이 높아야 하지. 서두르지 말게.','갈매기가 낮게 날면 비가 오는 거야. 내 무릎도 그렇고.','숨은 섬들은 지도 석 장마다 하나씩 나타난다네. 곡괭이도 챙겨 가게.'],
+ m:['장터의 시세는 늘 오르락내리락해요. 신문에 힌트가 있죠. 틀릴 때도 있지만.','식당에 요리가 쌓여 있으면 손님이 줄을 서요. 평판이 중요하죠.','박물관 세트를 채우면 영구 보너스가 있대요. 진주는 꼭 챙기세요.','계약은 믿음이에요. 한 번 맺었으면 끝까지 해내는 사람이 오래 가요.']};
+const CHAPS=[
+ {t:'낡은 장부',npc:'g',intro:['아이고, 마침 왔구나. 헛간을 정리하다가 네 할아버지의 낡은 장부를 찾았단다.','이 섬 상회를 처음 연 분이 네 할아버지였지. 장부 첫 장에 "밀 스무 포대부터 시작하라"고 적혀 있어.','그분처럼 밭부터 가꿔 보렴. 작물을 스무 개만 거둬 오면 다음 장을 읽어 주마.'],goal:{k:'harvest',n:20,txt:'작물 20개 수확하기'},wait:'작물을 스무 개 거둬 오렴. 밭에서 손을 부지런히 놀리면 금방이란다.',outro:['잘했다! 흙을 다루는 솜씨가 그분과 똑같구나.','장부 뒤쪽엔 항구 이야기가 이어지는데, 나는 바다를 몰라서… 부두의 오르간 영감을 찾아가 보렴.'],rw:{g:150}},
+ {t:'항해사의 부탁',npc:'o',intro:['자네가 그 장부 주인이구먼. 나는 오르간, 한때 자네 할아버지 배의 항해사였지.','장부에는 항구 이야기가 가득할 거야. 하지만 바다 냄새를 맡아야 장부가 읽히는 법이지.','배를 한 번 띄워 보게. 어디든 좋아, 항구를 다녀오면 되네.'],goal:{k:'sail',n:1,txt:'배를 한 번 보내기'},wait:'배는 부두에서 출항할 수 있다네. 일단 한 번 띄워 보게.',outro:['좋아, 파도가 낯설지 않은 얼굴이군.','이건 내가 오래 간직하던 낡은 지도 조각이네. 받게.'],rw:{g:100,map:1}},
+ {t:'믿을 만한 상인',npc:'m',intro:['어머, 그 장부 혹시 이 섬 상회의 것인가요? 우리 할머니가 늘 말씀하셨어요. 그 상회와 오래 거래했다고.','장부 속 거래처가 우리 집안이었네요. 계약 두 건만 성실히 마쳐 보세요.','믿을 만한 상인인지 보고 싶어요.'],goal:{k:'contract',n:2,txt:'계약 2건 끝내기'},wait:'계약은 항만 사무소에서 볼 수 있어요. 두 건만 마쳐 주세요.',outro:['수고했어요. 정말 믿을 만하네요.','그런데 하나만 물어볼게요. 장부의 내용을 저한테도 보여 줘도 괜찮을까요?'],choice:{opts:[{t:'기꺼이 보여 준다',say:'고마워요! 함께 맞춰 보니 지도 한 장이 더 나왔어요.',rw:{map:1}},{t:'아직은 비밀로 하겠다',say:'조심스러운 분이군요. 그것도 좋은 상인의 덕목이죠. 사례로 드릴게요.',rw:{g:150}}]},rw:{g:200}},
+ {t:'사라진 새벽호',npc:'o',req:s=>rankOf(s.stats.earned)>=1,reqTxt:'아직은 때가 아니네. 자네가 이 바다에서 이름을 좀 더 알린 뒤에 얘기해 주겠네.',intro:['장부 뒤쪽에 새벽호란 배 이름이 있지? 자네 할아버지가 마지막으로 몬 배였어.','폭풍이 몰아치던 밤, 새벽호는 사라졌고 장부 마지막 장도 찢어졌지.','이 바다에서 이름 있는 상인이 되면 사람들이 입을 열 걸세. 계급을 두 단계 이상 올려 보게.'],goal:{k:'rank',n:2,txt:'계급 2단계 이상 달성하기'},wait:'계급을 올려 보게. 장사로 이름을 알리는 게 가장 빠르지.',outro:['이제 이름이 제법 알려졌군.','새벽호를 마지막으로 본 사람들은 섬들에 흩어져 있네. 직접 걸어서 찾아보게.'],rw:{g:300}},
+ {t:'섬에서 들은 이야기',npc:'m',intro:['새벽호 얘기라면 저도 들었어요. 선원 중 한 명이 먼 섬에 정착했다던가…','섬을 직접 걸어 다니며 주민들에게 물어보세요. 세 곳에 상륙하면 실마리가 나올 거예요.'],goal:{k:'landed',n:3,txt:'섬 세 곳에 상륙하기'},wait:'섬에 상륙해서 랜드마크 옆의 주민에게 말을 걸어 보세요.',outro:['역시 해냈군요! 주민들이 하나같이 붉은 돛에 별이 그려진 배를 기억하더래요.','할멈한테도 알려 드리세요. 그 돛 이야기를 들으면 깜짝 놀라실 거예요.'],rw:{g:400}},
+ {t:'별이 그려진 돛',npc:'g',intro:['별이 그려진 붉은 돛이라니… 네 할아버지 배가 맞구나.','장부의 찢어진 조각은 바다 어딘가 숨은 섬에 있을지 몰라.','지도를 모아 숨은 섬을 하나 찾아보렴. 지도 석 장이면 새 섬이 나타난다더구나.'],goal:{k:'found',n:1,txt:'숨은 섬 하나 발견하기'},wait:'숨은 섬은 지도가 석 장 모이면 나타난단다. 섬에서 주민 부탁을 들어주면 지도를 준다더라.',outro:['숨은 섬이라니, 네 할아버지가 즐겨 가던 곳이구나.','오르간에게도 알려 주렴. 그 영감이 제일 기뻐할 거다.'],rw:{g:500}},
+ {t:'흩어진 조각',npc:'o',intro:['숨은 섬을 찾았다고? 그렇다면 나머지도 찾아야 하네.','자네 할아버지는 장부 조각을 숨은 섬 세 곳에 나눠 숨기셨지. 하나로는 이야기가 이어지지 않아.'],goal:{k:'found',n:3,txt:'숨은 섬 세 곳 모두 발견하기'},wait:'숨은 섬 세 곳을 모두 찾아보게. 인내심이 필요한 일이야.',outro:['조각을 맞춰 보니 마지막 글귀가 드러났네. "진짜 보물은 돌아올 곳이 있다는 것."','이제 그 장부를 미라 양과 함께 읽어 보게.'],rw:{g:800,map:1}},
+ {t:'상회의 주인',npc:'m',intro:['마지막 장에는 이렇게 적혀 있어요. "내가 돌아오지 못하더라도, 이 섬 상회를 이어 갈 사람에게 맡긴다."','당신이 이 상회의 주인이에요. 이제 이 장부를 어떻게 하실래요?'],outro:['이야기는 여기서 끝이 아니에요. 당신의 상회는 계속 자라날 테니까요.'],choice:{final:1,opts:[{t:'장부를 박물관에 기증해 이야기를 남긴다',say:'멋진 선택이에요. 박물관 입장료가 1.5배가 될 거예요.',end:1},{t:'장부를 품고 상회를 더 키운다',say:'든든하네요. 모든 판매가가 3% 올라요.',end:2}]},rw:{g:2000}}];
+const chapMet=ch=>{const g=ch.goal;if(!g)return true;const s=S.stats;return g.k==='harvest'?s.harvest>=g.n:g.k==='sail'?s.sailed>=g.n:g.k==='contract'?s.contracts>=g.n:g.k==='rank'?rankOf(s.earned)>=g.n:g.k==='landed'?(s.landed||0)>=g.n:g.k==='found'?S.found.length>=g.n:true;};
+const chapNow=ch=>{const g=ch.goal;if(!g)return 0;const s=S.stats;return g.k==='harvest'?s.harvest:g.k==='sail'?s.sailed:g.k==='contract'?s.contracts:g.k==='rank'?rankOf(s.earned):g.k==='landed'?(s.landed||0):S.found.length;};
+function stMark(id){if(!S||!S.story)return '';const st=S.story,c=CHAPS[st.ch];if(!c||c.npc!==id)return '';if(c.req&&!c.req(S))return '';if(st.st==='new')return '!';return chapMet(c)?'?':'…';}
+function talkStart(id){ensureBank(S);const st=S.story,c=CHAPS[st.ch],n=STN[id];let pages,kind='amb';
+  if(c&&c.npc===id){if(c.req&&!c.req(S))pages=[c.reqTxt];else if(st.st==='new'){pages=c.intro.slice();kind='intro';if(!c.goal){pages=pages.concat(c.outro);kind='outro';}}else if(chapMet(c)){pages=c.outro.slice();kind='outro';}else pages=[c.wait];}
+  else{const a=STAMB[id];pages=[a[Math.floor(Math.random()*a.length)]];}
+  return {id,name:n.n,pages,i:0,kind,cid:st.ch};}
+function talkFinish(m){const st=S.story,c=CHAPS[m.cid];if(m.kind==='intro'){st.st='goal';toast(T('새 목표: {0}','New goal: {0}',c.goal.txt));sfx('ach');}
+  else if(m.kind==='outro'&&m.cid===st.ch){const r=c.rw||{};if(r.g){S.money+=r.g;}if(r.map)addMap(r.map);
+    if(m.pickOpt){const o=m.pickOpt;if(o.rw){if(o.rw.g)S.money+=o.rw.g;if(o.rw.map)addMap(o.rw.map);}if(o.end)st.end=o.end;}
+    st.ch++;st.st='new';toast(T('이야기가 이어졌어요: {0}','Story advanced: {0}',c.t));sfx('ach');}}
 const HN=12;
 const hillN=()=>S.hill.filter(x=>x===1).length;
 const hillCost=()=>Math.round(300*(1+hillN()*0.7)),hillMs=()=>20000+hillN()*6000;
@@ -6988,7 +7018,7 @@ function fishCatch(q){const sn=season(),rn=weather()==='rain',x=q==='perfect'?2:
   if(id==='boot'){const g=6*x;S.money+=g;return {id,txt:T('낡은 장화를 건졌어요. 고물값 {0}','You hooked an old boot. Scrap {0}',g)};}
   if(id==='chest'){const g=Math.round((120+Math.random()*200)*x);S.money+=g;sfx('ach');return {id,txt:T('가라앉은 보물 상자를 건졌어요! +{0}','A sunken chest! +{0}',g)};}
   const a=addInv(id,n);if(id==='pearl')sfx('ach');return {id,txt:a>0?T('{0} {1}개를 낚았어요','Caught {0} x{1}',GN(id),a):T('창고가 가득 차서 놓쳤어요','Warehouse full, lost it')};}
-function ensureBank(s){if(s.dep==null)s.dep=0;if(!s.stk){const p={},h={};STK.forEach(x=>{p[x.id]=x.base;h[x.id]=[x.base];});s.stk={t:NOW(),p,h,hold:{}};}const k=s.stk;if(!k.drift)k.drift={};if(!k.mom)k.mom={};if(!k.news)k.news=[];if(!s.ins)s.ins={until:0,auto:0};if(s.paper===undefined)s.paper=null;if(!s.hill)s.hill=Array(HN).fill(0);while(s.plots.length<48+HN)s.plots.push(null);while(s.own.length<48+HN)s.own.push(0);if(!s.chal)s.chal={n:0,slots:[null,null,null]};if(!s.dn)s.dn={lv:1,rep:0,orders:[],stock:{},cook:null,next:0,served:0};if(!s.mu)s.mu={don:{},till:0,t:0};if(!s.npc)s.npc={};if(!s.mine)s.mine={ore:{stone:0,iron:0,copper:0,gem:0},ing:{iron:0,copper:0},pick:0};}
+function ensureBank(s){if(s.dep==null)s.dep=0;if(!s.stk){const p={},h={};STK.forEach(x=>{p[x.id]=x.base;h[x.id]=[x.base];});s.stk={t:NOW(),p,h,hold:{}};}const k=s.stk;if(!k.drift)k.drift={};if(!k.mom)k.mom={};if(!k.news)k.news=[];if(!s.ins)s.ins={until:0,auto:0};if(s.paper===undefined)s.paper=null;if(!s.hill)s.hill=Array(HN).fill(0);while(s.plots.length<48+HN)s.plots.push(null);while(s.own.length<48+HN)s.own.push(0);if(!s.chal)s.chal={n:0,slots:[null,null,null]};if(!s.dn)s.dn={lv:1,rep:0,orders:[],stock:{},cook:null,next:0,served:0};if(!s.mu)s.mu={don:{},till:0,t:0};if(!s.npc)s.npc={};if(!s.story)s.story={ch:0,st:'new',end:0,pick:{}};if(!s.mine)s.mine={ore:{stone:0,iron:0,copper:0,gem:0},ing:{iron:0,copper:0},pick:0};}
 const depCap=()=>loanMax()*3;
 function stkStep(){const k=S.stk;STK.forEach(x=>{let p=k.p[x.id];const z=Math.random()+Math.random()+Math.random()-1.5;let r=z*x.vol+Math.log(x.base/p)*0.02;{const dr=k.drift[x.id];if(dr&&dr.until>NOW())r+=dr.d*0.005;const mo=k.mom[x.id]||0;r+=mo;k.mom[x.id]=mo*0.85;}if(Math.random()<0.012)r+=(Math.random()<0.5?-1:1)*0.1;p=Math.max(x.base*0.35,Math.min(x.base*3,p*Math.exp(r)));k.p[x.id]=p;const h=k.h[x.id];h.push(p);if(h.length>40)h.shift();});}
 const GSTK=(()=>{const m={};const L={grain:['wheat','potato','corn','carrot','rice','sugarcane','flour','bread'],orch:['apple','tomato','pumpkin','strawberry','pepper','olive','pie','jam','sauce','oil'],wine:['grape','wine','rum','mead','sake'],tex:['cotton','wool','cloth','clothes','fine','silk','dyedcloth','hanbok','cloudcotton'],fish:['fish','canned','sushi','pearl','seaweed','coral']};for(const k in L)L[k].forEach(g=>m[g]=k);return m;})();
@@ -7779,6 +7809,7 @@ function drawWorldDyn(t){
   for(let k=0;k<3;k++){chicken(80+((k*19+Math.sin(t*.7+k)*10+10)%44),292+k*3,(k%2)?1:0,((Math.floor(t*2)+k)%4)===0);}
   for(let i=0;i<4;i++){const gx=((t*10+i*210)%(WLD_W+40))-20,gy=40+i*130+Math.sin(t*1.5+i)*6,fl=Math.floor(t*5+i)%2;if(gx>600){R(gx,gy,2,1,'#fff');R(gx-2,gy+(fl?-1:1),2,1,'#fff');R(gx+2,gy+(fl?-1:1),2,1,'#fff');}}
   S.ships.forEach((s,i)=>{if(s.st==='dock')ship(796,334+i*28,-1,PCOLS[0],t*2+s.id,s.ty);});
+  Object.keys(STN).forEach(id=>{const n=STN[id],sw=Math.round(Math.sin(t*.6+n.x)*1);if(vis(n.x-10,n.y-26,20,30))drawAvatar(n.x+sw,n.y,id==='o'?-1:1,0,0,n.c[0],n.c[1]);});
   if(PL.near)highlightObj(PL.near);drawPlayer(t);
   {const nf=nightF();if(nf>.03)nightWorld(nf);}
 }
@@ -7895,7 +7926,7 @@ function present(){cx.imageSmoothingEnabled=false;cx.clearRect(0,0,cv.width,cv.h
       else if(!p)label('+',sx(x+37),sy(y+30),'#ffe27a');
       else label(tx(BLD[p.b].n),sx(x+37),sy(y+51));}
     if(MP.on)for(const pid in MP.guests){const q=MP.guests[pid];label(q.name,sx(q.dx||q.x),sy((q.dy||q.y)-20),'#cfe');}
-    label(T('집','Home'),sx(54),sy(236),'#fff6b0');label(T('회관','Hall'),sx(314),sy(242),'#fff6b0');label(T('식당','Diner'),sx(488),sy(272),'#fff6b0');label(T('박물관','Museum'),sx(545),sy(272),'#fff6b0');label(T('창고','Warehouse'),sx(118),sy(240),'#fff6b0');label(T('연구','Research'),sx(265),sy(228),'#fff6b0');label(T('은행·계약','Bank & contracts'),sx(634),sy(312),'#fff6b0');label(T('항만 사무소','Harbor office'),sx(667),sy(426),'#fff6b0');label(T('해운 창고','Cargo shed'),sx(670),sy(474),'#fff6b0');label(T('어시장','Fish market'),sx(622),sy(510),'#fff6b0');label(T('등대','Lighthouse'),sx(718),sy(466),'#fff6b0');label(T('게시판','Notice board'),sx(448),sy(278),'#fff6b0');if(MP.on&&MP.inbox.length)label('!',sx(448),sy(268),'#ffe27a');
+    label(T('집','Home'),sx(54),sy(236),'#fff6b0');Object.keys(STN).forEach(id=>{const n=STN[id],mk=stMark(id);label(n.n,sx(n.x),sy(n.y-22),'#fff6b0');if(mk)label(mk,sx(n.x),sy(n.y-30+Math.round(Math.sin(performance.now()/250))),mk==='…'?'#cfd8e0':'#ffe27a');});label(T('회관','Hall'),sx(314),sy(242),'#fff6b0');label(T('식당','Diner'),sx(488),sy(272),'#fff6b0');label(T('박물관','Museum'),sx(545),sy(272),'#fff6b0');label(T('창고','Warehouse'),sx(118),sy(240),'#fff6b0');label(T('연구','Research'),sx(265),sy(228),'#fff6b0');label(T('은행·계약','Bank & contracts'),sx(634),sy(312),'#fff6b0');label(T('항만 사무소','Harbor office'),sx(667),sy(426),'#fff6b0');label(T('해운 창고','Cargo shed'),sx(670),sy(474),'#fff6b0');label(T('어시장','Fish market'),sx(622),sy(510),'#fff6b0');label(T('등대','Lighthouse'),sx(718),sy(466),'#fff6b0');label(T('게시판','Notice board'),sx(448),sy(278),'#fff6b0');if(MP.on&&MP.inbox.length)label('!',sx(448),sy(268),'#ffe27a');
     if(S.visitor)label(T('방문 상인','Trader'),sx(513),sy(280),'#ffe27a');
     const sail=S.ships.filter(s=>s.st==='sail').length;if(sail)label(T('항해 중 {0}척','{0} at sea',sail),sx(752),sy(306),'#ffe27a');
     const now=performance.now();for(let i=FL.length-1;i>=0;i--){const f=FL[i],a=(now-f.t)/1400;if(a>1){FL.splice(i,1);continue;}cx.globalAlpha=1-a;cx.font=(7*SC)+'px "Press Start 2P",Gugi,monospace';label(f.txt,sx(f.x),sy(f.y-a*18),f.col);cx.globalAlpha=1;}}
@@ -7951,7 +7982,7 @@ function objs(){const o=[];if(VIEW==='sea'||VIEW==='helm'||VIEW==='isl'||!S)retu
   for(let i=0;i<16;i++){const [x,y]=slotXY(i);o.push({k:'slot',i,x:x+8,y:y+4,w:58,h:46,r:9});}
   if(S.visitor)o.push({k:'vis',x:500,y:286,w:44,h:30,r:9});
   o.push({k:'store',x:292,y:282,w:30,h:30,r:10},{k:'shop',x:386,y:282,w:36,h:30,r:10},{k:'seeds',x:328,y:282,w:36,h:30,r:10});o.push({k:'harbor',x:704,y:322,w:96,h:238,r:8});o.push({k:'hoffice',x:642,y:432,w:50,h:30,r:8},{k:'hshed',x:634,y:480,w:72,h:30,r:8},{k:'fishmkt',x:598,y:514,w:46,h:16,r:8},{k:'hlight',x:710,y:470,w:16,h:40,r:8});
-  S.deco.forEach((d,i)=>o.push({k:'deco',i,x:d.x-5,y:d.y-8,w:10,h:10,r:7}));avObjs(o);o.push({k:'home',x:26,y:246,w:56,h:44,r:8},{k:'barn',x:90,y:248,w:56,h:42,r:8},{k:'hall',x:290,y:244,w:50,h:30,r:8},{k:'diner',x:464,y:280,w:48,h:26,r:8},{k:'museum',x:518,y:280,w:54,h:26,r:8},{k:'lab',x:252,y:236,w:26,h:38,r:8},{k:'bank',x:598,y:318,w:72,h:52,r:8},{k:'board',x:432,y:282,w:30,h:26,r:9});return o;}
+  S.deco.forEach((d,i)=>o.push({k:'deco',i,x:d.x-5,y:d.y-8,w:10,h:10,r:7}));avObjs(o);o.push({k:'home',x:26,y:246,w:56,h:44,r:8},{k:'barn',x:90,y:248,w:56,h:42,r:8},{k:'hall',x:290,y:244,w:50,h:30,r:8},...Object.keys(STN).map(id=>({k:'npc',id,x:STN[id].x-6,y:STN[id].y-17,w:12,h:17,r:16})),{k:'diner',x:464,y:280,w:48,h:26,r:8},{k:'museum',x:518,y:280,w:54,h:26,r:8},{k:'lab',x:252,y:236,w:26,h:38,r:8},{k:'bank',x:598,y:318,w:72,h:52,r:8},{k:'board',x:432,y:282,w:30,h:26,r:9});return o;}
 const rectDist=(px,py,o)=>Math.hypot(Math.max(o.x-px,0,px-(o.x+o.w)),Math.max(o.y-py,0,py-(o.y+o.h)));
 function hitObj(vx,vy){let hb=null;for(const o of objs()){const p=o.k==='slot'?4:0;if(vx>=o.x-p&&vx<o.x+o.w+p&&vy>=o.y-p&&vy<o.y+o.h+p){if(o.k==='harbor')hb=o;else return o;}}return hb;}
 function activate(o){const sx=(PL.x-Math.round(CAM.x))*SC,sy=(PL.y-12-Math.round(CAM.y))*SC;
@@ -7959,7 +7990,8 @@ function activate(o){const sx=(PL.x-Math.round(CAM.x))*SC,sy=(PL.y-12-Math.round
   if(o.k==='plot'){const p=S.plots[o.i];if(ripe(p)){harvest(o.i);closePop();return;}popPlot(o.i,sx,sy);}
   else if(o.k==='pen'){const p=S.pens[o.i];if(p&&p.done>0){collectPen(o.i);closePop();return;}popPen(o.i,sx,sy);}
   else if(o.k==='store')popList(T('내 가게','My shop'),[[T('가게 관리','Manage shop'),S.store.till>=1?fmt(Math.floor(S.store.till))+UG():'',()=>openModal('store')]],sx,sy);
-  else if(o.k==='hall')popList(T('마을 회관','Town hall'),[[T('도전 과제','Challenges'),chalTitle(S.chal.n),()=>openModal('chal')],[T('뒷산 개간지','Back hill'),hillN()+'/'+HN,()=>openModal('hill')]],sx,sy);
+  else if(o.k==='npc'){openModal('talk',talkStart(o.id));}
+  else if(o.k==='hall')popList(T('마을 회관','Town hall'),[[T('이야기','Story'),Math.min(S.story.ch,CHAPS.length)+'/'+CHAPS.length,()=>openModal('story')],[T('도전 과제','Challenges'),chalTitle(S.chal.n),()=>openModal('chal')],[T('뒷산 개간지','Back hill'),hillN()+'/'+HN,()=>openModal('hill')]],sx,sy);
   else if(o.k==='diner')popList(T('식당','Diner'),[[T('식당 열기','Open the diner'),S.dn.orders.length?T('주문 {0}','{0} orders',S.dn.orders.length):'',()=>openModal('diner')]],sx,sy);
   else if(o.k==='museum')popList(T('박물관','Museum'),[[T('박물관 보기','Visit the museum'),muN()+'/'+MUSETS.reduce((a,b)=>a+b.items.length,0),()=>openModal('museum')]],sx,sy);
   else if(o.k==='seeds')popList(T('종자 상점','Seed shop'),[[T('씨앗 사기','Buy seeds'),'',()=>openModal('seeds')]],sx,sy);
@@ -8336,6 +8368,20 @@ MODS.mine=()=>{const M=S.mine,u=PICKUP[M.pick];
   <div class="muted">${T('철괴는 배 강철 보강과 공사 서두르기에 써요. 팔지 말고 모아 두세요','Keep ingots for ship reinforcement and rushing construction')}</div>
   <h5>${T('곡괭이','Pickaxe')} ${T('{0}단계','Lv {0}',M.pick+1)}</h5>${u?`<div class="card"><div class="grow">${T('다음 단계: 철괴 {0}{1}, {2}','Next: {0} iron{1}, {2}',u.i,u.c?T(', 구리괴 {0}',', {0} copper',u.c):'',fmt(u.g)+UG())}<div class="muted">${T('치는 횟수 {0}번 → {1}번, 캐는 양 +1','Hits {0} → {1}, yield +1',mineHits(),mineHits()-1)}</div></div><button class="pb sm gold" data-act="pickup" ${S.money<u.g||M.ing.iron<u.i||M.ing.copper<u.c?'disabled':''}>${T('강화','Upgrade')}</button></div>`:`<div class="muted">${T('가장 좋은 곡괭이예요','Best pickaxe')}</div>`}`;};
 ACT.smelt=a=>{const [k,n]=a.split(':');smelt(k,n==='all');updateHud();renderModal();};ACT.mnsell=a=>{const [kind,k]=a.split(':');sellMine(kind,k);updateHud();renderModal();};ACT.pickup=()=>{pickUp();updateHud();renderModal();};
+/* NPC 이야기 */
+MODS.talk=m=>{const last=m.i>=m.pages.length-1,c=CHAPS[m.cid];let b;
+  if(!last)b=`<button class="pb gold" data-act="tnext">${T('다음','Next')}</button>`;
+  else if(m.kind==='outro'&&c&&c.choice&&!m.said)b=`<div class="muted" style="margin-bottom:6px">${T('선택해 주세요','Choose')}</div>`+c.choice.opts.map((o,i)=>`<button class="pb sm" style="display:block;width:100%;margin:4px 0" data-act="tpick:${i}">${o.t}</button>`).join('');
+  else b=`<button class="pb gold" data-act="tdone">${T('끝내기','Done')}</button>`;
+  return `<h2>${m.name}</h2><div class="card" style="display:block;min-height:70px"><div style="font-size:15px;line-height:1.6">${m.said||m.pages[m.i]}</div></div><div class="muted" style="margin:4px 0">${m.i+1}/${m.pages.length}</div><div style="text-align:right">${b}</div>`;};
+ACT.tnext=()=>{MOD.i++;renderModal();};
+ACT.tpick=a=>{const m=MOD,o=CHAPS[m.cid].choice.opts[+a];m.pickOpt=o;m.said=o.say;talkFinish(m);m.kind='done';updateHud();renderModal();};
+ACT.tdone=()=>{const m=MOD;if(m.kind!=='done')talkFinish(m);updateHud();closeModal();};
+MODS.story=()=>{const st=S.story,c=CHAPS[st.ch];let h=`<h2>${T('이야기','Story')}: ${T('할아버지의 낡은 장부','Grandfather\'s old ledger')}</h2>`;
+  CHAPS.slice(0,st.ch).forEach((q,i)=>{h+=`<div class="card"><div class="grow">✔ ${i+1}. ${q.t}</div></div>`;});
+  if(c){h+=`<div class="card" style="display:block"><b>${st.ch+1}. ${c.t}</b><div class="muted">${st.st==='new'?T('{0}에게 말을 걸어 보세요','Talk to {0}',STN[c.npc].n):c.goal?T('목표: {0} ({1}/{2})','Goal: {0} ({1}/{2})',c.goal.txt,Math.min(chapNow(c),c.goal.n),c.goal.n)+(chapMet(c)?' · '+T('{0}에게 돌아가세요','Return to {0}',STN[c.npc].n):''):''}</div></div>`;}
+  else h+=`<div class="muted">${T('이야기를 모두 마쳤어요. 선택: {0}','Story complete. Your choice: {0}',st.end===1?T('장부를 박물관에 기증','Donated to the museum'):T('상회를 더 키우기','Growing the company'))}</div>`;
+  return h;};
 /* 도감 */
 MODS.codex=()=>{const cn=Object.keys(S.codex).length,tr=codexTier(S);let h=`<h2>${T('도감','Codex')} <span class="muted" style="font-family:var(--ko)">${GOODS.filter(g0=>S.codex[g0.id]).length}/${GOODS.length}</span></h2><div class="box"><div class="row"><span><b>${T('도감 등급 {0}','Codex tier {0}',tr)}</b> <small class="muted">${T('팔 때 +{0}%','Sell +{0}%',(tr*0.4).toFixed(1))}</small></span><span class="muted">${T('다음 등급까지 {0}개','{0} more for next tier',10-cn%10)}</span></div><div class="muted">${T('등급이 오르면 꾸미기 물건이 풀려요','Higher tiers unlock decorations')}: ${Object.keys(DECO).filter(k=>DECO[k].need).map(k=>tx(DECO[k].n)+(cn>=DECO[k].need?' ✔':' ('+DECO[k].need+')')).join(', ')}</div></div>`;
   GOODS.forEach(g0=>{const seen=S.codex[g0.id];if(!seen){h+=`<div class="card" style="opacity:.55"><div class="gi" style="background:#120a04"></div><div class="grow">???</div></div>`;return;}
@@ -8709,6 +8755,8 @@ function drawIsl(t){const th=ISL.th;g.fillStyle=th.sea;g.fillRect(0,0,VW,VH);
   const f=Math.floor(t*1.5);g.fillStyle='rgba(235,248,255,.5)';for(let i=0;i<70;i++){const x=Math.floor(h2(i,f,41)*IW),y=Math.floor(h2(i,f,42)*IH);if(ISL.mask[y*IW+x]<=1)g.fillRect(x,y,2,1);}
   /* 특산물 */
   ISL.fg.forEach(q=>{const b=Math.round(Math.sin(t*4+q.x)*1);R(q.x+1,q.y+9,6,1,'rgba(0,0,0,.25)');ico(q.g,q.x,q.y+b);});
+  /* 주민 */
+  ISL.objs.forEach(o=>{if(o.k==='lm'&&o.npc&&NPCS[ISL.k]){const sw=Math.round(Math.sin(t*.7+o.x)*1);drawAvatar(o.x+o.w+7+sw,o.y+o.h-1,-1,0,0,['#8a5a3a','#6a7a4a','#7a4a8a','#5a7aa0','#3a6a8a','#c0452f','#2a8a9a','#a07a2a','#6a6a7a'][ISL.k%9],'#f0c8a0');}});
   /* 광석 */
   if(ISL.nodes)ISL.nodes.forEach(n=>{const sh=performance.now()-n.fl<160?(Math.floor(performance.now()/40)%2?1:-1):0,x=n.x+sh,y=n.y,fc={stone:'#c8c8c0',iron:'#b87a4a',copper:'#e08a3a',gem:'#5ae0e8'}[n.t];R(x,y+7,11,2,'rgba(0,0,0,.25)');R(x+1,y+2,9,6,'#7a7a76');R(x+2,y,7,3,'#8a8a86');R(x+3,y+3,2,2,fc);R(x+7,y+4,2,2,fc);if(n.t==='gem'||n.t==='copper')R(x+5,y+1,2,2,fc);if(n.hp)R(x+1,y+6,9,1,'#4a4a48');});
   /* 움직임 */
