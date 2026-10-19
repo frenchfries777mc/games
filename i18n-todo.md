@@ -19,3 +19,6 @@
 
 ## Isleport (build 8)
 - isleport/patchnotes.json | build 8 "항구 음악" 항목 2개 (ja·es·fr·de 칸에 영어 임시 입력) | Isleport 전용 배경음악이 생겼어요. 기타와 전자 피아노가 어우러진 느긋한 곡이에요 / 음악 파일이 게임 옆에 따로 있어요. 파일을 못 불러오면 예전처럼 만들어 내는 음악이 나와요 | 음악 스레드 | 2026-10-19
+
+## Isleport (build 11)
+- isleport/patchnotes.json | build 11 "새 항구 음악" 항목 1개 (ja·es·fr·de 칸에 영어 임시 입력) | Isleport 배경음악을 새 곡으로 바꿨어요. 기타와 피아노, 현악이 겹쳐지는 느긋한 곡이에요 | 음악 스레드 | 2026-10-19

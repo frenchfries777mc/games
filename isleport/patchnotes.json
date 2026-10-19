@@ -2,6 +2,46 @@
  "notes": [
   {
    "date": "2026-10-19",
+   "build": "v0.2 build 11",
+   "title": "새 항구 음악",
+   "items": [
+    "Isleport 배경음악을 새 곡으로 바꿨어요. 기타와 피아노, 현악이 겹쳐지는 느긋한 곡이에요"
+   ],
+   "tr": {
+    "en": {
+     "title": "New harbor music",
+     "items": [
+      "Isleport's background music is a new track: a relaxed layering of guitar, piano and strings"
+     ]
+    },
+    "ja": {
+     "title": "New harbor music",
+     "items": [
+      "Isleport's background music is a new track: a relaxed layering of guitar, piano and strings"
+     ]
+    },
+    "es": {
+     "title": "New harbor music",
+     "items": [
+      "Isleport's background music is a new track: a relaxed layering of guitar, piano and strings"
+     ]
+    },
+    "fr": {
+     "title": "New harbor music",
+     "items": [
+      "Isleport's background music is a new track: a relaxed layering of guitar, piano and strings"
+     ]
+    },
+    "de": {
+     "title": "New harbor music",
+     "items": [
+      "Isleport's background music is a new track: a relaxed layering of guitar, piano and strings"
+     ]
+    }
+   }
+  },
+  {
+   "date": "2026-10-19",
    "build": "v0.2 build 10",
    "title": "광산섬",
    "items": [
