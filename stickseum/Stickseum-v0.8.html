@@ -1177,12 +1177,12 @@ const WEAPONS = {
             desc:'데미지 16 · 쿨타임 1.0초 · 장거리 · 칩을 곧게 던짐, 맞힐 때마다 칩 +1 (최대 6) · 칩이 많을수록 스킬·궁극기가 강해짐'},
   wizard:  {id:'wizard',  name:'마법사',   emoji:'🧙', kind:'gun',      dmg:14, cd:0.6,  bulletSpeed:750, shape:'fireball', pierce:true,
             desc:'데미지 14 · 쿨타임 0.6초 · 발판과 플레이어를 그대로 통과하며 계속 날아가는 화염 마법'},
-  magiccard:{id:'magiccard',name:'마술 카드',emoji:'🃏', kind:'cards',    dmg:10,  cd:1.0,  bulletSpeed:820, shape:'card', hitR:26, comboBonus:5, freeVolleys:3,
-            desc:'트럼프 카드 3장이 넓게 퍼져 날아감 · 장당 데미지 10 · 쿨타임 1.0초 · 맞은 상대는 이동속도가 조금 느려짐 · 3장이 모두 맞으면 추가 5 데미지 + 0.5초 기절'},
+  magiccard:{id:'magiccard',name:'마술 카드',emoji:'🃏', kind:'cards',    dmg:10,  cd:0.9,  bulletSpeed:820, shape:'card', hitR:26, comboBonus:5, freeVolleys:3,
+            desc:'트럼프 카드 3장이 넓게 퍼져 날아감 · 장당 데미지 10 · 쿨타임 0.9초 · 맞은 상대는 이동속도가 조금 느려짐 · 3장이 모두 맞으면 추가 5 데미지 + 0.5초 기절'},
   flamethrower:{id:'flamethrower',name:'화염방사기',emoji:'🔥', kind:'flame', dmg:0, cd:0, range:FLAME_RANGE, shape:'flamethrower',
             desc:'중거리 화염방사 · 꾹 눌러 최대 7.5초간 유지 · 닿으면 초당 '+FLAME_DIRECT_DPS+' 직접 피해 · 발판에 막힘 · 7.5초 다 쓰면 2초간 과열'},
-  portalgun:{id:'portalgun',name:'포탈건',emoji:'🌀', kind:'gun', dmg:12, cd:0.55, bulletSpeed:700, shape:'portalbullet', bounces:3,
-            desc:'데미지 12 · 쿨타임 0.55초 · 바닥이나 발판에 닿으면 최대 3번까지 튕기는 탄환'},
+  portalgun:{id:'portalgun',name:'포탈건',emoji:'🌀', kind:'gun', dmg:15, cd:0.55, bulletSpeed:700, shape:'portalbullet', bounces:3,
+            desc:'데미지 15 · 쿨타임 0.55초 · 바닥이나 발판에 닿으면 최대 3번까지 튕기는 탄환'},
   vacuum:{id:'vacuum',name:'청소기',emoji:'🧹', kind:'vacuum', dmg:24, cd:0.9, range:VACUUM_RANGE, shape:'vacuum',
             desc:'사거리 '+VACUUM_RANGE+'(화염방사기보다 조금 김) · 데미지 24 · 쿨타임 0.9초 · 맞힐 때마다 스택 축적(최대 8) · 맞은 상대를 나에게 살짝 끌어당김'},
   pirate:{id:'pirate',name:'갈고리손',emoji:'🏴‍☠️', kind:'melee', dmg:30, cd:0.3, range:70, shape:'hook',
@@ -4686,7 +4686,7 @@ function shuffle(arr){ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.
 /* ===== the version of this file =====
    Players with different versions CAN meet and play together: the automatic matchmaking uses the same room names for every version (online-<mode>-<map>-<slot>), and nobody is refused because of a different build.
    The build is only sent along with the join message and the lobby (for information); the corner of the screen shows it. */
-const GAME_BUILD='build 2026-10-18-v307';
+const GAME_BUILD='build 2026-10-18-v308';
 const GAME_VERSION='0.8', GAME_VERSION_NAME='황금을 찾아서';   // 게임 버전 이름: versions.json의 title과 같게 (빌드마다 바꾸지 않음)
 const WEEKLY_EVENTS=[
   {id:'lowg',    name:'저중력 난투', desc:'몸이 둥실둥실, 중력이 약해진 난투', rules:{grav:0.6}},
@@ -10592,7 +10592,7 @@ function tryUltimate(p, tMs, aimX, aimY, viaClick){
    effects list + a few snapshot fields (skillCdRemain, buff). Skills are meant to be small: a short buff, a push, a hop, a swap - never a
    kill button. The ones that need a target do not spend the cooldown when there is none in reach.                                         */
 const DRAC_REST_SEC=1.0, DRAC_REST_STEP=0.1, DRAC_REST_HEAL=5;   // Dracula's skill: standing still for a second, healing 5 every 0.1 s
-const CARD_LINE_N=5, CARD_LINE_DMG=10;   // the magic card skill
+const CARD_LINE_N=4, CARD_LINE_DMG=10;   // the magic card skill
 const WIZ_SHOCK_R=160, WIZ_SHOCK_DMG=10, WIZ_SHOCK_KB=1000, WIZ_SHOCK_UP=300;   // the wizard's skill: a shockwave
 const BAT_ULT_HASTE_SEC=2.5, BAT_ULT_SPEED_MULT=2;
 const BOOMERANG_BACK_MULT=1.0;   // the returning boomerang's damage (was half of the throw)
@@ -10619,7 +10619,7 @@ const SKILLS={
   dracula:  {name:'피의 안식',   kind:'buff', desc:'1초 동안 움직일 수 없는 대신 0.1초마다 체력 5 회복 (총 50)'},
   gambler:  {name:'동전 던지기', kind:'buff', desc:'앞면(확률 50% + 칩당 7%): 체력 25 회복 + 칩 1개당 3 추가 / 뒷면: 가까운 적에게 18 피해 + 칩 1개당 4 추가 (칩은 소모되지 않음)'},
   wizard:   {name:'충격파',      kind:'hit',  desc:'주변 상대를 아주 크게 밀쳐내는 충격파 (10 피해)'},
-  magiccard:{name:'카드 일렬 발사', kind:'hit', desc:'조준 방향으로 카드 5장을 일렬로 연달아 발사 (장당 10 피해)'},
+  magiccard:{name:'카드 일렬 발사', kind:'hit', desc:'조준 방향으로 카드 4장을 일렬로 연달아 발사 (장당 10 피해)'},
   flamethrower:{name:'화염 폭발',kind:'hit',  desc:'주변 적에게 10 피해 + 2초 화상'},
   portalgun:{name:'시간 되감기', kind:'move', desc:'약 2초 전 위치로 돌아가고 그동안 잃은 체력의 절반 회복'},
   vacuum:   {name:'흡인',        kind:'hit',  desc:'주변 적을 끌어당기고 스택 +1'},
@@ -12868,9 +12868,9 @@ function hostTick(dt,t){
           if(nx>=pl.x-BULLET_R && nx<=pl.x+pl.w+BULLET_R && ny>=pl.y-BULLET_R && ny<=pl.y+pl.h+BULLET_R){
             if(b.bouncesLeft>0){
               b.bouncesLeft--;
-              b.vy=-Math.abs(b.vy)*0.8;
-              b.x=nx; b.y=pl.y-BULLET_R-1;
-              pushFx('hit', nx, pl.y, t, {color:b.color, ang:-Math.PI/2, v:0});
+              if(b.y>=pl.y+pl.h){ b.vy=Math.abs(b.vy)*0.8; b.x=nx; b.y=pl.y+pl.h+BULLET_R+1; pushFx('hit', nx, pl.y+pl.h, t, {color:b.color, ang:Math.PI/2, v:0}); }      // came from below: bounce back down, not up through the platform
+              else if(b.y>pl.y){ b.vx=-b.vx*0.8; pushFx('hit', b.x, b.y, t, {color:b.color, ang:b.vx>0?0:Math.PI, v:0}); }                                             // came from the side: bounce off the wall of the platform
+              else { b.vy=-Math.abs(b.vy)*0.8; b.x=nx; b.y=pl.y-BULLET_R-1; pushFx('hit', nx, pl.y, t, {color:b.color, ang:-Math.PI/2, v:0}); }
               bounced=true;
             } else { hit=true; hitPlatform=true; hitPl=pl; }
             break;
