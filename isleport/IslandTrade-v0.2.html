@@ -436,7 +436,7 @@ const TUT=[
  [P('다 자라면 밭을 눌러 수확해요','When it is grown, tap the field to harvest'),s=>s.stats.harvest>=1],
  [P('마을 장터에서 수확한 것을 팔아요','Sell your harvest at the town market'),s=>(s.stats.shop||0)>=1],
  [P('항구에서 배에 짐을 싣고 보내요','Load a ship at the harbor and send it off'),s=>s.stats.sailed>=1]];
-const OUTMAX=12,BUILD=26;
+const OUTMAX=12,BUILD=27;
 const hasB=(s,b)=>s.slots.some(x=>x&&x.b===b);
 const rankOf=e=>{let r=0;RANKS.forEach((x,i)=>{if(e>=x[0])r=i;});return r;};
 /* 업적: id, 이름, 설명, 조건 */
@@ -558,6 +558,9 @@ A('nw1m',P('백만장자','Millionaire'),P('재산 1,000,000 모으기','Reach a
 const CROPK=Object.keys(CROPS),SPEC=['goldbarley','pomegranate','saffron','cloudcotton','seaweed','dragonfruit'],CROPK17=CROPK.filter(c=>!SPEC.includes(c));
 const ACHN={};ACH.forEach(a=>ACHN[a.id]=a);
 const NOTES=[
+ {date:'2026-10-19',build:'v0.2 build 27',title:P('사이트로 돌아가기','Back to the site'),items:[
+  P('설정 화면에 "사이트로 돌아가기" 버튼이 생겼어요. 누르면 저장하고 게임 사이트로 돌아가요','Settings now has a "Back to site" button that saves and returns to the games site')
+ ]},
  {date:'2026-10-19',build:'v0.2 build 26',title:P('연구: 무한 씨앗','Research: Endless seeds'),items:[
   P('연구에 무한 씨앗이 생겼어요. 연구하면 씨앗이 줄지 않아 사지 않고도 해금한 작물을 마음껏 심어요','New research Endless seeds: seeds no longer run out, so you can plant any unlocked crop without buying them'),
   P('감독관 연구 뒤에 열려요','It unlocks after Overseer')
@@ -8793,8 +8796,10 @@ MODS.settings=()=>`<h2>${T('설정','Settings')}</h2>
  <div class="row" style="margin-top:8px"><label>${T('효과음','Sound effects')}</label><button class="pb sm ${AU.sfx?'gold':''}" data-act="tsfx">${AU.sfx?T('켜짐','On'):T('꺼짐','Off')}</button></div>
  <div class="row" style="margin-top:6px"><label>${T('음악','Music')}</label><button class="pb sm ${AU.mus?'gold':''}" data-act="tmus">${AU.mus?T('켜짐','On'):T('꺼짐','Off')}</button></div>
  <label class="muted">${T('소리 크기','Volume')}</label><input id="setVol" type="range" min="0" max="100" value="${Math.round(AU.vol*100)}">
+ <div class="btns" style="margin-top:10px"><button class="pb sm" data-act="toSite">${T('사이트로 돌아가기','Back to site')}</button></div>
  ${S&&!MP.on?`<h5>${T('저장 내보내기 · 불러오기','Export / import save')}</h5><textarea id="saveTxt" rows="3" placeholder="${T('여기에 저장 글자를 붙여 넣어요','Paste save text here')}"></textarea><div class="btns"><button class="pb sm" data-act="saveExp">${T('내보내기','Export')}</button><button class="pb sm" data-act="saveImp">${T('불러오기','Import')}</button></div>`:''}`;
 $('mbody').addEventListener('input',e=>{if(e.target.id==='setLang'){setLang(e.target.value);applyStatic();renderModal();}if(e.target.id==='setVol')setVol(e.target.value/100);});
+ACT.toSite=()=>{try{if(S)save();}catch(e){}location.href='https://frenchfries777mc.github.io/games/';};
 ACT.tsfx=()=>{AU.sfx=!AU.sfx;saveSet();renderModal();};ACT.tmus=()=>{AU.mus=!AU.mus;saveSet();if(AU.mus)musicStart();renderModal();};
 ACT.saveExp=()=>{save();try{$('saveTxt').value=btoa(unescape(encodeURIComponent(JSON.stringify({S,DEM,EV,PROJ}))));$('saveTxt').select();}catch(e){}};
 ACT.saveImp=()=>{try{const t=JSON.parse(decodeURIComponent(escape(atob($('saveTxt').value.trim()))));if(!t.S||t.S.v!==2)throw 0;migrate(t.S);S=t.S;DEM=t.DEM;EV=t.EV||[];CO=t.CO||freshCO();PROJ=t.PROJ||freshProj();save();toast(T('불러왔어요','Imported'));closeModal();renderSide(true);}catch(e){toast(T('저장 글자가 올바르지 않아요','Invalid save text'));}};
