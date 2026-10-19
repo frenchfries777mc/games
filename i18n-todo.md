@@ -60,3 +60,6 @@
 - crownenvoy/patchnotes.json·i18n.js | N["b66"] 제목 "계정 도메인 이전 준비"와 항목 1개 (en·es·fr·de·ja·ar 칸에 한국어 임시 입력) | 로그인 안정화 (계정 주소 이전에 대비해 두 가지 방식으로 로그인 시도) | b66 | 2026-10-19
 - Dummy Party build 3 (2026-10-19): Korean only; new strings are in prototypes/dummyparty/index.html (패치노트, 꾸미기/이모트 안내 토스트).
 - beaconfall/patchnotes.json·i18n.js | N["v0.3"].items 맨 위 항목 (en·es·fr·de·ja 칸에 한국어 임시 입력) | 로그인 때 계정 도메인 이전에 대비해 @arenaclash.local로 먼저 로그인하고 안 되면 @frenchfries777.com으로 다시 시도함 | b77 | 2026-10-19
+
+## Crown Envoy (b67)
+- crownenvoy/patchnotes.json·i18n.js | N["b67"] 제목 "계정 주소 이전"과 항목 1개 (en·es·fr·de·ja·ar 칸에 한국어 임시 입력) | 계정 가입·로그인 주소를 새 주소로 전환 (이전 계정도 계속 로그인 가능) | b67 | 2026-10-19
