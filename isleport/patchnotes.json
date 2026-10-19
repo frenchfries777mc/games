@@ -2,6 +2,46 @@
  "notes": [
   {
    "date": "2026-10-19",
+   "build": "v0.2 build 32",
+   "title": "새 계정 주소로 로그인",
+   "items": [
+    "로그인이 새 계정 주소를 먼저 쓰고, 안 되면 옛 주소로 다시 시도해요. 아이디와 비밀번호는 그대로예요"
+   ],
+   "tr": {
+    "en": {
+     "title": "Login on the new account address",
+     "items": [
+      "Login now uses the new account address first and falls back to the old one. Your ID and password stay the same"
+     ]
+    },
+    "ja": {
+     "title": "Login on the new account address",
+     "items": [
+      "Login now uses the new account address first and falls back to the old one. Your ID and password stay the same"
+     ]
+    },
+    "es": {
+     "title": "Login on the new account address",
+     "items": [
+      "Login now uses the new account address first and falls back to the old one. Your ID and password stay the same"
+     ]
+    },
+    "fr": {
+     "title": "Login on the new account address",
+     "items": [
+      "Login now uses the new account address first and falls back to the old one. Your ID and password stay the same"
+     ]
+    },
+    "de": {
+     "title": "Login on the new account address",
+     "items": [
+      "Login now uses the new account address first and falls back to the old one. Your ID and password stay the same"
+     ]
+    }
+   }
+  },
+  {
+   "date": "2026-10-19",
    "build": "v0.2 build 31",
    "title": "계정 도메인 이전 준비",
    "items": [
