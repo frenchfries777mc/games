@@ -1121,7 +1121,7 @@ function cleanOpts(o){ return {balance:!!(o&&o.balance), vote:!!(o&&o.vote)}; }
 function ruleHp(){ return Math.round(MAX_HP*roomRules.hp); }
 const MOVE_SPEED = 250, JUMP_VELOCITY = -680;
 const DASH_FORCE = 700, DASH_CD = 1.5;
-const PZ_MAX=3, PZ_DMG=[24,30,36,42], PZ_ATK_CD=[0.6,0.5,0.4,0.3], PZ_DASH_CD=[3,1.5,0.7,0.4], PZ_CD_STEP=0.12, PZ_ULT_HEAL=30, PZ_MAX_SPEED=1.25;       // 피사로 has four stages (the start, then one per ultimate): damage, attack cooldown and dash cooldown come from these tables; the skill and ultimate cooldowns are 12% shorter per stage; the last stage also runs at 125% speed       // (+5 damage per stack; at the 4th stack: a 0.5 s dash and 125% speed)
+const PZ_MAX=3, PZ_DMG=[24,30,36,42], PZ_ATK_CD=[0.6,0.5,0.4,0.3], PZ_DASH_CD=[3,1.5,0.7,0.4], PZ_CD_STEP=0.12, PZ_ULT_HEAL=30, PZ_ULT_HEAL_MAX=50, PZ_MAX_SPEED=1.25;       // 피사로 has four stages (the start, then one per ultimate): damage, attack cooldown and dash cooldown come from these tables; the skill and ultimate cooldowns are 12% shorter per stage; the last stage also runs at 125% speed       // (+5 damage per stack; at the 4th stack: a 0.5 s dash and 125% speed)
 const PZ_GOLD_NEED=3, PZ_LUNGE_WIN=0.7, PZ_LUNGE_KB=1.3, PZ_LUNGE_STUN=0.2;       // 황금 약탈: 3 marks (kill/assist) make the next thrust twice as long; 돌격 찌르기: the first thrust within 0.7 s after a dash shoves harder and staggers       // 피사로: the ultimate stacks (up to 4): +15% damage and 12% shorter cooldowns (attack, skill, ultimate, dash) each; dying resets it
 function pzStacks(p){ return (p && p.weapon==='pizarro' && p.pzStacks) ? Math.min(PZ_MAX, p.pzStacks) : 0; }
 function pzGoldAdd(p,tMs){ if(!p || p.weapon!=='pizarro' || !p.alive) return; p.pzGold=Math.min(PZ_GOLD_NEED,(p.pzGold||0)+1); pushFx('skill', p.x, p.y-84, tMs, {color:'#ffd34d', name:(p.pzGold>=PZ_GOLD_NEED?'황금 약탈 준비!':'황금 '+p.pzGold+'/'+PZ_GOLD_NEED)}); }
@@ -1243,7 +1243,7 @@ function pirateFlyVel(p, ax, ay){      // launch velocity of the cannon ride: to
   return {vx:Math.cos(a)*PIRATE_FLY_SPEED, vy:Math.sin(a)*PIRATE_FLY_SPEED};
 }
 const ULTS = {
-  pizarro:  {name:'정복자의 기세', desc:'체력 30 회복 + 공격력 24→30→36→42, 공격 쿨타임 0.6→0.5→0.4→0.3초, 대쉬 쿨타임 3→1.5→0.7→0.4초로 단계가 오르고 스킬·궁극기 쿨타임도 단계마다 12% 단축됨 (최대 3번 중첩 = 4단계, 4단계엔 이동속도 125%, 죽으면 초기화)'},
+  pizarro:  {name:'정복자의 기세', desc:'체력 30 회복(최종 단계에서 쓰면 50) + 공격력 24→30→36→42, 공격 쿨타임 0.6→0.5→0.4→0.3초, 대쉬 쿨타임 3→1.5→0.7→0.4초로 단계가 오르고 스킬·궁극기 쿨타임도 단계마다 12% 단축됨 (최대 3번 중첩 = 4단계, 4단계엔 이동속도 125%, 죽으면 초기화)'},
   pistol:   {name:'강화탄',       desc:'다음 발사 때 데미지 66의 크고 빠른 탄환 1발'},
   rifle:    {name:'미사일 폭격',   desc:'랜덤 3곳에 미사일이 떨어짐 (발판 통과, 나는 피해 없음)'},
   smg:      {name:'방벽',         desc:'3.5초간 플레이어와 탄환을 막는 벽 (내 탄환은 통과)'},
@@ -4686,7 +4686,7 @@ function shuffle(arr){ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.
 /* ===== the version of this file =====
    Players with different versions CAN meet and play together: the automatic matchmaking uses the same room names for every version (online-<mode>-<map>-<slot>), and nobody is refused because of a different build.
    The build is only sent along with the join message and the lobby (for information); the corner of the screen shows it. */
-const GAME_BUILD='build 2026-10-18-v309';
+const GAME_BUILD='build 2026-10-18-v310';
 const GAME_VERSION='0.8', GAME_VERSION_NAME='황금을 찾아서';   // 게임 버전 이름: versions.json의 title과 같게 (빌드마다 바꾸지 않음)
 const WEEKLY_EVENTS=[
   {id:'lowg',    name:'저중력 난투', desc:'몸이 둥실둥실, 중력이 약해진 난투', rules:{grav:0.6}},
@@ -10421,7 +10421,7 @@ function rifleBarrageXs(ax){                // three missiles around the point
 function magiccardTarget(p, ax, ay){ return hasAim(ax,ay) ? pickTarget(p, ax, ay) : nearestEnemyOf(p); }
 const ARM_FIRE_ULTS={pistol:1, bazooka:1, shuriken:1};   // ultimates that arm the next shot: a click while holding the key also fires that shot at the click
 const ULT_IMPL = {
-  pizarro(p,tSec,tMs){ p.pzStacks=Math.min(PZ_MAX,(p.pzStacks||0)+1); { const before=p.hp; p.hp=Math.min(maxHpFor(p), p.hp+PZ_ULT_HEAL); if(p.hp>before) pushFx('heal', p.x, p.y-70, tMs, {v:Math.round(p.hp-before)}); } pushFx('spark', p.x, p.y-60, tMs, {ang:-Math.PI/2, color:'#ffd34d'}); pushFx('skill', p.x, p.y-70, tMs, {color:'#ffd34d', name:'기세 '+p.pzStacks+'/'+PZ_MAX}); },
+  pizarro(p,tSec,tMs){ const _heal=((p.pzStacks||0)>=PZ_MAX)?PZ_ULT_HEAL_MAX:PZ_ULT_HEAL; p.pzStacks=Math.min(PZ_MAX,(p.pzStacks||0)+1); { const before=p.hp; p.hp=Math.min(maxHpFor(p), p.hp+_heal); if(p.hp>before) pushFx('heal', p.x, p.y-70, tMs, {v:Math.round(p.hp-before)}); } pushFx('spark', p.x, p.y-60, tMs, {ang:-Math.PI/2, color:'#ffd34d'}); pushFx('skill', p.x, p.y-70, tMs, {color:'#ffd34d', name:'기세 '+p.pzStacks+'/'+PZ_MAX}); },
   pistol(p){ p.ultPending='pistol'; },
   magiccard(p,tSec,tMs,ax,ay){
     const tg=magiccardTarget(p, ax, ay); if(!tg) return false;
