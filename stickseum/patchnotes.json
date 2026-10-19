@@ -8,7 +8,49 @@
     "가입·로그인 계정 주소를 frenchfries777.com으로 변경 (옛 주소 재시도 유지)",
     "접속자 전송 지연 시 스냅샷 대기 (인원 많은 게임 렉 완화)",
     "스냅샷 숫자 소수점 정리 (전송량 감소)"
-   ]
+   ],
+   "tr": {
+    "en": {
+     "title": "Account address move and less lag",
+     "items": [
+      "Sign-up and login now use frenchfries777.com (still retries the old address)",
+      "Waits for snapshots when a player's connection lags (less lag in crowded games)",
+      "Rounded snapshot numbers (less data sent)"
+     ]
+    },
+    "es": {
+     "title": "Cambio de dirección de cuenta y menos lag",
+     "items": [
+      "El registro y el inicio de sesión ahora usan frenchfries777.com (sigue reintentando la dirección antigua)",
+      "Espera de instantáneas cuando la conexión de un jugador va con retraso (menos lag en partidas con mucha gente)",
+      "Números de las instantáneas redondeados (se envían menos datos)"
+     ]
+    },
+    "fr": {
+     "title": "Nouvelle adresse de compte et moins de lag",
+     "items": [
+      "L'inscription et la connexion utilisent désormais frenchfries777.com (nouvel essai avec l'ancienne adresse conservé)",
+      "Attente des instantanés quand la connexion d'un joueur prend du retard (moins de lag dans les parties chargées)",
+      "Nombres des instantanés arrondis (moins de données envoyées)"
+     ]
+    },
+    "de": {
+     "title": "Neue Kontoadresse und weniger Lag",
+     "items": [
+      "Registrierung und Anmeldung nutzen jetzt frenchfries777.com (die alte Adresse wird weiterhin erneut versucht)",
+      "Wartet auf Snapshots, wenn die Verbindung eines Spielers hinterherhinkt (weniger Lag in vollen Spielen)",
+      "Snapshot-Zahlen gerundet (weniger Datenverkehr)"
+     ]
+    },
+    "ja": {
+     "title": "アカウントアドレス移行とラグ軽減",
+     "items": [
+      "登録・ログインのアカウントアドレスをfrenchfries777.comに変更（旧アドレスでの再試行は維持）",
+      "通信が遅れているときはスナップショットを待機（人数の多い試合のラグを軽減）",
+      "スナップショットの数値の小数点を整理（通信量を削減）"
+     ]
+    }
+   }
   },
   {
    "date": "2026-10-19",
