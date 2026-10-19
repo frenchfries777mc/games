@@ -2,6 +2,64 @@
  "notes": [
   {
    "date": "2026-10-19",
+   "build": "v0.2 build 9",
+   "title": "식당, 박물관, 주민 의뢰",
+   "items": [
+    "시장 옆에 식당이 생겼어요. 재료로 요리를 만들어 손님 주문을 받아요",
+    "식당 단계를 올리면 새 요리가 열리고, 평판이 오르면 손님이 더 자주 와요",
+    "박물관이 생겼어요. 물건을 전시하면 입장료가 쌓이고, 세트를 채우면 영구 보너스를 받아요",
+    "섬에 상륙해서 랜드마크를 누르면 주민이 부탁을 해요. 세 번 들어주면 지도를 받아요"
+   ],
+   "tr": {
+    "en": {
+     "title": "Diner, museum and resident requests",
+     "items": [
+      "A diner opened by the market: cook dishes and serve customer orders",
+      "Upgrade the diner for new dishes; better reputation brings more customers",
+      "A museum: displays earn admission fees and complete sets give permanent bonuses",
+      "Landmarks on islands now host a resident who asks for favors; finish three for a map"
+     ]
+    },
+    "ja": {
+     "title": "Diner, museum and resident requests",
+     "items": [
+      "A diner opened by the market: cook dishes and serve customer orders",
+      "Upgrade the diner for new dishes; better reputation brings more customers",
+      "A museum: displays earn admission fees and complete sets give permanent bonuses",
+      "Landmarks on islands now host a resident who asks for favors; finish three for a map"
+     ]
+    },
+    "es": {
+     "title": "Diner, museum and resident requests",
+     "items": [
+      "A diner opened by the market: cook dishes and serve customer orders",
+      "Upgrade the diner for new dishes; better reputation brings more customers",
+      "A museum: displays earn admission fees and complete sets give permanent bonuses",
+      "Landmarks on islands now host a resident who asks for favors; finish three for a map"
+     ]
+    },
+    "fr": {
+     "title": "Diner, museum and resident requests",
+     "items": [
+      "A diner opened by the market: cook dishes and serve customer orders",
+      "Upgrade the diner for new dishes; better reputation brings more customers",
+      "A museum: displays earn admission fees and complete sets give permanent bonuses",
+      "Landmarks on islands now host a resident who asks for favors; finish three for a map"
+     ]
+    },
+    "de": {
+     "title": "Diner, museum and resident requests",
+     "items": [
+      "A diner opened by the market: cook dishes and serve customer orders",
+      "Upgrade the diner for new dishes; better reputation brings more customers",
+      "A museum: displays earn admission fees and complete sets give permanent bonuses",
+      "Landmarks on islands now host a resident who asks for favors; finish three for a map"
+     ]
+    }
+   }
+  },
+  {
+   "date": "2026-10-19",
    "build": "v0.2 build 8",
    "title": "항구 음악",
    "items": [
