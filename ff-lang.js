@@ -89,7 +89,7 @@ var B='html body ', BAR={
   isleport: B+'.top .wrap{flex-wrap:nowrap;align-items:center}'+B+'.top .logo{flex:none}'+B+'.top .nav{flex:1 1 auto;min-width:0;display:flex;flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none}'+B+'.top .nav::-webkit-scrollbar{display:none}'+B+'.top .nav a{flex:none;white-space:nowrap}'+
     B+'.top .lang{flex:none}'+
     '@media(max-width:620px){'+B+'.top .wrap{flex-wrap:wrap;row-gap:0}'+B+'.top .logo{margin-right:auto}'+B+'.top .nav{order:3;flex:1 0 100%}}',
-  hub: B+'header{flex-wrap:nowrap}'+B+'header .right{flex:none}'+B+'header .right nav{white-space:nowrap}'+
+  hub: B+'header .right nav a{margin-left:14px;font-size:15px;font-weight:400;color:var(--dim)}'+B+'header .right nav a:hover{color:var(--text)}'+'@media(max-width:1100px){'+B+'header .right nav a{margin-left:9px;font-size:14px}}@media(max-width:1000px) and (min-width:521px){'+B+'header .right nav{display:none}}'+B+'header{flex-wrap:nowrap}'+B+'header .right{flex:none}'+B+'header .right nav{white-space:nowrap}'+
     '@media(max-width:960px){'+B+'header nav{display:none}}'+
     '@media(max-width:700px){'+B+'header{flex-wrap:wrap;row-gap:0}'+B+'.swr{order:3;flex:1 0 100%;margin:14px 0 0}}'
 };
