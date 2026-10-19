@@ -2,6 +2,46 @@
  "notes": [
   {
    "date": "2026-10-19",
+   "build": "v0.2 build 14",
+   "title": "NPC 이름 정리",
+   "items": [
+    "섬 주민과 이야기 속 NPC의 이름을 신문 속 인물처럼 서양식 이름으로 바꿨어요"
+   ],
+   "tr": {
+    "en": {
+     "title": "NPC names",
+     "items": [
+      "Island residents and story NPCs now have names in the same style as the newspaper characters"
+     ]
+    },
+    "ja": {
+     "title": "NPC names",
+     "items": [
+      "Island residents and story NPCs now have names in the same style as the newspaper characters"
+     ]
+    },
+    "es": {
+     "title": "NPC names",
+     "items": [
+      "Island residents and story NPCs now have names in the same style as the newspaper characters"
+     ]
+    },
+    "fr": {
+     "title": "NPC names",
+     "items": [
+      "Island residents and story NPCs now have names in the same style as the newspaper characters"
+     ]
+    },
+    "de": {
+     "title": "NPC names",
+     "items": [
+      "Island residents and story NPCs now have names in the same style as the newspaper characters"
+     ]
+    }
+   }
+  },
+  {
+   "date": "2026-10-19",
    "build": "v0.2 build 13",
    "title": "기차역과 내륙 지방",
    "items": [
@@ -57,7 +97,7 @@
    "build": "v0.2 build 12",
    "title": "NPC와 이야기",
    "items": [
-    "섬에 말을 걸 수 있는 NPC 셋이 생겼어요. 밭 옆의 보리 할멈, 부두의 항해사 오르간, 장터의 상인 미라예요",
+    "섬에 말을 걸 수 있는 NPC 셋이 생겼어요. 밭 옆의 마사 할멈, 부두의 항해사 오르간, 장터의 상인 미라예요",
     "할아버지의 낡은 장부를 따라가는 여덟 장짜리 이야기가 생겼어요. 목표를 이루고 다시 찾아가면 이야기가 이어져요",
     "이야기 끝에서 고르는 선택에 따라 영구 보너스가 달라져요",
     "이야기 사이사이에 NPC가 팁을 한마디씩 들려줘요. 각 섬의 주민도 모습을 드러냈어요"
