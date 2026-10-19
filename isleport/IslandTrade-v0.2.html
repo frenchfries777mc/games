@@ -354,7 +354,7 @@ const MAXSHIPS=8,CAP_COST=[250,600,1300],ESC_COST=[200,500,1000];
 /* 항구: 위치(바다 화면), 싼 물건 prod, 비싼 물건 want, 파는 물건 sell */
 const PORTS=[
  {n:P('황금항','Goldport'),x:166,y:46,r:26,rank:0,prod:['wheat','potato','corn','carrot','rice','sugarcane'],want:['bread','wine','cloth','ham','dyedcloth','seaweed'],sell:['wheat','corn','salt','rice','carrot','goldbarley'],d:P('밀과 감자가 흔한 곡창 항구','A grain port full of wheat and potatoes')},
- {n:P('붉은항','Redport'),x:268,y:82,r:28,rank:0,prod:['apple','tomato','pumpkin','strawberry','pepper'],want:['wheat','cheese','cloth','chocolate','mead','saffron'],sell:['apple','tomato','strawberry','pepper','pomegranate'],d:P('사과 과수원이 많은 항구','An orchard port famous for apples')},
+ {n:P('레드포트','Redport'),x:268,y:82,r:28,rank:0,prod:['apple','tomato','pumpkin','strawberry','pepper'],want:['wheat','cheese','cloth','chocolate','mead','saffron'],sell:['apple','tomato','strawberry','pepper','pomegranate'],d:P('사과 과수원이 많은 항구','An orchard port famous for apples')},
  {n:P('보랏항','Violetport'),x:222,y:162,r:26,rank:1,prod:['grape','olive','wine','lavender','cocoa','rum'],want:['potato','pizza','coffee','perfume','sushi','cloudcotton','coral','amber'],sell:['grape','olive','lavender','dye','saffron'],d:P('포도 농장과 와인으로 유명한 항구','A port known for vineyards and wine')},
  {n:P('흰구름항','Cloudport'),x:128,y:168,r:24,rank:1,prod:['cotton','wool','cloth','tea','honey'],want:['bread','jam','oil','candy','goatcheese','cookie','dragonfruit'],sell:['cotton','wool','tea','honey','cloudcotton'],d:P('목화밭과 옷감 시장이 있는 항구','A port with cotton fields and a cloth market')},
  {n:P('푸른만','Blue Bay'),x:196,y:106,r:22,rank:2,prod:['fish','canned','salt','pork'],want:['wheat','potato','pie','curry','sake','goldbarley'],sell:['fish','salt','pearl','pork','seaweed'],d:P('고기잡이 마을, 곡식을 비싸게 사요','A fishing village that pays well for grain')},
@@ -434,7 +434,7 @@ const TUT=[
  [P('다 자라면 밭을 눌러 수확해요','When it is grown, tap the field to harvest'),s=>s.stats.harvest>=1],
  [P('마을 장터에서 수확한 것을 팔아요','Sell your harvest at the town market'),s=>(s.stats.shop||0)>=1],
  [P('항구에서 배에 짐을 싣고 보내요','Load a ship at the harbor and send it off'),s=>s.stats.sailed>=1]];
-const OUTMAX=12,BUILD=15;
+const OUTMAX=12,BUILD=16;
 const hasB=(s,b)=>s.slots.some(x=>x&&x.b===b);
 const rankOf=e=>{let r=0;RANKS.forEach((x,i)=>{if(e>=x[0])r=i;});return r;};
 /* 업적: id, 이름, 설명, 조건 */
@@ -556,6 +556,9 @@ A('nw1m',P('백만장자','Millionaire'),P('재산 1,000,000 모으기','Reach a
 const CROPK=Object.keys(CROPS),SPEC=['goldbarley','pomegranate','saffron','cloudcotton','seaweed','dragonfruit'],CROPK17=CROPK.filter(c=>!SPEC.includes(c));
 const ACHN={};ACH.forEach(a=>ACHN[a.id]=a);
 const NOTES=[
+ {date:'2026-10-19',build:'v0.2 build 16',title:P('항구 이름 정리','Port name'),items:[
+  P('붉은항의 이름을 레드포트로 바꿨어요','Redport now has a Korean name that matches its English one')
+ ]},
  {date:'2026-10-19',build:'v0.2 build 15',title:P('지방 이름 정리','Province names'),items:[
   P('내륙 지방의 이름을 블루힐스 고원, 파인우드 마을, 레드리지 역참으로 바꿨어요','Inland provinces are now named Blue Hills, Pinewood and Red Ridge')
  ]},
@@ -615,7 +618,7 @@ const NOTES=[
   P('섬에 상륙하면 부두 옆에 그 섬의 항구 건물이 있어요','Each island you land on now has its own harbor building next to the pier'),
  ]},
  {date:'2026-10-18',build:'v0.2 build 2',title:P('섬 상륙','Landing'),items:[
-  P('직접 항해로 섬에 닿으면 그 섬의 맵으로 상륙해요. 섬마다 모양과 풍경이 달라요: 황금항은 밀밭과 풍차, 붉은항은 사과 과수원, 보랏항은 포도밭과 돌 저택, 흰구름항은 목화밭과 양, 푸른만은 어촌과 만, 향신항은 시장 천막, 산호섬은 산호 웅덩이, 호박섬은 송진 숲, 유적 환초는 옛 기둥과 제단이에요','Sailing to an island now lets you land on its own map: Goldport has wheat fields and a windmill, Redport an apple orchard, Violetport vineyards and a villa, Cloudport cotton and sheep, Blue Bay a fishing village on a bay, Spiceport bazaar tents, Coral Cay coral pools, Amber Isle a resin forest, and Ruin Atoll old pillars and an altar'),
+  P('직접 항해로 섬에 닿으면 그 섬의 맵으로 상륙해요. 섬마다 모양과 풍경이 달라요: 황금항은 밀밭과 풍차, 레드포트은 사과 과수원, 보랏항은 포도밭과 돌 저택, 흰구름항은 목화밭과 양, 푸른만은 어촌과 만, 향신항은 시장 천막, 산호섬은 산호 웅덩이, 호박섬은 송진 숲, 유적 환초는 옛 기둥과 제단이에요','Sailing to an island now lets you land on its own map: Goldport has wheat fields and a windmill, Redport an apple orchard, Violetport vineyards and a villa, Cloudport cotton and sheep, Blue Bay a fishing village on a bay, Spiceport bazaar tents, Coral Cay coral pools, Amber Isle a resin forest, and Ruin Atoll old pillars and an altar'),
   P('섬을 걸어 다니며 반짝이는 특산물을 주울 수 있고, 시장 건물에서 교역과 해금을, 부두에서 배로 돌아가요','Walk around to pick up local goods, trade and unlock at the market building, and return to your ship from the pier'),
  ]},
  {date:'2026-10-18',build:'v0.2 build 1',title:P('다듬기','Polish'),items:[
@@ -4165,7 +4168,7 @@ let TRX={
   "fr": "Un port de céréales rempli de blé et de pommes de terre",
   "de": "Ein Getreidehafen voller Weizen und Kartoffeln"
  },
- "붉은항": {
+ "레드포트": {
   "ja": "赤港",
   "es": "Puerto Rojo",
   "fr": "Port-Rouge",
@@ -6554,7 +6557,7 @@ let TRX={
   "fr": "Accostage",
   "de": "Landgang"
  },
- "직접 항해로 섬에 닿으면 그 섬의 맵으로 상륙해요. 섬마다 모양과 풍경이 달라요: 황금항은 밀밭과 풍차, 붉은항은 사과 과수원, 보랏항은 포도밭과 돌 저택, 흰구름항은 목화밭과 양, 푸른만은 어촌과 만, 향신항은 시장 천막, 산호섬은 산호 웅덩이, 호박섬은 송진 숲, 유적 환초는 옛 기둥과 제단이에요": {
+ "직접 항해로 섬에 닿으면 그 섬의 맵으로 상륙해요. 섬마다 모양과 풍경이 달라요: 황금항은 밀밭과 풍차, 레드포트은 사과 과수원, 보랏항은 포도밭과 돌 저택, 흰구름항은 목화밭과 양, 푸른만은 어촌과 만, 향신항은 시장 천막, 산호섬은 산호 웅덩이, 호박섬은 송진 숲, 유적 환초는 옛 기둥과 제단이에요": {
   "ja": "自分で航海して島に着くと、その島のマップに上陸できます。島ごとに形も景色も違います：黄金港は麦畑と風車、赤港はりんご園、紫港はぶどう畑と石の屋敷、白雲港は綿花畑と羊、青の湾は漁村と入り江、香辛港は市場のテント、サンゴ島はサンゴの潮だまり、琥珀島は松やにの森、遺跡の環礁は古い柱と祭壇です",
   "es": "Al llegar navegando a una isla, ahora desembarcas en su propio mapa. Cada isla tiene su forma y paisaje: Puerto Dorado, trigales y un molino de viento; Puerto Rojo, un huerto de manzanos; Puerto Violeta, viñedos y una casona de piedra; Puerto Nube, algodonales y ovejas; Bahía Azul, un pueblo pesquero en su bahía; Puerto Especia, tiendas de bazar; Cayo de Coral, pozas de coral; Isla de Ámbar, un bosque de resina; y Atolón de las Ruinas, columnas antiguas y un altar",
   "fr": "En naviguant jusqu’à une île, tu accostes désormais sur sa propre carte. Chaque île a sa forme et son paysage : Port-Or, des champs de blé et un moulin à vent ; Port-Rouge, un verger de pommiers ; Port-Violet, des vignes et un manoir de pierre ; Port-Nuage, des champs de coton et des moutons ; Baie Bleue, un village de pêcheurs dans sa baie ; Port-Épice, des tentes de bazar ; Îlot de Corail, des bassins de corail ; Île d’Ambre, une forêt de résine ; Atoll des Ruines, de vieux piliers et un autel",
@@ -8625,7 +8628,7 @@ const ISLES=[
  /* 0 황금항: 곡창 */{seed:11,sea:'#2a7aa8',grass:['#8fae45','#7f9e3a'],beach:'#e6d08a',amp:[.10,.07,.05],ph:[.4,1.7,2.9],ax:1,ay:.82,
   mk:[P('곡물 시장','Grain market'),'#d9a63a'],lm:[P('풍차 방앗간','Windmill'),P('밀이 바람을 타고 가루가 되는 곳이에요. 황금항의 곡식은 거의 다 여기서 빻아요.','The wind turns wheat into flour here. Almost all of Goldport\'s grain is milled here.')],
   feat:[['wheat',5],['hay',9],['tree',10],['fence',3],['cart',2]],fg:['wheat','potato','corn','carrot'],ground:'#a89a4e'},
- /* 1 붉은항: 과수원 */{seed:23,sea:'#2c78a6',grass:['#6aa843','#5b9a38'],beach:'#e8d49a',amp:[.07,.12,.06],ph:[1.2,.3,2.2],ax:1,ay:.84,
+ /* 1 레드포트: 과수원 */{seed:23,sea:'#2c78a6',grass:['#6aa843','#5b9a38'],beach:'#e8d49a',amp:[.07,.12,.06],ph:[1.2,.3,2.2],ax:1,ay:.84,
   mk:[P('과일 가게','Fruit shop'),'#d8503c'],lm:[P('사과 저장고','Apple store'),P('가을마다 붉은 사과가 산처럼 쌓이는 창고예요.','Every autumn, red apples pile up here like mountains.')],
   feat:[['apple',16],['crate',8],['berry',3],['fence',3],['tree',4]],fg:['apple','tomato','strawberry','pepper'],ground:'#8aa24a'},
  /* 2 보랏항: 포도 언덕 */{seed:37,sea:'#2a6fa4',grass:['#7da24a','#6f9440'],beach:'#e4cf9a',amp:[.09,.05,.12],ph:[2.2,.9,1.4],ax:1,ay:.86,
