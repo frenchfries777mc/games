@@ -2,6 +2,46 @@
  "notes": [
   {
    "date": "2026-10-19",
+   "build": "v0.2 build 31",
+   "title": "계정 도메인 이전 준비",
+   "items": [
+    "로그인할 때 새 계정 주소로도 시도해요. 아이디와 비밀번호는 그대로 쓰면 돼요"
+   ],
+   "tr": {
+    "en": {
+     "title": "Account domain move prep",
+     "items": [
+      "Login now also tries the new account address. Keep using the same ID and password"
+     ]
+    },
+    "ja": {
+     "title": "Account domain move prep",
+     "items": [
+      "Login now also tries the new account address. Keep using the same ID and password"
+     ]
+    },
+    "es": {
+     "title": "Account domain move prep",
+     "items": [
+      "Login now also tries the new account address. Keep using the same ID and password"
+     ]
+    },
+    "fr": {
+     "title": "Account domain move prep",
+     "items": [
+      "Login now also tries the new account address. Keep using the same ID and password"
+     ]
+    },
+    "de": {
+     "title": "Account domain move prep",
+     "items": [
+      "Login now also tries the new account address. Keep using the same ID and password"
+     ]
+    }
+   }
+  },
+  {
+   "date": "2026-10-19",
    "build": "v0.2 build 30",
    "title": "주택가와 마을의 움직임",
    "items": [
