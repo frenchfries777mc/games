@@ -429,7 +429,7 @@ const TUT=[
  [P('다 자라면 밭을 눌러 수확해요','When it is grown, tap the field to harvest'),s=>s.stats.harvest>=1],
  [P('마을 장터에서 수확한 것을 팔아요','Sell your harvest at the town market'),s=>(s.stats.shop||0)>=1],
  [P('항구에서 배에 짐을 싣고 보내요','Load a ship at the harbor and send it off'),s=>s.stats.sailed>=1]];
-const OUTMAX=12,BUILD=7;
+const OUTMAX=12,BUILD=8;
 const hasB=(s,b)=>s.slots.some(x=>x&&x.b===b);
 const rankOf=e=>{let r=0;RANKS.forEach((x,i)=>{if(e>=x[0])r=i;});return r;};
 /* 업적: id, 이름, 설명, 조건 */
@@ -551,6 +551,10 @@ A('nw1m',P('백만장자','Millionaire'),P('재산 1,000,000 모으기','Reach a
 const CROPK=Object.keys(CROPS),SPEC=['goldbarley','pomegranate','saffron','cloudcotton','seaweed','dragonfruit'],CROPK17=CROPK.filter(c=>!SPEC.includes(c));
 const ACHN={};ACH.forEach(a=>ACHN[a.id]=a);
 const NOTES=[
+ {date:'2026-10-19',build:'v0.2 build 8',title:P('항구 음악','Harbor music'),items:[
+  P('Isleport 전용 배경음악이 생겼어요. 기타와 전자 피아노가 어우러진 느긋한 곡이에요','Isleport now has its own background music: a relaxed track with guitar and electric piano'),
+  P('음악 파일이 게임 옆에 따로 있어요. 파일을 못 불러오면 예전처럼 만들어 내는 음악이 나와요','The music is a separate file next to the game; if it can\'t be loaded, the old generated music plays instead'),
+ ]},
  {date:'2026-10-19',build:'v0.2 build 7',title:P('마을 회관, 낚시, 개간, 도전 과제','Town hall, fishing, reclamation and challenges'),items:[
   P('집 옆에 마을 회관이 생겼어요. 도전 과제와 뒷산 개간지를 여기서 열어요','A town hall now stands near the farm: challenges and the back-hill reclamation open from it'),
   P('낚시터에서 낚시하기를 누르면 타이밍 낚시 미니게임을 할 수 있어요. 계절과 날씨에 따라 낚이는 것이 달라요','Fishing huts now have a timing mini-game; catches depend on season and weather'),
@@ -7307,7 +7311,17 @@ function musicTick(){if(!AU.mus||!AU.ctx||AU.ctx.state!=='running'||!S)return;co
     if(sn===3){if(rnd()<.45)tone(note(deg+Math.floor(rnd()*6),1),t,beat*2.2,'sine',.09,AU.mg);}
     else if(rnd()<.8)tone(note(deg+Math.floor(rnd()*7),sn===1?1:0),t,beat*1.4,'triangle',.1,AU.mg);
     AU.next+=beat;AU.step++;}}
-function musicStart(){if(AU.timer)return;auCtx();if(!AU.ctx)return;AU.next=AU.ctx.currentTime+.1;AU.timer=setInterval(musicTick,250);}
+/* 음악 파일: 게임 옆의 isleport-music.mp3를 불러와 반복해요 (게임 파일을 작게 두려고 따로 둬요). 파일을 못 불러오면 위의 만들어 내는 음악으로 대신해요 */
+const MFILE='isleport-music.mp3',MALT='https://frenchfries777mc.github.io/games/isleport/',MLOOP=62.6087;   // MLOOP: 24마디 길이(초), 끝과 처음이 이어져요
+AU.file={st:0};
+function musicFile(){const F=AU.file;if(F.st)return;F.st=1;const get=u=>fetch(u).then(r=>{if(!r.ok)throw new Error(r.status);return r.arrayBuffer();});
+  get(MFILE).catch(()=>get(MALT+MFILE)).then(ab=>new Promise((ok,no)=>AU.ctx.decodeAudioData(ab,ok,no))).then(buf=>{
+    const c=AU.ctx,src=c.createBufferSource();src.buffer=buf;src.loop=true;src.loopStart=0;src.loopEnd=Math.min(buf.duration,MLOOP);
+    AU.mf=c.createGain();AU.mf.gain.value=0;src.connect(AU.mf);AU.mf.connect(AU.master);src.start(c.currentTime+.05);F.st=2;
+    setInterval(()=>{if(AU.ctx&&AU.mf)AU.mf.gain.setTargetAtTime(AU.mus&&S?1:0,AU.ctx.currentTime,.4);},400);})
+   .catch(()=>{F.st=3;musicGen();});}
+function musicGen(){if(AU.timer)return;AU.next=AU.ctx.currentTime+.1;AU.timer=setInterval(musicTick,250);}
+function musicStart(){if(AU.timer||AU.file.st)return;auCtx();if(!AU.ctx)return;musicFile();}
 
 /* ================= 그림 ================= */
 const cv=$('cv'),cx=cv.getContext('2d'),lo=document.createElement('canvas'),g=lo.getContext('2d');
