@@ -484,6 +484,7 @@ if(document.readyState==='loading') document.addEventListener('DOMContentLoaded'
   .gl-c{position:relative; display:block; padding:0; border:1px solid var(--line); border-radius:14px; overflow:hidden; background:var(--panel); cursor:zoom-in; text-align:left; color:var(--text); font:inherit;}
   .gl-c img{display:block; width:100%; aspect-ratio:16/9; object-fit:cover; transition:transform .25s;}
   .gl-c:hover img{transform:scale(1.04);}
+  .gl-c{transition:transform .18s,box-shadow .18s,border-color .18s;} .gl-c:hover{transform:translateY(-2px); border-color:var(--fry); box-shadow:0 14px 34px rgba(0,0,0,.35);}
   .gl-c .cap{position:absolute; left:0; right:0; bottom:0; padding:28px 14px 11px; background:linear-gradient(transparent,rgba(0,0,0,.82));}
   .gl-c .cap b{display:block; font-size:16px;} .gl-c .cap span{font-size:12px; color:var(--fry); font-weight:700; letter-spacing:.04em;}
   .gl-lb{position:fixed; inset:0; z-index:2147483000; background:rgba(4,5,8,.92); display:flex; flex-direction:column; align-items:center; justify-content:center; padding:20px;}
