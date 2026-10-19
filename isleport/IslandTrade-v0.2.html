@@ -436,7 +436,7 @@ const TUT=[
  [P('다 자라면 밭을 눌러 수확해요','When it is grown, tap the field to harvest'),s=>s.stats.harvest>=1],
  [P('마을 장터에서 수확한 것을 팔아요','Sell your harvest at the town market'),s=>(s.stats.shop||0)>=1],
  [P('항구에서 배에 짐을 싣고 보내요','Load a ship at the harbor and send it off'),s=>s.stats.sailed>=1]];
-const OUTMAX=12,BUILD=31;
+const OUTMAX=12,BUILD=32;
 const hasB=(s,b)=>s.slots.some(x=>x&&x.b===b);
 const rankOf=e=>{let r=0;RANKS.forEach((x,i)=>{if(e>=x[0])r=i;});return r;};
 /* 업적: id, 이름, 설명, 조건 */
@@ -558,6 +558,9 @@ A('nw1m',P('백만장자','Millionaire'),P('재산 1,000,000 모으기','Reach a
 const CROPK=Object.keys(CROPS),SPEC=['goldbarley','pomegranate','saffron','cloudcotton','seaweed','dragonfruit'],CROPK17=CROPK.filter(c=>!SPEC.includes(c));
 const ACHN={};ACH.forEach(a=>ACHN[a.id]=a);
 const NOTES=[
+ {date:'2026-10-19',build:'v0.2 build 32',title:P('새 계정 주소로 로그인','Login on the new account address'),items:[
+  P('로그인이 새 계정 주소를 먼저 쓰고, 안 되면 옛 주소로 다시 시도해요. 아이디와 비밀번호는 그대로예요','Login now uses the new account address first and falls back to the old one. Your ID and password stay the same')
+ ]},
  {date:'2026-10-19',build:'v0.2 build 31',title:P('계정 도메인 이전 준비','Account domain move prep'),items:[
   P('로그인할 때 새 계정 주소로도 시도해요. 아이디와 비밀번호는 그대로 쓰면 돼요','Login now also tries the new account address. Keep using the same ID and password')
  ]},
@@ -8904,7 +8907,7 @@ ACT.shopsell=a=>{const [g,n]=a.split(':');shopSell(g,n==='all'?9999:+n);renderMo
 MODS.login=()=>{if(UID)return `<h2>${T('Frenchfries777 계정','Frenchfries777 account')}</h2><div class="muted">${T('로그인 중: {0}','Logged in as {0}',esc(UNAME||''))}<br>${T('업적이 프로필 카드에 올라가요. 계정 만들기와 비밀번호 바꾸기는 허브 사이트에서 해요.','Your goals show on your profile card. Create accounts and change passwords on the hub site.')}</div><div class="btns" style="margin-top:10px"><button class="pb dark" data-act="dologout">${T('로그아웃','Log out')}</button></div>`;
   return `<h2>${T('Frenchfries777 계정','Frenchfries777 account')}</h2><div class="muted">${T('아이디와 비밀번호로 로그인하면 닉네임이 쓰이고 업적이 프로필 카드에 올라가요. 계정은 허브 사이트에서 만들어요.','Log in with your ID and password to use your nickname and show goals on your profile card. Create accounts on the hub site.')}</div>
    <label class="muted">${T('아이디','ID')}</label><input id="lgId" type="text" maxlength="30" autocomplete="username" autocapitalize="none"><label class="muted">${T('비밀번호','Password')}</label><input id="lgPw" type="password" maxlength="60" autocomplete="current-password"><div class="btns" style="margin-top:10px"><button class="pb gold" data-act="dologin">${T('로그인','Log in')}</button></div><div class="muted" id="lgMsg" style="margin-top:6px"></div>`;};
-const EMAIL_DOM='@arenaclash.local',EMAIL_DOM2='@frenchfries777.com';
+const EMAIL_DOM='@frenchfries777.com',EMAIL_DOM2='@arenaclash.local'; // 새 주소 우선, 옛 주소는 안전망
 const emailFor=(u,dom)=>u.toLowerCase().replace(/[^a-z0-9_]/g,'')+(dom||EMAIL_DOM);
 ACT.dologin=async()=>{const u=($('lgId')||{}).value||'',p=($('lgPw')||{}).value||'',m=$('lgMsg');if(!u||!p){if(m)m.textContent=T('아이디와 비밀번호를 적어 주세요','Enter your ID and password');return;}
   try{if(!sb)await initAuth();if(!sb){if(m)m.textContent=T('로그인 서버에 연결하지 못했어요','Could not reach the login server');return;}
