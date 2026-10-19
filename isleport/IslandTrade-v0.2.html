@@ -324,9 +324,9 @@ const CREWP={steady:{n:P('성실','Steady'),w:.75,e:1},greedy:{n:P('욕심쟁이
 const CREWNAMES=['Mina','Joon','Haru','Sol','Lena','Marco','Yuri','Otto','Nami','Pablo','Iris','Kai','Sora','Luca','Bora','Theo'];
 /* 비밀 섬 (지도 조각 3개마다 하나씩 발견) */
 const PROVS=[
- {n:P('푸른 고원','Blue Highlands'),d:P('양과 풀이 가득한 높은 목초지예요','High pastures full of sheep and grass'),rank:1,fare:30,ms:2800,want:['bread','wine','cloth','salt','pie'],sell:['milk','cheese','wool','goatcheese','butter']},
- {n:P('소나무 숲마을','Pine Forest Village'),d:P('소나무 숲 속의 조용한 나무꾼 마을이에요','A quiet logging village among pines'),rank:2,fare:60,ms:3200,want:['salt','tea','coffee','canned','jam'],sell:['honey','mead','pork','ham']},
- {n:P('붉은 산맥 역참','Red Ridge Depot'),d:P('붉은 바위산 아래의 역참 마을이에요','A depot town below red cliffs'),rank:3,fare:100,ms:3600,want:['bread','wine','canned','cheese','clothes'],sell:['salt','amber','curry','stew']}];
+ {n:P('블루힐스 고원','Blue Highlands'),d:P('양과 풀이 가득한 높은 목초지예요','High pastures full of sheep and grass'),rank:1,fare:30,ms:2800,want:['bread','wine','cloth','salt','pie'],sell:['milk','cheese','wool','goatcheese','butter']},
+ {n:P('파인우드 마을','Pine Forest Village'),d:P('소나무 숲 속의 조용한 나무꾼 마을이에요','A quiet logging village among pines'),rank:2,fare:60,ms:3200,want:['salt','tea','coffee','canned','jam'],sell:['honey','mead','pork','ham']},
+ {n:P('레드리지 역참','Red Ridge Depot'),d:P('붉은 바위산 아래의 역참 마을이에요','A depot town below red cliffs'),rank:3,fare:100,ms:3600,want:['bread','wine','canned','cheese','clothes'],sell:['salt','amber','curry','stew']}];
 const SECRET=[
  {id:'coral',n:P('산호섬','Coral Cay'),d:P('산호초에 둘러싸인 작은 섬','A tiny isle ringed by coral'),x:44,y:150,r:11,g:'coral'},
  {id:'amber',n:P('호박섬','Amber Isle'),d:P('나무 진액이 굳은 호박이 나는 섬','An isle where amber washes ashore'),x:314,y:150,r:11,g:'amber'},
@@ -434,7 +434,7 @@ const TUT=[
  [P('다 자라면 밭을 눌러 수확해요','When it is grown, tap the field to harvest'),s=>s.stats.harvest>=1],
  [P('마을 장터에서 수확한 것을 팔아요','Sell your harvest at the town market'),s=>(s.stats.shop||0)>=1],
  [P('항구에서 배에 짐을 싣고 보내요','Load a ship at the harbor and send it off'),s=>s.stats.sailed>=1]];
-const OUTMAX=12,BUILD=14;
+const OUTMAX=12,BUILD=15;
 const hasB=(s,b)=>s.slots.some(x=>x&&x.b===b);
 const rankOf=e=>{let r=0;RANKS.forEach((x,i)=>{if(e>=x[0])r=i;});return r;};
 /* 업적: id, 이름, 설명, 조건 */
@@ -556,12 +556,15 @@ A('nw1m',P('백만장자','Millionaire'),P('재산 1,000,000 모으기','Reach a
 const CROPK=Object.keys(CROPS),SPEC=['goldbarley','pomegranate','saffron','cloudcotton','seaweed','dragonfruit'],CROPK17=CROPK.filter(c=>!SPEC.includes(c));
 const ACHN={};ACH.forEach(a=>ACHN[a.id]=a);
 const NOTES=[
+ {date:'2026-10-19',build:'v0.2 build 15',title:P('지방 이름 정리','Province names'),items:[
+  P('내륙 지방의 이름을 블루힐스 고원, 파인우드 마을, 레드리지 역참으로 바꿨어요','Inland provinces are now named Blue Hills, Pinewood and Red Ridge')
+ ]},
  {date:'2026-10-19',build:'v0.2 build 14',title:P('NPC 이름 정리','NPC names'),items:[
   P('섬 주민과 이야기 속 NPC의 이름을 신문 속 인물처럼 서양식 이름으로 바꿨어요','Island residents and story NPCs now have names in the same style as the newspaper characters')
  ]},
  {date:'2026-10-19',build:'v0.2 build 13',title:P('기차역과 내륙 지방','Train station and inland provinces'),items:[
   P('홈 섬 장터 옆에 기차역이 생겼어요. 기차를 타고 내륙의 세 지방으로 갈 수 있어요','A train station stands by the market. Ride to three inland provinces'),
-  P('푸른 고원(계급 1), 소나무 숲마을(계급 2), 붉은 산맥 역참(계급 3)이 있고, 각각 걸어 다닐 수 있는 지도와 시장, 주민이 있어요','Blue Highlands (rank 1), Pine Forest Village (rank 2) and Red Ridge Depot (rank 3), each with a walkable map, market and resident'),
+  P('블루힐스 고원(계급 1), 파인우드 마을(계급 2), 레드리지 역참(계급 3)이 있고, 각각 걸어 다닐 수 있는 지도와 시장, 주민이 있어요','Blue Highlands (rank 1), Pine Forest Village (rank 2) and Red Ridge Depot (rank 3), each with a walkable map, market and resident'),
   P('지방 시장에서 물건을 비싸게 팔고, 그 지방의 특산품을 싸게 살 수 있어요','Sell goods dear at provincial markets and buy local specialties cheaply'),
  ]},
  {date:'2026-10-19',build:'v0.2 build 12',title:P('NPC와 이야기','NPCs and a story'),items:[
@@ -8649,13 +8652,13 @@ const ISLES=[
  /* 9 광산섬 */{seed:131,sea:'#1f6a92',grass:['#7a8a5a','#6e7e50'],beach:'#cfc6a4',amp:[.08,.06,.09],ph:[.9,2.3,1.6],ax:.84,ay:.8,
   mk:[P('광부 상점','Miners store'),'#8a8a96'],lm:[P('제련소','Smelter'),P('붉은 불꽃이 밤낮없이 광석을 녹여요.','A red fire melts ore day and night.')],
   feat:[['pine',9],['stump',5],['wall',3],['hut',2]],fg:[],ground:'#7a7a72',secret:'mine',mine:1},
- /* 10 푸른 고원 */{seed:151,sea:'#3f6a4a',grass:['#7ab868','#6aa85c'],beach:'#9ab870',amp:[.07,.09,.05],ph:[1.3,.6,2.4],ax:.88,ay:.82,inland:1,prov:0,
+ /* 10 블루힐스 고원 */{seed:151,sea:'#3f6a4a',grass:['#7ab868','#6aa85c'],beach:'#9ab870',amp:[.07,.09,.05],ph:[1.3,.6,2.4],ax:.88,ay:.82,inland:1,prov:0,
   mk:[P('고원 시장','Highland market'),'#7ab0e0'],lm:[P('양치기 오두막','Shepherd hut'),P('고원의 바람 속에서 양치기가 양떼를 지켜봐요.','A shepherd watches the flock in the highland wind.')],
   feat:[['sheep',10],['hay',8],['fence',6],['tree',5],['cart',2]],fg:['wool','milk'],ground:'#9ab870'},
- /* 11 소나무 숲마을 */{seed:163,sea:'#2e4a30',grass:['#5a8a46','#4e7c3e'],beach:'#7a8a52',amp:[.06,.1,.07],ph:[.5,1.9,1.1],ax:.86,ay:.8,inland:1,prov:1,
+ /* 11 파인우드 마을 */{seed:163,sea:'#2e4a30',grass:['#5a8a46','#4e7c3e'],beach:'#7a8a52',amp:[.06,.1,.07],ph:[.5,1.9,1.1],ax:.86,ay:.8,inland:1,prov:1,
   mk:[P('목재 시장','Timber market'),'#8a6a3a'],lm:[P('나무꾼 오두막','Woodcutter hut'),P('도끼 소리가 숲 속에 울려 퍼져요.','The sound of axes rings through the pines.')],
   feat:[['pine',24],['stump',8],['hut',3],['barrel',5],['hive',4]],fg:['honey'],ground:'#4e6a3a'},
- /* 12 붉은 산맥 역참 */{seed:177,sea:'#5a4a40',grass:['#8a8a5a','#7c7c50'],beach:'#a89878',amp:[.09,.06,.08],ph:[2.1,.8,1.5],ax:.84,ay:.8,inland:1,prov:2,
+ /* 12 레드리지 역참 */{seed:177,sea:'#5a4a40',grass:['#8a8a5a','#7c7c50'],beach:'#a89878',amp:[.09,.06,.08],ph:[2.1,.8,1.5],ax:.84,ay:.8,inland:1,prov:2,
   mk:[P('산악 시장','Ridge market'),'#b0603a'],lm:[P('역장 사무소','Stationmaster office'),P('붉은 바위 아래에서 열차가 쉬어 가요.','Trains rest below the red rocks.')],
   feat:[['wall',4],['pine',8],['stump',4],['crate',6],['cart',3]],fg:['amber','salt'],ground:'#8a7a68'}];
 const ISLHB=[['항구 일꾼 집','곡식 포대를 배에 싣는 일꾼들이 쉬어 가는 집이에요.','#a8784a'],['과일 상자 창고','갓 딴 사과가 상자째 배를 기다려요.','#c0452f'],['와인 통 창고','부두 옆에서 와인 통을 굴려 배에 실어요.','#7a3e9d'],['솜 창고','솜 포대가 구름처럼 쌓여 있어요.','#8ab0e0'],['어부의 집','새벽마다 어부들이 그물을 챙겨 나가요.','#3a6fb8'],['세관 초소','먼 바다에서 온 배의 짐을 확인하는 곳이에요.','#e07a2a'],['조개 오두막','주운 조개를 말려 두는 오두막이에요.','#f08aa0'],['채집꾼 오두막','호박을 캐는 사람들이 쉬어 가는 오두막이에요.','#8a6a32'],['탐사대 천막','유적을 조사하는 사람들이 머무는 천막이에요.','#b8b8a8'],['짐꾼 오두막','광석 수레가 부두로 줄지어 내려와요.','#8a8a96'],['역무원 숙소','역무원이 시간표를 확인하고 있어요.','#7ab0e0'],['역무원 숙소','역무원이 시간표를 확인하고 있어요.','#8a6a3a'],['역무원 숙소','역무원이 시간표를 확인하고 있어요.','#b0603a']];
