@@ -429,7 +429,7 @@ const TUT=[
  [P('다 자라면 밭을 눌러 수확해요','When it is grown, tap the field to harvest'),s=>s.stats.harvest>=1],
  [P('마을 장터에서 수확한 것을 팔아요','Sell your harvest at the town market'),s=>(s.stats.shop||0)>=1],
  [P('항구에서 배에 짐을 싣고 보내요','Load a ship at the harbor and send it off'),s=>s.stats.sailed>=1]];
-const OUTMAX=12,BUILD=5;
+const OUTMAX=12,BUILD=6;
 const hasB=(s,b)=>s.slots.some(x=>x&&x.b===b);
 const rankOf=e=>{let r=0;RANKS.forEach((x,i)=>{if(e>=x[0])r=i;});return r;};
 /* 업적: id, 이름, 설명, 조건 */
@@ -551,6 +551,12 @@ A('nw1m',P('백만장자','Millionaire'),P('재산 1,000,000 모으기','Reach a
 const CROPK=Object.keys(CROPS),SPEC=['goldbarley','pomegranate','saffron','cloudcotton','seaweed','dragonfruit'],CROPK17=CROPK.filter(c=>!SPEC.includes(c));
 const ACHN={};ACH.forEach(a=>ACHN[a.id]=a);
 const NOTES=[
+ {date:'2026-10-19',build:'v0.2 build 6',title:P('시세 신문과 무역 보험','Price paper and trade insurance'),items:[
+  P('은행에 시세 신문 탭이 생겼어요. 현재 주식 시세, 다음 호까지의 예측, 지난 호 예측 결과, 시장 소식이 실려요','The bank has a Paper tab: current stock prices, a forecast until the next issue, last issue\'s results and market news'),
+  P('신문에는 엉뚱한 소식과 아재개그도 실려요','The paper also carries silly news and dad jokes'),
+  P('항구의 풍년·축제·폭풍과 해적 습격이 관련 주식 가격에 영향을 줘요','Port booms, festivals, storms and pirate raids now move related stocks'),
+  P('은행에 무역 보험이 생겼어요. 가입해 두면 해적에게 빼앗긴 짐 값의 70%를 돌려받아요','The bank offers trade insurance: pirate losses are refunded at 70% of their value'),
+ ]},
  {date:'2026-10-18',build:'v0.2 build 5',title:P('은행 확장','Bank expansion'),items:[
   P('은행에서 주식을 사고팔 수 있어요. 곡물·과수원·와인·직물·수산·무역 여섯 종목이 있어요','You can now buy and sell stocks at the bank: grain, orchard, wine, textile, fishing and trade'),
   P('은행에 돈을 맡길 수 있어요. 1분에 0.2% 이자가 붙고 언제든 찾을 수 있어요','You can deposit money at the bank: 0.2% interest per minute, withdraw anytime'),
@@ -6852,7 +6858,9 @@ function arrive(s){const p=s.port;let total=0;const parts=[];
 function dock(s){const lost=[];for(const k in s.cargo){const n=s.cargo[k],a=addInv(k,n);if(a<n)lost.push(GN(k)+' '+(n-a));}s.cargo={};s.st='dock';s.back=false;if(lost.length)toast(T('창고가 가득 차서 {0}을(를) 잃었어요','Warehouse full, lost: {0}',lost.join(', ')));}
 function pirates(s){s.pirAt=0;S.stats.pirated++;const e=escOf(s),beat=Math.random()<0.25*e+(hasT('drill')?.15:0)+crewV('gun');
   if(beat){S.stats.piratesBeaten++;if(Math.random()<.35)addMap(1);const b=80+Math.floor(Math.random()*220);S.money+=b;toast(T('해적이 나타났지만 호위가 물리쳤어요! 현상금 +{0}','Pirates attacked but your escort drove them off! Bounty +{0}',b));sfx('ach');}
-  else{let n=0;for(const k in s.cargo){const q=Math.ceil(s.cargo[k]*0.25);s.cargo[k]-=q;n+=q;}toast('<span class="bad">'+T('해적에게 짐 {0}개를 빼앗겼어요!','Pirates stole {0} goods!',n)+'</span>');sfx('bad');}}
+  else{let n=0,val=0;for(const k in s.cargo){const q=Math.ceil(s.cargo[k]*0.25);s.cargo[k]-=q;n+=q;val+=q*GI[k].base;}toast('<span class="bad">'+T('해적에게 짐 {0}개를 빼앗겼어요!','Pirates stole {0} goods!',n)+'</span>');sfx('bad');
+    stkShock('trade',-0.04,T('해적 소식에 {0} 주가가 내렸어요','Pirate news pushed {0} down',STKN('trade')));
+    ensureBank(S);if(S.ins.until>NOW()&&val>0){const pay=Math.round(val*0.7);S.money+=pay;S.stats.insPaid=(S.stats.insPaid||0)+pay;toast(T('보험금 {0}을 받았어요','Insurance paid {0}',fmt(pay)));}}}
 /* ---- 계약, 방문 상인 ---- */
 function genContract(){const rk=rankOf(S.stats.earned),ps=PORTS.map((p,i)=>i).filter(i=>PORTS[i].rank<=rk);if(!ps.length)return;const p=ps[Math.floor(Math.random()*ps.length)];
   const pr=GOODS.filter(g=>g.k==='proc'&&S.codex[g.id]),o=pr.length&&Math.random()<.5;
@@ -6872,9 +6880,28 @@ function research(id){const t=TI[id];if(!t||S.techs[id]||S.money<t.cost||(t.req&
 const loanMax=()=>[500,1500,5000,15000,50000,150000,500000][rankOf(S.stats.earned)];
 const STK=[{id:'grain',ko:'곡물조합',en:'Grain Guild',base:60,vol:0.035},{id:'orch',ko:'과수원공사',en:'Orchard Co.',base:80,vol:0.04},{id:'wine',ko:'와인양조',en:'Vintners',base:120,vol:0.05},{id:'tex',ko:'직물공방',en:'Textile Works',base:70,vol:0.04},{id:'fish',ko:'수산협동',en:'Fisheries',base:50,vol:0.045},{id:'trade',ko:'무역상사',en:'Trading House',base:150,vol:0.06}];
 const DEPR=0.002,STKMS=8000;
-function ensureBank(s){if(s.dep==null)s.dep=0;if(!s.stk){const p={},h={};STK.forEach(x=>{p[x.id]=x.base;h[x.id]=[x.base];});s.stk={t:NOW(),p,h,hold:{}};}}
+function ensureBank(s){if(s.dep==null)s.dep=0;if(!s.stk){const p={},h={};STK.forEach(x=>{p[x.id]=x.base;h[x.id]=[x.base];});s.stk={t:NOW(),p,h,hold:{}};}const k=s.stk;if(!k.drift)k.drift={};if(!k.mom)k.mom={};if(!k.news)k.news=[];if(!s.ins)s.ins={until:0,auto:0};if(s.paper===undefined)s.paper=null;}
 const depCap=()=>loanMax()*3;
-function stkStep(){const k=S.stk;STK.forEach(x=>{let p=k.p[x.id];const z=Math.random()+Math.random()+Math.random()-1.5;let r=z*x.vol+Math.log(x.base/p)*0.02;if(Math.random()<0.012)r+=(Math.random()<0.5?-1:1)*0.1;p=Math.max(x.base*0.35,Math.min(x.base*3,p*Math.exp(r)));k.p[x.id]=p;const h=k.h[x.id];h.push(p);if(h.length>40)h.shift();});}
+function stkStep(){const k=S.stk;STK.forEach(x=>{let p=k.p[x.id];const z=Math.random()+Math.random()+Math.random()-1.5;let r=z*x.vol+Math.log(x.base/p)*0.02;{const dr=k.drift[x.id];if(dr&&dr.until>NOW())r+=dr.d*0.005;const mo=k.mom[x.id]||0;r+=mo;k.mom[x.id]=mo*0.85;}if(Math.random()<0.012)r+=(Math.random()<0.5?-1:1)*0.1;p=Math.max(x.base*0.35,Math.min(x.base*3,p*Math.exp(r)));k.p[x.id]=p;const h=k.h[x.id];h.push(p);if(h.length>40)h.shift();});}
+const GSTK=(()=>{const m={};const L={grain:['wheat','potato','corn','carrot','rice','sugarcane','flour','bread'],orch:['apple','tomato','pumpkin','strawberry','pepper','olive','pie','jam','sauce','oil'],wine:['grape','wine','rum','mead','sake'],tex:['cotton','wool','cloth','clothes','fine','silk','dyedcloth','hanbok','cloudcotton'],fish:['fish','canned','sushi','pearl','seaweed','coral']};for(const k in L)L[k].forEach(g=>m[g]=k);return m;})();
+const stkOf=g=>GSTK[g]||'trade';
+function stkShock(id,pct,txt){if(!S||!S.stk)return;const k=S.stk;k.p[id]=Math.max(GSTKB(id)*0.35,Math.min(GSTKB(id)*3,k.p[id]*(1+pct)));const h=k.h[id];h[h.length-1]=k.p[id];k.mom[id]=(k.mom[id]||0)+pct*0.3;if(txt){k.news.unshift({t:NOW(),s:txt});if(k.news.length>8)k.news.pop();}}
+const GSTKB=id=>STK.find(x=>x.id===id).base,STKN=id=>{const x=STK.find(y=>y.id===id);return T(x.ko,x.en);};
+function stkEv(e){if(!S||!S.stk)return;const P0=tx(PORTS[e.p].n);
+  if(e.kind==='boom'){const id=stkOf(GOODS[e.g].id);stkShock(id,0.07,T('{0}에 {1} 수요가 몰려 {2} 주가가 올랐어요','{0} wants {1}; {2} shares rose',P0,GN(GOODS[e.g].id),STKN(id)));stkShock('trade',0.02);}
+  else if(e.kind==='fest'){stkShock('trade',0.05,T('{0} 축제로 {1} 주가가 올랐어요','Festival in {0} lifted {1}',P0,STKN('trade')));stkShock('wine',0.04);}
+  else{stkShock('fish',-0.06,T('{0} 폭풍으로 {1} 주가가 내렸어요','Storm near {0} hit {1}',P0,STKN('fish')));stkShock('trade',-0.05);}}
+const PAPERMS=180000;
+const NEWSX=['터너 씨의 강아지가 실종되었다. 터너 씨는 외계인이 그의 반려동물을 납치했다고 주장했다','경찰서장 도널드의 애완 도넛이 도난당했다. 용의자는 설탕을 묻히고 도주 중이다','부두 갈매기들이 어제 저녁 일제히 한 방향으로 서 있었다. 전문가들은 "그냥 바람 때문"이라고 밝혔다','어시장의 오징어 한 마리가 스스로 신문을 읽고 있었다는 제보가 접수되었다','마을 시계탑이 이틀째 13시를 가리키고 있다. 시계공은 "시간이 남아돈다"고 말했다','양치기 모리스 씨는 양 마흔 마리를 세다 잠들었고, 일어나 보니 마흔한 마리였다고 한다','한 선원이 항해 중 병에 담긴 편지를 주웠는데 "다음 주 화요일에 환불해 주세요"라고 적혀 있었다','밤마다 등대 불빛이 모스 부호로 "배고파"라고 깜빡인다는 신고가 이어지고 있다','할머니의 사과 파이가 3등 상금보다 맛있다며 심사위원이 눈물을 흘렸다. 상금은 파이에게 전달되었다','수상한 구름이 사흘 연속 같은 모양으로 떠 있다. 구름은 "우연"이라고 해명했다','염소 한 마리가 시장 선거에 출마하겠다고 선언했다. 풀 공약이 인기를 끌고 있다','밭의 허수아비가 어젯밤 자리를 옮겼다는 증언이 나왔다. 허수아비는 "스트레칭이었다"고 답했다','선착장에서 발견된 거대한 조개는 열어 보니 또 다른 조개였다. 조사는 계속된다','부두의 고양이가 닻을 세 번 돌려놓았다. 선원들은 "오늘은 출항하지 말라는 뜻"이라고 해석했다','마을 빵집의 빵이 너무 부풀어 지붕을 뚫고 올라갔다. 빵은 아직 하늘에 떠 있다','어부 베니 씨가 낚은 장화 한 짝의 짝이 어제 시장에서 발견되었다. 둘은 감격의 재회를 했다','방문 상인이 "이 모자는 비밀 지도"라고 주장했으나, 펼쳐 보니 그냥 모자였다','닭장에서 달걀 하나가 사라졌다. 닭들은 "우리도 몰라"라며 서로 의심하고 있다','어느 선장의 앵무새가 항로를 먼저 외쳐 항해사가 일자리를 걱정하고 있다','광장에서 열린 달리기 대회에서 달팽이가 우승했다. 나머지 선수는 모두 구경하느라 출발하지 않았다','우체부 조지 씨의 가방에서 3년 전 편지가 나왔다. 수취인은 "이미 답장했다"고 말했다','시장 구석 펌프에서 레모네이드가 나온다는 소문에 사람들이 줄을 섰으나, 그냥 물이었다','한 어부는 "고래가 내 배를 빌려 갔다"고 주장했다. 배는 깨끗이 세차되어 돌아왔다','마을 도서관의 책 한 권이 스스로 3페이지 뒤로 이사했다고 사서가 밝혔다'];
+const JOKES=[['바나나가 웃으면?','바나나킥'],['세상에서 가장 뜨거운 바다는?','열받아'],['왕이 넘어지면?','킹콩'],['오리가 얼면?','언덕'],['우유가 길을 가면?','우유부단'],['달걀이 놀라면?','에그머니나!'],['거꾸로 읽어도 똑같은 채소는?','토마토'],['빵이 화나면?','식빵'],['생선 중에 제일 비싼 생선은?','금붕어'],['세상에서 가장 빠른 닭은?','후다닭'],['선장이 제일 좋아하는 과일은?','배'],['갈매기가 제일 좋아하는 과자는?','새우깡'],['버터가 날아가면?','버터플라이'],['치즈가 사진을 찍으면?','치즈~ 찰칵']];
+function genPaper(){const t=NOW(),k=S.stk,old=S.paper;let prev=null;if(old&&old.fc)prev=old.fc.map(f=>({id:f.id,d:f.d,hit:(k.p[f.id]>f.p0)===(f.d>0)}));
+  const ids=STK.map(x=>x.id).sort(()=>Math.random()-.5).slice(0,3);k.drift={};
+  const fc=ids.map(id=>{const d=Math.random()<.5?1:-1,ok=Math.random()<.75;k.drift[id]={d:ok?d:-d,until:t+PAPERMS};return {id,d,p0:k.p[id]};});
+  const xs=[];while(xs.length<3){const i=Math.floor(Math.random()*NEWSX.length);if(!xs.includes(i))xs.push(i);}
+  S.paper={t,no:(old?old.no:0)+1,fc,prev,x:xs,j:Math.floor(Math.random()*JOKES.length),seen:0};}
+const insCost=()=>Math.round(S.ships.reduce((a,x)=>a+SHIPS[x.ty].cost,0)*0.05);
+const INSMS=600000;
+function insBuy(){if(S.money<insCost())return;S.money-=insCost();const t=NOW();S.ins.until=Math.max(S.ins.until,t)+INSMS;sfx('coin');}
 function stkValue(){if(!S||!S.stk)return 0;let v=0;for(const k in S.stk.hold)v+=S.stk.hold[k].n*S.stk.p[k];return v;}
 function stkBuy(id,n){const k=S.stk,p=k.p[id];if(n==='max')n=Math.floor(S.money/p);n=Math.floor(n);if(n<=0||S.money<p*n)return;S.money-=p*n;const h=k.hold[id]||(k.hold[id]={n:0,avg:0});h.avg=(h.avg*h.n+p*n)/(h.n+n);h.n+=n;sfx('coin');}
 function stkSell(id,n){const k=S.stk,h=k.hold[id];if(!h)return;if(n==='all')n=h.n;n=Math.min(Math.floor(n),h.n);if(n<=0)return;const g=k.p[id]*n*0.99;S.money+=g;S.stats.earned+=Math.max(0,g-h.avg*n);h.n-=n;if(h.n<=0)delete k.hold[id];sfx('coin');}
@@ -6916,7 +6943,9 @@ function tick(dt){if(!S)return;const t=NOW();rescue(dt);
   if(S.visitor&&S.visitor.until<t)S.visitor=null;
   if(!S.visitor&&t>S.visNext){S.visNext=t+(150+Math.random()*90)*1000;if(S.stats.sold>0||S.stats.harvest>=20)genVisitor();}
   if(S.loan>0)S.loan+=S.loan*0.01/60*dt;
-  ensureBank(S);if(S.dep>0)S.dep+=Math.min(S.dep,depCap())*DEPR/60*dt;
+  ensureBank(S);if(!S.paper||t>=S.paper.t+PAPERMS){const first=!S.paper;genPaper();if(!first)toast(T('새 시세 신문이 나왔어요','A new price paper is out'));}
+  if(S.ins.auto&&S.ins.until<t&&S.money>=insCost()*3&&S.ships.length)insBuy();
+  if(S.dep>0)S.dep+=Math.min(S.dep,depCap())*DEPR/60*dt;
   {const k=S.stk;if(t-k.t>200*STKMS)k.t=t-200*STKMS;while(t>=k.t+STKMS){stkStep();k.t+=STKMS;}}
   // 계급
   const rk=rankOf(S.stats.earned);if(rk>S.rank){S.rank=rk;rankUp(rk);}
@@ -6927,7 +6956,7 @@ function tick(dt){if(!S)return;const t=NOW();rescue(dt);
   if(!MP.on||MP.host){const rec=PROJ.done[1]?0.02:0.01;PORTS.forEach((_,p)=>GOODS.forEach((_,g)=>{DEM[p][g]+=(1-DEM[p][g])*rec*dt;}));
     EV=EV.filter(e=>e.until>t);
     if(t>(tick.nextEv||0)){tick.nextEv=t+(70+Math.random()*80)*1000;const rk2=rankOf(S.stats.earned);const p=Math.floor(Math.random()*Math.min(PORTS.length,3+rk2)),k=['boom','fest','storm'][Math.floor(Math.random()*3)];
-      const e={p,kind:k,g:Math.floor(Math.random()*GOODS.length),until:t+90000};EV.push(e);announce(e);}}
+      const e={p,kind:k,g:Math.floor(Math.random()*GOODS.length),until:t+90000};EV.push(e);announce(e);stkEv(e);}}
   histAcc+=dt;if(histAcc>=5){histAcc=0;PORTS.forEach((_,p)=>GOODS.forEach((_,g)=>{const h=HIST[p][g];h.push(quote(p,g));if(h.length>48)h.shift();}));}
   crewTick(dt);storeTick(dt);coTick(t);
   achAcc+=dt;if(achAcc>=1){achAcc=0;ACH.forEach(a=>{if(!S.ach[a.id]){try{if(a.f(S))unlock(a.id);}catch(e){}}});}
@@ -8090,7 +8119,7 @@ document.addEventListener('click',e=>{if(window.__tmoved&&Date.now()-window.__tm
 ACT.tech=a=>{research(a);updateHud();renderModal();};
 /* 은행 */
 MODS.bank=m=>{ensureBank(S);const tab=m.tab||'loan';
-  const tabs=`<div class="btns">${[['loan','대출','Loan'],['dep','예금','Deposit'],['stk','주식','Stocks']].map(([k,ko,en])=>`<button class="pb sm ${tab===k?'gold':''}" data-act="btab:${k}">${T(ko,en)}</button>`).join('')}</div>`;
+  const tabs=`<div class="btns">${[['loan','대출','Loan'],['dep','예금','Deposit'],['stk','주식','Stocks'],['paper','신문'+(S.paper&&!S.paper.seen?' ●':''),'Paper'+(S.paper&&!S.paper.seen?' ●':'')],['ins','보험','Insurance']].map(([k,ko,en])=>`<button class="pb sm ${tab===k?'gold':''}" data-act="btab:${k}">${T(ko,en)}</button>`).join('')}</div>`;
   let body='';
   if(tab==='loan'){const mx=loanMax();body=`<div class="muted">${T('이자는 1분에 1%씩 붙어요. 계급이 오르면 더 많이 빌릴 수 있어요','Interest is 1% per minute. A higher rank lets you borrow more')}</div>
   <div class="card"><div class="grow">${T('빚','Debt')}: <b class="${S.loan>0?'bad':''}">${fmt(S.loan)}</b><div class="muted">${T('빌릴 수 있는 한도 {0}','Limit {0}',fmt(mx))}</div></div></div>
@@ -8100,13 +8129,25 @@ MODS.bank=m=>{ensureBank(S);const tab=m.tab||'loan';
   <div class="card"><div class="grow">${T('예금','Deposit')}: <b>${fmt(S.dep)}</b><div class="muted">${T('가진 돈 {0}','Cash {0}',fmt(S.money))}</div></div></div>
   <h5>${T('맡기기','Deposit')}</h5><div class="btns">${[500,2000,10000].map(v=>`<button class="pb sm" data-act="dput:${v}" ${S.money<v?'disabled':''}>${fmt(v)}</button>`).join('')}<button class="pb sm gold" data-act="dput:all" ${S.money<1?'disabled':''}>${T('모두 맡기기','All in')}</button></div>
   <h5>${T('찾기','Withdraw')}</h5><div class="btns">${[500,2000,10000].map(v=>`<button class="pb sm" data-act="dget:${v}" ${S.dep<v?'disabled':''}>${fmt(v)}</button>`).join('')}<button class="pb sm gold" data-act="dget:all" ${S.dep<=0?'disabled':''}>${T('모두 찾기','Withdraw all')}</button></div>`;}
+  else if(tab==='paper'){const pp=S.paper,k=S.stk;pp.seen=1;
+    const row=x=>{const p=k.p[x.id],h=k.h[x.id],ch=(p/h[0]-1)*100,up=ch>=0;return `<div class="card"><div class="grow"><b>${T(x.ko,x.en)}</b></div><span style="${up?'color:#e0605a':'color:#5a8fe0'}">${fmt(p)} (${up?'+':''}${ch.toFixed(1)}%)</span></div>`;};
+    body=`<div class="muted">${T('제 {0}호 · 3분마다 새 호가 나와요','No. {0} · a new issue every 3 minutes',pp.no)}</div>
+    <h5>${T('현재 시세','Current prices')}</h5>${STK.map(row).join('')}
+    <h5>${T('다음 호까지 예측','Forecast')}</h5>${pp.fc.map(f=>`<div class="card"><div class="grow">🔮 <b>${STKN(f.id)}</b> ${f.d>0?T('오를 것 같아요','looks set to rise'):T('내릴 것 같아요','looks set to fall')}</div></div>`).join('')}<div class="muted">${T('예측은 틀릴 수도 있어요','Forecasts can be wrong')}</div>
+    ${pp.prev?`<h5>${T('지난 호 예측 결과','Last issue')}</h5>${pp.prev.map(f=>`<div class="card"><div class="grow">${STKN(f.id)} ${f.d>0?T('상승','up'):T('하락','down')} → <b class="${f.hit?'':'bad'}">${f.hit?T('적중','Hit'):T('빗나감','Miss')}</b></div></div>`).join('')}`:''}
+    <h5>${T('시장 소식','Market news')}</h5>${k.news.length?k.news.slice(0,5).map(n=>`<div class="card"><div class="grow">${n.s}</div></div>`).join(''):`<div class="muted">${T('아직 큰 소식이 없어요','No big news yet')}</div>`}
+    <h5>${T('오늘의 엉뚱한 소식','Strange news')}</h5>${pp.x.map(i=>`<div class="card"><div class="grow">${NEWSX[i]}</div></div>`).join('')}
+    <h5>${T('오늘의 아재개그','Dad joke')}</h5><div class="card"><div class="grow">${JOKES[pp.j][0]} <b>${JOKES[pp.j][1]}</b></div></div>`;}
+  else if(tab==='ins'){const on=S.ins.until>NOW(),left=Math.max(0,Math.ceil((S.ins.until-NOW())/1000));body=`<div class="muted">${T('해적에게 짐을 빼앗기면 빼앗긴 짐 값의 70%를 돌려받아요. 보험료는 배 값의 5%이고 10분 동안 유효해요','Pirate losses are refunded at 70% of their value. Premium is 5% of ship value for 10 minutes')}</div>
+  <div class="card"><div class="grow">${T('상태','Status')}: <b>${on?T('가입 중 ({0}초 남음)','Active ({0}s left)',left):T('미가입','Not insured')}</b><div class="muted">${T('보험료 {0} · 지금까지 받은 보험금 {1}','Premium {0} · paid out so far {1}',fmt(insCost()),fmt(S.stats.insPaid||0))}</div></div></div>
+  <div class="btns"><button class="pb sm gold" data-act="insbuy" ${S.money<insCost()?'disabled':''}>${on?T('10분 연장','Extend 10 min'):T('가입하기','Buy cover')}</button><button class="pb sm ${S.ins.auto?'gold':''}" data-act="insauto">${T('자동 갱신','Auto-renew')}: ${S.ins.auto?T('켜짐','On'):T('꺼짐','Off')}</button></div>`;}
   else{const k=S.stk;body=`<div class="muted">${T('가격은 8초마다 바뀌어요. 팔 때 수수료 1%가 붙어요','Prices change every 8 seconds. Selling costs a 1% fee')}</div>
   <div class="card"><div class="grow">${T('주식 평가액','Holdings')}: <b>${fmt(stkValue())}</b><div class="muted">${T('가진 돈 {0}','Cash {0}',fmt(S.money))}</div></div></div>`+STK.map(x=>{const p=k.p[x.id],h=k.h[x.id],o=h[0],ch=(p/o-1)*100,hd=k.hold[x.id],mn=Math.min(...h),mxv=Math.max(...h),rg=Math.max(mxv-mn,0.01);
     const pts=h.map((v,i)=>`${(i/Math.max(h.length-1,1)*80).toFixed(1)},${(24-(v-mn)/rg*22-1).toFixed(1)}`).join(' ');const up=ch>=0;
     return `<div class="card" style="display:block"><div style="display:flex;align-items:center;gap:8px"><div class="grow"><b>${T(x.ko,x.en)}</b> <span class="${up?'':'bad'}" style="${up?'color:#e0605a':''}">${fmt(p)} (${up?'+':''}${ch.toFixed(1)}%)</span>${hd?`<div class="muted">${T('보유 {0}주 · 평균 {1} · 손익 {2}','Held {0} · avg {1} · P/L {2}',hd.n,fmt(hd.avg),(p>=hd.avg?'+':'')+fmt((p-hd.avg)*hd.n))}</div>`:''}</div><svg width="80" height="24" viewBox="0 0 80 24"><polyline fill="none" stroke="${up?'#e0605a':'#5a8fe0'}" stroke-width="1.5" points="${pts}"/></svg></div>
     <div class="btns" style="margin-top:4px">${[1,10].map(n=>`<button class="pb sm" data-act="stbuy:${x.id}:${n}" ${S.money<p*n?'disabled':''}>${T('사기','Buy')} ${n}</button>`).join('')}<button class="pb sm" data-act="stbuy:${x.id}:max" ${S.money<p?'disabled':''}>${T('최대 사기','Buy max')}</button>${hd?`<button class="pb sm" data-act="stsell:${x.id}:1">${T('팔기','Sell')} 1</button><button class="pb sm gold" data-act="stsell:${x.id}:all">${T('모두 팔기','Sell all')}</button>`:''}</div></div>`;}).join('');}
   return `<h2>${T('은행','Bank')}</h2>${tabs}${body}`;};
-ACT.btab=a=>{MOD.tab=a;renderModal();};
+ACT.btab=a=>{MOD.tab=a;renderModal();};ACT.insbuy=()=>{insBuy();updateHud();renderModal();};ACT.insauto=()=>{S.ins.auto=S.ins.auto?0:1;renderModal();};
 ACT.dput=a=>{depPut(a==='all'?a:+a);updateHud();renderModal();};ACT.dget=a=>{depGet(a==='all'?a:+a);updateHud();renderModal();};
 ACT.stbuy=a=>{const [i,n]=a.split(':');stkBuy(i,n==='max'?n:+n);updateHud();renderModal();};ACT.stsell=a=>{const [i,n]=a.split(':');stkSell(i,n==='all'?n:+n);updateHud();renderModal();};
 ACT.borrow=a=>{borrow(+a);updateHud();renderModal();};ACT.repay=a=>{repay(a==='all'?S.loan+0.5:+a);updateHud();renderModal();};
