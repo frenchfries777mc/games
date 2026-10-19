@@ -21,3 +21,18 @@ patchnotes.json | v312 title | 캐릭터 카드 디자인 통일 | build 312 | 2
 patchnotes.json | v312 items[0] | 스킨 있는 카드와 없는 카드의 그림 크기·모양·색 통일 | build 312 | 2026-10-18
 patchnotes.json | v313 title | 폭발 무기 오류 수정 | build 313 | 2026-10-18
 patchnotes.json | v313 items[0] | 중화기병·폭발광 등 폭발 무기의 폭발이 오류로 피해를 주지 못하던 문제 수정 | build 313 | 2026-10-18
+Stickseum-v0.8.html | WEAPONS.kan.name | 독침대롱 | build 314 | 2026-10-19
+Stickseum-v0.8.html | WEAPONS.kan.desc | 데미지 5 · 쿨타임 0.5초 · 맞으면 독이 쌓임 (최대 4중첩, 중첩마다 초당 2 피해, 3초 지속, 맞을 때마다 시간 갱신) · 빠르게 날아가는 독침 | build 314 | 2026-10-19
+Stickseum-v0.8.html | WEAPON_PERSONA_NAME.kan | 칸 | build 314 | 2026-10-19
+Stickseum-v0.8.html | ULT.kan.name | 케찰코아틀의 날개 | build 314 | 2026-10-19
+Stickseum-v0.8.html | ULT.kan.desc | 5초 동안 날개를 펴고 날아올라 (점프 키를 누르면 위로, 떼면 천천히 내려옴) 독침을 한 번에 3발씩, 더 빠르게 발사 | build 314 | 2026-10-19
+Stickseum-v0.8.html | SKILLS.kan.name | 독두꺼비 함정 | build 314 | 2026-10-19
+Stickseum-v0.8.html | SKILLS.kan.desc | 내 발밑에 독두꺼비 함정을 설치 (10초 지속, 최대 2개) · 들어온 적에게 독이 쌓이고 이동 속도가 느려짐 | build 314 | 2026-10-19
+Stickseum-v0.8.html | COSMETICS.skin_pizarro.name | 황금빛 모리온 투구 | build 314 | 2026-10-19
+Stickseum-v0.8.html | COSMETICS.skin_pizarro_c.name | 흑강철 모리온 투구 | build 314 | 2026-10-19
+Stickseum-v0.8.html | NEW_SKINS.pizarro | 황금 약탈자의 투구 | build 314 | 2026-10-19
+Stickseum-v0.8.html | TIER_SKINS.pizarro | 황금도시 정복자의 투구 / 엘도라도 황제의 왕관 투구 | build 314 | 2026-10-19
+patchnotes.json | v314 title | 칸 추가와 피사로 스킨 | build 314 | 2026-10-19
+patchnotes.json | v314 items[0] | 새 캐릭터 칸 추가 (마야 독침 사수, 독침대롱·독두꺼비 함정·케찰코아틀의 날개) | build 314 | 2026-10-19
+patchnotes.json | v314 items[1] | 독 피해 추가 (독 중첩, 진한 초록 숫자) | build 314 | 2026-10-19
+patchnotes.json | v314 items[2] | 피사로 스킨 추가 (황금빛·흑강철 모리온 투구, 황금 약탈자의 투구, 다이아·그랜드 마스터 전용 2종) | build 314 | 2026-10-19
