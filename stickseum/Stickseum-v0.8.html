@@ -4686,7 +4686,7 @@ function shuffle(arr){ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.
 /* ===== the version of this file =====
    Players with different versions CAN meet and play together: the automatic matchmaking uses the same room names for every version (online-<mode>-<map>-<slot>), and nobody is refused because of a different build.
    The build is only sent along with the join message and the lobby (for information); the corner of the screen shows it. */
-const GAME_BUILD='build 2026-10-18-v308';
+const GAME_BUILD='build 2026-10-18-v309';
 const GAME_VERSION='0.8', GAME_VERSION_NAME='황금을 찾아서';   // 게임 버전 이름: versions.json의 title과 같게 (빌드마다 바꾸지 않음)
 const WEEKLY_EVENTS=[
   {id:'lowg',    name:'저중력 난투', desc:'몸이 둥실둥실, 중력이 약해진 난투', rules:{grav:0.6}},
@@ -10078,7 +10078,7 @@ function drawWeaponPortrait(wid){
 function drawCharIcon(cv, wid){          // a small picture of the character itself (head gear, body colour, weapon in hand): used where a character without a skin used to show only its emoji
   cv.width=112; cv.height=112; const c=cv.getContext('2d'); c.clearRect(0,0,112,112);
   const _ec=getEquippedCos(), shn=(_ec.col&&COSMETICS[_ec.col]&&COSMETICS[_ec.col].shine)?_ec.col:null;
-  const col=shn ? bodyShineColor(shn, performance.now(), 0) : ((players[myId] && players[myId].color) || cosBaseColor(_ec) || '#3fe0c5');
+  const col=shn ? '#3fe0c5' : ((players[myId] && players[myId].color) || cosBaseColor(_ec) || '#3fe0c5');      // a rainbow / silver / gold colour is not shown on the cards (it was far too big there)
   c.save(); c.translate(56,164); c.scale(2.2,2.2);                                                  // only the head and the neck, big
   const SH=-42, HEADCY=-52, HEADR=9;
   c.strokeStyle=col; c.fillStyle=col; c.lineWidth=5; c.lineCap='round'; c.lineJoin='round';
@@ -10087,7 +10087,6 @@ function drawCharIcon(cv, wid){          // a small picture of the character its
   if(WEAPON_PERSONA_NAME[wid]) drawWeaponPersona(c,wid,0,HEADCY,HEADR,SH,undefined);
   c.restore();
 }
-setInterval(()=>{ try{ const ec=getEquippedCos(); if(!(ec.col&&COSMETICS[ec.col]&&COSMETICS[ec.col].shine)) return; document.querySelectorAll('canvas.charIcon').forEach(cv=>{ if(cv.getClientRects().length) drawCharIcon(cv, cv.dataset.wid); }); }catch(e){} }, 100);      // the rainbow / shiny colours move on the character cards too
 function setWeaponIcon(el, wid){
   const wi=el.querySelector('.wi'); if(!wi) return;
   const sid=(getEquippedCos().skin||{})[wid];
