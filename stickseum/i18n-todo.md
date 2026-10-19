@@ -19,3 +19,5 @@ patchnotes.json | v311 items[0] | 피해 종류별 숫자 색 구분 (불 피해
 patchnotes.json | v311 items[1] | 화염방사기 궁극기 방패가 아군과 나는 밀지 않고 통과하게 수정 | build 311 | 2026-10-18
 patchnotes.json | v312 title | 캐릭터 카드 디자인 통일 | build 312 | 2026-10-18
 patchnotes.json | v312 items[0] | 스킨 있는 카드와 없는 카드의 그림 크기·모양·색 통일 | build 312 | 2026-10-18
+patchnotes.json | v313 title | 폭발 무기 오류 수정 | build 313 | 2026-10-18
+patchnotes.json | v313 items[0] | 중화기병·폭발광 등 폭발 무기의 폭발이 오류로 피해를 주지 못하던 문제 수정 | build 313 | 2026-10-18
