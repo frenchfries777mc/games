@@ -2,6 +2,46 @@
  "notes": [
   {
    "date": "2026-10-19",
+   "build": "v0.2 build 27",
+   "title": "사이트로 돌아가기",
+   "items": [
+    "설정 화면에 \"사이트로 돌아가기\" 버튼이 생겼어요. 누르면 저장하고 게임 사이트로 돌아가요"
+   ],
+   "tr": {
+    "en": {
+     "title": "Back to the site",
+     "items": [
+      "Settings now has a \"Back to site\" button that saves and returns to the games site"
+     ]
+    },
+    "ja": {
+     "title": "Back to the site",
+     "items": [
+      "Settings now has a \"Back to site\" button that saves and returns to the games site"
+     ]
+    },
+    "es": {
+     "title": "Back to the site",
+     "items": [
+      "Settings now has a \"Back to site\" button that saves and returns to the games site"
+     ]
+    },
+    "fr": {
+     "title": "Back to the site",
+     "items": [
+      "Settings now has a \"Back to site\" button that saves and returns to the games site"
+     ]
+    },
+    "de": {
+     "title": "Back to the site",
+     "items": [
+      "Settings now has a \"Back to site\" button that saves and returns to the games site"
+     ]
+    }
+   }
+  },
+  {
+   "date": "2026-10-19",
    "build": "v0.2 build 26",
    "title": "연구: 무한 씨앗",
    "items": [
