@@ -77,7 +77,12 @@ async function setUser(u){
 function nick(){ return (prof&&(prof.display_name||prof.username)) || (user&&String(user.email||'').split('@')[0]) || ''; }
 
 /* ---- the same login rules as the games (id -> internal e-mail, typo-tolerant password) ---- */
-function emailFor(u){ return String(u).toLowerCase().replace(/[^a-z0-9_]/g,'')+'@arenaclash.local'; }
+/* ID accounts are stored as <id>@<domain>. The domain is moving arenaclash.local -> frenchfries777.com: sign-in accepts both while
+   the DB is converted, and ID_DOM is the one domain new/renamed accounts use (flip it to the new one AFTER the SQL has run). */
+var ID_DOM='arenaclash.local', ID_DOM_OLD=['arenaclash.local','frenchfries777.com'];
+function idLocal(u){ return String(u).toLowerCase().replace(/[^a-z0-9_]/g,''); }
+function emailFor(u){ return idLocal(u)+'@'+ID_DOM; }
+function emailsFor(u){ var l=idLocal(u), out=[emailFor(u)]; ID_DOM_OLD.forEach(function(d){ var e=l+'@'+d; if(out.indexOf(e)<0) out.push(e); }); return out; }
 function pwVariants(p){
   p=String(p==null?'':p); var out=[p]; function add(x){ if(x&&out.indexOf(x)<0) out.push(x); }
   var clean=p.replace(/[\u200B-\u200D\uFEFF\u00A0]/g,''), trimmed=clean.trim(), nfkc=trimmed.normalize('NFKC');
@@ -92,10 +97,11 @@ function errText(e){ var m=String((e&&e.message)||''), c=String((e&&(e.code||e.e
   if(!s||/fetch|network|timeout|failed to|load failed/i.test(m)) return T.net;
   return T.fail; }
 async function signIn(id, pw){
-  var email=emailFor(String(id||'').trim()), err=null, vs=pwVariants(pw);
-  for(var i=0;i<vs.length;i++){ var r; try{ r=await sb.auth.signInWithPassword({email:email, password:vs[i]}); }catch(e){ r={error:{message:String(e&&e.message||e)}}; }
-    if(!r.error){ pwSave(id,vs[i]); await setUser(r.data.user); return {ok:true}; }
-    err=r.error; if(errText(err)!==T.cred) break; }
+  var emails=emailsFor(String(id||'').trim()), err=null, vs=pwVariants(pw);
+  for(var j=0;j<emails.length;j++){
+    for(var i=0;i<vs.length;i++){ var r; try{ r=await sb.auth.signInWithPassword({email:emails[j], password:vs[i]}); }catch(e){ r={error:{message:String(e&&e.message||e)}}; }
+      if(!r.error){ pwSave(id,vs[i]); await setUser(r.data.user); return {ok:true}; }
+      err=r.error; if(errText(err)!==T.cred) return {error:errText(err)}; } }
   return {error:errText(err)};
 }
 async function signUp(id, pw){
@@ -134,7 +140,7 @@ function OA(){ return OAL[lang()]||OAL.en; }
 var OAP=[['github','gh','<svg viewBox="0 0 16 16" width="18" height="18" fill="currentColor" aria-hidden="true"><path d="M8 0a8 8 0 0 0-2.53 15.59c.4.07.55-.17.55-.38v-1.33c-2.23.48-2.7-1.07-2.7-1.07-.36-.92-.89-1.17-.89-1.17-.73-.5.05-.49.05-.49.8.06 1.23.83 1.23.83.72 1.22 1.87.87 2.33.66.07-.52.28-.87.5-1.07-1.78-.2-3.65-.89-3.65-3.95 0-.87.31-1.59.83-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.22 2.2.82a7.6 7.6 0 0 1 4 0c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.52.56.83 1.28.83 2.15 0 3.07-1.87 3.75-3.66 3.95.29.25.54.73.54 1.48v2.2c0 .21.15.46.55.38A8 8 0 0 0 8 0z"/></svg>'],
  ['google','gg','<svg viewBox="0 0 48 48" width="18" height="18" aria-hidden="true"><path fill="#FFC107" d="M43.6 20.5H42V20H24v8h11.3C33.7 32.7 29.2 36 24 36c-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.8 1.2 7.9 3.1l5.7-5.7C34 6.1 29.3 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20 20-8.9 20-20c0-1.3-.1-2.4-.4-3.5z"/><path fill="#FF3D00" d="M6.3 14.7l6.6 4.8C14.7 15.1 19 12 24 12c3.1 0 5.8 1.2 7.9 3.1l5.7-5.7C34 6.1 29.3 4 24 4 16.3 4 9.7 8.3 6.3 14.7z"/><path fill="#4CAF50" d="M24 44c5.2 0 9.9-2 13.4-5.2l-6.2-5.2C29.2 35.1 26.7 36 24 36c-5.2 0-9.6-3.3-11.3-8l-6.5 5C9.5 39.6 16.2 44 24 44z"/><path fill="#1976D2" d="M43.6 20.5H42V20H24v8h11.3c-.8 2.2-2.2 4.2-4.1 5.6l6.2 5.2C37 39.2 44 34 44 24c0-1.3-.1-2.4-.4-3.5z"/></svg>']];
 function backUrl(){ return location.origin+location.pathname+location.search; }   // no #hash: Supabase puts its tokens there
-function isIdAcct(u){ return /@arenaclash\.local$/i.test(String((u&&u.email)||'')); }
+function isIdAcct(u){ return /@(arenaclash\.local|frenchfries777\.com)$/i.test(String((u&&u.email)||'')); }
 function oaBtns(){ return OAP.map(function(x){ return '<button type="button" class="ffa-oa" data-p="'+x[0]+'">'+x[2]+'<span>'+esc(OA()[x[1]])+'</span></button>'; }).join(''); }
 function oaErr(e){ return /not enabled|unsupported provider|provider is not/i.test(String((e&&e.message)||''))?OA().off:errText(e); }
 async function oauth(p, m){
