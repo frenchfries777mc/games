@@ -461,7 +461,7 @@ async function loadFriends(){
   badge(); return friends;
 }
 /* what a friend is playing: "🟢 Stickseum 하는 중" while the game is open (it pings every minute), else the last game and how long ago */
-var GNAME={stickseum:'Stickseum',crownenvoy:'Crown Envoy',beaconfall:'Beaconfall'};
+var GNAME={stickseum:'Stickseum',crownenvoy:'Crown Envoy',beaconfall:'Beaconfall',isleport:'Isleport',dummyparty:'Dummy Party'};
 function online(f){ var t=f&&f.pres&&Date.parse(f.pres.at); return !!(t&&Date.now()-t<100000); }
 function presText(f){ var p=f&&f.pres; if(!p) return ''; var g=GNAME[p.game]||p.game, t=Date.parse(p.at); if(!t) return '';
   var m=Math.max(0,Math.round((Date.now()-t)/60000)); if(online(f)) return fmt(F.playing,g);
@@ -556,6 +556,7 @@ function fpaint(){
   var acc=friends.filter(function(f){ return f.status==='accepted'; }).sort(function(a,b){ return (online(b)-online(a))||a.name.localeCompare(b.name,'ko'); });
   if(acc.length) section(F.list, acc, function(f){ var d=row(f.name,f.otherId,[[F.card,function(){ openProfile(f.otherId); return null; }]],presText(f));
       var dm=document.createElement('button'); dm.type='button'; dm.className='dmb'; dm.textContent='💬'; dm.title=N.msg; dm.setAttribute('aria-label',N.msg); var un=dmUnread[f.otherId]||0; if(un){ var bg=document.createElement('span'); bg.className='ffa-badge'; bg.textContent=un>9?'9+':String(un); dm.appendChild(bg); } dm.onclick=function(e){ e.stopPropagation(); openDM(f.otherId); }; d.appendChild(dm);
+      if(myRoom){ var iv=document.createElement('button'); iv.type='button'; iv.textContent=N.invBtn||NL.ko.invBtn; iv.onclick=function(e){ e.stopPropagation(); iv.disabled=true; sendInvite(f.otherId).then(function(ok){ iv.disabled=false; toast(ok?(N.invDone||NL.ko.invDone):(N.invFail||NL.ko.invFail)); }); }; d.appendChild(iv); }
       if(online(f)) d.classList.add('on');
       var rm=document.createElement('button'); rm.type='button'; rm.textContent=F.remove;
       rm.onclick=async function(e){ e.stopPropagation(); if(fbusy) return; if(!rm.dataset.sure){ rm.dataset.sure='1'; rm.textContent=F.sure; setTimeout(function(){ if(rm.isConnected&&!fbusy){ delete rm.dataset.sure; rm.textContent=F.remove; } },3000); return; } fbusy=true; rm.disabled=true; var r; try{ r=await removeRow(f.rowId); }catch(x){ r={error:x}; } fbusy=false; if(r&&r.error) toastErr(); fpaint(); };
@@ -616,7 +617,7 @@ function setFill(p){
 }
 
 var NL={
- ko:{blist:'차단한 사람',bell:'알림',none:'새 알림이 없어요.',mention:'{0}님이 나를 언급했어요',mentionc:'{0}님이 채팅에서 나를 불렀어요',coin:'{0}님이 Hub Coin을 보냈어요 🎁',comment:'{0}님이 내 글에 댓글을 남겼어요',like:'{0}님이 내 글을 좋아해요',friend:'{0}님이 친구 요청을 보냈어요',dm:'{0}님이 메시지를 보냈어요',
+ ko:{blist:'차단한 사람',bell:'알림',none:'새 알림이 없어요.',mention:'{0}님이 나를 언급했어요',mentionc:'{0}님이 채팅에서 나를 불렀어요',coin:'{0}님이 Hub Coin을 보냈어요 🎁',comment:'{0}님이 내 글에 댓글을 남겼어요',like:'{0}님이 내 글을 좋아해요',friend:'{0}님이 친구 요청을 보냈어요',dm:'{0}님이 메시지를 보냈어요',invite:'{0}님이 {1} 방에 초대했어요 (코드 {2})',inviteOld:'{0}님의 초대가 지났어요',invBtn:'➕ 초대',invDone:'초대를 보냈어요',invFail:'초대를 보내지 못했어요. 잠시 뒤 다시 해 주세요.',
      feedback:'보낸 피드백을 관리자가 확인했어요',report:'보낸 신고를 관리자가 처리했어요',clear:'모두 지우기',msg:'💬 메시지',dmPh:'메시지 보내기',send:'보내기',dmEmpty:'아직 나눈 메시지가 없어요.',
      dmOnly:'친구끼리만 메시지를 보낼 수 있어요.',block:'🚫 차단',unblock:'차단 풀기',blocked:'차단한 사람이에요. 이 사람의 글과 채팅은 보이지 않아요.',report_:'🚩 신고',
      rTitle:'신고하기',rWhy:'이유',r1:'스팸 · 광고',r2:'욕설 · 괴롭힘',r3:'부적절한 사진',r4:'기타',rMore:'자세히 (선택)',rBlock:'이 사람도 차단하기',rSend:'신고 보내기',rDone:'신고했어요. 관리자가 확인할게요.',
@@ -647,7 +648,7 @@ var NL={
      rTitle:'通報する',rWhy:'理由',r1:'スパム・宣伝',r2:'暴言・嫌がらせ',r3:'不適切な写真',r4:'その他',rMore:'詳しく（任意）',rBlock:'この人もブロックする',rSend:'通報を送る',rDone:'通報しました。管理者が確認します。',
      sureBlock:'本当にブロックしますか？',blockedT:'ブロックしました',err:'処理できませんでした。少し後でもう一度お試しください。',notReady:'まだ準備中です。'}
 };
-var N=NL[lang()]||NL.en, notes=[], noteNames={}, noteChan=null, blocks={}, dmUnread={}, dmWith=null, dmRows=[], dmPoll=null;
+var N=NL[lang()]||NL.en, invMap={}, myRoom=null, notes=[], noteNames={}, noteChan=null, blocks={}, dmUnread={}, dmWith=null, dmRows=[], dmPoll=null;
 var NCSS='[data-ff-account] .ffa-wrap{white-space:nowrap}.ffa-bell{position:relative;background:#10131b;color:#eef0f5;border:1px solid #2b3245;border-radius:9px;padding:6px 9px;font-size:15px;cursor:pointer;margin-right:6px;line-height:1.2;vertical-align:middle}.ffa-bell:hover{border-color:var(--fry,#ffc93c)}'+
  '.ffa-bell .ffa-nb{position:absolute;top:-6px;right:-6px;margin:0}'+
  '.ffa-notes{position:absolute;right:0;top:calc(100% + 6px);width:min(340px,calc(100vw - 24px));max-height:min(420px,70vh);overflow:auto;background:#10131b;border:1px solid #2b3245;border-radius:12px;padding:6px;z-index:2147482000;box-shadow:0 12px 30px rgba(0,0,0,.45);display:none;text-align:left;font-family:system-ui,-apple-system,"Noto Sans KR",sans-serif}'+
@@ -667,12 +668,18 @@ var NCSS='[data-ff-account] .ffa-wrap{white-space:nowrap}.ffa-bell{position:rela
  '#ffaFriends .row .nm{min-width:64px}#ffaFriends .row .tg{flex-shrink:1;min-width:0}#ffaFriends .row .dmb{position:relative}#ffaFriends .row .dmb .ffa-badge{position:absolute;top:-7px;right:-7px;margin:0}';
 function ncss(){ fcss(); if(document.getElementById('ffaNCss')) return; var s=document.createElement('style'); s.id='ffaNCss'; s.textContent=NCSS; document.head.appendChild(s); }
 function ago2(iso){ var t=Date.parse(iso), m=Math.max(0,Math.round((Date.now()-t)/60000)); return m<1?F.now:(m<60?fmt(F.mn,m):(m<1440?fmt(F.hr,Math.round(m/60)):fmt(F.dy,Math.round(m/1440)))); }
-function noteText(n){ var nm=noteNames[n.actor_id]||'???', t=N[n.kind]||''; return fmt(t,nm); }
+function noteText(n){ var nm=noteNames[n.actor_id]||'???', t=N[n.kind]||NL.ko[n.kind]||'';
+  if(n.kind==='invite'){ var v=invMap[n.ref]; if(!v||!inviteLive(v)) return fmt(N.inviteOld||NL.ko.inviteOld,nm); return fmt(t,nm).replace('{1}',GNAME[v.game]||v.game).replace('{2}',v.code); }
+  return fmt(t,nm); }
+function inviteLive(v){ var t=Date.parse(v&&v.created_at); return !!t&&Date.now()-t<30*60*1000; }
+function inviteUrl(v){ return HUB+v.path+(v.path.indexOf('?')<0?'?':'&')+'join='+encodeURIComponent(v.code)+'&room='+encodeURIComponent(v.code); }
 async function loadNotes(){
   if(!sb||!user){ notes=[]; return; }
   try{ var r=await sb.from('ff_notes').select('*').eq('user_id',user.id).order('created_at',{ascending:false}).limit(40); if(r.error) return; notes=(r.data||[]).filter(function(n){ return npOn(n.kind); }); }catch(e){ return; }
   var ids=notes.map(function(n){ return n.actor_id; }).filter(function(x,i,a){ return x&&!noteNames[x]&&a.indexOf(x)===i; });
   if(ids.length){ var p=await sb.from('profiles').select('id,username,display_name').in('id',ids); ((p&&p.data)||[]).forEach(function(x){ noteNames[x.id]=nickOf(x); }); }
+  var iv=notes.filter(function(n){ return n.kind==='invite'&&n.ref&&!invMap[n.ref]; }).map(function(n){ return n.ref; });
+  if(iv.length) try{ var q=await sb.from('ff_invites').select('id,game,code,path,created_at').in('id',iv); ((q&&q.data)||[]).forEach(function(x){ invMap[x.id]=x; }); }catch(e){}
   bellBadge();
 }
 async function loadBlocks(){ blocks={}; if(!sb||!user) return; try{ var r=await sb.from('ff_blocks').select('blocked_id').eq('user_id',user.id); ((r&&!r.error&&r.data)||[]).forEach(function(x){ blocks[x.blocked_id]=1; }); }catch(e){}
@@ -703,6 +710,7 @@ async function markRead(){ if(!unreadNotes()) return; var ids=notes.filter(funct
 function goNote(n){
   var hubUrl=HUB;
   if(n.kind==='friend') return openFriends();
+  if(n.kind==='invite'){ var v=invMap[n.ref]; if(v&&inviteLive(v)&&/^[a-z0-9_.\/-]+\.html$/i.test(v.path)&&v.path.indexOf('..')<0) location.href=inviteUrl(v); else toast(noteText(n)); return; }
   if(n.kind==='dm') return openDM(n.actor_id);
   if(n.kind==='coin'){ if(onHub&&window.FFHub&&FFHub.coin) return FFHub.coin(); location.href=hubUrl+'#coin'; return; }
   if(n.kind==='mentionc'){ if(onHub&&window.FFHub) return FFHub.tab('chat'); location.href=hubUrl+'#chat'; return; }
@@ -718,6 +726,9 @@ function watchNotes(){
     .subscribe(); }catch(e){}
 }
 /* block / report */
+async function sendInvite(uid){ if(!sb||!user||!myRoom) return false;
+  try{ var r=await sb.rpc('ff_invite',{p_to:uid,p_game:myRoom.game,p_code:myRoom.code,p_path:myRoom.path}); return !(r&&r.error); }catch(e){ return false; } }
+function setRoom(r){ myRoom=(r&&r.game&&r.code&&r.path)?{game:String(r.game),code:String(r.code),path:String(r.path)}:null; try{ fpaint(); }catch(e){} }
 function isBlocked(id){ return !!blocks[id]; }
 function blocksChanged(){ try{ window.dispatchEvent(new Event('ffblocks')); }catch(e){} }
 async function block(id, on){ if(!sb||!user||!id||id===user.id) return {error:true}; var r=on===false?await sb.from('ff_blocks').delete().eq('user_id',user.id).eq('blocked_id',id):await sb.from('ff_blocks').insert({blocked_id:id});
@@ -814,5 +825,5 @@ document.addEventListener('visibilitychange', function(){ if(document.visibility
 
 window.FFAuth={ ready:ready, pollCheck:pollCheck, client:function(){ return sb; }, user:function(){ return user; }, profile:function(){ return prof; }, nickname:nick,
   onChange:function(f){ if(typeof f==='function') subs.push(f); }, openLogin:openLogin, openProfile:openProfile, openFriends:openFriends, friends:function(){ return friends.slice(); }, signOut:signOut, refresh:paint, syncHub:syncHub,
-  openDM:openDM, openReport:openReport, openAcct:openAcct, notePrefs:{get:npGet,set:npSet}, userKey:userKey, lang:lang, loadDevs:loadDevs, devRole:devRole, devBadge:devBadge, block:block, isBlocked:isBlocked, blocked:function(){ return Object.assign({},blocks); } };
+  openDM:openDM, setRoom:setRoom, openReport:openReport, openAcct:openAcct, notePrefs:{get:npGet,set:npSet}, userKey:userKey, lang:lang, loadDevs:loadDevs, devRole:devRole, devBadge:devBadge, block:block, isBlocked:isBlocked, blocked:function(){ return Object.assign({},blocks); } };
 })();
