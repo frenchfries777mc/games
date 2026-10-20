@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+<!-- © 2026 Frenchfries777 · CC BY-NC-ND 4.0 — https://creativecommons.org/licenses/by-nc-nd/4.0/deed.ko -->
 <html lang="ko">
 <head>
 <meta charset="utf-8">
@@ -366,7 +367,7 @@ html:not(.introDone) #ui,html:not(.introDone) #authgate,html:not(.introDone) #au
     <button class="btn" data-act="skins"><span class="arrow">▶</span>스킨 상점<span class="en">SKIN SHOP</span></button>
     <button class="btn" data-act="stats"><span class="arrow">▶</span>통계<span class="en">STATS</span></button>
     <button class="btn" data-act="settings"><span class="arrow">▶</span>설정<span class="en">SETTINGS</span></button>
-    <p class="foot">v0.3<br>build 79</p>
+    <p class="foot">v0.3<br>build 80</p>
   </nav>
 </div>
 
@@ -10886,6 +10887,7 @@ function showSettings(){
     <div class="row"><span>계정 저장</span><span style="font-size:12px;opacity:.85;text-align:right">${esc(window.bfCloudStatus?bfCloudStatus():'')}</span></div>
     <div class="row"><span>언어</span><div class="seg" style="flex-wrap:wrap">${I18N_LANGS.map(v=>`<button data-lang="${v}" aria-pressed="${I18N.lang===v}">${I18N_NAMES[v]}</button>`).join('')}</div></div>
     <div class="row"><span>모바일 조작</span><div class="seg">${['auto','on','off'].map(v=>`<button data-touch="${v}" aria-pressed="${(settings.touch||'auto')===v}">${v==='auto'?'자동':v==='on'?'켜짐':'꺼짐'}</button>`).join('')}</div></div>
+    <div style="font-size:11px;opacity:.75;text-align:center;margin-top:8px">© 2026 Frenchfries777 · <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.ko" target="_blank" rel="noopener" style="color:inherit">CC BY-NC-ND 4.0</a></div>
     <div class="actions"><button class="btn sm" data-site>사이트로 돌아가기</button><button class="btn sm ghost" data-close>닫기</button></div>`,m=>{const r=m.querySelector('#bgmvol');if(r)r.oninput=()=>BGM.setVol(r.value/100);
     m.querySelector('[data-site]').onclick=()=>{try{if(csOn&&csDirty)csPush();}catch(e){}location.href='https://frenchfries777mc.github.io/games/';};
     m.querySelectorAll('[data-lang]').forEach(b=>b.onclick=()=>{setLang(b.dataset.lang);m.querySelectorAll('[data-lang]').forEach(x=>x.setAttribute('aria-pressed',String(x===b)));});
