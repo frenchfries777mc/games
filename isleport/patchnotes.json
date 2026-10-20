@@ -2,6 +2,52 @@
  "notes": [
   {
    "date": "2026-10-20",
+   "build": "v0.2 build 35",
+   "title": "나무는 천천히",
+   "items": [
+    "과일나무와 차나무, 카카오 같은 나무류가 다 자라기까지 두 배 걸려요",
+    "일꾼은 연구 \"일꾼 고용\"을 끝낸 뒤 집에서 고용해요. 도움말에도 적어 두었어요"
+   ],
+   "tr": {
+    "en": {
+     "title": "Trees grow slower",
+     "items": [
+      "Fruit trees, tea and cocoa now take twice as long to ripen",
+      "Hire workers at home after finishing the \"Hire workers\" research; also noted in the guide"
+     ]
+    },
+    "ja": {
+     "title": "Trees grow slower",
+     "items": [
+      "Fruit trees, tea and cocoa now take twice as long to ripen",
+      "Hire workers at home after finishing the \"Hire workers\" research; also noted in the guide"
+     ]
+    },
+    "es": {
+     "title": "Trees grow slower",
+     "items": [
+      "Fruit trees, tea and cocoa now take twice as long to ripen",
+      "Hire workers at home after finishing the \"Hire workers\" research; also noted in the guide"
+     ]
+    },
+    "fr": {
+     "title": "Trees grow slower",
+     "items": [
+      "Fruit trees, tea and cocoa now take twice as long to ripen",
+      "Hire workers at home after finishing the \"Hire workers\" research; also noted in the guide"
+     ]
+    },
+    "de": {
+     "title": "Trees grow slower",
+     "items": [
+      "Fruit trees, tea and cocoa now take twice as long to ripen",
+      "Hire workers at home after finishing the \"Hire workers\" research; also noted in the guide"
+     ]
+    }
+   }
+  },
+  {
+   "date": "2026-10-20",
    "build": "v0.2 build 34",
    "title": "장터를 원래대로",
    "items": [
