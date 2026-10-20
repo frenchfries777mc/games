@@ -367,7 +367,7 @@ html:not(.introDone) #ui,html:not(.introDone) #authgate,html:not(.introDone) #au
     <button class="btn" data-act="skins"><span class="arrow">▶</span>스킨 상점<span class="en">SKIN SHOP</span></button>
     <button class="btn" data-act="stats"><span class="arrow">▶</span>통계<span class="en">STATS</span></button>
     <button class="btn" data-act="settings"><span class="arrow">▶</span>설정<span class="en">SETTINGS</span></button>
-    <p class="foot">v0.3<br>build 81</p>
+    <p class="foot">v0.3<br>build 82</p>
   </nav>
 </div>
 
@@ -11723,6 +11723,7 @@ async function frSendInvite(f){
     if(!room){FR.msg='방을 열지 못했어요.';frRender();return;}
   }
   try{FR.ch.send({type:'broadcast',event:'invite',payload:{to:f.id,from:window.bfUid,name:window.bfUser||'',room}});}catch(e){}
+  try{sb.rpc('ff_invite',{p_to:f.id,p_game:'beaconfall',p_code:room,p_path:'beaconfall/BEACONFALL-v0.3.html'});}catch(e){}   // 허브 알림으로도 초대 (접속 중이 아닌 친구도 받아요)
   f.invT=Date.now();frRender();
 }
 function frInvite(p){
@@ -11790,7 +11791,7 @@ function frRender(){
   for(const f of acc){
     const s=st(f),m=frMeta(f.id),room=m&&m.room;
     let btn='';
-    const inv=s>=1&&!inGuest?(f.invT&&Date.now()-f.invT<30000?`<span class="hint">초대함</span>`:`<button class="btn sm ghost" data-frinv="${esc(f.id)}">초대</button>`):'';
+    const inv=!inGuest?(f.invT&&Date.now()-f.invT<30000?`<span class="hint">초대함</span>`:`<button class="btn sm ghost" data-frinv="${esc(f.id)}">초대</button>`):'';
     if(s===2&&room!==myRoom&&room!==inGuest)btn=`<button class="btn sm" data-frjoin="${esc(room)}">참가</button>`+(f.reqT&&Date.now()-f.reqT<30000?`<span class="hint">요청함</span>`:`<button class="btn sm ghost" data-frreq="${esc(f.id)}">참가 요청</button>`)+inv;
     else if(s===2&&room===inGuest)btn=`<span class="hint">같은 방</span>`;
     else if(s===1&&!inGuest&&!myRoom)btn=(f.reqT&&Date.now()-f.reqT<30000?`<span class="hint">요청함</span>`:`<button class="btn sm ghost" data-frreq="${esc(f.id)}">참가 요청</button>`)+inv;
