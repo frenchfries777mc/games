@@ -503,7 +503,9 @@ body.playing #emoBar{display:flex}
    <div class="row"><input id="codeIn" maxlength="5" placeholder="방 코드" autocomplete="off"><button class="pb dark" id="joinBtn" style="flex:0 0 auto">들어가기</button></div>
    <div class="msg" id="homeMsg"></div>
   </div>
-  <details class="notes"><summary>패치노트 · v0.1 (build 11)</summary>
+  <details class="notes"><summary>패치노트 · v0.1 (build 12)</summary>
+   <b>2026-10-20 · v0.1 build 12 · 미로 끼임 수정</b>
+   <ul><li>병맛 미로: 벽에 끼던 문제 수정 (유령 효과가 끝났을 때 벽 속이면 빈 칸으로 빼 주고, 모서리에서 자연스럽게 미끄러져요)</li></ul>
    <b>2026-10-20 · v0.1 build 11 · 승리 춤과 해설 대폭 추가</b>
    <ul><li>승리 춤 4종 추가 (dC로 구매): 디스코 파티, 로봇 춤, 발레 공연, 브레이크댄스. 이길 때 시상식과 결과 화면에서 춰요</li><li>꾸미기 줄에서 춤을 누르면 미리 춤을 보여줘요</li><li>해설위원의 엉뚱한 말 대폭 추가 (이제 270줄 넘게 나와요)</li><li>게임 화면에서 허브 코인 안내 문구 삭제</li></ul>
    <b>2026-10-20 · v0.1 build 10 · 우노 카드 설명</b>
@@ -524,7 +526,7 @@ body.playing #emoBar{display:flex}
    <ul><li>무너지는 발판 칸 수 대폭 증가 (19×10)와 용암 동굴 맵</li><li>10개 맵 전부 새로 그림 (관중석, 야자수 섬, 링, 정원 미로, 서커스, 우노 테이블 등)</li><li>글자 대신 아이콘·말풍선·이펙트로 표현 (무기, 아이템, 카드 효과, 시작 안내)</li><li>타격·폭발·물보라 효과와 화면 흔들림 추가</li></ul>
    <b>2026-10-19 · v0.1 build 1 · 첫 시험판</b>
    <ul><li>마네킹 미니게임 10개 추가 (장애물 달리기, 섬 밀치기, 싸우기, 병맛 미로, 체스 대난투, 폭탄 돌리기, 병맛 우노, 쇼윈도 얼음땡, 무너지는 발판, 컨베이어 서바이벌)</li><li>방 코드로 최대 8명 멀티플레이, 빈자리는 봇으로 채우기</li><li>판마다 10개 중 5개를 무작위로 골라 점수를 합산</li><li>PC 키보드와 휴대폰 터치 조작 지원</li></ul></details>
-  <p class="foot">2~8명 · 판마다 16개 미니게임 중 5개 · 프로토타입 v0.1 b11 · <a href="../">← 프로토타입 목록</a></p>
+  <p class="foot">2~8명 · 판마다 16개 미니게임 중 5개 · 프로토타입 v0.1 b12 · <a href="../">← 프로토타입 목록</a></p>
   <p class="foot"><span class="ff-copy">© 2026 Frenchfries777 · <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.ko" target="_blank" rel="noopener">CC BY-NC-ND 4.0</a></span></p>
  </div>
 </section>
@@ -1487,9 +1489,20 @@ regMG({
         var mx = i.mx, my = i.my; if (p.inv > 0) { mx = -mx; my = -my; }
         var sp = (p.fast > 0 ? 210 : 125) * (p.stun > 0 ? 0 : 1);
         var nx = p.x + mx * sp * dt, ny = p.y + my * sp * dt;
-        if (p.ghost > 0 || !hitRect(nx, p.y, 9, s.rs)) p.x = nx;
-        if (p.ghost > 0 || !hitRect(p.x, ny, 9, s.rs)) p.y = ny;
+        if (p.ghost > 0 || !hitRect(nx, p.y, 8, s.rs)) p.x = nx;
+        if (p.ghost > 0 || !hitRect(p.x, ny, 8, s.rs)) p.y = ny;
+        // 모서리에서 막히면 열린 쪽으로 살짝 밀어 줘요
+        if (p.ghost <= 0 && sp > 0 && (nx !== p.x || ny !== p.y)) {
+          var nudge = 70 * dt;
+          if (Math.abs(mx) > 0.3 && Math.abs(my) < 0.3 && p.y === ny) { var cyy = cellC(0, clamp(Math.floor((p.y - OY) / CS), 0, R - 1)).y; if (!hitRect(p.x + Math.sign(mx) * 3, p.y + Math.sign(cyy - p.y) * nudge, 8, s.rs)) p.y += Math.sign(cyy - p.y) * Math.min(nudge, Math.abs(cyy - p.y)); }
+          else if (Math.abs(my) > 0.3 && Math.abs(mx) < 0.3 && p.x === nx) { var cxx = cellC(clamp(Math.floor((p.x - OX) / CS), 0, C - 1), 0).x; if (!hitRect(p.x + Math.sign(cxx - p.x) * nudge, p.y + Math.sign(my) * 3, 8, s.rs)) p.x += Math.sign(cxx - p.x) * Math.min(nudge, Math.abs(cxx - p.x)); }
+        }
         p.x = clamp(p.x, OX + 8, OX + C * CS - 8); p.y = clamp(p.y, OY + 8, OY + R * CS - 8);
+        // 유령 효과가 끝났을 때 벽 속이면 가장 가까운 빈 칸 가운데로 빼 줘요 (벽에 끼는 문제 방지)
+        if (p.ghost <= 0 && hitRect(p.x, p.y, 8, s.rs)) {
+          var gx = clamp(Math.floor((p.x - OX) / CS), 0, C - 1), gy = clamp(Math.floor((p.y - OY) / CS), 0, R - 1), cc2 = cellC(gx, gy);
+          p.x += (cc2.x - p.x) * Math.min(1, dt * 14); p.y += (cc2.y - p.y) * Math.min(1, dt * 14);
+        }
         if (Math.abs(mx) > 0.1) p.face = mx > 0 ? 1 : -1;
         animP(p, dt, sp > 0 && len(mx, my) > 0.1);
         for (var k = s.items.length - 1; k >= 0; k--) {
