@@ -439,16 +439,33 @@ if(document.readyState==='loading') document.addEventListener('DOMContentLoaded'
   .hero-bg{position:absolute; z-index:-1; left:50%; width:100vw; margin-left:-50vw; top:-130px; bottom:-30px; pointer-events:none; overflow:hidden; -webkit-mask-image:linear-gradient(180deg,#000 0,#000 66%,transparent 100%); mask-image:linear-gradient(180deg,#000 0,#000 66%,transparent 100%);}
   .hero-bg i{position:absolute; inset:0; opacity:0; animation:hbFade 32s linear infinite;}
   .hero-bg i:nth-child(1){animation-delay:-2s;} .hero-bg i:nth-child(2){animation-delay:6s;} .hero-bg i:nth-child(3){animation-delay:14s;} .hero-bg i:nth-child(4){animation-delay:22s;}
-  .hero-bg img{position:absolute; top:0; right:0; width:72%; height:100%; object-fit:cover; opacity:.8; -webkit-mask-image:linear-gradient(90deg,transparent 0,#000 48%); mask-image:linear-gradient(90deg,transparent 0,#000 48%); animation:hbKen 32s ease-in-out infinite alternate;}
+  .hero-bg img,.hero-bg video{position:absolute; top:0; right:0; width:72%; height:100%; object-fit:cover; opacity:.8; -webkit-mask-image:linear-gradient(90deg,transparent 0,#000 48%); mask-image:linear-gradient(90deg,transparent 0,#000 48%); animation:hbKen 32s ease-in-out infinite alternate;}
   .hero-bg i::after{content:''; position:absolute; inset:0; background:radial-gradient(ellipse 60% 80% at 82% 55%, color-mix(in srgb,var(--c) 38%,transparent), transparent 70%), radial-gradient(ellipse 50% 60% at 8% 30%, color-mix(in srgb,var(--c) 14%,transparent), transparent 70%);}
   .hero-bg::after{content:''; position:absolute; inset:0; background:linear-gradient(180deg,color-mix(in srgb,var(--bg) 90%,transparent) 0,color-mix(in srgb,var(--bg) 55%,transparent) 14%,transparent 34%);}
   @keyframes hbFade{0%{opacity:0;} 5%{opacity:1;} 25%{opacity:1;} 31%{opacity:0;} 100%{opacity:0;}}
   @keyframes hbKen{from{transform:scale(1.03) translate3d(0,0,0);} to{transform:scale(1.14) translate3d(-2%,-2%,0);}}
   @keyframes hbRise{from{opacity:0; transform:translateY(18px);} to{opacity:1; transform:none;}}
-  .hero-t>*{animation:hbRise .6s cubic-bezier(.2,.7,.2,1) both;} .hero-t>:nth-child(2){animation-delay:.07s;} .hero-t>:nth-child(3){animation-delay:.14s;} .hero-t>:nth-child(4){animation-delay:.21s;} .hero-t>:nth-child(5){animation-delay:.28s;}
+  .hero-t>*:not(.ffs){animation:hbRise .6s cubic-bezier(.2,.7,.2,1) both;} .hero-t>:nth-child(2){animation-delay:.07s;} .hero-t>:nth-child(3){animation-delay:.14s;} .hero-t>:nth-child(4){animation-delay:.21s;} .hero-t>:nth-child(5){animation-delay:.28s;}
   .game:hover{box-shadow:0 20px 46px -14px rgba(255,170,60,.28);}
-  @media(max-width:640px){ .hero-bg img{width:100%; -webkit-mask-image:linear-gradient(90deg,transparent 0,#000 30%); mask-image:linear-gradient(90deg,transparent 0,#000 30%); opacity:.55;} }
-  @media(prefers-reduced-motion:reduce){ .hero-bg i{animation:none;} .hero-bg i:first-child{opacity:1;} .hero-bg img,.hero-t>*{animation:none;} }
+  @media(max-width:640px){ .hero-bg img,.hero-bg video{width:100%; -webkit-mask-image:linear-gradient(90deg,transparent 0,#000 30%); mask-image:linear-gradient(90deg,transparent 0,#000 30%); opacity:.55;} }
+  @media(prefers-reduced-motion:reduce){ .hero-bg i{animation:none;} .hero-bg i:first-child{opacity:1;} .hero-bg img,.hero-bg video,.hero-t>*:not(.ffs){animation:none;} }
+  /* 숫자로 보는 줄 */
+  .hstats{display:grid; grid-template-columns:repeat(5,1fr); gap:10px; margin:0 0 18px; padding:18px 8px; border:1px solid var(--line); border-radius:18px; background:color-mix(in srgb,var(--panel) 80%,transparent); backdrop-filter:blur(6px); -webkit-backdrop-filter:blur(6px);}
+  .hstats div{text-align:center; padding:2px 6px; border-left:1px solid var(--line);} .hstats div:first-child{border-left:0;}
+  .hstats b{display:block; font-family:'Oswald','Noto Sans KR',sans-serif; font-weight:700; font-size:clamp(26px,4.2vw,42px); line-height:1.1; background:linear-gradient(90deg,var(--fry),var(--fry2)); -webkit-background-clip:text; background-clip:text; color:transparent; font-variant-numeric:tabular-nums;}
+  .hstats span{display:block; margin-top:4px; font-size:13px; color:var(--dim);}
+  @media(max-width:640px){ .hstats{grid-template-columns:repeat(3,1fr); row-gap:14px;} .hstats div:nth-child(4){border-left:0;} }
+  /* 게임 카드: 스크롤하면 차례로 나타나고, 올리면 장면이 커지며 대표색 빛이 번져요 */
+  .game.st{--gc:255,90,95;} .game.ce{--gc:232,194,90;} .game.bf{--gc:90,200,120;} .game.ip{--gc:56,182,255;}
+  .game{--rx:0deg; --ry:0deg; --mx:50%; --my:30%;}
+  .game.rv{opacity:0; transform:translateY(34px);}
+  .game.rv.in{opacity:1; transform:none; transition:opacity .7s ease, transform .7s cubic-bezier(.2,.7,.2,1);}
+  .game.in.tilt:hover{transform:perspective(1000px) translateY(-6px) rotateX(var(--rx)) rotateY(var(--ry)); transition:transform .12s ease-out, box-shadow .2s, border-color .2s;}
+  .game:hover{border-color:rgba(var(--gc),.55); box-shadow:0 24px 54px -16px rgba(var(--gc),.42);}
+  .game::before{content:''; position:absolute; inset:0; z-index:2; pointer-events:none; opacity:0; transition:opacity .25s; background:radial-gradient(420px circle at var(--mx) var(--my), rgba(var(--gc),.16), transparent 62%);}
+  .game:hover::before{opacity:1;}
+  .game:hover .shot img{transform:scale(1.09);}
+  @media(prefers-reduced-motion:reduce){ .game.rv{opacity:1; transform:none;} .game.in.tilt:hover{transform:translateY(-4px);} }
   .hero-lg{order:2; flex:0 0 auto; width:clamp(150px,21vw,230px); height:auto; filter:drop-shadow(0 18px 50px rgba(255,150,40,.28)); transform:rotate(4deg);}
   @media(max-width:640px){ .hero{flex-direction:column; align-items:flex-start; gap:12px;} .hero-lg{order:0; width:92px; transform:none;} }
   /* 위쪽 오른쪽 버튼 묶음 */
@@ -504,6 +521,13 @@ if(document.readyState==='loading') document.addEventListener('DOMContentLoaded'
     </div>
   </section>
 
+  <section class="hstats" id="heroStats" aria-label="숫자로 보는 Frenchfries777">
+    <div><b data-n="4">4</b><span>게임</span></div>
+    <div><b data-n="27">27</b><span>Stickseum 캐릭터</span></div>
+    <div><b data-n="28">28</b><span>Stickseum 맵</span></div>
+    <div><b data-n="93" id="hsWiki">93</b><span>위키 문서</span></div>
+    <div><b data-n="6">6</b><span>언어</span></div>
+  </section>
 
   <section class="acct">
     <div class="ai"><img src="logo.svg" alt="" width="40" height="40"></div>
@@ -626,5 +650,46 @@ if(document.readyState==='loading') document.addEventListener('DOMContentLoaded'
 <script src="ff-auth.js?v=20261018b"></script>
 <script src="hub.js?v=20261018b"></script>
 <script src="ff-splash.js?v=20261017a" defer></script>
+<script>
+(function(){
+  var rm=window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var io=('IntersectionObserver' in window)?IntersectionObserver:null;
+  /* 숫자 올라가기: 처음 보일 때 한 번 */
+  var st=document.getElementById('heroStats');
+  function count(b){ var n=+b.getAttribute('data-n')||0; if(rm||!n){ b.textContent=n; return; } var t0=null; function f(t){ if(!t0)t0=t; var p=Math.min(1,(t-t0)/1100); b.textContent=Math.round(n*(1-Math.pow(1-p,3))); if(p<1)requestAnimationFrame(f); } b.textContent=0; requestAnimationFrame(f); }
+  if(st){ var bs=[].slice.call(st.querySelectorAll('b'));
+    if(io){ new io(function(es,ob){ es.forEach(function(e){ if(e.isIntersecting){ bs.forEach(count); ob.disconnect(); } }); },{threshold:.4}).observe(st); } else bs.forEach(count);
+    /* 위키 문서 수는 실제 값으로 (읽을 수 없으면 적힌 수 그대로) */
+    var tries=0; (function wiki(){ var c=window.FFAuth&&FFAuth.client&&FFAuth.client(); if(!c){ if(++tries<30) setTimeout(wiki,300); return; }
+      try{ c.from('ff_wiki').select('slug',{count:'exact',head:true}).then(function(r){ if(r&&!r.error&&r.count>0){ var w=document.getElementById('hsWiki'); w.setAttribute('data-n',r.count); w.textContent=r.count; } },function(){}); }catch(e){} })(); }
+  /* 게임 카드: 스크롤하면 차례로 나타나기, 마우스를 따라 빛과 기울기 */
+  var cards=[].slice.call(document.querySelectorAll('.games .game'));
+  cards.forEach(function(c,i){ c.style.transitionDelay=''; if(!rm&&io){ c.classList.add('rv'); } else c.classList.add('in'); });
+  if(!rm&&io){ var o2=new io(function(es){ es.forEach(function(e){ if(e.isIntersecting){ var el=e.target, i=cards.indexOf(el)%3; setTimeout(function(){ el.classList.add('in'); setTimeout(function(){ el.classList.add('tilt'); el.style.transitionDelay=''; },800); },i*110); o2.unobserve(el); } }); },{threshold:.12}); cards.forEach(function(c){ o2.observe(c); }); }
+  else cards.forEach(function(c){ c.classList.add('tilt'); });
+  if(window.matchMedia&&matchMedia('(hover:hover) and (pointer:fine)').matches&&!rm){
+    cards.forEach(function(c){ c.addEventListener('pointermove',function(e){ var r=c.getBoundingClientRect(), x=(e.clientX-r.left)/r.width, y=(e.clientY-r.top)/r.height; c.style.setProperty('--mx',(x*100)+'%'); c.style.setProperty('--my',(y*100)+'%'); c.style.setProperty('--ry',((x-.5)*5).toFixed(2)+'deg'); c.style.setProperty('--rx',((.5-y)*4).toFixed(2)+'deg'); }); c.addEventListener('pointerleave',function(){ c.style.setProperty('--rx','0deg'); c.style.setProperty('--ry','0deg'); }); });
+  }
+})();
+</script>
+<script>
+(function(){
+  var bg=document.querySelector('.hero-bg'); if(!bg) return;
+  var rm=matchMedia('(prefers-reduced-motion:reduce)').matches, narrow=matchMedia('(max-width:640px)').matches, cn=navigator.connection||{};
+  if(rm||narrow||cn.saveData) return;
+  var clips=['stk','ce','bf','ip'], vids=[];
+  bg.querySelectorAll('i').forEach(function(el,k){
+    var v=document.createElement('video'); v.muted=true; v.loop=true; v.playsInline=true; v.preload='auto'; v.setAttribute('aria-hidden','true'); v.style.opacity=0; v.style.transition='opacity .6s';
+    v.src='hero/'+clips[k]+(v.canPlayType('video/mp4; codecs="avc1.42E01E"')?'.mp4':'.webm'); el.appendChild(v); vids.push(v);
+    v.addEventListener('playing',function(){ v.style.opacity=.9; });
+    v.addEventListener('error',function(){ v.remove(); });
+  });
+  function go(on){ vids.forEach(function(v){ if(!v.isConnected) return; if(on){ var p=v.play(); if(p&&p.catch) p.catch(function(){}); } else v.pause(); }); }
+  var vis=true,tab=true;
+  function upd(){ go(vis&&tab); }
+  new IntersectionObserver(function(e){ vis=e[0].isIntersecting; upd(); }).observe(document.querySelector('.hero'));
+  document.addEventListener('visibilitychange',function(){ tab=!document.hidden; upd(); });
+})();
+</script>
 </body>
 </html>
