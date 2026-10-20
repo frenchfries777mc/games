@@ -505,7 +505,9 @@ body.playing #emoBar{display:flex}
    <div class="row"><input id="codeIn" maxlength="5" placeholder="방 코드" autocomplete="off"><button class="pb dark" id="joinBtn" style="flex:0 0 auto">들어가기</button></div>
    <div class="msg" id="homeMsg"></div>
   </div>
-  <details class="notes"><summary>패치노트 · v0.1 (build 20)</summary>
+  <details class="notes"><summary>패치노트 · v0.1 (build 21)</summary>
+   <b>2026-10-20 · v0.1 build 21 · 허브 방 초대</b>
+   <ul><li>방에 들어가 있으면 허브 친구에게 방 초대를 보낼 수 있어요. 초대 알림을 누르면 자동으로 방에 들어와요</li></ul>
    <b>2026-10-20 · v0.1 build 20 · 미니게임 배경음악</b>
    <ul><li>의자 뺏기를 뺀 미니게임을 하는 동안 8비트 느낌의 신나는 배경음악이 나와요</li><li>소리 켜기·끄기 설정을 따라가요</li></ul>
    <b>2026-10-20 · v0.1 build 19 · 미니게임 4개, 볼풀 수정</b>
@@ -544,7 +546,7 @@ body.playing #emoBar{display:flex}
    <ul><li>무너지는 발판 칸 수 대폭 증가 (19×10)와 용암 동굴 맵</li><li>10개 맵 전부 새로 그림 (관중석, 야자수 섬, 링, 정원 미로, 서커스, 우노 테이블 등)</li><li>글자 대신 아이콘·말풍선·이펙트로 표현 (무기, 아이템, 카드 효과, 시작 안내)</li><li>타격·폭발·물보라 효과와 화면 흔들림 추가</li></ul>
    <b>2026-10-19 · v0.1 build 1 · 첫 시험판</b>
    <ul><li>마네킹 미니게임 10개 추가 (장애물 달리기, 섬 밀치기, 싸우기, 병맛 미로, 체스 대난투, 폭탄 돌리기, 병맛 우노, 쇼윈도 얼음땡, 무너지는 발판, 컨베이어 서바이벌)</li><li>방 코드로 최대 8명 멀티플레이, 빈자리는 봇으로 채우기</li><li>판마다 10개 중 5개를 무작위로 골라 점수를 합산</li><li>PC 키보드와 휴대폰 터치 조작 지원</li></ul></details>
-  <p class="foot">2~8명 · 판마다 23개 미니게임 중 7개 · 프로토타입 v0.1 b19 · <a href="../">← 프로토타입 목록</a></p>
+  <p class="foot">2~8명 · 판마다 23개 미니게임 중 7개 · 프로토타입 v0.1 b21 · <a href="../">← 프로토타입 목록</a></p>
   <p class="foot"><span class="ff-copy">© 2026 Frenchfries777 · <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.ko" target="_blank" rel="noopener">CC BY-NC-ND 4.0</a></span></p>
  </div>
 </section>
@@ -4386,7 +4388,8 @@ function peerOpts() {
   return o;
 }
 function newCode() { var s = ''; for (var i = 0; i < 5; i++) s += CODE_CH[Math.floor(Math.random() * CODE_CH.length)]; return s; }
-function destroyPeer() { if (G.peer) { try { G.peer.destroy(); } catch (e) { } } G.peer = null; G.conn = null; G.conns = {}; }
+function hubRoom(on) { try { if (window.FFAuth && FFAuth.setRoom) FFAuth.setRoom(on && G.code ? { game: 'dummyparty', code: G.code, path: 'prototypes/dummyparty/index.html' } : null); } catch (e) { } }
+function destroyPeer() { G._hr = null; hubRoom(false); if (G.peer) { try { G.peer.destroy(); } catch (e) { } } G.peer = null; G.conn = null; G.conns = {}; }
 function homeMsg(t, info) { var m = $('homeMsg'); m.textContent = t || ''; m.className = 'msg' + (info ? ' info' : ''); }
 function busy(on) { ['hostBtn', 'joinBtn', 'soloBtn'].forEach(function (id) { $(id).disabled = on; }); }
 
@@ -4540,6 +4543,7 @@ function trimBots(fill) {
 }
 function renderLobby() {
   if (G.phase !== 'lobby') return;
+  if (G.code && G._hr !== G.code) { G._hr = G.code; hubRoom(true); }
   var host = G.role !== 'guest';
   $('lobCode').textContent = G.code || '혼자 하기';
   $('lobCodeBox').style.display = G.code ? '' : 'none';
@@ -4997,13 +5001,21 @@ function goHome() { destroyPeer(); G.role = null; G.phase = 'idle'; G.st = null;
     });
     addEventListener('keydown', function (e) { if (e.target && /INPUT|TEXTAREA/.test(e.target.tagName)) return; var k = e.code && e.code.match(/^Digit([1-5])$/); if (k) sendEmote(+k[1] - 1); });
   })();
+  // 허브 방 초대 링크(?join=코드)로 열리면 이름이 정해진 뒤 자동으로 들어가요
+  var autoDone = false;
+  function autoJoin() {
+    var c = (qs.get('join') || '').toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 5);
+    if (autoDone || c.length !== 5 || G.role || !$('nameIn').value.trim()) return;
+    autoDone = true; $('codeIn').value = c; $('joinBtn').click();
+  }
+  setTimeout(autoJoin, 3000);
   // Frenchfries777 계정이 있으면 그 닉네임을 이름으로 써요
   (function () {
     function useNick() {
       try { var u = window.FFAuth && FFAuth.user(), n = u && FFAuth.nickname(); if (n) { $('nameIn').value = cleanName(n); lsSet('dummyparty.name', cleanName(n)); }
         $('acctLine').innerHTML = n ? 'Frenchfries777 계정으로 접속 중' : '<a href="https://frenchfries777mc.github.io/games/">허브에서 로그인하면 dC와 꾸미기가 저장돼요</a>'; } catch (e) { }
     }
-    function hook() { if (!window.FFAuth) return false; FFAuth.ready.then(function () { useNick(); walletRefresh(); }); FFAuth.onChange(function () { useNick(); walletRefresh(); }); return true; }
+    function hook() { if (!window.FFAuth) return false; FFAuth.ready.then(function () { useNick(); walletRefresh(); autoJoin(); }); FFAuth.onChange(function () { useNick(); walletRefresh(); }); return true; }
     if (!hook()) { var tries = 0, iv = setInterval(function () { if (hook() || ++tries > 40) clearInterval(iv); }, 250); }
   })();
   requestAnimationFrame(frame);
