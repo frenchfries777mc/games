@@ -505,7 +505,9 @@ body.playing #emoBar{display:flex}
    <div class="row"><input id="codeIn" maxlength="5" placeholder="방 코드" autocomplete="off"><button class="pb dark" id="joinBtn" style="flex:0 0 auto">들어가기</button></div>
    <div class="msg" id="homeMsg"></div>
   </div>
-  <details class="notes"><summary>패치노트 · v0.1 (build 18)</summary>
+  <details class="notes"><summary>패치노트 · v0.1 (build 19)</summary>
+   <b>2026-10-20 · v0.1 build 19 · 미니게임 배경음악</b>
+   <ul><li>의자 뺏기를 뺀 미니게임을 하는 동안 8비트 느낌의 신나는 배경음악이 나와요</li><li>소리 켜기·끄기 설정을 따라가요</li></ul>
    <b>2026-10-20 · v0.1 build 18 · 의자 뺏기 음악</b>
    <ul><li>의자 뺏기에 신나는 음악이 나와요. 두 곡 중 하나가 무작위로 나오고, 음악이 멈추면 같이 멈춰요</li><li>소리 켜기·끄기 설정을 따라가요</li></ul>
    <b>2026-10-20 · v0.1 build 17 · 해설 효과음</b>
@@ -4522,7 +4524,17 @@ var CHM = (function () {
       if (el.paused) { var q = el.play(); if (q && q.catch) q.catch(function () { }); }
     } catch (e) { }
   }
-  return { tick: tick };
+  // 의자 뺏기를 뺀 미니게임 진행 중에 나오는 배경음악 한 곡
+  var mel = null, malt = false;
+  function mainTick(m) {
+    var want = !!(m && m.phase === 'play' && m.mg !== 'chair' && lsGet('dummyparty.sfx') !== '0');
+    if (!want) { if (mel && !mel.paused) { try { mel.pause(); } catch (e) { } } return; }
+    try {
+      if (!mel) { mel = new Audio('party-main.mp3'); mel.loop = true; mel.preload = 'auto'; mel.volume = 0.4; mel.onerror = function () { if (!malt) { malt = true; mel.src = ALT + 'party-main.mp3'; mel.load(); } }; }
+      if (mel.paused) { var q = mel.play(); if (q && q.catch) q.catch(function () { }); }
+    } catch (e) { }
+  }
+  return { tick: function (m, s) { tick(m, s); mainTick(m); } };
 })();
 
 function frame() {
