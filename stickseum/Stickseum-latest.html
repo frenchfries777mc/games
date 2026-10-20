@@ -4758,7 +4758,7 @@ function shuffle(arr){ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.
 /* ===== the version of this file =====
    Players with different versions CAN meet and play together: the automatic matchmaking uses the same room names for every version (online-<mode>-<map>-<slot>), and nobody is refused because of a different build.
    The build is only sent along with the join message and the lobby (for information); the corner of the screen shows it. */
-const GAME_BUILD='build 2026-10-18-v326';
+const GAME_BUILD='build 2026-10-18-v327';
 const GAME_VERSION='0.8', GAME_VERSION_NAME='황금을 찾아서';   // 게임 버전 이름: versions.json의 title과 같게 (빌드마다 바꾸지 않음)
 const WEEKLY_EVENTS=[
   {id:'lowg',    name:'저중력 난투', desc:'몸이 둥실둥실, 중력이 약해진 난투', rules:{grav:0.6}},
@@ -9964,17 +9964,24 @@ function banEligible(){       // duel (also the ranked one) and team battle, nor
 function banActive(){ return !!(weaponPhase && weaponPhase.ban && !weaponPhase.ban.done); }
 function initBanStage(){
   const ph=weaponPhase; ph.ban={ends:Date.now()+BAN_MS, picks:{}, banner:{}, botAt:{}, done:false}; ph.deadline+=BAN_MS;
-  for(const p of Object.values(players)){ const k=banSideKey(p); if(!p.isBot){ (ph.ban.banner[k]=ph.ban.banner[k]||[]).push(p.id); } }       // (every person of a side bans one character of his own)
-  for(const p of Object.values(players)){ const k=banSideKey(p); if(!ph.ban.banner[k] && ph.ban.botAt[k]===undefined) ph.ban.botAt[k]=Date.now()+1500+Math.random()*3500; }       // (a side with only bots: they ban at random, after a moment, so the people can see it happen)
+  for(const p of Object.values(players)){ const k=banSideKey(p); (ph.ban.banner[k]=ph.ban.banner[k]||[]).push(p.id); if(p.isBot) ph.ban.botAt[p.id]=Date.now()+1500+Math.random()*3500; }       // (every member of a side bans one character, so a 5 against 5 bans five on each side; a bot bans at random after a moment so the people can see it happen)
   for(const p of Object.values(players)) if(p.isBot && p.pickAt!==undefined){ p.pickAt+=BAN_MS; p.lockAt+=BAN_MS; }
+}
+function banMatesPicks(id){          // what the other members of this one's side have banned so far
+  const k=players[id]?banSideKey(players[id]):id, b=weaponPhase&&weaponPhase.ban; if(!b) return [];
+  return Object.keys(b.picks).filter(x=>x!==id && (players[x]?banSideKey(players[x]):x)===k).map(x=>b.picks[x]).filter(Boolean);
+}
+function banFreeRandom(id){          // a random character that nobody on this side has banned yet (five bans on a side are five different characters)
+  const taken=banMatesPicks(id), free=SELECTABLE_WEAPONS.filter(w=>!taken.includes(w)), pool=free.length?free:SELECTABLE_WEAPONS;
+  return pool[Math.floor(Math.random()*pool.length)];
 }
 function botBanTick(){          // the bot-only sides ban once their moment has come
   const b=weaponPhase&&weaponPhase.ban; if(!b||b.done) return false; let any=false;
-  for(const k in b.botAt){ if(b.picks[k]===undefined && (Date.now()>=b.botAt[k] || Date.now()>=b.ends-200)){ b.picks[k]=SELECTABLE_WEAPONS[Math.floor(Math.random()*SELECTABLE_WEAPONS.length)]; any=true; } }
+  for(const k in b.botAt){ if(b.picks[k]===undefined && (Date.now()>=b.botAt[k] || Date.now()>=b.ends-200)){ b.picks[k]=banFreeRandom(k); any=true; } }
   return any;
 }
 /* a person who ran out of time still bans (at random): both sides must have banned before the pick opens */
-function endBanStage(){ if(!banActive()) return; botBanTick(); { const bp=weaponPhase.ban.picks; for(const k in weaponPhase.ban.banner) for(const id of weaponPhase.ban.banner[k]) if(players[id] && bp[id]===undefined) bp[id]=SELECTABLE_WEAPONS[Math.floor(Math.random()*SELECTABLE_WEAPONS.length)]; } weaponPhase.ban.done=true; matchBans={}; for(const x in weaponPhase.ban.picks){ const w=weaponPhase.ban.picks[x]; if(!w) continue; const k=players[x]?banSideKey(players[x]):x; (matchBans[k]=matchBans[k]||[]); if(!matchBans[k].includes(w)) matchBans[k].push(w); } broadcastWeaponState(); }
+function endBanStage(){ if(!banActive()) return; botBanTick(); { const bp=weaponPhase.ban.picks; for(const k in weaponPhase.ban.banner) for(const id of weaponPhase.ban.banner[k]) if(players[id] && bp[id]===undefined) bp[id]=banFreeRandom(id); } weaponPhase.ban.done=true; matchBans={}; for(const x in weaponPhase.ban.picks){ const w=weaponPhase.ban.picks[x]; if(!w) continue; const k=players[x]?banSideKey(players[x]):x; (matchBans[k]=matchBans[k]||[]); if(!matchBans[k].includes(w)) matchBans[k].push(w); } broadcastWeaponState(); }
 function banStageCheck(){
   if(!banActive()) return;
   const b=weaponPhase.ban, live=new Set(Object.values(players).map(banSideKey));
@@ -9986,6 +9993,7 @@ function hostWeaponBan(pid, wid){
   const p=players[pid]; if(!p || !banActive() || weaponPhase.revealing || !SELECTABLE_WEAPONS.includes(wid)) return;
   const k=banSideKey(p), b=weaponPhase.ban;
   if(!(b.banner[k]||[]).includes(pid) || b.picks[pid]!==undefined) return;
+  if(banMatesPicks(pid).includes(wid)){ broadcastWeaponState(); return; }                 // a teammate has banned it already
   b.picks[pid]=wid; broadcastWeaponState(); banStageCheck();
 }
 let matchBans=null;      // {side: banned character} once the ban stage is over; it holds for one pick (a duel has a new ban stage before every round)
@@ -10007,7 +10015,7 @@ function weaponStateFor(p){
   }
   const bn=weaponPhase && weaponPhase.ban, bk=banSideKey(p);
   return {t:'weaponState', picks:picks, count:Object.values(players).filter(o=>o.weaponChosen).length, total:Object.keys(players).length, dup:dupRuleOn(p), banned:(duelPick&&p.duelUsed)?p.duelUsed:[],
-    ban:bn?{on:!bn.done, ends:bn.ends, can:(bn.banner[bk]||[]).includes(p.id), mine:bn.picks[p.id]||null, opp:Object.keys(bn.picks).some(x=>(players[x]?banSideKey(players[x]):x)!==bk), oppPick:((bn.picks[p.id]!==undefined||bn.done)?[...new Set(Object.keys(bn.picks).filter(x=>(players[x]?banSideKey(players[x]):x)!==bk).map(x=>bn.picks[x]).filter(Boolean))]:[])}:null, ob:oppBansFor(p)};
+    ban:bn?{on:!bn.done, ends:bn.ends, tm:banMatesPicks(p.id), can:(bn.banner[bk]||[]).includes(p.id), mine:bn.picks[p.id]||null, opp:Object.keys(bn.picks).some(x=>(players[x]?banSideKey(players[x]):x)!==bk), oppPick:((bn.picks[p.id]!==undefined||bn.done)?[...new Set(Object.keys(bn.picks).filter(x=>(players[x]?banSideKey(players[x]):x)!==bk).map(x=>bn.picks[x]).filter(Boolean))]:[])}:null, ob:oppBansFor(p)};
 }
 function broadcastWeaponState(){
   for(const pid in players){
@@ -10225,7 +10233,7 @@ function enterWeaponPhase(deadline, wmode, offer, banEnds){
 function weaponBanMode(){ const st=weaponUI.state; return weaponUI.mode==='pick' && !!(st && st.ban ? st.ban.on : weaponUI.banEnds>Date.now()); }
 function pickWeapon(wid){
   if(weaponUI.mode!=='pick' || weaponUI.locked) return;
-  if(weaponBanMode()){ const sb=weaponUI.state&&weaponUI.state.ban; if(!sb || !sb.can || sb.mine) return; weaponUI.banSel=wid; renderWeaponUI(); return; }
+  if(weaponBanMode()){ const sb=weaponUI.state&&weaponUI.state.ban; if(!sb || !sb.can || sb.mine || (sb.tm||[]).includes(wid)) return; weaponUI.banSel=wid; renderWeaponUI(); return; }
   if(weaponUI.offer && !weaponUI.offer.includes(wid)) return;
   if(weaponUI.hiddenUntil && performance.now()<weaponUI.hiddenUntil) return; // random cards are still 'rolling'
   const st=weaponUI.state;
@@ -10254,7 +10262,7 @@ function applyWeaponState(st){
   const mine=st.picks.find(p=>p.id===myId);
   if(mine){ weaponUI.selected=mine.pick; if(mine.locked){ weaponUI.locked=true; weaponChosenLocally=true; } }
   renderWeaponUI();
-  const bn=st.banned||[], ob=st.ob||[];
+  const bn=(st.banned||[]).concat(weaponBanMode()&&st.ban?(st.ban.tm||[]):[]), ob=st.ob||[];
   document.querySelectorAll('#weaponGrid .wpnCard').forEach(el=>{ const w=el.dataset.wid, b=bn.includes(w), o=ob.includes(w); el.style.opacity=(b||o)?'0.3':''; el.style.pointerEvents=(b||o)?'none':''; el.title=o?'상대가 금지한 캐릭터예요':(b?'이미 사용한 무기예요':''); });
 }
 function drawWeaponPortrait(wid){
