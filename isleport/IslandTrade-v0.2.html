@@ -437,7 +437,7 @@ const TUT=[
  [P('다 자라면 밭을 눌러 수확해요','When it is grown, tap the field to harvest'),s=>s.stats.harvest>=1],
  [P('마을 장터에서 수확한 것을 팔아요','Sell your harvest at the town market'),s=>(s.stats.shop||0)>=1],
  [P('항구에서 배에 짐을 싣고 보내요','Load a ship at the harbor and send it off'),s=>s.stats.sailed>=1]];
-const OUTMAX=12,BUILD=38;
+const OUTMAX=12,BUILD=39;
 const hasB=(s,b)=>s.slots.some(x=>x&&x.b===b);
 const rankOf=e=>{let r=0;RANKS.forEach((x,i)=>{if(e>=x[0])r=i;});return r;};
 /* 업적: id, 이름, 설명, 조건 */
@@ -11356,6 +11356,174 @@ let TRX={
   "es": "Ahora hay cuatro temas de fondo; el nuevo es una pieza de ritmo rápido que fluye ligera sobre un solo acorde",
   "fr": "La musique de fond compte maintenant quatre morceaux ; le nouveau, au tempo rapide, glisse légèrement sur un seul accord",
   "de": "Es gibt jetzt vier Hintergrundstücke; das neue hat ein flottes Tempo und fließt leicht über einem einzigen Akkord"
+ },
+ "사진 모드": {
+  "en": "Photo mode",
+  "ja": "フォトモード",
+  "es": "Modo foto",
+  "fr": "Mode photo",
+  "de": "Fotomodus"
+ },
+ "P 키를 누르거나 집에서 \"사진 찍기\"를 고르면 지금 화면을 사진으로 찍어요. 사진은 앨범에 열두 장까지 모여요": {
+  "en": "Press P or choose Take a photo at home to snap the screen; the album keeps up to twelve",
+  "ja": "Pキーを押すか、家で「写真を撮る」を選ぶと今の画面を写真に撮れます。写真はアルバムに12枚までたまります",
+  "es": "Pulsa P o elige «Hacer una foto» en casa para capturar la pantalla; el álbum guarda hasta doce fotos",
+  "fr": "Appuie sur P ou choisis « Prendre une photo » à la maison pour capturer l’écran ; l’album garde jusqu’à douze photos",
+  "de": "Drücke P oder wähle zu Hause „Foto machen“, um den Bildschirm zu knipsen; das Album fasst bis zu zwölf Fotos"
+ },
+ "분수 광장, 시계탑, 호수, 기차역, 등대, 박물관, 항구 앞에서 처음 찍으면 금화 보너스를 받아요": {
+  "en": "The first photo at the fountain plaza, clock tower, lake, station, lighthouse, museum or harbor earns a gold bonus",
+  "ja": "噴水広場、時計塔、湖、駅、灯台、博物館、港の前で初めて撮ると金貨のボーナスがもらえます",
+  "es": "La primera foto en la plaza de la fuente, la torre del reloj, el lago, la estación, el faro, el museo o el puerto da una bonificación de oro",
+  "fr": "La première photo sur la place de la fontaine, devant la tour de l’horloge, le lac, la gare, le phare, le musée ou le port rapporte un bonus d’or",
+  "de": "Das erste Foto am Brunnenplatz, Uhrturm, See, Bahnhof, Leuchtturm, Museum oder Hafen bringt einen Goldbonus"
+ },
+ "친구 초대로 바로 입장": {
+  "en": "Join friends from invites",
+  "ja": "招待からすぐ参加",
+  "es": "Únete desde las invitaciones",
+  "fr": "Rejoindre via les invitations",
+  "de": "Direkt per Einladung beitreten"
+ },
+ "방을 열거나 들어가면 허브 친구들에게 방이 보이고, 초대 알림을 누르면 이 게임이 열리면서 그 방에 바로 들어가요": {
+  "en": "Open or join a room and hub friends can see it; tapping an invite opens the game and joins that room",
+  "ja": "ルームを作ったり入ったりするとハブの友達にルームが見え、招待通知を押すとこのゲームが開いてそのルームにすぐ入れます",
+  "es": "Si creas o entras en una sala, tus amigos del hub la verán; al tocar una invitación se abre el juego y entras directamente en esa sala",
+  "fr": "Quand tu crées ou rejoins un salon, tes amis du hub le voient ; toucher une invitation ouvre le jeu et te place directement dans ce salon",
+  "de": "Erstellst du einen Raum oder trittst einem bei, sehen ihn deine Hub-Freunde; tippst du auf eine Einladung, öffnet sich das Spiel direkt in diesem Raum"
+ },
+ "저작권 표기": {
+  "en": "Copyright notice",
+  "ja": "著作権表示",
+  "es": "Aviso de copyright",
+  "fr": "Mention de droits d’auteur",
+  "de": "Urheberrechtshinweis"
+ },
+ "게임 파일과 시작 화면, 설정 화면에 저작권 표기를 넣었어요 (CC BY-NC-ND 4.0)": {
+  "en": "Added a copyright notice (CC BY-NC-ND 4.0) to the game file, title screen and settings",
+  "ja": "ゲームファイルとタイトル画面、設定画面に著作権表示を入れました (CC BY-NC-ND 4.0)",
+  "es": "Se ha añadido un aviso de copyright (CC BY-NC-ND 4.0) al archivo del juego, la pantalla de inicio y los ajustes",
+  "fr": "Ajout d’une mention de droits d’auteur (CC BY-NC-ND 4.0) dans le fichier du jeu, l’écran titre et les réglages",
+  "de": "Urheberrechtshinweis (CC BY-NC-ND 4.0) in Spieldatei, Titelbildschirm und Einstellungen ergänzt"
+ },
+ "나무는 천천히": {
+  "en": "Trees grow slower",
+  "ja": "木はゆっくり",
+  "es": "Los árboles crecen más despacio",
+  "fr": "Les arbres poussent plus lentement",
+  "de": "Bäume wachsen langsamer"
+ },
+ "과일나무와 차나무, 카카오 같은 나무류가 다 자라기까지 두 배 걸려요": {
+  "en": "Fruit trees, tea and cocoa now take twice as long to ripen",
+  "ja": "果樹や茶の木、カカオなどの木は育ちきるまで2倍かかります",
+  "es": "Los árboles frutales, el té, el cacao y demás árboles tardan el doble en madurar",
+  "fr": "Les arbres fruitiers, le thé, le cacao et autres arbres mettent deux fois plus de temps à mûrir",
+  "de": "Obstbäume, Tee, Kakao und andere Bäume brauchen jetzt doppelt so lange zum Reifen"
+ },
+ "일꾼은 연구 \"일꾼 고용\"을 끝낸 뒤 집에서 고용해요. 도움말에도 적어 두었어요": {
+  "en": "Hire workers at home after finishing the \"Hire workers\" research; also noted in the guide",
+  "ja": "働き手は研究「働き手を雇う」を終えてから家で雇います。ヘルプにも書いておきました",
+  "es": "Contrata peones en casa tras completar la investigación «Contratar peones»; también está en la ayuda",
+  "fr": "Embauche des ouvriers à la maison après la recherche « Embaucher des ouvriers » ; c’est aussi indiqué dans l’aide",
+  "de": "Arbeiter heuerst du zu Hause an, nachdem die Forschung „Arbeiter anheuern“ fertig ist; steht auch in der Hilfe"
+ },
+ "장터를 원래대로": {
+  "en": "Market back to normal",
+  "ja": "市場を元どおりに",
+  "es": "El mercado vuelve a ser como antes",
+  "fr": "Le marché comme avant",
+  "de": "Markt wie früher"
+ },
+ "마을 입구 장터를 누르면 다시 물건 팔기 창이 열려요. 식당 납품은 식당가에서만 해요": {
+  "en": "The market at the town gate opens the selling window again; restaurant deliveries are only at the restaurant row",
+  "ja": "村の入口の市場を押すと、また品物を売る画面が開きます。レストランへの納品はレストラン街だけでします",
+  "es": "El mercado de la entrada del pueblo vuelve a abrir la ventana de venta; las entregas a restaurantes solo se hacen en la calle de restaurantes",
+  "fr": "Le marché à l’entrée du village rouvre la fenêtre de vente ; les livraisons aux restaurants se font uniquement dans la rue des restaurants",
+  "de": "Der Markt am Dorfeingang öffnet wieder das Verkaufsfenster; Restaurantlieferungen gibt es nur in der Restaurantmeile"
+ },
+ "사진 찍기": {
+  "en": "Take a photo",
+  "ja": "写真を撮る",
+  "es": "Hacer una foto",
+  "fr": "Prendre une photo",
+  "de": "Foto machen"
+ },
+ "사진 앨범": {
+  "en": "Photo album",
+  "ja": "フォトアルバム",
+  "es": "Álbum de fotos",
+  "fr": "Album photo",
+  "de": "Fotoalbum"
+ },
+ "<b>일꾼</b>: 연구 \"일꾼 고용\"(큰 바구니 다음)을 끝내면 집을 눌러 \"일꾼 고용\"에서 금화로 고용해요. 일꾼은 다 자란 작물과 산물을 알아서 모아요.": {
+  "en": "<b>Workers</b>: finish the Hire workers research (after Big basket), then press your house and choose Hire workers. Workers collect ripe crops and goods on their own.",
+  "ja": "<b>働き手</b>: 研究「働き手を雇う」（大きなかごの次）を終えたら、家を押して「働き手を雇う」から金貨で雇います。働き手は育った作物や産物を自動で集めます。",
+  "es": "<b>Peones</b>: completa la investigación «Contratar peones» (después de Cesta grande), pulsa tu casa y elige «Contratar peones» para pagarlos con oro. Los peones recogen solos los cultivos maduros y los productos.",
+  "fr": "<b>Ouvriers</b> : termine la recherche « Embaucher des ouvriers » (après Grand panier), puis touche ta maison et choisis « Embaucher des ouvriers » pour les payer en or. Les ouvriers récoltent seuls les cultures mûres et les produits.",
+  "de": "<b>Arbeiter</b>: Schließe die Forschung „Arbeiter anheuern“ ab (nach Großer Korb), tippe dann auf dein Haus und heuere sie unter „Arbeiter anheuern“ für Gold an. Arbeiter sammeln reife Pflanzen und Erzeugnisse selbst ein."
+ },
+ "풍경": {
+  "en": "Scenery",
+  "ja": "風景",
+  "es": "Paisaje",
+  "fr": "Paysage",
+  "de": "Landschaft"
+ },
+ "사진을 저장하지 못했어요": {
+  "en": "Could not save the photo",
+  "ja": "写真を保存できませんでした",
+  "es": "No se pudo guardar la foto",
+  "fr": "Impossible d’enregistrer la photo",
+  "de": "Foto konnte nicht gespeichert werden"
+ },
+ "{0} 첫 사진! 보너스 {1}": {
+  "en": "First photo at {0}! Bonus {1}",
+  "ja": "{0}で初めての写真！ボーナス {1}",
+  "es": "¡Primera foto en {0}! Bonificación {1}",
+  "fr": "Première photo : {0} ! Bonus {1}",
+  "de": "Erstes Foto: {0}! Bonus {1}"
+ },
+ "찰칵! 사진을 앨범에 담았어요": {
+  "en": "Click! Saved to the album",
+  "ja": "パシャ！写真をアルバムに入れました",
+  "es": "¡Clic! Foto guardada en el álbum",
+  "fr": "Clic ! Photo ajoutée à l’album",
+  "de": "Klick! Foto im Album gespeichert"
+ },
+ "P 키나 집 메뉴로 지금 화면을 찍어요. 명소 앞에서 처음 찍으면 보너스를 받아요.": {
+  "en": "Press P or use the home menu to snap the screen. The first photo at a landmark earns a bonus.",
+  "ja": "Pキーか家のメニューで今の画面を撮ります。名所の前で初めて撮るとボーナスがもらえます。",
+  "es": "Pulsa P o usa el menú de casa para capturar la pantalla. La primera foto en un lugar emblemático da una bonificación.",
+  "fr": "Appuie sur P ou passe par le menu de la maison pour capturer l’écran. La première photo devant un lieu célèbre rapporte un bonus.",
+  "de": "Drücke P oder nutze das Hausmenü, um den Bildschirm zu knipsen. Das erste Foto an einer Sehenswürdigkeit bringt einen Bonus."
+ },
+ "지금 찍기": {
+  "en": "Take one now",
+  "ja": "今すぐ撮る",
+  "es": "Hacer una ahora",
+  "fr": "Prendre maintenant",
+  "de": "Jetzt knipsen"
+ },
+ "목록": {
+  "en": "Back",
+  "ja": "一覧へ",
+  "es": "Volver",
+  "fr": "Retour",
+  "de": "Zurück"
+ },
+ "지우기": {
+  "en": "Delete",
+  "ja": "削除",
+  "es": "Borrar",
+  "fr": "Supprimer",
+  "de": "Löschen"
+ },
+ "아직 사진이 없어요": {
+  "en": "No photos yet",
+  "ja": "まだ写真がありません",
+  "es": "Aún no hay fotos",
+  "fr": "Pas encore de photos",
+  "de": "Noch keine Fotos"
  }
 }
 ;
