@@ -224,8 +224,6 @@ input[type=checkbox]{accent-color:var(--gold)}
 @media (prefers-reduced-motion:reduce){.toast,#bpop.show{animation:none}.seal,.btn{transition:none}}
 #evwin{position:absolute;inset:0;z-index:60;background:#050a14f0;display:flex;align-items:center;justify-content:center;cursor:pointer}
 #evwin.hidden{display:none}
-#evwin.soft{animation:evfade .8s ease-out}#evwin.soft .evcard{animation:evrise .8s ease-out}
-@keyframes evfade{from{opacity:0}to{opacity:1}}@keyframes evrise{from{transform:translateY(18px) scale(.97)}to{transform:none}}
 .evcard{width:min(780px,94vw);max-height:96vh;display:flex;flex-direction:column;background:#efe6cf;color:#1c1710;border:2px solid #5a4a2a;box-shadow:0 0 0 4px #00000066,0 30px 80px #000;overflow:hidden;font-family:Georgia,'Noto Serif KR','Batang','Malgun Gothic',serif}
 .evphoto{padding:14px 14px 8px;background:#d9ceb2;border-bottom:2px solid #5a4a2a}
 .evphoto canvas{display:block;width:100%;height:auto;border:6px solid #f6f1e2;box-shadow:0 2px 8px #0008}
@@ -387,7 +385,7 @@ window.ceReload=function(){try{if(window.FFAuth&&FFAuth.setRoom)FFAuth.setRoom(n
 try{if(sessionStorage.getItem('ce_noIntro')){sessionStorage.removeItem('ce_noIntro');el.style.display='none';go();}}catch(e){}})();</script>
 <div id="app">
  <div id="lobby" class="screen">
-  <canvas id="lobbyBg"></canvas><canvas id="lobbyWar"></canvas><div id="cpTag">© 2026 Frenchfries777 · <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.ko" target="_blank" rel="noopener">CC BY-NC-ND 4.0</a></div><div id="verTag">v0.3 · build 71</div>
+  <canvas id="lobbyBg"></canvas><canvas id="lobbyWar"></canvas><div id="cpTag">© 2026 Frenchfries777 · <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.ko" target="_blank" rel="noopener">CC BY-NC-ND 4.0</a></div><div id="verTag">v0.3 · build 70</div>
   <header class="brand"><h1>Crown Envoy</h1><div class="sub"><i></i>DIPLOMACY · WAR · EMPIRE<i></i></div></header>
   <div id="lobbyRight">
    <div id="lobbyHome" class="modes">
@@ -3666,7 +3664,7 @@ const MapView={cv:null,ctx:null,W:0,H:0,dpr:1,scale:1,ox:0,oy:0,hover:-1,deco:[]
     return e.complete&&e.naturalWidth?e:null;},
   flash(tid,color){this.flashes[tid]={t0:performance.now(),color};},
   marks:{},
-  mark(tid,k,sc){this.marks[tid]={k,t0:performance.now(),s:sc||1};},   // 첩보 결과 연출: 고리가 퍼지고 큼직한 표시가 떠오른다
+  mark(tid,k){this.marks[tid]={k,t0:performance.now()};},   // 첩보 결과 연출: 고리가 퍼지고 큼직한 표시가 떠오른다
   path(c,id){c.beginPath();for(const o of GEO.polys[id]){c.moveTo(o[0][0],o[0][1]);for(let i=1;i<o.length;i++)c.lineTo(o[i][0],o[i][1]);c.closePath();}},
   pathBg(c){c.beginPath();for(const o of GEO.bg){c.moveTo(o[0][0],o[0][1]);for(let i=1;i<o.length;i++)c.lineTo(o[i][0],o[i][1]);c.closePath();}},
   deco1(c,d){c.save();c.translate(d.x,d.y);c.scale(d.s,d.s);c.globalAlpha=.55;
@@ -3787,7 +3785,7 @@ const MapView={cv:null,ctx:null,W:0,H:0,dpr:1,scale:1,ox:0,oy:0,hover:-1,deco:[]
     try{this.fx(c,now,vw,K,v,pl);}catch(e){}
     for(const k in this.flashes){const f=this.flashes[k],age=(now-f.t0)/1200;if(age>1){delete this.flashes[k];continue;}const td=TDEF[k],uu=1/vw.z;c.strokeStyle=f.color;c.globalAlpha=1-age;c.lineWidth=5*uu;c.beginPath();c.arc(td.x,td.y,(20+age*90)*uu,0,6.3);c.stroke();c.globalAlpha=1;}
     {const ICON={dead:'💀',fire:'🔥',riot:'🔥',spy:'🕵'},COL={dead:'#ff5a5a',fire:'#ffb040',riot:'#ff8a3a',spy:'#9fb3d4'};const nowT=performance.now();
-      for(const k in this.marks){const m=this.marks[k],age=(nowT-m.t0)/4200;if(age>1){delete this.marks[k];continue;}const td=TDEF[k];if(!td)continue;const uu=(1/vw.z)*(m.s||1);
+      for(const k in this.marks){const m=this.marks[k],age=(nowT-m.t0)/4200;if(age>1){delete this.marks[k];continue;}const td=TDEF[k];if(!td)continue;const uu=1/vw.z;
         for(let i=0;i<3;i++){const a=(age*1.6-i*0.25);if(a<=0||a>=1)continue;c.strokeStyle=COL[m.k]||'#fff';c.globalAlpha=(1-a)*.9;c.lineWidth=4*uu;c.beginPath();c.arc(td.x,td.y,(14+a*110)*uu,0,6.3);c.stroke();}
         c.globalAlpha=Math.min(1,(1-age)*1.6);c.font=`${Math.round(46*uu)}px sans-serif`;c.textAlign='center';c.textBaseline='middle';c.fillText(ICON[m.k]||'⚑',td.x,td.y-(10+age*38)*uu);c.globalAlpha=1;}
       // 며칠 남아 있는 표시(시설 파괴·소요·암살 현장)
@@ -4769,7 +4767,6 @@ const UI={
   isMulti(){if(C.multi)return true;const m=(typeof Net!=='undefined')&&Net.mode;const v=C.view;const humans=v&&v.players?v.players.filter(p=>!p.isBot).length:0;if(m==='client'||m==='host'||humans>=2){C.multi=true;return true;}return false;},
   fxMode(){if(C.auto>0)return 'off';return UI.isMulti()?'mine':C.fx;},   // 건너뛰는 동안에는 연출을 생략한다
   init(){
-    try{const sp=localStorage.getItem('ce_spy');if(sp)C.spy=sp;const sm=localStorage.getItem('ce_spymap');if(sm)C.spyMap=sm;}catch(e){}
     try{const fx=localStorage.getItem('ce_fx2');if(fx)C.fx=fx;const sn=localStorage.getItem('ce_snd');if(sn!=null)Battle.snd=sn==='1';}catch(e){}
     const name=()=>UI.myName();
     $('#btnOnline').onclick=()=>{UI.show('find');netOnline(name());};
@@ -4792,7 +4789,7 @@ const UI={
     $('#codeIn').addEventListener('keydown',e=>{if(e.key==='Enter')$('#btnJoin').click();});
     $('#bSkip').onclick=()=>{if(Battle._skip)Battle._skip();};$('#bSkipAll').onclick=()=>{Battle.skipAll=true;if(Battle._skip)Battle._skip();};
     $('#btnReady').onclick=()=>UI.onReady();$('#btnAuto').onclick=()=>UI.toggleAuto();$('#btnMenu').onclick=()=>UI.openMenu();
-    $('#menu').addEventListener('click',e=>{if(e.target.id==='menu')UI.closeMenu();const b=e.target.closest('[data-act]');if(!b)return;if(b.dataset.act==='closeMenu')UI.closeMenu();if(b.dataset.act==='wl'){UI.closeMenu();UI.openWarlog();}if(b.dataset.act==='sum'){UI.closeMenu();UI.openSummary();}if(b.dataset.act==='savegame'){UI.doSave();}if(b.dataset.act==='site'){UI.ask('게임을 나가 사이트로 돌아갈까요?',()=>{location.href='https://frenchfries777mc.github.io/games/';},{yes:'돌아가기'});}if(b.dataset.act==='leave'){UI.leaveGame();}if(b.dataset.act==='saveName'){const v=($('#nameEdit').value||'').trim().slice(0,12);if(v){try{localStorage.setItem('ce_name',v);}catch(_){}UI.toast('이름을 저장했어요.','ok');}}if(b.dataset.act==='saveK'){const v=($('#kEdit').value||'').trim();if(v){try{localStorage.setItem('ce_kname',v);}catch(_){}if(C.view&&!C.view.draft){send({a:'kname',name:v});UI.toast('나라 이름을 바꿨어요.','ok');}else UI.toast('게임이 시작되면 적용돼요.','ok');}}if(b.dataset.act==='saveFlag'){send({a:'flag',key:($('#flagEdit')||{}).value||''});try{MapView._fi={};MapView.layerKey='';}catch(_){}UI.toast('국기를 바꿨어요.','ok');setTimeout(()=>{try{UI.renderAll();UI.openMenu();}catch(_){}},250);}if(b.dataset.act==='endGame'){UI.ask('지금 승점으로 게임을 끝낼까요?',()=>{Net.send({t:'endgame'});UI.closeMenu();},{yes:'게임 끝내기'});}if(b.dataset.act==='spy'){C.spy=b.dataset.val;try{localStorage.setItem('ce_spy',C.spy);}catch(_){}UI.openMenu();}if(b.dataset.act==='spymap'){C.spyMap=b.dataset.val;try{localStorage.setItem('ce_spymap',C.spyMap);}catch(_){}UI.openMenu();}if(b.dataset.act==='fx'&&!UI.isMulti()){C.fx=b.dataset.val;try{localStorage.setItem('ce_fx2',C.fx);}catch(_){}UI.openMenu();}
+    $('#menu').addEventListener('click',e=>{if(e.target.id==='menu')UI.closeMenu();const b=e.target.closest('[data-act]');if(!b)return;if(b.dataset.act==='closeMenu')UI.closeMenu();if(b.dataset.act==='wl'){UI.closeMenu();UI.openWarlog();}if(b.dataset.act==='sum'){UI.closeMenu();UI.openSummary();}if(b.dataset.act==='savegame'){UI.doSave();}if(b.dataset.act==='site'){UI.ask('게임을 나가 사이트로 돌아갈까요?',()=>{location.href='https://frenchfries777mc.github.io/games/';},{yes:'돌아가기'});}if(b.dataset.act==='leave'){UI.leaveGame();}if(b.dataset.act==='saveName'){const v=($('#nameEdit').value||'').trim().slice(0,12);if(v){try{localStorage.setItem('ce_name',v);}catch(_){}UI.toast('이름을 저장했어요.','ok');}}if(b.dataset.act==='saveK'){const v=($('#kEdit').value||'').trim();if(v){try{localStorage.setItem('ce_kname',v);}catch(_){}if(C.view&&!C.view.draft){send({a:'kname',name:v});UI.toast('나라 이름을 바꿨어요.','ok');}else UI.toast('게임이 시작되면 적용돼요.','ok');}}if(b.dataset.act==='saveFlag'){send({a:'flag',key:($('#flagEdit')||{}).value||''});try{MapView._fi={};MapView.layerKey='';}catch(_){}UI.toast('국기를 바꿨어요.','ok');setTimeout(()=>{try{UI.renderAll();UI.openMenu();}catch(_){}},250);}if(b.dataset.act==='endGame'){UI.ask('지금 승점으로 게임을 끝낼까요?',()=>{Net.send({t:'endgame'});UI.closeMenu();},{yes:'게임 끝내기'});}if(b.dataset.act==='fx'&&!UI.isMulti()){C.fx=b.dataset.val;try{localStorage.setItem('ce_fx2',C.fx);}catch(_){}UI.openMenu();}
       if(b.dataset.act==='blur'){BLUR_FLAGS=b.dataset.val==='1';try{localStorage.setItem('ce_blurflag',BLUR_FLAGS?'1':'0');}catch(_){}Object.keys(_fc).forEach(k=>delete _fc[k]);MapView._fi={};MapView.layerKey='';UI.renderAll();UI.openMenu();}
       if(b.dataset.act==='bgm'){Music.setOn(b.dataset.val==='1');UI.openMenu();}
       if(b.dataset.act==='snd'){Battle.snd=b.dataset.val==='1';try{localStorage.setItem('ce_snd',Battle.snd?'1':'0');}catch(_){}UI.openMenu();}});
@@ -5018,7 +5015,7 @@ const UI={
     if(v.over)UI.showOver();
     UI.collectDigest(v);
     if(v.chs&&v.chs.length)UI.maybeChoice();
-    if(v.phase==='plan'&&!v.draft&&C.evRound!==v.round){const list=UI.spyFilter((v.evs||[]).slice());const dg=UI.buildDigest(v);if(dg)list.push(dg);
+    if(v.phase==='plan'&&!v.draft&&C.evRound!==v.round){const list=(v.evs||[]).slice();const dg=UI.buildDigest(v);if(dg)list.push(dg);
       {const me0=v.players[v.me];if(!v.spec&&me0&&me0.obj&&me0.obj.length&&!C.missionShown){C.missionShown=true;list.splice(list.filter(x=>x.intro).length,0,{mission:true,digest:true,date:v.date,head:'당신의 사명',sum:v.end?`${v.end.at}턴 안에 아래 목표를 이루세요. 목표를 이룰 때마다 승점이 크게 올라요.`:'아래 목표를 이루세요. 목표를 이룰 때마다 승점이 크게 올라요.',items:me0.obj.map(x=>'🎯 '+x.text+' (+'+fmt(x.vp)+'점)'+(x.end?' · 끝날 때 판정':'')),scene:'treaty',ca:me0.color,cb:'#caa24a'});}}if(list.length){C.evRound=v.round;UI.showEvents(list);}}
     UI.renderAll();UI.autoTick(v);
   },
@@ -5048,7 +5045,7 @@ const UI={
   renderEvent(){const e=(C.evQ||[])[0];const w=$('#evwin');if(!e){w.classList.add('hidden');w.innerHTML='';Net.send({t:'evhold',v:false});if(C.auto&&C.view)setTimeout(()=>UI.autoTick(C.view),300);UI.playPendFx();return;}
     const d=e.date;const ds=d?`${d.y<0?'기원전 '+(-d.y):d.y}년 ${d.m}월`:'';const left=C.evQ.length;
     w.innerHTML=`<div class="evcard"><div class="evphoto"><canvas id="evcv" width="760" height="300"></canvas></div><div class="evnews"><div class="evmast"><b>CONQUEST 일보</b><span>${ds} · ${e.spy?'첩보 보고':e.mission?'새 임무':e.digest?'분기 소식':'속보'}${C.evTotal>1?' ('+(C.evTotal-left+1)+'/'+C.evTotal+')':''}</span></div><div class="evhead">${esc(e.head)}</div>${e.items?`<div class="evbody"><div class="evsum">${esc(e.sum)}</div><ul class="evlist">${e.items.map(x=>`<li>${esc(x)}</li>`).join('')}</ul></div>`:`<div class="evbody">${esc(e.body)}</div>`}<div class="evfoot">${left>1?'화면 아무 곳이나 눌러 다음 소식 보기':(e.spy?'화면 아무 곳이나 눌러 지도 보기':'화면 아무 곳이나 눌러 턴 시작하기')}</div></div></div>`;
-    w.classList.toggle('soft',!!e.spy);w.classList.remove('hidden');try{drawEventArt($('#evcv'),e);}catch(_){}},
+    w.classList.remove('hidden');try{drawEventArt($('#evcv'),e);}catch(_){}},
   /* ----- 전쟁 기록: 선전포고·참전·휴전·동맹·수도 함락·멸망을 연표로 ----- */
   WL_KINDS:{war:['⚔','선전포고'],join:['🛡','참전'],truce:['🕊','휴전'],ally:['🤝','동맹'],break:['💔','동맹 해제'],capital:['🏰','수도 함락'],fall:['☠','멸망'],event:['📰','사건']},
   openWarlog(){const v=C.view;if(!v)return;C.wlf=C.wlf||'all';UI.navPush('warlog');UI.renderWarlog();$('#warlog').classList.remove('hidden');},
@@ -5300,8 +5297,6 @@ const UI={
     const seg=(act,cur,items)=>`<div class="seg">${items.map(([val,l])=>`<button data-act="${act}" data-val="${val}" class="${cur===val?'on':''}">${l}</button>`).join('')}</div>`;
     m.innerHTML=`<div class="menubox"><div class="row" style="margin-bottom:8px"><h2 style="margin:0">기록·설정</h2><button class="btn sm" style="flex:none" data-act="closeMenu">닫기</button></div>
       ${UI.isMulti()?`<div class="pol"><div><b>전투 연출</b><small>멀티플레이에서는 내가 공격하거나 공격받은 전투만 보여요. (고정)</small></div><div class="seg"><button class="on" disabled>내 전투만 · 고정</button></div></div>`:`<div class="pol"><div><b>전투 연출</b><small>전체: 모든 전투 · 내 전투만: 내가 공격하거나 공격받은 전투 · 요약: 수도·대규모 전투만</small></div>${seg('fx',C.fx,[['full','전체'],['mine','내 전투만'],['brief','요약'],['off','끔']])}</div>`}
-      <div class="pol"><div><b>첩보 알림</b><small>신문 창: 크게 띄움 · 알림만: 화면 위쪽 한 줄 · 조용히: 짧은 알림만 (신문 창은 부드럽게 나타나요)</small></div>${seg('spy',C.spy||'news',[['news','신문 창'],['brief','알림만'],['quiet','조용히']])}</div>
-      <div class="pol"><div><b>첩보 지도 표시</b><small>첩보 결과가 지도에 나타나는 크기예요. 은은하게 · 크게 · 끔</small></div>${seg('spymap',C.spyMap||'soft',[['soft','은은하게'],['big','크게'],['off','끔']])}</div>
       <div class="pol"><div><b>업적 · 도감</b><small>달성한 업적과, 만난 병종·장군을 모아 봐요. (이 기기에 저장)</small></div><button class="btn sm" data-act="meta">보기</button></div>
       <div class="pol"><div><b>단축키</b><small>키보드로 탭 전환·확대·이동·턴 확정을 해요.</small></div><button class="btn sm" data-act="keys">보기</button></div>
       <div class="pol"><div><b>튜토리얼</b><small>게임 하는 법을 처음부터 다시 안내해 줘요.</small></div><button class="btn sm" data-act="tut">다시 보기</button></div>
@@ -5376,12 +5371,8 @@ const UI={
     box.innerHTML=opts.map(([k,l])=>`<button data-len="${k}" class="${cur===k?'on':''}" ${host?'':'disabled'}>${l}</button>`).join('');
     box.querySelectorAll('button[data-len]').forEach(b=>b.onclick=()=>Net.send({t:'len',v:b.dataset.len==='default'?null:+b.dataset.len}));},
   /* 첩보 결과: 내 화면에 신문 창을 띄우고, 닫으면 해당 지역으로 확대해 효과를 보여 준다 */
-  onEvNow(ev){if(!ev)return;C.pendFx=(ev.tid!=null)?{tid:ev.tid,k:ev.fxk}:null;
-    const m=C.spy||'news';if(ev.spy&&m!=='news'){UI.toast('🕵 '+ev.head+(m==='brief'&&ev.sum?' — '+ev.sum:''),ev.ok===false?'bad':'ok');if(m==='brief')setTimeout(()=>UI.playPendFx(),400);else C.pendFx=null;return;}
-    UI.showEvents([ev]);},
-  /* 상대·제3국의 첩보 소식도 방식에 따라 신문 대신 알림으로 */
-  spyFilter(list){const m=C.spy||'news';if(m==='news')return list;return list.filter(e=>{if(!e.spy)return true;UI.toast('🕵 '+e.head,'');return false;});},
-  playPendFx(){const f=C.pendFx;if(!f)return;C.pendFx=null;if(f.tid==null)return;const sm=C.spyMap||'soft';if(sm==='off')return;try{MapView.focus([f.tid],sm==='soft'?1.8:2.6);MapView.mark(f.tid,f.k||'spy',sm==='soft'?0.55:1);}catch(_){}},
+  onEvNow(ev){if(!ev)return;C.pendFx=(ev.tid!=null)?{tid:ev.tid,k:ev.fxk}:null;UI.showEvents([ev]);},
+  playPendFx(){const f=C.pendFx;if(!f)return;C.pendFx=null;if(f.tid==null)return;try{MapView.focus([f.tid],2.6);MapView.mark(f.tid,f.k||'spy');}catch(_){}},
   availU(from){const v=C.view,T=v.terr[from];const base=(T.owner===v.me?T.u:T.gu)||[(T.owner===v.me?T.troops:(T.mygst||0)),0,0];const us=[0,0,0];C.orders.filter(o=>o.from===from).forEach(o=>{const x=o.u||{i:o.n,c:0,a:0};us[0]+=x.i||0;us[1]+=x.c||0;us[2]+=x.a||0;});return {i:Math.max(0,base[0]-us[0]),c:Math.max(0,base[1]-us[1]),a:Math.max(0,base[2]-us[2])};},
   defU(av,mv,stp){const f=mv?0.5:0.7;const u={};UT.forEach(t=>{u[t]=Math.floor(av[t]*f/stp)*stp;});if(!mv&&sumU(u)<CFG.minAttack){const need=Math.min(sumU(av),CFG.minAttack);UT.forEach(t=>{u[t]=0;});let r=need;UT.forEach(t=>{const x=Math.min(r,av[t]);u[t]=Math.ceil(x/stp)*stp>av[t]?av[t]:Math.ceil(x/stp)*stp;r-=x;});}return u;},
   compHTML(T,mine){const x=mine?T.gu:T.u;if(!x||(x[1]===0&&x[2]===0&&x[0]===0))return '';const ut=mePl().ut||[0,0,0];const uv=(!mine&&T.uv)||[0,1,2].map(i=>{const a=[0,0,0,0];a[ut[i]||0]=1;return a;});return `<div class="sm" style="margin-top:4px;color:#cbd6ee">${UT.map((t,i)=>uv[i].map((f,k)=>{const n=Math.round(x[i]*f/10)*10;return n>0?`<span class="utchip ut${t}" title="${esc(ABIL[t][k])}">${esc(UT_TIER[t][k])} ${fmt(n)}</span>`:'';}).join('')).join('')}${T.xl>0?`<span class="utchip">정예도 ${'★'.repeat(T.xl)}</span>`:''}${T.mcn>0?`<span class="utchip">용병 ${fmt(T.mcn)}명 · ${T.mcl}턴</span>`:''}</div>`;},
