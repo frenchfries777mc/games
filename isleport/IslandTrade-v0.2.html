@@ -12061,7 +12061,7 @@ function musicTick(){if(!AU.mus||!AU.ctx||AU.ctx.state!=='running'||!S)return;co
     else if(rnd()<.8)tone(note(deg+Math.floor(rnd()*7),sn===1?1:0),t,beat*1.4,'triangle',.1,AU.mg);
     AU.next+=beat;AU.step++;}}
 /* 음악 파일: 게임 옆의 mp3 곡들을 불러와 차례로 이어서 틀어요 (게임 파일을 작게 두려고 따로 둬요). 첫 곡을 못 불러오면 위의 만들어 내는 음악으로 대신해요 */
-const MFILES=['isleport-music.mp3?v=11','isleport-music2.mp3?v=12','isleport-music3.mp3?v=13','isleport-music4.mp3?v=14'],MALT='https://frenchfries777mc.github.io/games/isleport/';
+const MFILES=['isleport-music.mp3?v=11','isleport-music2.mp3?v=12','isleport-music3.mp3?v=13','isleport-music4.mp3?v=14','isleport-music5.mp3?v=15','isleport-music6.mp3?v=16','isleport-music7.mp3?v=17'],MALT='https://frenchfries777mc.github.io/games/isleport/';
 AU.file={st:0,bufs:[],i:-1,tend:0};
 function musicLoad(k){const get=u=>fetch(u).then(r=>{if(!r.ok)throw new Error(r.status);return r.arrayBuffer();});
   return get(MFILES[k]).catch(()=>get(MALT+MFILES[k])).then(ab=>new Promise((ok,no)=>AU.ctx.decodeAudioData(ab,ok,no))).then(buf=>{AU.file.bufs[k]=buf;});}
