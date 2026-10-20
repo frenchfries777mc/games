@@ -4759,7 +4759,7 @@ function shuffle(arr){ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.
 /* ===== the version of this file =====
    Players with different versions CAN meet and play together: the automatic matchmaking uses the same room names for every version (online-<mode>-<map>-<slot>), and nobody is refused because of a different build.
    The build is only sent along with the join message and the lobby (for information); the corner of the screen shows it. */
-const GAME_BUILD='build 2026-10-18-v323';
+const GAME_BUILD='build 2026-10-18-v324';
 const GAME_VERSION='0.8', GAME_VERSION_NAME='황금을 찾아서';   // 게임 버전 이름: versions.json의 title과 같게 (빌드마다 바꾸지 않음)
 const WEEKLY_EVENTS=[
   {id:'lowg',    name:'저중력 난투', desc:'몸이 둥실둥실, 중력이 약해진 난투', rules:{grav:0.6}},
@@ -6858,6 +6858,7 @@ const SUPABASE_URL='https://kebsbuvuutilitwlvxzv.supabase.co';
 const SUPABASE_KEY='sb_publishable_4Egu0zm3p6cxWGvP_-GlIw_mlCpO1Nf';
 let sb=null;
 try{ if(window.supabase) sb=window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY); }catch(e){ console.error('[social] supabase init failed', e); }
+if(sb) window.FFAuthClient=sb;          // the hub's account script (ff-auth.js, loaded at the end of the page) reuses this client
 
 let sbUser=null; // {id, username}
 let presenceChannel=null, friendReqChannel=null, inviteChannel=null;
@@ -8524,6 +8525,17 @@ function joinPrivateByCode(code){
   becomeClient('arena-'+code, 'private', null, code);
 }
 let pendingJoinCode=null;
+(function joinFromLink(){          // a link from the hub (?join=CODE&room=CODE) opens the game and goes straight into that room
+  let code=''; try{ const q=new URLSearchParams(location.search); code=String(q.get('join')||q.get('room')||'').trim().toUpperCase(); }catch(e){}
+  if(!/^[A-Z0-9]{6}$/.test(code)) return;
+  try{ const u=new URL(location.href); u.searchParams.delete('join'); u.searchParams.delete('room'); history.replaceState(null,'',u.pathname+(u.search||'')+u.hash); }catch(e){}
+  let tries=0; const iv=setInterval(()=>{                       // wait until the intro is gone and the menu is up
+    tries++; if(tries>1200){ clearInterval(iv); return; }
+    if(document.getElementById('introScr')) return;
+    const ms=document.getElementById('menuScreen'); if(!ms || !(ms.classList.contains('active') || document.getElementById('nameScreen').classList.contains('active'))) return;
+    clearInterval(iv); joinPrivateByCode(code);
+  }, 500);
+})();
 joinBtn.onclick=()=>{
   const code=joinCodeInput.value.trim().toUpperCase();
   if(code.length!==6){ uiAlert('6자리 코드를 입력하세요.'); return; }
@@ -8636,6 +8648,7 @@ function uiAlert(msg){ return uiDialog(String(msg)); }
 function uiConfirm(msg){ return uiDialog(String(msg),{cancel:true}); }
 function uiPrompt(msg,def,max){ return uiDialog(String(msg),{cancel:true,input:true,def:def,max:max}); }
 function showErrorAndReturnToMenu(msg){
+  stkRoomSync(null);
   if(peer){ try{peer.destroy();}catch(e){} peer=null; }
   window.__versionNoted=false; chatPending=[];
   spectatorMode=false; clanWar=null; clanRoom=null; document.body.classList.remove('specView'); conns={}; players={}; isHost=false; hostConn=null; MAP=null; started=false; currentMode=null; currentMapId=null; countdownEndsAt=null; gameLoopStarted=false; weaponChosenLocally=false; hostRoomLive=false; if(typeof weaponCountdownTimer!=='undefined' && weaponCountdownTimer){ clearInterval(weaponCountdownTimer); weaponCountdownTimer=null; } matchEnded=false; duelScores={}; duelRoundEndsAt=null; duelPick=false; matchTimerEndsAt=null; document.getElementById('matchTimerLabel').style.display='none'; document.getElementById('duelScoreLabel').style.display='none'; cq=null; walls=[]; hostTimers=[]; magicCircles=[]; teamPings=[]; pingsView=[]; poisonZones=[]; turrets=[]; weaponPhase=null; document.getElementById('cqLabel').style.display='none'; bombHolderId=null; bombTimerEndsAt=0; hotpotatoOriginalCount=0; seekerId=null; hideseekPhase=null; hideseekPhaseEndsAt=0; survivalRound=0; survivalPhase=null; survivalPhaseEndsAt=0; survivalCurrentDisaster=null; survivalHazards=[]; survivalZombies=[]; document.getElementById('survivalLabel').style.display='none'; ctf=null; ctfEndsLocal=0; document.getElementById('ctfLabel').style.display='none'; { const mini=document.getElementById('ctfMini'); if(mini) mini.style.display='none'; }
@@ -8651,7 +8664,9 @@ function refreshRoomLabel(){
   const _pre=_cr ? (_cr.i ? '🏰 클랜경기 · ['+(_cr.t&&_cr.t[0]||'')+'] 클랜원 전용 · ' : '⚔ 클랜 대항전 · ['+(_cr.t&&_cr.t[0]||'')+'] vs ['+((_cr.t&&_cr.t[1])||'?')+'] · ') : (currentMode==='online' ? '🌐 온라인 매칭됨 · ' : '🔒 비공개 방 (보상 없음) · ');
   el.textContent = _pre + MAP.name + ' · ' + (MODES[gameMode]||MODES.ffa).name + (weaponMode==='random' ? ' · 랜덤 무기' : '') + (rulesAreCustom() ? ' · ⚙️ 커스텀 규칙' : '') + (roomOpts.vote ? ' · 🗳️ 맵 투표' : '') + (roomOpts.balance ? ' · ⚖️ 팀 자동 밸런스' : '');
 }
+function stkRoomSync(code){ try{ if(window.FFAuth && FFAuth.setRoom) FFAuth.setRoom(code ? {game:'stickseum', code:code, path:'stickseum/Stickseum-latest.html'} : null); }catch(e){} }      // tells the hub which room I am in, so a friend can be invited into it
 function enterRoomScreen(mode, mapId, code){
+  stkRoomSync(mode==='private' ? code : null);
   MAP = MAP_TEMPLATES[mapId]; currentMapId=mapId; currentMode=mode;
   document.getElementById('roomModeLabel').textContent = (mode==='online' ? '🌐 온라인 매칭됨 · ' : '🔒 비공개 방 (보상 없음) · ') + MAP.name + ' · ' + (MODES[gameMode]||MODES.ffa).name + (weaponMode==='random' ? ' · 랜덤 무기' : '') + (rulesAreCustom() ? ' · ⚙️ 커스텀 규칙' : '');
   if(mode==='private'){ codeDisplay.style.display='block'; codeDisplay.textContent=code; }
@@ -9395,6 +9410,7 @@ function doStart(){
   }
 }
 function leaveRoom(){
+  stkRoomSync(null);
   elimState=null; { const o=document.getElementById('elimOverlay'); if(o) o.style.display='none'; const x=document.getElementById('elimExitBtn'); if(x) x.style.display='none'; }
   mvpVote=null; mvpShown=null; try{ hideMvpBox(); }catch(e){}
   mapVote=null; mapVoteDone=false; try{ hideMapVote(); }catch(e){}
@@ -9416,6 +9432,7 @@ function leaveRoom(){
 /* ================= CLIENT LOGIC ================= */
 let spectatorMode=false;
 function becomeClient(idString, mode, mapId, code, spec){
+  stkRoomSync(null);
   if(peer){ return; } // re-entrancy guard: don't start a second session while one is active
   const p=new Peer(undefined, Object.assign({debug:0}, PEERJS_ICE_CONFIG));
   keepPeerAlive(p);
@@ -16451,5 +16468,6 @@ initAuthGate();
 
 })();
 </script>
+<script src="https://frenchfries777mc.github.io/games/ff-auth.js"></script>
 </body>
 </html>
