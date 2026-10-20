@@ -16,3 +16,5 @@ patchnotes.json | v323 items[0] | 맵 에디터 추가 (발판·시작 위치 �
 patchnotes.json | v323 items[1] | 팀 핑 추가 (G 키, 팀원에게 위치 표시) | build 323 | 2026-10-20
 patchnotes.json | v323 items[2] | 캐릭터 선택 화면에 캐릭터 검색 추가 | build 323 | 2026-10-20
 patchnotes.json | v323 items[3] | 금지 단계에서 시간이 지나도 양쪽 모두 금지해야 선택으로 넘어감 (금지 시간 20초) | build 323 | 2026-10-20
+patchnotes.json | v324 title | 허브 방 초대 | build 324 | 2026-10-20
+patchnotes.json | v324 items[0] | 허브 친구 초대 연결 (비공개 방 코드를 허브에 알리고, 초대 링크로 방에 바로 입장) | build 324 | 2026-10-20
