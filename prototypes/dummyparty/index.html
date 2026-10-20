@@ -460,13 +460,6 @@ canvas.ico{width:100%;max-width:320px;height:auto;aspect-ratio:640/150;backgroun
 #toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
 @keyframes finIn{from{opacity:0;transform:translateY(40px) scale(.92)}to{opacity:1;transform:none}}
 .ov.fin{background:none}
-.card.board{background:#2f5a47;color:#f4f1e4;border:10px solid #8a5a30;border-radius:12px;box-shadow:0 14px 40px rgba(0,0,0,.5),inset 0 0 60px rgba(0,0,0,.35);font-family:'Gaegu','Nanum Pen Script','Noto Sans KR',cursive}
-.card.board .rn{color:#e8e2c8;font-size:15px;letter-spacing:.06em}.card.board h2{color:#fffdf0;font-weight:800;text-shadow:1px 1px 0 rgba(0,0,0,.25)}
-.card.board .rl li{color:#f4f1e4;border-bottom:2px dashed rgba(244,241,228,.28);border-radius:0;font-weight:700}
-.card.board .rl li.me{background:rgba(255,255,255,.12)}.card.board .rl .rk,.card.board .rl em{color:#ffe68a}
-.chalk{margin:10px 0 2px;min-height:44px;font-size:19px;font-weight:800;line-height:1.35;color:#fff7c8}.chalk.tot{min-height:0;font-size:15px;color:#cfe8d8;margin-bottom:4px}
-.chalk i{display:inline-block;width:2px;height:1em;background:#fff7c8;margin-left:2px;vertical-align:-2px;animation:blink .6s steps(2) infinite}@keyframes blink{50%{opacity:0}}
-.tray{height:9px;border-radius:5px;background:#b98a56;margin:10px -4px -8px;position:relative}.tray:after{content:'';position:absolute;left:30px;top:-5px;width:46px;height:6px;border-radius:3px;background:#f4f1e4}
 .card.fin{animation:finIn .7s ease 5.6s both}
 .exitHub{display:none;position:fixed;top:12px;left:12px;z-index:30;border:0;border-radius:12px;padding:9px 14px;font:800 14px 'Noto Sans KR',sans-serif;background:rgba(40,28,16,.72);color:#fff;cursor:pointer}
 body.onhome .exitHub{display:block}.exitHub:hover{background:rgba(40,28,16,.9)}
@@ -512,9 +505,11 @@ body.playing #emoBar{display:flex}
    <div class="row"><input id="codeIn" maxlength="5" placeholder="방 코드" autocomplete="off"><button class="pb dark" id="joinBtn" style="flex:0 0 auto">들어가기</button></div>
    <div class="msg" id="homeMsg"></div>
   </div>
-  <details class="notes"><summary>패치노트 · v0.1 (build 16)</summary>
-   <b>2026-10-20 · v0.1 build 16 · 7판과 칠판, 미니게임 3개</b>
-   <ul><li>한 판이 7라운드로 늘었어요</li><li>라운드 결과가 칠판에 분필로 적혀요 (총점과 한마디)</li><li>미니게임 3개 추가: 엉터리 댄스 배틀, 라면 3분 맞히기, 풍선 부풀리기</li><li>이제 19개 중 7개가 무작위로 나와요</li></ul>
+  <details class="notes"><summary>패치노트 · v0.1 (build 17)</summary>
+   <b>2026-10-20 · v0.1 build 17 · 해설 효과음</b>
+   <ul><li>해설 대사가 바뀔 때마다 효과음이 나요</li><li>라운드 결과 칠판 연출은 뺐어요</li></ul>
+   <b>2026-10-20 · v0.1 build 16 · 7판, 미니게임 3개</b>
+   <ul><li>한 판이 7라운드로 늘었어요</li><li>미니게임 3개 추가: 엉터리 댄스 배틀, 라면 3분 맞히기, 풍선 부풀리기</li><li>이제 19개 중 7개가 무작위로 나와요</li></ul>
    <b>2026-10-20 · v0.1 build 15 · dC 보상 상향</b>
    <ul><li>판이 끝나면 1등 15dC, 2등 10dC, 3등 5dC, 그 외 3dC를 받아요</li></ul>
    <b>2026-10-20 · v0.1 build 14 · 나가기 버튼, 상단 바 제거</b>
@@ -543,7 +538,7 @@ body.playing #emoBar{display:flex}
    <ul><li>무너지는 발판 칸 수 대폭 증가 (19×10)와 용암 동굴 맵</li><li>10개 맵 전부 새로 그림 (관중석, 야자수 섬, 링, 정원 미로, 서커스, 우노 테이블 등)</li><li>글자 대신 아이콘·말풍선·이펙트로 표현 (무기, 아이템, 카드 효과, 시작 안내)</li><li>타격·폭발·물보라 효과와 화면 흔들림 추가</li></ul>
    <b>2026-10-19 · v0.1 build 1 · 첫 시험판</b>
    <ul><li>마네킹 미니게임 10개 추가 (장애물 달리기, 섬 밀치기, 싸우기, 병맛 미로, 체스 대난투, 폭탄 돌리기, 병맛 우노, 쇼윈도 얼음땡, 무너지는 발판, 컨베이어 서바이벌)</li><li>방 코드로 최대 8명 멀티플레이, 빈자리는 봇으로 채우기</li><li>판마다 10개 중 5개를 무작위로 골라 점수를 합산</li><li>PC 키보드와 휴대폰 터치 조작 지원</li></ul></details>
-  <p class="foot">2~8명 · 판마다 19개 미니게임 중 7개 · 프로토타입 v0.1 b16 · <a href="../">← 프로토타입 목록</a></p>
+  <p class="foot">2~8명 · 판마다 19개 미니게임 중 7개 · 프로토타입 v0.1 b17 · <a href="../">← 프로토타입 목록</a></p>
   <p class="foot"><span class="ff-copy">© 2026 Frenchfries777 · <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.ko" target="_blank" rel="noopener">CC BY-NC-ND 4.0</a></span></p>
  </div>
 </section>
@@ -860,6 +855,7 @@ var SFX = (function () {
     splash: function () { noise(0.4, 0.3, 2500); },
     coin: function () { tone(880, 1320, 0.09, 'square', 0.06); setTimeout(function () { tone(1320, 1760, 0.12, 'square', 0.05); }, 70); },
     beep: function () { tone(660, 660, 0.12, 'square', 0.07); },
+    cmt: function () { tone(880, 1320, 0.09, 'triangle', 0.07); setTimeout(function () { tone(1320, 1760, 0.12, 'triangle', 0.06); }, 90); },
     tick: function () { tone(1800, 1200, 0.03, 'square', 0.025); },
     go: function () { tone(990, 990, 0.3, 'square', 0.08); },
     fart: function () { tone(110, 60, 0.35, 'sawtooth', 0.16); },
@@ -3171,8 +3167,8 @@ function laneF(s, i, y0, y1, maxh) { var n = s.ids.length, lh = Math.min(maxh, (
         var p = s.pl[id], col = v.players[id].color, x = 70 + (W - 140) * (i + 0.5) / n, y = 438, ds = Math.min(0.9, (W - 140) / n / 90);
         dummyOf(ctx, { x: x, y: y, face: 1, walk: 0, mvv: 0 }, v, id, { s: ds, pose: p.stop >= 0 ? 'up' : 'stand' });
         var reveal = s.done || v.t > LIMIT - 0.4;
-        if (p.stop >= 0) { txt(ctx, reveal ? p.stop.toFixed(2) : '멈춤!', x, y - 70 * ds - 10, { size: 16, c: col }); if (reveal) txt(ctx, (p.stop - TARGET >= 0 ? '+' : '') + (p.stop - TARGET).toFixed(2), x, y - 70 * ds - 30, { size: 12, c: '#7a2a22', stroke: false }); }
-        else txt(ctx, '세는 중', x, y - 70 * ds - 10, { size: 13, c: '#7a2a22', stroke: false });
+        if (p.stop >= 0) { txt(ctx, reveal ? p.stop.toFixed(2) : '멈춤!', x, y + 26, { size: 16, c: col }); if (reveal) txt(ctx, (p.stop - TARGET >= 0 ? '+' : '') + (p.stop - TARGET).toFixed(2), x, y + 44, { size: 12, c: '#7a2a22', stroke: false }); }
+        else txt(ctx, '세는 중', x, y + 26, { size: 13, c: '#7a2a22', stroke: false });
       });
     },
     result: function (s, forced) {
@@ -3783,7 +3779,7 @@ function say(kind, force) {
   var cm = FUNS.cm, now = performance.now(); if (!force && now < cm.cool) return;
   var pool = CMT[kind]; if (!pool) return;
   var line = pool[Math.floor(Math.random() * pool.length)]; if (line === cm.text && pool.length > 1) line = pool[(pool.indexOf(line) + 1) % pool.length];
-  cm.text = line.replace('{n}', cmName()); cm.t0 = now; cm.until = now + 1500 + cm.text.length * 105; cm.cool = now + 3600; cm.idle = now;
+  cm.text = line.replace('{n}', cmName()); cm.t0 = now; cm.until = now + 1500 + cm.text.length * 105; cm.cool = now + 3600; cm.idle = now; try { SFX.play('cmt'); } catch (e) { }
 }
 function drawCommentary(c, now) {
   var cm = FUNS.cm; if (!cm.text || now > cm.until) return;
@@ -4416,11 +4412,9 @@ function onPhase(prev) {
       var p = m.players.filter(function (q) { return q.id === id; })[0]; if (!p) return '';
       return '<li class="' + (id === G.me ? 'me' : '') + '"><b class="rk">' + (i + 1) + '</b><canvas class="mini" data-c="' + p.color + '" data-p="' + (i === 0 ? 'dance' : (i === m.ranking.length - 1 && m.ranking.length >= 3 ? 'sad' : 'stand')) + '"' + (i === 0 || i === m.ranking.length - 1 ? ' data-anim="1"' : '') + ' width="36" height="46"></canvas><span style="color:' + COLORS[p.color] + '">' + esc(p.name) + '</span><em>+' + (m.gained[id] || 0) + '</em><strong>' + p.score + '점</strong></li>';
     }).join('');
-    var tot = m.players.slice().sort(function (a, b) { return b.score - a.score || b.wins - a.wins; }).slice(0, 3).map(function (p, i) { return (i + 1) + '등 ' + esc(p.name) + ' ' + p.score + '점'; }).join('  ');
-    ov.innerHTML = '<div class="card res board"><div class="rn">' + (m.round + 1) + ' / ' + m.order.length + ' 판 결과</div><h2>' + esc(def.name) + '</h2><ol class="rl">' + rows + '</ol>' +
-      '<div class="chalk tot">지금까지: ' + tot + '</div><div class="chalk" id="chalkTxt"></div><div class="tray"></div>' +
+    ov.innerHTML = '<div class="card res"><div class="rn">' + (m.round + 1) + ' / ' + m.order.length + ' 판 결과</div><h2>' + esc(def.name) + '</h2><ol class="rl">' + rows + '</ol>' +
       '<div class="bar"><i style="animation-duration:' + T_RESULT + 's"></i></div></div>';
-    paintMinis(ov); chalkWrite(m);
+    paintMinis(ov);
     if (m.ranking && m.ranking[0] === G.me) SFX.play('win'); else SFX.play('coin');
   } else if (ph === 'final') {
     ov.className = 'ov on fin';
@@ -4476,12 +4470,6 @@ function paintIntro(cv, mg) {
   }
   var tot = 0; items.forEach(function (it) { tot += it.w + 30; }); tot -= 30; var x0 = 320 - tot / 2;
   items.forEach(function (it) { it.d(x0); x0 += it.w + 30; });
-}
-var CHALK = ['오늘의 반성: 넘어진 사람은 손 들기', '숙제: 다음 판에는 덜 넘어지기', '이 문제는 시험에 나옵니다: 누가 1등인가', '선생님은 다 보고 있다', '떠든 사람 이름 적는다', '마네킹도 쉬는 시간이 필요합니다', '정답: 연습만이 살 길', '반장은 조용히 해 주세요', '지각한 점수는 없습니다', '칠판 지우개 담당 구함'];
-function chalkWrite(m) {
-  var el = $('chalkTxt'); if (!el) return; var r = (m.round * 7 + (m.mg ? m.mg.length : 3)) % CHALK.length, str = m.round === m.order.length - 1 ? '마지막 판! 이제 시상식이야' : CHALK[r], i = 0;
-  if (G._chalkIv) clearInterval(G._chalkIv);
-  G._chalkIv = setInterval(function () { i++; var e = $('chalkTxt'); if (!e || i > str.length) { clearInterval(G._chalkIv); if (e) e.textContent = str; return; } e.innerHTML = esc(str.slice(0, i)) + '<i></i>'; if (i % 2 === 0) SFX.play('tick'); }, 85);
 }
 function paintMinis(root) {
   root.querySelectorAll('canvas.mini').forEach(function (cv) {
