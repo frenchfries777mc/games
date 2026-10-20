@@ -79,8 +79,9 @@ if(document.readyState==='loading') document.addEventListener('DOMContentLoaded'
   html,body{margin:0; padding:0; background:var(--bg); color:var(--text);}
   body{font-family:'Noto Sans KR','Apple SD Gothic Neo','Malgun Gothic',system-ui,sans-serif; font-size:16px; line-height:1.6; min-height:100vh;
     padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
-    background-image:radial-gradient(ellipse 900px 520px at 10% -10%, rgba(255,201,60,.10), transparent 60%), radial-gradient(ellipse 800px 600px at 110% 30%, rgba(255,77,94,.08), transparent 60%), radial-gradient(ellipse 800px 600px at -10% 90%, rgba(31,74,165,.12), transparent 60%);
-    background-attachment:fixed;}
+    background:none;}
+  html{background-image:radial-gradient(ellipse 900px 520px at 10% -10%, rgba(255,201,60,.10), transparent 60%), radial-gradient(ellipse 800px 600px at 110% 30%, rgba(255,77,94,.08), transparent 60%), radial-gradient(ellipse 800px 600px at -10% 90%, rgba(31,74,165,.12), transparent 60%);
+  background-attachment:fixed;}
   .wrap{max-width:1120px; margin:0 auto; padding:0 22px;}
   header{display:flex; align-items:center; justify-content:space-between; padding:26px 0 0;}
   .logo{display:flex; align-items:center; gap:10px; font-family:'Oswald',sans-serif; font-weight:600; font-size:20px; letter-spacing:.04em; color:var(--text); text-decoration:none;}
@@ -433,6 +434,21 @@ if(document.readyState==='loading') document.addEventListener('DOMContentLoaded'
   .logo img.lg{width:36px; height:36px; display:block; border-radius:10px; filter:drop-shadow(0 6px 14px rgba(255,160,60,.25));}
   .hero{display:flex; align-items:center; justify-content:space-between; gap:28px;}
   .hero .hero-t{min-width:0;}
+  /* 첫 화면 배경: 네 게임의 실제 장면이 번갈아 천천히 나타나요 (오른쪽에서 왼쪽으로 사라지게 깔려서 글자는 그대로 읽혀요) */
+  .hero{position:relative;}
+  .hero-bg{position:absolute; z-index:-1; left:50%; width:100vw; margin-left:-50vw; top:-130px; bottom:-30px; pointer-events:none; overflow:hidden; -webkit-mask-image:linear-gradient(180deg,#000 0,#000 66%,transparent 100%); mask-image:linear-gradient(180deg,#000 0,#000 66%,transparent 100%);}
+  .hero-bg i{position:absolute; inset:0; opacity:0; animation:hbFade 32s linear infinite;}
+  .hero-bg i:nth-child(1){animation-delay:-2s;} .hero-bg i:nth-child(2){animation-delay:6s;} .hero-bg i:nth-child(3){animation-delay:14s;} .hero-bg i:nth-child(4){animation-delay:22s;}
+  .hero-bg img{position:absolute; top:0; right:0; width:72%; height:100%; object-fit:cover; opacity:.8; -webkit-mask-image:linear-gradient(90deg,transparent 0,#000 48%); mask-image:linear-gradient(90deg,transparent 0,#000 48%); animation:hbKen 32s ease-in-out infinite alternate;}
+  .hero-bg i::after{content:''; position:absolute; inset:0; background:radial-gradient(ellipse 60% 80% at 82% 55%, color-mix(in srgb,var(--c) 38%,transparent), transparent 70%), radial-gradient(ellipse 50% 60% at 8% 30%, color-mix(in srgb,var(--c) 14%,transparent), transparent 70%);}
+  .hero-bg::after{content:''; position:absolute; inset:0; background:linear-gradient(180deg,color-mix(in srgb,var(--bg) 90%,transparent) 0,color-mix(in srgb,var(--bg) 55%,transparent) 14%,transparent 34%);}
+  @keyframes hbFade{0%{opacity:0;} 5%{opacity:1;} 25%{opacity:1;} 31%{opacity:0;} 100%{opacity:0;}}
+  @keyframes hbKen{from{transform:scale(1.03) translate3d(0,0,0);} to{transform:scale(1.14) translate3d(-2%,-2%,0);}}
+  @keyframes hbRise{from{opacity:0; transform:translateY(18px);} to{opacity:1; transform:none;}}
+  .hero-t>*{animation:hbRise .6s cubic-bezier(.2,.7,.2,1) both;} .hero-t>:nth-child(2){animation-delay:.07s;} .hero-t>:nth-child(3){animation-delay:.14s;} .hero-t>:nth-child(4){animation-delay:.21s;} .hero-t>:nth-child(5){animation-delay:.28s;}
+  .game:hover{box-shadow:0 20px 46px -14px rgba(255,170,60,.28);}
+  @media(max-width:640px){ .hero-bg img{width:100%; -webkit-mask-image:linear-gradient(90deg,transparent 0,#000 30%); mask-image:linear-gradient(90deg,transparent 0,#000 30%); opacity:.55;} }
+  @media(prefers-reduced-motion:reduce){ .hero-bg i{animation:none;} .hero-bg i:first-child{opacity:1;} .hero-bg img,.hero-t>*{animation:none;} }
   .hero-lg{order:2; flex:0 0 auto; width:clamp(150px,21vw,230px); height:auto; filter:drop-shadow(0 18px 50px rgba(255,150,40,.28)); transform:rotate(4deg);}
   @media(max-width:640px){ .hero{flex-direction:column; align-items:flex-start; gap:12px;} .hero-lg{order:0; width:92px; transform:none;} }
   /* 위쪽 오른쪽 버튼 묶음 */
@@ -478,6 +494,7 @@ if(document.readyState==='loading') document.addEventListener('DOMContentLoaded'
   <div id="annBar"></div>
 
   <section class="hero">
+    <div class="hero-bg" aria-hidden="true"><i style="--c:#ff5a5f"><img src="stickseum.webp" alt=""></i><i style="--c:#e8c25a"><img src="crown-envoy.webp" alt=""></i><i style="--c:#5ac878"><img src="beaconfall.webp" alt=""></i><i style="--c:#38b6ff"><img src="isleport.webp" alt=""></i></div>
     <img class="hero-lg" src="logo.svg" alt="" width="230" height="230">
     <div class="hero-t">
     <span class="eyebrow">Browser Games</span>
