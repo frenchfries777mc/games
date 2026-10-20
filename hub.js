@@ -5,7 +5,7 @@
 'use strict';
 var SI=window.SI18N||{lang:'ko',F:function(t){ var a=arguments; return String(t).replace(/\{(\d)\}/g,function(_,n){ return a[+n+1]; }); }};
 var LANG=SI.lang||'ko', F=SI.F;
-var GAMES={stickseum:{name:'Stickseum',cls:'g1',site:'https://frenchfries777mc.github.io/games/stickseum/'},crownenvoy:{name:'Crown Envoy',cls:'g2',site:'https://frenchfries777mc.github.io/games/crownenvoy/'},beaconfall:{name:'Beaconfall',cls:'g3',site:'https://frenchfries777mc.github.io/games/beaconfall/'}};
+var GAMES={stickseum:{name:'Stickseum',cls:'g1',site:'https://frenchfries777mc.github.io/games/stickseum/'},crownenvoy:{name:'Crown Envoy',cls:'g2',site:'https://frenchfries777mc.github.io/games/crownenvoy/'},beaconfall:{name:'Beaconfall',cls:'g3',site:'https://frenchfries777mc.github.io/games/beaconfall/'},dummyparty:{name:'Dummy Party',cls:'',site:'https://frenchfries777mc.github.io/games/prototypes/dummyparty/'}};
 function $(s,r){ return (r||document).querySelector(s); }
 /* 허브 첫 페이지와 커뮤니티 페이지(community/)가 같은 파일을 써요. ROOT = 허브 맨 위 경로 */
 var CMP=!!document.getElementById('community'), ROOT=document.body.getAttribute('data-root')||'', CMURL=CMP?'':ROOT+'community/';
