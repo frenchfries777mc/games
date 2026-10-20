@@ -421,6 +421,9 @@ if(document.readyState==='loading') document.addEventListener('DOMContentLoaded'
   .pracWpn .e{ font-size:20px; line-height:1.1; } .pracWpn .n{ font-size:10.5px; font-weight:700; margin-top:2px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; } .pracWpn .m{ font-size:9px; color:#7ef0a8; font-weight:700; }
   #practicePanel button, #practicePanel select{ width:100%; margin-top:5px; padding:6px 4px; border-radius:7px; border:1px solid #2f3544; background:#1b1f2a; color:#e8eaf0; font-size:12px; font-weight:700; cursor:pointer; }
   #practicePanel button:hover{ border-color:#3fe0c5; }
+  #practicePanel #pracHead{ cursor:pointer; }
+  #practicePanel.min > :not(#pracHead){ display:none !important; }
+  @media (max-width:760px), (max-height:520px){ #practicePanel{ top:8px !important; left:8px !important; max-height:calc(100vh - 16px); overflow-y:auto; } }
   #practicePanel button.danger{ background:#3a1d22; border-color:#6b2a33; }
   .wpnCard .wm{ font-size:9px; color:#7ef0a8; margin-top:2px; white-space:nowrap; font-weight:700; }
   .wpnCard .wm.max{ color:#ffd34d; }
@@ -807,7 +810,7 @@ setTimeout(go,14000);})();</script>
 <div id="chatInputBox" style="display:none;"><input type="text" id="chatInput" maxlength="150" placeholder="메시지 입력 후 Enter로 보내기 (Esc 취소)"></div>
 
 <div id="practicePanel" style="display:none; position:fixed; left:12px; top:92px; z-index:25; width:178px; background:rgba(14,16,22,.9); border:1px solid #2a2f3a; border-radius:10px; padding:10px;">
-    <div style="font-weight:800; font-size:13px;">🎯 연습 모드</div>
+    <div id="pracHead" style="font-weight:800; font-size:13px;" title="누르면 접고 펼쳐요">🎯 연습 모드 <span style="font-weight:400; color:#8890a4;">▾</span></div>
     <div style="font-size:10.5px; color:#8890a4; margin-top:2px; line-height:1.4;">보상 없음 · 궁극기 3초 · 스킬 2초 · 순간이동 2초</div>
     <select id="pracWeaponSel" title="캐릭터 바꾸기"></select>
     <button id="pracAddStill">허수아비 +</button>
@@ -838,7 +841,7 @@ setTimeout(go,14000);})();</script>
   </div>
   <div class="brand" id="brandDisplay">
     <h1>STICK<span>SEUM</span><span class="splash" id="splashText"></span></h1>
-    <div class="ver">v0.6</div>
+    <div class="ver">v0.8</div>
   </div>
   <div class="card menu-floating" id="menuScreen">
     <button class="menu-float-btn" id="goOnlineBtn">온라인 플레이</button>
@@ -6664,7 +6667,7 @@ function startPractice(cfg){
   if(sel){ sel.innerHTML=''; for(const wid of SELECTABLE_WEAPONS){ const o=document.createElement('option'); o.value=wid; o.textContent=WEAPONS[wid].emoji+' '+(WEAPON_PERSONA_NAME[wid]||WEAPONS[wid].name); sel.appendChild(o); } sel.value=cfg.wid; }
   const lsel=document.getElementById('pracBotLevelSel');
   if(lsel){ lsel.innerHTML=''; for(const id of BOT_CHOOSABLE_LEVELS()){ const o=document.createElement('option'); o.value=id; o.textContent=BOT_LEVELS[id].name; lsel.appendChild(o); } lsel.value=cfg.botLevel; }
-  document.getElementById('practicePanel').style.display='block';
+  { const pp=document.getElementById('practicePanel'); pp.style.display='block'; if(window.matchMedia('(max-width:760px), (max-height:520px)').matches) pp.classList.add('min'); else pp.classList.remove('min'); }       // on a phone the panel starts folded so it does not cover the health bars and the HUD
   pracDpsReset(); clearInterval(pracDpsTimer); pracDpsTimer=setInterval(pracDpsShow, 250);
   if(typeof setChatVisible==='function') setChatVisible(false);
 }
@@ -16447,6 +16450,7 @@ function renderAuthGateForm(){
 }
 initAuthGate();
 
+{ const ph=document.getElementById('pracHead'); if(ph) ph.addEventListener('click',()=>document.getElementById('practicePanel').classList.toggle('min')); }
 })();
 </script>
 <script src="https://frenchfries777mc.github.io/games/ff-auth.js"></script>
