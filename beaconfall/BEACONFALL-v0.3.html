@@ -367,7 +367,7 @@ html:not(.introDone) #ui,html:not(.introDone) #authgate,html:not(.introDone) #au
     <button class="btn" data-act="skins"><span class="arrow">▶</span>스킨 상점<span class="en">SKIN SHOP</span></button>
     <button class="btn" data-act="stats"><span class="arrow">▶</span>통계<span class="en">STATS</span></button>
     <button class="btn" data-act="settings"><span class="arrow">▶</span>설정<span class="en">SETTINGS</span></button>
-    <p class="foot">v0.3<br>build 80</p>
+    <p class="foot">v0.3<br>build 81</p>
   </nav>
 </div>
 
@@ -11648,6 +11648,10 @@ async function frLoad(){
   frRender();
 }
 function frRoom(){try{return (net.role==='host'&&net.addr)?net.addr:'';}catch(e){return '';}}
+/* 허브 방 초대: 방을 열면 FFAuth에 방 코드를 알리고, 닫으면 지워요 (FFAuth가 없는 화면에서는 아무 일도 안 해요) */
+let ffRoomSent=null;
+function ffRoomSync(){try{const r=frRoom();if(r===ffRoomSent||!window.FFAuth||!FFAuth.setRoom)return;ffRoomSent=r;FFAuth.setRoom(r?{game:'beaconfall',code:r,path:'beaconfall/BEACONFALL-v0.3.html'}:null);}catch(e){}}
+setInterval(ffRoomSync,2000);
 async function frTrack(force){
   if(!FR.ch)return;const room=frRoom();if(!force&&room===FR.room)return;FR.room=room;
   try{await FR.ch.track({name:window.bfUser||'',room,at:Date.now()});}catch(e){}
