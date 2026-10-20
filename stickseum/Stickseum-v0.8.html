@@ -1266,7 +1266,6 @@ const BAT_DMG_MULT = 1.6, BAT_SPEED_MULT = 1.7, BAT_FORM_SEC = 7, BAT_TEAM_HEAL_
 const WIZ_CIRCLE_R = 330, WIZ_CIRCLE_SEC = 8, WIZ_HEAL_PER_SEC = 8, WIZ_ENEMY_DPS = 5, WIZ_SPEED_MULT = 1.4, WIZ_DMG_MULT = 1.25, WIZ_CD_MULT = 0.7;
 const SHURIKEN_ULT_BLINK = 90;
 let magicCircles=[];
-let teamPings=[], pingsView=[];      // team pings: a marker the whole team sees where a teammate pointed (host: the list itself; guests: rebuilt from each snapshot)
 let turrets=[];   // the pirate's cannon turrets: {owner,team,x,y,until,next,ang}
 // 쿠루스 (v227): a thrown potion leaves a dark puddle on the surface it lands on (pi = platform index, rl/rr = its edges measured from that platform's left
 // edge, so a puddle rides a moving platform). The owner heals in his own puddles, enemies are hurt in them. His ultimate sinks him into his puddles.
@@ -1563,8 +1562,7 @@ const KEY_ACTIONS=[
   {id:'ultimate', label:'궁극기', default:'KeyR'},
   {id:'skill', label:'스킬', default:'KeyF'},
   {id:'chat', label:'채팅 열기', default:'Enter'},
-  {id:'emote', label:'이모트', default:'KeyV'},
-  {id:'ping', label:'팀 핑 (마우스 위치 표시)', default:'KeyG'}
+  {id:'emote', label:'이모트', default:'KeyV'}
 ];
 // keys the game already uses for something fixed: the chat key may not be one of them (Enter is the default and sends a message, Esc cancels it)
 const CHAT_RESERVED_KEYS={Escape:1, Tab:1, Space:1, ArrowLeft:1, ArrowRight:1, ArrowUp:1, ArrowDown:1, KeyS:1};
@@ -4759,7 +4757,7 @@ function shuffle(arr){ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.
 /* ===== the version of this file =====
    Players with different versions CAN meet and play together: the automatic matchmaking uses the same room names for every version (online-<mode>-<map>-<slot>), and nobody is refused because of a different build.
    The build is only sent along with the join message and the lobby (for information); the corner of the screen shows it. */
-const GAME_BUILD='build 2026-10-18-v324';
+const GAME_BUILD='build 2026-10-18-v325';
 const GAME_VERSION='0.8', GAME_VERSION_NAME='황금을 찾아서';   // 게임 버전 이름: versions.json의 title과 같게 (빌드마다 바꾸지 않음)
 const WEEKLY_EVENTS=[
   {id:'lowg',    name:'저중력 난투', desc:'몸이 둥실둥실, 중력이 약해진 난투', rules:{grav:0.6}},
@@ -5329,37 +5327,6 @@ function carouselList(){ if(mapOrder.length===0) buildMapOrder(); return mapOrde
   const a=$('cmOpenFromPriv'); if(a) a.onclick=()=>cmOpen('privateScreen');
   const b=$('cmOpenFromPrac'); if(b) b.onclick=()=>cmOpen('practiceScreen');
 })();
-const PING_SEC=5, PING_CD=1.2, PING_MAX_EACH=2;
-function hostPing(pid, x, y, tMs){
-  const p=players[pid]; x=+x; y=+y; if(!p || !p.alive || p.team===null || p.team===undefined || !MAP || !isFinite(x) || !isFinite(y)) return;
-  if(gameMode==='ffa'||gameMode==='duel') return;
-  const tSec=tMs/1000; if(tSec-(p.lastPing===undefined?-9999:p.lastPing)<PING_CD) return;
-  p.lastPing=tSec;
-  teamPings=teamPings.filter(g=>g.until>tSec);
-  const mine=teamPings.filter(g=>g.owner===pid); while(mine.length>=PING_MAX_EACH){ const o=mine.shift(); teamPings.splice(teamPings.indexOf(o),1); }
-  teamPings.push({x:clamp(x,0,MAP.arenaW), y:clamp(y,0,MAP.arenaH), team:p.team, owner:pid, name:p.name, color:p.color, until:tSec+PING_SEC});
-}
-function sendPing(){
-  const m=mouseWorld();
-  if(isHost) hostPing(myId, m.x, m.y, performance.now()); else if(hostConn && hostConn.open){ try{ hostConn.send({t:'ping', x:m.x, y:m.y}); }catch(e){} }
-}
-function drawPings(){
-  const list=isHost?teamPings:pingsView, me=players[myId], tSec=performance.now()/1000; if(!list.length || !me || me.team===null || me.team===undefined) return;
-  for(const g of list){
-    if(g.team!==me.team || g.until<=tSec) continue;
-    const rem=g.until-tSec, age=PING_SEC-rem, fade=Math.min(1,rem/0.6), pop=Math.min(1,age/0.2), col=g.color||'#ffd34d';
-    ctx.save(); ctx.globalAlpha=fade; ctx.translate(g.x,g.y);
-    const r=18+10*((age*1.6)%1);
-    ctx.strokeStyle=col; ctx.lineWidth=3; ctx.beginPath(); ctx.arc(0,0,r,0,Math.PI*2); ctx.stroke();
-    ctx.globalAlpha=fade*0.9; ctx.fillStyle=col; ctx.strokeStyle='rgba(0,0,0,.55)'; ctx.lineWidth=2;
-    const bob=Math.sin(age*6)*3, hh=46*pop;
-    ctx.beginPath(); ctx.moveTo(0,-4-bob); ctx.lineTo(-11,-4-hh*0.5-bob); ctx.lineTo(11,-4-hh*0.5-bob); ctx.closePath(); ctx.fill(); ctx.stroke();
-    ctx.beginPath(); ctx.arc(0,-4-hh*0.5-9-bob,10,0,Math.PI*2); ctx.fill(); ctx.stroke();
-    ctx.font='bold 12px sans-serif'; ctx.textAlign='center'; ctx.fillStyle='#fff'; ctx.strokeStyle='rgba(0,0,0,.7)'; ctx.lineWidth=3;
-    ctx.strokeText(g.name||'', 0, -4-hh*0.5-28-bob); ctx.fillText(g.name||'', 0, -4-hh*0.5-28-bob);
-    ctx.restore();
-  }
-}
 function inMatchHud(){ const cf=document.getElementById('chatFeed'); return !!(cf && cf.style.display!=='none'); }
 window.addEventListener('keydown', e=>{
   if(keybindListenFor || e.ctrlKey || e.metaKey || e.altKey || e.repeat) return;
@@ -5370,7 +5337,6 @@ window.addEventListener('keydown', e=>{
     return;
   }
   if(e.code===keyBindings.emote && inMatchHud()){ e.preventDefault(); ensureEmoteWheel().style.display='block'; }
-  else if(e.code===keyBindings.ping && inMatchHud()){ e.preventDefault(); sendPing(); }
 }, true);
 /* ================= BOSS RAID + TOURNAMENT ================= */
 const RAID_DURATION=180, RAID_BOSS_BASE_HP=1500, RAID_BOSS_HP_PER=880, RAID_SLAM_R=190, RAID_SLAM_DMG=22, RAID_SLAM_WARN=1.4, RAID_BOSS_SCALE=1.5, RAID_RESPAWN=6;
@@ -8651,7 +8617,7 @@ function showErrorAndReturnToMenu(msg){
   stkRoomSync(null);
   if(peer){ try{peer.destroy();}catch(e){} peer=null; }
   window.__versionNoted=false; chatPending=[];
-  spectatorMode=false; clanWar=null; clanRoom=null; document.body.classList.remove('specView'); conns={}; players={}; isHost=false; hostConn=null; MAP=null; started=false; currentMode=null; currentMapId=null; countdownEndsAt=null; gameLoopStarted=false; weaponChosenLocally=false; hostRoomLive=false; if(typeof weaponCountdownTimer!=='undefined' && weaponCountdownTimer){ clearInterval(weaponCountdownTimer); weaponCountdownTimer=null; } matchEnded=false; duelScores={}; duelRoundEndsAt=null; duelPick=false; matchTimerEndsAt=null; document.getElementById('matchTimerLabel').style.display='none'; document.getElementById('duelScoreLabel').style.display='none'; cq=null; walls=[]; hostTimers=[]; magicCircles=[]; teamPings=[]; pingsView=[]; poisonZones=[]; turrets=[]; weaponPhase=null; document.getElementById('cqLabel').style.display='none'; bombHolderId=null; bombTimerEndsAt=0; hotpotatoOriginalCount=0; seekerId=null; hideseekPhase=null; hideseekPhaseEndsAt=0; survivalRound=0; survivalPhase=null; survivalPhaseEndsAt=0; survivalCurrentDisaster=null; survivalHazards=[]; survivalZombies=[]; document.getElementById('survivalLabel').style.display='none'; ctf=null; ctfEndsLocal=0; document.getElementById('ctfLabel').style.display='none'; { const mini=document.getElementById('ctfMini'); if(mini) mini.style.display='none'; }
+  spectatorMode=false; clanWar=null; clanRoom=null; document.body.classList.remove('specView'); conns={}; players={}; isHost=false; hostConn=null; MAP=null; started=false; currentMode=null; currentMapId=null; countdownEndsAt=null; gameLoopStarted=false; weaponChosenLocally=false; hostRoomLive=false; if(typeof weaponCountdownTimer!=='undefined' && weaponCountdownTimer){ clearInterval(weaponCountdownTimer); weaponCountdownTimer=null; } matchEnded=false; duelScores={}; duelRoundEndsAt=null; duelPick=false; matchTimerEndsAt=null; document.getElementById('matchTimerLabel').style.display='none'; document.getElementById('duelScoreLabel').style.display='none'; cq=null; walls=[]; hostTimers=[]; magicCircles=[]; poisonZones=[]; turrets=[]; weaponPhase=null; document.getElementById('cqLabel').style.display='none'; bombHolderId=null; bombTimerEndsAt=0; hotpotatoOriginalCount=0; seekerId=null; hideseekPhase=null; hideseekPhaseEndsAt=0; survivalRound=0; survivalPhase=null; survivalPhaseEndsAt=0; survivalCurrentDisaster=null; survivalHazards=[]; survivalZombies=[]; document.getElementById('survivalLabel').style.display='none'; ctf=null; ctfEndsLocal=0; document.getElementById('ctfLabel').style.display='none'; { const mini=document.getElementById('ctfMini'); if(mini) mini.style.display='none'; }
   resetFlowState();
   showScreen('menuScreen');
   if(msg) uiAlert(msg);
@@ -9106,7 +9072,6 @@ function onHostData(conn, data){
   if(data.t==='parkourPush'){ const p=players[peerId]; if(p){ p.lastSeen=Date.now(); tryParkourPush(p, data.angle, performance.now()); } return; }
   if(data.t==='chat'){ const p=players[peerId]; if(p){ p.lastSeen=Date.now(); handleChatMessage(peerId, p.name, data.text, data.cid); } return; }
   if(data.t==='ult'){ const p=players[peerId]; if(p){ tryUltimate(p, performance.now(), Number.isFinite(data.x)?data.x:undefined, Number.isFinite(data.y)?data.y:undefined, !!data.click); p.lastSeen=Date.now(); } return; }
-  if(data.t==='ping'){ const p=players[peerId]; if(p){ p.lastSeen=Date.now(); hostPing(peerId, data.x, data.y, performance.now()); } return; }
   if(data.t==='emote'){ const p=players[peerId]; if(p){ p.lastSeen=Date.now(); hostEmote(peerId, data.i, performance.now()); } return; }
   if(data.t==='dash'){ const p=players[peerId]; if(p && !p.teleportChannel){ tryDash(p, p.input||{}, performance.now(), data.dir===-1?-1:(data.dir===1?1:undefined)); p.lastSeen=Date.now(); } return; }
   if(data.t==='skill'){ const p=players[peerId]; if(p){ trySkill(p, performance.now(), Number.isFinite(data.x)?data.x:undefined, Number.isFinite(data.y)?data.y:undefined); p.lastSeen=Date.now(); } return; }
@@ -9421,7 +9386,7 @@ function leaveRoom(){
   if(peer){ const op=peer; peer=null; if(handOff) setTimeout(()=>{ try{op.destroy();}catch(e){} }, 900); else { try{op.destroy();}catch(e){} } }   // (the last messages need a moment to go out)
   migState=null; migBundle=null; migOrderIds=[]; migPending=[]; try{ migBanner(false); }catch(e){}
   window.__versionNoted=false; chatPending=[];
-  spectatorMode=false; clanWar=null; clanRoom=null; document.body.classList.remove('specView'); conns={}; players={}; isHost=false; hostConn=null; MAP=null; started=false; currentMode=null; currentMapId=null; countdownEndsAt=null; gameLoopStarted=false; weaponChosenLocally=false; hostRoomLive=false; if(typeof weaponCountdownTimer!=='undefined' && weaponCountdownTimer){ clearInterval(weaponCountdownTimer); weaponCountdownTimer=null; } matchEnded=false; duelScores={}; duelRoundEndsAt=null; duelPick=false; matchTimerEndsAt=null; document.getElementById('matchTimerLabel').style.display='none'; document.getElementById('duelScoreLabel').style.display='none'; cq=null; walls=[]; hostTimers=[]; magicCircles=[]; teamPings=[]; pingsView=[]; poisonZones=[]; turrets=[]; weaponPhase=null; document.getElementById('cqLabel').style.display='none'; bombHolderId=null; bombTimerEndsAt=0; hotpotatoOriginalCount=0; seekerId=null; hideseekPhase=null; hideseekPhaseEndsAt=0; survivalRound=0; survivalPhase=null; survivalPhaseEndsAt=0; survivalCurrentDisaster=null; survivalHazards=[]; survivalZombies=[]; document.getElementById('survivalLabel').style.display='none'; ctf=null; ctfEndsLocal=0; document.getElementById('ctfLabel').style.display='none'; { const mini=document.getElementById('ctfMini'); if(mini) mini.style.display='none'; }
+  spectatorMode=false; clanWar=null; clanRoom=null; document.body.classList.remove('specView'); conns={}; players={}; isHost=false; hostConn=null; MAP=null; started=false; currentMode=null; currentMapId=null; countdownEndsAt=null; gameLoopStarted=false; weaponChosenLocally=false; hostRoomLive=false; if(typeof weaponCountdownTimer!=='undefined' && weaponCountdownTimer){ clearInterval(weaponCountdownTimer); weaponCountdownTimer=null; } matchEnded=false; duelScores={}; duelRoundEndsAt=null; duelPick=false; matchTimerEndsAt=null; document.getElementById('matchTimerLabel').style.display='none'; document.getElementById('duelScoreLabel').style.display='none'; cq=null; walls=[]; hostTimers=[]; magicCircles=[]; poisonZones=[]; turrets=[]; weaponPhase=null; document.getElementById('cqLabel').style.display='none'; bombHolderId=null; bombTimerEndsAt=0; hotpotatoOriginalCount=0; seekerId=null; hideseekPhase=null; hideseekPhaseEndsAt=0; survivalRound=0; survivalPhase=null; survivalPhaseEndsAt=0; survivalCurrentDisaster=null; survivalHazards=[]; survivalZombies=[]; document.getElementById('survivalLabel').style.display='none'; ctf=null; ctfEndsLocal=0; document.getElementById('ctfLabel').style.display='none'; { const mini=document.getElementById('ctfMini'); if(mini) mini.style.display='none'; }
   resetFlowState();
   showScreen('menuScreen');
   setChatVisible(false);
@@ -9526,7 +9491,6 @@ function onClientData(data, mode, code){
     if(Array.isArray(data.chat)) for(const m of data.chat.slice(0,12)){ if(m && typeof m.text==='string') onChatRelayed(m); }       // chat lines that ride along with the state (the second road: a state certainly arrives during a match)
     bullets=data.bullets;
     walls=data.walls||[];
-    { const ns=performance.now()/1000; pingsView=(data.pg||[]).map(g=>({x:g.x,y:g.y,team:g.team,name:g.n,color:g.c,until:ns+g.r})); }
     magicCircles=data.magicCircles||[]; poisonZones=data.poisonZones||[]; turrets=data.turrets||[]; hzDraw=data.hz||null; syncBridgePlatforms(); if(data.dark!==undefined){ const nowS=performance.now()/1000; darkView=(data.dark||[]).map(z=>Object.assign(z, {t0:nowS-(z.age||0)})); }
     if(data.cq && cq){ cq.scores=data.cq.s; cq.holder=data.cq.h; cq.contested=data.cq.c; }
     xmV=data.xm||null; if(!isHost) brzV=data.bz||null;
@@ -10462,7 +10426,7 @@ function finalizeGameplayStart(mte){
   // silent freeze, and the error banner mechanism gets its chance to work.
   try{
     matchEnded=false; try{ rpRecStart(); }catch(e){}
-    xm=null; xmV=null; brz=null; brzV=null; particles=[]; fxSeen={}; prevGround={}; prevHp={}; hitFlashUntil={}; screenShake=0; walls=[]; hostTimers=[]; magicCircles=[]; teamPings=[]; pingsView=[]; poisonZones=[]; turrets=[]; darkPools=[]; darkView=[]; lastKnownKills=0; matchAssists=0;
+    xm=null; xmV=null; brz=null; brzV=null; particles=[]; fxSeen={}; prevGround={}; prevHp={}; hitFlashUntil={}; screenShake=0; walls=[]; hostTimers=[]; magicCircles=[]; poisonZones=[]; turrets=[]; darkPools=[]; darkView=[]; lastKnownKills=0; matchAssists=0;
     matchKillLog=[]; killcamActive=false; killcamOverride=null; killcamSnapshot=null; killcamReplay=null; killcamReplayStartAt=0; replayBuffer={}; replayFrames=[]; replayFxLog=[]; replayDefs={};
     hitStopUntil=0; staggers={}; setTimeout(()=>{ try{ entranceShow(); }catch(e){ console.error('[entrance]', e); } }, 450);
     if(gameMode==='parkour') initParkourItems(); // runs for host and every client alike, so everyone's item-icon rendering starts from the same "all available" state
@@ -13237,7 +13201,6 @@ function hostTick(dt,t){
       ctf: (gameMode==='ctf' && ctf) ? {f:ctf.flags.map(f=>({s:(f.state==='home'?0:(f.state==='carried'?1:2)), x:Math.round(f.x), y:Math.round(f.y), c:f.carrierId||null, r:(f.state==='dropped'?Math.round(Math.max(0,f.returnAt-t/1000)*10)/10:0)})), sc:ctf.scores, rm:Math.max(0,Math.round((ctf.endsAt-Date.now())/1000)), ot:!!ctf.overtime, tg:ctf.target} : undefined,
       bullets:bullets.map(b=>({x:b.x,y:b.y,color:b.color,wid:b.wid,vx:b.vx,vy:b.vy,dmgless:b.dmgless,swingAngle:b.swingAngle,splash:b.splash,life:b.life,life0:b.life0,sx:b.spawnX,sy:b.spawnY,ult:b.ult,fire:b.fire,reach:b.reach})),
       walls:walls.map(w=>({x:w.x,y:w.y,w:w.w,h:w.h,owner:w.owner,rem:w.until-t/1000})),
-      pg:(()=>{ const ts=t/1000; teamPings=teamPings.filter(g=>g.until>ts); return teamPings.length?teamPings.map(g=>({x:Math.round(g.x),y:Math.round(g.y),team:g.team,n:g.name,c:g.color,r:Math.round((g.until-ts)*10)/10})):undefined; })(),
       magicCircles:magicCircles.map(z=>({x:z.x,y:z.y,r:z.r,owner:z.owner,team:z.team,rem:z.until-t/1000})),
       poisonZones:poisonZones.map(z=>({x:z.x,y:z.y,r:z.r,owner:z.owner,team:z.team,rem:z.until-t/1000})),
       hz:hzDraw,
@@ -16218,7 +16181,6 @@ function render(fxDt){
   safeDraw(drawConquestZone);
   safeDraw(()=>drawWalls(kcScene?kcScene.walls:null));
   safeDraw(()=>drawMagicCircles(kcScene?kcScene.circles:null));
-  if(!kcScene) safeDraw(drawPings);
   safeDraw(()=>drawPoisonZones());
   safeDraw(()=>drawDarkPools(kcScene?[]:(isHost?darkPoolsView(performance.now()):darkView)));
   safeDraw(()=>drawTurrets(kcScene?[]:null));
