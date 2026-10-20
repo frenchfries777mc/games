@@ -24,7 +24,49 @@
     "프로필 카드의 게임 칸에 게임별 누적 플레이 시간 표시",
     "게임 안 친구 창에 방 초대 버튼 추가, 받은 친구는 알림을 눌러 바로 방에 들어감",
     "Isleport와 Dummy Party도 접속 표시와 플레이 시간 집계에 포함"
-   ]
+   ],
+   "tr": {
+    "en": {
+     "title": "Play time · room invites",
+     "items": [
+      "The games section of the profile card now shows total play time per game",
+      "Added a room invite button to the in-game friends window; friends who get one can tap the notification to join the room right away",
+      "Isleport and Dummy Party now count toward online status and play time"
+     ]
+    },
+    "es": {
+     "title": "Tiempo de juego · invitaciones a sala",
+     "items": [
+      "La sección de juegos de la tarjeta de perfil ahora muestra el tiempo total jugado en cada juego",
+      "Botón de invitar a la sala en la ventana de amigos del juego; quien la recibe entra directamente tocando la notificación",
+      "Isleport y Dummy Party ahora cuentan para el estado en línea y el tiempo de juego"
+     ]
+    },
+    "fr": {
+     "title": "Temps de jeu · invitations au salon",
+     "items": [
+      "La section jeux de la carte de profil affiche le temps de jeu total par jeu",
+      "Ajout d’un bouton d’invitation au salon dans la fenêtre d’amis en jeu ; l’ami invité rejoint directement en touchant la notification",
+      "Isleport et Dummy Party comptent désormais pour le statut en ligne et le temps de jeu"
+     ]
+    },
+    "de": {
+     "title": "Spielzeit · Raumeinladungen",
+     "items": [
+      "Der Spiele-Bereich der Profilkarte zeigt jetzt die gesamte Spielzeit pro Spiel",
+      "Einladen-Schaltfläche für den Raum im Freundesfenster im Spiel; eingeladene Freunde treten per Tipp auf die Benachrichtigung direkt bei",
+      "Isleport und Dummy Party zählen jetzt auch für Online-Status und Spielzeit"
+     ]
+    },
+    "ja": {
+     "title": "プレイ時間・部屋への招待",
+     "items": [
+      "プロフィールカードのゲーム欄にゲームごとの累計プレイ時間を表示",
+      "ゲーム内のフレンド画面に部屋の招待ボタンを追加、受け取ったフレンドは通知を押すとすぐ部屋に入れる",
+      "IsleportとDummy Partyも接続表示とプレイ時間の集計に追加"
+     ]
+    }
+   }
   },
   {
    "date": "2026-10-20",
@@ -51,7 +93,44 @@
    "items": [
     "모든 페이지 하단에 © 2026 Frenchfries777 · CC BY-NC-ND 4.0 표기 추가",
     "저장소에 라이선스 파일(LICENSE) 추가: 원작자 표기 필수, 상업적 이용 금지, 변경 금지"
-   ]
+   ],
+   "tr": {
+    "en": {
+     "title": "Copyright notice",
+     "items": [
+      "Added © 2026 Frenchfries777 · CC BY-NC-ND 4.0 at the bottom of every page",
+      "Added a license file (LICENSE) to the repository: attribution required, no commercial use, no derivatives"
+     ]
+    },
+    "es": {
+     "title": "Aviso de copyright",
+     "items": [
+      "Se añadió © 2026 Frenchfries777 · CC BY-NC-ND 4.0 al pie de todas las páginas",
+      "Se añadió un archivo de licencia (LICENSE) al repositorio: atribución obligatoria, sin uso comercial, sin obras derivadas"
+     ]
+    },
+    "fr": {
+     "title": "Mention de copyright",
+     "items": [
+      "Ajout de © 2026 Frenchfries777 · CC BY-NC-ND 4.0 en bas de chaque page",
+      "Ajout d’un fichier de licence (LICENSE) au dépôt : attribution obligatoire, pas d’utilisation commerciale, pas de modification"
+     ]
+    },
+    "de": {
+     "title": "Urheberrechtshinweis",
+     "items": [
+      "© 2026 Frenchfries777 · CC BY-NC-ND 4.0 am Fuß jeder Seite hinzugefügt",
+      "Lizenzdatei (LICENSE) zum Repository hinzugefügt: Namensnennung erforderlich, keine kommerzielle Nutzung, keine Bearbeitung"
+     ]
+    },
+    "ja": {
+     "title": "著作権表記",
+     "items": [
+      "すべてのページの下部に © 2026 Frenchfries777 · CC BY-NC-ND 4.0 の表記を追加",
+      "リポジトリにライセンスファイル（LICENSE）を追加：作者の表示必須、商用利用禁止、改変禁止"
+     ]
+    }
+   }
   },
   {
    "date": "2026-10-19",
