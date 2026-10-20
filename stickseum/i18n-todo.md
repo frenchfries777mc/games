@@ -21,3 +21,5 @@ patchnotes.json | v325 title | 팀 핑 삭제 | build 325 | 2026-10-20
 patchnotes.json | v325 items[0] | 팀 핑 기능 삭제 (G 키) | build 325 | 2026-10-20
 patchnotes.json | v326 title | 아래쪽 스크롤 숨김 | build 326 | 2026-10-20
 patchnotes.json | v326 items[0] | 캐릭터 선택 화면 등 목록 아래쪽 가로 스크롤 막대 숨김 | build 326 | 2026-10-20
+patchnotes.json | v327 title | 팀전 금지 인원 전체 | build 327 | 2026-10-20
+patchnotes.json | v327 items[0] | 팀전 금지 단계에서 팀원 모두가 각자 하나씩 금지 (5대5면 양쪽 5개씩, 같은 캐릭터 중복 불가, 봇도 참여) | build 327 | 2026-10-20
