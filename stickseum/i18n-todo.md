@@ -23,3 +23,6 @@ patchnotes.json | v326 title | 아래쪽 스크롤 숨김 | build 326 | 2026-10-
 patchnotes.json | v326 items[0] | 캐릭터 선택 화면 등 목록 아래쪽 가로 스크롤 막대 숨김 | build 326 | 2026-10-20
 patchnotes.json | v327 title | 팀전 금지 인원 전체 | build 327 | 2026-10-20
 patchnotes.json | v327 items[0] | 팀전 금지 단계에서 팀원 모두가 각자 하나씩 금지 (5대5면 양쪽 5개씩, 같은 캐릭터 중복 불가, 봇도 참여) | build 327 | 2026-10-20
+patchnotes.json | v328 title | 칸 투사체 확대와 금지 실시간 표시 | build 328 | 2026-10-20
+patchnotes.json | v328 items[0] | 칸의 독침 크기와 판정 확대 | build 328 | 2026-10-20
+patchnotes.json | v328 items[1] | 금지 단계에서 봇도 각자 따로 정하고 모두의 금지가 실시간으로 표시 | build 328 | 2026-10-20
