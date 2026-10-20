@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+<!-- Isleport © 2026 Frenchfries777 · CC BY-NC-ND 4.0 · https://creativecommons.org/licenses/by-nc-nd/4.0/deed.ko -->
 <html lang="ko">
 <head>
 <meta charset="utf-8">
@@ -436,7 +437,7 @@ const TUT=[
  [P('다 자라면 밭을 눌러 수확해요','When it is grown, tap the field to harvest'),s=>s.stats.harvest>=1],
  [P('마을 장터에서 수확한 것을 팔아요','Sell your harvest at the town market'),s=>(s.stats.shop||0)>=1],
  [P('항구에서 배에 짐을 싣고 보내요','Load a ship at the harbor and send it off'),s=>s.stats.sailed>=1]];
-const OUTMAX=12,BUILD=35;
+const OUTMAX=12,BUILD=36;
 const hasB=(s,b)=>s.slots.some(x=>x&&x.b===b);
 const rankOf=e=>{let r=0;RANKS.forEach((x,i)=>{if(e>=x[0])r=i;});return r;};
 /* 업적: id, 이름, 설명, 조건 */
@@ -558,6 +559,9 @@ A('nw1m',P('백만장자','Millionaire'),P('재산 1,000,000 모으기','Reach a
 const CROPK=Object.keys(CROPS),SPEC=['goldbarley','pomegranate','saffron','cloudcotton','seaweed','dragonfruit'],CROPK17=CROPK.filter(c=>!SPEC.includes(c));
 const ACHN={};ACH.forEach(a=>ACHN[a.id]=a);
 const NOTES=[
+ {date:'2026-10-20',build:'v0.2 build 36',title:P('저작권 표기','Copyright notice'),items:[
+  P('게임 파일과 시작 화면, 설정 화면에 저작권 표기를 넣었어요 (CC BY-NC-ND 4.0)','Added a copyright notice (CC BY-NC-ND 4.0) to the game file, title screen and settings')
+ ]},
  {date:'2026-10-20',build:'v0.2 build 35',title:P('나무는 천천히','Trees grow slower'),items:[
   P('과일나무와 차나무, 카카오 같은 나무류가 다 자라기까지 두 배 걸려요','Fruit trees, tea and cocoa now take twice as long to ripen'),
   P('일꾼은 연구 "일꾼 고용"을 끝낸 뒤 집에서 고용해요. 도움말에도 적어 두었어요','Hire workers at home after finishing the "Hire workers" research; also noted in the guide')
@@ -12740,7 +12744,7 @@ function renderTitle(){const sv=loadSave();
    <button class="tb sm" data-act="m:login">${UID?esc(UNAME||T('내 계정','My account')):T('로그인','Log in')}</button>
    <button class="tb sm" data-act="m:help">${T('하는 법','How to play')}</button><button class="tb sm" data-act="m:notes">${T('패치노트','Patch notes')}</button>
    <select id="langSel" class="tb sm" onchange="setLang(this.value);renderTitle()">${LANGS.map(l=>`<option value="${l}" ${l===LANG?'selected':''}>${LANGN[l]}</option>`).join('')}</select></div>
-   <div class="tfoot">v0.2 build ${BUILD}<br>${UNAME?esc(UNAME)+' ('+T('Frenchfries777 계정','Frenchfries777 account')+')':T('Frenchfries777 계정으로 로그인하면 프로필 카드에 업적이 올라가요','Log in with your Frenchfries777 account to show goals on your profile card')}</div>`;}
+   <div class="tfoot">v0.2 build ${BUILD}<br>© 2026 Frenchfries777 · <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.ko" target="_blank" rel="noopener" style="color:inherit">CC BY-NC-ND 4.0</a><br>${UNAME?esc(UNAME)+' ('+T('Frenchfries777 계정','Frenchfries777 account')+')':T('Frenchfries777 계정으로 로그인하면 프로필 카드에 업적이 올라가요','Log in with your Frenchfries777 account to show goals on your profile card')}</div>`;}
 function showTitle(){$('title').hidden=false;$('modal').hidden=true;closePop();renderTitle();$('backBtn')&&($('backBtn').hidden=true);}
 ACT.newgame=(a,b)=>{if(b.dataset.arm){try{localStorage.removeItem(SAVEK());}catch(e){}startSingle(false);}else{b.dataset.arm=1;b.textContent=T('정말 지울까요? 한 번 더','Really delete? Press again');}};
 ACT.single=()=>startSingle(true);
@@ -13431,7 +13435,7 @@ MODS.settings=()=>`<h2>${T('설정','Settings')}</h2>
  <div class="row" style="margin-top:8px"><label>${T('효과음','Sound effects')}</label><button class="pb sm ${AU.sfx?'gold':''}" data-act="tsfx">${AU.sfx?T('켜짐','On'):T('꺼짐','Off')}</button></div>
  <div class="row" style="margin-top:6px"><label>${T('음악','Music')}</label><button class="pb sm ${AU.mus?'gold':''}" data-act="tmus">${AU.mus?T('켜짐','On'):T('꺼짐','Off')}</button></div>
  <label class="muted">${T('소리 크기','Volume')}</label><input id="setVol" type="range" min="0" max="100" value="${Math.round(AU.vol*100)}">
- <div class="btns" style="margin-top:10px"><button class="pb sm" data-act="toSite">${T('사이트로 돌아가기','Back to site')}</button></div>
+ <div class="muted" style="margin-top:10px">© 2026 Frenchfries777 · <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.ko" target="_blank" rel="noopener" style="color:inherit">CC BY-NC-ND 4.0</a></div><div class="btns" style="margin-top:10px"><button class="pb sm" data-act="toSite">${T('사이트로 돌아가기','Back to site')}</button></div>
  ${S&&!MP.on?`<h5>${T('저장 내보내기 · 불러오기','Export / import save')}</h5><textarea id="saveTxt" rows="3" placeholder="${T('여기에 저장 글자를 붙여 넣어요','Paste save text here')}"></textarea><div class="btns"><button class="pb sm" data-act="saveExp">${T('내보내기','Export')}</button><button class="pb sm" data-act="saveImp">${T('불러오기','Import')}</button></div>`:''}`;
 $('mbody').addEventListener('input',e=>{if(e.target.id==='setLang'){setLang(e.target.value);applyStatic();renderModal();}if(e.target.id==='setVol')setVol(e.target.value/100);});
 ACT.toSite=()=>{try{if(S)save();}catch(e){}location.href='https://frenchfries777mc.github.io/games/';};
