@@ -515,7 +515,9 @@ body.playing #emoBar{display:flex}
    <div class="row"><input id="codeIn" maxlength="5" placeholder="방 코드" autocomplete="off"><button class="pb dark" id="joinBtn" style="flex:0 0 auto">들어가기</button></div>
    <div class="msg" id="homeMsg"></div>
   </aside>
-  <details class="notes"><summary>패치노트 · v0.1 (build 22)</summary>
+  <details class="notes"><summary>패치노트 · v0.1 (build 23)</summary>
+   <b>2026-10-20 · v0.1 build 23 · 어둠 없애기, 장애물 또렷하게</b>
+   <ul><li>갑자기 불이 꺼지는 돌발 사건을 없앴어요</li><li>장애물 달리기: 허들은 부딪히는 칸 그대로 크고 또렷하게, 진흙은 노란 점선 테두리로 그려서 위치가 확실해요</li><li>진흙에 느려지는 범위를 그림과 똑같이 맞췄어요</li></ul>
    <b>2026-10-20 · v0.1 build 22 · 시작 화면 개편</b>
    <ul><li>시작 화면을 다른 게임처럼 바꿨어요: 제목은 가운데 크게, 오른쪽에 방 만들기, 혼자 하기, 상점 버튼</li><li>상점에서 얼굴, 모자, 안경, 춤을 사고 고를 수 있어요</li><li>방 만들기에서 봇 추가 기능을 없앴어요 (혼자 하기에서는 봇과 해요)</li><li>약 올리는 승리 춤 2종 추가 (dC로 구매): 약 올리기 춤(메롱, 이마에 L, 우는 척하다 비웃기), 엉덩이 바이바이</li></ul>
    <b>2026-10-20 · v0.1 build 21 · 허브 방 초대</b>
@@ -558,7 +560,7 @@ body.playing #emoBar{display:flex}
    <ul><li>무너지는 발판 칸 수 대폭 증가 (19×10)와 용암 동굴 맵</li><li>10개 맵 전부 새로 그림 (관중석, 야자수 섬, 링, 정원 미로, 서커스, 우노 테이블 등)</li><li>글자 대신 아이콘·말풍선·이펙트로 표현 (무기, 아이템, 카드 효과, 시작 안내)</li><li>타격·폭발·물보라 효과와 화면 흔들림 추가</li></ul>
    <b>2026-10-19 · v0.1 build 1 · 첫 시험판</b>
    <ul><li>마네킹 미니게임 10개 추가 (장애물 달리기, 섬 밀치기, 싸우기, 병맛 미로, 체스 대난투, 폭탄 돌리기, 병맛 우노, 쇼윈도 얼음땡, 무너지는 발판, 컨베이어 서바이벌)</li><li>방 코드로 최대 8명 멀티플레이, 빈자리는 봇으로 채우기</li><li>판마다 10개 중 5개를 무작위로 골라 점수를 합산</li><li>PC 키보드와 휴대폰 터치 조작 지원</li></ul></details>
-  <p class="foot">2~8명 · 판마다 23개 미니게임 중 7개 · 프로토타입 v0.1 b22 · <a href="../">← 프로토타입 목록</a></p>
+  <p class="foot">2~8명 · 판마다 23개 미니게임 중 7개 · 프로토타입 v0.1 b23 · <a href="../">← 프로토타입 목록</a></p>
   <p class="foot"><span class="ff-copy">© 2026 Frenchfries777 · <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.ko" target="_blank" rel="noopener">CC BY-NC-ND 4.0</a></span></p>
  </div>
 </section>
@@ -1261,7 +1263,7 @@ function animP(p, dt, moving) { p.walk = (p.walk || 0) + dt * 13 * (moving ? 1 :
         // 장애물
         if (p.stun <= 0) s.obs.forEach(function (o) {
           if (o.k === 'h' && Math.abs(p.x - o.x) < 15 && Math.abs(p.y - o.y) < 30 && p.z < 24) { p.stun = 0.8; p.x -= 24; fx(s, 'hit', p.x, p.y - 20); }
-          else if (o.k === 'm' && dist(p.x, p.y, o.x, o.y) < 42 && p.z < 6) { p.slow = Math.max(p.slow, 0.5); }
+          else if (o.k === 'm' && Math.pow((p.x - o.x) / 44, 2) + Math.pow((p.y - o.y) / 18, 2) < 1 && p.z < 6) { p.slow = Math.max(p.slow, 0.5); }
         });
         for (var b = s.ban.length - 1; b >= 0; b--) { var bn = s.ban[b]; if (bn.by !== id && p.z < 10 && dist(p.x, p.y, bn.x, bn.y) < 20 && p.stun <= 0) { p.stun = 1.1; s.ban.splice(b, 1); fx(s, 'squeak', p.x, p.y - 30); } }
         // 바나나 던지기
@@ -3595,12 +3597,15 @@ DP.MG.hurdle.draw = function (ctx, s, v) {
   var items = [];
   s.obs.forEach(function (o) { if (o.x > cam - 60 && o.x < cam + W + 60) items.push({ y: o.y, d: function () {
     if (o.k === 'h') {
-      ctx.fillStyle = 'rgba(0,0,0,.25)'; ctx.beginPath(); ctx.ellipse(o.x + 4, o.y + 4, 9, 30, 0, 0, 6.283); ctx.fill();
-      ctx.fillStyle = '#f5f5f5'; ctx.fillRect(o.x - 3, o.y - 28, 5, 14); ctx.fillRect(o.x - 3, o.y + 14, 5, 14);
-      for (var q = 0; q < 6; q++) { ctx.fillStyle = q % 2 ? '#fff' : '#e8463a'; ctx.fillRect(o.x - 5, o.y - 26 + q * 9 - 14, 10, 9); }
-      ctx.strokeStyle = 'rgba(0,0,0,.3)'; ctx.lineWidth = 1; ctx.strokeRect(o.x - 5, o.y - 40, 10, 54);
+      // 허들: 부딪히는 칸(가로 30, 세로 60)을 그대로 그려요. 점프로 넘어요
+      var hx = o.x - 15, hy = o.y - 30, pulse = 0.5 + 0.5 * Math.sin(v.t * 6);
+      ctx.fillStyle = 'rgba(255,235,60,' + (0.28 + 0.2 * pulse) + ')'; ctx.fillRect(hx - 6, hy - 4, 42, 68);
+      ctx.fillStyle = 'rgba(0,0,0,.3)'; ctx.fillRect(hx + 4, hy + 6, 30, 60);
+      for (var q = 0; q < 6; q++) { ctx.fillStyle = q % 2 ? '#fff' : '#e8463a'; ctx.fillRect(hx, hy + q * 10, 30, 10); }
+      ctx.strokeStyle = '#222'; ctx.lineWidth = 3; ctx.strokeRect(hx, hy, 30, 60);
+      ctx.fillStyle = '#222'; ctx.fillRect(hx - 3, hy - 4, 6, 8); ctx.fillRect(hx + 27, hy - 4, 6, 8); ctx.fillRect(hx - 3, hy + 56, 6, 8); ctx.fillRect(hx + 27, hy + 56, 6, 8);
     } else {
-      ctx.fillStyle = '#5a3a1c'; ctx.beginPath(); ctx.ellipse(o.x, o.y, 44, 17, 0, 0, 6.283); ctx.fill(); ctx.fillStyle = '#7a5028'; ctx.beginPath(); ctx.ellipse(o.x - 3, o.y - 2, 36, 12, 0, 0, 6.283); ctx.fill();
+      ctx.fillStyle = '#4a2c12'; ctx.beginPath(); ctx.ellipse(o.x, o.y, 46, 20, 0, 0, 6.283); ctx.fill(); ctx.strokeStyle = '#ffd23f'; ctx.lineWidth = 3; ctx.setLineDash([8, 6]); ctx.beginPath(); ctx.ellipse(o.x, o.y, 46, 20, 0, 0, 6.283); ctx.stroke(); ctx.setLineDash([]); ctx.fillStyle = '#7a5028'; ctx.beginPath(); ctx.ellipse(o.x - 3, o.y - 2, 36, 13, 0, 0, 6.283); ctx.fill();
       ctx.strokeStyle = 'rgba(255,255,255,.25)'; ctx.lineWidth = 2; ctx.beginPath(); ctx.ellipse(o.x - 6, o.y - 3, 20 + Math.sin(v.t * 3 + o.x) * 3, 6, 0, 0, 6.283); ctx.stroke();
       ctx.fillStyle = 'rgba(160,110,60,.9)'; ctx.beginPath(); ctx.arc(o.x + 14 + Math.sin(v.t * 2 + o.y) * 2, o.y - 4, 3, 0, 6.283); ctx.arc(o.x - 16, o.y + 2, 2.4, 0, 6.283); ctx.fill();
     } } }); });
@@ -4227,7 +4232,7 @@ function evTick(def, dt) {
   var st = G.st; if (!st) return; if (!st._ev) st._ev = [];
   G.evT += dt;
   if (G.evT > G.evNext && G.evN < 3 && st._ev.length === 0 && (def.time - (G.tl || 0)) < def.time - 4 && G.tl > 9) {
-    var kinds = ['piano', 'tilt', 'dark'].filter(function (k) { return EV_OK[k].indexOf(G.mgId) >= 0; });
+    var kinds = ['piano', 'tilt'].filter(function (k) { return EV_OK[k].indexOf(G.mgId) >= 0; });
     if (kinds.length) {
       var k = kinds[Math.floor(Math.random() * kinds.length)], e = { k: k, x: 480, y: 270, t: 0, dur: k === 'piano' ? 2.6 : (k === 'tilt' ? 4.2 : 4.6), dir: Math.random() < 0.5 ? -1 : 1, hit: 0 };
       if (k === 'piano' && st.pl && st.ids) { var al = st.ids.filter(function (id) { return st.pl[id] && !st.pl[id].out && typeof st.pl[id].x === 'number'; }); if (al.length) { var tp = st.pl[al[Math.floor(Math.random() * al.length)]]; e.x = Math.round(tp.x + (Math.random() - 0.5) * 70); e.y = Math.round(tp.y + (Math.random() - 0.5) * 50); } }
