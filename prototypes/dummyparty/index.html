@@ -268,6 +268,17 @@
     '모자': ['hat', 'sombrero', 'chapeau', 'Hut', '帽子'],
     '안경': ['glasses', 'gafas', 'lunettes', 'Brille', 'メガネ'],
     /* 빌드 25 추가분 */
+    "오프라인으로 하기": ["Play offline", "Jugar sin conexión", "Jouer hors ligne", "Offline spielen", "オフラインで遊ぶ"],
+    "오프라인 · 혼자 하기만 할 수 있어요": ["Offline · solo play only", "Sin conexión · solo modo individual", "Hors ligne · jeu solo uniquement", "Offline · nur Solo-Spiel möglich", "オフライン · ひとりで遊ぶのみ"],
+    "로그인하거나 오프라인으로 하기를 눌러 주세요.": ["Log in or press Play offline.", "Inicia sesión o pulsa Jugar sin conexión.", "Connectez-vous ou appuyez sur Jouer hors ligne.", "Melde dich an oder tippe auf Offline spielen.", "ログインするか「オフラインで遊ぶ」を押してください。"],
+    "방 만들기와 친구 방은 로그인해야 해요.": ["Creating or joining a room requires logging in.", "Crear o unirse a una sala requiere iniciar sesión.", "Créer ou rejoindre un salon nécessite une connexion.", "Für Räume ist eine Anmeldung nötig.", "ルームの作成・参加にはログインが必要です。"],
+    "로그인 필요": ["Login required", "Requiere inicio de sesión", "Connexion requise", "Anmeldung nötig", "ログインが必要"],
+    "로그인해야 살 수 있어요": ["log in to buy", "inicia sesión para comprar", "connectez-vous pour acheter", "zum Kaufen anmelden", "ログインすると買えます"],
+    "방장이 나갔어요. 새 방장을 정하는 중이에요...": ["The host left. Choosing a new host...", "El anfitrión se fue. Eligiendo nuevo anfitrión...", "L'hôte est parti. Choix d'un nouvel hôte...", "Der Host ist weg. Neuer Host wird bestimmt...", "ホストが退出しました。新しいホストを決めています..."],
+    "이제 내가 방장이에요.": ["You are the host now.", "Ahora eres el anfitrión.", "Vous êtes maintenant l'hôte.", "Du bist jetzt der Host.", "あなたが新しいホストです。"],
+    "방장이 바뀌었어요.": ["The host has changed.", "El anfitrión ha cambiado.", "L'hôte a changé.", "Der Host hat gewechselt.", "ホストが交代しました。"],
+    "방장이 나가서 이어갈 수 없어요.": ["The host left and the game can't continue.", "El anfitrión se fue y no se puede continuar.", "L'hôte est parti, impossible de continuer.", "Der Host ist weg, das Spiel kann nicht fortgesetzt werden.", "ホストが退出したため続行できません。"],
+    "방장을 이어받지 못했어요.": ["Couldn't take over as host.", "No se pudo asumir como anfitrión.", "Impossible de devenir hôte.", "Host-Übernahme fehlgeschlagen.", "ホストを引き継げませんでした。"],
     "경기 우승": ["Match Wins", "Partidas ganadas", "Parties gagnées", "Spielsiege", "試合優勝"],
     "라운드 1등": ["Round Wins", "Rondas ganadas", "Manches gagnées", "Rundensiege", "ラウンド1位"],
     "경기 수": ["Matches", "Partidas", "Parties", "Spiele", "試合数"],
@@ -1117,6 +1128,7 @@ body.playing #emoBar{display:flex}
   <aside class="menuR">
    <div class="acctLine" id="acctLine"></div>
    <button class="pb ghost" id="loginBtn" style="display:none">Frenchfries777 계정으로 로그인</button>
+   <button class="pb ghost" id="offBtn" style="display:none">오프라인으로 하기</button>
    <input id="nameIn" type="hidden">
    <button class="pb gold" id="hostBtn">방 만들기</button>
    <button class="pb" id="soloBtn">혼자 하기</button>
@@ -1125,7 +1137,9 @@ body.playing #emoBar{display:flex}
    <div class="row"><input id="codeIn" maxlength="5" placeholder="방 코드" autocomplete="off"><button class="pb dark" id="joinBtn" style="flex:0 0 auto">들어가기</button></div>
    <div class="msg" id="homeMsg"></div>
   </aside>
-  <template id="patchnotes"><details class="notes" open><summary>패치노트 · v0.1 (build 32)</summary>
+  <template id="patchnotes"><details class="notes" open><summary>패치노트 · v0.1 (build 33)</summary>
+   <b>2026-10-21 · v0.1 build 33 · 방장 이어받기, 오프라인, 최적화</b>
+   <ul><li>방장이 나가면 남은 사람 중 먼저 들어온 사람이 새 방장이 돼요 (진행 중인 판은 처음부터 다시 시작하고, 점수는 그대로예요)</li><li>로그인하지 않으면 로그인 아래에 "오프라인으로 하기" 버튼이 나와요. 오프라인에서는 혼자 하기만 되고 상점 구매는 안 돼요</li><li>사람이 많은 방에서 네트워크로 보내는 양을 줄이고, 폰 화면 그리기 부담을 줄였어요</li></ul>
    <b>2026-10-20 · v0.1 build 32 · 오류·표기 정리</b>
    <ul><li>의자 뺏기 다음 판으로 넘어갈 때 나던 오류 수정</li><li>시상식 위에 "8 / 7"이 나오던 표시 제거</li><li>폰 세로 화면에서 가로로 돌려 달라는 안내 추가</li><li>이름표끼리 겹치면 위로 비켜 서요, 가위바위보 말풍선이 이름표를 가리지 않아요</li><li>홈 기록 칩에 이름 추가 (경기 우승, 라운드 1등, 경기 수)</li><li>"어차피 다 하얗습니다" 외국어 번역 수정</li></ul>
    <b>2026-10-20 · v0.1 build 31 · 해설 멘트 추가</b>
@@ -1188,7 +1202,7 @@ body.playing #emoBar{display:flex}
    <ul><li>무너지는 발판 칸 수 대폭 증가 (19×10)와 용암 동굴 맵</li><li>10개 맵 전부 새로 그림 (관중석, 야자수 섬, 링, 정원 미로, 서커스, 우노 테이블 등)</li><li>글자 대신 아이콘·말풍선·이펙트로 표현 (무기, 아이템, 카드 효과, 시작 안내)</li><li>타격·폭발·물보라 효과와 화면 흔들림 추가</li></ul>
    <b>2026-10-19 · v0.1 build 1 · 첫 시험판</b>
    <ul><li>마네킹 미니게임 10개 추가 (장애물 달리기, 섬 밀치기, 싸우기, 병맛 미로, 체스 대난투, 폭탄 돌리기, 병맛 우노, 쇼윈도 얼음땡, 무너지는 발판, 컨베이어 서바이벌)</li><li>방 코드로 최대 8명 멀티플레이, 빈자리는 봇으로 채우기</li><li>판마다 10개 중 5개를 무작위로 골라 점수를 합산</li><li>PC 키보드와 휴대폰 터치 조작 지원</li></ul></details></template>
-  <p class="foot">2~8명 · 판마다 24개 미니게임 중 7개 · 프로토타입 v0.1 b32 · <a href="../">← 프로토타입 목록</a></p>
+  <p class="foot">2~8명 · 판마다 24개 미니게임 중 7개 · 프로토타입 v0.1 b33 · <a href="../">← 프로토타입 목록</a></p>
   <p class="foot"><span class="ff-copy">© 2026 Frenchfries777 · <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.ko" target="_blank" rel="noopener">CC BY-NC-ND 4.0</a></span></p>
  </div>
 </section>
@@ -5171,7 +5185,7 @@ function animMinis() {
 }
 /* 단계가 바뀔 때 한 번만 */
 function funPhase(m, ph) {
-  var now = performance.now(), me = G.role === 'guest' ? G.me : 'p0';
+  var now = performance.now(), me = G.me;
   if (ph === 'intro') { G.poseSaved = {}; RPL.buf = []; POSEO = {}; LOST = {}; FUNS.limbs = []; FUNS.fly = []; HITQ = []; FUNS.mood = 0; say('intro', true); if (m.boost && Object.keys(m.boost).length) setTimeout(function () { say('boost', true); }, 3500); }
   else if (ph === 'count') { POSEO = {}; say('g_' + m.mg, true); }
   else if (ph === 'play') { POSEO = {}; FUNS.cm.idle = now; }
@@ -5327,18 +5341,21 @@ function destroyPeer() { G._hr = null; hubRoom(false); if (G.peer) { try { G.pee
 function homeMsg(t, info) { var m = $('homeMsg'); m.textContent = t || ''; m.className = 'msg' + (info ? ' info' : ''); }
 function busy(on) { ['hostBtn', 'joinBtn', 'soloBtn'].forEach(function (id) { $(id).disabled = on; }); }
 
-function startHost(name, tries) {
-  if (!window.Peer) { homeMsg('연결 도구를 불러오지 못했어요. 인터넷 연결을 확인하고 새로고침하세요.'); return; }
-  tries = tries || 0; busy(true); homeMsg('방을 만드는 중...', true); destroyPeer();
-  G.role = 'host'; G.name = name; G.code = newCode();
-  var p = new Peer(PREFIX + G.code, peerOpts()); G.peer = p;
-  p.on('open', function () { busy(false); homeMsg(''); initLobby(); });
+function hostPeerHooks(p) {
   p.on('connection', function (conn) {
     conn.on('data', function (d) { hostMsg(conn, d); });
     conn.on('close', function () { dropConn(conn); });
     conn.on('error', function () { dropConn(conn); });
   });
   p.on('disconnected', function () { if (G.peer === p && !p.destroyed) setTimeout(function () { if (G.peer === p && !p.destroyed) p.reconnect(); }, 1000); });
+}
+function startHost(name, tries) {
+  if (!window.Peer) { homeMsg('연결 도구를 불러오지 못했어요. 인터넷 연결을 확인하고 새로고침하세요.'); return; }
+  tries = tries || 0; busy(true); homeMsg('방을 만드는 중...', true); destroyPeer();
+  G.role = 'host'; G.name = name; G.code = newCode(); G.gen = 0;
+  var p = new Peer(PREFIX + G.code, peerOpts()); G.peer = p;
+  p.on('open', function () { busy(false); homeMsg(''); initLobby(); });
+  hostPeerHooks(p);
   p.on('error', function (err) {
     if (G.peer !== p) return;
     if (err.type === 'unavailable-id' && tries < 5) { startHost(name, tries + 1); return; }
@@ -5353,13 +5370,14 @@ function startGuest(name, code) {
   var tm = setTimeout(function () { if (G.peer === p && G.phase === 'idle') { homeMsg('연결 시간이 초과됐어요. 코드를 확인하고 다시 해 보세요.'); busy(false); destroyPeer(); } }, 15000);
   p.on('open', function () {
     var c = p.connect(PREFIX + code, { reliable: true }); G.conn = c;
-    c.on('open', function () { c.send({ t: 'hello', name: name, h: myDeco().h, g: myDeco().g, f: myDeco().f, d: myDeco().d }); });
+    c.on('open', function () { G.lastRx = performance.now(); c.send({ t: 'hello', name: name, h: myDeco().h, g: myDeco().g, f: myDeco().f, d: myDeco().d }); });
     c.on('data', function (d) { clearTimeout(tm); guestMsg(d); });
-    c.on('close', function () { if (G.role === 'guest' && G.phase !== 'idle') { toast('방장과 연결이 끊겼어요.'); goHome(); } });
+    c.on('close', function () { if (G.conn === c && G.role === 'guest' && G.phase !== 'idle') migStart(); });
   });
   p.on('error', function (err) {
     if (G.peer !== p) return;
     clearTimeout(tm);
+    if (G.mig && err.type === 'peer-unavailable') { if (G.mig.fail) G.mig.fail(true); return; }
     if (G.phase === 'idle') { homeMsg(err.type === 'peer-unavailable' ? '그 코드의 방이 없어요. 코드를 확인하세요.' : '연결하지 못했어요 (' + err.type + ').'); busy(false); destroyPeer(); }
   });
 }
@@ -5379,6 +5397,12 @@ function hostMsg(conn, d) {
     sendMeta(); renderLobby(); SFX.play('pop');
     return;
   }
+  if (d.t === 'rejoin') {
+    var rp = getP(d.id);
+    if (!rp || rp.id === G.me || G.conns[rp.id] || !rp.lost) { conn.send({ t: 'deny', why: '방장이 나가서 이어갈 수 없어요.' }); setTimeout(function () { conn.close(); }, 300); return; }
+    rp.bot = false; rp.lost = false; rp.name = rp.rn || rp.name; conn._pid = rp.id; G.conns[rp.id] = conn;
+    conn.send({ t: 'welcome', id: rp.id }); sendMeta(); renderLobby(); return;
+  }
   var pid = conn._pid; if (!pid) return;
   if (d.t === 'e') { doEmote(pid, d.e | 0); return; }
   if (d.t === 'i') { var r = G.raw[pid] || (G.raw[pid] = { acts: [] }); r.mx = clamp(+d.mx || 0, -1, 1); r.my = clamp(+d.my || 0, -1, 1); r.a = !!d.a; r.b = !!d.b; r.ac = d.ac | 0; r.bc = d.bc | 0; }
@@ -5391,10 +5415,87 @@ function dropConn(conn) {
   else { pl.online = false; pl.bot = true; pl.name += ' (봇)'; toast(pl.name.replace(' (봇)', '') + '님이 나가서 봇이 대신해요.'); }
   sendMeta(); renderLobby();
 }
+
+/* ---------- 방장 이어받기: 방장이 나가면 남은 사람 중 첫 번째가 방장이 돼요 ---------- */
+function migIds() {
+  var m = G.meta; if (!m) return [];
+  return m.players.filter(function (p) { return !p.bot && p.id !== m.hostId; }).map(function (p) { return p.id; });
+}
+function migId(gen, k) { return PREFIX + G.code + '-m' + gen + 'c' + k; }
+function migStart() {
+  if (G.role !== 'guest' || G.phase === 'idle' || G.mig || !G.meta) return;
+  var ids = migIds(), my = ids.indexOf(G.me);
+  if (my < 0 || !G.code) { toast('방장과 연결이 끊겼어요.'); goHome(); return; }
+  G.mig = { gen: (G.meta.gen | 0) + 1, ids: ids, my: my, k: 0 };
+  toast('방장이 나갔어요. 새 방장을 정하는 중이에요...');
+  var old = G.conn; G.conn = null; try { if (old) old.close(); } catch (e) { }
+  migStep();
+}
+function migStep() {
+  var M = G.mig; if (!M) return;
+  if (M.k >= M.my) { migBecomeHost(); return; }
+  var p = G.peer, done = false, c = null, until = performance.now() + 8000;
+  function fail(quick) {
+    if (done || G.mig !== M) return;
+    if (quick && performance.now() < until) { setTimeout(function () { if (!done && G.mig === M) attempt(); }, 1200); return; }
+    done = true; try { if (c) c.close(); } catch (e) { }
+    M.k++; migStep();
+  }
+  function attempt() {
+    try { if (c) c.close(); } catch (e) { }
+    try { if (p.disconnected) p.reconnect(); c = p.connect(migId(M.gen, M.k), { reliable: true }); } catch (e) { fail(false); return; }
+    var mine = c;
+    c.on('open', function () {
+      if (done || G.mig !== M) return; done = true;
+      G.conn = mine; G.lastRx = performance.now();
+      mine.on('data', function (d) { guestMsg(d); });
+      mine.on('close', function () { if (G.conn === mine && G.role === 'guest' && G.phase !== 'idle') migStart(); });
+      mine.send({ t: 'rejoin', id: G.me });
+    });
+    c.on('error', function () { if (c === mine) fail(true); });
+  }
+  M.fail = fail; attempt();
+  setTimeout(function () { if (!done && G.mig === M) fail(false); }, 16000);
+}
+function migBecomeHost() {
+  var M = G.mig, m = G.meta; if (!M || !m) { goHome(); return; }
+  var newId = migId(M.gen, M.my);
+  destroyPeer(); G.role = 'host'; G.gen = M.gen;
+  var p = new Peer(newId, peerOpts()); G.peer = p;
+  p.on('open', function () {
+    G.mig = null; G.conns = {}; G.raw = {}; G.lastC = {}; G.frame = 0; G._hr = G.code;
+    G.players = m.players.filter(function (q) { return !(m.phase === 'lobby' && q.id === m.hostId); }).map(function (q) {
+      var o = { id: q.id, name: q.name, color: q.color, bot: q.bot, online: true, score: q.score | 0, wins: q.wins | 0, h: q.h | 0, g: q.g | 0, f: q.f | 0, d: q.d | 0 };
+      if (q.id !== G.me && !q.bot) { o.lost = true; o.rn = q.name; o.bot = true; if (m.phase !== 'lobby') o.name = q.name + ' (봇)'; }
+      else if (q.id === m.hostId) { o.bot = true; o.name = q.name + ' (봇)'; }
+      return o;
+    });
+    G.order = m.order || []; G.round = m.round | 0; G.boost = m.boost || {}; G.ranking = m.ranking; G.gained = m.gained; G.mgId = m.mg;
+    G.snapPrev = G.snapCur = null; G.bots = 0;
+    if (!G.hostTimer) G.hostTimer = setInterval(hostTick, 1000 / 60);
+    toast('이제 내가 방장이에요.');
+    var ph = m.phase;
+    if (ph === 'lobby') {
+      G.phase = 'lobby'; show('sLobby'); renderLobby(); sendMeta();
+      setTimeout(function () { if (G.phase === 'lobby' && G.role === 'host') { G.players = G.players.filter(function (q) { return !q.lost; }); sendMeta(); renderLobby(); } }, 12000);
+    } else if (ph === 'final') {
+      G.phase = 'final'; G.tl = 0; sendMeta(); onPhase('result');
+    } else if ((ph === 'end' || ph === 'result') && G.ranking) {
+      var def = DP.MG[G.mgId]; G.mgRng = mkRng((Math.random() * 4e9) >>> 0); G.st = def.init(mgPlayers(), G.mgRng); evReset();
+      setPhase('result', T_RESULT);
+    } else { beginIntro(); }
+  });
+  hostPeerHooks(p);
+  p.on('error', function (err) { if (G.peer !== p) return; toast('방장을 이어받지 못했어요.'); goHome(); });
+}
+setInterval(function () { if (G.role === 'host' && G.phase !== 'idle') for (var k in G.conns) try { G.conns[k].send({ t: 'hb' }); } catch (e) { } }, 2000);
+setInterval(function () { if (G.role === 'guest' && G.phase !== 'idle' && !G.mig && G.lastRx && performance.now() - G.lastRx > 9000) migStart(); }, 1000);
 function guestMsg(d) {
   if (!d || typeof d !== 'object') return;
-  if (d.t === 'deny') { homeMsg(d.why); busy(false); destroyPeer(); G.role = null; return; }
-  if (d.t === 'welcome') { G.me = d.id; busy(false); homeMsg(''); return; }
+  if (d.t === 'deny') { var why = d.why; if (G.phase !== 'idle') goHome(); else { busy(false); destroyPeer(); G.role = null; } homeMsg(why); return; }
+  G.lastRx = performance.now();
+  if (d.t === 'welcome') { G.me = d.id; busy(false); homeMsg(''); if (G.mig) { G.mig = null; toast('방장이 바뀌었어요.'); } return; }
+  if (d.t === 'hb') return;
   if (d.t === 'm') { applyMeta(d.m); return; }
   if (d.t === 'e') { showEmote(d.id, d.e | 0); return; }
   if (d.t === 's') {
@@ -5438,10 +5539,10 @@ function showEmote(pid, e) {
 function sendEmote(e) {
   if (G.phase === 'lobby' || G.phase === 'idle' || G.phase === 'final') return;
   if (G.role === 'guest') { var now = performance.now(); if (now - G.emoAt < 1200) return; G.emoAt = now; showEmote(G.me, e); if (G.conn) try { G.conn.send({ t: 'e', e: e }); } catch (er) { } }
-  else doEmote('p0', e);
+  else doEmote(G.me, e);
 }
 function noteMatchEnd(m) {
-  var me = G.role === 'guest' ? G.me : 'p0', st = myStats(), mp = null, top = -1;
+  var me = G.me, st = myStats(), mp = null, top = -1;
   m.players.forEach(function (p) { if (p.id === me) mp = p; if (p.score > top) top = p.score; });
   if (!mp) return;
   var before = st.rwins; st.matches++; st.rwins += mp.wins; if (mp.score === top && top > 0) st.wins++;
@@ -5484,7 +5585,7 @@ function renderLobby() {
   var ps = host ? G.players : (G.meta ? G.meta.players : []);
   $('lobList').innerHTML = ps.map(function (p) {
     return '<li><canvas class="mini" data-c="' + p.color + '" width="44" height="56"></canvas><span style="color:' + COLORS[p.color] + '">' + esc(p.name) + '</span>' +
-      (p.id === (G.role === 'guest' ? G.me : 'p0') ? ' <em>나</em>' : '') + (p.bot ? ' <em class="bt">봇</em>' : '') + '</li>';
+      (p.id === G.me ? ' <em>나</em>' : '') + (p.bot ? ' <em class="bt">봇</em>' : '') + '</li>';
   }).join('');
   document.querySelectorAll('#lobList canvas.mini').forEach(function (cv) {
     var c = cv.getContext('2d'); c.clearRect(0, 0, 44, 56); drawDummy(c, 22, 54, { s: 0.85, color: COLORS[+cv.dataset.c] });
@@ -5502,7 +5603,7 @@ function metaObj() {
   return {
     phase: G.phase, round: G.round, order: G.order, mg: G.mgId, tl: G.tl,
     players: G.players.map(function (p) { return { id: p.id, name: p.name, color: p.color, bot: p.bot, score: p.score, wins: p.wins, h: p.h || 0, g: p.g || 0, f: p.f || 0, d: p.d || 0 }; }),
-    boost: G.boost,
+    boost: G.boost, hostId: G.me, gen: G.gen | 0,
     ranking: G.ranking, gained: G.gained
   };
 }
@@ -5564,7 +5665,10 @@ function hostTick() {
   }
   // 상태 보내기 (30번/초)
   def = DP.MG[G.mgId];
-  if (G.st && G.frame % 2 === 0) broadcastSnap(def);
+  // 보내는 횟수는 사람 수와 단계에 맞춰요: 사람이 많을수록, 가만히 있는 단계일수록 덜 보내요
+  var live = G.phase === 'play' || G.phase === 'end', nG = G.role === 'host' ? Object.keys(G.conns).length : 0;
+  var every = !live ? 10 : nG >= 6 ? 4 : nG >= 4 ? 3 : 2;
+  if (G.st && G.frame % every === 0) broadcastSnap(def);
   else if (G.st && G.st._fx && G.st._fx.length && G.role === 'solo') broadcastSnap(def);
 }
 function gatherInputs(def) {
@@ -5573,7 +5677,7 @@ function gatherInputs(def) {
     var inp;
     if (p.bot) { inp = def.bot(G.st, p.id, G.mgRng) || emptyInput(); inp.acts = inp.acts || []; inp.ap = !!inp.ap; inp.bp = !!inp.bp; }
     else {
-      var r = p.id === 'p0' ? myRaw() : (G.raw[p.id] || { acts: [] });
+      var r = p.id === G.me ? myRaw() : (G.raw[p.id] || { acts: [] });
       var lc = G.lastC[p.id] || { ac: r.ac || 0, bc: r.bc || 0 };
       inp = { mx: r.mx || 0, my: r.my || 0, a: !!r.a, b: !!r.b, ap: (r.ac || 0) > lc.ac, bp: (r.bc || 0) > lc.bc, acts: r.acts || [] };
       G.lastC[p.id] = { ac: r.ac || 0, bc: r.bc || 0 };
@@ -5594,7 +5698,7 @@ function broadcastSnap(def) {
       try { G.conns[k].send({ t: 's', mg: G.mgId + ':' + G.round, d: s, tl: G.tl }); } catch (e) { }
     }
   }
-  var mine = def.snap(G.st, 'p0'); mine._fx = fxl; mine._ev = G.st._ev || [];
+  var mine = def.snap(G.st, G.me); mine._fx = fxl; mine._ev = G.st._ev || [];
   onFxList(fxl);
   G.snapPrev = null; G.snapCur = { mg: G.mgId + ':' + G.round, d: mine, tl: G.tl }; G.snapAt = performance.now();
 }
@@ -5730,7 +5834,7 @@ function isTouch() { return ('ontouchstart' in window) || navigator.maxTouchPoin
 /* ---------- 그리기 ---------- */
 var CV, CX, SCALE = 1, OFFX = 0, OFFY = 0, BTNS = [], MOUSE = { x: -1, y: -1, on: false };
 function resize() {
-  var dpr = Math.min(window.devicePixelRatio || 1, 2), w = innerWidth, h = innerHeight;
+  var dpr = Math.min(window.devicePixelRatio || 1, isTouch() ? 1.5 : 2), w = innerWidth, h = innerHeight;
   CV.width = Math.round(w * dpr); CV.height = Math.round(h * dpr); CV.style.width = w + 'px'; CV.style.height = h + 'px';
   SCALE = Math.min(w / W, h / H) * dpr; OFFX = (CV.width - W * SCALE) / 2; OFFY = (CV.height - H * SCALE) / 2;
 }
@@ -5761,7 +5865,7 @@ function frame() {
   } else if (def && G.snapCur) {
     var s = G.snapCur.d, tlNow = G.snapCur.tl;
     if (G.role === 'guest' && G.snapPrev) { var f = clamp((now - G.snapAt) / G.snapGap, 0, 1); s = lerpSnap(G.snapPrev.d, G.snapCur.d, f); }
-    else if (G.role !== 'guest' && G.st) { s = def.snap(G.st, 'p0'); tlNow = G.tl; }
+    else if (G.role !== 'guest' && G.st) { s = def.snap(G.st, G.me); tlNow = G.tl; }
     var evl = G.role === 'guest' ? (s._ev || []) : ((G.st && G.st._ev) || []);
     CHM.tick(m, s);
     if (m.phase === 'play') recordSnap(now, s);
@@ -5772,7 +5876,7 @@ function frame() {
     if (SHAKE > 0.2) CX.translate((Math.random() - 0.5) * SHAKE, (Math.random() - 0.5) * SHAKE);
     screenXform(CX, now, m, evl);
     var v = {
-      me: G.role === 'guest' ? G.me : 'p0', t: now / 1000, dt: dt, phase: rep ? 'replay' : m.phase, players: plMap(m.players),
+      me: G.me, t: now / 1000, dt: dt, phase: rep ? 'replay' : m.phase, players: plMap(m.players),
       btn: function (x, y, w, h, act) { if (m.phase === 'play') BTNS.push([x, y, w, h, act]); }
     };
     try { def.draw(CX, rep || s, v); } catch (e) { if (!G._drawErr) { G._drawErr = 1; console.error(e); } }
@@ -5795,7 +5899,7 @@ function frame() {
   if (def) { var tw = def.touch === true || (def.touch === 'duel' && G.snapCur && G.snapCur.d.mode === 'duel'); var on = tw && (m.phase === 'play' || m.phase === 'count') && isTouch(); if ($('touch').classList.contains('on') !== on) $('touch').classList.toggle('on', on); }
   if (m.phase === 'count') { var c = $('cnt'); if (c) { var n = Math.ceil(G.role === 'guest' ? (G.snapCur ? countLeft() : 3) : G.tl); n = clamp(n, 1, 3); if (c.textContent !== String(n)) { c.textContent = n; SFX.play('beep'); } } }
   // 점수 줄
-  var me = m.players.filter(function (p) { return p.id === (G.role === 'guest' ? G.me : 'p0'); })[0];
+  var me = m.players.filter(function (p) { return p.id === G.me; })[0];
   $('hudScore').textContent = me ? me.score + '점' : '';
   animMinis();
 }
@@ -5831,6 +5935,9 @@ function goHome() { destroyPeer(); G.role = null; G.phase = 'idle'; G.st = null;
   document.addEventListener('pointerdown', function () { SFX.unlock(); }, { once: true });
   $('nameIn').value = lsGet('dummyparty.name') || '';
   if (qs.get('room')) $('codeIn').value = qs.get('room').toUpperCase().slice(0, 5);
+  var OFFLINE = false;
+  function loggedIn() { try { return !!(window.FFAuth && FFAuth.user()); } catch (e) { return false; } }
+  function needLogin() { homeMsg('방 만들기와 친구 방은 로그인해야 해요.'); try { FFAuth.openLogin(); } catch (e) { } }
   function needName() { var n = $('nameIn').value.trim(); if (!n) { homeMsg('Frenchfries777 계정으로 로그인해야 해요.'); try { FFAuth.openLogin(); } catch (e) { } return null; } n = cleanName(n); lsSet('dummyparty.name', n); homeMsg(''); return n; }
   $('codeIn').addEventListener('input', function () { this.value = this.value.toUpperCase().replace(/[^A-Z0-9]/g, ''); });
   $('codeIn').addEventListener('keydown', function (e) { if (e.key === 'Enter') $('joinBtn').click(); });
@@ -5841,9 +5948,13 @@ function goHome() { destroyPeer(); G.role = null; G.phase = 'idle'; G.st = null;
   $('botMinus').onclick = function () { if (G.role === 'solo') { G.bots = clamp(G.bots - 1, 1, MAXP - 1); trimBots(); renderLobby(); } };
   $('botPlus').onclick = function () { if (G.role === 'solo') { G.bots = clamp(G.bots + 1, 1, MAXP - 1); trimBots(); renderLobby(); } };
   $('loginBtn').onclick = function () { try { FFAuth.openLogin(); } catch (e) { } };
-  $('hostBtn').onclick = function () { var n = needName(); if (n) startHost(n); };
-  $('soloBtn').onclick = function () { var n = needName(); if (n) startSolo(n); };
-  $('joinBtn').onclick = function () { var n = needName(); if (!n) return; var c = $('codeIn').value.trim().toUpperCase(); if (c.length !== 5) { homeMsg('방 코드 5자리를 입력하세요.'); return; } startGuest(n, c); };
+  $('offBtn').onclick = function () { OFFLINE = true; homeMsg(''); useNickRefresh(); };
+  $('hostBtn').onclick = function () { if (!loggedIn()) { needLogin(); return; } var n = needName(); if (n) startHost(n); };
+  $('soloBtn').onclick = function () {
+    if (!loggedIn()) { if (!OFFLINE) { homeMsg('로그인하거나 오프라인으로 하기를 눌러 주세요.'); return; } homeMsg(''); startSolo('마네킹'); return; }
+    var n = needName(); if (n) startSolo(n);
+  };
+  $('joinBtn').onclick = function () { if (!loggedIn()) { needLogin(); return; } var n = needName(); if (!n) return; var c = $('codeIn').value.trim().toUpperCase(); if (c.length !== 5) { homeMsg('방 코드 5자리를 입력하세요.'); return; } startGuest(n, c); };
   $('lobBack').onclick = goHome;
   $('quitBtn').onclick = function () { if (confirm('게임에서 나가 허브로 돌아갈까요?')) exitHub(); };
   $('exitHub').onclick = exitHub;
@@ -5916,7 +6027,7 @@ function goHome() { destroyPeer(); G.role = null; G.phase = 'idle'; G.st = null;
     else {
       var need = cat[3] && cat[3][i];
       sub = p + 'dC' + (need ? ' · 라운드 1등 ' + need + '번이면 그냥 열려요 (지금 ' + st.rwins + '번)' : '');
-      if (!walClient()) { btn.textContent = '구매 ' + p + 'dC'; btn.className = 'pb dark'; btn.onclick = function () { toast('로그인하면 dC를 모아서 살 수 있어요.'); }; }
+      if (!walClient()) { sub += ' · 로그인해야 살 수 있어요'; btn.textContent = '로그인 필요'; btn.disabled = true; btn.className = 'pb'; }
       else if (!WAL.ready) { btn.textContent = '지갑 불러오는 중'; btn.disabled = true; btn.className = 'pb'; walletRefresh(); }
       else if (WAL.bal < p) { sub += ' · ' + (p - WAL.bal) + 'dC가 모자라요'; btn.textContent = '구매 ' + p + 'dC'; btn.disabled = true; btn.className = 'pb'; }
       else { btn.textContent = '구매 ' + p + 'dC'; btn.onclick = function () { shopBuy(key, name); }; }
@@ -5971,9 +6082,11 @@ function goHome() { destroyPeer(); G.role = null; G.phase = 'idle'; G.st = null;
   (function () {
     function useNick() {
       try { var u = window.FFAuth && FFAuth.user(), n = u && FFAuth.nickname(); if (n) { $('nameIn').value = cleanName(n); lsSet('dummyparty.name', cleanName(n)); }
-        $('acctLine').textContent = n ? n + ' 님 (Frenchfries777 계정)' : 'dC와 꾸미기는 로그인해야 저장돼요'; $('loginBtn').style.display = n ? 'none' : ''; } catch (e) { }
+        $('acctLine').textContent = n ? n + ' 님 (Frenchfries777 계정)' : (OFFLINE ? '오프라인 · 혼자 하기만 할 수 있어요' : 'dC와 꾸미기는 로그인해야 저장돼요'); $('loginBtn').style.display = n ? 'none' : ''; $('offBtn').style.display = (n || OFFLINE) ? 'none' : ''; } catch (e) { }
     }
+    window.useNickRefresh = useNick;
     function hook() { if (!window.FFAuth) return false; FFAuth.ready.then(function () { useNick(); walletRefresh(); autoJoin(); }); FFAuth.onChange(function () { useNick(); walletRefresh(); }); return true; }
+    useNick(); if (!window.FFAuth) { $('loginBtn').style.display = ''; $('offBtn').style.display = ''; }
     if (!hook()) { var tries = 0, iv = setInterval(function () { if (hook() || ++tries > 40) clearInterval(iv); }, 250); }
   })();
   requestAnimationFrame(frame);
