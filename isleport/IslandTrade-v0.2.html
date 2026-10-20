@@ -437,7 +437,7 @@ const TUT=[
  [P('다 자라면 밭을 눌러 수확해요','When it is grown, tap the field to harvest'),s=>s.stats.harvest>=1],
  [P('마을 장터에서 수확한 것을 팔아요','Sell your harvest at the town market'),s=>(s.stats.shop||0)>=1],
  [P('항구에서 배에 짐을 싣고 보내요','Load a ship at the harbor and send it off'),s=>s.stats.sailed>=1]];
-const OUTMAX=12,BUILD=37;
+const OUTMAX=12,BUILD=38;
 const hasB=(s,b)=>s.slots.some(x=>x&&x.b===b);
 const rankOf=e=>{let r=0;RANKS.forEach((x,i)=>{if(e>=x[0])r=i;});return r;};
 /* 업적: id, 이름, 설명, 조건 */
@@ -559,6 +559,10 @@ A('nw1m',P('백만장자','Millionaire'),P('재산 1,000,000 모으기','Reach a
 const CROPK=Object.keys(CROPS),SPEC=['goldbarley','pomegranate','saffron','cloudcotton','seaweed','dragonfruit'],CROPK17=CROPK.filter(c=>!SPEC.includes(c));
 const ACHN={};ACH.forEach(a=>ACHN[a.id]=a);
 const NOTES=[
+ {date:'2026-10-20',build:'v0.2 build 38',title:P('사진 모드','Photo mode'),items:[
+  P('P 키를 누르거나 집에서 "사진 찍기"를 고르면 지금 화면을 사진으로 찍어요. 사진은 앨범에 열두 장까지 모여요','Press P or choose Take a photo at home to snap the screen; the album keeps up to twelve'),
+  P('분수 광장, 시계탑, 호수, 기차역, 등대, 박물관, 항구 앞에서 처음 찍으면 금화 보너스를 받아요','The first photo at the fountain plaza, clock tower, lake, station, lighthouse, museum or harbor earns a gold bonus')
+ ]},
  {date:'2026-10-20',build:'v0.2 build 37',title:P('친구 초대로 바로 입장','Join friends from invites'),items:[
   P('방을 열거나 들어가면 허브 친구들에게 방이 보이고, 초대 알림을 누르면 이 게임이 열리면서 그 방에 바로 들어가요','Open or join a room and hub friends can see it; tapping an invite opens the game and joins that room'),
  ]},
@@ -11675,7 +11679,7 @@ function fishCatch(q){const sn=season(),rn=weather()==='rain',x=q==='perfect'?2:
   if(id==='boot'){const g=6*x;S.money+=g;return {id,txt:T('낡은 장화를 건졌어요. 고물값 {0}','You hooked an old boot. Scrap {0}',g)};}
   if(id==='chest'){const g=Math.round((120+Math.random()*200)*x);S.money+=g;sfx('ach');return {id,txt:T('가라앉은 보물 상자를 건졌어요! +{0}','A sunken chest! +{0}',g)};}
   const a=addInv(id,n);if(id==='pearl')sfx('ach');return {id,txt:a>0?T('{0} {1}개를 낚았어요','Caught {0} x{1}',GN(id),a):T('창고가 가득 차서 놓쳤어요','Warehouse full, lost it')};}
-function ensureBank(s){if(s.dep==null)s.dep=0;if(!s.stk){const p={},h={};STK.forEach(x=>{p[x.id]=x.base;h[x.id]=[x.base];});s.stk={t:NOW(),p,h,hold:{}};}const k=s.stk;if(!k.drift)k.drift={};if(!k.mom)k.mom={};if(!k.news)k.news=[];if(!s.ins)s.ins={until:0,auto:0};if(s.paper===undefined)s.paper=null;if(!s.hill)s.hill=Array(HN).fill(0);while(s.plots.length<48+HN)s.plots.push(null);while(s.own.length<48+HN)s.own.push(0);if(!s.chal)s.chal={n:0,slots:[null,null,null]};if(!s.dn)s.dn={lv:1,rep:0,orders:[],stock:{},cook:null,next:0,served:0};if(!s.mu)s.mu={don:{},till:0,t:0};if(!s.npc)s.npc={};if(!s.story)s.story={ch:0,st:'new',end:0,pick:{}};if(!s.prov)s.prov={};if(!s.post)s.post={ord:[],snt:[],n:0,acc:0};if(!s.shops)s.shops={rest:{ord:[],acc:0,n:0,rep:0},bake:{ord:[],acc:0,n:0,rep:0}};if(!s.vol)s.vol={ore:{},gl:0};if(!s.fest)s.fest={p:-1,tr:0,last:null};if(!s.re)s.re={l:Array(8).fill(-2),till:0};if(!s.gd)s.gd={m:0,pt:0,q:[],n:0,acc:0};if(!s.inn)s.inn={lv:1,g:[],till:0,rep:0,served:0,acc:0};if(!s.mine)s.mine={ore:{stone:0,iron:0,copper:0,gem:0},ing:{iron:0,copper:0},pick:0};}
+function ensureBank(s){if(s.dep==null)s.dep=0;if(!s.stk){const p={},h={};STK.forEach(x=>{p[x.id]=x.base;h[x.id]=[x.base];});s.stk={t:NOW(),p,h,hold:{}};}const k=s.stk;if(!k.drift)k.drift={};if(!k.mom)k.mom={};if(!k.news)k.news=[];if(!s.ins)s.ins={until:0,auto:0};if(s.paper===undefined)s.paper=null;if(!s.hill)s.hill=Array(HN).fill(0);while(s.plots.length<48+HN)s.plots.push(null);while(s.own.length<48+HN)s.own.push(0);if(!s.chal)s.chal={n:0,slots:[null,null,null]};if(!s.dn)s.dn={lv:1,rep:0,orders:[],stock:{},cook:null,next:0,served:0};if(!s.mu)s.mu={don:{},till:0,t:0};if(!s.npc)s.npc={};if(!s.photos)s.photos=[];if(!s.pspots)s.pspots={};if(!s.story)s.story={ch:0,st:'new',end:0,pick:{}};if(!s.prov)s.prov={};if(!s.post)s.post={ord:[],snt:[],n:0,acc:0};if(!s.shops)s.shops={rest:{ord:[],acc:0,n:0,rep:0},bake:{ord:[],acc:0,n:0,rep:0}};if(!s.vol)s.vol={ore:{},gl:0};if(!s.fest)s.fest={p:-1,tr:0,last:null};if(!s.re)s.re={l:Array(8).fill(-2),till:0};if(!s.gd)s.gd={m:0,pt:0,q:[],n:0,acc:0};if(!s.inn)s.inn={lv:1,g:[],till:0,rep:0,served:0,acc:0};if(!s.mine)s.mine={ore:{stone:0,iron:0,copper:0,gem:0},ing:{iron:0,copper:0},pick:0};}
 const depCap=()=>loanMax()*3;
 function stkStep(){const k=S.stk;STK.forEach(x=>{let p=k.p[x.id];const z=Math.random()+Math.random()+Math.random()-1.5;let r=z*x.vol+Math.log(x.base/p)*0.02;{const dr=k.drift[x.id];if(dr&&dr.until>NOW())r+=dr.d*0.005;const mo=k.mom[x.id]||0;r+=mo;k.mom[x.id]=mo*0.85;}if(Math.random()<0.012)r+=(Math.random()<0.5?-1:1)*0.1;p=Math.max(x.base*0.35,Math.min(x.base*3,p*Math.exp(r)));k.p[x.id]=p;const h=k.h[x.id];h.push(p);if(h.length>40)h.shift();});}
 const GSTK=(()=>{const m={};const L={grain:['wheat','potato','corn','carrot','rice','sugarcane','flour','bread'],orch:['apple','tomato','pumpkin','strawberry','pepper','olive','pie','jam','sauce','oil'],wine:['grape','wine','rum','mead','sake'],tex:['cotton','wool','cloth','clothes','fine','silk','dyedcloth','hanbok','cloudcotton'],fish:['fish','canned','sushi','pearl','seaweed','coral']};for(const k in L)L[k].forEach(g=>m[g]=k);return m;})();
@@ -12799,7 +12803,7 @@ function activate(o){const sx=(PL.x-Math.round(CAM.x))*SC,sy=(PL.y-12-Math.round
   else if(o.k==='hlight'){toast(T('밤마다 불을 밝혀 배들이 길을 찾아요','It lights up each night to guide the ships'));}
   else if(o.k==='slot')popSlot(o.i,sx,sy);else if(o.k==='vis')popVisitor(sx,sy);else if(o.k==='harbor')popHarbor(sx,sy);
   else if(o.k==='deco'){const d=S.deco[o.i];if(d)popList(tx(DECO[d.k].n),[[T('치우기','Pick up'),'+'+Math.floor(DECO[d.k].cost/2)+UG(),()=>{removeDeco(o.i);updateHud();}]],sx,sy);}
-  else if(o.k==='home'){const it=[[T('꾸미기','Decorate'),S.deco.length+'/'+DECOMAX,()=>openModal('deco')],hasT('hire')?[T('일꾼 고용','Hire workers'),S.wk+'/'+WKMAX,()=>openModal('crew')]:null,[T('통계','Stats'),'',()=>openModal('stats')],[T('업적','Goals'),'',()=>openModal('ach')],[T('도감','Codex'),'',()=>openModal('codex')],[T('계정','Account'),UID?(UNAME||''):'',()=>openModal('login')],[T('설정','Settings'),'',()=>openModal('settings')],[T('하는 법','How to play'),'',()=>openModal('help')],[T('다른 섬과 연결','Connect to others'),MP.on?T('연결됨','On'):'',()=>openModal('mp')],[T('처음으로','Title'),'',()=>ACT.menu()]].filter(Boolean);popList(T('집','Home'),it,sx,sy);}
+  else if(o.k==='home'){const it=[[T('꾸미기','Decorate'),S.deco.length+'/'+DECOMAX,()=>openModal('deco')],hasT('hire')?[T('일꾼 고용','Hire workers'),S.wk+'/'+WKMAX,()=>openModal('crew')]:null,[T('사진 찍기','Take a photo'),'P',()=>takePhoto()],[T('사진 앨범','Photo album'),S.photos.length+'/'+PHMAX,()=>openModal('album')],[T('통계','Stats'),'',()=>openModal('stats')],[T('업적','Goals'),'',()=>openModal('ach')],[T('도감','Codex'),'',()=>openModal('codex')],[T('계정','Account'),UID?(UNAME||''):'',()=>openModal('login')],[T('설정','Settings'),'',()=>openModal('settings')],[T('하는 법','How to play'),'',()=>openModal('help')],[T('다른 섬과 연결','Connect to others'),MP.on?T('연결됨','On'):'',()=>openModal('mp')],[T('처음으로','Title'),'',()=>ACT.menu()]].filter(Boolean);popList(T('집','Home'),it,sx,sy);}
   else if(o.k==='barn')popList(T('창고','Warehouse'),[[T('창고','Warehouse'),'',()=>openModal('wh')],[T('창고 늘리기','Expand warehouse'),(S.whUp||0)>=WHMAX?T('최대','Max'):fmt(whCost())+UG(),()=>{openModal('wh');}],].concat(hasT('reapall')?[[T('모두 수확','Collect all'),'',()=>{harvestAll();}]]:[]),sx,sy);
   else if(o.k==='lab')popList(T('연구','Research'),[[T('연구','Research'),'',()=>openModal('tech')]],sx,sy);
   else if(o.k==='bank')popList(T('은행·계약','Bank & contracts'),[[T('계약','Contracts'),String(S.contracts.length),()=>openModal('contracts')],[T('은행','Bank'),'',()=>openModal('bank')]],sx,sy);
@@ -12902,7 +12906,7 @@ function popShip(b,x,y){popAct={};const s=b.s,pl=b.pl;let h=`<h4>${T('{0}의 배
 const typing=()=>/INPUT|TEXTAREA|SELECT/.test((document.activeElement||{}).tagName||'');
 document.addEventListener('keyup',e=>{delete KEYS[e.key];delete KEYS[e.key.toLowerCase()];});
 window.addEventListener('blur',()=>{for(const k in KEYS)delete KEYS[k];});
-document.addEventListener('keydown',e=>{if(S&&$('modal').hidden&&$('title').hidden&&!typing()){const k=e.key;if(/^Arrow/.test(k)){KEYS[k]=1;e.preventDefault();}else if('wasd'.includes(k.toLowerCase())&&k.length===1)KEYS[k.toLowerCase()]=1;else if(k==='e'||k==='E'||k===' '||k==='Enter'){e.preventDefault();interactNear();}}
+document.addEventListener('keydown',e=>{if(S&&$('modal').hidden&&$('title').hidden&&!typing()){const k=e.key;if(/^Arrow/.test(k)){KEYS[k]=1;e.preventDefault();}else if('wasd'.includes(k.toLowerCase())&&k.length===1)KEYS[k.toLowerCase()]=1;else if(k==='e'||k==='E'||k===' '||k==='Enter'){e.preventDefault();interactNear();}else if(k==='p'||k==='P'){takePhoto();}}
   if(e.key==='Escape'){closePop();if(!$('modal').hidden){if(MOD&&MOD.type==='livetrade')ltCancel();else if(MODAL_CLOSABLE)closeModal();}else if(S&&VIEW==='isl')leaveIsl();else if(S&&VIEW==='sea')setView('land');else if(S&&VIEW==='visit')leaveVisit();else if(S&&VIEW==='helm')ACT.seaback();}
   if(!S||!$('modal').hidden||!$('title').hidden||/INPUT|TEXTAREA|SELECT/.test((document.activeElement||{}).tagName))return;
   const k={'1':'farm','2':'ranch','3':'town','4':'harbor'}[e.key];if(k&&(VIEW==='land'||VIEW==='visit'))setView(k);else if(e.key==='h'||e.key==='H')ACT.harvestAll();});
@@ -13465,6 +13469,26 @@ document.addEventListener('keydown',e=>{if(e.target&&e.target.id==='chatIn'&&e.k
 /* 멀티플레이 입장 */
 ACT.mpmake=()=>startMP(true,Math.random().toString(36).slice(2,6).toUpperCase());
 ACT.mpjoin=()=>{const c=$('mCode').value.trim().toUpperCase();if(c.length!==4){toast(T('코드는 4글자예요','The code is 4 letters'));return;}startMP(false,c);};
+
+/* ---- 사진 모드 ---- */
+const PHMAX=12,PHSPOTS=[['fountain',P('분수 광장','Fountain plaza'),370,876,150,60],['clock',P('시계탑','Clock tower'),271,835,110,50],['lake',P('호수','Lake'),785,1150,170,60],['station',P('기차역','Station'),261,625,160,50],['light',P('등대','Lighthouse'),718,490,110,50],['museum',P('박물관','Museum'),584,281,110,50],['harbor',P('항구','Harbor'),752,440,110,50]];
+const phName=n=>{const q=PHSPOTS.find(x=>x[0]===n);return q?tx(q[1]):T('풍경','Scenery');};
+function photoSpot(){if(VIEW!=='land')return null;for(const q of PHSPOTS)if(Math.hypot(PL.x-q[2],PL.y-q[3])<q[4])return q;return null;}
+function takePhoto(){if(!S||!VW)return;const c=$('cv'),w=420,h=Math.round(w*c.height/c.width),t=document.createElement('canvas');t.width=w;t.height=h;t.getContext('2d').drawImage(c,0,0,w,h);
+  let url='';try{url=t.toDataURL('image/jpeg',.62);}catch(e){toast(T('사진을 저장하지 못했어요','Could not save the photo'));return;}
+  const q=photoSpot();S.photos.push({d:url,t:Date.now(),n:q?q[0]:''});while(S.photos.length>PHMAX)S.photos.shift();
+  const fl=document.createElement('div');fl.style.cssText='position:fixed;inset:0;background:#fff;opacity:.85;z-index:60;pointer-events:none;transition:opacity .45s';document.body.appendChild(fl);requestAnimationFrame(()=>{fl.style.opacity='0';});setTimeout(()=>fl.remove(),600);
+  sfx('build');
+  if(q&&!S.pspots[q[0]]){S.pspots[q[0]]=1;const g=50;S.money+=g;toast(T('{0} 첫 사진! 보너스 {1}','First photo at {0}! Bonus {1}',tx(q[1]),fmt(g)+UG()));}
+  else toast(T('찰칵! 사진을 앨범에 담았어요','Click! Saved to the album'));
+  if(MOD&&MOD.type==='album')renderModal();}
+MODS.album=m=>{const ph=S.photos;let h=`<h2>${T('사진 앨범','Photo album')} <span class="muted" style="font-family:var(--ko)">${ph.length}/${PHMAX}</span></h2><div class="muted">${T('P 키나 집 메뉴로 지금 화면을 찍어요. 명소 앞에서 처음 찍으면 보너스를 받아요.','Press P or use the home menu to snap the screen. The first photo at a landmark earns a bonus.')} (${Object.keys(S.pspots).length}/${PHSPOTS.length})</div><div class="btns" style="margin:6px 0"><button class="pb sm gold" data-act="shot">${T('지금 찍기','Take one now')}</button></div>`;
+  if(m.v!=null&&ph[m.v]){const p=ph[m.v];h+=`<div class="card" style="display:block"><img src="${p.d}" style="width:100%;image-rendering:auto;border-radius:6px"><div class="muted" style="margin:4px 0">${esc(phName(p.n))} · ${new Date(p.t).toLocaleString()}</div><div class="btns"><button class="pb sm" data-act="pback">${T('목록','Back')}</button><button class="pb sm dark" data-act="pdel:${m.v}">${T('지우기','Delete')}</button></div></div>`;}
+  else h+=ph.length?`<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:6px">${ph.map((p,i)=>`<div><img src="${p.d}" data-act="pview:${i}" style="width:100%;border-radius:4px;cursor:pointer"><div class="muted" style="font-size:11px">${esc(phName(p.n))}</div></div>`).join('')}</div>`:`<div class="muted">${T('아직 사진이 없어요','No photos yet')}</div>`;
+  return h;};
+ACT.shot=()=>{const mb=$('modal');mb.style.visibility='hidden';setTimeout(()=>{takePhoto();mb.style.visibility='';},60);};
+ACT.pview=a=>{MOD.v=+a;renderModal();};ACT.pback=()=>{MOD.v=null;renderModal();};
+ACT.pdel=a=>{S.photos.splice(+a,1);MOD.v=null;renderModal();};
 
 /* ================= 섬 상륙 맵: 섬마다 모양과 풍경이 달라요 ================= */
 const ISC=3.5,IW=Math.round(520*ISC),IH=Math.round(340*ISC),ICNT=6;let SPOTR=0;
