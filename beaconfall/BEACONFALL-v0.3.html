@@ -196,6 +196,7 @@ body.playing #hp{ display:flex; }
 #loading{ position:fixed; inset:0; z-index:40; display:flex; flex-direction:column; gap:22px; align-items:center; justify-content:center;
   background:#0b1226; transition:opacity .5s steps(5); }
 #loading.done{ opacity:0; pointer-events:none; }
+body:has(#introScr.run:not(.out)) #loading{ visibility:hidden; }
 #loading .logo{ margin:0; }
 #loading .msg{ font-size:15px; color:var(--muted); min-height:1.4em; }
 .bar{ width:min(320px,70vw); height:16px; background:#060b1a; box-shadow:0 -3px 0 0 var(--line),0 3px 0 0 var(--line),-3px 0 0 0 var(--line),3px 0 0 0 var(--line); }
@@ -367,7 +368,7 @@ html:not(.introDone) #ui,html:not(.introDone) #authgate,html:not(.introDone) #au
     <button class="btn" data-act="skins"><span class="arrow">▶</span>스킨 상점<span class="en">SKIN SHOP</span></button>
     <button class="btn" data-act="stats"><span class="arrow">▶</span>통계<span class="en">STATS</span></button>
     <button class="btn" data-act="settings"><span class="arrow">▶</span>설정<span class="en">SETTINGS</span></button>
-    <p class="foot">v0.3<br>build 82</p>
+    <p class="foot">v0.3<br>build 83</p>
   </nav>
 </div>
 
@@ -3202,6 +3203,14 @@ body.mp #tc .ch{display:flex}
 body.touch.crafting #tc .grp{display:none}
 body.touch.crafting #tc .tb.keep{display:flex}
 @media (max-height:420px){#tc .joy{width:112px;height:112px;bottom:14px}#tc .atk{width:80px;height:80px;bottom:14px}#tc .act{width:60px;height:60px;right:112px;bottom:18px}}
+/* 폰 세로: 오른쪽 버튼은 공격 버튼 위로, 체력·장비·확대 버튼은 조이스틱 위로 올려 서로 안 겹치게 */
+body.touch #photobtn{bottom:calc(122px + env(safe-area-inset-bottom,0px))}
+body.touch #bpbtn{bottom:calc(174px + env(safe-area-inset-bottom,0px))}
+body.touch #rollbtn{bottom:calc(226px + env(safe-area-inset-bottom,0px))}
+body.touch #equip{bottom:calc(170px + env(safe-area-inset-bottom,0px));transform:translateX(calc(-50% - 44px))}
+body.touch #hp{bottom:calc(213px + env(safe-area-inset-bottom,0px));transform:translateX(calc(-50% - 44px)) scale(.85)}
+body.touch #tc .zm{bottom:calc(252px + env(safe-area-inset-bottom,0px))}
+@media (max-height:420px){body.touch #photobtn{bottom:100px}body.touch #bpbtn{bottom:148px}body.touch #rollbtn{bottom:196px}body.touch #equip{bottom:calc(54px + env(safe-area-inset-bottom,0px));transform:translateX(-50%)}body.touch #hp{bottom:calc(18px + env(safe-area-inset-bottom,0px));transform:translateX(-50%)}body.touch #tc .zm{bottom:136px}}
 `;
 const keyEv=(type,code,key)=>{try{window.dispatchEvent(new KeyboardEvent(type,{code,key:key||code,bubbles:true,cancelable:true}));}catch(e){}};
 const keyTap=(code,key,hold)=>{keyEv('keydown',code,key);setTimeout(()=>keyEv('keyup',code,key),hold||80);};
@@ -11500,7 +11509,16 @@ document.addEventListener('click',async e=>{
     return;
   }
 });
-document.addEventListener('keydown',e=>{if(e.key==='Escape'){if(BPS.mode&&$('#modal').hidden){bpEnd();return;}if(!$('#modal').hidden)closeModal();else if(mapOn)toggleMap(false);else if(crafting)closeCraft();else if(mode==='play')exitPlay();}});
+let escT=0;
+function escExit(){   // 창을 닫으려던 Esc로 실수로 로비에 나가지 않게, 2초 안에 한 번 더 눌러야 나가요
+  const h=$('#esch');
+  if(Date.now()-escT<2000){escT=0;if(h)h.remove();exitPlay();return;}
+  escT=Date.now();
+  let el=h;if(!el){el=document.createElement('div');el.id='esch';el.setAttribute('data-noi18n','1');el.style.cssText='position:fixed;left:50%;top:76px;transform:translateX(-50%);z-index:60;padding:9px 16px;background:rgba(38,24,11,.92);color:#f6efd8;border:2px solid #e9d9a4;font:600 15px/1.3 inherit;pointer-events:none;white-space:nowrap';document.body.appendChild(el);}
+  el.textContent='한 번 더 Esc를 누르면 로비로 나가요';
+  clearTimeout(escExit.t);escExit.t=setTimeout(()=>{const x=$('#esch');if(x)x.remove();},2000);
+}
+document.addEventListener('keydown',e=>{if(e.key==='Escape'){if(BPS.mode&&$('#modal').hidden){bpEnd();return;}if(!$('#modal').hidden)closeModal();else if(mapOn)toggleMap(false);else if(crafting)closeCraft();else if(mode==='play')escExit();}});
 let rz=0;addEventListener('resize',()=>{clearTimeout(rz);rz=setTimeout(()=>{if(world){resize();clampCam();}},100);});
 
 /* ---------- 시작 ---------- */
