@@ -461,7 +461,10 @@ canvas.ico{width:100%;max-width:320px;height:auto;aspect-ratio:640/150;backgroun
 @keyframes finIn{from{opacity:0;transform:translateY(40px) scale(.92)}to{opacity:1;transform:none}}
 .ov.fin{background:none}
 .card.fin{animation:finIn .7s ease 5.6s both}
-#acctSlot{position:absolute;top:10px;right:12px;z-index:5}
+#acctSlot{display:flex;justify-content:center;margin:0 0 10px;position:relative;z-index:5}
+#walBox{margin:0 0 8px;padding:7px 12px;border-radius:14px;background:rgba(255,255,255,.55);font-size:13px;color:#3a2410;text-align:center}
+#walBox b{font-weight:900}#walBox span{opacity:.7;margin:0 4px}#walBox a{color:inherit;font-weight:800}
+.dhint{font-size:11px;color:#5a3415;opacity:.8;margin-top:4px}
 .homeBox{position:relative}
 #stats{display:flex;gap:8px;justify-content:center;margin:2px 0 10px}
 #stats span{display:inline-flex;align-items:center;gap:4px;background:rgba(255,255,255,.55);border-radius:14px;padding:3px 10px 3px 4px;font-weight:800;font-size:14px;color:#3a2410}
@@ -490,7 +493,8 @@ body.playing #emoBar{display:flex}
   <p class="tag">하얀 마네킹들의 엉망진창 미니게임 대결</p>
   <canvas id="heroCv" width="520" height="300"></canvas>
   <div id="stats"></div>
-  <div class="deco"><canvas id="decoPrev" width="168" height="208"></canvas><div class="dgrid"><div class="drow" id="hatRow"></div><div class="drow" id="glRow"></div></div></div>
+  <div id="walBox"></div>
+  <div class="deco"><canvas id="decoPrev" width="168" height="208"></canvas><div class="dgrid"><div class="drow" id="faceRow"></div><div class="drow" id="hatRow"></div><div class="drow" id="glRow"></div><div class="dhint">잠긴 꾸미기는 라운드 1등을 하거나 dC로 살 수 있어요 (눌러서 가격 확인)</div></div></div>
   <div class="panel">
    <label for="nameIn">내 이름</label>
    <input id="nameIn" maxlength="12" placeholder="이름 (12자까지)" autocomplete="off">
@@ -499,7 +503,9 @@ body.playing #emoBar{display:flex}
    <div class="row"><input id="codeIn" maxlength="5" placeholder="방 코드" autocomplete="off"><button class="pb dark" id="joinBtn" style="flex:0 0 auto">들어가기</button></div>
    <div class="msg" id="homeMsg"></div>
   </div>
-  <details class="notes"><summary>패치노트 · v0.1 (build 7)</summary>
+  <details class="notes"><summary>패치노트 · v0.1 (build 8)</summary>
+   <b>2026-10-20 · v0.1 build 8 · dC와 스킨 가게</b>
+   <ul><li>게임 재화 dC 추가: 판이 끝나면 등수에 따라 3~12dC (하루 80dC까지)</li><li>허브 코인 1개 = 8dC 교환</li><li>dC로 스킨 구매: 모자와 안경도 dC로 살 수 있어요</li><li>얼굴 스킨 3종 추가: 버럭 아저씨, 놀란 얼굴, 졸린 얼굴</li><li>계정 버튼이 제목을 가리던 문제 수정</li><li>체스 대난투: 서로 잡을 수 없는 배치(기사 둘 등)로 안 끝나던 문제 수정, 16초 동안 안 잡히면 가까운 둘이 결투해요</li></ul>
    <b>2026-10-20 · v0.1 build 7 · 저작권 표기</b>
    <ul><li>게임 파일과 화면 하단에 저작권 표기 추가 (© 2026 Frenchfries777 · CC BY-NC-ND 4.0)</li></ul>
    <b>2026-10-20 · v0.1 build 6 · 병맛 연출</b>
@@ -512,7 +518,7 @@ body.playing #emoBar{display:flex}
    <ul><li>무너지는 발판 칸 수 대폭 증가 (19×10)와 용암 동굴 맵</li><li>10개 맵 전부 새로 그림 (관중석, 야자수 섬, 링, 정원 미로, 서커스, 우노 테이블 등)</li><li>글자 대신 아이콘·말풍선·이펙트로 표현 (무기, 아이템, 카드 효과, 시작 안내)</li><li>타격·폭발·물보라 효과와 화면 흔들림 추가</li></ul>
    <b>2026-10-19 · v0.1 build 1 · 첫 시험판</b>
    <ul><li>마네킹 미니게임 10개 추가 (장애물 달리기, 섬 밀치기, 싸우기, 병맛 미로, 체스 대난투, 폭탄 돌리기, 병맛 우노, 쇼윈도 얼음땡, 무너지는 발판, 컨베이어 서바이벌)</li><li>방 코드로 최대 8명 멀티플레이, 빈자리는 봇으로 채우기</li><li>판마다 10개 중 5개를 무작위로 골라 점수를 합산</li><li>PC 키보드와 휴대폰 터치 조작 지원</li></ul></details>
-  <p class="foot">2~8명 · 판마다 16개 미니게임 중 5개 · 프로토타입 v0.1 b7 · <a href="../">← 프로토타입 목록</a></p>
+  <p class="foot">2~8명 · 판마다 16개 미니게임 중 5개 · 프로토타입 v0.1 b8 · <a href="../">← 프로토타입 목록</a></p>
   <p class="foot"><span class="ff-copy">© 2026 Frenchfries777 · <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.ko" target="_blank" rel="noopener">CC BY-NC-ND 4.0</a></span></p>
  </div>
 </section>
@@ -713,7 +719,7 @@ function drawLimbPiece(ctx, x, y, rot, kind) {
 /* ---------- 꾸미기(모자·안경)와 응원 이모트: 목도리 색으로 사람을 찾아서 그려요 ---------- */
 var DECO = {}, EMO = {}, BOOSTC = {}, POSEO = {}, LOST = {}, DPOS = {}, DPOSP = {}, HITQ = [];   // DECO[색] = {h:모자번호, g:안경번호}, EMO[색] = {e:이모트번호, t0:시작 ms}
 var EMO_ICONS = ['joy', 'bang', 'skull', 'crown', 'dizzy'];
-var HAT_COUNT = 9, GL_COUNT = 5;
+var HAT_COUNT = 9, GL_COUNT = 5, FACE_COUNT = 4;
 var HAT_NEED = [0, 0, 1, 2, 4, 6, 9, 13, 18];   // 라운드 1등을 이만큼 해야 열려요
 var GL_NEED = [0, 0, 3, 7, 12];
 var HATS = [
@@ -734,8 +740,41 @@ var GLASSES = [
   function (c, y) { c.fillStyle = '#ff4f87'; [3, 11].forEach(function (x) { c.beginPath(); c.moveTo(x, y + 4.5); c.bezierCurveTo(x - 6, y - 1, x - 3, y - 5.5, x, y - 2); c.bezierCurveTo(x + 3, y - 5.5, x + 6, y - 1, x, y + 4.5); c.fill(); }); },
   function (c, y) { c.strokeStyle = '#d9a41c'; c.lineWidth = 1.8; c.beginPath(); c.arc(10, y, 5, 0, 6.283); c.stroke(); c.lineWidth = 1; c.beginPath(); c.moveTo(10, y + 5); c.quadraticCurveTo(8, y + 14, 12, y + 20); c.stroke(); c.fillStyle = 'rgba(255,255,255,.4)'; c.beginPath(); c.arc(10, y, 4.5, 0, 6.283); c.fill(); }
 ];
+var FACES = [
+  null,
+  // 1 버럭 아저씨 (오너가 그린 얼굴): 굵은 찡그린 눈썹, 마름모 눈, 긴 코, 이를 드러낸 입
+  function (c, y) {
+    c.save(); c.translate(1, 0); c.strokeStyle = '#17120d'; c.fillStyle = '#17120d'; c.lineCap = 'round'; c.lineJoin = 'round';
+    c.lineWidth = 2.6; c.beginPath(); c.moveTo(-9, y - 7.5); c.lineTo(-2, y - 4.5); c.moveTo(8.6, y - 7); c.lineTo(3, y - 4.2); c.stroke();
+    c.lineWidth = 1.2; c.beginPath(); c.moveTo(-9.5, y - 3.8); c.lineTo(-2.6, y - 2.6); c.lineTo(-4.2, y + 1.2); c.lineTo(-9.6, y + 0.8); c.closePath(); c.moveTo(10.4, y - 3.6); c.lineTo(3.6, y - 2.2); c.lineTo(4.8, y + 1.4); c.lineTo(9.4, y + 0.4); c.closePath(); c.stroke();
+    c.beginPath(); c.arc(-6.6, y - 0.8, 1.05, 0, 6.283); c.arc(6.8, y - 0.8, 1.05, 0, 6.283); c.fill();
+    c.lineWidth = 1.7; c.beginPath(); c.moveTo(0.6, y - 4); c.quadraticCurveTo(-1.8, y + 1.5, -1.2, y + 4.6); c.lineTo(2.6, y + 5.2); c.stroke();
+    c.lineWidth = 1.6; c.beginPath(); c.moveTo(-5.8, y + 7.8); c.quadraticCurveTo(0, y + 6.2, 5.8, y + 7.6); c.quadraticCurveTo(2.5, y + 11.6, -2, y + 10.8); c.quadraticCurveTo(-5.4, y + 10, -5.8, y + 7.8); c.stroke();
+    c.lineWidth = 1; c.beginPath(); c.moveTo(0.4, y + 7); c.lineTo(0.4, y + 10.4); c.stroke();
+    c.lineWidth = 1.5; c.beginPath(); c.moveTo(-10.2, y + 3.5); c.quadraticCurveTo(-10.6, y + 8, -9, y + 10); c.moveTo(10.6, y + 3); c.quadraticCurveTo(11, y + 8, 9.2, y + 10.5); c.stroke();
+    c.restore();
+  },
+  // 2 놀란 얼굴
+  function (c, y) {
+    c.save(); c.translate(1, 0); c.strokeStyle = '#2b2118'; c.lineCap = 'round'; c.lineWidth = 1.3;
+    [-5, 6].forEach(function (x) { c.fillStyle = '#fff'; c.beginPath(); c.arc(x, y - 1, 3.8, 0, 6.283); c.fill(); c.stroke(); c.fillStyle = '#2b2118'; c.beginPath(); c.arc(x, y - 1, 1.3, 0, 6.283); c.fill(); });
+    c.beginPath(); c.moveTo(-9, y - 7); c.quadraticCurveTo(-5, y - 10, -1.6, y - 7.4); c.moveTo(11, y - 7); c.quadraticCurveTo(7, y - 10, 3.6, y - 7.4); c.stroke();
+    c.fillStyle = '#7a2a2a'; c.beginPath(); c.ellipse(0.4, y + 7.6, 2.8, 3.6, 0, 0, 6.283); c.fill(); c.stroke();
+    c.restore();
+  },
+  // 3 졸린 얼굴
+  function (c, y) {
+    c.save(); c.translate(1, 0); c.strokeStyle = '#2b2118'; c.lineCap = 'round'; c.lineWidth = 1.6;
+    c.beginPath(); c.arc(-5, y - 1, 3.2, 0.1, 3.04); c.moveTo(11.2, y - 1); c.arc(6, y - 1, 3.2, 0.1, 3.04); c.stroke();
+    c.lineWidth = 1.2; c.beginPath(); c.moveTo(-8.5, y - 5.4); c.lineTo(-2, y - 5); c.moveTo(10, y - 5.4); c.lineTo(3.6, y - 5); c.stroke();
+    c.lineWidth = 1.4; c.beginPath(); c.moveTo(-2, y + 7.4); c.quadraticCurveTo(0.6, y + 9, 3.4, y + 7.4); c.stroke();
+    c.fillStyle = '#6aa8e8'; c.beginPath(); c.moveTo(9.4, y + 3); c.quadraticCurveTo(11.4, y + 6, 9.4, y + 7.6); c.quadraticCurveTo(7.4, y + 6, 9.4, y + 3); c.fill();
+    c.restore();
+  }
+];
 function drawDeco(c, d, headY) {
   if (!d) return;
+  if (d.f && FACES[d.f]) { c.save(); FACES[d.f](c, headY); c.restore(); }
   if (d.g && GLASSES[d.g]) { c.save(); GLASSES[d.g](c, headY - 2); c.restore(); }
   if (d.h && HATS[d.h]) { c.save(); HATS[d.h](c, headY - 3); c.restore(); }
 }
@@ -1440,6 +1479,7 @@ regMG({
     s.du.f[a] = A; s.du.f[d] = D; fx(s, 'boom');
   }
   function endDuel(s, win, lose) {
+    s.quiet = 0;
     var du = s.du, L = s.pl[lose], Wn = s.pl[win];
     L.alive = false; s.outs.push(lose); Wn.kills++; Wn.gx = du.to[0]; Wn.gy = du.to[1];
     s.mode = 'board'; s.du = null; s.last = Wn && (s.pl[win].t) ? win : null; fx(s, 'win');
@@ -1462,6 +1502,14 @@ regMG({
       s.t += dt;
       if (s.mode === 'board') {
         s.tt -= dt; s.th += dt;
+        // 기사끼리처럼 서로 잡을 수 없는 배치로 판이 늘어지면 16초 뒤에 가까운 둘이 억지로 결투해요
+        s.quiet = (s.quiet || 0) + dt;
+        if (s.quiet > 16) {
+          var cp = s.pl[s.cur], nf = null, nd = 99;
+          s.ids.forEach(function (o) { var q = s.pl[o]; if (o !== s.cur && q.alive) { var dd = Math.abs(q.gx - cp.gx) + Math.abs(q.gy - cp.gy); if (dd < nd) { nd = dd; nf = o; } } });
+          s.quiet = 0;
+          if (nf) { startDuel(s, s.cur, nf, [s.pl[nf].gx, s.pl[nf].gy]); return; }
+        }
         var mv = moves(s, s.cur), pick = null, i = inp[s.cur];
         (i.acts || []).forEach(function (a) { if (a && a.mv && !pick) { for (var k = 0; k < mv.length; k++) if (mv[k].x === a.mv[0] && mv[k].y === a.mv[1]) pick = mv[k]; } });
         if (!pick && s.tt <= 0 && mv.length) { var q = mv.filter(function (m) { return !m.cap; }); pick = rng.pick(q.length ? q : mv); }
@@ -1506,7 +1554,7 @@ regMG({
         var mv = moves(s, id), caps = mv.filter(function (m) { return m.cap; });
         if (!mv.length) return r;
         var pick;
-        if (caps.length && rng() < 0.55) pick = rng.pick(caps);
+        if (caps.length && rng() < 0.8) pick = rng.pick(caps);
         else {
           var me = s.pl[id], foe = null, bd = 99; s.ids.forEach(function (o) { var q = s.pl[o]; if (o !== id && q.alive) { var d = Math.abs(q.gx - me.gx) + Math.abs(q.gy - me.gy); if (d < bd) { bd = d; foe = q; } } });
           var nc = mv.filter(function (m) { return !m.cap; }); if (!nc.length) nc = mv; var bestD = 999;
@@ -3345,6 +3393,59 @@ function funPhase(m, ph) {
   else if (ph !== 'result') POSEO = {};
 }
 
+/* ---------- dC 지갑 · 스킨 가게 ---------- */
+// 값은 supabase-dp-coin.sql 의 dp_price 와 같아야 해요. 허브 코인 1개 = 8dC
+var WAL = { bal: 0, today: 0, own: {}, ready: false, busy: false };
+var DP_PRICE = { f1: 60, f2: 30, f3: 30 };
+HAT_NEED.forEach(function (n, i) { if (n > 0) DP_PRICE['h' + i] = n * 10; });
+GL_NEED.forEach(function (n, i) { if (n > 0) DP_PRICE['g' + i] = n * 10; });
+function ownsItem(k) { return !!WAL.own[k]; }
+function walClient() { try { return window.FFAuth && FFAuth.user() ? FFAuth.client() : null; } catch (e) { return null; } }
+function walRow(r) { var d = r && r.data; if (Array.isArray(d)) d = d[0]; return d || null; }
+function walApply(d) {
+  if (!d) return false;
+  if (d.balance != null) WAL.bal = d.balance | 0;
+  if (d.today != null) WAL.today = d.today | 0;
+  if (d.owned) { WAL.own = {}; d.owned.forEach(function (k) { WAL.own[k] = 1; }); }
+  WAL.ready = true; return true;
+}
+async function walletRefresh() {
+  var sb = walClient();
+  if (!sb) { WAL.ready = false; WAL.bal = 0; WAL.own = {}; if (window.renderHome) renderHome(); return false; }
+  try { walApply(walRow(await sb.rpc('dp_wallet_get'))); } catch (e) { WAL.ready = false; }
+  if (window.renderHome) renderHome();
+  return WAL.ready;
+}
+async function walletPlay(rank, n) {
+  var sb = walClient(); if (!sb || !WAL.ready) return;
+  try {
+    var d = walRow(await sb.rpc('dp_coin_play', { p_rank: rank, p_n: n }));
+    if (d) { WAL.bal = d.balance | 0; WAL.today = d.today | 0; if (d.got > 0) setTimeout(function () { toast('+' + d.got + ' dC를 받았어요!'); }, 2400); }
+  } catch (e) { }
+  if (window.renderHome) renderHome();
+}
+// 이미 열린 건 그냥 쓰고, 잠긴 건 dC로 살 수 있어요 (한 번 눌러 가격 확인, 3초 안에 다시 누르면 구매)
+var shopPend = null, shopT = 0;
+function shopClick(key, label, openMsg) {
+  var p = DP_PRICE[key];
+  if (!p) { toast(openMsg); return; }
+  if (!walClient()) { toast(label + '은(는) ' + p + 'dC예요. 로그인하면 dC를 모아서 살 수 있어요.'); return; }
+  if (!WAL.ready) { toast('dC 지갑을 불러오는 중이에요. 잠시 뒤에 다시 눌러 주세요.'); walletRefresh(); return; }
+  if (WAL.bal < p) { toast(label + ' ' + p + 'dC · 지금 ' + WAL.bal + 'dC라서 ' + (p - WAL.bal) + 'dC가 모자라요.'); return; }
+  var now = Date.now();
+  if (shopPend !== key || now - shopT > 3000) { shopPend = key; shopT = now; toast(label + '을(를) ' + p + 'dC에 살까요? 한 번 더 누르면 사요.'); return; }
+  shopPend = null; shopBuy(key, label);
+}
+async function shopBuy(key, label) {
+  var sb = walClient(); if (!sb || WAL.busy) return; WAL.busy = true;
+  try {
+    var r = await sb.rpc('dp_buy', { p_item: key }), d = walRow(r);
+    if (d && !r.error) { walApply(d); SFX.play('coin'); toast(label + ' 구매 완료! 남은 dC ' + WAL.bal); var m = key.charAt(0), i = +key.slice(1); lsSet(m === 'h' ? 'dummyparty.hat' : m === 'g' ? 'dummyparty.gl' : 'dummyparty.face', String(i)); }
+    else toast('살 수 없었어요. ' + ((r && r.error && r.error.message) || '').slice(0, 40));
+  } catch (e) { toast('구매하지 못했어요. 잠시 뒤에 다시 해 주세요.'); }
+  WAL.busy = false; if (window.renderHome) renderHome();
+}
+
 /* ===== Dummy Party 진행: 방(PeerJS), 로비, 5판 진행, 그리기 루프 =====
    호스트가 모든 미니게임을 계산하고 상태를 보낸다. 게스트는 입력만 보낸다. */
 var PREFIX = 'ff-dummyparty-', CODE_CH = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789', MAXP = 8, ROUNDS = 5;
@@ -3400,7 +3501,7 @@ function startGuest(name, code) {
   var tm = setTimeout(function () { if (G.peer === p && G.phase === 'idle') { homeMsg('연결 시간이 초과됐어요. 코드를 확인하고 다시 해 보세요.'); busy(false); destroyPeer(); } }, 15000);
   p.on('open', function () {
     var c = p.connect(PREFIX + code, { reliable: true }); G.conn = c;
-    c.on('open', function () { c.send({ t: 'hello', name: name, h: myDeco().h, g: myDeco().g }); });
+    c.on('open', function () { c.send({ t: 'hello', name: name, h: myDeco().h, g: myDeco().g, f: myDeco().f }); });
     c.on('data', function (d) { clearTimeout(tm); guestMsg(d); });
     c.on('close', function () { if (G.role === 'guest' && G.phase !== 'idle') { toast('방장과 연결이 끊겼어요.'); goHome(); } });
   });
@@ -3419,7 +3520,7 @@ function hostMsg(conn, d) {
     var humans = G.players.filter(function (p) { return !p.bot; });
     if (humans.length >= MAXP) { conn.send({ t: 'deny', why: '방이 가득 찼어요 (최대 8명).' }); setTimeout(function () { conn.close(); }, 300); return; }
     var id = 'p' + (Date.now() % 100000) + Math.floor(Math.random() * 100);
-    var pl = { id: id, name: cleanName(d.name), color: freeColor(), bot: false, online: true, score: 0, wins: 0, h: decoOk(d.h, HAT_COUNT), g: decoOk(d.g, GL_COUNT) };
+    var pl = { id: id, name: cleanName(d.name), color: freeColor(), bot: false, online: true, score: 0, wins: 0, h: decoOk(d.h, HAT_COUNT), g: decoOk(d.g, GL_COUNT), f: decoOk(d.f, FACE_COUNT) };
     G.players.push(pl); conn._pid = id; G.conns[id] = conn;
     trimBots();
     conn.send({ t: 'welcome', id: id });
@@ -3460,12 +3561,13 @@ function freeColor() { for (var c = 0; c < COLORS.length; c++) { if (!G.players.
 /* ---------- 꾸미기 · 이모트 · 전적 ---------- */
 function decoOk(v, n) { v = v | 0; return v >= 0 && v < n ? v : 0; }
 function myStats() { var st = {}; try { st = JSON.parse(lsGet('dummyparty.stats') || '{}') || {}; } catch (e) { } return { matches: st.matches | 0, wins: st.wins | 0, rwins: st.rwins | 0 }; }
-function hatOpen(i) { return myStats().rwins >= HAT_NEED[i]; }
-function glOpen(i) { return myStats().rwins >= GL_NEED[i]; }
-function myDeco() { var h = decoOk(lsGet('dummyparty.hat'), HAT_COUNT), g = decoOk(lsGet('dummyparty.gl'), GL_COUNT); if (!hatOpen(h)) h = 0; if (!glOpen(g)) g = 0; return { h: h, g: g }; }
+function hatOpen(i) { return myStats().rwins >= HAT_NEED[i] || ownsItem('h' + i); }
+function glOpen(i) { return myStats().rwins >= GL_NEED[i] || ownsItem('g' + i); }
+function faceOpen(i) { return i === 0 || ownsItem('f' + i); }
+function myDeco() { var h = decoOk(lsGet('dummyparty.hat'), HAT_COUNT), g = decoOk(lsGet('dummyparty.gl'), GL_COUNT), f = decoOk(lsGet('dummyparty.face'), FACE_COUNT); if (!hatOpen(h)) h = 0; if (!glOpen(g)) g = 0; if (!faceOpen(f)) f = 0; return { h: h, g: g, f: f }; }
 function syncDeco(m) {
   DECO = {}; BOOSTC = {};
-  (m.players || []).forEach(function (p) { var c = COLORS[p.color]; if (p.h || p.g) DECO[c] = { h: p.h | 0, g: p.g | 0 }; if (m.boost && m.boost[p.id] && m.phase !== 'lobby' && m.phase !== 'final') BOOSTC[c] = 1; });
+  (m.players || []).forEach(function (p) { var c = COLORS[p.color]; if (p.h || p.g || p.f) DECO[c] = { h: p.h | 0, g: p.g | 0, f: p.f | 0 }; if (m.boost && m.boost[p.id] && m.phase !== 'lobby' && m.phase !== 'final') BOOSTC[c] = 1; });
 }
 function doEmote(pid, e) {
   if (e < 0 || e >= EMO_ICONS.length) return;
@@ -3493,13 +3595,14 @@ function noteMatchEnd(m) {
   lsSet('dummyparty.stats', JSON.stringify(st));
   var got = []; HAT_NEED.forEach(function (n, i) { if (n > before && n <= st.rwins) got.push('모자'); }); GL_NEED.forEach(function (n, i) { if (n > before && n <= st.rwins) got.push('안경'); });
   if (got.length) setTimeout(function () { toast('새 꾸미기 ' + got.length + '개가 열렸어요!'); }, 1200);
+  walletPlay(m.players.filter(function (p) { return p.score > mp.score; }).length + 1, m.players.length);
   if (window.renderHome) renderHome();
 }
 
 /* ---------- 로비 ---------- */
 function initLobby() {
   G.phase = 'lobby'; G.me = 'p0';
-  G.players = [{ id: 'p0', name: G.name, color: 0, bot: false, online: true, score: 0, wins: 0, h: myDeco().h, g: myDeco().g }];
+  G.players = [{ id: 'p0', name: G.name, color: 0, bot: false, online: true, score: 0, wins: 0, h: myDeco().h, g: myDeco().g, f: myDeco().f }];
   G.bots = G.role === 'solo' ? 3 : +(lsGet('dummyparty.bots') || 0);
   trimBots(true);
   if (!G.hostTimer) G.hostTimer = setInterval(hostTick, 1000 / 60);
@@ -3544,7 +3647,7 @@ function renderLobby() {
 function metaObj() {
   return {
     phase: G.phase, round: G.round, order: G.order, mg: G.mgId, tl: G.tl,
-    players: G.players.map(function (p) { return { id: p.id, name: p.name, color: p.color, bot: p.bot, score: p.score, wins: p.wins, h: p.h || 0, g: p.g || 0 }; }),
+    players: G.players.map(function (p) { return { id: p.id, name: p.name, color: p.color, bot: p.bot, score: p.score, wins: p.wins, h: p.h || 0, g: p.g || 0, f: p.f || 0 }; }),
     boost: G.boost,
     ranking: G.ranking, gained: G.gained
   };
@@ -3887,14 +3990,15 @@ function goHome() { destroyPeer(); G.role = null; G.phase = 'idle'; G.st = null;
     c.fillStyle = 'rgba(30,25,20,.62)'; c.fillRect(0, 0, 80, 80);
     c.fillStyle = '#fff'; rrect(c, x - r, y - r * 0.2, r * 2, r * 1.5, 4); c.fill();
     c.strokeStyle = '#fff'; c.lineWidth = 3.5; c.beginPath(); c.arc(x, y - r * 0.2, r * 0.7, 3.14, 6.283); c.stroke();
-    txt(c, String(need), x, y + r * 0.55, { size: 15, c: '#3a2410', stroke: false });
+    txt(c, String(need), x, y + r * 0.55, { size: String(need).length > 3 ? 11 : 15, c: '#3a2410', stroke: false });
   }
   function thumb(kind, i, open, need) {
     var cv = document.createElement('canvas'); cv.width = cv.height = 80; var c = cv.getContext('2d');
     c.fillStyle = '#efe6d6'; c.fillRect(0, 0, 80, 80);
     c.save(); c.translate(40, 58); c.scale(2.1, 2.1);
     c.fillStyle = DUMMY_LINE; c.beginPath(); c.arc(0, 0, 12.6, 0, 6.283); c.fill(); c.fillStyle = dGrad(c, 0, 0, 12); c.beginPath(); c.arc(0, 0, 11.8, 0, 6.283); c.fill();
-    if (kind === 'h') { if (HATS[i]) HATS[i](c, -2); else { c.strokeStyle = '#b5a898'; c.lineWidth = 1.5; c.beginPath(); c.moveTo(-6, -6); c.lineTo(6, 6); c.moveTo(6, -6); c.lineTo(-6, 6); c.stroke(); } }
+    if (kind === 'f') { if (FACES[i]) FACES[i](c, 0); else { c.strokeStyle = '#b5a898'; c.lineWidth = 1.5; c.beginPath(); c.moveTo(-6, -6); c.lineTo(6, 6); c.moveTo(6, -6); c.lineTo(-6, 6); c.stroke(); } }
+    else if (kind === 'h') { if (HATS[i]) HATS[i](c, -2); else { c.strokeStyle = '#b5a898'; c.lineWidth = 1.5; c.beginPath(); c.moveTo(-6, -6); c.lineTo(6, 6); c.moveTo(6, -6); c.lineTo(-6, 6); c.stroke(); } }
     else { if (GLASSES[i]) GLASSES[i](c, -1); else { c.strokeStyle = '#b5a898'; c.lineWidth = 1.5; c.beginPath(); c.moveTo(-6, -6); c.lineTo(6, 6); c.moveTo(6, -6); c.lineTo(-6, 6); c.stroke(); } }
     c.restore();
     if (!open) lockDraw(c, 40, 36, 16, need);
@@ -3902,18 +4006,21 @@ function goHome() { destroyPeer(); G.role = null; G.phase = 'idle'; G.st = null;
   }
   function fillDeco() {
     var d = myDeco(), st = myStats();
-    [['hatRow', 'h', HAT_COUNT, HAT_NEED, 'dummyparty.hat', d.h], ['glRow', 'g', GL_COUNT, GL_NEED, 'dummyparty.gl', d.g]].forEach(function (r) {
+    [['faceRow', 'f', FACE_COUNT, null, 'dummyparty.face', d.f, '얼굴'], ['hatRow', 'h', HAT_COUNT, HAT_NEED, 'dummyparty.hat', d.h, '모자'], ['glRow', 'g', GL_COUNT, GL_NEED, 'dummyparty.gl', d.g, '안경']].forEach(function (r) {
       var row = $(r[0]); row.innerHTML = '';
       for (var i = 0; i < r[2]; i++) (function (i) {
-        var open = st.rwins >= r[3][i], b = document.createElement('button'); b.type = 'button'; b.className = 'dk' + (i === r[5] ? ' on' : '') + (open ? '' : ' lk');
-        b.appendChild(thumb(r[1] === 'h' ? 'h' : 'g', i, open, r[3][i]));
-        b.onclick = function () { if (!open) { toast('라운드에서 ' + r[3][i] + '번 1등 하면 열려요.'); return; } lsSet(r[4], String(i)); SFX.play('pop'); renderHome(); };
+        var key = r[1] + i, open = r[1] === 'f' ? faceOpen(i) : (st.rwins >= r[3][i] || ownsItem(key)), b = document.createElement('button'); b.type = 'button'; b.className = 'dk' + (i === r[5] ? ' on' : '') + (open ? '' : ' lk');
+        b.appendChild(thumb(r[1], i, open, DP_PRICE[key] || 0));
+        b.onclick = function () {
+          if (!open) { shopClick(key, r[6] + (r[3] ? ' ' + i + '번' : ''), '아직 열리지 않았어요.'); return; }
+          lsSet(r[4], String(i)); SFX.play('pop'); renderHome();
+        };
         row.appendChild(b);
       })(i);
     });
-    var pv = $('decoPrev').getContext('2d'), col = COLORS[0]; DECO[col] = { h: d.h, g: d.g };
+    var pv = $('decoPrev').getContext('2d'), col = COLORS[0];
     pv.setTransform(1, 0, 0, 1, 0, 0); pv.clearRect(0, 0, 168, 208); pv.setTransform(2, 0, 0, 2, 0, 0);
-    DECO[col] = { h: d.h, g: d.g }; drawDummy(pv, 42, 94, { s: 1.45, color: col, pose: 'up' });
+    DECO[col] = { h: d.h, g: d.g, f: d.f }; drawDummy(pv, 42, 94, { s: 1.45, color: col, pose: 'up' });
   }
   function fillStats() {
     var st = myStats(), box = $('stats'); box.innerHTML = '';
@@ -3922,7 +4029,13 @@ function goHome() { destroyPeer(); G.role = null; G.phase = 'idle'; G.st = null;
       sp.appendChild(cv); sp.appendChild(document.createTextNode(String(x[1]))); box.appendChild(sp);
     });
   }
-  window.renderHome = function () { fillStats(); fillDeco(); };
+  function fillWallet() {
+    var box = $('walBox'), u = walClient();
+    if (!u) box.innerHTML = '<b>dC</b> 로그인하면 판이 끝날 때마다 dC를 모아서 스킨을 살 수 있어요';
+    else if (!WAL.ready) box.innerHTML = '<b>dC</b> 불러오는 중…';
+    else box.innerHTML = '<b>' + WAL.bal + ' dC</b> <span>허브 코인 1개 = 8dC</span> <a href="https://frenchfries777mc.github.io/games/#coin" target="_blank" rel="noopener">허브 코인으로 바꾸기</a>';
+  }
+  window.renderHome = function () { fillStats(); fillWallet(); fillDeco(); };
   renderHome();
   // 이모트 줄과 단축키(1~5)
   (function () {
@@ -3938,7 +4051,7 @@ function goHome() { destroyPeer(); G.role = null; G.phase = 'idle'; G.st = null;
     function useNick() {
       try { var u = window.FFAuth && FFAuth.user(), n = u && FFAuth.nickname(); if (n) { $('nameIn').value = cleanName(n); lsSet('dummyparty.name', cleanName(n)); } } catch (e) { }
     }
-    function hook() { if (!window.FFAuth) return false; FFAuth.ready.then(useNick); FFAuth.onChange(useNick); return true; }
+    function hook() { if (!window.FFAuth) return false; FFAuth.ready.then(function () { useNick(); walletRefresh(); }); FFAuth.onChange(function () { useNick(); walletRefresh(); }); return true; }
     if (!hook()) { var tries = 0, iv = setInterval(function () { if (hook() || ++tries > 40) clearInterval(iv); }, 250); }
   })();
   requestAnimationFrame(frame);
