@@ -5,7 +5,7 @@
 한국어로만 바뀐 문서는 다른 언어 화면에서 한국어가 그대로 보인다. (위키는 번역 글의 해시가 다르면 한국어 원문을 보여 준다.)
 
 ## 위키
-위키 한국어 본문은 /mnt/project-files/frenchfries777-hub/wiki-src/all.ko.json 에 있고, 바뀐 내용은 batchNN-notes.md 에 있다. batch30까지의 번역은 wiki/tr 에 들어갔다(2026-10-19 번역 묶음). batch31, batch32 변경분(batch32-notes.md)은 아직 번역 전이라 한국어로 보인다.
+위키 한국어 본문은 /mnt/project-files/frenchfries777-hub/wiki-src/all.ko.json 에 있고, 바뀐 내용은 batchNN-notes.md 에 있다. batch32까지의 번역은 wiki/tr 에 들어갔다(2026-10-20 번역 묶음).
 
 
 ## 허브 패치노트
