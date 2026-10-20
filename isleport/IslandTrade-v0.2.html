@@ -437,7 +437,7 @@ const TUT=[
  [P('다 자라면 밭을 눌러 수확해요','When it is grown, tap the field to harvest'),s=>s.stats.harvest>=1],
  [P('마을 장터에서 수확한 것을 팔아요','Sell your harvest at the town market'),s=>(s.stats.shop||0)>=1],
  [P('항구에서 배에 짐을 싣고 보내요','Load a ship at the harbor and send it off'),s=>s.stats.sailed>=1]];
-const OUTMAX=12,BUILD=36;
+const OUTMAX=12,BUILD=37;
 const hasB=(s,b)=>s.slots.some(x=>x&&x.b===b);
 const rankOf=e=>{let r=0;RANKS.forEach((x,i)=>{if(e>=x[0])r=i;});return r;};
 /* 업적: id, 이름, 설명, 조건 */
@@ -559,6 +559,9 @@ A('nw1m',P('백만장자','Millionaire'),P('재산 1,000,000 모으기','Reach a
 const CROPK=Object.keys(CROPS),SPEC=['goldbarley','pomegranate','saffron','cloudcotton','seaweed','dragonfruit'],CROPK17=CROPK.filter(c=>!SPEC.includes(c));
 const ACHN={};ACH.forEach(a=>ACHN[a.id]=a);
 const NOTES=[
+ {date:'2026-10-20',build:'v0.2 build 37',title:P('친구 초대로 바로 입장','Join friends from invites'),items:[
+  P('방을 열거나 들어가면 허브 친구들에게 방이 보이고, 초대 알림을 누르면 이 게임이 열리면서 그 방에 바로 들어가요','Open or join a room and hub friends can see it; tapping an invite opens the game and joins that room'),
+ ]},
  {date:'2026-10-20',build:'v0.2 build 36',title:P('저작권 표기','Copyright notice'),items:[
   P('게임 파일과 시작 화면, 설정 화면에 저작권 표기를 넣었어요 (CC BY-NC-ND 4.0)','Added a copyright notice (CC BY-NC-ND 4.0) to the game file, title screen and settings')
  ]},
@@ -11851,10 +11854,10 @@ async function startMP(host,code){
     MP.T=await openTransport(code,host);MP.on=true;MP.bak=host?null:{DEM,EV,PROJ,CO};
     if(host){MP.hostId=MP.me;MP.players[MP.me]={name:MP.name,nw:300,rk:0,slot:0,last:Date.now(),ships:[]};}
     else MP.send({t:'hello',pid:MP.me,name:MP.name});
-    S.stats.mp++;applyStatic();openModal('mp');
+    S.stats.mp++;applyStatic();openModal('mp');try{window.FFAuth&&FFAuth.setRoom({game:'isleport',code:code,path:'isleport/IslandTrade-v0.2.html'});}catch(e){}
     toast(host?T('방을 열었어요. 코드 <b>{0}</b>','Room opened. Code <b>{0}</b>',code):T('방에 들어왔어요','Joined the room'));
   }catch(e){toast(T('연결하지 못했어요','Could not connect'));MP.on=false;if(MP.T){try{MP.T.close();}catch(x){}MP.T=null;}}}
-function mpLeave(msg){ltAbort(true);if(VIS.on)leaveVisit();
+function mpLeave(msg){try{window.FFAuth&&FFAuth.setRoom(null);}catch(e){}ltAbort(true);if(VIS.on)leaveVisit();
   if(MP.on){if(MP.host)MP.send({t:'hostbye'});else MP.send({t:'bye',pid:MP.me});}
   if(MP.T){try{MP.T.close();}catch(e){}}MP.T=null;
   if(S)for(const id in MP.offers){const o=MP.offers[id];if(o.dir==='sell')S.inv[o.g]=inv(o.g)+o.n;else S.money+=o.price;}
@@ -13715,7 +13718,9 @@ function loop(now){const dt=Math.min(1,(now-last)/1000);last=now;
   if(S){movePlayer(dt);updateJoy();updateCam(dt);tickAcc+=dt;tick(dt);updateHud();if(now-lastSide>400&&!POPOPEN){lastSide=now;renderSide(false);renderChat();}if(now-lastSave>4000){lastSave=now;save();}}
   requestAnimationFrame(loop);}
 document.addEventListener('pointerdown',()=>{if(S){auCtx();if(AU.mus)musicStart();}},{once:false});
-initLang();fit();initAuth();applyStatic();showTitle();requestAnimationFrame(loop);
+initLang();fit();initAuth();applyStatic();showTitle();
+try{const q=new URLSearchParams(location.search),jc=(q.get('join')||q.get('room')||'').trim().toUpperCase();if(/^[A-Z0-9]{4}$/.test(jc)){startSingle(true);startMP(false,jc);}}catch(e){}
+requestAnimationFrame(loop);
 window.__it={bldLoad,bldTake,outN,get UID(){return UID;},set UID(v){UID=v;},SAVEK,capOf,upWh,setAutoAll,harvest,plant,SAIL,openModal,SECRET,addMap,crewCands,crewHire,crewTick,crewV,stockAdd,storeTick,storeCollect,storeSetMult,coGen,coDonate,coApply,secretBuy,secretPrice,helmBottles,get CO(){return CO;},set CO(v){CO=v;},codexTier,plotXY,decoSpot,DECO,placeDeco,PL,ISLE,OX,OY,HOME,get MOD(){return typeof MOD!=="undefined"?MOD:null;},HEL,startHelm,endHelm,helmAct,isUnl,unlockItem,buySeed,tx,NOTES,VIS,LT,startVisit,leaveVisit,ltRequest,ltAnswer,ltSet,ltReady,ltUnready,ltCancel,mpLeave,mySnap,hireWorker,get S(){return S;},set S(v){S=v;},set OFF(v){OFF=v;},get OFF(){return OFF;},get DEM(){return DEM;},get PROJ(){return PROJ;},MP,migrate,tick,startSingle,startMP,setView,dispatch,harvestAll,plant,buildB,buildPen,buyShip,quote,GOODS,PORTS,ACH,BLD,CROPS,ANIM,TECHS,QUESTS,PROJECTS,netWorth,openDispatch,offerTo,answerOffer,raid,onMsg,research,donate,listAuction,bidAuction,sendChat,genContract,genVisitor,sellVisitor,rankOf,harvest,collectPen,upB,upPen,buyPlot,sellPlot,buyPenSlot,buySlot,borrow,repay,get LANG(){return LANG;},setLang,T,EN,save,loadSave,get VIEW(){return VIEW;},PL,KEYS,JOY,interactNear,objs,openModal,get MOD(){return MOD;},ACT,dispatchRaw:dispatch,GI,hist:HIST,season,weather,SHIPS};
 
 </script>
