@@ -464,6 +464,16 @@ canvas.ico{width:100%;max-width:320px;height:auto;aspect-ratio:640/150;backgroun
 .exitHub{display:none;position:fixed;top:12px;left:12px;z-index:30;border:0;border-radius:12px;padding:9px 14px;font:800 14px 'Noto Sans KR',sans-serif;background:rgba(40,28,16,.72);color:#fff;cursor:pointer}
 body.onhome .exitHub{display:block}.exitHub:hover{background:rgba(40,28,16,.9)}
 .acctLine{margin:2px 0 10px;font-size:13px;font-weight:700;color:var(--mu)}.acctLine a{color:inherit}
+#sHome .homeBox{max-width:720px}
+.logo{font-size:clamp(46px,8vw,96px);white-space:nowrap}
+.menuR{position:fixed;right:28px;top:50%;transform:translateY(-50%);width:236px;background:var(--panel);border-radius:20px;padding:16px;box-shadow:0 10px 30px rgba(60,30,10,.25);display:flex;flex-direction:column;gap:10px;text-align:left;z-index:5}
+.menuR label{font-weight:800;font-size:13px;color:var(--mu);margin:0}.menuR .acctLine{margin:0}
+.menuR input{width:100%;font:inherit;font-size:16px;padding:10px 12px;border-radius:12px;border:2px solid var(--line);background:#fff;color:var(--ink);outline:none;box-sizing:border-box}
+.menuR .pb{width:100%;font-size:18px;padding:13px 16px}.menuR .or{margin:6px 0 0}.menuR .row{margin-top:0}.menuR .row input{flex:1;min-width:0;width:auto}.menuR .row .pb{width:auto;flex:0 0 auto;font-size:15px;padding:10px 14px}
+@media(max-width:900px){.menuR{position:static;transform:none;width:100%;max-width:440px;margin:14px auto 0}}
+.shop{display:none;position:fixed;inset:0;z-index:40;background:rgba(30,18,8,.62);align-items:center;justify-content:center;padding:16px}.shop.on{display:flex}
+.shopBox{background:var(--panel);border-radius:20px;padding:16px;max-width:520px;width:100%;max-height:92vh;overflow:auto;box-shadow:0 14px 40px rgba(0,0,0,.45)}
+.shopHead{display:flex;align-items:center;gap:10px;margin-bottom:8px}.shopHead h2{margin:0;font-size:24px;font-weight:900;color:var(--ink)}.shopHead #walBox{flex:1;margin:0;font-size:14px}.shopHead .pb{padding:8px 14px;font-size:14px}
 #walBox{margin:0 0 8px;padding:7px 12px;border-radius:14px;background:rgba(255,255,255,.55);font-size:13px;color:#3a2410;text-align:center}
 #walBox b{font-weight:900}#walBox span{opacity:.7;margin:0 4px}#walBox a{color:inherit;font-weight:800}
 .dhint{font-size:11px;color:#5a3415;opacity:.8;margin-top:4px}
@@ -495,17 +505,19 @@ body.playing #emoBar{display:flex}
   <p class="tag">하얀 마네킹들의 엉망진창 미니게임 대결</p>
   <canvas id="heroCv" width="520" height="300"></canvas>
   <div id="stats"></div>
-  <div id="walBox"></div>
-  <div class="deco"><canvas id="decoPrev" width="168" height="208"></canvas><div class="dgrid"><div class="drow" id="faceRow"></div><div class="drow" id="hatRow"></div><div class="drow" id="glRow"></div><div class="drow" id="danceRow"></div><div class="dhint">잠긴 칸은 눌러서 구경하고 dC로 살 수 있어요. 맨 아래 줄은 이길 때 추는 춤이에요</div></div></div>
-  <div class="panel">
+  <aside class="menuR">
    <label for="nameIn">내 이름</label><div class="acctLine" id="acctLine"></div>
    <input id="nameIn" maxlength="12" placeholder="이름 (12자까지)" autocomplete="off">
-   <div class="row"><button class="pb gold" id="hostBtn">방 만들기</button><button class="pb" id="soloBtn">봇이랑 하기</button></div>
+   <button class="pb gold" id="hostBtn">방 만들기</button>
+   <button class="pb" id="soloBtn">혼자 하기</button>
+   <button class="pb dark" id="shopBtn">상점</button>
    <div class="or">친구 방에 들어가기</div>
    <div class="row"><input id="codeIn" maxlength="5" placeholder="방 코드" autocomplete="off"><button class="pb dark" id="joinBtn" style="flex:0 0 auto">들어가기</button></div>
    <div class="msg" id="homeMsg"></div>
-  </div>
-  <details class="notes"><summary>패치노트 · v0.1 (build 21)</summary>
+  </aside>
+  <details class="notes"><summary>패치노트 · v0.1 (build 22)</summary>
+   <b>2026-10-20 · v0.1 build 22 · 시작 화면 개편</b>
+   <ul><li>시작 화면을 다른 게임처럼 바꿨어요: 제목은 가운데 크게, 오른쪽에 방 만들기, 혼자 하기, 상점 버튼</li><li>상점에서 얼굴, 모자, 안경, 춤을 사고 고를 수 있어요</li><li>방 만들기에서 봇 추가 기능을 없앴어요 (혼자 하기에서는 봇과 해요)</li><li>약 올리는 승리 춤 2종 추가 (dC로 구매): 약 올리기 춤(메롱, 이마에 L, 우는 척하다 비웃기), 엉덩이 바이바이</li></ul>
    <b>2026-10-20 · v0.1 build 21 · 허브 방 초대</b>
    <ul><li>방에 들어가 있으면 허브 친구에게 방 초대를 보낼 수 있어요. 초대 알림을 누르면 자동으로 방에 들어와요</li></ul>
    <b>2026-10-20 · v0.1 build 20 · 미니게임 배경음악</b>
@@ -546,7 +558,7 @@ body.playing #emoBar{display:flex}
    <ul><li>무너지는 발판 칸 수 대폭 증가 (19×10)와 용암 동굴 맵</li><li>10개 맵 전부 새로 그림 (관중석, 야자수 섬, 링, 정원 미로, 서커스, 우노 테이블 등)</li><li>글자 대신 아이콘·말풍선·이펙트로 표현 (무기, 아이템, 카드 효과, 시작 안내)</li><li>타격·폭발·물보라 효과와 화면 흔들림 추가</li></ul>
    <b>2026-10-19 · v0.1 build 1 · 첫 시험판</b>
    <ul><li>마네킹 미니게임 10개 추가 (장애물 달리기, 섬 밀치기, 싸우기, 병맛 미로, 체스 대난투, 폭탄 돌리기, 병맛 우노, 쇼윈도 얼음땡, 무너지는 발판, 컨베이어 서바이벌)</li><li>방 코드로 최대 8명 멀티플레이, 빈자리는 봇으로 채우기</li><li>판마다 10개 중 5개를 무작위로 골라 점수를 합산</li><li>PC 키보드와 휴대폰 터치 조작 지원</li></ul></details>
-  <p class="foot">2~8명 · 판마다 23개 미니게임 중 7개 · 프로토타입 v0.1 b21 · <a href="../">← 프로토타입 목록</a></p>
+  <p class="foot">2~8명 · 판마다 23개 미니게임 중 7개 · 프로토타입 v0.1 b22 · <a href="../">← 프로토타입 목록</a></p>
   <p class="foot"><span class="ff-copy">© 2026 Frenchfries777 · <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.ko" target="_blank" rel="noopener">CC BY-NC-ND 4.0</a></span></p>
  </div>
 </section>
@@ -557,7 +569,6 @@ body.playing #emoBar{display:flex}
   <div id="lobCodeBox"><small>방 코드</small><div id="lobCode"></div><button class="pb" id="copyBtn" style="margin-top:6px;font-size:14px;padding:8px 14px">초대 링크 복사</button></div>
   <ul id="lobList"></ul>
   <div class="lobSet" id="lobHost">
-   <div class="step">봇 <button id="botMinus">−</button><span id="botN">0</span><button id="botPlus">+</button><span style="font-size:13px;color:var(--mu);font-weight:600">빈자리를 봇이 채워요</span></div>
    <button class="pb gold" id="startBtn">시작하기</button>
    <div id="startHint"></div>
   </div>
@@ -572,6 +583,9 @@ body.playing #emoBar{display:flex}
  <div id="emoBar"></div>
  <div class="ov" id="ov"></div>
 </section>
+<div class="shop" id="shopModal"><div class="shopBox"><div class="shopHead"><h2>상점</h2><div id="walBox"></div><button class="pb dark" id="shopClose">닫기</button></div>
+  <div class="deco"><canvas id="decoPrev" width="168" height="208"></canvas><div class="dgrid"><div class="drow" id="faceRow"></div><div class="drow" id="hatRow"></div><div class="drow" id="glRow"></div><div class="drow" id="danceRow"></div><div class="dhint">잠긴 칸은 눌러서 구경하고 dC로 살 수 있어요. 맨 아래 줄은 이길 때 추는 춤이에요</div></div></div>
+</div></div>
 <div id="toast"></div>
 <script>
 /* ===== Dummy Party core: 공용 도구, 입력, 마네킹 그림, 효과음 =====
@@ -953,7 +967,7 @@ var INPUT = (function () {
    DANCES[번호](t) -> { rot, pv, bob, z, sx, l1, l2, f1, f2, aL, aR, hx, hr, back(c,x,y,s,t), front(c,x,y,s,t) }
    팔은 어깨 기준 [dx, dy], 발은 [x 이동, 바닥 기준 y]. 1~4번은 모두 춤추는 동안 계속 돌아가요 */
 var DANCE = {};   // DANCE[색] = 춤 번호
-var DANCE_COUNT = 5, DANCE_NAMES = ['기본 춤', '디스코 파티', '로봇 춤', '발레 공연', '브레이크댄스'];
+var DANCE_COUNT = 7, DANCE_NAMES = ['기본 춤', '디스코 파티', '로봇 춤', '발레 공연', '브레이크댄스', '약 올리기 춤', '엉덩이 바이바이'];
 function dHue(h, a, l) { return 'hsla(' + (h % 360) + ',90%,' + (l || 60) + '%,' + (a == null ? 1 : a) + ')'; }
 function dLerp(a, b, k) { return [a[0] + (b[0] - a[0]) * k, a[1] + (b[1] - a[1]) * k]; }
 function dEase(k) { k = Math.max(0, Math.min(1, k)); return k * k * (3 - 2 * k); }
@@ -1040,8 +1054,61 @@ var DANCES = [null,
     };
     return o;
   }
+  ,
+  // 5 약 올리기 춤: 메롱 + 귀 옆 손가락 흔들기 → 이마에 L자 → 우는 척하다 비웃기
+  function (t) {
+    var T = 4.8, ph = t % T, o = { hx: 0, hr: 0, bob: 0, rot: 0, z: 0, l1: 0, l2: 0, f1: -2, f2: -2, aL: [-8, 12], aR: [8, 12] }, mode = 0, txtS = '';
+    if (ph < 1.6) { mode = 0; var w = Math.sin(t * 9), wi = Math.sin(t * 28); o.hr = w * 0.22; o.hx = w * 2.5; o.bob = Math.abs(Math.sin(t * 9)) * 4; o.aL = [-13, -19 + wi * 3]; o.aR = [13, -19 - wi * 3]; o.l1 = w * 6; o.l2 = -w * 6; o.f1 = -2 - Math.max(0, w) * 4; o.f2 = -2 - Math.max(0, -w) * 4; txtS = '메롱~'; }
+    else if (ph < 3.2) { mode = 1; var h = Math.sin(t * 7); o.hr = h * 0.12; o.hx = h * 1.5; o.bob = Math.abs(h) * 3; o.aL = [-6, -19 + Math.sin(t * 20) * 1.2]; o.aR = [6, -19 - Math.sin(t * 20) * 1.2]; o.rot = h * 0.06; o.l1 = h * 5; o.l2 = -h * 5; txtS = 'L'; }
+    else { mode = 2; var u = ph - 3.2, cry = u < 0.8; if (cry) { var r = Math.sin(t * 24); o.aL = [-5, -17 + r * 2]; o.aR = [5, -17 - r * 2]; o.hr = -0.1; o.bob = -1; o.rot = Math.sin(t * 30) * 0.03; txtS = '엉엉...'; } else { var k = Math.sin(t * 22); o.aL = [-9, -6]; o.aR = [11, -14]; o.rot = k * 0.07; o.bob = Math.abs(k) * 5; o.hr = 0.2 + k * 0.05; o.l1 = k * 4; o.l2 = -k * 4; txtS = 'ㅋㅋㅋㅋ'; } o.mode2 = cry ? 1 : 2; }
+    var hx = o.hx;
+    o.back = function (c, x, y, s, tt) {
+      c.save(); var a = 0.18 + 0.1 * Math.sin(tt * 8); c.fillStyle = mode === 2 && o.mode2 === 1 ? 'rgba(90,120,255,.25)' : 'rgba(255,90,170,' + a + ')'; c.beginPath(); c.ellipse(x, y - 52 * s, 56 * s, 70 * s, 0, 0, 6.283); c.fill();
+      c.fillStyle = 'rgba(255,255,255,.35)'; for (var i = 0; i < 3; i++) { var k = (tt * 1.2 + i / 3) % 1; c.beginPath(); c.arc(x + Math.sin(i * 4) * 30 * s, y - k * 120 * s, 3 * s, 0, 6.283); c.fill(); }
+      c.restore();
+    };
+    o.front = function (c, x, y, s, tt) {
+      c.save(); var hy = y - 62 * s, bob = o.bob || 0; c.lineJoin = 'round'; c.textAlign = 'center';
+      // 혀 (메롱)
+      if (mode === 0 || (mode === 2 && o.mode2 === 2)) { var tl = (7 + 2 * Math.sin(tt * 20)) * s; c.fillStyle = '#ff6f91'; c.strokeStyle = '#c23a5f'; c.lineWidth = 1.2 * s; c.beginPath(); c.moveTo(x + hx * s - 3.4 * s, hy + 5 * s - bob * s * 0.2); c.lineTo(x + hx * s - 3.4 * s, hy + 5 * s + tl - 3 * s); c.arc(x + hx * s, hy + 5 * s + tl - 3 * s, 3.4 * s, 3.1416, 0, true); c.lineTo(x + hx * s + 3.4 * s, hy + 5 * s - bob * s * 0.2); c.closePath(); c.fill(); c.stroke(); }
+      // 눈물 (우는 척)
+      if (mode === 2 && o.mode2 === 1) { for (var q = 0; q < 6; q++) { var k = (tt * 2.2 + q / 6) % 1, sd = q % 2 ? 1 : -1; c.fillStyle = 'rgba(120,190,255,' + (1 - k) + ')'; c.beginPath(); c.ellipse(x + sd * (7 + k * 6) * s, hy + 3 * s + k * 38 * s, 2.2 * s, 3.4 * s, 0, 0, 6.283); c.fill(); } }
+      // 떠오르는 글자
+      var tx = x + Math.sin(tt * 3) * 6 * s, ty = hy - 34 * s - ((tt * 10) % 8) * s, big = mode === 1;
+      c.font = '900 ' + Math.round((big ? 40 : 19) * s) + 'px "Noto Sans KR",sans-serif'; c.lineWidth = 4 * s; c.strokeStyle = 'rgba(60,20,60,.75)'; c.fillStyle = mode === 2 && o.mode2 === 1 ? '#bfdcff' : (big ? '#ff5a7a' : '#fff4a8');
+      c.strokeText(txtS, tx, ty); c.fillText(txtS, tx, ty);
+      if (big) { var lx = x + hx * s - 9 * s, ly = hy - 10 * s; c.lineCap = 'round'; c.beginPath(); c.moveTo(lx, ly - 9 * s); c.lineTo(lx, ly + 3 * s); c.lineTo(lx + 8 * s, ly + 3 * s); c.strokeStyle = '#fff'; c.lineWidth = 6.5 * s; c.stroke(); c.strokeStyle = '#ff5a7a'; c.lineWidth = 3.8 * s; c.stroke(); }
+      c.restore();
+    };
+    return o;
+  }
+  ,
+  // 6 엉덩이 바이바이: 허리 숙여 엉덩이 흔들고 찰싹 → 한 손 허리, 한 손으로 "잘 가~" 흔들기
+  function (t) {
+    var T = 5, ph = t % T, o = { hx: 0, hr: 0, bob: 0, rot: 0, z: 0, l1: 0, l2: 0, f1: -2, f2: -2, aL: [-8, 12], aR: [8, 12] }, bend = ph < 2.5, slap = 0;
+    if (bend) { var w = Math.sin(t * 17); o.rot = 0.52 + w * 0.1; o.pv = -4; o.l1 = -9 + w * 3; o.l2 = 9 - w * 3; o.f1 = -3; o.f2 = -3; o.bob = Math.abs(w) * 3; o.aL = [-13, 17]; slap = Math.max(0, Math.sin(t * 17 + 1.2)); o.aR = [10 + slap * 4, 20 - slap * 6]; o.hr = -0.1; o.hx = 3; }
+    else { var u = ph - 2.5, wv = Math.sin(t * 8.5); o.rot = -0.06 + wv * 0.03; o.hr = 0.2; o.hx = 2; o.bob = Math.abs(wv) * 2; o.aR = [17, -4]; o.aL = [-8 + wv * 7, -29 + Math.cos(t * 8.5) * 3]; o.l1 = 4; o.l2 = -2; o.f1 = -2; o.f2 = -4; }
+    o.back = function (c, x, y, s, tt) {
+      c.save(); c.fillStyle = bend ? 'rgba(255,150,60,.2)' : 'rgba(150,120,255,.22)'; c.beginPath(); c.ellipse(x, y - 48 * s, 58 * s, 66 * s, 0, 0, 6.283); c.fill();
+      for (var i = 0; i < 5; i++) { var k = (tt * 0.9 + i / 5) % 1; c.fillStyle = dHue(i * 70 + tt * 80, 0.7 * (1 - k), 70); star(c, x + Math.sin(i * 5 + tt) * 44 * s, y - 30 * s - k * 110 * s, (3 + i % 2 * 2) * s); }
+      c.restore();
+    };
+    o.front = function (c, x, y, s, tt) {
+      c.save(); c.textAlign = 'center'; c.lineJoin = 'round';
+      if (bend) {
+        // 엉덩이 쪽 부채꼴 + 찰싹
+        var bx = x - 20 * s, by = y - 38 * s; for (var i = 0; i < 3; i++) { c.strokeStyle = 'rgba(255,255,255,' + (0.65 - i * 0.18) + ')'; c.lineWidth = 2.4 * s; c.beginPath(); c.arc(bx, by, (14 + i * 7) * s, 2.5, 4.0); c.stroke(); }
+        var tx = x + 6 * s, ty = y - 118 * s - ((tt * 14) % 10) * s; c.font = '900 ' + Math.round(20 * s) + 'px "Noto Sans KR",sans-serif'; c.lineWidth = 4 * s; c.strokeStyle = 'rgba(70,25,10,.8)'; c.fillStyle = '#ffd7a0'; var tw = Math.floor(tt * 6) % 2 ? '찰싹!' : '엉덩이~'; c.strokeText(tw, tx, ty); c.fillText(tw, tx, ty);
+      } else {
+        // 바이바이 글자와 하트
+        var ty2 = y - 108 * s - ((tt * 12) % 8) * s; c.font = '900 ' + Math.round(21 * s) + 'px "Noto Sans KR",sans-serif'; c.lineWidth = 4 * s; c.strokeStyle = 'rgba(40,20,80,.8)'; c.fillStyle = '#dcd0ff'; c.strokeText('잘 가~', x + 4 * s, ty2); c.fillText('잘 가~', x + 4 * s, ty2);
+        for (var j = 0; j < 4; j++) { var k = (tt * 0.8 + j / 4) % 1; c.fillStyle = 'rgba(255,110,170,' + (1 - k) + ')'; var hx = x - 34 * s + Math.sin(j * 3 + tt * 3) * 12 * s, hy = y - 80 * s - k * 60 * s, r = 4.5 * s; c.beginPath(); c.arc(hx - r * 0.55, hy, r * 0.62, 0, 6.283); c.arc(hx + r * 0.55, hy, r * 0.62, 0, 6.283); c.moveTo(hx - r * 1.1, hy + r * 0.25); c.lineTo(hx, hy + r * 1.35); c.lineTo(hx + r * 1.1, hy + r * 0.25); c.closePath(); c.fill(); }
+      }
+      c.restore();
+    };
+    return o;
+  }
 ];
-
 /* ===== 효과(파티클, 화면 흔들림)와 그림 아이콘 =====
    글자 대신 화면으로 알려 주기 위한 공용 도구. 아이콘은 (x, y)가 가운데, s가 한 변 크기. */
 var CAMX = 0, CAMY = 0, SHAKE = 0, PARTS = [];
@@ -4285,7 +4352,7 @@ function funPhase(m, ph) {
 /* ---------- dC 지갑 · 스킨 가게 ---------- */
 // 값은 supabase-dp-coin.sql 의 dp_price 와 같아야 해요. 허브 코인 1개 = 8dC
 var WAL = { bal: 0, today: 0, own: {}, ready: false, busy: false };
-var DP_PRICE = { f1: 60, f2: 30, f3: 30, d1: 80, d2: 100, d3: 130, d4: 180 };
+var DP_PRICE = { f1: 60, f2: 30, f3: 30, d1: 80, d2: 100, d3: 130, d4: 180, d5: 160, d6: 220 };
 HAT_NEED.forEach(function (n, i) { if (n > 0) DP_PRICE['h' + i] = n * 10; });
 GL_NEED.forEach(function (n, i) { if (n > 0) DP_PRICE['g' + i] = n * 10; });
 function ownsItem(k) { return !!WAL.own[k]; }
@@ -4522,7 +4589,7 @@ function noteMatchEnd(m) {
 function initLobby() {
   G.phase = 'lobby'; G.me = 'p0';
   G.players = [{ id: 'p0', name: G.name, color: 0, bot: false, online: true, score: 0, wins: 0, h: myDeco().h, g: myDeco().g, f: myDeco().f, d: myDeco().d }];
-  G.bots = G.role === 'solo' ? 3 : +(lsGet('dummyparty.bots') || 0);
+  G.bots = G.role === 'solo' ? 3 : 0;
   trimBots(true);
   if (!G.hostTimer) G.hostTimer = setInterval(hostTick, 1000 / 60);
   show('sLobby'); renderLobby(); sendMeta();
@@ -4557,10 +4624,9 @@ function renderLobby() {
   });
   $('lobHost').style.display = host ? '' : 'none';
   $('lobWait').style.display = host ? 'none' : '';
-  $('botN').textContent = G.players.filter(function (p) { return p.bot; }).length;
   $('lobCount').textContent = ps.length + ' / ' + MAXP;
   $('startBtn').disabled = ps.length < 2;
-  $('startHint').textContent = ps.length < 2 ? '2명 이상이어야 시작할 수 있어요. 봇을 넣어도 돼요.' : '';
+  $('startHint').textContent = ps.length < 2 ? '2명 이상이어야 시작할 수 있어요.' : '';
 }
 
 /* ---------- 메타(단계, 점수) 보내기 ---------- */
@@ -4898,14 +4964,16 @@ function goHome() { destroyPeer(); G.role = null; G.phase = 'idle'; G.st = null;
   function needName() { var n = $('nameIn').value.trim(); if (!n) { homeMsg('이름을 먼저 입력하세요.'); $('nameIn').focus(); return null; } n = cleanName(n); lsSet('dummyparty.name', n); homeMsg(''); return n; }
   $('codeIn').addEventListener('input', function () { this.value = this.value.toUpperCase().replace(/[^A-Z0-9]/g, ''); });
   $('codeIn').addEventListener('keydown', function (e) { if (e.key === 'Enter') $('joinBtn').click(); });
+  $('shopBtn').onclick = function () { $('shopModal').classList.add('on'); };
+  $('shopClose').onclick = function () { $('shopModal').classList.remove('on'); };
+  $('shopModal').addEventListener('click', function (e) { if (e.target === this) this.classList.remove('on'); });
+  addEventListener('keydown', function (e) { if (e.key === 'Escape') $('shopModal').classList.remove('on'); });
   $('hostBtn').onclick = function () { var n = needName(); if (n) startHost(n); };
   $('soloBtn').onclick = function () { var n = needName(); if (n) startSolo(n); };
   $('joinBtn').onclick = function () { var n = needName(); if (!n) return; var c = $('codeIn').value.trim().toUpperCase(); if (c.length !== 5) { homeMsg('방 코드 5자리를 입력하세요.'); return; } startGuest(n, c); };
   $('lobBack').onclick = goHome;
   $('quitBtn').onclick = function () { if (confirm('게임에서 나가 허브로 돌아갈까요?')) exitHub(); };
   $('exitHub').onclick = exitHub;
-  $('botPlus').onclick = function () { G.bots = clamp(G.bots + 1, 0, MAXP - 1); lsSet('dummyparty.bots', String(G.bots)); trimBots(); sendMeta(); renderLobby(); };
-  $('botMinus').onclick = function () { G.bots = clamp(G.bots - 1, G.role === 'solo' ? 1 : 0, MAXP); lsSet('dummyparty.bots', String(G.bots)); trimBots(); sendMeta(); renderLobby(); };
   $('startBtn').onclick = function () { SFX.unlock(); startMatch(); };
   $('copyBtn').onclick = function () {
     var url = location.origin + location.pathname + '?room=' + G.code + (qs.get('ps') ? '&ps=' + encodeURIComponent(qs.get('ps')) : '');
