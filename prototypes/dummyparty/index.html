@@ -503,7 +503,9 @@ body.playing #emoBar{display:flex}
    <div class="row"><input id="codeIn" maxlength="5" placeholder="방 코드" autocomplete="off"><button class="pb dark" id="joinBtn" style="flex:0 0 auto">들어가기</button></div>
    <div class="msg" id="homeMsg"></div>
   </div>
-  <details class="notes"><summary>패치노트 · v0.1 (build 8)</summary>
+  <details class="notes"><summary>패치노트 · v0.1 (build 9)</summary>
+   <b>2026-10-20 · v0.1 build 9 · 점프와 해설 위치</b>
+   <ul><li>무너지는 발판: 점프(B 키)로 빈 칸 하나까지 건너뛸 수 있어요</li><li>해설 자막을 화면 아래쪽으로 옮겼어요</li></ul>
    <b>2026-10-20 · v0.1 build 8 · dC와 스킨 가게</b>
    <ul><li>게임 재화 dC 추가: 판이 끝나면 등수에 따라 3~12dC (하루 80dC까지)</li><li>허브 코인 1개 = 8dC 교환</li><li>dC로 스킨 구매: 모자와 안경도 dC로 살 수 있어요</li><li>얼굴 스킨 3종 추가: 버럭 아저씨, 놀란 얼굴, 졸린 얼굴</li><li>계정 버튼이 제목을 가리던 문제 수정</li><li>체스 대난투: 서로 잡을 수 없는 배치(기사 둘 등)로 안 끝나던 문제 수정, 16초 동안 안 잡히면 가까운 둘이 결투해요</li></ul>
    <b>2026-10-20 · v0.1 build 7 · 저작권 표기</b>
@@ -518,7 +520,7 @@ body.playing #emoBar{display:flex}
    <ul><li>무너지는 발판 칸 수 대폭 증가 (19×10)와 용암 동굴 맵</li><li>10개 맵 전부 새로 그림 (관중석, 야자수 섬, 링, 정원 미로, 서커스, 우노 테이블 등)</li><li>글자 대신 아이콘·말풍선·이펙트로 표현 (무기, 아이템, 카드 효과, 시작 안내)</li><li>타격·폭발·물보라 효과와 화면 흔들림 추가</li></ul>
    <b>2026-10-19 · v0.1 build 1 · 첫 시험판</b>
    <ul><li>마네킹 미니게임 10개 추가 (장애물 달리기, 섬 밀치기, 싸우기, 병맛 미로, 체스 대난투, 폭탄 돌리기, 병맛 우노, 쇼윈도 얼음땡, 무너지는 발판, 컨베이어 서바이벌)</li><li>방 코드로 최대 8명 멀티플레이, 빈자리는 봇으로 채우기</li><li>판마다 10개 중 5개를 무작위로 골라 점수를 합산</li><li>PC 키보드와 휴대폰 터치 조작 지원</li></ul></details>
-  <p class="foot">2~8명 · 판마다 16개 미니게임 중 5개 · 프로토타입 v0.1 b8 · <a href="../">← 프로토타입 목록</a></p>
+  <p class="foot">2~8명 · 판마다 16개 미니게임 중 5개 · 프로토타입 v0.1 b9 · <a href="../">← 프로토타입 목록</a></p>
   <p class="foot"><span class="ff-copy">© 2026 Frenchfries777 · <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.ko" target="_blank" rel="noopener">CC BY-NC-ND 4.0</a></span></p>
  </div>
 </section>
@@ -1910,12 +1912,12 @@ regMG({
   regMG({
     id: 'tiles', name: '무너지는 발판', time: 75,
     desc: '밟은 발판이 곧 부서져요. 계속 움직여서 마지막까지 바닥에 남아요.',
-    how: '밀치기로 남을 발판 없는 곳으로 보낼 수 있어요.',
-    keys: { a: '밀치기', b: null }, touch: true,
+    how: '밀치기로 남을 발판 없는 곳으로 보내요. 점프로 빈 칸 하나는 건너뛸 수 있어요.',
+    keys: { a: '밀치기', b: '점프' }, touch: true,
     init: function (ps, rng) {
       var tl = []; for (var i = 0; i < TC * TR; i++) tl.push(0);
       var pl = {}, n = ps.length;
-      ps.forEach(function (p, k) { var a = k / n * 6.283; pl[p.id] = { x: TX + TC * TS / 2 + Math.cos(a) * 330, y: TY + TR * TS / 2 + Math.sin(a) * 150, vx: 0, vy: 0, face: 1, walk: 0, mvv: 0, cd: 0, sh: 0, kb: 0, out: false, fall: 0, gone: 0 }; });
+      ps.forEach(function (p, k) { var a = k / n * 6.283; pl[p.id] = { x: TX + TC * TS / 2 + Math.cos(a) * 330, y: TY + TR * TS / 2 + Math.sin(a) * 150, vx: 0, vy: 0, face: 1, walk: 0, mvv: 0, cd: 0, sh: 0, kb: 0, out: false, fall: 0, gone: 0, z: 0, vz: 0 }; });
       return { t: 0, tl: tl, tm: tl.map(function () { return 0; }), pl: pl, ids: ps.map(function (p) { return p.id; }), outs: [], rc: 2 };
     },
     step: function (s, inp, dt, rng) {
@@ -1926,14 +1928,20 @@ regMG({
         var p = s.pl[id], i = inp[id];
         if (p.out) { p.fall += dt; return; }
         p.cd = Math.max(0, p.cd - dt); p.sh = Math.max(0, p.sh - dt); p.kb = Math.max(0, p.kb - dt);
-        var acc = p.kb > 0 ? 0 : 1100; p.vx += i.mx * acc * dt; p.vy += i.my * acc * dt;
-        var damp = Math.pow(0.002, dt); p.vx *= damp; p.vy *= damp; var sp = len(p.vx, p.vy), mx = p.kb > 0 ? 800 : 200; if (sp > mx) { p.vx *= mx / sp; p.vy *= mx / sp; }
+        var air = p.z > 0 || p.vz > 0;
+        if (i.bp && !air && p.kb <= 0) {   // 점프: 발판 한 칸 정도는 건너뛰어요 (날아가는 동안은 방향을 못 바꿔요)
+          var jl = len(i.mx, i.my), jx = jl > 0.2 ? i.mx / jl : p.face, jy = jl > 0.2 ? i.my / jl : 0;
+          p.vx = jx * 190; p.vy = jy * 190; p.vz = 260; p.z = 0.01; air = true; fx(s, 'boing', p.x, p.y);
+        }
+        if (air) { p.vz -= 1300 * dt; p.z += p.vz * dt; if (p.z <= 0) { p.z = 0; p.vz = 0; air = false; p.vx *= 0.15; p.vy *= 0.15; } }
+        var acc = p.kb > 0 || air ? 0 : 1100; p.vx += i.mx * acc * dt; p.vy += i.my * acc * dt;
+        var damp = air ? 1 : Math.pow(0.002, dt); p.vx *= damp; p.vy *= damp; var sp = len(p.vx, p.vy), mx = p.kb > 0 ? 800 : (air ? 200 : 200); if (sp > mx) { p.vx *= mx / sp; p.vy *= mx / sp; }
         if (Math.abs(i.mx) > 0.1) p.face = i.mx > 0 ? 1 : -1;
         p.x += p.vx * dt; p.y += p.vy * dt; animP(p, dt, sp > 30);
         var c = cellOf(p.x, p.y), idx = c[1] * TC + c[0], on = c[0] >= 0 && c[1] >= 0 && c[0] < TC && c[1] < TR && s.tl[idx] !== 2;
-        if (on && s.tl[idx] === 0) { s.tl[idx] = 1; s.tm[idx] = 1.4; }
-        if (!on) { p.gone += dt; if (p.gone > 0.18) { p.out = true; s.outs.push(id); fx(s, 'lava', p.x, p.y); } } else p.gone = 0;
-        if (i.ap && p.cd <= 0) {
+        if (on && !air && s.tl[idx] === 0) { s.tl[idx] = 1; s.tm[idx] = 1.4; }
+        if (!on && !air) { p.gone += dt; if (p.gone > 0.18) { p.out = true; s.outs.push(id); fx(s, 'lava', p.x, p.y); } } else p.gone = 0;
+        if (i.ap && p.cd <= 0 && !air) {
           p.cd = 1.4; p.sh = 0.25; fx(s, 'hit', p.x, p.y - 20);
           s.ids.forEach(function (o) { var qq = s.pl[o]; if (o === id || qq.out) return; var d = dist(p.x, p.y, qq.x, qq.y); if (d < 76) { qq.vx += (qq.x - p.x) / (d || 1) * 380; qq.vy += (qq.y - p.y) / (d || 1) * 380; qq.kb = 0.3; } });
         }
@@ -1941,9 +1949,17 @@ regMG({
       for (var a = 0; a < s.ids.length; a++) for (var b = a + 1; b < s.ids.length; b++) { var A = s.pl[s.ids[a]], B = s.pl[s.ids[b]]; if (!A.out && !B.out) pushApart(A, B, 12, 12); }
     },
     bot: function (s, id, rng) {
+      function safeJumpSkip(q) { return rng() < 0.1; }
       var p = s.pl[id], r = { mx: 0, my: 0, a: false, ap: false, b: false, bp: false, acts: [] };
       if (p.out) return r;
       var cc = cellOf(p.x, p.y), ck = cc[1] * TC + cc[0], safe = cc[0] >= 0 && cc[1] >= 0 && cc[0] < TC && cc[1] < TR && (s.tl[ck] === 0 || (s.tl[ck] === 1 && s.tm[ck] > 0.6));
+      var ax = p.vx, ay = p.vy, al = len(ax, ay);
+      function solid(x, y) { var c2 = cellOf(x, y), k2 = c2[1] * TC + c2[0]; return c2[0] >= 0 && c2[1] >= 0 && c2[0] < TC && c2[1] < TR && (s.tl[k2] === 0 || (s.tl[k2] === 1 && s.tm[k2] > 0.9)); }
+      function hole(x, y) { var c2 = cellOf(x, y), k2 = c2[1] * TC + c2[0]; return !(c2[0] >= 0 && c2[1] >= 0 && c2[0] < TC && c2[1] < TR) || s.tl[k2] === 2; }
+      if (p.z <= 0 && al > 60 && p.kb <= 0 && !safeJumpSkip(p)) {
+        var ux = ax / al, uy = ay / al;
+        if (hole(p.x + ux * 38, p.y + uy * 38) && solid(p.x + ux * 80, p.y + uy * 80)) { r.mx = ux; r.my = uy; r.b = true; r.bp = true; return r; }
+      }
       if (safe) { var near2 = null; s.ids.forEach(function (o) { var q = s.pl[o]; if (o !== id && !q.out && dist(p.x, p.y, q.x, q.y) < 62 && p.cd <= 0 && rng() < 0.03) r.ap = true; }); return r; }
       var best = null, bd = 1e9;
       for (var cy = 0; cy < TR; cy++) for (var cx = 0; cx < TC; cx++) { var k = cy * TC + cx; if (s.tl[k] !== 0) continue; var x = TX + cx * TS + TS / 2, y = TY + cy * TS + TS / 2, d = dist(p.x, p.y, x, y); var occ = 0; s.ids.forEach(function (o) { var q = s.pl[o]; if (o !== id && !q.out && dist(q.x, q.y, x, y) < 38) occ = 1; }); d += occ * 90; if (d < bd && d > 8) { bd = d; best = [x, y]; } }
@@ -3166,7 +3182,7 @@ function drawCommentary(c, now) {
   var cm = FUNS.cm; if (!cm.text || now > cm.until) return;
   var age = (now - cm.t0) / 1000, a = clamp(Math.min(age / 0.25, (cm.until - now) / 300), 0, 1);
   var shown = Math.min(cm.text.length, Math.floor(age * 28)), t = cm.text.slice(0, shown);
-  c.save(); c.globalAlpha = a; c.font = '700 16px ' + FONT; var w = Math.min(780, Math.max(260, c.measureText(cm.text).width + 90)), x = W / 2 - w / 2, y = 94 - (1 - a) * 12;
+  c.save(); c.globalAlpha = a; c.font = '700 16px ' + FONT; var w = Math.min(780, Math.max(260, c.measureText(cm.text).width + 90)), x = W / 2 - w / 2, y = H - 100 + (1 - a) * 12;
   c.fillStyle = 'rgba(20,14,30,.82)'; rrect(c, x, y, w, 40, 20); c.fill(); c.strokeStyle = 'rgba(255,255,255,.25)'; c.lineWidth = 2; c.stroke();
   // 해설 마네킹 (헤드셋)
   c.fillStyle = '#f4f1ec'; c.beginPath(); c.arc(x + 24, y + 22, 13, 0, 6.283); c.fill(); c.strokeStyle = '#222'; c.lineWidth = 3; c.beginPath(); c.arc(x + 24, y + 20, 15, 3.4, 6.0); c.stroke(); c.fillStyle = '#222'; c.fillRect(x + 8, y + 18, 5, 9); c.fillRect(x + 35, y + 18, 5, 9);
@@ -3822,7 +3838,7 @@ var INTRO = {
   bomb: { tip: '폭탄을 몸으로 넘겨요', hero: 'bomb', a: 'dash' },
   uno: { tip: '카드를 먼저 다 내요', hero: 'tap', tapOnly: true },
   freeze: { tip: '불이 켜지면 멈춰요', hero: 'eye' },
-  tiles: { tip: '밟은 발판이 부서져요', hero: 'flame', a: 'shove' },
+  tiles: { tip: '밟은 발판이 부서져요, 점프로 빈 칸을 건너요', hero: 'flame', a: 'shove', b: 'jump' },
   belt: { tip: '상자는 점프로, 벨트에 버텨요', hero: 'flame', a: 'jump' },
   chair: { tip: '음악이 멈추면 의자에 앉아요', hero: 'note', a: 'shove' },
   photo: { tip: '불빛 안에서 포즈, 셔터 때 멈춰요', hero: 'camera', a: 'pose', b: 'shove' },
