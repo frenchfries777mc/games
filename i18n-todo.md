@@ -49,3 +49,7 @@
 
 ## Crown Envoy b74 (2026-10-20)
 - crownenvoy/CrownEnvoy-v0.3.html | 튜토리얼 선전포고 보조 문구 | 상대 병력은 약 N명이에요. / 상대 병력은 (소규모~대군) 규모예요. | b74 | 2026-10-20
+- beaconfall/patchnotes.json·i18n.js | N["v0.3 b83"].items (en·es·fr·de·ja 칸에 한국어 임시 입력) | 폰 세로 화면에서 공격 버튼이 청사진·사진 버튼과 겹치고 조이스틱이 체력 하트를 가리던 배치를 고침 | b83 | 2026-10-20
+- beaconfall/patchnotes.json·i18n.js | N["v0.3 b83"].items (en·es·fr·de·ja 칸에 한국어 임시 입력) | 시작할 때 로딩 화면에서 Made by 글자가 로딩바와 겹치던 문제 수정 | b83 | 2026-10-20
+- beaconfall/patchnotes.json·i18n.js | N["v0.3 b83"].items (en·es·fr·de·ja 칸에 한국어 임시 입력) | 게임 중 Esc를 한 번 눌러도 바로 로비로 나가지 않고, 2초 안에 한 번 더 눌러야 나가도록 확인 추가 | b83 | 2026-10-20
+- beaconfall/patchnotes.json·i18n.js | N["v0.3 b83"].items (en·es·fr·de·ja 칸에 한국어 임시 입력) | 패치노트를 빌드별로 나누고 안 쓰는 옛 파일(BEACONFALL.html, bg.jpg 등) 정리 | b83 | 2026-10-20
