@@ -2,6 +2,46 @@
  "notes": [
   {
    "date": "2026-10-20",
+   "build": "v0.2 build 36",
+   "title": "저작권 표기",
+   "items": [
+    "게임 파일과 시작 화면, 설정 화면에 저작권 표기를 넣었어요 (CC BY-NC-ND 4.0)"
+   ],
+   "tr": {
+    "en": {
+     "title": "Copyright notice",
+     "items": [
+      "Added a copyright notice (CC BY-NC-ND 4.0) to the game file, title screen and settings"
+     ]
+    },
+    "ja": {
+     "title": "Copyright notice",
+     "items": [
+      "Added a copyright notice (CC BY-NC-ND 4.0) to the game file, title screen and settings"
+     ]
+    },
+    "es": {
+     "title": "Copyright notice",
+     "items": [
+      "Added a copyright notice (CC BY-NC-ND 4.0) to the game file, title screen and settings"
+     ]
+    },
+    "fr": {
+     "title": "Copyright notice",
+     "items": [
+      "Added a copyright notice (CC BY-NC-ND 4.0) to the game file, title screen and settings"
+     ]
+    },
+    "de": {
+     "title": "Copyright notice",
+     "items": [
+      "Added a copyright notice (CC BY-NC-ND 4.0) to the game file, title screen and settings"
+     ]
+    }
+   }
+  },
+  {
+   "date": "2026-10-20",
    "build": "v0.2 build 35",
    "title": "나무는 천천히",
    "items": [
