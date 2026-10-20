@@ -16,3 +16,4 @@ patchnotes.json | 2026-10-20 저작권 표기 | 제목 "저작권 표기"와 항
 ## Crown Envoy (b69)
 - crownenvoy/patchnotes.json·i18n.js | N["b69"] 제목 "저작권 표기"와 항목 1개 (en·es·fr·de·ja·ar 칸에 한국어 임시 입력) | 저작권 표기 추가 (© 2026 Frenchfries777 · CC BY-NC-ND 4.0, 시작 화면 아래와 기록·설정에서 확인) | b69 | 2026-10-20
 - crownenvoy/CrownEnvoy-v0.3.html | 기록·설정 메뉴 "저작권" 줄 제목 | 한국어 고정 문구 ("© 2026 Frenchfries777 · CC BY-NC-ND 4.0" 표기 자체는 번역하지 않음) | b69 | 2026-10-20
+- Dummy Party build 7 (2026-10-20): 새 문구는 prototypes/dummyparty/index.html 안: 패치노트 build 7 블록 "저작권 표기" (게임 화면 하단 저작권 줄은 번역 불필요).
