@@ -436,7 +436,7 @@ const TUT=[
  [P('다 자라면 밭을 눌러 수확해요','When it is grown, tap the field to harvest'),s=>s.stats.harvest>=1],
  [P('마을 장터에서 수확한 것을 팔아요','Sell your harvest at the town market'),s=>(s.stats.shop||0)>=1],
  [P('항구에서 배에 짐을 싣고 보내요','Load a ship at the harbor and send it off'),s=>s.stats.sailed>=1]];
-const OUTMAX=12,BUILD=33;
+const OUTMAX=12,BUILD=34;
 const hasB=(s,b)=>s.slots.some(x=>x&&x.b===b);
 const rankOf=e=>{let r=0;RANKS.forEach((x,i)=>{if(e>=x[0])r=i;});return r;};
 /* 업적: id, 이름, 설명, 조건 */
@@ -558,6 +558,9 @@ A('nw1m',P('백만장자','Millionaire'),P('재산 1,000,000 모으기','Reach a
 const CROPK=Object.keys(CROPS),SPEC=['goldbarley','pomegranate','saffron','cloudcotton','seaweed','dragonfruit'],CROPK17=CROPK.filter(c=>!SPEC.includes(c));
 const ACHN={};ACH.forEach(a=>ACHN[a.id]=a);
 const NOTES=[
+ {date:'2026-10-20',build:'v0.2 build 34',title:P('장터를 원래대로','Market back to normal'),items:[
+  P('마을 입구 장터를 누르면 다시 물건 팔기 창이 열려요. 식당 납품은 식당가에서만 해요','The market at the town gate opens the selling window again; restaurant deliveries are only at the restaurant row')
+ ]},
  {date:'2026-10-19',build:'v0.2 build 32',title:P('새 계정 주소로 로그인','Login on the new account address'),items:[
   P('로그인이 새 계정 주소를 먼저 쓰고, 안 되면 옛 주소로 다시 시도해요. 아이디와 비밀번호는 그대로예요','Login now uses the new account address first and falls back to the old one. Your ID and password stay the same')
  ]},
@@ -12757,7 +12760,7 @@ function objs(){const o=[];if(VIEW==='sea'||VIEW==='helm'||VIEW==='isl'||!S)retu
   for(let i=0;i<16;i++){const [x,y]=slotXY(i);o.push({k:'slot',i,x:x+8,y:y+4,w:58,h:46,r:9});}
   if(S.visitor)o.push({k:'vis',x:500,y:286,w:44,h:30,r:9});
   o.push({k:'store',x:292,y:282,w:30,h:30,r:10},{k:'shop',x:386,y:282,w:36,h:30,r:10},{k:'seeds',x:328,y:282,w:36,h:30,r:10});o.push({k:'harbor',x:704,y:322,w:96,h:238,r:8});o.push({k:'hoffice',x:642,y:432,w:50,h:30,r:8},{k:'hshed',x:634,y:480,w:72,h:30,r:8},{k:'fishmkt',x:598,y:514,w:46,h:16,r:8},{k:'hlight',x:710,y:470,w:16,h:40,r:8});
-  S.deco.forEach((d,i)=>o.push({k:'deco',i,x:d.x-5,y:d.y-8,w:10,h:10,r:7}));avObjs(o);o.push({k:'home',x:26,y:246,w:56,h:44,r:8},{k:'barn',x:90,y:248,w:56,h:42,r:8},{k:'hall',x:290,y:244,w:50,h:30,r:8},{k:'station',x:176,y:586,w:170,h:78,r:10},...Object.keys(STN).map(id=>({k:'npc',id,x:STN[id].x-6,y:STN[id].y-17,w:12,h:17,r:16})),{k:'diner',x:464,y:280,w:48,h:26,r:8},{k:'museum',x:526,y:256,w:116,h:50,r:10},{k:'lab',x:252,y:236,w:26,h:38,r:8},{k:'bank',x:598,y:318,w:72,h:52,r:8},{k:'news',x:562,y:322,w:32,h:34,r:10},{k:'inn',x:572,y:416,w:54,h:38,r:10},{k:'post',x:572,y:460,w:54,h:38,r:10},{k:'board',x:432,y:282,w:30,h:26,r:9},{k:'fountain',x:330,y:846,w:80,h:60,r:10},...TOWNB.filter(b=>b[0].slice(0,4)!=='rest').map(b=>({k:'town',id:b[0],x:b[1],y:754,w:b[2],h:42,r:10})),{k:'shop',sid:'rest',x:560,y:754,w:182,h:42,r:10},{k:'clocktower',x:258,y:808,w:26,h:54,r:10});return o;}
+  S.deco.forEach((d,i)=>o.push({k:'deco',i,x:d.x-5,y:d.y-8,w:10,h:10,r:7}));avObjs(o);o.push({k:'home',x:26,y:246,w:56,h:44,r:8},{k:'barn',x:90,y:248,w:56,h:42,r:8},{k:'hall',x:290,y:244,w:50,h:30,r:8},{k:'station',x:176,y:586,w:170,h:78,r:10},...Object.keys(STN).map(id=>({k:'npc',id,x:STN[id].x-6,y:STN[id].y-17,w:12,h:17,r:16})),{k:'diner',x:464,y:280,w:48,h:26,r:8},{k:'museum',x:526,y:256,w:116,h:50,r:10},{k:'lab',x:252,y:236,w:26,h:38,r:8},{k:'bank',x:598,y:318,w:72,h:52,r:8},{k:'news',x:562,y:322,w:32,h:34,r:10},{k:'inn',x:572,y:416,w:54,h:38,r:10},{k:'post',x:572,y:460,w:54,h:38,r:10},{k:'board',x:432,y:282,w:30,h:26,r:9},{k:'fountain',x:330,y:846,w:80,h:60,r:10},...TOWNB.filter(b=>b[0].slice(0,4)!=='rest').map(b=>({k:'town',id:b[0],x:b[1],y:754,w:b[2],h:42,r:10})),{k:'tshop',sid:'rest',x:560,y:754,w:182,h:42,r:10},{k:'clocktower',x:258,y:808,w:26,h:54,r:10});return o;}
 const rectDist=(px,py,o)=>Math.hypot(Math.max(o.x-px,0,px-(o.x+o.w)),Math.max(o.y-py,0,py-(o.y+o.h)));
 function hitObj(vx,vy){let hb=null;for(const o of objs()){const p=o.k==='slot'?4:0;if(vx>=o.x-p&&vx<o.x+o.w+p&&vy>=o.y-p&&vy<o.y+o.h+p){if(o.k==='harbor')hb=o;else return o;}}return hb;}
 function activate(o){const sx=(PL.x-Math.round(CAM.x))*SC,sy=(PL.y-12-Math.round(CAM.y))*SC;
@@ -12772,7 +12775,7 @@ function activate(o){const sx=(PL.x-Math.round(CAM.x))*SC,sy=(PL.y-12-Math.round
   else if(o.k==='npc'){openModal('talk',talkStart(o.id));}
   else if(o.k==='hall')popList(T('마을 회관','Town hall'),[[T('이야기','Story'),Math.min(S.story.ch,CHAPS.length)+'/'+CHAPS.length,()=>openModal('story')],[T('도전 과제','Challenges'),chalTitle(S.chal.n),()=>openModal('chal')],[T('뒷산 개간지','Back hill'),hillN()+'/'+HN,()=>openModal('hill')],[T('계절 축제','Festival'),S.fest.p===festPeriod()?T('참가함','entered'):'',()=>openModal('fest',{sel:[]})],[T('부동산','Real estate'),S.re.l.filter(x=>x>-2).length+'/'+LOTS.length,()=>openModal('re')],[T('상인 길드','Guild'),S.gd.m?tx([GDR[gdLv()][0],GDR[gdLv()][0]]):'',()=>openModal('guild')]],sx,sy);
   else if(o.k==='diner')popList(T('식당','Diner'),[[T('식당 열기','Open the diner'),S.dn.orders.length?T('주문 {0}','{0} orders',S.dn.orders.length):'',()=>openModal('diner')]],sx,sy);
-  else if(o.k==='shop'||(o.k==='town'&&o.id==='bak')){const sid=o.k==='shop'?'rest':'bake',H=S.shops[sid];popList(T(SHOPS[sid].n,SHOPS[sid].en),[[T('납품하기','Deliver'),H.ord.length?T('주문 {0}','{0} orders',H.ord.length):'',()=>openModal('shop',{sid})]],sx,sy);}
+  else if(o.k==='tshop'||(o.k==='town'&&o.id==='bak')){const sid=o.k==='tshop'?'rest':'bake',H=S.shops[sid];popList(T(SHOPS[sid].n,SHOPS[sid].en),[[T('납품하기','Deliver'),H.ord.length?T('주문 {0}','{0} orders',H.ord.length):'',()=>openModal('shop',{sid})]],sx,sy);}
   else if(o.k==='town'){const q=TOWNB.find(b=>b[0]===o.id);popList(T(q[3],q[4]),[[T('둘러보기','Look around'),'',()=>townTalk(o.id)]],sx,sy);}
   else if(o.k==='fountain')popList(T('분수 광장','Fountain plaza'),[[T('소원 빌기','Make a wish'),'1'+UG(),()=>fountainWish()]],sx,sy);
   else if(o.k==='clocktower'){toast(nightF()>.5?T('광장의 시계탑이에요. 지금은 밤이에요','The plaza clock tower. It is night'):T('광장의 시계탑이에요. 지금은 낮이에요','The plaza clock tower. It is daytime'));sfx('click');}

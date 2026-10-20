@@ -1,6 +1,46 @@
 {
  "notes": [
   {
+   "date": "2026-10-20",
+   "build": "v0.2 build 34",
+   "title": "장터를 원래대로",
+   "items": [
+    "마을 입구 장터를 누르면 다시 물건 팔기 창이 열려요. 식당 납품은 식당가에서만 해요"
+   ],
+   "tr": {
+    "en": {
+     "title": "Market back to normal",
+     "items": [
+      "The market at the town gate opens the selling window again; restaurant deliveries are only at the restaurant row"
+     ]
+    },
+    "ja": {
+     "title": "Market back to normal",
+     "items": [
+      "The market at the town gate opens the selling window again; restaurant deliveries are only at the restaurant row"
+     ]
+    },
+    "es": {
+     "title": "Market back to normal",
+     "items": [
+      "The market at the town gate opens the selling window again; restaurant deliveries are only at the restaurant row"
+     ]
+    },
+    "fr": {
+     "title": "Market back to normal",
+     "items": [
+      "The market at the town gate opens the selling window again; restaurant deliveries are only at the restaurant row"
+     ]
+    },
+    "de": {
+     "title": "Market back to normal",
+     "items": [
+      "The market at the town gate opens the selling window again; restaurant deliveries are only at the restaurant row"
+     ]
+    }
+   }
+  },
+  {
    "date": "2026-10-19",
    "build": "v0.2 build 32",
    "title": "새 계정 주소로 로그인",
