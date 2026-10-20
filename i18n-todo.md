@@ -38,3 +38,6 @@ patchnotes.json | 2026-10-20 저작권 표기 | 제목 "저작권 표기"와 항
 - Dummy Party build 19 (2026-10-20): 새 문구는 prototypes/dummyparty/index.html 안: 패치노트 build 19 블록 "미니게임 4개, 볼풀 수정", 푸터 "판마다 23개 미니게임 중 7개", 새 미니게임 4개(시몬 가라사대, 줄넘기 대회, 두더지 잡기, 가위바위보 토너먼트)의 이름/설명/방법/조작/인트로 문구와 게임 안 글자(명령, 탈락, 고르는 중 등), 볼풀 설명(밀치기), 해설 g_simon/g_rope/g_mole/g_rps(소스 fun.js, mg_g.js).
 
 - Dummy Party build 20 (2026-10-20): prototypes/dummyparty/index.html 패치노트 build 20 블록 "미니게임 배경음악" | 의자 뺏기를 뺀 미니게임 진행 중에 밝은 8비트 음악이 나와요 / 소리 켜기·끄기 설정을 따라가요
+
+## Crown Envoy (b70)
+- crownenvoy/patchnotes.json·i18n.js | N["b70"] 제목 "허브 방 초대 연결"과 항목 1개 (en·es·fr·de·ja·ar 칸에 한국어 임시 입력) | 허브 친구 초대 연결 (비공개 방에 있으면 허브에서 친구가 초대 알림으로 바로 입장) | b70 | 2026-10-20

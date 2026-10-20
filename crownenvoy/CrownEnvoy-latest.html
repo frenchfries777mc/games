@@ -381,11 +381,11 @@ setInterval(function(){if(cur()===window.CE_UID)return;try{if(typeof Net!=='unde
 <script>(function(){var el=document.getElementById('introScr'),done=0;function go(){if(done)return;done=1;el.classList.add('out');document.documentElement.classList.add('introDone');try{window.dispatchEvent(new Event('introdone'));}catch(e){}setTimeout(function(){el.remove();},800);}
 setTimeout(go,6200);   /* 인트로는 건너뛸 수 없다 (끝까지 재생) */window.__introGo=go;
 /* 게임에서 나가 로비로 돌아올 때(페이지를 다시 불러올 때)는 인트로 없이 바로 로비 */
-window.ceReload=function(){try{sessionStorage.setItem('ce_noIntro','1');}catch(e){}location.reload();};
+window.ceReload=function(){try{if(window.FFAuth&&FFAuth.setRoom)FFAuth.setRoom(null);}catch(e){}try{sessionStorage.setItem('ce_noIntro','1');}catch(e){}location.reload();};
 try{if(sessionStorage.getItem('ce_noIntro')){sessionStorage.removeItem('ce_noIntro');el.style.display='none';go();}}catch(e){}})();</script>
 <div id="app">
  <div id="lobby" class="screen">
-  <canvas id="lobbyBg"></canvas><canvas id="lobbyWar"></canvas><div id="cpTag">© 2026 Frenchfries777 · <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.ko" target="_blank" rel="noopener">CC BY-NC-ND 4.0</a></div><div id="verTag">v0.3 · build 69</div>
+  <canvas id="lobbyBg"></canvas><canvas id="lobbyWar"></canvas><div id="cpTag">© 2026 Frenchfries777 · <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.ko" target="_blank" rel="noopener">CC BY-NC-ND 4.0</a></div><div id="verTag">v0.3 · build 70</div>
   <header class="brand"><h1>Crown Envoy</h1><div class="sub"><i></i>DIPLOMACY · WAR · EMPIRE<i></i></div></header>
   <div id="lobbyRight">
    <div id="lobbyHome" class="modes">
@@ -3489,6 +3489,8 @@ const Reco={on:false,n:0,timer:null,MAX:40,
     }catch(e){giveup();}},
   ok(peer,conn,s){this.on=false;C.reco=false;Net.peer=peer;Net.hostConn=conn;Net.mode='client';Net.pub=false;C.spec=!!s.spec;C.specGuest=!!s.spec;UI.netbar('',false);UI.toast('다시 연결됐어요.','ok');},
   fail(msg){this.on=false;C.reco=false;Net.clearSession();UI.netbar(msg,'fail');}};
+/* 허브 친구 초대: 방 코드가 있는 방에 있는 동안 허브에 알려 준다 (나가면 ceReload에서 null) */
+const ffRoom=code=>{try{if(window.FFAuth&&FFAuth.setRoom)FFAuth.setRoom(code?{game:'crownenvoy',code,path:'crownenvoy/CrownEnvoy-latest.html'}:null);}catch(e){}};
 const genCode=()=>{const a='ABCDEFGHJKLMNPQRSTUVWXYZ23456789';let s='';for(let i=0;i<5;i++)s+=a[Math.floor(Math.random()*a.length)];return s;};
 const genToken=()=>Math.random().toString(36).slice(2,10)+Math.random().toString(36).slice(2,8);
 function hostSetup(peer){
@@ -3506,7 +3508,7 @@ function netHost(name,attempt=0){
   if(typeof Peer==='undefined'){UI.toast('PeerJS를 불러오지 못했습니다. 인터넷 연결을 확인하세요.','bad');return;}
   Net.mode='host';Net.pub=false;Host.init(name);Net.code=genCode();
   const peer=new Peer('crownenvoy-'+Net.code);Net.peer=peer;
-  peer.on('open',()=>{UI.showLobby();Host.lobbyPush();});
+  peer.on('open',()=>{UI.showLobby();Host.lobbyPush();ffRoom(Net.code);});
   peer.on('error',e=>{if(e.type==='unavailable-id'&&attempt<4){try{peer.destroy();}catch(_){}netHost(name,attempt+1);}else UI.toast('연결 오류: '+e.type,'bad');});
   hostSetup(peer);
 }
@@ -3546,7 +3548,7 @@ function netJoin(code,name,spec){
   Net.mode='client';Net.pub=false;Net.code=code;C.spec=!!spec;C.specGuest=!!spec;const peer=new Peer();Net.peer=peer;
   peer.on('error',e=>UI.toast(e.type==='peer-unavailable'?'방을 찾을 수 없습니다. 코드를 확인하세요.':'연결 오류: '+e.type,'bad'));
   peer.on('open',()=>{const conn=peer.connect('crownenvoy-'+code,{reliable:true,serialization:'json'});Net.hostConn=conn;
-    conn.on('open',()=>conn.send({t:'join',name,spec:!!spec}));conn.on('data',m=>Client.onMsg(m));
+    conn.on('open',()=>{conn.send({t:'join',name,spec:!!spec});if(!spec)ffRoom(code);});conn.on('data',m=>Client.onMsg(m));
     conn.on('close',()=>{if(Net.hostConn===conn)Reco.start();});});
 }
 function netSolo(name){Net.mode='solo';Net.pub=false;Host.init(name);Host.seats[1]=mkBot(Host.seats,1);Host.seats[2]=mkBot(Host.seats,2);Net.code='';UI.showLobby();Host.lobbyPush();}
@@ -6310,7 +6312,9 @@ setInterval(()=>{let u=null;try{u=window.CEAuth&&CEAuth.user();}catch(e){}const 
 (function(){const pl=$('#plaque');if(!pl)return;const b=document.createElement('button');b.className='btn sm';b.id='btnFrInv';b.textContent='👥 친구 초대';b.onclick=()=>open();pl.appendChild(b);
   setInterval(()=>{b.style.display=uid&&myState().st==='room'?'':'none';},1000);b.style.display='none';})();
 /* 다른 방에 있다가 친구 방으로 옮기는 중이면(새로고침 직후) 이어서 들어간다 */
-(function(){let code=null;try{code=sessionStorage.getItem('ce_fjoin');sessionStorage.removeItem('ce_fjoin');}catch(e){}if(!code)return;
+(function(){let code=null;try{code=sessionStorage.getItem('ce_fjoin');sessionStorage.removeItem('ce_fjoin');}catch(e){}
+  try{const q=new URLSearchParams(location.search);const c=(q.get('join')||q.get('room')||'').toUpperCase();if(/^[A-Z2-9]{5}$/.test(c)){code=code||c;q.delete('join');q.delete('room');history.replaceState(null,'',location.pathname+(q.toString()?'?'+q:'')+location.hash);}}catch(e){}   /* 허브 초대 알림: ?join=코드&room=코드 */
+  if(!code)return;
   let n=0;const t=setInterval(()=>{const ready=typeof netJoin==='function'&&(document.documentElement.classList.contains('introDone')||!document.getElementById('introScr'));
     if(ready||++n>40){clearInterval(t);if(!Net.mode)netJoin(code,UI.myName());}},500);})();
 window.CEFriends={open,state:myState};
@@ -6589,5 +6593,6 @@ window.CETurnRep={onView,paint,_snap:()=>snap};window.CEGameStats=()=>tot;
 })();
 </script>
 <script src="https://frenchfries777mc.github.io/games/ff-profile.js"></script>
+<script src="https://frenchfries777mc.github.io/games/ff-auth.js"></script>
 </body>
 </html>
