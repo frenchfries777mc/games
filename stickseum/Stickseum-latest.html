@@ -390,6 +390,7 @@ if(document.readyState==='loading') document.addEventListener('DOMContentLoaded'
   .weaponSlot .wName{ font-weight:700; font-size:15px; margin-top:4px; }
   .weaponSlot .wDesc{ font-size:11px; color:var(--text-dim); margin-top:6px; line-height:1.5; min-height:2.5em; }
   #weaponPickLayout{ display:flex; gap:12px; margin:10px 0; align-items:flex-start; }
+  .cmTool.sel{ outline:2px solid var(--accent,#ffd34d); }
   #weaponGrid{ display:flex; flex-direction:column; gap:6px; flex:0 0 92px; max-height:420px; overflow-y:auto; padding-right:2px; }
   .wpnCard{ position:relative; background:var(--panel-2); border:2px solid var(--line); border-radius:10px; padding:7px 4px; text-align:center; cursor:pointer;
     transition:border-color .12s ease, transform .1s ease, opacity .12s ease; user-select:none; }
@@ -901,6 +902,7 @@ setTimeout(go,14000);})();</script>
       <button class="btn-secondary" id="pracMapNext" style="padding:6px 14px;">▶</button>
     </div>
     <canvas id="pracMapCanvas" style="width:100%; height:120px; border-radius:8px; margin-top:6px; display:block; background:#0d0f14;"></canvas>
+    <button class="btn-secondary" id="cmOpenFromPrac" style="margin-top:6px; width:100%;">🛠 내 맵 만들기 · 가져오기</button>
     <div class="pracLabel">캐릭터</div>
     <div id="pracWeaponGrid"></div>
     <div class="pracLabel">상대</div>
@@ -914,6 +916,32 @@ setTimeout(go,14000);})();</script>
       <div class="pracRow" id="pracLevels"></div>
     </div>
     <button class="btn-primary btn-full" id="pracStartBtn" style="margin-top:18px;">연습 시작</button>
+  </div>
+  <div class="card" id="cmScreen" style="width:min(1100px,98vw); max-height:94vh; overflow-y:auto;">
+    <button class="backlink" id="cmCloseBtn" style="position:absolute; top:14px; right:14px; margin:0;">&larr; 닫기</button>
+    <h2 style="margin:0 0 8px;">🛠 맵 에디터</h2>
+    <div style="display:flex; flex-wrap:wrap; gap:8px; align-items:center;">
+      <input id="cmName" type="text" maxlength="16" placeholder="맵 이름" style="width:150px; padding:7px 10px; border-radius:8px; border:1px solid #3a4150; background:#171b24; color:#fff;">
+      <select id="cmSize"><option value="1800">소형 (1800×900)</option><option value="2400">중형 (2400×900)</option></select>
+      <select id="cmTheme"></select>
+    </div>
+    <div style="display:flex; flex-wrap:wrap; gap:6px; margin:8px 0;" id="cmTools">
+      <button class="btn-secondary cmTool sel" data-tool="plat">▭ 발판 (끌어서 그리기)</button>
+      <button class="btn-secondary cmTool" data-tool="spawn">📍 시작 위치</button>
+      <button class="btn-secondary cmTool" data-tool="del">🗑 지우기</button>
+      <button class="btn-secondary" id="cmFloorBtn">바닥 깔기</button>
+      <button class="btn-secondary" id="cmUndoBtn">되돌리기</button>
+      <button class="btn-secondary" id="cmClearBtn">모두 지우기</button>
+    </div>
+    <canvas id="cmCanvas" style="width:100%; display:block; border-radius:10px; background:#0d0f14; touch-action:none; cursor:crosshair;"></canvas>
+    <div id="cmInfo" style="font-size:12px; color:var(--text-dim); margin:6px 0; line-height:1.5;"></div>
+    <div style="display:flex; flex-wrap:wrap; gap:8px;">
+      <button class="btn-primary" id="cmPracBtn">저장하고 연습해 보기</button>
+      <button class="btn-secondary" id="cmSaveBtn">저장</button>
+      <button class="btn-secondary" id="cmListBtn">내 맵 목록</button>
+      <button class="btn-secondary" id="cmCopyBtn">맵 코드 복사</button>
+      <button class="btn-secondary" id="cmImportBtn">맵 코드 가져오기</button>
+    </div>
   </div>
   <div class="card" id="feedbackScreen" style="width:min(460px,94vw);">
     <button class="backlink" id="feedbackBackBtn" style="position:absolute; top:14px; right:14px; margin:0;">&larr; 뒤로가기</button>
@@ -1037,6 +1065,7 @@ setTimeout(go,14000);})();</script>
       </div>
       <button class="carousel-arrow" id="mapNextBtn">&#10095;</button>
     </div>
+    <button class="btn-secondary btn-full" id="cmOpenFromPriv" style="margin-top:10px;">🛠 내 맵 만들기 · 가져오기</button>
     <button class="btn-primary btn-full" id="mapSelectBtn" style="margin-top:14px;">방 만들기</button>
     <div id="privateStatus"></div>
   </div>
@@ -1084,6 +1113,7 @@ setTimeout(go,14000);})();</script>
     <h2 id="weaponTitle" style="text-align:center;">캐릭터를 선택하세요</h2>
     <p class="hint" id="weaponTimerText" style="text-align:center;"></p>
     <div id="weaponTeamBox"></div>
+    <input id="weaponSearch" type="search" placeholder="캐릭터 검색" autocomplete="off" style="display:block; margin:4px auto 8px; width:min(260px,80%); padding:7px 12px; border-radius:10px; border:1px solid #3a4150; background:#171b24; color:#fff; font-size:14px;">
     <div id="weaponPickLayout">
       <div id="weaponGrid"></div>
       <div id="weaponPortraitWrap">
@@ -1236,6 +1266,7 @@ const BAT_DMG_MULT = 1.6, BAT_SPEED_MULT = 1.7, BAT_FORM_SEC = 7, BAT_TEAM_HEAL_
 const WIZ_CIRCLE_R = 330, WIZ_CIRCLE_SEC = 8, WIZ_HEAL_PER_SEC = 8, WIZ_ENEMY_DPS = 5, WIZ_SPEED_MULT = 1.4, WIZ_DMG_MULT = 1.25, WIZ_CD_MULT = 0.7;
 const SHURIKEN_ULT_BLINK = 90;
 let magicCircles=[];
+let teamPings=[], pingsView=[];      // team pings: a marker the whole team sees where a teammate pointed (host: the list itself; guests: rebuilt from each snapshot)
 let turrets=[];   // the pirate's cannon turrets: {owner,team,x,y,until,next,ang}
 // 쿠루스 (v227): a thrown potion leaves a dark puddle on the surface it lands on (pi = platform index, rl/rr = its edges measured from that platform's left
 // edge, so a puddle rides a moving platform). The owner heals in his own puddles, enemies are hurt in them. His ultimate sinks him into his puddles.
@@ -1532,7 +1563,8 @@ const KEY_ACTIONS=[
   {id:'ultimate', label:'궁극기', default:'KeyR'},
   {id:'skill', label:'스킬', default:'KeyF'},
   {id:'chat', label:'채팅 열기', default:'Enter'},
-  {id:'emote', label:'이모트', default:'KeyV'}
+  {id:'emote', label:'이모트', default:'KeyV'},
+  {id:'ping', label:'팀 핑 (마우스 위치 표시)', default:'KeyG'}
 ];
 // keys the game already uses for something fixed: the chat key may not be one of them (Enter is the default and sends a message, Esc cancels it)
 const CHAT_RESERVED_KEYS={Escape:1, Tab:1, Space:1, ArrowLeft:1, ArrowRight:1, ArrowUp:1, ArrowDown:1, KeyS:1};
@@ -4727,7 +4759,7 @@ function shuffle(arr){ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.
 /* ===== the version of this file =====
    Players with different versions CAN meet and play together: the automatic matchmaking uses the same room names for every version (online-<mode>-<map>-<slot>), and nobody is refused because of a different build.
    The build is only sent along with the join message and the lobby (for information); the corner of the screen shows it. */
-const GAME_BUILD='build 2026-10-18-v322';
+const GAME_BUILD='build 2026-10-18-v323';
 const GAME_VERSION='0.8', GAME_VERSION_NAME='황금을 찾아서';   // 게임 버전 이름: versions.json의 title과 같게 (빌드마다 바꾸지 않음)
 const WEEKLY_EVENTS=[
   {id:'lowg',    name:'저중력 난투', desc:'몸이 둥실둥실, 중력이 약해진 난투', rules:{grav:0.6}},
@@ -5186,6 +5218,148 @@ function ensureEmoteWheel(){
 }
 function emoteWheelOpen(){ const w=document.getElementById('emoteWheel'); return !!(w && w.style.display==='block'); }
 function closeEmoteWheel(){ const w=document.getElementById('emoteWheel'); if(w) w.style.display='none'; }
+/* ================= 맵 에디터: platforms and start points drawn by hand, kept in this browser, shared as a code or with the friends of a private room ================= */
+const CM_KEY='stickseumCustomMaps', CM_GRID=20, CM_MAX_PLATS=60, CM_MAX_SPAWNS=8, CM_MAX_SAVED=12;
+function cmThemeKeys(){ return Object.keys(THEMES).filter(k=>THEMES[k] && THEMES[k].plat && THEMES[k].bgA); }
+function cmClean(sp){          // one map spec {n name, w width, h 900, t theme, p [[x,y,w,h]], s [[x,y]]}, brought into safe ranges (a code from anybody is only data)
+  if(!sp || typeof sp!=='object') return null;
+  const W=(+sp.w===2400)?2400:1800, H=900, num=v=>Math.round(+v);
+  const n=String(sp.n==null?'':sp.n).replace(/[<>&"']/g,'').slice(0,16).trim()||'내 맵';
+  const t=(typeof sp.t==='string' && cmThemeKeys().includes(sp.t)) ? sp.t : 'colosseum';
+  const p=[], s=[];
+  for(const a of (Array.isArray(sp.p)?sp.p:[]).slice(0,CM_MAX_PLATS)){ if(!Array.isArray(a) || a.length<4) continue; let [x,y,w,h]=a.slice(0,4).map(num); if(![x,y,w,h].every(Number.isFinite)) continue; w=clamp(w,40,W); h=clamp(h,16,200); x=clamp(x,0,W-w); y=clamp(y,100,H-h); p.push([x,y,w,h]); }
+  for(const a of (Array.isArray(sp.s)?sp.s:[]).slice(0,CM_MAX_SPAWNS)){ if(!Array.isArray(a) || a.length<2) continue; let [x,y]=a.slice(0,2).map(num); if(![x,y].every(Number.isFinite)) continue; s.push([clamp(x,20,W-20), clamp(y,40,H)]); }
+  return {n,w:W,h:H,t,p,s};
+}
+function cmId(sp){ const str=JSON.stringify([sp.n,sp.w,sp.t,sp.p,sp.s]); let h=5381; for(let i=0;i<str.length;i++) h=((h<<5)+h+str.charCodeAt(i))|0; return 'cm_'+(h>>>0).toString(36); }
+function cmRegister(raw, guest){          // puts a map spec into MAP_TEMPLATES (private rooms and practice use it from there); returns its id, or null when the spec cannot be a map
+  const sp=cmClean(raw); if(!sp || !sp.p.length || sp.s.length<2) return null;
+  const id=cmId(sp);
+  if(!MAP_TEMPLATES[id]) MAP_TEMPLATES[id]={id, name:'🛠 '+sp.n, maxPlayers:clamp(sp.s.length,2,8), arenaW:sp.w, arenaH:sp.h, theme:THEMES[sp.t], platforms:sp.p.map(([x,y,w,h])=>({x,y,w,h})), spawns:sp.s.map(([x,y])=>({x,y})), privateOnly:true, custom:true, cspec:sp, guestOnly:!!guest};
+  else if(!guest) MAP_TEMPLATES[id].guestOnly=false;
+  return id;
+}
+function cmLoad(){ try{ const a=JSON.parse(localStorage.getItem(CM_KEY)||'[]'); return (Array.isArray(a)?a:[]).map(cmClean).filter(Boolean).slice(0,CM_MAX_SAVED); }catch(e){ return []; } }
+function cmStore(list){ try{ localStorage.setItem(CM_KEY, JSON.stringify(list.slice(0,CM_MAX_SAVED))); }catch(e){} }
+function cmSavedIds(){ return cmLoad().map(sp=>cmRegister(sp,false)).filter(Boolean); }
+function cmEncode(sp){ return 'SM1:'+btoa(unescape(encodeURIComponent(JSON.stringify(sp)))); }
+function cmDecode(code){ try{ code=String(code||'').trim(); if(!/^SM1:/.test(code)) return null; return cmClean(JSON.parse(decodeURIComponent(escape(atob(code.slice(4)))))); }catch(e){ return null; } }
+cmSavedIds();
+const cm={sp:null, tool:'plat', drag:null, undo:[], back:'menuScreen', cv:null, sc:1};
+function cmNew(){ return {n:'내 맵', w:1800, h:900, t:'colosseum', p:[[0,800,1800,100]], s:[[300,800],[1500,800]]}; }
+function cmPush(){ cm.undo.push(JSON.stringify(cm.sp)); if(cm.undo.length>30) cm.undo.shift(); }
+function cmOpen(from, sp){
+  cm.back=from||'menuScreen'; cm.sp=cmClean(sp||cmNew()) || cmNew(); cm.undo=[]; cm.drag=null;
+  const th=document.getElementById('cmTheme'); if(!th.options.length) for(const k of cmThemeKeys()){ const o=document.createElement('option'); o.value=k; o.textContent=THEMES[k].name||k; th.appendChild(o); }
+  showScreen('cmScreen'); cmSync(); requestAnimationFrame(cmDraw);
+}
+function cmSync(){ document.getElementById('cmName').value=cm.sp.n; document.getElementById('cmSize').value=String(cm.sp.w); document.getElementById('cmTheme').value=cm.sp.t; document.querySelectorAll('#cmTools .cmTool').forEach(b=>b.classList.toggle('sel', b.dataset.tool===cm.tool)); cmDraw(); }
+function cmDraw(){
+  const cv=document.getElementById('cmCanvas'); if(!cv || !cm.sp) return; cm.cv=cv;
+  const sp=cm.sp, W=Math.max(300, cv.clientWidth||800), H=Math.round(W*sp.h/sp.w); cv.width=W; cv.height=H; cm.sc=W/sp.w;
+  const c=cv.getContext('2d'), th=THEMES[sp.t]||THEMES.colosseum, sc=cm.sc;
+  const g=c.createLinearGradient(0,0,0,H); g.addColorStop(0,th.bgA); g.addColorStop(1,th.bgB); c.fillStyle=g; c.fillRect(0,0,W,H);
+  c.strokeStyle='rgba(255,255,255,.07)'; c.lineWidth=1; for(let x=0;x<=sp.w;x+=100){ c.beginPath(); c.moveTo(x*sc,0); c.lineTo(x*sc,H); c.stroke(); } for(let y=0;y<=sp.h;y+=100){ c.beginPath(); c.moveTo(0,y*sc); c.lineTo(W,y*sc); c.stroke(); }
+  for(const [x,y,w,h] of sp.p){ c.fillStyle=h>40?th.ground:th.plat; c.fillRect(x*sc,y*sc,w*sc,h*sc); c.fillStyle=th.stripe; c.globalAlpha=.75; c.fillRect(x*sc,y*sc,w*sc,Math.max(2,3)); c.globalAlpha=1; c.strokeStyle=th.platEdge; c.strokeRect(x*sc,y*sc,w*sc,h*sc); }
+  sp.s.forEach(([x,y],i)=>{ c.fillStyle='#ff4d6d'; c.beginPath(); c.arc(x*sc,(y-18)*sc*1,Math.max(8,14*sc*2),0,7); c.fill(); c.fillStyle='#fff'; c.font='bold 12px sans-serif'; c.textAlign='center'; c.textBaseline='middle'; c.fillText(String(i+1), x*sc, (y-18)*sc); });
+  if(cm.drag){ const d=cm.drag, x=Math.min(d.x0,d.x1), y=Math.min(d.y0,d.y1), w=Math.abs(d.x1-d.x0), h=Math.abs(d.y1-d.y0); c.strokeStyle='#fff'; c.setLineDash([6,4]); c.strokeRect(x*sc,y*sc,w*sc,h*sc); c.setLineDash([]); }
+  document.getElementById('cmInfo').textContent='발판 '+sp.p.length+'/'+CM_MAX_PLATS+' · 시작 위치 '+sp.s.length+'/'+CM_MAX_SPAWNS+' (2개 이상 필요, 시작 위치는 발판 위에만 놓을 수 있어요) · 시작 위치 수가 최대 인원이에요';
+}
+function cmPos(e){ const r=cm.cv.getBoundingClientRect(); const x=(e.clientX-r.left)/r.width*cm.sp.w, y=(e.clientY-r.top)/r.height*cm.sp.h; return {x:clamp(x,0,cm.sp.w), y:clamp(y,0,cm.sp.h)}; }
+function cmSnap(v){ return Math.round(v/CM_GRID)*CM_GRID; }
+function cmPlatUnder(x,y){ let best=null; for(const pl of cm.sp.p){ if(x>=pl[0] && x<=pl[0]+pl[2] && pl[1]>=y-50 && (!best || pl[1]<best[1])) best=pl; } return best; }
+function cmDown(e){
+  if(!cm.sp) return; e.preventDefault(); const q=cmPos(e), sp=cm.sp;
+  if(cm.tool==='plat'){ cm.drag={x0:cmSnap(q.x), y0:cmSnap(q.y), x1:cmSnap(q.x), y1:cmSnap(q.y)}; try{ cm.cv.setPointerCapture(e.pointerId); }catch(_){} cmDraw(); }
+  else if(cm.tool==='spawn'){
+    if(sp.s.length>=CM_MAX_SPAWNS){ uiAlert('시작 위치는 최대 '+CM_MAX_SPAWNS+'개예요'); return; }
+    const pl=cmPlatUnder(q.x,q.y); if(!pl){ uiAlert('시작 위치는 발판 위에만 놓을 수 있어요'); return; }
+    const nx=cmSnap(q.x); if(sp.s.some(([x,y])=>Math.abs(x-nx)<30 && y===pl[1])) return;
+    cmPush(); sp.s.push([nx, pl[1]]); cmDraw();
+  } else {
+    let hit=-1; sp.s.forEach(([x,y],i)=>{ if(Math.hypot(q.x-x,q.y-(y-18))<40) hit=i; });
+    if(hit>=0){ cmPush(); sp.s.splice(hit,1); cmDraw(); return; }
+    for(let i=sp.p.length-1;i>=0;i--){ const [x,y,w,h]=sp.p[i]; if(q.x>=x&&q.x<=x+w&&q.y>=y-6&&q.y<=y+h+6){ cmPush(); sp.p.splice(i,1); cmFixSpawns(); cmDraw(); return; } }
+  }
+}
+function cmMove(e){ if(!cm.drag) return; const q=cmPos(e); cm.drag.x1=cmSnap(q.x); cm.drag.y1=cmSnap(q.y); cmDraw(); }
+function cmUp(e){
+  if(!cm.drag) return; const d=cm.drag; cm.drag=null; const sp=cm.sp;
+  let x=Math.min(d.x0,d.x1), y=Math.min(d.y0,d.y1), w=Math.abs(d.x1-d.x0), h=Math.abs(d.y1-d.y0);
+  if(w<CM_GRID*2 && h<CM_GRID*2){ w=200; h=24; x=clamp(d.x0-100,0,sp.w-w); }           // a click makes an ordinary platform
+  if(h<16) h=24; if(w<40) w=40;
+  if(sp.p.length>=CM_MAX_PLATS){ uiAlert('발판은 최대 '+CM_MAX_PLATS+'개예요'); cmDraw(); return; }
+  cmPush(); const c=cmClean({n:sp.n,w:sp.w,t:sp.t,p:[[x,y,w,h]],s:[]}); if(c.p.length) sp.p.push(c.p[0]); cmDraw();
+}
+function cmFixSpawns(){ const sp=cm.sp; sp.s=sp.s.filter(([x,y])=>sp.p.some(pl=>x>=pl[0]&&x<=pl[0]+pl[2]&&Math.abs(pl[1]-y)<=2)); }
+function cmReadFields(){ const sp=cm.sp; sp.n=String(document.getElementById('cmName').value||'').replace(/[<>&"']/g,'').slice(0,16).trim()||'내 맵'; sp.t=document.getElementById('cmTheme').value||sp.t; }
+function cmValid(){ cmFixSpawns(); const sp=cm.sp; if(!sp.p.length){ uiAlert('발판을 하나 이상 그려 주세요'); return false; } if(sp.s.length<2){ uiAlert('시작 위치가 2개 이상 있어야 해요 (발판 위에 놓아 주세요)'); return false; } return true; }
+function cmSaveCurrent(){ cmReadFields(); if(!cmValid()){ cmDraw(); return null; } const sp=cmClean(cm.sp); let list=cmLoad().filter(x=>x.n!==sp.n); list.unshift(sp); cmStore(list); const id=cmRegister(sp,false); cm.sp=sp; cmSync(); return id; }
+function cmCloseEditor(){ showScreen(cm.back||'menuScreen'); if(cm.back==='practiceScreen'){ try{ renderPracticeSetup(); }catch(e){} } else if(cm.back==='privateScreen'){ try{ renderMapCarousel(); }catch(e){} } }
+function cmShowList(){
+  const list=cmLoad(); const ov=document.createElement('div'); ov.style.cssText='position:fixed;inset:0;z-index:99998;background:rgba(0,0,0,.75);display:flex;align-items:center;justify-content:center;padding:16px;';
+  const box=document.createElement('div'); box.style.cssText='background:#171b24;border:1px solid #3a4150;border-radius:12px;padding:16px;width:min(420px,94vw);max-height:80vh;overflow-y:auto;color:#fff;';
+  const close=()=>ov.remove(); ov.onclick=e=>{ if(e.target===ov) close(); };
+  const h=document.createElement('div'); h.textContent='내 맵 ('+list.length+'/'+CM_MAX_SAVED+')'; h.style.cssText='font-weight:800;margin-bottom:10px;'; box.appendChild(h);
+  if(!list.length){ const e=document.createElement('div'); e.textContent='저장한 맵이 없어요'; e.style.opacity='.7'; box.appendChild(e); }
+  for(const sp of list){ const row=document.createElement('div'); row.style.cssText='display:flex;gap:6px;align-items:center;margin:6px 0;'; const nm=document.createElement('div'); nm.style.cssText='flex:1;font-weight:700;'; nm.textContent=sp.n+' ('+sp.s.length+'인)';
+    const b1=document.createElement('button'); b1.className='btn-secondary'; b1.textContent='불러오기'; b1.onclick=()=>{ cm.sp=cmClean(sp); cm.undo=[]; cmSync(); close(); };
+    const b2=document.createElement('button'); b2.className='btn-secondary'; b2.textContent='삭제'; b2.onclick=async()=>{ if(await uiConfirm('"'+sp.n+'" 맵을 지울까요?')){ cmStore(cmLoad().filter(x=>x.n!==sp.n)); close(); cmShowList(); } };
+    row.append(nm,b1,b2); box.appendChild(row); }
+  ov.appendChild(box); document.body.appendChild(ov);
+}
+function carouselList(){ if(mapOrder.length===0) buildMapOrder(); return mapOrder.concat(cmSavedIds()); }
+(function cmInit(){
+  const $=id=>document.getElementById(id); if(!$('cmCanvas')) return;
+  const cv=$('cmCanvas'); cv.addEventListener('pointerdown',cmDown); cv.addEventListener('pointermove',cmMove); cv.addEventListener('pointerup',cmUp); cv.addEventListener('pointercancel',()=>{ cm.drag=null; cmDraw(); });
+  window.addEventListener('resize',()=>{ if($('cmScreen').classList.contains('active')) cmDraw(); });
+  document.querySelectorAll('#cmTools .cmTool').forEach(b=>b.onclick=()=>{ cm.tool=b.dataset.tool; cmSync(); });
+  $('cmName').oninput=()=>{ cmReadFields(); };
+  $('cmTheme').onchange=()=>{ cmReadFields(); cmDraw(); };
+  $('cmSize').onchange=()=>{ cmPush(); cm.sp.w=(+$('cmSize').value===2400)?2400:1800; cm.sp=cmClean(cm.sp); cmSync(); };
+  $('cmFloorBtn').onclick=()=>{ cmPush(); cm.sp.p=cm.sp.p.filter(pl=>!(pl[1]===800&&pl[0]===0)); cm.sp.p.unshift([0,800,cm.sp.w,100]); cmSync(); };
+  $('cmUndoBtn').onclick=()=>{ const u=cm.undo.pop(); if(u){ cm.sp=cmClean(JSON.parse(u)); cmSync(); } };
+  $('cmClearBtn').onclick=async()=>{ if(await uiConfirm('그린 것을 모두 지울까요?')){ cmPush(); cm.sp.p=[]; cm.sp.s=[]; cmSync(); } };
+  $('cmSaveBtn').onclick=()=>{ const id=cmSaveCurrent(); if(id) uiAlert('저장했어요: '+cm.sp.n); };
+  $('cmListBtn').onclick=cmShowList;
+  $('cmPracBtn').onclick=()=>{ const id=cmSaveCurrent(); if(!id) return; practiceCfg.mapId=id; savePracticeCfg(); renderPracticeSetup(); showScreen('practiceScreen'); };
+  $('cmCopyBtn').onclick=async()=>{ cmReadFields(); if(!cmValid()){ cmDraw(); return; } const code=cmEncode(cmClean(cm.sp)); let ok=false; try{ await navigator.clipboard.writeText(code); ok=true; }catch(e){} if(ok) uiAlert('맵 코드를 복사했어요. 친구에게 붙여 넣어 보내 주세요'); else uiPrompt('이 맵 코드를 복사해 주세요', code, 20000); };
+  $('cmImportBtn').onclick=async()=>{ const v=await uiPrompt('받은 맵 코드를 붙여 넣어 주세요','',20000); if(v===null||v===false) return; const sp=cmDecode(v); if(!sp || !sp.p.length || sp.s.length<2){ uiAlert('맵 코드가 올바르지 않아요'); return; } cmPush(); cm.sp=sp; cmSync(); };
+  $('cmCloseBtn').onclick=cmCloseEditor;
+  const a=$('cmOpenFromPriv'); if(a) a.onclick=()=>cmOpen('privateScreen');
+  const b=$('cmOpenFromPrac'); if(b) b.onclick=()=>cmOpen('practiceScreen');
+})();
+const PING_SEC=5, PING_CD=1.2, PING_MAX_EACH=2;
+function hostPing(pid, x, y, tMs){
+  const p=players[pid]; x=+x; y=+y; if(!p || !p.alive || p.team===null || p.team===undefined || !MAP || !isFinite(x) || !isFinite(y)) return;
+  if(gameMode==='ffa'||gameMode==='duel') return;
+  const tSec=tMs/1000; if(tSec-(p.lastPing===undefined?-9999:p.lastPing)<PING_CD) return;
+  p.lastPing=tSec;
+  teamPings=teamPings.filter(g=>g.until>tSec);
+  const mine=teamPings.filter(g=>g.owner===pid); while(mine.length>=PING_MAX_EACH){ const o=mine.shift(); teamPings.splice(teamPings.indexOf(o),1); }
+  teamPings.push({x:clamp(x,0,MAP.arenaW), y:clamp(y,0,MAP.arenaH), team:p.team, owner:pid, name:p.name, color:p.color, until:tSec+PING_SEC});
+}
+function sendPing(){
+  const m=mouseWorld();
+  if(isHost) hostPing(myId, m.x, m.y, performance.now()); else if(hostConn && hostConn.open){ try{ hostConn.send({t:'ping', x:m.x, y:m.y}); }catch(e){} }
+}
+function drawPings(){
+  const list=isHost?teamPings:pingsView, me=players[myId], tSec=performance.now()/1000; if(!list.length || !me || me.team===null || me.team===undefined) return;
+  for(const g of list){
+    if(g.team!==me.team || g.until<=tSec) continue;
+    const rem=g.until-tSec, age=PING_SEC-rem, fade=Math.min(1,rem/0.6), pop=Math.min(1,age/0.2), col=g.color||'#ffd34d';
+    ctx.save(); ctx.globalAlpha=fade; ctx.translate(g.x,g.y);
+    const r=18+10*((age*1.6)%1);
+    ctx.strokeStyle=col; ctx.lineWidth=3; ctx.beginPath(); ctx.arc(0,0,r,0,Math.PI*2); ctx.stroke();
+    ctx.globalAlpha=fade*0.9; ctx.fillStyle=col; ctx.strokeStyle='rgba(0,0,0,.55)'; ctx.lineWidth=2;
+    const bob=Math.sin(age*6)*3, hh=46*pop;
+    ctx.beginPath(); ctx.moveTo(0,-4-bob); ctx.lineTo(-11,-4-hh*0.5-bob); ctx.lineTo(11,-4-hh*0.5-bob); ctx.closePath(); ctx.fill(); ctx.stroke();
+    ctx.beginPath(); ctx.arc(0,-4-hh*0.5-9-bob,10,0,Math.PI*2); ctx.fill(); ctx.stroke();
+    ctx.font='bold 12px sans-serif'; ctx.textAlign='center'; ctx.fillStyle='#fff'; ctx.strokeStyle='rgba(0,0,0,.7)'; ctx.lineWidth=3;
+    ctx.strokeText(g.name||'', 0, -4-hh*0.5-28-bob); ctx.fillText(g.name||'', 0, -4-hh*0.5-28-bob);
+    ctx.restore();
+  }
+}
 function inMatchHud(){ const cf=document.getElementById('chatFeed'); return !!(cf && cf.style.display!=='none'); }
 window.addEventListener('keydown', e=>{
   if(keybindListenFor || e.ctrlKey || e.metaKey || e.altKey || e.repeat) return;
@@ -5196,6 +5370,7 @@ window.addEventListener('keydown', e=>{
     return;
   }
   if(e.code===keyBindings.emote && inMatchHud()){ e.preventDefault(); ensureEmoteWheel().style.display='block'; }
+  else if(e.code===keyBindings.ping && inMatchHud()){ e.preventDefault(); sendPing(); }
 }, true);
 /* ================= BOSS RAID + TOURNAMENT ================= */
 const RAID_DURATION=180, RAID_BOSS_BASE_HP=1500, RAID_BOSS_HP_PER=880, RAID_SLAM_R=190, RAID_SLAM_DMG=22, RAID_SLAM_WARN=1.4, RAID_BOSS_SCALE=1.5, RAID_RESPAWN=6;
@@ -6418,7 +6593,7 @@ const PRACTICE_KEY='arenaClashPractice';
 let practiceCfg={mapId:null, wid:'pistol', oppKind:'still', oppCount:2, botLevel:'normal'};
 let practiceDummySeq=0;
 const PRACTICE_OPP_KINDS=[{id:'none',name:'없음'},{id:'still',name:'허수아비'},{id:'moving',name:'움직이는 허수아비'},{id:'bot',name:'봇'}];
-function practiceMapIds(){ return Object.keys(MAP_TEMPLATES).filter(id=>!MAP_TEMPLATES[id].isParkour && !MAP_TEMPLATES[id].isCtf); }
+function practiceMapIds(){ return Object.keys(MAP_TEMPLATES).filter(id=>!MAP_TEMPLATES[id].isParkour && !MAP_TEMPLATES[id].isCtf && !MAP_TEMPLATES[id].guestOnly); }
 function loadPracticeCfg(){
   try{
     const s=JSON.parse(localStorage.getItem(PRACTICE_KEY)||'null');
@@ -8300,28 +8475,29 @@ const MAP_GIMMICKS={collapsebridge:['🌉 무너지는 다리 판자','🌊 강�
 function mapGimmickTags(id){
   const t=MAP_TEMPLATES[id]; if(!t) return [];
   if(MAP_GIMMICKS[id]) return MAP_GIMMICKS[id];
+  if(t.custom) return ['🛠 직접 만든 맵'];
   if(t.isParkour) return ['🏃 파쿠르'];
   if(t.isCtf) return ['🚩 깃발 뺏기'];
   if(t.platforms.some(p=>p.move)) return ['↔️ 움직이는 발판'];
   return ['기믹 없음'];
 }
 function renderMapCarousel(){
-  if(mapOrder.length===0) buildMapOrder();
-  const id=mapOrder[mapCarouselIdx];
+  const CL=carouselList(); if(mapCarouselIdx>=CL.length) mapCarouselIdx=0;
+  const id=CL[mapCarouselIdx];
   const m=MAP_TEMPLATES[id];
   renderMapPreview(id, document.getElementById('mapCarouselPreview'));
   document.getElementById('mapCarouselName').textContent=m.name;
   const groupLabel = m.isCtf ? '깃발 뺏기 전용' : (m.privateOnly ? '비공개 전용' : shapeLabel[id.split('_')[0]]);
   const cap = m.privateOnly ? m.maxPlayers : effectiveMaxPlayers(id, selectedPrivateMode);
-  document.getElementById('mapCarouselMeta').textContent = groupLabel+' · 최대 '+cap+'인  ('+(mapCarouselIdx+1)+'/'+mapOrder.length+')';
+  document.getElementById('mapCarouselMeta').textContent = groupLabel+' · 최대 '+cap+'인  ('+(mapCarouselIdx+1)+'/'+CL.length+')';
   { const gm=document.getElementById('mapCarouselGimmick'); if(gm) gm.textContent=mapGimmickTags(id).join('  ·  '); }
 }
-document.getElementById('mapPrevBtn').onclick=()=>{ mapCarouselIdx=(mapCarouselIdx-1+mapOrder.length)%mapOrder.length; renderMapCarousel(); };
-document.getElementById('mapNextBtn').onclick=()=>{ mapCarouselIdx=(mapCarouselIdx+1)%mapOrder.length; renderMapCarousel(); };
+document.getElementById('mapPrevBtn').onclick=()=>{ const n=carouselList().length; mapCarouselIdx=(mapCarouselIdx-1+n)%n; renderMapCarousel(); };
+document.getElementById('mapNextBtn').onclick=()=>{ const n=carouselList().length; mapCarouselIdx=(mapCarouselIdx+1)%n; renderMapCarousel(); };
 mapSelectBtn.onclick=()=>{
   if(connecting) return; connecting=true;
   mapSelectBtn.disabled=true; joinBtn.disabled=true;
-  const id=mapOrder[mapCarouselIdx];
+  const id=carouselList()[mapCarouselIdx];
   roomCode=rid();
   startHostPeer('arena-'+roomCode, id, 'private', roomCode, undefined, selectedPrivateMode);
 };
@@ -8462,7 +8638,7 @@ function uiPrompt(msg,def,max){ return uiDialog(String(msg),{cancel:true,input:t
 function showErrorAndReturnToMenu(msg){
   if(peer){ try{peer.destroy();}catch(e){} peer=null; }
   window.__versionNoted=false; chatPending=[];
-  spectatorMode=false; clanWar=null; clanRoom=null; document.body.classList.remove('specView'); conns={}; players={}; isHost=false; hostConn=null; MAP=null; started=false; currentMode=null; currentMapId=null; countdownEndsAt=null; gameLoopStarted=false; weaponChosenLocally=false; hostRoomLive=false; if(typeof weaponCountdownTimer!=='undefined' && weaponCountdownTimer){ clearInterval(weaponCountdownTimer); weaponCountdownTimer=null; } matchEnded=false; duelScores={}; duelRoundEndsAt=null; duelPick=false; matchTimerEndsAt=null; document.getElementById('matchTimerLabel').style.display='none'; document.getElementById('duelScoreLabel').style.display='none'; cq=null; walls=[]; hostTimers=[]; magicCircles=[]; poisonZones=[]; turrets=[]; weaponPhase=null; document.getElementById('cqLabel').style.display='none'; bombHolderId=null; bombTimerEndsAt=0; hotpotatoOriginalCount=0; seekerId=null; hideseekPhase=null; hideseekPhaseEndsAt=0; survivalRound=0; survivalPhase=null; survivalPhaseEndsAt=0; survivalCurrentDisaster=null; survivalHazards=[]; survivalZombies=[]; document.getElementById('survivalLabel').style.display='none'; ctf=null; ctfEndsLocal=0; document.getElementById('ctfLabel').style.display='none'; { const mini=document.getElementById('ctfMini'); if(mini) mini.style.display='none'; }
+  spectatorMode=false; clanWar=null; clanRoom=null; document.body.classList.remove('specView'); conns={}; players={}; isHost=false; hostConn=null; MAP=null; started=false; currentMode=null; currentMapId=null; countdownEndsAt=null; gameLoopStarted=false; weaponChosenLocally=false; hostRoomLive=false; if(typeof weaponCountdownTimer!=='undefined' && weaponCountdownTimer){ clearInterval(weaponCountdownTimer); weaponCountdownTimer=null; } matchEnded=false; duelScores={}; duelRoundEndsAt=null; duelPick=false; matchTimerEndsAt=null; document.getElementById('matchTimerLabel').style.display='none'; document.getElementById('duelScoreLabel').style.display='none'; cq=null; walls=[]; hostTimers=[]; magicCircles=[]; teamPings=[]; pingsView=[]; poisonZones=[]; turrets=[]; weaponPhase=null; document.getElementById('cqLabel').style.display='none'; bombHolderId=null; bombTimerEndsAt=0; hotpotatoOriginalCount=0; seekerId=null; hideseekPhase=null; hideseekPhaseEndsAt=0; survivalRound=0; survivalPhase=null; survivalPhaseEndsAt=0; survivalCurrentDisaster=null; survivalHazards=[]; survivalZombies=[]; document.getElementById('survivalLabel').style.display='none'; ctf=null; ctfEndsLocal=0; document.getElementById('ctfLabel').style.display='none'; { const mini=document.getElementById('ctfMini'); if(mini) mini.style.display='none'; }
   resetFlowState();
   showScreen('menuScreen');
   if(msg) uiAlert(msg);
@@ -8874,7 +9050,7 @@ function onHostData(conn, data){
     if(!started || matchEnded){ safeSend(conn, {t:'specNo', msg:'지금 진행 중인 경기가 없어요'}); return; }
     if(Object.keys(conns).filter(id=>!players[id]).length>=8){ safeSend(conn, {t:'specNo', msg:'관전석이 가득 찼어요'}); return; }
     conns[peerId]=conn;
-    safeSend(conn, {t:'specInit', mapId:currentMapId, gameMode, weaponMode, mte:matchTimerEndsAt, rules:roomRules, opts:roomOpts, count:Object.keys(players).length});
+    safeSend(conn, {t:'specInit', cmap:(MAP&&MAP.custom)?MAP.cspec:undefined, mapId:currentMapId, gameMode, weaponMode, mte:matchTimerEndsAt, rules:roomRules, opts:roomOpts, count:Object.keys(players).length});
     try{ pushSystemLine('👁 관전자가 들어왔어요'); }catch(e){}
     return;
   }
@@ -8915,6 +9091,7 @@ function onHostData(conn, data){
   if(data.t==='parkourPush'){ const p=players[peerId]; if(p){ p.lastSeen=Date.now(); tryParkourPush(p, data.angle, performance.now()); } return; }
   if(data.t==='chat'){ const p=players[peerId]; if(p){ p.lastSeen=Date.now(); handleChatMessage(peerId, p.name, data.text, data.cid); } return; }
   if(data.t==='ult'){ const p=players[peerId]; if(p){ tryUltimate(p, performance.now(), Number.isFinite(data.x)?data.x:undefined, Number.isFinite(data.y)?data.y:undefined, !!data.click); p.lastSeen=Date.now(); } return; }
+  if(data.t==='ping'){ const p=players[peerId]; if(p){ p.lastSeen=Date.now(); hostPing(peerId, data.x, data.y, performance.now()); } return; }
   if(data.t==='emote'){ const p=players[peerId]; if(p){ p.lastSeen=Date.now(); hostEmote(peerId, data.i, performance.now()); } return; }
   if(data.t==='dash'){ const p=players[peerId]; if(p && !p.teleportChannel){ tryDash(p, p.input||{}, performance.now(), data.dir===-1?-1:(data.dir===1?1:undefined)); p.lastSeen=Date.now(); } return; }
   if(data.t==='skill'){ const p=players[peerId]; if(p){ trySkill(p, performance.now(), Number.isFinite(data.x)?data.x:undefined, Number.isFinite(data.y)?data.y:undefined); p.lastSeen=Date.now(); } return; }
@@ -8960,7 +9137,7 @@ setInterval(()=>{
 function broadcastLobby(){
   const list=Object.values(players).map(p=>({id:p.id,name:p.name,color:p.color,team:p.team,joinOrder:p.joinOrder,isHost:p.isHost,sbId:p.sbId||null,sbUsername:p.sbUsername||null,level:p.level||1,isBot:!!p.isBot,nm:(p.cos&&p.cos.name)||null,clan:p.clan||'',ce:p.ce||'',cc:p.cc||'',cn:p.cn||''}));
   botFillShowAt=botFillAt;
-  const msg={t:'lobby', build:GAME_BUILD, list, mapId:currentMapId, gameMode, weaponMode, rules:roomRules, opts:roomOpts, started, countdownEndsAt, botFillAt:botFillAt===null?null:botFillAt, cr:(clanWar?{i:clanWar.inner?1:0, t:clanWar.tags}:null)};
+  const msg={t:'lobby', build:GAME_BUILD, list, cmap:(MAP&&MAP.custom)?MAP.cspec:undefined, mapId:currentMapId, gameMode, weaponMode, rules:roomRules, opts:roomOpts, started, countdownEndsAt, botFillAt:botFillAt===null?null:botFillAt, cr:(clanWar?{i:clanWar.inner?1:0, t:clanWar.tags}:null)};
   broadcastAll(msg);
 }
 function evaluateAutoStart(){
@@ -9228,7 +9405,7 @@ function leaveRoom(){
   if(peer){ const op=peer; peer=null; if(handOff) setTimeout(()=>{ try{op.destroy();}catch(e){} }, 900); else { try{op.destroy();}catch(e){} } }   // (the last messages need a moment to go out)
   migState=null; migBundle=null; migOrderIds=[]; migPending=[]; try{ migBanner(false); }catch(e){}
   window.__versionNoted=false; chatPending=[];
-  spectatorMode=false; clanWar=null; clanRoom=null; document.body.classList.remove('specView'); conns={}; players={}; isHost=false; hostConn=null; MAP=null; started=false; currentMode=null; currentMapId=null; countdownEndsAt=null; gameLoopStarted=false; weaponChosenLocally=false; hostRoomLive=false; if(typeof weaponCountdownTimer!=='undefined' && weaponCountdownTimer){ clearInterval(weaponCountdownTimer); weaponCountdownTimer=null; } matchEnded=false; duelScores={}; duelRoundEndsAt=null; duelPick=false; matchTimerEndsAt=null; document.getElementById('matchTimerLabel').style.display='none'; document.getElementById('duelScoreLabel').style.display='none'; cq=null; walls=[]; hostTimers=[]; magicCircles=[]; poisonZones=[]; turrets=[]; weaponPhase=null; document.getElementById('cqLabel').style.display='none'; bombHolderId=null; bombTimerEndsAt=0; hotpotatoOriginalCount=0; seekerId=null; hideseekPhase=null; hideseekPhaseEndsAt=0; survivalRound=0; survivalPhase=null; survivalPhaseEndsAt=0; survivalCurrentDisaster=null; survivalHazards=[]; survivalZombies=[]; document.getElementById('survivalLabel').style.display='none'; ctf=null; ctfEndsLocal=0; document.getElementById('ctfLabel').style.display='none'; { const mini=document.getElementById('ctfMini'); if(mini) mini.style.display='none'; }
+  spectatorMode=false; clanWar=null; clanRoom=null; document.body.classList.remove('specView'); conns={}; players={}; isHost=false; hostConn=null; MAP=null; started=false; currentMode=null; currentMapId=null; countdownEndsAt=null; gameLoopStarted=false; weaponChosenLocally=false; hostRoomLive=false; if(typeof weaponCountdownTimer!=='undefined' && weaponCountdownTimer){ clearInterval(weaponCountdownTimer); weaponCountdownTimer=null; } matchEnded=false; duelScores={}; duelRoundEndsAt=null; duelPick=false; matchTimerEndsAt=null; document.getElementById('matchTimerLabel').style.display='none'; document.getElementById('duelScoreLabel').style.display='none'; cq=null; walls=[]; hostTimers=[]; magicCircles=[]; teamPings=[]; pingsView=[]; poisonZones=[]; turrets=[]; weaponPhase=null; document.getElementById('cqLabel').style.display='none'; bombHolderId=null; bombTimerEndsAt=0; hotpotatoOriginalCount=0; seekerId=null; hideseekPhase=null; hideseekPhaseEndsAt=0; survivalRound=0; survivalPhase=null; survivalPhaseEndsAt=0; survivalCurrentDisaster=null; survivalHazards=[]; survivalZombies=[]; document.getElementById('survivalLabel').style.display='none'; ctf=null; ctfEndsLocal=0; document.getElementById('ctfLabel').style.display='none'; { const mini=document.getElementById('ctfMini'); if(mini) mini.style.display='none'; }
   resetFlowState();
   showScreen('menuScreen');
   setChatVisible(false);
@@ -9263,6 +9440,7 @@ function becomeClient(idString, mode, mapId, code, spec){
   p.on('error', err=>{ if(err && err.type==='disconnected') return; if(migPeerError(err)) return; if(started && !isHost && hostConn && String(err && err.type).includes('unavailable')) return; showErrorAndReturnToMenu('연결 실패: '+err.type); });
 }
 function onClientData(data, mode, code){
+  if(data && data.cmap) cmRegister(data.cmap, true);          // a room on a hand-made map sends the map itself
   if(data.t==='clanNo'){ showErrorAndReturnToMenu(data.msg||'들어갈 수 없어요'); return; }
   if(data.t==='specNo'){ showErrorAndReturnToMenu(data.msg||'관전할 수 없어요'); return; }
   if(data.t==='specInit'){
@@ -9331,6 +9509,7 @@ function onClientData(data, mode, code){
     if(Array.isArray(data.chat)) for(const m of data.chat.slice(0,12)){ if(m && typeof m.text==='string') onChatRelayed(m); }       // chat lines that ride along with the state (the second road: a state certainly arrives during a match)
     bullets=data.bullets;
     walls=data.walls||[];
+    { const ns=performance.now()/1000; pingsView=(data.pg||[]).map(g=>({x:g.x,y:g.y,team:g.team,name:g.n,color:g.c,until:ns+g.r})); }
     magicCircles=data.magicCircles||[]; poisonZones=data.poisonZones||[]; turrets=data.turrets||[]; hzDraw=data.hz||null; syncBridgePlatforms(); if(data.dark!==undefined){ const nowS=performance.now()/1000; darkView=(data.dark||[]).map(z=>Object.assign(z, {t0:nowS-(z.age||0)})); }
     if(data.cq && cq){ cq.scores=data.cq.s; cq.holder=data.cq.h; cq.contested=data.cq.c; }
     xmV=data.xm||null; if(!isHost) brzV=data.bz||null;
@@ -9794,7 +9973,7 @@ function makeWeaponOffers(){ // random-weapon mode: 3 random weapons per player,
   }
 }
 /* ---- 캐릭터 금지: before the pick, each side (the two players of a duel, or the leader of each of the two teams) bans one character the other side cannot choose ---- */
-const BAN_MS=10000;
+const BAN_MS=20000;
 function banSideKey(p){ return (p.team===null||p.team===undefined) ? p.id : 't'+p.team; }
 function banEligible(){       // duel (also the ranked one) and team battle, normal pick only
   if(weaponMode==='random' || !(gameMode==='duel' || gameMode==='team')) return false;
@@ -9812,7 +9991,8 @@ function botBanTick(){          // the bot-only sides ban once their moment has 
   for(const k in b.botAt){ if(b.picks[k]===undefined && (Date.now()>=b.botAt[k] || Date.now()>=b.ends-200)){ b.picks[k]=SELECTABLE_WEAPONS[Math.floor(Math.random()*SELECTABLE_WEAPONS.length)]; any=true; } }
   return any;
 }
-function endBanStage(){ if(!banActive()) return; botBanTick(); weaponPhase.ban.done=true; matchBans={}; for(const x in weaponPhase.ban.picks){ const w=weaponPhase.ban.picks[x]; if(!w) continue; const k=players[x]?banSideKey(players[x]):x; (matchBans[k]=matchBans[k]||[]); if(!matchBans[k].includes(w)) matchBans[k].push(w); } broadcastWeaponState(); }
+/* a person who ran out of time still bans (at random): both sides must have banned before the pick opens */
+function endBanStage(){ if(!banActive()) return; botBanTick(); { const bp=weaponPhase.ban.picks; for(const k in weaponPhase.ban.banner) for(const id of weaponPhase.ban.banner[k]) if(players[id] && bp[id]===undefined) bp[id]=SELECTABLE_WEAPONS[Math.floor(Math.random()*SELECTABLE_WEAPONS.length)]; } weaponPhase.ban.done=true; matchBans={}; for(const x in weaponPhase.ban.picks){ const w=weaponPhase.ban.picks[x]; if(!w) continue; const k=players[x]?banSideKey(players[x]):x; (matchBans[k]=matchBans[k]||[]); if(!matchBans[k].includes(w)) matchBans[k].push(w); } broadcastWeaponState(); }
 function banStageCheck(){
   if(!banActive()) return;
   const b=weaponPhase.ban, live=new Set(Object.values(players).map(banSideKey));
@@ -9984,6 +10164,7 @@ function enterCharacterBrowse(){
   document.getElementById('weaponChosenCount').style.display='none';
   document.getElementById('weaponBrowseBackBtn').style.display='';
   if(weaponCountdownTimer){ clearInterval(weaponCountdownTimer); weaponCountdownTimer=null; }
+  { const si=document.getElementById('weaponSearch'); if(si){ si.value=''; si.oninput=weaponSearchApply; setTimeout(weaponSearchApply,0); } }
   const grid=document.getElementById('weaponGrid'); grid.innerHTML='';
   for(const wid of SELECTABLE_WEAPONS){
     const w=WEAPONS[wid];
@@ -10039,6 +10220,7 @@ function enterWeaponPhase(deadline, wmode, offer, banEnds){
     grid.appendChild(el);
   }
   document.getElementById('weaponLockBtn').onclick=lockWeapon;
+  { const si=document.getElementById('weaponSearch'); if(si){ si.value=''; si.oninput=weaponSearchApply; } }
   renderWeaponUI();
   if(weaponCountdownTimer) clearInterval(weaponCountdownTimer);
   weaponCountdownTimer=setInterval(()=>{
@@ -10136,11 +10318,18 @@ function setWeaponIcon(el, wid){
   if(sid && COSMETICS[sid]){ wi.textContent=''; let cv=document.createElement('canvas'); cv.style.cssText='width:76px; height:76px; display:block; margin:-14px auto -12px;'; try{ drawItemPreview(cv,sid); if(cv.width!==112){ const big=document.createElement('canvas'); big.width=112; big.height=112; big.getContext('2d').drawImage(cv,16,16); big.style.cssText=cv.style.cssText; cv=big; } wi.appendChild(cv); }catch(e){ wi.textContent=WEAPONS[wid].emoji; } }
   else { wi.textContent=''; const cv=document.createElement('canvas'); cv.style.cssText='width:76px; height:76px; display:block; margin:-14px auto -12px;'; cv.className='charIcon'; cv.dataset.wid=wid; try{ drawCharIcon(cv,wid); wi.appendChild(cv); }catch(e){ wi.textContent=WEAPONS[wid].emoji; } }
 }
+function weaponSearchApply(){          // the search box over the character list: a card stays when its name (or the name of its persona) holds what was typed
+  const inp=document.getElementById('weaponSearch'), grid=document.getElementById('weaponGrid'); if(!inp||!grid) return;
+  inp.style.display = (grid.style.display==='none') ? 'none' : '';
+  const q=inp.value.trim().toLowerCase();
+  grid.querySelectorAll('.wpnCard').forEach(el=>{ const w=WEAPONS[el.dataset.wid]; const txt=((w&&w.name)||'')+' '+(WEAPON_PERSONA_NAME[el.dataset.wid]||'')+' '+el.dataset.wid; el.style.display = (!q || txt.toLowerCase().includes(q)) ? '' : 'none'; });
+}
 function renderWeaponUI(){
   const st=weaponUI.state, bm=weaponBanMode(), sel=bm?weaponUI.banSel:weaponUI.selected;
   { const tEl=document.getElementById('weaponTitle'), sb=st&&st.ban;
     if(bm) tEl.textContent = (sb&&sb.can) ? '🚫 상대가 쓰지 못할 캐릭터를 하나 고르세요' : '🚫 상대에게 금지할 캐릭터를 정하는 중이에요';
     else if(weaponUI.titleBase) tEl.textContent = (st&&st.ob&&st.ob.length&&weaponUI.titleBase==='무기를 선택하세요') ? '무기를 선택하세요 (회색은 상대가 금지한 캐릭터)' : weaponUI.titleBase; }
+  weaponSearchApply();
   const takenBy={};
   if(st && st.dup) for(const p of st.picks) if(p.id!==myId && p.pick) takenBy[p.pick]=p.name;
   const rolling = weaponUI.hiddenUntil && performance.now()<weaponUI.hiddenUntil;
@@ -10256,7 +10445,7 @@ function finalizeGameplayStart(mte){
   // silent freeze, and the error banner mechanism gets its chance to work.
   try{
     matchEnded=false; try{ rpRecStart(); }catch(e){}
-    xm=null; xmV=null; brz=null; brzV=null; particles=[]; fxSeen={}; prevGround={}; prevHp={}; hitFlashUntil={}; screenShake=0; walls=[]; hostTimers=[]; magicCircles=[]; poisonZones=[]; turrets=[]; darkPools=[]; darkView=[]; lastKnownKills=0; matchAssists=0;
+    xm=null; xmV=null; brz=null; brzV=null; particles=[]; fxSeen={}; prevGround={}; prevHp={}; hitFlashUntil={}; screenShake=0; walls=[]; hostTimers=[]; magicCircles=[]; teamPings=[]; pingsView=[]; poisonZones=[]; turrets=[]; darkPools=[]; darkView=[]; lastKnownKills=0; matchAssists=0;
     matchKillLog=[]; killcamActive=false; killcamOverride=null; killcamSnapshot=null; killcamReplay=null; killcamReplayStartAt=0; replayBuffer={}; replayFrames=[]; replayFxLog=[]; replayDefs={};
     hitStopUntil=0; staggers={}; setTimeout(()=>{ try{ entranceShow(); }catch(e){ console.error('[entrance]', e); } }, 450);
     if(gameMode==='parkour') initParkourItems(); // runs for host and every client alike, so everyone's item-icon rendering starts from the same "all available" state
@@ -13031,6 +13220,7 @@ function hostTick(dt,t){
       ctf: (gameMode==='ctf' && ctf) ? {f:ctf.flags.map(f=>({s:(f.state==='home'?0:(f.state==='carried'?1:2)), x:Math.round(f.x), y:Math.round(f.y), c:f.carrierId||null, r:(f.state==='dropped'?Math.round(Math.max(0,f.returnAt-t/1000)*10)/10:0)})), sc:ctf.scores, rm:Math.max(0,Math.round((ctf.endsAt-Date.now())/1000)), ot:!!ctf.overtime, tg:ctf.target} : undefined,
       bullets:bullets.map(b=>({x:b.x,y:b.y,color:b.color,wid:b.wid,vx:b.vx,vy:b.vy,dmgless:b.dmgless,swingAngle:b.swingAngle,splash:b.splash,life:b.life,life0:b.life0,sx:b.spawnX,sy:b.spawnY,ult:b.ult,fire:b.fire,reach:b.reach})),
       walls:walls.map(w=>({x:w.x,y:w.y,w:w.w,h:w.h,owner:w.owner,rem:w.until-t/1000})),
+      pg:(()=>{ const ts=t/1000; teamPings=teamPings.filter(g=>g.until>ts); return teamPings.length?teamPings.map(g=>({x:Math.round(g.x),y:Math.round(g.y),team:g.team,n:g.name,c:g.color,r:Math.round((g.until-ts)*10)/10})):undefined; })(),
       magicCircles:magicCircles.map(z=>({x:z.x,y:z.y,r:z.r,owner:z.owner,team:z.team,rem:z.until-t/1000})),
       poisonZones:poisonZones.map(z=>({x:z.x,y:z.y,r:z.r,owner:z.owner,team:z.team,rem:z.until-t/1000})),
       hz:hzDraw,
@@ -16011,6 +16201,7 @@ function render(fxDt){
   safeDraw(drawConquestZone);
   safeDraw(()=>drawWalls(kcScene?kcScene.walls:null));
   safeDraw(()=>drawMagicCircles(kcScene?kcScene.circles:null));
+  if(!kcScene) safeDraw(drawPings);
   safeDraw(()=>drawPoisonZones());
   safeDraw(()=>drawDarkPools(kcScene?[]:(isHost?darkPoolsView(performance.now()):darkView)));
   safeDraw(()=>drawTurrets(kcScene?[]:null));
