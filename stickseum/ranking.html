@@ -28,7 +28,7 @@
   .topbar nav a{color:var(--text-dim); text-decoration:none; font-size:15px; padding:6px 10px; border-radius:7px; white-space:nowrap; border:1px solid transparent;}
   .topbar nav a:hover{color:var(--text);}
   .topbar [data-ff-account]{display:inline-flex; align-items:center; white-space:nowrap;}
-  .topbar{align-items:flex-start; flex-wrap:nowrap;} .topbar .right{row-gap:8px;} .topbar nav{order:3; flex-basis:100%; justify-content:flex-end;}   /* not enough room for one row: the menu goes under the language and account buttons */
+  .topbar{align-items:flex-start; flex-wrap:nowrap;} .topbar .right{row-gap:8px;} .topbar nav{order:3; flex-basis:100%; justify-content:flex-end; flex-wrap:wrap; overflow-x:visible;}   /* not enough room for one row: the menu goes under the language and account buttons */
   .topbar nav a.on{color:var(--text); background:var(--panel); border:1px solid var(--line);}
   .langSel{background:var(--panel); color:var(--text-dim); border:1px solid var(--line); border-radius:7px; padding:5px 8px; font:inherit; font-size:14px; cursor:pointer; margin-left:6px;}
   .langSel:hover{color:var(--text); border-color:var(--teal);}
