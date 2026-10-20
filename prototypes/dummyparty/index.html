@@ -461,16 +461,9 @@ canvas.ico{width:100%;max-width:320px;height:auto;aspect-ratio:640/150;backgroun
 @keyframes finIn{from{opacity:0;transform:translateY(40px) scale(.92)}to{opacity:1;transform:none}}
 .ov.fin{background:none}
 .card.fin{animation:finIn .7s ease 5.6s both}
-#siteBar{display:none;position:fixed;top:0;left:0;right:0;height:52px;z-index:30;align-items:center;justify-content:space-between;gap:10px;padding:0 16px;background:rgba(14,16,22,.94);border-bottom:1px solid #2b3245;font-family:'Noto Sans KR',sans-serif}
-body.onhome #siteBar{display:flex}
-#siteBar .sb-logo{font-family:'Oswald','Noto Sans KR',sans-serif;font-weight:600;font-size:18px;letter-spacing:.04em;color:#eef0f5;text-decoration:none;white-space:nowrap}
-#siteBar .sb-logo b{color:#ffc93c;font-weight:700}
-#siteBar nav{display:flex;gap:2px;flex:1;justify-content:center}
-#siteBar nav a{color:#c9cfdc;text-decoration:none;font-weight:700;font-size:14px;padding:6px 10px;border-radius:8px}
-#siteBar nav a:hover{background:#1c2232;color:#fff}
-#siteBar .sb-acc{display:inline-flex;align-items:center;white-space:nowrap}
-@media(max-width:620px){#siteBar nav{display:none}#siteBar{height:48px}}
-body.onhome #sHome{padding-top:76px}
+.exitHub{display:none;position:fixed;top:12px;left:12px;z-index:30;border:0;border-radius:12px;padding:9px 14px;font:800 14px 'Noto Sans KR',sans-serif;background:rgba(40,28,16,.72);color:#fff;cursor:pointer}
+body.onhome .exitHub{display:block}.exitHub:hover{background:rgba(40,28,16,.9)}
+.acctLine{margin:2px 0 10px;font-size:13px;font-weight:700;color:var(--mu)}.acctLine a{color:inherit}
 #walBox{margin:0 0 8px;padding:7px 12px;border-radius:14px;background:rgba(255,255,255,.55);font-size:13px;color:#3a2410;text-align:center}
 #walBox b{font-weight:900}#walBox span{opacity:.7;margin:0 4px}#walBox a{color:inherit;font-weight:800}
 .dhint{font-size:11px;color:#5a3415;opacity:.8;margin-top:4px}
@@ -495,7 +488,7 @@ body.playing #emoBar{display:flex}
 <script src="https://frenchfries777mc.github.io/games/ff-auth.js"></script>
 </head>
 <body class="onhome">
-<header id="siteBar"><a class="sb-logo" href="../../">FRENCHFRIES<b>777</b></a><nav><a href="../../wiki/">위키</a><a href="../../community/">커뮤니티</a><a href="../">라운지</a><a href="../../settings/">설정</a></nav><span class="sb-acc"><span data-ff-account></span></span></header>
+<button class="exitHub" id="exitHub">← 나가기</button>
 <section class="screen on" id="sHome">
  <div class="homeBox">
   <h1 class="logo">Dummy Party</h1>
@@ -505,14 +498,16 @@ body.playing #emoBar{display:flex}
   <div id="walBox"></div>
   <div class="deco"><canvas id="decoPrev" width="168" height="208"></canvas><div class="dgrid"><div class="drow" id="faceRow"></div><div class="drow" id="hatRow"></div><div class="drow" id="glRow"></div><div class="drow" id="danceRow"></div><div class="dhint">잠긴 칸은 눌러서 구경하고 dC로 살 수 있어요. 맨 아래 줄은 이길 때 추는 춤이에요</div></div></div>
   <div class="panel">
-   <label for="nameIn">내 이름</label>
+   <label for="nameIn">내 이름</label><div class="acctLine" id="acctLine"></div>
    <input id="nameIn" maxlength="12" placeholder="이름 (12자까지)" autocomplete="off">
    <div class="row"><button class="pb gold" id="hostBtn">방 만들기</button><button class="pb" id="soloBtn">봇이랑 하기</button></div>
    <div class="or">친구 방에 들어가기</div>
    <div class="row"><input id="codeIn" maxlength="5" placeholder="방 코드" autocomplete="off"><button class="pb dark" id="joinBtn" style="flex:0 0 auto">들어가기</button></div>
    <div class="msg" id="homeMsg"></div>
   </div>
-  <details class="notes"><summary>패치노트 · v0.1 (build 13)</summary>
+  <details class="notes"><summary>패치노트 · v0.1 (build 14)</summary>
+   <b>2026-10-20 · v0.1 build 14 · 나가기 버튼, 상단 바 제거</b>
+   <ul><li>허브 상단 바와 종·투표·계정 버튼 줄을 게임 화면에서 뺐어요</li><li>왼쪽 위 나가기 버튼과 게임 중 나가기 버튼을 누르면 허브로 돌아가요 (게임 중에는 확인창이 떠요)</li><li>계정은 이름칸 위에 작은 한 줄로만 보여요</li></ul>
    <b>2026-10-20 · v0.1 build 13 · 병맛 신작 3개, 상단 바 정리</b>
    <ul><li>병맛 미니게임 3개 추가: 방귀 로켓 레이스, 핫도그 먹기 대회, 닭 몰이</li><li>미로, 체스, 우노는 판에서 뺐어요</li><li>위키·커뮤니티·라운지·설정과 계정 버튼을 다른 사이트처럼 맨 위 바로 옮겼어요 (게임 화면에는 안 나와요)</li></ul>
    <b>2026-10-20 · v0.1 build 12 · 미로 끼임 수정</b>
@@ -537,7 +532,7 @@ body.playing #emoBar{display:flex}
    <ul><li>무너지는 발판 칸 수 대폭 증가 (19×10)와 용암 동굴 맵</li><li>10개 맵 전부 새로 그림 (관중석, 야자수 섬, 링, 정원 미로, 서커스, 우노 테이블 등)</li><li>글자 대신 아이콘·말풍선·이펙트로 표현 (무기, 아이템, 카드 효과, 시작 안내)</li><li>타격·폭발·물보라 효과와 화면 흔들림 추가</li></ul>
    <b>2026-10-19 · v0.1 build 1 · 첫 시험판</b>
    <ul><li>마네킹 미니게임 10개 추가 (장애물 달리기, 섬 밀치기, 싸우기, 병맛 미로, 체스 대난투, 폭탄 돌리기, 병맛 우노, 쇼윈도 얼음땡, 무너지는 발판, 컨베이어 서바이벌)</li><li>방 코드로 최대 8명 멀티플레이, 빈자리는 봇으로 채우기</li><li>판마다 10개 중 5개를 무작위로 골라 점수를 합산</li><li>PC 키보드와 휴대폰 터치 조작 지원</li></ul></details>
-  <p class="foot">2~8명 · 판마다 16개 미니게임 중 5개 · 프로토타입 v0.1 b13 · <a href="../">← 프로토타입 목록</a></p>
+  <p class="foot">2~8명 · 판마다 16개 미니게임 중 5개 · 프로토타입 v0.1 b14 · <a href="../">← 프로토타입 목록</a></p>
   <p class="foot"><span class="ff-copy">© 2026 Frenchfries777 · <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.ko" target="_blank" rel="noopener">CC BY-NC-ND 4.0</a></span></p>
  </div>
 </section>
@@ -4388,6 +4383,7 @@ function canvasTap(e) {
 function show(id) { document.querySelectorAll('.screen').forEach(function (s) { s.classList.toggle('on', s.id === id); }); document.body.classList.toggle('onhome', id === 'sHome'); if (id !== 'sGame') { $('ov').className = 'ov'; document.body.classList.remove('playing'); $('touch').classList.remove('on'); } }
 var toastT;
 function toast(t) { var el = $('toast'); el.textContent = t; el.classList.add('on'); clearTimeout(toastT); toastT = setTimeout(function () { el.classList.remove('on'); }, 2600); }
+function exitHub() { destroyPeer(); location.href = 'https://frenchfries777mc.github.io/games/'; }
 function goHome() { destroyPeer(); G.role = null; G.phase = 'idle'; G.st = null; G.meta = null; G.snapCur = G.snapPrev = null; busy(false); show('sHome'); }
 
 /* ===== Dummy Party 시작: 버튼 연결, 첫 화면 그림 ===== */
@@ -4413,7 +4409,8 @@ function goHome() { destroyPeer(); G.role = null; G.phase = 'idle'; G.st = null;
   $('soloBtn').onclick = function () { var n = needName(); if (n) startSolo(n); };
   $('joinBtn').onclick = function () { var n = needName(); if (!n) return; var c = $('codeIn').value.trim().toUpperCase(); if (c.length !== 5) { homeMsg('방 코드 5자리를 입력하세요.'); return; } startGuest(n, c); };
   $('lobBack').onclick = goHome;
-  $('quitBtn').onclick = function () { if (confirm('나갈까요?')) goHome(); };
+  $('quitBtn').onclick = function () { if (confirm('게임에서 나가 허브로 돌아갈까요?')) exitHub(); };
+  $('exitHub').onclick = exitHub;
   $('botPlus').onclick = function () { G.bots = clamp(G.bots + 1, 0, MAXP - 1); lsSet('dummyparty.bots', String(G.bots)); trimBots(); sendMeta(); renderLobby(); };
   $('botMinus').onclick = function () { G.bots = clamp(G.bots - 1, G.role === 'solo' ? 1 : 0, MAXP); lsSet('dummyparty.bots', String(G.bots)); trimBots(); sendMeta(); renderLobby(); };
   $('startBtn').onclick = function () { SFX.unlock(); startMatch(); };
@@ -4514,7 +4511,8 @@ function goHome() { destroyPeer(); G.role = null; G.phase = 'idle'; G.st = null;
   // Frenchfries777 계정이 있으면 그 닉네임을 이름으로 써요
   (function () {
     function useNick() {
-      try { var u = window.FFAuth && FFAuth.user(), n = u && FFAuth.nickname(); if (n) { $('nameIn').value = cleanName(n); lsSet('dummyparty.name', cleanName(n)); } } catch (e) { }
+      try { var u = window.FFAuth && FFAuth.user(), n = u && FFAuth.nickname(); if (n) { $('nameIn').value = cleanName(n); lsSet('dummyparty.name', cleanName(n)); }
+        $('acctLine').innerHTML = n ? 'Frenchfries777 계정으로 접속 중' : '<a href="https://frenchfries777mc.github.io/games/">허브에서 로그인하면 dC와 꾸미기가 저장돼요</a>'; } catch (e) { }
     }
     function hook() { if (!window.FFAuth) return false; FFAuth.ready.then(function () { useNick(); walletRefresh(); }); FFAuth.onChange(function () { useNick(); walletRefresh(); }); return true; }
     if (!hook()) { var tries = 0, iv = setInterval(function () { if (hook() || ++tries > 40) clearInterval(iv); }, 250); }
