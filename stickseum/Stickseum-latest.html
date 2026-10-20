@@ -391,7 +391,8 @@ if(document.readyState==='loading') document.addEventListener('DOMContentLoaded'
   .weaponSlot .wDesc{ font-size:11px; color:var(--text-dim); margin-top:6px; line-height:1.5; min-height:2.5em; }
   #weaponPickLayout{ display:flex; gap:12px; margin:10px 0; align-items:flex-start; }
   .cmTool.sel{ outline:2px solid var(--accent,#ffd34d); }
-  #weaponGrid{ display:flex; flex-direction:column; gap:6px; flex:0 0 92px; max-height:420px; overflow-y:auto; padding-right:2px; }
+  #weaponGrid{ display:flex; flex-direction:column; gap:6px; flex:0 0 92px; max-height:420px; overflow-y:auto; overflow-x:hidden; padding-right:2px; }
+  *::-webkit-scrollbar:horizontal{ display:none; height:0; }          /* no bar along the bottom of any list: a sideways scroll still works by touch and wheel */
   .wpnCard{ position:relative; background:var(--panel-2); border:2px solid var(--line); border-radius:10px; padding:7px 4px; text-align:center; cursor:pointer;
     transition:border-color .12s ease, transform .1s ease, opacity .12s ease; user-select:none; }
   .wpnCard:hover:not(.taken):not(.lockedAll){ border-color:var(--accent-2); }
@@ -4757,7 +4758,7 @@ function shuffle(arr){ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.
 /* ===== the version of this file =====
    Players with different versions CAN meet and play together: the automatic matchmaking uses the same room names for every version (online-<mode>-<map>-<slot>), and nobody is refused because of a different build.
    The build is only sent along with the join message and the lobby (for information); the corner of the screen shows it. */
-const GAME_BUILD='build 2026-10-18-v325';
+const GAME_BUILD='build 2026-10-18-v326';
 const GAME_VERSION='0.8', GAME_VERSION_NAME='황금을 찾아서';   // 게임 버전 이름: versions.json의 title과 같게 (빌드마다 바꾸지 않음)
 const WEEKLY_EVENTS=[
   {id:'lowg',    name:'저중력 난투', desc:'몸이 둥실둥실, 중력이 약해진 난투', rules:{grav:0.6}},
