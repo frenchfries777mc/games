@@ -365,6 +365,7 @@ html:not(.introDone) #tutfab,html:not(.introDone) #langBox,html:not(.introDone) 
 .introDone .brand h1{color:#f6ecd0;text-shadow:0 3px 18px #000c,0 0 6px #000a}.introDone .brand .sub{color:#e9dcb8;text-shadow:0 0 10px #000b}.introDone .brand .sub i{background:#e9dcb8}
 #cpTag{position:absolute;left:50%;transform:translateX(-50%);bottom:8px;white-space:nowrap;z-index:3;font:600 11px system-ui,sans-serif;color:#e9dcb8;opacity:.6;letter-spacing:.04em}#cpTag a{color:inherit}
 #verTag{position:absolute;right:12px;bottom:8px;z-index:3;font:600 11px system-ui,sans-serif;color:#e9dcb8;opacity:.6;letter-spacing:.08em}
+@media(max-width:640px){#cpTag{bottom:44px;font-size:10px}}
 </style>
 </head>
 <body>
@@ -385,7 +386,7 @@ window.ceReload=function(){try{if(window.FFAuth&&FFAuth.setRoom)FFAuth.setRoom(n
 try{if(sessionStorage.getItem('ce_noIntro')){sessionStorage.removeItem('ce_noIntro');el.style.display='none';go();}}catch(e){}})();</script>
 <div id="app">
  <div id="lobby" class="screen">
-  <canvas id="lobbyBg"></canvas><canvas id="lobbyWar"></canvas><div id="cpTag">© 2026 Frenchfries777 · <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.ko" target="_blank" rel="noopener">CC BY-NC-ND 4.0</a></div><div id="verTag">v0.3 · build 73</div>
+  <canvas id="lobbyBg"></canvas><canvas id="lobbyWar"></canvas><div id="cpTag">© 2026 Frenchfries777 · <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.ko" target="_blank" rel="noopener">CC BY-NC-ND 4.0</a></div><div id="verTag">v0.3 · build 74</div>
   <header class="brand"><h1>Crown Envoy</h1><div class="sub"><i></i>DIPLOMACY · WAR · EMPIRE<i></i></div></header>
   <div id="lobbyRight">
    <div id="lobbyHome" class="modes">
@@ -560,7 +561,7 @@ function q(n){pend.add(n);if(!sched){sched=true;(window.requestAnimationFrame||s
 function mkSel(id){return '<select id="'+id+'" class="langSel" aria-label="Language">'+LANGS.map(l=>'<option value="'+l[0]+'">🌐 '+l[1]+'</option>').join('')+'</select>';}
 function sync(){
   const g=document.getElementById('game'),box=document.getElementById('langBox');
-  if(box)box.style.display=(g&&!g.classList.contains('hidden'))?'none':'';
+  if(box){const ai=document.getElementById('btnAI');const hideN=innerWidth<=640&&!(ai&&ai.offsetParent!==null);box.style.display=((g&&!g.classList.contains('hidden'))||hideN)?'none':'';}
   const mb=document.querySelector('#menu .menubox');
   if(mb&&!mb.querySelector('.menuLang')){
     const d=document.createElement('div');d.className='menuLang';d.style.cssText='margin:6px 0 10px';
@@ -5788,7 +5789,7 @@ window.tutShow=function(i){
   if(!box){box=document.createElement('div');box.id='tutbox';document.body.appendChild(box);}
   const last=i===ST.length-1;
   box.innerHTML='<div class="tn"><span>튜토리얼</span> '+(i+1)+' / '+ST.length+'</div><div class="tt"></div><div class="tb"><button class="btn sm" data-t="skip">건너뛰기</button>'+(i>0?'<button class="btn sm" data-t="prev">이전</button>':'')+'<button class="btn sm primary" data-t="next">'+(last?'끝내기':'다음')+'</button></div>';
-  box.querySelector('.tt').textContent=tx;
+  box.querySelector('.tt').textContent=tx;tutAvoid(el);
   box.onclick=e=>{const b=e.target.closest('[data-t]');if(!b)return;const k=b.dataset.t;if(k==='skip')tutEnd(true);else if(k==='prev')tutShow(cur-1);else tutShow(cur+1);};
 };
 /* ===== 상황별 튜토리얼 ===== */
@@ -5829,7 +5830,7 @@ function decide(v){
         if(!btn){const wsel=`[data-act="dipForm"][data-kind="war"][data-to="${CX.tgt}"]`,wb=$q(wsel);
           if(wb){if(!CX.sk.fm){CX.sk.fm=1;C.dipForm={pid:CX.tgt,kind:'war'};try{UI.renderPanel();}catch(e){}}return {k:'w4',t:'⚔ 버튼을 눌러 선전포고 창을 여세요.',hl:wsel,scroll:1};}
           if(!CX.sk.q){CX.sk.q=1;C.dipQ=nm;const inp=$q('#dipQ');if(inp)inp.value=nm;const el=$q('#dipList');if(el&&UI._dipListFn)el.innerHTML=UI._dipListFn();}return {k:'w2',t:`목록에서 ${nm}을(를) 찾아 [선전포고]를 누르세요. 검색창에 이름을 입력하면 쉬워요.`};}
-        const sub=typeof p.troops==='number'?`병력 약 ${fmt(p.troops)}명`:`병력 규모 ${TN[p.tier||0]}`;
+        const sub=typeof p.troops==='number'?`상대 병력은 약 ${fmt(p.troops)}명이에요.`:`상대 병력은 ${TN[p.tier||0]} 규모예요.`;
         if(C.decArm===CX.tgt)return {k:'w3',t:`[정말 선전포고? 한 번 더] 버튼을 한 번 더 눌러 ${nm} 선전포고를 확정하세요.`,hl:sel,scroll:1};
         return {k:'w1',t:`가장 약한 이웃 나라: ${nm}. 선전포고해야 공격할 수 있어요. [선전포고] 버튼을 누르세요.`,sub,hl:sel,scroll:1};}}}
   const tg=CX.tgt;
@@ -5855,6 +5856,10 @@ function decide(v){
   if(CX.stage==='ready'){if(me.ready){CX.fin=true;CX.finR=v.round;ctxSave();return null;}
     return {k:'r',t:'계획이 끝나면 [계획 확정]을 누르세요. 모두 확정하거나 위의 타이머가 끝나면 명령이 한꺼번에 실행되고 전투 연출이 나와요.',hl:'#btnReady'};}
   return null;}
+function tutAvoid(el){if(!box)return;const hit=(a,b)=>!(a.right<b.left||a.left>b.right||a.bottom<b.top||a.top>b.bottom);
+  box.style.cssText='';if(!el)return;const e=el.getBoundingClientRect();if(!e.width&&!e.height)return;
+  if(hit(e,box.getBoundingClientRect())){box.style.bottom='auto';box.style.top='64px';
+    if(hit(e,box.getBoundingClientRect())){box.style.top='auto';box.style.bottom='76px';box.style.left='12px';box.style.transform='none';}}}
 function ctxHide(){window.TUT_HL=null;document.querySelectorAll('.tuthl').forEach(e=>e.classList.remove('tuthl'));if(box){box.remove();box=null;}}
 function ctxShow(d){
   if(!box){box=document.createElement('div');box.id='tutbox';document.body.appendChild(box);box.onclick=ctxClick;}
@@ -5865,6 +5870,7 @@ function ctxShow(d){
   const el=d.hl?$q(d.hl):null;
   document.querySelectorAll('.tuthl').forEach(e=>{if(e!==el)e.classList.remove('tuthl');});
   if(el){if(!el.classList.contains('tuthl'))el.classList.add('tuthl');if(d.scroll&&box._sc!==d.k){box._sc=d.k;try{el.scrollIntoView({block:'center',behavior:'smooth'});}catch(e){}}}
+  tutAvoid(el);if(el&&d.scroll)setTimeout(()=>{try{tutAvoid($q(d.hl));}catch(e){}},700);
   window.TUT_HL=d.tids&&d.tids.length?d.tids:null;}
 function ctxClick(e){const b=e.target.closest('[data-t]');if(!b)return;const k=b.dataset.t;
   if(k==='skip'||k==='end')ctxStop(true);else if(k==='more'){ctxStop(true);tutShow(0);}else if(k==='mvskip'&&CX){CX.stage='ready';ctxTick();}}
@@ -5877,6 +5883,8 @@ function ctxTick(){if(!CX)return;const v=C.view;
   if(d.auto==='map'&&!CX.sk.am){const b=$q('#tabs [data-tab="map"]');if(b){CX.sk.am=1;b.click();}}
   ctxShow(d);}
 const fb=document.createElement('button');fb.id='tutfab';fb.className='btn sm';fb.textContent='❓ 튜토리얼';fb.style.cssText='position:fixed;left:12px;bottom:56px;z-index:9400;opacity:.92';fb.onclick=()=>{if(inGame())ctxStart();else tutShow(0);};document.body.appendChild(fb);
+/* 폰에서는 로비 첫 화면에서만 튜토리얼 버튼·언어 선택을 보여 줘서 다른 화면 버튼과 겹치지 않게 한다 (게임 안에서는 기록·설정 메뉴에 있음) */
+setInterval(()=>{try{const narrow=innerWidth<=640;const ai=document.getElementById('btnAI');const main=!inGame()&&ai&&ai.offsetParent!==null;const vis=(!narrow||main)?'':'none';fb.style.display=vis;}catch(e){}},600);
 document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest('#menu [data-act="tut"]');if(!b)return;try{UI.closeMenu();}catch(_){}if(inGame())ctxStart();else tutShow(0);});
 setInterval(()=>{try{if(box||window._tutAuto)return;if(typeof C==='undefined'||!C.view||C.spec||C.me==null||!C.started)return;window._tutAuto=1;if(!localStorage.getItem('ce_tut2'))setTimeout(ctxStart,1200);}catch(e){}},1500);
 })();
