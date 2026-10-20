@@ -19,3 +19,5 @@ patchnotes.json | v324 title | 허브 방 초대 | build 324 | 2026-10-20
 patchnotes.json | v324 items[0] | 허브 친구 초대 연결 (비공개 방 코드를 허브에 알리고, 초대 링크로 방에 바로 입장) | build 324 | 2026-10-20
 patchnotes.json | v325 title | 팀 핑 삭제 | build 325 | 2026-10-20
 patchnotes.json | v325 items[0] | 팀 핑 기능 삭제 (G 키) | build 325 | 2026-10-20
+patchnotes.json | v326 title | 아래쪽 스크롤 숨김 | build 326 | 2026-10-20
+patchnotes.json | v326 items[0] | 캐릭터 선택 화면 등 목록 아래쪽 가로 스크롤 막대 숨김 | build 326 | 2026-10-20
