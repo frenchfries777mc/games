@@ -11,8 +11,8 @@
    "title": "큰 항해",
    "summary": "캐릭터를 직접 조종하고, 하나로 이어진 섬 지도에서 키우고 팔고, 배를 몰아 다른 섬과 비밀 섬을 찾아가는 버전",
    "latest": true,
-   "size": 901538,
-   "sha256": "29e9a1b48047",
+   "size": 948479,
+   "sha256": "c3a60e92de4c84caf2da583706abf0aefb956ed21fbec13d1eb7f5b76f2283ad",
    "tr": {
     "title": {
      "en": "The big voyage",
@@ -29,7 +29,7 @@
      "de": "Figur direkt steuern, auf einer zusammenhängenden Inselkarte anbauen und verkaufen und zu anderen und geheimen Inseln segeln"
     }
    },
-   "build": 39
+   "build": 40
   },
   {
    "version": "0.1",
@@ -39,7 +39,7 @@
    "summary": "밭, 목장, 항구 무역과 멀티플레이 방 코드가 있는 첫 공개",
    "latest": false,
    "size": 57379,
-   "sha256": "37a9bb37a7bc",
+   "sha256": "37a9bb37a7bcd5946ed00a94a3ef620ef2eb9efc2a73397a3ea18a7818b5756f",
    "tr": {
     "title": {
      "en": "First sailing",
