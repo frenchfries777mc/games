@@ -27,3 +27,4 @@ patchnotes.json | 2026-10-20 저작권 표기 | 제목 "저작권 표기"와 항
 - isleport/patchnotes.json | build 11 항목 5번째 (ja·es·fr·de 칸에 영어 임시 입력) | 배경음악이 여섯 곡으로 늘어났어요. 새 곡 둘은 포근한 피아노가 이어지는 잔잔한 곡과 마림바가 얹힌 경쾌한 곡이에요 | 음악 스레드 | 2026-10-20
 
 - Dummy Party build 14 (2026-10-20): 새 문구는 prototypes/dummyparty/index.html 안: 패치노트 build 14 블록 "나가기 버튼, 상단 바 제거"(3줄), 나가기 버튼, 나가기 확인창("게임에서 나가 허브로 돌아갈까요?"), 계정 한 줄("Frenchfries777 계정으로 접속 중", "허브에서 로그인하면 dC와 꾸미기가 저장돼요").
+- Dummy Party build 15 (2026-10-20): 새 문구는 prototypes/dummyparty/index.html 안: 패치노트 build 15 블록 "dC 보상 상향" 한 줄.
