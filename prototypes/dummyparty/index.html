@@ -503,7 +503,9 @@ body.playing #emoBar{display:flex}
    <div class="row"><input id="codeIn" maxlength="5" placeholder="방 코드" autocomplete="off"><button class="pb dark" id="joinBtn" style="flex:0 0 auto">들어가기</button></div>
    <div class="msg" id="homeMsg"></div>
   </div>
-  <details class="notes"><summary>패치노트 · v0.1 (build 9)</summary>
+  <details class="notes"><summary>패치노트 · v0.1 (build 10)</summary>
+   <b>2026-10-20 · v0.1 build 10 · 우노 카드 설명</b>
+   <ul><li>병맛 우노: 카드에 마우스를 올리면 이름과 효과 설명이 떠요 (내 손패와 맨 위 카드)</li></ul>
    <b>2026-10-20 · v0.1 build 9 · 점프와 해설 위치</b>
    <ul><li>무너지는 발판: 점프(B 키)로 빈 칸 하나까지 건너뛸 수 있어요</li><li>해설 자막을 화면 아래쪽으로 옮겼어요</li></ul>
    <b>2026-10-20 · v0.1 build 8 · dC와 스킨 가게</b>
@@ -520,7 +522,7 @@ body.playing #emoBar{display:flex}
    <ul><li>무너지는 발판 칸 수 대폭 증가 (19×10)와 용암 동굴 맵</li><li>10개 맵 전부 새로 그림 (관중석, 야자수 섬, 링, 정원 미로, 서커스, 우노 테이블 등)</li><li>글자 대신 아이콘·말풍선·이펙트로 표현 (무기, 아이템, 카드 효과, 시작 안내)</li><li>타격·폭발·물보라 효과와 화면 흔들림 추가</li></ul>
    <b>2026-10-19 · v0.1 build 1 · 첫 시험판</b>
    <ul><li>마네킹 미니게임 10개 추가 (장애물 달리기, 섬 밀치기, 싸우기, 병맛 미로, 체스 대난투, 폭탄 돌리기, 병맛 우노, 쇼윈도 얼음땡, 무너지는 발판, 컨베이어 서바이벌)</li><li>방 코드로 최대 8명 멀티플레이, 빈자리는 봇으로 채우기</li><li>판마다 10개 중 5개를 무작위로 골라 점수를 합산</li><li>PC 키보드와 휴대폰 터치 조작 지원</li></ul></details>
-  <p class="foot">2~8명 · 판마다 16개 미니게임 중 5개 · 프로토타입 v0.1 b9 · <a href="../">← 프로토타입 목록</a></p>
+  <p class="foot">2~8명 · 판마다 16개 미니게임 중 5개 · 프로토타입 v0.1 b10 · <a href="../">← 프로토타입 목록</a></p>
   <p class="foot"><span class="ff-copy">© 2026 Frenchfries777 · <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.ko" target="_blank" rel="noopener">CC BY-NC-ND 4.0</a></span></p>
  </div>
 </section>
@@ -3009,6 +3011,34 @@ DP.MG.uno.draw = function (ctx, s, v) {
     hand.forEach(function (c, i) { var ok = myTurn && !s.pick && playable(c, s); card(x0 + i * sp, y0 - (ok ? 16 : 0), c, cw, chh, myTurn && !s.pick && !ok); if (ok) v.btn(x0 + i * sp, y0 - 16, i === hand.length - 1 ? cw : sp, chh, { c: i }); });
     ctx.fillStyle = 'rgba(0,0,0,.4)'; ctx.beginPath(); ctx.arc(52, H - 60, 24, 0, 6.283); ctx.fill(); txt(ctx, String(hand.length), 52, H - 60, { size: 22 });
   }
+  // 마우스를 올린 카드 설명
+  (function () {
+    if (!MOUSE.on || s.win || (s.pick && s.pick.id === me)) return;
+    var info = null, ax = 0, ay = 0;
+    if (Array.isArray(hand)) {
+      var cw2 = 62, ch2 = 90, sp2 = Math.min(cw2 + 4, (W - 120 - cw2) / Math.max(1, hand.length - 1)), xs = W / 2 - (sp2 * (hand.length - 1) + cw2) / 2, ys = H - ch2 - 16;
+      for (var hi = hand.length - 1; hi >= 0; hi--) {
+        var ok2 = myTurn && !s.pick && playable(hand[hi], s), rx = xs + hi * sp2, ry = ys - (ok2 ? 16 : 0), rw = hi === hand.length - 1 ? cw2 : sp2;
+        if (MOUSE.x >= rx && MOUSE.x <= rx + rw && MOUSE.y >= ry && MOUSE.y <= ry + ch2) { info = { c: hand[hi], own: true, ok: ok2 }; ax = rx + cw2 / 2; ay = ry - 8; break; }
+      }
+    }
+    if (!info && MOUSE.x >= W / 2 - 20 && MOUSE.x <= W / 2 + 60 && MOUSE.y >= 198 && MOUSE.y <= 306) { info = { c: s.top, own: false }; ax = W / 2 + 20; ay = 190; }
+    if (!info) return;
+    var c = info.c, k = c[1], K2 = DP.K.uno, title, desc;
+    if (k < 10) { title = K2.CNM[c[0]] + ' ' + k; desc = '같은 색이나 같은 숫자 위에 낼 수 있어요'; }
+    else if (k === 10) { title = K2.CNM[c[0]] + ' 건너뛰기'; desc = '다음 사람이 한 번 쉬어요'; }
+    else if (k === 11) { title = K2.CNM[c[0]] + ' 방향 바꿈'; desc = '돌아가는 방향이 바뀌어요 (둘이면 한 번 더 내요)'; }
+    else if (k === 12) { title = K2.CNM[c[0]] + ' +2'; desc = '다음 사람이 두 장 뽑고 쉬어요'; }
+    else if (k === 13) { title = '무지개'; desc = '아무 때나 낼 수 있고 색을 정해요'; }
+    else if (k === 14) { title = '무지개 +4'; desc = '아무 때나 내고 색을 정해요. 다음 사람이 네 장 뽑고 쉬어요'; }
+    else { title = K2.KN[k]; desc = K2.KD[k] + ' (아무 때나 낼 수 있어요)'; }
+    var note = info.own ? (info.ok ? '지금 낼 수 있어요. 눌러서 내요' : (myTurn ? '지금은 낼 수 없어요' : '내 차례에 낼 수 있어요')) : '지금 맨 위 카드예요';
+    ctx.save(); ctx.font = '700 13px ' + FONT; var tw = Math.max(ctx.measureText(desc).width, ctx.measureText(note).width, 120) + 24, th = 66, tx = clamp(ax - tw / 2, 20, W - tw - 20), ty = Math.max(70, ay - th);
+    ctx.fillStyle = 'rgba(20,14,30,.92)'; rrect(ctx, tx, ty, tw, th, 10); ctx.fill(); ctx.strokeStyle = 'rgba(255,255,255,.35)'; ctx.lineWidth = 2; ctx.stroke();
+    ctx.textAlign = 'left'; ctx.textBaseline = 'middle'; ctx.fillStyle = '#ffd23f'; ctx.font = '900 15px ' + FONT; ctx.fillText(title, tx + 12, ty + 15);
+    ctx.fillStyle = '#fff'; ctx.font = '700 13px ' + FONT; ctx.fillText(desc, tx + 12, ty + 34); ctx.fillStyle = info.own && info.ok ? '#9be8a8' : 'rgba(255,255,255,.6)'; ctx.fillText(note, tx + 12, ty + 53);
+    ctx.restore();
+  })();
   if (s.win) { var wp = v.players[s.win]; icon(ctx, 'crown', W / 2, 190, 60); drawDummy(ctx, W / 2, 190 + 70, { s: 1.3, color: wp.color, pose: 'up' }); }
   if (s.pick && s.pick.id === me) {
     ctx.fillStyle = 'rgba(0,0,0,.6)'; ctx.fillRect(0, 150, W, 150);
@@ -3878,7 +3908,7 @@ function keyLine(def) {
 function isTouch() { return ('ontouchstart' in window) || navigator.maxTouchPoints > 0; }
 
 /* ---------- 그리기 ---------- */
-var CV, CX, SCALE = 1, OFFX = 0, OFFY = 0, BTNS = [];
+var CV, CX, SCALE = 1, OFFX = 0, OFFY = 0, BTNS = [], MOUSE = { x: -1, y: -1, on: false };
 function resize() {
   var dpr = Math.min(window.devicePixelRatio || 1, 2), w = innerWidth, h = innerHeight;
   CV.width = Math.round(w * dpr); CV.height = Math.round(h * dpr); CV.style.width = w + 'px'; CV.style.height = h + 'px';
@@ -3968,6 +3998,13 @@ function goHome() { destroyPeer(); G.role = null; G.phase = 'idle'; G.st = null;
   addEventListener('resize', resize); resize();
   INPUT.setupTouch();
   CV.addEventListener('pointerdown', function (e) { SFX.unlock(); canvasTap(e); });
+  // 마우스를 올렸을 때 카드 설명 (우노)
+  CV.addEventListener('pointermove', function (e) {
+    if (e.pointerType !== 'mouse') return;
+    var r = CV.getBoundingClientRect(), dpr = CV.width / r.width;
+    MOUSE.x = ((e.clientX - r.left) * dpr - OFFX) / SCALE; MOUSE.y = ((e.clientY - r.top) * dpr - OFFY) / SCALE; MOUSE.on = true;
+  });
+  CV.addEventListener('pointerleave', function () { MOUSE.on = false; });
   document.addEventListener('pointerdown', function () { SFX.unlock(); }, { once: true });
   $('nameIn').value = lsGet('dummyparty.name') || '';
   if (qs.get('room')) $('codeIn').value = qs.get('room').toUpperCase().slice(0, 5);
