@@ -12,3 +12,7 @@
 patchnotes.json | 2026-10-20 저작권 표기 | 제목 "저작권 표기"와 항목 2줄 | 저작권 표기 PR | 2026-10-20
 - Dummy Party build 6 (2026-10-20): Korean only. 새 문구는 prototypes/dummyparty/index.html 안에 있어요: 패치노트 build 6 블록, 해설위원 대사 전부(소스 fun.js의 CMT, 지금은 한국어일 때만 보여요), 캔버스 글자 '리플레이', '시상식', '바보상'.
 - beaconfall/patchnotes.json·i18n.js | N["v0.3"].items 맨 위 항목 (en·es·fr·de·ja 칸에 한국어 임시 입력) | 설정 화면과 파일 상단에 저작권 표기(© 2026 Frenchfries777 · CC BY-NC-ND 4.0) 추가 | b80 | 2026-10-20
+
+## Crown Envoy (b69)
+- crownenvoy/patchnotes.json·i18n.js | N["b69"] 제목 "저작권 표기"와 항목 1개 (en·es·fr·de·ja·ar 칸에 한국어 임시 입력) | 저작권 표기 추가 (© 2026 Frenchfries777 · CC BY-NC-ND 4.0, 시작 화면 아래와 기록·설정에서 확인) | b69 | 2026-10-20
+- crownenvoy/CrownEnvoy-v0.3.html | 기록·설정 메뉴 "저작권" 줄 제목 | 한국어 고정 문구 ("© 2026 Frenchfries777 · CC BY-NC-ND 4.0" 표기 자체는 번역하지 않음) | b69 | 2026-10-20
