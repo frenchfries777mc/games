@@ -41,3 +41,5 @@ patchnotes.json | 2026-10-20 저작권 표기 | 제목 "저작권 표기"와 항
 
 ## Crown Envoy (b70)
 - crownenvoy/patchnotes.json·i18n.js | N["b70"] 제목 "허브 방 초대 연결"과 항목 1개 (en·es·fr·de·ja·ar 칸에 한국어 임시 입력) | 허브 친구 초대 연결 (비공개 방에 있으면 허브에서 친구가 초대 알림으로 바로 입장) | b70 | 2026-10-20
+- Dummy Party build 21 (2026-10-20): 새 문구는 prototypes/dummyparty/index.html 안: 패치노트 build 21 블록 "허브 방 초대" 한 줄.
+- beaconfall/patchnotes.json·i18n.js | N["v0.3"].items 맨 위 항목 (en·es·fr·de·ja 칸에 한국어 임시 입력) | 방을 열면 허브 친구 방 초대에 방 코드를 알리고 닫으면 지우도록 연결함 | b81 | 2026-10-20
