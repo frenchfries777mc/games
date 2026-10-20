@@ -39,6 +39,7 @@ function localIds(game){
   try{ /* global settings */ if(game==='beaconfall'&&typeof settings!=='undefined'&&settings&&settings.ach&&typeof settings.ach==='object') return Object.keys(settings.ach).filter(function(k){ return settings.ach[k]; }); }catch(e){}
   return null;
 }
+function durTxt(s){ var h=Math.floor(s/3600), m=Math.floor(s%3600/60); return h>0?h+'h '+m+'m':Math.max(1,m)+'m'; }
 function markPlayed(sb, game){ try{ if(sb&&sb.rpc) return sb.rpc('ff_mark_played',{p_game:game}).then(function(){},function(){}); }catch(e){} return Promise.resolve(); }
 
 async function fetchData(sb, uid){
@@ -49,10 +50,11 @@ async function fetchData(sb, uid){
   var played={}, ach={}; ((g&&g.data)||[]).forEach(function(r){ played[r.game]=r.plays||1; if(r.ach_total>0) ach[r.game]=[r.ach_done||0, r.ach_total]; });
   var ids={}, a=null; try{ a=await sb.from('ff_ach').select('game,ach_id').eq('user_id',uid).limit(5000); }catch(e){}       // (empty before supabase-ff-ach-list.sql is run)
   ((a&&!a.error&&a.data)||[]).forEach(function(r){ (ids[r.game]=ids[r.game]||{})[r.ach_id]=1; });
+  var secs={}; try{ var pt=await sb.from('ff_playtime').select('game,secs').eq('user_id',uid); ((pt&&!pt.error&&pt.data)||[]).forEach(function(r){ secs[r.game]=r.secs|0; }); }catch(e){}      // (empty before supabase-ff-playtime-invite.sql is run)
   var deco=null; try{ var dc=await sb.from('ff_deco').select('bg,fr').eq('user_id',uid).limit(1); if(dc&&!dc.error&&dc.data&&dc.data[0]) deco=dc.data[0]; }catch(e){}      // (empty before supabase-ff-extra.sql is run)
   var card=null; try{ var cd=await sb.from('ff_card').select('bio,fav,title').eq('user_id',uid).limit(1); if(cd&&!cd.error&&cd.data&&cd.data[0]) card=cd.data[0]; }catch(e){}      // (empty before supabase-ff-more.sql is run)
   var dev=null; try{ var dv=await sb.from('ff_devs').select('role').eq('user_id',uid).limit(1); if(dv&&!dv.error&&dv.data&&dv.data[0]) dev=dv.data[0].role; }catch(e){}      // (empty before supabase-ff-dev.sql is run)
-  return {profile:(p&&p.data)||{id:uid}, played:played, ach:ach, ids:ids, deco:deco, card:card, dev:dev};
+  return {profile:(p&&p.data)||{id:uid}, played:played, secs:secs, ach:ach, ids:ids, deco:deco, card:card, dev:dev};
 }
 
 /* ---- card looks unlocked by hub achievements (ff_deco in supabase-ff-extra.sql; keep the "need" numbers in step with ff_deco_need there) ---- */
@@ -394,7 +396,7 @@ async function draw(cv, d, o){
   var T=L[lang(o)], c=cv.getContext('2d'), W=cv.width=480, H=cv.height=640, pr=d.profile||{}, st=pr.stats||{}, av=st.avatar||{};
   var played={}; GAMES.forEach(function(g){ played[g.id]=d.played[g.id]||0; });
   if(!played.stickseum && ((+st.matches||0)>0 || (+st.xp||0)>0)) played.stickseum=-1;          // played before the shared record existed
-  var all=GAMES.every(function(g){ return played[g.id]; });
+  var all=GAMES.every(function(g){ return played[g.id]; }), secs=d.secs||{};
   var ach=Object.assign({}, d.ach||{});
   if(STK.achTotal && Array.isArray(st.ach) && st.ach.length && !(ach.stickseum&&ach.stickseum[1])) ach.stickseum=[Math.min(st.ach.length,STK.achTotal), STK.achTotal];   // Stickseum's own record, until the game reports it
   var DB=decoOf('bg',d.deco&&d.deco.bg), DF=decoOf('fr',d.deco&&d.deco.fr);
@@ -438,7 +440,7 @@ async function draw(cv, d, o){
   GAMES.forEach(function(g,i){ var y=gy+i*66, n=played[g.id], A=ach[g.id], on=n||A; c.fillStyle=on?'rgba(255,196,61,.14)':'rgba(255,255,255,.04)'; c.fillRect(60,y,W-120,58);
     c.strokeStyle=on?'rgba(255,196,61,.5)':'rgba(255,255,255,.1)'; c.strokeRect(60.5,y+.5,W-121,57);
     c.textAlign='left'; c.font='22px serif'; c.fillStyle='#fff'; c.fillText(g.icon,76,y+37); c.font='800 17px system-ui, sans-serif'; c.fillStyle=on?'#fff':'rgba(255,255,255,.4)'; c.fillText(g.name+(CD.fav===g.id?'  ⭐':''),110,y+25);
-    c.font='700 12px system-ui, sans-serif'; c.fillStyle=on?'rgba(255,255,255,.7)':'rgba(255,255,255,.35)'; c.fillText(n>0?fmt(T.plays,n):(n||A?T.done:T.none),110,y+45);
+    c.font='700 12px system-ui, sans-serif'; c.fillStyle=on?'rgba(255,255,255,.7)':'rgba(255,255,255,.35)'; c.fillText((n>0?fmt(T.plays,n):(n||A?T.done:T.none))+(secs[g.id]>=60?' · '+durTxt(secs[g.id]):''),110,y+45);
     if(A){ var bw=110, bx=W-76-bw, frac=A[1]?A[0]/A[1]:0; c.textAlign='right'; c.font='800 13px system-ui, sans-serif'; c.fillStyle='#ffd36b'; c.fillText('🏆 '+T.ach+' '+A[0]+'/'+A[1],W-76,y+25);
       c.fillStyle='rgba(255,255,255,.12)'; rrect(c,bx,y+36,bw,8,4); c.fill(); if(frac>0){ c.fillStyle='#ffc43d'; rrect(c,bx,y+36,Math.max(8,bw*frac),8,4); c.fill(); } }
     else { c.textAlign='right'; c.font='700 12px system-ui, sans-serif'; c.fillStyle='rgba(255,255,255,.3)'; c.fillText('🏆 '+T.ach+' –',W-76,y+35); }
