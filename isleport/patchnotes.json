@@ -2,6 +2,52 @@
  "notes": [
   {
    "date": "2026-10-20",
+   "build": "v0.2 build 38",
+   "title": "사진 모드",
+   "items": [
+    "P 키를 누르거나 집에서 \"사진 찍기\"를 고르면 지금 화면을 사진으로 찍어요. 사진은 앨범에 열두 장까지 모여요",
+    "분수 광장, 시계탑, 호수, 기차역, 등대, 박물관, 항구 앞에서 처음 찍으면 금화 보너스를 받아요"
+   ],
+   "tr": {
+    "en": {
+     "title": "Photo mode",
+     "items": [
+      "Press P or choose Take a photo at home to snap the screen; the album keeps up to twelve",
+      "The first photo at the fountain plaza, clock tower, lake, station, lighthouse, museum or harbor earns a gold bonus"
+     ]
+    },
+    "ja": {
+     "title": "Photo mode",
+     "items": [
+      "Press P or choose Take a photo at home to snap the screen; the album keeps up to twelve",
+      "The first photo at the fountain plaza, clock tower, lake, station, lighthouse, museum or harbor earns a gold bonus"
+     ]
+    },
+    "es": {
+     "title": "Photo mode",
+     "items": [
+      "Press P or choose Take a photo at home to snap the screen; the album keeps up to twelve",
+      "The first photo at the fountain plaza, clock tower, lake, station, lighthouse, museum or harbor earns a gold bonus"
+     ]
+    },
+    "fr": {
+     "title": "Photo mode",
+     "items": [
+      "Press P or choose Take a photo at home to snap the screen; the album keeps up to twelve",
+      "The first photo at the fountain plaza, clock tower, lake, station, lighthouse, museum or harbor earns a gold bonus"
+     ]
+    },
+    "de": {
+     "title": "Photo mode",
+     "items": [
+      "Press P or choose Take a photo at home to snap the screen; the album keeps up to twelve",
+      "The first photo at the fountain plaza, clock tower, lake, station, lighthouse, museum or harbor earns a gold bonus"
+     ]
+    }
+   }
+  },
+  {
+   "date": "2026-10-20",
    "build": "v0.2 build 37",
    "title": "친구 초대로 바로 입장",
    "items": [
