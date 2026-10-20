@@ -7,7 +7,44 @@
    "items": [
     "칸의 독침 크기와 판정 확대",
     "금지 단계에서 봇도 각자 따로 정하고 모두의 금지가 실시간으로 표시"
-   ]
+   ],
+   "tr": {
+    "en": {
+     "title": "Bigger Kan projectiles and live bans",
+     "items": [
+      "Kan's poison darts are bigger with a larger hitbox",
+      "In the ban phase, bots now decide individually and everyone's bans are shown live"
+     ]
+    },
+    "es": {
+     "title": "Proyectiles de Kan más grandes y prohibiciones en directo",
+     "items": [
+      "Los dardos venenosos de Kan son más grandes y tienen mayor área de impacto",
+      "En la fase de prohibición, los bots deciden por separado y las prohibiciones de todos se muestran en tiempo real"
+     ]
+    },
+    "fr": {
+     "title": "Projectiles de Kan agrandis et interdictions en direct",
+     "items": [
+      "Les fléchettes empoisonnées de Kan sont plus grandes, avec une zone de touche élargie",
+      "En phase d'interdiction, les bots choisissent chacun de leur côté et les interdictions de tous s'affichent en temps réel"
+     ]
+    },
+    "de": {
+     "title": "Größere Kan-Geschosse und Live-Sperren",
+     "items": [
+      "Kans Giftpfeile sind größer und haben eine größere Trefferzone",
+      "In der Sperrphase entscheiden Bots jetzt einzeln, und die Sperren aller werden live angezeigt"
+     ]
+    },
+    "ja": {
+     "title": "カンの投射物拡大と禁止のリアルタイム表示",
+     "items": [
+      "カンの毒針のサイズと判定を拡大",
+      "禁止フェーズでボットも個別に決定し、全員の禁止をリアルタイムで表示"
+     ]
+    }
+   }
   },
   {
    "date": "2026-10-20",
@@ -15,7 +52,39 @@
    "title": "팀전 금지 인원 전체",
    "items": [
     "팀전 금지 단계에서 팀원 모두가 각자 하나씩 금지 (5대5면 양쪽 5개씩, 같은 캐릭터 중복 불가, 봇도 참여)"
-   ]
+   ],
+   "tr": {
+    "en": {
+     "title": "Team bans for everyone",
+     "items": [
+      "In team-mode ban phases, every teammate bans one character each (5 bans per side in 5v5, no duplicate characters, bots take part too)"
+     ]
+    },
+    "es": {
+     "title": "Prohibiciones de todo el equipo",
+     "items": [
+      "En la fase de prohibición por equipos, cada miembro prohíbe un personaje (5 por lado en 5 contra 5, sin repetir personajes, los bots también participan)"
+     ]
+    },
+    "fr": {
+     "title": "Interdictions pour toute l'équipe",
+     "items": [
+      "En phase d'interdiction par équipes, chaque coéquipier interdit un personnage (5 par camp en 5 contre 5, pas de doublon, les bots participent aussi)"
+     ]
+    },
+    "de": {
+     "title": "Sperren für das ganze Team",
+     "items": [
+      "In der Sperrphase im Teammodus sperrt jedes Teammitglied einen Charakter (bei 5 gegen 5 je 5 pro Seite, keine doppelten Charaktere, Bots machen auch mit)"
+     ]
+    },
+    "ja": {
+     "title": "チーム戦の禁止を全員で",
+     "items": [
+      "チーム戦の禁止フェーズでチームメイト全員が1体ずつ禁止（5対5なら両チーム5体ずつ、同じキャラクターの重複不可、ボットも参加）"
+     ]
+    }
+   }
   },
   {
    "date": "2026-10-20",
@@ -23,7 +92,39 @@
    "title": "아래쪽 스크롤 숨김",
    "items": [
     "캐릭터 선택 화면 등 목록 아래쪽 가로 스크롤 막대 숨김"
-   ]
+   ],
+   "tr": {
+    "en": {
+     "title": "Bottom scrollbar hidden",
+     "items": [
+      "Hid the horizontal scrollbar under lists such as the character select screen"
+     ]
+    },
+    "es": {
+     "title": "Barra de desplazamiento inferior oculta",
+     "items": [
+      "Barra de desplazamiento horizontal oculta bajo las listas, como en la pantalla de selección de personaje"
+     ]
+    },
+    "fr": {
+     "title": "Barre de défilement du bas masquée",
+     "items": [
+      "Barre de défilement horizontale masquée sous les listes, comme sur l'écran de sélection des personnages"
+     ]
+    },
+    "de": {
+     "title": "Untere Bildlaufleiste ausgeblendet",
+     "items": [
+      "Horizontale Bildlaufleiste unter Listen wie im Charakterauswahl-Bildschirm ausgeblendet"
+     ]
+    },
+    "ja": {
+     "title": "下部スクロールバー非表示",
+     "items": [
+      "キャラクター選択画面などのリスト下部の横スクロールバーを非表示"
+     ]
+    }
+   }
   },
   {
    "date": "2026-10-20",
@@ -31,7 +132,39 @@
    "title": "팀 핑 삭제",
    "items": [
     "팀 핑 기능 삭제 (G 키)"
-   ]
+   ],
+   "tr": {
+    "en": {
+     "title": "Team ping removed",
+     "items": [
+      "Removed the team ping feature (G key)"
+     ]
+    },
+    "es": {
+     "title": "Aviso de equipo eliminado",
+     "items": [
+      "Función de aviso de equipo eliminada (tecla G)"
+     ]
+    },
+    "fr": {
+     "title": "Ping d'équipe retiré",
+     "items": [
+      "Fonction de ping d'équipe retirée (touche G)"
+     ]
+    },
+    "de": {
+     "title": "Team-Ping entfernt",
+     "items": [
+      "Team-Ping-Funktion entfernt (Taste G)"
+     ]
+    },
+    "ja": {
+     "title": "チームピン削除",
+     "items": [
+      "チームピン機能を削除（Gキー）"
+     ]
+    }
+   }
   },
   {
    "date": "2026-10-20",
@@ -39,7 +172,39 @@
    "title": "허브 방 초대",
    "items": [
     "허브 친구 초대 연결 (비공개 방 코드를 허브에 알리고, 초대 링크로 방에 바로 입장)"
-   ]
+   ],
+   "tr": {
+    "en": {
+     "title": "Hub room invites",
+     "items": [
+      "Connected hub friend invites (private room codes are shared with the hub, and invite links take you straight into the room)"
+     ]
+    },
+    "es": {
+     "title": "Invitaciones a salas desde el hub",
+     "items": [
+      "Invitaciones de amigos del hub conectadas (el código de la sala privada se comparte con el hub y el enlace de invitación te lleva directo a la sala)"
+     ]
+    },
+    "fr": {
+     "title": "Invitations de salon via le hub",
+     "items": [
+      "Invitations d'amis du hub reliées (le code du salon privé est transmis au hub et le lien d'invitation fait entrer directement dans le salon)"
+     ]
+    },
+    "de": {
+     "title": "Raumeinladungen über den Hub",
+     "items": [
+      "Hub-Freundeseinladungen angebunden (der private Raumcode wird an den Hub gemeldet, und Einladungslinks führen direkt in den Raum)"
+     ]
+    },
+    "ja": {
+     "title": "ハブからのルーム招待",
+     "items": [
+      "ハブのフレンド招待に対応（非公開ルームのコードをハブに通知し、招待リンクからルームに直接入室）"
+     ]
+    }
+   }
   },
   {
    "date": "2026-10-20",
@@ -50,7 +215,54 @@
     "팀 핑 추가 (G 키, 팀원에게 위치 표시)",
     "캐릭터 선택 화면에 캐릭터 검색 추가",
     "금지 단계에서 시간이 지나도 양쪽 모두 금지해야 선택으로 넘어감 (금지 시간 20초)"
-   ]
+   ],
+   "tr": {
+    "en": {
+     "title": "Map editor and team ping",
+     "items": [
+      "Added a map editor (place platforms and spawn points yourself, save, share map codes, use in practice and private rooms)",
+      "Added team ping (G key, shows a location to teammates)",
+      "Added character search to the character select screen",
+      "In the ban phase, the game now moves on to picking only after both sides have banned, even when time runs out (ban time 20 s)"
+     ]
+    },
+    "es": {
+     "title": "Editor de mapas y aviso de equipo",
+     "items": [
+      "Editor de mapas añadido (coloca tú mismo plataformas y puntos de aparición, guarda, comparte códigos de mapa y úsalos en práctica y salas privadas)",
+      "Aviso de equipo añadido (tecla G, muestra una ubicación a tus compañeros)",
+      "Búsqueda de personajes añadida a la pantalla de selección de personaje",
+      "En la fase de prohibición, aunque se acabe el tiempo, solo se pasa a la selección cuando ambos lados han prohibido (tiempo de prohibición 20 s)"
+     ]
+    },
+    "fr": {
+     "title": "Éditeur de cartes et ping d'équipe",
+     "items": [
+      "Ajout d'un éditeur de cartes (placez vous-même plateformes et points d'apparition, enregistrez, partagez des codes de carte, utilisables en entraînement et en salon privé)",
+      "Ajout du ping d'équipe (touche G, indique une position à vos coéquipiers)",
+      "Ajout de la recherche de personnage dans l'écran de sélection",
+      "Pendant la phase d'interdiction, même quand le temps est écoulé, on ne passe à la sélection qu'une fois que les deux camps ont interdit (durée d'interdiction 20 s)"
+     ]
+    },
+    "de": {
+     "title": "Karteneditor und Team-Ping",
+     "items": [
+      "Karteneditor hinzugefügt (Plattformen und Startpunkte selbst platzieren, speichern, Kartencodes teilen, im Training und in privaten Räumen nutzbar)",
+      "Team-Ping hinzugefügt (Taste G, zeigt Teammitgliedern eine Position)",
+      "Charaktersuche im Charakterauswahl-Bildschirm hinzugefügt",
+      "In der Sperrphase geht es auch nach Ablauf der Zeit erst zur Auswahl, wenn beide Seiten gesperrt haben (Sperrzeit 20 s)"
+     ]
+    },
+    "ja": {
+     "title": "マップエディター・チームピン",
+     "items": [
+      "マップエディターを追加（足場と開始位置を自分で配置、保存、マップコード共有、練習と非公開ルームで使用可能）",
+      "チームピンを追加（Gキー、チームメイトに位置を表示）",
+      "キャラクター選択画面にキャラクター検索を追加",
+      "禁止フェーズで時間が過ぎても両チームが禁止するまで選択に進まないように変更（禁止時間20秒）"
+     ]
+    }
+   }
   },
   {
    "date": "2026-10-20",
@@ -58,7 +270,39 @@
    "title": "저작권 표기",
    "items": [
     "게임 파일 맨 위 주석과 설정 화면에 저작권 표기 추가 (© 2026 Frenchfries777 · CC BY-NC-ND 4.0)"
-   ]
+   ],
+   "tr": {
+    "en": {
+     "title": "Copyright notice",
+     "items": [
+      "Added a copyright notice at the top of the game file and on the settings screen (© 2026 Frenchfries777 · CC BY-NC-ND 4.0)"
+     ]
+    },
+    "es": {
+     "title": "Aviso de copyright",
+     "items": [
+      "Aviso de copyright añadido al principio del archivo del juego y en la pantalla de ajustes (© 2026 Frenchfries777 · CC BY-NC-ND 4.0)"
+     ]
+    },
+    "fr": {
+     "title": "Mention de copyright",
+     "items": [
+      "Ajout d'une mention de copyright en haut du fichier du jeu et dans l'écran des paramètres (© 2026 Frenchfries777 · CC BY-NC-ND 4.0)"
+     ]
+    },
+    "de": {
+     "title": "Urheberrechtshinweis",
+     "items": [
+      "Urheberrechtshinweis oben in der Spieldatei und im Einstellungsbildschirm hinzugefügt (© 2026 Frenchfries777 · CC BY-NC-ND 4.0)"
+     ]
+    },
+    "ja": {
+     "title": "著作権表記",
+     "items": [
+      "ゲームファイル冒頭のコメントと設定画面に著作権表記を追加（© 2026 Frenchfries777 · CC BY-NC-ND 4.0）"
+     ]
+    }
+   }
   },
   {
    "date": "2026-10-19",
