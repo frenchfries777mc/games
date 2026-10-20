@@ -5,8 +5,7 @@
 한국어로만 바뀐 문서는 다른 언어 화면에서 한국어가 그대로 보인다. (위키는 번역 글의 해시가 다르면 한국어 원문을 보여 준다.)
 
 ## 위키
-위키 한국어 본문은 /mnt/project-files/frenchfries777-hub/wiki-src/all.ko.json 에 있고, 바뀐 내용은 batchNN-notes.md 에 있다. batch30까지의 번역은 wiki/tr 에 들어갔다(2026-10-19 번역 묶음).
-
+위키 한국어 본문은 /mnt/project-files/frenchfries777-hub/wiki-src/all.ko.json 에 있고, 바뀐 내용은 batchNN-notes.md 에 있다. batch32까지의 번역은 wiki/tr 에 들어갔다(2026-10-20 번역 묶음).
 
 ## 허브 패치노트
 patchnotes.json | 2026-10-20 저작권 표기 | 제목 "저작권 표기"와 항목 2줄 | 저작권 표기 PR | 2026-10-20
@@ -24,8 +23,6 @@ patchnotes.json | 2026-10-20 저작권 표기 | 제목 "저작권 표기"와 항
 - Dummy Party build 12 (2026-10-20): 새 문구는 prototypes/dummyparty/index.html 안: 패치노트 build 12 블록 "미로 끼임 수정" 한 줄.
 - 허브 ff-auth.js 알림·친구 창 (2026-10-20): ko 키 invite, inviteOld, invBtn, invDone, invFail (NL.ko 안, 다른 언어 번역 전에는 한국어로 보임). 패치노트 "플레이 시간·방 초대" 3줄.
 - Dummy Party build 13 (2026-10-20): Korean only. 새 문구는 prototypes/dummyparty/index.html 안: 패치노트 build 13 블록 "병맛 신작 3개, 상단 바 정리", 새 미니게임 3개(방귀 로켓 레이스, 핫도그 먹기 대회, 닭 몰이)의 이름/설명/방법/조작 문구 및 인트로, 상단 바 메뉴(위키·커뮤니티·라운지·설정), 해설 대사 g_fartrace/g_hotdog/g_chicken(소스 fun.js, mg_e.js).
-
-- isleport/patchnotes.json | build 11 항목 5번째 (ja·es·fr·de 칸에 영어 임시 입력) | 배경음악이 여섯 곡으로 늘어났어요. 새 곡 둘은 포근한 피아노가 이어지는 잔잔한 곡과 마림바가 얹힌 경쾌한 곡이에요 | 음악 스레드 | 2026-10-20
 
 - Dummy Party build 14 (2026-10-20): 새 문구는 prototypes/dummyparty/index.html 안: 패치노트 build 14 블록 "나가기 버튼, 상단 바 제거"(3줄), 나가기 버튼, 나가기 확인창("게임에서 나가 허브로 돌아갈까요?"), 계정 한 줄("Frenchfries777 계정으로 접속 중", "허브에서 로그인하면 dC와 꾸미기가 저장돼요").
 - Dummy Party build 15 (2026-10-20): 새 문구는 prototypes/dummyparty/index.html 안: 패치노트 build 15 블록 "dC 보상 상향" 한 줄.
@@ -48,3 +45,9 @@ patchnotes.json | 2026-10-20 저작권 표기 | 제목 "저작권 표기"와 항
 - prototypes/dummyparty/index.html | patch note block "build 24 · 시작 화면 배경" | "시작 화면 배경에 실제 게임 장면이 나옵니다" etc. | b24 | 2026-10-20
 - prototypes/dummyparty/index.html | DANCE_NAMES[5] "L을 가져가", floating text "L을 가져가!" | b24 | 2026-10-20
 - beaconfall/patchnotes.json·i18n.js | N["v0.3"].items 맨 위 항목 (en·es·fr·de·ja 칸에 한국어 임시 입력) | 멀티 창 친구 목록에서 오프라인 친구에게도 초대 버튼이 나오고 초대가 허브 알림으로도 전달됨 | b82 | 2026-10-20
+
+## Crown Envoy b71 (2026-10-20)
+- crownenvoy/CrownEnvoy-v0.3.html | 첩보 공작 설명 | 첩보원이 지도를 따라 목적지로 이동해요. 가까우면 1턴, 멀면 최대 3턴 뒤 도착해서 공작이 실행돼요. 영토나 장군을 직접 고를 수도 있어요. 발각되면 첩보원이 붙잡히고 신뢰도가 떨어져요. 한 나라에 한 번에 한 명만 보내요. | b71 | 2026-10-20
+- crownenvoy/CrownEnvoy-v0.3.html | 첩보 대상 선택 | (대상 선택) / 노릴 영토 / 노릴 장군 / 을 고르세요 / 자동 / 첩보원 보내기 / 취소 / 고를 수 있는 대상이 없어요 | b71 | 2026-10-20
+- crownenvoy/CrownEnvoy-v0.3.html | 첩보원 이동 | 공작원이 이동 중 · 도착까지 N턴 | b71 | 2026-10-20
+- crownenvoy/CrownEnvoy-v0.3.html | 첩보 알림 | 첩보원을 N으로 보냈어요. N턴 뒤에 공작이 실행돼요. / 이미 그 나라로 첩보원이 가는 중이에요. / 수도는 노릴 수 없어요. / 공작 대상이 사라져 첩보원이 돌아왔어요. 금화를 돌려받았어요. | b71 | 2026-10-20
