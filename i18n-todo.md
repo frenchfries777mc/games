@@ -48,3 +48,9 @@ patchnotes.json | 2026-10-20 저작권 표기 | 제목 "저작권 표기"와 항
 - prototypes/dummyparty/index.html | patch note block "build 24 · 시작 화면 배경" | "시작 화면 배경에 실제 게임 장면이 나옵니다" etc. | b24 | 2026-10-20
 - prototypes/dummyparty/index.html | DANCE_NAMES[5] "L을 가져가", floating text "L을 가져가!" | b24 | 2026-10-20
 - beaconfall/patchnotes.json·i18n.js | N["v0.3"].items 맨 위 항목 (en·es·fr·de·ja 칸에 한국어 임시 입력) | 멀티 창 친구 목록에서 오프라인 친구에게도 초대 버튼이 나오고 초대가 허브 알림으로도 전달됨 | b82 | 2026-10-20
+
+## Crown Envoy b71 (2026-10-20)
+- crownenvoy/CrownEnvoy-v0.3.html | 첩보 공작 설명 | 첩보원이 지도를 따라 목적지로 이동해요. 가까우면 1턴, 멀면 최대 3턴 뒤 도착해서 공작이 실행돼요. 영토나 장군을 직접 고를 수도 있어요. 발각되면 첩보원이 붙잡히고 신뢰도가 떨어져요. 한 나라에 한 번에 한 명만 보내요. | b71 | 2026-10-20
+- crownenvoy/CrownEnvoy-v0.3.html | 첩보 대상 선택 | (대상 선택) / 노릴 영토 / 노릴 장군 / 을 고르세요 / 자동 / 첩보원 보내기 / 취소 / 고를 수 있는 대상이 없어요 | b71 | 2026-10-20
+- crownenvoy/CrownEnvoy-v0.3.html | 첩보원 이동 | 공작원이 이동 중 · 도착까지 N턴 | b71 | 2026-10-20
+- crownenvoy/CrownEnvoy-v0.3.html | 첩보 알림 | 첩보원을 N으로 보냈어요. N턴 뒤에 공작이 실행돼요. / 이미 그 나라로 첩보원이 가는 중이에요. / 수도는 노릴 수 없어요. / 공작 대상이 사라져 첩보원이 돌아왔어요. 금화를 돌려받았어요. | b71 | 2026-10-20
