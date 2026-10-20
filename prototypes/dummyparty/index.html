@@ -505,7 +505,9 @@ body.playing #emoBar{display:flex}
    <div class="row"><input id="codeIn" maxlength="5" placeholder="방 코드" autocomplete="off"><button class="pb dark" id="joinBtn" style="flex:0 0 auto">들어가기</button></div>
    <div class="msg" id="homeMsg"></div>
   </div>
-  <details class="notes"><summary>패치노트 · v0.1 (build 17)</summary>
+  <details class="notes"><summary>패치노트 · v0.1 (build 18)</summary>
+   <b>2026-10-20 · v0.1 build 18 · 의자 뺏기 음악</b>
+   <ul><li>의자 뺏기에 신나는 음악이 나와요. 두 곡 중 하나가 무작위로 나오고, 음악이 멈추면 같이 멈춰요</li><li>소리 켜기·끄기 설정을 따라가요</li></ul>
    <b>2026-10-20 · v0.1 build 17 · 해설 효과음</b>
    <ul><li>해설 대사가 바뀔 때마다 효과음이 나요</li><li>라운드 결과 칠판 연출은 뺐어요</li></ul>
    <b>2026-10-20 · v0.1 build 16 · 7판, 미니게임 3개</b>
@@ -4505,9 +4507,27 @@ function lerpSnap(a, b, f) {
   return o;
 }
 var lastFrame = performance.now();
+/* ---------- 의자 뺏기 음악 (파일은 게임 옆에 따로 있어요. 못 불러오면 사이트 주소로, 그래도 안 되면 조용히 넘어가요) ---------- */
+var CHM = (function () {
+  var FILES = ['chairs-a.mp3', 'chairs-b.mp3'], ALT = 'https://frenchfries777mc.github.io/games/prototypes/dummyparty/';
+  var el = null, key = null, alt = false;
+  function pause() { if (el && !el.paused) { try { el.pause(); } catch (e) { } } }
+  function tick(m, s) {
+    var want = !!(m && m.mg === 'chair' && m.phase === 'play' && s && s.ph === 'music' && lsGet('dummyparty.sfx') !== '0');
+    if (!want) { pause(); return; }
+    try {
+      var k = m.mg + ':' + m.round;
+      if (!el) { el = new Audio(); el.loop = true; el.preload = 'auto'; el.volume = 0.6; el.onerror = function () { if (!alt && key) { alt = true; el.src = ALT + el.dataset.f; el.load(); } }; }
+      if (key !== k) { key = k; alt = false; el.dataset.f = FILES[Math.floor(Math.random() * FILES.length)]; el.src = el.dataset.f; }
+      if (el.paused) { var q = el.play(); if (q && q.catch) q.catch(function () { }); }
+    } catch (e) { }
+  }
+  return { tick: tick };
+})();
+
 function frame() {
   requestAnimationFrame(frame);
-  if (!$('sGame').classList.contains('on')) return;
+  if (!$('sGame').classList.contains('on')) { CHM.tick(null, null); return; }
   var now = performance.now(), dt = Math.min(0.1, (now - lastFrame) / 1000); lastFrame = now;
   var m = G.meta; if (!m) return;
   var def = DP.MG[m.mg];
@@ -4516,12 +4536,14 @@ function frame() {
   BTNS = [];
   funTick(dt, now, m); POSEO = {};
   if (m.phase === 'final') {
+    CHM.tick(null, null);
     CX.save(); CX.beginPath(); CX.rect(0, 0, W, H); CX.clip(); drawCeremony(CX, m, now); CX.restore();
   } else if (def && G.snapCur) {
     var s = G.snapCur.d, tlNow = G.snapCur.tl;
     if (G.role === 'guest' && G.snapPrev) { var f = clamp((now - G.snapAt) / G.snapGap, 0, 1); s = lerpSnap(G.snapPrev.d, G.snapCur.d, f); }
     else if (G.role !== 'guest' && G.st) { s = def.snap(G.st, 'p0'); tlNow = G.tl; }
     var evl = G.role === 'guest' ? (s._ev || []) : ((G.st && G.st._ev) || []);
+    CHM.tick(m, s);
     if (m.phase === 'play') recordSnap(now, s);
     var rep = m.phase === 'end' ? replayFrame(now) : null;
     if ((m.phase === 'end' && !rep) || m.phase === 'result') POSEO = G.poseSaved || {};
