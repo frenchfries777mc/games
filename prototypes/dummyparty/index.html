@@ -1050,7 +1050,9 @@ body.playing #emoBar{display:flex}
    <div class="row"><input id="codeIn" maxlength="5" placeholder="방 코드" autocomplete="off"><button class="pb dark" id="joinBtn" style="flex:0 0 auto">들어가기</button></div>
    <div class="msg" id="homeMsg"></div>
   </aside>
-  <template id="patchnotes"><details class="notes" open><summary>패치노트 · v0.1 (build 26)</summary>
+  <template id="patchnotes"><details class="notes" open><summary>패치노트 · v0.1 (build 27)</summary>
+   <b>2026-10-20 · v0.1 build 27 · 두더지 봇 약하게</b>
+   <ul><li>두더지 잡기 봇이 사람처럼 반응이 늦고 느리게 움직이며, 가끔 놓치고 폭탄도 쳐요</li></ul>
    <b>2026-10-20 · v0.1 build 26 · 상점 개편</b>
    <ul><li>해설 멘트 추가: "모든 선수들이 하얗게 질렸군요, 아니 원래 하얀가?"</li><li>혼자 하기 대기실에서 봇 수를 조절할 수 있어요 (방 만들기에는 봇 추가가 없어요)</li><li>상점을 얼굴·모자·안경·춤 탭으로 나눴어요</li><li>물건을 누르면 큰 미리보기가 나오고, 아래 버튼으로 구매·장착해요</li></ul>
    <b>2026-10-20 · v0.1 build 25 · 로비 정리</b>
@@ -1101,7 +1103,7 @@ body.playing #emoBar{display:flex}
    <ul><li>무너지는 발판 칸 수 대폭 증가 (19×10)와 용암 동굴 맵</li><li>10개 맵 전부 새로 그림 (관중석, 야자수 섬, 링, 정원 미로, 서커스, 우노 테이블 등)</li><li>글자 대신 아이콘·말풍선·이펙트로 표현 (무기, 아이템, 카드 효과, 시작 안내)</li><li>타격·폭발·물보라 효과와 화면 흔들림 추가</li></ul>
    <b>2026-10-19 · v0.1 build 1 · 첫 시험판</b>
    <ul><li>마네킹 미니게임 10개 추가 (장애물 달리기, 섬 밀치기, 싸우기, 병맛 미로, 체스 대난투, 폭탄 돌리기, 병맛 우노, 쇼윈도 얼음땡, 무너지는 발판, 컨베이어 서바이벌)</li><li>방 코드로 최대 8명 멀티플레이, 빈자리는 봇으로 채우기</li><li>판마다 10개 중 5개를 무작위로 골라 점수를 합산</li><li>PC 키보드와 휴대폰 터치 조작 지원</li></ul></details></template>
-  <p class="foot">2~8명 · 판마다 23개 미니게임 중 7개 · 프로토타입 v0.1 b26 · <a href="../">← 프로토타입 목록</a></p>
+  <p class="foot">2~8명 · 판마다 23개 미니게임 중 7개 · 프로토타입 v0.1 b27 · <a href="../">← 프로토타입 목록</a></p>
   <p class="foot"><span class="ff-copy">© 2026 Frenchfries777 · <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.ko" target="_blank" rel="noopener">CC BY-NC-ND 4.0</a></span></p>
  </div>
 </section>
@@ -3998,10 +4000,11 @@ function laneF(s, i, y0, y1, maxh) { var n = s.ids.length, lh = Math.min(maxh, (
     },
     bot: function (s, id, rng) {
       var r = emptyInput(), p = s.pl[id]; if (p.stun > 0) return r;
-      if (p.tg < 0 || s.ms[p.tg].life <= 0 || s.ms[p.tg].bomb) { p.tg = -1; var c = []; s.ms.forEach(function (m, k) { if (m.life > 0 && !m.bomb) c.push(k); }); if (c.length && rng() < 0.15) p.tg = c[Math.floor(rng() * c.length)]; }
+      // 사람처럼: 반응이 늦고, 느리게 움직이고, 가끔 놓치고, 가끔 폭탄도 쳐요
+      if (p.tg < 0 || s.ms[p.tg].life <= 0) { p.tg = -1; var c = [], cb = []; s.ms.forEach(function (m, k) { if (m.life > 0) (m.bomb ? cb : c).push(k); }); if (rng() < 0.04) { var pool = (cb.length && rng() < 0.1) ? cb : c; if (pool.length) p.tg = pool[Math.floor(rng() * pool.length)]; } }
       if (p.tg < 0) return r;
-      var h = HOLES[p.tg], mv = botToward(p.x, p.y, h.x, h.y - 20); r.mx = mv.mx; r.my = mv.my;
-      if (dist(p.x, p.y, h.x, h.y - 20) < 34 && p.cd <= 0) { r.ap = true; r.a = true; }
+      var h = HOLES[p.tg], mv = botToward(p.x, p.y, h.x, h.y - 20); r.mx = mv.mx * 0.7; r.my = mv.my * 0.7;
+      if (dist(p.x, p.y, h.x, h.y - 20) < 30 && p.cd <= 0 && rng() < 0.2) { r.ap = true; r.a = true; }
       return r;
     },
     snap: function (s) { return { t: s.t, pl: cl(s.pl), ms: cl(s.ms), ids: s.ids, _fx: [] }; },
