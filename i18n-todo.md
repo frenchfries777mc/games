@@ -10,3 +10,4 @@
 
 ## 허브 패치노트
 patchnotes.json | 2026-10-20 저작권 표기 | 제목 "저작권 표기"와 항목 2줄 | 저작권 표기 PR | 2026-10-20
+- Dummy Party build 6 (2026-10-20): Korean only. 새 문구는 prototypes/dummyparty/index.html 안에 있어요: 패치노트 build 6 블록, 해설위원 대사 전부(소스 fun.js의 CMT, 지금은 한국어일 때만 보여요), 캔버스 글자 '리플레이', '시상식', '바보상'.
