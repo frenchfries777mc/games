@@ -7,3 +7,6 @@
 ## 위키
 위키 한국어 본문은 /mnt/project-files/frenchfries777-hub/wiki-src/all.ko.json 에 있고, 바뀐 내용은 batchNN-notes.md 에 있다. batch30까지의 번역은 wiki/tr 에 들어갔다(2026-10-19 번역 묶음).
 
+
+## 허브 패치노트
+patchnotes.json | 2026-10-20 저작권 표기 | 제목 "저작권 표기"와 항목 2줄 | 저작권 표기 PR | 2026-10-20
