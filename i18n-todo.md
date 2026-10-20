@@ -46,3 +46,6 @@
 ## Crown Envoy b73 (2026-10-20)
 - crownenvoy/index.html | patchnotes b73 | 사이트 시작 오류와 조사 수정 (번역할 문구는 패치노트 항목만) | b73 | 2026-10-20
 - index.html (educations) | 같은 반 코드를 넣으면 모두 같은 문제로 시작해서 결과를 비교할 수 있어요. | proverb/index.html | 입이 짧다 · 음식을 심하게 가린다 · 식은{땀을} 흘리다 · 말 한마디에 천 냥 빚도 갚는다 | educations | 2026-10-20
+
+## Crown Envoy b74 (2026-10-20)
+- crownenvoy/CrownEnvoy-v0.3.html | 튜토리얼 선전포고 보조 문구 | 상대 병력은 약 N명이에요. / 상대 병력은 (소규모~대군) 규모예요. | b74 | 2026-10-20
