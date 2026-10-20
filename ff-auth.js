@@ -198,7 +198,7 @@ var CSS='.ffa-btn{display:inline-flex;align-items:center;gap:6px;background:line
  '#ffaSetup input{display:block;width:100%;box-sizing:border-box;margin:0 0 10px;padding:11px 12px;border-radius:9px;border:1px solid #2b3245;background:#08090d;color:#eef0f5;font:inherit;font-size:16px}#ffaSetup input:focus{outline:none;border-color:var(--fry,#ffc93c)}'+
  '#ffaSetup .ffa-btn{width:100%;justify-content:center;padding:11px;font-size:15px}#ffaSetup .m{min-height:18px;font-size:13px;color:#ff9b7a;margin:0 0 10px}#ffaSetup .sw{margin-top:14px;text-align:center;font-size:13px}#ffaSetup .sw a{color:#8a93a6;cursor:pointer;text-decoration:underline}'+
  '#ffaModal .ffa-in .ffa-oa span{display:none}#ffaModal .ffa-in .ffa-oa{display:inline-flex;width:44px;height:40px;padding:0;margin:0 4px}#ffaModal .ffa-in .oas{text-align:center}#ffaModal .ffa-in .or{margin:12px 0 8px}'+
- '.ffa-menu .ffa-ph{display:none}@media(max-width:620px){.ffa-menu .ffa-ph{display:block}.ffa-bell,.ffa-vote{display:none!important}.ffa-menu .ffa-ph .ffa-badge{position:static;margin-left:6px}.ffa-nbc{position:absolute;top:-4px;right:-4px;margin:0;min-width:8px;width:8px;height:8px;padding:0;font-size:0;border-radius:50%}}'+
+ '.ffa-menu .ffa-ph{display:none}@media(min-width:621px){.ffa-nbc{display:none!important}}@media(max-width:620px){.ffa-menu .ffa-ph{display:block}.ffa-bell,.ffa-vote{display:none!important}.ffa-menu .ffa-ph .ffa-badge{position:static;margin-left:6px}.ffa-nbc{position:absolute;top:-4px;right:-4px;margin:0;min-width:8px;width:8px;height:8px;padding:0;font-size:0;border-radius:50%}}'+
  '.ffa-lk{display:flex;align-items:center;gap:9px;margin:0 0 8px;padding:8px 10px;border:1px solid #2b3245;border-radius:9px;background:#08090d}.ffa-lk span{flex:1;font-weight:700;font-size:14px}.ffa-lk b{color:#7ddc8a;font-size:13px}.ffa-lk .ffa-btn{padding:6px 12px;font-size:13px}'+
  '#ffaModal .sw a{color:var(--fry,#ffc93c);cursor:pointer;margin-left:4px}#ffaModal .x{float:right;background:none;border:0;color:#8a93a6;font-size:20px;cursor:pointer;line-height:1}'+
  '#ffaModal,#ffaSetup,#ffaFriends,#ffaDM,#ffaRep{-webkit-backdrop-filter:blur(5px);backdrop-filter:blur(5px)}'+
@@ -467,7 +467,7 @@ function presText(f){ var p=f&&f.pres; if(!p) return ''; var g=GNAME[p.game]||p.
   var m=Math.max(0,Math.round((Date.now()-t)/60000)); if(online(f)) return fmt(F.playing,g);
   var a=m<1?F.now:(m<60?fmt(F.mn,m):(m<60*24?fmt(F.hr,Math.round(m/60)):fmt(F.dy,Math.round(m/1440)))); return m<1?g+' · '+a:fmt(F.ago,g).replace('{1}',a); }
 function incomingCount(){ return friends.filter(function(f){ return f.incoming; }).length; }
-function badge(){ var n=incomingCount(), bs=document.querySelectorAll('.ffa-badge'); for(var i=0;i<bs.length;i++){ bs[i].textContent=n>9?'9+':String(n); bs[i].style.display=n?'':'none'; } }
+function badge(){ var n=incomingCount(), bs=document.querySelectorAll('.ffa-chip>.ffa-badge:not(.ffa-nb),.ffa-menu [data-a=friends]>.ffa-badge'); for(var i=0;i<bs.length;i++){ bs[i].textContent=n>9?'9+':String(n); bs[i].style.display=n?'':'none'; } }
 function watchFriends(){
   if(frChan){ try{ sb.removeChannel(frChan); }catch(e){} frChan=null; }
   if(!sb||!user) return;
