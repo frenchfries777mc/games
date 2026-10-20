@@ -268,6 +268,12 @@
     '모자': ['hat', 'sombrero', 'chapeau', 'Hut', '帽子'],
     '안경': ['glasses', 'gafas', 'lunettes', 'Brille', 'メガネ'],
     /* 빌드 25 추가분 */
+    "리듬게임이에요. 떨어지는 화살표가 아래 선에 닿을 때 같은 방향을 눌러요.": ["A rhythm game! Press the matching direction when a falling arrow reaches the line.", "¡Es un juego de ritmo! Pulsa la misma dirección cuando una flecha llegue a la línea.", "C'est un jeu de rythme ! Appuie sur la même direction quand une flèche touche la ligne.", "Ein Rhythmusspiel! Drücke die passende Richtung, wenn ein fallender Pfeil die Linie erreicht.", "リズムゲームだよ。落ちてくる矢印が線に来たら同じ方向を押そう。"],
+    "화살표 음표가 판정선에 닿는 순간 같은 방향키(WASD)를 눌러요. 정확할수록 점수가 커지고, 엉뚱하게 누르면 감점이에요.": ["Press the matching direction key (WASD) the moment an arrow hits the line. Better timing scores more, and wrong presses cost points.", "Pulsa la dirección correcta (WASD) justo cuando la flecha toque la línea. Cuanto más exacto, más puntos; si te equivocas, pierdes puntos.", "Appuie sur la bonne direction (WASD) au moment où la flèche touche la ligne. Plus c'est précis, plus tu marques ; une erreur retire des points.", "Drücke die passende Richtungstaste (WASD), sobald ein Pfeil die Linie berührt. Je genauer, desto mehr Punkte; falsche Eingaben kosten Punkte.", "矢印が線に触れた瞬間に同じ方向キー（WASD）を押そう。正確なほど高得点、間違うと減点。"],
+    "떨어지는 화살표를 판정선에서 맞춰 눌러요": ["Hit the falling arrows on the line", "Pulsa las flechas que caen justo en la línea", "Appuie sur les flèches qui tombent au bon moment", "Triff die fallenden Pfeile auf der Linie", "落ちてくる矢印を線に合わせて押そう"],
+    "좋아요": ["Good", "Bien", "Bien", "Gut", "いいね"],
+    "완벽!": ["Perfect!", "¡Perfecto!", "Parfait !", "Perfekt!", "パーフェクト！"],
+    "엉터리 댄스 배틀: 박자 대신 리듬게임으로 바뀌었어요. 화살표 음표가 떨어지고 판정선에서 같은 방향을 눌러요": ["Terrible Dance Battle is now a rhythm game: arrows fall and you press the same direction on the line", "Batalla de baile chapucera ahora es un juego de ritmo: caen flechas y pulsas la misma dirección en la línea", "Le duel de danse nul est devenu un jeu de rythme : des flèches tombent, appuie sur la même direction sur la ligne", "Der Pfusch-Tanzkampf ist jetzt ein Rhythmusspiel: Pfeile fallen und du drückst die gleiche Richtung auf der Linie", "へなちょこダンスバトルがリズムゲームになりました。矢印が落ちてくるので線に合わせて同じ方向を押します"],
     "모든 선수들이 하얗게 질렸군요, 아니 원래 하얀가?": ["All the players have gone pale... wait, were they always white?", "¡Todos los jugadores se han puesto pálidos... espera, ¿no eran blancos de siempre?", "Tous les joueurs ont blêmi... attendez, ils étaient déjà blancs, non ?", "Alle Spieler sind kreidebleich geworden... Moment, waren die nicht schon immer weiß?", "選手全員が真っ青、いや真っ白に…あれ、もともと白でしたっけ？"],
     "기본 얼굴": ["Default face", "Cara normal", "Visage par défaut", "Standardgesicht", "ふつうの顔"],
     "버럭 아저씨": ["Angry Uncle", "Tío gruñón", "Tonton grincheux", "Wüterich", "怒りんぼおじさん"],
@@ -1050,7 +1056,9 @@ body.playing #emoBar{display:flex}
    <div class="row"><input id="codeIn" maxlength="5" placeholder="방 코드" autocomplete="off"><button class="pb dark" id="joinBtn" style="flex:0 0 auto">들어가기</button></div>
    <div class="msg" id="homeMsg"></div>
   </aside>
-  <template id="patchnotes"><details class="notes" open><summary>패치노트 · v0.1 (build 28)</summary>
+  <template id="patchnotes"><details class="notes" open><summary>패치노트 · v0.1 (build 29)</summary>
+   <b>2026-10-20 · v0.1 build 29 · 댄스 배틀 리듬게임</b>
+   <ul><li>엉터리 댄스 배틀: 박자 대신 리듬게임으로 바뀌었어요. 화살표 음표가 떨어지고 판정선에서 같은 방향을 눌러요</li></ul>
    <b>2026-10-20 · v0.1 build 28 · 줄넘기 줄 수리</b>
    <ul><li>줄넘기 대회: 줄이 땅 밑으로 내려갔다가 머리 위로 넘어오며 계속 돌아가요 (줄이 멈춰 보이던 문제 수정)</li></ul>
    <b>2026-10-20 · v0.1 build 27 · 두더지 봇 약하게</b>
@@ -1105,7 +1113,7 @@ body.playing #emoBar{display:flex}
    <ul><li>무너지는 발판 칸 수 대폭 증가 (19×10)와 용암 동굴 맵</li><li>10개 맵 전부 새로 그림 (관중석, 야자수 섬, 링, 정원 미로, 서커스, 우노 테이블 등)</li><li>글자 대신 아이콘·말풍선·이펙트로 표현 (무기, 아이템, 카드 효과, 시작 안내)</li><li>타격·폭발·물보라 효과와 화면 흔들림 추가</li></ul>
    <b>2026-10-19 · v0.1 build 1 · 첫 시험판</b>
    <ul><li>마네킹 미니게임 10개 추가 (장애물 달리기, 섬 밀치기, 싸우기, 병맛 미로, 체스 대난투, 폭탄 돌리기, 병맛 우노, 쇼윈도 얼음땡, 무너지는 발판, 컨베이어 서바이벌)</li><li>방 코드로 최대 8명 멀티플레이, 빈자리는 봇으로 채우기</li><li>판마다 10개 중 5개를 무작위로 골라 점수를 합산</li><li>PC 키보드와 휴대폰 터치 조작 지원</li></ul></details></template>
-  <p class="foot">2~8명 · 판마다 23개 미니게임 중 7개 · 프로토타입 v0.1 b28 · <a href="../">← 프로토타입 목록</a></p>
+  <p class="foot">2~8명 · 판마다 23개 미니게임 중 7개 · 프로토타입 v0.1 b29 · <a href="../">← 프로토타입 목록</a></p>
   <p class="foot"><span class="ff-copy">© 2026 Frenchfries777 · <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.ko" target="_blank" rel="noopener">CC BY-NC-ND 4.0</a></span></p>
  </div>
 </section>
@@ -3688,56 +3696,95 @@ ICONS.ball = function (c, s) { c.fillStyle = '#ff5a5a'; c.beginPath(); c.arc(0, 
 /* 줄 배치: 사람 수에 따라 높이를 나눠요 */
 function laneF(s, i, y0, y1, maxh) { var n = s.ids.length, lh = Math.min(maxh, (y1 - y0) / n); return { y: y0 + (i + 0.5) * lh + ((y1 - y0) - lh * n) / 2, lh: lh, ds: Math.min(0.8, lh / 66) }; }
 
-/* ---------- 20. 엉터리 댄스 배틀 ---------- */
+/* 화면 시계 v.t와 시뮬 시계 s.t는 달라요: s.t에 화면 시간 경과를 더해서 음표가 부드럽게 떨어지게 */
+var SNOW = { st: -1, vt: 0 };
+function snow(s, v) { if (s.t !== SNOW.st) { SNOW.st = s.t; SNOW.vt = v.t; } return s.t + clamp(v.t - SNOW.vt, 0, 0.1); }
+
+/* ---------- 20. 엉터리 댄스 배틀 (리듬게임: 음표가 떨어져요) ---------- */
 (function () {
-  var B0 = 2.2, BD = 0.75, NB = 36;
+  var B0 = 2.4, BD = 0.5, NB = 46, FT = 1.5, LANE_COL = ['#ff7ac8', '#59d6ff', '#a6e84a', '#ffb347'], HIT_Y = 405, TOP_Y = 96;
+  function arrow(ctx, x, y, l, sz, col, al) {
+    ctx.save(); ctx.translate(x, y); ctx.rotate([3.1416, 1.5708, -1.5708, 0][l]); ctx.globalAlpha = al == null ? 1 : al;
+    ctx.beginPath(); ctx.moveTo(sz, 0); ctx.lineTo(0, -sz * 0.95); ctx.lineTo(0, -sz * 0.42); ctx.lineTo(-sz, -sz * 0.42); ctx.lineTo(-sz, sz * 0.42); ctx.lineTo(0, sz * 0.42); ctx.lineTo(0, sz * 0.95); ctx.closePath();
+    ctx.fillStyle = col; ctx.fill(); ctx.lineWidth = 3; ctx.strokeStyle = '#fff'; ctx.lineJoin = 'round'; ctx.stroke(); ctx.restore();
+  }
   regMG({
     id: 'dancebeat', name: '엉터리 댄스 배틀', time: 30,
-    desc: '박자에 맞춰 버튼을 눌러 춤을 춰요. 박자가 딱 맞을수록 점수가 커요.',
-    how: '왼쪽에서 오는 동그라미가 가운데 칸에 오면 버튼을 눌러요. 엉뚱한 때 누르면 감점이에요.',
-    keys: { a: '박자에 맞춰 누르기', b: null }, touch: true,
+    desc: '리듬게임이에요. 떨어지는 화살표가 아래 선에 닿을 때 같은 방향을 눌러요.',
+    how: '화살표 음표가 판정선에 닿는 순간 같은 방향키(WASD)를 눌러요. 정확할수록 점수가 커지고, 엉뚱하게 누르면 감점이에요.',
+    keys: { a: null, b: null }, touch: true,
     init: function (ps, rng) {
-      var pl = {}; ps.forEach(function (p) { pl[p.id] = { sc: 0, last: -1, combo: 0, flash: 0, miss: 0, pose: 0 }; });
-      return { t: 0, pl: pl, ids: ps.map(function (p) { return p.id; }), bt: {} };
+      var pl = {}, ch = [], last = -1, rep = 0, t = B0;
+      for (var k = 0; k < NB; k++) {
+        var l = Math.floor(rng() * 4); if (l === last && rep >= 1) l = (l + 1 + Math.floor(rng() * 3)) % 4;
+        rep = l === last ? rep + 1 : 0; last = l;
+        ch.push({ t: t, l: l }); t += rng() < 0.2 ? BD / 2 : BD;   // 가끔 반 박자 빠른 음표
+      }
+      ps.forEach(function (p) { var jl = []; for (var k = 0; k < NB; k++) jl.push(0); pl[p.id] = { sc: 0, combo: 0, best: 0, flash: 0, miss: 0, pose: 0, nx: 0, jl: jl, dn: [false, false, false, false], jg: 0, jgT: -9, press: [-9, -9, -9, -9] }; });
+      return { t: 0, pl: pl, ids: ps.map(function (p) { return p.id; }), bt: {}, ch: ch };
     },
     step: function (s, inp, dt, rng) {
       s.t += dt;
       s.ids.forEach(function (id) {
         var p = s.pl[id], i = inp[id] || emptyInput(); p.flash = Math.max(0, p.flash - dt); p.miss = Math.max(0, p.miss - dt); p.pose = Math.max(0, p.pose - dt);
-        if (!i.ap) return;
-        var k = Math.round((s.t - B0) / BD), d = Math.abs(s.t - (B0 + k * BD));
-        if (k >= 0 && k < NB && k > p.last && d <= 0.2) {
-          p.last = k; var perfect = d <= 0.08; p.combo++; p.sc += (perfect ? 3 : 1) + Math.min(3, Math.floor(p.combo / 4)); p.flash = 0.35; p.pose = 0.4; fx(s, perfect ? 'coin' : 'pop');
-        } else { p.combo = 0; p.sc = Math.max(0, p.sc - 1); p.miss = 0.5; fx(s, 'squeak'); }
+        for (; p.nx < NB && s.ch[p.nx].t + 0.22 < s.t; p.nx++) if (!p.jl[p.nx]) { p.jl[p.nx] = 2; p.combo = 0; p.jg = 3; p.jgT = s.t; }
+        var d = [i.mx < -0.5, i.my > 0.5, i.my < -0.5, i.mx > 0.5];
+        d.forEach(function (on, l) {
+          var was = p.dn[l]; p.dn[l] = on; if (!on || was) return;
+          p.press[l] = s.t;
+          var bk = -1, bd = 0.23;
+          for (var k = p.nx; k < NB && s.ch[k].t - s.t < 0.3; k++) if (s.ch[k].l === l && !p.jl[k]) { var dd = Math.abs(s.ch[k].t - s.t); if (dd < bd) { bd = dd; bk = k; } }
+          if (bk >= 0) {
+            p.jl[bk] = 1; var perfect = bd <= 0.09; p.combo++; p.best = Math.max(p.best, p.combo);
+            p.sc += (perfect ? 3 : 1) + Math.min(3, Math.floor(p.combo / 4)); p.flash = 0.35; p.pose = 0.4; p.jg = perfect ? 2 : 1; p.jgT = s.t; fx(s, perfect ? 'coin' : 'pop');
+          } else { p.combo = 0; p.sc = Math.max(0, p.sc - 1); p.miss = 0.5; p.jg = 3; p.jgT = s.t; fx(s, 'squeak'); }
+        });
       });
     },
     bot: function (s, id, rng) {
-      var r = emptyInput(), b = s.bt[id]; if (!b) b = s.bt[id] = { k: 0, off: (rng() - 0.5) * 0.18 };
+      var r = emptyInput(), b = s.bt[id]; if (!b) b = s.bt[id] = { k: 0, sk: 0.62 + rng() * 0.25, off: (rng() - 0.5) * 0.16 };
       if (b.k >= NB) return r;
-      var at = B0 + b.k * BD + b.off;
-      if (s.t >= at) { if (rng() < 0.85) { r.ap = true; r.a = true; } b.k++; b.off = (rng() - 0.5) * 0.2; }
+      var n = s.ch[b.k];
+      if (s.t >= n.t + b.off) {
+        if (rng() < b.sk) { var l = rng() < 0.04 ? Math.floor(rng() * 4) : n.l; if (l === 0) r.mx = -1; else if (l === 3) r.mx = 1; else if (l === 1) r.my = 1; else r.my = -1; }
+        b.k++; b.off = (rng() - 0.5) * 0.2;
+      }
       return r;
     },
-    snap: function (s) { return { t: s.t, pl: cl(s.pl), ids: s.ids, _fx: [] }; },
+    snap: function (s) { return { t: s.t, pl: cl(s.pl), ids: s.ids, ch: s.ch, _fx: [] }; },
     draw: function (ctx, s, v) {
+      var now = snow(s, v);
       bgFloor(ctx, '#2a1245', '#6a2a6a');
       for (var q = 0; q < 12; q++) { var a = 0.1 + 0.08 * Math.sin(v.t * 3 + q); ctx.fillStyle = 'rgba(' + (q % 2 ? '255,120,200' : '120,200,255') + ',' + a + ')'; ctx.beginPath(); ctx.arc(40 + q * 80, 20 + (q % 3) * 12, 26, 0, 6.283); ctx.fill(); }
-      // 박자 길
-      var ty = 96, tx0 = 70, tx1 = 890, cx = 480;
-      ctx.fillStyle = 'rgba(0,0,0,.45)'; rrect(ctx, tx0, ty - 24, tx1 - tx0, 48, 24); ctx.fill();
-      ctx.fillStyle = 'rgba(255,230,120,.3)'; rrect(ctx, cx - 40, ty - 24, 80, 48, 16); ctx.fill(); ctx.strokeStyle = '#ffe68a'; ctx.lineWidth = 3; rrect(ctx, cx - 40, ty - 24, 80, 48, 16); ctx.stroke();
-      for (var k = 0; k < NB; k++) { var dx = (B0 + k * BD - v.t) * 230; if (dx < -300 || dx > 420) continue; var x = cx + dx; ctx.fillStyle = Math.abs(dx) < 30 ? '#ffe68a' : '#ff7ac8'; ctx.beginPath(); ctx.arc(x, ty, 14, 0, 6.283); ctx.fill(); ctx.strokeStyle = '#fff'; ctx.lineWidth = 3; ctx.stroke(); }
-      txt(ctx, '지금!', cx, ty - 36, { size: 14, c: '#ffe68a' });
+      // 음표 길 (가운데 4칸)
+      var hx0 = 330, lw = 75, me = s.pl[v.me] || s.pl[s.ids[0]];
+      ctx.fillStyle = 'rgba(0,0,0,.5)'; rrect(ctx, hx0 - 8, TOP_Y - 8, lw * 4 + 16, HIT_Y - TOP_Y + 60, 16); ctx.fill();
+      for (var l = 0; l < 4; l++) {
+        ctx.fillStyle = l % 2 ? 'rgba(255,255,255,.05)' : 'rgba(255,255,255,.1)'; ctx.fillRect(hx0 + l * lw, TOP_Y, lw, HIT_Y - TOP_Y + 44);
+        var pr = clamp(1 - (now - me.press[l]) / 0.25, 0, 1);
+        if (pr > 0) { ctx.fillStyle = 'rgba(255,255,255,' + 0.35 * pr + ')'; ctx.fillRect(hx0 + l * lw, TOP_Y, lw, HIT_Y - TOP_Y + 44); }
+      }
+      ctx.fillStyle = '#ffe68a'; ctx.fillRect(hx0, HIT_Y - 3, lw * 4, 6);
+      for (var l2 = 0; l2 < 4; l2++) { var pr2 = clamp(1 - (now - me.press[l2]) / 0.25, 0, 1); arrow(ctx, hx0 + l2 * lw + lw / 2, HIT_Y + 30, l2, 20 + pr2 * 5, 'rgba(255,255,255,.18)', 1); }
+      for (var k = 0; k < NB; k++) {
+        var n = s.ch[k], y = HIT_Y - (n.t - now) / FT * (HIT_Y - TOP_Y); if (y < TOP_Y - 30 || y > HIT_Y + 70) continue;
+        if (me.jl[k] === 1) continue;
+        arrow(ctx, hx0 + n.l * lw + lw / 2, y, n.l, 24, LANE_COL[n.l], me.jl[k] === 2 ? 0.35 : 1);
+      }
+      txt(ctx, '← ↑ ↓ →  /  WASD', hx0 + lw * 2, HIT_Y + 74, { size: 13, c: '#ffe68a' });
+      // 판정과 연속 (내 것)
+      var jt = now - me.jgT;
+      if (jt < 0.7 && me.jg) { var jx = hx0 + lw * 4 + 140, sc = 1 + 0.25 * clamp(1 - jt / 0.2, 0, 1); ctx.save(); ctx.translate(jx, 250); ctx.scale(sc, sc); txt(ctx, ['', '좋아요', '완벽!', '삐끗'][me.jg], 0, 0, { size: 38, c: ['#fff', '#9ff0ff', '#ffe68a', '#ff8a8a'][me.jg] }); ctx.restore(); }
+      if (me.combo >= 2) txt(ctx, me.combo + '연속', hx0 + lw * 4 + 140, 300, { size: 22, c: '#ffe68a' });
+      // 선수 줄 (왼쪽)
       s.ids.forEach(function (id, i) {
-        var p = s.pl[id], g = laneF(s, i, 140, 510, 56), col = v.players[id].color, dn = Math.sin(v.t * 9 + i) ;
-        ctx.fillStyle = i % 2 ? 'rgba(255,255,255,.06)' : 'rgba(0,0,0,.12)'; ctx.fillRect(0, g.y - g.lh / 2, W, g.lh);
-        dummyOf(ctx, { x: 200, y: g.y + 16 * g.ds, face: 1, walk: 0, mvv: 0 }, v, id, { s: g.ds, pose: p.pose > 0 ? 'dance' : 'stand', spin: p.miss > 0 ? 0.25 * Math.sin(v.t * 40) : 0 });
-        ctx.fillStyle = 'rgba(255,255,255,.12)'; rrect(ctx, 280, g.y - 8, 420, 16, 8); ctx.fill();
-        ctx.fillStyle = col; rrect(ctx, 280, g.y - 8, Math.max(8, 420 * clamp(p.sc / 90, 0, 1)), 16, 8); ctx.fill();
-        txt(ctx, String(p.sc), 740, g.y + 2, { size: 22, c: col });
-        if (p.combo >= 3) txt(ctx, p.combo + '연속', 830, g.y + 2, { size: 14, c: '#ffe68a' });
-        if (p.flash > 0) icon(ctx, 'joy', 250, g.y - 22 * g.ds, 18 * (1 + p.flash));
-        if (p.miss > 0) txt(ctx, '삐끗', 250, g.y - 28 * g.ds, { size: 13, c: '#ff8a8a' });
+        var p = s.pl[id], g = laneF(s, i, 110, 510, 56), col = v.players[id].color;
+        ctx.fillStyle = i % 2 ? 'rgba(255,255,255,.06)' : 'rgba(0,0,0,.12)'; ctx.fillRect(0, g.y - g.lh / 2, 316, g.lh);
+        dummyOf(ctx, { x: 66, y: g.y + 16 * g.ds, face: 1, walk: 0, mvv: 0 }, v, id, { s: g.ds, pose: p.pose > 0 ? 'dance' : 'stand', spin: p.miss > 0 ? 0.25 * Math.sin(v.t * 40) : 0 });
+        ctx.fillStyle = 'rgba(255,255,255,.12)'; rrect(ctx, 116, g.y - 8, 134, 16, 8); ctx.fill();
+        ctx.fillStyle = col; rrect(ctx, 116, g.y - 8, Math.max(8, 134 * clamp(p.sc / 150, 0, 1)), 16, 8); ctx.fill();
+        txt(ctx, String(p.sc), 282, g.y + 2, { size: 20, c: col });
+        if (p.flash > 0) icon(ctx, 'joy', 100, g.y - 22 * g.ds, 16 * (1 + p.flash));
       });
     },
     result: function (s, forced) {
@@ -5415,7 +5462,7 @@ var INTRO = {
   fartrace: { tip: '꾹 눌러 모으고 놓으면 발사!', hero: 'wind', a: 'wind' },
   hotdog: { tip: '마구 눌러 먹고 뜨거울 땐 멈춰요', hero: 'flame', a: 'mash' },
   chicken: { tip: '닭을 몰아서 내 닭장에', hero: 'chicken', a: 'wind' },
-  dancebeat: { tip: '박자에 맞춰 눌러 춤을 춰요', hero: 'note', a: 'mash' },
+  dancebeat: { tip: '떨어지는 화살표를 판정선에서 맞춰 눌러요', hero: 'note', a: 'mash' },
   ramen: { tip: '속으로 세다가 딱 8초에 멈춰요', hero: 'flame', a: 'mash' },
   balloon: { tip: '크게 불고 터지기 전에 챙겨요', hero: 'wind', a: 'wind', b: 'skip' },
   simon: { tip: '"시몬 가라사대"가 붙은 명령만 따라 해요', hero: 'flame', a: 'jump', b: 'skip' },
