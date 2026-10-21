@@ -79,3 +79,8 @@ index.html | 첫 화면 숫자 줄 라벨 | 계정 하나로 모든 게임, 필�
 - beaconfall/patchnotes.json·i18n.js | N["v0.3 b84"].items (en·es·fr·de·ja 칸에 한국어 임시 입력) | 양동이(판자 4개 + 막대기 1개) 추가: 물가나 우물에서 물을 떠 불 옆에서 사용하면 근처 불을 끔 (사용 키로 사용) | b84 | 2026-10-21
 - beaconfall/BEACONFALL-v0.3.html | ITEMS.bucket.name · ITEMS.bucket_w.name · 양동이 레시피 note (게임 안 문자열, I18N_D에 없음 = 한국어 표시) | 양동이 / 물 양동이 / 물가나 우물에서 물을 떠 번지는 불을 꺼요 | b84 | 2026-10-21
 index.html | 첫 화면 숫자 줄 라벨 | 달성할 업적, 광고 | 허브 숫자 줄 교체(계정·설치 칸 삭제) | 2026-10-21
+- balance/index.html | 반 이름 · 반 이름: {0} · ✅ 선생님 · 결과 저장 (CSV) | educations | 2026-10-21
+- munjang/index.html | 반 이름 / 예: 3학년 2반 / 결과 저장 (CSV) / ✅ 선생님(teacher.js 제공) | educations | 2026-10-21
+- proverb/index.html | 반 이름 | 예: 3학년 2반 | 날짜 | 순위 | 이름 | 점수 | 푼 사건 수 | 전체 사건 수 | 결과 저장 (CSV) | 속담탐정 | 결과 | ✅ 선생님 | educations | 2026-10-21
+- speedcode/index.html | 반 이름 / 예: 3학년 2반 / 반 / 결과 저장 (CSV) / ✅ 선생님 / 결과 / 날짜 / 순위 / 이름 / 점수 / 해독 / 정확도 / 최고 자릿수 | educations | 2026-10-21
+- timeline/index.html | 반 이름, 예: 3학년 2반, 결과 저장 (CSV), ✅ 선생님, 타임라인(CSV 파일 이름), CSV 열 이름(반 이름/날짜/순위/이름/점수/정답/정확도/최고 연속) | educations | 2026-10-21
