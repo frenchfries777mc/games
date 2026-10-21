@@ -379,7 +379,7 @@ async function feed(){
 var rkGame='crownenvoy';
 async function ranking(){
   var box=$('#rankList'); if(!box||!sb) return; var g=rkGame;
-  if(g==='stickseum'||g==='isleport') return rankingBy(g,box);
+  if(g==='stickseum'||g==='isleport'||g==='beaconfall') return rankingBy(g,box);
   var r=await sb.from('ff_rank').select('user_id,points,wins,games').eq('game',g).order('points',{ascending:false}).order('wins',{ascending:false}).limit(20);
   if(g!==rkGame) return;
   if(r.error){ box.innerHTML='<div class="cm-e">'+esc(errText(r.error))+'</div>'; return; }
@@ -395,26 +395,26 @@ async function ranking(){
   box.innerHTML=h;
 }
 
-/* 게임마다 순위 기준이 달라요: Stickseum = 이번 시즌(한국 달력 월) 랭크 점수(ranked_ratings), Isleport = 재산(ff_wealth, supabase-ff-wealth.sql) */
+/* 게임마다 순위 기준이 달라요: Stickseum = 이번 시즌(한국 달력 월) 랭크 점수(ranked_ratings), Isleport = 재산(ff_wealth, supabase-ff-wealth.sql), Beaconfall = 최장 생존 일수(ff_survival, supabase-ff-survival.sql) */
 async function rankingBy(g,box){
-  var st=g==='stickseum', tb=st?'ranked_ratings':'ff_wealth', col=st?'rating':'wealth', season=new Date(Date.now()+9*36e5).toISOString().slice(0,7);
-  var q=sb.from(tb).select(st?'user_id,rating,wins,losses':'user_id,wealth');
-  if(st) q=q.eq('season',season).order('rating',{ascending:false}).order('wins',{ascending:false}); else q=q.order('wealth',{ascending:false});
+  var st=g==='stickseum', bf=g==='beaconfall', tb=st?'ranked_ratings':bf?'ff_survival':'ff_wealth', col=st?'rating':bf?'days':'wealth', season=new Date(Date.now()+9*36e5).toISOString().slice(0,7);
+  var q=sb.from(tb).select(st?'user_id,rating,wins,losses':'user_id,'+col);
+  if(st) q=q.eq('season',season).order('rating',{ascending:false}).order('wins',{ascending:false}); else q=q.order(col,{ascending:false});
   var r=await q.limit(20);
   if(g!==rkGame) return;
-  if(r.error){ box.innerHTML='<div class="cm-e">'+esc(st?errText(r.error):'재산 순위는 서버 준비 중이에요.')+'</div>'; return; }
+  if(r.error){ box.innerHTML='<div class="cm-e">'+esc(st?errText(r.error):bf?'생존 순위는 서버 준비 중이에요.':'재산 순위는 서버 준비 중이에요.')+'</div>'; return; }
   var rows=r.data||[]; await loadNames(rows.map(function(x){ return x.user_id; }));
-  if(!rows.length){ box.innerHTML='<div class="cm-e">'+(st?'이번 시즌 랭크전 기록이 아직 없어요.':'아직 재산을 보낸 사람이 없어요.')+'</div>'; return; }
+  if(!rows.length){ box.innerHTML='<div class="cm-e">'+(st?'이번 시즌 랭크전 기록이 아직 없어요.':bf?'아직 생존 기록을 보낸 사람이 없어요.':'아직 재산을 보낸 사람이 없어요.')+'</div>'; return; }
   var n=function(v){ try{ return Number(v).toLocaleString(); }catch(e){ return v; } };
-  var h='<table class="rkt"><tr><th></th><th>닉네임</th><th>'+(st?'랭크 점수':'재산')+'</th>'+(st?'<th>승</th><th>패</th>':'')+'</tr>';
-  rows.forEach(function(x,i){ h+='<tr class="'+(i<3?'t'+(i+1):'')+(me&&x.user_id===me.id?' me':'')+'"><td>'+(i<3?['🥇','🥈','🥉'][i]:i+1)+'</td><td>'+who(x.user_id)+'</td><td class="pt" data-notr>'+n(x[col])+'</td>'+(st?'<td data-notr>'+x.wins+'</td><td data-notr>'+x.losses+'</td>':'')+'</tr>'; });
+  var h='<table class="rkt"><tr><th></th><th>닉네임</th><th>'+(st?'랭크 점수':bf?'최장 생존 일수':'재산')+'</th>'+(st?'<th>승</th><th>패</th>':'')+'</tr>';
+  rows.forEach(function(x,i){ h+='<tr class="'+(i<3?'t'+(i+1):'')+(me&&x.user_id===me.id?' me':'')+'"><td>'+(i<3?['🥇','🥈','🥉'][i]:i+1)+'</td><td>'+who(x.user_id)+'</td><td class="pt" data-notr>'+n(x[col])+(bf?'일':'')+'</td>'+(st?'<td data-notr>'+x.wins+'</td><td data-notr>'+x.losses+'</td>':'')+'</tr>'; });
   h+='</table>';
   if(st) h+='<div class="rk-n">'+esc(F('{0} 시즌 · 매달 새로 시작해요',season))+'</div>';
   if(me&&!rows.some(function(x){ return x.user_id===me.id; })){
     var q2=sb.from(tb).select(col).eq('user_id',me.id); if(st) q2=q2.eq('season',season);
     var mine=await q2.limit(1), mp=mine&&mine.data&&mine.data[0];
     if(mp){ var c=sb.from(tb).select('user_id',{count:'exact',head:true}); if(st) c=c.eq('season',season); var above=await c.gt(col,mp[col]);
-      if(above&&above.count!=null) h+='<div class="rk-me">'+esc(F(st?'내 순위: {0}위 · {1}점':'내 순위: {0}위 · 재산 {1}',above.count+1,n(mp[col])))+'</div>'; }
+      if(above&&above.count!=null) h+='<div class="rk-me">'+esc(F(st?'내 순위: {0}위 · {1}점':bf?'내 순위: {0}위 · {1}일':'내 순위: {0}위 · 재산 {1}',above.count+1,n(mp[col])))+'</div>'; }
   }
   box.innerHTML=h;
 }
