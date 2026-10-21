@@ -103,5 +103,29 @@ function tapply(){ var st=tget(), h=document.documentElement; h.setAttribute('da
 tapply(); try{ lightCss(); }catch(e){} try{ barCss(); }catch(e){}
 window.addEventListener('storage',function(e){ if(e.key===TK||e.key===SK){ tapply(); try{ window.dispatchEvent(new Event('fftheme')); }catch(x){} } });
 window.FFTheme={ get:tget, sizes:Object.keys(ZOOM), set:function(t,z){ try{ if(THEMES.indexOf(t)>=0) localStorage.setItem(TK,t); if(ZOOM[z]) localStorage.setItem(SK,z); }catch(e){} tapply(); try{ window.dispatchEvent(new Event('fftheme')); }catch(e){} } };
-window.FFLang={ get:function(){ return now; }, set:function(l){ set(l); now=l; }, sync:function(){ now=sync()||now; return now; } };
+/* Newspeak (nw): the joke language from Orwell's 1984. A party slogan sits above the copyright line, the hub number strip gets "2 + 2 = 5",
+   and the community page is closed by the telescreen. Everything else is plain translation. */
+var SLOGANS=['WAR IS PEACE','FREEDOM IS SLAVERY','IGNORANCE IS STRENGTH'];
+function slogan(){ return SLOGANS[Math.floor(Math.random()*SLOGANS.length)]; }
+function ingsoc(){
+  if(now!=='nw'||document.getElementById('ff-nw')) return;
+  var st=document.createElement('style'); st.id='ff-nw';
+  st.textContent='.ff-ingsoc{display:block;margin:0 0 6px;font-weight:800;letter-spacing:.12em;font-size:12px;opacity:.75}'+
+    '.ff-tele{max-width:560px;margin:40px auto;padding:36px 22px;text-align:center;border:2px solid #b4231f;border-radius:16px;background:rgba(180,35,31,.08)}'+
+    '.ff-tele .eye{font-size:56px;line-height:1}.ff-tele b{display:block;margin:14px 0 6px;font-size:22px;letter-spacing:.06em;color:#e0443e}.ff-tele small{display:block;opacity:.7;letter-spacing:.1em}'+
+    '.ff-2p2{text-align:center;margin:-8px 0 18px;font-size:13px;letter-spacing:.2em;opacity:.65}';
+  (document.head||document.documentElement).appendChild(st);
+  var cps=document.querySelectorAll('.ff-copy');
+  if(cps.length){ for(var i=0;i<cps.length;i++){ var d=document.createElement('span'); d.className='ff-ingsoc'; d.setAttribute('data-notr',''); d.textContent=slogan(); cps[i].parentNode.insertBefore(d,cps[i]); } }
+  else { var f=document.querySelector('footer'); if(f){ var e=document.createElement('div'); e.className='ff-ingsoc'; e.setAttribute('data-notr',''); e.textContent=slogan(); f.insertBefore(e,f.firstChild); } }
+  var hs=document.getElementById('heroStats'); if(hs&&!document.querySelector('.ff-2p2')){ var t=document.createElement('p'); t.className='ff-2p2'; t.setAttribute('data-notr',''); t.textContent='2 + 2 = 5'; hs.parentNode.insertBefore(t,hs.nextSibling); }
+  if(/\/games\/community\/(index\.html)?$/.test(location.pathname)){ var cm=document.getElementById('community');
+    if(cm) cm.innerHTML='<div class="ff-tele" data-notr><div class="eye">👁️</div><b>THE TELESCREEN IS WATCHING YOU.</b><small>BIG BROTHER IS WATCHING YOU</small></div>'; }
+}
+/* Turkish: CSS uppercase turns i into İ under lang=tr, which breaks Latin brand names (FRENCHFRİES). ASCII-only uppercased text keeps the English rule. */
+function trCaps(){ var a=document.body?document.body.querySelectorAll('*'):[]; for(var i=0;i<a.length;i++){ var e=a[i]; if(e.hasAttribute('lang')||!/i/.test(e.textContent)||/[^\x00-\x7f]/.test(e.textContent)) continue;
+  try{ if(getComputedStyle(e).textTransform==='uppercase') e.setAttribute('lang','en'); }catch(x){} } }
+if(now==='tr'){ if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',function(){ trCaps(); setTimeout(trCaps,1500); }); else trCaps(); }
+if(now==='nw'){ if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',ingsoc); else ingsoc(); }
+window.FFLang={ get:function(){ return now; }, slogan:slogan, set:function(l){ set(l); now=l; }, sync:function(){ now=sync()||now; return now; } };
 })();

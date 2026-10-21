@@ -53,27 +53,33 @@
   <div class="bar" id="bar"></div>
   <div id="list"></div>
 </div>
-<script src="../ff-auth.js?v=20261018a"></script>
+<script src="../ff-auth.js?v=20261021l"></script>
 <script>
 (function(){
 'use strict';
-var LN=['ko','en','es','fr','de','ja'], NAMES={ko:'한국어',en:'English',es:'Español',fr:'Français',de:'Deutsch',ja:'日本語'};
+var LN=['ko','en','es','fr','de','ja','zh','pt','ru','tr','nw'], NAMES={ko:'한국어',en:'English',es:'Español',fr:'Français',de:'Deutsch',ja:'日本語',zh:"简体中文",pt:"Português (Brasil)",ru:"Русский",tr:"Türkçe",nw:"Newspeak"};
 var U={
  ko:{hub:'허브',lead:'Stickseum · Crown Envoy · Beaconfall · 허브의 패치노트를 한곳에 모았다.',all:'전체',hubN:'허브',search:'패치노트 검색',empty:'찾는 패치노트가 없다.',err:'패치노트를 불러오지 못했다.',more:'더 보기',items:'{0}개'},
  en:{hub:'Hub',lead:'Patch notes of Stickseum, Crown Envoy, Beaconfall and the hub in one place.',all:'All',hubN:'Hub',search:'Search patch notes',empty:'No patch notes found.',err:'Could not load the patch notes.',more:'Show more',items:'{0} items'},
  es:{hub:'Hub',lead:'Las notas de parche de Stickseum, Crown Envoy, Beaconfall y el hub en un solo lugar.',all:'Todo',hubN:'Hub',search:'Buscar notas de parche',empty:'No se encontraron notas de parche.',err:'No se pudieron cargar las notas de parche.',more:'Ver más',items:'{0} elementos'},
  fr:{hub:'Hub',lead:'Les notes de mise à jour de Stickseum, Crown Envoy, Beaconfall et du hub au même endroit.',all:'Tout',hubN:'Hub',search:'Rechercher dans les notes',empty:'Aucune note trouvée.',err:'Impossible de charger les notes.',more:'Voir plus',items:'{0} éléments'},
  de:{hub:'Hub',lead:'Die Patchnotes von Stickseum, Crown Envoy, Beaconfall und dem Hub an einem Ort.',all:'Alle',hubN:'Hub',search:'Patchnotes durchsuchen',empty:'Keine Patchnotes gefunden.',err:'Die Patchnotes konnten nicht geladen werden.',more:'Mehr anzeigen',items:'{0} Einträge'},
- ja:{hub:'ハブ',lead:'Stickseum・Crown Envoy・Beaconfall・ハブのパッチノートを1か所にまとめました。',all:'すべて',hubN:'ハブ',search:'パッチノートを検索',empty:'パッチノートが見つかりません。',err:'パッチノートを読み込めませんでした。',more:'もっと見る',items:'{0}件'}};
+ ja:{hub:'ハブ',lead:'Stickseum・Crown Envoy・Beaconfall・ハブのパッチノートを1か所にまとめました。',all:'すべて',hubN:'ハブ',search:'パッチノートを検索',empty:'パッチノートが見つかりません。',err:'パッチノートを読み込めませんでした。',more:'もっと見る',items:'{0}件'},
+ zh:{"hub":"主页","lead":"将 Stickseum · Crown Envoy · Beaconfall · 主页的补丁说明汇集在一处。","all":"全部","hubN":"主页","search":"搜索补丁说明","empty":"没有找到补丁说明。","err":"无法加载补丁说明。","more":"显示更多","items":"{0} 项"},
+ pt:{"hub":"Início","lead":"Notas de atualização de Stickseum, Crown Envoy, Beaconfall e do início em um só lugar.","all":"Tudo","hubN":"Início","search":"Buscar notas de atualização","empty":"Nenhuma nota encontrada.","err":"Não foi possível carregar as notas.","more":"Mostrar mais","items":"{0} itens"},
+ ru:{"hub":"Хаб","lead":"Патчноуты Stickseum, Crown Envoy, Beaconfall и хаба в одном месте.","all":"Все","hubN":"Хаб","search":"Поиск по патчноутам","empty":"Патчноуты не найдены.","err":"Не удалось загрузить патчноуты.","more":"Показать ещё","items":"{0} пунктов"},
+ tr:{"hub":"Merkez","lead":"Stickseum, Crown Envoy, Beaconfall ve merkezin yama notları tek yerde.","all":"Tümü","hubN":"Merkez","search":"Yama notlarında ara","empty":"Yama notu bulunamadı.","err":"Yama notları yüklenemedi.","more":"Daha fazla göster","items":"{0} madde"},
+ nw:{"hub":"Hub","lead":"Every correction of Stickseum, Crown Envoy, Beaconfall and the hub, by the Ministry of Truth. The past has always been this way.","all":"All","hubN":"Hub","search":"Search corrections","empty":"No corrections found. They never existed.","err":"You have been sent to Room 101. (Corrections could not load.)","more":"Show more","items":"{0} items"}};
 function detect(){ var c=[]; try{ var s=localStorage.getItem('arenaClashLang'); if(s) c.push(s); }catch(e){} try{ c=c.concat(navigator.languages||[navigator.language||'']); }catch(e){}
   for(var i=0;i<c.length;i++){ var k=String(c[i]).slice(0,2).toLowerCase(); if(LN.indexOf(k)>=0) return k; } return 'ko'; }
 var lang=detect(), T=U[lang];
+if(lang==='nw'){ document.title='Ministry of Truth: Corrections'; var h1=document.querySelector('h1'); if(h1) h1.innerHTML='Ministry of Truth: <b>Corrections</b>'; }
 var SRC=[{k:'hub',name:'허브',c:'--g0',url:'../patchnotes.json'},{k:'stickseum',name:'Stickseum',c:'--g1',url:'../stickseum/patchnotes.json'},
          {k:'crownenvoy',name:'Crown Envoy',c:'--g2',url:'../crownenvoy/patchnotes.json'},{k:'beaconfall',name:'Beaconfall',c:'--g3',url:'../beaconfall/patchnotes.json'}];
 function $(s){ return document.querySelector(s); }
 function esc(s){ return String(s==null?'':s).replace(/[&<>"']/g,function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); }
 var all=[], sel='all', q='', shown=30, failed=0;
-function tr(n){ var t=lang!=='ko'&&n.tr&&n.tr[lang]; return {title:(t&&t.title)||n.title||'', items:(t&&t.items)||n.items||[]}; }
+function tr(n){ var t=lang!=='ko'&&n.tr&&(n.tr[lang]||(['zh','pt','ru','tr','nw'].indexOf(lang)>=0&&n.tr.en)); return {title:(t&&t.title)||n.title||'', items:(t&&t.items)||n.items||[]}; }
 function paintBar(){
   var h='<button type="button" class="chip'+(sel==='all'?' on':'')+'" data-k="all">'+esc(T.all)+'</button>'+SRC.map(function(s){ return '<button type="button" class="chip'+(sel===s.k?' on':'')+'" data-k="'+s.k+'">'+esc(s.k==='hub'?T.hubN:s.name)+'</button>'; }).join('')+
     '<input class="srch" id="q" type="search" placeholder="'+esc(T.search)+'" value="'+esc(q)+'">';

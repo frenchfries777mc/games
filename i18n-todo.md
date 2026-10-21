@@ -1,6 +1,6 @@
 # 번역 대기 목록 (i18n-todo)
 
-오너 지시(2026-10-18): 개발은 한국어만 하고, 다른 언어(en·es·fr·de·ja) 번역은 하루에 한 번 번역 스레드에서 모아서 처리한다.
+오너 지시(2026-10-18): 개발은 한국어만 하고, 다른 언어(en·es·fr·de·ja·zh·pt·ru·tr, 신어 nw) 번역은 하루에 한 번 번역 스레드에서 모아서 처리한다.
 한 줄 형식: `파일 또는 위키 문서 | 키 또는 내용 | 한국어 문구 | 바뀐 PR | 날짜`. 처리가 끝난 줄은 지운다.
 한국어로만 바뀐 문서는 다른 언어 화면에서 한국어가 그대로 보인다. (위키는 번역 글의 해시가 다르면 한국어 원문을 보여 준다.)
 
@@ -53,7 +53,6 @@
 - beaconfall/patchnotes.json·i18n.js | N["v0.3 b83"].items (en·es·fr·de·ja 칸에 한국어 임시 입력) | 시작할 때 로딩 화면에서 Made by 글자가 로딩바와 겹치던 문제 수정 | b83 | 2026-10-20
 - beaconfall/patchnotes.json·i18n.js | N["v0.3 b83"].items (en·es·fr·de·ja 칸에 한국어 임시 입력) | 게임 중 Esc를 한 번 눌러도 바로 로비로 나가지 않고, 2초 안에 한 번 더 눌러야 나가도록 확인 추가 | b83 | 2026-10-20
 - beaconfall/patchnotes.json·i18n.js | N["v0.3 b83"].items (en·es·fr·de·ja 칸에 한국어 임시 입력) | 패치노트를 빌드별로 나누고 안 쓰는 옛 파일(BEACONFALL.html, bg.jpg 등) 정리 | b83 | 2026-10-20
-index.html | 첫 화면 숫자 줄 라벨 | 계정 하나로 모든 게임, 필요한 설치, 숫자로 보기 | 허브 숫자 줄 | 2026-10-20
 - speedcode/index.html | 정답 | educations | 2026-10-21
 - munjang/index.html | 기억하기 / 소속 / 검수 1라인 / 직책 / 문장 수리공 / 등급 / 견습 / 검수 우수 / 검수 합격 / 재검수 필요 (131개 문제 해설 및 기억 팁은 한국어 데이터라 번역 대상 아님) | educations | 2026-10-21
 - planetsearch/index.html | 켜진 1의 자릿값을 모두 더해 10진수로 바꿔 보세요. / 행성 줄을 누르면 고른 종족이 그 행성에 정착해요. / 어디에도 해당 없음 / 크레딧 세금 / 섹터 N(보고서 상단 표시) / ±N명(인구 증감 표시) | educations | 2026-10-21
@@ -78,7 +77,6 @@ index.html | 첫 화면 숫자 줄 라벨 | 계정 하나로 모든 게임, 필�
 - beaconfall/patchnotes.json·i18n.js | N["v0.3 b84"].items (en·es·fr·de·ja 칸에 한국어 임시 입력) | 불은 6~12초 타며 나무와 나무로 된 건물·가구를 태우고 재를 남김, 불에 닿으면 화상을 입음 (내화 물약·화산석 갑옷으로 막을 수 있음) | b84 | 2026-10-21
 - beaconfall/patchnotes.json·i18n.js | N["v0.3 b84"].items (en·es·fr·de·ja 칸에 한국어 임시 입력) | 양동이(판자 4개 + 막대기 1개) 추가: 물가나 우물에서 물을 떠 불 옆에서 사용하면 근처 불을 끔 (사용 키로 사용) | b84 | 2026-10-21
 - beaconfall/BEACONFALL-v0.3.html | ITEMS.bucket.name · ITEMS.bucket_w.name · 양동이 레시피 note (게임 안 문자열, I18N_D에 없음 = 한국어 표시) | 양동이 / 물 양동이 / 물가나 우물에서 물을 떠 번지는 불을 꺼요 | b84 | 2026-10-21
-index.html | 첫 화면 숫자 줄 라벨 | 달성할 업적, 광고 | 허브 숫자 줄 교체(계정·설치 칸 삭제) | 2026-10-21
 - balance/index.html | 반 이름 · 반 이름: {0} · ✅ 선생님 · 결과 저장 (CSV) | educations | 2026-10-21
 - munjang/index.html | 반 이름 / 예: 3학년 2반 / 결과 저장 (CSV) / ✅ 선생님(teacher.js 제공) | educations | 2026-10-21
 - proverb/index.html | 반 이름 | 예: 3학년 2반 | 날짜 | 순위 | 이름 | 점수 | 푼 사건 수 | 전체 사건 수 | 결과 저장 (CSV) | 속담탐정 | 결과 | ✅ 선생님 | educations | 2026-10-21
