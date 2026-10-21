@@ -386,7 +386,7 @@ window.ceReload=function(){try{if(window.FFAuth&&FFAuth.setRoom)FFAuth.setRoom(n
 try{if(sessionStorage.getItem('ce_noIntro')){sessionStorage.removeItem('ce_noIntro');el.style.display='none';go();}}catch(e){}})();</script>
 <div id="app">
  <div id="lobby" class="screen">
-  <canvas id="lobbyBg"></canvas><canvas id="lobbyWar"></canvas><div id="cpTag">© 2026 Frenchfries777 · <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.ko" target="_blank" rel="noopener">CC BY-NC-ND 4.0</a></div><div id="verTag">v0.3 · build 74</div>
+  <canvas id="lobbyBg"></canvas><canvas id="lobbyWar"></canvas><div id="cpTag">© 2026 Frenchfries777 · <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.ko" target="_blank" rel="noopener">CC BY-NC-ND 4.0</a></div><div id="verTag">v0.3 · build 75</div>
   <header class="brand"><h1>Crown Envoy</h1><div class="sub"><i></i>DIPLOMACY · WAR · EMPIRE<i></i></div></header>
   <div id="lobbyRight">
    <div id="lobbyHome" class="modes">
@@ -1082,7 +1082,7 @@ function act_(pid,m){
   case 'cancel':{const to=+m.to;m={...m,to};const t=G.treaties.find(x=>x.type==='alliance'&&((x.a===pid&&x.b===to)||(x.a===to&&x.b===pid)));if(!t)return fail('해제할 동맹이 없습니다.');G.treaties=G.treaties.filter(x=>x!==t);log(`${pname(pid)}이(가) ${pname(m.to)}과(와)의 동맹을 해제했다.`,'dip');wlog('break',pid,+m.to,`${snm(pid)}이(가) ${snm(+m.to)}과(와)의 동맹을 해제했다`);hooks.toast(m.to,`${pname(pid)}이(가) 동맹을 해제했습니다.`);return ok('동맹을 해제했습니다.');}
   case 'flag':{const k=String(m.key||'');if(k&&!(typeof FLAGS!=='undefined'&&FLAGS[k]))return fail('없는 국기예요.');G.players[pid].flag=k||null;return ok('국기를 바꿨어요.');}
   case 'kname':{const nm=String(m.name||'').replace(/[<>&"]/g,'').trim().slice(0,16);if(!nm)return fail('이름을 입력하세요.');G.players[pid].kingdom=nm;return ok('나라 이름을 바꿨어요.');}
-  case 'policy':{const po=G.pol[pid];const v=Math.max(0,Math.min(2,Math.floor(+m.val)||0));if(!po||!['conscript','garrison','treaty'].includes(m.key))return fail('방침 오류');po[m.key]=v;return ok('방침을 바꿨습니다.');}
+  case 'policy':{const po=G.pol[pid];const dk=m.key in DLDEF;const v=Math.max(0,Math.min((m.key==='dlch'||m.key==='dlac')?1:2,Math.floor(+m.val)||0));if(!po||!(dk||['conscript','garrison','treaty'].includes(m.key)))return fail('방침 오류');po[m.key]=v;return ok('방침을 바꿨습니다.');}
   case 'undo':{if(!Host.canUndo(pid))return fail('되돌릴 수 없어요. (혼자 하는 대전의 계획 단계에서만 가능)');Host.snaps.pop();G=JSON.parse(Host.snaps[Host.snaps.length-1]);G.phaseEnd=Date.now()+(CFG.dur.plan||0)*1000;G.players.forEach(p=>{p.ready=!p.alive;});botsAct('plan');return ok(`${G.round}턴 계획 단계로 되돌렸어요.`);}
   case 'repeat':{if(G.phase!=='plan')return fail('계획 단계에서만 가능합니다.');const l=sanitizeOrders(pid,G.lastOrders[pid]||[]);if(!l.length)return fail('반복할 지난 명령이 없습니다.');G.orders[pid]=l;return ok(`지난 턴 명령 ${l.length}건을 불러왔습니다.`);}
   case 'clearorders':{if(G.phase!=='plan')return fail('계획 단계에서만 가능합니다.');G.orders[pid]=[];return ok('명령을 모두 지웠습니다.');}
@@ -1122,6 +1122,26 @@ const formOf=pid=>{const p=pid!=null&&G.players[pid];return p&&FORMS[p.form]?p.f
 const formWin=(a,b)=>!!(a&&b&&a!==b&&FORMS[a]&&FORMS[a].beats===b);
 function formEdge(A,D){if(!A.form||!D.form||A.form===D.form)return [0,0,null];const bo=s=>0.015+0.006*(s.gen?s.gen.lead||0:0);
   if(formWin(A.form,D.form)){const b=bo(A);return [b,-b*0.5,'att'];}if(formWin(D.form,A.form)){const b=bo(D);return [-b*0.5,b,'def'];}return [0,0,null];}
+/* ===== 장군 결투(일기토): 같은 전투에 양쪽 장군이 있으면 공격측이 청하고, 3합을 겨뤄 이긴 쪽 사기가 오른다 ===== */
+const DLDEF={dlch:1,dlac:1,dlm0:0,dlm1:1,dlm2:2};
+const dlGet=(pid,k)=>{const po=G.pol[pid]||{};return po[k]!=null?po[k]:DLDEF[k];};
+const DLMV=['강타','방어','빈틈'];
+function duelRun(pa,ga,pd,gd){const res={a:ga.id,d:gd.id,an:ga.name,dn:gd.name,pa,pd,r:[]};
+  const accept=G.players[pd].isBot?Math.random()<0.7:!!dlGet(pd,'dlac');if(!accept){res.rej=1;return res;}
+  const mv=(pid,i)=>G.players[pid].isBot?ri(0,2):dlGet(pid,'dlm'+i);
+  const base=(g,m,first)=>[g.atk,g.def,g.lead][m]+ri(0,2)+Math.min(2,Math.floor((g.xp||0)/10))+(g.trait==='ambush'&&first?2:0)+(g.trait==='ironwall'&&m===1?1:0);
+  const beats=(x,y)=>(x===0&&y===2)||(x===2&&y===1)||(x===1&&y===0);
+  let wa=0,wd=0;
+  for(let i=0;i<3;i++){const ma=mv(pa,i),md=mv(pd,i);let sa=base(ga,ma,i===0),sd=base(gd,md,i===0);if(beats(ma,md))sa+=2;else if(beats(md,ma))sd+=2;const w=sa>sd?'a':sd>sa?'d':null;if(w==='a')wa++;else if(w==='d')wd++;res.r.push({ma,md,sa,sd,w});}
+  let win=wa>wd?'att':wd>wa?'def':null;if(!win){const ta=ga.atk+ga.def+ga.lead,td=gd.atk+gd.def+gd.lead;win=ta>td?'att':td>ta?'def':(Math.random()<0.5?'att':'def');}
+  res.w=win;res.s=[wa,wd];return res;}
+function duelApply(du,A,D,ga,gd,tid){const tn=TDEF[tid].name,pa=du.pa,pd=du.pd;
+  if(du.rej){D.morale=Math.max(0,D.morale-5);log(`${tn} 전투: ${pname(pa)}의 ${ga.name}${jIga(ga.name)} 결투를 청했지만 ${pname(pd)}의 ${gd.name}${jIga(gd.name)} 거절했다. (수비군 사기 −5)`,'war');return;}
+  const attW=du.w==='att',w=attW?ga:gd,l=attW?gd:ga,wp=attW?pa:pd,lp=attW?pd:pa;
+  const bonus=8+(w.trait==='charisma'?3:0);if(attW){A.morale+=bonus;D.morale=Math.max(0,D.morale-12);}else{D.morale+=bonus;A.morale=Math.max(0,A.morale-12);}
+  genXP(w,2);const f=genFate(l,[0.1,0.2],wp);du.fate=f;
+  log(`${tn} 결투: ${pname(wp)}의 ${w.name}${jIga(w.name)} ${pname(lp)}의 ${l.name}을(를) ${du.s[0]===du.s[1]?'판정으로':du.s[attW?0:1]+'대'+du.s[attW?1:0]+'로'} 꺾었다. (승리 사기 +${bonus}, 패배 사기 −12)`,'war');
+  if(f!=='escaped'){if(l===ga)A.gen=null;else D.gen=null;}}
 function simulateBattle(A,D){
   const fe=formEdge(A,D);
   const F=[0.14,0.26,0.22,0.12];let a=A.troops,d=D.troops;const a0=a,d0=d;
@@ -1259,24 +1279,28 @@ function resolveRound(){
     if(old!=null&&T.gst){let gs=0;const gp=[];Object.keys(T.gst).forEach(k=>{if(T.gst[k]>0&&treatyBetween(+k,old,'alliance')){gs+=T.gst[k];gp.push(+k);}});if(gs>0){holder.troops+=gs;holder.guestSum=gs;holder.gpids=gp;}}
     const initialTroops=T.troops;T.hot=G.round;const battleRecs=[];
     for(const a of atts){
-      const aGen=a.gen;
+      let aGen=a.gen;
       if(holder.pid!=null&&holder.pid!==a.pid&&!holder.original&&treatyBetween(a.pid,holder.pid,'alliance')){holder.troops+=a.n;if(aGen)holder.gens.push(aGen);log(`${pname(a.pid)}이(가) 동맹 ${pname(holder.pid)}과(와) 함께 ${TDEF[tid].name}을(를) 차지했다.`,'war');continue;}
       if(holder.troops<=0){
         const rec={tid,att:a.pid,def:holder.pid,walkover:true,aStart:a.n,dStart:0,winner:'att',captured:true,aGen:aGen&&aGen.id};battleRecs.push(rec);
         holder.gens.forEach(g=>{const f=genFate(g,[0.1,0.5],a.pid);if(f==='escaped')escapees.push({g,tid});});
         log(`${pname(a.pid)}이(가) 무방비의 ${TDEF[tid].name}에 무혈 입성했다.`,'war');
         holder={pid:a.pid,troops:a.n,original:false,mix:a.mix,gens:aGen?[aGen]:[]};continue;}
-      const dGen=holder.gens.slice().sort((x,y)=>y.def-x.def)[0]||null;
+      let dGen=holder.gens.slice().sort((x,y)=>y.def-x.def)[0]||null;
       const SE=SEA_ERA[TK(G.tplId)]||SEA_ERA.def;const seaA=!!(a.srcs&&a.srcs.length&&a.srcs.every(s=>G.terr[s.from].sea));const pin=(a.srcs&&a.srcs.length>1)?Math.min(0.3,0.12*(a.srcs.length-1)):0;const A={pid:a.pid,troops:a.n,morale:armyMorale(a.pid,aGen),gen:aGen,sea:!!T.sea,vet:G.players[a.pid].vet||0,abonus:(T.sea?(((G.players[a.pid].navy||1)-1)*0.5):(seaA?-SE.land:0))+(T.sea?0:seasonAtk(T))+pin};
       const D={pid:holder.pid,troops:holder.troops,morale:armyMorale(holder.pid,dGen),gen:dGen,sea:!!T.sea,amb:!T.sea&&['forest','mountain'].includes(TDEF[T.id].terrain),vet:holder.pid!=null?(G.players[holder.pid].vet||0):0,bonus:T.sea?(holder.pid!=null?(((G.players[holder.pid].navy||1)-1)*0.5):0):defBonus(T,holder.original),mbonus:T.sea?0:(holder.original?fortMorale(T):0)};
       {xpGain(a.pid,a.mix);if(holder.pid!=null)xpGain(holder.pid,holder.mix||mixOfT(T));const cb=compBattle(a.mix,holder.mix||mixOfT(T),T,a.pid,holder.pid);A.abonus+=cb.atk;if(!T.sea)D.bonus+=cb.def;}
       if(!T.sea&&holder.pid!=null){A.form=formOf(a.pid);D.form=formOf(holder.pid);}
+      let duel=null;
+      if(!T.sea&&aGen&&dGen&&aGen.status==='ok'&&dGen.status==='ok'&&dGen.owner!==a.pid&&(G.players[a.pid].isBot?Math.random()<0.6:dlGet(a.pid,'dlch'))){
+        duel=duelRun(a.pid,aGen,dGen.owner,dGen);duelApply(duel,A,D,aGen,dGen,tid);
+        if(duel.fate&&duel.fate!=='escaped'){if(A.gen===null&&aGen.status!=='ok')aGen=null;if(D.gen===null&&dGen.status!=='ok'){holder.gens=holder.gens.filter(g=>g.id!==dGen.id);dGen=null;}}}
       const r=simulateBattle(A,D);
       if(r.fm){const pa=G.players[a.pid],pd=G.players[holder.pid];(pa.seenF=pa.seenF||{})[holder.pid]=r.fm.d;(pd.seenF=pd.seenF||{})[a.pid]=r.fm.a;if(r.fm.w)log(`${TDEF[tid].name} 전투: ${pname(a.pid)} ${FORMS[r.fm.a].ic}${FORMS[r.fm.a].n} vs ${pname(holder.pid)} ${FORMS[r.fm.d].ic}${FORMS[r.fm.d].n} — ${pname(r.fm.w==='att'?a.pid:holder.pid)} 쪽이 대형 우위`,'war');}
       {const lA=r.aStart-r.aSurv,lD=r.dStart-r.dSurv;if(G.wounded){const wa=Math.round(lA*(techHas(a.pid,'med')?0.45:0.3)),wd=Math.round(lD*((holder.pid!=null&&techHas(holder.pid,'med'))?0.45:0.3));if(wa>0)G.wounded.push({pid:a.pid,tid:(a.srcs&&a.srcs[0])?a.srcs[0].from:G.players[a.pid].cap,n:wa,due:G.round+2});if(wd>0&&holder.pid!=null)G.wounded.push({pid:holder.pid,tid,n:wd,due:G.round+2});}
        [[a.pid,lA/(r.aStart||1),r.winner==='att'],[holder.pid,lD/(r.dStart||1),r.winner==='def']].forEach(([pp,fr,w])=>{if(pp==null)return;const q=G.players[pp];const gn=Math.max(0,Math.min(0.8+Math.min(2.5,fr*6)+(w?0.8:0),4-(q.vg||0)));q.vg=(q.vg||0)+gn;q.vet=Math.min(100,(q.vet||0)+gn);});}
       const rec={tid,att:a.pid,def:holder.pid,aGen:aGen&&aGen.id,dGen:dGen&&dGen.id,aStart:r.aStart,dStart:r.dStart,phases:r.phases,winner:r.winner,aSurv:r.aSurv,dSurv:r.dSurv,pursuit:r.pursuit,mStart:r.mStart,bonus:r.bonus,pin:pin,sea:T.sea?1:0,mb:D.mbonus||0,gp:holder.gpids||null,trench:holder.original?(T.trench||0):0,captured:r.winner==='att',fates:[],aU:{c:(a.mix&&a.mix.c)||0,i:utier(a.pid,'i'),k:utier(a.pid,'c')},dU:{c:((holder.mix||mixOfT(T)).c)||0,i:holder.pid!=null?utier(holder.pid,'i'):0,k:holder.pid!=null?utier(holder.pid,'c'):0}};
-      battleRecs.push(rec);
+      battleRecs.push(rec);if(duel){rec.aGen=duel.a;rec.dGen=duel.d;rec.duel=duel;}
       {const win=r.winner==='att';const wg=win?aGen:dGen,lg=win?dGen:aGen;if(wg&&wg.status==='ok')genXP(wg,(win?r.aStart<r.dStart:r.dStart<r.aStart)?3:2);if(lg&&lg.status==='ok')genXP(lg,1);
         if(wg&&wg.status==='ok'&&(wg.md||0)<5){const wS=win?r.aStart:r.dStart,lS=win?r.dStart:r.aStart,lossL=lS-(win?r.dSurv:r.aSurv);let why=null;if(lS>=1500&&wS<lS*0.75&&lossL>=lS*0.4)why='열세를 뒤집은 승리';else if(lossL>=4000)why='대승';if(why){genMedal(wg,why);rec.medal=wg.id;}}}
       if(holder.original&&holder.guestSum>0){const ratio=r.dStart>0?r.dSurv/r.dStart:0;let gs2=0;Object.keys(T.gst).forEach(k=>{if(T.gst[k]>0&&treatyBetween(+k,old,'alliance')){T.gst[k]=Math.round(T.gst[k]*ratio);gs2+=T.gst[k];}});r.dSurv=Math.max(0,r.dSurv-gs2);holder.guestSum=0;}
@@ -5056,7 +5080,8 @@ const UI={
       if(att){const win=b.winner==='att';foes[b.def]=(foes[b.def]||0)+1;if(win){won++;took++;line=`⚔ ${tn(b.tid)} ${b.walkover?'무혈 점령':'공격 성공 — 점령'} (${pn(b.def)})`;pri=2;}else{lost++;line=`⚔ ${tn(b.tid)} 공격 실패 (${pn(b.def)})`;pri=1;}}
       else if(def){const win=b.winner==='def';foes[b.att]=(foes[b.att]||0)+1;if(win){won++;line=`🛡 ${tn(b.tid)} 방어 성공 — ${pn(b.att)} 격퇴`;pri=1;}else{lost++;lostT++;line=b.walkover?`🛡 ${tn(b.tid)} 무방비로 ${pn(b.att)}에게 점령당함`:`🛡 ${tn(b.tid)} 함락 — ${pn(b.att)}에게 빼앗김`;pri=3;}}
       else{const win=b.winner==='def';line=`🛡 ${tn(b.tid)} 동맹 ${pn(b.def)}과(와) 함께 방어 ${win?'성공':'실패'}`;pri=0;}
-      bl.push({line,pri});});
+      bl.push({line,pri});
+      if(b.duel&&(att||def)){const du=b.duel;const me2=att?'att':'def';const nm=x=>x||'';bl.push({line:du.rej?`🤺 ${tn(b.tid)} 결투 ${att?'신청 거절당함':'거절함'} (${nm(du.an)} / ${nm(du.dn)})`:`🤺 ${tn(b.tid)} 결투: ${nm(du.w==='att'?du.an:du.dn)} 승 (${du.s[0]}:${du.s[1]})${du.fate==='dead'?' · 상대 장군 전사':du.fate==='captured'?' · 상대 장군 포로':''}`,pri:du.w===me2&&!du.rej?2:1});}});
     bl.sort((x,y)=>y.pri-x.pri);
     const dpri=t=>/선전포고|동맹을 맺|해제|조약/.test(t)?2:1;const dl=D.map(t=>({t,p:dpri(t)})).sort((x,y)=>y.p-x.p);
     const items=bl.slice(0,6).map(x=>x.line).concat(dl.slice(0,5).map(x=>'🕊 '+x.t));
@@ -5225,12 +5250,15 @@ const UI={
     return h+'</div>';},
   polHTML(){
     const v=C.view,po=v.pol||{conscript:0,garrison:0,treaty:0};
-    const seg=(key,labels)=>`<div class="seg">${labels.map((l,i)=>`<button data-act="policy" data-key="${key}" data-val="${i}" class="${po[key]===i?'on':''}">${l}</button>`).join('')}</div>`;
+    const seg=(key,labels)=>{const cur=po[key]!=null?po[key]:(DLDEF[key]!=null?DLDEF[key]:0);return `<div class="seg">${labels.map((l,i)=>`<button data-act="policy" data-key="${key}" data-val="${i}" class="${cur===i?'on':''}">${l}</button>`).join('')}</div>`;};
     const on=[po.conscript,po.garrison,po.treaty].filter(x=>x>0).length;
     return `<details class="acc" data-acc="pol" ${C.acc.pol?'open':''}><summary>상시 방침<small>${on?on+'개 켜짐':'자동화'}</small></summary><div class="accb">
       <div class="pol"><div><b>자동 징집</b><small>계획 단계가 시작될 때 금고의 일부로 병력을 보충해요. 위협이 큰 지역에 배치합니다.</small></div>${seg('conscript',['끔','보통','총동원'])}</div>
       <div class="pol"><div><b>방어 태세</b><small>위협이 있는 지역으로 병력 이동 명령을 미리 채워 줘요. 직접 고치거나 지울 수 있어요.</small></div>${seg('garrison',['끔','수도·위협','국경 균형'])}</div>
       <div class="pol"><div><b>조약 자동 수락</b><small>신뢰도 50 이상인 상대의 제안만 받아요.</small></div>${seg('treaty',['끔','불가침','모두'])}</div>
+      <div class="pol"><div><b>장군 결투 신청</b><small>내 장군이 공격할 때 상대 장군이 있으면 결투를 청해요. 이기면 우리 사기 +8, 상대 −12예요. 지면 장군이 다치거나 포로·전사할 수 있어요.</small></div>${seg('dlch',['끔','켬'])}</div>
+      <div class="pol"><div><b>결투 신청 받기</b><small>상대가 결투를 청하면 받아요. 거절하면 수비군 사기가 5 내려가요.</small></div>${seg('dlac',['거절','받기'])}</div>
+      <div class="pol"><div><b>결투 3합 전술</b><small>강타는 빈틈을, 빈틈은 방어를, 방어는 강타를 이겨요. 합마다 낼 수를 미리 정해요.</small></div><div style="display:flex;flex-direction:column;gap:4px">${[0,1,2].map(i=>`<div class="row" style="gap:6px;align-items:center;flex:none"><span class="sm muted" style="flex:none">${i+1}합</span>${seg('dlm'+i,DLMV)}</div>`).join('')}</div></div>
       <div class="sm muted" style="margin-top:8px">방침은 다음 계획 단계부터 적용됩니다.</div></div></details>`;},
   tcWin(v){if(window.tcWin)window.tcWin(v);},
   tcHTML(){
