@@ -143,6 +143,9 @@ function paintTabs(kind){
   else L='<a class="on" href="'+(query?'#':hashNow())+'">'+esc(kind==='main'?t('main'):t('special'))+'</a>';
   $('#tabsL').innerHTML=L; $('#tabsR').innerHTML=R;
 }
+var TI='https://frenchfries777mc.github.io/tools/icons/ai/';
+var ICO={'hub/lounge':['img/lounge/patchnotes.svg','img/lounge/gallery.svg','img/lounge/music.svg','img/lounge/prototypes.svg','img/lounge/github.svg','img/lounge/ai.svg'],'hub/music-room':['img/lounge/music.svg'],'tools/ff777-models':[TI+'tarius.svg',TI+'lectus.svg',TI+'premus.svg']};
+function icoStrip(g,s){ var a=ICO[g+'/'+s]; return a?'<div class="ico">'+a.map(function(u){ return '<img src="'+u+'" alt="" width="56" height="56" loading="lazy">'; }).join('')+'</div>':''; }
 function head(title,cls){ return '<div class="ph"><h1>'+esc(title)+'</h1><span class="lg"></span></div>'; }
 function putLang(){ var s=$('#page .lg'); if(s&&langSel) s.appendChild(langSel); }
 function table(ps){ return '<table class="wt"><tr><th>'+esc(t('colP'))+'</th><th>'+esc(t('colD'))+'</th></tr>'+ps.map(function(p){ return '<tr><td><a href="#'+p.game+'/'+esc(p.slug)+'">'+esc(titleOf(p))+'</a></td><td>'+esc(descOf(p))+'</td></tr>'; }).join('')+'</table>'; }
@@ -171,7 +174,7 @@ async function paint(){
   if(r.heads.length>1){ var toc='<div class="toc"><h4>'+esc(t('toc'))+'</h4><ol>'+r.heads.map(function(h){ return '<li><a href="#" data-h="'+h[0]+'">'+esc(h[1])+'</a></li>'; }).join('')+'</ol></div>', k=body.indexOf('<h3');
     body=k<0?body+toc:body.slice(0,k)+toc+body.slice(k); }
   A.className='page g-'+game;
-  A.innerHTML=head(s.title)+'<div class="hat">'+t('hatG','<b>'+esc(gameName(game))+'</b>')+'</div>'+note+
+  A.innerHTML=head(s.title)+'<div class="hat">'+t('hatG','<b>'+esc(gameName(game))+'</b>')+'</div>'+icoStrip(game,slug)+note+
     '<div class="txt">'+ibox(s.title,r.info)+body+'</div><div class="meta"><span>'+esc(who(p.updated_by))+' · '+esc(t('edited',ago(p.updated_at)))+'</span></div>'+
     '<div class="pn">'+(i>0?'<a href="#'+game+'/'+esc(ps[i-1].slug)+'"><small>← '+esc(t('pv'))+'</small>'+esc(titleOf(ps[i-1]))+'</a>':'')+(i<ps.length-1?'<a class="nx" href="#'+game+'/'+esc(ps[i+1].slug)+'"><small>'+esc(t('nx'))+' →</small>'+esc(titleOf(ps[i+1]))+'</a>':'')+'</div>';
   putLang();
