@@ -2,6 +2,14 @@
  "notes": [
   {
    "date": "2026-10-22",
+   "build": "v0.2 build 44",
+   "title": "신어 표현 수정",
+   "items": [
+    "신어 표현 수정: plusplus를 doubleplus로"
+   ]
+  },
+  {
+   "date": "2026-10-22",
    "build": "v0.2 build 43",
    "title": "은하 표준어 추가",
    "items": [
