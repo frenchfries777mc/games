@@ -23,8 +23,9 @@ function snapshot(l){ var s={lang:l}; KEYS.forEach(function(e){ s[e.k]=read(e); 
 /* Aurebesh (au) is not a language of its own: it is English drawn in the Aurebesh letters. Picking it stores English everywhere plus a flag. */
 var AU='ff.script';
 function auOn(){ try{ return localStorage.getItem(AU)==='au'; }catch(x){ return false; } }
-function set(l){ if(l==='au'){ try{ localStorage.setItem(AU,'au'); }catch(x){} l='en'; } else if(ok(l)){ try{ localStorage.removeItem(AU); }catch(x){} }
-  if(!ok(l)) return; KEYS.forEach(function(e){ write(e,l); }); snapshot(l); }
+function put(l){ if(!ok(l)) return; KEYS.forEach(function(e){ write(e,l); }); snapshot(l); }
+function set(l){ if(l==='au'){ try{ localStorage.setItem(AU,'au'); }catch(x){} l='en'; } else if(ok(l)){ try{ localStorage.removeItem(AU); }catch(x){} }      // a person's own choice in a picker
+  put(l); }
 function sync(){
   var snap=null; try{ snap=JSON.parse(localStorage.getItem(SNAP)||'null'); }catch(x){}
   var cur=KEYS.map(function(e){ return read(e); }), lang=null;
@@ -32,7 +33,8 @@ function sync(){
     for(var i=0;i<KEYS.length;i++) if(cur[i] && cur[i]!==snap[KEYS[i].k]){ lang=cur[i]; break; }     // a page changed its language since the last sync: that one wins
     if(!lang) lang=snap.lang;
   } else { for(var j=0;j<cur.length;j++) if(cur[j]){ lang=cur[j]; break; } }                        // first time: the first language found (Stickseum/hub first)
-  if(lang) set(lang);
+  if(lang==='au'){ try{ localStorage.setItem(AU,'au'); }catch(x){} lang='en'; }      // a picker that stored au before calling FFLang.set
+  if(lang) put(lang);
   return lang;
 }
 var now=sync(); if(now==='au') now='en';
