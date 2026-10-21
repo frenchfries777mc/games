@@ -105,3 +105,5 @@ index.html | 랭킹 표 | 최장 생존 일수, 생존 순위는 서버 준비 �
 - crownenvoy/patchnotes.json | b79 1줄 | 2026-10-22
 - isleport/patchnotes.json | v0.2 build 43 1줄 (게임 안 NOTES는 ko/en만) | 2026-10-22
 - 언어 이름 "Standard Galactic"은 은하 표준어 글꼴로만 보여서 번역하지 않음
+- prototypes/vowkeep/ (js/data.js, js/main.js, index.html) | 구역 이름 9개(무너진 계단, 해골 병영, 무기고, 버려진 예배당, 물에 잠긴 회랑, 성물실, 근위대 무덤, 단장의 길, 기사단장의 방)와 구역 첫 입장 문장, 상자·제단·모닥불 안내, "건너뛰기"·"건너뛰기 기다리는 중 (n/m)", 모닥불 부활 문구, 깨어남·저장·전멸 알림, 업적 문구 2개 변경 | 한국어만 있음 | Vowkeep b4 | 2026-10-22
+- patchnotes.json | "Vowkeep 거대한 지하 맵과 이야기 건너뛰기" 6줄 | Vowkeep b4 | 2026-10-22
