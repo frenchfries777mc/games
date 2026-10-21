@@ -78,3 +78,4 @@ index.html | 첫 화면 숫자 줄 라벨 | 계정 하나로 모든 게임, 필�
 - beaconfall/patchnotes.json·i18n.js | N["v0.3 b84"].items (en·es·fr·de·ja 칸에 한국어 임시 입력) | 불은 6~12초 타며 나무와 나무로 된 건물·가구를 태우고 재를 남김, 불에 닿으면 화상을 입음 (내화 물약·화산석 갑옷으로 막을 수 있음) | b84 | 2026-10-21
 - beaconfall/patchnotes.json·i18n.js | N["v0.3 b84"].items (en·es·fr·de·ja 칸에 한국어 임시 입력) | 양동이(판자 4개 + 막대기 1개) 추가: 물가나 우물에서 물을 떠 불 옆에서 사용하면 근처 불을 끔 (사용 키로 사용) | b84 | 2026-10-21
 - beaconfall/BEACONFALL-v0.3.html | ITEMS.bucket.name · ITEMS.bucket_w.name · 양동이 레시피 note (게임 안 문자열, I18N_D에 없음 = 한국어 표시) | 양동이 / 물 양동이 / 물가나 우물에서 물을 떠 번지는 불을 꺼요 | b84 | 2026-10-21
+index.html | 첫 화면 숫자 줄 라벨 | 달성할 업적, 광고 | 허브 숫자 줄 교체(계정·설치 칸 삭제) | 2026-10-21
