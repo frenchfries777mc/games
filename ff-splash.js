@@ -2,7 +2,9 @@
    들어올 때마다 무작위로 하나. 사이트 언어(FFLang)에 맞는 문구만 고르고, 한국어 전용 문구는 한국어일 때만 나와요.
    각 사이트가 <script src="https://frenchfries777mc.github.io/games/ff-splash.js" defer></script> 로 불러요. */
 (function(){
-var L=['ko','en','es','fr','de','ja','zh','pt','ru','tr','nw'];
+var L=['ko','en','es','fr','de','ja','zh','pt','ru','tr','nw','gk'];
+/* 번역기 한국어 (gk): the Korean lines in stiff machine-translation style */
+var GK={"혼자 만듬!":"홀로 만듬!","한 인간과 한 AI가 만듬!":"한 인간과 한 AI가 만듬!","안녕하세요!":"안녕하십시오!","숙제는 하셨나요?":"숙제는 하셨습니까?","피아노를 던지면 어떻게 피아노?":"피아노를 던지면 어떻게 피아노?","차이나에서 고백하면 차이나?":"차이나에서 고백하면 차이나?","그거 아세요? 저도 몰라요!":"그거 아십시오? 저도 몰릅니다!","와! 샌즈!":"와! 샌즈!","조선천지에 777% 일어날 일!":"조선천지에 777% 일어날 일!","옛날 옛적에, 호랑이가 클라우드에 자아를 백업하는 시절에...":"옛날 옛적에, 호랑이가 클라우드에 자아를 백업하는 시절에...","로딩중... 로딩중학교 1학년 6반 16번!":"적재중... 적재중학교 1학년 6반 16번!","애덤 스미siu의 보이지 않는 텍스트!":"애덤 스미siu의 보이지 않는 텍스트!","그대들은 총게임을 원하는가?":"그대들은 총놀이를 원하는가?","당신은 이 문구를 보았습니다!":"당신은 이 문구를 보았습니다!","사과해요! 난 키위할테니...":"사과합니다! 난 키위할테니...","나쁜사람만 보이는 글씨!":"나쁜사람만 보이는 편지씨!"};
 /* Newspeak (nw): only these lines from Orwell's 1984, nothing else */
 var NW=['BIG BROTHER IS WATCHING YOU!','WAR IS PEACE','FREEDOM IS SLAVERY','IGNORANCE IS STRENGTH','2 + 2 = 5','You have been sent to Room 101.','This post never existed.','Vaporized!','Unperson!','Report to Thinkpol!','Ministry of Truth: Corrections','The telescreen is watching you.',
  'We have always been at war with Eurasia!',{t:'Down with Big Brother!',swap:'Thoughtcrime detected.'},'Down with Emmanuel Goldstein!'];
@@ -37,6 +39,7 @@ function pick(l){
   P.forEach(function(p){
     if(typeof p==='string') out.push({t:p});
     else if(p.t) out.push(p);
+    else if(l==='gk') out.push({t:GK[p[0]]||p[0]});
     else if(p.length===1){ if(l==='ko') out.push({t:p[0]}); }
     else out.push({t:p[i]||p[1]});
   });
