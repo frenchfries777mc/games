@@ -268,6 +268,11 @@
     '모자': ['hat', 'sombrero', 'chapeau', 'Hut', '帽子'],
     '안경': ['glasses', 'gafas', 'lunettes', 'Brille', 'メガネ'],
     /* 빌드 25 추가분 */
+    /* 빌드 42 추가분 */
+    "트램펄린": ["Trampoline", "Cama elástica", "Trampoline", "Trampolin", "トランポリン"],
+    "댄스 플로어": ["Dance floor", "Pista de baile", "Piste de danse", "Tanzfläche", "ダンスフロア"],
+    "골!": ["Goal!", "¡Gol!", "But !", "Tor!", "ゴール！"],
+    "움직이기: WASD · 화면 누르기 / 점프: 스페이스 / 던지기: K / 이모트: 1~5 · 공을 차서 골대에 넣고, 트램펄린에서 뛰고, 댄스 플로어에서 춤춰요": ["Move: WASD or tap the stage / Jump: Space / Throw: K / Emotes: 1-5 · Kick the ball into the goals, bounce on the trampoline, dance on the dance floor", "Mover: WASD o tocar el escenario / Saltar: Espacio / Lanzar: K / Emotes: 1-5 · Mete el balón en la portería, bota en la cama elástica y baila en la pista", "Bouger : WASD ou toucher la scène / Sauter : Espace / Lancer : K / Émotes : 1-5 · Mets le ballon dans les buts, rebondis sur le trampoline et danse sur la piste", "Bewegen: WASD oder Bühne antippen / Springen: Leertaste / Werfen: K / Emotes: 1-5 · Schieß den Ball ins Tor, hüpf auf dem Trampolin und tanze auf der Tanzfläche", "移動: WASD かステージをタップ / ジャンプ: スペース / 投げる: K / エモート: 1~5 ・ ボールをゴールに蹴り入れ、トランポリンで跳ね、ダンスフロアで踊ろう"],
     /* 빌드 41 추가분 */
     "쇼핑카트 레이스": ["Shopping Cart Race", "Carrera de carritos", "Course de caddies", "Einkaufswagen-Rennen", "ショッピングカートレース"],
     "쇼핑카트를 타고 트랙을 4바퀴 달려요. 코너에서 드리프트하면 속도가 붙고, 부딪히면 물건이 쏟아져요.": ["Ride a shopping cart four laps around the track. Drifting through corners builds speed, and crashes spill your goods.", "Corre cuatro vueltas en un carrito de compra. Derrapar en las curvas da velocidad y los choques derraman tus compras.", "Fais quatre tours de piste en caddie. Dériver dans les virages donne de la vitesse et les chocs renversent tes courses.", "Fahr vier Runden im Einkaufswagen. Driften in Kurven gibt Tempo, und bei Crashes fällt die Ware raus.", "ショッピングカートでコースを4周。コーナーでドリフトすると加速し、ぶつかると荷物がこぼれる。"],
@@ -1330,7 +1335,9 @@ body.playing #emoBar{display:flex}
    <div class="row"><input id="codeIn" maxlength="5" placeholder="방 코드" autocomplete="off"><button class="pb dark" id="joinBtn" style="flex:0 0 auto">들어가기</button></div>
    <div class="msg" id="homeMsg"></div>
   </aside>
-  <template id="patchnotes"><details class="notes" open><summary>패치노트 · v0.1 (build 41)</summary>
+  <template id="patchnotes"><details class="notes" open><summary>패치노트 · v0.1 (build 42)</summary>
+   <b>2026-10-21 · v0.1 build 42 · 대기실 놀 거리</b>
+   <ul><li>대기실에 공 차기와 양쪽 골대를 추가했어요. 공에 부딪히면 굴러가고, 골대에 넣으면 이름 옆에 골 수가 붙어요</li><li>대기실에 트램펄린을 추가했어요. 올라가면 높이 튀어 올라요</li><li>대기실에 댄스 플로어를 추가했어요. 위에서 가만히 서 있으면 춤을 춰요</li></ul>
    <b>2026-10-21 · v0.1 build 41 · 미니게임 쇼핑카트 레이스</b>
    <ul><li>미니게임 추가: 쇼핑카트 레이스 (카트로 트랙을 4바퀴 달리고, 코너에서 드리프트하면 부스트가 붙어요. 부딪히면 물건이 쏟아지고 쏟아진 물건을 밟으면 미끄러져요)</li><li>이제 28개 미니게임</li></ul>
    <b>2026-10-21 · v0.1 build 40 · 공개방 / 비공개방</b>
@@ -1411,7 +1418,7 @@ body.playing #emoBar{display:flex}
    <ul><li>무너지는 발판 칸 수 대폭 증가 (19×10)와 용암 동굴 맵</li><li>10개 맵 전부 새로 그림 (관중석, 야자수 섬, 링, 정원 미로, 서커스, 우노 테이블 등)</li><li>글자 대신 아이콘·말풍선·이펙트로 표현 (무기, 아이템, 카드 효과, 시작 안내)</li><li>타격·폭발·물보라 효과와 화면 흔들림 추가</li></ul>
    <b>2026-10-19 · v0.1 build 1 · 첫 시험판</b>
    <ul><li>마네킹 미니게임 10개 추가 (장애물 달리기, 섬 밀치기, 싸우기, 병맛 미로, 체스 대난투, 폭탄 돌리기, 병맛 우노, 쇼윈도 얼음땡, 무너지는 발판, 컨베이어 서바이벌)</li><li>방 코드로 최대 8명 멀티플레이, 빈자리는 봇으로 채우기</li><li>판마다 10개 중 5개를 무작위로 골라 점수를 합산</li><li>PC 키보드와 휴대폰 터치 조작 지원</li></ul></details></template>
-  <p class="foot">2~8명 · 판마다 28개 미니게임 중 7개 · 프로토타입 v0.1 b41 · <a href="../">← 프로토타입 목록</a></p>
+  <p class="foot">2~8명 · 판마다 28개 미니게임 중 7개 · 프로토타입 v0.1 b42 · <a href="../">← 프로토타입 목록</a></p>
   <p class="foot"><span class="ff-copy">© 2026 Frenchfries777 · <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.ko" target="_blank" rel="noopener">CC BY-NC-ND 4.0</a></span></p>
  </div>
 </section>
@@ -1423,7 +1430,7 @@ body.playing #emoBar{display:flex}
    <div class="lobTop"><button class="pb dark" id="lobBack">← 나가기</button><h2>대기실</h2><b id="lobCount"></b></div>
    <div class="lobBot">
     <div class="lobCtl"><div id="lobEmo"></div><button class="pb" id="lobJump" type="button">점프</button><button class="pb" id="lobThrow" type="button">던지기</button></div>
-    <div class="lobHint">움직이기: WASD · 화면 누르기 / 점프: 스페이스 / 던지기: K / 이모트: 1~5</div>
+    <div class="lobHint">움직이기: WASD · 화면 누르기 / 점프: 스페이스 / 던지기: K / 이모트: 1~5 · 공을 차서 골대에 넣고, 트램펄린에서 뛰고, 댄스 플로어에서 춤춰요</div>
    </div>
   </div>
   <aside class="lobSide">
@@ -6672,10 +6679,11 @@ function goHome() { destroyPeer(); G.role = null; G.phase = 'idle'; G.st = null;
 /* ===== 대기실 놀이터: 기다리는 동안 마네킹을 움직이고 이모트를 보내고 소품을 던져요 =====
    방장이 모두의 위치를 계산해서 15번/초 보내고, 참가자는 입력만 보내요. */
 var LOB = { w: 900, h: 480, y0: 190, y1: 450, view: { s: 1, ox: 0, oy: 0, cw: 1, ch: 1 }, tgt: null, a: 0, b: 0, lastC: {}, vis: {}, snap: null, props: [], t0: 0 };
+var LOB_PAD = { x: 140, y: 400, rx: 62, ry: 24 }, LOB_DANCE = { x: 760, y: 395, rx: 88, ry: 34 }, LOB_GOAL = [290, 390];
 var LOB_PROPS = ['tomato', 'banana', 'melon', 'baguette', 'pan'];
 function lobReset() { G.lob = null; LOB.vis = {}; LOB.snap = null; LOB.tgt = null; LOB.lastC = {}; }
 function lobEnsure() {
-  if (!G.lob) G.lob = { pl: {}, pr: [] };
+  if (!G.lob) G.lob = { pl: {}, pr: [], ball: { x: 450, y: 320, vx: 0, vy: 0, last: '', rs: 0 }, goals: {}, gn: 0 };
   var L = G.lob, ids = {};
   G.players.forEach(function (p, i) {
     ids[p.id] = 1;
@@ -6705,6 +6713,9 @@ function lobStep(dt) {
     var mv = Math.abs(q.vx) + Math.abs(q.vy) > 20; if (Math.abs(q.vx) > 12) q.face = q.vx > 0 ? 1 : -1;
     q.mvv = lerp(q.mvv, mv ? 1 : 0, 0.25); q.walk += dt * 11 * q.mvv;
     if (jump && q.z <= 0 && q.hit <= 0) { q.vz = 330; L.ev = (L.ev || []); L.ev.push('boing'); }
+    q.tj = Math.max(0, (q.tj || 0) - dt);
+    if (q.z <= 2 && q.vz <= 0 && q.hit <= 0 && q.tj <= 0 && lobIn(q, LOB_PAD)) { q.vz = 600; q.tj = 0.35; (L.ev = L.ev || []).push('boing'); }
+    q.dn = q.z <= 0 && !mv && lobIn(q, LOB_DANCE) ? 1 : 0;
     q.vz -= 900 * dt; q.z = Math.max(0, q.z + q.vz * dt); if (q.z <= 0) q.vz = 0;
     q.cd -= dt;
     if (thr && q.cd <= 0 && q.hit <= 0 && L.pr.length < 14) { q.cd = 0.55; L.pr.push({ x: q.x + q.face * 18, y: q.y, z: 34, vx: q.face * 300, vz: 140, k: Math.floor(Math.random() * LOB_PROPS.length), by: p.id, t: 0, b: 0 }); }
@@ -6719,13 +6730,26 @@ function lobStep(dt) {
     }
     if (gone) L.pr.splice(i, 1);
   }
+  /* 공 차기: 마네킹이 부딪히면 굴러가고, 양쪽 골대에 넣으면 점수예요 */
+  var B = L.ball;
+  if (B.rs > 0) { B.rs -= dt; if (B.rs <= 0) { B.x = 450; B.y = 320; B.vx = B.vy = 0; } }
+  else {
+    for (var kb in L.pl) { var pq = L.pl[kb], bx = B.x - pq.x, by = (B.y - pq.y) / 0.75, bd = Math.hypot(bx, by); if (bd < 30 && pq.z < 46 && pq.hit <= 0) { var ps2 = Math.hypot(pq.vx, pq.vy) + 150, nx = bx / (bd || 1), ny = by / (bd || 1) * 0.75; B.vx = nx * ps2 * 1.5; B.vy = ny * ps2 * 1.5; B.last = kb; B.x = pq.x + nx * 31; (L.ev = L.ev || []).push('boing'); } }
+    B.x += B.vx * dt; B.y += B.vy * dt; var fr = Math.pow(0.35, dt); B.vx *= fr; B.vy *= fr;
+    if (B.y < LOB.y0) { B.y = LOB.y0; B.vy = Math.abs(B.vy) * 0.8; } if (B.y > LOB.y1) { B.y = LOB.y1; B.vy = -Math.abs(B.vy) * 0.8; }
+    var inGoal = B.y > LOB_GOAL[0] && B.y < LOB_GOAL[1];
+    if (B.x < 16) { if (inGoal) lobGoal(L, B); else { B.x = 16; B.vx = Math.abs(B.vx) * 0.8; } }
+    if (B.x > LOB.w - 16) { if (inGoal) lobGoal(L, B); else { B.x = LOB.w - 16; B.vx = -Math.abs(B.vx) * 0.8; } }
+  }
 }
+function lobGoal(L, B) { B.rs = 1.1; B.vx = B.vy = 0; L.gn++; if (B.last) L.goals[B.last] = (L.goals[B.last] | 0) + 1; (L.ev = L.ev || []).push('win'); }
+function lobIn(q, o) { var dx = (q.x - o.x) / o.rx, dy = (q.y - o.y) / o.ry; return dx * dx + dy * dy < 1; }
 function lobTick() {
   G.frame++; lobStep(1 / 60);
   var L = G.lob; if (!L) return;
   if (G.frame % 4 === 0) {
-    var d = { pl: {}, pr: L.pr.map(function (o) { return [Math.round(o.x), Math.round(o.y), Math.round(o.z), o.k]; }), ev: L.ev || [] };
-    for (var id in L.pl) { var q = L.pl[id]; d.pl[id] = [Math.round(q.x), Math.round(q.y), q.face, +q.walk.toFixed(2), +q.mvv.toFixed(2), Math.round(q.z), q.hit > 0 ? 1 : 0]; }
+    var d = { b: [Math.round(L.ball.x), Math.round(L.ball.y)], g: L.goals, gn: L.gn, pl: {}, pr: L.pr.map(function (o) { return [Math.round(o.x), Math.round(o.y), Math.round(o.z), o.k]; }), ev: L.ev || [] };
+    for (var id in L.pl) { var q = L.pl[id]; d.pl[id] = [Math.round(q.x), Math.round(q.y), q.face, +q.walk.toFixed(2), +q.mvv.toFixed(2), Math.round(q.z), q.hit > 0 ? 1 : 0, q.dn | 0]; }
     for (var k in G.conns) try { G.conns[k].send({ t: 'ls', d: d }); } catch (e) { }
     lobEvents(d.ev); L.ev = [];
     LOB.snap = d;
@@ -6745,7 +6769,7 @@ function lobRaw() {
   r.ac += LOB.a; r.bc += LOB.b; return r;
 }
 function lobTag(c, v) {
-  var nm = v.p.name + (v.p.id === G.me ? ' ★' : ''), ny = v.y - v.z - 118;
+  var nm = v.p.name + (v.p.id === G.me ? ' ★' : '') + (v.gl ? '  ⚽' + v.gl : ''), ny = v.y - v.z - 118;
   c.save(); c.font = '800 15px ' + FONT; c.textAlign = 'center'; c.lineWidth = 4; c.strokeStyle = 'rgba(0,0,0,.65)'; c.strokeText(nm, v.x, ny); c.fillStyle = COLORS[v.p.color]; c.fillText(nm, v.x, ny); c.restore();
 }
 function lobDraw() {
@@ -6761,18 +6785,35 @@ function lobDraw() {
   var vh = 22 * dpr + 6; c.fillStyle = '#a3202f'; c.fillRect(0, 0, cw, vh); for (var sx = 0; sx < cw + 30 * dpr; sx += 30 * dpr) { c.beginPath(); c.arc(sx + 15 * dpr, vh, 15 * dpr, 0, 3.1416); c.fill(); }
   for (var i = 0; i < 5; i++) { var a = Math.sin(t * 0.9 + i * 2) * 0.3; c.save(); c.translate(cw * (0.12 + i * 0.19), -10); c.rotate(a); var gr = c.createLinearGradient(0, 0, 0, fy); gr.addColorStop(0, 'rgba(255,240,180,.26)'); gr.addColorStop(1, 'rgba(255,240,180,0)'); c.fillStyle = gr; c.beginPath(); c.moveTo(-10, 0); c.lineTo(10, 0); c.lineTo(70 * sc, fy); c.lineTo(-70 * sc, fy); c.fill(); c.restore(); }
   c.setTransform(sc, 0, 0, sc, ox, oy);
+  /* 바닥 놀거리: 트램펄린, 댄스 플로어, 골대 */
+  (function () {
+    var P = LOB_PAD; c.fillStyle = 'rgba(0,0,0,.25)'; c.beginPath(); c.ellipse(P.x, P.y + 6, P.rx + 6, P.ry + 6, 0, 0, 6.283); c.fill();
+    c.fillStyle = '#3a6fd8'; c.beginPath(); c.ellipse(P.x, P.y, P.rx + 4, P.ry + 4, 0, 0, 6.283); c.fill();
+    c.fillStyle = '#16203a'; c.beginPath(); c.ellipse(P.x, P.y, P.rx - 6, P.ry - 4, 0, 0, 6.283); c.fill();
+    c.strokeStyle = 'rgba(255,255,255,.35)'; c.lineWidth = 2; c.beginPath(); c.ellipse(P.x, P.y, P.rx - 22, P.ry - 12, 0, 0, 6.283); c.stroke();
+    var D = LOB_DANCE; c.save(); c.beginPath(); c.ellipse(D.x, D.y, D.rx, D.ry, 0, 0, 6.283); c.clip();
+    for (var gx = -4; gx < 4; gx++) for (var gy = -2; gy < 2; gy++) { var hue = ((gx + gy) & 1) ? (t * 90 + gx * 40) % 360 : (t * 90 + 180 + gy * 40) % 360; c.fillStyle = 'hsl(' + hue + ',70%,' + (((gx + gy + Math.floor(t * 3)) & 1) ? 58 : 38) + '%)'; c.fillRect(D.x + gx * 44, D.y + gy * 34, 44, 34); }
+    c.restore(); c.strokeStyle = 'rgba(255,255,255,.6)'; c.lineWidth = 3; c.beginPath(); c.ellipse(D.x, D.y, D.rx, D.ry, 0, 0, 6.283); c.stroke();
+    c.font = '800 13px ' + FONT; c.textAlign = 'center'; c.lineWidth = 3; c.strokeStyle = 'rgba(0,0,0,.6)'; c.fillStyle = '#fff';
+    c.strokeText('트램펄린', P.x, P.y + P.ry + 22); c.fillText('트램펄린', P.x, P.y + P.ry + 22);
+    c.strokeText('댄스 플로어', D.x, D.y + D.ry + 22); c.fillText('댄스 플로어', D.x, D.y + D.ry + 22);
+    [[0, 1], [LOB.w, -1]].forEach(function (g) { var gx0 = g[0], d = g[1]; c.fillStyle = 'rgba(255,255,255,.18)'; c.fillRect(d > 0 ? 0 : LOB.w - 30, LOB_GOAL[0], 30, LOB_GOAL[1] - LOB_GOAL[0]); c.strokeStyle = '#f4f1e8'; c.lineWidth = 4; c.strokeRect(d > 0 ? 2 : LOB.w - 32, LOB_GOAL[0], 30, LOB_GOAL[1] - LOB_GOAL[0]); c.lineWidth = 1; c.strokeStyle = 'rgba(255,255,255,.35)'; for (var nx = 0; nx < 30; nx += 7) { c.beginPath(); c.moveTo((d > 0 ? 2 : LOB.w - 32) + nx, LOB_GOAL[0]); c.lineTo((d > 0 ? 2 : LOB.w - 32) + nx, LOB_GOAL[1]); c.stroke(); } });
+  })();
   var ps = G.role === 'guest' ? (G.meta ? G.meta.players : []) : G.players, snap = LOB.snap, items = [];
   if (snap) {
     ps.forEach(function (p) {
       var s = snap.pl[p.id]; if (!s) return; var v = LOB.vis[p.id];
       if (!v) v = LOB.vis[p.id] = { x: s[0], y: s[1], z: s[5] };
-      v.x = lerp(v.x, s[0], 0.35); v.y = lerp(v.y, s[1], 0.35); v.z = lerp(v.z, s[5], 0.4); v.face = s[2]; v.walk = s[3]; v.mvv = s[4]; v.hit = s[6]; v.p = p;
+      v.x = lerp(v.x, s[0], 0.35); v.y = lerp(v.y, s[1], 0.35); v.z = lerp(v.z, s[5], 0.4); v.face = s[2]; v.walk = s[3]; v.mvv = s[4]; v.hit = s[6]; v.dn = s[7] | 0; v.p = p; v.gl = (snap.g && snap.g[p.id]) | 0;
     });
     for (var id in LOB.vis) if (!snap.pl[id]) delete LOB.vis[id];
-    for (var id2 in LOB.vis) (function (v) { items.push({ y: v.y, d: function () { drawDummy(c, v.x, v.y, { s: 1.6, face: v.face, walk: v.walk, mv: v.mvv, z: v.z, color: COLORS[v.p.color], pose: v.hit ? 'fall' : 'stand', t: t }); lobTag(c, v);  } }); })(LOB.vis[id2]);
+    for (var id2 in LOB.vis) (function (v) { items.push({ y: v.y, d: function () { drawDummy(c, v.x, v.y, { s: 1.6, face: v.face, walk: v.walk, mv: v.mvv, z: v.z, color: COLORS[v.p.color], pose: v.hit ? 'fall' : (v.dn ? 'dance' : 'stand'), t: t }); lobTag(c, v);  } }); })(LOB.vis[id2]);
+    if (snap.b) items.push({ y: snap.b[1], d: function () { var bx = snap.b[0], by = snap.b[1]; c.fillStyle = 'rgba(0,0,0,.25)'; c.beginPath(); c.ellipse(bx, by + 2, 13, 5, 0, 0, 6.283); c.fill(); c.fillStyle = '#fff'; c.beginPath(); c.arc(bx, by - 12, 13, 0, 6.283); c.fill(); c.strokeStyle = '#222'; c.lineWidth = 2; c.stroke(); c.fillStyle = '#222'; c.beginPath(); c.arc(bx, by - 12, 5, 0, 6.283); c.fill(); for (var a = 0; a < 5; a++) { c.beginPath(); c.arc(bx + Math.cos(a * 1.2566) * 11, by - 12 + Math.sin(a * 1.2566) * 11, 2.2, 0, 6.283); c.fill(); } } });
+    if (snap.gn !== LOB.gseen) { if (LOB.gseen !== undefined) LOB.gt = t; LOB.gseen = snap.gn; }
     snap.pr.forEach(function (o) { items.push({ y: o[1] + 1, d: function () { c.fillStyle = 'rgba(0,0,0,.2)'; c.beginPath(); c.ellipse(o[0], o[1], 9, 4, 0, 0, 6.283); c.fill(); icon(c, LOB_PROPS[o[3]], o[0], o[1] - o[2] - 8, 26); } }); });
   }
   items.sort(function (a, b) { return a.y - b.y; }).forEach(function (it) { it.d(); });
+  if (LOB.gt && t - LOB.gt < 1.4) { var ga = 1 - (t - LOB.gt) / 1.4; c.save(); c.globalAlpha = Math.min(1, ga * 2); c.font = '900 64px ' + FONT; c.textAlign = 'center'; c.lineWidth = 8; c.strokeStyle = 'rgba(0,0,0,.6)'; c.fillStyle = '#ffd23f'; c.translate(LOB.w / 2, 120 - (1 - ga) * 20); c.strokeText('골!', 0, 0); c.fillText('골!', 0, 0); c.restore(); }
   if (LOB.tgt) { c.strokeStyle = 'rgba(255,255,255,.55)'; c.lineWidth = 2; c.beginPath(); c.ellipse(LOB.tgt.x, LOB.tgt.y, 12 + Math.sin(t * 8) * 2, 6, 0, 0, 6.283); c.stroke(); }
 }
 (function () {
