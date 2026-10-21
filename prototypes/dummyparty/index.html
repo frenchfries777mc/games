@@ -268,6 +268,20 @@
     '모자': ['hat', 'sombrero', 'chapeau', 'Hut', '帽子'],
     '안경': ['glasses', 'gafas', 'lunettes', 'Brille', 'メガネ'],
     /* 빌드 25 추가분 */
+    /* 빌드 40 추가분 */
+    "공개방": ["Public room", "Sala pública", "Salon public", "Öffentlicher Raum", "公開ルーム"],
+    "비공개방": ["Private room", "Sala privada", "Salon privé", "Privater Raum", "非公開ルーム"],
+    "공개방 목록": ["Public rooms", "Salas públicas", "Salons publics", "Öffentliche Räume", "公開ルーム一覧"],
+    "새로고침": ["Refresh", "Actualizar", "Actualiser", "Aktualisieren", "更新"],
+    "비공개방 코드로 들어가기": ["Join a private room with a code", "Entrar a una sala privada con código", "Rejoindre un salon privé avec un code", "Mit Code einem privaten Raum beitreten", "コードで非公開ルームに入る"],
+    "지금 열린 공개방이 없어요.": ["No public rooms are open right now.", "No hay salas públicas abiertas ahora.", "Aucun salon public ouvert pour le moment.", "Gerade sind keine öffentlichen Räume offen.", "今、開いている公開ルームはありません。"],
+    "방 목록을 불러오지 못했어요.": ["Couldn't load the room list.", "No se pudo cargar la lista de salas.", "Impossible de charger la liste des salons.", "Die Raumliste konnte nicht geladen werden.", "ルーム一覧を読み込めませんでした。"],
+    "로그인하면 방 목록이 보여요.": ["Log in to see the room list.", "Inicia sesión para ver la lista de salas.", "Connecte-toi pour voir la liste des salons.", "Melde dich an, um die Raumliste zu sehen.", "ログインするとルーム一覧が見られます。"],
+    "공개방 · 방 코드": ["Public room · Room code", "Sala pública · Código", "Salon public · Code", "Öffentlicher Raum · Code", "公開ルーム・ルームコード"],
+    "비공개방 · 방 코드": ["Private room · Room code", "Sala privada · Código", "Salon privé · Code", "Privater Raum · Code", "非公開ルーム・ルームコード"],
+    "공개방으로 바꾸기": ["Make public", "Hacer pública", "Rendre public", "Öffentlich machen", "公開にする"],
+    "비공개방으로 바꾸기": ["Make private", "Hacer privada", "Rendre privé", "Privat machen", "非公開にする"],
+    "공개방 목록 등록에 실패했어요. 코드로는 들어올 수 있어요.": ["Couldn't list the room publicly. Players can still join with the code.", "No se pudo publicar la sala. Aún se puede entrar con el código.", "Impossible d'afficher le salon dans la liste. On peut encore le rejoindre avec le code.", "Der Raum konnte nicht gelistet werden. Mit dem Code kann man trotzdem beitreten.", "公開一覧に載せられませんでした。コードでは入れます。"],
     /* 빌드 39 추가분 */
     "용암 차오르기": ["Rising Lava", "Lava en ascenso", "Lave montante", "Steigende Lava", "せり上がる溶岩"],
     "바닥에 용암이 점점 차올라요. 위쪽 발판으로 올라가서 가장 오래 버텨요. 밀쳐서 방해할 수도 있어요.": ["Lava slowly fills the floor. Climb the platforms and survive the longest. You can shove rivals too.", "La lava va llenando el suelo. Sube por las plataformas y aguanta lo máximo. También puedes empujar a los rivales.", "La lave monte peu à peu. Grimpe sur les plateformes et tiens le plus longtemps. Tu peux aussi pousser les rivaux.", "Lava füllt langsam den Boden. Klettere auf die Plattformen und überlebe am längsten. Rivalen kannst du auch schubsen.", "床に溶岩がじわじわ迫る。足場を登って一番長く生き残ろう。ライバルを押して邪魔もできる。"],
@@ -1082,6 +1096,14 @@ button{font:inherit;cursor:pointer}
 .panel input:focus{border-color:var(--gold)}
 .row{display:flex;gap:8px;margin-top:10px}
 .row>*{flex:1}
+.seg{display:flex;gap:0;border-radius:12px;overflow:hidden;border:2px solid var(--line);background:#fff;margin-top:-4px}.seg button{flex:1;border:0;background:#fff;padding:8px 4px;font:inherit;font-weight:800;font-size:14px;color:var(--mu);cursor:pointer}.seg button.on{background:var(--gold);color:#3a2410}
+#roomList{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px;max-height:150px;overflow:auto}
+#roomList li{background:#fff;border-radius:12px;padding:5px 8px;display:flex;align-items:center;gap:8px;font-weight:800;font-size:14px;color:var(--ink);text-align:left}
+#roomList .rn{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#roomList em{font-style:normal;font-size:12px;color:var(--mu)}
+#roomList .pb{width:auto!important;font-size:13px!important;padding:6px 10px!important}
+#roomList li.rEmpty{justify-content:center;color:var(--mu);font-size:13px;background:rgba(255,255,255,.7)}
+.rref{border:0;background:none;font:inherit;font-size:12px;font-weight:800;color:var(--mu);text-decoration:underline;cursor:pointer;margin-left:auto}
 .or{display:flex;align-items:center;gap:10px;color:var(--mu);font-size:13px;margin:16px 0 10px}
 .or:before,.or:after{content:"";flex:1;height:1px;background:var(--line)}
 #codeIn{text-transform:uppercase;letter-spacing:4px;text-align:center;font-weight:800}
@@ -1282,13 +1304,18 @@ body.playing #emoBar{display:flex}
    <button class="pb ghost" id="offBtn" style="display:none">오프라인으로 하기</button>
    <input id="nameIn" type="hidden">
    <button class="pb gold" id="hostBtn">방 만들기</button>
+   <div class="seg" id="pubSeg"><button type="button" data-p="1">공개방</button><button type="button" data-p="0" class="on">비공개방</button></div>
    <button class="pb" id="soloBtn">혼자 하기</button>
    <button class="pb dark" id="shopBtn">상점</button>
-   <div class="or">친구 방에 들어가기</div>
+   <div class="or">공개방 목록 <button type="button" class="rref" id="roomRef">새로고침</button></div>
+   <ul id="roomList"></ul>
+   <div class="or">비공개방 코드로 들어가기</div>
    <div class="row"><input id="codeIn" maxlength="5" placeholder="방 코드" autocomplete="off"><button class="pb dark" id="joinBtn" style="flex:0 0 auto">들어가기</button></div>
    <div class="msg" id="homeMsg"></div>
   </aside>
-  <template id="patchnotes"><details class="notes" open><summary>패치노트 · v0.1 (build 39)</summary>
+  <template id="patchnotes"><details class="notes" open><summary>패치노트 · v0.1 (build 40)</summary>
+   <b>2026-10-21 · v0.1 build 40 · 공개방 / 비공개방</b>
+   <ul><li>방을 만들 때 공개방과 비공개방을 고를 수 있어요. 공개방은 처음 화면의 방 목록에 올라가고 아무나 눌러서 들어올 수 있어요. 비공개방은 방 코드로만 들어와요</li><li>대기실에서 방장이 공개방 ↔ 비공개방을 바꿀 수 있어요</li></ul>
    <b>2026-10-21 · v0.1 build 39 · 미니게임 용암 차오르기</b>
    <ul><li>미니게임 추가: 용암 차오르기 (바닥에 용암이 차오르고, 위쪽 발판으로 점프해 가장 오래 버티기. 밀치기로 방해도 가능해요)</li><li>이제 27개 미니게임</li></ul>
    <b>2026-10-21 · v0.1 build 38 · 결과표 위치</b>
@@ -1365,7 +1392,7 @@ body.playing #emoBar{display:flex}
    <ul><li>무너지는 발판 칸 수 대폭 증가 (19×10)와 용암 동굴 맵</li><li>10개 맵 전부 새로 그림 (관중석, 야자수 섬, 링, 정원 미로, 서커스, 우노 테이블 등)</li><li>글자 대신 아이콘·말풍선·이펙트로 표현 (무기, 아이템, 카드 효과, 시작 안내)</li><li>타격·폭발·물보라 효과와 화면 흔들림 추가</li></ul>
    <b>2026-10-19 · v0.1 build 1 · 첫 시험판</b>
    <ul><li>마네킹 미니게임 10개 추가 (장애물 달리기, 섬 밀치기, 싸우기, 병맛 미로, 체스 대난투, 폭탄 돌리기, 병맛 우노, 쇼윈도 얼음땡, 무너지는 발판, 컨베이어 서바이벌)</li><li>방 코드로 최대 8명 멀티플레이, 빈자리는 봇으로 채우기</li><li>판마다 10개 중 5개를 무작위로 골라 점수를 합산</li><li>PC 키보드와 휴대폰 터치 조작 지원</li></ul></details></template>
-  <p class="foot">2~8명 · 판마다 27개 미니게임 중 7개 · 프로토타입 v0.1 b39 · <a href="../">← 프로토타입 목록</a></p>
+  <p class="foot">2~8명 · 판마다 27개 미니게임 중 7개 · 프로토타입 v0.1 b40 · <a href="../">← 프로토타입 목록</a></p>
   <p class="foot"><span class="ff-copy">© 2026 Frenchfries777 · <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.ko" target="_blank" rel="noopener">CC BY-NC-ND 4.0</a></span></p>
  </div>
 </section>
@@ -1381,7 +1408,7 @@ body.playing #emoBar{display:flex}
    </div>
   </div>
   <aside class="lobSide">
-   <div id="lobCodeBox"><small>방 코드</small><div id="lobCode"></div><button class="pb" id="copyBtn" style="margin-top:6px;font-size:13px;padding:7px 12px">초대 링크 복사</button></div>
+   <div id="lobCodeBox"><small id="lobCodeLab">방 코드</small><div id="lobCode"></div><button class="pb" id="copyBtn" style="margin-top:6px;font-size:13px;padding:7px 12px">초대 링크 복사</button><button class="pb" id="pubTog" type="button" style="margin-top:6px;font-size:13px;padding:7px 12px"></button></div>
    <ul id="lobList"></ul>
    <div class="lobSet" id="lobHost">
     <div id="botRow" style="display:none"><span>봇</span><button class="pb" id="botMinus" type="button">−</button><b id="botN"></b><button class="pb" id="botPlus" type="button">+</button></div>
@@ -5881,7 +5908,7 @@ function peerOpts() {
 }
 function newCode() { var s = ''; for (var i = 0; i < 5; i++) s += CODE_CH[Math.floor(Math.random() * CODE_CH.length)]; return s; }
 function hubRoom(on) { try { if (window.FFAuth && FFAuth.setRoom) FFAuth.setRoom(on && G.code ? { game: 'dummyparty', code: G.code, path: 'prototypes/dummyparty/index.html' } : null); } catch (e) { } }
-function destroyPeer() { G._hr = null; hubRoom(false); if (G.peer) { try { G.peer.destroy(); } catch (e) { } } G.peer = null; G.conn = null; G.conns = {}; }
+function destroyPeer() { G._hr = null; hubRoom(false); if (G.role === 'host' && typeof pubClose === 'function') pubClose(); if (G.peer) { try { G.peer.destroy(); } catch (e) { } } G.peer = null; G.conn = null; G.conns = {}; }
 function homeMsg(t, info) { var m = $('homeMsg'); m.textContent = t || ''; m.className = 'msg' + (info ? ' info' : ''); }
 function busy(on) { ['hostBtn', 'joinBtn', 'soloBtn'].forEach(function (id) { $(id).disabled = on; }); }
 
@@ -6008,7 +6035,7 @@ function migBecomeHost() {
   destroyPeer(); G.role = 'host'; G.gen = M.gen;
   var p = new Peer(newId, peerOpts()); G.peer = p;
   p.on('open', function () {
-    G.mig = null; G.conns = {}; G.raw = {}; G.lastC = {}; G.frame = 0; G._hr = G.code;
+    G.mig = null; G.conns = {}; G.raw = {}; G.lastC = {}; G.frame = 0; G._hr = G.code; G.pub = !!m.pub; setTimeout(function () { pubSync(true); }, 800);
     G.players = m.players.filter(function (q) { return !(m.phase === 'lobby' && q.id === m.hostId); }).map(function (q) {
       var o = { id: q.id, name: q.name, color: q.color, bot: q.bot, online: true, score: q.score | 0, wins: q.wins | 0, h: q.h | 0, g: q.g | 0, f: q.f | 0, d: q.d | 0 };
       if (q.id !== G.me && !q.bot) { o.lost = true; o.rn = q.name; o.bot = true; if (m.phase !== 'lobby') o.name = q.name + ' (봇)'; }
@@ -6128,6 +6155,9 @@ function renderLobby() {
   var host = G.role !== 'guest';
   $('lobCode').textContent = G.code || '혼자 하기';
   $('lobCodeBox').style.display = G.code ? '' : 'none';
+  $('lobCodeLab').textContent = G.pub ? '공개방 · 방 코드' : '비공개방 · 방 코드';
+  $('pubTog').style.display = host ? '' : 'none'; $('pubTog').textContent = G.pub ? '비공개방으로 바꾸기' : '공개방으로 바꾸기';
+  if (host) pubSync(false);
   var ps = host ? G.players : (G.meta ? G.meta.players : []);
   $('lobList').innerHTML = ps.map(function (p) {
     return '<li><canvas class="mini" data-c="' + p.color + '" width="44" height="56"></canvas><span style="color:' + COLORS[p.color] + '">' + esc(p.name) + '</span>' +
@@ -6149,7 +6179,7 @@ function metaObj() {
   return {
     phase: G.phase, round: G.round, order: G.order, mg: G.mgId, tl: G.tl,
     players: G.players.map(function (p) { return { id: p.id, name: p.name, color: p.color, bot: p.bot, score: p.score, wins: p.wins, h: p.h || 0, g: p.g || 0, f: p.f || 0, d: p.d || 0 }; }),
-    boost: G.boost, hostId: G.me, gen: G.gen | 0, awards: G.awards || null, iv: G.iv || null,
+    boost: G.boost, hostId: G.me, gen: G.gen | 0, awards: G.awards || null, iv: G.iv || null, pub: G.pub ? 1 : 0,
     ranking: G.ranking, gained: G.gained
   };
 }
@@ -6161,7 +6191,7 @@ function sendMeta() {
 }
 function applyMeta(m) {
   var prev = G.meta ? G.meta.phase : null, prevMg = G.meta ? G.meta.mg + ':' + G.meta.round : '';
-  G.meta = m; G.phase = m.phase; syncDeco(m);
+  G.meta = m; G.phase = m.phase; G.pub = !!m.pub; syncDeco(m);
   if (m.mg + ':' + m.round !== prevMg) { G.snapPrev = G.snapCur = null; }
   if (m.phase === 'lobby') { if (prev !== 'lobby') show('sLobby'); renderLobby(); }
   else { if (!$('sGame').classList.contains('on')) show('sGame'); }
@@ -6585,6 +6615,71 @@ function lobDraw() {
 (function () {
   function loop() { requestAnimationFrame(loop); if ($('sLobby').classList.contains('on') && G.phase === 'lobby') lobDraw(); }
   requestAnimationFrame(loop);
+})();
+
+/* ===== 공개방 / 비공개방: 공개방은 방 목록에 올라가고, 비공개방은 코드로만 들어와요 =====
+   서버에는 방 코드·방장 이름·인원만 올려요 (supabase-dp-rooms.sql). 연결은 그대로 PeerJS 방 코드예요. */
+var PUB = { code: null, warned: 0, key: '', list: null, err: '', t: 0 };
+function pubClient() { try { return window.FFAuth && FFAuth.user() ? FFAuth.client() : null; } catch (e) { return null; } }
+function pubFail() { PUB.err = 'x'; if (!PUB.warned) { PUB.warned = 1; try { toast('공개방 목록 등록에 실패했어요. 코드로는 들어올 수 있어요.'); } catch (e) { } } }
+function pubSync(force) {
+  if (G.role !== 'host' || !G.pub || !G.code || !G.peer) return;
+  var c = pubClient(); if (!c) return;
+  var humans = G.players.filter(function (p) { return !p.bot; }).length, open = G.phase === 'lobby', key = G.code + ':' + humans + ':' + open;
+  if (!force && key === PUB.key && performance.now() - PUB.t < 8000) return;
+  PUB.key = key; PUB.t = performance.now(); PUB.code = G.code;
+  try { c.rpc('dp_room_publish', { p_code: G.code, p_host: String(G.name || '').slice(0, 20), p_players: humans, p_max: MAXP, p_open: open }).then(function (r) { if (r && r.error) pubFail(); else PUB.warned = 0; }, pubFail); } catch (e) { pubFail(); }
+}
+function pubClose() {
+  var code = PUB.code; PUB.code = null; PUB.key = ''; if (!code) return;
+  var c = pubClient(); if (!c) return;
+  try { c.rpc('dp_room_close', { p_code: code }).then(function () { }, function () { }); } catch (e) { }
+}
+function pubSet(on) {
+  G.pub = !!on; try { localStorage.setItem('dpPub', on ? '1' : '0'); } catch (e) { }
+  if (!on) pubClose(); else pubSync(true);
+}
+setInterval(function () { pubSync(true); }, 8000);
+/* 방 목록 (처음 화면) */
+function roomsLoad() {
+  var box = $('roomList'); if (!box) return;
+  var c = pubClient();
+  if (!c) { PUB.list = null; PUB.err = 'login'; roomsRender(); return; }
+  try {
+    c.rpc('dp_room_list').then(function (r) {
+      if (r && r.error) { PUB.err = 'x'; PUB.list = null; } else { PUB.err = ''; PUB.list = (r && r.data) || []; }
+      roomsRender();
+    }, function () { PUB.err = 'x'; PUB.list = null; roomsRender(); });
+  } catch (e) { PUB.err = 'x'; roomsRender(); }
+}
+function roomsRender() {
+  var box = $('roomList'); if (!box) return;
+  var tr = function (t) { return (window.DP_T && window.DP_LANG && DP_LANG !== 'ko') ? DP_T(t) : t; };
+  if (PUB.err === 'login') { box.innerHTML = '<li class="rEmpty">' + tr('로그인하면 방 목록이 보여요.') + '</li>'; return; }
+  if (PUB.err) { box.innerHTML = '<li class="rEmpty">' + tr('방 목록을 불러오지 못했어요.') + '</li>'; return; }
+  var l = PUB.list || [];
+  if (!l.length) { box.innerHTML = '<li class="rEmpty">' + tr('지금 열린 공개방이 없어요.') + '</li>'; return; }
+  box.innerHTML = l.map(function (r) {
+    return '<li><span class="rn">' + esc(r.host_name) + '</span><em>' + (r.players | 0) + '/' + (r.max_players | 0) + '</em><button type="button" class="pb dark" data-c="' + esc(r.code) + '">' + tr('들어가기') + '</button></li>';
+  }).join('');
+  Array.prototype.forEach.call(box.querySelectorAll('button[data-c]'), function (b) {
+    b.onclick = function () { $('codeIn').value = b.getAttribute('data-c'); $('joinBtn').click(); };
+  });
+}
+function pubSegPaint() {
+  Array.prototype.forEach.call(document.querySelectorAll('#pubSeg button'), function (b) { b.classList.toggle('on', (b.getAttribute('data-p') === '1') === !!G.pub); });
+}
+(function () {
+  try { G.pub = localStorage.getItem('dpPub') === '1'; } catch (e) { G.pub = false; }
+  function init() {
+    Array.prototype.forEach.call(document.querySelectorAll('#pubSeg button'), function (b) { b.onclick = function () { G.pub = b.getAttribute('data-p') === '1'; try { localStorage.setItem('dpPub', G.pub ? '1' : '0'); } catch (e) { } pubSegPaint(); }; });
+    pubSegPaint();
+    $('roomRef').onclick = roomsLoad;
+    $('pubTog').onclick = function () { if (G.role !== 'host') return; pubSet(!G.pub); sendMeta(); renderLobby(); };
+    roomsLoad(); setInterval(function () { if ($('sHome').classList.contains('on') && !document.hidden) roomsLoad(); }, 6000);
+    setTimeout(roomsLoad, 2500);
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init); else init();
 })();
 
 /* ===== Dummy Party 시작: 버튼 연결, 첫 화면 그림 ===== */
