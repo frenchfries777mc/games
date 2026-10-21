@@ -17,11 +17,13 @@ function ago(iso){ var t=Date.parse(iso); if(!t) return ''; var m=Math.round((Da
 /* ===================== 뉴스: 세 게임과 허브의 패치노트 중 가장 최근 6개 ===================== */
 var NEWS_N=6, news=[], hubNotes=[], notesBy={};
 var NSRC={hub:{name:'허브',cls:'g0',site:'./'},stickseum:GAMES.stickseum,crownenvoy:GAMES.crownenvoy,beaconfall:GAMES.beaconfall};
+var NEWL=['zh','pt','ru','tr','nw'].indexOf(LANG)>=0;   /* the newer languages fall back to English, not Korean */
 function trNote(n, N){
   if(LANG==='ko') return {title:n.title, items:n.items||[]};
+  if(NEWL&&n.tr&&!n.tr[LANG]&&n.tr.en) return {title:n.tr.en.title||n.title, items:n.tr.en.items||n.items||[]};
   if(n.tr&&n.tr[LANG]) return {title:n.tr[LANG].title||n.title, items:n.tr[LANG].items||n.items||[]};
   if(N){ var b=String(n.build||''), k=[b, b.replace(/^v/,''), 'v'+b.replace(/^v/,'')], e=null; for(var i=0;i<k.length&&!e;i++) e=N[k[i]];
-    if(e) return {title:(e.title&&e.title[LANG])||n.title, items:(n.items||[]).map(function(x,j){ var it=e.items&&e.items[j]; return (it&&it[LANG])||x; })}; }
+    if(e) return {title:(e.title&&(e.title[LANG]||NEWL&&e.title.en))||n.title, items:(n.items||[]).map(function(x,j){ var it=e.items&&e.items[j]; return (it&&(it[LANG]||NEWL&&it.en))||x; })}; }
   return {title:n.title, items:n.items||[]};
 }
 function siteDict(g){ return fetch(GAMES[g].site+'i18n.js',{cache:'no-cache'}).then(function(r){ return r.ok?r.text():''; }).then(function(t){
@@ -364,7 +366,7 @@ async function feed(){
   if(!ev.length){ p.innerHTML='<div class="cm-e">최근 2주 동안 친구 소식이 없어요.</div>'; return; }
   p.innerHTML='<div class="fd-list"></div>'; var L=p.querySelector('.fd-list');
   ev.forEach(function(x){ var d=document.createElement('div'); d.className='fd'; var ic, body;
-    if(x.kind==='ach'){ var a=(cats[x.game]||{})[x.ids[0]], nm=a?((a.n&&(a.n[LANG]||a.n.ko))||a.id):x.ids[0]; ic=a&&a.icon||'🏆';
+    if(x.kind==='ach'){ var a=(cats[x.game]||{})[x.ids[0]], nm=a?((a.n&&(a.n[LANG]||(NEWL?a.n.en:a.n.ko)))||a.id):x.ids[0]; ic=a&&a.icon||'🏆';
       body=feedTag(x.game)+' <span>도전과제 달성</span> <b data-notr>'+esc(nm)+'</b>'+(x.ids.length>1?' <span class="fd-n">'+esc(F('외 {0}개',x.ids.length-1))+'</span>':''); }
     else if(x.kind==='play'){ ic='🎮'; body=feedTag(x.game)+' <span>처음 시작했어요</span>'; }
     else { ic='📝'; body='<span>새 글</span> '+feedTag(x.post.game)+' <a class="fd-p" href="?post='+x.post.id+'" data-notr>'+esc(x.post.title)+'</a>'; }
@@ -790,7 +792,7 @@ function splain(b){ return String(b||'').replace(/^::.*$/gm,'').replace(/\*\*/g,
 function ssnip(b,q){ var p=splain(b), i=p.toLowerCase().indexOf(q.toLowerCase()); if(i<0) return smark(p.slice(0,90),''); var a=Math.max(0,i-30); return (a?'…':'')+smark(p.slice(a,i+q.length+60),q); }
 async function sxLoad(){
   if(SX.wiki||!sb) return;
-  var trP=LANG==='ko'?Promise.resolve({}):fetch(ROOT+'wiki/tr/'+LANG+'.json').then(function(r){ return r.ok?r.json():{}; }).catch(function(){ return {}; });
+  var trP=LANG==='ko'?Promise.resolve({}):fetch(ROOT+'wiki/tr/'+(NEWL?'en':LANG)+'.json').then(function(r){ return r.ok?r.json():{}; }).catch(function(){ return {}; });
   var r=await sb.from('ff_wiki').select('game,slug,title,body').limit(500); SX.tr=await trP;
   SX.wiki=((r&&r.data)||[]).map(function(p){ var x=SX.tr[p.game+'/'+p.slug], ok=x&&x.t&&x.h===sfnv(p.title+'\n'+p.body); return {game:p.game, slug:p.slug, title:ok?x.t:p.title, body:ok?x.b:p.body, ko:p.title+'\n'+p.body}; });
 }

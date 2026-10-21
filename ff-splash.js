@@ -2,39 +2,43 @@
    들어올 때마다 무작위로 하나. 사이트 언어(FFLang)에 맞는 문구만 고르고, 한국어 전용 문구는 한국어일 때만 나와요.
    각 사이트가 <script src="https://frenchfries777mc.github.io/games/ff-splash.js" defer></script> 로 불러요. */
 (function(){
-var L=['ko','en','es','fr','de','ja'];
-/* [ko, en, es, fr, de, ja] — 문자열 하나면 모든 언어에서 그대로, ko만 있으면 한국어 전용 */
+var L=['ko','en','es','fr','de','ja','zh','pt','ru','tr','nw'];
+/* Newspeak (nw): only these lines from Orwell's 1984, nothing else */
+var NW=['BIG BROTHER IS WATCHING YOU!','WAR IS PEACE','FREEDOM IS SLAVERY','IGNORANCE IS STRENGTH','2 + 2 = 5','You have been sent to Room 101.','This post never existed.','Vaporized!','Unperson!','Report to Thinkpol!','Ministry of Truth: Corrections','The telescreen is watching you.',
+ 'We have always been at war with Eurasia!',{t:'Down with Big Brother!',swap:'Thoughtcrime detected.'},'Down with Emmanuel Goldstein!'];
+/* [ko, en, es, fr, de, ja, zh, pt, ru, tr] (missing languages show the English line) — 문자열 하나면 모든 언어에서 그대로, ko만 있으면 한국어 전용 */
 var P=[
- ['혼자 만듬!','Made solo!','¡Hecho en solitario!','Fait en solo !','Allein gemacht!','ひとりで作った！'],
+ ['혼자 만듬!','Made solo!','¡Hecho en solitario!','Fait en solo !','Allein gemacht!','ひとりで作った！','一个人做的！','Feito sozinho!','Сделано в одиночку!','Tek başıma yaptım!'],
  {t:'A whole new world arabic version!',href:'https://www.youtube.com/watch?v=-bWqcKzbQBY'},
- ['한 인간과 한 AI가 만듬!','Made by one human and one AI!','¡Hecho por un humano y una IA!','Fait par un humain et une IA !','Von einem Menschen und einer KI gemacht!','人間ひとりとAIひとりで作った！'],
+ ['한 인간과 한 AI가 만듬!','Made by one human and one AI!','¡Hecho por un humano y una IA!','Fait par un humain et une IA !','Von einem Menschen und einer KI gemacht!','人間ひとりとAIひとりで作った！','由一个人类和一个 AI 制作！','Feito por um humano e uma IA!','Сделано одним человеком и одним ИИ!','Bir insan ve bir yapay zekâ yaptı!'],
  'Claude AI by Anthropic!',
- ['안녕하세요!','Hello!','¡Hola!','Bonjour !','Hallo!','こんにちは！'],
+ ['안녕하세요!','Hello!','¡Hola!','Bonjour !','Hallo!','こんにちは！','你好！','Olá!','Привет!','Merhaba!'],
  'Reduce... Reuse...  ecyc e...',
  '67!',
  '169.9!',
- ['숙제는 하셨나요?','Did you do your homework?','¿Hiciste la tarea?','Tu as fait tes devoirs ?','Hast du deine Hausaufgaben gemacht?','宿題はやった？'],
- ['피아노를 던지면 어떻게 피아노?','Threw a piano? That fell flat!','¿Un piano volando? ¡No tiene ni pies ni teclas!','Lancer un piano ? Faut avoir du doigté !','Ein Klavier werfen? Dafür braucht man Flügel!','ピアノを投げたら…おっと！音（おと）！'],
- ['차이나에서 고백하면 차이나?','Confess your love in Chile? Expect a chilly answer!','¿Te declaras en Perú? Te dicen: ¡Pe-rú no!','Se déclarer au Népal ? « Népal possible ! »','Liebeserklärung in Norwegen? Antwort: Nein-wegen!','チャイナで告白したら、ふられちゃいな？'],
- ['그거 아세요? 저도 몰라요!','Did you know? Me neither!','¿Sabías qué? ¡Yo tampoco!','Tu savais ? Moi non plus !','Wusstest du schon? Ich auch nicht!','知ってました？私も知りません！'],
+ ['숙제는 하셨나요?','Did you do your homework?','¿Hiciste la tarea?','Tu as fait tes devoirs ?','Hast du deine Hausaufgaben gemacht?','宿題はやった？','作业写完了吗？','Fez a lição de casa?','Домашку сделал?','Ödevini yaptın mı?'],
+ ['피아노를 던지면 어떻게 피아노?','Threw a piano? That fell flat!','¿Un piano volando? ¡No tiene ni pies ni teclas!','Lancer un piano ? Faut avoir du doigté !','Ein Klavier werfen? Dafür braucht man Flügel!','ピアノを投げたら…おっと！音（おと）！','钢琴扔出去？那可真是“弹”出去了！','Jogou um piano? Que nota baixa!','Бросил рояль? Ну это уже не в ту тональность!','Piyano mu fırlattın? Notası düştü!'],
+ ['차이나에서 고백하면 차이나?','Confess your love in Chile? Expect a chilly answer!','¿Te declaras en Perú? Te dicen: ¡Pe-rú no!','Se déclarer au Népal ? « Népal possible ! »','Liebeserklärung in Norwegen? Antwort: Nein-wegen!','チャイナで告白したら、ふられちゃいな？','在冰岛表白？等来的回答冷冰冰！','Declarar amor no Peru? Vai ouvir: Peru, não!','Признался в любви в Чили? Ответ будет прохладным — чилл!','Mısır’da aşkını mı ilan ettin? Cevap: Patlamış mısır!'],
+ ['그거 아세요? 저도 몰라요!','Did you know? Me neither!','¿Sabías qué? ¡Yo tampoco!','Tu savais ? Moi non plus !','Wusstest du schon? Ich auch nicht!','知ってました？私も知りません！','你知道吗？我也不知道！','Sabia? Eu também não!','А вы знали? Я тоже нет!','Biliyor muydun? Ben de bilmiyordum!'],
  ['와! 샌즈!'],
  ['조선천지에 777% 일어날 일!'],
  ['옛날 옛적에, 호랑이가 클라우드에 자아를 백업하는 시절에...'],
  ['로딩중... 로딩중학교 1학년 6반 16번!'],
  ['애덤 스미siu의 보이지 않는 텍스트!'],
- ['그대들은 총게임을 원하는가?','Are you ready for the ultimate game?','¿Estáis listos para el juego definitivo?','Êtes-vous prêts pour le jeu ultime ?','Seid ihr bereit für das ultimative Spiel?','究極のゲームを望むか？'],
- ['당신은 이 문구를 보았습니다!','You have seen this text!','¡Has visto este texto!','Vous avez vu ce texte !','Du hast diesen Text gesehen!','あなたはこの文を見ました！'],
+ ['그대들은 총게임을 원하는가?','Are you ready for the ultimate game?','¿Estáis listos para el juego definitivo?','Êtes-vous prêts pour le jeu ultime ?','Seid ihr bereit für das ultimative Spiel?','究極のゲームを望むか？','你们渴望终极游戏吗？','Vocês estão prontos para o jogo definitivo?','Готовы ли вы к главной игре?','Nihai oyuna hazır mısınız?'],
+ ['당신은 이 문구를 보았습니다!','You have seen this text!','¡Has visto este texto!','Vous avez vu ce texte !','Du hast diesen Text gesehen!','あなたはこの文を見ました！','你看到了这句话！','Você viu este texto!','Вы увидели эту надпись!','Bu yazıyı gördün!'],
  ['사과해요! 난 키위할테니...'],
- ['나쁜사람만 보이는 글씨!','Only bad people can see this text!','¡Solo la gente mala puede ver este texto!','Seules les mauvaises personnes voient ce texte !','Nur böse Menschen können diesen Text sehen!','悪い人にしか見えない文字！']
+ ['나쁜사람만 보이는 글씨!','Only bad people can see this text!','¡Solo la gente mala puede ver este texto!','Seules les mauvaises personnes voient ce texte !','Nur böse Menschen können diesen Text sehen!','悪い人にしか見えない文字！','只有坏人才能看到的文字！','Só gente má consegue ver este texto!','Этот текст видят только плохие люди!','Bu yazıyı sadece kötü insanlar görebilir!']
 ];
-function lang(){ var l='ko'; try{ l=document.documentElement.lang||(window.FFLang&&FFLang.get())||'ko'; }catch(e){} l=String(l).slice(0,2); return L.indexOf(l)<0?'en':l; }
+function lang(){ var l='ko'; try{ l=(window.FFLang&&FFLang.get())||document.documentElement.lang||'ko'; }catch(e){} l=String(l).slice(0,2); return L.indexOf(l)<0?'en':l; }
 function pick(l){
+  if(l==='nw'){ var w=NW[Math.floor(Math.random()*NW.length)]; return typeof w==='string'?{t:w}:w; }
   var i=L.indexOf(l), out=[];
   P.forEach(function(p){
     if(typeof p==='string') out.push({t:p});
     else if(p.t) out.push(p);
     else if(p.length===1){ if(l==='ko') out.push({t:p[0]}); }
-    else out.push({t:p[i]});
+    else out.push({t:p[i]||p[1]});
   });
   return out[Math.floor(Math.random()*out.length)];
 }
@@ -54,6 +58,7 @@ function run(){
   var p=pick(lang()); if(!p) return; css();
   var el=document.createElement(p.href?'a':'span'); el.className='ffs'; el.setAttribute('data-notr',''); el.setAttribute('aria-hidden','true');
   if(p.href){ el.href=p.href; el.target='_blank'; el.rel='noopener'; el.removeAttribute('aria-hidden'); }
+  if(p.swap){ el.style.pointerEvents='auto'; el.style.cursor='pointer'; el.onclick=function(){ var x=el.querySelector('i'); if(x) x.textContent=p.swap; el.style.color='#ff5a4e'; el.onclick=null; }; }
   var i=document.createElement('i'); i.textContent=p.t; el.appendChild(i);
   var n=p.t.length; el.style.fontSize=Math.max(14,Math.min(22,25-n*0.3))+'px';
   var box=h.parentNode; if(getComputedStyle(box).position==='static') box.style.position='relative';
