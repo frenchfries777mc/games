@@ -453,7 +453,7 @@ const TUT=[
  [P('다 자라면 ▼ 표시의 밭을 눌러 수확해요','When it is grown, tap the field with the ▼ to harvest'),s=>s.stats.harvest>=1],
  [P('마을 장터에서 수확한 것을 팔아요','Sell your harvest at the town market'),s=>(s.stats.shop||0)>=1],
  [P('항구에서 배에 짐을 싣고 보내요','Load a ship at the harbor and send it off'),s=>s.stats.sailed>=1]];
-const OUTMAX=12,BUILD=43;
+const OUTMAX=12,BUILD=44;
 const hasB=(s,b)=>s.slots.some(x=>x&&x.b===b);
 const rankOf=e=>{let r=0;RANKS.forEach((x,i)=>{if(e>=x[0])r=i;});return r;};
 /* 업적: id, 이름, 설명, 조건 */
@@ -575,6 +575,9 @@ A('nw1m',P('백만장자','Millionaire'),P('재산 1,000,000 모으기','Reach a
 const CROPK=Object.keys(CROPS),SPEC=['goldbarley','pomegranate','saffron','cloudcotton','seaweed','dragonfruit'],CROPK17=CROPK.filter(c=>!SPEC.includes(c));
 const ACHN={};ACH.forEach(a=>ACHN[a.id]=a);
 const NOTES=[
+ {date:'2026-10-22',build:'v0.2 build 44',title:P("신어 표현 수정","Newspeak wording fix"),items:[
+  P("신어 표현 수정: plusplus를 doubleplus로","Newspeak wording fix: plusplus is now doubleplus"),
+ ]},
  {date:'2026-10-22',build:'v0.2 build 43',title:P("은하 표준어 추가","Standard Galactic added"),items:[
   P("가상 언어 은하 표준어 추가 (커맨더 킨·마인크래프트 인챈트 글자, 직접 그린 글꼴)","Fictional script Standard Galactic added (the Commander Keen and Minecraft enchanting letters, in our own drawn font)"),
  ]},
@@ -17906,7 +17909,7 @@ let TRX={
   "pt": "Quando as gaivotas voam baixo, vem chuva. Meus joelhos também dizem.",
   "ru": "Чайки летают низко — к дождю. Мои колени тоже так говорят.",
   "tr": "Martılar alçaktan uçunca yağmur gelir. Dizlerim de öyle diyor.",
-  "nw": "When gulls upgo unup, downwater is coming. My knees say plusplus.",
+  "nw": "When gulls upgo unup, downwater is coming. My knees say doubleplus.",
   "gk": "언제 그 gulls 파리 low, rain 이다 오하는 중. 나의 knees say 그래서 또한."
  },
  "숨은 섬들은 지도 석 장마다 하나씩 나타난다네. 곡괭이도 챙겨 가게.": {
