@@ -3,7 +3,7 @@
    번역은 tr/<언어>.json 에 있어요: { "게임/slug": { h: 원문 해시, t: 제목, b: 본문 } }.
    원문이 고쳐져서 해시가 달라지면 번역 대신 한국어 원문을 보여 줘요. 번역을 다시 만들면 h 를 새 원문으로 계산해요 (fnv 아래). */
 (function(){
-var LANGS=['ko','en','es','fr','de','ja','zh','pt','ru','tr','nw','gk','au'], NAMES={ko:'한국어',en:'English',es:'Español',fr:'Français',de:'Deutsch',ja:'日本語',zh:"简体中文",pt:"Português (Brasil)",ru:"Русский",tr:"Türkçe",nw:"Newspeak",gk:"번역기 한국어",au:"Aurebesh",gk:"번역기 한국어"};
+var LANGS=['ko','en','es','fr','de','ja','zh','pt','ru','tr','nw','gk','au','sg'], NAMES={ko:'한국어',en:'English',es:'Español',fr:'Français',de:'Deutsch',ja:'日本語',zh:"简体中文",pt:"Português (Brasil)",ru:"Русский",tr:"Türkçe",nw:"Newspeak",gk:"번역기 한국어",au:"Aurebesh",sg:"Standard Galactic",gk:"번역기 한국어"};
 var GAMES=[['stickseum','Stickseum'],['crownenvoy','Crown Envoy'],['beaconfall','Beaconfall'],['isleport','Isleport'],['tools','Tools'],['educations','Educations'],['hub','Hub']];
 var U={
  ko:{hub:'허브',sub:'누구나 읽을 수 있고, 로그인하면 문서를 고치거나 새로 쓸 수 있다.',search:'위키 검색',loading:'불러오는 중…',pages:'글 목록',toc:'목차',newp:'＋ 새 글',
@@ -271,7 +271,7 @@ function statics(){
   var q=$('#q'); q.placeholder=t('search'); q.setAttribute('aria-label',t('search')); $('#menuBtn').setAttribute('aria-label',t('nav'));
   var sel=document.createElement('select'); sel.className='langSel'; sel.setAttribute('aria-label',t('lang'));
   var VL={"ko": "가상 언어", "en": "Fictional languages", "es": "Idiomas ficticios", "fr": "Langues fictives", "de": "Fiktive Sprachen", "ja": "架空の言語", "zh": "虚构语言", "pt": "Idiomas fictícios", "ru": "Вымышленные языки", "tr": "Kurgusal diller", "nw": "Fictional speaks","gk":"Fictional 언어들"}, vg=document.createElement('optgroup'); vg.label=VL[lang]||VL.en;
-  LANGS.forEach(function(l){ var o=document.createElement('option'); o.value=l; o.textContent='🌐 '+NAMES[l]; if(l===((window.FFLang&&FFLang.pick)?FFLang.pick():lang)) o.selected=true; (l==='nw'||l==='gk'||l==='au'?vg:sel).appendChild(o); });
+  LANGS.forEach(function(l){ var o=document.createElement('option'); o.value=l; o.textContent='🌐 '+NAMES[l]; if(l===((window.FFLang&&FFLang.pick)?FFLang.pick():lang)) o.selected=true; (l==='nw'||l==='gk'||(l==='au'||l==='sg')?vg:sel).appendChild(o); });
   sel.appendChild(vg);
   sel.onchange=function(){ try{ localStorage.setItem('arenaClashLang',this.value); }catch(e){} try{ if(window.FFLang) FFLang.set(this.value); }catch(e){} location.reload(); };
   langSel=sel;
