@@ -1,8 +1,8 @@
 // Vowkeep · © 2026 Frenchfries777 · CC BY-NC-ND 4.0
-// 화면 그리기: three.js 입체 모델을 픽셀로 바꿔 그려요 (RenderPixelatedPass)
+// 화면 그리기: three.js 입체 모델을 매끄럽게 그려요 (안티에일리어싱, 빛 번짐)
 import * as THREE from 'three';
 import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
-import { RenderPixelatedPass } from 'three/addons/postprocessing/RenderPixelatedPass.js';
+import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
 import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
 import { OutputPass } from 'three/addons/postprocessing/OutputPass.js';
 import { RW, RH } from './sim.js';
@@ -12,7 +12,7 @@ let seed = 7; const R = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
 const MC = new Map();
 const M = (c, o = {}) => {
   const key = c + '|' + JSON.stringify(o); if (MC.has(key) && !o.uniq) return MC.get(key);
-  const m = new THREE.MeshStandardMaterial({ color: c, roughness: o.r ?? 0.85, metalness: o.m ?? 0, emissive: o.e ?? 0, emissiveIntensity: o.ei ?? 1, flatShading: true, transparent: !!o.op, opacity: o.op ?? 1, depthWrite: o.op ? false : true, side: o.ds ? THREE.DoubleSide : THREE.FrontSide });
+  const m = new THREE.MeshStandardMaterial({ color: c, roughness: o.r ?? 0.85, metalness: o.m ?? 0, emissive: o.e ?? 0, emissiveIntensity: o.ei ?? 1, flatShading: false, transparent: !!o.op, opacity: o.op ?? 1, depthWrite: o.op ? false : true, side: o.ds ? THREE.DoubleSide : THREE.FrontSide });
   if (!o.uniq) MC.set(key, m); return m;
 };
 const GC = new Map();
@@ -117,8 +117,8 @@ export function makeBoss() {
 export class View {
   constructor(canvas) {
     this.canvas = canvas;
-    this.r = new THREE.WebGLRenderer({ canvas, antialias: false, powerPreference: 'high-performance' });
-    this.r.shadowMap.enabled = true; this.r.shadowMap.type = THREE.PCFShadowMap;
+    this.r = new THREE.WebGLRenderer({ canvas, antialias: true, powerPreference: 'high-performance' });
+    this.r.shadowMap.enabled = true; this.r.shadowMap.type = THREE.PCFSoftShadowMap;
     this.r.toneMapping = THREE.ACESFilmicToneMapping; this.r.toneMappingExposure = 1.0;
     this.ps = 3; this.bloomOn = true; this.shake = 0; this.shakeOn = true;
     this.cam = new THREE.OrthographicCamera(-10, 10, 10, -10, 0.1, 200);
@@ -128,15 +128,13 @@ export class View {
     this.resize();
   }
   resize() {
-    // 화면 픽셀 칸이 고르게 나오도록 캔버스를 기기 픽셀 단위로, 픽셀 크기의 배수로 맞춰요 (지글거림 방지)
-    const dpr = devicePixelRatio || 1, P = Math.max(1, Math.round(this.ps * dpr)); this.P = P;
-    const w = Math.ceil(innerWidth * dpr / P) * P, h = Math.ceil(innerHeight * dpr / P) * P; this.W = w; this.H = h;
-    this.r.setPixelRatio(1); this.r.setSize(w, h, false);
-    this.cw = w / dpr; this.ch = h / dpr; this.r.domElement.style.width = (w / dpr) + 'px'; this.r.domElement.style.height = (h / dpr) + 'px';
+    // 화질: 선명하게(2)·보통(3)·가볍게(4) 설정을 화면 해상도 배율로 써요
+    const q = { 2: 2, 3: 1.5, 4: 1 }[this.ps] || 1.5, dpr = Math.min(devicePixelRatio || 1, q);
+    const w = innerWidth, h = innerHeight; this.W = w; this.H = h; this.cw = w; this.ch = h; this.dpr = dpr;
+    this.r.setPixelRatio(dpr); this.r.setSize(w, h, false);
     const asp = w / h, vs = this.mode === 'lobby' ? 7.6 : this.zoom * (asp < 1 ? 1.35 : 1);
     this.cam.left = -vs * asp; this.cam.right = vs * asp; this.cam.top = vs; this.cam.bottom = -vs; this.cam.updateProjectionMatrix();
-    if (this.comp) this.comp.setSize(w, h);
-    if (this.pp) this.pp.setPixelSize(P);
+    if (this.comp) { this.comp.setPixelRatio(dpr); this.comp.setSize(w, h); }
   }
   setPixel(ps) { this.ps = ps; this.resize(); }
   setBloom(on) { this.bloomOn = on; if (this.bloom) this.bloom.enabled = on; }
@@ -144,15 +142,16 @@ export class View {
     if (this.scene) this.scene.traverse(o => { if (o.isLight && o.shadow && o.shadow.map) o.shadow.map.dispose(); });
     const s = new THREE.Scene(); s.background = new THREE.Color(bg); s.fog = new THREE.Fog(fog, 45, 90);
     this.scene = s; this.ents.clear(); this.fx = []; this.nums = [];
-    this.comp = new EffectComposer(this.r); this.pp = new RenderPixelatedPass(this.P, s, this.cam, { normalEdgeStrength: 0.2, depthEdgeStrength: 0.4 });
-    this.comp.addPass(this.pp); this.bloom = new UnrealBloomPass(new THREE.Vector2(this.W / this.P, this.H / this.P), 0.26, 0.2, 0.9); this.bloom.enabled = this.bloomOn; this.comp.addPass(this.bloom); this.comp.addPass(new OutputPass());
+    const rt = new THREE.WebGLRenderTarget(this.W * this.dpr, this.H * this.dpr, { type: THREE.HalfFloatType, samples: 4 });
+    this.comp = new EffectComposer(this.r, rt); this.comp.setPixelRatio(this.dpr); this.pp = new RenderPass(s, this.cam);
+    this.comp.addPass(this.pp); this.bloom = new UnrealBloomPass(new THREE.Vector2(this.W / 2, this.H / 2), 0.3, 0.35, 0.88); this.bloom.enabled = this.bloomOn; this.comp.addPass(this.bloom); this.comp.addPass(new OutputPass());
     this.comp.setSize(this.W, this.H);
     return s;
   }
   lights(s, amb = 1.3) {
     s.add(new THREE.AmbientLight(0x4a4a78, amb)); s.add(new THREE.HemisphereLight(0x8a90c8, 0x2a1e18, 0.9));
     const fill = new THREE.DirectionalLight(0xffc89a, 0.9); fill.position.set(0, 12, 30); s.add(fill);
-    const moon = new THREE.DirectionalLight(0x6a78c0, 0.7); moon.position.set(-10, 30, 12); moon.castShadow = true; moon.shadow.mapSize.set(1024, 1024); Object.assign(moon.shadow.camera, { left: -30, right: 30, top: 30, bottom: -30 }); s.add(moon); s.add(moon.target);
+    const moon = new THREE.DirectionalLight(0x6a78c0, 0.7); moon.position.set(-10, 30, 12); moon.castShadow = true; moon.shadow.mapSize.set(2048, 2048); Object.assign(moon.shadow.camera, { left: -30, right: 30, top: 30, bottom: -30 }); s.add(moon); s.add(moon.target);
   }
   flame(p, x, y, z, k = 1, light = true) {
     cone(0.32 * k, 0.9 * k, 6, M(0xff9a3a, { e: 0xff7a20, ei: 3 }), x, y, z, p);
@@ -256,14 +255,14 @@ export class View {
   }
 
   /* ----- 스냅숏을 장면에 반영 ----- */
-  sync(S, me, dt, t) {
+  sync(S, me, dt, t, exact) {
     const s = this.scene; if (!s) return;
     const seen = new Set();
     // 플레이어
     for (const p of S.pl) {
       const key = 'p' + p.id; seen.add(key); let E = this.ents.get(key);
       if (!E) { const m = makeHero(p.role); s.add(m); E = { m, x: p.x, z: p.z, a: p.a, ph: 0 }; this.ents.set(key, E); E.ring = ringMesh(s, ROLES[p.role].color); E.ward = sph(1.6, 12, 10, M(0x9af0e0, { e: 0x6ad0c0, ei: 1, op: 0.18, uniq: true }), 0, 1.6, 0, m); E.ward.castShadow = false; }
-      const k = p.id === me ? 1 : Math.min(1, dt * 14);
+      const k = exact || p.id === me ? 1 : Math.min(1, dt * 12);
       E.x += (p.x - E.x) * k; E.z += (p.z - E.z) * k; E.a = lerpA(E.a, p.a, Math.min(1, dt * 18));
       animHero(E, p, dt, t); E.ring.position.set(E.x, 0.12, E.z); E.ring.visible = !p.dd;
       E.ward.visible = p.sh > 0; E.m.visible = !p.dd;
@@ -272,14 +271,14 @@ export class View {
     for (const e of S.en) {
       const key = 'e' + e.id; seen.add(key); let E = this.ents.get(key);
       if (!E) { const m = e.k === 'boss' ? makeBoss() : makeSkel(e.k); s.add(m); E = { m, x: e.x, z: e.z, a: e.a, ph: R() * 6, base: m.scale.x }; this.ents.set(key, E); }
-      const k = Math.min(1, dt * 14); E.x += (e.x - E.x) * k; E.z += (e.z - E.z) * k; E.a = lerpA(E.a, e.a, Math.min(1, dt * 14));
+      const k = exact ? 1 : Math.min(1, dt * 12); E.x += (e.x - E.x) * k; E.z += (e.z - E.z) * k; E.a = lerpA(E.a, e.a, Math.min(1, dt * 14));
       animEnemy(E, e, dt, t, this);
     }
     // 투사체
     for (const p of S.pr) {
       const key = 'r' + p.id; seen.add(key); let E = this.ents.get(key);
       if (!E) { E = { m: projMesh(p.k), x: p.x, z: p.z }; s.add(E.m); this.ents.set(key, E); }
-      const k = Math.min(1, dt * 20); E.x += (p.x - E.x) * k; E.z += (p.z - E.z) * k;
+      const k = exact ? 1 : Math.min(1, dt * 18); E.x += (p.x - E.x) * k; E.z += (p.z - E.z) * k;
       E.m.position.set(E.x, (p.k === 'potion' ? p.y : 0) + 1.6, E.z); E.m.rotation.y = -p.a; if (p.k === 'potion') E.m.rotation.z += dt * 12;
     }
     // 바닥 효과
@@ -299,14 +298,6 @@ export class View {
     if (mp) { this.camT.x += (clampN(mp.x, -RW + 8, RW - 8) - this.camT.x) * Math.min(1, dt * 5); this.camT.z += (-1.8 + clampN(mp.z, -RH, RH) * 0.15 - this.camT.z) * Math.min(1, dt * 5); }
     let sx = 0, sz = 0; if (this.shake > 0 && this.shakeOn) { sx = (Math.random() - .5) * this.shake * 0.6; sz = (Math.random() - .5) * this.shake * 0.6; this.shake = Math.max(0, this.shake - dt * 3); }
     this.cam.position.set(this.camT.x + sx, 22, this.camT.z + 33 + sz); this.cam.lookAt(this.camT.x + sx, 1.8, this.camT.z + 0.4 + sz);
-    this.snapCam();
-  }
-  // 카메라를 픽셀 칸에 딱 맞춰 움직여요. 반 칸씩 밀리면 화면 전체가 지글거려요.
-  snapCam() {
-    const px = (this.cam.top - this.cam.bottom) / (this.H / this.P); this.cam.updateMatrixWorld();
-    const up = new THREE.Vector3().setFromMatrixColumn(this.cam.matrixWorld, 1), rt = new THREE.Vector3().setFromMatrixColumn(this.cam.matrixWorld, 0), p = this.cam.position;
-    const a = p.dot(rt), b = p.dot(up);
-    p.addScaledVector(rt, Math.round(a / px) * px - a).addScaledVector(up, Math.round(b / px) * px - b); this.cam.updateMatrixWorld();
   }
   tick(dt, t) {
     for (const f of this.flick || []) f.L.intensity = f.b * (0.9 + Math.sin(t * 2.2 + f.ph) * 0.04 + Math.sin(t * 3.7 + f.ph * 2) * 0.02);
