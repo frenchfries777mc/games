@@ -1,8 +1,9 @@
 // Vowkeep · © 2026 Frenchfries777 · CC BY-NC-ND 4.0
 // 화면 흐름, 조작, 멀티(친구 초대, PeerJS), 저장
 import { View } from './render.js';
-import { createGame, step, snapshot, chooseBless, RW, RH, INTRO_T } from './sim.js';
-import { ROLES, ROLE_IDS, BLESSINGS, CHAPTER1, ACHIEVEMENTS, GEAR_TIERS, GEAR_COST, VERSION, BUILD, roleLevel } from './data.js';
+import { createGame, step, snapshot, chooseBless, INTRO_T } from './sim.js';
+import { ROLES, ROLE_IDS, BLESSINGS, CHAPTER1, MAP, ACHIEVEMENTS, GEAR_TIERS, GEAR_COST, VERSION, BUILD, roleLevel } from './data.js';
+import { collide as mapCollide, areaAt, floorCell, MW, MH, CS, cw } from './map.js';
 import * as SFX from './sfx.js';
 
 const $ = id => document.getElementById(id);
@@ -23,7 +24,7 @@ const gearOf = r => Object.assign({ weapon: 0, armor: 0 }, SAVE.gear[r] || {});
 /* ---------- 상태 ---------- */
 const S = {
   scr: 'lobby', net: null, code: '', peer: null, conns: {}, conn: null, slots: [], G: null, snap: null, me: null,
-  rin: {}, acc: 0, sendAcc: 0, evq: [], builtRi: -2, builtKind: '', lastPh: '', nums: [], local: null, saved: false,
+  rin: {}, acc: 0, sendAcc: 0, evq: [], built: false, area: -2, seenA: {}, lastPh: '', nums: [], local: null, saved: false,
   wonT: 0, resultShown: false, everDown: false, lastBless: null, t0: performance.now()
 };
 const view = new View($('gl'));
@@ -183,7 +184,7 @@ function hostMsg(c, d) {
   }
   const uid = c._uid; if (!uid) return;
   if (d.t === 'role' && !S.G) { const tgt = S.slots.find(s => s.role === d.role); if (tgt && !tgt.uid) { const cur = S.slots.find(s => s.uid === uid); if (cur) { cur.uid = null; cur.name = ''; } tgt.uid = uid; tgt.name = c._name || '기사'; hostLobby(); paintSlots(); } }
-  else if (d.t === 'i' && S.G) { const pid = c._pid; if (!pid) return; const r = S.rin[pid] || (S.rin[pid] = {}); const once = { q: r.q || d.q, e: r.e || d.e, r: r.r || d.r, roll: r.roll || d.roll }; Object.assign(r, d, once); }
+  else if (d.t === 'i' && S.G) { const pid = c._pid; if (!pid) return; const r = S.rin[pid] || (S.rin[pid] = {}); const once = { q: r.q || d.q, e: r.e || d.e, r: r.r || d.r, roll: r.roll || d.roll, skip: r.skip || d.skip }; Object.assign(r, d, once); }
   else if (d.t === 'b' && S.G) { if (c._pid) chooseBless(S.G, c._pid, d.id); }
 }
 function dropConn(c) {
@@ -231,7 +232,7 @@ function beginGame() {
   startClient();
 }
 function startClient() {
-  S.builtRi = -2; S.lastPh = ''; S.saved = false; S.resultShown = false; S.everDown = false; S.local = null; S.nums = []; S.evq = []; S.wonT = 0; S.lastBless = null;
+  S.built = false; S.area = -2; S.seenA = {}; S.voted = false; S.lastPh = ''; S.saved = false; S.resultShown = false; S.everDown = false; S.local = null; S.nums = []; S.evq = []; S.wonT = 0; S.lastBless = null;
   if (S.G) S.snap = snapshot(S.G);
   unlock('first');
   setHud(false); show('sIntro'); $('introCh').textContent = CHAPTER1.title; $('introLine').classList.remove('on'); S.introIdx = -1;
@@ -257,11 +258,13 @@ function awardHonor() {
 }
 
 /* ---------- 조작 ---------- */
-const K = {}; let mouse = { x: innerWidth / 2, y: innerHeight / 2, down: false }; const once = { q: 0, e: 0, r: 0, roll: 0 };
+const K = {}; let mouse = { x: innerWidth / 2, y: innerHeight / 2, down: false }; const once = { q: 0, e: 0, r: 0, roll: 0, skip: 0 };
 addEventListener('keydown', e => {
   if (e.target && e.target.tagName === 'INPUT') return;
   const k = e.key.toLowerCase(); K[k] = true; SFX.unlock();
   if (!inGame()) return;
+  if (S.snap && S.snap.ph === 'won' && (k === ' ' || k === 'enter') && S.wonT > 1) { S.wonT = Math.max(S.wonT, 9); return; }
+  if (S.scr === 'sIntro') { if (k === ' ' || k === 'enter' || k === 'escape') { once.skip = 1; e.preventDefault(); } return; }
   if (k === 'q' || k === 'ㅂ') once.q = 1; if (k === 'e' || k === 'ㄷ') once.e = 1; if (k === 'r' || k === 'ㄱ') once.r = 1; if (k === ' ') { once.roll = 1; e.preventDefault(); }
   if (k === '1' || k === '2' || k === '3') pickBlessIdx(+k - 1);
 });
@@ -305,24 +308,25 @@ function gatherInput(p) {
     const g = view.groundAt(mouse.x, mouse.y); inp.aim = Math.atan2(g.z - pos.z, g.x - pos.x); inp.ax = g.x; inp.az = g.z;
     inp.atk = mouse.down; inp.f = keyDown('f', 'ㄹ');
   }
-  inp.q = once.q; inp.e = once.e; inp.r = once.r; inp.roll = once.roll; once.q = once.e = once.r = once.roll = 0;
+  inp.q = once.q; inp.e = once.e; inp.r = once.r; inp.roll = once.roll; if (once.skip) S.voted = true; inp.skip = once.skip; once.q = once.e = once.r = once.roll = once.skip = 0;
   return inp;
 }
 
 /* 게스트: 내 캐릭터는 내 화면에서 바로 움직여요 */
 function localMove(p, inp, dt) {
   const L = S.local; const R = ROLES[p.role];
-  if (p.dn || p.dd || S.snap.ph === 'intro' || S.snap.ph === 'wipe') { L.x = p.x; L.z = p.z; L.roll = 0; return; }
+  if (p.dn || p.dd || S.snap.ph === 'intro' || S.snap.ph === 'wipe' || S.snap.ph === 'won') { L.x = p.x; L.z = p.z; L.roll = 0; return; }
   if (Math.hypot(L.x - p.x, L.z - p.z) > 5) { L.x = p.x; L.z = p.z; }
   L.rollCd = Math.max(0, (L.rollCd || 0) - dt);
   let mx = inp.mx, mz = inp.mz; const ml = Math.hypot(mx, mz); if (ml > 1) { mx /= ml; mz /= ml; }
   if (inp.roll && L.rollCd <= 0 && !(L.roll > 0)) { L.roll = 0.35; L.rollCd = 1.2 * ((p.b || []).indexOf('roll') >= 0 ? 0.6 : 1); const ra = ml > 0.1 ? Math.atan2(mz, mx) : p.a; L.rdx = Math.cos(ra); L.rdz = Math.sin(ra); }
   if (L.roll > 0) { L.roll -= dt; L.x += L.rdx * 15 * dt; L.z += L.rdz * 15 * dt; }
   else { const sp = R.speed * ((p.b || []).indexOf('feet') >= 0 ? 1.12 : 1) * (p.ra ? 1.3 : 1) * (p.bk ? 0.45 : 1); L.x += mx * sp * dt; L.z += mz * sp * dt; }
-  L.x = Math.max(-RW + 0.6, Math.min(RW - 0.6, L.x)); L.z = Math.max(-RH + 0.6, Math.min(RH - 0.6, L.z));
-  for (const q of S.snap.rm.pi || []) { const d = Math.hypot(L.x - q.x, L.z - q.z), m = q.r + 0.6; if (d < m && d > 0.0001) { L.x = q.x + (L.x - q.x) / d * m; L.z = q.z + (L.z - q.z) / d * m; } }
+  mapCollide(L, 0.6);
 }
 
+$('gl').addEventListener('touchstart', () => { if (S.snap && S.snap.ph === 'won' && S.wonT > 1) S.wonT = Math.max(S.wonT, 9); }, { passive: true });
+$('introSkip').addEventListener('click', () => { SFX.unlock(); SFX.play('click'); once.skip = 1; });
 /* ---------- 축복 고르기 ---------- */
 function paintBless() {
   const opts = S.snap && S.snap.bless && S.snap.bless[S.me];
@@ -380,11 +384,14 @@ function onEvent(e) {
     case 'fire': SFX.play('fire'); break;
     case 'snap': SFX.play('clang'); break;
     case 'disarm': toast('종자가 바닥 함정을 해체했어요.'); SFX.play('click'); break;
-    case 'clear': if (S.snap && CHAPTER1.rooms[e.ri].kind === 'fight') { bigMsg('방을 깼어요', '축복을 고르고 위쪽 문으로 가요', 3000); SFX.play('clear'); setTimeout(() => SFX.play('door'), 500); } break;
-    case 'chest': toast('상자에서 명예 25와 축복을 얻었어요.'); SFX.play('clear'); break;
-    case 'room': break;
-    case 'wipe': bigMsg('모두 쓰러졌어요', '잠시 뒤 이 방을 다시 시작해요', 3000); SFX.play('wipe'); break;
-    case 'restart': toast('방을 다시 시작해요.'); break;
+    case 'chest': toast('상자에서 명예 25를 얻었어요.'); SFX.play('clear'); break;
+    case 'altar': bigMsg('제단의 축복', '축복을 하나 골라요', 2200); SFX.play('clear'); view.column(e.x, e.z, 0xffe08a, 1.2); break;
+    case 'checkpoint': bigMsg('모닥불에 불을 붙였어요', '모두 쓰러지면 여기서 다시 시작해요', 3000); SFX.play('door'); break;
+    case 'wake': if (!S.wakeT || performance.now() - S.wakeT > 1500) { S.wakeT = performance.now(); SFX.play('spawn'); } view.burst(e.x, 0.3, e.z, 0x6a5a7a, 6, 3, 0.6, 0.12); break;
+    case 'bossIntro': bigMsg('몰락한 기사단장', MAP.areas.find(a => a.boss).line, 3400); break;
+    case 'respawn': view.column(e.x, e.z, 0xff9a48); if (e.id === me) bigMsg('모닥불에서 다시 일어났어요', '', 1800); break;
+    case 'wipe': bigMsg('모두 쓰러졌어요', '잠시 뒤 마지막 모닥불에서 다시 시작해요', 3000); SFX.play('wipe'); break;
+    case 'restart': toast('깨어 있던 적은 제자리로 돌아갔어요.'); break;
     case 'won': SFX.play('won'); break;
     case 'ach': if (!e.pid || e.pid === me) unlock(e.id); break;
   }
@@ -393,25 +400,34 @@ function num(x, z, v, col, sc = 1, y = 3) { S.nums.push({ x: x + (Math.random() 
 
 /* ---------- 화면 갱신 ---------- */
 function syncScene() {
-  const sn = S.snap; const kind = CHAPTER1.rooms[sn.ri].kind;
-  if (sn.ri !== S.builtRi) { view.buildRoom(sn.rm, sn.ri, kind); S.builtRi = sn.ri; S.local = null; const R = CHAPTER1.rooms[sn.ri]; if (sn.ph !== 'intro') { bigMsg(R.name, R.line, 3200); } if (kind === 'rest') unlock('rest'); }
+  const sn = S.snap;
+  if (!S.built) { view.buildMap(); S.built = true; S.local = null; mini.reset(); }
   if (sn.ph !== S.lastPh) {
     const prev = S.lastPh; S.lastPh = sn.ph;
     if (sn.ph === 'intro') { show('sIntro'); setHud(false); }
-    else if (prev === 'intro' || prev === '') { show(''); setHud(true); const R = CHAPTER1.rooms[sn.ri]; bigMsg(R.name, R.line, 3200); }
-    if (sn.ph === 'bossIntro') bigMsg('몰락한 기사단장', CHAPTER1.rooms[sn.ri].line, 3400);
+    else if (prev === 'intro' || prev === '') { show(''); setHud(true); S.area = -2; }
     if (sn.ph === 'won') { S.wonT = 0; bigMsg('', '', 0); }
+  }
+  // 새 구역에 처음 들어가면 이름을 보여 줘요
+  const me = myP();
+  if (me && sn.ph !== 'intro') {
+    const pos = S.local || me, a = areaAt(pos.x, pos.z);
+    if (a >= 0 && a !== S.area) { S.area = a; if (!S.seenA[a]) { S.seenA[a] = 1; const A = MAP.areas[a]; if (!A.boss) bigMsg(A.name, A.line, 3200); } }
+    mini.reveal(pos.x, pos.z);
   }
 }
 function paintIntro() {
   const lines = CHAPTER1.intro, per = INTRO_T / lines.length, t = S.snap.pt, i = Math.min(lines.length - 1, Math.floor(t / per));
   if (i !== S.introIdx) { S.introIdx = i; const el = $('introLine'); el.classList.remove('on'); setTimeout(() => { el.textContent = lines[i]; el.classList.add('on'); }, 250); }
   $('introBar').firstElementChild.style.width = Math.min(100, t / INTRO_T * 100) + '%';
+  const sk = $('introSkip'), voted = S.voted;
+  sk.textContent = (voted ? '건너뛰기 기다리는 중' : '건너뛰기') + (S.snap.hu > 1 ? ' (' + S.snap.sk + '/' + S.snap.hu + ')' : '');
+  sk.classList.toggle('on', !!voted);
 }
 function paintHud() {
   const sn = S.snap, me = myP();
-  $('roomTag').textContent = CHAPTER1.title + '   ' + (sn.ri + 1) + '/' + CHAPTER1.rooms.length + ' · ' + CHAPTER1.rooms[sn.ri].name;
-  const boss = sn.en.find(e => e.k === 'boss');
+  $('roomTag').textContent = CHAPTER1.title + (S.area >= 0 ? ' · ' + MAP.areas[S.area].name : '') + ' · 남은 적 ' + sn.w.left;
+  const boss = sn.w.boss && !sn.w.bd ? sn.en.find(e => e.k === 'boss') : null;
   $('bossBar').style.display = boss ? 'block' : 'none';
   if (boss) { $('bossHp').style.width = Math.max(0, boss.hp / boss.mx * 100) + '%'; $('bossPh').textContent = boss.sn ? '기절!' : ['', '1단계', '2단계 · 해골 소환', '3단계 · 등 뒤가 약점'][boss.ph] || ''; }
   // 동료 칸
@@ -421,7 +437,7 @@ function paintHud() {
     d.querySelector('.n i').style.background = R.color; d.querySelector('.n b').textContent = R.name; d.querySelector('.n span').textContent = p.id === S.me ? '나' : p.bot ? '봇' : p.name;
     d.querySelector('.hp i').style.width = (p.hp / p.mx * 100) + '%'; d.querySelector('.hp em').style.width = Math.min(100, p.sh / p.mx * 100) + '%';
     d.classList.toggle('down', !!(p.dn || p.dd));
-    d.querySelector('.st').textContent = p.dd ? '방을 깨면 일어나요' : p.dn ? '쓰러짐 ' + Math.ceil(p.bl) + '초' : p.tn ? '외침' : p.ra ? '함성' : '';
+    d.querySelector('.st').textContent = p.dd ? '모닥불에서 ' + Math.max(1, Math.ceil(p.rs)) + '초 뒤 일어나요' : p.dn ? '쓰러짐 ' + Math.ceil(p.bl) + '초' : p.tn ? '외침' : p.ra ? '함성' : '';
   });
   // 기술 칸
   if (me) {
@@ -437,15 +453,41 @@ function paintHud() {
     const pos = S.local || me;
     const dn = sn.pl.find(q => q.dn && !q.dd && Math.hypot(q.x - pos.x, q.z - pos.z) < 2.2);
     if (dn) pr = (TOUCH ? 'F 버튼' : 'F') + '를 꾹 눌러 ' + ROLES[dn.role].name + ' 일으키기';
-    else if (sn.rm.ch && !sn.rm.ch.o && Math.hypot(sn.rm.ch.x - pos.x, sn.rm.ch.z - pos.z) < 2.6) pr = (TOUCH ? 'F 버튼' : 'F') + '를 꾹 눌러 상자 열기';
-    else if (sn.rm.dr && sn.ph === 'play' && sn.ri < CHAPTER1.rooms.length - 1 && !(sn.bless && Object.values(sn.bless).some(Boolean))) pr = '위쪽 문으로 가면 다음 방이에요' + (sn.pl.filter(q => !q.bot).length > 1 ? ' (사람 모두 문 앞에 서야 해요)' : '');
+    else if (MAP.chests.some(([x, y], k) => !sn.w.ch[k] && Math.hypot(cw(x) - pos.x, cw(y) - pos.z) < 2.6)) pr = (TOUCH ? 'F 버튼' : 'F') + '를 꾹 눌러 상자 열기';
+    else if (MAP.altars.some(([x, y], k) => !sn.w.al[k] && Math.hypot(cw(x) - pos.x, cw(y) - pos.z) < 2.8)) pr = (TOUCH ? 'F 버튼' : 'F') + '를 꾹 눌러 제단에서 축복 받기';
+    else if (MAP.fires.some(([x, y], k) => sn.w.fi[k] && Math.hypot(cw(x) - pos.x, cw(y) - pos.z) < 4) && me.hp < me.mx) pr = '모닥불 곁에서 체력이 차올라요';
     else if (sn.bless && Object.values(sn.bless).some(Boolean) && !(sn.bless[S.me])) pr = '동료가 축복을 고르는 중이에요';
   }
   const pe = $('prompt'); pe.textContent = pr; pe.style.display = pr ? 'block' : 'none';
 }
+/* 작은 지도: 가 본 곳만 보여요 */
+const WATERC = (i, j) => MAP.water.some(([x, y, w, h]) => i >= x && i < x + w && j >= y && j < y + h);
+const mini = {
+  c: document.createElement('canvas'), seen: new Uint8Array(MW * MH), dirty: true,
+  reset() { this.seen.fill(0); this.c.width = MW * 3; this.c.height = MH * 3; this.dirty = true; },
+  reveal(x, z) {
+    const ci = Math.floor(x / CS), cj = Math.floor(z / CS), R = 9;
+    for (let j = cj - R; j <= cj + R; j++) for (let i = ci - R; i <= ci + R; i++) { if (i < 0 || j < 0 || i >= MW || j >= MH || (i - ci) ** 2 + (j - cj) ** 2 > R * R) continue; const k = j * MW + i; if (!this.seen[k]) { this.seen[k] = 1; this.dirty = true; } }
+  },
+  paint() {
+    const g = this.c.getContext('2d'); g.clearRect(0, 0, this.c.width, this.c.height);
+    for (let j = 0; j < MH; j++) for (let i = 0; i < MW; i++) { if (!this.seen[j * MW + i] || !floorCell(i, j)) continue; g.fillStyle = WATERC(i, j) ? '#6a8ab0' : '#a49cb0'; g.fillRect(i * 3, j * 3, 3, 3); }
+    this.dirty = false;
+  },
+  draw(sn) {
+    if (this.dirty) this.paint();
+    const sc = innerWidth < 700 ? 1.4 : 2, w = MW * sc, h = MH * sc, x0 = innerWidth - w - 14, y0 = 64;
+    oc.globalAlpha = 0.82; oc.fillStyle = 'rgba(10,8,14,.75)'; oc.fillRect(x0 - 4, y0 - 4, w + 8, h + 8); oc.drawImage(this.c, x0, y0, w, h); oc.globalAlpha = 1;
+    const P = (wx, wz) => [x0 + wx / CS * sc, y0 + wz / CS * sc];
+    MAP.fires.forEach(([fx, fy], k) => { if (!this.seen[fy * MW + fx | 0]) return; const [a, b] = P(cw(fx), cw(fy)); oc.fillStyle = sn.w.fi[k] ? '#ffb040' : '#6a5a4a'; oc.fillRect(a - 2.5, b - 2.5, 5, 5); });
+    MAP.altars.forEach(([ax, ay], k) => { if (!this.seen[(ay | 0) * MW + (ax | 0)] || sn.w.al[k]) return; const [a, b] = P(cw(ax), cw(ay)); oc.fillStyle = '#ffe08a'; oc.beginPath(); oc.arc(a, b, 2.5, 0, 7); oc.fill(); });
+    for (const p of sn.pl) { if (p.dd) continue; const q = p.id === S.me && S.local ? S.local : p, [a, b] = P(q.x, q.z); oc.fillStyle = ROLES[p.role].color; oc.beginPath(); oc.arc(a, b, p.id === S.me ? 3.5 : 2.5, 0, 7); oc.fill(); if (p.id === S.me) { oc.strokeStyle = '#fff'; oc.lineWidth = 1.2; oc.stroke(); } }
+  }
+};
 function drawOverlay(dt) {
   oc.clearRect(0, 0, innerWidth, innerHeight);
   const sn = S.snap; if (!sn || S.scr === 'sIntro') return;
+  if (sn.w) mini.draw(sn);
   oc.textAlign = 'center'; oc.textBaseline = 'middle';
   // 적 체력
   for (const e of sn.en) {
@@ -502,7 +544,7 @@ function frame(now) {
       S.acc += dt; const h = 1 / 30;
       while (S.acc >= h) {
         S.acc -= h; S.prevPos = posMap(S.G); step(S.G, h, S.rin);
-        for (const pid in S.rin) { const r = S.rin[pid]; r.q = r.e = r.r = r.roll = 0; }
+        for (const pid in S.rin) { const r = S.rin[pid]; r.q = r.e = r.r = r.roll = r.skip = 0; }
         for (const e of S.G.ev) { S.evq.push(e); if (S.net === 'host') (S.netEv || (S.netEv = [])).push(e); }
         S.G.ev.length = 0;
       }
@@ -512,8 +554,8 @@ function frame(now) {
       // 게스트: 내 이동은 바로, 나머지는 방장에게 보내요
       if (!S.local || S.local.ri !== S.snap.ri) S.local = { x: me.x, z: me.z, ri: S.snap.ri, roll: 0, rollCd: 0 };
       localMove(me, inp, dt);
-      S.sendAcc += dt; const o = S.pend || (S.pend = {}); o.q = o.q || inp.q; o.e = o.e || inp.e; o.r = o.r || inp.r; o.roll = o.roll || inp.roll;
-      if (S.sendAcc >= 1 / 30) { S.sendAcc = 0; send({ t: 'i', px: +S.local.x.toFixed(2), pz: +S.local.z.toFixed(2), aim: inp.aim, ax: inp.ax, az: inp.az, atk: !!inp.atk, f: !!inp.f, q: o.q, e: o.e, r: o.r, roll: o.roll }); S.pend = {}; }
+      S.sendAcc += dt; const o = S.pend || (S.pend = {}); o.q = o.q || inp.q; o.e = o.e || inp.e; o.r = o.r || inp.r; o.roll = o.roll || inp.roll; o.skip = o.skip || inp.skip;
+      if (S.sendAcc >= 1 / 30) { S.sendAcc = 0; send({ t: 'i', px: +S.local.x.toFixed(2), pz: +S.local.z.toFixed(2), aim: inp.aim, ax: inp.ax, az: inp.az, atk: !!inp.atk, f: !!inp.f, q: o.q, e: o.e, r: o.r, roll: o.roll, skip: o.skip }); S.pend = {}; }
       me.x = S.local.x; me.z = S.local.z; if (S.local.roll > 0) me.ro = 1; if (inp.aim != null) me.a = inp.aim;
     }
     syncScene();
@@ -522,7 +564,7 @@ function frame(now) {
     else {
       for (const e of S.evq) onEvent(e); S.evq.length = 0;
       view.sync(S.snap, S.me, dt, t, !!S.G); paintHud(); paintBless();
-      if (ph === 'won') { S.wonT += dt; if (S.wonT > 1.5 && S.wonT < 9) bigMsg(CHAPTER1.outro[Math.min(2, Math.floor((S.wonT - 1.5) / 2.5))], '', 0); if (S.wonT >= 9 && !S.resultShown) showResult(); }
+      if (ph === 'won') { S.wonT += dt; if (S.wonT > 1.5 && S.wonT < 9) bigMsg(CHAPTER1.outro[Math.min(2, Math.floor((S.wonT - 1.5) / 2.5))], TOUCH ? '화면을 누르면 건너뛰어요' : 'Space 키로 건너뛰어요', 0); if (S.wonT >= 9 && !S.resultShown) showResult(); }
     }
     S.evq.length = 0;
   }
@@ -531,12 +573,13 @@ function frame(now) {
 }
 requestAnimationFrame(frame);
 
-// 시험용: ?test=solo 로 바로 혼자 원정을 시작해요 (화면 확인용)
+// 시험용: ?test=1 로 바로 혼자 원정을 시작해요 (화면 확인용). &skip=1 이야기 건너뛰기, &room=구역 번호
 if (qs.get('test')) {
   const r = qs.get('role') || 'knight'; SAVE.role = r;
   S.net = 'solo'; S.slots = ROLE_IDS.map(x => ({ role: x, uid: x === r ? UID : null, name: x === r ? myName() : '' }));
   beginGame(); const ri = +(qs.get('room') || 0);
-  if (qs.get('skip')) { S.G.phase = 'enter'; S.G.phaseT = 0; if (ri) { import('./sim.js').then(m => { m.enterRoom(S.G, ri); }); } }
+  if (qs.get('skip')) { S.G.phase = 'play'; S.G.phaseT = 0; }
+  if (ri) { const A = MAP.areas[ri], [x, y, w, h] = A.r[0]; const c = A.boss ? { x: cw(27), z: cw(12) } : { x: (x + w / 2) * CS, z: (y + h - 1.5) * CS }; S.G.players.forEach((p, i) => { p.x = c.x + (i - 1.5) * 1.6; p.z = c.z; mapCollide(p, 0.6); }); }
   window.__S = S;
 }
 if (qs.get('dbg')) window.__S = S;
