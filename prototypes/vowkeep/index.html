@@ -18,7 +18,7 @@
 html,body{margin:0;height:100%;background:var(--bg);color:var(--ink);font-family:system-ui,-apple-system,"Apple SD Gothic Neo","Noto Sans KR","Malgun Gothic",sans-serif;overflow:hidden;user-select:none;-webkit-user-select:none;touch-action:none}
 ::-webkit-scrollbar{width:8px;height:8px}::-webkit-scrollbar-track{background:#150f1a}::-webkit-scrollbar-thumb{background:#4a4054;border-radius:4px}
 *{scrollbar-color:#4a4054 #150f1a}
-canvas#gl{position:fixed;inset:0;width:100vw;height:100vh;display:block}
+canvas#gl{position:fixed;left:0;top:0;display:block;image-rendering:pixelated}
 canvas#ov{position:fixed;inset:0;width:100vw;height:100vh;pointer-events:none;z-index:2}
 .scr{position:fixed;inset:0;z-index:5;display:none}
 .scr.on{display:block}
@@ -135,6 +135,7 @@ body.touch #exitBtn{top:auto;bottom:auto}
 @media(max-width:700px){#roomTag{font-size:13px;padding:6px 10px}#bossBar{top:52px}}
 @media (max-width:1100px){#party{gap:6px;flex-wrap:nowrap;max-width:none}.pf,body.touch .pf{width:118px;padding:4px 7px;border-width:2px}.pf .n,body.touch .pf .n{font-size:12px}.pf .n span{font-size:10px}.pf .hp{height:7px;margin-top:4px}.pf .st{font-size:10px;height:12px;margin-top:1px}}
 @media (max-aspect-ratio:1/1){#party{top:62px;bottom:auto;left:10px;flex-direction:column;gap:4px}.pf,body.touch .pf{width:104px;padding:3px 6px}.pf .st{display:none}}
+#introSkip{position:fixed;right:22px;bottom:22px;background:none;border:2px solid #6a6276;color:#d8d0e4;font:inherit;font-size:15px;padding:8px 16px;cursor:pointer}#introSkip:hover{border-color:#ffd36b;color:#ffd36b}#introSkip.on{border-color:#ffd36b;color:#ffd36b}
 </style>
 </head>
 <body>
@@ -191,7 +192,7 @@ body.touch #exitBtn{top:auto;bottom:auto}
 </div></section>
 
 <!-- 인트로 (건너뛰기 없음) -->
-<section class="scr" id="sIntro"><div id="introBox"><div class="ch" id="introCh"></div><div id="introLine"></div><div id="introBar"><i></i></div></div></section>
+<section class="scr" id="sIntro"><div id="introBox"><div class="ch" id="introCh"></div><div id="introLine"></div><div id="introBar"><i></i></div><button id="introSkip">건너뛰기</button></div></section>
 
 <!-- 결과 -->
 <section class="scr" id="sResult"><div class="pan" style="width:min(560px,94vw)" id="result"></div></section>
