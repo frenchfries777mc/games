@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta name="copyright" content="© 2026 Frenchfries777. CC BY-NC-ND 4.0 (https://creativecommons.org/licenses/by-nc-nd/4.0/)">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Frenchfries777</title>
+<link rel="icon" href="/games/logo.svg" type="image/svg+xml">
+<script src="/games/ff-lang.js"></script>
+<style>
+  :root{ --bg:#08090d; --panel:#10131b; --line:#222837; --text:#eef0f5; --dim:#8a93a6; --fry:#ffc93c; --fry2:#ff8a3d; }
+  html[data-ff-theme=light]{ --bg:#f4f5f9; --panel:#fff; --line:#d8dde7; --text:#151922; --dim:#5b6476; }
+  html,body{margin:0;background:var(--bg);color:var(--text);font-family:'Noto Sans KR',system-ui,sans-serif;}
+  main{min-height:80vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:24px 16px;}
+  .big{font-family:'Oswald',system-ui,sans-serif;font-size:72px;font-weight:700;background:linear-gradient(90deg,var(--fry),var(--fry2));-webkit-background-clip:text;background-clip:text;color:transparent;line-height:1;}
+  p{color:var(--dim);margin:14px 0 22px;}
+  a.b{display:inline-block;padding:10px 18px;border-radius:12px;background:linear-gradient(135deg,var(--fry),var(--fry2));color:#1a1206;font-weight:700;text-decoration:none;}
+  footer{text-align:center;color:var(--dim);font-size:13px;padding:18px 16px;}
+  footer a{color:inherit;}
+</style>
+</head>
+<body>
+<main><div class="big" id="n">404</div><p id="m">페이지를 찾지 못했어요.</p><a class="b" id="h" href="/games/">허브로 돌아가기</a></main>
+<footer><span class="ff-copy">© 2026 Frenchfries777 · <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.ko" target="_blank" rel="noopener">CC BY-NC-ND 4.0</a></span></footer>
+<script>
+(function(){
+  var T={ko:['페이지를 찾지 못했어요.','허브로 돌아가기'],en:['Page not found.','Back to the hub'],es:['No se encontró la página.','Volver al inicio'],fr:['Page introuvable.','Retour à l’accueil'],
+    de:['Seite nicht gefunden.','Zurück zum Hub'],ja:['ページが見つかりません。','ハブに戻る'],zh:['找不到页面。','返回主页'],pt:['Página não encontrada.','Voltar ao início'],
+    ru:['Страница не найдена.','Вернуться в хаб'],tr:['Sayfa bulunamadı.','Merkeze dön'],nw:['You have been sent to Room 101.','Back to the Ministry']};
+  var l=(window.FFLang&&FFLang.get())||'ko'; if(!T[l]) l='en'; document.documentElement.lang=l;
+  document.getElementById('m').textContent=T[l][0]; document.getElementById('h').textContent=T[l][1];
+  if(l==='nw') document.getElementById('n').textContent='101';
+})();
+</script>
+</body>
+</html>
