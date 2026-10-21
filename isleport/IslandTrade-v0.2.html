@@ -160,8 +160,8 @@ let OFF=0;const NOW=()=>Date.now()+OFF;
 /* ================= 언어 ================= */
 const LANGS=['ko','en','ja','es','fr','de','zh','pt','ru','tr','nw','gk'],LANGN={ko:'한국어',en:'English',ja:'日本語',es:'Español',fr:'Français',de:'Deutsch',zh:'简体中文',pt:'Português',ru:'Русский',tr:'Türkçe',nw:'Newspeak',gk:'번역기 한국어'};
 const VIRT={nw:1,gk:1},VLABEL={ko:'가상 언어',en:'Fictional languages',es:'Idiomas ficticios',fr:'Langues fictives',de:'Fiktive Sprachen',ja:'架空の言語',zh:'虚构语言',pt:'Idiomas fictícios',ru:'Вымышленные языки',tr:'Kurgusal diller',nw:'Unreal speaks',gk:"Fictional 언어들"};
-const auOn=()=>{try{return !!(window.FFLang&&FFLang.script&&FFLang.script()==='au');}catch(e){return false;}};
-const langOpts=()=>LANGS.filter(l=>!VIRT[l]).map(l=>`<option value="${l}" ${l===LANG&&!auOn()?'selected':''}>${LANGN[l]}</option>`).join('')+`<optgroup label="${VLABEL[LANG]||VLABEL.en}">`+LANGS.filter(l=>VIRT[l]).map(l=>`<option value="${l}" ${l===LANG?'selected':''}>${LANGN[l]}</option>`).join('')+`<option value="au" style="font-family:'FF Aurebesh',system-ui" ${auOn()?'selected':''}>🌐 Aurebesh</option></optgroup>`;
+const auOn=()=>{try{return !!(window.FFLang&&FFLang.script&&FFLang.script());}catch(e){return false;}};
+const langOpts=()=>LANGS.filter(l=>!VIRT[l]).map(l=>`<option value="${l}" ${l===LANG&&!auOn()?'selected':''}>${LANGN[l]}</option>`).join('')+`<optgroup label="${VLABEL[LANG]||VLABEL.en}">`+LANGS.filter(l=>VIRT[l]).map(l=>`<option value="${l}" ${l===LANG?'selected':''}>${LANGN[l]}</option>`).join('')+`<option value="au" style="font-family:'FF Aurebesh',system-ui" ${auOn()&&FFLang.script()==='au'?'selected':''}>🌐 Aurebesh</option><option value="sg" style="font-family:'FF Galactic',system-ui" ${auOn()&&FFLang.script()==='sg'?'selected':''}>🌐 Standard Galactic</option></optgroup>`;
 let LANG='ko';
 const EN={};
 function P(ko,en){EN[ko]=en;return [ko,en];}
@@ -171,7 +171,7 @@ const tx=a=>pick(a[0],a[1]);
 const fmt=n=>Math.round(n).toLocaleString(LANG==='ko'||LANG==='gk'?'ko-KR':LANG==='nw'?'en':LANG);
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 function initLang(){let l=null;try{if(window.FFLang)l=FFLang.get();}catch(e){}if(!l)try{l=localStorage.getItem('islandtrade.lang');}catch(e){}if(!l){l=(navigator.language||'ko').slice(0,2);}if(auOn())l='en';LANG=LANGS.includes(l)?l:'en';document.documentElement.lang=LANG;}
-function setLang(l){if(l==='au'||auOn()){try{localStorage.setItem('islandtrade.lang',l==='au'?'en':l);if(window.FFLang)FFLang.set(l);}catch(e){}location.reload();return;}LANG=l;document.documentElement.lang=l;try{localStorage.setItem('islandtrade.lang',l);if(window.FFLang)FFLang.set(l);}catch(e){}ICONC={};applyStatic();}
+function setLang(l){if((l==='au'||l==='sg')||auOn()){try{localStorage.setItem('islandtrade.lang',(l==='au'||l==='sg')?'en':l);if(window.FFLang)FFLang.set(l);}catch(e){}location.reload();return;}LANG=l;document.documentElement.lang=l;try{localStorage.setItem('islandtrade.lang',l);if(window.FFLang)FFLang.set(l);}catch(e){}ICONC={};applyStatic();}
 
 /* ================= 자료: 물건 ================= */
 /* 8x8 픽셀 모양. a 본색 b 그늘 c 하이라이트 o 테두리 g 잎 w 줄기 */
@@ -453,7 +453,7 @@ const TUT=[
  [P('다 자라면 ▼ 표시의 밭을 눌러 수확해요','When it is grown, tap the field with the ▼ to harvest'),s=>s.stats.harvest>=1],
  [P('마을 장터에서 수확한 것을 팔아요','Sell your harvest at the town market'),s=>(s.stats.shop||0)>=1],
  [P('항구에서 배에 짐을 싣고 보내요','Load a ship at the harbor and send it off'),s=>s.stats.sailed>=1]];
-const OUTMAX=12,BUILD=42;
+const OUTMAX=12,BUILD=43;
 const hasB=(s,b)=>s.slots.some(x=>x&&x.b===b);
 const rankOf=e=>{let r=0;RANKS.forEach((x,i)=>{if(e>=x[0])r=i;});return r;};
 /* 업적: id, 이름, 설명, 조건 */
@@ -575,6 +575,9 @@ A('nw1m',P('백만장자','Millionaire'),P('재산 1,000,000 모으기','Reach a
 const CROPK=Object.keys(CROPS),SPEC=['goldbarley','pomegranate','saffron','cloudcotton','seaweed','dragonfruit'],CROPK17=CROPK.filter(c=>!SPEC.includes(c));
 const ACHN={};ACH.forEach(a=>ACHN[a.id]=a);
 const NOTES=[
+ {date:'2026-10-22',build:'v0.2 build 43',title:P("은하 표준어 추가","Standard Galactic added"),items:[
+  P("가상 언어 은하 표준어 추가 (커맨더 킨·마인크래프트 인챈트 글자, 직접 그린 글꼴)","Fictional script Standard Galactic added (the Commander Keen and Minecraft enchanting letters, in our own drawn font)"),
+ ]},
  {date:'2026-10-21',build:'v0.2 build 42',title:P("언어 4개와 가상 언어 3개 추가","4 languages and 3 fictional languages added"),items:[
   P("언어 4개 추가: 중국어 간체, 포르투갈어(브라질), 러시아어, 튀르키예어","4 languages added: Simplified Chinese, Portuguese (Brazil), Russian, Turkish"),
   P("가상 언어 신어, 번역기 한국어, 오라베쉬 추가 (언어 선택의 가상 언어 묶음)","Fictional languages Newspeak, Translator Korean and Aurebesh added (Fictional languages group in the language picker)"),

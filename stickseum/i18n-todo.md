@@ -15,3 +15,5 @@ patchnotes.json | v332 title | 언어 7개 추가 | build 332 | 2026-10-21
 patchnotes.json | v332 items[0] | 중국어 간체, 포르투갈어(브라질), 러시아어, 튀르키예어 추가 | build 332 | 2026-10-21
 patchnotes.json | v332 items[1] | 가상 언어 신어, 번역기 한국어, 오라베쉬 추가 | build 332 | 2026-10-21
 patchnotes.json | v332 items[2] | 봇 이름을 새 언어별 이름으로 | build 332 | 2026-10-21
+patchnotes.json | v333 title | 은하 표준어 추가 | build 333 | 2026-10-22
+patchnotes.json | v333 items[0] | 가상 언어 은하 표준어 추가 (커맨더 킨·마인크래프트 인챈트 글자, 직접 그린 글꼴) | build 333 | 2026-10-22
