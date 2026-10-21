@@ -98,3 +98,4 @@ index.html | 랭킹 표 | 최장 생존 일수, 생존 순위는 서버 준비 �
 - patchnotes.json | "프로토타입 Vowkeep 추가" 3줄 | b1 | 2026-10-21
 - patchnotes.json | "Vowkeep 화면 지글거림 줄이기" 3줄 | Vowkeep b2 | 2026-10-21
 - patchnotes.json | "Vowkeep 매끄러운 화면과 부드러운 움직임" 4줄 | Vowkeep b3 | 2026-10-22
+- beaconfall/patchnotes.json·i18n.js | N["v0.3 b87"] (en·es·fr·de·ja 칸에 한국어 임시 입력) | 머리·표정 꾸미기 1줄. 게임 안 새 글자(머리·표정 이름, '머리 모양', '머리 색 (무료)', '표정', '머리·표정 꾸미기', '스킨 상점으로')는 I18N_D 11칸 배열에 번역 필요
