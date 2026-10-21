@@ -1084,28 +1084,42 @@ button{font:inherit;cursor:pointer}
 .notes ul{margin:6px 0 0;padding-left:18px}.notes li{margin:3px 0}
 /* 로비 */
 #botRow{display:flex;align-items:center;justify-content:center;gap:10px;margin:0 0 10px;font-weight:800;color:#3a2410}#botRow .pb{padding:6px 14px;font-size:18px}#botN{min-width:22px;text-align:center;font-size:18px}
-#sLobby{background:linear-gradient(180deg,#f7d9a8,#e8b77a);min-height:100vh;padding:20px 16px 40px}
-.lobBox{max-width:560px;margin:0 auto}
-.lobTop{display:flex;align-items:center;gap:10px;margin-bottom:14px}
-.lobTop h2{margin:0;font-size:22px;flex:1}
-#lobCodeBox{background:#fff;border-radius:18px;padding:14px;text-align:center;margin-bottom:14px;box-shadow:0 4px 0 #d9b98a}
-#lobCodeBox small{display:block;color:var(--mu);font-weight:700}
-#lobCode{font-size:40px;font-weight:900;letter-spacing:8px}
-#sLobby .lobPlay{margin:0 0 12px;background:#fff;border-radius:18px;padding:8px;box-shadow:0 4px 0 #d9b98a}
-#lobStage{display:block;width:100%;height:auto;border-radius:12px;touch-action:none;cursor:pointer}
-.lobCtl{display:flex;align-items:center;gap:8px;margin-top:8px}#lobEmo{display:flex;gap:6px;flex:1}
+#sLobby{background:#2a1a3a}
+#sLobby.on{display:block;position:fixed;inset:0;min-height:0;padding:0;overflow:hidden}
+.lobWrap{position:absolute;inset:0;display:grid;grid-template-columns:8fr 2fr}
+.lobMain{position:relative;min-width:0;min-height:0;overflow:hidden}
+#lobStage{position:absolute;inset:0;width:100%;height:100%;display:block;touch-action:none;cursor:pointer}
+.lobTop{position:absolute;left:0;right:0;top:0;display:flex;align-items:center;gap:10px;padding:10px 12px;padding-top:max(10px,env(safe-area-inset-top));pointer-events:none;z-index:2}
+.lobTop>*{pointer-events:auto}
+.lobTop h2{margin:0;font-size:20px;color:#fff;text-shadow:0 2px 0 rgba(0,0,0,.5);flex:1}
+.lobTop b{color:#fff;text-shadow:0 2px 0 rgba(0,0,0,.5)}
+.lobBot{position:absolute;left:0;right:0;bottom:0;padding:8px 12px;padding-bottom:max(8px,env(safe-area-inset-bottom));z-index:2;background:linear-gradient(0deg,rgba(20,10,30,.7),rgba(20,10,30,0))}
+.lobCtl{display:flex;align-items:center;gap:8px}#lobEmo{display:flex;gap:6px;flex:1}
 #lobEmo button{width:42px;height:42px;border:0;border-radius:12px;background:#f3e2c7;padding:2px;cursor:pointer}#lobEmo canvas{width:100%;height:100%}
 .lobCtl .pb{padding:9px 14px;font-size:14px}
-.lobHint{font-size:12px;font-weight:700;color:var(--mu);text-align:center;margin-top:6px}
-#lobList{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
-#lobList li{background:#fff;border-radius:14px;padding:6px 10px;display:flex;align-items:center;gap:8px;font-weight:800;min-width:0}
-#lobList li span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-#lobList em{font-style:normal;font-size:11px;background:var(--gold);border-radius:6px;padding:1px 6px;color:#3a2410}
+.lobHint{font-size:12px;font-weight:700;color:#fff;text-shadow:0 1px 0 rgba(0,0,0,.6);text-align:center;margin-top:6px}
+.lobSide{background:linear-gradient(180deg,#f7d9a8,#e8b77a);padding:12px 10px;overflow:auto;display:flex;flex-direction:column;gap:10px;min-width:0}
+#lobCodeBox{background:#fff;border-radius:14px;padding:10px;text-align:center;box-shadow:0 3px 0 #d9b98a}
+#lobCodeBox small{display:block;color:var(--mu);font-weight:700;font-size:12px}
+#lobCode{font-size:28px;font-weight:900;letter-spacing:5px}
+#lobList{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px}
+#lobList li{background:#fff;border-radius:12px;padding:4px 8px;display:flex;align-items:center;gap:6px;font-weight:800;min-width:0;font-size:13px}
+#lobList li canvas.mini{flex:none;width:30px;height:38px}
+#lobList li span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0}
+#lobList em{font-style:normal;font-size:10px;background:var(--gold);border-radius:6px;padding:1px 5px;color:#3a2410;flex:none}
 #lobList em.bt{background:#ddd}
-.lobSet{background:#fff8ec;border-radius:16px;padding:14px;margin-top:14px}
+@media(max-aspect-ratio:1/1){
+.lobWrap{grid-template-columns:1fr;grid-template-rows:6fr 4fr}
+.lobSide{flex-direction:row;flex-wrap:wrap;align-content:flex-start}
+.lobSide>*{flex:1 1 150px}
+.lobSet{order:-1}#lobList{flex:1 1 100%;display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}
+.lobHint{display:none}
+#lobEmo{gap:4px}#lobEmo button{width:34px;height:34px;border-radius:10px}.lobCtl .pb{padding:8px 10px}.lobCtl{gap:5px}
+}
+.lobSet{background:#fff8ec;border-radius:14px;padding:10px}
 .step{display:flex;align-items:center;gap:10px;font-weight:800}
 .step button{width:38px;height:38px;border-radius:10px;border:0;background:#fff;box-shadow:0 3px 0 #cdbca4;font-size:20px;font-weight:900}
-#startBtn{width:100%;margin-top:14px;font-size:19px;padding:15px}
+#startBtn{width:100%;margin-top:10px;font-size:18px;padding:12px}
 #startHint{font-size:13px;color:var(--mu);margin-top:8px;text-align:center}
 .wait{text-align:center;color:var(--mu);font-weight:700}
 /* 게임 */
@@ -1259,7 +1273,9 @@ body.playing #emoBar{display:flex}
    <div class="row"><input id="codeIn" maxlength="5" placeholder="방 코드" autocomplete="off"><button class="pb dark" id="joinBtn" style="flex:0 0 auto">들어가기</button></div>
    <div class="msg" id="homeMsg"></div>
   </aside>
-  <template id="patchnotes"><details class="notes" open><summary>패치노트 · v0.1 (build 36)</summary>
+  <template id="patchnotes"><details class="notes" open><summary>패치노트 · v0.1 (build 37)</summary>
+   <b>2026-10-21 · v0.1 build 37 · 전체 화면 대기실</b>
+   <ul><li>대기실을 전체 화면으로 바꿨어요. 놀이터가 8, 방 코드·플레이어 목록·봇 추가·시작 버튼이 오른쪽 2 비율이에요 (폰 세로 화면에서는 위아래로 나뉘어요)</li><li>마네킹이 커지고 이름표가 머리 바로 위에 하나씩만 보여요 (여러 개로 겹쳐 보이던 문제 수정)</li></ul>
    <b>2026-10-21 · v0.1 build 36 · 미니게임 2개, 우승자 인터뷰</b>
    <ul><li>미니게임 추가: 외줄타기 레이스 (몸이 기우는 쪽을 눌러 균형을 잡고 결승선까지 건너기)</li><li>미니게임 추가: 구멍 벽 통과 (다가오는 벽의 구멍에 몸을 맞추고, 필요하면 납작해지기)</li><li>우승자 인터뷰 추가 (우승자가 대답을 고르면 리포터가 반응)</li><li>이제 26개 미니게임</li></ul>
    <b>2026-10-21 · v0.1 build 35 · 대기실 놀이터, 클릭 연타</b>
@@ -1330,25 +1346,31 @@ body.playing #emoBar{display:flex}
    <ul><li>무너지는 발판 칸 수 대폭 증가 (19×10)와 용암 동굴 맵</li><li>10개 맵 전부 새로 그림 (관중석, 야자수 섬, 링, 정원 미로, 서커스, 우노 테이블 등)</li><li>글자 대신 아이콘·말풍선·이펙트로 표현 (무기, 아이템, 카드 효과, 시작 안내)</li><li>타격·폭발·물보라 효과와 화면 흔들림 추가</li></ul>
    <b>2026-10-19 · v0.1 build 1 · 첫 시험판</b>
    <ul><li>마네킹 미니게임 10개 추가 (장애물 달리기, 섬 밀치기, 싸우기, 병맛 미로, 체스 대난투, 폭탄 돌리기, 병맛 우노, 쇼윈도 얼음땡, 무너지는 발판, 컨베이어 서바이벌)</li><li>방 코드로 최대 8명 멀티플레이, 빈자리는 봇으로 채우기</li><li>판마다 10개 중 5개를 무작위로 골라 점수를 합산</li><li>PC 키보드와 휴대폰 터치 조작 지원</li></ul></details></template>
-  <p class="foot">2~8명 · 판마다 26개 미니게임 중 7개 · 프로토타입 v0.1 b36 · <a href="../">← 프로토타입 목록</a></p>
+  <p class="foot">2~8명 · 판마다 26개 미니게임 중 7개 · 프로토타입 v0.1 b37 · <a href="../">← 프로토타입 목록</a></p>
   <p class="foot"><span class="ff-copy">© 2026 Frenchfries777 · <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.ko" target="_blank" rel="noopener">CC BY-NC-ND 4.0</a></span></p>
  </div>
 </section>
 
 <section class="screen" id="sLobby">
- <div class="lobBox">
-  <div class="lobTop"><button class="pb dark" id="lobBack">← 나가기</button><h2>대기실</h2><b id="lobCount"></b></div>
-  <div id="lobCodeBox"><small>방 코드</small><div id="lobCode"></div><button class="pb" id="copyBtn" style="margin-top:6px;font-size:14px;padding:8px 14px">초대 링크 복사</button></div>
-  <div class="lobPlay"><canvas id="lobStage" width="720" height="300"></canvas>
-   <div class="lobCtl"><div id="lobEmo"></div><button class="pb" id="lobJump" type="button">점프</button><button class="pb" id="lobThrow" type="button">던지기</button></div>
-   <div class="lobHint">움직이기: WASD · 화면 누르기 / 점프: 스페이스 / 던지기: K / 이모트: 1~5</div></div>
-  <ul id="lobList"></ul>
-  <div class="lobSet" id="lobHost">
-   <div id="botRow" style="display:none"><span>봇</span><button class="pb" id="botMinus" type="button">−</button><b id="botN"></b><button class="pb" id="botPlus" type="button">+</button></div>
-   <button class="pb gold" id="startBtn">시작하기</button>
-   <div id="startHint"></div>
+ <div class="lobWrap">
+  <div class="lobMain">
+   <canvas id="lobStage" width="800" height="500"></canvas>
+   <div class="lobTop"><button class="pb dark" id="lobBack">← 나가기</button><h2>대기실</h2><b id="lobCount"></b></div>
+   <div class="lobBot">
+    <div class="lobCtl"><div id="lobEmo"></div><button class="pb" id="lobJump" type="button">점프</button><button class="pb" id="lobThrow" type="button">던지기</button></div>
+    <div class="lobHint">움직이기: WASD · 화면 누르기 / 점프: 스페이스 / 던지기: K / 이모트: 1~5</div>
+   </div>
   </div>
-  <p class="wait" id="lobWait">방장이 시작하기를 누르면 바로 시작해요.</p>
+  <aside class="lobSide">
+   <div id="lobCodeBox"><small>방 코드</small><div id="lobCode"></div><button class="pb" id="copyBtn" style="margin-top:6px;font-size:13px;padding:7px 12px">초대 링크 복사</button></div>
+   <ul id="lobList"></ul>
+   <div class="lobSet" id="lobHost">
+    <div id="botRow" style="display:none"><span>봇</span><button class="pb" id="botMinus" type="button">−</button><b id="botN"></b><button class="pb" id="botPlus" type="button">+</button></div>
+    <button class="pb gold" id="startBtn">시작하기</button>
+    <div id="startHint"></div>
+   </div>
+   <p class="wait" id="lobWait">방장이 시작하기를 누르면 바로 시작해요.</p>
+  </aside>
  </div>
 </section>
 
@@ -6334,7 +6356,7 @@ function goHome() { destroyPeer(); G.role = null; G.phase = 'idle'; G.st = null;
 
 /* ===== 대기실 놀이터: 기다리는 동안 마네킹을 움직이고 이모트를 보내고 소품을 던져요 =====
    방장이 모두의 위치를 계산해서 15번/초 보내고, 참가자는 입력만 보내요. */
-var LOB = { w: 720, h: 300, y0: 158, y1: 288, tgt: null, a: 0, b: 0, lastC: {}, vis: {}, snap: null, props: [], t0: 0 };
+var LOB = { w: 900, h: 480, y0: 190, y1: 450, view: { s: 1, ox: 0, oy: 0, cw: 1, ch: 1 }, tgt: null, a: 0, b: 0, lastC: {}, vis: {}, snap: null, props: [], t0: 0 };
 var LOB_PROPS = ['tomato', 'banana', 'melon', 'baguette', 'pan'];
 function lobReset() { G.lob = null; LOB.vis = {}; LOB.snap = null; LOB.tgt = null; LOB.lastC = {}; }
 function lobEnsure() {
@@ -6342,7 +6364,7 @@ function lobEnsure() {
   var L = G.lob, ids = {};
   G.players.forEach(function (p, i) {
     ids[p.id] = 1;
-    if (!L.pl[p.id]) L.pl[p.id] = { x: 120 + (i * 97) % 480, y: LOB.y0 + 10 + (i * 53) % 110, vx: 0, vy: 0, face: 1, walk: 0, mvv: 0, z: 0, vz: 0, hit: 0, cd: 0, jb: 0, tx: 0, ty: 0, tt: 0 };
+    if (!L.pl[p.id]) L.pl[p.id] = { x: 120 + (i * 137) % 660, y: LOB.y0 + 10 + (i * 71) % 220, vx: 0, vy: 0, face: 1, walk: 0, mvv: 0, z: 0, vz: 0, hit: 0, cd: 0, jb: 0, tx: 0, ty: 0, tt: 0 };
   });
   for (var k in L.pl) if (!ids[k]) delete L.pl[k];
   return L;
@@ -6363,7 +6385,7 @@ function lobStep(dt) {
       inp = { mx: r.mx || 0, my: r.my || 0 }; jump = (r.ac | 0) > lc.ac; thr = (r.bc | 0) > lc.bc; LOB.lastC[p.id] = { ac: r.ac | 0, bc: r.bc | 0 };
     }
     if (q.hit > 0) { q.hit -= dt; inp = { mx: 0, my: 0 }; }
-    var sp = 150; q.vx = lerp(q.vx, inp.mx * sp, 0.3); q.vy = lerp(q.vy, inp.my * sp * 0.75, 0.3);
+    var sp = 190; q.vx = lerp(q.vx, inp.mx * sp, 0.3); q.vy = lerp(q.vy, inp.my * sp * 0.75, 0.3);
     q.x = clamp(q.x + q.vx * dt, 28, LOB.w - 28); q.y = clamp(q.y + q.vy * dt, LOB.y0, LOB.y1);
     var mv = Math.abs(q.vx) + Math.abs(q.vy) > 20; if (Math.abs(q.vx) > 12) q.face = q.vx > 0 ? 1 : -1;
     q.mvv = lerp(q.mvv, mv ? 1 : 0, 0.25); q.walk += dt * 11 * q.mvv;
@@ -6407,12 +6429,23 @@ function lobRaw() {
   else if (LOB.tgt) { var dx = LOB.tgt.x - me.x, dy = (LOB.tgt.y - me.y) / 0.75, d = Math.hypot(dx, dy); if (d < 8) LOB.tgt = null; else { r.mx = +(dx / d).toFixed(2); r.my = +(dy / d * 0.75).toFixed(2); } }
   r.ac += LOB.a; r.bc += LOB.b; return r;
 }
+function lobTag(c, v) {
+  var nm = v.p.name + (v.p.id === G.me ? ' ★' : ''), ny = v.y - v.z - 118;
+  c.save(); c.font = '800 15px ' + FONT; c.textAlign = 'center'; c.lineWidth = 4; c.strokeStyle = 'rgba(0,0,0,.65)'; c.strokeText(nm, v.x, ny); c.fillStyle = COLORS[v.p.color]; c.fillText(nm, v.x, ny); c.restore();
+}
 function lobDraw() {
-  var cv = $('lobStage'); if (!cv) return; var c = cv.getContext('2d'), now = performance.now(), t = now / 1000;
-  c.setTransform(cv.width / LOB.w, 0, 0, cv.height / LOB.h, 0, 0);
-  var g = c.createLinearGradient(0, 0, 0, LOB.h); g.addColorStop(0, '#3a2358'); g.addColorStop(0.4, '#5b3a7a'); g.addColorStop(0.41, '#9c6a3c'); g.addColorStop(1, '#6e4624'); c.fillStyle = g; c.fillRect(0, 0, LOB.w, LOB.h);
-  c.fillStyle = '#a3202f'; c.fillRect(0, 0, LOB.w, 22); for (var sc = 0; sc < LOB.w; sc += 30) { c.beginPath(); c.arc(sc + 15, 22, 15, 0, 3.1416); c.fill(); }
-  for (var i = 0; i < 3; i++) { var a = Math.sin(t * 0.9 + i * 2) * 0.35; c.save(); c.translate(120 + i * 240, -10); c.rotate(a); var gr = c.createLinearGradient(0, 0, 0, 230); gr.addColorStop(0, 'rgba(255,240,180,.28)'); gr.addColorStop(1, 'rgba(255,240,180,0)'); c.fillStyle = gr; c.beginPath(); c.moveTo(-10, 0); c.lineTo(10, 0); c.lineTo(60, 230); c.lineTo(-60, 230); c.fill(); c.restore(); }
+  var cv = $('lobStage'); if (!cv) return; var now = performance.now(), t = now / 1000;
+  var dpr = Math.min(window.devicePixelRatio || 1, isTouch() ? 1.5 : 2), cw = Math.round(cv.clientWidth * dpr), ch = Math.round(cv.clientHeight * dpr);
+  if (!cw || !ch) return;
+  if (cv.width !== cw || cv.height !== ch) { cv.width = cw; cv.height = ch; }
+  var c = cv.getContext('2d'), padT = 56 * dpr, padB = (cv.clientWidth < cv.clientHeight ? 70 : 96) * dpr;
+  var sc = Math.min(cw / LOB.w, (ch - padT - padB) / LOB.h), ox = (cw - LOB.w * sc) / 2, oy = padT + ((ch - padT - padB) - LOB.h * sc) / 2;
+  LOB.view = { s: sc, ox: ox, oy: oy, cw: cw, ch: ch };
+  c.setTransform(1, 0, 0, 1, 0, 0);
+  var fy = oy + 160 * sc, g = c.createLinearGradient(0, 0, 0, ch); g.addColorStop(0, '#3a2358'); g.addColorStop(fy / ch * 0.98, '#5b3a7a'); g.addColorStop(Math.min(1, fy / ch), '#9c6a3c'); g.addColorStop(1, '#6e4624'); c.fillStyle = g; c.fillRect(0, 0, cw, ch);
+  var vh = 22 * dpr + 6; c.fillStyle = '#a3202f'; c.fillRect(0, 0, cw, vh); for (var sx = 0; sx < cw + 30 * dpr; sx += 30 * dpr) { c.beginPath(); c.arc(sx + 15 * dpr, vh, 15 * dpr, 0, 3.1416); c.fill(); }
+  for (var i = 0; i < 5; i++) { var a = Math.sin(t * 0.9 + i * 2) * 0.3; c.save(); c.translate(cw * (0.12 + i * 0.19), -10); c.rotate(a); var gr = c.createLinearGradient(0, 0, 0, fy); gr.addColorStop(0, 'rgba(255,240,180,.26)'); gr.addColorStop(1, 'rgba(255,240,180,0)'); c.fillStyle = gr; c.beginPath(); c.moveTo(-10, 0); c.lineTo(10, 0); c.lineTo(70 * sc, fy); c.lineTo(-70 * sc, fy); c.fill(); c.restore(); }
+  c.setTransform(sc, 0, 0, sc, ox, oy);
   var ps = G.role === 'guest' ? (G.meta ? G.meta.players : []) : G.players, snap = LOB.snap, items = [];
   if (snap) {
     ps.forEach(function (p) {
@@ -6421,7 +6454,7 @@ function lobDraw() {
       v.x = lerp(v.x, s[0], 0.35); v.y = lerp(v.y, s[1], 0.35); v.z = lerp(v.z, s[5], 0.4); v.face = s[2]; v.walk = s[3]; v.mvv = s[4]; v.hit = s[6]; v.p = p;
     });
     for (var id in LOB.vis) if (!snap.pl[id]) delete LOB.vis[id];
-    for (var id2 in LOB.vis) (function (v) { items.push({ y: v.y, d: function () { drawDummy(c, v.x, v.y, { s: 1.3, face: v.face, walk: v.walk, mv: v.mvv, z: v.z, color: COLORS[v.p.color], name: v.p.name, pose: v.hit ? 'fall' : 'stand', t: t }); } }); })(LOB.vis[id2]);
+    for (var id2 in LOB.vis) (function (v) { items.push({ y: v.y, d: function () { drawDummy(c, v.x, v.y, { s: 1.6, face: v.face, walk: v.walk, mv: v.mvv, z: v.z, color: COLORS[v.p.color], pose: v.hit ? 'fall' : 'stand', t: t }); lobTag(c, v);  } }); })(LOB.vis[id2]);
     snap.pr.forEach(function (o) { items.push({ y: o[1] + 1, d: function () { c.fillStyle = 'rgba(0,0,0,.2)'; c.beginPath(); c.ellipse(o[0], o[1], 9, 4, 0, 0, 6.283); c.fill(); icon(c, LOB_PROPS[o[3]], o[0], o[1] - o[2] - 8, 26); } }); });
   }
   items.sort(function (a, b) { return a.y - b.y; }).forEach(function (it) { it.d(); });
@@ -6443,7 +6476,7 @@ function lobDraw() {
   // 대기실 놀이터: 눌러서 이동, 점프·던지기 버튼, 이모트
   (function () {
     var st = $('lobStage');
-    st.addEventListener('pointerdown', function (e) { var r = st.getBoundingClientRect(); LOB.tgt = { x: clamp((e.clientX - r.left) / r.width * LOB.w, 28, LOB.w - 28), y: clamp((e.clientY - r.top) / r.height * LOB.h, LOB.y0, LOB.y1) }; });
+    st.addEventListener('pointerdown', function (e) { var r = st.getBoundingClientRect(), V = LOB.view, px = (e.clientX - r.left) / r.width * V.cw, py = (e.clientY - r.top) / r.height * V.ch; LOB.tgt = { x: clamp((px - V.ox) / V.s, 28, LOB.w - 28), y: clamp((py - V.oy) / V.s, LOB.y0, LOB.y1) }; });
     $('lobJump').addEventListener('pointerdown', function (e) { e.preventDefault(); LOB.a++; });
     $('lobThrow').addEventListener('pointerdown', function (e) { e.preventDefault(); LOB.b++; });
     var bar = $('lobEmo');
