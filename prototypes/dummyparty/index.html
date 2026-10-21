@@ -268,6 +268,10 @@
     '모자': ['hat', 'sombrero', 'chapeau', 'Hut', '帽子'],
     '안경': ['glasses', 'gafas', 'lunettes', 'Brille', 'メガネ'],
     /* 빌드 25 추가분 */
+    "클릭": ["Click", "Clic", "Clic", "Klick", "クリック"],
+    "마우스 클릭": ["Mouse click", "Clic del ratón", "Clic de souris", "Mausklick", "マウスクリック"],
+    "던지기": ["Throw", "Lanzar", "Lancer", "Werfen", "投げる"],
+    "움직이기: WASD · 화면 누르기 / 점프: 스페이스 / 던지기: K / 이모트: 1~5": ["Move: WASD or tap the stage / Jump: Space / Throw: K / Emotes: 1-5", "Mover: WASD o tocar el escenario / Saltar: Espacio / Lanzar: K / Emotes: 1-5", "Bouger : WASD ou toucher la scène / Sauter : Espace / Lancer : K / Émotes : 1-5", "Bewegen: WASD oder Bühne antippen / Springen: Leertaste / Werfen: K / Emotes: 1-5", "移動: WASD かステージをタップ / ジャンプ: スペース / 投げる: K / エモート: 1~5"],
     "특별상": ["Special Awards", "Premios especiales", "Prix spéciaux", "Sonderpreise", "特別賞"],
     "방귀왕": ["Fart King", "Rey del pedo", "Roi des pets", "Pups-König", "おならキング"],
     "낙하왕": ["Fall King", "Rey de las caídas", "Roi des chutes", "Sturz-König", "落下王"],
@@ -1013,6 +1017,12 @@ button{font:inherit;cursor:pointer}
 #lobCodeBox{background:#fff;border-radius:18px;padding:14px;text-align:center;margin-bottom:14px;box-shadow:0 4px 0 #d9b98a}
 #lobCodeBox small{display:block;color:var(--mu);font-weight:700}
 #lobCode{font-size:40px;font-weight:900;letter-spacing:8px}
+#sLobby .lobPlay{margin:0 0 12px;background:#fff;border-radius:18px;padding:8px;box-shadow:0 4px 0 #d9b98a}
+#lobStage{display:block;width:100%;height:auto;border-radius:12px;touch-action:none;cursor:pointer}
+.lobCtl{display:flex;align-items:center;gap:8px;margin-top:8px}#lobEmo{display:flex;gap:6px;flex:1}
+#lobEmo button{width:42px;height:42px;border:0;border-radius:12px;background:#f3e2c7;padding:2px;cursor:pointer}#lobEmo canvas{width:100%;height:100%}
+.lobCtl .pb{padding:9px 14px;font-size:14px}
+.lobHint{font-size:12px;font-weight:700;color:var(--mu);text-align:center;margin-top:6px}
 #lobList{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
 #lobList li{background:#fff;border-radius:14px;padding:6px 10px;display:flex;align-items:center;gap:8px;font-weight:800;min-width:0}
 #lobList li span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
@@ -1174,7 +1184,9 @@ body.playing #emoBar{display:flex}
    <div class="row"><input id="codeIn" maxlength="5" placeholder="방 코드" autocomplete="off"><button class="pb dark" id="joinBtn" style="flex:0 0 auto">들어가기</button></div>
    <div class="msg" id="homeMsg"></div>
   </aside>
-  <template id="patchnotes"><details class="notes" open><summary>패치노트 · v0.1 (build 34)</summary>
+  <template id="patchnotes"><details class="notes" open><summary>패치노트 · v0.1 (build 35)</summary>
+   <b>2026-10-21 · v0.1 build 35 · 대기실 놀이터, 클릭 연타</b>
+   <ul><li>대기실 놀이터 추가: 기다리는 동안 마네킹을 움직이고 점프하고 소품(토마토, 바나나 등)을 던지고 이모트를 보낼 수 있어요. 화면을 눌러도 그쪽으로 걸어가요</li><li>연타하는 판(핫도그, 줄다리기, 닭 몰이, 풍선, 박스 탈출)은 마우스 클릭으로도 할 수 있어요 (스페이스도 그대로 돼요)</li></ul>
    <b>2026-10-21 · v0.1 build 34 · 부문별 특별상</b>
    <ul><li>시상식 결과 카드에 부문별 특별상 추가 (방귀왕, 낙하왕, 맞기왕, 만년 꼴찌, 아깝다상). 경기 중 기록으로 자동으로 주고 해설이 한마디씩 해요</li></ul>
    <b>2026-10-21 · v0.1 build 33 · 방장 이어받기, 오프라인, 최적화</b>
@@ -1241,7 +1253,7 @@ body.playing #emoBar{display:flex}
    <ul><li>무너지는 발판 칸 수 대폭 증가 (19×10)와 용암 동굴 맵</li><li>10개 맵 전부 새로 그림 (관중석, 야자수 섬, 링, 정원 미로, 서커스, 우노 테이블 등)</li><li>글자 대신 아이콘·말풍선·이펙트로 표현 (무기, 아이템, 카드 효과, 시작 안내)</li><li>타격·폭발·물보라 효과와 화면 흔들림 추가</li></ul>
    <b>2026-10-19 · v0.1 build 1 · 첫 시험판</b>
    <ul><li>마네킹 미니게임 10개 추가 (장애물 달리기, 섬 밀치기, 싸우기, 병맛 미로, 체스 대난투, 폭탄 돌리기, 병맛 우노, 쇼윈도 얼음땡, 무너지는 발판, 컨베이어 서바이벌)</li><li>방 코드로 최대 8명 멀티플레이, 빈자리는 봇으로 채우기</li><li>판마다 10개 중 5개를 무작위로 골라 점수를 합산</li><li>PC 키보드와 휴대폰 터치 조작 지원</li></ul></details></template>
-  <p class="foot">2~8명 · 판마다 24개 미니게임 중 7개 · 프로토타입 v0.1 b34 · <a href="../">← 프로토타입 목록</a></p>
+  <p class="foot">2~8명 · 판마다 24개 미니게임 중 7개 · 프로토타입 v0.1 b35 · <a href="../">← 프로토타입 목록</a></p>
   <p class="foot"><span class="ff-copy">© 2026 Frenchfries777 · <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.ko" target="_blank" rel="noopener">CC BY-NC-ND 4.0</a></span></p>
  </div>
 </section>
@@ -1250,6 +1262,9 @@ body.playing #emoBar{display:flex}
  <div class="lobBox">
   <div class="lobTop"><button class="pb dark" id="lobBack">← 나가기</button><h2>대기실</h2><b id="lobCount"></b></div>
   <div id="lobCodeBox"><small>방 코드</small><div id="lobCode"></div><button class="pb" id="copyBtn" style="margin-top:6px;font-size:14px;padding:8px 14px">초대 링크 복사</button></div>
+  <div class="lobPlay"><canvas id="lobStage" width="720" height="300"></canvas>
+   <div class="lobCtl"><div id="lobEmo"></div><button class="pb" id="lobJump" type="button">점프</button><button class="pb" id="lobThrow" type="button">던지기</button></div>
+   <div class="lobHint">움직이기: WASD · 화면 누르기 / 점프: 스페이스 / 던지기: K / 이모트: 1~5</div></div>
   <ul id="lobList"></ul>
   <div class="lobSet" id="lobHost">
    <div id="botRow" style="display:none"><span>봇</span><button class="pb" id="botMinus" type="button">−</button><b id="botN"></b><button class="pb" id="botPlus" type="button">+</button></div>
@@ -1609,13 +1624,13 @@ function fx(state, name, x, y, who) { (state._fx || (state._fx = [])).push(x == 
 /* ---------- 입력 (키보드 + 터치 조이스틱 + 버튼) ---------- */
 var INPUT = (function () {
   var keys = {}, joy = { on: false, id: null, cx: 0, cy: 0, x: 0, y: 0 }, tA = false, tB = false;
-  var aC = 0, bC = 0, prevA = false, prevB = false;
+  var aC = 0, bC = 0, prevA = false, prevB = false, mA = false;
   var KA = ['Space', 'KeyJ', 'KeyZ', 'Enter'], KB = ['KeyK', 'KeyX', 'ShiftLeft', 'ShiftRight', 'KeyE'];
   addEventListener('keydown', function (e) {
     if (e.target && (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA' || e.target.tagName === 'SELECT')) return;
     if (!keys[e.code]) { if (KA.indexOf(e.code) >= 0) aC++; if (KB.indexOf(e.code) >= 0) bC++; }
     keys[e.code] = true;
-    if (['Space', 'ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].indexOf(e.code) >= 0 && document.body.classList.contains('playing')) e.preventDefault();
+    if (['Space', 'ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].indexOf(e.code) >= 0 && (document.body.classList.contains('playing') || (window.G && G.phase === 'lobby' && !(e.target && e.target.tagName === 'BUTTON')))) e.preventDefault();
   });
   addEventListener('keyup', function (e) { keys[e.code] = false; });
   addEventListener('blur', function () { keys = {}; });
@@ -1653,9 +1668,10 @@ var INPUT = (function () {
       if (keys.KeyW || keys.ArrowUp) my -= 1; if (keys.KeyS || keys.ArrowDown) my += 1;
       if (mx && my) { mx *= 0.7071; my *= 0.7071; }
       if (joy.on && (Math.abs(joy.x) > 0.12 || Math.abs(joy.y) > 0.12)) { mx = joy.x; my = joy.y; }
-      return { mx: +mx.toFixed(2), my: +my.toFixed(2), a: anyKey(KA) || tA, b: anyKey(KB) || tB, ac: aC, bc: bC };
+      return { mx: +mx.toFixed(2), my: +my.toFixed(2), a: anyKey(KA) || tA || mA, b: anyKey(KB) || tB, ac: aC, bc: bC };
     },
-    reset: function () { keys = {}; joy.on = false; joy.x = joy.y = 0; tA = tB = false; }
+    mouse: function (v) { if (v && !mA) aC++; mA = v; },
+    reset: function () { keys = {}; mA = false; joy.on = false; joy.x = joy.y = 0; tA = tB = false; }
   };
 })();
 
@@ -5576,7 +5592,7 @@ function migBecomeHost() {
     toast('이제 내가 방장이에요.');
     var ph = m.phase;
     if (ph === 'lobby') {
-      G.phase = 'lobby'; show('sLobby'); renderLobby(); sendMeta();
+      G.phase = 'lobby'; lobReset(); show('sLobby'); renderLobby(); sendMeta();
       setTimeout(function () { if (G.phase === 'lobby' && G.role === 'host') { G.players = G.players.filter(function (q) { return !q.lost; }); sendMeta(); renderLobby(); } }, 12000);
     } else if (ph === 'final') {
       G.phase = 'final'; G.tl = 0; sendMeta(); onPhase('result');
@@ -5596,6 +5612,7 @@ function guestMsg(d) {
   G.lastRx = performance.now();
   if (d.t === 'welcome') { G.me = d.id; busy(false); homeMsg(''); if (G.mig) { G.mig = null; toast('방장이 바뀌었어요.'); } return; }
   if (d.t === 'hb') return;
+  if (d.t === 'ls') { lobGuestSnap(d.d); return; }
   if (d.t === 'm') { applyMeta(d.m); return; }
   if (d.t === 'e') { showEmote(d.id, d.e | 0); return; }
   if (d.t === 's') {
@@ -5625,7 +5642,7 @@ function syncDeco(m) {
 }
 function doEmote(pid, e) {
   if (e < 0 || e >= EMO_ICONS.length) return;
-  var p = getP(pid); if (!p || G.phase === 'lobby' || G.phase === 'idle') return;
+  var p = getP(pid); if (!p || G.phase === 'idle') return;
   var now = performance.now(); p._emoAt = p._emoAt || 0; if (now - p._emoAt < 1200) return; p._emoAt = now;
   showEmote(pid, e);
   for (var k in G.conns) try { G.conns[k].send({ t: 'e', id: pid, e: e }); } catch (er) { }
@@ -5637,7 +5654,7 @@ function showEmote(pid, e) {
   EMO[COLORS[p.color]] = { e: e, t0: performance.now() }; SFX.play(['boing', 'squeak', 'fall', 'coin', 'pop'][e]);
 }
 function sendEmote(e) {
-  if (G.phase === 'lobby' || G.phase === 'idle' || G.phase === 'final') return;
+  if (G.phase === 'idle' || G.phase === 'final') return;
   if (G.role === 'guest') { var now = performance.now(); if (now - G.emoAt < 1200) return; G.emoAt = now; showEmote(G.me, e); if (G.conn) try { G.conn.send({ t: 'e', e: e }); } catch (er) { } }
   else doEmote(G.me, e);
 }
@@ -5655,7 +5672,7 @@ function noteMatchEnd(m) {
 
 /* ---------- 로비 ---------- */
 function initLobby() {
-  G.phase = 'lobby'; G.me = 'p0';
+  G.phase = 'lobby'; G.me = 'p0'; lobReset();
   G.players = [{ id: 'p0', name: G.name, color: 0, bot: false, online: true, score: 0, wins: 0, h: myDeco().h, g: myDeco().g, f: myDeco().f, d: myDeco().d }];
   G.bots = G.role === 'solo' ? 3 : 0;
   trimBots(true);
@@ -5744,7 +5761,8 @@ function beginIntro() {
 function setPhase(ph, t) { var prev = G.phase; G.phase = ph; G.tl = t; G.phaseT = 0; sendMeta(); onPhase(prev); }
 function hostTick() {
   if (G.role !== 'host' && G.role !== 'solo') return;
-  if (G.phase === 'idle' || G.phase === 'lobby' || G.phase === 'final') return;
+  if (G.phase === 'lobby') { lobTick(); return; }
+  if (G.phase === 'idle' || G.phase === 'final') return;
   var dt = 1 / 60, def = DP.MG[G.mgId];
   G.tl -= dt; G.phaseT += dt; G.frame++;
   if (G.phase === 'intro' && G.tl <= 0) setPhase('count', T_COUNT);
@@ -5818,8 +5836,8 @@ function sendAct(a) {
 }
 /* 게스트 입력 보내기 */
 setInterval(function () {
-  if (G.role !== 'guest' || !G.conn || G.phase !== 'play') return;
-  var r = INPUT.raw(); var k = JSON.stringify(r);
+  if (G.role !== 'guest' || !G.conn || (G.phase !== 'play' && G.phase !== 'lobby')) return;
+  var r = G.phase === 'lobby' ? lobRaw() : INPUT.raw(); var k = JSON.stringify(r);
   if (k !== G._lastSent || G.frame++ % 6 === 0) { G._lastSent = k; try { G.conn.send({ t: 'i', mx: r.mx, my: r.my, a: r.a, b: r.b, ac: r.ac, bc: r.bc }); } catch (e) { } }
 }, 33);
 
@@ -5868,7 +5886,7 @@ function onPhase(prev) {
       awardsHtml(m) + '<ol class="rl sm">' + ps.slice(3).map(function (p, i) { return '<li><b class="rk">' + (i + 4) + '</b><span style="color:' + COLORS[p.color] + '">' + esc(p.name) + '</span><strong>' + p.score + '점</strong></li>'; }).join('') + '</ol>' +
       '<div class="fbtn">' + (host ? '<button class="pb gold" id="againBtn">한 번 더</button><button class="pb" id="toLobbyBtn">로비로</button>' : '<p class="wait">방장이 다음 경기를 고르는 중이에요.</p>') + '<button class="pb dark" id="quitBtn2">나가기</button></div></div>';
     paintMinis(ov);
-    if (host) { $('againBtn').onclick = function () { startMatch(); }; $('toLobbyBtn').onclick = function () { G.phase = 'lobby'; G.st = null; G.mgId = null; sendMeta(); show('sLobby'); trimBots(); renderLobby(); ov.className = 'ov'; }; }
+    if (host) { $('againBtn').onclick = function () { startMatch(); }; $('toLobbyBtn').onclick = function () { G.phase = 'lobby'; lobReset(); G.st = null; G.mgId = null; sendMeta(); show('sLobby'); trimBots(); renderLobby(); ov.className = 'ov'; }; }
     $('quitBtn2').onclick = goHome;
   }
 }
@@ -5885,17 +5903,17 @@ var INTRO = {
   belt: { tip: '상자는 점프로, 벨트에 버텨요', hero: 'flame', a: 'jump' },
   chair: { tip: '음악이 멈추면 의자에 앉아요', hero: 'note', a: 'shove' },
   photo: { tip: '불빛 안에서 포즈, 셔터 때 멈춰요', hero: 'camera', a: 'pose', b: 'shove' },
-  box: { tip: '상자를 부수고 지게차에서 도망', hero: 'flame', a: 'mash', b: 'dash' },
-  tug: { tip: '버튼을 마구 눌러 줄을 당겨요', hero: 'flame', a: 'mash' },
+  box: { tip: '상자를 부수고 지게차에서 도망', hero: 'flame', a: 'mash', b: 'dash', click: true },
+  tug: { tip: '버튼을 마구 눌러 줄을 당겨요', hero: 'flame', a: 'mash', click: true },
   hide: { tip: '가짜 마네킹 사이에 숨어요', hero: 'magnify', a: 'hand' },
   pool: { tip: '공을 모으고, 밀쳐서 방해해요', hero: 'ball', a: 'shove' },
   fartrace: { tip: '꾹 눌러 모으고 놓으면 발사!', hero: 'wind', a: 'wind' },
-  hotdog: { tip: '마구 눌러 먹고 뜨거울 땐 멈춰요', hero: 'flame', a: 'mash' },
-  chicken: { tip: '닭을 몰아서 내 닭장에', hero: 'chicken', a: 'wind' },
+  hotdog: { tip: '마구 눌러 먹고 뜨거울 땐 멈춰요', hero: 'flame', a: 'mash', click: true },
+  chicken: { tip: '닭을 몰아서 내 닭장에', hero: 'chicken', a: 'wind', click: true },
   cannon: { tip: '각도와 세기를 정해 쏘고, 수영장 한가운데로!', hero: 'wind', a: 'wind' },
   dancebeat: { tip: '떨어지는 화살표를 판정선에서 맞춰 눌러요', hero: 'note', a: 'mash' },
   ramen: { tip: '속으로 세다가 딱 8초에 멈춰요', hero: 'flame', a: 'mash' },
-  balloon: { tip: '크게 불고 터지기 전에 챙겨요', hero: 'wind', a: 'wind', b: 'skip' },
+  balloon: { tip: '크게 불고 터지기 전에 챙겨요', hero: 'wind', a: 'wind', b: 'skip', click: true },
   simon: { tip: '"시몬 가라사대"가 붙은 명령만 따라 해요', hero: 'flame', a: 'jump', b: 'skip' },
   rope: { tip: '줄이 닿기 직전에 점프', hero: 'flame', a: 'jump' },
   mole: { tip: '두더지는 잡고 폭탄은 피해요', hero: 'bat', a: 'attack' },
@@ -5909,7 +5927,8 @@ function paintIntro(cv, mg) {
   else if (touch) { items.push({ w: 110, d: function (x) { icon(c, 'joy', x + 55, 75, 100); } }); if (I.a) items.push({ w: 96, d: function (x) { icon(c, 'btn', x + 48, 75, 96, '#ffd23f', I.a); } }); if (I.b) items.push({ w: 84, d: function (x) { icon(c, 'btn', x + 42, 80, 84, '#78beff', I.b); } }); }
   else {
     items.push({ w: 124, d: function (x) { keycap(c, x + 47, 22, 36, 36, 'W'); keycap(c, x + 6, 62, 36, 36, 'A'); keycap(c, x + 47, 62, 36, 36, 'S'); keycap(c, x + 88, 62, 36, 36, 'D'); } });
-    if (I.a) items.push({ w: 150, d: function (x) { keycap(c, x, 62, 150, 36, null, I.a); } });
+    if (I.a && I.click) items.push({ w: 150, d: function (x) { c.save(); c.translate(x + 75, 70); c.fillStyle = 'rgba(255,255,255,.92)'; rrect(c, -22, -34, 44, 68, 20); c.fill(); c.strokeStyle = 'rgba(0,0,0,.3)'; c.lineWidth = 2; c.beginPath(); c.moveTo(-22, -4); c.lineTo(22, -4); c.moveTo(0, -34); c.lineTo(0, -4); c.stroke(); c.fillStyle = '#ffd23f'; c.beginPath(); c.moveTo(-22, -14); c.arcTo(-22, -34, 0, -34, 20); c.lineTo(0, -34); c.lineTo(0, -4); c.lineTo(-22, -4); c.closePath(); c.fill(); c.fillStyle = '#2b2117'; c.font = '800 16px ' + FONT; c.textAlign = 'left'; c.textBaseline = 'middle'; c.fillText('클릭', 30, 0); c.restore(); } });
+    else if (I.a) items.push({ w: 150, d: function (x) { keycap(c, x, 62, 150, 36, null, I.a); } });
     if (I.b) items.push({ w: 70, d: function (x) { keycap(c, x, 62, 70, 36, 'Shift', null); icon(c, I.b, x + 35, 30, 34); } });
   }
   var tot = 0; items.forEach(function (it) { tot += it.w + 30; }); tot -= 30; var x0 = 320 - tot / 2;
@@ -5925,7 +5944,7 @@ function keyLine(def) {
   if (def.touch === false) return '화면의 카드를 눌러요';
   if (def.touch === 'duel') return '내 차례엔 노란 칸을 누르고, 결투에서는 이동 + ' + (isTouch() ? 'A 버튼' : '스페이스') + '으로 공격';
   var t = isTouch() ? '왼쪽 아래를 끌어서 이동' : 'WASD / 방향키로 이동';
-  if (def.keys && def.keys.a) t += ' · ' + (isTouch() ? 'A 버튼' : '스페이스') + ': ' + def.keys.a;
+  if (def.keys && def.keys.a) t += ' · ' + (isTouch() ? 'A 버튼' : ((INTRO[def.id] || {}).click ? '마우스 클릭' : '스페이스')) + ': ' + def.keys.a;
   if (def.keys && def.keys.b) t += ' · ' + (isTouch() ? 'B 버튼' : 'Shift / K') + ': ' + def.keys.b;
   return esc(t);
 }
@@ -6019,12 +6038,123 @@ function toast(t) { var el = $('toast'); el.textContent = t; el.classList.add('o
 function exitHub() { destroyPeer(); location.href = 'https://frenchfries777mc.github.io/games/'; }
 function goHome() { destroyPeer(); G.role = null; G.phase = 'idle'; G.st = null; G.meta = null; G.snapCur = G.snapPrev = null; busy(false); show('sHome'); }
 
+/* ===== 대기실 놀이터: 기다리는 동안 마네킹을 움직이고 이모트를 보내고 소품을 던져요 =====
+   방장이 모두의 위치를 계산해서 15번/초 보내고, 참가자는 입력만 보내요. */
+var LOB = { w: 720, h: 300, y0: 158, y1: 288, tgt: null, a: 0, b: 0, lastC: {}, vis: {}, snap: null, props: [], t0: 0 };
+var LOB_PROPS = ['tomato', 'banana', 'melon', 'baguette', 'pan'];
+function lobReset() { G.lob = null; LOB.vis = {}; LOB.snap = null; LOB.tgt = null; LOB.lastC = {}; }
+function lobEnsure() {
+  if (!G.lob) G.lob = { pl: {}, pr: [] };
+  var L = G.lob, ids = {};
+  G.players.forEach(function (p, i) {
+    ids[p.id] = 1;
+    if (!L.pl[p.id]) L.pl[p.id] = { x: 120 + (i * 97) % 480, y: LOB.y0 + 10 + (i * 53) % 110, vx: 0, vy: 0, face: 1, walk: 0, mvv: 0, z: 0, vz: 0, hit: 0, cd: 0, jb: 0, tx: 0, ty: 0, tt: 0 };
+  });
+  for (var k in L.pl) if (!ids[k]) delete L.pl[k];
+  return L;
+}
+function lobBot(p, q, dt) {
+  q.tt -= dt;
+  if (q.tt <= 0) { q.tt = 1 + Math.random() * 2.2; q.tx = 40 + Math.random() * (LOB.w - 80); q.ty = LOB.y0 + Math.random() * (LOB.y1 - LOB.y0); if (Math.random() < 0.25) q.jb = 1; if (Math.random() < 0.18) q.tb = 1; }
+  var dx = q.tx - q.x, dy = q.ty - q.y, d = Math.hypot(dx, dy);
+  return { mx: d > 10 ? dx / d * 0.8 : 0, my: d > 10 ? dy / d * 0.8 : 0 };
+}
+function lobStep(dt) {
+  var L = lobEnsure();
+  G.players.forEach(function (p) {
+    var q = L.pl[p.id], inp, jump = false, thr = false;
+    if (p.bot) { inp = lobBot(p, q, dt); jump = !!q.jb; thr = !!q.tb; q.jb = q.tb = 0; }
+    else {
+      var r = p.id === G.me ? lobRaw() : (G.raw[p.id] || { acts: [] }), lc = LOB.lastC[p.id] || { ac: r.ac | 0, bc: r.bc | 0 };
+      inp = { mx: r.mx || 0, my: r.my || 0 }; jump = (r.ac | 0) > lc.ac; thr = (r.bc | 0) > lc.bc; LOB.lastC[p.id] = { ac: r.ac | 0, bc: r.bc | 0 };
+    }
+    if (q.hit > 0) { q.hit -= dt; inp = { mx: 0, my: 0 }; }
+    var sp = 150; q.vx = lerp(q.vx, inp.mx * sp, 0.3); q.vy = lerp(q.vy, inp.my * sp * 0.75, 0.3);
+    q.x = clamp(q.x + q.vx * dt, 28, LOB.w - 28); q.y = clamp(q.y + q.vy * dt, LOB.y0, LOB.y1);
+    var mv = Math.abs(q.vx) + Math.abs(q.vy) > 20; if (Math.abs(q.vx) > 12) q.face = q.vx > 0 ? 1 : -1;
+    q.mvv = lerp(q.mvv, mv ? 1 : 0, 0.25); q.walk += dt * 11 * q.mvv;
+    if (jump && q.z <= 0 && q.hit <= 0) { q.vz = 330; L.ev = (L.ev || []); L.ev.push('boing'); }
+    q.vz -= 900 * dt; q.z = Math.max(0, q.z + q.vz * dt); if (q.z <= 0) q.vz = 0;
+    q.cd -= dt;
+    if (thr && q.cd <= 0 && q.hit <= 0 && L.pr.length < 14) { q.cd = 0.55; L.pr.push({ x: q.x + q.face * 18, y: q.y, z: 34, vx: q.face * 300, vz: 140, k: Math.floor(Math.random() * LOB_PROPS.length), by: p.id, t: 0, b: 0 }); }
+  });
+  for (var i = L.pr.length - 1; i >= 0; i--) {
+    var o = L.pr[i]; o.t += dt; o.x += o.vx * dt; o.vz -= 900 * dt; o.z += o.vz * dt;
+    if (o.z <= 0) { o.z = 0; if (o.b < 1) { o.vz = 150; o.vx *= 0.5; o.b++; } else { o.vz = 0; o.vx *= 0.9; } }
+    var gone = o.t > 2.2 || o.x < -20 || o.x > LOB.w + 20;
+    if (!gone) for (var k in L.pl) {
+      if (k === o.by) continue; var t = L.pl[k];
+      if (t.hit <= 0 && Math.abs(t.x - o.x) < 24 && Math.abs(t.y - o.y) < 16 && o.z < 70) { t.hit = 0.9; t.vx = Math.sign(o.vx) * 160; t.vz = 200; (L.ev = L.ev || []).push('bonk'); gone = true; break; }
+    }
+    if (gone) L.pr.splice(i, 1);
+  }
+}
+function lobTick() {
+  G.frame++; lobStep(1 / 60);
+  var L = G.lob; if (!L) return;
+  if (G.frame % 4 === 0) {
+    var d = { pl: {}, pr: L.pr.map(function (o) { return [Math.round(o.x), Math.round(o.y), Math.round(o.z), o.k]; }), ev: L.ev || [] };
+    for (var id in L.pl) { var q = L.pl[id]; d.pl[id] = [Math.round(q.x), Math.round(q.y), q.face, +q.walk.toFixed(2), +q.mvv.toFixed(2), Math.round(q.z), q.hit > 0 ? 1 : 0]; }
+    for (var k in G.conns) try { G.conns[k].send({ t: 'ls', d: d }); } catch (e) { }
+    lobEvents(d.ev); L.ev = [];
+    LOB.snap = d;
+  }
+}
+function lobEvents(ev) { (ev || []).forEach(function (n) { try { SFX.play(n); } catch (e) { } }); }
+/* 참가자가 받은 위치 */
+function lobGuestSnap(d) {
+  LOB.snap = d; lobEvents(d.ev);
+}
+function lobMe() { var v = LOB.vis[G.me]; return v || { x: 360, y: 200 }; }
+/* 내 입력: 키보드 · 화면 버튼 · 눌러서 이동 */
+function lobRaw() {
+  var r = INPUT.raw(), me = lobMe();
+  if (r.mx || r.my) LOB.tgt = null;
+  else if (LOB.tgt) { var dx = LOB.tgt.x - me.x, dy = (LOB.tgt.y - me.y) / 0.75, d = Math.hypot(dx, dy); if (d < 8) LOB.tgt = null; else { r.mx = +(dx / d).toFixed(2); r.my = +(dy / d * 0.75).toFixed(2); } }
+  r.ac += LOB.a; r.bc += LOB.b; return r;
+}
+function lobDraw() {
+  var cv = $('lobStage'); if (!cv) return; var c = cv.getContext('2d'), now = performance.now(), t = now / 1000;
+  c.setTransform(cv.width / LOB.w, 0, 0, cv.height / LOB.h, 0, 0);
+  var g = c.createLinearGradient(0, 0, 0, LOB.h); g.addColorStop(0, '#3a2358'); g.addColorStop(0.4, '#5b3a7a'); g.addColorStop(0.41, '#9c6a3c'); g.addColorStop(1, '#6e4624'); c.fillStyle = g; c.fillRect(0, 0, LOB.w, LOB.h);
+  c.fillStyle = '#a3202f'; c.fillRect(0, 0, LOB.w, 22); for (var sc = 0; sc < LOB.w; sc += 30) { c.beginPath(); c.arc(sc + 15, 22, 15, 0, 3.1416); c.fill(); }
+  for (var i = 0; i < 3; i++) { var a = Math.sin(t * 0.9 + i * 2) * 0.35; c.save(); c.translate(120 + i * 240, -10); c.rotate(a); var gr = c.createLinearGradient(0, 0, 0, 230); gr.addColorStop(0, 'rgba(255,240,180,.28)'); gr.addColorStop(1, 'rgba(255,240,180,0)'); c.fillStyle = gr; c.beginPath(); c.moveTo(-10, 0); c.lineTo(10, 0); c.lineTo(60, 230); c.lineTo(-60, 230); c.fill(); c.restore(); }
+  var ps = G.role === 'guest' ? (G.meta ? G.meta.players : []) : G.players, snap = LOB.snap, items = [];
+  if (snap) {
+    ps.forEach(function (p) {
+      var s = snap.pl[p.id]; if (!s) return; var v = LOB.vis[p.id];
+      if (!v) v = LOB.vis[p.id] = { x: s[0], y: s[1], z: s[5] };
+      v.x = lerp(v.x, s[0], 0.35); v.y = lerp(v.y, s[1], 0.35); v.z = lerp(v.z, s[5], 0.4); v.face = s[2]; v.walk = s[3]; v.mvv = s[4]; v.hit = s[6]; v.p = p;
+    });
+    for (var id in LOB.vis) if (!snap.pl[id]) delete LOB.vis[id];
+    for (var id2 in LOB.vis) (function (v) { items.push({ y: v.y, d: function () { drawDummy(c, v.x, v.y, { s: 1.3, face: v.face, walk: v.walk, mv: v.mvv, z: v.z, color: COLORS[v.p.color], name: v.p.name, pose: v.hit ? 'fall' : 'stand', t: t }); } }); })(LOB.vis[id2]);
+    snap.pr.forEach(function (o) { items.push({ y: o[1] + 1, d: function () { c.fillStyle = 'rgba(0,0,0,.2)'; c.beginPath(); c.ellipse(o[0], o[1], 9, 4, 0, 0, 6.283); c.fill(); icon(c, LOB_PROPS[o[3]], o[0], o[1] - o[2] - 8, 26); } }); });
+  }
+  items.sort(function (a, b) { return a.y - b.y; }).forEach(function (it) { it.d(); });
+  if (LOB.tgt) { c.strokeStyle = 'rgba(255,255,255,.55)'; c.lineWidth = 2; c.beginPath(); c.ellipse(LOB.tgt.x, LOB.tgt.y, 12 + Math.sin(t * 8) * 2, 6, 0, 0, 6.283); c.stroke(); }
+}
+(function () {
+  function loop() { requestAnimationFrame(loop); if ($('sLobby').classList.contains('on') && G.phase === 'lobby') lobDraw(); }
+  requestAnimationFrame(loop);
+})();
+
 /* ===== Dummy Party 시작: 버튼 연결, 첫 화면 그림 ===== */
 (function () {
   CV = $('cv'); CX = CV.getContext('2d');
   addEventListener('resize', resize); resize();
   INPUT.setupTouch();
-  CV.addEventListener('pointerdown', function (e) { SFX.unlock(); canvasTap(e); });
+  CV.addEventListener('pointerdown', function (e) { SFX.unlock(); canvasTap(e); if (e.pointerType === 'mouse' && e.button === 0 && G.phase === 'play' && DP.MG[G.mgId] && DP.MG[G.mgId].touch === true && !BTNS.length) INPUT.mouse(true); });
+  addEventListener('pointerup', function () { INPUT.mouse(false); });
+  addEventListener('blur', function () { INPUT.mouse(false); });
+  // 대기실 놀이터: 눌러서 이동, 점프·던지기 버튼, 이모트
+  (function () {
+    var st = $('lobStage');
+    st.addEventListener('pointerdown', function (e) { var r = st.getBoundingClientRect(); LOB.tgt = { x: clamp((e.clientX - r.left) / r.width * LOB.w, 28, LOB.w - 28), y: clamp((e.clientY - r.top) / r.height * LOB.h, LOB.y0, LOB.y1) }; });
+    $('lobJump').addEventListener('pointerdown', function (e) { e.preventDefault(); LOB.a++; });
+    $('lobThrow').addEventListener('pointerdown', function (e) { e.preventDefault(); LOB.b++; });
+    var bar = $('lobEmo');
+    EMO_ICONS.forEach(function (n, i) { var b = document.createElement('button'), cv = document.createElement('canvas'); cv.width = cv.height = 84; icon(cv.getContext('2d'), n, 42, 42, 54); b.appendChild(cv); b.addEventListener('pointerdown', function (e) { e.preventDefault(); sendEmote(i); }); bar.appendChild(b); });
+  })();
   // 마우스를 올렸을 때 카드 설명 (우노)
   CV.addEventListener('pointermove', function (e) {
     if (e.pointerType !== 'mouse') return;
