@@ -7,7 +7,7 @@ import * as SFX from './sfx.js';
 
 const $ = id => document.getElementById(id);
 const qs = new URLSearchParams(location.search);
-const PREFIX = 'ff-vowkeep-', CODE_CH = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789', SNAP_HZ = 15;
+const PREFIX = 'ff-vowkeep-', CODE_CH = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789', SNAP_HZ = 20;
 const TOUCH = matchMedia('(pointer: coarse)').matches || 'ontouchstart' in window;
 if (TOUCH) document.body.classList.add('touch');
 
@@ -483,6 +483,12 @@ function showResult() {
 }
 
 /* ---------- 메인 루프 ---------- */
+// 규칙은 1초에 30번 돌아요. 그 사이 화면은 직전 위치와 지금 위치 사이를 이어서 그려 부드럽게 움직여요.
+function posMap(G) { const m = new Map(); for (const a of [G.players, G.enemies, G.projs]) for (const o of a) m.set(o.id, [o.x, o.z]); return m; }
+function smoothSnap(sn, G, prev, al) {
+  if (!prev) return; const cur = new Map(); for (const a of [G.players, G.enemies, G.projs]) for (const o of a) cur.set(o.id, o);
+  for (const a of [sn.pl, sn.en, sn.pr]) for (const o of a) { const c = cur.get(o.id), p = prev.get(o.id); if (!c) continue; if (!p || Math.abs(c.x - p[0]) + Math.abs(c.z - p[1]) > 3) { o.x = c.x; o.z = c.z; continue; } o.x = p[0] + (c.x - p[0]) * al; o.z = p[1] + (c.z - p[1]) * al; }
+}
 let lastT = performance.now();
 function frame(now) {
   requestAnimationFrame(frame);
@@ -495,12 +501,12 @@ function frame(now) {
       S.rin[S.me] = inp;
       S.acc += dt; const h = 1 / 30;
       while (S.acc >= h) {
-        S.acc -= h; step(S.G, h, S.rin);
+        S.acc -= h; S.prevPos = posMap(S.G); step(S.G, h, S.rin);
         for (const pid in S.rin) { const r = S.rin[pid]; r.q = r.e = r.r = r.roll = 0; }
         for (const e of S.G.ev) { S.evq.push(e); if (S.net === 'host') (S.netEv || (S.netEv = [])).push(e); }
         S.G.ev.length = 0;
       }
-      S.snap = snapshot(S.G);
+      S.snap = snapshot(S.G); smoothSnap(S.snap, S.G, S.prevPos, S.acc / h);
       if (S.net === 'host') { S.sendAcc += dt; if (S.sendAcc >= 1 / SNAP_HZ) { S.sendAcc = 0; bcast({ t: 's', S: S.snap, ev: S.netEv || [] }); S.netEv = []; } }
     } else if (me) {
       // 게스트: 내 이동은 바로, 나머지는 방장에게 보내요
@@ -515,7 +521,7 @@ function frame(now) {
     if (ph === 'intro') paintIntro();
     else {
       for (const e of S.evq) onEvent(e); S.evq.length = 0;
-      view.sync(S.snap, S.me, dt, t); paintHud(); paintBless();
+      view.sync(S.snap, S.me, dt, t, !!S.G); paintHud(); paintBless();
       if (ph === 'won') { S.wonT += dt; if (S.wonT > 1.5 && S.wonT < 9) bigMsg(CHAPTER1.outro[Math.min(2, Math.floor((S.wonT - 1.5) / 2.5))], '', 0); if (S.wonT >= 9 && !S.resultShown) showResult(); }
     }
     S.evq.length = 0;
