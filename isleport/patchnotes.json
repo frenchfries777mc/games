@@ -1,6 +1,46 @@
 {
  "notes": [
   {
+   "date": "2026-10-21",
+   "build": "v0.2 build 41",
+   "title": "허브 재산 랭킹",
+   "items": [
+    "로그인하고 하면 내 재산이 허브 랭킹에 올라가요"
+   ],
+   "tr": {
+    "en": {
+     "title": "Hub wealth ranking",
+     "items": [
+      "When you are logged in, your net worth is shown in the hub ranking"
+     ]
+    },
+    "ja": {
+     "title": "Hub wealth ranking",
+     "items": [
+      "When you are logged in, your net worth is shown in the hub ranking"
+     ]
+    },
+    "es": {
+     "title": "Hub wealth ranking",
+     "items": [
+      "When you are logged in, your net worth is shown in the hub ranking"
+     ]
+    },
+    "fr": {
+     "title": "Hub wealth ranking",
+     "items": [
+      "When you are logged in, your net worth is shown in the hub ranking"
+     ]
+    },
+    "de": {
+     "title": "Hub wealth ranking",
+     "items": [
+      "When you are logged in, your net worth is shown in the hub ranking"
+     ]
+    }
+   }
+  },
+  {
    "date": "2026-10-20",
    "build": "v0.2 build 40",
    "title": "시작 화면 다듬기",
