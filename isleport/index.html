@@ -175,17 +175,19 @@ footer{padding:44px 0 50px;color:var(--mu);font-size:13px;text-align:center}
 <footer><span data-i="foot"></span> · <span id="footVer"></span>  · <span class="ff-copy">© 2026 Frenchfries777 · <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.ko" target="_blank" rel="noopener">CC BY-NC-ND 4.0</a></span></footer>
 <script src="i18n.js"></script>
 <script>
-const FALLBACK={"latest":"0.2","latestFile":"IslandTrade-v0.2.html","updated":"2026-10-18","versions":[{"version":"0.2","build":41,"date":"2026-10-18","file":"IslandTrade-v0.2.html","title":"큰 항해","summary":"캐릭터를 직접 조종하고, 배를 몰아 다른 섬과 비밀 섬을 찾아가는 버전","latest":true,"size":0},{"version":"0.1","date":"2026-10-18","file":"IslandTrade-v0.1.html","title":"첫 출항","summary":"밭, 목장, 항구 무역과 멀티플레이 방 코드가 있는 첫 공개","latest":false,"size":0}]};
+const FALLBACK={"latest":"0.2","latestFile":"IslandTrade-v0.2.html","updated":"2026-10-18","versions":[{"version":"0.2","build":42,"date":"2026-10-18","file":"IslandTrade-v0.2.html","title":"큰 항해","summary":"캐릭터를 직접 조종하고, 배를 몰아 다른 섬과 비밀 섬을 찾아가는 버전","latest":true,"size":0},{"version":"0.1","date":"2026-10-18","file":"IslandTrade-v0.1.html","title":"첫 출항","summary":"밭, 목장, 항구 무역과 멀티플레이 방 코드가 있는 첫 공개","latest":false,"size":0}]};
 const I=window.I18N,esc=s=>String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const mb=n=>!n?'':(n>=1048576?(n/1048576).toFixed(1)+' MB':Math.round(n/1024)+' KB');
-const NAMES={ko:'한국어',en:'English',fr:'Français',de:'Deutsch',es:'Español',ja:'日本語'};
+const NAMES={ko:'한국어',en:'English',fr:'Français',de:'Deutsch',es:'Español',ja:'日本語',zh:"简体中文",pt:"Português (Brasil)",ru:"Русский",tr:"Türkçe",nw:"Newspeak",gk:"번역기 한국어",au:"🌐 Aurebesh"};
+const VIRT={nw:1,gk:1},VLABEL={ko:'가상 언어',en:'Fictional languages',es:'Idiomas ficticios',fr:'Langues fictives',de:'Fiktive Sprachen',ja:'架空の言語',zh:'虚构语言',pt:'Idiomas fictícios',ru:'Вымышленные языки',tr:'Kurgusal diller',nw:'Unreal speaks',gk:"Fictional 언어들"};
+const auOn=()=>{try{return !!(window.FFLang&&FFLang.script&&FFLang.script()==='au');}catch(e){return false;}};
 const KEY='islandtradeSiteLang';
-function pick(){let s=null;try{s=localStorage.getItem(KEY);}catch(e){}
+function pick(){if(auOn())return 'en';let s=null;try{s=localStorage.getItem(KEY);}catch(e){}
  if(s&&I.L.includes(s))return s;
  for(const x of (navigator.languages&&navigator.languages.length?navigator.languages:[navigator.language||'ko'])){const b=String(x).toLowerCase().split('-')[0];if(I.L.includes(b))return b;}
  return 'ko';}
 let LANG=pick(),DATA=FALLBACK,NDATA={notes:[]};
-const t=(k,v)=>{const e=I.D[k];let s=(e&&(e[LANG]||e.ko))||'';if(v)for(const q in v)s=s.split('{'+q+'}').join(v[q]);return s;};
+const t=(k,v)=>{const e=I.D[k];let s=(e&&(e[LANG]||e.en||e.ko))||'';if(v)for(const q in v)s=s.split('{'+q+'}').join(v[q]);return s;};
 /* 특징 카드: 화면 일부를 잘라 보여 줘요 */
 const FEAT=[['f1','ft1','farm','8% 22%'],['f2','ft2','town','70% 20%'],['f3','ft3','sea','30% 55%'],['f4','ft4','harbor','88% 45%'],['f5','ft5','ranch','30% 40%'],['f6','ft6','square','78% 60%']];
 const fg=document.getElementById('fgrid');
@@ -195,7 +197,7 @@ const GUIDE=[['gc1',['gt1a','gt1b','gt1c']],['gc2',['gt2a','gt2b','gt2c']],['gc3
 GUIDE.forEach((g,i)=>{const b=document.createElement('button');b.className='pb sm';b.onclick=()=>{GI=i;guide();};gcats.appendChild(b);});
 function guide(){gcats.querySelectorAll('button').forEach((b,i)=>{b.textContent=t(GUIDE[i][0]);b.classList.toggle('gold',i===GI);b.classList.toggle('dark',i!==GI);});
  gtips.innerHTML=GUIDE[GI][1].map(k=>'<li class="box">'+esc(t(k))+'</li>').join('');}
-const vt=(v,f)=>(v.tr&&v.tr[f]&&v.tr[f][LANG])||v[f];
+const vt=(v,f)=>LANG==='ko'?v[f]:((v.tr&&v.tr[f]&&(v.tr[f][LANG]||v.tr[f].en))||v[f]);
 function render(d){
  DATA=d;const list=Array.isArray(d.versions)?d.versions:[],box=document.getElementById('vbox');
  if(!list.length){box.innerHTML='<div class="err">'+t('v_none')+'</div>';return;}
@@ -211,17 +213,18 @@ function renderNotes(d){
  NDATA=d;const list=(d&&Array.isArray(d.notes))?d.notes:[],box=document.getElementById('notesBox'),more=document.getElementById('notesMore');
  if(!list.length){box.innerHTML='<div class="sub2">'+t('nt_none')+'</div>';more.style.display='none';return;}
  const all=box.dataset.all==='1',sh=all?list:list.slice(0,SHOWN);
- box.innerHTML=sh.map((n,ni)=>{const e=n.tr&&n.tr[LANG];
+ box.innerHTML=sh.map((n,ni)=>{const e=LANG==='ko'?null:n.tr&&(n.tr[LANG]||n.tr.en);
   const title=(e&&e.title)||n.title,items=(e&&e.items&&e.items.length===(n.items||[]).length)?e.items:(n.items||[]);
   return '<details class="box"'+(ni?'':' open')+'><summary><b>'+esc(title)+'</b><small>'+esc(n.date)+(n.build?' · '+esc(n.build):'')+'</small></summary><ul>'+items.map(i=>'<li>'+esc(i)+'</li>').join('')+'</ul></details>';}).join('');
  more.style.display=(!all&&list.length>SHOWN)?'':'none';
  more.onclick=()=>{box.dataset.all='1';renderNotes(d);};
 }
 const lg=document.getElementById('lg');
-I.L.forEach(l=>{const o=document.createElement('option');o.value=l;o.textContent=NAMES[l];lg.appendChild(o);});
-lg.onchange=()=>{LANG=lg.value;try{localStorage.setItem(KEY,LANG);if(window.FFLang)FFLang.set(LANG);}catch(e){}applyLang();};
+{const op=l=>'<option value="'+l+'"'+(l==='au'?' style="font-family:\'FF Aurebesh\',system-ui"':'')+'>'+NAMES[l]+'</option>';
+ lg.innerHTML=I.L.filter(l=>!VIRT[l]).map(op).join('')+'<optgroup>'+I.L.filter(l=>VIRT[l]).concat(['au']).map(op).join('')+'</optgroup>';}
+lg.onchange=()=>{const v=lg.value,was=auOn();LANG=v==='au'?'en':v;try{localStorage.setItem(KEY,LANG);if(window.FFLang)FFLang.set(v);}catch(e){}if(v==='au'||was){location.reload();return;}applyLang();};
 function applyLang(){
- document.documentElement.lang=LANG;lg.value=LANG;
+ document.documentElement.lang=LANG;lg.value=auOn()?'au':LANG;lg.querySelector('optgroup').label=VLABEL[LANG]||VLABEL.en;
  document.querySelectorAll('[data-i]').forEach(e=>{e.textContent=t(e.dataset.i);});
  document.title=t('title');const m=document.querySelector('meta[name=description]');if(m)m.content=t('desc');
  guide();render(DATA);renderNotes(NDATA);
