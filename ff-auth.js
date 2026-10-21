@@ -625,7 +625,7 @@ var SL={
  pt:{"lang":"Idioma",vlang:"Idiomas fictícios","set":"Configurações","theme":"Tema","dark":"🌙 Escuro","light":"☀️ Claro","yellow":"🟡 Amarelo","red":"🔴 Vermelho","blue":"🔵 Azul","size":"Tamanho do texto","s":"Pequeno","m":"Normal","l":"Grande","xl":"Muito grande","note":"Vale para o início e os sites dos jogos."},
  ru:{"lang":"Язык",vlang:"Вымышленные языки","set":"Настройки","theme":"Тема","dark":"🌙 Тёмная","light":"☀️ Светлая","yellow":"🟡 Жёлтая","red":"🔴 Красная","blue":"🔵 Синяя","size":"Размер текста","s":"Мелкий","m":"Обычный","l":"Крупный","xl":"Очень крупный","note":"Применяется к хабу и сайтам игр."},
  tr:{"lang":"Dil",vlang:"Kurgusal diller","set":"Ayarlar","theme":"Tema","dark":"🌙 Koyu","light":"☀️ Açık","yellow":"🟡 Sarı","red":"🔴 Kırmızı","blue":"🔵 Mavi","size":"Yazı boyutu","s":"Küçük","m":"Normal","l":"Büyük","xl":"Çok büyük","note":"Merkeze ve oyun sitelerine uygulanır."},
- nw:{"lang":"Speak","vlang":"Fictional speaks","set":"Rules","theme":"Theme","dark":"🌙 Unlight","light":"☀️ Light","yellow":"🟡 Yellow","red":"🔴 Red","blue":"🔵 Blue","size":"Speakwrite size","s":"Unbig","m":"Good","l":"Plusbig","xl":"Plus plusbig","note":"Does to hub plus joyduty sites."},
+ nw:{"lang":"Speak","vlang":"Fictional speaks","set":"Rules","theme":"Theme","dark":"🌙 Unlight","light":"☀️ Light","yellow":"🟡 Yellow","red":"🔴 Red","blue":"🔵 Blue","size":"Speakwrite size","s":"Unbig","m":"Good","l":"Plusbig","xl":"Doubleplusbig","note":"Does to hub plus joyduty sites."},
  gk:{"lang":"언어","vlang":"Fictional 언어들","set":"환경들","theme":"주제","dark":"🌙 어두운","light":"☀️ 빛","yellow":"🟡 노란","red":"🔴 빨간","blue":"🔵 우울한","size":"본문 크기","s":"작은","m":"정상","l":"큰","xl":"Extra 큰","note":"Applies 에게 그 바퀴통 그리고 그 사냥감 현장들."}
 };
 var S_=SL[lang()]||SL.en;
