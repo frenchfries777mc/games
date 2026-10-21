@@ -96,3 +96,4 @@ index.html | 랭킹 표 | 최장 생존 일수, 생존 순위는 서버 준비 �
 - prototypes/index.html | 소개 문장·Vowkeep 카드 | Dummy Party와 Vowkeep이 올라와 있어요. / 무너진 기사단의 마지막 기사가 되어 친구, 봇과 함께 던전을 내려가는 협동 게임이에요. | b1 | 2026-10-21
 - prototypes/vowkeep/ (index.html, js/data.js, js/main.js) | 게임 안 모든 문자열 (로비, 대기실, 역할·장비, 업적, 설정, 인트로, 전투 알림, 축복, 결과) | 한국어만 있음, 다국어 구조 없음 | b1 | 2026-10-21
 - patchnotes.json | "프로토타입 Vowkeep 추가" 3줄 | b1 | 2026-10-21
+- patchnotes.json | "Vowkeep 화면 지글거림 줄이기" 3줄 | Vowkeep b2 | 2026-10-21

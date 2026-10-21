@@ -128,21 +128,24 @@ export class View {
     this.resize();
   }
   resize() {
-    const w = innerWidth, h = innerHeight; this.W = w; this.H = h;
+    // 화면 픽셀 칸이 고르게 나오도록 캔버스를 기기 픽셀 단위로, 픽셀 크기의 배수로 맞춰요 (지글거림 방지)
+    const dpr = devicePixelRatio || 1, P = Math.max(1, Math.round(this.ps * dpr)); this.P = P;
+    const w = Math.ceil(innerWidth * dpr / P) * P, h = Math.ceil(innerHeight * dpr / P) * P; this.W = w; this.H = h;
     this.r.setPixelRatio(1); this.r.setSize(w, h, false);
+    this.cw = w / dpr; this.ch = h / dpr; this.r.domElement.style.width = (w / dpr) + 'px'; this.r.domElement.style.height = (h / dpr) + 'px';
     const asp = w / h, vs = this.mode === 'lobby' ? 7.6 : this.zoom * (asp < 1 ? 1.35 : 1);
     this.cam.left = -vs * asp; this.cam.right = vs * asp; this.cam.top = vs; this.cam.bottom = -vs; this.cam.updateProjectionMatrix();
     if (this.comp) this.comp.setSize(w, h);
-    if (this.pp) this.pp.setPixelSize(this.ps);
+    if (this.pp) this.pp.setPixelSize(P);
   }
-  setPixel(ps) { this.ps = ps; if (this.pp) this.pp.setPixelSize(ps); }
+  setPixel(ps) { this.ps = ps; this.resize(); }
   setBloom(on) { this.bloomOn = on; if (this.bloom) this.bloom.enabled = on; }
   newScene(bg, fog) {
     if (this.scene) this.scene.traverse(o => { if (o.isLight && o.shadow && o.shadow.map) o.shadow.map.dispose(); });
     const s = new THREE.Scene(); s.background = new THREE.Color(bg); s.fog = new THREE.Fog(fog, 45, 90);
     this.scene = s; this.ents.clear(); this.fx = []; this.nums = [];
-    this.comp = new EffectComposer(this.r); this.pp = new RenderPixelatedPass(this.ps, s, this.cam, { normalEdgeStrength: 0.35, depthEdgeStrength: 0.55 });
-    this.comp.addPass(this.pp); this.bloom = new UnrealBloomPass(new THREE.Vector2(this.W / this.ps, this.H / this.ps), 0.32, 0.2, 0.88); this.bloom.enabled = this.bloomOn; this.comp.addPass(this.bloom); this.comp.addPass(new OutputPass());
+    this.comp = new EffectComposer(this.r); this.pp = new RenderPixelatedPass(this.P, s, this.cam, { normalEdgeStrength: 0.2, depthEdgeStrength: 0.4 });
+    this.comp.addPass(this.pp); this.bloom = new UnrealBloomPass(new THREE.Vector2(this.W / this.P, this.H / this.P), 0.26, 0.2, 0.9); this.bloom.enabled = this.bloomOn; this.comp.addPass(this.bloom); this.comp.addPass(new OutputPass());
     this.comp.setSize(this.W, this.H);
     return s;
   }
@@ -184,7 +187,7 @@ export class View {
     sph(2, 12, 10, M(0xffffff, { e: 0xe8ecff, ei: 2 }), -20, 22, -30, s);
     const poses = [['knight', -3.8, 4.6, 2.4], ['archer', 3.8, 4.8, -2.5], ['priest', -2.6, -1.2, 0.6], ['squire', 2.8, -0.8, -0.7]];
     this.lobbyHeroes = poses.map(([r, x, z, ry]) => { const h = makeHero(r); h.position.set(x, 0, z); h.rotation.y = ry; s.add(h); return h; });
-    this.embers = []; for (let i = 0; i < 30; i++) { const e = box(0.08, 0.08, 0.08, M(0xffb050, { e: 0xff8a30, ei: 5 }), 0, 0, 0, s); e.castShadow = false; this.embers.push({ m: e, t: R() * 3 }); }
+    this.embers = []; for (let i = 0; i < 18; i++) { const e = box(0.14, 0.14, 0.14, M(0xffb050, { e: 0xff8a30, ei: 5 }), 0, 0, 0, s); e.castShadow = false; this.embers.push({ m: e, t: R() * 3 }); }
     this.resize();
     this.cam.position.set(-1.5, 13, 30); this.cam.lookAt(-1.5, 3.0, 1.5);
   }
@@ -248,7 +251,7 @@ export class View {
       const sp = new THREE.Group(); g.add(sp); for (let i = -1; i <= 1; i++) for (let j = -1; j <= 1; j++) cone(0.15, 0.8, 4, M(0x9a9aa6, { m: 0.8, r: 0.4 }), i * 0.5, 0.3, j * 0.5, sp);
       this.trapM.set(t.id, { g, sp });
     }
-    this.embers = []; for (let i = 0; i < 40; i++) { const e = box(0.08, 0.08, 0.08, M(0xffb050, { e: 0xff8a30, ei: 5 }), 0, -5, 0, s); e.castShadow = false; this.embers.push({ m: e, t: R() * 6, x: (R() - .5) * RW * 2, z: (R() - .5) * RH * 2 }); }
+    this.embers = []; for (let i = 0; i < 16; i++) { const e = box(0.15, 0.15, 0.15, M(0xffb050, { e: 0xff8a30, ei: 5 }), 0, -5, 0, s); e.castShadow = false; this.embers.push({ m: e, t: R() * 6, x: (R() - .5) * RW * 2, z: (R() - .5) * RH * 2 }); }
     this.resize();
   }
 
@@ -289,17 +292,25 @@ export class View {
     // 함정, 문, 상자
     if (S.rm && this.trapM) for (const tr of S.rm.tr) { const T = this.trapM.get(tr.id); if (!T) continue; T.sp.position.y += ((tr.on && tr.up ? 0.1 : -0.8) - T.sp.position.y) * Math.min(1, dt * 18); T.g.visible = true; if (!tr.on) T.sp.visible = false; }
     if (this.gate) { const y = S.rm && S.rm.dr ? 6.2 : 0; this.gate.position.y += (y - this.gate.position.y) * Math.min(1, dt * 3); }
-    if (this.doorGlow) this.doorGlow.material.opacity = S.rm && S.rm.dr ? 0.25 + Math.sin(t * 4) * 0.12 : 0;
+    if (this.doorGlow) this.doorGlow.material.opacity = S.rm && S.rm.dr ? 0.25 + Math.sin(t * 2) * 0.06 : 0;
     if (this.lid && S.rm.ch) this.lid.rotation.x += ((S.rm.ch.o ? -1.6 : 0) - this.lid.rotation.x) * Math.min(1, dt * 6);
     // 카메라: 내 캐릭터를 따라가요
     const mp = this.ents.get('p' + me);
     if (mp) { this.camT.x += (clampN(mp.x, -RW + 8, RW - 8) - this.camT.x) * Math.min(1, dt * 5); this.camT.z += (-1.8 + clampN(mp.z, -RH, RH) * 0.15 - this.camT.z) * Math.min(1, dt * 5); }
-    let sx = 0, sz = 0; if (this.shake > 0 && this.shakeOn) { sx = (Math.random() - .5) * this.shake; sz = (Math.random() - .5) * this.shake; this.shake = Math.max(0, this.shake - dt * 3); }
+    let sx = 0, sz = 0; if (this.shake > 0 && this.shakeOn) { sx = (Math.random() - .5) * this.shake * 0.6; sz = (Math.random() - .5) * this.shake * 0.6; this.shake = Math.max(0, this.shake - dt * 3); }
     this.cam.position.set(this.camT.x + sx, 22, this.camT.z + 33 + sz); this.cam.lookAt(this.camT.x + sx, 1.8, this.camT.z + 0.4 + sz);
+    this.snapCam();
+  }
+  // 카메라를 픽셀 칸에 딱 맞춰 움직여요. 반 칸씩 밀리면 화면 전체가 지글거려요.
+  snapCam() {
+    const px = (this.cam.top - this.cam.bottom) / (this.H / this.P); this.cam.updateMatrixWorld();
+    const up = new THREE.Vector3().setFromMatrixColumn(this.cam.matrixWorld, 1), rt = new THREE.Vector3().setFromMatrixColumn(this.cam.matrixWorld, 0), p = this.cam.position;
+    const a = p.dot(rt), b = p.dot(up);
+    p.addScaledVector(rt, Math.round(a / px) * px - a).addScaledVector(up, Math.round(b / px) * px - b); this.cam.updateMatrixWorld();
   }
   tick(dt, t) {
-    for (const f of this.flick || []) f.L.intensity = f.b * (0.85 + Math.sin(t * 9 + f.ph) * 0.08 + Math.sin(t * 23 + f.ph * 2) * 0.05);
-    if (this.fireG) { this.fireG.children.forEach((c, i) => { c.scale.y = 0.8 + Math.sin(t * 10 + i * 1.7) * 0.25; }); }
+    for (const f of this.flick || []) f.L.intensity = f.b * (0.9 + Math.sin(t * 2.2 + f.ph) * 0.04 + Math.sin(t * 3.7 + f.ph * 2) * 0.02);
+    if (this.fireG) { this.fireG.children.forEach((c, i) => { c.scale.y = 0.85 + Math.sin(t * 4 + i * 1.7) * 0.12; }); }
     for (const e of this.embers || []) {
       e.t += dt; if (this.mode === 'lobby') { const u = (e.t % 3) / 3; e.m.position.set(Math.sin(e.t * 2 + e.m.id) * 1.2 * u, 1.5 + u * 7, 2 + Math.cos(e.t * 1.3 + e.m.id) * 1.2 * u); }
       else { const u = (e.t % 6) / 6; e.m.position.set(e.x + Math.sin(e.t) * 0.5, u * 8, e.z); }
@@ -331,8 +342,8 @@ export class View {
     const m = mesh(geo('col', () => new THREE.CylinderGeometry(0.9, 0.9, 6, 12, 1, true)), M(col, { e: col, ei: 2, op: 0.5, uniq: true, ds: true }), x, 3, z, this.scene, false);
     this.fx.push({ m, t: 0, T, up: (f) => { m.material.opacity = 0.5 * (1 - f.t / f.T); m.scale.x = m.scale.z = 1 - f.t / f.T * 0.6; } });
   }
-  groundAt(sx, sy) { const v = new THREE.Vector3(sx / this.W * 2 - 1, -(sy / this.H) * 2 + 1, 0); const rc = new THREE.Raycaster(); rc.setFromCamera(v, this.cam); const t = -rc.ray.origin.y / rc.ray.direction.y; return { x: rc.ray.origin.x + rc.ray.direction.x * t, z: rc.ray.origin.z + rc.ray.direction.z * t }; }
-  project(x, y, z) { const v = new THREE.Vector3(x, y, z).project(this.cam); return { x: (v.x + 1) / 2 * this.W, y: (1 - v.y) / 2 * this.H }; }
+  groundAt(sx, sy) { const v = new THREE.Vector3(sx / this.cw * 2 - 1, -(sy / this.ch) * 2 + 1, 0); const rc = new THREE.Raycaster(); rc.setFromCamera(v, this.cam); const t = -rc.ray.origin.y / rc.ray.direction.y; return { x: rc.ray.origin.x + rc.ray.direction.x * t, z: rc.ray.origin.z + rc.ray.direction.z * t }; }
+  project(x, y, z) { const v = new THREE.Vector3(x, y, z).project(this.cam); return { x: (v.x + 1) / 2 * this.cw, y: (1 - v.y) / 2 * this.ch }; }
   entPos(key) { const E = this.ents.get(key); return E ? { x: E.x, z: E.z } : null; }
 }
 
@@ -368,7 +379,7 @@ function zoneMesh(z) {
 function zoneAnim(E, z, t) {
   const f = E.m.userData.fill;
   if (f && z.T) { const u = 1 - z.t / z.T; f.material.opacity = 0.18 + u * 0.4; if (z.k === 'tcircle') f.scale.setScalar(z.r * (0.2 + 0.8 * u)); }
-  if (z.k === 'fire') { E.m.visible = !z.dl; E.m.children.forEach((c, i) => { if (c.geometry.type === 'ConeGeometry') c.scale.y = 0.7 + Math.sin(t * 12 + i) * 0.3; }); }
+  if (z.k === 'fire') { E.m.visible = !z.dl; E.m.children.forEach((c, i) => { if (c.geometry.type === 'ConeGeometry') c.scale.y = 0.8 + Math.sin(t * 4 + i) * 0.15; }); }
   if (z.k === 'rain') E.m.userData.drops.forEach((d, i) => { d.position.y = 4 - ((t * 9 + i * 0.37) % 1) * 4; });
 }
 function lerpA(a, b, k) { let d = b - a; while (d > Math.PI) d -= Math.PI * 2; while (d < -Math.PI) d += Math.PI * 2; return a + d * k; }
@@ -386,7 +397,7 @@ function animHero(E, p, dt, t) {
   u.body.rotation.set(0, 0, 0); u.body.position.y = 0;
   if (p.ro) { E.rollA = (E.rollA || 0) + dt * 18; u.body.rotation.x = E.rollA; u.body.position.y = -0.6; } else E.rollA = 0;
   if (p.dn) { u.body.rotation.x = -Math.PI / 2 + 0.2; u.body.position.y = 0.4; u.body.position.z = -1; } else u.body.position.z = 0;
-  if (u.light) u.light.intensity = (p.dn ? 3 : 15) * (0.9 + Math.sin(t * 13) * 0.1);
+  if (u.light) u.light.intensity = (p.dn ? 3 : 15);
 }
 function animEnemy(E, e, dt, t, view) {
   const m = E.m, u = m.userData; m.position.set(E.x, 0, E.z); m.rotation.y = Math.PI / 2 - E.a;
@@ -397,7 +408,7 @@ function animEnemy(E, e, dt, t, view) {
   if (e.k === 'boss') {
     if (e.ak === 'slam') ar = -3.0; else if (e.ak === 'sweep') { ar = -1.6; u.body.rotation.y = 0.9; } else u.body.rotation.y = 0;
     if (e.ak === 'charge!') { ar = -1.4; u.body.rotation.x = 0.35; } else u.body.rotation.x = e.sn ? 0.5 : 0;
-    if (u.light) u.light.intensity = 18 + Math.sin(t * 5) * 6 + (e.ph === 3 ? 14 : 0);
+    if (u.light) u.light.intensity = 18 + Math.sin(t * 1.5) * 2 + (e.ph === 3 ? 10 : 0);
   }
   u.armR.rotation.x = ar;
   m.position.y = 0;
