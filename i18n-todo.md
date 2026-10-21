@@ -91,3 +91,8 @@
 index.html | 랭킹 표 | 랭크 점수, 재산, 승, 패, 이번 시즌 랭크전 기록이 아직 없어요., 아직 재산을 보낸 사람이 없어요., 재산 순위는 서버 준비 중이에요., {0} 시즌 · 매달 새로 시작해요, 내 순위: {0}위 · 재산 {1} | 랭킹 Stickseum(랭크 점수)·Isleport(재산) | 2026-10-21
 index.html | 랭킹 표 | 최장 생존 일수, 생존 순위는 서버 준비 중이에요., 아직 생존 기록을 보낸 사람이 없어요., 내 순위: {0}위 · {1}일 | Beaconfall 랭킹 | 2026-10-21
 - beaconfall/patchnotes.json·i18n.js | N["v0.3 b85"] (en·es·fr·de·ja 칸에 한국어 임시 입력) | 허브 랭킹 '최장 생존 일수' 연결 1줄
+
+## Vowkeep v0.1 b1 (2026-10-21)
+- prototypes/index.html | 소개 문장·Vowkeep 카드 | Dummy Party와 Vowkeep이 올라와 있어요. / 무너진 기사단의 마지막 기사가 되어 친구, 봇과 함께 던전을 내려가는 협동 게임이에요. | b1 | 2026-10-21
+- prototypes/vowkeep/ (index.html, js/data.js, js/main.js) | 게임 안 모든 문자열 (로비, 대기실, 역할·장비, 업적, 설정, 인트로, 전투 알림, 축복, 결과) | 한국어만 있음, 다국어 구조 없음 | b1 | 2026-10-21
+- patchnotes.json | "프로토타입 Vowkeep 추가" 3줄 | b1 | 2026-10-21

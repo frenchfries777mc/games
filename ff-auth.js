@@ -491,7 +491,7 @@ async function loadFriends(){
   badge(); return friends;
 }
 /* what a friend is playing: "🟢 Stickseum 하는 중" while the game is open (it pings every minute), else the last game and how long ago */
-var GNAME={stickseum:'Stickseum',crownenvoy:'Crown Envoy',beaconfall:'Beaconfall',isleport:'Isleport',dummyparty:'Dummy Party'};
+var GNAME={stickseum:'Stickseum',crownenvoy:'Crown Envoy',beaconfall:'Beaconfall',isleport:'Isleport',dummyparty:'Dummy Party',vowkeep:'Vowkeep'};
 function online(f){ var t=f&&f.pres&&Date.parse(f.pres.at); return !!(t&&Date.now()-t<100000); }
 function presText(f){ var p=f&&f.pres; if(!p) return ''; var g=GNAME[p.game]||p.game, t=Date.parse(p.at); if(!t) return '';
   var m=Math.max(0,Math.round((Date.now()-t)/60000)); if(online(f)) return fmt(F.playing,g);
