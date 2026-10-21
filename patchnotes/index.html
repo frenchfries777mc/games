@@ -10,7 +10,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&family=Noto+Sans+KR:wght@400;500;700;900&display=swap" rel="stylesheet">
-<script src="../ff-lang.js?v=20261021t"></script>
+<script src="../ff-lang.js?v=20261022a"></script>
 <style>
   :root{ --bg:#08090d; --panel:#10131b; --line:#222837; --text:#eef0f5; --dim:#8a93a6; --fry:#ffc93c; --fry2:#ff8a3d; --g0:#ff8fc2; --g1:#3ee0c4; --g2:#e8c25a; --g3:#ffae5a; --g4:#6aa8ff; }
   html[data-ff-theme=light]{ --bg:#f6f3ec; --panel:#ffffff; --line:#e2dccf; --text:#1f1b14; --dim:#6d6658; --g0:#b8326f; --g1:#0f8a77; --g2:#8a6c14; --g3:#a0600c; --g4:#1f5fbf; }
@@ -53,11 +53,11 @@
   <div class="bar" id="bar"></div>
   <div id="list"></div>
 </div>
-<script src="../ff-auth.js?v=20261021r"></script>
+<script src="../ff-auth.js?v=20261022a"></script>
 <script>
 (function(){
 'use strict';
-var LN=['ko','en','es','fr','de','ja','zh','pt','ru','tr','nw','gk','au'], NAMES={ko:'한국어',en:'English',es:'Español',fr:'Français',de:'Deutsch',ja:'日本語',zh:"简体中文",pt:"Português (Brasil)",ru:"Русский",tr:"Türkçe",nw:"Newspeak",gk:"번역기 한국어",au:"Aurebesh",gk:"번역기 한국어"};
+var LN=['ko','en','es','fr','de','ja','zh','pt','ru','tr','nw','gk','au','sg'], NAMES={ko:'한국어',en:'English',es:'Español',fr:'Français',de:'Deutsch',ja:'日本語',zh:"简体中文",pt:"Português (Brasil)",ru:"Русский",tr:"Türkçe",nw:"Newspeak",gk:"번역기 한국어",au:"Aurebesh",sg:"Standard Galactic",gk:"번역기 한국어"};
 var U={
  ko:{hub:'허브',lead:'Stickseum · Crown Envoy · Beaconfall · 허브의 패치노트를 한곳에 모았다.',all:'전체',hubN:'허브',search:'패치노트 검색',empty:'찾는 패치노트가 없다.',err:'패치노트를 불러오지 못했다.',more:'더 보기',items:'{0}개'},
  en:{hub:'Hub',lead:'Patch notes of Stickseum, Crown Envoy, Beaconfall and the hub in one place.',all:'All',hubN:'Hub',search:'Search patch notes',empty:'No patch notes found.',err:'Could not load the patch notes.',more:'Show more',items:'{0} items'},
@@ -107,7 +107,7 @@ function load(){
 }
 (function init(){
   document.documentElement.lang=lang; $('#hubBtn span').textContent=T.hub; $('#lead').textContent=T.lead;
-  var ls=$('#lang'); var VL={"ko": "가상 언어", "en": "Fictional languages", "es": "Idiomas ficticios", "fr": "Langues fictives", "de": "Fiktive Sprachen", "ja": "架空の言語", "zh": "虚构语言", "pt": "Idiomas fictícios", "ru": "Вымышленные языки", "tr": "Kurgusal diller", "nw": "Fictional speaks","gk":"Fictional 언어들"}, cur=(window.FFLang&&FFLang.pick)?FFLang.pick():lang, op=function(k){ return '<option value="'+k+'"'+(k===cur?' selected':'')+'>'+NAMES[k]+'</option>'; }, vk=function(k){ return k==='nw'||k==='gk'||k==='au'; };
+  var ls=$('#lang'); var VL={"ko": "가상 언어", "en": "Fictional languages", "es": "Idiomas ficticios", "fr": "Langues fictives", "de": "Fiktive Sprachen", "ja": "架空の言語", "zh": "虚构语言", "pt": "Idiomas fictícios", "ru": "Вымышленные языки", "tr": "Kurgusal diller", "nw": "Fictional speaks","gk":"Fictional 언어들"}, cur=(window.FFLang&&FFLang.pick)?FFLang.pick():lang, op=function(k){ return '<option value="'+k+'"'+(k===cur?' selected':'')+'>'+NAMES[k]+'</option>'; }, vk=function(k){ return k==='nw'||k==='gk'||(k==='au'||k==='sg'); };
   ls.innerHTML=LN.filter(function(k){ return !vk(k); }).map(op).join('')+'<optgroup label="'+(VL[lang]||VL.en)+'">'+LN.filter(vk).map(op).join('')+'</optgroup>';
   ls.onchange=function(){ try{ localStorage.setItem('arenaClashLang',this.value); }catch(e){} try{ if(window.FFLang) FFLang.set(this.value); }catch(e){} location.reload(); };
   var h=(location.hash||'').slice(1); if(SRC.some(function(s){ return s.k===h; })) sel=h;

@@ -178,9 +178,9 @@ footer{padding:44px 0 50px;color:var(--mu);font-size:13px;text-align:center}
 const FALLBACK={"latest":"0.2","latestFile":"IslandTrade-v0.2.html","updated":"2026-10-18","versions":[{"version":"0.2","build":42,"date":"2026-10-18","file":"IslandTrade-v0.2.html","title":"큰 항해","summary":"캐릭터를 직접 조종하고, 배를 몰아 다른 섬과 비밀 섬을 찾아가는 버전","latest":true,"size":0},{"version":"0.1","date":"2026-10-18","file":"IslandTrade-v0.1.html","title":"첫 출항","summary":"밭, 목장, 항구 무역과 멀티플레이 방 코드가 있는 첫 공개","latest":false,"size":0}]};
 const I=window.I18N,esc=s=>String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const mb=n=>!n?'':(n>=1048576?(n/1048576).toFixed(1)+' MB':Math.round(n/1024)+' KB');
-const NAMES={ko:'한국어',en:'English',fr:'Français',de:'Deutsch',es:'Español',ja:'日本語',zh:"简体中文",pt:"Português (Brasil)",ru:"Русский",tr:"Türkçe",nw:"Newspeak",gk:"번역기 한국어",au:"🌐 Aurebesh"};
+const NAMES={ko:'한국어',en:'English',fr:'Français',de:'Deutsch',es:'Español',ja:'日本語',zh:"简体中文",pt:"Português (Brasil)",ru:"Русский",tr:"Türkçe",nw:"Newspeak",gk:"번역기 한국어",au:"🌐 Aurebesh",sg:"🌐 Standard Galactic"};
 const VIRT={nw:1,gk:1},VLABEL={ko:'가상 언어',en:'Fictional languages',es:'Idiomas ficticios',fr:'Langues fictives',de:'Fiktive Sprachen',ja:'架空の言語',zh:'虚构语言',pt:'Idiomas fictícios',ru:'Вымышленные языки',tr:'Kurgusal diller',nw:'Unreal speaks',gk:"Fictional 언어들"};
-const auOn=()=>{try{return !!(window.FFLang&&FFLang.script&&FFLang.script()==='au');}catch(e){return false;}};
+const auOn=()=>{try{return !!(window.FFLang&&FFLang.script&&FFLang.script());}catch(e){return false;}};
 const KEY='islandtradeSiteLang';
 function pick(){if(auOn())return 'en';let s=null;try{s=localStorage.getItem(KEY);}catch(e){}
  if(s&&I.L.includes(s))return s;
@@ -220,11 +220,11 @@ function renderNotes(d){
  more.onclick=()=>{box.dataset.all='1';renderNotes(d);};
 }
 const lg=document.getElementById('lg');
-{const op=l=>'<option value="'+l+'"'+(l==='au'?' style="font-family:\'FF Aurebesh\',system-ui"':'')+'>'+NAMES[l]+'</option>';
- lg.innerHTML=I.L.filter(l=>!VIRT[l]).map(op).join('')+'<optgroup>'+I.L.filter(l=>VIRT[l]).concat(['au']).map(op).join('')+'</optgroup>';}
-lg.onchange=()=>{const v=lg.value,was=auOn();LANG=v==='au'?'en':v;try{localStorage.setItem(KEY,LANG);if(window.FFLang)FFLang.set(v);}catch(e){}if(v==='au'||was){location.reload();return;}applyLang();};
+{const op=l=>'<option value="'+l+'"'+(l==='au'?' style="font-family:\'FF Aurebesh\',system-ui"':l==='sg'?' style="font-family:\'FF Galactic\',system-ui"':'')+'>'+NAMES[l]+'</option>';
+ lg.innerHTML=I.L.filter(l=>!VIRT[l]).map(op).join('')+'<optgroup>'+I.L.filter(l=>VIRT[l]).concat(['au','sg']).map(op).join('')+'</optgroup>';}
+lg.onchange=()=>{const v=lg.value,was=auOn();LANG=(v==='au'||v==='sg')?'en':v;try{localStorage.setItem(KEY,LANG);if(window.FFLang)FFLang.set(v);}catch(e){}if((v==='au'||v==='sg')||was){location.reload();return;}applyLang();};
 function applyLang(){
- document.documentElement.lang=LANG;lg.value=auOn()?'au':LANG;lg.querySelector('optgroup').label=VLABEL[LANG]||VLABEL.en;
+ document.documentElement.lang=LANG;lg.value=auOn()?FFLang.script():LANG;lg.querySelector('optgroup').label=VLABEL[LANG]||VLABEL.en;
  document.querySelectorAll('[data-i]').forEach(e=>{e.textContent=t(e.dataset.i);});
  document.title=t('title');const m=document.querySelector('meta[name=description]');if(m)m.content=t('desc');
  guide();render(DATA);renderNotes(NDATA);
