@@ -450,11 +450,11 @@ if(document.readyState==='loading') document.addEventListener('DOMContentLoaded'
   @media(max-width:640px){ .hero-bg img,.hero-bg video{width:100%; -webkit-mask-image:linear-gradient(90deg,transparent 0,#000 30%); mask-image:linear-gradient(90deg,transparent 0,#000 30%); opacity:.55;} }
   @media(prefers-reduced-motion:reduce){ .hero-bg i{animation:none;} .hero-bg i:first-child{opacity:1;} .hero-bg img,.hero-bg video,.hero-t>*:not(.ffs){animation:none;} }
   /* 숫자로 보는 줄 */
-  .hstats{display:grid; grid-template-columns:repeat(4,1fr); gap:10px; margin:0 0 18px; padding:18px 8px; border:1px solid var(--line); border-radius:18px; background:color-mix(in srgb,var(--panel) 80%,transparent); backdrop-filter:blur(6px); -webkit-backdrop-filter:blur(6px);}
+  .hstats{display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin:0 0 18px; padding:18px 8px; border:1px solid var(--line); border-radius:18px; background:color-mix(in srgb,var(--panel) 80%,transparent); backdrop-filter:blur(6px); -webkit-backdrop-filter:blur(6px);}
   .hstats div{text-align:center; padding:2px 6px; border-left:1px solid var(--line);} .hstats div:first-child{border-left:0;}
   .hstats b{display:block; font-family:'Oswald','Noto Sans KR',sans-serif; font-weight:700; font-size:clamp(26px,4.2vw,42px); line-height:1.1; background:linear-gradient(90deg,var(--fry),var(--fry2)); -webkit-background-clip:text; background-clip:text; color:transparent; font-variant-numeric:tabular-nums;}
   .hstats span{display:block; margin-top:4px; font-size:13px; color:var(--dim);}
-  @media(max-width:640px){ .hstats{grid-template-columns:repeat(2,1fr); row-gap:14px;} .hstats div:nth-child(3){border-left:0;} }
+  @media(max-width:640px){ .hstats{gap:4px; padding:14px 4px;} .hstats div{padding:2px 2px;} .hstats span{font-size:12px;} }
   /* 게임 카드: 스크롤하면 차례로 나타나고, 올리면 장면이 커지며 대표색 빛이 번져요 */
   .game.st{--gc:255,90,95;} .game.ce{--gc:232,194,90;} .game.bf{--gc:90,200,120;} .game.ip{--gc:56,182,255;}
   .game{--rx:0deg; --ry:0deg; --mx:50%; --my:30%;}
@@ -525,7 +525,6 @@ if(document.readyState==='loading') document.addEventListener('DOMContentLoaded'
     <div><b data-n="4">4</b><span>게임</span></div>
     <div><b data-n="148">148</b><span>달성할 업적</span></div>
     <div><b data-n="6">6</b><span>언어</span></div>
-    <div><b data-n="0">0</b><span>광고</span></div>
   </section>
 
   <section class="acct">
