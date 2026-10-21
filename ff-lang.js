@@ -20,7 +20,11 @@ function read(e){ try{ var v=localStorage.getItem(e.k); if(v==null) return null;
 function write(e, l){ try{ if(e.json){ var o={}; try{ o=JSON.parse(localStorage.getItem(e.k)||'{}')||{}; }catch(x){ o={}; } if(typeof o!=='object'||Array.isArray(o)) o={}; if(o[e.json]===l) return; o[e.json]=l; localStorage.setItem(e.k, JSON.stringify(o)); }
   else if(localStorage.getItem(e.k)!==l) localStorage.setItem(e.k, l); }catch(x){} }
 function snapshot(l){ var s={lang:l}; KEYS.forEach(function(e){ s[e.k]=read(e); }); try{ localStorage.setItem(SNAP, JSON.stringify(s)); }catch(x){} }
-function set(l){ if(!ok(l)) return; KEYS.forEach(function(e){ write(e,l); }); snapshot(l); }
+/* Aurebesh (au) is not a language of its own: it is English drawn in the Aurebesh letters. Picking it stores English everywhere plus a flag. */
+var AU='ff.script';
+function auOn(){ try{ return localStorage.getItem(AU)==='au'; }catch(x){ return false; } }
+function set(l){ if(l==='au'){ try{ localStorage.setItem(AU,'au'); }catch(x){} l='en'; } else if(ok(l)){ try{ localStorage.removeItem(AU); }catch(x){} }
+  if(!ok(l)) return; KEYS.forEach(function(e){ write(e,l); }); snapshot(l); }
 function sync(){
   var snap=null; try{ snap=JSON.parse(localStorage.getItem(SNAP)||'null'); }catch(x){}
   var cur=KEYS.map(function(e){ return read(e); }), lang=null;
@@ -31,7 +35,8 @@ function sync(){
   if(lang) set(lang);
   return lang;
 }
-var now=sync();
+var now=sync(); if(now==='au') now='en';
+if(now&&now!=='en'&&auOn()){ try{ localStorage.removeItem(AU); }catch(x){} }      // a game picked another language: Aurebesh is off
 /* 게임 화면이면 친구에게 "지금 하는 게임"을 알리는 ff-presence.js 도 불러요 */
 try{ var me=document.currentScript, base=(me&&me.src)?me.src.replace(/[^\/]*$/,''):'https://frenchfries777mc.github.io/games/';
   if(!window.FFPresence && /\.html$/i.test(location.pathname) && /\/(stickseum|crownenvoy|beaconfall)\/[^\/]*\.html$/i.test(location.pathname)){ var ps=document.createElement('script'); ps.src=base+'ff-presence.js'; ps.async=true; (document.head||document.documentElement).appendChild(ps); } }catch(e){}
@@ -127,5 +132,12 @@ function trCaps(){ var a=document.body?document.body.querySelectorAll('*'):[]; f
   try{ if(getComputedStyle(e).textTransform==='uppercase') e.setAttribute('lang','en'); }catch(x){} } }
 if(now==='tr'){ if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',function(){ trCaps(); setTimeout(trCaps,1500); }); else trCaps(); }
 if(now==='nw'){ if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',ingsoc); else ingsoc(); }
-window.FFLang={ get:function(){ return now; }, slogan:slogan, set:function(l){ set(l); now=l; }, sync:function(){ now=sync()||now; return now; } };
+/* Aurebesh: our own letter drawings (fonts/ff-aurebesh.woff2) over every text on the page; language pickers stay readable */
+function aurebesh(){ if(!auOn()||document.getElementById('ff-au')) return; var base='https://frenchfries777mc.github.io/games/'; try{ var me=document.currentScript; if(me&&me.src) base=me.src.replace(/[^\/]*$/,''); }catch(x){}
+  var h=document.documentElement; h.classList.add('ff-au'); var st=document.createElement('style'); st.id='ff-au';
+  st.textContent="@font-face{font-family:'FF Aurebesh';src:url('"+base+"fonts/ff-aurebesh.woff2') format('woff2');font-display:block}"+
+    "html.ff-au body,html.ff-au body *:not(select):not(option):not(optgroup):not([data-lg]):not(.ff-au-keep){font-family:'FF Aurebesh',system-ui,sans-serif!important}";
+  (document.head||h).appendChild(st); }
+try{ aurebesh(); }catch(e){}
+window.FFLang={ get:function(){ return now; }, script:function(){ return auOn()?'au':''; }, pick:function(){ return auOn()?'au':now; }, slogan:slogan, set:function(l){ set(l); now=l==='au'?'en':l; }, sync:function(){ now=sync()||now; if(now==='au') now='en'; return now; } };
 })();
