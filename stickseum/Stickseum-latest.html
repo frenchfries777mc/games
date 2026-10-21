@@ -1165,7 +1165,7 @@ function applyPoison(p, ownerId, ownerName, stacks, tMs){ if(!p || !p.alive) ret
 const PZ_LUNGE_WIN=0.7, PZ_LUNGE_KB=1.3, PZ_LUNGE_STUN=0.2;       // 돌격 찌르기: the first thrust within 0.7 s after a dash shoves harder and staggers       // 피사로: the ultimate stacks (up to 4): +15% damage and 12% shorter cooldowns (attack, skill, ultimate, dash) each; dying resets it
 function pzStacks(p){ return (p && p.weapon==='pizarro' && p.pzStacks) ? Math.min(PZ_MAX, p.pzStacks) : 0; }
 function pzCdMult(p){ return 1-PZ_CD_STEP*pzStacks(p); }
-function dashCdOf(p){ if(p && p.weapon==='pizarro') return PZ_DASH_CD[pzStacks(p)]; const w=WEAPONS[p && p.weapon], base=(w && w.dashCd!==undefined) ? w.dashCd : DASH_CD; return base*((p && p.isZombie) ? ZOMBIE_DASH_CD_MULT : 1)*pzCdMult(p); }   // how long a player waits between dashes (a zombie: half of it)
+function dashCdOf(p){ if(gameMode==='dashbr') return 0; if(p && p.weapon==='pizarro') return PZ_DASH_CD[pzStacks(p)]; const w=WEAPONS[p && p.weapon], base=(w && w.dashCd!==undefined) ? w.dashCd : DASH_CD; return base*((p && p.isZombie) ? ZOMBIE_DASH_CD_MULT : 1)*pzCdMult(p); }   // how long a player waits between dashes (a zombie: half of it)
 let TELEPORT_CD = 10;   // (a `let` only so the practice mode can shorten it)
 const PROJECTILE_GRAVITY = 700;
 const PLAYER_W = 26, PLAYER_H = 58;
@@ -3122,6 +3122,7 @@ applyColorBlind();
 const MODES = {
   ffa:  {id:'ffa',  name:'데스매치',        desc:'제한 없이 부활하며 자유롭게 싸우는 기본 모드', teams:false, extra:0, elim:false},
   br:   {id:'br',   name:'배틀로얄',        desc:'맵 기본 인원이 참가, 부활 없이 최후의 1인이 남을 때까지', teams:false, extra:0, elim:true},
+  dashbr: {id:'dashbr', name:'무한 대쉬 배틀로얄', desc:'배틀로얄과 같은 규칙, 대쉬 쿨타임이 0초 · 대쉬를 계속 이어 쓸 수 있어요', teams:false, extra:0, elim:true},
   duo:  {id:'duo',  name:'배틀로얄 듀오',   desc:'맵 기본 인원이 2인 1팀으로 나뉘어 최후의 팀이 남을 때까지 · 최소 8명(8인 이상 맵에서만 가능)', teams:true, teamSize:2, extra:0, elim:true, minPlayers:8},
   team: {id:'team', name:'팀전',            desc:'맵 기본 인원+2명이 두 팀으로 나뉘어 상대 팀을 전멸시키면 승리', teams:true, teamSize:'half', extra:2, elim:true},
   duel: {id:'duel', name:'듀얼',            desc:'단둘이 겨루는 3판 2선승제 결투', teams:false, fixedPlayers:2, elim:true, winsNeeded:2},
@@ -3307,8 +3308,11 @@ const SPECIAL_ITEMS=[
   {id:'oneshot', icon:'☝️', name:'한 방 승부',  mapId:'tower_cyber',       weapons:['bullet','pellet'],desc:'체력 1, 한 대 맞으면 끝! 100킬 선취'},
   {id:'turf',    icon:'🎨', name:'색칠 전쟁',   mapId:'grid_school',       weapons:['bullet','fist'],  desc:'밟은 발판이 우리 색으로, 더 많이 칠한 팀이 승리'},
   {id:'bounty',  icon:'🎯', name:'현상금 사냥', mapId:'canyon_volcano',    weapons:['blade','dagger'], desc:'선두에게 현상금이 붙어요, 잡으면 +4점'},
-  {id:'lowg',    icon:'🪐', name:'저중력 난투', mapId:'tower_space',       weapons:['fist','bullet'],  desc:'중력이 약하고 넉백이 강한 난투'}
+  {id:'lowg',    icon:'🪐', name:'저중력 난투', mapId:'tower_space',       weapons:['fist','bullet'],  desc:'중력이 약하고 넉백이 강한 난투'},
+  {id:'dashbr',  icon:'💨', name:'무한 대쉬 배틀로얄', mapId:'canyon_volcano', weapons:['arrow','bullet'], desc:'대쉬 쿨타임 0초, 최후의 1인이 승리'}
 ];
+const DAILY_EXCLUDE={oneshot:1};      // (the one-hit mode is not in the daily rotation: balance, a short grind for xp)
+function brLike(m){ return m==='br' || m==='duo' || m==='dashbr'; }
 const SPECIAL_IDS=SPECIAL_ITEMS.map(i=>i.id);
 function dailyMatchCount(sd){ const mm=(sd&&sd.modeMatches)||{}; let n=0; for(const id of SPECIAL_IDS) n+=(mm[id]||0); return n; }
 const XM_END={vip:300,koth:360,relay:360,freeze:240,rush:240,roulette:300,oneshot:240,turf:240,bounty:300,lowg:240};
@@ -4761,7 +4765,7 @@ function shuffle(arr){ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.
 /* ===== the version of this file =====
    Players with different versions CAN meet and play together: the automatic matchmaking uses the same room names for every version (online-<mode>-<map>-<slot>), and nobody is refused because of a different build.
    The build is only sent along with the join message and the lobby (for information); the corner of the screen shows it. */
-const GAME_BUILD='build 2026-10-18-v329';
+const GAME_BUILD='build 2026-10-18-v330';
 const GAME_VERSION='0.8', GAME_VERSION_NAME='황금을 찾아서';   // 게임 버전 이름: versions.json의 title과 같게 (빌드마다 바꾸지 않음)
 const WEEKLY_EVENTS=[
   {id:'lowg',    name:'저중력 난투', desc:'몸이 둥실둥실, 중력이 약해진 난투', rules:{grav:0.6}},
@@ -4836,7 +4840,7 @@ function brSpots(){
   return brSpotCache.spots;
 }
 function spawnPoint(){
-  const s = (gameMode==='br' || gameMode==='duo') ? brSpots() : MAP.spawns;
+  const s = brLike(gameMode) ? brSpots() : MAP.spawns;
   if(!players || Object.keys(players).length===0) return s[Math.floor(Math.random()*s.length)];
   let best=null, bestScore=-1;
   for(const cand of s){
@@ -6106,9 +6110,9 @@ const MODE_LIST=[
 function dailyModeItem(){
   // one mode per calendar day (the person's local date): picked once, saved, and read back - never re-rolled while entering the game again
   const d=new Date(), key=d.getFullYear()+'-'+(d.getMonth()+1)+'-'+d.getDate();
-  try{ const sv=JSON.parse(localStorage.getItem('stickseumDailyMode')||'null'); if(sv && sv.key===key){ const it=SPECIAL_ITEMS.find(x=>x.id===sv.id); if(it) return it; } }catch(e){}
+  try{ const sv=JSON.parse(localStorage.getItem('stickseumDailyMode')||'null'); if(sv && sv.key===key){ const it=SPECIAL_ITEMS.find(x=>x.id===sv.id && !DAILY_EXCLUDE[x.id]); if(it) return it; } }catch(e){}
   let h=7; for(let k=0;k<key.length;k++) h=(h*31+key.charCodeAt(k))>>>0;
-  const it=SPECIAL_ITEMS[h%SPECIAL_ITEMS.length];
+  const pool=SPECIAL_ITEMS.filter(x=>!DAILY_EXCLUDE[x.id]), it=pool[h%pool.length];
   try{ localStorage.setItem('stickseumDailyMode', JSON.stringify({key, id:it.id})); }catch(e){}
   return it;
 }
@@ -8549,7 +8553,7 @@ function tnMyOut(){                  // knocked out of the tournament: the round
 function elimInfo(me){
   if(!me || spectatorMode || !started || matchEnded || highlightViewing || rpView) return null;
   if(gameMode==='tournament'){ const lbl=tnMyOut(); return lbl ? {key:'tn', sub:lbl+' 탈락'} : null; }
-  if(gameMode!=='br' && gameMode!=='duo' && gameMode!=='survival') return null;       // (survival too: out of the disasters for good, so 나가기 / 관전 shows at once)
+  if(!brLike(gameMode) && gameMode!=='survival') return null;       // (survival too: out of the disasters for good, so 나가기 / 관전 shows at once)
   if(me.alive || !(isHost ? me.respawnAt===Infinity : me.respawnIn===-1)) return null;
   const all=Object.values(players).filter(p=>p && !p.isMinion && !p.isBoss && !p.isSpectator);
   if(gameMode==='duo'){
@@ -11536,7 +11540,7 @@ const BOT_PERSONALITIES=['coward','taunter','sniper','revenge','collector','riva
 const PERSONALITY_WEAPONS={sniper:['bow','rifle','pistol','bazooka','wizard'], taunter:['sword','gloves','dagger','lightsaber','horemheb','bat','dracula']};
 // modes the bots know how to play. (hide & seek is not here: a bot seeker/hider needs its own logic, so those rooms keep waiting for people)
 // hot potato, parkour, survival and the flag mode each have their own brain below (botBrain*); the rest use the generic fighter
-const BOT_MODES={ffa:1,br:1,duo:1,team:1,duel:1,conquest:1,zombie:1,hotpotato:1,parkour:1,survival:1,ctf:1,raid:1,tournament:1,vip:1,koth:1,relay:1,freeze:1,rush:1,roulette:1,oneshot:1,turf:1,bounty:1,lowg:1};
+const BOT_MODES={ffa:1,br:1,dashbr:1,duo:1,team:1,duel:1,conquest:1,zombie:1,hotpotato:1,parkour:1,survival:1,ctf:1,raid:1,tournament:1,vip:1,koth:1,relay:1,freeze:1,rush:1,roulette:1,oneshot:1,turf:1,bounty:1,lowg:1};
 let botSeq=0, lastHumanJoinAt=0, botFillAt=null, botFilling=false, botNextAt=0; // botFillAt: when the first bot will join (announced to everyone); botFilling: bots are walking in; botNextAt: when the next one does
 function botSupported(modeId){ return !!BOT_MODES[modeId]; }
 function humanPlayers(){ return Object.values(players).filter(p=>!p.isBot); }
@@ -12755,7 +12759,7 @@ function drawDarkSubmerged(p){      // 쿠루스 inside his darkness: enemies se
 const BRZ_DELAY_S=30, BRZ_SHRINK_S=110, BRZ_MIN_W=560, BRZ_DPS=6, BRZ_SUPPLY_EVERY_MS=9000, BRZ_CRATE_LIFE_MS=40000;
 let brz=null, brzV=null;
 function brzStart(){
-  if(!(gameMode==='br' || gameMode==='duo') || practiceMode || !MAP){ brz=null; brzV=null; return; }
+  if(!brLike(gameMode) || practiceMode || !MAP){ brz=null; brzV=null; return; }
   brz={t0:Date.now(), crates:[], seq:0, nextSup:Date.now()+6000};
   brzV=null;
 }
