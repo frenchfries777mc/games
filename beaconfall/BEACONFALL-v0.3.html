@@ -368,7 +368,7 @@ html:not(.introDone) #ui,html:not(.introDone) #authgate,html:not(.introDone) #au
     <button class="btn" data-act="skins"><span class="arrow">▶</span>스킨 상점<span class="en">SKIN SHOP</span></button>
     <button class="btn" data-act="stats"><span class="arrow">▶</span>통계<span class="en">STATS</span></button>
     <button class="btn" data-act="settings"><span class="arrow">▶</span>설정<span class="en">SETTINGS</span></button>
-    <p class="foot">v0.3<br>build 83</p>
+    <p class="foot">v0.3<br>build 84</p>
   </nav>
 </div>
 
@@ -1224,6 +1224,7 @@ function draw(){
   flush(1e9);
   for(const b of world.structs)if(b.layer==='r'&&b.x>=x0-14&&b.x<=x1+14&&b.y>=y0-6&&b.y<=y1+30){g.globalAlpha=(mode==='play'&&Math.hypot(P.x-b.x,P.y-b.y)<54)?0.25:1;drawRoofTile(g,b);}
   g.globalAlpha=1;
+  drawFires(g,x0,y0,x1,y1);
   drawCamp(g);
   if(mode==='play')drawPlayFx(g);
   if(!inD)drawVolcFx(g,x0,y0,x1,y1);
@@ -1286,7 +1287,7 @@ async function loadWorld(seed,name,id){
   world=null;base=null;    // 이전 월드의 큰 메모리를 먼저 놓아줘요
   world=await generateTerrain(seed,(p,m)=>progress(p*0.8,m));
   world.voidWon=0;world.voidBD=0;world.rit=null;ritV=null;world.seedStr=String(seed);world.id=id||null;world.savedPlayer=null;world.clock=DAY_SEC*2/24;monsters=[];world.conv=[];world.pend=new Map();world.trader=null;world.lastTraderDay=0;world.weather={t:'clear',left:120};animals=[];world.expl=new Uint8Array(EW*EH);world.mapBase=null;world.treasureInit=false;world.esc={ph:'idle',t:0};world.escaped=false;world.introSeen=false;world.disc=world.islands.map((o,i)=>i===0);world.seen=world.islands.map(()=>false);world.lm=[];world.bossDay=world.islands.map(()=>0);oreT=30;
-  world.structs=[];world.sgrid=new Map();world.fgrid=new Map();world.cgrid=new Map();world.rgrid=new Map();
+  world.structs=[];world.sgrid=new Map();world.fgrid=new Map();world.cgrid=new Map();world.rgrid=new Map();FIRE.clear();
   buildTreeGrid();drops=[];parts=[];
   applySave();
   buildLandmarks();
@@ -1827,6 +1828,8 @@ ITEMS.carpet={name:'카펫',place:'carpet',icon(g){g.fillStyle='#4a1a22';g.fillR
 ITEMS.table={name:'탁자',place:'table',icon(g){g.fillStyle='#3d2412';g.fillRect(1,3,10,3);g.fillRect(2,6,2,5);g.fillRect(8,6,2,5);g.fillStyle='#c9904f';g.fillRect(1,3,10,2);g.fillStyle='#e8b878';g.fillRect(1,3,10,1);}};
 ITEMS.chair={name:'의자',place:'chair',icon(g){g.fillStyle='#3d2412';g.fillRect(3,1,5,6);g.fillRect(3,7,6,2);g.fillRect(3,9,1,2);g.fillRect(8,9,1,2);g.fillStyle='#b5834a';g.fillRect(4,2,3,4);g.fillRect(4,7,4,1);}};
 ITEMS.shelf={name:'책장',place:'shelf',icon(g){g.fillStyle='#3d2412';g.fillRect(1,0,10,12);g.fillStyle='#8a5a2b';g.fillRect(2,1,8,10);g.fillStyle='#3d2412';g.fillRect(2,5,8,1);g.fillStyle='#e0434f';g.fillRect(3,2,1,3);g.fillStyle='#3f7fd9';g.fillRect(4,2,2,3);g.fillStyle='#5ec86e';g.fillRect(6,3,1,2);g.fillStyle='#f2c75a';g.fillRect(3,7,2,3);g.fillStyle='#8a5ad9';g.fillRect(6,7,2,3);}};
+ITEMS.bucket={name:'양동이',max:1,icon(g){g.fillStyle='#14161c';g.fillRect(3,0,1,4);g.fillRect(8,0,1,4);g.fillRect(4,0,4,1);g.fillRect(2,4,8,7);g.fillStyle='#8a8e9c';g.fillRect(3,5,6,5);g.fillStyle='#b6b9c6';g.fillRect(3,5,1,5);g.fillStyle='#5a5e6e';g.fillRect(3,7,6,1);g.fillRect(3,10,6,1);}};
+ITEMS.bucket_w={name:'물 양동이',max:1,icon(g){ITEMS.bucket.icon(g);g.fillStyle='#4aa8ff';g.fillRect(3,4,6,2);g.fillStyle='#bfe6ff';g.fillRect(4,4,2,1);}};
 ITEMS.fence={name:'울타리',place:'fence',icon(g){
   g.fillStyle='#3d2412';g.fillRect(1,3,2,8);g.fillRect(9,3,2,8);g.fillRect(0,4,12,2);g.fillRect(0,7,12,2);
   g.fillStyle='#8a5a2b';g.fillRect(1,3,1,8);g.fillRect(9,3,1,8);g.fillRect(0,4,12,1);g.fillRect(0,7,12,1);g.fillStyle='#c9904f';g.fillRect(1,3,2,1);g.fillRect(9,3,2,1);
@@ -2017,6 +2020,7 @@ RECIPES.push({grp:'건축',bench:true,name:'석재벽돌',note:'강화석재 3�
    RECIPES.push({grp:'건축',bench:true,name:'우체통',note:'판자 2 · 철괴 1 · 종이 1 · 다른 플레이어에게 편지와 선물을 보내요',pat:[P1,P1,{id:'iron_ingot',n:1},{id:'paper',n:1}],out:[{id:'mailbox',n:1}]});
    RECIPES.push({grp:'건축',bench:true,name:'방명록 비석',note:'돌 6 · 막대기 1 · 종이 1 · 한 줄 글을 새겨 다른 플레이어에게 남겨요',pat:[{id:'stone',n:3},{id:'stone',n:3},S1,{id:'paper',n:1}],out:[{id:'monument',n:1}]});
    RECIPES.push({grp:'건축',bench:true,name:'책장',note:'판자 6개',pat:[P1,P1,P1,P1,P1,P1],out:[{id:'shelf',n:1}]});}
+  RECIPES.push({grp:'맨손',name:'양동이',note:'물가나 우물에서 물을 떠 번지는 불을 꺼요',pat:[{id:'plank',n:1},{id:'plank',n:1},{id:'plank',n:1},{id:'plank',n:1},S1],out:[{id:'bucket',n:1}]});
   RECIPES.push({grp:'맨손',name:'울타리',note:'이어 붙이면 길게 이어져요',pat:[{id:'plank',n:1},S1,{id:'plank',n:1},S1,{id:'plank',n:1}],out:[{id:'fence',n:2}]});
   RECIPES.push({grp:'신호',name:'톱니바퀴',note:'강화목재 · 회로조각 · 강화목재',pat:[{id:'rwood',n:1},{id:'circuit',n:1},{id:'rwood',n:1}],out:[{id:'gear',n:1}]});
   RECIPES.push({grp:'신호',name:'시계',note:'옆에 측정기를 붙이면 일정 시간마다 신호를 보내요',pat:[{id:'gear',n:1},{id:'gear',n:1},{id:'gear',n:1}],out:[{id:'clock',n:1}]});
@@ -2169,13 +2173,14 @@ function openRunes(){
 }
 function applyRune(m,rn){
   if(!rn||m.hp<=0)return;
-  if(rn==='fire'){m.dotT=3.2;m.dotD=0.7;m.dotC='#ff8a3a';}
+  if(rn==='fire'){m.dotT=3.2;m.dotD=0.7;m.dotC='#ff8a3a';if(!isGuest()&&Math.random()<0.35)igniteAt(m.x,m.y);}
   else if(rn==='venom'){m.dotT=5.2;m.dotD=0.5;m.dotC='#7be07b';}
   else if(rn==='ice'){m.slowT=3.5;}
   for(let j=0;j<4;j++)parts.push({x:m.x,y:m.y-4,vx:(Math.random()-0.5)*30,vy:-8-Math.random()*16,life:0.4,c:(RUNES[rn]||{}).c||'#fff'});
 }
 function dotTick(m,dt){
   if(m.slowT>0)m.slowT-=dt;
+  if(m.dotT>0&&m.dotC==='#ff8a3a'&&!isGuest()&&Math.random()<dt*0.5)igniteAt(m.x,m.y);   // 불붙은 몬스터가 지나간 자리에 불이 옮겨붙어요
   if(!(m.dotT>0))return;
   m.dotT-=dt;m.dotA=(m.dotA||0)+dt;
   if(m.dotA>=1){
@@ -4800,7 +4805,7 @@ function applySmashed(gx,gy,ds,already,layer){
   const cx=layer==='c'?gx*CG+4:gx*GRID+8,cy=layer==='c'?gy*CG+4:gy*GRID+8;
   for(let j=0;j<12;j++)parts.push({x:cx,y:cy,vx:(Math.random()-0.5)*70,vy:-15-Math.random()*35,life:0.5+Math.random()*0.3,c:j%2?'#7a4e2c':'#c9904f'});
 }
-function smashStructAuth(gx,gy,layer,belt,sap){
+function smashStructAuth(gx,gy,layer,belt,sap,burn){
   const b=removeStructCell(gx,gy,layer);if(!b)return false;
   if(b.id==='bed'){
     if(P.sleeping&&P.bed&&P.bed.gx===gx&&P.bed.gy===gy)wakeUp();
@@ -4814,6 +4819,7 @@ function smashStructAuth(gx,gy,layer,belt,sap){
   let n=STRUCT[b.id].n===0?0:(STRUCT[b.id].n||1),item=structItem(b);
   if(b.id==='tree'){item=spItem('stick',b.tt);lastFellTT=b.tt|0;n=2+((Math.random()*4)|0);}else if(b.id==='sapling')item=spItem('sapling',b.tt);
   if(b.id==='crop'){const cd=CROPS[b.ct]||CROPS.wheat;if(b.gr<=0){item=cd.out;n=cd.yield();}else{item=cd.seed;n=1;}}
+  if(burn)n=0;   // 불에 탄 구조물은 재료가 사라지고 안에 든 물건만 떨어져요
   for(let j=0;j<n;j++){
     let tx=cx+(Math.random()-0.5)*8,ty=cy+3;
     if(n>1)for(let a=0;a<8;a++){
@@ -4834,6 +4840,7 @@ function smashStructAuth(gx,gy,layer,belt,sap){
     ds.push({id:nextDropId++,item:q.id,n:q.n,dur:q.d,sx:cx,sy:cy,tx:Math.round((cx+(Math.random()-0.5)*14)*10)/10,ty:Math.round((cy+Math.random()*6)*10)/10,v:(Math.random()*3)|0});
   }
   if(b.id==='tree'&&sap){let tx=cx,ty=cy+3;if(belt){const sp=beltSpot(belt);tx=sp[0];ty=sp[1];}ds.push({id:nextDropId++,item:'leaf',sx:cx,sy:cy,tx:Math.round(tx*10)/10,ty:Math.round(ty*10)/10,v:(Math.random()*3)|0});}
+  if(burn&&Math.random()<0.6)ds.push({id:nextDropId++,item:'ash',sx:cx,sy:cy,tx:Math.round((cx+(Math.random()-0.5)*8)*10)/10,ty:Math.round((cy+3)*10)/10,v:(Math.random()*3)|0});
   const rp=sap?takeSapMats(ds):false;
   applySmashed(gx,gy,ds,true,layer);
   saveWorld(true);
@@ -5295,6 +5302,14 @@ function useSelected(){
   const sel=inv[P.sel];if(!sel)return;
   const a=armorInfo(sel.id);
   if(a){const old=eq[a.piece],oldd=eqd[a.piece];eq[a.piece]=sel.id;eqd[a.piece]=sel.d;inv[P.sel]=old?(oldd!==undefined?{id:old,n:1,d:oldd}:{id:old,n:1}):null;afterEq();return;}
+  if(sel.id==='bucket'){   // 양동이: 물가나 우물 곁에서 물을 떠요
+    if(nearWaterPx()){inv[P.sel]={id:'bucket_w',n:1};for(let j=0;j<8;j++)parts.push({x:P.x+(Math.random()-0.5)*8,y:P.y-6,vx:(Math.random()-0.5)*30,vy:-20-Math.random()*20,life:0.4,c:j%2?'#6ec6ff':'#e8f6ff'});persist();renderInv();}
+    return;
+  }
+  if(sel.id==='bucket_w'){   // 물 양동이: 가까운 불을 꺼요
+    if(douseFire()){inv[P.sel]={id:'bucket',n:1};persist();renderInv();}
+    return;
+  }
   if(sel.id==='ash'){   // 잿가루: 근처에 자라는 작물에 뿌리면 빨리 자라요
     let best=null,bd=1e9;for(const b of world.structs){if(b.id!=='crop'||!(b.gr>0))continue;const d=Math.hypot(b.gx*GRID+8-P.x,b.gy*GRID+8-P.y);if(d<bd&&d<28){bd=d;best=b;}}
     if(best){if(isGuest())sendHost({t:'ash',gx:best.gx,gy:best.gy});else{best.gr=best.gr*0.35;bcastAll({t:'ashed',gx:best.gx,gy:best.gy,gr:best.gr});}sel.n--;if(sel.n<=0)inv[P.sel]=null;for(let j=0;j<6;j++)parts.push({x:best.gx*GRID+8,y:best.gy*GRID+6,vx:(Math.random()-0.5)*20,vy:-10-Math.random()*14,life:0.5,c:j%2?'#9a9aa6':'#ffb23a'});persist();renderInv();}
@@ -6177,6 +6192,140 @@ function nextWeather(){
   if(isHost())bcastAll({t:'weather',w:world.weather.t});
 }
 function updateWeather(dt){const w=world.weather;w.left-=dt;if(w.left<=0)nextWeather();}
+/* ===== 번지는 불 =====
+   번개(폭풍우)·화염 룬·용암에서 불이 붙어 나무와 나무 구조물을 타고 번져요. 불은 칸마다 6~12초 타며 연료를 태우고 재를 남겨요.
+   비가 오면 잘 번지지 않고 꺼지기도 해요. 물 양동이로 꺼요. 불은 방장이 계산하고, 참가자는 방장이 보낸 목록을 그려요. */
+const FIRE=new Map();   // 칸(gy*GW+gx) -> {gx,gy,t,ttl,sp}
+const FIRE_STRUCT=new Set(['tree','sapling','crop','bench','chest','bed','fence','door','bwall','bwin','floor','logfloor','roof','carpet','table','chair','shelf','hut','stall','mailbox','tradepost']);
+let fireLt=25,fireLava=2,fireNet=0,fireSent=false,fireSave=false,fireFx=0;
+const fireTree=k=>{const t=world.trees.t[k];return !world.removed[k]&&t!==4&&t!==5;};
+function fireFuel(gx,gy){
+  if(gx<0||gy<0||gx>=GW||gy>=GH)return false;
+  const tc=tgrid.get(gy*tgw+gx);if(tc)for(const k of tc)if(fireTree(k))return true;
+  for(const l of ['o','f','r']){const b=structMap(l).get(skey(l,gx,gy));if(b&&FIRE_STRUCT.has(b.id))return true;}
+  return false;
+}
+function igniteCell(gx,gy){
+  if(isGuest()||!world||gx<0||gy<0||gx>=GW||gy>=GH)return false;
+  const key=gy*GW+gx;if(FIRE.has(key)||!fireFuel(gx,gy))return false;
+  FIRE.set(key,{gx,gy,t:0,ttl:6+Math.random()*6,sp:0.5+Math.random()*0.5});return true;
+}
+const igniteAt=(x,y)=>igniteCell(Math.floor(x/GRID),Math.floor(y/GRID));
+function burnTreeAuth(k){
+  const T=world.trees,x=T.x[k],y=T.y[k],key=y*W+x,ds=[];
+  world.removed[k]=1;
+  if(Math.random()<0.7)ds.push({id:nextDropId++,item:'ash',sx:x,sy:y,tx:Math.round((x+(Math.random()-0.5)*10)*10)/10,ty:Math.round((y+3)*10)/10,v:(Math.random()*3)|0});
+  applyBroke(key,ds,true);
+  if(isHost())bcastAll({t:'broke',key,drops:ds});
+}
+function burnOut(f){
+  const gx=f.gx,gy=f.gy,tc=tgrid.get(gy*tgw+gx);
+  if(tc)for(const k of tc.slice())if(fireTree(k))burnTreeAuth(k);
+  for(const l of ['o','f','r']){const b=structMap(l).get(skey(l,gx,gy));if(b&&FIRE_STRUCT.has(b.id))smashStructAuth(gx,gy,l,null,false,true);}
+  fireSave=true;
+  for(let j=0;j<6;j++)parts.push({x:gx*GRID+8,y:gy*GRID+10,vx:(Math.random()-0.5)*30,vy:-30-Math.random()*30,life:0.7,c:j%2?'#6b6f7a':'#3a3d46'});
+}
+function douseAt(x,y,r){
+  let n=0;
+  for(const [k,f] of FIRE){
+    const cx=f.gx*GRID+8,cy=f.gy*GRID+8;
+    if(Math.hypot(cx-x,cy-y)<=r){FIRE.delete(k);n++;for(let j=0;j<8;j++)parts.push({x:cx+(Math.random()-0.5)*10,y:cy,vx:(Math.random()-0.5)*40,vy:-30-Math.random()*40,life:0.5,c:j%3?'#6ec6ff':'#e8f6ff'});}
+  }
+  return n;
+}
+function douseFire(){   // 가까운 불 하나를 골라 그 둘레를 꺼요
+  let best=null,bd=1e9;
+  for(const f of FIRE.values()){const d=Math.hypot(f.gx*GRID+8-P.x,f.gy*GRID+8-(P.y-4));if(d<bd){bd=d;best=f;}}
+  if(!best||bd>34)return 0;
+  const cx=best.gx*GRID+8,cy=best.gy*GRID+8;
+  if(isGuest())sendHost({t:'douse',x:cx,y:cy});
+  return douseAt(cx,cy,22);
+}
+const isWaterPx=(x,y)=>{const xi=Math.round(x),yi=Math.round(y);if(xi<6||yi<6||xi>=W-6||yi>=H-6)return false;return hAt(xi,yi)<SEA-0.01||rvAt(xi,yi)>0;};
+function nearWaterPx(){
+  if(isWaterPx(P.x,P.y))return true;
+  for(let a=0;a<8;a++){const an=a*Math.PI/4;for(const r of [8,14])if(isWaterPx(P.x+Math.cos(an)*r,P.y+Math.sin(an)*r))return true;}
+  for(const b of world.structs)if(b.id==='ruin'&&b.k==='well'&&Math.hypot(b.x-P.x,b.y-P.y)<26)return true;
+  return false;
+}
+function fireStrike(){   // 폭풍우의 번개: 플레이어 가까이 나무나 구조물에 떨어져요
+  const ps=[{x:P.x,y:P.y}];for(const r of remotes.values())ps.push({x:r.x,y:r.y});
+  const c=ps[(Math.random()*ps.length)|0];
+  for(let n=0;n<14;n++){
+    const x=c.x+(Math.random()-0.5)*300,y=c.y+(Math.random()-0.5)*200;
+    if(igniteAt(x,y)){flash=1;for(let j=0;j<10;j++)parts.push({x:x+(Math.random()-0.5)*6,y:y-Math.random()*30,vx:(Math.random()-0.5)*20,vy:-10,life:0.3,c:j%2?'#ffffff':'#fff3a0'});return;}
+  }
+}
+function fireNearLava(){   // 용암 가까이 서 있는 나무에 가끔 불이 붙어요
+  const ps=[{x:P.x,y:P.y}];for(const r of remotes.values())ps.push({x:r.x,y:r.y});
+  for(const c of ps){
+    for(let n=0;n<6;n++){
+      const gx=Math.floor((c.x+(Math.random()-0.5)*240)/GRID),gy=Math.floor((c.y+(Math.random()-0.5)*160)/GRID);
+      if(gx<1||gy<1||gx>=GW-1||gy>=GH-1||FIRE.has(gy*GW+gx))continue;
+      const cx=gx*GRID+8,cy=gy*GRID+8;
+      let lava=false;for(const [ax,ay] of [[-12,0],[12,0],[0,-12],[0,12],[0,0]])if(bioRaw(cx+ax,cy+ay)&128){lava=true;break;}
+      if(lava&&Math.random()<0.3)igniteCell(gx,gy);
+    }
+  }
+}
+function updateFire(dt){
+  if(!world)return;
+  const guest=isGuest();
+  if(!guest){
+    const wt=world.weather?world.weather.t:'clear';
+    if(wt==='storm'){fireLt-=dt;if(fireLt<=0){fireLt=18+Math.random()*30;fireStrike();}}
+    fireLava-=dt;if(fireLava<=0){fireLava=1.5;fireNearLava();}
+    for(const [key,f] of FIRE){
+      f.t+=dt;f.sp-=dt;
+      if(f.sp<=0){
+        f.sp=1;
+        if(wt!=='clear'&&Math.random()<(wt==='storm'?0.12:0.25)){FIRE.delete(key);continue;}   // 비가 오면 꺼져요
+        const k=wt==='clear'?1:0.25;
+        for(let dy=-1;dy<=1;dy++)for(let dx=-1;dx<=1;dx++){
+          if(!dx&&!dy)continue;
+          if(Math.random()<(dx&&dy?0.035:0.07)*k)igniteCell(f.gx+dx,f.gy+dy);
+        }
+      }
+      if(f.t>=f.ttl){FIRE.delete(key);burnOut(f);}
+    }
+    if(fireSave){fireSave=false;saveWorld(true);}
+    if(net.conns&&net.conns.length){
+      fireNet-=dt;
+      if(fireNet<=0){fireNet=0.4;if(FIRE.size||fireSent){fireSent=FIRE.size>0;bcastAll({t:'fires',l:[...FIRE.values()].slice(0,300).map(f=>[f.gx,f.gy])});}}
+    }
+  }
+  if(!FIRE.size)return;
+  fireFx-=dt;
+  const fx=fireFx<=0;if(fx)fireFx=0.12;
+  const dun=DUN&&dunFloorAt(P.x,P.y);
+  for(const f of FIRE.values()){
+    const cx=f.gx*GRID+8,cy=f.gy*GRID+10;
+    if(fx&&Math.abs(cx-P.x)<260&&Math.abs(cy-P.y)<180){
+      if(Math.random()<0.5)parts.push({x:cx+(Math.random()-0.5)*10,y:cy-6,vx:(Math.random()-0.5)*14,vy:-45-Math.random()*25,life:0.45,c:Math.random()<0.5?'#ffb03a':'#ff6a3a'});
+      if(Math.random()<0.25)parts.push({x:cx+(Math.random()-0.5)*8,y:cy-12,vx:(Math.random()-0.5)*8,vy:-55,life:0.6,c:'#5a5e6a'});
+    }
+    if(!dun&&!P.dead&&!lavaProt()&&Math.abs(P.x-cx)<9&&Math.abs(P.y-cy-2)<9)P.status.burn=Math.max(P.status.burn,2.5);   // 불에 닿으면 화상
+  }
+}
+function drawFlame(g,cx,by,h,ph){   // 아래가 넓고 위로 좁아지는 불꽃 하나 (겉 빨강, 속 주황, 심지 노랑)
+  for(let r=0;r<h;r++){
+    const t=r/h,w=t<0.3?6:t<0.6?4:t<0.85?2:1,sw=Math.round(Math.sin(ph+r*0.45)*(t*1.6)),y=by-r-1;
+    g.fillStyle='#c93a14';g.fillRect(cx-(w>>1)+sw,y,w,1);
+    if(w>=3&&t<0.85){g.fillStyle='#ff9a2e';g.fillRect(cx-((w-2)>>1)+sw,y,w-2,1);}
+    if(w>=4&&t<0.55){g.fillStyle='#ffe27a';g.fillRect(cx-((w-4)>>1)+sw,y,Math.max(1,w-4),1);}
+  }
+}
+function drawFires(g,x0,y0,x1,y1){
+  for(const f of FIRE.values()){
+    const cx=f.gx*GRID+8,by=f.gy*GRID+14;
+    if(cx<x0-12||cx>x1+12||by<y0-16||by>y1+24)continue;
+    const ph=time*9+f.gx*7.3+f.gy*13.1;
+    g.fillStyle='rgba(255,130,40,0.16)';g.fillRect(cx-14,by-20,28,22);
+    drawFlame(g,cx-4,by,8+((Math.sin(ph*1.1)+1)*2.5|0),ph);
+    drawFlame(g,cx+4,by-1,7+((Math.sin(ph*1.7+2)+1)*2.5|0),ph+2);
+    drawFlame(g,cx,by+1,12+((Math.sin(ph*1.3+4)+1)*3|0),ph+4);
+  }
+}
 function drawWeather(g,wt){
   const n=wt==='storm'?260:140;
   if(rainDrops.length!==n||rainW!==VW){rainDrops=[];for(let i=0;i<n;i++)rainDrops.push({x:Math.random()*VW,y:Math.random()*VH,s:110+Math.random()*70});rainW=VW;}
@@ -9654,6 +9803,7 @@ function updateMonsters(dt){
 }
 function updateSim(dt){
   world.clock+=dt;
+  updateFire(dt);
   if(!isGuest()){oreT-=dt;if(oreT<=0){oreT=45;trySpawnOre();}updateConveyors(dt);updatePorts(dt);updateGuards(dt);updateCrafters(dt);updateSignals(dt);updateEscape(dt);updateWeather(dt);growSaplings(dt*(wetNow()?1.5:1));growCrops(dt*(wetNow()?2:1));updateFellers(dt);updateMiners(dt);updateFurnaces(dt);updatePend(dt);checkSleepSkip(dt);updateTrader(dt);}else{if(world.trader)world.trader.pt+=dt;if(world.esc.ph!=='idle')world.esc.t+=dt;growCrops(dt*(wetNow()?2:1));}
   updateAnimals(dt);
   if(!isGuest()){updateTradeposts(dt);updateTraps(dt);updateHuts(dt);}
@@ -10542,6 +10692,7 @@ function drawNight(g,a,ix,iy){
     light(P.x,P.y-4,dk?(dk===6?62:46):24);
     if(dk){const G=dunGen(dk),r=dunFloorRect(dk);for(const [tx,ty] of G.torches){const x=r.x+tx*16+8,y=r.y+ty*16+8;if(Math.abs(x-P.x)<420&&Math.abs(y-P.y)<320)light(x,y+4,34);}}}
   for(const r of remotes.values())light(r.x,r.y-4,20);
+  for(const f of FIRE.values())light(f.gx*GRID+8,f.gy*GRID+8,30);
   d.globalCompositeOperation='source-over';
   g.drawImage(dk,0,0);
   {   // 불빛 번짐: 따뜻한 빛이 어둠 위에 번져요
@@ -10972,6 +11123,7 @@ function sendSnapshot(c){   // PeerJS는 원소가 1만 개쯤 넘는 배열을 
 }
 function onHostData(c,d){
   if(!d||typeof d!=='object'||!world)return;
+  if(d.t==='douse'){if(Number.isFinite(d.x)&&Number.isFinite(d.y))douseAt(d.x,d.y,24);return;}
   if(d.t==='pos'&&Number.isFinite(d.x)&&Number.isFinite(d.y)){
     let r=remotes.get(c.peer);
     if(!r){r={x:d.x,y:d.y,tx:d.x,ty:d.y,f:1,m:0,walk:0,suit:suitOf(c.peer)};remotes.set(c.peer,r);}
@@ -11204,7 +11356,7 @@ function onHostData(c,d){
 function applyState(d){
   if(world.disc){if(typeof d.disc==='string')for(let i=0;i<world.disc.length;i++)if(d.disc[i]==='1')world.disc[i]=true;if(typeof d.seen==='string')for(let i=0;i<world.seen.length;i++)if(d.seen[i]==='1')world.seen[i]=true;if(d.dby&&typeof d.dby==='object')world.discBy=Object.assign(world.discBy||{},d.dby);}
   markRemoved(d.removed);markBrem(d.brem);markOres(d.ores,5);
-  world.structs=[];world.sgrid=new Map();world.fgrid=new Map();world.cgrid=new Map();world.rgrid=new Map();
+  world.structs=[];world.sgrid=new Map();world.fgrid=new Map();world.cgrid=new Map();world.rgrid=new Map();FIRE.clear();
   buildLandmarks();   // 방장과 같은 배치가 나오도록 구조물을 얹기 전에 먼저 만들어요
   for(const b of (d.structs||[]))addStructCell(b.id,b.gx|0,b.gy|0,b);
   drops=(d.drops||[]).map(o=>({id:o.id,item:o.item||'stick',n:Math.max(1,o.n|0),sx:o.sx,sy:o.sy,tx:o.tx,ty:o.ty,age:1,v:o.v|0,dur:Number.isFinite(o.dur)?o.dur:undefined}));
@@ -11275,6 +11427,7 @@ async function guestHandle(d){
   else if(d.t==='sided'){const b=world.cgrid.get((d.gy|0)*CW+(d.gx|0));if(b&&b.id==='sorter')b.sr=d.sr&1;}
   else if(d.t==='fltd'){const b=world.cgrid.get((d.gy|0)*CW+(d.gx|0));if(b&&b.id==='sorter'){if(d.fl&&ITEMS[d.fl])b.fl=d.fl;else delete b.fl;}}
   else if(d.t==='dmov'){for(const a of (d.list||[])){const o=drops.find(q=>q.id===a[0]);if(o){o.tx=a[1];o.ty=a[2];o.sx=a[1];o.sy=a[2];}}}
+  else if(d.t==='fires'){FIRE.clear();for(const a of (Array.isArray(d.l)?d.l.slice(0,300):[])){const gx=a[0]|0,gy=a[1]|0;if(gx>=0&&gy>=0&&gx<GW&&gy<GH)FIRE.set(gy*GW+gx,{gx,gy,t:0,ttl:99,sp:9});}}
   else if(d.t==='weather'){world.weather={t:d.w==='rain'||d.w==='storm'?d.w:'clear',left:60};lastClockTxt='';}
   else if(d.t==='anims'){
     const byId=new Map(animals.map(a=>[a.id,a])),next=[];
