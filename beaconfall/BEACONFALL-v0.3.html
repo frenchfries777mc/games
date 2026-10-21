@@ -368,7 +368,7 @@ html:not(.introDone) #ui,html:not(.introDone) #authgate,html:not(.introDone) #au
     <button class="btn" data-act="skins"><span class="arrow">▶</span>스킨 상점<span class="en">SKIN SHOP</span></button>
     <button class="btn" data-act="stats"><span class="arrow">▶</span>통계<span class="en">STATS</span></button>
     <button class="btn" data-act="settings"><span class="arrow">▶</span>설정<span class="en">SETTINGS</span></button>
-    <p class="foot">v0.3<br>build 87</p>
+    <p class="foot">v0.3<br>build 88</p>
   </nav>
 </div>
 
@@ -10811,6 +10811,43 @@ const SKINS=[
 const SKIN_BY={};for(const k of SKINS)SKIN_BY[k.id]=k;
 const bC=n=>(n|0)+'bC';
 const mySkin=()=>{const k=settings.skin;return k&&SKIN_BY[k]&&(settings.skinsOwn||[]).includes(k)?k:'';};
+/* 머리 모양·머리 색·표정: 스킨과 따로 고르고, 'sk~머리.색.표정' 한 줄로 합쳐서 다른 사람에게 보내요 */
+const HAIRS=[{id:'',name:'기본',price:0},{id:'spiky',name:'뾰족머리',price:150},{id:'long',name:'긴 머리',price:150},{id:'bun',name:'올림머리',price:150},{id:'tail',name:'말총머리',price:200},{id:'mohawk',name:'모히칸',price:250},{id:'afro',name:'곱슬머리',price:300},{id:'bald',name:'민머리',price:100}];
+const HAIRC=[{id:'',name:'기본',col:'#4a2d18'},{id:'blk',name:'검정',col:'#14161c'},{id:'gld',name:'금발',col:'#e8c35a'},{id:'red',name:'빨강',col:'#b5402a'},{id:'wht',name:'흰색',col:'#e8e8ef'},{id:'blu',name:'파랑',col:'#3f7fd9'},{id:'pnk',name:'분홍',col:'#ee6fb0'},{id:'grn',name:'초록',col:'#4aa860'},{id:'pur',name:'보라',col:'#8a4aff'}];
+const FACES=[{id:'',name:'기본',price:0},{id:'smile',name:'웃는 얼굴',price:80},{id:'blush',name:'볼 빨강',price:80},{id:'sleepy',name:'졸린 눈',price:100},{id:'grumpy',name:'뚱한 얼굴',price:100},{id:'surprised',name:'놀란 얼굴',price:100},{id:'wink',name:'윙크',price:150},{id:'cool',name:'선글라스',price:200}];
+const HAIR_BY={},HAIRC_BY={},FACE_BY={};
+for(const k of HAIRS)if(k.id)HAIR_BY[k.id]=k;for(const k of HAIRC)if(k.id)HAIRC_BY[k.id]=k.col;for(const k of FACES)if(k.id)FACE_BY[k.id]=k;
+function parseLook(str){
+  const t=String(str||'').slice(0,40).split('~'),q=(t[1]||'').split('.');
+  return {s:SKIN_BY[t[0]]?t[0]:'',h:HAIR_BY[q[0]]?q[0]:'',c:HAIRC_BY[q[1]]?q[1]:'',f:FACE_BY[q[2]]?q[2]:''};
+}
+function lookStr(s,h,c,f){return (h||c||f)?(s||'')+'~'+(h||'')+'.'+(c||'')+'.'+(f||''):(s||'');}
+const cleanLook=str=>{const L=parseLook(str);return lookStr(L.s,L.h,L.c,L.f);};
+function myLook(){
+  const o=(k,arr)=>(settings[arr]||[]).includes(k)?k:'';
+  return lookStr(mySkin(),o(settings.hair,'hairOwn'),HAIRC_BY[settings.hairc]?settings.hairc:'',o(settings.face,'faceOwn'));
+}
+function drawHeadLook(g,x,by,f,c,L,hat){
+  const R=(dx,dy,w,h,col)=>{g.fillStyle=col;g.fillRect(x+dx,by+dy,w,h);};
+  const H=(dx,dy,w,h,col)=>{if(hat&&dy<-3)return;R(dx,dy,w,h,col);};
+  const hc=(L&&L.c&&HAIRC_BY[L.c])||c.hr||'#4a2d18',hs=L?L.h:'',fc=L?L.f:'',bk=-f,fr=f>0?1:-1,wd=f>0?0:-1;
+  if(!hs){R(-1,-3,3,1,hc);R(bk,-2,1,1,hc);}
+  else if(hs==='spiky'){R(-1,-3,3,1,hc);H(-1,-4,1,1,hc);H(1,-4,1,1,hc);H(0,-5,1,1,hc);}
+  else if(hs==='long'){R(-1,-3,3,1,hc);R(bk,-2,1,3,hc);}
+  else if(hs==='bun'){R(-1,-3,3,1,hc);R(bk,-2,1,1,hc);H(0,-4,1,2,hc);}
+  else if(hs==='tail'){R(-1,-3,3,1,hc);R(bk,-2,1,2,hc);R(bk*2,-2,1,3,hc);}
+  else if(hs==='mohawk'){H(0,-5,1,2,hc);R(0,-3,1,1,hc);}
+  else if(hs==='afro'){H(-1,-5,3,1,hc);H(-2,-4,5,1,hc);R(-2,-3,5,1,hc);R(-2,-2,1,2,hc);R(2,-2,1,2,hc);}
+  const E=col=>R(fr,-2,1,1,col);
+  if(fc==='smile'){E('#2a1a10');R(wd,-1,2,1,'#c4363b');}
+  else if(fc==='blush'){E('#2a1a10');R(fr,-1,1,1,'#ee8aa0');}
+  else if(fc==='sleepy'){E('#a07858');const z=((time*2)|0)&1;g.fillStyle='#cfe0ff';g.fillRect(x+fr*2,by-4-z,1,1);}
+  else if(fc==='grumpy'){E('#c4363b');R(0,-1,1,1,'#2a1a10');}
+  else if(fc==='surprised'){R(fr,-2,1,2,'#2a1a10');R(0,-1,1,1,'#2a1a10');}
+  else if(fc==='wink'){E((((time*1.1)|0)%3===0)?'#b88a66':'#2a1a10');R(0,-1,1,1,'#c4363b');}
+  else if(fc==='cool'){R(wd,-2,2,1,'#14161c');R(-fr<0?-1:0,-2,1,1,'#2a3a50');R(fr,-2,1,1,'#14161c');}
+  else E('#2a1a10');
+}
 function drawSkinAcc(g,x,by,f,a){
   const R=(dx,dy,w,h,c)=>{g.fillStyle=c;g.fillRect(x+dx,by+dy,w,h);},s=f>0?1:-1;
   if(a==='bandana'){R(-1,-3,3,1,'#d9423e');R(s>0?-2:2,-3,1,2,'#d9423e');}
@@ -10850,8 +10887,9 @@ function showSkins(){
     <div class="row"><span>보유 BeaCoin</span><b id="bcbal" data-noi18n="1">${bC(settings.bc)}</b></div>
     <div id="bcex" class="row col"></div>
     <ul class="wlist" style="max-height:44vh;overflow:auto;margin:6px 0">${rows}</ul>
-    <div class="actions"><button class="btn sm ghost" data-close>닫기</button></div>`,m=>{
+    <div class="actions"><button class="btn sm" data-look>머리·표정 꾸미기</button><button class="btn sm ghost" data-close>닫기</button></div>`,m=>{
       m.querySelector('[data-close]').onclick=closeModal;
+      m.querySelector('[data-look]').onclick=showLook;
       m.querySelectorAll('canvas.skprev').forEach(c=>{const g=c.getContext('2d');g.clearRect(0,0,12,16);drawPerson(g,6,14,1,false,0,false,0,0,c.dataset.skid);});
       const ex=m.querySelector('#bcex');
       if(!sb||!window.bfUid)ex.innerHTML='<span class="hint">로그인하면 허브 코인을 BeaCoin으로 바꿀 수 있어요.</span>';
@@ -10883,11 +10921,47 @@ function showSkins(){
       };
     },'single');
 }
+function showLook(){
+  skArm='';
+  const ownH=settings.hairOwn||[],ownF=settings.faceOwn||[];
+  const chip=(k,kind,own)=>{
+    const has=!k.id||own.includes(k.id),on=(kind==='h'?settings.hair||'':settings.face||'')===k.id&&(!k.id||has);
+    return `<button class="btn sm${on?' ghost':''}" ${on?'disabled':''} data-lk="${kind}" data-id="${k.id}" style="margin:2px;display:inline-block;width:auto">${k.name}${has?'':' · '+bC(k.price)}</button>`;
+  };
+  const sw=HAIRC.map(k=>`<button class="btn sm${(settings.hairc||'')===k.id?' ghost':''}" data-lk="c" data-id="${k.id}" title="${k.name}" style="margin:2px;display:inline-block;width:34px;height:28px;padding:0;background:${k.col};${(settings.hairc||'')===k.id?'outline:2px solid #fff;':''}"></button>`).join('');
+  openModal(`<h2>머리·표정 꾸미기<small>HAIR &amp; FACE</small></h2>
+    <div class="row"><span>보유 BeaCoin</span><b data-noi18n="1">${bC(settings.bc)}</b></div>
+    <div style="text-align:center;margin:6px 0"><canvas id="lkprev" width="12" height="16" style="width:72px;height:96px;image-rendering:pixelated"></canvas></div>
+    <div style="max-height:32vh;overflow:auto">
+      <div class="hint">머리 모양</div><div>${HAIRS.map(k=>chip(k,'h',ownH)).join('')}</div>
+      <div class="hint" style="margin-top:6px">머리 색 (무료)</div><div>${sw}</div>
+      <div class="hint" style="margin-top:6px">표정</div><div>${FACES.map(k=>chip(k,'f',ownF)).join('')}</div>
+    </div>
+    <div class="actions"><button class="btn sm ghost" data-back>스킨 상점으로</button><button class="btn sm ghost" data-close>닫기</button></div>`,m=>{
+      m.querySelector('[data-close]').onclick=closeModal;
+      m.querySelector('[data-back]').onclick=showSkins;
+      const c=m.querySelector('#lkprev'),g=c.getContext('2d');
+      const draw=()=>{g.clearRect(0,0,12,16);drawPerson(g,6,14,1,false,0,false,0,0,myLook());};draw();
+      const iv=setInterval(()=>{if(!c.isConnected){clearInterval(iv);return;}draw();},300);
+      m.querySelector('.modal').onclick=e=>{
+        const t=e.target.closest('button[data-lk]');if(!t||t.disabled)return;
+        const kind=t.dataset.lk,id=t.dataset.id;
+        if(kind==='c'){settings.hairc=id;saveSettings();showLook();return;}
+        const k=(kind==='h'?HAIR_BY:FACE_BY)[id]||{id:'',price:0},own=kind==='h'?'hairOwn':'faceOwn',key=kind==='h'?'hair':'face';
+        if(id&&!(settings[own]||[]).includes(id)){
+          if((settings.bc|0)<k.price){toast('BeaCoin이 모자라요');return;}
+          if(skArm!==kind+id){skArm=kind+id;t.textContent='한 번 더 누르면 구매';return;}
+          settings.bc=(settings.bc|0)-k.price;settings[own]=(settings[own]||[]).concat(id);toast(k.name+'을(를) 샀어요');
+        }
+        settings[key]=id;saveSettings();showLook();
+      };
+    },'single');
+}
 const SUITS=[{b:'#e8833a',h:'#f5a55a',d:'#b4571f'},{b:'#3f7fd9',h:'#6aa0ee',d:'#274f94'},{b:'#4aa860',h:'#74c98a',d:'#2d6a3c'},
   {b:'#d95a9a',h:'#ee86b8',d:'#9a2f66'},{b:'#8a5ad9',h:'#ab86ee',d:'#58369a'},{b:'#d9c53f',h:'#eedc6a',d:'#968a22'}];
 function drawPerson(g,px,py,f,moving,walkT,chopping,swingT,suit,skin){
   const sw=chopping?(((swingT*6)|0)&1):0, step=moving?(((walkT*9)|0)&1):0, bob=((moving&&step)||sw)?1:0;
-  const sk=skin&&SKIN_BY[skin],x=Math.round(px)+(sw?f:0), y=Math.round(py), c=sk||SUITS[suit%SUITS.length];
+  const L=skin?parseLook(skin):null,sk=L&&L.s?SKIN_BY[L.s]:null,x=Math.round(px)+(sw?f:0), y=Math.round(py), c=sk||SUITS[suit%SUITS.length];
   g.fillStyle='rgba(8,24,12,0.32)';g.fillRect(Math.round(px)-2,y,5,1);
   g.fillStyle=c.lg||'#2b2233';
   g.fillRect(x-1,y-(moving&&step?1:2),1,moving&&step?1:2);
@@ -10897,8 +10971,7 @@ function drawPerson(g,px,py,f,moving,walkT,chopping,swingT,suit,skin){
   g.fillStyle=c.h;g.fillRect(x-2,by,5,1);
   g.fillStyle=c.d;g.fillRect(x-1,by+2,3,1);
   g.fillStyle=c.sk||'#f2c9a0';g.fillRect(x-1,by-3,3,3);
-  g.fillStyle=c.hr||'#4a2d18';g.fillRect(x-1,by-3,3,1);g.fillRect(f>0?x-1:x+1,by-2,1,1);
-  g.fillStyle='#2a1a10';g.fillRect(x+(f>0?1:-1),by-2,1,1);
+  drawHeadLook(g,x,by,f,c,L,!!(sk&&sk.acc&&sk.acc!=='mask'&&sk.acc!=='smith'));
   if(sk&&sk.acc)drawSkinAcc(g,x,by,f,sk.acc);
 }
 function drawHorseBody(g,x,y,f,moving,walk){
@@ -10925,11 +10998,11 @@ const drawPlayer=g=>{
   if(P.dead||(P.sleeping&&onBed(P.x,P.y)))return;
   if(P.hurtT>0&&(((time*20)|0)&1))g.globalAlpha=0.35;else if(P.rollT>time)g.globalAlpha=0.55;
   if(cartOn&&!P.sailing&&cartP.y<P.y)drawCart(g,cartP.x,cartP.y);
-  if(P.down){g.globalAlpha=0.55;drawPerson(g,P.x,P.y+4,P.f,false,0,false,0,0,mySkin());g.globalAlpha=1;drawDownMark(g,P.x,P.y,P.downT);}
+  if(P.down){g.globalAlpha=0.55;drawPerson(g,P.x,P.y+4,P.f,false,0,false,0,0,myLook());g.globalAlpha=1;drawDownMark(g,P.x,P.y,P.downT);}
   else if(P.air){drawAirRider(g,P.x,P.y,P.f,0);}
-  else if(P.sailing){drawBoatHull(g,P.x,P.y);drawPerson(g,P.x,P.y-3,P.f,false,0,false,0,0,mySkin());drawArmorOverlay(g,P.x,P.y-3,P.f,false,0,false,0);}
-  else if(P.mount){drawHorseBody(g,P.x,P.y,P.f,P.moving,P.walk);drawPerson(g,P.x,P.y-7,P.f,false,0,P.chopping||P.atkAnim>0,P.swing,0,mySkin());drawArmorOverlay(g,P.x,P.y-7,P.f,false,0,P.chopping||P.atkAnim>0,P.swing);}
-  else{drawPerson(g,P.x,P.y,P.f,P.moving,P.walk,P.chopping||P.atkAnim>0,P.swing,0,mySkin());drawArmorOverlay(g,P.x,P.y,P.f,P.moving,P.walk,P.chopping||P.atkAnim>0,P.swing);drawHeldBow(g);drawHeldItem(g,0);}
+  else if(P.sailing){drawBoatHull(g,P.x,P.y);drawPerson(g,P.x,P.y-3,P.f,false,0,false,0,0,myLook());drawArmorOverlay(g,P.x,P.y-3,P.f,false,0,false,0);}
+  else if(P.mount){drawHorseBody(g,P.x,P.y,P.f,P.moving,P.walk);drawPerson(g,P.x,P.y-7,P.f,false,0,P.chopping||P.atkAnim>0,P.swing,0,myLook());drawArmorOverlay(g,P.x,P.y-7,P.f,false,0,P.chopping||P.atkAnim>0,P.swing);}
+  else{drawPerson(g,P.x,P.y,P.f,P.moving,P.walk,P.chopping||P.atkAnim>0,P.swing,0,myLook());drawArmorOverlay(g,P.x,P.y,P.f,P.moving,P.walk,P.chopping||P.atkAnim>0,P.swing);drawHeldBow(g);drawHeldItem(g,0);}
   if(cartOn&&!P.sailing&&cartP.y>=P.y)drawCart(g,cartP.x,cartP.y);
   g.globalAlpha=1;
 };
@@ -11120,7 +11193,7 @@ function bcast(){
 }
 function playerList(){
   const a=[];
-  if(mode==='play')a.push({id:'host',x:P.x,y:P.y,f:P.f,m:P.moving?1:0,d:P.dead?1:0,s:P.sleeping?1:0,b:P.sailing?1:0,h:P.mount?1:0,a:P.air?1:0,n:myName(),dn:P.down?1:0,w:wkStr(),k:mySkin()});
+  if(mode==='play')a.push({id:'host',x:P.x,y:P.y,f:P.f,m:P.moving?1:0,d:P.dead?1:0,s:P.sleeping?1:0,b:P.sailing?1:0,h:P.mount?1:0,a:P.air?1:0,n:myName(),dn:P.down?1:0,w:wkStr(),k:myLook()});
   for(const [id,r] of remotes)a.push({id,x:r.tx,y:r.ty,f:r.f,m:r.m?1:0,d:r.dead?1:0,s:r.sleep?1:0,b:r.boat?1:0,h:r.horse?1:0,a:r.air?1:0,n:r.name||'',dn:r.down?1:0,w:r.wk||'',k:r.sk||''});
   return a;
 }
@@ -11146,7 +11219,7 @@ function onHostData(c,d){
   if(d.t==='pos'&&Number.isFinite(d.x)&&Number.isFinite(d.y)){
     let r=remotes.get(c.peer);
     if(!r){r={x:d.x,y:d.y,tx:d.x,ty:d.y,f:1,m:0,walk:0,suit:suitOf(c.peer)};remotes.set(c.peer,r);}
-    r.tx=d.x;r.ty=d.y;r.f=d.f===-1?-1:1;r.m=d.m?1:0;r.dead=d.d?1:0;r.sleep=!!d.s;r.boat=!!d.b;r.horse=!!d.h;r.air=!!d.a;r.name=String(d.n||r.name||'').slice(0,12);r.down=!!d.dn;r.wk=String(d.w||'').slice(0,12);r.sk=SKIN_BY[d.k]?d.k:'';if(r.sleep){r.x=d.x;r.y=d.y;}
+    r.tx=d.x;r.ty=d.y;r.f=d.f===-1?-1:1;r.m=d.m?1:0;r.dead=d.d?1:0;r.sleep=!!d.s;r.boat=!!d.b;r.horse=!!d.h;r.air=!!d.a;r.name=String(d.n||r.name||'').slice(0,12);r.down=!!d.dn;r.wk=String(d.w||'').slice(0,12);r.sk=cleanLook(d.k);if(r.sleep){r.x=d.x;r.y=d.y;}
   }else if(d.t==='chat'){
     const r=remotes.get(c.peer),t=chatClean(d.x),now=performance.now();
     if(t&&r&&!(r._ct>now-500)){r._ct=now;const n=r.name||'손님';chatAdd(c.peer,n,t);bcastAll({t:'chat',id:c.peer,n,x:t},c);}
@@ -11400,7 +11473,7 @@ async function guestHandle(d){
       seen.add(p.id);
       let r=remotes.get(p.id);
       if(!r){r={x:p.x,y:p.y,tx:p.x,ty:p.y,f:1,m:0,walk:0,suit:suitOf(p.id)};remotes.set(p.id,r);}
-      r.tx=p.x;r.ty=p.y;r.f=p.f===-1?-1:1;r.m=p.m?1:0;r.dead=p.d?1:0;r.sleep=!!p.s;r.boat=!!p.b;r.horse=!!p.h;r.air=!!p.a;r.name=String(p.n||'').slice(0,12);r.down=!!p.dn;r.wk=String(p.w||'').slice(0,12);r.sk=SKIN_BY[p.k]?p.k:'';if(r.sleep){r.x=p.x;r.y=p.y;}
+      r.tx=p.x;r.ty=p.y;r.f=p.f===-1?-1:1;r.m=p.m?1:0;r.dead=p.d?1:0;r.sleep=!!p.s;r.boat=!!p.b;r.horse=!!p.h;r.air=!!p.a;r.name=String(p.n||'').slice(0,12);r.down=!!p.dn;r.wk=String(p.w||'').slice(0,12);r.sk=cleanLook(p.k);if(r.sleep){r.x=p.x;r.y=p.y;}
     }
     for(const id of [...remotes.keys()])if(!seen.has(id))remotes.delete(id);
   }else if(d.t==='mons'){
@@ -11501,7 +11574,7 @@ async function guestHandle(d){
 function netTick(now){
   if(!net.role||!world)return;
   if(isGuest()){
-    if(mode==='play'&&now-net.tPos>100){net.tPos=now;sendHost({t:'pos',x:Math.round(P.x*10)/10,y:Math.round(P.y*10)/10,f:P.f,m:P.moving?1:0,d:P.dead?1:0,s:P.sleeping?1:0,b:P.sailing?1:0,h:P.mount?1:0,a:P.air?1:0,n:myName(),dn:P.down?1:0,w:wkStr(),k:mySkin()});}
+    if(mode==='play'&&now-net.tPos>100){net.tPos=now;sendHost({t:'pos',x:Math.round(P.x*10)/10,y:Math.round(P.y*10)/10,f:P.f,m:P.moving?1:0,d:P.dead?1:0,s:P.sleeping?1:0,b:P.sailing?1:0,h:P.mount?1:0,a:P.air?1:0,n:myName(),dn:P.down?1:0,w:wkStr(),k:myLook()});}
   }else if(isHost()&&net.conns.length){
     if(now-net.tPlayers>100){net.tPlayers=now;bcastAll({t:'players',list:playerList()});}
     if(now-net.tMons>125){net.tMons=now;bcastAll({t:'mons',list:monsters.map(m=>[m.id,Math.round(m.x*10)/10,Math.round(m.y*10)/10,m.f,Math.round(m.born*10)/10,Math.round(m.burn*10)/10,m.hp,m.st,Math.round(Math.max(0,m.hurt)*10)/10,Math.max(0,MT_KEYS.indexOf(m.ty||'slime')),m.boss?1:0,m.isl|0,Math.round(Math.max(0,m.swt||0)*10)/10,m.pat?PK.indexOf(m.pat):-1,Math.round((m.pt||0)*100)/100,m.hid?1:0,m.tg&&m.pat?m.tg:0,Math.round((m.ag||0)*100)/100,m.zn&&m.zn.length?m.zn.map(z=>[z[0],z[1],z[2],Math.round(z[3]*10)/10]):0,m.rage?1:0,m.elite?1:0])});}

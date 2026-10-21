@@ -97,9 +97,11 @@ index.html | 랭킹 표 | 최장 생존 일수, 생존 순위는 서버 준비 �
 - prototypes/vowkeep/ (index.html, js/data.js, js/main.js) | 게임 안 모든 문자열 (로비, 대기실, 역할·장비, 업적, 설정, 인트로, 전투 알림, 축복, 결과) | 한국어만 있음, 다국어 구조 없음 | b1 | 2026-10-21
 - patchnotes.json | "프로토타입 Vowkeep 추가" 3줄 | b1 | 2026-10-21
 - patchnotes.json | "Vowkeep 화면 지글거림 줄이기" 3줄 | Vowkeep b2 | 2026-10-21
+- patchnotes.json | "Vowkeep 매끄러운 화면과 부드러운 움직임" 4줄 | Vowkeep b3 | 2026-10-22
+- beaconfall/patchnotes.json·i18n.js | N["v0.3 b87"] (en·es·fr·de·ja 칸에 한국어 임시 입력) | 머리·표정 꾸미기 1줄. 게임 안 새 글자(머리·표정 이름, '머리 모양', '머리 색 (무료)', '표정', '머리·표정 꾸미기', '스킨 상점으로')는 I18N_D 11칸 배열에 번역 필요
 ## 은하 표준어 (2026-10-22)
 - patchnotes.json (허브) | "은하 표준어 추가" 3줄 | 2026-10-22
-- beaconfall/patchnotes.json | v0.3 b87 1줄 | 2026-10-22
+- beaconfall/patchnotes.json | v0.3 b88 1줄 | 2026-10-22
 - crownenvoy/patchnotes.json | b79 1줄 | 2026-10-22
 - isleport/patchnotes.json | v0.2 build 43 1줄 (게임 안 NOTES는 ko/en만) | 2026-10-22
 - 언어 이름 "Standard Galactic"은 은하 표준어 글꼴로만 보여서 번역하지 않음
