@@ -117,14 +117,23 @@ function slogan(){ return SLOGANS[Math.floor(Math.random()*SLOGANS.length)]; }
 function ingsoc(){
   if(now!=='nw'||document.getElementById('ff-nw')) return;
   var st=document.createElement('style'); st.id='ff-nw';
-  st.textContent='.ff-ingsoc{display:block;margin:0 0 6px;font-weight:800;letter-spacing:.12em;font-size:12px;opacity:.75}'+
+  st.textContent='.ff-ingsoc{display:block;margin:0 0 8px;font-weight:800;letter-spacing:.14em;font-size:13px;color:#e0443e}'+
+    '.ff-party{display:flex;flex-wrap:wrap;justify-content:center;gap:6px 28px;margin:18px 0 0;padding:9px 12px;border-top:2px solid #b4231f;border-bottom:2px solid #b4231f;background:rgba(180,35,31,.12);font-family:Oswald,Impact,sans-serif;font-weight:700;font-size:15px;letter-spacing:.16em;color:#f2ede2}'+
+    '.ff-party span:nth-child(2){color:#e0443e}'+
+    '.ff-party-h{margin:14px 0 4px;font-family:Oswald,Impact,sans-serif;font-weight:700;font-size:clamp(20px,3.2vw,30px);line-height:1.18;letter-spacing:.08em;color:#f2ede2}.ff-party-h span{display:block}.ff-party-h span:nth-child(2){color:#e0443e}'+
     '.ff-tele{max-width:560px;margin:40px auto;padding:36px 22px;text-align:center;border:2px solid #b4231f;border-radius:16px;background:rgba(180,35,31,.08)}'+
     '.ff-tele .eye{font-size:56px;line-height:1}.ff-tele b{display:block;margin:14px 0 6px;font-size:22px;letter-spacing:.06em;color:#e0443e}.ff-tele small{display:block;opacity:.7;letter-spacing:.1em}'+
     '.ff-2p2{text-align:center;margin:-8px 0 18px;font-size:13px;letter-spacing:.2em;opacity:.65}';
   (document.head||document.documentElement).appendChild(st);
+  var ALL=SLOGANS.join(' · ');
   var cps=document.querySelectorAll('.ff-copy');
-  if(cps.length){ for(var i=0;i<cps.length;i++){ var d=document.createElement('span'); d.className='ff-ingsoc'; d.setAttribute('data-notr',''); d.textContent=slogan(); cps[i].parentNode.insertBefore(d,cps[i]); } }
-  else { var f=document.querySelector('footer'); if(f){ var e=document.createElement('div'); e.className='ff-ingsoc'; e.setAttribute('data-notr',''); e.textContent=slogan(); f.insertBefore(e,f.firstChild); } }
+  if(cps.length){ for(var i=0;i<cps.length;i++){ var d=document.createElement('span'); d.className='ff-ingsoc'; d.setAttribute('data-notr',''); d.textContent=ALL; cps[i].parentNode.insertBefore(d,cps[i]); } }
+  else { var f=document.querySelector('footer'); if(f){ var e=document.createElement('div'); e.className='ff-ingsoc'; e.setAttribute('data-notr',''); e.textContent=ALL; f.insertBefore(e,f.firstChild); } }
+  /* the three party slogans under the site bar on every page that has one, and stacked big in the hub hero */
+  var hd=document.querySelector('.wrap>header, body>header');
+  if(hd&&!document.querySelector('.ff-party')){ var b=document.createElement('div'); b.className='ff-party'; b.setAttribute('data-notr',''); b.innerHTML='<span>'+SLOGANS.join('</span><span>')+'</span>'; hd.parentNode.insertBefore(b,hd.nextSibling); }
+  var ht=document.querySelector('.hero-t h1');
+  if(ht&&!document.querySelector('.ff-party-h')){ var hp=document.createElement('div'); hp.className='ff-party-h'; hp.setAttribute('data-notr',''); hp.innerHTML='<span>'+SLOGANS.join('</span><span>')+'</span>'; ht.parentNode.insertBefore(hp,ht.nextSibling); }
   /* the site logo becomes a Big Brother poster (bigbrother.svg next to logo.svg) */
   var lg=document.querySelectorAll('img[src*="logo.svg"],link[rel~="icon"][href*="logo.svg"]');
   for(var k=0;k<lg.length;k++){ var a=lg[k].tagName==='LINK'?'href':'src'; lg[k].setAttribute(a,lg[k].getAttribute(a).replace(/logo\.svg(\?[^"]*)?$/,'bigbrother.svg')); if(a==='src'){ lg[k].alt='BIG BROTHER IS WATCHING YOU'; lg[k].style.borderRadius='10px'; } }
