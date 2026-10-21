@@ -11,3 +11,7 @@ patchnotes.json | v330 items[0] | 일일 모드에 무한 대쉬 배틀로얄 �
 patchnotes.json | v330 items[1] | 일일 모드 목록에서 한 방 승부 제외 | build 330 | 2026-10-20
 patchnotes.json | v331 title | 봇 이름 추가 | build 331 | 2026-10-20
 patchnotes.json | v331 items[0] | 봇 이름 목록에 해성 추가 | build 331 | 2026-10-20
+patchnotes.json | v332 title | 언어 7개 추가 | build 332 | 2026-10-21
+patchnotes.json | v332 items[0] | 중국어 간체, 포르투갈어(브라질), 러시아어, 튀르키예어 추가 | build 332 | 2026-10-21
+patchnotes.json | v332 items[1] | 가상 언어 신어, 번역기 한국어, 오라베쉬 추가 | build 332 | 2026-10-21
+patchnotes.json | v332 items[2] | 봇 이름을 새 언어별 이름으로 | build 332 | 2026-10-21
