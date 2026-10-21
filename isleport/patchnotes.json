@@ -2,6 +2,106 @@
  "notes": [
   {
    "date": "2026-10-21",
+   "build": "v0.2 build 42",
+   "title": "언어 4개와 가상 언어 3개 추가",
+   "items": [
+    "언어 4개 추가: 중국어 간체, 포르투갈어(브라질), 러시아어, 튀르키예어",
+    "가상 언어 신어, 번역기 한국어, 오라베쉬 추가 (언어 선택의 가상 언어 묶음)",
+    "사이트도 같은 언어로 표시"
+   ],
+   "tr": {
+    "en": {
+     "title": "4 languages and 3 fictional languages added",
+     "items": [
+      "4 languages added: Simplified Chinese, Portuguese (Brazil), Russian, Turkish",
+      "Fictional languages Newspeak, Translator Korean and Aurebesh added (Fictional languages group in the language picker)",
+      "The site shows the same language too"
+     ]
+    },
+    "ja": {
+     "title": "4言語と架空の言語3つを追加",
+     "items": [
+      "4言語を追加：簡体字中国語、ポルトガル語（ブラジル）、ロシア語、トルコ語",
+      "架空の言語ニュースピーク、翻訳機韓国語、オーラベッシュを追加（言語選択の架空の言語グループ）",
+      "サイトも同じ言語で表示"
+     ]
+    },
+    "es": {
+     "title": "4 idiomas y 3 idiomas ficticios añadidos",
+     "items": [
+      "4 idiomas añadidos: chino simplificado, portugués (Brasil), ruso, turco",
+      "Idiomas ficticios añadidos: neolengua, coreano de traductor y aurebesh (grupo Idiomas ficticios del selector)",
+      "El sitio también se muestra en el mismo idioma"
+     ]
+    },
+    "fr": {
+     "title": "4 langues et 3 langues fictives ajoutées",
+     "items": [
+      "4 langues ajoutées : chinois simplifié, portugais (Brésil), russe, turc",
+      "Langues fictives ajoutées : novlangue, coréen de traducteur et aurebesh (groupe Langues fictives du sélecteur)",
+      "Le site s'affiche aussi dans la même langue"
+     ]
+    },
+    "de": {
+     "title": "4 Sprachen und 3 fiktive Sprachen hinzugefügt",
+     "items": [
+      "4 Sprachen hinzugefügt: Vereinfachtes Chinesisch, Portugiesisch (Brasilien), Russisch, Türkisch",
+      "Fiktive Sprachen Neusprech, Übersetzer-Koreanisch und Aurebesh hinzugefügt (Gruppe Fiktive Sprachen in der Sprachauswahl)",
+      "Die Website erscheint ebenfalls in derselben Sprache"
+     ]
+    },
+    "zh": {
+     "title": "新增 4 种语言和 3 种虚构语言",
+     "items": [
+      "新增 4 种语言：简体中文、葡萄牙语（巴西）、俄语、土耳其语",
+      "新增虚构语言：新话、翻译器韩语、奥瑞贝什文（语言选择中的虚构语言组）",
+      "网站也以相同语言显示"
+     ]
+    },
+    "pt": {
+     "title": "4 idiomas e 3 idiomas fictícios adicionados",
+     "items": [
+      "4 idiomas adicionados: chinês simplificado, português (Brasil), russo, turco",
+      "Idiomas fictícios Novilíngua, Coreano de Tradutor e Aurebesh adicionados (grupo Idiomas fictícios na escolha de idioma)",
+      "O site também aparece no mesmo idioma"
+     ]
+    },
+    "ru": {
+     "title": "Добавлены 4 языка и 3 вымышленных",
+     "items": [
+      "Добавлены 4 языка: упрощённый китайский, португальский (Бразилия), русский, турецкий",
+      "Добавлены вымышленные языки: новояз, корейский из переводчика и ауребеш (группа «Вымышленные языки» в выборе языка)",
+      "Сайт тоже показывается на том же языке"
+     ]
+    },
+    "tr": {
+     "title": "4 dil ve 3 kurgusal dil eklendi",
+     "items": [
+      "4 dil eklendi: Basitleştirilmiş Çince, Portekizce (Brezilya), Rusça, Türkçe",
+      "Kurgusal diller Yenikonuş, Çevirmen Korecesi ve Aurebesh eklendi (dil seçimindeki Kurgusal diller grubu)",
+      "Site de aynı dilde gösterilir"
+     ]
+    },
+    "nw": {
+     "title": "4 speaks plus 3 fictional speaks plussed",
+     "items": [
+      "4 speaks plussed: Simplified Chinese, Portuguese (Brazil), Russian, Turkish",
+      "Fictional speaks Newspeak, Translator Eastasian plus Aurebesh plussed (Fictional speaks group in speak picker)",
+      "Ministry shows same speak plus"
+     ]
+    },
+    "gk": {
+     "title": "4 언어들 그리고 3 fictional 언어들 더해진",
+     "items": [
+      "언어들 4개 추가: 중국어 간체, 포르투갈어(브라질), 러시아어, 튀르키예어",
+      "Fictional 언어들 Newspeak, Translator 한국인 그리고 Aurebesh 더해진 (Fictional 언어들 group 안에 그 언어 picker)",
+      "그 현장 쇼들 그 같은 언어 또한"
+     ]
+    }
+   }
+  },
+  {
+   "date": "2026-10-21",
    "build": "v0.2 build 41",
    "title": "허브 재산 랭킹",
    "items": [
