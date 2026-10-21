@@ -9,3 +9,5 @@ patchnotes.json | v329 items[3] | 캐릭터 수 표기를 27명으로 정정 | b
 patchnotes.json | v330 title | 무한 대쉬 배틀로얄 추가 | build 330 | 2026-10-20
 patchnotes.json | v330 items[0] | 일일 모드에 무한 대쉬 배틀로얄 추가 (대쉬 쿨타임 0초) | build 330 | 2026-10-20
 patchnotes.json | v330 items[1] | 일일 모드 목록에서 한 방 승부 제외 | build 330 | 2026-10-20
+patchnotes.json | v331 title | 봇 이름 추가 | build 331 | 2026-10-20
+patchnotes.json | v331 items[0] | 봇 이름 목록에 해성 추가 | build 331 | 2026-10-20
