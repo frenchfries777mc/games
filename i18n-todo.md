@@ -97,3 +97,4 @@ index.html | 랭킹 표 | 최장 생존 일수, 생존 순위는 서버 준비 �
 - prototypes/vowkeep/ (index.html, js/data.js, js/main.js) | 게임 안 모든 문자열 (로비, 대기실, 역할·장비, 업적, 설정, 인트로, 전투 알림, 축복, 결과) | 한국어만 있음, 다국어 구조 없음 | b1 | 2026-10-21
 - patchnotes.json | "프로토타입 Vowkeep 추가" 3줄 | b1 | 2026-10-21
 - patchnotes.json | "Vowkeep 화면 지글거림 줄이기" 3줄 | Vowkeep b2 | 2026-10-21
+- patchnotes.json | "Vowkeep 매끄러운 화면과 부드러운 움직임" 4줄 | Vowkeep b3 | 2026-10-22
