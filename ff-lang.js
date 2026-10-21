@@ -135,7 +135,7 @@ if(now==='nw'){ if(document.readyState==='loading') document.addEventListener('D
 /* Aurebesh: our own letter drawings (fonts/ff-aurebesh.woff2) over every text on the page; language pickers stay readable */
 function aurebesh(){ if(!auOn()||document.getElementById('ff-au')) return; var base='https://frenchfries777mc.github.io/games/'; try{ var me=document.currentScript; if(me&&me.src) base=me.src.replace(/[^\/]*$/,''); }catch(x){}
   var h=document.documentElement; h.classList.add('ff-au'); var st=document.createElement('style'); st.id='ff-au';
-  st.textContent="@font-face{font-family:'FF Aurebesh';src:url('"+base+"fonts/ff-aurebesh.woff2') format('woff2');font-display:block}"+
+  st.textContent="@font-face{font-family:'FF Aurebesh';src:url('"+base+"fonts/ff-aurebesh.woff2?v=2') format('woff2');font-display:block}"+
     "html.ff-au body,html.ff-au body *:not(select):not(option):not(optgroup):not([data-lg]):not(.ff-au-keep){font-family:'FF Aurebesh',system-ui,sans-serif!important}";
   (document.head||h).appendChild(st); }
 try{ aurebesh(); }catch(e){}
