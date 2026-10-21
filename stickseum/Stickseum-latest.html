@@ -4765,7 +4765,7 @@ function shuffle(arr){ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.
 /* ===== the version of this file =====
    Players with different versions CAN meet and play together: the automatic matchmaking uses the same room names for every version (online-<mode>-<map>-<slot>), and nobody is refused because of a different build.
    The build is only sent along with the join message and the lobby (for information); the corner of the screen shows it. */
-const GAME_BUILD='build 2026-10-18-v330';
+const GAME_BUILD='build 2026-10-18-v331';
 const GAME_VERSION='0.8', GAME_VERSION_NAME='황금을 찾아서';   // 게임 버전 이름: versions.json의 title과 같게 (빌드마다 바꾸지 않음)
 const WEEKLY_EVENTS=[
   {id:'lowg',    name:'저중력 난투', desc:'몸이 둥실둥실, 중력이 약해진 난투', rules:{grav:0.6}},
@@ -11520,7 +11520,7 @@ const BOT_FILL_MAX=10;       // a very big room (parkour holds 20) is only fille
 const BOT_FILL_FULL_UP_TO=16; // a room that holds up to this many is filled COMPLETELY (the flag mode holds 12; with the old limit of 10 it stayed two short)
 function botFillTargetFor(cap){ return cap<=BOT_FILL_FULL_UP_TO ? cap : Math.min(cap, BOT_FILL_MAX); }
 const BOT_NAMES_BY_LANG={
-  ko:['제현','현진','재민','이들','상원','서윤','휘찬','재웅','연후','연준','진표','재윤','유준','우엽','재경'],
+  ko:['제현','현진','재민','이들','상원','서윤','휘찬','재웅','연후','연준','진표','재윤','유준','우엽','재경','해성'],
   en:['James','Emma','Liam','Olivia','Noah','Ava','Ethan','Mia','Lucas','Sophia','Jack','Chloe','Ryan','Grace','Leo','Nora'],
   es:['Mateo','Sofía','Santiago','Valentina','Diego','Lucía','Carlos','Camila','Javier','Elena','Pablo','Marta','Álvaro','Paula','Hugo','Daniela'],
   fr:['Louis','Léa','Gabriel','Chloé','Hugo','Camille','Jules','Manon','Arthur','Inès','Nathan','Jade','Théo','Louise','Lucas','Emma'],
