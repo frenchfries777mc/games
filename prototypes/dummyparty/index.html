@@ -1197,6 +1197,9 @@ canvas.ico{width:100%;max-width:320px;height:auto;aspect-ratio:640/150;backgroun
 #toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
 @keyframes finIn{from{opacity:0;transform:translateY(40px) scale(.92)}to{opacity:1;transform:none}}
 .ov.fin{background:none}
+.card.fin .podium{display:none}
+@media(min-aspect-ratio:1/1){.ov.fin{justify-content:flex-end;padding:8px 12px}.card.fin{width:min(340px,32vw);min-width:280px}}
+@media(max-aspect-ratio:1/1){.ov.fin{align-items:flex-end;padding:0}.card.fin{width:100%;max-height:52vh;border-radius:18px 18px 0 0}}
 .card.fin{animation:finIn .7s ease 5.6s both}
 .exitHub{display:none;position:fixed;top:12px;left:12px;z-index:30;border:0;border-radius:12px;padding:9px 14px;font:800 14px 'Noto Sans KR',sans-serif;background:rgba(40,28,16,.72);color:#fff;cursor:pointer}
 body.onhome .exitHub{display:block}.exitHub:hover{background:rgba(40,28,16,.9)}
@@ -1273,7 +1276,9 @@ body.playing #emoBar{display:flex}
    <div class="row"><input id="codeIn" maxlength="5" placeholder="방 코드" autocomplete="off"><button class="pb dark" id="joinBtn" style="flex:0 0 auto">들어가기</button></div>
    <div class="msg" id="homeMsg"></div>
   </aside>
-  <template id="patchnotes"><details class="notes" open><summary>패치노트 · v0.1 (build 37)</summary>
+  <template id="patchnotes"><details class="notes" open><summary>패치노트 · v0.1 (build 38)</summary>
+   <b>2026-10-21 · v0.1 build 38 · 결과표 위치</b>
+   <ul><li>결과표가 승리 춤을 가리던 문제를 고쳤어요. 결과표가 오른쪽으로 옮겨지고 시상식 장면이 왼쪽에 작게 남아서 춤이 계속 보여요 (폰 세로 화면에서는 결과표가 아래쪽에 나와요)</li></ul>
    <b>2026-10-21 · v0.1 build 37 · 전체 화면 대기실</b>
    <ul><li>대기실을 전체 화면으로 바꿨어요. 놀이터가 8, 방 코드·플레이어 목록·봇 추가·시작 버튼이 오른쪽 2 비율이에요 (폰 세로 화면에서는 위아래로 나뉘어요)</li><li>마네킹이 커지고 이름표가 머리 바로 위에 하나씩만 보여요 (여러 개로 겹쳐 보이던 문제 수정)</li></ul>
    <b>2026-10-21 · v0.1 build 36 · 미니게임 2개, 우승자 인터뷰</b>
@@ -1346,7 +1351,7 @@ body.playing #emoBar{display:flex}
    <ul><li>무너지는 발판 칸 수 대폭 증가 (19×10)와 용암 동굴 맵</li><li>10개 맵 전부 새로 그림 (관중석, 야자수 섬, 링, 정원 미로, 서커스, 우노 테이블 등)</li><li>글자 대신 아이콘·말풍선·이펙트로 표현 (무기, 아이템, 카드 효과, 시작 안내)</li><li>타격·폭발·물보라 효과와 화면 흔들림 추가</li></ul>
    <b>2026-10-19 · v0.1 build 1 · 첫 시험판</b>
    <ul><li>마네킹 미니게임 10개 추가 (장애물 달리기, 섬 밀치기, 싸우기, 병맛 미로, 체스 대난투, 폭탄 돌리기, 병맛 우노, 쇼윈도 얼음땡, 무너지는 발판, 컨베이어 서바이벌)</li><li>방 코드로 최대 8명 멀티플레이, 빈자리는 봇으로 채우기</li><li>판마다 10개 중 5개를 무작위로 골라 점수를 합산</li><li>PC 키보드와 휴대폰 터치 조작 지원</li></ul></details></template>
-  <p class="foot">2~8명 · 판마다 26개 미니게임 중 7개 · 프로토타입 v0.1 b37 · <a href="../">← 프로토타입 목록</a></p>
+  <p class="foot">2~8명 · 판마다 26개 미니게임 중 7개 · 프로토타입 v0.1 b38 · <a href="../">← 프로토타입 목록</a></p>
   <p class="foot"><span class="ff-copy">© 2026 Frenchfries777 · <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.ko" target="_blank" rel="noopener">CC BY-NC-ND 4.0</a></span></p>
  </div>
 </section>
@@ -6296,7 +6301,10 @@ function frame() {
   funTick(dt, now, m); POSEO = {}; NMB.length = 0;
   if (m.phase === 'final') {
     CHM.tick(null, null);
-    CX.save(); CX.beginPath(); CX.rect(0, 0, W, H); CX.clip(); drawCeremony(CX, m, now); CX.restore();
+    CX.save(); CX.beginPath(); CX.rect(0, 0, W, H); CX.clip();
+    var fk = clamp(((now - (G.finT0 || now)) / 1000 - 5.6) / 0.7, 0, 1), side = innerWidth > innerHeight;
+    if (fk > 0 && side) { var fs = 1 - 0.3 * fk; CX.fillStyle = '#14081f'; CX.fillRect(0, 0, W, H); CX.translate(0, H * (1 - fs) / 2); CX.scale(fs, fs); CX.beginPath(); CX.rect(0, 0, W, H); CX.clip(); }
+    drawCeremony(CX, m, now); CX.restore();
   } else if (def && G.snapCur) {
     var s = G.snapCur.d, tlNow = G.snapCur.tl;
     if (G.role === 'guest' && G.snapPrev) { var f = clamp((now - G.snapAt) / G.snapGap, 0, 1); s = lerpSnap(G.snapPrev.d, G.snapCur.d, f); }
