@@ -125,6 +125,9 @@ function ingsoc(){
   var cps=document.querySelectorAll('.ff-copy');
   if(cps.length){ for(var i=0;i<cps.length;i++){ var d=document.createElement('span'); d.className='ff-ingsoc'; d.setAttribute('data-notr',''); d.textContent=slogan(); cps[i].parentNode.insertBefore(d,cps[i]); } }
   else { var f=document.querySelector('footer'); if(f){ var e=document.createElement('div'); e.className='ff-ingsoc'; e.setAttribute('data-notr',''); e.textContent=slogan(); f.insertBefore(e,f.firstChild); } }
+  /* the site logo becomes a Big Brother poster (bigbrother.svg next to logo.svg) */
+  var lg=document.querySelectorAll('img[src*="logo.svg"],link[rel~="icon"][href*="logo.svg"]');
+  for(var k=0;k<lg.length;k++){ var a=lg[k].tagName==='LINK'?'href':'src'; lg[k].setAttribute(a,lg[k].getAttribute(a).replace(/logo\.svg(\?[^"]*)?$/,'bigbrother.svg')); if(a==='src'){ lg[k].alt='BIG BROTHER IS WATCHING YOU'; lg[k].style.borderRadius='10px'; } }
   var hs=document.getElementById('heroStats'); if(hs&&!document.querySelector('.ff-2p2')){ var t=document.createElement('p'); t.className='ff-2p2'; t.setAttribute('data-notr',''); t.textContent='2 + 2 = 5'; hs.parentNode.insertBefore(t,hs.nextSibling); }
   if(/\/games\/community\/(index\.html)?$/.test(location.pathname)){ var cm=document.getElementById('community');
     if(cm) cm.innerHTML='<div class="ff-tele" data-notr><div class="eye">👁️</div><b>THE TELESCREEN IS WATCHING YOU.</b><small>BIG BROTHER IS WATCHING YOU</small></div>'; }
@@ -135,10 +138,12 @@ function trCaps(){ var a=document.body?document.body.querySelectorAll('*'):[]; f
 if(now==='tr'){ if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',function(){ trCaps(); setTimeout(trCaps,1500); }); else trCaps(); }
 if(now==='nw'){ if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',ingsoc); else ingsoc(); }
 /* Aurebesh: our own letter drawings (fonts/ff-aurebesh.woff2) over every text on the page; language pickers stay readable */
-function aurebesh(){ if(!auOn()||document.getElementById('ff-au')) return; var base='https://frenchfries777mc.github.io/games/'; try{ var me=document.currentScript; if(me&&me.src) base=me.src.replace(/[^\/]*$/,''); }catch(x){}
-  var h=document.documentElement; h.classList.add('ff-au'); var st=document.createElement('style'); st.id='ff-au';
-  st.textContent="@font-face{font-family:'FF Aurebesh';src:url('"+base+"fonts/ff-aurebesh.woff2?v=2') format('woff2');font-display:block}"+
-    "html.ff-au body,html.ff-au body *:not(select):not(option):not(optgroup):not([data-lg]):not(.ff-au-keep){font-family:'FF Aurebesh',system-ui,sans-serif!important}";
+/* The "Aurebesh" entry in every language picker is always written in Aurebesh, so the font face is declared on every page */
+function aurebesh(){ if(document.getElementById('ff-au')) return; var base='https://frenchfries777mc.github.io/games/'; try{ var me=document.currentScript; if(me&&me.src) base=me.src.replace(/[^\/]*$/,''); }catch(x){}
+  var h=document.documentElement, on=auOn(); if(on) h.classList.add('ff-au'); var st=document.createElement('style'); st.id='ff-au';
+  st.textContent="@font-face{font-family:'FF Aurebesh';src:url('"+base+"fonts/ff-aurebesh.woff2?v=2') format('woff2');font-display:"+(on?'block':'swap')+"}"+
+    "[data-lg=au],option[value=au]{font-family:'FF Aurebesh',system-ui,sans-serif!important}"+
+    (on?"html.ff-au body,html.ff-au body *:not(select):not(option):not(optgroup):not([data-lg]):not(.ff-au-keep){font-family:'FF Aurebesh',system-ui,sans-serif!important}":"");
   (document.head||h).appendChild(st); }
 try{ aurebesh(); }catch(e){}
 window.FFLang={ get:function(){ return now; }, script:function(){ return auOn()?'au':''; }, pick:function(){ return auOn()?'au':now; }, slogan:slogan, set:function(l){ set(l); now=l==='au'?'en':l; }, sync:function(){ now=sync()||now; if(now==='au') now='en'; return now; } };
