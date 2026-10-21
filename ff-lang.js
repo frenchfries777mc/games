@@ -20,11 +20,12 @@ function read(e){ try{ var v=localStorage.getItem(e.k); if(v==null) return null;
 function write(e, l){ try{ if(e.json){ var o={}; try{ o=JSON.parse(localStorage.getItem(e.k)||'{}')||{}; }catch(x){ o={}; } if(typeof o!=='object'||Array.isArray(o)) o={}; if(o[e.json]===l) return; o[e.json]=l; localStorage.setItem(e.k, JSON.stringify(o)); }
   else if(localStorage.getItem(e.k)!==l) localStorage.setItem(e.k, l); }catch(x){} }
 function snapshot(l){ var s={lang:l}; KEYS.forEach(function(e){ s[e.k]=read(e); }); try{ localStorage.setItem(SNAP, JSON.stringify(s)); }catch(x){} }
-/* Aurebesh (au) is not a language of its own: it is English drawn in the Aurebesh letters. Picking it stores English everywhere plus a flag. */
-var AU='ff.script';
-function auOn(){ try{ return localStorage.getItem(AU)==='au'; }catch(x){ return false; } }
+/* Aurebesh (au) and Standard Galactic (sg) are not languages of their own: they are English drawn in other letters. Picking one stores English everywhere plus a flag. */
+var AU='ff.script', SCR={au:'FF Aurebesh',sg:'FF Galactic'};
+function scr(){ try{ var v=localStorage.getItem(AU); return SCR[v]?v:''; }catch(x){ return ''; } }
+function auOn(){ return !!scr(); }
 function put(l){ if(!ok(l)) return; KEYS.forEach(function(e){ write(e,l); }); snapshot(l); }
-function set(l){ if(l==='au'){ try{ localStorage.setItem(AU,'au'); }catch(x){} l='en'; } else if(ok(l)){ try{ localStorage.removeItem(AU); }catch(x){} }      // a person's own choice in a picker
+function set(l){ if(SCR[l]){ try{ localStorage.setItem(AU,l); }catch(x){} l='en'; } else if(ok(l)){ try{ localStorage.removeItem(AU); }catch(x){} }      // a person's own choice in a picker
   put(l); }
 function sync(){
   var snap=null; try{ snap=JSON.parse(localStorage.getItem(SNAP)||'null'); }catch(x){}
@@ -33,12 +34,12 @@ function sync(){
     for(var i=0;i<KEYS.length;i++) if(cur[i] && cur[i]!==snap[KEYS[i].k]){ lang=cur[i]; break; }     // a page changed its language since the last sync: that one wins
     if(!lang) lang=snap.lang;
   } else { for(var j=0;j<cur.length;j++) if(cur[j]){ lang=cur[j]; break; } }                        // first time: the first language found (Stickseum/hub first)
-  if(lang==='au'){ try{ localStorage.setItem(AU,'au'); }catch(x){} lang='en'; }      // a picker that stored au before calling FFLang.set
+  if(SCR[lang]){ try{ localStorage.setItem(AU,lang); }catch(x){} lang='en'; }      // a picker that stored au/sg before calling FFLang.set
   if(lang) put(lang);
   return lang;
 }
-var now=sync(); if(now==='au') now='en';
-if(now&&now!=='en'&&auOn()){ try{ localStorage.removeItem(AU); }catch(x){} }      // a game picked another language: Aurebesh is off
+var now=sync(); if(SCR[now]) now='en';
+if(now&&now!=='en'&&auOn()){ try{ localStorage.removeItem(AU); }catch(x){} }      // a game picked another language: Aurebesh/Galactic is off
 /* 게임 화면이면 친구에게 "지금 하는 게임"을 알리는 ff-presence.js 도 불러요 */
 try{ var me=document.currentScript, base=(me&&me.src)?me.src.replace(/[^\/]*$/,''):'https://frenchfries777mc.github.io/games/';
   if(!window.FFPresence && /\.html$/i.test(location.pathname) && /\/(stickseum|crownenvoy|beaconfall)\/[^\/]*\.html$/i.test(location.pathname)){ var ps=document.createElement('script'); ps.src=base+'ff-presence.js'; ps.async=true; (document.head||document.documentElement).appendChild(ps); } }catch(e){}
@@ -146,14 +147,14 @@ function trCaps(){ var a=document.body?document.body.querySelectorAll('*'):[]; f
   try{ if(getComputedStyle(e).textTransform==='uppercase') e.setAttribute('lang','en'); }catch(x){} } }
 if(now==='tr'){ if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',function(){ trCaps(); setTimeout(trCaps,1500); }); else trCaps(); }
 if(now==='nw'){ if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',ingsoc); else ingsoc(); }
-/* Aurebesh: our own letter drawings (fonts/ff-aurebesh.woff2) over every text on the page; language pickers stay readable */
-/* The "Aurebesh" entry in every language picker is always written in Aurebesh, so the font face is declared on every page */
+/* Aurebesh and Standard Galactic: our own letter drawings (fonts/ff-aurebesh.woff2, fonts/ff-galactic.woff2) over every text on the page; language pickers stay readable */
+/* The "Aurebesh" and "Standard Galactic" entries in every language picker are always written in their own letters, so the font faces are declared on every page */
 function aurebesh(){ if(document.getElementById('ff-au')) return; var base='https://frenchfries777mc.github.io/games/'; try{ var me=document.currentScript; if(me&&me.src) base=me.src.replace(/[^\/]*$/,''); }catch(x){}
-  var h=document.documentElement, on=auOn(); if(on) h.classList.add('ff-au'); var st=document.createElement('style'); st.id='ff-au';
-  st.textContent="@font-face{font-family:'FF Aurebesh';src:url('"+base+"fonts/ff-aurebesh.woff2?v=2') format('woff2');font-display:"+(on?'block':'swap')+"}"+
-    "[data-lg=au],option[value=au]{font-family:'FF Aurebesh',system-ui,sans-serif!important}"+
-    (on?"html.ff-au body,html.ff-au body *:not(select):not(option):not(optgroup):not([data-lg]):not(.ff-au-keep){font-family:'FF Aurebesh',system-ui,sans-serif!important}":"");
-  (document.head||h).appendChild(st); }
+  var h=document.documentElement, on=scr(), FILE={au:'ff-aurebesh.woff2?v=2',sg:'ff-galactic.woff2?v=1'}, css=''; if(on) h.classList.add('ff-'+on); var st=document.createElement('style'); st.id='ff-au';
+  for(var k in SCR) css+="@font-face{font-family:'"+SCR[k]+"';src:url('"+base+"fonts/"+FILE[k]+"') format('woff2');font-display:"+(on===k?'block':'swap')+"}"+
+    "[data-lg="+k+"],[data-l="+k+"],option[value="+k+"],[data-lang="+k+"]{font-family:'"+SCR[k]+"',system-ui,sans-serif!important}";
+  if(on) css+="html.ff-"+on+" body,html.ff-"+on+" body *:not(select):not(option):not(optgroup):not([data-lg]):not([data-l]):not([data-lang]):not(.ff-au-keep){font-family:'"+SCR[on]+"',system-ui,sans-serif!important}";
+  st.textContent=css; (document.head||h).appendChild(st); }
 try{ aurebesh(); }catch(e){}
-window.FFLang={ get:function(){ return now; }, script:function(){ return auOn()?'au':''; }, pick:function(){ return auOn()?'au':now; }, slogan:slogan, set:function(l){ set(l); now=l==='au'?'en':l; }, sync:function(){ now=sync()||now; if(now==='au') now='en'; return now; } };
+window.FFLang={ get:function(){ return now; }, script:function(){ return scr(); }, pick:function(){ return scr()||now; }, slogan:slogan, set:function(l){ set(l); now=SCR[l]?'en':l; }, sync:function(){ now=sync()||now; if(SCR[now]) now='en'; return now; } };
 })();
