@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 240">
+  <!-- Newspeak logo: a Big Brother poster drawn for the hub (no photo, no real person) -->
+  <defs>
+    <radialGradient id="g" cx="50%" cy="42%" r="60%"><stop offset="0" stop-color="#3a3a36"/><stop offset="1" stop-color="#121211"/></radialGradient>
+    <linearGradient id="s" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#e3dccd"/><stop offset="1" stop-color="#b9b0a0"/></linearGradient>
+  </defs>
+  <rect width="240" height="240" rx="26" fill="url(#g)"/>
+  <rect x="7" y="7" width="226" height="226" rx="20" fill="none" stroke="#b4231f" stroke-width="4"/>
+  <text x="120" y="38" text-anchor="middle" font-family="Oswald,Impact,'Arial Narrow',sans-serif" font-weight="700" font-size="28" letter-spacing="2" fill="#f2ede2">BIG BROTHER</text>
+  <!-- shoulders -->
+  <path d="M38 204 Q46 168 92 160 L148 160 Q194 168 202 204 Z" fill="#2b2b28"/>
+  <path d="M104 160 L120 186 L136 160 Z" fill="#d8d1c2"/>
+  <!-- neck and head -->
+  <rect x="104" y="140" width="32" height="24" fill="#a59c8c"/>
+  <ellipse cx="120" cy="104" rx="40" ry="48" fill="url(#s)"/>
+  <ellipse cx="80" cy="108" rx="6" ry="11" fill="#b9b0a0"/>
+  <ellipse cx="160" cy="108" rx="6" ry="11" fill="#b9b0a0"/>
+  <!-- hair -->
+  <path d="M80 98 Q78 58 120 54 Q162 58 160 98 Q154 76 140 72 Q120 66 100 72 Q86 76 80 98 Z" fill="#1c1b19"/>
+  <!-- heavy brows and eyes that look at you -->
+  <path d="M90 90 L114 93 L114 99 L90 96 Z" fill="#1c1b19"/>
+  <path d="M150 90 L126 93 L126 99 L150 96 Z" fill="#1c1b19"/>
+  <ellipse cx="103" cy="106" rx="8" ry="5" fill="#f5f1e8"/>
+  <ellipse cx="137" cy="106" rx="8" ry="5" fill="#f5f1e8"/>
+  <circle cx="103" cy="106" r="3.6" fill="#141413"/>
+  <circle cx="137" cy="106" r="3.6" fill="#141413"/>
+  <!-- nose, moustache, mouth -->
+  <path d="M120 106 L114 126 Q120 129 126 126 Z" fill="#a59c8c"/>
+  <path d="M96 134 Q108 126 120 131 Q132 126 144 134 Q136 142 120 138 Q104 142 96 134 Z" fill="#1c1b19"/>
+  <path d="M110 145 Q120 147 130 145" stroke="#7d7466" stroke-width="2.4" fill="none" stroke-linecap="round"/>
+  <!-- bottom band -->
+  <rect x="7" y="200" width="226" height="33" fill="#b4231f"/>
+  <path d="M7 200 h226 v13 a20 20 0 0 1 -20 20 h-186 a20 20 0 0 1 -20 -20 Z" fill="#b4231f"/>
+  <text x="120" y="224" text-anchor="middle" font-family="Oswald,Impact,'Arial Narrow',sans-serif" font-weight="700" font-size="17" letter-spacing="1.5" fill="#f2ede2">IS WATCHING YOU</text>
+</svg>
