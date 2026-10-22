@@ -639,7 +639,7 @@ function setPull(B, pull) {
 const ease = u => u < 0 ? 0 : u > 1 ? 1 : u * u * (3 - 2 * u);
 const seg = (u, a, b) => ease((u - a) / (b - a));
 // 역할마다 공격·기술 동작. 몸 전체(허리 비틀기, 내딛기, 뛰어오르기)가 같이 움직여요
-const ANIM_T = { atk: 0.32, hv: 0.55, skill: 0.5 };
+const ANIM_T = { atk: 0.32, hv: 0.95, skill: 0.8 };
 function animHero(E, p, dt, t) {
   const m = E.m, u = m.userData; m.position.set(E.x, 0, E.z); m.rotation.y = Math.PI / 2 - E.a;
   E.ph += dt * (p.mv ? 11 : 0); E.sw = (E.sw || 0) + ((p.mv ? Math.sin(E.ph) * 0.75 : 0) - (E.sw || 0)) * Math.min(1, dt * 14); const sw = E.sw;
@@ -651,49 +651,67 @@ function animHero(E, p, dt, t) {
   const v = E.ak ? E.aT / D : 1, role = p.role, side = (E.aN || 0) % 2 ? 1 : -1;
   const base = { knight: [-0.7, -0.6], archer: [-1.45, -1.55], priest: [-1.2, -0.4], squire: [-1.3, -0.6] }[role];
   // 기본 자세 (달릴 때는 앞으로 기울고 팔을 크게 흔들어요)
-  const T = { rx: base[0] - sw * 0.45, rz: 0, lx: base[1] + sw * 0.45, lz: 0, bx: p.mv ? 0.14 : 0, by: 0, bz: 0, bry: 0, hx: 0, rpz: 0, pull: 0.35 };
+  // jy: 몸 전체가 뛰어오르는 높이, sq: 찌그러짐(+는 납작, -는 길쭉), lg: 다리 벌리기
+  const T = { rx: base[0] - sw * 0.45, rz: 0, lx: base[1] + sw * 0.45, lz: 0, bx: p.mv ? 0.14 : 0, by: 0, bz: 0, bry: 0, hx: 0, rpz: 0, pull: 0.35, jy: 0, sq: 0, lg: 0 };
   if (role === 'archer') { T.rx = -1.5; T.rz = -0.25; T.lx = -1.55; T.lz = 0.12; T.rpz = -0.3; T.pull = 0.35; }
+  // 뛰어올랐다 내려오기: a~b 사이에 h만큼 포물선
+  const hop = (a, b, h) => { const q = (v - a) / (b - a); return q > 0 && q < 1 ? Math.sin(q * Math.PI) * h : 0; };
+  // 착지 충격: 내려앉는 순간 납작해졌다가 돌아와요
+  const land = (a, n) => { const q = (v - a) / 0.25; return q >= 0 && q < 1 ? (1 - q) * (1 - q) * n : 0; };
   if (E.ak) {
     const a = E.ak;
     if (a === 'atk' || a === 'hv') {
-      if (role === 'knight' || role === 'squire') {
-        if (a === 'atk') { // 옆으로 크게 베기: 반대쪽으로 감았다가 휘둘러요
-          const w = seg(v, 0, 0.18), st = seg(v, 0.18, 0.55), rc = seg(v, 0.6, 1);
-          T.rx = -1.45; T.rz = (side * 1.3 * w - side * 2.6 * st) * (1 - rc); T.bry = (side * 0.5 * w - side * 1.1 * st) * (1 - rc); T.bz = 0.4 * st * (1 - rc); T.bx = 0.15 * st * (1 - rc); T.lx = base[1] - 0.3 * st;
-        } else { // 강타: 높이 들어 뛰어올랐다가 내려찍기
-          const up = seg(v, 0, 0.14), dn = seg(v, 0.14, 0.32), rc = seg(v, 0.65, 1);
-          T.rx = (-3.1 * up + 2.6 * dn) * (1 - rc) + base[0] * rc; T.bx = (-0.25 * up + 0.7 * dn) * (1 - rc); T.by = (0.5 * up - 0.5 * dn) * (1 - rc) + Math.sin(up * Math.PI) * 0.3 * (1 - dn); T.bz = 0.5 * dn * (1 - rc); T.lx = -2.2 * up * (1 - dn) + base[1];
-        }
-      } else if (role === 'archer' && a === 'hv') { // 궁수 강타: 뛰어올라 활째로 내려찍으며 쏴요
-        const up = seg(v, 0, 0.14), dn = seg(v, 0.14, 0.32), rc = seg(v, 0.65, 1), x = (1 - rc);
-        T.lx = (-2.9 * up + 2.2 * dn) * x - 1.55 * rc; T.rx = (-2.7 * up + 2.0 * dn) * x - 1.5 * rc; T.rz = -0.25; T.pull = 0.75 * up * (1 - dn); T.rpz = -0.4 * up * (1 - dn);
-        T.bx = (-0.25 * up + 0.7 * dn) * x; T.by = Math.sin(up * Math.PI) * 0.3 * (1 - dn) + (0.5 * up - 0.5 * dn) * x; T.bz = 0.45 * dn * x;
+      if (a === 'hv') { // 강타: 웅크려 칼을 등 뒤까지 젖히고, 높이 뛰어올라 몸을 던지듯 내려찍어요
+        const L1 = 0.379; // 땅에 닿는 순간 (sim의 HV_DELAY 0.36 / 0.95)
+        const cr = seg(v, 0, 0.08), up = seg(v, 0.06, 0.18), dn = seg(v, 0.26, L1), rc = seg(v, 0.68, 1), x = 1 - rc, two = role !== 'knight' && role !== 'squire';
+        T.rx = (-1.2 * cr - 2.6 * up + 2.9 * dn) * x + base[0] * rc; T.lx = (-0.6 * cr - 2.6 * up + (two ? 2.9 : 2.6) * dn) * x + base[1] * rc;
+        T.rz = (0.35 * cr - 0.35 * dn) * x; T.lz = two ? 0.3 * x : -0.5 * up * (1 - dn) * x;
+        T.bx = (0.35 * cr - 0.85 * up + 1.45 * dn) * x; T.hx = (-0.25 * up + 0.45 * dn) * x;
+        T.jy = hop(0.07, L1, 3.8); T.bz = 0.3 * dn * x; T.bry = 0.5 * cr * (1 - dn) * x;
+        T.sq = 0.5 * cr * (1 - up) - 0.4 * up * (1 - dn) + land(L1, 0.75); T.by = (-0.35 * cr * (1 - up) - 0.45 * dn) * x; T.lg = (0.6 * cr * (1 - up) + 0.9 * dn) * x;
+        if (role === 'archer') { T.pull = 0.75 * up * (1 - dn); T.rpz = -0.4 * up * (1 - dn); }
+      } else if (role === 'knight' || role === 'squire') { // 옆으로 크게 베기: 반대쪽으로 감았다가 휘둘러요
+        const w = seg(v, 0, 0.18), st = seg(v, 0.18, 0.55), rc = seg(v, 0.6, 1);
+        T.rx = -1.45; T.rz = (side * 1.3 * w - side * 2.6 * st) * (1 - rc); T.bry = (side * 0.5 * w - side * 1.1 * st) * (1 - rc); T.bz = 0.4 * st * (1 - rc); T.bx = 0.15 * st * (1 - rc); T.lx = base[1] - 0.3 * st;
       } else if (role === 'archer') { // 시위를 놓고 반동, 다시 당겨요
-        const rel = seg(v, 0, 0.12), re = seg(v, 0.25, 1);
-        T.pull = 0.75 * (1 - rel) * 0 + re * 0.75; T.rpz = -0.55 * re; T.rz = -0.25 - 0.1 * re; T.lx = -1.55 - (a === 'hv' ? 0.45 : 0.25) * (1 - seg(v, 0.08, 0.5)); T.bx = -(a === 'hv' ? 0.3 : 0.12) * (1 - seg(v, 0.05, 0.6)); T.rx = -1.5 + 0.5 * (1 - seg(v, 0.05, 0.4));
-      } else { // 사제: 지팡이를 앞으로 찔러 빛을 쏴요 (강타는 머리 위로 한 바퀴)
-        if (a === 'atk') { const th = seg(v, 0, 0.3), rc = seg(v, 0.45, 1); T.bry = -0.5 * th * (1 - rc); T.rz = -0.4 * th * (1 - rc); T.rx = base[0] - 0.6 * th * (1 - rc); T.bx = 0.25 * th * (1 - rc); T.bz = 0.3 * th * (1 - rc); T.lx = -1.2 * th * (1 - rc) + base[1]; }
-        else { // 사제 강타: 지팡이를 두 손으로 높이 들고 뛰어올라 땅을 내려찍어요
-          const up = seg(v, 0, 0.14), dn = seg(v, 0.14, 0.32), rc = seg(v, 0.65, 1), x = 1 - rc;
-          T.rx = (-2.7 * up + 2.3 * dn) * x + base[0] * rc; T.lx = (-2.6 * up + 2.0 * dn) * x + base[1] * rc; T.lz = 0.3 * x; T.bx = (-0.25 * up + 0.75 * dn) * x; T.by = Math.sin(up * Math.PI) * 0.3 * (1 - dn) + (0.5 * up - 0.5 * dn) * x; T.bz = 0.45 * dn * x; }
+        const re = seg(v, 0.25, 1);
+        T.pull = re * 0.75; T.rpz = -0.55 * re; T.rz = -0.25 - 0.1 * re; T.lx = -1.55 - 0.25 * (1 - seg(v, 0.08, 0.5)); T.bx = -0.12 * (1 - seg(v, 0.05, 0.6)); T.rx = -1.5 + 0.5 * (1 - seg(v, 0.05, 0.4));
+      } else { // 사제: 지팡이를 앞으로 찔러 빛을 쏴요
+        const th = seg(v, 0, 0.3), rc = seg(v, 0.45, 1); T.bry = -0.5 * th * (1 - rc); T.rz = -0.4 * th * (1 - rc); T.rx = base[0] - 0.6 * th * (1 - rc); T.bx = 0.25 * th * (1 - rc); T.bz = 0.3 * th * (1 - rc); T.lx = -1.2 * th * (1 - rc) + base[1];
       }
-    } else { // 기술
-      const pk = Math.sin(Math.min(1, v * 1.4) * Math.PI), hold = 1 - seg(v, 0.7, 1);
+    } else { // 기술: 모두 예비 동작(0~0.2) → 크게 터뜨리기 → 버티기 → 돌아오기
+      const pre = seg(v, 0, 0.2), go = seg(v, 0.2, 0.34), hold = 1 - seg(v, 0.72, 1), pk = go * hold, cr = pre * (1 - go);
       switch (a) {
-        case 'block': T.lx = -1.65; T.lz = 0.3; T.by = -0.15; T.bx = 0.1; T.rx = -0.4; break;
-        case 'dash': T.bx = 0.55 * hold; T.rx = -1.6; T.lx = 0.7 * hold; T.bz = 0.5 * pk; break;
-        case 'taunt': T.rx = -2.7 * hold; T.rz = 0.9 * hold; T.lx = -2.7 * hold; T.lz = -0.9 * hold; T.hx = -0.4 * hold; T.by = 0.35 * pk; T.bx = -0.2 * hold; break;
-        case 'pierce': { const dr = seg(v, 0, 0.45), rl = seg(v, 0.45, 0.55); T.pull = 0.75 * dr * (1 - rl); T.rpz = -0.6 * dr * (1 - rl); T.bx = -0.35 * rl * hold; T.lx = -1.55 - 0.4 * rl * hold; break; }
-        case 'rain': T.lx = -2.5 * hold - 1.55 * (1 - hold); T.rx = -2.4 * hold - 1.5 * (1 - hold); T.bx = -0.3 * hold; T.pull = 0.75 * seg(v, 0, 0.4) * (1 - seg(v, 0.4, 0.5)); break;
-        case 'mark': T.lx = -1.7; T.lz = 0.35 * hold; T.rx = -0.6; T.bry = -0.3 * hold; break;
-        case 'heal': case 'raise': T.rx = -2.3 * hold + base[0] * (1 - hold); T.rz = 0.35 * hold; T.lx = -2.4 * hold; T.lz = -0.8 * hold; T.by = 0.3 * pk; T.hx = -0.35 * hold; break;
-        case 'ward': T.rx = -0.9; T.by = -0.3 * hold; T.bx = 0.25 * hold; T.lx = -1.7 * hold; break;
-        case 'potion': { const th = seg(v, 0.15, 0.4); T.rx = -3.0 * (1 - th) - 1.2 * th; T.bx = -0.2 + 0.5 * th; T.bry = 0.4 - 0.8 * th; break; }
-        case 'trap': T.by = -0.45 * pk; T.bx = 0.5 * pk; T.rx = -0.9; T.lx = -0.9; break;
-        case 'rally': T.rx = -3.05 * hold; T.lx = -2.2 * hold; T.lz = -0.5 * hold; T.by = 0.45 * pk; T.hx = -0.3 * hold; break;
+        case 'block': // 방패를 땅에 쾅 박으며 버텨요
+          T.lx = (-0.4 * cr - 1.75 * go) * hold + base[1] * (1 - hold); T.lz = 0.35 * pk; T.rx = -0.3 * pk + base[0] * (1 - pk); T.bx = -0.25 * cr + 0.35 * pk; T.jy = hop(0.06, 0.3, 0.6); T.sq = land(0.3, 0.5) + 0.12 * pk; T.by = -0.35 * pk; T.lg = 0.8 * pk; T.bz = 0.4 * pk; break;
+        case 'dash': // 칼을 뒤로 빼고 몸을 쭉 뻗어 날아가요
+          T.rx = (0.9 * cr - 1.65 * go) * hold + base[0] * (1 - hold); T.bx = -0.35 * cr + 1.0 * pk; T.bz = 1.1 * pk; T.lx = 1.0 * pk; T.sq = 0.3 * cr - 0.35 * pk; T.jy = hop(0.2, 0.6, 0.5); T.lg = 1.1 * pk; T.bry = 0.5 * cr; break;
+        case 'taunt': // 웅크렸다가 뛰어올라 두 팔을 활짝 펴고 하늘을 향해 외쳐요
+          T.rx = (-0.3 * cr - 2.9 * go) * hold; T.rz = 1.3 * pk; T.lx = (-0.3 * cr - 2.9 * go) * hold; T.lz = -1.3 * pk; T.hx = -0.9 * pk; T.bx = 0.4 * cr - 0.6 * pk; T.jy = hop(0.2, 0.5, 1.1); T.sq = 0.4 * cr - 0.3 * go * (1 - seg(v, 0.4, 0.5)) + land(0.5, 0.4); T.lg = 0.9 * pk; break;
+        case 'pierce': { // 몸을 한껏 젖혀 끝까지 당겼다가 쏘고, 반동으로 뒤로 튕겨요
+          const rl = seg(v, 0.42, 0.5); T.pull = 0.75 * seg(v, 0, 0.4) * (1 - rl); T.rpz = -0.8 * seg(v, 0, 0.4) * (1 - rl); T.bx = (-0.3 * seg(v, 0, 0.4) - 0.5 * rl) * hold; T.bry = 0.5 * seg(v, 0, 0.4) * (1 - rl); T.lx = -1.55 - 0.7 * rl * hold; T.bz = -0.8 * rl * hold; T.jy = hop(0.42, 0.75, 0.6); T.sq = 0.25 * seg(v, 0, 0.4) * (1 - rl) + land(0.75, 0.3); T.lg = 0.7 * pk; break; }
+        case 'rain': // 높이 뛰어올라 하늘로 쏘아 올려요
+          T.lx = -1.55 - 1.5 * pk; T.rx = -1.5 - 1.4 * pk; T.bx = 0.3 * cr - 0.75 * pk; T.hx = -0.6 * pk; T.jy = hop(0.18, 0.62, 1.7); T.pull = 0.75 * seg(v, 0, 0.3) * (1 - seg(v, 0.38, 0.44)); T.sq = 0.4 * cr + land(0.62, 0.45); T.lg = -0.5 * pk; break;
+        case 'mark': // 몸을 홱 비틀며 손가락으로 적을 콕 집어요
+          T.lx = -1.75; T.lz = 0.5 * pk; T.rx = -0.4 * pk + base[0] * (1 - pk); T.rz = 0.9 * pk; T.bry = 0.5 * cr - 0.9 * pk; T.bx = 0.45 * pk; T.bz = 0.6 * pk; T.hx = 0.2 * pk; T.sq = 0.2 * cr - 0.15 * pk; T.lg = 0.9 * pk; break;
+        case 'heal': case 'raise': { // 지팡이를 하늘 높이 들고 떠오르듯 솟아요 (부활은 더 높이)
+          const big = a === 'raise' ? 1.6 : 1;
+          T.rx = -3.0 * pk + base[0] * (1 - pk); T.rz = 0.45 * pk; T.lx = -2.8 * pk; T.lz = -1.1 * pk; T.hx = -0.7 * pk; T.bx = 0.35 * cr - 0.45 * pk; T.jy = hop(0.2, 0.95, 0.8 * big); T.sq = 0.35 * cr - 0.2 * pk; T.by = -0.3 * cr; break; }
+        case 'ward': // 지팡이를 머리 위로 들었다가 땅에 쾅 내리꽂아요
+          T.rx = (-3.0 * cr + 2.2 * go) * hold + base[0] * (1 - hold); T.lx = (-2.2 * cr - 1.1 * go) * hold; T.bx = -0.4 * cr + 0.7 * pk; T.by = -0.45 * pk; T.jy = hop(0.04, 0.32, 0.8); T.sq = land(0.32, 0.55) + 0.1 * pk; T.lg = 0.9 * pk; break;
+        case 'potion': { // 크게 뒤로 젖혔다가 온몸으로 던져요
+          const th = seg(v, 0.18, 0.36); T.rx = -3.3 * (1 - th) * hold - 0.6 * th * hold + base[0] * (1 - hold); T.rz = 0.6 * (1 - th) * hold; T.bx = (-0.55 * (1 - th) + 0.8 * th) * hold; T.bry = (0.8 - 1.6 * th) * hold; T.bz = 0.6 * th * hold; T.lx = -1.2 * th * hold; T.lg = 1.0 * pk; T.sq = -0.15 * (1 - th) * pre; break; }
+        case 'trap': // 바닥에 납작 엎드려 덫을 쾅 박아요
+          T.by = -0.8 * pk - 0.2 * cr; T.bx = 0.95 * pk; T.rx = -0.3 * pk + base[0] * (1 - pk); T.lx = -0.3 * pk; T.sq = 0.25 * pk + land(0.34, 0.35); T.jy = hop(0.0, 0.2, 0.4); T.lg = 1.0 * pk; break;
+        case 'rally': // 높이 뛰어올라 칼을 하늘로 치켜들고 외쳐요
+          T.rx = -3.15 * pk + base[0] * (1 - pk); T.lx = -2.6 * pk; T.lz = -0.8 * pk; T.hx = -0.7 * pk; T.bx = 0.4 * cr - 0.5 * pk; T.jy = hop(0.2, 0.6, 1.5); T.sq = 0.45 * cr - 0.25 * go * (1 - seg(v, 0.45, 0.55)) + land(0.6, 0.45); T.lg = -0.6 * pk + 0.8 * seg(v, 0.6, 0.7) * hold; break;
         default: T.rx = -2.8 * hold;
       }
     }
+  }
+  if (E.ak && E.ak !== 'hv') { // 모든 동작을 훨씬 크게: 기본 자세에서 벗어난 만큼을 키워요
+    const X = 1.4; for (const k of ['rz', 'lz', 'bx', 'by', 'bz', 'bry', 'hx']) T[k] *= X;
+    T.rx = base[0] + (T.rx - base[0]) * 1.25; T.lx = base[1] + (T.lx - base[1]) * 1.25; T.jy *= 1.9; T.sq = clampN(T.sq * 1.5, -0.5, 0.7); T.lg *= 1.3;
   }
   if (p.bk && E.ak !== 'block') { T.lx = -1.6; }
   const k = Math.min(1, dt * 30), L = (o, kk, v2) => { E[kk] = E[kk] == null ? v2 : E[kk] + (v2 - E[kk]) * k; return E[kk]; };
@@ -702,6 +720,8 @@ function animHero(E, p, dt, t) {
   if (u.bowS) setPull(u.bowS, L(0, 'pl', T.pull));
   const bob = p.mv ? Math.abs(Math.sin(E.ph)) * 0.1 : Math.sin(t * 2 + E.ph) * 0.03;
   u.body.rotation.set(L(0, 'bx', T.bx), L(0, 'bry', T.bry), 0); u.body.position.set(0, bob + L(0, 'by', T.by), L(0, 'bz', T.bz));
+  m.position.y = L(0, 'jy', T.jy); const sq = L(0, 'sq', T.sq); u.body.scale.set(1 + sq * 0.5, 1 - sq * 0.6, 1 + sq * 0.5);
+  const lg = L(0, 'lg', T.lg); if (E.ak) { u.legL.rotation.x = sw - lg * 0.6; u.legR.rotation.x = -sw + lg * 0.6; }
   if (p.ro) { E.rollA = (E.rollA || 0) + dt * 18; u.body.rotation.x = E.rollA; u.body.position.y = -0.6; } else E.rollA = 0;
   if (p.dn) { u.body.rotation.set(-Math.PI / 2 + 0.2, 0, 0); u.body.position.set(0, 0.4, -1); }
   if (u.light) u.light.intensity = (p.dn ? 3 : 15);
