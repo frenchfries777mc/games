@@ -1,7 +1,7 @@
 // Vowkeep · © 2026 Frenchfries777 · CC BY-NC-ND 4.0
 // 화면 흐름, 조작, 멀티(친구 초대, PeerJS), 저장
 import { View } from './render.js';
-import { createGame, step, snapshot, chooseBless, carryOver, INTRO_T, HV_DELAY, leapDist } from './sim.js';
+import { createGame, step, snapshot, chooseBless, carryOver, INTRO_T, HV_DELAY } from './sim.js';
 import { ROLES, ROLE_IDS, BLESSINGS, CHAPTERS, CH, FOES, MAP, ACHIEVEMENTS, GEAR_TIERS, GEAR_COST, VERSION, BUILD, roleLevel } from './data.js';
 import { collide as mapCollide, areaAt, floorCell, MW, MH, CS, cw, useChapter, chapterIndex } from './map.js';
 import * as SFX from './sfx.js';
@@ -343,9 +343,9 @@ function localMove(p, inp, dt) {
   if (Math.hypot(L.x - p.x, L.z - p.z) > 5) { L.x = p.x; L.z = p.z; }
   L.rollCd = Math.max(0, (L.rollCd || 0) - dt);
   let mx = inp.mx, mz = inp.mz; const ml = Math.hypot(mx, mz); if (ml > 1) { mx /= ml; mz /= ml; }
-  // 기사 강타: 방장이 강타를 알려 오면 내 화면에서도 조준한 쪽으로 뛰어올라요
-  if (p.aN !== L.aN) { if (L.aN != null && p.ak === 'hv') { const d = leapDist(L, inp.ax, inp.az), a = p.a; L.lp = HV_DELAY; L.lpx = Math.cos(a) * d / HV_DELAY; L.lpz = Math.sin(a) * d / HV_DELAY; } L.aN = p.aN; }
-  if (L.lp > 0) { L.lp -= dt; L.x += L.lpx * dt; L.z += L.lpz * dt; mapCollide(L, 0.6); return; }
+  // 기사 강타: 방장이 강타를 알려 오면 내 화면에서도 공중에 있는 동안 제자리에 멈춰요
+  if (p.aN !== L.aN) { if (L.aN != null && p.ak === 'hv') L.lp = HV_DELAY; L.aN = p.aN; }
+  if (L.lp > 0) { L.lp -= dt; return; }
   if (inp.roll && L.rollCd <= 0 && !(L.roll > 0)) { L.roll = 0.35; L.rollCd = 1.2 * ((p.b || []).indexOf('roll') >= 0 ? 0.6 : 1); const ra = ml > 0.1 ? Math.atan2(mz, mx) : p.a; L.rdx = Math.cos(ra); L.rdz = Math.sin(ra); }
   if (L.roll > 0) { L.roll -= dt; L.x += L.rdx * 15 * dt; L.z += L.rdz * 15 * dt; }
   else { const sp = R.speed * ((p.b || []).indexOf('feet') >= 0 ? 1.12 : 1) * (p.ra ? 1.3 : 1) * (p.bk ? 0.8 : 1); L.x += mx * sp * dt; L.z += mz * sp * dt; }
