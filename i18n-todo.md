@@ -184,3 +184,8 @@ crownenvoy/CrownEnvoy-v0.4.html | 공화국 지도자 UI/신문/알림 | 🏛 �
 crownenvoy/CrownEnvoy-v0.4.html | 대규모 전투 신문 | 전투 이름("~ 전투/침략/방어전/해전" 등)과 본문 "~의 N명과 ~의 M명이 ~에서 맞붙었다…" | b89 | 2026-10-22
 crownenvoy/CrownEnvoy-v0.4.html | 선전포고 대기 안내 | "선전포고 소식이 신문에 실린 다음 턴부터 공격할 수 있어요" 등 3곳 | b89 | 2026-10-22
 crownenvoy/CrownEnvoy-v0.4.html | KON (영토 한글 이름 1,451개) | 영어 원래 이름 → 한글 이름 표. 다른 언어는 원래 이름 그대로이므로 번역 담당이 언어별 표기(독일어 Wien, 프랑스어 Vienne 등)를 추가할 수 있음 | b89 | 2026-10-22
+## Vowkeep b19 (2026-10-22)
+- patchnotes.json | "Vowkeep 과장된 강타·기술 동작" 5줄 | Vowkeep b19 | 2026-10-22
+
+## Vowkeep b20 (2026-10-22)
+- patchnotes.json | "Vowkeep 실제로 뛰어오르는 강타" 3줄 | Vowkeep b20 | 2026-10-22
