@@ -422,7 +422,7 @@ export class View {
     // 투사체
     for (const p of S.pr) {
       const key = 'r' + p.id; seen.add(key); let E = this.ents.get(key);
-      if (!E) { E = { m: projMesh(p.k), x: p.x, z: p.z }; s.add(E.m); this.ents.set(key, E); }
+      if (!E) { E = { m: projMesh(p.k), x: p.x, z: p.z }; if (p.bg) E.m.scale.setScalar(2.2); s.add(E.m); this.ents.set(key, E); }
       const k = exact ? 1 : Math.min(1, dt * 18); E.x += (p.x - E.x) * k; E.z += (p.z - E.z) * k;
       E.m.position.set(E.x, (p.k === 'potion' ? p.y : 0) + 1.6, E.z); E.m.rotation.y = -p.a; if (p.k === 'potion') E.m.rotation.z += dt * 12;
       const TC = { pierce: 0xffe08a, orb: 0x9af0d0, eorb: 0x6ab0ff, ember: 0xff7a20, arrow: 0xe8e0c8, bolt: 0xff8a5a, spear: 0xffb060, earrow: 0xff5a4a }[p.k]; if (TC && (E.tr = (E.tr || 0) - dt) <= 0) { E.tr = 0.03; const big = p.k !== 'arrow' && p.k !== 'earrow'; this.burst(E.x, 1.6, E.z, TC, big ? 3 : 1, 1.2, big ? 0.45 : 0.25, big ? 0.12 : 0.08); }
@@ -639,20 +639,20 @@ function setPull(B, pull) {
 const ease = u => u < 0 ? 0 : u > 1 ? 1 : u * u * (3 - 2 * u);
 const seg = (u, a, b) => ease((u - a) / (b - a));
 // 역할마다 공격·기술 동작. 몸 전체(허리 비틀기, 내딛기, 뛰어오르기)가 같이 움직여요
-const ANIM_T = { atk: 0.32, hv: 0.95, skill: 0.8 };
+const ANIM_T = { atk: 0.32, hv: 0.95, big: 0.6, skill: 0.8 };
 function animHero(E, p, dt, t) {
   const m = E.m, u = m.userData; m.position.set(E.x, 0, E.z); m.rotation.y = Math.PI / 2 - E.a;
   E.ph += dt * (p.mv ? 11 : 0); E.sw = (E.sw || 0) + ((p.mv ? Math.sin(E.ph) * 0.75 : 0) - (E.sw || 0)) * Math.min(1, dt * 14); const sw = E.sw;
   u.legL.rotation.x = sw; u.legR.rotation.x = -sw;
   // 동작 시작: 동작 번호가 바뀌면 처음부터
   if (p.aN !== E.aN) { E.aN = p.aN; if (E.aN != null && p.ak) { E.ak = p.ak; E.aT = 0; } }
-  const kind = E.ak ? (E.ak === 'atk' || E.ak === 'hv' ? E.ak : 'skill') : '', D = ANIM_T[kind] || 0.5;
+  const kind = E.ak ? (E.ak === 'atk' || E.ak === 'hv' || E.ak === 'big' ? E.ak : 'skill') : '', D = ANIM_T[kind] || 0.5;
   if (E.ak) { E.aT += dt; if (E.aT > D) E.ak = null; }
   const v = E.ak ? E.aT / D : 1, role = p.role, side = (E.aN || 0) % 2 ? 1 : -1;
   const base = { knight: [-0.7, -0.6], archer: [-1.45, -1.55], priest: [-1.2, -0.4], squire: [-1.3, -0.6] }[role];
   // 기본 자세 (달릴 때는 앞으로 기울고 팔을 크게 흔들어요)
   // jy: 몸 전체가 뛰어오르는 높이, sq: 찌그러짐(+는 납작, -는 길쭉), lg: 다리 벌리기
-  const T = { rx: base[0] - sw * 0.45, rz: 0, lx: base[1] + sw * 0.45, lz: 0, bx: p.mv ? 0.14 : 0, by: 0, bz: 0, bry: 0, hx: 0, rpz: 0, pull: 0.35, jy: 0, sq: 0, lg: 0 };
+  const T = { rx: base[0] - sw * 0.45, rz: 0, lx: base[1] + sw * 0.45, lz: 0, bx: p.mv ? 0.14 : 0, by: 0, bz: 0, bry: 0, hx: 0, rpz: 0, pull: 0.35, jy: 0, sq: 0, lg: 0, spin: 0 };
   if (role === 'archer') { T.rx = -1.5; T.rz = -0.25; T.lx = -1.55; T.lz = 0.12; T.rpz = -0.3; T.pull = 0.35; }
   // 뛰어올랐다 내려오기: a~b 사이에 h만큼 포물선
   const hop = (a, b, h) => { const q = (v - a) / (b - a); return q > 0 && q < 1 ? Math.sin(q * Math.PI) * h : 0; };
@@ -660,7 +660,14 @@ function animHero(E, p, dt, t) {
   const land = (a, n) => { const q = (v - a) / 0.25; return q >= 0 && q < 1 ? (1 - q) * (1 - q) * n : 0; };
   if (E.ak) {
     const a = E.ak;
-    if (a === 'atk' || a === 'hv') {
+    if (a === 'big') { // 세 번째 큰 공격
+      const cr = seg(v, 0, 0.18), go = seg(v, 0.18, 0.5), rc = seg(v, 0.7, 1), x = 1 - rc, pc = cr * (1 - go);
+      if (role === 'squire') { // 종자: 웅크렸다가 뛰어오르며 한 바퀴 빙글 돌려 베기
+        T.spin = -Math.PI * 2 * go; T.rx = -1.5 * x + base[0] * rc; T.rz = (1.2 * pc - 1.6 * go) * x; T.bx = 0.45 * pc - 0.2 * go * x; T.jy = hop(0.16, 0.55, 1.6); T.sq = 0.5 * pc - 0.3 * go * x * (1 - seg(v, 0.45, 0.55)) + land(0.55, 0.6); T.lg = 0.9 * pc + 0.7 * go * x; T.lx = -1.2 * go * x + base[1];
+      } else { // 사제: 지팡이를 두 손으로 머리 위 높이 들고 뛰어올라 앞으로 크게 내지르기
+        T.rx = (-3.2 * cr + 2.0 * go) * x + base[0] * rc; T.lx = (-3.0 * cr + 1.8 * go) * x + base[1] * rc; T.lz = 0.35 * x; T.bx = (-0.6 * cr + 1.1 * go) * x; T.hx = (-0.5 * cr + 0.3 * go) * x; T.bz = 0.8 * go * x; T.jy = hop(0.12, 0.5, 1.8); T.sq = 0.5 * pc + land(0.5, 0.65); T.lg = 1.0 * go * x;
+      }
+    } else if (a === 'atk' || a === 'hv') {
       if (a === 'hv') { // 강타: 웅크려 칼을 등 뒤까지 젖히고, 높이 뛰어올라 몸을 던지듯 내려찍어요
         const L1 = 0.379; // 땅에 닿는 순간 (sim의 HV_DELAY 0.36 / 0.95)
         const cr = seg(v, 0, 0.08), up = seg(v, 0.06, 0.18), dn = seg(v, 0.26, L1), rc = seg(v, 0.68, 1), x = 1 - rc, two = role !== 'knight' && role !== 'squire';
@@ -709,7 +716,7 @@ function animHero(E, p, dt, t) {
       }
     }
   }
-  if (E.ak && E.ak !== 'hv') { // 모든 동작을 훨씬 크게: 기본 자세에서 벗어난 만큼을 키워요
+  if (E.ak && E.ak !== 'hv' && E.ak !== 'big') { // 모든 동작을 훨씬 크게: 기본 자세에서 벗어난 만큼을 키워요
     const X = 1.4; for (const k of ['rz', 'lz', 'bx', 'by', 'bz', 'bry', 'hx']) T[k] *= X;
     T.rx = base[0] + (T.rx - base[0]) * 1.25; T.lx = base[1] + (T.lx - base[1]) * 1.25; T.jy *= 1.9; T.sq = clampN(T.sq * 1.5, -0.5, 0.7); T.lg *= 1.3;
   }
@@ -719,7 +726,7 @@ function animHero(E, p, dt, t) {
   u.armR.position.z = L(0, 'rpz', T.rpz); u.head.rotation.x = L(0, 'hx', T.hx);
   if (u.bowS) setPull(u.bowS, L(0, 'pl', T.pull));
   const bob = p.mv ? Math.abs(Math.sin(E.ph)) * 0.1 : Math.sin(t * 2 + E.ph) * 0.03;
-  u.body.rotation.set(L(0, 'bx', T.bx), L(0, 'bry', T.bry), 0); u.body.position.set(0, bob + L(0, 'by', T.by), L(0, 'bz', T.bz));
+  u.body.rotation.set(L(0, 'bx', T.bx), L(0, 'bry', T.bry) + T.spin, 0); u.body.position.set(0, bob + L(0, 'by', T.by), L(0, 'bz', T.bz));
   m.position.y = L(0, 'jy', T.jy); const sq = L(0, 'sq', T.sq); u.body.scale.set(1 + sq * 0.5, 1 - sq * 0.6, 1 + sq * 0.5);
   const lg = L(0, 'lg', T.lg); if (E.ak) { u.legL.rotation.x = sw - lg * 0.6; u.legR.rotation.x = -sw + lg * 0.6; }
   if (p.ro) { E.rollA = (E.rollA || 0) + dt * 18; u.body.rotation.x = E.rollA; u.body.position.y = -0.6; } else E.rollA = 0;
@@ -730,7 +737,7 @@ function animEnemy(E, e, dt, t, view) {
   const m = E.m, u = m.userData; m.position.set(E.x, 0, E.z); m.rotation.y = Math.PI / 2 - E.a;
   // 맞으면 잠깐 부풀었다 돌아와요
   if (E.pop > 0) { E.pop = Math.max(0, E.pop - dt); const q = 1 + E.pop * 1.6; m.scale.set(E.base * q, E.base * (2 - q), E.base * q); } else if (E.pop === 0) { m.scale.setScalar(E.base); E.pop = null; }
-  E.ph += dt * (e.mv ? 9 : 0); E.sw = (E.sw || 0) + ((e.mv ? Math.sin(E.ph) * 0.6 : 0) - (E.sw || 0)) * Math.min(1, dt * 14); const sw = E.sw;
+  E.ph += dt * (e.mv ? (e.sl ? 4.5 : 9) : 0); E.sw = (E.sw || 0) + ((e.mv ? Math.sin(E.ph) * 0.6 : 0) - (E.sw || 0)) * Math.min(1, dt * 14); const sw = E.sw;
   u.legL.rotation.x = sw; u.legR.rotation.x = -sw;
   let ar = -0.9 - sw * 0.3;
   if (e.st === 'wind' || e.st === 'wind2') ar = -2.6 + Math.sin(t * 30) * 0.1;
@@ -740,6 +747,8 @@ function animEnemy(E, e, dt, t, view) {
     if (u.light) u.light.intensity = 18 + Math.sin(t * 1.5) * 2 + (e.ph === 3 ? 10 : 0);
     if (u.crack) { const on = e.ph === 3; u.crack.visible = on; u.cape.visible = !on; const pl = 0.5 + 0.5 * Math.sin(t * 6); u.ckM.emissiveIntensity = on ? 4 + pl * 5 : 0; u.ckL.intensity = on ? 10 + pl * 14 : 0; if (on && (E.ckT = (E.ckT || 0) - dt) <= 0) { E.ckT = 0.12; const bk = -E.a + Math.PI / 2, bx = E.x - Math.sin(bk) * 1.3, bz = E.z - Math.cos(bk) * 1.3; view.burst(bx, 4 + Math.random(), bz, 0xff7a20, 2, 2, 0.5, 0.12); } }
   }
+  // 강타로 느려진 적: 파란 서리 알갱이가 몸에서 피어올라요
+  if (e.sl && (E.slT = (E.slT || 0) - dt) <= 0) { E.slT = 0.1; const sz = e.k === 'boss' ? 2.4 : 1; view.burst(E.x + (Math.random() - .5) * sz, 0.6 + Math.random() * 1.8 * sz, E.z + (Math.random() - .5) * sz, 0x7ac8ff, 2, 1.2, 0.6, 0.11); }
   E.ar = E.ar == null ? ar : E.ar + (ar - E.ar) * Math.min(1, dt * 22); u.armR.rotation.x = E.ar;
   m.position.y = e.k === 'boss' && CH.boss.ai === 'bishop' ? 0.6 + Math.sin(t * 1.6) * 0.25 : 0;
   if (e.st === 'rise') m.position.y = -1.5;
