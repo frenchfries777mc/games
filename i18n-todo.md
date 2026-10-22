@@ -206,3 +206,7 @@ crownenvoy/CrownEnvoy-v0.4.html | KON (영토 한글 이름 1,451개) | 영어 �
 ## Vowkeep b25 (2026-10-23)
 - prototypes/vowkeep/js/data.js | TALK 1~4장 게임 중 대사 (구역별·보스 앞, 약 60줄), 1~4장 시작·결말 이야기 문장 변경, 구역 문장 2개 변경 | 한국어만 있음 | Vowkeep b25 | 2026-10-23
 - patchnotes.json | "Vowkeep 맵 디테일과 동료 대사" 9줄 | Vowkeep b25 | 2026-10-23
+
+## Vowkeep b26 (2026-10-23)
+- prototypes/vowkeep/js/data.js | CHAPTERS 5~8장 (제목·장소·시작·결말 이야기·보스 이름·단계 안내), 5~8장 구역 이름·문장 36개, FOES 5~8장 적 이름 16개, TALK 5~8장 대사 (약 60줄), 4장 결말 문장 변경, 업적 5~8장 이름·설명, 4장 업적 이름 '왕관을 깨다' | 한국어만 있음 | Vowkeep b26 | 2026-10-23
+- patchnotes.json | "Vowkeep 5~8장 추가" 7줄 | Vowkeep b26 | 2026-10-23
