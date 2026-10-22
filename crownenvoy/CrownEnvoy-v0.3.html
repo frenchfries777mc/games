@@ -386,7 +386,7 @@ window.ceReload=function(){try{if(window.FFAuth&&FFAuth.setRoom)FFAuth.setRoom(n
 try{if(sessionStorage.getItem('ce_noIntro')){sessionStorage.removeItem('ce_noIntro');el.style.display='none';go();}}catch(e){}})();</script>
 <div id="app">
  <div id="lobby" class="screen">
-  <canvas id="lobbyBg"></canvas><canvas id="lobbyWar"></canvas><div id="cpTag">© 2026 Frenchfries777 · <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.ko" target="_blank" rel="noopener">CC BY-NC-ND 4.0</a></div><div id="verTag">v0.3 · build 85</div>
+  <canvas id="lobbyBg"></canvas><canvas id="lobbyWar"></canvas><div id="cpTag">© 2026 Frenchfries777 · <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.ko" target="_blank" rel="noopener">CC BY-NC-ND 4.0</a></div><div id="verTag">v0.3 · build 86</div>
   <header class="brand"><h1>Crown Envoy</h1><div class="sub"><i></i>DIPLOMACY · WAR · EMPIRE<i></i></div></header>
   <div id="lobbyRight">
    <div id="lobbyHome" class="modes">
@@ -1264,6 +1264,7 @@ function place(pid,n,prefer,from,mix){
   addUnits(G.terr[dest],pid,mu);
 }
 function resolveRound(){
+  pendApply();/* 징집한 병사는 공격과 이동보다 먼저 도착한다 */
   Object.keys(G.hostile).forEach(k=>{const [x,y]=k.split('-').map(Number);if(truceLeft(x,y)>0)delete G.hostile[k];});
   const rep={round:G.round,attacks:[],moves:[],battles:[]};const plans={};const moves=[];
   for(const p of G.players){if(!p.alive)continue;const list=sanitizeOrders(p.id,G.orders[p.id]);G.lastOrders[p.id]=list.map(o=>({...o}));
