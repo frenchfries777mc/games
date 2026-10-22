@@ -5,8 +5,8 @@ import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
 import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
 import { OutputPass } from 'three/addons/postprocessing/OutputPass.js';
 import { RenderPixelatedPass } from 'three/addons/postprocessing/RenderPixelatedPass.js';
-import { ROLES, MAP } from './data.js';
-import { CS, MW, MH, floorCell, GRID, WATER, PILLARS, cw } from './map.js';
+import { ROLES, MAP, CH, FOES } from './data.js';
+import { CS, MW, MH, floorCell, GRID, WATER, PILLARS, cw, chapterIndex } from './map.js';
 
 let seed = 7; const R = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
 const MC = new Map();
@@ -26,6 +26,15 @@ const cone = (r, h, s, m, x, y, z, p) => mesh(geo('n' + [r, h, s], () => new THR
 
 const metal = () => M(0xb8bfcc, { m: 0.75, r: 0.35 }), dmetal = () => M(0x5a5f70, { m: 0.7, r: 0.45 }), skin = () => M(0xe8b48a), gold = () => M(0xe6c15a, { m: 0.8, r: 0.3 }), leather = () => M(0x5a3a22), bone = () => M(0xd8d0bc);
 
+/* ---------- 장마다 다른 색과 장식 ---------- */
+const THEMES = {
+  dungeon: { bg: 0x050407, fog: 0x07060a, amb: 0x4a4a78, hemi: 0x8a90c8, floor: [0x4a4550, 0x524d58, 0x5a5462, 0x463f4c, 0x55505c], bfloor: [0x3e3440, 0x463a48, 0x4e4250, 0x3a3040, 0x4a3e4c], wet: [0x34404c, 0x384656, 0x2e3a46, 0x3c4a58], wall: [0x3e3846, 0x463f50, 0x4e4658, 0x38323f], bwall: [0x3a2e3c, 0x423446, 0x4a3a50, 0x342a38], top: 0x2a2630, moss: 0x3e5a36, mossP: 0.06, torch: 0xff9a48, water: 0x3a6a9a, ring: 0x8a1a2a, fz: [0x5a1aa0, 0x8a2ad0], ember: [0xffb050, 0xff8a30], banner: 0x7a1f22 },
+  forest: { bg: 0x08090a, fog: 0x161a1c, amb: 0x5a6070, hemi: 0xa0a8a0, floor: [0x3c3a2e, 0x444030, 0x3a4030, 0x4a4636, 0x363a2a], bfloor: [0x3a3226, 0x42382a, 0x3a3024, 0x463c2e, 0x34301e], wet: [0x2e3a36, 0x34403c, 0x2a3632, 0x38443e], wall: [0x2e2a24, 0x36302a, 0x2a2620, 0x3a3430], bwall: [0x30241e, 0x382a22, 0x2c201a, 0x3e2e26], top: 0x24301e, moss: 0x4a5a34, mossP: 0.22, torch: 0xffb060, water: 0x4a6a6a, ring: 0x6a3a1a, fz: [0x4a3a1a, 0xd06a20], ember: [0xd8d4cc, 0x9a968e], trees: 1 },
+  abbey: { bg: 0x03060a, fog: 0x08101a, amb: 0x405478, hemi: 0x88a0d0, floor: [0x4a5058, 0x525a62, 0x485058, 0x565e68, 0x444c54], bfloor: [0x3a4450, 0x404a58, 0x36404c, 0x46505c, 0x343e4a], wet: [0x2e4054, 0x34485c, 0x2a3c50, 0x3a4e62], wall: [0x3c4450, 0x444c58, 0x4c5462, 0x363e4a], bwall: [0x2e3a4a, 0x344052, 0x3a4658, 0x2a3444], top: 0x262c36, moss: 0x3a5a4a, mossP: 0.1, torch: 0xffd08a, water: 0x2a5a9a, ring: 0x2a5ab0, fz: [0x1a3a6a, 0x3a8ae0], ember: [0x9ad0ff, 0x6aa0e0], windows: 1 },
+  tower: { bg: 0x0a0505, fog: 0x160a08, amb: 0x6a4a4a, hemi: 0xc89a8a, floor: [0x4a4040, 0x524646, 0x5a4c4a, 0x463c3c, 0x54484a], bfloor: [0x4a3030, 0x523434, 0x5a3a36, 0x462c2c, 0x503432], wet: [0x3a3440, 0x403848, 0x36303c, 0x443c4c], wall: [0x4a3a36, 0x52423c, 0x5a4842, 0x443430], bwall: [0x5a2a22, 0x622e26, 0x6a3428, 0x52261e], top: 0x2e2220, moss: 0x5a4a2a, mossP: 0.04, torch: 0xff7a30, water: 0x6a3a2a, ring: 0xc04a10, fz: [0xa03a10, 0xff6a20], ember: [0xffa040, 0xff6a20], banner: 0x3a3a3a }
+};
+const THEME = () => THEMES[CH.theme] || THEMES.dungeon;
+
 /* ---------- 캐릭터 모델 ---------- */
 const HERO = {
   knight: { body: 0x3f6fd0, leg: 'dm', arm: 'mt', helm: 1, sword: 1, shield: 1, cape: 0x24479a, belt: 1 },
@@ -34,8 +43,10 @@ const HERO = {
   squire: { body: 0x8a6a44, leg: 0x4a4250, arm: 0x8a6a44, cap: 0xb9443a, torch: 1, sack: 1, belt: 1 }
 };
 function matOf(v) { return v === 'dm' ? dmetal() : v === 'mt' ? metal() : M(v); }
-export function makeHero(role) {
-  const o = HERO[role], g = new THREE.Group(), body = new THREE.Group(); g.add(body);
+export function makeHero(role) { const g = makeFigure(HERO[role]); g.userData.role = role; return g; }
+// 사람 모양 (주인공과 사람 모양 적이 같이 써요)
+function makeFigure(o) {
+  const g = new THREE.Group(), body = new THREE.Group(); g.add(body);
   const lg = matOf(o.leg), am = matOf(o.arm);
   const legL = new THREE.Group(), legR = new THREE.Group(); legL.position.set(-0.25, 0.9, 0); legR.position.set(0.25, 0.9, 0); body.add(legL, legR);
   cap(0.2, 0.6, lg, 0, -0.4, 0, legL); cap(0.2, 0.6, lg, 0, -0.4, 0, legR);
@@ -45,25 +56,82 @@ export function makeHero(role) {
   if (o.belt) { const b = mesh(geo('belt', () => new THREE.TorusGeometry(0.58, 0.08, 5, 12)), leather(), 0, 1.2, 0, body); b.rotation.x = Math.PI / 2; }
   const head = new THREE.Group(); head.position.y = 2.75; body.add(head);
   if (o.helm) {
-    cyl(0.42, 0.45, 0.8, 10, metal(), 0, 0, 0, head); sph(0.42, 10, 6, metal(), 0, 0.4, 0, head, 1.6);
-    box(0.6, 0.08, 0.1, M(0x0a0a0e), 0, 0.05, 0.42, head); const pl = cone(0.12, 0.7, 5, M(0x3f6fd0), 0, 0.95, -0.1, head); pl.rotation.x = -0.5;
+    const hm = o.helmC ? M(o.helmC, { m: 0.7, r: 0.4 }) : metal(); cyl(0.42, 0.45, 0.8, 10, hm, 0, 0, 0, head); sph(0.42, 10, 6, hm, 0, 0.4, 0, head, 1.6);
+    box(0.6, 0.08, 0.1, o.eye ? M(o.eye, { e: o.eye, ei: 5 }) : M(0x0a0a0e), 0, 0.05, 0.42, head); if (o.plume !== 0) { const pl = cone(0.12, 0.7, 5, M(o.plume || 0x3f6fd0), 0, 0.95, -0.1, head); pl.rotation.x = -0.5; }
   } else {
-    sph(0.42, 10, 8, skin(), 0, 0, 0, head); box(0.08, 0.1, 0.05, M(0x1a1418), -0.15, 0.02, 0.4, head); box(0.08, 0.1, 0.05, M(0x1a1418), 0.15, 0.02, 0.4, head);
+    const ey = o.eye ? M(o.eye, { e: o.eye, ei: 5 }) : M(0x1a1418);
+    sph(0.42, 10, 8, o.skinC ? M(o.skinC) : skin(), 0, 0, 0, head); box(0.08, 0.1, 0.05, ey, -0.15, 0.02, 0.4, head); box(0.08, 0.1, 0.05, ey, 0.15, 0.02, 0.4, head);
     if (o.hood) { sph(0.52, 10, 8, M(o.hood), 0, 0.05, -0.05, head, 1.9); const c = cone(0.3, 0.6, 6, M(o.hood), 0, 0.1, -0.5, head); c.rotation.x = -1.9; }
     if (o.cap) { cyl(0.46, 0.46, 0.25, 10, M(o.cap), 0, 0.3, 0, head); sph(0.44, 10, 6, M(o.cap), 0, 0.35, 0, head, 1.4); const f = cone(0.06, 0.6, 4, M(0xf0e8d0), 0.3, 0.7, -0.1, head); f.rotation.z = -0.6; }
   }
   if (o.cape) { const cp = mesh(geo('cape', () => new THREE.PlaneGeometry(1.2, 2, 1, 3)), M(o.cape, { ds: true }), 0, 1.6, -0.6, body); cp.rotation.x = 0.18; }
+  if (o.antler) for (const sx of [-1, 1]) { const a = new THREE.Group(); a.position.set(sx * 0.3, 0.45, 0); head.add(a); a.rotation.z = -sx * 0.5; cyl(0.05, 0.07, 0.9, 4, M(0xcfc0a0), 0, 0.45, 0, a); for (let i = 0; i < 3; i++) { const t = cyl(0.04, 0.05, 0.4, 4, M(0xcfc0a0), sx * 0.15, 0.3 + i * 0.25, 0, a); t.rotation.z = -sx * 0.9; } }
+  if (o.mitre) { const mt = cone(0.4, 1.2, 4, M(0xd8d4c8), 0, 0.75, 0, head); mt.rotation.y = Math.PI / 4; box(0.08, 1, 0.5, gold(), 0, 0.7, 0, head); }
+  if (o.crown) { cyl(0.48, 0.5, 0.2, 8, gold(), 0, 0.7, 0, head); for (let i = 0; i < 6; i++) { const a = i / 6 * 6.283; cone(0.08, 0.4, 4, gold(), Math.cos(a) * 0.44, 0.95, Math.sin(a) * 0.44, head); } }
+  if (o.horns) for (const sx of [-1, 1]) { const hn = cone(0.1, 0.7, 5, M(0x2a2228), sx * 0.45, 0.5, 0, head); hn.rotation.z = -sx * 0.8; }
+  if (o.bark) for (let i = 0; i < 5; i++) { const b = cone(0.12, 0.9, 4, M(0x4a3a26), Math.cos(i * 1.3) * 0.5, 2.4 + (i % 2) * 0.3, Math.sin(i * 1.3) * 0.4 - 0.2, body); b.rotation.set(Math.sin(i) * 0.8, 0, Math.cos(i) * 0.8); }
   const armR = new THREE.Group(); armR.position.set(0.72, 2.15, 0); body.add(armR); cap(0.17, 0.7, am, 0, -0.45, 0, armR);
   const armL = new THREE.Group(); armL.position.set(-0.72, 2.15, 0); body.add(armL); cap(0.17, 0.7, am, 0, -0.45, 0, armL);
   let light = null;
   if (o.sword) { const sw = new THREE.Group(); sw.position.set(0, -0.9, 0.1); armR.add(sw); box(0.12, 2, 0.04, M(0xe9edf5, { m: 0.9, r: 0.2 }), 0, 1.1, 0, sw); box(0.6, 0.1, 0.14, gold(), 0, 0.1, 0, sw); box(0.08, 0.35, 0.08, leather(), 0, -0.1, 0, sw); sw.rotation.x = Math.PI / 2; }
-  if (o.shield) { const sh = new THREE.Group(); sh.position.set(-0.15, -0.7, 0.45); armL.add(sh); sh.rotation.x = 0.6; box(1.1, 1.4, 0.14, M(0x2c4f9e), 0, 0, 0, sh); const c = cone(0.78, 0.7, 4, M(0x2c4f9e), 0, -0.95, 0, sh); c.rotation.set(Math.PI, Math.PI / 4, 0); box(0.18, 1.2, 0.05, gold(), 0, -0.1, 0.09, sh); box(0.8, 0.18, 0.05, gold(), 0, 0.25, 0.09, sh); }
+  if (o.shield) { const shc = o.shieldC || 0x2c4f9e; const sh = new THREE.Group(); sh.position.set(-0.15, -0.7, 0.45); armL.add(sh); sh.rotation.x = 0.6; box(1.1, 1.4, 0.14, M(shc), 0, 0, 0, sh); const c = cone(0.78, 0.7, 4, M(shc), 0, -0.95, 0, sh); c.rotation.set(Math.PI, Math.PI / 4, 0); box(0.18, 1.2, 0.05, gold(), 0, -0.1, 0.09, sh); box(0.8, 0.18, 0.05, gold(), 0, 0.25, 0.09, sh); }
   if (o.bow) { const bw = mesh(geo('bow', () => new THREE.TorusGeometry(0.95, 0.06, 4, 12, Math.PI)), M(0x8a5a2a), -0.1, -0.8, 0.5, armL); bw.rotation.set(0, Math.PI / 2, Math.PI / 2); box(0.02, 1.9, 0.02, M(0xe8e0c8), -0.1, -0.8, 0.5, armL); }
-  if (o.staff) { const st = new THREE.Group(); st.position.set(0, -0.9, 0.1); armR.add(st); st.rotation.x = 0.7; cyl(0.07, 0.07, 3.2, 6, M(0x7a5a2a), 0, 0.5, 0, st); mesh(geo('oct', () => new THREE.OctahedronGeometry(0.32)), M(0x9af0d0, { e: 0x6af0c0, ei: 4 }), 0, 2.3, 0, st); light = new THREE.PointLight(0x6af0c0, 14, 8, 1.6); light.position.set(0, 2.4, 0); st.add(light); }
-  if (o.torch) { const t = new THREE.Group(); t.position.set(0, -0.9, 0.1); armR.add(t); t.rotation.x = 0.9; cyl(0.08, 0.1, 1.2, 6, leather(), 0, 0.4, 0, t); cone(0.22, 0.6, 6, M(0xffa040, { e: 0xff7a20, ei: 3 }), 0, 1.2, 0, t); light = new THREE.PointLight(0xff9a48, 16, 9, 1.6); light.position.set(0, 1.4, 0); t.add(light); }
+  if (o.staff) { const sc = o.staffC || 0x9af0d0; const st = new THREE.Group(); st.position.set(0, -0.9, 0.1); armR.add(st); st.rotation.x = 0.7; cyl(0.07, 0.07, 3.2, 6, M(0x7a5a2a), 0, 0.5, 0, st); mesh(geo('oct', () => new THREE.OctahedronGeometry(0.32)), M(sc, { e: sc, ei: 4 }), 0, 2.3, 0, st); if (!o.noLight) { light = new THREE.PointLight(0x6af0c0, 14, 8, 1.6); light.position.set(0, 2.4, 0); st.add(light); } }
+  if (o.spear) { const sp = new THREE.Group(); sp.position.set(0, -0.9, 0.1); armR.add(sp); sp.rotation.x = Math.PI / 2; cyl(0.06, 0.06, 3.6, 5, M(0x5a3a22), 0, 0.8, 0, sp); cone(0.16, 0.6, 4, metal(), 0, 2.9, 0, sp); }
+  if (o.great) { const gs = new THREE.Group(); gs.position.set(0, -0.9, 0.2); armR.add(gs); gs.rotation.x = Math.PI / 2; box(0.2, 2.8, 0.06, M(o.great, { m: 0.9, r: 0.3, e: o.greatE || 0, ei: 1.5 }), 0, 1.6, 0, gs); box(0.8, 0.12, 0.14, gold(), 0, 0.15, 0, gs); }
+  if (o.censer) { const c = new THREE.Group(); c.position.set(0, -1.1, 0.2); armR.add(c); cyl(0.02, 0.02, 0.8, 4, dmetal(), 0, 0.4, 0, c); sph(0.3, 6, 5, M(0x8a7a40, { m: 0.7, e: 0x3a7ad0, ei: 1 }), 0, -0.1, 0, c); }
+  if (o.bell) { const bl = new THREE.Group(); bl.position.set(-0.1, -0.8, 0.5); armL.add(bl); bl.rotation.x = 0.6; cyl(0.45, 0.8, 1.3, 8, M(0x8a7a4a, { m: 0.8, r: 0.35 }), 0, 0, 0, bl); }
+  if (o.xbow) { const xb = new THREE.Group(); xb.position.set(0, -0.9, 0.3); armR.add(xb); xb.rotation.x = Math.PI / 2; box(0.14, 1.1, 0.14, M(0x4a3020), 0, 0.4, 0, xb); box(1.2, 0.1, 0.1, dmetal(), 0, 0.8, 0, xb); }
+  if (o.torch) { const t = new THREE.Group(); t.position.set(0, -0.9, 0.1); armR.add(t); t.rotation.x = 0.9; cyl(0.08, 0.1, 1.2, 6, leather(), 0, 0.4, 0, t); cone(0.22, 0.6, 6, M(0xffa040, { e: 0xff7a20, ei: 3 }), 0, 1.2, 0, t); if (!o.noLight) { light = new THREE.PointLight(0xff9a48, 16, 9, 1.6); light.position.set(0, 1.4, 0); t.add(light); } }
   if (o.sack) sph(0.55, 8, 6, M(0xb89a6a), -0.1, 1.9, -0.7, body).scale.set(1, 1.1, 0.8);
   if (o.quiver) { const q = cyl(0.2, 0.2, 1.1, 6, leather(), 0.3, 2.1, -0.55, body); q.rotation.x = 0.3; for (let i = 0; i < 3; i++) box(0.04, 0.4, 0.04, M(0xe8e0c8), 0.25 + i * 0.06, 2.75, -0.7, body); }
-  g.userData = { body, legL, legR, armL, armR, head, role, light, kind: 'hero' };
+  if (o.scale) g.scale.setScalar(o.scale);
+  g.userData = { body, legL, legR, armL, armR, head, light, kind: 'hero' };
+  return g;
+}
+// 장마다 다른 적 모습
+const FIG = {
+  hunter: { body: 0x5a5040, leg: 0x3a3428, arm: 0x5a5040, hood: 0x3a3a2a, bow: 1, quiver: 1, belt: 1, eye: 0xffa040, skinC: 0x9a8a7a },
+  treant: { body: 0x4a3a26, leg: 0x3a2a1a, arm: 0x4a3a26, skinC: 0x5a4630, eye: 0xffa040, bark: 1, scale: 1.3 },
+  monk: { body: 0x3a4a4a, robe: 1, leg: 0x2a3434, arm: 0x3a4a4a, hood: 0x2a3a3a, skinC: 0x8aa0a0, eye: 0x6ad0ff },
+  acolyte: { body: 0x2a3a5a, robe: 1, leg: 0x1a2a3a, arm: 0x2a3a5a, hood: 0x1e2c48, skinC: 0x8aa0a0, eye: 0x6ad0ff, staff: 1, staffC: 0x6ab0ff, noLight: 1 },
+  bellman: { body: 0x3a4a4a, robe: 1, leg: 0x2a3434, arm: 0x3a4a4a, hood: 0x2a3a3a, skinC: 0x8aa0a0, eye: 0x6ad0ff, bell: 1 },
+  monkw: { body: 0x2a3a3a, robe: 1, leg: 0x1a2a2a, arm: 0x2a3a3a, hood: 0x1a2828, skinC: 0x7a9090, eye: 0x6ad0ff, censer: 1, scale: 1.45 },
+  ashknight: { body: 0x4a4448, leg: 'dm', arm: 'dm', helm: 1, helmC: 0x5a5458, plume: 0x6a2a1a, eye: 0xff6a20, sword: 1, cape: 0x2a2224 },
+  xbow: { body: 0x4a4448, leg: 'dm', arm: 'dm', helm: 1, helmC: 0x5a5458, plume: 0, eye: 0xff6a20, xbow: 1 },
+  ashshield: { body: 0x4a4448, leg: 'dm', arm: 'dm', helm: 1, helmC: 0x5a5458, plume: 0, eye: 0xff6a20, sword: 1, shield: 1, shieldC: 0x3a3436 },
+  royal: { body: 0x3a2e2a, leg: 'dm', arm: 'dm', helm: 1, helmC: 0x6a5a40, plume: 0xc04a10, eye: 0xff6a20, great: 0x8a8a96, cape: 0x5a1a12, horns: 1, scale: 1.45 }
+};
+function makeWolf(big) {
+  const g = new THREE.Group(), body = new THREE.Group(); g.add(body); const fur = M(0x6a6470), dk = M(0x4a4450);
+  box(0.9, 0.8, 1.9, fur, 0, 1.15, 0, body); box(0.8, 0.5, 0.6, dk, 0, 1.55, -0.5, body);
+  const head = new THREE.Group(); head.position.set(0, 1.45, 1.1); body.add(head);
+  box(0.7, 0.6, 0.7, fur, 0, 0, 0, head); box(0.4, 0.3, 0.55, dk, 0, -0.1, 0.5, head);
+  for (const sx of [-1, 1]) { cone(0.12, 0.35, 4, dk, sx * 0.22, 0.42, -0.1, head); box(0.1, 0.08, 0.05, M(0xffa040, { e: 0xff7a20, ei: 5 }), sx * 0.18, 0.1, 0.36, head); }
+  const tail = box(0.18, 0.18, 0.9, dk, 0, 1.4, -1.25, body); tail.rotation.x = 0.6;
+  const legL = new THREE.Group(), legR = new THREE.Group(); body.add(legL, legR); legL.position.set(0, 0.9, 0.6); legR.position.set(0, 0.9, -0.6);
+  for (const L of [legL, legR]) for (const sx of [-1, 1]) box(0.22, 0.9, 0.22, dk, sx * 0.32, -0.45, 0, L);
+  const armR = new THREE.Group(), armL = new THREE.Group(); head.add(armR); body.add(armL);
+  if (big) g.scale.setScalar(1.6);
+  g.userData = { body, legL, legR, armL, armR, head, kind: 'wolf' };
+  return g;
+}
+function makeFoe(k) {
+  const f = (FOES[chapterIndex()] || FOES[0])[k] || {}, sk = f.skin || 'skel';
+  if (sk === 'wolf') return makeWolf(k === 'elite');
+  if (FIG[sk]) { const g = makeFigure(FIG[sk]); g.userData.kind = 'skel'; return g; }
+  return makeSkel(k);
+}
+// 보스 모습
+const BOSSFIG = {
+  hunter: { body: 0x5a7a3a, leg: 0x3a4a2a, arm: 0x5a7a3a, hood: 0x4a5a2e, antler: 1, spear: 1, cape: 0x2a3a1a, eye: 0xffa040, skinC: 0x9a8a7a, scale: 2.0, belt: 1 },
+  bishop: { body: 0x2a3a5a, robe: 1, leg: 0x1a2a3a, arm: 0x2a3a5a, skinC: 0x7a9aa0, eye: 0x6ad0ff, mitre: 1, staff: 1, staffC: 0x6ab0ff, noLight: 1, cape: 0x1a2848, scale: 2.1 },
+  king: { body: 0x3a3436, leg: 'dm', arm: 'dm', helm: 1, helmC: 0x4a4448, plume: 0, crown: 1, eye: 0xff6a20, great: 0x5a5a66, greatE: 0xff5a10, cape: 0x6a1a12, scale: 2.2 }
+};
+function makeBossOf(ai) {
+  if (!BOSSFIG[ai]) return makeBoss();
+  const g = makeFigure(BOSSFIG[ai]); const col = ai === 'hunter' ? 0xffa040 : ai === 'bishop' ? 0x6ab0ff : 0xff6a20;
+  const light = new THREE.PointLight(col, 18, 10, 1.6); light.position.set(0, 3, 1); g.userData.body.add(light); g.userData.light = light; g.userData.kind = 'boss';
   return g;
 }
 export function makeSkel(k) {
@@ -151,13 +219,13 @@ export class View {
     this.comp.setSize(this.W, this.H);
     return s;
   }
-  lights(s, amb = 1.3) {
-    s.add(new THREE.AmbientLight(0x4a4a78, amb)); s.add(new THREE.HemisphereLight(0x8a90c8, 0x2a1e18, 0.9));
+  lights(s, amb = 1.3, T) {
+    s.add(new THREE.AmbientLight(T ? T.amb : 0x4a4a78, amb)); s.add(new THREE.HemisphereLight(T ? T.hemi : 0x8a90c8, 0x2a1e18, 0.9));
     const fill = new THREE.DirectionalLight(0xffc89a, 0.9); fill.position.set(0, 12, 30); s.add(fill);
     const moon = this.moon = new THREE.DirectionalLight(0x6a78c0, 0.7); moon.position.set(-10, 30, 12); moon.castShadow = true; moon.shadow.mapSize.set(1024, 1024); Object.assign(moon.shadow.camera, { left: -30, right: 30, top: 30, bottom: -30 }); s.add(moon); s.add(moon.target);
   }
-  flame(p, x, y, z, k = 1, light = true) {
-    cone(0.32 * k, 0.9 * k, 6, M(0xff9a3a, { e: 0xff7a20, ei: 3 }), x, y, z, p);
+  flame(p, x, y, z, k = 1, light = true, col) {
+    cone(0.32 * k, 0.9 * k, 6, col && col !== 0xff9a48 ? M(col, { e: col, ei: 3 }) : M(0xff9a3a, { e: 0xff7a20, ei: 3 }), x, y, z, p);
     cone(0.18 * k, 0.6 * k, 6, M(0xffe08a, { e: 0xfff0b0, ei: 4 }), x, y - 0.1 * k, z, p);
     if (light) { const L = new THREE.PointLight(0xff9a48, 55 * k, 24, 1.6); L.position.set(x, y + 0.4, z + 0.8); p.add(L); this.flick.push({ L, b: 55 * k, ph: R() * 9 }); }
   }
@@ -197,10 +265,10 @@ export class View {
   /* ----- 1장 지하 지도 (한 번만 만들어요) ----- */
   buildMap() {
     this.mode = 'map';
-    const s = this.newScene(0x050407, 0x07060a); s.fog = new THREE.Fog(0x07060a, 52, 95); this.flick = []; this.lights(s, 1.25);
-    seed = 31;
-    const stone = [0x4a4550, 0x524d58, 0x5a5462, 0x463f4c, 0x55505c], bstone = [0x3e3440, 0x463a48, 0x4e4250, 0x3a3040, 0x4a3e4c], wet = [0x34404c, 0x384656, 0x2e3a46, 0x3c4a58];
-    const brick = [0x3e3846, 0x463f50, 0x4e4658, 0x38323f], bbrick = [0x3a2e3c, 0x423446, 0x4a3a50, 0x342a38];
+    const T = THEME();
+    const s = this.newScene(T.bg, T.fog); s.fog = new THREE.Fog(T.fog, 52, 95); this.flick = []; this.lights(s, 1.25, T);
+    seed = 31 + chapterIndex() * 7;
+    const stone = T.floor, bstone = T.bfloor, wet = T.wet, brick = T.wall, bbrick = T.bwall;
     const bossA = MAP.areas.findIndex(a => a.boss), inBoss = (i, j) => MAP.areas[bossA].r.some(([x, y, w, h]) => i >= x && i < x + w && j >= y && j < y + h);
     const torches = [];
     instBoxes(s, (add) => {
@@ -208,7 +276,7 @@ export class View {
         if (!floorCell(i, j)) continue;
         const x = cw(i), z = cw(j), h = 0.3 + R() * 0.1, wt = WATER[j * MW + i], cols = wt ? wet : inBoss(i, j) ? bstone : stone;
         add(x + (R() - .5) * 0.06, h / 2 - 0.3 - (wt ? 0.15 : 0), z + (R() - .5) * 0.06, 1.94, h, 1.94, cols[R() * cols.length | 0]);
-        if (!wt && R() < 0.06) add(x + (R() - .5) * 1.2, 0.04, z + (R() - .5) * 1.2, 0.6, 0.08, 0.5, 0x3e5a36);
+        if (!wt && R() < T.mossP) add(x + (R() - .5) * 1.2, 0.04, z + (R() - .5) * 1.2, 0.6, 0.08, 0.5, T.moss);
       }
     });
     // 벽: 방 뒤쪽(북쪽) 벽은 높게, 앞쪽·옆 벽은 낮게 해서 캐릭터가 가려지지 않게 해요
@@ -221,25 +289,36 @@ export class View {
         const back = floorCell(i, j + 1) && !floorCell(i, j - 1);
         const rows = back ? 6 : floorCell(i, j - 1) && !floorCell(i, j + 1) ? 1 : 3;
         for (let y = 0; y < rows; y++) { const off = (y + j) % 2 ? 0.5 : 0; add(x - 0.5 + off, y + 0.45, z, 1.02, 0.95, 1.9, bc[R() * 4 | 0]); add(x + 0.5 + off - (off ? 1 : 0), y + 0.45, z, 1.02, 0.95, 1.9, bc[R() * 4 | 0]); }
-        add(x, rows + 0.12, z, 2.02, 0.24, 2.02, 0x2a2630);
+        add(x, rows + 0.12, z, 2.02, 0.24, 2.02, T.top);
         if (back && i % 3 === 0 && !(i % 6 === 0 && R() < 0.3)) torches.push([x, z + 1.0]);
-        if (back && i % 6 === 3 && R() < 0.5) this.banner(s, x, z + 1.02, bc === bbrick);
+        if (back && T.banner && i % 6 === 3 && R() < 0.5) this.banner(s, x, z + 1.02, bc === bbrick, T.banner);
+        // 숲: 벽 위로 나무, 수도원: 푸른 창
+        if (T.trees && rows > 1) { add(x + (R() - .5) * 0.4, rows + 0.5, z, 2.2, 1 + R() * 0.6, 2.2, [0x2e3a26, 0x36402a, 0x3a3a2c][R() * 3 | 0]); }
+        if (T.windows && back && i % 4 === 2) { add(x, 3.2, z + 0.98, 0.9, 2.2, 0.06, 0x6ab0ff); }
       }
     });
     this.torchPos = torches;
-    for (const [x, z] of torches) { box(0.3, 1, 0.3, M(0x4a3020), x, 4, z, s); box(0.6, 0.25, 0.6, M(0x2a2830, { m: 0.7 }), x, 4.5, z, s); this.flame(s, x, 5.05, z, 1, false); }
+    for (const [x, z] of torches) { box(0.3, 1, 0.3, M(0x4a3020), x, 4, z, s); box(0.6, 0.25, 0.6, M(0x2a2830, { m: 0.7 }), x, 4.5, z, s); this.flame(s, x, 5.05, z, 1, false, T.torch); }
     // 횃불 빛은 가까운 곳에만 몇 개 켜요 (빛이 너무 많으면 느려져요)
-    this.pool = []; for (let k = 0; k < 8; k++) { const L = new THREE.PointLight(0xff9a48, 0, 22, 1.6); s.add(L); this.pool.push(L); this.flick.push({ L, b: 0, ph: k * 1.3, pool: true }); }
+    this.pool = []; for (let k = 0; k < 8; k++) { const L = new THREE.PointLight(T.torch, 0, 22, 1.6); s.add(L); this.pool.push(L); this.flick.push({ L, b: 0, ph: k * 1.3, pool: true }); }
     this.poolT = 0;
     // 물
-    for (const [x, y, w, h] of MAP.water) { const wm = mesh(new THREE.PlaneGeometry(w * CS, h * CS), M(0x3a6a9a, { e: 0x0a2040, ei: 0.6, op: 0.35, r: 0.2, m: 0.3 }), (x + w / 2) * CS, 0.02, (y + h / 2) * CS, s, false); wm.rotation.x = -Math.PI / 2; wm.receiveShadow = true; }
+    for (const [x, y, w, h] of MAP.water) { const wm = mesh(new THREE.PlaneGeometry(w * CS, h * CS), M(T.water, { e: 0x0a2040, ei: 0.6, op: 0.35, r: 0.2, m: 0.3 }), (x + w / 2) * CS, 0.02, (y + h / 2) * CS, s, false); wm.rotation.x = -Math.PI / 2; wm.receiveShadow = true; }
     // 기둥
-    for (const p of PILLARS) { box(2.4, 0.6, 2.4, M(0x5c5468), p.x, 0.3, p.z, s); instBoxes(s, add => { for (let y = 0.6; y < 6; y += 1.1) add(p.x, y + 0.5, p.z, 1.9, 1.05, 1.9, brick[R() * 4 | 0]); }); box(2.5, 0.5, 2.5, M(0x5c5468), p.x, 6.4, p.z, s); }
+    for (const p of PILLARS) {
+      if (T.trees) { cyl(0.8, 1.1, 4, 7, M(0x3a2a1c), p.x, 2, p.z, s); cone(2.4, 3, 6, M(0x2e3a26), p.x, 5, p.z, s); cone(1.8, 2.4, 6, M(0x3a4430), p.x, 6.4, p.z, s); continue; }
+      box(2.4, 0.6, 2.4, M(0x5c5468), p.x, 0.3, p.z, s); instBoxes(s, add => { for (let y = 0.6; y < 6; y += 1.1) add(p.x, y + 0.5, p.z, 1.9, 1.05, 1.9, brick[R() * 4 | 0]); }); box(2.5, 0.5, 2.5, M(0x5c5468), p.x, 6.4, p.z, s);
+    }
     // 구석 장식
     const barrel = (x, z) => { cyl(0.75, 0.75, 1.6, 10, M(0x6a4628), x, 0.8, z, s); cyl(0.8, 0.8, 0.12, 10, dmetal(), x, 0.3, z, s); cyl(0.8, 0.8, 0.12, 10, dmetal(), x, 1.3, z, s); };
-    MAP.areas.forEach((a, ai) => { const [x, y, w, h] = a.r[0]; if (a.boss) return; barrel(cw(x), cw(y) + 0.2); if (w > 6) barrel(cw(x) + 1.7, cw(y)); box(1.8, 1.6, 1.8, M(0x6a4628), cw(x + w - 1), 0.8, cw(y), s).rotation.y = 0.3 + ai; for (let k = 0; k < 3; k++) { const bx = cw(x + 1 + R() * (w - 2)), bz = cw(y + 1 + R() * (h - 2)); const b = box(1.2, 0.15, 0.15, bone(), bx, 0.12, bz, s); b.rotation.y = R() * 3; sph(0.35, 8, 6, bone(), bx + 0.8, 0.25, bz + 0.3, s); } });
+    const rock = (x, z, k) => { const r = mesh(geo('rock', () => new THREE.DodecahedronGeometry(0.8)), M([0x4a4a44, 0x55534c, 0x3e3e3a][k % 3]), x, 0.4, z, s); r.scale.set(1 + (k % 2) * 0.5, 0.7, 1); r.rotation.y = k; };
+    const decor = { forest: (a, ai, x, y, w, h) => { for (let k = 0; k < 4; k++) rock(cw(x + 1 + R() * (w - 2)), cw(y + 1 + R() * (h - 2)), ai + k); cyl(0.7, 0.8, 0.7, 7, M(0x5a4228), cw(x + w - 1), 0.35, cw(y), s); for (let k = 0; k < 3; k++) { const mx = cw(x + 1 + R() * (w - 2)), mz = cw(y + 1 + R() * (h - 2)); cyl(0.06, 0.08, 0.3, 4, M(0xd8d0bc), mx, 0.15, mz, s); sph(0.22, 6, 4, M(0xd06a3a, { e: 0x6a2a10, ei: 1 }), mx, 0.34, mz, s, 1.6); } },
+      abbey: (a, ai, x, y, w, h) => { for (let k = 0; k < 2; k++) { const bz = cw(y + 2 + k * 2); box(3.4, 0.5, 0.8, M(0x4a3626), cw(x + 3), 0.5, bz, s); box(3.4, 0.9, 0.15, M(0x4a3626), cw(x + 3), 0.9, bz - 0.4, s); } for (let k = 0; k < 3; k++) { const cx = cw(x + w - 2) + (k - 1) * 0.6; cyl(0.08, 0.08, 0.6 + k * 0.2, 5, M(0xe8e0c8), cx, 0.3 + k * 0.1, cw(y), s); this.flame(s, cx, 0.75 + k * 0.2, cw(y), 0.35, false); } },
+      tower: (a, ai, x, y, w, h) => { const bx = cw(x + 1), bz = cw(y); cyl(0.6, 0.4, 1.2, 6, dmetal(), bx, 0.6, bz, s); this.flame(s, bx, 1.5, bz, 0.9, false, T.torch); box(2.4, 2, 0.3, M(0x4a3020), cw(x + w - 2), 1, cw(y), s); for (let k = 0; k < 3; k++) box(0.1, 1.8, 0.1, metal(), cw(x + w - 2) - 0.7 + k * 0.7, 1.4, cw(y) + 0.25, s); }
+    }[CH.theme];
+    MAP.areas.forEach((a, ai) => { const [x, y, w, h] = a.r[0]; if (a.boss) return; if (decor) { decor(a, ai, x, y, w, h); return; } barrel(cw(x), cw(y) + 0.2); if (w > 6) barrel(cw(x) + 1.7, cw(y)); box(1.8, 1.6, 1.8, M(0x6a4628), cw(x + w - 1), 0.8, cw(y), s).rotation.y = 0.3 + ai; for (let k = 0; k < 3; k++) { const bx = cw(x + 1 + R() * (w - 2)), bz = cw(y + 1 + R() * (h - 2)); const b = box(1.2, 0.15, 0.15, bone(), bx, 0.12, bz, s); b.rotation.y = R() * 3; sph(0.35, 8, 6, bone(), bx + 0.8, 0.25, bz + 0.3, s); } });
     // 보스 방 바닥 문양
-    { const ring = mesh(geo('bring', () => new THREE.TorusGeometry(6, 0.08, 4, 48)), M(0x8a1a2a, { e: 0xa01a30, ei: 2 }), cw(MAP.boss[0]), 0.12, cw(MAP.boss[1]) + 3, s); ring.rotation.x = Math.PI / 2; ring.castShadow = false; }
+    { const ring = mesh(geo('bring', () => new THREE.TorusGeometry(6, 0.08, 4, 48)), M(T.ring, { e: T.ring, ei: 2 }), cw(MAP.boss[0]), 0.12, cw(MAP.boss[1]) + 3, s); ring.rotation.x = Math.PI / 2; ring.castShadow = false; }
     // 모닥불
     this.fires = MAP.fires.map(([fx, fy]) => {
       const x = cw(fx), z = cw(fy); for (let i = 0; i < 8; i++) { const a = i / 8 * 6.283; mesh(geo('dod', () => new THREE.DodecahedronGeometry(0.35)), M(0x5a5462), x + Math.cos(a) * 1.1, 0.15, z + Math.sin(a) * 1.1, s); }
@@ -269,13 +348,13 @@ export class View {
       const sp = new THREE.Group(); g.add(sp); for (let i = -1; i <= 1; i++) for (let j = -1; j <= 1; j++) cone(0.15, 0.8, 4, M(0x9a9aa6, { m: 0.8, r: 0.4 }), i * 0.5, 0.3, j * 0.5, sp);
       sp.position.y = -0.8; return { g, sp };
     });
-    this.embers = []; for (let i = 0; i < 18; i++) { const e = box(0.15, 0.15, 0.15, M(0xffb050, { e: 0xff8a30, ei: 5 }), 0, -5, 0, s); e.castShadow = false; this.embers.push({ m: e, t: R() * 6, x: (R() - .5) * 40, z: (R() - .5) * 30 }); }
+    this.embers = []; for (let i = 0; i < 18; i++) { const e = box(0.15, 0.15, 0.15, M(T.ember[0], { e: T.ember[1], ei: CH.theme === 'forest' ? 1 : 5 }), 0, -5, 0, s); e.castShadow = false; this.embers.push({ m: e, t: R() * 6, x: (R() - .5) * 40, z: (R() - .5) * 30 }); }
     this.camT.set(cw(MAP.start[0]), 0, cw(MAP.start[1])); this.camInit = false;
     this.resize();
   }
-  banner(s, x, z, dark) {
+  banner(s, x, z, dark, col = 0x7a1f22) {
     const g = new THREE.Group(); g.position.set(x, 5.4, z); s.add(g); box(2.2, 0.16, 0.16, M(0x8a6a30, { m: 0.6 }), 0, 0.1, 0, g);
-    box(1.8, 3.6, 0.08, M(dark ? 0x3a0e14 : 0x7a1f22), 0, -1.8, 0.05, g); box(0.7, 1.4, 0.1, gold(), 0, -1.9, 0.12, g);
+    box(1.8, 3.6, 0.08, M(dark ? 0x3a0e14 : col), 0, -1.8, 0.05, g); box(0.7, 1.4, 0.1, gold(), 0, -1.9, 0.12, g);
   }
 
   /* ----- 스냅숏을 장면에 반영 ----- */
@@ -294,7 +373,7 @@ export class View {
     // 적
     for (const e of S.en) {
       const key = 'e' + e.id; seen.add(key); let E = this.ents.get(key);
-      if (!E) { const m = e.k === 'boss' ? makeBoss() : makeSkel(e.k); s.add(m); E = { m, x: e.x, z: e.z, a: e.a, ph: R() * 6, base: m.scale.x }; this.ents.set(key, E); }
+      if (!E) { const m = e.k === 'boss' ? makeBossOf(CH.boss.ai) : makeFoe(e.k); s.add(m); E = { m, x: e.x, z: e.z, a: e.a, ph: R() * 6, base: m.scale.x }; this.ents.set(key, E); }
       const k = exact ? 1 : Math.min(1, dt * 12); E.x += (e.x - E.x) * k; E.z += (e.z - E.z) * k; E.a = lerpA(E.a, e.a, Math.min(1, dt * 14));
       animEnemy(E, e, dt, t, this);
     }
@@ -304,7 +383,7 @@ export class View {
       if (!E) { E = { m: projMesh(p.k), x: p.x, z: p.z }; s.add(E.m); this.ents.set(key, E); }
       const k = exact ? 1 : Math.min(1, dt * 18); E.x += (p.x - E.x) * k; E.z += (p.z - E.z) * k;
       E.m.position.set(E.x, (p.k === 'potion' ? p.y : 0) + 1.6, E.z); E.m.rotation.y = -p.a; if (p.k === 'potion') E.m.rotation.z += dt * 12;
-      if ((p.k === 'pierce' || p.k === 'orb') && (E.tr = (E.tr || 0) - dt) <= 0) { E.tr = 0.03; this.burst(E.x, 1.6, E.z, p.k === 'pierce' ? 0xffe08a : 0x9af0d0, 2, 1.2, 0.3, 0.1); }
+      const TC = { pierce: 0xffe08a, orb: 0x9af0d0, eorb: 0x6ab0ff, ember: 0xff7a20 }[p.k]; if (TC && (E.tr = (E.tr || 0) - dt) <= 0) { E.tr = 0.04; this.burst(E.x, 1.6, E.z, TC, 2, 1.2, 0.3, 0.1); }
     }
     // 바닥 효과
     for (const z of S.zn) {
@@ -434,6 +513,10 @@ function projMesh(k) {
     box(1.4, 0.07, 0.07, M(0x8a5a2a), 0, 0, 0, g); const h = cone(0.1, 0.3, 4, M(c, { e: c, ei: k === 'arrow' ? 0.3 : 2 }), 0.8, 0, 0, g); h.rotation.z = -Math.PI / 2;
     box(0.3, 0.02, 0.2, M(0xe8e0c8), -0.6, 0, 0, g); if (k === 'pierce') box(1.8, 0.04, 0.04, M(0xffe08a, { e: 0xffd060, ei: 2 }), -0.6, 0, 0, g);
   } else if (k === 'orb') { sph(0.28, 8, 6, M(0xd8fff0, { e: 0x9af0d0, ei: 4 }), 0, 0, 0, g); }
+  else if (k === 'spear') { box(2.2, 0.08, 0.08, M(0x5a3a22), 0, 0, 0, g); const h = cone(0.14, 0.5, 4, M(0xffb060, { e: 0xff7a20, ei: 2 }), 1.3, 0, 0, g); h.rotation.z = -Math.PI / 2; }
+  else if (k === 'eorb') { sph(0.34, 8, 6, M(0x9ad0ff, { e: 0x3a8ae0, ei: 4 }), 0, 0, 0, g); }
+  else if (k === 'bolt') { box(1, 0.08, 0.08, M(0x3a2a20), 0, 0, 0, g); const h = cone(0.1, 0.25, 4, M(0xff6a20, { e: 0xff5a10, ei: 2 }), 0.6, 0, 0, g); h.rotation.z = -Math.PI / 2; }
+  else if (k === 'ember') { sph(0.36, 8, 6, M(0xffa040, { e: 0xff5a10, ei: 4 }), 0, 0, 0, g); }
   else if (k === 'potion') { sph(0.3, 8, 6, M(0xd0543a, { e: 0x8a2a20, ei: 1 }), 0, 0, 0, g); cyl(0.1, 0.12, 0.3, 6, M(0xd8d0bc), 0, 0.35, 0, g); }
   g.traverse(o => o.castShadow = false); return g;
 }
@@ -442,7 +525,7 @@ function zoneMesh(z) {
   if (z.k === 'tcircle') { const f = mesh(geo('zc', () => new THREE.CircleGeometry(1, 32)), M(0xff2a2a, { e: 0xff1a1a, ei: 1.5, op: 0.25, uniq: true }), 0, 0, 0, g, false); f.rotation.x = -Math.PI / 2; f.scale.setScalar(z.r); const r = mesh(geo('zr', () => new THREE.RingGeometry(0.94, 1, 40)), M(0xff4a3a, { e: 0xff2a1a, ei: 2, op: 0.8 }), 0, 0.01, 0, g, false); r.rotation.x = -Math.PI / 2; r.scale.setScalar(z.r); g.userData.fill = f; }
   else if (z.k === 'tcone') { const f = mesh(new THREE.CircleGeometry(z.r, 24, -z.arc / 2, z.arc), M(0xff2a2a, { e: 0xff1a1a, ei: 1.5, op: 0.3, uniq: true }), 0, 0, 0, g, false); f.rotation.x = -Math.PI / 2; f.rotation.z = -z.a; g.userData.fill = f; }
   else if (z.k === 'tline') { const f = mesh(new THREE.PlaneGeometry(z.len, z.w), M(0xff2a2a, { e: 0xff1a1a, ei: 1.5, op: 0.3, uniq: true }), z.len / 2, 0, 0, g, false); f.rotation.x = -Math.PI / 2; g.rotation.y = -z.a; g.userData.fill = f; }
-  else if (z.k === 'fire') { for (let i = 0; i < 4; i++) cone(0.35, 1 + Math.random(), 5, M(0x5a1aa0, { e: 0x8a2ad0, ei: 3 }), (Math.random() - .5) * 1.4, 0.5, (Math.random() - .5) * 1.4, g); const f = mesh(geo('zc', () => new THREE.CircleGeometry(1, 32)), M(0x3a0a5a, { e: 0x5a1a8a, ei: 1, op: 0.5 }), 0, 0, 0, g, false); f.rotation.x = -Math.PI / 2; f.scale.setScalar(z.r); g.traverse(o => o.castShadow = false); }
+  else if (z.k === 'fire') { const fz = THEME().fz; for (let i = 0; i < 4; i++) cone(0.35, 1 + Math.random(), 5, M(fz[0], { e: fz[1], ei: 3 }), (Math.random() - .5) * 1.4, 0.5, (Math.random() - .5) * 1.4, g); const f = mesh(geo('zc', () => new THREE.CircleGeometry(1, 32)), M(fz[0], { e: fz[1], ei: 0.5, op: 0.5 }), 0, 0, 0, g, false); f.rotation.x = -Math.PI / 2; f.scale.setScalar(z.r); g.traverse(o => o.castShadow = false); }
   else if (z.k === 'rain') { const r = mesh(geo('zr', () => new THREE.RingGeometry(0.94, 1, 40)), M(0xffe08a, { e: 0xffd060, ei: 2, op: 0.7 }), 0, 0.01, 0, g, false); r.rotation.x = -Math.PI / 2; r.scale.setScalar(z.r); g.userData.drops = []; for (let i = 0; i < 10; i++) { const d = box(0.06, 1, 0.06, M(0xe8e0c8, { e: 0xffe08a, ei: 1 }), (Math.random() - .5) * z.r * 1.4, 4, (Math.random() - .5) * z.r * 1.4, g); d.castShadow = false; g.userData.drops.push(d); } }
   else if (z.k === 'ptrap') { box(1.2, 0.12, 1.2, dmetal(), 0, 0.05, 0, g); for (let i = 0; i < 6; i++) { const a = i / 6 * 6.28; const t = cone(0.1, 0.4, 4, metal(), Math.cos(a) * 0.5, 0.25, Math.sin(a) * 0.5, g); t.rotation.z = Math.cos(a) * 0.5; t.rotation.x = -Math.sin(a) * 0.5; } }
   return g;
@@ -483,11 +566,11 @@ function animEnemy(E, e, dt, t, view) {
     if (u.light) u.light.intensity = 18 + Math.sin(t * 1.5) * 2 + (e.ph === 3 ? 10 : 0);
   }
   E.ar = E.ar == null ? ar : E.ar + (ar - E.ar) * Math.min(1, dt * 22); u.armR.rotation.x = E.ar;
-  m.position.y = 0;
+  m.position.y = e.k === 'boss' && CH.boss.ai === 'bishop' ? 0.6 + Math.sin(t * 1.6) * 0.25 : 0;
   if (e.st === 'rise') m.position.y = -1.5;
   // 잠든 해골은 고개를 숙이고 있어요
   const zz = e.st === 'sleep' || e.st === 'home' && !e.mv ? 1 : 0; E.zz = (E.zz || 0) + (zz - (E.zz || 0)) * Math.min(1, dt * 4);
-  if (e.k !== 'boss') { u.head.rotation.x = E.zz * 0.6; u.body.rotation.x = E.zz * 0.22; }
+  if (e.k !== 'boss') { u.head.rotation.x = E.zz * 0.6; u.body.rotation.x = E.zz * 0.22 + (u.kind === 'wolf' && (e.st === 'wind' || e.st === 'charge') ? -0.25 : 0); }
   if (e.hp <= 0) { E.dieT = (E.dieT || 0) + dt; m.position.y = -E.dieT * 1.8; u.body.rotation.z = E.dieT * 1.2; }
   const pop = e.ht ? 1.08 : 1; m.scale.setScalar((E.base || 1) * pop);
   if (e.sn) u.head.rotation.y = t * 6; else u.head.rotation.y = 0;
