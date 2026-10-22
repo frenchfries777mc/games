@@ -110,3 +110,4 @@ index.html | 랭킹 표 | 최장 생존 일수, 생존 순위는 서버 준비 �
 - munjang/index.html | 새 문제 12개(스무 명/가는 대로/때문에/도무지/좀처럼/마치/제발/할머니께서 주셨다/오셨다/제가/말씀하셨다 등)의 문장·해설·팁(한국어 전용 콘텐츠), 결과 '다시 볼 문장'의 분류 표시는 기존 문구 재사용 | educations | 2026-10-21
 - planetsearch/index.html | 신호 {n} / 4 정확 · 기록 {n} / 3, 총 인구 / 명 / 최고 기록!, {n} 부족 (정비소 버튼) | educations | 2026-10-21
 - timeline/index.html | 점수 (기존 문구 재사용, 결과 화면 점수 라벨) | educations | 2026-10-21
+- patchnotes.json | "Vowkeep 난이도 상승" 6줄 | Vowkeep b5 | 2026-10-22
