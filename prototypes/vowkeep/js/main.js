@@ -1,7 +1,7 @@
 // Vowkeep · © 2026 Frenchfries777 · CC BY-NC-ND 4.0
 // 화면 흐름, 조작, 멀티(친구 초대, PeerJS), 저장
 import { View } from './render.js';
-import { createGame, step, snapshot, chooseBless, carryOver, INTRO_T } from './sim.js';
+import { createGame, step, snapshot, chooseBless, carryOver, INTRO_T, HV_DELAY, leapDist } from './sim.js';
 import { ROLES, ROLE_IDS, BLESSINGS, CHAPTERS, CH, FOES, MAP, ACHIEVEMENTS, GEAR_TIERS, GEAR_COST, VERSION, BUILD, roleLevel } from './data.js';
 import { collide as mapCollide, areaAt, floorCell, MW, MH, CS, cw, useChapter, chapterIndex } from './map.js';
 import * as SFX from './sfx.js';
@@ -343,6 +343,9 @@ function localMove(p, inp, dt) {
   if (Math.hypot(L.x - p.x, L.z - p.z) > 5) { L.x = p.x; L.z = p.z; }
   L.rollCd = Math.max(0, (L.rollCd || 0) - dt);
   let mx = inp.mx, mz = inp.mz; const ml = Math.hypot(mx, mz); if (ml > 1) { mx /= ml; mz /= ml; }
+  // 기사 강타: 방장이 강타를 알려 오면 내 화면에서도 조준한 쪽으로 뛰어올라요
+  if (p.aN !== L.aN) { if (L.aN != null && p.ak === 'hv') { const d = leapDist(L, inp.ax, inp.az), a = p.a; L.lp = HV_DELAY; L.lpx = Math.cos(a) * d / HV_DELAY; L.lpz = Math.sin(a) * d / HV_DELAY; } L.aN = p.aN; }
+  if (L.lp > 0) { L.lp -= dt; L.x += L.lpx * dt; L.z += L.lpz * dt; mapCollide(L, 0.6); return; }
   if (inp.roll && L.rollCd <= 0 && !(L.roll > 0)) { L.roll = 0.35; L.rollCd = 1.2 * ((p.b || []).indexOf('roll') >= 0 ? 0.6 : 1); const ra = ml > 0.1 ? Math.atan2(mz, mx) : p.a; L.rdx = Math.cos(ra); L.rdz = Math.sin(ra); }
   if (L.roll > 0) { L.roll -= dt; L.x += L.rdx * 15 * dt; L.z += L.rdz * 15 * dt; }
   else { const sp = R.speed * ((p.b || []).indexOf('feet') >= 0 ? 1.12 : 1) * (p.ra ? 1.3 : 1) * (p.bk ? 0.8 : 1); L.x += mx * sp * dt; L.z += mz * sp * dt; }
@@ -372,18 +375,19 @@ function pickBlessIdx(i) {
 // 기술마다 번쩍임, 바닥 문양, 충격파 같은 연출을 붙여요
 function skillFx(e) {
   const c = Math.cos(e.a || 0), s = Math.sin(e.a || 0), mine = e.id === S.me;
+  if (mine && ['block', 'pierce', 'ward', 'trap', 'rain', 'heal'].includes(e.s)) view.shake = Math.max(view.shake, 0.35);
   switch (e.s) {
     case 'block': view.dome(e.x + c * 0.6, e.z + s * 0.6, 1.9, 0xffe08a, 1.2); view.burst(e.x + c, 1.6, e.z + s, 0xffe08a, 10, 5, 0.35, 0.1); view.flash(e.x, e.z, 0xffe08a, 70); SFX.play('clang'); break;
-    case 'dash': view.streak(e.x, e.z, e.a, 6, 0xcfe0ff, 0.4, 1.2); view.burst(e.x, 0.4, e.z, 0xbcae94, 16, 5, 0.6, 0.16); view.shock(e.x + c * 6, e.z + s * 6, 2.4, 0xcfe0ff, 0.35); view.flash(e.x + c * 4, e.z + s * 4, 0xcfe0ff, 90); if (mine) view.shake = Math.max(view.shake, 0.5); SFX.play('roll'); break;
-    case 'taunt': view.shock(e.x, e.z, 10, 0xff6a4a, 0.6); view.rune(e.x, e.z, 2.6, 0xff6a4a, 1.2, 3); view.rise(e.x, e.z, 0xff6a4a, 18, 1.5, 0.9, 7); view.flash(e.x, e.z, 0xff6a4a, 120); if (mine) view.shake = Math.max(view.shake, 0.7); SFX.play('roar'); break;
+    case 'dash': view.streak(e.x, e.z, e.a, 6, 0xcfe0ff, 0.4, 1.2); view.burst(e.x, 0.4, e.z, 0xbcae94, 16, 5, 0.6, 0.16); view.shock(e.x + c * 6, e.z + s * 6, 2.4, 0xcfe0ff, 0.35); view.flash(e.x + c * 4, e.z + s * 4, 0xcfe0ff, 90); if (mine) view.shake = Math.max(view.shake, 0.75); SFX.play('roll'); break;
+    case 'taunt': view.shock(e.x, e.z, 10, 0xff6a4a, 0.6); view.rune(e.x, e.z, 2.6, 0xff6a4a, 1.2, 3); view.rise(e.x, e.z, 0xff6a4a, 18, 1.5, 0.9, 7); view.flash(e.x, e.z, 0xff6a4a, 120); if (mine) view.shake = Math.max(view.shake, 1.0); SFX.play('roar'); break;
     case 'pierce': view.streak(e.x, e.z, e.a, 18, 0xffe08a, 0.3, 0.35); view.burst(e.x + c, 1.6, e.z + s, 0xffe08a, 12, 6, 0.4, 0.12); view.flash(e.x, e.z, 0xffe08a, 80); break;
     case 'rain': view.rune(e.x, e.z, 1.2, 0xffd36b, 0.5, 5); view.rise(e.x, e.z, 0xffd36b, 8, 0.8, 0.5, 9); break;
     case 'heal': view.rune(e.x, e.z, 4.5, 0x9af0a8, 0.9, 1.5); view.rise(e.x, e.z, 0x9af0a8, 12, 4, 1, 4); view.column(e.x, e.z, 0x9af0a8, 0.5); view.flash(e.x, e.z, 0x9af0a8, 45); break;
     case 'ward': view.rune(e.x, e.z, 5, 0x9af0e0, 0.9, -1.5); view.flash(e.x, e.z, 0x9af0e0, 40); break;
-    case 'raise': view.rune(e.x, e.z, 8, 0xfff0b0, 1.8, 1); view.column(e.x, e.z, 0xfff0b0, 1.4); view.rise(e.x, e.z, 0xfff0b0, 28, 7, 1.6, 6); view.shock(e.x, e.z, 8, 0xfff0b0, 0.7); view.flash(e.x, e.z, 0xfff0b0, 200); view.shake = Math.max(view.shake, 0.6); break;
+    case 'raise': view.rune(e.x, e.z, 8, 0xfff0b0, 1.8, 1); view.column(e.x, e.z, 0xfff0b0, 1.4); view.rise(e.x, e.z, 0xfff0b0, 28, 7, 1.6, 6); view.shock(e.x, e.z, 8, 0xfff0b0, 0.7); view.flash(e.x, e.z, 0xfff0b0, 200); view.shake = Math.max(view.shake, 0.9); break;
     case 'potion': view.burst(e.x + c, 1.8, e.z + s, 0xd0543a, 6, 3, 0.3, 0.1); break;
     case 'trap': view.rune(e.x, e.z, 1.5, 0xffb060, 0.8, 6); view.burst(e.x, 0.3, e.z, 0x9a9aa6, 10, 4, 0.4, 0.12); SFX.play('click'); break;
-    case 'rally': view.shock(e.x, e.z, 9, 0xffd36b, 0.6); view.rune(e.x, e.z, 3, 0xffb040, 1.2, -3); view.flash(e.x, e.z, 0xffb040, 120); if (mine) view.shake = Math.max(view.shake, 0.6); SFX.play('roar'); break;
+    case 'rally': view.shock(e.x, e.z, 9, 0xffd36b, 0.6); view.rune(e.x, e.z, 3, 0xffb040, 1.2, -3); view.flash(e.x, e.z, 0xffb040, 120); if (mine) view.shake = Math.max(view.shake, 0.9); SFX.play('roar'); break;
   }
 }
 const COL = { knight: 0xcfe0ff, squire: 0xffb060 };
@@ -395,8 +399,10 @@ function onEvent(e) {
     case 'eshoot': SFX.play('arrow'); break;
     case 'ehit': if (e.hv) view.spark(e.x, e.z, e.id, true); else view.burst(e.x, 1.6, e.z, 0xe8e0c8, e.crit ? 6 : 3, 4, 0.3, 0.09); num(e.x, e.z, e.v, e.crit ? '#ffd36b' : '#ffffff', e.crit ? 1.3 : 1); SFX.play('hit'); break;
     case 'pdodge': view.ring(e.x, e.z, 2.6, 0x9ad0ff, 0.4); view.streak(e.x, e.z, 0, 0.1, 0x9ad0ff, 0.2, 0.1); view.rise(e.x, e.z, 0x9ad0ff, 10, 1, 0.6, 6); if (e.id === me) { num(e.x, e.z, '완벽한 회피!', '#9ad0ff', 1.3, 4.2); view.flash(e.x, e.z, 0x9ad0ff, 120); SFX.play('parry'); if (S.net === 'solo') S.slowT = Math.max(S.slowT || 0, 0.45); } break;
-    case 'heavy': { const hp = view.entPos('p' + e.id); if (hp) { view.ring(hp.x + Math.cos(e.a) * 1.4, hp.z + Math.sin(e.a) * 1.4, 2.4, 0xffe08a, 0.35); view.burst(hp.x + Math.cos(e.a) * 1.4, 0.3, hp.z + Math.sin(e.a) * 1.4, 0xbcae94, 12, 6, 0.5, 0.14); } }
-      view.shock(e.x, e.z, 3, 0xffe08a, 0.35); view.streak(e.x - Math.cos(e.a) * 2, e.z - Math.sin(e.a) * 2, e.a, 4, 0xfff0b0, 0.25, 0.6); view.rise(e.x, e.z, 0xffd36b, 10, 1, 0.5, 7); view.flash(e.x, e.z, 0xffe08a, 110); if (e.id === me) { num(e.x, e.z, '강타!', '#ffd36b', 1.4, 4.2); view.shake = Math.max(view.shake, 0.45); } SFX.play('clang'); break;
+    case 'heavy': { // 내려찍은 자리: 큰 충격파 두 겹, 흙먼지, 땅 문양, 화면 크게 흔들기
+      const hp = view.entPos('p' + e.id); if (hp) { view.ring(hp.x + Math.cos(e.a) * 1.4, hp.z + Math.sin(e.a) * 1.4, 3.4, 0xffe08a, 0.4); view.burst(hp.x + Math.cos(e.a) * 1.4, 0.3, hp.z + Math.sin(e.a) * 1.4, 0xbcae94, 26, 9, 0.6, 0.18); }
+      view.shock(e.x, e.z, 6, 0xffe08a, 0.45); view.shock(e.x, e.z, 3.2, 0xffffff, 0.3); view.rune(e.x, e.z, 2.2, 0xffb040, 0.7, 0); view.streak(e.x - Math.cos(e.a) * 2.5, e.z - Math.sin(e.a) * 2.5, e.a, 5, 0xfff0b0, 0.28, 0.9); view.rise(e.x, e.z, 0xffd36b, 16, 1.6, 0.6, 9); view.flash(e.x, e.z, 0xffe08a, 150);
+      if (e.id === me) { num(e.x, e.z, '강타!', '#ffd36b', 1.5, 4.2); view.shake = Math.max(view.shake, 1.0); if (S.net === 'solo') S.slowT = Math.max(S.slowT || 0, 0.12); } SFX.play('clang'); break; }
     case 'weak': num(e.x, e.z, '약점!', '#ff9c4a', 1.4, 3.8); view.shock(e.x, e.z, 3, 0xff7a20, 0.35); view.burst(e.x, 2.4, e.z, 0xffb060, 14, 9, 0.5, 0.14); view.flash(e.x, e.z, 0xff7a20, 90); view.shake = Math.max(view.shake, 0.35); SFX.play('parry'); break;
     case 'phit': num(e.x, e.z, '-' + e.v, '#ff7a6a', 1); if (e.id === me) { view.shake = Math.max(view.shake, 0.5); SFX.play('phit'); } break;
     case 'ekill': {
@@ -412,7 +418,7 @@ function onEvent(e) {
     case 'heal': num(e.x, e.z, '+' + e.v, '#9af0a8', 1); view.burst(e.x, 1.5, e.z, 0x9af0c0, 6, 3, 0.7, 0.1); SFX.play('heal'); break;
     case 'ward': { const p = view.entPos('p' + e.id); if (p) { view.dome(p.x, p.z, 1.8, 0x9af0e0, 0.9); view.rise(p.x, p.z, 0x9af0e0, 8, 1, 0.8, 4); } break; }
     case 'rally': { const p = view.entPos('p' + e.id); if (p) { view.ring(p.x, p.z, 2.4, 0xffd36b); view.rise(p.x, p.z, 0xffb040, 8, 1, 0.7, 6); } break; }
-    case 'skill': skillFx(e); break;
+    case 'skill': setTimeout(() => skillFx(e), 130); break; // 예비 동작이 끝나고 터지는 순간에 맞춰요
     case 'mark': view.rune(e.x, e.z, 1.6, 0xff3a3a, 1.4, 4); view.column(e.x, e.z, 0xff3a3a, 0.6); view.flash(e.x, e.z, 0xff3a3a, 60); break;
     case 'splash': view.burst(e.x, 0.6, e.z, 0x9af0a8, 16, 6, 0.6, 0.14); view.ring(e.x, e.z, 3, 0x9af0a8, 0.5); view.rise(e.x, e.z, 0x9af0a8, 10, 2.5, 0.8, 4); view.flash(e.x, e.z, 0x9af0a8, 70); break;
     case 'down': SFX.play('down'); if (e.id === me) { S.everDown = true; bigMsg('쓰러졌어요', '동료가 일으켜 줄 때까지 버텨요', 2200); } break;
