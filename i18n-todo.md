@@ -177,3 +177,6 @@ crownenvoy/i18n.js | V.0.4.summary | 교황청·신성로마제국 황제 선거
 
 ## Vowkeep b19 (2026-10-22)
 - patchnotes.json | "Vowkeep 과장된 강타·기술 동작" 5줄 | Vowkeep b19 | 2026-10-22
+
+## Vowkeep b20 (2026-10-22)
+- patchnotes.json | "Vowkeep 실제로 뛰어오르는 강타" 3줄 | Vowkeep b20 | 2026-10-22
