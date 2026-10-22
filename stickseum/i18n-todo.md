@@ -30,3 +30,6 @@ patchnotes.json | v337 items[1] | 사이트에서 바로 플레이가 새 창에
 patchnotes.json | v338 title | 닿을 수 없는 발판 수정 | build 338 | 2026-10-20
 patchnotes.json | v338 items[0] | 무너지는 다리의 거점 발판과 높은 발판에 점프로 올라갈 수 있게 수정 | build 338 | 2026-10-20
 patchnotes.json | v338 items[1] | 화산 지대·폐허 도시·초대형 경기장의 닿지 않던 높은 발판 높이 조정 | build 338 | 2026-10-20
+patchnotes.json | v339 title | 모바일 터치 공격 조작 개선 | build 339 | 2026-10-20
+patchnotes.json | v339 items[0] | 모바일에서 빈 공간을 터치하면 그 방향으로 공격 | build 339 | 2026-10-20
+patchnotes.json | v339 items[1] | 더블탭과 핀치 확대 방지 | build 339 | 2026-10-20
