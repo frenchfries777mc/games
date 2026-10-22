@@ -105,7 +105,7 @@ function hurtEnemy(G, e, dmg, p, o) {
   if (e.hp <= 0 || e.st === 'rise') return 0;
   if (e.st === 'sleep' || e.st === 'home') wake(G, e);
   const E = G.EN[e.k];
-  let d = dmg * (p ? p.dmgMul * (hasB(p, 'blade') ? 1.15 : 1) * (p.rally > 0 ? 1.3 : 1) * (p.focus > 0 ? 1.5 : 1) * (o.basic ? 1 + Math.min(p.combo || 0, 15) * 0.02 : 1) : 1);
+  let d = dmg * (p ? p.dmgMul * (hasB(p, 'blade') ? 1.15 : 1) * (p.rally > 0 ? 1.3 : 1) * (p.focus > 0 ? 1.5 : 1) : 1);
   if (e.mark > 0) d *= 1.5;
   const from = o.from || p;
   if (E.front && from && !o.pierce) { if (angDiff(e.a, angTo(e, from)) < 1.0) { d *= E.front; ev(G, 'clang', { x: e.x, z: e.z }); } }
@@ -115,7 +115,6 @@ function hurtEnemy(G, e, dmg, p, o) {
   }
   d = Math.max(1, Math.round(d));
   e.hp -= d; e.hitT = 0.15; ev(G, 'ehit', { x: e.x, z: e.z, v: d, id: e.id, crit: d > dmg * 1.4, hv: o.heavy ? 1 : 0 });
-  if (o.basic && p && !p.bot && p.role === 'knight' && o.aid && p.lastAid !== o.aid) { p.lastAid = o.aid; p.combo = (p.comboT > 0 ? p.combo || 0 : 0) + 1; p.comboT = 1.2; if (o.heavy) ev(G, 'heavy', { id: p.id, x: e.x, z: e.z, a: angTo(p, e) }); }
   if (p && hasB(p, 'leech') && alive(p)) p.hp = Math.min(p.maxhp, p.hp + 1);
   if ((o.burn || (p && hasB(p, 'fire') && o.basic)) && e.hp > 0) { e.burn = 3; }
   if (o.kb && e.k !== 'boss') { e.vx += Math.cos(o.kbA) * o.kb; e.vz += Math.sin(o.kbA) * o.kb; }
@@ -138,8 +137,11 @@ function aimPoint(p, inp, range) {
 function basicAttack(G, p) {
   const R = ROLES[p.role], A = R.atk;
   p.cd.atk = A.cd * cdMul(p, 'atk');
-  // 연타(기사만): 적을 맞힐 때만 쌓이고(1.2초 안에 이어서), 3번째 맞힘마다 강타가 나가요. 봇은 쓰지 않아요
-  const cmb = !p.bot && p.role === 'knight', aid = p.atkN = (p.atkN || 0) + 1, heavy = cmb && (p.comboT > 0 ? p.combo || 0 : 0) % 3 === 2, hm = heavy ? 1.7 : 1;
+  // 기사 3단 베기: 공격, 공격, 강타 뒤 처음부터 (1.2초 쉬면 처음부터). 봇은 쓰지 않아요
+  const cmb = !p.bot && p.role === 'knight', aid = p.atkN = (p.atkN || 0) + 1;
+  if (cmb) { p.combo = p.comboT > 0 ? ((p.combo || 0) + 1) % 3 : 0; p.comboT = 1.2; }
+  const heavy = cmb && p.combo === 2, hm = heavy ? 1.7 : 1;
+  if (heavy) ev(G, 'heavy', { id: p.id, x: p.x + Math.cos(p.a) * 1.6, z: p.z + Math.sin(p.a) * 1.6, a: p.a });
   p.anim = heavy ? 'hv' : 'atk'; p.animT = heavy ? 0.55 : 0.32; p.animN = (p.animN || 0) + 1;
   if (A.kind === 'melee') {
     ev(G, 'swing', { id: p.id, x: p.x, z: p.z, a: p.a, r: A.range, role: p.role });
