@@ -196,3 +196,6 @@ crownenvoy/CrownEnvoy-v0.4.html | KON (영토 한글 이름 1,451개) | 영어 �
 
 ## Vowkeep b22 (2026-10-22)
 - patchnotes.json | "Vowkeep 두리번거리기와 걷기 동작" 3줄 | Vowkeep b22 | 2026-10-22
+
+## Vowkeep b23 (2026-10-22)
+- patchnotes.json | "Vowkeep 잡몹 난이도 낮춤" 3줄 | Vowkeep b23 | 2026-10-22
