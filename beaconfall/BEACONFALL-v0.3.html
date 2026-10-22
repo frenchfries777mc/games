@@ -368,7 +368,7 @@ html:not(.introDone) #ui,html:not(.introDone) #authgate,html:not(.introDone) #au
     <button class="btn" data-act="skins"><span class="arrow">▶</span>스킨 상점<span class="en">SKIN SHOP</span></button>
     <button class="btn" data-act="stats"><span class="arrow">▶</span>통계<span class="en">STATS</span></button>
     <button class="btn" data-act="settings"><span class="arrow">▶</span>설정<span class="en">SETTINGS</span></button>
-    <p class="foot">v0.3<br>build 90</p>
+    <p class="foot">v0.3<br>build 91</p>
   </nav>
 </div>
 
@@ -10876,6 +10876,19 @@ async function bcClaim(){
 function bcMaybe(){if(!document.hidden&&Date.now()-bcLast>15000){bcClaim().then(n=>{if(n&&$('#bcbal'))$('#bcbal').textContent=bC(settings.bc);});}}
 try{document.addEventListener('visibilitychange',bcMaybe);window.addEventListener('focus',bcMaybe);window.addEventListener('bf-login',()=>{bcLast=0;bcMaybe();});}catch(e){}
 let skArm='';
+/* 나가기: 이 창을 닫아요. 브라우저가 막으면(직접 연 창이 아닐 때) 자체 창으로 안내해요. */
+function exitWindow(){
+  try{if(mode==='play')saveWorld(true);}catch(e){}
+  try{window.close();}catch(e){}
+  setTimeout(()=>{
+    if(window.closed)return;
+    openModal(`<h2>나가기<small>EXIT</small></h2><p class="hint">이 창은 직접 닫을 수 없어요. 탭을 닫거나 사이트로 이동해 주세요.</p>
+      <div class="actions"><button class="btn sm" data-gosite>사이트로 이동</button><button class="btn sm ghost" data-close>닫기</button></div>`,m=>{
+      m.querySelector('[data-close]').onclick=closeModal;
+      m.querySelector('[data-gosite]').onclick=()=>{location.href='https://frenchfries777mc.github.io/games/';};
+    },'single');
+  },350);
+}
 function showSkins(){
   skArm='';const sb=window.bfSb;
   const own=settings.skinsOwn||[],cur=settings.skin||'';
@@ -11138,8 +11151,8 @@ function showSettings(){
     <div class="row"><span>가상 언어</span><div class="seg" style="flex-wrap:wrap">${['nw','gk','au','sg'].map(v=>`<button data-lang="${v}" aria-pressed="${i18nPick()===v}"${v==='au'?` style="font-family:'FF Aurebesh',system-ui"`:v==='sg'?` style="font-family:'FF Galactic',system-ui"`:''}>${I18N_NAMES[v]}</button>`).join('')}</div></div>
     <div class="row"><span>모바일 조작</span><div class="seg">${['auto','on','off'].map(v=>`<button data-touch="${v}" aria-pressed="${(settings.touch||'auto')===v}">${v==='auto'?'자동':v==='on'?'켜짐':'꺼짐'}</button>`).join('')}</div></div>
     <div style="font-size:11px;opacity:.75;text-align:center;margin-top:8px">© 2026 Frenchfries777 · <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.ko" target="_blank" rel="noopener" style="color:inherit">CC BY-NC-ND 4.0</a></div>
-    <div class="actions"><button class="btn sm" data-site>사이트로 돌아가기</button><button class="btn sm ghost" data-close>닫기</button></div>`,m=>{const r=m.querySelector('#bgmvol');if(r)r.oninput=()=>BGM.setVol(r.value/100);
-    m.querySelector('[data-site]').onclick=()=>{try{if(csOn&&csDirty)csPush();}catch(e){}location.href='https://frenchfries777mc.github.io/games/';};
+    <div class="actions"><button class="btn sm" data-site>나가기</button><button class="btn sm ghost" data-close>닫기</button></div>`,m=>{const r=m.querySelector('#bgmvol');if(r)r.oninput=()=>BGM.setVol(r.value/100);
+    m.querySelector('[data-site]').onclick=()=>{try{if(csOn&&csDirty)csPush();}catch(e){}exitWindow();};
     m.querySelectorAll('[data-lang]').forEach(b=>b.onclick=()=>{const v=b.dataset.lang,was=(i18nPick()==='au'||i18nPick()==='sg');   // Aurebesh is English in its own letters; the font is set up on load, so switching it in or out reloads
       if((v==='au'||v==='sg')){setLang('en');try{if(window.FFLang)FFLang.set(v);}catch(e){}location.reload();return;}
       setLang(v);if(was){location.reload();return;}m.querySelectorAll('[data-lang]').forEach(x=>x.setAttribute('aria-pressed',String(x===b)));});
