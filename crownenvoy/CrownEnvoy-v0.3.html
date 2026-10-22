@@ -386,7 +386,7 @@ window.ceReload=function(){try{if(window.FFAuth&&FFAuth.setRoom)FFAuth.setRoom(n
 try{if(sessionStorage.getItem('ce_noIntro')){sessionStorage.removeItem('ce_noIntro');el.style.display='none';go();}}catch(e){}})();</script>
 <div id="app">
  <div id="lobby" class="screen">
-  <canvas id="lobbyBg"></canvas><canvas id="lobbyWar"></canvas><div id="cpTag">© 2026 Frenchfries777 · <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.ko" target="_blank" rel="noopener">CC BY-NC-ND 4.0</a></div><div id="verTag">v0.3 · build 82</div>
+  <canvas id="lobbyBg"></canvas><canvas id="lobbyWar"></canvas><div id="cpTag">© 2026 Frenchfries777 · <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.ko" target="_blank" rel="noopener">CC BY-NC-ND 4.0</a></div><div id="verTag">v0.3 · build 83</div>
   <header class="brand"><h1>Crown Envoy</h1><div class="sub"><i></i>DIPLOMACY · WAR · EMPIRE<i></i></div></header>
   <div id="lobbyRight">
    <div id="lobbyHome" class="modes">
@@ -397,6 +397,7 @@ try{if(sessionStorage.getItem('ce_noIntro')){sessionStorage.removeItem('ce_noInt
     <button class="btn mode" id="btnShared"><b>공유 시나리오</b><small>다른 사람이 만든 시나리오를 받아 플레이해요.</small></button>
     <button class="btn mode hidden" id="btnSaves"><b>저장된 게임</b><small id="savesInfo"></small></button>
     <button class="btn mode hidden" id="btnRejoin"><b>↩ 이전 게임으로 돌아가기</b><small id="rejoinInfo"></small></button>
+    <button class="btn mode" id="btnSettings"><b>설정</b><small>소리, 언어, 업적·도감, 단축키 등을 열어요.</small></button>
    </div>
    <div id="lobbyPrivate" class="lobby-panel hidden">
     <h2>비공개 플레이</h2>
@@ -4886,7 +4887,7 @@ const UI={
     $('#btnPrivate').onclick=()=>UI.show('private');
     $('#btnAI').onclick=()=>netSolo(name());
     $('#btnPrivBack').onclick=()=>UI.back();
-    $('#btnEditor').onclick=()=>Ed.open();$('#btnShared').onclick=()=>Ed.browse('likes');
+    $('#btnSettings').onclick=()=>UI.openMenu();$('#btnEditor').onclick=()=>Ed.open();$('#btnShared').onclick=()=>Ed.browse('likes');
     $('#btnSaves').onclick=()=>{UI.show('saves');UI.renderSaves();};
     $('#btnSavesBack').onclick=()=>UI.back();
     $('#btnSpec').onclick=()=>{const c=$('#codeIn').value.trim().toUpperCase();if(c.length!==5){UI.toast('관전할 방의 5자리 코드를 입력하세요.','bad');return;}netJoin(c,name(),true);};
@@ -5412,7 +5413,21 @@ const UI={
       return c+'</div>';}).join('');
     return h;},
   /* ----- 메뉴(기록·설정) ----- */
-  openMenu(){const v=C.view;if(!v)return;const m=$('#menu');
+  /* 로비 설정: 게임 중 메뉴에서 판과 상관없는 항목만 모아 로비에서도 연다 */
+  openLobbyMenu(){const m=$('#menu');
+    const seg=(act,cur,items)=>`<div class="seg">${items.map(([val,l])=>`<button data-act="${act}" data-val="${val}" class="${cur===val?'on':''}">${l}</button>`).join('')}</div>`;
+    m.innerHTML=`<div class="menubox"><div class="row" style="margin-bottom:8px"><h2 style="margin:0">설정</h2><button class="btn sm" style="flex:none" data-act="closeMenu">닫기</button></div>
+      <div class="pol"><div><b>효과음</b></div>${seg('snd',Battle.snd?'1':'0',[['1','켬'],['0','끔']])}</div>
+      <div class="pol"><div><b>배경음악</b><small>전투 음악은 게임 중에, 잔잔한 곡은 로비에서 반복 재생돼요. 이 기기에만 적용돼요.</small></div><div class="row" style="gap:8px;flex:none;align-items:center">${seg('bgm',Music.on?'1':'0',[['1','켬'],['0','끔']])}<input type="range" id="bgmVol" min="0" max="100" step="1" value="${Math.round(Music.vol*100)}" style="width:110px"><span id="bgmVolNum" style="width:36px;text-align:right">${Math.round(Music.vol*100)}%</span></div></div>
+      <div class="pol"><div><b>하켄크로이츠 흐리게</b><small>1939년 독일 국기의 하켄크로이츠를 흐리게 보여줘요. 이 기기에만 적용돼요.</small></div>${seg('blur',BLUR_FLAGS?'1':'0',[['1','켬'],['0','끔']])}</div>
+      <div class="pol"><div><b>업적 · 도감</b><small>달성한 업적과, 만난 병종·장군을 모아 봐요. (이 기기에 저장)</small></div><button class="btn sm" data-act="meta">보기</button></div>
+      <div class="pol"><div><b>단축키</b><small>키보드로 탭 전환·확대·이동·턴 확정을 해요.</small></div><button class="btn sm" data-act="keys">보기</button></div>
+      <div class="pol"><div><b>튜토리얼</b><small>게임 하는 법을 처음부터 안내해 줘요.</small></div><button class="btn sm" data-act="tut">보기</button></div>
+      <div class="pol"><div><b>내 이름</b><small>다음 게임부터 적용돼요.</small></div><div class="row" style="gap:6px;flex:none"><input type="text" id="nameEdit" maxlength="12" value="${esc(UI.myName())}" style="width:120px"><button class="btn sm" data-act="saveName">저장</button></div></div>
+      <div class="pol"><div><b>저작권</b><small>© 2026 Frenchfries777 · <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.ko" target="_blank" rel="noopener" style="color:inherit">CC BY-NC-ND 4.0</a></small></div></div>
+      <div class="pol"><div><b>나가기</b><small>이 창을 닫아요.</small></div><button class="btn sm danger" data-act="site">나가기</button></div></div>`;
+    const wasHidden=m.classList.contains('hidden');m.classList.remove('hidden');if(wasHidden)UI.navPush('menu');},
+  openMenu(){const v=C.view;if(!v)return UI.openLobbyMenu();const m=$('#menu');
     const seg=(act,cur,items)=>`<div class="seg">${items.map(([val,l])=>`<button data-act="${act}" data-val="${val}" class="${cur===val?'on':''}">${l}</button>`).join('')}</div>`;
     m.innerHTML=`<div class="menubox"><div class="row" style="margin-bottom:8px"><h2 style="margin:0">기록·설정</h2><button class="btn sm" style="flex:none" data-act="closeMenu">닫기</button></div>
       ${UI.isMulti()?`<div class="pol"><div><b>전투 연출</b><small>멀티플레이에서는 내가 공격하거나 공격받은 전투만 보여요. (고정)</small></div><div class="seg"><button class="on" disabled>내 전투만 · 고정</button></div></div>`:`<div class="pol"><div><b>전투 연출</b><small>전체: 모든 전투 · 내 전투만: 내가 공격하거나 공격받은 전투 · 요약: 수도·대규모 전투만</small></div>${seg('fx',C.fx,[['full','전체'],['mine','내 전투만'],['brief','요약'],['off','끔']])}</div>`}
