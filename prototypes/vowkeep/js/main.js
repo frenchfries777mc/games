@@ -390,9 +390,9 @@ function onEvent(e) {
     case 'swing': view.arc(e.x, e.z, e.a, e.r, COL[e.role] || 0xffffff); SFX.play('swing'); break;
     case 'shoot': SFX.play(e.pk === 'orb' ? 'orb' : 'arrow'); break;
     case 'eshoot': SFX.play('arrow'); break;
-    case 'ehit': view.spark(e.x, e.z, e.id, e.crit); num(e.x, e.z, e.v, e.crit ? '#ffd36b' : '#ffffff', e.crit ? 1.3 : 1); SFX.play('hit'); break;
+    case 'ehit': if (e.hv) view.spark(e.x, e.z, e.id, true); else view.burst(e.x, 1.6, e.z, 0xe8e0c8, e.crit ? 6 : 3, 4, 0.3, 0.09); num(e.x, e.z, e.v, e.crit ? '#ffd36b' : '#ffffff', e.crit ? 1.3 : 1); SFX.play('hit'); break;
     case 'pdodge': view.ring(e.x, e.z, 2.6, 0x9ad0ff, 0.4); view.streak(e.x, e.z, 0, 0.1, 0x9ad0ff, 0.2, 0.1); view.rise(e.x, e.z, 0x9ad0ff, 10, 1, 0.6, 6); if (e.id === me) { num(e.x, e.z, '완벽한 회피!', '#9ad0ff', 1.3, 4.2); view.flash(e.x, e.z, 0x9ad0ff, 120); SFX.play('parry'); if (S.net === 'solo') S.slowT = Math.max(S.slowT || 0, 0.45); } break;
-    case 'heavy': view.shock(e.x, e.z, e.melee ? 2.6 : 1.6, 0xffe08a, 0.3); view.burst(e.x, 1.6, e.z, 0xffe08a, 8, 6, 0.35, 0.1); if (e.id === me) view.shake = Math.max(view.shake, 0.3); break;
+    case 'heavy': view.shock(e.x, e.z, 3, 0xffe08a, 0.35); view.streak(e.x - Math.cos(e.a) * 2, e.z - Math.sin(e.a) * 2, e.a, 4, 0xfff0b0, 0.25, 0.6); view.rise(e.x, e.z, 0xffd36b, 10, 1, 0.5, 7); view.flash(e.x, e.z, 0xffe08a, 110); if (e.id === me) { num(e.x, e.z, '강타!', '#ffd36b', 1.4, 4.2); view.shake = Math.max(view.shake, 0.45); } SFX.play('clang'); break;
     case 'weak': num(e.x, e.z, '약점!', '#ff9c4a', 1.4, 3.8); view.shock(e.x, e.z, 3, 0xff7a20, 0.35); view.burst(e.x, 2.4, e.z, 0xffb060, 14, 9, 0.5, 0.14); view.flash(e.x, e.z, 0xff7a20, 90); view.shake = Math.max(view.shake, 0.35); SFX.play('parry'); break;
     case 'phit': num(e.x, e.z, '-' + e.v, '#ff7a6a', 1); if (e.id === me) { view.shake = Math.max(view.shake, 0.5); SFX.play('phit'); } break;
     case 'ekill': {
@@ -508,6 +508,7 @@ function paintHud() {
     const dn = sn.pl.find(q => q.dn && !q.dd && Math.hypot(q.x - pos.x, q.z - pos.z) < 2.2);
     if (dn) pr = (TOUCH ? 'F 버튼' : 'F') + '를 꾹 눌러 ' + ROLES[dn.role].name + ' 일으키기';
     else if (MAP.chests.some(([x, y], k) => !sn.w.ch[k] && Math.hypot(cw(x) - pos.x, cw(y) - pos.z) < 2.6)) pr = (TOUCH ? 'F 버튼' : 'F') + '를 꾹 눌러 상자 열기';
+    else if (MAP.fires.some(([x, y], k) => !sn.w.fi[k] && Math.hypot(cw(x) - pos.x, cw(y) - pos.z) < 3)) pr = (TOUCH ? 'F 버튼' : 'F') + '를 꾹 눌러 모닥불 피우기';
     else if (MAP.altars.some(([x, y], k) => !sn.w.al[k] && Math.hypot(cw(x) - pos.x, cw(y) - pos.z) < 2.8)) pr = (TOUCH ? 'F 버튼' : 'F') + '를 꾹 눌러 제단에서 축복 받기';
     else if (MAP.fires.some(([x, y], k) => sn.w.fi[k] && Math.hypot(cw(x) - pos.x, cw(y) - pos.z) < 4) && me.hp < me.mx) pr = '모닥불 곁에서 체력이 차올라요';
     else if (sn.bless && Object.values(sn.bless).some(Boolean) && !(sn.bless[S.me])) pr = '동료가 축복을 고르는 중이에요';
@@ -569,7 +570,7 @@ function drawOverlay(dt) {
   // 내 연타 수와 집중 상태
   { const p = sn.pl.find(q => q.id === S.me), E = p && view.ents.get('p' + p.id);
     if (E && !p.dn) { const c = view.project(E.x, 4.1, E.z); oc.lineWidth = 4; oc.strokeStyle = '#140f18';
-      if (p.cb >= 2) { const big = p.cb % 3 === 2; oc.font = 'bold ' + (14 + Math.min(p.cb, 20) * 0.5 | 0) + 'px system-ui'; const t = p.cb + ' 연타' + (big ? ' · 다음 강타' : ''); oc.strokeText(t, c.x, c.y); oc.fillStyle = big ? '#ffd36b' : '#efe3c8'; oc.fillText(t, c.x, c.y); }
+      if (p.cb >= 2) { oc.font = 'bold ' + (14 + Math.min(p.cb, 20) * 0.5 | 0) + 'px system-ui'; const t = p.cb + ' 연타'; oc.strokeText(t, c.x, c.y); oc.fillStyle = '#efe3c8'; oc.fillText(t, c.x, c.y); }
       if (p.fc) { oc.font = 'bold 13px system-ui'; oc.strokeText('집중 · 피해 +50%', c.x, c.y - 18); oc.fillStyle = '#9ad0ff'; oc.fillText('집중 · 피해 +50%', c.x, c.y - 18); } } }
   // 피해 숫자
   for (const n of S.nums) { n.t += dt; const s = view.project(n.x, n.y + n.t * 2.2, n.z); oc.globalAlpha = Math.max(0, 1 - n.t / 0.9); oc.font = 'bold ' + Math.round(18 * n.sc) + 'px system-ui'; oc.lineWidth = 4; oc.strokeStyle = '#140f18'; oc.strokeText(n.v, s.x, s.y); oc.fillStyle = n.col; oc.fillText(n.v, s.x, s.y); }
