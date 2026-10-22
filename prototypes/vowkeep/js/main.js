@@ -467,7 +467,7 @@ function onEvent(e) {
     case 'wake': if (!S.wakeT || performance.now() - S.wakeT > 1500) { S.wakeT = performance.now(); SFX.play('spawn'); } view.burst(e.x, 0.3, e.z, 0x6a5a7a, 6, 3, 0.6, 0.12); break;
     case 'bossIntro': { talk('boss', 3400); bigMsg(CH.boss.name, MAP.areas.find(a => a.boss).line, 3400); const b = S.snap && S.snap.en.find(q => q.k === 'boss'); if (b) { view.focusOn(b.x, b.z, 3); view.shock(b.x, b.z, 8, 0xff5a3a, 0.8); view.flash(b.x, b.z, 0xff5a3a, 200); } view.shake = Math.max(view.shake, 0.8); letterbox(3000); break; }
     case 'bvolley': SFX.play('arrow'); view.burst(e.x, 1.8, e.z, 0xffb060, 8, 4, 0.3, 0.1); break;
-    case 'nova': SFX.play('orb'); view.shock(e.x, e.z, 4, CH.boss.ai === 'king' ? 0xff7a20 : 0x6ab0ff, 0.4); view.flash(e.x, e.z, CH.boss.ai === 'king' ? 0xff7a20 : 0x6ab0ff, 120); break;
+    case 'nova': SFX.play('orb'); { const nc = CH.boss.col || (CH.boss.ai === 'king' ? 0xff7a20 : 0x6ab0ff); view.shock(e.x, e.z, 4, nc, 0.4); view.flash(e.x, e.z, nc, 120); } break;
     case 'pillar': view.column(e.x, e.z, 0x6ab0ff, 0.9); view.burst(e.x, 0.5, e.z, 0x9ad0ff, 14, 6, 0.6, 0.14); view.flash(e.x, e.z, 0x6ab0ff, 80); SFX.play('slam'); break;
     case 'blink': view.column(e.x, e.z, 0x9ad0ff, 0.5); view.rise(e.x, e.z, 0x9ad0ff, 12, 1.5, 0.7, 6); SFX.play('orb'); break;
     case 'respawn': view.column(e.x, e.z, 0xff9a48); if (e.id === me) bigMsg('모닥불에서 다시 일어났어요', '', 1800); break;
