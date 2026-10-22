@@ -121,3 +121,5 @@ index.html | 랭킹 표 | 최장 생존 일수, 생존 순위는 서버 준비 �
 - patchnotes.json | "Vowkeep 2~4장과 새 보스 3명" 7줄 | Vowkeep b9 | 2026-10-22
 - prototypes/vowkeep/js/main.js | 대기실 이야기 안내 문장, "N장 이어서 시작", "원정 시작", "…완료 · 방장과 함께 다음 장으로 가요", 다음 장 안내 알림 | 한국어만 있음 | Vowkeep b10 | 2026-10-22
 - patchnotes.json | "Vowkeep 이어지는 이야기와 캐릭터 그림" 8줄 | Vowkeep b10 | 2026-10-22
+- crownenvoy/patchnotes.json | b81 1줄 (i18n.js N에 15개 언어 번역 넣음) | 2026-10-22
+- 이탈리아어·폴란드어·아랍어 추가 (오너 2026-10-22): 앞으로 새 문구는 it/pl/ar도 함께 번역해야 함 (Crown Envoy는 ar이 원래 있었음, it/pl 추가)

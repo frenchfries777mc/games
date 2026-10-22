@@ -178,8 +178,8 @@ const dlSvg='<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke=
 const esc=s=>String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const mb=n=>n>=1048576?(n/1048576).toFixed(1)+' MB':Math.round(n/1024)+' KB';
 const I=window.I18N||{L:['ko'],D:{},V:{},N:{}};
-const NAMES={ko:'한국어',en:'English',es:'Español',fr:'Français',de:'Deutsch',ja:'日本語',ar:'العربية',zh:"简体中文",pt:"Português (Brasil)",ru:"Русский",tr:"Türkçe",nw:"Newspeak",gk:"번역기 한국어",au:'Aurebesh',sg:'Standard Galactic'};
-const VIRT={nw:1,gk:1,au:1,sg:1},VLABEL={ko:'가상 언어',en:'Fictional languages',es:'Idiomas ficticios',fr:'Langues fictives',de:'Fiktive Sprachen',ja:'架空の言語',ar:'لغات خيالية',zh:'虚构语言',pt:'Idiomas fictícios',ru:'Вымышленные языки',tr:'Kurgusal diller',nw:'Unreal speaks',gk:'가짜의 언어들'};
+const NAMES={ko:'한국어',en:'English',es:'Español',fr:'Français',de:'Deutsch',ja:'日本語',ar:'العربية',zh:"简体中文",pt:"Português (Brasil)",ru:"Русский",tr:"Türkçe",it:"Italiano",pl:"Polski",nw:"Newspeak",gk:"번역기 한국어",au:'Aurebesh',sg:'Standard Galactic'};
+const VIRT={nw:1,gk:1,au:1,sg:1},VLABEL={ko:'가상 언어',en:'Fictional languages',es:'Idiomas ficticios',fr:'Langues fictives',de:'Fiktive Sprachen',ja:'架空の言語',ar:'لغات خيالية',zh:'虚构语言',pt:'Idiomas fictícios',ru:'Вымышленные языки',tr:'Kurgusal diller',it:'Lingue immaginarie',pl:'Języki fikcyjne',nw:'Unreal speaks',gk:'가짜의 언어들'};
 const auOn=()=>{try{return !!(window.FFLang&&FFLang.script&&FFLang.script());}catch(e){return false;}};
 function pick(){let s=null;if(auOn())return 'en';try{s=localStorage.getItem('ce_lang');}catch(e){}
   if(s&&I.L.includes(s))return s;
