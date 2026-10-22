@@ -1,6 +1,6 @@
 // Vowkeep · © 2026 Frenchfries777 · CC BY-NC-ND 4.0
 // 배경음악: 파일은 게임 옆에 따로 있어요. 못 불러오면 사이트 주소로, 그래도 안 되면 조용히 넘어가요
-const FILES = { lobby: 'vowkeep-lobby.mp3', boss: 'vowkeep-boss.mp3' };
+const FILES = { lobby: 'vowkeep-lobby.mp3', dungeon: 'vowkeep-dungeon.mp3', boss: 'vowkeep-boss.mp3' };
 const ALT = 'https://frenchfries777mc.github.io/games/prototypes/vowkeep/';
 const T = {}; let vol = 0.7, tryAt = 0;
 function mk(k) {
@@ -10,7 +10,7 @@ function mk(k) {
 }
 export function setVol(v) { vol = v; }
 export function kick() { tryAt = 0; }
-// want: 'lobby' | 'boss' | null. 곡이 바뀌면 1초쯤 걸쳐 서로 바꿔 틀어요
+// want: 'lobby' | 'dungeon' | 'boss' | null. 곡이 바뀌면 1초쯤 걸쳐 서로 바꿔 틀어요
 export function tick(want, dt, now) {
   try {
     for (const k of Object.keys(FILES)) {
