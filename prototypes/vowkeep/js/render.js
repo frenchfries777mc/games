@@ -41,6 +41,10 @@ const THEMES = {
   dungeon: { bg: 0x050407, fog: 0x07060a, amb: 0x4a4a78, hemi: 0x8a90c8, floor: [0x4a4550, 0x524d58, 0x5a5462, 0x463f4c, 0x55505c], bfloor: [0x3e3440, 0x463a48, 0x4e4250, 0x3a3040, 0x4a3e4c], wet: [0x34404c, 0x384656, 0x2e3a46, 0x3c4a58], wall: [0x3e3846, 0x463f50, 0x4e4658, 0x38323f], bwall: [0x3a2e3c, 0x423446, 0x4a3a50, 0x342a38], top: 0x2a2630, moss: 0x3e5a36, mossP: 0.06, torch: 0xff9a48, water: 0x3a6a9a, ring: 0x8a1a2a, fz: [0x5a1aa0, 0x8a2ad0], ember: [0xffb050, 0xff8a30], banner: 0x7a1f22 },
   forest: { bg: 0x08090a, fog: 0x161a1c, amb: 0x5a6070, hemi: 0xa0a8a0, floor: [0x3c3a2e, 0x3e4430, 0x3a4030, 0x34402c, 0x404a32], bfloor: [0x3a3226, 0x42382a, 0x3a3024, 0x463c2e, 0x34301e], wet: [0x2e3a36, 0x34403c, 0x2a3632, 0x38443e], wall: [0x2e2a24, 0x36302a, 0x2a2620, 0x3a3430], bwall: [0x30241e, 0x382a22, 0x2c201a, 0x3e2e26], top: 0x24301e, moss: 0x4a5a34, mossP: 0.22, torch: 0xffb060, water: 0x4a6a6a, ring: 0x6a3a1a, fz: [0x4a3a1a, 0xd06a20], ember: [0xd8d4cc, 0x9a968e], trees: 1 },
   abbey: { bg: 0x03060a, fog: 0x08101a, amb: 0x405478, hemi: 0x88a0d0, floor: [0x4a5058, 0x525a62, 0x485058, 0x565e68, 0x444c54], bfloor: [0x3a4450, 0x404a58, 0x36404c, 0x46505c, 0x343e4a], wet: [0x2e4054, 0x34485c, 0x2a3c50, 0x3a4e62], wall: [0x3c4450, 0x444c58, 0x4c5462, 0x363e4a], bwall: [0x2e3a4a, 0x344052, 0x3a4658, 0x2a3444], top: 0x262c36, moss: 0x3a5a4a, mossP: 0.1, torch: 0xffd08a, water: 0x2a5a9a, ring: 0x2a5ab0, fz: [0x1a3a6a, 0x3a8ae0], ember: [0x9ad0ff, 0x6aa0e0], windows: 1 },
+  frost: { bg: 0x04070c, fog: 0x0e1622, amb: 0x5a6a8a, hemi: 0xb0c8e8, floor: [0x5a6470, 0x626c7a, 0x6a7482, 0x56606c, 0x667080], bfloor: [0x4a5868, 0x526070, 0x5a6878, 0x465464, 0x56647a], wet: [0x7a98b8, 0x82a0c0, 0x7090b0, 0x88a8c8], wall: [0x4e5866, 0x56606e, 0x5e6878, 0x48525e], bwall: [0x3e4c5e, 0x465466, 0x4e5c70, 0x3a4658], top: 0xc8d8e8, moss: 0xd8e8f8, mossP: 0.12, torch: 0x9ad8ff, water: 0x8ab8e0, ring: 0x4aa0e0, fz: [0x3a7ab0, 0x9ad8ff], ember: [0xf0f8ff, 0xc8e0ff], banner: 0x2a4a6a },
+  mine: { bg: 0x060403, fog: 0x120c08, amb: 0x5a4a3a, hemi: 0xb09878, floor: [0x4a4034, 0x524638, 0x5a4e40, 0x463c30, 0x54483a], bfloor: [0x3e3428, 0x463a2c, 0x4e4030, 0x3a3024, 0x4a3e2e], wet: [0x3a3a36, 0x40403a, 0x363632, 0x44443e], wall: [0x4a3e30, 0x524636, 0x5a4c3a, 0x44382c], bwall: [0x3a3026, 0x42362a, 0x4a3c2e, 0x362c22], top: 0x2a2018, moss: 0x5a8a9a, mossP: 0.05, torch: 0xffb060, water: 0x3a5a5a, ring: 0xc08a30, fz: [0x8a5a20, 0xffb050], ember: [0xffc070, 0xff9a40], banner: 0x5a3a1a },
+  temple: { bg: 0x0a0402, fog: 0x1a0a04, amb: 0x7a4a30, hemi: 0xe0a070, floor: [0x6a5a44, 0x72624a, 0x7a6a50, 0x665640, 0x76664c], bfloor: [0x6a4a30, 0x725036, 0x7a583a, 0x66462c, 0x765436], wet: [0x8a3a10, 0x9a4414, 0x7a320c, 0xa04a18], wall: [0x5a4a36, 0x62523c, 0x6a5a42, 0x544430], bwall: [0x6a3a20, 0x724026, 0x7a4628, 0x64361c], top: 0x3a2a1a, moss: 0x8a6a2a, mossP: 0.03, torch: 0xffa040, water: 0xd05a10, ring: 0xff8a20, fz: [0xc04a10, 0xffa030], ember: [0xffc060, 0xff7a20], banner: 0x8a2a10, windows: 1 },
+  abyss: { bg: 0x040208, fog: 0x0c0614, amb: 0x4a3a6a, hemi: 0x9a80c8, floor: [0x3a3444, 0x423a4c, 0x4a4254, 0x36303e, 0x463e50], bfloor: [0x2e2440, 0x362a48, 0x3e3050, 0x2a203a, 0x3a2c4c], wet: [0x3a2a5a, 0x423064, 0x36264e, 0x4a366a], wall: [0x36303e, 0x3e3646, 0x463e50, 0x302a38], bwall: [0x2e2240, 0x362848, 0x3e2e52, 0x2a1e3a], top: 0x1e1828, moss: 0x5a3a8a, mossP: 0.08, torch: 0xc08aff, water: 0x5a3a9a, ring: 0xb06aff, fz: [0x5a1aa0, 0xb06aff], ember: [0xd0a0ff, 0xa06ae0], banner: 0x3a1a5a },
   tower: { bg: 0x0a0505, fog: 0x160a08, amb: 0x6a4a4a, hemi: 0xc89a8a, floor: [0x4a4040, 0x524646, 0x5a4c4a, 0x463c3c, 0x54484a], bfloor: [0x4a3030, 0x523434, 0x5a3a36, 0x462c2c, 0x503432], wet: [0x3a3440, 0x403848, 0x36303c, 0x443c4c], wall: [0x4a3a36, 0x52423c, 0x5a4842, 0x443430], bwall: [0x5a2a22, 0x622e26, 0x6a3428, 0x52261e], top: 0x2e2220, moss: 0x5a4a2a, mossP: 0.04, torch: 0xff7a30, water: 0x6a3a2a, ring: 0xc04a10, fz: [0xa03a10, 0xff6a20], ember: [0xffa040, 0xff6a20], banner: 0x3a3a3a }
 };
 const THEME = () => THEMES[CH.theme] || THEMES.dungeon;
@@ -120,6 +124,21 @@ const FIG = {
   ashknight: { body: 0x4a4448, leg: 'dm', arm: 'dm', helm: 1, helmC: 0x5a5458, plume: 0x6a2a1a, eye: 0xff6a20, sword: 1, cape: 0x2a2224 },
   xbow: { body: 0x4a4448, leg: 'dm', arm: 'dm', helm: 1, helmC: 0x5a5458, plume: 0, eye: 0xff6a20, xbow: 1 },
   ashshield: { body: 0x4a4448, leg: 'dm', arm: 'dm', helm: 1, helmC: 0x5a5458, plume: 0, eye: 0xff6a20, sword: 1, shield: 1, shieldC: 0x3a3436 },
+  frostk: { body: 0x5a6a7a, leg: 'dm', arm: 'dm', helm: 1, helmC: 0x9ab0c8, plume: 0, eye: 0x6ad0ff, sword: 1, cape: 0x2a4a6a },
+  frostb: { body: 0x5a6a7a, leg: 0x3a4a5a, arm: 0x5a6a7a, hood: 0xc8d8e8, bow: 1, quiver: 1, eye: 0x6ad0ff, skinC: 0xa0b8c8 },
+  frosts: { body: 0x5a6a7a, leg: 'dm', arm: 'dm', helm: 1, helmC: 0x9ab0c8, plume: 0, eye: 0x6ad0ff, sword: 1, shield: 1, shieldC: 0x8ab8e0 },
+  frostl: { body: 0x4a5a6a, leg: 'dm', arm: 'dm', helm: 1, helmC: 0xb8d0e8, plume: 0x6ad0ff, eye: 0x6ad0ff, great: 0xb8d8f0, cape: 0x2a4a6a, horns: 1, scale: 1.45 },
+  miner: { body: 0x5a4a34, leg: 0x3a3024, arm: 0x5a4a34, hood: 0x6a5a40, belt: 1, sack: 1, eye: 0xffb060, skinC: 0x8a7a6a },
+  golem: { body: 0x5a5448, leg: 0x4a443a, arm: 0x5a5448, skinC: 0x6a6458, eye: 0x6ad8e0, bark: 1, scale: 1.35 },
+  golemk: { body: 0x4a3e30, leg: 0x3a3024, arm: 0x4a3e30, helm: 1, helmC: 0x6a5a3a, plume: 0, eye: 0xffb060, great: 0x7a6a5a, belt: 1, cape: 0x3a2a1a, scale: 1.45 },
+  zealot: { body: 0x8a3a1a, robe: 1, leg: 0x5a2410, arm: 0x8a3a1a, hood: 0x6a2a10, skinC: 0xa08070, eye: 0xffa040, sword: 1 },
+  pyro: { body: 0x6a2a10, robe: 1, leg: 0x4a1a0a, arm: 0x6a2a10, hood: 0x4a1a0a, skinC: 0xa08070, eye: 0xffa040, staff: 1, staffC: 0xff8a30, noLight: 1 },
+  censer: { body: 0x7a4a20, robe: 1, leg: 0x4a2a10, arm: 0x7a4a20, hood: 0x5a3010, skinC: 0xa08070, eye: 0xffa040, censer: 1 },
+  templar: { body: 0x8a6a3a, leg: 'dm', arm: 'dm', helm: 1, helmC: 0xc0a060, plume: 0xc04a10, eye: 0xffa040, great: 0xd0b070, greatE: 0xff8a30, cape: 0x8a2a10, scale: 1.45 },
+  voidk: { body: 0x2e2838, leg: 'dm', arm: 'dm', helm: 1, helmC: 0x3e3448, plume: 0x5a2a8a, eye: 0xd08aff, sword: 1, cape: 0x2a1a40 },
+  voidb: { body: 0x2e2838, leg: 'dm', arm: 'dm', helm: 1, helmC: 0x3e3448, plume: 0, eye: 0xd08aff, xbow: 1 },
+  voids: { body: 0x2e2838, leg: 'dm', arm: 'dm', helm: 1, helmC: 0x3e3448, plume: 0, eye: 0xd08aff, sword: 1, shield: 1, shieldC: 0x3a2a4a },
+  voidl: { body: 0x26202e, leg: 'dm', arm: 'dm', helm: 1, helmC: 0x4a3a5a, plume: 0xb06aff, eye: 0xd08aff, great: 0x5a4a6a, greatE: 0xb06aff, cape: 0x3a1a5a, horns: 1, scale: 1.5 },
   royal: { body: 0x3a2e2a, leg: 'dm', arm: 'dm', helm: 1, helmC: 0x6a5a40, plume: 0xc04a10, eye: 0xff6a20, great: 0x8a8a96, cape: 0x5a1a12, horns: 1, scale: 1.45 }
 };
 function makeWolf(big) {
@@ -152,7 +171,7 @@ const BOSSFIG = {
 const makeBossOf = toonify(makeBossOf_);
 function makeBossOf_(ai) {
   if (!BOSSFIG[ai]) return makeBoss();
-  const g = makeFigure(BOSSFIG[ai]); const col = ai === 'hunter' ? 0xffa040 : ai === 'bishop' ? 0x6ab0ff : 0xff6a20;
+  const g = makeFigure(Object.assign({}, BOSSFIG[ai], CH.boss.fig)); const col = CH.boss.col || (ai === 'hunter' ? 0xffa040 : ai === 'bishop' ? 0x6ab0ff : 0xff6a20);
   const light = new THREE.PointLight(col, 18, 10, 1.6); light.position.set(0, 3, 1); g.userData.body.add(light); g.userData.light = light; g.userData.kind = 'boss';
   return g;
 }
@@ -352,6 +371,10 @@ export class View {
     const rock = (x, z, k) => { const r = mesh(geo('rock', () => new THREE.DodecahedronGeometry(0.8)), M([0x4a4a44, 0x55534c, 0x3e3e3a][k % 3]), x, 0.4, z, s); r.scale.set(1 + (k % 2) * 0.5, 0.7, 1); r.rotation.y = k; };
     const decor = { forest: (a, ai, x, y, w, h) => { for (let k = 0; k < 4; k++) rock(cw(x + 1 + R() * (w - 2)), cw(y + 1 + R() * (h - 2)), ai + k); cyl(0.7, 0.8, 0.7, 7, M(0x5a4228), cw(x + w - 1), 0.35, cw(y), s); for (let k = 0; k < 3; k++) { const mx = cw(x + 1 + R() * (w - 2)), mz = cw(y + 1 + R() * (h - 2)); cyl(0.06, 0.08, 0.3, 4, M(0xd8d0bc), mx, 0.15, mz, s); sph(0.22, 6, 4, M(0xd06a3a, { e: 0x6a2a10, ei: 1 }), mx, 0.34, mz, s, 1.6); } },
       abbey: (a, ai, x, y, w, h) => { for (let k = 0; k < 2; k++) { const bz = cw(y + 2 + k * 2); box(3.4, 0.5, 0.8, M(0x4a3626), cw(x + 3), 0.5, bz, s); box(3.4, 0.9, 0.15, M(0x4a3626), cw(x + 3), 0.9, bz - 0.4, s); } for (let k = 0; k < 3; k++) { const cx = cw(x + w - 2) + (k - 1) * 0.6; cyl(0.08, 0.08, 0.6 + k * 0.2, 5, M(0xe8e0c8), cx, 0.3 + k * 0.1, cw(y), s); this.flame(s, cx, 0.75 + k * 0.2, cw(y), 0.35, false); } },
+      frost: (a, ai, x, y, w, h) => { for (let k = 0; k < 5; k++) { const ix = cw(x + 1 + R() * (w - 2)), iz = cw(y + 1 + R() * (h - 2)); const c = cone(0.25 + R() * 0.25, 1 + R() * 1.4, 5, M(0xb8d8f0, { e: 0x4a8ac0, ei: 0.6 }), ix, 0.5, iz, s); c.rotation.z = (R() - .5) * 0.4; } box(1.8, 0.4, 1.4, M(0xd8e8f8), cw(x + w - 1), 0.2, cw(y), s); },
+      mine: (a, ai, x, y, w, h) => { const rz = cw(y + (h >> 1)); for (const o of [-0.5, 0.5]) box((w - 1) * 2, 0.08, 0.1, dmetal(), cw(x) + w - 1, 0.1, rz + o, s); for (let k = 0; k < w; k++) box(0.25, 0.06, 1.4, M(0x4a3020), cw(x + k), 0.05, rz, s); box(1.4, 0.9, 1.1, M(0x5a4228), cw(x + 1), 0.75, rz, s); for (let k = 0; k < 4; k++) { const cx = cw(x + 1 + R() * (w - 2)), cz = cw(y + 1 + R() * (h - 2)); const c = cone(0.18, 0.7 + R() * 0.5, 4, M(0x7ad8e8, { e: 0x3ab0c0, ei: 2 }), cx, 0.35, cz, s); c.rotation.z = (R() - .5) * 0.6; c.castShadow = false; } },
+      temple: (a, ai, x, y, w, h) => { for (const bx of [cw(x + 1), cw(x + w - 2)]) { const bz = cw(y); cyl(0.5, 0.3, 1.4, 8, M(0x8a6a3a, { m: 0.6 }), bx, 0.7, bz, s); this.flame(s, bx, 1.7, bz, 0.9, false, T.torch); } box(2.6, 0.8, 1.2, M(0x7a6a50), cw(x + (w >> 1)), 0.4, cw(y), s); },
+      abyss: (a, ai, x, y, w, h) => { for (let k = 0; k < 5; k++) { const cx = cw(x + 1 + R() * (w - 2)), cz = cw(y + 1 + R() * (h - 2)); const c = cone(0.3, 1 + R() * 1.6, 4, M(0x8a5ad0, { e: 0x6a2ab0, ei: 2 }), cx, 0.5, cz, s); c.rotation.set((R() - .5) * 0.5, R() * 3, (R() - .5) * 0.5); c.castShadow = false; } },
       tower: (a, ai, x, y, w, h) => { const bx = cw(x + 1), bz = cw(y); cyl(0.6, 0.4, 1.2, 6, dmetal(), bx, 0.6, bz, s); this.flame(s, bx, 1.5, bz, 0.9, false, T.torch); box(2.4, 2, 0.3, M(0x4a3020), cw(x + w - 2), 1, cw(y), s); for (let k = 0; k < 3; k++) box(0.1, 1.8, 0.1, metal(), cw(x + w - 2) - 0.7 + k * 0.7, 1.4, cw(y) + 0.25, s); }
     }[CH.theme];
     MAP.areas.forEach((a, ai) => { const [x, y, w, h] = a.r[0]; if (a.boss) return; if (decor) { decor(a, ai, x, y, w, h); return; } barrel(cw(x), cw(y) + 0.2); if (w > 6) barrel(cw(x) + 1.7, cw(y)); box(1.8, 1.6, 1.8, M(0x6a4628), cw(x + w - 1), 0.8, cw(y), s).rotation.y = 0.3 + ai; for (let k = 0; k < 3; k++) { const bx = cw(x + 1 + R() * (w - 2)), bz = cw(y + 1 + R() * (h - 2)); const b = box(1.2, 0.15, 0.15, bone(), bx, 0.12, bz, s); b.rotation.y = R() * 3; sph(0.35, 8, 6, bone(), bx + 0.8, 0.25, bz + 0.3, s); } });
@@ -390,7 +413,7 @@ export class View {
     // 공중에 떠다니는 것: 숲은 반딧불이, 그 밖은 불씨와 먼지
     this.embers = []; const ff = CH.theme === 'forest';
     for (let i = 0; i < 18; i++) { const e = box(0.15, 0.15, 0.15, M(T.ember[0], { e: T.ember[1], ei: ff ? 1 : 5 }), 0, -5, 0, s); e.castShadow = false; this.embers.push({ m: e, t: R() * 6, x: (R() - .5) * 40, z: (R() - .5) * 30 }); }
-    const fly = ff ? [0xd8ff8a, 0xb0ff6a] : CH.theme === 'abbey' ? [0x9ad0ff, 0x6aa0e0] : [0xffd08a, 0xffa040];
+    const fly = ff ? [0xd8ff8a, 0xb0ff6a] : CH.theme === 'abbey' || CH.theme === 'frost' ? [0x9ad0ff, 0x6aa0e0] : CH.theme === 'abyss' ? [0xd0a0ff, 0xa06ae0] : [0xffd08a, 0xffa040];
     for (let i = 0; i < 26; i++) { const e = box(0.12, 0.12, 0.12, M(fly[0], { e: fly[1], ei: 6, uniq: true }), 0, -5, 0, s); e.castShadow = false; this.embers.push({ m: e, t: R() * 9, x: (R() - .5) * 44, z: (R() - .5) * 32, fly: 1, ph: R() * 6.28, h: 0.8 + R() * 3 }); }
     this.camT.set(cw(MAP.start[0]), 0, cw(MAP.start[1])); this.camInit = false;
     this.resize();
@@ -495,7 +518,7 @@ export class View {
       if (!E) { E = { m: projMesh(p.k), x: p.x, z: p.z }; if (p.bg) E.m.scale.setScalar(2.2); s.add(E.m); this.ents.set(key, E); }
       const k = exact ? 1 : Math.min(1, dt * 18); E.x += (p.x - E.x) * k; E.z += (p.z - E.z) * k;
       E.m.position.set(E.x, (p.k === 'potion' ? p.y : 0) + 1.6, E.z); E.m.rotation.y = -p.a; if (p.k === 'potion') E.m.rotation.z += dt * 12;
-      const TC = { pierce: 0xffe08a, orb: 0x9af0d0, eorb: 0x6ab0ff, ember: 0xff7a20, arrow: 0xe8e0c8, bolt: 0xff8a5a, spear: 0xffb060, earrow: 0xff5a4a }[p.k]; if (TC && (E.tr = (E.tr || 0) - dt) <= 0) { E.tr = 0.03; const big = p.k !== 'arrow' && p.k !== 'earrow'; this.burst(E.x, 1.6, E.z, TC, big ? 3 : 1, 1.2, big ? 0.45 : 0.25, big ? 0.12 : 0.08); }
+      const TC = { pierce: 0xffe08a, orb: 0x9af0d0, eorb: 0x6ab0ff, ember: 0xff7a20, arrow: 0xe8e0c8, bolt: 0xff8a5a, spear: 0xffb060, earrow: 0xff5a4a, vorb: 0xb06aff }[p.k]; if (TC && (E.tr = (E.tr || 0) - dt) <= 0) { E.tr = 0.03; const big = p.k !== 'arrow' && p.k !== 'earrow'; this.burst(E.x, 1.6, E.z, TC, big ? 3 : 1, 1.2, big ? 0.45 : 0.25, big ? 0.12 : 0.08); }
       // 빛 꼬리: 지나간 자리에 짧게 남는 선
       if (TC) { if (E.lx != null) { const dx = E.x - E.lx, dz = E.z - E.lz, L = Math.hypot(dx, dz); if (L > 0.05) this.tail(E.lx, E.lz, Math.atan2(dz, dx), L, TC, p.k === 'arrow' || p.k === 'earrow' ? 0.12 : 0.24); } E.lx = E.x; E.lz = E.z; }
     }
@@ -687,6 +710,7 @@ function projMesh(k) {
     box(0.3, 0.02, 0.2, M(0xe8e0c8), -0.6, 0, 0, g); if (k === 'pierce') box(1.8, 0.04, 0.04, M(0xffe08a, { e: 0xffd060, ei: 2 }), -0.6, 0, 0, g);
   } else if (k === 'orb') { sph(0.28, 8, 6, M(0xd8fff0, { e: 0x9af0d0, ei: 4 }), 0, 0, 0, g); }
   else if (k === 'spear') { box(2.2, 0.08, 0.08, M(0x5a3a22), 0, 0, 0, g); const h = cone(0.14, 0.5, 4, M(0xffb060, { e: 0xff7a20, ei: 2 }), 1.3, 0, 0, g); h.rotation.z = -Math.PI / 2; }
+  else if (k === 'vorb') { sph(0.34, 8, 6, M(0xd8b0ff, { e: 0x8a3ae0, ei: 4 }), 0, 0, 0, g); }
   else if (k === 'eorb') { sph(0.34, 8, 6, M(0x9ad0ff, { e: 0x3a8ae0, ei: 4 }), 0, 0, 0, g); }
   else if (k === 'bolt') { box(1, 0.08, 0.08, M(0x3a2a20), 0, 0, 0, g); const h = cone(0.1, 0.25, 4, M(0xff6a20, { e: 0xff5a10, ei: 2 }), 0.6, 0, 0, g); h.rotation.z = -Math.PI / 2; }
   else if (k === 'ember') { sph(0.36, 8, 6, M(0xffa040, { e: 0xff5a10, ei: 4 }), 0, 0, 0, g); }
