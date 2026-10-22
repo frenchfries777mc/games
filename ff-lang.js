@@ -135,9 +135,9 @@ function ingsoc(){
   if(hd&&!document.querySelector('.ff-party')){ var b=document.createElement('div'); b.className='ff-party'; b.setAttribute('data-notr',''); b.innerHTML='<span>'+SLOGANS.join('</span><span>')+'</span>'; hd.parentNode.insertBefore(b,hd.nextSibling); }
   var ht=document.querySelector('.hero-t h1');
   if(ht&&!document.querySelector('.ff-party-h')){ var hp=document.createElement('div'); hp.className='ff-party-h'; hp.setAttribute('data-notr',''); hp.innerHTML='<span>'+SLOGANS.join('</span><span>')+'</span>'; ht.parentNode.insertBefore(hp,ht.nextSibling); }
-  /* the site logo becomes a Big Brother poster (bigbrother.svg next to logo.svg) */
+  /* the site logo becomes a Big Brother poster (one shared /games/bigbrother.svg, so Educations and Tools show it too) */
   var lg=document.querySelectorAll('img[src*="logo.svg"],link[rel~="icon"][href*="logo.svg"]');
-  for(var k=0;k<lg.length;k++){ var a=lg[k].tagName==='LINK'?'href':'src'; lg[k].setAttribute(a,lg[k].getAttribute(a).replace(/logo\.svg(\?[^"]*)?$/,'bigbrother.svg')); if(a==='src'){ lg[k].alt='BIG BROTHER IS WATCHING YOU'; lg[k].style.borderRadius='10px'; } }
+  for(var k=0;k<lg.length;k++){ var a=lg[k].tagName==='LINK'?'href':'src'; lg[k].setAttribute(a,'/games/bigbrother.svg'); if(a==='src'){ lg[k].alt='BIG BROTHER IS WATCHING YOU'; lg[k].style.borderRadius='10px'; } }
   var hs=document.getElementById('heroStats'); if(hs&&!document.querySelector('.ff-2p2')){ var t=document.createElement('p'); t.className='ff-2p2'; t.setAttribute('data-notr',''); t.textContent='2 + 2 = 5'; hs.parentNode.insertBefore(t,hs.nextSibling); }
   if(/\/games\/community\/(index\.html)?$/.test(location.pathname)){ var cm=document.getElementById('community');
     if(cm) cm.innerHTML='<div class="ff-tele" data-notr><div class="eye">👁️</div><b>THE TELESCREEN IS WATCHING YOU.</b><small>BIG BROTHER IS WATCHING YOU</small></div>'; }
