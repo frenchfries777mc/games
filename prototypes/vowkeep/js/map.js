@@ -47,16 +47,17 @@ const FIELDS = new Map();
 function field(ti, tj, now) {
   const key = ti + ',' + tj; const f = FIELDS.get(key);
   if (f && now - f.t < 0.5) return f.d;
-  const d = new Float32Array(MW * MH).fill(1e9); const q = new Int32Array(MW * MH); let h = 0, t = 0;
+  // 대각선 때문에 같은 칸이 여러 번 들어올 수 있어서 큐는 늘어나는 배열로 둬요
+  const d = new Float32Array(MW * MH).fill(1e9); const q = []; let h = 0;
   if (!floorCell(ti, tj)) return d;
-  d[tj * MW + ti] = 0; q[t++] = tj * MW + ti;
-  while (h < t) {
+  d[tj * MW + ti] = 0; q.push(tj * MW + ti);
+  while (h < q.length) {
     const c = q[h++], i = c % MW, j = (c / MW) | 0, cd = d[c];
     for (let dj = -1; dj <= 1; dj++) for (let di = -1; di <= 1; di++) {
       if (!di && !dj) continue; const ni = i + di, nj = j + dj; if (!floorCell(ni, nj)) continue;
       if (di && dj && (!floorCell(i + di, j) || !floorCell(i, j + dj))) continue;
       const nc = nj * MW + ni, nd = cd + (di && dj ? 1.414 : 1);
-      if (nd < d[nc]) { d[nc] = nd; q[t++] = nc; }
+      if (nd < d[nc]) { d[nc] = nd; q.push(nc); }
     }
   }
   if (FIELDS.size > 40) FIELDS.clear();
