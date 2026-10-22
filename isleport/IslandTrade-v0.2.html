@@ -453,7 +453,7 @@ const TUT=[
  [P('다 자라면 ▼ 표시의 밭을 눌러 수확해요','When it is grown, tap the field with the ▼ to harvest'),s=>s.stats.harvest>=1],
  [P('마을 장터에서 수확한 것을 팔아요','Sell your harvest at the town market'),s=>(s.stats.shop||0)>=1],
  [P('항구에서 배에 짐을 싣고 보내요','Load a ship at the harbor and send it off'),s=>s.stats.sailed>=1]];
-const OUTMAX=12,BUILD=46;
+const OUTMAX=12,BUILD=47;
 const hasB=(s,b)=>s.slots.some(x=>x&&x.b===b);
 const rankOf=e=>{let r=0;RANKS.forEach((x,i)=>{if(e>=x[0])r=i;});return r;};
 /* 업적: id, 이름, 설명, 조건 */
@@ -575,6 +575,9 @@ A('nw1m',P('백만장자','Millionaire'),P('재산 1,000,000 모으기','Reach a
 const CROPK=Object.keys(CROPS),SPEC=['goldbarley','pomegranate','saffron','cloudcotton','seaweed','dragonfruit'],CROPK17=CROPK.filter(c=>!SPEC.includes(c));
 const ACHN={};ACH.forEach(a=>ACHN[a.id]=a);
 const NOTES=[
+ {date:'2026-10-22',build:'v0.2 build 47',title:P('나가기 버튼','Exit button'),items:[
+  P('설정의 "사이트로 돌아가기"를 "나가기"로 바꿨어요. 누르면 저장하고 게임 창이 닫혀요','The settings button "Back to site" is now "Exit": it saves and closes the game window')
+ ]},
  {date:'2026-10-22',build:'v0.2 build 46',title:P('이탈리아어, 폴란드어, 아랍어','Italian, Polish and Arabic'),items:[
   P('언어 3개 추가: 이탈리아어, 폴란드어, 아랍어 (게임과 사이트 모두)','3 languages added: Italian, Polish and Arabic (game and site)')]},
  {date:'2026-10-22',build:'v0.2 build 45',title:P('수족관과 선술집','Aquarium and tavern'),items:[
@@ -28781,10 +28784,12 @@ MODS.settings=()=>`<h2>${T('설정','Settings')}</h2>
  <div class="row" style="margin-top:8px"><label>${T('효과음','Sound effects')}</label><button class="pb sm ${AU.sfx?'gold':''}" data-act="tsfx">${AU.sfx?T('켜짐','On'):T('꺼짐','Off')}</button></div>
  <div class="row" style="margin-top:6px"><label>${T('음악','Music')}</label><button class="pb sm ${AU.mus?'gold':''}" data-act="tmus">${AU.mus?T('켜짐','On'):T('꺼짐','Off')}</button></div>
  <label class="muted">${T('소리 크기','Volume')}</label><input id="setVol" type="range" min="0" max="100" value="${Math.round(AU.vol*100)}">
- <div class="muted" style="margin-top:10px">© 2026 Frenchfries777 · <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.ko" target="_blank" rel="noopener" style="color:inherit">CC BY-NC-ND 4.0</a></div><div class="btns" style="margin-top:10px"><button class="pb sm" data-act="toSite">${T('사이트로 돌아가기','Back to site')}</button></div>
+ <div class="muted" style="margin-top:10px">© 2026 Frenchfries777 · <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.ko" target="_blank" rel="noopener" style="color:inherit">CC BY-NC-ND 4.0</a></div><div class="btns" style="margin-top:10px"><button class="pb sm" data-act="exitGame">${T('나가기','Exit')}</button></div>
  ${S&&!MP.on?`<h5>${T('저장 내보내기 · 불러오기','Export / import save')}</h5><textarea id="saveTxt" rows="3" placeholder="${T('여기에 저장 글자를 붙여 넣어요','Paste save text here')}"></textarea><div class="btns"><button class="pb sm" data-act="saveExp">${T('내보내기','Export')}</button><button class="pb sm" data-act="saveImp">${T('불러오기','Import')}</button></div>`:''}`;
 $('mbody').addEventListener('input',e=>{if(e.target.id==='setLang'){setLang(e.target.value);applyStatic();renderModal();}if(e.target.id==='setVol')setVol(e.target.value/100);});
-ACT.toSite=()=>{try{if(S)save();}catch(e){}location.href='https://frenchfries777mc.github.io/games/';};
+ACT.exitGame=()=>{try{if(S)save();}catch(e){}try{window.close();}catch(e){}setTimeout(()=>{if(!window.closed&&document.visibilityState!=='hidden')openModal('exitfail');},500);};
+MODS.exitfail=()=>`<h2>${T('창을 닫지 못했어요','Could not close the window')}</h2><div class="muted">${T('저장은 끝났어요. 브라우저에서 이 탭을 직접 닫아 주세요. 사이트에서 새 창으로 연 게임만 나가기로 닫을 수 있어요.','Your game is saved. Please close this tab yourself. Only games opened in a new window from the site can be closed with Exit.')}</div><div class="btns" style="margin-top:10px"><button class="pb sm gold" data-act="toSite">${T('사이트로 가기','Go to the site')}</button></div>`;
+ACT.toSite=()=>{location.href='https://frenchfries777mc.github.io/games/';};
 ACT.tsfx=()=>{AU.sfx=!AU.sfx;saveSet();renderModal();};ACT.tmus=()=>{AU.mus=!AU.mus;saveSet();if(AU.mus)musicStart();renderModal();};
 ACT.saveExp=()=>{save();try{$('saveTxt').value=btoa(unescape(encodeURIComponent(JSON.stringify({S,DEM,EV,PROJ}))));$('saveTxt').select();}catch(e){}};
 ACT.saveImp=()=>{try{const t=JSON.parse(decodeURIComponent(escape(atob($('saveTxt').value.trim()))));if(!t.S||t.S.v!==2)throw 0;migrate(t.S);S=t.S;DEM=t.DEM;EV=t.EV||[];CO=t.CO||freshCO();PROJ=t.PROJ||freshProj();save();toast(T('불러왔어요','Imported'));closeModal();renderSide(true);}catch(e){toast(T('저장 글자가 올바르지 않아요','Invalid save text'));}};

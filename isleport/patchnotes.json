@@ -2,11 +2,83 @@
  "notes": [
   {
    "date": "2026-10-22",
+   "build": "v0.2 build 47",
+   "title": "나가기 버튼",
+   "items": [
+    "설정의 \"사이트로 돌아가기\"를 \"나가기\"로 바꿨어요. 누르면 저장하고 게임 창이 닫혀요"
+   ],
+   "tr": {
+    "en": {
+     "title": "Exit button",
+     "items": [
+      "The settings button \"Back to site\" is now \"Exit\": it saves and closes the game window"
+     ]
+    },
+    "ja": {
+     "title": "Exit button",
+     "items": [
+      "The settings button \"Back to site\" is now \"Exit\": it saves and closes the game window"
+     ]
+    },
+    "es": {
+     "title": "Exit button",
+     "items": [
+      "The settings button \"Back to site\" is now \"Exit\": it saves and closes the game window"
+     ]
+    },
+    "fr": {
+     "title": "Exit button",
+     "items": [
+      "The settings button \"Back to site\" is now \"Exit\": it saves and closes the game window"
+     ]
+    },
+    "de": {
+     "title": "Exit button",
+     "items": [
+      "The settings button \"Back to site\" is now \"Exit\": it saves and closes the game window"
+     ]
+    }
+   }
+  },
+  {
+   "date": "2026-10-22",
    "build": "v0.2 build 46",
    "title": "이탈리아어, 폴란드어, 아랍어",
    "items": [
     "언어 3개 추가: 이탈리아어, 폴란드어, 아랍어 (게임과 사이트 모두)"
-   ]
+   ],
+   "tr": {
+    "en": {
+     "title": "Italian, Polish and Arabic",
+     "items": [
+      "3 languages added: Italian, Polish and Arabic (game and site)"
+     ]
+    },
+    "ja": {
+     "title": "Italian, Polish and Arabic",
+     "items": [
+      "3 languages added: Italian, Polish and Arabic (game and site)"
+     ]
+    },
+    "es": {
+     "title": "Italian, Polish and Arabic",
+     "items": [
+      "3 languages added: Italian, Polish and Arabic (game and site)"
+     ]
+    },
+    "fr": {
+     "title": "Italian, Polish and Arabic",
+     "items": [
+      "3 languages added: Italian, Polish and Arabic (game and site)"
+     ]
+    },
+    "de": {
+     "title": "Italian, Polish and Arabic",
+     "items": [
+      "3 languages added: Italian, Polish and Arabic (game and site)"
+     ]
+    }
+   }
   },
   {
    "date": "2026-10-22",
