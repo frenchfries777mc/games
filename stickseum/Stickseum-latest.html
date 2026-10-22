@@ -4771,7 +4771,7 @@ function shuffle(arr){ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.
 /* ===== the version of this file =====
    Players with different versions CAN meet and play together: the automatic matchmaking uses the same room names for every version (online-<mode>-<map>-<slot>), and nobody is refused because of a different build.
    The build is only sent along with the join message and the lobby (for information); the corner of the screen shows it. */
-const GAME_BUILD='build 2026-10-18-v338';
+const GAME_BUILD='build 2026-10-18-v339';
 const GAME_VERSION='0.8', GAME_VERSION_NAME='황금을 찾아서';   // 게임 버전 이름: versions.json의 title과 같게 (빌드마다 바꾸지 않음)
 const WEEKLY_EVENTS=[
   {id:'lowg',    name:'저중력 난투', desc:'몸이 둥실둥실, 중력이 약해진 난투', rules:{grav:0.6}},
@@ -14547,7 +14547,7 @@ function ensureTouchUi(){
   if(touchUiBuilt) return document.getElementById('touchUi'); touchUiBuilt=true;
   const st=document.createElement('style');
   st.textContent=`
-  html,body{ overscroll-behavior:none; -webkit-tap-highlight-color:transparent; }
+  html,body{ overscroll-behavior:none; -webkit-tap-highlight-color:transparent; touch-action:manipulation; }
   body.touchOn #controls-hint{ display:none !important; }
   #touchUi{ display:none; position:fixed; inset:0; z-index:15; pointer-events:none; touch-action:none; user-select:none; -webkit-user-select:none; }
   /* the two halves of the screen are the sticks: they appear where the thumb lands (nothing sits on the game while idle but two faint rings) */
@@ -14596,7 +14596,7 @@ function ensureTouchUi(){
     for(const o of enemiesOf(me)){ if(o.invis) continue; const dx=o.x-me.x, dy=(o.y-35)-(me.y-40), d=Math.hypot(dx,dy); if(d<bd){ bd=d; best=Math.atan2(dy,dx); } }
     return best;
   }
-  let aimDown=0, aimMoved=false;
+  let aimDown=0, aimMoved=false, aimTapX=0, aimTapY=0;
   bindStick(document.getElementById('tsAim'), (v,e)=>{
       const m=Math.hypot(v.dx,v.dy);
       if(m>0.2){ localInput.angle=assistAngle(Math.atan2(v.dy,v.dx)); touchAimActive=true;
@@ -14604,8 +14604,11 @@ function ensureTouchUi(){
       trackBatSwing(e.clientY); },
     ()=>{ const quick=!aimMoved && performance.now()-aimDown<350;
       localInput.shoot=false; touchAimActive=false; batSwingY=null; aimMoved=false;
-      if(quick){ const a=nearestFoeAngle(); if(a!==null){ localInput.angle=a; localInput.shoot=true; const me=players[myId]; if(!me || me.weapon!=='bat') fireInstant(); setTimeout(()=>{ localInput.shoot=false; },90); } } },
-    e=>{ aimDown=performance.now(); aimMoved=false; }, 60);
+      if(quick){
+        let a=null; { const me=players[myId]; if(me){ const cam=getCamera(), dx=aimTapX+cam.x-me.x, dy=aimTapY+cam.y-(me.y-40); if(Math.hypot(dx,dy)>40) a=assistAngle(Math.atan2(dy,dx)); } }       // a tap on an empty spot fires toward that spot (snapping onto a foe close to that line)
+        if(a===null) a=nearestFoeAngle();
+        if(a!==null){ localInput.angle=a; localInput.shoot=true; const me=players[myId]; if(!me || me.weapon!=='bat') fireInstant(); setTimeout(()=>{ localInput.shoot=false; },90); } } },
+    e=>{ aimDown=performance.now(); aimMoved=false; aimTapX=e.clientX; aimTapY=e.clientY; }, 60);
   const bx=document.getElementById('tBtns');
   const mk=(txt,cls,fn,up)=>{ const b=document.createElement('button'); b.className='tbtn '+(cls||''); b.textContent=txt; b.addEventListener('pointerdown', e=>{ e.preventDefault(); e.stopPropagation(); b.classList.add('on'); fn(); });
     const u=()=>{ b.classList.remove('on'); if(up) up(); }; b.addEventListener('pointerup',u); b.addEventListener('pointercancel',u); b.addEventListener('pointerleave',u); bx.appendChild(b); return b; };
@@ -14621,6 +14624,10 @@ function ensureTouchUi(){
   document.getElementById('tEmote').addEventListener('pointerdown', e=>{ e.preventDefault(); e.stopPropagation(); const w=ensureEmoteWheel(); w.style.display=(w.style.display==='block')?'none':'block'; });
   document.getElementById('tFull').onclick=()=>{ try{ const d=document.documentElement; if(document.fullscreenElement) document.exitFullscreen(); else if(d.requestFullscreen) d.requestFullscreen(); }catch(e){} };
   ui.addEventListener('contextmenu', e=>e.preventDefault());
+  /* no zoom by double tap or pinch (iPhone/iPad Safari ignores user-scalable=no): a second tap within 350 ms is swallowed, and the pinch gestures are cancelled */
+  { let lastEnd=0;
+    document.addEventListener('touchend', e=>{ const t=Date.now(); if(t-lastEnd<350 && e.cancelable && ui.style.display==='block') e.preventDefault(); lastEnd=t; }, {passive:false});
+    ['gesturestart','gesturechange','gestureend'].forEach(ev=>document.addEventListener(ev, e=>{ if(touchModeOn()) e.preventDefault(); }, {passive:false})); }
   return ui;
 }
 setInterval(()=>{
