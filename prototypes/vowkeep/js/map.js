@@ -1,25 +1,45 @@
 // Vowkeep · © 2026 Frenchfries777 · CC BY-NC-ND 4.0
 // 지도: 벽 칸, 충돌, 시야, 길찾기 (규칙·화면·게스트 이동이 같이 써요)
-import { MAP } from './data.js';
+import { MAP, CHAPTERS, CH, setChapterData } from './data.js';
 
-export const CS = MAP.cs, MW = MAP.w, MH = MAP.h;
-export const WX = MW * CS, WZ = MH * CS; // 지도 전체 크기 (m)
+const FIELDS = new Map();
+export let CS = 2, MW = 0, MH = 0, WX = 0, WZ = 0; // 지도 전체 크기 (m)
 // 칸 좌표 → 세계 좌표 (칸 가운데)
 export const cw = c => (c + 0.5) * CS;
 
-// 0 = 벽, 1 = 바닥
-export const GRID = new Uint8Array(MW * MH);
-for (const [x, y, w, h] of MAP.floors) for (let j = y; j < y + h; j++) for (let i = x; i < x + w; i++) GRID[j * MW + i] = 1;
-export const WATER = new Uint8Array(MW * MH);
-for (const [x, y, w, h] of MAP.water) for (let j = y; j < y + h; j++) for (let i = x; i < x + w; i++) WATER[j * MW + i] = 1;
-
-export const PILLARS = MAP.pillars.map(([x, y]) => ({ x: cw(x), z: cw(y), r: 1.1 }));
+// GRID: 0 = 벽, 1 = 바닥
+export let GRID = new Uint8Array(0), WATER = new Uint8Array(0), PILLARS = [];
+let CUR = -1;
+// 장을 바꾸면 지도를 새로 만들어요
+export function useChapter(i) {
+  i = Math.max(0, Math.min(CHAPTERS.length - 1, i | 0));
+  if (i === CUR) return CH; CUR = i; setChapterData(i);
+  CS = MAP.cs; MW = MAP.w; MH = MAP.h; WX = MW * CS; WZ = MH * CS;
+  GRID = new Uint8Array(MW * MH); WATER = new Uint8Array(MW * MH);
+  for (const [x, y, w, h] of MAP.floors) for (let j = y; j < y + h; j++) for (let k = x; k < x + w; k++) if (k >= 0 && j >= 0 && k < MW && j < MH) GRID[j * MW + k] = 1;
+  for (const [x, y, w, h] of MAP.water) for (let j = y; j < y + h; j++) for (let k = x; k < x + w; k++) if (k >= 0 && j >= 0 && k < MW && j < MH) WATER[j * MW + k] = 1;
+  PILLARS = MAP.pillars.map(([x, y]) => ({ x: cw(x), z: cw(y), r: 1.1 }));
+  FIELDS.clear();
+  return CH;
+}
+export function chapterIndex() { return CUR; }
 
 export function floorCell(i, j) { return i >= 0 && j >= 0 && i < MW && j < MH && GRID[j * MW + i] === 1; }
 export function isWall(x, z) { return !floorCell(Math.floor(x / CS), Math.floor(z / CS)); }
 
 // 원(위치 o, 반지름 r)을 벽과 기둥 밖으로 밀어내요
 export function collide(o, r) {
+  // 벽 안에 들어가 버렸으면 가장 가까운 바닥 칸으로 꺼내요
+  const ci = Math.floor(o.x / CS), cj = Math.floor(o.z / CS);
+  if (!floorCell(ci, cj)) {
+    let best = null, bd = 1e9;
+    for (let dj = -4; dj <= 4; dj++) for (let di = -4; di <= 4; di++) {
+      if (!floorCell(ci + di, cj + dj)) continue;
+      const nx = Math.max((ci + di) * CS + r, Math.min(o.x, (ci + di + 1) * CS - r)), nz = Math.max((cj + dj) * CS + r, Math.min(o.z, (cj + dj + 1) * CS - r)), d = Math.hypot(nx - o.x, nz - o.z);
+      if (d < bd) { bd = d; best = [nx, nz]; }
+    }
+    if (best) { o.x = best[0]; o.z = best[1]; }
+  }
   for (let pass = 0; pass < 2; pass++) {
     const i0 = Math.floor((o.x - r) / CS), i1 = Math.floor((o.x + r) / CS), j0 = Math.floor((o.z - r) / CS), j1 = Math.floor((o.z + r) / CS);
     for (let j = j0; j <= j1; j++) for (let i = i0; i <= i1; i++) {
@@ -43,7 +63,6 @@ export function lineClear(ax, az, bx, bz) {
 }
 
 // 길찾기: 목표 칸에서 퍼져 나가는 거리 지도를 만들어 두고 재사용해요
-const FIELDS = new Map();
 function field(ti, tj, now) {
   const key = ti + ',' + tj; const f = FIELDS.get(key);
   if (f && now - f.t < 0.5) return f.d;
@@ -88,3 +107,5 @@ export function areaAt(x, z) {
   for (let a = 0; a < MAP.areas.length; a++) for (const [rx, ry, rw, rh] of MAP.areas[a].r) if (i >= rx && i < rx + rw && j >= ry && j < ry + rh) return a;
   return -1;
 }
+
+useChapter(0);
