@@ -16,7 +16,7 @@ function ago(iso){ var t=Date.parse(iso); if(!t) return ''; var m=Math.round((Da
 
 /* ===================== 뉴스: 세 게임과 허브의 패치노트 중 가장 최근 6개 ===================== */
 var NEWS_N=6, news=[], hubNotes=[], notesBy={};
-var NSRC={hub:{name:'허브',cls:'g0',site:'./'},stickseum:GAMES.stickseum,crownenvoy:GAMES.crownenvoy,beaconfall:GAMES.beaconfall};
+var NSRC={hub:{name:'허브',cls:'g0',site:'https://frenchfries777mc.github.io/games/'},stickseum:GAMES.stickseum,crownenvoy:GAMES.crownenvoy,beaconfall:GAMES.beaconfall};
 var NEWL=['zh','pt','ru','tr','it','pl','ar','nw'].indexOf(LANG)>=0;   /* the newer languages fall back to English, not Korean */
 function trNote(n, N){
   if(LANG==='ko') return {title:n.title, items:n.items||[]};
