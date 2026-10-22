@@ -1,7 +1,7 @@
 // Vowkeep · © 2026 Frenchfries777 · CC BY-NC-ND 4.0
 // 게임 데이터: 역할, 적, 축복, 1장 지도
 
-export const VERSION = 'v0.1', BUILD = 25;
+export const VERSION = 'v0.1', BUILD = 26;
 
 export const ROLES = {
   knight: {
@@ -119,7 +119,11 @@ export const FOES = [
   { skel: { name: '해골 병사', skin: 'skel' }, archer: { name: '해골 궁수', skin: 'skel' }, shield: { name: '방패 해골', skin: 'skel' }, elite: { name: '해골 근위대장', skin: 'skel' } },
   { skel: { name: '잿빛 늑대', skin: 'wolf', hp: 0.8, speed: 1.3, r: 0.75 }, archer: { name: '재 사냥꾼', skin: 'hunter', proj: 'spear' }, shield: { name: '껍질 거인', skin: 'treant', hp: 1.2, speed: 0.85, r: 0.9 }, elite: { name: '늑대 우두머리', skin: 'wolf', speed: 1.15 } },
   { skel: { name: '익사한 수도사', skin: 'monk', hp: 1.15, speed: 0.9 }, archer: { name: '물의 시종', skin: 'acolyte', proj: 'eorb', psp: 12 }, shield: { name: '종지기', skin: 'bellman' }, elite: { name: '수도원 파수꾼', skin: 'monkw' } },
-  { skel: { name: '재의 기사', skin: 'ashknight', hp: 1.1 }, archer: { name: '재 석궁병', skin: 'xbow', proj: 'bolt', psp: 22 }, shield: { name: '탑 방패병', skin: 'ashshield' }, elite: { name: '왕의 근위 기사', skin: 'royal' } }
+  { skel: { name: '재의 기사', skin: 'ashknight', hp: 1.1 }, archer: { name: '재 석궁병', skin: 'xbow', proj: 'bolt', psp: 22 }, shield: { name: '탑 방패병', skin: 'ashshield' }, elite: { name: '왕의 근위 기사', skin: 'royal' } },
+  { skel: { name: '얼어붙은 형제', skin: 'frostk', hp: 1.1 }, archer: { name: '서리 궁수', skin: 'frostb', proj: 'eorb', psp: 15 }, shield: { name: '얼음 방패병', skin: 'frosts' }, elite: { name: '서리 형제단장', skin: 'frostl' } },
+  { skel: { name: '해골 광부', skin: 'skel', hp: 1.05 }, archer: { name: '곡괭이 투척꾼', skin: 'miner', proj: 'spear', psp: 16 }, shield: { name: '바위 거인', skin: 'golem', hp: 1.25, speed: 0.85, r: 0.9 }, elite: { name: '광산 감독', skin: 'golemk' } },
+  { skel: { name: '불꽃 신도', skin: 'zealot', speed: 1.1 }, archer: { name: '재 사제', skin: 'pyro', proj: 'ember', psp: 13 }, shield: { name: '향로지기', skin: 'censer' }, elite: { name: '사원 수호기사', skin: 'templar' } },
+  { skel: { name: '깨진 서약의 기사', skin: 'voidk', hp: 1.15 }, archer: { name: '심연 석궁병', skin: 'voidb', proj: 'vorb', psp: 18 }, shield: { name: '심연 방패병', skin: 'voids' }, elite: { name: '심연의 맹세자', skin: 'voidl' } }
 ];
 
 // 큰 지도 만들기: 방 9개를 세 줄로 지그재그 이어 붙여요. 같은 씨앗이면 늘 같은 지도예요
@@ -220,12 +224,76 @@ export const CHAPTERS = [
       '꼭대기 왕좌에서 잿빛 왕이 기다리고 있어요.'
     ],
     outro: [
-      '잿빛 왕관이 재가 되어 흩어졌어요.',
-      '되찾은 불꽃이 탑 꼭대기에서 왕국을 다시 밝혔어요.',
-      '사람들은 끝까지 서약을 지킨 네 사람을 Vowkeep, 서약을 지킨 자들이라 불렀어요.'
+      '잿빛 왕관이 깨지고, 왕은 재가 되어 무너졌어요.',
+      '왕은 마지막으로 속삭였어요. "불꽃이... 나를 골랐을 뿐이다. 다음은 너희다."',
+      '그런데 불꽃은 꺼지지 않았어요. 북쪽 국경 너머에서 같은 불꽃이 피어오르고 있었어요.'
     ],
     boss: { name: '잿빛 왕', ai: 'king', hp: 14000, speed: 4.0, r: 1.5, dmg: 50, p2: ['왕이 재의 기사들을 불러내요', '돌진은 기사가 막기로 받아칠 수 있어요'], p3: ['왕관에서 재의 불꽃이 타올라요', '불길을 피하고 마지막 일격을 노려요'], ph: ['재의 기사 소환', '재의 불꽃'] },
     theme: 'tower'
+  },
+  {
+    id: 5, title: '5장 · 얼어붙은 국경', place: '얼어붙은 국경', diff: 1.3,
+    intro: [
+      '네 사람은 불꽃을 쫓아 북쪽 국경으로 떠났어요.',
+      '국경 요새는 기사단의 형제단이 지키던 곳이었지만, 지금은 얼음에 갇혀 있었어요.',
+      '요새를 다스리는 하랄드는 추위를 이기려고 불꽃과 서약을 맺었다고 해요.',
+      '얼어붙은 형제들을 지나, 하랄드에게 불꽃이 어디서 왔는지 물어야 해요.'
+    ],
+    outro: [
+      '하랄드의 얼음 갑옷이 산산이 부서졌어요.',
+      '하랄드가 떨리는 손으로 남쪽 산을 가리켰어요. "불꽃은... 잊힌 광산에서 캐낸 돌이다."',
+      '네 사람은 눈보라를 뚫고 광산으로 향했어요.'
+    ],
+    boss: { name: '서리 맹세의 하랄드', ai: 'king', hp: 15000, speed: 4.0, r: 1.5, dmg: 50, col: 0x6ad0ff, fig: { body: 0x4a5a6a, helmC: 0x9ab0c8, eye: 0x6ad0ff, great: 0xb8d8f0, greatE: 0x6ad0ff, cape: 0x2a4a6a, crown: 0 }, p2: ['하랄드가 얼어붙은 형제들을 깨워요', '돌진은 기사가 막기로 받아칠 수 있어요'], p3: ['요새 전체가 얼음 불꽃에 휩싸여요', '얼음 불길을 피하고 빈틈을 노려요'], ph: ['형제 소환', '얼음 불꽃'] },
+    theme: 'frost'
+  },
+  {
+    id: 6, title: '6장 · 잊힌 광산', place: '잊힌 광산', diff: 1.36,
+    intro: [
+      '산속 깊은 곳에 오래전에 버려진 광산이 있었어요.',
+      '사람들은 이곳에서 검게 빛나는 돌을 캐냈고, 그 돌이 처음으로 불꽃을 피웠어요.',
+      '광산을 감독하던 그롬은 돌을 먹고 거인이 되어, 지금도 갱도를 지키고 있어요.',
+      '불꽃의 돌이 처음 나온 곳까지 내려가야 해요.'
+    ],
+    outro: [
+      '거인이 쓰러지자 갱도 끝에서 붉은 빛이 새어 나왔어요.',
+      '벽에는 불꽃을 섬기는 사원의 문장이 새겨져 있었어요.',
+      '누군가 이 돌을 사원으로 실어 날랐던 거예요.'
+    ],
+    boss: { name: '돌을 삼킨 거인 그롬', ai: 'hunter', hp: 16000, speed: 4.4, r: 1.5, dmg: 52, col: 0xffb060, fig: { body: 0x5a4a3a, leg: 0x3a3028, arm: 0x5a4a3a, hood: 0x4a3a2a, antler: 0, cape: 0x3a2a1a, skinC: 0x8a7a6a, eye: 0xffb060, scale: 2.3 }, p2: ['그롬이 갱도의 짐승들을 불러요', '짐승부터 쓰러뜨리고 도약은 굴러서 피해요'], p3: ['무너지는 돌이 갱도를 막아요', '돌 고리 안쪽으로 파고들어요'], ph: ['갱도 짐승', '무너지는 돌'] },
+    theme: 'mine'
+  },
+  {
+    id: 7, title: '7장 · 불꽃의 사원', place: '불꽃의 사원', diff: 1.42,
+    intro: [
+      '사막 한가운데, 모래 언덕 사이에 붉은 사원이 서 있었어요.',
+      '사원의 사제들은 불꽃을 신으로 섬기며, 왕과 하랄드에게 불꽃을 나눠 주었어요.',
+      '예언자 세라핀은 불꽃이 온 세상을 태워야 새 왕국이 온다고 믿고 있어요.',
+      '세라핀을 멈추고, 불꽃이 어디로 이어지는지 알아내야 해요.'
+    ],
+    outro: [
+      '세라핀의 지팡이가 꺾이고, 사원의 불이 하나둘 꺼졌어요.',
+      '세라핀은 웃으며 말했어요. "불꽃은 심연에서 올라온다. 너희가 닿기 전에 모든 것이 탈 것이다."',
+      '사원 제단 아래로, 끝이 보이지 않는 계단이 열렸어요.'
+    ],
+    boss: { name: '불꽃의 예언자 세라핀', ai: 'bishop', hp: 15000, speed: 3.3, r: 1.3, dmg: 50, col: 0xff8a30, fig: { body: 0x8a2a1a, leg: 0x5a1a10, arm: 0x8a2a1a, skinC: 0xb09080, eye: 0xffb040, staffC: 0xff8a30, cape: 0x6a3a10 }, p2: ['세라핀이 불꽃 신도들을 불러요', '순간이동한 자리를 놓치지 말아요'], p3: ['사원 바닥에서 불길이 솟아요', '불길을 피하며 끝까지 버텨요'], ph: ['신도 소환', '솟는 불길'] },
+    theme: 'temple'
+  },
+  {
+    id: 8, title: '8장 · 재의 심연', place: '재의 심연', diff: 1.5,
+    intro: [
+      '사원 아래 계단은 땅속 깊은 곳, 재의 심연까지 이어져 있었어요.',
+      '그곳에는 처음부터 꺼지지 않은 불꽃이 살아 있었어요. 왕도, 하랄드도, 세라핀도 그 불꽃에 서약했어요.',
+      '불꽃은 서약을 먹고 자라요. 지키지 못한 서약일수록 더 크게 타올라요.',
+      '네 사람은 마지막 서약을 품고 심연 바닥으로 내려갔어요.'
+    ],
+    outro: [
+      '꺼지지 않던 불꽃이 처음으로 흔들리더니, 작은 불씨가 되어 사그라들었어요.',
+      '네 사람은 그 불씨를 서약의 탑으로 가져가 모두를 지키는 등불로 바꾸었어요.',
+      '사람들은 끝까지 서약을 지킨 네 사람을 Vowkeep, 서약을 지킨 자들이라 불렀어요.'
+    ],
+    boss: { name: '꺼지지 않는 불꽃', ai: 'king', hp: 18000, speed: 4.2, r: 1.6, dmg: 52, col: 0xb06aff, fig: { body: 0x2a2234, helmC: 0x3a2a48, eye: 0xd08aff, great: 0x4a3a5a, greatE: 0xb06aff, cape: 0x3a1a5a, crown: 1, scale: 2.5 }, p2: ['불꽃이 깨진 서약의 기사들을 불러내요', '돌진은 기사가 막기로 받아칠 수 있어요'], p3: ['심연 전체가 보랏빛 불꽃으로 타올라요', '불길을 피하고 마지막 일격을 노려요'], ph: ['깨진 서약 소환', '심연의 불꽃'] },
+    theme: 'abyss'
   }
 ];
 // 게임 중 대사: 장마다 구역에 처음 들어가면(숫자는 구역 순서), boss는 보스가 나타날 때
@@ -274,6 +342,50 @@ export const TALK = [
     6: [['knight', '왕의 근위 기사들이오. 둘 다 만만치 않소.']],
     7: [['squire', '이 계단 끝에 왕이 있는 거죠?'], ['knight', '그렇소. 모두 내 곁을 지키시오.']],
     boss: [['knight', '왕이여, 기사단의 서약을 돌려받으러 왔소!'], ['priest', '불꽃이 왕을 삼키고 있어요. 조심하세요!']]
+  },
+  {
+    0: [['squire', '으으, 손가락이 얼 것 같아요.'], ['knight', '북쪽 형제단이 지키던 요새요. 이리 조용할 리가 없소.']],
+    1: [['archer', '얼음 속에 사람이 있어. 눈이 움직였어.'], ['priest', '불꽃이 저들을 얼음 속에 묶어 두었군요.']],
+    2: [['knight', '성벽 위의 궁수부터 떨어뜨리시오.'], ['archer', '맡겨 둬. 눈보라 속이라도 안 빗나가.']],
+    3: [['squire', '망루가 반쯤 무너졌어요. 누가 여기서 싸웠던 걸까요?']],
+    4: [['priest', '모닥불을 피웁시다. 다들 입술이 파래요.'], ['squire', '형제단 식당이라니, 따뜻한 수프라도 남아 있으면 좋겠어요.']],
+    5: [['archer', '바닥 미끄러워. 넘어지면 덫 위야.']],
+    6: [['knight', '형제단장... 북쪽에서 가장 용맹하던 분이오.'], ['priest', '그분도 지금은 불꽃의 사슬에 묶여 있어요.']],
+    7: [['squire', '얼음 속인데도 촛불이 안 꺼져요.'], ['knight', '누군가 서약을 지키려 했던 흔적이오. 하랄드가 가까이 있소.']],
+    boss: [['knight', '하랄드, 불꽃이 어디서 왔는지 말하시오!'], ['archer', '대답 대신 도끼부터 드는구나.']]
+  },
+  {
+    0: [['archer', '사람 발자국이 하나도 없어. 오래 버려진 곳이야.'], ['squire', '어두워요... 횃불 꼭 붙잡고 있을게요.']],
+    1: [['knight', '죽어서도 곡괭이를 놓지 못했구려.'], ['priest', '불꽃의 돌이 저들을 놓아주지 않는 거예요.']],
+    2: [['squire', '곡괭이가 날아와요! 고개 숙여요!']],
+    3: [['archer', '저 바위 덩어리가 움직였어.'], ['knight', '거인이오. 다리부터 노리시오.']],
+    4: [['priest', '광부들도 여기서 쉬었겠지요. 우리도 잠시 쉬어 가요.']],
+    5: [['squire', '물이 차가워서 발이 저려요.'], ['archer', '물소리 때문에 발소리가 안 들려. 조심해.']],
+    6: [['knight', '감독이 장부를 들고 있소. 무엇을 그리 세었던 것이오?'], ['priest', '캐낸 돌, 그리고 쓰러진 광부들이겠지요.']],
+    7: [['archer', '이 검은 돌... 왕관에서 본 불꽃이랑 똑같이 빛나.'], ['knight', '불꽃이 여기서 시작되었소. 그롬은 이 아래에 있소.']],
+    boss: [['knight', '그롬, 그 돌을 내려놓으시오!'], ['squire', '저렇게 큰 사람은 처음 봐요!']]
+  },
+  {
+    0: [['archer', '모래 때문에 눈을 못 뜨겠어.'], ['priest', '이 사원이 불꽃을 왕에게 보냈다니... 같은 사제로서 부끄럽습니다.']],
+    1: [['squire', '저 사람들 맨발이에요! 안 뜨거운가?'], ['knight', '불꽃에 홀리면 아픔도 잊는 법이오.']],
+    2: [['priest', '저들의 기도에는 이름이 없습니다. 불꽃만 부르고 있어요.']],
+    3: [['archer', '연기 때문에 앞이 안 보여. 향로부터 치워.']],
+    4: [['knight', '여기서 쉬어 가오. 세라핀과 맞서려면 힘이 필요하오.'], ['squire', '제가 물 떠 올게요!']],
+    5: [['squire', '벽에서 불이 튀어나와요!'], ['archer', '불 나오는 틈을 보고 지나가. 박자가 있어.']],
+    6: [['knight', '수호기사의 갑옷에도 기사단 문장이 있소.'], ['priest', '그들도 서약했던 거예요. 다른 것에게요.']],
+    7: [['squire', '아, 시원하다! 여기서 조금만 더 있고 싶어요.'], ['priest', '이 우물만은 불꽃이 닿지 않았군요.']],
+    boss: [['priest', '세라핀, 불꽃은 신이 아닙니다!'], ['knight', '세상을 태워 얻는 왕국 따위는 필요 없소.']]
+  },
+  {
+    0: [['squire', '계단이 끝이 없어요...'], ['knight', '내려가는 수밖에 없소. 서로 손을 놓지 마시오.']],
+    1: [['priest', '서약을 어긴 기사들이에요. 불꽃이 저들의 후회를 먹고 있어요.'], ['archer', '저렇게는 되고 싶지 않네.']],
+    2: [['archer', '다리가 떠 있어. 떨어지면 끝이야.'], ['squire', '아래 보지 마요, 아래 보지 마요...']],
+    3: [['knight', '재가 된 숲이라니. 불꽃이 무엇까지 삼켰단 말이오.']],
+    4: [['priest', '마지막 쉼터예요. 불을 피우고 서로의 서약을 다시 말해 봐요.'], ['squire', '저는 끝까지 여러분 곁에 있을게요!'], ['knight', '나도 그 서약을 지키겠소.']],
+    5: [['archer', '바닥 아래가 전부 불이야. 덫 밟지 마.']],
+    6: [['knight', '맹세자가 둘이오. 한 명씩 떼어 놓으시오.'], ['priest', '제가 뒤에서 버티게 해 드릴게요.']],
+    7: [['squire', '심장 뛰는 소리... 불꽃이 살아 있는 거예요?'], ['archer', '살아 있든 말든, 여기서 끝낼 거야.']],
+    boss: [['knight', '우리는 서약을 지키는 자들이오. 너에게 바칠 서약은 없소!'], ['priest', '모두, 마지막입니다!']]
   }
 ];
 CHAPTERS[0].map = MAP1;
@@ -310,6 +422,50 @@ CHAPTERS[3].map = genMap(5521, [
   { name: '왕좌 앞 계단', line: '마지막 모닥불이에요. 숨을 고르고 올라가요.', rest: 1, chest: 1, w: 12, h: 11 },
   { name: '왕좌의 방', line: '"서약이란 지키는 자를 묶는 사슬일 뿐이다."', boss: 1 }
 ]);
+CHAPTERS[4].map = genMap(7717, [
+  { name: '눈 덮인 관문', line: '눈보라 너머로 얼어붙은 요새가 보여요.', w: 12, h: 12 },
+  { name: '얼어붙은 연병장', line: '형제단 기사들이 얼음 속에서 깨어나요.', foes: { skel: 6, archer: 2 } },
+  { name: '얼음 성벽', line: '서리 궁수들이 성벽 위에서 겨누고 있어요.', foes: { skel: 4, archer: 4, shield: 1 }, traps: 3 },
+  { name: '무너진 망루', line: '얼음 방패병이 망루 아래를 막고 있어요.', foes: { skel: 3, archer: 2, shield: 3 }, altar: 1, pil: 1 },
+  { name: '형제단 식당', line: '꺼진 모닥불이 있어요. 불을 붙이면 쓰러졌을 때 여기서 다시 시작해요.', rest: 1, chest: 1, w: 12, h: 11 },
+  { name: '서리 회랑', line: '바닥이 미끄럽고 얼음 덫이 숨어 있어요.', foes: { skel: 5, archer: 3, shield: 2 }, traps: 4 },
+  { name: '형제단장의 방', line: '서리 형제단장이 마지막 문을 지켜요.', foes: { elite: 1, skel: 4, archer: 2, shield: 1 }, altar: 1, pil: 1 },
+  { name: '얼어붙은 예배실', line: '얼음 속에서도 꺼지지 않는 촛불이 있어요. 숨을 고르고 가요.', rest: 1, chest: 1, w: 12, h: 11 },
+  { name: '얼음 왕좌', line: '"추위보다 차가운 것은 지키지 못한 서약이다."', boss: 1 }
+]);
+CHAPTERS[5].map = genMap(3089, [
+  { name: '광산 입구', line: '녹슨 수레가 입구를 막고 있어요.', w: 12, h: 12 },
+  { name: '첫 번째 갱도', line: '해골 광부들이 아직도 곡괭이를 휘둘러요.', foes: { skel: 6, archer: 2 } },
+  { name: '수레 선로', line: '곡괭이를 던지는 광부들이 선로 위에 있어요.', foes: { skel: 4, archer: 4, shield: 1 }, traps: 3 },
+  { name: '무너진 채굴장', line: '바위 거인이 무너진 돌 사이에서 일어나요.', foes: { skel: 3, archer: 2, shield: 3 }, altar: 1, pil: 1 },
+  { name: '광부 쉼터', line: '꺼진 모닥불이 있어요. 불을 붙이면 쓰러졌을 때 여기서 다시 시작해요.', rest: 1, chest: 1, w: 12, h: 11 },
+  { name: '지하 물웅덩이', line: '갱도에 물이 고여 있어요. 덫을 조심해요.', foes: { skel: 5, archer: 3, shield: 2 }, traps: 3, water: 1 },
+  { name: '감독관실', line: '광산 감독이 장부를 든 채 문을 지켜요.', foes: { elite: 1, skel: 4, archer: 2, shield: 1 }, altar: 1, pil: 1 },
+  { name: '검은 돌 창고', line: '검은 돌이 희미하게 빛나요. 숨을 고르고 가요.', rest: 1, chest: 1, w: 12, h: 11 },
+  { name: '가장 깊은 갱도', line: '"돌은 배고프다. 너희 서약도 먹어 치우겠다."', boss: 1 }
+], { flip: 1 });
+CHAPTERS[6].map = genMap(6151, [
+  { name: '모래 계단', line: '뜨거운 모래바람 사이로 붉은 사원이 보여요.', w: 12, h: 12 },
+  { name: '순례자의 뜰', line: '불꽃 신도들이 맨발로 달려들어요.', foes: { skel: 6, archer: 2 } },
+  { name: '불꽃 기도실', line: '재 사제들이 불덩이를 던져요.', foes: { skel: 4, archer: 4, shield: 1 }, traps: 3, pil: 1 },
+  { name: '향로의 방', line: '향로지기들이 연기 속에 숨어 있어요.', foes: { skel: 3, archer: 2, shield: 3 }, altar: 1 },
+  { name: '사제 숙소', line: '꺼진 모닥불이 있어요. 불을 붙이면 쓰러졌을 때 여기서 다시 시작해요.', rest: 1, chest: 1, w: 12, h: 11 },
+  { name: '타오르는 회랑', line: '벽 틈에서 불이 새어 나와요. 덫을 조심해요.', foes: { skel: 5, archer: 3, shield: 2 }, traps: 4 },
+  { name: '수호기사의 문', line: '사원 수호기사가 성소 앞을 막아요.', foes: { elite: 1, skel: 4, archer: 2, shield: 1 }, altar: 1, pil: 1 },
+  { name: '그늘진 우물', line: '사원에서 유일하게 시원한 곳이에요. 숨을 고르고 가요.', rest: 1, chest: 1, pool: 1, w: 12, h: 11 },
+  { name: '불꽃의 성소', line: '"불은 거짓말하지 않는다. 모든 것을 똑같이 태울 뿐."', boss: 1 }
+]);
+CHAPTERS[7].map = genMap(8263, [
+  { name: '끝없는 계단', line: '아래에서 보랏빛 바람이 올라와요.', w: 12, h: 12 },
+  { name: '깨진 서약의 무덤', line: '서약을 어긴 기사들이 심연에 묶여 있어요.', foes: { skel: 6, archer: 2 } },
+  { name: '떠 있는 다리', line: '심연 석궁병들이 다리 끝을 겨누고 있어요.', foes: { skel: 4, archer: 4, shield: 1 }, traps: 4 },
+  { name: '재의 숲', line: '타 버린 나무 사이로 심연 방패병이 서 있어요.', foes: { skel: 3, archer: 3, shield: 3 }, altar: 1, pil: 1 },
+  { name: '마지막 쉼터', line: '꺼진 모닥불이 있어요. 불을 붙이면 쓰러졌을 때 여기서 다시 시작해요.', rest: 1, chest: 1, w: 12, h: 11 },
+  { name: '불타는 강', line: '바닥 아래로 불의 강이 흘러요. 덫을 조심해요.', foes: { skel: 5, archer: 3, shield: 2 }, traps: 4 },
+  { name: '맹세자의 제단', line: '심연의 맹세자 둘이 제단을 지켜요.', foes: { elite: 2, skel: 3, archer: 2 }, altar: 1, pil: 1 },
+  { name: '불씨의 문', line: '문 너머에서 심장 뛰는 소리가 들려요. 숨을 고르고 가요.', rest: 1, chest: 1, w: 12, h: 11 },
+  { name: '심연의 바닥', line: '"서약하라. 그러면 영원히 타오르게 해 주마."', boss: 1 }
+], { flip: 1 });
 export const CHAPTER1 = CHAPTERS[0];
 
 // 지금 고른 장의 지도. map.js의 useChapter로 바꿔요
@@ -335,7 +491,11 @@ export const ACHIEVEMENTS = [
   { id: 'friends', name: '함께하는 원정', desc: '친구와 같은 방에서 원정을 떠나요.' },
   { id: 'ch2', name: '잿빛 숲을 지나', desc: '2장에서 가시관의 사냥꾼 베른을 쓰러뜨려요.' },
   { id: 'ch3', name: '불꽃을 되찾다', desc: '3장에서 익사한 대주교 오드릭을 쓰러뜨려요.' },
-  { id: 'ch4', name: '서약을 지킨 자들', desc: '4장에서 잿빛 왕을 쓰러뜨려요.' },
+  { id: 'ch4', name: '왕관을 깨다', desc: '4장에서 잿빛 왕을 쓰러뜨려요.' },
+  { id: 'ch5', name: '얼음을 녹이다', desc: '5장에서 서리 맹세의 하랄드를 쓰러뜨려요.' },
+  { id: 'ch6', name: '돌의 근원', desc: '6장에서 돌을 삼킨 거인 그롬을 쓰러뜨려요.' },
+  { id: 'ch7', name: '거짓 예언', desc: '7장에서 불꽃의 예언자 세라핀을 쓰러뜨려요.' },
+  { id: 'ch8', name: '서약을 지킨 자들', desc: '8장에서 꺼지지 않는 불꽃을 꺼뜨려요.' },
   { id: 'nodown', name: '한 번도 안 쓰러짐', desc: '한 번도 쓰러지지 않고 한 장을 깨요.' },
   { id: 'all4', name: '네 가지 서약', desc: '네 역할로 모두 한 장 이상 깨요.' }
 ];
