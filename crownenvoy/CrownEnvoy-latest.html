@@ -386,7 +386,7 @@ window.ceReload=function(){try{if(window.FFAuth&&FFAuth.setRoom)FFAuth.setRoom(n
 try{if(sessionStorage.getItem('ce_noIntro')){sessionStorage.removeItem('ce_noIntro');el.style.display='none';go();}}catch(e){}})();</script>
 <div id="app">
  <div id="lobby" class="screen">
-  <canvas id="lobbyBg"></canvas><canvas id="lobbyWar"></canvas><div id="cpTag">© 2026 Frenchfries777 · <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.ko" target="_blank" rel="noopener">CC BY-NC-ND 4.0</a></div><div id="verTag">v0.3 · build 87</div>
+  <canvas id="lobbyBg"></canvas><canvas id="lobbyWar"></canvas><div id="cpTag">© 2026 Frenchfries777 · <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.ko" target="_blank" rel="noopener">CC BY-NC-ND 4.0</a></div><div id="verTag">v0.4 · build 88</div>
   <header class="brand"><h1>Crown Envoy</h1><div class="sub"><i></i>DIPLOMACY · WAR · EMPIRE<i></i></div></header>
   <div id="lobbyRight">
    <div id="lobbyHome" class="modes">
@@ -3007,7 +3007,6 @@ function extAct(pid,m){const p=G.players[pid];const inPlan=G.phase==='plan';if(m
     p.gold-=80;opnAdd(to,pid,'raid','사략선으로 약탈했다',-18,30);if(Math.random()<0.55){let msg='';if(cvs.length){const c=pick(cvs);G.convoys=G.convoys.filter(x=>x!==c);const x=Math.round(c.value/2);p.gold+=x;msg+=`상선을 나포해 ${x}금을 얻었어요. `;}
       if(mg){G.mono[mg].sus=G.round+2;msg+=`${GOODS[mg].n} 독점 수입이 2턴 끊겼어요.`;}log(`${q.kingdom}의 교역이 ${p.kingdom}의 사략선에 약탈당했다.`,'war');return ok('사략선이 성공했습니다! '+msg+' (-80금)');}
     p.trust=clamp(p.trust-6,0,100);return fail('사략선이 격침됐습니다. (-80금, 신뢰도 -6)');}
-  case 'color':{const c=String(m.c||'');if(!/^#[0-9a-f]{6}$/i.test(c))return fail('색 형식이 올바르지 않아요.');p.color=c.toLowerCase();return ok('나라 색을 바꿨어요.');}
   case 'merc':{if(!inPlan)return fail('계획 단계에서만 가능합니다.');const T=G.terr[+m.tid];if(!T||T.sea||T.owner!==pid)return fail('내 영토를 선택하세요.');const ty=UT.includes(m.type)?m.type:'i';{const why=unitRule(pid,T,ty);if(why)return fail(why);}
     const vv=Math.max(0,Math.min(convAvail(pid,ty),Math.floor(+m.v)||0));let n=Math.floor((+m.n||0)/10)*10;if(!(n>=100))return fail('용병은 100명 이상 고용해요.');const room=capacity(pid)-totalTroops(pid);if(n>room)return fail(`병력 상한 초과 (여유 ${Math.max(0,room)}명)`);
     {const lim=G.treaties.find(t=>t.type==='truce'&&t.lim&&t.lim.pid===pid&&t.until>=G.round);if(lim&&totalTroops(pid)+pendOf(pid)+n>lim.lim.cap)return fail(`휴전 조건으로 병력이 ${lim.lim.cap.toLocaleString()}명을 넘을 수 없어요.`);}
@@ -4996,7 +4995,6 @@ const UI={
   },
   toast(text,kind){const d=document.createElement('div');d.className='toast '+(kind||'');d.textContent=josaFix(text);$('#toasts').appendChild(d);setTimeout(()=>d.remove(),3800);},
   /* ----- 로비 ----- */
-  setColor(c){if(!/^#[0-9a-f]{6}$/i.test(c))return;try{localStorage.setItem('ce_color',c);}catch(_){}send({a:'color',c});},
   myName(){try{let v=localStorage.getItem('ce_name');if(!v){v='지휘관'+Math.floor(100+Math.random()*900);localStorage.setItem('ce_name',v);}return v;}catch(e){return '지휘관'+Math.floor(100+Math.random()*900);}},
   show(which){['Home','Private','Find','Room','Saves'].forEach(k=>$('#lobby'+k).classList.toggle('hidden',k.toLowerCase()!==which));
     if(which==='home'){UI.stk=[];UI.refreshRejoin&&UI.refreshRejoin();UI.refreshSaves&&UI.refreshSaves();}else if(['private','find','room','saves'].includes(which)){UI.stk=(UI.stk||[]).filter(x=>!['private','find','room','saves'].includes(x));UI.navPush(which);}},
@@ -5518,7 +5516,6 @@ const UI={
       <div class="pol"><div><b>효과음</b></div>${seg('snd',Battle.snd?'1':'0',[['1','켬'],['0','끔']])}</div>
       <div class="pol"><div><b>배경음악</b><small>전투 음악은 게임 중에, 잔잔한 곡은 로비에서 반복 재생돼요. 이 기기에만 적용돼요.</small></div><div class="row" style="gap:8px;flex:none;align-items:center">${seg('bgm',Music.on?'1':'0',[['1','켬'],['0','끔']])}<input type="range" id="bgmVol" min="0" max="100" step="1" value="${Math.round(Music.vol*100)}" style="width:110px"><span id="bgmVolNum" style="width:36px;text-align:right">${Math.round(Music.vol*100)}%</span></div></div>
       <div class="pol"><div><b>하켄크로이츠 흐리게</b><small>1939년 독일 국기의 하켄크로이츠를 흐리게 보여줘요. 이 기기에만 적용돼요.</small></div>${seg('blur',BLUR_FLAGS?'1':'0',[['1','켬'],['0','끔']])}</div>
-      <div class="pol"><div><b>나라 색</b><small>지도에 표시되는 우리 나라의 색을 바꿔요.</small></div><input type="color" value="${(mePl()&&/^#[0-9a-f]{6}$/i.test(mePl().color))?mePl().color:'#c0392b'}" onchange="UI.setColor(this.value)" style="width:44px;height:30px;border:0;background:none"></div>
       ${C.me===0?`<div class="pol"><div><b>게임 끝내기</b><small>라운드 제한이 없어서, 방장은 언제든 현재 승점으로 승부를 가를 수 있어요.</small></div><button class="btn sm danger" data-act="endGame">승점으로 종료</button></div>`:''}<div class="pol"><div><b>내 이름</b><small>다음 게임부터 적용돼요.</small></div><div class="row" style="gap:6px;flex:none"><input type="text" id="nameEdit" maxlength="12" value="${esc(UI.myName())}" style="width:120px"><button class="btn sm" data-act="saveName">저장</button></div></div><div class="pol"><div><b>내 나라 이름</b><small>게임 중에도 바꿀 수 있어요.</small></div><div class="row" style="gap:6px;flex:none"><input type="text" id="kEdit" maxlength="16" value="${esc((v.draft?'':(v.players[C.me]||{}).kingdom)||(()=>{try{return localStorage.getItem('ce_kname')||'';}catch(_){return '';}})())}" style="width:120px"><button class="btn sm" data-act="saveK">저장</button></div></div>${v.draft?'':`<div class="pol"><div><b>내 국기</b><small>게임 중에도 바꿀 수 있어요.</small></div><div class="row" style="gap:6px;flex:none"><select id="flagEdit" style="width:150px"><option value="">자동 (나라 색)</option>${Ed.flagOpts().map(([k,nm])=>`<option value="${k}" ${(v.players[C.me]||{}).flag===k?'selected':''}>${esc(nm)}</option>`).join('')}</select><button class="btn sm" data-act="saveFlag">저장</button></div></div>`}<h3 style="font-family:var(--serif);font-size:15px;margin:14px 0 4px">소식</h3><div class="logs">${v.log.slice().reverse().map(l=>`<div class="logline ${l.kind}"><small>${l.r}R</small>${esc(l.text)}</div>`).join('')}</div></div>`;const wasHidden=m.classList.contains('hidden');m.classList.remove('hidden');if(wasHidden)UI.navPush('menu');},
   closeMenu(){if((UI.stk||[])[UI.stk.length-1]==='menu')UI.back();else $('#menu').classList.add('hidden');},
   /* ----- 상호작용 ----- */
@@ -5973,7 +5970,6 @@ Object.assign(UI,{
 ;(function(){const i=document.getElementById('kLobby');if(!i)return;try{i.value=localStorage.getItem('ce_kname')||'';}catch(e){}i.addEventListener('input',()=>{try{localStorage.setItem('ce_kname',i.value.trim().slice(0,16));}catch(e){}});})();
 ;(function(){const f=()=>{try{UI.refreshSaves&&UI.refreshSaves();}catch(e){}};f();setTimeout(f,0);setTimeout(f,300);window.addEventListener('pageshow',f);document.addEventListener('visibilitychange',f);})();
 
-;setInterval(()=>{try{if(typeof C==='undefined'||!C.view||C.view.draft||C.spec||C.me==null||C._cs)return;const c=localStorage.getItem('ce_color');C._cs=1;if(c&&/^#[0-9a-f]{6}$/i.test(c)&&C.view.players[C.me]&&c!==C.view.players[C.me].color)send({a:'color',c});}catch(e){}},2500);
 
 ;(function(){
 const STEPS=[["#mapwrap", "map", "지도에서 영토를 누르면 정보가 나와요. 내 영토(내 나라 색)를 눌러 시작해 보세요. 휠이나 + 버튼으로 확대할 수 있어요."], ["#panel", "map", "내 영토를 고른 뒤 이웃 영토를 누르면 공격·이동 명령을 만들 수 있어요. 보병·기병·포병 슬라이더로 병력을 정하고 [공격 추가]를 누르세요."], ["#timer", "map", "위의 시간이 계획 시간이에요. 모두의 시간이 끝나면 명령이 한꺼번에 실행되고 전투 연출이 나와요. 마음에 안 들면 이전 턴 되돌리기(혼자 할 때)를 쓸 수 있어요."], ["#tabs [data-tab=\"dip\"]", "dip", "외교 탭: 동맹·조약·무역·선전포고를 해요. 나라 이름으로 검색할 수 있고, 먼 나라는 외교관을 보내야 해요."], ["#tabs [data-tab=\"trade\"]", "trade", "무역 탭: 상품 시세를 보고 사고팔며, 항구끼리 무역 협정을 맺으면 매턴 금이 들어와요."], ["#tabs [data-tab=\"tech\"]", "tech", "기술 탭: 연구하면 병종이 발전해요. 기병은 평지, 기관총병은 참호·험지에서 강해요. 기병과 기관총병은 전투에서도 따로 줄을 서요."], ["#tabs [data-tab=\"obj\"]", "obj", "목표 탭: 나라마다 사명이 있어요. 달성하면 승점이 크게 올라요."], ["#panel", "map", "장군은 열세를 뒤집거나 큰 승리를 거두면 훈장을 받아 강해져요. 항구·큰 도시에는 가끔 역병이 돌아 병력이 줄어요. 의학 기술이 피해를 줄여요."]];

@@ -1,16 +1,27 @@
 {
  "name": "Crown Envoy",
- "latest": "0.3",
- "latestFile": "CrownEnvoy-v0.3.html",
+ "latest": "0.4",
+ "latestFile": "CrownEnvoy-v0.4.html",
  "updated": "2026-10-22",
  "versions": [
+  {
+   "version": "0.4",
+   "date": "2026-10-22",
+   "file": "CrownEnvoy-v0.4.html",
+   "title": "오래된 제국과 교황의 시대",
+   "summary": "교황청·신성로마제국 황제 선거·망명 정부·유언장 등 왕실 정치 확장\n의회, 장군 결투, 첩보원 직접 조종\n나라 색 자동 지정, 삼국 대륙 제거",
+   "latest": true,
+   "size": 6231857,
+   "sha256": "36b190ec4e4f",
+   "build": "b88"
+  },
   {
    "version": "0.3",
    "date": "2026-10-17",
    "file": "CrownEnvoy-v0.3.html",
    "title": "자원과 장군의 시대",
    "summary": "자원·정치·귀족 파벌·국채·산적 소굴 등 나라 운영 확장\n휴전회의, 성격이 다른 AI 최대 5명\n시즌 랭킹·칭호, 판 통계",
-   "latest": true,
+   "latest": false,
    "size": 6232773,
    "sha256": "fa05bcee0d59",
    "build": "b87"
