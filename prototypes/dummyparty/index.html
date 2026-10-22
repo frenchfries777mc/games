@@ -267,6 +267,9 @@
     /* 꾸미기 */
     '모자': ['hat', 'sombrero', 'chapeau', 'Hut', '帽子'],
     '안경': ['glasses', 'gafas', 'lunettes', 'Brille', 'メガネ'],
+    /* 빌드 51 추가분 */
+    "가위바위보로 토너먼트, 아래 버튼으로 골라요": ["Rock-paper-scissors tournament, pick with the buttons below", "Torneo de piedra, papel o tijera, elige con los botones", "Tournoi pierre-feuille-ciseaux, choisis avec les boutons", "Schere-Stein-Papier-Turnier, wähle mit den Tasten unten", "じゃんけんトーナメント、下のボタンで選びます"],
+    "아래 바위, 보, 가위 버튼 중 하나를 눌러 골라요. 시간이 끝나면 고른 걸로 대결해요. 비기면 다시 해요.": ["Tap one of the rock, paper, scissors buttons below. When time's up, you battle with what you picked. Ties are replayed.", "Pulsa uno de los botones de piedra, papel o tijera. Al acabar el tiempo, se lucha con lo elegido. Si hay empate, se repite.", "Appuie sur un bouton pierre, feuille ou ciseaux. À la fin du temps, on s'affronte avec son choix. En cas d'égalité, on rejoue.", "Tippe unten auf Stein, Papier oder Schere. Wenn die Zeit um ist, kämpfst du mit deiner Wahl. Bei Gleichstand wird wiederholt.", "下の「グー・パー・チョキ」ボタンを押して選びます。時間が切れたら選んだ手で勝負します。あいこはやり直しです。"],
     /* 빌드 50 추가분 */
     "자, 우승자는… {a} 선수입니다! 축하드립니다!": ["And the winner is... {a}! Congratulations!", "¡Y el ganador es... {a}! ¡Felicidades!", "Et le vainqueur est... {a} ! Félicitations !", "Und der Sieger ist... {a}! Glückwunsch!", "優勝は…{a}選手です！おめでとうございます！"],
     "정정합니다. 우승자는 {a} 선수입니다. 죄송합니다, {b} 선수.": ["Correction: the winner is {a}. Sorry, {b}.", "Rectifico: el ganador es {a}. Perdón, {b}.", "Rectification : le vainqueur est {a}. Désolé, {b}.", "Korrektur: Der Sieger ist {a}. Tut mir leid, {b}.", "訂正します。優勝は{a}選手です。{b}選手、すみません。"],
@@ -1433,7 +1436,9 @@ body.playing #emoBar{display:flex}
    <div class="row"><input id="codeIn" maxlength="5" placeholder="방 코드" autocomplete="off"><button class="pb dark" id="joinBtn" style="flex:0 0 auto">들어가기</button></div>
    <div class="msg" id="homeMsg"></div>
   </aside>
-  <template id="patchnotes"><details class="notes" open><summary>패치노트 · v0.1 (build 50)</summary>
+  <template id="patchnotes"><details class="notes" open><summary>패치노트 · v0.1 (build 51)</summary>
+   <b>2026-10-22 · v0.1 build 51 · 가위바위보 버튼</b>
+   <ul><li>마지막 판 해설의 말줄임표와 지친 멘트를 없앴어요</li><li>가위바위보 토너먼트에서 바위, 보, 가위를 화면 아래 버튼으로 바로 골라요</li></ul>
    <b>2026-10-22 · v0.1 build 50 · 가짜 우승 발표</b>
    <ul><li>시상식에서 해설자가 먼저 엉뚱한 선수를 우승자로 부르고, 곧 "정정합니다"라고 바로잡아요</li></ul>
    <b>2026-10-22 · v0.1 build 49 · 병맛 포인트 추가</b>
@@ -1532,7 +1537,7 @@ body.playing #emoBar{display:flex}
    <ul><li>무너지는 발판 칸 수 대폭 증가 (19×10)와 용암 동굴 맵</li><li>10개 맵 전부 새로 그림 (관중석, 야자수 섬, 링, 정원 미로, 서커스, 우노 테이블 등)</li><li>글자 대신 아이콘·말풍선·이펙트로 표현 (무기, 아이템, 카드 효과, 시작 안내)</li><li>타격·폭발·물보라 효과와 화면 흔들림 추가</li></ul>
    <b>2026-10-19 · v0.1 build 1 · 첫 시험판</b>
    <ul><li>마네킹 미니게임 10개 추가 (장애물 달리기, 섬 밀치기, 싸우기, 병맛 미로, 체스 대난투, 폭탄 돌리기, 병맛 우노, 쇼윈도 얼음땡, 무너지는 발판, 컨베이어 서바이벌)</li><li>방 코드로 최대 8명 멀티플레이, 빈자리는 봇으로 채우기</li><li>판마다 10개 중 5개를 무작위로 골라 점수를 합산</li><li>PC 키보드와 휴대폰 터치 조작 지원</li></ul></details></template>
-  <p class="foot">2~8명 · 판마다 31개 미니게임 중 7개 · 프로토타입 v0.1 b50 · <a href="../">← 프로토타입 목록</a></p>
+  <p class="foot">2~8명 · 판마다 31개 미니게임 중 7개 · 프로토타입 v0.1 b51 · <a href="../">← 프로토타입 목록</a></p>
   <p class="foot"><span class="ff-copy">© 2026 Frenchfries777 · <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.ko" target="_blank" rel="noopener">CC BY-NC-ND 4.0</a></span></p>
  </div>
 </section>
@@ -4554,8 +4559,8 @@ function snow(s, v) { if (s.t !== SNOW.st) { SNOW.st = s.t; SNOW.vt = v.t; } ret
   regMG({
     id: 'rps', name: '가위바위보 토너먼트', time: 50,
     desc: '둘씩 짝지어 가위바위보로 겨뤄요. 이기면 다음 판으로, 지면 탈락이에요.',
-    how: 'A를 누를 때마다 바위, 보, 가위가 바뀌어요. 시간이 끝나면 고른 걸로 대결해요. 비기면 다시 해요.',
-    keys: { a: '바꾸기', b: null }, touch: true,
+    how: '아래 바위, 보, 가위 버튼 중 하나를 눌러 골라요. 시간이 끝나면 고른 걸로 대결해요. 비기면 다시 해요.',
+    keys: { a: null, b: null }, touch: false,
     init: function (ps, rng) {
       var pl = {}; ps.forEach(function (p) { pl[p.id] = { c: -1, out: 0, win: 0 }; });
       var s = { t: 0, pl: pl, ids: ps.map(function (p) { return p.id; }), alive: ps.map(function (p) { return p.id; }), pairs: [], bye: null, ph: 'pick', pt: PICK, rd: 1, ties: 0, order: [], bt: {} };
@@ -4564,7 +4569,7 @@ function snow(s, v) { if (s.t !== SNOW.st) { SNOW.st = s.t; SNOW.vt = v.t; } ret
     step: function (s, inp, dt, rng) {
       s.t += dt; if (s.alive.length < 2) return; s.pt -= dt;
       if (s.ph === 'pick') {
-        s.ids.forEach(function (id) { var p = s.pl[id], i = inp[id] || emptyInput(); if (!p.out && i.ap) { p.c = (p.c + 1) % 3; fx(s, 'pop'); } });
+        s.ids.forEach(function (id) { var p = s.pl[id], i = inp[id] || emptyInput(); if (p.out) return; (i.acts || []).forEach(function (a) { if (a && a.c != null && a.c >= 0 && a.c < 3 && p.c !== (a.c | 0)) { p.c = a.c | 0; fx(s, 'pop'); } }); if (i.ap) { p.c = (p.c + 1) % 3; fx(s, 'pop'); } });
         if (s.pt <= 0) {
           s.ph = 'show'; s.pt = SHOW; s.res = [];
           s.pairs.forEach(function (pr) { var a = s.pl[pr[0]], b = s.pl[pr[1]]; if (a.c < 0 && b.c < 0) { a.c = Math.floor(rng() * 3); b.c = Math.floor(rng() * 3); } else if (a.c < 0) a.c = (b.c + 2) % 3; else if (b.c < 0) b.c = (a.c + 2) % 3; });
@@ -4607,7 +4612,17 @@ function snow(s, v) { if (s.t !== SNOW.st) { SNOW.st = s.t; SNOW.vt = v.t; } ret
         });
         txt(ctx, 'VS', cx, cy + 20, { size: 18, c: '#4a2a7a', stroke: false });
       });
-      if (s.bye) txt(ctx, '부전승: ' + (v.players[s.bye] ? v.players[s.bye].name : ''), W / 2, 500, { size: 16, c: '#4a2a7a', stroke: false });
+      // 고르기 버튼: 바위 / 보 / 가위를 바로 눌러요
+      var me = s.pl[v.me];
+      if (s.ph === 'pick' && s.alive.length >= 2 && me && !me.out && s.alive.indexOf(v.me) >= 0 && s.bye !== v.me) {
+        for (var bi = 0; bi < 3; bi++) {
+          var bx = W / 2 - 215 + bi * 150, by = np > 3 ? 434 : 300, bh = np > 3 ? 52 : 64, on = me.c === bi;
+          ctx.fillStyle = on ? COLS[bi] : 'rgba(255,255,255,.85)'; rrect(ctx, bx, by, 130, bh, 16); ctx.fill(); ctx.strokeStyle = on ? '#4a2a7a' : COLS[bi]; ctx.lineWidth = on ? 5 : 3; ctx.stroke();
+          txt(ctx, NAMES[bi], bx + 65, by + bh / 2 + 1, { size: 24, c: on ? '#2a1450' : '#4a2a7a', stroke: false });
+          v.btn(bx, by, 130, bh, { c: bi });
+        }
+      }
+      if (s.bye) txt(ctx, '부전승: ' + (v.players[s.bye] ? v.players[s.bye].name : ''), W - 130, 94, { size: 16, c: '#4a2a7a', stroke: false });
     },
     result: function (s, forced) {
       if (!forced && s.alive.length > 1) return null;
@@ -6024,8 +6039,7 @@ var CMT = {
 (function () {
   var Y = {
     foul: ['삐익! 방금 그건 반칙입니다.', '삐익! 무슨 반칙인지는 묻지 말아 주세요.', '삐익! 반칙입니다. 제가 그렇게 느꼈습니다.', '삐익! 아무 일도 없었지만 반칙입니다.'],
-    armoff: ['{n} 선수 팔이 혼자 떨어졌습니다. 아무도 안 쳤는데요.', '팔이 알아서 나갔습니다. 독립심이 강한 팔이네요.', '{n} 선수, 팔이 먼저 퇴근했습니다.'],
-    tired: ['이제 지치네요.', '저도 이제 집에 가고 싶습니다. 마이크는 두고 가겠습니다.', '이제 지치네요. 내일의 저에게 맡기겠습니다.', '자, 다들 수고하셨습니다. 저는 특히 수고했습니다.']
+    armoff: ['{n} 선수 팔이 혼자 떨어졌습니다. 아무도 안 쳤는데요.', '팔이 알아서 나갔습니다. 독립심이 강한 팔이네요.', '{n} 선수, 팔이 먼저 퇴근했습니다.']
   };
   for (var k in Y) { if (!CMT[k]) CMT[k] = []; Y[k].forEach(function (l) { CMT[k].push(l); }); }
 })();
@@ -6039,36 +6053,12 @@ var CMT = {
 function cmName() { var m = G.meta; if (!m || !m.players || !m.players.length) return '마네킹'; return m.players[Math.floor(Math.random() * m.players.length)].name; }
 // 바보상 받는 사람 = 최종 순위 꼴찌 (3명 이상일 때), 아니면 아무나
 function cmFool() { var m = G.meta; if (!m || !m.players || m.players.length < 3) return cmName(); var ps = m.players.slice().sort(function (a, b) { return b.score - a.score; }); return ps[ps.length - 1].name; }
-// 마지막 판에는 해설이 지쳐서 글자 사이사이에 말줄임표가 끼어요
-function lastRoundDots(t, kind) {
-  var m = G.meta; if (kind === 'tired' || !m || !m.order || !m.order.length || (m.round | 0) !== m.order.length - 1 || m.phase === 'final' || m.phase === 'result') return t;
-  if (window.DP_LANG && DP_LANG !== 'ko') return t.split(' ').join('… ');
-  var o = '', n = 0, cs = Array.from(t);
-  for (var i = 0; i < cs.length; i++) { o += cs[i]; if (cs[i] !== ' ' && i < cs.length - 1 && cs[i + 1] !== ' ' && /[가-힣A-Za-z]/.test(cs[i]) && ++n % 2 === 0) o += '…'; }
-  return o;
-}
-// 직접 문장을 말해요 ({a}, {b} 자리에 이름을 넣어요)
-function sayText(tpl, vars) {
-  var cm = FUNS.cm, now = performance.now(), tl = (window.DP_T && window.DP_LANG && DP_LANG !== 'ko') ? DP_T(tpl) : tpl;
-  for (var k in vars) tl = tl.split('{' + k + '}').join(vars[k]);
-  cm.text = tl; cm.t0 = now; cm.until = now + 1500 + cm.text.length * 105; cm.cool = now + 3600; cm.idle = now; try { SFX.play('cmt'); } catch (e) { }
-}
-// 가짜 우승 발표: 해설자가 엉뚱한 선수를 우승자로 부르고 곧 정정해요
-function fakeWinner(m) {
-  var ps = (m && m.players ? m.players : []).slice().sort(function (a, b) { return b.score - a.score || b.wins - a.wins; });
-  if (ps.length < 2) return;
-  var real = ps[0], wrong = ps[1 + Math.floor(Math.random() * (ps.length - 1))], my = G.finT0;
-  var ok = function () { return G.meta && G.meta.phase === 'final' && G.finT0 === my; };
-  setTimeout(function () { if (ok()) sayText('자, 우승자는… {a} 선수입니다! 축하드립니다!', { a: wrong.name }); }, 800);
-  setTimeout(function () { if (ok()) sayText('정정합니다. 우승자는 {a} 선수입니다. 죄송합니다, {b} 선수.', { a: real.name, b: wrong.name }); }, 3900);
-  setTimeout(function () { if (ok()) say('tired', true); }, 7600);
-}
 function say(kind, force) {
   var cm = FUNS.cm, now = performance.now(); if (!force && now < cm.cool) return;
   var pool = CMT[kind]; if (!pool) return;
   var line = pool[Math.floor(Math.random() * pool.length)]; if (line === cm.text && pool.length > 1) line = pool[(pool.indexOf(line) + 1) % pool.length];
   var tl = (window.DP_T && window.DP_LANG && DP_LANG !== 'ko') ? DP_T(line) : line;   // 이름을 넣기 전에 번역해요
-  cm.text = lastRoundDots(tl.replace('{n}', cmName()).replace('{f}', cmFool()), kind); cm.t0 = now; cm.until = now + 1500 + cm.text.length * 105; cm.cool = now + 3600; cm.idle = now; try { SFX.play('cmt'); } catch (e) { }
+  cm.text = tl.replace('{n}', cmName()).replace('{f}', cmFool()); cm.t0 = now; cm.until = now + 1500 + cm.text.length * 105; cm.cool = now + 3600; cm.idle = now; try { SFX.play('cmt'); } catch (e) { }
 }
 function drawCommentary(c, now) {
   var cm = FUNS.cm; if (!cm.text || now > cm.until) return;
@@ -6415,7 +6405,7 @@ function funPhase(m, ph) {
     FUNS.mood = 1; say('end', true); setTimeout(function () { SFX.play('cheer'); throwFlowers(wp); }, 900);
     if (rk[rk.length - 1] === me && m.players.length >= 3) setTimeout(function () { SFX.play('trombone'); }, 1600);
   }
-  else if (ph === 'final') { G.finT0 = now; G._cer = {}; POSEO = {}; FUNS.mood = 1; if (m.players && m.players.length >= 2) fakeWinner(m); else { say('final', true); setTimeout(function () { say('tired', true); }, 5200); } }
+  else if (ph === 'final') { G.finT0 = now; G._cer = {}; POSEO = {}; FUNS.mood = 1; if (m.players && m.players.length >= 2) fakeWinner(m); else say('final', true); }
   else if (ph !== 'result') POSEO = {};
 }
 
@@ -7036,7 +7026,7 @@ var INTRO = {
   simon: { tip: '"시몬 가라사대"가 붙은 명령만 따라 해요', hero: 'flame', a: 'jump', b: 'skip' },
   rope: { tip: '줄이 닿기 직전에 점프', hero: 'flame', a: 'jump' },
   mole: { tip: '두더지는 잡고 폭탄은 피해요', hero: 'bat', a: 'attack' },
-  rps: { tip: '가위바위보로 토너먼트', hero: 'hand', a: 'mash' }
+  rps: { tip: '가위바위보로 토너먼트, 아래 버튼으로 골라요', hero: 'tap', tapOnly: true }
 };
 function keycap(c, x, y, w, h, label, glyph) { c.fillStyle = 'rgba(255,255,255,.92)'; rrect(c, x, y, w, h, 7); c.fill(); c.fillStyle = 'rgba(0,0,0,.2)'; c.fillRect(x + 4, y + h - 5, w - 8, 4); if (label) { c.fillStyle = '#2b2117'; c.font = '800 20px ' + FONT; c.textAlign = 'center'; c.textBaseline = 'middle'; c.fillText(label, x + w / 2, y + h / 2 - 1); } if (glyph) { c.save(); c.translate(x + w / 2, y + h / 2 - 1); c.fillStyle = '#2b2117'; c.strokeStyle = '#2b2117'; ICONS[glyph](c, 28); c.restore(); } }
 function paintIntro(cv, mg) {
