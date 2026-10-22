@@ -275,8 +275,9 @@ function respawnAll(G) {
   G.phase = 'play'; G.phaseT = 0; ev(G, 'restart', {});
 }
 function resetEnemy(e) {
-  e.x = e.hx; e.z = e.hz; e.hp = e.maxhp; e.st = 'sleep'; e.vx = e.vz = 0; e.burn = e.mark = e.stun = e.root = 0; e.tauntT = 0; e.charging = false;
-  if (e.k === 'boss') { e.phase = 1; e.atk = null; e.summonT = 10; e.fireT = 5; e.cdT = 0; e.a = Math.PI / 2; }
+  e.keepHp = e.hp; e.x = e.hx; e.z = e.hz; e.hp = e.maxhp; e.st = 'sleep'; e.vx = e.vz = 0; e.burn = e.mark = e.stun = e.root = 0; e.tauntT = 0; e.charging = false;
+  // 보스는 깎아 둔 체력과 단계를 그대로 두고 조금만 회복해요
+  if (e.k === 'boss') { e.hp = Math.min(e.maxhp, e.keepHp + e.maxhp * 0.05); e.atk = null; e.summonT = 10; e.fireT = 5; e.cdT = 0; e.a = Math.PI / 2; }
 }
 
 function stepPlayer(G, p, inp, dt) {

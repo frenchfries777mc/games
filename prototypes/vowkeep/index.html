@@ -42,6 +42,9 @@ button{font:inherit;color:inherit;cursor:pointer}
 /* 판넬 */
 .pan{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:min(860px,94vw);max-height:90vh;overflow:auto;background:var(--panel);border:3px solid var(--line);box-shadow:0 0 0 3px #1a1420,0 12px 40px rgba(0,0,0,.6);padding:22px 22px 18px}
 .pan h2{margin:0 0 14px;font-size:22px;color:var(--gold)}
+.startRow{position:sticky;bottom:-18px;background:var(--panel);padding:10px 0 4px;margin-bottom:-4px;z-index:2}
+@media (max-height:520px){.pan{padding:12px 16px 14px;max-height:96vh}.slots{grid-template-columns:repeat(4,1fr)!important}.pan .slot img.pt{width:46px}.pan h2{margin-bottom:6px;font-size:18px}}
+@media (max-aspect-ratio:1/1){#menu{top:auto;bottom:40px;right:0;transform:none;padding:14px 18px 14px 70px;background:linear-gradient(to left,rgba(10,8,14,.82) 40%,rgba(10,8,14,0))}}
 .pan .x{position:absolute;right:10px;top:8px;background:none;border:0;font-size:26px;color:var(--dim)}
 .row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
 .btn{background:#2a2230;border:2px solid var(--line);padding:9px 16px;font-weight:700;font-size:15px}
@@ -100,7 +103,8 @@ input[type=range]{width:220px;accent-color:#d9b75a}
 .sk{width:74px;height:66px;background:var(--panel);border:3px solid var(--line);position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;font-weight:700;font-size:14px;overflow:hidden}
 .sk small{font-size:11px;color:var(--dim)}
 .sk .cd{position:absolute;left:0;right:0;bottom:0;background:rgba(0,0,0,.65)}
-.sk .cn{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:18px;color:#fff}
+.sk .cn{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:22px;color:#fff}
+.sk.cool .nm,.sk.cool small{opacity:.15}
 #center{position:absolute;left:50%;top:22%;transform:translateX(-50%);text-align:center;width:90vw}
 #bigMsg{font-size:clamp(22px,3vw,36px);font-weight:800;opacity:0;transition:opacity .4s}
 #subMsg{font-size:clamp(14px,1.6vw,18px);color:#d8ccb4;margin-top:6px;opacity:0;transition:opacity .4s}
@@ -168,7 +172,7 @@ body.touch #exitBtn{top:auto;bottom:auto}
   <div class="chs" id="chRow"></div><p class="note" id="chNote"></p>
   <p class="note" id="roomNote">역할을 하나 골라 주세요. 빈 자리는 봇 동료가 맡아요.</p>
   <div class="slots" id="slots"></div>
-  <div class="row"><button class="btn gold" id="startBtn">원정 시작</button><span class="note" id="roomMsg"></span></div>
+  <div class="row startRow"><button class="btn gold" id="startBtn">원정 시작</button><span class="note" id="roomMsg"></span></div>
 </div></section>
 
 <!-- 역할·장비 -->
@@ -194,7 +198,7 @@ body.touch #exitBtn{top:auto;bottom:auto}
   <p class="note">PC: WASD 이동 · 마우스 조준 · 왼쪽 클릭 공격 · Q E R 기술 · Space 구르기 · F 꾹 누르기(일으키기, 상자 열기) · 1 2 3 축복 고르기<br>휴대폰: 왼쪽 엄지로 이동 · 오른쪽 버튼으로 공격(가까운 적 자동 조준), 기술, 구르기, 상호작용</p>
 </div></section>
 
-<!-- 인트로 (건너뛰기 없음) -->
+<!-- 인트로: 건너뛰기 (함께할 때는 사람이 모두 눌러야 넘어가요) -->
 <section class="scr" id="sIntro"><div id="introBox"><div class="ch" id="introCh"></div><div id="introLine"></div><div id="introBar"><i></i></div><button id="introSkip">건너뛰기</button></div></section>
 
 <!-- 결과 -->
