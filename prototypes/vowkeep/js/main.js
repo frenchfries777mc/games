@@ -401,8 +401,11 @@ function onEvent(e) {
     case 'pdodge': view.ring(e.x, e.z, 2.6, 0x9ad0ff, 0.4); view.streak(e.x, e.z, 0, 0.1, 0x9ad0ff, 0.2, 0.1); view.rise(e.x, e.z, 0x9ad0ff, 10, 1, 0.6, 6); if (e.id === me) { num(e.x, e.z, '완벽한 회피!', '#9ad0ff', 1.3, 4.2); view.flash(e.x, e.z, 0x9ad0ff, 120); SFX.play('parry'); if (S.net === 'solo') S.slowT = Math.max(S.slowT || 0, 0.45); } break;
     case 'heavy': { // 내려찍은 자리: 큰 충격파 두 겹, 흙먼지, 땅 문양, 화면 크게 흔들기
       const hp = view.entPos('p' + e.id); if (hp) { view.ring(hp.x + Math.cos(e.a) * 1.4, hp.z + Math.sin(e.a) * 1.4, 3.4, 0xffe08a, 0.4); view.burst(hp.x + Math.cos(e.a) * 1.4, 0.3, hp.z + Math.sin(e.a) * 1.4, 0xbcae94, 26, 9, 0.6, 0.18); }
-      view.shock(e.x, e.z, 6, 0xffe08a, 0.45); view.shock(e.x, e.z, 3.2, 0xffffff, 0.3); view.rune(e.x, e.z, 2.2, 0xffb040, 0.7, 0); view.streak(e.x - Math.cos(e.a) * 2.5, e.z - Math.sin(e.a) * 2.5, e.a, 5, 0xfff0b0, 0.28, 0.9); view.rise(e.x, e.z, 0xffd36b, 16, 1.6, 0.6, 9); view.flash(e.x, e.z, 0xffe08a, 150);
+      view.shock(e.x, e.z, 6, 0xffe08a, 0.45); view.ring(e.x - Math.cos(e.a) * 0.4, e.z - Math.sin(e.a) * 0.4, 3.2, 0x7ac8ff, 0.6); view.shock(e.x, e.z, 3.2, 0xffffff, 0.3); view.rune(e.x, e.z, 2.2, 0xffb040, 0.7, 0); view.streak(e.x - Math.cos(e.a) * 2.5, e.z - Math.sin(e.a) * 2.5, e.a, 5, 0xfff0b0, 0.28, 0.9); view.rise(e.x, e.z, 0xffd36b, 16, 1.6, 0.6, 9); view.flash(e.x, e.z, 0xffe08a, 150);
       if (e.id === me) { num(e.x, e.z, '강타!', '#ffd36b', 1.5, 4.2); view.shake = Math.max(view.shake, 1.0); if (S.net === 'solo') S.slowT = Math.max(S.slowT || 0, 0.12); } SFX.play('clang'); break; }
+    case 'big': { // 사제·종자 세 번째 큰 공격
+      const col = e.role === 'priest' ? 0xfff0b0 : 0xffb060; view.shock(e.x, e.z, 3.6, col, 0.4); view.burst(e.x, 1.4, e.z, col, 18, 8, 0.45, 0.14); view.rise(e.x, e.z, col, 10, 1.2, 0.5, 7); view.flash(e.x, e.z, col, 110);
+      if (e.id === me) view.shake = Math.max(view.shake, 0.6); SFX.play('clang'); break; }
     case 'weak': num(e.x, e.z, '약점!', '#ff9c4a', 1.4, 3.8); view.shock(e.x, e.z, 3, 0xff7a20, 0.35); view.burst(e.x, 2.4, e.z, 0xffb060, 14, 9, 0.5, 0.14); view.flash(e.x, e.z, 0xff7a20, 90); view.shake = Math.max(view.shake, 0.35); SFX.play('parry'); break;
     case 'phit': num(e.x, e.z, '-' + e.v, '#ff7a6a', 1); if (e.id === me) { view.shake = Math.max(view.shake, 0.5); SFX.play('phit'); } break;
     case 'ekill': {
@@ -561,6 +564,7 @@ function drawOverlay(dt) {
     const h = e.k === 'elite' ? 4.6 : 3.4, s = view.project(E.x, h, E.z), w = e.k === 'elite' ? 54 : 38;
     if (e.hp < e.mx) { oc.fillStyle = 'rgba(20,10,14,.85)'; oc.fillRect(s.x - w / 2 - 1, s.y - 1, w + 2, 6); oc.fillStyle = '#d0443a'; oc.fillRect(s.x - w / 2, s.y, w * e.hp / e.mx, 4); }
     if (e.mk) { oc.fillStyle = '#ff5a4a'; oc.font = 'bold 16px system-ui'; oc.fillText('▼', s.x, s.y - 12); }
+    if (e.sl && !e.sn && !e.mk) { oc.fillStyle = '#7ac8ff'; oc.font = 'bold 12px system-ui'; oc.strokeStyle = '#140f18'; oc.lineWidth = 3; const ly = s.y - (e.k === 'elite' ? 28 : 11); oc.strokeText('둔화', s.x, ly); oc.fillText('둔화', s.x, ly); }
     if (e.sn) { oc.fillStyle = '#ffe08a'; oc.font = 'bold 14px system-ui'; oc.fillText('★ ★', s.x, s.y - 12); }
     if (e.k === 'elite') { oc.fillStyle = '#efe3c8'; oc.font = 'bold 13px system-ui'; oc.strokeStyle = '#140f18'; oc.lineWidth = 4; oc.strokeText(FOES[chapterIndex()].elite.name, s.x, s.y - 12); oc.fillText(FOES[chapterIndex()].elite.name, s.x, s.y - 12); }
   }
