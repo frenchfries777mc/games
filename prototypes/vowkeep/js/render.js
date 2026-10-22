@@ -85,7 +85,8 @@ function makeFigure(o) {
   let light = null;
   if (o.sword) { const sw = new THREE.Group(); sw.position.set(0, -0.9, 0.1); armR.add(sw); box(0.12, 2, 0.04, M(0xe9edf5, { m: 0.9, r: 0.2 }), 0, 1.1, 0, sw); box(0.6, 0.1, 0.14, gold(), 0, 0.1, 0, sw); box(0.08, 0.35, 0.08, leather(), 0, -0.1, 0, sw); sw.rotation.x = Math.PI / 2; }
   if (o.shield) { const shc = o.shieldC || 0x2c4f9e; const sh = new THREE.Group(); sh.position.set(-0.15, -0.7, 0.45); armL.add(sh); sh.rotation.x = 0.6; box(1.1, 1.4, 0.14, M(shc), 0, 0, 0, sh); const c = cone(0.78, 0.7, 4, M(shc), 0, -0.95, 0, sh); c.rotation.set(Math.PI, Math.PI / 4, 0); box(0.18, 1.2, 0.05, gold(), 0, -0.1, 0.09, sh); box(0.8, 0.18, 0.05, gold(), 0, 0.25, 0.09, sh); }
-  if (o.bow) { const bw = mesh(geo('bow', () => new THREE.TorusGeometry(0.95, 0.06, 4, 12, Math.PI)), M(0x8a5a2a), -0.1, -0.8, 0.5, armL); bw.rotation.set(0, Math.PI / 2, Math.PI / 2); box(0.02, 1.9, 0.02, M(0xe8e0c8), -0.1, -0.8, 0.5, armL); }
+  // 활: 왼손에 쥐고, 팔을 앞으로 뻗으면 위아래로 선 활이 조준 방향으로 휘어요 (시위는 몸 쪽)
+  if (o.bow) { const bw = mesh(geo('bow', () => new THREE.TorusGeometry(0.95, 0.06, 4, 14, Math.PI)), M(0x8a5a2a), 0.12, 0, 0, armL); bw.setRotationFromMatrix(new THREE.Matrix4().makeBasis(new THREE.Vector3(0, 0, 1), new THREE.Vector3(0, -1, 0), new THREE.Vector3(1, 0, 0))); box(0.02, 0.02, 1.9, M(0xe8e0c8), 0.12, 0, 0, armL); box(0.14, 0.22, 0.14, leather(), 0.12, -0.95, 0, armL); }
   if (o.staff) { const sc = o.staffC || 0x9af0d0; const st = new THREE.Group(); st.position.set(0, -0.9, 0.1); armR.add(st); st.rotation.x = 0.7; cyl(0.07, 0.07, 3.2, 6, M(0x7a5a2a), 0, 0.5, 0, st); mesh(geo('oct', () => new THREE.OctahedronGeometry(0.32)), M(sc, { e: sc, ei: 4 }), 0, 2.3, 0, st); if (!o.noLight) { light = new THREE.PointLight(0x6af0c0, 14, 8, 1.6); light.position.set(0, 2.4, 0); st.add(light); } }
   if (o.spear) { const sp = new THREE.Group(); sp.position.set(0, -0.9, 0.1); armR.add(sp); sp.rotation.x = Math.PI / 2; cyl(0.06, 0.06, 3.6, 5, M(0x5a3a22), 0, 0.8, 0, sp); cone(0.16, 0.6, 4, metal(), 0, 2.9, 0, sp); }
   if (o.great) { const gs = new THREE.Group(); gs.position.set(0, -0.9, 0.2); armR.add(gs); gs.rotation.x = Math.PI / 2; box(0.2, 2.8, 0.06, M(o.great, { m: 0.9, r: 0.3, e: o.greatE || 0, ei: 1.5 }), 0, 1.6, 0, gs); box(0.8, 0.12, 0.14, gold(), 0, 0.15, 0, gs); }
@@ -186,12 +187,19 @@ function makeBoss_() {
   const eyeM = M(0xff2020, { e: 0xff1010, ei: 8 }); sph(0.08, 5, 4, eyeM, -0.15, 0.05, 0.45, head); sph(0.08, 5, 4, eyeM, 0.15, 0.05, 0.45, head);
   const light = new THREE.PointLight(0xff2a2a, 18, 10, 1.6); light.position.set(0, 3, 1); body.add(light);
   const cp = mesh(geo('bcape', () => new THREE.PlaneGeometry(1.8, 2.6, 2, 4)), M(0x3a0e14, { ds: true }), 0, 1.6, -0.65, body); cp.rotation.x = 0.12;
+  // 3단계: 망토가 찢기고 등 갑옷의 붉은 균열이 드러나요
+  // 등에는 큰 균열, 앞과 어깨에는 작은 금이 보여요 (화면에서도 보이게)
+  const crack = new THREE.Group(); body.add(crack); crack.visible = false; const ckM = M(0xffb060, { e: 0xff4a10, ei: 6, uniq: true });
+  const back = new THREE.Group(); back.position.set(0, 2.0, -0.62); crack.add(back);
+  for (const [x, y, h, r] of [[0, 0.3, 0.9, 0.2], [-0.18, -0.25, 0.6, -0.5], [0.2, -0.3, 0.7, 0.6], [-0.05, 0.75, 0.4, -0.3], [0.3, 0.35, 0.35, 1.1], [-0.32, 0.2, 0.3, -1.2]]) { const q = box(0.12, h, 0.08, ckM, x, y, 0, back); q.rotation.z = r; q.castShadow = false; }
+  for (const [x, y, z, h, r] of [[0.25, 2.2, 0.6, 0.5, 0.5], [-0.2, 1.9, 0.62, 0.4, -0.7], [0.82, 2.75, 0.1, 0.35, 1.2], [-0.82, 2.75, 0.1, 0.35, -1.2], [0, 1.55, 0.66, 0.3, 0]]) { const q = box(0.08, h, 0.08, ckM, x, y, z, crack); q.rotation.z = r; q.castShadow = false; }
+  const ckL = new THREE.PointLight(0xff5a20, 0, 7, 1.6); ckL.position.set(0, 2, -1.4); body.add(ckL);
   const armR = new THREE.Group(); armR.position.set(0.95, 2.3, 0); body.add(armR); cap(0.2, 0.7, bA2, 0, -0.45, 0, armR);
   const gs = new THREE.Group(); gs.position.set(0, -0.9, 0.2); armR.add(gs); gs.rotation.x = Math.PI / 2;
   box(0.22, 3.2, 0.06, M(0x7a7f90, { m: 0.9, r: 0.3 }), 0, 1.8, 0, gs); box(0.9, 0.14, 0.16, bA2, 0, 0.15, 0, gs); box(0.12, 0.6, 0.12, leather(), 0, -0.2, 0, gs);
   sph(0.2, 6, 5, M(0xff3a3a, { e: 0xff1a1a, ei: 3 }), 0, 0.15, 0.1, gs);
   const armL = new THREE.Group(); armL.position.set(-0.95, 2.3, 0); body.add(armL); cap(0.2, 0.7, bA2, 0, -0.45, 0, armL); armL.rotation.x = -0.5;
-  g.userData = { body, legL, legR, armL, armR, head, kind: 'boss', light };
+  g.userData = { body, legL, legR, armL, armR, head, kind: 'boss', light, cape: cp, crack, ckM, ckL };
   return g;
 }
 
@@ -369,7 +377,11 @@ export class View {
       const sp = new THREE.Group(); g.add(sp); for (let i = -1; i <= 1; i++) for (let j = -1; j <= 1; j++) cone(0.15, 0.8, 4, M(0x9a9aa6, { m: 0.8, r: 0.4 }), i * 0.5, 0.3, j * 0.5, sp);
       sp.position.y = -0.8; return { g, sp };
     });
-    this.embers = []; for (let i = 0; i < 18; i++) { const e = box(0.15, 0.15, 0.15, M(T.ember[0], { e: T.ember[1], ei: CH.theme === 'forest' ? 1 : 5 }), 0, -5, 0, s); e.castShadow = false; this.embers.push({ m: e, t: R() * 6, x: (R() - .5) * 40, z: (R() - .5) * 30 }); }
+    // 공중에 떠다니는 것: 숲은 반딧불이, 그 밖은 불씨와 먼지
+    this.embers = []; const ff = CH.theme === 'forest';
+    for (let i = 0; i < 18; i++) { const e = box(0.15, 0.15, 0.15, M(T.ember[0], { e: T.ember[1], ei: ff ? 1 : 5 }), 0, -5, 0, s); e.castShadow = false; this.embers.push({ m: e, t: R() * 6, x: (R() - .5) * 40, z: (R() - .5) * 30 }); }
+    const fly = ff ? [0xd8ff8a, 0xb0ff6a] : CH.theme === 'abbey' ? [0x9ad0ff, 0x6aa0e0] : [0xffd08a, 0xffa040];
+    for (let i = 0; i < 26; i++) { const e = box(0.12, 0.12, 0.12, M(fly[0], { e: fly[1], ei: 6, uniq: true }), 0, -5, 0, s); e.castShadow = false; this.embers.push({ m: e, t: R() * 9, x: (R() - .5) * 44, z: (R() - .5) * 32, fly: 1, ph: R() * 6.28, h: 0.8 + R() * 3 }); }
     this.camT.set(cw(MAP.start[0]), 0, cw(MAP.start[1])); this.camInit = false;
     this.resize();
   }
@@ -404,7 +416,9 @@ export class View {
       if (!E) { E = { m: projMesh(p.k), x: p.x, z: p.z }; s.add(E.m); this.ents.set(key, E); }
       const k = exact ? 1 : Math.min(1, dt * 18); E.x += (p.x - E.x) * k; E.z += (p.z - E.z) * k;
       E.m.position.set(E.x, (p.k === 'potion' ? p.y : 0) + 1.6, E.z); E.m.rotation.y = -p.a; if (p.k === 'potion') E.m.rotation.z += dt * 12;
-      const TC = { pierce: 0xffe08a, orb: 0x9af0d0, eorb: 0x6ab0ff, ember: 0xff7a20 }[p.k]; if (TC && (E.tr = (E.tr || 0) - dt) <= 0) { E.tr = 0.04; this.burst(E.x, 1.6, E.z, TC, 2, 1.2, 0.3, 0.1); }
+      const TC = { pierce: 0xffe08a, orb: 0x9af0d0, eorb: 0x6ab0ff, ember: 0xff7a20, arrow: 0xe8e0c8, bolt: 0xff8a5a, spear: 0xffb060, earrow: 0xff5a4a }[p.k]; if (TC && (E.tr = (E.tr || 0) - dt) <= 0) { E.tr = 0.03; const big = p.k !== 'arrow' && p.k !== 'earrow'; this.burst(E.x, 1.6, E.z, TC, big ? 3 : 1, 1.2, big ? 0.45 : 0.25, big ? 0.12 : 0.08); }
+      // 빛 꼬리: 지나간 자리에 짧게 남는 선
+      if (TC) { if (E.lx != null) { const dx = E.x - E.lx, dz = E.z - E.lz, L = Math.hypot(dx, dz); if (L > 0.05) this.tail(E.lx, E.lz, Math.atan2(dz, dx), L, TC, p.k === 'arrow' || p.k === 'earrow' ? 0.12 : 0.24); } E.lx = E.x; E.lz = E.z; }
     }
     // 바닥 효과
     for (const z of S.zn) {
@@ -425,7 +439,10 @@ export class View {
     const mp = this.ents.get('p' + me);
     if (mp) {
       if (!this.camInit) { this.camT.set(mp.x, 0, mp.z); this.camInit = true; }
-      const k = 1 - Math.exp(-dt * 6); this.camT.x += (mp.x - this.camT.x) * k; this.camT.z += (mp.z - 1.5 - this.camT.z) * k;
+      let tx = mp.x, tz = mp.z - 1.5, zm = 1;
+      if (this.focus) { const F = this.focus; F.t += dt; const u = F.t / F.T, w = u < 0.25 ? u / 0.25 : u > 0.8 ? (1 - u) / 0.2 : 1; if (u >= 1) this.focus = null; else { tx += (F.x - tx) * w * 0.7; tz += (F.z - tz) * w * 0.7; zm = 1 + 0.3 * w; } }
+      const k = 1 - Math.exp(-dt * 6); this.camT.x += (tx - this.camT.x) * k; this.camT.z += (tz - this.camT.z) * k;
+      if (Math.abs(this.cam.zoom - zm) > 0.002) { this.cam.zoom += (zm - this.cam.zoom) * Math.min(1, dt * 5); this.cam.updateProjectionMatrix(); }
     }
     let sx = 0, sz = 0; if (this.shake > 0 && this.shakeOn) { sx = (Math.random() - .5) * this.shake * 0.6; sz = (Math.random() - .5) * this.shake * 0.6; this.shake = Math.max(0, this.shake - dt * 3); }
     this.cam.position.set(this.camT.x + sx, 22, this.camT.z + 33 + sz); this.cam.lookAt(this.camT.x + sx, 1.8, this.camT.z + 0.4 + sz); this.snapCam();
@@ -442,6 +459,7 @@ export class View {
     if (this.fireG) { this.fireG.children.forEach((c, i) => { c.scale.y = 0.85 + Math.sin(t * 4 + i * 1.7) * 0.12; }); }
     for (const e of this.embers || []) {
       e.t += dt; if (this.mode === 'lobby') { const u = (e.t % 3) / 3; e.m.position.set(Math.sin(e.t * 2 + e.m.id) * 1.2 * u, 1.5 + u * 7, 2 + Math.cos(e.t * 1.3 + e.m.id) * 1.2 * u); }
+      else if (e.fly) { e.m.position.set(this.camT.x + e.x + Math.sin(e.t * 0.4 + e.ph) * 2.5, e.h + Math.sin(e.t * 0.9 + e.ph) * 0.6, this.camT.z + e.z + Math.cos(e.t * 0.3 + e.ph) * 2); e.m.material.emissiveIntensity = 2 + 5 * Math.max(0, Math.sin(e.t * 1.7 + e.ph)); }
       else { const u = (e.t % 6) / 6; e.m.position.set(this.camT.x + e.x + Math.sin(e.t) * 0.5, u * 8, this.camT.z + e.z); }
     }
     if (this.lobbyHeroes) this.lobbyHeroes.forEach((h, i) => { h.userData.body.position.y = Math.sin(t * 1.5 + i) * 0.03; h.userData.head.rotation.y = Math.sin(t * 0.6 + i * 2) * 0.3; });
@@ -452,7 +470,7 @@ export class View {
   render() { if (this.comp) this.comp.render(); }
   // 카메라를 픽셀 칸에 딱 맞춰 움직여요. 반 칸씩 밀리면 화면 전체가 지글거려요.
   snapCam() {
-    const px = (this.cam.top - this.cam.bottom) / (this.H / this.P); this.cam.updateMatrixWorld();
+    const px = (this.cam.top - this.cam.bottom) / this.cam.zoom / (this.H / this.P); this.cam.updateMatrixWorld();
     const up = new THREE.Vector3().setFromMatrixColumn(this.cam.matrixWorld, 1), rt = new THREE.Vector3().setFromMatrixColumn(this.cam.matrixWorld, 0), p = this.cam.position;
     const a = p.dot(rt), b = p.dot(up);
     p.addScaledVector(rt, Math.round(a / px) * px - a).addScaledVector(up, Math.round(b / px) * px - b); this.cam.updateMatrixWorld();
@@ -466,6 +484,29 @@ export class View {
       this.fx.push({ m, t: 0, T: life * (0.6 + Math.random() * 0.6), up: (f, dt) => { m.position.x += vx * dt; m.position.y += (vy - 9 * f.t) * dt; m.position.z += vz * dt; } });
     }
   }
+  tail(x, z, a, len, col, w) {
+    const m = mesh(geo('tail', () => new THREE.BoxGeometry(1, 0.06, 1)), M(col, { e: col, ei: 3, op: 0.7, uniq: true }), x + Math.cos(a) * len / 2, 1.6, z + Math.sin(a) * len / 2, this.scene, false);
+    m.rotation.y = -a; m.scale.set(len + 0.1, 1, w);
+    this.fx.push({ m, t: 0, T: 0.22, up: (f) => { const u = f.t / f.T; m.material.opacity = 0.7 * (1 - u); m.scale.z = w * (1 - u); } });
+  }
+  // 타격: 하얀 별 모양 번쩍임과 불똥, 맞은 적은 잠깐 부풀어요
+  spark(x, z, id, big) {
+    const E = this.ents.get('e' + id); if (E) { E.pop = big ? 0.14 : 0.1; if (E.base == null) E.base = E.m.scale.x; }
+    const g = new THREE.Group(); g.position.set(x, 1.7, z); this.scene.add(g); const mat = M(0xffffff, { e: 0xffffff, ei: 4, op: 0.95, uniq: true });
+    for (let i = 0; i < 2; i++) { const b = box(1.2, 0.08, 0.16, mat, 0, 0, 0, g); b.rotation.y = i * Math.PI / 2 + 0.4; b.castShadow = false; }
+    this.fx.push({ m: g, t: 0, T: 0.12, up: (f) => { const u = f.t / f.T; g.scale.setScalar((big ? 1.5 : 1) * (0.5 + u)); mat.opacity = 0.95 * (1 - u); } });
+    this.burst(x, 1.6, z, big ? 0xffd36b : 0xffe8b0, big ? 9 : 5, 7, 0.3, 0.09);
+  }
+  // 쓰러질 때 픽셀 조각으로 부서져요
+  shatter(x, z, cols, n, big) {
+    for (let i = 0; i < n; i++) {
+      const c = cols[i % cols.length], sz = (big ? 0.3 : 0.18) * (0.6 + Math.random() * 0.8), m = box(sz, sz, sz, M(c), x + (Math.random() - .5) * 0.8, 0.6 + Math.random() * 2, z + (Math.random() - .5) * 0.8, this.scene); m.castShadow = false;
+      const q = Math.random() * 6.283, v = (big ? 9 : 5) * (0.4 + Math.random()), vy = 3 + Math.random() * (big ? 9 : 5), sp = (Math.random() - .5) * 14; let vY = vy, land = false;
+      this.fx.push({ m, t: 0, T: 1.1 + Math.random() * 0.5, up: (f, dt) => { if (!land) { m.position.x += Math.cos(q) * v * dt; m.position.z += Math.sin(q) * v * dt; vY -= 22 * dt; m.position.y += vY * dt; m.rotation.x += sp * dt; m.rotation.z += sp * dt; if (m.position.y < 0.1) { m.position.y = 0.1; land = true; } } if (f.t > f.T - 0.3) m.scale.setScalar(Math.max(0.01, (f.T - f.t) / 0.3)); } });
+    }
+  }
+  // 보스 등장: 화면이 보스 쪽으로 다가갔다가 돌아와요
+  focusOn(x, z, T = 2.6) { this.focus = { x, z, t: 0, T }; }
   arc(x, z, a, r, col) {
     const m = mesh(geo('arc' + r, () => new THREE.TorusGeometry(r * 0.8, 0.12, 3, 20, Math.PI * 0.75)), M(col, { e: col, ei: 3, op: 0.9, uniq: true }), x, 1.6, z, this.scene, false);
     m.rotation.set(-Math.PI / 2, 0, -a - Math.PI * 0.375);
@@ -598,6 +639,8 @@ function animHero(E, p, dt, t) {
 }
 function animEnemy(E, e, dt, t, view) {
   const m = E.m, u = m.userData; m.position.set(E.x, 0, E.z); m.rotation.y = Math.PI / 2 - E.a;
+  // 맞으면 잠깐 부풀었다 돌아와요
+  if (E.pop > 0) { E.pop = Math.max(0, E.pop - dt); const q = 1 + E.pop * 1.6; m.scale.set(E.base * q, E.base * (2 - q), E.base * q); } else if (E.pop === 0) { m.scale.setScalar(E.base); E.pop = null; }
   E.ph += dt * (e.mv ? 9 : 0); E.sw = (E.sw || 0) + ((e.mv ? Math.sin(E.ph) * 0.6 : 0) - (E.sw || 0)) * Math.min(1, dt * 14); const sw = E.sw;
   u.legL.rotation.x = sw; u.legR.rotation.x = -sw;
   let ar = -0.9 - sw * 0.3;
@@ -606,6 +649,7 @@ function animEnemy(E, e, dt, t, view) {
     if (e.ak === 'slam') ar = -3.0; else if (e.ak === 'sweep') { ar = -1.6; u.body.rotation.y = 0.9; } else u.body.rotation.y = 0;
     if (e.ak === 'charge!') { ar = -1.4; u.body.rotation.x = 0.35; } else u.body.rotation.x = e.sn ? 0.5 : 0;
     if (u.light) u.light.intensity = 18 + Math.sin(t * 1.5) * 2 + (e.ph === 3 ? 10 : 0);
+    if (u.crack) { const on = e.ph === 3; u.crack.visible = on; u.cape.visible = !on; const pl = 0.5 + 0.5 * Math.sin(t * 6); u.ckM.emissiveIntensity = on ? 4 + pl * 5 : 0; u.ckL.intensity = on ? 10 + pl * 14 : 0; if (on && (E.ckT = (E.ckT || 0) - dt) <= 0) { E.ckT = 0.12; const bk = -E.a + Math.PI / 2, bx = E.x - Math.sin(bk) * 1.3, bz = E.z - Math.cos(bk) * 1.3; view.burst(bx, 4 + Math.random(), bz, 0xff7a20, 2, 2, 0.5, 0.12); } }
   }
   E.ar = E.ar == null ? ar : E.ar + (ar - E.ar) * Math.min(1, dt * 22); u.armR.rotation.x = E.ar;
   m.position.y = e.k === 'boss' && CH.boss.ai === 'bishop' ? 0.6 + Math.sin(t * 1.6) * 0.25 : 0;

@@ -133,3 +133,5 @@ index.html | 랭킹 표 | 최장 생존 일수, 생존 순위는 서버 준비 �
 - beaconfall/patchnotes.json·i18n.js | N["v0.3 b91"] (en·es·fr·de·ja·zh·pt·ru·tr·it·pl·ar 칸에 한국어 임시 입력) | 나가기 버튼 1줄. 게임 안 새 글자: '나가기', '이 창은 직접 닫을 수 없어요. 탭을 닫거나 사이트로 이동해 주세요.', '사이트로 이동' (I18N_D 14칸)
 - prototypes/vowkeep/js/data.js, main.js | 보스 단계 이름 8개(CHAPTERS boss.ph), "보스가 기절했어요. 지금 공격해요", "N장까지 완료", 업적 설명 3개(elite, nodown, all4) 변경 | 한국어만 있음 | Vowkeep b11 | 2026-10-22
 - patchnotes.json | "Vowkeep 전투 화면 정리와 장별 문구 수정" 13줄 | Vowkeep b11 | 2026-10-22
+- patchnotes.json | "Vowkeep 활 자세와 화려한 연출" 9줄 | Vowkeep b12 | 2026-10-22
+- prototypes/vowkeep/js/data.js | 기사단장 3단계 안내 문장, 단계 이름 "갑옷 균열" | 한국어만 있음 | Vowkeep b12 | 2026-10-22
