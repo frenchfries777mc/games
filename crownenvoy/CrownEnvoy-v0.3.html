@@ -386,7 +386,7 @@ window.ceReload=function(){try{if(window.FFAuth&&FFAuth.setRoom)FFAuth.setRoom(n
 try{if(sessionStorage.getItem('ce_noIntro')){sessionStorage.removeItem('ce_noIntro');el.style.display='none';go();}}catch(e){}})();</script>
 <div id="app">
  <div id="lobby" class="screen">
-  <canvas id="lobbyBg"></canvas><canvas id="lobbyWar"></canvas><div id="cpTag">© 2026 Frenchfries777 · <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.ko" target="_blank" rel="noopener">CC BY-NC-ND 4.0</a></div><div id="verTag">v0.3 · build 84</div>
+  <canvas id="lobbyBg"></canvas><canvas id="lobbyWar"></canvas><div id="cpTag">© 2026 Frenchfries777 · <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.ko" target="_blank" rel="noopener">CC BY-NC-ND 4.0</a></div><div id="verTag">v0.3 · build 85</div>
   <header class="brand"><h1>Crown Envoy</h1><div class="sub"><i></i>DIPLOMACY · WAR · EMPIRE<i></i></div></header>
   <div id="lobbyRight">
    <div id="lobbyHome" class="modes">
@@ -1221,7 +1221,7 @@ function declareWar(pid,tid,opts){opts=opts||{};const p=G.players[pid],q=G.playe
   breachCheck(pid,tid);setHostile(pid,tid);dipOnWar(pid,tid,!!opts.ult||!!(p.refusedBy&&(p.refusedBy[tid]||-99)>=G.round-8));q.warUntil=G.round+6;p.warUntil=Math.max(p.warUntil||0,G.round+6);
   if(G.tplId)G.players.forEach(x=>{if(x.alive&&!x.neu&&x.id!==pid&&x.id!==tid&&treatyBetween(x.id,tid,'alliance')&&!treatyBetween(x.id,pid,'alliance')&&truceLeft(x.id,pid)===0)setHostile(x.id,pid);});
   log(`${pname(pid)}이(가) ${pname(tid)}에 선전포고했다.`,'dip');(G.pendDecl=G.pendDecl||[]).push({from:pid,to:tid,round:G.round});
-  pst(p).wars++;if(opts.goal)addGoal(pid,tid,opts.goal);
+  pst(p).wars++;papWar(pid,tid);if(opts.goal)addGoal(pid,tid,opts.goal);
   wlog(opts.join?'join':'war',pid,tid,opts.join?`${snm(pid)}이(가) 동맹을 돕기 위해 ${snm(tid)}에 선전포고하고 참전했다`:`${snm(pid)}이(가) ${snm(tid)}에 선전포고했다`);
   hooks.toast(tid,`${pname(pid)}이(가) 우리에게 선전포고했습니다!`);if(!opts.join)requestJoin(pid,tid);
   return ok(`${pname(tid)}에 선전포고했습니다. 이제 공격할 수 있고, 소식은 다음 턴 시작 전 신문에 실려요.`);}
@@ -1327,7 +1327,7 @@ function resolveRound(){
     if(holder.pid!==old){cowarSpoil(holder.pid,old);
       if(old!=null&&holder.pid!=null&&(T.mkt||0)>0&&!((T.burn||0)>=G.round)){const pl=40*T.mkt;G.players[holder.pid].gold+=pl;T.mkt=Math.max(0,T.mkt-1);log(`${pname(holder.pid)}이(가) ${TDEF[tid].name}의 시장을 약탈했다. (금화 +${pl})`,'war');}
       const pv=T.prev;T.prev=old!=null?{from:old,to:holder.pid,r:G.round}:null;T.occAt=G.round;T.owner=holder.pid;T.troops=holder.troops;{T.cv=holder.mix?holder.mix.c:0;T.ar=holder.mix?holder.mix.a:0;if(holder.mix&&holder.mix.v){const hv=holder.mix.v;T.vf={i:hv.i.slice(),c:hv.c.slice(),a:hv.a.slice()};}else delete T.vf;}T.unrest=T.sea?0:2;T.fort=Math.max(0,T.fort-1);T.trench=Math.max(0,(T.trench||0)-2);holder.gens.forEach(g=>{if(g.status==='ok')g.loc=tid;});
-      const cq=G.players[holder.pid];cq.stab=clamp(cq.stab+0,0,100);if(old!=null&&old!==holder.pid)tallyAdd(holder.pid,old,'c');statCapture(holder.pid,old,tid,old!=null&&G.players[old].cap===tid);
+      const cq=G.players[holder.pid];cq.stab=clamp(cq.stab+0,0,100);if(old!=null&&old!==holder.pid){tallyAdd(holder.pid,old,'c');papCap(holder.pid,old);}statCapture(holder.pid,old,tid,old!=null&&G.players[old].cap===tid);
       if(old!=null&&!T.sea){if((T.burn||0)>=G.round){T.burn=0;T.troops=Math.max(0,Math.round(T.troops*0.85/10)*10);T.plg=Math.max(T.plg||0,2);T.mkt=0;T.unrest=3;morAdd(cq,-2,'불탄 땅 점령');log(`${pname(old)}이(가) ${TDEF[tid].name}을(를) 불태우고 물러났다. ${pname(holder.pid)}군은 굶주림과 역병에 시달린다.`,'war');}refugees(old,tid);}
       if(cq.exile&&T.home===cq.id&&!T.sea)exileReturn(cq,T);
       if(cq.landless){const plw=(byT[tid]||[]).find(x=>x.pid===holder.pid);const lib=liberatorFor(holder.pid,(plw&&plw.srcs&&plw.srcs[0])?plw.srcs[0].from:null);if(lib!=null){T.owner=lib;T.gst=T.gst||{};T.gst[holder.pid]=(T.gst[holder.pid]||0)+holder.troops;T.troops=0;}}
@@ -2739,7 +2739,7 @@ const inFaiT=p=>p.faiUntil!=null&&G.round<p.faiUntil;
 const pubOf=p=>p.pub==null?60:p.pub;
 function polMor(p){if(!p)return 1;let m=1+(polFx(p).mor||0);if(inGovT(p))m*=0.5;if(inFaiT(p))m*=1.5;const pb=pubOf(p);if(pb>=75)m*=1.05;else if(pb<15)m*=0.85;return m;}
 function polInc(p){if(!p)return 1;let m=1+(polFx(p).tax||0);if(inGovT(p))m*=2;if(inFaiT(p))m*=1.2;if(pubOf(p)<15)m*=0.85;return m;}
-function polReb(p){if(!p)return 1;let m=Math.max(0,1+(polFx(p).reb||0));if(inGovT(p))m*=2;if(inFaiT(p))m*=1.7;if(pubOf(p)<30)m*=1.5;if(p.cnRebUntil!=null&&G.round<p.cnRebUntil)m*=1.5;return m;}
+function polReb(p){if(!p)return 1;let m=Math.max(0,1+(polFx(p).reb||0));if(inGovT(p))m*=2;if(inFaiT(p))m*=1.7;if(pubOf(p)<30)m*=1.5;if(p.cnRebUntil!=null&&G.round<p.cnRebUntil)m*=1.5;if(p.exc&&p.fai==='chr')m*=1.4;return m;}
 const landTotal=()=>TDEF.filter(t=>!t.sea).length;
 function empNeed(){return {land:Math.max(10,Math.ceil(landTotal()*0.07)),mult:1.5};}
 function empBlock(pid){const nd=empNeed(),n=owned(pid).length;const alive=G.players.filter(q=>q.alive&&!q.landless);const avg=alive.reduce((a,q)=>a+totalTroops(q.id),0)/Math.max(1,alive.length);const tr=totalTroops(pid);
@@ -2768,6 +2768,7 @@ function polAct(pid,m){const p=G.players[pid];if(!p||!p.alive)return fail('대�
   if(m.op==='decend'){if(!decOn(p))return fail('시행 중인 칙령이 없어요.');p.dec=null;return ok('칙령을 거뒀어요.');}
   if(m.op==='cnhire'||m.op==='cnfire')return cnAct(p,m);
   if(m.op==='will')return rlAct(p,m);
+  if(m.op==='papdon'||m.op==='papabs')return papAct(p,m);
   return fail('대상 오류');}
 function revoltOne(p){const c=owned(p.id).filter(t=>t.id!==p.cap).sort((a,b)=>((b.home!==p.id)?1:0)-((a.home!==p.id)?1:0)||b.unrest-a.unrest||Math.random()-0.5)[0];if(!c)return false;
   c.owner=null;c.unrest=0;c.troops=Math.max(c.troops,KIND[TDEF[c.id].kind].gar||300);log(`${TDEF[c.id].name}에서 반란이 일어나 ${p.kingdom}에서 이탈했다.`,'war');wlog('revolt',p.id,null,`${TDEF[c.id].name}이(가) 반란으로 ${snm(p.id)}에서 이탈했다`);hooks.toast(p.id,`${TDEF[c.id].name}에서 반란이 일어났습니다!`);return true;}
@@ -2828,10 +2829,52 @@ function exileReturn(p,T){p.landless=false;p.exile=null;p.cap=T.id;p.stab=Math.m
   log(`${p.kingdom}의 망명 정부가 ${TDEF[T.id].name}을(를) 되찾고 돌아왔다! (정통성 승점 +6)`,'war');wlog('event',p.id,null,`${snm(p.id)}의 망명 정부가 ${TDEF[T.id].name}을(를) 되찾았다`);
   if(!G.turnEvents)G.turnEvents=[];G.turnEvents.push({r:G.round,date:ymOf(G.round),head:`${snm(p.id)}의 망명 정부가 돌아오다`,body:`망명했던 군주가 ${TDEF[T.id].name}을(를) 되찾고 다시 왕좌에 올랐다. 백성은 옛 군주를 환호로 맞았다.`,scene:'meeting',ca:p.color,cb:p.color});
   hooks.toast(p.id,`${TDEF[T.id].name}을(를) 되찾아 나라가 되살아났어요! 승점 +6, 금화 +150, 사기 상승`);}
+/* ===== 교황청: 크리스트교 나라는 교황의 호감을 얻어야 해요. 헌금을 거부하거나 같은 신자를 치면 호감이 떨어지고 바닥이면 파문돼요. 호감이 높으면 성전을 선포해 줘요 ===== */
+const PAP_NAMES=['레오','인노첸시오','그레고리오','우르바노','베네딕토','클레멘스','피우스','알렉산데르','보니파시오','니콜라오'],PAP_DON=120,PAP_ABS=300,PAP_CD=3,PAP_CRU=16;
+const papEl=p=>!!p&&p.alive&&!p.neu&&!p.landless&&(polEnsure(p),p.fai==='chr');
+function papEnsure(){if(!G.pope)G.pope={n:pick(PAP_NAMES),num:ri(1,9),age:ri(58,72),r0:G.round,fav:{},next:G.round+ri(12,18)};return G.pope;}
+const papName=()=>{const P=papEnsure();return `교황 ${P.n} ${P.num}세`;};
+const papFav=p=>{const P=papEnsure();return P.fav[p.id]==null?50:P.fav[p.id];};
+function papAdd(p,d){const P=papEnsure();P.fav[p.id]=clamp(papFav(p)+d,0,100);}
+function papNews(head,body,ca,cb){if(!G.turnEvents)G.turnEvents=[];G.turnEvents.push({r:G.round,date:ymOf(G.round),head,body,scene:'meeting',ca,cb:cb||ca});}
+function papExc(p){p.exc=G.round;p.stab=clamp(p.stab-8,0,100);addMAdj(p,-8,10,'파문');log(`${papName()}이(가) ${p.kingdom}을(를) 파문했다.`,'event');wlog('event',p.id,null,`${snm(p.id)}이(가) 파문당했다`);
+  papNews(`${snm(p.id)}이(가) 파문당하다`,`${papName()}이(가) ${snm(p.id)}의 군주를 교회에서 내쫓았다. 신자들은 군주의 명령을 따라야 할지 흔들리고 있다.`,p.color);hooks.toast(p.id,`${papName()}이(가) 우리를 파문했어요! 안정도·사기가 떨어지고 반란 확률이 올라요. 헌금하거나 호감을 회복하면 풀려요.`);}
+function papLift(p){p.exc=null;log(`${papName()}이(가) ${p.kingdom}의 파문을 풀었다.`,'event');hooks.toast(p.id,'파문이 풀렸어요.');}
+function papPay(p,cost){if(!p.alive)return;if(p.gold<cost){hooks.toast(p.id,'금화가 모자라 헌금하지 못했어요.');return papRefuse(p,true);}
+  p.gold-=cost;papAdd(p,12);log(`${p.kingdom}이(가) 교황청에 헌금 ${cost}금을 바쳤다. (호감 +12)`,'event');}
+function papRefuse(p,quiet){if(!p.alive)return;papAdd(p,-14);if(!quiet)log(`${p.kingdom}이(가) 교황청의 헌금 요구를 거부했다. (호감 −14)`,'event');}
+function papWar(pid,tid){const a=G.players[pid],b=G.players[tid];if(!papEl(a)||!papEl(b))return;if(a.cru&&a.cru.vs===tid&&G.round<=a.cru.until)return;
+  papAdd(a,-12);if(!a.isBot)hooks.toast(pid,'같은 신자를 쳐서 교황의 호감이 떨어졌어요. (−12)');}
+function papCap(pid,old){const p=G.players[pid];if(!p||old==null||!p.cru||p.cru.vs!==old||G.round>p.cru.until)return;p.vp+=2;p.gold+=60;}
+function papCru(p,foe){if(!p.alive||!foe.alive)return;if(!isHostile(p.id,foe.id)){const r=declareWar(p.id,foe.id,{force:1,goal:'land'});if(!r||!r.ok)return;}
+  p.cru={vs:foe.id,until:G.round+PAP_CRU};addMAdj(p,10,PAP_CRU,'성전');papAdd(p,5);log(`${papName()}이(가) ${p.kingdom}의 ${foe.kingdom} 성전을 선포했다.`,'event');wlog('event',p.id,foe.id,`${snm(p.id)}이(가) ${snm(foe.id)}을(를) 향한 성전을 선포했다`);
+  papNews(`${snm(p.id)}의 성전 선포`,`${papName()}이(가) ${snm(foe.id)}을(를) 겨냥한 성전을 선포했다. 십자 깃발 아래 병사들의 사기가 솟는다.`,p.color,foe.color);}
+function papTick(){const el=G.players.filter(papEl);if(!el.length)return;const P=papEnsure();
+  const age=P.age+Math.floor((G.round-P.r0)/12);
+  if(age>=62&&Math.random()<Math.min(0.05,0.003*(age-60))){const old=papName();P.n=pick(PAP_NAMES);P.num=ri(1,9);P.age=ri(55,68);P.r0=G.round;const pt=pick(el);papAdd(pt,20);
+    log(`${old}이(가) 선종하고 ${papName()}이(가) 선출됐다. 새 교황은 ${pt.kingdom}과(와) 가깝다.`,'event');papNews('새 교황이 선출되다',`${old}이(가) 세상을 떠나고 추기경들이 ${papName()}을(를) 뽑았다. 새 교황은 ${snm(pt.id)}에 호의적이라고 한다.`,pt.color);
+    el.filter(x=>!x.isBot).forEach(x=>hooks.toast(x.id,`새 교황 ${papName()}이(가) 선출됐어요.${x.id===pt.id?' 우리에게 호의적이에요! (호감 +20)':''}`));}
+  el.forEach(p=>{if(G.round%4===0&&papFav(p)<60)papAdd(p,1);
+    if(p.exc){p.stab=clamp(p.stab-1,0,100);if(papFav(p)>=35)papLift(p);else if(p.isBot&&p.gold>PAP_ABS+150&&Math.random()<0.3){p.gold-=PAP_ABS;P.fav[p.id]=35;papLift(p);}return;}
+    if(papFav(p)<=10){papExc(p);return;}
+    if(p.papNext==null)p.papNext=G.round+ri(10,16);
+    if(G.round>=p.papNext){p.papNext=G.round+ri(14,20);const cost=Math.round(clamp(p.gold*0.15,60,300));
+      if(p.isBot||G.noChoice){if(p.gold>cost+120&&Math.random()<0.6)papPay(p,cost);else papRefuse(p);}
+      else{const id=G.uid++;(G.choices=G.choices||[]).push({id,pid:p.id,head:'교황청의 헌금 요구',body:`${papName()}이(가) 교회 재건을 위해 헌금 ${cost}금을 요구하고 있어요.\n바치면 교황의 호감이 오르고, 거부하면 호감이 떨어져요. 호감이 바닥이면 파문돼요. (고르지 않으면 거부로 처리돼요)`,opts:[`헌금 (−${cost}금)`,'거부'],def:1,round:G.round});G._cfn=G._cfn||{};G._cfn[id]=[()=>papPay(p,cost),()=>papRefuse(p)];hooks.toast(p.id,'교황청이 헌금을 요구했어요.');}}});
+  if(G.round>=P.next){P.next=G.round+ri(14,20);const c=el.filter(p=>!p.exc&&!(p.cru&&G.round<=p.cru.until)&&papFav(p)>=65).sort((a,b)=>papFav(b)-papFav(a))[0];
+    if(c){const foes=G.players.filter(q=>q.alive&&!q.neu&&!q.landless&&q.id!==c.id&&(polEnsure(q),q.fai!=='chr'&&q.fai!=='pro')&&!treatyBetween(c.id,q.id,'alliance')&&overlordOf(q.id)!==c.id&&overlordOf(c.id)!==q.id&&owned(q.id).some(t=>GEO.adj[t.id].some(n=>G.terr[n].owner===c.id)));
+      if(foes.length){const foe=pick(foes);
+        if(c.isBot||G.noChoice){if(Math.random()<0.6)papCru(c,foe);else papAdd(c,-3);}
+        else{const id=G.uid++;(G.choices=G.choices||[]).push({id,pid:c.id,head:`성전 선포: ${snm(foe.id)}`,body:`${papName()}이(가) ${snm(foe.id)}을(를) 겨냥한 성전을 선포하자고 해요.\n선포하면 ${PAP_CRU}턴 동안 사기가 오르고, ${snm(foe.id)}에서 영토를 빼앗을 때마다 승점 +2와 금화 +60을 받아요. 전쟁 중이 아니라면 선전포고가 함께 이뤄져요.\n거절하면 교황의 호감이 조금 떨어져요. (고르지 않으면 거절로 처리돼요)`,opts:['성전 선포','거절'],def:1,round:G.round});G._cfn=G._cfn||{};G._cfn[id]=[()=>papCru(c,foe),()=>papAdd(c,-3)];hooks.toast(c.id,'교황이 성전을 제안했어요.');}}}}}
+function papView(p){if(!papEl(p))return null;papEnsure();const cd=p.papDonAt==null?0:Math.max(0,p.papDonAt+PAP_CD-G.round);return {pope:papName(),fav:Math.round(papFav(p)),exc:!!p.exc,don:PAP_DON,abs:PAP_ABS,cd,cru:(p.cru&&G.round<=p.cru.until)?{vs:snm(p.cru.vs),left:p.cru.until-G.round}:null};}
+function papAct(p,m){if(!papEl(p))return fail('크리스트교 나라만 쓸 수 있어요.');
+  if(m.op==='papdon'){const cd=p.papDonAt==null?0:Math.max(0,p.papDonAt+PAP_CD-G.round);if(cd>0)return fail(`헌금은 ${cd}턴 뒤에 다시 할 수 있어요.`);if(p.gold<PAP_DON)return fail(`금화가 부족합니다 (필요 ${PAP_DON})`);p.gold-=PAP_DON;p.papDonAt=G.round;papAdd(p,12);return ok(`교황청에 헌금을 바쳤어요. 호감 +12 (−${PAP_DON}금)`);}
+  if(!p.exc)return fail('파문 중이 아니에요.');if(p.gold<PAP_ABS)return fail(`금화가 부족합니다 (필요 ${PAP_ABS})`);p.gold-=PAP_ABS;P_fav35(p);papLift(p);return ok(`파문이 풀렸어요. (−${PAP_ABS}금)`);}
+function P_fav35(p){const P=papEnsure();P.fav[p.id]=Math.max(papFav(p),35);}
 function polTick(){G.players.forEach(p=>{if(!p.alive||p.landless)return;polEnsure(p);cnTick(p);rlTick(p);const wars=G.players.filter(q=>q.alive&&q.id!==p.id&&isHostile(p.id,q.id)).length;let d;
     {const sh=pubShift(p);if(wars)d=-1-(wars>=2?1:0)-((p.ww||0)>=50?1:0)+sh-Math.floor(nBld(p.id,'guild',6)/2);else{const tg=clamp(60+10*sh,30,85);d=p.pub<tg?2:p.pub>tg?-1:0;}}if(p.stab<30)d-=1;if(p.gold<0)d-=2;p.pub=clamp(p.pub+d,0,100);
     if(p.pub<15&&wars&&!p.isBot&&G.round-(p.pubWarn==null?-99:p.pubWarn)>=5){p.pubWarn=G.round;hooks.toast(p.id,'여론이 바닥이에요! 백성들이 휴전을 요구해요. (수입·사기 −15%, 반란 위험)');}
-    if(p.isBot)polBot(p,wars);});}
+    if(p.isBot)polBot(p,wars);});papTick();}
 function polBot(p,wars){const r=Math.random();
   if(p.pub<35&&p.gold>propCost(p)+150&&r<0.5)polAct(p.id,{op:'prop'});
   else if(p.pub<25&&p.gold>festCost(p)+200&&r<0.6)polAct(p.id,{op:'fest'});
@@ -2840,7 +2883,7 @@ function polBot(p,wars){const r=Math.random();
   if(p.gov!=='emp'&&['mon','tot'].includes(p.gov)&&!polCd(p,'gov')&&!wars&&Math.random()<0.04&&!empBlock(p.id))setGov(p,'emp');
   if(p.pub<12&&wars&&Math.random()<0.2){const q=G.players.filter(x=>x.alive&&x.isBot&&x.id!==p.id&&isHostile(p.id,x.id)&&warBalance(p.id,x.id)<=0.1)[0];if(q){makeTruce(p.id,q.id);log(`여론에 밀린 ${p.kingdom}이(가) ${q.kingdom}과(와) 휴전했다.`,'dip');}}}
 function polView(pid){const p=G.players[pid];polEnsure(p);const nd=empNeed();return {gov:p.gov,fai:p.fai,pub:Math.round(p.pub),govT:inGovT(p)?p.govUntil-G.round:0,faiT:inFaiT(p)?p.faiUntil-G.round:0,govCd:polCd(p,'gov'),faiCd:polCd(p,'fai'),emp:empBlock(pid),empNeed:nd.land,
-  propCost:propCost(p),festCost:festCost(p),propCd:p.propAt==null?0:Math.max(0,p.propAt+PROP_CD-G.round),festCd:p.festAt==null?0:Math.max(0,p.festAt+FEST_CD-G.round),mor:+polMor(p).toFixed(2),inc:+polInc(p).toFixed(2),reb:+polReb(p).toFixed(2),base:govBase(p.kingdom),taxr:p.taxr==null?1:p.taxr,taxLock:p.taxAt==null?0:Math.max(0,p.taxAt+TAX_LOCK-G.round),decK:decOn(p)?p.dec.k:null,decLeft:decOn(p)?p.dec.until-G.round:0,decCd:decCd(p),decCost:decCost(p),cn:cnView(p),rl:rlView(p)};}
+  propCost:propCost(p),festCost:festCost(p),propCd:p.propAt==null?0:Math.max(0,p.propAt+PROP_CD-G.round),festCd:p.festAt==null?0:Math.max(0,p.festAt+FEST_CD-G.round),mor:+polMor(p).toFixed(2),inc:+polInc(p).toFixed(2),reb:+polReb(p).toFixed(2),base:govBase(p.kingdom),taxr:p.taxr==null?1:p.taxr,taxLock:p.taxAt==null?0:Math.max(0,p.taxAt+TAX_LOCK-G.round),decK:decOn(p)?p.dec.k:null,decLeft:decOn(p)?p.dec.until-G.round:0,decCd:decCd(p),decCost:decCost(p),cn:cnView(p),rl:rlView(p),pap:papView(p)};}
 /* ---------- 시나리오 이벤트: 편집기에서 정한 턴에 선전포고·휴전·동맹·반란·금화·소식이 일어난다 ---------- */
 function winText(w){const P=i=>(G.players[i]?G.players[i].kingdom:'?');return w.k==='turns'?`${w.n}턴 동안 살아남기`:w.k==='terr'?`영토 ${w.n}곳 차지하기`:w.k==='gold'?`금화 ${w.n} 모으기`:w.k==='cap'?`${P(w.b)}의 수도 점령하기`:'';}
 function winCheck(){if(G.over||!G.wins||!G.wins.length)return;const lands=p=>owned(p.id).filter(t=>!t.sea).length;
@@ -5657,6 +5700,12 @@ Object.assign(UI,{
       <div style="display:flex;flex-wrap:wrap;gap:4px">${Object.keys(CNL).map(k=>`<button class="btn sm" data-act="pol" data-op="cnhire" data-v="${k}" ${tot>=CN_MAX||cn.acted||me.gold<CN_HIRE?'disabled':''}>${CNL[k].ic} ${CNL[k].n}</button>`).join('')}</div></div>`;}}
     {const rl=P.rl;if(rl){h+=`<h3>📜 유언장</h3><div class="card"><div class="row"><div><b>👑 ${esc(rl.n)}</b> <span class="tag">${rl.age}세</span></div></div><div class="sm muted" style="margin:4px 0 6px">군주가 늙으면 언제든 세상을 떠날 수 있어요. 후계자를 정해 두지 않으면 계승 전쟁이 나서 안정도 −25, 사기 하락, 영토 이탈이 생겨요.${rl.will?'':' <b style="color:var(--bad)">지금은 유언장이 비어 있어요.</b>'}${rl.cd?` <span style="color:var(--gold2)">${rl.cd}턴 뒤 고칠 수 있어요</span>`:''}</div>
       ${Object.keys(RLW).map(k=>`<div class="row" style="gap:8px;align-items:center;margin:4px 0"><span style="flex:1"><b>${RLW[k].ic} ${RLW[k].n}</b>${k==='gen'&&rl.gen?` <span class="muted sm">(${esc(rl.gen)})</span>`:''}<div class="sm muted">${RLW[k].d}</div></span><button class="btn sm ${rl.will===k?'primary':''}" data-act="pol" data-op="will" data-v="${k}" ${rl.will===k||rl.cd?'disabled':''}>${rl.will===k?'지정됨':'지정'}</button></div>`).join('')}</div>`;}}
+    {const pp=P.pap;if(pp){h+=`<h3>✝ 교황청</h3><div class="card"><div><b>${esc(pp.pope)}</b> ${pp.exc?'<span class="tag" style="color:var(--bad)">파문 중</span>':''}</div>
+      <div class="sm muted" style="margin:4px 0 6px">크리스트교 나라는 교황의 호감을 얻어야 해요. 같은 신자를 치거나 헌금을 거부하면 호감이 떨어지고, 10 이하가 되면 파문돼요(안정도·사기 하락, 반란 확률 ×1.4). 호감이 65 이상이면 교황이 성전을 선포해 줘요.</div>
+      <div style="background:#0003;border-radius:6px;height:10px;overflow:hidden"><div style="width:${pp.fav}%;height:100%;background:${pp.fav<=10?'var(--bad)':'var(--gold)'}"></div></div><div class="sm muted" style="margin:3px 0 6px">교황의 호감 ${pp.fav}/100</div>
+      ${pp.cru?`<div class="sm" style="color:var(--gold2);margin-bottom:6px">⚔ 성전 중: ${esc(pp.cru.vs)} (남은 ${pp.cru.left}턴) · 영토를 빼앗을 때마다 승점 +2, 금화 +60</div>`:''}
+      <div class="row" style="gap:8px"><button class="btn sm primary" data-act="pol" data-op="papdon" ${pp.cd||me.gold<pp.don?'disabled':''}>🙏 <span>헌금 ${pp.don}금</span></button>${pp.exc?`<button class="btn sm" data-act="pol" data-op="papabs" ${me.gold<pp.abs?'disabled':''}>파문 해제 ${pp.abs}금</button>`:''}</div>
+      <div class="sm muted" style="margin-top:4px">헌금: 호감 +12${pp.cd?` <span style="color:var(--gold2)">${pp.cd}턴 뒤 가능</span>`:''}</div></div>`;}}
     h+=`<h3>세율</h3><div class="card"><div class="seg">${TAXR.map((x,i)=>`<button data-act="pol" data-op="taxr" data-v="${i}" class="${P.taxr===i?'on':''}" ${P.taxr===i||P.taxLock?'disabled':''}>${x.ic} ${x.n}</button>`).join('')}</div><div class="sm muted" style="margin-top:6px">${TAXR[P.taxr].d}${P.taxLock?` <span style="color:var(--gold2)">${P.taxLock}턴 뒤 바꿀 수 있어요</span>`:''}</div></div>
     <h3>칙령</h3>${P.decK?`<div class="card" style="border-left-color:var(--gold)"><div class="row"><div><b>${DECR[P.decK].ic} ${DECR[P.decK].n}</b> <span class="tag">남은 ${P.decLeft}턴</span><div class="sm muted">${DECR[P.decK].d}</div></div><button class="btn sm" data-act="pol" data-op="decend">거두기</button></div></div>`:''}${Object.keys(DECR).filter(k=>k!==P.decK).map(k=>{const x=DECR[k];return `<div class="card"><div class="row"><div><b>${x.ic} ${x.n}</b><div class="sm muted">${x.d}</div></div><button class="btn sm primary" data-act="pol" data-op="dec" data-v="${k}" ${P.decK||P.decCd||me.gold<P.decCost?'disabled':''}>${P.decCost}금</button></div></div>`;}).join('')}<div class="sm muted" style="margin:2px 2px 8px">칙령은 ${DEC_T}턴 동안 시행되고, 내린 뒤 ${DEC_CD}턴이 지나야 다시 내릴 수 있어요.${P.decCd&&!P.decK?` <span style="color:var(--gold2)">${P.decCd}턴 뒤 가능</span>`:''}</div>
     <h3>정치체제</h3><div class="card" style="border-left-color:var(--gold)"><div class="row"><div><b style="font-size:16px">${g.n}</b> <span class="tag">${g.r}</span><div class="sm muted">${esc(me.kingdom)}</div></div></div><div class="sm" style="margin-top:4px">${g.d}</div>${trans(P.govT,'체제 전환 중: 사기 −50%, 반란 확률 2배, 수입 2배')}</div>`;
