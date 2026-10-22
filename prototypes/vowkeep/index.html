@@ -91,7 +91,7 @@ input[type=range]{width:220px;accent-color:#d9b75a}
 #bossBar{position:absolute;left:50%;top:12px;transform:translateX(-50%);width:min(440px,70vw);background:var(--panel);border:3px solid var(--line);padding:6px 14px 10px;text-align:center;display:none}
 #bossBar b{font-size:16px}#bossBar .bar{height:10px;background:#2a1418;margin-top:6px;position:relative}#bossBar .bar i{position:absolute;left:0;top:0;bottom:0;background:#b9302a;box-shadow:inset 0 3px 0 #ff6a4a}
 #bossBar .ph{font-size:12px;color:var(--dim)}
-.chs{margin:4px 0 2px}.chs .story{border-left:3px solid #ffd36b;padding:4px 12px}.chs .story b{display:block;color:#ffd36b;font-size:16px}.chs .story small{color:var(--dim);font-size:13px}
+.chs{margin:4px 0 2px}.chpick{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px}.chpick .btn{padding:6px 14px}.chs .story{border-left:3px solid #ffd36b;padding:4px 12px}.chs .story b{display:block;color:#ffd36b;font-size:16px}.chs .story small{color:var(--dim);font-size:13px}
 .slot img.pt,.rc img.pt{display:block;margin:0 auto 4px;width:84px;max-width:100%;height:auto;aspect-ratio:42/54;image-rendering:pixelated}.rc img.pt{float:right;margin:0 0 6px 10px}
 #party{position:absolute;left:14px;bottom:14px;display:flex;gap:8px;flex-wrap:wrap;max-width:60vw}
 .pf{background:var(--panel);border:3px solid var(--line);padding:7px 10px;width:170px}
@@ -197,7 +197,7 @@ body.touch #exitBtn{top:auto;bottom:auto}
     <span>화면 흔들림</span><div class="seg" id="setShake"><button data-v="1">켜기</button><button data-v="0">끄기</button></div>
   </div>
   <h2 style="margin-top:22px;font-size:18px">조작</h2>
-  <p class="note">PC: WASD 이동 · 마우스 조준 · 왼쪽 클릭 공격 · Q E R 기술 · Space 구르기 · F 꾹 누르기(일으키기, 상자 열기, 모닥불 피우기) · 1 2 3 축복 고르기<br>기술: 공격이 닿기 직전에 구르면 2.5초 동안 집중(피해 +50%) · 기사는 기본 공격으로 적을 끊지 않고 이어 맞히면 연타가 쌓여 피해가 늘고 3번째마다 내려찍는 강타<br>휴대폰: 왼쪽 엄지로 이동 · 오른쪽 버튼으로 공격(가까운 적 자동 조준), 기술, 구르기, 상호작용</p>
+  <p class="note">PC: WASD 이동 · 마우스 조준 · 왼쪽 클릭 공격 · Q E R 기술 · Space 구르기 · F 꾹 누르기(일으키기, 상자 열기, 모닥불 피우기) · 1 2 3 축복 고르기<br>기술: 공격이 닿기 직전에 구르면 2.5초 동안 집중(피해 +50%) · 기사는 기본 공격을 이어 치면 두 번 벤 뒤 세 번째에 내려찍는 강타<br>휴대폰: 왼쪽 엄지로 이동 · 오른쪽 버튼으로 공격(가까운 적 자동 조준), 기술, 구르기, 상호작용</p>
 </div></section>
 
 <!-- 인트로: 건너뛰기 (함께할 때는 사람이 모두 눌러야 넘어가요) -->
