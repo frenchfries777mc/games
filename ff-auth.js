@@ -776,7 +776,7 @@ async function markRead(){ if(!unreadNotes()) return; var ids=notes.filter(funct
 function goNote(n){
   var hubUrl=HUB;
   if(n.kind==='friend') return openFriends();
-  if(n.kind==='invite'){ var v=invMap[n.ref]; if(v&&inviteLive(v)&&/^[a-z0-9_.\/-]+\.html$/i.test(v.path)&&v.path.indexOf('..')<0) location.href=inviteUrl(v); else toast(noteText(n)); return; }
+  if(n.kind==='invite'){ var v=invMap[n.ref]; if(v&&inviteLive(v)&&/^[a-z0-9_.\/-]+\.html$/i.test(v.path)&&v.path.indexOf('..')<0) window.open(inviteUrl(v),'_blank'); else toast(noteText(n)); return; }
   if(n.kind==='dm') return openDM(n.actor_id);
   if(n.kind==='coin'){ if(onHub&&window.FFHub&&FFHub.coin) return FFHub.coin(); location.href=hubUrl+'#coin'; return; }
   if(n.kind==='mentionc'){ if(onHub&&window.FFHub) return FFHub.tab('chat'); location.href=hubUrl+'#chat'; return; }
