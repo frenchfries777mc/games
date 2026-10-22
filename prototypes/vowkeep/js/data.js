@@ -1,7 +1,7 @@
 // Vowkeep · © 2026 Frenchfries777 · CC BY-NC-ND 4.0
 // 게임 데이터: 역할, 적, 축복, 1장 지도
 
-export const VERSION = 'v0.1', BUILD = 11;
+export const VERSION = 'v0.1', BUILD = 12;
 
 export const ROLES = {
   knight: {
@@ -176,7 +176,7 @@ export const CHAPTERS = [
       '쓰러진 단장이 마지막으로 속삭였어요. "왕이... 먼저 서약을 깼다."',
       '네 사람은 성 밖, 잿빛 숲으로 향했어요.'
     ],
-    boss: { name: '몰락한 기사단장', ai: 'warden', hp: 16000, speed: 3.9, r: 1.4, dmg: 55, p2: ['단장이 해골 병사를 불러내요', '돌진할 때 기사가 막기로 받아치면 기절해요'], p3: ['단장의 갑옷이 갈라졌어요', '검은 불꽃을 피하고 등 뒤를 노려요'], ph: ['해골 소환', '등 뒤가 약점'] },
+    boss: { name: '몰락한 기사단장', ai: 'warden', hp: 12000, speed: 3.9, r: 1.4, dmg: 55, p2: ['단장이 해골 병사를 불러내요', '돌진할 때 기사가 막기로 받아치면 기절해요'], p3: ['단장의 갑옷이 갈라졌어요', '검은 불꽃을 피하며 등의 붉은 균열을 노려요. 두 배 피해예요'], ph: ['해골 소환', '갑옷 균열'] },
     theme: 'dungeon'
   },
   {
