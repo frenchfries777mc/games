@@ -267,6 +267,19 @@
     /* 꾸미기 */
     '모자': ['hat', 'sombrero', 'chapeau', 'Hut', '帽子'],
     '안경': ['glasses', 'gafas', 'lunettes', 'Brille', 'メガネ'],
+    /* 빌드 49 추가분 */
+    "삐익! 방금 그건 반칙입니다.": ["Peep! That was a foul.", "¡Piii! Eso fue falta.", "Pouit ! C'était une faute.", "Pfiff! Das war ein Foul.", "ピーッ！今のは反則です。"],
+    "삐익! 무슨 반칙인지는 묻지 말아 주세요.": ["Peep! Please don't ask what the foul was.", "¡Piii! No pregunten cuál fue la falta.", "Pouit ! Ne demandez pas quelle faute.", "Pfiff! Fragt nicht, welches Foul.", "ピーッ！何の反則かは聞かないでください。"],
+    "삐익! 반칙입니다. 제가 그렇게 느꼈습니다.": ["Peep! Foul. That's just how I felt.", "¡Piii! Falta. Así lo sentí.", "Pouit ! Faute. C'est mon ressenti.", "Pfiff! Foul. So habe ich es empfunden.", "ピーッ！反則です。私がそう感じました。"],
+    "삐익! 아무 일도 없었지만 반칙입니다.": ["Peep! Nothing happened, but it's a foul.", "¡Piii! No pasó nada, pero es falta.", "Pouit ! Rien ne s'est passé, mais c'est une faute.", "Pfiff! Nichts ist passiert, aber es ist ein Foul.", "ピーッ！何もなかったけど反則です。"],
+    "{n} 선수 팔이 혼자 떨어졌습니다. 아무도 안 쳤는데요.": ["{n}'s arm fell off by itself. Nobody even hit it.", "Al brazo de {n} se le cayó solo. Nadie lo tocó.", "Le bras de {n} est tombé tout seul. Personne n'y a touché.", "{n}s Arm ist von allein abgefallen. Niemand hat ihn berührt.", "{n}選手の腕が勝手に取れました。誰も叩いてないのに。"],
+    "팔이 알아서 나갔습니다. 독립심이 강한 팔이네요.": ["The arm left on its own. Very independent arm.", "El brazo se fue por su cuenta. Muy independiente.", "Le bras est parti tout seul. Un bras très indépendant.", "Der Arm ist von selbst gegangen. Sehr selbstständig.", "腕が勝手に出ていきました。自立心の強い腕ですね。"],
+    "{n} 선수, 팔이 먼저 퇴근했습니다.": ["{n}, your arm clocked out early.", "{n}, tu brazo salió antes del trabajo.", "{n}, votre bras a fini sa journée avant vous.", "{n}, dein Arm hat schon Feierabend gemacht.", "{n}選手、腕が先に退勤しました。"],
+    "이제 지치네요.": ["I'm getting tired now.", "Ya me estoy cansando.", "Je commence à fatiguer.", "Ich werde langsam müde.", "そろそろ疲れてきましたね。"],
+    "저도 이제 집에 가고 싶습니다. 마이크는 두고 가겠습니다.": ["I want to go home too. I'll leave the mic behind.", "Yo también quiero irme a casa. Dejo el micro.", "Moi aussi je veux rentrer. Je laisse le micro.", "Ich will auch nach Hause. Das Mikro lasse ich da.", "私も帰りたいです。マイクは置いていきます。"],
+    "이제 지치네요. 내일의 저에게 맡기겠습니다.": ["I'm getting tired. I'll leave it to tomorrow's me.", "Ya me canso. Se lo dejo al yo de mañana.", "Je fatigue. Je laisse ça au moi de demain.", "Ich werde müde. Das überlasse ich dem Ich von morgen.", "疲れてきました。明日の私に任せます。"],
+    "자, 다들 수고하셨습니다. 저는 특히 수고했습니다.": ["Well done, everyone. Especially me.", "Buen trabajo a todos. Sobre todo yo.", "Bravo à tous. Surtout à moi.", "Gut gemacht, alle. Besonders ich.", "皆さんお疲れさまでした。特に私が。"],
+    "참가해 주셔서 감사합니다": ["Thank you for participating", "Gracias por participar", "Merci d'avoir participé", "Danke fürs Mitmachen", "ご参加ありがとうございます"],
     /* 빌드 46 추가분 */
     "판 수": ["Rounds", "Rondas", "Manches", "Runden", "ラウンド数"],
     "미니게임 고르기": ["Choose minigames", "Elegir minijuegos", "Choisir les mini-jeux", "Minispiele wählen", "ミニゲームを選ぶ"],
@@ -1417,7 +1430,9 @@ body.playing #emoBar{display:flex}
    <div class="row"><input id="codeIn" maxlength="5" placeholder="방 코드" autocomplete="off"><button class="pb dark" id="joinBtn" style="flex:0 0 auto">들어가기</button></div>
    <div class="msg" id="homeMsg"></div>
   </aside>
-  <template id="patchnotes"><details class="notes" open><summary>패치노트 · v0.1 (build 48)</summary>
+  <template id="patchnotes"><details class="notes" open><summary>패치노트 · v0.1 (build 49)</summary>
+   <b>2026-10-22 · v0.1 build 49 · 병맛 포인트 추가</b>
+   <ul><li>경기 중 가끔 이유 없이 호루라기가 울리고 해설자가 반칙이라고 우겨요</li><li>아주 드물게 아무도 안 쳤는데 마네킹 팔이 혼자 빠져 굴러가요</li><li>시상식 3등 포디움에 삐뚤어진 "참가해 주셔서 감사합니다" 상패가 생겼어요</li><li>마지막 판 해설은 지쳐서 글자 사이에 "…"가 끼고, 시상식 후 "이제 지치네요" 같은 멘트가 나와요</li></ul>
    <b>2026-10-22 · v0.1 build 48 · 해설 문구 다듬기</b>
    <ul><li>한국어 외 언어에서 "하얗다" 관련 해설과 소개 문구를 마네킹 소재에 맞게 고쳤어요</li></ul>
    <b>2026-10-22 · v0.1 build 47 · 평가 지적 수정</b>
@@ -1512,7 +1527,7 @@ body.playing #emoBar{display:flex}
    <ul><li>무너지는 발판 칸 수 대폭 증가 (19×10)와 용암 동굴 맵</li><li>10개 맵 전부 새로 그림 (관중석, 야자수 섬, 링, 정원 미로, 서커스, 우노 테이블 등)</li><li>글자 대신 아이콘·말풍선·이펙트로 표현 (무기, 아이템, 카드 효과, 시작 안내)</li><li>타격·폭발·물보라 효과와 화면 흔들림 추가</li></ul>
    <b>2026-10-19 · v0.1 build 1 · 첫 시험판</b>
    <ul><li>마네킹 미니게임 10개 추가 (장애물 달리기, 섬 밀치기, 싸우기, 병맛 미로, 체스 대난투, 폭탄 돌리기, 병맛 우노, 쇼윈도 얼음땡, 무너지는 발판, 컨베이어 서바이벌)</li><li>방 코드로 최대 8명 멀티플레이, 빈자리는 봇으로 채우기</li><li>판마다 10개 중 5개를 무작위로 골라 점수를 합산</li><li>PC 키보드와 휴대폰 터치 조작 지원</li></ul></details></template>
-  <p class="foot">2~8명 · 판마다 31개 미니게임 중 7개 · 프로토타입 v0.1 b48 · <a href="../">← 프로토타입 목록</a></p>
+  <p class="foot">2~8명 · 판마다 31개 미니게임 중 7개 · 프로토타입 v0.1 b49 · <a href="../">← 프로토타입 목록</a></p>
   <p class="foot"><span class="ff-copy">© 2026 Frenchfries777 · <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.ko" target="_blank" rel="noopener">CC BY-NC-ND 4.0</a></span></p>
  </div>
 </section>
@@ -1869,6 +1884,7 @@ var SFX = (function () {
     honk: function () { tone(340, 300, 0.16, 'square', 0.09); setTimeout(function () { tone(300, 260, 0.2, 'square', 0.09); }, 130); },
     slide: function () { tone(1500, 160, 0.55, 'triangle', 0.12); },
     bonk: function () { tone(420, 90, 0.16, 'sine', 0.2); noise(0.05, 0.2, 1500); },
+    whistle: function () { tone(2300, 2100, 0.14, 'sine', 0.1); setTimeout(function () { tone(2100, 2500, 0.3, 'sine', 0.1); }, 120); },
     sproing: function () { tone(120, 900, 0.22, 'triangle', 0.16); setTimeout(function () { tone(900, 300, 0.2, 'triangle', 0.1); }, 140); },
     duck: function () { tone(520, 330, 0.12, 'sawtooth', 0.1); setTimeout(function () { tone(560, 340, 0.14, 'sawtooth', 0.1); }, 170); },
     trombone: function () { [[392, 370], [370, 349], [349, 330], [330, 196]].forEach(function (f, i) { setTimeout(function () { tone(f[0], f[1], i === 3 ? 0.7 : 0.28, 'sawtooth', 0.09); }, i * 300); }); },
@@ -5999,6 +6015,16 @@ var CMT = {
   for (var k in X) { if (!CMT[k]) CMT[k] = []; X[k].forEach(function (l) { CMT[k].push(l); }); }
 })();
 
+/* 빌드 49: 반칙 휘슬 / 저절로 빠진 팔 / 지친 해설 */
+(function () {
+  var Y = {
+    foul: ['삐익! 방금 그건 반칙입니다.', '삐익! 무슨 반칙인지는 묻지 말아 주세요.', '삐익! 반칙입니다. 제가 그렇게 느꼈습니다.', '삐익! 아무 일도 없었지만 반칙입니다.'],
+    armoff: ['{n} 선수 팔이 혼자 떨어졌습니다. 아무도 안 쳤는데요.', '팔이 알아서 나갔습니다. 독립심이 강한 팔이네요.', '{n} 선수, 팔이 먼저 퇴근했습니다.'],
+    tired: ['이제 지치네요.', '저도 이제 집에 가고 싶습니다. 마이크는 두고 가겠습니다.', '이제 지치네요. 내일의 저에게 맡기겠습니다.', '자, 다들 수고하셨습니다. 저는 특히 수고했습니다.']
+  };
+  for (var k in Y) { if (!CMT[k]) CMT[k] = []; Y[k].forEach(function (l) { CMT[k].push(l); }); }
+})();
+
 /* 오너가 직접 보낸 해설 멘트 */
 (function () {
   var N = {"intro": ["선수들 모두 하얗게 질렸군요, 아니 원래 하얗군요.", "제 월급이 올라가길 67일째 빌고 있습니다.", "제 상사는 언제 쯤 짤릴까요?", "이번 선수 라인업입니다. 라인다운은 없나요?", "오늘은 {n}선수가 기대되는군요. 좋은 활약은 기대하지 않습니다.", "오늘 날짜는 모릅니다. 물어보지 마세요.", "오늘 날씨는 비가 올 것 입니다. 기상청이 맑을 거라고 했거든요."], "hit": ["정말 폭력적이군요 {n}선수", "계속해서 다정한 모습 보여주고 있는 {n}선수 입니다.", "제 부장님도 참가시키고 싶군요.", "팝콘까지 있으면 완벽할텐데 제 돈이 없네요"], "boom": ["폭발은 예술입니다.", "아쉽게도 다른 선을 잘랐나 보네요.", "방금 공습경보가 있었나요?"], "splash": ["물에 빠진 마네킹 꼴이로군요!", "저는 수육은 안 좋아하는데요.", "아주 멋진 다이빙입니다."], "fall": ["뉴턴에게 감사해야 되겠군요.", "{n}선수가 바닥을 많이 좋아하는 것 같습니다.", "아이쿠! 바닥 괜찮나요? 바닥 씨 많이 아프겠네요."], "fart": ["우리 부장님이 쓰는 향수 냄새가 납니다.", "제 옆에 있던 꽃이 죽은 것 같네요.", "속보입니다, {n}선수가 무리하다 다른 걸 쌌다고 합니다.", "누구 한 명 실수로 지린 건 아니겠지요?", "이럴 때만 코가 안 막히는 법이죠.", "누구 코마개 있는 사람 없나요?"], "lava": ["{n}선수, 웰던으로 구워졌습니다. 저는 미디움으로 시켰는데요.", "여기 1인분 더 추가요!", "오늘 회식 메뉴는 삼겹살로 하겠습니다."], "piano": ["피아노가 떨어지면 어떻게 피아노?", "방금 곡은 떨어짐 교향곡 47번 이네요. 세기의 명곡이죠."], "limb": ["혹시 {n}선수 다리는 탈부착이 가능한가요?", "다리우스 3세도 다리 빼면 우스 3세죠."], "end": ["아 그거 그렇게 하는 거 아닌데"], "final": ["1등? 좋습니다. 하지만 우리의 바보상 {f}님이 더 위대하죠, 어떻게 저러죠?", "멍청이상 하나 만들어서 제 월급 안 올리는 놈들에게 주고 싶습니다."]};
@@ -6008,12 +6034,20 @@ var CMT = {
 function cmName() { var m = G.meta; if (!m || !m.players || !m.players.length) return '마네킹'; return m.players[Math.floor(Math.random() * m.players.length)].name; }
 // 바보상 받는 사람 = 최종 순위 꼴찌 (3명 이상일 때), 아니면 아무나
 function cmFool() { var m = G.meta; if (!m || !m.players || m.players.length < 3) return cmName(); var ps = m.players.slice().sort(function (a, b) { return b.score - a.score; }); return ps[ps.length - 1].name; }
+// 마지막 판에는 해설이 지쳐서 글자 사이사이에 말줄임표가 끼어요
+function lastRoundDots(t, kind) {
+  var m = G.meta; if (kind === 'tired' || !m || !m.order || !m.order.length || (m.round | 0) !== m.order.length - 1 || m.phase === 'final' || m.phase === 'result') return t;
+  if (window.DP_LANG && DP_LANG !== 'ko') return t.split(' ').join('… ');
+  var o = '', n = 0, cs = Array.from(t);
+  for (var i = 0; i < cs.length; i++) { o += cs[i]; if (cs[i] !== ' ' && i < cs.length - 1 && cs[i + 1] !== ' ' && /[가-힣A-Za-z]/.test(cs[i]) && ++n % 2 === 0) o += '…'; }
+  return o;
+}
 function say(kind, force) {
   var cm = FUNS.cm, now = performance.now(); if (!force && now < cm.cool) return;
   var pool = CMT[kind]; if (!pool) return;
   var line = pool[Math.floor(Math.random() * pool.length)]; if (line === cm.text && pool.length > 1) line = pool[(pool.indexOf(line) + 1) % pool.length];
   var tl = (window.DP_T && window.DP_LANG && DP_LANG !== 'ko') ? DP_T(line) : line;   // 이름을 넣기 전에 번역해요
-  cm.text = tl.replace('{n}', cmName()).replace('{f}', cmFool()); cm.t0 = now; cm.until = now + 1500 + cm.text.length * 105; cm.cool = now + 3600; cm.idle = now; try { SFX.play('cmt'); } catch (e) { }
+  cm.text = lastRoundDots(tl.replace('{n}', cmName()).replace('{f}', cmFool()), kind); cm.t0 = now; cm.until = now + 1500 + cm.text.length * 105; cm.cool = now + 3600; cm.idle = now; try { SFX.play('cmt'); } catch (e) { }
 }
 function drawCommentary(c, now) {
   var cm = FUNS.cm; if (!cm.text || now > cm.until) return;
@@ -6074,6 +6108,21 @@ function funTick(dt, now, m) {
     if (L.y > L.fy) { L.y = L.fy; if (Math.abs(L.vy) > 80) { L.vy = -L.vy * 0.45; L.vx *= 0.7; L.sp *= 0.6; } else { L.vy = 0; L.vx *= Math.pow(0.1, dt); L.sp *= Math.pow(0.1, dt); } }
   }
   for (var q = FUNS.fly.length - 1; q >= 0; q--) { var F = FUNS.fly[q]; F.t += dt; if (F.t >= F.dur) FUNS.fly.splice(q, 1); }
+  // 이유 없는 반칙 휘슬 / 아무도 안 쳤는데 빠지는 팔 (보기만 하는 연출이에요)
+  if (m && m.phase === 'play') {
+    if (!FUNS.nx) FUNS.nx = { foul: now + 22000 + Math.random() * 20000, arm: now + 30000 + Math.random() * 30000 };
+    if (now > FUNS.nx.foul) { FUNS.nx.foul = now + 30000 + Math.random() * 30000; SFX.play('whistle'); SCR.flash = Math.max(SCR.flash, 0.25); say('foul', true); }
+    if (now > FUNS.nx.arm) {
+      FUNS.nx.arm = now + 40000 + Math.random() * 40000;
+      var cols = Object.keys(DPOSP).filter(function (q) { return !(LOST[q] && LOST[q].until > now); });
+      if (cols.length) {
+        var bc = cols[Math.floor(Math.random() * cols.length)], dp2 = DPOSP[bc], dir2 = Math.random() < 0.5 ? -1 : 1, pt = Math.random() < 0.5 ? 'armL' : 'armR';
+        LOST[bc] = { part: pt, until: now + 4200 };
+        FUNS.limbs.push({ kind: 'arm', x: dp2.x, y: dp2.y - 30 * dp2.s, vx: dir2 * (160 + Math.random() * 120), vy: -200, rot: 0, sp: dir2 * 10, fy: dp2.y + 6, until: now + 4200, bounce: 0, s: dp2.s });
+        burst('pop', dp2.x, dp2.y - 30 * dp2.s); SFX.play('sproing'); say('armoff', true);
+      }
+    }
+  } else FUNS.nx = null;
   if (m && m.phase === 'play' && now - FUNS.cm.idle > 9000 && now > FUNS.cm.cool) say('idle');
 }
 function drawFun(c, now) {
@@ -6307,6 +6356,7 @@ function drawCeremony(c, m, now) {
       var lose = (sl.i === n - 1 && n >= 3), pose = sl.i === 0 ? 'dance' : (lose ? 'sad' : 'up'), bounce = sl.i === 0 && k >= 1 ? 0 : 0;
       if (k >= 0.6) drawDummy(c, sl.x, top + 2, { s: 1.7, color: COLORS[p.color], pose: pose, name: p.name, face: 1, shadow: false });
       if (sl.i === 0 && t > 3.5) { var ty = top - 150 + Math.min(1, (t - 3.5) / 0.5) * 20 + Math.sin(t * 5) * 4; spot(c, sl.x + 80, ty + 78, 70, 'rgba(255,230,120,.5)'); icon(c, 'trophy', sl.x + 80, ty + 78, 62); }
+      if (sl.i === 2 && n >= 3 && k >= 1) { c.save(); c.translate(sl.x, top + 94); c.rotate(-0.13); c.fillStyle = '#f2e4b8'; rrect(c, -50, -17, 100, 34, 4); c.fill(); c.strokeStyle = '#7a5a2a'; c.lineWidth = 2; c.stroke(); var pl = (window.DP_T && window.DP_LANG && DP_LANG !== 'ko') ? DP_T('참가해 주셔서 감사합니다') : '참가해 주셔서 감사합니다'; if (pl.length > 14) { var pp = pl.lastIndexOf(' ', pl.length / 2 + 4); if (pp < 1) pp = pl.indexOf(' ', 3); if (pp > 0) { txt(c, pl.slice(0, pp), 1, -6, { size: 10, c: '#4a3210', stroke: false }); txt(c, pl.slice(pp + 1), -2, 7, { size: 10, c: '#4a3210', stroke: false }); } else txt(c, pl, 0, 0, { size: 10, c: '#4a3210', stroke: false }); } else txt(c, pl, 0, 0, { size: 10, c: '#4a3210', stroke: false }); c.restore(); }
       if (sl.i === 1 && t > 2.7) icon(c, 'crown', sl.x + 58, top - 100, 30);
     }
   });
@@ -6344,7 +6394,7 @@ function funPhase(m, ph) {
     FUNS.mood = 1; say('end', true); setTimeout(function () { SFX.play('cheer'); throwFlowers(wp); }, 900);
     if (rk[rk.length - 1] === me && m.players.length >= 3) setTimeout(function () { SFX.play('trombone'); }, 1600);
   }
-  else if (ph === 'final') { G.finT0 = now; G._cer = {}; POSEO = {}; FUNS.mood = 1; say('final', true); }
+  else if (ph === 'final') { G.finT0 = now; G._cer = {}; POSEO = {}; FUNS.mood = 1; say('final', true); setTimeout(function () { say('tired', true); }, 5200); }
   else if (ph !== 'result') POSEO = {};
 }
 
