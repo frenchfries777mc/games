@@ -106,6 +106,8 @@ input[type=range]{width:220px;accent-color:#d9b75a}
 .sk .cn{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:22px;color:#fff}
 .sk.cool .nm,.sk.cool small{opacity:.15}
 #center{position:absolute;left:50%;top:22%;transform:translateX(-50%);text-align:center;width:90vw}
+.lb{position:fixed;left:0;right:0;height:0;background:#000;pointer-events:none;transition:height .5s}#lbT{top:0}#lbB{bottom:0}body.lbox .lb{height:11vh}
+#wflash{position:fixed;inset:0;background:#fff8e8;opacity:0;pointer-events:none}
 #bigMsg{font-size:clamp(22px,3vw,36px);font-weight:800;opacity:0;transition:opacity .4s}
 #subMsg{font-size:clamp(14px,1.6vw,18px);color:#d8ccb4;margin-top:6px;opacity:0;transition:opacity .4s}
 #prompt{position:absolute;left:50%;bottom:110px;transform:translateX(-50%);background:var(--panel);border:2px solid #d9b75a;padding:6px 14px;font-weight:700;display:none}
@@ -205,7 +207,7 @@ body.touch #exitBtn{top:auto;bottom:auto}
 <section class="scr" id="sResult"><div class="pan" style="width:min(560px,94vw)" id="result"></div></section>
 
 <!-- 전투 화면 -->
-<div id="hud">
+<div id="hud"><div id="lbT" class="lb"></div><div id="lbB" class="lb"></div><div id="wflash"></div>
   <div id="roomTag"></div>
   <button id="exitBtn">나가기</button>
   <div id="bossBar"><b id="bossName">몰락한 기사단장</b><div class="ph" id="bossPh"></div><div class="bar"><i id="bossHp"></i></div></div>
