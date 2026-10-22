@@ -8,7 +8,7 @@ var LANG=SI.lang||'ko', F=SI.F;
 var GAMES={stickseum:{name:'Stickseum',cls:'g1',site:'https://frenchfries777mc.github.io/games/stickseum/'},crownenvoy:{name:'Crown Envoy',cls:'g2',site:'https://frenchfries777mc.github.io/games/crownenvoy/'},beaconfall:{name:'Beaconfall',cls:'g3',site:'https://frenchfries777mc.github.io/games/beaconfall/'},dummyparty:{name:'Dummy Party',cls:'',site:'https://frenchfries777mc.github.io/games/prototypes/dummyparty/'}};
 function $(s,r){ return (r||document).querySelector(s); }
 /* 허브 첫 페이지와 커뮤니티 페이지(community/)가 같은 파일을 써요. ROOT = 허브 맨 위 경로 */
-var CMP=!!document.getElementById('community'), ROOT=document.body.getAttribute('data-root')||'', CMURL=CMP?'':ROOT+'community/';
+var CMP=!!document.getElementById('community'), ROOT=document.body.getAttribute('data-root')||'', HR=document.body.hasAttribute('data-hub')?document.body.getAttribute('data-hub'):'https://frenchfries777mc.github.io/hub/', CMURL=CMP?'':HR+'community/';
 function esc(s){ return String(s==null?'':s).replace(/[&<>"']/g,function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); }
 function ago(iso){ var t=Date.parse(iso); if(!t) return ''; var m=Math.round((Date.now()-t)/60000);
   if(m<1) return '방금'; if(m<60) return F('{0}분 전',m); if(m<1440) return F('{0}시간 전',Math.round(m/60)); if(m<1440*7) return F('{0}일 전',Math.round(m/1440));
@@ -16,7 +16,7 @@ function ago(iso){ var t=Date.parse(iso); if(!t) return ''; var m=Math.round((Da
 
 /* ===================== 뉴스: 세 게임과 허브의 패치노트 중 가장 최근 6개 ===================== */
 var NEWS_N=6, news=[], hubNotes=[], notesBy={};
-var NSRC={hub:{name:'허브',cls:'g0',site:'./'},stickseum:GAMES.stickseum,crownenvoy:GAMES.crownenvoy,beaconfall:GAMES.beaconfall};
+var NSRC={hub:{name:'허브',cls:'g0',site:'https://frenchfries777mc.github.io/games/'},stickseum:GAMES.stickseum,crownenvoy:GAMES.crownenvoy,beaconfall:GAMES.beaconfall};
 var NEWL=['zh','pt','ru','tr','it','pl','ar','nw'].indexOf(LANG)>=0;   /* the newer languages fall back to English, not Korean */
 function trNote(n, N){
   if(LANG==='ko') return {title:n.title, items:n.items||[]};
@@ -817,7 +817,7 @@ function splain(b){ return String(b||'').replace(/^::.*$/gm,'').replace(/\*\*/g,
 function ssnip(b,q){ var p=splain(b), i=p.toLowerCase().indexOf(q.toLowerCase()); if(i<0) return smark(p.slice(0,90),''); var a=Math.max(0,i-30); return (a?'…':'')+smark(p.slice(a,i+q.length+60),q); }
 async function sxLoad(){
   if(SX.wiki||!sb) return;
-  var trP=LANG==='ko'?Promise.resolve({}):fetch(ROOT+'wiki/tr/'+(NEWL?'en':LANG)+'.json').then(function(r){ return r.ok?r.json():{}; }).catch(function(){ return {}; });
+  var trP=LANG==='ko'?Promise.resolve({}):fetch(HR+'wiki/tr/'+(NEWL?'en':LANG)+'.json').then(function(r){ return r.ok?r.json():{}; }).catch(function(){ return {}; });
   var r=await sb.from('ff_wiki').select('game,slug,title,body').limit(500); SX.tr=await trP;
   SX.wiki=((r&&r.data)||[]).map(function(p){ var x=SX.tr[p.game+'/'+p.slug], ok=x&&x.t&&x.h===sfnv(p.title+'\n'+p.body); return {game:p.game, slug:p.slug, title:ok?x.t:p.title, body:ok?x.b:p.body, ko:p.title+'\n'+p.body}; });
 }
@@ -840,7 +840,7 @@ async function runSearch(v){
   if(gs.length) h+='<div class="sg"><h4>'+esc(F('게임'))+'</h4>'+gs.map(function(g){ return '<a class="sr" href="'+g[3]+'"><b class="'+g[2]+'">'+smark(g[1],q)+'</b><small>'+esc(F(g[4]))+'</small></a>'; }).join('')+'</div>';
   var ws=(SX.wiki||[]).map(function(p){ var sc=0; if(p.title.toLowerCase().indexOf(ql)>=0) sc+=10; if(p.body.toLowerCase().indexOf(ql)>=0) sc+=2; if(!sc&&p.ko.toLowerCase().indexOf(ql)>=0) sc+=1; return {p:p,sc:sc}; })
     .filter(function(x){ return x.sc; }).sort(function(a,b){ return b.sc-a.sc; }).slice(0,8);
-  if(ws.length) h+='<div class="sg"><h4>'+esc(F('위키'))+'</h4>'+ws.map(function(x){ var g=GAMES[x.p.game]||WIKIX[x.p.game]||{name:x.p.game,cls:''}; return '<a class="sr" href="'+ROOT+'wiki/#'+x.p.game+'/'+encodeURIComponent(x.p.slug)+'"><span class="gt '+g.cls+'">'+esc(g.name)+'</span><b>'+smark(x.p.title,q)+'</b><small>'+ssnip(x.p.body,q)+'</small></a>'; }).join('')+'</div>';
+  if(ws.length) h+='<div class="sg"><h4>'+esc(F('위키'))+'</h4>'+ws.map(function(x){ var g=GAMES[x.p.game]||WIKIX[x.p.game]||{name:x.p.game,cls:''}; return '<a class="sr" href="'+HR+'wiki/#'+x.p.game+'/'+encodeURIComponent(x.p.slug)+'"><span class="gt '+g.cls+'">'+esc(g.name)+'</span><b>'+smark(x.p.title,q)+'</b><small>'+ssnip(x.p.body,q)+'</small></a>'; }).join('')+'</div>';
   R.innerHTML=h||'<div class="se">…</div>';
   var ps=[]; if(sb){ var w=q.replace(/[,()%*\\"]/g,' ').trim(); if(w){ try{ var r=await sb.from('ff_posts').select('id,game,title,body,created_at').or('title.ilike.%'+w+'%,body.ilike.%'+w+'%').order('created_at',{ascending:false}).limit(6); ps=(r&&r.data)||[]; }catch(e){} } }
   if(my!==SX.seq) return;
