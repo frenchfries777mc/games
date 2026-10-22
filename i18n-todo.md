@@ -124,3 +124,4 @@ index.html | 랭킹 표 | 최장 생존 일수, 생존 순위는 서버 준비 �
 - crownenvoy/patchnotes.json | b81 1줄 (i18n.js N에 15개 언어 번역 넣음) | 2026-10-22
 - 이탈리아어·폴란드어·아랍어 추가 (오너 2026-10-22): 앞으로 새 문구는 it/pl/ar도 함께 번역해야 함 (Crown Envoy는 ar이 원래 있었음, it/pl 추가)
 - isleport/patchnotes.json | v0.2 build 46 1줄 (게임 안 NOTES는 it/pl/ar까지 넣음) | 2026-10-22
+- beaconfall/patchnotes.json·i18n.js | N["v0.3 b91"] (en·es·fr·de·ja·zh·pt·ru·tr·it·pl·ar 칸에 한국어 임시 입력) | 나가기 버튼 1줄. 게임 안 새 글자: '나가기', '이 창은 직접 닫을 수 없어요. 탭을 닫거나 사이트로 이동해 주세요.', '사이트로 이동' (I18N_D 14칸)
