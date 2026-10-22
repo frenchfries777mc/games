@@ -1,5 +1,5 @@
 // Vowkeep · © 2026 Frenchfries777 · CC BY-NC-ND 4.0
-// 효과음: 파일 없이 소리를 만들어요 (음악은 없어요)
+// 효과음: 파일 없이 소리를 만들어요 (배경음악은 music.js)
 let ac = null, master = null, vol = 0.7, noiseBuf = null;
 function ctx() {
   if (!ac) { try { ac = new (window.AudioContext || window.webkitAudioContext)(); master = ac.createGain(); master.gain.value = vol; master.connect(ac.destination); const n = ac.sampleRate; noiseBuf = ac.createBuffer(1, n, n); const d = noiseBuf.getChannelData(0); for (let i = 0; i < n; i++) d[i] = Math.random() * 2 - 1; } catch (e) { return null; } }
