@@ -2,6 +2,58 @@
  "notes": [
   {
    "date": "2026-10-22",
+   "build": "v0.2 build 49",
+   "title": "선체 내구와 도크 수리",
+   "items": [
+    "폭풍을 뚫고 가거나 해적에게 당하면 배의 선체가 상해요",
+    "선체가 70% 아래로 내려가면 배가 느려지고, 30% 아래면 항해 중 짐이 새요",
+    "정박 중에 배 목록에서 수리 버튼으로 도크 수리를 할 수 있어요"
+   ],
+   "tr": {
+    "en": {
+     "title": "Hull wear and dock repairs",
+     "items": [
+      "Sailing into storms or being raided now damages the hull",
+      "Below 70% hull the ship slows down, and below 30% it leaks cargo",
+      "Repair docked ships with the Repair button in the ship list"
+     ]
+    },
+    "ja": {
+     "title": "Hull wear and dock repairs",
+     "items": [
+      "Sailing into storms or being raided now damages the hull",
+      "Below 70% hull the ship slows down, and below 30% it leaks cargo",
+      "Repair docked ships with the Repair button in the ship list"
+     ]
+    },
+    "es": {
+     "title": "Hull wear and dock repairs",
+     "items": [
+      "Sailing into storms or being raided now damages the hull",
+      "Below 70% hull the ship slows down, and below 30% it leaks cargo",
+      "Repair docked ships with the Repair button in the ship list"
+     ]
+    },
+    "fr": {
+     "title": "Hull wear and dock repairs",
+     "items": [
+      "Sailing into storms or being raided now damages the hull",
+      "Below 70% hull the ship slows down, and below 30% it leaks cargo",
+      "Repair docked ships with the Repair button in the ship list"
+     ]
+    },
+    "de": {
+     "title": "Hull wear and dock repairs",
+     "items": [
+      "Sailing into storms or being raided now damages the hull",
+      "Below 70% hull the ship slows down, and below 30% it leaks cargo",
+      "Repair docked ships with the Repair button in the ship list"
+     ]
+    }
+   }
+  },
+  {
+   "date": "2026-10-22",
    "build": "v0.2 build 47",
    "title": "나가기 버튼",
    "items": [

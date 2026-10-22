@@ -453,7 +453,7 @@ const TUT=[
  [P('다 자라면 ▼ 표시의 밭을 눌러 수확해요','When it is grown, tap the field with the ▼ to harvest'),s=>s.stats.harvest>=1],
  [P('마을 장터에서 수확한 것을 팔아요','Sell your harvest at the town market'),s=>(s.stats.shop||0)>=1],
  [P('항구에서 배에 짐을 싣고 보내요','Load a ship at the harbor and send it off'),s=>s.stats.sailed>=1]];
-const OUTMAX=12,BUILD=48;
+const OUTMAX=12,BUILD=49;
 const hasB=(s,b)=>s.slots.some(x=>x&&x.b===b);
 const rankOf=e=>{let r=0;RANKS.forEach((x,i)=>{if(e>=x[0])r=i;});return r;};
 /* 업적: id, 이름, 설명, 조건 */
@@ -575,6 +575,11 @@ A('nw1m',P('백만장자','Millionaire'),P('재산 1,000,000 모으기','Reach a
 const CROPK=Object.keys(CROPS),SPEC=['goldbarley','pomegranate','saffron','cloudcotton','seaweed','dragonfruit'],CROPK17=CROPK.filter(c=>!SPEC.includes(c));
 const ACHN={};ACH.forEach(a=>ACHN[a.id]=a);
 const NOTES=[
+ {date:'2026-10-22',build:'v0.2 build 49',title:P('선체 내구와 도크 수리','Hull wear and dock repairs'),items:[
+  P('폭풍을 뚫고 가거나 해적에게 당하면 배의 선체가 상해요','Sailing into storms or being raided now damages the hull'),
+  P('선체가 70% 아래로 내려가면 배가 느려지고, 30% 아래면 항해 중 짐이 새요','Below 70% hull the ship slows down, and below 30% it leaks cargo'),
+  P('정박 중에 배 목록에서 수리 버튼으로 도크 수리를 할 수 있어요','Repair docked ships with the Repair button in the ship list')
+ ]},
  {date:'2026-10-22',build:'v0.2 build 47',title:P('나가기 버튼','Exit button'),items:[
   P('설정의 "사이트로 돌아가기"를 "나가기"로 바꿨어요. 누르면 저장하고 게임 창이 닫혀요','The settings button "Back to site" is now "Exit": it saves and closes the game window')
  ]},
@@ -26712,7 +26717,12 @@ const stormAt=p=>{const t=NOW();return EV.some(e=>e.p===p&&e.kind==='storm'&&e.u
 const dist=p=>Math.hypot(PORTS[p].x-HOME[0],PORTS[p].y-HOME[1]);
 const crewV=tr=>S.cwOK===false?0:(S.crew||[]).reduce((a,c)=>a+(c.tr===tr?CREWT[tr].v*CREWP[c.pe].e:0),0);
 const spdMult=()=>1+crewV('nav')+(hasT('hull')?.2:0)+(hasT('nav')?.15:0)+(hasT('logistics')?.15:0)+bldLv('lighthouse')*0.06+(PROJ.done[0]?.12:0)+(muSet('far')?.03:0);
-const travel=(p,s)=>Math.round(dist(p)/(SHIPS[s?s.ty:0].spd*spdMult()*(1+0.04*(s&&s.rf||0)))*(stormAt(p)?1.5:1)*1000);
+const hpOf=s=>s&&s.hp!=null?s.hp:100;
+const hullMult=s=>{const h=hpOf(s);return h>=70?1:0.65+0.35*h/70;};
+const repairCost=s=>Math.ceil((100-hpOf(s))*(2+SHIPS[s.ty].cost/250));
+function hullHit(s,n){s.hp=Math.max(5,Math.round(hpOf(s)-n));}
+function repairShip(s){if(!s||s.st!=='dock'||hpOf(s)>=100)return;const c=repairCost(s);if(S.money<c)return;spend(c);s.hp=100;sfx('build');}
+const travel=(p,s)=>Math.round(dist(p)/(hullMult(s)*SHIPS[s?s.ty:0].spd*spdMult()*(1+0.04*(s&&s.rf||0)))*(stormAt(p)?1.5:1)*1000);
 const shipCap=s=>Math.round(SHIPS[s.ty].cap*(1+0.25*s.cl+crewV('carry')+0.08*(s.rf||0))*(hasT('hold')?1.2:1)*(PROJ.done[3]?1.15:1));
 const escOf=s=>s.esc+SHIPS[s.ty].esc0;
 const cargoN=c=>c?Object.values(c).reduce((a,b)=>a+b,0):0;
@@ -26782,8 +26792,10 @@ function dispatch(sid,p,cargo,buy){const s=S.ships.find(x=>x.id===sid);if(!s||s.
   const bn=cargoN(buy);if(tot>shipCap(s)||bn>shipCap(s)||(tot<=0&&bn<=0))return false;
   const d=travel(p,s),t=NOW();for(const k in cargo){S.inv[k]=inv(k)-cargo[k];if(!cargo[k])delete cargo[k];}
   const e=escOf(s),pir=Math.random()<0.14*Math.max(0.2,1-0.2*e)*(tot>0?1:0.4);
+  if(stormAt(p)){hullHit(s,10+Math.random()*10);toast('<span class="bad">'+T('폭풍에 선체가 상했어요 ({0}%)','The storm damaged the hull ({0}%)',hpOf(s))+'</span>');}
   Object.assign(s,{st:'sail',port:p,t0:t,t1:t+d,cargo,buy:buy||{},back:false,raided:false,pirAt:pir?t+d*(0.35+Math.random()*0.3):0});S.stats.sailed++;s.last={p,cargo:Object.assign({},cargo),buy:Object.assign({},buy||{})};sfx('sail');return true;}
 function arrive(s){const p=s.port;let total=0;const parts=[];
+  if(hpOf(s)<30){let n=0;for(const k in s.cargo){const q=Math.floor(s.cargo[k]*0.15);if(q>0){s.cargo[k]-=q;n+=q;}}if(n>0)toast('<span class="bad">'+T('선체가 새서 짐 {0}개를 잃었어요','The leaking hull lost {0} goods',n)+'</span>');}
   // 계약 먼저
   S.contracts=S.contracts.filter(c=>{if(c.p!==p)return true;if(c.exp<NOW())return false;if((s.cargo[c.g]||0)>=c.n){s.cargo[c.g]-=c.n;total+=c.reward;S.stats.contracts++;if(c.o)S.stats.orders=(S.stats.orders||0)+1;if(Math.random()<.2)addMap(1);S.rep[p]+=3;S.codex[c.g]=1;parts.push(T('계약 {0} {1}개','Contract {0} x{1}',GN(c.g),c.n));sfx('coin');return false;}return true;});
   for(const k in s.cargo){const n=s.cargo[k];if(n<=0)continue;const gi=GI[k].i,r=revenue(p,gi,n);total+=r;parts.push(GN(k)+' '+n);
@@ -26799,8 +26811,8 @@ function arrive(s){const p=s.port;let total=0;const parts=[];
   s.cargo=ret;s.buy={};s.back=true;s.t0=NOW();s.t1=s.t0+travel(p,s)*0.9;s.pirAt=0;}
 function dock(s){const lost=[];for(const k in s.cargo){const n=s.cargo[k],a=addInv(k,n);if(a<n)lost.push(GN(k)+' '+(n-a));}s.cargo={};s.st='dock';s.back=false;if(lost.length)toast(T('창고가 가득 차서 {0}을(를) 잃었어요','Warehouse full, lost: {0}',lost.join(', ')));}
 function pirates(s){s.pirAt=0;S.stats.pirated++;const e=escOf(s),beat=Math.random()<0.25*e+(hasT('drill')?.15:0)+crewV('gun');
-  if(beat){S.stats.piratesBeaten++;if(Math.random()<.35)addMap(1);const b=80+Math.floor(Math.random()*220);S.money+=b;toast(T('해적이 나타났지만 호위가 물리쳤어요! 현상금 +{0}','Pirates attacked but your escort drove them off! Bounty +{0}',b));sfx('ach');}
-  else{let n=0,val=0;for(const k in s.cargo){const q=Math.ceil(s.cargo[k]*0.25);s.cargo[k]-=q;n+=q;val+=q*GI[k].base;}toast('<span class="bad">'+T('해적에게 짐 {0}개를 빼앗겼어요!','Pirates stole {0} goods!',n)+'</span>');sfx('bad');
+  if(beat){hullHit(s,5);S.stats.piratesBeaten++;if(Math.random()<.35)addMap(1);const b=80+Math.floor(Math.random()*220);S.money+=b;toast(T('해적이 나타났지만 호위가 물리쳤어요! 현상금 +{0}','Pirates attacked but your escort drove them off! Bounty +{0}',b));sfx('ach');}
+  else{hullHit(s,15+Math.random()*10);let n=0,val=0;for(const k in s.cargo){const q=Math.ceil(s.cargo[k]*0.25);s.cargo[k]-=q;n+=q;val+=q*GI[k].base;}toast('<span class="bad">'+T('해적에게 짐 {0}개를 빼앗겼어요!','Pirates stole {0} goods!',n)+'</span>');sfx('bad');
     stkShock('trade',-0.04,T('해적 소식에 {0} 주가가 내렸어요','Pirate news pushed {0} down',STKN('trade')));
     ensureBank(S);if(S.ins.until>NOW()&&val>0){const pay=Math.round(val*0.7);S.money+=pay;S.stats.insPaid=(S.stats.insPaid||0)+pay;toast(T('보험금 {0}을 받았어요','Insurance paid {0}',fmt(pay)));}}}
 /* ---- 계약, 방문 상인 ---- */
@@ -28271,8 +28283,9 @@ function boxShips(){let h='';
   h+=`<div class="box"><h3>${T('배','Ships')} <span>${S.ships.length}/${MAXSHIPS}</span></h3>`;
   S.ships.forEach((s,i)=>{let st;if(s.st==='dock')st=`<span class="good">${T('정박 중','Docked')}</span>`;else if(s.st==='helm')st=`<span class="good">${T('직접 항해 중','Under your command')}</span>`;else{const left=Math.max(0,Math.round((s.t1-NOW())/1000));st=`${tx(PORTS[s.port].n)} ${s.back?T('에서 귀항','— home'):T('으로','— out')} · ${left}s`;}
     const cargo=s.cargo&&Object.keys(s.cargo).filter(k=>s.cargo[k]>0).map(k=>gi(k,14)+s.cargo[k]).join(' ');
-    h+=`<div class="ship"><div class="row"><b>${i+1}. ${tx(SHIPS[s.ty].n)}</b><span class="muted">${T('{0}칸','{0} cap',shipCap(s))} · ${T('호위','Esc')} ${escOf(s)}</span></div><div class="muted">${st}${cargo?'<br>'+cargo:''}</div><div class="btns">`;
+    h+=`<div class="ship"><div class="row"><b>${i+1}. ${tx(SHIPS[s.ty].n)}</b><span class="muted">${T('{0}칸','{0} cap',shipCap(s))} · ${T('호위','Esc')} ${escOf(s)} · ${T('선체','Hull')} <span class="${hpOf(s)<30?'bad':hpOf(s)<70?'gd':'good'}">${hpOf(s)}%</span></span></div><div class="muted">${st}${cargo?'<br>'+cargo:''}</div><div class="btns">`;
     if(s.st==='dock')h+=`<button class="pb sm gold" data-act="go:${s.id}">${T('출항','Sail')}</button>`;
+    if(s.st==='dock'&&hpOf(s)<100)h+=`<button class="pb sm" data-act="fix:${s.id}" ${S.money<repairCost(s)?'disabled':''}>${T('수리','Repair')} ${fmt(repairCost(s))}</button>`;
     if(s.last)h+=`<button class="pb sm ${s.rep?'gold':''}" data-act="rep:${s.id}">↻ ${T('반복','Repeat')}</button>`;
     if(s.cl<3)h+=`<button class="pb sm" data-act="cap:${s.id}" ${S.money<CAP_COST[s.cl]?'disabled':''}>${T('용량','Hold')} ${fmt(CAP_COST[s.cl])}</button>`;
     if((s.rf||0)<3){const u=RFC[s.rf||0];h+=`<button class="pb sm" data-act="rf:${s.id}" ${S.money<u.g||S.mine.ing.iron<u.iron||S.mine.ore.stone<u.stone||S.mine.ing.copper<(u.copper||0)?'disabled':''}>${T('강철 보강','Reinforce')} ${(s.rf||0)+1}/3</button>`;}
@@ -28297,7 +28310,7 @@ function boxEv(){let h='';
 const LIVEW=['wh','fleet','contracts','mp','bank','hill','chal','diner','museum','post','inn','re','guild','shop','aq','tav'];let PTRDOWN=false;
 document.addEventListener('pointerdown',()=>{PTRDOWN=true;},true);document.addEventListener('pointerup',()=>{PTRDOWN=false;},true);document.addEventListener('pointercancel',()=>{PTRDOWN=false;},true);
 function renderSide(force){if(!S||!MOD||!LIVEW.includes(MOD.type)||$('modal').hidden)return;if(PTRDOWN&&!force)return;const f=MODS[MOD.type];if(!f)return;const html=f(MOD);if(!force&&html===MOD._sig)return;MOD._sig=html;renderModal();}
-ACT.rf=a=>{reinforce(S.ships.find(x=>x.id===+a));updateHud();renderSide(true);};ACT.go=a=>openDispatch(+a);ACT.rep=a=>{const s=S.ships.find(x=>x.id===+a);if(s){s.rep=!s.rep;s.repT=0;}renderSide(true);};ACT.cap=a=>{upCap(S.ships.find(s=>s.id===+a));updateHud();renderSide(true);};ACT.esc=a=>{upEsc(S.ships.find(s=>s.id===+a));updateHud();renderSide(true);};
+ACT.fix=a=>{repairShip(S.ships.find(x=>x.id===+a));updateHud();renderSide(true);};ACT.rf=a=>{reinforce(S.ships.find(x=>x.id===+a));updateHud();renderSide(true);};ACT.go=a=>openDispatch(+a);ACT.rep=a=>{const s=S.ships.find(x=>x.id===+a);if(s){s.rep=!s.rep;s.repT=0;}renderSide(true);};ACT.cap=a=>{upCap(S.ships.find(s=>s.id===+a));updateHud();renderSide(true);};ACT.esc=a=>{upEsc(S.ships.find(s=>s.id===+a));updateHud();renderSide(true);};
 ACT.yes=a=>{answerOffer(a,true);renderSide(true);};ACT.no=a=>{answerOffer(a,false);renderSide(true);};ACT.trade=a=>openTrade(a);ACT.visit=a=>startVisit(a);ACT.ltreq=a=>{ltRequest(a);};
 function updateHud(){if(!S)return;$('hud').hidden=false;const tu=$('tut'),on=S.tut>=0&&S.tut<TUT.length&&!MP.on;if(on){const h=`<span class="tn">${S.tut+1}/${TUT.length}</span> ${tx(TUT[S.tut][0])} <button class="tb sm" data-act="tutskip">${T('건너뛰기','Skip')}</button>`;if(tu.dataset.h!==h){tu.dataset.h=h;tu.innerHTML=h;}}tu.hidden=!on;$('sMoney').textContent=fmt(S.money);
   const rk=rankOf(S.stats.earned),nx=RANKS[rk+1],cur=RANKS[rk][0];$('sRank').textContent=tx(RANKS[rk][1]);$('sRankBar').style.width=(nx?Math.min(100,(S.stats.earned-cur)/(nx[0]-cur)*100):100)+'%';
