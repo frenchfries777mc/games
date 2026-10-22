@@ -1,7 +1,7 @@
 // Vowkeep · © 2026 Frenchfries777 · CC BY-NC-ND 4.0
 // 게임 데이터: 역할, 적, 축복, 1장 지도
 
-export const VERSION = 'v0.1', BUILD = 4;
+export const VERSION = 'v0.1', BUILD = 5;
 
 export const ROLES = {
   knight: {
@@ -48,11 +48,11 @@ export const ROLES = {
 export const ROLE_IDS = ['knight', 'archer', 'priest', 'squire'];
 
 export const ENEMIES = {
-  skel: { name: '해골 병사', hp: 90, speed: 3.8, r: 0.6, dmg: 16, range: 1.7, windup: 0.5, cd: 1.1, honor: 1 },
-  archer: { name: '해골 궁수', hp: 60, speed: 3.4, r: 0.6, dmg: 13, range: 10, windup: 0.7, cd: 2.2, keep: 7.5, honor: 1 },
-  shield: { name: '방패 해골', hp: 150, speed: 3.0, r: 0.7, dmg: 18, range: 1.8, windup: 0.6, cd: 1.6, front: 0.3, honor: 2 },
-  elite: { name: '해골 근위대장', hp: 560, speed: 3.7, r: 0.9, dmg: 28, range: 2.4, windup: 0.7, cd: 1.6, charge: true, honor: 6 },
-  boss: { name: '몰락한 기사단장', hp: 11000, speed: 3.4, r: 1.4, dmg: 30, honor: 0 }
+  skel: { name: '해골 병사', hp: 130, speed: 4.4, r: 0.6, dmg: 32, range: 1.8, windup: 0.42, cd: 0.9, honor: 1 },
+  archer: { name: '해골 궁수', hp: 85, speed: 3.9, r: 0.6, dmg: 25, range: 12, windup: 0.55, cd: 1.6, keep: 7.5, honor: 1 },
+  shield: { name: '방패 해골', hp: 230, speed: 3.5, r: 0.7, dmg: 36, range: 1.9, windup: 0.5, cd: 1.3, front: 0.3, honor: 2 },
+  elite: { name: '해골 근위대장', hp: 900, speed: 4.2, r: 0.9, dmg: 52, range: 2.5, windup: 0.55, cd: 1.3, charge: true, honor: 6 },
+  boss: { name: '몰락한 기사단장', hp: 16000, speed: 3.9, r: 1.4, dmg: 55, honor: 0 }
 };
 
 export const BLESSINGS = [
@@ -113,7 +113,11 @@ export const MAP = {
     ['shield', 56, 29], ['archer', 51, 27], ['archer', 47, 31], ['skel', 44, 29], ['skel', 40, 28], ['archer', 34, 27], ['archer', 33, 31], ['shield', 28, 29], ['skel', 26, 28], ['skel', 25, 30],
     ['shield', 58, 21], ['archer', 56, 19], ['archer', 62, 19],
     ['elite', 10, 30], ['skel', 7, 27], ['skel', 14, 27], ['skel', 7, 34], ['skel', 14, 34], ['archer', 10, 36], ['shield', 12, 26],
-    ['skel', 11, 18], ['archer', 20, 12], ['skel', 22, 11]
+    ['skel', 11, 18], ['archer', 20, 12], ['skel', 22, 11],
+    // 더 어렵게: 무리를 늘리고 길목마다 매복을 둬요
+    ['skel', 34, 51], ['archer', 31, 45], ['shield', 37, 51], ['skel', 49, 50], ['archer', 50, 51],
+    ['skel', 8, 49], ['shield', 9, 55], ['skel', 60, 42], ['archer', 63, 33], ['skel', 52, 30], ['shield', 38, 29], ['archer', 29, 27],
+    ['skel', 60, 20], ['shield', 9, 28], ['archer', 13, 37], ['skel', 11, 23], ['elite', 27, 12], ['archer', 25, 10], ['skel', 31, 13]
   ],
   boss: [38, 8],
   pillars: [[28, 47], [43, 47], [28, 54], [43, 54], [58, 54], [66, 54], [7, 30.5], [14, 30.5], [30, 5], [46, 5], [30, 18], [46, 18]],
