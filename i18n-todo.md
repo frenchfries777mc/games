@@ -155,3 +155,8 @@ index.html | 랭킹 표 | 최장 생존 일수, 생존 순위는 서버 준비 �
 ## Crown Envoy b84 (2026-10-22)
 - crownenvoy/index.html·i18n.js | 첫 화면 s_p "고대부터 현대까지 15개의 역사 템플릿이 준비돼 있어요…" (숫자 16→15, 모든 언어 칸 숫자만 바꿈) | b84 | 2026-10-22
 - crownenvoy/patchnotes.json·i18n.js | N["b84"] (en·es·fr·de·ja·ar 한국어 임시) | 삼국 대륙 템플릿 삭제 | b84 | 2026-10-22
+
+## Crown Envoy b85 (2026-10-22)
+- crownenvoy/CrownEnvoy-v0.3.html | 정치 탭 교황청 | ✝ 교황청 / 크리스트교 나라는 교황의 호감을 얻어야 해요. … / 교황의 호감 N/100 / 성전 중 … / 헌금 N금 / 파문 해제 N금 / 파문 중 / 헌금: 호감 +12 | b85 | 2026-10-22
+- crownenvoy/CrownEnvoy-v0.3.html | 교황 결정 창·알림·신문·로그 | 교황청의 헌금 요구 / 성전 선포: X / 교황 ○○ N세 파문·선종·선출 문구 / 같은 신자를 쳐서 교황의 호감이 떨어졌어요 | b85 | 2026-10-22
+- crownenvoy/patchnotes.json·i18n.js | N["b85"] (en·es·fr·de·ja·ar 한국어 임시) | 교황 시스템 추가 외 4줄 | b85 | 2026-10-22
