@@ -3,6 +3,15 @@
   {
    "date": "2026-10-22",
    "build": "",
+   "title": "Discord·Microsoft 로그인 추가",
+   "items": [
+    "계정 만들기 화면에 Discord, Microsoft 버튼 추가",
+    "로그인 화면에 Discord, Microsoft 아이콘 추가"
+   ]
+  },
+  {
+   "date": "2026-10-22",
+   "build": "",
    "title": "허브 첫 화면에 위키·커뮤니티·랭킹·뉴스 추가",
    "items": [
     "허브 첫 화면 아래에 위키, 커뮤니티 바로가기 추가",
