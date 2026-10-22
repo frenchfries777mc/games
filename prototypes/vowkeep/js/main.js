@@ -532,11 +532,11 @@ function smoothSnap(sn, G, prev, al) {
   if (!prev) return; const cur = new Map(); for (const a of [G.players, G.enemies, G.projs]) for (const o of a) cur.set(o.id, o);
   for (const a of [sn.pl, sn.en, sn.pr]) for (const o of a) { const c = cur.get(o.id), p = prev.get(o.id); if (!c) continue; if (!p || Math.abs(c.x - p[0]) + Math.abs(c.z - p[1]) > 3) { o.x = c.x; o.z = c.z; continue; } o.x = p[0] + (c.x - p[0]) * al; o.z = p[1] + (c.z - p[1]) * al; }
 }
-// 배경음악: 화면 밖(로비, 이야기)은 로비 곡, 기사단장의 방에서 싸우는 동안은 보스 곡, 나머지 던전은 아직 없어요
+// 배경음악: 화면 밖(로비, 이야기)은 로비 곡, 기사단장의 방에서 싸우는 동안은 보스 곡, 나머지 던전은 동굴 곡
 const BOSS_AREA = MAP.areas.findIndex(a => a.boss);
 function musicTick(dt, now) {
   const sn = S.snap, playing = !!sn && S.scr === '' && sn.ph === 'play';
-  const want = !playing ? 'lobby' : (sn.w.boss && !sn.w.bd && S.area === BOSS_AREA ? 'boss' : null);
+  const want = !playing ? 'lobby' : (sn.w.boss && !sn.w.bd && S.area === BOSS_AREA ? 'boss' : 'dungeon');
   MUS.tick(want, dt, now);
 }
 addEventListener('pointerdown', () => MUS.kick()); addEventListener('keydown', () => MUS.kick());
