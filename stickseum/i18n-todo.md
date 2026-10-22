@@ -22,3 +22,5 @@ patchnotes.json | v334 items[0] | 신어 표현 수정: plusplus를 doubleplus�
 patchnotes.json | v335 title | 언어 3개 추가 | build 335 | 2026-10-22
 patchnotes.json | v335 items[0] | 이탈리아어, 폴란드어, 아랍어 추가 | build 335 | 2026-10-22
 patchnotes.json | v335 items[1] | 봇 이름을 새 언어별 이름으로 | build 335 | 2026-10-22
+patchnotes.json | v336 title | 봇 금지 선택 속도 개선 | build 336 | 2026-10-20
+patchnotes.json | v336 items[0] | 금지 단계에서 봇이 1~7초 안에 각자 정하도록 수정 | build 336 | 2026-10-20
