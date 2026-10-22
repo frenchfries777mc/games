@@ -114,3 +114,4 @@ index.html | 랭킹 표 | 최장 생존 일수, 생존 순위는 서버 준비 �
 - 허브 사이트 (2026-10-22): Korean only. hub/index.html 소개 문구 한 단락, 옛 주소 안내 문구(games/lounge, settings, music 자리표시 페이지 "이 페이지는 … 로 옮겼어요.").
 - patchnotes.json | "Vowkeep 원래 픽셀 그래픽과 화려한 기술 연출" 5줄 | Vowkeep b8 | 2026-10-22
 - 허브 사이트 (2026-10-22): 새 문구 없음. 옛 주소 안내 자리표시 페이지(games/wiki, community, patchnotes)는 lounge와 같은 문구.
+- 브라우저 기본 팝업(confirm/alert/prompt) 금지 (오너 2026-10-22). 새 문구 없음.

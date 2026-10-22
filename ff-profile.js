@@ -578,7 +578,8 @@ async function open(sb, uid, o){
   lk.onclick=function(){ var u='https://frenchfries777mc.github.io/games/?card='+encodeURIComponent(un);
     var done=function(){ lk.textContent='✓ '+T.copied; setTimeout(function(){ lk.textContent=T.link; },2000); };
     if(navigator.share&&/Mobi|Android|iPad|iPhone/i.test(navigator.userAgent)){ navigator.share({title:'Frenchfries777',url:u}).catch(function(){}); return; }
-    try{ navigator.clipboard.writeText(u).then(done,function(){ prompt('',u); }); }catch(e){ prompt('',u); } };
+    var manual=function(){ var i=document.createElement('input'); i.value=u; i.readOnly=true; i.style.cssText='margin-left:8px;max-width:100%;padding:6px 8px;border-radius:8px;border:1px solid #333;background:#10131b;color:#eef0f5;font:inherit'; lk.parentNode.insertBefore(i,lk.nextSibling); i.focus(); i.select(); };
+    try{ navigator.clipboard.writeText(u).then(done,manual); }catch(e){ manual(); } };
 }
 window.FFProfile={open:open, markPlayed:markPlayed, setAchievements:setAchievements, draw:draw, fetchData:fetchData, games:GAMES, characters:EXT_CHARS, catalog:catalog, syncHub:syncHub, deco:DECO, titles:TITLES};
 })();
