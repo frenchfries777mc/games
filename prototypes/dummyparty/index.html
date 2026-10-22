@@ -267,6 +267,9 @@
     /* 꾸미기 */
     '모자': ['hat', 'sombrero', 'chapeau', 'Hut', '帽子'],
     '안경': ['glasses', 'gafas', 'lunettes', 'Brille', 'メガネ'],
+    /* 빌드 50 추가분 */
+    "자, 우승자는… {a} 선수입니다! 축하드립니다!": ["And the winner is... {a}! Congratulations!", "¡Y el ganador es... {a}! ¡Felicidades!", "Et le vainqueur est... {a} ! Félicitations !", "Und der Sieger ist... {a}! Glückwunsch!", "優勝は…{a}選手です！おめでとうございます！"],
+    "정정합니다. 우승자는 {a} 선수입니다. 죄송합니다, {b} 선수.": ["Correction: the winner is {a}. Sorry, {b}.", "Rectifico: el ganador es {a}. Perdón, {b}.", "Rectification : le vainqueur est {a}. Désolé, {b}.", "Korrektur: Der Sieger ist {a}. Tut mir leid, {b}.", "訂正します。優勝は{a}選手です。{b}選手、すみません。"],
     /* 빌드 49 추가분 */
     "삐익! 방금 그건 반칙입니다.": ["Peep! That was a foul.", "¡Piii! Eso fue falta.", "Pouit ! C'était une faute.", "Pfiff! Das war ein Foul.", "ピーッ！今のは反則です。"],
     "삐익! 무슨 반칙인지는 묻지 말아 주세요.": ["Peep! Please don't ask what the foul was.", "¡Piii! No pregunten cuál fue la falta.", "Pouit ! Ne demandez pas quelle faute.", "Pfiff! Fragt nicht, welches Foul.", "ピーッ！何の反則かは聞かないでください。"],
@@ -1430,7 +1433,9 @@ body.playing #emoBar{display:flex}
    <div class="row"><input id="codeIn" maxlength="5" placeholder="방 코드" autocomplete="off"><button class="pb dark" id="joinBtn" style="flex:0 0 auto">들어가기</button></div>
    <div class="msg" id="homeMsg"></div>
   </aside>
-  <template id="patchnotes"><details class="notes" open><summary>패치노트 · v0.1 (build 49)</summary>
+  <template id="patchnotes"><details class="notes" open><summary>패치노트 · v0.1 (build 50)</summary>
+   <b>2026-10-22 · v0.1 build 50 · 가짜 우승 발표</b>
+   <ul><li>시상식에서 해설자가 먼저 엉뚱한 선수를 우승자로 부르고, 곧 "정정합니다"라고 바로잡아요</li></ul>
    <b>2026-10-22 · v0.1 build 49 · 병맛 포인트 추가</b>
    <ul><li>경기 중 가끔 이유 없이 호루라기가 울리고 해설자가 반칙이라고 우겨요</li><li>아주 드물게 아무도 안 쳤는데 마네킹 팔이 혼자 빠져 굴러가요</li><li>시상식 3등 포디움에 삐뚤어진 "참가해 주셔서 감사합니다" 상패가 생겼어요</li><li>마지막 판 해설은 지쳐서 글자 사이에 "…"가 끼고, 시상식 후 "이제 지치네요" 같은 멘트가 나와요</li></ul>
    <b>2026-10-22 · v0.1 build 48 · 해설 문구 다듬기</b>
@@ -1527,7 +1532,7 @@ body.playing #emoBar{display:flex}
    <ul><li>무너지는 발판 칸 수 대폭 증가 (19×10)와 용암 동굴 맵</li><li>10개 맵 전부 새로 그림 (관중석, 야자수 섬, 링, 정원 미로, 서커스, 우노 테이블 등)</li><li>글자 대신 아이콘·말풍선·이펙트로 표현 (무기, 아이템, 카드 효과, 시작 안내)</li><li>타격·폭발·물보라 효과와 화면 흔들림 추가</li></ul>
    <b>2026-10-19 · v0.1 build 1 · 첫 시험판</b>
    <ul><li>마네킹 미니게임 10개 추가 (장애물 달리기, 섬 밀치기, 싸우기, 병맛 미로, 체스 대난투, 폭탄 돌리기, 병맛 우노, 쇼윈도 얼음땡, 무너지는 발판, 컨베이어 서바이벌)</li><li>방 코드로 최대 8명 멀티플레이, 빈자리는 봇으로 채우기</li><li>판마다 10개 중 5개를 무작위로 골라 점수를 합산</li><li>PC 키보드와 휴대폰 터치 조작 지원</li></ul></details></template>
-  <p class="foot">2~8명 · 판마다 31개 미니게임 중 7개 · 프로토타입 v0.1 b49 · <a href="../">← 프로토타입 목록</a></p>
+  <p class="foot">2~8명 · 판마다 31개 미니게임 중 7개 · 프로토타입 v0.1 b50 · <a href="../">← 프로토타입 목록</a></p>
   <p class="foot"><span class="ff-copy">© 2026 Frenchfries777 · <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.ko" target="_blank" rel="noopener">CC BY-NC-ND 4.0</a></span></p>
  </div>
 </section>
@@ -6042,6 +6047,22 @@ function lastRoundDots(t, kind) {
   for (var i = 0; i < cs.length; i++) { o += cs[i]; if (cs[i] !== ' ' && i < cs.length - 1 && cs[i + 1] !== ' ' && /[가-힣A-Za-z]/.test(cs[i]) && ++n % 2 === 0) o += '…'; }
   return o;
 }
+// 직접 문장을 말해요 ({a}, {b} 자리에 이름을 넣어요)
+function sayText(tpl, vars) {
+  var cm = FUNS.cm, now = performance.now(), tl = (window.DP_T && window.DP_LANG && DP_LANG !== 'ko') ? DP_T(tpl) : tpl;
+  for (var k in vars) tl = tl.split('{' + k + '}').join(vars[k]);
+  cm.text = tl; cm.t0 = now; cm.until = now + 1500 + cm.text.length * 105; cm.cool = now + 3600; cm.idle = now; try { SFX.play('cmt'); } catch (e) { }
+}
+// 가짜 우승 발표: 해설자가 엉뚱한 선수를 우승자로 부르고 곧 정정해요
+function fakeWinner(m) {
+  var ps = (m && m.players ? m.players : []).slice().sort(function (a, b) { return b.score - a.score || b.wins - a.wins; });
+  if (ps.length < 2) return;
+  var real = ps[0], wrong = ps[1 + Math.floor(Math.random() * (ps.length - 1))], my = G.finT0;
+  var ok = function () { return G.meta && G.meta.phase === 'final' && G.finT0 === my; };
+  setTimeout(function () { if (ok()) sayText('자, 우승자는… {a} 선수입니다! 축하드립니다!', { a: wrong.name }); }, 800);
+  setTimeout(function () { if (ok()) sayText('정정합니다. 우승자는 {a} 선수입니다. 죄송합니다, {b} 선수.', { a: real.name, b: wrong.name }); }, 3900);
+  setTimeout(function () { if (ok()) say('tired', true); }, 7600);
+}
 function say(kind, force) {
   var cm = FUNS.cm, now = performance.now(); if (!force && now < cm.cool) return;
   var pool = CMT[kind]; if (!pool) return;
@@ -6394,7 +6415,7 @@ function funPhase(m, ph) {
     FUNS.mood = 1; say('end', true); setTimeout(function () { SFX.play('cheer'); throwFlowers(wp); }, 900);
     if (rk[rk.length - 1] === me && m.players.length >= 3) setTimeout(function () { SFX.play('trombone'); }, 1600);
   }
-  else if (ph === 'final') { G.finT0 = now; G._cer = {}; POSEO = {}; FUNS.mood = 1; say('final', true); setTimeout(function () { say('tired', true); }, 5200); }
+  else if (ph === 'final') { G.finT0 = now; G._cer = {}; POSEO = {}; FUNS.mood = 1; if (m.players && m.players.length >= 2) fakeWinner(m); else { say('final', true); setTimeout(function () { say('tired', true); }, 5200); } }
   else if (ph !== 'result') POSEO = {};
 }
 
