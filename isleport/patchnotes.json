@@ -2,6 +2,58 @@
  "notes": [
   {
    "date": "2026-10-22",
+   "build": "v0.2 build 50",
+   "title": "이야기의 결말과 크레딧",
+   "items": [
+    "마지막 장에서 장부의 주인을 정하면 결말 연출과 대사가 나와요",
+    "결말 뒤에 크레딧이 올라가요. 건너뛸 수 있고, 끝나도 게임은 계속돼요",
+    "마을 회관의 이야기에서 결말을 다시 볼 수 있어요"
+   ],
+   "tr": {
+    "en": {
+     "title": "Story ending and credits",
+     "items": [
+      "Choosing the ledger's fate in the last chapter now plays an ending scene with dialogue",
+      "Credits roll after the ending. You can skip them, and the game goes on",
+      "Rewatch the ending from the Story page at the town hall"
+     ]
+    },
+    "ja": {
+     "title": "Story ending and credits",
+     "items": [
+      "Choosing the ledger's fate in the last chapter now plays an ending scene with dialogue",
+      "Credits roll after the ending. You can skip them, and the game goes on",
+      "Rewatch the ending from the Story page at the town hall"
+     ]
+    },
+    "es": {
+     "title": "Story ending and credits",
+     "items": [
+      "Choosing the ledger's fate in the last chapter now plays an ending scene with dialogue",
+      "Credits roll after the ending. You can skip them, and the game goes on",
+      "Rewatch the ending from the Story page at the town hall"
+     ]
+    },
+    "fr": {
+     "title": "Story ending and credits",
+     "items": [
+      "Choosing the ledger's fate in the last chapter now plays an ending scene with dialogue",
+      "Credits roll after the ending. You can skip them, and the game goes on",
+      "Rewatch the ending from the Story page at the town hall"
+     ]
+    },
+    "de": {
+     "title": "Story ending and credits",
+     "items": [
+      "Choosing the ledger's fate in the last chapter now plays an ending scene with dialogue",
+      "Credits roll after the ending. You can skip them, and the game goes on",
+      "Rewatch the ending from the Story page at the town hall"
+     ]
+    }
+   }
+  },
+  {
+   "date": "2026-10-22",
    "build": "v0.2 build 49",
    "title": "선체 내구와 도크 수리",
    "items": [

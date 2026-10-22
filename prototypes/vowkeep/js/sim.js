@@ -134,15 +134,16 @@ function aimPoint(p, inp, range) {
   if (inp.ax != null) { const d = Math.hypot(inp.ax - p.x, inp.az - p.z); if (d <= range) return { x: inp.ax, z: inp.az }; }
   return { x: p.x + Math.cos(p.a) * range, z: p.z + Math.sin(p.a) * range };
 }
-function basicAttack(G, p) {
+function basicAttack(G, p, inp) {
   const R = ROLES[p.role], A = R.atk;
   p.cd.atk = A.cd * cdMul(p, 'atk');
   // 기사 3단 베기: 공격, 공격, 강타 뒤 처음부터 (1.2초 쉬면 처음부터). 봇은 쓰지 않아요
   const cmb = !p.bot && p.role === 'knight', aid = p.atkN = (p.atkN || 0) + 1;
   if (cmb) { p.combo = p.comboT > 0 ? ((p.combo || 0) + 1) % 3 : 0; p.comboT = 1.2; }
   const heavy = cmb && p.combo === 2, hm = heavy ? 1.7 : 1;
-  if (heavy) ev(G, 'heavy', { id: p.id, x: p.x + Math.cos(p.a) * 1.6, z: p.z + Math.sin(p.a) * 1.6, a: p.a });
-  p.anim = heavy ? 'hv' : 'atk'; p.animT = heavy ? 0.55 : 0.32; p.animN = (p.animN || 0) + 1;
+  p.anim = heavy ? 'hv' : 'atk'; p.animT = heavy ? 0.95 : 0.32; p.animN = (p.animN || 0) + 1;
+  // 강타는 조준한 쪽으로 실제로 뛰어올라 날아가서, 땅에 내려찍는 순간 맞아요
+  if (heavy) { p.hvT = HV_DELAY; p.hvAid = aid; const L = leapDist(p, inp && inp.ax, inp && inp.az); p.lpx = Math.cos(p.a) * L / HV_DELAY; p.lpz = Math.sin(p.a) * L / HV_DELAY; return; }
   if (A.kind === 'melee') {
     ev(G, 'swing', { id: p.id, x: p.x, z: p.z, a: p.a, r: A.range, role: p.role });
     for (const e of G.enemies) { if (e.hp <= 0) continue; const d = dist(p, e); if (d < A.range * (heavy ? 1.2 : 1) + e.r && angDiff(p.a, angTo(p, e)) < A.arc / 2 + (heavy ? 0.6 : 0.25)) hurtEnemy(G, e, A.dmg * hm, p, { basic: true, aid, heavy, burn: A.burn, kb: heavy ? 7 : 3, kbA: angTo(p, e) }); }
@@ -151,10 +152,19 @@ function basicAttack(G, p) {
     ev(G, 'shoot', { id: p.id, pk: A.kind, x: p.x, z: p.z });
   }
 }
+export const HV_DELAY = 0.36, LEAP_MAX = 4.5;
+// 뛰는 거리: 조준한 곳 바로 앞까지, 최대 4.5m
+export function leapDist(p, ax, az) { if (ax == null || !isFinite(ax)) return LEAP_MAX; return Math.max(0, Math.min(LEAP_MAX, Math.hypot(ax - p.x, az - p.z) - 1.2)); }
+function heavyLand(G, p) {
+  const A = ROLES[p.role].atk;
+  ev(G, 'heavy', { id: p.id, x: p.x + Math.cos(p.a) * 1.6, z: p.z + Math.sin(p.a) * 1.6, a: p.a });
+  ev(G, 'swing', { id: p.id, x: p.x, z: p.z, a: p.a, r: A.range, role: p.role });
+  for (const e of G.enemies) { if (e.hp <= 0) continue; const d = dist(p, e); if (d < A.range * 1.2 + e.r && angDiff(p.a, angTo(p, e)) < A.arc / 2 + 0.6) hurtEnemy(G, e, A.dmg * 1.7, p, { basic: true, aid: p.hvAid, heavy: true, burn: A.burn, kb: 7, kbA: angTo(p, e) }); }
+}
 function useSkill(G, p, si, inp) {
   const R = ROLES[p.role], S = R.skills[si], key = 's' + si;
   if (p.cd[key] > 0) return;
-  p.cd[key] = S.cd * cdMul(p, 'skill'); p.anim = S.id; p.animT = 0.5; p.animN = (p.animN || 0) + 1;
+  p.cd[key] = S.cd * cdMul(p, 'skill'); p.anim = S.id; p.animT = 0.8; p.animN = (p.animN || 0) + 1;
   ev(G, 'skill', { id: p.id, s: S.id, x: p.x, z: p.z, a: p.a });
   switch (S.id) {
     case 'block': p.block = 1.2; break;
@@ -293,6 +303,7 @@ function stepPlayer(G, p, inp, dt) {
   for (const k in p.cd) if (p.cd[k] > 0) p.cd[k] -= dt;
   ['block', 'taunt', 'rally', 'inv', 'hitT', 'animT', 'rollCd', 'focus', 'pdCd'].forEach(k => { if (p[k] > 0) p[k] = Math.max(0, p[k] - dt); });
   if (p.comboT > 0) { p.comboT -= dt; if (p.comboT <= 0) p.combo = 0; }
+  if (p.hvT > 0) { p.hvT -= dt; if (p.hvT <= 0) { p.hvT = 0; if (!p.down && !p.dead) heavyLand(G, p); } }
   if (p.shieldT > 0) { p.shieldT -= dt; if (p.shieldT <= 0) p.shield = 0; }
   if (p.dead) {
     // 완전히 쓰러지면 12초 뒤 마지막 모닥불에서 다시 일어나요
@@ -322,11 +333,12 @@ function stepPlayer(G, p, inp, dt) {
     if (p.roll > 0) p.roll -= dt;
   } else {
     let mx = inp.mx || 0, mz = inp.mz || 0; const ml = Math.hypot(mx, mz); if (ml > 1) { mx /= ml; mz /= ml; }
-    if (inp.roll && p.rollCd <= 0 && p.roll <= 0) {
+    if (inp.roll && p.rollCd <= 0 && p.roll <= 0 && !(p.hvT > 0)) {
       p.roll = 0.35; p.rollCd = 1.2 * (hasB(p, 'roll') ? 0.6 : 1);
       const ra = ml > 0.1 ? Math.atan2(mz, mx) : p.a; p.rdx = Math.cos(ra); p.rdz = Math.sin(ra); ev(G, 'roll', { id: p.id });
     }
-    if (p.roll > 0) { p.roll -= dt; p.x += p.rdx * 15 * dt; p.z += p.rdz * 15 * dt; }
+    if (p.hvT > 0) { p.x += p.lpx * dt; p.z += p.lpz * dt; }
+    else if (p.roll > 0) { p.roll -= dt; p.x += p.rdx * 15 * dt; p.z += p.rdz * 15 * dt; }
     else { p.x += mx * sp * dt; p.z += mz * sp * dt; }
     p.moving = ml > 0.1;
     collide(G, p, 0.6);
@@ -334,7 +346,7 @@ function stepPlayer(G, p, inp, dt) {
   p.f = !!inp.f;
   if (p.roll > 0) return;
   if (G.phase !== 'play' && G.phase !== 'bossIntro') return;
-  if (inp.atk && p.cd.atk <= 0 && p.block <= 0) basicAttack(G, p);
+  if (inp.atk && p.cd.atk <= 0 && p.block <= 0) basicAttack(G, p, inp);
   if (inp.q) useSkill(G, p, 0, inp);
   if (inp.e) useSkill(G, p, 1, inp);
   if (inp.r) useSkill(G, p, 2, inp);
