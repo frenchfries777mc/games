@@ -145,3 +145,5 @@ index.html | 랭킹 표 | 최장 생존 일수, 생존 순위는 서버 준비 �
 - patchnotes.json | "Vowkeep 기사 전용 연타" 2줄 | Vowkeep b17 | 2026-10-22
 - prototypes/vowkeep/js/main.js, index.html | 장 버튼 "N장", "N장 시작", 조작 설명 3단 베기 문장 | 한국어만 있음 | Vowkeep b18 | 2026-10-22
 - patchnotes.json | "Vowkeep 장 고르기와 기사 3단 베기" 4줄 | Vowkeep b18 | 2026-10-22
+
+- ff-auth.js: 되돌아가기 버튼 이름 '게임', '교육', '도구' 와 title '게임/교육/도구 사이트로 돌아가기' (허브일 때는 기존 hub/hubT)
