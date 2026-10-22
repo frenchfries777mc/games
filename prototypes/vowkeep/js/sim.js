@@ -1,10 +1,10 @@
 // Vowkeep · © 2026 Frenchfries777 · CC BY-NC-ND 4.0
 // 게임 규칙 (방장·혼자 하기에서만 돌아가요). three.js를 쓰지 않아서 node에서도 시험할 수 있어요.
-import { ROLES, ROLE_IDS, ENEMIES, BLESSINGS, CHAPTER1, MAP, GEAR_BONUS } from './data.js';
-import { collide as mapCollide, isWall, lineClear, navDir, areaAt, cw, PILLARS } from './map.js';
+import { ROLES, ROLE_IDS, ENEMIES, BLESSINGS, CHAPTERS, FOES, MAP, GEAR_BONUS } from './data.js';
+import { collide as mapCollide, isWall, lineClear, navDir, areaAt, cw, useChapter, PILLARS } from './map.js';
 
 export const INTRO_T = 16;
-const WAKE_R = 14, LEASH_R = 30, BOSS_AREA = MAP.areas.findIndex(a => a.boss);
+const WAKE_R = 14, LEASH_R = 30;
 const TAU = Math.PI * 2;
 const clamp = (v, a, b) => v < a ? a : v > b ? b : v;
 const dist = (a, b) => Math.hypot(a.x - b.x, a.z - b.z);
@@ -14,11 +14,23 @@ const angDiff = (a, b) => { let d = (b - a) % TAU; if (d > Math.PI) d -= TAU; if
 export function mkRng(seed) { let s = seed >>> 0 || 1; return () => { s ^= s << 13; s >>>= 0; s ^= s >> 17; s ^= s << 5; s >>>= 0; return s / 4294967296; }; }
 
 /* slots: [{id, role, name, bot, lv, gear:{weapon,armor}}] */
-export function createGame(slots, seed) {
+// 장마다 적 능력치: 1장 값에 장 난이도와 적 종류별 배율을 곱해요
+function enemyStats(ch) {
+  const C = CHAPTERS[ch], F = FOES[ch] || FOES[0], o = {};
+  for (const k of ['skel', 'archer', 'shield', 'elite']) {
+    const b = ENEMIES[k], f = F[k] || {};
+    o[k] = Object.assign({}, b, { name: f.name || b.name, hp: Math.round(b.hp * (f.hp || 1) * C.diff), dmg: Math.round(b.dmg * C.diff), speed: b.speed * (f.speed || 1), r: f.r || b.r, proj: f.proj || 'earrow', psp: f.psp || 17 });
+  }
+  o.boss = Object.assign({}, ENEMIES.boss, C.boss, { honor: 0 });
+  return o;
+}
+export function createGame(slots, seed, ch = 0) {
+  useChapter(ch);
   const G = {
+    ch, CH: CHAPTERS[ch], EN: enemyStats(ch), bossArea: MAP.areas.findIndex(a => a.boss),
     t: 0, rng: mkRng(seed || Date.now()), phase: 'intro', phaseT: 0,
     players: [], enemies: [], projs: [], zones: [], ev: [], uid: 1, msg: '', stats: { downs: 0, kills: 0 },
-    humans: slots.filter(s => !s.bot).length, bless: {}, honor: {}, won: false, chapter: CHAPTER1,
+    humans: slots.filter(s => !s.bot).length, bless: {}, honor: {}, won: false,
     skip: {}, cp: { x: cw(MAP.start[0]), z: cw(MAP.start[1]) }, cpI: -1, bossIntro: false, bossDead: false, route: 0,
     fires: MAP.fires.map(([x, y]) => ({ x: cw(x), z: cw(y), lit: false })),
     altars: MAP.altars.map(([x, y]) => ({ x: cw(x), z: cw(y), used: false, prog: 0 })),
@@ -53,8 +65,9 @@ function alive(p) { return !p.down && !p.dead; }
 function hpMul(G) { return 1 + 0.35 * (Math.max(1, G.humans) - 1); }
 
 function spawnEnemy(G, k, x, z, home) {
-  const E = ENEMIES[k], hp = Math.round(E.hp * hpMul(G));
-  const e = { id: G.uid++, k, x, z, a: Math.PI / 2, hp, maxhp: hp, st: home ? 'sleep' : 'rise', stT: 0.9, cd: 0.3 + G.rng() * 0.6, tgt: null, root: 0, burn: 0, burnT: 0, mark: 0, stun: 0, hitT: 0, vx: 0, vz: 0, wind: 0, r: E.r };
+  // 보스가 부른 부하는 장 난이도를 빼고 1장 수준으로 나와요
+  const E = G.EN[k], weak = !home && k !== 'boss' ? 1 / G.CH.diff : 1, hp = Math.round(E.hp * hpMul(G) * weak);
+  const e = { id: G.uid++, k, x, z, a: Math.PI / 2, hp, maxhp: hp, dm: weak, st: home ? 'sleep' : 'rise', stT: 0.9, cd: 0.3 + G.rng() * 0.6, tgt: null, root: 0, burn: 0, burnT: 0, mark: 0, stun: 0, hitT: 0, vx: 0, vz: 0, wind: 0, r: E.r };
   if (home) { e.hx = x; e.hz = z; } else e.summoned = true;
   if (k === 'boss') Object.assign(e, { phase: 1, pat: 0, summonT: 10, fireT: 5, atk: null, faceLock: 0 });
   G.enemies.push(e); if (!home) ev(G, 'spawn', { x, z, en: k });
@@ -89,7 +102,7 @@ function hurtPlayer(G, p, dmg, src) {
 function hurtEnemy(G, e, dmg, p, o) {
   if (e.hp <= 0 || e.st === 'rise') return 0;
   if (e.st === 'sleep' || e.st === 'home') wake(G, e);
-  const E = ENEMIES[e.k];
+  const E = G.EN[e.k];
   let d = dmg * (p ? p.dmgMul * (hasB(p, 'blade') ? 1.15 : 1) * (p.rally > 0 ? 1.3 : 1) : 1);
   if (e.mark > 0) d *= 1.5;
   const from = o.from || p;
@@ -108,7 +121,7 @@ function hurtEnemy(G, e, dmg, p, o) {
 }
 function killEnemy(G, e) {
   e.hp = 0; G.stats.kills++; ev(G, 'ekill', { x: e.x, z: e.z, en: e.k, id: e.id }); ev(G, 'ach', { id: 'room1' });
-  const h = ENEMIES[e.k].honor; for (const p of G.players) G.honor[p.id] += h;
+  const h = G.EN[e.k].honor; for (const p of G.players) G.honor[p.id] += h;
   if (e.k === 'elite') ev(G, 'ach', { id: 'elite' });
   if (e.k === 'boss') { G.bossDead = true; for (const o of G.enemies) if (o !== e && o.hp > 0 && o.summoned) { o.hp = 0; ev(G, 'ekill', { x: o.x, z: o.z, en: o.k, id: o.id }); } }
 }
@@ -195,7 +208,7 @@ export function step(G, dt, inputs) {
   for (const p of G.players) stepPlayer(G, p, inputs[p.id] || {}, dt);
 
   // 보스 방에 들어가면 단장이 깨어나요
-  if (!G.bossIntro && !G.bossDead && G.players.some(p => alive(p) && areaAt(p.x, p.z) === BOSS_AREA && p.x > cw(27.5))) { G.bossIntro = true; G.phase = 'bossIntro'; G.phaseT = 0; ev(G, 'bossIntro', {}); }
+  if (!G.bossIntro && !G.bossDead && G.players.some(p => alive(p) && inTrig(p))) { G.bossIntro = true; G.phase = 'bossIntro'; G.phaseT = 0; ev(G, 'bossIntro', {}); }
 
   // 적: 깨어 있거나 가까운 적만 움직여요
   for (const e of G.enemies) if (e.hp > 0) stepEnemy(G, e, dt);
@@ -228,6 +241,7 @@ export function step(G, dt, inputs) {
   if (G.bossDead && !G.won && !G.enemies.some(e => e.k === 'boss')) win(G);
 }
 
+function inTrig(p) { const [x, y, w, h] = MAP.bossTrig, i = p.x / 2, j = p.z / 2; return i >= x && i < x + w && j >= y && j < y + h; }
 function win(G) {
   for (const p of G.players) G.honor[p.id] += 90;
   G.won = true; G.phase = 'won'; G.phaseT = 0; ev(G, 'won', {});
@@ -329,7 +343,7 @@ function pickTarget(G, e) {
   return best;
 }
 function stepEnemy(G, e, dt) {
-  const E = ENEMIES[e.k];
+  const E = G.EN[e.k];
   ['root', 'mark', 'stun', 'hitT', 'tauntT'].forEach(k => { if (e[k] > 0) e[k] = Math.max(0, e[k] - dt); });
   if (e.burn > 0) { e.burn -= dt; e.burnT += dt; if (e.burnT >= 0.5) { e.burnT = 0; hurtEnemy(G, e, 2, null, {}); if (e.hp <= 0) return; } }
   // 잠든 적: 사람이 보이는 곳까지 오면 깨어나요
@@ -347,7 +361,7 @@ function stepEnemy(G, e, dt) {
     for (const p of G.players) if (alive(p) && dist(p, e) < WAKE_R * 0.8 && lineClear(e.x, e.z, p.x, p.z)) { e.st = 'idle'; return; }
     if (d < 0.8) { e.st = 'sleep'; e.hp = e.maxhp; e.moving = false; return; }
     const a = navDir(e.x, e.z, e.hx, e.hz, G.t); if (a == null) { e.x = e.hx; e.z = e.hz; return; }
-    e.a = a; e.x += Math.cos(a) * ENEMIES[e.k].speed * 1.3 * dt; e.z += Math.sin(a) * ENEMIES[e.k].speed * 1.3 * dt; e.moving = true; e.hp = Math.min(e.maxhp, e.hp + e.maxhp * 0.2 * dt);
+    e.a = a; e.x += Math.cos(a) * E.speed * 1.3 * dt; e.z += Math.sin(a) * E.speed * 1.3 * dt; e.moving = true; e.hp = Math.min(e.maxhp, e.hp + e.maxhp * 0.2 * dt);
     return;
   }
   if (e.k === 'boss') { stepBoss(G, e, dt); return; }
@@ -361,18 +375,18 @@ function stepEnemy(G, e, dt) {
     e.wind -= dt;
     if (e.wind <= 0) {
       e.st = 'idle'; e.cd = E.cd * (0.8 + G.rng() * 0.4);
-      if (e.k === 'archer') { G.projs.push({ id: G.uid++, k: 'earrow', x: e.x, z: e.z, vx: Math.cos(e.a) * 17, vz: Math.sin(e.a) * 17, dmg: E.dmg, life: 1.2, team: 1, src: e.id }); ev(G, 'eshoot', { x: e.x, z: e.z }); }
+      if (e.k === 'archer') { G.projs.push({ id: G.uid++, k: E.proj, x: e.x, z: e.z, vx: Math.cos(e.a) * E.psp, vz: Math.sin(e.a) * E.psp, dmg: E.dmg * e.dm, life: 20 / E.psp, team: 1, src: e.id }); ev(G, 'eshoot', { x: e.x, z: e.z }); }
       else if (e.charging) { /* 돌진 끝 */ }
       else {
         ev(G, 'eswing', { id: e.id, x: e.x, z: e.z, a: e.a });
-        for (const p of G.players) if (alive(p) && dist(e, p) < E.range + 0.7 && angDiff(e.a, angTo(e, p)) < 1.1) hurtPlayer(G, p, E.dmg, e);
+        for (const p of G.players) if (alive(p) && dist(e, p) < E.range + 0.7 && angDiff(e.a, angTo(e, p)) < 1.1) hurtPlayer(G, p, E.dmg * e.dm, e);
       }
     }
     return;
   }
   if (e.st === 'charge') {
     e.chT -= dt; const sp = 15; e.x += Math.cos(e.a) * sp * dt; e.z += Math.sin(e.a) * sp * dt; collide(G, e, e.r);
-    for (const p of G.players) if (alive(p) && dist(e, p) < e.r + 0.7 && !e.hitSet[p.id]) { e.hitSet[p.id] = 1; hurtPlayer(G, p, E.dmg, e); }
+    for (const p of G.players) if (alive(p) && dist(e, p) < e.r + 0.7 && !e.hitSet[p.id]) { e.hitSet[p.id] = 1; hurtPlayer(G, p, E.dmg * e.dm, e); }
     if (e.chT <= 0) { e.st = 'idle'; e.cd = 1.5; }
     return;
   }
@@ -400,55 +414,100 @@ function stepEnemy(G, e, dt) {
 function eliteWind(G, e, dt) { e.wind -= dt; if (e.wind <= 0) { e.st = 'charge'; e.chT = 0.6; e.hitSet = {}; } }
 
 /* ---------- 보스 ---------- */
+// 장마다 보스가 달라요. 공통: 체력 60%·30%에서 단계가 바뀌고, 자기 방 안에 있는 사람만 쫓아요
 function stepBoss(G, b, dt) {
-  const f = b.hp / b.maxhp;
+  const f = b.hp / b.maxhp, B = G.EN.boss;
   const np = f > 0.6 ? 1 : f > 0.3 ? 2 : 3;
   if (np !== b.phase) { b.phase = np; ev(G, 'bphase', { p: np }); b.cdT = 1.2; b.atk = null; b.st = 'idle'; if (np === 2) b.summonT = 1; if (np === 3) b.fireT = 1; }
   if (b.stun > 0) { b.atk = null; b.st = 'stun'; return; }
   if (b.st === 'stun') b.st = 'idle';
-  // 단장은 자기 방 안에 있는 사람만 쫓아요
-  let t = null, bd = 1e9; for (const p of G.players) { if (!alive(p) || areaAt(p.x, p.z) !== BOSS_AREA) continue; const dd = dist(b, p) - (p.taunt > 0 ? 6 : 0); if (dd < bd) { bd = dd; t = p; } }
+  let t = null, bd = 1e9; for (const p of G.players) { if (!alive(p) || areaAt(p.x, p.z) !== G.bossArea) continue; const dd = dist(b, p) - (p.taunt > 0 ? 6 : 0); if (dd < bd) { bd = dd; t = p; } }
   if (!t) { b.atk = null; const hd = Math.hypot(b.hx - b.x, b.hz - b.z); if (hd > 1) { const a = Math.atan2(b.hz - b.z, b.hx - b.x); b.x += Math.cos(a) * 3 * dt; b.z += Math.sin(a) * 3 * dt; b.a = a; b.moving = true; } else b.moving = false; return; }
-  const sp = ENEMIES.boss.speed * (b.phase === 3 ? 1.3 : 1);
-  // 소환·불꽃은 따로 돌아가요
-  if (b.phase >= 2) { b.summonT -= dt; if (b.summonT <= 0) { b.summonT = 15; for (let i = 0; i < 3; i++) { const a = i / 3 * TAU + G.rng(); let sx = b.x + Math.cos(a) * 4, sz = b.z + Math.sin(a) * 4; if (isWall(sx, sz) || !lineClear(b.x, b.z, sx, sz)) { sx = b.x; sz = b.z; } spawnEnemy(G, i === 2 && G.rng() < 0.5 ? 'archer' : 'skel', sx, sz, false); } ev(G, 'summon', {}); } }
-  if (b.phase >= 3) { b.fireT -= dt; if (b.fireT <= 0) { b.fireT = 2.4; fireTrail(G, b, t); } }
-  if (b.atk) {
-    const A = b.atk; A.t -= dt;
-    if (A.k === 'charge' && A.go) {
-      const ox = b.x + Math.cos(b.a) * 17 * dt, oz = b.z + Math.sin(b.a) * 17 * dt; b.x = ox; b.z = oz; collide(G, b, b.r); const bumped = Math.hypot(b.x - ox, b.z - oz) > 0.05;
-      for (const p of G.players) {
-        if (!alive(p) || A.hit[p.id] || dist(b, p) > b.r + 0.8) continue;
-        A.hit[p.id] = 1;
-        // 기사가 막기를 막 들었을 때 정면으로 받으면 받아치기
-        if (p.role === 'knight' && p.block > 0.8 && angDiff(p.a, angTo(p, b)) < 1.2) { b.stun = 3; b.atk = null; ev(G, 'parry', { id: p.id, x: p.x, z: p.z }); if (!p.bot) ev(G, 'ach', { id: 'parry', pid: p.id }); return; }
-        hurtPlayer(G, p, 42, b); p.inv = Math.max(p.inv, 0.4);
-      }
-      if (A.t <= 0 || bumped) { b.atk = null; b.cdT = 1.4; }
-      return;
+  const K = B.dmg / 55, ai = B.ai || 'warden', d = dist(b, t), ta = angTo(b, t);
+  // 부하 부르기 (2단계부터)
+  if (b.phase >= 2) { b.summonT -= dt; if (b.summonT <= 0) { b.summonT = ai === 'bishop' ? 13 : 15; const n = 3; for (let i = 0; i < n; i++) { const a = i / n * TAU + G.rng(); let sx = b.x + Math.cos(a) * 4, sz = b.z + Math.sin(a) * 4; if (isWall(sx, sz) || !lineClear(b.x, b.z, sx, sz)) { sx = b.x; sz = b.z; } spawnEnemy(G, i === n - 1 && G.rng() < 0.6 ? 'archer' : 'skel', sx, sz, false); } ev(G, 'summon', {}); } }
+  // 3단계: 보스마다 다른 바닥 공격
+  if (b.phase >= 3) {
+    b.fireT -= dt;
+    if (b.fireT <= 0) {
+      if (ai === 'warden') { b.fireT = 2.4; fireTrail(G, b, t); }
+      else if (ai === 'hunter') { b.fireT = 5.5; fireRing(G, b.x, b.z, 6.5, 14); }
+      else if (ai === 'bishop') { b.fireT = 2.6; for (const p of G.players) if (alive(p) && areaAt(p.x, p.z) === G.bossArea) G.zones.push({ id: G.uid++, k: 'tcircle', x: p.x, z: p.z, r: 2.2, t: 1.1, T: 1.1, then: 'fire' }); ev(G, 'bwind', { w: 'murk' }); }
+      else { b.fireT = 2.2; fireTrail(G, b, t); }
     }
-    if (A.t <= 0) {
-      if (A.k === 'slam') { ev(G, 'slam', { x: A.x, z: A.z }); for (const p of G.players) if (alive(p) && Math.hypot(p.x - A.x, p.z - A.z) < A.r) hurtPlayer(G, p, 48, b); b.atk = null; b.cdT = 0.7; }
-      else if (A.k === 'sweep') { ev(G, 'bsweep', { x: b.x, z: b.z, a: b.a }); for (const p of G.players) if (alive(p) && dist(b, p) < 5.2 && angDiff(b.a, angTo(b, p)) < 1.05) hurtPlayer(G, p, 34, b); b.atk = null; b.cdT = 0.5; }
-      else if (A.k === 'charge') { A.go = true; A.t = 0.9; A.hit = {}; ev(G, 'bcharge', {}); }
+  }
+  if (b.atk) { bossAttack(G, b, dt, K); return; }
+  // 걷기: 대주교는 거리를 두고, 나머지는 다가와요
+  const sp = B.speed * (b.phase === 3 ? 1.25 : 1);
+  let da = ta - b.a; while (da > Math.PI) da -= TAU; while (da < -Math.PI) da += TAU; b.a += clamp(da, -2.6 * dt, 2.6 * dt);
+  let want = d > 3 ? 1 : 0; if (ai === 'bishop') want = d > 9 ? 1 : d < 5 ? -1 : 0;
+  if (want) { const ma = lineClear(b.x, b.z, t.x, t.z) ? ta : (navDir(b.x, b.z, t.x, t.z, G.t) ?? ta); b.x += Math.cos(ma) * sp * want * dt; b.z += Math.sin(ma) * sp * want * dt; collide(G, b, b.r); b.moving = true; } else b.moving = false;
+  b.cdT = (b.cdT || 0) - dt;
+  if (b.cdT > 0) return;
+  const r = G.rng(), tw = b.phase === 3 ? 0.75 : 1;
+  const warn = (k, z) => { if (z) G.zones.push(Object.assign({ id: G.uid++, t: z.T }, z)); ev(G, 'bwind', { w: k }); };
+  if (ai === 'warden' || ai === 'king') {
+    const ring = ai === 'king' && b.phase >= 3 && r < 0.22;
+    if (ring) { b.atk = { k: 'ring', t: 1.3, r: 7.5 }; warn('ring', { k: 'tcircle', x: b.x, z: b.z, r: 7.5, T: 1.3 }); }
+    else if (b.phase >= 2 && d > 5 && r < 0.45) { b.a = ta; b.atk = { k: 'charge', t: 1.0 * tw }; warn('charge', { k: 'tline', x: b.x, z: b.z, a: ta, len: 15, w: 2.6, T: 1.0 * tw }); }
+    else if (ai === 'king' && b.phase >= 2 && r < 0.62) { b.atk = { k: 'nova', t: 0.9 * tw, n: 10, pk: 'ember' }; warn('nova', { k: 'tcircle', x: b.x, z: b.z, r: 2.5, T: 0.8 * tw }); }
+    else if (d < 5 && r < 0.75) { b.a = ta; b.atk = { k: 'sweep', t: 0.75 * tw }; warn('sweep', { k: 'tcone', x: b.x, z: b.z, a: ta, r: 5.2, arc: 2.1, T: 0.75 * tw }); }
+    else { b.atk = { k: 'slam', t: 0.95 * tw, x: t.x, z: t.z, r: 3.4 }; b.a = ta; warn('slam', { k: 'tcircle', x: t.x, z: t.z, r: 3.4, T: 0.95 * tw }); }
+  } else if (ai === 'hunter') {
+    if (d > 6 && r < 0.4) { b.atk = { k: 'leap', t: 0.9 * tw, x: t.x, z: t.z, r: 3.2 }; b.a = ta; warn('leap', { k: 'tcircle', x: t.x, z: t.z, r: 3.2, T: 0.9 * tw }); }
+    else if (d > 4 && r < 0.8) { b.a = ta; b.atk = { k: 'volley', t: 0.7 * tw, n: b.phase >= 2 ? 7 : 5, pk: 'spear', sp: 20 }; warn('volley', { k: 'tcone', x: b.x, z: b.z, a: ta, r: 12, arc: 1.1, T: 0.7 * tw }); }
+    else if (d < 5) { b.a = ta; b.atk = { k: 'sweep', t: 0.6 * tw }; warn('sweep', { k: 'tcone', x: b.x, z: b.z, a: ta, r: 5.2, arc: 2.1, T: 0.6 * tw }); }
+    else { b.atk = { k: 'leap', t: 0.9 * tw, x: t.x, z: t.z, r: 3.2 }; warn('leap', { k: 'tcircle', x: t.x, z: t.z, r: 3.2, T: 0.9 * tw }); }
+  } else if (ai === 'bishop') {
+    if (d < 3.5 || r < 0.2) { const q = bossSpot(G, b); b.atk = { k: 'blink', t: 0.6, x: q.x, z: q.z }; warn('blink', { k: 'tcircle', x: q.x, z: q.z, r: 1.6, T: 0.6 }); }
+    else if (r < 0.55) { b.atk = { k: 'nova', t: 0.8 * tw, n: b.phase >= 2 ? 16 : 12, pk: 'eorb' }; warn('nova', { k: 'tcircle', x: b.x, z: b.z, r: 2.5, T: 0.8 * tw }); }
+    else { b.atk = { k: 'pillars', t: 1.1 * tw, pts: [] }; for (const p of G.players) if (alive(p) && areaAt(p.x, p.z) === G.bossArea) { b.atk.pts.push([p.x, p.z]); G.zones.push({ id: G.uid++, k: 'tcircle', x: p.x, z: p.z, r: 2.4, t: 1.1 * tw, T: 1.1 * tw }); } ev(G, 'bwind', { w: 'pillars' }); }
+  }
+}
+// 보스 공격이 터지는 순간
+function bossAttack(G, b, dt, K) {
+  const A = b.atk; A.t -= dt;
+  if (A.k === 'charge' && A.go) {
+    const ox = b.x + Math.cos(b.a) * 17 * dt, oz = b.z + Math.sin(b.a) * 17 * dt; b.x = ox; b.z = oz; collide(G, b, b.r); const bumped = Math.hypot(b.x - ox, b.z - oz) > 0.05;
+    for (const p of G.players) {
+      if (!alive(p) || A.hit[p.id] || dist(b, p) > b.r + 0.8) continue;
+      A.hit[p.id] = 1;
+      // 기사가 막기를 막 들었을 때 정면으로 받으면 받아치기
+      if (p.role === 'knight' && p.block > 0.8 && angDiff(p.a, angTo(p, b)) < 1.2) { b.stun = 3; b.atk = null; ev(G, 'parry', { id: p.id, x: p.x, z: p.z }); if (!p.bot) ev(G, 'ach', { id: 'parry', pid: p.id }); return; }
+      hurtPlayer(G, p, 42 * K, b); p.inv = Math.max(p.inv, 0.4);
     }
+    if (A.t <= 0 || bumped) { b.atk = null; b.cdT = 1.4; }
     return;
   }
-  // 걷기
-  const d = dist(b, t), ta = angTo(b, t);
-  let da = ta - b.a; while (da > Math.PI) da -= TAU; while (da < -Math.PI) da += TAU; b.a += clamp(da, -2.6 * dt, 2.6 * dt);
-  if (d > 3) { b.x += Math.cos(ta) * sp * dt; b.z += Math.sin(ta) * sp * dt; b.moving = true; } else b.moving = false;
-  b.cdT = (b.cdT || 0) - dt;
-  if (b.cdT <= 0) {
-    const r = G.rng(), tw = b.phase === 3 ? 0.75 : 1;
-    if (b.phase >= 2 && d > 5 && r < 0.45) { b.a = ta; b.atk = { k: 'charge', t: 1.0 * tw }; G.zones.push({ id: G.uid++, k: 'tline', x: b.x, z: b.z, a: ta, len: 15, w: 2.6, t: 1.0 * tw, T: 1.0 * tw }); ev(G, 'bwind', { w: 'charge' }); }
-    else if (d < 5 && r < 0.6) { b.a = ta; b.atk = { k: 'sweep', t: 0.75 * tw }; G.zones.push({ id: G.uid++, k: 'tcone', x: b.x, z: b.z, a: ta, r: 5.2, arc: 2.1, t: 0.75 * tw, T: 0.75 * tw }); ev(G, 'bwind', { w: 'sweep' }); }
-    else { b.atk = { k: 'slam', t: 0.95 * tw, x: t.x, z: t.z, r: 3.4 }; b.a = ta; G.zones.push({ id: G.uid++, k: 'tcircle', x: t.x, z: t.z, r: 3.4, t: 0.95 * tw, T: 0.95 * tw }); ev(G, 'bwind', { w: 'slam' }); }
+  if (A.t > 0) return;
+  const area = (x, z, r, dmg) => { for (const p of G.players) if (alive(p) && Math.hypot(p.x - x, p.z - z) < r) hurtPlayer(G, p, dmg, b); };
+  const shoot = (a, pk, sp, dmg) => G.projs.push({ id: G.uid++, k: pk, x: b.x + Math.cos(a) * 1.2, z: b.z + Math.sin(a) * 1.2, vx: Math.cos(a) * sp, vz: Math.sin(a) * sp, dmg, life: 22 / sp, team: 1, src: b.id });
+  b.atk = null;
+  switch (A.k) {
+    case 'slam': ev(G, 'slam', { x: A.x, z: A.z }); area(A.x, A.z, A.r, 48 * K); b.cdT = 0.7; break;
+    case 'sweep': ev(G, 'bsweep', { x: b.x, z: b.z, a: b.a }); for (const p of G.players) if (alive(p) && dist(b, p) < 5.2 && angDiff(b.a, angTo(b, p)) < 1.05) hurtPlayer(G, p, 34 * K, b); b.cdT = 0.5; break;
+    case 'charge': b.atk = { k: 'charge', go: true, t: 0.9, hit: {} }; ev(G, 'bcharge', {}); break;
+    case 'leap': b.x = A.x; b.z = A.z; collide(G, b, b.r); ev(G, 'slam', { x: A.x, z: A.z }); area(A.x, A.z, A.r, 44 * K); b.cdT = 0.8; break;
+    case 'volley': for (let i = 0; i < A.n; i++) shoot(b.a + (i - (A.n - 1) / 2) * 0.17, A.pk, A.sp, 26 * K); ev(G, 'bvolley', { x: b.x, z: b.z }); b.cdT = 0.9; break;
+    case 'nova': { const o = G.rng() * TAU; for (let i = 0; i < A.n; i++) shoot(o + i / A.n * TAU, A.pk, 9, 18 * K); ev(G, 'nova', { x: b.x, z: b.z }); b.cdT = 1.0; break; }
+    case 'pillars': for (const [x, z] of A.pts) { ev(G, 'pillar', { x, z }); area(x, z, 2.4, 40 * K); } b.cdT = 0.8; break;
+    case 'blink': ev(G, 'blink', { x: b.x, z: b.z }); b.x = A.x; b.z = A.z; ev(G, 'blink', { x: b.x, z: b.z }); b.cdT = 0.4; break;
+    case 'ring': ev(G, 'slam', { x: b.x, z: b.z, big: 1 }); area(b.x, b.z, A.r, 50 * K); b.cdT = 1.2; break;
   }
+}
+// 보스 방 안에서 순간이동할 자리
+function bossSpot(G, b) {
+  const [x, y, w, h] = MAP.areas[G.bossArea].r[0];
+  for (let k = 0; k < 20; k++) { const q = { x: (x + 3 + G.rng() * (w - 6)) * 2, z: (y + 3 + G.rng() * (h - 6)) * 2 }; if (!isWall(q.x, q.z) && dist(q, b) > 6) return q; }
+  return { x: b.hx, z: b.hz };
 }
 function fireTrail(G, b, t) {
   const a = angTo(b, t), n = 7;
   for (let i = 1; i <= n; i++) { const x = b.x + Math.cos(a) * i * 1.7, z = b.z + Math.sin(a) * i * 1.7; if (isWall(x, z)) break; G.zones.push({ id: G.uid++, k: 'fire', x, z, r: 1.3, t: 6.5, delay: i * 0.08, tick: 0 }); }
+  ev(G, 'fire', {});
+}
+function fireRing(G, x, z, r, n) {
+  for (let i = 0; i < n; i++) { const a = i / n * TAU, fx = x + Math.cos(a) * r, fz = z + Math.sin(a) * r; if (isWall(fx, fz)) continue; G.zones.push({ id: G.uid++, k: 'fire', x: fx, z: fz, r: 1.3, t: 5, delay: i * 0.04, tick: 0 }); }
   ev(G, 'fire', {});
 }
 
@@ -490,6 +549,7 @@ function stepZones(G, dt) {
     if (z.k === 'rain') { z.tick -= dt; if (z.tick <= 0) { z.tick = 0.5; const own = G.players.find(p => p.id === z.own); for (const e of G.enemies) if (e.hp > 0 && Math.hypot(e.x - z.x, e.z - z.z) < z.r + e.r) hurtEnemy(G, e, 18, own, { from: { x: e.x, z: e.z - 1 } }); } }
     if (z.k === 'fire') { if (z.delay > 0) { z.delay -= dt; continue; } z.tick -= dt; if (z.tick <= 0) { z.tick = 0.5; for (const p of G.players) if (alive(p) && Math.hypot(p.x - z.x, p.z - z.z) < z.r) hurtPlayer(G, p, 16, null); } }
   }
+  for (const z of G.zones) if (z.t <= 0 && z.then === 'fire') { z.then = null; G.zones.push({ id: G.uid++, k: 'fire', x: z.x, z: z.z, r: z.r * 0.8, t: 5, delay: 0, tick: 0 }); }
   G.zones = G.zones.filter(z => z.t > 0);
   // 근위대장 돌진 준비
   for (const e of G.enemies) if (e.st === 'wind2') eliteWind(G, e, dt);
@@ -579,7 +639,7 @@ const r1 = v => Math.round(v * 100) / 100;
 export function snapshot(G) {
   const near = e => e.k === 'boss' || (e.st !== 'sleep') || G.players.some(p => Math.abs(p.x - e.x) < 34 && Math.abs(p.z - e.z) < 26);
   return {
-    t: r1(G.t), ph: G.phase, pt: r1(G.phaseT), msg: G.msg, won: G.won,
+    t: r1(G.t), ph: G.phase, pt: r1(G.phaseT), c: G.ch, msg: G.msg, won: G.won,
     sk: G.players.filter(p => !p.bot && G.skip[p.id]).length, hu: G.players.filter(p => !p.bot).length,
     pl: G.players.map(p => ({ id: p.id, role: p.role, name: p.name, bot: p.bot, x: r1(p.x), z: r1(p.z), a: r1(p.a), hp: Math.round(p.hp), mx: p.maxhp, dn: p.down ? 1 : 0, dd: p.dead ? 1 : 0, bl: r1(p.bleed), rs: r1(p.respT), rv: r1(p.revT), ro: p.roll > 0 ? 1 : 0, bk: p.block > 0 ? 1 : 0, sh: Math.round(p.shield), tn: p.taunt > 0 ? 1 : 0, ra: p.rally > 0 ? 1 : 0, an: p.animT > 0 ? p.anim : '', mv: p.moving ? 1 : 0, cd: [r1(p.cd.s0), r1(p.cd.s1), r1(p.cd.s2)], rc: r1(p.rollCd), b: p.bl })),
     en: G.enemies.filter(near).map(e => ({ id: e.id, k: e.k, x: r1(e.x), z: r1(e.z), a: r1(e.a), hp: Math.round(e.hp), mx: e.maxhp, st: e.st, mk: e.mark > 0 ? 1 : 0, sn: e.stun > 0 ? 1 : 0, bu: e.burn > 0 ? 1 : 0, ph: e.phase || 0, mv: e.moving ? 1 : 0, ak: e.atk ? e.atk.k + (e.atk.go ? '!' : '') : '', ht: e.hitT > 0 ? 1 : 0 })),

@@ -115,3 +115,6 @@ index.html | 랭킹 표 | 최장 생존 일수, 생존 순위는 서버 준비 �
 - patchnotes.json | "Vowkeep 원래 픽셀 그래픽과 화려한 기술 연출" 5줄 | Vowkeep b8 | 2026-10-22
 - 허브 사이트 (2026-10-22): 새 문구 없음. 옛 주소 안내 자리표시 페이지(games/wiki, community, patchnotes)는 lounge와 같은 문구.
 - 브라우저 기본 팝업(confirm/alert/prompt) 금지 (오너 2026-10-22). 새 문구 없음.
+- prototypes/vowkeep/js/data.js | 2~4장 제목·장소·이야기(시작 4줄, 결말 3줄), 보스 이름 3개와 단계 안내 문구, 구역 이름·첫 입장 문장 27개, 장별 적 이름 12개(FOES), 업적 3개(ch2~ch4), 1장 결말 문장 변경 | 한국어만 있음 | Vowkeep b9 | 2026-10-22
+- prototypes/vowkeep/js/main.js, index.html | 대기실 장 고르기("N장", "잠김", "보스:"), 결과 화면 "OO이 열렸어요."·"모든 장을 깼어요. 서약을 끝까지 지켰어요." | 한국어만 있음 | Vowkeep b9 | 2026-10-22
+- patchnotes.json | "Vowkeep 2~4장과 새 보스 3명" 7줄 | Vowkeep b9 | 2026-10-22
