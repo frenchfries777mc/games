@@ -267,6 +267,9 @@
     /* 꾸미기 */
     '모자': ['hat', 'sombrero', 'chapeau', 'Hut', '帽子'],
     '안경': ['glasses', 'gafas', 'lunettes', 'Brille', 'メガネ'],
+    /* 빌드 45 추가분 */
+    "취소": ["Cancel", "Cancelar", "Annuler", "Abbrechen", "キャンセル"],
+    "확인": ["OK", "Aceptar", "OK", "OK", "OK"],
     /* 빌드 43 추가분 */
     "만세": ["Arms up", "Brazos arriba", "Bras levés", "Arme hoch", "バンザイ"],
     "얼음 땡 포즈": ["Freeze Pose", "Pose congelada", "Pose figée", "Eingefrorene Pose", "フリーズポーズ"],
@@ -1299,6 +1302,7 @@ canvas.ico{width:100%;max-width:320px;height:auto;aspect-ratio:640/150;backgroun
 .tbtn.dn{transform:translateY(3px);box-shadow:0 1px 0 rgba(0,0,0,.3);filter:brightness(1.15)}
 #btnA{right:max(22px,env(safe-area-inset-right));bottom:max(26px,env(safe-area-inset-bottom))}
 #btnB{right:calc(max(22px,env(safe-area-inset-right)) + 96px);bottom:max(18px,env(safe-area-inset-bottom));width:70px;height:70px;background:rgba(120,190,255,.75)}
+.dlg{display:none;position:fixed;inset:0;z-index:60;background:rgba(30,18,8,.62);align-items:center;justify-content:center;padding:16px}.dlg.on{display:flex}.dlgBox{background:#fff8ec;border-radius:18px;padding:20px 22px;max-width:360px;width:100%;box-shadow:0 6px 0 #d9b98a;text-align:center}.dlgBox p{margin:0 0 16px;font-weight:800;font-size:17px;color:#3a2410;line-height:1.45}.dlgBtns{display:flex;gap:10px;justify-content:center}
 #toast{position:fixed;left:50%;bottom:30px;transform:translateX(-50%) translateY(30px);background:#2b2117;color:#fff;padding:10px 16px;border-radius:12px;font-weight:700;font-size:14px;opacity:0;transition:.25s;z-index:20;pointer-events:none;max-width:90vw;text-align:center}
 #toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
 @keyframes finIn{from{opacity:0;transform:translateY(40px) scale(.92)}to{opacity:1;transform:none}}
@@ -1385,7 +1389,9 @@ body.playing #emoBar{display:flex}
    <div class="row"><input id="codeIn" maxlength="5" placeholder="방 코드" autocomplete="off"><button class="pb dark" id="joinBtn" style="flex:0 0 auto">들어가기</button></div>
    <div class="msg" id="homeMsg"></div>
   </aside>
-  <template id="patchnotes"><details class="notes" open><summary>패치노트 · v0.1 (build 44)</summary>
+  <template id="patchnotes"><details class="notes" open><summary>패치노트 · v0.1 (build 45)</summary>
+   <b>2026-10-22 · v0.1 build 45 · 나가기 확인 창</b>
+   <ul><li>나가기를 눌렀을 때 브라우저 기본 팝업 대신 게임 디자인에 맞는 확인 창이 떠요</li></ul>
    <b>2026-10-22 · v0.1 build 44 · 해설 정리</b>
    <ul><li>해설자의 우노 관련 대사를 뺐어요</li></ul>
    <b>2026-10-22 · v0.1 build 43 · 미니게임 3종 추가</b>
@@ -1472,7 +1478,7 @@ body.playing #emoBar{display:flex}
    <ul><li>무너지는 발판 칸 수 대폭 증가 (19×10)와 용암 동굴 맵</li><li>10개 맵 전부 새로 그림 (관중석, 야자수 섬, 링, 정원 미로, 서커스, 우노 테이블 등)</li><li>글자 대신 아이콘·말풍선·이펙트로 표현 (무기, 아이템, 카드 효과, 시작 안내)</li><li>타격·폭발·물보라 효과와 화면 흔들림 추가</li></ul>
    <b>2026-10-19 · v0.1 build 1 · 첫 시험판</b>
    <ul><li>마네킹 미니게임 10개 추가 (장애물 달리기, 섬 밀치기, 싸우기, 병맛 미로, 체스 대난투, 폭탄 돌리기, 병맛 우노, 쇼윈도 얼음땡, 무너지는 발판, 컨베이어 서바이벌)</li><li>방 코드로 최대 8명 멀티플레이, 빈자리는 봇으로 채우기</li><li>판마다 10개 중 5개를 무작위로 골라 점수를 합산</li><li>PC 키보드와 휴대폰 터치 조작 지원</li></ul></details></template>
-  <p class="foot">2~8명 · 판마다 31개 미니게임 중 7개 · 프로토타입 v0.1 b44 · <a href="../">← 프로토타입 목록</a></p>
+  <p class="foot">2~8명 · 판마다 31개 미니게임 중 7개 · 프로토타입 v0.1 b45 · <a href="../">← 프로토타입 목록</a></p>
   <p class="foot"><span class="ff-copy">© 2026 Frenchfries777 · <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.ko" target="_blank" rel="noopener">CC BY-NC-ND 4.0</a></span></p>
  </div>
 </section>
@@ -1513,6 +1519,7 @@ body.playing #emoBar{display:flex}
   <div class="shopMain"><canvas id="decoPrev" width="168" height="208"></canvas><div class="shopGrid" id="shopGrid"></div></div>
   <div class="shopBar"><div class="sbInfo"><b id="sbName"></b><span id="sbSub"></span></div><button class="pb gold" id="sbBtn"></button></div>
 </div></div>
+<div class="dlg" id="dlg"><div class="dlgBox"><p id="dlgMsg"></p><div class="dlgBtns"><button class="pb" id="dlgNo" type="button">취소</button><button class="pb gold" id="dlgOk" type="button">확인</button></div></div></div>
 <div id="toast"></div>
 <script>
 /* ===== Dummy Party core: 공용 도구, 입력, 마네킹 그림, 효과음 =====
@@ -7249,6 +7256,14 @@ function pubSegPaint() {
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init); else init();
 })();
 
+/* 확인 창 (브라우저 기본 팝업 대신 쓰는 자체 창) */
+function dpAsk(msg, okLabel, onOk) {
+  var box = $('dlg'); $('dlgMsg').textContent = msg; $('dlgOk').textContent = okLabel || '확인'; box.classList.add('on');
+  function close() { box.classList.remove('on'); $('dlgOk').onclick = $('dlgNo').onclick = null; document.removeEventListener('keydown', key, true); }
+  function key(e) { if (e.key === 'Escape') { e.preventDefault(); e.stopPropagation(); close(); } else if (e.key === 'Enter') { e.preventDefault(); e.stopPropagation(); close(); onOk(); } }
+  $('dlgOk').onclick = function () { close(); onOk(); }; $('dlgNo').onclick = close; box.onclick = function (e) { if (e.target === box) close(); };
+  document.addEventListener('keydown', key, true); $('dlgNo').focus();
+}
 /* ===== Dummy Party 시작: 버튼 연결, 첫 화면 그림 ===== */
 (function () {
   CV = $('cv'); CX = CV.getContext('2d');
@@ -7297,7 +7312,7 @@ function pubSegPaint() {
   };
   $('joinBtn').onclick = function () { if (!loggedIn()) { needLogin(); return; } var n = needName(); if (!n) return; var c = $('codeIn').value.trim().toUpperCase(); if (c.length !== 5) { homeMsg('방 코드 5자리를 입력하세요.'); return; } startGuest(n, c); };
   $('lobBack').onclick = goHome;
-  $('quitBtn').onclick = function () { if (confirm('게임에서 나가 허브로 돌아갈까요?')) exitHub(); };
+  $('quitBtn').onclick = function () { dpAsk('게임에서 나가 허브로 돌아갈까요?', '나가기', exitHub); };
   $('exitHub').onclick = exitHub;
   $('startBtn').onclick = function () { SFX.unlock(); startMatch(); };
   $('copyBtn').onclick = function () {
