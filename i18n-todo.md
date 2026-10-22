@@ -202,3 +202,7 @@ crownenvoy/CrownEnvoy-v0.4.html | KON (영토 한글 이름 1,451개) | 영어 �
 
 ## Vowkeep b24 (2026-10-22)
 - patchnotes.json | "Vowkeep 봇 따라오기와 제자리 강타" 3줄 | Vowkeep b24 | 2026-10-22
+
+## Vowkeep b25 (2026-10-23)
+- prototypes/vowkeep/js/data.js | TALK 1~4장 게임 중 대사 (구역별·보스 앞, 약 60줄), 1~4장 시작·결말 이야기 문장 변경, 구역 문장 2개 변경 | 한국어만 있음 | Vowkeep b25 | 2026-10-23
+- patchnotes.json | "Vowkeep 맵 디테일과 동료 대사" 9줄 | Vowkeep b25 | 2026-10-23
