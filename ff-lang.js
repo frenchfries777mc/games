@@ -146,6 +146,8 @@ function ingsoc(){
 function trCaps(){ var a=document.body?document.body.querySelectorAll('*'):[]; for(var i=0;i<a.length;i++){ var e=a[i]; if(e.hasAttribute('lang')||!/i/.test(e.textContent)||/[^\x00-\x7f]/.test(e.textContent)) continue;
   try{ if(getComputedStyle(e).textTransform==='uppercase') e.setAttribute('lang','en'); }catch(x){} } }
 if(now==='tr'){ if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',function(){ trCaps(); setTimeout(trCaps,1500); }); else trCaps(); }
+/* Arabic: pages keep their left-to-right layout, but each line of text is ordered right to left (so punctuation and numbers land where an Arabic reader expects) */
+if(now==='ar'){ try{ var h0=document.documentElement; h0.classList.add('ff-ar'); var sa=document.createElement('style'); sa.textContent='html.ff-ar body *:not(svg):not(canvas):not(input):not(textarea){unicode-bidi:plaintext}'; (document.head||h0).appendChild(sa); }catch(e){} }
 if(now==='nw'){ if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',ingsoc); else ingsoc(); }
 /* Aurebesh and Standard Galactic: our own letter drawings (fonts/ff-aurebesh.woff2, fonts/ff-galactic.woff2) over every text on the page; language pickers stay readable */
 /* The "Aurebesh" and "Standard Galactic" entries in every language picker are always written in their own letters, so the font faces are declared on every page */
