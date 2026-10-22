@@ -135,3 +135,5 @@ index.html | 랭킹 표 | 최장 생존 일수, 생존 순위는 서버 준비 �
 - patchnotes.json | "Vowkeep 전투 화면 정리와 장별 문구 수정" 13줄 | Vowkeep b11 | 2026-10-22
 - patchnotes.json | "Vowkeep 활 자세와 화려한 연출" 9줄 | Vowkeep b12 | 2026-10-22
 - prototypes/vowkeep/js/data.js | 기사단장 3단계 안내 문장, 단계 이름 "갑옷 균열" | 한국어만 있음 | Vowkeep b12 | 2026-10-22
+- prototypes/vowkeep/js/main.js, data.js, index.html | "완벽한 회피!", "N 연타", "· 다음 강타", "집중 · 피해 +50%", 업적 pdodge 이름·설명, 조작 설명 기술 줄 | 한국어만 있음 | Vowkeep b13 | 2026-10-22
+- patchnotes.json | "Vowkeep 저스트 회피와 연타" 6줄 | Vowkeep b13 | 2026-10-22

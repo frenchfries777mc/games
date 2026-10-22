@@ -87,14 +87,16 @@ function collide(G, o, r) { mapCollide(o, r); }
 
 /* ---------- 피해 ---------- */
 function hurtPlayer(G, p, dmg, src) {
-  if (!alive(p) || p.inv > 0 || p.roll > 0) return 0;
+  if (!alive(p) || p.inv > 0) return 0;
+  // 저스트 회피: 구르기를 막 시작했을 때 맞을 뻔하면 잠깐 집중 상태가 돼요 (피해 +50%)
+  if (p.roll > 0) { if (p.roll > 0.15 && !(p.pdCd > 0) && !p.bot) { p.focus = 2.5; p.pdCd = 0.6; ev(G, 'pdodge', { id: p.id, x: p.x, z: p.z }); if (!p.bot) ev(G, 'ach', { id: 'pdodge', pid: p.id }); } return 0; }
   let d = dmg;
   if (p.block > 0 && src) { const fa = angTo(p, src); if (angDiff(p.a, fa) < 1.3) { d *= 0.3; ev(G, 'block', { x: p.x, z: p.z }); } }
   if (p.taunt > 0) d *= 0.7;
   if (hasB(p, 'last') && p.hp < p.maxhp * 0.3) d *= 0.75;
   if (p.shield > 0) { const s = Math.min(p.shield, d); p.shield -= s; d -= s; }
   d = Math.round(d); if (d <= 0) return 0;
-  p.hp -= d; p.hitT = 0.25; ev(G, 'phit', { id: p.id, x: p.x, z: p.z, v: d });
+  p.hp -= d; p.hitT = 0.25; p.combo = 0; p.comboT = 0; ev(G, 'phit', { id: p.id, x: p.x, z: p.z, v: d });
   if (hasB(p, 'thorn') && src && src.hp > 0 && src.id) hurtEnemy(G, src, 8, null, {});
   if (p.hp <= 0) { p.hp = 0; p.down = true; p.bleed = 20; p.revT = 0; p.everDown = true; G.stats.downs++; ev(G, 'down', { id: p.id, x: p.x, z: p.z }); }
   return d;
@@ -103,7 +105,7 @@ function hurtEnemy(G, e, dmg, p, o) {
   if (e.hp <= 0 || e.st === 'rise') return 0;
   if (e.st === 'sleep' || e.st === 'home') wake(G, e);
   const E = G.EN[e.k];
-  let d = dmg * (p ? p.dmgMul * (hasB(p, 'blade') ? 1.15 : 1) * (p.rally > 0 ? 1.3 : 1) : 1);
+  let d = dmg * (p ? p.dmgMul * (hasB(p, 'blade') ? 1.15 : 1) * (p.rally > 0 ? 1.3 : 1) * (p.focus > 0 ? 1.5 : 1) * (o.basic ? 1 + Math.min(p.combo || 0, 15) * 0.02 : 1) : 1);
   if (e.mark > 0) d *= 1.5;
   const from = o.from || p;
   if (E.front && from && !o.pierce) { if (angDiff(e.a, angTo(e, from)) < 1.0) { d *= E.front; ev(G, 'clang', { x: e.x, z: e.z }); } }
@@ -135,11 +137,15 @@ function aimPoint(p, inp, range) {
 function basicAttack(G, p) {
   const R = ROLES[p.role], A = R.atk;
   p.cd.atk = A.cd * cdMul(p, 'atk'); p.anim = 'atk'; p.animT = 0.3;
+  // 연타: 1.2초 안에 이어 치면 연타 수가 쌓여 피해가 늘고, 3번째마다 강타가 나가요
+  // 봇은 연타를 쓰지 않아요 (사람 손맛)
+  p.combo = p.bot ? 0 : p.comboT > 0 ? (p.combo || 0) + 1 : 1; p.comboT = p.bot ? 0 : 1.2; const heavy = !p.bot && p.combo % 3 === 0, hm = heavy ? 1.7 : 1;
+  if (heavy) ev(G, 'heavy', { id: p.id, x: p.x + Math.cos(p.a) * 1.5, z: p.z + Math.sin(p.a) * 1.5, a: p.a, melee: A.kind === 'melee' });
   if (A.kind === 'melee') {
     ev(G, 'swing', { id: p.id, x: p.x, z: p.z, a: p.a, r: A.range, role: p.role });
-    for (const e of G.enemies) { if (e.hp <= 0) continue; const d = dist(p, e); if (d < A.range + e.r && angDiff(p.a, angTo(p, e)) < A.arc / 2 + 0.25) hurtEnemy(G, e, A.dmg, p, { basic: true, burn: A.burn, kb: 3, kbA: angTo(p, e) }); }
+    for (const e of G.enemies) { if (e.hp <= 0) continue; const d = dist(p, e); if (d < A.range * (heavy ? 1.2 : 1) + e.r && angDiff(p.a, angTo(p, e)) < A.arc / 2 + (heavy ? 0.6 : 0.25)) hurtEnemy(G, e, A.dmg * hm, p, { basic: true, burn: A.burn, kb: heavy ? 7 : 3, kbA: angTo(p, e) }); }
   } else {
-    G.projs.push({ id: G.uid++, k: A.kind, own: p.id, x: p.x + Math.cos(p.a) * 0.8, z: p.z + Math.sin(p.a) * 0.8, vx: Math.cos(p.a) * A.speed, vz: Math.sin(p.a) * A.speed, dmg: A.dmg, life: 1.1, pierce: false, hit: [], basic: true, team: 0 });
+    G.projs.push({ id: G.uid++, k: A.kind, big: heavy ? 1 : 0, own: p.id, x: p.x + Math.cos(p.a) * 0.8, z: p.z + Math.sin(p.a) * 0.8, vx: Math.cos(p.a) * A.speed, vz: Math.sin(p.a) * A.speed, dmg: A.dmg * hm, life: 1.1, pierce: heavy, hit: [], basic: true, team: 0 });
     ev(G, 'shoot', { id: p.id, pk: A.kind, x: p.x, z: p.z });
   }
 }
@@ -282,7 +288,8 @@ function resetEnemy(e) {
 
 function stepPlayer(G, p, inp, dt) {
   for (const k in p.cd) if (p.cd[k] > 0) p.cd[k] -= dt;
-  ['block', 'taunt', 'rally', 'inv', 'hitT', 'animT', 'rollCd'].forEach(k => { if (p[k] > 0) p[k] = Math.max(0, p[k] - dt); });
+  ['block', 'taunt', 'rally', 'inv', 'hitT', 'animT', 'rollCd', 'focus', 'pdCd'].forEach(k => { if (p[k] > 0) p[k] = Math.max(0, p[k] - dt); });
+  if (p.comboT > 0) { p.comboT -= dt; if (p.comboT <= 0) p.combo = 0; }
   if (p.shieldT > 0) { p.shieldT -= dt; if (p.shieldT <= 0) p.shield = 0; }
   if (p.dead) {
     // 완전히 쓰러지면 12초 뒤 마지막 모닥불에서 다시 일어나요
@@ -646,7 +653,7 @@ export function snapshot(G) {
   return {
     t: r1(G.t), ph: G.phase, pt: r1(G.phaseT), c: G.ch, msg: G.msg, won: G.won,
     sk: G.players.filter(p => !p.bot && G.skip[p.id]).length, hu: G.players.filter(p => !p.bot).length,
-    pl: G.players.map(p => ({ id: p.id, role: p.role, name: p.name, bot: p.bot, x: r1(p.x), z: r1(p.z), a: r1(p.a), hp: Math.round(p.hp), mx: p.maxhp, dn: p.down ? 1 : 0, dd: p.dead ? 1 : 0, bl: r1(p.bleed), rs: r1(p.respT), rv: r1(p.revT), ro: p.roll > 0 ? 1 : 0, bk: p.block > 0 ? 1 : 0, sh: Math.round(p.shield), tn: p.taunt > 0 ? 1 : 0, ra: p.rally > 0 ? 1 : 0, an: p.animT > 0 ? p.anim : '', mv: p.moving ? 1 : 0, cd: [r1(p.cd.s0), r1(p.cd.s1), r1(p.cd.s2)], rc: r1(p.rollCd), b: p.bl })),
+    pl: G.players.map(p => ({ id: p.id, role: p.role, name: p.name, bot: p.bot, x: r1(p.x), z: r1(p.z), a: r1(p.a), hp: Math.round(p.hp), mx: p.maxhp, dn: p.down ? 1 : 0, dd: p.dead ? 1 : 0, bl: r1(p.bleed), rs: r1(p.respT), rv: r1(p.revT), ro: p.roll > 0 ? 1 : 0, bk: p.block > 0 ? 1 : 0, sh: Math.round(p.shield), tn: p.taunt > 0 ? 1 : 0, ra: p.rally > 0 ? 1 : 0, an: p.animT > 0 ? p.anim : '', mv: p.moving ? 1 : 0, cd: [r1(p.cd.s0), r1(p.cd.s1), r1(p.cd.s2)], rc: r1(p.rollCd), b: p.bl, cb: p.comboT > 0 ? p.combo : 0, fc: p.focus > 0 ? 1 : 0 })),
     en: G.enemies.filter(near).map(e => ({ id: e.id, k: e.k, x: r1(e.x), z: r1(e.z), a: r1(e.a), hp: Math.round(e.hp), mx: e.maxhp, st: e.st, mk: e.mark > 0 ? 1 : 0, sn: e.stun > 0 ? 1 : 0, bu: e.burn > 0 ? 1 : 0, ph: e.phase || 0, mv: e.moving ? 1 : 0, ak: e.atk ? e.atk.k + (e.atk.go ? '!' : '') : '', ht: e.hitT > 0 ? 1 : 0 })),
     pr: G.projs.map(p => ({ id: p.id, k: p.k, x: r1(p.x), z: r1(p.z), y: r1(p.y || 0), a: r1(Math.atan2(p.vz || (p.tz - p.sz) || 0, p.vx || (p.tx - p.sx) || 1)) })),
     zn: G.zones.map(z => ({ id: z.id, k: z.k, x: r1(z.x), z: r1(z.z), r: z.r, a: z.a, len: z.len, w: z.w, arc: z.arc, t: r1(z.t), T: z.T, dl: z.delay > 0 ? 1 : 0 })),

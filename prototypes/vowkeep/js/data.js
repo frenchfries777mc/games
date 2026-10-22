@@ -1,7 +1,7 @@
 // Vowkeep · © 2026 Frenchfries777 · CC BY-NC-ND 4.0
 // 게임 데이터: 역할, 적, 축복, 1장 지도
 
-export const VERSION = 'v0.1', BUILD = 12;
+export const VERSION = 'v0.1', BUILD = 13;
 
 export const ROLES = {
   knight: {
@@ -282,6 +282,7 @@ export const ACHIEVEMENTS = [
   { id: 'elite', name: '대장 격파', desc: '장마다 있는 적 대장을 쓰러뜨려요.' },
   { id: 'boss', name: '서약을 지킨 자', desc: '몰락한 기사단장을 쓰러뜨려요.' },
   { id: 'parry', name: '완벽한 막기', desc: '기사로 보스 돌진을 받아쳐 기절시켜요.' },
+  { id: 'pdodge', name: '종이 한 장 차이', desc: '공격이 닿기 직전에 굴러서 피해요.' },
   { id: 'revive', name: '일으켜 세우기', desc: '쓰러진 동료를 일으켜요.' },
   { id: 'friends', name: '함께하는 원정', desc: '친구와 같은 방에서 원정을 떠나요.' },
   { id: 'ch2', name: '잿빛 숲을 지나', desc: '2장에서 가시관의 사냥꾼 베른을 쓰러뜨려요.' },
