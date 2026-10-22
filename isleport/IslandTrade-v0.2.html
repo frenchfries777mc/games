@@ -453,7 +453,7 @@ const TUT=[
  [P('다 자라면 ▼ 표시의 밭을 눌러 수확해요','When it is grown, tap the field with the ▼ to harvest'),s=>s.stats.harvest>=1],
  [P('마을 장터에서 수확한 것을 팔아요','Sell your harvest at the town market'),s=>(s.stats.shop||0)>=1],
  [P('항구에서 배에 짐을 싣고 보내요','Load a ship at the harbor and send it off'),s=>s.stats.sailed>=1]];
-const OUTMAX=12,BUILD=49;
+const OUTMAX=12,BUILD=50;
 const hasB=(s,b)=>s.slots.some(x=>x&&x.b===b);
 const rankOf=e=>{let r=0;RANKS.forEach((x,i)=>{if(e>=x[0])r=i;});return r;};
 /* 업적: id, 이름, 설명, 조건 */
@@ -575,6 +575,11 @@ A('nw1m',P('백만장자','Millionaire'),P('재산 1,000,000 모으기','Reach a
 const CROPK=Object.keys(CROPS),SPEC=['goldbarley','pomegranate','saffron','cloudcotton','seaweed','dragonfruit'],CROPK17=CROPK.filter(c=>!SPEC.includes(c));
 const ACHN={};ACH.forEach(a=>ACHN[a.id]=a);
 const NOTES=[
+ {date:'2026-10-22',build:'v0.2 build 50',title:P('이야기의 결말과 크레딧','Story ending and credits'),items:[
+  P('마지막 장에서 장부의 주인을 정하면 결말 연출과 대사가 나와요','Choosing the ledger\'s fate in the last chapter now plays an ending scene with dialogue'),
+  P('결말 뒤에 크레딧이 올라가요. 건너뛸 수 있고, 끝나도 게임은 계속돼요','Credits roll after the ending. You can skip them, and the game goes on'),
+  P('마을 회관의 이야기에서 결말을 다시 볼 수 있어요','Rewatch the ending from the Story page at the town hall')
+ ]},
  {date:'2026-10-22',build:'v0.2 build 49',title:P('선체 내구와 도크 수리','Hull wear and dock repairs'),items:[
   P('폭풍을 뚫고 가거나 해적에게 당하면 배의 선체가 상해요','Sailing into storms or being raided now damages the hull'),
   P('선체가 70% 아래로 내려가면 배가 느려지고, 30% 아래면 항해 중 짐이 새요','Below 70% hull the ship slows down, and below 30% it leaks cargo'),
@@ -28525,12 +28530,36 @@ MODS.talk=m=>{const last=m.i>=m.pages.length-1,c=CHAPS[m.cid];let b;
   else b=`<button class="pb gold" data-act="tdone">${T('끝내기','Done')}</button>`;
   return `<h2>${m.name}</h2><div class="card" style="display:block;min-height:70px"><div style="font-size:15px;line-height:1.6">${(s=>tx([s,s]))(m.said||m.pages[m.i])}</div></div><div class="muted" style="margin:4px 0">${m.i+1}/${m.pages.length}</div><div style="text-align:right">${b}</div>`;};
 ACT.tnext=()=>{MOD.i++;renderModal();};
-ACT.tpick=a=>{const m=MOD,o=CHAPS[m.cid].choice.opts[+a];m.pickOpt=o;m.said=o.say;talkFinish(m);m.kind='done';updateHud();renderModal();};
+ACT.tpick=a=>{const m=MOD,o=CHAPS[m.cid].choice.opts[+a];m.pickOpt=o;m.said=o.say;talkFinish(m);m.kind='done';updateHud();renderModal();if(o.end){S.story.fin=o.end;setTimeout(()=>showEnding(o.end),900);}};
+/* 결말 연출과 크레딧 */
+const ENDSC=e=>[
+ [['장부의 마지막 장에는 이렇게 적혀 있었다.',0],['「진짜 보물은 돌아올 곳이 있다는 것.」',1]],
+ e===1?[['당신은 낡은 장부를 박물관 유리장 안에 올려 두었다.',0],['사람들은 장부 앞에서 한참을 서 있었다.',1],['할아버지의 글씨는 이제 모두의 이야기가 되었다.',2]]
+  :[['당신은 장부를 품에 안고 부두로 나갔다.',0],['상회의 불은 밤새 꺼지지 않았고,',1],['배들은 아침마다 새로운 항구로 떠났다.',2]],
+ [['"네 할아버지가 보았다면 활짝 웃었을 거란다."',0,'마사 할멈'],['"바다는 아직 자네를 기다리고 있네. 닻을 올리게."',1,'항해사 오르간'],['"당신의 상회는 앞으로도 계속 자라날 거예요."',2,'상인 미라']],
+ [['새벽호는 끝내 돌아오지 않았지만,',0],['그날 새벽, 수평선 위로 붉은 돛 하나가 떠올랐다.',1],['별이 그려진 돛이었다.',2]],
+ [['이 섬에는 이제, 돌아올 곳이 생겼다.',0]]];
+const ENDCR=[['ISLEPORT',1],['',0],['기획과 제작',2],['Frenchfries777',0],['',0],['함께 만든 AI',2],['Claude AI',0],['',0],['섬 사람들',2],['마사 할멈','0'],['항해사 오르간',0],['상인 미라',0],['',0],['함께 항해해 준 모든 상인에게',2],['플레이해 주셔서 고마워요',0],['',0],['© 2026 Frenchfries777',0],['CC BY-NC-ND 4.0',0]];
+let ENDING=null;
+function showEnding(e){if(ENDING)return;const sk=(ms)=>new Promise(r=>setTimeout(r,ms));
+  if(!$('endcss')){const st=document.createElement('style');st.id='endcss';st.textContent='#endov{position:fixed;inset:0;z-index:40;overflow:hidden;background:linear-gradient(#050810,#0b1428 60%,#14213a);opacity:0;transition:opacity 1.2s,background 8s;color:#f4e6c0;font-family:inherit}#endov.on{opacity:1}#endov.dawn{background:linear-gradient(#1b2c52,#9a5a60 62%,#f2b36a)}#endov .sea{position:absolute;left:0;right:0;bottom:0;height:28%;background:linear-gradient(#10203c,#08101e)}#endov svg{position:absolute;left:50%;bottom:24%;width:140px;transform:translateX(-50%);opacity:.0;transition:opacity 3s}#endov.ship svg{opacity:1}#endtx{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:24px;text-align:center}#endtx p{margin:0;font-size:clamp(17px,3.4vw,26px);line-height:1.5;opacity:0;transition:opacity 1.4s;max-width:640px}#endtx p.on{opacity:1}#endtx small{display:block;font-size:13px;color:#e8b86a;margin-bottom:2px}#endcr{position:absolute;left:0;right:0;top:100%;text-align:center;animation:endroll 34s linear forwards}#endcr div{font-size:clamp(16px,3vw,22px);line-height:1.9}#endcr .h{color:#e8b86a;font-size:13px;letter-spacing:.15em;margin-top:8px}#endcr .t{font-size:clamp(34px,8vw,64px);color:#f2c75a;letter-spacing:.12em;margin-bottom:14px}@keyframes endroll{to{top:-130%}}#endsk{position:absolute;right:calc(14px + env(safe-area-inset-right,0px));top:calc(12px + env(safe-area-inset-top,0px));z-index:2}';document.head.appendChild(st);}
+  const ov=document.createElement('div');ov.id='endov';ov.innerHTML='<div class="sea"></div><svg viewBox="0 0 60 60"><path d="M6 44h48l-8 10H14z" fill="#2a190b"/><rect x="29" y="6" width="3" height="40" fill="#3a2412"/><path d="M32 8l20 8-20 24z" fill="#c0452f"/><path d="M42 20l1.6 3.5 3.8.4-2.8 2.5.8 3.7-3.4-1.9-3.4 1.9.8-3.7-2.8-2.5 3.8-.4z" fill="#f2c75a"/></svg><div id="endtx"></div><button id="endsk" class="pb sm">'+tx(['건너뛰기','Skip'])+'</button>';
+  document.body.appendChild(ov);let stop=false;ENDING=ov;
+  const fin=()=>{stop=true;ov.classList.remove('on');setTimeout(()=>{ov.remove();ENDING=null;},1200);};
+  $('endsk').onclick=fin;requestAnimationFrame(()=>ov.classList.add('on'));
+  (async()=>{await sk(1500);const box=$('endtx');const sc=ENDSC(e);
+    for(let i=0;i<sc.length&&!stop;i++){box.innerHTML='';if(i===3){ov.classList.add('dawn');await sk(1500);}if(i===4)ov.classList.add('ship');
+      const ps=sc[i].map(l=>{const p=document.createElement('p');p.innerHTML=(l[2]?'<small>'+tx([l[2],l[2]])+'</small>':'')+tx([l[0],l[0]]);box.appendChild(p);return p;});
+      for(const p of ps){if(stop)return;await sk(300);p.classList.add('on');await sk(2600);}
+      await sk(1600);ps.forEach(p=>p.classList.remove('on'));await sk(1500);}
+    if(stop)return;box.innerHTML='';const cr=document.createElement('div');cr.id='endcr';cr.innerHTML=ENDCR.map(c=>'<div class="'+(c[1]===1?'t':c[1]===2?'h':'')+'">'+(c[0]?tx([c[0],c[0]]):'&nbsp;')+'</div>').join('');ov.appendChild(cr);
+    await sk(35000);if(stop)return;box.innerHTML='<p class="on">'+tx(['이야기는 여기서 끝이 아니에요. 섬은 계속 당신의 것이에요.','The story does not end here. The isle is still yours.'])+'</p>';$('endsk').textContent=tx(['계속 플레이하기','Keep playing']);})();}
+ACT.endAgain=()=>{const f=S.story.fin||S.story.end||1;closeModal();setTimeout(()=>showEnding(f),300);};
 ACT.tdone=()=>{const m=MOD;if(m.kind!=='done')talkFinish(m);updateHud();closeModal();};
 MODS.story=()=>{const st=S.story,c=CHAPS[st.ch];let h=`<h2>${T('이야기','Story')}: ${T('할아버지의 낡은 장부','Grandfather\'s old ledger')}</h2>`;
   CHAPS.slice(0,st.ch).forEach((q,i)=>{h+=`<div class="card"><div class="grow">✔ ${i+1}. ${tx([q.t,q.t])}</div></div>`;});
   if(c){h+=`<div class="card" style="display:block"><b>${st.ch+1}. ${tx([c.t,c.t])}</b><div class="muted">${st.st==='new'?T('{0}에게 말을 걸어 보세요','Talk to {0}',tx([STN[c.npc].n,STN[c.npc].n])):c.goal?T('목표: {0} ({1}/{2})','Goal: {0} ({1}/{2})',tx([c.goal.txt,c.goal.txt]),Math.min(chapNow(c),c.goal.n),c.goal.n)+(chapMet(c)?' · '+T('{0}에게 돌아가세요','Return to {0}',tx([STN[c.npc].n,STN[c.npc].n])):''):''}</div></div>`;}
-  else h+=`<div class="muted">${T('이야기를 모두 마쳤어요. 선택: {0}','Story complete. Your choice: {0}',st.end===1?T('장부를 박물관에 기증','Donated to the museum'):T('상회를 더 키우기','Growing the company'))}</div>`;
+  else h+=`<div class="muted">${T('이야기를 모두 마쳤어요. 선택: {0}','Story complete. Your choice: {0}',st.end===1?T('장부를 박물관에 기증','Donated to the museum'):T('상회를 더 키우기','Growing the company'))}</div><div class="btns" style="margin-top:8px"><button class="pb sm" data-act="endAgain">${T('결말 다시 보기','Rewatch ending')}</button></div>`;
   return h;};
 /* 기차역 */
 MODS.station=()=>{const rk=rankOf(S.stats.earned);return `<h2>${T('기차역','Train station')}</h2><div class="muted">${T('기차를 타고 내륙의 지방으로 가요. 지방 시장은 항구와 값이 달라요','Ride inland. Provincial markets pay differently from the ports')}</div>`+PROVS.map((q,i)=>{const ok=rk>=q.rank;return `<div class="card"><div class="grow"><b>${tx(q.n)}</b><div class="muted">${tx(q.d)} · ${T('요금 {0}','Fare {0}',q.fare)}${UG()}${ok?'':' · '+T('계급 {0} 필요','Needs rank {0}',q.rank)}</div></div><button class="pb sm gold" data-act="board:${i}" ${ok&&S.money>=q.fare?'':'disabled'}>${T('타기','Board')}</button></div>`;}).join('');};
