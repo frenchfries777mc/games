@@ -137,9 +137,10 @@ function aimPoint(p, inp, range) {
 }
 function basicAttack(G, p) {
   const R = ROLES[p.role], A = R.atk;
-  p.cd.atk = A.cd * cdMul(p, 'atk'); p.anim = 'atk'; p.animT = 0.3;
+  p.cd.atk = A.cd * cdMul(p, 'atk');
   // 연타: 적을 맞힐 때만 쌓이고(1.2초 안에 이어서), 3번째 맞힘마다 강타가 나가요. 봇은 쓰지 않아요
   const aid = p.atkN = (p.atkN || 0) + 1, heavy = !p.bot && (p.comboT > 0 ? p.combo || 0 : 0) % 3 === 2, hm = heavy ? 1.7 : 1;
+  p.anim = heavy ? 'hv' : 'atk'; p.animT = heavy ? 0.55 : 0.32; p.animN = (p.animN || 0) + 1;
   if (A.kind === 'melee') {
     ev(G, 'swing', { id: p.id, x: p.x, z: p.z, a: p.a, r: A.range, role: p.role });
     for (const e of G.enemies) { if (e.hp <= 0) continue; const d = dist(p, e); if (d < A.range * (heavy ? 1.2 : 1) + e.r && angDiff(p.a, angTo(p, e)) < A.arc / 2 + (heavy ? 0.6 : 0.25)) hurtEnemy(G, e, A.dmg * hm, p, { basic: true, aid, heavy, burn: A.burn, kb: heavy ? 7 : 3, kbA: angTo(p, e) }); }
@@ -151,7 +152,7 @@ function basicAttack(G, p) {
 function useSkill(G, p, si, inp) {
   const R = ROLES[p.role], S = R.skills[si], key = 's' + si;
   if (p.cd[key] > 0) return;
-  p.cd[key] = S.cd * cdMul(p, 'skill'); p.anim = 'skill'; p.animT = 0.4;
+  p.cd[key] = S.cd * cdMul(p, 'skill'); p.anim = S.id; p.animT = 0.5; p.animN = (p.animN || 0) + 1;
   ev(G, 'skill', { id: p.id, s: S.id, x: p.x, z: p.z, a: p.a });
   switch (S.id) {
     case 'block': p.block = 1.2; break;
@@ -653,7 +654,7 @@ export function snapshot(G) {
   return {
     t: r1(G.t), ph: G.phase, pt: r1(G.phaseT), c: G.ch, msg: G.msg, won: G.won,
     sk: G.players.filter(p => !p.bot && G.skip[p.id]).length, hu: G.players.filter(p => !p.bot).length,
-    pl: G.players.map(p => ({ id: p.id, role: p.role, name: p.name, bot: p.bot, x: r1(p.x), z: r1(p.z), a: r1(p.a), hp: Math.round(p.hp), mx: p.maxhp, dn: p.down ? 1 : 0, dd: p.dead ? 1 : 0, bl: r1(p.bleed), rs: r1(p.respT), rv: r1(p.revT), ro: p.roll > 0 ? 1 : 0, bk: p.block > 0 ? 1 : 0, sh: Math.round(p.shield), tn: p.taunt > 0 ? 1 : 0, ra: p.rally > 0 ? 1 : 0, an: p.animT > 0 ? p.anim : '', mv: p.moving ? 1 : 0, cd: [r1(p.cd.s0), r1(p.cd.s1), r1(p.cd.s2)], rc: r1(p.rollCd), b: p.bl, cb: p.comboT > 0 ? p.combo : 0, fc: p.focus > 0 ? 1 : 0 })),
+    pl: G.players.map(p => ({ id: p.id, role: p.role, name: p.name, bot: p.bot, x: r1(p.x), z: r1(p.z), a: r1(p.a), hp: Math.round(p.hp), mx: p.maxhp, dn: p.down ? 1 : 0, dd: p.dead ? 1 : 0, bl: r1(p.bleed), rs: r1(p.respT), rv: r1(p.revT), ro: p.roll > 0 ? 1 : 0, bk: p.block > 0 ? 1 : 0, sh: Math.round(p.shield), tn: p.taunt > 0 ? 1 : 0, ra: p.rally > 0 ? 1 : 0, an: p.animT > 0 ? p.anim : '', aN: p.animN || 0, ak: p.anim, mv: p.moving ? 1 : 0, cd: [r1(p.cd.s0), r1(p.cd.s1), r1(p.cd.s2)], rc: r1(p.rollCd), b: p.bl, cb: p.comboT > 0 ? p.combo : 0, fc: p.focus > 0 ? 1 : 0 })),
     en: G.enemies.filter(near).map(e => ({ id: e.id, k: e.k, x: r1(e.x), z: r1(e.z), a: r1(e.a), hp: Math.round(e.hp), mx: e.maxhp, st: e.st, mk: e.mark > 0 ? 1 : 0, sn: e.stun > 0 ? 1 : 0, bu: e.burn > 0 ? 1 : 0, ph: e.phase || 0, mv: e.moving ? 1 : 0, ak: e.atk ? e.atk.k + (e.atk.go ? '!' : '') : '', ht: e.hitT > 0 ? 1 : 0 })),
     pr: G.projs.map(p => ({ id: p.id, k: p.k, x: r1(p.x), z: r1(p.z), y: r1(p.y || 0), a: r1(Math.atan2(p.vz || (p.tz - p.sz) || 0, p.vx || (p.tx - p.sx) || 1)) })),
     zn: G.zones.map(z => ({ id: z.id, k: z.k, x: r1(z.x), z: r1(z.z), r: z.r, a: z.a, len: z.len, w: z.w, arc: z.arc, t: r1(z.t), T: z.T, dl: z.delay > 0 ? 1 : 0 })),
