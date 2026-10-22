@@ -151,3 +151,7 @@ index.html | 랭킹 표 | 최장 생존 일수, 생존 순위는 서버 준비 �
 ## Crown Envoy b83 (2026-10-22)
 - crownenvoy/CrownEnvoy-v0.3.html | 로비 설정 버튼·설정 창 | 설정 / 소리, 언어, 업적·도감, 단축키 등을 열어요. / 설정 창: 효과음·배경음악·하켄크로이츠 흐리게·업적·단축키·튜토리얼("게임 하는 법을 처음부터 안내해 줘요." / 보기)·내 이름·저작권·나가기("이 창을 닫아요.") | b83 | 2026-10-22
 - crownenvoy/patchnotes.json·i18n.js | N["b83"] (en·es·fr·de·ja·ar 한국어 임시) | 로비에 설정 버튼 추가 | b83 | 2026-10-22
+
+## Crown Envoy b84 (2026-10-22)
+- crownenvoy/index.html·i18n.js | 첫 화면 s_p "고대부터 현대까지 15개의 역사 템플릿이 준비돼 있어요…" (숫자 16→15, 모든 언어 칸 숫자만 바꿈) | b84 | 2026-10-22
+- crownenvoy/patchnotes.json·i18n.js | N["b84"] (en·es·fr·de·ja·ar 한국어 임시) | 삼국 대륙 템플릿 삭제 | b84 | 2026-10-22
