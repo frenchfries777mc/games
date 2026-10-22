@@ -26,7 +26,10 @@
 (function(){
   var T={ko:['페이지를 찾지 못했어요.','허브로 돌아가기'],en:['Page not found.','Back to the hub'],es:['No se encontró la página.','Volver al inicio'],fr:['Page introuvable.','Retour à l’accueil'],
     de:['Seite nicht gefunden.','Zurück zum Hub'],ja:['ページが見つかりません。','ハブに戻る'],zh:['找不到页面。','返回主页'],pt:['Página não encontrada.','Voltar ao início'],
-    ru:['Страница не найдена.','Вернуться в хаб'],tr:['Sayfa bulunamadı.','Merkeze dön'],nw:['You have been sent to Room 101.','Back to the Ministry'],
+    ru:['Страница не найдена.','Вернуться в хаб'],tr:['Sayfa bulunamadı.','Merkeze dön'],
+ it:["Pagina non trovata.","Torna all'hub"],
+ pl:["Nie znaleziono strony.","Wróć do huba"],
+ ar:["الصفحة غير موجودة.","العودة إلى المركز"],nw:['You have been sent to Room 101.','Back to the Ministry'],
  gk:["페이지 아니다 설립하다.","등 에게 그 바퀴통"]};
   var l=(window.FFLang&&FFLang.get())||'ko'; if(!T[l]) l='en'; document.documentElement.lang=l;
   document.getElementById('m').textContent=T[l][0]; document.getElementById('h').textContent=T[l][1];
