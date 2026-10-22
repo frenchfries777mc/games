@@ -4767,7 +4767,7 @@ function shuffle(arr){ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.
 /* ===== the version of this file =====
    Players with different versions CAN meet and play together: the automatic matchmaking uses the same room names for every version (online-<mode>-<map>-<slot>), and nobody is refused because of a different build.
    The build is only sent along with the join message and the lobby (for information); the corner of the screen shows it. */
-const GAME_BUILD='build 2026-10-18-v335';
+const GAME_BUILD='build 2026-10-18-v336';
 const GAME_VERSION='0.8', GAME_VERSION_NAME='황금을 찾아서';   // 게임 버전 이름: versions.json의 title과 같게 (빌드마다 바꾸지 않음)
 const WEEKLY_EVENTS=[
   {id:'lowg',    name:'저중력 난투', desc:'몸이 둥실둥실, 중력이 약해진 난투', rules:{grav:0.6}},
@@ -9973,7 +9973,7 @@ function banEligible(){       // duel (also the ranked one) and team battle, nor
 function banActive(){ return !!(weaponPhase && weaponPhase.ban && !weaponPhase.ban.done); }
 function initBanStage(){
   const ph=weaponPhase; ph.ban={ends:Date.now()+BAN_MS, picks:{}, banner:{}, botAt:{}, done:false}; ph.deadline+=BAN_MS;
-  for(const p of Object.values(players)){ const k=banSideKey(p); (ph.ban.banner[k]=ph.ban.banner[k]||[]).push(p.id); if(p.isBot) ph.ban.botAt[p.id]=Date.now()+2000+Math.random()*(BAN_MS-5000); }       // (every member of a side bans one character, so a 5 against 5 bans five on each side; a bot bans at random after a moment so the people can see it happen)
+  for(const p of Object.values(players)){ const k=banSideKey(p); (ph.ban.banner[k]=ph.ban.banner[k]||[]).push(p.id); if(p.isBot) ph.ban.botAt[p.id]=Date.now()+1000+Math.random()*6000; }       // (every member of a side bans one character, so a 5 against 5 bans five on each side; a bot bans at random after a moment so the people can see it happen)
   for(const p of Object.values(players)) if(p.isBot && p.pickAt!==undefined){ p.pickAt+=BAN_MS; p.lockAt+=BAN_MS; }
 }
 function banMatesPicks(id){          // what the other members of this one's side have banned so far
