@@ -386,7 +386,7 @@ window.ceReload=function(){try{if(window.FFAuth&&FFAuth.setRoom)FFAuth.setRoom(n
 try{if(sessionStorage.getItem('ce_noIntro')){sessionStorage.removeItem('ce_noIntro');el.style.display='none';go();}}catch(e){}})();</script>
 <div id="app">
  <div id="lobby" class="screen">
-  <canvas id="lobbyBg"></canvas><canvas id="lobbyWar"></canvas><div id="cpTag">© 2026 Frenchfries777 · <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.ko" target="_blank" rel="noopener">CC BY-NC-ND 4.0</a></div><div id="verTag">v0.3 · build 86</div>
+  <canvas id="lobbyBg"></canvas><canvas id="lobbyWar"></canvas><div id="cpTag">© 2026 Frenchfries777 · <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.ko" target="_blank" rel="noopener">CC BY-NC-ND 4.0</a></div><div id="verTag">v0.3 · build 87</div>
   <header class="brand"><h1>Crown Envoy</h1><div class="sub"><i></i>DIPLOMACY · WAR · EMPIRE<i></i></div></header>
   <div id="lobbyRight">
    <div id="lobbyHome" class="modes">
@@ -2872,10 +2872,41 @@ function papAct(p,m){if(!papEl(p))return fail('크리스트교 나라만 쓸 수
   if(m.op==='papdon'){const cd=p.papDonAt==null?0:Math.max(0,p.papDonAt+PAP_CD-G.round);if(cd>0)return fail(`헌금은 ${cd}턴 뒤에 다시 할 수 있어요.`);if(p.gold<PAP_DON)return fail(`금화가 부족합니다 (필요 ${PAP_DON})`);p.gold-=PAP_DON;p.papDonAt=G.round;papAdd(p,12);return ok(`교황청에 헌금을 바쳤어요. 호감 +12 (−${PAP_DON}금)`);}
   if(!p.exc)return fail('파문 중이 아니에요.');if(p.gold<PAP_ABS)return fail(`금화가 부족합니다 (필요 ${PAP_ABS})`);p.gold-=PAP_ABS;P_fav35(p);papLift(p);return ok(`파문이 풀렸어요. (−${PAP_ABS}금)`);}
 function P_fav35(p){const P=papEnsure();P.fav[p.id]=Math.max(papFav(p),35);}
+/* ===== 신성로마제국 황제 선거: 나폴레옹 전쟁 이전에는 8턴마다 제국 영토를 가진 나라들이 황제를 뽑아요. 영토 1곳이 1표예요 ===== */
+const EMP_GAP=8,EMP_CC=['독일','오스트리아','네덜란드','벨기에','룩셈부르크','스위스','슬로베니아','체코','리히텐슈타인'];
+const isHRE=tid=>{const d=TDEF[tid];return !!d&&!d.sea&&EMP_CC.includes(d.cc);};
+function empOn(){const y=polYear();return y>=962&&y<1803&&G.terr.some(t=>!t.sea&&t.owner!=null&&isHRE(t.id));}
+const empW=pid=>G.terr.reduce((n,t)=>n+((!t.sea&&t.owner===pid&&isHRE(t.id))?1:0),0);
+const empVoters=()=>G.players.filter(p=>p.alive&&!p.landless&&empW(p.id)>0);
+function empBotVote(v,cands,E){let best=null,bs=-1e9;cands.forEach(c=>{let x=empW(c.id)*0.3+(E.holder===c.id?1.5:0);if(c.id===v.id)x+=2;if(treatyBetween(v.id,c.id,'alliance'))x+=3;if(isHostile(v.id,c.id))x-=5;x+=Math.random()*0.8;if(x>bs){bs=x;best=c;}});return best?best.id:null;}
+function empCrown(E,id){const p=G.players[id],prev=E.holder;E.holder=id;p.vp+=3;p.gold+=100;p.stab=clamp(p.stab+5,0,100);morAdd(p,5,'황제 즉위');
+  log(`${p.kingdom}이(가) 신성로마제국의 황제로 선출됐다. (승점 +3, 금화 +100)`,'event');wlog('event',id,null,`${snm(id)}이(가) 신성로마제국의 황제로 선출됐다`);
+  papNews(`${snm(id)}, 황제로 선출되다`,`선제후들의 투표 끝에 ${snm(id)}의 군주가 신성로마제국의 황제 자리에 올랐다.${prev!=null&&prev!==id&&G.players[prev]?` ${snm(prev)}의 황제 시대는 막을 내렸다.`:' 제국 영토의 제후들이 새 황제 앞에 무릎을 꿇었다.'}`,p.color,prev!=null&&G.players[prev]?G.players[prev].color:p.color);}
+function empTally(E){const ws={};Object.keys(E.votes).forEach(v=>{const c=E.votes[v];if(c==null)return;ws[c]=(ws[c]||0)+Math.max(1,empW(+v));});
+  const ids=Object.keys(ws).map(Number).filter(i=>G.players[i]&&G.players[i].alive);E.votes=null;E.close=null;
+  if(!ids.length){if(E.holder!=null&&G.players[E.holder]&&G.players[E.holder].alive)return;const v=empVoters();if(v.length)empCrown(E,pick(v).id);return;}
+  const top=Math.max(...ids.map(i=>ws[i])),win=ids.filter(i=>ws[i]===top);const w=win.includes(E.holder)?E.holder:pick(win);
+  G.players.filter(x=>!x.isBot&&x.alive&&empW(x.id)>0).forEach(x=>hooks.toast(x.id,`황제 선거 결과: ${snm(w)} (${top}표)${w===x.id?' · 우리가 황제가 됐어요!':''}`));
+  empCrown(E,w);}
+function empOpen(E){const V=empVoters();if(V.length<2){return;}E.votes={};const humans=[];
+  V.forEach(v=>{if(v.isBot||G.noChoice)E.votes[v.id]=empBotVote(v,V,E);else humans.push(v);});
+  log(`신성로마제국 황제 선거가 열렸다. (제국 영토를 가진 ${V.length}개국)`,'event');
+  if(!humans.length){E.close=G.round;empTally(E);return;}
+  E.close=G.round+1;
+  humans.forEach(p=>{const cs=V.slice().sort((a,b)=>empW(b.id)-empW(a.id)).slice(0,4);if(!cs.some(c=>c.id===p.id))cs[cs.length-1]=p;
+    const id=G.uid++;(G.choices=G.choices||[]).push({id,pid:p.id,head:'신성로마제국 황제 선거',body:`제국 영토 1곳이 1표예요. 우리는 ${empW(p.id)}표를 가지고 있어요.\n현 황제: ${E.holder!=null&&G.players[E.holder]?snm(E.holder):'없음'}\n황제가 되면 승점 +3, 금화 +100, 안정도 +5, 사기 +5를 받아요. (고르지 않으면 기권으로 처리돼요)`,opts:cs.map(c=>`${snm(c.id)} (제국 영토 ${empW(c.id)}곳)${c.id===p.id?' · 우리':''}`).concat(['기권']),def:cs.length,round:G.round});
+    G._cfn=G._cfn||{};G._cfn[id]=cs.map(c=>()=>{if(G.emp&&G.emp.votes)G.emp.votes[p.id]=c.id;else hooks.toast(p.id,'선거가 이미 끝났어요.');}).concat([()=>{if(G.emp&&G.emp.votes)G.emp.votes[p.id]=null;}]);hooks.toast(p.id,'황제 선거가 열렸어요. 투표해 주세요.');});}
+function empTick(){if(!empOn())return;let E=G.emp;
+  if(!E){E=G.emp={holder:null,next:G.round+EMP_GAP,votes:null,close:null};const V=empVoters();if(!V.length)return;const h=V.find(x=>x.nkey==='hab')||V.sort((a,b)=>empW(b.id)-empW(a.id))[0];E.holder=h.id;log(`${h.kingdom}이(가) 신성로마제국의 황제 자리에 있다.`,'event');return;}
+  if(E.holder!=null&&G.players[E.holder]&&!G.players[E.holder].alive)E.holder=null;
+  if(E.votes&&G.round>=E.close){empTally(E);return;}
+  if(!E.votes&&G.round>=E.next){E.next=G.round+EMP_GAP;empOpen(E);}}
+function empView(p){if(!empOn()||!G.emp)return null;const w=empW(p.id),E=G.emp;if(!w&&E.holder!==p.id)return null;
+  return {holder:E.holder!=null&&G.players[E.holder]?snm(E.holder):null,me:E.holder===p.id,left:Math.max(0,E.next-G.round),w,open:!!E.votes,cands:empVoters().sort((a,b)=>empW(b.id)-empW(a.id)).slice(0,6).map(c=>({n:snm(c.id),w:empW(c.id),me:c.id===p.id}))};}
 function polTick(){G.players.forEach(p=>{if(!p.alive||p.landless)return;polEnsure(p);cnTick(p);rlTick(p);const wars=G.players.filter(q=>q.alive&&q.id!==p.id&&isHostile(p.id,q.id)).length;let d;
     {const sh=pubShift(p);if(wars)d=-1-(wars>=2?1:0)-((p.ww||0)>=50?1:0)+sh-Math.floor(nBld(p.id,'guild',6)/2);else{const tg=clamp(60+10*sh,30,85);d=p.pub<tg?2:p.pub>tg?-1:0;}}if(p.stab<30)d-=1;if(p.gold<0)d-=2;p.pub=clamp(p.pub+d,0,100);
     if(p.pub<15&&wars&&!p.isBot&&G.round-(p.pubWarn==null?-99:p.pubWarn)>=5){p.pubWarn=G.round;hooks.toast(p.id,'여론이 바닥이에요! 백성들이 휴전을 요구해요. (수입·사기 −15%, 반란 위험)');}
-    if(p.isBot)polBot(p,wars);});papTick();}
+    if(p.isBot)polBot(p,wars);});papTick();empTick();}
 function polBot(p,wars){const r=Math.random();
   if(p.pub<35&&p.gold>propCost(p)+150&&r<0.5)polAct(p.id,{op:'prop'});
   else if(p.pub<25&&p.gold>festCost(p)+200&&r<0.6)polAct(p.id,{op:'fest'});
@@ -2884,7 +2915,7 @@ function polBot(p,wars){const r=Math.random();
   if(p.gov!=='emp'&&['mon','tot'].includes(p.gov)&&!polCd(p,'gov')&&!wars&&Math.random()<0.04&&!empBlock(p.id))setGov(p,'emp');
   if(p.pub<12&&wars&&Math.random()<0.2){const q=G.players.filter(x=>x.alive&&x.isBot&&x.id!==p.id&&isHostile(p.id,x.id)&&warBalance(p.id,x.id)<=0.1)[0];if(q){makeTruce(p.id,q.id);log(`여론에 밀린 ${p.kingdom}이(가) ${q.kingdom}과(와) 휴전했다.`,'dip');}}}
 function polView(pid){const p=G.players[pid];polEnsure(p);const nd=empNeed();return {gov:p.gov,fai:p.fai,pub:Math.round(p.pub),govT:inGovT(p)?p.govUntil-G.round:0,faiT:inFaiT(p)?p.faiUntil-G.round:0,govCd:polCd(p,'gov'),faiCd:polCd(p,'fai'),emp:empBlock(pid),empNeed:nd.land,
-  propCost:propCost(p),festCost:festCost(p),propCd:p.propAt==null?0:Math.max(0,p.propAt+PROP_CD-G.round),festCd:p.festAt==null?0:Math.max(0,p.festAt+FEST_CD-G.round),mor:+polMor(p).toFixed(2),inc:+polInc(p).toFixed(2),reb:+polReb(p).toFixed(2),base:govBase(p.kingdom),taxr:p.taxr==null?1:p.taxr,taxLock:p.taxAt==null?0:Math.max(0,p.taxAt+TAX_LOCK-G.round),decK:decOn(p)?p.dec.k:null,decLeft:decOn(p)?p.dec.until-G.round:0,decCd:decCd(p),decCost:decCost(p),cn:cnView(p),rl:rlView(p),pap:papView(p)};}
+  propCost:propCost(p),festCost:festCost(p),propCd:p.propAt==null?0:Math.max(0,p.propAt+PROP_CD-G.round),festCd:p.festAt==null?0:Math.max(0,p.festAt+FEST_CD-G.round),mor:+polMor(p).toFixed(2),inc:+polInc(p).toFixed(2),reb:+polReb(p).toFixed(2),base:govBase(p.kingdom),taxr:p.taxr==null?1:p.taxr,taxLock:p.taxAt==null?0:Math.max(0,p.taxAt+TAX_LOCK-G.round),decK:decOn(p)?p.dec.k:null,decLeft:decOn(p)?p.dec.until-G.round:0,decCd:decCd(p),decCost:decCost(p),cn:cnView(p),rl:rlView(p),pap:papView(p),emp:empView(p)};}
 /* ---------- 시나리오 이벤트: 편집기에서 정한 턴에 선전포고·휴전·동맹·반란·금화·소식이 일어난다 ---------- */
 function winText(w){const P=i=>(G.players[i]?G.players[i].kingdom:'?');return w.k==='turns'?`${w.n}턴 동안 살아남기`:w.k==='terr'?`영토 ${w.n}곳 차지하기`:w.k==='gold'?`금화 ${w.n} 모으기`:w.k==='cap'?`${P(w.b)}의 수도 점령하기`:'';}
 function winCheck(){if(G.over||!G.wins||!G.wins.length)return;const lands=p=>owned(p.id).filter(t=>!t.sea).length;
@@ -5701,6 +5732,10 @@ Object.assign(UI,{
       <div style="display:flex;flex-wrap:wrap;gap:4px">${Object.keys(CNL).map(k=>`<button class="btn sm" data-act="pol" data-op="cnhire" data-v="${k}" ${tot>=CN_MAX||cn.acted||me.gold<CN_HIRE?'disabled':''}>${CNL[k].ic} ${CNL[k].n}</button>`).join('')}</div></div>`;}}
     {const rl=P.rl;if(rl){h+=`<h3>📜 유언장</h3><div class="card"><div class="row"><div><b>👑 ${esc(rl.n)}</b> <span class="tag">${rl.age}세</span></div></div><div class="sm muted" style="margin:4px 0 6px">군주가 늙으면 언제든 세상을 떠날 수 있어요. 후계자를 정해 두지 않으면 계승 전쟁이 나서 안정도 −25, 사기 하락, 영토 이탈이 생겨요.${rl.will?'':' <b style="color:var(--bad)">지금은 유언장이 비어 있어요.</b>'}${rl.cd?` <span style="color:var(--gold2)">${rl.cd}턴 뒤 고칠 수 있어요</span>`:''}</div>
       ${Object.keys(RLW).map(k=>`<div class="row" style="gap:8px;align-items:center;margin:4px 0"><span style="flex:1"><b>${RLW[k].ic} ${RLW[k].n}</b>${k==='gen'&&rl.gen?` <span class="muted sm">(${esc(rl.gen)})</span>`:''}<div class="sm muted">${RLW[k].d}</div></span><button class="btn sm ${rl.will===k?'primary':''}" data-act="pol" data-op="will" data-v="${k}" ${rl.will===k||rl.cd?'disabled':''}>${rl.will===k?'지정됨':'지정'}</button></div>`).join('')}</div>`;}}
+    {const em=P.emp;if(em){h+=`<h3>👑 신성로마제국</h3><div class="card"><div><b>황제: ${em.holder?esc(em.holder):'없음'}</b> ${em.me?'<span class="tag">우리</span>':''}</div>
+      <div class="sm muted" style="margin:4px 0 6px">나폴레옹 전쟁 이전에는 ${EMP_GAP}턴마다 제국 영토를 가진 나라들이 황제를 뽑아요. 제국 영토 1곳이 1표예요. 황제가 되면 승점 +3, 금화 +100, 안정도 +5, 사기 +5를 받아요.</div>
+      <div class="sm">${em.open?'<b style="color:var(--gold2)">지금 선거 중이에요. 결정 창에서 투표해 주세요.</b>':`다음 선거까지 ${em.left}턴`} · 내 투표권 ${em.w}표</div>
+      <div style="margin-top:6px">${em.cands.map(c=>`<span class="tag">${c.me?'★ ':''}${esc(c.n)} ${c.w}표</span>`).join(' ')}</div></div>`;}}
     {const pp=P.pap;if(pp){h+=`<h3>✝ 교황청</h3><div class="card"><div><b>${esc(pp.pope)}</b> ${pp.exc?'<span class="tag" style="color:var(--bad)">파문 중</span>':''}</div>
       <div class="sm muted" style="margin:4px 0 6px">크리스트교 나라는 교황의 호감을 얻어야 해요. 같은 신자를 치거나 헌금을 거부하면 호감이 떨어지고, 10 이하가 되면 파문돼요(안정도·사기 하락, 반란 확률 ×1.4). 호감이 65 이상이면 교황이 성전을 선포해 줘요.</div>
       <div style="background:#0003;border-radius:6px;height:10px;overflow:hidden"><div style="width:${pp.fav}%;height:100%;background:${pp.fav<=10?'var(--bad)':'var(--gold)'}"></div></div><div class="sm muted" style="margin:3px 0 6px">교황의 호감 ${pp.fav}/100</div>
