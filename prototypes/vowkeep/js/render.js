@@ -642,7 +642,9 @@ const seg = (u, a, b) => ease((u - a) / (b - a));
 const ANIM_T = { atk: 0.32, hv: 0.95, big: 0.6, skill: 0.8 };
 function animHero(E, p, dt, t) {
   const m = E.m, u = m.userData; m.position.set(E.x, 0, E.z); m.rotation.y = Math.PI / 2 - E.a;
-  E.ph += dt * (p.mv ? 11 : 0); E.sw = (E.sw || 0) + ((p.mv ? Math.sin(E.ph) * 0.75 : 0) - (E.sw || 0)) * Math.min(1, dt * 14); const sw = E.sw;
+  E.ph += dt * (p.mv ? 11 : 0); E.sw = (E.sw || 0) + ((p.mv ? Math.sin(E.ph) * 0.95 : 0) - (E.sw || 0)) * Math.min(1, dt * 14); const sw = E.sw;
+  // 걷기 세기 (멈추면 부드럽게 0으로)
+  E.wk = (E.wk || 0) + ((p.mv ? 1 : 0) - (E.wk || 0)) * Math.min(1, dt * 10); const wk = E.wk, sn = Math.sin(E.ph);
   u.legL.rotation.x = sw; u.legR.rotation.x = -sw;
   // 동작 시작: 동작 번호가 바뀌면 처음부터
   if (p.aN !== E.aN) { E.aN = p.aN; if (E.aN != null && p.ak) { E.ak = p.ak; E.aT = 0; } }
@@ -652,7 +654,15 @@ function animHero(E, p, dt, t) {
   const base = { knight: [-0.7, -0.6], archer: [-1.45, -1.55], priest: [-1.2, -0.4], squire: [-1.3, -0.6] }[role];
   // 기본 자세 (달릴 때는 앞으로 기울고 팔을 크게 흔들어요)
   // jy: 몸 전체가 뛰어오르는 높이, sq: 찌그러짐(+는 납작, -는 길쭉), lg: 다리 벌리기
-  const T = { rx: base[0] - sw * 0.45, rz: 0, lx: base[1] + sw * 0.45, lz: 0, bx: p.mv ? 0.14 : 0, by: 0, bz: 0, bry: 0, hx: 0, rpz: 0, pull: 0.35, jy: 0, sq: 0, lg: 0, spin: 0 };
+  // 걷기: 팔을 반대로 크게 흔들고, 허리를 비틀고, 좌우로 뒤뚱, 고개는 반대로 살짝
+  const T = { rx: base[0] - sw * 0.7, rz: 0, lx: base[1] + sw * 0.7, lz: 0, bx: 0.18 * wk, by: 0, bz: 0, bry: -sn * 0.22 * wk, brz: sn * 0.09 * wk, hx: 0, hy: sn * 0.15 * wk, hz: 0, rpz: 0, pull: 0.35, jy: 0, sq: 0, lg: 0, spin: 0 };
+  // 가만히 있으면: 숨 쉬고, 가끔 고개와 몸을 돌려 두리번거려요
+  if (!p.mv && !E.ak && !p.dn) {
+    E.idle = (E.idle || 0) + dt;
+    if (E.idle > 0.8 && (E.lkT = (E.lkT || 0) - dt) <= 0) { const r = Math.random(); E.lkT = 1.2 + Math.random() * 1.8; E.lk = r < 0.25 ? 0 : (r < 0.62 ? -1 : 1) * (0.8 + Math.random() * 0.5); E.lkU = Math.random() < 0.3 ? -0.25 : Math.random() * 0.15; }
+    const lk = E.idle > 0.8 ? (E.lk || 0) : 0; E.lkS = (E.lkS || 0) + (lk - (E.lkS || 0)) * Math.min(1, dt * 5);
+    T.hy = E.lkS; T.bry = E.lkS * 0.45; T.hz = -E.lkS * 0.12; T.hx = E.idle > 0.8 ? (E.lkU || 0) : 0; T.sq = Math.sin(t * 2.2 + E.ph) * 0.025; T.lz = -Math.abs(E.lkS) * 0.1; T.rz = Math.abs(E.lkS) * 0.08;
+  } else E.idle = 0;
   if (role === 'archer') { T.rx = -1.5; T.rz = -0.25; T.lx = -1.55; T.lz = 0.12; T.rpz = -0.3; T.pull = 0.35; }
   // 뛰어올랐다 내려오기: a~b 사이에 h만큼 포물선
   const hop = (a, b, h) => { const q = (v - a) / (b - a); return q > 0 && q < 1 ? Math.sin(q * Math.PI) * h : 0; };
@@ -723,10 +733,10 @@ function animHero(E, p, dt, t) {
   if (p.bk && E.ak !== 'block') { T.lx = -1.6; }
   const k = Math.min(1, dt * 30), L = (o, kk, v2) => { E[kk] = E[kk] == null ? v2 : E[kk] + (v2 - E[kk]) * k; return E[kk]; };
   u.armR.rotation.set(L(0, 'ar', T.rx), 0, L(0, 'arz', T.rz)); u.armL.rotation.set(L(0, 'al', T.lx), 0, L(0, 'alz', T.lz));
-  u.armR.position.z = L(0, 'rpz', T.rpz); u.head.rotation.x = L(0, 'hx', T.hx);
+  u.armR.position.z = L(0, 'rpz', T.rpz); u.head.rotation.set(L(0, 'hx', T.hx), L(0, 'hy', T.hy), L(0, 'hz', T.hz));
   if (u.bowS) setPull(u.bowS, L(0, 'pl', T.pull));
-  const bob = p.mv ? Math.abs(Math.sin(E.ph)) * 0.1 : Math.sin(t * 2 + E.ph) * 0.03;
-  u.body.rotation.set(L(0, 'bx', T.bx), L(0, 'bry', T.bry) + T.spin, 0); u.body.position.set(0, bob + L(0, 'by', T.by), L(0, 'bz', T.bz));
+  const bob = Math.abs(sn) * 0.16 * wk;
+  u.body.rotation.set(L(0, 'bx', T.bx), L(0, 'bry', T.bry) + T.spin, L(0, 'brz', T.brz)); u.body.position.set(0, bob + L(0, 'by', T.by), L(0, 'bz', T.bz));
   m.position.y = L(0, 'jy', T.jy); const sq = L(0, 'sq', T.sq); u.body.scale.set(1 + sq * 0.5, 1 - sq * 0.6, 1 + sq * 0.5);
   const lg = L(0, 'lg', T.lg); if (E.ak) { u.legL.rotation.x = sw - lg * 0.6; u.legR.rotation.x = -sw + lg * 0.6; }
   if (p.ro) { E.rollA = (E.rollA || 0) + dt * 18; u.body.rotation.x = E.rollA; u.body.position.y = -0.6; } else E.rollA = 0;
