@@ -391,6 +391,8 @@ function onEvent(e) {
     case 'shoot': SFX.play(e.pk === 'orb' ? 'orb' : 'arrow'); break;
     case 'eshoot': SFX.play('arrow'); break;
     case 'ehit': view.spark(e.x, e.z, e.id, e.crit); num(e.x, e.z, e.v, e.crit ? '#ffd36b' : '#ffffff', e.crit ? 1.3 : 1); SFX.play('hit'); break;
+    case 'pdodge': view.ring(e.x, e.z, 2.6, 0x9ad0ff, 0.4); view.streak(e.x, e.z, 0, 0.1, 0x9ad0ff, 0.2, 0.1); view.rise(e.x, e.z, 0x9ad0ff, 10, 1, 0.6, 6); if (e.id === me) { num(e.x, e.z, '완벽한 회피!', '#9ad0ff', 1.3, 4.2); view.flash(e.x, e.z, 0x9ad0ff, 120); SFX.play('parry'); if (S.net === 'solo') S.slowT = Math.max(S.slowT || 0, 0.45); } break;
+    case 'heavy': view.shock(e.x, e.z, e.melee ? 2.6 : 1.6, 0xffe08a, 0.3); view.burst(e.x, 1.6, e.z, 0xffe08a, 8, 6, 0.35, 0.1); if (e.id === me) view.shake = Math.max(view.shake, 0.3); break;
     case 'weak': num(e.x, e.z, '약점!', '#ff9c4a', 1.4, 3.8); view.shock(e.x, e.z, 3, 0xff7a20, 0.35); view.burst(e.x, 2.4, e.z, 0xffb060, 14, 9, 0.5, 0.14); view.flash(e.x, e.z, 0xff7a20, 90); view.shake = Math.max(view.shake, 0.35); SFX.play('parry'); break;
     case 'phit': num(e.x, e.z, '-' + e.v, '#ff7a6a', 1); if (e.id === me) { view.shake = Math.max(view.shake, 0.5); SFX.play('phit'); } break;
     case 'ekill': {
@@ -564,6 +566,11 @@ function drawOverlay(dt) {
       oc.fillStyle = '#ff9c94'; oc.font = 'bold 13px system-ui'; oc.fillText(Math.ceil(p.bl), c.x, c.y - 30);
     }
   }
+  // 내 연타 수와 집중 상태
+  { const p = sn.pl.find(q => q.id === S.me), E = p && view.ents.get('p' + p.id);
+    if (E && !p.dn) { const c = view.project(E.x, 4.1, E.z); oc.lineWidth = 4; oc.strokeStyle = '#140f18';
+      if (p.cb >= 2) { const big = p.cb % 3 === 2; oc.font = 'bold ' + (14 + Math.min(p.cb, 20) * 0.5 | 0) + 'px system-ui'; const t = p.cb + ' 연타' + (big ? ' · 다음 강타' : ''); oc.strokeText(t, c.x, c.y); oc.fillStyle = big ? '#ffd36b' : '#efe3c8'; oc.fillText(t, c.x, c.y); }
+      if (p.fc) { oc.font = 'bold 13px system-ui'; oc.strokeText('집중 · 피해 +50%', c.x, c.y - 18); oc.fillStyle = '#9ad0ff'; oc.fillText('집중 · 피해 +50%', c.x, c.y - 18); } } }
   // 피해 숫자
   for (const n of S.nums) { n.t += dt; const s = view.project(n.x, n.y + n.t * 2.2, n.z); oc.globalAlpha = Math.max(0, 1 - n.t / 0.9); oc.font = 'bold ' + Math.round(18 * n.sc) + 'px system-ui'; oc.lineWidth = 4; oc.strokeStyle = '#140f18'; oc.strokeText(n.v, s.x, s.y); oc.fillStyle = n.col; oc.fillText(n.v, s.x, s.y); }
   oc.globalAlpha = 1; S.nums = S.nums.filter(n => n.t < 0.9);
