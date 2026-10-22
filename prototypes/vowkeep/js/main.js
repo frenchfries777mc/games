@@ -1,7 +1,7 @@
 // Vowkeep · © 2026 Frenchfries777 · CC BY-NC-ND 4.0
 // 화면 흐름, 조작, 멀티(친구 초대, PeerJS), 저장
 import { View } from './render.js';
-import { createGame, step, snapshot, chooseBless, INTRO_T } from './sim.js';
+import { createGame, step, snapshot, chooseBless, carryOver, INTRO_T } from './sim.js';
 import { ROLES, ROLE_IDS, BLESSINGS, CHAPTERS, CH, FOES, MAP, ACHIEVEMENTS, GEAR_TIERS, GEAR_COST, VERSION, BUILD, roleLevel } from './data.js';
 import { collide as mapCollide, areaAt, floorCell, MW, MH, CS, cw, useChapter, chapterIndex } from './map.js';
 import * as SFX from './sfx.js';
@@ -20,7 +20,8 @@ const SAVE = Object.assign({ honor: 0, xp: {}, gear: {}, ach: {}, clears: {}, ro
 SAVE.set = Object.assign({ vol: 70, px: 3, bloom: 1, shake: 1 }, SAVE.set || {});
 // 깬 장 수 (예전 저장은 1장을 깼으면 1)
 if (SAVE.chMax == null) SAVE.chMax = Object.keys(SAVE.clears || {}).length ? 1 : 0;
-const chOpen = () => Math.min(CHAPTERS.length - 1, SAVE.chMax | 0);
+// 다음에 이어서 할 장 (모든 장을 깼으면 1장부터 새 원정)
+const chOpen = () => (SAVE.chMax | 0) >= CHAPTERS.length ? 0 : SAVE.chMax | 0;
 function save() { lsSet('vowkeep.save', SAVE); }
 let UID = lsGet('vowkeep.uid', null); if (!UID) { UID = 'u' + Math.random().toString(36).slice(2, 10); lsSet('vowkeep.uid', UID); }
 const gearOf = r => Object.assign({ weapon: 0, armor: 0 }, SAVE.gear[r] || {});
@@ -87,7 +88,7 @@ function paintRoles() {
   ROLE_IDS.forEach(r => {
     const R = ROLES[r], xp = SAVE.xp[r] || 0, lv = roleLevel(xp), g = gearOf(r), cl = SAVE.clears[r] ? ' · 1장 완료' : '';
     const d = document.createElement('div'); d.className = 'rc';
-    d.innerHTML = `<h3 style="color:${R.color === '#e8e4ef' ? '#efe3c8' : R.color}">${R.name}</h3><div class="lv">Lv ${lv} (명예 ${xp} 받음)${cl}</div><div class="note">${R.role} 체력 ${R.hp}</div><ul>${R.skills.map(s => `<li><b>${s.key} ${s.name}</b>: ${s.desc}</li>`).join('')}</ul>`;
+    d.innerHTML = `<img class="pt" alt="" src="${view.portrait(r)}"><h3 style="color:${R.color === '#e8e4ef' ? '#efe3c8' : R.color}">${R.name}</h3><div class="lv">Lv ${lv} (명예 ${xp} 받음)${cl}</div><div class="note">${R.role} 체력 ${R.hp}</div><ul>${R.skills.map(s => `<li><b>${s.key} ${s.name}</b>: ${s.desc}</li>`).join('')}</ul>`;
     const gr = document.createElement('div'); gr.className = 'gear';
     [['weapon', '무기'], ['armor', '갑옷']].forEach(([k, lab]) => {
       const t = g[k] | 0, sp = document.createElement('span'); sp.textContent = lab + ': ' + GEAR_TIERS[t] + ' ' + lab; gr.appendChild(sp);
@@ -111,20 +112,15 @@ function paintSettings() {
 $('setVol').oninput = e => { SAVE.set.vol = +e.target.value; SFX.setVol(SAVE.set.vol / 100); MUS.setVol(SAVE.set.vol / 100); save(); };
 
 /* ---------- 대기실 ---------- */
-// 대기실 장 고르기: 깬 장 다음 장까지 열려요. 친구 방에서는 방장이 골라요
+// 대기실: 장은 고르지 않고, 저장된 이야기에서 이어서 시작해요. 친구 방은 방장의 이야기를 따라가요
 function paintChapters() {
-  const row = $('chRow'); if (!row) return; row.innerHTML = '';
-  CHAPTERS.forEach((c, i) => {
-    const b = document.createElement('button'), open = S.net === 'guest' || i <= chOpen();
-    b.className = 'ch' + (i === S.chSel ? ' on' : '') + (open ? '' : ' lock'); b.innerHTML = `<b>${c.id}장</b><small>${open ? c.place : '잠김'}</small>`;
-    b.disabled = !open || S.net === 'guest';
-    b.onclick = () => { S.chSel = i; SFX.play('click'); paintChapters(); hostLobby(); };
-    row.appendChild(b);
-  });
-  const c = CHAPTERS[S.chSel]; $('chNote').textContent = c.intro[0] + ' 보스: ' + c.boss.name;
+  const c = CHAPTERS[S.chSel], prev = CHAPTERS[S.chSel - 1];
+  $('chRow').innerHTML = `<div class="story"><b>${S.chSel ? '이어서 ' : ''}${esc(c.title)}</b><small>${esc(prev ? prev.outro[prev.outro.length - 1] : c.intro[0])}</small></div>`;
+  $('chNote').textContent = S.net === 'guest' ? '방장의 원정을 함께 이어 가요.' : S.chSel ? '지난번에 멈춘 곳에서 이야기가 이어져요.' : '';
+  if (S.net !== 'guest') $('startBtn').textContent = S.chSel ? S.chSel + 1 + '장 이어서 시작' : '원정 시작';
 }
 function openRoom() {
-  show('sRoom'); const solo = S.net === 'solo'; if (S.net !== 'guest') S.chSel = Math.min(S.chSel, chOpen()); paintChapters();
+  show('sRoom'); const solo = S.net === 'solo'; if (S.net !== 'guest') S.chSel = chOpen(); paintChapters();
   $('roomTitle').textContent = solo ? '혼자 원정 준비' : S.net === 'host' ? '친구와 원정' : '친구 방';
   $('codeRow').style.display = S.net === 'host' ? 'flex' : 'none';
   $('roomNote').textContent = solo ? '내 역할을 고르세요. 나머지 세 자리는 봇 동료가 맡아요.' : '역할을 하나 골라 주세요. 빈 자리는 봇 동료가 맡아요.';
@@ -138,7 +134,7 @@ function paintSlots() {
     const R = ROLES[sl.role], mine = sl.uid === UID, d = document.createElement('div');
     d.className = 'slot' + (mine ? ' mine' : '') + (sl.uid && !mine ? ' taken' : '');
     const lv = mine ? roleLevel(SAVE.xp[sl.role] || 0) : null;
-    d.innerHTML = `<i class="sw" style="background:${R.color}"></i><b>${R.name}</b><div class="who">${sl.uid ? esc(sl.name) + (mine ? ' (나)' : '') : '봇'}</div><small>${R.role}</small>${mine ? `<small style="color:#ffd36b">Lv ${lv} · ${GEAR_TIERS[gearOf(sl.role).weapon]} 무기 · ${GEAR_TIERS[gearOf(sl.role).armor]} 갑옷</small>` : ''}`;
+    d.innerHTML = `<img class="pt" alt="" src="${view.portrait(sl.role)}"><b>${R.name}</b><div class="who">${sl.uid ? esc(sl.name) + (mine ? ' (나)' : '') : '봇'}</div><small>${R.role}</small>${mine ? `<small style="color:#ffd36b">Lv ${lv} · ${GEAR_TIERS[gearOf(sl.role).weapon]} 무기 · ${GEAR_TIERS[gearOf(sl.role).armor]} 갑옷</small>` : ''}`;
     d.onclick = () => { if (sl.uid) return; SFX.play('click'); pickRole(sl.role); };
     box.appendChild(d);
   });
@@ -227,29 +223,32 @@ function guestMsg(d) {
   if (d.t === 'welcome') { homeMsg(''); if (d.start) { S.me = d.pid; useChapter(d.ch | 0); startClient(); } else { openRoom(); } }
   else if (d.t === 'lobby') { S.slots = d.slots; S.chSel = d.ch | 0; if (S.scr === 'sRoom') { paintSlots(); paintChapters(); } }
   else if (d.t === 'deny') { homeMsg(d.why || '들어갈 수 없어요.'); leaveNet(); }
-  else if (d.t === 'start') { S.me = d.pid; useChapter(d.ch | 0); startClient(); }
+  else if (d.t === 'start') { if (S.snap && S.snap.won) clearChapter(); S.me = d.pid; useChapter(d.ch | 0); startClient(); }
   else if (d.t === 's') { if (d.S && d.S.c != null && d.S.c !== chapterIndex()) { useChapter(d.S.c); S.built = false; } S.snap = d.S; if (d.ev) for (const e of d.ev) S.evq.push(e); }
 }
 
 /* ---------- 게임 시작 ---------- */
-function beginGame() {
+function beginGame(prevG) {
   const solo = S.net === 'solo';
-  const sl = S.slots.map((s, i) => {
+  const sl = prevG ? S.lastSl : S.slots.map((s, i) => {
     const id = 's' + i;
     if (s.uid === UID) return { id, uid: UID, role: s.role, name: myName(), bot: false, lv: roleLevel(SAVE.xp[s.role] || 0), gear: gearOf(s.role) };
     if (s.uid) { const c = S.conns[s.uid]; const xp = c && c._xp ? c._xp[s.role] : 0, gr = c && c._gear ? c._gear[s.role] : null; return { id, uid: s.uid, role: s.role, name: s.name, bot: false, lv: roleLevel(xp || 0), gear: gr || { weapon: 0, armor: 0 } }; }
     return { id, role: s.role, name: ROLES[s.role].name + ' (봇)', bot: true, lv: 1 };
   });
-  if (!sl.some(s => s.uid === UID)) { $('roomMsg').textContent = '내 역할을 먼저 골라 주세요.'; return; }
+  if (!prevG && !sl.some(s => s.uid === UID)) { $('roomMsg').textContent = '내 역할을 먼저 골라 주세요.'; return; }
+  if (prevG) sl.forEach((s, i) => { const q = prevG.players[i]; s.bot = q.bot; s.uid = q.uid; s.name = q.name; });
+  S.lastSl = sl;
   S.G = createGame(sl, (Math.random() * 4e9) >>> 0, S.chSel);
   S.G.players.forEach((p, i) => { p.uid = sl[i].uid; });
+  if (prevG) carryOver(S.G, prevG);
   S.me = sl.find(s => s.uid === UID).id;
   if (!solo) { for (const uid in S.conns) { const p = S.G.players.find(q => q.uid === uid); if (p) { S.conns[uid]._pid = p.id; S.conns[uid].send({ t: 'start', pid: p.id, ch: S.G.ch }); } } }
   if (S.G.humans > 1) unlock('friends');
   startClient();
 }
 function startClient() {
-  S.built = false; S.area = -2; S.seenA = {}; S.voted = false; S.lastPh = ''; S.saved = false; S.resultShown = false; S.everDown = false; S.local = null; S.nums = []; S.evq = []; S.wonT = 0; S.lastBless = null;
+  S.cleared = false; S.built = false; S.area = -2; S.seenA = {}; S.voted = false; S.lastPh = ''; S.saved = false; S.resultShown = false; S.everDown = false; S.local = null; S.nums = []; S.evq = []; S.wonT = 0; S.lastBless = null;
   if (S.G) S.snap = snapshot(S.G);
   unlock('first');
   setHud(false); show('sIntro'); $('introCh').textContent = CH.title; $('introLine').classList.remove('on'); S.introIdx = -1;
@@ -275,17 +274,19 @@ function awardHonor() {
 }
 
 /* ---------- 조작 ---------- */
+// 한글 입력 상태여도 같은 자리의 글쇠로 읽어요 (e.code 기준)
+function keyOf(e) { const c = e.code || ''; if (/^Key[A-Z]$/.test(c)) return c[3].toLowerCase(); if (/^Digit[0-9]$/.test(c)) return c[5]; if (c === 'Space') return ' '; return e.key.toLowerCase(); }
 const K = {}; let mouse = { x: innerWidth / 2, y: innerHeight / 2, down: false }; const once = { q: 0, e: 0, r: 0, roll: 0, skip: 0 };
 addEventListener('keydown', e => {
   if (e.target && e.target.tagName === 'INPUT') return;
-  const k = e.key.toLowerCase(); K[k] = true; SFX.unlock();
+  const k = keyOf(e); K[k] = true; SFX.unlock();
   if (!inGame()) return;
   if (S.snap && S.snap.ph === 'won' && (k === ' ' || k === 'enter') && S.wonT > 1) { S.wonT = Math.max(S.wonT, 9); return; }
   if (S.scr === 'sIntro') { if (k === ' ' || k === 'enter' || k === 'escape') { once.skip = 1; e.preventDefault(); } return; }
   if (k === 'q' || k === 'ㅂ') once.q = 1; if (k === 'e' || k === 'ㄷ') once.e = 1; if (k === 'r' || k === 'ㄱ') once.r = 1; if (k === ' ') { once.roll = 1; e.preventDefault(); }
   if (k === '1' || k === '2' || k === '3') pickBlessIdx(+k - 1);
 });
-addEventListener('keyup', e => { K[e.key.toLowerCase()] = false; });
+addEventListener('keyup', e => { K[keyOf(e)] = false; K[e.key.toLowerCase()] = false; });
 addEventListener('blur', () => { for (const k in K) K[k] = false; mouse.down = false; });
 $('gl').addEventListener('mousemove', e => { mouse.x = e.clientX; mouse.y = e.clientY; });
 addEventListener('mousemove', e => { mouse.x = e.clientX; mouse.y = e.clientY; });
@@ -338,7 +339,7 @@ function localMove(p, inp, dt) {
   let mx = inp.mx, mz = inp.mz; const ml = Math.hypot(mx, mz); if (ml > 1) { mx /= ml; mz /= ml; }
   if (inp.roll && L.rollCd <= 0 && !(L.roll > 0)) { L.roll = 0.35; L.rollCd = 1.2 * ((p.b || []).indexOf('roll') >= 0 ? 0.6 : 1); const ra = ml > 0.1 ? Math.atan2(mz, mx) : p.a; L.rdx = Math.cos(ra); L.rdz = Math.sin(ra); }
   if (L.roll > 0) { L.roll -= dt; L.x += L.rdx * 15 * dt; L.z += L.rdz * 15 * dt; }
-  else { const sp = R.speed * ((p.b || []).indexOf('feet') >= 0 ? 1.12 : 1) * (p.ra ? 1.3 : 1) * (p.bk ? 0.45 : 1); L.x += mx * sp * dt; L.z += mz * sp * dt; }
+  else { const sp = R.speed * ((p.b || []).indexOf('feet') >= 0 ? 1.12 : 1) * (p.ra ? 1.3 : 1) * (p.bk ? 0.8 : 1); L.x += mx * sp * dt; L.z += mz * sp * dt; }
   mapCollide(L, 0.6);
 }
 
@@ -546,11 +547,27 @@ function drawOverlay(dt) {
   for (const n of S.nums) { n.t += dt; const s = view.project(n.x, n.y + n.t * 2.2, n.z); oc.globalAlpha = Math.max(0, 1 - n.t / 0.9); oc.font = 'bold ' + Math.round(18 * n.sc) + 'px system-ui'; oc.lineWidth = 4; oc.strokeStyle = '#140f18'; oc.strokeText(n.v, s.x, s.y); oc.fillStyle = n.col; oc.fillText(n.v, s.x, s.y); }
   oc.globalAlpha = 1; S.nums = S.nums.filter(n => n.t < 0.9);
 }
+// 장을 깼을 때: 명예와 이야기 진행을 저장해요 (한 장에 한 번)
+function clearChapter() {
+  if (S.cleared) return S.lastH || 0; S.cleared = true;
+  const h = S.lastH = awardHonor() || 0, me = myP(), ci = chapterIndex();
+  if (me) { SAVE.clears[me.role] = 1; if (!S.everDown) unlock('nodown'); if (ROLE_IDS.every(r => SAVE.clears[r])) unlock('all4'); }
+  if (ci === 0) unlock('boss'); else unlock('ch' + (ci + 1));
+  SAVE.chMax = Math.max(SAVE.chMax | 0, ci + 1); save();
+  return h;
+}
+// 결말이 끝나면 같은 동료와 다음 장 이야기로 바로 넘어가요
+function afterOutro() {
+  const ci = chapterIndex(), h = clearChapter();
+  if (ci + 1 >= CHAPTERS.length) { showResult(); return; }
+  S.resultShown = true;
+  if (S.net === 'guest') { bigMsg(CH.title + ' 완료', '명예 ' + h + ' · 방장과 함께 다음 장으로 가요', 0); return; }
+  toast(CH.title + ' 완료 · 명예 ' + h, 3200);
+  S.chSel = ci + 1; beginGame(S.G);
+}
 function showResult() {
-  S.resultShown = true; const h = awardHonor() || 0; const me = myP();
-  if (me) { SAVE.clears[me.role] = 1; save(); if (!S.everDown) unlock('nodown'); if (ROLE_IDS.every(r => SAVE.clears[r])) unlock('all4'); }
-  const ci = chapterIndex(); if (ci === 0) unlock('boss'); else unlock('ch' + (ci + 1));
-  if (S.G || S.net === 'guest') { SAVE.chMax = Math.max(SAVE.chMax | 0, ci + 1); save(); S.chSel = chOpen(); }
+  S.resultShown = true; const h = clearChapter();
+  const ci = chapterIndex(); S.chSel = chOpen();
   const next = ci + 1 < CHAPTERS.length ? `<p class="note">${CHAPTERS[ci + 1].title}이 열렸어요.</p>` : '<p class="note">모든 장을 깼어요. 서약을 끝까지 지켰어요.</p>';
   const rows = S.snap.pl.map(p => `<tr><td style="color:${ROLES[p.role].color}">${ROLES[p.role].name}</td><td>${esc(p.id === S.me ? '나' : p.bot ? '봇' : p.name)}</td><td>${(p.b || []).map(b => (BLESSINGS.find(x => x.id === b) || {}).name).join(', ') || '-'}</td></tr>`).join('');
   $('result').innerHTML = `<div class="big">${CH.title} 완료</div><p class="note">${CH.outro.join(' ')}</p><table>${rows}</table><p>받은 명예 <b style="color:#ffd36b">${h}</b> · 지금 명예 ${SAVE.honor}</p>${next}<div class="row"><button class="btn gold" id="resBack">로비로</button></div>`;
@@ -582,6 +599,8 @@ function frame(now) {
     const inp = me ? gatherInput(me) : {};
     if (S.G) {
       // 방장·혼자: 규칙을 직접 돌려요
+      // 한 번 누르는 입력은 규칙이 실제로 돌 때까지 모아 둬요 (화면이 규칙보다 자주 그려져도 눌림이 사라지지 않게)
+      const pr = S.rin[S.me]; if (pr) for (const k of ['q', 'e', 'r', 'roll', 'skip']) inp[k] = inp[k] || pr[k];
       S.rin[S.me] = inp;
       S.acc += dt; const h = 1 / 30;
       while (S.acc >= h) {
@@ -606,7 +625,7 @@ function frame(now) {
     else {
       for (const e of S.evq) onEvent(e); S.evq.length = 0;
       view.sync(S.snap, S.me, dt, t, !!S.G); paintHud(); paintBless();
-      if (ph === 'won') { S.wonT += dt; if (S.wonT > 1.5 && S.wonT < 9) bigMsg(CH.outro[Math.min(CH.outro.length - 1, Math.floor((S.wonT - 1.5) / 2.5))], TOUCH ? '화면을 누르면 건너뛰어요' : 'Space 키로 건너뛰어요', 0); if (S.wonT >= 9 && !S.resultShown) showResult(); }
+      if (ph === 'won') { S.wonT += dt; if (S.wonT > 1.5 && S.wonT < 9) bigMsg(CH.outro[Math.min(CH.outro.length - 1, Math.floor((S.wonT - 1.5) / 2.5))], TOUCH ? '화면을 누르면 건너뛰어요' : 'Space 키로 건너뛰어요', 0); if (S.wonT >= 9 && !S.resultShown) afterOutro(); }
     }
     S.evq.length = 0;
   }
