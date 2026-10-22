@@ -2,11 +2,101 @@
  "notes": [
   {
    "date": "2026-10-22",
+   "build": "v0.2 build 45",
+   "title": "수족관과 선술집",
+   "items": [
+    "마을 남쪽에 수족관이 생겼어요. 낚시에서 물고기를 낚으면 14가지 어종 중 하나가 함께 잡혀요. 수조에 전시하면 관람료가 쌓여요",
+    "수족관은 두 번 키울 수 있고, 처음 잡은 어종마다 보너스 금화를 줘요",
+    "항구 쪽 선술집이 생겼어요. 한 잔 사면 선원이 지금 시세가 좋은 항구, 수요가 몰린 물건, 폭풍 소식을 들려줘요",
+    "아주 가끔 선원이 낡은 지도 조각을 내놓아요"
+   ],
+   "tr": {
+    "en": {
+     "title": "Aquarium and tavern",
+     "items": [
+      "An aquarium opens south of the town. Fishing now also catches one of 14 species; show them in the tanks to earn admission fees",
+      "The aquarium can be upgraded twice and gives a bonus for each new species",
+      "A tavern opens near the harbor. Buy a drink to hear which port pays well, what is in demand and where storms are",
+      "Once in a while a sailor hands you an old map piece"
+     ]
+    },
+    "ja": {
+     "title": "Aquarium and tavern",
+     "items": [
+      "An aquarium opens south of the town. Fishing now also catches one of 14 species; show them in the tanks to earn admission fees",
+      "The aquarium can be upgraded twice and gives a bonus for each new species",
+      "A tavern opens near the harbor. Buy a drink to hear which port pays well, what is in demand and where storms are",
+      "Once in a while a sailor hands you an old map piece"
+     ]
+    },
+    "es": {
+     "title": "Aquarium and tavern",
+     "items": [
+      "An aquarium opens south of the town. Fishing now also catches one of 14 species; show them in the tanks to earn admission fees",
+      "The aquarium can be upgraded twice and gives a bonus for each new species",
+      "A tavern opens near the harbor. Buy a drink to hear which port pays well, what is in demand and where storms are",
+      "Once in a while a sailor hands you an old map piece"
+     ]
+    },
+    "fr": {
+     "title": "Aquarium and tavern",
+     "items": [
+      "An aquarium opens south of the town. Fishing now also catches one of 14 species; show them in the tanks to earn admission fees",
+      "The aquarium can be upgraded twice and gives a bonus for each new species",
+      "A tavern opens near the harbor. Buy a drink to hear which port pays well, what is in demand and where storms are",
+      "Once in a while a sailor hands you an old map piece"
+     ]
+    },
+    "de": {
+     "title": "Aquarium and tavern",
+     "items": [
+      "An aquarium opens south of the town. Fishing now also catches one of 14 species; show them in the tanks to earn admission fees",
+      "The aquarium can be upgraded twice and gives a bonus for each new species",
+      "A tavern opens near the harbor. Buy a drink to hear which port pays well, what is in demand and where storms are",
+      "Once in a while a sailor hands you an old map piece"
+     ]
+    }
+   }
+  },
+  {
+   "date": "2026-10-22",
    "build": "v0.2 build 44",
    "title": "신어 표현 수정",
    "items": [
     "신어 표현 수정: plusplus를 doubleplus로"
-   ]
+   ],
+   "tr": {
+    "en": {
+     "title": "Newspeak wording fix",
+     "items": [
+      "Newspeak wording fix: plusplus is now doubleplus"
+     ]
+    },
+    "ja": {
+     "title": "Newspeak wording fix",
+     "items": [
+      "Newspeak wording fix: plusplus is now doubleplus"
+     ]
+    },
+    "es": {
+     "title": "Newspeak wording fix",
+     "items": [
+      "Newspeak wording fix: plusplus is now doubleplus"
+     ]
+    },
+    "fr": {
+     "title": "Newspeak wording fix",
+     "items": [
+      "Newspeak wording fix: plusplus is now doubleplus"
+     ]
+    },
+    "de": {
+     "title": "Newspeak wording fix",
+     "items": [
+      "Newspeak wording fix: plusplus is now doubleplus"
+     ]
+    }
+   }
   },
   {
    "date": "2026-10-22",
@@ -14,7 +104,39 @@
    "title": "은하 표준어 추가",
    "items": [
     "가상 언어 은하 표준어 추가 (커맨더 킨·마인크래프트 인챈트 글자, 직접 그린 글꼴)"
-   ]
+   ],
+   "tr": {
+    "en": {
+     "title": "Standard Galactic added",
+     "items": [
+      "Fictional script Standard Galactic added (the Commander Keen and Minecraft enchanting letters, in our own drawn font)"
+     ]
+    },
+    "ja": {
+     "title": "Standard Galactic added",
+     "items": [
+      "Fictional script Standard Galactic added (the Commander Keen and Minecraft enchanting letters, in our own drawn font)"
+     ]
+    },
+    "es": {
+     "title": "Standard Galactic added",
+     "items": [
+      "Fictional script Standard Galactic added (the Commander Keen and Minecraft enchanting letters, in our own drawn font)"
+     ]
+    },
+    "fr": {
+     "title": "Standard Galactic added",
+     "items": [
+      "Fictional script Standard Galactic added (the Commander Keen and Minecraft enchanting letters, in our own drawn font)"
+     ]
+    },
+    "de": {
+     "title": "Standard Galactic added",
+     "items": [
+      "Fictional script Standard Galactic added (the Commander Keen and Minecraft enchanting letters, in our own drawn font)"
+     ]
+    }
+   }
   },
   {
    "date": "2026-10-21",
