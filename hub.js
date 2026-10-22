@@ -42,7 +42,7 @@ function paintNews(){
     return '<article class="nw '+G.cls+'"><div class="nh"><span class="ng">'+esc(G.name)+'</span>'+(isNew(n)?'<span class="nnew">'+esc(F('새 패치노트'))+'</span>':'')+'<span class="nd" data-notr>'+esc(n.date)+(n.build?' · '+esc(n.build):'')+'</span></div>'+
       '<h3 data-notr>'+esc(n.title)+'</h3><ul data-notr>'+it.map(function(x){ return '<li>'+esc(x)+'</li>'; }).join('')+'</ul>'+
       (n.items.length>4?'<div class="nmore">'+esc(F('외 {0}개',n.items.length-4))+'</div>':'')+
-      (n.g==='hub'?'<a class="nl" href="#hubnotes">패치노트 전체 보기 →</a>':'<a class="nl" target="_blank" rel="noopener" href="'+G.site+'#notes">패치노트 전체 보기 →</a>')+'</article>'; }).join('');
+      (n.g==='hub'?'<a class="nl" href="#hubnotes">패치노트 전체 보기 →</a>':'<a class="nl" href="'+G.site+'#notes">패치노트 전체 보기 →</a>')+'</article>'; }).join('');
 }
 
 /* ---- 게임별 소식 받기: 구독한 게임에 새 패치노트가 올라오면 뉴스에 표시 (supabase-ff-follow.sql) ---- */
@@ -837,7 +837,7 @@ async function runSearch(v){
   var el=$('#srxBox'), R=el&&el.querySelector('.srs'); if(!R) return; var q=String(v||'').trim(), my=++SX.seq; SX.sel=-1;
   if(!q){ R.innerHTML=''; return; } var ql=q.toLowerCase(), h='';
   var gs=SGAMES.filter(function(g){ return (g[1]+' '+F(g[4])+' '+g[4]+' '+g[5]).toLowerCase().indexOf(ql)>=0; });
-  if(gs.length) h+='<div class="sg"><h4>'+esc(F('게임'))+'</h4>'+gs.map(function(g){ return '<a class="sr" target="_blank" rel="noopener" href="'+g[3]+'"><b class="'+g[2]+'">'+smark(g[1],q)+'</b><small>'+esc(F(g[4]))+'</small></a>'; }).join('')+'</div>';
+  if(gs.length) h+='<div class="sg"><h4>'+esc(F('게임'))+'</h4>'+gs.map(function(g){ return '<a class="sr" href="'+g[3]+'"><b class="'+g[2]+'">'+smark(g[1],q)+'</b><small>'+esc(F(g[4]))+'</small></a>'; }).join('')+'</div>';
   var ws=(SX.wiki||[]).map(function(p){ var sc=0; if(p.title.toLowerCase().indexOf(ql)>=0) sc+=10; if(p.body.toLowerCase().indexOf(ql)>=0) sc+=2; if(!sc&&p.ko.toLowerCase().indexOf(ql)>=0) sc+=1; return {p:p,sc:sc}; })
     .filter(function(x){ return x.sc; }).sort(function(a,b){ return b.sc-a.sc; }).slice(0,8);
   if(ws.length) h+='<div class="sg"><h4>'+esc(F('위키'))+'</h4>'+ws.map(function(x){ var g=GAMES[x.p.game]||WIKIX[x.p.game]||{name:x.p.game,cls:''}; return '<a class="sr" href="'+HR+'wiki/#'+x.p.game+'/'+encodeURIComponent(x.p.slug)+'"><span class="gt '+g.cls+'">'+esc(g.name)+'</span><b>'+smark(x.p.title,q)+'</b><small>'+ssnip(x.p.body,q)+'</small></a>'; }).join('')+'</div>';
