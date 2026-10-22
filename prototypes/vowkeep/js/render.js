@@ -664,12 +664,18 @@ function animHero(E, p, dt, t) {
           const up = seg(v, 0, 0.14), dn = seg(v, 0.14, 0.32), rc = seg(v, 0.65, 1);
           T.rx = (-3.1 * up + 2.6 * dn) * (1 - rc) + base[0] * rc; T.bx = (-0.25 * up + 0.7 * dn) * (1 - rc); T.by = (0.5 * up - 0.5 * dn) * (1 - rc) + Math.sin(up * Math.PI) * 0.3 * (1 - dn); T.bz = 0.5 * dn * (1 - rc); T.lx = -2.2 * up * (1 - dn) + base[1];
         }
+      } else if (role === 'archer' && a === 'hv') { // 궁수 강타: 뛰어올라 활째로 내려찍으며 쏴요
+        const up = seg(v, 0, 0.14), dn = seg(v, 0.14, 0.32), rc = seg(v, 0.65, 1), x = (1 - rc);
+        T.lx = (-2.9 * up + 2.2 * dn) * x - 1.55 * rc; T.rx = (-2.7 * up + 2.0 * dn) * x - 1.5 * rc; T.rz = -0.25; T.pull = 0.75 * up * (1 - dn); T.rpz = -0.4 * up * (1 - dn);
+        T.bx = (-0.25 * up + 0.7 * dn) * x; T.by = Math.sin(up * Math.PI) * 0.3 * (1 - dn) + (0.5 * up - 0.5 * dn) * x; T.bz = 0.45 * dn * x;
       } else if (role === 'archer') { // 시위를 놓고 반동, 다시 당겨요
         const rel = seg(v, 0, 0.12), re = seg(v, 0.25, 1);
         T.pull = 0.75 * (1 - rel) * 0 + re * 0.75; T.rpz = -0.55 * re; T.rz = -0.25 - 0.1 * re; T.lx = -1.55 - (a === 'hv' ? 0.45 : 0.25) * (1 - seg(v, 0.08, 0.5)); T.bx = -(a === 'hv' ? 0.3 : 0.12) * (1 - seg(v, 0.05, 0.6)); T.rx = -1.5 + 0.5 * (1 - seg(v, 0.05, 0.4));
       } else { // 사제: 지팡이를 앞으로 찔러 빛을 쏴요 (강타는 머리 위로 한 바퀴)
         if (a === 'atk') { const th = seg(v, 0, 0.3), rc = seg(v, 0.45, 1); T.bry = -0.5 * th * (1 - rc); T.rz = -0.4 * th * (1 - rc); T.rx = base[0] - 0.6 * th * (1 - rc); T.bx = 0.25 * th * (1 - rc); T.bz = 0.3 * th * (1 - rc); T.lx = -1.2 * th * (1 - rc) + base[1]; }
-        else { const sp = seg(v, 0, 0.5), th = seg(v, 0.5, 0.65), rc = seg(v, 0.75, 1); T.rx = (-3.0 * (1 - th) - 1.8 * th) * (1 - rc) + base[0] * rc; T.rz = Math.sin(sp * Math.PI * 2) * 0.9 * (1 - th); T.bry = sp * Math.PI * 2 * (1 - th); T.by = Math.sin(sp * Math.PI) * 0.35; T.bx = 0.3 * th * (1 - rc); }
+        else { // 사제 강타: 지팡이를 두 손으로 높이 들고 뛰어올라 땅을 내려찍어요
+          const up = seg(v, 0, 0.14), dn = seg(v, 0.14, 0.32), rc = seg(v, 0.65, 1), x = 1 - rc;
+          T.rx = (-2.7 * up + 2.3 * dn) * x + base[0] * rc; T.lx = (-2.6 * up + 2.0 * dn) * x + base[1] * rc; T.lz = 0.3 * x; T.bx = (-0.25 * up + 0.75 * dn) * x; T.by = Math.sin(up * Math.PI) * 0.3 * (1 - dn) + (0.5 * up - 0.5 * dn) * x; T.bz = 0.45 * dn * x; }
       }
     } else { // 기술
       const pk = Math.sin(Math.min(1, v * 1.4) * Math.PI), hold = 1 - seg(v, 0.7, 1);
