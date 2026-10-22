@@ -2,35 +2,35 @@
    들어올 때마다 무작위로 하나. 사이트 언어(FFLang)에 맞는 문구만 고르고, 한국어 전용 문구는 한국어일 때만 나와요.
    각 사이트가 <script src="https://frenchfries777mc.github.io/games/ff-splash.js" defer></script> 로 불러요. */
 (function(){
-var L=['ko','en','es','fr','de','ja','zh','pt','ru','tr','nw','gk'];
+var L=['ko','en','es','fr','de','ja','zh','pt','ru','tr','it','pl','ar','nw','gk'];
 /* 번역기 한국어 (gk): the Korean lines in stiff machine-translation style */
 var GK={"혼자 만듬!":"만든 독주!","한 인간과 한 AI가 만듬!":"만든 옆에 하나 인간 그리고 하나 AI!","안녕하세요!":"안녕!","숙제는 하셨나요?":"했다 당신 하다 당신의 숙제?","피아노를 던지면 어떻게 피아노?":"Threw 하나의 피아노? 저것 fell 아파트!","차이나에서 고백하면 차이나?":"차이나에서 고백하면 차이나?","그거 아세요? 저도 몰라요!":"했다 당신 알다? 나를 어느 쪽도!","와! 샌즈!":"와! 샌즈!","조선천지에 777% 일어날 일!":"조선천지에 777% 일어날 일!","옛날 옛적에, 호랑이가 클라우드에 자아를 백업하는 시절에...":"옛날 옛적에, 호랑이가 클라우드에 자아를 백업하는 시절에...","로딩중... 로딩중학교 1학년 6반 16번!":"적재중... 적재중학교 1학년 6반 16번!","애덤 스미siu의 보이지 않는 텍스트!":"애덤 스미siu의 보이지 않는 텍스트!","그대들은 총게임을 원하는가?":"이다 당신 준비된 위하여 그 궁극적인 사냥감?","당신은 이 문구를 보았습니다!":"당신 가지다 보인 이것 본문!","사과해요! 난 키위할테니...":"사과합니다! 난 키위할테니...","나쁜사람만 보이는 글씨!":"오직 나쁜 사람들 깡통 보다 이것 본문!"};
 /* Newspeak (nw): only these lines from Orwell's 1984, nothing else */
 var NW=['BIG BROTHER IS WATCHING YOU!','WAR IS PEACE','FREEDOM IS SLAVERY','IGNORANCE IS STRENGTH','2 + 2 = 5','You have been sent to Room 101.','This post never existed.','Vaporized!','Unperson!','Report to Thinkpol!','Ministry of Truth: Corrections','The telescreen is watching you.',
  'We have always been at war with Eurasia!',{t:'Down with Big Brother!',swap:'Thoughtcrime detected.'},'Down with Emmanuel Goldstein!'];
-/* [ko, en, es, fr, de, ja, zh, pt, ru, tr] (missing languages show the English line) — 문자열 하나면 모든 언어에서 그대로, ko만 있으면 한국어 전용 */
+/* [ko, en, es, fr, de, ja, zh, pt, ru, tr, it, pl, ar] (missing languages show the English line) — 문자열 하나면 모든 언어에서 그대로, ko만 있으면 한국어 전용 */
 var P=[
- ['혼자 만듬!','Made solo!','¡Hecho en solitario!','Fait en solo !','Allein gemacht!','ひとりで作った！','一个人做的！','Feito sozinho!','Сделано в одиночку!','Tek başıma yaptım!'],
+ ['혼자 만듬!','Made solo!','¡Hecho en solitario!','Fait en solo !','Allein gemacht!','ひとりで作った！','一个人做的！','Feito sozinho!','Сделано в одиночку!','Tek başıma yaptım!',"Fatto da solo!","Zrobione w pojedynkę!","صُنع بمفرده!"],
  {t:'A whole new world arabic version!',href:'https://www.youtube.com/watch?v=-bWqcKzbQBY'},
- ['한 인간과 한 AI가 만듬!','Made by one human and one AI!','¡Hecho por un humano y una IA!','Fait par un humain et une IA !','Von einem Menschen und einer KI gemacht!','人間ひとりとAIひとりで作った！','由一个人类和一个 AI 制作！','Feito por um humano e uma IA!','Сделано одним человеком и одним ИИ!','Bir insan ve bir yapay zekâ yaptı!'],
+ ['한 인간과 한 AI가 만듬!','Made by one human and one AI!','¡Hecho por un humano y una IA!','Fait par un humain et une IA !','Von einem Menschen und einer KI gemacht!','人間ひとりとAIひとりで作った！','由一个人类和一个 AI 制作！','Feito por um humano e uma IA!','Сделано одним человеком и одним ИИ!','Bir insan ve bir yapay zekâ yaptı!',"Fatto da un umano e un'IA!","Zrobione przez jednego człowieka i jedną SI!","صنعه إنسان واحد وذكاء اصطناعي واحد!"],
  'Claude AI by Anthropic!',
- ['안녕하세요!','Hello!','¡Hola!','Bonjour !','Hallo!','こんにちは！','你好！','Olá!','Привет!','Merhaba!'],
+ ['안녕하세요!','Hello!','¡Hola!','Bonjour !','Hallo!','こんにちは！','你好！','Olá!','Привет!','Merhaba!',"Ciao!","Cześć!","مرحبًا!"],
  'Reduce... Reuse...  ecyc e...',
  '67!',
  '169.9!',
- ['숙제는 하셨나요?','Did you do your homework?','¿Hiciste la tarea?','Tu as fait tes devoirs ?','Hast du deine Hausaufgaben gemacht?','宿題はやった？','作业写完了吗？','Fez a lição de casa?','Домашку сделал?','Ödevini yaptın mı?'],
- ['피아노를 던지면 어떻게 피아노?','Threw a piano? That fell flat!','¿Un piano volando? ¡No tiene ni pies ni teclas!','Lancer un piano ? Faut avoir du doigté !','Ein Klavier werfen? Dafür braucht man Flügel!','ピアノを投げたら…おっと！音（おと）！','钢琴扔出去？那可真是“弹”出去了！','Jogou um piano? Que nota baixa!','Бросил рояль? Ну это уже не в ту тональность!','Piyano mu fırlattın? Notası düştü!'],
- ['차이나에서 고백하면 차이나?','Confess your love in Chile? Expect a chilly answer!','¿Te declaras en Perú? Te dicen: ¡Pe-rú no!','Se déclarer au Népal ? « Népal possible ! »','Liebeserklärung in Norwegen? Antwort: Nein-wegen!','チャイナで告白したら、ふられちゃいな？','在冰岛表白？等来的回答冷冰冰！','Declarar amor no Peru? Vai ouvir: Peru, não!','Признался в любви в Чили? Ответ будет прохладным — чилл!','Mısır’da aşkını mı ilan ettin? Cevap: Patlamış mısır!'],
- ['그거 아세요? 저도 몰라요!','Did you know? Me neither!','¿Sabías qué? ¡Yo tampoco!','Tu savais ? Moi non plus !','Wusstest du schon? Ich auch nicht!','知ってました？私も知りません！','你知道吗？我也不知道！','Sabia? Eu também não!','А вы знали? Я тоже нет!','Biliyor muydun? Ben de bilmiyordum!'],
+ ['숙제는 하셨나요?','Did you do your homework?','¿Hiciste la tarea?','Tu as fait tes devoirs ?','Hast du deine Hausaufgaben gemacht?','宿題はやった？','作业写完了吗？','Fez a lição de casa?','Домашку сделал?','Ödevini yaptın mı?',"Hai fatto i compiti?","Odrobiłeś lekcje?","هل أنهيت واجبك؟"],
+ ['피아노를 던지면 어떻게 피아노?','Threw a piano? That fell flat!','¿Un piano volando? ¡No tiene ni pies ni teclas!','Lancer un piano ? Faut avoir du doigté !','Ein Klavier werfen? Dafür braucht man Flügel!','ピアノを投げたら…おっと！音（おと）！','钢琴扔出去？那可真是“弹”出去了！','Jogou um piano? Que nota baixa!','Бросил рояль? Ну это уже не в ту тональность!','Piyano mu fırlattın? Notası düştü!',"Hai lanciato un pianoforte? Che nota stonata!","Rzuciłeś pianinem? Ale fałszywa nuta!","رميت بيانو؟ يا لها من نغمة نشاز!"],
+ ['차이나에서 고백하면 차이나?','Confess your love in Chile? Expect a chilly answer!','¿Te declaras en Perú? Te dicen: ¡Pe-rú no!','Se déclarer au Népal ? « Népal possible ! »','Liebeserklärung in Norwegen? Antwort: Nein-wegen!','チャイナで告白したら、ふられちゃいな？','在冰岛表白？等来的回答冷冰冰！','Declarar amor no Peru? Vai ouvir: Peru, não!','Признался в любви в Чили? Ответ будет прохладным — чилл!','Mısır’da aşkını mı ilan ettin? Cevap: Patlamış mısır!',"Dichiarazione d'amore in Cile? Risposta glaciale!","Wyznanie miłości w Chile? Chłodna odpowiedź!","اعترفت بحبك في تشيلي؟ توقّع ردًا باردًا!"],
+ ['그거 아세요? 저도 몰라요!','Did you know? Me neither!','¿Sabías qué? ¡Yo tampoco!','Tu savais ? Moi non plus !','Wusstest du schon? Ich auch nicht!','知ってました？私も知りません！','你知道吗？我也不知道！','Sabia? Eu também não!','А вы знали? Я тоже нет!','Biliyor muydun? Ben de bilmiyordum!',"Lo sapevi? Neanch'io!","Wiedziałeś? Ja też nie!","هل كنت تعلم؟ ولا أنا!"],
  ['와! 샌즈!'],
  ['조선천지에 777% 일어날 일!'],
  ['옛날 옛적에, 호랑이가 클라우드에 자아를 백업하는 시절에...'],
  ['로딩중... 로딩중학교 1학년 6반 16번!'],
  ['애덤 스미siu의 보이지 않는 텍스트!'],
- ['그대들은 총게임을 원하는가?','Are you ready for the ultimate game?','¿Estáis listos para el juego definitivo?','Êtes-vous prêts pour le jeu ultime ?','Seid ihr bereit für das ultimative Spiel?','究極のゲームを望むか？','你们渴望终极游戏吗？','Vocês estão prontos para o jogo definitivo?','Готовы ли вы к главной игре?','Nihai oyuna hazır mısınız?'],
- ['당신은 이 문구를 보았습니다!','You have seen this text!','¡Has visto este texto!','Vous avez vu ce texte !','Du hast diesen Text gesehen!','あなたはこの文を見ました！','你看到了这句话！','Você viu este texto!','Вы увидели эту надпись!','Bu yazıyı gördün!'],
+ ['그대들은 총게임을 원하는가?','Are you ready for the ultimate game?','¿Estáis listos para el juego definitivo?','Êtes-vous prêts pour le jeu ultime ?','Seid ihr bereit für das ultimative Spiel?','究極のゲームを望むか？','你们渴望终极游戏吗？','Vocês estão prontos para o jogo definitivo?','Готовы ли вы к главной игре?','Nihai oyuna hazır mısınız?',"Siete pronti per il gioco definitivo?","Czy jesteście gotowi na grę ostateczną?","هل أنتم مستعدون للعبة المطلقة؟"],
+ ['당신은 이 문구를 보았습니다!','You have seen this text!','¡Has visto este texto!','Vous avez vu ce texte !','Du hast diesen Text gesehen!','あなたはこの文を見ました！','你看到了这句话！','Você viu este texto!','Вы увидели эту надпись!','Bu yazıyı gördün!',"Hai visto questo testo!","Widziałeś ten tekst!","لقد رأيت هذا النص!"],
  ['사과해요! 난 키위할테니...'],
- ['나쁜사람만 보이는 글씨!','Only bad people can see this text!','¡Solo la gente mala puede ver este texto!','Seules les mauvaises personnes voient ce texte !','Nur böse Menschen können diesen Text sehen!','悪い人にしか見えない文字！','只有坏人才能看到的文字！','Só gente má consegue ver este texto!','Этот текст видят только плохие люди!','Bu yazıyı sadece kötü insanlar görebilir!']
+ ['나쁜사람만 보이는 글씨!','Only bad people can see this text!','¡Solo la gente mala puede ver este texto!','Seules les mauvaises personnes voient ce texte !','Nur böse Menschen können diesen Text sehen!','悪い人にしか見えない文字！','只有坏人才能看到的文字！','Só gente má consegue ver este texto!','Этот текст видят только плохие люди!','Bu yazıyı sadece kötü insanlar görebilir!',"Solo le persone cattive possono vedere questo testo!","Tylko źli ludzie widzą ten tekst!","لا يرى هذا النص إلا الأشرار!"]
 ];
 function lang(){ var l='ko'; try{ l=(window.FFLang&&FFLang.get())||document.documentElement.lang||'ko'; }catch(e){} l=String(l).slice(0,2); return L.indexOf(l)<0?'en':l; }
 function pick(l){
