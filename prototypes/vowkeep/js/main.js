@@ -86,7 +86,7 @@ function paintRoles() {
   $('honorNow').textContent = '지금 명예 ' + SAVE.honor;
   const box = $('roleCards'); box.innerHTML = '';
   ROLE_IDS.forEach(r => {
-    const R = ROLES[r], xp = SAVE.xp[r] || 0, lv = roleLevel(xp), g = gearOf(r), cl = SAVE.clears[r] ? ' · 1장 완료' : '';
+    const R = ROLES[r], xp = SAVE.xp[r] || 0, lv = roleLevel(xp), g = gearOf(r), cl = SAVE.clears[r] ? ' · ' + SAVE.clears[r] + '장까지 완료' : '';
     const d = document.createElement('div'); d.className = 'rc';
     d.innerHTML = `<img class="pt" alt="" src="${view.portrait(r)}"><h3 style="color:${R.color === '#e8e4ef' ? '#efe3c8' : R.color}">${R.name}</h3><div class="lv">Lv ${lv} (명예 ${xp} 받음)${cl}</div><div class="note">${R.role} 체력 ${R.hp}</div><ul>${R.skills.map(s => `<li><b>${s.key} ${s.name}</b>: ${s.desc}</li>`).join('')}</ul>`;
     const gr = document.createElement('div'); gr.className = 'gear';
@@ -371,9 +371,9 @@ function skillFx(e) {
     case 'dash': view.streak(e.x, e.z, e.a, 6, 0xcfe0ff, 0.4, 1.2); view.burst(e.x, 0.4, e.z, 0xbcae94, 16, 5, 0.6, 0.16); view.shock(e.x + c * 6, e.z + s * 6, 2.4, 0xcfe0ff, 0.35); view.flash(e.x + c * 4, e.z + s * 4, 0xcfe0ff, 90); if (mine) view.shake = Math.max(view.shake, 0.5); SFX.play('roll'); break;
     case 'taunt': view.shock(e.x, e.z, 10, 0xff6a4a, 0.6); view.rune(e.x, e.z, 2.6, 0xff6a4a, 1.2, 3); view.rise(e.x, e.z, 0xff6a4a, 18, 1.5, 0.9, 7); view.flash(e.x, e.z, 0xff6a4a, 120); if (mine) view.shake = Math.max(view.shake, 0.7); SFX.play('roar'); break;
     case 'pierce': view.streak(e.x, e.z, e.a, 18, 0xffe08a, 0.3, 0.35); view.burst(e.x + c, 1.6, e.z + s, 0xffe08a, 12, 6, 0.4, 0.12); view.flash(e.x, e.z, 0xffe08a, 80); break;
-    case 'rain': view.rune(e.x, e.z, 1.4, 0xffd36b, 0.6, 5); view.rise(e.x, e.z, 0xffd36b, 8, 0.8, 0.5, 9); break;
-    case 'heal': view.rune(e.x, e.z, 6, 0x9af0a8, 1.3, 1.5); view.rise(e.x, e.z, 0x9af0a8, 18, 5, 1.2, 4); view.column(e.x, e.z, 0x9af0a8, 0.7); view.flash(e.x, e.z, 0x9af0a8, 100); break;
-    case 'ward': view.rune(e.x, e.z, 7.5, 0x9af0e0, 1.2, -1.5); view.flash(e.x, e.z, 0x9af0e0, 90); break;
+    case 'rain': view.rune(e.x, e.z, 1.2, 0xffd36b, 0.5, 5); view.rise(e.x, e.z, 0xffd36b, 8, 0.8, 0.5, 9); break;
+    case 'heal': view.rune(e.x, e.z, 4.5, 0x9af0a8, 0.9, 1.5); view.rise(e.x, e.z, 0x9af0a8, 12, 4, 1, 4); view.column(e.x, e.z, 0x9af0a8, 0.5); view.flash(e.x, e.z, 0x9af0a8, 45); break;
+    case 'ward': view.rune(e.x, e.z, 5, 0x9af0e0, 0.9, -1.5); view.flash(e.x, e.z, 0x9af0e0, 40); break;
     case 'raise': view.rune(e.x, e.z, 8, 0xfff0b0, 1.8, 1); view.column(e.x, e.z, 0xfff0b0, 1.4); view.rise(e.x, e.z, 0xfff0b0, 28, 7, 1.6, 6); view.shock(e.x, e.z, 8, 0xfff0b0, 0.7); view.flash(e.x, e.z, 0xfff0b0, 200); view.shake = Math.max(view.shake, 0.6); break;
     case 'potion': view.burst(e.x + c, 1.8, e.z + s, 0xd0543a, 6, 3, 0.3, 0.1); break;
     case 'trap': view.rune(e.x, e.z, 1.5, 0xffb060, 0.8, 6); view.burst(e.x, 0.3, e.z, 0x9a9aa6, 10, 4, 0.4, 0.12); SFX.play('click'); break;
@@ -407,8 +407,8 @@ function onEvent(e) {
     case 'bwind': SFX.play('warn'); break;
     case 'bcharge': SFX.play('roar'); break;
     case 'roar': SFX.play('roar'); view.shake = 1; break;
-    case 'bphase': if (e.p === 2) bigMsg(CH.boss.p2[0], CH.boss.p2[1], 3600); if (e.p === 3) bigMsg(CH.boss.p3[0], CH.boss.p3[1] + (CH.boss.ai === 'warden' ? ' · 등 뒤를 노리면 두 배 피해예요' : ''), 3800); SFX.play('roar'); view.shake = 1.2; break;
-    case 'parry': bigMsg('완벽한 막기!', '단장이 기절했어요. 지금 공격해요', 2400); SFX.play('parry'); view.burst(e.x, 2, e.z, 0xffffff, 16, 8, 0.6, 0.12); view.shake = 0.8; break;
+    case 'bphase': { const P = e.p === 2 ? CH.boss.p2 : e.p === 3 ? CH.boss.p3 : null, sub = P && P[1] + (e.p === 3 && CH.boss.ai === 'warden' ? ' · 등 뒤를 노리면 두 배 피해예요' : ''), mp = myP(); if (P) { if (mp && mp.dn) toast(P[0] + ' · ' + sub, 3600); else bigMsg(P[0], sub, 3700); } } SFX.play('roar'); view.shake = 1.2; break;
+    case 'parry': bigMsg('완벽한 막기!', '보스가 기절했어요. 지금 공격해요', 2400); SFX.play('parry'); view.burst(e.x, 2, e.z, 0xffffff, 16, 8, 0.6, 0.12); view.shake = 0.8; break;
     case 'summon': SFX.play('spawn'); break;
     case 'fire': SFX.play('fire'); break;
     case 'snap': SFX.play('clang'); break;
@@ -429,7 +429,13 @@ function onEvent(e) {
     case 'ach': if (!e.pid || e.pid === me) unlock(e.id); break;
   }
 }
-function num(x, z, v, col, sc = 1, y = 3) { S.nums.push({ x: x + (Math.random() - .5) * 0.6, z, y, v: String(v), col, sc, t: 0 }); }
+// 피해 숫자: 같은 자리에 잇달아 뜨면 하나로 합쳐서 덩어리지지 않게 해요
+function num(x, z, v, col, sc = 1, y = 3) {
+  v = String(v); const m = /^([+-]?)(\d+)$/.exec(v);
+  if (m) { const o = S.nums.find(n => n.col === col && n.t < 0.45 && n.n != null && Math.abs(n.x - x) < 1.6 && Math.abs(n.z - z) < 1.6); if (o) { o.n += +m[2]; o.v = m[1] + o.n; o.t = Math.min(o.t, 0.12); o.sc = Math.min(1.6, Math.max(o.sc, sc) + 0.04); return; } }
+  S.nums.push({ x: x + (Math.random() - .5) * 0.6, z, y, v, n: m ? +m[2] : null, col, sc, t: 0 });
+  if (S.nums.length > 18) S.nums.shift();
+}
 
 /* ---------- 화면 갱신 ---------- */
 function syncScene() {
@@ -462,7 +468,7 @@ function paintHud() {
   $('roomTag').textContent = CH.title + (S.area >= 0 ? ' · ' + MAP.areas[S.area].name : '') + ' · 남은 적 ' + sn.w.left;
   const boss = sn.w.boss && !sn.w.bd ? sn.en.find(e => e.k === 'boss') : null;
   $('bossBar').style.display = boss ? 'block' : 'none'; if (boss && $('bossName').textContent !== CH.boss.name) $('bossName').textContent = CH.boss.name;
-  if (boss) { $('bossHp').style.width = Math.max(0, boss.hp / boss.mx * 100) + '%'; $('bossPh').textContent = boss.sn ? '기절!' : ['', '1단계', '2단계 · 해골 소환', '3단계 · 등 뒤가 약점'][boss.ph] || ''; }
+  if (boss) { $('bossHp').style.width = Math.max(0, boss.hp / boss.mx * 100) + '%'; $('bossPh').textContent = boss.sn ? '기절!' : ['', '1단계', '2단계 · ' + CH.boss.ph[0], '3단계 · ' + CH.boss.ph[1]][boss.ph] || ''; }
   // 동료 칸
   const pb = $('party'); if (pb.children.length !== sn.pl.length) { pb.innerHTML = ''; sn.pl.forEach(() => { const d = document.createElement('div'); d.className = 'pf'; d.innerHTML = '<div class="n"><i></i><b></b><span></span></div><div class="hp"><i></i><em></em></div><div class="st"></div>'; pb.appendChild(d); }); }
   sn.pl.forEach((p, i) => {
@@ -477,7 +483,7 @@ function paintHud() {
     const R = ROLES[me.role], sk = $('skills');
     if (sk.dataset.role !== me.role) { sk.dataset.role = me.role; sk.innerHTML = ''; R.skills.concat([{ key: 'Space', name: '구르기', cd: 1.2 }]).forEach(s => { const d = document.createElement('div'); d.className = 'sk'; d.innerHTML = `<i class="cd"></i><span class="nm">${s.name}</span><small>${s.key}</small><b class="cn"></b>`; sk.appendChild(d); }); ['tQ', 'tE', 'tR'].forEach((id, i) => $(id).querySelector('span').textContent = R.skills[i].name); }
     const cds = me.cd.concat([me.rc]), maxs = R.skills.map(s => s.cd).concat([1.2]);
-    [...sk.children].forEach((d, i) => { const c = Math.max(0, cds[i]); d.querySelector('.cd').style.height = Math.min(100, c / maxs[i] * 100) + '%'; d.querySelector('.cn').textContent = c > 0.05 ? Math.ceil(c) : ''; });
+    [...sk.children].forEach((d, i) => { const c = Math.max(0, cds[i]); d.querySelector('.cd').style.height = Math.min(100, c / maxs[i] * 100) + '%'; d.querySelector('.cn').textContent = c > 0.05 ? Math.ceil(c) : ''; d.classList.toggle('cool', c > 0.05); });
     ['tQ', 'tE', 'tR', 'tRoll'].forEach((id, i) => { const c = Math.max(0, cds[i]); $(id).querySelector('.cd').style.height = Math.min(100, c / maxs[i] * 100) + '%'; });
   }
   // 안내
@@ -533,10 +539,12 @@ function drawOverlay(dt) {
     if (e.k === 'elite') { oc.fillStyle = '#efe3c8'; oc.font = 'bold 13px system-ui'; oc.strokeStyle = '#140f18'; oc.lineWidth = 4; oc.strokeText(FOES[chapterIndex()].elite.name, s.x, s.y - 12); oc.fillText(FOES[chapterIndex()].elite.name, s.x, s.y - 12); }
   }
   // 동료 이름, 쓰러짐
+  const tags = [];
   for (const p of sn.pl) {
     if (p.dd) continue; const E = view.ents.get('p' + p.id); if (!E) continue;
     const s = view.project(E.x, 3.9, E.z);
-    if (p.id !== S.me) { oc.font = 'bold 13px system-ui'; oc.lineWidth = 4; oc.strokeStyle = '#140f18'; const t = p.bot ? ROLES[p.role].name + ' 봇' : p.name; oc.strokeText(t, s.x, s.y - 10); oc.fillStyle = ROLES[p.role].color; oc.fillText(t, s.x, s.y - 10); oc.fillStyle = 'rgba(20,10,14,.85)'; oc.fillRect(s.x - 20, s.y - 1, 40, 6); oc.fillStyle = '#4cc06a'; oc.fillRect(s.x - 19, s.y, 38 * p.hp / p.mx, 4); }
+    // 이름표가 겹치면 위로 비켜 올려요
+    if (p.id !== S.me) { for (let k = 0; k < 4 && tags.some(t => Math.abs(t.x - s.x) < 64 && Math.abs(t.y - s.y) < 20); k++) s.y -= 20; tags.push({ x: s.x, y: s.y }); oc.font = 'bold 13px system-ui'; oc.lineWidth = 4; oc.strokeStyle = '#140f18'; const t = p.bot ? ROLES[p.role].name + ' 봇' : p.name; oc.strokeText(t, s.x, s.y - 10); oc.fillStyle = ROLES[p.role].color; oc.fillText(t, s.x, s.y - 10); oc.fillStyle = 'rgba(20,10,14,.85)'; oc.fillRect(s.x - 20, s.y - 1, 40, 6); oc.fillStyle = '#4cc06a'; oc.fillRect(s.x - 19, s.y, 38 * p.hp / p.mx, 4); }
     if (p.dn) {
       const c = view.project(E.x, 1.5, E.z); oc.lineWidth = 5; oc.strokeStyle = 'rgba(20,10,14,.85)'; oc.beginPath(); oc.arc(c.x, c.y - 30, 16, 0, 7); oc.stroke();
       oc.strokeStyle = '#fff0b0'; oc.beginPath(); oc.arc(c.x, c.y - 30, 16, -Math.PI / 2, -Math.PI / 2 + Math.PI * 2 * Math.min(1, p.rv / 1.6)); oc.stroke();
@@ -551,7 +559,7 @@ function drawOverlay(dt) {
 function clearChapter() {
   if (S.cleared) return S.lastH || 0; S.cleared = true;
   const h = S.lastH = awardHonor() || 0, me = myP(), ci = chapterIndex();
-  if (me) { SAVE.clears[me.role] = 1; if (!S.everDown) unlock('nodown'); if (ROLE_IDS.every(r => SAVE.clears[r])) unlock('all4'); }
+  if (me) { SAVE.clears[me.role] = Math.max(SAVE.clears[me.role] || 0, ci + 1); if (!S.everDown) unlock('nodown'); if (ROLE_IDS.every(r => SAVE.clears[r])) unlock('all4'); }
   if (ci === 0) unlock('boss'); else unlock('ch' + (ci + 1));
   SAVE.chMax = Math.max(SAVE.chMax | 0, ci + 1); save();
   return h;
@@ -635,7 +643,9 @@ function frame(now) {
 requestAnimationFrame(frame);
 
 // 시험용: ?test=1 로 바로 혼자 원정을 시작해요 (화면 확인용). &skip=1 이야기 건너뛰기, &room=구역 번호
-if (qs.get('test')) {
+// 내 컴퓨터에서 열었을 때만 돼요 (배포된 주소에서는 잠긴 장이 열리지 않게)
+const DEV = /^(localhost|127\.0\.0\.1)$/.test(location.hostname);
+if (DEV && qs.get('test')) {
   const r = qs.get('role') || 'knight'; SAVE.role = r;
   S.net = 'solo'; S.slots = ROLE_IDS.map(x => ({ role: x, uid: x === r ? UID : null, name: x === r ? myName() : '' }));
   S.chSel = +(qs.get('ch') || 1) - 1;
@@ -644,4 +654,4 @@ if (qs.get('test')) {
   if (ri) { const A = MAP.areas[ri], [x, y, w, h] = A.r[0]; const c = A.boss ? { x: cw(MAP.boss[0]), z: cw(MAP.boss[1] + 6) } : { x: (x + w / 2) * CS, z: (y + h - 1.5) * CS }; S.G.players.forEach((p, i) => { p.x = c.x + (i - 1.5) * 1.6; p.z = c.z; mapCollide(p, 0.6); }); }
   window.__S = S;
 }
-if (qs.get('dbg')) window.__S = S;
+if (DEV && qs.get('dbg')) window.__S = S;
