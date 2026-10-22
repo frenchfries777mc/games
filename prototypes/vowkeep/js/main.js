@@ -5,6 +5,7 @@ import { createGame, step, snapshot, chooseBless, INTRO_T } from './sim.js';
 import { ROLES, ROLE_IDS, BLESSINGS, CHAPTER1, MAP, ACHIEVEMENTS, GEAR_TIERS, GEAR_COST, VERSION, BUILD, roleLevel } from './data.js';
 import { collide as mapCollide, areaAt, floorCell, MW, MH, CS, cw } from './map.js';
 import * as SFX from './sfx.js';
+import * as MUS from './music.js';
 
 const $ = id => document.getElementById(id);
 const qs = new URLSearchParams(location.search);
@@ -28,7 +29,7 @@ const S = {
   wonT: 0, resultShown: false, everDown: false, lastBless: null, t0: performance.now()
 };
 const view = new View($('gl'));
-view.setPixel(SAVE.set.px); view.setBloom(!!SAVE.set.bloom); view.shakeOn = !!SAVE.set.shake; SFX.setVol(SAVE.set.vol / 100);
+view.setPixel(SAVE.set.px); view.setBloom(!!SAVE.set.bloom); view.shakeOn = !!SAVE.set.shake; SFX.setVol(SAVE.set.vol / 100); MUS.setVol(SAVE.set.vol / 100);
 view.buildLobby();
 addEventListener('resize', () => { view.resize(); sizeOv(); });
 const ov = $('ov'), oc = ov.getContext('2d');
@@ -103,7 +104,7 @@ function paintSettings() {
   seg('setBloom', SAVE.set.bloom, v => { SAVE.set.bloom = v; view.setBloom(!!v); });
   seg('setShake', SAVE.set.shake, v => { SAVE.set.shake = v; view.shakeOn = !!v; });
 }
-$('setVol').oninput = e => { SAVE.set.vol = +e.target.value; SFX.setVol(SAVE.set.vol / 100); save(); };
+$('setVol').oninput = e => { SAVE.set.vol = +e.target.value; SFX.setVol(SAVE.set.vol / 100); MUS.setVol(SAVE.set.vol / 100); save(); };
 
 /* ---------- 대기실 ---------- */
 function openRoom() {
@@ -531,10 +532,19 @@ function smoothSnap(sn, G, prev, al) {
   if (!prev) return; const cur = new Map(); for (const a of [G.players, G.enemies, G.projs]) for (const o of a) cur.set(o.id, o);
   for (const a of [sn.pl, sn.en, sn.pr]) for (const o of a) { const c = cur.get(o.id), p = prev.get(o.id); if (!c) continue; if (!p || Math.abs(c.x - p[0]) + Math.abs(c.z - p[1]) > 3) { o.x = c.x; o.z = c.z; continue; } o.x = p[0] + (c.x - p[0]) * al; o.z = p[1] + (c.z - p[1]) * al; }
 }
+// 배경음악: 화면 밖(로비, 이야기)은 로비 곡, 기사단장의 방에서 싸우는 동안은 보스 곡, 나머지 던전은 아직 없어요
+const BOSS_AREA = MAP.areas.findIndex(a => a.boss);
+function musicTick(dt, now) {
+  const sn = S.snap, playing = !!sn && S.scr === '' && sn.ph === 'play';
+  const want = !playing ? 'lobby' : (sn.w.boss && !sn.w.bd && S.area === BOSS_AREA ? 'boss' : null);
+  MUS.tick(want, dt, now);
+}
+addEventListener('pointerdown', () => MUS.kick()); addEventListener('keydown', () => MUS.kick());
 let lastT = performance.now();
 function frame(now) {
   requestAnimationFrame(frame);
   const dt = Math.min(0.05, (now - lastT) / 1000); lastT = now; const t = (now - S.t0) / 1000;
+  musicTick(dt, now);
   if (S.snap && (S.G || S.net === 'guest') && S.scr !== 'sLobby' && S.scr !== 'sRoom') {
     const me = myP();
     const inp = me ? gatherInput(me) : {};
