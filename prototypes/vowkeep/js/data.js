@@ -1,7 +1,7 @@
 // Vowkeep · © 2026 Frenchfries777 · CC BY-NC-ND 4.0
 // 게임 데이터: 역할, 적, 축복, 1장 지도
 
-export const VERSION = 'v0.1', BUILD = 10;
+export const VERSION = 'v0.1', BUILD = 11;
 
 export const ROLES = {
   knight: {
@@ -136,6 +136,7 @@ function genMap(seed, rooms, opt = {}) {
   R.forEach((r, i) => {
     m.floors.push([r.x, r.y, r.rw, r.rh]);
     if (r.water) m.water.push([r.x, r.y, r.rw, r.rh]);
+    if (r.pool) m.water.push([r.x + 1, r.y + r.rh - 5, 4, 4]);
     m.areas.push({ name: r.name, line: r.line, r: [[r.x, r.y, r.rw, r.rh]], rest: r.rest ? 1 : undefined, boss: r.boss ? 1 : undefined });
     if (i < R.length - 1) {
       const n = R[i + 1], x0 = Math.min(r.cx, n.cx), x1 = Math.max(r.cx, n.cx), y0 = Math.min(r.cy, n.cy), y1 = Math.max(r.cy, n.cy);
@@ -175,7 +176,7 @@ export const CHAPTERS = [
       '쓰러진 단장이 마지막으로 속삭였어요. "왕이... 먼저 서약을 깼다."',
       '네 사람은 성 밖, 잿빛 숲으로 향했어요.'
     ],
-    boss: { name: '몰락한 기사단장', ai: 'warden', hp: 16000, speed: 3.9, r: 1.4, dmg: 55, p2: ['단장이 해골 병사를 불러내요', '돌진할 때 기사가 막기로 받아치면 기절해요'], p3: ['단장의 갑옷이 갈라졌어요', '검은 불꽃을 피하고 등 뒤를 노려요'] },
+    boss: { name: '몰락한 기사단장', ai: 'warden', hp: 16000, speed: 3.9, r: 1.4, dmg: 55, p2: ['단장이 해골 병사를 불러내요', '돌진할 때 기사가 막기로 받아치면 기절해요'], p3: ['단장의 갑옷이 갈라졌어요', '검은 불꽃을 피하고 등 뒤를 노려요'], ph: ['해골 소환', '등 뒤가 약점'] },
     theme: 'dungeon'
   },
   {
@@ -191,7 +192,7 @@ export const CHAPTERS = [
       '그는 왕이 재의 불꽃을 얻으려고 기사단을 제물로 바쳤다고 털어놓았어요.',
       '불꽃을 지키던 수도원은 이미 검은 물에 잠겼다고 해요.'
     ],
-    boss: { name: '가시관의 사냥꾼 베른', ai: 'hunter', hp: 15000, speed: 4.6, r: 1.3, dmg: 50, p2: ['베른이 뿔피리로 늑대를 불러요', '늑대부터 쓰러뜨리고 도약을 굴러서 피해요'], p3: ['가시덤불이 사냥터를 뒤덮어요', '가시 고리 안쪽으로 파고들어요'] },
+    boss: { name: '가시관의 사냥꾼 베른', ai: 'hunter', hp: 15000, speed: 4.6, r: 1.3, dmg: 50, p2: ['베른이 뿔피리로 늑대를 불러요', '늑대부터 쓰러뜨리고 도약을 굴러서 피해요'], p3: ['가시덤불이 사냥터를 뒤덮어요', '가시 고리 안쪽으로 파고들어요'], ph: ['늑대 무리', '가시 고리'] },
     theme: 'forest'
   },
   {
@@ -207,11 +208,11 @@ export const CHAPTERS = [
       '불꽃은 네 사람의 서약에 답하듯 다시 타올랐어요.',
       '이제 서약의 탑만 남았어요.'
     ],
-    boss: { name: '익사한 대주교 오드릭', ai: 'bishop', hp: 14000, speed: 3.2, r: 1.3, dmg: 48, p2: ['대주교가 물에 잠긴 수도사를 깨워요', '순간이동한 자리를 놓치지 말아요'], p3: ['검은 물이 차오르기 시작해요', '물웅덩이를 피하며 끝까지 버텨요'] },
+    boss: { name: '익사한 대주교 오드릭', ai: 'bishop', hp: 14000, speed: 3.2, r: 1.3, dmg: 48, p2: ['대주교가 물에 잠긴 수도사를 깨워요', '순간이동한 자리를 놓치지 말아요'], p3: ['검은 물이 차오르기 시작해요', '물웅덩이를 피하며 끝까지 버텨요'], ph: ['수도사 소환', '검은 물'] },
     theme: 'abbey'
   },
   {
-    id: 4, title: '4장 · 서약의 탑', place: '서약의 탑', diff: 1.32,
+    id: 4, title: '4장 · 서약의 탑', place: '서약의 탑', diff: 1.22,
     intro: [
       '왕국 한가운데 서약의 탑이 잿빛 구름을 뚫고 서 있어요.',
       '왕은 기사단의 서약을 불꽃에 바치고 죽지 않는 몸을 얻었어요.',
@@ -223,7 +224,7 @@ export const CHAPTERS = [
       '되찾은 불꽃이 탑 꼭대기에서 왕국을 다시 밝혔어요.',
       '네 사람의 서약은 끝까지 지켜졌어요. 사람들은 그들을 Vowkeep, 서약을 지킨 자들이라 불렀어요.'
     ],
-    boss: { name: '잿빛 왕', ai: 'king', hp: 15000, speed: 4.0, r: 1.5, dmg: 54, p2: ['왕이 재의 기사들을 불러내요', '돌진은 기사가 막기로 받아칠 수 있어요'], p3: ['왕관에서 재의 불꽃이 타올라요', '불길을 피하고 마지막 일격을 노려요'] },
+    boss: { name: '잿빛 왕', ai: 'king', hp: 14000, speed: 4.0, r: 1.5, dmg: 50, p2: ['왕이 재의 기사들을 불러내요', '돌진은 기사가 막기로 받아칠 수 있어요'], p3: ['왕관에서 재의 불꽃이 타올라요', '불길을 피하고 마지막 일격을 노려요'], ph: ['재의 기사 소환', '재의 불꽃'] },
     theme: 'tower'
   }
 ];
@@ -236,7 +237,7 @@ CHAPTERS[1].map = genMap(4242, [
   { name: '숲속 오두막', line: '꺼진 모닥불이 있어요. 불을 붙이면 쓰러졌을 때 여기서 다시 시작해요.', rest: 1, chest: 1, w: 12, h: 11 },
   { name: '가시덤불 길', line: '껍질 거인이 길목을 막고 있어요.', foes: { skel: 5, archer: 3, shield: 1 }, traps: 3 },
   { name: '우두머리의 언덕', line: '거대한 늑대 우두머리가 언덕을 지켜요.', foes: { elite: 1, skel: 4, archer: 2 }, altar: 1, pil: 1 },
-  { name: '잿빛 샘', line: '맑은 샘물 곁에서 숨을 고르고 가요.', rest: 1, chest: 1, water: 0, w: 12, h: 11 },
+  { name: '잿빛 샘', line: '맑은 샘물 곁에서 숨을 고르고 가요.', rest: 1, chest: 1, pool: 1, w: 12, h: 11 },
   { name: '사냥터의 심장', line: '"왕의 명령이다. 이 숲을 지나간 자는 아무도 없다."', boss: 1 }
 ]);
 CHAPTERS[2].map = genMap(9137, [
@@ -278,7 +279,7 @@ export const ACHIEVEMENTS = [
   { id: 'first', name: '첫 원정', desc: '원정을 처음 시작해요.' },
   { id: 'room1', name: '첫 승리', desc: '처음으로 적을 쓰러뜨려요.' },
   { id: 'rest', name: '모닥불 곁에서', desc: '모닥불에 처음 불을 붙여요.' },
-  { id: 'elite', name: '근위대장 격파', desc: '해골 근위대장을 쓰러뜨려요.' },
+  { id: 'elite', name: '대장 격파', desc: '장마다 있는 적 대장을 쓰러뜨려요.' },
   { id: 'boss', name: '서약을 지킨 자', desc: '몰락한 기사단장을 쓰러뜨려요.' },
   { id: 'parry', name: '완벽한 막기', desc: '기사로 보스 돌진을 받아쳐 기절시켜요.' },
   { id: 'revive', name: '일으켜 세우기', desc: '쓰러진 동료를 일으켜요.' },
@@ -286,8 +287,8 @@ export const ACHIEVEMENTS = [
   { id: 'ch2', name: '잿빛 숲을 지나', desc: '2장에서 가시관의 사냥꾼 베른을 쓰러뜨려요.' },
   { id: 'ch3', name: '불꽃을 되찾다', desc: '3장에서 익사한 대주교 오드릭을 쓰러뜨려요.' },
   { id: 'ch4', name: '서약을 지킨 자들', desc: '4장에서 잿빛 왕을 쓰러뜨려요.' },
-  { id: 'nodown', name: '한 번도 안 쓰러짐', desc: '한 번도 쓰러지지 않고 1장을 깨요.' },
-  { id: 'all4', name: '네 가지 서약', desc: '네 역할로 모두 1장을 깨요.' }
+  { id: 'nodown', name: '한 번도 안 쓰러짐', desc: '한 번도 쓰러지지 않고 한 장을 깨요.' },
+  { id: 'all4', name: '네 가지 서약', desc: '네 역할로 모두 한 장 이상 깨요.' }
 ];
 
 export const GEAR_TIERS = ['낡은', '쓸만한', '명장의'];
