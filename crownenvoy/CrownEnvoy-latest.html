@@ -386,7 +386,7 @@ window.ceReload=function(){try{if(window.FFAuth&&FFAuth.setRoom)FFAuth.setRoom(n
 try{if(sessionStorage.getItem('ce_noIntro')){sessionStorage.removeItem('ce_noIntro');el.style.display='none';go();}}catch(e){}})();</script>
 <div id="app">
  <div id="lobby" class="screen">
-  <canvas id="lobbyBg"></canvas><canvas id="lobbyWar"></canvas><div id="cpTag">© 2026 Frenchfries777 · <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.ko" target="_blank" rel="noopener">CC BY-NC-ND 4.0</a></div><div id="verTag">v0.3 · build 82</div>
+  <canvas id="lobbyBg"></canvas><canvas id="lobbyWar"></canvas><div id="cpTag">© 2026 Frenchfries777 · <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.ko" target="_blank" rel="noopener">CC BY-NC-ND 4.0</a></div><div id="verTag">v0.3 · build 83</div>
   <header class="brand"><h1>Crown Envoy</h1><div class="sub"><i></i>DIPLOMACY · WAR · EMPIRE<i></i></div></header>
   <div id="lobbyRight">
    <div id="lobbyHome" class="modes">
@@ -6310,6 +6310,7 @@ async function out(){S=null;TOK=null;marked=false;paint();close();try{const c=aw
 btn.onclick=open;paint();
 function mount(){const l=$('#lobby');if(l&&!bar.parentNode)l.appendChild(bar);}
 mount();setTimeout(mount,500);
+window.addEventListener('ff-nick',e=>{try{const n=e&&e.detail&&e.detail.name;if(n&&S&&S.user&&(!e.detail.id||e.detail.id===S.user.id)){S.prof=Object.assign({},S.prof||{},{display_name:n});localStorage.setItem('ce_name',n.slice(0,16));paint();}}catch(x){}});
 window.CEAuth={user:()=>S&&S.user||null,token:()=>TOK,open,sb:ensureSb,name:()=>dname(S&&S.user)};
 paint();ensureSb().catch(()=>{});
 })();
