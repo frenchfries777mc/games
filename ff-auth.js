@@ -81,8 +81,24 @@ async function setUser(u){
   user=u||null; prof=null;
   if(user){ try{ var r=await sb.from('profiles').select('username,display_name').eq('id',user.id).single(); prof=(r&&r.data)||null; }catch(e){} }
   paint(); subs.forEach(function(f){ try{ f(user, prof); }catch(e){} });
+  nickEmit();
   if(user&&!prof&&!isIdAcct(user)) setTimeout(openSetup,0);
 }
+/* One nickname everywhere: when profiles.display_name changes (here, in another window or on another site) every game that called FFAuth.onNick(fn) hears it at once. */
+var nickSubs=[], lastNick=null, nickAt=0;
+function nickEmit(){
+  var n=nick(); if(n===lastNick) return; lastNick=n;
+  try{ localStorage.setItem('ff.nick', JSON.stringify({id:user&&user.id, n:n, t:Date.now()})); }catch(e){}
+  nickSubs.forEach(function(f){ try{ f(n, user, prof); }catch(e){} });
+  try{ window.dispatchEvent(new CustomEvent('ff-nick',{detail:{name:n,id:user&&user.id}})); }catch(e){}
+}
+async function nickRefresh(force){
+  if(!sb||!user) return; var now=Date.now(); if(!force&&now-nickAt<4000) return; nickAt=now;
+  try{ var r=await sb.from('profiles').select('username,display_name').eq('id',user.id).single(); if(r&&r.data&&user){ prof=r.data; paint(); nickEmit(); } }catch(e){}
+}
+window.addEventListener('focus', function(){ nickRefresh(); });
+document.addEventListener('visibilitychange', function(){ if(document.visibilityState==='visible') nickRefresh(); });
+window.addEventListener('storage', function(e){ if(e.key==='ff.nick') nickRefresh(true); });
 function nick(){ return (prof&&(prof.display_name||prof.username)) || (user&&String(user.email||'').split('@')[0]) || ''; }
 
 /* ---- the same login rules as the games (id -> internal e-mail, typo-tolerant password) ---- */
@@ -534,7 +550,7 @@ async function searchUsers(q){
 async function request(id){ await expireReq(true); var r=await sb.from('friendships').insert({requester_id:user.id, addressee_id:id}); await loadFriends(); return r; }
 async function respond(rowId, ok){ var r=ok?await sb.from('friendships').update({status:'accepted'}).eq('id',rowId):await sb.from('friendships').delete().eq('id',rowId); await loadFriends(); return r; }
 async function removeRow(rowId){ var r=await sb.from('friendships').delete().eq('id',rowId); await loadFriends(); return r; }
-async function setNick(n){ n=String(n||'').trim().slice(0,12); if(!n) return {error:true}; var r=await sb.from('profiles').update({display_name:n}).eq('id',user.id); if(r&&r.error) return {error:true}; prof=Object.assign({},prof||{},{display_name:n}); paint(); return {ok:true}; }
+async function setNick(n){ n=String(n||'').trim().slice(0,12); if(!n) return {error:true}; var r=await sb.from('profiles').update({display_name:n}).eq('id',user.id); if(r&&r.error) return {error:true}; prof=Object.assign({},prof||{},{display_name:n}); paint(); nickEmit(); return {ok:true}; }
 
 var FCSS='.ffa-badge{display:inline-block;min-width:18px;height:18px;line-height:18px;border-radius:9px;background:#ff5a4f;color:#fff;font-size:11px;font-weight:800;text-align:center;padding:0 5px;margin-left:6px;box-sizing:border-box}'+
  '#ffaFriends{position:fixed;inset:0;z-index:2147482400;background:rgba(5,6,10,.72);display:none;align-items:center;justify-content:center;padding:16px;font-family:system-ui,-apple-system,"Noto Sans KR",sans-serif}'+
@@ -890,6 +906,6 @@ setInterval(function(){ if(document.visibilityState!=='hidden') pollCheck(); }, 
 document.addEventListener('visibilitychange', function(){ if(document.visibilityState==='visible') pollCheck(); });
 
 window.FFAuth={ ready:ready, pollCheck:pollCheck, client:function(){ return sb; }, user:function(){ return user; }, profile:function(){ return prof; }, nickname:nick,
-  onChange:function(f){ if(typeof f==='function') subs.push(f); }, openLogin:openLogin, openProfile:openProfile, openFriends:openFriends, friends:function(){ return friends.slice(); }, signOut:signOut, refresh:paint, syncHub:syncHub,
+  onChange:function(f){ if(typeof f==='function') subs.push(f); }, onNick:function(f){ if(typeof f!=='function') return; nickSubs.push(f); ready.then(function(){ if(user){ try{ f(nick(), user, prof); }catch(e){} } }); }, setNick:setNick, refreshNick:function(){ return nickRefresh(true); }, openLogin:openLogin, openProfile:openProfile, openFriends:openFriends, friends:function(){ return friends.slice(); }, signOut:signOut, refresh:paint, syncHub:syncHub,
   openDM:openDM, setRoom:setRoom, openReport:openReport, openAcct:openAcct, notePrefs:{get:npGet,set:npSet}, userKey:userKey, lang:lang, loadDevs:loadDevs, devRole:devRole, devBadge:devBadge, block:block, isBlocked:isBlocked, blocked:function(){ return Object.assign({},blocks); } };
 })();

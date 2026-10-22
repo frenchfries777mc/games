@@ -7682,7 +7682,7 @@ function dpAsk(msg, okLabel, onOk) {
         $('acctLine').textContent = n ? n + ' 님 (Frenchfries777 계정)' : (OFFLINE ? '오프라인 · 혼자 하기만 할 수 있어요' : 'dC와 꾸미기는 로그인해야 저장돼요'); $('loginBtn').style.display = n ? 'none' : ''; $('offBtn').style.display = (n || OFFLINE) ? 'none' : ''; } catch (e) { }
     }
     window.useNickRefresh = useNick;
-    function hook() { if (!window.FFAuth) return false; FFAuth.ready.then(function () { useNick(); walletRefresh(); autoJoin(); }); FFAuth.onChange(function () { useNick(); walletRefresh(); }); return true; }
+    function hook() { if (!window.FFAuth) return false; FFAuth.ready.then(function () { useNick(); walletRefresh(); autoJoin(); }); FFAuth.onChange(function () { useNick(); walletRefresh(); }); if (FFAuth.onNick) FFAuth.onNick(function () { useNick(); }); return true; }
     useNick(); if (!window.FFAuth) { $('loginBtn').style.display = ''; $('offBtn').style.display = ''; }
     if (!hook()) { var tries = 0, iv = setInterval(function () { if (hook() || ++tries > 40) clearInterval(iv); }, 250); }
   })();

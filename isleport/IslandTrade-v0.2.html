@@ -453,7 +453,7 @@ const TUT=[
  [P('다 자라면 ▼ 표시의 밭을 눌러 수확해요','When it is grown, tap the field with the ▼ to harvest'),s=>s.stats.harvest>=1],
  [P('마을 장터에서 수확한 것을 팔아요','Sell your harvest at the town market'),s=>(s.stats.shop||0)>=1],
  [P('항구에서 배에 짐을 싣고 보내요','Load a ship at the harbor and send it off'),s=>s.stats.sailed>=1]];
-const OUTMAX=12,BUILD=47;
+const OUTMAX=12,BUILD=48;
 const hasB=(s,b)=>s.slots.some(x=>x&&x.b===b);
 const rankOf=e=>{let r=0;RANKS.forEach((x,i)=>{if(e>=x[0])r=i;});return r;};
 /* 업적: id, 이름, 설명, 조건 */
@@ -27115,6 +27115,9 @@ async function initAuth(){try{if(!window.supabase)return;
 function syncAch(){try{if(window.FFProfile&&FFProfile.setAchievements&&sb&&UID)FFProfile.setAchievements(sb,'islandtrade',Object.keys(S.ach).length,ACH.length,Object.keys(S.ach));}catch(e){}}
 let marked=false;function markOnce(){try{if(!marked&&window.FFProfile&&sb&&UID){marked=true;FFProfile.markPlayed(sb,'islandtrade');}}catch(e){}}
 const rid=()=>Math.random().toString(36).slice(2,8);
+/* 사이트·다른 게임에서 닉네임을 바꾸면 돌아왔을 때 바로 반영해요 */
+async function refreshUname(){try{if(!sb||!UID)return;const q=await sb.from('profiles').select('display_name,username').eq('id',UID).maybeSingle();const n=q.data&&(q.data.display_name||q.data.username)||null;if(n&&n!==UNAME){UNAME=n;applyStatic();}}catch(e){}}
+window.addEventListener('focus',refreshUname);document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')refreshUname();});window.addEventListener('ff-nick',refreshUname);
 const myName=()=>UNAME||(T('상인','Trader')+' '+Math.random().toString(36).slice(2,5).toUpperCase());
 
 /* ---- 직접 교역 (배를 몰고 상륙했을 때) ---- */

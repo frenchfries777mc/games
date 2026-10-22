@@ -368,7 +368,7 @@ html:not(.introDone) #ui,html:not(.introDone) #authgate,html:not(.introDone) #au
     <button class="btn" data-act="skins"><span class="arrow">▶</span>스킨 상점<span class="en">SKIN SHOP</span></button>
     <button class="btn" data-act="stats"><span class="arrow">▶</span>통계<span class="en">STATS</span></button>
     <button class="btn" data-act="settings"><span class="arrow">▶</span>설정<span class="en">SETTINGS</span></button>
-    <p class="foot">v0.3<br>build 91</p>
+    <p class="foot">v0.3<br>build 92</p>
   </nav>
 </div>
 
@@ -2449,7 +2449,7 @@ function openJournal(){
     const bind=()=>{
       const box=m.querySelector('.modal'),rd=()=>{const sc=box.scrollTop;box.innerHTML=draw();box.scrollTop=sc;bind();};
       box.querySelector('[data-close]').onclick=closeModal;
-      const ps=box.querySelector('[data-pset]');if(ps)ps.onclick=()=>{const v=box.querySelector('[data-pname]').value.trim().slice(0,12);if(v){settings.pname=v;saveSettings();}rd();};
+      const ps=box.querySelector('[data-pset]');if(ps)ps.onclick=()=>{const v=box.querySelector('[data-pname]').value.trim().slice(0,12);if(v){settings.pname=v;saveSettings();try{if(window.FFAuth&&FFAuth.user()&&FFAuth.setNick)FFAuth.setNick(v);}catch(e){}}rd();};
       box.querySelectorAll('[data-ms]').forEach(x=>x.onclick=()=>{
         const need=+x.dataset.ms,ms=JR_MS.find(q=>(q[0]||isl.length)===need);if(!ms||got<need||J.m[need])return;
         J.m[need]=1;saveSettings();for(const [id,c] of ms[1])giveReward(id,c);rd();
@@ -11927,7 +11927,10 @@ function frRoom(){try{return (net.role==='host'&&net.addr)?net.addr:'';}catch(e)
 /* 허브 방 초대: 방을 열면 FFAuth에 방 코드를 알리고, 닫으면 지워요 (FFAuth가 없는 화면에서는 아무 일도 안 해요) */
 let ffRoomSent=null;
 function ffRoomSync(){try{const r=frRoom();if(r===ffRoomSent||!window.FFAuth||!FFAuth.setRoom)return;ffRoomSent=r;FFAuth.setRoom(r?{game:'beaconfall',code:r,path:'beaconfall/BEACONFALL-v0.3.html'}:null);}catch(e){}}
-setInterval(ffRoomSync,2000);
+/* 로그인했으면 계정 닉네임(사이트·다른 게임에서 바꾼 이름 포함)이 곧 내 이름이에요 */
+function ffNickSync(){try{if(!window.FFAuth||!FFAuth.user())return;const n=String(FFAuth.nickname()||'').trim().slice(0,12);if(n&&settings.pname!==n){settings.pname=n;saveSettings();}}catch(e){}}
+window.addEventListener('ff-nick',ffNickSync);
+setInterval(()=>{ffRoomSync();ffNickSync();},2000);
 async function frTrack(force){
   if(!FR.ch)return;const room=frRoom();if(!force&&room===FR.room)return;FR.room=room;
   try{await FR.ch.track({name:window.bfUser||'',room,at:Date.now()});}catch(e){}

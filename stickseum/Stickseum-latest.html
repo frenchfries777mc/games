@@ -4771,7 +4771,7 @@ function shuffle(arr){ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.
 /* ===== the version of this file =====
    Players with different versions CAN meet and play together: the automatic matchmaking uses the same room names for every version (online-<mode>-<map>-<slot>), and nobody is refused because of a different build.
    The build is only sent along with the join message and the lobby (for information); the corner of the screen shows it. */
-const GAME_BUILD='build 2026-10-18-v337';
+const GAME_BUILD='build 2026-10-22-v338';
 const GAME_VERSION='0.8', GAME_VERSION_NAME='황금을 찾아서';   // 게임 버전 이름: versions.json의 title과 같게 (빌드마다 바꾸지 않음)
 const WEEKLY_EVENTS=[
   {id:'lowg',    name:'저중력 난투', desc:'몸이 둥실둥실, 중력이 약해진 난투', rules:{grav:0.6}},
@@ -6971,6 +6971,9 @@ async function nickSyncWithProfile(id){
   clanSyncMyName(id);
   return changed;
 }
+/* the nickname changed on the site / in another game while this window stayed open: take it when the window is used again */
+{ let nickPulling=false; const pullNick=()=>{ if(nickPulling || !sb || !sbUser) return; nickPulling=true; nickSyncWithProfile(sbUser.id).then(ch=>{ nickPulling=false; if(ch){ try{ if(document.getElementById('profNameEditBtn')) renderProfile(); }catch(e){} } }).catch(()=>{ nickPulling=false; }); };
+  window.addEventListener('focus',pullNick); window.addEventListener('ff-nick',pullNick); document.addEventListener('visibilitychange',()=>{ if(document.visibilityState==='visible') pullNick(); }); }
 function clanSyncMyName(id){            // my row in the clan list keeps the nickname that is shown to the clan (best effort; the clan screen also reads the profile names)
   try{ const nm=(myNameSet&&myName)?myName:null; if(sb && id && nm && myClan) sb.from('clan_members').update({uname:nm}).eq('user_id', id).then(()=>{}); }catch(e){}
 }
