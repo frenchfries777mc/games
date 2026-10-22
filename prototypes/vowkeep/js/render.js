@@ -86,7 +86,16 @@ function makeFigure(o) {
   if (o.sword) { const sw = new THREE.Group(); sw.position.set(0, -0.9, 0.1); armR.add(sw); box(0.12, 2, 0.04, M(0xe9edf5, { m: 0.9, r: 0.2 }), 0, 1.1, 0, sw); box(0.6, 0.1, 0.14, gold(), 0, 0.1, 0, sw); box(0.08, 0.35, 0.08, leather(), 0, -0.1, 0, sw); sw.rotation.x = Math.PI / 2; }
   if (o.shield) { const shc = o.shieldC || 0x2c4f9e; const sh = new THREE.Group(); sh.position.set(-0.15, -0.7, 0.45); armL.add(sh); sh.rotation.x = 0.6; box(1.1, 1.4, 0.14, M(shc), 0, 0, 0, sh); const c = cone(0.78, 0.7, 4, M(shc), 0, -0.95, 0, sh); c.rotation.set(Math.PI, Math.PI / 4, 0); box(0.18, 1.2, 0.05, gold(), 0, -0.1, 0.09, sh); box(0.8, 0.18, 0.05, gold(), 0, 0.25, 0.09, sh); }
   // 활: 왼손에 쥐고, 팔을 앞으로 뻗으면 위아래로 선 활이 조준 방향으로 휘어요 (시위는 몸 쪽)
-  if (o.bow) { const bw = mesh(geo('bow', () => new THREE.TorusGeometry(0.95, 0.06, 4, 14, Math.PI)), M(0x8a5a2a), 0.12, 0, 0, armL); bw.setRotationFromMatrix(new THREE.Matrix4().makeBasis(new THREE.Vector3(0, 0, 1), new THREE.Vector3(0, -1, 0), new THREE.Vector3(1, 0, 0))); box(0.02, 0.02, 1.9, M(0xe8e0c8), 0.12, 0, 0, armL); box(0.14, 0.22, 0.14, leather(), 0.12, -0.95, 0, armL); }
+  let bowS = null;
+  if (o.bow) {
+    // 얕게 휜 활: 손잡이는 손에, 시위는 몸 쪽. 시위는 두 가닥이라 당기면 V자로 접혀요
+    const bw = mesh(geo('bow2', () => { const t = new THREE.TorusGeometry(1.6, 0.06, 4, 12, 1.24); t.rotateZ(Math.PI / 2 - 0.62); return t; }), M(0x8a5a2a), 0.12, 0.65, 0, armL);
+    bw.setRotationFromMatrix(new THREE.Matrix4().makeBasis(new THREE.Vector3(0, 0, 1), new THREE.Vector3(0, -1, 0), new THREE.Vector3(1, 0, 0)));
+    box(0.14, 0.22, 0.14, leather(), 0.12, -0.95, 0, armL);
+    const sm = M(0xe8e0c8), sa = mesh(geo('str', () => new THREE.BoxGeometry(0.025, 0.025, 1)), sm, 0, 0, 0, armL, false), sb = mesh(geo('str', () => new THREE.BoxGeometry(0.025, 0.025, 1)), sm, 0, 0, 0, armL, false);
+    const ar = new THREE.Group(); armL.add(ar); box(0.05, 1.3, 0.05, M(0x8a5a2a), 0, 0, 0, ar); const ah = cone(0.08, 0.25, 4, metal(), 0, -0.75, 0, ar); ah.rotation.x = Math.PI;
+    bowS = { sa, sb, ar }; setPull(bowS, 0.05);
+  }
   if (o.staff) { const sc = o.staffC || 0x9af0d0; const st = new THREE.Group(); st.position.set(0, -0.9, 0.1); armR.add(st); st.rotation.x = 0.7; cyl(0.07, 0.07, 3.2, 6, M(0x7a5a2a), 0, 0.5, 0, st); mesh(geo('oct', () => new THREE.OctahedronGeometry(0.32)), M(sc, { e: sc, ei: 4 }), 0, 2.3, 0, st); if (!o.noLight) { light = new THREE.PointLight(0x6af0c0, 14, 8, 1.6); light.position.set(0, 2.4, 0); st.add(light); } }
   if (o.spear) { const sp = new THREE.Group(); sp.position.set(0, -0.9, 0.1); armR.add(sp); sp.rotation.x = Math.PI / 2; cyl(0.06, 0.06, 3.6, 5, M(0x5a3a22), 0, 0.8, 0, sp); cone(0.16, 0.6, 4, metal(), 0, 2.9, 0, sp); }
   if (o.great) { const gs = new THREE.Group(); gs.position.set(0, -0.9, 0.2); armR.add(gs); gs.rotation.x = Math.PI / 2; box(0.2, 2.8, 0.06, M(o.great, { m: 0.9, r: 0.3, e: o.greatE || 0, ei: 1.5 }), 0, 1.6, 0, gs); box(0.8, 0.12, 0.14, gold(), 0, 0.15, 0, gs); }
@@ -97,7 +106,7 @@ function makeFigure(o) {
   if (o.sack) sph(0.55, 8, 6, M(0xb89a6a), -0.1, 1.9, -0.7, body).scale.set(1, 1.1, 0.8);
   if (o.quiver) { const q = cyl(0.2, 0.2, 1.1, 6, leather(), 0.3, 2.1, -0.55, body); q.rotation.x = 0.3; for (let i = 0; i < 3; i++) box(0.04, 0.4, 0.04, M(0xe8e0c8), 0.25 + i * 0.06, 2.75, -0.7, body); }
   if (o.scale) g.scale.setScalar(o.scale);
-  g.userData = { body, legL, legR, armL, armR, head, light, kind: 'hero' };
+  g.userData = { body, legL, legR, armL, armR, head, light, kind: 'hero', bowS };
   return g;
 }
 // 장마다 다른 적 모습
@@ -621,20 +630,74 @@ function zoneAnim(E, z, t) {
 }
 function lerpA(a, b, k) { let d = b - a; while (d > Math.PI) d -= Math.PI * 2; while (d < -Math.PI) d += Math.PI * 2; return a + d * k; }
 function clampN(v, a, b) { return v < a ? a : v > b ? b : v; }
+// 활 시위 당기기: pull 0(쉼) ~ 0.75(가득)
+function setPull(B, pull) {
+  const ny = -0.65 + pull;
+  for (const [m, tz] of [[B.sa, 0.93], [B.sb, -0.93]]) { const L = Math.hypot(pull, tz); m.position.set(0.12, -0.65 + pull / 2, tz / 2); m.rotation.set(Math.atan2(-pull, -tz), 0, 0); m.scale.z = L; }
+  B.ar.position.set(0.12, ny - 0.62, 0); B.ar.visible = pull > 0.18;
+}
+const ease = u => u < 0 ? 0 : u > 1 ? 1 : u * u * (3 - 2 * u);
+const seg = (u, a, b) => ease((u - a) / (b - a));
+// 역할마다 공격·기술 동작. 몸 전체(허리 비틀기, 내딛기, 뛰어오르기)가 같이 움직여요
+const ANIM_T = { atk: 0.32, hv: 0.55, skill: 0.5 };
 function animHero(E, p, dt, t) {
   const m = E.m, u = m.userData; m.position.set(E.x, 0, E.z); m.rotation.y = Math.PI / 2 - E.a;
-  E.ph += dt * (p.mv ? 11 : 0); E.sw = (E.sw || 0) + ((p.mv ? Math.sin(E.ph) * 0.7 : 0) - (E.sw || 0)) * Math.min(1, dt * 14); const sw = E.sw;
+  E.ph += dt * (p.mv ? 11 : 0); E.sw = (E.sw || 0) + ((p.mv ? Math.sin(E.ph) * 0.75 : 0) - (E.sw || 0)) * Math.min(1, dt * 14); const sw = E.sw;
   u.legL.rotation.x = sw; u.legR.rotation.x = -sw;
-  const base = { knight: [-0.7, -0.6], archer: [-1.4, -1.5], priest: [-1.2, -0.4], squire: [-1.3, -0.6] }[p.role];
-  let ar = base[0] - sw * 0.4, al = base[1] + sw * 0.4;
-  if (p.an === 'atk') { E.atkT = (E.atkT || 0) + dt * 9; ar = p.role === 'knight' || p.role === 'squire' ? -2.6 + Math.sin(Math.min(E.atkT, 3.14)) * 2.2 : ar - 0.3; } else E.atkT = 0;
-  if (p.an === 'skill') ar = -2.8;
-  if (p.bk) al = -1.6;
-  const ka = Math.min(1, dt * 22); E.ar = E.ar == null ? ar : E.ar + (ar - E.ar) * ka; E.al = E.al == null ? al : E.al + (al - E.al) * ka;
-  u.armR.rotation.x = E.ar; u.armL.rotation.x = E.al;
-  u.body.rotation.set(0, 0, 0); u.body.position.y = p.mv ? Math.abs(Math.sin(E.ph)) * 0.08 : Math.sin(t * 2 + E.ph) * 0.03;
+  // 동작 시작: 동작 번호가 바뀌면 처음부터
+  if (p.aN !== E.aN) { E.aN = p.aN; if (E.aN != null && p.ak) { E.ak = p.ak; E.aT = 0; } }
+  const kind = E.ak ? (E.ak === 'atk' || E.ak === 'hv' ? E.ak : 'skill') : '', D = ANIM_T[kind] || 0.5;
+  if (E.ak) { E.aT += dt; if (E.aT > D) E.ak = null; }
+  const v = E.ak ? E.aT / D : 1, role = p.role, side = (E.aN || 0) % 2 ? 1 : -1;
+  const base = { knight: [-0.7, -0.6], archer: [-1.45, -1.55], priest: [-1.2, -0.4], squire: [-1.3, -0.6] }[role];
+  // 기본 자세 (달릴 때는 앞으로 기울고 팔을 크게 흔들어요)
+  const T = { rx: base[0] - sw * 0.45, rz: 0, lx: base[1] + sw * 0.45, lz: 0, bx: p.mv ? 0.14 : 0, by: 0, bz: 0, bry: 0, hx: 0, rpz: 0, pull: 0.35 };
+  if (role === 'archer') { T.rx = -1.5; T.rz = -0.25; T.lx = -1.55; T.lz = 0.12; T.rpz = -0.3; T.pull = 0.35; }
+  if (E.ak) {
+    const a = E.ak;
+    if (a === 'atk' || a === 'hv') {
+      if (role === 'knight' || role === 'squire') {
+        if (a === 'atk') { // 옆으로 크게 베기: 반대쪽으로 감았다가 휘둘러요
+          const w = seg(v, 0, 0.18), st = seg(v, 0.18, 0.55), rc = seg(v, 0.6, 1);
+          T.rx = -1.45; T.rz = (side * 1.3 * w - side * 2.6 * st) * (1 - rc); T.bry = (side * 0.5 * w - side * 1.1 * st) * (1 - rc); T.bz = 0.4 * st * (1 - rc); T.bx = 0.15 * st * (1 - rc); T.lx = base[1] - 0.3 * st;
+        } else { // 강타: 높이 들어 뛰어올랐다가 내려찍기
+          const up = seg(v, 0, 0.14), dn = seg(v, 0.14, 0.32), rc = seg(v, 0.65, 1);
+          T.rx = (-3.1 * up + 2.6 * dn) * (1 - rc) + base[0] * rc; T.bx = (-0.25 * up + 0.7 * dn) * (1 - rc); T.by = (0.5 * up - 0.5 * dn) * (1 - rc) + Math.sin(up * Math.PI) * 0.3 * (1 - dn); T.bz = 0.5 * dn * (1 - rc); T.lx = -2.2 * up * (1 - dn) + base[1];
+        }
+      } else if (role === 'archer') { // 시위를 놓고 반동, 다시 당겨요
+        const rel = seg(v, 0, 0.12), re = seg(v, 0.25, 1);
+        T.pull = 0.75 * (1 - rel) * 0 + re * 0.75; T.rpz = -0.55 * re; T.rz = -0.25 - 0.1 * re; T.lx = -1.55 - (a === 'hv' ? 0.45 : 0.25) * (1 - seg(v, 0.08, 0.5)); T.bx = -(a === 'hv' ? 0.3 : 0.12) * (1 - seg(v, 0.05, 0.6)); T.rx = -1.5 + 0.5 * (1 - seg(v, 0.05, 0.4));
+      } else { // 사제: 지팡이를 앞으로 찔러 빛을 쏴요 (강타는 머리 위로 한 바퀴)
+        if (a === 'atk') { const th = seg(v, 0, 0.3), rc = seg(v, 0.45, 1); T.bry = -0.5 * th * (1 - rc); T.rz = -0.4 * th * (1 - rc); T.rx = base[0] - 0.6 * th * (1 - rc); T.bx = 0.25 * th * (1 - rc); T.bz = 0.3 * th * (1 - rc); T.lx = -1.2 * th * (1 - rc) + base[1]; }
+        else { const sp = seg(v, 0, 0.5), th = seg(v, 0.5, 0.65), rc = seg(v, 0.75, 1); T.rx = (-3.0 * (1 - th) - 1.8 * th) * (1 - rc) + base[0] * rc; T.rz = Math.sin(sp * Math.PI * 2) * 0.9 * (1 - th); T.bry = sp * Math.PI * 2 * (1 - th); T.by = Math.sin(sp * Math.PI) * 0.35; T.bx = 0.3 * th * (1 - rc); }
+      }
+    } else { // 기술
+      const pk = Math.sin(Math.min(1, v * 1.4) * Math.PI), hold = 1 - seg(v, 0.7, 1);
+      switch (a) {
+        case 'block': T.lx = -1.65; T.lz = 0.3; T.by = -0.15; T.bx = 0.1; T.rx = -0.4; break;
+        case 'dash': T.bx = 0.55 * hold; T.rx = -1.6; T.lx = 0.7 * hold; T.bz = 0.5 * pk; break;
+        case 'taunt': T.rx = -2.7 * hold; T.rz = 0.9 * hold; T.lx = -2.7 * hold; T.lz = -0.9 * hold; T.hx = -0.4 * hold; T.by = 0.35 * pk; T.bx = -0.2 * hold; break;
+        case 'pierce': { const dr = seg(v, 0, 0.45), rl = seg(v, 0.45, 0.55); T.pull = 0.75 * dr * (1 - rl); T.rpz = -0.6 * dr * (1 - rl); T.bx = -0.35 * rl * hold; T.lx = -1.55 - 0.4 * rl * hold; break; }
+        case 'rain': T.lx = -2.5 * hold - 1.55 * (1 - hold); T.rx = -2.4 * hold - 1.5 * (1 - hold); T.bx = -0.3 * hold; T.pull = 0.75 * seg(v, 0, 0.4) * (1 - seg(v, 0.4, 0.5)); break;
+        case 'mark': T.lx = -1.7; T.lz = 0.35 * hold; T.rx = -0.6; T.bry = -0.3 * hold; break;
+        case 'heal': case 'raise': T.rx = -2.3 * hold + base[0] * (1 - hold); T.rz = 0.35 * hold; T.lx = -2.4 * hold; T.lz = -0.8 * hold; T.by = 0.3 * pk; T.hx = -0.35 * hold; break;
+        case 'ward': T.rx = -0.9; T.by = -0.3 * hold; T.bx = 0.25 * hold; T.lx = -1.7 * hold; break;
+        case 'potion': { const th = seg(v, 0.15, 0.4); T.rx = -3.0 * (1 - th) - 1.2 * th; T.bx = -0.2 + 0.5 * th; T.bry = 0.4 - 0.8 * th; break; }
+        case 'trap': T.by = -0.45 * pk; T.bx = 0.5 * pk; T.rx = -0.9; T.lx = -0.9; break;
+        case 'rally': T.rx = -3.05 * hold; T.lx = -2.2 * hold; T.lz = -0.5 * hold; T.by = 0.45 * pk; T.hx = -0.3 * hold; break;
+        default: T.rx = -2.8 * hold;
+      }
+    }
+  }
+  if (p.bk && E.ak !== 'block') { T.lx = -1.6; }
+  const k = Math.min(1, dt * 30), L = (o, kk, v2) => { E[kk] = E[kk] == null ? v2 : E[kk] + (v2 - E[kk]) * k; return E[kk]; };
+  u.armR.rotation.set(L(0, 'ar', T.rx), 0, L(0, 'arz', T.rz)); u.armL.rotation.set(L(0, 'al', T.lx), 0, L(0, 'alz', T.lz));
+  u.armR.position.z = L(0, 'rpz', T.rpz); u.head.rotation.x = L(0, 'hx', T.hx);
+  if (u.bowS) setPull(u.bowS, L(0, 'pl', T.pull));
+  const bob = p.mv ? Math.abs(Math.sin(E.ph)) * 0.1 : Math.sin(t * 2 + E.ph) * 0.03;
+  u.body.rotation.set(L(0, 'bx', T.bx), L(0, 'bry', T.bry), 0); u.body.position.set(0, bob + L(0, 'by', T.by), L(0, 'bz', T.bz));
   if (p.ro) { E.rollA = (E.rollA || 0) + dt * 18; u.body.rotation.x = E.rollA; u.body.position.y = -0.6; } else E.rollA = 0;
-  if (p.dn) { u.body.rotation.x = -Math.PI / 2 + 0.2; u.body.position.y = 0.4; u.body.position.z = -1; } else u.body.position.z = 0;
+  if (p.dn) { u.body.rotation.set(-Math.PI / 2 + 0.2, 0, 0); u.body.position.set(0, 0.4, -1); }
   if (u.light) u.light.intensity = (p.dn ? 3 : 15);
 }
 function animEnemy(E, e, dt, t, view) {
