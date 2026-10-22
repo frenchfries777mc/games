@@ -51,6 +51,9 @@ function inGame() { return !!S.snap && S.scr !== 'sLobby' && S.scr !== 'sRoom'; 
 function setHud(on) { $('hud').classList.toggle('on', on); $('touch').classList.toggle('on', on && TOUCH); }
 function homeMsg(t) { $('homeMsg').textContent = t || ''; }
 function toast(t, ms = 2200) { const el = $('toast'); el.textContent = t; el.style.display = 'block'; clearTimeout(toast._t); toast._t = setTimeout(() => el.style.display = 'none', ms); }
+// 보스 등장 때 위아래 검은 띠, 보스가 쓰러질 때 하얀 번쩍임
+function letterbox(ms) { document.body.classList.add('lbox'); clearTimeout(letterbox._t); letterbox._t = setTimeout(() => document.body.classList.remove('lbox'), ms); }
+function flashScreen() { const f = $('wflash'); f.style.transition = 'none'; f.style.opacity = 0.85; requestAnimationFrame(() => { f.style.transition = 'opacity 1.1s'; f.style.opacity = 0; }); }
 function bigMsg(a, b, ms = 2400) { $('bigMsg').textContent = a || ''; $('subMsg').textContent = b || ''; $('bigMsg').style.opacity = a ? 1 : 0; $('subMsg').style.opacity = b ? 1 : 0; clearTimeout(bigMsg._t); if (ms) bigMsg._t = setTimeout(() => { $('bigMsg').style.opacity = 0; $('subMsg').style.opacity = 0; }, ms); }
 
 /* ---------- 로그인 ---------- */
@@ -387,10 +390,18 @@ function onEvent(e) {
     case 'swing': view.arc(e.x, e.z, e.a, e.r, COL[e.role] || 0xffffff); SFX.play('swing'); break;
     case 'shoot': SFX.play(e.pk === 'orb' ? 'orb' : 'arrow'); break;
     case 'eshoot': SFX.play('arrow'); break;
-    case 'ehit': view.burst(e.x, 1.6, e.z, 0xe8e0c8, e.crit ? 7 : 4, 5, 0.4, 0.1); num(e.x, e.z, e.v, e.crit ? '#ffd36b' : '#ffffff', e.crit ? 1.3 : 1); SFX.play('hit'); break;
-    case 'weak': num(e.x, e.z, '약점!', '#ff9c4a', 1.1, 3.6); break;
+    case 'ehit': view.spark(e.x, e.z, e.id, e.crit); num(e.x, e.z, e.v, e.crit ? '#ffd36b' : '#ffffff', e.crit ? 1.3 : 1); SFX.play('hit'); break;
+    case 'weak': num(e.x, e.z, '약점!', '#ff9c4a', 1.4, 3.8); view.shock(e.x, e.z, 3, 0xff7a20, 0.35); view.burst(e.x, 2.4, e.z, 0xffb060, 14, 9, 0.5, 0.14); view.flash(e.x, e.z, 0xff7a20, 90); view.shake = Math.max(view.shake, 0.35); SFX.play('parry'); break;
     case 'phit': num(e.x, e.z, '-' + e.v, '#ff7a6a', 1); if (e.id === me) { view.shake = Math.max(view.shake, 0.5); SFX.play('phit'); } break;
-    case 'ekill': view.burst(e.x, 1.2, e.z, e.en === 'boss' ? 0xff3a3a : 0xd8d0bc, e.en === 'boss' ? 40 : 12, 7, 0.8, 0.14); SFX.play('kill'); if (e.en === 'boss') view.shake = 1.4; break;
+    case 'ekill': {
+      const boss = e.en === 'boss', big = boss || e.en === 'elite';
+      view.shatter(e.x, e.z, boss ? [0x3a2e2a, 0xff5a3a, 0xe6c15a, 0x5a5f70] : [0xd8d0bc, 0x6a6470, 0x5a5040, 0x8a8a96], boss ? 70 : big ? 30 : 16, big);
+      view.burst(e.x, 1.2, e.z, boss ? 0xff3a3a : 0xffe8b0, boss ? 40 : 8, 7, 0.6, 0.12); SFX.play('kill');
+      if (big) { view.shock(e.x, e.z, boss ? 12 : 5, boss ? 0xff6a3a : 0xffe08a, boss ? 0.9 : 0.5); view.flash(e.x, e.z, 0xffd08a, boss ? 300 : 120); view.shake = Math.max(view.shake, boss ? 1.6 : 0.6); }
+      // 보스가 쓰러지면 화면이 하얗게 번쩍이고 잠깐 느려져요
+      if (boss) { view.column(e.x, e.z, 0xfff0b0, 1.6); view.rise(e.x, e.z, 0xffd08a, 40, 4, 2, 6); flashScreen(); S.slowT = 1.4; }
+      break;
+    }
     case 'block': case 'clang': SFX.play('clang'); view.burst(e.x, 1.8, e.z, 0xffe08a, 4, 4, 0.25, 0.08); break;
     case 'heal': num(e.x, e.z, '+' + e.v, '#9af0a8', 1); view.burst(e.x, 1.5, e.z, 0x9af0c0, 6, 3, 0.7, 0.1); SFX.play('heal'); break;
     case 'ward': { const p = view.entPos('p' + e.id); if (p) { view.dome(p.x, p.z, 1.8, 0x9af0e0, 0.9); view.rise(p.x, p.z, 0x9af0e0, 8, 1, 0.8, 4); } break; }
@@ -407,7 +418,9 @@ function onEvent(e) {
     case 'bwind': SFX.play('warn'); break;
     case 'bcharge': SFX.play('roar'); break;
     case 'roar': SFX.play('roar'); view.shake = 1; break;
-    case 'bphase': { const P = e.p === 2 ? CH.boss.p2 : e.p === 3 ? CH.boss.p3 : null, sub = P && P[1] + (e.p === 3 && CH.boss.ai === 'warden' ? ' · 등 뒤를 노리면 두 배 피해예요' : ''), mp = myP(); if (P) { if (mp && mp.dn) toast(P[0] + ' · ' + sub, 3600); else bigMsg(P[0], sub, 3700); } } SFX.play('roar'); view.shake = 1.2; break;
+    case 'bphase': { const P = e.p === 2 ? CH.boss.p2 : e.p === 3 ? CH.boss.p3 : null, sub = P && P[1], mp = myP();
+      // 기사단장 3단계: 망토가 찢겨 날아가요
+      if (e.p === 3 && CH.boss.ai === 'warden') { const b = S.snap && S.snap.en.find(q => q.k === 'boss'); if (b) { view.shatter(b.x, b.z, [0x3a0e14, 0x5a1a22, 0x2a0a10], 36, true); view.shock(b.x, b.z, 7, 0xff5a20, 0.6); view.flash(b.x, b.z, 0xff5a20, 220); } } if (P) { if (mp && mp.dn) toast(P[0] + ' · ' + sub, 3600); else bigMsg(P[0], sub, 3700); } } SFX.play('roar'); view.shake = 1.2; break;
     case 'parry': bigMsg('완벽한 막기!', '보스가 기절했어요. 지금 공격해요', 2400); SFX.play('parry'); view.burst(e.x, 2, e.z, 0xffffff, 16, 8, 0.6, 0.12); view.shake = 0.8; break;
     case 'summon': SFX.play('spawn'); break;
     case 'fire': SFX.play('fire'); break;
@@ -417,7 +430,7 @@ function onEvent(e) {
     case 'altar': bigMsg('제단의 축복', '축복을 하나 골라요', 2200); SFX.play('clear'); view.column(e.x, e.z, 0xffe08a, 1.2); break;
     case 'checkpoint': bigMsg('모닥불에 불을 붙였어요', '모두 쓰러지면 여기서 다시 시작해요', 3000); SFX.play('door'); break;
     case 'wake': if (!S.wakeT || performance.now() - S.wakeT > 1500) { S.wakeT = performance.now(); SFX.play('spawn'); } view.burst(e.x, 0.3, e.z, 0x6a5a7a, 6, 3, 0.6, 0.12); break;
-    case 'bossIntro': bigMsg(CH.boss.name, MAP.areas.find(a => a.boss).line, 3400); break;
+    case 'bossIntro': { bigMsg(CH.boss.name, MAP.areas.find(a => a.boss).line, 3400); const b = S.snap && S.snap.en.find(q => q.k === 'boss'); if (b) { view.focusOn(b.x, b.z, 3); view.shock(b.x, b.z, 8, 0xff5a3a, 0.8); view.flash(b.x, b.z, 0xff5a3a, 200); } view.shake = Math.max(view.shake, 0.8); letterbox(3000); break; }
     case 'bvolley': SFX.play('arrow'); view.burst(e.x, 1.8, e.z, 0xffb060, 8, 4, 0.3, 0.1); break;
     case 'nova': SFX.play('orb'); view.shock(e.x, e.z, 4, CH.boss.ai === 'king' ? 0xff7a20 : 0x6ab0ff, 0.4); view.flash(e.x, e.z, CH.boss.ai === 'king' ? 0xff7a20 : 0x6ab0ff, 120); break;
     case 'pillar': view.column(e.x, e.z, 0x6ab0ff, 0.9); view.burst(e.x, 0.5, e.z, 0x9ad0ff, 14, 6, 0.6, 0.14); view.flash(e.x, e.z, 0x6ab0ff, 80); SFX.play('slam'); break;
@@ -610,7 +623,8 @@ function frame(now) {
       // 한 번 누르는 입력은 규칙이 실제로 돌 때까지 모아 둬요 (화면이 규칙보다 자주 그려져도 눌림이 사라지지 않게)
       const pr = S.rin[S.me]; if (pr) for (const k of ['q', 'e', 'r', 'roll', 'skip']) inp[k] = inp[k] || pr[k];
       S.rin[S.me] = inp;
-      S.acc += dt; const h = 1 / 30;
+      if (S.slowT > 0) S.slowT -= dt;
+      S.acc += dt * (S.slowT > 0 ? 0.35 : 1); const h = 1 / 30;
       while (S.acc >= h) {
         S.acc -= h; S.prevPos = posMap(S.G); step(S.G, h, S.rin);
         for (const pid in S.rin) { const r = S.rin[pid]; r.q = r.e = r.r = r.roll = r.skip = 0; }
