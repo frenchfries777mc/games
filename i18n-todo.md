@@ -123,3 +123,4 @@ index.html | 랭킹 표 | 최장 생존 일수, 생존 순위는 서버 준비 �
 - patchnotes.json | "Vowkeep 이어지는 이야기와 캐릭터 그림" 8줄 | Vowkeep b10 | 2026-10-22
 - crownenvoy/patchnotes.json | b81 1줄 (i18n.js N에 15개 언어 번역 넣음) | 2026-10-22
 - 이탈리아어·폴란드어·아랍어 추가 (오너 2026-10-22): 앞으로 새 문구는 it/pl/ar도 함께 번역해야 함 (Crown Envoy는 ar이 원래 있었음, it/pl 추가)
+- isleport/patchnotes.json | v0.2 build 46 1줄 (게임 안 NOTES는 it/pl/ar까지 넣음) | 2026-10-22
