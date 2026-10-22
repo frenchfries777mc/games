@@ -114,7 +114,8 @@ function hurtEnemy(G, e, dmg, p, o) {
     if (e.phase >= 3 && from && angDiff(e.a, angTo(e, from)) > 1.9) { d *= 2; ev(G, 'weak', { x: e.x, z: e.z }); }
   }
   d = Math.max(1, Math.round(d));
-  e.hp -= d; e.hitT = 0.15; ev(G, 'ehit', { x: e.x, z: e.z, v: d, id: e.id, crit: d > dmg * 1.4 });
+  e.hp -= d; e.hitT = 0.15; ev(G, 'ehit', { x: e.x, z: e.z, v: d, id: e.id, crit: d > dmg * 1.4, hv: o.heavy ? 1 : 0 });
+  if (o.basic && p && !p.bot && o.aid && p.lastAid !== o.aid) { p.lastAid = o.aid; p.combo = (p.comboT > 0 ? p.combo || 0 : 0) + 1; p.comboT = 1.2; if (o.heavy) ev(G, 'heavy', { id: p.id, x: e.x, z: e.z, a: angTo(p, e) }); }
   if (p && hasB(p, 'leech') && alive(p)) p.hp = Math.min(p.maxhp, p.hp + 1);
   if ((o.burn || (p && hasB(p, 'fire') && o.basic)) && e.hp > 0) { e.burn = 3; }
   if (o.kb && e.k !== 'boss') { e.vx += Math.cos(o.kbA) * o.kb; e.vz += Math.sin(o.kbA) * o.kb; }
@@ -137,15 +138,13 @@ function aimPoint(p, inp, range) {
 function basicAttack(G, p) {
   const R = ROLES[p.role], A = R.atk;
   p.cd.atk = A.cd * cdMul(p, 'atk'); p.anim = 'atk'; p.animT = 0.3;
-  // 연타: 1.2초 안에 이어 치면 연타 수가 쌓여 피해가 늘고, 3번째마다 강타가 나가요
-  // 봇은 연타를 쓰지 않아요 (사람 손맛)
-  p.combo = p.bot ? 0 : p.comboT > 0 ? (p.combo || 0) + 1 : 1; p.comboT = p.bot ? 0 : 1.2; const heavy = !p.bot && p.combo % 3 === 0, hm = heavy ? 1.7 : 1;
-  if (heavy) ev(G, 'heavy', { id: p.id, x: p.x + Math.cos(p.a) * 1.5, z: p.z + Math.sin(p.a) * 1.5, a: p.a, melee: A.kind === 'melee' });
+  // 연타: 적을 맞힐 때만 쌓이고(1.2초 안에 이어서), 3번째 맞힘마다 강타가 나가요. 봇은 쓰지 않아요
+  const aid = p.atkN = (p.atkN || 0) + 1, heavy = !p.bot && (p.comboT > 0 ? p.combo || 0 : 0) % 3 === 2, hm = heavy ? 1.7 : 1;
   if (A.kind === 'melee') {
     ev(G, 'swing', { id: p.id, x: p.x, z: p.z, a: p.a, r: A.range, role: p.role });
-    for (const e of G.enemies) { if (e.hp <= 0) continue; const d = dist(p, e); if (d < A.range * (heavy ? 1.2 : 1) + e.r && angDiff(p.a, angTo(p, e)) < A.arc / 2 + (heavy ? 0.6 : 0.25)) hurtEnemy(G, e, A.dmg * hm, p, { basic: true, burn: A.burn, kb: heavy ? 7 : 3, kbA: angTo(p, e) }); }
+    for (const e of G.enemies) { if (e.hp <= 0) continue; const d = dist(p, e); if (d < A.range * (heavy ? 1.2 : 1) + e.r && angDiff(p.a, angTo(p, e)) < A.arc / 2 + (heavy ? 0.6 : 0.25)) hurtEnemy(G, e, A.dmg * hm, p, { basic: true, aid, heavy, burn: A.burn, kb: heavy ? 7 : 3, kbA: angTo(p, e) }); }
   } else {
-    G.projs.push({ id: G.uid++, k: A.kind, big: heavy ? 1 : 0, own: p.id, x: p.x + Math.cos(p.a) * 0.8, z: p.z + Math.sin(p.a) * 0.8, vx: Math.cos(p.a) * A.speed, vz: Math.sin(p.a) * A.speed, dmg: A.dmg * hm, life: 1.1, pierce: heavy, hit: [], basic: true, team: 0 });
+    G.projs.push({ id: G.uid++, k: A.kind, big: heavy ? 1 : 0, own: p.id, x: p.x + Math.cos(p.a) * 0.8, z: p.z + Math.sin(p.a) * 0.8, vx: Math.cos(p.a) * A.speed, vz: Math.sin(p.a) * A.speed, dmg: A.dmg * hm, life: 1.1, pierce: heavy, hit: [], basic: true, aid, heavy, team: 0 });
     ev(G, 'shoot', { id: p.id, pk: A.kind, x: p.x, z: p.z });
   }
 }
@@ -236,7 +235,8 @@ export function step(G, dt, inputs) {
   G.fires.forEach((f, i) => {
     for (const p of G.players) {
       if (!alive(p)) continue; const d = Math.hypot(p.x - f.x, p.z - f.z);
-      if (d < 4 && !f.lit) { f.lit = true; ev(G, 'checkpoint', { i, x: f.x, z: f.z }); ev(G, 'ach', { id: 'rest' }); }
+      // 불 붙이기: F를 꾹 눌러요 (사람이 없을 때만 봇이 대신 붙여요)
+      if (d < 3 && !f.lit && (p.bot ? !G.humans : p.f)) { f.prog = (f.prog || 0) + dt; if (f.prog > 1) { f.lit = true; ev(G, 'checkpoint', { i, x: f.x, z: f.z }); ev(G, 'ach', { id: 'rest' }); } }
       if (f.lit && d < 4) p.hp = Math.min(p.maxhp, p.hp + 5 * dt);
     }
     if (f.lit && i > G.cpI) { G.cpI = i; G.cp = { x: f.x, z: f.z + 2.5 }; }
@@ -542,7 +542,7 @@ function stepProjs(G, dt) {
       for (const e of G.enemies) {
         if (e.hp <= 0 || e.st === 'rise' || pr.hit.indexOf(e.id) >= 0) continue;
         if (Math.hypot(e.x - pr.x, e.z - pr.z) < e.r + 0.35) {
-          pr.hit.push(e.id); hurtEnemy(G, e, pr.dmg, own, { basic: pr.basic, pierce: pr.pierce, from: { x: pr.x - pr.vx * 0.05, z: pr.z - pr.vz * 0.05 } });
+          pr.hit.push(e.id); hurtEnemy(G, e, pr.dmg, own, { basic: pr.basic, aid: pr.aid, heavy: pr.heavy, pierce: pr.pierce, from: { x: pr.x - pr.vx * 0.05, z: pr.z - pr.vz * 0.05 } });
           if (!pr.pierce) { pr.dead = true; break; }
         }
       }
