@@ -24,3 +24,6 @@ patchnotes.json | v335 items[0] | 이탈리아어, 폴란드어, 아랍어 추�
 patchnotes.json | v335 items[1] | 봇 이름을 새 언어별 이름으로 | build 335 | 2026-10-22
 patchnotes.json | v336 title | 봇 금지 선택 속도 개선 | build 336 | 2026-10-20
 patchnotes.json | v336 items[0] | 금지 단계에서 봇이 1~7초 안에 각자 정하도록 수정 | build 336 | 2026-10-20
+patchnotes.json | v337 title | 나가기 버튼과 새 창 실행 | build 337 | 2026-10-20
+patchnotes.json | v337 items[0] | 설정의 사이트로 돌아가기 버튼을 나가기로 변경, 누르면 게임 창이 닫힘 | build 337 | 2026-10-20
+patchnotes.json | v337 items[1] | 사이트에서 바로 플레이가 새 창에서 열림 | build 337 | 2026-10-20
