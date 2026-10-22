@@ -639,7 +639,7 @@ function setPull(B, pull) {
 const ease = u => u < 0 ? 0 : u > 1 ? 1 : u * u * (3 - 2 * u);
 const seg = (u, a, b) => ease((u - a) / (b - a));
 // 역할마다 공격·기술 동작. 몸 전체(허리 비틀기, 내딛기, 뛰어오르기)가 같이 움직여요
-const ANIM_T = { atk: 0.32, hv: 0.7, skill: 0.65 };
+const ANIM_T = { atk: 0.32, hv: 0.95, skill: 0.8 };
 function animHero(E, p, dt, t) {
   const m = E.m, u = m.userData; m.position.set(E.x, 0, E.z); m.rotation.y = Math.PI / 2 - E.a;
   E.ph += dt * (p.mv ? 11 : 0); E.sw = (E.sw || 0) + ((p.mv ? Math.sin(E.ph) * 0.75 : 0) - (E.sw || 0)) * Math.min(1, dt * 14); const sw = E.sw;
@@ -662,13 +662,13 @@ function animHero(E, p, dt, t) {
     const a = E.ak;
     if (a === 'atk' || a === 'hv') {
       if (a === 'hv') { // 강타: 웅크려 칼을 등 뒤까지 젖히고, 높이 뛰어올라 몸을 던지듯 내려찍어요
-        const L1 = 0.314; // 땅에 닿는 순간 (sim의 HV_DELAY / 0.7)
-        const cr = seg(v, 0, 0.12), up = seg(v, 0.1, 0.2), dn = seg(v, 0.22, L1), rc = seg(v, 0.62, 1), x = 1 - rc, two = role !== 'knight' && role !== 'squire';
+        const L1 = 0.379; // 땅에 닿는 순간 (sim의 HV_DELAY 0.36 / 0.95)
+        const cr = seg(v, 0, 0.08), up = seg(v, 0.06, 0.18), dn = seg(v, 0.26, L1), rc = seg(v, 0.68, 1), x = 1 - rc, two = role !== 'knight' && role !== 'squire';
         T.rx = (-1.2 * cr - 2.6 * up + 2.9 * dn) * x + base[0] * rc; T.lx = (-0.6 * cr - 2.6 * up + (two ? 2.9 : 2.6) * dn) * x + base[1] * rc;
         T.rz = (0.35 * cr - 0.35 * dn) * x; T.lz = two ? 0.3 * x : -0.5 * up * (1 - dn) * x;
         T.bx = (0.35 * cr - 0.85 * up + 1.45 * dn) * x; T.hx = (-0.25 * up + 0.45 * dn) * x;
-        T.jy = hop(0.12, L1, 2.2); T.bz = (0.9 * up + 0.4 * dn) * x;
-        T.sq = 0.35 * cr * (1 - up) - 0.25 * up * (1 - dn) + land(L1, 0.55); T.by = (-0.35 * cr * (1 - up) - 0.45 * dn) * x; T.lg = (0.6 * cr * (1 - up) + 0.9 * dn) * x;
+        T.jy = hop(0.07, L1, 3.8); T.bz = 0.3 * dn * x; T.bry = 0.5 * cr * (1 - dn) * x;
+        T.sq = 0.5 * cr * (1 - up) - 0.4 * up * (1 - dn) + land(L1, 0.75); T.by = (-0.35 * cr * (1 - up) - 0.45 * dn) * x; T.lg = (0.6 * cr * (1 - up) + 0.9 * dn) * x;
         if (role === 'archer') { T.pull = 0.75 * up * (1 - dn); T.rpz = -0.4 * up * (1 - dn); }
       } else if (role === 'knight' || role === 'squire') { // 옆으로 크게 베기: 반대쪽으로 감았다가 휘둘러요
         const w = seg(v, 0, 0.18), st = seg(v, 0.18, 0.55), rc = seg(v, 0.6, 1);
@@ -708,6 +708,10 @@ function animHero(E, p, dt, t) {
         default: T.rx = -2.8 * hold;
       }
     }
+  }
+  if (E.ak && E.ak !== 'hv') { // 모든 동작을 훨씬 크게: 기본 자세에서 벗어난 만큼을 키워요
+    const X = 1.4; for (const k of ['rz', 'lz', 'bx', 'by', 'bz', 'bry', 'hx']) T[k] *= X;
+    T.rx = base[0] + (T.rx - base[0]) * 1.25; T.lx = base[1] + (T.lx - base[1]) * 1.25; T.jy *= 1.9; T.sq = clampN(T.sq * 1.5, -0.5, 0.7); T.lg *= 1.3;
   }
   if (p.bk && E.ak !== 'block') { T.lx = -1.6; }
   const k = Math.min(1, dt * 30), L = (o, kk, v2) => { E[kk] = E[kk] == null ? v2 : E[kk] + (v2 - E[kk]) * k; return E[kk]; };
