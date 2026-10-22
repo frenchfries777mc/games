@@ -141,8 +141,9 @@ function basicAttack(G, p) {
   const cmb = !p.bot && p.role === 'knight', aid = p.atkN = (p.atkN || 0) + 1;
   if (cmb) { p.combo = p.comboT > 0 ? ((p.combo || 0) + 1) % 3 : 0; p.comboT = 1.2; }
   const heavy = cmb && p.combo === 2, hm = heavy ? 1.7 : 1;
-  if (heavy) ev(G, 'heavy', { id: p.id, x: p.x + Math.cos(p.a) * 1.6, z: p.z + Math.sin(p.a) * 1.6, a: p.a });
-  p.anim = heavy ? 'hv' : 'atk'; p.animT = heavy ? 0.55 : 0.32; p.animN = (p.animN || 0) + 1;
+  p.anim = heavy ? 'hv' : 'atk'; p.animT = heavy ? 0.7 : 0.32; p.animN = (p.animN || 0) + 1;
+  // 강타는 뛰어올랐다가 땅에 내려찍는 순간 맞아요
+  if (heavy) { p.hvT = HV_DELAY; p.hvAid = aid; return; }
   if (A.kind === 'melee') {
     ev(G, 'swing', { id: p.id, x: p.x, z: p.z, a: p.a, r: A.range, role: p.role });
     for (const e of G.enemies) { if (e.hp <= 0) continue; const d = dist(p, e); if (d < A.range * (heavy ? 1.2 : 1) + e.r && angDiff(p.a, angTo(p, e)) < A.arc / 2 + (heavy ? 0.6 : 0.25)) hurtEnemy(G, e, A.dmg * hm, p, { basic: true, aid, heavy, burn: A.burn, kb: heavy ? 7 : 3, kbA: angTo(p, e) }); }
@@ -151,10 +152,17 @@ function basicAttack(G, p) {
     ev(G, 'shoot', { id: p.id, pk: A.kind, x: p.x, z: p.z });
   }
 }
+const HV_DELAY = 0.22;
+function heavyLand(G, p) {
+  const A = ROLES[p.role].atk;
+  ev(G, 'heavy', { id: p.id, x: p.x + Math.cos(p.a) * 1.6, z: p.z + Math.sin(p.a) * 1.6, a: p.a });
+  ev(G, 'swing', { id: p.id, x: p.x, z: p.z, a: p.a, r: A.range, role: p.role });
+  for (const e of G.enemies) { if (e.hp <= 0) continue; const d = dist(p, e); if (d < A.range * 1.2 + e.r && angDiff(p.a, angTo(p, e)) < A.arc / 2 + 0.6) hurtEnemy(G, e, A.dmg * 1.7, p, { basic: true, aid: p.hvAid, heavy: true, burn: A.burn, kb: 7, kbA: angTo(p, e) }); }
+}
 function useSkill(G, p, si, inp) {
   const R = ROLES[p.role], S = R.skills[si], key = 's' + si;
   if (p.cd[key] > 0) return;
-  p.cd[key] = S.cd * cdMul(p, 'skill'); p.anim = S.id; p.animT = 0.5; p.animN = (p.animN || 0) + 1;
+  p.cd[key] = S.cd * cdMul(p, 'skill'); p.anim = S.id; p.animT = 0.65; p.animN = (p.animN || 0) + 1;
   ev(G, 'skill', { id: p.id, s: S.id, x: p.x, z: p.z, a: p.a });
   switch (S.id) {
     case 'block': p.block = 1.2; break;
@@ -293,6 +301,7 @@ function stepPlayer(G, p, inp, dt) {
   for (const k in p.cd) if (p.cd[k] > 0) p.cd[k] -= dt;
   ['block', 'taunt', 'rally', 'inv', 'hitT', 'animT', 'rollCd', 'focus', 'pdCd'].forEach(k => { if (p[k] > 0) p[k] = Math.max(0, p[k] - dt); });
   if (p.comboT > 0) { p.comboT -= dt; if (p.comboT <= 0) p.combo = 0; }
+  if (p.hvT > 0) { p.hvT -= dt; if (p.hvT <= 0) { p.hvT = 0; if (!p.down && !p.dead) heavyLand(G, p); } }
   if (p.shieldT > 0) { p.shieldT -= dt; if (p.shieldT <= 0) p.shield = 0; }
   if (p.dead) {
     // 완전히 쓰러지면 12초 뒤 마지막 모닥불에서 다시 일어나요
