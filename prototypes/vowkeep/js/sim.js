@@ -19,7 +19,9 @@ function enemyStats(ch) {
   const C = CHAPTERS[ch], F = FOES[ch] || FOES[0], o = {};
   for (const k of ['skel', 'archer', 'shield', 'elite']) {
     const b = ENEMIES[k], f = F[k] || {};
-    o[k] = Object.assign({}, b, { name: f.name || b.name, hp: Math.round(b.hp * (f.hp || 1) * C.diff), dmg: Math.round(b.dmg * C.diff), speed: b.speed * (f.speed || 1), r: f.r || b.r, proj: f.proj || 'earrow', psp: f.psp || 17 });
+    // 잡몹은 쉽게: 체력 70%, 공격 75% (정예는 85%씩)
+    const eh = k === 'elite' ? 0.85 : 0.7, ed = k === 'elite' ? 0.85 : 0.75;
+    o[k] = Object.assign({}, b, { name: f.name || b.name, hp: Math.round(b.hp * (f.hp || 1) * C.diff * eh), dmg: Math.round(b.dmg * C.diff * ed), speed: b.speed * (f.speed || 1), r: f.r || b.r, proj: f.proj || 'earrow', psp: f.psp || 17 });
   }
   o.boss = Object.assign({}, ENEMIES.boss, C.boss, { honor: 0 });
   return o;
