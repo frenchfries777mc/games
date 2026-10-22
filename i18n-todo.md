@@ -124,3 +124,9 @@ index.html | 랭킹 표 | 최장 생존 일수, 생존 순위는 서버 준비 �
 - crownenvoy/patchnotes.json | b81 1줄 (i18n.js N에 15개 언어 번역 넣음) | 2026-10-22
 - 이탈리아어·폴란드어·아랍어 추가 (오너 2026-10-22): 앞으로 새 문구는 it/pl/ar도 함께 번역해야 함 (Crown Envoy는 ar이 원래 있었음, it/pl 추가)
 - isleport/patchnotes.json | v0.2 build 46 1줄 (게임 안 NOTES는 it/pl/ar까지 넣음) | 2026-10-22
+
+## Crown Envoy b82 (2026-10-22)
+- crownenvoy/CrownEnvoy-v0.3.html | 메뉴 나가기 | 나가기 / 이 창을 닫아요. AI 대전은 자동 저장돼 있으면 홈 화면의 [저장된 게임]에서 이어 할 수 있어요. / 게임 중이면 나가는 것과 같아요. | b82 | 2026-10-22
+- crownenvoy/CrownEnvoy-v0.3.html | 나가기 확인·안내 창 | 게임을 나가고 이 창을 닫을까요? / 브라우저가 이 창을 닫지 못했어요. 탭을 직접 닫거나 사이트로 이동해 주세요. / 사이트로 이동 / 그대로 있기 | b82 | 2026-10-22
+- crownenvoy/CrownEnvoy-v0.3.html | 메뉴 이름 변경 | 게임에서 나가기 → 게임 그만두기 / 버튼 그만두기 | b82 | 2026-10-22
+- crownenvoy/patchnotes.json·i18n.js | N["b82"] (en·es·fr·de·ja·ar 한국어 임시) | 나가기 버튼 변경 외 3줄 | b82 | 2026-10-22
