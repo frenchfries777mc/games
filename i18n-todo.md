@@ -163,3 +163,8 @@ index.html | 랭킹 표 | 최장 생존 일수, 생존 순위는 서버 준비 �
 
 ## Crown Envoy b86 (2026-10-22)
 - crownenvoy/patchnotes.json·i18n.js | N["b86"] (en·es·fr·de·ja·ar 한국어 임시) | 징집 순서 변경 (게임 안 새 문구 없음) | b86 | 2026-10-22
+
+## Crown Envoy b87 (2026-10-22)
+- crownenvoy/CrownEnvoy-v0.3.html | 정치 탭 신성로마제국 | 👑 신성로마제국 / 황제: X / 나폴레옹 전쟁 이전에는 8턴마다 제국 영토를 가진 나라들이 황제를 뽑아요. … / 지금 선거 중이에요. 결정 창에서 투표해 주세요. / 다음 선거까지 N턴 · 내 투표권 N표 | b87 | 2026-10-22
+- crownenvoy/CrownEnvoy-v0.3.html | 황제 선거 결정 창·알림·신문·로그 | 신성로마제국 황제 선거 / 제국 영토 1곳이 1표예요. … / 기권 / 황제 선거 결과 / X이(가) 신성로마제국의 황제로 선출됐다 | b87 | 2026-10-22
+- crownenvoy/patchnotes.json·i18n.js | N["b87"] (en·es·fr·de·ja·ar 한국어 임시) | 신성로마제국 황제 선거 추가 외 3줄 | b87 | 2026-10-22
