@@ -141,3 +141,5 @@ index.html | 랭킹 표 | 최장 생존 일수, 생존 순위는 서버 준비 �
 - patchnotes.json | "Vowkeep 연타와 모닥불 조작 수정" 4줄 | Vowkeep b14 | 2026-10-22
 - patchnotes.json | "Vowkeep 캐릭터 공격·기술 동작" 6줄 | Vowkeep b15 | 2026-10-22
 - patchnotes.json | "Vowkeep 강타 내려찍기 동작" 4줄 | Vowkeep b16 | 2026-10-22
+- prototypes/vowkeep/index.html | 조작 설명 연타 문장 변경(기사 전용) | 한국어만 있음 | Vowkeep b17 | 2026-10-22
+- patchnotes.json | "Vowkeep 기사 전용 연타" 2줄 | Vowkeep b17 | 2026-10-22
