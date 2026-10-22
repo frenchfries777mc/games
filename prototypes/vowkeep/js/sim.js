@@ -96,7 +96,7 @@ function hurtPlayer(G, p, dmg, src) {
   if (hasB(p, 'last') && p.hp < p.maxhp * 0.3) d *= 0.75;
   if (p.shield > 0) { const s = Math.min(p.shield, d); p.shield -= s; d -= s; }
   d = Math.round(d); if (d <= 0) return 0;
-  p.hp -= d; p.hitT = 0.25; p.combo = 0; p.comboT = 0; ev(G, 'phit', { id: p.id, x: p.x, z: p.z, v: d });
+  p.hp -= d; p.hitT = 0.25; ev(G, 'phit', { id: p.id, x: p.x, z: p.z, v: d });
   if (hasB(p, 'thorn') && src && src.hp > 0 && src.id) hurtEnemy(G, src, 8, null, {});
   if (p.hp <= 0) { p.hp = 0; p.down = true; p.bleed = 20; p.revT = 0; p.everDown = true; G.stats.downs++; ev(G, 'down', { id: p.id, x: p.x, z: p.z }); }
   return d;
@@ -115,7 +115,7 @@ function hurtEnemy(G, e, dmg, p, o) {
   }
   d = Math.max(1, Math.round(d));
   e.hp -= d; e.hitT = 0.15; ev(G, 'ehit', { x: e.x, z: e.z, v: d, id: e.id, crit: d > dmg * 1.4, hv: o.heavy ? 1 : 0 });
-  if (o.basic && p && !p.bot && o.aid && p.lastAid !== o.aid) { p.lastAid = o.aid; p.combo = (p.comboT > 0 ? p.combo || 0 : 0) + 1; p.comboT = 1.2; if (o.heavy) ev(G, 'heavy', { id: p.id, x: e.x, z: e.z, a: angTo(p, e) }); }
+  if (o.basic && p && !p.bot && p.role === 'knight' && o.aid && p.lastAid !== o.aid) { p.lastAid = o.aid; p.combo = (p.comboT > 0 ? p.combo || 0 : 0) + 1; p.comboT = 1.2; if (o.heavy) ev(G, 'heavy', { id: p.id, x: e.x, z: e.z, a: angTo(p, e) }); }
   if (p && hasB(p, 'leech') && alive(p)) p.hp = Math.min(p.maxhp, p.hp + 1);
   if ((o.burn || (p && hasB(p, 'fire') && o.basic)) && e.hp > 0) { e.burn = 3; }
   if (o.kb && e.k !== 'boss') { e.vx += Math.cos(o.kbA) * o.kb; e.vz += Math.sin(o.kbA) * o.kb; }
@@ -138,8 +138,8 @@ function aimPoint(p, inp, range) {
 function basicAttack(G, p) {
   const R = ROLES[p.role], A = R.atk;
   p.cd.atk = A.cd * cdMul(p, 'atk');
-  // 연타: 적을 맞힐 때만 쌓이고(1.2초 안에 이어서), 3번째 맞힘마다 강타가 나가요. 봇은 쓰지 않아요
-  const aid = p.atkN = (p.atkN || 0) + 1, heavy = !p.bot && (p.comboT > 0 ? p.combo || 0 : 0) % 3 === 2, hm = heavy ? 1.7 : 1;
+  // 연타(기사만): 적을 맞힐 때만 쌓이고(1.2초 안에 이어서), 3번째 맞힘마다 강타가 나가요. 봇은 쓰지 않아요
+  const cmb = !p.bot && p.role === 'knight', aid = p.atkN = (p.atkN || 0) + 1, heavy = cmb && (p.comboT > 0 ? p.combo || 0 : 0) % 3 === 2, hm = heavy ? 1.7 : 1;
   p.anim = heavy ? 'hv' : 'atk'; p.animT = heavy ? 0.55 : 0.32; p.animN = (p.animN || 0) + 1;
   if (A.kind === 'melee') {
     ev(G, 'swing', { id: p.id, x: p.x, z: p.z, a: p.a, r: A.range, role: p.role });
