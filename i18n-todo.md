@@ -111,3 +111,5 @@ index.html | 랭킹 표 | 최장 생존 일수, 생존 순위는 서버 준비 �
 - planetsearch/index.html | 신호 {n} / 4 정확 · 기록 {n} / 3, 총 인구 / 명 / 최고 기록!, {n} 부족 (정비소 버튼) | educations | 2026-10-21
 - timeline/index.html | 점수 (기존 문구 재사용, 결과 화면 점수 라벨) | educations | 2026-10-21
 - patchnotes.json | "Vowkeep 난이도 상승" 6줄 | Vowkeep b5 | 2026-10-22
+- 허브 사이트 (2026-10-22): Korean only. hub/index.html 소개 문구 한 단락, 옛 주소 안내 문구(games/lounge, settings, music 자리표시 페이지 "이 페이지는 … 로 옮겼어요.").
+- patchnotes.json | "Vowkeep 원래 픽셀 그래픽과 화려한 기술 연출" 5줄 | Vowkeep b8 | 2026-10-22
