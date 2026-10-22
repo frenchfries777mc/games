@@ -346,6 +346,23 @@ function pickBlessIdx(i) {
 }
 
 /* ---------- 이벤트 → 효과 ---------- */
+// 기술마다 번쩍임, 바닥 문양, 충격파 같은 연출을 붙여요
+function skillFx(e) {
+  const c = Math.cos(e.a || 0), s = Math.sin(e.a || 0), mine = e.id === S.me;
+  switch (e.s) {
+    case 'block': view.dome(e.x + c * 0.6, e.z + s * 0.6, 1.9, 0xffe08a, 1.2); view.burst(e.x + c, 1.6, e.z + s, 0xffe08a, 10, 5, 0.35, 0.1); view.flash(e.x, e.z, 0xffe08a, 70); SFX.play('clang'); break;
+    case 'dash': view.streak(e.x, e.z, e.a, 6, 0xcfe0ff, 0.4, 1.2); view.burst(e.x, 0.4, e.z, 0xbcae94, 16, 5, 0.6, 0.16); view.shock(e.x + c * 6, e.z + s * 6, 2.4, 0xcfe0ff, 0.35); view.flash(e.x + c * 4, e.z + s * 4, 0xcfe0ff, 90); if (mine) view.shake = Math.max(view.shake, 0.5); SFX.play('roll'); break;
+    case 'taunt': view.shock(e.x, e.z, 10, 0xff6a4a, 0.6); view.rune(e.x, e.z, 2.6, 0xff6a4a, 1.2, 3); view.rise(e.x, e.z, 0xff6a4a, 18, 1.5, 0.9, 7); view.flash(e.x, e.z, 0xff6a4a, 120); if (mine) view.shake = Math.max(view.shake, 0.7); SFX.play('roar'); break;
+    case 'pierce': view.streak(e.x, e.z, e.a, 18, 0xffe08a, 0.3, 0.35); view.burst(e.x + c, 1.6, e.z + s, 0xffe08a, 12, 6, 0.4, 0.12); view.flash(e.x, e.z, 0xffe08a, 80); break;
+    case 'rain': view.rune(e.x, e.z, 1.4, 0xffd36b, 0.6, 5); view.rise(e.x, e.z, 0xffd36b, 8, 0.8, 0.5, 9); break;
+    case 'heal': view.rune(e.x, e.z, 6, 0x9af0a8, 1.3, 1.5); view.rise(e.x, e.z, 0x9af0a8, 18, 5, 1.2, 4); view.column(e.x, e.z, 0x9af0a8, 0.7); view.flash(e.x, e.z, 0x9af0a8, 100); break;
+    case 'ward': view.rune(e.x, e.z, 7.5, 0x9af0e0, 1.2, -1.5); view.flash(e.x, e.z, 0x9af0e0, 90); break;
+    case 'raise': view.rune(e.x, e.z, 8, 0xfff0b0, 1.8, 1); view.column(e.x, e.z, 0xfff0b0, 1.4); view.rise(e.x, e.z, 0xfff0b0, 28, 7, 1.6, 6); view.shock(e.x, e.z, 8, 0xfff0b0, 0.7); view.flash(e.x, e.z, 0xfff0b0, 200); view.shake = Math.max(view.shake, 0.6); break;
+    case 'potion': view.burst(e.x + c, 1.8, e.z + s, 0xd0543a, 6, 3, 0.3, 0.1); break;
+    case 'trap': view.rune(e.x, e.z, 1.5, 0xffb060, 0.8, 6); view.burst(e.x, 0.3, e.z, 0x9a9aa6, 10, 4, 0.4, 0.12); SFX.play('click'); break;
+    case 'rally': view.shock(e.x, e.z, 9, 0xffd36b, 0.6); view.rune(e.x, e.z, 3, 0xffb040, 1.2, -3); view.flash(e.x, e.z, 0xffb040, 120); if (mine) view.shake = Math.max(view.shake, 0.6); SFX.play('roar'); break;
+  }
+}
 const COL = { knight: 0xcfe0ff, squire: 0xffb060 };
 function onEvent(e) {
   const me = S.me;
@@ -359,17 +376,11 @@ function onEvent(e) {
     case 'ekill': view.burst(e.x, 1.2, e.z, e.en === 'boss' ? 0xff3a3a : 0xd8d0bc, e.en === 'boss' ? 40 : 12, 7, 0.8, 0.14); SFX.play('kill'); if (e.en === 'boss') view.shake = 1.4; break;
     case 'block': case 'clang': SFX.play('clang'); view.burst(e.x, 1.8, e.z, 0xffe08a, 4, 4, 0.25, 0.08); break;
     case 'heal': num(e.x, e.z, '+' + e.v, '#9af0a8', 1); view.burst(e.x, 1.5, e.z, 0x9af0c0, 6, 3, 0.7, 0.1); SFX.play('heal'); break;
-    case 'ward': { const p = view.entPos('p' + e.id); if (p) view.ring(p.x, p.z, 2.2, 0x9af0e0); break; }
-    case 'rally': { const p = view.entPos('p' + e.id); if (p) view.ring(p.x, p.z, 2.4, 0xffd36b); break; }
-    case 'skill': {
-      if (e.s === 'taunt') { view.ring(e.x, e.z, 10, 0xff6a4a, 0.6); SFX.play('roar'); }
-      else if (e.s === 'heal') view.ring(e.x, e.z, 6, 0x9af0a8, 0.6);
-      else if (e.s === 'raise') view.ring(e.x, e.z, 8, 0xfff0b0, 0.7);
-      else if (e.s === 'dash') { view.burst(e.x, 0.5, e.z, 0xbcae94, 10, 4, 0.5, 0.15); SFX.play('roll'); }
-      else if (e.s === 'block') SFX.play('clang');
-      break;
-    }
-    case 'mark': view.ring(e.x, e.z, 2, 0xff3a3a, 0.6); break;
+    case 'ward': { const p = view.entPos('p' + e.id); if (p) { view.dome(p.x, p.z, 1.8, 0x9af0e0, 0.9); view.rise(p.x, p.z, 0x9af0e0, 8, 1, 0.8, 4); } break; }
+    case 'rally': { const p = view.entPos('p' + e.id); if (p) { view.ring(p.x, p.z, 2.4, 0xffd36b); view.rise(p.x, p.z, 0xffb040, 8, 1, 0.7, 6); } break; }
+    case 'skill': skillFx(e); break;
+    case 'mark': view.rune(e.x, e.z, 1.6, 0xff3a3a, 1.4, 4); view.column(e.x, e.z, 0xff3a3a, 0.6); view.flash(e.x, e.z, 0xff3a3a, 60); break;
+    case 'splash': view.burst(e.x, 0.6, e.z, 0x9af0a8, 16, 6, 0.6, 0.14); view.ring(e.x, e.z, 3, 0x9af0a8, 0.5); view.rise(e.x, e.z, 0x9af0a8, 10, 2.5, 0.8, 4); view.flash(e.x, e.z, 0x9af0a8, 70); break;
     case 'down': SFX.play('down'); if (e.id === me) { S.everDown = true; bigMsg('쓰러졌어요', '동료가 일으켜 줄 때까지 버텨요', 2200); } break;
     case 'revive': view.column(e.x, e.z, 0xfff0b0); SFX.play('revive'); if (e.id === me) bigMsg('다시 일어났어요', '', 1400); break;
     case 'roll': if (e.id !== me) SFX.play('roll'); break;
