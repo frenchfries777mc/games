@@ -189,3 +189,7 @@ crownenvoy/CrownEnvoy-v0.4.html | KON (영토 한글 이름 1,451개) | 영어 �
 
 ## Vowkeep b20 (2026-10-22)
 - patchnotes.json | "Vowkeep 실제로 뛰어오르는 강타" 3줄 | Vowkeep b20 | 2026-10-22
+
+## Vowkeep b21 (2026-10-22)
+- prototypes/vowkeep/js/main.js | 적 머리 위 "둔화" 표시 | 한국어만 있음 | Vowkeep b21 | 2026-10-22
+- patchnotes.json | "Vowkeep 범위 강타와 사제·종자 큰 공격" 5줄 | Vowkeep b21 | 2026-10-22
