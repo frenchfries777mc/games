@@ -958,7 +958,7 @@ setTimeout(go,14000);})();</script>
   <div class="card" id="settingsScreen" style="width:min(480px,94vw); max-height:86vh; overflow-y:auto;">
     <button class="backlink" id="settingsBackBtn" style="position:absolute; top:14px; right:14px; margin:0;">&larr; 뒤로가기</button>
     <h2 style="margin:0;">⚙️ 설정</h2>
-    <button class="btn-secondary btn-full" id="settingsToSiteBtn" style="margin-top:12px;">사이트로 돌아가기</button>
+    <button class="btn-secondary btn-full" id="settingsToSiteBtn" style="margin-top:12px;">나가기</button>
     <div style="margin-top:14px;text-align:center;font-size:11px;opacity:.6;"><a href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.ko" target="_blank" rel="noopener" style="color:inherit;">© 2026 Frenchfries777 · CC BY-NC-ND 4.0</a></div>
     <div style="font-size:12px; color:var(--text-dim); font-weight:700; margin:16px 0 6px;" data-notr>🌐 Language · 언어</div>
     <select id="settingsLangSelect" data-notr style="width:100%; padding:9px 10px; border-radius:8px; border:1px solid var(--line); background:var(--panel-2); color:var(--text); font-size:15px;">
@@ -1771,7 +1771,11 @@ document.getElementById('feedbackSendBtn').onclick=async()=>{
 };
 document.getElementById('settingsBadge').onclick=()=>{ showScreen('settingsScreen'); renderSettingsScreen(); };
 document.getElementById('settingsBackBtn').onclick=()=>showScreen('menuScreen');
-document.getElementById('settingsToSiteBtn').onclick=()=>{ location.href='https://frenchfries777mc.github.io/games/'; };      // back to the games hub
+document.getElementById('settingsToSiteBtn').onclick=async ()=>{      // 나가기: the game is opened in its own window by the site, so it closes that window
+  try{ window.close(); }catch(e){}
+  await new Promise(r=>setTimeout(r,250));
+  if(!window.closed && await uiConfirm('이 창은 직접 닫을 수 없어요. 사이트로 돌아갈까요?')) location.href='https://frenchfries777mc.github.io/games/';       // (opened by typing the address: the browser refuses to close it)
+};
 document.getElementById('keybindResetBtn').onclick=()=>{ keyBindings=defaultKeyBindings(); persistKeyBindings(); renderKeybinds(); updateControlsHint(); };
 // ===== Weapon mastery =====
 // Every weapon (character) levels up on its own the more it is used. Mastery XP is earned when a match ends with that
@@ -4767,7 +4771,7 @@ function shuffle(arr){ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.
 /* ===== the version of this file =====
    Players with different versions CAN meet and play together: the automatic matchmaking uses the same room names for every version (online-<mode>-<map>-<slot>), and nobody is refused because of a different build.
    The build is only sent along with the join message and the lobby (for information); the corner of the screen shows it. */
-const GAME_BUILD='build 2026-10-18-v336';
+const GAME_BUILD='build 2026-10-18-v337';
 const GAME_VERSION='0.8', GAME_VERSION_NAME='황금을 찾아서';   // 게임 버전 이름: versions.json의 title과 같게 (빌드마다 바꾸지 않음)
 const WEEKLY_EVENTS=[
   {id:'lowg',    name:'저중력 난투', desc:'몸이 둥실둥실, 중력이 약해진 난투', rules:{grav:0.6}},
