@@ -139,3 +139,4 @@ index.html | 랭킹 표 | 최장 생존 일수, 생존 순위는 서버 준비 �
 - patchnotes.json | "Vowkeep 저스트 회피와 연타" 6줄 | Vowkeep b13 | 2026-10-22
 - prototypes/vowkeep/js/main.js, index.html | "F를 꾹 눌러 모닥불 피우기", "강타!", 조작 설명 문장 변경 | 한국어만 있음 | Vowkeep b14 | 2026-10-22
 - patchnotes.json | "Vowkeep 연타와 모닥불 조작 수정" 4줄 | Vowkeep b14 | 2026-10-22
+- patchnotes.json | "Vowkeep 캐릭터 공격·기술 동작" 6줄 | Vowkeep b15 | 2026-10-22
