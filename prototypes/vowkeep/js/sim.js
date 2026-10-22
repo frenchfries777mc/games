@@ -145,8 +145,8 @@ function basicAttack(G, p, inp) {
   if (cmb) { p.combo = p.comboT > 0 ? ((p.combo || 0) + 1) % 3 : 0; p.comboT = 1.2; }
   const third = cmb && p.combo === 2, heavy = third && p.role === 'knight', big = third && !heavy, hm = big ? 1.5 : 1;
   p.anim = heavy ? 'hv' : big ? 'big' : 'atk'; p.animT = heavy ? 0.95 : big ? 0.6 : 0.32; p.animN = (p.animN || 0) + 1;
-  // 강타는 조준한 쪽으로 실제로 뛰어올라 날아가서, 땅에 내려찍는 순간 맞아요
-  if (heavy) { p.hvT = HV_DELAY; p.hvAid = aid; const L = leapDist(p, inp && inp.ax, inp && inp.az); p.lpx = Math.cos(p.a) * L / HV_DELAY; p.lpz = Math.sin(p.a) * L / HV_DELAY; return; }
+  // 강타는 제자리에서 높이 뛰어올라, 땅에 내려찍는 순간 맞아요 (공중에 있는 동안은 움직이지 않아요)
+  if (heavy) { p.hvT = HV_DELAY; p.hvAid = aid; return; }
   if (big) ev(G, 'big', { id: p.id, role: p.role, x: p.x + Math.cos(p.a) * 1.4, z: p.z + Math.sin(p.a) * 1.4, a: p.a });
   if (A.kind === 'melee') {
     ev(G, 'swing', { id: p.id, x: p.x, z: p.z, a: p.a, r: A.range * (big ? 1.3 : 1), role: p.role });
@@ -156,9 +156,7 @@ function basicAttack(G, p, inp) {
     ev(G, 'shoot', { id: p.id, pk: A.kind, x: p.x, z: p.z });
   }
 }
-export const HV_DELAY = 0.36, LEAP_MAX = 4.5, HV_R = 3.2;
-// 뛰는 거리: 조준한 곳 바로 앞까지, 최대 4.5m
-export function leapDist(p, ax, az) { if (ax == null || !isFinite(ax)) return LEAP_MAX; return Math.max(0, Math.min(LEAP_MAX, Math.hypot(ax - p.x, az - p.z) - 1.2)); }
+export const HV_DELAY = 0.36, HV_R = 3.2;
 function heavyLand(G, p) {
   const A = ROLES[p.role].atk;
   ev(G, 'heavy', { id: p.id, x: p.x + Math.cos(p.a) * 1.6, z: p.z + Math.sin(p.a) * 1.6, a: p.a });
@@ -343,7 +341,7 @@ function stepPlayer(G, p, inp, dt) {
       p.roll = 0.35; p.rollCd = 1.2 * (hasB(p, 'roll') ? 0.6 : 1);
       const ra = ml > 0.1 ? Math.atan2(mz, mx) : p.a; p.rdx = Math.cos(ra); p.rdz = Math.sin(ra); ev(G, 'roll', { id: p.id });
     }
-    if (p.hvT > 0) { p.x += p.lpx * dt; p.z += p.lpz * dt; }
+    if (p.hvT > 0) { /* 강타 공중: 제자리 */ }
     else if (p.roll > 0) { p.roll -= dt; p.x += p.rdx * 15 * dt; p.z += p.rdz * 15 * dt; }
     else { p.x += mx * sp * dt; p.z += mz * sp * dt; }
     p.moving = ml > 0.1;
@@ -634,8 +632,18 @@ function botThink(G, p, dt) {
       if (Math.hypot(wx - p.x, wz - p.z) < 3 && G.route < MAP.route.length - 1) G.route++;
       moveTo(G, p, inp, wx, wz, 1);
     } else if (leader) {
-      const bx = leader.x - Math.cos(leader.a) * 2.2 + (p.slot - 1.5) * 1.3, bz = leader.z - Math.sin(leader.a) * 2.2;
-      if (dist(p, leader) > 4.5) moveTo(G, p, inp, isWall(bx, bz) ? leader.x : bx, isWall(bx, bz) ? leader.z : bz, 0.8);
+      // 느슨하게 따라가요: 9m보다 멀어지면 출발하고 5m 안에 들면 멈춰요. 서 있는 자리는 봇마다 따로라서 내가 돌아도 우르르 움직이지 않아요
+      const dl = dist(p, leader);
+      if (dl > 9) ai.fol = true; else if (dl < 5) ai.fol = false;
+      if (ai.fol) {
+        const q = p.slot * 2.1 + 0.6, bx = leader.x + Math.cos(q) * 3.5, bz = leader.z + Math.sin(q) * 3.5;
+        moveTo(G, p, inp, isWall(bx, bz) ? leader.x : bx, isWall(bx, bz) ? leader.z : bz, 1.2);
+      } else {
+        // 멈춰 있을 때는 가끔 근처를 몇 걸음 둘러봐요
+        ai.wt = (ai.wt || 0) - dt;
+        if (ai.wt <= 0) { ai.wt = 2.5 + G.rng() * 3; const r = G.rng(); ai.wa = r < 0.45 ? G.rng() * TAU : null; ai.wd = 0.5 + G.rng() * 0.6; }
+        if (ai.wa != null && (ai.wd -= dt) > 0) { const nx = p.x + Math.cos(ai.wa) * 0.8, nz = p.z + Math.sin(ai.wa) * 0.8; if (!isWall(nx, nz) && Math.hypot(nx - leader.x, nz - leader.z) < 7) { inp.mx = Math.cos(ai.wa) * 0.45; inp.mz = Math.sin(ai.wa) * 0.45; inp.aim = ai.wa; } }
+      }
     }
     return inp;
   }

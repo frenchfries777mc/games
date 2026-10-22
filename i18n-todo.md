@@ -199,3 +199,6 @@ crownenvoy/CrownEnvoy-v0.4.html | KON (영토 한글 이름 1,451개) | 영어 �
 
 ## Vowkeep b23 (2026-10-22)
 - patchnotes.json | "Vowkeep 잡몹 난이도 낮춤" 3줄 | Vowkeep b23 | 2026-10-22
+
+## Vowkeep b24 (2026-10-22)
+- patchnotes.json | "Vowkeep 봇 따라오기와 제자리 강타" 3줄 | Vowkeep b24 | 2026-10-22
