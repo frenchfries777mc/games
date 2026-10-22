@@ -253,6 +253,10 @@ function offerBless(G) {
     G.bless[p.id] = pick;
   }
 }
+// 다음 장으로 넘어갈 때 받은 축복을 그대로 가져가요
+export function carryOver(G, P) {
+  G.players.forEach((p, i) => { const q = P.players[i]; if (!q) return; p.bl = q.bl.slice(); if (hasB(p, 'armor')) { p.maxhp += 25; p.hp = p.maxhp; } });
+}
 export function chooseBless(G, pid, bid) {
   const opts = G.bless[pid]; if (!opts || opts.indexOf(bid) < 0) return;
   const p = G.players.find(q => q.id === pid); if (!p) return;
@@ -296,7 +300,7 @@ function stepPlayer(G, p, inp, dt) {
   }
   p.reviving = null;
   const R = ROLES[p.role];
-  let sp = R.speed * (hasB(p, 'feet') ? 1.12 : 1) * (p.rally > 0 ? 1.3 : 1) * (p.block > 0 ? 0.45 : 1);
+  let sp = R.speed * (hasB(p, 'feet') ? 1.12 : 1) * (p.rally > 0 ? 1.3 : 1) * (p.block > 0 ? 0.8 : 1);
   if (inp.aim != null && isFinite(inp.aim)) p.a = inp.aim;
   if (inp.px != null && isFinite(inp.px)) {
     // 원격 플레이어: 자기 화면에서 움직인 위치를 믿되, 너무 멀리 뛰면 막아요
