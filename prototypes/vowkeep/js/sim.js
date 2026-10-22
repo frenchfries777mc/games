@@ -4,7 +4,7 @@ import { ROLES, ROLE_IDS, ENEMIES, BLESSINGS, CHAPTER1, MAP, GEAR_BONUS } from '
 import { collide as mapCollide, isWall, lineClear, navDir, areaAt, cw, PILLARS } from './map.js';
 
 export const INTRO_T = 16;
-const WAKE_R = 11, LEASH_R = 30, BOSS_AREA = MAP.areas.findIndex(a => a.boss);
+const WAKE_R = 14, LEASH_R = 30, BOSS_AREA = MAP.areas.findIndex(a => a.boss);
 const TAU = Math.PI * 2;
 const clamp = (v, a, b) => v < a ? a : v > b ? b : v;
 const dist = (a, b) => Math.hypot(a.x - b.x, a.z - b.z);
@@ -50,7 +50,7 @@ function placeAt(G, c) {
 function hasB(p, id) { return p.bl.indexOf(id) >= 0; }
 function ev(G, k, o) { G.ev.push(Object.assign({ k }, o || {})); }
 function alive(p) { return !p.down && !p.dead; }
-function hpMul(G) { return 1 + 0.18 * (Math.max(1, G.humans) - 1); }
+function hpMul(G) { return 1 + 0.35 * (Math.max(1, G.humans) - 1); }
 
 function spawnEnemy(G, k, x, z, home) {
   const E = ENEMIES[k], hp = Math.round(E.hp * hpMul(G));
@@ -66,7 +66,7 @@ function wake(G, e) {
   e.st = 'idle'; e.cd = 0.4 + G.rng() * 0.8;
   if (e.k !== 'boss') ev(G, 'wake', { x: e.x, z: e.z, id: e.id });
   // 근처에 잠든 동료도 같이 깨워요
-  for (const o of G.enemies) if (o !== e && o.hp > 0 && o.st === 'sleep' && o.k !== 'boss' && dist(o, e) < 8) { o.st = 'idle'; o.cd = 0.6 + G.rng(); }
+  for (const o of G.enemies) if (o !== e && o.hp > 0 && o.st === 'sleep' && o.k !== 'boss' && dist(o, e) < 12) { o.st = 'idle'; o.cd = 0.6 + G.rng(); }
 }
 
 /* ---------- 이동·충돌 ---------- */
@@ -218,7 +218,7 @@ export function step(G, dt, inputs) {
     for (const p of G.players) {
       if (!alive(p)) continue; const d = Math.hypot(p.x - f.x, p.z - f.z);
       if (d < 4 && !f.lit) { f.lit = true; ev(G, 'checkpoint', { i, x: f.x, z: f.z }); ev(G, 'ach', { id: 'rest' }); }
-      if (f.lit && d < 4) p.hp = Math.min(p.maxhp, p.hp + 12 * dt);
+      if (f.lit && d < 4) p.hp = Math.min(p.maxhp, p.hp + 5 * dt);
     }
     if (f.lit && i > G.cpI) { G.cpI = i; G.cp = { x: f.x, z: f.z + 2.5 }; }
   });
@@ -412,7 +412,7 @@ function stepBoss(G, b, dt) {
   const sp = ENEMIES.boss.speed * (b.phase === 3 ? 1.3 : 1);
   // 소환·불꽃은 따로 돌아가요
   if (b.phase >= 2) { b.summonT -= dt; if (b.summonT <= 0) { b.summonT = 15; for (let i = 0; i < 3; i++) { const a = i / 3 * TAU + G.rng(); let sx = b.x + Math.cos(a) * 4, sz = b.z + Math.sin(a) * 4; if (isWall(sx, sz) || !lineClear(b.x, b.z, sx, sz)) { sx = b.x; sz = b.z; } spawnEnemy(G, i === 2 && G.rng() < 0.5 ? 'archer' : 'skel', sx, sz, false); } ev(G, 'summon', {}); } }
-  if (b.phase >= 3) { b.fireT -= dt; if (b.fireT <= 0) { b.fireT = 3.2; fireTrail(G, b, t); } }
+  if (b.phase >= 3) { b.fireT -= dt; if (b.fireT <= 0) { b.fireT = 2.4; fireTrail(G, b, t); } }
   if (b.atk) {
     const A = b.atk; A.t -= dt;
     if (A.k === 'charge' && A.go) {
@@ -488,7 +488,7 @@ function stepZones(G, dt) {
   for (const z of G.zones) {
     z.t -= dt;
     if (z.k === 'rain') { z.tick -= dt; if (z.tick <= 0) { z.tick = 0.5; const own = G.players.find(p => p.id === z.own); for (const e of G.enemies) if (e.hp > 0 && Math.hypot(e.x - z.x, e.z - z.z) < z.r + e.r) hurtEnemy(G, e, 18, own, { from: { x: e.x, z: e.z - 1 } }); } }
-    if (z.k === 'fire') { if (z.delay > 0) { z.delay -= dt; continue; } z.tick -= dt; if (z.tick <= 0) { z.tick = 0.5; for (const p of G.players) if (alive(p) && Math.hypot(p.x - z.x, p.z - z.z) < z.r) hurtPlayer(G, p, 11, null); } }
+    if (z.k === 'fire') { if (z.delay > 0) { z.delay -= dt; continue; } z.tick -= dt; if (z.tick <= 0) { z.tick = 0.5; for (const p of G.players) if (alive(p) && Math.hypot(p.x - z.x, p.z - z.z) < z.r) hurtPlayer(G, p, 16, null); } }
   }
   G.zones = G.zones.filter(z => z.t > 0);
   // 근위대장 돌진 준비
