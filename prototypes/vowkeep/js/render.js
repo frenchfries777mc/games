@@ -10,8 +10,18 @@ import { CS, MW, MH, floorCell, GRID, WATER, PILLARS, cw, chapterIndex } from '.
 
 let seed = 7; const R = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
 const MC = new Map();
+// 캐릭터는 명암을 3단계로만 나눠서 조금 납작하게 보여요
+let TOON = 0, TGRAD = null;
+const toonGrad = () => { if (!TGRAD) { TGRAD = new THREE.DataTexture(new Uint8Array([115, 115, 115, 255, 190, 190, 190, 255, 255, 255, 255, 255]), 3, 1); TGRAD.minFilter = TGRAD.magFilter = THREE.NearestFilter; TGRAD.needsUpdate = true; } return TGRAD; };
+const toonify = f => (...a) => { TOON++; try { return f(...a); } finally { TOON--; } };
 const M = (c, o = {}) => {
-  const key = c + '|' + JSON.stringify(o); if (MC.has(key) && !o.uniq) return MC.get(key);
+  const key = (TOON && !o.op ? 't' : '') + c + '|' + JSON.stringify(o); if (MC.has(key) && !o.uniq) return MC.get(key);
+  if (TOON && !o.op) {
+    // 쇠붙이는 반짝임 대신 조금 밝게
+    const col = new THREE.Color(c); if (o.m) col.multiplyScalar(1.12);
+    const m = new THREE.MeshToonMaterial({ color: col, gradientMap: toonGrad(), emissive: o.e ?? 0, emissiveIntensity: o.ei ?? 1, side: o.ds ? THREE.DoubleSide : THREE.FrontSide });
+    if (!o.uniq) MC.set(key, m); return m;
+  }
   const m = new THREE.MeshStandardMaterial({ color: c, roughness: o.r ?? 0.85, metalness: o.m ?? 0, emissive: o.e ?? 0, emissiveIntensity: o.ei ?? 1, flatShading: true, transparent: !!o.op, opacity: o.op ?? 1, depthWrite: o.op ? false : true, side: o.ds ? THREE.DoubleSide : THREE.FrontSide });
   if (!o.uniq) MC.set(key, m); return m;
 };
@@ -43,7 +53,7 @@ const HERO = {
   squire: { body: 0x8a6a44, leg: 0x4a4250, arm: 0x8a6a44, cap: 0xb9443a, torch: 1, sack: 1, belt: 1 }
 };
 function matOf(v) { return v === 'dm' ? dmetal() : v === 'mt' ? metal() : M(v); }
-export function makeHero(role) { const g = makeFigure(HERO[role]); g.userData.role = role; return g; }
+export const makeHero = toonify(function (role) { const g = makeFigure(HERO[role]); g.userData.role = role; return g; });
 // 사람 모양 (주인공과 사람 모양 적이 같이 써요)
 function makeFigure(o) {
   const g = new THREE.Group(), body = new THREE.Group(); g.add(body);
@@ -116,7 +126,8 @@ function makeWolf(big) {
   g.userData = { body, legL, legR, armL, armR, head, kind: 'wolf' };
   return g;
 }
-function makeFoe(k) {
+const makeFoe = toonify(makeFoe_);
+function makeFoe_(k) {
   const f = (FOES[chapterIndex()] || FOES[0])[k] || {}, sk = f.skin || 'skel';
   if (sk === 'wolf') return makeWolf(k === 'elite');
   if (FIG[sk]) { const g = makeFigure(FIG[sk]); g.userData.kind = 'skel'; return g; }
@@ -128,13 +139,15 @@ const BOSSFIG = {
   bishop: { body: 0x2a3a5a, robe: 1, leg: 0x1a2a3a, arm: 0x2a3a5a, skinC: 0x7a9aa0, eye: 0x6ad0ff, mitre: 1, staff: 1, staffC: 0x6ab0ff, noLight: 1, cape: 0x1a2848, scale: 2.1 },
   king: { body: 0x3a3436, leg: 'dm', arm: 'dm', helm: 1, helmC: 0x4a4448, plume: 0, crown: 1, eye: 0xff6a20, great: 0x5a5a66, greatE: 0xff5a10, cape: 0x6a1a12, scale: 2.2 }
 };
-function makeBossOf(ai) {
+const makeBossOf = toonify(makeBossOf_);
+function makeBossOf_(ai) {
   if (!BOSSFIG[ai]) return makeBoss();
   const g = makeFigure(BOSSFIG[ai]); const col = ai === 'hunter' ? 0xffa040 : ai === 'bishop' ? 0x6ab0ff : 0xff6a20;
   const light = new THREE.PointLight(col, 18, 10, 1.6); light.position.set(0, 3, 1); g.userData.body.add(light); g.userData.light = light; g.userData.kind = 'boss';
   return g;
 }
-export function makeSkel(k) {
+export const makeSkel = toonify(makeSkel_);
+function makeSkel_(k) {
   const g = new THREE.Group(), body = new THREE.Group(); g.add(body); const bm = bone();
   const legL = new THREE.Group(), legR = new THREE.Group(); legL.position.set(-0.25, 1.15, 0); legR.position.set(0.25, 1.15, 0); body.add(legL, legR);
   cyl(0.09, 0.09, 1.1, 5, bm, 0, -0.55, 0, legL); cyl(0.09, 0.09, 1.1, 5, bm, 0, -0.55, 0, legR);
@@ -160,7 +173,8 @@ export function makeSkel(k) {
   g.userData = { body, legL, legR, armL, armR, head, kind: 'skel' };
   return g;
 }
-export function makeBoss() {
+export const makeBoss = toonify(makeBoss_);
+function makeBoss_() {
   const g = new THREE.Group(), body = new THREE.Group(); g.add(body); g.scale.setScalar(2.1);
   const bA = M(0x3a3446, { m: 0.75, r: 0.4 }), bA2 = M(0x5a5268, { m: 0.75, r: 0.35 }), cloth = M(0x5a1a22);
   const legL = new THREE.Group(), legR = new THREE.Group(); legL.position.set(-0.28, 0.9, 0); legR.position.set(0.28, 0.9, 0); body.add(legL, legR);
@@ -457,6 +471,25 @@ export class View {
   column(x, z, col, T = 0.8) {
     const m = mesh(geo('col', () => new THREE.CylinderGeometry(0.9, 0.9, 6, 12, 1, true)), M(col, { e: col, ei: 2, op: 0.5, uniq: true, ds: true }), x, 3, z, this.scene, false);
     this.fx.push({ m, t: 0, T, up: (f) => { m.material.opacity = 0.5 * (1 - f.t / f.T); m.scale.x = m.scale.z = 1 - f.t / f.T * 0.6; } });
+  }
+  // 역할 그림: 캐릭터 모델을 작게 그려서 픽셀 그림으로 만들어요 (한 번 그리고 저장해 둬요)
+  portrait(role) {
+    this._pt = this._pt || {}; if (this._pt[role]) return this._pt[role];
+    const W = 42, H = 54, rt = new THREE.WebGLRenderTarget(W, H), sc = new THREE.Scene();
+    sc.add(new THREE.AmbientLight(0x8a8ab0, 1.5)); const d = new THREE.DirectionalLight(0xffe0c0, 2.6); d.position.set(4, 6, 7); sc.add(d); const d2 = new THREE.DirectionalLight(0x7a88d0, 1.2); d2.position.set(-5, 3, -3); sc.add(d2);
+    const m = makeHero(role); m.rotation.y = 0.55; sc.add(m); const u = m.userData; u.armR.rotation.x = -0.7; u.armL.rotation.x = -0.5;
+    const cam = new THREE.OrthographicCamera(-1.75, 1.75, 2.25, -2.25, 0.1, 50); cam.position.set(0, 1.85, 10); cam.lookAt(0, 1.85, 0);
+    const tm = this.r.toneMapping; this.r.toneMapping = THREE.NoToneMapping;
+    this.r.setRenderTarget(rt); this.r.setClearColor(0x000000, 0); this.r.clear(); this.r.render(sc, cam);
+    const px = new Uint8Array(W * H * 4); this.r.readRenderTargetPixels(rt, 0, 0, W, H, px); this.r.setRenderTarget(null); this.r.toneMapping = tm; rt.dispose();
+    // 위아래 뒤집고 밝기 보정, 그리고 1칸짜리 어두운 테두리
+    const c = document.createElement('canvas'); c.width = W; c.height = H; const g = c.getContext('2d'), img = g.createImageData(W, H), A = (x, y) => x >= 0 && y >= 0 && x < W && y < H && px[((H - 1 - y) * W + x) * 4 + 3] > 40;
+    for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) {
+      const i = ((H - 1 - y) * W + x) * 4, o = (y * W + x) * 4;
+      if (A(x, y)) { for (let k = 0; k < 3; k++) img.data[o + k] = Math.min(255, 255 * Math.pow(px[i + k] / 255, 1 / 2.2)); img.data[o + 3] = 255; }
+      else if (A(x - 1, y) || A(x + 1, y) || A(x, y - 1) || A(x, y + 1)) { img.data[o] = 20; img.data[o + 1] = 15; img.data[o + 2] = 24; img.data[o + 3] = 255; }
+    }
+    g.putImageData(img, 0, 0); return (this._pt[role] = c.toDataURL());
   }
   // 기술 연출: 번쩍임, 바닥 문양, 솟는 빛 알갱이, 충격파, 잔상
   flash(x, z, col, I = 120) { if (!this.fxL) return; I *= 0.5; this.fxL.color.setHex(col); this.fxL.position.set(x, 3, z); this.fxLI = Math.max(this.fxLI, I); this.fxL.intensity = this.fxLI; }
