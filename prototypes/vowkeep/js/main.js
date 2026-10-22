@@ -118,9 +118,12 @@ $('setVol').oninput = e => { SAVE.set.vol = +e.target.value; SFX.setVol(SAVE.set
 // 대기실: 장은 고르지 않고, 저장된 이야기에서 이어서 시작해요. 친구 방은 방장의 이야기를 따라가요
 function paintChapters() {
   const c = CHAPTERS[S.chSel], prev = CHAPTERS[S.chSel - 1];
-  $('chRow').innerHTML = `<div class="story"><b>${S.chSel ? '이어서 ' : ''}${esc(c.title)}</b><small>${esc(prev ? prev.outro[prev.outro.length - 1] : c.intro[0])}</small></div>`;
-  $('chNote').textContent = S.net === 'guest' ? '방장의 원정을 함께 이어 가요.' : S.chSel ? '지난번에 멈춘 곳에서 이야기가 이어져요.' : '';
-  if (S.net !== 'guest') $('startBtn').textContent = S.chSel ? S.chSel + 1 + '장 이어서 시작' : '원정 시작';
+  // 깬 장까지는 골라서 다시 할 수 있어요 (기본은 이어서 할 장)
+  const top = Math.min(CHAPTERS.length - 1, SAVE.chMax | 0), pick = S.net !== 'guest' && top > 0;
+  $('chRow').innerHTML = (pick ? `<div class="chpick">${CHAPTERS.slice(0, top + 1).map((ch, i) => `<button class="btn${i === S.chSel ? ' gold' : ''}" data-ch="${i}">${i + 1}장</button>`).join('')}</div>` : '') + `<div class="story"><b>${S.chSel ? '이어서 ' : ''}${esc(c.title)}</b><small>${esc(prev ? prev.outro[prev.outro.length - 1] : c.intro[0])}</small></div>`;
+  $('chNote').textContent = S.net === 'guest' ? '방장의 원정을 함께 이어 가요.' : S.chSel === chOpen() && S.chSel ? '지난번에 멈춘 곳에서 이야기가 이어져요.' : '';
+  if (S.net !== 'guest') $('startBtn').textContent = S.chSel ? S.chSel + 1 + '장 시작' : '원정 시작';
+  $('chRow').querySelectorAll('[data-ch]').forEach(b => b.onclick = () => { SFX.play('click'); S.chSel = +b.dataset.ch; paintChapters(); hostLobby(); });
 }
 function openRoom() {
   show('sRoom'); const solo = S.net === 'solo'; if (S.net !== 'guest') S.chSel = chOpen(); paintChapters();
@@ -571,7 +574,6 @@ function drawOverlay(dt) {
   // 내 연타 수와 집중 상태
   { const p = sn.pl.find(q => q.id === S.me), E = p && view.ents.get('p' + p.id);
     if (E && !p.dn) { const c = view.project(E.x, 4.1, E.z); oc.lineWidth = 4; oc.strokeStyle = '#140f18';
-      if (p.cb >= 2) { oc.font = 'bold ' + (14 + Math.min(p.cb, 20) * 0.5 | 0) + 'px system-ui'; const t = p.cb + ' 연타'; oc.strokeText(t, c.x, c.y); oc.fillStyle = '#efe3c8'; oc.fillText(t, c.x, c.y); }
       if (p.fc) { oc.font = 'bold 13px system-ui'; oc.strokeText('집중 · 피해 +50%', c.x, c.y - 18); oc.fillStyle = '#9ad0ff'; oc.fillText('집중 · 피해 +50%', c.x, c.y - 18); } } }
   // 피해 숫자
   for (const n of S.nums) { n.t += dt; const s = view.project(n.x, n.y + n.t * 2.2, n.z); oc.globalAlpha = Math.max(0, 1 - n.t / 0.9); oc.font = 'bold ' + Math.round(18 * n.sc) + 'px system-ui'; oc.lineWidth = 4; oc.strokeStyle = '#140f18'; oc.strokeText(n.v, s.x, s.y); oc.fillStyle = n.col; oc.fillText(n.v, s.x, s.y); }
