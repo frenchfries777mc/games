@@ -39,7 +39,7 @@ const metal = () => M(0xb8bfcc, { m: 0.75, r: 0.35 }), dmetal = () => M(0x5a5f70
 /* ---------- 장마다 다른 색과 장식 ---------- */
 const THEMES = {
   dungeon: { bg: 0x050407, fog: 0x07060a, amb: 0x4a4a78, hemi: 0x8a90c8, floor: [0x4a4550, 0x524d58, 0x5a5462, 0x463f4c, 0x55505c], bfloor: [0x3e3440, 0x463a48, 0x4e4250, 0x3a3040, 0x4a3e4c], wet: [0x34404c, 0x384656, 0x2e3a46, 0x3c4a58], wall: [0x3e3846, 0x463f50, 0x4e4658, 0x38323f], bwall: [0x3a2e3c, 0x423446, 0x4a3a50, 0x342a38], top: 0x2a2630, moss: 0x3e5a36, mossP: 0.06, torch: 0xff9a48, water: 0x3a6a9a, ring: 0x8a1a2a, fz: [0x5a1aa0, 0x8a2ad0], ember: [0xffb050, 0xff8a30], banner: 0x7a1f22 },
-  forest: { bg: 0x08090a, fog: 0x161a1c, amb: 0x5a6070, hemi: 0xa0a8a0, floor: [0x3c3a2e, 0x444030, 0x3a4030, 0x4a4636, 0x363a2a], bfloor: [0x3a3226, 0x42382a, 0x3a3024, 0x463c2e, 0x34301e], wet: [0x2e3a36, 0x34403c, 0x2a3632, 0x38443e], wall: [0x2e2a24, 0x36302a, 0x2a2620, 0x3a3430], bwall: [0x30241e, 0x382a22, 0x2c201a, 0x3e2e26], top: 0x24301e, moss: 0x4a5a34, mossP: 0.22, torch: 0xffb060, water: 0x4a6a6a, ring: 0x6a3a1a, fz: [0x4a3a1a, 0xd06a20], ember: [0xd8d4cc, 0x9a968e], trees: 1 },
+  forest: { bg: 0x08090a, fog: 0x161a1c, amb: 0x5a6070, hemi: 0xa0a8a0, floor: [0x3c3a2e, 0x3e4430, 0x3a4030, 0x34402c, 0x404a32], bfloor: [0x3a3226, 0x42382a, 0x3a3024, 0x463c2e, 0x34301e], wet: [0x2e3a36, 0x34403c, 0x2a3632, 0x38443e], wall: [0x2e2a24, 0x36302a, 0x2a2620, 0x3a3430], bwall: [0x30241e, 0x382a22, 0x2c201a, 0x3e2e26], top: 0x24301e, moss: 0x4a5a34, mossP: 0.22, torch: 0xffb060, water: 0x4a6a6a, ring: 0x6a3a1a, fz: [0x4a3a1a, 0xd06a20], ember: [0xd8d4cc, 0x9a968e], trees: 1 },
   abbey: { bg: 0x03060a, fog: 0x08101a, amb: 0x405478, hemi: 0x88a0d0, floor: [0x4a5058, 0x525a62, 0x485058, 0x565e68, 0x444c54], bfloor: [0x3a4450, 0x404a58, 0x36404c, 0x46505c, 0x343e4a], wet: [0x2e4054, 0x34485c, 0x2a3c50, 0x3a4e62], wall: [0x3c4450, 0x444c58, 0x4c5462, 0x363e4a], bwall: [0x2e3a4a, 0x344052, 0x3a4658, 0x2a3444], top: 0x262c36, moss: 0x3a5a4a, mossP: 0.1, torch: 0xffd08a, water: 0x2a5a9a, ring: 0x2a5ab0, fz: [0x1a3a6a, 0x3a8ae0], ember: [0x9ad0ff, 0x6aa0e0], windows: 1 },
   tower: { bg: 0x0a0505, fog: 0x160a08, amb: 0x6a4a4a, hemi: 0xc89a8a, floor: [0x4a4040, 0x524646, 0x5a4c4a, 0x463c3c, 0x54484a], bfloor: [0x4a3030, 0x523434, 0x5a3a36, 0x462c2c, 0x503432], wet: [0x3a3440, 0x403848, 0x36303c, 0x443c4c], wall: [0x4a3a36, 0x52423c, 0x5a4842, 0x443430], bwall: [0x5a2a22, 0x622e26, 0x6a3428, 0x52261e], top: 0x2e2220, moss: 0x5a4a2a, mossP: 0.04, torch: 0xff7a30, water: 0x6a3a2a, ring: 0xc04a10, fz: [0xa03a10, 0xff6a20], ember: [0xffa040, 0xff6a20], banner: 0x3a3a3a }
 };
@@ -289,7 +289,8 @@ export class View {
       for (let j = 0; j < MH; j++) for (let i = 0; i < MW; i++) {
         if (!floorCell(i, j)) continue;
         const x = cw(i), z = cw(j), h = 0.3 + R() * 0.1, wt = WATER[j * MW + i], cols = wt ? wet : inBoss(i, j) ? bstone : stone;
-        add(x + (R() - .5) * 0.06, h / 2 - 0.3 - (wt ? 0.15 : 0), z + (R() - .5) * 0.06, 1.94, h, 1.94, cols[R() * cols.length | 0]);
+        if (T.trees) add(x, h / 2 - 0.3 - (wt ? 0.15 : 0) + (R() - .5) * 0.08, z, 2.02, h, 2.02, cols[R() * cols.length | 0]); // 숲 바닥은 틈 없이 흙과 풀
+        else add(x + (R() - .5) * 0.06, h / 2 - 0.3 - (wt ? 0.15 : 0), z + (R() - .5) * 0.06, 1.94, h, 1.94, cols[R() * cols.length | 0]);
         if (!wt && R() < T.mossP) add(x + (R() - .5) * 1.2, 0.04, z + (R() - .5) * 1.2, 0.6, 0.08, 0.5, T.moss);
       }
     });
@@ -302,17 +303,23 @@ export class View {
         const x = cw(i), z = cw(j), bc = inBoss(i, j + 1) || inBoss(i, j - 1) ? bbrick : brick;
         const back = floorCell(i, j + 1) && !floorCell(i, j - 1);
         const rows = back ? 6 : floorCell(i, j - 1) && !floorCell(i, j + 1) ? 1 : 3;
-        for (let y = 0; y < rows; y++) { const off = (y + j) % 2 ? 0.5 : 0; add(x - 0.5 + off, y + 0.45, z, 1.02, 0.95, 1.9, bc[R() * 4 | 0]); add(x + 0.5 + off - (off ? 1 : 0), y + 0.45, z, 1.02, 0.95, 1.9, bc[R() * 4 | 0]); }
-        add(x, rows + 0.12, z, 2.02, 0.24, 2.02, T.top);
+        if (T.trees) {
+          // 숲: 벽돌 대신 나무줄기와 덤불이 빽빽한 숲 가장자리
+          const leaf = [0x2e3a26, 0x36402a, 0x3a4430, 0x2a3422], trunk = [0x3a2a1c, 0x44301e, 0x2e2216];
+          if (back) { for (let k = 0; k < 2; k++) add(x + (R() - .5) * 1.4, 2.2, z + (R() - .5) * 0.8, 0.45 + R() * 0.2, 4.4, 0.45 + R() * 0.2, trunk[R() * 3 | 0]); for (let k = 0; k < 3; k++) add(x + (R() - .5) * 0.8, 4.3 + k * 0.8 + R() * 0.4, z + (R() - .5) * 0.6, 2.4 - k * 0.4, 1, 2.4 - k * 0.4, leaf[R() * 4 | 0]); }
+          add(x + (R() - .5) * 0.3, rows * 0.35 + 0.1, z, 2.1, rows * 0.7 + 0.2, 2.1, leaf[R() * 4 | 0]); add(x + (R() - .5) * 0.6, rows * 0.7 + 0.35, z + (R() - .5) * 0.4, 1.3, 0.6, 1.3, leaf[R() * 4 | 0]);
+        } else {
+          for (let y = 0; y < rows; y++) { const off = (y + j) % 2 ? 0.5 : 0; add(x - 0.5 + off, y + 0.45, z, 1.02, 0.95, 1.9, bc[R() * 4 | 0]); add(x + 0.5 + off - (off ? 1 : 0), y + 0.45, z, 1.02, 0.95, 1.9, bc[R() * 4 | 0]); }
+          add(x, rows + 0.12, z, 2.02, 0.24, 2.02, T.top);
+        }
         if (back && i % 3 === 0 && !(i % 6 === 0 && R() < 0.3)) torches.push([x, z + 1.0]);
         if (back && T.banner && i % 6 === 3 && R() < 0.5) this.banner(s, x, z + 1.02, bc === bbrick, T.banner);
-        // 숲: 벽 위로 나무, 수도원: 푸른 창
-        if (T.trees && rows > 1) { add(x + (R() - .5) * 0.4, rows + 0.5, z, 2.2, 1 + R() * 0.6, 2.2, [0x2e3a26, 0x36402a, 0x3a3a2c][R() * 3 | 0]); }
+        // 수도원: 푸른 창
         if (T.windows && back && i % 4 === 2) { add(x, 3.2, z + 0.98, 0.9, 2.2, 0.06, 0x6ab0ff); }
       }
     });
     this.torchPos = torches;
-    for (const [x, z] of torches) { box(0.3, 1, 0.3, M(0x4a3020), x, 4, z, s); box(0.6, 0.25, 0.6, M(0x2a2830, { m: 0.7 }), x, 4.5, z, s); this.flame(s, x, 5.05, z, 1, false, T.torch); }
+    for (const [x, z] of torches) { box(0.3, T.trees ? 4.6 : 1, 0.3, M(0x4a3020), x, T.trees ? 2.3 : 4, z, s); box(0.6, 0.25, 0.6, M(0x2a2830, { m: 0.7 }), x, 4.5, z, s); this.flame(s, x, 5.05, z, 1, false, T.torch); }
     // 횃불 빛은 가까운 곳에만 몇 개 켜요 (빛이 너무 많으면 느려져요)
     this.pool = []; for (let k = 0; k < 8; k++) { const L = new THREE.PointLight(T.torch, 0, 22, 1.6); s.add(L); this.pool.push(L); this.flick.push({ L, b: 0, ph: k * 1.3, pool: true }); }
     this.poolT = 0;
@@ -378,7 +385,7 @@ export class View {
     // 플레이어
     for (const p of S.pl) {
       const key = 'p' + p.id; seen.add(key); let E = this.ents.get(key);
-      if (!E) { const m = makeHero(p.role); s.add(m); E = { m, x: p.x, z: p.z, a: p.a, ph: 0 }; this.ents.set(key, E); E.ring = ringMesh(s, ROLES[p.role].color); E.ward = sph(1.6, 12, 10, M(0x9af0e0, { e: 0x6ad0c0, ei: 1, op: 0.18, uniq: true }), 0, 1.6, 0, m); E.ward.castShadow = false; }
+      if (!E) { const m = makeHero(p.role); s.add(m); E = { m, x: p.x, z: p.z, a: p.a, ph: 0 }; this.ents.set(key, E); E.ring = ringMesh(s, ROLES[p.role].color); E.ward = sph(1.3, 12, 10, M(0x9af0e0, { e: 0x6ad0c0, ei: 0.5, op: 0.08, uniq: true }), 0, 1.5, 0, m); E.ward.castShadow = false; }
       const k = exact || p.id === me ? 1 : Math.min(1, dt * 12);
       E.x += (p.x - E.x) * k; E.z += (p.z - E.z) * k; E.a = lerpA(E.a, p.a, Math.min(1, dt * 18));
       animHero(E, p, dt, t); E.ring.position.set(E.x, 0.12, E.z); E.ring.visible = !p.dd;
@@ -494,11 +501,11 @@ export class View {
   // 기술 연출: 번쩍임, 바닥 문양, 솟는 빛 알갱이, 충격파, 잔상
   flash(x, z, col, I = 120) { if (!this.fxL) return; I *= 0.5; this.fxL.color.setHex(col); this.fxL.position.set(x, 3, z); this.fxLI = Math.max(this.fxLI, I); this.fxL.intensity = this.fxLI; }
   rune(x, z, r, col, T = 1.2, spin = 2) {
-    const g = new THREE.Group(); g.position.set(x, 0.16, z); this.scene.add(g); const mat = M(col, { e: col, ei: 1.2, op: 0.55, uniq: true });
+    const g = new THREE.Group(); g.position.set(x, 0.16, z); this.scene.add(g); const mat = M(col, { e: col, ei: 0.8, op: 0.3, uniq: true });
     const a = mesh(geo('rn1', () => new THREE.RingGeometry(0.92, 1, 32)), mat, 0, 0, 0, g, false); a.rotation.x = -Math.PI / 2;
     const b = mesh(geo('rn2', () => new THREE.RingGeometry(0.62, 0.68, 6)), mat, 0, 0.01, 0, g, false); b.rotation.x = -Math.PI / 2;
     for (let i = 0; i < 6; i++) { const q = i / 6 * 6.283; const d = box(0.16, 0.04, 0.34, mat, Math.cos(q) * 0.8, 0.02, Math.sin(q) * 0.8, g); d.rotation.y = -q; d.castShadow = false; }
-    this.fx.push({ m: g, t: 0, T, up: (f, dt) => { const u = f.t / f.T; g.rotation.y += dt * spin; g.scale.setScalar(r * Math.min(1, u * 5)); mat.opacity = 0.55 * (u < 0.7 ? 1 : (1 - u) / 0.3); } });
+    this.fx.push({ m: g, t: 0, T, up: (f, dt) => { const u = f.t / f.T; g.rotation.y += dt * spin; g.scale.setScalar(r * Math.min(1, u * 5)); mat.opacity = 0.3 * (u < 0.7 ? 1 : (1 - u) / 0.3); } });
   }
   rise(x, z, col, n = 14, r = 1.5, T = 1, sp = 5) {
     const mat = M(col, { e: col, ei: 4 });
@@ -559,13 +566,15 @@ function zoneMesh(z) {
   else if (z.k === 'tcone') { const f = mesh(new THREE.CircleGeometry(z.r, 24, -z.arc / 2, z.arc), M(0xff2a2a, { e: 0xff1a1a, ei: 1.5, op: 0.3, uniq: true }), 0, 0, 0, g, false); f.rotation.x = -Math.PI / 2; f.rotation.z = -z.a; g.userData.fill = f; }
   else if (z.k === 'tline') { const f = mesh(new THREE.PlaneGeometry(z.len, z.w), M(0xff2a2a, { e: 0xff1a1a, ei: 1.5, op: 0.3, uniq: true }), z.len / 2, 0, 0, g, false); f.rotation.x = -Math.PI / 2; g.rotation.y = -z.a; g.userData.fill = f; }
   else if (z.k === 'fire') { const fz = THEME().fz; for (let i = 0; i < 4; i++) cone(0.35, 1 + Math.random(), 5, M(fz[0], { e: fz[1], ei: 3 }), (Math.random() - .5) * 1.4, 0.5, (Math.random() - .5) * 1.4, g); const f = mesh(geo('zc', () => new THREE.CircleGeometry(1, 32)), M(fz[0], { e: fz[1], ei: 0.5, op: 0.5 }), 0, 0, 0, g, false); f.rotation.x = -Math.PI / 2; f.scale.setScalar(z.r); g.traverse(o => o.castShadow = false); }
-  else if (z.k === 'rain') { const r = mesh(geo('zr', () => new THREE.RingGeometry(0.94, 1, 40)), M(0xffe08a, { e: 0xffd060, ei: 2, op: 0.7 }), 0, 0.01, 0, g, false); r.rotation.x = -Math.PI / 2; r.scale.setScalar(z.r); g.userData.drops = []; for (let i = 0; i < 10; i++) { const d = box(0.06, 1, 0.06, M(0xe8e0c8, { e: 0xffe08a, ei: 1 }), (Math.random() - .5) * z.r * 1.4, 4, (Math.random() - .5) * z.r * 1.4, g); d.castShadow = false; g.userData.drops.push(d); } }
+  else if (z.k === 'rain') { const r = mesh(geo('zr', () => new THREE.RingGeometry(0.94, 1, 40)), M(0xffe08a, { e: 0xffd060, ei: 1, op: 0.3 }), 0, 0.01, 0, g, false); r.rotation.x = -Math.PI / 2; r.scale.setScalar(z.r); g.userData.drops = []; for (let i = 0; i < 10; i++) { const d = box(0.06, 1, 0.06, M(0xe8e0c8, { e: 0xffe08a, ei: 1 }), (Math.random() - .5) * z.r * 1.4, 4, (Math.random() - .5) * z.r * 1.4, g); d.castShadow = false; g.userData.drops.push(d); } }
   else if (z.k === 'ptrap') { box(1.2, 0.12, 1.2, dmetal(), 0, 0.05, 0, g); for (let i = 0; i < 6; i++) { const a = i / 6 * 6.28; const t = cone(0.1, 0.4, 4, metal(), Math.cos(a) * 0.5, 0.25, Math.sin(a) * 0.5, g); t.rotation.z = Math.cos(a) * 0.5; t.rotation.x = -Math.sin(a) * 0.5; } }
+  // 보스 바닥 경고는 다른 효과보다 늘 위에 그려요
+  if (z.k === 'tcircle' || z.k === 'tcone' || z.k === 'tline') g.traverse(o => { if (o.material) { o.material.depthTest = false; o.renderOrder = 20; } });
   return g;
 }
 function zoneAnim(E, z, t) {
   const f = E.m.userData.fill;
-  if (f && z.T) { const u = 1 - z.t / z.T; f.material.opacity = 0.18 + u * 0.4; if (z.k === 'tcircle') f.scale.setScalar(z.r * (0.2 + 0.8 * u)); }
+  if (f && z.T) { const u = 1 - z.t / z.T; f.material.opacity = 0.24 + u * 0.4; if (z.k === 'tcircle') f.scale.setScalar(z.r * (0.2 + 0.8 * u)); }
   if (z.k === 'fire') { E.m.visible = !z.dl; E.m.children.forEach((c, i) => { if (c.geometry.type === 'ConeGeometry') c.scale.y = 0.8 + Math.sin(t * 4 + i) * 0.15; }); }
   if (z.k === 'rain') E.m.userData.drops.forEach((d, i) => { d.position.y = 4 - ((t * 9 + i * 0.37) % 1) * 4; });
 }
