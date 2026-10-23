@@ -1,7 +1,7 @@
 // Vowkeep · © 2026 Frenchfries777 · CC BY-NC-ND 4.0
 // 게임 데이터: 역할, 적, 축복, 1장 지도
 
-export const VERSION = 'v0.1', BUILD = 27;
+export const VERSION = 'v0.1', BUILD = 28;
 
 export const ROLES = {
   knight: {
@@ -52,6 +52,7 @@ export const ENEMIES = {
   archer: { name: '해골 궁수', hp: 85, speed: 3.9, r: 0.6, dmg: 25, range: 12, windup: 0.55, cd: 1.6, keep: 7.5, honor: 1 },
   shield: { name: '방패 해골', hp: 230, speed: 3.5, r: 0.7, dmg: 36, range: 1.9, windup: 0.5, cd: 1.3, front: 0.3, honor: 2 },
   elite: { name: '해골 근위대장', hp: 900, speed: 4.2, r: 0.9, dmg: 52, range: 2.5, windup: 0.55, cd: 1.3, charge: true, honor: 6 },
+  mimic: { name: '미믹', hp: 760, speed: 5.4, r: 0.9, dmg: 40, range: 2.1, windup: 0.4, cd: 1.0, honor: 8 },
   boss: { name: '몰락한 기사단장', hp: 16000, speed: 3.9, r: 1.4, dmg: 55, honor: 0 }
 };
 
@@ -70,54 +71,6 @@ export const BLESSINGS = [
   { id: 'honor', name: '명예의 길', desc: '이번 원정에서 받는 명예 +25%' }
 ];
 
-const MAP1 = {
-  w: 80, h: 76, cs: 2,
-  // 바닥 (x, y, 너비, 높이)
-  floors: [
-    [30, 66, 12, 8], [34, 58, 4, 8], [24, 44, 24, 14], [14, 49, 10, 3], [4, 45, 10, 11], [48, 49, 8, 3], [56, 44, 12, 12],
-    [60, 32, 4, 12], [22, 26, 44, 6], [57, 24, 4, 2], [54, 17, 10, 7], [18, 27, 4, 3], [4, 24, 14, 14], [9, 10, 4, 14], [13, 10, 13, 4], [26, 2, 24, 20]
-  ],
-  water: [[22, 26, 44, 6]],
-  areas: [
-    { name: '무너진 계단', line: '계단 아래에서 뼈 부딪히는 소리가 들려요.', r: [[30, 66, 12, 8], [34, 58, 4, 8]] },
-    { name: '해골 병영', line: '기사단 병사였던 해골들이 잠들어 있어요. 가까이 가면 깨어나요.', r: [[24, 44, 24, 14], [48, 49, 8, 3]] },
-    { name: '무기고', line: '녹슨 무기 사이에 오래된 제단이 있어요.', r: [[4, 45, 10, 11], [14, 49, 10, 3]] },
-    { name: '버려진 예배당', line: '꺼진 모닥불이 있어요. 불을 붙이면 쓰러졌을 때 여기서 다시 시작해요.', r: [[56, 44, 12, 12]], rest: 1 },
-    { name: '물에 잠긴 회랑', line: '방패를 든 해골들이 물길을 지켜요. 바닥 함정을 조심해요.', r: [[22, 26, 44, 6], [60, 32, 4, 12]] },
-    { name: '성물실', line: '기사단의 성물이 아직 남아 있어요.', r: [[54, 17, 10, 7], [57, 24, 4, 2]] },
-    { name: '근위대 무덤', line: '단장의 근위대장이 아직 무덤을 지키고 있어요.', r: [[4, 24, 14, 14], [18, 27, 4, 3]] },
-    { name: '단장의 길', line: '검은 불꽃의 열기가 느껴져요. 모닥불에서 숨을 고르고 가요.', r: [[9, 10, 4, 14], [13, 10, 13, 4]] },
-    { name: '기사단장의 방', line: '"서약은 깨졌다. 너희도 여기서 무릎 꿇어라."', r: [[26, 2, 24, 20]], boss: 1 }
-  ],
-  start: [36, 70],
-  spawns: [
-    ['skel', 33, 54], ['skel', 38, 54], ['skel', 31, 49], ['skel', 35, 48], ['archer', 36, 45], ['shield', 41, 50], ['skel', 44, 51], ['skel', 39, 47], ['archer', 46, 45],
-    ['archer', 6, 47], ['archer', 11, 47], ['shield', 8, 52], ['skel', 6, 54], ['skel', 11, 54],
-    ['skel', 61, 37], ['skel', 62, 39],
-    ['shield', 56, 29], ['archer', 51, 27], ['archer', 47, 31], ['skel', 44, 29], ['skel', 40, 28], ['archer', 34, 27], ['archer', 33, 31], ['shield', 28, 29], ['skel', 26, 28], ['skel', 25, 30],
-    ['shield', 58, 21], ['archer', 56, 19], ['archer', 62, 19],
-    ['elite', 10, 30], ['skel', 7, 27], ['skel', 14, 27], ['skel', 7, 34], ['skel', 14, 34], ['archer', 10, 36], ['shield', 12, 26],
-    ['skel', 11, 18], ['archer', 20, 12], ['skel', 22, 11],
-    // 더 어렵게: 무리를 늘리고 길목마다 매복을 둬요
-    ['skel', 34, 51], ['archer', 31, 45], ['shield', 37, 51], ['skel', 49, 50], ['archer', 50, 51],
-    ['skel', 8, 49], ['shield', 9, 55], ['skel', 60, 42], ['archer', 63, 33], ['skel', 52, 30], ['shield', 38, 29], ['archer', 29, 27],
-    ['skel', 60, 20], ['shield', 9, 28], ['archer', 13, 37], ['skel', 11, 23], ['elite', 27, 12], ['archer', 25, 10], ['skel', 31, 13]
-  ],
-  boss: [38, 8], bossTrig: [27.5, 2, 22.5, 20],
-  pillars: [[28, 47], [43, 47], [28, 54], [43, 54], [58, 54], [66, 54], [7, 30.5], [14, 30.5], [30, 5], [46, 5], [30, 18], [46, 18]],
-  traps: [[54, 28], [48, 30], [42, 27], [36, 29], [30, 28], [45, 28.5], [36, 61], [11, 15]],
-  fires: [[61, 50], [11, 12]],
-  altars: [[8.5, 46], [58, 46], [59, 18], [5, 36]],
-  chests: [[66, 46], [62, 22]],
-  // 비밀 방: 금 간 벽(pass)을 강타로 부수면 열려요 (room 안에 상자와 옛 기록)
-  secrets: [
-    { pass: [68, 49, 3, 2], room: [71, 46, 7, 7], face: [68, 49, 1, 2], chest: [76, 47], lore: [74, 51] },
-    { pass: [64, 19, 3, 2], room: [67, 16, 7, 7], face: [64, 19, 1, 2], chest: [72, 17], lore: [70, 21] }
-  ],
-  // 봇이 앞장설 때 따라가는 길
-  route: [[36, 62], [36, 51], [52, 50.5], [61, 48], [62, 36], [62, 29], [44, 29], [24, 29], [20, 28.5], [11, 31], [11, 20], [11, 12], [22, 12], [32, 12], [38, 10]]
-};
-
 // 장마다 적의 이름·모습·능력치가 달라요 (규칙은 해골 병사·궁수·방패·근위대장 네 가지를 같이 써요)
 // skin: 화면에 그릴 모습, proj: 원거리 적이 쏘는 것
 export const FOES = [
@@ -131,23 +84,25 @@ export const FOES = [
   { skel: { name: '깨진 서약의 기사', skin: 'voidk', hp: 1.15 }, archer: { name: '심연 석궁병', skin: 'voidb', proj: 'vorb', psp: 18 }, shield: { name: '심연 방패병', skin: 'voids' }, elite: { name: '심연의 맹세자', skin: 'voidl' } }
 ];
 
-// 큰 지도 만들기: 방 9개를 세 줄로 지그재그 이어 붙여요. 같은 씨앗이면 늘 같은 지도예요
+// 큰 지도 만들기: 방 12개를 네 줄로 지그재그 이어 붙여요. 같은 씨앗이면 늘 같은 지도예요
+// 방 종류: foes(적), rest(모닥불), boss, puz(수수께끼 방: plates·braziers·statues), dark(어둠의 방)
 function genMap(seed, rooms, opt = {}) {
   let sd = seed; const rnd = () => (sd = (sd * 16807) % 2147483647) / 2147483647;
   // 양옆에 10칸씩 여유를 둬서 바깥쪽 방 옆에 비밀 방을 붙여요
-  const SW = 24, SH = 22, cols = 3, X0 = 10, rowsN = Math.ceil(rooms.length / cols), w = SW * cols + X0 * 2, h = SH * rowsN + 2;
-  const m = { w, h, cs: 2, floors: [], water: [], areas: [], spawns: [], pillars: [], traps: [], fires: [], altars: [], chests: [], route: [], secrets: [] };
+  const SW = 30, SH = 26, cols = 3, X0 = 10, rowsN = Math.ceil(rooms.length / cols), w = SW * cols + X0 * 2, h = SH * rowsN + 2;
+  const m = { w, h, cs: 2, floors: [], water: [], areas: [], spawns: [], pillars: [], traps: [], fires: [], altars: [], chests: [], route: [], secrets: [], puzzles: [], darks: [], mimic: -1 };
   const R = rooms.map((r, i) => {
     const row = Math.floor(i / cols), c0 = row % 2 ? cols - 1 - (i % cols) : i % cols, col = opt.flip ? cols - 1 - c0 : c0, sy = (rowsN - 1 - row) * SH + 1;
-    const rw = r.boss ? 22 : r.w || 12 + Math.floor(rnd() * 7), rh = r.boss ? 20 : r.h || 10 + Math.floor(rnd() * 7);
+    const rw = r.boss ? 26 : r.w ? r.w + 3 : 15 + Math.floor(rnd() * 8), rh = r.boss ? 22 : r.h ? r.h + 2 : 13 + Math.floor(rnd() * 7);
     const x = X0 + col * SW + Math.floor((SW - rw) / 2), y = sy + Math.floor((SH - rh) / 2);
     return Object.assign({ x, y, rw, rh, col, cx: x + Math.floor(rw / 2), cy: y + Math.floor(rh / 2) }, r);
   });
+  const chestRooms = [];
   R.forEach((r, i) => {
     m.floors.push([r.x, r.y, r.rw, r.rh]);
     if (r.water) m.water.push([r.x, r.y, r.rw, r.rh]);
     if (r.pool) m.water.push([r.x + 1, r.y + r.rh - 5, 4, 4]);
-    m.areas.push({ name: r.name, line: r.line, r: [[r.x, r.y, r.rw, r.rh]], rest: r.rest ? 1 : undefined, boss: r.boss ? 1 : undefined });
+    m.areas.push({ name: r.name, line: r.line, r: [[r.x, r.y, r.rw, r.rh]], rest: r.rest ? 1 : undefined, boss: r.boss ? 1 : undefined, t: r.t != null ? r.t : i, puz: r.puz, dark: r.dark ? 1 : undefined });
     if (i < R.length - 1) {
       const n = R[i + 1], x0 = Math.min(r.cx, n.cx), x1 = Math.max(r.cx, n.cx), y0 = Math.min(r.cy, n.cy), y1 = Math.max(r.cy, n.cy);
       m.floors.push([x0 - 2, r.cy - 2, x1 - x0 + 4, 4], [n.cx - 2, y0 - 2, 4, y1 - y0 + 4]);
@@ -161,20 +116,45 @@ function genMap(seed, rooms, opt = {}) {
     for (let q = 0; q < (r.traps || 0); q++) m.traps.push(spot(3));
     if (r.rest) m.fires.push([r.cx, r.cy]);
     if (r.altar) m.altars.push([r.x + 2.5, r.y + 2]);
-    if (r.chest) m.chests.push([r.x + r.rw - 3, r.y + 2]);
+    if (r.chest) { chestRooms.push(m.chests.length); m.chests.push([r.x + r.rw - 3, r.y + 2]); }
     if (r.boss) { m.boss = [r.cx, r.y + Math.round(r.rh * 0.35)]; m.bossTrig = [r.x + 2, r.y + 2, r.rw - 4, r.rh - 4]; }
     if (i === 0) m.start = [r.cx, r.y + r.rh - 3];
+    // 수수께끼 방: 나가는 길목에 창살문이 내려와 있어요. 풀면 올라가요
+    if (r.puz && i < R.length - 1) {
+      const n = R[i + 1], gate = n.cy === r.cy ? [n.cx > r.cx ? r.x + r.rw : r.x - 1, r.cy - 2, 1, 4] : [r.cx - 2, r.y - 1, 4, 1];
+      const c4 = [[r.x + 3, r.y + 3], [r.x + r.rw - 4, r.y + 3], [r.x + r.rw - 4, r.y + r.rh - 4], [r.x + 3, r.y + r.rh - 4]];
+      const q = { k: r.puz, area: i, gate, c: [r.cx, r.cy] };
+      if (r.puz === 'plates') q.items = c4;
+      else if (r.puz === 'braziers') { q.items = c4; const o = [0, 1, 2, 3]; for (let k = 3; k > 0; k--) { const j = Math.floor(rnd() * (k + 1)); [o[k], o[j]] = [o[j], o[k]]; } q.order = o; }
+      else { q.items = [[r.cx, r.cy - 4], [r.cx + 5, r.cy], [r.cx, r.cy + 4], [r.cx - 5, r.cy]]; q.rot0 = q.items.map((_, k) => (k + 1 + Math.floor(rnd() * 3)) % 4); }
+      m.puzzles.push(q);
+    }
+    // 어둠의 방: 들어오는 쪽에 횃불 걸이가 있어요
+    if (r.dark && i > 0) {
+      const p = R[i - 1], st = p.cy === r.cy ? [p.cx > r.cx ? r.x + r.rw - 2 : r.x + 1, r.cy + 3] : [r.cx + 4, r.y + r.rh - 2];
+      m.darks.push({ area: i, room: [r.x, r.y, r.rw, r.rh], stand: st });
+    }
     // 봇이 따라갈 길: 방 가운데 → 꺾이는 곳
     m.route.push([r.cx, r.cy]); if (i < R.length - 1) m.route.push([R[i + 1].cx, r.cy]);
   });
   m.route.push(m.boss);
-  // 비밀 방 두 곳: 3·4번째 방 중 하나, 6·7번째 방 중 하나 (바깥쪽 벽 너머)
-  if (!opt.noSecret) for (const [a, b] of [[2, 3], [5, 6]]) {
-    const r = R[(seed >> (a === 2 ? 1 : 2)) % 2 ? b : a]; if (!r || r.boss || r.col === 1) continue;
+  // 미믹: 모닥불 방 상자 하나는 상자인 척하는 괴물이에요
+  if (!opt.noMimic && chestRooms.length) m.mimic = chestRooms[seed % chestRooms.length];
+  // 무너지는 성: 보스를 쓰러뜨리면 세 방 앞 출구까지 달려요
+  const ex = R[Math.max(0, R.length - 4)]; m.exit = [ex.cx, ex.cy]; m.exitA = Math.max(0, R.length - 4);
+  // 비밀 방 두 곳: 앞쪽 절반과 뒤쪽 절반에서 하나씩 (바깥쪽 벽 너머, 수수께끼·어둠의 방은 빼고)
+  if (!opt.noSecret) for (const [a, b] of [[1, 5], [6, 10]]) {
+    const cand = R.filter((r, i) => i >= a && i <= b && !r.boss && !r.puz && !r.dark && r.col !== 1); if (!cand.length) continue;
+    const r = cand[(seed >> (a === 1 ? 1 : 2)) % cand.length];
     const left = r.col === 0, py = r.cy - 1, px = left ? r.x - 3 : r.x + r.rw, rx = left ? r.x - 10 : r.x + r.rw + 3, ry = r.cy - 3;
     m.secrets.push({ pass: [px, py, 3, 2], room: [rx, ry, 7, 7], face: [left ? r.x - 1 : r.x + r.rw, py, 1, 2], chest: [rx + (left ? 1 : 5), ry + 1], lore: [rx + 3, ry + 4] });
   }
   return m;
+}
+// 장마다 수수께끼 방 둘과 어둠의 방 하나를 끼워 넣어요 (원래 방 번호는 대사 번호로 남겨요)
+function grow(rooms, [p1, dk, p2]) {
+  const r = rooms.map((o, i) => Object.assign({ t: i }, o));
+  return [r[0], r[1], Object.assign({ t: 'puz' }, p1), r[2], r[3], r[4], Object.assign({ t: 'dark' }, dk), r[5], Object.assign({ t: 'puz' }, p2), r[6], r[7], r[8]];
 }
 
 // 장: 이야기, 지도, 보스, 색
@@ -192,7 +172,8 @@ export const CHAPTERS = [
       '단장은 숨을 몰아쉬며 말했어요. "먼저 서약을 깬 건... 왕이었다."',
       '진실을 찾아, 네 사람은 성 밖 잿빛 숲으로 향했어요.'
     ],
-    boss: { name: '몰락한 기사단장', ai: 'warden', hp: 12000, speed: 3.9, r: 1.4, dmg: 55, p2: ['단장이 해골 병사를 불러내요', '돌진할 때 기사가 막기로 받아치면 기절해요'], p3: ['단장의 갑옷이 갈라졌어요', '검은 불꽃을 피하며 등의 붉은 균열을 노려요. 두 배 피해예요'], ph: ['해골 소환', '갑옷 균열'] },
+    mimic: { name: '미믹', hp: 760, speed: 5.4, r: 0.9, dmg: 40, range: 2.1, windup: 0.4, cd: 1.0, honor: 8 },
+  boss: { name: '몰락한 기사단장', ai: 'warden', hp: 12000, speed: 3.9, r: 1.4, dmg: 55, p2: ['단장이 해골 병사를 불러내요', '돌진할 때 기사가 막기로 받아치면 기절해요'], p3: ['단장의 갑옷이 갈라졌어요', '검은 불꽃을 피하며 등의 붉은 균열을 노려요. 두 배 피해예요'], ph: ['해골 소환', '갑옷 균열'] },
     theme: 'dungeon'
   },
   {
@@ -400,8 +381,27 @@ export const TALK = [
     boss: [['knight', '우리는 서약을 지키는 자들이오. 너에게 바칠 서약은 없소!'], ['priest', '모두, 마지막입니다!']]
   }
 ];
-CHAPTERS[0].map = MAP1;
-CHAPTERS[1].map = genMap(4242, [
+// 수수께끼 방, 어둠의 방, 무너지는 성: 장과 상관없이 같은 대사
+export const TALK_X = {
+  plates: [['knight', '발판이 넷이오. 모두 하나씩 올라서시오.'], ['squire', '저는 이쪽 발판이요!']],
+  braziers: [['priest', '비석에 불 붙일 순서가 그려져 있어요.'], ['archer', '틀리면 전부 꺼진대. 천천히 하자.']],
+  statues: [['archer', '석상들이 딴 데를 보고 있어.'], ['knight', '모두 가운데 문양을 바라보게 돌려 보시오.']],
+  dark: [['squire', '아무것도 안 보여요! 횃불, 횃불 어디 있어요?'], ['priest', '입구에 횃불 걸이가 있어요. 누가 들지 정해요.']],
+  esc: [['knight', '성이 무너지오! 모두 출구로 달리시오!'], ['squire', '천장이 떨어져요!']],
+  mimic: [['archer', '상자에 이빨이 있었어!'], ['knight', '물러서시오, 내가 막겠소!']]
+};
+CHAPTERS[0].map = genMap(1103, grow([
+  { name: '무너진 계단', line: '계단 아래에서 뼈 부딪히는 소리가 들려요.', w: 12, h: 12 },
+  { name: '해골 병영', line: '기사단 병사였던 해골들이 잠들어 있어요. 가까이 가면 깨어나요.', foes: { skel: 6, archer: 2, shield: 1 }, pil: 1 },
+  { name: '무기고', line: '녹슨 무기 사이에 오래된 제단이 있어요.', foes: { skel: 2, archer: 3, shield: 1 }, altar: 1 },
+  { name: '버려진 예배당', line: '꺼진 모닥불이 있어요. 불을 붙이면 쓰러졌을 때 여기서 다시 시작해요.', rest: 1, chest: 1, w: 12, h: 11 },
+  { name: '물에 잠긴 회랑', line: '방패를 든 해골들이 물길을 지켜요. 바닥 함정을 조심해요.', foes: { skel: 4, archer: 4, shield: 2 }, water: 1, traps: 4 },
+  { name: '성물실', line: '기사단의 성물이 아직 남아 있어요.', foes: { skel: 2, archer: 2, shield: 1 }, altar: 1 },
+  { name: '근위대 무덤', line: '단장의 근위대장이 아직 무덤을 지키고 있어요.', foes: { elite: 1, skel: 4, archer: 2, shield: 1 }, altar: 1, pil: 1 },
+  { name: '단장의 길', line: '검은 불꽃의 열기가 느껴져요. 모닥불에서 숨을 고르고 가요.', rest: 1, chest: 1, w: 12, h: 11 },
+  { name: '기사단장의 방', line: '"서약은 깨졌다. 너희도 여기서 무릎 꿇어라."', boss: 1 }
+], [{ name: '발판의 방', line: '바닥에 발판 네 개가 있어요. 모두 하나씩 올라서면 창살문이 열려요.', puz: 'plates', w: 16, h: 13 }, { name: '불 꺼진 감옥', line: '불빛 하나 없는 방이에요. 입구의 횃불을 들어야 앞이 보여요.', dark: 1, foes: { skel: 4, archer: 2, shield: 1 }, traps: 2 }, { name: '화로의 방', line: '비석에 그려진 순서대로 화로에 불을 붙여요. 틀리면 모두 꺼져요.', puz: 'braziers', w: 16, h: 13 }]));
+CHAPTERS[1].map = genMap(4242, grow([
   { name: '숲 어귀', line: '잿빛 나뭇잎이 눈처럼 내려요. 늑대 울음이 멀리서 들려요.', w: 12, h: 12 },
   { name: '늑대 굴', line: '잠든 늑대 무리예요. 하나가 깨면 모두 깨어나요.', foes: { skel: 6, archer: 1 } },
   { name: '사냥꾼 야영지', line: '재 사냥꾼들이 창을 들고 야영지를 지켜요.', foes: { skel: 3, archer: 4, shield: 1 }, altar: 1, pil: 1 },
@@ -411,8 +411,8 @@ CHAPTERS[1].map = genMap(4242, [
   { name: '우두머리의 언덕', line: '거대한 늑대 우두머리가 언덕을 지켜요.', foes: { elite: 1, skel: 4, archer: 2 }, altar: 1, pil: 1 },
   { name: '잿빛 샘', line: '맑은 샘물 곁에서 숨을 고르고 가요.', rest: 1, chest: 1, pool: 1, w: 12, h: 11 },
   { name: '사냥터의 심장', line: '"왕의 명령이다. 이 숲을 지나간 자는 아무도 없다."', boss: 1 }
-]);
-CHAPTERS[2].map = genMap(9137, [
+], [{ name: '사냥꾼의 석상 터', line: '석상 넷이 모두 가운데 문양을 바라보게 돌려요.', puz: 'statues', w: 16, h: 13 }, { name: '빛이 닿지 않는 덤불', line: '불빛 하나 없는 방이에요. 입구의 횃불을 들어야 앞이 보여요.', dark: 1, foes: { skel: 4, archer: 2, shield: 1 }, traps: 2 }, { name: '돌 발판 숲길', line: '바닥에 발판 네 개가 있어요. 모두 하나씩 올라서면 창살문이 열려요.', puz: 'plates', w: 16, h: 13 }]));
+CHAPTERS[2].map = genMap(9137, grow([
   { name: '물에 잠긴 정문', line: '종소리가 물속에서 울려요.', w: 12, h: 12, water: 1 },
   { name: '세례당', line: '물에 빠진 수도사들이 아직 기도하고 있어요.', foes: { skel: 5, archer: 2 }, water: 1 },
   { name: '무너진 회랑', line: '물의 시종들이 물빛 구슬을 던져요.', foes: { skel: 4, archer: 3, shield: 1 }, traps: 3, pil: 1 },
@@ -422,8 +422,8 @@ CHAPTERS[2].map = genMap(9137, [
   { name: '납골당', line: '수도원 파수꾼이 납골당 문을 지켜요.', foes: { elite: 1, skel: 4, archer: 2 }, altar: 1, pil: 1 },
   { name: '성가대석', line: '젖은 의자 사이에서 숨을 고르고 가요.', rest: 1, chest: 1, w: 12, h: 11 },
   { name: '잠긴 대성당', line: '"서약은 물에 씻겨 사라졌다. 너희 기도도 마찬가지다."', boss: 1, water: 1 }
-], { flip: 1 });
-CHAPTERS[3].map = genMap(5521, [
+], [{ name: '촛대 성가실', line: '비석에 그려진 순서대로 화로에 불을 붙여요. 틀리면 모두 꺼져요.', puz: 'braziers', w: 16, h: 13 }, { name: '물 밑 지하실', line: '불빛 하나 없는 방이에요. 입구의 횃불을 들어야 앞이 보여요.', dark: 1, foes: { skel: 4, archer: 2, shield: 1 }, traps: 2 }, { name: '성인 석상 회랑', line: '석상 넷이 모두 가운데 문양을 바라보게 돌려요.', puz: 'statues', w: 16, h: 13 }]), { flip: 1 });
+CHAPTERS[3].map = genMap(5521, grow([
   { name: '탑 아래 성문', line: '잿빛 구름 아래, 탑의 문이 열려 있어요.', w: 12, h: 12 },
   { name: '무너진 병영', line: '한때 함께 싸우던 동료들이 재의 기사가 되어 서 있어요.', foes: { skel: 6, archer: 2 } },
   { name: '사슬 다리', line: '석궁병들이 다리 위를 겨누고 있어요.', foes: { skel: 4, archer: 3, shield: 1 }, traps: 4 },
@@ -433,8 +433,8 @@ CHAPTERS[3].map = genMap(5521, [
   { name: '근위대 대기실', line: '왕의 근위 기사 두 명이 문 앞에 서 있어요.', foes: { elite: 2, skel: 3, archer: 2 }, altar: 1, pil: 1 },
   { name: '왕좌 앞 계단', line: '마지막 모닥불이에요. 숨을 고르고 올라가요.', rest: 1, chest: 1, w: 12, h: 11 },
   { name: '왕좌의 방', line: '"서약이란 지키는 자를 묶는 사슬일 뿐이다."', boss: 1 }
-]);
-CHAPTERS[4].map = genMap(7717, [
+], [{ name: '맹세의 발판', line: '바닥에 발판 네 개가 있어요. 모두 하나씩 올라서면 창살문이 열려요.', puz: 'plates', w: 16, h: 13 }, { name: '그림자 계단', line: '불빛 하나 없는 방이에요. 입구의 횃불을 들어야 앞이 보여요.', dark: 1, foes: { skel: 4, archer: 2, shield: 1 }, traps: 2 }, { name: '왕의 석상 홀', line: '석상 넷이 모두 가운데 문양을 바라보게 돌려요.', puz: 'statues', w: 16, h: 13 }]));
+CHAPTERS[4].map = genMap(7717, grow([
   { name: '눈 덮인 관문', line: '눈보라 너머로 얼어붙은 요새가 보여요.', w: 12, h: 12 },
   { name: '얼어붙은 연병장', line: '형제단 기사들이 얼음 속에서 깨어나요.', foes: { skel: 6, archer: 2 } },
   { name: '얼음 성벽', line: '서리 궁수들이 성벽 위에서 겨누고 있어요.', foes: { skel: 4, archer: 4, shield: 1 }, traps: 3 },
@@ -444,8 +444,8 @@ CHAPTERS[4].map = genMap(7717, [
   { name: '형제단장의 방', line: '서리 형제단장이 마지막 문을 지켜요.', foes: { elite: 1, skel: 4, archer: 2, shield: 1 }, altar: 1, pil: 1 },
   { name: '얼어붙은 예배실', line: '얼음 속에서도 꺼지지 않는 촛불이 있어요. 숨을 고르고 가요.', rest: 1, chest: 1, w: 12, h: 11 },
   { name: '얼음 왕좌', line: '"추위보다 차가운 것은 지키지 못한 서약이다."', boss: 1 }
-]);
-CHAPTERS[5].map = genMap(3089, [
+], [{ name: '얼어붙은 화로', line: '비석에 그려진 순서대로 화로에 불을 붙여요. 틀리면 모두 꺼져요.', puz: 'braziers', w: 16, h: 13 }, { name: '눈 덮인 지하 창고', line: '불빛 하나 없는 방이에요. 입구의 횃불을 들어야 앞이 보여요.', dark: 1, foes: { skel: 4, archer: 2, shield: 1 }, traps: 2 }, { name: '얼음 발판', line: '바닥에 발판 네 개가 있어요. 모두 하나씩 올라서면 창살문이 열려요.', puz: 'plates', w: 16, h: 13 }]));
+CHAPTERS[5].map = genMap(3089, grow([
   { name: '광산 입구', line: '녹슨 수레가 입구를 막고 있어요.', w: 12, h: 12 },
   { name: '첫 번째 갱도', line: '해골 광부들이 아직도 곡괭이를 휘둘러요.', foes: { skel: 6, archer: 2 } },
   { name: '수레 선로', line: '곡괭이를 던지는 광부들이 선로 위에 있어요.', foes: { skel: 4, archer: 4, shield: 1 }, traps: 3 },
@@ -455,8 +455,8 @@ CHAPTERS[5].map = genMap(3089, [
   { name: '감독관실', line: '광산 감독이 장부를 든 채 문을 지켜요.', foes: { elite: 1, skel: 4, archer: 2, shield: 1 }, altar: 1, pil: 1 },
   { name: '검은 돌 창고', line: '검은 돌이 희미하게 빛나요. 숨을 고르고 가요.', rest: 1, chest: 1, w: 12, h: 11 },
   { name: '가장 깊은 갱도', line: '"돌은 배고프다. 너희 서약도 먹어 치우겠다."', boss: 1 }
-], { flip: 1 });
-CHAPTERS[6].map = genMap(6151, [
+], [{ name: '광부 석상 갱도', line: '석상 넷이 모두 가운데 문양을 바라보게 돌려요.', puz: 'statues', w: 16, h: 13 }, { name: '불 꺼진 갱도', line: '불빛 하나 없는 방이에요. 입구의 횃불을 들어야 앞이 보여요.', dark: 1, foes: { skel: 4, archer: 2, shield: 1 }, traps: 2 }, { name: '용광로 화로', line: '비석에 그려진 순서대로 화로에 불을 붙여요. 틀리면 모두 꺼져요.', puz: 'braziers', w: 16, h: 13 }]), { flip: 1 });
+CHAPTERS[6].map = genMap(6151, grow([
   { name: '모래 계단', line: '뜨거운 모래바람 사이로 붉은 사원이 보여요.', w: 12, h: 12 },
   { name: '순례자의 뜰', line: '불꽃 신도들이 맨발로 달려들어요.', foes: { skel: 6, archer: 2 } },
   { name: '불꽃 기도실', line: '재 사제들이 불덩이를 던져요.', foes: { skel: 4, archer: 4, shield: 1 }, traps: 3, pil: 1 },
@@ -466,8 +466,8 @@ CHAPTERS[6].map = genMap(6151, [
   { name: '수호기사의 문', line: '사원 수호기사가 성소 앞을 막아요.', foes: { elite: 1, skel: 4, archer: 2, shield: 1 }, altar: 1, pil: 1 },
   { name: '그늘진 우물', line: '사원에서 유일하게 시원한 곳이에요. 숨을 고르고 가요.', rest: 1, chest: 1, pool: 1, w: 12, h: 11 },
   { name: '불꽃의 성소', line: '"불은 거짓말하지 않는다. 모든 것을 똑같이 태울 뿐."', boss: 1 }
-]);
-CHAPTERS[7].map = genMap(8263, [
+], [{ name: '순례자의 발판', line: '바닥에 발판 네 개가 있어요. 모두 하나씩 올라서면 창살문이 열려요.', puz: 'plates', w: 16, h: 13 }, { name: '연기 가득한 지하 사당', line: '불빛 하나 없는 방이에요. 입구의 횃불을 들어야 앞이 보여요.', dark: 1, foes: { skel: 4, archer: 2, shield: 1 }, traps: 2 }, { name: '불꽃 화로 제단', line: '비석에 그려진 순서대로 화로에 불을 붙여요. 틀리면 모두 꺼져요.', puz: 'braziers', w: 16, h: 13 }]));
+CHAPTERS[7].map = genMap(8263, grow([
   { name: '끝없는 계단', line: '아래에서 보랏빛 바람이 올라와요.', w: 12, h: 12 },
   { name: '깨진 서약의 무덤', line: '서약을 어긴 기사들이 심연에 묶여 있어요.', foes: { skel: 6, archer: 2 } },
   { name: '떠 있는 다리', line: '심연 석궁병들이 다리 끝을 겨누고 있어요.', foes: { skel: 4, archer: 4, shield: 1 }, traps: 4 },
@@ -477,7 +477,7 @@ CHAPTERS[7].map = genMap(8263, [
   { name: '맹세자의 제단', line: '심연의 맹세자 둘이 제단을 지켜요.', foes: { elite: 2, skel: 3, archer: 2 }, altar: 1, pil: 1 },
   { name: '불씨의 문', line: '문 너머에서 심장 뛰는 소리가 들려요. 숨을 고르고 가요.', rest: 1, chest: 1, w: 12, h: 11 },
   { name: '심연의 바닥', line: '"서약하라. 그러면 영원히 타오르게 해 주마."', boss: 1 }
-], { flip: 1 });
+], [{ name: '깨진 서약 석상', line: '석상 넷이 모두 가운데 문양을 바라보게 돌려요.', puz: 'statues', w: 16, h: 13 }, { name: '빛을 삼키는 구덩이', line: '불빛 하나 없는 방이에요. 입구의 횃불을 들어야 앞이 보여요.', dark: 1, foes: { skel: 4, archer: 2, shield: 1 }, traps: 2 }, { name: '심연의 발판', line: '바닥에 발판 네 개가 있어요. 모두 하나씩 올라서면 창살문이 열려요.', puz: 'plates', w: 16, h: 13 }]), { flip: 1 });
 export const CHAPTER1 = CHAPTERS[0];
 
 // 비밀 방의 옛 기록: 장마다 두 개, 하나에 두 줄
@@ -520,7 +520,8 @@ export function makeDeep(d) {
   const map = genMap(DEEP.seed * 31 + f * 977, [
     { name: N[0], line, w: 12, h: 12 },
     { name: N[1], line, foes: { skel: 5, archer: 2 } },
-    { name: N[2], line, foes: { skel: 4, archer: 3, shield: 2 }, altar: 1, pil: 1 },
+    { name: '심연의 수수께끼', line: ['바닥에 발판 네 개가 있어요. 모두 하나씩 올라서면 창살문이 열려요.', '비석에 그려진 순서대로 화로에 불을 붙여요. 틀리면 모두 꺼져요.', '석상 넷이 모두 가운데 문양을 바라보게 돌려요.'][f % 3], puz: ['plates', 'braziers', 'statues'][f % 3], w: 16, h: 13, t: 'puz' },
+    { name: N[2], line: f % 2 ? line : '불빛 하나 없는 방이에요. 입구의 횃불을 들어야 앞이 보여요.', foes: { skel: 4, archer: 3, shield: 2 }, altar: 1, pil: 1, dark: f % 2 ? 0 : 1, t: f % 2 ? undefined : 'dark' },
     { name: N[3], line: '꺼진 모닥불이 있어요. 불을 붙이면 쓰러졌을 때 여기서 다시 시작해요.', rest: 1, chest: 1, w: 12, h: 11 },
     { name: N[4], line, foes: { elite: 1 + n('elite'), skel: 4, archer: 2, shield: 2 }, traps: 3 },
     { name: N[5], line: '"더 내려가고 싶다면, 나를 넘어라."', boss: 1 }
@@ -576,6 +577,11 @@ export const ACHIEVEMENTS = [
   { id: 'combo5', name: '다섯 가지 합동기', desc: '합동기 다섯 가지를 모두 써 봐요.' },
   { id: 'deep5', name: '심연 5층', desc: '끝없는 심연에서 5층까지 내려가요.' },
   { id: 'deep10', name: '심연 10층', desc: '끝없는 심연에서 10층까지 내려가요.' },
+  { id: 'mimic', name: '이빨 달린 상자', desc: '상자인 척하던 미믹을 쓰러뜨려요.' },
+  { id: 'puzzle', name: '첫 수수께끼', desc: '수수께끼 방의 창살문을 처음 열어요.' },
+  { id: 'puzzle10', name: '수수께끼 장인', desc: '수수께끼를 10개 풀어요.' },
+  { id: 'torch', name: '어둠 속 횃불', desc: '어둠의 방에서 횃불을 들어요.' },
+  { id: 'escape', name: '무너지는 성에서', desc: '보스를 쓰러뜨린 뒤 무너지는 곳에서 탈출해요.' },
   { id: 'nodown', name: '한 번도 안 쓰러짐', desc: '한 번도 쓰러지지 않고 한 장을 깨요.' },
   { id: 'all4', name: '네 가지 서약', desc: '네 역할로 모두 한 장 이상 깨요.' }
 ];
