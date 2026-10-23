@@ -230,3 +230,9 @@ crownenvoy/CrownEnvoy-v0.4.html | 전신망 (정치 탭 카드) | "📡 전신�
 
 ## Crown Envoy b91 (2026-10-23)
 - patchnotes.json | "게임 중 배경음악 추가" 1줄 (CrownEnvoy-v0.4.html 소스에는 새 한국어 문구 없음) | Crown Envoy b91 | 2026-10-23
+
+## Crown Envoy b91 (2026-10-23)
+| file | key | Korean text | build | date |
+|---|---|---|---|---|
+| CrownEnvoy-v0.4.html | 국정 도구 카드 | 🏛 국정 도구 (🗳 국민투표 · 📜 법전 편찬 · 🕊 중립 선언 · 📰 보도 통제 설명·버튼·알림 문구 전체) | b91 | 2026-10-23 |
+| CrownEnvoy-v0.4.html | 신문 | 〇〇, 언론 탄압 들통나다 | b91 | 2026-10-23 |
