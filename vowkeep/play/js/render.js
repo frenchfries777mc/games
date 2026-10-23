@@ -54,6 +54,8 @@ const THEMES = {
   abyss: { bg: 0x040208, fog: 0x0c0614, amb: 0x4a3a6a, hemi: 0x9a80c8, floor: [0x3a3444, 0x423a4c, 0x4a4254, 0x36303e, 0x463e50], bfloor: [0x2e2440, 0x362a48, 0x3e3050, 0x2a203a, 0x3a2c4c], wet: [0x3a2a5a, 0x423064, 0x36264e, 0x4a366a], wall: [0x36303e, 0x3e3646, 0x463e50, 0x302a38], bwall: [0x2e2240, 0x362848, 0x3e2e52, 0x2a1e3a], top: 0x1e1828, moss: 0x5a3a8a, mossP: 0.08, torch: 0xc08aff, water: 0x5a3a9a, ring: 0xb06aff, fz: [0x5a1aa0, 0xb06aff], ember: [0xd0a0ff, 0xa06ae0], banner: 0x3a1a5a },
   tower: { bg: 0x0a0505, fog: 0x160a08, amb: 0x6a4a4a, hemi: 0xc89a8a, floor: [0x4a4040, 0x524646, 0x5a4c4a, 0x463c3c, 0x54484a], bfloor: [0x4a3030, 0x523434, 0x5a3a36, 0x462c2c, 0x503432], wet: [0x3a3440, 0x403848, 0x36303c, 0x443c4c], wall: [0x4a3a36, 0x52423c, 0x5a4842, 0x443430], bwall: [0x5a2a22, 0x622e26, 0x6a3428, 0x52261e], top: 0x2e2220, moss: 0x5a4a2a, mossP: 0.04, torch: 0xff7a30, water: 0x6a3a2a, ring: 0xc04a10, fz: [0xa03a10, 0xff6a20], ember: [0xffa040, 0xff6a20], banner: 0x3a3a3a }
 };
+// 장마다 다른 기사단 깃발 색 (1장부터 8장까지)
+const FLAG_COL = [0x7a1f22, 0x2e5a2a, 0x2a4a8a, 0x4a4a4a, 0x2a5a7a, 0x6a4a1a, 0x8a2a10, 0x4a1a6a];
 const THEME = () => THEMES[CH.theme] || THEMES.dungeon;
 
 /* ---------- 캐릭터 모델 ---------- */
@@ -284,7 +286,12 @@ export class View {
     if (this.pp) this.pp.setPixelSize(P);
   }
   setPixel(ps) { this.ps = ps; this.resize(); }
-  setBloom(on) { this.bloomOn = on; if (this.bloom) this.bloom.enabled = on; }
+  setBloom(on) { this.bloomOn = on; if (this.bloom) this.bloom.enabled = on && !this.low; }
+  // 최적화: 그림자와 빛 번짐을 끄고 효과 조각을 절반으로 줄여요 (화면은 1초에 30번만 그려요, main.js)
+  setLow(on) {
+    this.low = !!on; this.r.shadowMap.enabled = !this.low; if (this.bloom) this.bloom.enabled = this.bloomOn && !this.low;
+    if (this.scene) this.scene.traverse(o => { if (o.material) (Array.isArray(o.material) ? o.material : [o.material]).forEach(m => m.needsUpdate = true); });
+  }
   newScene(bg, fog) {
     if (this.scene) this.scene.traverse(o => { if (o.isLight && o.shadow && o.shadow.map) o.shadow.map.dispose(); });
     const s = new THREE.Scene(); s.background = new THREE.Color(bg); s.fog = new THREE.Fog(fog, 45, 90);
@@ -292,7 +299,7 @@ export class View {
     // 기술 번쩍임용 빛 하나 (빛 개수가 바뀌면 셰이더를 다시 만들어서 미리 넣어 둬요)
     this.fxL = new THREE.PointLight(0xffffff, 0, 16, 1.6); this.fxL.position.set(0, -50, 0); s.add(this.fxL); this.fxLI = 0;
     this.comp = new EffectComposer(this.r); this.pp = new RenderPixelatedPass(this.P, s, this.cam, { normalEdgeStrength: 0.2, depthEdgeStrength: 0.4 });
-    this.comp.addPass(this.pp); this.bloom = new UnrealBloomPass(new THREE.Vector2(this.W / this.P, this.H / this.P), 0.26, 0.2, 0.9); this.bloom.enabled = this.bloomOn; this.comp.addPass(this.bloom); this.comp.addPass(new OutputPass());
+    this.comp.addPass(this.pp); this.bloom = new UnrealBloomPass(new THREE.Vector2(this.W / this.P, this.H / this.P), 0.26, 0.2, 0.9); this.bloom.enabled = this.bloomOn && !this.low; this.comp.addPass(this.bloom); this.comp.addPass(new OutputPass());
     this.comp.setSize(this.W, this.H);
     return s;
   }
@@ -330,6 +337,14 @@ export class View {
     const cf = new THREE.PointLight(0xff9040, 60, 26, 1.5); cf.position.set(0, 2.5, 2); cf.castShadow = true; cf.shadow.mapSize.set(512, 512); s.add(cf); this.flick.push({ L: cf, b: 60, ph: 0 });
     box(3, 0.6, 0.7, M(0x5a3a22), -3.6, 0.3, 4.6, s).rotation.y = 0.5; box(3, 0.6, 0.7, M(0x5a3a22), 3.4, 0.3, 4.8, s).rotation.y = -0.5;
     for (const tx of [-5, 5]) { box(0.3, 1, 0.3, M(0x4a3020), tx, 4, -11, s); this.flame(s, tx, 5, -11, 1); }
+    // 성벽의 기사단 깃발: 장을 깰 때 든 채로 지킨 깃발만 걸려요. 빈 자리에는 걸쇠만 있어요
+    const FL = this.lobbyFlags || {};
+    for (let i = 0; i < 8; i++) {
+      const x = -14.4 + i * 1.15; box(0.3, 0.16, 0.3, dmetal(), x, 5.45, -11.15, s);
+      if (!FL[i]) continue;
+      box(1.15, 0.1, 0.1, gold(), x, 5.35, -10.98, s); box(1.0, 2.0, 0.06, M(FLAG_COL[i], { e: FLAG_COL[i], ei: 0.25 }), x, 4.3, -10.98, s);
+      box(0.36, 0.7, 0.08, gold(), x, 4.4, -10.93, s); for (const dx of [-0.33, 0.33]) box(0.42, 0.3, 0.06, M(FLAG_COL[i]), x + dx * 0.75, 3.2, -10.98, s).rotation.z = dx > 0 ? -0.78 : 0.78;
+    }
     for (let i = 0; i < 80; i++) box(0.12, 0.12, 0.12, M(0xffffff, { e: 0xdfe6ff, ei: 2 }), (R() - .5) * 70, 14 + R() * 10, -30, s);
     sph(2, 12, 10, M(0xffffff, { e: 0xe8ecff, ei: 2 }), -20, 22, -30, s);
     const poses = [['knight', -3.8, 4.6, 2.4], ['archer', 3.8, 4.8, -2.5], ['priest', -2.6, -1.2, 0.6], ['squire', 2.8, -0.8, -0.7]];
@@ -539,6 +554,18 @@ export class View {
       cg.userData.dust = { x: cw(fx) + dir * 1.05, z: cw(fy) + fh, t: 0 };
       cg.visible = !SOPEN[k]; this.crackG[k] = cg;
     });
+    // 기사단 깃발: 뒤쪽 비밀 방 구석에 꽂혀 있어요. 들면 등에 메고 다녀요
+    this.flagG = null;
+    if (MAP.flag) {
+      const g = new THREE.Group(); s.add(g); const col = FLAG_COL[chapterIndex()] || T.banner || 0x7a1f22;
+      cyl(0.09, 0.1, 5.6, 6, M(0x5a3a22), 0, 2.8, 0, g); sph(0.2, 8, 6, gold(), 0, 5.75, 0, g); box(1.9, 0.12, 0.12, gold(), 0, 5.4, 0, g);
+      const cloth = new THREE.Group(); cloth.position.set(0, 5.35, 0.08); g.add(cloth);
+      box(1.7, 2.5, 0.06, M(col), 0, -1.25, 0, cloth); box(0.6, 1.0, 0.08, gold(), 0, -1.15, 0.03, cloth); box(0.22, 0.6, 0.09, M(col), 0, -1.15, 0.06, cloth); box(1.7, 0.14, 0.08, gold(), 0, -2.45, 0.01, cloth);
+      for (const dx of [-0.45, 0.45]) box(0.62, 0.42, 0.06, M(col), dx, -2.7, 0, cloth).rotation.z = dx > 0 ? -0.78 : 0.78;
+      const L = new THREE.PointLight(0xffd36b, 6, 9, 1.6); L.position.set(0, 4.6, 1.6); g.add(L);
+      g.position.set(cw(MAP.flag[0]), 0, cw(MAP.flag[1])); g.visible = !!SOPEN[MAP.flag[2]];
+      this.flagG = { g, cloth, L };
+    }
   }
   openSecret(k, lr) { if (!this.secG || !this.secG[k]) return; this.secG[k].visible = true; this.crackG[k].visible = false; this.secOn[k] = 1; if (lr) this.loreRead(lr); }
   // 수수께끼 방: 창살문, 발판, 화로와 순서 비석, 석상과 가운데 문양
@@ -824,6 +851,12 @@ export class View {
       }
     });
   }
+  syncFlag(W, t) {
+    const F = this.flagG; if (!F) return; const f = W.fl; if (!f) { F.g.visible = false; return; }
+    const E = f[2] && this.ents.get('p' + f[2]);
+    if (E) { F.g.visible = true; F.g.position.set(E.x - Math.cos(E.a) * 0.55, 0.4, E.z - Math.sin(E.a) * 0.55); F.g.rotation.y = 0; F.g.scale.setScalar(0.85); F.cloth.rotation.x = Math.sin(t * 6) * 0.08; F.cloth.rotation.z = Math.sin(t * 3.1) * 0.06; F.L.intensity = 3; }
+    else { F.g.visible = !!this.secOn[MAP.flag[2]] || f[0] !== cw(MAP.flag[0]) || f[1] !== cw(MAP.flag[1]); F.g.position.set(f[0], 0, f[1]); F.g.rotation.y = 0; F.g.scale.setScalar(1); F.cloth.rotation.x = Math.sin(t * 1.4) * 0.06; F.L.intensity = 5 + Math.sin(t * 3) * 2 + (f[3] || 0) * 6; }
+  }
   banner(s, x, z, dark, col = 0x7a1f22) {
     const g = new THREE.Group(); g.position.set(x, 5.4, z); s.add(g); box(2.2, 0.16, 0.16, M(0x8a6a30, { m: 0.6 }), 0, 0.1, 0, g);
     box(1.8, 3.6, 0.08, M(dark ? 0x3a0e14 : col), 0, -1.8, 0.05, g); box(0.7, 1.4, 0.1, gold(), 0, -1.9, 0.12, g);
@@ -871,7 +904,7 @@ export class View {
     if (W && this.trapM) {
       this.trapM.forEach((T, k) => { const v = W.tr[k] | 0, on = v & 1, up = v & 2; T.sp.position.y += ((on && up ? 0.1 : -0.8) - T.sp.position.y) * Math.min(1, dt * 18); if (!on) T.sp.visible = false; });
       this.chests.forEach((C, k) => { if (C.mim) { C.g.visible = !W.ch[k]; C.lid.rotation.x = -(Math.max(0, Math.sin(t * 1.3 + 1)) ** 8) * 0.18; return; } C.lid.rotation.x += ((W.ch[k] ? -1.6 : 0) - C.lid.rotation.x) * Math.min(1, dt * 6); });
-      this.syncPuzzles(W, dt, t); this.syncCuts(W, dt, t);
+      this.syncPuzzles(W, dt, t); this.syncCuts(W, dt, t); this.syncFlag(W, t);
       this.altars.forEach((A, k) => { const u = !!W.al[k]; A.c.position.y = 2.3 + Math.sin(t * 1.6 + k) * 0.12; A.c.rotation.y = t * 0.8; if (u !== A.used) { A.used = u; A.c.material.emissiveIntensity = u ? 0.2 : 3; A.L.intensity = u ? 0 : 18; } });
       this.fires.forEach((F, k) => { const lit = !!W.fi[k]; if (lit !== F.lit) { F.lit = lit; F.g.visible = lit; F.ring.visible = lit; F.L.intensity = lit ? 70 : 0; if (lit) this.flick.push({ L: F.L, b: 70, ph: k }); } if (lit) F.g.children.forEach((c, i) => { c.scale.y = 0.85 + Math.sin(t * 4 + i * 1.7) * 0.12; }); });
     }
@@ -969,6 +1002,7 @@ export class View {
 
   /* ----- 효과 ----- */
   burst(x, y, z, col, n = 8, sp = 4, life = 0.5, size = 0.12) {
+    if (this.low) n = Math.ceil(n / 2);
     for (let i = 0; i < n; i++) {
       const m = box(size, size, size, M(col, { e: col, ei: 2 }), x, y, z, this.scene); m.castShadow = false;
       const vx = (Math.random() - .5) * sp, vy = Math.random() * sp, vz = (Math.random() - .5) * sp;
@@ -1199,7 +1233,7 @@ function animHero(E, p, dt, t) {
   // 동작 시작: 동작 번호가 바뀌면 처음부터
   // 앞 동작이 아직 남아 있으면 그 자세에서 이어서 시작해요 (blT 동안 천천히 따라가요)
   if (p.aN !== E.aN) { E.aN = p.aN; if (E.aN != null && p.ak) { if (E.ak || E.kh) E.blT = 0.1; E.ak = p.ak; E.aT = 0; E.kc = (p.ac | 0) % 2; E.kh = null; } }
-  const kind = E.ak ? (E.ak === 'atk' || E.ak === 'hv' || E.ak === 'big' ? E.ak : 'skill') : '', D = ANIM_T[kind] || 0.5;
+  const kind = E.ak ? (E.ak === 'atk' || E.ak === 'hv' || E.ak === 'big' ? E.ak : 'skill') : '', D = kind === 'big' && role === 'priest' ? 0.9 : ANIM_T[kind] || 0.5;
   // 기사 베기가 끝나면 끝 자세를 잠깐 들고 있다가 (연타가 이어질 수 있는 동안) 천천히 돌아와요
   if (E.ak) { E.aT += dt; if (E.aT > D) { if ((role === 'knight' || CHAIN[role]) && E.ak === 'atk') E.kh = { c: E.kc, t: 0 }; E.ak = null; } }
   if (E.kh && (E.kh.t += dt) > KH_T) E.kh = null;
@@ -1230,8 +1264,11 @@ function animHero(E, p, dt, t) {
       const cr = seg(v, 0, 0.18), go = seg(v, 0.18, 0.5), rc = seg(v, 0.7, 1), x = 1 - rc, pc = cr * (1 - go);
       if (role === 'squire') { // 종자: 웅크렸다가 뛰어오르며 한 바퀴 빙글 돌려 베기
         T.spin = -Math.PI * 2 * go; T.rx = -1.5 * x + base[0] * rc; T.rz = (1.2 * pc - 1.6 * go) * x; T.bx = 0.45 * pc - 0.2 * go * x; T.jy = hop(0.16, 0.55, 1.6); T.sq = 0.5 * pc - 0.3 * go * x * (1 - seg(v, 0.45, 0.55)) + land(0.55, 0.6); T.lg = 0.9 * pc + 0.7 * go * x; T.lx = -1.2 * go * x + base[1];
-      } else { // 사제: 지팡이를 두 손으로 머리 위 높이 들고 뛰어올라 앞으로 크게 내지르기
-        T.rx = (-3.2 * cr + 2.0 * go) * x + base[0] * rc; T.lx = (-3.0 * cr + 1.8 * go) * x + base[1] * rc; T.lz = 0.35 * x; T.bx = (-0.6 * cr + 1.1 * go) * x; T.hx = (-0.5 * cr + 0.3 * go) * x; T.bz = 0.8 * go * x; T.jy = hop(0.12, 0.5, 1.8); T.sq = 0.5 * pc + land(0.5, 0.65); T.lg = 1.0 * go * x;
+      } else { // 사제: 지팡이를 두 손으로 머리 위로 들고 웅크려 빛을 모았다가 (0~0.5, 점점 떨려요) 앞으로 내질러 큰 빛을 쏴요
+        const ch = seg(v, 0, 0.2), fi = seg(v, 0.48, 0.56), rc2 = seg(v, 0.72, 1), x2 = 1 - rc2, sh = v < 0.5 ? Math.sin(t * 60) * 0.05 * seg(v, 0.15, 0.5) : 0, hc = ch * (1 - fi);
+        T.rx = (-3.1 * hc + (-1.5) * fi) * x2 + base[0] * rc2 + sh; T.lx = (-2.9 * hc - 1.4 * fi) * x2 + base[1] * rc2 - sh; T.lz = 0.4 * hc * x2; T.rz = -0.3 * hc * x2;
+        T.bx = (-0.35 * hc + 0.75 * fi) * x2; T.hx = (-0.45 * hc + 0.15 * fi) * x2; T.bz = (-0.2 * hc + 0.7 * fi) * x2; T.by = -0.25 * hc * x2;
+        T.sq = (0.35 * hc + land(0.48, 0.4)) ; T.lg = (0.7 * hc + 1.0 * fi) * x2; T.jy = hop(0.2, 0.46, 0.35);
       }
     } else if (a === 'atk' || a === 'hv') {
       if (a === 'hv') { // 강타: 웅크려 칼을 등 뒤까지 젖히고, 높이 뛰어올라 몸을 던지듯 내려찍어요

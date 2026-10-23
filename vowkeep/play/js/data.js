@@ -1,7 +1,7 @@
 // Vowkeep · © 2026 Frenchfries777 · CC BY-NC-ND 4.0
 // 게임 데이터: 역할, 적, 축복, 1장 지도
 
-export const VERSION = 'v0.1', BUILD = 36;
+export const VERSION = 'v0.1', BUILD = 37;
 
 export const ROLES = {
   knight: {
@@ -179,7 +179,7 @@ function genMap(seed, rooms, opt = {}) {
     const cand = R.filter((r, i) => i >= a && i <= b && !r.boss && !r.puz && !r.dark && !r.cut && r.col !== 1); if (!cand.length) continue;
     const r = cand[(seed >> (a === 1 ? 1 : 2)) % cand.length];
     const left = r.col === 0, py = r.cy - 1, px = left ? r.x - 3 : r.x + r.rw, rx = left ? r.x - 10 : r.x + r.rw + 3, ry = r.cy - 3;
-    m.secrets.push({ pass: [px, py, 3, 2], room: [rx, ry, 7, 7], face: [left ? r.x - 1 : r.x + r.rw, py, 1, 2], chest: [rx + (left ? 1 : 5), ry + 1], lore: [rx + 3, ry + 4] });
+    m.secrets.push({ pass: [px, py, 3, 2], room: [rx, ry, 7, 7], face: [left ? r.x - 1 : r.x + r.rw, py, 1, 2], chest: [rx + (left ? 1 : 5), ry + 1], lore: [rx + 3, ry + 4], flag: [rx + (left ? 1 : 5), ry + 5] });
   }
   return m;
 }
@@ -600,6 +600,9 @@ export function setChapterData(i) {
   MAP.secrets = MAP.secrets || [];
   MAP.chests = MAP.chests.concat(MAP.secrets.map((q, k) => [q.chest[0], q.chest[1], k + 1]));
   MAP.lores = MAP.secrets.map((q, k) => [q.lore[0], q.lore[1], k]);
+  // 기사단 깃발: 뒤쪽 비밀 방 구석에 하나 (심연에는 없어요)
+  const fq = !CH.deep && MAP.secrets.length > 1 && MAP.secrets[MAP.secrets.length - 1];
+  MAP.flag = fq && fq.flag ? [fq.flag[0], fq.flag[1], MAP.secrets.length - 1] : null;
   return CH;
 }
 setChapterData(0);
@@ -623,6 +626,8 @@ export const ACHIEVEMENTS = [
   { id: 'ch8', name: '서약을 지킨 자들', desc: '8장에서 꺼지지 않는 불꽃을 꺼뜨려요.' },
   { id: 'secret', name: '무너진 벽 너머', desc: '금 간 벽을 부수고 비밀 방을 찾아요.' },
   { id: 'lore', name: '옛 기록을 모은 자', desc: '비밀 방의 옛 기록 16개를 모두 읽어요.' },
+  { id: 'flag1', name: '깃발을 지킨 자', desc: '기사단 깃발을 든 채 장을 끝내요.' },
+  { id: 'flags', name: '기사단의 벽', desc: '여덟 장의 기사단 깃발을 모두 로비 벽에 걸어요.' },
   { id: 'combo', name: '함께 쓰는 기술', desc: '동료와 합동기를 처음 써요.' },
   { id: 'combo5', name: '다섯 가지 합동기', desc: '합동기 다섯 가지를 모두 써 봐요.' },
   { id: 'deep5', name: '심연 5층', desc: '끝없는 심연에서 5층까지 내려가요.' },
