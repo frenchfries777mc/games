@@ -755,6 +755,33 @@ h1,h2{ text-shadow:0 0 10px rgba(63,224,197,.55), 0 0 26px rgba(63,224,197,.25);
   @keyframes tcFall{ to{ transform:translateY(110vh) rotate(540deg); } }
   #tnSpecBar{ position:fixed; top:78px; left:50%; transform:translateX(-50%); z-index:30; display:none; gap:8px; align-items:center; }
   #tnSpecBar button{ width:56px; height:40px; border-radius:10px; border:1px solid rgba(63,224,197,.5); background:rgba(20,24,34,.85); color:#e8eaf0; font:800 18px 'Rajdhani',sans-serif; cursor:pointer; box-shadow:0 0 12px rgba(63,224,197,.25); }
+/* phones in landscape (touch + short screen): smaller panels, buttons and text so everything fits; tablets and PCs keep their size */
+@media (pointer:coarse) and (max-height:520px){
+  #game{ height:calc(100% - 50px); }
+  #bottomBar{ height:50px; gap:10px; padding:0 10px env(safe-area-inset-bottom,0px); }
+  #healthWrap{ width:130px; } #dashWrap{ width:90px; } #teleportWrap{ width:100px; } #vacuumStackWrap{ width:90px; }
+  #healthLabel, #dashLabel, #teleportLabel, #ultLabel, #vacuumStackLabel, #enemyNameLabel{ font-size:10px !important; margin-bottom:2px !important; }
+  #dashBar, #teleportBar, #ultBar, #skillBar{ height:7px; } #healthBar{ height:12px; }
+  #topBar{ top:6px; padding:4px 10px; font-size:10.5px; gap:6px; border-radius:8px; }
+  #lobby{ padding:8px 0; }
+  .card{ padding:12px 16px 10px; border-radius:10px; width:min(420px, 92vw); }
+  h2{ font-size:16px; margin:0 0 2px; } label{ font-size:11px; margin:8px 0 4px; } .tag{ font-size:12px; margin:0 0 8px; }
+  .hint{ font-size:10.5px; margin:0 0 6px; }
+  button{ font-size:12.5px; padding:6px 10px; border-radius:7px; }
+  .btn-full{ margin-bottom:5px; }
+  input[type=text], input[type=password]{ padding:6px 9px; font-size:12.5px; }
+  #weaponScreen{ width:min(760px, 94vw) !important; }
+  #weaponPickLayout{ gap:8px; margin:6px 0; }
+  #weaponGrid{ flex:0 0 70px; max-height:calc(100vh - 150px); gap:4px; }
+  .wpnCard{ padding:4px 2px; border-radius:8px; } .wpnCard .wi{ font-size:16px; } .wpnCard .wn{ font-size:9.5px; }
+  .wpnCard .wi canvas{ width:58px !important; height:58px !important; margin:-10px auto -10px !important; }
+  #weaponDetail{ min-height:0 !important; padding:6px 10px !important; } #weaponSearch{ width:min(200px,60%) !important; }
+  #lobby{ align-items:flex-start; } .card{ margin:auto; }
+  #weaponTitle{ font-size:15px !important; margin:0 !important; } #weaponTimerText{ margin:0 0 2px !important; }
+  #weaponPortraitWrap{ padding:6px; } #weaponPortraitName{ font-size:14px !important; } #weaponPortraitCanvas{ width:72px; height:auto; }
+  #weaponDetail{ font-size:11px; } #weaponSearch{ padding:4px 10px !important; font-size:12px; margin:2px auto 4px !important; }
+  #weaponLockBtn{ margin-top:6px !important; } #weaponChosenCount{ margin-top:4px !important; font-size:11px; }
+}
 </style>
 </head>
 <body>
@@ -4891,7 +4918,7 @@ function shuffle(arr){ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.
 /* ===== the version of this file =====
    Players with different versions CAN meet and play together: the automatic matchmaking uses the same room names for every version (online-<mode>-<map>-<slot>), and nobody is refused because of a different build.
    The build is only sent along with the join message and the lobby (for information); the corner of the screen shows it. */
-const GAME_BUILD='build 2026-10-18-v354';
+const GAME_BUILD='build 2026-10-18-v355';
 const GAME_VERSION='0.8', GAME_VERSION_NAME='황금을 찾아서';   // 게임 버전 이름: versions.json의 title과 같게 (빌드마다 바꾸지 않음)
 const WEEKLY_EVENTS=[
   {id:'lowg',    name:'저중력 난투', desc:'몸이 둥실둥실, 중력이 약해진 난투', rules:{grav:0.6}},
@@ -14965,7 +14992,8 @@ setInterval(()=>{
   document.body.classList.toggle('touchOn', on);
   if(!on){ const u=document.getElementById('touchUi'); if(u) u.style.display='none'; const r=document.getElementById('touchRotate'); if(r) r.style.display='none'; return; }
   const ui=ensureTouchUi(), playing=started && !matchEnded && !highlightViewing && document.getElementById('hud').style.display!=='none';
-  ui.style.display=playing?'block':'none';
+  const picking=!!(document.getElementById('weaponScreen').classList.contains('active') && document.getElementById('lobby').style.display!=='none');
+  ui.style.display=(playing && !picking)?'block':'none';
   const portrait=window.innerHeight>window.innerWidth*1.05;
   document.getElementById('touchRotate').style.display=(playing && portrait)?'flex':'none';
 }, 250);
