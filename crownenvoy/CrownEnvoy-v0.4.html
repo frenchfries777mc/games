@@ -394,7 +394,7 @@ try{if(sessionStorage.getItem('ce_noIntro')){sessionStorage.removeItem('ce_noInt
 sting();})();</script>
 <div id="app">
  <div id="lobby" class="screen">
-  <canvas id="lobbyBg"></canvas><canvas id="lobbyWar"></canvas><div id="cpTag">© 2026 Frenchfries777 · <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.ko" target="_blank" rel="noopener">CC BY-NC-ND 4.0</a></div><div id="verTag">v0.4 · build 92</div>
+  <canvas id="lobbyBg"></canvas><canvas id="lobbyWar"></canvas><div id="cpTag">© 2026 Frenchfries777 · <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.ko" target="_blank" rel="noopener">CC BY-NC-ND 4.0</a></div><div id="verTag">v0.4 · build 95</div>
   <header class="brand"><h1>Crown Envoy</h1><div class="sub"><i></i>DIPLOMACY · WAR · EMPIRE<i></i></div></header>
   <div id="lobbyRight">
    <div id="lobbyHome" class="modes">
@@ -3949,7 +3949,7 @@ const MapView={cv:null,ctx:null,W:0,H:0,dpr:1,scale:1,ox:0,oy:0,hover:-1,deco:[]
     const s=document.createElement('canvas');s.width=W;s.height=H;const c=s.getContext('2d');const g=c.createRadialGradient(W/2,H/2,H*.15,W/2,H/2,Math.max(W,H)*.7);g.addColorStop(0,'#1f3a46');g.addColorStop(1,'#0c161d');c.fillStyle=g;c.fillRect(0,0,W,H);
     c.strokeStyle='rgba(160,200,205,.06)';c.lineWidth=1;const r=rng(3);for(let i=0;i<120;i++){const x=r()*W,y=r()*H,l=14+r()*30;c.beginPath();c.moveTo(x,y);c.quadraticCurveTo(x+l/2,y-4,x+l,y);c.stroke();}
     this.sea=s;},
-  clampView(){const v=this.view;v.z=Math.max(1,Math.min(this.zmax,v.z));const mx=240,my=170;v.x=Math.max(1000*(1-v.z)-mx,Math.min(mx,v.x));v.y=Math.max(700*(1-v.z)-my,Math.min(my,v.y));},
+  clampView(){const v=this.view;v.z=Math.max(1,Math.min(this.zmax,v.z));const mx=60,my=40;v.x=Math.max(1000*(1-v.z)-mx,Math.min(mx,v.x));v.y=Math.max(700*(1-v.z)-my,Math.min(my,v.y));},
   zoomAt(e,f){const v=this.view;const old=v.z;const nz=Math.max(1,Math.min(this.zmax,old*f));if(nz===old)return;
     let mx=500,my=350;if(e){const r=this.cv.getBoundingClientRect();mx=(e.clientX-r.left-this.ox)/this.scale;my=(e.clientY-r.top-this.oy)/this.scale;}
     const px=(mx-v.x)/old,py=(my-v.y)/old;v.z=nz;v.x=mx-px*nz;v.y=my-py*nz;this.clampView();},
