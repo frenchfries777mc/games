@@ -2,6 +2,7 @@
 <!-- Dummy Party · © 2026 Frenchfries777 · CC BY-NC-ND 4.0 (출처 표시 필수, 비영리, 변경 금지) · https://creativecommons.org/licenses/by-nc-nd/4.0/deed.ko -->
 <html lang="ko">
 <head>
+<link rel="icon" href="logo.svg" type="image/svg+xml">
 <meta charset="UTF-8">
 <script src="https://frenchfries777mc.github.io/games/ff-lang.js"></script>
 <script>
@@ -1384,6 +1385,9 @@ body.onhome .exitHub{display:block}.exitHub:hover{background:rgba(40,28,16,.9)}
 #homeDim{position:fixed;inset:0;z-index:1;pointer-events:none;background:radial-gradient(ellipse at 50% 45%,rgba(40,20,6,.28),rgba(30,14,4,.58))}
 #sHome .homeBox{position:relative;z-index:2}.menuR{z-index:5}
 #sHome .homeBox{max-width:720px}
+.logoMark{display:block;width:104px;height:104px;margin:0 auto 8px;border-radius:24px;box-shadow:0 6px 18px rgba(0,0,0,.35)}
+@media (max-height:640px){.logoMark{width:68px;height:68px;margin-bottom:4px;border-radius:16px}}
+@media (max-height:460px){.logoMark{width:44px;height:44px;margin-bottom:2px;border-radius:11px}}
 .logo{font-size:clamp(46px,8vw,96px);white-space:nowrap}
 .menuR{position:fixed;right:40px;top:50%;transform:translateY(-50%);width:260px;background:none;padding:0;box-shadow:none;display:flex;flex-direction:column;gap:12px;text-align:right;z-index:5}.menuR .acctLine{color:#fff;font-weight:800;text-shadow:0 2px 6px rgba(0,0,0,.7)}.menuR .acctLine a{color:#ffe08a}.menuR .or{margin:0;color:#fff;text-shadow:0 2px 6px rgba(0,0,0,.7)}.menuR .msg{color:#ffe08a;text-shadow:0 2px 6px rgba(0,0,0,.7)}.menuR .pb.ghost{background:rgba(0,0,0,.45);color:#fff;border:2px solid rgba(255,255,255,.7)}
 .menuR label{font-weight:800;font-size:13px;color:var(--mu);margin:0}.menuR .acctLine{margin:0}
@@ -1436,6 +1440,7 @@ body.playing #emoBar{display:flex}
 <section class="screen on" id="sHome">
  <canvas id="homeBg" width="960" height="540"></canvas><div id="homeDim"></div>
  <div class="homeBox">
+  <img class="logoMark" src="logo.svg" alt="" width="104" height="104">
   <h1 class="logo">Dummy Party</h1>
   <p class="tag">하얀 마네킹들의 엉망진창 미니게임 대결</p>
   <canvas id="heroCv" width="520" height="300"></canvas>
@@ -1455,7 +1460,9 @@ body.playing #emoBar{display:flex}
    <div class="row"><input id="codeIn" maxlength="5" placeholder="방 코드" autocomplete="off"><button class="pb dark" id="joinBtn" style="flex:0 0 auto">들어가기</button></div>
    <div class="msg" id="homeMsg"></div>
   </aside>
-  <template id="patchnotes"><details class="notes" open><summary>패치노트 · v0.1 (build 52)</summary>
+  <template id="patchnotes"><details class="notes" open><summary>패치노트 · v0.1 (build 53)</summary>
+   <b>2026-10-23 · v0.1 build 53 · 새 로고</b>
+   <ul><li>확정 로고를 시작 화면과 탭 아이콘에 적용했어요</li></ul>
    <b>2026-10-23 · v0.1 build 52 · 웨이터 쟁반 배달</b>
    <ul><li>새 미니게임 "웨이터 쟁반 배달": 주방에서 접시를 쌓아 손님 테이블까지 날라요</li><li>많이 쌓을수록 점수가 크지만 달리면 쟁반이 흔들려 와르르 쏟아져요, 천천히 걸으면 균형을 잡아요</li></ul>
    <b>2026-10-22 · v0.1 build 51 · 가위바위보 버튼</b>
@@ -1558,7 +1565,7 @@ body.playing #emoBar{display:flex}
    <ul><li>무너지는 발판 칸 수 대폭 증가 (19×10)와 용암 동굴 맵</li><li>10개 맵 전부 새로 그림 (관중석, 야자수 섬, 링, 정원 미로, 서커스, 우노 테이블 등)</li><li>글자 대신 아이콘·말풍선·이펙트로 표현 (무기, 아이템, 카드 효과, 시작 안내)</li><li>타격·폭발·물보라 효과와 화면 흔들림 추가</li></ul>
    <b>2026-10-19 · v0.1 build 1 · 첫 시험판</b>
    <ul><li>마네킹 미니게임 10개 추가 (장애물 달리기, 섬 밀치기, 싸우기, 병맛 미로, 체스 대난투, 폭탄 돌리기, 병맛 우노, 쇼윈도 얼음땡, 무너지는 발판, 컨베이어 서바이벌)</li><li>방 코드로 최대 8명 멀티플레이, 빈자리는 봇으로 채우기</li><li>판마다 10개 중 5개를 무작위로 골라 점수를 합산</li><li>PC 키보드와 휴대폰 터치 조작 지원</li></ul></details></template>
-  <p class="foot">2~8명 · 판마다 35개 미니게임 중 7개 · 프로토타입 v0.1 b52 · <a href="../">← 프로토타입 목록</a></p>
+  <p class="foot">2~8명 · 판마다 35개 미니게임 중 7개 · 프로토타입 v0.1 b53 · <a href="../">← 프로토타입 목록</a></p>
   <p class="foot"><span class="ff-copy">© 2026 Frenchfries777 · <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.ko" target="_blank" rel="noopener">CC BY-NC-ND 4.0</a></span></p>
  </div>
 </section>
