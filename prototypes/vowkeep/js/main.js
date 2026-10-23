@@ -3,7 +3,7 @@
 import { View } from './render.js';
 import { createGame, step, snapshot, chooseBless, carryOver, INTRO_T, HV_DELAY } from './sim.js';
 import { ROLES, ROLE_IDS, BLESSINGS, CHAPTERS, CH, FOES, MAP, ACHIEVEMENTS, TALK, GEAR_TIERS, GEAR_COST, VERSION, BUILD, roleLevel, LORE, COMBOS, CURSES, DEEP, DEEP_I, TALK_X } from './data.js';
-import { collide as mapCollide, areaAt, floorCell, MW, MH, CS, cw, useChapter, chapterIndex, SOPEN, openSecret, resetSecrets, hiddenCell, GOPEN, openGate } from './map.js';
+import { collide as mapCollide, areaAt, floorCell, MW, MH, CS, cw, useChapter, chapterIndex, SOPEN, openSecret, resetSecrets, hiddenCell, GOPEN, openGate, PDOWN, dropPillar, LIFTH, liftOk, CUT } from './map.js';
 import * as SFX from './sfx.js';
 import * as MUS from './music.js';
 
@@ -376,6 +376,7 @@ function localMove(p, inp, dt) {
   const L = S.local; const R = ROLES[p.role];
   if (p.dn || p.dd || S.snap.ph === 'intro' || S.snap.ph === 'wipe' || S.snap.ph === 'won') { L.x = p.x; L.z = p.z; L.roll = 0; return; }
   if (Math.hypot(L.x - p.x, L.z - p.z) > 5) { L.x = p.x; L.z = p.z; }
+  const ox = L.x, oz = L.z;
   L.rollCd = Math.max(0, (L.rollCd || 0) - dt);
   let mx = inp.mx, mz = inp.mz; const ml = Math.hypot(mx, mz); if (ml > 1) { mx /= ml; mz /= ml; }
   // 기사 강타: 방장이 강타를 알려 오면 내 화면에서도 공중에 있는 동안 제자리에 멈춰요
@@ -385,6 +386,7 @@ function localMove(p, inp, dt) {
   if (L.roll > 0) { L.roll -= dt; L.x += L.rdx * 15 * dt; L.z += L.rdz * 15 * dt; }
   else { const sp = R.speed * ((p.b || []).indexOf('feet') >= 0 ? 1.12 : 1) * (p.ra ? 1.3 : 1) * (p.bk ? 0.8 : 1); L.x += mx * sp * dt; L.z += mz * sp * dt; }
   mapCollide(L, 0.6);
+  if (!liftOk(ox, oz, L.x, L.z)) { L.x = ox; L.z = oz; }
 }
 
 $('gl').addEventListener('touchstart', () => { if (S.snap && S.snap.ph === 'won' && S.wonT > 1) S.wonT = Math.max(S.wonT, 9); }, { passive: true });
@@ -494,7 +496,11 @@ function onEvent(e) {
     case 'plit': SFX.play('fire'); view.rise(e.x, e.z, 0xffd36b, 10, 0.8, 0.7, 6); view.flash(e.x, e.z, 0xffb050, 70); break;
     case 'pwrong': toast('순서가 틀렸어요. 화로 불이 모두 꺼졌어요.', 2600); SFX.play('warn'); view.burst(e.x, 2, e.z, 0x6a6470, 12, 4, 0.7, 0.14); break;
     case 'prot': SFX.play('clang'); view.burst(e.x, 0.6, e.z, 0x9a9aa6, 6, 3, 0.4, 0.1); break;
-    case 'phelp': toast('봇 동료가 수수께끼를 도와줘요.', 2600); break;
+    case 'phelp': toast(e.pk === -1 ? '봇 동료가 기둥을 쳐서 쓰러뜨려요.' : '봇 동료가 수수께끼를 도와줘요.', 2600); break;
+    case 'pcrack': SFX.play('clang'); view.burst(e.x, 2 + Math.random() * 4, e.z + 1, 0x9a8e84, 8, 4, 0.6, 0.14); view.shake = Math.max(view.shake, 0.25); break;
+    case 'pfall': bigMsg('기둥이 쓰러졌어요', '쓰러진 기둥을 밟고 건너요', 2600); SFX.play('slam'); view.shake = Math.max(view.shake, 0.6); view.burst(e.x, 3, e.z, 0x9a8e84, 22, 6, 0.9, 0.18); break;
+    case 'lstop': SFX.play('door'); view.burst(e.x, e.up ? 3 : 0.5, e.z, 0x9a8e84, 10, 3, 0.6, 0.12); if (e.up) toast('승강기가 위층에 닿았어요. 다시 돌리면 내려가요.', 2400); break;
+    case 'lifted': bigMsg('모두 위층에 올라왔어요', '이제 승강기는 혼자 타도 움직여요', 2600); SFX.play('clear'); break;
     case 'torch': if (e.id === me) toast(e.on ? '횃불을 들었어요. 들고 있는 동안은 기술을 못 써요.' : '횃불을 내려놓았어요.', 2400); SFX.play('fire'); break;
     case 'esc': TK.q.length = 0; TK.cur = null; talk('esc'); bigMsg('성이 무너지기 시작해요!', '초록빛 출구까지 모두 달려요', 3200); SFX.play('slam'); view.shake = Math.max(view.shake, 1.4); flashScreen(); break;
     case 'rock': view.shatter(e.x, e.z, [0x6a625a, 0x58504a, 0x8a8076], 12, false); view.ring(e.x, e.z, 2, 0x8a7a6a, 0.4); view.burst(e.x, 0.4, e.z, 0x8a7a6a, 10, 5, 0.6, 0.14); if (Math.random() < 0.5) SFX.play('slam'); break;
@@ -538,6 +544,9 @@ function syncScene() {
   if (sn.w.lr) view.loreRead(sn.w.lr);
   // 수수께끼 방 창살문: 게스트도 열린 문은 지나갈 수 있게
   if (sn.w.pz) sn.w.pz.forEach((q, k) => { if (q.d && !GOPEN[k]) { openGate(k); mini.dirty = true; } });
+  // 쓰러진 기둥 다리와 승강기 높이도 게스트 화면에 맞춰요
+  if (sn.w.pt) sn.w.pt.forEach((v, k) => { if (v === -1 && !PDOWN[k]) { dropPillar(k); mini.dirty = true; } });
+  if (sn.w.lf) sn.w.lf.forEach((v, k) => { LIFTH[k] = v[0]; });
   // 새 구역에 처음 들어가면 이름을 보여 줘요
   const me = myP();
   if (me && sn.ph !== 'intro') {
@@ -588,6 +597,7 @@ function paintHud() {
     else if (MAP.fires.some(([x, y], k) => !sn.w.fi[k] && Math.hypot(cw(x) - pos.x, cw(y) - pos.z) < 3)) pr = (TOUCH ? 'F 버튼' : 'F') + '를 꾹 눌러 모닥불 피우기';
     else if (MAP.darks.some((D, k) => Math.hypot(cw(D.stand[0]) - pos.x, cw(D.stand[1]) - pos.z) < 2.6 && (me.tc === k + 1 || sn.pl.filter(q => q.tc === k + 1).length < 2))) pr = (TOUCH ? 'F 버튼' : 'F') + '를 눌러 횃불 ' + (me.tc ? '내려놓기' : '들기 (드는 동안 기술 못 씀)');
     else if (puzPrompt(sn, pos)) pr = puzPrompt(sn, pos);
+    else if (cutPrompt(sn, pos)) pr = cutPrompt(sn, pos);
     else if (MAP.altars.some(([x, y], k) => !sn.w.al[k] && Math.hypot(cw(x) - pos.x, cw(y) - pos.z) < 2.8)) pr = (TOUCH ? 'F 버튼' : 'F') + '를 꾹 눌러 제단에서 축복 받기';
     else if (MAP.fires.some(([x, y], k) => sn.w.fi[k] && Math.hypot(cw(x) - pos.x, cw(y) - pos.z) < 4) && me.hp < me.mx) pr = '모닥불 곁에서 체력이 차올라요';
     else if (sn.bless && Object.values(sn.bless).some(Boolean) && !(sn.bless[S.me])) pr = '동료가 축복을 고르는 중이에요';
@@ -606,6 +616,21 @@ function puzPrompt(sn, pos) {
   }
   return '';
 }
+// 끊어진 길·승강기 안내
+function cutPrompt(sn, pos) {
+  const a = areaAt(pos.x, pos.z), F = TOUCH ? 'F 버튼' : 'F';
+  for (let k = 0; k < MAP.pits.length; k++) {
+    const q = MAP.pits[k], v = sn.w.pt ? sn.w.pt[k] : -1; if (q.area !== a || v === -1) continue;
+    return '금 간 기둥을 강타로 내려찍거나 여러 번 쳐서 쓰러뜨려요 · ' + Math.min(v, 6) + '/6';
+  }
+  for (let k = 0; k < MAP.lifts.length; k++) {
+    const q = MAP.lifts[k], v = sn.w.lf && sn.w.lf[k]; if (!v || q.area !== a || v[1]) continue;
+    const near = [q.cb, q.ct].some(([x, y]) => Math.hypot(cw(x) - pos.x, cw(y) - pos.z) < 2.2);
+    if (near) return F + '를 꾹 눌러 손잡이 돌리기 · 승강기 ' + (v[0] >= 0.97 ? '내리기' : v[0] <= 0.03 ? '올리기' : '움직이는 중');
+    return '한 명이 손잡이를 돌리는 동안 나머지는 발판에 타요. 위에 간 동료가 다시 내려 줘요';
+  }
+  return '';
+}
 /* 작은 지도: 가 본 곳만 보여요 */
 const WATERC = (i, j) => MAP.water.some(([x, y, w, h]) => i >= x && i < x + w && j >= y && j < y + h);
 const mini = {
@@ -617,7 +642,7 @@ const mini = {
   },
   paint() {
     const g = this.c.getContext('2d'); g.clearRect(0, 0, this.c.width, this.c.height);
-    for (let j = 0; j < MH; j++) for (let i = 0; i < MW; i++) { if (!this.seen[j * MW + i] || !floorCell(i, j) || hiddenCell(i, j)) continue; g.fillStyle = WATERC(i, j) ? '#6a8ab0' : '#a49cb0'; g.fillRect(i * 3, j * 3, 3, 3); }
+    for (let j = 0; j < MH; j++) for (let i = 0; i < MW; i++) { if (!this.seen[j * MW + i] || !floorCell(i, j) || hiddenCell(i, j)) continue; g.fillStyle = WATERC(i, j) ? '#6a8ab0' : CUT[j * MW + i] === 3 ? '#c8c0d6' : CUT[j * MW + i] === 4 ? '#c8a060' : '#a49cb0'; g.fillRect(i * 3, j * 3, 3, 3); }
     this.dirty = false;
   },
   draw(sn) {
