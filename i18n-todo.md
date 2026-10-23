@@ -257,3 +257,7 @@ crownenvoy/CrownEnvoy-v0.4.html | 전신망 (정치 탭 카드) | "📡 전신�
 
 ## Vowkeep b31 (2026-10-23)
 - patchnotes.json | "Vowkeep 궁수 화살 장전 모습" 2줄 (게임 소스에 새 문구 없음) | Vowkeep b31 | 2026-10-23
+
+## Vowkeep b32 (2026-10-23)
+- prototypes/vowkeep/index.html, js/main.js | '초대하기', '친구나 지금 접속 중인 플레이어에게 초대를 보내면 바로 들어와요.', '불러오는 중이에요...', '친구 (N)', '아직 친구가 없어요.', '접속 안 함', '지금 접속 중인 플레이어 (N)', '접속 중인 플레이어 목록은 곧 열려요.', '지금 접속 중인 다른 플레이어가 없어요.', '초대', '보냈어요', '못 보냈어요', '허브' | 한국어만 있음 | Vowkeep b32 | 2026-10-23
+- patchnotes.json | "Vowkeep 초대 창" 2줄 | Vowkeep b32 | 2026-10-23
