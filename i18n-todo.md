@@ -211,3 +211,7 @@ crownenvoy/CrownEnvoy-v0.4.html | KON (영토 한글 이름 1,451개) | 영어 �
 - prototypes/vowkeep/js/data.js | CHAPTERS 5~8장 (제목·장소·시작·결말 이야기·보스 이름·단계 안내), 5~8장 구역 이름·문장 36개, FOES 5~8장 적 이름 16개, TALK 5~8장 대사 (약 60줄), 4장 결말 문장 변경, 업적 5~8장 이름·설명, 4장 업적 이름 '왕관을 깨다' | 한국어만 있음 | Vowkeep b26 | 2026-10-23
 - patchnotes.json | "Vowkeep 5~8장 추가" 7줄 | Vowkeep b26 | 2026-10-23
 - beaconfall/patchnotes.json·i18n.js | N["v0.3 b93"] 한국어 임시 입력 | 무덤·혼불 등 2줄. 게임 안 새 글자(I18N_D 14칸): '혼불 등', '수정 2 · 횃불 1 · 깃털 1 — 손에 들면 푸른 불꽃이 무덤 쪽으로 앞장서고, 무덤에서는 빛기둥이 솟아요', '쓰러진 자리의 무덤에 물건이 모두 남아 있어요', '무덤에서 잃은 물건을 모두 되찾았어요'
+- speedcode/index.html | 자주 틀린 자릿값, 자릿값 {n}에서 가장 많이 틀렸어요. 이 자리를 한 번 더 확인해 보세요. | educations | 2026-10-23
+- proverb/index.html | 속담·관용구 78개 장면(그림 이모지, 상황 한 줄, 대사)은 한국어 전용이라 번역하지 않음. 다른 언어는 장면이 나오지 않음 | educations | 2026-10-23
+- balance/index.html | 느리게 다시 보기, 합력, 돌리는 힘 | educations | 2026-10-23
+- timeline/index.html | 사건 지도의 장소 이름 121개(EVLOC)는 한국어 화면에서만 보이고 다른 언어에서는 핀만 보임 | educations | 2026-10-23
