@@ -306,3 +306,6 @@ crownenvoy/CrownEnvoy-v0.4.html | 전신망 (정치 탭 카드) | "📡 전신�
 ## 공용 최적화 설정 (2026-10-23)
 - hub/settings/index.html | T.ko 최적화 항목 문구 12개 (perf, perfN, low, lowD, fx, fxD, fxhigh/mid/low, fps, fpsD, fps0) | 한국어만 있음 (다른 언어는 한국어로 대체돼요) | 2026-10-23
 - patchnotes.json | "공용 최적화 설정" 2줄 | 2026-10-23
+
+## Crown Envoy b96 (2026-10-23)
+| CrownEnvoy-v0.4.html | 설정 | 최적화 (모든 게임이 같이 쓰는 설정이에요. 켜면 지도 해상도를 낮추고 계절·도장 연출을 끄고 전투 연출을 요약으로 줄여서 느린 기기에서도 부드러워져요.) | b96 | 2026-10-23 |
