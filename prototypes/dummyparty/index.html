@@ -268,6 +268,12 @@
     /* 꾸미기 */
     '모자': ['hat', 'sombrero', 'chapeau', 'Hut', '帽子'],
     '안경': ['glasses', 'gafas', 'lunettes', 'Brille', 'メガネ'],
+    /* 빌드 60 추가분 */
+    "최적화": ["Optimize", "Optimizar", "Optimiser", "Optimieren", "最適化"],
+    "최적화 켬": ["Optimize: on", "Optimizar: sí", "Optimiser : oui", "Optimieren: an", "最適化 オン"],
+    "최적화 끔": ["Optimize: off", "Optimizar: no", "Optimiser : non", "Optimieren: aus", "最適化 オフ"],
+    "최적화를 켰어요. 화질과 효과를 줄여 더 부드럽게 해요.": ["Optimization on. Lower quality and effects for smoother play.", "Optimización activada. Menos calidad y efectos para ir más fluido.", "Optimisation activée. Qualité et effets réduits pour plus de fluidité.", "Optimierung an. Weniger Qualität und Effekte für flüssigeres Spiel.", "最適化をオンにしました。画質と演出を減らして滑らかにします。"],
+    "최적화를 껐어요.": ["Optimization off.", "Optimización desactivada.", "Optimisation désactivée.", "Optimierung aus.", "最適化をオフにしました。"],
     /* 빌드 57 추가분 */
     '화면을 누르면 시작해요': ['Tap the screen to start', 'Toca la pantalla para empezar', "Touchez l'écran pour commencer", 'Tippe auf den Bildschirm, um zu starten', '画面をタップして開始'],
     /* 빌드 56 추가분 */
@@ -1414,7 +1420,7 @@ canvas.ico{width:100%;max-width:320px;height:auto;aspect-ratio:640/150;backgroun
 #joyBase{position:fixed;width:110px;height:110px;border-radius:50%;background:rgba(255,255,255,.12);border:2px solid rgba(255,255,255,.35);display:none;pointer-events:none}
 #joyBase.on{display:block}
 #joyKnob{position:absolute;left:30px;top:30px;width:50px;height:50px;border-radius:50%;background:rgba(255,255,255,.55)}
-.tbtn{position:absolute;pointer-events:auto;touch-action:none;width:84px;height:84px;border-radius:50%;border:0;background:rgba(255,210,63,.75);color:#3a2410;font-weight:900;font-size:14px;box-shadow:0 4px 0 rgba(0,0,0,.3);padding:4px;line-height:1.1}
+.tbtn{word-break:keep-all;position:absolute;pointer-events:auto;touch-action:none;width:84px;height:84px;border-radius:50%;border:0;background:rgba(255,210,63,.75);color:#3a2410;font-weight:900;font-size:14px;box-shadow:0 4px 0 rgba(0,0,0,.3);padding:4px;line-height:1.1}
 .tbtn.dn{transform:translateY(3px);box-shadow:0 1px 0 rgba(0,0,0,.3);filter:brightness(1.15)}
 #btnA{right:max(22px,env(safe-area-inset-right));bottom:max(26px,env(safe-area-inset-bottom))}
 #btnB{right:calc(max(22px,env(safe-area-inset-right)) + 96px);bottom:max(18px,env(safe-area-inset-bottom));width:70px;height:70px;background:rgba(120,190,255,.75)}
@@ -1490,6 +1496,7 @@ body.playing #emoBar{display:flex}
 #emoBar button{width:42px;height:42px;border-radius:50%;border:0;background:rgba(0,0,0,.45);padding:0;touch-action:manipulation;opacity:.85}
 #emoBar button:active{transform:scale(.9);background:rgba(255,255,255,.35)}
 #emoBar canvas{width:100%;height:100%;display:block}
+@media(max-height:480px){#emoBar{bottom:3px;gap:4px}#emoBar button{width:30px;height:30px;opacity:.55}}
 </style>
 <script src="https://frenchfries777mc.github.io/games/ff-auth.js"></script>
 </head>
@@ -1519,7 +1526,9 @@ body.playing #emoBar{display:flex}
    <div class="row"><input id="codeIn" maxlength="5" placeholder="방 코드" autocomplete="off"><button class="pb dark" id="joinBtn" style="flex:0 0 auto">들어가기</button></div>
    <div class="msg" id="homeMsg"></div>
   </aside>
-  <template id="patchnotes"><details class="notes" open><summary>패치노트 · v0.1 (build 59)</summary>
+  <template id="patchnotes"><details class="notes" open><summary>패치노트 · v0.1 (build 60)</summary>
+   <b>2026-10-23 · v0.1 build 60 · 모바일과 최적화</b>
+   <ul><li>최적화 옵션이 생겼어요 (게임 위쪽 버튼과 대기실의 "최적화"): 켜면 해상도를 1배로 낮추고 관객과 색종이 효과를 빼서 느린 기기에서 부드러워요</li><li>작은 화면에서 이모티콘 버튼이 작고 흐려져서 해설 자막을 덜 가려요</li><li>터치 버튼 글자가 어색하게 줄바꿈되던 것을 고쳤어요</li></ul>
    <b>2026-10-23 · v0.1 build 59 · 라면 3분 맞히기 수정</b>
    <ul><li>라면 3분 맞히기에서 위쪽 제한시간 막대가 흐른 시간을 알려 주던 문제를 고쳤어요 (이제 숫자가 가려진 뒤에는 시간을 알 수 없어요)</li><li>컵 야바위에서 컵을 섞는 동안 공이 드러나던 문제를 고쳤어요 (공이 컵과 함께 움직여 계속 가려져요)</li></ul>
    <b>2026-10-23 · v0.1 build 58 · 인트로를 다른 게임과 같은 구성으로</b>
@@ -1636,7 +1645,7 @@ body.playing #emoBar{display:flex}
    <ul><li>무너지는 발판 칸 수 대폭 증가 (19×10)와 용암 동굴 맵</li><li>10개 맵 전부 새로 그림 (관중석, 야자수 섬, 링, 정원 미로, 서커스, 우노 테이블 등)</li><li>글자 대신 아이콘·말풍선·이펙트로 표현 (무기, 아이템, 카드 효과, 시작 안내)</li><li>타격·폭발·물보라 효과와 화면 흔들림 추가</li></ul>
    <b>2026-10-19 · v0.1 build 1 · 첫 시험판</b>
    <ul><li>마네킹 미니게임 10개 추가 (장애물 달리기, 섬 밀치기, 싸우기, 병맛 미로, 체스 대난투, 폭탄 돌리기, 병맛 우노, 쇼윈도 얼음땡, 무너지는 발판, 컨베이어 서바이벌)</li><li>방 코드로 최대 8명 멀티플레이, 빈자리는 봇으로 채우기</li><li>판마다 10개 중 5개를 무작위로 골라 점수를 합산</li><li>PC 키보드와 휴대폰 터치 조작 지원</li></ul></details></template>
-  <p class="foot">2~8명 · 판마다 36개 미니게임 중 7개 · 프로토타입 v0.1 b59 · <a href="../">← 프로토타입 목록</a></p>
+  <p class="foot">2~8명 · 판마다 36개 미니게임 중 7개 · 프로토타입 v0.1 b60 · <a href="../">← 프로토타입 목록</a></p>
   <p class="foot"><span class="ff-copy">© 2026 Frenchfries777 · <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.ko" target="_blank" rel="noopener">CC BY-NC-ND 4.0</a></span></p>
  </div>
 </section>
@@ -1657,7 +1666,7 @@ body.playing #emoBar{display:flex}
    <div class="lobSet" id="lobHost">
     <div id="botRow" style="display:none"><span>봇</span><button class="pb" id="botMinus" type="button">−</button><b id="botN"></b><button class="pb" id="botPlus" type="button">+</button></div>
     <div id="rulesRow"><span>판 수</span><button class="pb" id="rnMinus" type="button">−</button><b id="rnN"></b><button class="pb" id="rnPlus" type="button">+</button></div>
-    <button class="pb" id="rulesBtn" type="button">미니게임 고르기</button>
+    <button class="pb" id="rulesBtn" type="button">미니게임 고르기</button> <button class="pb" id="optLobBtn" type="button">최적화</button>
     <button class="pb gold" id="startBtn">시작하기</button>
     <div id="startHint"></div>
    </div>
@@ -1669,7 +1678,7 @@ body.playing #emoBar{display:flex}
 
 <section class="screen" id="sGame">
  <canvas id="cv"></canvas>
- <div class="hud"><button class="hb" id="quitBtn">나가기</button><span id="hudRound"></span><button class="hb" id="sfxBtn">소리</button><span id="hudScore"></span></div>
+ <div class="hud"><button class="hb" id="quitBtn">나가기</button><span id="hudRound"></span><button class="hb" id="sfxBtn">소리</button><button class="hb" id="optBtn">최적화</button><span id="hudScore"></span></div>
  <div id="touch"><div id="joyZone"></div><div id="joyBase"><div id="joyKnob"></div></div><button class="tbtn" id="btnB">B</button><button class="tbtn" id="btnA">A</button></div>
  <div id="emoBar"></div>
  <div class="ov" id="ov"></div>
@@ -7642,9 +7651,10 @@ function keyLine(def) {
 function isTouch() { return ('ontouchstart' in window) || navigator.maxTouchPoints > 0; }
 
 /* ---------- 그리기 ---------- */
+var OPT = lsGet('dummyparty.opt') === '1';   // 최적화: 해상도 1배, 관객·색종이·빛 효과를 줄여 느린 기기에서 부드럽게
 var CV, CX, SCALE = 1, CSSS = 1, OFFX = 0, OFFY = 0, BTNS = [], MOUSE = { x: -1, y: -1, on: false };
 function resize() {
-  var dpr = Math.min(window.devicePixelRatio || 1, isTouch() ? 1.5 : 2), w = innerWidth, h = innerHeight;
+  var dpr = OPT ? 1 : Math.min(window.devicePixelRatio || 1, isTouch() ? 1.5 : 2), w = innerWidth, h = innerHeight;
   CV.width = Math.round(w * dpr); CV.height = Math.round(h * dpr); CV.style.width = w + 'px'; CV.style.height = h + 'px';
   SCALE = Math.min(w / W, h / H) * dpr; CSSS = Math.min(w / W, h / H); OFFX = (CV.width - W * SCALE) / 2; OFFY = (CV.height - H * SCALE) / 2;
 }
@@ -7695,7 +7705,7 @@ function frame() {
     try { def.draw(CX, rep || s, v); } catch (e) { if (!G._drawErr) { G._drawErr = 1; console.error(e); } }
     CX.save(); CX.translate(-CAMX, -CAMY); drawParts(CX); drawFun(CX, now); if (!rep) drawEvents(CX, evl, v); CX.restore();
     CX.restore();
-    drawCrowd(CX, now);
+    if (!OPT) drawCrowd(CX, now);
     if (rep) drawReplayFrame(CX, now);
     else if ((m.phase === 'play' || m.phase === 'end') && !def.hideTimer) drawTimer(CX, Math.max(0, tlNow), def.time);
     var bl = m.players.filter(function (p) { return m.boost && m.boost[p.id]; });
@@ -8255,7 +8265,7 @@ function dpPhoto(m) {
     // 관객: 어두운 앞줄
     for (var m = 0; m < 15; m++) drawDummy(c, 20 + m * 65, 566 + Math.abs(Math.sin(t * 3 + m)) * -9, { s: 0.85, color: COLORS[m % 8], pose: m % 3 === 0 ? 'up' : 'stand', face: 1, t: t });
     c.fillStyle = 'rgba(10,4,24,.28)'; c.fillRect(0, 500, W, 40);
-    confetti(t);
+    if (!OPT) confetti(t);
     // 가운데 글자가 잘 보이게 가장자리를 살짝 어둡게
     var vg = c.createRadialGradient(W / 2, H / 2, 160, W / 2, H / 2, 620); vg.addColorStop(0, 'rgba(8,3,20,0.12)'); vg.addColorStop(1, 'rgba(8,3,20,.5)'); c.fillStyle = vg; c.fillRect(0, 0, W, H);
     sc1.style.opacity = op(t / 3); sc2.style.opacity = op((t - 3) / 3);
@@ -8336,6 +8346,9 @@ function dpAsk(msg, okLabel, onOk) {
   function sfxLabel() { $('sfxBtn').textContent = SFX.on ? '소리 켬' : '소리 끔'; }
   $('sfxBtn').onclick = function () { SFX.on = !SFX.on; sfxLabel(); };
   sfxLabel();
+  function optLabel() { var t = OPT ? '최적화 켬' : '최적화 끔'; $('optBtn').textContent = t; $('optLobBtn').textContent = t; }
+  function optToggle() { OPT = !OPT; lsSet('dummyparty.opt', OPT ? '1' : '0'); optLabel(); resize(); toast(OPT ? '최적화를 켰어요. 화질과 효과를 줄여 더 부드럽게 해요.' : '최적화를 껐어요.'); }
+  $('optBtn').onclick = optToggle; $('optLobBtn').onclick = optToggle; optLabel();
   // 첫 화면 마네킹 셋
   (function () {
     var c = $('heroCv').getContext('2d'), t0 = performance.now();
