@@ -141,3 +141,7 @@ patchnotes.json | v363 title | 이모지어 추가 | build 363 | 2026-10-23
 patchnotes.json | v363 items[0] | 가상 언어 이모지어 추가 (글자를 이모지로 바꿔 보여 줌, 마우스를 올리면 원문) | build 363 | 2026-10-23
 patchnotes.json | v364 title | 호렘헵 넉백 조정 | build 364 | 2026-10-20
 patchnotes.json | v364 items[0] | 호렘헵 모래바람 밀치는 거리 대폭 감소 | build 364 | 2026-10-20
+patchnotes.json | v365 title | 밸런스 표 정리 | build 365 | 2026-10-20
+patchnotes.json | v365 items[0] | 밸런스 표에 인형술사 추가 | build 365 | 2026-10-20
+patchnotes.json | v365 items[1] | 변화가 없는 항목은 표와 그래프에서 숨김 | build 365 | 2026-10-20
+patchnotes.json | v365 items[2] | 밸런스 표는 밸런스 패치 때만 새로 측정 | build 365 | 2026-10-20
