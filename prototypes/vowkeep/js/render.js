@@ -1093,6 +1093,8 @@ function animHero(E, p, dt, t) {
     T.hy = E.lkS; T.bry = E.lkS * 0.45; T.hz = -E.lkS * 0.12; T.hx = E.idle > 0.8 ? (E.lkU || 0) : 0; T.sq = Math.sin(t * 2.2 + E.ph) * 0.025; T.lz = -Math.abs(E.lkS) * 0.1; T.rz = Math.abs(E.lkS) * 0.08;
   } else E.idle = 0;
   if (role === 'archer') { T.rx = -1.5; T.rz = -0.25; T.lx = -1.55; T.lz = 0.12; T.rpz = -0.3; T.pull = 0.35; }
+  // 궁수 모아 쏘기: 시위를 끝까지 당기며 몸을 뒤로 젖히고, 오래 모을수록 웅크려요
+  if (role === 'archer' && p.cg > 0 && !E.ak) { const a = Math.min(1, p.cg / 0.8), b = Math.min(1, p.cg / 2); T.pull = 0.35 + 0.4 * a; T.rpz = -0.3 - 0.5 * a; T.bx = -0.12 * a - 0.1 * b; T.bry = 0.35 * a; T.sq = 0.12 * b + (p.cg >= 2 ? Math.sin(t * 40) * 0.02 : 0); T.lg = 0.6 * b; T.lx = -1.55 - 0.15 * a; }
   // 뛰어올랐다 내려오기: a~b 사이에 h만큼 포물선
   const hop = (a, b, h) => { const q = (v - a) / (b - a); return q > 0 && q < 1 ? Math.sin(q * Math.PI) * h : 0; };
   // 착지 충격: 내려앉는 순간 납작해졌다가 돌아와요
