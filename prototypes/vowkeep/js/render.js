@@ -6,7 +6,9 @@ import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js'
 import { OutputPass } from 'three/addons/postprocessing/OutputPass.js';
 import { RenderPixelatedPass } from 'three/addons/postprocessing/RenderPixelatedPass.js';
 import { ROLES, MAP, CH, FOES } from './data.js';
-import { CS, MW, MH, floorCell, GRID, WATER, PILLARS, cw, chapterIndex } from './map.js';
+import { CS, MW, MH, floorCell as rawFloor, GRID, WATER, PILLARS, cw, chapterIndex, SEC, SOPEN } from './map.js';
+// 화면에서 '바닥'은 비밀 방(SEC)을 뺀 곳이에요. 비밀 방은 따로 그려 두고 벽이 무너질 때 보여요
+const floorCell = (i, j) => rawFloor(i, j) && !SEC[j * MW + i];
 
 let seed = 7; const R = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
 const MC = new Map();
@@ -234,7 +236,7 @@ function makeBoss_() {
 /* ---------- 장면 ---------- */
 export class View {
   constructor(canvas) {
-    this.canvas = canvas;
+    this.canvas = canvas; this.secOn = [];
     this.r = new THREE.WebGLRenderer({ canvas, antialias: false, powerPreference: 'high-performance' });
     this.r.shadowMap.enabled = true; this.r.shadowMap.type = THREE.PCFShadowMap;
     this.r.toneMapping = THREE.ACESFilmicToneMapping; this.r.toneMappingExposure = 1.0;
@@ -333,7 +335,7 @@ export class View {
     // 벽: 방 뒤쪽(북쪽) 벽은 높게, 앞쪽·옆 벽은 낮게 해서 캐릭터가 가려지지 않게 해요
     instBoxes(s, (add) => {
       for (let j = 0; j < MH; j++) for (let i = 0; i < MW; i++) {
-        if (floorCell(i, j)) continue;
+        if (floorCell(i, j) || SEC[j * MW + i]) continue;
         let nb = false; for (let dj = -1; dj <= 1; dj++) for (let di = -1; di <= 1; di++) if (floorCell(i + di, j + dj)) nb = true;
         if (!nb) continue;
         const x = cw(i), z = cw(j), bc = inBoss(i, j + 1) || inBoss(i, j - 1) ? bbrick : brick;
@@ -355,6 +357,7 @@ export class View {
       }
     });
     this.torchPos = torches;
+    this.buildSecrets(s, T, brick);
     for (const [x, z] of torches) { box(0.3, T.trees ? 4.6 : 1, 0.3, M(0x4a3020), x, T.trees ? 2.3 : 4, z, s); box(0.6, 0.25, 0.6, M(0x2a2830, { m: 0.7 }), x, 4.5, z, s); this.flame(s, x, 5.05, z, 1, false, T.torch); }
     // 횃불 빛은 가까운 곳에만 몇 개 켜요 (빛이 너무 많으면 느려져요)
     this.pool = []; for (let k = 0; k < 8; k++) { const L = new THREE.PointLight(T.torch, 0, 22, 1.6); s.add(L); this.pool.push(L); this.flick.push({ L, b: 0, ph: k * 1.3, pool: true }); }
@@ -399,8 +402,8 @@ export class View {
       return { c, L, used: false };
     });
     // 상자
-    this.chests = MAP.chests.map(([cx, cy]) => {
-      const ch = new THREE.Group(); ch.position.set(cw(cx), 0, cw(cy)); ch.rotation.y = -0.3; s.add(ch); box(2, 1.1, 1.3, M(0x6a4628), 0, 0.55, 0, ch);
+    this.chests = MAP.chests.map(([cx, cy, sec]) => {
+      const ch = new THREE.Group(); ch.position.set(cw(cx), 0, cw(cy)); ch.rotation.y = -0.3; (sec ? this.secG[sec - 1] : s).add(ch); box(2, 1.1, 1.3, M(0x6a4628), 0, 0.55, 0, ch);
       const lid = new THREE.Group(); lid.position.set(0, 1.1, -0.65); ch.add(lid); const lidM = cyl(0.65, 0.65, 2, 10, M(0x6a4628), 0, 0, 0.65, lid); lidM.rotation.z = Math.PI / 2; box(2.05, 0.15, 1.35, gold(), 0, -0.2, 0.65, lid);
       box(0.3, 0.4, 0.1, gold(), 0, 0.9, 0.7, ch); return { lid };
     });
@@ -418,6 +421,54 @@ export class View {
     this.camT.set(cw(MAP.start[0]), 0, cw(MAP.start[1])); this.camInit = false;
     this.resize();
   }
+  // 비밀 방: 바닥·벽·옛 기록 돌은 따로 묶어 숨겨 두고, 통로 입구에는 금 간 벽을 세워요
+  buildSecrets(s, T, brick) {
+    this.secG = []; this.crackG = []; this.loreM = []; this.secOn = [];
+    const fl = floorCell;
+    MAP.secrets.forEach((q, k) => {
+      const g = new THREE.Group(); s.add(g); const id = k + 1, inK = (i, j) => i >= 0 && j >= 0 && i < MW && j < MH && Math.abs(SEC[j * MW + i]) === id, flK = (i, j) => inK(i, j) || fl(i, j);
+      const [rx, ry, rw, rh] = q.room, [px, py, pw, ph] = q.pass, x0 = Math.min(rx, px) - 1, x1 = Math.max(rx + rw, px + pw) + 1, y0 = Math.min(ry, py) - 1, y1 = Math.max(ry + rh, py + ph) + 1;
+      instBoxes(g, add => {
+        for (let j = y0; j < y1; j++) for (let i = x0; i < x1; i++) {
+          const x = cw(i), z = cw(j);
+          if (inK(i, j)) { add(x + (R() - .5) * 0.06, 0.15 - 0.3 + 0.05, z + (R() - .5) * 0.06, 1.94, 0.34, 1.94, T.bfloor[R() * T.bfloor.length | 0]); continue; }
+          if (flK(i, j)) continue;
+          let nb = false, nm = false; for (let dj = -1; dj <= 1; dj++) for (let di = -1; di <= 1; di++) { if (inK(i + di, j + dj)) nb = true; if (fl(i + di, j + dj)) nm = true; }
+          if (!nb || nm) continue;
+          const back = flK(i, j + 1) && !flK(i, j - 1), rows = back ? 6 : flK(i, j - 1) && !flK(i, j + 1) ? 1 : 3;
+          for (let y = 0; y < rows; y++) { const off = (y + j) % 2 ? 0.5 : 0; add(x - 0.5 + off, y + 0.45, z, 1.02, 0.95, 1.9, brick[R() * 4 | 0]); add(x + 0.5 + off - (off ? 1 : 0), y + 0.45, z, 1.02, 0.95, 1.9, brick[R() * 4 | 0]); }
+          add(x, rows + 0.12, z, 2.02, 0.24, 2.02, T.top);
+        }
+      });
+      // 방 안: 옛 기록 돌, 촛불, 기사단 깃발, 뼈
+      const lx = cw(q.lore[0]), lz = cw(q.lore[1]);
+      box(1.6, 0.3, 0.9, M(0x5c5468), lx, 0.15, lz, g); box(1.3, 2.3, 0.45, M(0x6e6a74), lx, 1.45, lz, g); box(1.5, 0.3, 0.6, M(0x5c5468), lx, 2.7, lz, g);
+      const rm = M(0xffd36b, { e: 0xffb040, ei: 3, uniq: true }); for (const [yy, ww] of [[2.1, 0.8], [1.7, 0.6], [1.3, 0.9], [0.9, 0.5]]) box(ww, 0.1, 0.06, rm, lx, yy, lz + 0.25, g);
+      this.loreM[k] = rm;
+      for (const [cx2, cz2] of [[-1.4, 0.4], [1.4, 0.4], [1.0, 1.0]]) { cyl(0.08, 0.08, 0.5, 5, M(0xe8e0c8), lx + cx2, 0.25, lz + cz2, g); this.flame(g, lx + cx2, 0.6, lz + cz2, 0.3, false); }
+      const L = new THREE.PointLight(0xffc070, 16, 14, 1.6); L.position.set(cw(rx + 3), 3, cw(ry + 3)); g.add(L);
+      this.banner(g, cw(rx + 1), cw(ry) - 0.98 + 0.02, false, T.banner || 0x7a1f22);
+      for (let b = 0; b < 3; b++) { const bb = box(1.1, 0.14, 0.14, bone(), cw(rx + 1 + b * 2), 0.1, cw(ry + rh - 1), g); bb.rotation.y = b * 1.3; }
+      g.visible = !!SOPEN[k]; this.secG[k] = g; this.secOn[k] = SOPEN[k] ? 1 : 0;
+      // 금 간 벽: 벽돌 사이로 금이 가 있고, 발밑에 부스러기가 떨어져 있어요
+      const cg = new THREE.Group(); s.add(cg); const [fx, fy, fw, fh] = q.face, dir = rx < fx ? 1 : -1, crackM = M(0x141016), glowM = M(0xffd08a, { e: 0xffb050, ei: 2.6 });
+      for (let j = fy; j < fy + fh; j++) {
+        const x = cw(fx), z = cw(j);
+        instBoxes(cg, add => { for (let y = 0; y < 3; y++) { const off = (y + j) % 2 ? 0.5 : 0; add(x, y + 0.45, z - 0.5 + off, 1.9, 0.95, 1.02, brick[R() * 4 | 0]); add(x, y + 0.45, z + 0.5 + off - (off ? 1 : 0), 1.9, 0.95, 1.02, brick[R() * 4 | 0]); } add(x, 3.12, z, 2.02, 0.24, 2.02, T.top); });
+        // 지그재그 금 (벽 앞면과 윗면)
+        let cy = 2.9, cz = z + (R() - .5) * 0.6;
+        for (let n = 0; n < 6; n++) { const ny = cy - 0.45, nz = cz + (R() - .5) * 0.9, seg = box(0.06, Math.hypot(cy - ny, cz - nz) + 0.06, 0.09, n % 2 ? glowM : crackM, x + dir * 0.97, (cy + ny) / 2, (cz + nz) / 2, cg); seg.rotation.x = Math.atan2(nz - cz, cy - ny); cy = ny; cz = nz; }
+        for (let n = 0; n < 4; n++) box(1.2 + R() * 0.6, 0.06, 0.12, n % 2 ? glowM : crackM, x + (R() - .5) * 0.5, 3.26, z + (R() - .5) * 1.4, cg).rotation.y = (R() - .5) * 1.6;
+        for (let n = 0; n < 4; n++) { const r = mesh(geo('rock', () => new THREE.DodecahedronGeometry(0.8)), M(brick[n % 4]), x + dir * (1.3 + R() * 0.8), 0.1, z + (R() - .5) * 1.6, cg); r.scale.setScalar(0.22 + R() * 0.2); r.rotation.y = R() * 3; }
+      }
+      // 틈새로 새어 나오는 빛과 먼지
+      const cl = new THREE.PointLight(0xffb060, 10, 7, 1.6); cl.position.set(cw(fx) + dir * 1.6, 2.2, cw(fy) + fh); cg.add(cl);
+      cg.userData.dust = { x: cw(fx) + dir * 1.05, z: cw(fy) + fh, t: 0 };
+      cg.visible = !SOPEN[k]; this.crackG[k] = cg;
+    });
+  }
+  openSecret(k, lr) { if (!this.secG || !this.secG[k]) return; this.secG[k].visible = true; this.crackG[k].visible = false; this.secOn[k] = 1; if (lr) this.loreRead(lr); }
+  loreRead(lr) { if (!this.loreM) return; lr.forEach((r, k) => { if (this.loreM[k]) this.loreM[k].emissiveIntensity = r ? 0.4 : 2.2 + Math.sin(performance.now() / 300) * 1.2; }); }
   // 맵 디테일: 빛줄기와 먼지, 쇠사슬과 창살, 깨진 타일·이끼·틈, 거미줄과 뼈, 쓰러진 석상과 갑옷, 흔들리는 풀과 덩굴, 물방울과 물결, 아치문과 기사단 문장
   details(s, T) {
     const th = CH.theme, ff = th === 'forest', stoneM = M(0x6e6a74), stoneD = M(0x58545e), boneM = bone(), dark = M(0x1a1618), webM = M(0xe8e8f0, { e: 0x8a8a9a, ei: 0.4, op: 0.5, uniq: true, ds: true });
@@ -559,6 +610,8 @@ export class View {
   tick(dt, t) {
     for (const f of this.flick || []) f.L.intensity = f.b * (0.9 + Math.sin(t * 2.2 + f.ph) * 0.04 + Math.sin(t * 3.7 + f.ph * 2) * 0.02);
     if (this.fireG) { this.fireG.children.forEach((c, i) => { c.scale.y = 0.85 + Math.sin(t * 4 + i * 1.7) * 0.12; }); }
+    // 금 간 벽: 가끔 부스러기가 떨어져요
+    if (this.mode === 'map') for (const cg of this.crackG || []) { const d = cg.userData.dust; if (!cg.visible || !d || (d.t -= dt) > 0) continue; d.t = 0.9 + Math.random() * 0.8; this.burst(d.x, 2.6, d.z + (Math.random() - .5) * 2, 0x9a8e84, 3, 1.2, 0.7, 0.1); }
     for (const e of this.embers || []) {
       e.t += dt; if (this.mode === 'lobby') { const u = (e.t % 3) / 3; e.m.position.set(Math.sin(e.t * 2 + e.m.id) * 1.2 * u, 1.5 + u * 7, 2 + Math.cos(e.t * 1.3 + e.m.id) * 1.2 * u); }
       else if (e.fly) { e.m.position.set(this.camT.x + e.x + Math.sin(e.t * 0.4 + e.ph) * 2.5, e.h + Math.sin(e.t * 0.9 + e.ph) * 0.6, this.camT.z + e.z + Math.cos(e.t * 0.3 + e.ph) * 2); e.m.material.emissiveIntensity = 2 + 5 * Math.max(0, Math.sin(e.t * 1.7 + e.ph)); }
@@ -747,6 +800,8 @@ const ease = u => u < 0 ? 0 : u > 1 ? 1 : u * u * (3 - 2 * u);
 const seg = (u, a, b) => ease((u - a) / (b - a));
 // 역할마다 공격·기술 동작. 몸 전체(허리 비틀기, 내딛기, 뛰어오르기)가 같이 움직여요
 const ANIM_T = { atk: 0.32, hv: 0.95, big: 0.6, skill: 0.8 };
+// 기사 베기 좌우 방향 (1이면 화면 오른쪽에서 시작)
+const KS = 1, KR = 1;
 function animHero(E, p, dt, t) {
   const m = E.m, u = m.userData; m.position.set(E.x, 0, E.z); m.rotation.y = Math.PI / 2 - E.a;
   E.ph += dt * (p.mv ? 11 : 0); E.sw = (E.sw || 0) + ((p.mv ? Math.sin(E.ph) * 0.95 : 0) - (E.sw || 0)) * Math.min(1, dt * 14); const sw = E.sw;
@@ -762,7 +817,7 @@ function animHero(E, p, dt, t) {
   // 기본 자세 (달릴 때는 앞으로 기울고 팔을 크게 흔들어요)
   // jy: 몸 전체가 뛰어오르는 높이, sq: 찌그러짐(+는 납작, -는 길쭉), lg: 다리 벌리기
   // 걷기: 팔을 반대로 크게 흔들고, 허리를 비틀고, 좌우로 뒤뚱, 고개는 반대로 살짝
-  const T = { rx: base[0] - sw * 0.7, rz: 0, lx: base[1] + sw * 0.7, lz: 0, bx: 0.18 * wk, by: 0, bz: 0, bry: -sn * 0.22 * wk, brz: sn * 0.09 * wk, hx: 0, hy: sn * 0.15 * wk, hz: 0, rpz: 0, pull: 0.35, jy: 0, sq: 0, lg: 0, spin: 0 };
+  const T = { rx: base[0] - sw * 0.7, rz: 0, ry: 0, lx: base[1] + sw * 0.7, lz: 0, bx: 0.18 * wk, by: 0, bz: 0, bry: -sn * 0.22 * wk, brz: sn * 0.09 * wk, hx: 0, hy: sn * 0.15 * wk, hz: 0, rpz: 0, pull: 0.35, jy: 0, sq: 0, lg: 0, spin: 0 };
   // 가만히 있으면: 숨 쉬고, 가끔 고개와 몸을 돌려 두리번거려요
   if (!p.mv && !E.ak && !p.dn) {
     E.idle = (E.idle || 0) + dt;
@@ -794,7 +849,19 @@ function animHero(E, p, dt, t) {
         T.jy = hop(0.07, L1, 3.8); T.bz = 0.3 * dn * x; T.bry = 0.5 * cr * (1 - dn) * x;
         T.sq = 0.5 * cr * (1 - up) - 0.4 * up * (1 - dn) + land(L1, 0.75); T.by = (-0.35 * cr * (1 - up) - 0.45 * dn) * x; T.lg = (0.6 * cr * (1 - up) + 0.9 * dn) * x;
         if (role === 'archer') { T.pull = 0.75 * up * (1 - dn); T.rpz = -0.4 * up * (1 - dn); }
-      } else if (role === 'knight' || role === 'squire') { // 옆으로 크게 베기: 반대쪽으로 감았다가 휘둘러요
+      } else if (role === 'knight') { // 기사 1타: (화면에서 볼 때) 오른쪽 위에서 왼쪽 아래로 비스듬히 / 2타: 왼쪽 아래에서 오른쪽 아래로 낮게 가로 베기
+        // 팔을 앞으로 들고(rx) 좌우로 휘두르며(rz) 칼날을 팔 축으로 돌려(ry) 눕혀요. 허리 비틀기(bry)로 더 크게
+        const w = seg(v, 0, 0.24), st = seg(v, 0.24, 0.54), rc = seg(v, 0.64, 1), x = 1 - rc;
+        if ((p.ac | 0) % 2 === 0) {
+          T.rx = (-2.3 * w * (1 - st) - 0.5 * st) * x + base[0] * rc; T.rz = (KS * -1.9 * w + KS * 3.0 * st) * x; T.ry = KR * (0.9 * (1 - st) + 1.8 * st) * x;
+          T.bry = (KS * -0.9 * w + KS * 1.6 * st) * x; T.bx = (-0.15 * w + 0.55 * st) * x; T.bz = 0.45 * st * x; T.by = -0.25 * st * x; T.lg = 0.7 * st * x; T.sq = 0.18 * st * x;
+          T.lx = base[1] - 0.4 * st * x;
+        } else {
+          T.rx = -1.35 * x + base[0] * rc; T.rz = (KS * 1.2 * w - KS * 2.5 * st) * x; T.ry = KR * 1.5 * x;
+          T.bry = (KS * 0.7 * w - KS * 1.4 * st) * x; T.by = (-0.3 * w - 0.4 * st) * x; T.bx = (0.3 * w + 0.2 * st) * x; T.bz = 0.3 * st * x; T.lg = (0.6 * w + 0.9 * st) * x; T.sq = (0.25 * w + 0.15 * st) * x;
+          T.lx = base[1] - 0.5 * st * x;
+        }
+      } else if (role === 'squire') { // 옆으로 크게 베기: 반대쪽으로 감았다가 휘둘러요
         const w = seg(v, 0, 0.18), st = seg(v, 0.18, 0.55), rc = seg(v, 0.6, 1);
         T.rx = -1.45; T.rz = (side * 1.3 * w - side * 2.6 * st) * (1 - rc); T.bry = (side * 0.5 * w - side * 1.1 * st) * (1 - rc); T.bz = 0.4 * st * (1 - rc); T.bx = 0.15 * st * (1 - rc); T.lx = base[1] - 0.3 * st;
       } else if (role === 'archer') { // 시위를 놓고 반동, 다시 당겨요
@@ -820,7 +887,7 @@ function animHero(E, p, dt, t) {
           T.lx = -1.75; T.lz = 0.5 * pk; T.rx = -0.4 * pk + base[0] * (1 - pk); T.rz = 0.9 * pk; T.bry = 0.5 * cr - 0.9 * pk; T.bx = 0.45 * pk; T.bz = 0.6 * pk; T.hx = 0.2 * pk; T.sq = 0.2 * cr - 0.15 * pk; T.lg = 0.9 * pk; break;
         case 'heal': case 'raise': { // 지팡이를 하늘 높이 들고 떠오르듯 솟아요 (부활은 더 높이)
           const big = a === 'raise' ? 1.6 : 1;
-          T.rx = -3.0 * pk + base[0] * (1 - pk); T.rz = 0.45 * pk; T.lx = -2.8 * pk; T.lz = -1.1 * pk; T.hx = -0.7 * pk; T.bx = 0.35 * cr - 0.45 * pk; T.jy = hop(0.2, 0.95, 0.8 * big); T.sq = 0.35 * cr - 0.2 * pk; T.by = -0.3 * cr; break; }
+          T.rx = -3.0 * pk + base[0] * (1 - pk); T.rz = 0.45 * pk; T.lx = -2.8 * pk; T.lz = -1.1 * pk; T.hx = -0.7 * pk; T.bx = 0.35 * cr - 0.25 * pk; T.jy = hop(0.2, 0.95, 0.8 * big); T.sq = 0.35 * cr - 0.2 * pk; T.by = -0.3 * cr; break; }
         case 'ward': // 지팡이를 머리 위로 들었다가 땅에 쾅 내리꽂아요
           T.rx = (-3.0 * cr + 2.2 * go) * hold + base[0] * (1 - hold); T.lx = (-2.2 * cr - 1.1 * go) * hold; T.bx = -0.4 * cr + 0.7 * pk; T.by = -0.45 * pk; T.jy = hop(0.04, 0.32, 0.8); T.sq = land(0.32, 0.55) + 0.1 * pk; T.lg = 0.9 * pk; break;
         case 'potion': { // 크게 뒤로 젖혔다가 온몸으로 던져요
@@ -828,18 +895,19 @@ function animHero(E, p, dt, t) {
         case 'trap': // 바닥에 납작 엎드려 덫을 쾅 박아요
           T.by = -0.8 * pk - 0.2 * cr; T.bx = 0.95 * pk; T.rx = -0.3 * pk + base[0] * (1 - pk); T.lx = -0.3 * pk; T.sq = 0.25 * pk + land(0.34, 0.35); T.jy = hop(0.0, 0.2, 0.4); T.lg = 1.0 * pk; break;
         case 'rally': // 높이 뛰어올라 칼을 하늘로 치켜들고 외쳐요
-          T.rx = -3.15 * pk + base[0] * (1 - pk); T.lx = -2.6 * pk; T.lz = -0.8 * pk; T.hx = -0.7 * pk; T.bx = 0.4 * cr - 0.5 * pk; T.jy = hop(0.2, 0.6, 1.5); T.sq = 0.45 * cr - 0.25 * go * (1 - seg(v, 0.45, 0.55)) + land(0.6, 0.45); T.lg = -0.6 * pk + 0.8 * seg(v, 0.6, 0.7) * hold; break;
+          T.rx = -3.15 * pk + base[0] * (1 - pk); T.lx = -2.6 * pk; T.lz = -0.8 * pk; T.hx = -0.7 * pk; T.bx = 0.4 * cr - 0.3 * pk; T.jy = hop(0.2, 0.6, 1.5); T.sq = 0.45 * cr - 0.25 * go * (1 - seg(v, 0.45, 0.55)) + land(0.6, 0.45); T.lg = -0.6 * pk + 0.8 * seg(v, 0.6, 0.7) * hold; break;
         default: T.rx = -2.8 * hold;
       }
     }
   }
-  if (E.ak && E.ak !== 'hv' && E.ak !== 'big') { // 모든 동작을 훨씬 크게: 기본 자세에서 벗어난 만큼을 키워요
-    const X = 1.4; for (const k of ['rz', 'lz', 'bx', 'by', 'bz', 'bry', 'hx']) T[k] *= X;
-    T.rx = base[0] + (T.rx - base[0]) * 1.25; T.lx = base[1] + (T.lx - base[1]) * 1.25; T.jy *= 1.9; T.sq = clampN(T.sq * 1.5, -0.5, 0.7); T.lg *= 1.3;
+  if (E.ak && E.ak !== 'hv') { // 모든 동작을 훨씬 크게: 기본 자세에서 벗어난 만큼을 키워요 (기사 말고 셋은 더 크게)
+    const ex = role !== 'knight', big = E.ak === 'big', X = big ? 1.3 : ex ? 1.85 : 1.4, A = big ? 1.15 : ex ? 1.5 : 1.25;
+    for (const k of ['rz', 'lz', 'bx', 'by', 'bz', 'bry', 'hx']) T[k] *= X;
+    T.rx = base[0] + (T.rx - base[0]) * A; T.lx = base[1] + (T.lx - base[1]) * A; T.jy *= big ? 1.35 : ex ? 2.5 : 1.9; T.sq = clampN(T.sq * (ex ? 1.8 : 1.5), -0.55, 0.75); T.lg *= ex ? 1.6 : 1.3;
   }
   if (p.bk && E.ak !== 'block') { T.lx = -1.6; }
   const k = Math.min(1, dt * 30), L = (o, kk, v2) => { E[kk] = E[kk] == null ? v2 : E[kk] + (v2 - E[kk]) * k; return E[kk]; };
-  u.armR.rotation.set(L(0, 'ar', T.rx), 0, L(0, 'arz', T.rz)); u.armL.rotation.set(L(0, 'al', T.lx), 0, L(0, 'alz', T.lz));
+  u.armR.rotation.order = 'XZY'; u.armR.rotation.set(L(0, 'ar', T.rx), L(0, 'ary', T.ry), L(0, 'arz', T.rz)); u.armL.rotation.set(L(0, 'al', T.lx), 0, L(0, 'alz', T.lz));
   u.armR.position.z = L(0, 'rpz', T.rpz); u.head.rotation.set(L(0, 'hx', T.hx), L(0, 'hy', T.hy), L(0, 'hz', T.hz));
   if (u.bowS) setPull(u.bowS, L(0, 'pl', T.pull));
   const bob = Math.abs(sn) * 0.16 * wk;

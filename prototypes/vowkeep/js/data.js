@@ -1,7 +1,7 @@
 // Vowkeep · © 2026 Frenchfries777 · CC BY-NC-ND 4.0
 // 게임 데이터: 역할, 적, 축복, 1장 지도
 
-export const VERSION = 'v0.1', BUILD = 26;
+export const VERSION = 'v0.1', BUILD = 27;
 
 export const ROLES = {
   knight: {
@@ -71,7 +71,7 @@ export const BLESSINGS = [
 ];
 
 const MAP1 = {
-  w: 72, h: 76, cs: 2,
+  w: 80, h: 76, cs: 2,
   // 바닥 (x, y, 너비, 높이)
   floors: [
     [30, 66, 12, 8], [34, 58, 4, 8], [24, 44, 24, 14], [14, 49, 10, 3], [4, 45, 10, 11], [48, 49, 8, 3], [56, 44, 12, 12],
@@ -109,6 +109,11 @@ const MAP1 = {
   fires: [[61, 50], [11, 12]],
   altars: [[8.5, 46], [58, 46], [59, 18], [5, 36]],
   chests: [[66, 46], [62, 22]],
+  // 비밀 방: 금 간 벽(pass)을 강타로 부수면 열려요 (room 안에 상자와 옛 기록)
+  secrets: [
+    { pass: [68, 49, 3, 2], room: [71, 46, 7, 7], face: [68, 49, 1, 2], chest: [76, 47], lore: [74, 51] },
+    { pass: [64, 19, 3, 2], room: [67, 16, 7, 7], face: [64, 19, 1, 2], chest: [72, 17], lore: [70, 21] }
+  ],
   // 봇이 앞장설 때 따라가는 길
   route: [[36, 62], [36, 51], [52, 50.5], [61, 48], [62, 36], [62, 29], [44, 29], [24, 29], [20, 28.5], [11, 31], [11, 20], [11, 12], [22, 12], [32, 12], [38, 10]]
 };
@@ -129,13 +134,14 @@ export const FOES = [
 // 큰 지도 만들기: 방 9개를 세 줄로 지그재그 이어 붙여요. 같은 씨앗이면 늘 같은 지도예요
 function genMap(seed, rooms, opt = {}) {
   let sd = seed; const rnd = () => (sd = (sd * 16807) % 2147483647) / 2147483647;
-  const SW = 24, SH = 22, cols = 3, rowsN = Math.ceil(rooms.length / cols), w = SW * cols, h = SH * rowsN + 2;
-  const m = { w, h, cs: 2, floors: [], water: [], areas: [], spawns: [], pillars: [], traps: [], fires: [], altars: [], chests: [], route: [] };
+  // 양옆에 10칸씩 여유를 둬서 바깥쪽 방 옆에 비밀 방을 붙여요
+  const SW = 24, SH = 22, cols = 3, X0 = 10, rowsN = Math.ceil(rooms.length / cols), w = SW * cols + X0 * 2, h = SH * rowsN + 2;
+  const m = { w, h, cs: 2, floors: [], water: [], areas: [], spawns: [], pillars: [], traps: [], fires: [], altars: [], chests: [], route: [], secrets: [] };
   const R = rooms.map((r, i) => {
     const row = Math.floor(i / cols), c0 = row % 2 ? cols - 1 - (i % cols) : i % cols, col = opt.flip ? cols - 1 - c0 : c0, sy = (rowsN - 1 - row) * SH + 1;
     const rw = r.boss ? 22 : r.w || 12 + Math.floor(rnd() * 7), rh = r.boss ? 20 : r.h || 10 + Math.floor(rnd() * 7);
-    const x = col * SW + Math.floor((SW - rw) / 2), y = sy + Math.floor((SH - rh) / 2);
-    return Object.assign({ x, y, rw, rh, cx: x + Math.floor(rw / 2), cy: y + Math.floor(rh / 2) }, r);
+    const x = X0 + col * SW + Math.floor((SW - rw) / 2), y = sy + Math.floor((SH - rh) / 2);
+    return Object.assign({ x, y, rw, rh, col, cx: x + Math.floor(rw / 2), cy: y + Math.floor(rh / 2) }, r);
   });
   R.forEach((r, i) => {
     m.floors.push([r.x, r.y, r.rw, r.rh]);
@@ -162,6 +168,12 @@ function genMap(seed, rooms, opt = {}) {
     m.route.push([r.cx, r.cy]); if (i < R.length - 1) m.route.push([R[i + 1].cx, r.cy]);
   });
   m.route.push(m.boss);
+  // 비밀 방 두 곳: 3·4번째 방 중 하나, 6·7번째 방 중 하나 (바깥쪽 벽 너머)
+  if (!opt.noSecret) for (const [a, b] of [[2, 3], [5, 6]]) {
+    const r = R[(seed >> (a === 2 ? 1 : 2)) % 2 ? b : a]; if (!r || r.boss || r.col === 1) continue;
+    const left = r.col === 0, py = r.cy - 1, px = left ? r.x - 3 : r.x + r.rw, rx = left ? r.x - 10 : r.x + r.rw + 3, ry = r.cy - 3;
+    m.secrets.push({ pass: [px, py, 3, 2], room: [rx, ry, 7, 7], face: [left ? r.x - 1 : r.x + r.rw, py, 1, 2], chest: [rx + (left ? 1 : 5), ry + 1], lore: [rx + 3, ry + 4] });
+  }
   return m;
 }
 
@@ -468,13 +480,75 @@ CHAPTERS[7].map = genMap(8263, [
 ], { flip: 1 });
 export const CHAPTER1 = CHAPTERS[0];
 
+// 비밀 방의 옛 기록: 장마다 두 개, 하나에 두 줄
+export const LORE = [
+  [['기사단을 세운 첫 단장은 서약을 돌에 새기지 않았다.', '"서약은 지키는 사람의 가슴에 새기는 것이다."'], ['단장의 일기 마지막 장: "왕이 불꽃을 보여 주었다. 거절하지 못했다."', '일기 끝에는 지워진 이름 네 개가 적혀 있어요.']],
+  [['사냥꾼들의 규칙: 새끼를 밴 짐승은 쏘지 않는다.', '베른은 왕의 명령으로 그 규칙을 처음 어겼다고 적었어요.'], ['나무 밑동에 새겨진 글: "숲은 기억한다. 재가 되어도."', '그 옆에 작은 늑대 발자국이 찍혀 있어요.']],
+  [['수도원의 첫 기도문: "불꽃은 빌리는 것이지 갖는 것이 아니다."', '대주교의 손으로 그 문장에 줄이 그어져 있어요.'], ['젖은 장부에 적힌 이름들은 모두 이 수도원에서 서약한 기사들이에요.', '맨 아래 줄에 네 사람의 이름도 있어요.']],
+  [['왕의 어린 시절 초상화가 벽을 보고 뒤집혀 있어요.', '뒷면에는 "두려움을 이기는 왕이 되겠다"라고 적혀 있어요.'], ['근위 기사의 편지: "왕은 밤마다 불꽃에게 말을 건다."', '"불꽃이 대답한다고 했다. 북쪽에서 왔다고."']],
+  [['형제단의 맹세판: "추위가 와도 불을 나누어 쓴다."', '하랄드는 그 불을 혼자 품었어요.'], ['얼음 속에 갇힌 편지: "형님, 불꽃이 따뜻하지 않아요."', '편지를 쓴 사람의 이름은 얼어서 읽을 수 없어요.']],
+  [['광부들의 노래: "검은 돌은 캐지 마라, 깨어나면 배고프다."', '그 아래 감독의 글씨로 "생산량 두 배"라고 적혀 있어요.'], ['그롬의 작업 일지: "돌을 삼키면 힘이 난다. 배는 고프지 않다."', '마지막 장은 이빨 자국으로 찢겨 있어요.']],
+  [['사원 벽화: 불꽃 앞에 무릎 꿇은 왕, 하랄드, 그리고 세라핀.', '네 번째 자리는 비어 있어요. 누구를 기다리는 걸까요.'], ['세라핀의 어린 시절 기도: "모두가 따뜻하게 해 주세요."', '기도는 언젠가부터 "모두 태워 주세요"로 바뀌었어요.']],
+  [['심연의 벽에 새겨진 수천 개의 서약. 모두 반쯤 지워져 있어요.', '지키지 못한 서약은 이렇게 불꽃의 먹이가 됐어요.'], ['가장 오래된 서약 하나만 또렷하게 남아 있어요.', '"끝까지 서로를 지킨다." 기사단 첫 단장의 글씨예요.']]
+];
+
+// 합동기: 두 동료가 1초 안에 짝이 맞는 기술을 같이 쓰면 터져요
+export const COMBOS = [
+  { id: 'lightdash', name: '빛의 돌진', a: 'dash', b: 'ward', desc: '기사 돌진 + 사제 보호막: 지나간 길에 빛이 터지고 기사에게 큰 보호막' },
+  { id: 'sanct', name: '성역의 외침', a: 'taunt', b: 'heal', desc: '기사 외침 + 사제 치유: 주변 동료를 더 치유하고 적에게 빛 피해' },
+  { id: 'wall', name: '방패진', a: 'block', b: 'rally', desc: '기사 막기 + 종자 함성: 주변 동료 모두에게 큰 보호막' },
+  { id: 'firerain', name: '불화살비', a: 'rain', b: 'potion', desc: '궁수 화살비 + 종자 물약: 화살비가 불타며 두 배로 아파요' },
+  { id: 'net', name: '사냥꾼의 그물', a: 'mark', b: 'trap', desc: '궁수 약점 표시 + 종자 덫: 표시한 적 둘레를 모두 묶어요' }
+];
+
+// 끝없는 심연: 8장을 깨면 열려요. 층마다 무작위 구역과 저주가 하나씩 쌓여요
+export const CURSES = [
+  { id: 'hp', name: '두꺼운 뼈', desc: '적 체력 +20%' },
+  { id: 'dmg', name: '날 선 무기', desc: '적 공격 +15%' },
+  { id: 'spd', name: '서두르는 발', desc: '적 이동 속도 +10%' },
+  { id: 'heal', name: '마른 샘', desc: '받는 회복 -25%' },
+  { id: 'cd', name: '무거운 손', desc: '기술 대기 시간 +15%' },
+  { id: 'elite', name: '대장의 귀환', desc: '층마다 적 대장 한 명 더' },
+  { id: 'boss', name: '질긴 수호자', desc: '층 수호자 체력 +30%' }
+];
+export const DEEP = { floor: 1, seed: 1, curses: [] };
+const DEEP_NAMES = [['무너진 계단', '뼈의 방', '녹슨 제단', '꺼진 화로', '함정 회랑', '수호자의 방'], ['잿빛 오솔길', '늑대 굴', '사냥꾼 야영지', '버려진 오두막', '가시밭', '수호자의 숲'], ['물에 잠긴 문', '기도실', '종탑 아래', '젖은 서고', '납골당', '수호자의 성당'], ['탑 계단', '병영', '무기 창고', '맹세의 방', '불타는 복도', '수호자의 왕좌'], ['눈 덮인 문', '얼음 연병장', '서리 성벽', '얼음 식당', '서리 회랑', '수호자의 얼음 방'], ['광산 입구', '갱도', '수레 선로', '광부 쉼터', '무너진 채굴장', '수호자의 갱도'], ['모래 계단', '순례자의 뜰', '향로의 방', '사제 숙소', '타오르는 회랑', '수호자의 성소'], ['끝없는 계단', '서약의 무덤', '떠 있는 다리', '불씨 쉼터', '불타는 강', '수호자의 바닥']];
+// 층 하나 만들기: 모양은 층마다 바뀌는 장(1~8장)을 빌려 와요. 같은 층·씨앗이면 늘 같은 지도예요
+export function makeDeep(d) {
+  Object.assign(DEEP, d); const f = DEEP.floor, src = (f - 1 + (DEEP.seed % 8)) % 8, C = CHAPTERS[src], n = c => DEEP.curses.filter(x => x === c).length, N = DEEP_NAMES[src];
+  const line = '심연 ' + f + '층 · 저주 ' + DEEP.curses.length + '개';
+  const map = genMap(DEEP.seed * 31 + f * 977, [
+    { name: N[0], line, w: 12, h: 12 },
+    { name: N[1], line, foes: { skel: 5, archer: 2 } },
+    { name: N[2], line, foes: { skel: 4, archer: 3, shield: 2 }, altar: 1, pil: 1 },
+    { name: N[3], line: '꺼진 모닥불이 있어요. 불을 붙이면 쓰러졌을 때 여기서 다시 시작해요.', rest: 1, chest: 1, w: 12, h: 11 },
+    { name: N[4], line, foes: { elite: 1 + n('elite'), skel: 4, archer: 2, shield: 2 }, traps: 3 },
+    { name: N[5], line: '"더 내려가고 싶다면, 나를 넘어라."', boss: 1 }
+  ], { noSecret: 1, flip: f % 2 });
+  const B = C.boss;
+  return {
+    id: 9, deep: 1, src, title: '끝없는 심연 · ' + f + '층', place: '끝없는 심연', diff: 1.2 + 0.06 * (f - 1), introT: 7,
+    intro: [f === 1 ? '불씨가 꺼진 심연 아래로, 아무도 끝을 본 적 없는 계단이 이어져 있어요.' : '네 사람은 더 깊이 내려갔어요.', '심연 ' + f + '층. 쌓인 저주: ' + (DEEP.curses.length ? DEEP.curses.map(c => CURSES.find(x => x.id === c).name).join(', ') : '없음')],
+    outro: [f + '층을 지났어요.', '아래에서 더 차가운 바람이 올라와요.'],
+    boss: Object.assign({}, B, { name: '심연의 ' + B.name, hp: Math.round(B.hp * 0.45 * (1 + 0.1 * (f - 1)) * (1 + 0.3 * n('boss'))) }),
+    curse: { hp: 1 + 0.2 * n('hp'), dmg: 1 + 0.15 * n('dmg'), spd: 1 + 0.1 * n('spd'), heal: Math.pow(0.75, n('heal')), cd: 1 + 0.15 * n('cd') },
+    theme: C.theme, map
+  };
+}
+export const DEEP_I = 8;
+
 // 지금 고른 장의 지도. map.js의 useChapter로 바꿔요
 export const MAP = {};
 export let CH = CHAPTERS[0];
 export function setChapterData(i) {
-  CH = CHAPTERS[i] || CHAPTERS[0];
+  if (i === DEEP_I) { CH = makeDeep({}); FOES[DEEP_I] = FOES[CH.src]; TALK[DEEP_I] = {}; }
+  else CH = CHAPTERS[i] || CHAPTERS[0];
   for (const k of Object.keys(MAP)) delete MAP[k];
   Object.assign(MAP, CH.map);
+  // 비밀 방 상자는 상자 목록 끝에 붙여요 (세 번째 값 = 비밀 방 번호 + 1), 옛 기록 돌
+  MAP.secrets = MAP.secrets || [];
+  MAP.chests = MAP.chests.concat(MAP.secrets.map((q, k) => [q.chest[0], q.chest[1], k + 1]));
+  MAP.lores = MAP.secrets.map((q, k) => [q.lore[0], q.lore[1], k]);
   return CH;
 }
 setChapterData(0);
@@ -496,6 +570,12 @@ export const ACHIEVEMENTS = [
   { id: 'ch6', name: '돌의 근원', desc: '6장에서 돌을 삼킨 거인 그롬을 쓰러뜨려요.' },
   { id: 'ch7', name: '거짓 예언', desc: '7장에서 불꽃의 예언자 세라핀을 쓰러뜨려요.' },
   { id: 'ch8', name: '서약을 지킨 자들', desc: '8장에서 꺼지지 않는 불꽃을 꺼뜨려요.' },
+  { id: 'secret', name: '무너진 벽 너머', desc: '금 간 벽을 부수고 비밀 방을 찾아요.' },
+  { id: 'lore', name: '옛 기록을 모은 자', desc: '비밀 방의 옛 기록 16개를 모두 읽어요.' },
+  { id: 'combo', name: '함께 쓰는 기술', desc: '동료와 합동기를 처음 써요.' },
+  { id: 'combo5', name: '다섯 가지 합동기', desc: '합동기 다섯 가지를 모두 써 봐요.' },
+  { id: 'deep5', name: '심연 5층', desc: '끝없는 심연에서 5층까지 내려가요.' },
+  { id: 'deep10', name: '심연 10층', desc: '끝없는 심연에서 10층까지 내려가요.' },
   { id: 'nodown', name: '한 번도 안 쓰러짐', desc: '한 번도 쓰러지지 않고 한 장을 깨요.' },
   { id: 'all4', name: '네 가지 서약', desc: '네 역할로 모두 한 장 이상 깨요.' }
 ];
