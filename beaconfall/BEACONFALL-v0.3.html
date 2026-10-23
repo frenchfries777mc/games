@@ -235,6 +235,7 @@ body.crafting #recipes{ display:block; }
 .rname{ width:96px; flex:none; font-size:13px; line-height:1.3; }
 .rname small{ display:block; font-size:10px; color:var(--muted); }
 .rpat{ display:flex; gap:2px; flex-wrap:nowrap; }
+@media (max-width:520px){ .rout{width:56px} .rname{width:72px} .rpat{flex-wrap:wrap;min-width:0} .rrow{gap:6px} }
 .rc{ flex:none; width:26px; height:26px; padding:1px; background:rgba(8,14,30,.7); box-shadow:inset 0 0 0 1px var(--line); }
 .rc.e{ opacity:.5; }
 .rc{ position:relative; }
@@ -377,7 +378,7 @@ window.bfIntro=function(){if(run)return;run=1;t0=Date.now();el.classList.add('ru
     <button class="btn" data-act="skins"><span class="arrow">▶</span>스킨 상점<span class="en">SKIN SHOP</span></button>
     <button class="btn" data-act="stats"><span class="arrow">▶</span>통계<span class="en">STATS</span></button>
     <button class="btn" data-act="settings"><span class="arrow">▶</span>설정<span class="en">SETTINGS</span></button>
-    <p class="foot">v0.3<br>build 97</p>
+    <p class="foot">v0.3<br>build 98</p>
   </nav>
 </div>
 
@@ -1087,13 +1088,19 @@ function makeCloud(rnd,w,h){
 }
 
 let world=null, base=null, clouds=[], cloudSprites=[], dk=null, dkc=null;
+/* 최적화: 허브 설정(ff_perf)과 같은 값을 읽고 써요. 저사양이면 화면을 더 크게 그리고, 효과 단계와 프레임 제한을 따라가요 */
+let PERF={low:false,fx:'high',fps:0};
+const perfLoad=()=>{try{if(window.FFPerf)PERF=FFPerf.get();}catch(e){}};
+perfLoad();
+window.addEventListener('ffperf',()=>{perfLoad();if(world){resize();clampCam();}});
+const optOn=()=>PERF.low;
 let S=4,VW=0,VH=0,panelW=0;
 const cam={x:0,y:0}, vel={x:0,y:0};
 let time=0, lastInput=-99, drag=null;
 
 function resize(){
   const small=innerWidth<720;
-  const auto=Math.min(Math.max(2,Math.round(innerHeight/220)),small?4:7);
+  const auto=Math.min(Math.max(2,Math.round(innerHeight/220))+(optOn()?1:0),small?4:7);
   S=settings.scale==='auto'?auto:+settings.scale;
   VW=Math.ceil(innerWidth/S)+2; VH=Math.ceil(innerHeight/S)+2;
   cv.width=VW;cv.height=VH;
@@ -1189,9 +1196,9 @@ function draw(){
     }
   }
 
-  if(!inD)drawWaterFx(g,x0,y0,x1,y1);
-  if(!inD&&!P.air)drawWhales(g,x0,y0,x1,y1);
-  if(!inD)drawReefMarks(g,x0,y0,x1,y1);
+  if(!inD&&PERF.fx==='high')drawWaterFx(g,x0,y0,x1,y1);
+  if(!inD&&!P.air&&PERF.fx==='high')drawWhales(g,x0,y0,x1,y1);
+  if(!inD&&PERF.fx==='high')drawReefMarks(g,x0,y0,x1,y1);
   for(const b of world.structs)if(b.layer==='f'&&b.x>=x0-10&&b.x<=x1+10&&b.y>=y0-6&&b.y<=y1+20)drawStructSprite(g,b.id,b.gx*GRID,b.gy*GRID,b.mat);
   for(const b of world.structs)if(b.layer==='c'&&b.x>=x0-6&&b.x<=x1+6&&b.y>=y0-2&&b.y<=y1+12)drawBelt8(g,b.gx*CG,b.gy*CG,b.dr|0,b.id==='sorter',b.sr|0,b.fl,beltPaused(b),!!b.lk);
   if(mode==='play'){drawGrave(g);drawDrops(g);drawArrows(g);}
@@ -1242,7 +1249,7 @@ function draw(){
   drawSkyReef(g,x0,y0,x1,y1);
 
   // 구름 그림자 + 구름
-  if(settings.clouds&&!inD){
+  if(settings.clouds&&!inD&&PERF.fx!=='low'){
     g.globalAlpha=0.2;
     for(const c of clouds){const x=((c.x0+time*c.v)%(W+400))-200,y=c.y;if(x+c.sp.w+40<x0||x>x1||y+c.sp.h+50<y0||y>y1)continue;g.drawImage(c.sp.s,Math.round(x+26),Math.round(y+38));}
     g.globalAlpha=0.9;
@@ -1257,7 +1264,7 @@ function draw(){
   {const wt=mode==='play'&&world.weather&&!inD?world.weather.t:'clear';if(wt!=='clear')drawWeather(g,wt);}
   if(mode==='play'&&!inD){drawAmbient(g,ix,iy,dkn);drawSkyFx(g,dkn);}
   drawDnums(g,ix,iy);
-  if(settings.clouds&&dkn<0.25){
+  if(settings.clouds&&PERF.fx!=='low'&&dkn<0.25){
     for(let i=0;i<4;i++){
       const bx=Math.floor(((time*13+i*173)%(VW+80))-40), by=Math.floor(VH*0.18+i*(VH*0.17)+Math.sin(time*0.7+i*2)*7), up=((time*5+i)|0)&1;
       g.fillStyle='rgba(8,24,56,0.28)';g.fillRect(bx+1,by+24,5,1);
@@ -2755,7 +2762,7 @@ function drawSkyReef(g,x0,y0,x1,y1){
     }
   }
   if(P.air&&mode==='play'){
-    if(settings.clouds){g.globalAlpha=0.42;for(const c of clouds){const x=((c.x0+time*c.v*1.6)%(W+400))-200,y=c.y-30;const sw=c.sp.w*2,sh=c.sp.h*2;if(x+sw<x0||x>x1||y+sh<y0||y>y1)continue;g.drawImage(c.sp.c,Math.round(x),Math.round(y),sw,sh);}g.globalAlpha=1;}
+    if(settings.clouds&&PERF.fx!=='low'){g.globalAlpha=0.42;for(const c of clouds){const x=((c.x0+time*c.v*1.6)%(W+400))-200,y=c.y-30;const sw=c.sp.w*2,sh=c.sp.h*2;if(x+sw<x0||x>x1||y+sh<y0||y>y1)continue;g.drawImage(c.sp.c,Math.round(x),Math.round(y),sw,sh);}g.globalAlpha=1;}
     skyBirdsDraw(g,x0,y0,x1,y1);drawBalloonEnv(g,P.x,P.y);
   }
   for(const r of remotes.values())if(r.air&&!r.dead)drawBalloonEnv(g,r.x,r.y);
@@ -3335,7 +3342,7 @@ const keyTap=(code,key,hold)=>{keyEv('keydown',code,key);setTimeout(()=>keyEv('k
 const touchDetected=()=>{try{return matchMedia('(pointer:coarse)').matches||(navigator.maxTouchPoints>0&&!matchMedia('(pointer:fine)').matches);}catch(e){return false;}};
 const touchOn=()=>settings.touch==='on'||((settings.touch||'auto')==='auto'&&(touchDetected()||touchSeen));
 let touchSeen=false;
-function applyTouch(){document.body.classList.toggle('touch',touchOn());}
+function applyTouch(){document.body.classList.toggle('touch',touchOn());const h=document.querySelector('#recipes h3 small');if(h)h.innerHTML=touchOn()?'레시피를 누르면 재료 한 번 분량이 채워져요 · 길게 누르면 가진 재료로 최대한 한꺼번에 제작<br>금색 테두리는 지금 만들 수 있어요':'좌클릭: 재료 한 번 분량 채우기 · 우클릭 / Shift+클릭 / Space: 가진 재료로 최대한 한꺼번에 제작<br>금색 테두리는 지금 만들 수 있어요';}
 function mapBtn(){
   if(mode!=='play'||P.dead||P.sleeping)return;
   if(mapOn){toggleMap(false);return;}
@@ -3976,6 +3983,11 @@ $('#rlist').addEventListener('contextmenu',e=>{
   craftMax(r);   // 우클릭: 한꺼번에
 });
 
+{let lpT=0,lpHit=false;const rl=$('#rlist');
+  rl.addEventListener('touchstart',e=>{const row=e.target.closest('.rrow');if(!row||!crafting)return;lpHit=false;clearTimeout(lpT);
+    lpT=setTimeout(()=>{lpHit=true;const r=RECIPES[+row.dataset.ri];if(!recipeOk(r)){toast(WHERE_HINT[r.st||'bench']);return;}if(craftMode==='smelt')return;craftMax(r);},520);},{passive:true});
+  ['touchend','touchmove','touchcancel'].forEach(n=>rl.addEventListener(n,()=>clearTimeout(lpT),{passive:true}));
+  rl.addEventListener('click',e=>{if(lpHit){lpHit=false;e.stopImmediatePropagation();}},true);}
 /* 월드 저장 (월드별로 베어낸 나무 · 설치물 · 바닥 아이템 · 플레이어 위치) */
 const SAVE_KEY=id=>'stranded.save.v5.'+id;   // 섬 구성이 바뀌어 예전 저장과는 호환되지 않아요
 let lastSaveT=0;
@@ -10841,7 +10853,7 @@ function drawAmbient(g,ix,iy,dkn){
   if(ambPir){g.fillStyle='rgba(60,10,16,0.16)';g.fillRect(0,0,Wd,Hd);
     g.fillStyle='rgba(20,0,6,0.22)';for(let i=0;i<4;i++){g.fillRect(0,i,Wd,1);g.fillRect(0,Hd-1-i,Wd,1);}}
   // 입자 생성
-  const cap=70;
+  const cap=PERF.fx==='low'?24:PERF.fx==='mid'?46:70;
   if(ambP.length<cap){
     const rate=fr*(b===8?6:4);
     const roll=Math.random();
@@ -11143,16 +11155,16 @@ function showLook(){
   const ownH=settings.hairOwn||[],ownF=settings.faceOwn||[];
   const chip=(k,kind,own)=>{
     const has=!k.id||own.includes(k.id),on=(kind==='h'?settings.hair||'':settings.face||'')===k.id&&(!k.id||has);
-    return `<button class="btn sm${on?' ghost':''}" ${on?'disabled':''} data-lk="${kind}" data-id="${k.id}" style="margin:2px;display:inline-block;width:auto">${k.name}${has?'':' · '+bC(k.price)}</button>`;
+    return `<button class="btn sm${on?' ghost':''}" ${on?'disabled':''} data-lk="${kind}" data-id="${k.id}" style="margin:2px;display:block;width:auto">${k.name}${has?'':' · '+bC(k.price)}</button>`;
   };
   const sw=HAIRC.map(k=>`<button class="btn sm${(settings.hairc||'')===k.id?' ghost':''}" data-lk="c" data-id="${k.id}" title="${k.name}" style="margin:2px;display:inline-block;width:34px;height:28px;padding:0;background:${k.col};${(settings.hairc||'')===k.id?'outline:2px solid #fff;':''}"></button>`).join('');
   openModal(`<h2>머리·표정 꾸미기<small>HAIR &amp; FACE</small></h2>
     <div class="row"><span>보유 BeaCoin</span><b data-noi18n="1">${bC(settings.bc)}</b></div>
     <div style="text-align:center;margin:6px 0"><canvas id="lkprev" width="12" height="16" style="width:72px;height:96px;image-rendering:pixelated"></canvas></div>
     <div style="max-height:32vh;overflow:auto">
-      <div class="hint">머리 모양</div><div>${HAIRS.map(k=>chip(k,'h',ownH)).join('')}</div>
+      <div class="hint">머리 모양</div><div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr))">${HAIRS.map(k=>chip(k,'h',ownH)).join('')}</div>
       <div class="hint" style="margin-top:6px">머리 색 (무료)</div><div>${sw}</div>
-      <div class="hint" style="margin-top:6px">표정</div><div>${FACES.map(k=>chip(k,'f',ownF)).join('')}</div>
+      <div class="hint" style="margin-top:6px">표정</div><div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr))">${FACES.map(k=>chip(k,'f',ownF)).join('')}</div>
     </div>
     <div class="actions"><button class="btn sm ghost" data-back>스킨 상점으로</button><button class="btn sm ghost" data-close>닫기</button></div>`,m=>{
       m.querySelector('[data-close]').onclick=closeModal;
@@ -11356,6 +11368,10 @@ function showSettings(){
     <div class="row"><span>계정 저장</span><span style="font-size:12px;opacity:.85;text-align:right">${esc(window.bfCloudStatus?bfCloudStatus():'')}</span></div>
     <div class="row"><span>언어</span><div class="seg" style="flex-wrap:wrap">${I18N_LANGS.filter(v=>!I18N_VIRT[v]).map(v=>`<button data-lang="${v}" aria-pressed="${i18nPick()===v}">${I18N_NAMES[v]}</button>`).join('')}</div></div>
     <div class="row"><span>가상 언어</span><div class="seg" style="flex-wrap:wrap">${['nw','gk','au','sg','em'].map(v=>`<button data-lang="${v}" aria-pressed="${i18nPick()===v}"${v==='au'?` style="font-family:'FF Aurebesh',system-ui"`:v==='sg'?` style="font-family:'FF Galactic',system-ui"`:''}>${I18N_NAMES[v]}</button>`).join('')}</div></div>
+    <div class="row"><span>저사양 모드</span><div class="seg">${[['1','켜짐'],['0','꺼짐']].map(([v,t])=>`<button data-perf="low" data-v="${v}" aria-pressed="${PERF.low===(v==='1')}">${t}</button>`).join('')}</div></div>
+    <div class="row"><span>효과</span><div class="seg">${[['high','높음'],['mid','중간'],['low','낮음']].map(([v,t])=>`<button data-perf="fx" data-v="${v}" aria-pressed="${PERF.fx===v}">${t}</button>`).join('')}</div></div>
+    <div class="row"><span>프레임</span><div class="seg">${[['0','제한 없음'],['60','60'],['30','30']].map(([v,t])=>`<button data-perf="fps" data-v="${v}" aria-pressed="${String(PERF.fps)===v}">${t}</button>`).join('')}</div></div>
+    <div style="font-size:11px;opacity:.75;margin:-2px 0 6px">허브·교육·도구 사이트와 같은 설정이에요. 저사양 모드를 켜면 화면을 더 크게 그리고 효과와 프레임을 줄여요.</div>
     <div class="row"><span>모바일 조작</span><div class="seg">${['auto','on','off'].map(v=>`<button data-touch="${v}" aria-pressed="${(settings.touch||'auto')===v}">${v==='auto'?'자동':v==='on'?'켜짐':'꺼짐'}</button>`).join('')}</div></div>
     <div style="font-size:11px;opacity:.75;text-align:center;margin-top:8px">© 2026 Frenchfries777 · <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.ko" target="_blank" rel="noopener" style="color:inherit">CC BY-NC-ND 4.0</a></div>
     <div class="actions"><button class="btn sm" data-site>나가기</button><button class="btn sm ghost" data-close>닫기</button></div>`,m=>{const r=m.querySelector('#bgmvol');if(r)r.oninput=()=>BGM.setVol(r.value/100);
@@ -11363,6 +11379,10 @@ function showSettings(){
     m.querySelectorAll('[data-lang]').forEach(b=>b.onclick=()=>{const v=b.dataset.lang,was=(i18nPick()==='au'||i18nPick()==='sg'||i18nPick()==='em');   // Aurebesh is English in its own letters; the font is set up on load, so switching it in or out reloads
       if((v==='au'||v==='sg'||v==='em')){setLang('en');try{if(window.FFLang)FFLang.set(v);}catch(e){}location.reload();return;}
       setLang(v);if(was){location.reload();return;}m.querySelectorAll('[data-lang]').forEach(x=>x.setAttribute('aria-pressed',String(x===b)));});
+    m.querySelectorAll('[data-perf]').forEach(b=>b.onclick=()=>{const k=b.dataset.perf,v=b.dataset.v;let o;
+      if(k==='low')o={low:v==='1',fx:v==='1'?'low':'high',fps:v==='1'?30:0};else if(k==='fx')o={fx:v};else o={fps:+v};
+      try{FFPerf.set(o);}catch(e){}perfLoad();if(world){resize();clampCam();}
+      m.querySelectorAll('[data-perf]').forEach(x=>{const kk=x.dataset.perf,vv=x.dataset.v;x.setAttribute('aria-pressed',String(kk==='low'?PERF.low===(vv==='1'):String(PERF[kk])===vv));});});
     m.querySelectorAll('[data-touch]').forEach(b=>b.onclick=()=>{settings.touch=b.dataset.touch;saveSettings();applyTouch();m.querySelectorAll('[data-touch]').forEach(x=>x.setAttribute('aria-pressed',String(x===b)));});},'settings');
 }
 
@@ -11989,6 +12009,7 @@ let rz=0;addEventListener('resize',()=>{clearTimeout(rz);rz=setTimeout(()=>{if(w
 /* ---------- 시작 ---------- */
 let last=performance.now();
 function frame(now){
+  if(PERF.fps&&now-last<(PERF.fps===30?28:14)){requestAnimationFrame(frame);return;}   // 최적화: 프레임 제한
   let dt=Math.min(0.05,(now-last)/1000);last=now;if(hitStop>0){hitStop-=dt;dt*=0.05;}frameDt=dt;
   achPopTick(dt);dnTick(dt);
   if(forge)updateForge(dt);

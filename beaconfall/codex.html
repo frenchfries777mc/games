@@ -5,7 +5,7 @@
 <meta charset="UTF-8">
 <script src="https://frenchfries777mc.github.io/games/ff-lang.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>BEACONFALL · 도감</title>
+<title>BEACONFALL</title>
 <meta name="theme-color" content="#14527e">
 <style>
 @font-face{font-family:Galmuri;src:url(Galmuri11.woff2) format('woff2');font-weight:400;font-display:swap}
@@ -373,7 +373,7 @@ function setTab(tb){
 function applyLang(){
  document.documentElement.lang=LANG;
  document.querySelectorAll('[data-t]').forEach(el=>el.textContent=t(el.dataset.t));
- document.title='BEACONFALL · '+t('title');
+ document.title='BEACONFALL';
  document.getElementById('qi').placeholder=t('q_items');document.getElementById('qr').placeholder=t('q_recipes');document.getElementById('qc').placeholder=t('q_calc');
  const cur=auOn()?FFLang.script():LANG;document.getElementById('lg').innerHTML=LS.concat(['au','sg','em']).map(l=>`<button class="pb${l===cur?' on':''}" data-l="${l}"${l==='au'?` style="font-family:'FF Aurebesh',system-ui"`:l==='sg'?` style="font-family:'FF Galactic',system-ui"`:''}>${NAMES[l]}</button>`).join('');
  setTab(TAB);
