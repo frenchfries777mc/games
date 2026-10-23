@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#0e2a2e"/><stop offset="1" stop-color="#071518"/></linearGradient>
+    <radialGradient id="gl" cx=".5" cy=".45" r=".5"><stop offset="0" stop-color="#4fd6d0" stop-opacity=".5"/><stop offset="1" stop-color="#4fd6d0" stop-opacity="0"/></radialGradient>
+    <linearGradient id="pp" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff6dc"/><stop offset="1" stop-color="#ffe3a0"/></linearGradient>
+    <linearGradient id="ac" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#4fd6d0"/><stop offset="1" stop-color="#4fd6d0" stop-opacity=".75"/></linearGradient>
+    <linearGradient id="sk" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#8fd0ff"/><stop offset="1" stop-color="#3f7fdc"/></linearGradient>
+    <linearGradient id="fy" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffd14a"/><stop offset="1" stop-color="#f09a12"/></linearGradient>
+  </defs>
+  <rect x="2" y="2" width="116" height="116" rx="28" fill="url(#bg)" stroke="#4fd6d0" stroke-opacity=".7" stroke-width="3"/>
+  <circle cx="60" cy="56" r="48" fill="url(#gl)"/>
+<path d="M14 84 Q60 60 106 84 Q106 98 60 98 Q14 98 14 84Z" fill="#e8c77a" stroke="#9a5a08" stroke-width="2.4"/><path d="M60 76 Q58 56 64 38" fill="none" stroke="#9a5a08" stroke-width="5" stroke-linecap="round"/><path d="M64 38 Q48 32 40 42 M64 38 Q54 24 42 28 M64 38 Q78 28 90 36 M64 38 Q76 42 88 52" fill="none" stroke="#5fd38d" stroke-width="5.5" stroke-linecap="round"/><path d="M12 100 Q30 92 48 100 T84 100 T112 100" fill="none" stroke="#4fd6d0" stroke-width="4" stroke-linecap="round"/><path d="M92 76 V58 L104 76 Z" fill="#fff4d6" stroke="#9a5a08" stroke-width="2" stroke-linejoin="round"/><path d="M88 78 H106 L102 84 H92 Z" fill="#b0482a" stroke="#6b1f10" stroke-width="1.8" stroke-linejoin="round"/><path d="M24 24 Q25.32 28.68 30 30 Q25.32 31.32 24 36 Q22.68 31.32 18 30 Q22.68 28.68 24 24Z" fill="#fff4d6"/><path d="M98 17 Q99.54 22.46 105 24 Q99.54 25.54 98 31 Q96.46 25.54 91 24 Q96.46 22.46 98 17Z" fill="#ffd14a"/></svg>
