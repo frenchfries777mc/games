@@ -70,3 +70,8 @@ patchnotes.json | v347 items[0] | 봇이 캐릭터를 금지하고 고르는 속
 patchnotes.json | v348 title | 인트로 효과음 | build 348 | 2026-10-23
 patchnotes.json | v348 items[0] | 인트로에 5초짜리 인트로 곡 추가(제목이 나올 때 큰 소리가 터짐) | build 348 | 2026-10-23
 patchnotes.json | v348 items[1] | 배경음악 설정을 끄면 나오지 않음 | build 348 | 2026-10-23
+patchnotes.json | v349 title | 봇 선택 대기 수정 | build 349 | 2026-10-20
+patchnotes.json | v349 items[0] | 금지 단계가 일찍 끝나도 봇이 남은 금지 시간만큼 기다렸다가 고르던 현상 수정(금지가 끝나는 즉시 선택) | build 349 | 2026-10-20
+patchnotes.json | v349 title | 카드 연출 개선과 봇 선택 대기 수정 | build 349 | 2026-10-20
+patchnotes.json | v349 items[0] | 도박사 궁극기 카드 배경 제거, 카드 뒷면을 빨간색으로, 카드 크기 확대 | build 349 | 2026-10-20
+patchnotes.json | v349 items[1] | 금지 단계가 일찍 끝나도 봇이 남은 금지 시간만큼 기다렸다가 고르던 현상 수정 | build 349 | 2026-10-20
