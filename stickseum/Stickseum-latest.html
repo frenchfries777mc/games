@@ -2120,7 +2120,9 @@ const KFX={
   kfx_coins:{icon:'🪙',name:'금화 비',price:800},
   kfx_stars:{icon:'⭐',name:'별빛 폭발',price:0,season:true},
   kfx_ice:{icon:'❄️',name:'얼음 파편',price:0,season:true},
-  kfx_split:{icon:'🦴',name:'몸 분리',price:700}
+  kfx_split:{icon:'🦴',name:'몸 분리',price:700},
+  kfx_blackhole:{icon:'🌀',name:'블랙홀',price:0,season:true},
+  kfx_phoenix:{icon:'🪶',name:'불사조 승천',price:0,season:true}
 };
 for(const id in KFX){ const k=KFX[id]; COSMETICS[id]={cat:'kfx', name:k.name, price:k.price, icon:k.icon, seasonOnly:!!k.season}; }
 /* ===== 승리 포즈 =====
@@ -2135,9 +2137,11 @@ const WIN_POSES={
   pose_dab:{name:'대브', price:550, icon:'💫'},
   pose_sit:{name:'여유롭게 앉기', price:650, icon:'😎'},
   pose_flip:{name:'백덤블링', price:800, icon:'🤸'},
-  pose_taunt:{name:'약 올리기', price:1500, icon:'😝'}
+  pose_taunt:{name:'약 올리기', price:1500, icon:'😝'},
+  pose_levitate:{name:'공중 부양', price:0, icon:'🧘', season:true},
+  pose_trophy:{name:'챔피언 트로피', price:0, icon:'🏆', season:true}
 };
-for(const id in WIN_POSES){ const q=WIN_POSES[id]; COSMETICS[id]={cat:'pose', name:q.name, price:q.price, icon:q.icon, free:!!q.free}; }
+for(const id in WIN_POSES){ const q=WIN_POSES[id]; COSMETICS[id]={cat:'pose', name:q.name, price:q.price, icon:q.icon, free:!!q.free, seasonOnly:!!q.season}; }
 // draws the figure with its feet at (0,0), y going up negative; stroke/fill colours are set by the caller. t = seconds.
 function drawWinPose(c, poseId, t, wid, tint){
   const HEADR=9, ln=(pts)=>{ c.beginPath(); c.moveTo(pts[0][0],pts[0][1]); for(let i=1;i<pts.length;i++) c.lineTo(pts[i][0],pts[i][1]); c.stroke(); };
@@ -2185,6 +2189,25 @@ function drawWinPose(c, poseId, t, wid, tint){
     if(ph<0.55){ const q=ph/0.55, h=Math.sin(q*Math.PI)*24; c.translate(0,-30-h); c.rotate(-q*Math.PI*2); c.translate(0,30);
       ln([[-6,-6],[0,-22],[6,-6]]); ln([[0,-22],[0,-42]]); ln([[-12,-30],[0,-38],[12,-30]]); head(0,-52); persona(0,-52,-42); }
     else { const k=Math.sin(t*6)*3; ln([[-8,0],[0,-22],[8,0]]); ln([[0,-22],[0,-42]]); ln([[-18,-56-k],[0,-38],[18,-56+k]]); head(0,-52); persona(0,-52,-42); }
+  } else if(id==='pose_levitate'){      // 공중 부양: cross-legged, floating, with orbs circling the body
+    const fl=Math.sin(t*1.8)*4+10;
+    c.save(); c.shadowBlur=0; c.globalAlpha=Math.max(0.1,0.34-fl*0.012); c.beginPath(); c.ellipse(0,2,20-fl*0.4,4,0,0,7); c.fill(); c.restore();
+    c.translate(0,-fl);
+    ln([[-14,-8],[0,-13],[14,-8]]); ln([[-12,-14],[2,-9],[13,-15]]);
+    ln([[0,-13],[0,-40]]); ln([[0,-36],[-15,-28],[-9,-17]]); ln([[0,-36],[15,-28],[9,-17]]);
+    head(0,-50); persona(0,-50,-40);
+    c.save(); c.shadowBlur=0; c.globalCompositeOperation='lighter'; c.lineWidth=2; c.globalAlpha=0.6+0.3*Math.sin(t*3); c.beginPath(); c.ellipse(0,-66,11,3,0,0,7); c.stroke(); c.restore();
+    c.save(); c.shadowBlur=10; for(let i=0;i<4;i++){ const a=t*1.7+i*1.571, depth=Math.sin(a); c.globalAlpha=0.55+0.4*depth; c.beginPath(); c.arc(Math.cos(a)*30,-28+depth*8,2.4+depth*0.8,0,7); c.fill(); } c.restore();
+  } else if(id==='pose_trophy'){        // 챔피언 트로피: a golden cup held high, sparkling
+    const bob=Math.abs(Math.sin(t*3))*2; c.scale(0.9,0.9); c.translate(0,-bob);
+    ln([[-8,0],[0,-22],[8,0]]); ln([[0,-22],[0,-42]]);
+    ln([[0,-40],[-14,-56],[-6,-72]]); ln([[0,-40],[14,-56],[6,-72]]);
+    head(0,-52); persona(0,-52,-42);
+    c.save(); c.shadowColor='#ffd34d'; c.shadowBlur=14; c.fillStyle='#ffd34d'; c.strokeStyle='#fff3b0'; c.lineWidth=1.5; c.lineJoin='round';
+    c.translate(0,-10); c.beginPath(); c.moveTo(-10,-86); c.lineTo(10,-86); c.quadraticCurveTo(9,-74,3,-70); c.lineTo(3,-67); c.lineTo(7,-67); c.lineTo(7,-63); c.lineTo(-7,-63); c.lineTo(-7,-67); c.lineTo(-3,-67); c.lineTo(-3,-70); c.quadraticCurveTo(-9,-74,-10,-86); c.closePath(); c.fill(); c.stroke();
+    c.lineWidth=2; c.beginPath(); c.arc(-11,-80,5,Math.PI*0.5,Math.PI*1.5); c.stroke(); c.beginPath(); c.arc(11,-80,5,-Math.PI*0.5,Math.PI*0.5); c.stroke();
+    c.shadowBlur=0; c.fillStyle='#fff'; for(let i=0;i<6;i++){ const a=t*2+i*1.047, r=20+7*Math.sin(t*3+i), sx=Math.cos(a)*r, sy=-76+Math.sin(a)*r*0.7, sz=2+1.5*Math.abs(Math.sin(t*5+i*2)); c.fillRect(sx-sz,sy-0.7,2*sz,1.4); c.fillRect(sx-0.7,sy-sz,1.4,2*sz); }
+    c.restore();
   } else if(id==='pose_taunt'){
     // 약 올리기, a 4.5s loop of three taunts: 메롱 with both hands on the nose and the tongue out -> back turned, shaking and slapping his behind -> rolling on the floor laughing
     const cyc=4.5, ph=t%cyc, sb=c.shadowBlur;
@@ -2373,20 +2396,22 @@ function ensureSeason(){
 }
 function seasonTier(){ const x=ensureSeason().xp; let t=0; while(t<SEASON_TIERS && x>=seasonXpForTier(t+1)) t++; return t; }
 function addSeasonXp(n, quiet){ n=Math.floor(+n||0); if(n<=0) return; const s=ensureSeason(), before=seasonTier(); s.xp=Math.min(SEASON_MAX_XP, s.xp+n); persistSave(); const after=seasonTier(); if(!quiet && after>before){ try{ showAchievementToast({icon:'🎫', name:'시즌 패스 '+after+'단계', reward:0}, '시즌 패스 단계 상승!'); }catch(e){} } try{ refreshMissionBadge(); }catch(e){} }
+const SEASON_COS_TIERS={27:'skin_pistol_s1', 33:'pose_levitate', 38:'kfx_blackhole', 47:'skin_sword_s1', 53:'pose_trophy', 57:'kfx_phoenix'};      // (the exclusive looks; the two emotes are put in where they are made)
+for(const t in SEASON_COS_TIERS) SEASON_REWARDS[t-1]={kind:'cos', id:SEASON_COS_TIERS[t]};
 function seasonRewardLabel(r){
   if(r.kind==='gold') return '💰 골드 '+r.amount;
   if(r.kind==='soul') return SOUL.icon+' '+SOUL.name+' '+r.amount;
   if(r.kind==='box') return '🎁 랜덤 상자 ×'+r.amount;
   if(r.kind==='playerxp') return '⭐ 플레이어 XP '+r.amount;
   if(r.kind==='charxp') return '🎖️ 랜덤 캐릭터 XP '+r.amount;
-  if(r.kind==='cos') return (COSMETICS[r.id].icon||'💥')+' 킬 이펙트: '+COSMETICS[r.id].name;
+  if(r.kind==='cos'){ const c0=COSMETICS[r.id]; if(!c0) return ''; const lab={kfx:'킬 이펙트', emo:'이모트', pose:'승리 모션', skin:'스킨'}[c0.cat]||'꾸미기'; return (c0.icon||c0.em||(c0.cat==='skin'?'🎩':'💥'))+' '+lab+': '+c0.name; }
   if(r.kind==='title') return '🏷️ 칭호: '+SEASON_TITLES[r.id].name;
   return '';
 }
 function claimSeasonTier(i){
   const s=ensureSeason(); if(i<1 || i>seasonTier() || s.claimed[i]) return false;
   const r=SEASON_REWARDS[i-1]; s.claimed[i]=true;
-  if(r.kind==='cos' || r.kind==='title'){ saveData.owned[r.id]=true; }
+  if(r.kind==='cos' || r.kind==='title'){ saveData.owned[r.id]=true; if(r.kind==='cos' && COSMETICS[r.id] && COSMETICS[r.id].cat==='emo' && emoteWheelList().length<EMOTE_WHEEL_N) emoteWheelToggle(COSMETICS[r.id].emIdx); }
   else if(r.kind==='gold' || r.kind==='soul' || r.kind==='box' || r.kind==='playerxp' || r.kind==='charxp') giveReward(r);
   persistSave(); updateGoldUI(); try{ refreshMissionBadge(); }catch(e){}
   return true;
@@ -2540,6 +2565,18 @@ function spawnKillEffect(e, x, y, addP, burst, shakeFrom){
   else if(k==='kfx_split'){ const vc=e.vc||'#ffffff'; const part=(dx,dy,vx,vy,len,head)=>addP({x:x+dx,y:y+dy,vx:vx+(R()-.5)*60,vy:vy,grav:1500,drag:.5,life:1.5+R()*.4,size:len,color:vc,shape:'limb',head:!!head,add:false,rot:R()*6.28,vr:(R()-.5)*16});
     part(0,-24,(R()-.5)*160,-520,11,true); part(0,-4,(R()-.5)*120,-300,26); part(-8,-8,-330,-420,20); part(8,-8,330,-420,20); part(-5,14,-180,-260,22); part(5,14,180,-260,22);
     burst(x,y,16,{a0:0,a1:6.28,s0:120,s1:420,l0:.4,l1:.8,z0:2,z1:4,colors:['#d62839','#ff5f5f',vc],grav:900,drag:1,add:false}); }
+  else if(k==='kfx_blackhole'){        // 블랙홀: a ring and streaks are sucked into a dark core, then it bursts
+    addP({x:x,y:y,life:.9,color:'#12041f',shape:'flash',size:130,add:false});
+    for(let i=0;i<34;i++){ const a=R()*6.28, d=140+R()*130, sp=d/0.5; addP({x:x+Math.cos(a)*d,y:y+Math.sin(a)*d,vx:-Math.cos(a)*sp,vy:-Math.sin(a)*sp,life:.5,size:2.5+R()*3,color:['#b388ff','#7a5cff','#ff8fd9','#ffffff'][i%4],shape:'streak'}); }
+    addP({x:x,y:y,life:.5,color:'#7a5cff',shape:'ring',r0:250,r1:8,lw:6}); addP({x:x,y:y,life:.5,color:'#ff8fd9',shape:'ring',r0:170,r1:6,lw:4});
+    setTimeout(()=>{ addP({x:x,y:y,life:.35,color:'#ffffff',shape:'flash',size:300}); addP({x:x,y:y,life:.7,color:'#d9c4ff',shape:'ring',r0:10,r1:360,lw:10}); addP({x:x,y:y,life:.55,color:'#7a5cff',shape:'ring',r0:6,r1:230,lw:7});
+      burst(x,y,44,{a0:0,a1:6.28,s0:240,s1:900,l0:.45,l1:.9,z0:2,z1:4.5,colors:['#ffffff','#b388ff','#7a5cff','#ff8fd9'],drag:1.9,shape:'streak'}); shakeFrom(x,y,14,700); },480); }
+  else if(k==='kfx_phoenix'){          // 불사조 승천: a pillar of fire, two wings of embers, rising feathers
+    addP({x:x,y:y,life:.4,color:'#fff0b8',shape:'flash',size:270}); addP({x:x,y:y,life:1.1,color:'#ff8a2b',shape:'pillar'});
+    burst(x,y,46,{a0:-2.5,a1:-0.64,s0:120,s1:560,l0:.7,l1:1.5,z0:6,z1:15,colors:['#ff3b1f','#ff9b2e','#ffd34d','#fff0b8'],grav:-260,drag:1.6,shape:'fire'});
+    for(const side of [-1,1]) for(let j=0;j<9;j++){ const ang=0.15+j*0.17, sp=420+j*36; addP({x:x,y:y-10,vx:side*Math.cos(ang)*sp,vy:-Math.sin(ang)*sp*0.9,life:.55+j*0.02,size:3.4,color:j%2?'#ffd34d':'#ff9b2e',shape:'streak',drag:1.2}); }
+    addP({x:x,y:y,life:.6,color:'#ffd34d',shape:'ring',r0:8,r1:240,lw:8}); floaters('🪶',8,'#ffd34d','#7a3b00'); shakeFrom(x,y,9,500);
+    setTimeout(()=>{ addP({x:x,y:y-60,life:.45,color:'#ff9b2e',shape:'ring',r0:6,r1:200,lw:6}); burst(x,y-40,26,{a0:-2.8,a1:-0.34,s0:200,s1:620,l0:.6,l1:1.2,z0:4,z1:10,colors:['#ffd34d','#fff0b8','#ff6b2c'],grav:-180,drag:1.5,shape:'fire'}); },300); }
   else if(k==='kfx_ice'){ addP({x:x,y:y,life:.3,color:'#e8f8ff',shape:'flash',size:170}); burst(x,y,30,{a0:0,a1:6.28,s0:160,s1:620,l0:.6,l1:1.1,z0:3,z1:6,colors:['#9fe8ff','#ffffff','#5fd0ff'],grav:500,drag:1.2,shape:'streak'}); addP({x:x,y:y,life:.5,color:'#9fe8ff',shape:'ring',r0:6,r1:170,lw:7}); floaters('❄️',5,'#bfefff','#2a6f8a'); }
 }
 
@@ -2607,6 +2644,8 @@ const TIER_SKINS=[
   ['pizarro',['황금도시 정복자의 투구','#ffc93c','sparkle'],['엘도라도 황제의 왕관 투구','#fff1a8','crown']]
 ];
 for(const [ch,nm,tint,fx] of NEW_SKINS) COSMETICS['skin_'+ch+'_new']={cat:'skin', char:ch, name:nm, price:NEW_SKIN_PRICE, tint, fx, isNew:true};
+COSMETICS.skin_pistol_s1={cat:'skin', char:'pistol', name:'오로라 총잡이', price:0, tint:'#7bf3ff', fx:'halo', lux:1, seasonOnly:true};      // (season pass only)
+COSMETICS.skin_sword_s1={cat:'skin', char:'sword', name:'황금 시즌 기사', price:0, tint:'#ffd34d', fx:'crown', lux:2, seasonOnly:true};
 for(const [ch,a,b] of TIER_SKINS) [a,b].forEach((s,i)=>{ COSMETICS['skin_'+ch+'_t'+(i+1)]={cat:'skin', char:ch, name:s[0], price:0, tint:s[1], fx:s[2], tier:TIER_SKIN_TIERS[i], lux:i+1}; });
 /* ===== the character's own color in a match: plain colors are free, the shiny ones are bought (cat 'bcol', equipped as saveData.equipped.bcol, sent as cos.col) ===== */
 [['red','빨강','#ff4d4d'],['mint','민트','#3fe0c5'],['yellow','노랑','#f5c94c'],['blue','파랑','#7c9eff'],['pink','분홍','#ff8fd9'],['lime','연두','#8dff7c'],
@@ -3215,6 +3254,7 @@ function renderShop(){
       const inWheel=owned && emoteWheelList().indexOf(it.emIdx)!==-1;
       if(owned){ btn.textContent=inWheel?'휠에 있음 (빼기)':'휠에 넣기'; if(inWheel) btn.className='eq';
         btn.onclick=()=>{ if(!emoteWheelToggle(it.emIdx)) uiAlert(inWheel?'휠에는 이모트가 하나 이상 있어야 해요':'휠이 가득 찼어요 ('+EMOTE_WHEEL_N+'개). 먼저 하나를 빼 주세요'); renderShop(); }; }
+      else if(it.seasonOnly){ btn.textContent='🔒 잠김'; btn.className='off'; btn.disabled=true; }
       else { const can=gold>=it.price; btn.textContent='구매'; if(!can) btn.className='off';
         btn.onclick=()=>{ if(gold<it.price) return; gold-=it.price; saveData.owned[id]=true; persistSave(); updateGoldUI();
           if(emoteWheelList().length<EMOTE_WHEEL_N) emoteWheelToggle(it.emIdx); else uiAlert('이모트 휠이 가득 차서 휠에는 넣지 않았어요. 다른 이모트를 빼고 넣어 주세요');
@@ -4938,7 +4978,7 @@ function shuffle(arr){ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.
 /* ===== the version of this file =====
    Players with different versions CAN meet and play together: the automatic matchmaking uses the same room names for every version (online-<mode>-<map>-<slot>), and nobody is refused because of a different build.
    The build is only sent along with the join message and the lobby (for information); the corner of the screen shows it. */
-const GAME_BUILD='build 2026-10-18-v360';
+const GAME_BUILD='build 2026-10-18-v361';
 const GAME_VERSION='0.8', GAME_VERSION_NAME='황금을 찾아서';   // 게임 버전 이름: versions.json의 title과 같게 (빌드마다 바꾸지 않음)
 const WEEKLY_EVENTS=[
   {id:'lowg',    name:'저중력 난투', desc:'몸이 둥실둥실, 중력이 약해진 난투', rules:{grav:0.6}},
@@ -5354,6 +5394,8 @@ const SHOP_EMOTES=[
 ];
 EMOTES.forEach((em,i)=>{ COSMETICS['emo_'+i]={cat:'emo', name:'기본 이모트 '+(i+1), price:0, free:true, em, emIdx:i}; });
 for(const [em,nm,pr] of SHOP_EMOTES){ const i=EMOTES.length; EMOTES.push(em); COSMETICS['emo_'+i]={cat:'emo', name:nm, price:pr, em, emIdx:i}; }
+/* the season-pass emotes: animated bubbles (never sold; the pass gives them) - appended at the END as always, and put into the pass at tiers 23 and 43 */
+for(const [em,nm,fx,tier] of [['🌠','별똥별 소원','meteor',23], ['👑','황금 왕관','royal',43]]){ const i=EMOTES.length; EMOTES.push(em); COSMETICS['emo_'+i]={cat:'emo', name:nm, price:0, em, emIdx:i, seasonOnly:true, fx}; SEASON_REWARDS[tier-1]={kind:'cos', id:'emo_'+i}; }
 function emoteOwned(i){ return i>=0 && i<EMOTES.length && cosOwned('emo_'+i); }
 function emoteWheelList(){                          // the emotes on the wheel, in order (falls back to the 8 free ones)
   const e=saveData.equipped||{};
@@ -5380,9 +5422,24 @@ function drawEmote(ctx, p, HEADCY){
   const age=EMOTE_SEC-rem, pop=Math.min(1,age/0.18), sc=0.4+0.6*pop+(pop<1?0.25*Math.sin(pop*Math.PI):0), fade=Math.min(1,rem/0.4);
   const bob=Math.sin(age*5)*2.5, cx=p.x, cy=p.y+HEADCY-96+bob;
   ctx.save(); ctx.globalAlpha=fade; ctx.translate(cx,cy); ctx.scale(sc,sc);
+  const efx=(COSMETICS['emo_'+p.emIdx]||{}).fx;
+  if(efx==='meteor'){                                   // 별똥별 소원: a night-sky bubble with a shooting star
+    const g=ctx.createLinearGradient(0,-19,0,19); g.addColorStop(0,'#0b1330'); g.addColorStop(1,'#2a2f6a'); ctx.fillStyle=g; ctx.strokeStyle='#9fc2ff'; ctx.lineWidth=2.5;
+    ctx.beginPath(); ctx.arc(0,0,19,0,Math.PI*2); ctx.fill(); ctx.stroke(); ctx.beginPath(); ctx.moveTo(-6,16); ctx.lineTo(0,27); ctx.lineTo(6,16); ctx.closePath(); ctx.fillStyle='#2a2f6a'; ctx.fill();
+    ctx.save(); ctx.beginPath(); ctx.arc(0,0,18,0,Math.PI*2); ctx.clip(); ctx.fillStyle='#fff';
+    for(let i=0;i<7;i++){ const a=(Math.sin(age*3+i*1.9)+1)/2, sx=((i*37)%34)-17, sy=((i*53)%30)-15; ctx.globalAlpha=0.3+0.7*a; ctx.fillRect(sx-1,sy-0.5,2,1); ctx.fillRect(sx-0.5,sy-1,1,2); }
+    const ph=(age*1.5)%1, mx=-22+ph*44, my=-20+ph*38, tg=ctx.createLinearGradient(mx,my,mx-18,my-16); tg.addColorStop(0,'rgba(255,255,255,0.95)'); tg.addColorStop(1,'rgba(159,194,255,0)');
+    ctx.globalAlpha=1; ctx.strokeStyle=tg; ctx.lineWidth=2.2; ctx.lineCap='round'; ctx.beginPath(); ctx.moveTo(mx,my); ctx.lineTo(mx-18,my-16); ctx.stroke(); ctx.restore();
+  } else if(efx==='royal'){                             // 황금 왕관: a golden bubble with a sweeping shine and orbiting sparkles
+    const g=ctx.createRadialGradient(-6,-7,2,0,0,21); g.addColorStop(0,'#fff3b0'); g.addColorStop(0.55,'#ffd34d'); g.addColorStop(1,'#c9921a'); ctx.fillStyle=g; ctx.strokeStyle='#fff6c8'; ctx.lineWidth=3;
+    ctx.beginPath(); ctx.arc(0,0,19,0,Math.PI*2); ctx.fill(); ctx.stroke(); ctx.beginPath(); ctx.moveTo(-6,16); ctx.lineTo(0,27); ctx.lineTo(6,16); ctx.closePath(); ctx.fillStyle='#e3aa27'; ctx.fill();
+    ctx.save(); ctx.beginPath(); ctx.arc(0,0,18,0,Math.PI*2); ctx.clip(); const sw=((age*0.9)%1.4)*60-30; ctx.fillStyle='rgba(255,255,255,0.55)'; ctx.beginPath(); ctx.moveTo(sw-4,-22); ctx.lineTo(sw+6,-22); ctx.lineTo(sw-6,22); ctx.lineTo(sw-16,22); ctx.closePath(); ctx.fill(); ctx.restore();
+    ctx.fillStyle='#fff'; for(let i=0;i<5;i++){ const a=age*2.2+i*1.2566, r=26+3*Math.sin(age*4+i), sx=Math.cos(a)*r, sy=Math.sin(a)*r*0.8, sz=2+1.4*Math.abs(Math.sin(age*6+i*2)); ctx.fillRect(sx-sz,sy-0.6,2*sz,1.2); ctx.fillRect(sx-0.6,sy-sz,1.2,2*sz); }
+  } else {
   ctx.fillStyle='rgba(255,255,255,.95)'; ctx.strokeStyle='rgba(0,0,0,.35)'; ctx.lineWidth=2;
   ctx.beginPath(); ctx.arc(0,0,19,0,Math.PI*2); ctx.fill(); ctx.stroke();
   ctx.beginPath(); ctx.moveTo(-6,16); ctx.lineTo(0,27); ctx.lineTo(6,16); ctx.closePath(); ctx.fill();
+  }
   ctx.font='24px serif'; ctx.textAlign='center'; ctx.textBaseline='middle'; ctx.fillStyle='#000'; ctx.fillText(EMOTES[p.emIdx]||'',0,1);
   ctx.restore();
 }
