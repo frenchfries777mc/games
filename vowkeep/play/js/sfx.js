@@ -23,6 +23,7 @@ export function play(k) {
   const now = performance.now(); if (last[k] && now - last[k] < 40) return; last[k] = now;
   switch (k) {
     case 'swing': noise(0.14, 2400, 1.5, 0.22, 'bandpass', 0, 700); break;
+    case 'charge': tone(300, 900, 0.42, 'sine', 0.12); tone(450, 1350, 0.42, 'triangle', 0.06, 0.05); break;
     case 'hit': noise(0.08, 900, 1, 0.3, 'lowpass'); tone(180, 70, 0.1, 'triangle', 0.25); break;
     case 'clang': tone(1400, 900, 0.18, 'square', 0.08); tone(2100, 1500, 0.15, 'triangle', 0.08); break;
     case 'arrow': noise(0.18, 3200, 3, 0.12, 'bandpass', 0, 1200); break;
