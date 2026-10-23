@@ -98,3 +98,6 @@ patchnotes.json | v354 items[2] | 레벨 10 이후 레벨당 필요 경험치 10
 patchnotes.json | v355 title | 폰 화면 조정 | build 355 | 2026-10-20
 patchnotes.json | v355 items[0] | 캐릭터 선택·금지 화면에서 조이스틱과 버튼 숨김 | build 355 | 2026-10-20
 patchnotes.json | v355 items[1] | 폰 가로 화면에서 메뉴, 캐릭터 선택, 하단 바 크기 축소 | build 355 | 2026-10-20
+patchnotes.json | v356 title | 황금 쟁탈 봇 수정 | build 356 | 2026-10-20
+patchnotes.json | v356 items[0] | 황금 쟁탈에서 봇을 추가할 수 없던 문제 수정 | build 356 | 2026-10-20
+patchnotes.json | v356 items[1] | 온라인 매칭에서 봇이 빈자리를 채우지 않던 문제 수정 | build 356 | 2026-10-20
