@@ -302,3 +302,7 @@ crownenvoy/CrownEnvoy-v0.4.html | 전신망 (정치 탭 카드) | "📡 전신�
 - prototypes/vowkeep/js/data.js | ROLE_PUZ 이름·설명 4개 ('방패 맹세의 방' 등), TALK_X oath·targets·basins·vines 대사 8줄 | 한국어만 있음 | Vowkeep b36 | 2026-10-23
 - prototypes/vowkeep/js/main.js | 역할 수수께끼 안내 8줄 ('방패 석판 위에 서서 막기(Q)를 써요' 등), '10초가 지났어요. 과녁을 처음부터 다시 맞혀요.' | 한국어만 있음 | Vowkeep b36 | 2026-10-23
 - patchnotes.json | "Vowkeep 역할 전용 수수께끼, 이어지는 공격 동작" 4줄 | Vowkeep b36 | 2026-10-23
+
+## 공용 최적화 설정 (2026-10-23)
+- hub/settings/index.html | T.ko 최적화 항목 문구 12개 (perf, perfN, low, lowD, fx, fxD, fxhigh/mid/low, fps, fpsD, fps0) | 한국어만 있음 (다른 언어는 한국어로 대체돼요) | 2026-10-23
+- patchnotes.json | "공용 최적화 설정" 2줄 | 2026-10-23
