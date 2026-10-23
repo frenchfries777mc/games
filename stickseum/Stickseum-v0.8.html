@@ -4918,7 +4918,7 @@ function shuffle(arr){ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.
 /* ===== the version of this file =====
    Players with different versions CAN meet and play together: the automatic matchmaking uses the same room names for every version (online-<mode>-<map>-<slot>), and nobody is refused because of a different build.
    The build is only sent along with the join message and the lobby (for information); the corner of the screen shows it. */
-const GAME_BUILD='build 2026-10-18-v356';
+const GAME_BUILD='build 2026-10-18-v357';
 const GAME_VERSION='0.8', GAME_VERSION_NAME='황금을 찾아서';   // 게임 버전 이름: versions.json의 title과 같게 (빌드마다 바꾸지 않음)
 const WEEKLY_EVENTS=[
   {id:'lowg',    name:'저중력 난투', desc:'몸이 둥실둥실, 중력이 약해진 난투', rules:{grav:0.6}},
@@ -7313,7 +7313,7 @@ const PRESENCE_GRACE_MS=10000; // treat a friend as still online for a short gra
 let presenceLastSeen={};
 function renderOnlineCount(){        // a small "how many are online" label at the top of the lobby (everybody logged in with the game open counts)
   let el=document.getElementById('onlineCount');
-  if(!el){ el=document.createElement('div'); el.id='onlineCount'; el.style.cssText='position:fixed; top:10px; left:50%; transform:translateX(-50%); z-index:6; display:none; padding:3px 10px; border-radius:99px; background:rgba(20,22,28,.7); color:#c9ced8; font-size:11.5px; font-weight:700; pointer-events:none; white-space:nowrap;'; document.body.appendChild(el); }
+  if(!el){ el=document.createElement('div'); el.id='onlineCount'; el.style.cssText='position:fixed; top:10px; left:50%; transform:translateX(-50%); z-index:11; display:none; padding:3px 10px; border-radius:99px; background:rgba(20,22,28,.7); color:#c9ced8; font-size:13px; font-weight:700; pointer-events:none; white-space:nowrap;'; document.body.appendChild(el); }
   const n=presenceChannel?Object.keys(presenceChannel.presenceState()).length:0;
   el.textContent='🟢 온라인 '+n+'명';
   el.style.display=(dailyBadgeScreenOk && presenceChannel && n>0)?'block':'none';
