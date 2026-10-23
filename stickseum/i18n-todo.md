@@ -108,3 +108,8 @@ patchnotes.json | v358 items[0] | 인형술사 궁극기를 실을 날려 맞혀
 patchnotes.json | v358 items[1] | 조종 중에는 인형술사 시야가 조종당하는 상대 시점으로 변경 | build 358 | 2026-10-20
 patchnotes.json | v358 items[2] | 조종당하는 상대의 공격이 같은 팀 판정으로 막히던 문제 수정 | build 358 | 2026-10-20
 patchnotes.json | v358 items[3] | 인형술사 바늘 크기 확대와 데미지 10으로 변경 | build 358 | 2026-10-20
+patchnotes.json | v359 title | 시즌 패스 확장 | build 359 | 2026-10-20
+patchnotes.json | v359 items[0] | 시즌 패스 단계를 20단계에서 60단계로 확대 | build 359 | 2026-10-20
+patchnotes.json | v359 items[1] | 31단계부터 단계당 필요 시즌 XP 450으로 상향 | build 359 | 2026-10-20
+patchnotes.json | v359 items[2] | 21단계 이후 보상 상향과 31단계 이후 큰 골드·영혼석·상자 보상 추가 | build 359 | 2026-10-20
+patchnotes.json | v359 items[3] | 시즌 칭호 4종 추가 (영웅, 전설, 신화, 영원) | build 359 | 2026-10-20
