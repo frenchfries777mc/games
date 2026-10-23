@@ -11,6 +11,8 @@ export const cw = c => (c + 0.5) * CS;
 export let GRID = new Uint8Array(0), WATER = new Uint8Array(0), PILLARS = [];
 // 비밀 방: SEC 칸 값 = 비밀 방 번호 + 1 (방 안), -(번호 + 1) (금 간 벽 통로). SOPEN = 열렸는지
 export let SEC = new Int8Array(0); export const SOPEN = [];
+// 수수께끼 방 창살문: GATE 칸 값 = 문 번호 + 1. 닫혀 있으면 지나갈 수 없어요. GOPEN = 열렸는지
+export let GATE = new Int8Array(0); export const GOPEN = [];
 let CUR = -1;
 // 장을 바꾸면 지도를 새로 만들어요 (끝없는 심연은 층마다 새로: force)
 export function useChapter(i, force) {
@@ -26,6 +28,8 @@ export function useChapter(i, force) {
     const fill = ([x, y, w, h], v, g) => { for (let j = y; j < y + h; j++) for (let i = x; i < x + w; i++) { SEC[j * MW + i] = v; GRID[j * MW + i] = g; } };
     fill(q.room, k + 1, 1); fill(q.pass, -(k + 1), 0);
   });
+  GATE = new Int8Array(MW * MH);
+  MAP.puzzles.forEach((q, k) => { const [x, y, w, h] = q.gate; for (let j = y; j < y + h; j++) for (let i = x; i < x + w; i++) GATE[j * MW + i] = k + 1; });
   resetSecrets();
   return CH;
 }
@@ -33,7 +37,10 @@ export function useChapter(i, force) {
 export function resetSecrets() {
   SOPEN.length = 0; FIELDS.clear();
   MAP.secrets.forEach(q => { const [x, y, w, h] = q.pass; for (let j = y; j < y + h; j++) for (let i = x; i < x + w; i++) GRID[j * MW + i] = 0; });
+  GOPEN.length = 0; MAP.puzzles.forEach(q => gateSet(q, 0));
 }
+function gateSet(q, v) { const [x, y, w, h] = q.gate; for (let j = y; j < y + h; j++) for (let i = x; i < x + w; i++) GRID[j * MW + i] = v; }
+export function openGate(k) { if (GOPEN[k] || !MAP.puzzles[k]) return; GOPEN[k] = 1; FIELDS.clear(); gateSet(MAP.puzzles[k], 1); }
 export function openSecret(k) {
   if (SOPEN[k] || !MAP.secrets[k]) return; SOPEN[k] = 1; FIELDS.clear();
   const [x, y, w, h] = MAP.secrets[k].pass; for (let j = y; j < y + h; j++) for (let i = x; i < x + w; i++) GRID[j * MW + i] = 1;
