@@ -33,3 +33,14 @@ patchnotes.json | v338 items[1] | 화산 지대·폐허 도시·초대형 경기
 patchnotes.json | v339 title | 모바일 터치 공격 조작 개선 | build 339 | 2026-10-20
 patchnotes.json | v339 items[0] | 모바일에서 빈 공간을 터치하면 그 방향으로 공격 | build 339 | 2026-10-20
 patchnotes.json | v339 items[1] | 더블탭과 핀치 확대 방지 | build 339 | 2026-10-20
+Stickseum-v0.8.html | WEAPONS.portalgun.desc | 데미지 15 · 쿨타임 0.55초 · 바닥이나 발판에 닿으면 최대 3번까지 튕기는 탄환 · 튕길 때마다 데미지 30% 증가 | build 340 | 2026-10-23
+Stickseum-v0.8.html | MODES.ctf.desc | 전용 대형 맵 4종 중 선택 · 두 팀이 상대 기지의 깃발을 가져와 우리 기지에 가져오면 1점(우리 깃발이 기지에 있어야 득점) · 깃발을 든 사람은 조금 느려지고 순간이동을 못 씀 · 든 사람이 죽으면 깃발이 떨어지고 10초 뒤 기지로 돌아감(우리 팀이 닿으면 바로 복귀) · 먼저 3점 또는 8분 안에 더 많이 득점한 팀 승리, 동점이면 무승부 · 처치당하면 5초 후 우리 기지에서 부활 · 최소 4명(비공개 방에서는 봇 추가 가능) | build 340 | 2026-10-23
+Stickseum-v0.8.html | 로비 온라인 인원 | 온라인 {n}명 (🟢 온라인 N명) | build 340 | 2026-10-23
+- build 340: 킬 이펙트 '몸 분리' (kfx_split name/shop)
+patchnotes.json | v340 title | 차원 여행자 반사 강화 | build 340 | 2026-10-20
+patchnotes.json | v340 items[0] | 차원여행자 탄환이 튕길 때마다 데미지 30% 증가 | build 340 | 2026-10-20
+patchnotes.json | v340 items[1] | 로비 위쪽 현재 접속자 수 표시 | build 340 | 2026-10-20
+patchnotes.json | v340 items[2] | 깃발 뺏기 제한시간 종료 시 동점이면 무승부 | build 340 | 2026-10-20
+patchnotes.json | v340 items[3] | 킬 이펙트 '몸 분리' 추가(목·몸통·팔·다리 분리) | build 340 | 2026-10-20
+patchnotes.json | v340 items[4] | 인트로의 STICKSEUM 글자와 글자 빛 효과 제거 | build 340 | 2026-10-20
+patchnotes.json | v340 items[5] | 인트로 배경을 업데이트 대표 그림으로 교체(칸과 피사로의 황금 대결) | build 340 | 2026-10-20
