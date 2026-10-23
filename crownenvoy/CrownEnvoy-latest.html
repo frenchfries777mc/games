@@ -4466,9 +4466,9 @@ const Battle={_skip:null,skipAll:false,snd:true,_ac:null,
  });}
 };
 
-/* 배경음악: 게임 중에는 전투 음악과 전쟁 행진곡을 번갈아 틀고, 로비에서는 잔잔한 곡을 튼다. 첫 로딩을 줄이려고 게임 파일 옆의 mp3를 불러오고, 파일만 따로 받아 열었을 땐 사이트에서 불러온다.
+/* 배경음악: 게임 중에는 전투 음악, 전쟁 행진곡, 느리고 비장한 곡을 번갈아 틀고, 로비에서는 잔잔한 곡을 튼다. 첫 로딩을 줄이려고 게임 파일 옆의 mp3를 불러오고, 파일만 따로 받아 열었을 땐 사이트에서 불러온다.
    k는 곡마다의 소리 크기 보정 (두 곡 모두 파일에서 같은 크기로 맞춰 둬서 지금은 1) */
-const BGM_TRACKS=[{uri:'CrownEnvoy-music.mp3',k:1},{uri:'CrownEnvoy-music2.mp3',k:1},{uri:'CrownEnvoy-music3.mp3',k:1}],BGM_GAME=[0,2],BGM_SITE='https://frenchfries777mc.github.io/games/crownenvoy/';
+const BGM_TRACKS=[{uri:'CrownEnvoy-music.mp3',k:1},{uri:'CrownEnvoy-music2.mp3',k:1},{uri:'CrownEnvoy-music3.mp3',k:1},{uri:'CrownEnvoy-music4.mp3',k:1}],BGM_GAME=[0,2,3],BGM_SITE='https://frenchfries777mc.github.io/games/crownenvoy/';
 
 /* 배경음악 재생기: 게임이 시작되면 반복 재생하고, 설정에서 켜고 끄거나 음량을 조절한다 (이 기기에만 저장) */
 const Music={el:null,vol:0.35,on:true,started:false,ti:0,gi:0,want:'lobby',cur:null,
