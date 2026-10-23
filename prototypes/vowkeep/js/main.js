@@ -2,8 +2,8 @@
 // 화면 흐름, 조작, 멀티(친구 초대, PeerJS), 저장
 import { View } from './render.js';
 import { createGame, step, snapshot, chooseBless, carryOver, INTRO_T, HV_DELAY } from './sim.js';
-import { ROLES, ROLE_IDS, BLESSINGS, CHAPTERS, CH, FOES, MAP, ACHIEVEMENTS, TALK, GEAR_TIERS, GEAR_COST, VERSION, BUILD, roleLevel } from './data.js';
-import { collide as mapCollide, areaAt, floorCell, MW, MH, CS, cw, useChapter, chapterIndex } from './map.js';
+import { ROLES, ROLE_IDS, BLESSINGS, CHAPTERS, CH, FOES, MAP, ACHIEVEMENTS, TALK, GEAR_TIERS, GEAR_COST, VERSION, BUILD, roleLevel, LORE, COMBOS, CURSES, DEEP, DEEP_I } from './data.js';
+import { collide as mapCollide, areaAt, floorCell, MW, MH, CS, cw, useChapter, chapterIndex, SOPEN, openSecret, resetSecrets, hiddenCell } from './map.js';
 import * as SFX from './sfx.js';
 import * as MUS from './music.js';
 
@@ -20,6 +20,7 @@ const SAVE = Object.assign({ honor: 0, xp: {}, gear: {}, ach: {}, clears: {}, ro
 SAVE.set = Object.assign({ vol: 70, px: 3, bloom: 1, shake: 1 }, SAVE.set || {});
 // 깬 장 수 (예전 저장은 1장을 깼으면 1)
 if (SAVE.chMax == null) SAVE.chMax = Object.keys(SAVE.clears || {}).length ? 1 : 0;
+SAVE.lore = SAVE.lore || {}; SAVE.combos = SAVE.combos || {}; SAVE.deepBest = SAVE.deepBest | 0;
 // 다음에 이어서 할 장 (모든 장을 깼으면 1장부터 새 원정)
 const chOpen = () => (SAVE.chMax | 0) >= CHAPTERS.length ? 0 : SAVE.chMax | 0;
 function save() { lsSet('vowkeep.save', SAVE); }
@@ -63,14 +64,21 @@ function talk(key, delay = 0) {
   const gen = TK.gen, L = (TALK[chapterIndex()] || {})[key]; if (!L) return;
   setTimeout(() => { if (gen !== TK.gen) return; for (const [r, t] of L) TK.q.push({ r, t }); }, delay);
 }
+// 옛 기록 얼굴 칸: 금빛 글자가 새겨진 비석 그림
+function loreIcon() {
+  if (loreIcon.u) return loreIcon.u; const c = document.createElement('canvas'); c.width = c.height = 30; const g = c.getContext('2d');
+  g.fillStyle = '#000'; g.fillRect(0, 0, 30, 30); g.fillStyle = '#5a5662'; g.fillRect(8, 6, 14, 22); g.fillRect(10, 4, 10, 2); g.fillStyle = '#7a7686'; g.fillRect(9, 7, 3, 20);
+  g.fillStyle = '#ffd36b'; for (const [x, y, w] of [[12, 9, 7], [11, 13, 8], [13, 17, 5], [11, 21, 8]]) g.fillRect(x, y, w, 2); g.fillStyle = '#3a3640'; g.fillRect(6, 27, 18, 3);
+  return loreIcon.u = c.toDataURL();
+}
 function talkReset() { TK.gen++; TK.q.length = 0; TK.cur = null; TK.wait = 0; $('talk').classList.remove('on'); }
 function talkTick(dt, on) {
   const el = $('talk');
   if (!on) { el.classList.remove('on'); return; }
   if (!TK.cur) {
     if ((TK.wait -= dt) > 0 || !TK.q.length) { if (!TK.q.length) el.classList.remove('on'); return; }
-    TK.cur = TK.q.shift(); TK.cur.age = 0; const R = ROLES[TK.cur.r];
-    $('talkFace').src = view.portrait(TK.cur.r, true); $('talkWho').textContent = R.name; $('talkWho').style.color = R.color === '#e8e4ef' ? '#efe3c8' : R.color; el.classList.add('on');
+    TK.cur = TK.q.shift(); TK.cur.age = 0; const R = ROLES[TK.cur.r] || { name: '옛 기록', color: '#ffd36b' };
+    $('talkFace').src = TK.cur.r === 'lore' ? loreIcon() : view.portrait(TK.cur.r, true); $('talkWho').textContent = R.name; $('talkWho').style.color = R.color === '#e8e4ef' ? '#efe3c8' : R.color; el.classList.add('on');
   }
   const c = TK.cur; c.age += dt; const n = Math.min(c.t.length, Math.floor(c.age * 30)); $('talkText').textContent = c.t.slice(0, n);
   if (c.age > c.t.length / 30 + 2.4) { TK.cur = null; TK.wait = 0.25; }
@@ -137,12 +145,13 @@ $('setVol').oninput = e => { SAVE.set.vol = +e.target.value; SFX.setVol(SAVE.set
 /* ---------- 대기실 ---------- */
 // 대기실: 장은 고르지 않고, 저장된 이야기에서 이어서 시작해요. 친구 방은 방장의 이야기를 따라가요
 function paintChapters() {
-  const c = CHAPTERS[S.chSel], prev = CHAPTERS[S.chSel - 1];
-  // 깬 장까지는 골라서 다시 할 수 있어요 (기본은 이어서 할 장)
-  const top = Math.min(CHAPTERS.length - 1, SAVE.chMax | 0), pick = S.net !== 'guest' && top > 0;
-  $('chRow').innerHTML = (pick ? `<div class="chpick">${CHAPTERS.slice(0, top + 1).map((ch, i) => `<button class="btn${i === S.chSel ? ' gold' : ''}" data-ch="${i}">${i + 1}장</button>`).join('')}</div>` : '') + `<div class="story"><b>${S.chSel ? '이어서 ' : ''}${esc(c.title)}</b><small>${esc(prev ? prev.outro[prev.outro.length - 1] : c.intro[0])}</small></div>`;
+  const deep = S.chSel === DEEP_I, c = deep ? null : CHAPTERS[S.chSel], prev = CHAPTERS[S.chSel - 1];
+  // 깬 장까지는 골라서 다시 할 수 있어요 (기본은 이어서 할 장). 8장을 깨면 끝없는 심연이 열려요
+  const top = Math.min(CHAPTERS.length - 1, SAVE.chMax | 0), dOpen = (SAVE.chMax | 0) >= CHAPTERS.length, pick = S.net !== 'guest' && (top > 0 || dOpen);
+  const story = deep ? `<div class="story"><b>끝없는 심연</b><small>층마다 무작위 구역과 저주가 하나씩 쌓여요. 모두 쓰러지면 끝나요.${S.net !== 'guest' ? ' 최고 기록 ' + (SAVE.deepBest || 0) + '층' : ''}</small></div>` : `<div class="story"><b>${S.chSel ? '이어서 ' : ''}${esc(c.title)}</b><small>${esc(prev ? prev.outro[prev.outro.length - 1] : c.intro[0])}</small></div>`;
+  $('chRow').innerHTML = (pick ? `<div class="chpick">${CHAPTERS.slice(0, top + 1).map((ch, i) => `<button class="btn${i === S.chSel ? ' gold' : ''}" data-ch="${i}">${i + 1}장</button>`).join('')}${dOpen ? `<button class="btn${deep ? ' gold' : ''}" data-ch="${DEEP_I}">끝없는 심연</button>` : ''}</div>` : '') + story;
   $('chNote').textContent = S.net === 'guest' ? '방장의 원정을 함께 이어 가요.' : S.chSel === chOpen() && S.chSel ? '지난번에 멈춘 곳에서 이야기가 이어져요.' : '';
-  if (S.net !== 'guest') $('startBtn').textContent = S.chSel ? S.chSel + 1 + '장 시작' : '원정 시작';
+  if (S.net !== 'guest') $('startBtn').textContent = deep ? '심연으로 내려가기' : S.chSel ? S.chSel + 1 + '장 시작' : '원정 시작';
   $('chRow').querySelectorAll('[data-ch]').forEach(b => b.onclick = () => { SFX.play('click'); S.chSel = +b.dataset.ch; paintChapters(); hostLobby(); });
 }
 function openRoom() {
@@ -212,7 +221,7 @@ function hostMsg(c, d) {
       if (!p || (!p.bot && p.uid !== uid)) { c.send({ t: 'deny', why: '방이 가득 찼어요 (최대 4명).' }); setTimeout(() => c.close(), 300); return; }
       p.bot = false; p.uid = uid; p.name = name; p.wasHuman = true; S.G.humans = S.G.players.filter(q => !q.bot).length;
       S.conns[uid] = c; c._pid = p.id;
-      c.send({ t: 'welcome', uid, start: true, pid: p.id, ch: S.G.ch }); toast(name + '님이 ' + ROLES[p.role].name + ' 자리에 들어왔어요.');
+      c.send({ t: 'welcome', uid, start: true, pid: p.id, ch: S.G.ch, dp: S.G.deep }); toast(name + '님이 ' + ROLES[p.role].name + ' 자리에 들어왔어요.');
       return;
     }
     let sl = S.slots.find(s => s.uid === uid) || S.slots.find(s => !s.uid && s.role === d.role) || S.slots.find(s => !s.uid);
@@ -246,13 +255,18 @@ function startGuest(code) {
 }
 function guestMsg(d) {
   if (!d || typeof d !== 'object') return;
-  if (d.t === 'welcome') { homeMsg(''); if (d.start) { S.me = d.pid; useChapter(d.ch | 0); startClient(); } else { openRoom(); } }
+  if (d.t === 'welcome') { homeMsg(''); if (d.start) { S.me = d.pid; useDeep(d.dp); useChapter(d.ch | 0, !!d.dp); startClient(); } else { openRoom(); } }
   else if (d.t === 'lobby') { S.slots = d.slots; S.chSel = d.ch | 0; if (S.scr === 'sRoom') { paintSlots(); paintChapters(); } }
   else if (d.t === 'deny') { homeMsg(d.why || '들어갈 수 없어요.'); leaveNet(); }
-  else if (d.t === 'start') { if (S.snap && S.snap.won) clearChapter(); S.me = d.pid; useChapter(d.ch | 0); startClient(); }
-  else if (d.t === 's') { if (d.S && d.S.c != null && d.S.c !== chapterIndex()) { useChapter(d.S.c); S.built = false; } S.snap = d.S; if (d.ev) for (const e of d.ev) S.evq.push(e); }
+  else if (d.t === 'start') { if (S.snap && S.snap.won) clearChapter(); S.me = d.pid; useDeep(d.dp); useChapter(d.ch | 0, !!d.dp); startClient(); }
+  else if (d.t === 's') {
+    if (d.S && d.S.c != null && (d.S.c !== chapterIndex() || (d.S.dp && d.S.dp.floor !== DEEP.floor))) { useDeep(d.S.dp); useChapter(d.S.c, !!d.S.dp); S.built = false; }
+    S.snap = d.S; if (d.ev) for (const e of d.ev) S.evq.push(e);
+  }
 }
 
+// 끝없는 심연: 방장이 보낸 층·씨앗·저주로 같은 층을 만들어요
+function useDeep(dp) { if (dp) { DEEP.floor = dp.floor; DEEP.seed = dp.seed; DEEP.curses = dp.curses.slice(); } }
 /* ---------- 게임 시작 ---------- */
 function beginGame(prevG) {
   const solo = S.net === 'solo';
@@ -265,16 +279,17 @@ function beginGame(prevG) {
   if (!prevG && !sl.some(s => s.uid === UID)) { $('roomMsg').textContent = '내 역할을 먼저 골라 주세요.'; return; }
   if (prevG) sl.forEach((s, i) => { const q = prevG.players[i]; s.bot = q.bot; s.uid = q.uid; s.name = q.name; });
   S.lastSl = sl;
+  if (S.chSel === DEEP_I && !prevG) { DEEP.floor = 1; DEEP.seed = (Math.random() * 1e6) | 0; DEEP.curses = []; }
   S.G = createGame(sl, (Math.random() * 4e9) >>> 0, S.chSel);
   S.G.players.forEach((p, i) => { p.uid = sl[i].uid; });
   if (prevG) carryOver(S.G, prevG);
   S.me = sl.find(s => s.uid === UID).id;
-  if (!solo) { for (const uid in S.conns) { const p = S.G.players.find(q => q.uid === uid); if (p) { S.conns[uid]._pid = p.id; S.conns[uid].send({ t: 'start', pid: p.id, ch: S.G.ch }); } } }
+  if (!solo) { for (const uid in S.conns) { const p = S.G.players.find(q => q.uid === uid); if (p) { S.conns[uid]._pid = p.id; S.conns[uid].send({ t: 'start', pid: p.id, ch: S.G.ch, dp: S.G.deep }); } } }
   if (S.G.humans > 1) unlock('friends');
   startClient();
 }
 function startClient() {
-  talkReset(); S.cleared = false; S.built = false; S.area = -2; S.seenA = {}; S.voted = false; S.lastPh = ''; S.saved = false; S.resultShown = false; S.everDown = false; S.local = null; S.nums = []; S.evq = []; S.wonT = 0; S.lastBless = null;
+  talkReset(); if (!S.G) resetSecrets(); S.overT = 0; S.cleared = false; S.built = false; S.area = -2; S.seenA = {}; S.voted = false; S.lastPh = ''; S.saved = false; S.resultShown = false; S.everDown = false; S.local = null; S.nums = []; S.evq = []; S.wonT = 0; S.lastBless = null;
   if (S.G) S.snap = snapshot(S.G);
   unlock('first');
   setHud(false); show('sIntro'); $('introCh').textContent = CH.title; $('introLine').classList.remove('on'); S.introIdx = -1;
@@ -461,7 +476,18 @@ function onEvent(e) {
     case 'fire': SFX.play('fire'); break;
     case 'snap': SFX.play('clang'); break;
     case 'disarm': toast('종자가 바닥 함정을 해체했어요.'); SFX.play('click'); break;
-    case 'chest': toast('상자에서 명예 25를 얻었어요.'); SFX.play('clear'); break;
+    case 'chest': toast('상자에서 명예 ' + (e.h || 25) + '을 얻었어요.'); SFX.play('clear'); view.rise(e.x, e.z, 0xffd36b, 16, 1.2, 1, 6); break;
+    case 'secret': { // 금 간 벽이 무너지고 비밀 방이 열려요
+      view.shatter(e.x, e.z, [0x6e6a74, 0x58545e, 0x8a8494, 0x4a4650], 40, true); view.burst(e.x, 1.5, e.z, 0xbcae94, 30, 8, 0.8, 0.2); view.shock(e.x, e.z, 5, 0xffe08a, 0.5); view.flash(e.x, e.z, 0xffe08a, 200);
+      view.shake = Math.max(view.shake, 1.2); SFX.play('slam'); bigMsg('비밀 방을 찾았어요', '무너진 벽 너머에 옛 기사단의 방이 있어요', 3200); mini.dirty = true; break; }
+    case 'lore': { const ci = chapterIndex(), L = (LORE[ci] || [])[e.li]; if (!L) break; TK.q.length = 0; TK.cur = null; for (const t of L) TK.q.push({ r: 'lore', t }); TK.wait = 0; SFX.play('bless'); view.column(e.x, e.z, 0xffd36b, 0.8);
+      SAVE.lore[ci + '-' + e.li] = 1; save(); if (Object.keys(SAVE.lore).length >= 16) unlock('lore'); break; }
+    case 'combo': { // 합동기: 화면 가운데 큰 글씨, 크게 터지는 빛
+      const col = { lightdash: 0xfff0b0, sanct: 0x9af0a8, wall: 0x9ad0ff, firerain: 0xff7a20, net: 0xffb060 }[e.c] || 0xffffff;
+      bigMsg('합동기! ' + e.name, '', 2000); view.shock(e.x, e.z, 7, col, 0.6); view.shock(e.x, e.z, 4, 0xffffff, 0.35); view.rune(e.x, e.z, 3.4, col, 1.2, 3); view.column(e.x, e.z, col, 1.0); view.rise(e.x, e.z, col, 30, 3, 1.4, 8); view.flash(e.x, e.z, col, 220);
+      view.shake = Math.max(view.shake, 1.1); SFX.play('parry'); if (S.net === 'solo') S.slowT = Math.max(S.slowT || 0, 0.25); break; }
+    case 'combo1': if (e.pid === me) { SAVE.combos[e.c] = 1; save(); if (COMBOS.every(c => SAVE.combos[c.id])) unlock('combo5'); } break;
+    case 'over': bigMsg('모두 쓰러졌어요', '끝없는 심연 ' + e.floor + '층에서 원정이 끝났어요', 3400); SFX.play('wipe'); break;
     case 'altar': bigMsg('제단의 축복', '축복을 하나 골라요', 2200); SFX.play('clear'); view.column(e.x, e.z, 0xffe08a, 1.2); break;
     case 'checkpoint': bigMsg('모닥불에 불을 붙였어요', '모두 쓰러지면 여기서 다시 시작해요', 3000); SFX.play('door'); break;
     case 'wake': if (!S.wakeT || performance.now() - S.wakeT > 1500) { S.wakeT = performance.now(); SFX.play('spawn'); } view.burst(e.x, 0.3, e.z, 0x6a5a7a, 6, 3, 0.6, 0.12); break;
@@ -495,6 +521,9 @@ function syncScene() {
     else if (prev === 'intro' || prev === '') { show(''); setHud(true); S.area = -2; }
     if (sn.ph === 'won') { S.wonT = 0; bigMsg('', '', 0); }
   }
+  // 비밀 방: 열린 것은 지도와 화면에서도 열어요 (게스트는 여기서 길도 열어요)
+  if (sn.w.sc) sn.w.sc.forEach((o, k) => { if (!o) return; if (!SOPEN[k]) { openSecret(k); mini.dirty = true; } if (!view.secOn[k]) view.openSecret(k, sn.w.lr); });
+  if (sn.w.lr) view.loreRead(sn.w.lr);
   // 새 구역에 처음 들어가면 이름을 보여 줘요
   const me = myP();
   if (me && sn.ph !== 'intro') {
@@ -504,9 +533,9 @@ function syncScene() {
   }
 }
 function paintIntro() {
-  const lines = CH.intro, per = INTRO_T / lines.length, t = S.snap.pt, i = Math.min(lines.length - 1, Math.floor(t / per));
+  const IT = CH.introT || INTRO_T, lines = CH.intro, per = IT / lines.length, t = S.snap.pt, i = Math.min(lines.length - 1, Math.floor(t / per));
   if (i !== S.introIdx) { S.introIdx = i; const el = $('introLine'); el.classList.remove('on'); setTimeout(() => { el.textContent = lines[i]; el.classList.add('on'); }, 250); }
-  $('introBar').firstElementChild.style.width = Math.min(100, t / INTRO_T * 100) + '%';
+  $('introBar').firstElementChild.style.width = Math.min(100, t / IT * 100) + '%';
   const sk = $('introSkip'), voted = S.voted;
   sk.textContent = (voted ? '건너뛰기 기다리는 중' : '건너뛰기') + (S.snap.hu > 1 ? ' (' + S.snap.sk + '/' + S.snap.hu + ')' : '');
   sk.classList.toggle('on', !!voted);
@@ -541,6 +570,7 @@ function paintHud() {
     const dn = sn.pl.find(q => q.dn && !q.dd && Math.hypot(q.x - pos.x, q.z - pos.z) < 2.2);
     if (dn) pr = (TOUCH ? 'F 버튼' : 'F') + '를 꾹 눌러 ' + ROLES[dn.role].name + ' 일으키기';
     else if (MAP.chests.some(([x, y], k) => !sn.w.ch[k] && Math.hypot(cw(x) - pos.x, cw(y) - pos.z) < 2.6)) pr = (TOUCH ? 'F 버튼' : 'F') + '를 꾹 눌러 상자 열기';
+    else if (MAP.lores.some(([x, y, q], k) => sn.w.sc[q] && !sn.w.lr[k] && Math.hypot(cw(x) - pos.x, cw(y) - pos.z) < 2.6)) pr = (TOUCH ? 'F 버튼' : 'F') + '를 꾹 눌러 옛 기록 읽기';
     else if (MAP.fires.some(([x, y], k) => !sn.w.fi[k] && Math.hypot(cw(x) - pos.x, cw(y) - pos.z) < 3)) pr = (TOUCH ? 'F 버튼' : 'F') + '를 꾹 눌러 모닥불 피우기';
     else if (MAP.altars.some(([x, y], k) => !sn.w.al[k] && Math.hypot(cw(x) - pos.x, cw(y) - pos.z) < 2.8)) pr = (TOUCH ? 'F 버튼' : 'F') + '를 꾹 눌러 제단에서 축복 받기';
     else if (MAP.fires.some(([x, y], k) => sn.w.fi[k] && Math.hypot(cw(x) - pos.x, cw(y) - pos.z) < 4) && me.hp < me.mx) pr = '모닥불 곁에서 체력이 차올라요';
@@ -559,7 +589,7 @@ const mini = {
   },
   paint() {
     const g = this.c.getContext('2d'); g.clearRect(0, 0, this.c.width, this.c.height);
-    for (let j = 0; j < MH; j++) for (let i = 0; i < MW; i++) { if (!this.seen[j * MW + i] || !floorCell(i, j)) continue; g.fillStyle = WATERC(i, j) ? '#6a8ab0' : '#a49cb0'; g.fillRect(i * 3, j * 3, 3, 3); }
+    for (let j = 0; j < MH; j++) for (let i = 0; i < MW; i++) { if (!this.seen[j * MW + i] || !floorCell(i, j) || hiddenCell(i, j)) continue; g.fillStyle = WATERC(i, j) ? '#6a8ab0' : '#a49cb0'; g.fillRect(i * 3, j * 3, 3, 3); }
     this.dirty = false;
   },
   draw(sn) {
@@ -613,19 +643,35 @@ function drawOverlay(dt) {
 function clearChapter() {
   if (S.cleared) return S.lastH || 0; S.cleared = true;
   const h = S.lastH = awardHonor() || 0, me = myP(), ci = chapterIndex();
+  if (CH.deep) { deepRecord(DEEP.floor + 1); return h; }
   if (me) { SAVE.clears[me.role] = Math.max(SAVE.clears[me.role] || 0, ci + 1); if (!S.everDown) unlock('nodown'); if (ROLE_IDS.every(r => SAVE.clears[r])) unlock('all4'); }
   if (ci === 0) unlock('boss'); else unlock('ch' + (ci + 1));
   SAVE.chMax = Math.max(SAVE.chMax | 0, ci + 1); save();
   return h;
 }
 // 결말이 끝나면 같은 동료와 다음 장 이야기로 바로 넘어가요
+function deepRecord(f) { SAVE.deepBest = Math.max(SAVE.deepBest | 0, f); save(); if (f >= 5) unlock('deep5'); if (f >= 10) unlock('deep10'); }
 function afterOutro() {
   const ci = chapterIndex(), h = clearChapter();
+  if (CH.deep) { // 다음 층: 저주가 하나 더 쌓여요
+    S.resultShown = true;
+    if (S.net === 'guest') { bigMsg(CH.title + ' 완료', '명예 ' + h + ' · 방장과 함께 더 내려가요', 0); return; }
+    const c = CURSES[Math.floor(Math.random() * CURSES.length)]; DEEP.floor++; DEEP.curses.push(c.id);
+    toast(DEEP.floor - 1 + '층 완료 · 명예 ' + h + ' · 새 저주: ' + c.name + ' (' + c.desc + ')', 4200);
+    S.chSel = DEEP_I; beginGame(S.G); return;
+  }
   if (ci + 1 >= CHAPTERS.length) { showResult(); return; }
   S.resultShown = true;
   if (S.net === 'guest') { bigMsg(CH.title + ' 완료', '명예 ' + h + ' · 방장과 함께 다음 장으로 가요', 0); return; }
   toast(CH.title + ' 완료 · 명예 ' + h, 3200);
   S.chSel = ci + 1; beginGame(S.G);
+}
+function showDeepResult() {
+  S.resultShown = true; const h = awardHonor() || 0, f = S.snap.dp ? S.snap.dp.floor : DEEP.floor; deepRecord(f);
+  const cs = (S.snap.dp ? S.snap.dp.curses : DEEP.curses).map(c => CURSES.find(x => x.id === c).name);
+  $('result').innerHTML = `<div class="big">끝없는 심연 ${f}층</div><p class="note">${f}층에서 모두 쓰러졌어요. ${f - 1}층까지 지나왔어요.</p><p class="note">쌓인 저주: ${cs.length ? cs.join(', ') : '없음'}</p><p>받은 명예 <b style="color:#ffd36b">${h}</b> · 최고 기록 <b style="color:#ffd36b">${SAVE.deepBest}층</b></p><div class="row"><button class="btn gold" id="resBack">로비로</button></div>`;
+  $('resBack').onclick = () => endToLobby('');
+  setHud(false); show('sResult');
 }
 function showResult() {
   S.resultShown = true; const h = clearChapter();
@@ -688,6 +734,7 @@ function frame(now) {
     else {
       for (const e of S.evq) onEvent(e); S.evq.length = 0;
       view.sync(S.snap, S.me, dt, t, !!S.G); paintHud(); paintBless();
+      if (ph === 'over') { S.overT += dt; if (S.overT > 3.6 && !S.resultShown) showDeepResult(); }
       if (ph === 'won') { S.wonT += dt; if (S.wonT > 1.5 && S.wonT < 9) bigMsg(CH.outro[Math.min(CH.outro.length - 1, Math.floor((S.wonT - 1.5) / 2.5))], TOUCH ? '화면을 누르면 건너뛰어요' : 'Space 키로 건너뛰어요', 0); if (S.wonT >= 9 && !S.resultShown) afterOutro(); }
     }
     S.evq.length = 0;

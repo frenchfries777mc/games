@@ -223,3 +223,8 @@ crownenvoy/CrownEnvoy-v0.4.html | 전신망 (정치 탭 카드) | "📡 전신�
 - balance/index.html | 느리게 다시 보기, 합력, 돌리는 힘 | educations | 2026-10-23
 - timeline/index.html | 사건 지도의 장소 이름 121개(EVLOC)는 한국어 화면에서만 보이고 다른 언어에서는 핀만 보임 | educations | 2026-10-23
 - beaconfall/patchnotes.json·i18n.js | N["v0.3 b94"] 한국어 임시 입력 | 펭귄·공룡 뼈 발굴·공룡 골격 전시 3줄. 게임 안 새 글자(I18N_D 14칸): '공룡 뼈 조각', '공룡 골격 전시', '공룡 뼈 조각 12 — 설치하면 커다란 공룡 골격이 서요 (뼈는 섬 곳곳 땅속에 묻혀 있어요)', '뼈를 파내는 중… 움직이지 마세요', '아기 펭귄이 태어났어요'
+
+## Vowkeep b27 (2026-10-23)
+- prototypes/vowkeep/js/data.js | LORE 옛 기록 32줄 (8장 × 비석 2개 × 2줄), COMBOS 합동기 이름 5개, CURSES 저주 이름·설명 7개, 심연 층 이름·시작·결말 문장, 업적 6개 (비밀 방, 옛 기록, 합동기, 심연 5·10층) 이름·설명 | 한국어만 있음 | Vowkeep b27 | 2026-10-23
+- prototypes/vowkeep/js/main.js | '비밀 방을 찾았어요', 'F를 꾹 눌러 옛 기록 읽기', '옛 기록', '합동기!', '끝없는 심연', '심연으로 내려가기', 심연 결과 화면·저주 알림 문장 | 한국어만 있음 | Vowkeep b27 | 2026-10-23
+- patchnotes.json | "Vowkeep 비밀 방, 합동기, 끝없는 심연" 8줄 | Vowkeep b27 | 2026-10-23

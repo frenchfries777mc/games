@@ -1,6 +1,6 @@
 // Vowkeep · © 2026 Frenchfries777 · CC BY-NC-ND 4.0
 // 지도: 벽 칸, 충돌, 시야, 길찾기 (규칙·화면·게스트 이동이 같이 써요)
-import { MAP, CHAPTERS, CH, setChapterData } from './data.js';
+import { MAP, CHAPTERS, CH, setChapterData, DEEP_I } from './data.js';
 
 const FIELDS = new Map();
 export let CS = 2, MW = 0, MH = 0, WX = 0, WZ = 0; // 지도 전체 크기 (m)
@@ -9,19 +9,39 @@ export const cw = c => (c + 0.5) * CS;
 
 // GRID: 0 = 벽, 1 = 바닥
 export let GRID = new Uint8Array(0), WATER = new Uint8Array(0), PILLARS = [];
+// 비밀 방: SEC 칸 값 = 비밀 방 번호 + 1 (방 안), -(번호 + 1) (금 간 벽 통로). SOPEN = 열렸는지
+export let SEC = new Int8Array(0); export const SOPEN = [];
 let CUR = -1;
-// 장을 바꾸면 지도를 새로 만들어요
-export function useChapter(i) {
-  i = Math.max(0, Math.min(CHAPTERS.length - 1, i | 0));
-  if (i === CUR) return CH; CUR = i; setChapterData(i);
+// 장을 바꾸면 지도를 새로 만들어요 (끝없는 심연은 층마다 새로: force)
+export function useChapter(i, force) {
+  i = i === DEEP_I ? DEEP_I : Math.max(0, Math.min(CHAPTERS.length - 1, i | 0));
+  if (i === CUR && !force) return CH; CUR = i; setChapterData(i);
   CS = MAP.cs; MW = MAP.w; MH = MAP.h; WX = MW * CS; WZ = MH * CS;
   GRID = new Uint8Array(MW * MH); WATER = new Uint8Array(MW * MH);
   for (const [x, y, w, h] of MAP.floors) for (let j = y; j < y + h; j++) for (let k = x; k < x + w; k++) if (k >= 0 && j >= 0 && k < MW && j < MH) GRID[j * MW + k] = 1;
   for (const [x, y, w, h] of MAP.water) for (let j = y; j < y + h; j++) for (let k = x; k < x + w; k++) if (k >= 0 && j >= 0 && k < MW && j < MH) WATER[j * MW + k] = 1;
   PILLARS = MAP.pillars.map(([x, y]) => ({ x: cw(x), z: cw(y), r: 1.1 }));
-  FIELDS.clear();
+  SEC = new Int8Array(MW * MH);
+  MAP.secrets.forEach((q, k) => {
+    const fill = ([x, y, w, h], v, g) => { for (let j = y; j < y + h; j++) for (let i = x; i < x + w; i++) { SEC[j * MW + i] = v; GRID[j * MW + i] = g; } };
+    fill(q.room, k + 1, 1); fill(q.pass, -(k + 1), 0);
+  });
+  resetSecrets();
   return CH;
 }
+// 새 원정마다 비밀 방을 다시 막아요
+export function resetSecrets() {
+  SOPEN.length = 0; FIELDS.clear();
+  MAP.secrets.forEach(q => { const [x, y, w, h] = q.pass; for (let j = y; j < y + h; j++) for (let i = x; i < x + w; i++) GRID[j * MW + i] = 0; });
+}
+export function openSecret(k) {
+  if (SOPEN[k] || !MAP.secrets[k]) return; SOPEN[k] = 1; FIELDS.clear();
+  const [x, y, w, h] = MAP.secrets[k].pass; for (let j = y; j < y + h; j++) for (let i = x; i < x + w; i++) GRID[j * MW + i] = 1;
+}
+// 아직 열리지 않은 비밀 방 칸인지 (작은 지도에 안 보이게)
+export function hiddenCell(i, j) { const v = SEC[j * MW + i]; return v !== 0 && !SOPEN[Math.abs(v) - 1]; }
+// 금 간 벽 가운데 (세계 좌표)
+export function secretFace(k) { const [x, y, w, h] = MAP.secrets[k].face; return { x: (x + w / 2) * CS, z: (y + h / 2) * CS }; }
 export function chapterIndex() { return CUR; }
 
 export function floorCell(i, j) { return i >= 0 && j >= 0 && i < MW && j < MH && GRID[j * MW + i] === 1; }
