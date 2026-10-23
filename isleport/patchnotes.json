@@ -1,6 +1,64 @@
 {
  "notes": [
   {
+   "date": "2026-10-23",
+   "build": "v0.2 build 51",
+   "title": "보급선, 흥정, 선주문, 외상",
+   "items": [
+    "바다로 나간 배에 보급선을 보내 선체를 고치고 창고 물건을 더 실을 수 있어요",
+    "장터에서 노점 흥정을 할 수 있어요. 손님이 떠나기 전에 값을 잘 맞춰 보세요",
+    "게시판의 선주문으로 계약금을 받고 기한 안에 납품하면 보너스를 받아요",
+    "배 목록에서 외상 판매를 켜면 단골 항구에 더 비싸게 팔 수 있어요. 다음 방문 때 값을 받아요"
+   ],
+   "tr": {
+    "en": {
+     "title": "Supply boats, haggling, pre-orders, credit",
+     "items": [
+      "Send a supply boat to a ship at sea to patch the hull and load more goods",
+      "Haggle with customers at the market stall before they walk away",
+      "Take pre-orders at the notice board: deposit now, bonus when delivered in time",
+      "Turn on credit sales in the ship list: regular ports pay more, collected on your next visit"
+     ]
+    },
+    "ja": {
+     "title": "Supply boats, haggling, pre-orders, credit",
+     "items": [
+      "Send a supply boat to a ship at sea to patch the hull and load more goods",
+      "Haggle with customers at the market stall before they walk away",
+      "Take pre-orders at the notice board: deposit now, bonus when delivered in time",
+      "Turn on credit sales in the ship list: regular ports pay more, collected on your next visit"
+     ]
+    },
+    "es": {
+     "title": "Supply boats, haggling, pre-orders, credit",
+     "items": [
+      "Send a supply boat to a ship at sea to patch the hull and load more goods",
+      "Haggle with customers at the market stall before they walk away",
+      "Take pre-orders at the notice board: deposit now, bonus when delivered in time",
+      "Turn on credit sales in the ship list: regular ports pay more, collected on your next visit"
+     ]
+    },
+    "fr": {
+     "title": "Supply boats, haggling, pre-orders, credit",
+     "items": [
+      "Send a supply boat to a ship at sea to patch the hull and load more goods",
+      "Haggle with customers at the market stall before they walk away",
+      "Take pre-orders at the notice board: deposit now, bonus when delivered in time",
+      "Turn on credit sales in the ship list: regular ports pay more, collected on your next visit"
+     ]
+    },
+    "de": {
+     "title": "Supply boats, haggling, pre-orders, credit",
+     "items": [
+      "Send a supply boat to a ship at sea to patch the hull and load more goods",
+      "Haggle with customers at the market stall before they walk away",
+      "Take pre-orders at the notice board: deposit now, bonus when delivered in time",
+      "Turn on credit sales in the ship list: regular ports pay more, collected on your next visit"
+     ]
+    }
+   }
+  },
+  {
    "date": "2026-10-22",
    "build": "v0.2 build 50",
    "title": "이야기의 결말과 크레딧",
