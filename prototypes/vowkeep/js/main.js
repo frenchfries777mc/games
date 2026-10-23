@@ -182,7 +182,41 @@ function pickRole(r) {
   if (!tgt || tgt.uid) return; if (cur) { cur.uid = null; cur.name = ''; }
   tgt.uid = UID; tgt.name = myName(); paintSlots(); hostLobby();
 }
-$('inviteBtn').onclick = () => { SFX.play('click'); try { if (window.FFAuth && FFAuth.openFriends) FFAuth.openFriends(); } catch (e) { } };
+$('inviteBtn').onclick = () => { SFX.play('click'); openInvite(); };
+/* 초대 창: 친구는 접속 여부와 상관없이 맨 위(접속 중인 친구 먼저), 그 아래 지금 접속 중인 다른 플레이어 */
+const GN = { stickseum: 'Stickseum', crownenvoy: 'Crown Envoy', beaconfall: 'Beaconfall', isleport: 'Isleport', dummyparty: 'Dummy Party', vowkeep: 'Vowkeep', hub: '허브' };
+async function openInvite() {
+  if (needLogin()) return;
+  const sb = window.FFAuth && FFAuth.client && FFAuth.client(), me = FFAuth.user(); if (!sb || !me) return;
+  const L = $('invList'); $('inv').classList.add('on'); L.innerHTML = '<p class="note">불러오는 중이에요...</p>';
+  const blocked = id => { try { return FFAuth.isBlocked(id); } catch (e) { return false; } };
+  const fr = (FFAuth.friends() || []).filter(f => f.status === 'accepted' && !blocked(f.otherId));
+  let onF = {}, others = [], otherErr = false;
+  try { const r = await sb.rpc('ff_online_friends'); ((r && r.data) || []).forEach(x => { onF[x.user_id] = x.place; }); } catch (e) { }
+  try { const r = await sb.rpc('ff_online_players', { p_limit: 40 }); if (r.error) otherErr = true; others = ((r && r.data) || []).filter(x => x.user_id !== me.id && !blocked(x.user_id) && !fr.some(f => f.otherId === x.user_id)); } catch (e) { otherErr = true; }
+  fr.sort((a, b) => ((onF[b.otherId] ? 1 : 0) - (onF[a.otherId] ? 1 : 0)) || a.name.localeCompare(b.name, 'ko'));
+  L.innerHTML = '';
+  const head = t => { const h = document.createElement('h4'); h.textContent = t; L.appendChild(h); };
+  const row = (id, name, tag, on) => {
+    const d = document.createElement('div'); d.className = 'r' + (on ? ' on' : ''); d.innerHTML = '<b></b><small></small><button class="btn gold">초대</button>';
+    d.querySelector('b').textContent = name; d.querySelector('small').textContent = tag;
+    const bt = d.querySelector('button'); bt.onclick = async () => {
+      SFX.play('click'); bt.disabled = true; let ok = false;
+      try { const r = await sb.rpc('ff_invite', { p_to: id, p_game: 'vowkeep', p_code: S.code, p_path: 'prototypes/vowkeep/index.html' }); ok = !(r && r.error); } catch (e) { }
+      bt.textContent = ok ? '보냈어요' : '못 보냈어요'; if (!ok) setTimeout(() => { bt.disabled = false; bt.textContent = '초대'; }, 2000);
+    };
+    L.appendChild(d);
+  };
+  head('친구 (' + fr.length + ')');
+  if (!fr.length) L.insertAdjacentHTML('beforeend', '<p class="note">아직 친구가 없어요.</p>');
+  fr.forEach(f => row(f.otherId, f.name, onF[f.otherId] ? '🟢 ' + (GN[onF[f.otherId]] || onF[f.otherId]) : '접속 안 함', !!onF[f.otherId]));
+  head('지금 접속 중인 플레이어 (' + others.length + ')');
+  if (otherErr) L.insertAdjacentHTML('beforeend', '<p class="note">접속 중인 플레이어 목록은 곧 열려요.</p>');
+  else if (!others.length) L.insertAdjacentHTML('beforeend', '<p class="note">지금 접속 중인 다른 플레이어가 없어요.</p>');
+  others.forEach(x => row(x.user_id, x.name || '???', '🟢 ' + (GN[x.place] || x.place || ''), true));
+}
+$('invX').onclick = () => $('inv').classList.remove('on');
+$('inv').addEventListener('click', e => { if (e.target === $('inv')) $('inv').classList.remove('on'); });
 $('startBtn').onclick = () => { SFX.unlock(); SFX.play('click'); if (S.net === 'guest') return; beginGame(); };
 
 /* ---------- 멀티: 친구 초대 (허브 초대 링크 ?join=) ---------- */
