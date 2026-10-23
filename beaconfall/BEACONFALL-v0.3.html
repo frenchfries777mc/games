@@ -136,6 +136,7 @@ body.playing #backbtn{ display:block; }
 body.playing #statbtn{ display:block; }
 #photobtn{ position:fixed; right:calc(18px + env(safe-area-inset-right,0px)); bottom:calc(16px + env(safe-area-inset-bottom,0px)); z-index:6; display:none; }
 body.playing #photobtn{ display:block; }
+body.playing:not(.touch) #photobtn,body.playing:not(.touch) #bpbtn,body.playing:not(.touch) #rollbtn{ display:none; }   /* 컴퓨터에서는 R 구르기 · G 청사진 · P 사진 키로만 써요 */
 #rollbtn{ position:fixed; right:calc(18px + env(safe-area-inset-right,0px)); bottom:calc(16px + 104px + env(safe-area-inset-bottom,0px)); z-index:6; display:none; }
 body.playing #rollbtn{ display:block; }
 #bpbtn{ position:fixed; right:calc(18px + env(safe-area-inset-right,0px)); bottom:calc(16px + 52px + env(safe-area-inset-bottom,0px)); z-index:6; display:none; }
@@ -368,7 +369,7 @@ html:not(.introDone) #ui,html:not(.introDone) #authgate,html:not(.introDone) #au
     <button class="btn" data-act="skins"><span class="arrow">▶</span>스킨 상점<span class="en">SKIN SHOP</span></button>
     <button class="btn" data-act="stats"><span class="arrow">▶</span>통계<span class="en">STATS</span></button>
     <button class="btn" data-act="settings"><span class="arrow">▶</span>설정<span class="en">SETTINGS</span></button>
-    <p class="foot">v0.3<br>build 94</p>
+    <p class="foot">v0.3<br>build 95</p>
   </nav>
 </div>
 
@@ -11257,6 +11258,9 @@ addEventListener('keydown',e=>{
   else if(e.code==='KeyB'){if(!e.repeat)toggleSandbox();e.preventDefault();}
   else if(e.code==='KeyN'){if(!e.repeat)toast('배경음악 '+(BGM.toggle()?'켜짐':'꺼짐'));e.preventDefault();}
   else if(e.code==='KeyJ'){if(!e.repeat)toggleAch();e.preventDefault();}
+  else if(e.code==='KeyR'&&!e.repeat&&!crafting&&!e.ctrlKey&&!e.metaKey){doRoll();e.preventDefault();}
+  else if(e.code==='KeyG'&&!e.repeat&&!crafting){if(BPS.mode)bpEnd();else bpMenu();e.preventDefault();}
+  else if(e.code==='KeyP'&&!e.repeat&&!crafting){openPhoto();e.preventDefault();}
   else if(e.code==='KeyV'){if(!e.repeat)openJournal();e.preventDefault();}
   else if(e.code==='KeyT'&&!e.repeat&&!crafting){e.preventDefault();chatOpen();}
   else if((e.code==='Equal'||e.code==='NumpadAdd')&&!crafting){zoomStep(1);e.preventDefault();}
