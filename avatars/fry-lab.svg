@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#1e1636"/><stop offset="1" stop-color="#0d0a18"/></linearGradient>
+    <radialGradient id="gl" cx=".5" cy=".45" r=".5"><stop offset="0" stop-color="#b08cff" stop-opacity=".5"/><stop offset="1" stop-color="#b08cff" stop-opacity="0"/></radialGradient>
+    <linearGradient id="pp" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff6dc"/><stop offset="1" stop-color="#ffe3a0"/></linearGradient>
+    <linearGradient id="ac" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#b08cff"/><stop offset="1" stop-color="#b08cff" stop-opacity=".75"/></linearGradient>
+    <linearGradient id="sk" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#8fd0ff"/><stop offset="1" stop-color="#3f7fdc"/></linearGradient>
+    <linearGradient id="fy" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffd14a"/><stop offset="1" stop-color="#f09a12"/></linearGradient>
+  </defs>
+  <rect x="2" y="2" width="116" height="116" rx="28" fill="url(#bg)" stroke="#b08cff" stroke-opacity=".7" stroke-width="3"/>
+  <circle cx="60" cy="56" r="48" fill="url(#gl)"/>
+<defs><clipPath id="fl"><path d="M52 24 H68 V50 L88 86 Q92 98 80 98 H40 Q28 98 32 86 L52 50 Z"/></clipPath></defs><path d="M52 24 H68 V50 L88 86 Q92 98 80 98 H40 Q28 98 32 86 L52 50 Z" fill="#e8f6ff" fill-opacity=".9" stroke="#fff4d6" stroke-width="3.5" stroke-linejoin="round"/><g clip-path="url(#fl)"><path d="M20 70 Q35 64 50 70 T80 70 T110 70 V100 H20 Z" fill="url(#ac)"/></g><rect x="47" y="18" width="26" height="8" rx="4" fill="#fff4d6" stroke="#7a4a05" stroke-width="1.8"/><path d="M44 86 Q52 78 60 86 T76 86" fill="none" stroke="#fff" stroke-opacity=".7" stroke-width="2.4"/><circle cx="58" cy="82" r="3" fill="#fff" fill-opacity=".55"/><circle cx="68" cy="76" r="2.3" fill="#fff" fill-opacity=".55"/><path d="M96 34 L100 26 L104 34 L112 38 L104 42 L100 50 L96 42 L88 38Z" fill="#ffd14a" transform="translate(-6 -8) scale(.9)"/><path d="M20 24 Q21.32 28.68 26 30 Q21.32 31.32 20 36 Q18.68 31.32 14 30 Q18.68 28.68 20 24Z" fill="#fff4d6"/></svg>

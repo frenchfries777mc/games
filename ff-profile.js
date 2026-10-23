@@ -62,8 +62,9 @@ async function fetchData(sb, uid){
   var secs={}; try{ var pt=await sb.from('ff_playtime').select('game,secs').eq('user_id',uid); ((pt&&!pt.error&&pt.data)||[]).forEach(function(r){ secs[r.game]=r.secs|0; }); }catch(e){}      // (empty before supabase-ff-playtime-invite.sql is run)
   var deco=null; try{ var dc=await sb.from('ff_deco').select('bg,fr').eq('user_id',uid).limit(1); if(dc&&!dc.error&&dc.data&&dc.data[0]) deco=dc.data[0]; }catch(e){}      // (empty before supabase-ff-extra.sql is run)
   var card=null; try{ var cd=await sb.from('ff_card').select('bio,fav,title').eq('user_id',uid).limit(1); if(cd&&!cd.error&&cd.data&&cd.data[0]) card=cd.data[0]; }catch(e){}      // (empty before supabase-ff-more.sql is run)
+  var avpick=null; try{ var ap=await sb.from('ff_avatar').select('pick').eq('user_id',uid).limit(1); if(ap&&!ap.error&&ap.data&&ap.data[0]) avpick=ap.data[0].pick||null; }catch(e){}      // (empty before supabase-ff-avatar.sql is run)
   var dev=null; try{ var dv=await sb.from('ff_devs').select('role').eq('user_id',uid).limit(1); if(dv&&!dv.error&&dv.data&&dv.data[0]) dev=dv.data[0].role; }catch(e){}      // (empty before supabase-ff-dev.sql is run)
-  return {profile:(p&&p.data)||{id:uid}, played:played, secs:secs, ach:ach, ids:ids, deco:deco, card:card, dev:dev};
+  return {profile:(p&&p.data)||{id:uid}, played:played, secs:secs, ach:ach, ids:ids, deco:deco, card:card, dev:dev, avpick:avpick};
 }
 
 /* ---- card looks unlocked by hub achievements (ff_deco in supabase-ff-extra.sql; keep the "need" numbers in step with ff_deco_need there) ---- */
@@ -97,6 +98,34 @@ var TITLES=[
  {id:'master',ach:'ach_60',n:{ko:'달인',en:'Master',es:'Maestro',fr:'Maître',de:'Meister',ja:'達人',zh:"达人",pt:"Mestre",ru:"Мастер",tr:"Usta",it:"Maestro",pl:"Mistrz",ar:"سيد",nw:"Big brother",gk:"주인"}},
  {id:'legend',ach:'hub_all',n:{ko:'전설',en:'Legend',es:'Leyenda',fr:'Légende',de:'Legende',ja:'伝説',zh:"传奇",pt:"Lenda",ru:"Легенда",tr:"Efsane",it:"Leggenda",pl:"Legenda",ar:"أسطورة",nw:"Inner Party",gk:"Legend"}}
 ];
+/* ---- profile photos: free ones, ones bought with Hub Coin, ones unlocked by a hub achievement.
+   The prices and conditions are checked on the server (supabase-ff-avatar.sql); keep them in step with ff_avatar_items there ---- */
+var AVATARS=[
+ {id:'account',kind:'free',n:{ko:'내 계정',en:'My account'}},
+ {id:'fries',kind:'free',n:{ko:'감자튀김',en:'Fries'}},
+ {id:'stickseum',kind:'free',n:{ko:'Stickseum',en:'Stickseum'}},
+ {id:'crownenvoy',kind:'free',n:{ko:'Crown Envoy',en:'Crown Envoy'}},
+ {id:'beaconfall',kind:'free',n:{ko:'Beaconfall',en:'Beaconfall'}},
+ {id:'isleport',kind:'free',n:{ko:'Isleport',en:'Isleport'}},
+ {id:'dummyparty',kind:'coin',price:30,n:{ko:'Dummy Party',en:'Dummy Party'}},
+ {id:'vowkeep',kind:'coin',price:40,n:{ko:'Vowkeep',en:'Vowkeep'}},
+ {id:'ranking',kind:'coin',price:50,n:{ko:'랭킹',en:'Ranking'}},
+ {id:'fry-lab',kind:'coin',price:50,n:{ko:'프라이랩',en:'Fry Lab'}},
+ {id:'wiki',kind:'coin',price:60,n:{ko:'위키',en:'Wiki'}},
+ {id:'coin',kind:'coin',price:100,n:{ko:'허브 코인',en:'Hub Coin'}},
+ {id:'proverb',kind:'ach',ach:'play_2',n:{ko:'속담 탐정',en:'Proverb Detective'}},
+ {id:'planet',kind:'ach',ach:'play_3',n:{ko:'행성 탐사',en:'Planet Search'}},
+ {id:'munjang',kind:'ach',ach:'post_1',n:{ko:'문장 수리공',en:'Sentence Fixer'}},
+ {id:'achievements',kind:'ach',ach:'ach_10',n:{ko:'도전 메달',en:'Achievement Medal'}},
+ {id:'timeline',kind:'ach',ach:'ach_30',n:{ko:'타임라인',en:'Timeline'}}
+];
+function avatarOf(id){ for(var i=0;i<AVATARS.length;i++) if(AVATARS[i].id===id) return AVATARS[i]; return null; }
+function avatarUrl(id){ return BASE+'avatars/'+id+'.svg'; }
+var AVS={
+ ko:{ttl:'프로필 사진',game:'게임 캐릭터',gameT:'Stickseum 캐릭터 그림을 써요',coins:'보유',buy:'구매',cancel:'취소',ask:'{0} 사진을 {1} hC에 살까요?',bought:'샀어요. 이제 쓸 수 있어요.',picked:'바꿨어요.',poor:'허브 코인이 모자라요.',locked:'업적을 달성하면 열려요: {0}',off:'프로필 사진은 아직 준비 중이에요.',fail:'저장하지 못했어요. 잠시 뒤에 다시 해 주세요.',free:'기본',own:'구매함'},
+ en:{ttl:'Profile photo',game:'Game character',gameT:'Use your Stickseum character picture',coins:'You have',buy:'Buy',cancel:'Cancel',ask:'Buy the {0} photo for {1} hC?',bought:'Bought. You can use it now.',picked:'Changed.',poor:'Not enough Hub Coin.',locked:'Unlocks with this achievement: {0}',off:'Profile photos are not ready yet.',fail:'Could not save. Please try again later.',free:'Free',own:'Owned'}
+};
+function avt(lg,k){ return (AVS[lg]&&AVS[lg][k])||AVS.en[k]||AVS.ko[k]||''; }
 function titleOf(id){ for(var i=0;i<TITLES.length;i++) if(TITLES[i].id===id) return TITLES[i]; return null; }
 function decoOf(kind, id){ var a=DECO[kind]; for(var i=0;i<a.length;i++) if(a[i].id===id) return a[i]; return a[0]; }
 
@@ -422,6 +451,7 @@ async function draw(cv, d, o){
   // avatar with its frame
   var AS=138, AX=W/2-AS/2, AY=HY+22, a=document.createElement('canvas'); a.width=a.height=168;
   var im=av.ext?await loadImg(ext(av.ext)):null; drawAvatar(a, av, im);
+  var hp=d.avpick&&avatarOf(d.avpick); if(hp){ var hi=await loadImg(avatarUrl(hp.id)); if(hi){ var ac=a.getContext('2d'); ac.clearRect(0,0,168,168); ac.drawImage(hi,0,0,168,168); } }          // a profile photo replaces the game character picture
   var fr=st.pfr&&STK.pfr[st.pfr], gl=fr&&glowOf(fr.shadow);
   c.save(); if(gl){ c.shadowColor=gl.color; c.shadowBlur=gl.blur*1.6; } c.fillStyle='#000'; rrect(c,AX,AY,AS,AS,20); c.fill(); c.restore();
   c.save(); rrect(c,AX,AY,AS,AS,20); c.clip(); c.drawImage(a,AX,AY,AS,AS); c.restore();
@@ -525,7 +555,38 @@ function decoPanel(el, sb, uid, d, cv, o){
   var about='<b>'+esc(T.me_)+'</b><div class="bio"><input maxlength="60" placeholder="'+esc(T.bioPh)+'"><button type="button" class="bs">'+esc(T.bsave)+'</button></div>'+
     '<b>'+esc(T.fav)+'</b><div class="chips"><button type="button" class="ch'+(!CD.fav?' on':'')+'" data-fav="">'+esc(T.favNone)+'</button>'+GAMES.map(function(g){ return '<button type="button" class="ch'+(CD.fav===g.id?' on':'')+'" data-fav="'+g.id+'">'+g.icon+' '+esc(g.name)+'</button>'; }).join('')+'</div>'+
     '<b>'+esc(T.ttl)+'</b><div class="chips"><button type="button" class="ch'+(!CD.title?' on':'')+'" data-t="">'+esc(T.ttlNone)+'</button>'+TITLES.map(function(t){ var lk=!hub[t.ach]; return '<button type="button" class="ch'+(CD.title===t.id?' on':'')+(lk?' lk':'')+'" data-t="'+t.id+'" data-ach="'+t.ach+'">'+(lk?'🔒 ':'🏷️ ')+esc(t.n[lg]||t.n.en)+'</button>'; }).join('')+'</div>';
-  P.innerHTML=about+'<div class="n">'+esc(fmt(T.dnote,n))+'</div><b>'+esc(T.dbg)+'</b><div class="sws">'+DECO.bg.map(function(x){ return sw('bg',x); }).join('')+'</div><b>'+esc(T.dfr)+'</b><div class="sws">'+DECO.fr.map(function(x){ return sw('fr',x); }).join('')+'</div><div class="dm"></div>';
+  /* profile photo: free / Hub Coin / hub achievement. Buying asks inside the panel (no browser popup). */
+  function avState(){ if(!d.av){ d.av={pick:d.avpick||null, own:{}, coins:null, buy:null, msg:'', off:false}; avLoad(); } return d.av; }
+  async function avLoad(){ var A=d.av;
+    try{ var ow=await sb.from('ff_avatar_own').select('avatar_id').eq('user_id',uid).limit(200), cn=await sb.from('ff_coins').select('coins').eq('user_id',uid).limit(1);
+      if(ow.error) A.off=true; else (ow.data||[]).forEach(function(r){ A.own[r.avatar_id]=1; });
+      A.coins=(cn&&!cn.error&&cn.data&&cn.data[0])?(cn.data[0].coins|0):0; }catch(e){ A.off=true; }
+    decoPanel(el, sb, uid, d, cv, o); }
+  function avHtml(){ var A=avState(), h='<b>'+esc(avt(lg,'ttl'))+'</b>';
+    if(A.off) return h+'<div class="n">'+esc(avt(lg,'off'))+'</div>';
+    h+='<div class="n">'+esc(avt(lg,'coins'))+' <span data-notr>'+(A.coins==null?'…':A.coins)+' hC</span></div><div class="avs">'+
+       '<button type="button" class="av'+(!A.pick?' on':'')+'" data-av="" title="'+esc(avt(lg,'gameT'))+'"><i class="g">🎮</i><span>'+esc(avt(lg,'game'))+'</span></button>';
+    AVATARS.forEach(function(x){ var nm=x.n[lg]||x.n.en||x.n.ko, lock=false, tag='';
+      if(x.kind==='coin'){ if(A.own[x.id]) tag=avt(lg,'own'); else { lock=true; tag=x.price+' hC'; } }
+      else if(x.kind==='ach'){ if(!hub[x.ach]){ lock=true; tag='🔒'; } }
+      h+='<button type="button" class="av'+(A.pick===x.id?' on':'')+(lock?' lk':'')+'" data-av="'+x.id+'" title="'+esc(nm)+'"><img src="'+avatarUrl(x.id)+'" alt="" width="52" height="52"><span>'+esc(nm)+'</span>'+(tag?'<em data-notr>'+esc(tag)+'</em>':'')+'</button>'; });
+    h+='</div>';
+    if(A.buy){ var b=avatarOf(A.buy); h+='<div class="avq"><span>'+esc(avt(lg,'ask').replace('{0}',b.n[lg]||b.n.en||b.n.ko).replace('{1}',b.price))+'</span><button type="button" class="ch" data-avy="1">'+esc(avt(lg,'buy'))+'</button><button type="button" class="ch" data-avn="1">'+esc(avt(lg,'cancel'))+'</button></div>'; }
+    if(A.msg) h+='<div class="n avm">'+esc(A.msg)+'</div>';
+    return h; }
+  P.innerHTML=avHtml()+about+'<div class="n">'+esc(fmt(T.dnote,n))+'</div><b>'+esc(T.dbg)+'</b><div class="sws">'+DECO.bg.map(function(x){ return sw('bg',x); }).join('')+'</div><b>'+esc(T.dfr)+'</b><div class="sws">'+DECO.fr.map(function(x){ return sw('fr',x); }).join('')+'</div><div class="dm"></div>';
+  [].forEach.call(P.querySelectorAll('[data-av]'),function(b){ b.onclick=async function(){ var A=d.av, id=b.getAttribute('data-av')||null, x=id&&avatarOf(id); if(!A||A.off) return; if(id===A.pick) return; A.msg='';
+    if(x&&x.kind==='coin'&&!A.own[x.id]){ if(A.coins!=null&&A.coins<x.price){ A.buy=null; A.msg=avt(lg,'poor'); } else A.buy=x.id; decoPanel(el, sb, uid, d, cv, o); return; }
+    if(x&&x.kind==='ach'&&!hub[x.ach]){ var ca=await catalog('hub'), aa=(ca||[]).filter(function(q){ return q.id===x.ach; })[0]; A.buy=null; A.msg=avt(lg,'locked').replace('{0}',aa&&aa.n?(aa.n[lg]||aa.n.en||aa.n.ko):x.ach); decoPanel(el, sb, uid, d, cv, o); return; }
+    A.buy=null; await avPick(id); }; });
+  async function avPick(id){ var A=d.av, r; try{ r=await sb.rpc('ff_avatar_set',{p_id:id}); }catch(e){ r={error:e}; }
+    if(r&&r.error){ A.msg=avt(lg,'fail'); } else { A.pick=id; d.avpick=id; A.msg=avt(lg,'picked'); }
+    decoPanel(el, sb, uid, d, cv, o); await draw(cv, d, o); }
+  var avy=P.querySelector('[data-avy]'), avn=P.querySelector('[data-avn]');
+  if(avn) avn.onclick=function(){ d.av.buy=null; decoPanel(el, sb, uid, d, cv, o); };
+  if(avy) avy.onclick=async function(){ var A=d.av, id=A.buy, r; avy.disabled=true; try{ r=await sb.rpc('ff_avatar_buy',{p_id:id}); }catch(e){ r={error:e}; }
+    A.buy=null; if(r&&r.error){ A.msg=/not enough/i.test(r.error.message||'')?avt(lg,'poor'):avt(lg,'fail'); decoPanel(el, sb, uid, d, cv, o); return; }
+    A.own[id]=1; if(typeof r.data==='number') A.coins=r.data; A.msg=avt(lg,'bought'); await avPick(id); };
   var bi=P.querySelector('.bio input'); bi.value=CD.bio||'';
   async function saveCard(patch, btn){ var prev=Object.assign({},d.card||{}); d.card=Object.assign({bio:'',fav:null,title:null},d.card||{},patch); if(btn) btn.disabled=true;
     var r; try{ r=await sb.from('ff_card').upsert({user_id:uid, bio:d.card.bio||'', fav:d.card.fav||null, title:d.card.title||null}); }catch(e){ r={error:e}; }
@@ -544,6 +605,7 @@ function decoPanel(el, sb, uid, d, cv, o){
 function modal(T){
   var el=document.getElementById('ffpModal'); if(el) return el;
   var css=document.createElement('style'); css.textContent='#ffpModal{position:fixed;inset:0;z-index:2147483000;background:rgba(5,6,10,.78);display:none;align-items:flex-start;justify-content:center;padding:12px;font-family:system-ui,sans-serif;overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain}#ffpModal .b{display:flex;flex-direction:column;gap:10px;align-items:center;width:100%;max-width:480px;margin:auto}#ffpModal canvas{width:100%;height:auto;border-radius:12px;box-shadow:0 10px 40px rgba(0,0,0,.5)}#ffpModal .x{position:fixed;top:10px;right:12px;width:40px;height:40px;padding:0;border-radius:50%;background:#2a2f3a;color:#fff;font-size:20px;z-index:1}#ffpAch .L{width:100%;box-sizing:border-box;background:#14110d;border:1px solid rgba(255,196,61,.35);border-radius:12px;padding:14px;color:#eee;text-align:left}#ffpAch .L .h{font-weight:800;font-size:17px;color:#ffd36b}#ffpAch .L .n{font-size:12px;color:rgba(255,255,255,.55);margin:4px 0 6px}#ffpAch details{border-top:1px solid rgba(255,255,255,.1);padding:8px 0 4px}#ffpAch summary{display:flex;align-items:center;gap:8px;cursor:pointer;font-size:16px;padding:4px 0;list-style:none}#ffpAch summary::-webkit-details-marker{display:none}#ffpAch summary:after{content:"▾";margin-left:6px;color:rgba(255,255,255,.5)}#ffpAch details:not([open]) summary:after{content:"▸"}#ffpAch .gc{margin-left:auto;color:#ffd36b;font-weight:800;font-size:14px}#ffpAch .a{display:flex;align-items:center;gap:10px;padding:7px 8px;margin:4px 0;border-radius:9px;background:rgba(255,255,255,.03);opacity:.55}#ffpAch .a.on{opacity:1;background:rgba(255,196,61,.12)}#ffpAch .a .i{font-size:20px;width:26px;text-align:center;flex:none}#ffpAch .a .t{flex:1;min-width:0}#ffpAch .a .t b{display:block;font-size:14px}#ffpAch .a .t small{display:block;font-size:12px;color:rgba(255,255,255,.6);margin-top:1px}#ffpAch .a .p{flex:none;width:76px;text-align:right;font-size:13px}#ffpAch .a .p em{display:block;font-style:normal;font-weight:800;color:#7dff9b;font-size:12px}#ffpAch .a .q{font-weight:800}#ffpAch .a .p i{display:block;height:5px;border-radius:3px;background:rgba(255,255,255,.12);margin-top:3px;overflow:hidden}#ffpAch .a .p u{display:block;height:100%;background:#ffc43d}#ffpModal .r{display:flex;gap:8px;flex-wrap:wrap;justify-content:center}#ffpModal button{font:700 15px system-ui,sans-serif;padding:10px 18px;border-radius:10px;border:0;cursor:pointer;background:#ffc43d;color:#1a1208}#ffpModal button.alt{background:#2a2f3a;color:#fff}#ffpModal .m{color:#fff;font-size:15px}#ffpModal .D{width:100%;box-sizing:border-box;background:#14110d;border:1px solid rgba(255,196,61,.35);border-radius:12px;padding:12px 14px;color:#eee;text-align:left;display:none}#ffpModal .D.on{display:block}#ffpModal .D b{display:block;font-size:14px;color:#ffd36b;margin:8px 0 6px}#ffpModal .D .n{font-size:12px;color:rgba(255,255,255,.6)}#ffpModal .sws{display:grid;grid-template-columns:repeat(6,1fr);gap:6px}#ffpModal .sw{background:none;padding:0;color:#ddd;font:600 11px system-ui,sans-serif;display:flex;flex-direction:column;align-items:center;gap:4px;border-radius:10px}#ffpModal .sw i{display:flex;align-items:center;justify-content:center;width:100%;aspect-ratio:1;border-radius:10px;font-style:normal;font-size:16px;border:2px solid transparent;box-sizing:border-box}#ffpModal .sw.on i{border-color:#fff}#ffpModal .sw.lk{opacity:.5;cursor:default}#ffpModal .sw span{line-height:1.2;text-align:center;word-break:keep-all}#ffpModal .D .dm{font-size:13px;color:#7dff9b;min-height:16px;margin-top:6px}@media(max-width:420px){#ffpModal .sws{grid-template-columns:repeat(3,1fr)}}#ffpModal .bio{display:flex;gap:6px}#ffpModal .bio input{flex:1;min-width:0;padding:9px 11px;border-radius:9px;border:1px solid rgba(255,255,255,.18);background:#08090d;color:#eee;font:15px system-ui,sans-serif}#ffpModal .bio button{padding:8px 14px;font-size:14px}#ffpModal .chips{display:flex;flex-wrap:wrap;gap:6px}#ffpModal .ch{background:#2a2f3a;color:#eee;font:600 13px system-ui,sans-serif;padding:7px 11px;border-radius:99px}#ffpModal .ch.on{background:#ffc43d;color:#1a1208}#ffpModal .ch.lk{opacity:.45}#ffpAch{position:fixed;inset:0;z-index:2147483001;background:rgba(5,6,10,.82);display:none;align-items:center;justify-content:center;padding:12px;font-family:system-ui,sans-serif}#ffpAch.on{display:flex}#ffpAch .w{position:relative;display:flex;flex-direction:column;width:100%;max-width:760px;height:min(90vh,900px);background:#14110d;border:1px solid rgba(255,196,61,.35);border-radius:14px;box-shadow:0 10px 40px rgba(0,0,0,.6);overflow:hidden}#ffpAch .hd{display:flex;align-items:center;gap:10px;padding:12px 14px;border-bottom:1px solid rgba(255,255,255,.12);flex:none}#ffpAch .hd b{flex:1;font-size:18px;color:#ffd36b}#ffpAch .hd button{width:36px;height:36px;padding:0;border-radius:50%;border:0;background:#2a2f3a;color:#fff;font-size:18px;cursor:pointer}#ffpAch .L{flex:1;min-height:0;overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;border:0;border-radius:0}#ffpAch details{padding:10px 0 6px}#ffpAch details:first-of-type{border-top:0}#ffpAch summary{position:sticky;top:-14px;background:#14110d;z-index:1;font-size:18px;padding:8px 0}';
+  css.textContent+='#ffpModal .D .avs{display:grid;grid-template-columns:repeat(auto-fill,minmax(76px,1fr));gap:8px;margin:6px 0 4px}#ffpModal .D .av{position:relative;display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px 4px;background:#0e0c09;border:1px solid rgba(255,255,255,.14);border-radius:10px;color:#eee;font:inherit;font-size:11px;cursor:pointer}#ffpModal .D .av:hover{border-color:#ffc43d}#ffpModal .D .av.on{border-color:#ffc43d;box-shadow:0 0 0 2px rgba(255,196,61,.45)}#ffpModal .D .av img,#ffpModal .D .av i.g{width:52px;height:52px;border-radius:11px;object-fit:cover;display:grid;place-items:center;font-style:normal;font-size:26px;background:#1d1812}#ffpModal .D .av.lk img{filter:grayscale(.7) brightness(.7)}#ffpModal .D .av span{max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}#ffpModal .D .av em{font-style:normal;font-size:10.5px;font-weight:800;color:#ffd36b}#ffpModal .D .avq{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin:8px 0;padding:8px 10px;background:rgba(255,196,61,.1);border:1px solid rgba(255,196,61,.35);border-radius:10px;font-size:13px}#ffpModal .D .avq span{flex:1;min-width:150px}#ffpModal .D .avm{color:#ffd36b;margin-top:6px}';
   document.head.appendChild(css);
   el=document.createElement('div'); el.id='ffpModal'; el.innerHTML='<button class="x" aria-label="'+T.close+'">✕</button><div class="b"><div class="m"></div><canvas width="480" height="640"></canvas><div class="r"><button class="s"></button><button class="alt dc"></button><button class="alt ac"></button><button class="alt k"></button><button class="alt c"></button></div><div class="D"></div></div>';
   document.body.appendChild(el);
@@ -581,5 +643,5 @@ async function open(sb, uid, o){
     var manual=function(){ var i=document.createElement('input'); i.value=u; i.readOnly=true; i.style.cssText='margin-left:8px;max-width:100%;padding:6px 8px;border-radius:8px;border:1px solid #333;background:#10131b;color:#eef0f5;font:inherit'; lk.parentNode.insertBefore(i,lk.nextSibling); i.focus(); i.select(); };
     try{ navigator.clipboard.writeText(u).then(done,manual); }catch(e){ manual(); } };
 }
-window.FFProfile={open:open, markPlayed:markPlayed, setAchievements:setAchievements, draw:draw, fetchData:fetchData, games:GAMES, characters:EXT_CHARS, catalog:catalog, syncHub:syncHub, deco:DECO, titles:TITLES};
+window.FFProfile={open:open, markPlayed:markPlayed, setAchievements:setAchievements, draw:draw, fetchData:fetchData, games:GAMES, characters:EXT_CHARS, catalog:catalog, syncHub:syncHub, deco:DECO, titles:TITLES, avatars:AVATARS, avatarUrl:avatarUrl};
 })();
