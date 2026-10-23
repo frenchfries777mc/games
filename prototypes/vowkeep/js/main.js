@@ -2,7 +2,7 @@
 // 화면 흐름, 조작, 멀티(친구 초대, PeerJS), 저장
 import { View } from './render.js';
 import { createGame, step, snapshot, chooseBless, carryOver, INTRO_T, HV_DELAY } from './sim.js';
-import { ROLES, ROLE_IDS, BLESSINGS, CHAPTERS, CH, FOES, MAP, ACHIEVEMENTS, TALK, GEAR_TIERS, GEAR_COST, VERSION, BUILD, roleLevel, LORE, COMBOS, CURSES, DEEP, DEEP_I, TALK_X } from './data.js';
+import { ROLES, ROLE_IDS, BLESSINGS, CHAPTERS, CH, FOES, MAP, ACHIEVEMENTS, TALK, GEAR_TIERS, GEAR_COST, VERSION, BUILD, roleLevel, LORE, COMBOS, CURSES, DEEP, DEEP_I, TALK_X, ROLE_PUZ } from './data.js';
 import { collide as mapCollide, areaAt, floorCell, MW, MH, CS, cw, useChapter, chapterIndex, SOPEN, openSecret, resetSecrets, hiddenCell, GOPEN, openGate, PDOWN, dropPillar, LIFTH, liftOk, CUT } from './map.js';
 import * as SFX from './sfx.js';
 import * as MUS from './music.js';
@@ -573,6 +573,8 @@ function onEvent(e) {
       if (e.pk != null && !S.solvedP[e.pk]) { S.solvedP[e.pk] = 1; SAVE.puz = (SAVE.puz | 0) + 1; save(); if (SAVE.puz >= 10) unlock('puzzle10'); } break;
     case 'plit': SFX.play('fire'); view.rise(e.x, e.z, 0xffd36b, 10, 0.8, 0.7, 6); view.flash(e.x, e.z, 0xffb050, 70); break;
     case 'pwrong': toast('순서가 틀렸어요. 화로 불이 모두 꺼졌어요.', 2600); SFX.play('warn'); view.burst(e.x, 2, e.z, 0x6a6470, 12, 4, 0.7, 0.14); break;
+    case 'pburn': SFX.play('fire'); view.burst(e.x, 1.4, e.z, 0xff8a2a, 16, 5, 0.7, 0.12); view.rise(e.x, e.z, 0x5a5050, 10, 1.2, 0.9, 5); view.flash(e.x, e.z, 0xff7a20, 90); break;
+    case 'ptime': toast('10초가 지났어요. 과녁을 처음부터 다시 맞혀요.', 2600); SFX.play('warn'); break;
     case 'prot': SFX.play('clang'); view.burst(e.x, 0.6, e.z, 0x9a9aa6, 6, 3, 0.4, 0.1); break;
     case 'phelp': toast(e.pk === -1 ? '봇 동료가 기둥을 쳐서 쓰러뜨려요.' : '봇 동료가 수수께끼를 도와줘요.', 2600); break;
     case 'pcrack': SFX.play('clang'); view.burst(e.x, 2 + Math.random() * 4, e.z + 1, 0x9a8e84, 8, 4, 0.6, 0.14); view.shake = Math.max(view.shake, 0.25); break;
@@ -689,6 +691,14 @@ function puzPrompt(sn, pos) {
     const q = MAP.puzzles[k], z = sn.w.pz && sn.w.pz[k]; if (!z || z.d || q.area !== a) continue;
     const near = q.items.some(([x, y]) => Math.hypot(cw(x) - pos.x, cw(y) - pos.z) < 2.4);
     if (q.k === 'plates') return '모두 발판 위에 서요 · ' + z.o.split('').filter(c => c === '1').length + '/' + Math.min(4, sn.pl.filter(p => !p.dn && !p.dd).length);
+    const RP = ROLE_PUZ[q.k];
+    if (RP) {
+      const n = z.l.split('').filter(c => c === '1').length + '/' + q.items.length, me = sn.pl.find(p => p.id === S.me), mine = me && me.role === RP.role, who = ROLES[RP.role].name;
+      if (q.k === 'oath') return mine ? '방패 석판 위에 서서 막기(' + (TOUCH ? 'Q 버튼' : 'Q') + ')를 써요 · ' + n : who + '만 풀 수 있어요. 방패 석판 위에서 막기를 써야 해요 · ' + n;
+      if (q.k === 'targets') return mine ? '벽 높이 걸린 과녁을 10초 안에 모두 화살로 맞혀요 · ' + n : who + '만 화살로 과녁을 맞힐 수 있어요 · ' + n;
+      if (q.k === 'basins') return mine ? '빛 구슬이나 치유로 성수반을 채워요 · ' + n : who + '만 빛으로 성수반을 채울 수 있어요 · ' + n;
+      return mine ? '횃불 든 공격으로 가시덩굴을 태워요 · ' + n : who + '만 횃불로 가시덩굴을 태울 수 있어요 · ' + n;
+    }
     if (q.k === 'braziers') return near ? F + '를 눌러 화로에 불 붙이기 (공격이나 화살로도 돼요)' : '비석의 색 순서대로 화로에 불을 붙여요 · ' + z.l.split('').filter(c => c === '1').length + '/4';
     return near ? F + '를 눌러 석상 돌리기' : '석상 넷이 모두 가운데 문양을 보게 돌려요';
   }
