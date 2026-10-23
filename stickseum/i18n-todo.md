@@ -65,3 +65,5 @@ patchnotes.json | v345 items[1] | 대쉬 파티클 감소(무한 대쉬에서는
 patchnotes.json | v346 title | 무한 대쉬 봇 속도와 카드 연출 | build 346 | 2026-10-20
 patchnotes.json | v346 items[0] | 무한 대쉬 배틀로얄에서 봇이 너무 빠르게 대쉬하던 현상 완화(약 1초에 한 번) | build 346 | 2026-10-20
 patchnotes.json | v346 items[1] | 도박사 궁극기 카드를 화면 위 그래픽으로 표시(카드가 돌다가 왼쪽부터 차례로 공개) | build 346 | 2026-10-20
+patchnotes.json | v347 title | 봇 캐릭터 선택 가속 | build 347 | 2026-10-20
+patchnotes.json | v347 items[0] | 봇이 캐릭터를 금지하고 고르는 속도 약 2배 향상 | build 347 | 2026-10-20
