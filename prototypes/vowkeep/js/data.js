@@ -1,7 +1,7 @@
 // Vowkeep · © 2026 Frenchfries777 · CC BY-NC-ND 4.0
 // 게임 데이터: 역할, 적, 축복, 1장 지도
 
-export const VERSION = 'v0.1', BUILD = 29;
+export const VERSION = 'v0.1', BUILD = 30;
 
 export const ROLES = {
   knight: {
@@ -22,7 +22,7 @@ export const ROLES = {
       { id: 'rain', name: '화살비', key: 'E', cd: 9, desc: '조준한 곳에 1.5초 동안 화살비를 내려요.' },
       { id: 'mark', name: '약점 표시', key: 'R', cd: 12, desc: '조준한 적에게 6초 동안 표시를 남겨 모두의 피해가 50% 늘어요.' }
     ],
-    role: '멀리서 약점을 쏴요.'
+    role: '멀리서 약점을 쏴요. 공격을 꾹 누르면 0.8초에 두 발, 2초에 세 발을 한 번에 쏴요.'
   },
   priest: {
     name: '사제', color: '#e8e4ef', hp: 115, speed: 6.0,
@@ -30,17 +30,17 @@ export const ROLES = {
     skills: [
       { id: 'heal', name: '치유', key: 'Q', cd: 7, desc: '나와 주변 동료의 체력을 35 회복해요.' },
       { id: 'ward', name: '보호막', key: 'E', cd: 14, desc: '주변 동료에게 5초 동안 피해 25를 막는 보호막을 씌워요.' },
-      { id: 'raise', name: '부활의 빛', key: 'R', cd: 30, desc: '주변에 쓰러진 동료를 체력 40%로 바로 일으켜요.' }
+      { id: 'raise', name: '부활의 빛', key: 'R', cd: 50, desc: '가까이 쓰러진 동료를 체력 25%로 일으켜요. 1초 동안 빛을 모은 뒤 일어나요.' }
     ],
     role: '회복과 보호막으로 동료를 지켜요.'
   },
   squire: {
-    name: '종자', color: '#d0543a', hp: 125, speed: 6.8,
-    atk: { kind: 'melee', range: 2.1, arc: 1.6, dmg: 12, cd: 0.4, burn: true },
+    name: '종자', color: '#d0543a', hp: 150, speed: 7.0,
+    atk: { kind: 'melee', range: 2.3, arc: 1.7, dmg: 15, cd: 0.38, burn: true },
     skills: [
-      { id: 'potion', name: '물약 던지기', key: 'Q', cd: 8, desc: '조준한 곳에 물약을 던져 그 자리 동료의 체력을 30 회복해요.' },
-      { id: 'trap', name: '덫 놓기', key: 'E', cd: 8, desc: '발밑에 덫을 놓아 밟은 적을 2초 묶고 25 피해를 줘요.' },
-      { id: 'rally', name: '함성', key: 'R', cd: 18, desc: '주변 동료의 공격력과 속도를 6초 동안 30% 올려요.' }
+      { id: 'potion', name: '물약 던지기', key: 'Q', cd: 7, desc: '조준한 곳에 물약을 던져 그 자리 동료의 체력을 40 회복해요.' },
+      { id: 'trap', name: '덫 놓기', key: 'E', cd: 7, desc: '발밑에 덫을 놓아 밟은 적을 2.5초 묶고 40 피해를 줘요.' },
+      { id: 'rally', name: '함성', key: 'R', cd: 15, desc: '주변 동료의 공격력과 속도를 7초 동안 30% 올려요.' }
     ],
     role: '물약과 덫으로 돕고, 바닥 함정을 밟아도 다치지 않고 해체해요.'
   }

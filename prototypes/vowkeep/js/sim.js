@@ -145,7 +145,7 @@ function aimPoint(p, inp, range) {
   if (inp.ax != null) { const d = Math.hypot(inp.ax - p.x, inp.az - p.z); if (d <= range) return { x: inp.ax, z: inp.az }; }
   return { x: p.x + Math.cos(p.a) * range, z: p.z + Math.sin(p.a) * range };
 }
-function basicAttack(G, p, inp) {
+function basicAttack(G, p, inp, nShot = 1) {
   const R = ROLES[p.role], A = R.atk;
   p.cd.atk = A.cd * cdMul(p, 'atk');
   // 기사 3단 베기: 공격, 공격, 강타 뒤 처음부터 (0.8초 안에 다시 치지 않으면 처음부터). 봇은 쓰지 않아요
@@ -164,11 +164,13 @@ function basicAttack(G, p, inp) {
     ev(G, 'swing', { id: p.id, x: p.x, z: p.z, a: p.a, r: A.range * (big ? 1.3 : 1), role: p.role });
     for (const e of G.enemies) { if (e.hp <= 0) continue; const d = dist(p, e); if (d < A.range * (big ? 1.3 : 1) + e.r && angDiff(p.a, angTo(p, e)) < A.arc / 2 + (big ? 0.7 : 0.25)) hurtEnemy(G, e, A.dmg * hm, p, { basic: true, aid, burn: A.burn, kb: big ? 6 : 3, kbA: angTo(p, e) }); }
   } else {
-    G.projs.push({ id: G.uid++, k: A.kind, big: big ? 1 : 0, own: p.id, x: p.x + Math.cos(p.a) * 0.8, z: p.z + Math.sin(p.a) * 0.8, vx: Math.cos(p.a) * A.speed, vz: Math.sin(p.a) * A.speed, dmg: A.dmg * hm, life: 1.1, hit: [], basic: true, aid, team: 0 });
+    // 모아 쏜 화살: 두 발은 한 발마다 1.3배, 세 발은 1.7배 피해로 살짝 퍼져 나가요
+    const sm = CHG_M[nShot - 1], spread = nShot === 1 ? [0] : nShot === 2 ? [-0.07, 0.07] : [-0.13, 0, 0.13];
+    for (const da of spread) { const a = p.a + da; G.projs.push({ id: G.uid++, k: A.kind, big: big ? 1 : 0, own: p.id, x: p.x + Math.cos(a) * 0.8, z: p.z + Math.sin(a) * 0.8, vx: Math.cos(a) * A.speed * (nShot > 1 ? 1.15 : 1), vz: Math.sin(a) * A.speed * (nShot > 1 ? 1.15 : 1), dmg: A.dmg * hm * sm, life: 1.1, hit: [], basic: true, aid, team: 0, cs: nShot }); }
     ev(G, 'shoot', { id: p.id, pk: A.kind, x: p.x, z: p.z });
   }
 }
-export const HV_DELAY = 0.36, HV_R = 3.2;
+export const HV_DELAY = 0.36, HV_R = 3.2, CHG_T = [0.8, 2], CHG_M = [1, 1.3, 1.7];
 function heavyLand(G, p) {
   const A = ROLES[p.role].atk;
   ev(G, 'heavy', { id: p.id, x: p.x + Math.cos(p.a) * 1.6, z: p.z + Math.sin(p.a) * 1.6, a: p.a });
@@ -250,13 +252,14 @@ function useSkill(G, p, si, inp) {
     case 'heal': for (const q of G.players) if (alive(q) && dist(p, q) < 6) ev(G, 'heal', { id: q.id, x: q.x, z: q.z, v: healP(G, q, 35) }); break;
     case 'ward': for (const q of G.players) if (alive(q) && dist(p, q) < 7.5) { q.shield = 25; q.shieldT = 5; ev(G, 'ward', { id: q.id }); } break;
     case 'raise': {
-      let n = 0; for (const q of G.players) if (q.down && !q.dead && dist(p, q) < 8) { revive(G, q, 0.4, p); n++; }
-      if (!n) p.cd[key] = 2; // 아무도 없으면 대기 시간을 거의 쓰지 않아요
+      // 1초 동안 빛을 모은 뒤 가까이 쓰러진 동료가 일어나요 (그 사이 사제가 쓰러지면 없던 일)
+      const n = G.players.filter(q => q.down && !q.dead && dist(p, q) < 6).length;
+      if (!n) p.cd[key] = 2; else { p.raiseT = 1; ev(G, 'raising', { id: p.id, x: p.x, z: p.z }); } // 아무도 없으면 대기 시간을 거의 쓰지 않아요
       break;
     }
     case 'potion': { const q = aimPoint(p, inp, 9); G.projs.push({ id: G.uid++, k: 'potion', own: p.id, x: p.x, z: p.z, tx: q.x, tz: q.z, sx: p.x, sz: p.z, t: 0, T: 0.55, team: 0 }); break; }
     case 'trap': G.zones.push({ id: G.uid++, k: 'ptrap', x: p.x, z: p.z, r: 1.4, t: 20, own: p.id }); break;
-    case 'rally': for (const q of G.players) if (alive(q) && dist(p, q) < 9) { q.rally = 6; ev(G, 'rally', { id: q.id }); } break;
+    case 'rally': for (const q of G.players) if (alive(q) && dist(p, q) < 9) { q.rally = 7; ev(G, 'rally', { id: q.id }); } break;
   }
   tryCombo(G, p, S.id);
 }
@@ -375,6 +378,7 @@ function stepPlayer(G, p, inp, dt) {
   ['block', 'taunt', 'rally', 'inv', 'hitT', 'animT', 'rollCd', 'focus', 'pdCd'].forEach(k => { if (p[k] > 0) p[k] = Math.max(0, p[k] - dt); });
   if (p.comboT > 0) { p.comboT -= dt; if (p.comboT <= 0) p.combo = 0; }
   if (p.hvT > 0) { p.hvT -= dt; if (p.hvT <= 0) { p.hvT = 0; if (!p.down && !p.dead) heavyLand(G, p); } }
+  if (p.raiseT > 0) { p.raiseT -= dt; if (p.down || p.dead) p.raiseT = 0; else if (p.raiseT <= 0) { p.raiseT = 0; for (const q of G.players) if (q.down && !q.dead && dist(p, q) < 6) revive(G, q, 0.25, p); } }
   if (p.shieldT > 0) { p.shieldT -= dt; if (p.shieldT <= 0) p.shield = 0; }
   if (p.dead) {
     // 완전히 쓰러지면 12초 뒤 마지막 모닥불에서 다시 일어나요
@@ -420,7 +424,13 @@ function stepPlayer(G, p, inp, dt) {
   p.f = !!inp.f; const fe = p.f && !p.fPrev; p.fPrev = p.f;
   if (p.roll > 0) return;
   if (G.phase !== 'play' && G.phase !== 'bossIntro') return;
-  if (inp.atk && p.cd.atk <= 0 && p.block <= 0) basicAttack(G, p, inp);
+  // 궁수 모아 쏘기: 꾹 누르고 있다가 놓으면 쏴요 (0.8초 두 발, 2초 세 발). 봇은 바로바로 쏴요
+  if (p.role === 'archer' && !p.bot) {
+    if (inp.atk && p.block <= 0) { const c0 = p.chg || 0; p.chg = c0 + dt; for (const T of CHG_T) if (c0 < T && p.chg >= T) ev(G, 'charge', { id: p.id, n: T === CHG_T[0] ? 2 : 3, x: p.x, z: p.z }); }
+    else if (p.chg > 0) { p.qShot = p.chg >= CHG_T[1] ? 3 : p.chg >= CHG_T[0] ? 2 : 1; p.qT = 0.4; p.chg = 0; }
+    if (p.qShot && p.cd.atk <= 0) { basicAttack(G, p, inp, p.qShot); p.qShot = 0; }
+    if (p.qShot && (p.qT -= dt) <= 0) p.qShot = 0;
+  } else if (inp.atk && p.cd.atk <= 0 && p.block <= 0) basicAttack(G, p, inp);
   // 횃불을 든 동안은 기술을 못 써요 (기본 공격은 돼요)
   if (!p.torch) { if (inp.q) useSkill(G, p, 0, inp); if (inp.e) useSkill(G, p, 1, inp); if (inp.r) useSkill(G, p, 2, inp); }
   if (fe) interact(G, p);
@@ -675,7 +685,7 @@ function stepEnemy(G, e, dt) {
   if (!e.summoned && e.hx != null && !G.players.some(p => alive(p) && dist(p, e) < LEASH_R) && Math.hypot(e.hx - e.x, e.hz - e.z) > 4) { e.st = 'home'; e.tgt = null; return; }
   if (e.stun > 0) return;
   // 함정
-  for (const z of G.zones) if (z.k === 'ptrap' && Math.hypot(z.x - e.x, z.z - e.z) < z.r) { e.root = 2; hurtEnemy(G, e, 25, G.players.find(p => p.id === z.own), {}); z.t = 0; ev(G, 'snap', { x: z.x, z: z.z }); if (e.hp <= 0) return; }
+  for (const z of G.zones) if (z.k === 'ptrap' && Math.hypot(z.x - e.x, z.z - e.z) < z.r) { e.root = 2; hurtEnemy(G, e, 40, G.players.find(p => p.id === z.own), {}); e.root = 2.5; z.t = 0; ev(G, 'snap', { x: z.x, z: z.z }); if (e.hp <= 0) return; }
   const t = pickTarget(G, e); if (!t) return;
   const d = dist(e, t), sees = lineClear(e.x, e.z, t.x, t.z), ta = angTo(e, t);
   if (e.st === 'wind') {
@@ -823,7 +833,7 @@ function stepProjs(G, dt) {
   for (const pr of G.projs) {
     if (pr.k === 'potion') {
       pr.t += dt; const u = Math.min(1, pr.t / pr.T); pr.x = pr.sx + (pr.tx - pr.sx) * u; pr.z = pr.sz + (pr.tz - pr.sz) * u; pr.y = Math.sin(u * Math.PI) * 3;
-      if (u >= 1) { pr.dead = true; hitPuzzle(G, pr.tx, pr.tz, 1.4, G.players.find(q => q.id === pr.own)); ev(G, 'splash', { x: pr.tx, z: pr.tz }); for (const q of G.players) if (alive(q) && Math.hypot(q.x - pr.tx, q.z - pr.tz) < 3) ev(G, 'heal', { id: q.id, x: q.x, z: q.z, v: healP(G, q, 30) }); }
+      if (u >= 1) { pr.dead = true; hitPuzzle(G, pr.tx, pr.tz, 1.4, G.players.find(q => q.id === pr.own)); ev(G, 'splash', { x: pr.tx, z: pr.tz }); for (const q of G.players) if (alive(q) && Math.hypot(q.x - pr.tx, q.z - pr.tz) < 3) ev(G, 'heal', { id: q.id, x: q.x, z: q.z, v: healP(G, q, 40) }); }
       continue;
     }
     pr.x += pr.vx * dt; pr.z += pr.vz * dt; pr.life -= dt;
@@ -897,7 +907,7 @@ function botThink(G, p, dt) {
   const downed = G.players.find(q => q.down && !q.dead && dist(p, q) < 20);
   if (downed) {
     const near = foes.filter(e => dist(e, downed) < 3).length;
-    if (p.role === 'priest' && p.cd.s2 <= 0 && dist(p, downed) < 7.5) { inp.r = true; return inp; }
+    if (p.role === 'priest' && p.cd.s2 <= 0 && dist(p, downed) < 5.5) { inp.r = true; return inp; }
     if (near < 2 || dist(p, downed) < 2) {
       if (!moveTo(G, p, inp, downed.x, downed.z, 1.4)) inp.f = true;
       return inp;
@@ -972,7 +982,7 @@ export function snapshot(G) {
   return {
     t: r1(G.t), ph: G.phase, pt: r1(G.phaseT), c: G.ch, dp: G.deep, msg: G.msg, won: G.won,
     sk: G.players.filter(p => !p.bot && G.skip[p.id]).length, hu: G.players.filter(p => !p.bot).length,
-    pl: G.players.map(p => ({ id: p.id, role: p.role, name: p.name, bot: p.bot, x: r1(p.x), z: r1(p.z), a: r1(p.a), hp: Math.round(p.hp), mx: p.maxhp, dn: p.down ? 1 : 0, dd: p.dead ? 1 : 0, bl: r1(p.bleed), rs: r1(p.respT), rv: r1(p.revT), ro: p.roll > 0 ? 1 : 0, bk: p.block > 0 ? 1 : 0, sh: Math.round(p.shield), tn: p.taunt > 0 ? 1 : 0, ra: p.rally > 0 ? 1 : 0, an: p.animT > 0 ? p.anim : '', aN: p.animN || 0, ak: p.anim, mv: p.moving ? 1 : 0, cd: [r1(p.cd.s0), r1(p.cd.s1), r1(p.cd.s2)], rc: r1(p.rollCd), b: p.bl, cb: p.comboT > 0 ? p.combo : 0, ac: p.animC || 0, fc: p.focus > 0 ? 1 : 0, tc: p.torch || 0 })),
+    pl: G.players.map(p => ({ id: p.id, role: p.role, name: p.name, bot: p.bot, x: r1(p.x), z: r1(p.z), a: r1(p.a), hp: Math.round(p.hp), mx: p.maxhp, dn: p.down ? 1 : 0, dd: p.dead ? 1 : 0, bl: r1(p.bleed), rs: r1(p.respT), rv: r1(p.revT), ro: p.roll > 0 ? 1 : 0, bk: p.block > 0 ? 1 : 0, sh: Math.round(p.shield), tn: p.taunt > 0 ? 1 : 0, ra: p.rally > 0 ? 1 : 0, an: p.animT > 0 ? p.anim : '', aN: p.animN || 0, ak: p.anim, mv: p.moving ? 1 : 0, cd: [r1(p.cd.s0), r1(p.cd.s1), r1(p.cd.s2)], rc: r1(p.rollCd), b: p.bl, cb: p.comboT > 0 ? p.combo : 0, ac: p.animC || 0, fc: p.focus > 0 ? 1 : 0, tc: p.torch || 0, cg: p.chg > 0 ? r1(p.chg) : 0 })),
     en: G.enemies.filter(near).map(e => ({ id: e.id, k: e.k, x: r1(e.x), z: r1(e.z), a: r1(e.a), hp: Math.round(e.hp), mx: e.maxhp, st: e.st, mk: e.mark > 0 ? 1 : 0, sn: e.stun > 0 ? 1 : 0, sl: e.slow > 0 ? 1 : 0, bu: e.burn > 0 ? 1 : 0, ph: e.phase || 0, mv: e.moving ? 1 : 0, ak: e.atk ? e.atk.k + (e.atk.go ? '!' : '') : '', ht: e.hitT > 0 ? 1 : 0 })),
     pr: G.projs.map(p => ({ id: p.id, k: p.k, x: r1(p.x), z: r1(p.z), y: r1(p.y || 0), bg: p.big ? 1 : 0, a: r1(Math.atan2(p.vz || (p.tz - p.sz) || 0, p.vx || (p.tx - p.sx) || 1)) })),
     zn: G.zones.map(z => ({ id: z.id, k: z.k, x: r1(z.x), z: r1(z.z), r: z.r, a: z.a, len: z.len, w: z.w, arc: z.arc, t: r1(z.t), T: z.T, dl: z.delay > 0 ? 1 : 0 })),

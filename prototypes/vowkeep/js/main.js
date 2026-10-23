@@ -433,6 +433,8 @@ function onEvent(e) {
   switch (e.k) {
     case 'swing': view.arc(e.x, e.z, e.a, e.r, COL[e.role] || 0xffffff); SFX.play('swing'); break;
     case 'shoot': SFX.play(e.pk === 'orb' ? 'orb' : 'arrow'); break;
+    case 'charge': view.ring(e.x, e.z, e.n === 3 ? 2.4 : 1.6, e.n === 3 ? 0xffd36b : 0x9af0a8, 0.4); view.burst(e.x, 1.8, e.z, e.n === 3 ? 0xffd36b : 0x9af0a8, e.n === 3 ? 12 : 6, 3, 0.4, 0.1); if (e.id === S.me) SFX.play(e.n === 3 ? 'clear' : 'clang'); break;
+    case 'raising': view.column(e.x, e.z, 0xfff0b0, 1.1); view.ring(e.x, e.z, 6, 0xfff0b0, 1.0); break;
     case 'eshoot': SFX.play('arrow'); break;
     case 'ehit': if (e.hv) view.spark(e.x, e.z, e.id, true); else view.burst(e.x, 1.6, e.z, 0xe8e0c8, e.crit ? 6 : 3, 4, 0.3, 0.09); num(e.x, e.z, e.v, e.crit ? '#ffd36b' : '#ffffff', e.crit ? 1.3 : 1); SFX.play('hit'); break;
     case 'pdodge': view.ring(e.x, e.z, 2.6, 0x9ad0ff, 0.4); view.streak(e.x, e.z, 0, 0.1, 0x9ad0ff, 0.2, 0.1); view.rise(e.x, e.z, 0x9ad0ff, 10, 1, 0.6, 6); if (e.id === me) { num(e.x, e.z, '완벽한 회피!', '#9ad0ff', 1.3, 4.2); view.flash(e.x, e.z, 0x9ad0ff, 120); SFX.play('parry'); if (S.net === 'solo') S.slowT = Math.max(S.slowT || 0, 0.45); } break;
