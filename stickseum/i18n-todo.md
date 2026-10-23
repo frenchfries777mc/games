@@ -162,3 +162,7 @@ patchnotes.json | v369 title | 페이지 제목 통일 | build 369 | 2026-10-20
 patchnotes.json | v369 items[0] | 모든 페이지의 브라우저 탭 제목을 게임 이름 Stickseum으로 통일 | build 369 | 2026-10-20
 patchnotes.json | v370 title | 밸런스 그래프 보기 설정 | build 370 | 2026-10-20
 patchnotes.json | v370 items[0] | 밸런스 그래프에 패치 때만 보기 버튼 추가 (기본 켜짐) | build 370 | 2026-10-20
+patchnotes.json | v371 title | 피사로 스킬 변경 | build 371 | 2026-10-20
+patchnotes.json | v371 items[0] | 피사로 스킬을 정복자의 휴식으로 변경: 3초 동안 받는 피해 40% 감소와 초당 체력 12 회복, 움직이면 끊김 | build 371 | 2026-10-20
+patchnotes.json | v371 items[1] | 하늘의 십자가와 표식 효과 삭제 | build 371 | 2026-10-20
+patchnotes.json | v371 items[2] | 피사로 밸런스 다시 측정 | build 371 | 2026-10-20
