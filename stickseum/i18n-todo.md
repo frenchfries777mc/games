@@ -103,3 +103,8 @@ patchnotes.json | v356 items[0] | 황금 쟁탈에서 봇을 추가할 수 없�
 patchnotes.json | v356 items[1] | 온라인 매칭에서 봇이 빈자리를 채우지 않던 문제 수정 | build 356 | 2026-10-20
 patchnotes.json | v357 title | 온라인 표시 수정 | build 357 | 2026-10-20
 patchnotes.json | v357 items[0] | 로비 위쪽 온라인 인원 표시가 화면 뒤에 가려지던 문제 수정 | build 357 | 2026-10-20
+patchnotes.json | v358 title | 인형술사 조종 변경 | build 358 | 2026-10-20
+patchnotes.json | v358 items[0] | 인형술사 궁극기를 실을 날려 맞혀야 조종되도록 변경 | build 358 | 2026-10-20
+patchnotes.json | v358 items[1] | 조종 중에는 인형술사 시야가 조종당하는 상대 시점으로 변경 | build 358 | 2026-10-20
+patchnotes.json | v358 items[2] | 조종당하는 상대의 공격이 같은 팀 판정으로 막히던 문제 수정 | build 358 | 2026-10-20
+patchnotes.json | v358 items[3] | 인형술사 바늘 크기 확대와 데미지 10으로 변경 | build 358 | 2026-10-20
