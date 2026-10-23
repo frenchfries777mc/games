@@ -101,3 +101,5 @@ patchnotes.json | v355 items[1] | 폰 가로 화면에서 메뉴, 캐릭터 선�
 patchnotes.json | v356 title | 황금 쟁탈 봇 수정 | build 356 | 2026-10-20
 patchnotes.json | v356 items[0] | 황금 쟁탈에서 봇을 추가할 수 없던 문제 수정 | build 356 | 2026-10-20
 patchnotes.json | v356 items[1] | 온라인 매칭에서 봇이 빈자리를 채우지 않던 문제 수정 | build 356 | 2026-10-20
+patchnotes.json | v357 title | 온라인 표시 수정 | build 357 | 2026-10-20
+patchnotes.json | v357 items[0] | 로비 위쪽 온라인 인원 표시가 화면 뒤에 가려지던 문제 수정 | build 357 | 2026-10-20
