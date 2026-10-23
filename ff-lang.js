@@ -21,7 +21,7 @@ function write(e, l){ try{ if(e.json){ var o={}; try{ o=JSON.parse(localStorage.
   else if(localStorage.getItem(e.k)!==l) localStorage.setItem(e.k, l); }catch(x){} }
 function snapshot(l){ var s={lang:l}; KEYS.forEach(function(e){ s[e.k]=read(e); }); try{ localStorage.setItem(SNAP, JSON.stringify(s)); }catch(x){} }
 /* Aurebesh (au) and Standard Galactic (sg) are not languages of their own: they are English drawn in other letters. Picking one stores English everywhere plus a flag. */
-var AU='ff.script', SCR={au:'FF Aurebesh',sg:'FF Galactic'};
+var AU='ff.script', SCR={au:'FF Aurebesh',sg:'FF Galactic',em:'Emoji'};      // em = 이모지어: English turned into emoji by ff-emoji.js
 function scr(){ try{ var v=localStorage.getItem(AU); return SCR[v]?v:''; }catch(x){ return ''; } }
 function auOn(){ return !!scr(); }
 function put(l){ if(!ok(l)) return; KEYS.forEach(function(e){ write(e,l); }); snapshot(l); }
@@ -153,10 +153,16 @@ if(now==='nw'){ if(document.readyState==='loading') document.addEventListener('D
 /* The "Aurebesh" and "Standard Galactic" entries in every language picker are always written in their own letters, so the font faces are declared on every page */
 function aurebesh(){ if(document.getElementById('ff-au')) return; var base='https://frenchfries777mc.github.io/games/'; try{ var me=document.currentScript; if(me&&me.src) base=me.src.replace(/[^\/]*$/,''); }catch(x){}
   var h=document.documentElement, on=scr(), FILE={au:'ff-aurebesh.woff2?v=2',sg:'ff-galactic.woff2?v=1'}, css=''; if(on) h.classList.add('ff-'+on); var st=document.createElement('style'); st.id='ff-au';
-  for(var k in SCR) css+="@font-face{font-family:'"+SCR[k]+"';src:url('"+base+"fonts/"+FILE[k]+"') format('woff2');font-display:"+(on===k?'block':'swap')+"}"+
+  for(var k in SCR) if(FILE[k]) css+="@font-face{font-family:'"+SCR[k]+"';src:url('"+base+"fonts/"+FILE[k]+"') format('woff2');font-display:"+(on===k?'block':'swap')+"}"+
     "[data-lg="+k+"],[data-l="+k+"],option[value="+k+"],[data-lang="+k+"]{font-family:'"+SCR[k]+"',system-ui,sans-serif!important}";
-  if(on) css+="html.ff-"+on+" body,html.ff-"+on+" body *:not(select):not(option):not(optgroup):not([data-lg]):not([data-l]):not([data-lang]):not(.ff-au-keep){font-family:'"+SCR[on]+"',system-ui,sans-serif!important}";
+  if(on&&FILE[on]) css+="html.ff-"+on+" body,html.ff-"+on+" body *:not(select):not(option):not(optgroup):not([data-lg]):not([data-l]):not([data-lang]):not(.ff-au-keep){font-family:'"+SCR[on]+"',system-ui,sans-serif!important}";
   st.textContent=css; (document.head||h).appendChild(st); }
 try{ aurebesh(); }catch(e){}
+/* 이모지어: the page waits hidden (at most 2.5 s) until ff-emoji.js has turned its English into emoji */
+function emoji(){ var h=document.documentElement, base='https://frenchfries777mc.github.io/games/'; try{ var me=document.currentScript; if(me&&me.src) base=me.src.replace(/[^\/]*$/,''); }catch(x){}
+  var st=document.createElement('style'); st.textContent='html.ff-em:not(.ff-em-ready) body{visibility:hidden}'; (document.head||h).appendChild(st);
+  setTimeout(function(){ h.classList.add('ff-em-ready'); },2500);
+  var s=document.createElement('script'); s.src=base+'ff-emoji.js?v=1'; s.onerror=function(){ h.classList.add('ff-em-ready'); }; (document.head||h).appendChild(s); }
+if(scr()==='em'){ try{ emoji(); }catch(e){} }
 window.FFLang={ get:function(){ return now; }, script:function(){ return scr(); }, pick:function(){ return scr()||now; }, slogan:slogan, set:function(l){ set(l); now=SCR[l]?'en':l; }, sync:function(){ now=sync()||now; if(SCR[now]) now='en'; return now; } };
 })();

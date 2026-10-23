@@ -669,9 +669,9 @@ var SL={
 };
 var S_=SL[lang()]||SL.en;
 /* fictional (joke) languages sit in their own group in every language picker */
-var VIRT={nw:1,gk:1,au:1,sg:1};
+var VIRT={nw:1,gk:1,au:1,sg:1,em:1};
 function lgBtns(v){ return LANGS.filter(function(x){ return !VIRT[x[0]]===!v; }).map(function(x){ return '<button type="button" data-lg="'+x[0]+'">'+esc(x[1])+'</button>'; }).join(''); }
-var LANGS=[['ko','한국어'],['en','English'],['es','Español'],['fr','Français'],['de','Deutsch'],['ja','日本語'],['zh','简体中文'],['pt','Português (Brasil)'],['ru','Русский'],['tr','Türkçe'],['it','Italiano'],['pl','Polski'],['ar','العربية'],['nw','Newspeak'],['gk','번역기 한국어'],['au','Aurebesh'],['sg','Standard Galactic']];
+var LANGS=[['ko','한국어'],['en','English'],['es','Español'],['fr','Français'],['de','Deutsch'],['ja','日本語'],['zh','简体中文'],['pt','Português (Brasil)'],['ru','Русский'],['tr','Türkçe'],['it','Italiano'],['pl','Polski'],['ar','العربية'],['nw','Newspeak'],['gk','번역기 한국어'],['au','Aurebesh'],['sg','Standard Galactic'],['em','😀💬']];
 var SCSS='.ffa-set{background:#10131b;color:#eef0f5;border:1px solid #2b3245;border-radius:9px;padding:6px 9px;font-size:15px;cursor:pointer;margin-right:6px;line-height:1.2;vertical-align:middle}.ffa-set:hover{border-color:var(--fry,#ffc93c)}'+
  '.ffa-setp{position:absolute;right:0;top:calc(100% + 6px);width:min(280px,calc(100vw - 24px));background:#10131b;border:1px solid #2b3245;border-radius:12px;padding:10px 12px;z-index:2147482000;box-shadow:0 12px 30px rgba(0,0,0,.45);display:none;text-align:left;color:#eef0f5;font-family:system-ui,-apple-system,"Noto Sans KR",sans-serif;white-space:normal}'+
  '.ffa-setp b{display:block;font-size:13px;color:#8a93a6;margin:6px 0 6px}.ffa-setp .g{display:flex;flex-wrap:wrap;gap:6px}.ffa-setp .g button{flex:1;background:#1b2030;color:#eef0f5;border:1px solid #2b3245;border-radius:8px;padding:7px 8px;font:inherit;font-size:13.5px;font-weight:700;cursor:pointer;white-space:nowrap}'+

@@ -273,3 +273,10 @@ crownenvoy/CrownEnvoy-v0.4.html | 전신망 (정치 탭 카드) | "📡 전신�
 ## 첫 화면 스킨 칸 (2026-10-23)
 - index.html | 숫자 띠의 "스킨" (라벨 한 단어, 숫자는 skins.json에서 읽음)
 - index.html (educations) | 과목 (첫 화면 숫자 띠 라벨, 모든 언어 배열에 임시로 한국어 "과목"을 넣어 둠) | educations | 2026-10-23
+
+## 이모지어 (2026-10-23)
+- patchnotes.json (허브) | "이모지어 추가" 3줄 | 2026-10-23
+- beaconfall/patchnotes.json | v0.3 b97 1줄 | 2026-10-23
+- crownenvoy/patchnotes.json | b94 1줄 | 2026-10-23
+- isleport/patchnotes.json | v0.2 build 54 1줄 (게임 안 NOTES는 ko/en만) | 2026-10-23
+- 언어 이름 "😀💬"은 이모지라 번역하지 않음
