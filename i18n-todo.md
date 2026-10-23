@@ -269,3 +269,6 @@ crownenvoy/CrownEnvoy-v0.4.html | 전신망 (정치 탭 카드) | "📡 전신�
 - crownenvoy/patchnotes.json | b93 title·items 2줄 | Crown Envoy b93 | 2026-10-23
 - beaconfall/patchnotes.json | v0.3 b96 items 1줄 | Beaconfall b96 | 2026-10-23
 - CrownEnvoy-v0.4.html, BEACONFALL-v0.3.html | 인트로 안내 | 화면을 누르면 시작해요 | b93 / b96 | 2026-10-23
+
+## 첫 화면 스킨 칸 (2026-10-23)
+- index.html | 숫자 띠의 "스킨" (라벨 한 단어, 숫자는 skins.json에서 읽음)
