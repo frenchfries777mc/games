@@ -2,7 +2,7 @@
 // 게임 규칙 (방장·혼자 하기에서만 돌아가요). three.js를 쓰지 않아서 node에서도 시험할 수 있어요.
 import { ROLES, ROLE_IDS, ENEMIES, BLESSINGS, CHAPTERS, FOES, MAP, GEAR_BONUS, COMBOS, DEEP } from './data.js';
 import * as D from './data.js';
-import { collide as mapCollide, isWall, lineClear, navDir, areaAt, cw, useChapter, PILLARS, resetSecrets, openSecret, secretFace, openGate } from './map.js';
+import { collide as mapCollide, isWall, lineClear, navDir, areaAt, cw, useChapter, PILLARS, resetSecrets, openSecret, secretFace, openGate, dropPillar, pillarAt, LIFTH, liftOk } from './map.js';
 
 export const INTRO_T = 16;
 const WAKE_R = 14, LEASH_R = 30;
@@ -42,6 +42,7 @@ export function createGame(slots, seed, ch = 0) {
     chests: MAP.chests.map(([x, y, sec], i) => ({ x: cw(x), z: cw(y), open: false, prog: 0, sec: sec || 0, mim: i === MAP.mimic })),
     puz: MAP.puzzles.map(q => ({ done: false, occ: [0, 0, 0, 0], hold: 0, n: 0, lit: [0, 0, 0, 0], rot: q.rot0 ? q.rot0.slice() : [0, 0, 0, 0], idle: 0, help: false })),
     darks: MAP.darks.map(() => ({ t: 0 })), esc: null, escDone: false,
+    pits: MAP.pits.map(() => ({ down: false, hits: 0, idle: 0, help: false })), lifts: MAP.lifts.map(() => ({ h: 0, dir: 1, lock: false, done: false, mv: 0 })),
     traps: MAP.traps.map(([x, y], i) => ({ id: i, x: cw(x), z: cw(y), on: true, t: i * 0.7, up: false }))
   };
   slots.forEach((s, i) => {
@@ -147,10 +148,10 @@ function aimPoint(p, inp, range) {
 function basicAttack(G, p, inp) {
   const R = ROLES[p.role], A = R.atk;
   p.cd.atk = A.cd * cdMul(p, 'atk');
-  // 기사 3단 베기: 공격, 공격, 강타 뒤 처음부터 (1.2초 쉬면 처음부터). 봇은 쓰지 않아요
+  // 기사 3단 베기: 공격, 공격, 강타 뒤 처음부터 (0.8초 안에 다시 치지 않으면 처음부터). 봇은 쓰지 않아요
   // 사제·종자: 세 번째 공격마다 크게 휘두르는 큰 공격 (피해 1.5배). 봇은 쓰지 않아요
   const cmb = !p.bot && (p.role === 'knight' || p.role === 'priest' || p.role === 'squire'), aid = p.atkN = (p.atkN || 0) + 1;
-  if (cmb) { p.combo = p.comboT > 0 ? ((p.combo || 0) + 1) % 3 : 0; p.comboT = 1.2; }
+  if (cmb) { p.combo = p.comboT > 0 ? ((p.combo || 0) + 1) % 3 : 0; p.comboT = 0.8; }
   const third = cmb && p.combo === 2, heavy = third && p.role === 'knight', big = third && !heavy, hm = big ? 1.5 : 1;
   p.anim = heavy ? 'hv' : big ? 'big' : 'atk'; p.animT = heavy ? 0.95 : big ? 0.6 : 0.32; p.animN = (p.animN || 0) + 1;
   // 기사 베기 방향: 1타 오른쪽 위→왼쪽 아래, 2타 왼쪽 아래→오른쪽 아래 (봇은 둘을 번갈아)
@@ -179,6 +180,7 @@ function heavyLand(G, p) {
 }
 // 금 간 벽: 강타, 세 번째 큰 공격, 관통 화살이 닿으면 무너지고 비밀 방이 열려요
 function breakWall(G, x, z, r, p) {
+  G.pits.forEach((P, k) => { if (!P.down) { const o = pillarAt(k); if (Math.hypot(o.x - x, o.z - z) < r + 1.6) fellPillar(G, k, p); } });
   G.secrets.forEach((q, k) => {
     if (q.open) return; const f = secretFace(k); if (Math.hypot(f.x - x, f.z - z) > r + 1.4) return;
     q.open = true; openSecret(k); ev(G, 'secret', { i: k, x: f.x, z: f.z }); for (const o of G.players) G.honor[o.id] += 20;
@@ -295,7 +297,7 @@ export function step(G, dt, inputs) {
   for (const e of G.enemies) if (e.hp > 0) stepEnemy(G, e, dt);
   G.enemies = G.enemies.filter(e => e.hp > 0 || (e.dieT = (e.dieT || 0) + dt) < 1.2);
 
-  stepProjs(G, dt); stepZones(G, dt); stepPuzzles(G, dt); if (G.esc) stepEsc(G, dt);
+  stepProjs(G, dt); stepZones(G, dt); stepPuzzles(G, dt); stepCuts(G, dt); if (G.esc) stepEsc(G, dt);
 
   // 바닥 함정: 3초마다 가시가 올라와요. 종자는 밟으면 해체해요
   for (const tr of G.traps) {
@@ -393,6 +395,7 @@ function stepPlayer(G, p, inp, dt) {
   const R = ROLES[p.role];
   let sp = R.speed * (hasB(p, 'feet') ? 1.12 : 1) * (p.rally > 0 ? 1.3 : 1) * (p.block > 0 ? 0.8 : 1);
   if (inp.aim != null && isFinite(inp.aim)) p.a = inp.aim;
+  const ox = p.x, oz = p.z;
   if (inp.px != null && isFinite(inp.px)) {
     // 원격 플레이어: 자기 화면에서 움직인 위치를 믿되, 너무 멀리 뛰면 막아요
     const d = Math.hypot(inp.px - p.x, inp.pz - p.z), maxd = 22 * dt + 1.2;
@@ -412,6 +415,8 @@ function stepPlayer(G, p, inp, dt) {
     p.moving = ml > 0.1;
     collide(G, p, 0.6);
   }
+  // 승강기 발판: 발판이 오르내리는 동안은 타고 내릴 수 없어요
+  if (!liftOk(ox, oz, p.x, p.z)) { p.x = ox; p.z = oz; }
   p.f = !!inp.f; const fe = p.f && !p.fPrev; p.fPrev = p.f;
   if (p.roll > 0) return;
   if (G.phase !== 'play' && G.phase !== 'bossIntro') return;
@@ -460,8 +465,14 @@ function interact(G, p) {
   });
 }
 // 공격이나 화살·구슬이 화로에 닿아도 불이 붙어요
-function hitPuzzle(G, x, z, r, p) {
+function hitPuzzle(G, x, z, r, p, pw = 1) {
   let hit = false;
+  // 금 간 기둥: 보통 공격은 여섯 번 맞히면, 강타·큰 공격·관통 화살은 한 번에 쓰러져요
+  G.pits.forEach((P, k) => {
+    if (P.down) return; const o = pillarAt(k); if (Math.hypot(o.x - x, o.z - z) > r + 1.3) return;
+    hit = true; P.hits += pw; if (p && !p.bot) P.idle = 0;
+    if (P.hits >= PIT_HITS) fellPillar(G, k, p); else ev(G, 'pcrack', { pk: k, x: o.x, z: o.z, n: P.hits });
+  });
   MAP.puzzles.forEach((q, k) => {
     const P = G.puz[k]; if (P.done || q.k !== 'braziers') return;
     for (let i = 0; i < 4; i++) { const o = itemPos(q, i); if (Math.hypot(o.x - x, o.z - z) < r + 0.8) { hit = true; if (!P.lit[i]) lightBrazier(G, k, i, p); } }
@@ -504,6 +515,85 @@ function stepPuzzles(G, dt) {
     const b = ['priest', 'squire', 'archer', 'knight'].map(r => G.players.find(p => p.bot && p.role === r && alive(p) && !p.torch && !far(p))).find(Boolean);
     if (b) { b.torch = k + 1; ev(G, 'torch', { id: b.id, on: 1 }); Dk.t = 0; }
   });
+}
+export const PIT_HITS = 6, LIFT_T = 3.5;
+function fellPillar(G, k, p) {
+  const P = G.pits[k]; if (P.down) return; P.down = true; dropPillar(k);
+  const o = pillarAt(k); for (const q of G.players) G.honor[q.id] += 20;
+  ev(G, 'pfall', { pk: k, x: o.x, z: o.z });
+  if (p && !p.bot) ev(G, 'ach', { id: 'bridge', pid: p.id });
+}
+// 승강기에서 어느 쪽에 있는지: 0 아래층, 1 위층, 2 발판 위
+function liftSide(q, p) {
+  const i = Math.floor(p.x / 2), j = Math.floor(p.z / 2), [px, py, pw, ph] = q.plat;
+  if (i >= px && i < px + pw && j >= py && j < py + ph) return 2;
+  const a = areaAt(p.x, p.z); if (a >= 0 && a !== q.area) return a < q.area ? 0 : 1;
+  const [bx, by, bw, bh] = q.band;
+  return q.ax === 'h' ? (j < by ? 1 : 0) : (q.far > 0 ? (i > bx + 1 ? 1 : 0) : (i < bx + 1 ? 1 : 0));
+}
+function stepCuts(G, dt) {
+  // 끊어진 길: 오래 못 쓰러뜨리면 봇 동료가 기둥을 쳐요
+  MAP.pits.forEach((q, k) => {
+    const P = G.pits[k]; if (P.down) return;
+    const inRoom = G.players.filter(p => alive(p) && areaAt(p.x, p.z) === q.area);
+    if (inRoom.length && (inRoom.some(p => !p.bot) || !G.humans)) { P.idle += dt; if (G.humans && P.idle > 20 && !P.help) { P.help = true; ev(G, 'phelp', { pk: -1 }); } }
+  });
+  // 승강기: 손잡이를 꾹 누르고 있는 동안 움직여요. 끝에 닿으면 손을 뗐다가 다시 눌러야 반대로 가요
+  MAP.lifts.forEach((q, k) => {
+    const L = G.lifts[k], ps = G.players.filter(alive), side = ps.map(p => liftSide(q, p)), onP = side.filter(v => v === 2).length;
+    const cb = { x: cw(q.cb[0]), z: cw(q.cb[1]) }, ct = { x: cw(q.ct[0]), z: cw(q.ct[1]) };
+    const hold = ps.filter((p, n) => p.f && side[n] !== 2 && (Math.hypot(p.x - cb.x, p.z - cb.z) < 2.2 || Math.hypot(p.x - ct.x, p.z - ct.z) < 2.2));
+    const h0 = L.h;
+    if (!L.done && ps.length && side.every(v => v === 1)) { L.done = true; for (const p of G.players) G.honor[p.id] += 20; ev(G, 'lifted', {}); for (const p of G.players) if (!p.bot) ev(G, 'ach', { id: 'lift', pid: p.id }); }
+    if (L.done) {
+      // 모두 한 번 올라간 뒤에는 혼자서도 탈 수 있게 저절로 움직여요 (다시 일어난 동료가 갇히지 않게)
+      const tgt = onP ? 1 : 0; L.h = tgt > L.h ? Math.min(1, L.h + dt / LIFT_T) : Math.max(0, L.h - dt / LIFT_T);
+    } else if (!hold.length) L.lock = false;
+    else if (!L.lock) {
+      L.h = clamp(L.h + L.dir * dt / LIFT_T, 0, 1);
+      if (L.h >= 1 && L.dir > 0) { L.dir = -1; L.lock = true; ev(G, 'lstop', { x: cw(q.plat[0] + 1), z: cw(q.plat[1] + 1), up: 1 }); }
+      else if (L.h <= 0 && L.dir < 0) { L.dir = 1; L.lock = true; ev(G, 'lstop', { x: cw(q.plat[0] + 1), z: cw(q.plat[1] + 1), up: 0 }); }
+    }
+    if (L.done) L.dir = L.h >= 1 ? -1 : L.h <= 0 ? 1 : L.dir;
+    L.mv = L.h !== h0 ? 1 : 0; LIFTH[k] = L.h;
+  });
+}
+// 봇: 끊어진 길에서는 기둥을 치고, 승강기에서는 손잡이를 돌리거나 발판에 타요
+function botCut(G, p, inp, leader) {
+  const me = areaAt(p.x, p.z), la = leader ? areaAt(leader.x, leader.z) : -1;
+  for (let k = 0; k < MAP.pits.length; k++) {
+    const q = MAP.pits[k], P = G.pits[k]; if (P.down || (me !== q.area && la !== q.area)) continue;
+    if (P.idle < (G.humans ? 20 : 1.5)) return false;
+    const helper = G.players.filter(o => o.bot && alive(o)).sort((a, b) => (ROLES[a.role].atk.kind === 'melee' ? 0 : 1) - (ROLES[b.role].atk.kind === 'melee' ? 0 : 1) || a.slot - b.slot)[0];
+    if (helper !== p) return false;
+    const o = pillarAt(k), a = Math.atan2(o.z - p.z, o.x - p.x);
+    if (!moveTo(G, p, inp, o.x, o.z, ROLES[p.role].atk.kind === 'melee' ? 2.2 : 7)) { inp.aim = a; inp.atk = true; }
+    return true;
+  }
+  for (let k = 0; k < MAP.lifts.length; k++) {
+    const q = MAP.lifts[k], L = G.lifts[k]; if (L.done || (me !== q.area && la !== q.area)) continue;
+    const ps = G.players.filter(alive), sd = o => liftSide(q, o), my = sd(p);
+    const low = ps.filter(o => sd(o) === 0), onP = ps.filter(o => sd(o) === 2), up = ps.filter(o => sd(o) === 1);
+    const cb = { x: cw(q.cb[0]), z: cw(q.cb[1]) }, ct = { x: cw(q.ct[0]), z: cw(q.ct[1]) }, [px, py] = q.plat, pc = { x: cw(px + 1), z: cw(py + 1) };
+    const slotOff = o => ({ x: pc.x + ((o.slot % 2) - 0.5) * 1.6, z: pc.z + ((o.slot >> 1) - 0.5) * 1.6 });
+    const crank = (c, want) => { if (!moveTo(G, p, inp, c.x, c.z, 1.2)) inp.f = !L.lock && want !== 0 && L.dir === want; return true; };
+    if (my === 1) {
+      const helper = up.filter(o => o.bot).sort((a, b) => a.slot - b.slot)[0];
+      if (helper !== p) { moveTo(G, p, inp, ct.x + (p.slot - 1.5) * 1.5, ct.z + (q.ax === 'h' ? -2 : 0), 1.2); return true; }
+      if (up.some(o => !o.bot && o.f && Math.hypot(o.x - ct.x, o.z - ct.z) < 2.2)) return true;
+      // 끝 가까이 왔으면 끝까지 마저 돌려요 (중간에 멈추면 아무도 못 타요)
+      const want = L.h > 0 && L.h < 0.1 && L.dir < 0 ? -1 : L.h > 0.9 && L.h < 1 && L.dir > 0 ? 1 : onP.length && (L.h > 0 || !low.length) ? 1 : !onP.length && low.length && L.h > 0 ? -1 : 0;
+      return crank(ct, want);
+    }
+    // 아래층: 위에 아무도 없으면 봇 하나가 아래 손잡이를 돌리고 나머지는 발판에 타요
+    const humanAtB = ps.some(o => !o.bot && Math.hypot(o.x - cb.x, o.z - cb.z) < 2.4);
+    const crankBot = !up.length && !humanAtB ? low.concat(onP).filter(o => o.bot).sort((a, b) => b.slot - a.slot)[0] : null;
+    if (crankBot === p) { const others = low.filter(o => o !== p).length; return crank(cb, !others && onP.length ? 1 : 0); }
+    if (my === 2) { if (L.h >= 0.97) { const d = q.ax === 'h' ? { x: 0, z: -7 } : { x: 7 * q.far, z: 0 }; moveTo(G, p, inp, pc.x + d.x, pc.z + d.z, 1); } else { const o = slotOff(p); moveTo(G, p, inp, o.x, o.z, 0.4); } return true; }
+    if (L.h <= 0.03) { const o = slotOff(p); moveTo(G, p, inp, o.x, o.z, 0.4); } else moveTo(G, p, inp, cb.x, cb.z, 2.5);
+    return true;
+  }
+  return false;
 }
 export const ESC_T = 45;
 function startEsc(G) {
@@ -740,7 +830,7 @@ function stepProjs(G, dt) {
     if (pr.life <= 0 || isWall(pr.x, pr.z) || PILLARS.some(p => Math.hypot(p.x - pr.x, p.z - pr.z) < p.r)) { pr.dead = true; if (pr.k === 'pierce') { const o = G.players.find(p => p.id === pr.own); if (o && !o.bot) breakWall(G, pr.x, pr.z, 1.2, o); } continue; }
     if (pr.team === 0) {
       const own = G.players.find(p => p.id === pr.own);
-      if (hitPuzzle(G, pr.x, pr.z, 0.5, own)) { pr.dead = true; continue; }
+      if (hitPuzzle(G, pr.x, pr.z, 0.5, own, pr.k === 'pierce' ? PIT_HITS : 1)) { pr.dead = true; continue; }
       if (pr.k === 'orb') { // 사제 빛 구슬은 가까운 적을 살짝 따라가요
         let best = null, bd = 6; for (const e of G.enemies) { if (e.hp <= 0) continue; const d = Math.hypot(e.x - pr.x, e.z - pr.z); if (d < bd) { bd = d; best = e; } }
         if (best) { const a = Math.atan2(best.z - pr.z, best.x - pr.x), sp = Math.hypot(pr.vx, pr.vz), ca = Math.atan2(pr.vz, pr.vx); let da = a - ca; while (da > Math.PI) da -= TAU; while (da < -Math.PI) da += TAU; const na = ca + clamp(da, -4 * dt, 4 * dt); pr.vx = Math.cos(na) * sp; pr.vz = Math.sin(na) * sp; }
@@ -825,7 +915,7 @@ function botThink(G, p, dt) {
   // 무너지는 성: 출구로 달려요
   if (G.esc) { moveTo(G, p, inp, G.esc.x, G.esc.z, 2); return inp; }
   // 3) 싸울 적이 없으면 앞사람을 따라가요. 앞장서는 봇은 정해진 길을 따라가요
-  if (!foes.length && botPuzzle(G, p, inp, leader)) return inp;
+  if (!foes.length && (botCut(G, p, inp, leader) || botPuzzle(G, p, inp, leader))) return inp;
   if (!foes.length) {
     if (leader === p) {
       const wp = MAP.route[Math.min(G.route, MAP.route.length - 1)], wx = cw(wp[0]), wz = cw(wp[1]);
@@ -886,7 +976,7 @@ export function snapshot(G) {
     en: G.enemies.filter(near).map(e => ({ id: e.id, k: e.k, x: r1(e.x), z: r1(e.z), a: r1(e.a), hp: Math.round(e.hp), mx: e.maxhp, st: e.st, mk: e.mark > 0 ? 1 : 0, sn: e.stun > 0 ? 1 : 0, sl: e.slow > 0 ? 1 : 0, bu: e.burn > 0 ? 1 : 0, ph: e.phase || 0, mv: e.moving ? 1 : 0, ak: e.atk ? e.atk.k + (e.atk.go ? '!' : '') : '', ht: e.hitT > 0 ? 1 : 0 })),
     pr: G.projs.map(p => ({ id: p.id, k: p.k, x: r1(p.x), z: r1(p.z), y: r1(p.y || 0), bg: p.big ? 1 : 0, a: r1(Math.atan2(p.vz || (p.tz - p.sz) || 0, p.vx || (p.tx - p.sx) || 1)) })),
     zn: G.zones.map(z => ({ id: z.id, k: z.k, x: r1(z.x), z: r1(z.z), r: z.r, a: z.a, len: z.len, w: z.w, arc: z.arc, t: r1(z.t), T: z.T, dl: z.delay > 0 ? 1 : 0 })),
-    w: { cp: G.cpI, fi: G.fires.map(f => f.lit ? 1 : 0), al: G.altars.map(a => a.used ? 1 : 0), ap: G.altars.map(a => r1(a.prog)), ch: G.chests.map(c => c.open ? 1 : 0), cp2: G.chests.map(c => r1(c.prog)), tr: G.traps.map(t => (t.on ? 1 : 0) + (t.up ? 2 : 0)), boss: G.bossIntro ? 1 : 0, bd: G.bossDead ? 1 : 0, sc: G.secrets.map(q => q.open ? 1 : 0), lr: G.lores.map(q => q.read ? 1 : 0), pz: G.puz.map(q => ({ d: q.done ? 1 : 0, o: q.occ.join(''), l: q.lit.join(''), r: q.rot.join('') })), es: G.esc ? [r1(G.esc.t), G.esc.T] : 0, left: G.enemies.filter(e => e.hp > 0 && !e.summoned && e.k !== 'boss').length },
+    w: { cp: G.cpI, fi: G.fires.map(f => f.lit ? 1 : 0), al: G.altars.map(a => a.used ? 1 : 0), ap: G.altars.map(a => r1(a.prog)), ch: G.chests.map(c => c.open ? 1 : 0), cp2: G.chests.map(c => r1(c.prog)), tr: G.traps.map(t => (t.on ? 1 : 0) + (t.up ? 2 : 0)), boss: G.bossIntro ? 1 : 0, bd: G.bossDead ? 1 : 0, sc: G.secrets.map(q => q.open ? 1 : 0), lr: G.lores.map(q => q.read ? 1 : 0), pz: G.puz.map(q => ({ d: q.done ? 1 : 0, o: q.occ.join(''), l: q.lit.join(''), r: q.rot.join('') })), es: G.esc ? [r1(G.esc.t), G.esc.T] : 0, pt: G.pits.map(q => q.down ? -1 : q.hits), lf: G.lifts.map(q => [r1(q.h), q.done ? 1 : 0, q.mv]), left: G.enemies.filter(e => e.hp > 0 && !e.summoned && e.k !== 'boss').length },
     bless: G.bless, honor: G.honor
   };
 }
