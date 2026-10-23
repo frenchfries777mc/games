@@ -1418,7 +1418,7 @@ const KILL_GOLD=10, ASSIST_GOLD=3, ASSIST_WINDOW=10;
    To rename it change the name / icon / colour right here - every text, the shop and the kill feed read it from this one place. */
 const SOUL={name:'영혼석', icon:'💜', color:'#b86bff'};
 const SOUL_PER_KILL=1;
-const ASSIST_XP=10;                    // an assist also gives player xp (a kill gives 10) ...
+const ASSIST_XP=5;                    // an assist also gives player xp (a kill gives 10) ...
 let matchAssists=0;                   // ... and counts for the weapon xp at the end of the match: the assists I got in the match that is running
 let gold=0;
 let lastKnownKills=0;
@@ -1432,10 +1432,12 @@ let saveData={owned:{}, equipped:{name:null, skin:{}}, xp:0, totalKills:0, total
    Both systems earn XP at the same pace (10 per kill, 5 per assist, 5 per match) and from their knee on need the very same XP for the next level. */
 /* the xp of the player (the profile level): a kill gives KILL_XP, a win gives WIN_XP on top of the 5 xp that every finished match gives.
    Both are 1.8 times what they were (a kill 10 -> 18; there was no xp for a win before: it is now 18, the same as a kill). */
-const XP_MULT=3.6, KILL_XP=Math.round(10*XP_MULT), WIN_XP=Math.round(10*XP_MULT), FINISH_XP=10;   // (all player xp doubled)
-const XP_FLAT=950, PLAYER_KNEE=10;      // 950 = what the old curve charged for Lv.10 -> 11, so the curve continues without a jump and nobody loses a level
-function xpForLevel(lv){ lv=Math.max(1,Math.floor(lv||1)); if(lv<=PLAYER_KNEE) return 50*(lv-1)*(lv-1); return 50*(PLAYER_KNEE-1)*(PLAYER_KNEE-1)+(lv-PLAYER_KNEE)*XP_FLAT; }
-function levelFromXp(xp){ xp=Math.max(0,+xp||0); const kx=xpForLevel(PLAYER_KNEE); if(xp<kx) return Math.floor(Math.sqrt(xp/50))+1; return PLAYER_KNEE+Math.floor((xp-kx)/XP_FLAT); }
+const KILL_XP=20, WIN_XP=30, FINISH_XP=15;   // (all player xp doubled)
+const XP_FLAT=950, PLAYER_FLAT=1000, PLAYER_KNEE=10;      // XP_FLAT (950) is the character mastery cost; the player level costs PLAYER_FLAT per level after the knee
+function xpForLevel(lv){ lv=Math.max(1,Math.floor(lv||1)); if(lv<=PLAYER_KNEE) return 50*(lv-1)*(lv-1); return 50*(PLAYER_KNEE-1)*(PLAYER_KNEE-1)+(lv-PLAYER_KNEE)*PLAYER_FLAT; }
+function levelFromXp(xp){ xp=Math.max(0,+xp||0); const kx=xpForLevel(PLAYER_KNEE); if(xp<kx) return Math.floor(Math.sqrt(xp/50))+1; return PLAYER_KNEE+Math.floor((xp-kx)/PLAYER_FLAT); }
+/* the per-level cost went 950 -> 1000: a save without xc=1000 keeps its level and the progress inside it (xp is rescaled once), so nobody drops or jumps a level */
+function migrateXpCurve(s){ if(!s || typeof s!=='object' || s.xc===PLAYER_FLAT) return s; const kx=50*(PLAYER_KNEE-1)*(PLAYER_KNEE-1), x=Math.max(0,+s.xp||0); if(x>=kx){ const d=x-kx, lv=Math.floor(d/950), fr=(d-lv*950)/950; s.xp=Math.round(kx+(lv+fr)*PLAYER_FLAT); } s.xc=PLAYER_FLAT; return s; }
 function addXP(n){
   if(n<=0) return;
   saveData.xp=(saveData.xp||0)+n;
@@ -1447,6 +1449,7 @@ function loadSave(){
   try{
     const s=JSON.parse(localStorage.getItem(SAVE_KEY)||'null');
     if(s){
+      migrateXpCurve(s);
       gold=Math.max(0,+s.gold||0); saveData.owned=s.owned||{}; saveData.equipped=Object.assign({name:null, skin:{}}, s.equipped||{}); if(!saveData.equipped.skin||typeof saveData.equipped.skin!=='object') saveData.equipped.skin={};
       saveData.xp=Math.max(0,+s.xp||0); saveData.totalKills=Math.max(0,+s.totalKills||0); saveData.totalMatches=Math.max(0,+s.totalMatches||0);
       saveData.totalWins=Math.max(0,+s.totalWins||0); saveData.totalDamage=Math.max(0,+s.totalDamage||0); saveData.totalAssists=Math.max(0,+s.totalAssists||0);
@@ -1468,7 +1471,7 @@ function persistSave(){
   try{ sbScheduleCloudSave(); }catch(e){}       // (and keeps the progress in the account - see cloudSaveUpload)
   try{
     localStorage.setItem(SAVE_KEY, JSON.stringify({
-      gold, owned:saveData.owned, equipped:saveData.equipped, xp:saveData.xp, totalKills:saveData.totalKills, totalMatches:saveData.totalMatches,
+      gold, owned:saveData.owned, equipped:saveData.equipped, xp:saveData.xp, xc:PLAYER_FLAT, totalKills:saveData.totalKills, totalMatches:saveData.totalMatches,
       totalWins:saveData.totalWins, totalDamage:saveData.totalDamage, totalAssists:saveData.totalAssists,
       modeMatches:saveData.modeMatches, charKills:saveData.charKills, avatar:saveData.avatar, playerName:saveData.playerName, nameDirty:!!saveData.nameDirty,
       achievements:saveData.achievements, weaponXp:saveData.weaponXp,
@@ -4888,7 +4891,7 @@ function shuffle(arr){ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.
 /* ===== the version of this file =====
    Players with different versions CAN meet and play together: the automatic matchmaking uses the same room names for every version (online-<mode>-<map>-<slot>), and nobody is refused because of a different build.
    The build is only sent along with the join message and the lobby (for information); the corner of the screen shows it. */
-const GAME_BUILD='build 2026-10-18-v353';
+const GAME_BUILD='build 2026-10-18-v354';
 const GAME_VERSION='0.8', GAME_VERSION_NAME='황금을 찾아서';   // 게임 버전 이름: versions.json의 title과 같게 (빌드마다 바꾸지 않음)
 const WEEKLY_EVENTS=[
   {id:'lowg',    name:'저중력 난투', desc:'몸이 둥실둥실, 중력이 약해진 난투', rules:{grav:0.6}},
@@ -7106,9 +7109,10 @@ function clanSyncMyName(id){            // my row in the clan list keeps the nic
 const SAVE_FIELDS=['gold','xp','owned','equipped','totalKills','totalMatches','totalWins','totalDamage','totalAssists','modeMatches','charKills','avatar','playerName','achievements','weaponXp','boxes','boxesOpened','dailyLast','dailyCount','souls','pxEarned','pxSpent','missions','season'];
 const CLOUD_META_KEY='stickseumSave', CLOUD_MAX_CHARS=3600, CLOUD_MIN_GAP_MS=30000, CLOUD_DEBOUNCE_MS=20000;
 let cloudSaveState='off', cloudSaveReady=false, cloudSaveTimer=null, cloudSaveLastJson='', cloudSaveLastAt=0, cloudSaveNote='', cloudSaveBackoffUntil=0, sbUserMeta={};
-function cloudSavePayload(){ const o={v:1}; for(const k of SAVE_FIELDS) o[k]=(k==='gold') ? gold : saveData[k]; o.at=Date.now(); return JSON.parse(JSON.stringify(o)); }
+function cloudSavePayload(){ const o={v:1}; for(const k of SAVE_FIELDS) o[k]=(k==='gold') ? gold : saveData[k]; o.xc=PLAYER_FLAT; o.at=Date.now(); return JSON.parse(JSON.stringify(o)); }
 function cloudScore(s){ return (+s.xp||0) + (+s.totalMatches||0)*3 + Object.keys(s.owned||{}).length*10 + Object.keys(s.achievements||{}).length*10; }
 function mergeSaves(local, cloud){
+  migrateXpCurve(local); migrateXpCurve(cloud);
   const base = cloudScore(cloud) > cloudScore(local) ? cloud : local, other = base===cloud ? local : cloud;     // the one that has gone further is the base
   const m=JSON.parse(JSON.stringify(base));
   m.owned=Object.assign({}, other.owned||{}, base.owned||{});
@@ -7168,7 +7172,7 @@ async function cloudSaveSync(username, sameAccountAsLast){
   cloudSaveReady=false; cloudSaveNote='';
   if(!sb || !sbUser){ cloudSaveState='off'; return; }
   try{
-    const cloud=await unpackSave(sbUserMeta && sbUserMeta[CLOUD_META_KEY]), local=cloudSavePayload();
+    const cloud=await unpackSave(sbUserMeta && sbUserMeta[CLOUD_META_KEY]), local=cloudSavePayload(); migrateXpCurve(cloud);
     if(!cloud){ cloudSaveState='ok'; cloudSaveReady=true; if(!saveIsFresh()){ await cloudSaveUpload(true); } return; }                    // the account has no save yet: this browser's one becomes it
     if(saveIsFresh()){ applyCloudSave(cloud); cloudSaveNote='계정에 저장된 진행 상황을 불러왔어요'; }                                     // an empty browser takes over the account's progress
     else if(!sameAccountAsLast && (localStorage.getItem(LAST_USER_KEY)||'') && (localStorage.getItem(LAST_USER_KEY)||'')!==username){   // another account had played in this browser: keep its record safe, take this account's one
@@ -13879,7 +13883,7 @@ function applyCtfSnapshot(d){
    Two teams on the flag maps. The pile in the middle holds GOLD_PILE lumps; a player takes one lump at a time (up to GOLD_MAX_CARRY, 10% slower per lump), and
    touching the own cart loads everything carried (GOLD_PTS points per lump, loaded gold is safe). A carrier who dies drops the lumps where he fell; anybody can pick
    them up. When the pile is empty it grows GOLD_REFILL_N lumps every GOLD_REFILL_SEC seconds. The better score after GOLD_DURATION seconds wins (a tie is a draw). */
-const GOLD_DURATION=180, GOLD_MAX_CARRY=3, GOLD_PILE=40, GOLD_REFILL_SEC=15, GOLD_REFILL_N=6, GOLD_PTS=10, GOLD_SLOW=0.1, GOLD_PILE_R=110, GOLD_CART_R=72, GOLD_DROP_R=48, GOLD_PICK_GAP=0.35, GOLD_XP_PER_LUMP=4;
+const GOLD_DURATION=180, GOLD_MAX_CARRY=3, GOLD_PILE=40, GOLD_REFILL_SEC=15, GOLD_REFILL_N=6, GOLD_PTS=10, GOLD_SLOW=0.1, GOLD_PILE_R=110, GOLD_CART_R=72, GOLD_DROP_R=48, GOLD_PICK_GAP=0.35, GOLD_XP_PER_LUMP=2;
 let gdm=null, goldEndsLocal=0;          // gdm: {pile:{x,y,n}, carts:[{x,y,lumps}], pts:[a,b], drops:[{x,y,n}], endsAt, refillAt}
 function startGoldMatch(){
   if(!MAP || !MAP.ctf) return;
