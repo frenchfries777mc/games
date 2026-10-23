@@ -272,3 +272,4 @@ crownenvoy/CrownEnvoy-v0.4.html | 전신망 (정치 탭 카드) | "📡 전신�
 
 ## 첫 화면 스킨 칸 (2026-10-23)
 - index.html | 숫자 띠의 "스킨" (라벨 한 단어, 숫자는 skins.json에서 읽음)
+- index.html (educations) | 과목 (첫 화면 숫자 띠 라벨, 모든 언어 배열에 임시로 한국어 "과목"을 넣어 둠) | educations | 2026-10-23
