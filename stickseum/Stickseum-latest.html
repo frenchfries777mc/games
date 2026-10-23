@@ -5018,7 +5018,7 @@ function shuffle(arr){ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.
 /* ===== the version of this file =====
    Players with different versions CAN meet and play together: the automatic matchmaking uses the same room names for every version (online-<mode>-<map>-<slot>), and nobody is refused because of a different build.
    The build is only sent along with the join message and the lobby (for information); the corner of the screen shows it. */
-const GAME_BUILD='build 2026-10-18-v370';
+const GAME_BUILD='build 2026-10-18-v371';
 const GAME_VERSION='0.8', GAME_VERSION_NAME='황금을 찾아서';   // 게임 버전 이름: versions.json의 title과 같게 (빌드마다 바꾸지 않음)
 const WEEKLY_EVENTS=[
   {id:'lowg',    name:'저중력 난투', desc:'몸이 둥실둥실, 중력이 약해진 난투', rules:{grav:0.6}},
@@ -11133,7 +11133,7 @@ function skillCdOf(p){ return SKILL_CD*pzCdMult(p); }
 function ultCdOf(p){ return ULT_CD*pzCdMult(p); }
 const PRACTICE_SKILL_CD=2;
 const SKILLS={
-  pizarro:  {name:'하늘의 십자가', kind:'hit', desc:'조준한 곳에 십자가가 떨어져 맞은 적에게 20 피해와 1초 기절, 맞은 아군과 나는 체력 20 회복 (기세 단계마다 범위가 넓어지고 피해 20→22→25→28) · 맞은 적에게는 3초 동안 표식이 남아 다음 창 공격이 5 피해를 더 줌'},
+  pizarro:  {name:'정복자의 휴식', kind:'buff', desc:'3초 동안 받는 피해 40% 감소 + 초당 체력 12 회복 · 움직이거나 점프, 대쉬를 하면 끊김 (서서 창으로 싸우는 건 가능)'},
   puppeteer:{name:'바느질', kind:'hit', desc:'실이 달린 바늘을 조준한 방향으로 발사 · 맞은 상대와 실이 이어지고 이동속도 25% 감소 · 맞히면 쿨타임 없이 바로 바늘 빼기를 쓸 수 있음 (최대 8초) · 바늘 빼기: 실을 당겨 상대에게 30 피해를 주고 실이 끊김, 쿨타임은 바늘 빼기를 쓴 뒤부터 돌아요 (못 맞히면 바로 쿨타임)'},
   kan:      {name:'독두꺼비 함정', kind:'hit', desc:'내 발밑에 독두꺼비 함정을 설치 (10초 지속, 최대 2개) · 들어온 적에게 독이 쌓이고 이동 속도가 느려짐'},
   pistol:   {name:'속사',        kind:'buff', desc:'1.8초 동안 연사 속도 2배'},
@@ -11164,8 +11164,21 @@ const SKILLS={
 };
 const SKILL_SFX={buff:'skill_buff', hit:'skill_hit', move:'skill_move'};
 const SANDSTORM_LEN=1725, SANDSTORM_H=360, SANDSTORM_KB=1200, SANDSTORM_SLOW_SEC=3.5, SAND_SLOW_MULT=0.3, SANDSTORM_DMG=36, SANDSTORM_STUN=2.0;     // the sandstorm of 호렘헵: reach, height, push, how long and how much it slows
-const BUFF_ORDER=['barrier','guard','reflect','focus','rapid','haste'];
-const BUFF_COLORS={barrier:'#c17bff', guard:'#6ec6ff', reflect:'#ffffff', focus:'#ff8a3d', rapid:'#ffd34d', haste:'#7ef0a8'};
+const BUFF_ORDER=['barrier','guard','reflect','focus','rapid','haste','rest'];
+const BUFF_COLORS={barrier:'#c17bff', guard:'#6ec6ff', reflect:'#ffffff', focus:'#ff8a3d', rapid:'#ffd34d', haste:'#7ef0a8', rest:'#ffc93c'};
+const PZ_REST_SEC=3, PZ_REST_CUT=0.4, PZ_REST_HPS=12;      // 피사로's skill 정복자의 휴식: 3 s, 40% less damage, 12 hp every second; walking, jumping or dashing breaks it
+function pzRestTick(tS){
+  for(const id in players){
+    const p=players[id]; if(!p.buffs || !(p.buffs.rest>tS)){ if(p.restLast!==undefined) p.restLast=undefined; continue; }
+    if(!p.alive){ p.buffs.rest=0; continue; }
+    const i=p.input||{};
+    if(i.left||i.right||i.jump||i.dash){ p.buffs.rest=0; p.restLast=undefined; continue; }          // moving ends the rest
+    if(p.restLast===undefined){ p.restLast=tS; p.restAcc=0; }
+    const dt=Math.min(0.1, Math.max(0, tS-p.restLast)); p.restLast=tS;
+    const before=p.hp; p.hp=Math.min(maxHpFor(p), p.hp+PZ_REST_HPS*dt); p.restAcc=(p.restAcc||0)+(p.hp-before);
+    if(p.restAcc>=6){ pushFx('heal', p.x, p.y-70, tS*1000, {v:Math.round(p.restAcc)}); p.restAcc=0; }
+  }
+}
 function skillHasBuff(p, name, tSec){ return !!(p && p.buffs && p.buffs[name]>tSec); }
 function skillSetBuff(p, name, sec, tSec){ p.buffs=p.buffs||{}; p.buffs[name]=tSec+sec; }
 function skillActiveBuff(p, tSec){
@@ -11205,7 +11218,7 @@ function puppetBlast(m, v, tMs){      // the end of the control: the puppet blow
 function puppetVictim(p, tSec){ return !!(p && p.puppetBy && p.puppetUntil>tSec); }
 function puppetMaster(p, tSec){ return !!(p && p.puppetTarget && p.puppetUntil>tSec); }
 function puppetIn(t){
-  const tS=t/1000; sewTick(tS);
+  const tS=t/1000; sewTick(tS); pzRestTick(tS);
   for(const id in players) players[id].pp=null;     // (read by the drawing of the strings)
   for(const id in players){
     const m=players[id]; if(!m.puppetTarget) continue;
@@ -11228,6 +11241,7 @@ function skillMitigate(target, dmg, tMs){
   if(target.darkSub){ target.hp=Math.min(maxHpFor(target), target.hp+dmg); return 0; }                                         // 쿠루스 inside his darkness: nothing reaches him
   const tSec=tMs/1000; let left=dmg;
   if(puppetMaster(target,tSec)){ const back=left*0.5; target.hp=Math.min(maxHpFor(target), target.hp+back); left-=back; }   // 인형술사: half the damage while he pulls the strings
+  if(skillHasBuff(target,'rest',tSec)){ const back=left*PZ_REST_CUT; target.hp=Math.min(maxHpFor(target), target.hp+back); left-=back; }       // 정복자의 휴식: 40% of every hit is given back
   if(skillHasBuff(target,'guard',tSec)){ const back=left*0.5; target.hp=Math.min(maxHpFor(target), target.hp+back); left-=back; }
   if(target.barrier && target.barrier.until>tSec && target.barrier.hp>0 && left>0){
     const ab=Math.min(left, target.barrier.hp); target.barrier.hp-=ab; target.hp=Math.min(maxHpFor(target), target.hp+ab); left-=ab;
@@ -11362,18 +11376,10 @@ const SKILL_IMPL={
     pushFx('skillring', p.x, p.y-6, tMs, {color:'#2fb87a', r:KAN_TRAP_R});
     return true;
   },
-  pizarro(p,tSec,tMs,ax,ay){
-    const spot=wizardCircleSpot(p, ax, ay), sx=spot.x, iy=spot.y, st=pzStacks(p), half=PZ_CROSS_HALF[st], cdmg=PZ_CROSS_DMG[st], cstun=PZ_CROSS_STUN[st];
-    pushFx('crossfall', sx, iy, tMs, {dur:PZ_CROSS_DUR, hw:half});
-    hostTimers.push({ta:fxActor, at:tSec+PZ_CROSS_DUR, fn:(tt)=>{
-      for(const id in players){
-        const t=players[id]; if(!t.alive || t.x===undefined || t.darkSub) continue;
-        if(Math.abs(t.x-sx)>half || t.y<iy-340 || t.y>iy+60) continue;
-        if(id===p.id || isAlly(p,t)){ const before=t.hp; t.hp=Math.min(maxHpFor(t), t.hp+PZ_CROSS_HEAL); pushFx('heal', t.x, t.y-70, tt, {v:Math.round(t.hp-before)}); }
-        else if(!t.swordCharge){ skillDamage(p, t, cdmg, tt, {stun:cstun}); if(t.hp>0){ t.pzMarkUntil=tt/1000+PZ_MARK_SEC; t.pzMarkBy=p.id; } }
-      }
-      pushFx('crosshit', sx, iy, tt, {hw:half});
-    }});
+  pizarro(p,tSec,tMs){          // 정복자의 휴식: stand still for 3 s - 40% less damage and 12 hp a second (moving breaks it)
+    skillSetBuff(p,'rest',PZ_REST_SEC,tSec); p.restLast=undefined;
+    pushFx('skillring', p.x, p.y-30, tMs, {color:'#ffd34d', r:70});
+    return true;
   },
   pistol(p,tSec){ skillSetBuff(p,'rapid',1.8,tSec); return true; },
   smg(p,tSec,tMs){ const n=skillPulse(p,tMs,{r:230, slow:2.5}); if(n>0) pushFx('skillring', p.x, p.y-30, tMs, {color:'#9aa3b2', r:230}); return n>0; },
@@ -11531,7 +11537,7 @@ function abilityPreviewOps(action, p, mx, my){
       case 'kurus': { const d=skillAimDir(p,mx); ops.push({t:'rect', x:d>0?p.x:p.x-DARK_SWORD_RANGE, y:p.y-90, w:DARK_SWORD_RANGE, h:90}); break; }
       case 'horemheb': ops.push(ray(ang, 740)); break;
       case 'puppeteer': { const tg=p.sw && players[p.sw]; if(tg){ ops.push({t:'line', x1:p.x, y1:p.y-30, x2:tg.x, y2:tg.y-40}); ops.push(mark(tg.x, tg.y-40, 40)); } else ops.push(ray(ang, 1050)); break; }
-      case 'pizarro': { const sp=wizardCircleSpot(p, mx, my), hf=PZ_CROSS_HALF[pzStacks(p)]; ops.push({t:'rect', x:sp.x-hf, y:sp.y-340, w:hf*2, h:400}); ops.push({t:'ellipse', x:sp.x, y:sp.y, rx:hf, ry:14}); break; }
+      case 'pizarro': ops.push(selfRing(70)); break;
       case 'shuriken': { const a=Math.atan2(my-cy, mx-p.x), best=skillMoveSpot(p, p.x+Math.cos(a)*230, p.y+Math.sin(a)*230); ops.push({t:'line', x1:p.x, y1:p.y-30, x2:best.x, y2:best.y-30, dash:true}); ops.push(mark(best.x, best.y-30, 20)); break; }
       case 'dagger': { const t=nearestEnemyOf(p); if(t && Math.hypot(t.x-p.x,t.y-p.y)<=330){ ops.push({t:'line', x1:cx, y1:cy, x2:t.x, y2:t.y-30, dash:true}); ops.push(mark(t.x, t.y-30, 40)); } break; }
       case 'magiccard': ops.push(ray(ang, 820)); break;
@@ -12414,7 +12420,7 @@ function botWantsSkill(p, target, d, tSec){
     case 'bow': return d<280 || (hurt && d<420);
     case 'sword': return d<900 && Math.abs(target.y-p.y)<110 && !p.swordCharge;   // a 3 second charge: worth it from a long way off (same level), and never while already charging
     case 'lightsaber': return d<115;                                  // the thrust only reaches up close
-    case 'pizarro': return d<520 && Math.abs(target.y-p.y)<130;                    // the cross falls where the enemy stands
+    case 'pizarro': return hpFrac<0.7 && d<260;                                    // the rest: when hurt and the fight is close
     case 'horemheb': return d>=170 && d<=640 && Math.abs(target.y-p.y)<150;       // the throw: from a distance, on about the same level
     case 'puppeteer': return sewActive(p,tSec) ? (tSec-(p.sewAt||0)>1.2 || hurt) : (d<850 && Math.abs(target.y-p.y)<220);       // the needle from a distance; pulled out after a short while
     case 'bat': return botIncomingShot(p, 230);
@@ -12940,6 +12946,7 @@ function botsThink(dt, t){
     if(p.isDummy){ botDummyThink(p, t, dt); continue; }
     if(grace){ const i=p.input; i.left=i.right=i.shoot=i.jump=i.dash=i.down=false; continue; }
     botThink(p, t, dt);
+    if(p.weapon==='pizarro' && skillHasBuff(p,'rest',t/1000)){ const i=p.input; i.left=i.right=i.jump=i.dash=false; }       // a resting 피사로 stands still (and keeps thrusting)
   }
 }
 
