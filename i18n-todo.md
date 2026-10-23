@@ -227,3 +227,6 @@ crownenvoy/CrownEnvoy-v0.4.html | 전신망 (정치 탭 카드) | "📡 전신�
 - prototypes/vowkeep/js/data.js | LORE 옛 기록 32줄 (8장 × 비석 2개 × 2줄), COMBOS 합동기 이름 5개, CURSES 저주 이름·설명 7개, 심연 층 이름·시작·결말 문장, 업적 6개 (비밀 방, 옛 기록, 합동기, 심연 5·10층) 이름·설명 | 한국어만 있음 | Vowkeep b27 | 2026-10-23
 - prototypes/vowkeep/js/main.js | '비밀 방을 찾았어요', 'F를 꾹 눌러 옛 기록 읽기', '옛 기록', '합동기!', '끝없는 심연', '심연으로 내려가기', 심연 결과 화면·저주 알림 문장 | 한국어만 있음 | Vowkeep b27 | 2026-10-23
 - patchnotes.json | "Vowkeep 비밀 방, 합동기, 끝없는 심연" 8줄 | Vowkeep b27 | 2026-10-23
+
+## Crown Envoy b91 (2026-10-23)
+- patchnotes.json | "게임 중 배경음악 추가" 1줄 (CrownEnvoy-v0.4.html 소스에는 새 한국어 문구 없음) | Crown Envoy b91 | 2026-10-23
