@@ -134,3 +134,6 @@ patchnotes.json | v361 items[0] | 시즌 패스 전용 킬 이펙트 추가 (블
 patchnotes.json | v361 items[1] | 시즌 패스 전용 승리 모션 추가 (공중 부양, 챔피언 트로피) | build 361 | 2026-10-20
 patchnotes.json | v361 items[2] | 시즌 패스 전용 움직이는 이모트 추가 (별똥별 소원, 황금 왕관) | build 361 | 2026-10-20
 patchnotes.json | v361 items[3] | 시즌 패스 전용 스킨 추가 (오로라 총잡이, 황금 시즌 기사) | build 361 | 2026-10-20
+patchnotes.json | v362 title | 인트로 눌러서 시작 복구 | build 362 | 2026-10-20
+patchnotes.json | v362 items[0] | 소리가 막힌 브라우저에서는 화면을 누르면 인트로 시작 | build 362 | 2026-10-20
+patchnotes.json | v362 items[1] | 인트로 도중 로비 곡으로 전환 | build 362 | 2026-10-20
