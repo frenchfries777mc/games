@@ -821,7 +821,8 @@ var SX={wiki:null, tr:null, seq:0, sel:-1};
 var SGAMES=[['stickseum','Stickseum','g1','https://frenchfries777mc.github.io/games/stickseum/','친구들과 실시간으로 붙는 스틱맨 난투','스틱맨 난투 액션 stickman brawl'],
   ['crownenvoy','Crown Envoy','g2','https://frenchfries777mc.github.io/games/crownenvoy/','외교와 전쟁으로 제국을 키우는 턴제 전략','외교 전쟁 전략 diplomacy war strategy'],
   ['beaconfall','Beaconfall','g3','https://frenchfries777mc.github.io/games/beaconfall/','외계 행성에서 살아남아 탈출하는 생존 제작','생존 제작 픽셀 survival crafting pixel'],
-  ['isleport','Isleport','g3','https://frenchfries777mc.github.io/games/isleport/','섬을 가꾸고 배로 교역하는 섬 경영','섬 경영 교역 타이쿤 픽셀 tycoon trade island pixel']];
+  ['isleport','Isleport','g3','https://frenchfries777mc.github.io/games/isleport/','섬을 가꾸고 배로 교역하는 섬 경영','섬 경영 교역 타이쿤 픽셀 tycoon trade island pixel'],
+  ['vowkeep','Vowkeep','g3','https://frenchfries777mc.github.io/games/vowkeep/','기사 넷이 서약을 지키러 던전으로 내려가는 협동 액션','기사 던전 협동 액션 픽셀 knight dungeon co-op action pixel']];
 function sfnv(s){ var h=0x811c9dc5; for(var i=0;i<s.length;i++){ h^=s.charCodeAt(i); h=Math.imul(h,0x01000193)>>>0; } return ('0000000'+h.toString(16)).slice(-8); }
 function smark(t,q){ var e=esc(t); if(!q) return e; var r=esc(q).replace(/[.*+?^${}()|[\]\\]/g,'\\$&'); try{ return e.replace(new RegExp(r,'gi'),function(x){ return '<mark>'+x+'</mark>'; }); }catch(_){ return e; } }
 function splain(b){ return String(b||'').replace(/^::.*$/gm,'').replace(/\*\*/g,'').replace(/^#{2,3}\s+|^\s*[-•]\s+|^\s*\d+[.)]\s+/gm,'').replace(/\s+/g,' ').trim(); }
