@@ -105,7 +105,9 @@ function makeFigure(o) {
     box(0.14, 0.22, 0.14, leather(), 0.12, -0.95, 0, armL);
     const sm = M(0xe8e0c8), sa = mesh(geo('str', () => new THREE.BoxGeometry(0.025, 0.025, 1)), sm, 0, 0, 0, armL, false), sb = mesh(geo('str', () => new THREE.BoxGeometry(0.025, 0.025, 1)), sm, 0, 0, 0, armL, false);
     const ar = new THREE.Group(); armL.add(ar); box(0.05, 1.3, 0.05, M(0x8a5a2a), 0, 0, 0, ar); const ah = cone(0.08, 0.25, 4, metal(), 0, -0.75, 0, ar); ah.rotation.x = Math.PI;
-    bowS = { sa, sb, ar }; setPull(bowS, 0.05);
+    // 모아 쏘기용 화살 두 대: 두 발·세 발을 모으면 첫 화살 양옆으로 부채꼴로 메겨져요 (촉이 빛나요)
+    const ex = [0.2, -0.2].map((dz, k) => { const g2 = new THREE.Group(); g2.position.z = dz; g2.rotation.x = k ? -0.2 : 0.2; ar.add(g2); box(0.05, 1.3, 0.05, M(0x8a5a2a), 0, 0, 0, g2); const hm = M(0xffd36b, { e: 0xffb040, ei: 2.5, uniq: true }), h2 = cone(0.11, 0.32, 4, hm, 0, -0.75, 0, g2); h2.rotation.x = Math.PI; box(0.16, 0.2, 0.03, M(0xe8e0c8), 0, 0.58, 0, g2); g2.visible = false; return { g: g2, hm }; });
+    bowS = { sa, sb, ar, ex }; setPull(bowS, 0.05);
   }
   if (o.staff) { const sc = o.staffC || 0x9af0d0; const st = new THREE.Group(); st.position.set(0, -0.9, 0.1); armR.add(st); st.rotation.x = 0.7; cyl(0.07, 0.07, 3.2, 6, M(0x7a5a2a), 0, 0.5, 0, st); mesh(geo('oct', () => new THREE.OctahedronGeometry(0.32)), M(sc, { e: sc, ei: 4 }), 0, 2.3, 0, st); if (!o.noLight) { light = new THREE.PointLight(0x6af0c0, 14, 8, 1.6); light.position.set(0, 2.4, 0); st.add(light); } }
   if (o.spear) { const sp = new THREE.Group(); sp.position.set(0, -0.9, 0.1); armR.add(sp); sp.rotation.x = Math.PI / 2; cyl(0.06, 0.06, 3.6, 5, M(0x5a3a22), 0, 0.8, 0, sp); cone(0.16, 0.6, 4, metal(), 0, 2.9, 0, sp); }
@@ -1032,10 +1034,11 @@ function hy(E, dt) { const h = hAt(E.x, E.z); return E.hy == null || dt >= 1 ? h
 function lerpA(a, b, k) { let d = b - a; while (d > Math.PI) d -= Math.PI * 2; while (d < -Math.PI) d += Math.PI * 2; return a + d * k; }
 function clampN(v, a, b) { return v < a ? a : v > b ? b : v; }
 // 활 시위 당기기: pull 0(쉼) ~ 0.75(가득)
-function setPull(B, pull) {
+function setPull(B, pull, n = 1) {
+  if (B.ex) B.ex.forEach((e, k) => { const on = n >= 2 + k; e.g.visible = on; if (on) { const c = n >= 3 ? 0xffd36b : 0x9af0a8; e.hm.color.setHex(c); e.hm.emissive.setHex(c); } });
   const ny = -0.65 + pull;
   for (const [m, tz] of [[B.sa, 0.93], [B.sb, -0.93]]) { const L = Math.hypot(pull, tz); m.position.set(0.12, -0.65 + pull / 2, tz / 2); m.rotation.set(Math.atan2(-pull, -tz), 0, 0); m.scale.z = L; }
-  B.ar.position.set(0.12, ny - 0.62, 0); B.ar.visible = pull > 0.18;
+  B.ar.position.set(0.12, ny - 0.62, 0); B.ar.visible = pull > 0.18 || n > 1;
 }
 const ease = u => u < 0 ? 0 : u > 1 ? 1 : u * u * (3 - 2 * u);
 const seg = (u, a, b) => ease((u - a) / (b - a));
@@ -1171,7 +1174,7 @@ function animHero(E, p, dt, t) {
   const k = Math.min(1, dt * (E.blT > 0 ? 14 : 30)), L = (o, kk, v2) => { E[kk] = E[kk] == null ? v2 : E[kk] + (v2 - E[kk]) * k; return E[kk]; };
   u.armR.rotation.order = 'XZY'; u.armR.rotation.set(L(0, 'ar', T.rx), L(0, 'ary', T.ry), L(0, 'arz', T.rz)); u.armL.rotation.set(L(0, 'al', T.lx), 0, L(0, 'alz', T.lz));
   u.armR.position.z = L(0, 'rpz', T.rpz); u.head.rotation.set(L(0, 'hx', T.hx), L(0, 'hy', T.hy), L(0, 'hz', T.hz));
-  if (u.bowS) setPull(u.bowS, L(0, 'pl', T.pull));
+  if (u.bowS) setPull(u.bowS, L(0, 'pl', T.pull), p.cg >= 2 ? 3 : p.cg >= 0.8 ? 2 : 1);
   const bob = Math.abs(sn) * 0.16 * wk;
   u.body.rotation.set(L(0, 'bx', T.bx), L(0, 'bry', T.bry) + T.spin, L(0, 'brz', T.brz)); u.body.position.set(0, bob + L(0, 'by', T.by), L(0, 'bz', T.bz));
   m.position.y = L(0, 'jy', T.jy); const sq = L(0, 'sq', T.sq); u.body.scale.set(1 + sq * 0.5, 1 - sq * 0.6, 1 + sq * 0.5);

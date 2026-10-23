@@ -2,6 +2,98 @@
  "notes": [
   {
    "date": "2026-10-23",
+   "build": "v0.2 build 53",
+   "title": "밭 인트로",
+   "items": [
+    "게임을 켜면 새벽 밭에서 작물이 자라고 멀리 배가 지나가는 인트로가 나와요. 건너뛸 수 없어요"
+   ],
+   "tr": {
+    "en": {
+     "title": "Field intro",
+     "items": [
+      "The game now opens with a dawn field where crops grow and a ship sails by far away. It cannot be skipped"
+     ]
+    },
+    "ja": {
+     "title": "Field intro",
+     "items": [
+      "The game now opens with a dawn field where crops grow and a ship sails by far away. It cannot be skipped"
+     ]
+    },
+    "es": {
+     "title": "Field intro",
+     "items": [
+      "The game now opens with a dawn field where crops grow and a ship sails by far away. It cannot be skipped"
+     ]
+    },
+    "fr": {
+     "title": "Field intro",
+     "items": [
+      "The game now opens with a dawn field where crops grow and a ship sails by far away. It cannot be skipped"
+     ]
+    },
+    "de": {
+     "title": "Field intro",
+     "items": [
+      "The game now opens with a dawn field where crops grow and a ship sails by far away. It cannot be skipped"
+     ]
+    }
+   }
+  },
+  {
+   "date": "2026-10-23",
+   "build": "v0.2 build 52",
+   "title": "음식 평론가, 항구 달력, 수상한 상인",
+   "items": [
+    "식당에 가끔 음식 평론가가 와요. 원하는 요리를 내면 별점에 따라 큰 보상과 평판을 받아요",
+    "마을 회관의 항구 달력에서 곧 일어날 축제, 수요 급증, 폭풍을 미리 볼 수 있어요",
+    "방문 상인 중에 사기꾼이 섞여 있어요. 수상한 단서를 보고 신고하면 포상금을 받아요"
+   ],
+   "tr": {
+    "en": {
+     "title": "Food critic, port calendar, shady traders",
+     "items": [
+      "A food critic sometimes visits the diner: serve the dish they want for a star rating, gold and reputation",
+      "The town hall port calendar shows upcoming festivals, demand booms and storms",
+      "Some visiting traders are frauds: spot the clues and report them for a bounty"
+     ]
+    },
+    "ja": {
+     "title": "Food critic, port calendar, shady traders",
+     "items": [
+      "A food critic sometimes visits the diner: serve the dish they want for a star rating, gold and reputation",
+      "The town hall port calendar shows upcoming festivals, demand booms and storms",
+      "Some visiting traders are frauds: spot the clues and report them for a bounty"
+     ]
+    },
+    "es": {
+     "title": "Food critic, port calendar, shady traders",
+     "items": [
+      "A food critic sometimes visits the diner: serve the dish they want for a star rating, gold and reputation",
+      "The town hall port calendar shows upcoming festivals, demand booms and storms",
+      "Some visiting traders are frauds: spot the clues and report them for a bounty"
+     ]
+    },
+    "fr": {
+     "title": "Food critic, port calendar, shady traders",
+     "items": [
+      "A food critic sometimes visits the diner: serve the dish they want for a star rating, gold and reputation",
+      "The town hall port calendar shows upcoming festivals, demand booms and storms",
+      "Some visiting traders are frauds: spot the clues and report them for a bounty"
+     ]
+    },
+    "de": {
+     "title": "Food critic, port calendar, shady traders",
+     "items": [
+      "A food critic sometimes visits the diner: serve the dish they want for a star rating, gold and reputation",
+      "The town hall port calendar shows upcoming festivals, demand booms and storms",
+      "Some visiting traders are frauds: spot the clues and report them for a bounty"
+     ]
+    }
+   }
+  },
+  {
+   "date": "2026-10-23",
    "build": "v0.2 build 51",
    "title": "보급선, 흥정, 선주문, 외상",
    "items": [
