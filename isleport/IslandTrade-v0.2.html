@@ -453,7 +453,7 @@ const TUT=[
  [P('다 자라면 ▼ 표시의 밭을 눌러 수확해요','When it is grown, tap the field with the ▼ to harvest'),s=>s.stats.harvest>=1],
  [P('마을 장터에서 수확한 것을 팔아요','Sell your harvest at the town market'),s=>(s.stats.shop||0)>=1],
  [P('항구에서 배에 짐을 싣고 보내요','Load a ship at the harbor and send it off'),s=>s.stats.sailed>=1]];
-const OUTMAX=12,BUILD=50;
+const OUTMAX=12,BUILD=51;
 const hasB=(s,b)=>s.slots.some(x=>x&&x.b===b);
 const rankOf=e=>{let r=0;RANKS.forEach((x,i)=>{if(e>=x[0])r=i;});return r;};
 /* 업적: id, 이름, 설명, 조건 */
@@ -575,6 +575,12 @@ A('nw1m',P('백만장자','Millionaire'),P('재산 1,000,000 모으기','Reach a
 const CROPK=Object.keys(CROPS),SPEC=['goldbarley','pomegranate','saffron','cloudcotton','seaweed','dragonfruit'],CROPK17=CROPK.filter(c=>!SPEC.includes(c));
 const ACHN={};ACH.forEach(a=>ACHN[a.id]=a);
 const NOTES=[
+ {date:'2026-10-23',build:'v0.2 build 51',title:P('보급선, 흥정, 선주문, 외상','Supply boats, haggling, pre-orders, credit'),items:[
+  P('바다로 나간 배에 보급선을 보내 선체를 고치고 창고 물건을 더 실을 수 있어요','Send a supply boat to a ship at sea to patch the hull and load more goods'),
+  P('장터에서 노점 흥정을 할 수 있어요. 손님이 떠나기 전에 값을 잘 맞춰 보세요','Haggle with customers at the market stall before they walk away'),
+  P('게시판의 선주문으로 계약금을 받고 기한 안에 납품하면 보너스를 받아요','Take pre-orders at the notice board: deposit now, bonus when delivered in time'),
+  P('배 목록에서 외상 판매를 켜면 단골 항구에 더 비싸게 팔 수 있어요. 다음 방문 때 값을 받아요','Turn on credit sales in the ship list: regular ports pay more, collected on your next visit')
+ ]},
  {date:'2026-10-22',build:'v0.2 build 50',title:P('이야기의 결말과 크레딧','Story ending and credits'),items:[
   P('마지막 장에서 장부의 주인을 정하면 결말 연출과 대사가 나와요','Choosing the ledger\'s fate in the last chapter now plays an ending scene with dialogue'),
   P('결말 뒤에 크레딧이 올라가요. 건너뛸 수 있고, 끝나도 게임은 계속돼요','Credits roll after the ending. You can skip them, and the game goes on'),
@@ -26798,13 +26804,18 @@ function dispatch(sid,p,cargo,buy){const s=S.ships.find(x=>x.id===sid);if(!s||s.
   const d=travel(p,s),t=NOW();for(const k in cargo){S.inv[k]=inv(k)-cargo[k];if(!cargo[k])delete cargo[k];}
   const e=escOf(s),pir=Math.random()<0.14*Math.max(0.2,1-0.2*e)*(tot>0?1:0.4);
   if(stormAt(p)){hullHit(s,10+Math.random()*10);toast('<span class="bad">'+T('폭풍에 선체가 상했어요 ({0}%)','The storm damaged the hull ({0}%)',hpOf(s))+'</span>');}
-  Object.assign(s,{st:'sail',port:p,t0:t,t1:t+d,cargo,buy:buy||{},back:false,raided:false,pirAt:pir?t+d*(0.35+Math.random()*0.3):0});S.stats.sailed++;s.last={p,cargo:Object.assign({},cargo),buy:Object.assign({},buy||{})};sfx('sail');return true;}
+  Object.assign(s,{sup:0,st:'sail',port:p,t0:t,t1:t+d,cargo,buy:buy||{},back:false,raided:false,pirAt:pir?t+d*(0.35+Math.random()*0.3):0});S.stats.sailed++;s.last={p,cargo:Object.assign({},cargo),buy:Object.assign({},buy||{})};sfx('sail');return true;}
 function arrive(s){const p=s.port;let total=0;const parts=[];
   if(hpOf(s)<30){let n=0;for(const k in s.cargo){const q=Math.floor(s.cargo[k]*0.15);if(q>0){s.cargo[k]-=q;n+=q;}}if(n>0)toast('<span class="bad">'+T('선체가 새서 짐 {0}개를 잃었어요','The leaking hull lost {0} goods',n)+'</span>');}
   // 계약 먼저
   S.contracts=S.contracts.filter(c=>{if(c.p!==p)return true;if(c.exp<NOW())return false;if((s.cargo[c.g]||0)>=c.n){s.cargo[c.g]-=c.n;total+=c.reward;S.stats.contracts++;if(c.o)S.stats.orders=(S.stats.orders||0)+1;if(Math.random()<.2)addMap(1);S.rep[p]+=3;S.codex[c.g]=1;parts.push(T('계약 {0} {1}개','Contract {0} x{1}',GN(c.g),c.n));sfx('coin');return false;}return true;});
+  const ctot=total;
   for(const k in s.cargo){const n=s.cargo[k];if(n<=0)continue;const gi=GI[k].i,r=revenue(p,gi,n);total+=r;parts.push(GN(k)+' '+n);
     DEM[p][gi]=Math.max(0.35,DEM[p][gi]*Math.pow(sellDrop(),n));if(MP.on&&!MP.host)MP.send({t:'sell',p,g:gi,n});else if(MP.on)MP.sold=1;}
+  S.debt=S.debt||{};let col=0;
+  if(S.debt[p]>0){const dd=S.debt[p];S.debt[p]=0;if(Math.random()<0.85){col=dd;parts.push(T('외상 회수 {0}','Credit collected {0}',fmt(dd)));}else{col=Math.round(dd*0.4);toast('<span class="bad">'+T('외상값을 다 받지 못했어요 ({0}만 회수)','Could not collect it all (got {0})',fmt(col))+'</span>');}}
+  if(S.credit&&repLv(S.rep[p])>=1&&total-ctot>0){const cr=total-ctot,dd=Math.round(cr*1.15);S.debt[p]=(S.debt[p]||0)+dd;total=ctot;toast(T('{0}에 외상 {1}을 달았어요 (다음 방문 때 회수)','Sold on credit at {0}: {1} due next visit',tx(PORTS[p].n),fmt(dd)));}
+  total+=col;
   S.money+=total;S.stats.earned+=total;if(total>0){S.stats.sold++;S.stats.best=Math.max(S.stats.best,total);}S.visited[p]=1;S.rep[p]+=1;
   const ret={};let bought=0,cost=0;
   for(const k in (s.buy||{})){const gi=GI[k].i;let n=Math.min(s.buy[k],shipCap(s)-cargoN(ret));while(n>0&&buyCost(p,gi,n)>S.money)n--;if(n<=0)continue;const c=buyCost(p,gi,n);S.money-=c;cost+=c;ret[k]=n;bought+=n;S.codex[k]=1;
@@ -26820,6 +26831,17 @@ function pirates(s){s.pirAt=0;S.stats.pirated++;const e=escOf(s),beat=Math.rando
   else{hullHit(s,15+Math.random()*10);let n=0,val=0;for(const k in s.cargo){const q=Math.ceil(s.cargo[k]*0.25);s.cargo[k]-=q;n+=q;val+=q*GI[k].base;}toast('<span class="bad">'+T('해적에게 짐 {0}개를 빼앗겼어요!','Pirates stole {0} goods!',n)+'</span>');sfx('bad');
     stkShock('trade',-0.04,T('해적 소식에 {0} 주가가 내렸어요','Pirate news pushed {0} down',STKN('trade')));
     ensureBank(S);if(S.ins.until>NOW()&&val>0){const pay=Math.round(val*0.7);S.money+=pay;S.stats.insPaid=(S.stats.insPaid||0)+pay;toast(T('보험금 {0}을 받았어요','Insurance paid {0}',fmt(pay)));}}}
+/* ---- 보급선, 선주문, 노점 흥정 ---- */
+const SUPFEE=s=>60+shipCap(s)*2;
+function supplyShip(s){if(!s||s.st!=='sail'||s.back||s.sup)return false;const c=SUPFEE(s);if(S.money<c)return false;spend(c);s.sup=1;if(hpOf(s)<100)s.hp=Math.min(100,hpOf(s)+20);sfx('build');return true;}
+function supplyLoad(s,g,n){if(!s||s.st!=='sail'||s.back||!s.sup)return 0;n=Math.min(n,inv(g),shipCap(s)-cargoN(s.cargo));if(n<=0)return 0;S.inv[g]=inv(g)-n;s.cargo[g]=(s.cargo[g]||0)+n;return n;}
+function preGen(){S.pre=S.pre||{act:[],off:[],t:0};const q=S.pre;if(NOW()<q.t&&q.off.length)return;q.t=NOW()+300000;const rk=rankOf(S.stats.earned),pool=GOODS.filter(g=>g.base<=40+rk*40);q.off=[0,1,2].map(()=>{const g=pool[Math.floor(Math.random()*pool.length)],n=8+Math.floor(Math.random()*13),v=g.base*n;return {id:S.nid++,g:g.id,n,dep:Math.round(v*0.3),rw:Math.round(v*1.4),min:8+Math.floor(Math.random()*5)};});}
+function preTake(id){preGen();const q=S.pre,o=q.off.find(x=>x.id===id);if(!o||q.act.length>=3)return;S.money+=o.dep;q.act.push(Object.assign({},o,{exp:NOW()+o.min*60000}));q.off=q.off.filter(x=>x!==o);sfx('coin');}
+function preDeliver(id){const q=S.pre,o=q&&q.act.find(x=>x.id===id);if(!o||inv(o.g)<o.n)return;S.inv[o.g]=inv(o.g)-o.n;S.money+=o.rw-o.dep;S.stats.earned+=o.rw;q.act=q.act.filter(x=>x!==o);S.codex[o.g]=1;toast(T('선주문 납품 완료! 보너스 포함 +{0}','Pre-order delivered! +{0} with bonus',fmt(o.rw-o.dep)));sfx('ach');}
+function preTick(){const q=S&&S.pre;if(!q||!q.act.length)return;const t=NOW();q.act=q.act.filter(o=>{if(t<o.exp)return true;const pen=Math.round(o.dep*1.1);S.money=Math.max(0,S.money-pen);toast('<span class="bad">'+T('선주문 기한이 지나 계약금과 위약금 {0}을 물렸어요','Pre-order expired: deposit plus penalty {0} returned',fmt(pen))+'</span>');sfx('bad');return false;});}
+function hagStart(){const own=GOODS.filter(q=>inv(q.id)>0);if(!own.length){toast(T('팔 물건이 없어요','Nothing to sell'));return;}if((S.hagT||0)>NOW()){toast(T('손님이 아직 오지 않았어요 ({0}초)','No customer yet ({0}s)',Math.ceil((S.hagT-NOW())/1000)));return;}
+  const g=own[Math.floor(Math.random()*own.length)];openModal('haggle',{g:g.id,q:Math.min(inv(g.id),3+Math.floor(Math.random()*3)),L:g.base*(0.85+Math.random()*0.8),A:Math.round(g.base*1.6),pat:4,msg:'',done:0});}
+function hagEnd(){S.hagT=NOW()+30000;}
 /* ---- 계약, 방문 상인 ---- */
 function genContract(){const rk=rankOf(S.stats.earned),ps=PORTS.map((p,i)=>i).filter(i=>PORTS[i].rank<=rk);if(!ps.length)return;const p=ps[Math.floor(Math.random()*ps.length)];
   const pr=GOODS.filter(g=>g.k==='proc'&&S.codex[g.id]),o=pr.length&&Math.random()<.5;
@@ -27094,7 +27116,7 @@ function tick(dt){if(!S)return;const t=NOW();rescue(dt);
   if(S.visitor&&S.visitor.until<t)S.visitor=null;
   if(!S.visitor&&t>S.visNext){S.visNext=t+(150+Math.random()*90)*1000;if(S.stats.sold>0||S.stats.harvest>=20)genVisitor();}
   if(S.loan>0)S.loan+=S.loan*0.01/60*dt;
-  ensureBank(S);provTick(dt);postTick(dt);shopTick(dt);aqTick(dt);innTick(dt);reTick(dt);gdTick(dt);hillTick(t);chalTick(t);dnTick(t);muTick(t);if(!S.paper||t>=S.paper.t+PAPERMS){const first=!S.paper;genPaper();if(!first)toast(T('새 시세 신문이 나왔어요','A new price paper is out'));}
+  ensureBank(S);provTick(dt);postTick(dt);shopTick(dt);aqTick(dt);innTick(dt);preTick();reTick(dt);gdTick(dt);hillTick(t);chalTick(t);dnTick(t);muTick(t);if(!S.paper||t>=S.paper.t+PAPERMS){const first=!S.paper;genPaper();if(!first)toast(T('새 시세 신문이 나왔어요','A new price paper is out'));}
   if(S.ins.auto&&S.ins.until<t&&S.money>=insCost()*3&&S.ships.length)insBuy();
   if(S.dep>0)S.dep+=Math.min(S.dep,depCap())*DEPR/60*dt;
   {const k=S.stk;if(t-k.t>200*STKMS)k.t=t-200*STKMS;while(t>=k.t+STKMS){stkStep();k.t+=STKMS;}}
@@ -28158,7 +28180,7 @@ function activate(o){const sx=(PL.x-Math.round(CAM.x))*SC,sy=(PL.y-12-Math.round
   else if(o.k==='clocktower'){toast(nightF()>.5?T('광장의 시계탑이에요. 지금은 밤이에요','The plaza clock tower. It is night'):T('광장의 시계탑이에요. 지금은 낮이에요','The plaza clock tower. It is daytime'));sfx('click');}
   else if(o.k==='museum')popList(T('박물관','Museum'),[[T('박물관 보기','Visit the museum'),muN()+'/'+MUSETS.reduce((a,b)=>a+b.items.length,0),()=>openModal('museum')]],sx,sy);
   else if(o.k==='seeds')popList(T('종자 상점','Seed shop'),[[T('씨앗 사기','Buy seeds'),'',()=>openModal('seeds')]],sx,sy);
-  else if(o.k==='shop')popList(T('장터','Market'),[[T('물건 팔기','Sell goods'),'',()=>openModal('market')]],sx,sy);
+  else if(o.k==='shop')popList(T('장터','Market'),[[T('물건 팔기','Sell goods'),'',()=>openModal('market')],[T('노점 흥정','Stall haggling'),'',()=>hagStart()]],sx,sy);
   else if(o.k==='hoffice')popList(T('항만 사무소','Harbor office'),[[T('배','Ships'),String(S.ships.length),()=>openModal('fleet')],[T('계약','Contracts'),String(S.contracts.length),()=>openModal('contracts')]],sx,sy);
   else if(o.k==='hshed')popList(T('해운 창고','Cargo shed'),[[T('창고','Warehouse'),'',()=>openModal('wh')]],sx,sy);
   else if(o.k==='fishmkt'){toast(T('어부들이 갓 잡은 생선을 늘어놓았어요','Fishers lay out the fresh catch'));}
@@ -28169,7 +28191,7 @@ function activate(o){const sx=(PL.x-Math.round(CAM.x))*SC,sy=(PL.y-12-Math.round
   else if(o.k==='barn')popList(T('창고','Warehouse'),[[T('창고','Warehouse'),'',()=>openModal('wh')],[T('창고 늘리기','Expand warehouse'),(S.whUp||0)>=WHMAX?T('최대','Max'):fmt(whCost())+UG(),()=>{openModal('wh');}],].concat(hasT('reapall')?[[T('모두 수확','Collect all'),'',()=>{harvestAll();}]]:[]),sx,sy);
   else if(o.k==='lab')popList(T('연구','Research'),[[T('연구','Research'),'',()=>openModal('tech')]],sx,sy);
   else if(o.k==='bank')popList(T('은행·계약','Bank & contracts'),[[T('계약','Contracts'),String(S.contracts.length),()=>openModal('contracts')],[T('은행','Bank'),'',()=>openModal('bank')]],sx,sy);
-  else if(o.k==='board'){const it=[[T('마을 대형 주문','Town big order'),CO.cur?'!':'',()=>openModal('coorder')],[T('공공 공사','Projects'),'',()=>openModal('proj')],[T('다른 섬과 연결','Connect to others'),MP.inbox.length?'!':(MP.on?T('연결됨','On'):''),()=>openModal('mp')]];if(MP.on)it.push([T('경매장','Auction house'),'',()=>openModal('auction')],[T('채팅','Chat'),'',()=>{MP.unread=0;openModal('chat');}]);popList(T('게시판','Notice board'),it,sx,sy);}}
+  else if(o.k==='board'){const it=[[T('마을 대형 주문','Town big order'),CO.cur?'!':'',()=>openModal('coorder')],[T('선주문','Pre-orders'),S.pre&&S.pre.act.length?String(S.pre.act.length):'',()=>{preGen();openModal('pre');}],[T('공공 공사','Projects'),'',()=>openModal('proj')],[T('다른 섬과 연결','Connect to others'),MP.inbox.length?'!':(MP.on?T('연결됨','On'):''),()=>openModal('mp')]];if(MP.on)it.push([T('경매장','Auction house'),'',()=>openModal('auction')],[T('채팅','Chat'),'',()=>{MP.unread=0;openModal('chat');}]);popList(T('게시판','Notice board'),it,sx,sy);}}
 function popList(title,items,x,y){popAct={};let h=`<h4>${title}</h4>`;items.forEach(q=>{h+=opt(q[0],q[1],()=>{closePop();q[2]();});});showPop(h,x,y);}
 function placePlayer(){PL.x=371;PL.y=300;PL.goal=null;PL.near=null;updateCam(0,true);}
 function nearObj(){let best=null,bd=1e9;for(const o of objs()){const d=rectDist(PL.x,PL.y,o);if(d<=o.r&&d<bd){bd=d;best=o;}}return best;}
@@ -28289,6 +28311,7 @@ function boxShips(){let h='';
   S.ships.forEach((s,i)=>{let st;if(s.st==='dock')st=`<span class="good">${T('정박 중','Docked')}</span>`;else if(s.st==='helm')st=`<span class="good">${T('직접 항해 중','Under your command')}</span>`;else{const left=Math.max(0,Math.round((s.t1-NOW())/1000));st=`${tx(PORTS[s.port].n)} ${s.back?T('에서 귀항','— home'):T('으로','— out')} · ${left}s`;}
     const cargo=s.cargo&&Object.keys(s.cargo).filter(k=>s.cargo[k]>0).map(k=>gi(k,14)+s.cargo[k]).join(' ');
     h+=`<div class="ship"><div class="row"><b>${i+1}. ${tx(SHIPS[s.ty].n)}</b><span class="muted">${T('{0}칸','{0} cap',shipCap(s))} · ${T('호위','Esc')} ${escOf(s)} · ${T('선체','Hull')} <span class="${hpOf(s)<30?'bad':hpOf(s)<70?'gd':'good'}">${hpOf(s)}%</span></span></div><div class="muted">${st}${cargo?'<br>'+cargo:''}</div><div class="btns">`;
+    if(s.st==='sail'&&!s.back){h+=s.sup?`<button class="pb sm gold" data-act="supm:${s.id}">${T('보급선: 짐 싣기','Supply: load')}</button>`:`<button class="pb sm" data-act="sup:${s.id}" ${S.money<SUPFEE(s)?'disabled':''}>${T('보급선','Supply boat')} ${fmt(SUPFEE(s))}</button>`;}
     if(s.st==='dock')h+=`<button class="pb sm gold" data-act="go:${s.id}">${T('출항','Sail')}</button>`;
     if(s.st==='dock'&&hpOf(s)<100)h+=`<button class="pb sm" data-act="fix:${s.id}" ${S.money<repairCost(s)?'disabled':''}>${T('수리','Repair')} ${fmt(repairCost(s))}</button>`;
     if(s.last)h+=`<button class="pb sm ${s.rep?'gold':''}" data-act="rep:${s.id}">↻ ${T('반복','Repeat')}</button>`;
@@ -28296,7 +28319,10 @@ function boxShips(){let h='';
     if((s.rf||0)<3){const u=RFC[s.rf||0];h+=`<button class="pb sm" data-act="rf:${s.id}" ${S.money<u.g||S.mine.ing.iron<u.iron||S.mine.ore.stone<u.stone||S.mine.ing.copper<(u.copper||0)?'disabled':''}>${T('강철 보강','Reinforce')} ${(s.rf||0)+1}/3</button>`;}
     if(s.esc<3)h+=`<button class="pb sm" data-act="esc:${s.id}" ${S.money<ESC_COST[s.esc]?'disabled':''}>${T('호위','Escort')} ${fmt(ESC_COST[s.esc])}</button>`;
     h+='</div></div>';});
-  h+=`<div class="btns"><button class="pb sm" data-act="m:yard" ${S.ships.length>=MAXSHIPS?'disabled':''}>${T('배 사기','Buy ship')}</button></div></div>`;
+  h+=`<div class="btns"><button class="pb sm" data-act="m:yard" ${S.ships.length>=MAXSHIPS?'disabled':''}>${T('배 사기','Buy ship')}</button><button class="pb sm ${S.credit?'gold':''}" data-act="credit">${T('외상 판매','Credit sales')} ${S.credit?T('켜짐','On'):T('꺼짐','Off')}</button></div>`;
+  const dbt=Object.keys(S.debt||{}).filter(k=>S.debt[k]>0);
+  if(S.credit||dbt.length)h+=`<div class="muted" style="margin-top:4px">${T('단골 항구(평판 1단계 이상)에는 값을 15% 더 쳐서 외상으로 팔아요. 다음에 들르면 받지만 가끔 떼여요.','At regular ports (rep level 1+) you sell on credit for 15% more. Collected on your next visit, but sometimes unpaid.')}</div>`+dbt.map(k=>`<div class="row"><span>${tx(PORTS[+k].n)}</span><span class="gd">${fmt(S.debt[k])}</span></div>`).join('');
+  h+='</div>';
   return h;}
 function boxCon(){let h='';
   if(S.contracts.length){h+=`<div class="box"><h3>${T('계약','Contracts')} <span>${S.contracts.length}</span></h3>`;S.contracts.forEach(c=>{h+=`<div class="row" style="padding:2px 0"><span>${c.o?'⚙ ':''}${gi(c.g,16)} ${GN(c.g)} x${c.n}</span><span class="muted">${tx(PORTS[c.p].n)}</span></div><div class="row muted"><span class="gd">+${fmt(c.reward)}</span><span>${mmss((c.exp-NOW())/1000)}</span></div>`;});h+='</div>';}
@@ -28312,10 +28338,16 @@ function boxMP(){let h='';
 function boxEv(){let h='';
   const ev=EV.filter(e=>e.until>NOW());h+=`<div class="box"><h3>${T('바다 소식','Sea news')}</h3>${ev.length?ev.map(e=>`<div class="muted">${evText(e)}</div>`).join(''):`<div class="muted">${T('잔잔한 바다예요','The sea is calm')}</div>`}</div>`;
   return h;}
-const LIVEW=['wh','fleet','contracts','mp','bank','hill','chal','diner','museum','post','inn','re','guild','shop','aq','tav'];let PTRDOWN=false;
+const LIVEW=['wh','fleet','contracts','mp','bank','hill','chal','diner','museum','post','inn','re','guild','shop','aq','tav','pre'];let PTRDOWN=false;
 document.addEventListener('pointerdown',()=>{PTRDOWN=true;},true);document.addEventListener('pointerup',()=>{PTRDOWN=false;},true);document.addEventListener('pointercancel',()=>{PTRDOWN=false;},true);
 function renderSide(force){if(!S||!MOD||!LIVEW.includes(MOD.type)||$('modal').hidden)return;if(PTRDOWN&&!force)return;const f=MODS[MOD.type];if(!f)return;const html=f(MOD);if(!force&&html===MOD._sig)return;MOD._sig=html;renderModal();}
-ACT.fix=a=>{repairShip(S.ships.find(x=>x.id===+a));updateHud();renderSide(true);};ACT.rf=a=>{reinforce(S.ships.find(x=>x.id===+a));updateHud();renderSide(true);};ACT.go=a=>openDispatch(+a);ACT.rep=a=>{const s=S.ships.find(x=>x.id===+a);if(s){s.rep=!s.rep;s.repT=0;}renderSide(true);};ACT.cap=a=>{upCap(S.ships.find(s=>s.id===+a));updateHud();renderSide(true);};ACT.esc=a=>{upEsc(S.ships.find(s=>s.id===+a));updateHud();renderSide(true);};
+ACT.fix=a=>{repairShip(S.ships.find(x=>x.id===+a));updateHud();renderSide(true);};ACT.sup=a=>{supplyShip(S.ships.find(x=>x.id===+a));updateHud();renderSide(true);};ACT.supm=a=>openModal('supply',{sid:+a});ACT.credit=()=>{S.credit=!S.credit;renderSide(true);};
+ACT.supL=a=>{const [g,n]=a.split(':');supplyLoad(S.ships.find(x=>x.id===MOD.sid),g,+n);updateHud();renderModal();};
+ACT.preT=a=>{preTake(+a);updateHud();renderSide(true);};ACT.preD=a=>{preDeliver(+a);updateHud();renderSide(true);};
+ACT.hagCut=()=>{const m=MOD;if(m.done)return;m.A=Math.max(1,Math.round(m.A*0.9));m.msg=T('"좀 더 깎아 주세요!"','"A bit cheaper, please!"');renderModal();};
+ACT.hagSell=()=>{const m=MOD;if(m.done)return;if(m.A<=m.L){const q=Math.min(m.q,inv(m.g)),r=m.A*q;S.inv[m.g]=inv(m.g)-q;S.money+=r;S.stats.earned+=r;m.done=1;m.won=r;m.msg=T('"좋아요, 살게요!"','"Deal!"');sfx('coin');hagEnd();updateHud();}else{m.pat--;if(m.pat<=0){m.done=1;m.msg=T('"너무 비싸요. 다른 데 갈래요."','"Too pricey. I\'ll go elsewhere."');hagEnd();}else m.msg=m.A>m.L*1.3?T('"너무 비싸요!"','"Way too expensive!"'):T('"조금만 더 싸면 살 텐데요."','"A little cheaper and I\'d buy."');}renderModal();};
+ACT.hagEnd=()=>closeModal();
+ACT.rf=a=>{reinforce(S.ships.find(x=>x.id===+a));updateHud();renderSide(true);};ACT.go=a=>openDispatch(+a);ACT.rep=a=>{const s=S.ships.find(x=>x.id===+a);if(s){s.rep=!s.rep;s.repT=0;}renderSide(true);};ACT.cap=a=>{upCap(S.ships.find(s=>s.id===+a));updateHud();renderSide(true);};ACT.esc=a=>{upEsc(S.ships.find(s=>s.id===+a));updateHud();renderSide(true);};
 ACT.yes=a=>{answerOffer(a,true);renderSide(true);};ACT.no=a=>{answerOffer(a,false);renderSide(true);};ACT.trade=a=>openTrade(a);ACT.visit=a=>startVisit(a);ACT.ltreq=a=>{ltRequest(a);};
 function updateHud(){if(!S)return;$('hud').hidden=false;const tu=$('tut'),on=S.tut>=0&&S.tut<TUT.length&&!MP.on;if(on){const h=`<span class="tn">${S.tut+1}/${TUT.length}</span> ${tx(TUT[S.tut][0])} <button class="tb sm" data-act="tutskip">${T('건너뛰기','Skip')}</button>`;if(tu.dataset.h!==h){tu.dataset.h=h;tu.innerHTML=h;}}tu.hidden=!on;$('sMoney').textContent=fmt(S.money);
   const rk=rankOf(S.stats.earned),nx=RANKS[rk+1],cur=RANKS[rk][0];$('sRank').textContent=tx(RANKS[rk][1]);$('sRankBar').style.width=(nx?Math.min(100,(S.stats.earned-cur)/(nx[0]-cur)*100):100)+'%';
@@ -28699,6 +28731,12 @@ MODS.help=()=>`<h2>${T('하는 법','How to play')}</h2><div class="note"><ul>
 MODS.crew=()=>{const full=S.wk>=WKMAX,c=full?0:wkCost();return `<h2>${T('일꾼 고용','Hire workers')} ${S.wk}/${WKMAX}</h2><div class="muted">${T('일꾼은 다 자란 작물과 동물 산물을 알아서 모아요. 많을수록 빨라져요.','Workers collect ripe crops and animal goods by themselves. More workers, faster work.')}</div><div class="muted" style="margin:6px 0">${hasT('overseer')?T('감독관 덕분에 수확한 밭에 다시 심어요','Thanks to the overseer they replant fields'):T('연구 감독관을 끝내면 다시 심어요','Research Overseer so they replant')}</div>${full?'':`<button class="pb gold" data-act="hire" ${S.money<c?'disabled':''}>${T('고용하기','Hire')} ${fmt(c)} ${UG()}</button>`}`;};
 ACT.hire=()=>{hireWorker();renderModal();updateHud();};
 MODS.wh=()=>`<h2>${T('창고','Warehouse')}</h2>`+boxWh();
+MODS.haggle=m=>{const g=GI[m.g],mk=Math.round(g.base*0.65);return `<h2>${T('노점 흥정','Stall haggling')}</h2><div class="card" style="display:block"><div>${gi(m.g,22)} <b>${GN(m.g)}</b> x${m.q} · ${T('장터 기본 시세 {0}/개','Market rate {0} each',fmt(mk))}</div><div style="margin:8px 0;font-size:15px;line-height:1.6">${m.msg||T('손님이 다가와 물건을 살펴봐요.','A customer eyes your goods.')}</div><div class="row"><span>${T('부른 값','Asking')}</span><b class="gd">${fmt(m.A)}/${T('개','ea')}</b></div><div class="muted">${T('손님 참을성','Patience')} ${'●'.repeat(Math.max(0,m.pat))}${'○'.repeat(Math.max(0,4-m.pat))}</div></div>`+(m.done?`<div style="margin:6px 0">${m.won?`<b class="good">+${fmt(m.won)}</b>`:`<span class="bad">${T('손님이 떠났어요','The customer left')}</span>`}</div><div class="btns"><button class="pb sm gold" data-act="hagEnd">${T('닫기','Close')}</button></div>`:`<div class="btns" style="margin-top:8px"><button class="pb sm" data-act="hagCut">${T('10% 깎기','Cut 10%')}</button><button class="pb sm gold" data-act="hagSell">${T('이 값에 팔기','Sell at this price')}</button></div>`);};
+MODS.supply=m=>{const s=S.ships.find(x=>x.id===m.sid);if(!s||s.st!=='sail'||s.back)return `<h2>${T('보급선','Supply boat')}</h2><div class="muted">${T('배가 이미 항구에 닿았어요','The ship has already reached port')}</div>`;const room=shipCap(s)-cargoN(s.cargo);
+  return `<h2>${T('보급선: 짐 싣기','Supply boat: load')}</h2><div class="muted">${T('남은 칸 {0} · 선체 {1}%','Free {0} · Hull {1}%',room,hpOf(s))}</div>`+(GOODS.filter(q=>inv(q.id)>0).map(q=>`<div class="row" style="padding:2px 0"><span>${gi(q.id,16)} ${GN(q.id)} (${inv(q.id)})</span><span><button class="pb sm" data-act="supL:${q.id}:1" ${room<1?'disabled':''}>+1</button> <button class="pb sm" data-act="supL:${q.id}:5" ${room<1?'disabled':''}>+5</button></span></div>`).join('')||`<div class="muted">${T('창고가 비었어요','The warehouse is empty')}</div>`);};
+MODS.pre=()=>{preGen();const q=S.pre;let h=`<h2>${T('선주문','Pre-orders')}</h2><div class="muted">${T('계약금을 먼저 받고, 기한 안에 납품하면 보너스를 받아요. 기한을 넘기면 계약금에 위약금 10%를 물어요.','Take a deposit now, deliver in time for a bonus. Miss the deadline and you return the deposit plus 10%.')}</div>`;
+  if(q.act.length){h+=`<h5>${T('받은 주문','Accepted')} ${q.act.length}/3</h5>`+q.act.map(o=>`<div class="card" style="display:block"><div class="row"><span>${gi(o.g,16)} ${GN(o.g)} x${o.n} (${inv(o.g)})</span><span class="muted">${mmss((o.exp-NOW())/1000)}</span></div><div class="row"><span class="gd">+${fmt(o.rw-o.dep)}</span><button class="pb sm gold" data-act="preD:${o.id}" ${inv(o.g)<o.n?'disabled':''}>${T('납품','Deliver')}</button></div></div>`).join('');}
+  h+=`<h5>${T('새 주문','Offers')}</h5>`+(q.off.map(o=>`<div class="card" style="display:block"><div class="row"><span>${gi(o.g,16)} ${GN(o.g)} x${o.n}</span><span class="muted">${T('{0}분 안에','Within {0} min',o.min)}</span></div><div class="row"><span class="muted">${T('계약금 {0} · 납품 시 {1}','Deposit {0} · on delivery {1}',fmt(o.dep),fmt(o.rw))}</span><button class="pb sm" data-act="preT:${o.id}" ${q.act.length>=3?'disabled':''}>${T('받기','Accept')}</button></div></div>`).join('')||`<div class="muted">${T('지금은 새 주문이 없어요','No offers right now')}</div>`);return h;};
 MODS.fleet=()=>`<h2>${T('배','Ships')}</h2>`+boxShips()+boxEv();
 MODS.contracts=()=>`<h2>${T('계약','Contracts')}</h2>`+(S.contracts.length?boxCon():`<div class="muted">${T('지금은 계약이 없어요','No contracts right now')}</div>`);
 MODS.mp=()=>{if(!MP.on)return `<h2>${T('다른 섬과 연결','Connect to other islands')}</h2><div class="muted">${T('연결하지 않아도 내 섬에서 계속 즐길 수 있어요. 연결하면 친구의 섬을 구경하고, 실시간으로 거래하고, 경매하고, 함께 공사도 해요. 시장도 같이 움직여요.','You can keep playing alone. Connect to visit friends’ islands, trade live, hold auctions and build together. The market is shared.')}</div>
