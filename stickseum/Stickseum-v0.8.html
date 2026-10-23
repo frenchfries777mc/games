@@ -561,13 +561,16 @@ if(document.readyState==='loading') document.addEventListener('DOMContentLoaded'
   #teleportBar{height:9px; border-radius:5px; background:var(--panel-2); border:1px solid var(--line); overflow:hidden;}
   #teleportFill{height:100%; width:100%; background:linear-gradient(90deg,#c17bff,#ff8fd9); transition:width .1s linear;}
   .diceBanner{ background:rgba(15,17,23,.92); border:2px solid #ffd34d; border-radius:12px; padding:8px 16px 10px; text-align:center; min-width:120px; box-shadow:0 6px 18px rgba(0,0,0,.4); opacity:0; transform:translateY(-8px); transition:opacity .18s ease, transform .18s ease; }
-  .pkRow{ display:flex; gap:10px; justify-content:center; perspective:600px; }
-  .pkCard{ width:54px; height:78px; border-radius:8px; border:2px solid #fff; box-shadow:0 4px 12px rgba(0,0,0,.5); display:flex; flex-direction:column; align-items:center; justify-content:center; font:900 24px/1 'Rajdhani',sans-serif; background:#fff; color:#15171d; }
-  .pkCard.back{ background:repeating-linear-gradient(45deg,#2a3f9a 0 6px,#1b2a6b 6px 12px); color:transparent; animation:pkSpin .55s linear infinite; }
+  .pkRow{ display:flex; gap:16px; justify-content:center; perspective:600px; }
+  .diceBanner.pkBanner{ background:transparent; border:none; box-shadow:none; padding:0; }
+  .diceBanner.pkBanner .dbName, .diceBanner.pkBanner .dbEffect{ text-shadow:0 2px 6px #000; }
+  .diceBanner.pkBanner .dbEffect{ font-size:15px; margin-top:8px; }
+  .pkCard{ width:92px; height:132px; border-radius:12px; border:3px solid #fff; box-shadow:0 6px 16px rgba(0,0,0,.55); display:flex; flex-direction:column; align-items:center; justify-content:center; font:900 46px/1 'Rajdhani',sans-serif; background:#fff; color:#15171d; }
+  .pkCard.back{ background:repeating-linear-gradient(45deg,#e0283c 0 8px,#a01626 8px 16px); color:transparent; animation:pkSpin .55s linear infinite; }
   .pkCard.red{ color:#d62839; }
   .pkCard.flip{ animation:pkFlip .28s ease-out; }
-  .pkCard small{ font-size:22px; margin-top:2px; }
-  .pkCard .jk{ font-size:11px; font-weight:800; margin-top:3px; }
+  .pkCard small{ font-size:42px; margin-top:4px; }
+  .pkCard .jk{ font-size:16px; font-weight:800; margin-top:3px; }
   @keyframes pkSpin{ to{ transform:rotateY(360deg); } }
   @keyframes pkFlip{ from{ transform:rotateY(90deg) scale(1.15); } to{ transform:rotateY(0) scale(1); } }
   .diceBanner.show{ opacity:1; transform:translateY(0); }
@@ -4880,7 +4883,7 @@ function shuffle(arr){ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.
 /* ===== the version of this file =====
    Players with different versions CAN meet and play together: the automatic matchmaking uses the same room names for every version (online-<mode>-<map>-<slot>), and nobody is refused because of a different build.
    The build is only sent along with the join message and the lobby (for information); the corner of the screen shows it. */
-const GAME_BUILD='build 2026-10-18-v348';
+const GAME_BUILD='build 2026-10-18-v349';
 const GAME_VERSION='0.8', GAME_VERSION_NAME='황금을 찾아서';   // 게임 버전 이름: versions.json의 title과 같게 (빌드마다 바꾸지 않음)
 const WEEKLY_EVENTS=[
   {id:'lowg',    name:'저중력 난투', desc:'몸이 둥실둥실, 중력이 약해진 난투', rules:{grav:0.6}},
@@ -10115,7 +10118,7 @@ function botBanTick(){          // the bot-only sides ban once their moment has 
   return any;
 }
 /* a person who ran out of time still bans (at random): both sides must have banned before the pick opens */
-function endBanStage(){ if(!banActive()) return; botBanTick(); { const bp=weaponPhase.ban.picks; for(const k in weaponPhase.ban.banner) for(const id of weaponPhase.ban.banner[k]) if(players[id] && bp[id]===undefined) bp[id]=banFreeRandom(id); } weaponPhase.ban.done=true; matchBans={}; for(const x in weaponPhase.ban.picks){ const w=weaponPhase.ban.picks[x]; if(!w) continue; const k=players[x]?banSideKey(players[x]):x; (matchBans[k]=matchBans[k]||[]); if(!matchBans[k].includes(w)) matchBans[k].push(w); } broadcastWeaponState(); }
+function endBanStage(){ if(!banActive()) return; botBanTick(); { const bp=weaponPhase.ban.picks; for(const k in weaponPhase.ban.banner) for(const id of weaponPhase.ban.banner[k]) if(players[id] && bp[id]===undefined) bp[id]=banFreeRandom(id); } weaponPhase.ban.done=true; matchBans={}; for(const x in weaponPhase.ban.picks){ const w=weaponPhase.ban.picks[x]; if(!w) continue; const k=players[x]?banSideKey(players[x]):x; (matchBans[k]=matchBans[k]||[]); if(!matchBans[k].includes(w)) matchBans[k].push(w); } botSchedulePicks(); broadcastWeaponState(); }   // (the bots' pick timers started when the ban stage began; restart them from the moment the bans are really done, or they would sit out the unused ban time)
 function banStageCheck(){
   if(!banActive()) return;
   const b=weaponPhase.ban, live=new Set(Object.values(players).map(banSideKey));
@@ -15463,7 +15466,7 @@ const DICE_EFFECT_TEXT={1:'자해 15',2:'이동속도 감소',3:'가장 가까�
 function showCardBanner(name, cards, total, tags){      // 도박사 궁극기: three cards spin face-down, then turn over one by one from the left
   const container=document.getElementById('diceBannerContainer');
   if(!container) return;
-  const el=document.createElement('div'); el.className='diceBanner';
+  const el=document.createElement('div'); el.className='diceBanner pkBanner';
   el.innerHTML='<div class="dbName"></div><div class="pkRow"></div><div class="dbEffect"></div>';
   el.querySelector('.dbName').textContent=name+'님의 카드';
   const row=el.querySelector('.pkRow'), eff=el.querySelector('.dbEffect'), els=[];
