@@ -13,6 +13,10 @@ export let GRID = new Uint8Array(0), WATER = new Uint8Array(0), PILLARS = [];
 export let SEC = new Int8Array(0); export const SOPEN = [];
 // 수수께끼 방 창살문: GATE 칸 값 = 문 번호 + 1. 닫혀 있으면 지나갈 수 없어요. GOPEN = 열렸는지
 export let GATE = new Int8Array(0); export const GOPEN = [];
+// 끊어진 길·승강기: CUT 칸 값 1 = 낭떠러지(끊어진 길), 2 = 절벽(승강기 띠), 3 = 위층 바닥, 4 = 승강기 발판, 5 = 계단
+// HGT = 칸 바닥 높이 비율 (위층 1), PDOWN = 기둥이 쓰러졌는지, LIFTH = 승강기 높이 (0 아래 ~ 1 위)
+export const LEDGE_H = 2.6;
+export let CUT = new Uint8Array(0), HGT = new Float32Array(0); export const PDOWN = [], LIFTH = [];
 let CUR = -1;
 // 장을 바꾸면 지도를 새로 만들어요 (끝없는 심연은 층마다 새로: force)
 export function useChapter(i, force) {
@@ -28,6 +32,10 @@ export function useChapter(i, force) {
     const fill = ([x, y, w, h], v, g) => { for (let j = y; j < y + h; j++) for (let i = x; i < x + w; i++) { SEC[j * MW + i] = v; GRID[j * MW + i] = g; } };
     fill(q.room, k + 1, 1); fill(q.pass, -(k + 1), 0);
   });
+  CUT = new Uint8Array(MW * MH); HGT = new Float32Array(MW * MH);
+  const fillC = ([x, y, w, h], v, g, hv) => { for (let j = y; j < y + h; j++) for (let i = x; i < x + w; i++) { if (i < 0 || j < 0 || i >= MW || j >= MH) continue; CUT[j * MW + i] = v; if (g != null) GRID[j * MW + i] = g; if (hv != null) HGT[j * MW + i] = hv; } };
+  for (const q of MAP.pits) fillC(q.band, 1, 0);
+  for (const q of MAP.lifts) { fillC(q.ledge, 3, null, 1); for (const [x, y, w, h, v] of q.stairs) fillC([x, y, w, h], 5, null, v); fillC(q.band, 2, 0); fillC(q.plat, 4, 1); }
   GATE = new Int8Array(MW * MH);
   MAP.puzzles.forEach((q, k) => { const [x, y, w, h] = q.gate; for (let j = y; j < y + h; j++) for (let i = x; i < x + w; i++) GATE[j * MW + i] = k + 1; });
   resetSecrets();
@@ -38,6 +46,37 @@ export function resetSecrets() {
   SOPEN.length = 0; FIELDS.clear();
   MAP.secrets.forEach(q => { const [x, y, w, h] = q.pass; for (let j = y; j < y + h; j++) for (let i = x; i < x + w; i++) GRID[j * MW + i] = 0; });
   GOPEN.length = 0; MAP.puzzles.forEach(q => gateSet(q, 0));
+  PDOWN.length = 0; MAP.pits.forEach(q => { bridgeSet(q, 0); const [x, y, w, h] = q.bridge; for (let j = y; j < y + h; j++) for (let i = x; i < x + w; i++) HGT[j * MW + i] = 0; }); LIFTH.length = 0; MAP.lifts.forEach((q, k) => { LIFTH[k] = 0; });
+}
+function bridgeSet(q, v) { const [x, y, w, h] = q.bridge; for (let j = y; j < y + h; j++) for (let i = x; i < x + w; i++) GRID[j * MW + i] = v; }
+// 기둥이 쓰러져 다리가 놓여요
+export function dropPillar(k) {
+  if (PDOWN[k] || !MAP.pits[k]) return; PDOWN[k] = 1; FIELDS.clear(); bridgeSet(MAP.pits[k], 1);
+  // 쓰러진 기둥 위를 걸어요 (기둥 윗면 높이)
+  const [x, y, w, h] = MAP.pits[k].bridge; for (let j = y; j < y + h; j++) for (let i = x; i < x + w; i++) HGT[j * MW + i] = 1 / LEDGE_H;
+}
+// 서 있는 기둥 가운데 (세계 좌표)
+export function pillarAt(k) { const [x, y] = MAP.pits[k].pil; return { x: x * CS, z: y * CS }; }
+// 그 자리 바닥 높이 (m): 위층·계단·오르내리는 발판
+export function hAt(x, z) {
+  const i = Math.floor(x / CS), j = Math.floor(z / CS); if (i < 0 || j < 0 || i >= MW || j >= MH) return 0;
+  const c = CUT[j * MW + i]; if (!c) return 0;
+  if (c === 4) { const k = MAP.lifts.findIndex(q => inR(q.plat, i, j)); return (LIFTH[k] || 0) * LEDGE_H; }
+  return HGT[j * MW + i] * LEDGE_H;
+}
+const inR = ([x, y, w, h], i, j) => i >= x && i < x + w && j >= y && j < y + h;
+// 승강기 발판에 오르내릴 수 있는지: 발판이 아래에 있으면 아래층과, 위에 있으면 위층과만 오가요
+// (ox, oz) → (nx, nz)로 움직여도 되면 true
+export function liftOk(ox, oz, nx, nz) {
+  if (!MAP.lifts.length) return true;
+  const oi = Math.floor(ox / CS), oj = Math.floor(oz / CS), ni = Math.floor(nx / CS), nj = Math.floor(nz / CS);
+  if (oi === ni && oj === nj) return true;
+  for (let k = 0; k < MAP.lifts.length; k++) {
+    const q = MAP.lifts[k], a = inR(q.plat, oi, oj), b = inR(q.plat, ni, nj); if (a === b) continue;
+    const h = LIFTH[k] || 0, other = a ? [ni, nj] : [oi, oj], up = CUT[other[1] * MW + other[0]] === 3;
+    return up ? h >= 0.97 : h <= 0.03;
+  }
+  return true;
 }
 function gateSet(q, v) { const [x, y, w, h] = q.gate; for (let j = y; j < y + h; j++) for (let i = x; i < x + w; i++) GRID[j * MW + i] = v; }
 export function openGate(k) { if (GOPEN[k] || !MAP.puzzles[k]) return; GOPEN[k] = 1; FIELDS.clear(); gateSet(MAP.puzzles[k], 1); }
@@ -80,6 +119,8 @@ export function collide(o, r) {
     }
   }
   for (const p of PILLARS) { const d = Math.hypot(o.x - p.x, o.z - p.z), m = p.r + r; if (d < m && d > 1e-4) { o.x = p.x + (o.x - p.x) / d * m; o.z = p.z + (o.z - p.z) / d * m; } }
+  // 아직 서 있는 금 간 기둥
+  for (let k = 0; k < MAP.pits.length; k++) { if (PDOWN[k]) continue; const p = pillarAt(k), d = Math.hypot(o.x - p.x, o.z - p.z), m = 1.2 + r; if (d < m && d > 1e-4) { o.x = p.x + (o.x - p.x) / d * m; o.z = p.z + (o.z - p.z) / d * m; } }
 }
 
 // 두 점 사이가 벽에 막히지 않았는지 (기둥은 무시해요)

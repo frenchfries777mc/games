@@ -6,9 +6,12 @@ import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js'
 import { OutputPass } from 'three/addons/postprocessing/OutputPass.js';
 import { RenderPixelatedPass } from 'three/addons/postprocessing/RenderPixelatedPass.js';
 import { ROLES, MAP, CH, FOES } from './data.js';
-import { CS, MW, MH, GRID, WATER, PILLARS, cw, chapterIndex, SEC, SOPEN, GATE } from './map.js';
+import { CS, MW, MH, GRID, WATER, PILLARS, cw, chapterIndex, SEC, SOPEN, GATE, CUT, HGT, LEDGE_H, hAt, pillarAt } from './map.js';
 // 화면에서 '바닥'은 비밀 방(SEC)을 뺀 곳이에요. 비밀 방은 따로 그려 두고 벽이 무너질 때 보여요. 창살문(GATE) 자리는 닫혀 있어도 바닥으로 그려요
-const floorCell = (i, j) => i >= 0 && j >= 0 && i < MW && j < MH && (GRID[j * MW + i] === 1 || GATE[j * MW + i] > 0) && !SEC[j * MW + i];
+const floorCell = (i, j) => i >= 0 && j >= 0 && i < MW && j < MH && (GRID[j * MW + i] === 1 || GATE[j * MW + i] > 0) && !SEC[j * MW + i] && CUT[j * MW + i] !== 4 && CUT[j * MW + i] !== 1;
+// 낭떠러지·절벽·승강기 칸 (벽을 세우지 않아요)
+const cutCell = (i, j) => i >= 0 && j >= 0 && i < MW && j < MH && CUT[j * MW + i] > 0 && CUT[j * MW + i] !== 3 && CUT[j * MW + i] !== 5;
+const cellH = (i, j) => i >= 0 && j >= 0 && i < MW && j < MH ? HGT[j * MW + i] * LEDGE_H : 0;
 // 어둠의 방 안쪽 칸인지 (횃불·빛줄기를 달지 않아요)
 const inDark = (i, j) => MAP.darks.some(({ room: [x, y, w, h] }) => i >= x - 1 && i <= x + w && j >= y - 1 && j <= y + h);
 
@@ -346,21 +349,21 @@ export class View {
     instBoxes(s, (add) => {
       for (let j = 0; j < MH; j++) for (let i = 0; i < MW; i++) {
         if (!floorCell(i, j)) continue;
-        const x = cw(i), z = cw(j), h = 0.3 + R() * 0.1, wt = WATER[j * MW + i], cols = wt ? wet : inBoss(i, j) ? bstone : stone;
+        const x = cw(i), z = cw(j), wt = WATER[j * MW + i], lh = cellH(i, j), cols = wt ? wet : inBoss(i, j) || lh > 1.5 ? bstone : stone, h = 0.3 + R() * 0.1 + lh;
         if (T.trees) add(x, h / 2 - 0.3 - (wt ? 0.15 : 0) + (R() - .5) * 0.08, z, 2.02, h, 2.02, cols[R() * cols.length | 0]); // 숲 바닥은 틈 없이 흙과 풀
         else add(x + (R() - .5) * 0.06, h / 2 - 0.3 - (wt ? 0.15 : 0), z + (R() - .5) * 0.06, 1.94, h, 1.94, cols[R() * cols.length | 0]);
-        if (!wt && R() < T.mossP) add(x + (R() - .5) * 1.2, 0.04, z + (R() - .5) * 1.2, 0.6, 0.08, 0.5, T.moss);
+        if (!wt && R() < T.mossP) add(x + (R() - .5) * 1.2, 0.04 + lh, z + (R() - .5) * 1.2, 0.6, 0.08, 0.5, T.moss);
       }
     });
     // 벽: 방 뒤쪽(북쪽) 벽은 높게, 앞쪽·옆 벽은 낮게 해서 캐릭터가 가려지지 않게 해요
     instBoxes(s, (add) => {
       for (let j = 0; j < MH; j++) for (let i = 0; i < MW; i++) {
-        if (floorCell(i, j) || SEC[j * MW + i]) continue;
-        let nb = false; for (let dj = -1; dj <= 1; dj++) for (let di = -1; di <= 1; di++) if (floorCell(i + di, j + dj)) nb = true;
+        if (floorCell(i, j) || SEC[j * MW + i] || cutCell(i, j)) continue;
+        let nb = false, nh = 0; for (let dj = -1; dj <= 1; dj++) for (let di = -1; di <= 1; di++) if (floorCell(i + di, j + dj)) { nb = true; nh = Math.max(nh, cellH(i + di, j + dj)); }
         if (!nb) continue;
         const x = cw(i), z = cw(j), bc = inBoss(i, j + 1) || inBoss(i, j - 1) ? bbrick : brick;
         const back = floorCell(i, j + 1) && !floorCell(i, j - 1);
-        const rows = back ? 6 : floorCell(i, j - 1) && !floorCell(i, j + 1) ? 1 : 3;
+        const rows = (back ? 6 : floorCell(i, j - 1) && !floorCell(i, j + 1) ? 1 : 3) + Math.ceil(nh);
         if (T.trees) {
           // 숲: 벽돌 대신 나무줄기와 덤불이 빽빽한 숲 가장자리
           const leaf = [0x2e3a26, 0x36402a, 0x3a4430, 0x2a3422], trunk = [0x3a2a1c, 0x44301e, 0x2e2216];
@@ -377,7 +380,7 @@ export class View {
       }
     });
     this.torchPos = torches;
-    this.buildSecrets(s, T, brick); this.buildPuzzles(s, T); this.buildDarks(s); this.buildExit(s); this.escOn = false;
+    this.buildSecrets(s, T, brick); this.buildPuzzles(s, T); this.buildDarks(s); this.buildExit(s); this.buildCuts(s, T, brick); this.escOn = false;
     for (const [x, z] of torches) { box(0.3, T.trees ? 4.6 : 1, 0.3, M(0x4a3020), x, T.trees ? 2.3 : 4, z, s); box(0.6, 0.25, 0.6, M(0x2a2830, { m: 0.7 }), x, 4.5, z, s); this.flame(s, x, 5.05, z, 1, false, T.torch); }
     // 횃불 빛은 가까운 곳에만 몇 개 켜요 (빛이 너무 많으면 느려져요)
     this.pool = []; for (let k = 0; k < 8; k++) { const L = new THREE.PointLight(T.torch, 0, 22, 1.6); s.add(L); this.pool.push(L); this.flick.push({ L, b: 0, ph: k * 1.3, pool: true }); }
@@ -400,7 +403,7 @@ export class View {
       abyss: (a, ai, x, y, w, h) => { for (let k = 0; k < 5; k++) { const cx = cw(x + 1 + R() * (w - 2)), cz = cw(y + 1 + R() * (h - 2)); const c = cone(0.3, 1 + R() * 1.6, 4, M(0x8a5ad0, { e: 0x6a2ab0, ei: 2 }), cx, 0.5, cz, s); c.rotation.set((R() - .5) * 0.5, R() * 3, (R() - .5) * 0.5); c.castShadow = false; } },
       tower: (a, ai, x, y, w, h) => { const bx = cw(x + 1), bz = cw(y); cyl(0.6, 0.4, 1.2, 6, dmetal(), bx, 0.6, bz, s); this.flame(s, bx, 1.5, bz, 0.9, false, T.torch); box(2.4, 2, 0.3, M(0x4a3020), cw(x + w - 2), 1, cw(y), s); for (let k = 0; k < 3; k++) box(0.1, 1.8, 0.1, metal(), cw(x + w - 2) - 0.7 + k * 0.7, 1.4, cw(y) + 0.25, s); }
     }[CH.theme];
-    MAP.areas.forEach((a, ai) => { const [x, y, w, h] = a.r[0]; if (a.boss) return; if (decor) { decor(a, ai, x, y, w, h); return; } barrel(cw(x), cw(y) + 0.2); if (w > 6) barrel(cw(x) + 1.7, cw(y)); box(1.8, 1.6, 1.8, M(0x6a4628), cw(x + w - 1), 0.8, cw(y), s).rotation.y = 0.3 + ai; for (let k = 0; k < 3; k++) { const bx = cw(x + 1 + R() * (w - 2)), bz = cw(y + 1 + R() * (h - 2)); const b = box(1.2, 0.15, 0.15, bone(), bx, 0.12, bz, s); b.rotation.y = R() * 3; sph(0.35, 8, 6, bone(), bx + 0.8, 0.25, bz + 0.3, s); } });
+    MAP.areas.forEach((a, ai) => { const [x, y, w, h] = a.r[0]; if (a.boss || a.cut) return; if (decor) { decor(a, ai, x, y, w, h); return; } barrel(cw(x), cw(y) + 0.2); if (w > 6) barrel(cw(x) + 1.7, cw(y)); box(1.8, 1.6, 1.8, M(0x6a4628), cw(x + w - 1), 0.8, cw(y), s).rotation.y = 0.3 + ai; for (let k = 0; k < 3; k++) { const bx = cw(x + 1 + R() * (w - 2)), bz = cw(y + 1 + R() * (h - 2)); const b = box(1.2, 0.15, 0.15, bone(), bx, 0.12, bz, s); b.rotation.y = R() * 3; sph(0.35, 8, 6, bone(), bx + 0.8, 0.25, bz + 0.3, s); } });
     this.details(s, T);
     // 보스 방 바닥 문양
     { const ring = mesh(geo('bring', () => new THREE.TorusGeometry(6, 0.08, 4, 48)), M(T.ring, { e: T.ring, ei: 2 }), cw(MAP.boss[0]), 0.12, cw(MAP.boss[1]) + 3, s); ring.rotation.x = Math.PI / 2; ring.castShadow = false; }
@@ -548,6 +551,95 @@ export class View {
       this.puzR.push(P);
     });
   }
+  // 끊어진 길: 바닥이 꺼진 낭떠러지와 금 간 기둥 / 도르래 승강기: 절벽, 오르내리는 발판, 손잡이 둘
+  buildCuts(s, T, brick) {
+    this.pitR = []; this.liftR = [];
+    const dark = M(0x0a080c), wood = M(0x6a4628), woodD = M(0x4a3020), rope = M(0xb09a70), stoneD = M(0x58545e), crackM = M(0x141016), glowM = M(0xffd08a, { e: 0xffb050, ei: 2.6 });
+    const edges = (band, ax, depth, col) => instBoxes(s, add => {
+      const [bx, by, bw, bh] = band;
+      // 낭떠러지 안쪽 벽: 띠 둘레를 따라 아래로 내려가는 벽돌
+      for (let j = by; j < by + bh; j++) for (let i = bx; i < bx + bw; i++) {
+        for (const [di, dj] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) {
+          const ni = i + di, nj = j + dj; if (ni >= bx && ni < bx + bw && nj >= by && nj < by + bh) continue;
+          const x = cw(i) + di * 0.95, z = cw(j) + dj * 0.95;
+          for (let y = 0; y < depth; y++) add(x, -0.5 - y, z, di ? 0.12 : 1.96, 0.95, dj ? 0.12 : 1.96, col[(y + i + j) % col.length]);
+        }
+      }
+    });
+    MAP.pits.forEach((q, k) => {
+      const [bx, by, bw, bh] = q.band;
+      box(bw * CS, 0.2, bh * CS, dark, (bx + bw / 2) * CS, -6, (by + bh / 2) * CS, s, false);
+      edges(q.band, q.ax, 5, brick);
+      // 낭떠러지 끝 부스러기
+      for (let n = 0; n < 10; n++) { const along = R() * (q.ax === 'h' ? bw : bh), side = R() < 0.5 ? -0.4 : (q.ax === 'h' ? bh : bw) + 0.4; const x = q.ax === 'h' ? (bx + along) * CS : (bx + side) * CS, z = q.ax === 'h' ? (by + side) * CS : (by + along) * CS; const r = mesh(geo('rock', () => new THREE.DodecahedronGeometry(0.8)), M(brick[n % 4]), x, 0.1, z, s); r.scale.setScalar(0.25 + R() * 0.25); r.rotation.y = R() * 3; }
+      // 기둥: 밑동을 축으로 먼 쪽을 향해 쓰러져요
+      const o = pillarAt(k), g = new THREE.Group(); g.position.set(o.x, 0, o.z); s.add(g);
+      const fall = new THREE.Group(); g.add(fall);
+      // 쓰러지는 방향: 가로 띠는 위쪽(-z), 세로 띠는 far 쪽(±x)
+      if (q.ax === 'h') g.rotation.y = 0; else g.rotation.y = q.far > 0 ? -Math.PI / 2 : Math.PI / 2;
+      box(2.8, 0.6, 2.8, stoneD, 0, 0.3, 0, g);
+      const Hp = 10.5;
+      instBoxes(fall, add => { for (let y = 0.6; y < Hp - 0.6; y += 1.1) add((R() - .5) * 0.06, y + 0.5, (R() - .5) * 0.06, 2.0, 1.05, 2.0, brick[R() * 4 | 0]); add(0, Hp - 0.2, 0, 2.5, 0.5, 2.5, 0x5c5468); });
+      // 앞면의 빛나는 금
+      const cracks = new THREE.Group(); fall.add(cracks);
+      let cy = 5.5, cx = 0; for (let n = 0; n < 7; n++) { const ny = cy - 0.6, nx = cx + (R() - .5) * 0.9, sg = box(Math.hypot(cx - nx, 0.01) + 0.08, 0.6 + 0.08, 0.08, n % 2 ? glowM : crackM, (cx + nx) / 2, (cy + ny) / 2, 1.02, cracks); sg.rotation.z = Math.atan2(nx - cx, 0.6); cy = ny; cx = nx; }
+      for (let n = 0; n < 3; n++) { const r = mesh(geo('rock', () => new THREE.DodecahedronGeometry(0.8)), M(brick[n % 4]), (R() - .5) * 2, 0.15, 1.6 + R() * 0.6, g); r.scale.setScalar(0.2 + R() * 0.15); }
+      const L = new THREE.PointLight(0xffb060, 8, 7, 1.6); L.position.set(0, 3, 1.8); g.add(L);
+      this.pitR.push({ g, fall, cracks, L, down: q.ax ? false : false, ang: 0, v: 0, hits: 0, done: false, Hp });
+    });
+    MAP.lifts.forEach((q, k) => {
+      const [bx, by, bw, bh] = q.band, [px, py, pw, ph] = q.plat, H = LEDGE_H;
+      // 절벽: 발판 자리만 비워 두고 위층 높이까지 벽돌을 쌓아요. 발판 구멍 아래는 어둡게
+      instBoxes(s, add => { for (let j = by; j < by + bh; j++) for (let i = bx; i < bx + bw; i++) { if (i >= px && i < px + pw && j >= py && j < py + ph) continue; for (let y = 0; y < Math.ceil(H); y++) add(cw(i), y + 0.45 - (Math.ceil(H) - H), cw(j), 1.98, 0.95, 1.98, brick[(y + i + j) % 4]); add(cw(i), H + 0.1, cw(j), 2.02, 0.2, 2.02, T.top); } });
+      // 위층 가장자리 난간 (발판 자리는 비워요): 위층이 높다는 게 한눈에 보이게
+      const fence = (i, j, di, dj) => { const x = cw(i) - di * 0.85, z = cw(j) - dj * 0.85, y = H; box(0.22, 1.1, 0.22, woodD, x, y + 0.55, z, s); box(di ? 0.12 : 2.0, 0.14, dj ? 0.12 : 2.0, wood, x, y + 0.95, z, s); box(di ? 0.1 : 2.0, 0.1, dj ? 0.1 : 2.0, wood, x, y + 0.5, z, s); };
+      if (q.ax === 'h') { for (let i = bx; i < bx + bw; i++) if (i < px || i >= px + pw) fence(i, by - 1, 0, -1); }
+      else { const ei = q.far > 0 ? bx + 3 : bx - 1; for (let j = by; j < by + bh; j++) if (j < py || j >= py + ph) fence(ei, j, q.far > 0 ? 1 : -1, 0); }
+      const pcx = (px + pw / 2) * CS, pcz = (py + ph / 2) * CS, W = pw * CS - 0.2;
+      // 도르래 틀: 양옆 기둥과 위의 들보, 가운데 바퀴
+      const perp = q.ax === 'h'; // 가로 띠: 기둥은 x 양옆
+      for (const sgn of [-1, 1]) { const x = perp ? pcx + sgn * (W / 2 + 0.5) : pcx, z = perp ? pcz : pcz + sgn * (W / 2 + 0.5); box(0.6, H + 5.4, 0.6, woodD, x, (H + 5.4) / 2, z, s); }
+      box(perp ? W + 1.6 : 0.6, 0.6, perp ? 0.6 : W + 1.6, woodD, pcx, H + 5.4, pcz, s);
+      const wheel = new THREE.Group(); wheel.position.set(pcx, H + 4.8, pcz); s.add(wheel); if (!perp) wheel.rotation.y = Math.PI / 2;
+      cyl(0.8, 0.8, 0.3, 10, wood, 0, 0, 0, wheel).rotation.x = Math.PI / 2; for (let n = 0; n < 4; n++) box(1.5, 0.12, 0.12, woodD, 0, 0, 0.18, wheel).rotation.z = n * Math.PI / 4;
+      // 발판: 나무 판자, 난간, 네 귀퉁이 밧줄
+      const plat = new THREE.Group(); plat.position.set(pcx, 0, pcz); s.add(plat);
+      instBoxes(plat, add => { for (let n = 0; n < 6; n++) add(-W / 2 + W / 12 + n * W / 6, -0.15, 0, W / 6 - 0.08, 0.3, W, [0x6a4628, 0x5e3e22, 0x744c2c][n % 3]); });
+      box(W, 0.16, 0.3, woodD, 0, -0.05, -W / 2, plat); box(W, 0.16, 0.3, woodD, 0, -0.05, W / 2, plat);
+      const ropes = []; for (const [ax2, az2] of [[-1, -1], [1, -1], [-1, 1], [1, 1]]) { const r = box(0.08, 1, 0.08, rope, ax2 * (W / 2 - 0.2), 0, az2 * (W / 2 - 0.2), plat); r.castShadow = false; ropes.push(r); }
+      // 발판 위 빛나는 테두리 (움직일 수 있을 때 금빛)
+      const rimM = M(0xffd36b, { e: 0xffb040, ei: 1.5, uniq: true }); for (const [dx, dz, w2, d2] of [[0, -W / 2 + 0.1, W, 0.1], [0, W / 2 - 0.1, W, 0.1], [-W / 2 + 0.1, 0, 0.1, W], [W / 2 - 0.1, 0, 0.1, W]]) box(w2, 0.05, d2, rimM, dx, 0.02, dz, plat).castShadow = false;
+      // 손잡이: 아래층과 위층에 하나씩. 돌리면 바퀴가 돌아요
+      const cranks = [q.cb, q.ct].map(([cx2, cy2], n) => {
+        const x = cw(cx2), z = cw(cy2), y0 = n ? H : 0, cg = new THREE.Group(); cg.position.set(x, y0, z); s.add(cg);
+        box(1.2, 1.4, 1.0, woodD, 0, 0.7, 0, cg); const wh = new THREE.Group(); wh.position.set(0, 1.5, 0.55); cg.add(wh);
+        cyl(0.55, 0.55, 0.14, 10, wood, 0, 0, 0, wh).rotation.x = Math.PI / 2; box(0.12, 0.9, 0.12, woodD, 0, 0.3, 0.12, wh); cyl(0.07, 0.07, 0.5, 5, M(0xd8c8a0), 0, 0.75, 0.3, wh).rotation.x = Math.PI / 2;
+        const gem = mesh(geo('oct3', () => new THREE.OctahedronGeometry(0.28)), M(0xffd36b, { e: 0xffb040, ei: 2, uniq: true }), 0, 2.4, 0, cg);
+        return { cg, wh, gem };
+      });
+      this.liftR.push({ plat, wheel, ropes, rimM, cranks, H, h: 0 });
+    });
+  }
+  syncCuts(W, dt, t) {
+    if (!this.pitR) return;
+    this.pitR.forEach((P, k) => {
+      const v = W && W.pt ? W.pt[k] : 0, down = v === -1;
+      if (!down && v > P.hits) { P.hits = v; P.fall.rotation.x = -0.04; P.cracks.scale.setScalar(1 + v * 0.12); P.L.intensity = 8 + v * 4; }
+      P.fall.rotation.x += (0 - P.fall.rotation.x) * Math.min(1, dt * 10) * (P.down ? 0 : 1);
+      if (down && !P.down) { P.down = true; P.v = 0; }
+      if (P.down && !P.done) { P.v += dt * 3.2; P.ang = Math.min(Math.PI / 2, P.ang + P.v * dt * 2.4); P.fall.rotation.x = -P.ang; if (P.ang >= Math.PI / 2) { P.done = true; this.shake = Math.max(this.shake, 0.9); const o = P.g.position; const fx = o.x + (P.g.rotation.y ? -Math.sin(P.g.rotation.y) : 0) * 6, fz = o.z - (P.g.rotation.y ? 0 : 6); this.burst(fx, 0.6, fz, 0x9a8e84, 26, 6, 0.9, 0.22); this.ring(fx, fz, 4, 0xc8b89a, 0.6); P.L.intensity = 0; } }
+      if (P.done) { P.fall.rotation.x = -Math.PI / 2; P.cracks.visible = false; }
+    });
+    this.liftR.forEach((L, k) => {
+      const z = W && W.lf ? W.lf[k] : null; if (!z) return; const [h, done, mv] = z;
+      L.h += (h - L.h) * Math.min(1, dt * 14); L.plat.position.y = L.h * L.H;
+      // 밧줄은 발판에서 들보까지 늘었다 줄었다
+      const top = L.H + 4.8 - L.plat.position.y; L.ropes.forEach(r => { r.scale.y = top; r.position.y = top / 2; });
+      if (mv) { const d = (h >= L.h ? 1 : -1) * dt * 5; L.wheel.rotation.z += d; L.cranks.forEach(c => c.wh.rotation.z -= d * 1.6); }
+      const ready = h <= 0.03 || h >= 0.97; L.rimM.emissiveIntensity = ready ? 1.5 + Math.sin(t * 4) * 0.6 : 0.3;
+      L.cranks.forEach(c => { c.gem.visible = !done; c.gem.position.y = 2.4 + Math.sin(t * 2.5) * 0.12; c.gem.rotation.y = t; });
+    });
+  }
   // 어둠의 방: 방 위를 검은 막으로 덮고, 동료 둘레와 횃불 둘레만 구멍을 뚫어요. 입구에는 횃불 걸이가 있어요
   buildDarks(s) {
     this.darkR = [];
@@ -597,7 +689,7 @@ export class View {
       const backs = []; for (let i = x; i < x + w; i++) if (floorCell(i, y) && !floorCell(i, y - 1)) backs.push(i);
       const wz = cw(y - 1) + 1.0;
       // 1) 무너진 천장 틈으로 내려오는 빛줄기와 떠다니는 먼지 (어둠의 방은 빼고)
-      for (let k = 0; k < (a.dark ? 0 : big ? 2 : 1); k++) {
+      for (let k = 0; k < (a.dark || a.cut ? 0 : big ? 2 : 1); k++) {
         const bx = rx(), bz = rz(), b = nd(box(1.8, 12, 1.8, beamM, bx + 1.05, 6, bz - 2.2, s)); b.receiveShadow = false; b.rotation.set(-0.35, 0, -0.17);
         const g = nd(mesh(geo('glow', () => new THREE.CircleGeometry(1.6, 10)), glowM, bx, 0.12, bz, s)); g.rotation.x = -Math.PI / 2;
         for (let q = 0; q < 7; q++) { const m = nd(box(0.09, 0.09, 0.09, moteM, bx, 1, bz, s)); this.motes.push({ m, x: bx, z: bz, t: R() * 10, sp: 0.15 + R() * 0.2 }); }
@@ -610,8 +702,8 @@ export class View {
       });
       if (!ff && backs.length > 6 && ai % 2 === 0) { const i = backs[Math.floor(backs.length * 0.75)], bx = cw(i); box(2.2, 2.6, 0.2, dark, bx, 1.6, wz - 0.02, s); for (let q = 0; q < 5; q++) box(0.1, 2.6, 0.12, M(0x6a4a3a, { m: 0.5 }), bx - 0.9 + q * 0.45, 1.6, wz + 0.1, s); box(2.3, 0.14, 0.14, M(0x6a4a3a, { m: 0.5 }), bx, 2.9, wz + 0.1, s); box(2.3, 0.14, 0.14, M(0x6a4a3a, { m: 0.5 }), bx, 0.4, wz + 0.1, s); }
       // 3) 깨진 타일, 이끼, 갈라진 틈
-      for (let k = 0; k < (big ? 9 : 5); k++) { const c = nd(box(0.08, 0.05, 0.7 + R() * 1.1, dark, rx(), 0.11, rz(), s)); c.rotation.y = R() * 3; if (R() < 0.6) { const c2 = nd(box(0.07, 0.05, 0.5, dark, c.position.x + 0.3, 0.11, c.position.z + 0.3, s)); c2.rotation.y = c.rotation.y + 0.9; } }
-      if (!ff) for (let k = 0; k < (big ? 4 : 2); k++) { const t = box(0.9, 0.18, 0.9, M(T.floor[k % T.floor.length]), rx(), 0.12, rz(), s); t.rotation.set(0.25, R() * 3, 0.15); }
+      for (let k = 0; k < (a.cut ? 0 : big ? 9 : 5); k++) { const c = nd(box(0.08, 0.05, 0.7 + R() * 1.1, dark, rx(), 0.11, rz(), s)); c.rotation.y = R() * 3; if (R() < 0.6) { const c2 = nd(box(0.07, 0.05, 0.5, dark, c.position.x + 0.3, 0.11, c.position.z + 0.3, s)); c2.rotation.y = c.rotation.y + 0.9; } }
+      if (!ff && !a.cut) for (let k = 0; k < (big ? 4 : 2); k++) { const t = box(0.9, 0.18, 0.9, M(T.floor[k % T.floor.length]), rx(), 0.12, rz(), s); t.rotation.set(0.25, R() * 3, 0.15); }
       for (let k = 0; k < 4; k++) { const bx = cw(x + R() * w), mz = cw(y) - 0.6 + R() * 0.6; nd(box(0.8 + R() * 0.8, 0.06, 0.4 + R() * 0.5, M(T.moss), bx, 0.12, mz, s)); }
       // 4) 구석 거미줄과 뼈 무더기
       // 거미줄: 벽 위 모서리에서 퍼지는 실 다섯 가닥과 그 사이를 잇는 실 두 줄
@@ -620,18 +712,18 @@ export class View {
         for (let q = 0; q <= 4; q++) { const a2 = A(q), t = nd(box(1.9, 0.04, 0.02, webM, Math.cos(a2) * 0.95, Math.sin(a2) * 0.95, 0, g)); t.rotation.z = a2; }
         for (const r of [0.7, 1.35]) for (let q = 0; q < 4; q++) { const a1 = A(q), a2 = A(q + 1), x1 = Math.cos(a1) * r, y1 = Math.sin(a1) * r, x2 = Math.cos(a2) * r * 0.92, y2 = Math.sin(a2) * r * 0.92, t = nd(box(Math.hypot(x2 - x1, y2 - y1), 0.035, 0.02, webM, (x1 + x2) / 2, (y1 + y2) / 2, 0, g)); t.rotation.z = Math.atan2(y2 - y1, x2 - x1); }
       }
-      for (let k = 0; k < (a.rest ? 1 : 2); k++) { const bx = rx(), bz = rz(); for (let q = 0; q < 5; q++) { const bn = cyl(0.06, 0.06, 0.7, 4, boneM, bx + (R() - .5) * 0.8, 0.16, bz + (R() - .5) * 0.8, s); bn.rotation.set(Math.PI / 2, R() * 3, 0); } sph(0.26, 6, 5, boneM, bx + 0.2, 0.3, bz, s); }
+      for (let k = 0; k < (a.cut ? 0 : a.rest ? 1 : 2); k++) { const bx = rx(), bz = rz(); for (let q = 0; q < 5; q++) { const bn = cyl(0.06, 0.06, 0.7, 4, boneM, bx + (R() - .5) * 0.8, 0.16, bz + (R() - .5) * 0.8, s); bn.rotation.set(Math.PI / 2, R() * 3, 0); } sph(0.26, 6, 5, boneM, bx + 0.2, 0.3, bz, s); }
       // 5) 쓰러진 기사 석상과 부서진 갑옷 더미
-      if (ai % 3 === 1 && !a.boss) {
+      if (ai % 3 === 1 && !a.boss && !a.cut) {
         const bx = cw(x + w - 2), bz = cw(y + h - 2), st = new THREE.Group(); st.position.set(bx, 0, bz); st.rotation.y = 0.5 + R(); s.add(st);
         box(1.6, 0.7, 1.6, stoneD, -1.8, 0.35, 0, st); box(0.9, 0.7, 2.6, stoneM, 0, 0.45, 0, st); sph(0.42, 8, 6, stoneM, 0, 0.5, 1.75, st); box(0.25, 0.25, 2.6, stoneD, 0.6, 0.25, 0.4, st); box(0.9, 0.12, 0.25, stoneD, 0.6, 0.25, -0.7, st);
         for (let q = 0; q < 4; q++) mesh(geo('rock', () => new THREE.DodecahedronGeometry(0.8)), stoneD, -1 + R() * 2, 0.15, -1.6 + R(), st).scale.setScalar(0.35);
         const ax = rx(), az = rz(); cyl(0.38, 0.42, 0.55, 8, dmetal(), ax, 0.28, az, s).rotation.z = 1.2; box(0.9, 0.3, 1, dmetal(), ax + 0.7, 0.18, az + 0.3, s).rotation.y = 0.6; const sh = cyl(0.6, 0.6, 0.12, 8, M(0x2a4a8a), ax - 0.6, 0.1, az + 0.5, s);
       }
       // 6) 흔들리는 풀 (숲)
-      if (ff) for (let k = 0; k < (big ? 26 : 16); k++) { const g = new THREE.Group(), gx = rx(), gz = rz(); g.position.set(gx, 0.05, gz); s.add(g); for (let q = 0; q < 3; q++) { const c = cone(0.1, 0.8 + R() * 0.5, 3, M(grassC[q]), (q - 1) * 0.15, 0.4, (R() - .5) * 0.2, g); c.castShadow = false; c.rotation.z = (q - 1) * 0.25; } this.grass.push({ g, x: gx, z: gz, b: 0, bx: 0, bz: 0, ph: R() * 6 }); }
+      if (ff && !a.cut) for (let k = 0; k < (big ? 26 : 16); k++) { const g = new THREE.Group(), gx = rx(), gz = rz(); g.position.set(gx, 0.05, gz); s.add(g); for (let q = 0; q < 3; q++) { const c = cone(0.1, 0.8 + R() * 0.5, 3, M(grassC[q]), (q - 1) * 0.15, 0.4, (R() - .5) * 0.2, g); c.castShadow = false; c.rotation.z = (q - 1) * 0.25; } this.grass.push({ g, x: gx, z: gz, b: 0, bx: 0, bz: 0, ph: R() * 6 }); }
       // 7) 천장에서 떨어지는 물방울과 물결
-      for (let k = 0; k < (th === 'abbey' ? 3 : 1) + (big ? 1 : 0); k++) { const dx = rx(), dz = rz(); nd(mesh(geo('wet', () => new THREE.CircleGeometry(0.7, 8)), wetM, dx, 0.11, dz, s)).rotation.x = -Math.PI / 2; const m = nd(box(0.09, 0.22, 0.09, dropM, dx, 8, dz, s)); this.drips.push({ m, x: dx, z: dz, t: R() * 3, T: 2 + R() * 2.5 }); }
+      for (let k = 0; k < (a.cut ? 0 : (th === 'abbey' ? 3 : 1) + (big ? 1 : 0)); k++) { const dx = rx(), dz = rz(); nd(mesh(geo('wet', () => new THREE.CircleGeometry(0.7, 8)), wetM, dx, 0.11, dz, s)).rotation.x = -Math.PI / 2; const m = nd(box(0.09, 0.22, 0.09, dropM, dx, 8, dz, s)); this.drips.push({ m, x: dx, z: dz, t: R() * 3, T: 2 + R() * 2.5 }); }
       // 8) 기사단 문장 (뒷벽 가운데)
       if (backs.length > 4 && !ff) { let i = backs[Math.floor(backs.length / 2)]; if (i % 3 === 0) i++; const bx = cw(i); box(1.5, 1.8, 0.12, M(crestC), bx, 3.4, wz + 0.02, s); cone(0.75, 0.6, 4, M(crestC), bx, 2.3, wz + 0.02, s).rotation.set(Math.PI, Math.PI / 4, 0); box(0.22, 1.5, 0.14, gold(), bx, 3.35, wz + 0.1, s); box(1.0, 0.22, 0.14, gold(), bx, 3.6, wz + 0.1, s); }
       // 8) 구역 입구 아치문
@@ -665,7 +757,7 @@ export class View {
       if (!E) { const m = makeHero(p.role); s.add(m); E = { m, x: p.x, z: p.z, a: p.a, ph: 0 }; this.ents.set(key, E); E.ring = ringMesh(s, ROLES[p.role].color); E.ward = sph(1.3, 12, 10, M(0x9af0e0, { e: 0x6ad0c0, ei: 0.5, op: 0.08, uniq: true }), 0, 1.5, 0, m); E.ward.castShadow = false; }
       const k = exact || p.id === me ? 1 : Math.min(1, dt * 12);
       E.x += (p.x - E.x) * k; E.z += (p.z - E.z) * k; E.a = lerpA(E.a, p.a, Math.min(1, dt * 18));
-      animHero(E, p, dt, t); E.ring.position.set(E.x, 0.12, E.z); E.ring.visible = !p.dd;
+      animHero(E, p, dt, t); E.hy = hy(E, exact ? 1 : dt); E.m.position.y += E.hy; E.ring.position.set(E.x, 0.12 + E.hy, E.z); E.ring.visible = !p.dd;
       E.ward.visible = p.sh > 0; E.m.visible = !p.dd;
     }
     // 적
@@ -673,7 +765,7 @@ export class View {
       const key = 'e' + e.id; seen.add(key); let E = this.ents.get(key);
       if (!E) { const m = e.k === 'boss' ? makeBossOf(CH.boss.ai) : makeFoe(e.k); s.add(m); E = { m, x: e.x, z: e.z, a: e.a, ph: R() * 6, base: m.scale.x }; this.ents.set(key, E); }
       const k = exact ? 1 : Math.min(1, dt * 12); E.x += (e.x - E.x) * k; E.z += (e.z - E.z) * k; E.a = lerpA(E.a, e.a, Math.min(1, dt * 14));
-      animEnemy(E, e, dt, t, this);
+      animEnemy(E, e, dt, t, this); E.hy = hy(E, exact ? 1 : dt); E.m.position.y += E.hy;
     }
     // 투사체
     for (const p of S.pr) {
@@ -697,7 +789,7 @@ export class View {
     if (W && this.trapM) {
       this.trapM.forEach((T, k) => { const v = W.tr[k] | 0, on = v & 1, up = v & 2; T.sp.position.y += ((on && up ? 0.1 : -0.8) - T.sp.position.y) * Math.min(1, dt * 18); if (!on) T.sp.visible = false; });
       this.chests.forEach((C, k) => { if (C.mim) { C.g.visible = !W.ch[k]; C.lid.rotation.x = -(Math.max(0, Math.sin(t * 1.3 + 1)) ** 8) * 0.18; return; } C.lid.rotation.x += ((W.ch[k] ? -1.6 : 0) - C.lid.rotation.x) * Math.min(1, dt * 6); });
-      this.syncPuzzles(W, dt, t);
+      this.syncPuzzles(W, dt, t); this.syncCuts(W, dt, t);
       this.altars.forEach((A, k) => { const u = !!W.al[k]; A.c.position.y = 2.3 + Math.sin(t * 1.6 + k) * 0.12; A.c.rotation.y = t * 0.8; if (u !== A.used) { A.used = u; A.c.material.emissiveIntensity = u ? 0.2 : 3; A.L.intensity = u ? 0 : 18; } });
       this.fires.forEach((F, k) => { const lit = !!W.fi[k]; if (lit !== F.lit) { F.lit = lit; F.g.visible = lit; F.ring.visible = lit; F.L.intensity = lit ? 70 : 0; if (lit) this.flick.push({ L: F.L, b: 70, ph: k }); } if (lit) F.g.children.forEach((c, i) => { c.scale.y = 0.85 + Math.sin(t * 4 + i * 1.7) * 0.12; }); });
     }
@@ -935,6 +1027,8 @@ function zoneAnim(E, z, t) {
   if (z.k === 'fire') { E.m.visible = !z.dl; E.m.children.forEach((c, i) => { if (c.geometry.type === 'ConeGeometry') c.scale.y = 0.8 + Math.sin(t * 4 + i) * 0.15; }); }
   if (z.k === 'rain') E.m.userData.drops.forEach((d, i) => { d.position.y = 4 - ((t * 9 + i * 0.37) % 1) * 4; });
 }
+// 위층·계단·승강기 위에 서 있으면 그만큼 올려 그려요 (부드럽게 따라가요)
+function hy(E, dt) { const h = hAt(E.x, E.z); return E.hy == null || dt >= 1 ? h : E.hy + (h - E.hy) * Math.min(1, dt * 14); }
 function lerpA(a, b, k) { let d = b - a; while (d > Math.PI) d -= Math.PI * 2; while (d < -Math.PI) d += Math.PI * 2; return a + d * k; }
 function clampN(v, a, b) { return v < a ? a : v > b ? b : v; }
 // 활 시위 당기기: pull 0(쉼) ~ 0.75(가득)
@@ -948,25 +1042,51 @@ const seg = (u, a, b) => ease((u - a) / (b - a));
 // 역할마다 공격·기술 동작. 몸 전체(허리 비틀기, 내딛기, 뛰어오르기)가 같이 움직여요
 const ANIM_T = { atk: 0.32, hv: 0.95, big: 0.6, skill: 0.8 };
 // 기사 베기 좌우 방향 (1이면 화면 오른쪽에서 시작)
-const KS = 1, KR = 1;
+const KS = 1, KR = 1, KH_T = 0.5;
+// 기사 베기 자세. 1타: 오른쪽 위에서 감았다가 왼쪽 아래로 / 2타: 1타가 끝난 왼쪽 아래에서 조금 더 감았다가 오른쪽 아래로 낮게
+// 1타 끝 자세 = 2타 시작 자세라서 두 번이 한 번에 이어지는 것처럼 보여요
+const K1E = { rx: -0.5, rz: 1.1, ry: 1.8, bry: 0.7, bx: 0.4, bz: 0.45, by: -0.25, lg: 0.7, sq: 0.18, lx: -0.4 };
+const K2W = { rx: -1.0, rz: 1.5, ry: 1.6, bry: 1.0, bx: 0.3, bz: 0.15, by: -0.35, lg: 0.8, sq: 0.25, lx: -0.2 };
+const K2E = { rx: -1.35, rz: -1.4, ry: 1.5, bry: -0.8, bx: 0.5, bz: 0.35, by: -0.6, lg: 1.4, sq: 0.35, lx: -0.5 };
+function kPose(c, v, base) {
+  const P = {};
+  if (c === 0) {
+    const w = seg(v, 0, 0.24), st = seg(v, 0.24, 0.54);
+    P.rx = -2.3 * w * (1 - st) + K1E.rx * st; P.rz = KS * (-1.9 * w * (1 - st) + K1E.rz * st); P.ry = KR * (0.9 * w * (1 - st) + K1E.ry * st);
+    P.bry = KS * (-0.9 * w * (1 - st) + K1E.bry * st); P.bx = -0.15 * w * (1 - st) + K1E.bx * st;
+    for (const q of ['bz', 'by', 'lg', 'sq', 'lx']) P[q] = K1E[q] * st;
+    P.rx = P.rx * Math.max(w, st) + base[0] * (1 - Math.max(w, st));
+  } else {
+    const w = seg(v, 0, 0.16), st = seg(v, 0.16, 0.5);
+    for (const q in K1E) P[q] = (K1E[q] + (K2W[q] - K1E[q]) * w) * (1 - st) + K2E[q] * st;
+    P.rz *= KS; P.bry *= KS; P.ry *= KR;
+  }
+  P.lx += base[1];
+  return P;
+}
+function kApply(T, P, f) { if (f <= 0) return; for (const q in P) T[q] = T[q] * (1 - f) + P[q] * f; }
 function animHero(E, p, dt, t) {
-  const m = E.m, u = m.userData; m.position.set(E.x, 0, E.z); m.rotation.y = Math.PI / 2 - E.a;
+  const m = E.m, u = m.userData, role = p.role; m.position.set(E.x, 0, E.z); m.rotation.y = Math.PI / 2 - E.a;
   E.ph += dt * (p.mv ? 11 : 0); E.sw = (E.sw || 0) + ((p.mv ? Math.sin(E.ph) * 0.95 : 0) - (E.sw || 0)) * Math.min(1, dt * 14); const sw = E.sw;
   // 걷기 세기 (멈추면 부드럽게 0으로)
   E.wk = (E.wk || 0) + ((p.mv ? 1 : 0) - (E.wk || 0)) * Math.min(1, dt * 10); const wk = E.wk, sn = Math.sin(E.ph);
   u.legL.rotation.x = sw; u.legR.rotation.x = -sw;
   // 동작 시작: 동작 번호가 바뀌면 처음부터
-  if (p.aN !== E.aN) { E.aN = p.aN; if (E.aN != null && p.ak) { E.ak = p.ak; E.aT = 0; } }
+  // 앞 동작이 아직 남아 있으면 그 자세에서 이어서 시작해요 (blT 동안 천천히 따라가요)
+  if (p.aN !== E.aN) { E.aN = p.aN; if (E.aN != null && p.ak) { if (E.ak || E.kh) E.blT = 0.1; E.ak = p.ak; E.aT = 0; E.kc = (p.ac | 0) % 2; E.kh = null; } }
   const kind = E.ak ? (E.ak === 'atk' || E.ak === 'hv' || E.ak === 'big' ? E.ak : 'skill') : '', D = ANIM_T[kind] || 0.5;
-  if (E.ak) { E.aT += dt; if (E.aT > D) E.ak = null; }
-  const v = E.ak ? E.aT / D : 1, role = p.role, side = (E.aN || 0) % 2 ? 1 : -1;
+  // 기사 베기가 끝나면 끝 자세를 잠깐 들고 있다가 (연타가 이어질 수 있는 동안) 천천히 돌아와요
+  if (E.ak) { E.aT += dt; if (E.aT > D) { if (role === 'knight' && E.ak === 'atk') E.kh = { c: E.kc, t: 0 }; E.ak = null; } }
+  if (E.kh && (E.kh.t += dt) > KH_T) E.kh = null;
+  if (E.blT > 0) E.blT -= dt;
+  const v = E.ak ? E.aT / D : 1, side = (E.aN || 0) % 2 ? 1 : -1;
   const base = { knight: [-0.7, -0.6], archer: [-1.45, -1.55], priest: [-1.2, -0.4], squire: [-1.3, -0.6] }[role];
   // 기본 자세 (달릴 때는 앞으로 기울고 팔을 크게 흔들어요)
   // jy: 몸 전체가 뛰어오르는 높이, sq: 찌그러짐(+는 납작, -는 길쭉), lg: 다리 벌리기
   // 걷기: 팔을 반대로 크게 흔들고, 허리를 비틀고, 좌우로 뒤뚱, 고개는 반대로 살짝
   const T = { rx: base[0] - sw * 0.7, rz: 0, ry: 0, lx: base[1] + sw * 0.7, lz: 0, bx: 0.18 * wk, by: 0, bz: 0, bry: -sn * 0.22 * wk, brz: sn * 0.09 * wk, hx: 0, hy: sn * 0.15 * wk, hz: 0, rpz: 0, pull: 0.35, jy: 0, sq: 0, lg: 0, spin: 0 };
   // 가만히 있으면: 숨 쉬고, 가끔 고개와 몸을 돌려 두리번거려요
-  if (!p.mv && !E.ak && !p.dn) {
+  if (!p.mv && !E.ak && !E.kh && !p.dn) {
     E.idle = (E.idle || 0) + dt;
     if (E.idle > 0.8 && (E.lkT = (E.lkT || 0) - dt) <= 0) { const r = Math.random(); E.lkT = 1.2 + Math.random() * 1.8; E.lk = r < 0.25 ? 0 : (r < 0.62 ? -1 : 1) * (0.8 + Math.random() * 0.5); E.lkU = Math.random() < 0.3 ? -0.25 : Math.random() * 0.15; }
     const lk = E.idle > 0.8 ? (E.lk || 0) : 0; E.lkS = (E.lkS || 0) + (lk - (E.lkS || 0)) * Math.min(1, dt * 5);
@@ -998,16 +1118,7 @@ function animHero(E, p, dt, t) {
         if (role === 'archer') { T.pull = 0.75 * up * (1 - dn); T.rpz = -0.4 * up * (1 - dn); }
       } else if (role === 'knight') { // 기사 1타: (화면에서 볼 때) 오른쪽 위에서 왼쪽 아래로 비스듬히 / 2타: 왼쪽 아래에서 오른쪽 아래로 낮게 가로 베기
         // 팔을 앞으로 들고(rx) 좌우로 휘두르며(rz) 칼날을 팔 축으로 돌려(ry) 눕혀요. 허리 비틀기(bry)로 더 크게
-        const w = seg(v, 0, 0.24), st = seg(v, 0.24, 0.54), rc = seg(v, 0.64, 1), x = 1 - rc;
-        if ((p.ac | 0) % 2 === 0) {
-          T.rx = (-2.3 * w * (1 - st) - 0.5 * st) * x + base[0] * rc; T.rz = (KS * -1.9 * w + KS * 3.0 * st) * x; T.ry = KR * (0.9 * (1 - st) + 1.8 * st) * x;
-          T.bry = (KS * -0.9 * w + KS * 1.6 * st) * x; T.bx = (-0.15 * w + 0.55 * st) * x; T.bz = 0.45 * st * x; T.by = -0.25 * st * x; T.lg = 0.7 * st * x; T.sq = 0.18 * st * x;
-          T.lx = base[1] - 0.4 * st * x;
-        } else {
-          T.rx = -1.35 * x + base[0] * rc; T.rz = (KS * 1.2 * w - KS * 2.5 * st) * x; T.ry = KR * 1.5 * x;
-          T.bry = (KS * 0.7 * w - KS * 1.4 * st) * x; T.by = (-0.3 * w - 0.4 * st) * x; T.bx = (0.3 * w + 0.2 * st) * x; T.bz = 0.3 * st * x; T.lg = (0.6 * w + 0.9 * st) * x; T.sq = (0.25 * w + 0.15 * st) * x;
-          T.lx = base[1] - 0.5 * st * x;
-        }
+        kApply(T, kPose(E.kc, v, base), 1);
       } else if (role === 'squire') { // 옆으로 크게 베기: 반대쪽으로 감았다가 휘둘러요
         const w = seg(v, 0, 0.18), st = seg(v, 0.18, 0.55), rc = seg(v, 0.6, 1);
         T.rx = -1.45; T.rz = (side * 1.3 * w - side * 2.6 * st) * (1 - rc); T.bry = (side * 0.5 * w - side * 1.1 * st) * (1 - rc); T.bz = 0.4 * st * (1 - rc); T.bx = 0.15 * st * (1 - rc); T.lx = base[1] - 0.3 * st;
@@ -1047,13 +1158,15 @@ function animHero(E, p, dt, t) {
       }
     }
   }
-  if (E.ak && E.ak !== 'hv') { // 모든 동작을 훨씬 크게: 기본 자세에서 벗어난 만큼을 키워요 (기사 말고 셋은 더 크게)
+  // 베기 끝 자세 들고 있기: 처음엔 그대로, 연타가 끊길 즈음 기본 자세로
+  if (!E.ak && E.kh) kApply(T, kPose(E.kh.c, 1, base), 1 - seg(E.kh.t, 0.18, KH_T));
+  if ((E.ak && E.ak !== 'hv') || E.kh) { // 모든 동작을 훨씬 크게: 기본 자세에서 벗어난 만큼을 키워요 (기사 말고 셋은 더 크게)
     const ex = role !== 'knight', big = E.ak === 'big', X = big ? 1.3 : ex ? 1.85 : 1.4, A = big ? 1.15 : ex ? 1.5 : 1.25;
     for (const k of ['rz', 'lz', 'bx', 'by', 'bz', 'bry', 'hx']) T[k] *= X;
     T.rx = base[0] + (T.rx - base[0]) * A; T.lx = base[1] + (T.lx - base[1]) * A; T.jy *= big ? 1.35 : ex ? 2.5 : 1.9; T.sq = clampN(T.sq * (ex ? 1.8 : 1.5), -0.55, 0.75); T.lg *= ex ? 1.6 : 1.3;
   }
   if (p.bk && E.ak !== 'block') { T.lx = -1.6; }
-  const k = Math.min(1, dt * 30), L = (o, kk, v2) => { E[kk] = E[kk] == null ? v2 : E[kk] + (v2 - E[kk]) * k; return E[kk]; };
+  const k = Math.min(1, dt * (E.blT > 0 ? 14 : 30)), L = (o, kk, v2) => { E[kk] = E[kk] == null ? v2 : E[kk] + (v2 - E[kk]) * k; return E[kk]; };
   u.armR.rotation.order = 'XZY'; u.armR.rotation.set(L(0, 'ar', T.rx), L(0, 'ary', T.ry), L(0, 'arz', T.rz)); u.armL.rotation.set(L(0, 'al', T.lx), 0, L(0, 'alz', T.lz));
   u.armR.position.z = L(0, 'rpz', T.rpz); u.head.rotation.set(L(0, 'hx', T.hx), L(0, 'hy', T.hy), L(0, 'hz', T.hz));
   if (u.bowS) setPull(u.bowS, L(0, 'pl', T.pull));
