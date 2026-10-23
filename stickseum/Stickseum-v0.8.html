@@ -1310,8 +1310,8 @@ const WEAPONS = {
             desc:'데미지 34 · 쿨타임 0.55초 · 사거리 105 · 쇠스랑을 휘둘러 근접 공격'},
   pizarro: {id:'pizarro', name:'창',       emoji:'🪖', kind:'melee',    dmg:24, cd:0.6, range:160, shape:'spear', thrust:true, kbMult:2.6,
             desc:'데미지 27 · 쿨타임 0.55초 · 사거리 160 · 앞으로 창을 찔러 상대를 멀리 밀어냄 · 궁극기를 쓸수록 강해짐(죽으면 초기화)'},
-  puppeteer:{id:'puppeteer', name:'실 바늘', emoji:'🪆', kind:'gun', dmg:12, cd:0.6, bulletSpeed:1300, shape:'needle',
-            desc:'데미지 12 · 쿨타임 0.6초 · 빠르게 날아가는 바늘 · 궁극기로 상대를 조종해 싸움'},
+  puppeteer:{id:'puppeteer', name:'실 바늘', emoji:'🪆', kind:'gun', dmg:10, cd:0.6, bulletSpeed:1300, shape:'needle', hitR:14,
+            desc:'데미지 10 · 쿨타임 0.6초 · 빠르게 날아가는 바늘 · 궁극기로 상대를 조종해 싸움'},
   kan:     {id:'kan',     name:'독침대롱', emoji:'🐸', kind:'gun',      dmg:5, cd:0.5, bulletSpeed:1500, shape:'blowgun', poison:1, hitR:10,
             desc:'데미지 5 · 쿨타임 0.5초 · 맞으면 독이 쌓임 (최대 4중첩, 중첩마다 초당 2 피해, 3초 지속, 맞을 때마다 시간 갱신) · 빠르게 날아가는 독침'},
   sword:   {id:'sword',   name:'칼',       emoji:'🗡️', kind:'melee',    dmg:32, cd:0.5,  range:100, shape:'blade',
@@ -1408,7 +1408,7 @@ function pirateFlyVel(p, ax, ay){      // launch velocity of the cannon ride: to
 }
 const ULTS = {
   pizarro:  {name:'정복자의 기세', desc:'체력 30 회복(최종 단계에서 쓰면 50) + 공격력 24→30→36→42, 공격 쿨타임 0.6→0.5→0.4→0.3초, 대쉬 쿨타임 3→1.5→0.7→0.4초로 단계가 오르고 스킬·궁극기 쿨타임도 단계마다 12% 단축됨 (최대 3번 중첩 = 4단계, 4단계엔 이동속도 125%, 죽으면 초기화)'},
-  puppeteer:{name:'꼭두각시 조종', desc:'가장 가까운 상대(사거리 700)를 3초간 조종 (내 이동·점프·조준·일반 공격 입력대로 움직임, 상대는 스킬과 궁극기를 쓸 수 없음) · 조종하는 동안 내 몸은 움직이지 못하고 받는 데미지 50% 감소'},
+  puppeteer:{name:'꼭두각시 조종', desc:'조준한 방향으로 실을 날려 맞힌 상대를 3초간 조종 (맞히지 못하면 조종 못 함) · 조종하는 동안 내 이동·점프·조준·일반 공격 입력대로 움직이고 내 시야도 상대 시점이 됨, 상대는 스킬과 궁극기를 쓸 수 없음 · 조종하는 동안 내 몸은 움직이지 못하고 받는 데미지 50% 감소'},
   kan:      {name:'케찰코아틀의 날개', desc:'5초 동안 날개를 펴고 날아올라 (점프 키를 누르면 위로, 떼면 천천히 내려옴) 독침을 한 번에 3발씩, 더 빠르게 발사'},
   pistol:   {name:'강화탄',       desc:'다음 발사 때 데미지 66의 크고 빠른 탄환 1발'},
   rifle:    {name:'미사일 폭격',   desc:'랜덤 3곳에 미사일이 떨어짐 (발판 통과, 나는 피해 없음)'},
@@ -4918,7 +4918,7 @@ function shuffle(arr){ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.
 /* ===== the version of this file =====
    Players with different versions CAN meet and play together: the automatic matchmaking uses the same room names for every version (online-<mode>-<map>-<slot>), and nobody is refused because of a different build.
    The build is only sent along with the join message and the lobby (for information); the corner of the screen shows it. */
-const GAME_BUILD='build 2026-10-18-v357';
+const GAME_BUILD='build 2026-10-18-v358';
 const GAME_VERSION='0.8', GAME_VERSION_NAME='황금을 찾아서';   // 게임 버전 이름: versions.json의 title과 같게 (빌드마다 바꾸지 않음)
 const WEEKLY_EVENTS=[
   {id:'lowg',    name:'저중력 난투', desc:'몸이 둥실둥실, 중력이 약해진 난투', rules:{grav:0.6}},
@@ -10832,7 +10832,7 @@ function rifleBarrageXs(ax){                // three missiles around the point
 function magiccardTarget(p, ax, ay){ return hasAim(ax,ay) ? pickTarget(p, ax, ay) : nearestEnemyOf(p); }
 const ARM_FIRE_ULTS={pistol:1, bazooka:1, shuriken:1};   // ultimates that arm the next shot: a click while holding the key also fires that shot at the click
 const ULT_IMPL = {
-  puppeteer(p,tSec,tMs){ const tg=nearestEnemyOf(p); if(!tg || Math.hypot(tg.x-p.x,tg.y-p.y)>PUP_RANGE) return false; p.puppetTarget=tg.id; p.puppetUntil=tSec+PUP_SEC; tg.puppetBy=p.id; tg.puppetUntil=tSec+PUP_SEC; pushFx('skillring', tg.x, tg.y-40, tMs, {color:'#ff9ecb', r:80}); pushFx('skillring', p.x, p.y-40, tMs, {color:'#ff9ecb', r:60}); },
+  puppeteer(p,tSec,tMs){ spawnBullet(p, p.angle||0, {id:'puppeteer', bulletSpeed:1500, life:0.85, dmg:0, hitR:26}, {pthread:true, ult:true}); },
   kan(p,tSec,tMs){ p.kanWingsUntil=tSec+KAN_ULT_SEC; p.vy=-800; p.grounded=false; pushFx('skillring', p.x, p.y-40, tMs, {color:'#35d08a', r:90}); },
   pizarro(p,tSec,tMs){ const _heal=((p.pzStacks||0)>=PZ_MAX)?PZ_ULT_HEAL_MAX:PZ_ULT_HEAL; p.pzStacks=Math.min(PZ_MAX,(p.pzStacks||0)+1); { const before=p.hp; p.hp=Math.min(maxHpFor(p), p.hp+_heal); if(p.hp>before) pushFx('heal', p.x, p.y-70, tMs, {v:Math.round(p.hp-before)}); } pushFx('spark', p.x, p.y-60, tMs, {ang:-Math.PI/2, color:'#ffd34d'}); pushFx('skill', p.x, p.y-70, tMs, {color:'#ffd34d', name:'기세 '+p.pzStacks+'/'+PZ_MAX}); },
   pistol(p){ p.ultPending='pistol'; },
@@ -11059,6 +11059,10 @@ function skillActiveBuff(p, tSec){
 // 인형술사 궁극기: 가장 가까운 상대를 PUP_SEC초 동안 조종한다 (조종당하는 쪽은 인형술사의 입력대로 움직이고 일반 공격만 하며, 인형술사의 몸은 데미지 50% 감소)
 const PUP_SEC=3, PUP_RANGE=700;
 let puppetOK=false;                    // true only while the tick itself runs a controlled player's dash / shot
+function startPuppet(m, v, tSec, tMs){      // the thread of the puppeteer m has hit v: v is his puppet for PUP_SEC seconds
+  m.puppetTarget=v.id; m.puppetUntil=tSec+PUP_SEC; v.puppetBy=m.id; v.puppetUntil=tSec+PUP_SEC;
+  pushFx('skillring', v.x, v.y-40, tMs, {color:'#ff9ecb', r:80}); pushFx('skillring', m.x, m.y-40, tMs, {color:'#ff9ecb', r:60});
+}
 function puppetVictim(p, tSec){ return !!(p && p.puppetBy && p.puppetUntil>tSec); }
 function puppetMaster(p, tSec){ return !!(p && p.puppetTarget && p.puppetUntil>tSec); }
 function puppetIn(t){
@@ -11429,7 +11433,10 @@ function drawAbilityPreview(){
   }
   ctx.restore();
 }
-function isAlly(a,b){ if(tn && gameMode==='tournament'){ if(!a || !b || a.id===b.id) return false; return tn.partner[a.id]!==b.id; }      // (tournament: everybody except my own opponent is untouchable)
+function puppetSide(a){ if(a && a.puppetBy && a.puppetUntil>(curTickSec||0)){ const m=players[a.puppetBy]; if(m && m.puppetTarget===a.id) return m; } return a; }   // a puppet fights on the side of the one who pulls his strings
+let curTickSec=0;
+function isAlly(a,b){ if(a && b && a.id!==b.id && (a.puppetBy||b.puppetBy)){ const a2=puppetSide(a), b2=puppetSide(b); if(a2!==a || b2!==b){ if(a2.id===b2.id) return true; a=a2; b=b2; } }
+  if(tn && gameMode==='tournament'){ if(!a || !b || a.id===b.id) return false; return tn.partner[a.id]!==b.id; }      // (tournament: everybody except my own opponent is untouchable)
   return !!a && !!b && a.id!==b.id && a.team!==null && a.team!==undefined && a.team===b.team; }
 const GAMBLE_SLOW_SEC = 3;
 function nearestEnemyOf(p){
@@ -13148,7 +13155,7 @@ function hostTickCore(dt,t){
   players[myId].input=localInput;
   if(duelPick){ for(const id in players){ const q=players[id]; q.input={left:false,right:false,jump:false,angle:(q.input&&q.input.angle)||0,shoot:false,dash:false}; } }
   else if(hasBots()) botsThink(dt,t);
-  puppetIn(t);
+  curTickSec=t/1000; puppetIn(t);
   conquestTick(dt);
   if(brz){ try{ brzTick(dt,t); }catch(e){ recordDiagError('brzTick', e); } }
   if(xm){ try{ xmTick(dt,t); }catch(e){ recordDiagError('xmTick', e); } }
@@ -13409,6 +13416,12 @@ function hostTickCore(dt,t){
           if(gameMode==='hideseek'){
             handleHideseekShot(p, players[b.owner], t);
             hit=true; break;
+          }
+          if(b.pthread){        // 인형술사's thread: no damage, it only ties the one it hits (not somebody who is already a puppet / puppeteer)
+            const pow=players[b.owner], tS2=t/1000;
+            if(pow && pow.alive && !puppetVictim(p,tS2) && !puppetMaster(p,tS2) && !puppetVictim(pow,tS2) && !puppetMaster(pow,tS2)){ startPuppet(pow, p, tS2, t); }
+            pushFx('hit', nx, ny, t, {color:'#ff9ecb', ang:Math.atan2(b.vy,b.vx), v:0, el:dmgTypeOf(b.wid)});
+            hit=true; hitWho=p; break;
           }
           if(!b.splash){
             let dmg=computeFalloffDamage(b); if(b.ultDouble) dmg*=2;
@@ -14881,7 +14894,7 @@ canvas.addEventListener('mousemove', e=>{
   const me=players[myId]; if(!me) return;
   const cam=getCamera();
   const wx=e.clientX+cam.x, wy=e.clientY+cam.y;
-  localInput.angle=Math.atan2(wy-(me.y-40), wx-me.x);
+  { const og=(me.pp && players[me.pp])||me; localInput.angle=Math.atan2(wy-(og.y-40), wx-og.x); }
   trackBatSwing(e.clientY);
 });
 canvas.addEventListener('pointermove', e=>{
@@ -14890,7 +14903,7 @@ canvas.addEventListener('pointermove', e=>{
   const me=players[myId]; if(!me) return;
   const cam=getCamera();
   const wx=e.clientX+cam.x, wy=e.clientY+cam.y;
-  localInput.angle=Math.atan2(wy-(me.y-40), wx-me.x);
+  { const og=(me.pp && players[me.pp])||me; localInput.angle=Math.atan2(wy-(og.y-40), wx-og.x); }
   trackBatSwing(e.clientY);
 });
 /* ================= TOUCH CONTROLS: shown on phones/tablets only (auto-detected, can be switched in the settings) ================= */
@@ -15033,7 +15046,8 @@ function spectateCycle(dir){ const c=spectateList(); if(!c.length || !spectateTa
 function getCamera(){
   const spt=spectateTarget();
   let focus = killcamActive && killcamOverride ? killcamOverride : (spt || players[myId] || {x:MAP?MAP.arenaW/2:0, y:MAP?MAP.arenaH/2:0});
-  if(gameMode==='tournament' && !killcamActive){ const tf=tnFocusPoint(); if(tf) focus=tf; }       // a spectator watches the fight
+  if(gameMode==='tournament' && !killcamActive){ const tf=tnFocusPoint(); if(tf) focus=tf; }
+  { const m0=players[myId]; if(m0 && m0.pp && players[m0.pp] && !killcamActive && !spt) focus=players[m0.pp]; }       // the puppeteer sees through his puppet's eyes       // a spectator watches the fight
   const w=MAP?MAP.arenaW:innerWidth, h=MAP?MAP.arenaH:innerHeight;
   return { x: clamp(focus.x-canvas.width/2, 0, Math.max(0,w-canvas.width)),
            y: clamp((focus.y-80)-canvas.height/2, 0, Math.max(0,h-canvas.height)) };
@@ -16013,6 +16027,7 @@ function drawProjectile(b){
       ctx.strokeStyle='#e0334a'; ctx.lineWidth=1.4; ctx.beginPath(); ctx.moveTo(-9,0); ctx.lineTo(-12,-2.5); ctx.moveTo(-9,0); ctx.lineTo(-12,2.5); ctx.stroke();
       break;
     case 'needle':
+      ctx.scale(b.ult?3.2:2.1, b.ult?3.2:2.1);
       ctx.strokeStyle='#e8eef8'; ctx.lineWidth=1.8; ctx.beginPath(); ctx.moveTo(-9,0); ctx.lineTo(9,0); ctx.stroke();
       ctx.strokeStyle='#ff9ecb'; ctx.lineWidth=1.2; ctx.beginPath(); ctx.moveTo(-9,0); ctx.quadraticCurveTo(-14,-3,-18,0); ctx.stroke();
       break;
