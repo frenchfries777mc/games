@@ -261,3 +261,8 @@ crownenvoy/CrownEnvoy-v0.4.html | 전신망 (정치 탭 카드) | "📡 전신�
 ## Vowkeep b32 (2026-10-23)
 - prototypes/vowkeep/index.html, js/main.js | '초대하기', '친구나 지금 접속 중인 플레이어에게 초대를 보내면 바로 들어와요.', '불러오는 중이에요...', '친구 (N)', '아직 친구가 없어요.', '접속 안 함', '지금 접속 중인 플레이어 (N)', '접속 중인 플레이어 목록은 곧 열려요.', '지금 접속 중인 다른 플레이어가 없어요.', '초대', '보냈어요', '못 보냈어요', '허브' | 한국어만 있음 | Vowkeep b32 | 2026-10-23
 - patchnotes.json | "Vowkeep 초대 창" 2줄 | Vowkeep b32 | 2026-10-23
+
+## 음악 인트로 곡 (Crown Envoy b93, Beaconfall b96, 2026-10-23)
+- crownenvoy/patchnotes.json | b93 title·items 2줄 | Crown Envoy b93 | 2026-10-23
+- beaconfall/patchnotes.json | v0.3 b96 items 1줄 | Beaconfall b96 | 2026-10-23
+- CrownEnvoy-v0.4.html, BEACONFALL-v0.3.html | 인트로 안내 | 화면을 누르면 시작해요 | b93 / b96 | 2026-10-23
