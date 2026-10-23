@@ -453,7 +453,7 @@ if(document.readyState==='loading') document.addEventListener('DOMContentLoaded'
   @media(max-width:640px){ .hero-bg img,.hero-bg video{width:100%; -webkit-mask-image:linear-gradient(90deg,transparent 0,#000 30%); mask-image:linear-gradient(90deg,transparent 0,#000 30%); opacity:.55;} }
   @media(prefers-reduced-motion:reduce){ .hero-bg i{animation:none;} .hero-bg i:first-child{opacity:1;} .hero-bg img,.hero-bg video,.hero-t>*:not(.ffs){animation:none;} }
   /* 숫자로 보는 줄 */
-  .hstats{display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin:0 0 18px; padding:18px 8px; border:1px solid var(--line); border-radius:18px; background:color-mix(in srgb,var(--panel) 80%,transparent); backdrop-filter:blur(6px); -webkit-backdrop-filter:blur(6px);}
+  .hstats{display:grid; grid-template-columns:repeat(4,1fr); gap:10px; margin:0 0 18px; padding:18px 8px; border:1px solid var(--line); border-radius:18px; background:color-mix(in srgb,var(--panel) 80%,transparent); backdrop-filter:blur(6px); -webkit-backdrop-filter:blur(6px);}
   .hstats div{text-align:center; padding:2px 6px; border-left:1px solid var(--line);} .hstats div:first-child{border-left:0;}
   .hstats b{display:block; font-family:'Oswald','Noto Sans KR',sans-serif; font-weight:700; font-size:clamp(26px,4.2vw,42px); line-height:1.1; background:linear-gradient(90deg,var(--fry),var(--fry2)); -webkit-background-clip:text; background-clip:text; color:transparent; font-variant-numeric:tabular-nums;}
   .hstats span{display:block; margin-top:4px; font-size:13px; color:var(--dim);}
@@ -527,6 +527,7 @@ if(document.readyState==='loading') document.addEventListener('DOMContentLoaded'
   <section class="hstats" id="heroStats" aria-label="모든 게임에 적용되는 숫자">
     <div><b data-n="4">4</b><span>게임</span></div>
     <div><b data-n="148">148</b><span>달성할 업적</span></div>
+    <div><b data-n="144" id="skinN">144</b><span>스킨</span></div>
     <div><b data-n="17">17</b><span>언어 17개</span></div>
   </section>
 
@@ -658,7 +659,10 @@ if(document.readyState==='loading') document.addEventListener('DOMContentLoaded'
   var io=('IntersectionObserver' in window)?IntersectionObserver:null;
   /* 숫자 올라가기: 처음 보일 때 한 번 */
   var st=document.getElementById('heroStats');
-  function count(b){ var n=+b.getAttribute('data-n')||0; if(rm||!n){ b.textContent=n; return; } var t0=null; function f(t){ if(!t0)t0=t; var p=Math.min(1,(t-t0)/1100); b.textContent=Math.round(n*(1-Math.pow(1-p,3))); if(p<1)requestAnimationFrame(f); } b.textContent=0; requestAnimationFrame(f); }
+  function count(b){ if(b===skinB) skinDone=true; var n=+b.getAttribute('data-n')||0; if(rm||!n){ b.textContent=n; return; } var t0=null; function f(t){ if(!t0)t0=t; var p=Math.min(1,(t-t0)/1100); b.textContent=Math.round(n*(1-Math.pow(1-p,3))); if(p<1)requestAnimationFrame(f); } b.textContent=0; requestAnimationFrame(f); }
+  /* 스킨 수는 skins.json (node scripts/count-skins.js 로 게임 코드에서 센 값)에서 읽어요 */
+  var skinB=document.getElementById('skinN'), skinDone=false;
+  try{ fetch('skins.json',{cache:'no-cache'}).then(function(r){ return r.ok?r.json():null; }).then(function(j){ if(j&&j.total>0&&skinB){ skinB.setAttribute('data-n',j.total); if(skinDone) skinB.textContent=j.total; } }).catch(function(){}); }catch(e){}
   if(st){ var bs=[].slice.call(st.querySelectorAll('b'));
     if(io){ new io(function(es,ob){ es.forEach(function(e){ if(e.isIntersecting){ bs.forEach(count); ob.disconnect(); } }); },{threshold:.4}).observe(st); } else bs.forEach(count);
   }
