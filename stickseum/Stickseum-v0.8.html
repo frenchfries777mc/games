@@ -1103,6 +1103,8 @@ sting();})();</script>
     <div class="profRow"><span class="k">화면 흔들림</span><span class="v"><button id="settingsShakeToggle" class="btn-secondary" style="padding:4px 12px;"></button></span></div>
     <div class="profRow"><span class="k">그래픽 효과 (스킨 연출 등)</span><span class="v"><button id="settingsQualityToggle" class="btn-secondary" style="padding:4px 12px;"></button></span></div>
     <div class="profRow"><span class="k">조작 방식 (모바일 / 컴퓨터)</span><span class="v"><button id="settingsCtrlToggle" class="btn-secondary" style="padding:4px 12px;"></button></span></div>
+    <div class="profRow"><span class="k">터치 버튼 크기 (모바일)</span><span class="v"><button id="settingsTouchScaleToggle" class="btn-secondary" style="padding:4px 12px;"></button></span></div>
+    <div class="profRow"><span class="k">터치 버튼 높이 (모바일)</span><span class="v"><button id="settingsTouchLiftToggle" class="btn-secondary" style="padding:4px 12px;"></button></span></div>
     <div class="profRow"><span class="k">프레임 제한</span><span class="v"><button id="settingsFpsLimitToggle" class="btn-secondary" style="padding:4px 12px;"></button></span></div>
     <div class="profRow"><span class="k">배터리 절약 (메뉴 30프레임 · 경기 60프레임 상한)</span><span class="v"><button id="settingsSaverToggle" class="btn-secondary" style="padding:4px 12px;"></button></span></div>
     <div class="profRow"><span class="k">색약 모드 (팀 색·체력바 색 변경)</span><span class="v"><button id="settingsColorBlindToggle" class="btn-secondary" style="padding:4px 12px;"></button></span></div>
@@ -1719,7 +1721,7 @@ function loadKeyBindings(){
 function persistKeyBindings(){ try{ localStorage.setItem('arenaClashKeybinds', JSON.stringify(keyBindings)); }catch(e){} }
 loadKeyBindings();
 
-let otherSettings={screenShake:true, damageNumbers:true, sfx:true, bgm:true, bgmVol:0.4, quality:'auto', controls:'auto', fpsLimit:0, showFps:false, abilityMode:'hold', saver:true, colorBlind:false};       // fpsLimit: 0 = no limit, 30 or 60 // abilityMode: 'hold' (held to aim, used on release), 'instant', 'confirm' (press once to aim, press again to use)
+let otherSettings={screenShake:true, damageNumbers:true, sfx:true, bgm:true, bgmVol:0.4, quality:'auto', controls:'auto', fpsLimit:0, showFps:false, abilityMode:'hold', saver:true, colorBlind:false, touchScale:1, touchLift:0};       // fpsLimit: 0 = no limit, 30 or 60 // abilityMode: 'hold' (held to aim, used on release), 'instant', 'confirm' (press once to aim, press again to use)
 let fpsN=0, fpsT=0, fpsBoxEl=null;       // quality: 'auto' (follows the speed of the game), 'high', 'mid' or 'low'
 function loadOtherSettings(){
   try{
@@ -1736,6 +1738,8 @@ function loadOtherSettings(){
       if(typeof saved.showFps==='boolean') otherSettings.showFps=saved.showFps;
       if(typeof saved.saver==='boolean') otherSettings.saver=saved.saver;
       if(typeof saved.colorBlind==='boolean') otherSettings.colorBlind=saved.colorBlind;
+      if([0.8,1,1.25,1.5].includes(saved.touchScale)) otherSettings.touchScale=saved.touchScale;
+      if([0,40,80].includes(saved.touchLift)) otherSettings.touchLift=saved.touchLift;
       if(saved.abilityMode==='hold' || saved.abilityMode==='instant' || saved.abilityMode==='confirm') otherSettings.abilityMode=saved.abilityMode;
     }
   }catch(e){}
@@ -1876,6 +1880,11 @@ function renderSettingsScreen(){
     ctBtn.textContent=CL[otherSettings.controls]||CL.auto;
     ctBtn.onclick=()=>{ otherSettings.controls=co[(co.indexOf(otherSettings.controls)+1)%co.length]; persistOtherSettings(); ctBtn.textContent=CL[otherSettings.controls]; };
   }
+  applyTouchLayout();
+  const tsBtn=document.getElementById('settingsTouchScaleToggle');
+  if(tsBtn){ const TL={0.8:'작게', 1:'보통', 1.25:'크게', 1.5:'아주 크게'}, to=[1,1.25,1.5,0.8]; tsBtn.textContent=TL[otherSettings.touchScale]; tsBtn.onclick=()=>{ otherSettings.touchScale=to[(to.indexOf(otherSettings.touchScale)+1)%to.length]; persistOtherSettings(); tsBtn.textContent=TL[otherSettings.touchScale]; applyTouchLayout(); }; }
+  const tlBtn=document.getElementById('settingsTouchLiftToggle');
+  if(tlBtn){ const LL={0:'기본', 40:'조금 위', 80:'많이 위'}, lo=[0,40,80]; tlBtn.textContent=LL[otherSettings.touchLift]; tlBtn.onclick=()=>{ otherSettings.touchLift=lo[(lo.indexOf(otherSettings.touchLift)+1)%lo.length]; persistOtherSettings(); tlBtn.textContent=LL[otherSettings.touchLift]; applyTouchLayout(); }; }
   const flBtn=document.getElementById('settingsFpsLimitToggle');
   if(flBtn){ const FL={0:'제한 없음', 60:'60 FPS', 30:'30 FPS'}, fo=[0,60,30]; flBtn.textContent=FL[otherSettings.fpsLimit]; flBtn.onclick=()=>{ otherSettings.fpsLimit=fo[(fo.indexOf(otherSettings.fpsLimit)+1)%fo.length]; persistOtherSettings(); flBtn.textContent=FL[otherSettings.fpsLimit]; }; }
   const svBtn=document.getElementById('settingsSaverToggle');
@@ -3119,6 +3128,7 @@ function perfToShared(){
   }catch(e){}
 }
 window.addEventListener('ffperf', ()=>{ if(perfFromShared()){ persistOtherSettings(); try{ loadOtherSettings(); }catch(e){} if(typeof applyFxQualityNow==='function') applyFxQualityNow(); } });
+function applyTouchLayout(){ const r=document.documentElement.style; r.setProperty('--tscale', String(otherSettings.touchScale||1)); r.setProperty('--tlift', (otherSettings.touchLift||0)+'px'); }       // the size and the height of the phone buttons (settings)
 let fxFrames=0, fxSumDt=0, fxGoodStreak=0;
 function applyFxQualityNow(){ if(otherSettings.quality==='high') fxQuality=2; else if(otherSettings.quality==='mid') fxQuality=1; else if(otherSettings.quality==='low') fxQuality=0; }
 function updateFxQuality(dtSec){         // once per frame with the real time since the last frame: 'auto' lowers the effects when the game is slower than ~30 fps and raises them again after 4 s of more than ~52 fps
@@ -5008,7 +5018,7 @@ function shuffle(arr){ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.
 /* ===== the version of this file =====
    Players with different versions CAN meet and play together: the automatic matchmaking uses the same room names for every version (online-<mode>-<map>-<slot>), and nobody is refused because of a different build.
    The build is only sent along with the join message and the lobby (for information); the corner of the screen shows it. */
-const GAME_BUILD='build 2026-10-18-v367';
+const GAME_BUILD='build 2026-10-18-v368';
 const GAME_VERSION='0.8', GAME_VERSION_NAME='황금을 찾아서';   // 게임 버전 이름: versions.json의 title과 같게 (빌드마다 바꾸지 않음)
 const WEEKLY_EVENTS=[
   {id:'lowg',    name:'저중력 난투', desc:'몸이 둥실둥실, 중력이 약해진 난투', rules:{grav:0.6}},
@@ -15074,18 +15084,19 @@ function ensureTouchUi(){
   #touchUi .tbase.aim{ background:rgba(255,77,94,.10); border-color:rgba(255,77,94,.5); }
   #touchUi .tbase i{ position:absolute; left:50%; top:50%; width:52px; height:52px; margin:-26px 0 0 -26px; border-radius:50%; background:rgba(255,255,255,.3); border:2px solid rgba(255,255,255,.5); }
   #touchUi .tbase.aim i{ background:rgba(255,77,94,.4); border-color:rgba(255,120,130,.75); }
-  #tBtns{ position:absolute; right:calc(max(12px, env(safe-area-inset-right,0px))); bottom:calc(66px + env(safe-area-inset-bottom,0px)); display:grid; grid-template-columns:repeat(2,50px); gap:8px; pointer-events:none; }
+  #tBtns{ position:absolute; right:calc(max(12px, env(safe-area-inset-right,0px))); bottom:calc(66px + var(--tlift,0px) + env(safe-area-inset-bottom,0px)); display:grid; grid-template-columns:repeat(2,50px); gap:8px; pointer-events:none; transform:scale(var(--tscale,1)); transform-origin:right bottom; }
   #touchUi .tbtn{ pointer-events:auto; touch-action:none; width:50px; height:50px; border-radius:50%; border:2px solid rgba(255,255,255,.3); background:rgba(20,24,34,.42); color:#fff; font-size:11px; font-weight:800; line-height:1.15; padding:0; white-space:pre-line; opacity:.78; }
   #touchUi .tbtn:active, #touchUi .tbtn.on{ background:rgba(63,224,197,.55); opacity:1; }
   #touchUi .tbtn.ult{ border-color:#ffd34d; } #touchUi .tbtn.skl{ border-color:#7ef0a8; } #touchUi .tbtn.jmp{ border-color:#3fe0c5; }
   #tTop{ position:absolute; top:calc(10px + env(safe-area-inset-top,0px)); right:10px; display:flex; gap:6px; pointer-events:none; }
   #tTop button{ pointer-events:auto; width:34px; height:34px; border-radius:9px; border:1px solid rgba(255,255,255,.25); background:rgba(20,24,34,.45); color:#fff; font-size:16px; padding:0; }
   #touchRotate{ display:none; position:fixed; inset:0; z-index:16; background:rgba(8,9,12,.92); color:#fff; align-items:center; justify-content:center; flex-direction:column; font-size:20px; font-weight:700; text-align:center; gap:10px; }
-  @media (max-height:420px){ #touchUi .tbase{ width:104px; height:104px; margin:-52px 0 0 -52px; } #tBtns{ grid-template-columns:repeat(2,44px); gap:6px; bottom:calc(58px + env(safe-area-inset-bottom,0px)); } #touchUi .tbtn{ width:44px; height:44px; font-size:10px; } #touchUi .thint{ width:80px; height:80px; bottom:calc(44px + env(safe-area-inset-bottom,0px)); } }`;
+  @media (max-height:420px){ #touchUi .tbase{ width:104px; height:104px; margin:-52px 0 0 -52px; } #tBtns{ grid-template-columns:repeat(2,44px); gap:6px; bottom:calc(58px + var(--tlift,0px) + env(safe-area-inset-bottom,0px)); } #touchUi .tbtn{ width:44px; height:44px; font-size:10px; } #touchUi .thint{ width:80px; height:80px; bottom:calc(44px + env(safe-area-inset-bottom,0px)); } }`;
   document.head.appendChild(st);
   const ui=document.createElement('div'); ui.id='touchUi'; ui.innerHTML='<div class="tzone" id="tsMove"><div class="thint"></div><div class="tbase"><i></i></div></div><div class="tzone" id="tsAim"><div class="thint"></div><div class="tbase aim"><i></i></div></div><div id="tBtns"></div><div id="tTop"><button id="tEmote">😀</button><button id="tFull">⛶</button></div>';
   document.body.appendChild(ui);
-  const rot=document.createElement('div'); rot.id='touchRotate'; rot.innerHTML='<div style="font-size:46px;">📱↻</div><div>가로 화면으로 돌려 주세요</div>'; document.body.appendChild(rot);
+  const rot=document.createElement('div'); rot.id='touchRotate'; rot.innerHTML='<div style="font-size:46px;">📱↻</div><div>가로 화면으로 돌려 주세요</div><button id="touchLockBtn" style="margin-top:6px;padding:10px 18px;border-radius:10px;border:1px solid rgba(255,255,255,.4);background:rgba(63,224,197,.25);color:#fff;font-size:16px;font-weight:700;">전체 화면 + 가로로 고정</button>';
+  { const lb=rot.querySelector('#touchLockBtn'); lb.addEventListener('click', async ()=>{ try{ const d=document.documentElement; if(!document.fullscreenElement && d.requestFullscreen) await d.requestFullscreen(); }catch(e){} try{ if(screen.orientation && screen.orientation.lock) await screen.orientation.lock('landscape'); }catch(e){} }); } document.body.appendChild(rot);
   /* a floating stick: its centre is where the thumb first lands; move() gets the push as a vector of length 0..1 (R px = full) */
   function bindStick(el, onMove, onEnd, onStart, R){
     R=R||56; let pid=null, ox=0, oy=0; const base=el.querySelector('.tbase'), knob=base.querySelector('i'), hint=el.querySelector('.thint');

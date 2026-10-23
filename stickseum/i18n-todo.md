@@ -154,3 +154,7 @@ patchnotes.json | v366 items[4] | 인형술사 궁극기 미리보기를 바늘 
 patchnotes.json | v366 items[5] | 밸런스 표에서 인형술사 다시 측정 | build 366 | 2026-10-20
 patchnotes.json | v367 title | 공용 최적화 설정 연결 | build 367 | 2026-10-20
 patchnotes.json | v367 items[0] | 효과 품질과 FPS 제한이 허브 공용 최적화 설정과 같은 값을 사용 | build 367 | 2026-10-20
+patchnotes.json | v368 title | 모바일 화면 개선 | build 368 | 2026-10-20
+patchnotes.json | v368 items[0] | 터치 버튼 크기 설정 추가 (작게, 보통, 크게, 아주 크게) | build 368 | 2026-10-20
+patchnotes.json | v368 items[1] | 터치 버튼 높이 설정 추가 | build 368 | 2026-10-20
+patchnotes.json | v368 items[2] | 세로 화면 안내에 전체 화면과 가로 고정 버튼 추가 | build 368 | 2026-10-20
