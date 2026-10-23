@@ -1,7 +1,7 @@
 // Vowkeep · © 2026 Frenchfries777 · CC BY-NC-ND 4.0
 // 게임 데이터: 역할, 적, 축복, 1장 지도
 
-export const VERSION = 'v0.1', BUILD = 35;
+export const VERSION = 'v0.1', BUILD = 36;
 
 export const ROLES = {
   knight: {
@@ -126,6 +126,10 @@ function genMap(seed, rooms, opt = {}) {
       const q = { k: r.puz, area: i, gate, c: [r.cx, r.cy] };
       if (r.puz === 'plates') q.items = c4;
       else if (r.puz === 'braziers') { q.items = c4; const o = [0, 1, 2, 3]; for (let k = 3; k > 0; k--) { const j = Math.floor(rnd() * (k + 1)); [o[k], o[j]] = [o[j], o[k]]; } q.order = o; }
+      else if (r.puz === 'oath') q.items = [[r.cx - 4, r.cy], [r.cx, r.cy], [r.cx + 4, r.cy]];
+      else if (r.puz === 'targets') q.items = [[r.x + 2, r.y], [r.x + 4, r.y], [r.x + r.rw - 3, r.y]];
+      else if (r.puz === 'basins') q.items = c4;
+      else if (r.puz === 'vines') q.items = [[r.x + 3, r.cy], [r.cx, r.y + 3], [r.x + r.rw - 4, r.cy]];
       else { q.items = [[r.cx, r.cy - 4], [r.cx + 5, r.cy], [r.cx, r.cy + 4], [r.cx - 5, r.cy]]; q.rot0 = q.items.map((_, k) => (k + 1 + Math.floor(rnd() * 3)) % 4); }
       m.puzzles.push(q);
     }
@@ -183,7 +187,16 @@ function genMap(seed, rooms, opt = {}) {
 // 장마다 끊어진 길과 도르래 승강기도 하나씩 있어요 (방 14개)
 const CUTS = [['무너진 다리목', '우물 도르래'], ['끊어진 협곡', '사냥꾼 망루 도르래'], ['무너진 회랑', '종탑 도르래'], ['끊어진 탑 복도', '탑 승강기'], ['얼음 틈', '성벽 도르래'], ['꺼진 갱도', '광산 승강기'], ['무너진 순례길', '사원 도르래'], ['끊어진 심연 다리', '불씨 승강기']];
 const PIT_LINE = '천장이 무너져 길이 끊겼어요. 금 간 기둥을 강타로 쓰러뜨리면 다리가 돼요.', LIFT_LINE = '위층으로 가는 길은 도르래 승강기뿐이에요. 한 명이 손잡이를 돌리는 동안 나머지가 올라가요.';
+// 역할 전용 수수께끼: 장마다 두 번째 수수께끼 방은 한 역할만 풀 수 있어요 (1장 기사, 2장 궁수, 3장 사제, 4장 종자, 5장부터 다시)
+export const ROLE_PUZ = {
+  oath: { role: 'knight', name: '방패 맹세의 방', line: '기사만 풀 수 있어요. 방패 석판 셋 위에서 각각 막기(Q)를 쓰면 창살문이 열려요.' },
+  targets: { role: 'archer', name: '높은 과녁의 방', line: '궁수만 풀 수 있어요. 벽 높이 걸린 과녁 셋을 10초 안에 모두 화살로 맞혀요.' },
+  basins: { role: 'priest', name: '성수반의 방', line: '사제만 풀 수 있어요. 빛 구슬이나 치유로 성수반 넷에 모두 빛을 채워요.' },
+  vines: { role: 'squire', name: '가시덩굴 방', line: '종자만 풀 수 있어요. 횃불 든 공격으로 가시덩굴 셋을 모두 태워요.' }
+};
+const RP_ORDER = ['oath', 'targets', 'basins', 'vines'];
 function grow(ci, rooms, [p1, dk, p2]) {
+  { const k = RP_ORDER[ci % 4]; p2 = Object.assign({}, p2, { puz: k, name: ROLE_PUZ[k].name, line: ROLE_PUZ[k].line }); }
   const r = rooms.map((o, i) => Object.assign({ t: i }, o)), [pn, ln] = CUTS[ci];
   const pit = { name: pn, line: PIT_LINE, cut: 'pit', t: 'pit', w: 20, h: 17 }, lift = { name: ln, line: LIFT_LINE, cut: 'lift', t: 'lift', w: 20, h: 17 };
   return [r[0], r[1], Object.assign({ t: 'puz' }, p1), r[2], pit, r[3], r[4], Object.assign({ t: 'dark' }, dk), r[5], lift, Object.assign({ t: 'puz' }, p2), r[6], r[7], r[8]];
@@ -421,7 +434,11 @@ export const TALK_X = {
   esc: [['knight', '성이 무너지오! 모두 출구로 달리시오!'], ['squire', '천장이 떨어져요!']],
   mimic: [['archer', '상자에 이빨이 있었어!'], ['knight', '물러서시오, 내가 막겠소!']],
   pit: [['squire', '길이 뚝 끊겼어요! 바닥이 안 보여요.'], ['knight', '저 금 간 기둥을 쓰러뜨리면 다리가 되겠소. 내가 내려찍겠소.']],
-  lift: [['archer', '저 위로 가야 하는데, 손잡이를 누가 돌리지?'], ['priest', '한 분이 돌리고, 위에 간 분이 다시 내려 주면 돼요.']]
+  lift: [['archer', '저 위로 가야 하는데, 손잡이를 누가 돌리지?'], ['priest', '한 분이 돌리고, 위에 간 분이 다시 내려 주면 돼요.']],
+  oath: [['knight', '방패 문양이오. 이건 기사의 서약이 있어야 열리오.'], ['squire', '기사님, 방패를 들어 주세요!']],
+  targets: [['archer', '저 높은 과녁은 화살 말고는 못 닿아. 내가 맞힐게.'], ['knight', '빠르게 셋 다 맞혀야 하는 듯하오.']],
+  basins: [['priest', '성수반이 말라 있어요. 제 빛으로 채울게요.'], ['archer', '빛 구슬이 아니면 안 되는 모양이야.']],
+  vines: [['squire', '가시덩굴이에요! 제 횃불로 태워 버릴게요.'], ['priest', '칼로는 안 베어져요. 불이 필요해요.']]
 };
 CHAPTERS[0].map = genMap(1103, grow(0, [
   { name: '무너진 계단', line: '계단 아래에서 뼈 부딪히는 소리가 들려요.', w: 12, h: 12 },
@@ -553,7 +570,7 @@ export function makeDeep(d) {
   const map = genMap(DEEP.seed * 31 + f * 977, [
     { name: N[0], line, w: 12, h: 12 },
     { name: N[1], line, foes: { skel: 5, archer: 2 } },
-    { name: '심연의 수수께끼', line: ['바닥에 발판 네 개가 있어요. 모두 하나씩 올라서면 창살문이 열려요.', '비석에 그려진 순서대로 화로에 불을 붙여요. 틀리면 모두 꺼져요.', '석상 넷이 모두 가운데 문양을 바라보게 돌려요.'][f % 3], puz: ['plates', 'braziers', 'statues'][f % 3], w: 16, h: 13, t: 'puz' },
+    { name: '심연의 수수께끼', line: ['바닥에 발판 네 개가 있어요. 모두 하나씩 올라서면 창살문이 열려요.', '비석에 그려진 순서대로 화로에 불을 붙여요. 틀리면 모두 꺼져요.', '석상 넷이 모두 가운데 문양을 바라보게 돌려요.', ROLE_PUZ.oath.line, ROLE_PUZ.targets.line, ROLE_PUZ.basins.line, ROLE_PUZ.vines.line][f % 7], puz: ['plates', 'braziers', 'statues', 'oath', 'targets', 'basins', 'vines'][f % 7], w: 16, h: 13, t: 'puz' },
     { name: N[2], line: f % 2 ? line : '불빛 하나 없는 방이에요. 입구의 횃불을 들어야 앞이 보여요.', foes: { skel: 4, archer: 3, shield: 2 }, altar: 1, pil: 1, dark: f % 2 ? 0 : 1, t: f % 2 ? undefined : 'dark' },
     { name: N[3], line: '꺼진 모닥불이 있어요. 불을 붙이면 쓰러졌을 때 여기서 다시 시작해요.', rest: 1, chest: 1, w: 12, h: 11 },
     { name: N[4], line, foes: { elite: 1 + n('elite'), skel: 4, archer: 2, shield: 2 }, traps: 3 },
