@@ -1241,7 +1241,7 @@ function applyPoison(p, ownerId, ownerName, stacks, tMs){ if(!p || !p.alive) ret
 const PZ_LUNGE_WIN=0.7, PZ_LUNGE_KB=1.3, PZ_LUNGE_STUN=0.2;       // 돌격 찌르기: the first thrust within 0.7 s after a dash shoves harder and staggers       // 피사로: the ultimate stacks (up to 4): +15% damage and 12% shorter cooldowns (attack, skill, ultimate, dash) each; dying resets it
 function pzStacks(p){ return (p && p.weapon==='pizarro' && p.pzStacks) ? Math.min(PZ_MAX, p.pzStacks) : 0; }
 function pzCdMult(p){ return 1-PZ_CD_STEP*pzStacks(p); }
-function dashCdOf(p){ if(gameMode==='dashbr') return 0; if(p && p.weapon==='pizarro') return PZ_DASH_CD[pzStacks(p)]; const w=WEAPONS[p && p.weapon], base=(w && w.dashCd!==undefined) ? w.dashCd : DASH_CD; return base*((p && p.isZombie) ? ZOMBIE_DASH_CD_MULT : 1)*pzCdMult(p); }   // how long a player waits between dashes (a zombie: half of it)
+function dashCdOf(p){ if(gameMode==='dashbr') return 0; if(p && p.queenUntil && performance.now()/1000<p.queenUntil) return 0; if(p && p.weapon==='pizarro') return PZ_DASH_CD[pzStacks(p)]; const w=WEAPONS[p && p.weapon], base=(w && w.dashCd!==undefined) ? w.dashCd : DASH_CD; return base*((p && p.isZombie) ? ZOMBIE_DASH_CD_MULT : 1)*pzCdMult(p); }   // how long a player waits between dashes (a zombie: half of it)
 let TELEPORT_CD = 10;   // (a `let` only so the practice mode can shorten it)
 const PROJECTILE_GRAVITY = 700;
 const PLAYER_W = 26, PLAYER_H = 58;
@@ -1370,7 +1370,7 @@ const ULTS = {
   bat:      {name:'홈런',         desc:'다음 공격이 맞으면 넉백 7.5배 · 2.5초 동안 이동속도 100% 증가'},
   dagger:   {name:'은신',         desc:'4초간 나와 내 치장품이 보이지 않음'},
   dracula:  {name:'박쥐 변신',     desc:'7초간 박쥐로 변해 날아다니며(점프키 상승 · S 하강, 발판은 통과하지 못함) 이동속도·데미지 증가, 종료 시 그동안 입힌 피해만큼 체력 회복(팀원은 50%)'},
-  gambler:  {name:'삼중 도박',     desc:'주사위 3개를 한번에 굴려 효과를 연속 적용 (가진 칩 2개당 주사위 +1, 최대 +3, 칩 모두 사용)\n1:가까운 적에게 25 피해 · 2:가까운 적 둔화 · 3:가까운 적에게 38 피해 · 4:체력 15 회복 · 5:랜덤 위치로 이동 · 6:다음 굴림 2배'},
+  gambler:  {name:'삼중 도박',     desc:'트럼프 카드(52장+조커 2장)에서 3장을 뽑아, 숫자의 합(A=1, J=11, Q=12, K=13)만큼 다음 일반 공격의 데미지가 됨 (가진 칩 1개당 +1, 칩 모두 사용)\n같은 무늬 +5 · 같은 숫자 +10 · 연속 세 숫자 +15 · 무늬와 숫자 모두 같음 +20\nA: 체력 30 회복 · K: 5초간 이동속도 +50% · J: 스킬·대쉬 쿨타임 초기화 · Q: 1초간 대쉬 쿨타임 0초 · 조커: 옆 카드와 똑같이'},
   wizard:   {name:'마법진',       desc:'자신의 위치에 거대한 마법진 소환(8초): 나와 아군은 공격력 증가 + 초당 8 회복, 안에 들어온 적은 지속 피해'},
   sword:    {name:'천검',         desc:'하늘에서 대형검이 상대를 내리찍음'},
   horemheb: {name:'모래바람',     desc:'앞쪽 멀리(1725)까지 거센 모래바람을 일으켜 범위 안의 상대에게 36 피해를 주고 아주 강하게 밀치며 2초 동안 기절시키고, 3.5초 동안 이동속도를 크게(70%) 줄임'},
@@ -4850,7 +4850,7 @@ function shuffle(arr){ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.
 /* ===== the version of this file =====
    Players with different versions CAN meet and play together: the automatic matchmaking uses the same room names for every version (online-<mode>-<map>-<slot>), and nobody is refused because of a different build.
    The build is only sent along with the join message and the lobby (for information); the corner of the screen shows it. */
-const GAME_BUILD='build 2026-10-18-v342';
+const GAME_BUILD='build 2026-10-18-v343';
 const GAME_VERSION='0.8', GAME_VERSION_NAME='황금을 찾아서';   // 게임 버전 이름: versions.json의 title과 같게 (빌드마다 바꾸지 않음)
 const WEEKLY_EVENTS=[
   {id:'lowg',    name:'저중력 난투', desc:'몸이 둥실둥실, 중력이 약해진 난투', rules:{grav:0.6}},
@@ -5586,7 +5586,7 @@ function tnResetFighter(p){
   const clock=performance.now()/1000;
   const sp=spawnPoint(); p.x=sp.x; p.y=sp.y; p.vx=0; p.vy=0; p.kbX=0; p.spin=0; p.spinAngle=0; p.hp=ruleHp(); p.alive=true; p.respawnAt=0;
   p.lastDash=clock; p.lastTeleport=clock; p.lastUlt=clock; p.lastSkill=clock; p.skillUses=0; p.ultUses=0; p.lastShot=0;
-  p.buffs={}; p.barrier=null; p.buff=null; p.hasted=false; p.focusOn=false; p.ultPending=null; p.rushUntil=0; p.invisUntil=0; p.burn=null; p.poison=null; p.kanWingsUntil=0; p.batUntil=0; p.batting=false; p.slowUntil=0; p.slowed=false; p.stunUntil=0; p.stunned=false;
+  p.cardDmg=0; p.queenUntil=0; p.buffs={}; p.barrier=null; p.buff=null; p.hasted=false; p.focusOn=false; p.ultPending=null; p.rushUntil=0; p.invisUntil=0; p.burn=null; p.poison=null; p.kanWingsUntil=0; p.batUntil=0; p.batting=false; p.slowUntil=0; p.slowed=false; p.stunUntil=0; p.stunned=false;
   p.flameHeldSince=null; p.flameOverheatUntil=0; p.flaming=false; p.portalPair=null; p.portalCooldownUntil=0; p.vacuumStacks=0; p.chips=0; p.freeVolleys=0; p.teleportChannel=null; p.dmgBy={}; p.darkSub=null; p.darkArmUntil=0; p.darkLand=null;  p.pzStacks=0; p.pzMarkUntil=0;
   pushFx('respawn', p.x, p.y-30, performance.now(), {color:p.color, ta:p.id});
 }
@@ -10793,7 +10793,7 @@ const ULT_IMPL = {
   shuriken(p){ p.ultPending='shuriken'; },
   dagger(p,tSec,tMs){ p.invisUntil=tSec+4; pushFx('smokeveil', p.x, p.y-30, tMs, {}); },
   dracula(p,tSec,tMs){ p.batUntil=tSec+BAT_FORM_SEC; p.batDamageDealt=0; pushFx('batform', p.x, p.y-30, tMs, {}); },
-  gambler(p,tSec,tMs){ const n=3+Math.min(3,Math.floor((p.chips||0)/2)); p.chips=0; for(let i=0;i<n;i++) hostTimers.push({ta:fxActor, at:tSec+i*0.25, fn:(tt)=>{ if(p.alive) rollDice(p, tt); }}); },
+  gambler(p,tSec,tMs){ drawGamblerCards(p,tSec,tMs); },
   samurai(p,tSec,tMs){          // the mind's eye: up to 5 nearby enemies, one cut each, then back to where he started
     const list=enemiesOf(p).filter(o=>!o.swordCharge && !o.darkSub && Math.hypot(o.x-p.x,o.y-p.y)<=800).sort((a,b)=>Math.hypot(a.x-p.x,a.y-p.y)-Math.hypot(b.x-p.x,b.y-p.y)).slice(0,5);
     if(!list.length) return false;
@@ -11328,6 +11328,33 @@ function nearestEnemyOf(p){
   }
   return target;
 }
+// 도박사 궁극기: 트럼프 카드(52장 + 조커 2장)에서 3장을 뽑아, 합계가 다음 일반 공격의 데미지가 된다. A 회복, K 이동속도, J 초기화, Q 대쉬 무쿨, 조커는 옆 카드 복사
+const CARD_SUITS=['♠','♥','♦','♣'], CARD_RANKS=['A','2','3','4','5','6','7','8','9','10','J','Q','K'];
+function drawGamblerCards(p,tSec,tMs){
+  if(!p || !p.alive) return;
+  const deck=[]; for(let s=0;s<4;s++) for(let r=1;r<=13;r++) deck.push({s:s,r:r}); deck.push({joker:true},{joker:true});
+  const hand=[]; for(let i=0;i<3;i++) hand.push(deck.splice(Math.floor(Math.random()*deck.length),1)[0]);
+  const real=hand.filter(c=>!c.joker);
+  const shown=hand.map(c=>c.joker?{joker:true}:c);
+  for(let i=0;i<3;i++){ if(!hand[i].joker) continue; let src=null;
+    for(let d=1;d<3&&!src;d++){ for(const j of [i-d,i+d]){ if(j>=0&&j<3&&!hand[j].joker){ src=hand[j]; break; } } }   // the card next to it (left first)
+    hand[i]=src?{s:src.s,r:src.r,copy:true}:{s:Math.floor(Math.random()*4),r:1+Math.floor(Math.random()*13),copy:true}; }
+  let sum=0; for(const c of hand) sum+=c.r;
+  const sameSuit=hand.every(c=>c.s===hand[0].s), sameRank=hand.every(c=>c.r===hand[0].r);
+  const rs=hand.map(c=>c.r).sort((a,b)=>a-b);
+  const run=(rs[1]===rs[0]+1&&rs[2]===rs[1]+1) || (rs[0]===1&&rs[1]===12&&rs[2]===13);   // 연속 세 숫자 (Q K A 도 인정)
+  let bonus=0, tags=[];
+  if(sameSuit){ bonus+=5; tags.push('무늬 +5'); } if(sameRank){ bonus+=10; tags.push('숫자 +10'); } if(run){ bonus+=15; tags.push('연속 +15'); } if(sameSuit&&sameRank){ bonus+=20; tags.push('완전 일치 +20'); }
+  const chipBonus=Math.min(6,p.chips||0); p.chips=0; if(chipBonus) tags.push('칩 +'+chipBonus);
+  p.cardDmg=sum+bonus+chipBonus;
+  for(const c of hand){
+    if(c.r===1){ p.hp=Math.min(maxHpFor(p), p.hp+30); pushFx('heal', p.x, p.y-70, tMs, {v:30}); }
+    else if(c.r===13){ if(!p.buffs) p.buffs={}; p.buffs.haste=Math.max(p.buffs.haste||0, tSec+5); }
+    else if(c.r===11){ p.lastSkill=-9999; p.lastDash=-9999; }
+    else if(c.r===12){ p.queenUntil=tSec+1; }
+  }
+  pushFx('cards', p.x, p.y-60, tMs, {cards:shown.map((c,i)=>c.joker?'🃏→'+CARD_SUITS[hand[i].s]+CARD_RANKS[hand[i].r-1]:CARD_SUITS[c.s]+CARD_RANKS[c.r-1]), red:hand.map(c=>c.s===1||c.s===2), total:p.cardDmg, tags:tags});
+}
 function rollDice(p, tMs){
   if(!p || !p.alive) return;
   const face = 1+Math.floor(Math.random()*6);
@@ -11589,6 +11616,7 @@ function tryFire(p, angle, tMs){
     spawnBullet(p, useAngle, w, {ult:true, ultBlink:true, ultDouble:true});
     return;
   }
+  if(p.cardDmg && w.id==='gambler'){ const cd=p.cardDmg; p.cardDmg=0; spawnBullet(p, useAngle, Object.assign({}, w, {dmg:cd}), {big:true}); return; }   // the cards of the ultimate: this chip hits for the sum
   if(w.burst){
     const spreadOf=()=> w.spread ? (Math.random()-0.5)*2*w.spread : 0;
     spawnBullet(p, useAngle+spreadOf(), w);
@@ -13381,7 +13409,7 @@ function handleDeath(p, killer, t, killerNameFallback){
   attachKillScene(killer?killer.id:null, p.id, t);
   pushFx('death', p.x, p.y-PLAYER_H/2, t, {color:p.color});
   if(killer && killer.id!==p.id && killer.cos && killer.cos.kfx) pushFx('kfx', (MAP?clamp(p.x,40,MAP.arenaW-40):p.x), (MAP?clamp(p.y-PLAYER_H/2,50,MAP.arenaH-60):p.y-PLAYER_H/2), t, {k:killer.cos.kfx, vc:p.color});
-  p.buffs={}; p.barrier=null; p.buff=null; p.hasted=false; p.focusOn=false;
+  p.cardDmg=0; p.queenUntil=0; p.buffs={}; p.barrier=null; p.buff=null; p.hasted=false; p.focusOn=false;
   p.ultPending=null; p.rushUntil=0; p.invisUntil=0; p.burn=null; p.poison=null; p.kanWingsUntil=0; p.batUntil=0; p.batting=false; p.batDamageDealt=0; p.slowUntil=0; p.slowed=false; p.sandSlowUntil=0; p.sandSlowed=false; p.gambleDouble=false; p.teleportChannel=null; p.stunUntil=0; p.stunned=false; p.cardSlowUntil=0; p.cardSlowed=false; swordEnd(p);
   p.flameHeldSince=null; p.flameOverheatUntil=0; p.flaming=false; p.flameFxTimer=0;
   p.portalPair=null; p.portalCooldownUntil=0;
@@ -13981,7 +14009,7 @@ function finishDuelRepick(){
     const p=players[id]; map[id]=p.weapon;
     if(gameMode!=='tournament'){ p.duelUsed=(p.duelUsed||[]); if(p.weapon && !p.duelUsed.includes(p.weapon)) p.duelUsed.push(p.weapon); }
     p.lastDash=clock; p.lastTeleport=clock; p.lastUlt=clock; p.lastSkill=clock; p.skillUses=0; p.ultUses=0; p.lastShot=0;
-    p.buffs={}; p.barrier=null; p.buff=null; p.hasted=false; p.focusOn=false; p.ultPending=null; p.rushUntil=0; p.invisUntil=0; p.burn=null; p.poison=null; p.kanWingsUntil=0; p.batUntil=0; p.batting=false; p.slowUntil=0; p.slowed=false;
+    p.cardDmg=0; p.queenUntil=0; p.buffs={}; p.barrier=null; p.buff=null; p.hasted=false; p.focusOn=false; p.ultPending=null; p.rushUntil=0; p.invisUntil=0; p.burn=null; p.poison=null; p.kanWingsUntil=0; p.batUntil=0; p.batting=false; p.slowUntil=0; p.slowed=false;
     p.flameHeldSince=null; p.flameOverheatUntil=0; p.flaming=false; p.portalPair=null; p.portalCooldownUntil=0; p.vacuumStacks=0; p.pzStacks=0; p.pzMarkUntil=0; p.chips=0; p.freeVolleys=0; p.darkSub=null; p.darkArmUntil=0; p.darkLand=null;
   }
   }catch(e){ recordDiagError('duel-finish', e); console.error('[duel] re-pick finish:', e); }
@@ -15219,6 +15247,12 @@ function spawnFx(e){
       burst(x,y,22,{a0:0,a1:6.28,s0:30,s1:140,l0:.6,l1:1.1,z0:6,z1:13,colors:['#0c0c10','#1c1d22','#2a2b31'],grav:-30,drag:1.1,shape:'smoke',add:false});
       addP({x:x,y:y,life:.3,color:'#15161c',shape:'flash',size:70});
       break;
+    case 'cards': {
+      const n=e.cards.length;
+      e.cards.forEach((t,i)=>addP({x:x+(i-(n-1)/2)*58,y:y,vx:0,vy:-34,drag:.6,life:2.2,size:26,color:e.red&&e.red[i]?'#ff6b6b':'#ffffff',outline:'#000',shape:'text',add:false,text:t}));
+      addP({x:x,y:y-34,vx:0,vy:-30,drag:.6,life:2.4,size:20,color:'#ffd34d',shape:'text',add:false,text:'다음 공격 '+e.total+(e.tags&&e.tags.length?' ('+e.tags.join(' · ')+')':'')});
+      addP({x:x,y:y,life:.4,color:'#ffd34d',shape:'ring',r0:6,r1:90,lw:5});
+      break; }
     case 'dice':
       showDiceBanner(e.name||'?', e.face, e.doubled);
       break;
