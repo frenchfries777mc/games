@@ -1416,7 +1416,7 @@ function pirateFlyVel(p, ax, ay){      // launch velocity of the cannon ride: to
 }
 const ULTS = {
   pizarro:  {name:'정복자의 기세', desc:'체력 30 회복(최종 단계에서 쓰면 50) + 공격력 24→30→36→42, 공격 쿨타임 0.6→0.5→0.4→0.3초, 대쉬 쿨타임 3→1.5→0.7→0.4초로 단계가 오르고 스킬·궁극기 쿨타임도 단계마다 12% 단축됨 (최대 3번 중첩 = 4단계, 4단계엔 이동속도 125%, 죽으면 초기화)'},
-  puppeteer:{name:'꼭두각시 조종', desc:'조준한 방향으로 실을 날려 맞힌 상대를 3초간 조종 (맞히지 못하면 조종 못 함) · 조종하는 동안 내 이동·점프·조준·일반 공격 입력대로 움직이고 내 시야도 상대 시점이 됨, 상대는 스킬과 궁극기를 쓸 수 없음 · 조종하는 동안 내 몸은 움직이지 못하고 받는 데미지 50% 감소'},
+  puppeteer:{name:'꼭두각시 조종', desc:'조준한 방향으로 실을 날려 맞힌 상대를 5초간 조종 (맞히지 못하면 조종 못 함) · 조종하는 동안 내 이동·점프·조준·일반 공격 입력대로 움직이고 내 시야도 상대 시점이 됨, 상대는 스킬과 궁극기를 쓸 수 없음 · 조종하는 동안 내 몸은 움직이지 못하고 받는 데미지 50% 감소 · 조종이 끝나면 조종당한 상대가 자폭해 본인은 60, 주변(220) 적에게는 30 피해'},
   kan:      {name:'케찰코아틀의 날개', desc:'5초 동안 날개를 펴고 날아올라 (점프 키를 누르면 위로, 떼면 천천히 내려옴) 독침을 한 번에 3발씩, 더 빠르게 발사'},
   pistol:   {name:'강화탄',       desc:'다음 발사 때 데미지 66의 크고 빠른 탄환 1발'},
   rifle:    {name:'미사일 폭격',   desc:'랜덤 3곳에 미사일이 떨어짐 (발판 통과, 나는 피해 없음)'},
@@ -4986,7 +4986,7 @@ function shuffle(arr){ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.
 /* ===== the version of this file =====
    Players with different versions CAN meet and play together: the automatic matchmaking uses the same room names for every version (online-<mode>-<map>-<slot>), and nobody is refused because of a different build.
    The build is only sent along with the join message and the lobby (for information); the corner of the screen shows it. */
-const GAME_BUILD='build 2026-10-18-v365';
+const GAME_BUILD='build 2026-10-18-v366';
 const GAME_VERSION='0.8', GAME_VERSION_NAME='황금을 찾아서';   // 게임 버전 이름: versions.json의 title과 같게 (빌드마다 바꾸지 않음)
 const WEEKLY_EVENTS=[
   {id:'lowg',    name:'저중력 난투', desc:'몸이 둥실둥실, 중력이 약해진 난투', rules:{grav:0.6}},
@@ -5179,6 +5179,7 @@ function stepPhysics(p, input, dt){
   let spd = MOVE_SPEED;
   if(p.slowed) spd*=0.5;
   if(p.sandSlowed) spd*=SAND_SLOW_MULT;      // the sandstorm: only 30% of the speed
+  if(p.sewSlowed) spd*=SEW_SLOW_MULT;        // 바느질: 25% slower while the thread holds
   if(!batting && inShallows(p)) spd*=WF_SLOW;   // 폭포 절벽: the shallows
   if(!batting && inSwamp(p)) spd*=SWAMP_SLOW;   // 어둠의 늪: the bog on the floor
   spd*=darkFootMult(p);                          // Kurus' darkness: faster for him, slower for his opponents
@@ -11101,7 +11102,7 @@ function ultCdOf(p){ return ULT_CD*pzCdMult(p); }
 const PRACTICE_SKILL_CD=2;
 const SKILLS={
   pizarro:  {name:'하늘의 십자가', kind:'hit', desc:'조준한 곳에 십자가가 떨어져 맞은 적에게 20 피해와 1초 기절, 맞은 아군과 나는 체력 20 회복 (기세 단계마다 범위가 넓어지고 피해 20→22→25→28) · 맞은 적에게는 3초 동안 표식이 남아 다음 창 공격이 5 피해를 더 줌'},
-  puppeteer:{name:'얽힌 실', kind:'hit', desc:'가장 가까운 적(사거리 520)을 실로 묶어 10 피해와 2.5초간 이동속도 감소'},
+  puppeteer:{name:'바느질', kind:'hit', desc:'실이 달린 바늘을 조준한 방향으로 발사 · 맞은 상대와 실이 이어지고 이동속도 25% 감소 · 맞히면 쿨타임 없이 바로 바늘 빼기를 쓸 수 있음 (최대 8초) · 바늘 빼기: 실을 당겨 상대에게 30 피해를 주고 실이 끊김, 쿨타임은 바늘 빼기를 쓴 뒤부터 돌아요 (못 맞히면 바로 쿨타임)'},
   kan:      {name:'독두꺼비 함정', kind:'hit', desc:'내 발밑에 독두꺼비 함정을 설치 (10초 지속, 최대 2개) · 들어온 적에게 독이 쌓이고 이동 속도가 느려짐'},
   pistol:   {name:'속사',        kind:'buff', desc:'1.8초 동안 연사 속도 2배'},
   smg:      {name:'연막탄',      kind:'hit',  desc:'주변 적을 2.5초 동안 둔화'},
@@ -11142,21 +11143,42 @@ function skillActiveBuff(p, tSec){
 }
 // part of an incoming hit is given back (hp restored) while a guard / barrier is up; returns the damage that really got through
 // 인형술사 궁극기: 가장 가까운 상대를 PUP_SEC초 동안 조종한다 (조종당하는 쪽은 인형술사의 입력대로 움직이고 일반 공격만 하며, 인형술사의 몸은 데미지 50% 감소)
-const PUP_SEC=3, PUP_RANGE=700;
+const PUP_SEC=5, PUP_RANGE=700;
+const SEW_PULL_NAME='바늘 빼기';
+const PUP_BLAST_SELF=60, PUP_BLAST_NEAR=30, PUP_BLAST_R=220;     // when the 5 seconds are over the puppet blows itself up: 60 to it, 30 to every enemy of the puppeteer around it
+const SEW_MAX_SEC=8, SEW_SLOW_MULT=0.75, SEW_DMG=30;             // 바느질 (the needle with a thread) ties the one it hits for at most 8 s: 25% slower until 바늘 빼기 (30 damage) cuts the thread
 let puppetOK=false;                    // true only while the tick itself runs a controlled player's dash / shot
 function startPuppet(m, v, tSec, tMs){      // the thread of the puppeteer m has hit v: v is his puppet for PUP_SEC seconds
   m.puppetTarget=v.id; m.puppetUntil=tSec+PUP_SEC; v.puppetBy=m.id; v.puppetUntil=tSec+PUP_SEC;
   pushFx('skillring', v.x, v.y-40, tMs, {color:'#ff9ecb', r:80}); pushFx('skillring', m.x, m.y-40, tMs, {color:'#ff9ecb', r:60});
 }
+function sewActive(p, tSec){ const v=p && p.sewTo && players[p.sewTo]; return !!(v && v.alive && p.alive && p.sewUntil>tSec); }
+function sewTick(tS){      // a thread that broke by itself (time, a death) starts the skill cooldown; 바늘 빼기 starts it by itself
+  for(const id in players){
+    const p=players[id]; p.sw=null;
+    if(!p.sewTo) continue;
+    if(sewActive(p, tS)){ p.sw=p.sewTo; continue; }
+    const v=players[p.sewTo]; if(v) v.sewBy=null;
+    p.sewTo=null; if(p.alive) p.lastSkill=tS;
+  }
+  for(const id in players){ const v=players[id]; v.sewSlowed=!!(v.sewBy && players[v.sewBy] && players[v.sewBy].sewTo===v.id); }
+}
+function puppetBlast(m, v, tMs){      // the end of the control: the puppet blows itself up
+  const R=PUP_BLAST_R;
+  pushFx('explosion', v.x, v.y-PLAYER_H/2, tMs, {}); pushFx('skillring', v.x, v.y-40, tMs, {color:'#ff9ecb', r:R});
+  const near=enemiesOf(m).filter(o=>o.id!==v.id && !o.swordCharge && Math.hypot(o.x-v.x, o.y-v.y)<=R);
+  skillDamage(m, v, PUP_BLAST_SELF, tMs, {});
+  for(const o of near) if(o.alive) skillDamage(m, o, PUP_BLAST_NEAR, tMs, {});
+}
 function puppetVictim(p, tSec){ return !!(p && p.puppetBy && p.puppetUntil>tSec); }
 function puppetMaster(p, tSec){ return !!(p && p.puppetTarget && p.puppetUntil>tSec); }
 function puppetIn(t){
-  const tS=t/1000;
+  const tS=t/1000; sewTick(tS);
   for(const id in players) players[id].pp=null;     // (read by the drawing of the strings)
   for(const id in players){
     const m=players[id]; if(!m.puppetTarget) continue;
     const v=players[m.puppetTarget];
-    if(!v || !v.alive || !m.alive || m.puppetUntil<=tS){ m.puppetTarget=null; if(v){ v.puppetBy=null; } continue; }
+    if(!v || !v.alive || !m.alive || m.puppetUntil<=tS){ const over=!!(v && v.alive && m.alive); m.puppetTarget=null; if(v){ v.puppetBy=null; } if(over) puppetBlast(m, v, t); continue; }
     m.pp=v.id;
     const si=m.input||{};
     v._ri=v.input; m._ri=m.input;
@@ -11291,12 +11313,14 @@ function skillHitFront(p, tMs, dirX, o){   // the nearest enemy in a box in fron
 }
 const PZ_CROSS_HALF=[90,100,110,125], PZ_CROSS_DMG=[20,22,25,28], PZ_CROSS_STUN=[1,1,1,1], PZ_CROSS_HEAL=20, PZ_CROSS_DUR=0.7, PZ_MARK_SEC=3, PZ_MARK_DMG=5;   // 피사로's skill: the cross from the sky, bigger / harder / longer stun with every stage of his ultimate; whoever it hits is marked for 3 s and the next thrust on them hurts 5 more
 const SKILL_IMPL={
-  puppeteer(p,tSec,tMs){
-    const tg=nearestEnemyOf(p); if(!tg || Math.hypot(tg.x-p.x,tg.y-p.y)>520) return false;
-    const dmg=10*(p.isZombie?ZOMBIE_DMG_MULT:1), cy=tg.y-PLAYER_H/2;
-    tg.hp-=dmg; markHit(tg, p.id, tMs, dmg); tg.slowUntil=tSec+2.5;
-    pushFx('slow', tg.x, tg.y-70, tMs, {}); pushFx('hit', tg.x, cy, tMs, {color:p.color, ang:Math.atan2(cy-(p.y-PLAYER_H/2), tg.x-p.x), v:dmg, el:dmgTypeOf(p.weapon)});
-    if(tg.hp<=0) handleDeath(tg, p, tMs, p.name);
+  puppeteer(p,tSec,tMs,ax,ay){
+    if(sewActive(p,tSec)){            // 바늘 빼기: the needle comes out - 30 damage, the thread snaps (the cooldown starts now)
+      const tg=players[p.sewTo]; p.sewTo=null; tg.sewBy=null; tg.sewSlowed=false;
+      skillDamage(p, tg, SEW_DMG, tMs, {});
+      pushFx('spark', tg.x, tg.y-60, tMs, {ang:-Math.PI/2, color:'#ffd0e6'}); pushFx('skillring', tg.x, tg.y-50, tMs, {color:'#ff9ecb', r:50});
+      return true;
+    }
+    spawnBullet(p, (hasAim(ax,ay)?aimAngleOf(p,ax,ay):(p.angle||0)), {id:'puppeteer', bulletSpeed:1400, life:0.75, dmg:0, hitR:18}, {pthread:true, sew:true});   // 바느질: the needle with the thread
     return true;
   },
   kan(p,tSec,tMs){
@@ -11419,11 +11443,12 @@ function trySkill(p, tMs, aimX, aimY){
   if(p.weapon==='sword' && p.swordCharge){ swordEnd(p); return; }                                      // the knight's skill key again = stop charging
   if(tSec-(p.lastSkill===undefined?-9999:p.lastSkill) < skillCdOf(p)) return;
   const impl=SKILL_IMPL[p.weapon]; if(!impl) return;
+  const pullNeedle=(p.weapon==='puppeteer' && sewActive(p,tSec));
   if(impl(p,tSec,tMs,aimX,aimY)===false) return;                                   // nothing to use it on: the cooldown is not spent
   p.lastSkill=tSec;
   p.skillUses=(p.skillUses||0)+1;
   const sd=SKILLS[p.weapon];
-  pushFx('skill', p.x, p.y-40, tMs, {color:p.color, name:sd.name});
+  pushFx('skill', p.x, p.y-40, tMs, {color:p.color, name:pullNeedle?SEW_PULL_NAME:sd.name});
   pushFx('sfx', p.x, p.y-40, tMs, {name:SKILL_SFX[sd.kind]});
 }
 /* ================= ABILITY PREVIEW (the mint-coloured aim while an ability key is held) =================
@@ -11444,6 +11469,7 @@ function abilityPreviewOps(action, p, mx, my){
   }
   if(action==='ultimate'){
     switch(w){
+      case 'puppeteer': ops.push(ray(ang, 1275)); break;
       case 'pistol': case 'bazooka': case 'shuriken': ops.push(ray(ang, 900)); ops.push(mark(cx+Math.cos(ang)*900, cy+Math.sin(ang)*900, 12)); break;
       case 'bow': for(const o of [-0.11,0,0.11]) ops.push(ray(ang+o, 800)); break;
       case 'boomerang': for(const o of [-0.6,-0.3,0,0.3,0.6]) ops.push(ray(ang+o, 520)); break;
@@ -11472,6 +11498,7 @@ function abilityPreviewOps(action, p, mx, my){
       case 'lightsaber': { const d=skillAimDir(p,mx); ops.push({t:'rect', x:d>0?p.x:p.x-120, y:p.y-90, w:120, h:90}); break; }
       case 'kurus': { const d=skillAimDir(p,mx); ops.push({t:'rect', x:d>0?p.x:p.x-DARK_SWORD_RANGE, y:p.y-90, w:DARK_SWORD_RANGE, h:90}); break; }
       case 'horemheb': ops.push(ray(ang, 740)); break;
+      case 'puppeteer': { const tg=p.sw && players[p.sw]; if(tg){ ops.push({t:'line', x1:p.x, y1:p.y-30, x2:tg.x, y2:tg.y-40}); ops.push(mark(tg.x, tg.y-40, 40)); } else ops.push(ray(ang, 1050)); break; }
       case 'pizarro': { const sp=wizardCircleSpot(p, mx, my), hf=PZ_CROSS_HALF[pzStacks(p)]; ops.push({t:'rect', x:sp.x-hf, y:sp.y-340, w:hf*2, h:400}); ops.push({t:'ellipse', x:sp.x, y:sp.y, rx:hf, ry:14}); break; }
       case 'shuriken': { const a=Math.atan2(my-cy, mx-p.x), best=skillMoveSpot(p, p.x+Math.cos(a)*230, p.y+Math.sin(a)*230); ops.push({t:'line', x1:p.x, y1:p.y-30, x2:best.x, y2:best.y-30, dash:true}); ops.push(mark(best.x, best.y-30, 20)); break; }
       case 'dagger': { const t=nearestEnemyOf(p); if(t && Math.hypot(t.x-p.x,t.y-p.y)<=330){ ops.push({t:'line', x1:cx, y1:cy, x2:t.x, y2:t.y-30, dash:true}); ops.push(mark(t.x, t.y-30, 40)); } break; }
@@ -12357,6 +12384,7 @@ function botWantsSkill(p, target, d, tSec){
     case 'lightsaber': return d<115;                                  // the thrust only reaches up close
     case 'pizarro': return d<520 && Math.abs(target.y-p.y)<130;                    // the cross falls where the enemy stands
     case 'horemheb': return d>=170 && d<=640 && Math.abs(target.y-p.y)<150;       // the throw: from a distance, on about the same level
+    case 'puppeteer': return sewActive(p,tSec) ? (tSec-(p.sewAt||0)>1.2 || hurt) : (d<850 && Math.abs(target.y-p.y)<220);       // the needle from a distance; pulled out after a short while
     case 'bat': return botIncomingShot(p, 230);
     case 'boomerang': return d>380 || hurt;
     case 'shuriken': return (hurt && d<400) || (d>260 && d<460);
@@ -13502,6 +13530,16 @@ function hostTickCore(dt,t){
             handleHideseekShot(p, players[b.owner], t);
             hit=true; break;
           }
+          if(b.pthread && b.sew){      // 바느질: the needle ties the one it hits (until 바늘 빼기, at most SEW_MAX_SEC)
+            const pow=players[b.owner], tS2=t/1000;
+            if(pow && pow.alive && !puppetVictim(pow,tS2)){
+              if(pow.sewTo && players[pow.sewTo]) players[pow.sewTo].sewBy=null;
+              pow.sewTo=p.id; pow.sewUntil=tS2+SEW_MAX_SEC; pow.sewAt=tS2; pow.lastSkill=-9999; p.sewBy=pow.id; p.sewSlowed=true;      // the skill is ready at once (바늘 빼기)
+              pushFx('slow', p.x, p.y-70, t, {});
+            }
+            pushFx('hit', nx, ny, t, {color:'#ff9ecb', ang:Math.atan2(b.vy,b.vx), v:0, el:dmgTypeOf(b.wid)});
+            hit=true; hitWho=p; break;
+          }
           if(b.pthread){        // 인형술사's thread: no damage, it only ties the one it hits (not somebody who is already a puppet / puppeteer)
             const pow=players[b.owner], tS2=t/1000;
             if(pow && pow.alive && !puppetVictim(p,tS2) && !puppetMaster(p,tS2) && !puppetVictim(pow,tS2) && !puppetMaster(pow,tS2)){ startPuppet(pow, p, tS2, t); }
@@ -13561,7 +13599,7 @@ function hostTickCore(dt,t){
         fireCdRemain: snapR(p.fireCdRemain||0,20),
         ultCdRemain: p.darkSub ? 0 : snapR(Math.max(0, ultCdOf(p) - (t/1000-(p.lastUlt===undefined?-9999:p.lastUlt))),20), darkSub:p.darkSub?1:0, darkArm:(p.darkArmUntil>t/1000)?1:0,
         skillCdRemain: snapR(Math.max(0, skillCdOf(p) - (t/1000-(p.lastSkill===undefined?-9999:p.lastSkill))),20), buff:p.buff||null, skillUses:p.skillUses||0, ultUses:p.ultUses||0,
-        pz:p.pzStacks||0, pm:(p.pzMarkUntil>t/1000)?1:0, ultOn:!!p.ultOn, invis:!!p.invis, burning:!!p.burning, poisoned:!!p.poisoned, kw:(p.kanWingsUntil>t/1000)?1:0, gc:p.gc||0, pp:puppetMaster(p,t/1000)?p.puppetTarget:null, slowed:!!p.slowed, stunned:!!p.stunned, cardSlowed:!!p.cardSlowed, bladeSpin:!!p.bladeSpin, swordCharging:!!p.swordCharge, cannonFlying:!!p.cannonFly, chips:p.chips||0, cannonAng:p.cannonFly?Math.round(Math.atan2(p.vy||0,p.cannonFly.vx)*100)/100:0, totalDamageDealt:p.totalDamageDealt||0, channeling:!!p.teleportChannel, flaming:!!p.flaming, portalPair:p.portalPair||null, batting:!!p.batting, vacuumStacks:p.vacuumStacks||0, isZombie:!!p.isZombie, parkourItem:!!p.parkourItem, hsHiding:!!p.hsHiding, hsDisguiseW:p.hsDisguiseW, hsDisguiseH:p.hsDisguiseH, isSeeker:!!p.isSeeker,
+        pz:p.pzStacks||0, pm:(p.pzMarkUntil>t/1000)?1:0, ultOn:!!p.ultOn, invis:!!p.invis, burning:!!p.burning, poisoned:!!p.poisoned, kw:(p.kanWingsUntil>t/1000)?1:0, gc:p.gc||0, pp:puppetMaster(p,t/1000)?p.puppetTarget:null, sw:p.sw||null, sewSlowed:!!p.sewSlowed, slowed:!!p.slowed, stunned:!!p.stunned, cardSlowed:!!p.cardSlowed, bladeSpin:!!p.bladeSpin, swordCharging:!!p.swordCharge, cannonFlying:!!p.cannonFly, chips:p.chips||0, cannonAng:p.cannonFly?Math.round(Math.atan2(p.vy||0,p.cannonFly.vx)*100)/100:0, totalDamageDealt:p.totalDamageDealt||0, channeling:!!p.teleportChannel, flaming:!!p.flaming, portalPair:p.portalPair||null, batting:!!p.batting, vacuumStacks:p.vacuumStacks||0, isZombie:!!p.isZombie, parkourItem:!!p.parkourItem, hsHiding:!!p.hsHiding, hsDisguiseW:p.hsDisguiseW, hsDisguiseH:p.hsDisguiseH, isSeeker:!!p.isSeeker,
         isHost:p.isHost,clan:p.clan||'',joinOrder:p.joinOrder,weapon:p.weapon,team:p.team,spinAngle:p.spinAngle,cos:p.cos,isBoss:p.isBoss?1:0,isMinion:p.isMinion?1:0,bt:p.bt,bossMaxHp:p.bossMaxHp,emIdx:p.emIdx,emRem:(p.emUntil?Math.max(0,Math.round((p.emUntil-t/1000)*20)/20):0)})),
       cq: (gameMode==='conquest' && cq) ? {s:cq.scores, h:cq.holder, c:cq.contested} : undefined,
       xm: (xm && xmV) ? xmV : undefined,
@@ -16355,7 +16393,7 @@ function drawStickman(p){
   const luxLv=(skinId && COSMETICS[skinId] && COSMETICS[skinId].lux) || 0, luxNow=performance.now(), luxSeed=((p.id||'').length*7+((p.id||'x').charCodeAt(0)||0))%97;
   if(luxLv && p.alive!==false) drawSkinLux(ctx, luxLv, skinTint, luxNow, luxSeed, 'back');
   if(p.kw && p.alive!==false) drawKanWings(ctx, luxNow);
-  if(p.pp && players[p.pp] && p.alive!==false){ const q=players[p.pp], dx=(q.x-p.x), dy=(q.y-p.y); ctx.save(); ctx.strokeStyle='#ffd0e6'; ctx.lineWidth=1.6; ctx.globalAlpha=0.9; ctx.setLineDash([6,4]); ctx.lineDashOffset=-performance.now()/40; ctx.beginPath(); ctx.moveTo(0,-34); ctx.quadraticCurveTo(dx/2, Math.min(-34,dy-60)-24, dx, dy-60); ctx.stroke(); ctx.restore(); }   // 인형술사: the strings to his puppet
+  if(p.pp && players[p.pp] && p.alive!==false){ const q=players[p.pp], dx=(q.x-p.x), dy=(q.y-p.y); ctx.save(); ctx.strokeStyle='#ffd0e6'; ctx.lineWidth=1.6; ctx.globalAlpha=0.9; ctx.setLineDash([6,4]); ctx.lineDashOffset=-performance.now()/40; ctx.beginPath(); ctx.moveTo(0,-34); ctx.quadraticCurveTo(dx/2, Math.min(-34,dy-60)-24, dx, dy-60); ctx.stroke(); ctx.restore(); }   // 인형술사: the strings to his puppet if(p.sw && players[p.sw] && p.alive!==false){ const q=players[p.sw], dx=(q.x-p.x), dy=(q.y-p.y); ctx.save(); ctx.strokeStyle='#ff9ecb'; ctx.lineWidth=2; ctx.globalAlpha=0.95; ctx.beginPath(); ctx.moveTo(0,-34); ctx.quadraticCurveTo(dx/2, Math.min(-34,dy-60)+Math.sin(performance.now()/160)*6, dx, dy-60); ctx.stroke(); ctx.restore(); }   // 바느질: the thread to the one it holds
   if(p.pm && p.alive!==false) drawPizarroMark(ctx, luxNow);
   if(p.weapon==='pizarro' && p.alive!==false) drawPizarroAura(ctx, p, luxNow);      // 기세: a golden glow that grows with every stack, flames at the feet at the 4th, gold marks over the head      // a tier skin: the aura, the sunburst and the rings behind the body
   if(p.invis) ctx.globalAlpha=0.35;
@@ -16823,7 +16861,8 @@ function render(fxDt){
       if(hasSkill){
         const sRemain = isHost ? Math.max(0, skillCdOf(me)-(performance.now()/1000-(me.lastSkill===undefined?-9999:me.lastSkill))) : (me.skillCdRemain||0);
         document.getElementById('skillFill').style.width=(clamp(1-sRemain/skillCdOf(me),0,1)*100)+'%';
-        document.getElementById('skillLabel').textContent = sRemain>0.05 ? ('스킬 '+sd.name+' '+sRemain.toFixed(1)) : ('스킬 ('+codeToLabel(keyBindings.skill)+') '+sd.name);
+        const sdName=(me.weapon==='puppeteer' && me.sw) ? SEW_PULL_NAME : sd.name;
+        document.getElementById('skillLabel').textContent = sRemain>0.05 ? ('스킬 '+sdName+' '+sRemain.toFixed(1)) : ('스킬 ('+codeToLabel(keyBindings.skill)+') '+sdName);
         sw.classList.toggle('ready', sRemain<=0.05);
       }
     }
