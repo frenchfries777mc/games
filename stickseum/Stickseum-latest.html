@@ -2259,7 +2259,7 @@ function myProfileDeco(){ const e=saveData.equipped||{}; return {pbg:(e.pbg&&cos
 
 // ---- titles: a character earns a title at mastery Lv.5 / 10 / 20 (and the season pass gives two more) ----
 const TITLE_TIERS=[{lv:5,word:'숙련자',color:'#9ad1ff'},{lv:10,word:'달인',color:'#ffd34d'},{lv:20,word:'전설',color:'#ff7bd9'}];
-const SEASON_TITLES={season_vet:{name:'시즌 베테랑',color:'#7ef0a8'}, season_master:{name:'시즌 마스터',color:'#ff5fd2'}, tn_champ:{name:'토너먼트 챔피언',color:'#ffd34d'}, tn_king:{name:'토너먼트 제왕',color:'#ff9f43'}, tn_legend:{name:'토너먼트 전설',color:'#ff5fd2'}, rk_gold:{name:'랭크 골드',color:'#ffd34d'}, rk_dia:{name:'랭크 다이아',color:'#7bf3ff'}, rk_master:{name:'랭크 마스터',color:'#ff5fd2'}};
+const SEASON_TITLES={season_vet:{name:'시즌 베테랑',color:'#7ef0a8'}, season_master:{name:'시즌 마스터',color:'#ff5fd2'}, tn_champ:{name:'토너먼트 챔피언',color:'#ffd34d'}, tn_king:{name:'토너먼트 제왕',color:'#ff9f43'}, tn_legend:{name:'토너먼트 전설',color:'#ff5fd2'}, rk_gold:{name:'랭크 골드',color:'#ffd34d'}, rk_dia:{name:'랭크 다이아',color:'#7bf3ff'}, rk_master:{name:'랭크 마스터',color:'#ff5fd2'}, season_hero:{name:'시즌 영웅',color:'#7bf3ff'}, season_legend:{name:'시즌 전설',color:'#ffd34d'}, season_mythic:{name:'시즌 신화',color:'#ff5fd2'}, season_eternal:{name:'시즌 영원',color:'#ff4d5e'}};
 const TN_TITLE_WINS={tn_champ:1, tn_king:5, tn_legend:10};
 function tnTitleCheck(){ try{ saveData.owned=saveData.owned||{}; for(const id in TN_TITLE_WINS){ if((saveData.tnWins||0)>=TN_TITLE_WINS[id] && !saveData.owned[id]){ saveData.owned[id]=true; setTimeout(()=>showAchievementToast({icon:'👑', name:SEASON_TITLES[id].name, reward:0}, '새 칭호 획득!'), 3800); } } persistSave(); }catch(e){} }
 function titleInfo(id){
@@ -2337,22 +2337,42 @@ function claimMission(scope, idx){
   return true;
 }
 function missionsClaimable(){ const ms=ensureMissions(); let n=0; for(const sc of ['daily','weekly']) for(const m of ms[sc]) if(!m.c && m.p>=m.n) n++; return n; }
-// ---- the season pass: 20 tiers, 300 season xp each; progress resets every month ----
-const SEASON_TIERS=20, SEASON_TIER_XP=300;
+// ---- the season pass: 60 tiers (300 season xp each up to tier 30, 450 each after); progress resets every month ----
+const SEASON_TIERS=60, SEASON_TIER_XP=300, SEASON_LATE_FROM=30, SEASON_LATE_XP=450;
+function seasonTierCost(i){ return i>SEASON_LATE_FROM ? SEASON_LATE_XP : SEASON_TIER_XP; }              // season xp it costs to go from tier i-1 to i
+function seasonXpForTier(n){ n=Math.max(0,Math.min(SEASON_TIERS,n)); return n<=SEASON_LATE_FROM ? n*SEASON_TIER_XP : SEASON_LATE_FROM*SEASON_TIER_XP+(n-SEASON_LATE_FROM)*SEASON_LATE_XP; }
+const SEASON_MAX_XP=seasonXpForTier(SEASON_TIERS);
 const SEASON_REWARDS=[
   {kind:'gold',amount:50},{kind:'soul',amount:3},{kind:'box',amount:1},{kind:'gold',amount:80},{kind:'cos',id:'kfx_stars'},
   {kind:'playerxp',amount:120},{kind:'soul',amount:5},{kind:'gold',amount:100},{kind:'box',amount:1},{kind:'title',id:'season_vet'},
   {kind:'gold',amount:120},{kind:'charxp',amount:80},{kind:'soul',amount:8},{kind:'box',amount:1},{kind:'cos',id:'kfx_ice'},
   {kind:'gold',amount:150},{kind:'playerxp',amount:200},{kind:'soul',amount:10},{kind:'box',amount:2},{kind:'title',id:'season_master'}
 ];
+// tiers 21-30: a little better than before; from tier 31 on the rewards grow a lot (every tenth tier a title)
+(function(){
+  const ks=['gold','playerxp','soul','box','charxp'];
+  for(let i=21;i<=SEASON_TIERS;i++){
+    const late=i>SEASON_LATE_FROM, m=late?(1+(i-SEASON_LATE_FROM)/10):1, k=ks[(i-21)%5];
+    if(i===30){ SEASON_REWARDS.push({kind:'title',id:'season_hero'}); continue; }
+    if(i===40){ SEASON_REWARDS.push({kind:'title',id:'season_legend'}); continue; }
+    if(i===50){ SEASON_REWARDS.push({kind:'title',id:'season_mythic'}); continue; }
+    if(i===60){ SEASON_REWARDS.push({kind:'title',id:'season_eternal'}); continue; }
+    if(late && i%10===5){ SEASON_REWARDS.push({kind:'gold',amount:Math.round(700*m/10)*10}); continue; }
+    if(k==='gold') SEASON_REWARDS.push({kind:'gold',amount:Math.round((late?260:170)*m/10)*10});
+    else if(k==='playerxp') SEASON_REWARDS.push({kind:'playerxp',amount:Math.round((late?420:260)*m/10)*10});
+    else if(k==='soul') SEASON_REWARDS.push({kind:'soul',amount:Math.round((late?18:12)*m)});
+    else if(k==='box') SEASON_REWARDS.push({kind:'box',amount:late?3:2});
+    else SEASON_REWARDS.push({kind:'charxp',amount:Math.round((late?220:120)*m/10)*10});
+  }
+})();
 function ensureSeason(){
   const k=seasonKeyOf(); let s=saveData.season;
   if(!s || typeof s!=='object' || (s.key!==k && !(s.key && k<s.key))){ s={key:k, xp:0, claimed:{}}; saveData.season=s; persistSave(); }
   if(!s.claimed || typeof s.claimed!=='object') s.claimed={};
   return s;
 }
-function seasonTier(){ return Math.min(SEASON_TIERS, Math.floor(ensureSeason().xp/SEASON_TIER_XP)); }
-function addSeasonXp(n, quiet){ n=Math.floor(+n||0); if(n<=0) return; const s=ensureSeason(), before=seasonTier(); s.xp=Math.min(SEASON_TIERS*SEASON_TIER_XP, s.xp+n); persistSave(); const after=seasonTier(); if(!quiet && after>before){ try{ showAchievementToast({icon:'🎫', name:'시즌 패스 '+after+'단계', reward:0}, '시즌 패스 단계 상승!'); }catch(e){} } try{ refreshMissionBadge(); }catch(e){} }
+function seasonTier(){ const x=ensureSeason().xp; let t=0; while(t<SEASON_TIERS && x>=seasonXpForTier(t+1)) t++; return t; }
+function addSeasonXp(n, quiet){ n=Math.floor(+n||0); if(n<=0) return; const s=ensureSeason(), before=seasonTier(); s.xp=Math.min(SEASON_MAX_XP, s.xp+n); persistSave(); const after=seasonTier(); if(!quiet && after>before){ try{ showAchievementToast({icon:'🎫', name:'시즌 패스 '+after+'단계', reward:0}, '시즌 패스 단계 상승!'); }catch(e){} } try{ refreshMissionBadge(); }catch(e){} }
 function seasonRewardLabel(r){
   if(r.kind==='gold') return '💰 골드 '+r.amount;
   if(r.kind==='soul') return SOUL.icon+' '+SOUL.name+' '+r.amount;
@@ -2431,8 +2451,8 @@ function renderMissionScreen(){
   const mo=msToNextMonth(), md=Math.floor(mo/86400000);
   sec('🎫 시즌 패스 · '+s.key+' 시즌 ('+md+'일 남음)');
   const head=document.createElement('div'); head.style.cssText='padding:10px; border:1px solid var(--line); border-radius:10px; background:var(--panel-2); margin-bottom:8px;';
-  const into=s.xp-tier*SEASON_TIER_XP;
-  head.innerHTML='<div style="font-weight:800; font-size:15px; margin-bottom:6px;">'+tier+' / '+SEASON_TIERS+' 단계 · 시즌 XP '+s.xp+'</div>'+barHtml(tier>=SEASON_TIERS?1:into/SEASON_TIER_XP,'#c17bff')+'<div style="font-size:11px; color:var(--text-dim); margin-top:5px;">경기 완료 +20 · 승리 +20 · 킬 +5 · 미션 보상 · 단계마다 '+SEASON_TIER_XP+' XP</div>';
+  const into=s.xp-seasonXpForTier(tier), need=seasonTierCost(tier+1);
+  head.innerHTML='<div style="font-weight:800; font-size:15px; margin-bottom:6px;">'+tier+' / '+SEASON_TIERS+' 단계 · 시즌 XP '+s.xp+'</div>'+barHtml(tier>=SEASON_TIERS?1:into/need,'#c17bff')+'<div style="font-size:11px; color:var(--text-dim); margin-top:5px;">경기 완료 +20 · 승리 +20 · 킬 +5 · 미션 보상 · 단계마다 '+SEASON_TIER_XP+' XP (31단계부터 '+SEASON_LATE_XP+' XP)</div>';
   body.appendChild(head);
   const allBtn=document.createElement('button'); allBtn.className='btn-primary btn-full'; allBtn.style.marginBottom='8px';
   const claimN=seasonClaimable(); allBtn.textContent=claimN>0?('받을 수 있는 보상 모두 받기 ('+claimN+')'):'받을 수 있는 보상이 없어요';
@@ -4918,7 +4938,7 @@ function shuffle(arr){ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.
 /* ===== the version of this file =====
    Players with different versions CAN meet and play together: the automatic matchmaking uses the same room names for every version (online-<mode>-<map>-<slot>), and nobody is refused because of a different build.
    The build is only sent along with the join message and the lobby (for information); the corner of the screen shows it. */
-const GAME_BUILD='build 2026-10-18-v358';
+const GAME_BUILD='build 2026-10-18-v359';
 const GAME_VERSION='0.8', GAME_VERSION_NAME='황금을 찾아서';   // 게임 버전 이름: versions.json의 title과 같게 (빌드마다 바꾸지 않음)
 const WEEKLY_EVENTS=[
   {id:'lowg',    name:'저중력 난투', desc:'몸이 둥실둥실, 중력이 약해진 난투', rules:{grav:0.6}},
