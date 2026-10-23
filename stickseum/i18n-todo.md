@@ -91,3 +91,7 @@ patchnotes.json | v353 title | 6인 세로 맵 삭제와 맵 이름 정리 | bui
 patchnotes.json | v353 items[0] | 세로로 긴 6인 맵 4종(우주, 궁전, 사이버, 하늘) 삭제 | build 353 | 2026-10-20
 patchnotes.json | v353 items[1] | 왕 지키기·얼음땡·한 방 승부·저중력 난투·숨바꼭질·토너먼트 기본 맵 변경 | build 353 | 2026-10-20
 patchnotes.json | v353 items[2] | 깃발 뺏기 전용 맵 이름에서 '깃발 뺏기:' 글자 제거 | build 353 | 2026-10-20
+patchnotes.json | v354 title | 경험치 조정 | build 354 | 2026-10-20
+patchnotes.json | v354 items[0] | 플레이어 경험치 조정 (처치 20, 어시스트 5, 완주 15, 승리 30) | build 354 | 2026-10-20
+patchnotes.json | v354 items[1] | 황금 쟁탈 금덩이 입금 경험치 2로 조정 | build 354 | 2026-10-20
+patchnotes.json | v354 items[2] | 레벨 10 이후 레벨당 필요 경험치 1000으로 조정 (기존 레벨 유지) | build 354 | 2026-10-20
