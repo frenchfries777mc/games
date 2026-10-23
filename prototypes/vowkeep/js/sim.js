@@ -1,7 +1,8 @@
 // Vowkeep · © 2026 Frenchfries777 · CC BY-NC-ND 4.0
 // 게임 규칙 (방장·혼자 하기에서만 돌아가요). three.js를 쓰지 않아서 node에서도 시험할 수 있어요.
-import { ROLES, ROLE_IDS, ENEMIES, BLESSINGS, CHAPTERS, FOES, MAP, GEAR_BONUS } from './data.js';
-import { collide as mapCollide, isWall, lineClear, navDir, areaAt, cw, useChapter, PILLARS } from './map.js';
+import { ROLES, ROLE_IDS, ENEMIES, BLESSINGS, CHAPTERS, FOES, MAP, GEAR_BONUS, COMBOS, DEEP } from './data.js';
+import * as D from './data.js';
+import { collide as mapCollide, isWall, lineClear, navDir, areaAt, cw, useChapter, PILLARS, resetSecrets, openSecret, secretFace } from './map.js';
 
 export const INTRO_T = 16;
 const WAKE_R = 14, LEASH_R = 30;
@@ -16,27 +17,28 @@ export function mkRng(seed) { let s = seed >>> 0 || 1; return () => { s ^= s << 
 /* slots: [{id, role, name, bot, lv, gear:{weapon,armor}}] */
 // 장마다 적 능력치: 1장 값에 장 난이도와 적 종류별 배율을 곱해요
 function enemyStats(ch) {
-  const C = CHAPTERS[ch], F = FOES[ch] || FOES[0], o = {};
+  const C = D.CH, F = FOES[ch] || FOES[0], o = {}, cu = C.curse || {};
   for (const k of ['skel', 'archer', 'shield', 'elite']) {
     const b = ENEMIES[k], f = F[k] || {};
     // 잡몹은 쉽게: 체력 70%, 공격 75% (정예는 85%씩)
     const eh = k === 'elite' ? 0.85 : 0.7, ed = k === 'elite' ? 0.85 : 0.75;
-    o[k] = Object.assign({}, b, { name: f.name || b.name, hp: Math.round(b.hp * (f.hp || 1) * C.diff * eh), dmg: Math.round(b.dmg * C.diff * ed), speed: b.speed * (f.speed || 1), r: f.r || b.r, proj: f.proj || 'earrow', psp: f.psp || 17 });
+    o[k] = Object.assign({}, b, { name: f.name || b.name, hp: Math.round(b.hp * (f.hp || 1) * C.diff * eh * (cu.hp || 1)), dmg: Math.round(b.dmg * C.diff * ed * (cu.dmg || 1)), speed: b.speed * (f.speed || 1) * (cu.spd || 1), r: f.r || b.r, proj: f.proj || 'earrow', psp: f.psp || 17 });
   }
-  o.boss = Object.assign({}, ENEMIES.boss, C.boss, { honor: 0 });
+  o.boss = Object.assign({}, ENEMIES.boss, C.boss, { honor: 0 }); if (cu.dmg) o.boss.dmg = Math.round(o.boss.dmg * cu.dmg);
   return o;
 }
 export function createGame(slots, seed, ch = 0) {
-  useChapter(ch);
+  useChapter(ch, ch === D.DEEP_I); resetSecrets();
   const G = {
-    ch, CH: CHAPTERS[ch], EN: enemyStats(ch), bossArea: MAP.areas.findIndex(a => a.boss),
+    ch, CH: D.CH, EN: enemyStats(ch), deep: D.CH.deep ? { floor: DEEP.floor, seed: DEEP.seed, curses: DEEP.curses.slice() } : null, sk: [], combos: {},
+    secrets: MAP.secrets.map(() => ({ open: false })), lores: MAP.lores.map(() => ({ read: false, prog: 0 })), bossArea: MAP.areas.findIndex(a => a.boss),
     t: 0, rng: mkRng(seed || Date.now()), phase: 'intro', phaseT: 0,
     players: [], enemies: [], projs: [], zones: [], ev: [], uid: 1, msg: '', stats: { downs: 0, kills: 0 },
     humans: slots.filter(s => !s.bot).length, bless: {}, honor: {}, won: false,
     skip: {}, cp: { x: cw(MAP.start[0]), z: cw(MAP.start[1]) }, cpI: -1, bossIntro: false, bossDead: false, route: 0,
     fires: MAP.fires.map(([x, y]) => ({ x: cw(x), z: cw(y), lit: false })),
     altars: MAP.altars.map(([x, y]) => ({ x: cw(x), z: cw(y), used: false, prog: 0 })),
-    chests: MAP.chests.map(([x, y]) => ({ x: cw(x), z: cw(y), open: false, prog: 0 })),
+    chests: MAP.chests.map(([x, y, sec]) => ({ x: cw(x), z: cw(y), open: false, prog: 0, sec: sec || 0 })),
     traps: MAP.traps.map(([x, y], i) => ({ id: i, x: cw(x), z: cw(y), on: true, t: i * 0.7, up: false }))
   };
   slots.forEach((s, i) => {
@@ -62,6 +64,8 @@ function placeAt(G, c) {
 }
 
 function hasB(p, id) { return p.bl.indexOf(id) >= 0; }
+// 회복: 심연의 '마른 샘' 저주가 있으면 줄어요
+function healP(G, q, v) { const n = v * ((G.CH.curse && G.CH.curse.heal) || 1); q.hp = Math.min(q.maxhp, q.hp + n); return Math.round(n); }
 function ev(G, k, o) { G.ev.push(Object.assign({ k }, o || {})); }
 function alive(p) { return !p.down && !p.dead; }
 function hpMul(G) { return 1 + 0.35 * (Math.max(1, G.humans) - 1); }
@@ -117,7 +121,7 @@ function hurtEnemy(G, e, dmg, p, o) {
   }
   d = Math.max(1, Math.round(d));
   e.hp -= d; e.hitT = 0.15; ev(G, 'ehit', { x: e.x, z: e.z, v: d, id: e.id, crit: d > dmg * 1.4, hv: o.heavy ? 1 : 0 });
-  if (p && hasB(p, 'leech') && alive(p)) p.hp = Math.min(p.maxhp, p.hp + 1);
+  if (p && hasB(p, 'leech') && alive(p)) healP(G, p, 1);
   if ((o.burn || (p && hasB(p, 'fire') && o.basic)) && e.hp > 0) { e.burn = 3; }
   if (o.kb && e.k !== 'boss') { e.vx += Math.cos(o.kbA) * o.kb; e.vz += Math.sin(o.kbA) * o.kb; }
   if (e.hp <= 0) killEnemy(G, e);
@@ -131,7 +135,7 @@ function killEnemy(G, e) {
 }
 
 /* ---------- 플레이어 행동 ---------- */
-function cdMul(p, which) { return which === 'atk' ? (hasB(p, 'hands') ? 0.85 : 1) : (hasB(p, 'focus') ? 0.85 : 1); }
+function cdMul(p, which, G) { return which === 'atk' ? (hasB(p, 'hands') ? 0.85 : 1) : (hasB(p, 'focus') ? 0.85 : 1) * ((G && G.CH.curse && G.CH.curse.cd) || 1); }
 function aimPoint(p, inp, range) {
   if (inp.ax != null) { const d = Math.hypot(inp.ax - p.x, inp.az - p.z); if (d <= range) return { x: inp.ax, z: inp.az }; }
   return { x: p.x + Math.cos(p.a) * range, z: p.z + Math.sin(p.a) * range };
@@ -145,9 +149,11 @@ function basicAttack(G, p, inp) {
   if (cmb) { p.combo = p.comboT > 0 ? ((p.combo || 0) + 1) % 3 : 0; p.comboT = 1.2; }
   const third = cmb && p.combo === 2, heavy = third && p.role === 'knight', big = third && !heavy, hm = big ? 1.5 : 1;
   p.anim = heavy ? 'hv' : big ? 'big' : 'atk'; p.animT = heavy ? 0.95 : big ? 0.6 : 0.32; p.animN = (p.animN || 0) + 1;
+  // 기사 베기 방향: 1타 오른쪽 위→왼쪽 아래, 2타 왼쪽 아래→오른쪽 아래 (봇은 둘을 번갈아)
+  p.animC = cmb ? p.combo : (p.animN % 2);
   // 강타는 제자리에서 높이 뛰어올라, 땅에 내려찍는 순간 맞아요 (공중에 있는 동안은 움직이지 않아요)
   if (heavy) { p.hvT = HV_DELAY; p.hvAid = aid; return; }
-  if (big) ev(G, 'big', { id: p.id, role: p.role, x: p.x + Math.cos(p.a) * 1.4, z: p.z + Math.sin(p.a) * 1.4, a: p.a });
+  if (big) { ev(G, 'big', { id: p.id, role: p.role, x: p.x + Math.cos(p.a) * 1.4, z: p.z + Math.sin(p.a) * 1.4, a: p.a }); breakWall(G, p.x + Math.cos(p.a) * 1.6, p.z + Math.sin(p.a) * 1.6, 2.2, p); }
   if (A.kind === 'melee') {
     ev(G, 'swing', { id: p.id, x: p.x, z: p.z, a: p.a, r: A.range * (big ? 1.3 : 1), role: p.role });
     for (const e of G.enemies) { if (e.hp <= 0) continue; const d = dist(p, e); if (d < A.range * (big ? 1.3 : 1) + e.r && angDiff(p.a, angTo(p, e)) < A.arc / 2 + (big ? 0.7 : 0.25)) hurtEnemy(G, e, A.dmg * hm, p, { basic: true, aid, burn: A.burn, kb: big ? 6 : 3, kbA: angTo(p, e) }); }
@@ -163,12 +169,59 @@ function heavyLand(G, p) {
   ev(G, 'swing', { id: p.id, x: p.x, z: p.z, a: p.a, r: A.range, role: p.role });
   // 내려찍은 자리 둘레 전부를 쳐요 (피해 3.4배), 맞은 적은 느려져요 (보스는 덜, 짧게)
   const cx = p.x + Math.cos(p.a) * 1.2, cz = p.z + Math.sin(p.a) * 1.2;
+  breakWall(G, cx, cz, HV_R, p);
   for (const e of G.enemies) { if (e.hp <= 0) continue; if (Math.hypot(e.x - cx, e.z - cz) < HV_R + e.r) { const kbA = Math.atan2(e.z - cz, e.x - cx); hurtEnemy(G, e, A.dmg * 3.4, p, { basic: true, aid: p.hvAid, heavy: true, burn: A.burn, kb: 7, kbA }); if (e.hp > 0) { const boss = e.k === 'boss'; e.slow = boss ? 1.5 : 2.5; e.slowM = boss ? 0.75 : 0.5; } } }
+}
+// 금 간 벽: 강타, 세 번째 큰 공격, 관통 화살이 닿으면 무너지고 비밀 방이 열려요
+function breakWall(G, x, z, r, p) {
+  G.secrets.forEach((q, k) => {
+    if (q.open) return; const f = secretFace(k); if (Math.hypot(f.x - x, f.z - z) > r + 1.4) return;
+    q.open = true; openSecret(k); ev(G, 'secret', { i: k, x: f.x, z: f.z }); for (const o of G.players) G.honor[o.id] += 20;
+    if (p && !p.bot) ev(G, 'ach', { id: 'secret', pid: p.id });
+  });
+}
+// 합동기: 짝이 맞는 기술을 다른 동료가 1초 안에 썼으면 함께 터져요
+function tryCombo(G, p, sid) {
+  G.sk = G.sk.filter(o => G.t - o.t < 1);
+  for (const C of COMBOS) {
+    if (C.a !== sid && C.b !== sid) continue; const other = C.a === sid ? C.b : C.a;
+    const o = G.sk.find(q => q.s === other && q.pid !== p.id); if (!o) continue;
+    const q = G.players.find(x => x.id === o.pid); if (!q || !alive(q) || dist(p, q) > 12) continue;
+    G.sk = G.sk.filter(x => x !== o);
+    const A = C.a === sid ? p : q, B = A === p ? q : p; comboFx(G, C, A, B); return;
+  }
+  G.sk.push({ pid: p.id, s: sid, t: G.t });
+}
+function comboFx(G, C, A, B) {
+  const hit = (e, dmg, by) => { if (e.hp > 0) hurtEnemy(G, e, dmg, by, { from: by }); };
+  let x = A.x, z = A.z;
+  switch (C.id) {
+    case 'lightdash': { // 기사가 지나간 길을 따라 빛이 터져요
+      const ox = A.x - Math.cos(A.a) * 6, oz = A.z - Math.sin(A.a) * 6; x = (ox + A.x) / 2; z = (oz + A.z) / 2;
+      for (const e of G.enemies) if (e.hp > 0 && segDist(ox, oz, A.x + Math.cos(A.a) * 2, A.z + Math.sin(A.a) * 2, e.x, e.z) < 2.4 + e.r) { hit(e, 80, A); if (e.hp > 0) e.stun = Math.max(e.stun, e.k === 'boss' ? 0.6 : 1.5); }
+      A.shield = Math.max(A.shield, 60); A.shieldT = 6; break;
+    }
+    case 'sanct': // 기사 둘레가 성역이 돼요
+      for (const o of G.players) if (alive(o) && dist(A, o) < 8) ev(G, 'heal', { id: o.id, x: o.x, z: o.z, v: healP(G, o, 40) });
+      for (const e of G.enemies) if (e.hp > 0 && dist(A, e) < 8 + e.r) hit(e, 55, B); break;
+    case 'wall': // 방패진: 모두에게 큰 보호막
+      for (const o of G.players) if (alive(o) && dist(A, o) < 10) { o.shield = Math.max(o.shield, 50); o.shieldT = 6; ev(G, 'ward', { id: o.id }); } break;
+    case 'firerain': { // 화살비가 불타올라요
+      const r = G.zones.filter(zz => zz.k === 'rain' && zz.own === A.id).pop(); if (r) { r.fire = 1; r.t += 1.5; r.r += 0.8; x = r.x; z = r.z; } break;
+    }
+    case 'net': { // 표시한 적 둘레를 모두 묶어요
+      const m = G.enemies.filter(e => e.hp > 0 && e.mark > 0).sort((a, b) => dist(A, a) - dist(A, b))[0] || G.enemies.filter(e => e.hp > 0).sort((a, b) => dist(B, a) - dist(B, b))[0];
+      if (m) { x = m.x; z = m.z; for (const e of G.enemies) if (e.hp > 0 && Math.hypot(e.x - m.x, e.z - m.z) < 5.5) { e.root = Math.max(e.root, e.k === 'boss' ? 1.2 : 3.5); if (e.k === 'boss') e.slow = 2, e.slowM = 0.6; hit(e, 30, B); } } break;
+    }
+  }
+  G.combos[C.id] = 1;
+  ev(G, 'combo', { c: C.id, name: C.name, x, z, a: A.id, b: B.id });
+  if (!A.bot || !B.bot) { for (const o of [A, B]) if (!o.bot) { ev(G, 'ach', { id: 'combo', pid: o.id }); ev(G, 'combo1', { c: C.id, pid: o.id }); } }
 }
 function useSkill(G, p, si, inp) {
   const R = ROLES[p.role], S = R.skills[si], key = 's' + si;
   if (p.cd[key] > 0) return;
-  p.cd[key] = S.cd * cdMul(p, 'skill'); p.anim = S.id; p.animT = 0.8; p.animN = (p.animN || 0) + 1;
+  p.cd[key] = S.cd * cdMul(p, 'skill', G); p.anim = S.id; p.animT = 0.8; p.animN = (p.animN || 0) + 1;
   ev(G, 'skill', { id: p.id, s: S.id, x: p.x, z: p.z, a: p.a });
   switch (S.id) {
     case 'block': p.block = 1.2; break;
@@ -187,7 +240,7 @@ function useSkill(G, p, si, inp) {
       if (best) { best.mark = 6; ev(G, 'mark', { id: best.id, x: best.x, z: best.z }); }
       break;
     }
-    case 'heal': for (const q of G.players) if (alive(q) && dist(p, q) < 6) { q.hp = Math.min(q.maxhp, q.hp + 35); ev(G, 'heal', { id: q.id, x: q.x, z: q.z, v: 35 }); } break;
+    case 'heal': for (const q of G.players) if (alive(q) && dist(p, q) < 6) ev(G, 'heal', { id: q.id, x: q.x, z: q.z, v: healP(G, q, 35) }); break;
     case 'ward': for (const q of G.players) if (alive(q) && dist(p, q) < 7.5) { q.shield = 25; q.shieldT = 5; ev(G, 'ward', { id: q.id }); } break;
     case 'raise': {
       let n = 0; for (const q of G.players) if (q.down && !q.dead && dist(p, q) < 8) { revive(G, q, 0.4, p); n++; }
@@ -198,6 +251,7 @@ function useSkill(G, p, si, inp) {
     case 'trap': G.zones.push({ id: G.uid++, k: 'ptrap', x: p.x, z: p.z, r: 1.4, t: 20, own: p.id }); break;
     case 'rally': for (const q of G.players) if (alive(q) && dist(p, q) < 9) { q.rally = 6; ev(G, 'rally', { id: q.id }); } break;
   }
+  tryCombo(G, p, S.id);
 }
 function segDist(x1, z1, x2, z2, px, pz) {
   const dx = x2 - x1, dz = z2 - z1, L = dx * dx + dz * dz; let t = L ? ((px - x1) * dx + (pz - z1) * dz) / L : 0; t = clamp(t, 0, 1);
@@ -219,11 +273,11 @@ export function step(G, dt, inputs) {
   if (G.phase === 'intro') {
     for (const p of G.players) if (!p.bot && inputs[p.id] && inputs[p.id].skip) G.skip[p.id] = 1;
     const hum = G.players.filter(p => !p.bot);
-    if (G.phaseT > INTRO_T || (hum.length && hum.every(p => G.skip[p.id]))) { G.phase = 'play'; G.phaseT = 0; ev(G, 'start', {}); }
+    if (G.phaseT > (G.CH.introT || INTRO_T) || (hum.length && hum.every(p => G.skip[p.id]))) { G.phase = 'play'; G.phaseT = 0; ev(G, 'start', {}); }
     return;
   }
   if (G.phase === 'wipe') { if (G.phaseT > 3) respawnAll(G); return; }
-  if (G.phase === 'won') return;
+  if (G.phase === 'won' || G.phase === 'over') return;
   if (G.phase === 'bossIntro' && G.phaseT > 3.2) { G.phase = 'play'; G.phaseT = 0; const b = G.enemies.find(e => e.k === 'boss' && e.hp > 0); if (b) { wake(G, b); ev(G, 'roar', {}); } }
 
   // 플레이어
@@ -254,13 +308,17 @@ export function step(G, dt, inputs) {
       if (!alive(p)) continue; const d = Math.hypot(p.x - f.x, p.z - f.z);
       // 불 붙이기: F를 꾹 눌러요 (사람이 없을 때만 봇이 대신 붙여요)
       if (d < 3 && !f.lit && (p.bot ? !G.humans : p.f)) { f.prog = (f.prog || 0) + dt; if (f.prog > 1) { f.lit = true; ev(G, 'checkpoint', { i, x: f.x, z: f.z }); ev(G, 'ach', { id: 'rest' }); } }
-      if (f.lit && d < 4) p.hp = Math.min(p.maxhp, p.hp + 5 * dt);
+      if (f.lit && d < 4) healP(G, p, 5 * dt);
     }
     if (f.lit && i > G.cpI) { G.cpI = i; G.cp = { x: f.x, z: f.z + 2.5 }; }
   });
 
   // 전멸 확인
-  if ((G.phase === 'play' || G.phase === 'bossIntro') && G.players.every(p => !alive(p))) { G.phase = 'wipe'; G.phaseT = 0; ev(G, 'wipe', {}); }
+  if ((G.phase === 'play' || G.phase === 'bossIntro') && G.players.every(p => !alive(p))) {
+    // 끝없는 심연은 모두 쓰러지면 거기서 끝나요
+    if (G.deep) { G.phase = 'over'; G.phaseT = 0; ev(G, 'over', { floor: G.deep.floor }); }
+    else { G.phase = 'wipe'; G.phaseT = 0; ev(G, 'wipe', {}); }
+  }
   if (G.bossDead && !G.won && !G.enemies.some(e => e.k === 'boss')) win(G);
 }
 
@@ -357,8 +415,13 @@ function stepPlayer(G, p, inp, dt) {
   // 상자와 제단: F를 꾹 눌러요
   for (const ch of G.chests) {
     if (ch.open || !inp.f || Math.hypot(p.x - ch.x, p.z - ch.z) > 2.2) continue;
-    ch.prog += dt; if (ch.prog > 1.2) { ch.open = true; for (const q of G.players) G.honor[q.id] += 25; ev(G, 'chest', { x: ch.x, z: ch.z }); }
+    ch.prog += dt; if (ch.prog > 1.2) { ch.open = true; const h = ch.sec ? 60 : 25; for (const q of G.players) G.honor[q.id] += h; ev(G, 'chest', { x: ch.x, z: ch.z, h }); }
   }
+  // 옛 기록 돌: F를 꾹 눌러 읽어요
+  G.lores.forEach((lo, k) => {
+    const L = MAP.lores[k]; if (lo.read || !inp.f || !G.secrets[L[2]].open || Math.hypot(p.x - cw(L[0]), p.z - cw(L[1])) > 2.4) return;
+    lo.prog += dt; if (lo.prog > 0.8) { lo.read = true; ev(G, 'lore', { li: k, x: cw(L[0]), z: cw(L[1]) }); }
+  });
   for (const al of G.altars) {
     if (al.used || !inp.f || Math.hypot(p.x - al.x, p.z - al.z) > 2.4) continue;
     al.prog += dt; if (al.prog > 1) { al.used = true; for (const q of G.players) G.honor[q.id] += 10; offerBless(G); ev(G, 'altar', { x: al.x, z: al.z }); }
@@ -547,11 +610,11 @@ function stepProjs(G, dt) {
   for (const pr of G.projs) {
     if (pr.k === 'potion') {
       pr.t += dt; const u = Math.min(1, pr.t / pr.T); pr.x = pr.sx + (pr.tx - pr.sx) * u; pr.z = pr.sz + (pr.tz - pr.sz) * u; pr.y = Math.sin(u * Math.PI) * 3;
-      if (u >= 1) { pr.dead = true; ev(G, 'splash', { x: pr.tx, z: pr.tz }); for (const q of G.players) if (alive(q) && Math.hypot(q.x - pr.tx, q.z - pr.tz) < 3) { q.hp = Math.min(q.maxhp, q.hp + 30); ev(G, 'heal', { id: q.id, x: q.x, z: q.z, v: 30 }); } }
+      if (u >= 1) { pr.dead = true; ev(G, 'splash', { x: pr.tx, z: pr.tz }); for (const q of G.players) if (alive(q) && Math.hypot(q.x - pr.tx, q.z - pr.tz) < 3) ev(G, 'heal', { id: q.id, x: q.x, z: q.z, v: healP(G, q, 30) }); }
       continue;
     }
     pr.x += pr.vx * dt; pr.z += pr.vz * dt; pr.life -= dt;
-    if (pr.life <= 0 || isWall(pr.x, pr.z) || PILLARS.some(p => Math.hypot(p.x - pr.x, p.z - pr.z) < p.r)) { pr.dead = true; continue; }
+    if (pr.life <= 0 || isWall(pr.x, pr.z) || PILLARS.some(p => Math.hypot(p.x - pr.x, p.z - pr.z) < p.r)) { pr.dead = true; if (pr.k === 'pierce') { const o = G.players.find(p => p.id === pr.own); if (o && !o.bot) breakWall(G, pr.x, pr.z, 1.2, o); } continue; }
     if (pr.team === 0) {
       const own = G.players.find(p => p.id === pr.own);
       if (pr.k === 'orb') { // 사제 빛 구슬은 가까운 적을 살짝 따라가요
@@ -577,7 +640,7 @@ function stepProjs(G, dt) {
 function stepZones(G, dt) {
   for (const z of G.zones) {
     z.t -= dt;
-    if (z.k === 'rain') { z.tick -= dt; if (z.tick <= 0) { z.tick = 0.5; const own = G.players.find(p => p.id === z.own); for (const e of G.enemies) if (e.hp > 0 && Math.hypot(e.x - z.x, e.z - z.z) < z.r + e.r) hurtEnemy(G, e, 18, own, { from: { x: e.x, z: e.z - 1 } }); } }
+    if (z.k === 'rain') { z.tick -= dt; if (z.tick <= 0) { z.tick = 0.5; const own = G.players.find(p => p.id === z.own); for (const e of G.enemies) if (e.hp > 0 && Math.hypot(e.x - z.x, e.z - z.z) < z.r + e.r) hurtEnemy(G, e, z.fire ? 36 : 18, own, { from: { x: e.x, z: e.z - 1 }, burn: z.fire }); } }
     if (z.k === 'fire') { if (z.delay > 0) { z.delay -= dt; continue; } z.tick -= dt; if (z.tick <= 0) { z.tick = 0.5; for (const p of G.players) if (alive(p) && Math.hypot(p.x - z.x, p.z - z.z) < z.r) hurtPlayer(G, p, 16, null); } }
   }
   for (const z of G.zones) if (z.t <= 0 && z.then === 'fire') { z.then = null; G.zones.push({ id: G.uid++, k: 'fire', x: z.x, z: z.z, r: z.r * 0.8, t: 5, delay: 0, tick: 0 }); }
@@ -624,6 +687,15 @@ function botThink(G, p, dt) {
       if (!moveTo(G, p, inp, downed.x, downed.z, 1.4)) inp.f = true;
       return inp;
     }
+  }
+  // 사람이 합동기 짝 기술을 막 썼으면, 봇이 맞춰서 자기 짝 기술을 써 줘요
+  const hk = G.sk.find(o => G.t - o.t < 0.7 && o.pid !== p.id && G.players.some(q => q.id === o.pid && !q.bot && alive(q) && dist(p, q) < 10));
+  if (hk) for (const C of COMBOS) {
+    const mine = C.a === hk.s ? C.b : C.b === hk.s ? C.a : null, si = mine ? R.skills.findIndex(x => x.id === mine) : -1;
+    if (si < 0 || p.cd['s' + si] > 0) continue;
+    inp.q = si === 0; inp.e = si === 1; inp.r = si === 2;
+    if (mine === 'potion') { const z = G.zones.filter(zz => zz.k === 'rain').pop(); if (z) { inp.ax = z.x; inp.az = z.z; inp.aim = Math.atan2(z.z - p.z, z.x - p.x); } }
+    return inp;
   }
   // 3) 싸울 적이 없으면 앞사람을 따라가요. 앞장서는 봇은 정해진 길을 따라가요
   if (!foes.length) {
@@ -680,13 +752,13 @@ const r1 = v => Math.round(v * 100) / 100;
 export function snapshot(G) {
   const near = e => e.k === 'boss' || (e.st !== 'sleep') || G.players.some(p => Math.abs(p.x - e.x) < 34 && Math.abs(p.z - e.z) < 26);
   return {
-    t: r1(G.t), ph: G.phase, pt: r1(G.phaseT), c: G.ch, msg: G.msg, won: G.won,
+    t: r1(G.t), ph: G.phase, pt: r1(G.phaseT), c: G.ch, dp: G.deep, msg: G.msg, won: G.won,
     sk: G.players.filter(p => !p.bot && G.skip[p.id]).length, hu: G.players.filter(p => !p.bot).length,
-    pl: G.players.map(p => ({ id: p.id, role: p.role, name: p.name, bot: p.bot, x: r1(p.x), z: r1(p.z), a: r1(p.a), hp: Math.round(p.hp), mx: p.maxhp, dn: p.down ? 1 : 0, dd: p.dead ? 1 : 0, bl: r1(p.bleed), rs: r1(p.respT), rv: r1(p.revT), ro: p.roll > 0 ? 1 : 0, bk: p.block > 0 ? 1 : 0, sh: Math.round(p.shield), tn: p.taunt > 0 ? 1 : 0, ra: p.rally > 0 ? 1 : 0, an: p.animT > 0 ? p.anim : '', aN: p.animN || 0, ak: p.anim, mv: p.moving ? 1 : 0, cd: [r1(p.cd.s0), r1(p.cd.s1), r1(p.cd.s2)], rc: r1(p.rollCd), b: p.bl, cb: p.comboT > 0 ? p.combo : 0, fc: p.focus > 0 ? 1 : 0 })),
+    pl: G.players.map(p => ({ id: p.id, role: p.role, name: p.name, bot: p.bot, x: r1(p.x), z: r1(p.z), a: r1(p.a), hp: Math.round(p.hp), mx: p.maxhp, dn: p.down ? 1 : 0, dd: p.dead ? 1 : 0, bl: r1(p.bleed), rs: r1(p.respT), rv: r1(p.revT), ro: p.roll > 0 ? 1 : 0, bk: p.block > 0 ? 1 : 0, sh: Math.round(p.shield), tn: p.taunt > 0 ? 1 : 0, ra: p.rally > 0 ? 1 : 0, an: p.animT > 0 ? p.anim : '', aN: p.animN || 0, ak: p.anim, mv: p.moving ? 1 : 0, cd: [r1(p.cd.s0), r1(p.cd.s1), r1(p.cd.s2)], rc: r1(p.rollCd), b: p.bl, cb: p.comboT > 0 ? p.combo : 0, ac: p.animC || 0, fc: p.focus > 0 ? 1 : 0 })),
     en: G.enemies.filter(near).map(e => ({ id: e.id, k: e.k, x: r1(e.x), z: r1(e.z), a: r1(e.a), hp: Math.round(e.hp), mx: e.maxhp, st: e.st, mk: e.mark > 0 ? 1 : 0, sn: e.stun > 0 ? 1 : 0, sl: e.slow > 0 ? 1 : 0, bu: e.burn > 0 ? 1 : 0, ph: e.phase || 0, mv: e.moving ? 1 : 0, ak: e.atk ? e.atk.k + (e.atk.go ? '!' : '') : '', ht: e.hitT > 0 ? 1 : 0 })),
     pr: G.projs.map(p => ({ id: p.id, k: p.k, x: r1(p.x), z: r1(p.z), y: r1(p.y || 0), bg: p.big ? 1 : 0, a: r1(Math.atan2(p.vz || (p.tz - p.sz) || 0, p.vx || (p.tx - p.sx) || 1)) })),
     zn: G.zones.map(z => ({ id: z.id, k: z.k, x: r1(z.x), z: r1(z.z), r: z.r, a: z.a, len: z.len, w: z.w, arc: z.arc, t: r1(z.t), T: z.T, dl: z.delay > 0 ? 1 : 0 })),
-    w: { cp: G.cpI, fi: G.fires.map(f => f.lit ? 1 : 0), al: G.altars.map(a => a.used ? 1 : 0), ap: G.altars.map(a => r1(a.prog)), ch: G.chests.map(c => c.open ? 1 : 0), cp2: G.chests.map(c => r1(c.prog)), tr: G.traps.map(t => (t.on ? 1 : 0) + (t.up ? 2 : 0)), boss: G.bossIntro ? 1 : 0, bd: G.bossDead ? 1 : 0, left: G.enemies.filter(e => e.hp > 0 && !e.summoned && e.k !== 'boss').length },
+    w: { cp: G.cpI, fi: G.fires.map(f => f.lit ? 1 : 0), al: G.altars.map(a => a.used ? 1 : 0), ap: G.altars.map(a => r1(a.prog)), ch: G.chests.map(c => c.open ? 1 : 0), cp2: G.chests.map(c => r1(c.prog)), tr: G.traps.map(t => (t.on ? 1 : 0) + (t.up ? 2 : 0)), boss: G.bossIntro ? 1 : 0, bd: G.bossDead ? 1 : 0, sc: G.secrets.map(q => q.open ? 1 : 0), lr: G.lores.map(q => q.read ? 1 : 0), left: G.enemies.filter(e => e.hp > 0 && !e.summoned && e.k !== 'boss').length },
     bless: G.bless, honor: G.honor
   };
 }
