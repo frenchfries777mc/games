@@ -44,3 +44,7 @@ patchnotes.json | v340 items[2] | 깃발 뺏기 제한시간 종료 시 동점�
 patchnotes.json | v340 items[3] | 킬 이펙트 '몸 분리' 추가(목·몸통·팔·다리 분리) | build 340 | 2026-10-20
 patchnotes.json | v340 items[4] | 인트로의 STICKSEUM 글자와 글자 빛 효과 제거 | build 340 | 2026-10-20
 patchnotes.json | v340 items[5] | 인트로 배경을 업데이트 대표 그림으로 교체(칸과 피사로의 황금 대결) | build 340 | 2026-10-20
+patchnotes.json | v341 title | 상점 탭 배치 고정 | build 341 | 2026-10-20
+patchnotes.json | v341 items[0] | 치장품 상점 탭 버튼이 탭마다 4개·5개로 달라지던 현상 수정(항상 5개씩 2줄) | build 341 | 2026-10-20
+patchnotes.json | v342 title | 무한 대쉬 봇 강화 | build 342 | 2026-10-20
+patchnotes.json | v342 items[0] | 무한 대쉬 배틀로얄에서 봇도 이동할 때마다 계속 대쉬 | build 342 | 2026-10-20
