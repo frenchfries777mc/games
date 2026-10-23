@@ -75,3 +75,6 @@ patchnotes.json | v349 items[0] | 금지 단계가 일찍 끝나도 봇이 남�
 patchnotes.json | v349 title | 카드 연출 개선과 봇 선택 대기 수정 | build 349 | 2026-10-20
 patchnotes.json | v349 items[0] | 도박사 궁극기 카드 배경 제거, 카드 뒷면을 빨간색으로, 카드 크기 확대 | build 349 | 2026-10-20
 patchnotes.json | v349 items[1] | 금지 단계가 일찍 끝나도 봇이 남은 금지 시간만큼 기다렸다가 고르던 현상 수정 | build 349 | 2026-10-20
+patchnotes.json | v350 title | 인트로 곡 시작 시점 | build 350 | 2026-10-23
+patchnotes.json | v350 items[0] | 인트로 곡이 인트로가 시작되자마자 나옴 | build 350 | 2026-10-23
+patchnotes.json | v350 items[1] | 인트로가 끝나기 전에는 로비 음악이 나오지 않음 | build 350 | 2026-10-23
