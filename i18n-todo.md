@@ -254,3 +254,7 @@ crownenvoy/CrownEnvoy-v0.4.html | 전신망 (정치 탭 카드) | "📡 전신�
 ## Vowkeep b30 (2026-10-23)
 - prototypes/vowkeep/js/data.js | 궁수 역할 설명 ('공격을 꾹 누르면 0.8초에 두 발, 2초에 세 발을 한 번에 쏴요'), 사제 부활의 빛·종자 물약·덫·함성 설명 수정 | 한국어만 있음 | Vowkeep b30 | 2026-10-23
 - patchnotes.json | "Vowkeep 궁수 모아 쏘기, 사제·종자 균형" 5줄 | Vowkeep b30 | 2026-10-23
+
+## 갤러리 Isleport·Dummy Party·Vowkeep (2026-10-23)
+- gallery/index.html | 새 사진 11장의 제목·설명 (ko, en만 작성; 나머지 언어는 en으로 표시됨), 프로토타입 배지 글자(ko,en,es,fr,de,ja,zh,pt,ru,tr,it,pl,ar 작성됨, nw 없음)
+- patchnotes.json | "갤러리에 Isleport·Dummy Party·Vowkeep" 3줄
