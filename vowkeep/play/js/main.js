@@ -17,10 +17,21 @@ if (TOUCH) document.body.classList.add('touch');
 function lsGet(k, d) { try { const v = localStorage.getItem(k); return v ? JSON.parse(v) : d; } catch (e) { return d; } }
 function lsSet(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) { } }
 const SAVE = Object.assign({ honor: 0, xp: {}, gear: {}, ach: {}, clears: {}, role: 'knight', set: { vol: 70, px: 3, bloom: 1, shake: 1 } }, lsGet('vowkeep.save', {}));
-SAVE.set = Object.assign({ vol: 70, px: 3, bloom: 1, shake: 1 }, SAVE.set || {});
+SAVE.set = Object.assign({ vol: 70, px: 3, bloom: 1, shake: 1, opt: matchMedia('(pointer: coarse)').matches ? 1 : 0 }, SAVE.set || {});
+// 최적화: 허브 설정의 공용 값(ff_perf)이 있으면 그걸 따르고, 여기서 바꾸면 공용 값도 같이 바꿔요
+let FPS_CAP = 0;
+function perfApply() {
+  let has = false; try { has = !!localStorage.getItem('ff_perf'); } catch (e) { }
+  const P = window.FFPerf && has ? FFPerf.get() : null;
+  if (P) SAVE.set.opt = P.low || P.fx === 'low' ? 1 : 0;
+  FPS_CAP = P && P.fps ? P.fps : SAVE.set.opt ? 30 : 0;
+  try { view.setLow(!!SAVE.set.opt); } catch (e) { }   // 처음 부를 때는 아직 화면(view)이 없어요
+}
+perfApply();
+addEventListener('ffperf', () => { perfApply(); if (S.scr === 'sSettings') paintSettings(); });
 // 깬 장 수 (예전 저장은 1장을 깼으면 1)
 if (SAVE.chMax == null) SAVE.chMax = Object.keys(SAVE.clears || {}).length ? 1 : 0;
-SAVE.lore = SAVE.lore || {}; SAVE.puz = SAVE.puz | 0; SAVE.combos = SAVE.combos || {}; SAVE.deepBest = SAVE.deepBest | 0;
+SAVE.lore = SAVE.lore || {}; SAVE.flags = SAVE.flags || {}; SAVE.puz = SAVE.puz | 0; SAVE.combos = SAVE.combos || {}; SAVE.deepBest = SAVE.deepBest | 0;
 // 다음에 이어서 할 장 (모든 장을 깼으면 1장부터 새 원정)
 const chOpen = () => (SAVE.chMax | 0) >= CHAPTERS.length ? 0 : SAVE.chMax | 0;
 function save() { lsSet('vowkeep.save', SAVE); }
@@ -35,7 +46,7 @@ const S = {
 };
 S.chSel = chOpen();
 const view = new View($('gl'));
-view.setPixel(SAVE.set.px); view.setBloom(!!SAVE.set.bloom); view.shakeOn = !!SAVE.set.shake; SFX.setVol(SAVE.set.vol / 100); MUS.setVol(SAVE.set.vol / 100);
+view.lobbyFlags = SAVE.flags; view.setLow(!!SAVE.set.opt); view.setPixel(SAVE.set.px); view.setBloom(!!SAVE.set.bloom); view.shakeOn = !!SAVE.set.shake; SFX.setVol(SAVE.set.vol / 100); MUS.setVol(SAVE.set.vol / 100);
 // 처음 인트로: 던전 복도를 네 영웅이 걸어 나와요. 건너뛸 수 없어요 (끝까지 재생). 끝나면 로비로
 let INTRO = !(qs.get('test') && /^(localhost|127\.0\.0\.1)$/.test(location.hostname));
 window.__introSongDone = INTRO ? 0 : 1;
@@ -111,7 +122,7 @@ function paintWho() {
 if (window.FFAuth) { FFAuth.ready.then(() => { paintWho(); autoJoin(); }); FFAuth.onChange(paintWho); }
 paintWho();
 function needLogin() { if (!window.FFAuth) return false; if (loggedIn()) return false; homeMsg('친구와 원정은 Frenchfries777 계정으로 로그인해야 해요.'); try { FFAuth.openLogin(); } catch (e) { } return true; }
-function hubRoom(on) { try { if (window.FFAuth && FFAuth.setRoom) FFAuth.setRoom(on && S.code ? { game: 'vowkeep', code: S.code, path: 'prototypes/vowkeep/index.html' } : null); } catch (e) { } }
+function hubRoom(on) { try { if (window.FFAuth && FFAuth.setRoom) FFAuth.setRoom(on && S.code ? { game: 'vowkeep', code: S.code, path: 'vowkeep/play/index.html' } : null); } catch (e) { } }
 let autoDone = false;
 function autoJoin() { const c = (qs.get('join') || '').toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 6); if (autoDone || c.length !== 6 || S.net) return; autoDone = true; if (needLogin()) return;
   // 초대 링크로 들어왔을 때: 취소됐거나 30분이 지난 초대면 들어가지 않아요 (확인 기능이 아직 없으면 그냥 들어가요)
@@ -159,6 +170,7 @@ function paintSettings() {
   seg('setPx', SAVE.set.px, v => { SAVE.set.px = v; view.setPixel(v); });
   seg('setBloom', SAVE.set.bloom, v => { SAVE.set.bloom = v; view.setBloom(!!v); });
   seg('setShake', SAVE.set.shake, v => { SAVE.set.shake = v; view.shakeOn = !!v; });
+  seg('setOpt', SAVE.set.opt, v => { SAVE.set.opt = v; try { if (window.FFPerf) FFPerf.set({ low: !!v, fx: v ? 'low' : 'high', fps: v ? 30 : 0 }); } catch (e) { } perfApply(); });
 }
 $('setVol').oninput = e => { SAVE.set.vol = +e.target.value; SFX.setVol(SAVE.set.vol / 100); MUS.setVol(SAVE.set.vol / 100); save(); };
 
@@ -243,7 +255,7 @@ async function openInvite() {
         return;
       }
       let ok = false, nid = null;
-      try { const r = await sb.rpc('ff_invite', { p_to: id, p_game: 'vowkeep', p_code: S.code, p_path: 'prototypes/vowkeep/index.html' }); ok = !(r && r.error); nid = ok ? r.data : null; } catch (e) { }
+      try { const r = await sb.rpc('ff_invite', { p_to: id, p_game: 'vowkeep', p_code: S.code, p_path: 'vowkeep/play/index.html' }); ok = !(r && r.error); nid = ok ? r.data : null; } catch (e) { }
       if (ok) { S.sent[id] = { id: nid, at: Date.now(), code: S.code }; paint(); } else { bt.textContent = '못 보냈어요'; setTimeout(paint, 2000); }
     };
     paint();
@@ -365,7 +377,7 @@ function beginGame(prevG) {
   startClient();
 }
 function startClient() {
-  talkReset(); if (!S.G) resetSecrets(); S.overT = 0; S.cleared = false; S.built = false; S.area = -2; S.seenA = {}; S.voted = false; S.lastPh = ''; S.saved = false; S.resultShown = false; S.everDown = false; S.local = null; S.nums = []; S.evq = []; S.wonT = 0; S.lastBless = null; S.solvedP = {};
+  talkReset(); if (!S.G) resetSecrets(); S.overT = 0; S.cleared = false; S.built = false; S.area = -2; S.seenA = {}; S.voted = false; S.lastPh = ''; S.saved = false; S.resultShown = false; S.everDown = false; S.local = null; S.nums = []; S.evq = []; S.wonT = 0; S.lastBless = null; S.solvedP = {}; S.flagGot = 0;
   if (S.G) S.snap = snapshot(S.G);
   unlock('first');
   setHud(false); show('sIntro'); $('introCh').textContent = CH.title; $('introLine').classList.remove('on'); S.introIdx = -1;
@@ -458,9 +470,10 @@ function localMove(p, inp, dt) {
   // 기사 강타: 방장이 강타를 알려 오면 내 화면에서도 공중에 있는 동안 제자리에 멈춰요
   if (p.aN !== L.aN) { if (L.aN != null && p.ak === 'hv') L.lp = HV_DELAY; L.aN = p.aN; }
   if (L.lp > 0) { L.lp -= dt; return; }
-  if (inp.roll && L.rollCd <= 0 && !(L.roll > 0)) { L.roll = 0.35; L.rollCd = 1.2 * ((p.b || []).indexOf('roll') >= 0 ? 0.6 : 1); const ra = ml > 0.1 ? Math.atan2(mz, mx) : p.a; L.rdx = Math.cos(ra); L.rdz = Math.sin(ra); }
+  const fl = S.snap.w.fl && S.snap.w.fl[2] === p.id;
+  if (inp.roll && !fl && L.rollCd <= 0 && !(L.roll > 0)) { L.roll = 0.35; L.rollCd = 1.2 * ((p.b || []).indexOf('roll') >= 0 ? 0.6 : 1); const ra = ml > 0.1 ? Math.atan2(mz, mx) : p.a; L.rdx = Math.cos(ra); L.rdz = Math.sin(ra); }
   if (L.roll > 0) { L.roll -= dt; L.x += L.rdx * 15 * dt; L.z += L.rdz * 15 * dt; }
-  else { const sp = R.speed * ((p.b || []).indexOf('feet') >= 0 ? 1.12 : 1) * (p.ra ? 1.3 : 1) * (p.bk ? 0.8 : 1); L.x += mx * sp * dt; L.z += mz * sp * dt; }
+  else { const sp = R.speed * ((p.b || []).indexOf('feet') >= 0 ? 1.12 : 1) * (p.ra ? 1.3 : 1) * (p.bk ? 0.8 : 1) * (fl ? 0.7 : 1); L.x += mx * sp * dt; L.z += mz * sp * dt; }
   mapCollide(L, 0.6);
   if (!liftOk(ox, oz, L.x, L.z)) { L.x = ox; L.z = oz; }
 }
@@ -518,6 +531,8 @@ function onEvent(e) {
       const hp = view.entPos('p' + e.id); if (hp) { view.ring(hp.x + Math.cos(e.a) * 1.4, hp.z + Math.sin(e.a) * 1.4, 3.4, 0xffe08a, 0.4); view.burst(hp.x + Math.cos(e.a) * 1.4, 0.3, hp.z + Math.sin(e.a) * 1.4, 0xbcae94, 26, 9, 0.6, 0.18); }
       view.shock(e.x, e.z, 6, 0xffe08a, 0.45); view.ring(e.x - Math.cos(e.a) * 0.4, e.z - Math.sin(e.a) * 0.4, 3.2, 0x7ac8ff, 0.6); view.shock(e.x, e.z, 3.2, 0xffffff, 0.3); view.rune(e.x, e.z, 2.2, 0xffb040, 0.7, 0); view.streak(e.x - Math.cos(e.a) * 2.5, e.z - Math.sin(e.a) * 2.5, e.a, 5, 0xfff0b0, 0.28, 0.9); view.rise(e.x, e.z, 0xffd36b, 16, 1.6, 0.6, 9); view.flash(e.x, e.z, 0xffe08a, 150);
       if (e.id === me) { num(e.x, e.z, '강타!', '#ffd36b', 1.5, 4.2); view.shake = Math.max(view.shake, 1.0); if (S.net === 'solo') S.slowT = Math.max(S.slowT || 0, 0.12); } SFX.play('clang'); break; }
+    case 'pcharge': { // 사제 큰 빛 모으기: 발밑 문양과 모여드는 빛
+      view.rune(e.x, e.z, 2.0, 0xfff0b0, 0.5, 0); view.rise(e.x, e.z, 0xfff0b0, 14, 1.0, 0.45, 5); view.ring(e.x, e.z, 2.4, 0x9af0d0, 0.45); view.flash(e.x, e.z, 0xfff0b0, 80); SFX.play('charge'); break; }
     case 'big': { // 사제·종자 세 번째 큰 공격
       const col = e.role === 'priest' ? 0xfff0b0 : 0xffb060; view.shock(e.x, e.z, 3.6, col, 0.4); view.burst(e.x, 1.4, e.z, col, 18, 8, 0.45, 0.14); view.rise(e.x, e.z, col, 10, 1.2, 0.5, 7); view.flash(e.x, e.z, col, 110);
       if (e.id === me) view.shake = Math.max(view.shake, 0.6); SFX.play('clang'); break; }
@@ -581,6 +596,9 @@ function onEvent(e) {
     case 'pfall': bigMsg('기둥이 쓰러졌어요', '쓰러진 기둥을 밟고 건너요', 2600); SFX.play('slam'); view.shake = Math.max(view.shake, 0.6); view.burst(e.x, 3, e.z, 0x9a8e84, 22, 6, 0.9, 0.18); break;
     case 'lstop': SFX.play('door'); view.burst(e.x, e.up ? 3 : 0.5, e.z, 0x9a8e84, 10, 3, 0.6, 0.12); if (e.up) toast('승강기가 위층에 닿았어요. 다시 돌리면 내려가요.', 2400); break;
     case 'lifted': bigMsg('모두 위층에 올라왔어요', '이제 승강기는 혼자 타도 움직여요', 2600); SFX.play('clear'); break;
+    case 'flag': if (e.on) { const who = S.snap && S.snap.pl.find(q => q.id === e.id); if (e.id === me) bigMsg('기사단 깃발', '든 채로 장을 끝내면 로비 벽에 걸려요. 적이 깃발을 노려요', 3200); else if (who) toast(ROLES[who.role].name + '가 기사단 깃발을 들었어요.', 2600); SFX.play('bless'); view.column(e.x, e.z, 0xffd36b, 0.6); }
+      else { toast('기사단 깃발이 떨어졌어요. 다시 주워 들어요.', 2600); SFX.play('clang'); } break;
+    case 'flaggot': S.flagGot = 1; break;
     case 'torch': if (e.id === me) toast(e.on ? '횃불을 들었어요. 들고 있는 동안은 기술을 못 써요.' : '횃불을 내려놓았어요.', 2400); SFX.play('fire'); break;
     case 'esc': TK.q.length = 0; TK.cur = null; talk('esc'); bigMsg('성이 무너지기 시작해요!', '초록빛 출구까지 모두 달려요', 3200); SFX.play('slam'); view.shake = Math.max(view.shake, 1.4); flashScreen(); break;
     case 'rock': view.shatter(e.x, e.z, [0x6a625a, 0x58504a, 0x8a8076], 12, false); view.ring(e.x, e.z, 2, 0x8a7a6a, 0.4); view.burst(e.x, 0.4, e.z, 0x8a7a6a, 10, 5, 0.6, 0.14); if (Math.random() < 0.5) SFX.play('slam'); break;
@@ -671,7 +689,10 @@ function paintHud() {
   if (me && !me.dn && !me.dd) {
     const pos = S.local || me;
     const dn = sn.pl.find(q => q.dn && !q.dd && Math.hypot(q.x - pos.x, q.z - pos.z) < 2.2);
-    if (dn) pr = (TOUCH ? 'F 버튼' : 'F') + '를 꾹 눌러 ' + ROLES[dn.role].name + ' 일으키기';
+    const fw = sn.w.fl, F = TOUCH ? 'F 버튼' : 'F';
+    if (fw && fw[2] === me.id) pr = '깃발을 든 채 장을 끝내요 · ' + F + ' 내려놓기';
+    else if (dn) pr = (TOUCH ? 'F 버튼' : 'F') + '를 꾹 눌러 ' + ROLES[dn.role].name + ' 일으키기';
+    else if (fw && !fw[2] && sn.w.sc[MAP.flag[2]] && Math.hypot(fw[0] - pos.x, fw[1] - pos.z) < 2.6) pr = F + '를 꾹 눌러 기사단 깃발 들기' + (fw[3] > 0 ? ' ' + Math.round(fw[3] / 1.5 * 100) + '%' : '');
     else if (MAP.chests.some(([x, y], k) => !sn.w.ch[k] && Math.hypot(cw(x) - pos.x, cw(y) - pos.z) < 2.6)) pr = (TOUCH ? 'F 버튼' : 'F') + '를 꾹 눌러 상자 열기';
     else if (MAP.lores.some(([x, y, q], k) => sn.w.sc[q] && !sn.w.lr[k] && Math.hypot(cw(x) - pos.x, cw(y) - pos.z) < 2.6)) pr = (TOUCH ? 'F 버튼' : 'F') + '를 꾹 눌러 옛 기록 읽기';
     else if (MAP.fires.some(([x, y], k) => !sn.w.fi[k] && Math.hypot(cw(x) - pos.x, cw(y) - pos.z) < 3)) pr = (TOUCH ? 'F 버튼' : 'F') + '를 꾹 눌러 모닥불 피우기';
@@ -797,6 +818,7 @@ function clearChapter() {
   if (CH.deep) { deepRecord(DEEP.floor + 1); return h; }
   if (me) { SAVE.clears[me.role] = Math.max(SAVE.clears[me.role] || 0, ci + 1); if (!S.everDown) unlock('nodown'); if (ROLE_IDS.every(r => SAVE.clears[r])) unlock('all4'); }
   if (ci === 0) unlock('boss'); else unlock('ch' + (ci + 1));
+  if (S.flagGot) { SAVE.flags[ci] = 1; unlock('flag1'); if (CHAPTERS.every((c, i) => SAVE.flags[i])) unlock('flags'); toast('기사단 깃발을 로비 벽에 걸었어요.', 3600); }
   SAVE.chMax = Math.max(SAVE.chMax | 0, ci + 1); save();
   return h;
 }
@@ -849,8 +871,11 @@ function musicTick(dt, now) {
 }
 addEventListener('pointerdown', () => MUS.kick()); addEventListener('keydown', () => MUS.kick());
 let lastT = performance.now();
+let lastF = 0;
 function frame(now) {
   requestAnimationFrame(frame);
+  // 최적화를 켜면 1초에 30번만 그려요 (휴대폰 발열·배터리)
+  if (FPS_CAP && now - lastF < 1000 / FPS_CAP - 2) return; lastF = now;
   const dt = Math.min(0.05, (now - lastT) / 1000); lastT = now; const t = (now - S.t0) / 1000;
   musicTick(dt, now); talkTick(dt, !!S.snap && S.scr === '' && (S.snap.ph === 'play' || S.snap.ph === 'bossIntro'));
   if (S.snap && (S.G || S.net === 'guest') && S.scr !== 'sLobby' && S.scr !== 'sRoom') {

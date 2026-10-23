@@ -314,3 +314,12 @@ crownenvoy/CrownEnvoy-v0.4.html | 전신망 (정치 탭 카드) | "📡 전신�
 ## Crown Envoy b97 (2026-10-23)
 | CrownEnvoy-v0.4.html | 정치 탭 카드 | 🏙 점령지 동화 (설명·안정·동화 중·동화 버튼 문구 전체) | b97 | 2026-10-23 |
 | CrownEnvoy-v0.4.html | 알림 | 〇〇이(가) 완전히 안정됐어요. / 동화 정책을 폈어요 문구 | b97 | 2026-10-23 |
+
+## Vowkeep b37 (2026-10-23)
+- vowkeep/i18n.js | 게임 사이트 문구 전체 (소개, 특징 6개, 공략 12개, 도움말, 질문 3개) | 한국어만 있음 (L: ['ko']) | Vowkeep b37 | 2026-10-23
+- vowkeep/patchnotes.json, vowkeep/versions.json | 패치 노트 35개, 버전 제목 '첫 서약'과 설명 | 한국어만 있음 | Vowkeep b37 | 2026-10-23
+- vowkeep/play/js/data.js | 업적 2개 ('깃발을 지킨 자', '기사단의 벽') | 한국어만 있음 | Vowkeep b37 | 2026-10-23
+- vowkeep/play/js/main.js | 깃발 안내 ('깃발을 든 채 장을 끝내요 · F 내려놓기', 'F를 꾹 눌러 기사단 깃발 들기', '기사단 깃발', '든 채로 장을 끝내면 로비 벽에 걸려요. 적이 깃발을 노려요', '…가 기사단 깃발을 들었어요.', '기사단 깃발이 떨어졌어요. 다시 주워 들어요.', '기사단 깃발을 로비 벽에 걸었어요.') | 한국어만 있음 | Vowkeep b37 | 2026-10-23
+- vowkeep/play/index.html | 설정 '최적화', '켜기', '끄기' | 한국어만 있음 | Vowkeep b37 | 2026-10-23
+- prototypes/vowkeep/index.html | 옮김 안내 'Vowkeep이 새 주소로 옮겼어요. 새 주소로 가기' | 한국어만 있음 | Vowkeep b37 | 2026-10-23
+- patchnotes.json | "Vowkeep 정식 게임 사이트, 기사단 깃발" 6줄 | Vowkeep b37 | 2026-10-23
