@@ -115,3 +115,22 @@ patchnotes.json | v359 items[2] | 21단계 이후 보상 상향과 31단계 이�
 patchnotes.json | v359 items[3] | 시즌 칭호 4종 추가 (영웅, 전설, 신화, 영원) | build 359 | 2026-10-20
 patchnotes.json | v360 title | 숨바꼭질 비공개 전용 | build 360 | 2026-10-20
 patchnotes.json | v360 items[0] | 숨바꼭질을 온라인 모드 목록에서 빼고 비공개 방에서만 가능하게 변경 | build 360 | 2026-10-20
+Stickseum-v0.8.html | kfx_blackhole name | 블랙홀 | build 361 | 2026-10-23
+Stickseum-v0.8.html | kfx_phoenix name | 불사조 승천 | build 361 | 2026-10-23
+Stickseum-v0.8.html | pose_levitate name | 공중 부양 | build 361 | 2026-10-23
+Stickseum-v0.8.html | pose_trophy name | 챔피언 트로피 | build 361 | 2026-10-23
+Stickseum-v0.8.html | emo 별똥별 소원 name | 별똥별 소원 | build 361 | 2026-10-23
+Stickseum-v0.8.html | emo 황금 왕관 name | 황금 왕관 | build 361 | 2026-10-23
+Stickseum-v0.8.html | skin_pistol_s1 name | 오로라 총잡이 | build 361 | 2026-10-23
+Stickseum-v0.8.html | skin_sword_s1 name | 황금 시즌 기사 | build 361 | 2026-10-23
+Stickseum-v0.8.html | season_hero | 시즌 영웅 | build 361 | 2026-10-23
+Stickseum-v0.8.html | season_legend | 시즌 전설 | build 361 | 2026-10-23
+Stickseum-v0.8.html | season_mythic | 시즌 신화 | build 361 | 2026-10-23
+Stickseum-v0.8.html | season_eternal | 시즌 영원 | build 361 | 2026-10-23
+Stickseum-v0.8.html | season reward labels | 이모트 / 승리 모션 / 스킨 / 시즌 패스 보상 | build 361 | 2026-10-23
+Stickseum-v0.8.html | hideseek alert | 숨바꼭질은 비공개 방에서만 할 수 있어요 | build 361 | 2026-10-23
+patchnotes.json | v361 title | 시즌 패스 전용 꾸미기 | build 361 | 2026-10-20
+patchnotes.json | v361 items[0] | 시즌 패스 전용 킬 이펙트 추가 (블랙홀, 불사조 승천) | build 361 | 2026-10-20
+patchnotes.json | v361 items[1] | 시즌 패스 전용 승리 모션 추가 (공중 부양, 챔피언 트로피) | build 361 | 2026-10-20
+patchnotes.json | v361 items[2] | 시즌 패스 전용 움직이는 이모트 추가 (별똥별 소원, 황금 왕관) | build 361 | 2026-10-20
+patchnotes.json | v361 items[3] | 시즌 패스 전용 스킨 추가 (오로라 총잡이, 황금 시즌 기사) | build 361 | 2026-10-20
