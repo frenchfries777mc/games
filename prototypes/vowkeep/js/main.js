@@ -36,7 +36,15 @@ const S = {
 S.chSel = chOpen();
 const view = new View($('gl'));
 view.setPixel(SAVE.set.px); view.setBloom(!!SAVE.set.bloom); view.shakeOn = !!SAVE.set.shake; SFX.setVol(SAVE.set.vol / 100); MUS.setVol(SAVE.set.vol / 100);
-view.buildLobby();
+// 처음 인트로: 던전 복도를 네 영웅이 걸어 나와요. 건너뛸 수 없어요 (끝까지 재생). 끝나면 로비로
+let INTRO = !(qs.get('test') && /^(localhost|127\.0\.0\.1)$/.test(location.hostname));
+if (INTRO) {
+  view.buildIntro();
+  if (!(qs.get('hold') && /^(localhost|127\.0\.0\.1)$/.test(location.hostname))) setTimeout(() => { $('vkIntro').classList.add('dark'); setTimeout(() => {
+    if (view.mode === 'intro') view.buildLobby(); INTRO = false; document.documentElement.classList.add('vkReady');
+    $('vkIntro').classList.add('out'); setTimeout(() => $('vkIntro').remove(), 900);
+  }, 550); }, 6200);
+} else { view.buildLobby(); document.documentElement.classList.add('vkReady'); $('vkIntro').remove(); }
 addEventListener('resize', () => { view.resize(); sizeOv(); });
 const ov = $('ov'), oc = ov.getContext('2d');
 function sizeOv() { const d = Math.min(2, devicePixelRatio || 1); ov.width = innerWidth * d; ov.height = innerHeight * d; oc.setTransform(d, 0, 0, d, 0, 0); }
@@ -793,7 +801,7 @@ function smoothSnap(sn, G, prev, al) {
 function musicTick(dt, now) {
   const sn = S.snap, playing = !!sn && S.scr === '' && sn.ph === 'play';
   const want = !playing ? 'lobby' : (sn.w.boss && !sn.w.bd && S.area === MAP.areas.findIndex(a => a.boss) ? 'boss' : 'dungeon');
-  MUS.tick(want, dt, now);
+  MUS.tick(INTRO ? null : want, dt, now);
 }
 addEventListener('pointerdown', () => MUS.kick()); addEventListener('keydown', () => MUS.kick());
 let lastT = performance.now();
