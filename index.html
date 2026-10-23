@@ -179,6 +179,7 @@ if(document.readyState==='loading') document.addEventListener('DOMContentLoaded'
   .game .tags span.acc{background:rgba(255,196,61,.12); color:#ffd36b; border:1px solid rgba(255,196,61,.35); font-weight:700;}
   .tags span.acc i{font-style:normal; margin-right:4px;}
   .coinbar{display:flex; align-items:center; gap:14px; margin:-12px 0 26px; padding:12px 18px; border-radius:14px; border:1px solid var(--line); background:var(--panel);}
+  .hci{width:1.15em;height:1.15em;vertical-align:-.22em;object-fit:contain;} .hci.big{width:30px;height:30px;vertical-align:middle;} .fd-i .hci{width:24px;height:24px;vertical-align:middle;} .cc-b .hci{width:20px;height:20px;vertical-align:middle;}
   .coinbar:empty{display:none;} .cb-i{font-size:26px;} .cb-t{flex:1; display:flex; flex-direction:column; gap:2px; min-width:0;} .cb-t b{font-size:16px;} .cb-n{font-family:'Oswald',sans-serif; color:var(--fry); font-size:19px; margin-left:4px;} .cb-s{color:var(--dim); font-size:13.5px;}
   .coin-pop{position:fixed; left:50%; top:90px; transform:translate(-50%,10px) scale(.9); opacity:0; z-index:2147483000; padding:10px 20px; border-radius:99px; background:linear-gradient(90deg,var(--fry),var(--fry2)); color:#1c1405; font-weight:800; font-size:17px; box-shadow:0 10px 30px rgba(0,0,0,.35); transition:transform .35s cubic-bezier(.2,1.4,.4,1),opacity .35s; pointer-events:none;}
   .coin-pop.go{transform:translate(-50%,0) scale(1); opacity:1;} .coin-pop b{font-family:'Oswald',sans-serif; font-size:20px;}
@@ -508,7 +509,7 @@ if(document.readyState==='loading') document.addEventListener('DOMContentLoaded'
   <header>
     <a class="logo" href="./"><img class="lg" src="logo.svg" alt="" width="36" height="36"><span>FRENCHFRIES<b>777</b></span></a>
     <div class="swr"><span class="sw" data-notr><a href="https://frenchfries777mc.github.io/hub/">Hub</a><a class="on" href="./" aria-current="page">Games</a><a href="https://frenchfries777mc.github.io/educations/">Educations</a><a href="https://frenchfries777mc.github.io/tools/">Tools</a></span><button type="button" class="srx-btn" id="srxBtn" aria-label="검색" title="검색">🔍</button></div>
-    <div class="right"><nav><a href="https://frenchfries777mc.github.io/hub/wiki/">위키</a><a href="https://frenchfries777mc.github.io/hub/community/">커뮤니티</a><a href="https://frenchfries777mc.github.io/hub/lounge/">라운지</a><a href="https://frenchfries777mc.github.io/hub/settings/">설정</a></nav><div class="tb"><span class="cchip"><button type="button" class="cc-b" id="coinChip" title="Hub Coin" aria-haspopup="true"><span aria-hidden="true">🪙</span><b id="coinChipN" data-notr>0</b></button><div class="cc-dd" id="coinDd" hidden><div class="coinbar" id="coinBar"></div></div></span><span data-ff-account></span></div></div>
+    <div class="right"><nav><a href="https://frenchfries777mc.github.io/hub/wiki/">위키</a><a href="https://frenchfries777mc.github.io/hub/community/">커뮤니티</a><a href="https://frenchfries777mc.github.io/hub/lounge/">라운지</a><a href="https://frenchfries777mc.github.io/hub/settings/">설정</a></nav><div class="tb"><span class="cchip"><button type="button" class="cc-b" id="coinChip" title="Hub Coin" aria-haspopup="true"><img class="hci" src="https://frenchfries777mc.github.io/games/hubicons/coin.svg" alt="" width="20" height="20" draggable="false"><b id="coinChipN" data-notr>0</b></button><div class="cc-dd" id="coinDd" hidden><div class="coinbar" id="coinBar"></div></div></span><span data-ff-account></span></div></div>
   </header>
   <div id="annBar"></div>
 
@@ -649,7 +650,7 @@ if(document.readyState==='loading') document.addEventListener('DOMContentLoaded'
 </div>
 <script src="ff-hate.js?v=20261021r"></script>
 <script src="ff-auth.js?v=20261022d"></script>
-<script src="hub.js?v=20261022e"></script>
+<script src="hub.js?v=20261023a"></script>
 <script src="ff-splash.js?v=20261022d" defer></script>
 <script>
 (function(){
