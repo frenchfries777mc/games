@@ -1526,7 +1526,9 @@ body.playing #emoBar{display:flex}
    <div class="row"><input id="codeIn" maxlength="5" placeholder="방 코드" autocomplete="off"><button class="pb dark" id="joinBtn" style="flex:0 0 auto">들어가기</button></div>
    <div class="msg" id="homeMsg"></div>
   </aside>
-  <template id="patchnotes"><details class="notes" open><summary>패치노트 · v0.1 (build 60)</summary>
+  <template id="patchnotes"><details class="notes" open><summary>패치노트 · v0.1 (build 61)</summary>
+   <b>2026-10-23 · v0.1 build 61 · 공용 최적화 설정 연결</b>
+   <ul><li>"최적화" 버튼이 허브 설정의 공용 최적화 값과 같아졌어요 (여기서 켜면 허브에서도 켜지고, 허브에서 바꾸면 여기에도 적용돼요)</li><li>프레임 제한(30/60)과 효과 단계(보통은 색종이만 빼기)를 따라요</li></ul>
    <b>2026-10-23 · v0.1 build 60 · 모바일과 최적화</b>
    <ul><li>최적화 옵션이 생겼어요 (게임 위쪽 버튼과 대기실의 "최적화"): 켜면 해상도를 1배로 낮추고 관객과 색종이 효과를 빼서 느린 기기에서 부드러워요</li><li>작은 화면에서 이모티콘 버튼이 작고 흐려져서 해설 자막을 덜 가려요</li><li>터치 버튼 글자가 어색하게 줄바꿈되던 것을 고쳤어요</li></ul>
    <b>2026-10-23 · v0.1 build 59 · 라면 3분 맞히기 수정</b>
@@ -1645,7 +1647,7 @@ body.playing #emoBar{display:flex}
    <ul><li>무너지는 발판 칸 수 대폭 증가 (19×10)와 용암 동굴 맵</li><li>10개 맵 전부 새로 그림 (관중석, 야자수 섬, 링, 정원 미로, 서커스, 우노 테이블 등)</li><li>글자 대신 아이콘·말풍선·이펙트로 표현 (무기, 아이템, 카드 효과, 시작 안내)</li><li>타격·폭발·물보라 효과와 화면 흔들림 추가</li></ul>
    <b>2026-10-19 · v0.1 build 1 · 첫 시험판</b>
    <ul><li>마네킹 미니게임 10개 추가 (장애물 달리기, 섬 밀치기, 싸우기, 병맛 미로, 체스 대난투, 폭탄 돌리기, 병맛 우노, 쇼윈도 얼음땡, 무너지는 발판, 컨베이어 서바이벌)</li><li>방 코드로 최대 8명 멀티플레이, 빈자리는 봇으로 채우기</li><li>판마다 10개 중 5개를 무작위로 골라 점수를 합산</li><li>PC 키보드와 휴대폰 터치 조작 지원</li></ul></details></template>
-  <p class="foot">2~8명 · 판마다 36개 미니게임 중 7개 · 프로토타입 v0.1 b60 · <a href="../">← 프로토타입 목록</a></p>
+  <p class="foot">2~8명 · 판마다 36개 미니게임 중 7개 · 프로토타입 v0.1 b61 · <a href="../">← 프로토타입 목록</a></p>
   <p class="foot"><span class="ff-copy">© 2026 Frenchfries777 · <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.ko" target="_blank" rel="noopener">CC BY-NC-ND 4.0</a></span></p>
  </div>
 </section>
@@ -7651,7 +7653,15 @@ function keyLine(def) {
 function isTouch() { return ('ontouchstart' in window) || navigator.maxTouchPoints > 0; }
 
 /* ---------- 그리기 ---------- */
-var OPT = lsGet('dummyparty.opt') === '1';   // 최적화: 해상도 1배, 관객·색종이·빛 효과를 줄여 느린 기기에서 부드럽게
+/* 최적화: 사이트 공용 설정 FFPerf(ff_perf = {low, fx, fps})를 따라요. 공용 설정이 없으면(오프라인 등) 이 게임 안의 값을 써요.
+   low 또는 fx 'low' = 해상도 1배, 관객·색종이 빼기 / fx 'mid' = 색종이만 빼기 / fps 30·60 = 그 프레임으로 제한 */
+var OPT = false, OPTMID = false, FPSCAP = 0;
+function perfRead() {
+  var p = window.FFPerf ? FFPerf.get() : { low: lsGet('dummyparty.opt') === '1' }, low = !!p.low;
+  var fx = p.fx || (low ? 'low' : 'high'), fps = p.fps != null ? p.fps : (low ? 30 : 0);
+  OPT = low || fx === 'low'; OPTMID = OPT || fx === 'mid'; FPSCAP = fps === 30 || fps === 60 ? fps : 0;
+}
+perfRead();
 var CV, CX, SCALE = 1, CSSS = 1, OFFX = 0, OFFY = 0, BTNS = [], MOUSE = { x: -1, y: -1, on: false };
 function resize() {
   var dpr = OPT ? 1 : Math.min(window.devicePixelRatio || 1, isTouch() ? 1.5 : 2), w = innerWidth, h = innerHeight;
@@ -7672,6 +7682,7 @@ var lastFrame = performance.now();
 function frame() {
   requestAnimationFrame(frame);
   if (!$('sGame').classList.contains('on')) { CHM.tick(null, null); return; }
+  if (FPSCAP && performance.now() - lastFrame < 1000 / FPSCAP - 3) return;
   var now = performance.now(), dt = Math.min(0.1, (now - lastFrame) / 1000); lastFrame = now;
   var m = G.meta; if (!m) return;
   var def = DP.MG[m.mg];
@@ -8265,7 +8276,7 @@ function dpPhoto(m) {
     // 관객: 어두운 앞줄
     for (var m = 0; m < 15; m++) drawDummy(c, 20 + m * 65, 566 + Math.abs(Math.sin(t * 3 + m)) * -9, { s: 0.85, color: COLORS[m % 8], pose: m % 3 === 0 ? 'up' : 'stand', face: 1, t: t });
     c.fillStyle = 'rgba(10,4,24,.28)'; c.fillRect(0, 500, W, 40);
-    if (!OPT) confetti(t);
+    if (!OPTMID) confetti(t);
     // 가운데 글자가 잘 보이게 가장자리를 살짝 어둡게
     var vg = c.createRadialGradient(W / 2, H / 2, 160, W / 2, H / 2, 620); vg.addColorStop(0, 'rgba(8,3,20,0.12)'); vg.addColorStop(1, 'rgba(8,3,20,.5)'); c.fillStyle = vg; c.fillRect(0, 0, W, H);
     sc1.style.opacity = op(t / 3); sc2.style.opacity = op((t - 3) / 3);
@@ -8347,8 +8358,15 @@ function dpAsk(msg, okLabel, onOk) {
   $('sfxBtn').onclick = function () { SFX.on = !SFX.on; sfxLabel(); };
   sfxLabel();
   function optLabel() { var t = OPT ? '최적화 켬' : '최적화 끔'; $('optBtn').textContent = t; $('optLobBtn').textContent = t; }
-  function optToggle() { OPT = !OPT; lsSet('dummyparty.opt', OPT ? '1' : '0'); optLabel(); resize(); toast(OPT ? '최적화를 켰어요. 화질과 효과를 줄여 더 부드럽게 해요.' : '최적화를 껐어요.'); }
-  $('optBtn').onclick = optToggle; $('optLobBtn').onclick = optToggle; optLabel();
+  function optToggle() {
+    var on = !OPT;
+    if (window.FFPerf) FFPerf.set({ low: on, fx: on ? 'low' : 'high', fps: on ? 30 : 0 });   // 사이트 설정과 같은 값
+    else { lsSet('dummyparty.opt', on ? '1' : '0'); perfRead(); optLabel(); resize(); }
+    toast(on ? '최적화를 켰어요. 화질과 효과를 줄여 더 부드럽게 해요.' : '최적화를 껐어요.');
+  }
+  $('optBtn').onclick = optToggle; $('optLobBtn').onclick = optToggle;
+  window.addEventListener('ffperf', function () { perfRead(); optLabel(); resize(); });   // 허브 설정에서 바꿔도 바로 따라가요
+  optLabel();
   // 첫 화면 마네킹 셋
   (function () {
     var c = $('heroCv').getContext('2d'), t0 = performance.now();
