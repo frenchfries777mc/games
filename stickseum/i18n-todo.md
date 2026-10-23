@@ -145,3 +145,10 @@ patchnotes.json | v365 title | 밸런스 표 정리 | build 365 | 2026-10-20
 patchnotes.json | v365 items[0] | 밸런스 표에 인형술사 추가 | build 365 | 2026-10-20
 patchnotes.json | v365 items[1] | 변화가 없는 항목은 표와 그래프에서 숨김 | build 365 | 2026-10-20
 patchnotes.json | v365 items[2] | 밸런스 표는 밸런스 패치 때만 새로 측정 | build 365 | 2026-10-20
+patchnotes.json | v366 title | 인형술사 개편 | build 366 | 2026-10-20
+patchnotes.json | v366 items[0] | 인형술사 궁극기 지속시간 3초에서 5초로 증가 | build 366 | 2026-10-20
+patchnotes.json | v366 items[1] | 인형술사 궁극기가 끝나면 조종당한 상대가 자폭해 본인 60, 주변 적 30 피해 | build 366 | 2026-10-20
+patchnotes.json | v366 items[2] | 인형술사 스킬 바느질 추가: 실이 달린 바늘을 발사해 맞히면 상대와 실이 이어지고 이동속도 25% 감소 | build 366 | 2026-10-20
+patchnotes.json | v366 items[3] | 인형술사 스킬 바늘 빼기 추가: 맞힌 뒤 바로 사용, 30 피해를 주고 실이 끊기며 이때부터 쿨타임 | build 366 | 2026-10-20
+patchnotes.json | v366 items[4] | 인형술사 궁극기 미리보기를 바늘 사거리에 맞게 수정 | build 366 | 2026-10-20
+patchnotes.json | v366 items[5] | 밸런스 표에서 인형술사 다시 측정 | build 366 | 2026-10-20
