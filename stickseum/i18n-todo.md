@@ -137,3 +137,5 @@ patchnotes.json | v361 items[3] | 시즌 패스 전용 스킨 추가 (오로라 
 patchnotes.json | v362 title | 인트로 눌러서 시작 복구 | build 362 | 2026-10-20
 patchnotes.json | v362 items[0] | 소리가 막힌 브라우저에서는 화면을 누르면 인트로 시작 | build 362 | 2026-10-20
 patchnotes.json | v362 items[1] | 인트로 도중 로비 곡으로 전환 | build 362 | 2026-10-20
+patchnotes.json | v363 title | 이모지어 추가 | build 363 | 2026-10-23
+patchnotes.json | v363 items[0] | 가상 언어 이모지어 추가 (글자를 이모지로 바꿔 보여 줌, 마우스를 올리면 원문) | build 363 | 2026-10-23

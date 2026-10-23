@@ -571,7 +571,7 @@ function flush(){
 }
 function q(n){pend.add(n);if(!sched){sched=true;(window.requestAnimationFrame||setTimeout)(flush);}}
 function mkSel(id){const op=l=>'<option value="'+l[0]+'">🌐 '+l[1]+'</option>';
-  return '<select id="'+id+'" class="langSel" aria-label="Language">'+LANGS.filter(l=>!VIRT[l[0]]).map(op).join('')+'<optgroup label="'+(VLABEL[lang]||VLABEL.en)+'">'+LANGS.filter(l=>VIRT[l[0]]).map(op).join('')+'<option value="au" style="font-family:\'FF Aurebesh\',system-ui">🌐 Aurebesh</option><option value="sg" style="font-family:\'FF Galactic\',system-ui">🌐 Standard Galactic</option></optgroup></select>';}
+  return '<select id="'+id+'" class="langSel" aria-label="Language">'+LANGS.filter(l=>!VIRT[l[0]]).map(op).join('')+'<optgroup label="'+(VLABEL[lang]||VLABEL.en)+'">'+LANGS.filter(l=>VIRT[l[0]]).map(op).join('')+'<option value="au" style="font-family:\'FF Aurebesh\',system-ui">🌐 Aurebesh</option><option value="sg" style="font-family:\'FF Galactic\',system-ui">🌐 Standard Galactic</option><option value="em">😀💬</option></optgroup></select>';}
 function sync(){
   const g=document.getElementById('game'),box=document.getElementById('langBox');
   if(box){const ai=document.getElementById('btnAI');const hideN=innerWidth<=640&&!(ai&&ai.offsetParent!==null);box.style.display=((g&&!g.classList.contains('hidden'))||hideN)?'none':'';}
@@ -619,7 +619,7 @@ function apply(){
 }
 window.setLang=function(l){
   // Aurebesh = English in its own letters; ff-lang.js sets the font up on load, so switching it in or out reloads
-  if((l==='au'||l==='sg')||auOn()){const v=(l==='au'||l==='sg')?'en':l;if(!LANGS.some(x=>x[0]===v))return;try{localStorage.setItem('cq_lang',v);}catch(e){}try{window.FFLang&&FFLang.set(l);}catch(e){}location.reload();return;}
+  if((l==='au'||l==='sg'||l==='em')||auOn()){const v=(l==='au'||l==='sg'||l==='em')?'en':l;if(!LANGS.some(x=>x[0]===v))return;try{localStorage.setItem('cq_lang',v);}catch(e){}try{window.FFLang&&FFLang.set(l);}catch(e){}location.reload();return;}
   if(!LANGS.some(x=>x[0]===l))return;
   lang=l;try{localStorage.setItem('cq_lang',l);}catch(e){}try{window.FFLang&&FFLang.set(l);}catch(e){}
   apply();
