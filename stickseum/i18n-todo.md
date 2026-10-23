@@ -54,3 +54,14 @@ patchnotes.json | v343 title | 도박사 카드 궁극기 | build 343 | 2026-10-
 patchnotes.json | v343 items[0] | 도박사 궁극기를 주사위 대신 트럼프 카드 3장 뽑기로 변경(합계가 다음 공격 데미지) | build 343 | 2026-10-20
 patchnotes.json | v343 items[1] | 같은 무늬 +5, 같은 숫자 +10, 연속 숫자 +15, 무늬·숫자 모두 같음 +20 | build 343 | 2026-10-20
 patchnotes.json | v343 items[2] | A 체력 30 회복, K 이동속도 증가, J 쿨타임 초기화, Q 대쉬 쿨타임 0초, 조커는 옆 카드 복사 | build 343 | 2026-10-20
+Stickseum-v0.8.html | 인형술사 캐릭터 | 인형술사 / 실 바늘 / 꼭두각시 조종 / 얽힌 실 / 내 손 안의 꼭두각시 / 분홍 광대 모자 / 자줏빛 광대 모자 / 무대 위 꼭두각시 모자 / 붉은 실의 광대 모자 / 인형극 단장의 왕관 모자 (설명문은 WEAPONS·ULTS·SKILLS 참고) | build 344 | 2026-10-23
+patchnotes.json | v344 title | 인형술사 추가 | build 344 | 2026-10-20
+patchnotes.json | v344 items[0] | 새 캐릭터 인형술사 추가(실 바늘, 스킬 얽힌 실) | build 344 | 2026-10-20
+patchnotes.json | v344 items[1] | 궁극기 꼭두각시 조종: 가장 가까운 상대를 3초간 조종(이동·점프·조준·일반 공격만, 스킬·궁극기 불가) | build 344 | 2026-10-20
+patchnotes.json | v344 items[2] | 조종하는 동안 인형술사 본체는 움직이지 못하고 받는 데미지 50% 감소 | build 344 | 2026-10-20
+patchnotes.json | v345 title | 인트로 제목과 대쉬 효과 정리 | build 345 | 2026-10-20
+patchnotes.json | v345 items[0] | 인트로 위쪽 중앙에 황금색 업데이트 이름(IN SEARCH OF GOLD)과 v0.8 표시 | build 345 | 2026-10-20
+patchnotes.json | v345 items[1] | 대쉬 파티클 감소(무한 대쉬에서는 더 가볍게) | build 345 | 2026-10-20
+patchnotes.json | v346 title | 무한 대쉬 봇 속도와 카드 연출 | build 346 | 2026-10-20
+patchnotes.json | v346 items[0] | 무한 대쉬 배틀로얄에서 봇이 너무 빠르게 대쉬하던 현상 완화(약 1초에 한 번) | build 346 | 2026-10-20
+patchnotes.json | v346 items[1] | 도박사 궁극기 카드를 화면 위 그래픽으로 표시(카드가 돌다가 왼쪽부터 차례로 공개) | build 346 | 2026-10-20
