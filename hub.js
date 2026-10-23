@@ -366,11 +366,11 @@ async function feed(){
   if(!ev.length){ p.innerHTML='<div class="cm-e">최근 2주 동안 친구 소식이 없어요.</div>'; return; }
   p.innerHTML='<div class="fd-list"></div>'; var L=p.querySelector('.fd-list');
   ev.forEach(function(x){ var d=document.createElement('div'); d.className='fd'; var ic, body;
-    if(x.kind==='ach'){ var a=(cats[x.game]||{})[x.ids[0]], nm=a?((a.n&&(a.n[LANG]||(NEWL?a.n.en:a.n.ko)))||a.id):x.ids[0]; ic=a&&a.icon||'🏆';
+    if(x.kind==='ach'){ var a=(cats[x.game]||{})[x.ids[0]], nm=a?((a.n&&(a.n[LANG]||(NEWL?a.n.en:a.n.ko)))||a.id):x.ids[0]; ic=a&&a.icon||'';
       body=feedTag(x.game)+' <span>도전과제 달성</span> <b data-notr>'+esc(nm)+'</b>'+(x.ids.length>1?' <span class="fd-n">'+esc(F('외 {0}개',x.ids.length-1))+'</span>':''); }
     else if(x.kind==='play'){ ic='🎮'; body=feedTag(x.game)+' <span>처음 시작했어요</span>'; }
     else { ic='📝'; body='<span>새 글</span> '+feedTag(x.post.game)+' <a class="fd-p" href="?post='+x.post.id+'" data-notr>'+esc(x.post.title)+'</a>'; }
-    d.innerHTML='<span class="fd-i">'+esc(ic)+'</span><div class="fd-m"><div class="cm-meta">'+who(x.uid)+' · <span>'+esc(ago(new Date(x.t).toISOString()))+'</span></div><div class="fd-b">'+body+'</div></div>';
+    d.innerHTML='<span class="fd-i">'+(x.kind==='ach'&&!ic?hIco('achievements'):esc(ic))+'</span><div class="fd-m"><div class="cm-meta">'+who(x.uid)+' · <span>'+esc(ago(new Date(x.t).toISOString()))+'</span></div><div class="fd-b">'+body+'</div></div>';
     var pa=d.querySelector('.fd-p'); if(pa) pa.onclick=function(e){ e.preventDefault(); openPostById(x.post.id); };
     L.appendChild(d); });
 }
@@ -516,7 +516,17 @@ async function lfgList(){
 /* ===================== Hub Coin: 매일 출석 +10 · 게임 재화로 환전 (supabase-ff-coin.sql) ===================== */
 var coin={n:null, streak:0, today:false, err:''}, UNIT={gold:'골드',coin:'코인',coins:'코인'};
 function unitName(u){ var k=UNIT[u]||u; return SI.T?SI.T(k):k; }
-function coinPop(n){ var el=document.createElement('div'); el.className='coin-pop'; el.innerHTML='🪙 <b data-notr>+'+n+'</b> Hub Coin'+(n>10?' <span class="cp-b">🔥 7일 연속 보너스!</span>':''); document.body.appendChild(el); setTimeout(function(){ el.classList.add('go'); },30); setTimeout(function(){ el.remove(); },2600); }
+/* 허브 아이콘: 동전·랭킹·업적 (hubicons/*.svg) */
+var HICON='https://frenchfries777mc.github.io/games/hubicons/';
+function hIco(n,c){ return '<img class="hci '+(c||'')+'" src="'+HICON+n+'.svg" alt="" width="20" height="20" draggable="false">'; }
+var HMAP={'\ud83e\ude99':'coin','\ud83c\udfc6':'ranking'};
+var RE=/(\ud83e\ude99|\ud83c\udfc6)/;
+function hCoinSwap(root){ /* 번역으로 다시 쓰이는 글자에서도 동전 이모지를 아이콘으로 바꾼다 */
+  function run(){ var w=document.createTreeWalker(root,NodeFilter.SHOW_TEXT,null),t,L=[]; while((t=w.nextNode())){ if(RE.test(t.nodeValue)) L.push(t); }
+    L.forEach(function(n){ var parts=n.nodeValue.split(RE), f=document.createDocumentFragment(); parts.forEach(function(x,i){ if(i%2){ var im=document.createElement('span'); im.innerHTML=hIco(HMAP[x]); f.appendChild(im.firstChild); } else if(x) f.appendChild(document.createTextNode(x)); }); n.parentNode.replaceChild(f,n); }); }
+  run(); try{ new MutationObserver(run).observe(root,{childList:true,subtree:true,characterData:true}); }catch(e){}
+}
+function coinPop(n){ var el=document.createElement('div'); el.className='coin-pop'; el.innerHTML=hIco('coin')+' <b data-notr>+'+n+'</b> Hub Coin'+(n>10?' <span class="cp-b">🔥 7일 연속 보너스!</span>':''); document.body.appendChild(el); setTimeout(function(){ el.classList.add('go'); },30); setTimeout(function(){ el.remove(); },2600); }
 async function coinDaily(){
   coin={n:null, streak:0, today:false, err:''}; paintCoin(); if(!me||!sb) return;
   var r=await sb.rpc('ff_coin_daily');
@@ -537,9 +547,9 @@ function coinChip(){
 function paintCoin(){
   var cn=$('#coinChipN'); if(cn) cn.textContent=(me&&coin.n!=null)?coin.n:(me?'…':'0');
   var b=$('#coinBar'); if(!b) return;
-  if(!me){ b.innerHTML='<span class="cb-i">🪙</span><span class="cb-t"><b>Hub Coin</b><span class="cb-s">로그인하면 매일 10 Hub Coin을 받아요</span></span><button type="button" class="cm-btn cb-go">로그인</button>'; b.querySelector('.cb-go').onclick=login; return; }
-  if(coin.err){ b.innerHTML='<span class="cb-i">🪙</span><span class="cb-t"><b>Hub Coin</b><span class="cb-s">'+esc(coin.err)+'</span></span>'; return; }
-  b.innerHTML='<span class="cb-i">🪙</span><span class="cb-t"><b>Hub Coin <span class="cb-n" data-notr>'+(coin.n==null?'…':coin.n)+'</span></b>'+
+  if(!me){ b.innerHTML='<span class="cb-i">'+hIco('coin','big')+'</span><span class="cb-t"><b>Hub Coin</b><span class="cb-s">로그인하면 매일 10 Hub Coin을 받아요</span></span><button type="button" class="cm-btn cb-go">로그인</button>'; b.querySelector('.cb-go').onclick=login; return; }
+  if(coin.err){ b.innerHTML='<span class="cb-i">'+hIco('coin','big')+'</span><span class="cb-t"><b>Hub Coin</b><span class="cb-s">'+esc(coin.err)+'</span></span>'; return; }
+  b.innerHTML='<span class="cb-i">'+hIco('coin','big')+'</span><span class="cb-t"><b>Hub Coin <span class="cb-n" data-notr>'+(coin.n==null?'…':coin.n)+'</span></b>'+
     '<span class="cb-s">'+(coin.today?'<span>✓ 오늘 출석 완료</span>':'')+(coin.streak>1?' · <span>'+esc(F('{0}일 연속',coin.streak))+'</span>':'')+'</span></span><button type="button" class="cm-btn2 cb-cal">📅 달력</button><button type="button" class="cm-btn cb-go">환전하기</button>';
   b.querySelector('.cb-go').onclick=openCoin; b.querySelector('.cb-cal').onclick=function(){ openCal(); };
 }
@@ -562,7 +572,7 @@ async function questBox(el){
 }
 async function openCoin(){
   if(!me) return login();
-  var el=$('#coinBox'); if(!el){ el=document.createElement('div'); el.id='coinBox'; el.className='hn-bg'; document.body.appendChild(el); el.addEventListener('click',function(e){ if(e.target===el||e.target.closest('.hn-x')) el.style.display='none'; }); }
+  var el=$('#coinBox'); if(!el){ el=document.createElement('div'); el.id='coinBox'; el.className='hn-bg'; document.body.appendChild(el); hCoinSwap(el); el.addEventListener('click',function(e){ if(e.target===el||e.target.closest('.hn-x')) el.style.display='none'; }); }
   el.innerHTML='<div class="hn-b"><div class="hn-h"><b>🪙 Hub Coin 환전</b><button type="button" class="hn-x" aria-label="닫기">×</button></div>'+
     '<div class="cx-have">갖고 있는 코인 <b data-notr>'+(coin.n||0)+'</b></div>'+
     '<div class="cx-tabs"><button type="button" data-t="ex">환전</button><button type="button" data-t="gift">🎁 선물</button><button type="button" data-t="q">📋 퀘스트<i class="cx-dot" hidden></i></button><button type="button" data-t="log">기록</button></div>'+
@@ -862,6 +872,7 @@ function start(){
   fromUrl(); loadNews().then(function(){ if(location.hash==='#hubnotes') openHubNotes(); });
   if(location.hash==='#poll') setTimeout(openPolls,400);
   if(tab==='fb'){ setTimeout(scrollToCm,300); } var hb=$('#hubNotesBtn'); if(hb) hb.onclick=function(e){ e.preventDefault(); openHubNotes(); };
+  var rh=$('.rk-c h3'); if(rh) hCoinSwap(rh);
   var rf=$('.rk-f'); if(rf) rf.onclick=function(e){ var b=e.target.closest('button'); if(!b) return; rkGame=b.getAttribute('data-g'); [].forEach.call(this.children,function(x){ x.classList.toggle('on',x===b); }); ranking(); };
   var tabs=$('.cm-tabs'); if(tabs) tabs.onclick=function(e){ var b=e.target.closest('button'); if(b) setTab(b.getAttribute('data-t')); };
   var go=function(){ if(!window.FFAuth){ setTimeout(go,200); return; } FFAuth.ready.then(function(){ sb=client(); refreshUser(); FFAuth.onChange(function(){ setTimeout(refreshUser,50); }); }); };
