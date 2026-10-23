@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#1a1440"/><stop offset="1" stop-color="#0b0a1e"/></linearGradient>
+    <radialGradient id="gl" cx=".5" cy=".45" r=".5"><stop offset="0" stop-color="#b79bff" stop-opacity=".5"/><stop offset="1" stop-color="#b79bff" stop-opacity="0"/></radialGradient>
+    <linearGradient id="pp" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff6dc"/><stop offset="1" stop-color="#ffe3a0"/></linearGradient>
+    <linearGradient id="ac" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#b79bff"/><stop offset="1" stop-color="#b79bff" stop-opacity=".75"/></linearGradient>
+    <linearGradient id="sk" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#8fd0ff"/><stop offset="1" stop-color="#3f7fdc"/></linearGradient>
+    <linearGradient id="fy" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffd14a"/><stop offset="1" stop-color="#f09a12"/></linearGradient>
+  </defs>
+  <rect x="2" y="2" width="116" height="116" rx="28" fill="url(#bg)" stroke="#b79bff" stroke-opacity=".7" stroke-width="3"/>
+  <circle cx="60" cy="56" r="48" fill="url(#gl)"/>
+<circle cx="60" cy="60" r="26" fill="url(#ac)" stroke="#fff4d6" stroke-width="3"/><path d="M44 52 Q58 46 76 56 M42 68 Q60 74 78 66" fill="none" stroke="#fff" stroke-opacity=".5" stroke-width="3.5" stroke-linecap="round"/><circle cx="68" cy="50" r="5" fill="#fff" fill-opacity=".25"/><ellipse cx="60" cy="60" rx="48" ry="12" fill="none" stroke="#ffd14a" stroke-width="4" transform="rotate(-20 60 60)"/><path d="M92 90 L100 98 M96 82 L84 94" stroke="#fff4d6" stroke-width="3" stroke-linecap="round"/><rect x="86" y="88" width="12" height="6" rx="3" fill="#ff6b6b" stroke="#fff4d6" stroke-width="1.6" transform="rotate(45 92 91)"/><path d="M22 22 Q23.32 26.68 28 28 Q23.32 29.32 22 34 Q20.68 29.32 16 28 Q20.68 26.68 22 22Z" fill="#fff4d6"/><path d="M100 17 Q101.54 22.46 107 24 Q101.54 25.54 100 31 Q98.46 25.54 93 24 Q98.46 22.46 100 17Z" fill="#ffd14a"/></svg>
