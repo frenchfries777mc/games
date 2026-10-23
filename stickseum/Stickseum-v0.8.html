@@ -874,8 +874,8 @@ arm();
 /* intro sting (5 s, a separate file next to the game): starts as soon as the intro starts. Browsers on a computer block sound until the first click or key, so then the intro waits (frozen, with a short hint) and starts from that click, so the song always plays with the intro; silent if sound is off */
 function sting(){try{var st=JSON.parse(localStorage.getItem('arenaClashSettings')||'null');if(st&&st.bgm===false){window.__introSongDone=1;return;}var a=new Audio('music-intro.mp3'),alt=0;a.volume=Math.min(1,((st&&typeof st.bgmVol==='number')?st.bgmVol:0.4)*1.5);a.onerror=function(){if(!alt){alt=1;a.src='https://frenchfries777mc.github.io/games/stickseum/music-intro.mp3';a.load();var q=a.play();if(q&&q.catch)q.catch(function(){});}};
 function hold(){if(held||done)return;held=1;clearTimeout(T1);clearTimeout(T2);el.classList.add('hold');var h=document.createElement('div');h.id='introHold';h.textContent='화면을 누르면 시작해요';el.appendChild(h);
-var go2=function(){if(!held)return;held=0;['pointerdown','keydown','touchend','click'].forEach(function(ev){removeEventListener(ev,go2,true);});h.remove();el.classList.remove('hold');t0=Date.now();arm();var r=a.play();if(r&&r.catch)r.catch(function(){});};
-['pointerdown','keydown','touchend','click'].forEach(function(ev){addEventListener(ev,go2,true);});}
+var EV=['keydown','touchend','click'];var rel=function(){if(!held)return;held=0;EV.forEach(function(ev){removeEventListener(ev,go2,true);});h.remove();el.classList.remove('hold');t0=Date.now();arm();};var go2=function(){if(!held)return;var r=a.play();if(r&&r.then)r.then(rel,function(){});else rel();};
+EV.forEach(function(ev){addEventListener(ev,go2,true);});}
 function fin(){window.__introSongDone=1;}
 var p=a.play();if(p&&p.catch)p.catch(function(e){if(e&&e.name==='NotAllowedError')hold();});
 a.addEventListener('ended',fin);a.addEventListener('playing',function(){setTimeout(fin,5300);},{once:true});}catch(e){window.__introSongDone=1;}}
@@ -4986,7 +4986,7 @@ function shuffle(arr){ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.
 /* ===== the version of this file =====
    Players with different versions CAN meet and play together: the automatic matchmaking uses the same room names for every version (online-<mode>-<map>-<slot>), and nobody is refused because of a different build.
    The build is only sent along with the join message and the lobby (for information); the corner of the screen shows it. */
-const GAME_BUILD='build 2026-10-18-v363';
+const GAME_BUILD='build 2026-10-18-v364';
 const GAME_VERSION='0.8', GAME_VERSION_NAME='황금을 찾아서';   // 게임 버전 이름: versions.json의 title과 같게 (빌드마다 바꾸지 않음)
 const WEEKLY_EVENTS=[
   {id:'lowg',    name:'저중력 난투', desc:'몸이 둥실둥실, 중력이 약해진 난투', rules:{grav:0.6}},
