@@ -1,7 +1,7 @@
 // Vowkeep · © 2026 Frenchfries777 · CC BY-NC-ND 4.0
 // 배경음악: 파일은 게임 옆에 따로 있어요. 못 불러오면 사이트 주소로, 그래도 안 되면 조용히 넘어가요
 const FILES = { lobby: 'vowkeep-lobby.mp3', dungeon: 'vowkeep-dungeon.mp3', boss: 'vowkeep-boss.mp3' };
-const ALT = 'https://frenchfries777mc.github.io/games/prototypes/vowkeep/';
+const ALT = 'https://frenchfries777mc.github.io/games/vowkeep/play/';
 const T = {}; let vol = 0.7, tryAt = 0;
 function mk(k) {
   const el = new Audio(FILES[k]); el.loop = true; el.preload = 'auto'; el.volume = 0;
