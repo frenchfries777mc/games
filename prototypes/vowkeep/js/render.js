@@ -581,6 +581,41 @@ export class View {
         // 순서 비석: 불 붙일 화로의 색이 왼쪽부터 차례로 박혀 있어요
         box(4.4, 0.4, 1.2, stoneD, cxw, 0.2, czw, s); box(3.9, 2.4, 0.5, stone, cxw, 1.6, czw, s); box(4.2, 0.3, 0.7, stoneD, cxw, 2.95, czw, s);
         q.order.forEach((bi, n) => { const x = cxw - 1.35 + n * 0.9; mesh(geo('oct4', () => new THREE.OctahedronGeometry(0.26)), M(COL[bi], { e: COL[bi], ei: 2.4 }), x, 1.9, czw + 0.3, s); for (let d = 0; d <= n; d++) box(0.1, 0.1, 0.05, M(0xffe08a, { e: 0xffd060, ei: 2 }), x - n * 0.07 + d * 0.14, 1.2, czw + 0.28, s); });
+      } else if (q.k === 'oath') {
+        // 기사 전용: 방패 문양 석판. 위에서 막기를 쓰면 금빛이 들어와요
+        P.items = q.items.map(([ix, iy]) => {
+          const x = cw(ix), z = cw(iy); box(2.8, 0.3, 2.8, stoneD, x, 0.15, z, s); const m = M(0x6a6478, { e: 0x3f6fd0, ei: 0.6, uniq: true });
+          const sh = new THREE.Group(); sh.position.set(x, 0.32, z); s.add(sh); box(1.3, 0.08, 1.5, m, 0, 0, -0.1, sh); const tip = box(0.92, 0.08, 0.92, m, 0, 0, 0.55, sh); tip.rotation.y = Math.PI / 4;
+          box(0.18, 0.1, 1.2, M(0xe6c15a, { e: 0xe6c15a, ei: 0.4, uniq: true }), 0, 0.03, 0.05, sh); box(0.8, 0.1, 0.18, M(0xe6c15a, { e: 0xe6c15a, ei: 0.4 }), 0, 0.03, -0.2, sh);
+          const Lt = new THREE.PointLight(0xffd36b, 0, 10, 1.6); Lt.position.set(x, 2, z); s.add(Lt); return { m, Lt };
+        });
+      } else if (q.k === 'targets') {
+        // 궁수 전용: 벽 높이 걸린 과녁. 맞히면 초록빛
+        P.items = q.items.map(([ix, iy]) => {
+          const x = cw(ix), z = cw(iy) - 0.95, g2 = new THREE.Group(); g2.position.set(x, 4.3, z); g2.rotation.x = Math.PI / 2; s.add(g2);
+          const m = M(0xd8d0bc, { uniq: true }), mr = M(0xc0392b, { e: 0x601010, ei: 0.4, uniq: true });
+          cyl(0.9, 0.9, 0.16, 16, m, 0, 0, 0, g2); cyl(0.65, 0.65, 0.18, 16, mr, 0, 0.01, 0, g2); cyl(0.4, 0.4, 0.2, 16, m, 0, 0.02, 0, g2); cyl(0.18, 0.18, 0.22, 12, mr, 0, 0.03, 0, g2);
+          box(0.2, 1.6, 0.2, leather(), x, 3.5, z - 0.1, s);
+          const ar = new THREE.Group(); ar.position.set(0.1, 0.3, 0); g2.add(ar); cyl(0.04, 0.04, 1.0, 4, M(0x8a6a40), 0, 0.5, 0, ar); box(0.2, 0.2, 0.04, M(0xe8e4ef), 0, 0.95, 0, ar); ar.visible = false;
+          return { m, mr, ar };
+        });
+      } else if (q.k === 'basins') {
+        // 사제 전용: 말라 있는 성수반. 빛 구슬이 닿으면 빛나는 물이 차요
+        P.items = q.items.map(([ix, iy]) => {
+          const x = cw(ix), z = cw(iy); cyl(0.4, 0.6, 1.2, 8, stoneD, x, 0.6, z, s); cyl(1.0, 0.6, 0.5, 12, stone, x, 1.4, z, s);
+          const m = M(0x4a4652, { e: 0x9af0e0, ei: 0, uniq: true }), w = cyl(0.85, 0.85, 0.06, 12, m, x, 1.62, z, s);
+          const Lt = new THREE.PointLight(0x9af0e0, 0, 12, 1.6); Lt.position.set(x, 2.6, z); s.add(Lt); return { m, w, Lt };
+        });
+      } else if (q.k === 'vines') {
+        // 종자 전용: 가시덩굴. 횃불 공격에 불이 붙어 타 없어져요
+        const vm = M(0x2f4a24), tm = M(0x5a6a2a);
+        P.items = q.items.map(([ix, iy]) => {
+          const x = cw(ix), z = cw(iy), g2 = new THREE.Group(); g2.position.set(x, 0, z); s.add(g2);
+          for (let n = 0; n < 7; n++) { const a = n / 7 * 6.283, c = cyl(0.14, 0.24, 2.6 + R(), 5, vm, Math.cos(a) * 0.7, 1.2, Math.sin(a) * 0.7, g2); c.rotation.set(Math.sin(a) * 0.5, 0, -Math.cos(a) * 0.5); for (let t2 = 0; t2 < 3; t2++) { const th = cone(0.08, 0.3, 4, tm, Math.cos(a) * (0.8 + t2 * 0.2), 0.6 + t2 * 0.7, Math.sin(a) * (0.8 + t2 * 0.2), g2); th.rotation.z = -Math.cos(a) * 1.4; th.rotation.x = Math.sin(a) * 1.4; } }
+          sph(0.8, 8, 6, vm, 0, 0.5, 0, g2).scale.set(1.2, 0.6, 1.2);
+          const fg = new THREE.Group(); fg.visible = false; g2.add(fg); for (let n = 0; n < 5; n++) cone(0.3, 1.1, 6, M(0xff8a2a, { e: 0xff6a10, ei: 3 }), (R() - .5) * 1.2, 1.4, (R() - .5) * 1.2, fg);
+          return { g: g2, fg, burn: 0 };
+        });
       } else {
         // 석상: 칼을 앞으로 내민 기사. 가운데 문양을 바라보면 문양에 빛이 들어와요
         const ring = mesh(geo('pring2', () => new THREE.RingGeometry(1.7, 2.1, 32)), M(0x8a8494, { e: 0x8a8494, ei: 0.5, uniq: true }), cxw, 0.14, czw, s, false); ring.rotation.x = -Math.PI / 2;
@@ -871,6 +906,10 @@ export class View {
       P.gate.position.y += ((done ? 5.2 : 0) - P.gate.position.y) * ease; P.gate.visible = P.gate.position.y < 5.1;
       if (P.k === 'plates') P.items.forEach((it, i) => { const on = z.o[i] === '1'; it.top.position.y += ((on || done ? 0.12 : 0.22) - it.top.position.y) * Math.min(1, dt * 10); const c = done ? 0x9af0a8 : on ? 0xffd36b : 0x8a8494; it.rm.color.setHex(c); it.rm.emissive.setHex(c); it.rm.emissiveIntensity = done || on ? 3 : 1.0 + Math.sin(t * 2 + i) * 0.4; });
       else if (P.k === 'braziers') P.items.forEach((it, i) => { const on = done || z.l[i] === '1'; it.fg.visible = on; it.Lt.intensity = on ? 30 : 0; if (on) it.fg.children.forEach((c, n) => c.scale.y = 0.85 + Math.sin(t * 5 + n * 1.7) * 0.15); it.gem.rotation.y = t; });
+      else if (P.k === 'oath') P.items.forEach((it, i) => { const on = done || z.l[i] === '1', c = on ? 0xffd36b : 0x3f6fd0; it.m.emissive.setHex(c); it.m.emissiveIntensity = on ? 2.6 : 0.5 + Math.sin(t * 2 + i) * 0.3; it.Lt.intensity = on ? 22 : 0; });
+      else if (P.k === 'targets') P.items.forEach((it, i) => { const on = done || z.l[i] === '1'; it.ar.visible = on; it.mr.color.setHex(on ? 0x4cc06a : 0xc0392b); it.mr.emissive.setHex(on ? 0x2a8a3a : 0x601010); it.mr.emissiveIntensity = on ? 1.6 : 0.3 + Math.max(0, Math.sin(t * 3 + i)) * 0.4; });
+      else if (P.k === 'basins') P.items.forEach((it, i) => { const on = done || z.l[i] === '1'; it.m.color.setHex(on ? 0xcffff6 : 0x4a4652); it.m.emissiveIntensity = on ? 2.4 + Math.sin(t * 3 + i) * 0.3 : 0; it.Lt.intensity = on ? 26 : 0; });
+      else if (P.k === 'vines') P.items.forEach((it, i) => { const on = done || z.l[i] === '1'; if (on) it.burn = Math.min(1.6, it.burn + dt); const b = it.burn; it.fg.visible = b > 0 && b < 1.5; it.fg.children.forEach((c, n) => c.scale.y = 0.8 + Math.sin(t * 9 + n) * 0.25); const sc = Math.max(0, 1 - Math.max(0, b - 0.5)); it.g.scale.set(1, Math.max(0.01, sc), 1); it.g.visible = sc > 0.02 || it.fg.visible; });
       else { P.items.forEach((it, i) => { const r = +z.r[i], want = -r * Math.PI / 2; let d = want - it.cur; while (d > Math.PI) d -= Math.PI * 2; while (d < -Math.PI) d += Math.PI * 2; it.cur += d * Math.min(1, dt * 8); it.g.rotation.y = it.cur; const ok = r === i; it.eye.emissiveIntensity = ok ? 4 : 0; });
         const m = P.ring.material, c = done ? 0x9af0a8 : 0x8a8494; m.color.setHex(c); m.emissive.setHex(c); m.emissiveIntensity = done ? 2.4 : 0.5; }
     });
@@ -1096,7 +1135,7 @@ const KS = 1, KR = 1, KH_T = 0.5;
 // 1타 끝 자세 = 2타 시작 자세라서 두 번이 한 번에 이어지는 것처럼 보여요
 const K1E = { rx: -0.5, rz: 1.1, ry: 1.8, bry: 0.7, bx: 0.4, bz: 0.45, by: -0.25, lg: 0.7, sq: 0.18, lx: -0.4 };
 const K2W = { rx: -1.0, rz: 1.5, ry: 1.6, bry: 1.0, bx: 0.3, bz: 0.15, by: -0.35, lg: 0.8, sq: 0.25, lx: -0.2 };
-const K2E = { rx: -1.35, rz: -1.4, ry: 1.5, bry: -0.8, bx: 0.5, bz: 0.35, by: -0.6, lg: 1.4, sq: 0.35, lx: -0.5 };
+const K2E = { rx: -1.35, rz: -1.4, ry: 1.5, bry: -0.8, bx: 0.35, bz: 0.35, by: -0.3, lg: 1.4, sq: 0.25, lx: -0.5 };
 function kPose(c, v, base) {
   const P = {};
   if (c === 0) {
@@ -1113,6 +1152,43 @@ function kPose(c, v, base) {
   P.lx += base[1];
   return P;
 }
+// 궁수·사제·종자 연속 공격 자세. [1타 감기, 1타 끝, 2타 감기, 2타 끝]. 1타 끝 자세에서 2타가 바로 이어져요 (lxo = 왼팔 기본에서 벗어난 만큼)
+const CHAIN = {
+  archer: [
+    { pull: 0.8, rpz: -0.65, rz: -0.35, bry: 0.35, bx: -0.08, lg: 0.3 },
+    { pull: 0, rpz: -0.85, rx: -1.15, rz: -0.95, lxo: -0.2, bry: 0.9, bx: -0.1, bz: -0.3, sq: 0.15, lg: 0.9, hx: -0.05 },
+    { pull: 0.55, rpz: -0.45, rx: -2.8, rz: 0.45, lxo: -0.05, bry: 0.25, bx: -0.05, lg: 0.6, sq: -0.08 },
+    { pull: 0, rpz: -0.9, rx: -1.2, rz: -0.8, lxo: -0.25, lz: 0.4, bry: -0.9, bx: -0.1, bz: -0.3, sq: 0.18, lg: 1.0, hx: -0.05 }
+  ],
+  priest: [
+    { rx: -2.6, rz: -0.6, bry: -0.5, bx: -0.15, lxo: -0.6, sq: -0.1, hx: -0.15 },
+    { rx: -1.35, rz: 0.7, bry: 0.6, bx: 0.35, bz: 0.4, by: -0.15, lxo: -1.1, lz: 0.4, lg: 0.8, sq: 0.15, hx: 0.1 },
+    { rx: -2.9, rz: 0.9, bry: 0.8, bx: 0.0, lxo: -0.6, lz: 0.2, lg: 0.5, sq: -0.05 },
+    { rx: -1.2, rz: -1.0, bry: -0.7, bx: 0.4, bz: 0.35, by: -0.3, lxo: -0.3, lz: -0.3, lg: 1.1, sq: 0.25, hx: 0.12 }
+  ],
+  squire: [
+    { rx: -2.2, rz: -1.2, ry: -0.5, bry: -0.7, bx: -0.1, sq: 0.1, lg: 0.3 },
+    { rx: -1.4, rz: 1.6, ry: 0.4, bry: 0.9, bx: 0.3, bz: 0.4, by: -0.2, lg: 0.9, sq: 0.2, lxo: -0.3 },
+    { rx: -1.6, rz: 1.9, ry: 0.5, bry: 1.1, bx: 0.25, bz: 0.2, by: -0.15, lg: 0.8, sq: 0.2, lxo: -0.2 },
+    { rx: -2.4, rz: -1.3, ry: -0.6, bry: -0.9, bx: 0.2, bz: 0.35, by: -0.1, lg: 1.0, sq: -0.1, lxo: -0.4, hx: -0.1 }
+  ]
+};
+const CKEYS = ['rx', 'rz', 'ry', 'lxo', 'lz', 'bx', 'bz', 'by', 'bry', 'lg', 'sq', 'hx', 'rpz', 'pull'];
+function cRest(role, base) { return role === 'archer' ? { rx: -1.5, rz: -0.25, lz: 0.12, rpz: -0.3, pull: 0.35 } : { rx: base[0] }; }
+function cPose(role, c, v, base) {
+  const R0 = cRest(role, base), [W1, E1, W2, E2] = CHAIN[role].map(o => Object.assign({}, R0, o)), g = (o, q) => o[q] != null ? o[q] : (R0[q] != null ? R0[q] : 0), P = {};
+  if (c === 0) { const w = seg(v, 0, 0.24), st = seg(v, 0.24, 0.54); for (const q of CKEYS) { const a = g(R0, q); P[q] = (a + (g(W1, q) - a) * w) * (1 - st) + g(E1, q) * st; } }
+  else { const w = seg(v, 0, 0.16), st = seg(v, 0.16, 0.5); for (const q of CKEYS) P[q] = (g(E1, q) + (g(W2, q) - g(E1, q)) * w) * (1 - st) + g(E2, q) * st; }
+  P.lx = base[1] + P.lxo; delete P.lxo; if (role !== 'archer') { delete P.pull; delete P.rpz; }
+  return P;
+}
+// 동작 중에 몸이 바닥 아래로 들어가면 그만큼 들어 올려요 (팔과 무기는 빼고 몸통·머리·다리만 봐요)
+const FB = new THREE.Box3(), FB2 = new THREE.Box3();
+function floorGuard(m, u) {
+  m.updateMatrixWorld(true); FB.makeEmpty();
+  for (const c of u.body.children) { if (c === u.armL || c === u.armR || !c.visible) continue; FB2.setFromObject(c); if (!FB2.isEmpty()) FB.union(FB2); }
+  if (FB.isEmpty()) return; const d = m.position.y - FB.min.y - 0.02; if (d > 0) u.body.position.y += d;
+}
 function kApply(T, P, f) { if (f <= 0) return; for (const q in P) T[q] = T[q] * (1 - f) + P[q] * f; }
 function animHero(E, p, dt, t) {
   const m = E.m, u = m.userData, role = p.role; m.position.set(E.x, 0, E.z); m.rotation.y = Math.PI / 2 - E.a;
@@ -1125,7 +1201,7 @@ function animHero(E, p, dt, t) {
   if (p.aN !== E.aN) { E.aN = p.aN; if (E.aN != null && p.ak) { if (E.ak || E.kh) E.blT = 0.1; E.ak = p.ak; E.aT = 0; E.kc = (p.ac | 0) % 2; E.kh = null; } }
   const kind = E.ak ? (E.ak === 'atk' || E.ak === 'hv' || E.ak === 'big' ? E.ak : 'skill') : '', D = ANIM_T[kind] || 0.5;
   // 기사 베기가 끝나면 끝 자세를 잠깐 들고 있다가 (연타가 이어질 수 있는 동안) 천천히 돌아와요
-  if (E.ak) { E.aT += dt; if (E.aT > D) { if (role === 'knight' && E.ak === 'atk') E.kh = { c: E.kc, t: 0 }; E.ak = null; } }
+  if (E.ak) { E.aT += dt; if (E.aT > D) { if ((role === 'knight' || CHAIN[role]) && E.ak === 'atk') E.kh = { c: E.kc, t: 0 }; E.ak = null; } }
   if (E.kh && (E.kh.t += dt) > KH_T) E.kh = null;
   if (E.blT > 0) E.blT -= dt;
   const v = E.ak ? E.aT / D : 1, side = (E.aN || 0) % 2 ? 1 : -1;
@@ -1170,14 +1246,8 @@ function animHero(E, p, dt, t) {
       } else if (role === 'knight') { // 기사 1타: (화면에서 볼 때) 오른쪽 위에서 왼쪽 아래로 비스듬히 / 2타: 왼쪽 아래에서 오른쪽 아래로 낮게 가로 베기
         // 팔을 앞으로 들고(rx) 좌우로 휘두르며(rz) 칼날을 팔 축으로 돌려(ry) 눕혀요. 허리 비틀기(bry)로 더 크게
         kApply(T, kPose(E.kc, v, base), 1);
-      } else if (role === 'squire') { // 옆으로 크게 베기: 반대쪽으로 감았다가 휘둘러요
-        const w = seg(v, 0, 0.18), st = seg(v, 0.18, 0.55), rc = seg(v, 0.6, 1);
-        T.rx = -1.45; T.rz = (side * 1.3 * w - side * 2.6 * st) * (1 - rc); T.bry = (side * 0.5 * w - side * 1.1 * st) * (1 - rc); T.bz = 0.4 * st * (1 - rc); T.bx = 0.15 * st * (1 - rc); T.lx = base[1] - 0.3 * st;
-      } else if (role === 'archer') { // 시위를 놓고 반동, 다시 당겨요
-        const re = seg(v, 0.25, 1);
-        T.pull = re * 0.75; T.rpz = -0.55 * re; T.rz = -0.25 - 0.1 * re; T.lx = -1.55 - 0.25 * (1 - seg(v, 0.08, 0.5)); T.bx = -0.12 * (1 - seg(v, 0.05, 0.6)); T.rx = -1.5 + 0.5 * (1 - seg(v, 0.05, 0.4));
-      } else { // 사제: 지팡이를 앞으로 찔러 빛을 쏴요
-        const th = seg(v, 0, 0.3), rc = seg(v, 0.45, 1); T.bry = -0.5 * th * (1 - rc); T.rz = -0.4 * th * (1 - rc); T.rx = base[0] - 0.6 * th * (1 - rc); T.bx = 0.25 * th * (1 - rc); T.bz = 0.3 * th * (1 - rc); T.lx = -1.2 * th * (1 - rc) + base[1];
+      } else { // 궁수·사제·종자도 기사처럼 1타 끝 자세에서 2타가 이어져요 (궁수: 쏘고 반동 → 화살통에서 뽑아 반대로 비틀며 쏘기, 사제: 지팡이 내지르기 → 머리 위로 돌려 반대로 휘두르기, 종자: 가로 베기 → 되돌려 올려 베기)
+        kApply(T, cPose(role, E.kc, v, base), 1);
       }
     } else { // 기술: 모두 예비 동작(0~0.2) → 크게 터뜨리기 → 버티기 → 돌아오기
       const pre = seg(v, 0, 0.2), go = seg(v, 0.2, 0.34), hold = 1 - seg(v, 0.72, 1), pk = go * hold, cr = pre * (1 - go);
@@ -1210,9 +1280,9 @@ function animHero(E, p, dt, t) {
     }
   }
   // 베기 끝 자세 들고 있기: 처음엔 그대로, 연타가 끊길 즈음 기본 자세로
-  if (!E.ak && E.kh) kApply(T, kPose(E.kh.c, 1, base), 1 - seg(E.kh.t, 0.18, KH_T));
+  if (!E.ak && E.kh) kApply(T, role === 'knight' ? kPose(E.kh.c, 1, base) : cPose(role, E.kh.c, 1, base), 1 - seg(E.kh.t, 0.18, KH_T));
   if ((E.ak && E.ak !== 'hv') || E.kh) { // 모든 동작을 훨씬 크게: 기본 자세에서 벗어난 만큼을 키워요 (기사 말고 셋은 더 크게)
-    const ex = role !== 'knight', big = E.ak === 'big', X = big ? 1.3 : ex ? 1.85 : 1.4, A = big ? 1.15 : ex ? 1.5 : 1.25;
+    const ex = role !== 'knight' && !(E.ak === 'atk' || (!E.ak && E.kh)), big = E.ak === 'big', X = big ? 1.3 : ex ? 1.85 : 1.4, A = big ? 1.15 : ex ? 1.5 : 1.25;
     for (const k of ['rz', 'lz', 'bx', 'by', 'bz', 'bry', 'hx']) T[k] *= X;
     T.rx = base[0] + (T.rx - base[0]) * A; T.lx = base[1] + (T.lx - base[1]) * A; T.jy *= big ? 1.35 : ex ? 2.5 : 1.9; T.sq = clampN(T.sq * (ex ? 1.8 : 1.5), -0.55, 0.75); T.lg *= ex ? 1.6 : 1.3;
   }
@@ -1225,8 +1295,10 @@ function animHero(E, p, dt, t) {
   u.body.rotation.set(L(0, 'bx', T.bx), L(0, 'bry', T.bry) + T.spin, L(0, 'brz', T.brz)); u.body.position.set(0, bob + L(0, 'by', T.by), L(0, 'bz', T.bz));
   m.position.y = L(0, 'jy', T.jy); const sq = L(0, 'sq', T.sq); u.body.scale.set(1 + sq * 0.5, 1 - sq * 0.6, 1 + sq * 0.5);
   const lg = L(0, 'lg', T.lg); if (E.ak) { u.legL.rotation.x = sw - lg * 0.6; u.legR.rotation.x = -sw + lg * 0.6; }
-  if (p.ro) { E.rollA = (E.rollA || 0) + dt * 18; u.body.rotation.x = E.rollA; u.body.position.y = -0.6; } else E.rollA = 0;
+  // 구르기: 몸 가운데를 축으로 앞으로 한 바퀴 (발끝 축으로 돌면 머리가 바닥에 파묻혀요). 다리와 팔은 웅크려요
+  if (p.ro) { const a = E.rollA = Math.min(Math.PI * 2, (E.rollA || 0) + dt * 18), c = 1.45; u.body.rotation.set(a, 0, 0); u.body.position.set(0, 1.3 - c * Math.cos(a), -c * Math.sin(a)); u.legL.rotation.x = u.legR.rotation.x = -1.5; u.armL.rotation.x = u.armR.rotation.x = -2.2; u.body.scale.set(1, 0.85, 1); } else E.rollA = 0;
   if (p.dn) { u.body.rotation.set(-Math.PI / 2 + 0.2, 0, 0); u.body.position.set(0, 0.4, -1); }
+  floorGuard(m, u);
   if (u.light) u.light.intensity = (p.dn ? 3 : 15);
 }
 function animEnemy(E, e, dt, t, view) {

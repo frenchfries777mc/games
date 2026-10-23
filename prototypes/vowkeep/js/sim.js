@@ -1,6 +1,6 @@
 // Vowkeep · © 2026 Frenchfries777 · CC BY-NC-ND 4.0
 // 게임 규칙 (방장·혼자 하기에서만 돌아가요). three.js를 쓰지 않아서 node에서도 시험할 수 있어요.
-import { ROLES, ROLE_IDS, ENEMIES, BLESSINGS, CHAPTERS, FOES, MAP, GEAR_BONUS, COMBOS, DEEP } from './data.js';
+import { ROLES, ROLE_IDS, ENEMIES, BLESSINGS, CHAPTERS, FOES, MAP, GEAR_BONUS, COMBOS, DEEP, ROLE_PUZ } from './data.js';
 import * as D from './data.js';
 import { collide as mapCollide, isWall, lineClear, navDir, areaAt, cw, useChapter, PILLARS, resetSecrets, openSecret, secretFace, openGate, dropPillar, pillarAt, LIFTH, liftOk } from './map.js';
 
@@ -40,7 +40,7 @@ export function createGame(slots, seed, ch = 0) {
     fires: MAP.fires.map(([x, y]) => ({ x: cw(x), z: cw(y), lit: false })),
     altars: MAP.altars.map(([x, y]) => ({ x: cw(x), z: cw(y), used: false, prog: 0 })),
     chests: MAP.chests.map(([x, y, sec], i) => ({ x: cw(x), z: cw(y), open: false, prog: 0, sec: sec || 0, mim: i === MAP.mimic })),
-    puz: MAP.puzzles.map(q => ({ done: false, occ: [0, 0, 0, 0], hold: 0, n: 0, lit: [0, 0, 0, 0], rot: q.rot0 ? q.rot0.slice() : [0, 0, 0, 0], idle: 0, help: false })),
+    puz: MAP.puzzles.map(q => ({ done: false, occ: [0, 0, 0, 0], hold: 0, n: 0, lit: [0, 0, 0, 0], rot: q.rot0 ? q.rot0.slice() : [0, 0, 0, 0], idle: 0, help: false, tT: 0 })),
     darks: MAP.darks.map(() => ({ t: 0 })), esc: null, escDone: false,
     pits: MAP.pits.map(() => ({ down: false, hits: 0, idle: 0, help: false })), lifts: MAP.lifts.map(() => ({ h: 0, dir: 1, lock: false, done: false, mv: 0 })),
     traps: MAP.traps.map(([x, y], i) => ({ id: i, x: cw(x), z: cw(y), on: true, t: i * 0.7, up: false }))
@@ -160,7 +160,7 @@ function basicAttack(G, p, inp, nShot = 1) {
   if (heavy) { p.hvT = HV_DELAY; p.hvAid = aid; return; }
   if (big) { ev(G, 'big', { id: p.id, role: p.role, x: p.x + Math.cos(p.a) * 1.4, z: p.z + Math.sin(p.a) * 1.4, a: p.a }); breakWall(G, p.x + Math.cos(p.a) * 1.6, p.z + Math.sin(p.a) * 1.6, 2.2, p); }
   if (A.kind === 'melee') {
-    hitPuzzle(G, p.x + Math.cos(p.a) * 1.6, p.z + Math.sin(p.a) * 1.6, A.range * 0.8, p);
+    hitPuzzle(G, p.x + Math.cos(p.a) * 1.6, p.z + Math.sin(p.a) * 1.6, A.range * 0.8, p, 1, 'melee');
     ev(G, 'swing', { id: p.id, x: p.x, z: p.z, a: p.a, r: A.range * (big ? 1.3 : 1), role: p.role });
     for (const e of G.enemies) { if (e.hp <= 0) continue; const d = dist(p, e); if (d < A.range * (big ? 1.3 : 1) + e.r && angDiff(p.a, angTo(p, e)) < A.arc / 2 + (big ? 0.7 : 0.25)) hurtEnemy(G, e, A.dmg * hm, p, { basic: true, aid, burn: A.burn, kb: big ? 6 : 3, kbA: angTo(p, e) }); }
   } else {
@@ -177,7 +177,7 @@ function heavyLand(G, p) {
   ev(G, 'swing', { id: p.id, x: p.x, z: p.z, a: p.a, r: A.range, role: p.role });
   // 내려찍은 자리 둘레 전부를 쳐요 (피해 3.4배), 맞은 적은 느려져요 (보스는 덜, 짧게)
   const cx = p.x + Math.cos(p.a) * 1.2, cz = p.z + Math.sin(p.a) * 1.2;
-  breakWall(G, cx, cz, HV_R, p); hitPuzzle(G, cx, cz, HV_R, p);
+  breakWall(G, cx, cz, HV_R, p); hitPuzzle(G, cx, cz, HV_R, p, 1, 'heavy');
   for (const e of G.enemies) { if (e.hp <= 0) continue; if (Math.hypot(e.x - cx, e.z - cz) < HV_R + e.r) { const kbA = Math.atan2(e.z - cz, e.x - cx); hurtEnemy(G, e, A.dmg * 3.4, p, { basic: true, aid: p.hvAid, heavy: true, burn: A.burn, kb: 7, kbA }); if (e.hp > 0) { const boss = e.k === 'boss'; e.slow = boss ? 1.5 : 2.5; e.slowM = boss ? 0.75 : 0.5; } } }
 }
 // 금 간 벽: 강타, 세 번째 큰 공격, 관통 화살이 닿으면 무너지고 비밀 방이 열려요
@@ -233,7 +233,7 @@ function useSkill(G, p, si, inp) {
   p.cd[key] = S.cd * cdMul(p, 'skill', G); p.anim = S.id; p.animT = 0.8; p.animN = (p.animN || 0) + 1;
   ev(G, 'skill', { id: p.id, s: S.id, x: p.x, z: p.z, a: p.a });
   switch (S.id) {
-    case 'block': p.block = 1.2; break;
+    case 'block': p.block = 1.2; rolePuz(G, p, 'oath', 1.7); break;
     case 'dash': {
       const ox = p.x, oz = p.z, L = 6;
       p.x += Math.cos(p.a) * L; p.z += Math.sin(p.a) * L; collide(G, p, 0.6); p.inv = 0.3;
@@ -249,7 +249,7 @@ function useSkill(G, p, si, inp) {
       if (best) { best.mark = 6; ev(G, 'mark', { id: best.id, x: best.x, z: best.z }); }
       break;
     }
-    case 'heal': for (const q of G.players) if (alive(q) && dist(p, q) < 6) ev(G, 'heal', { id: q.id, x: q.x, z: q.z, v: healP(G, q, 35) }); break;
+    case 'heal': for (const q of G.players) if (alive(q) && dist(p, q) < 6) ev(G, 'heal', { id: q.id, x: q.x, z: q.z, v: healP(G, q, 35) }); rolePuz(G, p, 'basins', 6); break;
     case 'ward': for (const q of G.players) if (alive(q) && dist(p, q) < 7.5) { q.shield = 25; q.shieldT = 5; ev(G, 'ward', { id: q.id }); } break;
     case 'raise': {
       // 1초 동안 빛을 모은 뒤 가까이 쓰러진 동료가 일어나요 (그 사이 사제가 쓰러지면 없던 일)
@@ -475,8 +475,21 @@ function interact(G, p) {
   });
 }
 // 공격이나 화살·구슬이 화로에 닿아도 불이 붙어요
-function hitPuzzle(G, x, z, r, p, pw = 1) {
+// src: 'melee' (근접 공격), 'heavy' (강타), 'potion', 또는 투사체 종류 ('arrow', 'pierce', 'orb' ...)
+function hitPuzzle(G, x, z, r, p, pw = 1, src = '') {
   let hit = false;
+  // 역할 전용 수수께끼: 과녁은 궁수 화살로만, 성수반은 사제 빛 구슬로만, 가시덩굴은 종자 횃불 공격으로만
+  MAP.puzzles.forEach((q, k) => {
+    const P = G.puz[k]; if (P.done) return;
+    const ok = q.k === 'targets' ? (src === 'arrow' || src === 'pierce') : q.k === 'basins' ? src === 'orb' : q.k === 'vines' ? src === 'melee' && p && p.role === 'squire' : false; if (!ok) return;
+    q.items.forEach((_, i) => {
+      const o = itemPos(q, i), oz = q.k === 'targets' ? o.z - 0.6 : o.z, rr = q.k === 'targets' ? 1.1 : q.k === 'basins' ? 1.2 : 1.5;
+      if (Math.hypot(o.x - x, oz - z) > r + rr) return; hit = true; if (P.lit[i]) return;
+      P.lit[i] = 1; if (p && !p.bot) P.idle = 0; if (q.k === 'targets' && !(P.tT > 0)) P.tT = 10;
+      ev(G, q.k === 'vines' ? 'pburn' : 'plit', { pk: k, i, x: o.x, z: oz, k: q.k });
+      if (q.items.every((_, j) => P.lit[j])) solvePuz(G, k);
+    });
+  });
   // 금 간 기둥: 보통 공격은 여섯 번 맞히면, 강타·큰 공격·관통 화살은 한 번에 쓰러져요
   G.pits.forEach((P, k) => {
     if (P.down) return; const o = pillarAt(k); if (Math.hypot(o.x - x, o.z - z) > r + 1.3) return;
@@ -488,6 +501,14 @@ function hitPuzzle(G, x, z, r, p, pw = 1) {
     for (let i = 0; i < 4; i++) { const o = itemPos(q, i); if (Math.hypot(o.x - x, o.z - z) < r + 0.8) { hit = true; if (!P.lit[i]) lightBrazier(G, k, i, p); } }
   });
   return hit;
+}
+// 기술로 푸는 역할 수수께끼: 기사 막기(방패 석판 위), 사제 치유(성수반 가까이)
+function rolePuz(G, p, kind, r) {
+  MAP.puzzles.forEach((q, k) => {
+    const P = G.puz[k]; if (P.done || q.k !== kind) return;
+    q.items.forEach((_, i) => { const o = itemPos(q, i); if (P.lit[i] || Math.hypot(o.x - p.x, o.z - p.z) > r) return; P.lit[i] = 1; if (!p.bot) P.idle = 0; ev(G, 'plit', { pk: k, i, x: o.x, z: o.z, k: kind }); });
+    if (q.items.every((_, j) => P.lit[j])) solvePuz(G, k);
+  });
 }
 function lightBrazier(G, k, i, p) {
   const q = MAP.puzzles[k], P = G.puz[k], o = itemPos(q, i); if (P.lit[i]) return;
@@ -511,9 +532,11 @@ function stepPuzzles(G, dt) {
       const n = P.occ.reduce((a, b) => a + b, 0);
       if (n >= need) { P.hold += dt; if (P.hold > 0.8) solvePuz(G, k); } else P.hold = 0;
     } else if (inRoom.length && (inRoom.some(p => !p.bot) || !G.humans)) {
-      // 화로·석상: 오래 못 풀면 봇 동료가 도와줘요
-      P.idle += dt; if (G.humans && P.idle > 35 && !P.help) { P.help = true; ev(G, 'phelp', { pk: k }); }
+      // 화로·석상·역할 수수께끼: 한동안 못 풀면 봇 동료가 천천히 도와줘요
+      P.idle += dt; if (G.humans && P.idle > PUZ_HELP && !P.help && puzHelper(G, q)) { P.help = true; ev(G, 'phelp', { pk: k }); }
     }
+    // 과녁: 첫 과녁을 맞힌 뒤 10초 안에 셋 다 맞히지 못하면 다시 처음부터
+    if (q.k === 'targets' && P.tT > 0 && (P.tT -= dt) <= 0) { P.lit = [0, 0, 0, 0]; ev(G, 'ptime', { pk: k }); }
   });
   // 횃불: 어둠의 방에서 멀리 나가면 횃불은 걸이로 돌아가요. 사람이 아무도 안 들면 봇이 들어요
   MAP.darks.forEach((D, k) => {
@@ -632,6 +655,12 @@ function stepEsc(G, dt) {
   if (E.t <= 0) { ev(G, 'escfail', {}); escReset(G); }
 }
 // 봇: 수수께끼 방에서 할 일 (발판에 서기, 오래 못 풀면 화로·석상 대신 풀기)
+// 사람이 있으면 12초쯤 못 풀 때 봇이 도와요. 역할 수수께끼는 그 역할의 봇만 풀 수 있어요
+const PUZ_HELP = 12;
+function puzHelper(G, q) {
+  const RP = ROLE_PUZ[q.k], bots = G.players.filter(o2 => o2.bot && alive(o2) && !o2.torch && (!RP || o2.role === RP.role)).sort((a, b) => a.slot - b.slot);
+  return bots[0] || null;
+}
 function botPuzzle(G, p, inp, leader) {
   const ai = p.ai, la = leader ? areaAt(leader.x, leader.z) : -1, me = areaAt(p.x, p.z);
   for (let k = 0; k < MAP.puzzles.length; k++) {
@@ -642,11 +671,17 @@ function botPuzzle(G, p, inp, leader) {
       if (j < 0 || j >= free.length) return false;
       const o = itemPos(q, free[j]); moveTo(G, p, inp, o.x, o.z, 0.35); return true;
     }
-    if (P.idle < (G.humans ? 35 : 1.5)) return false;
-    const helper = G.players.filter(o2 => o2.bot && alive(o2)).sort((a, b) => a.slot - b.slot)[0]; if (helper !== p) return false;
-    const i = q.k === 'braziers' ? q.order[P.n] : P.rot.findIndex((r, j2) => r !== STAT_OK[j2]); if (i < 0) return false;
+    if (P.idle < (G.humans ? PUZ_HELP : 1.5)) return false;
+    if (puzHelper(G, q) !== p) return false;
+    // 사람처럼 한 번 하고 잠깐 멈췄다가 다음 것을 해요 (천천히)
+    if (ai.pzW > 0) { ai.pzW -= 1 / 30; return true; }
+    const RP = ROLE_PUZ[q.k];
+    const i = q.k === 'braziers' ? q.order[P.n] : RP ? q.items.findIndex((_, j2) => !P.lit[j2]) : P.rot.findIndex((r, j2) => r !== STAT_OK[j2]); if (i < 0) return false;
     const o = itemPos(q, i);
-    if (!moveTo(G, p, inp, o.x, o.z, 1.6)) { ai.fp = !ai.fp; inp.f = ai.fp; }
+    if (q.k === 'oath') { if (!moveTo(G, p, inp, o.x, o.z, 0.5) && p.cd.s0 <= 0) { inp.q = true; ai.pzW = 1.2; } return true; }
+    if (q.k === 'targets') { const tz = o.z - 0.6, sz = o.z + 9; if (!moveTo(G, p, inp, o.x, sz, 1.2)) { inp.aim = Math.atan2(tz - p.z, o.x - p.x); inp.atk = true; ai.pzW = 0.9; } return true; }
+    if (q.k === 'basins' || q.k === 'vines') { const near = q.k === 'basins' ? 5 : 1.6; if (!moveTo(G, p, inp, o.x, o.z, near)) { inp.aim = Math.atan2(o.z - p.z, o.x - p.x); inp.atk = true; ai.pzW = 1.1; } return true; }
+    if (!moveTo(G, p, inp, o.x, o.z, 1.6)) { ai.fp = !ai.fp; inp.f = ai.fp; if (ai.fp) ai.pzW = 1.3; }
     return true;
   }
   return false;
@@ -833,14 +868,14 @@ function stepProjs(G, dt) {
   for (const pr of G.projs) {
     if (pr.k === 'potion') {
       pr.t += dt; const u = Math.min(1, pr.t / pr.T); pr.x = pr.sx + (pr.tx - pr.sx) * u; pr.z = pr.sz + (pr.tz - pr.sz) * u; pr.y = Math.sin(u * Math.PI) * 3;
-      if (u >= 1) { pr.dead = true; hitPuzzle(G, pr.tx, pr.tz, 1.4, G.players.find(q => q.id === pr.own)); ev(G, 'splash', { x: pr.tx, z: pr.tz }); for (const q of G.players) if (alive(q) && Math.hypot(q.x - pr.tx, q.z - pr.tz) < 3) ev(G, 'heal', { id: q.id, x: q.x, z: q.z, v: healP(G, q, 40) }); }
+      if (u >= 1) { pr.dead = true; hitPuzzle(G, pr.tx, pr.tz, 1.4, G.players.find(q => q.id === pr.own), 1, 'potion'); ev(G, 'splash', { x: pr.tx, z: pr.tz }); for (const q of G.players) if (alive(q) && Math.hypot(q.x - pr.tx, q.z - pr.tz) < 3) ev(G, 'heal', { id: q.id, x: q.x, z: q.z, v: healP(G, q, 40) }); }
       continue;
     }
     pr.x += pr.vx * dt; pr.z += pr.vz * dt; pr.life -= dt;
     if (pr.life <= 0 || isWall(pr.x, pr.z) || PILLARS.some(p => Math.hypot(p.x - pr.x, p.z - pr.z) < p.r)) { pr.dead = true; if (pr.k === 'pierce') { const o = G.players.find(p => p.id === pr.own); if (o && !o.bot) breakWall(G, pr.x, pr.z, 1.2, o); } continue; }
     if (pr.team === 0) {
       const own = G.players.find(p => p.id === pr.own);
-      if (hitPuzzle(G, pr.x, pr.z, 0.5, own, pr.k === 'pierce' ? PIT_HITS : 1)) { pr.dead = true; continue; }
+      if (hitPuzzle(G, pr.x, pr.z, 0.5, own, pr.k === 'pierce' ? PIT_HITS : 1, pr.k)) { pr.dead = true; continue; }
       if (pr.k === 'orb') { // 사제 빛 구슬은 가까운 적을 살짝 따라가요
         let best = null, bd = 6; for (const e of G.enemies) { if (e.hp <= 0) continue; const d = Math.hypot(e.x - pr.x, e.z - pr.z); if (d < bd) { bd = d; best = e; } }
         if (best) { const a = Math.atan2(best.z - pr.z, best.x - pr.x), sp = Math.hypot(pr.vx, pr.vz), ca = Math.atan2(pr.vz, pr.vx); let da = a - ca; while (da > Math.PI) da -= TAU; while (da < -Math.PI) da += TAU; const na = ca + clamp(da, -4 * dt, 4 * dt); pr.vx = Math.cos(na) * sp; pr.vz = Math.sin(na) * sp; }
