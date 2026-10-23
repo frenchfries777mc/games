@@ -386,7 +386,7 @@ window.ceReload=function(){try{if(window.FFAuth&&FFAuth.setRoom)FFAuth.setRoom(n
 try{if(sessionStorage.getItem('ce_noIntro')){sessionStorage.removeItem('ce_noIntro');el.style.display='none';go();}}catch(e){}})();</script>
 <div id="app">
  <div id="lobby" class="screen">
-  <canvas id="lobbyBg"></canvas><canvas id="lobbyWar"></canvas><div id="cpTag">© 2026 Frenchfries777 · <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.ko" target="_blank" rel="noopener">CC BY-NC-ND 4.0</a></div><div id="verTag">v0.4 · build 90</div>
+  <canvas id="lobbyBg"></canvas><canvas id="lobbyWar"></canvas><div id="cpTag">© 2026 Frenchfries777 · <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.ko" target="_blank" rel="noopener">CC BY-NC-ND 4.0</a></div><div id="verTag">v0.4 · build 91</div>
   <header class="brand"><h1>Crown Envoy</h1><div class="sub"><i></i>DIPLOMACY · WAR · EMPIRE<i></i></div></header>
   <div id="lobbyRight">
    <div id="lobbyHome" class="modes">
@@ -1068,7 +1068,7 @@ function act_(pid,m){
     log(`${pname(pid)}이(가) ${pname(m.to)}에 대사관을 열었다.`,'dip');return ok('대사관을 열었어요. 외교관 유지비가 사라지고, 매달 서로의 호감이 올라요.');}
   case 'recall':{const i=G.dips.findIndex(d=>d.from===pid&&d.to===m.to);if(i<0)return fail('파견한 외교관이 없습니다.');G.dips.splice(i,1);log(`${pname(pid)}이(가) ${pname(m.to)}에서 외교관을 철수시켰다.`,'dip');return ok('외교관 철수');}
   case 'expel':{const i=G.dips.findIndex(d=>d.to===pid&&d.from===m.from);if(i<0)return fail('해당 외교관이 없습니다.');G.dips.splice(i,1);log(`${pname(pid)}이(가) ${pname(m.from)}의 외교관을 추방했다!`,'warn');return ok('외교관 추방');}
-  case 'propose':{if(!inPlan)return fail('지금은 불가능합니다.');const to=m.to;if(m.type==='truce')return proposeTruce(pid,+to,m.terms);if(!hasChannel(pid,to))return fail('외교 채널이 없습니다.');
+  case 'propose':{if(!inPlan)return fail('지금은 불가능합니다.');const to=m.to;if(m.type==='alliance'&&(nzOn(G.players[pid])||nzOn(G.players[+to])))return fail('중립 상태에서는 동맹을 맺을 수 없어요.');if(m.type==='truce')return proposeTruce(pid,+to,m.terms);if(!hasChannel(pid,to))return fail('외교 채널이 없습니다.');
     if(m.type==='ransom'){const g=G.gens.find(x=>x.id===m.gid&&x.owner===pid&&x.status==='captured'&&x.captor===to);const gold=Math.floor(+m.gold);if(!g)return fail('포로 정보 오류');if(!(gold>=0)||gold>p.gold)return fail('몸값이 올바르지 않습니다.');
       G.props.push({id:G.uid++,type:'ransom',from:pid,to,gid:g.id,gold,round:G.round});return ok('몸값을 제안했습니다.');}
     if(m.type==='union'){const q=G.players[to];if(!q||!q.alive||to===pid)return fail('대상 오류');if(!treatyBetween(pid,to,'alliance'))return fail('동맹국에만 연합을 제안할 수 있어요.');if(!q.isBot)return fail('AI 나라에만 연합을 제안할 수 있어요.');if(q.neu||p.neu)return fail('중립국과는 연합할 수 없어요.');if(G.props.some(x=>x.type==='union'&&x.from===pid&&x.to===to))return fail('이미 진행 중인 제안이 있습니다.');
@@ -1240,6 +1240,8 @@ function declareWar(pid,tid,opts){opts=opts||{};const p=G.players[pid],q=G.playe
   if(isHostile(pid,tid))return fail('이미 전쟁 중입니다.');
    if(p.isBot&&!opts.force&&truceLeft(pid,tid)>0)return fail('휴전 기간이라 선전포고하지 않습니다.');
   if(treatyBetween(pid,tid,'alliance'))return fail('동맹국에는 선전포고할 수 없어요. 먼저 동맹을 해제하세요.');
+  if(nzOn(p))return fail('중립을 선언한 동안은 선전포고할 수 없어요. 먼저 중립을 거두세요.');
+  if(nzOn(q)){nzEnd(q,`${pname(pid)}이(가) 중립을 깨고 쳐들어왔어요!`);G.players.forEach(x=>{if(x.alive&&x.id!==pid&&x.id!==tid)opnAdd(x.id,pid,'break_neu','중립국을 침공했다',-20,30);});}
   breachCheck(pid,tid);setHostile(pid,tid);markDecl(pid,tid);dipOnWar(pid,tid,!!opts.ult||!!(p.refusedBy&&(p.refusedBy[tid]||-99)>=G.round-8));q.warUntil=G.round+6;p.warUntil=Math.max(p.warUntil||0,G.round+6);
   if(G.tplId)G.players.forEach(x=>{if(x.alive&&!x.neu&&x.id!==pid&&x.id!==tid&&treatyBetween(x.id,tid,'alliance')&&!treatyBetween(x.id,pid,'alliance')&&truceLeft(x.id,pid)===0){setHostile(x.id,pid);markDecl(x.id,pid);}});
   log(`${pname(pid)}이(가) ${pname(tid)}에 선전포고했다.`,'dip');(G.pendDecl=G.pendDecl||[]).push({from:pid,to:tid,round:G.round});
@@ -2765,7 +2767,7 @@ function faithGuess(p,y){const k=p.nkey,c=p.cult,n=String(p.kingdom||'');
   if(c==='mix')return 'ath';
   return 'chr';}
 function polEnsure(p){if(!p)return;if(!p.gov||!GOV[p.gov])p.gov=govGuess(p,polYear());if(!p.fai||!FAITH[p.fai])p.fai=faithGuess(p,polYear());if(p.pub==null)p.pub=60;}
-function polFx(p){const f={};if(!p)return f;polEnsure(p);const add=o=>Object.keys(o).forEach(k=>f[k]=(f[k]||0)+o[k]);add(GOV[p.gov].fx);add(FAITH[p.fai].fx);wdList(p.id).forEach(k=>add(WONDERS[k].fx));relicList(p.id).forEach(k=>add(RELICS[k].fx));add(facFx(p));add(taxDecFx(p));add(trFx(p));if(telOn(p))add({reb:-0.08});return f;}
+function polFx(p){const f={};if(!p)return f;polEnsure(p);const add=o=>Object.keys(o).forEach(k=>f[k]=(f[k]||0)+o[k]);add(GOV[p.gov].fx);add(FAITH[p.fai].fx);wdList(p.id).forEach(k=>add(WONDERS[k].fx));relicList(p.id).forEach(k=>add(RELICS[k].fx));add(facFx(p));add(taxDecFx(p));add(trFx(p));if(telOn(p))add({reb:-0.08});if(codeDone(p))add({reb:-0.10,inc:0.05});if(nzOn(p))add({inc:0.05});return f;}
 const pfx=(pid,k)=>{const p=pid!=null&&G.players[pid];return p?(polFx(p)[k]||0):0;};
 const inGovT=p=>p.govUntil!=null&&G.round<p.govUntil;
 const inFaiT=p=>p.faiUntil!=null&&G.round<p.faiUntil;
@@ -2802,6 +2804,10 @@ function polAct(pid,m){const p=G.players[pid];if(!p||!p.alive)return fail('대�
   if(m.op==='cnhire'||m.op==='cnfire')return cnAct(p,m);
   if(m.op==='will')return rlAct(p,m);
   if(m.op==='tel')return telAct(p);
+  if(m.op==='ref')return refAct(p);
+  if(m.op==='code')return codeAct(p);
+  if(m.op==='neu'||m.op==='neuend')return nzAct(p,m.op==='neuend');
+  if(m.op==='press')return pressAct(p);
   if(m.op==='papdon'||m.op==='papabs')return papAct(p,m);
   return fail('대상 오류');}
 function revoltOne(p){const c=owned(p.id).filter(t=>t.id!==p.cap).sort((a,b)=>((b.home!==p.id)?1:0)-((a.home!==p.id)?1:0)||b.unrest-a.unrest||Math.random()-0.5)[0];if(!c)return false;
@@ -2869,6 +2875,35 @@ function prView(p){if(!prOn(p))return null;const r=prEnsure(p);return {role:GOV[
 const LET_COST=30,LET_CD=4,LET_LEAK=0.12,MIS_COST=90,MIS_CD=8,MIS_T=6,MIS_CATCH=0.10,MIS_CONV=0.45,TEL_YEAR=1840,TEL_COST=250,TEL_CUT=5;
 const telYear=()=>polYear()>=TEL_YEAR;
 const telOn=p=>!!p&&!!p.tel&&!(p.telCut!=null&&G.round<=p.telCut);
+/* ===== 국민투표 · 법전 편찬 · 중립 선언 · 보도 통제 ===== */
+const REF_COST=40,REF_CD=10,CODE_COST=120,CODE_T=6,NZ_T=12,NZ_CD=20,PRESS_COST=60,PRESS_T=6,PRESS_CD=12,PRESS_EXP=0.08;
+const refCd=p=>p.refAt==null?0:Math.max(0,p.refAt+REF_CD-G.round);
+const codeDone=p=>!!(p.code&&p.code.d);
+const nzOn=p=>p.nz!=null&&G.round<p.nz;
+const nzCd=p=>p.nzEnd==null?0:Math.max(0,p.nzEnd+NZ_CD-G.round);
+const pressOn=p=>!!(p.press&&G.round<p.press);
+const pressCd=p=>p.pressAt==null?0:Math.max(0,p.pressAt+PRESS_CD-G.round);
+function nzEnd(p,why){if(p.nz==null)return;p.nz=null;p.nzEnd=G.round;if(why)hooks.toast(p.id,why);}
+function refAct(p){const cd=refCd(p);if(cd>0)return fail(`국민투표는 ${cd}턴 뒤에 다시 할 수 있어요.`);if(p.gold<REF_COST)return fail(`금화가 부족합니다 (필요 ${REF_COST})`);
+  p.gold-=REF_COST;p.refAt=G.round;const win=Math.random()<clamp(p.pub/100+0.1,0.1,0.95);
+  if(win){p.stab=clamp(p.stab+12,0,100);p.pub=clamp(p.pub+10,0,100);if(inGovT(p))p.govUntil=G.round;log(`${p.kingdom}에서 국민투표가 치러져 정부가 신임을 얻었다.`,'event');return ok(`국민투표에서 신임을 얻었어요! 안정도 +12, 여론 +10${inGovT(p)?'':''} (−${REF_COST}금)`);}
+  p.stab=clamp(p.stab-12,0,100);p.pub=clamp(p.pub-12,0,100);log(`${p.kingdom}에서 국민투표가 치러졌으나 정부가 불신임을 받았다.`,'event');return ok(`국민투표에서 불신임을 받았어요. 안정도 −12, 여론 −12 (−${REF_COST}금)`);}
+function codeAct(p){if(p.code)return fail(codeDone(p)?'이미 법전을 편찬했어요.':'법전을 편찬하는 중이에요.');if(p.gold<CODE_COST)return fail(`금화가 부족합니다 (필요 ${CODE_COST})`);
+  p.gold-=CODE_COST;p.code={at:G.round,end:G.round+CODE_T,d:0};return ok(`법전 편찬을 시작했어요. ${CODE_T}턴 뒤 완성되고, 반란 확률 −10%·수입 +5%가 영구히 이어져요. (−${CODE_COST}금)`);}
+function nzAct(p,end){if(end){if(!nzOn(p))return fail('중립 상태가 아니에요.');nzEnd(p);return ok('중립을 거뒀어요.');}
+  if(nzOn(p))return fail('이미 중립을 선언했어요.');const cd=nzCd(p);if(cd>0)return fail(`중립은 ${cd}턴 뒤에 다시 선언할 수 있어요.`);
+  if(G.players.some(q=>q.alive&&q.id!==p.id&&isHostile(p.id,q.id)))return fail('전쟁 중에는 중립을 선언할 수 없어요.');
+  p.nz=G.round+NZ_T;log(`${p.kingdom}이(가) 중립을 선언했다.`,'dip');return ok(`${NZ_T}턴 동안 중립을 선언했어요. 선전포고·동맹 제안은 못 하지만 수입 +5%, 여론이 오르고, 이 나라를 치는 나라는 모두에게 미움을 사요.`);}
+function pressAct(p){if(pressOn(p))return fail('이미 보도를 통제하고 있어요.');const cd=pressCd(p);if(cd>0)return fail(`보도 통제는 ${cd}턴 뒤에 다시 할 수 있어요.`);if(p.gold<PRESS_COST)return fail(`금화가 부족합니다 (필요 ${PRESS_COST})`);
+  p.gold-=PRESS_COST;p.press=G.round+PRESS_T;p.pressAt=G.round;return ok(`${PRESS_T}턴 동안 보도를 통제해요. 전쟁 중 여론 하락이 절반으로 줄지만, 매 턴 ${Math.round(PRESS_EXP*100)}% 확률로 들통나 여론이 크게 떨어져요. (−${PRESS_COST}금)`);}
+function ctlTick(p){
+  if(p.code&&!p.code.d&&G.round>=p.code.end){p.code.d=1;p.pub=clamp(p.pub+3,0,100);log(`${p.kingdom}이(가) 법전을 편찬했다.`,'event');hooks.toast(p.id,'법전 편찬이 끝났어요! 반란 확률 −10%, 수입 +5%');}
+  if(p.nz!=null&&G.round>=p.nz){nzEnd(p,'중립 선언 기간이 끝났어요.');}
+  if(p.press!=null&&G.round>=p.press)p.press=null;
+  if(pressOn(p)&&Math.random()<PRESS_EXP){p.press=null;p.pub=clamp(p.pub-15,0,100);p.stab=clamp(p.stab-3,0,100);log(`${p.kingdom}의 보도 통제가 들통났다.`,'event');hooks.toast(p.id,'보도 통제가 들통났어요! 여론 −15, 안정도 −3');
+    (G.pendNews=G.pendNews||[]).push({r:G.round,date:ymOf(G.round),head:`${snm(p.id)}, 언론 탄압 들통나다`,body:`${snm(p.id)} 정부가 전쟁 소식을 가려 왔다는 사실이 드러나 백성들이 분노하고 있다.`,scene:'meeting',ca:p.color,cb:p.color});}
+  if(nzOn(p)&&!G.players.some(q=>q.alive&&q.id!==p.id&&isHostile(p.id,q.id)))p.pub=clamp(p.pub+1,0,100);}
+function ctlView(p){return {ref:{cd:refCd(p),cost:REF_COST},code:{st:!p.code?0:codeDone(p)?2:1,left:p.code&&!p.code.d?Math.max(0,p.code.end-G.round):0,cost:CODE_COST},nz:{on:nzOn(p),left:nzOn(p)?p.nz-G.round:0,cd:nzCd(p)},press:{on:pressOn(p),left:pressOn(p)?p.press-G.round:0,cd:pressCd(p),cost:PRESS_COST},gold:Math.round(p.gold)};}
 function telAct(p){if(!telYear())return fail(`전신은 ${TEL_YEAR}년 이후에 쓸 수 있어요.`);if(p.tel)return fail('이미 전신망이 있어요.');if(p.gold<TEL_COST)return fail(`금화가 부족합니다 (필요 ${TEL_COST})`);
   p.gold-=TEL_COST;p.tel=1;log(`${p.kingdom}이(가) 전신망을 깔았다.`,'event');return ok(`전신망을 깔았어요. 첩보 공작이 바로 실행되고 반란 확률이 8% 줄어요. (−${TEL_COST}금)`);}
 function telView(p){if(!telYear()&&!p.tel)return null;return {has:!!p.tel,cut:(p.telCut!=null&&G.round<=p.telCut)?p.telCut-G.round+1:0,cost:TEL_COST,gold:Math.round(p.gold)};}
@@ -2976,11 +3011,14 @@ function empTick(){if(!empOn())return;let E=G.emp;
   if(!E.votes&&G.round>=E.next){E.next=G.round+EMP_GAP;empOpen(E);}}
 function empView(p){if(!empOn()||!G.emp)return null;const w=empW(p.id),E=G.emp;if(!w&&E.holder!==p.id)return null;
   return {holder:E.holder!=null&&G.players[E.holder]?snm(E.holder):null,me:E.holder===p.id,left:Math.max(0,E.next-G.round),w,open:!!E.votes,cands:empVoters().sort((a,b)=>empW(b.id)-empW(a.id)).slice(0,6).map(c=>({n:snm(c.id),w:empW(c.id),me:c.id===p.id}))};}
-function polTick(){G.players.forEach(p=>{if(!p.alive||p.landless)return;polEnsure(p);cnTick(p);rlTick(p);prTick(p);const wars=G.players.filter(q=>q.alive&&q.id!==p.id&&isHostile(p.id,q.id)).length;let d;
-    {const sh=pubShift(p);if(wars)d=-1-(wars>=2?1:0)-((p.ww||0)>=50?1:0)+sh-Math.floor(nBld(p.id,'guild',6)/2);else{const tg=clamp(60+10*sh,30,85);d=p.pub<tg?2:p.pub>tg?-1:0;}}if(p.stab<30)d-=1;if(p.gold<0)d-=2;p.pub=clamp(p.pub+d,0,100);
+function polTick(){G.players.forEach(p=>{if(!p.alive||p.landless)return;polEnsure(p);cnTick(p);rlTick(p);prTick(p);ctlTick(p);const wars=G.players.filter(q=>q.alive&&q.id!==p.id&&isHostile(p.id,q.id)).length;let d;
+    {const sh=pubShift(p);if(wars)d=-1-(wars>=2?1:0)-((p.ww||0)>=50?1:0)+sh-Math.floor(nBld(p.id,'guild',6)/2);else{const tg=clamp(60+10*sh,30,85);d=p.pub<tg?2:p.pub>tg?-1:0;}}if(wars&&d<0&&pressOn(p))d=Math.ceil(d/2);if(p.stab<30)d-=1;if(p.gold<0)d-=2;p.pub=clamp(p.pub+d,0,100);
     if(p.pub<15&&wars&&!p.isBot&&G.round-(p.pubWarn==null?-99:p.pubWarn)>=5){p.pubWarn=G.round;hooks.toast(p.id,'여론이 바닥이에요! 백성들이 휴전을 요구해요. (수입·사기 −15%, 반란 위험)');}
     if(p.isBot)polBot(p,wars);});papTick();empTick();missionTick();}
 function polBot(p,wars){const r=Math.random();
+  if(!p.code&&p.gold>CODE_COST+250&&r<0.04)polAct(p.id,{op:'code'});
+  else if(p.pub<35&&p.stab<45&&refCd(p)===0&&p.gold>REF_COST+150&&r<0.3)polAct(p.id,{op:'ref'});
+  else if(wars&&p.pub<40&&!pressOn(p)&&!pressCd(p)&&p.gold>PRESS_COST+200&&r<0.3)polAct(p.id,{op:'press'});
   if(telYear()&&!p.tel&&p.gold>TEL_COST+300&&r<0.06){p.gold-=TEL_COST;p.tel=1;}
   if(p.pub<35&&p.gold>propCost(p)+150&&r<0.5)polAct(p.id,{op:'prop'});
   else if(p.pub<25&&p.gold>festCost(p)+200&&r<0.6)polAct(p.id,{op:'fest'});
@@ -2989,7 +3027,7 @@ function polBot(p,wars){const r=Math.random();
   if(p.gov!=='emp'&&['mon','tot'].includes(p.gov)&&!polCd(p,'gov')&&!wars&&Math.random()<0.04&&!empBlock(p.id))setGov(p,'emp');
   if(p.pub<12&&wars&&Math.random()<0.2){const q=G.players.filter(x=>x.alive&&x.isBot&&x.id!==p.id&&isHostile(p.id,x.id)&&warBalance(p.id,x.id)<=0.1)[0];if(q){makeTruce(p.id,q.id);log(`여론에 밀린 ${p.kingdom}이(가) ${q.kingdom}과(와) 휴전했다.`,'dip');}}}
 function polView(pid){const p=G.players[pid];polEnsure(p);const nd=empNeed();return {gov:p.gov,fai:p.fai,pub:Math.round(p.pub),govT:inGovT(p)?p.govUntil-G.round:0,faiT:inFaiT(p)?p.faiUntil-G.round:0,govCd:polCd(p,'gov'),faiCd:polCd(p,'fai'),emp:empBlock(pid),empNeed:nd.land,
-  propCost:propCost(p),festCost:festCost(p),propCd:p.propAt==null?0:Math.max(0,p.propAt+PROP_CD-G.round),festCd:p.festAt==null?0:Math.max(0,p.festAt+FEST_CD-G.round),mor:+polMor(p).toFixed(2),inc:+polInc(p).toFixed(2),reb:+polReb(p).toFixed(2),base:govBase(p.kingdom),taxr:p.taxr==null?1:p.taxr,taxLock:p.taxAt==null?0:Math.max(0,p.taxAt+TAX_LOCK-G.round),decK:decOn(p)?p.dec.k:null,decLeft:decOn(p)?p.dec.until-G.round:0,decCd:decCd(p),decCost:decCost(p),cn:cnView(p),rl:rlView(p),pr:prView(p),tel:telView(p),pap:papView(p),emp:empView(p)};}
+  propCost:propCost(p),festCost:festCost(p),propCd:p.propAt==null?0:Math.max(0,p.propAt+PROP_CD-G.round),festCd:p.festAt==null?0:Math.max(0,p.festAt+FEST_CD-G.round),mor:+polMor(p).toFixed(2),inc:+polInc(p).toFixed(2),reb:+polReb(p).toFixed(2),base:govBase(p.kingdom),taxr:p.taxr==null?1:p.taxr,taxLock:p.taxAt==null?0:Math.max(0,p.taxAt+TAX_LOCK-G.round),decK:decOn(p)?p.dec.k:null,decLeft:decOn(p)?p.dec.until-G.round:0,decCd:decCd(p),decCost:decCost(p),cn:cnView(p),rl:rlView(p),pr:prView(p),tel:telView(p),ctl:ctlView(p),pap:papView(p),emp:empView(p)};}
 /* ---------- 시나리오 이벤트: 편집기에서 정한 턴에 선전포고·휴전·동맹·반란·금화·소식이 일어난다 ---------- */
 function winText(w){const P=i=>(G.players[i]?G.players[i].kingdom:'?');return w.k==='turns'?`${w.n}턴 동안 살아남기`:w.k==='terr'?`영토 ${w.n}곳 차지하기`:w.k==='gold'?`금화 ${w.n} 모으기`:w.k==='cap'?`${P(w.b)}의 수도 점령하기`:'';}
 function winCheck(){if(G.over||!G.wins||!G.wins.length)return;const lands=p=>owned(p.id).filter(t=>!t.sea).length;
@@ -5805,6 +5843,12 @@ Object.assign(UI,{
     {const rl=P.rl;if(rl){h+=`<h3>📜 유언장</h3><div class="card"><div class="row"><div><b>👑 ${esc(rl.n)}</b> <span class="tag">${rl.age}세</span> <span class="tag">${rl.tr.ic} ${rl.tr.n}</span></div><div class="sm muted">성향: ${rl.tr.d}</div></div><div class="sm muted" style="margin:4px 0 6px">군주가 늙으면 언제든 세상을 떠날 수 있어요. 후계자를 정해 두지 않으면 계승 전쟁이 나서 안정도 −25, 사기 하락, 영토 이탈이 생겨요.${rl.will?'':' <b style="color:var(--bad)">지금은 유언장이 비어 있어요.</b>'}${rl.cd?` <span style="color:var(--gold2)">${rl.cd}턴 뒤 고칠 수 있어요</span>`:''}</div>
       ${Object.keys(RLW).map(k=>`<div class="row" style="gap:8px;align-items:center;margin:4px 0"><span style="flex:1"><b>${RLW[k].ic} ${RLW[k].n}</b>${k==='gen'&&rl.gen?` <span class="muted sm">(${esc(rl.gen)})</span>`:''}<div class="sm muted">${RLW[k].d}</div></span><button class="btn sm ${rl.will===k?'primary':''}" data-act="pol" data-op="will" data-v="${k}" ${rl.will===k||rl.cd?'disabled':''}>${rl.will===k?'지정됨':'지정'}</button></div>`).join('')}</div>`;}}
     {const tl=P.tel;if(tl){h+=`<h3>📡 전신망</h3><div class="card"><div class="sm muted" style="margin-bottom:6px">전신선을 깔면 첩보 공작이 바로 실행되고 반란 확률이 8% 줄어요. 적의 파괴 공작에 선이 끊기면 ${TEL_CUT}턴 동안 쓸 수 없어요. (${TEL_YEAR}년 이후)</div>${tl.has?`<span class="tag good">전신망 가동 중</span>${tl.cut?` <span class="tag" style="color:var(--bad)">끊김 ${tl.cut}턴 남음</span>`:''}`:`<button class="btn primary sm" data-act="pol" data-op="tel" ${tl.gold<tl.cost?'disabled':''}>전신망 깔기 ${tl.cost}금</button>`}</div>`;}}
+    {const c=P.ctl;if(c){const L=[];
+      L.push(`<div style="margin-bottom:10px"><b>🗳 국민투표</b> <span class="sm muted">정부에 신임을 묻는 투표예요. 여론이 높을수록 이길 가능성이 커요. 이기면 안정도 +12·여론 +10(정치체제 전환 기간도 끝나요), 지면 둘 다 −12.</span><div style="margin-top:4px"><button class="btn primary sm" data-act="pol" data-op="ref" ${c.ref.cd||c.gold<c.ref.cost?'disabled':''}>${c.ref.cd?`${c.ref.cd}턴 뒤 가능`:`국민투표 ${c.ref.cost}금`}</button></div></div>`);
+      L.push(`<div style="margin-bottom:10px"><b>📜 법전 편찬</b> <span class="sm muted">${CODE_T}턴 걸려 완성돼요. 반란 확률 −10%, 수입 +5%가 영구히 이어져요.</span><div style="margin-top:4px">${c.code.st===2?'<span class="tag good">법전 완성</span>':c.code.st===1?`<span class="tag">편찬 중 · ${c.code.left}턴 남음</span>`:`<button class="btn primary sm" data-act="pol" data-op="code" ${c.gold<c.code.cost?'disabled':''}>법전 편찬 ${c.code.cost}금</button>`}</div></div>`);
+      L.push(`<div style="margin-bottom:10px"><b>🕊 중립 선언</b> <span class="sm muted">${NZ_T}턴 동안 선전포고·동맹을 못 하는 대신 수입 +5%, 여론이 오르고, 이 나라를 치는 나라는 모두에게 미움을 사요. 전쟁 중엔 선언할 수 없어요.</span><div style="margin-top:4px">${c.nz.on?`<span class="tag good">중립 · ${c.nz.left}턴 남음</span> <button class="btn sm" data-act="pol" data-op="neuend">중립 거두기</button>`:`<button class="btn primary sm" data-act="pol" data-op="neu" ${c.nz.cd?'disabled':''}>${c.nz.cd?`${c.nz.cd}턴 뒤 가능`:'중립 선언'}</button>`}</div></div>`);
+      L.push(`<div><b>📰 보도 통제</b> <span class="sm muted">${PRESS_T}턴 동안 전쟁 중 여론 하락이 절반으로 줄어요. 매 턴 ${Math.round(PRESS_EXP*100)}% 확률로 들통나면 여론 −15.</span><div style="margin-top:4px">${c.press.on?`<span class="tag good">통제 중 · ${c.press.left}턴 남음</span>`:`<button class="btn primary sm" data-act="pol" data-op="press" ${c.press.cd||c.gold<c.press.cost?'disabled':''}>${c.press.cd?`${c.press.cd}턴 뒤 가능`:`보도 통제 ${c.press.cost}금`}</button>`}</div></div>`);
+      h+=`<h3>🏛 국정 도구</h3><div class="card">${L.join('')}</div>`;}}
     {const pr=P.pr;if(pr){h+=`<h3>🏛 ${esc(pr.role)}</h3><div class="card"><div><b>${esc(pr.n)}</b> <span class="tag">${pr.tr.ic} ${pr.tr.n}</span></div><div class="sm muted" style="margin:4px 0 6px">성향: ${pr.tr.d}</div><div class="sm">임기 ${pr.len}턴 · 다음 ${pr.word}까지 ${pr.left}턴</div></div>`;}}
     {const em=P.emp;if(em){h+=`<h3>👑 신성로마제국</h3><div class="card"><div><b>황제: ${em.holder?esc(em.holder):'없음'}</b> ${em.me?'<span class="tag">우리</span>':''}</div>
       <div class="sm muted" style="margin:4px 0 6px">나폴레옹 전쟁 이전에는 ${EMP_GAP}턴마다 제국 영토를 가진 나라들이 황제를 뽑아요. 제국 영토 1곳이 1표예요. 황제가 되면 승점 +3, 금화 +100, 안정도 +5, 사기 +5를 받아요.</div>
