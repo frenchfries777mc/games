@@ -111,6 +111,16 @@ function tapply(){ var st=tget(), h=document.documentElement; h.setAttribute('da
 tapply(); try{ lightCss(); }catch(e){} try{ barCss(); }catch(e){}
 window.addEventListener('storage',function(e){ if(e.key===TK||e.key===SK){ tapply(); try{ window.dispatchEvent(new Event('fftheme')); }catch(x){} } });
 window.FFTheme={ get:tget, sizes:Object.keys(ZOOM), set:function(t,z){ try{ if(THEMES.indexOf(t)>=0) localStorage.setItem(TK,t); if(ZOOM[z]) localStorage.setItem(SK,z); }catch(e){} tapply(); try{ window.dispatchEvent(new Event('fftheme')); }catch(e){} } };
+/* 최적화 설정: 모든 사이트와 게임이 같은 값을 읽어요. 키 ff_perf = {low:bool, fx:'high'|'mid'|'low', fps:0|30|60}.
+   FFPerf.get() 값 읽기, FFPerf.set({...}) 저장, 바뀌면 window 'ffperf' 이벤트. <html>에 class ff-low, data-ffx, data-ffps가 붙어요. */
+(function(){ var K='ff_perf', FX=['high','mid','low'];
+  function get(){ var o={}; try{ o=JSON.parse(localStorage.getItem(K)||'{}')||{}; }catch(e){}
+    var low=o.low===true; var fx=FX.indexOf(o.fx)>=0?o.fx:(low?'low':'high'); var fps=(o.fps===30||o.fps===60)?o.fps:(low?30:0);
+    return {low:low,fx:fx,fps:fps}; }
+  function apply(){ var p=get(), h=document.documentElement; h.classList.toggle('ff-low',p.low); h.setAttribute('data-ffx',p.fx); h.setAttribute('data-ffps',String(p.fps)); }
+  function set(v){ var p=get(); for(var k in v) p[k]=v[k]; try{ localStorage.setItem(K,JSON.stringify(p)); }catch(e){} apply(); try{ window.dispatchEvent(new Event('ffperf')); }catch(e){} }
+  window.FFPerf={get:get,set:set,key:K}; apply(); window.addEventListener('storage',function(e){ if(e.key===K){ apply(); try{ window.dispatchEvent(new Event('ffperf')); }catch(_){} } });
+})();
 /* Newspeak (nw): the joke language from Orwell's 1984. A party slogan sits above the copyright line, the hub number strip gets "2 + 2 = 5",
    and the community page is closed by the telescreen. Everything else is plain translation. */
 var SLOGANS=['WAR IS PEACE','FREEDOM IS SLAVERY','IGNORANCE IS STRENGTH'];
