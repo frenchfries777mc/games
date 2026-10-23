@@ -87,7 +87,7 @@ patchnotes.json | v352 items[1] | 금은 한 번에 최대 3개, 들수록 느�
 patchnotes.json | v352 items[2] | 금을 든 사람이 쓰러지면 금이 떨어져 누구나 줍기 | build 352 | 2026-10-20
 patchnotes.json | v352 items[3] | 더미가 비면 15초마다 6개씩 새로 쌓임 | build 352 | 2026-10-20
 patchnotes.json | v352 items[4] | 파쿠르 모드 삭제 | build 352 | 2026-10-20
-patchnotes.json | v353 title | 인트로 눌러서 시작, 인트로 도중 로비 곡 | build 353 | 2026-10-23
-patchnotes.json | v353 items[0] | 소리가 막힌 브라우저에서는 화면을 누르면 인트로 시작 | build 353 | 2026-10-23
-patchnotes.json | v353 items[1] | 인트로 곡이 끝나면 인트로 도중에 로비 곡으로 전환 | build 353 | 2026-10-23
-Stickseum-latest.html | 인트로 안내 | 화면을 누르면 시작해요 | build 353 | 2026-10-23
+patchnotes.json | v353 title | 6인 세로 맵 삭제와 맵 이름 정리 | build 353 | 2026-10-20
+patchnotes.json | v353 items[0] | 세로로 긴 6인 맵 4종(우주, 궁전, 사이버, 하늘) 삭제 | build 353 | 2026-10-20
+patchnotes.json | v353 items[1] | 왕 지키기·얼음땡·한 방 승부·저중력 난투·숨바꼭질·토너먼트 기본 맵 변경 | build 353 | 2026-10-20
+patchnotes.json | v353 items[2] | 깃발 뺏기 전용 맵 이름에서 '깃발 뺏기:' 글자 제거 | build 353 | 2026-10-20
