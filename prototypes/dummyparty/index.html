@@ -51,6 +51,7 @@
     'PC 키보드와 휴대폰 터치 조작 지원': ['Supports PC keyboard and phone touch controls', 'Compatible con teclado de PC y controles táctiles en el móvil', 'Clavier sur PC et commandes tactiles sur téléphone', 'Unterstützt PC-Tastatur und Touch-Steuerung am Handy', 'PCのキーボードとスマホのタッチ操作に対応'],
     '2~8명': ['2–8 players', '2–8 jugadores', '2 à 8 joueurs', '2–8 Spieler', '2〜8人'],
     '← 프로토타입 목록': ['← Prototypes', '← Prototipos', '← Prototypes', '← Prototypen', '← プロトタイプ一覧'],
+    '화면을 누르면 시작해요': ['Tap the screen to start', 'Toca la pantalla para empezar', "Touchez l'écran pour commencer", 'Tippe auf den Bildschirm, um zu starten', '画面をタップして開始'],
     '프로토타입': ['prototype', 'prototipo', 'prototype', 'Prototyp', 'プロトタイプ'],
     /* 대기실 */
     '← 나가기': ['← Leave', '← Salir', '← Quitter', '← Verlassen', '← 退出'],
@@ -1271,6 +1272,7 @@ button{font:inherit;cursor:pointer}
 /* 첫 화면 */
 #sHome{background:radial-gradient(ellipse at 50% 30%,#f7c27a 0%,#d98f4e 55%,#8a5530 100%);min-height:100vh;display:none;align-items:center;justify-content:center;padding:24px 16px}
 #sHome.on{display:flex}
+#introHold{position:fixed;left:0;right:0;bottom:9vh;text-align:center;color:#fff;font:700 clamp(15px,2.4vw,22px) system-ui,sans-serif;letter-spacing:.06em;text-shadow:0 2px 10px #000;z-index:99999;pointer-events:none;animation:introHold 1.4s ease-in-out infinite alternate}@keyframes introHold{from{opacity:.45}to{opacity:1}}
 #sIntro{background:#120a1e;min-height:100vh;display:none;align-items:center;justify-content:center}#sIntro.on{display:flex}#introCv{width:min(100vw,177.7vh);height:auto;aspect-ratio:16/9;display:block}
 .homeBox{width:100%;max-width:440px;text-align:center}
 .logo{font-weight:900;font-size:clamp(40px,11vw,64px);line-height:1;color:#fff;letter-spacing:-1px;text-shadow:0 4px 0 #b86b33,0 8px 18px rgba(0,0,0,.25);margin:0}
@@ -1515,7 +1517,9 @@ body.playing #emoBar{display:flex}
    <div class="row"><input id="codeIn" maxlength="5" placeholder="방 코드" autocomplete="off"><button class="pb dark" id="joinBtn" style="flex:0 0 auto">들어가기</button></div>
    <div class="msg" id="homeMsg"></div>
   </aside>
-  <template id="patchnotes"><details class="notes" open><summary>패치노트 · v0.1 (build 56)</summary>
+  <template id="patchnotes"><details class="notes" open><summary>패치노트 · v0.1 (build 57)</summary>
+   <b>2026-10-23 · v0.1 build 57 · 인트로 곡</b>
+   <ul><li>인트로에 곡이 나와요. 소리가 막힌 브라우저에서는 화면을 누르면 인트로가 시작돼요</li></ul>
    <b>2026-10-23 · v0.1 build 56 · 인트로와 봇 조정</b>
    <ul><li>게임을 열면 마네킹들이 컵 야바위, 풍선 다트, 줄넘기, 페인트 색 섞기를 하는 인트로가 나와요 (건너뛸 수 없어요)</li><li>쇼핑카트 레이스의 봇이 더 느리고 자주 실수해요</li><li>웨이터 쟁반 배달이 쉬워졌어요 (쟁반 흔들림 감소, 쏟기 전 여유 증가, 기절 시간 단축, 제한 시간 6초 증가)</li></ul>
    <b>2026-10-23 · v0.1 build 55 · 새 미니게임 2개</b>
@@ -1626,7 +1630,7 @@ body.playing #emoBar{display:flex}
    <ul><li>무너지는 발판 칸 수 대폭 증가 (19×10)와 용암 동굴 맵</li><li>10개 맵 전부 새로 그림 (관중석, 야자수 섬, 링, 정원 미로, 서커스, 우노 테이블 등)</li><li>글자 대신 아이콘·말풍선·이펙트로 표현 (무기, 아이템, 카드 효과, 시작 안내)</li><li>타격·폭발·물보라 효과와 화면 흔들림 추가</li></ul>
    <b>2026-10-19 · v0.1 build 1 · 첫 시험판</b>
    <ul><li>마네킹 미니게임 10개 추가 (장애물 달리기, 섬 밀치기, 싸우기, 병맛 미로, 체스 대난투, 폭탄 돌리기, 병맛 우노, 쇼윈도 얼음땡, 무너지는 발판, 컨베이어 서바이벌)</li><li>방 코드로 최대 8명 멀티플레이, 빈자리는 봇으로 채우기</li><li>판마다 10개 중 5개를 무작위로 골라 점수를 합산</li><li>PC 키보드와 휴대폰 터치 조작 지원</li></ul></details></template>
-  <p class="foot">2~8명 · 판마다 36개 미니게임 중 7개 · 프로토타입 v0.1 b56 · <a href="../">← 프로토타입 목록</a></p>
+  <p class="foot">2~8명 · 판마다 36개 미니게임 중 7개 · 프로토타입 v0.1 b57 · <a href="../">← 프로토타입 목록</a></p>
   <p class="foot"><span class="ff-copy">© 2026 Frenchfries777 · <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.ko" target="_blank" rel="noopener">CC BY-NC-ND 4.0</a></span></p>
  </div>
 </section>
@@ -8148,6 +8152,24 @@ function dpPhoto(m) {
 /* ===== 인트로: 마네킹들이 미니게임을 하는 장면 (건너뛸 수 없어요) ===== */
 (function () {
   var cv = $('introCv'), c = cv.getContext('2d'), T = 7.6, t0 = performance.now(), done = false, logo = new Image();
+  var held = false;
+  // 인트로 곡(스틱세움 인트로 곡, 5초): 인트로와 함께 시작해요. 브라우저가 소리를 막으면 인트로가 멈춘 채 화면을 누를 때까지 기다려요
+  function sting() {
+    if (lsGet('dummyparty.sfx') === '0') return;
+    try {
+      var a = new Audio('party-intro.mp3'), alt = false; a.volume = 0.5;
+      a.onerror = function () { if (!alt) { alt = true; a.src = 'https://frenchfries777mc.github.io/games/prototypes/dummyparty/party-intro.mp3'; a.load(); var q = a.play(); if (q && q.catch) q.catch(function () { }); } };
+      var p = a.play();
+      if (p && p.catch) p.catch(function (e) {
+        if (!(e && e.name === 'NotAllowedError') || done) return;
+        held = true;
+        var h = document.createElement('div'); h.id = 'introHold'; h.textContent = (window.DP_T || function (x) { return x; })('화면을 누르면 시작해요'); document.body.appendChild(h);
+        var evs = ['pointerdown', 'keydown', 'touchend', 'click'];
+        var go = function () { evs.forEach(function (ev) { removeEventListener(ev, go, true); }); held = false; h.remove(); t0 = performance.now(); var r = a.play(); if (r && r.catch) r.catch(function () { }); };
+        evs.forEach(function (ev) { addEventListener(ev, go, true); });
+      });
+    } catch (e) { }
+  }
   logo.src = 'logo.svg';
   window.INTRO_ON = true;
   function ease(k) { k = clamp(k, 0, 1); return k * k * (3 - 2 * k); }
@@ -8195,6 +8217,7 @@ function dpPhoto(m) {
   }
   function frame() {
     if (done) return; requestAnimationFrame(frame);
+    if (held) return;
     var t = (performance.now() - t0) / 1000, k;
     c.setTransform(cv.width / W, 0, 0, cv.height / H, 0, 0); c.clearRect(0, 0, W, H);
     var g = c.createLinearGradient(0, 0, 0, H); g.addColorStop(0, '#1d1033'); g.addColorStop(1, '#4a2a62'); c.fillStyle = g; c.fillRect(0, 0, W, H);
@@ -8220,7 +8243,7 @@ function dpPhoto(m) {
     if ($('sIntro').classList.contains('on')) show('sHome');
     if (window.autoJoin) window.autoJoin();
   }
-  show('sIntro'); requestAnimationFrame(frame);
+  show('sIntro'); requestAnimationFrame(frame); sting();
 })();
 
 /* 확인 창 (브라우저 기본 팝업 대신 쓰는 자체 창) */
