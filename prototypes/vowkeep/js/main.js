@@ -38,12 +38,19 @@ const view = new View($('gl'));
 view.setPixel(SAVE.set.px); view.setBloom(!!SAVE.set.bloom); view.shakeOn = !!SAVE.set.shake; SFX.setVol(SAVE.set.vol / 100); MUS.setVol(SAVE.set.vol / 100);
 // 처음 인트로: 던전 복도를 네 영웅이 걸어 나와요. 건너뛸 수 없어요 (끝까지 재생). 끝나면 로비로
 let INTRO = !(qs.get('test') && /^(localhost|127\.0\.0\.1)$/.test(location.hostname));
+window.__introSongDone = INTRO ? 0 : 1;
 if (INTRO) {
-  view.buildIntro();
-  if (!(qs.get('hold') && /^(localhost|127\.0\.0\.1)$/.test(location.hostname))) setTimeout(() => { $('vkIntro').classList.add('dark'); setTimeout(() => {
-    if (view.mode === 'intro') view.buildLobby(); INTRO = false; document.documentElement.classList.add('vkReady');
-    $('vkIntro').classList.add('out'); setTimeout(() => $('vkIntro').remove(), 900);
-  }, 550); }, 6200);
+  const begin = () => {
+    view.buildIntro();
+    if (!(qs.get('hold') && /^(localhost|127\.0\.0\.1)$/.test(location.hostname))) setTimeout(() => { $('vkIntro').classList.add('dark'); setTimeout(() => {
+      if (view.mode === 'intro') view.buildLobby(); INTRO = false; window.__introSongDone = 1; document.documentElement.classList.add('vkReady');
+      $('vkIntro').classList.add('out'); setTimeout(() => $('vkIntro').remove(), 900);
+    }, 550); }, 6200);
+  };
+  MUS.sting(begin, h => {
+    const el = $('vkIntro'); el.classList.toggle('hold', h);
+    if (h) { const t = document.createElement('div'); t.id = 'vkHold'; t.textContent = '화면을 누르면 시작해요'; el.appendChild(t); } else { const t = $('vkHold'); if (t) t.remove(); }
+  });
 } else { view.buildLobby(); document.documentElement.classList.add('vkReady'); $('vkIntro').remove(); }
 addEventListener('resize', () => { view.resize(); sizeOv(); });
 const ov = $('ov'), oc = ov.getContext('2d');
@@ -801,7 +808,7 @@ function smoothSnap(sn, G, prev, al) {
 function musicTick(dt, now) {
   const sn = S.snap, playing = !!sn && S.scr === '' && sn.ph === 'play';
   const want = !playing ? 'lobby' : (sn.w.boss && !sn.w.bd && S.area === MAP.areas.findIndex(a => a.boss) ? 'boss' : 'dungeon');
-  MUS.tick(INTRO ? null : want, dt, now);
+  MUS.tick(window.__introSongDone ? want : null, dt, now);   // 인트로 곡이 끝날 때까지 다른 곡은 기다려요 (그 뒤엔 인트로 도중이라도 로비 곡)
 }
 addEventListener('pointerdown', () => MUS.kick()); addEventListener('keydown', () => MUS.kick());
 let lastT = performance.now();

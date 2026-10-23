@@ -289,3 +289,7 @@ crownenvoy/CrownEnvoy-v0.4.html | 전신망 (정치 탭 카드) | "📡 전신�
 
 ## Crown Envoy b95 (2026-10-23)
 | CrownEnvoy-v0.4.html | 패치 노트 | 지도 가장자리 빈 띠 줄임 | b95 | 2026-10-23 |
+
+## 인트로 곡 (Isleport b55, Vowkeep b34, 2026-10-23)
+- IslandTrade-v0.2.html, prototypes/vowkeep/js/main.js | 인트로 안내 | 화면을 누르면 시작해요 | Isleport b55 / Vowkeep b34 | 2026-10-23
+- patchnotes.json | "Vowkeep 인트로 곡" 2줄 | Vowkeep b34 | 2026-10-23
