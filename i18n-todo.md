@@ -280,3 +280,6 @@ crownenvoy/CrownEnvoy-v0.4.html | 전신망 (정치 탭 카드) | "📡 전신�
 - crownenvoy/patchnotes.json | b94 1줄 | 2026-10-23
 - isleport/patchnotes.json | v0.2 build 54 1줄 (게임 안 NOTES는 ko/en만) | 2026-10-23
 - 언어 이름 "😀💬"은 이모지라 번역하지 않음
+
+## Vowkeep b33 (2026-10-23)
+- patchnotes.json | "Vowkeep 인트로" 2줄 (인트로 글자는 영어 'Made by', 'With'로 번역 필요 없음) | Vowkeep b33 | 2026-10-23

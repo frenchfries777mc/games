@@ -10,7 +10,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Pinyon+Script&display=swap" rel="stylesheet">
 <!-- 새 빌드마다 아래 ?v= 숫자를 BUILD와 같게 올려요 (브라우저가 옛 파일을 쓰지 않게) -->
-<script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/","./js/data.js":"./js/data.js?v=32","./js/main.js":"./js/main.js?v=32","./js/map.js":"./js/map.js?v=32","./js/music.js":"./js/music.js?v=32","./js/render.js":"./js/render.js?v=32","./js/sfx.js":"./js/sfx.js?v=32","./js/sim.js":"./js/sim.js?v=32"}}</script>
+<script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/","./js/data.js":"./js/data.js?v=33","./js/main.js":"./js/main.js?v=33","./js/map.js":"./js/map.js?v=33","./js/music.js":"./js/music.js?v=33","./js/render.js":"./js/render.js?v=33","./js/sfx.js":"./js/sfx.js?v=33","./js/sim.js":"./js/sim.js?v=33"}}</script>
 <script src="https://cdn.jsdelivr.net/npm/peerjs@1.5.4/dist/peerjs.min.js"></script>
 <script src="https://frenchfries777mc.github.io/games/ff-auth.js"></script>
 <style>
@@ -25,6 +25,16 @@ canvas#ov{position:fixed;inset:0;width:100vw;height:100vh;pointer-events:none;z-
 .scr.on{display:block}
 .tx{text-shadow:0 2px 0 #140f18,0 0 6px #140f18,2px 0 0 #140f18,-2px 0 0 #140f18,0 -2px 0 #140f18}
 button{font:inherit;color:inherit;cursor:pointer}
+/* 처음 인트로 (건너뛸 수 없어요) */
+html:not(.vkReady) #sLobby{visibility:hidden}
+#vkIntro{position:fixed;inset:0;z-index:99999;background:rgba(6,4,10,.22);transition:background .5s,opacity .8s;pointer-events:auto}
+#vkIntro.dark{background:#07060c}#vkIntro.out{opacity:0;pointer-events:none}
+#vkIntro .sc{position:absolute;left:0;right:0;top:16vh;display:flex;flex-direction:column;align-items:center;opacity:0;color:#fff;text-align:center;text-shadow:0 0 12px #000c,0 0 34px #000a}
+#vkIntro .sm{font:600 clamp(16px,3.2vw,26px)/1.2 system-ui,sans-serif;letter-spacing:.2em;margin-bottom:10px;color:#e9dcb8}
+#vkIntro .bg{font:900 clamp(40px,9vw,100px)/1.05 system-ui,sans-serif;letter-spacing:.03em;display:flex;align-items:center;gap:.25em;color:#f6ecd0}
+#vkIntro .bg img{height:1.15em;width:auto;filter:drop-shadow(0 0 10px #000a)}
+#vkIntro .s1{animation:vkSc 3s 0s both}#vkIntro .s2{animation:vkSc 3s 3s both}
+@keyframes vkSc{0%{opacity:0}33%{opacity:1}66%{opacity:1}100%{opacity:0}}
 /* 로비 */
 #sLobby .title{position:absolute;left:0;right:0;top:9vh;text-align:center;pointer-events:none}
 #sLobby .title h1{margin:0;font-family:"Pinyon Script",cursive;font-weight:400;font-size:clamp(72px,12vw,168px);line-height:1;color:#efe3c8;text-shadow:0 4px 0 #140f18,0 0 14px #140f18,3px 0 0 #140f18,-3px 0 0 #140f18}
@@ -170,6 +180,7 @@ body.touch #exitBtn{top:auto;bottom:auto}
 </head>
 <body>
 <canvas id="gl"></canvas>
+<div id="vkIntro"><div class="sc s1"><div class="sm">Made by</div><div class="bg">Frenchfries777</div></div><div class="sc s2"><div class="sm">With</div><div class="bg"><img alt="" src="claude.png">Claude AI</div></div></div>
 <canvas id="ov"></canvas>
 
 <!-- 로비 -->
@@ -245,6 +256,6 @@ body.touch #exitBtn{top:auto;bottom:auto}
 <div id="touch"><div id="joy"><div id="joyBase"><div id="joyKnob"></div></div></div>
   <div id="tbtns"><button id="tA"><span>공격</span></button><button id="tQ"><i class="cd"></i><span>Q</span></button><button id="tE"><i class="cd"></i><span>E</span></button><button id="tR"><i class="cd"></i><span>R</span></button><button id="tRoll"><i class="cd"></i><span>구르기</span></button><button id="tF"><span>F</span></button></div>
 </div>
-<script type="module" src="js/main.js?v=32"></script>
+<script type="module" src="js/main.js?v=33"></script>
 </body>
 </html>
