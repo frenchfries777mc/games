@@ -133,8 +133,8 @@ footer{padding:40px 0 30px;color:var(--gold);font-size:12px;text-shadow:2px 2px 
 <script src="codex-data.js"></script>
 <script>
 const C=window.CODEX,I=window.I18N,LS=['ko','en','fr','de','es','ja','zh','pt','ru','tr','it','pl','ar','nw','gk'];
-const NAMES={ko:'한국어',en:'English',fr:'Français',de:'Deutsch',es:'Español',ja:'日本語',zh:'简体中文',pt:'Português (Brasil)',ru:'Русский',tr:'Türkçe',it:"Italiano",pl:"Polski",ar:"العربية",nw:'Newspeak',gk:'번역기 한국어',au:'Aurebesh',sg:'Standard Galactic'};
-const VIRT={nw:1,gk:1,au:1,sg:1},VLABEL={ko:'가상 언어',en:'Fictional languages',fr:'Langues fictives',de:'Fiktive Sprachen',es:'Idiomas ficticios',ja:'架空の言語',zh:'虚构语言',pt:'Idiomas fictícios',ru:'Вымышленные языки',tr:'Kurgusal diller',it:"Lingue immaginarie",pl:"Języki fikcyjne",ar:"لغات خيالية",nw:'Unreal speaks',gk:'가짜의 언어들'};
+const NAMES={ko:'한국어',en:'English',fr:'Français',de:'Deutsch',es:'Español',ja:'日本語',zh:'简体中文',pt:'Português (Brasil)',ru:'Русский',tr:'Türkçe',it:"Italiano",pl:"Polski",ar:"العربية",nw:'Newspeak',gk:'번역기 한국어',au:'Aurebesh',sg:'Standard Galactic',em:'😀💬'};
+const VIRT={nw:1,gk:1,au:1,sg:1,em:1},VLABEL={ko:'가상 언어',en:'Fictional languages',fr:'Langues fictives',de:'Fiktive Sprachen',es:'Idiomas ficticios',ja:'架空の言語',zh:'虚构语言',pt:'Idiomas fictícios',ru:'Вымышленные языки',tr:'Kurgusal diller',it:"Lingue immaginarie",pl:"Języki fikcyjne",ar:"لغات خيالية",nw:'Unreal speaks',gk:'가짜의 언어들'};
 const auOn=()=>{try{return !!(window.FFLang&&FFLang.script&&FFLang.script());}catch(e){return false;}};
 const T={
  home:["← 홈","← Home","← Accueil","← Start","← Inicio","← ホーム","← 首页","← Início","← Главная","← Ana sayfa","← Ministry","← 집"],
@@ -375,14 +375,14 @@ function applyLang(){
  document.querySelectorAll('[data-t]').forEach(el=>el.textContent=t(el.dataset.t));
  document.title='BEACONFALL · '+t('title');
  document.getElementById('qi').placeholder=t('q_items');document.getElementById('qr').placeholder=t('q_recipes');document.getElementById('qc').placeholder=t('q_calc');
- const cur=auOn()?FFLang.script():LANG;document.getElementById('lg').innerHTML=LS.concat(['au','sg']).map(l=>`<button class="pb${l===cur?' on':''}" data-l="${l}"${l==='au'?` style="font-family:'FF Aurebesh',system-ui"`:l==='sg'?` style="font-family:'FF Galactic',system-ui"`:''}>${NAMES[l]}</button>`).join('');
+ const cur=auOn()?FFLang.script():LANG;document.getElementById('lg').innerHTML=LS.concat(['au','sg','em']).map(l=>`<button class="pb${l===cur?' on':''}" data-l="${l}"${l==='au'?` style="font-family:'FF Aurebesh',system-ui"`:l==='sg'?` style="font-family:'FF Galactic',system-ui"`:''}>${NAMES[l]}</button>`).join('');
  setTab(TAB);
  const d=document.getElementById('det');if(d.classList.contains('on')){const id=decodeURIComponent(location.hash.slice(1));if(C.items[id])openItem(id);else if(ISH&&TAB==='isl')openIsland(ISH);}
 }
 document.addEventListener('click',e=>{
  const el=e.target.closest('[data-l],[data-tab],[data-cat],[data-g],[data-calc],[data-isl],[data-id],[data-close],#det');if(!el)return;
  if(el.id==='det'){if(e.target===el)closeItem();return;}
- if(el.dataset.l){const v=el.dataset.l,was=auOn();LANG=(v==='au'||v==='sg')?'en':v;try{localStorage.setItem(KEY,LANG);if(window.FFLang)FFLang.set(v);}catch(x){}if((v==='au'||v==='sg')||was){location.reload();return;}applyLang();return;}
+ if(el.dataset.l){const v=el.dataset.l,was=auOn();LANG=(v==='au'||v==='sg'||v==='em')?'en':v;try{localStorage.setItem(KEY,LANG);if(window.FFLang)FFLang.set(v);}catch(x){}if((v==='au'||v==='sg'||v==='em')||was){location.reload();return;}applyLang();return;}
  if(el.dataset.tab){setTab(el.dataset.tab);history.replaceState(null,'',el.dataset.tab==='items'?location.pathname:'#'+el.dataset.tab);return;}
  if(el.dataset.cat){CAT=el.dataset.cat;renderItems();return;}
  if(el.dataset.g){GI=+el.dataset.g;renderGuide();return;}
