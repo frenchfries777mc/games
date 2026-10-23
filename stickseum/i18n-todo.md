@@ -113,3 +113,5 @@ patchnotes.json | v359 items[0] | 시즌 패스 단계를 20단계에서 60단�
 patchnotes.json | v359 items[1] | 31단계부터 단계당 필요 시즌 XP 450으로 상향 | build 359 | 2026-10-20
 patchnotes.json | v359 items[2] | 21단계 이후 보상 상향과 31단계 이후 큰 골드·영혼석·상자 보상 추가 | build 359 | 2026-10-20
 patchnotes.json | v359 items[3] | 시즌 칭호 4종 추가 (영웅, 전설, 신화, 영원) | build 359 | 2026-10-20
+patchnotes.json | v360 title | 숨바꼭질 비공개 전용 | build 360 | 2026-10-20
+patchnotes.json | v360 items[0] | 숨바꼭질을 온라인 모드 목록에서 빼고 비공개 방에서만 가능하게 변경 | build 360 | 2026-10-20

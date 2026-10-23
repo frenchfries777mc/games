@@ -4938,7 +4938,7 @@ function shuffle(arr){ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.
 /* ===== the version of this file =====
    Players with different versions CAN meet and play together: the automatic matchmaking uses the same room names for every version (online-<mode>-<map>-<slot>), and nobody is refused because of a different build.
    The build is only sent along with the join message and the lobby (for information); the corner of the screen shows it. */
-const GAME_BUILD='build 2026-10-18-v359';
+const GAME_BUILD='build 2026-10-18-v360';
 const GAME_VERSION='0.8', GAME_VERSION_NAME='황금을 찾아서';   // 게임 버전 이름: versions.json의 title과 같게 (빌드마다 바꾸지 않음)
 const WEEKLY_EVENTS=[
   {id:'lowg',    name:'저중력 난투', desc:'몸이 둥실둥실, 중력이 약해진 난투', rules:{grav:0.6}},
@@ -6228,6 +6228,7 @@ const MORE_MODES=[
 ];
 const PRIVATE_MODE_ORDER = MODE_ORDER.concat(MORE_MODES.map(it=>it.id)).concat(SPECIAL_IDS); // one carousel of every mode
 function pickOnlineModeAndMatch(mid, evt, ranked){
+  if(mid==='hideseek'){ uiAlert('숨바꼭질은 비공개 방에서만 할 수 있어요'); return; }          // (private rooms only)
   if(partyBlocks(ranked?'ranked':(evt?'event':mid))) return;          // (in a party: only the leader, only the party modes)
   onlineEvent=!!evt; onlineRanked=!!ranked; selectedOnlineMode=mid;
   document.getElementById('onlineModeTitle').textContent='온라인 플레이 · '+(ranked?'🏅 랭크전 (듀얼)':(evt?('주간 이벤트 · '+currentEvent().name):MODES[mid].name));
@@ -6278,7 +6279,6 @@ const MODE_LIST=[
   {id:'conquest', icon:'🏰', desc:'거점을 차지해 점수를 얻는 점령전'},
   {id:'zombie', icon:'🧟', desc:'좀비 한 명이 모두를 감염시켜요'},
   {id:'hotpotato', icon:'💣', desc:'터지기 전에 폭탄을 넘겨요'},
-  {id:'hideseek', icon:'🙈', desc:'숨는 사람과 술래의 대결'},
   {id:'survival', icon:'🌪️', desc:'쏟아지는 재해 속에서 끝까지 생존'},
   {id:'gold', icon:'⛏️', desc:'중앙의 금을 우리 팀 광차로 실어 날라요'},
   {id:'ctf', icon:'🚩', desc:'상대 깃발을 가져와 득점해요'},
