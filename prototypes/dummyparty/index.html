@@ -51,7 +51,6 @@
     'PC 키보드와 휴대폰 터치 조작 지원': ['Supports PC keyboard and phone touch controls', 'Compatible con teclado de PC y controles táctiles en el móvil', 'Clavier sur PC et commandes tactiles sur téléphone', 'Unterstützt PC-Tastatur und Touch-Steuerung am Handy', 'PCのキーボードとスマホのタッチ操作に対応'],
     '2~8명': ['2–8 players', '2–8 jugadores', '2 à 8 joueurs', '2–8 Spieler', '2〜8人'],
     '← 프로토타입 목록': ['← Prototypes', '← Prototipos', '← Prototypes', '← Prototypen', '← プロトタイプ一覧'],
-    '화면을 누르면 시작해요': ['Tap the screen to start', 'Toca la pantalla para empezar', "Touchez l'écran pour commencer", 'Tippe auf den Bildschirm, um zu starten', '画面をタップして開始'],
     '프로토타입': ['prototype', 'prototipo', 'prototype', 'Prototyp', 'プロトタイプ'],
     /* 대기실 */
     '← 나가기': ['← Leave', '← Salir', '← Quitter', '← Verlassen', '← 退出'],
@@ -269,6 +268,8 @@
     /* 꾸미기 */
     '모자': ['hat', 'sombrero', 'chapeau', 'Hut', '帽子'],
     '안경': ['glasses', 'gafas', 'lunettes', 'Brille', 'メガネ'],
+    /* 빌드 57 추가분 */
+    '화면을 누르면 시작해요': ['Tap the screen to start', 'Toca la pantalla para empezar', "Touchez l'écran pour commencer", 'Tippe auf den Bildschirm, um zu starten', '画面をタップして開始'],
     /* 빌드 56 추가분 */
     "마네킹들의 병맛 미니게임 파티": ["The silly minigame party of mannequins", "La fiesta de minijuegos absurdos de los maniquíes", "La fête de mini-jeux déjantés des mannequins", "Die verrückte Minispiel-Party der Mannequins", "マネキンたちのおバカミニゲームパーティー"],
     /* 빌드 55 추가분 */
@@ -1273,7 +1274,8 @@ button{font:inherit;cursor:pointer}
 #sHome{background:radial-gradient(ellipse at 50% 30%,#f7c27a 0%,#d98f4e 55%,#8a5530 100%);min-height:100vh;display:none;align-items:center;justify-content:center;padding:24px 16px}
 #sHome.on{display:flex}
 #introHold{position:fixed;left:0;right:0;bottom:9vh;text-align:center;color:#fff;font:700 clamp(15px,2.4vw,22px) system-ui,sans-serif;letter-spacing:.06em;text-shadow:0 2px 10px #000;z-index:99999;pointer-events:none;animation:introHold 1.4s ease-in-out infinite alternate}@keyframes introHold{from{opacity:.45}to{opacity:1}}
-#sIntro{background:#120a1e;min-height:100vh;display:none;align-items:center;justify-content:center}#sIntro.on{display:flex}#introCv{width:min(100vw,177.7vh);height:auto;aspect-ratio:16/9;display:block}
+#sIntro{position:relative;background:#120a1e;min-height:100vh;display:none;align-items:center;justify-content:center}#sIntro.on{display:flex}#introCv{width:min(100vw,177.7vh);height:auto;aspect-ratio:16/9;display:block}
+#sIntro .sc{position:absolute;left:0;right:0;top:16vh;display:flex;flex-direction:column;align-items:center;opacity:0;color:#fff;text-align:center;text-shadow:0 0 12px #000c,0 0 34px #000a;pointer-events:none}#sIntro .sm{font:600 clamp(16px,3.2vw,26px)/1.2 system-ui,sans-serif;letter-spacing:.2em;margin-bottom:10px;color:#e9dcb8}#sIntro .bg{font:900 clamp(40px,9vw,100px)/1.05 system-ui,sans-serif;letter-spacing:.03em;display:flex;align-items:center;gap:.25em;color:#f6ecd0}#sIntro .bg img{height:1.15em;width:auto;filter:drop-shadow(0 0 10px #000a)}
 .homeBox{width:100%;max-width:440px;text-align:center}
 .logo{font-weight:900;font-size:clamp(40px,11vw,64px);line-height:1;color:#fff;letter-spacing:-1px;text-shadow:0 4px 0 #b86b33,0 8px 18px rgba(0,0,0,.25);margin:0}
 .tag{color:#5a3415;font-weight:700;margin:10px 0 6px}
@@ -1493,7 +1495,7 @@ body.playing #emoBar{display:flex}
 </head>
 <body class="onhome">
 <button class="exitHub" id="exitHub">← 나가기</button>
-<section class="screen on" id="sIntro"><canvas id="introCv" width="1280" height="720"></canvas></section>
+<section class="screen on" id="sIntro"><canvas id="introCv" width="1280" height="720"></canvas><div class="sc" id="dpS1"><div class="sm">Made by</div><div class="bg">Frenchfries777</div></div><div class="sc" id="dpS2"><div class="sm">With</div><div class="bg"><img alt="" src="claude.png">Claude AI</div></div></section>
 <section class="screen" id="sHome">
  <canvas id="homeBg" width="960" height="540"></canvas><div id="homeDim"></div>
  <div class="homeBox">
@@ -1517,7 +1519,9 @@ body.playing #emoBar{display:flex}
    <div class="row"><input id="codeIn" maxlength="5" placeholder="방 코드" autocomplete="off"><button class="pb dark" id="joinBtn" style="flex:0 0 auto">들어가기</button></div>
    <div class="msg" id="homeMsg"></div>
   </aside>
-  <template id="patchnotes"><details class="notes" open><summary>패치노트 · v0.1 (build 57)</summary>
+  <template id="patchnotes"><details class="notes" open><summary>패치노트 · v0.1 (build 58)</summary>
+   <b>2026-10-23 · v0.1 build 58 · 인트로를 다른 게임과 같은 구성으로</b>
+   <ul><li>인트로가 다른 게임과 같은 구성이 됐어요: 무대 위 마네킹들 위로 "Made by Frenchfries777"과 "With Claude AI"가 3초씩 나와요</li><li>인트로 배경을 새로 꾸몄어요 (커튼, 조명, 전구, 색종이, 관객)</li></ul>
    <b>2026-10-23 · v0.1 build 57 · 인트로 곡</b>
    <ul><li>인트로에 곡이 나와요. 소리가 막힌 브라우저에서는 화면을 누르면 인트로가 시작돼요</li></ul>
    <b>2026-10-23 · v0.1 build 56 · 인트로와 봇 조정</b>
@@ -1630,7 +1634,7 @@ body.playing #emoBar{display:flex}
    <ul><li>무너지는 발판 칸 수 대폭 증가 (19×10)와 용암 동굴 맵</li><li>10개 맵 전부 새로 그림 (관중석, 야자수 섬, 링, 정원 미로, 서커스, 우노 테이블 등)</li><li>글자 대신 아이콘·말풍선·이펙트로 표현 (무기, 아이템, 카드 효과, 시작 안내)</li><li>타격·폭발·물보라 효과와 화면 흔들림 추가</li></ul>
    <b>2026-10-19 · v0.1 build 1 · 첫 시험판</b>
    <ul><li>마네킹 미니게임 10개 추가 (장애물 달리기, 섬 밀치기, 싸우기, 병맛 미로, 체스 대난투, 폭탄 돌리기, 병맛 우노, 쇼윈도 얼음땡, 무너지는 발판, 컨베이어 서바이벌)</li><li>방 코드로 최대 8명 멀티플레이, 빈자리는 봇으로 채우기</li><li>판마다 10개 중 5개를 무작위로 골라 점수를 합산</li><li>PC 키보드와 휴대폰 터치 조작 지원</li></ul></details></template>
-  <p class="foot">2~8명 · 판마다 36개 미니게임 중 7개 · 프로토타입 v0.1 b57 · <a href="../">← 프로토타입 목록</a></p>
+  <p class="foot">2~8명 · 판마다 36개 미니게임 중 7개 · 프로토타입 v0.1 b58 · <a href="../">← 프로토타입 목록</a></p>
   <p class="foot"><span class="ff-copy">© 2026 Frenchfries777 · <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.ko" target="_blank" rel="noopener">CC BY-NC-ND 4.0</a></span></p>
  </div>
 </section>
@@ -8149,9 +8153,10 @@ function dpPhoto(m) {
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init); else init();
 })();
 
-/* ===== 인트로: 마네킹들이 미니게임을 하는 장면 (건너뛸 수 없어요) ===== */
+/* ===== 인트로: 마네킹들이 미니게임을 하는 무대 위에 "Made by / With" 글자 (다른 게임 인트로와 같은 구성, 건너뛸 수 없어요) ===== */
 (function () {
-  var cv = $('introCv'), c = cv.getContext('2d'), T = 7.6, t0 = performance.now(), done = false, logo = new Image();
+  var cv = $('introCv'), c = cv.getContext('2d'), T = 6.6, t0 = performance.now(), done = false;
+  var sc1 = $('dpS1'), sc2 = $('dpS2');
   var held = false;
   // 인트로 곡(스틱세움 인트로 곡, 5초): 인트로와 함께 시작해요. 브라우저가 소리를 막으면 인트로가 멈춘 채 화면을 누를 때까지 기다려요
   function sting() {
@@ -8170,36 +8175,36 @@ function dpPhoto(m) {
       });
     } catch (e) { }
   }
-  logo.src = 'logo.svg';
   window.INTRO_ON = true;
   function ease(k) { k = clamp(k, 0, 1); return k * k * (3 - 2 * k); }
-  function cup(x, y, lift) { c.fillStyle = '#d6352e'; c.beginPath(); c.moveTo(x - 20, y - 26 - lift); c.lineTo(x + 20, y - 26 - lift); c.lineTo(x + 27, y + 18 - lift); c.lineTo(x - 27, y + 18 - lift); c.closePath(); c.fill(); c.fillStyle = '#ffd23f'; c.fillRect(x - 25, y + 4 - lift, 50, 5); }
+  function op(p) { return p <= 0 || p >= 1 ? 0 : p < 0.33 ? p / 0.33 : p < 0.66 ? 1 : (1 - p) / 0.34; }   // 다른 게임 인트로와 같은 3초 페이드
+  function glow(x, y, r, col, a) { var g = c.createRadialGradient(x, y, 0, x, y, r); g.addColorStop(0, col.replace('A', a)); g.addColorStop(1, col.replace('A', 0)); c.fillStyle = g; c.fillRect(x - r, y - r, r * 2, r * 2); }
+  function cup(x, y) { c.fillStyle = '#d6352e'; c.beginPath(); c.moveTo(x - 20, y - 26); c.lineTo(x + 20, y - 26); c.lineTo(x + 27, y + 18); c.lineTo(x - 27, y + 18); c.closePath(); c.fill(); c.fillStyle = 'rgba(255,255,255,.25)'; c.fillRect(x - 15, y - 20, 6, 32); c.fillStyle = '#ffd23f'; c.fillRect(x - 25, y + 4, 50, 5); }
   function station(i, t) {
-    var cx = [130, 370, 610, 830][i], gy = 392;
+    var cx = [140, 380, 620, 830][i], gy = 392;
     if (i === 0) {          // 컵 야바위
       var sl = [cx - 80, cx, cx + 80], k = (t * 1.3) % 3, sw = Math.floor(k), f = ease(k - sw), pair = [[0, 1], [1, 2], [0, 2]][sw % 3];
       var pos = [0, 1, 2].map(function (n) { return n === pair[0] ? lerp(sl[pair[0]], sl[pair[1]], f) : n === pair[1] ? lerp(sl[pair[1]], sl[pair[0]], f) : sl[n]; });
-      c.fillStyle = '#8a5a30'; rrect(c, cx - 125, gy - 30, 250, 22, 8); c.fill();
+      c.fillStyle = '#7a4a24'; rrect(c, cx - 125, gy - 30, 250, 22, 8); c.fill(); c.fillStyle = '#a8743c'; c.fillRect(cx - 120, gy - 30, 240, 6);
       c.fillStyle = '#ffd23f'; c.beginPath(); c.arc(pos[1], gy - 38, 8, 0, 6.283); c.fill();
-      pos.forEach(function (x, n) { cup(x, gy - 46, 0); });
+      pos.forEach(function (x) { cup(x, gy - 46); });
       drawDummy(c, cx, gy + 62, { s: 1.15, color: COLORS[1], pose: 'stand', face: 1, t: t });
       return;
     }
     if (i === 1) {          // 풍선 다트
-      for (var b = 0; b < 4; b++) {
-        var ph = (t * 0.55 + b * 0.27) % 1, bx = cx - 70 + b * 48 + Math.sin(t * 2 + b) * 8, by = gy + 10 - ph * 250, pop = ph > 0.8;
-        if (!pop) { c.fillStyle = b === 2 ? '#222' : COLORS[(b * 2 + 1) % 8]; c.beginPath(); c.ellipse(bx, by, 17, 21, 0, 0, 6.283); c.fill(); c.strokeStyle = '#fff6'; c.lineWidth = 1.5; c.beginPath(); c.moveTo(bx, by + 21); c.lineTo(bx, by + 50); c.stroke(); }
-        else { var q = (ph - 0.8) / 0.2; c.globalAlpha = 1 - q; c.strokeStyle = '#fff'; c.lineWidth = 3; for (var a = 0; a < 8; a++) { var an = a * 0.785; c.beginPath(); c.moveTo(bx + Math.cos(an) * 14 * (1 + q), by + Math.sin(an) * 14 * (1 + q)); c.lineTo(bx + Math.cos(an) * 30 * (1 + q), by + Math.sin(an) * 30 * (1 + q)); c.stroke(); } c.globalAlpha = 1; }
+      for (var b = 0; b < 5; b++) {
+        var ph = (t * 0.5 + b * 0.21) % 1, bx = cx - 80 + b * 44 + Math.sin(t * 2 + b) * 8, by = gy + 10 - ph * 270, pop = ph > 0.82;
+        if (!pop) { var bc = b === 2 ? '#2a2a33' : COLORS[(b * 2 + 1) % 8]; c.fillStyle = bc; c.beginPath(); c.ellipse(bx, by, 17, 21, 0, 0, 6.283); c.fill(); c.fillStyle = 'rgba(255,255,255,.4)'; c.beginPath(); c.ellipse(bx - 6, by - 8, 4, 7, 0.5, 0, 6.283); c.fill(); c.strokeStyle = 'rgba(255,255,255,.45)'; c.lineWidth = 1.5; c.beginPath(); c.moveTo(bx, by + 21); c.quadraticCurveTo(bx + 6, by + 36, bx, by + 50); c.stroke(); }
+        else { var q = (ph - 0.82) / 0.18; c.globalAlpha = 1 - q; c.strokeStyle = '#fff'; c.lineWidth = 3; for (var a = 0; a < 8; a++) { var an = a * 0.785; c.beginPath(); c.moveTo(bx + Math.cos(an) * 14 * (1 + q), by + Math.sin(an) * 14 * (1 + q)); c.lineTo(bx + Math.cos(an) * 30 * (1 + q), by + Math.sin(an) * 30 * (1 + q)); c.stroke(); } c.globalAlpha = 1; }
       }
       var th = (t * 1.6) % 1; if (th < 0.45) { var dx = lerp(cx - 40, cx + 30, th / 0.45), dy = lerp(gy - 40, gy - 150, th / 0.45); c.fillStyle = '#eee'; c.fillRect(dx - 9, dy - 2, 18, 4); c.fillStyle = '#d6352e'; c.fillRect(dx - 12, dy - 4, 5, 8); }
       drawDummy(c, cx - 70, gy + 62, { s: 1.15, color: COLORS[4], pose: th < 0.3 ? 'up' : 'stand', face: 1, t: t });
       return;
     }
     if (i === 2) {          // 줄넘기
-      var rp = t * 3.2, jump = Math.max(0, Math.sin(rp * 3.1416 * 0.5 + 1.2));
       var jz = Math.max(0, Math.sin(t * 5.2)) * 34;
       c.strokeStyle = '#ffe68a'; c.lineWidth = 4; c.beginPath();
-      for (var u = 0; u <= 20; u++) { var kx = cx - 100 + u * 10, sag = Math.sin(u / 20 * 3.1416); c.lineTo(kx, gy + 10 - sag * 18 + Math.sin(t * 5.2 + 1.4) * sag * 70 * 0 + Math.cos(t * 5.2) * sag * 60); }
+      for (var u = 0; u <= 20; u++) { var kx = cx - 100 + u * 10, sag = Math.sin(u / 20 * 3.1416); c.lineTo(kx, gy + 10 - sag * 18 + Math.cos(t * 5.2) * sag * 60); }
       c.stroke();
       drawDummy(c, cx - 100, gy + 62, { s: 1.1, color: COLORS[0], pose: 'push', face: 1, t: t });
       drawDummy(c, cx + 100, gy + 62, { s: 1.1, color: COLORS[3], pose: 'push', face: -1, t: t });
@@ -8207,7 +8212,7 @@ function dpPhoto(m) {
       return;
     }
     // 페인트 색 섞기: 팔레트와 튀는 물감
-    c.fillStyle = '#f2ecdf'; rrect(c, cx - 95, gy - 95, 190, 100, 10); c.fill();
+    c.fillStyle = '#f6f0e4'; rrect(c, cx - 95, gy - 95, 190, 100, 10); c.fill(); c.strokeStyle = '#3a2410'; c.lineWidth = 3; c.stroke();
     for (var s = 0; s < 19; s++) { c.fillStyle = 'hsl(' + (s * 19) + ',85%,60%)'; c.fillRect(cx - 90 + s * 9.5, gy - 90, 9.5, 90); }
     var ax = cx - 80 + (Math.sin(t * 1.7) * 0.5 + 0.5) * 160, ay = gy - 80 + (Math.cos(t * 2.1) * 0.5 + 0.5) * 70;
     c.strokeStyle = '#fff'; c.lineWidth = 4; c.beginPath(); c.arc(ax, ay, 11, 0, 6.283); c.stroke(); c.strokeStyle = '#222'; c.lineWidth = 2; c.stroke();
@@ -8215,31 +8220,48 @@ function dpPhoto(m) {
     for (var d = 0; d < 5; d++) { var pp = (t * 0.9 + d * 0.2) % 1; c.globalAlpha = 1 - pp; c.fillStyle = 'hsl(' + (d * 70 + t * 40) + ',85%,60%)'; c.beginPath(); c.arc(cx + (d - 2) * 34, gy - 110 - pp * 60, 6 - pp * 3, 0, 6.283); c.fill(); }
     c.globalAlpha = 1;
   }
+  function backdrop(t) {
+    var g = c.createLinearGradient(0, 0, 0, 450); g.addColorStop(0, '#1a0d36'); g.addColorStop(0.55, '#5a2d7a'); g.addColorStop(1, '#c4627a'); c.fillStyle = g; c.fillRect(0, 0, W, 450);
+    // 별빛
+    for (var st = 0; st < 40; st++) { var sx = (st * 97) % W, sy = (st * 53) % 200, tw = 0.35 + 0.35 * Math.sin(t * 2 + st); c.fillStyle = 'rgba(255,240,200,' + tw + ')'; c.fillRect(sx, sy, 2, 2); }
+    // 뒤쪽 무대 벽 널빤지
+    c.fillStyle = 'rgba(30,12,50,.35)'; for (var w = 0; w < W; w += 80) c.fillRect(w, 0, 3, 450);
+    // 무대 조명 빛줄기
+    for (var s = 0; s < 4; s++) { var lx = 140 + s * 235, sw = Math.sin(t * 0.9 + s * 1.7) * 70, col = ['255,230,150', '255,160,200', '150,220,255', '190,255,170'][s]; var lg = c.createLinearGradient(lx, 30, lx + sw, 450); lg.addColorStop(0, 'rgba(' + col + ',.38)'); lg.addColorStop(1, 'rgba(' + col + ',0)'); c.fillStyle = lg; c.beginPath(); c.moveTo(lx - 10, 30); c.lineTo(lx + 10, 30); c.lineTo(lx + sw + 130, 450); c.lineTo(lx + sw - 130, 450); c.closePath(); c.fill(); }
+    // 무대 바닥: 나무판 + 반사광
+    var fg = c.createLinearGradient(0, 440, 0, H); fg.addColorStop(0, '#9a6a3c'); fg.addColorStop(1, '#4c2e18'); c.fillStyle = fg; c.fillRect(0, 440, W, 100);
+    c.fillStyle = 'rgba(255,255,255,.12)'; c.fillRect(0, 440, W, 5); c.strokeStyle = 'rgba(0,0,0,.18)'; c.lineWidth = 2; for (var p = 0; p < 8; p++) { c.beginPath(); c.moveTo(p * 150 - 20, 445); c.lineTo(p * 190 - 300, H); c.stroke(); }
+    glow(480, 450, 420, 'rgba(255,220,150,A)', 0.22);
+    // 빨간 벨벳 커튼
+    [[0, 1], [W, -1]].forEach(function (cs) { var x0 = cs[0], dir = cs[1]; var cg = c.createLinearGradient(x0, 0, x0 + dir * 120, 0); cg.addColorStop(0, '#6e0f1e'); cg.addColorStop(1, '#b3243a'); c.fillStyle = cg; c.beginPath(); c.moveTo(x0, 0); c.lineTo(x0 + dir * 130, 0); c.quadraticCurveTo(x0 + dir * 70, 250, x0 + dir * 100, 450); c.lineTo(x0, 450); c.closePath(); c.fill(); c.strokeStyle = 'rgba(0,0,0,.25)'; c.lineWidth = 3; for (var f = 1; f < 5; f++) { c.beginPath(); c.moveTo(x0 + dir * f * 24, 0); c.quadraticCurveTo(x0 + dir * (f * 14 + 6), 250, x0 + dir * (f * 20 + 8), 450); c.stroke(); } });
+    c.fillStyle = '#4a0a16'; c.fillRect(0, 0, W, 26); c.fillStyle = '#e0a93b'; c.fillRect(0, 26, W, 4);
+    // 깃발 장식 + 전구 줄
+    for (var fl = 0; fl < 16; fl++) { var fx = 20 + fl * 61, fy = 34 + Math.sin(fl / 15 * 3.1416) * 18; c.fillStyle = COLORS[fl % 8]; c.beginPath(); c.moveTo(fx - 12, fy); c.lineTo(fx + 12, fy); c.lineTo(fx, fy + 26); c.closePath(); c.fill(); }
+    for (var bl = 0; bl < 24; bl++) { var bx = 20 + bl * 41, by = 70 + Math.sin(bl / 23 * 3.1416) * 14, on = (Math.floor(t * 3) + bl) % 3; glow(bx, by, 16, 'rgba(255,214,120,A)', on ? 0.5 : 0.2); c.fillStyle = on ? '#fff3c0' : '#c9a85a'; c.beginPath(); c.arc(bx, by, 4, 0, 6.283); c.fill(); }
+  }
+  function confetti(t) {
+    for (var q = 0; q < 46; q++) { var sp = 40 + (q * 37) % 70, x = ((q * 131) % W + Math.sin(t * 1.3 + q) * 24 + W) % W, y = ((t * sp + q * 83) % 520) - 20; c.save(); c.translate(x, y); c.rotate(t * 3 + q); c.fillStyle = 'hsl(' + ((q * 47) % 360) + ',85%,62%)'; c.globalAlpha = 0.85; c.fillRect(-4, -2, 8, 4); c.restore(); }
+    c.globalAlpha = 1;
+  }
   function frame() {
     if (done) return; requestAnimationFrame(frame);
     if (held) return;
     var t = (performance.now() - t0) / 1000, k;
     c.setTransform(cv.width / W, 0, 0, cv.height / H, 0, 0); c.clearRect(0, 0, W, H);
-    var g = c.createLinearGradient(0, 0, 0, H); g.addColorStop(0, '#1d1033'); g.addColorStop(1, '#4a2a62'); c.fillStyle = g; c.fillRect(0, 0, W, H);
-    for (var s = 0; s < 3; s++) { var sx = 240 + s * 240 + Math.sin(t * 1.1 + s * 2) * 90; c.fillStyle = 'rgba(255,230,160,.10)'; c.beginPath(); c.moveTo(sx - 8, 0); c.lineTo(sx + 8, 0); c.lineTo(sx + 110, 470); c.lineTo(sx - 110, 470); c.closePath(); c.fill(); }
-    c.fillStyle = '#6b4226'; c.fillRect(0, 440, W, 100); c.fillStyle = '#8a5a30'; c.fillRect(0, 440, W, 8);
-    var fade = ease(1 - (t - 3.9) / 0.8);   // 장면은 3.9초부터 어두워지고 로고가 나와요
-    c.globalAlpha = t < 3.9 ? ease(t / 0.6) : fade * 0.3; for (var i = 0; i < 4; i++) station(i, t); c.globalAlpha = 1;
-    for (var m = 0; m < 14; m++) drawDummy(c, 30 + m * 68, 560 + Math.abs(Math.sin(t * 3 + m)) * -8, { s: 0.8, color: COLORS[m % 8], pose: m % 3 === 0 ? 'up' : 'stand', face: 1, t: t });
-    if (t > 3.9) {
-      var lk = ease((t - 3.9) / 0.9), sc = 0.6 + 0.4 * lk;
-      c.save(); c.globalAlpha = lk; c.translate(W / 2, 226); c.scale(sc, sc);
-      if (logo.complete && logo.naturalWidth) c.drawImage(logo, -90, -90, 180, 180);
-      c.restore(); c.globalAlpha = lk;
-      txt(c, 'Dummy Party', W / 2, 352, { size: 54, c: '#fff' });
-      txt(c, '마네킹들의 병맛 미니게임 파티', W / 2, 400, { size: 22, c: '#ffe68a' });
-      c.globalAlpha = 1;
-    }
+    backdrop(t);
+    c.globalAlpha = ease(t / 0.6); for (var i = 0; i < 4; i++) station(i, t); c.globalAlpha = 1;
+    // 관객: 어두운 앞줄
+    for (var m = 0; m < 15; m++) drawDummy(c, 20 + m * 65, 566 + Math.abs(Math.sin(t * 3 + m)) * -9, { s: 0.85, color: COLORS[m % 8], pose: m % 3 === 0 ? 'up' : 'stand', face: 1, t: t });
+    c.fillStyle = 'rgba(10,4,24,.28)'; c.fillRect(0, 500, W, 40);
+    confetti(t);
+    // 가운데 글자가 잘 보이게 가장자리를 살짝 어둡게
+    var vg = c.createRadialGradient(W / 2, H / 2, 160, W / 2, H / 2, 620); vg.addColorStop(0, 'rgba(8,3,20,0.12)'); vg.addColorStop(1, 'rgba(8,3,20,.5)'); c.fillStyle = vg; c.fillRect(0, 0, W, H);
+    sc1.style.opacity = op(t / 3); sc2.style.opacity = op((t - 3) / 3);
     k = clamp((t - (T - 0.5)) / 0.5, 0, 1); if (k > 0) { c.fillStyle = 'rgba(0,0,0,' + k + ')'; c.fillRect(0, 0, W, H); }
     if (t >= T) finish();
   }
   function finish() {
-    if (done) return; done = true; window.INTRO_ON = false;
+    if (done) return; done = true; window.INTRO_ON = false; sc1.style.opacity = sc2.style.opacity = 0;
     if ($('sIntro').classList.contains('on')) show('sHome');
     if (window.autoJoin) window.autoJoin();
   }
