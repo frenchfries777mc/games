@@ -158,3 +158,5 @@ patchnotes.json | v368 title | 모바일 화면 개선 | build 368 | 2026-10-20
 patchnotes.json | v368 items[0] | 터치 버튼 크기 설정 추가 (작게, 보통, 크게, 아주 크게) | build 368 | 2026-10-20
 patchnotes.json | v368 items[1] | 터치 버튼 높이 설정 추가 | build 368 | 2026-10-20
 patchnotes.json | v368 items[2] | 세로 화면 안내에 전체 화면과 가로 고정 버튼 추가 | build 368 | 2026-10-20
+patchnotes.json | v369 title | 페이지 제목 통일 | build 369 | 2026-10-20
+patchnotes.json | v369 items[0] | 모든 페이지의 브라우저 탭 제목을 게임 이름 Stickseum으로 통일 | build 369 | 2026-10-20
