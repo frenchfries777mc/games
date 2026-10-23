@@ -368,7 +368,7 @@ html:not(.introDone) #ui,html:not(.introDone) #authgate,html:not(.introDone) #au
     <button class="btn" data-act="skins"><span class="arrow">▶</span>스킨 상점<span class="en">SKIN SHOP</span></button>
     <button class="btn" data-act="stats"><span class="arrow">▶</span>통계<span class="en">STATS</span></button>
     <button class="btn" data-act="settings"><span class="arrow">▶</span>설정<span class="en">SETTINGS</span></button>
-    <p class="foot">v0.3<br>build 92</p>
+    <p class="foot">v0.3<br>build 93</p>
   </nav>
 </div>
 
@@ -1705,6 +1705,11 @@ ITEMS.torch={name:'횃불',place:'torch',icon(g){g.fillStyle='#5a3a1e';g.fillRec
 ITEMS.brick={name:'벽돌',place:'brickfloor',icon(g){g.fillStyle='#5a2a18';g.fillRect(1,3,10,7);g.fillStyle='#b8552e';g.fillRect(2,4,4,2);g.fillRect(7,4,3,2);g.fillRect(2,7,2,2);g.fillRect(5,7,4,2);g.fillStyle='#d98050';g.fillRect(2,4,4,1);g.fillRect(5,7,4,1);}};
 ITEMS.conveyor={name:'컨베이어 벨트',place:'conveyor',icon(g){g.fillStyle='#14161c';g.fillRect(1,3,10,6);g.fillStyle='#3a3d4a';g.fillRect(1,4,10,4);g.fillStyle='#ffd24a';for(const x of [2,5,8]){g.fillRect(x,4,1,1);g.fillRect(x+1,5,1,2);g.fillRect(x,7,1,1);}}};
 ITEMS.paper={name:'종이',icon(g){g.fillStyle='#8a7a5a';g.fillRect(2,1,8,10);g.fillStyle='#f4ecd6';g.fillRect(3,2,6,8);g.fillStyle='#c9bb98';g.fillRect(4,4,4,1);g.fillRect(4,6,4,1);g.fillRect(4,8,3,1);}};
+ITEMS.soulwisp={name:'혼불 등',max:1,icon(g){
+  g.fillStyle='#2a3a5a';g.fillRect(3,1,6,1);g.fillRect(2,2,8,1);g.fillRect(3,10,6,1);
+  g.fillStyle='#14161c';g.fillRect(2,3,1,7);g.fillRect(9,3,1,7);
+  g.fillStyle='#9fd4ff';g.fillRect(3,3,6,7);g.fillStyle='#e8f6ff';g.fillRect(4,4,4,5);g.fillStyle='#4a8ad8';g.fillRect(5,6,2,3);g.fillStyle='#ffffff';g.fillRect(5,5,1,2);
+}};
 ITEMS.compass={name:'나침반',icon(g){g.fillStyle='#14161c';g.fillRect(2,2,8,8);g.fillRect(3,1,6,10);g.fillStyle='#b8bcc8';g.fillRect(3,2,6,8);g.fillStyle='#2a3350';g.fillRect(4,3,4,6);g.fillStyle='#e0434f';g.fillRect(5,3,2,3);g.fillStyle='#ffffff';g.fillRect(5,6,2,3);}};
 ITEMS.island_map={name:'섬 지도',max:1,icon(g){g.fillStyle='#6b5a3a';g.fillRect(1,2,10,8);g.fillStyle='#e8dcb8';g.fillRect(2,3,8,6);g.fillStyle='#4f9a5a';g.fillRect(3,4,2,2);g.fillRect(7,6,2,2);g.fillStyle='#e0434f';g.fillRect(6,4,1,1);g.fillRect(4,7,1,1);}};
 ITEMS.bag={name:'아이템 가방',max:1,icon(g){g.fillStyle='#2a1a0c';g.fillRect(3,1,6,2);g.fillRect(2,3,8,8);g.fillStyle='#8a5a2b';g.fillRect(3,4,6,6);g.fillStyle='#b57d3f';g.fillRect(3,4,6,2);g.fillStyle='#d9b27a';g.fillRect(5,6,2,2);g.fillStyle='#5a3a1a';g.fillRect(4,2,4,1);}};
@@ -1924,6 +1929,7 @@ const RECIPES=[
   {grp:'탐험',bench:true,name:'아이템 가방',note:'가죽 4 · 실 2 · 강화철판 1 — 가방 칸에 장착하면 인벤토리에서 7칸을 더 써요',pat:[{id:'leather',n:1},{id:'leather',n:1},{id:'leather',n:1},{id:'leather',n:1},{id:'thread',n:1},{id:'thread',n:1},{id:'riron_plate',n:1}],out:[{id:'bag',n:1}]},
   {grp:'탐험',name:'종이',note:'실 4개',pat:[{id:'thread',n:1},{id:'thread',n:1},{id:'thread',n:1},{id:'thread',n:1}],out:[{id:'paper',n:1}]},
   {grp:'탐험',name:'나침반',note:'철 주괴 · 회로조각 · 철 주괴',pat:[{id:'iron_ingot',n:1},{id:'circuit',n:1},{id:'iron_ingot',n:1}],out:[{id:'compass',n:1}]},
+  {grp:'탐험',name:'혼불 등',note:'수정 2 · 횃불 1 · 깃털 1 — 손에 들면 푸른 불꽃이 무덤 쪽으로 앞장서고, 무덤에서는 빛기둥이 솟아요',pat:[{id:'crystal',n:1},{id:'torch',n:1},{id:'crystal',n:1},{id:'feather',n:1}],out:[{id:'soulwisp',n:1}]},
   {grp:'탐험',name:'섬 지도',note:'종이 · 나침반 — 들고 Ctrl을 누르면 모든 섬이 표시되는 지도가 열려요',pat:[{id:'paper',n:1},{id:'compass',n:1}],out:[{id:'island_map',n:1}]},
   {grp:'탐험',bench:true,name:'보트',note:'손에 들고 물가에서 Shift로 타요. Shift/F로 내려요.',pat:[{id:'plank',n:1},{id:'plank',n:1},{id:'plank',n:1},{id:'plank',n:1},{id:'plank',n:1},{id:'iron_ingot',n:1},{id:'iron_ingot',n:1}],out:[{id:'boat',n:1}]}
 ];
@@ -3878,7 +3884,7 @@ function saveWorld(force){
       structs:world.structs.filter(b=>!b.lm).map(b=>Object.assign({id:b.id,gx:b.gx,gy:b.gy},exOf(b))),
       drops:drops.map(d=>({x:Math.round(d.tx),y:Math.round(d.ty),v:d.v,item:d.item||'stick',n:d.n||1,dur:d.dur})),
       cargo:(world.cargo||[]).map(e=>({fq:e.fq,item:e.item,n:e.n,dur:e.dur,sx:e.sx,sy:e.sy,dx:e.dx,dy:e.dy,gx:e.gx,gy:e.gy,rem:e.rem,tot:e.tot,ox:e.ox,oy:e.oy,pir:e.pir,hit:e.hit})),
-      grave:world.grave?{x:world.grave.x,y:world.grave.y}:null,
+      grave:world.grave?{x:world.grave.x,y:world.grave.y}:null,graves:(world.graves||[]).slice(0,60),
       player:world.savedPlayer
     }));
     if(window.bfCloudDirty)bfCloudDirty();
@@ -3907,6 +3913,7 @@ function applySave(){
   for(const o of (d.drops||[]))if(o.item!=='egg'&&Number.isFinite(o.x)&&Number.isFinite(o.y))drops.push({id:nextDropId++,item:ITEMS[migr(o.item)]?migr(o.item):'stick',sx:o.x,sy:o.y,tx:o.x,ty:o.y,age:1,n:Math.max(1,o.n|0),v:(o.v|0)%3,dur:Number.isFinite(o.dur)?o.dur:undefined});
   world.cargo=(d.cargo||[]).filter(e=>e&&ITEMS[e.item]&&Number.isFinite(e.dx)&&Number.isFinite(e.dy)).map(e=>({fq:String(e.fq||''),item:e.item,n:Math.max(1,e.n|0),dur:Number.isFinite(e.dur)?e.dur:undefined,sx:+e.sx||0,sy:+e.sy||0,dx:+e.dx,dy:+e.dy,gx:e.gx|0,gy:e.gy|0,rem:Math.max(0.1,+e.rem||1),tot:Math.max(1,+e.tot||1),ox:e.ox|0,oy:e.oy|0,pir:e.pir?1:0,hit:e.hit?1:0}));
   world.grave=(d.grave&&Number.isFinite(d.grave.x)&&Number.isFinite(d.grave.y))?{x:d.grave.x,y:d.grave.y,t:-99}:null;
+  world.graves=Array.isArray(d.graves)?d.graves.filter(okGrave).slice(0,60):[];
   if(d.player&&Number.isFinite(d.player.x)&&Number.isFinite(d.player.y))world.savedPlayer={x:d.player.x,y:d.player.y,f:d.player.f===-1?-1:1};
 }
 /* ===== 월드 백업 — 월드마다 자동으로 3개까지 보관하고, 싱글 플레이 목록의 '백업'에서 되돌려요 ===== */
@@ -5449,7 +5456,64 @@ function spawnDeathDrop(st,cx,cy){
   d.id=nextDropId++;d.age=0;d.lock=1.5;drops.push(d);
   if(isHost())bcastAll({t:'dropped',drop:{id:d.id,item:d.item,n:d.n,sx:d.sx,sy:d.sy,tx:d.tx,ty:d.ty,v:d.v,dur:d.dur}});
 }
+/* ===== 무덤: 쓰러진 자리에 묘비가 서고, 잃은 물건이 전부 그 안에 있어요. 가까이 가면 모두 되찾아요 (내 무덤은 나한테만 보여요) ===== */
+const okGrave=q=>q&&Number.isFinite(q.x)&&Number.isFinite(q.y)&&Array.isArray(q.items)&&q.items.every(o=>o&&typeof o.id==='string'&&ITEMS[o.id]&&o.n>0);
+const graveLsKey=()=>'bf.graves.'+(window.bfUid||'x')+'.'+((typeof shown!=='undefined'&&shown.seed)||'w');
+function gravesGet(){
+  if(!world)return [];
+  if(isGuest()){
+    if(!world.gl){world.gl=[];try{const r=JSON.parse(localStorage.getItem(graveLsKey())||'[]');if(Array.isArray(r))world.gl=r.filter(okGrave);}catch(e){}}
+    return world.gl;
+  }
+  return world.graves||(world.graves=[]);
+}
+function gravesSave(){if(isGuest()){try{localStorage.setItem(graveLsKey(),JSON.stringify(world.gl||[]));}catch(e){}}else saveWorld(true);}
+const inDunNow=()=>!!(DUN&&dunFloorAt(P.x,P.y));
+function graveSpot(x,y){   // 물·용암 위에서 쓰러졌으면 가까운 땅으로
+  if(walkable(x,y))return {x:Math.round(x),y:Math.round(y)};
+  for(let r=4;r<=60;r+=4)for(let a=0;a<16;a++){const px=x+Math.cos(a/16*6.2832)*r,py=y+Math.sin(a/16*6.2832)*r;if(walkable(px,py))return {x:Math.round(px),y:Math.round(py)};}
+  return {x:Math.round(x),y:Math.round(y)};
+}
+function graveLoot(i){
+  const gl=gravesGet(),q=gl[i];if(!q)return;
+  gl.splice(i,1);
+  for(const st of q.items){if(roomFor(st.id,st.n))addStack(st.id,st.n,st.d);else spawnPlayerDrop(st.id,st.n,st.d);}
+  renderInv();renderEquip();persist();gravesSave();
+  toast('무덤에서 잃은 물건을 모두 되찾았어요');
+}
+function graveTick(){
+  if(P.dead||P.sleeping||inDunNow())return;
+  const gl=gravesGet();
+  for(let i=gl.length-1;i>=0;i--){const q=gl[i];if(Math.hypot(P.x-q.x,P.y-(q.y-4))<=9){graveLoot(i);break;}}
+}
+function nearGrave(){let b=null,bd=1e9;for(const q of gravesGet()){const d=Math.hypot(P.x-q.x,P.y-q.y);if(d<bd){bd=d;b=q;}}return b&&{q:b,d:bd};}
+function drawTomb(g,x,y){
+  g.fillStyle='rgba(8,24,12,0.35)';g.fillRect(x-5,y+3,11,2);
+  g.fillStyle='#14161c';g.fillRect(x-4,y-9,9,12);g.fillRect(x-3,y-10,7,1);
+  g.fillStyle='#9aa0b0';g.fillRect(x-3,y-9,7,11);g.fillRect(x-2,y-10,5,1);g.fillStyle='#c3c5cf';g.fillRect(x-3,y-9,7,1);g.fillRect(x-3,y-9,1,10);
+  g.fillStyle='#565968';g.fillRect(x-1,y-7,1,5);g.fillRect(x-2,y-5,3,1);
+  g.fillStyle='#4a6a3a';g.fillRect(x-5,y+2,3,1);g.fillRect(x+3,y+2,3,1);
+}
+function drawGraves(g){
+  const gl=gravesGet();if(!gl.length)return;
+  for(const q of gl)drawTomb(g,Math.round(q.x),Math.round(q.y));
+  const h=inv[P.sel];
+  if(!(h&&h.id==='soulwisp'))return;
+  const n=nearGrave();if(!n)return;
+  const q=n.q,pulse=0.5+0.5*Math.sin(time*3);
+  for(let k=0;k<5;k++){   // 무덤 위로 솟는 푸른 빛기둥
+    g.fillStyle=`rgba(150,210,255,${(0.16+0.1*pulse)*(1-k*0.16)})`;g.fillRect(Math.round(q.x)-3+k%2,Math.round(q.y)-130-k*8,7-2*(k%2),128+k*8);
+  }
+  g.fillStyle=`rgba(230,246,255,${0.5+0.3*pulse})`;g.fillRect(Math.round(q.x)-1,Math.round(q.y)-140,3,138);
+  // 불꽃이 무덤 쪽으로 앞장서서 떠 가요
+  const dx=q.x-P.x,dy=q.y-P.y,d=Math.hypot(dx,dy)||1,ux=dx/d,uy=dy/d,off=Math.min(24,Math.max(0,d-8));
+  const bob=Math.sin(time*4)*1.5,wx=Math.round(P.x+ux*off),wy=Math.round(P.y-8+uy*off*0.8+bob);
+  for(let t=1;t<=4;t++){g.fillStyle=`rgba(170,220,255,${0.5-t*0.1})`;g.fillRect(Math.round(wx-ux*t*3),Math.round(wy-uy*t*2.4+(t&1)),2,2);}
+  g.fillStyle='#4a8ad8';g.fillRect(wx-1,wy-1,3,4);g.fillStyle='#9fd4ff';g.fillRect(wx,wy-2,2,4);g.fillStyle='#ffffff';g.fillRect(wx,wy-1,1,2);
+  if(((time*8)|0)&1){g.fillStyle='#d8f0ff';g.fillRect(wx+(((time*5)|0)&1?2:-2),wy-3,1,1);}
+}
 function drawGrave(g){
+  drawGraves(g);
   const q=world&&world.grave;if(!q)return;
   const x=Math.round(q.x),y=Math.round(q.y);
   g.fillStyle='rgba(8,24,12,0.35)';g.fillRect(x-5,y+3,11,2);
@@ -5473,11 +5537,19 @@ function die(){
   };
   if(!WOPT.keep){grab();renderEquip();
   if(crafting){closeCraft();grab();}}
-  for(const st of list)spawnDeathDrop(st,P.x,P.y);
-  if(list.length)world.grave={x:Math.round(P.x),y:Math.round(P.y),t:time};
+  let gotGrave=false;
+  if(list.length&&!inDunNow()){   // 던전 밖에서는 잃은 물건이 전부 무덤에 모여요
+    const sp=graveSpot(P.x,P.y);
+    gravesGet().push({x:sp.x,y:sp.y,t:Math.round(world.clock||0),items:list.map(st=>{const o={id:st.id,n:st.n};if(st.d!==undefined)o.d=st.d;return o;})});
+    gravesSave();gotGrave=true;
+  }else{
+    for(const st of list)spawnDeathDrop(st,P.x,P.y);
+    if(list.length)world.grave={x:Math.round(P.x),y:Math.round(P.y),t:time};
+  }
   persist();renderInv();if(!isGuest())saveWorld(true);
   P.dead=true;P.deadT=0;P.noPickT=time+15;P.hold=false;keys.clear();
   $('#dead').innerHTML=(WOPT.hard&&!isGuest())?'쓰러졌어요…<br>하드코어 월드가 끝났어요':WOPT.keep?'쓰러졌어요…<br>아이템은 그대로 두고 모닥불 옆에서 일어나요':'쓰러졌어요…<br>모닥불 옆에서 다시 일어나요';
+  if(gotGrave)$('#dead').innerHTML+='<br>쓰러진 자리의 무덤에 물건이 모두 남아 있어요';
   $('#dead').classList.add('on');
 }
 function respawn(){
@@ -6677,6 +6749,7 @@ function drawMap(){
   }
   for(const l of world.lm){if(l&&world.seen[l.i]){g.fillStyle='#14161c';g.fillRect(mx(l.cx)-3,mx(l.cy)-4,7,8);g.fillStyle='#e8eef6';g.fillRect(mx(l.cx)-2,mx(l.cy)-3,5,6);g.fillStyle='#8a8d9c';g.fillRect(mx(l.cx)-1,mx(l.cy)-3,1,6);}}
   for(const e of (world.cargo||[])){const cp=cargoPose(e,1-e.rem/e.tot),sx=mx(cp.x),sy=mx(cp.y);g.fillStyle='#0b1226';g.fillRect(sx-4,sy-3,9,6);g.fillStyle='#7ad0e8';g.fillRect(sx-3,sy-2,7,3);g.fillStyle='#ffffff';g.fillRect(sx,sy-4,1,3);}
+  for(const q of gravesGet()){const x=mx(q.x),y=mx(q.y);g.fillStyle='#0b1226';g.fillRect(x-5,y-5,11,11);g.fillStyle='#f4f0e0';g.fillRect(x-4,y-4,9,7);g.fillRect(x-2,y+3,5,2);g.fillStyle='#0b1226';g.fillRect(x-3,y-2,2,2);g.fillRect(x+1,y-2,2,2);g.fillRect(x,y+1,1,1);}
   if(world.grave){const q=world.grave,x=mx(q.x),y=mx(q.y);g.fillStyle='#0b1226';g.fillRect(x-5,y-5,11,11);g.fillStyle='#f4f0e0';g.fillRect(x-4,y-4,9,7);g.fillRect(x-2,y+3,5,2);g.fillStyle='#0b1226';g.fillRect(x-3,y-2,2,2);g.fillRect(x+1,y-2,2,2);g.fillRect(x,y+1,1,1);}
   for(const b of world.structs){if(b.id!=='flag'||!seen(b.x,b.y))continue;const x=mx(b.x),y=mx(b.y);g.fillStyle='#0b1226';g.fillRect(x-1,y-9,3,11);g.fillRect(x+1,y-9,7,6);g.fillStyle='#f2c75a';g.fillRect(x,y-8,1,9);g.fillStyle='#d8434a';g.fillRect(x+1,y-8,6,4);}
   const c=world.camp;g.fillStyle='#ffffff';g.fillRect(mx(c.x)-3,mx(c.y)-3,7,7);g.fillStyle='#ff6a2e';g.fillRect(mx(c.x)-2,mx(c.y)-2,5,5);g.fillStyle='#ffe27a';g.fillRect(mx(c.x),mx(c.y)-1,1,2);
@@ -9900,6 +9973,7 @@ for(const sel of ['#inv','#craft','#chest','#bagrow']){
 function updateObjs(dt){
   updateArrows(dt);
   for(const d of drops){d.age+=dt;if(d.lock>0)d.lock-=dt;}
+  graveTick();
   if(world.grave&&time-world.grave.t>4){   // 주워 갈 아이템이 더 없으면 묘비도 사라져요
     const q=world.grave;let any=false;for(const d of drops)if(Math.hypot(d.tx-q.x,d.ty-q.y)<34){any=true;break;}
     if(!any){world.grave=null;saveWorld(true);}
