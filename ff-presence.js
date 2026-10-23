@@ -13,7 +13,7 @@ function which(){
   if(/\/beaconfall\//i.test(p) && /^(BEACONFALL|lobby)[^/]*\.html$/i.test(f)) return 'beaconfall';
   if(/\/isleport\//i.test(p) && /^IslandTrade[^/]*\.html$/i.test(f)) return 'isleport';
   if(/\/(prototypes\/)?dummyparty\//i.test(p)) return 'dummyparty';
-  if(/\/(prototypes\/)?vowkeep\//i.test(p)) return 'vowkeep';
+  if(/\/(prototypes\/vowkeep|vowkeep\/play)\//i.test(p)) return 'vowkeep';
   return null;
 }
 var game=which();

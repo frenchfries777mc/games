@@ -323,3 +323,8 @@ crownenvoy/CrownEnvoy-v0.4.html | 전신망 (정치 탭 카드) | "📡 전신�
 - vowkeep/play/index.html | 설정 '최적화', '켜기', '끄기' | 한국어만 있음 | Vowkeep b37 | 2026-10-23
 - prototypes/vowkeep/index.html | 옮김 안내 'Vowkeep이 새 주소로 옮겼어요. 새 주소로 가기' | 한국어만 있음 | Vowkeep b37 | 2026-10-23
 - patchnotes.json | "Vowkeep 정식 게임 사이트, 기사단 깃발" 6줄 | Vowkeep b37 | 2026-10-23
+
+## Vowkeep 허브 연결 (2026-10-23)
+- index.html | Vowkeep 카드 문구 (배지 '협동 던전', 태그 3개, 설명 1줄과 목록 3줄) | 한국어만 있음 | 2026-10-23
+- ach/vowkeep.json | 업적 33개 이름과 설명 | 한국어만 있음 | 2026-10-23
+- patchnotes.json | "Vowkeep 정식 공개" 4줄 | 2026-10-23
