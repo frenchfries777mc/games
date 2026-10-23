@@ -679,9 +679,6 @@ if(document.readyState==='loading') document.addEventListener('DOMContentLoaded'
     line-height:1.6; font-weight:600; text-align:right;
   }
 #introScr{position:fixed;inset:0;z-index:99999;background:#000;transition:opacity .7s}
-#introScr.hold,#introScr.hold *{animation-play-state:paused!important}
-#introHold{position:absolute;left:0;right:0;bottom:9vh;text-align:center;color:#fff;font:700 clamp(15px,2.4vw,22px) system-ui,sans-serif;letter-spacing:.06em;text-shadow:0 2px 10px #000;z-index:5;animation:itHold 1.4s ease-in-out infinite alternate;animation-play-state:running!important}
-@keyframes itHold{from{opacity:.45}to{opacity:1}}
 #introScr.out{opacity:0;pointer-events:none}
 #introScr .sc{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;opacity:0;color:#fff;text-align:center;text-shadow:0 2px 10px rgba(0,0,0,.8)}
 #introScr .sm{font:600 clamp(16px,3.2vw,26px)/1.2 system-ui,sans-serif;letter-spacing:.2em;margin-bottom:10px}
@@ -840,19 +837,14 @@ h1,h2{ text-shadow:0 0 10px rgba(63,224,197,.55), 0 0 26px rgba(63,224,197,.25);
 <div id="introTitle">IN SEARCH OF GOLD<small>v0.8</small></div>
 <div class="sc s3"><div class="ib"><i></i></div></div>
 </div>
-<script>(function(){var t0=Date.now(),el=document.getElementById('introScr'),done=0,T1=0,T2=0,held=0;function go(){if(done)return;done=1;clearTimeout(T1);clearTimeout(T2);el.classList.add('out');setTimeout(function(){el.remove();},800);}
+<script>(function(){var t0=Date.now(),el=document.getElementById('introScr'),done=0;function go(){if(done)return;done=1;el.classList.add('out');setTimeout(function(){el.remove();},800);}
 /* the intro cannot be skipped: it plays to the end (go() runs only from the timers below) */
-function arm(){clearTimeout(T1);clearTimeout(T2);T1=setTimeout(go,Math.max(0,9400-(Date.now()-t0)));T2=setTimeout(go,Math.max(0,14000-(Date.now()-t0)));}
-arm();
-/* intro sting (5 s, a separate file next to the game): starts as soon as the intro starts. Browsers on a computer block sound until the first click or key, so then the intro waits (frozen, with a short hint) and starts from that click, so the song always plays with the intro; silent if sound is off */
-function sting(){try{var st=JSON.parse(localStorage.getItem('arenaClashSettings')||'null');if(st&&st.bgm===false){window.__introSongDone=1;return;}var a=new Audio('music-intro.mp3'),alt=0;a.volume=Math.min(1,((st&&typeof st.bgmVol==='number')?st.bgmVol:0.4)*1.5);a.onerror=function(){if(!alt){alt=1;a.src='https://frenchfries777mc.github.io/games/stickseum/music-intro.mp3';a.load();var q=a.play();if(q&&q.catch)q.catch(function(){});}};
-function hold(){if(held||done)return;held=1;clearTimeout(T1);clearTimeout(T2);el.classList.add('hold');var h=document.createElement('div');h.id='introHold';h.textContent='화면을 누르면 시작해요';el.appendChild(h);
-var go2=function(){if(!held)return;held=0;['pointerdown','keydown','touchend','click'].forEach(function(ev){removeEventListener(ev,go2,true);});h.remove();el.classList.remove('hold');t0=Date.now();arm();var r=a.play();if(r&&r.catch)r.catch(function(){});};
-['pointerdown','keydown','touchend','click'].forEach(function(ev){addEventListener(ev,go2,true);});}
-function fin(){window.__introSongDone=1;}
-var p=a.play();if(p&&p.catch)p.catch(function(e){if(e&&e.name==='NotAllowedError')hold();});
-a.addEventListener('ended',fin);a.addEventListener('playing',function(){setTimeout(fin,5300);},{once:true});}catch(e){window.__introSongDone=1;}}
-sting();})();</script>
+function chk(){var w=9400-(Date.now()-t0);setTimeout(go,Math.max(0,w));}
+if(document.readyState==='complete')chk();else window.addEventListener('load',chk);
+/* intro sting (5 s, a separate file next to the game): starts as soon as the intro starts; if the browser blocks sound it starts on the first tap or key during the intro; silent if sound is off */
+function sting(){try{var st=JSON.parse(localStorage.getItem('arenaClashSettings')||'null');if(st&&st.bgm===false)return;var a=new Audio('music-intro.mp3'),alt=0;a.volume=Math.min(1,((st&&typeof st.bgmVol==='number')?st.bgmVol:0.4)*1.5);a.onerror=function(){if(!alt){alt=1;a.src='https://frenchfries777mc.github.io/games/stickseum/music-intro.mp3';a.load();var q=a.play();if(q&&q.catch)q.catch(function(){});}};var p=a.play();if(p&&p.catch)p.catch(function(){var again=function(){if(Date.now()-t0<7000&&document.getElementById('introScr')){var r=a.play();if(r&&r.catch)r.catch(function(){});}};['pointerdown','keydown','touchend'].forEach(function(ev){addEventListener(ev,again,{once:true,passive:true});});});}catch(e){}}
+sting();
+setTimeout(go,14000);})();</script>
 
 
 <canvas id="game"></canvas>
@@ -1720,7 +1712,7 @@ const BGM_LOOP={lobby:41.739, battle:51.2, boss:41.143};            // loop leng
 let bgmCtx=null, bgmBufs={}, bgmLoading={}, bgmCur=null, bgmGain=null;
 function bgmWanted(){
   if(!otherSettings.bgm) return null;
-  if(document.getElementById('introScr') && !window.__introSongDone) return null;   // no lobby music while the intro song plays; the lobby song takes over right after it, still during the intro
+  if(document.getElementById('introScr')) return null;   // no lobby music until the intro is over
   const hud=document.getElementById('hud');
   if(hud && hud.style.display==='block') return (typeof matchEnded!=='undefined' && matchEnded) ? null : (gameMode==='raid' ? 'boss' : 'battle');  // the result screen has its own song
   return 'lobby';
@@ -3426,16 +3418,16 @@ function conquestTick(dt){
 }
 /* ================= 특별 모드 10종: 왕 지키기 · 언덕의 왕 · 무기 릴레이 · 얼음땡 · 보물 약탈 · 무기 룰렛 · 한 방 승부 · 색칠 전쟁 · 현상금 사냥 · 저중력 난투 ================= */
 const SPECIAL_ITEMS=[
-  {id:'vip',     icon:'👑', name:'왕 지키기',   mapId:'tower_palace',      weapons:['blade','arrow'],  desc:'팀마다 왕이 한 명, 상대 왕을 먼저 쓰러뜨려요'},
+  {id:'vip',     icon:'👑', name:'왕 지키기',   mapId:'colosseum',         weapons:['blade','arrow'],  desc:'팀마다 왕이 한 명, 상대 왕을 먼저 쓰러뜨려요'},
   {id:'koth',    icon:'⛰️', name:'언덕의 왕',   mapId:'canyon_desert',     weapons:['bullet','club'],  desc:'움직이는 거점을 혼자 차지하면 점수를 얻어요'},
   {id:'relay',   icon:'🔁', name:'무기 릴레이', mapId:'grid_programming',  weapons:['pellet','blade'], desc:'킬할 때마다 캐릭터가 바뀌고, 끝까지 가면 승리'},
-  {id:'freeze',  icon:'🧊', name:'얼음땡',      mapId:'tower_space',       weapons:['fist','bullet'],  desc:'죽으면 얼어붙고, 아군이 닿아서 녹여줘요'},
+  {id:'freeze',  icon:'🧊', name:'얼음땡',      mapId:'icelake',          weapons:['fist','bullet'],  desc:'죽으면 얼어붙고, 아군이 닿아서 녹여줘요'},
   {id:'rush',    icon:'💰', name:'보물 약탈',   mapId:'grid_sea',          weapons:['dagger','bullet'],desc:'금화를 모으고, 죽으면 절반을 떨어뜨려요'},
   {id:'roulette',icon:'🎲', name:'무기 룰렛',   mapId:'canyon_grassland',  weapons:['club','arrow'],   desc:'12초마다 모두의 캐릭터가 랜덤으로 바뀌어요'},
-  {id:'oneshot', icon:'☝️', name:'한 방 승부',  mapId:'tower_cyber',       weapons:['bullet','pellet'],desc:'체력 1, 한 대 맞으면 끝! 100킬 선취'},
+  {id:'oneshot', icon:'☝️', name:'한 방 승부',  mapId:'grid_programming', weapons:['bullet','pellet'],desc:'체력 1, 한 대 맞으면 끝! 100킬 선취'},
   {id:'turf',    icon:'🎨', name:'색칠 전쟁',   mapId:'grid_school',       weapons:['bullet','fist'],  desc:'밟은 발판이 우리 색으로, 더 많이 칠한 팀이 승리'},
   {id:'bounty',  icon:'🎯', name:'현상금 사냥', mapId:'canyon_volcano',    weapons:['blade','dagger'], desc:'선두에게 현상금이 붙어요, 잡으면 +4점'},
-  {id:'lowg',    icon:'🪐', name:'저중력 난투', mapId:'tower_space',       weapons:['fist','bullet'],  desc:'중력이 약하고 넉백이 강한 난투'},
+  {id:'lowg',    icon:'🪐', name:'저중력 난투', mapId:'skyport',           weapons:['fist','bullet'],  desc:'중력이 약하고 넉백이 강한 난투'},
   {id:'dashbr',  icon:'💨', name:'무한 대쉬 배틀로얄', mapId:'canyon_volcano', weapons:['arrow','bullet'], desc:'대쉬 쿨타임 0초, 최후의 1인이 승리'}
 ];
 const DAILY_EXCLUDE={oneshot:1};      // (the one-hit mode is not in the daily rotation: balance, a short grind for xp)
@@ -4120,7 +4112,6 @@ const THEMES = {
 /* Which theme skins go on which shape (4 themes per shape = 12 maps total) */
 const SHAPE_THEMES = {
   canyon: ['grassland','volcano','desert','pyramid'],
-  tower:  ['space','palace','cyber','sky'],
   grid:   ['sea','programming','school','playground']
 };
 
@@ -4775,13 +4766,13 @@ function buildCtfMap(cfg){
     ctf:{flags:[{team:0, x:fx, y:fy}, {team:1, x:W-fx, y:fy}]}, teamSpawns:[sp0, sp1], spawns:sp0.concat(sp1)};
 }
 const CTF_MAP_CONFIGS=[
-  {id:'ctf_canyon', name:'깃발 뺏기: 협곡 요새', theme:'grassland', w:4400, h:1500, flagX:360, flagUp:0,
+  {id:'ctf_canyon', name:'협곡 요새', theme:'grassland', w:4400, h:1500, flagX:360, flagUp:0,
    half:[[130,110,200],[400,110,200],[660,200,200],[920,300,200],[1180,400,200],[1440,500,220],[1720,600,240],[900,95,150],[1500,95,150]], center:[[600,440],[95,160]]},
-  {id:'ctf_volcano', name:'깃발 뺏기: 화산 분지', theme:'volcano', w:4800, h:1600, flagX:370, flagUp:240,
+  {id:'ctf_volcano', name:'화산 분지', theme:'volcano', w:4800, h:1600, flagX:370, flagUp:240,
    half:[[60,240,620],[760,120,180],[1030,100,200],[1330,200,200],[1630,300,200],[1930,400,220],[1200,95,150]], center:[[400,300],[100,200]]},
-  {id:'ctf_sky', name:'깃발 뺏기: 하늘 요새', theme:'sky', w:4000, h:1900, flagX:300, flagUp:0,
+  {id:'ctf_sky', name:'하늘 요새', theme:'sky', w:4000, h:1900, flagX:300, flagUp:0,
    half:[[150,110,200],[430,220,200],[170,330,200],[450,440,200],[730,440,300],[1100,440,300],[1470,440,300],[900,100,180],[1500,100,180]], center:[[550,400]]},
-  {id:'ctf_desert', name:'깃발 뺏기: 사막 유적', theme:'desert', w:5200, h:1400, flagX:300, flagUp:0,
+  {id:'ctf_desert', name:'사막 유적', theme:'desert', w:5200, h:1400, flagX:300, flagUp:0,
    half:[[120,100,160],[440,100,180],[740,180,180],[1060,100,220],[1400,190,200],[1720,100,200],[2040,200,200]], center:[[110,380]]}
 ];
 for(const cfg of CTF_MAP_CONFIGS) MAP_TEMPLATES[cfg.id]=buildCtfMap(cfg);
@@ -6055,7 +6046,7 @@ function renderWeaponModeCarousel(){
 }
 let selectedOnlineMode='ffa', selectedPrivateMode='ffa';
 let modeCarouselIdx=0;
-const MODE_THEME_FOR_ART = {ffa:'canyon_grassland', br:'canyon_volcano', duo:'tower_space', team:'tower_cyber', duel:'canyon_desert', conquest:'grid_school'};
+const MODE_THEME_FOR_ART = {ffa:'canyon_grassland', br:'canyon_volcano', duo:'grid_sea', team:'skyport', duel:'canyon_desert', conquest:'grid_school'};
 const MODE_WEAPON_PAIR = {ffa:['fist','dagger'], br:['arrow','bullet'], duo:['blade','pellet'], team:['club','bullet'], duel:['blade','dagger'], conquest:['bullet','pellet']};
 function refilterMapOrderForMode(mid){
   // some modes need their own map pool (a fixed single map, the 4 parkour maps, or regular maps meeting a
@@ -6178,12 +6169,12 @@ function renderModePanelCanvas(canvas, mapId, weaponPair, centerPct){
 const MORE_MODES=[
   {id:'zombie',    name:'좀비게임',   mapId:'canyon_volcano',    weapons:['dagger','fist']},
   {id:'hotpotato', name:'폭탄 돌리기', mapId:'grid_programming',  weapons:['bullet','bullet']},
-  {id:'hideseek',  name:'숨바꼭질',   mapId:'tower_palace',      weapons:['fist','fist']},
+  {id:'hideseek',  name:'숨바꼭질',   mapId:'grid_school',      weapons:['fist','fist']},
   {id:'survival',  name:'서바이벌',   mapId:'grid_sea',         weapons:['fist','fist']},
   {id:'gold',      name:'황금 쟁탈',  mapId:'ctf_canyon',        weapons:['sword','bow']},
   {id:'ctf',       name:'깃발 뺏기',  mapId:'ctf_canyon',        weapons:['sword','bow']},
   {id:'raid',      name:'보스 레이드', mapId:'grid_school',    weapons:['shotgun','bazooka']},
-  {id:'tournament',name:'토너먼트',   mapId:'tower_palace',      weapons:['sword','pistol']}
+  {id:'tournament',name:'토너먼트',   mapId:'colosseum',      weapons:['sword','pistol']}
 ];
 const PRIVATE_MODE_ORDER = MODE_ORDER.concat(MORE_MODES.map(it=>it.id)).concat(SPECIAL_IDS); // one carousel of every mode
 function pickOnlineModeAndMatch(mid, evt, ranked){
@@ -8589,7 +8580,7 @@ function buildMapOrder(){
   mapOrder.push('steampunk'); mapOrder.push('skyport'); mapOrder.push('colosseum'); mapOrder.push('lifttower'); mapOrder.push('stormship'); mapOrder.push('pipefactory'); mapOrder.push('mine'); mapOrder.push('icelake'); mapOrder.push('dungeon'); mapOrder.push('swamp'); mapOrder.push('waterfall'); mapOrder.push('collapsebridge'); mapOrder.push('lavaland'); mapOrder.push('ruins'); mapOrder.push('mirrormaze');
   mapOrder.push('mega_arena');
 }
-const shapeLabel={canyon:'4인 맵',tower:'6인 맵',grid:'8인 맵',steampunk:'6인 맵',skyport:'8인 맵',colosseum:'8인 맵',lifttower:'8인 맵',stormship:'8인 맵',pipefactory:'8인 맵',mine:'8인 맵',icelake:'8인 맵',dungeon:'8인 맵',swamp:'8인 맵',waterfall:'8인 맵',collapsebridge:'8인 맵',lavaland:'8인 맵',ruins:'8인 맵',mirrormaze:'6인 맵',parkour1:'파쿠르',parkour2:'파쿠르',parkour3:'파쿠르',parkour4:'파쿠르'};
+const shapeLabel={canyon:'4인 맵',grid:'8인 맵',steampunk:'6인 맵',skyport:'8인 맵',colosseum:'8인 맵',lifttower:'8인 맵',stormship:'8인 맵',pipefactory:'8인 맵',mine:'8인 맵',icelake:'8인 맵',dungeon:'8인 맵',swamp:'8인 맵',waterfall:'8인 맵',collapsebridge:'8인 맵',lavaland:'8인 맵',ruins:'8인 맵',mirrormaze:'6인 맵',parkour1:'파쿠르',parkour2:'파쿠르',parkour3:'파쿠르',parkour4:'파쿠르'};
 const mapSelectBtn=document.getElementById('mapSelectBtn');
 const MAP_GIMMICKS={collapsebridge:['🌉 무너지는 다리 판자','🌊 강물 (25 피해)'], lavaland:['🌋 용암 웅덩이 (30 피해)'], ruins:['🧱 기둥과 벽 엄폐물'], mirrormaze:['🪞 좌우 대칭 미로'], waterfall:['🌊 폭포 물살 (공중에서 위로 떠오름)','💧 얕은 물 (이동속도 20% 감소)'], swamp:['🟣 중앙 늪 (이동속도 33% 감소 · 시야 제한)'], stormship:['🌊 흔들리는 갑판','🌊 파도'], pipefactory:['➡️ 컨베이어','💨 증기 분출'], mine:['🛒 광차 (50 피해)','🔦 정전'], icelake:['🧊 미끄러운 얼음','💧 얼음 깨짐'], dungeon:['🚪 철창 문 개폐'], steampunk:['⚙️ 움직이는 발판'], skyport:['↔️ 움직이는 발판'], lifttower:['↔️ 움직이는 발판'], colosseum:['🏟️ 계단식 구조']};
 function mapGimmickTags(id){
