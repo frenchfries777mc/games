@@ -368,7 +368,7 @@ html:not(.introDone) #ui,html:not(.introDone) #authgate,html:not(.introDone) #au
     <button class="btn" data-act="skins"><span class="arrow">▶</span>스킨 상점<span class="en">SKIN SHOP</span></button>
     <button class="btn" data-act="stats"><span class="arrow">▶</span>통계<span class="en">STATS</span></button>
     <button class="btn" data-act="settings"><span class="arrow">▶</span>설정<span class="en">SETTINGS</span></button>
-    <p class="foot">v0.3<br>build 93</p>
+    <p class="foot">v0.3<br>build 94</p>
   </nav>
 </div>
 
@@ -1454,6 +1454,14 @@ ITEMS.mailbox={name:'우체통',place:'mailbox',icon(g){g.fillStyle='#3d2412';g.
 ITEMS.gpil={name:'대형 기둥',place:'gpil',icon(g){g.fillStyle='#14161c';g.fillRect(1,0,10,2);g.fillRect(3,2,6,8);g.fillRect(2,10,8,2);g.fillStyle='#b4b7c3';g.fillRect(2,0,8,1);g.fillStyle='#7d808c';g.fillRect(4,2,4,8);g.fillStyle='#a9acb8';g.fillRect(4,2,1,8);g.fillStyle='#8a8d99';g.fillRect(3,10,6,1);}};
 ITEMS.arch={name:'아치문',place:'arch',icon(g){g.fillStyle='#14161c';g.fillRect(0,1,12,10);g.fillStyle='#7d808c';g.fillRect(1,2,10,3);g.fillRect(1,5,2,6);g.fillRect(9,5,2,6);g.fillStyle='#b4b7c3';g.fillRect(1,2,10,1);g.fillStyle='#14161c';g.fillRect(3,5,6,6);g.fillRect(4,4,4,1);g.fillStyle='#f2c75a';g.fillRect(5,2,2,1);}};
 ITEMS.spire={name:'첨탑',place:'spire',icon(g){g.fillStyle='#14161c';g.fillRect(5,0,2,1);g.fillRect(4,1,4,2);g.fillRect(3,3,6,2);g.fillRect(2,5,8,2);g.fillRect(3,7,6,5);g.fillStyle='#4a5f9a';g.fillRect(5,1,2,1);g.fillRect(4,3,4,1);g.fillRect(3,5,6,1);g.fillStyle='#7d808c';g.fillRect(4,7,4,4);g.fillStyle='#ffd24a';g.fillRect(5,8,2,2);}};
+ITEMS.dino_bone={name:'공룡 뼈 조각',icon(g){
+  g.fillStyle='#3a3426';g.fillRect(1,3,3,3);g.fillRect(8,6,3,3);g.fillRect(3,4,6,4);
+  g.fillStyle='#efe6cf';g.fillRect(2,3,2,2);g.fillRect(9,6,2,2);g.fillRect(4,5,5,2);g.fillStyle='#b8ad92';g.fillRect(4,7,5,1);g.fillRect(2,5,1,1);g.fillRect(10,8,1,1);
+}};
+ITEMS.dinoskel={name:'공룡 골격 전시',place:'dinoskel',icon(g){
+  g.fillStyle='#3a3426';g.fillRect(0,9,12,1);g.fillRect(1,4,6,4);g.fillRect(6,2,5,3);
+  g.fillStyle='#efe6cf';g.fillRect(2,5,4,2);g.fillRect(7,3,3,1);g.fillRect(2,7,1,2);g.fillRect(5,7,1,2);g.fillRect(8,4,1,1);g.fillStyle='#b8ad92';g.fillRect(0,8,12,1);
+}};
 ITEMS.monument={name:'방명록 비석',place:'monument',icon(g){g.fillStyle='#14161c';g.fillRect(2,0,8,12);g.fillRect(1,2,10,10);g.fillStyle='#8a8ea0';g.fillRect(3,1,6,10);g.fillRect(2,3,8,8);g.fillStyle='#b4b8c8';g.fillRect(3,1,6,1);g.fillRect(2,3,1,7);g.fillStyle='#4a4e60';g.fillRect(4,4,4,1);g.fillRect(4,6,3,1);g.fillRect(4,8,4,1);g.fillStyle='#3a3e4c';g.fillRect(1,11,10,1);}};
 function fellerIcon(mat){
   return function(g){
@@ -2024,6 +2032,7 @@ RECIPES.push({grp:'건축',bench:true,name:'석재벽돌',note:'강화석재 3�
    RECIPES.push({grp:'시설',bench:true,name:'열기구',note:'실 6 · 판자 4 · 가죽 4 · 들고 Shift로 떠올라요 (2분)',pat:[{id:'thread',n:3},{id:'thread',n:3},{id:'plank',n:2},{id:'plank',n:2},{id:'leather',n:2},{id:'leather',n:2}],out:[{id:'balloon',n:1}]});
    RECIPES.push({grp:'건축',bench:true,name:'가판대',note:'판자 3 · 막대기 2 · 실 2 · 가격을 정해 다른 플레이어에게 팔아요',pat:[P1,P1,P1,S1,S1,TH,TH],out:[{id:'stall',n:1}]});
    RECIPES.push({grp:'건축',bench:true,name:'우체통',note:'판자 2 · 철괴 1 · 종이 1 · 다른 플레이어에게 편지와 선물을 보내요',pat:[P1,P1,{id:'iron_ingot',n:1},{id:'paper',n:1}],out:[{id:'mailbox',n:1}]});
+   RECIPES.push({grp:'건축',bench:true,name:'공룡 골격 전시',note:'공룡 뼈 조각 12 — 설치하면 커다란 공룡 골격이 서요 (뼈는 섬 곳곳 땅속에 묻혀 있어요)',pat:[{id:'dino_bone',n:4},{id:'dino_bone',n:4},{id:'dino_bone',n:4}],out:[{id:'dinoskel',n:1}]});
    RECIPES.push({grp:'건축',bench:true,name:'방명록 비석',note:'돌 6 · 막대기 1 · 종이 1 · 한 줄 글을 새겨 다른 플레이어에게 남겨요',pat:[{id:'stone',n:3},{id:'stone',n:3},S1,{id:'paper',n:1}],out:[{id:'monument',n:1}]});
    RECIPES.push({grp:'건축',bench:true,name:'책장',note:'판자 6개',pat:[P1,P1,P1,P1,P1,P1],out:[{id:'shelf',n:1}]});}
   RECIPES.push({grp:'맨손',name:'양동이',note:'물가나 우물에서 물을 떠 번지는 불을 꺼요',pat:[{id:'plank',n:1},{id:'plank',n:1},{id:'plank',n:1},{id:'plank',n:1},S1],out:[{id:'bucket',n:1}]});
@@ -3105,6 +3114,94 @@ function gbAdd(b,name,text){
   if(b.gb.length>GB_MAX)b.gb.splice(0,b.gb.length-GB_MAX);
   return true;
 }
+/* ===== 공룡 뼈 발굴: 섬 곳곳 땅속에 뼈 조각이 묻혀 있어요. 뼈 끝이 삐죽 나온 곳에서 F를 꾹 눌러 파내고, 12개를 모으면 골격 전시를 세울 수 있어요 ===== */
+const boneLsKey=()=>'bf.bones.'+(window.bfUid||'x')+'.'+((typeof shown!=='undefined'&&shown.seed)||'w');
+function boneGotSet(){
+  if(!world)return new Set();
+  if(isGuest()){
+    if(!world.bgl){world.bgl=new Set();try{const r=JSON.parse(localStorage.getItem(boneLsKey())||'[]');if(Array.isArray(r))for(const v of r)world.bgl.add(v|0);}catch(e){}}
+    return world.bgl;
+  }
+  if(!world.bgot)world.bgot=new Set();
+  return world.bgot;
+}
+function boneSave(){if(isGuest()){try{localStorage.setItem(boneLsKey(),JSON.stringify([...boneGotSet()]));}catch(e){}}else saveWorld(true);}
+function boneSpots(){
+  if(!world||!world.islands)return [];
+  if(world.bsp)return world.bsp;
+  const rnd=mulberry32(hashStr((world.seedStr||shown.seed||'w')+'dinobones')),out=[];
+  world.islands.forEach((o,i)=>{
+    if(o.b===3)return;   // 화산섬은 빼요
+    let n=0;
+    for(let t=0;t<90&&n<5;t++){
+      const a=rnd()*6.2832,r=Math.sqrt(rnd())*0.85,x=o.cx+Math.cos(a)*r*o.rx,y=o.cy+Math.sin(a)*r*o.ry;
+      if(!walkable(x,y))continue;
+      const hv=hAt(Math.round(x),Math.round(y));if(hv<SEA+0.06||hv>1.3)continue;
+      if(Math.hypot(x-world.camp.x,y-world.camp.y)<80)continue;
+      out.push({x:Math.round(x),y:Math.round(y),i:out.length});n++;
+    }
+  });
+  world.bsp=out;return out;
+}
+function nearBoneSpot(r){
+  let best=null,bd=r;const got=boneGotSet();
+  for(const q of boneSpots()){if(got.has(q.i))continue;const d=Math.hypot(P.x-q.x,P.y-q.y);if(d<bd){bd=d;best=q;}}
+  return best;
+}
+function startDig(q){
+  if(P.dig&&P.dig.q===q)return;
+  P.dig={q,t:0};toast('뼈를 파내는 중… 움직이지 마세요');
+}
+function digTick(dt){
+  const dg=P.dig;if(!dg)return;
+  if(P.dead||P.sleeping||P.moving||Math.hypot(P.x-dg.q.x,P.y-dg.q.y)>16||boneGotSet().has(dg.q.i)){P.dig=null;return;}
+  dg.t+=dt;
+  if(Math.random()<dt*14)parts.push({x:dg.q.x+(Math.random()-0.5)*8,y:dg.q.y-1,vx:(Math.random()-0.5)*30,vy:-14-Math.random()*20,life:0.45,c:Math.random()<0.5?'#8a6a3c':'#c9a36a'});
+  if(dg.t>=1.6){
+    P.dig=null;boneGotSet().add(dg.q.i);boneSave();
+    const n=Math.random()<0.4?2:1;giveReward('dino_bone',n);
+    for(let j=0;j<8;j++)parts.push({x:dg.q.x,y:dg.q.y-2,vx:(Math.random()-0.5)*50,vy:-18-Math.random()*26,life:0.6,c:'#efe6cf'});
+  }
+}
+function drawBoneSpots(g){
+  const got=boneGotSet(),sp=boneSpots();
+  for(const q of sp){
+    if(got.has(q.i)||Math.abs(q.x-P.x)>260||Math.abs(q.y-P.y)>180)continue;
+    const x=q.x,y=q.y;
+    g.fillStyle='rgba(60,40,20,0.35)';g.fillRect(x-3,y,7,2);
+    g.fillStyle='#3a3426';g.fillRect(x-3,y-3,3,3);g.fillRect(x+1,y-4,2,4);
+    g.fillStyle='#efe6cf';g.fillRect(x-2,y-3,2,2);g.fillRect(x+1,y-4,1,3);g.fillStyle='#b8ad92';g.fillRect(x-2,y-1,2,1);
+    if(((time*2+q.i)|0)%3===0){g.fillStyle='#ffffff';g.fillRect(x+3,y-6,1,1);g.fillRect(x+2,y-5,3,1);g.fillRect(x+3,y-4,1,1);}
+  }
+  const dg=P.dig;
+  if(dg){const x=Math.round(P.x),y=Math.round(P.y)-18,w=Math.round(16*Math.min(1,dg.t/1.6));g.fillStyle='#14161c';g.fillRect(x-9,y,18,4);g.fillStyle='#efe6cf';g.fillRect(x-8,y+1,w,2);}
+}
+function drawDinoSkel(g,b){
+  const cx=b.gx*GRID+8,cy=b.gy*GRID+14,v=Math.abs(b.gx*7+b.gy*3)%3;
+  const O='#3a3426',B='#efe6cf',S='#b8ad92';
+  const R=(dx,dy,w,h,c)=>{g.fillStyle=c;g.fillRect(cx+dx,cy+dy,w,h);};
+  R(-17,0,34,2,'rgba(8,24,12,0.3)');
+  R(-18,-3,36,3,'#6a6e80');R(-18,-3,36,1,'#9aa0b0');   // 받침대
+  if(v===0){   // 육식 공룡
+    R(-17,-9,12,3,O);R(-16,-8,10,1,B);R(-20,-7,5,2,O);R(-19,-7,3,1,B);       // 꼬리
+    R(-6,-17,18,10,O);R(-5,-16,16,8,B);for(let i=0;i<4;i++)R(-3+i*4,-15,1,6,S);R(-5,-8,16,1,S);   // 몸통·갈비뼈
+    R(-1,-7,5,5,O);R(0,-6,3,3,B);R(-2,-3,8,1,O);                               // 다리
+    R(11,-22,8,6,O);R(12,-21,6,4,B);R(18,-20,7,5,O);R(19,-19,5,3,B);R(19,-16,5,1,S);  // 목·머리
+    R(21,-17,1,2,O);R(23,-17,1,2,O);R(20,-19,1,1,O);                             // 이빨·눈구멍
+    R(9,-12,4,1,O);R(12,-11,2,2,B);                                              // 팔
+  }else if(v===1){   // 목이 긴 공룡
+    R(-18,-10,9,3,O);R(-17,-9,7,1,B);                                            // 꼬리
+    R(-10,-18,20,10,O);R(-9,-17,18,8,B);for(let i=0;i<5;i++)R(-8+i*4,-16,1,6,S);   // 몸통
+    R(-6,-8,4,6,O);R(-5,-7,2,4,B);R(4,-8,4,6,O);R(5,-7,2,4,B);                 // 다리
+    R(9,-30,4,16,O);R(10,-29,2,14,B);R(10,-34,8,5,O);R(11,-33,6,3,B);R(16,-32,1,1,O);   // 긴 목·머리
+  }else{   // 뿔 달린 공룡
+    R(-18,-9,8,3,O);R(-17,-8,6,1,B);
+    R(-10,-17,19,11,O);R(-9,-16,17,9,B);for(let i=0;i<4;i++)R(-7+i*4,-15,1,7,S);
+    R(-8,-7,4,5,O);R(-7,-6,2,3,B);R(3,-7,4,5,O);R(4,-6,2,3,B);
+    R(9,-20,11,12,O);R(10,-19,9,10,B);R(11,-24,3,5,O);R(12,-23,1,3,B);R(16,-23,3,4,O);R(17,-22,1,2,B);   // 프릴·뿔
+    R(19,-14,5,4,O);R(20,-13,3,2,B);R(22,-17,1,4,O);R(23,-17,1,1,B);
+  }
+}
 function drawMonument(g,b){
   const cx=b.gx*GRID,cy=b.gy*GRID,has=(b.gb||[]).length>0;
   g.fillStyle='rgba(8,24,12,0.3)';g.fillRect(cx+1,cy+14,14,2);
@@ -3884,7 +3981,7 @@ function saveWorld(force){
       structs:world.structs.filter(b=>!b.lm).map(b=>Object.assign({id:b.id,gx:b.gx,gy:b.gy},exOf(b))),
       drops:drops.map(d=>({x:Math.round(d.tx),y:Math.round(d.ty),v:d.v,item:d.item||'stick',n:d.n||1,dur:d.dur})),
       cargo:(world.cargo||[]).map(e=>({fq:e.fq,item:e.item,n:e.n,dur:e.dur,sx:e.sx,sy:e.sy,dx:e.dx,dy:e.dy,gx:e.gx,gy:e.gy,rem:e.rem,tot:e.tot,ox:e.ox,oy:e.oy,pir:e.pir,hit:e.hit})),
-      grave:world.grave?{x:world.grave.x,y:world.grave.y}:null,graves:(world.graves||[]).slice(0,60),
+      grave:world.grave?{x:world.grave.x,y:world.grave.y}:null,graves:(world.graves||[]).slice(0,60),bgot:world.bgot?[...world.bgot]:[],
       player:world.savedPlayer
     }));
     if(window.bfCloudDirty)bfCloudDirty();
@@ -3914,6 +4011,7 @@ function applySave(){
   world.cargo=(d.cargo||[]).filter(e=>e&&ITEMS[e.item]&&Number.isFinite(e.dx)&&Number.isFinite(e.dy)).map(e=>({fq:String(e.fq||''),item:e.item,n:Math.max(1,e.n|0),dur:Number.isFinite(e.dur)?e.dur:undefined,sx:+e.sx||0,sy:+e.sy||0,dx:+e.dx,dy:+e.dy,gx:e.gx|0,gy:e.gy|0,rem:Math.max(0.1,+e.rem||1),tot:Math.max(1,+e.tot||1),ox:e.ox|0,oy:e.oy|0,pir:e.pir?1:0,hit:e.hit?1:0}));
   world.grave=(d.grave&&Number.isFinite(d.grave.x)&&Number.isFinite(d.grave.y))?{x:d.grave.x,y:d.grave.y,t:-99}:null;
   world.graves=Array.isArray(d.graves)?d.graves.filter(okGrave).slice(0,60):[];
+  world.bgot=new Set(Array.isArray(d.bgot)?d.bgot.map(v=>v|0):[]);world.bsp=null;
   if(d.player&&Number.isFinite(d.player.x)&&Number.isFinite(d.player.y))world.savedPlayer={x:d.player.x,y:d.player.y,f:d.player.f===-1?-1:1};
 }
 /* ===== 월드 백업 — 월드마다 자동으로 3개까지 보관하고, 싱글 플레이 목록의 '백업'에서 되돌려요 ===== */
@@ -4093,6 +4191,7 @@ const STRUCT={
   stall:{layer:'o',block:true,item:'stall',n:1,need:2},
   mailbox:{layer:'o',block:true,item:'mailbox',n:1,need:1.5},
   monument:{layer:'o',block:true,item:'monument',n:1,need:3},
+  dinoskel:{layer:'o',block:true,item:'dinoskel',n:1,need:3},
   flag:{layer:'o',block:true,item:'flag',n:1,need:1.2},
   roof:{layer:'r',block:false,item:'roof',n:1,need:0.9},
   carpet:{layer:'f',block:false,item:'carpet',n:1,need:0.6},
@@ -4504,6 +4603,7 @@ function drawStruct(g,b){
   if(b.id==='stall'){drawStall(g,b);return;}
   if(b.id==='mailbox'){drawMailbox(g,b);return;}
   if(b.id==='monument'){drawMonument(g,b);return;}
+  if(b.id==='dinoskel'){drawDinoSkel(g,b);return;}
   if(b.id==='flag'){drawFlag(g,b);return;}
   if(b.id==='table'){drawTable(g,b);return;}
   if(b.id==='chair'){drawChair(g,b);return;}
@@ -4779,7 +4879,7 @@ function stationNear(mode){
   return true;
 }
 function doInteract(o,code){
-  if(o.id==='bench')openCraft('bench');else if(o.id==='chest')openChest(o);else if(o.id==='trader')tradeWith();else if(o.id==='trash')openTrash(o);else if(o.id==='oven'||o.id==='campfire')openCraft('cook');else if(o.id==='furnace'){smeltRef=o;smeltLast=o.fo?o.fo.n:0;openCraft('smelt');}else if(o.id==='armorbench')openArmor();else if(o.id==='anvil')openAnvil();else if(o.id==='cow')milkCow(o.a);else if(o.id==='chicken')feedChicken(o.a);else if(o.id==='conveyor')rotateConveyor(o);else if(o.id==='sorter'){if(code==='KeyF')rotateConveyor(o);else toggleSorterSide(o);}else if(o.id==='rsd'||o.id==='gauge'||o.id==='relay'||o.id==='tele'||o.id==='port')openSignalUI(o);else if(o.id==='bell')ringBell(o);else if(o.id==='guard')openGuardUI(o);else if(o.id==='vnpc')openShop(o.n);else if(o.id==='controller')toggleControl(o);else if(o.id==='beacon')callShip(o);else if(o.id==='ship')boardShip();else if(o.id==='crafter')openCrafterUI(o);else if(o.id==='feller')openFellerUI(o);else if(o.id==='door')toggleDoor(o);else if(o.id==='aquarium')openAquarium(o);else if(o.id==='cart')openCart();else if(o.id==='tradepost')openTradepost(o);else if(o.id==='alchemy')openAlchemy();else if(o.id==='runetable')openRunes();else if(o.id==='trap')openTrap(o);else if(o.id==='hut')openHut(o);else if(o.id==='stall')openStall(o);else if(o.id==='mailbox')openMailbox(o);else if(o.id==='monument')openMonument(o);else if(o.id==='flag')openFlag(o);else if(o.id==='revive')reviveReq(o.peer);else if(o.id==='dunin')dunGo(1,'down');else if(o.id==='dunst')dunGo(o.k,o.dir);else trySleep(o);
+  if(o.id==='bench')openCraft('bench');else if(o.id==='chest')openChest(o);else if(o.id==='trader')tradeWith();else if(o.id==='trash')openTrash(o);else if(o.id==='oven'||o.id==='campfire')openCraft('cook');else if(o.id==='furnace'){smeltRef=o;smeltLast=o.fo?o.fo.n:0;openCraft('smelt');}else if(o.id==='armorbench')openArmor();else if(o.id==='anvil')openAnvil();else if(o.id==='cow')milkCow(o.a);else if(o.id==='chicken'||o.id==='penguin')feedChicken(o.a);else if(o.id==='bone')startDig(o.q);else if(o.id==='conveyor')rotateConveyor(o);else if(o.id==='sorter'){if(code==='KeyF')rotateConveyor(o);else toggleSorterSide(o);}else if(o.id==='rsd'||o.id==='gauge'||o.id==='relay'||o.id==='tele'||o.id==='port')openSignalUI(o);else if(o.id==='bell')ringBell(o);else if(o.id==='guard')openGuardUI(o);else if(o.id==='vnpc')openShop(o.n);else if(o.id==='controller')toggleControl(o);else if(o.id==='beacon')callShip(o);else if(o.id==='ship')boardShip();else if(o.id==='crafter')openCrafterUI(o);else if(o.id==='feller')openFellerUI(o);else if(o.id==='door')toggleDoor(o);else if(o.id==='aquarium')openAquarium(o);else if(o.id==='cart')openCart();else if(o.id==='tradepost')openTradepost(o);else if(o.id==='alchemy')openAlchemy();else if(o.id==='runetable')openRunes();else if(o.id==='trap')openTrap(o);else if(o.id==='hut')openHut(o);else if(o.id==='stall')openStall(o);else if(o.id==='mailbox')openMailbox(o);else if(o.id==='monument')openMonument(o);else if(o.id==='flag')openFlag(o);else if(o.id==='revive')reviveReq(o.peer);else if(o.id==='dunin')dunGo(1,'down');else if(o.id==='dunst')dunGo(o.k,o.dir);else trySleep(o);
 }
 function nearInteract(){
   let best=null,bd=1e9;
@@ -4788,7 +4888,8 @@ function nearInteract(){
     const d0=Math.hypot(P.x-b.x,P.y-(b.y-7)),d=d0-(b===P.starget&&d0<=20?100:0);if(d0<=20&&d<bd){bd=d;best=b;}   // 흰 테두리로 가리킨 시설이 먼저
   }
   if(!best)for(const b of world.cgrid.values()){const d=Math.hypot(P.x-(b.gx*CG+4),P.y-(b.gy*CG+4));if(d<=10&&d<bd){bd=d;best=b;}}
-  for(const a of animals){if(a.type!=='cow'&&a.type!=='chicken')continue;const d=Math.hypot(P.x-a.x,P.y-a.y);if(d<=20&&d<bd){bd=d;best={id:a.type,a,x:a.x,y:a.y+7};}}
+  {const q=nearBoneSpot(14);if(q&&!best){bd=0;best={id:'bone',q,x:q.x,y:q.y+7};}}
+  for(const a of animals){if(a.type!=='cow'&&a.type!=='chicken'&&a.type!=='penguin')continue;const d=Math.hypot(P.x-a.x,P.y-a.y);if(d<=20&&d<bd){bd=d;best={id:a.type,a,x:a.x,y:a.y+7};}}
   {const c=world.camp,d=Math.hypot(P.x-c.x,P.y-c.y);if(d<=22&&!best){bd=d;best={id:'campfire',x:c.x,y:c.y+7};}}   // 다른 시설이 가까이 있으면 그쪽이 먼저예요
   {const e=world.esc;if(e&&e.ph==='landed'){const d=Math.hypot(P.x-e.sx,P.y-(e.sy-8));if(d<=42&&d<bd){bd=d;best={id:'ship',x:e.sx,y:e.sy};}}}
   for(const n of (world.vnpcs||[])){const d=Math.hypot(P.x-n.x,P.y-n.y);if(d<=22&&d<bd){bd=d;best={id:'vnpc',n,x:n.x,y:n.y+7};}}
@@ -5513,7 +5614,7 @@ function drawGraves(g){
   if(((time*8)|0)&1){g.fillStyle='#d8f0ff';g.fillRect(wx+(((time*5)|0)&1?2:-2),wy-3,1,1);}
 }
 function drawGrave(g){
-  drawGraves(g);
+  drawGraves(g);drawBoneSpots(g);
   const q=world&&world.grave;if(!q)return;
   const x=Math.round(q.x),y=Math.round(q.y);
   g.fillStyle='rgba(8,24,12,0.35)';g.fillRect(x-5,y+3,11,2);
@@ -6420,8 +6521,8 @@ function drawWeather(g,wt){
 }
 
 /* 동물: 닭(달걀), 소(우유). 때리면 생고기를 줘요 */
-const ANIM_TYPES={chicken:{hp:3,spd:13,max:7,lay:[60,100]},cow:{hp:8,spd:9,max:4},bird:{hp:2,spd:26,max:5,fly:1}};
-const ANIM_IDX=['chicken','cow','bird'];
+const ANIM_TYPES={chicken:{hp:3,spd:13,max:7,lay:[60,100]},cow:{hp:8,spd:9,max:4},bird:{hp:2,spd:26,max:5,fly:1},penguin:{hp:4,spd:10,max:7}};
+const ANIM_IDX=['chicken','cow','bird','penguin'];
 let animals=[],animT=2,nextAid=1;
 function spawnWorldDrop(item,n,x,y){
   const d={id:nextDropId++,item,n,sx:Math.round(x*10)/10,sy:Math.round((y-3)*10)/10,tx:Math.round((x+(Math.random()-0.5)*10)*10)/10,ty:Math.round((y+2+Math.random()*3)*10)/10,v:(Math.random()*3)|0,age:0,lock:0};
@@ -6457,7 +6558,8 @@ function spawnAnimals(){
       const x=p.x+Math.cos(ang)*r,y=p.y+Math.sin(ang)*r;
       if(!walkable(x,y))continue;
       const hv=hAt(Math.round(x),Math.round(y));
-      if(hv<SEA+0.06||hv>0.85)continue;
+      if(hv<SEA+0.06||hv>(type==='penguin'?1.4:0.85))continue;
+      if(type==='penguin'&&bioAt(x,y)!==8)continue;   // 펭귄은 얼음섬에만 살아요
       if(pl.some(q=>Math.hypot(q.x-x,q.y-y)<100))continue;
       animals.push({id:nextAid++,type,x,y,tx:x,ty:y,f:1,hp:T.hp,hurt:0,wt:0,wa:0,ws:0,flee:0,fx:0,fy:0,stun:0,kx:0,ky:0,lay:0,fed:0,mt:25});
       break;
@@ -6475,6 +6577,7 @@ function animalDamage(a,dmg,fx,fy){
       animals.splice(animals.indexOf(a),1);return;
     }
     if(a.type==='chicken'&&Math.random()<0.6)spawnWorldDrop('feather',1,a.x-3,a.y);   // 닭도 깃털을 떨어뜨려요
+    if(a.type==='penguin')spawnWorldDrop('feather',1,a.x-3,a.y);
     const n=a.type==='cow'?2+((Math.random()*2)|0):1;
     spawnWorldDrop('raw_meat',n,a.x,a.y);
     if(a.type==='cow')spawnWorldDrop('leather',1+((Math.random()*2)|0),a.x+4,a.y);   // 소: 가죽 1~2개
@@ -6497,6 +6600,10 @@ function updateAnimals(dt){
       if(a.love>0){a.love-=dt;if(Math.random()<dt*1.2)parts.push({x:a.x,y:a.y-8,vx:(Math.random()-0.5)*14,vy:-14,life:0.8,c:'#ff6a8a'});}
       if(a.bc>0)a.bc-=dt;
       if(a.baby){a.gt-=dt;if(a.gt<=0){a.baby=0;a.hp=T.hp;}}
+    }
+    if(a.type==='penguin'&&a.tame&&!a.baby){   // 길들인 펭귄은 가끔 물고기를 물어다 줘요
+      a.fq=(a.fq===undefined?120:a.fq)-dt;
+      if(a.fq<=0){a.fq=150+Math.random()*90;const fs=FISH.filter(f=>f.hab==='sea'&&f.tier===0);if(fs.length){spawnWorldDrop(fs[(Math.random()*fs.length)|0].id,1,a.x,a.y);for(let j=0;j<5;j++)parts.push({x:a.x,y:a.y-6,vx:(Math.random()-0.5)*26,vy:-12-Math.random()*14,life:0.6,c:'#9fd4ff'});}}
     }
     if(a.type==='chicken'&&a.fed>0){a.fed-=dt;if(a.fed<=0){a.fed=0;spawnWorldDrop('egg',1,a.x,a.y);}}   // 씨앗을 먹은 닭만 알을 낳아요
     if(a.stun>0){
@@ -6531,7 +6638,7 @@ function breedTick(){
     const x=(a.x+o.x)/2,y=(a.y+o.y)/2,T=ANIM_TYPES[a.type];
     animals.push({id:nextAid++,type:a.type,x,y,tx:x,ty:y,f:1,hp:T.hp,hurt:0,wt:0,wa:0,ws:0,flee:0,fx:0,fy:0,stun:0,kx:0,ky:0,lay:0,fed:0,mt:25,tame:1,baby:1,gt:90,hx:a.hx,hy:a.hy,love:0,bc:0});
     for(let j=0;j<10;j++)parts.push({x,y:y-6,vx:(Math.random()-0.5)*40,vy:-12-Math.random()*20,life:0.9,c:'#ff6a8a'});
-    achQ.push({h:'🐣 새끼 탄생',name:a.type==='cow'?'송아지가 태어났어요':'병아리가 태어났어요'});
+    achQ.push({h:'🐣 새끼 탄생',name:a.type==='cow'?'송아지가 태어났어요':a.type==='penguin'?'아기 펭귄이 태어났어요':'병아리가 태어났어요'});
     saveWorld(true);
   }
 }
@@ -6555,12 +6662,25 @@ const ANIMSPR=(()=>{
     g.fillStyle='#6a9ad8';g.fillRect(2,2,5,2);g.fillStyle='#d8ecff';g.fillRect(2,4,5,1);g.fillStyle='#4a6aa8';g.fillRect(0,2,2,2);
     g.fillStyle='#8ab8f0';g.fillRect(6,1,2,2);g.fillStyle='#f2a82a';g.fillRect(9,2,2,1);g.fillStyle='#1a1410';g.fillRect(7,1,1,1);
   };
-  return {chicken:[mk(7,7,chick,false),mk(7,7,chick,true)],cow:[mk(14,9,cow,false),mk(14,9,cow,true)],bird:[mk(11,6,bird,false),mk(11,6,bird,true)]};
+  const peng=g=>{
+    g.fillStyle='#14161c';g.fillRect(2,0,4,2);g.fillRect(1,2,6,5);g.fillRect(2,7,4,1);
+    g.fillStyle='#2a3a52';g.fillRect(2,1,3,1);g.fillRect(1,3,1,3);
+    g.fillStyle='#ffffff';g.fillRect(3,3,3,4);g.fillStyle='#dfe9f2';g.fillRect(3,6,3,1);
+    g.fillStyle='#ffffff';g.fillRect(5,1,1,1);g.fillStyle='#14161c';g.fillRect(5,1,1,1);
+    g.fillStyle='#f2a82a';g.fillRect(6,2,1,1);g.fillRect(2,8,2,1);g.fillRect(4,8,2,1);
+    g.fillStyle='#ffffff';g.fillRect(4,1,1,1);
+  };
+  const pengS=g=>{   // 배로 미끄러지는 모습
+    g.fillStyle='#14161c';g.fillRect(0,2,8,3);g.fillRect(6,1,3,3);
+    g.fillStyle='#ffffff';g.fillRect(1,4,6,1);g.fillStyle='#2a3a52';g.fillRect(1,2,5,1);
+    g.fillStyle='#f2a82a';g.fillRect(9,2,1,1);g.fillRect(0,5,2,1);g.fillStyle='#ffffff';g.fillRect(7,2,1,1);
+  };
+  return {chicken:[mk(7,7,chick,false),mk(7,7,chick,true)],cow:[mk(14,9,cow,false),mk(14,9,cow,true)],bird:[mk(11,6,bird,false),mk(11,6,bird,true)],penguin:[mk(8,9,peng,false),mk(8,9,peng,true)],penguinS:[mk(10,6,pengS,false),mk(10,6,pengS,true)]};
 })();
 function drawAnimal(g,a){
-  const spr=ANIMSPR[a.type][a.f>0?0:1],w=spr.width,h=spr.height,x=Math.round(a.x),y=Math.round(a.y);
+  const spr=ANIMSPR[a.type==='penguin'&&a.flee>0&&!a.baby?'penguinS':a.type][a.f>0?0:1],w=spr.width,h=spr.height,x=Math.round(a.x),y=Math.round(a.y);
   const fly=ANIM_TYPES[a.type].fly?12+Math.round(Math.sin(time*5+a.id)*1.5):0;
-  const hop=a.type==='chicken'?((a.ws&&((time*6+a.id)|0)&1)?1:0):(fly?fly:0);
+  const hop=(a.type==='chicken'||a.type==='penguin')?((a.ws&&!(a.flee>0)&&((time*(a.type==='penguin'?4:6)+a.id)|0)&1)?1:0):(fly?fly:0);
   g.fillStyle='rgba(8,24,12,0.3)';g.fillRect(x-(w>>1)+1,y,w-2,1);
   if(a.hurt>0){g.globalAlpha=0.55;}
   if(a.baby){const sw=Math.max(3,Math.round(w*0.62)),sh=Math.max(3,Math.round(h*0.62));g.drawImage(spr,x-(sw>>1),y-sh+1-hop,sw,sh);}
@@ -6586,7 +6706,7 @@ function hitAnimal(a,dmg,far){
 }
 const isSeedId=id=>Object.values(CROPS).some(c=>c.seed===id);
 const isCropOut=id=>Object.values(CROPS).some(c=>c.out===id);
-const feedOk=(a,id)=>a.type==='cow'?isCropOut(id):a.type==='chicken'?isSeedId(id):false;
+const feedOk=(a,id)=>a.type==='cow'?isCropOut(id):a.type==='chicken'?isSeedId(id):a.type==='penguin'?FISH.some(f=>f.id===id):false;
 const HERD_MAX=24;
 function tameFeed(a){   // 방장: 먹이를 먹이면 길들이고, 먹은 둘이 가까이 있으면 새끼를 낳아요
   if(a.baby)return 'baby';
@@ -9973,7 +10093,7 @@ for(const sel of ['#inv','#craft','#chest','#bagrow']){
 function updateObjs(dt){
   updateArrows(dt);
   for(const d of drops){d.age+=dt;if(d.lock>0)d.lock-=dt;}
-  graveTick();
+  graveTick();digTick(dt);
   if(world.grave&&time-world.grave.t>4){   // 주워 갈 아이템이 더 없으면 묘비도 사라져요
     const q=world.grave;let any=false;for(const d of drops)if(Math.hypot(d.tx-q.x,d.ty-q.y)<34){any=true;break;}
     if(!any){world.grave=null;saveWorld(true);}
