@@ -80,3 +80,10 @@ patchnotes.json | v350 items[0] | 인트로 곡이 인트로가 시작되자마�
 patchnotes.json | v350 items[1] | 인트로가 끝나기 전에는 로비 음악이 나오지 않음 | build 350 | 2026-10-23
 patchnotes.json | v351 title | 던지기 효과음 | build 351 | 2026-10-20
 patchnotes.json | v351 items[0] | 도박사와 인형술사 일반 공격 소리를 총소리 대신 던지는 소리로 변경 | build 351 | 2026-10-20
+Stickseum-v0.8.html | 황금 쟁탈 모드 | 황금 쟁탈 / 중앙의 금을 우리 팀 광차로 실어 날라요 / 금 N개를 실었어요 / 중앙에 금이 새로 쌓였어요 / 금 N개 운반 중 / 점 (MODES.gold 설명문 참고) | build 352 | 2026-10-23
+patchnotes.json | v352 title | 황금 쟁탈 추가, 파쿠르 삭제 | build 352 | 2026-10-20
+patchnotes.json | v352 items[0] | 새 모드 황금 쟁탈 추가(두 팀이 중앙의 금을 우리 광차로 운반, 3분) | build 352 | 2026-10-20
+patchnotes.json | v352 items[1] | 금은 한 번에 최대 3개, 들수록 느려짐 | build 352 | 2026-10-20
+patchnotes.json | v352 items[2] | 금을 든 사람이 쓰러지면 금이 떨어져 누구나 줍기 | build 352 | 2026-10-20
+patchnotes.json | v352 items[3] | 더미가 비면 15초마다 6개씩 새로 쌓임 | build 352 | 2026-10-20
+patchnotes.json | v352 items[4] | 파쿠르 모드 삭제 | build 352 | 2026-10-20
