@@ -95,3 +95,6 @@ patchnotes.json | v354 title | 경험치 조정 | build 354 | 2026-10-20
 patchnotes.json | v354 items[0] | 플레이어 경험치 조정 (처치 20, 어시스트 5, 완주 15, 승리 30) | build 354 | 2026-10-20
 patchnotes.json | v354 items[1] | 황금 쟁탈 금덩이 입금 경험치 2로 조정 | build 354 | 2026-10-20
 patchnotes.json | v354 items[2] | 레벨 10 이후 레벨당 필요 경험치 1000으로 조정 (기존 레벨 유지) | build 354 | 2026-10-20
+patchnotes.json | v355 title | 폰 화면 조정 | build 355 | 2026-10-20
+patchnotes.json | v355 items[0] | 캐릭터 선택·금지 화면에서 조이스틱과 버튼 숨김 | build 355 | 2026-10-20
+patchnotes.json | v355 items[1] | 폰 가로 화면에서 메뉴, 캐릭터 선택, 하단 바 크기 축소 | build 355 | 2026-10-20
