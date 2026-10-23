@@ -151,8 +151,8 @@ const FALLBACK={"latest":"0.3","latestFile":"BEACONFALL-v0.3.html","updated":"20
 const NOTES_FALLBACK={notes:[]};
 const I=window.I18N,esc=s=>String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const mb=n=>!n?'':(n>=1048576?(n/1048576).toFixed(1)+' MB':Math.round(n/1024)+' KB');
-const NAMES={ko:'한국어',en:'English',fr:'Français',de:'Deutsch',es:'Español',ja:'日本語',zh:'简体中文',pt:'Português (Brasil)',ru:'Русский',tr:'Türkçe',it:"Italiano",pl:"Polski",ar:"العربية",nw:'Newspeak',gk:'번역기 한국어',au:'Aurebesh',sg:'Standard Galactic'};
-const VIRT={nw:1,gk:1,au:1,sg:1},VLABEL={ko:'가상 언어',en:'Fictional languages',fr:'Langues fictives',de:'Fiktive Sprachen',es:'Idiomas ficticios',ja:'架空の言語',zh:'虚构语言',pt:'Idiomas fictícios',ru:'Вымышленные языки',tr:'Kurgusal diller',it:"Lingue immaginarie",pl:"Języki fikcyjne",ar:"لغات خيالية",nw:'Unreal speaks',gk:'가짜의 언어들'};
+const NAMES={ko:'한국어',en:'English',fr:'Français',de:'Deutsch',es:'Español',ja:'日本語',zh:'简体中文',pt:'Português (Brasil)',ru:'Русский',tr:'Türkçe',it:"Italiano",pl:"Polski",ar:"العربية",nw:'Newspeak',gk:'번역기 한국어',au:'Aurebesh',sg:'Standard Galactic',em:'😀💬'};
+const VIRT={nw:1,gk:1,au:1,sg:1,em:1},VLABEL={ko:'가상 언어',en:'Fictional languages',fr:'Langues fictives',de:'Fiktive Sprachen',es:'Idiomas ficticios',ja:'架空の言語',zh:'虚构语言',pt:'Idiomas fictícios',ru:'Вымышленные языки',tr:'Kurgusal diller',it:"Lingue immaginarie",pl:"Języki fikcyjne",ar:"لغات خيالية",nw:'Unreal speaks',gk:'가짜의 언어들'};
 const auOn=()=>{try{return !!(window.FFLang&&FFLang.script&&FFLang.script());}catch(e){return false;}};
 const KEY='beaconfallSiteLang';
 function pick(){let s=null;try{s=localStorage.getItem(KEY);}catch(e){}
@@ -215,8 +215,8 @@ function renderNotes(d){
 /* 언어 */
 const lg=document.getElementById('lg');
 const lgv=document.createElement('optgroup');
-I.L.concat(['au','sg']).forEach(l=>{const o=document.createElement('option');o.value=l;o.textContent=NAMES[l];(VIRT[l]?lgv:lg).appendChild(o);});lg.appendChild(lgv);
-lg.onchange=()=>{const v=lg.value,was=auOn();LANG=(v==='au'||v==='sg')?'en':v;try{localStorage.setItem(KEY,LANG);if(window.FFLang)FFLang.set(v);}catch(e){}if((v==='au'||v==='sg')||was){location.reload();return;}applyLang();};   // Aurebesh = English in its own letters (font set up on load by ff-lang.js)
+I.L.concat(['au','sg','em']).forEach(l=>{const o=document.createElement('option');o.value=l;o.textContent=NAMES[l];(VIRT[l]?lgv:lg).appendChild(o);});lg.appendChild(lgv);
+lg.onchange=()=>{const v=lg.value,was=auOn();LANG=(v==='au'||v==='sg'||v==='em')?'en':v;try{localStorage.setItem(KEY,LANG);if(window.FFLang)FFLang.set(v);}catch(e){}if((v==='au'||v==='sg'||v==='em')||was){location.reload();return;}applyLang();};   // Aurebesh = English in its own letters (font set up on load by ff-lang.js)
 function applyLang(){
  document.documentElement.lang=LANG;
  document.querySelectorAll('[data-i]').forEach(e=>{e.textContent=t(e.dataset.i);});document.querySelectorAll('[data-ph]').forEach(e=>{e.placeholder=t(e.dataset.ph);});
