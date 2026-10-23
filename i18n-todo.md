@@ -269,3 +269,4 @@ crownenvoy/CrownEnvoy-v0.4.html | 전신망 (정치 탭 카드) | "📡 전신�
 - crownenvoy/patchnotes.json | b93 title·items 2줄 | Crown Envoy b93 | 2026-10-23
 - beaconfall/patchnotes.json | v0.3 b96 items 1줄 | Beaconfall b96 | 2026-10-23
 - CrownEnvoy-v0.4.html, BEACONFALL-v0.3.html | 인트로 안내 | 화면을 누르면 시작해요 | b93 / b96 | 2026-10-23
+- index.html (educations) | 과목 (첫 화면 숫자 띠 라벨, 모든 언어 배열에 임시로 한국어 "과목"을 넣어 둠) | educations | 2026-10-23
