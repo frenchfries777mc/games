@@ -78,3 +78,5 @@ patchnotes.json | v349 items[1] | 금지 단계가 일찍 끝나도 봇이 남�
 patchnotes.json | v350 title | 인트로 곡 시작 시점 | build 350 | 2026-10-23
 patchnotes.json | v350 items[0] | 인트로 곡이 인트로가 시작되자마자 나옴 | build 350 | 2026-10-23
 patchnotes.json | v350 items[1] | 인트로가 끝나기 전에는 로비 음악이 나오지 않음 | build 350 | 2026-10-23
+patchnotes.json | v351 title | 던지기 효과음 | build 351 | 2026-10-20
+patchnotes.json | v351 items[0] | 도박사와 인형술사 일반 공격 소리를 총소리 대신 던지는 소리로 변경 | build 351 | 2026-10-20

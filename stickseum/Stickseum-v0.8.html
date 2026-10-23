@@ -1556,8 +1556,8 @@ const SFX_DEFS={
 const ULT_SFX={puppeteer:'ult_power', pizarro:'ult_power', kan:'ult_blast', pistol:'ult_power', bat:'ult_power', shuriken:'ult_power', dagger:'ult_power', dracula:'ult_power', gloves:'ult_power', bazooka:'ult_power',
   smg:'ult_shield', magiccard:'ult_shield', gambler:'ult_shield', wizard:'ult_shield', flamethrower:'ult_shield', portalgun:'ult_shield',
   rifle:'ult_blast', sword:'ult_blast', lightsaber:'ult_blast', horemheb:'ult_blast', bow:'ult_blast', boomerang:'ult_blast', shotgun:'ult_blast', grenade:'ult_blast', vacuum:'ult_blast', pirate:'ult_blast', samurai:'ult_blast', kurus:'ult_power'};
-const WEAPON_SFX={puppeteer:'pistol', pizarro:'sword', kan:'bow', pistol:'pistol', rifle:'rifle', smg:'smg', bow:'bow', wizard:'wizard', sword:'sword', horemheb:'sword', lightsaber:'portal', vacuum:'vacuum', portalgun:'portal',
-  magiccard:'magiccard', bat:'bat', boomerang:'boomerang', shuriken:'shuriken', shotgun:'shotgun', gloves:'gloves', grenade:'grenade', bazooka:'bazooka', dagger:'dagger', dracula:'dracula', pirate:'pirate', samurai:'samurai', kurus:'grenade', gambler:'pistol'}; // weapons that sound off in tryFire (dice and flame are hooked where they actually happen)
+const WEAPON_SFX={puppeteer:'shuriken', pizarro:'sword', kan:'bow', pistol:'pistol', rifle:'rifle', smg:'smg', bow:'bow', wizard:'wizard', sword:'sword', horemheb:'sword', lightsaber:'portal', vacuum:'vacuum', portalgun:'portal',
+  magiccard:'magiccard', bat:'bat', boomerang:'boomerang', shuriken:'shuriken', shotgun:'shotgun', gloves:'gloves', grenade:'grenade', bazooka:'bazooka', dagger:'dagger', dracula:'dracula', pirate:'pirate', samurai:'samurai', kurus:'grenade', gambler:'shuriken'}; // weapons that sound off in tryFire (dice and flame are hooked where they actually happen)
 const FLAME_SFX_INTERVAL=0.97; // fire clip is ~1.1s long with 0.12s faded ends -> re-trigger slightly early so consecutive chunks crossfade
 const SFX_MAX_VOICES=16;       // hard cap on simultaneous sounds so a 32-player brawl can't pile up into noise
 let sfxCtx=null, sfxMaster=null, sfxBuffers={}, sfxLoading=false, sfxActive=0, sfxLastPlay={};
@@ -4884,7 +4884,7 @@ function shuffle(arr){ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.
 /* ===== the version of this file =====
    Players with different versions CAN meet and play together: the automatic matchmaking uses the same room names for every version (online-<mode>-<map>-<slot>), and nobody is refused because of a different build.
    The build is only sent along with the join message and the lobby (for information); the corner of the screen shows it. */
-const GAME_BUILD='build 2026-10-18-v350';
+const GAME_BUILD='build 2026-10-18-v351';
 const GAME_VERSION='0.8', GAME_VERSION_NAME='황금을 찾아서';   // 게임 버전 이름: versions.json의 title과 같게 (빌드마다 바꾸지 않음)
 const WEEKLY_EVENTS=[
   {id:'lowg',    name:'저중력 난투', desc:'몸이 둥실둥실, 중력이 약해진 난투', rules:{grav:0.6}},
