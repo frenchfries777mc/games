@@ -220,7 +220,7 @@ lg.onchange=()=>{const v=lg.value,was=auOn();LANG=(v==='au'||v==='sg'||v==='em')
 function applyLang(){
  document.documentElement.lang=LANG;
  document.querySelectorAll('[data-i]').forEach(e=>{e.textContent=t(e.dataset.i);});document.querySelectorAll('[data-ph]').forEach(e=>{e.placeholder=t(e.dataset.ph);});
- document.title=t('title');const m=document.querySelector('meta[name=description]');if(m)m.content=t('desc');
+ document.title='BEACONFALL';const m=document.querySelector('meta[name=description]');if(m)m.content=t('desc');
  lg.value=auOn()?FFLang.script():LANG;lgv.label=VLABEL[LANG]||VLABEL.en;
  labels();guide();render(DATA);renderNotes(NDATA);
 }
