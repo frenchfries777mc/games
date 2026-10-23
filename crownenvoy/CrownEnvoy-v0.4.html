@@ -386,7 +386,7 @@ window.ceReload=function(){try{if(window.FFAuth&&FFAuth.setRoom)FFAuth.setRoom(n
 try{if(sessionStorage.getItem('ce_noIntro')){sessionStorage.removeItem('ce_noIntro');el.style.display='none';go();}}catch(e){}})();</script>
 <div id="app">
  <div id="lobby" class="screen">
-  <canvas id="lobbyBg"></canvas><canvas id="lobbyWar"></canvas><div id="cpTag">© 2026 Frenchfries777 · <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.ko" target="_blank" rel="noopener">CC BY-NC-ND 4.0</a></div><div id="verTag">v0.4 · build 91</div>
+  <canvas id="lobbyBg"></canvas><canvas id="lobbyWar"></canvas><div id="cpTag">© 2026 Frenchfries777 · <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.ko" target="_blank" rel="noopener">CC BY-NC-ND 4.0</a></div><div id="verTag">v0.4 · build 92</div>
   <header class="brand"><h1>Crown Envoy</h1><div class="sub"><i></i>DIPLOMACY · WAR · EMPIRE<i></i></div></header>
   <div id="lobbyRight">
    <div id="lobbyHome" class="modes">
@@ -3844,7 +3844,7 @@ function netJoin(code,name,spec){
     conn.on('open',()=>{conn.send({t:'join',name,spec:!!spec});if(!spec)ffRoom(code);});conn.on('data',m=>Client.onMsg(m));
     conn.on('close',()=>{if(Net.hostConn===conn)Reco.start();});});
 }
-function netSolo(name){Net.mode='solo';Net.pub=false;Host.init(name);Host.seats[1]=mkBot(Host.seats,1);Host.seats[2]=mkBot(Host.seats,2);Net.code='';UI.showLobby();Host.lobbyPush();}
+function netSolo(name){try{localStorage.removeItem('ce_kname');const ki=document.getElementById('kLobby');if(ki)ki.value='';}catch(e){}Net.mode='solo';Net.pub=false;Host.init(name);Host.seats[1]=mkBot(Host.seats,1);Host.seats[2]=mkBot(Host.seats,2);Net.code='';UI.showLobby();Host.lobbyPush();}
 
 /* ================= 지도 렌더링 ================= */
 const $=(s,el=document)=>el.querySelector(s);
