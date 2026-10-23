@@ -2,8 +2,8 @@
 // 화면 흐름, 조작, 멀티(친구 초대, PeerJS), 저장
 import { View } from './render.js';
 import { createGame, step, snapshot, chooseBless, carryOver, INTRO_T, HV_DELAY } from './sim.js';
-import { ROLES, ROLE_IDS, BLESSINGS, CHAPTERS, CH, FOES, MAP, ACHIEVEMENTS, TALK, GEAR_TIERS, GEAR_COST, VERSION, BUILD, roleLevel, LORE, COMBOS, CURSES, DEEP, DEEP_I } from './data.js';
-import { collide as mapCollide, areaAt, floorCell, MW, MH, CS, cw, useChapter, chapterIndex, SOPEN, openSecret, resetSecrets, hiddenCell } from './map.js';
+import { ROLES, ROLE_IDS, BLESSINGS, CHAPTERS, CH, FOES, MAP, ACHIEVEMENTS, TALK, GEAR_TIERS, GEAR_COST, VERSION, BUILD, roleLevel, LORE, COMBOS, CURSES, DEEP, DEEP_I, TALK_X } from './data.js';
+import { collide as mapCollide, areaAt, floorCell, MW, MH, CS, cw, useChapter, chapterIndex, SOPEN, openSecret, resetSecrets, hiddenCell, GOPEN, openGate } from './map.js';
 import * as SFX from './sfx.js';
 import * as MUS from './music.js';
 
@@ -20,7 +20,7 @@ const SAVE = Object.assign({ honor: 0, xp: {}, gear: {}, ach: {}, clears: {}, ro
 SAVE.set = Object.assign({ vol: 70, px: 3, bloom: 1, shake: 1 }, SAVE.set || {});
 // 깬 장 수 (예전 저장은 1장을 깼으면 1)
 if (SAVE.chMax == null) SAVE.chMax = Object.keys(SAVE.clears || {}).length ? 1 : 0;
-SAVE.lore = SAVE.lore || {}; SAVE.combos = SAVE.combos || {}; SAVE.deepBest = SAVE.deepBest | 0;
+SAVE.lore = SAVE.lore || {}; SAVE.puz = SAVE.puz | 0; SAVE.combos = SAVE.combos || {}; SAVE.deepBest = SAVE.deepBest | 0;
 // 다음에 이어서 할 장 (모든 장을 깼으면 1장부터 새 원정)
 const chOpen = () => (SAVE.chMax | 0) >= CHAPTERS.length ? 0 : SAVE.chMax | 0;
 function save() { lsSet('vowkeep.save', SAVE); }
@@ -61,7 +61,7 @@ function bigMsg(a, b, ms = 2400) { $('bigMsg').textContent = a || ''; $('subMsg'
 // 구역에 처음 들어가거나 보스가 나타나면 동료들이 한두 마디씩 해요. 한 줄씩 글자가 찍히고 잠시 뒤 다음 줄로 넘어가요
 const TK = { q: [], cur: null, wait: 0, gen: 0 };
 function talk(key, delay = 0) {
-  const gen = TK.gen, L = (TALK[chapterIndex()] || {})[key]; if (!L) return;
+  const gen = TK.gen, L = (TALK[chapterIndex()] || {})[key] || TALK_X[key]; if (!L) return;
   setTimeout(() => { if (gen !== TK.gen) return; for (const [r, t] of L) TK.q.push({ r, t }); }, delay);
 }
 // 옛 기록 얼굴 칸: 금빛 글자가 새겨진 비석 그림
@@ -289,7 +289,7 @@ function beginGame(prevG) {
   startClient();
 }
 function startClient() {
-  talkReset(); if (!S.G) resetSecrets(); S.overT = 0; S.cleared = false; S.built = false; S.area = -2; S.seenA = {}; S.voted = false; S.lastPh = ''; S.saved = false; S.resultShown = false; S.everDown = false; S.local = null; S.nums = []; S.evq = []; S.wonT = 0; S.lastBless = null;
+  talkReset(); if (!S.G) resetSecrets(); S.overT = 0; S.cleared = false; S.built = false; S.area = -2; S.seenA = {}; S.voted = false; S.lastPh = ''; S.saved = false; S.resultShown = false; S.everDown = false; S.local = null; S.nums = []; S.evq = []; S.wonT = 0; S.lastBless = null; S.solvedP = {};
   if (S.G) S.snap = snapshot(S.G);
   unlock('first');
   setHud(false); show('sIntro'); $('introCh').textContent = CH.title; $('introLine').classList.remove('on'); S.introIdx = -1;
@@ -488,6 +488,18 @@ function onEvent(e) {
       view.shake = Math.max(view.shake, 1.1); SFX.play('parry'); if (S.net === 'solo') S.slowT = Math.max(S.slowT || 0, 0.25); break; }
     case 'combo1': if (e.pid === me) { SAVE.combos[e.c] = 1; save(); if (COMBOS.every(c => SAVE.combos[c.id])) unlock('combo5'); } break;
     case 'over': bigMsg('모두 쓰러졌어요', '끝없는 심연 ' + e.floor + '층에서 원정이 끝났어요', 3400); SFX.play('wipe'); break;
+    case 'mimic': bigMsg('미믹이에요!', '상자가 이빨을 드러냈어요', 2400); TK.q.length = 0; TK.cur = null; talk('mimic'); view.shock(e.x, e.z, 4, 0xff3a2a, 0.4); view.burst(e.x, 1.2, e.z, 0xe8b48a, 14, 6, 0.5, 0.12); view.shake = Math.max(view.shake, 0.8); SFX.play('roar'); break;
+    case 'psolve': bigMsg('수수께끼를 풀었어요', '창살문이 올라가요', 2600); SFX.play('door'); view.burst(e.x, 2, e.z, 0x9a9aa6, 20, 5, 0.8, 0.14); view.flash(e.x, e.z, 0x9af0a8, 120); view.shake = Math.max(view.shake, 0.5);
+      if (e.pk != null && !S.solvedP[e.pk]) { S.solvedP[e.pk] = 1; SAVE.puz = (SAVE.puz | 0) + 1; save(); if (SAVE.puz >= 10) unlock('puzzle10'); } break;
+    case 'plit': SFX.play('fire'); view.rise(e.x, e.z, 0xffd36b, 10, 0.8, 0.7, 6); view.flash(e.x, e.z, 0xffb050, 70); break;
+    case 'pwrong': toast('순서가 틀렸어요. 화로 불이 모두 꺼졌어요.', 2600); SFX.play('warn'); view.burst(e.x, 2, e.z, 0x6a6470, 12, 4, 0.7, 0.14); break;
+    case 'prot': SFX.play('clang'); view.burst(e.x, 0.6, e.z, 0x9a9aa6, 6, 3, 0.4, 0.1); break;
+    case 'phelp': toast('봇 동료가 수수께끼를 도와줘요.', 2600); break;
+    case 'torch': if (e.id === me) toast(e.on ? '횃불을 들었어요. 들고 있는 동안은 기술을 못 써요.' : '횃불을 내려놓았어요.', 2400); SFX.play('fire'); break;
+    case 'esc': TK.q.length = 0; TK.cur = null; talk('esc'); bigMsg('성이 무너지기 시작해요!', '초록빛 출구까지 모두 달려요', 3200); SFX.play('slam'); view.shake = Math.max(view.shake, 1.4); flashScreen(); break;
+    case 'rock': view.shatter(e.x, e.z, [0x6a625a, 0x58504a, 0x8a8076], 12, false); view.ring(e.x, e.z, 2, 0x8a7a6a, 0.4); view.burst(e.x, 0.4, e.z, 0x8a7a6a, 10, 5, 0.6, 0.14); if (Math.random() < 0.5) SFX.play('slam'); break;
+    case 'escfail': bigMsg('무너진 돌에 길이 막혔어요', '보스 방에서 다시 달려요', 3000); SFX.play('wipe'); break;
+    case 'escaped': bigMsg('무너지는 곳을 빠져나왔어요', '', 2400); SFX.play('clear'); break;
     case 'altar': bigMsg('제단의 축복', '축복을 하나 골라요', 2200); SFX.play('clear'); view.column(e.x, e.z, 0xffe08a, 1.2); break;
     case 'checkpoint': bigMsg('모닥불에 불을 붙였어요', '모두 쓰러지면 여기서 다시 시작해요', 3000); SFX.play('door'); break;
     case 'wake': if (!S.wakeT || performance.now() - S.wakeT > 1500) { S.wakeT = performance.now(); SFX.play('spawn'); } view.burst(e.x, 0.3, e.z, 0x6a5a7a, 6, 3, 0.6, 0.12); break;
@@ -524,11 +536,13 @@ function syncScene() {
   // 비밀 방: 열린 것은 지도와 화면에서도 열어요 (게스트는 여기서 길도 열어요)
   if (sn.w.sc) sn.w.sc.forEach((o, k) => { if (!o) return; if (!SOPEN[k]) { openSecret(k); mini.dirty = true; } if (!view.secOn[k]) view.openSecret(k, sn.w.lr); });
   if (sn.w.lr) view.loreRead(sn.w.lr);
+  // 수수께끼 방 창살문: 게스트도 열린 문은 지나갈 수 있게
+  if (sn.w.pz) sn.w.pz.forEach((q, k) => { if (q.d && !GOPEN[k]) { openGate(k); mini.dirty = true; } });
   // 새 구역에 처음 들어가면 이름을 보여 줘요
   const me = myP();
   if (me && sn.ph !== 'intro') {
     const pos = S.local || me, a = areaAt(pos.x, pos.z);
-    if (a >= 0 && a !== S.area) { S.area = a; if (!S.seenA[a]) { S.seenA[a] = 1; const A = MAP.areas[a]; if (!A.boss) { bigMsg(A.name, A.line, 3200); talk(a, 2600); } } }
+    if (a >= 0 && a !== S.area) { S.area = a; if (!S.seenA[a]) { S.seenA[a] = 1; const A = MAP.areas[a]; if (!A.boss && !sn.w.es) { bigMsg(A.name, A.line, 3200); talk(A.puz || (A.dark ? 'dark' : A.t), 2600); } } }
     mini.reveal(pos.x, pos.z);
   }
 }
@@ -572,11 +586,25 @@ function paintHud() {
     else if (MAP.chests.some(([x, y], k) => !sn.w.ch[k] && Math.hypot(cw(x) - pos.x, cw(y) - pos.z) < 2.6)) pr = (TOUCH ? 'F 버튼' : 'F') + '를 꾹 눌러 상자 열기';
     else if (MAP.lores.some(([x, y, q], k) => sn.w.sc[q] && !sn.w.lr[k] && Math.hypot(cw(x) - pos.x, cw(y) - pos.z) < 2.6)) pr = (TOUCH ? 'F 버튼' : 'F') + '를 꾹 눌러 옛 기록 읽기';
     else if (MAP.fires.some(([x, y], k) => !sn.w.fi[k] && Math.hypot(cw(x) - pos.x, cw(y) - pos.z) < 3)) pr = (TOUCH ? 'F 버튼' : 'F') + '를 꾹 눌러 모닥불 피우기';
+    else if (MAP.darks.some((D, k) => Math.hypot(cw(D.stand[0]) - pos.x, cw(D.stand[1]) - pos.z) < 2.6 && (me.tc === k + 1 || sn.pl.filter(q => q.tc === k + 1).length < 2))) pr = (TOUCH ? 'F 버튼' : 'F') + '를 눌러 횃불 ' + (me.tc ? '내려놓기' : '들기 (드는 동안 기술 못 씀)');
+    else if (puzPrompt(sn, pos)) pr = puzPrompt(sn, pos);
     else if (MAP.altars.some(([x, y], k) => !sn.w.al[k] && Math.hypot(cw(x) - pos.x, cw(y) - pos.z) < 2.8)) pr = (TOUCH ? 'F 버튼' : 'F') + '를 꾹 눌러 제단에서 축복 받기';
     else if (MAP.fires.some(([x, y], k) => sn.w.fi[k] && Math.hypot(cw(x) - pos.x, cw(y) - pos.z) < 4) && me.hp < me.mx) pr = '모닥불 곁에서 체력이 차올라요';
     else if (sn.bless && Object.values(sn.bless).some(Boolean) && !(sn.bless[S.me])) pr = '동료가 축복을 고르는 중이에요';
   }
-  const pe = $('prompt'); pe.textContent = pr; pe.style.display = pr ? 'block' : 'none';
+  const pe = $('prompt'); pe.textContent = pr; pe.style.display = pr ? 'block' : 'none'; pe.classList.toggle('up', $('talk').classList.contains('on'));
+}
+// 수수께끼 방 안내
+function puzPrompt(sn, pos) {
+  const a = areaAt(pos.x, pos.z), F = TOUCH ? 'F 버튼' : 'F';
+  for (let k = 0; k < MAP.puzzles.length; k++) {
+    const q = MAP.puzzles[k], z = sn.w.pz && sn.w.pz[k]; if (!z || z.d || q.area !== a) continue;
+    const near = q.items.some(([x, y]) => Math.hypot(cw(x) - pos.x, cw(y) - pos.z) < 2.4);
+    if (q.k === 'plates') return '모두 발판 위에 서요 · ' + z.o.split('').filter(c => c === '1').length + '/' + Math.min(4, sn.pl.filter(p => !p.dn && !p.dd).length);
+    if (q.k === 'braziers') return near ? F + '를 눌러 화로에 불 붙이기 (공격이나 화살로도 돼요)' : '비석의 색 순서대로 화로에 불을 붙여요 · ' + z.l.split('').filter(c => c === '1').length + '/4';
+    return near ? F + '를 눌러 석상 돌리기' : '석상 넷이 모두 가운데 문양을 보게 돌려요';
+  }
+  return '';
 }
 /* 작은 지도: 가 본 곳만 보여요 */
 const WATERC = (i, j) => MAP.water.some(([x, y, w, h]) => i >= x && i < x + w && j >= y && j < y + h);
@@ -594,11 +622,13 @@ const mini = {
   },
   draw(sn) {
     if (this.dirty) this.paint();
-    const sc = innerWidth < 700 ? 1.4 : 2, w = MW * sc, h = MH * sc, x0 = innerWidth - w - 14, y0 = 64;
+    const sc = Math.min(innerWidth < 700 ? 1.4 : 2, (innerWidth < 700 ? 140 : 200) / Math.max(MW, MH)), w = MW * sc, h = MH * sc, x0 = innerWidth - w - 14, y0 = 64;
     oc.globalAlpha = 0.82; oc.fillStyle = 'rgba(10,8,14,.75)'; oc.fillRect(x0 - 4, y0 - 4, w + 8, h + 8); oc.drawImage(this.c, x0, y0, w, h); oc.globalAlpha = 1;
     const P = (wx, wz) => [x0 + wx / CS * sc, y0 + wz / CS * sc];
     MAP.fires.forEach(([fx, fy], k) => { if (!this.seen[fy * MW + fx | 0]) return; const [a, b] = P(cw(fx), cw(fy)); oc.fillStyle = sn.w.fi[k] ? '#ffb040' : '#6a5a4a'; oc.fillRect(a - 2.5, b - 2.5, 5, 5); });
     MAP.altars.forEach(([ax, ay], k) => { if (!this.seen[(ay | 0) * MW + (ax | 0)] || sn.w.al[k]) return; const [a, b] = P(cw(ax), cw(ay)); oc.fillStyle = '#ffe08a'; oc.beginPath(); oc.arc(a, b, 2.5, 0, 7); oc.fill(); });
+    MAP.puzzles.forEach((q, k) => { const [gx, gy, gw, gh] = q.gate; if (!this.seen[gy * MW + gx] || (sn.w.pz && sn.w.pz[k] && sn.w.pz[k].d)) return; const [a, b] = P(gx * CS, gy * CS); oc.fillStyle = '#8a8494'; oc.fillRect(a, b, gw * CS * sc / CS, gh * CS * sc / CS); });
+    if (sn.w.es && MAP.exit) { const [a, b] = P(cw(MAP.exit[0]), cw(MAP.exit[1])); oc.fillStyle = (performance.now() / 300 | 0) % 2 ? '#9af0a8' : '#4ac06a'; oc.beginPath(); oc.arc(a, b, 5, 0, 7); oc.fill(); }
     for (const p of sn.pl) { if (p.dd) continue; const q = p.id === S.me && S.local ? S.local : p, [a, b] = P(q.x, q.z); oc.fillStyle = ROLES[p.role].color; oc.beginPath(); oc.arc(a, b, p.id === S.me ? 3.5 : 2.5, 0, 7); oc.fill(); if (p.id === S.me) { oc.strokeStyle = '#fff'; oc.lineWidth = 1.2; oc.stroke(); } }
   }
 };
@@ -635,6 +665,14 @@ function drawOverlay(dt) {
   { const p = sn.pl.find(q => q.id === S.me), E = p && view.ents.get('p' + p.id);
     if (E && !p.dn) { const c = view.project(E.x, 4.1, E.z); oc.lineWidth = 4; oc.strokeStyle = '#140f18';
       if (p.fc) { oc.font = 'bold 13px system-ui'; oc.strokeText('집중 · 피해 +50%', c.x, c.y - 18); oc.fillStyle = '#9ad0ff'; oc.fillText('집중 · 피해 +50%', c.x, c.y - 18); } } }
+  // 무너지는 성: 남은 시간과 출구 방향 화살표
+  if (sn.w.es && MAP.exit) {
+    const left = Math.max(0, Math.ceil(sn.w.es[0])), urg = left <= 10; oc.font = 'bold ' + (urg ? 34 : 28) + 'px system-ui'; oc.lineWidth = 6; oc.strokeStyle = '#140f18';
+    const tx = '출구까지 ' + left + '초'; oc.strokeText(tx, innerWidth / 2, 96); oc.fillStyle = urg && (performance.now() / 250 | 0) % 2 ? '#ff5a4a' : '#ffd36b'; oc.fillText(tx, innerWidth / 2, 96);
+    const p = sn.pl.find(q => q.id === S.me), E = p && view.ents.get('p' + p.id);
+    if (E) { const ex = cw(MAP.exit[0]), ez = cw(MAP.exit[1]), d = Math.hypot(ex - E.x, ez - E.z); if (d > 6) { const c = view.project(E.x, 1, E.z), f = view.project(E.x + (ex - E.x) / d * 4, 1, E.z + (ez - E.z) / d * 4), a = Math.atan2(f.y - c.y, f.x - c.x), r = 62;
+      oc.save(); oc.translate(c.x + Math.cos(a) * r, c.y + Math.sin(a) * r); oc.rotate(a); oc.fillStyle = '#9af0a8'; oc.strokeStyle = '#140f18'; oc.lineWidth = 3; oc.beginPath(); oc.moveTo(14, 0); oc.lineTo(-8, -10); oc.lineTo(-3, 0); oc.lineTo(-8, 10); oc.closePath(); oc.stroke(); oc.fill(); oc.restore(); } }
+  }
   // 피해 숫자
   for (const n of S.nums) { n.t += dt; const s = view.project(n.x, n.y + n.t * 2.2, n.z); oc.globalAlpha = Math.max(0, 1 - n.t / 0.9); oc.font = 'bold ' + Math.round(18 * n.sc) + 'px system-ui'; oc.lineWidth = 4; oc.strokeStyle = '#140f18'; oc.strokeText(n.v, s.x, s.y); oc.fillStyle = n.col; oc.fillText(n.v, s.x, s.y); }
   oc.globalAlpha = 1; S.nums = S.nums.filter(n => n.t < 0.9);
@@ -756,4 +794,4 @@ if (DEV && qs.get('test')) {
   if (ri) { const A = MAP.areas[ri], [x, y, w, h] = A.r[0]; const c = A.boss ? { x: cw(MAP.boss[0]), z: cw(MAP.boss[1] + 6) } : { x: (x + w / 2) * CS, z: (y + h - 1.5) * CS }; S.G.players.forEach((p, i) => { p.x = c.x + (i - 1.5) * 1.6; p.z = c.z; mapCollide(p, 0.6); }); }
   window.__S = S;
 }
-if (DEV && qs.get('dbg')) window.__S = S;
+if (DEV && qs.get("dbg")) { window.__S = S; window.__view = view; }
