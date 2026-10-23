@@ -163,7 +163,7 @@ frame();
 function go(){if(done)return;done=1;clearTimeout(T1);fin();el.classList.add('out');setTimeout(function(){run=false;el.remove();},800);}
 function arm(){clearTimeout(T1);T1=setTimeout(go,Math.max(0,8900-(Date.now()-tt)));}arm();
 /* 인트로 곡(스틱세움 인트로 곡, 5초): 인트로와 함께 시작하고, 끝나면 게임 음악이 이어진다. 컴퓨터 브라우저가 소리를 막으면 인트로가 멈춘 채 화면을 누를 때까지 기다린다 */
-function sting(){if(window.__introSongDone)return;try{var vol=0.4;try{var v=(function(){var s=JSON.parse(localStorage.getItem('islandtrade.set'));return s&&typeof s.vol==='number'?s.vol:.6;})();if(v>=0&&v<=1)vol=v;}catch(e){}try{if((function(){var s=JSON.parse(localStorage.getItem('islandtrade.set'));return !!s&&s.mus===false;})()){window.__introSongDone=1;return;}}catch(e){}var a=new Audio('isleport-intro.mp3'),alt=0;a.volume=Math.min(1,vol*0.9);a.onerror=function(){if(!alt){alt=1;a.src='https://frenchfries777mc.github.io/games/isleport/isleport-intro.mp3';a.load();var q=a.play();if(q&&q.catch)q.catch(function(){});}else fin();};a.addEventListener('ended',fin);a.addEventListener('playing',function(){setTimeout(fin,5300);},{once:true});function hold(){if(held||done)return;held=1;clearTimeout(T1);el.classList.add('hold');var h=document.createElement('div');h.id='introHold';h.textContent='화면을 누르면 시작해요';el.appendChild(h);var go2=function(){if(!held)return;held=0;['pointerdown','keydown','touchend','click'].forEach(function(ev){removeEventListener(ev,go2,true);});h.remove();el.classList.remove('hold');t0=performance.now();tt=Date.now();arm();var r=a.play();if(r&&r.catch)r.catch(function(){});};['pointerdown','keydown','touchend','click'].forEach(function(ev){addEventListener(ev,go2,true);});}var p=a.play();if(p&&p.catch)p.catch(function(e){if(e&&e.name==='NotAllowedError')hold();});}catch(e){window.__introSongDone=1;}}
+function sting(){if(window.__introSongDone)return;try{var vol=0.4;try{var v=(function(){var s=JSON.parse(localStorage.getItem('islandtrade.set'));return s&&typeof s.vol==='number'?s.vol:.6;})();if(v>=0&&v<=1)vol=v;}catch(e){}try{if((function(){var s=JSON.parse(localStorage.getItem('islandtrade.set'));return !!s&&s.mus===false;})()){window.__introSongDone=1;return;}}catch(e){}var a=new Audio('isleport-intro.mp3'),alt=0;a.volume=Math.min(1,vol*0.9);a.onerror=function(){if(!alt){alt=1;a.src='https://frenchfries777mc.github.io/games/isleport/isleport-intro.mp3';a.load();var q=a.play();if(q&&q.catch)q.catch(function(){});}else fin();};a.addEventListener('ended',fin);a.addEventListener('playing',function(){setTimeout(fin,5300);},{once:true});function hold(){if(held||done)return;held=1;clearTimeout(T1);el.classList.add('hold');var h=document.createElement('div');h.id='introHold';h.textContent='화면을 누르면 시작해요';el.appendChild(h);var EV=['keydown','touchend','click'];var rel=function(){if(!held)return;held=0;EV.forEach(function(ev){removeEventListener(ev,go2,true);});h.remove();el.classList.remove('hold');t0=performance.now();tt=Date.now();arm();};var go2=function(){if(!held)return;var r=a.play();if(r&&r.then)r.then(rel,function(){});else rel();};EV.forEach(function(ev){addEventListener(ev,go2,true);});}var p=a.play();if(p&&p.catch)p.catch(function(e){if(e&&e.name==='NotAllowedError')hold();});}catch(e){window.__introSongDone=1;}}
 sting();})();</script>
 <div id="app">
   <div id="main"><div id="stage"><canvas id="cv"></canvas><div id="hud"></div><div id="tut" hidden></div><div id="pop" hidden></div><div id="joy" hidden><i></i></div><button id="actBtn" class="pb big gold" data-act="act" hidden></button></div></div>
@@ -476,7 +476,7 @@ const TUT=[
  [P('다 자라면 ▼ 표시의 밭을 눌러 수확해요','When it is grown, tap the field with the ▼ to harvest'),s=>s.stats.harvest>=1],
  [P('마을 장터에서 수확한 것을 팔아요','Sell your harvest at the town market'),s=>(s.stats.shop||0)>=1],
  [P('항구에서 배에 짐을 싣고 보내요','Load a ship at the harbor and send it off'),s=>s.stats.sailed>=1]];
-const OUTMAX=12,BUILD=55;
+const OUTMAX=12,BUILD=56;
 const hasB=(s,b)=>s.slots.some(x=>x&&x.b===b);
 const rankOf=e=>{let r=0;RANKS.forEach((x,i)=>{if(e>=x[0])r=i;});return r;};
 /* 업적: id, 이름, 설명, 조건 */
@@ -598,6 +598,9 @@ A('nw1m',P('백만장자','Millionaire'),P('재산 1,000,000 모으기','Reach a
 const CROPK=Object.keys(CROPS),SPEC=['goldbarley','pomegranate','saffron','cloudcotton','seaweed','dragonfruit'],CROPK17=CROPK.filter(c=>!SPEC.includes(c));
 const ACHN={};ACH.forEach(a=>ACHN[a.id]=a);
 const NOTES=[
+ {date:'2026-10-23',build:'v0.2 build 56',title:P('인트로 곡 소리 안정화','Intro song fix'),items:[
+  P('터치 기기에서도 화면을 눌러 시작하면 인트로 곡이 나오도록 수정','The intro song now also plays on touch devices after tapping the screen to start')
+ ]},
  {date:'2026-10-23',build:'v0.2 build 55',title:P('인트로 곡','Intro song'),items:[
   P('인트로에 곡이 나오고 게임 음악은 그 뒤에 이어져요. 소리가 막힌 브라우저에서는 화면을 누르면 인트로가 시작돼요','The intro now has a song, and the game music follows it. If the browser blocks sound, tap the screen to start the intro')
  ]},

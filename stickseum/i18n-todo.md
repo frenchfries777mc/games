@@ -139,3 +139,5 @@ patchnotes.json | v362 items[0] | 소리가 막힌 브라우저에서는 화면�
 patchnotes.json | v362 items[1] | 인트로 도중 로비 곡으로 전환 | build 362 | 2026-10-20
 patchnotes.json | v363 title | 이모지어 추가 | build 363 | 2026-10-23
 patchnotes.json | v363 items[0] | 가상 언어 이모지어 추가 (글자를 이모지로 바꿔 보여 줌, 마우스를 올리면 원문) | build 363 | 2026-10-23
+patchnotes.json | v364 title | 인트로 곡 소리 안정화 | build 364 | 2026-10-23
+patchnotes.json | v364 items[0] | 터치 기기에서도 화면을 눌러 시작하면 인트로 곡이 나오도록 수정 | build 364 | 2026-10-23

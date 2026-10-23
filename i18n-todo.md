@@ -297,3 +297,9 @@ crownenvoy/CrownEnvoy-v0.4.html | 전신망 (정치 탭 카드) | "📡 전신�
 ## Vowkeep b35 (2026-10-23)
 - prototypes/vowkeep/js/main.js | '취소', '초대함 · N분 남음', '못 취소했어요', '취소됐거나 30분이 지나 만료된 초대예요.' | 한국어만 있음 | Vowkeep b35 | 2026-10-23
 - patchnotes.json | "Vowkeep 초대 취소" 3줄 | Vowkeep b35 | 2026-10-23
+
+## 인트로 곡 소리 안정화 (2026-10-23)
+- patchnotes | "인트로 곡 소리 안정화" 제목 1줄·항목 1줄 | Crown Envoy b96 | 2026-10-23
+- patchnotes | "인트로 곡 소리 안정화" 제목 1줄·항목 1줄 | Beaconfall b98 | 2026-10-23
+- patchnotes | "인트로 곡 소리 안정화" 제목 1줄·항목 1줄 | Isleport b56 | 2026-10-23
+- patchnotes | "인트로 곡 소리 안정화" 제목 1줄·항목 1줄 | Vowkeep 루트 patchnotes.json | 2026-10-23

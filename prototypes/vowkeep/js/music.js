@@ -10,6 +10,10 @@ function mk(k) {
 }
 export function setVol(v) { vol = v; }
 export function kick() { tryAt = 0; }
+// iPad·폰: 곡마다 처음 한 번은 화면을 누른 순간에 틀어야 해서, 누른 김에 세 곡을 소리 없이 틀었다 멈춰 둬요
+export function unlock() {
+  try { for (const k of Object.keys(FILES)) { const t = T[k] || mk(k), el = t.el, v = el.volume; el.volume = 0; const q = el.play(); if (q && q.then) q.then(() => { if (t.lvl === 0) el.pause(); }).catch(() => { }); } } catch (e) { }
+}
 // want: 'lobby' | 'dungeon' | 'boss' | null. 곡이 바뀌면 1초쯤 걸쳐 서로 바꿔 틀어요
 export function tick(want, dt, now) {
   try {
@@ -39,9 +43,10 @@ export function sting(begin, setHold) {
     const p = el.play();
     const blocked = e => {
       if (!(e && e.name === 'NotAllowedError')) { start(); return; }
-      setHold(true);
-      const evs = ['pointerdown', 'keydown', 'touchend', 'click'];
-      const go = () => { evs.forEach(ev => removeEventListener(ev, go, true)); setHold(false); start(); const r = el.play(); if (r && r.catch) r.catch(() => { }); };
+      setHold(true); let held = true;
+      const evs = ['keydown', 'touchend', 'click'];
+      const rel = () => { if (!held) return; held = false; evs.forEach(ev => removeEventListener(ev, go, true)); setHold(false); start(); };
+      const go = () => { if (!held) return; unlock(); const r = el.play(); if (r && r.then) r.then(rel, () => { }); else rel(); };
       evs.forEach(ev => addEventListener(ev, go, true));
     };
     if (p && p.then) p.then(start, blocked); else start();
