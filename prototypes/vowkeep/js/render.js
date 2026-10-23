@@ -278,7 +278,7 @@ export class View {
     const w = Math.ceil(innerWidth * dpr / P) * P, h = Math.ceil(innerHeight * dpr / P) * P; this.W = w; this.H = h;
     this.r.setPixelRatio(1); this.r.setSize(w, h, false);
     this.cw = w / dpr; this.ch = h / dpr; this.r.domElement.style.width = (w / dpr) + 'px'; this.r.domElement.style.height = (h / dpr) + 'px';
-    const asp = w / h, vs = this.mode === 'lobby' ? 7.6 : this.zoom * (asp < 1 ? 1.35 : 1);
+    const asp = w / h, vs = this.mode === 'lobby' ? 7.6 : this.mode === 'intro' ? 6.4 : this.zoom * (asp < 1 ? 1.35 : 1);
     this.cam.left = -vs * asp; this.cam.right = vs * asp; this.cam.top = vs; this.cam.bottom = -vs; this.cam.updateProjectionMatrix();
     if (this.comp) this.comp.setSize(w, h);
     if (this.pp) this.pp.setPixelSize(P);
@@ -309,7 +309,7 @@ export class View {
 
   /* ----- 로비: 밤의 성 안뜰 모닥불 ----- */
   buildLobby() {
-    this.mode = 'lobby'; this.pool = null; this.trapM = null; const s = this.newScene(0x0e1024, 0x12142a); this.flick = []; this.lights(s);
+    this.mode = 'lobby'; this.introHeroes = null; this.pool = null; this.trapM = null; const s = this.newScene(0x0e1024, 0x12142a); this.flick = []; this.lights(s);
     const cob = [0x4a4550, 0x534d5a, 0x5c5664, 0x45404c];
     instBoxes(s, (add) => { for (let x = -24; x <= 24; x += 1.4) for (let z = -12; z <= 24; z += 1.4) { const h = 0.25 + R() * 0.1; add(x + (R() - .5) * 0.15, h / 2 - 0.25, z + (R() - .5) * 0.15, 1.36, h, 1.36, cob[R() * 4 | 0]); } });
     const brick = [0x3e3846, 0x463f50, 0x4e4658, 0x38323f];
@@ -337,6 +337,51 @@ export class View {
     this.embers = []; for (let i = 0; i < 18; i++) { const e = box(0.14, 0.14, 0.14, M(0xffb050, { e: 0xff8a30, ei: 5 }), 0, 0, 0, s); e.castShadow = false; this.embers.push({ m: e, t: R() * 3 }); }
     this.resize();
     this.cam.position.set(-1.5, 13, 30); this.cam.lookAt(-1.5, 3.0, 1.5);
+  }
+
+  /* ----- 처음 인트로: 횃불 켜진 던전 복도를 네 영웅이 걸어 나와요 ----- */
+  buildIntro() {
+    this.mode = 'intro'; this.pool = null; this.trapM = null; this.lobbyHeroes = null; this.embers = []; const s = this.newScene(0x07060c, 0x0a0812); s.fog.near = 30; s.fog.far = 70; this.flick = []; this.lights(s, 0.7);
+    const T = THEMES.dungeon, stone = [0x3a3640, 0x423d48, 0x36323c, 0x4a4450];
+    instBoxes(s, add => { for (let x = -9; x <= 9; x += 1.5) for (let z = -44; z <= 16; z += 1.5) { const h = 0.3 + R() * 0.08; add(x + (R() - .5) * 0.1, h / 2 - 0.3, z + (R() - .5) * 0.1, 1.44, h, 1.44, stone[R() * 4 | 0]); } });
+    const brick = [0x3e3846, 0x463f50, 0x4e4658, 0x38323f];
+    instBoxes(s, add => {
+      for (const sx of [-1, 1]) for (let y = 0; y < 8; y++) for (let z = -44; z <= 14; z += 2.2) add(sx * 10, y + 0.45, z + (y % 2 ? 1.1 : 0), 1.6, 0.95, 2.1, brick[R() * 4 | 0]);
+      for (let y = 0; y < 10; y++) for (let x = -10; x <= 10; x += 2.2) { if (Math.abs(x) < 3 && y < 6) continue; add(x + (y % 2 ? 1.1 : 0), y + 0.45, -44, 2.1, 0.95, 1.6, brick[R() * 4 | 0]); }
+    });
+    // 안쪽 문: 붉게 빛나는 입구
+    box(5.4, 6, 0.3, M(0x2a0c0a, { e: 0x601808, ei: 1.4 }), 0, 3, -44.2, s);
+    const gl = new THREE.PointLight(0xff5a2a, 70, 30, 1.4); gl.position.set(0, 3, -41); s.add(gl); this.flick.push({ L: gl, b: 70, ph: 2 });
+    // 기둥, 횃불, 깃발
+    for (let z = -38; z <= 10; z += 8) for (const sx of [-1, 1]) {
+      box(1.6, 0.5, 1.6, M(0x5c5468), sx * 6.5, 0.25, z, s); cyl(0.6, 0.7, 7, 8, M(0x4e4858), sx * 6.5, 3.8, z, s); box(1.7, 0.5, 1.7, M(0x5c5468), sx * 6.5, 7.4, z, s);
+      box(0.3, 1, 0.3, M(0x4a3020), sx * 9.1, 4, z + 4, s); this.flame(s, sx * 9.1, 5, z + 4, 1);
+      if ((z / 8 | 0) % 2 === 0) this.banner(s, sx * 9.1, z, false, T.banner || 0x7a1f22);
+    }
+    for (let n = 0; n < 14; n++) { const r = mesh(geo('rock', () => new THREE.DodecahedronGeometry(0.8)), M(brick[n % 4]), (R() < 0.5 ? -1 : 1) * (7.6 + R() * 1.6), 0.1, -40 + R() * 54, s); r.scale.setScalar(0.25 + R() * 0.3); r.rotation.y = R() * 3; }
+    // 떠다니는 먼지
+    for (let i = 0; i < 26; i++) { const e = box(0.1, 0.1, 0.1, M(0xffd090, { e: 0xffb060, ei: 3 }), 0, 0, 0, s); e.castShadow = false; this.embers.push({ m: e, t: R() * 8, x: (R() - .5) * 16, z: -30 + R() * 40, h: 1 + R() * 5, ph: R() * 9, intro: true }); }
+    // 네 영웅: 기사가 앞, 나머지가 양옆과 뒤
+    const row = [['archer', -3.3, -1.2], ['knight', -1.1, 0], ['priest', 1.1, -0.4], ['squire', 3.3, -1.4]];
+    const hl = new THREE.PointLight(0xffc890, 22, 14, 1.6); s.add(hl); this.introL = hl;
+    this.introHeroes = row.map(([r, x, z]) => { const h = makeHero(r); h.position.set(x, 0, z - 12); s.add(h); return { m: h, x, z, aL: h.userData.armL.rotation.x, aR: h.userData.armR.rotation.x }; });
+    this.introT = 0; this.resize(); this.introCam();
+  }
+  introCam() {
+    const u = Math.min(1, this.introT / 6.4), k = u * u * (3 - 2 * u), hz = -12 + Math.min(this.introT, 5.4) * 2.1;
+    this.cam.position.set(-2.2 + k * 3.4, 8.5 - k * 1.5, hz + 18); this.cam.lookAt(-0.4 + k * 0.6, 3.6, hz - 3);
+    if (this.introL) this.introL.position.set(0, 4, hz + 3);
+  }
+  tickIntro(dt, t) {
+    this.introT += dt; const wt = Math.min(this.introT, 5.4), stop = this.introT > 5.4;
+    (this.introHeroes || []).forEach((H, i) => {
+      const u = H.m.userData, ph = this.introT * 9 + i * 0.7, sw = stop ? 0 : Math.sin(ph) * 0.8;
+      H.m.position.set(H.x, 0, H.z - 12 + wt * 2.1); u.legL.rotation.x += (sw - u.legL.rotation.x) * Math.min(1, dt * 12); u.legR.rotation.x = -u.legL.rotation.x;
+      u.armL.rotation.x = H.aL - u.legL.rotation.x * 0.4; u.armR.rotation.x = H.aR + u.legL.rotation.x * 0.4;
+      u.body.position.y = stop ? Math.sin(t * 1.5 + i) * 0.03 : Math.abs(Math.sin(ph)) * 0.08; u.head.rotation.y = stop ? Math.sin(t * 0.8 + i * 2) * 0.25 : 0;
+    });
+    for (const e of this.embers) { e.t += dt; e.m.position.set(e.x + Math.sin(e.t * 0.4 + e.ph) * 2, e.h + Math.sin(e.t * 0.9 + e.ph) * 0.6, e.z + Math.cos(e.t * 0.3 + e.ph) * 2); e.m.material.emissiveIntensity = 1.5 + 3 * Math.max(0, Math.sin(e.t * 1.7 + e.ph)); }
+    this.introCam();
   }
 
   /* ----- 1장 지하 지도 (한 번만 만들어요) ----- */
@@ -851,7 +896,8 @@ export class View {
     if (this.fireG) { this.fireG.children.forEach((c, i) => { c.scale.y = 0.85 + Math.sin(t * 4 + i * 1.7) * 0.12; }); }
     // 금 간 벽: 가끔 부스러기가 떨어져요
     if (this.mode === 'map') for (const cg of this.crackG || []) { const d = cg.userData.dust; if (!cg.visible || !d || (d.t -= dt) > 0) continue; d.t = 0.9 + Math.random() * 0.8; this.burst(d.x, 2.6, d.z + (Math.random() - .5) * 2, 0x9a8e84, 3, 1.2, 0.7, 0.1); }
-    for (const e of this.embers || []) {
+    if (this.mode === 'intro') this.tickIntro(dt, t);
+    else for (const e of this.embers || []) {
       e.t += dt; if (this.mode === 'lobby') { const u = (e.t % 3) / 3; e.m.position.set(Math.sin(e.t * 2 + e.m.id) * 1.2 * u, 1.5 + u * 7, 2 + Math.cos(e.t * 1.3 + e.m.id) * 1.2 * u); }
       else if (e.fly) { e.m.position.set(this.camT.x + e.x + Math.sin(e.t * 0.4 + e.ph) * 2.5, e.h + Math.sin(e.t * 0.9 + e.ph) * 0.6, this.camT.z + e.z + Math.cos(e.t * 0.3 + e.ph) * 2); e.m.material.emissiveIntensity = 2 + 5 * Math.max(0, Math.sin(e.t * 1.7 + e.ph)); }
       else { const u = (e.t % 6) / 6; e.m.position.set(this.camT.x + e.x + Math.sin(e.t) * 0.5, u * 8, this.camT.z + e.z); }
