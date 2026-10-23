@@ -4918,7 +4918,7 @@ function shuffle(arr){ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.
 /* ===== the version of this file =====
    Players with different versions CAN meet and play together: the automatic matchmaking uses the same room names for every version (online-<mode>-<map>-<slot>), and nobody is refused because of a different build.
    The build is only sent along with the join message and the lobby (for information); the corner of the screen shows it. */
-const GAME_BUILD='build 2026-10-18-v355';
+const GAME_BUILD='build 2026-10-18-v356';
 const GAME_VERSION='0.8', GAME_VERSION_NAME='황금을 찾아서';   // 게임 버전 이름: versions.json의 title과 같게 (빌드마다 바꾸지 않음)
 const WEEKLY_EVENTS=[
   {id:'lowg',    name:'저중력 난투', desc:'몸이 둥실둥실, 중력이 약해진 난투', rules:{grav:0.6}},
@@ -11785,7 +11785,7 @@ const BOT_PERSONALITIES=['coward','taunter','sniper','revenge','collector','riva
 const PERSONALITY_WEAPONS={sniper:['bow','rifle','pistol','bazooka','wizard'], taunter:['sword','gloves','dagger','lightsaber','horemheb','bat','dracula']};
 // modes the bots know how to play. (hide & seek is not here: a bot seeker/hider needs its own logic, so those rooms keep waiting for people)
 // hot potato, parkour, survival and the flag mode each have their own brain below (botBrain*); the rest use the generic fighter
-const BOT_MODES={ffa:1,br:1,dashbr:1,duo:1,team:1,duel:1,conquest:1,zombie:1,hotpotato:1,parkour:1,survival:1,ctf:1,gdm:1,raid:1,tournament:1,vip:1,koth:1,relay:1,freeze:1,rush:1,roulette:1,oneshot:1,turf:1,bounty:1,lowg:1};
+const BOT_MODES={ffa:1,br:1,dashbr:1,duo:1,team:1,duel:1,conquest:1,zombie:1,hotpotato:1,parkour:1,survival:1,ctf:1,gold:1,raid:1,tournament:1,vip:1,koth:1,relay:1,freeze:1,rush:1,roulette:1,oneshot:1,turf:1,bounty:1,lowg:1};
 let botSeq=0, lastHumanJoinAt=0, botFillAt=null, botFilling=false, botNextAt=0; // botFillAt: when the first bot will join (announced to everyone); botFilling: bots are walking in; botNextAt: when the next one does
 function botSupported(modeId){ return !!BOT_MODES[modeId]; }
 function humanPlayers(){ return Object.values(players).filter(p=>!p.isBot); }
