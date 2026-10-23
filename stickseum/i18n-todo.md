@@ -152,3 +152,5 @@ patchnotes.json | v366 items[2] | 인형술사 스킬 바느질 추가: 실이 �
 patchnotes.json | v366 items[3] | 인형술사 스킬 바늘 빼기 추가: 맞힌 뒤 바로 사용, 30 피해를 주고 실이 끊기며 이때부터 쿨타임 | build 366 | 2026-10-20
 patchnotes.json | v366 items[4] | 인형술사 궁극기 미리보기를 바늘 사거리에 맞게 수정 | build 366 | 2026-10-20
 patchnotes.json | v366 items[5] | 밸런스 표에서 인형술사 다시 측정 | build 366 | 2026-10-20
+patchnotes.json | v367 title | 공용 최적화 설정 연결 | build 367 | 2026-10-20
+patchnotes.json | v367 items[0] | 효과 품질과 FPS 제한이 허브 공용 최적화 설정과 같은 값을 사용 | build 367 | 2026-10-20
