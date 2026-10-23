@@ -3249,9 +3249,9 @@ const MODES = {
   zombie: {id:'zombie', name:'좀비게임', desc:'무기 선택 후 한 명이 좀비로 지목됨(짙은 초록색) · 사람은 좀비에게만, 좀비는 사람에게만 피해를 줄 수 있음 · 좀비는 죽으면 5초 뒤 좀비로 부활, 사람은 좀비에게 죽으면 좀비로 변함 · 전원이 좀비가 되면 처음 좀비만 승리, 사람이 2분간 버티면 사람 승리 · 좀비는 이동속도·체력·공격력·공격속도·대쉬 쿨타임·회복 속도가 강화되고 넉백을 받지 않음', teams:false, extra:0, elim:false, ownMapRules:true, minPlayers:7},
   hotpotato: {id:'hotpotato', name:'폭탄 돌리기', desc:'무기·궁극기·순간이동 없이 대쉬만 가능한 맨손 스틱맨으로 바로 시작 · 한 명이 폭탄을 들고 시작, 20초 후 터짐 · 가까운 사람을 클릭하면 폭탄을 넘길 수 있음 · 터지면 들고 있던 사람 탈락, 생존자가 처음 인원의 절반 넘게 남아있으면 3초 뒤 다음 라운드 · 절반 이하가 된 상태에서 터지면 그때 생존자들이 승리', teams:false, extra:0, elim:true, ownMapRules:true, noWeapon:true, minPlayers:4},
   hideseek: {id:'hideseek', name:'숨바꼭질', desc:'32인용 대형 맵 고정 · 대쉬·궁극기·순간이동·무기선택 없는 맨몸 스틱맨 · 체력 1 · 최소 5명 · 술래 한 명이 정해지고 나머지는 움직이지 않는 발판으로 변신해 숨음 · 술래는 10초간 화면이 가려지고 그 동안 숨는 사람들은 자유롭게 움직여 위치를 잡음 · 카운트다운이 끝나면 술래에게 권총 지급, 첫 발은 발판을 다시 스틱맨으로 되돌리고(움직일 수 있게 됨), 두 번째 발이 명중하면 탈락 · 1분 30초 안에 술래가 전원을 찾아내면 술래 승리, 한 명이라도 남으면 생존자 승리', teams:false, extra:0, elim:true, ownMapRules:true, noWeapon:true, noAbility:true, minPlayers:5, fixedMapId:'mega_arena'},
-  parkour: {id:'parkour', name:'파쿠르', desc:'전용 파쿠르 맵 4종 중 선택 · 무기·캐릭터·체력·대쉬·순간이동 없는 맨몸 스틱맨 · 맨 위 황금색 발판에 먼저 닿는 사람이 승리 · 발판 중간중간 놓인 아이템을 주우면 가까운 상대를 밀쳐 방해할 수 있음', teams:false, extra:0, elim:false, ownMapRules:true, noWeapon:true, noAbility:true, minPlayers:1, isParkourMode:true},
   survival: {id:'survival', name:'서바이벌', desc:'8인 이상 맵에서만 가능 · 최소 6명 · 무기선택·순간이동·캐릭터 없음(대쉬는 있음) · 체력 1: 재해에 한 번이라도 맞으면 탈락 · 9초 대기 후 번개·해일·화산·산성비·홍수·운석·폭탄·좀비 중 하나가 랜덤으로 12초간 발생, 버티면 사라지고 다시 9초 대기 · 라운드가 갈수록 재해가 더 자주·더 넓게·더 빠르게 몰아침 · 총 5번의 재해에서 살아남으면 승리, 먼저 죽으면 관전하거나 나갈 수 있음', teams:false, extra:0, elim:true, ownMapRules:true, noWeapon:true, noTeleport:true, minPlayers:6, mapFilterMinPlayers:8}, // noTeleport made explicit here (previously implied only indirectly through noWeapon) to match the mode's own description, which promises no teleport
   ctf: {id:'ctf', name:'깃발 뺏기', desc:'전용 대형 맵 4종 중 선택 · 두 팀이 상대 기지의 깃발을 가져와 우리 기지에 가져오면 1점(우리 깃발이 기지에 있어야 득점) · 깃발을 든 사람은 조금 느려지고 순간이동을 못 씀 · 든 사람이 죽으면 깃발이 떨어지고 10초 뒤 기지로 돌아감(우리 팀이 닿으면 바로 복귀) · 먼저 3점 또는 8분 안에 더 많이 득점한 팀 승리, 동점이면 무승부 · 처치당하면 5초 후 우리 기지에서 부활 · 최소 4명(비공개 방에서는 봇 추가 가능)', teams:true, teamSize:'half', extra:0, elim:false, ownMapRules:true, isCtfMode:true, minPlayers:4, respawnTime:5},
+  gold: {id:'gold', name:'황금 쟁탈', desc:'전용 대형 맵 4종 중 선택 · 두 팀 대항 3분 · 맵 중앙의 금 덩이 더미에서 금을 집어(한 번에 최대 3개, 들수록 조금 느려짐) 우리 팀 광차에 실으면 1개당 10점 · 광차에 닿으면 자동으로 실려요 · 금을 든 사람이 쓰러지면 그 자리에 금이 떨어져 누구나 주울 수 있어요 · 더미가 비면 15초마다 6개씩 새로 쌓여요 · 3분 뒤 점수가 높은 팀 승리, 동점이면 무승부 · 쓰러지면 5초 후 우리 기지에서 부활 · 최소 4명(비공개 방에서는 봇 추가 가능)', teams:true, teamSize:'half', extra:0, elim:false, ownMapRules:true, isCtfMode:true, minPlayers:4, respawnTime:5},
   raid: {id:'raid', name:'보스 레이드', desc:'8인 이상 맵에서만 가능 · 4명 고정 · 모두가 한 팀이 되어 거대한 보스 한 마리를 쓰러뜨리는 협동 모드 · 보스는 인원에 맞춰 체력이 늘어나고, 주기적으로 바닥을 내려쳐요(빨간 원이 번쩍이면 점프!) · 팀 목숨이 정해져 있고 쓰러지면 6초 뒤 부활 · 3분 안에 보스를 잡으면 성공', teams:true, teamSize:'half', soloTeam:true, extra:0, fixedPlayers:4, elim:false, ownMapRules:true, mapFilterMinPlayers:8, respawnTime:6},
   tournament: {id:'tournament', name:'토너먼트', desc:'16명이 1대1 3판 2선승제로 겨루는 단판 토너먼트(16강 → 8강 → 4강 → 결승) · 같은 라운드 경기는 동시에 진행되고 내 경기만 보여요 · 라운드마다 캐릭터를 새로 골라요 · 끝난 사람은 다른 경기를 관전 · 결승은 경기장이 점점 좁아져요', teams:false, fixedPlayers:16, elim:true, ownMapRules:true, mapFilterMinPlayers:8, tnMode:true},
   vip:      {id:'vip', name:'왕 지키기', desc:'두 팀으로 나뉘고 팀마다 왕이 한 명(머리 위 왕관) · 상대 팀의 왕을 먼저 쓰러뜨리면 승리 · 왕이 아닌 사람은 5초 뒤 부활 · 5분이 지나면 왕의 남은 체력이 많은 팀이 승리', teams:true, teamSize:'half', extra:2, elim:false, respawnTime:5, special:true},
@@ -3764,13 +3764,18 @@ function drawCtf(){
 // a small map of the whole field: these maps are several screens wide
 function drawCtfMini(){
   const cv=document.getElementById('ctfMini'); if(!cv) return;
-  if(gameMode!=='ctf' || !ctf || !MAP || !started || matchEnded){ cv.style.display='none'; return; }
+  if(!((gameMode==='ctf' && ctf) || (gameMode==='gold' && gdm)) || !MAP || !started || matchEnded){ cv.style.display='none'; return; }
   cv.style.display='block';
   const g=cv.getContext('2d'), W=cv.width, Hh=cv.height, s=Math.min((W-8)/MAP.arenaW, (Hh-8)/MAP.arenaH), ox=(W-MAP.arenaW*s)/2, oy=(Hh-MAP.arenaH*s)/2;
   g.clearRect(0,0,W,Hh);
   g.fillStyle='rgba(180,200,230,0.55)';
   for(const pl of MAP.platforms) g.fillRect(ox+pl.x*s, oy+pl.y*s, Math.max(1.5,pl.w*s), Math.max(1.5, pl.h>40?3:2));
-  for(const f of ctf.flags){
+  if(gameMode==='gold'){
+    for(let tm=0;tm<2;tm++){ const c=gdm.carts[tm]; g.fillStyle=TEAM_COLORS[tm]; g.fillRect(ox+c.x*s-4, oy+(c.y-14)*s-2, 8, 6); }
+    g.fillStyle='#ffd34d'; g.beginPath(); g.arc(ox+gdm.pile.x*s, oy+(gdm.pile.y-10)*s, gdm.pile.n>0?5:2.5, 0, 7); g.fill();
+    for(const d of gdm.drops){ g.fillStyle='#ffd34d'; g.fillRect(ox+d.x*s-1.5, oy+(d.y-8)*s, 3, 3); }
+  }
+  if(gameMode==='ctf') for(const f of ctf.flags){
     let x=f.x, y=f.y; if(f.state==='carried'){ const c=players[f.carrierId]; if(c&&c.x!==undefined){ x=c.x; y=c.y; } }
     g.fillStyle=TEAM_COLORS[f.team]; g.fillRect(ox+x*s-1, oy+(y-70)*s, 2, 70*s+2); g.beginPath(); g.moveTo(ox+x*s+1, oy+(y-70)*s); g.lineTo(ox+x*s+9, oy+(y-62)*s+2); g.lineTo(ox+x*s+1, oy+(y-50)*s); g.closePath(); g.fill();
   }
@@ -4884,7 +4889,7 @@ function shuffle(arr){ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.
 /* ===== the version of this file =====
    Players with different versions CAN meet and play together: the automatic matchmaking uses the same room names for every version (online-<mode>-<map>-<slot>), and nobody is refused because of a different build.
    The build is only sent along with the join message and the lobby (for information); the corner of the screen shows it. */
-const GAME_BUILD='build 2026-10-18-v351';
+const GAME_BUILD='build 2026-10-18-v352';
 const GAME_VERSION='0.8', GAME_VERSION_NAME='황금을 찾아서';   // 게임 버전 이름: versions.json의 title과 같게 (빌드마다 바꾸지 않음)
 const WEEKLY_EVENTS=[
   {id:'lowg',    name:'저중력 난투', desc:'몸이 둥실둥실, 중력이 약해진 난투', rules:{grav:0.6}},
@@ -5085,6 +5090,7 @@ function stepPhysics(p, input, dt){
   if(p.isZombie) spd*=ZOMBIE_SPEED_MULT; // zombies move faster than humans
   if(pzStacks(p)>=PZ_MAX) spd*=PZ_MAX_SPEED;   // 피사로 at the 4th stack
   if(p.speedMult) spd*=p.speedMult;      // (the survival disaster zombies)
+  if(p.gc>0) spd*=Math.max(0.5, 1-GOLD_SLOW*p.gc);   // 황금 쟁탈: every lump slows a little
   if(p.ctfCarrying) spd*=CTF_CARRIER_SPEED;   // carrying the flag: a bit slower
   if(batting) spd = MOVE_SPEED*BAT_SPEED_MULT;
   spd*=roomRules.spd;                       // (custom room rule)
@@ -5193,7 +5199,7 @@ function tryTeleportChannel(p, x, y, tMs){
   if(isStunned(p, tMs/1000)) return;
   if((MODES[gameMode]||{}).noWeapon || (MODES[gameMode]||{}).noTeleport) return; // modes with no weapon pick, or survival specifically, have no teleport
   if(p.darkSub) return;                                        // (inside the darkness: no teleport)
-  if(p.ctfCarrying) return;                                    // a flag carrier cannot teleport (that would make carrying the flag across the field trivial)
+  if(p.ctfCarrying || p.gc>0) return;                          // a flag / gold carrier cannot teleport (that would make carrying the flag across the field trivial)
   const tSec=tMs/1000;
   if(tSec - (p.lastTeleport===undefined?-9999:p.lastTeleport) < TELEPORT_CD) return;
   if(p.teleportChannel) return; // already mid-channel
@@ -6166,7 +6172,7 @@ const MORE_MODES=[
   {id:'hotpotato', name:'폭탄 돌리기', mapId:'grid_programming',  weapons:['bullet','bullet']},
   {id:'hideseek',  name:'숨바꼭질',   mapId:'tower_palace',      weapons:['fist','fist']},
   {id:'survival',  name:'서바이벌',   mapId:'grid_sea',         weapons:['fist','fist']},
-  {id:'parkour',   name:'파쿠르',     mapId:'parkour1',          weapons:['fist','fist']},
+  {id:'gold',      name:'황금 쟁탈',  mapId:'ctf_canyon',        weapons:['sword','bow']},
   {id:'ctf',       name:'깃발 뺏기',  mapId:'ctf_canyon',        weapons:['sword','bow']},
   {id:'raid',      name:'보스 레이드', mapId:'grid_school',    weapons:['shotgun','bazooka']},
   {id:'tournament',name:'토너먼트',   mapId:'tower_palace',      weapons:['sword','pistol']}
@@ -6225,7 +6231,7 @@ const MODE_LIST=[
   {id:'hotpotato', icon:'💣', desc:'터지기 전에 폭탄을 넘겨요'},
   {id:'hideseek', icon:'🙈', desc:'숨는 사람과 술래의 대결'},
   {id:'survival', icon:'🌪️', desc:'쏟아지는 재해 속에서 끝까지 생존'},
-  {id:'parkour', icon:'🧗', desc:'가장 먼저 꼭대기에 올라가요'},
+  {id:'gold', icon:'⛏️', desc:'중앙의 금을 우리 팀 광차로 실어 날라요'},
   {id:'ctf', icon:'🚩', desc:'상대 깃발을 가져와 득점해요'},
   {id:'raid', icon:'🐲', desc:'모두 한 팀이 되어 거대한 보스를 쓰러뜨려요'},
   {id:'tournament', icon:'🏆', desc:'16명이 1대1로 겨루는 토너먼트, 끝까지 살아남으면 우승'}
@@ -7542,7 +7548,7 @@ async function pendingNoticeShow(){
    - only the leader picks the mode: the others follow into the same room on their own and are put on the same team.
    Nothing has to be set up on the server: the party is a realtime channel (presence = who is in it, broadcast = what the leader does)
    and an invite is one broadcast on the invited friend's own channel. */
-const PARTY_MODES=['team','conquest','ctf','duo','raid'], PARTY_MAX=4;
+const PARTY_MODES=['team','conquest','ctf','gold','duo','raid'], PARTY_MAX=4;
 let party=null;              // {leader, ch, members:[{id,name,at}], seenLeader, joinedAt}
 let partyInvCh=null, partyWaiting=false, partyInvSent={};
 function partyActive(){ return !!(party && party.members.length>=2); }
@@ -8985,8 +8991,8 @@ function migDecode(root){
   };
   return dec(root);
 }
-function migGetVars(){ return {matchBans, brz, roomRules, roomOpts, magicCircles, turrets, darkPools, darkPoolSeq, cq, xm, xmV, ctf, hzDraw, volleys, volleySeq, walls, wallSeq, effectIdSeq, countdownEndsAt, teamSpawnSlots, raid, raidAwards, tn, weaponMode, clanWar, weaponPhase, botSeq, botLiveSince, bombHolderId, bombTimerEndsAt, hotpotatoOriginalCount, lastBombPass, parkourItemStates, survivalRound, survivalPhase, survivalPhaseEndsAt, survivalCurrentDisaster, survivalHazards, survivalZombies, survivalStrikeTimer, survivalTickTimer, survivalHazSeq, survivalStartT, survivalWavePlan, seekerId, hideseekPhase, hideseekPhaseEndsAt, duelScores, duelRoundEndsAt, matchTimerEndsAt, duelPick, lastHumanJoinAt, chatSeq}; }
-function migSetVars(o){ if('matchBans' in o) matchBans=o.matchBans; if('brz' in o) brz=o.brz; if('roomRules' in o) roomRules=o.roomRules; if('roomOpts' in o) roomOpts=o.roomOpts; if('magicCircles' in o) magicCircles=o.magicCircles; if('turrets' in o) turrets=o.turrets; if('darkPools' in o) darkPools=o.darkPools||[]; if('darkPoolSeq' in o) darkPoolSeq=o.darkPoolSeq||0; if('cq' in o) cq=o.cq; if('xm' in o) xm=o.xm; if('xmV' in o) xmV=o.xmV; if('ctf' in o) ctf=o.ctf; if('hzDraw' in o) hzDraw=o.hzDraw; if('volleys' in o) volleys=o.volleys; if('volleySeq' in o) volleySeq=o.volleySeq; if('walls' in o) walls=o.walls; if('wallSeq' in o) wallSeq=o.wallSeq; if('effectIdSeq' in o) effectIdSeq=o.effectIdSeq; if('countdownEndsAt' in o) countdownEndsAt=o.countdownEndsAt; if('teamSpawnSlots' in o) teamSpawnSlots=o.teamSpawnSlots; if('raid' in o) raid=o.raid; if('raidAwards' in o) raidAwards=o.raidAwards; if('tn' in o) tn=o.tn; if('weaponMode' in o) weaponMode=o.weaponMode; if('clanWar' in o) clanWar=o.clanWar; if('weaponPhase' in o) weaponPhase=o.weaponPhase; if('botSeq' in o) botSeq=o.botSeq; if('botLiveSince' in o) botLiveSince=o.botLiveSince; if('bombHolderId' in o) bombHolderId=o.bombHolderId; if('bombTimerEndsAt' in o) bombTimerEndsAt=o.bombTimerEndsAt; if('hotpotatoOriginalCount' in o) hotpotatoOriginalCount=o.hotpotatoOriginalCount; if('lastBombPass' in o) lastBombPass=o.lastBombPass; if('parkourItemStates' in o) parkourItemStates=o.parkourItemStates; if('survivalRound' in o) survivalRound=o.survivalRound; if('survivalPhase' in o) survivalPhase=o.survivalPhase; if('survivalPhaseEndsAt' in o) survivalPhaseEndsAt=o.survivalPhaseEndsAt; if('survivalCurrentDisaster' in o) survivalCurrentDisaster=o.survivalCurrentDisaster; if('survivalHazards' in o) survivalHazards=o.survivalHazards; if('survivalZombies' in o) survivalZombies=o.survivalZombies; if('survivalStrikeTimer' in o) survivalStrikeTimer=o.survivalStrikeTimer; if('survivalTickTimer' in o) survivalTickTimer=o.survivalTickTimer; if('survivalHazSeq' in o) survivalHazSeq=o.survivalHazSeq; if('survivalStartT' in o) survivalStartT=o.survivalStartT; if('survivalWavePlan' in o) survivalWavePlan=o.survivalWavePlan; if('seekerId' in o) seekerId=o.seekerId; if('hideseekPhase' in o) hideseekPhase=o.hideseekPhase; if('hideseekPhaseEndsAt' in o) hideseekPhaseEndsAt=o.hideseekPhaseEndsAt; if('duelScores' in o) duelScores=o.duelScores; if('duelRoundEndsAt' in o) duelRoundEndsAt=o.duelRoundEndsAt; if('matchTimerEndsAt' in o) matchTimerEndsAt=o.matchTimerEndsAt; if('duelPick' in o) duelPick=o.duelPick; if('lastHumanJoinAt' in o) lastHumanJoinAt=o.lastHumanJoinAt; if('chatSeq' in o) chatSeq=o.chatSeq; }
+function migGetVars(){ return {matchBans, brz, roomRules, roomOpts, magicCircles, turrets, darkPools, darkPoolSeq, cq, xm, xmV, ctf, gdm, hzDraw, volleys, volleySeq, walls, wallSeq, effectIdSeq, countdownEndsAt, teamSpawnSlots, raid, raidAwards, tn, weaponMode, clanWar, weaponPhase, botSeq, botLiveSince, bombHolderId, bombTimerEndsAt, hotpotatoOriginalCount, lastBombPass, parkourItemStates, survivalRound, survivalPhase, survivalPhaseEndsAt, survivalCurrentDisaster, survivalHazards, survivalZombies, survivalStrikeTimer, survivalTickTimer, survivalHazSeq, survivalStartT, survivalWavePlan, seekerId, hideseekPhase, hideseekPhaseEndsAt, duelScores, duelRoundEndsAt, matchTimerEndsAt, duelPick, lastHumanJoinAt, chatSeq}; }
+function migSetVars(o){ if('gdm' in o) gdm=o.gdm; if('matchBans' in o) matchBans=o.matchBans; if('brz' in o) brz=o.brz; if('roomRules' in o) roomRules=o.roomRules; if('roomOpts' in o) roomOpts=o.roomOpts; if('magicCircles' in o) magicCircles=o.magicCircles; if('turrets' in o) turrets=o.turrets; if('darkPools' in o) darkPools=o.darkPools||[]; if('darkPoolSeq' in o) darkPoolSeq=o.darkPoolSeq||0; if('cq' in o) cq=o.cq; if('xm' in o) xm=o.xm; if('xmV' in o) xmV=o.xmV; if('ctf' in o) ctf=o.ctf; if('hzDraw' in o) hzDraw=o.hzDraw; if('volleys' in o) volleys=o.volleys; if('volleySeq' in o) volleySeq=o.volleySeq; if('walls' in o) walls=o.walls; if('wallSeq' in o) wallSeq=o.wallSeq; if('effectIdSeq' in o) effectIdSeq=o.effectIdSeq; if('countdownEndsAt' in o) countdownEndsAt=o.countdownEndsAt; if('teamSpawnSlots' in o) teamSpawnSlots=o.teamSpawnSlots; if('raid' in o) raid=o.raid; if('raidAwards' in o) raidAwards=o.raidAwards; if('tn' in o) tn=o.tn; if('weaponMode' in o) weaponMode=o.weaponMode; if('clanWar' in o) clanWar=o.clanWar; if('weaponPhase' in o) weaponPhase=o.weaponPhase; if('botSeq' in o) botSeq=o.botSeq; if('botLiveSince' in o) botLiveSince=o.botLiveSince; if('bombHolderId' in o) bombHolderId=o.bombHolderId; if('bombTimerEndsAt' in o) bombTimerEndsAt=o.bombTimerEndsAt; if('hotpotatoOriginalCount' in o) hotpotatoOriginalCount=o.hotpotatoOriginalCount; if('lastBombPass' in o) lastBombPass=o.lastBombPass; if('parkourItemStates' in o) parkourItemStates=o.parkourItemStates; if('survivalRound' in o) survivalRound=o.survivalRound; if('survivalPhase' in o) survivalPhase=o.survivalPhase; if('survivalPhaseEndsAt' in o) survivalPhaseEndsAt=o.survivalPhaseEndsAt; if('survivalCurrentDisaster' in o) survivalCurrentDisaster=o.survivalCurrentDisaster; if('survivalHazards' in o) survivalHazards=o.survivalHazards; if('survivalZombies' in o) survivalZombies=o.survivalZombies; if('survivalStrikeTimer' in o) survivalStrikeTimer=o.survivalStrikeTimer; if('survivalTickTimer' in o) survivalTickTimer=o.survivalTickTimer; if('survivalHazSeq' in o) survivalHazSeq=o.survivalHazSeq; if('survivalStartT' in o) survivalStartT=o.survivalStartT; if('survivalWavePlan' in o) survivalWavePlan=o.survivalWavePlan; if('seekerId' in o) seekerId=o.seekerId; if('hideseekPhase' in o) hideseekPhase=o.hideseekPhase; if('hideseekPhaseEndsAt' in o) hideseekPhaseEndsAt=o.hideseekPhaseEndsAt; if('duelScores' in o) duelScores=o.duelScores; if('duelRoundEndsAt' in o) duelRoundEndsAt=o.duelRoundEndsAt; if('matchTimerEndsAt' in o) matchTimerEndsAt=o.matchTimerEndsAt; if('duelPick' in o) duelPick=o.duelPick; if('lastHumanJoinAt' in o) lastHumanJoinAt=o.lastHumanJoinAt; if('chatSeq' in o) chatSeq=o.chatSeq; }
 /* -- the host's side -- */
 function migOrder(){ return Object.values(players).filter(p=>p.id!==myId && !p.isBot && !p.isSpectator && !p.isDummy && conns[p.id]).sort((a,b)=>(a.joinOrder||0)-(b.joinOrder||0)).map(p=>p.id); }
 function migCanRun(){ return !!(isHost && peer && MAP && started && !matchEnded && !practiceMode && !highlightViewing && !rpView); }
@@ -9248,6 +9254,7 @@ setInterval(()=>{
     else if(hideseekPhase==='seek') endHideseekBySeekTimer();
   }
   if(gameMode==='ctf' && !matchEnded) checkCtfTimer();
+  if(gameMode==='gold' && !matchEnded) checkGoldTimer();
   if(gameMode==='survival' && survivalPhase && Date.now()>=survivalPhaseEndsAt){
     if(survivalPhase==='waiting') startSurvivalDisaster();
     else if(survivalPhase==='active') endSurvivalDisaster();
@@ -9642,6 +9649,7 @@ function onClientData(data, mode, code){
       survivalHazards=(data.survival.hazards||[]).map(hz=>{ let o=hz; if(hz.warnRemain!==undefined) o=Object.assign({}, o, {warnUntil: performance.now()/1000 + hz.warnRemain}); if(hz.untilRemain!==undefined) o=Object.assign({}, o, {until: performance.now()/1000 + hz.untilRemain}); if(hz.goRemain!==undefined) o=Object.assign({}, o, {goAt: performance.now()/1000 + hz.goRemain}); return o; });
     }
     if(data.ctf){ applyCtfSnapshot(data.ctf); }
+    if(data.gd){ applyGoldSnapshot(data.gd); }
     // effects' "born" time comes from the HOST's own clock (performance.now() in its tab), which is not
     // comparable to this client's performance.now() - re-stamp each effect with OUR local receive time
     // (once, keyed by id) so age/lifetime math here is self-consistent instead of silently always "expired".
@@ -10246,6 +10254,10 @@ function beginGame(){
       for(const id in players){ const p=players[id]; p.hp=ruleHp(); p.alive=true; p.respawnAt=0; p.vx=0; p.vy=0; p.ctfCarrying=false; }
       startCtfMatch();
     }
+    if(gameMode==='gold'){
+      for(const id in players){ const p=players[id]; p.hp=ruleHp(); p.alive=true; p.respawnAt=0; p.vx=0; p.vy=0; p.ctfCarrying=false; p.gc=0; }
+      startGoldMatch();
+    }
     if(gameMode==='tournament') startTournament();
     if((MODES[gameMode]||{}).special) xmStart();
     brzStart();
@@ -10615,7 +10627,7 @@ function finalizeGameplayStart(mte){
       document.getElementById('matchTimerLabel').style.display='block';
     }
     if(gameMode==='survival') document.getElementById('survivalLabel').style.display='block';
-    if(gameMode==='ctf') document.getElementById('ctfLabel').style.display='block';
+    if(gameMode==='ctf' || gameMode==='gold') document.getElementById('ctfLabel').style.display='block';
   }catch(e){
     recordDiagError('finalizeGameplayStart', e);
     console.error('[finalizeGameplayStart] setup failed partway through (recovering - the loop will still start):', e);
@@ -11743,7 +11755,7 @@ const BOT_PERSONALITIES=['coward','taunter','sniper','revenge','collector','riva
 const PERSONALITY_WEAPONS={sniper:['bow','rifle','pistol','bazooka','wizard'], taunter:['sword','gloves','dagger','lightsaber','horemheb','bat','dracula']};
 // modes the bots know how to play. (hide & seek is not here: a bot seeker/hider needs its own logic, so those rooms keep waiting for people)
 // hot potato, parkour, survival and the flag mode each have their own brain below (botBrain*); the rest use the generic fighter
-const BOT_MODES={ffa:1,br:1,dashbr:1,duo:1,team:1,duel:1,conquest:1,zombie:1,hotpotato:1,parkour:1,survival:1,ctf:1,raid:1,tournament:1,vip:1,koth:1,relay:1,freeze:1,rush:1,roulette:1,oneshot:1,turf:1,bounty:1,lowg:1};
+const BOT_MODES={ffa:1,br:1,dashbr:1,duo:1,team:1,duel:1,conquest:1,zombie:1,hotpotato:1,parkour:1,survival:1,ctf:1,gdm:1,raid:1,tournament:1,vip:1,koth:1,relay:1,freeze:1,rush:1,roulette:1,oneshot:1,turf:1,bounty:1,lowg:1};
 let botSeq=0, lastHumanJoinAt=0, botFillAt=null, botFilling=false, botNextAt=0; // botFillAt: when the first bot will join (announced to everyone); botFilling: bots are walking in; botNextAt: when the next one does
 function botSupported(modeId){ return !!BOT_MODES[modeId]; }
 function humanPlayers(){ return Object.values(players).filter(p=>!p.isBot); }
@@ -12396,6 +12408,7 @@ function botModeBrain(p, ai, t, tSec, inp, navBusy){
     case 'parkour':   return botBrainParkour(p, ai, t, inp);
     case 'survival':  return botBrainSurvival(p, ai, t, tSec, inp, navBusy);
     case 'ctf':       return botBrainCtf(p, ai, t, inp);
+    case 'gold':      return botBrainGold(p, ai, t, inp);
   }
   return null;
 }
@@ -13093,6 +13106,7 @@ function hostTickCore(dt,t){
     else if(hideseekPhase==='seek') endHideseekBySeekTimer();
   }
   if(gameMode==='ctf' && !matchEnded){ tickCtf(t, dt); checkCtfTimer(); }
+  if(gameMode==='gold' && !matchEnded){ tickGold(t, dt); checkGoldTimer(); }
   if(gameMode==='survival' && !matchEnded && survivalPhase){
     if(Date.now()>=survivalPhaseEndsAt){
       if(survivalPhase==='waiting') startSurvivalDisaster();
@@ -13419,7 +13433,7 @@ function hostTickCore(dt,t){
         fireCdRemain: snapR(p.fireCdRemain||0,20),
         ultCdRemain: p.darkSub ? 0 : snapR(Math.max(0, ultCdOf(p) - (t/1000-(p.lastUlt===undefined?-9999:p.lastUlt))),20), darkSub:p.darkSub?1:0, darkArm:(p.darkArmUntil>t/1000)?1:0,
         skillCdRemain: snapR(Math.max(0, skillCdOf(p) - (t/1000-(p.lastSkill===undefined?-9999:p.lastSkill))),20), buff:p.buff||null, skillUses:p.skillUses||0, ultUses:p.ultUses||0,
-        pz:p.pzStacks||0, pm:(p.pzMarkUntil>t/1000)?1:0, ultOn:!!p.ultOn, invis:!!p.invis, burning:!!p.burning, poisoned:!!p.poisoned, kw:(p.kanWingsUntil>t/1000)?1:0, pp:puppetMaster(p,t/1000)?p.puppetTarget:null, slowed:!!p.slowed, stunned:!!p.stunned, cardSlowed:!!p.cardSlowed, bladeSpin:!!p.bladeSpin, swordCharging:!!p.swordCharge, cannonFlying:!!p.cannonFly, chips:p.chips||0, cannonAng:p.cannonFly?Math.round(Math.atan2(p.vy||0,p.cannonFly.vx)*100)/100:0, totalDamageDealt:p.totalDamageDealt||0, channeling:!!p.teleportChannel, flaming:!!p.flaming, portalPair:p.portalPair||null, batting:!!p.batting, vacuumStacks:p.vacuumStacks||0, isZombie:!!p.isZombie, parkourItem:!!p.parkourItem, hsHiding:!!p.hsHiding, hsDisguiseW:p.hsDisguiseW, hsDisguiseH:p.hsDisguiseH, isSeeker:!!p.isSeeker,
+        pz:p.pzStacks||0, pm:(p.pzMarkUntil>t/1000)?1:0, ultOn:!!p.ultOn, invis:!!p.invis, burning:!!p.burning, poisoned:!!p.poisoned, kw:(p.kanWingsUntil>t/1000)?1:0, gc:p.gc||0, pp:puppetMaster(p,t/1000)?p.puppetTarget:null, slowed:!!p.slowed, stunned:!!p.stunned, cardSlowed:!!p.cardSlowed, bladeSpin:!!p.bladeSpin, swordCharging:!!p.swordCharge, cannonFlying:!!p.cannonFly, chips:p.chips||0, cannonAng:p.cannonFly?Math.round(Math.atan2(p.vy||0,p.cannonFly.vx)*100)/100:0, totalDamageDealt:p.totalDamageDealt||0, channeling:!!p.teleportChannel, flaming:!!p.flaming, portalPair:p.portalPair||null, batting:!!p.batting, vacuumStacks:p.vacuumStacks||0, isZombie:!!p.isZombie, parkourItem:!!p.parkourItem, hsHiding:!!p.hsHiding, hsDisguiseW:p.hsDisguiseW, hsDisguiseH:p.hsDisguiseH, isSeeker:!!p.isSeeker,
         isHost:p.isHost,clan:p.clan||'',joinOrder:p.joinOrder,weapon:p.weapon,team:p.team,spinAngle:p.spinAngle,cos:p.cos,isBoss:p.isBoss?1:0,isMinion:p.isMinion?1:0,bt:p.bt,bossMaxHp:p.bossMaxHp,emIdx:p.emIdx,emRem:(p.emUntil?Math.max(0,Math.round((p.emUntil-t/1000)*20)/20):0)})),
       cq: (gameMode==='conquest' && cq) ? {s:cq.scores, h:cq.holder, c:cq.contested} : undefined,
       xm: (xm && xmV) ? xmV : undefined,
@@ -13433,6 +13447,7 @@ function hostTickCore(dt,t){
       // already used for walls' "rem" field below) - the client then rebuilds its own warnUntil from ITS OWN
       // clock plus this remaining duration.
       survival: (gameMode==='survival') ? {zombies:survivalZombies.map(z=>({x:Math.round(z.x*10)/10,y:Math.round(z.y*10)/10,f:z.face,g:z.grounded?1:0,w:(t/1000<z.awakeAt)?1:0,s:Math.round(Math.abs(z.vx||0))})), hazards:survivalHazards.map(hz=>Object.assign({}, hz, hz.warnUntil!==undefined ? {warnRemain: hz.warnUntil - t/1000, warnUntil:undefined} : {}, hz.until!==undefined ? {untilRemain: hz.until - t/1000, until:undefined} : {}, hz.goAt!==undefined ? {goRemain: hz.goAt - t/1000, goAt:undefined} : {}))} : undefined,
+      gd: (gameMode==='gold' && gdm) ? {n:gdm.pile.n, ps:gdm.pts, cl:gdm.carts.map(c=>c.lumps), dr:gdm.drops.map(d=>[Math.round(d.x),Math.round(d.y),d.n]), rm:Math.max(0,Math.round((gdm.endsAt-Date.now())/1000)), rf:Math.max(0,Math.ceil((gdm.refillAt||0)-t/1000))} : undefined,
       ctf: (gameMode==='ctf' && ctf) ? {f:ctf.flags.map(f=>({s:(f.state==='home'?0:(f.state==='carried'?1:2)), x:Math.round(f.x), y:Math.round(f.y), c:f.carrierId||null, r:(f.state==='dropped'?Math.round(Math.max(0,f.returnAt-t/1000)*10)/10:0)})), sc:ctf.scores, rm:Math.max(0,Math.round((ctf.endsAt-Date.now())/1000)), ot:!!ctf.overtime, tg:ctf.target} : undefined,
       bullets:bullets.map(b=>({x:b.x,y:b.y,color:b.color,wid:b.wid,vx:b.vx,vy:b.vy,dmgless:b.dmgless,swingAngle:b.swingAngle,splash:b.splash,life:b.life,life0:b.life0,sx:b.spawnX,sy:b.spawnY,ult:b.ult,fire:b.fire,reach:b.reach})),
       walls:walls.map(w=>({x:w.x,y:w.y,w:w.w,h:w.h,owner:w.owner,rem:w.until-t/1000})),
@@ -13859,6 +13874,123 @@ function applyCtfSnapshot(d){
   d.f.forEach((s,i)=>{ const f=ctf.flags[i]; if(!f) return; f.state=(s.s===0?'home':(s.s===1?'carried':'dropped')); f.x=s.x; f.y=s.y; f.carrierId=s.c; f.retRemain=s.r; });
   ctf.scores=d.sc; ctf.overtime=!!d.ot; ctf.target=d.tg||CTF_TARGET; ctfEndsLocal=Date.now()+d.rm*1000;
   for(const id in players) players[id].ctfCarrying=ctf.flags.some(f=>f.state==='carried' && f.carrierId===id);
+}
+
+/* ================= 황금 쟁탈: carry gold from the pile in the middle to your team's mine cart =================
+   Two teams on the flag maps. The pile in the middle holds GOLD_PILE lumps; a player takes one lump at a time (up to GOLD_MAX_CARRY, 10% slower per lump), and
+   touching the own cart loads everything carried (GOLD_PTS points per lump, loaded gold is safe). A carrier who dies drops the lumps where he fell; anybody can pick
+   them up. When the pile is empty it grows GOLD_REFILL_N lumps every GOLD_REFILL_SEC seconds. The better score after GOLD_DURATION seconds wins (a tie is a draw). */
+const GOLD_DURATION=180, GOLD_MAX_CARRY=3, GOLD_PILE=40, GOLD_REFILL_SEC=15, GOLD_REFILL_N=6, GOLD_PTS=10, GOLD_SLOW=0.1, GOLD_PILE_R=110, GOLD_CART_R=72, GOLD_DROP_R=48, GOLD_PICK_GAP=0.35, GOLD_XP_PER_LUMP=4;
+let gdm=null, goldEndsLocal=0;          // gdm: {pile:{x,y,n}, carts:[{x,y,lumps}], pts:[a,b], drops:[{x,y,n}], endsAt, refillAt}
+function startGoldMatch(){
+  if(!MAP || !MAP.ctf) return;
+  const G=MAP.arenaH-100;
+  gdm={pile:{x:MAP.arenaW/2, y:G, n:GOLD_PILE}, carts:MAP.ctf.flags.map(f=>({x:f.x, y:f.y, lumps:0})), pts:[0,0], drops:[], endsAt:Date.now()+GOLD_DURATION*1000, refillAt:0};
+  goldEndsLocal=gdm.endsAt;
+  for(const id in players){ players[id].gc=0; players[id].goldAt=0; }
+}
+function goldEnd(team){
+  if(matchEnded) return;
+  const winners=Object.values(players).filter(q=>q.team===team).map(q=>q.id);
+  announceMatchEnd(teamLabelCtf(team)+' 승리! ('+gdm.pts[0]+':'+gdm.pts[1]+')', winners);
+}
+function checkGoldTimer(){
+  if(!gdm || matchEnded || gameMode!=='gold') return;
+  if(Date.now()<gdm.endsAt) return;
+  if(gdm.pts[0]!==gdm.pts[1]) goldEnd(gdm.pts[0]>gdm.pts[1]?0:1);
+  else announceMatchEnd('무승부! ('+gdm.pts[0]+' : '+gdm.pts[1]+')', []);
+}
+function goldNear(p, x, y, r){ return Math.abs(p.x-x)<=r && Math.abs(p.y-y)<=PLAYER_H+16; }
+function tickGold(t, dt){
+  if(gameMode!=='gold' || !gdm || matchEnded) return;
+  const tSec=t/1000;
+  if(gdm.pile.n<=0){ if(!gdm.refillAt) gdm.refillAt=tSec+GOLD_REFILL_SEC; else if(tSec>=gdm.refillAt){ gdm.pile.n=GOLD_REFILL_N; gdm.refillAt=0; ctfMsg('⛏ 중앙에 금이 새로 쌓였어요!'); } }
+  for(const id in players){
+    const p=players[id];
+    if(!p.alive && (p.gc||0)>0){                                         // a carrier who fell drops what he carried
+      if(p.x!==undefined) gdm.drops.push({x:p.x, y:ctfGroundBelow(p.x, p.y), n:p.gc});
+      ctfMsg(p.name+'님이 금 '+p.gc+'개를 떨어뜨렸어요!'); p.gc=0; continue;
+    }
+    if(!p.alive || p.x===undefined || p.team===null || p.team===undefined || p.isDummy) continue;
+    p.gc=p.gc||0;
+    for(let i=gdm.drops.length-1;i>=0 && p.gc<GOLD_MAX_CARRY;i--){          // loose gold on the ground
+      const d=gdm.drops[i]; if(!goldNear(p,d.x,d.y,GOLD_DROP_R)) continue;
+      const take=Math.min(d.n, GOLD_MAX_CARRY-p.gc); p.gc+=take; d.n-=take; if(d.n<=0) gdm.drops.splice(i,1);
+    }
+    if(p.gc<GOLD_MAX_CARRY && gdm.pile.n>0 && tSec>=(p.goldAt||0) && goldNear(p, gdm.pile.x, gdm.pile.y, GOLD_PILE_R)){
+      p.gc++; gdm.pile.n--; p.goldAt=tSec+GOLD_PICK_GAP;
+      pushFx('spark', gdm.pile.x, gdm.pile.y-30, t, {color:'#ffd34d', ang:-Math.PI/2});
+    }
+    const cart=gdm.carts[p.team];
+    if(p.gc>0 && cart && goldNear(p, cart.x, cart.y, GOLD_CART_R)){
+      const n=p.gc; p.gc=0; cart.lumps+=n; gdm.pts[p.team]+=n*GOLD_PTS;
+      awardObjectiveXp(id, GOLD_XP_PER_LUMP*n, GOLD_XP_PER_LUMP*n, '금 운반', p.weapon);
+      ctfMsg(p.name+'님이 금 '+n+'개를 실었어요! '+teamLabelCtf(p.team)+' +'+(n*GOLD_PTS)+' (블루 '+gdm.pts[0]+' : '+gdm.pts[1]+' 레드)', true);
+      pushFx('ult', p.x, p.y-40, t, {color:TEAM_COLORS[p.team], name:'+'+(n*GOLD_PTS)});
+    }
+  }
+}
+function applyGoldSnapshot(d){
+  if(!MAP || !MAP.ctf) return;
+  if(!gdm) gdm={pile:{x:MAP.arenaW/2, y:MAP.arenaH-100, n:0}, carts:MAP.ctf.flags.map(f=>({x:f.x, y:f.y, lumps:0})), pts:[0,0], drops:[], endsAt:0, refillAt:0};
+  gdm.pile.n=d.n; gdm.pts=d.ps; gdm.carts.forEach((c,i)=>{ c.lumps=(d.cl&&d.cl[i])||0; }); gdm.drops=d.dr.map(a=>({x:a[0], y:a[1], n:a[2]})); gdm.rf=d.rf; goldEndsLocal=Date.now()+d.rm*1000;
+}
+function drawGoldHeap(x, y, n, sc, now){            // a heap of gold lumps sitting on the ground at (x,y); n lumps (drawn up to 18)
+  const k=Math.min(18, Math.max(0, Math.ceil(n))); if(!k) return;
+  ctx.save(); ctx.translate(x,y); ctx.scale(sc,sc);
+  const rows=Math.ceil((Math.sqrt(8*k+1)-1)/2); let i=0;
+  for(let r=0;r<rows;r++){ const cnt=rows-r; for(let c=0;c<cnt && i<k;c++,i++){
+    const lx=(c-(cnt-1)/2)*22, ly=-11-r*17;
+    ctx.fillStyle='#e0a81c'; ctx.strokeStyle='#8a5f00'; ctx.lineWidth=1.5; ctx.beginPath(); ctx.ellipse(lx,ly,12,9,0,0,7); ctx.fill(); ctx.stroke();
+    ctx.fillStyle='#ffe27a'; ctx.beginPath(); ctx.ellipse(lx-3,ly-3,5,3,-0.5,0,7); ctx.fill(); } }
+  if(k>=3){ ctx.globalAlpha=0.5+0.4*Math.abs(Math.sin(now/300)); ctx.fillStyle='#fff7c2'; ctx.beginPath(); ctx.arc(-6,-rows*14,2.4,0,7); ctx.fill(); }
+  ctx.restore();
+}
+function drawMineCart(x, y, col, lumps, now){
+  ctx.save(); ctx.translate(x,y);
+  ctx.strokeStyle='#6b6f78'; ctx.lineWidth=4; ctx.beginPath(); ctx.moveTo(-70,2); ctx.lineTo(70,2); ctx.stroke();
+  ctx.fillStyle='#4a4f5a'; ctx.strokeStyle='#d8dde8'; ctx.lineWidth=2;
+  ctx.beginPath(); ctx.moveTo(-44,-44); ctx.lineTo(44,-44); ctx.lineTo(36,-8); ctx.lineTo(-36,-8); ctx.closePath(); ctx.fill(); ctx.stroke();
+  ctx.fillStyle=col; ctx.fillRect(-44,-50,88,8);
+  for(const wx of [-24,24]){ ctx.fillStyle='#22252c'; ctx.strokeStyle='#d8dde8'; ctx.beginPath(); ctx.arc(wx,-2,8,0,7); ctx.fill(); ctx.stroke(); }
+  ctx.restore();
+  drawGoldHeap(x, y-40, Math.min(lumps,18), 0.55, now);
+}
+function drawGold(){
+  if(!gdm || !MAP || !MAP.ctf) return;
+  const now=performance.now();
+  for(let tm=0; tm<2; tm++){
+    const c=gdm.carts[tm], col=TEAM_COLORS[tm];
+    ctx.save(); ctx.globalAlpha=0.9; ctx.strokeStyle=col; ctx.lineWidth=3; ctx.setLineDash([10,8]);
+    ctx.beginPath(); ctx.ellipse(c.x, c.y, GOLD_CART_R, 13, 0, 0, 7); ctx.stroke(); ctx.setLineDash([]);
+    const gg=ctx.createRadialGradient(c.x,c.y,0,c.x,c.y,GOLD_CART_R*1.3); gg.addColorStop(0,hexA(col,0.28)); gg.addColorStop(1,hexA(col,0));
+    ctx.fillStyle=gg; ctx.beginPath(); ctx.ellipse(c.x, c.y, GOLD_CART_R*1.3, 22, 0, 0, 7); ctx.fill(); ctx.restore();
+    drawMineCart(c.x, c.y, col, c.lumps, now);
+    ctx.save(); ctx.fillStyle='#fff'; ctx.font='bold 16px sans-serif'; ctx.textAlign='center'; ctx.lineWidth=3; ctx.strokeStyle='rgba(0,0,0,.7)'; const tx=(gdm.pts[tm])+'점'; ctx.strokeText(tx, c.x, c.y-118); ctx.fillText(tx, c.x, c.y-118); ctx.restore();
+  }
+  const pl=gdm.pile;
+  { const gg=ctx.createRadialGradient(pl.x,pl.y,0,pl.x,pl.y,GOLD_PILE_R*1.4); gg.addColorStop(0,'rgba(255,214,77,.28)'); gg.addColorStop(1,'rgba(255,214,77,0)'); ctx.fillStyle=gg; ctx.beginPath(); ctx.ellipse(pl.x,pl.y,GOLD_PILE_R*1.4,30,0,0,7); ctx.fill(); }
+  drawGoldHeap(pl.x, pl.y, Math.min(18, Math.ceil(pl.n/2)), 1.7, now);
+  ctx.save(); ctx.fillStyle='#ffe27a'; ctx.font='bold 18px sans-serif'; ctx.textAlign='center'; ctx.lineWidth=4; ctx.strokeStyle='rgba(0,0,0,.7)';
+  const lab=pl.n>0 ? '금 '+pl.n : (gdm.rf!==undefined && !isHost ? '금 새로 쌓이는 중 '+Math.ceil(gdm.rf||0) : '금 새로 쌓이는 중 '+Math.max(0,Math.ceil((gdm.refillAt||0)-now/1000)));
+  ctx.strokeText(lab, pl.x, pl.y-148); ctx.fillText(lab, pl.x, pl.y-148); ctx.restore();
+  for(const d of gdm.drops) drawGoldHeap(d.x, d.y, d.n, 0.8, now);
+  for(const id in players){ const p=players[id]; if((p.gc||0)<=0 || p.alive===false || p.x===undefined) continue;
+    for(let i=0;i<p.gc;i++){ const lx=p.x+(i-(p.gc-1)/2)*16, ly=p.y-PLAYER_H-20; ctx.fillStyle='#e0a81c'; ctx.strokeStyle='#8a5f00'; ctx.lineWidth=1.5; ctx.beginPath(); ctx.ellipse(lx,ly,8,6,0,0,7); ctx.fill(); ctx.stroke(); ctx.fillStyle='#ffe27a'; ctx.beginPath(); ctx.ellipse(lx-2,ly-2,3,2,-0.5,0,7); ctx.fill(); } }
+}
+function botBrainGold(p, ai, t, inp){
+  if(!gdm || p.team===null || p.team===undefined) return null;
+  const cart=gdm.carts[p.team], carry=p.gc||0;
+  if(!ai.goldFull) ai.goldFull=2+Math.floor(Math.random()*2);          // some bots go home with two, some wait for three
+  const foes=Object.values(players).filter(o=>o.alive && o.x!==undefined && o.team!==p.team && o.team!==null && o.team!==undefined);
+  for(const o of foes){ if(Math.hypot(o.x-p.x, o.y-p.y)<BOT_CTF_FIGHT_R && carry<GOLD_MAX_CARRY) return null; }     // an enemy right next to me: fight it
+  let near=null, nd=1e9; for(const d of gdm.drops){ const dd=Math.hypot(d.x-p.x, d.y-p.y); if(dd<nd){ nd=dd; near=d; } }
+  const supply=gdm.pile.n>0 || near;
+  if(carry>=ai.goldFull || (carry>0 && !supply)){ ai.goldFull=0; return {goalX:cart.x, goalY:cart.y}; }
+  if(near && nd<900) return {goalX:near.x, goalY:near.y};
+  if(gdm.pile.n>0) return {goalX:gdm.pile.x+(Math.random()-0.5)*0, goalY:gdm.pile.y};
+  if(carry>0) return {goalX:cart.x, goalY:cart.y};
+  return {goalX:gdm.pile.x, goalY:gdm.pile.y};                      // wait at the pile for the next lumps
 }
 let seekerId=null, hideseekPhase=null, hideseekPhaseEndsAt=0; // hideseekPhase: 'hide' | 'seek'
 function startHideseekRound(){
@@ -16447,6 +16579,7 @@ function render(fxDt){
   // feature degrades instead of blacking out the whole screen.
   if(gameMode==='survival' && survivalPhase==='active' && !(killcamActive && killcamReplay && killcamReplay.sceneNow)) safeDraw(drawSurvivalDisaster);
   if(gameMode==='ctf' && !(killcamActive && killcamReplay && killcamReplay.sceneNow)) safeDraw(drawCtf);
+  if(gameMode==='gold' && !(killcamActive && killcamReplay && killcamReplay.sceneNow)) safeDraw(drawGold);
   if(xmV && !(killcamActive && killcamReplay && killcamReplay.sceneNow)) safeDraw(drawXmWorld);
   if(brzV && !(killcamActive && killcamReplay && killcamReplay.sceneNow)) safeDraw(drawBrzWorld); else if(document.getElementById('bzBox')) brzHud();
   const kcScene=(killcamActive && killcamReplay && killcamReplay.sceneNow) ? killcamReplay.sceneNow : null;   // a recorded killcam scene replaces the live field
@@ -16606,6 +16739,11 @@ function render(fxDt){
       else if(en.state==='carried') st='우리 팀이 상대 깃발을 가졌어요! 지켜 주세요';
       else if(en.state==='dropped') st='상대 깃발이 떨어졌어요 - 가서 주우세요';
       document.getElementById('ctfLabel').innerHTML = '<span style="color:'+TEAM_COLORS[0]+'">블루 '+ctf.scores[0]+'</span> : <span style="color:'+TEAM_COLORS[1]+'">'+ctf.scores[1]+' 레드</span>  ·  '+timeTxt+'<br><span style="font-size:12px;font-weight:600;opacity:.9">'+st+'</span>';
+    }
+    if(gameMode==='gold' && gdm){
+      const remain=Math.max(0, Math.ceil((goldEndsLocal-Date.now())/1000)), mm=Math.floor(remain/60), ss=remain%60, carry=(me&&me.gc)||0;
+      let st = carry>0 ? '⛏ 금 '+carry+'개 운반 중 - 우리 광차로 가세요!' : (gdm.pile.n>0 ? '중앙의 금을 집어 우리 광차로 가져가세요 (최대 '+GOLD_MAX_CARRY+'개)' : '중앙의 금이 다 떨어졌어요 - 곧 새로 쌓여요');
+      document.getElementById('ctfLabel').innerHTML = '<span style="color:'+TEAM_COLORS[0]+'">블루 '+gdm.pts[0]+'</span> : <span style="color:'+TEAM_COLORS[1]+'">'+gdm.pts[1]+' 레드</span>  ·  '+mm+':'+(ss<10?'0':'')+ss+'<br><span style="font-size:12px;font-weight:600;opacity:.9">'+st+'</span>';
     }
     drawCtfMini();
     try{ renderModeHud(); }catch(e){}
