@@ -679,6 +679,9 @@ if(document.readyState==='loading') document.addEventListener('DOMContentLoaded'
     line-height:1.6; font-weight:600; text-align:right;
   }
 #introScr{position:fixed;inset:0;z-index:99999;background:#000;transition:opacity .7s}
+#introScr.hold,#introScr.hold *{animation-play-state:paused!important}
+#introHold{position:absolute;left:0;right:0;bottom:9vh;text-align:center;color:#fff;font:700 clamp(15px,2.4vw,22px) system-ui,sans-serif;letter-spacing:.06em;text-shadow:0 2px 10px #000;z-index:5;animation:itHold 1.4s ease-in-out infinite alternate;animation-play-state:running!important}
+@keyframes itHold{from{opacity:.45}to{opacity:1}}
 #introScr.out{opacity:0;pointer-events:none}
 #introScr .sc{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;opacity:0;color:#fff;text-align:center;text-shadow:0 2px 10px rgba(0,0,0,.8)}
 #introScr .sm{font:600 clamp(16px,3.2vw,26px)/1.2 system-ui,sans-serif;letter-spacing:.2em;margin-bottom:10px}
@@ -837,14 +840,19 @@ h1,h2{ text-shadow:0 0 10px rgba(63,224,197,.55), 0 0 26px rgba(63,224,197,.25);
 <div id="introTitle">IN SEARCH OF GOLD<small>v0.8</small></div>
 <div class="sc s3"><div class="ib"><i></i></div></div>
 </div>
-<script>(function(){var t0=Date.now(),el=document.getElementById('introScr'),done=0;function go(){if(done)return;done=1;el.classList.add('out');setTimeout(function(){el.remove();},800);}
+<script>(function(){var t0=Date.now(),el=document.getElementById('introScr'),done=0,T1=0,T2=0,held=0;function go(){if(done)return;done=1;clearTimeout(T1);clearTimeout(T2);el.classList.add('out');setTimeout(function(){el.remove();},800);}
 /* the intro cannot be skipped: it plays to the end (go() runs only from the timers below) */
-function chk(){var w=9400-(Date.now()-t0);setTimeout(go,Math.max(0,w));}
-if(document.readyState==='complete')chk();else window.addEventListener('load',chk);
-/* intro sting (5 s, a separate file next to the game): starts as soon as the intro starts; if the browser blocks sound it starts on the first tap or key during the intro; silent if sound is off */
-function sting(){try{var st=JSON.parse(localStorage.getItem('arenaClashSettings')||'null');if(st&&st.bgm===false)return;var a=new Audio('music-intro.mp3'),alt=0;a.volume=Math.min(1,((st&&typeof st.bgmVol==='number')?st.bgmVol:0.4)*1.5);a.onerror=function(){if(!alt){alt=1;a.src='https://frenchfries777mc.github.io/games/stickseum/music-intro.mp3';a.load();var q=a.play();if(q&&q.catch)q.catch(function(){});}};var p=a.play();if(p&&p.catch)p.catch(function(){var again=function(){if(Date.now()-t0<7000&&document.getElementById('introScr')){var r=a.play();if(r&&r.catch)r.catch(function(){});}};['pointerdown','keydown','touchend'].forEach(function(ev){addEventListener(ev,again,{once:true,passive:true});});});}catch(e){}}
-sting();
-setTimeout(go,14000);})();</script>
+function arm(){clearTimeout(T1);clearTimeout(T2);T1=setTimeout(go,Math.max(0,9400-(Date.now()-t0)));T2=setTimeout(go,Math.max(0,14000-(Date.now()-t0)));}
+arm();
+/* intro sting (5 s, a separate file next to the game): starts as soon as the intro starts. Browsers on a computer block sound until the first click or key, so then the intro waits (frozen, with a short hint) and starts from that click, so the song always plays with the intro; silent if sound is off */
+function sting(){try{var st=JSON.parse(localStorage.getItem('arenaClashSettings')||'null');if(st&&st.bgm===false){window.__introSongDone=1;return;}var a=new Audio('music-intro.mp3'),alt=0;a.volume=Math.min(1,((st&&typeof st.bgmVol==='number')?st.bgmVol:0.4)*1.5);a.onerror=function(){if(!alt){alt=1;a.src='https://frenchfries777mc.github.io/games/stickseum/music-intro.mp3';a.load();var q=a.play();if(q&&q.catch)q.catch(function(){});}};
+function hold(){if(held||done)return;held=1;clearTimeout(T1);clearTimeout(T2);el.classList.add('hold');var h=document.createElement('div');h.id='introHold';h.textContent='화면을 누르면 시작해요';el.appendChild(h);
+var go2=function(){if(!held)return;held=0;['pointerdown','keydown','touchend','click'].forEach(function(ev){removeEventListener(ev,go2,true);});h.remove();el.classList.remove('hold');t0=Date.now();arm();var r=a.play();if(r&&r.catch)r.catch(function(){});};
+['pointerdown','keydown','touchend','click'].forEach(function(ev){addEventListener(ev,go2,true);});}
+function fin(){window.__introSongDone=1;}
+var p=a.play();if(p&&p.catch)p.catch(function(e){if(e&&e.name==='NotAllowedError')hold();});
+a.addEventListener('ended',fin);a.addEventListener('playing',function(){setTimeout(fin,5300);},{once:true});}catch(e){window.__introSongDone=1;}}
+sting();})();</script>
 
 
 <canvas id="game"></canvas>
@@ -1712,7 +1720,7 @@ const BGM_LOOP={lobby:41.739, battle:51.2, boss:41.143};            // loop leng
 let bgmCtx=null, bgmBufs={}, bgmLoading={}, bgmCur=null, bgmGain=null;
 function bgmWanted(){
   if(!otherSettings.bgm) return null;
-  if(document.getElementById('introScr')) return null;   // no lobby music until the intro is over
+  if(document.getElementById('introScr') && !window.__introSongDone) return null;   // no lobby music while the intro song plays; the lobby song takes over right after it, still during the intro
   const hud=document.getElementById('hud');
   if(hud && hud.style.display==='block') return (typeof matchEnded!=='undefined' && matchEnded) ? null : (gameMode==='raid' ? 'boss' : 'battle');  // the result screen has its own song
   return 'lobby';
@@ -4889,7 +4897,7 @@ function shuffle(arr){ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.
 /* ===== the version of this file =====
    Players with different versions CAN meet and play together: the automatic matchmaking uses the same room names for every version (online-<mode>-<map>-<slot>), and nobody is refused because of a different build.
    The build is only sent along with the join message and the lobby (for information); the corner of the screen shows it. */
-const GAME_BUILD='build 2026-10-18-v352';
+const GAME_BUILD='build 2026-10-18-v353';
 const GAME_VERSION='0.8', GAME_VERSION_NAME='황금을 찾아서';   // 게임 버전 이름: versions.json의 title과 같게 (빌드마다 바꾸지 않음)
 const WEEKLY_EVENTS=[
   {id:'lowg',    name:'저중력 난투', desc:'몸이 둥실둥실, 중력이 약해진 난투', rules:{grav:0.6}},
