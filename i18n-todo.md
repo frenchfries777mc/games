@@ -286,3 +286,6 @@ crownenvoy/CrownEnvoy-v0.4.html | 전신망 (정치 탭 카드) | "📡 전신�
 - patchnotes.json | "프로필 사진 고르기" 3줄
 ## Vowkeep b33 (2026-10-23)
 - patchnotes.json | "Vowkeep 인트로" 2줄 (인트로 글자는 영어 'Made by', 'With'로 번역 필요 없음) | Vowkeep b33 | 2026-10-23
+
+## Crown Envoy b95 (2026-10-23)
+| CrownEnvoy-v0.4.html | 패치 노트 | 지도 가장자리 빈 띠 줄임 | b95 | 2026-10-23 |
