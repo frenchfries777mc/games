@@ -285,10 +285,10 @@ async function openProfile(uid){ if(!sb) return; if(!uid&&!user) return openLogi
 /* 게임 사이트(허브가 아닌 페이지)에는 계정 버튼 옆에 '← 허브' 버튼을 붙여요. 빼고 싶으면 자리에 data-ff-nohub */
 var HUB=BASE, HUBSITE='https://frenchfries777mc.github.io/hub/', onHub=/\/hub\//.test(location.pathname||'') || location.href.indexOf(HUB)===0 && !/\/(stickseum|crownenvoy|beaconfall|isleport|educations|tools)\//i.test(location.pathname||''), SETURL='https://frenchfries777mc.github.io/hub/settings/';
 /* '← 허브' 버튼: 무조건 허브가 아니라, 이 창을 열기 전에 있던 사이트(games·educations·tools·hub)의 첫 화면으로 가요. 모르면 이 페이지가 속한 사이트로 가요. */
-var SITES={hub:['허브','Frenchfries777 허브로 돌아가기'], games:['게임','게임 사이트로 돌아가기'], educations:['교육','교육 사이트로 돌아가기'], tools:['도구','도구 사이트로 돌아가기']};
+var SITES={hub:1, games:1, educations:1, tools:1};
 function siteOf(u){ try{ var x=new URL(u, location.href); if(x.origin!==location.origin) return ''; var m=x.pathname.split('/')[1]; return SITES[m]?m:''; }catch(e){ return ''; } }
 function backSite(){ var own=siteOf(location.href)||'games', from=siteOf(document.referrer); return from||own; }
-function hubLink(s){ if(onHub||s.hasAttribute('data-ff-nohub')) return ''; var k=backSite(), nm=k==='hub'?T.hub:SITES[k][0], tt=k==='hub'?T.hubT:SITES[k][1]; return '<a class="ffa-hub" href="'+esc('https://frenchfries777mc.github.io/'+k+'/')+'" title="'+esc(tt)+'" aria-label="'+esc(tt)+'">\u2190<span class="t">'+esc(nm)+'</span></a>'; }
+function hubLink(s){ if(onHub||s.hasAttribute('data-ff-nohub')) return ''; var k=backSite(); return '<a class="ffa-hub" href="'+esc('https://frenchfries777mc.github.io/'+k+'/')+'" title="'+esc(T.hubT)+'" aria-label="'+esc(T.hubT)+'">\u2190<span class="t">'+esc(T.hub)+'</span></a>'; }
 function paint(){
   css(); var slots=document.querySelectorAll('[data-ff-account]');
   for(var i=0;i<slots.length;i++){
