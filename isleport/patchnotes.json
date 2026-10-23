@@ -2,11 +2,113 @@
  "notes": [
   {
    "date": "2026-10-23",
+   "build": "v0.2 build 56",
+   "title": "최적화 옵션과 가로 화면",
+   "items": [
+    "설정에 \"최적화\"를 넣었어요. 켜면 화면을 30프레임으로 그리고 비·눈 효과를 꺼서 폰이 덜 뜨거워져요",
+    "성능이 낮아 보이는 폰은 처음부터 최적화가 켜져 있어요",
+    "폰을 가로로 눕혔을 때 튜토리얼 안내 상자와 첫 화면 메뉴가 화면을 덜 가리도록 줄였어요",
+    "밭 인트로를 더 선명한 화질로 그려요. 최적화를 켜면 낮은 화질로 그려요",
+    "게임이 한 창에서만 실행돼요. 다른 창에서 이미 실행 중이면 안내가 나오고, 저장 데이터가 서로 덮어쓰이지 않아요",
+    "브라우저 탭 제목을 항상 Isleport로 맞췄어요"
+   ],
+   "tr": {
+    "en": {
+     "title": "Optimize option and landscape fixes",
+     "items": [
+      "Settings now has \"Optimize\": it draws at 30 fps and turns off rain and snow effects so phones run cooler",
+      "Low-end phones start with Optimize on",
+      "In landscape the tutorial box and title menu are smaller and no longer cover the game",
+      "The field intro is drawn in higher quality; Optimize keeps it low-res",
+      "The game now runs in one window at a time; a second window shows a notice and saves never overwrite each other",
+      "The browser tab title is now always Isleport"
+     ]
+    },
+    "ja": {
+     "title": "Optimize option and landscape fixes",
+     "items": [
+      "Settings now has \"Optimize\": it draws at 30 fps and turns off rain and snow effects so phones run cooler",
+      "Low-end phones start with Optimize on",
+      "In landscape the tutorial box and title menu are smaller and no longer cover the game",
+      "The field intro is drawn in higher quality; Optimize keeps it low-res",
+      "The game now runs in one window at a time; a second window shows a notice and saves never overwrite each other",
+      "The browser tab title is now always Isleport"
+     ]
+    },
+    "es": {
+     "title": "Optimize option and landscape fixes",
+     "items": [
+      "Settings now has \"Optimize\": it draws at 30 fps and turns off rain and snow effects so phones run cooler",
+      "Low-end phones start with Optimize on",
+      "In landscape the tutorial box and title menu are smaller and no longer cover the game",
+      "The field intro is drawn in higher quality; Optimize keeps it low-res",
+      "The game now runs in one window at a time; a second window shows a notice and saves never overwrite each other",
+      "The browser tab title is now always Isleport"
+     ]
+    },
+    "fr": {
+     "title": "Optimize option and landscape fixes",
+     "items": [
+      "Settings now has \"Optimize\": it draws at 30 fps and turns off rain and snow effects so phones run cooler",
+      "Low-end phones start with Optimize on",
+      "In landscape the tutorial box and title menu are smaller and no longer cover the game",
+      "The field intro is drawn in higher quality; Optimize keeps it low-res",
+      "The game now runs in one window at a time; a second window shows a notice and saves never overwrite each other",
+      "The browser tab title is now always Isleport"
+     ]
+    },
+    "de": {
+     "title": "Optimize option and landscape fixes",
+     "items": [
+      "Settings now has \"Optimize\": it draws at 30 fps and turns off rain and snow effects so phones run cooler",
+      "Low-end phones start with Optimize on",
+      "In landscape the tutorial box and title menu are smaller and no longer cover the game",
+      "The field intro is drawn in higher quality; Optimize keeps it low-res",
+      "The game now runs in one window at a time; a second window shows a notice and saves never overwrite each other",
+      "The browser tab title is now always Isleport"
+     ]
+    }
+   }
+  },
+  {
+   "date": "2026-10-23",
    "build": "v0.2 build 55",
    "title": "인트로 곡",
    "items": [
     "인트로에 곡이 나오고 게임 음악은 그 뒤에 이어져요. 소리가 막힌 브라우저에서는 화면을 누르면 인트로가 시작돼요"
-   ]
+   ],
+   "tr": {
+    "en": {
+     "title": "Intro song",
+     "items": [
+      "The intro now has a song, and the game music follows it. If the browser blocks sound, tap the screen to start the intro"
+     ]
+    },
+    "ja": {
+     "title": "Intro song",
+     "items": [
+      "The intro now has a song, and the game music follows it. If the browser blocks sound, tap the screen to start the intro"
+     ]
+    },
+    "es": {
+     "title": "Intro song",
+     "items": [
+      "The intro now has a song, and the game music follows it. If the browser blocks sound, tap the screen to start the intro"
+     ]
+    },
+    "fr": {
+     "title": "Intro song",
+     "items": [
+      "The intro now has a song, and the game music follows it. If the browser blocks sound, tap the screen to start the intro"
+     ]
+    },
+    "de": {
+     "title": "Intro song",
+     "items": [
+      "The intro now has a song, and the game music follows it. If the browser blocks sound, tap the screen to start the intro"
+     ]
+    }
+   }
   },
   {
    "date": "2026-10-23",
@@ -14,7 +116,39 @@
    "title": "이모지어 추가",
    "items": [
     "가상 언어 이모지어 추가 (글자를 이모지로 바꿔 보여 줌, 마우스를 올리면 원문)"
-   ]
+   ],
+   "tr": {
+    "en": {
+     "title": "Emoji language added",
+     "items": [
+      "Fictional language Emoji added (text is shown as emoji; hover to see the original)"
+     ]
+    },
+    "ja": {
+     "title": "Emoji language added",
+     "items": [
+      "Fictional language Emoji added (text is shown as emoji; hover to see the original)"
+     ]
+    },
+    "es": {
+     "title": "Emoji language added",
+     "items": [
+      "Fictional language Emoji added (text is shown as emoji; hover to see the original)"
+     ]
+    },
+    "fr": {
+     "title": "Emoji language added",
+     "items": [
+      "Fictional language Emoji added (text is shown as emoji; hover to see the original)"
+     ]
+    },
+    "de": {
+     "title": "Emoji language added",
+     "items": [
+      "Fictional language Emoji added (text is shown as emoji; hover to see the original)"
+     ]
+    }
+   }
   },
   {
    "date": "2026-10-23",
