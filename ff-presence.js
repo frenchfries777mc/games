@@ -12,7 +12,8 @@ function which(){
   if(/\/crownenvoy\//i.test(p) && /^CrownEnvoy[^/]*\.html$/i.test(f)) return 'crownenvoy';
   if(/\/beaconfall\//i.test(p) && /^(BEACONFALL|lobby)[^/]*\.html$/i.test(f)) return 'beaconfall';
   if(/\/isleport\//i.test(p) && /^IslandTrade[^/]*\.html$/i.test(f)) return 'isleport';
-  if(/\/prototypes\/dummyparty\//i.test(p)) return 'dummyparty';
+  if(/\/(prototypes\/)?dummyparty\//i.test(p)) return 'dummyparty';
+  if(/\/(prototypes\/)?vowkeep\//i.test(p)) return 'vowkeep';
   return null;
 }
 var game=which();
