@@ -4986,7 +4986,7 @@ function shuffle(arr){ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.
 /* ===== the version of this file =====
    Players with different versions CAN meet and play together: the automatic matchmaking uses the same room names for every version (online-<mode>-<map>-<slot>), and nobody is refused because of a different build.
    The build is only sent along with the join message and the lobby (for information); the corner of the screen shows it. */
-const GAME_BUILD='build 2026-10-18-v363';
+const GAME_BUILD='build 2026-10-18-v364';
 const GAME_VERSION='0.8', GAME_VERSION_NAME='황금을 찾아서';   // 게임 버전 이름: versions.json의 title과 같게 (빌드마다 바꾸지 않음)
 const WEEKLY_EVENTS=[
   {id:'lowg',    name:'저중력 난투', desc:'몸이 둥실둥실, 중력이 약해진 난투', rules:{grav:0.6}},
@@ -10974,7 +10974,7 @@ const ULT_IMPL = {
     return true; },
   pirate(p,tSec,tMs){ turrets=turrets.filter(z=>z.owner!==p.id); turrets.push({owner:p.id, team:p.team, x:p.x, y:p.y, until:tSec+PIRATE_TURRET_SEC, next:tSec+0.7, ang:(Math.cos(p.angle||0)>=0)?-0.6:Math.PI+0.6}); pushFx('skillring', p.x, p.y-24, tMs, {color:'#ffb347', r:60}); pushFx('sfx', p.x, p.y-30, tMs, {name:'explosion'}); },
   wizard(p,tSec,tMs,ax,ay){ const sp=wizardCircleSpot(p, ax, ay); magicCircles.push({owner:p.id, team:p.team, x:sp.x, y:sp.y, r:WIZ_CIRCLE_R, until:tSec+WIZ_CIRCLE_SEC}); pushFx('magiccircle', sp.x, sp.y, tMs, {}); },
-  horemheb(p,tSec,tMs,ax){         // the sandstorm: a gust far in front of him (1725 long, 360 high): 36 damage, a 10x push, a 2 second stun, and 70% less speed for 3.5 s
+  horemheb(p,tSec,tMs,ax){         // the sandstorm: a gust far in front of him (1725 long, 360 high): 36 damage, a strong push (about 300 px), a 2 second stun, and 70% less speed for 3.5 s
     const dir=skillAimDir(p, ax), x0=p.x, x1=p.x+dir*SANDSTORM_LEN, cy=p.y-PLAYER_H/2;
     for(const id in players){
       const t=players[id]; if(!t.alive || id===p.id || t.x===undefined || isAlly(p,t) || t.swordCharge || t.darkSub) continue;
@@ -11130,7 +11130,7 @@ const SKILLS={
   kurus:    {name:'어둠의 검',   kind:'hit',  desc:'어둠의 검을 휘둘러(사거리는 칼보다 조금 김) 맞은 상대에게 10 피해 + 매우 큰 넉백 + 1초 기절 · 상대가 떨어져 착지한 자리에 어둠이 생김 · 빗나가도 쿨타임은 다시 돌기 시작함'}
 };
 const SKILL_SFX={buff:'skill_buff', hit:'skill_hit', move:'skill_move'};
-const SANDSTORM_LEN=1725, SANDSTORM_H=360, SANDSTORM_KB=9000, SANDSTORM_SLOW_SEC=3.5, SAND_SLOW_MULT=0.3, SANDSTORM_DMG=36, SANDSTORM_STUN=2.0;     // the sandstorm of 호렘헵: reach, height, push, how long and how much it slows
+const SANDSTORM_LEN=1725, SANDSTORM_H=360, SANDSTORM_KB=1200, SANDSTORM_SLOW_SEC=3.5, SAND_SLOW_MULT=0.3, SANDSTORM_DMG=36, SANDSTORM_STUN=2.0;     // the sandstorm of 호렘헵: reach, height, push, how long and how much it slows
 const BUFF_ORDER=['barrier','guard','reflect','focus','rapid','haste'];
 const BUFF_COLORS={barrier:'#c17bff', guard:'#6ec6ff', reflect:'#ffffff', focus:'#ff8a3d', rapid:'#ffd34d', haste:'#7ef0a8'};
 function skillHasBuff(p, name, tSec){ return !!(p && p.buffs && p.buffs[name]>tSec); }
