@@ -221,6 +221,7 @@ input[type=checkbox]{accent-color:var(--gold)}
 @media (max-width:1000px){#side{width:330px}.phases{display:none}}
 @media (max-width:860px){.brand h1{font-size:44px}#lobbyRight{right:12px;width:min(340px,calc(100vw - 24px))}.btn.mode{min-height:78px;padding:12px 18px}}
 @media (max-width:760px){#main{flex-direction:column}#side{width:auto;height:46%;border-left:0;border-top:2px solid var(--goldd)}#topbar{gap:8px;overflow:hidden}#topbar .ttl{display:none}.stats{display:none}#maphint{max-width:80%;font-size:12px}#hint{font-size:12px}.seal{min-width:120px;padding:0 16px}}
+@media (pointer:coarse){.seg button{min-height:38px}.btn.sm,button.sm{min-height:38px;padding-top:6px;padding-bottom:6px}.tabs button,.tab{min-height:40px}}
 @media (prefers-reduced-motion:reduce){.toast,#bpop.show{animation:none}.seal,.btn{transition:none}}
 #evwin{position:absolute;inset:0;z-index:60;background:#050a14f0;display:flex;align-items:center;justify-content:center;cursor:pointer}
 #evwin.hidden{display:none}
@@ -229,6 +230,7 @@ input[type=checkbox]{accent-color:var(--gold)}
 .evphoto canvas{display:block;width:100%;height:auto;border:6px solid #f6f1e2;box-shadow:0 2px 8px #0008}
 .evphoto small{display:block;text-align:center;font-size:11px;color:#6b5b38;margin-top:5px}
 .evnews{padding:14px 26px 16px;overflow:auto}
+@media (max-height:520px) and (orientation:landscape){.evcard{flex-direction:row;width:min(920px,96vw)}.evphoto{flex:0 0 42%;display:flex;flex-direction:column;justify-content:center;border-bottom:0;border-right:2px solid #5a4a2a}.evnews{flex:1;min-width:0;padding:10px 18px}}
 .evmast{display:flex;justify-content:space-between;align-items:baseline;border-bottom:3px double #3a2f1a;padding-bottom:4px;margin-bottom:10px;font-size:12px;letter-spacing:1px;color:#4a3d22}
 .evmast b{font-size:20px;letter-spacing:3px;color:#1c1710}
 .evhead{font-size:26px;line-height:1.25;font-weight:900;margin:4px 0 10px}
@@ -394,7 +396,7 @@ try{if(sessionStorage.getItem('ce_noIntro')){sessionStorage.removeItem('ce_noInt
 sting();})();</script>
 <div id="app">
  <div id="lobby" class="screen">
-  <canvas id="lobbyBg"></canvas><canvas id="lobbyWar"></canvas><div id="cpTag">© 2026 Frenchfries777 · <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.ko" target="_blank" rel="noopener">CC BY-NC-ND 4.0</a></div><div id="verTag">v0.4 · build 95</div>
+  <canvas id="lobbyBg"></canvas><canvas id="lobbyWar"></canvas><div id="cpTag">© 2026 Frenchfries777 · <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.ko" target="_blank" rel="noopener">CC BY-NC-ND 4.0</a></div><div id="verTag">v0.4 · build 96</div>
   <header class="brand"><h1>Crown Envoy</h1><div class="sub"><i></i>DIPLOMACY · WAR · EMPIRE<i></i></div></header>
   <div id="lobbyRight">
    <div id="lobbyHome" class="modes">
@@ -3944,7 +3946,7 @@ const MapView={cv:null,ctx:null,W:0,H:0,dpr:1,scale:1,ox:0,oy:0,hover:-1,deco:[]
     for(let i=0;i<10;i++){c.strokeStyle=`rgba(110,85,40,.05)`;c.lineWidth=1+r()*2;c.beginPath();c.moveTo(r()*160,r()*160);c.bezierCurveTo(r()*160,r()*160,r()*160,r()*160,r()*160,r()*160);c.stroke();}
     this.vel=this.ctx.createPattern(v,'repeat');
   },
-  resize(){const w=$('#mapwrap');const W=w.clientWidth,H=w.clientHeight;if(!W||!H)return;this.dpr=Math.min(2,window.devicePixelRatio||1);this.W=W;this.H=H;this.cv.width=W*this.dpr;this.cv.height=H*this.dpr;
+  resize(){const w=$('#mapwrap');const W=w.clientWidth,H=w.clientHeight;if(!W||!H)return;this.dpr=UI.optOn()?1:Math.min(2,window.devicePixelRatio||1);this.W=W;this.H=H;this.cv.width=W*this.dpr;this.cv.height=H*this.dpr;
     this.scale=Math.min(W/1000,H/700);this.ox=(W-1000*this.scale)/2;this.oy=(H-700*this.scale)/2;this.layerKey='';
     const s=document.createElement('canvas');s.width=W;s.height=H;const c=s.getContext('2d');const g=c.createRadialGradient(W/2,H/2,H*.15,W/2,H/2,Math.max(W,H)*.7);g.addColorStop(0,'#1f3a46');g.addColorStop(1,'#0c161d');c.fillStyle=g;c.fillRect(0,0,W,H);
     c.strokeStyle='rgba(160,200,205,.06)';c.lineWidth=1;const r=rng(3);for(let i=0;i<120;i++){const x=r()*W,y=r()*H,l=14+r()*30;c.beginPath();c.moveTo(x,y);c.quadraticCurveTo(x+l/2,y-4,x+l,y);c.stroke();}
@@ -4104,7 +4106,8 @@ const MapView={cv:null,ctx:null,W:0,H:0,dpr:1,scale:1,ox:0,oy:0,hover:-1,deco:[]
 
 
 /* ================= 지도 연출: 점령 · 행군 · 계절 · 화재/역병 · 도장 · 폭죽 ================= */
-MapView.fxOn=function(){try{return UI.fxMode()!=='off';}catch(e){return true;}};
+try{window.addEventListener('ffperf',()=>{try{MapView.resize();}catch(e){}});}catch(e){}
+MapView.fxOn=function(){try{return UI.fxMode()!=='off'&&!UI.optOn();}catch(e){return true;}};
 MapView.capFx=[];MapView.prevOwn=null;MapView.prevCap=null;MapView.prevKey='';
 function mapShake(){const w=document.querySelector('#mapwrap');if(w&&w.animate)w.animate([{transform:'translate(0,0)'},{transform:'translate(-7px,3px)'},{transform:'translate(6px,-4px)'},{transform:'translate(-4px,-2px)'},{transform:'translate(3px,3px)'},{transform:'translate(0,0)'}],{duration:520,easing:'ease-out'});try{Battle.sfx('boom');}catch(e){}}
 MapView.fx=function(c,now,vw,K,v,pl){
@@ -5073,7 +5076,8 @@ const send=o=>Net.send({t:'act',...o});
 const UI={
   /* 멀티플레이(온라인·비공개 방, 또는 사람이 2명 이상)에서는 전투 연출이 '내가 공격하거나 공격받은 전투만'으로 고정된다 */
   isMulti(){if(C.multi)return true;const m=(typeof Net!=='undefined')&&Net.mode;const v=C.view;const humans=v&&v.players?v.players.filter(p=>!p.isBot).length:0;if(m==='client'||m==='host'||humans>=2){C.multi=true;return true;}return false;},
-  fxMode(){if(C.auto>0)return 'off';return UI.isMulti()?'mine':C.fx;},   // 건너뛰는 동안에는 연출을 생략한다
+  optOn(){try{const p=window.FFPerf&&FFPerf.get();return !!(p&&(p.low||p.fx==='low'));}catch(e){return false;}},
+  fxMode(){if(C.auto>0)return 'off';if(UI.optOn()&&!UI.isMulti()&&C.fx!=='off')return 'brief';return UI.isMulti()?'mine':C.fx;},   // 건너뛰는 동안에는 연출을 생략한다
   init(){
     try{const fx=localStorage.getItem('ce_fx2');if(fx)C.fx=fx;const sn=localStorage.getItem('ce_snd');if(sn!=null)Battle.snd=sn==='1';}catch(e){}
     const name=()=>UI.myName();
@@ -5097,7 +5101,7 @@ const UI={
     $('#codeIn').addEventListener('keydown',e=>{if(e.key==='Enter')$('#btnJoin').click();});
     $('#bSkip').onclick=()=>{if(Battle._skip)Battle._skip();};$('#bSkipAll').onclick=()=>{Battle.skipAll=true;if(Battle._skip)Battle._skip();};
     $('#btnReady').onclick=()=>UI.onReady();$('#btnAuto').onclick=()=>UI.toggleAuto();$('#btnMenu').onclick=()=>UI.openMenu();
-    $('#menu').addEventListener('click',e=>{if(e.target.id==='menu')UI.closeMenu();const b=e.target.closest('[data-act]');if(!b)return;if(b.dataset.act==='closeMenu')UI.closeMenu();if(b.dataset.act==='wl'){UI.closeMenu();UI.openWarlog();}if(b.dataset.act==='sum'){UI.closeMenu();UI.openSummary();}if(b.dataset.act==='savegame'){UI.doSave();}if(b.dataset.act==='site'){UI.ask('게임을 나가고 이 창을 닫을까요?',()=>UI.closeWin(),{yes:'나가기'});}if(b.dataset.act==='leave'){UI.leaveGame();}if(b.dataset.act==='saveName'){const v=($('#nameEdit').value||'').trim().slice(0,12);if(v){try{localStorage.setItem('ce_name',v);}catch(_){}UI.toast('이름을 저장했어요.','ok');}}if(b.dataset.act==='saveK'){const v=($('#kEdit').value||'').trim();if(v){try{localStorage.setItem('ce_kname',v);}catch(_){}if(C.view&&!C.view.draft){send({a:'kname',name:v});UI.toast('나라 이름을 바꿨어요.','ok');}else UI.toast('게임이 시작되면 적용돼요.','ok');}}if(b.dataset.act==='saveFlag'){send({a:'flag',key:($('#flagEdit')||{}).value||''});try{MapView._fi={};MapView.layerKey='';}catch(_){}UI.toast('국기를 바꿨어요.','ok');setTimeout(()=>{try{UI.renderAll();UI.openMenu();}catch(_){}},250);}if(b.dataset.act==='endGame'){UI.ask('지금 승점으로 게임을 끝낼까요?',()=>{Net.send({t:'endgame'});UI.closeMenu();},{yes:'게임 끝내기'});}if(b.dataset.act==='fx'&&!UI.isMulti()){C.fx=b.dataset.val;try{localStorage.setItem('ce_fx2',C.fx);}catch(_){}UI.openMenu();}
+    $('#menu').addEventListener('click',e=>{if(e.target.id==='menu')UI.closeMenu();const b=e.target.closest('[data-act]');if(!b)return;if(b.dataset.act==='closeMenu')UI.closeMenu();if(b.dataset.act==='wl'){UI.closeMenu();UI.openWarlog();}if(b.dataset.act==='sum'){UI.closeMenu();UI.openSummary();}if(b.dataset.act==='savegame'){UI.doSave();}if(b.dataset.act==='site'){UI.ask('게임을 나가고 이 창을 닫을까요?',()=>UI.closeWin(),{yes:'나가기'});}if(b.dataset.act==='leave'){UI.leaveGame();}if(b.dataset.act==='saveName'){const v=($('#nameEdit').value||'').trim().slice(0,12);if(v){try{localStorage.setItem('ce_name',v);}catch(_){}UI.toast('이름을 저장했어요.','ok');}}if(b.dataset.act==='saveK'){const v=($('#kEdit').value||'').trim();if(v){try{localStorage.setItem('ce_kname',v);}catch(_){}if(C.view&&!C.view.draft){send({a:'kname',name:v});UI.toast('나라 이름을 바꿨어요.','ok');}else UI.toast('게임이 시작되면 적용돼요.','ok');}}if(b.dataset.act==='saveFlag'){send({a:'flag',key:($('#flagEdit')||{}).value||''});try{MapView._fi={};MapView.layerKey='';}catch(_){}UI.toast('국기를 바꿨어요.','ok');setTimeout(()=>{try{UI.renderAll();UI.openMenu();}catch(_){}},250);}if(b.dataset.act==='endGame'){UI.ask('지금 승점으로 게임을 끝낼까요?',()=>{Net.send({t:'endgame'});UI.closeMenu();},{yes:'게임 끝내기'});}if(b.dataset.act==='opt'){try{FFPerf.set({low:b.dataset.val==='1'});}catch(_){}try{MapView.resize();}catch(_){}UI.openMenu();}if(b.dataset.act==='fx'&&!UI.isMulti()){C.fx=b.dataset.val;try{localStorage.setItem('ce_fx2',C.fx);}catch(_){}UI.openMenu();}
       if(b.dataset.act==='blur'){BLUR_FLAGS=b.dataset.val==='1';try{localStorage.setItem('ce_blurflag',BLUR_FLAGS?'1':'0');}catch(_){}Object.keys(_fc).forEach(k=>delete _fc[k]);MapView._fi={};MapView.layerKey='';UI.renderAll();UI.openMenu();}
       if(b.dataset.act==='bgm'){Music.setOn(b.dataset.val==='1');UI.openMenu();}
       if(b.dataset.act==='snd'){Battle.snd=b.dataset.val==='1';try{localStorage.setItem('ce_snd',Battle.snd?'1':'0');}catch(_){}UI.openMenu();}});
@@ -5623,7 +5627,7 @@ const UI={
   openMenu(){const v=C.view;if(!v)return UI.openLobbyMenu();const m=$('#menu');
     const seg=(act,cur,items)=>`<div class="seg">${items.map(([val,l])=>`<button data-act="${act}" data-val="${val}" class="${cur===val?'on':''}">${l}</button>`).join('')}</div>`;
     m.innerHTML=`<div class="menubox"><div class="row" style="margin-bottom:8px"><h2 style="margin:0">기록·설정</h2><button class="btn sm" style="flex:none" data-act="closeMenu">닫기</button></div>
-      ${UI.isMulti()?`<div class="pol"><div><b>전투 연출</b><small>멀티플레이에서는 내가 공격하거나 공격받은 전투만 보여요. (고정)</small></div><div class="seg"><button class="on" disabled>내 전투만 · 고정</button></div></div>`:`<div class="pol"><div><b>전투 연출</b><small>전체: 모든 전투 · 내 전투만: 내가 공격하거나 공격받은 전투 · 요약: 수도·대규모 전투만</small></div>${seg('fx',C.fx,[['full','전체'],['mine','내 전투만'],['brief','요약'],['off','끔']])}</div>`}
+      ${UI.isMulti()?`<div class="pol"><div><b>전투 연출</b><small>멀티플레이에서는 내가 공격하거나 공격받은 전투만 보여요. (고정)</small></div><div class="seg"><button class="on" disabled>내 전투만 · 고정</button></div></div>`:`<div class="pol"><div><b>전투 연출</b><small>전체: 모든 전투 · 내 전투만: 내가 공격하거나 공격받은 전투 · 요약: 수도·대규모 전투만</small></div>${seg('fx',C.fx,[['full','전체'],['mine','내 전투만'],['brief','요약'],['off','끔']])}</div>`}<div class="pol"><div><b>최적화</b><small>모든 게임이 같이 쓰는 설정이에요. 켜면 지도 해상도를 낮추고 계절·도장 연출을 끄고 전투 연출을 요약으로 줄여서 느린 기기에서도 부드러워져요.</small></div>${seg('opt',UI.optOn()?'1':'0',[['0','끔'],['1','켬']])}</div>
       <div class="pol"><div><b>업적 · 도감</b><small>달성한 업적과, 만난 병종·장군을 모아 봐요. (이 기기에 저장)</small></div><button class="btn sm" data-act="meta">보기</button></div>
       <div class="pol"><div><b>단축키</b><small>키보드로 탭 전환·확대·이동·턴 확정을 해요.</small></div><button class="btn sm" data-act="keys">보기</button></div>
       <div class="pol"><div><b>튜토리얼</b><small>게임 하는 법을 처음부터 다시 안내해 줘요.</small></div><button class="btn sm" data-act="tut">다시 보기</button></div>
