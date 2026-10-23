@@ -268,6 +268,8 @@
     /* 꾸미기 */
     '모자': ['hat', 'sombrero', 'chapeau', 'Hut', '帽子'],
     '안경': ['glasses', 'gafas', 'lunettes', 'Brille', 'メガネ'],
+    /* 빌드 56 추가분 */
+    "마네킹들의 병맛 미니게임 파티": ["The silly minigame party of mannequins", "La fiesta de minijuegos absurdos de los maniquíes", "La fête de mini-jeux déjantés des mannequins", "Die verrückte Minispiel-Party der Mannequins", "マネキンたちのおバカミニゲームパーティー"],
     /* 빌드 55 추가분 */
     "컵 야바위": ["Cup Shuffle", "Cubilete", "Jeu des gobelets", "Hütchenspiel", "カップ当て"],
     "컵 세 개 중 하나 밑에 공이 숨어 있어요. 빠르게 섞은 뒤 공이 든 컵을 먼저 맞혀요.": ["A ball hides under one of three cups. After a fast shuffle, find the cup with the ball first.", "Una bola se esconde bajo uno de tres vasos. Tras mezclarlos rápido, acierta antes el vaso con la bola.", "Une balle se cache sous l'un des trois gobelets. Après un mélange rapide, trouve le bon en premier.", "Unter einem von drei Bechern liegt eine Kugel. Nach dem schnellen Mischen musst du den richtigen Becher zuerst finden.", "3つのカップのどれかにボールが隠れています。素早くシャッフルした後、ボール入りのカップを先に当てよう。"],
@@ -1269,6 +1271,7 @@ button{font:inherit;cursor:pointer}
 /* 첫 화면 */
 #sHome{background:radial-gradient(ellipse at 50% 30%,#f7c27a 0%,#d98f4e 55%,#8a5530 100%);min-height:100vh;display:none;align-items:center;justify-content:center;padding:24px 16px}
 #sHome.on{display:flex}
+#sIntro{background:#120a1e;min-height:100vh;display:none;align-items:center;justify-content:center}#sIntro.on{display:flex}#introCv{width:min(100vw,177.7vh);height:auto;aspect-ratio:16/9;display:block}
 .homeBox{width:100%;max-width:440px;text-align:center}
 .logo{font-weight:900;font-size:clamp(40px,11vw,64px);line-height:1;color:#fff;letter-spacing:-1px;text-shadow:0 4px 0 #b86b33,0 8px 18px rgba(0,0,0,.25);margin:0}
 .tag{color:#5a3415;font-weight:700;margin:10px 0 6px}
@@ -1488,7 +1491,8 @@ body.playing #emoBar{display:flex}
 </head>
 <body class="onhome">
 <button class="exitHub" id="exitHub">← 나가기</button>
-<section class="screen on" id="sHome">
+<section class="screen on" id="sIntro"><canvas id="introCv" width="1280" height="720"></canvas></section>
+<section class="screen" id="sHome">
  <canvas id="homeBg" width="960" height="540"></canvas><div id="homeDim"></div>
  <div class="homeBox">
   <img class="logoMark" src="logo.svg" alt="" width="104" height="104">
@@ -1511,7 +1515,9 @@ body.playing #emoBar{display:flex}
    <div class="row"><input id="codeIn" maxlength="5" placeholder="방 코드" autocomplete="off"><button class="pb dark" id="joinBtn" style="flex:0 0 auto">들어가기</button></div>
    <div class="msg" id="homeMsg"></div>
   </aside>
-  <template id="patchnotes"><details class="notes" open><summary>패치노트 · v0.1 (build 55)</summary>
+  <template id="patchnotes"><details class="notes" open><summary>패치노트 · v0.1 (build 56)</summary>
+   <b>2026-10-23 · v0.1 build 56 · 인트로와 봇 조정</b>
+   <ul><li>게임을 열면 마네킹들이 컵 야바위, 풍선 다트, 줄넘기, 페인트 색 섞기를 하는 인트로가 나와요 (건너뛸 수 없어요)</li><li>쇼핑카트 레이스의 봇이 더 느리고 자주 실수해요</li><li>웨이터 쟁반 배달이 쉬워졌어요 (쟁반 흔들림 감소, 쏟기 전 여유 증가, 기절 시간 단축, 제한 시간 6초 증가)</li></ul>
    <b>2026-10-23 · v0.1 build 55 · 새 미니게임 2개</b>
    <ul><li>미니게임 추가: 컵 야바위 (섞인 컵 중 공이 든 컵을 빨리 맞힐수록 점수가 커요, 총 5번)</li><li>미니게임 추가: 페인트 색 섞기 (팔레트에서 제시된 색과 가장 비슷한 색을 골라 확정해요, 총 6번)</li><li>관중 속 마네킹 찾기의 봇이 더 오래 두리번거리고 가끔 틀리게 조정했어요</li><li>리듬 미니게임의 봇이 조금 더 정확해졌어요</li></ul>
    <b>2026-10-23 · v0.1 build 54 · 새 미니게임 2개와 선택창 검색</b>
@@ -1620,7 +1626,7 @@ body.playing #emoBar{display:flex}
    <ul><li>무너지는 발판 칸 수 대폭 증가 (19×10)와 용암 동굴 맵</li><li>10개 맵 전부 새로 그림 (관중석, 야자수 섬, 링, 정원 미로, 서커스, 우노 테이블 등)</li><li>글자 대신 아이콘·말풍선·이펙트로 표현 (무기, 아이템, 카드 효과, 시작 안내)</li><li>타격·폭발·물보라 효과와 화면 흔들림 추가</li></ul>
    <b>2026-10-19 · v0.1 build 1 · 첫 시험판</b>
    <ul><li>마네킹 미니게임 10개 추가 (장애물 달리기, 섬 밀치기, 싸우기, 병맛 미로, 체스 대난투, 폭탄 돌리기, 병맛 우노, 쇼윈도 얼음땡, 무너지는 발판, 컨베이어 서바이벌)</li><li>방 코드로 최대 8명 멀티플레이, 빈자리는 봇으로 채우기</li><li>판마다 10개 중 5개를 무작위로 골라 점수를 합산</li><li>PC 키보드와 휴대폰 터치 조작 지원</li></ul></details></template>
-  <p class="foot">2~8명 · 판마다 36개 미니게임 중 7개 · 프로토타입 v0.1 b55 · <a href="../">← 프로토타입 목록</a></p>
+  <p class="foot">2~8명 · 판마다 36개 미니게임 중 7개 · 프로토타입 v0.1 b56 · <a href="../">← 프로토타입 목록</a></p>
   <p class="foot"><span class="ff-copy">© 2026 Frenchfries777 · <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.ko" target="_blank" rel="noopener">CC BY-NC-ND 4.0</a></span></p>
  </div>
 </section>
@@ -5150,7 +5156,7 @@ function snow(s, v) { if (s.t !== SNOW.st) { SNOW.st = s.t; SNOW.vt = v.t; } ret
       var pl = {}, n = ps.length;
       ps.forEach(function (p, i) {
         var row = i >> 1, col = i & 1, s0 = 40 + row * 44, q = posAt(s0);
-        pl[p.id] = { x: q.x, y: q.y + (col ? 22 : -22) * (q.a === 0 ? 1 : 0) + (col ? 22 : -22), vx: 0, vy: 0, h: 0, dr: false, dc: 0, boost: 0, slow: 0, spin: 0, ic: 0, cargo: 5, sp: 0, prog: s0, last: s0, fin: 0, ft: 0, sk: 0.35 + rng() * 0.55, bt: 0, bs: 0, bd: 0, nz: 0, walk: 0 };
+        pl[p.id] = { x: q.x, y: q.y + (col ? 22 : -22) * (q.a === 0 ? 1 : 0) + (col ? 22 : -22), vx: 0, vy: 0, h: 0, dr: false, dc: 0, boost: 0, slow: 0, spin: 0, ic: 0, cargo: 5, sp: 0, prog: s0, last: s0, fin: 0, ft: 0, sk: 0.25 + rng() * 0.42, bt: 0, bs: 0, bd: 0, nz: 0, walk: 0 };
         pl[p.id].y = CY + R + (col ? 20 : -20);
       });
       return { t: 0, pl: pl, ids: ps.map(function (p) { return p.id; }), items: [], fin: [], done: false };
@@ -5199,12 +5205,13 @@ function snow(s, v) { if (s.t !== SNOW.st) { SNOW.st = s.t; SNOW.vt = v.t; } ret
     bot: function (s, id, rng) {
       var p = s.pl[id], r = emptyInput(); if (p.fin) return r;
       var sp = Math.hypot(p.vx, p.vy);
-      p.bt -= 1 / 60; if (p.bt <= 0) { p.bt = 0.04 + (1 - p.sk) * 0.14; p.nz = (rng() - 0.5) * (1.2 - p.sk) * 0.8; }
+      p.bt -= 1 / 60; if (p.bt <= 0) { p.bt = 0.04 + (1 - p.sk) * 0.14; p.nz = (rng() - 0.5) * (1.5 - p.sk) * 1.1; if (!(p.lp > 0) && rng() < 0.05) p.lp = 0.25 + rng() * 0.45; }
+      if (p.lp > 0) p.lp -= 1 / 60;   // 한눈팔기: 잠깐 조향을 놓쳐요
       var look = 110 + sp * 0.28, tp = posAt(progOf(p.x, p.y) + look), off = ((trackD(p.x, p.y).d - R) > 0 ? 1 : -1);
       var ang = Math.atan2(tp.y - p.y, tp.x - p.x) - p.h; while (ang > PI) ang -= 2 * PI; while (ang < -PI) ang += 2 * PI;
-      r.mx = clamp(ang * 2.2 + p.nz, -1, 1);
+      r.mx = p.lp > 0 ? clamp(p.nz * 0.4, -1, 1) : clamp(ang * 1.8 + p.nz, -1, 1);
       var tight = Math.abs(ang) > 0.28;
-      if (p.sk > 0.45 && tight && sp > 150) { p.bs = Math.min(1.1, p.bs + 1 / 60); r.a = true; r.b = false; }
+      if (p.sk > 0.5 && !(p.lp > 0) && tight && sp > 150) { p.bs = Math.min(1.1, p.bs + 1 / 60); r.a = true; r.b = false; }
       else { p.bs = Math.max(0, p.bs - 1 / 60); }
       return r;
     },
@@ -5557,10 +5564,10 @@ function snow(s, v) { if (s.t !== SNOW.st) { SNOW.st = s.t; SNOW.vt = v.t; } ret
 
 /* ---------- 35. 웨이터 쟁반 배달 ---------- */
 (function () {
-  var DUR = 38, KX = 150, TX = 790, MAXN = 8, FOODS = ['#ff9a4a', '#ff5a8a', '#ffd23f', '#8aff7a', '#c28aff', '#5ad7ff', '#ff7a5a', '#f4f1ec'];
+  var DUR = 44, KX = 150, TX = 790, MAXN = 8, FOODS = ['#ff9a4a', '#ff5a8a', '#ffd23f', '#8aff7a', '#c28aff', '#5ad7ff', '#ff7a5a', '#f4f1ec'];
   function pts(n) { return Math.round(n * (n + 1) / 2); }
   regMG({
-    id: 'waiter', name: '웨이터 쟁반 배달', time: 42,
+    id: 'waiter', name: '웨이터 쟁반 배달', time: 48,
     desc: '주방에서 접시를 쟁반에 쌓아 오른쪽 손님 테이블까지 날라요. 많이 쌓을수록 점수가 크지만 흔들리면 와르르 쏟아져요.',
     how: '왼쪽 주방에서 버튼을 눌러 접시를 쌓고, 오른쪽 테이블로 가요. 달릴수록 쟁반이 흔들려서 균형이 넘치면 전부 쏟아요. 두 번째 버튼을 누르고 있으면 천천히 걸으며 균형을 잡아요. 쌓은 개수가 많을수록 점수가 크게 올라가요.',
     keys: { a: '접시 쌓기', b: '천천히 걷기' }, touch: true,
@@ -5580,12 +5587,12 @@ function snow(s, v) { if (s.t !== SNOW.st) { SNOW.st = s.t; SNOW.vt = v.t; } ret
         p.x = clamp(p.x + mx * 150 * slow * dt, 30, 930); p.y = clamp(p.y + my * 150 * slow * dt, 120, 470);
         if (Math.abs(mx) > 0.1) p.face = mx > 0 ? 1 : -1; animP(p, dt, mag > 0.1);
         // 쟁반 균형: 많이 쌓고 빨리 걸을수록 크게 흔들려요
-        var push = (rng() - 0.5) * 2 * p.n * (0.4 + mag * 2.2) * (i.b ? 0.35 : 1);
+        var push = (rng() - 0.5) * 2 * p.n * (0.3 + mag * 1.2) * (i.b ? 0.3 : 1);
         p.tv += push * dt * 9 - p.tilt * dt * 9; p.tv *= Math.pow(i.b ? 0.05 : 0.18, dt); p.tilt += p.tv * dt;
         if (p.n === 0) { p.tilt *= 0.8; p.tv = 0; }
-        if (p.n > 0 && Math.abs(p.tilt) > 1) {
+        if (p.n > 0 && Math.abs(p.tilt) > 1.3) {
           for (var k = 0; k < p.n; k++) s.sp.push({ x: p.x, y: p.y - 56, vx: (rng() - 0.5) * 320, vy: -220 - rng() * 140, fy: p.y + 6 + rng() * 8, age: 0, col: FOODS[k % FOODS.length] });
-          s.pops.push({ x: p.x, y: p.y - 80, age: 0, t: '와르르!', c: '#ff6a6a' }); fx(s, 'hit', p.x, p.y - 40); p.n = 0; p.tilt = p.tv = 0; p.stun = 1.0; p.sp++;
+          s.pops.push({ x: p.x, y: p.y - 80, age: 0, t: '와르르!', c: '#ff6a6a' }); fx(s, 'hit', p.x, p.y - 40); p.n = 0; p.tilt = p.tv = 0; p.stun = 0.6; p.sp++;
         }
         if (live && p.stun <= 0) {
           if (p.x < KX && (i.a || i.ap) && p.cd <= 0 && p.n < MAXN) { p.n++; p.cd = 0.22; fx(s, 'pop', p.x, p.y - 50); }
@@ -5601,8 +5608,8 @@ function snow(s, v) { if (s.t !== SNOW.st) { SNOW.st = s.t; SNOW.vt = v.t; } ret
       if (p.n < p.tn) {
         if (p.x >= KX - 15) { r.mx = -1; } else if (p.cd <= 0) { r.a = true; r.ap = true; }
       } else {
-        var m2 = botToward(p.x, p.y, TX + 60, p.ty, 20); r.mx = m2.mx; r.my = m2.my; if (p.n >= 4 || Math.abs(p.tilt) > 0.55) r.b = true;
-        if (Math.abs(p.tilt) > 0.7) { r.mx = 0; r.my = 0; r.b = true; }
+        var m2 = botToward(p.x, p.y, TX + 60, p.ty, 20); r.mx = m2.mx; r.my = m2.my; if (p.n >= 4 || Math.abs(p.tilt) > 0.7) r.b = true;
+        if (Math.abs(p.tilt) > 0.9) { r.mx = 0; r.my = 0; r.b = true; }
       }
       return r;
     },
@@ -5629,7 +5636,7 @@ function snow(s, v) { if (s.t !== SNOW.st) { SNOW.st = s.t; SNOW.vt = v.t; } ret
           ctx.fillStyle = '#888'; ctx.fillRect(-20, -2, 40, 4);
           for (var k = 0; k < p.n; k++) { ctx.fillStyle = FOODS[k % FOODS.length]; ctx.beginPath(); ctx.ellipse(0, -8 - k * 9, 17, 5.5, 0, 0, 6.283); ctx.fill(); ctx.strokeStyle = 'rgba(0,0,0,.35)'; ctx.lineWidth = 1.5; ctx.stroke(); }
           ctx.restore();
-          if (id === v.me && Math.abs(p.tilt) > 0.65 && Math.floor(now * 8) % 2) txt(ctx, '!', p.x + 30, p.y - 90 - p.n * 8, { size: 28, c: '#ff4a4a' });
+          if (id === v.me && Math.abs(p.tilt) > 0.85 && Math.floor(now * 8) % 2) txt(ctx, '!', p.x + 30, p.y - 90 - p.n * 8, { size: 28, c: '#ff4a4a' });
         }
       });
       s.pops.forEach(function (o) { var k = o.age; ctx.globalAlpha = 1 - k; txt(ctx, o.t, o.x, o.y - k * 40, { size: 24, c: o.c }); ctx.globalAlpha = 1; });
@@ -5637,7 +5644,7 @@ function snow(s, v) { if (s.t !== SNOW.st) { SNOW.st = s.t; SNOW.vt = v.t; } ret
       if (me) {
         txt(ctx, '내 점수 ' + me.sc, 100, 76, { size: 20, c: '#fff' });
         // 균형 게이지
-        var bw = 160, bx = W / 2 - bw / 2, by = 76, lvl = me.n ? clamp(Math.abs(me.tilt), 0, 1) : 0;
+        var bw = 160, bx = W / 2 - bw / 2, by = 76, lvl = me.n ? clamp(Math.abs(me.tilt) / 1.3, 0, 1) : 0;
         ctx.fillStyle = 'rgba(0,0,0,.4)'; rrect(ctx, bx, by - 8, bw, 16, 8); ctx.fill(); ctx.fillStyle = lvl > 0.7 ? '#ff4a4a' : (lvl > 0.4 ? '#ffd23f' : '#6adf7a'); rrect(ctx, bx, by - 8, Math.max(4, bw * lvl), 16, 8); ctx.fill();
         txt(ctx, '균형', bx - 28, by, { size: 14, c: '#fff' });
       }
@@ -8138,6 +8145,84 @@ function dpPhoto(m) {
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init); else init();
 })();
 
+/* ===== 인트로: 마네킹들이 미니게임을 하는 장면 (건너뛸 수 없어요) ===== */
+(function () {
+  var cv = $('introCv'), c = cv.getContext('2d'), T = 7.6, t0 = performance.now(), done = false, logo = new Image();
+  logo.src = 'logo.svg';
+  window.INTRO_ON = true;
+  function ease(k) { k = clamp(k, 0, 1); return k * k * (3 - 2 * k); }
+  function cup(x, y, lift) { c.fillStyle = '#d6352e'; c.beginPath(); c.moveTo(x - 20, y - 26 - lift); c.lineTo(x + 20, y - 26 - lift); c.lineTo(x + 27, y + 18 - lift); c.lineTo(x - 27, y + 18 - lift); c.closePath(); c.fill(); c.fillStyle = '#ffd23f'; c.fillRect(x - 25, y + 4 - lift, 50, 5); }
+  function station(i, t) {
+    var cx = [130, 370, 610, 830][i], gy = 392;
+    if (i === 0) {          // 컵 야바위
+      var sl = [cx - 80, cx, cx + 80], k = (t * 1.3) % 3, sw = Math.floor(k), f = ease(k - sw), pair = [[0, 1], [1, 2], [0, 2]][sw % 3];
+      var pos = [0, 1, 2].map(function (n) { return n === pair[0] ? lerp(sl[pair[0]], sl[pair[1]], f) : n === pair[1] ? lerp(sl[pair[1]], sl[pair[0]], f) : sl[n]; });
+      c.fillStyle = '#8a5a30'; rrect(c, cx - 125, gy - 30, 250, 22, 8); c.fill();
+      c.fillStyle = '#ffd23f'; c.beginPath(); c.arc(pos[1], gy - 38, 8, 0, 6.283); c.fill();
+      pos.forEach(function (x, n) { cup(x, gy - 46, 0); });
+      drawDummy(c, cx, gy + 62, { s: 1.15, color: COLORS[1], pose: 'stand', face: 1, t: t });
+      return;
+    }
+    if (i === 1) {          // 풍선 다트
+      for (var b = 0; b < 4; b++) {
+        var ph = (t * 0.55 + b * 0.27) % 1, bx = cx - 70 + b * 48 + Math.sin(t * 2 + b) * 8, by = gy + 10 - ph * 250, pop = ph > 0.8;
+        if (!pop) { c.fillStyle = b === 2 ? '#222' : COLORS[(b * 2 + 1) % 8]; c.beginPath(); c.ellipse(bx, by, 17, 21, 0, 0, 6.283); c.fill(); c.strokeStyle = '#fff6'; c.lineWidth = 1.5; c.beginPath(); c.moveTo(bx, by + 21); c.lineTo(bx, by + 50); c.stroke(); }
+        else { var q = (ph - 0.8) / 0.2; c.globalAlpha = 1 - q; c.strokeStyle = '#fff'; c.lineWidth = 3; for (var a = 0; a < 8; a++) { var an = a * 0.785; c.beginPath(); c.moveTo(bx + Math.cos(an) * 14 * (1 + q), by + Math.sin(an) * 14 * (1 + q)); c.lineTo(bx + Math.cos(an) * 30 * (1 + q), by + Math.sin(an) * 30 * (1 + q)); c.stroke(); } c.globalAlpha = 1; }
+      }
+      var th = (t * 1.6) % 1; if (th < 0.45) { var dx = lerp(cx - 40, cx + 30, th / 0.45), dy = lerp(gy - 40, gy - 150, th / 0.45); c.fillStyle = '#eee'; c.fillRect(dx - 9, dy - 2, 18, 4); c.fillStyle = '#d6352e'; c.fillRect(dx - 12, dy - 4, 5, 8); }
+      drawDummy(c, cx - 70, gy + 62, { s: 1.15, color: COLORS[4], pose: th < 0.3 ? 'up' : 'stand', face: 1, t: t });
+      return;
+    }
+    if (i === 2) {          // 줄넘기
+      var rp = t * 3.2, jump = Math.max(0, Math.sin(rp * 3.1416 * 0.5 + 1.2));
+      var jz = Math.max(0, Math.sin(t * 5.2)) * 34;
+      c.strokeStyle = '#ffe68a'; c.lineWidth = 4; c.beginPath();
+      for (var u = 0; u <= 20; u++) { var kx = cx - 100 + u * 10, sag = Math.sin(u / 20 * 3.1416); c.lineTo(kx, gy + 10 - sag * 18 + Math.sin(t * 5.2 + 1.4) * sag * 70 * 0 + Math.cos(t * 5.2) * sag * 60); }
+      c.stroke();
+      drawDummy(c, cx - 100, gy + 62, { s: 1.1, color: COLORS[0], pose: 'push', face: 1, t: t });
+      drawDummy(c, cx + 100, gy + 62, { s: 1.1, color: COLORS[3], pose: 'push', face: -1, t: t });
+      drawDummy(c, cx, gy + 62, { s: 1.2, color: COLORS[2], pose: 'up', face: 1, z: jz, t: t });
+      return;
+    }
+    // 페인트 색 섞기: 팔레트와 튀는 물감
+    c.fillStyle = '#f2ecdf'; rrect(c, cx - 95, gy - 95, 190, 100, 10); c.fill();
+    for (var s = 0; s < 19; s++) { c.fillStyle = 'hsl(' + (s * 19) + ',85%,60%)'; c.fillRect(cx - 90 + s * 9.5, gy - 90, 9.5, 90); }
+    var ax = cx - 80 + (Math.sin(t * 1.7) * 0.5 + 0.5) * 160, ay = gy - 80 + (Math.cos(t * 2.1) * 0.5 + 0.5) * 70;
+    c.strokeStyle = '#fff'; c.lineWidth = 4; c.beginPath(); c.arc(ax, ay, 11, 0, 6.283); c.stroke(); c.strokeStyle = '#222'; c.lineWidth = 2; c.stroke();
+    drawDummy(c, cx, gy + 62, { s: 1.15, color: COLORS[6], pose: Math.sin(t * 3) > 0.4 ? 'up' : 'stand', face: 1, t: t });
+    for (var d = 0; d < 5; d++) { var pp = (t * 0.9 + d * 0.2) % 1; c.globalAlpha = 1 - pp; c.fillStyle = 'hsl(' + (d * 70 + t * 40) + ',85%,60%)'; c.beginPath(); c.arc(cx + (d - 2) * 34, gy - 110 - pp * 60, 6 - pp * 3, 0, 6.283); c.fill(); }
+    c.globalAlpha = 1;
+  }
+  function frame() {
+    if (done) return; requestAnimationFrame(frame);
+    var t = (performance.now() - t0) / 1000, k;
+    c.setTransform(cv.width / W, 0, 0, cv.height / H, 0, 0); c.clearRect(0, 0, W, H);
+    var g = c.createLinearGradient(0, 0, 0, H); g.addColorStop(0, '#1d1033'); g.addColorStop(1, '#4a2a62'); c.fillStyle = g; c.fillRect(0, 0, W, H);
+    for (var s = 0; s < 3; s++) { var sx = 240 + s * 240 + Math.sin(t * 1.1 + s * 2) * 90; c.fillStyle = 'rgba(255,230,160,.10)'; c.beginPath(); c.moveTo(sx - 8, 0); c.lineTo(sx + 8, 0); c.lineTo(sx + 110, 470); c.lineTo(sx - 110, 470); c.closePath(); c.fill(); }
+    c.fillStyle = '#6b4226'; c.fillRect(0, 440, W, 100); c.fillStyle = '#8a5a30'; c.fillRect(0, 440, W, 8);
+    var fade = ease(1 - (t - 3.9) / 0.8);   // 장면은 3.9초부터 어두워지고 로고가 나와요
+    c.globalAlpha = t < 3.9 ? ease(t / 0.6) : fade * 0.3; for (var i = 0; i < 4; i++) station(i, t); c.globalAlpha = 1;
+    for (var m = 0; m < 14; m++) drawDummy(c, 30 + m * 68, 560 + Math.abs(Math.sin(t * 3 + m)) * -8, { s: 0.8, color: COLORS[m % 8], pose: m % 3 === 0 ? 'up' : 'stand', face: 1, t: t });
+    if (t > 3.9) {
+      var lk = ease((t - 3.9) / 0.9), sc = 0.6 + 0.4 * lk;
+      c.save(); c.globalAlpha = lk; c.translate(W / 2, 226); c.scale(sc, sc);
+      if (logo.complete && logo.naturalWidth) c.drawImage(logo, -90, -90, 180, 180);
+      c.restore(); c.globalAlpha = lk;
+      txt(c, 'Dummy Party', W / 2, 352, { size: 54, c: '#fff' });
+      txt(c, '마네킹들의 병맛 미니게임 파티', W / 2, 400, { size: 22, c: '#ffe68a' });
+      c.globalAlpha = 1;
+    }
+    k = clamp((t - (T - 0.5)) / 0.5, 0, 1); if (k > 0) { c.fillStyle = 'rgba(0,0,0,' + k + ')'; c.fillRect(0, 0, W, H); }
+    if (t >= T) finish();
+  }
+  function finish() {
+    if (done) return; done = true; window.INTRO_ON = false;
+    if ($('sIntro').classList.contains('on')) show('sHome');
+    if (window.autoJoin) window.autoJoin();
+  }
+  show('sIntro'); requestAnimationFrame(frame);
+})();
+
 /* 확인 창 (브라우저 기본 팝업 대신 쓰는 자체 창) */
 function dpAsk(msg, okLabel, onOk) {
   var box = $('dlg'); $('dlgMsg').textContent = msg; $('dlgOk').textContent = okLabel || '확인'; box.classList.add('on');
@@ -8310,9 +8395,10 @@ function dpAsk(msg, okLabel, onOk) {
   })();
   // 허브 방 초대 링크(?join=코드)로 열리면 이름이 정해진 뒤 자동으로 들어가요
   var autoDone = false;
+  window.autoJoin = autoJoin;
   function autoJoin() {
     var c = (qs.get('join') || '').toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 5);
-    if (autoDone || c.length !== 5 || G.role || !$('nameIn').value.trim()) return;
+    if (window.INTRO_ON || autoDone || c.length !== 5 || G.role || !$('nameIn').value.trim()) return;
     autoDone = true; $('codeIn').value = c; $('joinBtn').click();
   }
   setTimeout(autoJoin, 3000);
