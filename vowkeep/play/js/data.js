@@ -1,7 +1,7 @@
 // Vowkeep · © 2026 Frenchfries777 · CC BY-NC-ND 4.0
 // 게임 데이터: 역할, 적, 축복, 1장 지도
 
-export const VERSION = 'v0.1', BUILD = 43;
+export const VERSION = 'v0.1', BUILD = 44;
 
 export const ROLES = {
   knight: {
@@ -89,24 +89,33 @@ export const FOES = [
 function genMap(seed, rooms, opt = {}) {
   let sd = seed; const rnd = () => (sd = (sd * 16807) % 2147483647) / 2147483647;
   // 양옆에 10칸씩 여유를 둬서 바깥쪽 방 옆에 비밀 방을 붙여요
-  const SW = 30, SH = 26, cols = 3, X0 = 10, rowsN = Math.ceil(rooms.length / cols), w = SW * cols + X0 * 2, h = SH * rowsN + 2;
+  // 장마다 다른 지도 짜임 (st): cols 열 수, cw 통로 너비, jit 방 위치 흔들기, zig 꺾인 통로, round 방 모서리 깎기
+  const st = opt.st || rooms.st || {}, cols = st.cols || 3, cwd = st.cw || 4, gw = Math.max(4, cwd + (cwd % 2)), jit = st.jit || 0;
+  const SW = 30, SH = 26, X0 = 10, rowsN = Math.ceil(rooms.length / cols), w = SW * cols + X0 * 2, h = SH * rowsN + 2;
   const m = { w, h, cs: 2, floors: [], water: [], areas: [], spawns: [], pillars: [], traps: [], fires: [], altars: [], chests: [], route: [], secrets: [], puzzles: [], darks: [], pits: [], lifts: [], mimic: -1 };
   const R = rooms.map((r, i) => {
     const row = Math.floor(i / cols), c0 = row % 2 ? cols - 1 - (i % cols) : i % cols, col = opt.flip ? cols - 1 - c0 : c0, sy = (rowsN - 1 - row) * SH + 1;
     const rw = r.boss ? 26 : r.w ? r.w + 3 : 15 + Math.floor(rnd() * 8), rh = r.boss ? 22 : r.h ? r.h + 2 : 13 + Math.floor(rnd() * 7);
-    const x = X0 + col * SW + Math.floor((SW - rw) / 2), y = sy + Math.floor((SH - rh) / 2);
+    const jx = Math.max(0, Math.min(jit, Math.floor((SW - rw) / 2) - 2)), jy = Math.max(0, Math.min(jit, Math.floor((SH - rh) / 2) - 2));
+    const x = X0 + col * SW + Math.floor((SW - rw) / 2) + (jx ? Math.round((rnd() * 2 - 1) * jx) : 0), y = sy + Math.floor((SH - rh) / 2) + (jy ? Math.round((rnd() * 2 - 1) * jy) : 0);
     return Object.assign({ x, y, rw, rh, col, row, cx: x + Math.floor(rw / 2), cy: y + Math.floor(rh / 2) }, r);
   });
   const chestRooms = [];
   R.forEach((r, i) => {
-    m.floors.push([r.x, r.y, r.rw, r.rh]);
+    const rd = st.round && !r.boss && !r.cut ? st.round : 0, rr = rd ? [[r.x + rd, r.y, r.rw - rd * 2, r.rh], [r.x, r.y + rd, r.rw, r.rh - rd * 2]] : [[r.x, r.y, r.rw, r.rh]];
+    m.floors.push(...rr);
     if (r.water) m.water.push([r.x, r.y, r.rw, r.rh]);
     if (r.pool) m.water.push([r.x + 1, r.y + r.rh - 5, 4, 4]);
-    m.areas.push({ name: r.name, line: r.line, r: [[r.x, r.y, r.rw, r.rh]], rest: r.rest ? 1 : undefined, boss: r.boss ? 1 : undefined, t: r.t != null ? r.t : i, puz: r.puz, dark: r.dark ? 1 : undefined, cut: r.cut });
+    m.areas.push({ name: r.name, line: r.line, r: rr, rest: r.rest ? 1 : undefined, boss: r.boss ? 1 : undefined, t: r.t != null ? r.t : i, puz: r.puz, dark: r.dark ? 1 : undefined, cut: r.cut });
+    // 통로: 같은 줄이면 가로로, 다음 줄이면 세로로 나가요. zig면 가운데에서 한 번 꺾여요
     if (i < R.length - 1) {
-      const n = R[i + 1], x0 = Math.min(r.cx, n.cx), x1 = Math.max(r.cx, n.cx), y0 = Math.min(r.cy, n.cy), y1 = Math.max(r.cy, n.cy);
-      m.floors.push([x0 - 2, r.cy - 2, x1 - x0 + 4, 4], [n.cx - 2, y0 - 2, 4, y1 - y0 + 4]);
-      if (r.water && n.water) m.water.push([x0 - 2, r.cy - 2, x1 - x0 + 4, 4]);
+      const n = R[i + 1], hw = Math.floor(cwd / 2), pts = [[r.cx, r.cy]];
+      if (n.row === r.row) { if (st.zig || n.cy !== r.cy) { const mx = Math.round((r.cx + n.cx) / 2 + (st.zig ? (rnd() - 0.5) * 4 : 0)); pts.push([mx, r.cy], [mx, n.cy]); } }
+      else { const my = Math.round((r.cy + n.cy) / 2 + (st.zig ? (rnd() - 0.5) * 3 : 0)); if (n.cx !== r.cx) pts.push([r.cx, my], [n.cx, my]); }
+      pts.push([n.cx, n.cy]); r.mid = pts.slice(1, -1);
+      for (let k = 0; k < pts.length - 1; k++) { const [ax, ay] = pts[k], [bx, by] = pts[k + 1], rc = [Math.min(ax, bx) - hw, Math.min(ay, by) - hw, Math.abs(bx - ax) + cwd, Math.abs(by - ay) + cwd]; m.floors.push(rc); if (r.water && n.water) m.water.push(rc); }
+      // 회랑: 넓은 통로 양옆에 기둥
+      if (st.colon) for (let k = 0; k < pts.length - 1; k++) { const [ax, ay] = pts[k], [bx, by] = pts[k + 1], L = Math.abs(bx - ax) + Math.abs(by - ay); if (L < 10) continue; for (let d = 4; d < L - 3; d += 5) { const t2 = d / L, px = Math.round(ax + (bx - ax) * t2), py = Math.round(ay + (by - ay) * t2); const inRoom = R.some(o => px >= o.x - 1 && px <= o.x + o.rw && py >= o.y - 1 && py <= o.y + o.rh); if (inRoom) continue; if (ax === bx) m.pillars.push([px - hw + 0.5, py], [px + hw - 1.5, py]); else m.pillars.push([px, py - hw + 0.5], [px, py + hw - 1.5]); } }
     }
     // 기둥
     if (r.pil || r.boss) for (const [u, v] of [[0.22, 0.28], [0.78, 0.28], [0.22, 0.72], [0.78, 0.72]]) m.pillars.push([r.x + Math.round(r.rw * u), r.y + Math.round(r.rh * v)]);
@@ -121,7 +130,7 @@ function genMap(seed, rooms, opt = {}) {
     if (i === 0) m.start = [r.cx, r.y + r.rh - 3];
     // 수수께끼 방: 나가는 길목에 창살문이 내려와 있어요. 풀면 올라가요
     if (r.puz && i < R.length - 1) {
-      const n = R[i + 1], gate = n.row === r.row ? [n.cx > r.cx ? r.x + r.rw : r.x - 1, r.cy - 2, 1, 4] : [r.cx - 2, r.y - 1, 4, 1];
+      const n = R[i + 1], gate = n.row === r.row ? [n.cx > r.cx ? r.x + r.rw : r.x - 1, r.cy - gw / 2, 1, gw] : [r.cx - gw / 2, r.y - 1, gw, 1];
       const c4 = [[r.x + 3, r.y + 3], [r.x + r.rw - 4, r.y + 3], [r.x + r.rw - 4, r.y + r.rh - 4], [r.x + 3, r.y + r.rh - 4]];
       const q = { k: r.puz, area: i, gate, c: [r.cx, r.cy] };
       if (r.puz === 'plates') q.items = c4;
@@ -133,7 +142,7 @@ function genMap(seed, rooms, opt = {}) {
       else if (r.puz === 'levers') { q.items = [-6, -2, 2, 6].map(d => [r.cx + d, r.cy + 2]); const o = [1, 0, 0, 0].map((_, k) => rnd() < 0.5 ? 1 : 0); if (o.every(v => v) || o.every(v => !v)) o[1] = 1 - o[0]; q.lit0 = o; }
       else if (r.puz === 'sigils') { q.items = []; for (let b = -1; b <= 1; b++) for (let a = -1; a <= 1; a++) q.items.push([r.cx + a * 3, r.cy + b * 3]); }
       else if (r.puz === 'crystals') q.items = [[r.cx - 4, r.cy - 3], [r.cx + 4, r.cy - 3], [r.cx + 4, r.cy + 3], [r.cx - 4, r.cy + 3]];
-      else if (r.puz === 'mirrors') { q.items = [[r.x + 3, r.cy + 3], [r.cx, r.cy - 3], [r.x + r.rw - 4, r.cy + 3]]; q.src = [r.x + 1, r.y + r.rh - 2]; q.ok = [0, 0, 0]; q.rot0 = q.items.map(() => 1 + Math.floor(rnd() * 3)); }
+      else if (r.puz === 'mirrors') { q.items = [[r.x + 3, r.cy + 3], [r.cx, r.cy - 3], [r.x + r.rw - 4, r.cy + 3]]; q.src = [r.x + 1, r.y + r.rh - 3]; q.ok = [0, 0, 0]; q.rot0 = q.items.map(() => 1 + Math.floor(rnd() * 3)); }
       else if (r.puz === 'embers') q.items = [[r.cx, r.cy], [r.x + 3, r.y + 3], [r.x + r.rw - 4, r.y + 3], [r.cx, r.y + r.rh - 3]];
       else if (r.puz === 'icecrys') q.items = [[r.cx - 5, r.cy], [r.cx, r.cy - 3], [r.cx + 5, r.cy]];
       else if (r.puz === 'lanterns') q.items = [[r.cx - 3, r.cy - 2], [r.cx, r.cy - 2], [r.cx + 3, r.cy - 2]];
@@ -171,12 +180,12 @@ function genMap(seed, rooms, opt = {}) {
         o.cb = nearAt(2, c + 3); o.ct = farAt(2, c + 3);
         o.ledge = ax === 'h' ? [r.x, r.y, r.rw, by - r.y] : far > 0 ? [bx + 3, r.y, r.x + r.rw - bx - 3, r.rh] : [r.x, r.y, bx - r.x, r.rh];
         // 위층에서 다음 방으로 내려가는 계단 두 칸
-        o.stairs = out === 'T' ? [[r.cx - 2, r.y - 1, 4, 1, 2 / 3], [r.cx - 2, r.y - 2, 4, 1, 1 / 3]] : out === 'R' ? [[r.x + r.rw, r.cy - 2, 1, 4, 2 / 3], [r.x + r.rw + 1, r.cy - 2, 1, 4, 1 / 3]] : [[r.x - 1, r.cy - 2, 1, 4, 2 / 3], [r.x - 2, r.cy - 2, 1, 4, 1 / 3]];
+        const g2 = gw / 2; o.stairs = out === 'T' ? [[r.cx - g2, r.y - 1, gw, 1, 2 / 3], [r.cx - g2, r.y - 2, gw, 1, 1 / 3]] : out === 'R' ? [[r.x + r.rw, r.cy - g2, 1, gw, 2 / 3], [r.x + r.rw + 1, r.cy - g2, 1, gw, 1 / 3]] : [[r.x - 1, r.cy - g2, 1, gw, 2 / 3], [r.x - 2, r.cy - g2, 1, gw, 1 / 3]];
         m.lifts.push(o);
       }
     }
     // 봇이 따라갈 길: 방 가운데 → 꺾이는 곳
-    m.route.push([r.cx, r.cy]); if (i < R.length - 1) m.route.push([R[i + 1].cx, r.cy]);
+    m.route.push([r.cx, r.cy]); if (r.mid) m.route.push(...r.mid);
   });
   m.route.push(m.boss);
   // 미믹: 모닥불 방 상자 하나는 상자인 척하는 괴물이에요
@@ -185,7 +194,7 @@ function genMap(seed, rooms, opt = {}) {
   const ex = R[Math.max(0, R.length - 4)]; m.exit = [ex.cx, ex.cy]; m.exitA = Math.max(0, R.length - 4);
   // 비밀 방 두 곳: 앞쪽 절반과 뒤쪽 절반에서 하나씩 (바깥쪽 벽 너머, 수수께끼·어둠의 방은 빼고)
   if (!opt.noSecret) for (const [a, b] of [[1, 5], [6, 10]]) {
-    const cand = R.filter((r, i) => i >= a && i <= b && !r.boss && !r.puz && !r.dark && !r.cut && r.col !== 1); if (!cand.length) continue;
+    const cand = R.filter((r, i) => i >= a && i <= b && !r.boss && !r.puz && !r.dark && !r.cut && (r.col === 0 || r.col === cols - 1)); if (!cand.length) continue;
     const r = cand[(seed >> (a === 1 ? 1 : 2)) % cand.length];
     const left = r.col === 0, py = r.cy - 1, px = left ? r.x - 3 : r.x + r.rw, rx = left ? r.x - 10 : r.x + r.rw + 3, ry = r.cy - 3;
     m.secrets.push({ pass: [px, py, 3, 2], room: [rx, ry, 7, 7], face: [left ? r.x - 1 : r.x + r.rw, py, 1, 2], chest: [rx + (left ? 1 : 5), ry + 1], lore: [rx + 3, ry + 4], flag: [rx + (left ? 1 : 5), ry + 5] });
@@ -219,13 +228,17 @@ export const GEN_PUZ = {
   mirrors: { name: '거울 회랑', line: '거울 셋을 돌려(F) 햇빛이 창살문까지 닿게 해요.' },
   embers: { name: '불씨 제단', line: '가운데 불씨 더미에서 불씨를 들어(F) 제단 셋에 하나씩 올려요(F).' }
 };
+// 장마다 다른 지도 짜임: 1 지하 미로(3열, 곧은 통로) 2 숲(구불구불한 오솔길) 3 수도원(2열, 기둥 늘어선 넓은 회랑) 4 탑(1열로 곧게 올라가는 둥근 방)
+// 5 얼음 국경(4열, 둥근 동굴) 6 광산(4열, 좁고 꺾인 갱도) 7 사원(2열, 넓은 회랑과 둥근 성소) 8 심연(좁은 다리로 이어진 흩어진 방)
+export const MAP_ST = [{}, { zig: 1, jit: 4, cw: 3 }, { cols: 2, cw: 6, colon: 1 }, { cols: 1, round: 3 }, { cols: 4, round: 2, jit: 2, zig: 1 }, { cols: 4, cw: 2, zig: 1, jit: 3 }, { cols: 2, cw: 6, round: 3, colon: 1 }, { cw: 2, zig: 1, jit: 4 }];
 const GEN_ORDER = [null, null, null, 'levers', 'sigils', 'crystals', 'mirrors', 'embers'];
 function grow(ci, rooms, [p1, dk, p2]) {
   { const k = RP_ORDER[ci % 8]; p2 = Object.assign({}, p2, { puz: k, name: ROLE_PUZ[k].name, line: ROLE_PUZ[k].line }); }
   { const k = GEN_ORDER[ci]; if (k) p1 = Object.assign({}, p1, { puz: k, name: GEN_PUZ[k].name, line: GEN_PUZ[k].line }); }
   const r = rooms.map((o, i) => Object.assign({ t: i }, o)), [pn, ln] = CUTS[ci];
   const pit = { name: pn, line: PIT_LINE, cut: 'pit', t: 'pit', w: 20, h: 17 }, lift = { name: ln, line: LIFT_LINE, cut: 'lift', t: 'lift', w: 20, h: 17 };
-  return [r[0], r[1], Object.assign({ t: 'puz' }, p1), r[2], pit, r[3], r[4], Object.assign({ t: 'dark' }, dk), r[5], lift, Object.assign({ t: 'puz' }, p2), r[6], r[7], r[8]];
+  const out = [r[0], r[1], Object.assign({ t: 'puz' }, p1), r[2], pit, r[3], r[4], Object.assign({ t: 'dark' }, dk), r[5], lift, Object.assign({ t: 'puz' }, p2), r[6], r[7], r[8]];
+  out.st = MAP_ST[ci]; return out;
 }
 
 // 장: 이야기, 지도, 보스, 색
@@ -601,7 +614,7 @@ export function makeDeep(d) {
     { name: N[3], line: '꺼진 모닥불이 있어요. 불을 붙이면 쓰러졌을 때 여기서 다시 시작해요.', rest: 1, chest: 1, w: 12, h: 11 },
     { name: N[4], line, foes: { elite: 1 + n('elite'), skel: 4, archer: 2, shield: 2 }, traps: 3 },
     { name: N[5], line: '"더 내려가고 싶다면, 나를 넘어라."', boss: 1 }
-  ], { noSecret: 1, flip: f % 2 });
+  ], { noSecret: 1, flip: f % 2, st: MAP_ST[src] });
   const B = C.boss;
   return {
     id: 9, deep: 1, src, title: '끝없는 심연 · ' + f + '층', place: '끝없는 심연', diff: 1.2 + 0.06 * (f - 1), introT: 7,
