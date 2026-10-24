@@ -157,7 +157,7 @@ function menu(go) {
   else if (go === 'roles') { paintRoles(); show('sRoles'); }
   else if (go === 'achs') { paintAchs(); show('sAchs'); }
   else if (go === 'settings') { paintSettings(); show('sSettings'); }
-  else if (go === 'site') { location.href = '../'; }
+  else if (go === 'site') { try { window.close(); } catch (e) { } setTimeout(() => { if (!window.closed) location.href = '../'; }, 300); }
 }
 
 function paintRoles() {
