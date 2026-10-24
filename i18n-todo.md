@@ -340,3 +340,5 @@ crownenvoy/CrownEnvoy-v0.4.html | 전신망 (정치 탭 카드) | "📡 전신�
 - vowkeep/i18n.js | v_build '마지막 빌드 {b} · {d}' | 한국어만 있음 | Vowkeep b38 | 2026-10-24
 - patchnotes.json, vowkeep/patchnotes.json | "Vowkeep 연타 시간, 버전 목록" 4줄 | Vowkeep b38 | 2026-10-24
 - patchnotes.json, vowkeep/patchnotes.json | "Vowkeep 봇 바라보는 방향" 1줄 | Vowkeep b39 | 2026-10-24
+- vowkeep/play/js/data.js | 5~8장 보스 단계 안내 8줄 ('얼음 창 세 줄 사이로 비켜서요…' 등) | 한국어만 있음 | Vowkeep b40 | 2026-10-24
+- patchnotes.json, vowkeep/patchnotes.json | "Vowkeep 보스마다 다른 공격, 픽셀체" 3줄 | Vowkeep b40 | 2026-10-24
