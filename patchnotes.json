@@ -3,6 +3,17 @@
   {
    "date": "2026-10-24",
    "build": "",
+   "title": "Dummy Party 허브 연결",
+   "items": [
+    "게임 수 6개로 수정",
+    "통합 검색에 Dummy Party 추가",
+    "갤러리 Dummy Party 사진 설명의 프로토타입 표시 삭제",
+    "Dummy Party 사이트에서 허브로 가는 버튼 표시"
+   ]
+  },
+  {
+   "date": "2026-10-24",
+   "build": "",
    "title": "첫 화면 배경 겹침 수정",
    "items": [
     "Vowkeep 사진과 Stickseum 영상이 겹쳐 보이던 문제 수정",
