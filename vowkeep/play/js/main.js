@@ -119,7 +119,23 @@ function paintWho() {
   const s = document.createElement('span'); s.className = 'tx'; s.textContent = (loggedIn() ? myName() : '로그인 안 함') + ' · ' + ROLES[SAVE.role].name + ' Lv ' + lv + ' · 명예 ' + SAVE.honor; $('who').appendChild(s);
   if (!loggedIn() && window.FFAuth) { const b = document.createElement('button'); b.textContent = '로그인'; b.onclick = () => { try { FFAuth.openLogin(); } catch (e) { } }; $('who').appendChild(b); }
 }
-if (window.FFAuth) { FFAuth.ready.then(() => { paintWho(); autoJoin(); }); FFAuth.onChange(paintWho); }
+// 계정 연동: 플레이 기록과 업적을 Frenchfries777 계정 프로필로 보내요
+let ffMarked = '', ffAchT = 0;
+function ffProfile() {
+  if (window.FFProfile) return Promise.resolve(true);
+  return new Promise(res => { const s = document.createElement('script'); s.src = 'https://frenchfries777mc.github.io/games/ff-profile.js?v=20261024b'; s.onload = () => res(!!window.FFProfile); s.onerror = () => res(false); document.head.appendChild(s); });
+}
+function ffSync() {
+  clearTimeout(ffAchT); ffAchT = setTimeout(async () => {
+    try {
+      const sb = window.FFAuth && FFAuth.client && FFAuth.client(), u = window.FFAuth && FFAuth.user(); if (!sb || !u || !(await ffProfile())) return;
+      if (ffMarked !== u.id) { ffMarked = u.id; FFProfile.markPlayed(sb, 'vowkeep'); }
+      const ids = ACHIEVEMENTS.filter(a => SAVE.ach[a.id]).map(a => a.id);
+      if (FFProfile.setAchievements) FFProfile.setAchievements(sb, 'vowkeep', ids.length, ACHIEVEMENTS.length, ids);
+    } catch (e) { }
+  }, 1500);
+}
+if (window.FFAuth) { FFAuth.ready.then(() => { paintWho(); autoJoin(); ffSync(); }); FFAuth.onChange(() => { paintWho(); ffSync(); }); }
 paintWho();
 function needLogin() { if (!window.FFAuth) return false; if (loggedIn()) return false; homeMsg('친구와 원정은 Frenchfries777 계정으로 로그인해야 해요.'); try { FFAuth.openLogin(); } catch (e) { } return true; }
 function hubRoom(on) { try { if (window.FFAuth && FFAuth.setRoom) FFAuth.setRoom(on && S.code ? { game: 'vowkeep', code: S.code, path: 'vowkeep/play/index.html' } : null); } catch (e) { } }
@@ -163,7 +179,7 @@ function paintRoles() {
   });
 }
 function paintAchs() { const b = $('achList'); b.innerHTML = ''; ACHIEVEMENTS.forEach(a => { const d = document.createElement('div'); d.className = 'ach' + (SAVE.ach[a.id] ? ' on' : ''); d.innerHTML = `<b>${SAVE.ach[a.id] ? '★ ' : ''}${a.name}</b><span>${a.desc}</span>`; b.appendChild(d); }); }
-function unlock(id) { if (SAVE.ach[id]) return; const a = ACHIEVEMENTS.find(x => x.id === id); if (!a) return; SAVE.ach[id] = Date.now(); save(); toast('업적: ' + a.name, 3000); }
+function unlock(id) { if (SAVE.ach[id]) return; const a = ACHIEVEMENTS.find(x => x.id === id); if (!a) return; SAVE.ach[id] = Date.now(); save(); ffSync(); toast('업적: ' + a.name, 3000); }
 function paintSettings() {
   $('setVol').value = SAVE.set.vol;
   const seg = (id, v, f) => { const el = $(id); el.querySelectorAll('button').forEach(b => { b.classList.toggle('on', +b.dataset.v === +v); b.onclick = () => { f(+b.dataset.v); save(); paintSettings(); }; }); };

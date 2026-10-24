@@ -351,3 +351,4 @@ crownenvoy/CrownEnvoy-v0.4.html | 전신망 (정치 탭 카드) | "📡 전신�
 ## 프로필 카드 게임 6개 (2026-10-24)
 - ff-profile.js | 새 게임 이름은 영어 고유명이라 번역 없음 | 2026-10-24
 - patchnotes.json | "프로필 카드에 게임 6개" 4줄 | 2026-10-24
+- patchnotes.json, vowkeep/patchnotes.json | "Vowkeep 계정 업적 연동" 1줄 | Vowkeep b41 | 2026-10-24
