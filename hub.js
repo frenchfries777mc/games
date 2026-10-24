@@ -6,6 +6,12 @@
 var SI=window.SI18N||{lang:'ko',F:function(t){ var a=arguments; return String(t).replace(/\{(\d)\}/g,function(_,n){ return a[+n+1]; }); }};
 var LANG=SI.lang||'ko', F=SI.F;
 var GAMES={stickseum:{name:'Stickseum',cls:'g1',site:'https://frenchfries777mc.github.io/games/stickseum/'},crownenvoy:{name:'Crown Envoy',cls:'g2',site:'https://frenchfries777mc.github.io/games/crownenvoy/'},beaconfall:{name:'Beaconfall',cls:'g3',site:'https://frenchfries777mc.github.io/games/beaconfall/'},dummyparty:{name:'Dummy Party',cls:'',site:'https://frenchfries777mc.github.io/games/dummyparty/'},vowkeep:{name:'Vowkeep',cls:'',site:'https://frenchfries777mc.github.io/games/vowkeep/'}};
+GAMES.isleport={name:'Isleport',cls:'g3',site:'https://frenchfries777mc.github.io/games/isleport/'};
+/* 새 게임이 생기면 위 GAMES에 한 줄 넣고 아래 순서 목록에도 아이디를 넣으면, 글쓰기·필터·피드백·같이 하기·접속 인원·소식 받기 목록에 한꺼번에 나와요 */
+var GLIST=['stickseum','crownenvoy','beaconfall','isleport','vowkeep','dummyparty'];
+window.FF_GAMES={list:GLIST,games:GAMES};
+function gOpts(first){ return (first||'')+GLIST.map(function(g){ return '<option value="'+g+'">'+GAMES[g].name+'</option>'; }).join(''); }
+function gBtns(){ return GLIST.map(function(g){ return '<button data-f="'+g+'">'+GAMES[g].name+'</button>'; }).join(''); }
 function $(s,r){ return (r||document).querySelector(s); }
 /* 허브 첫 페이지와 커뮤니티 페이지(community/)가 같은 파일을 써요. ROOT = 허브 맨 위 경로 */
 var CMP=!!document.getElementById('community'), ROOT=document.body.getAttribute('data-root')||'', HR=document.body.hasAttribute('data-hub')?document.body.getAttribute('data-hub'):'https://frenchfries777mc.github.io/hub/', CMURL=CMP?'':HR+'community/';
@@ -16,7 +22,7 @@ function ago(iso){ var t=Date.parse(iso); if(!t) return ''; var m=Math.round((Da
 
 /* ===================== 뉴스: 세 게임과 허브의 패치노트 중 가장 최근 6개 ===================== */
 var NEWS_N=6, news=[], hubNotes=[], notesBy={};
-var NSRC={hub:{name:'허브',cls:'g0',site:'https://frenchfries777mc.github.io/games/'},stickseum:GAMES.stickseum,crownenvoy:GAMES.crownenvoy,beaconfall:GAMES.beaconfall};
+var NSRC={hub:{name:'허브',cls:'g0',site:'https://frenchfries777mc.github.io/games/'},stickseum:GAMES.stickseum,crownenvoy:GAMES.crownenvoy,beaconfall:GAMES.beaconfall,isleport:GAMES.isleport,vowkeep:GAMES.vowkeep};
 var NEWL=['zh','pt','ru','tr','it','pl','ar','nw'].indexOf(LANG)>=0;   /* the newer languages fall back to English, not Korean */
 function trNote(n, N){
   if(LANG==='ko') return {title:n.title, items:n.items||[]};
@@ -46,7 +52,7 @@ function paintNews(){
 }
 
 /* ---- 게임별 소식 받기: 구독한 게임에 새 패치노트가 올라오면 뉴스에 표시 (supabase-ff-follow.sql) ---- */
-var FOLLOW_G=['stickseum','crownenvoy','beaconfall'], follows={}, followOK=true;
+var FOLLOW_G=['stickseum','crownenvoy','beaconfall','isleport','vowkeep'], follows={}, followOK=true;
 function unseenN(g){ if(follows[g]===undefined||!follows[g]) return 0; var l=notesBy[g]||[]; for(var i=0;i<l.length;i++) if(l[i]===follows[g]) return i; return 0; }
 function isNew(n){ return follows[n.g]!==undefined&&n.i<unseenN(n.g); }
 async function loadFollows(){
@@ -160,7 +166,7 @@ async function sel(table, cols, build){ var r=await build(sb.from(table).select(
 
 /* ---- 게시판 ---- */
 var bFilter='all', bQuery='', bLimit=20, bOpen=null, bWriting=false, bScroll=false, likes={}, myLikes={}, LIKES=true;
-var GOPT='<option value="free">자유</option><option value="stickseum">Stickseum</option><option value="crownenvoy">Crown Envoy</option><option value="beaconfall">Beaconfall</option>';
+var GOPT=gOpts('<option value="free">자유</option>');
 function gameTag(g){ if(g==='devlog') return '<span class="tag">🛠️ 개발자 일지</span>'; return g==='free'?'<span class="tag">자유</span>':(GAMES[g]?'<span class="tag '+GAMES[g].cls+'">'+esc(GAMES[g].name)+'</span>':''); }
 async function devOpt(){
   try{ if(!me||!window.FFAuth||!FFAuth.loadDevs) return; await FFAuth.loadDevs(); var s=document.querySelector('.cm-p[data-p=board] form.cm-w select[name=g]'); if(s&&FFAuth.devRole(me.id)&&!s.querySelector('option[value=devlog]')){ var o=document.createElement('option'); o.value='devlog'; o.textContent='🛠️ 개발자 일지'; s.appendChild(o); } }catch(e){}
@@ -169,7 +175,7 @@ async function board(){
   var p=$('.cm-p[data-p=board]'); if(!p) return;
   devOpt();
   if(!p.dataset.ready){ p.dataset.ready='1';
-    p.innerHTML='<div class="cm-bar"><div class="cm-f"><button data-f="all" class="on">전체</button><button data-f="hot">🔥 인기</button><button data-f="free">자유</button><button data-f="stickseum">Stickseum</button><button data-f="crownenvoy">Crown Envoy</button><button data-f="beaconfall">Beaconfall</button><button data-f="devlog">🛠️ 개발자 일지</button></div><button class="cm-btn cm-new">✏️ 글쓰기</button></div>'+
+    p.innerHTML='<div class="cm-bar"><div class="cm-f"><button data-f="all" class="on">전체</button><button data-f="hot">🔥 인기</button><button data-f="free">자유</button>'+gBtns()+'<button data-f="devlog">🛠️ 개발자 일지</button></div><button class="cm-btn cm-new">✏️ 글쓰기</button></div>'+
       '<form class="cm-q" role="search"><input type="search" maxlength="40" placeholder="🔍 제목 · 내용으로 글 찾기" autocomplete="off"></form>'+
       '<form class="cm-w" style="display:none"><select name="g">'+GOPT+'</select><input name="t" maxlength="80" placeholder="제목" required><textarea name="b" maxlength="4000" rows="6" placeholder="내용"></textarea><div class="cm-pv"></div><div class="cm-m"></div><div class="cm-acts"><label class="cm-btn2 cm-pick">🖼️ 사진<input type="file" accept="image/*" multiple hidden></label><span class="cm-sp"></span><button type="button" class="cm-btn2 cm-cancel">취소</button><button class="cm-btn">올리기</button></div></form>'+
       '<div class="cm-list"></div><button class="cm-btn2 cm-more" style="display:none">더 보기</button>';
@@ -424,7 +430,7 @@ var gFilter='all';
 async function gallery(){
   var p=$('.cm-p[data-p=gal]'); if(!p) return;
   if(!p.dataset.ready){ p.dataset.ready='1';
-    p.innerHTML='<div class="cm-bar"><div class="cm-f"><button data-f="all" class="on">전체</button><button data-f="stickseum">Stickseum</button><button data-f="crownenvoy">Crown Envoy</button><button data-f="beaconfall">Beaconfall</button></div></div><p class="cm-note">게임 글에 올라온 사진만 모았어요. 사진을 누르면 그 글이 열려요.</p><div class="gl"></div>';
+    p.innerHTML='<div class="cm-bar"><div class="cm-f"><button data-f="all" class="on">전체</button>'+gBtns()+'</div></div><p class="cm-note">게임 글에 올라온 사진만 모았어요. 사진을 누르면 그 글이 열려요.</p><div class="gl"></div>';
     p.querySelector('.cm-f').onclick=function(e){ var b=e.target.closest('button'); if(!b) return; gFilter=b.getAttribute('data-f'); [].forEach.call(this.children,function(x){ x.classList.toggle('on',x===b); }); gallery(); };
   }
   var G=p.querySelector('.gl'); if(!sb) return;
@@ -488,7 +494,7 @@ async function lfg(){
   var p=$('.cm-p[data-p=lfg]'); if(!p) return;
   if(!p.dataset.ready){ p.dataset.ready='1';
     p.innerHTML='<p class="cm-note">같이 할 사람을 찾아요. 방 링크를 붙이면 누르는 사람이 바로 그 방으로 들어가요. 2시간이 지나면 사라져요.</p>'+
-      '<form class="cm-w lf-w"><div class="cm-row"><select name="g"><option value="stickseum">Stickseum</option><option value="crownenvoy">Crown Envoy</option><option value="beaconfall">Beaconfall</option></select></div>'+
+      '<form class="cm-w lf-w"><div class="cm-row"><select name="g">'+gOpts()+'</select></div>'+
       '<input name="n" maxlength="100" placeholder="예: 팀전 2명 더 구해요!" required><input name="l" maxlength="300" placeholder="방 링크 (https://..., 선택)"><div class="cm-m"></div><div class="cm-acts"><button class="cm-btn">🎮 모집 올리기</button></div></form><div class="lf-list"></div>';
     p.querySelector('.lf-w').onsubmit=async function(e){ e.preventDefault(); if(!me) return login(); var f=this, m=f.querySelector('.cm-m'), n=f.n.value.trim(), l=f.l.value.trim(); if(!n) return;
       if(l&&!/^https:\/\//.test(l)){ m.textContent='링크는 https:// 로 시작해야 해요.'; return; }
@@ -666,7 +672,7 @@ async function online(){
   var r=await sb.rpc('ff_online'); if(r.error){ b.innerHTML=''; return; }
   var c={}; (r.data||[]).forEach(function(x){ c[x.place]=x.people; });
   var html='<span class="on-dot"></span><b>'+esc(F('지금 {0}명 접속 중',c.all||0))+'</b>';
-  ['stickseum','crownenvoy','beaconfall','hub'].forEach(function(g){ if(c[g]) html+='<span class="on-c">'+(g==='hub'?'<span>허브</span>':'<span data-notr>'+esc(GAMES[g].name)+'</span>')+' <b data-notr>'+c[g]+'</b></span>'; });
+  GLIST.concat(['hub']).forEach(function(g){ if(c[g]) html+='<span class="on-c">'+(g==='hub'?'<span>허브</span>':'<span data-notr>'+esc(GAMES[g].name)+'</span>')+' <b data-notr>'+c[g]+'</b></span>'; });
   if(me){ var f=await sb.rpc('ff_online_friends'), rows=((f&&!f.error&&f.data)||[]).filter(function(x){ return !blocked(x.user_id); });
     if(rows.length){ await loadNames(rows.map(function(x){ return x.user_id; }));
       html+='<span class="on-f"><span>친구</span> '+rows.slice(0,8).map(function(x){ var g=GAMES[x.place]; return '<a class="who on-p" data-uid="'+esc(x.user_id)+'" data-notr title="'+esc(g?g.name:'Hub')+'">'+esc(names[x.user_id]||'???')+'<small>'+esc(g?g.name:'Hub')+'</small></a>'; }).join('')+(rows.length>8?'<span>+'+(rows.length-8)+'</span>':'')+'</span>'; } }
@@ -707,13 +713,13 @@ document.addEventListener('focusout',function(e){ if(e.target===mnFor) setTimeou
 window.addEventListener('scroll',function(){ if(mnFor) mnShow(mnFor); },{passive:true});
 
 /* ---- 피드백 · 버그 신고 ---- */
-var KIND={bug:'🐞 버그',idea:'💡 아이디어',other:'💬 기타'}, GN={hub:'허브',stickseum:'Stickseum',crownenvoy:'Crown Envoy',beaconfall:'Beaconfall'};
+var KIND={bug:'🐞 버그',idea:'💡 아이디어',other:'💬 기타'}, GN={hub:'허브',stickseum:'Stickseum',crownenvoy:'Crown Envoy',beaconfall:'Beaconfall',isleport:'Isleport',vowkeep:'Vowkeep',dummyparty:'Dummy Party'};
 async function feedback(){
   var p=$('.cm-p[data-p=fb]'); if(!p) return;
   if(!p.dataset.ready){ p.dataset.ready='1';
     p.innerHTML='<p class="cm-note">고쳤으면 하는 점, 버그, 새 아이디어를 보내 주세요. 보낸 내용은 나와 관리자만 볼 수 있어요.</p>'+
       '<form class="cm-w cm-fb"><div class="cm-row"><select name="k"><option value="bug">🐞 버그</option><option value="idea">💡 아이디어</option><option value="other">💬 기타</option></select>'+
-      '<select name="g"><option value="hub">허브</option><option value="stickseum">Stickseum</option><option value="crownenvoy">Crown Envoy</option><option value="beaconfall">Beaconfall</option></select></div>'+
+      '<select name="g">'+gOpts('<option value="hub">허브</option>')+'</select></div>'+
       '<textarea name="b" maxlength="2000" rows="5" placeholder="무엇이 어떻게 됐는지 자세히 적어 주세요. (버그라면 어떤 기기에서, 무엇을 하다가 생겼는지)" required></textarea><div class="cm-m"></div><div class="cm-acts"><button class="cm-btn">보내기</button></div></form>'+
       '<div class="cm-mine"></div><div class="cm-admin"></div><div class="cm-reps"></div><div class="cm-ann"></div>';
     p.querySelector('.cm-fb').onsubmit=async function(e){ e.preventDefault(); if(!me) return login(); var f=this, m=f.querySelector('.cm-m'), b=f.b.value.trim(); if(!b) return;
