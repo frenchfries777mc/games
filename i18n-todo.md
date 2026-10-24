@@ -331,3 +331,7 @@ crownenvoy/CrownEnvoy-v0.4.html | 전신망 (정치 탭 카드) | "📡 전신�
 - ach/vowkeep.json | 업적 33개 이름과 설명 | 한국어만 있음 | 2026-10-23
 - patchnotes.json | "Vowkeep 정식 공개" 4줄 | 2026-10-23
 - index.html | Dummy Party 카드 문구 (배지 '파티 게임', 태그 3개, 설명 1줄과 목록 3줄) | 한국어만 있음 | b62 | 2026-10-24
+
+## Dummy Party 허브 연결 (2026-10-24)
+- hub.js | 통합 검색 Dummy Party 설명 '마네킹들이 벌이는 병맛 미니게임 파티' | 한국어만 있음 | 2026-10-24
+- patchnotes.json | "Dummy Party 허브 연결" 4줄 | 2026-10-24
