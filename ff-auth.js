@@ -284,7 +284,7 @@ function profileLib(){ return loadScript(BASE+'ff-profile.js?v=20261023a', funct
 async function openProfile(uid){ if(!sb) return; if(!uid&&!user) return openLogin(); if(await profileLib()) window.FFProfile.open(sb, uid||user.id); }
 
 /* 게임 사이트(허브가 아닌 페이지)에는 계정 버튼 옆에 '← 허브' 버튼을 붙여요. 빼고 싶으면 자리에 data-ff-nohub */
-var HUB=BASE, HUBSITE='https://frenchfries777mc.github.io/hub/', onHub=/\/hub\//.test(location.pathname||'') || location.href.indexOf(HUB)===0 && !/\/(stickseum|crownenvoy|beaconfall|isleport|vowkeep|educations|tools)\//i.test(location.pathname||''), SETURL='https://frenchfries777mc.github.io/hub/settings/';
+var HUB=BASE, HUBSITE='https://frenchfries777mc.github.io/hub/', onHub=/\/hub\//.test(location.pathname||'') || location.href.indexOf(HUB)===0 && !/\/(stickseum|crownenvoy|beaconfall|isleport|vowkeep|dummyparty|educations|tools)\//i.test(location.pathname||''), SETURL='https://frenchfries777mc.github.io/hub/settings/';
 /* '← 허브' 버튼: 무조건 허브가 아니라, 이 창을 열기 전에 있던 사이트(games·educations·tools·hub)의 첫 화면으로 가요. 모르면 이 페이지가 속한 사이트로 가요. */
 var SITES={hub:1, games:1, educations:1, tools:1};
 function siteOf(u){ try{ var x=new URL(u, location.href); if(x.origin!==location.origin) return ''; var m=x.pathname.split('/')[1]; return SITES[m]?m:''; }catch(e){ return ''; } }
