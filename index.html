@@ -166,6 +166,14 @@ if(document.readyState==='loading') document.addEventListener('DOMContentLoaded'
   .ip .desc{color:#b9c6e0;} .ip .desc li::marker{color:#f2c75a;}
   .ip .play{background:#f2c75a; color:#2a1f0c; border-radius:4px; box-shadow:0 4px 0 #b88a2a;}
   .ip .play:hover{filter:brightness(1.05);} .ip .play:active{transform:translateY(3px); box-shadow:0 1px 0 #b88a2a;}
+  .dp{--card:#2a1450; background:#2a1450; border-color:#5a3590;}
+  .dp:hover{border-color:#f7a83b; box-shadow:0 18px 50px rgba(247,168,59,.18);}
+  .dp .badge{background:rgba(247,168,59,.95); color:#2a1503;}
+  .dp h2{font-weight:900; font-size:27px; letter-spacing:-.01em; color:#fff; text-shadow:0 3px 0 #b86b33;}
+  .dp .tags span{background:rgba(247,168,59,.12); color:#ffe2b8; border:1px solid rgba(247,168,59,.35);}
+  .dp .desc{color:#cdb8ee;} .dp .desc li::marker{color:#f7a83b;}
+  .dp .play{background:#f7a83b; color:#2a1503; border-radius:10px; box-shadow:0 4px 0 #c9741a;}
+  .dp .play:hover{filter:brightness(1.05);} .dp .play:active{transform:translateY(3px); box-shadow:0 1px 0 #c9741a;}
   .acct{display:grid; grid-template-columns:auto 1fr auto; gap:18px; align-items:center; margin:0 0 26px; padding:18px 22px; border-radius:16px; border:1px solid rgba(255,196,61,.35); background:linear-gradient(100deg,rgba(255,196,61,.13),rgba(255,140,40,.05) 60%,var(--panel));}
   .acct .ai{font-size:34px; width:58px; height:58px; display:grid; place-items:center; border-radius:14px; background:rgba(255,196,61,.14); border:1px solid rgba(255,196,61,.3);}
   .acct h3{margin:0; font-size:19px;} .acct p{margin:4px 0 0; color:var(--dim); font-size:15px;}
@@ -514,7 +522,7 @@ if(document.readyState==='loading') document.addEventListener('DOMContentLoaded'
   <div id="annBar"></div>
 
   <section class="hero">
-    <div class="hero-bg" aria-hidden="true"><i style="--c:#ff5a5f"><img src="stickseum.webp" alt=""></i><i style="--c:#e8c25a"><img src="crown-envoy.webp" alt=""></i><i style="--c:#5ac878"><img src="beaconfall.webp" alt=""></i><i style="--c:#38b6ff"><img src="isleport.webp" alt=""></i><i style="--c:#c9a24a"><img src="vowkeep.webp" alt=""></i></div>
+    <div class="hero-bg" aria-hidden="true"><i style="--c:#ff5a5f"><img src="stickseum.webp" alt=""></i><i style="--c:#e8c25a"><img src="crown-envoy.webp" alt=""></i><i style="--c:#5ac878"><img src="beaconfall.webp" alt=""></i><i style="--c:#38b6ff"><img src="isleport.webp" alt=""></i><i style="--c:#c9a24a"><img src="vowkeep.webp" alt=""></i><i style="--c:#f7a83b"><img src="dummyparty.webp" alt=""></i></div>
     <img class="hero-lg" src="logo.svg" alt="" width="230" height="230">
     <div class="hero-t">
     <span class="eyebrow">Browser Games</span>
@@ -628,6 +636,24 @@ if(document.readyState==='loading') document.addEventListener('DOMContentLoaded'
         </div>
         <div class="acts">
           <a class="play" href="https://frenchfries777mc.github.io/games/vowkeep/"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M7 4.5v15a1 1 0 0 0 1.5.86l12.5-7.5a1 1 0 0 0 0-1.72L8.5 3.64A1 1 0 0 0 7 4.5z"/></svg>플레이</a>
+        </div>
+      </div>
+    </article>
+    <article class="game dp">
+      <a class="shot" href="https://frenchfries777mc.github.io/games/dummyparty/" aria-label="Dummy Party 플레이"><span class="badge">파티 게임</span><img src="dummyparty.webp" alt="마네킹들이 무대에서 미니게임을 하는 장면" loading="lazy"></a>
+      <div class="body">
+        <h2 class="wl"><img class="gl" src="gamelogo/dummyparty.svg" alt="" width="48" height="48">DUMMY PARTY</h2>
+        <div class="tags"><span>2~8명</span><span>미니게임 36개</span><span>방 코드</span></div>
+        <div class="desc">
+          하얀 마네킹들이 벌이는 엉망진창 미니게임 대결이에요.
+          <ul>
+            <li>달리고, 밀치고, 쌓고, 맞히는 미니게임이 판마다 7개씩 바뀌어 나오기</li>
+            <li>해설자의 병맛 중계와 시상식, 상점에서 마네킹 꾸미기</li>
+            <li>방 코드로 친구를 부르거나 봇과 혼자 하기</li>
+          </ul>
+        </div>
+        <div class="acts">
+          <a class="play" href="https://frenchfries777mc.github.io/games/dummyparty/"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M7 4.5v15a1 1 0 0 0 1.5.86l12.5-7.5a1 1 0 0 0 0-1.72L8.5 3.64A1 1 0 0 0 7 4.5z"/></svg>플레이</a>
         </div>
       </div>
     </article>
