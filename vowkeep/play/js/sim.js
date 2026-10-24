@@ -130,6 +130,8 @@ function hurtEnemy(G, e, dmg, p, o) {
   e.hp -= d; e.hitT = 0.15; ev(G, 'ehit', { x: e.x, z: e.z, v: d, id: e.id, crit: d > dmg * 1.4, hv: o.heavy ? 1 : 0 });
   if (p && hasB(p, 'leech') && alive(p)) healP(G, p, 1);
   if ((o.burn || (p && hasB(p, 'fire') && o.basic)) && e.hp > 0) { e.burn = 3; }
+  // 종자 함성 중에는 횃불 공격의 불똥이 튀어 옆의 적도 불타요
+  if (o.burn && p && p.role === 'squire' && p.rally > 0 && !o.spread) { let n = 0; for (const q of G.enemies) if (q !== e && q.hp > 0 && Math.hypot(q.x - e.x, q.z - e.z) < 3) { q.burn = 3; n++; } if (n) ev(G, 'flare', { x: e.x, z: e.z }); }
   if (o.kb && e.k !== 'boss') { e.vx += Math.cos(o.kbA) * o.kb; e.vz += Math.sin(o.kbA) * o.kb; }
   if (e.hp <= 0) killEnemy(G, e);
   return d;
@@ -421,13 +423,13 @@ function stepPlayer(G, p, inp, dt) {
     const d = Math.hypot(inp.px - p.x, inp.pz - p.z), maxd = 22 * dt + 1.2;
     if (d <= maxd) { p.x = inp.px; p.z = inp.pz; } else { p.x += (inp.px - p.x) / d * maxd; p.z += (inp.pz - p.z) / d * maxd; }
     collide(G, p, 0.6);
-    if (inp.roll && !fl && p.rollCd <= 0) { p.roll = 0.35; p.rollCd = 1.2 * (hasB(p, 'roll') ? 0.6 : 1); ev(G, 'roll', { id: p.id }); }
+    if (inp.roll && !fl && p.rollCd <= 0) { p.roll = 0.35; p.rollCd = 1.2 * (hasB(p, 'roll') ? 0.6 : 1); p.tkHit = {}; ev(G, 'roll', { id: p.id }); }
     if (p.roll > 0) p.roll -= dt;
   } else {
     let mx = inp.mx || 0, mz = inp.mz || 0; const ml = Math.hypot(mx, mz); if (ml > 1) { mx /= ml; mz /= ml; }
     if (inp.roll && !fl && p.rollCd <= 0 && p.roll <= 0 && !(p.hvT > 0)) {
       p.roll = 0.35; p.rollCd = 1.2 * (hasB(p, 'roll') ? 0.6 : 1);
-      const ra = ml > 0.1 ? Math.atan2(mz, mx) : p.a; p.rdx = Math.cos(ra); p.rdz = Math.sin(ra); ev(G, 'roll', { id: p.id });
+      const ra = ml > 0.1 ? Math.atan2(mz, mx) : p.a; p.rdx = Math.cos(ra); p.rdz = Math.sin(ra); p.tkHit = {}; ev(G, 'roll', { id: p.id });
     }
     if (p.hvT > 0 || p.pbT > 0) { /* 강타 공중·사제 빛 모으기: 제자리 */ }
     else if (p.roll > 0) { p.roll -= dt; p.x += p.rdx * 15 * dt; p.z += p.rdz * 15 * dt; }
@@ -438,6 +440,11 @@ function stepPlayer(G, p, inp, dt) {
   // 승강기 발판: 발판이 오르내리는 동안은 타고 내릴 수 없어요
   if (!liftOk(ox, oz, p.x, p.z)) { p.x = ox; p.z = oz; }
   p.f = !!inp.f; const fe = p.f && !p.fPrev; p.fPrev = p.f;
+  // 종자: 구르기 대신 미끄러지며 다리를 걸어요. 닿은 적은 넘어져 잠깐 기절해요
+  if (p.role === 'squire' && p.roll > 0 && p.tkHit) for (const e of G.enemies) {
+    if (e.hp <= 0 || e.st === 'rise' || p.tkHit[e.id] || Math.hypot(e.x - p.x, e.z - p.z) > 1.5 + e.r) continue;
+    p.tkHit[e.id] = 1; hurtEnemy(G, e, 14, p, { basic: 1 }); if (e.hp > 0) { e.stun = Math.max(e.stun || 0, e.k === 'boss' ? 0.25 : 0.9); ev(G, 'trip', { id: e.id, x: e.x, z: e.z }); }
+  }
   if (p.roll > 0) return;
   if (G.phase !== 'play' && G.phase !== 'bossIntro') return;
   // 궁수 모아 쏘기: 꾹 누르고 있다가 놓으면 쏴요 (0.8초 두 발, 2초 세 발). 봇은 바로바로 쏴요
@@ -812,7 +819,9 @@ function stepEnemy(G, e, dt) {
   if (!e.summoned && e.hx != null && !G.players.some(p => alive(p) && dist(p, e) < LEASH_R) && Math.hypot(e.hx - e.x, e.hz - e.z) > 4) { e.st = 'home'; e.tgt = null; return; }
   if (e.stun > 0) return;
   // 함정
-  for (const z of G.zones) if (z.k === 'ptrap' && Math.hypot(z.x - e.x, z.z - e.z) < z.r) { e.root = 2; hurtEnemy(G, e, 40, G.players.find(p => p.id === z.own), {}); e.root = 2.5; z.t = 0; ev(G, 'snap', { x: z.x, z: z.z }); if (e.hp <= 0) return; }
+  for (const z of G.zones) if (z.k === 'ptrap' && Math.hypot(z.x - e.x, z.z - e.z) < z.r) { const ow = G.players.find(p => p.id === z.own); e.root = 2; hurtEnemy(G, e, 40, ow, {}); e.root = 2.5; z.t = 0; ev(G, 'snap', { x: z.x, z: z.z }); ev(G, 'launch', { id: e.id, x: e.x, z: e.z });
+    // 덫이 터지며 불길이 번져요: 둘레 적이 불타고 조금 다쳐요
+    for (const q of G.enemies) if (q !== e && q.hp > 0 && Math.hypot(q.x - z.x, q.z - z.z) < 3) { q.burn = 3; hurtEnemy(G, q, 10, ow, { spread: 1 }); } if (e.hp <= 0) return; }
   const t = pickTarget(G, e); if (!t) return;
   const d = dist(e, t), sees = lineClear(e.x, e.z, t.x, t.z), ta = angTo(e, t);
   if (e.st === 'wind') {
