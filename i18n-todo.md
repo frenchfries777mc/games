@@ -356,3 +356,4 @@ crownenvoy/CrownEnvoy-v0.4.html | 전신망 (정치 탭 카드) | "📡 전신�
 - patchnotes.json, vowkeep/patchnotes.json | "Vowkeep 궁수 화살 수, 대검, 승강기 갇힘" 5줄 | Vowkeep b42 | 2026-10-25
 - vowkeep/play/js/data.js, main.js | 새 수수께끼 9가지 이름·설명·안내 (GEN_PUZ, ROLE_PUZ, puzPrompt), 패치 노트 "Vowkeep 장마다 다른 수수께끼" | Vowkeep b43 | 2026-10-25
 - patchnotes.json, vowkeep/patchnotes.json | "Vowkeep 장마다 다른 지도" 4줄 | Vowkeep b44 | 2026-10-25
+- vowkeep/play/js/data.js | 종자 덫·함성·역할 설명 3줄 바뀜, 패치 노트 "Vowkeep 종자 다리 걸기, 과장된 적 동작" 6줄 | Vowkeep b45 | 2026-10-25
