@@ -1080,6 +1080,11 @@ export class View {
     m.rotation.y = -a; m.scale.set(len + 0.1, 1, w);
     this.fx.push({ m, t: 0, T: 0.22, up: (f) => { const u = f.t / f.T; m.material.opacity = 0.7 * (1 - u); m.scale.z = w * (1 - u); } });
   }
+  // 맞은 적: 뒤로 휘청 / 휘두르기 시작 / 보스 포효
+  react(id, big) { const E = this.ents.get('e' + id); if (!E) return; E.kb = Math.max(E.kb || 0, big ? 0.45 : 0.28); if (!(E.pop > 0)) E.pop = big ? 0.14 : 0.08; if (E.base == null) E.base = E.m.scale.x; }
+  trip(id, high) { const E = this.ents.get('e' + id); if (!E) return; E.tripD = E.tripT = high ? 0.9 : 0.5; E.tripH = high ? 3.2 : 1.1; }
+  eAct(id) { const E = this.ents.get('e' + id); if (E) E.swT = 0.42; }
+  roar() { for (const [k, E] of this.ents) if (k[0] === 'e' && E.m.userData.kind === 'boss') E.roarT = 1.1; }
   // 타격: 하얀 별 모양 번쩍임과 불똥, 맞은 적은 잠깐 부풀어요
   spark(x, z, id, big) {
     const E = this.ents.get('e' + id); if (E) { E.pop = big ? 0.14 : 0.1; if (E.base == null) E.base = E.m.scale.x; }
@@ -1400,35 +1405,68 @@ function animHero(E, p, dt, t) {
   m.position.y = L(0, 'jy', T.jy); const sq = L(0, 'sq', T.sq); u.body.scale.set(1 + sq * 0.5, 1 - sq * 0.6, 1 + sq * 0.5);
   const lg = L(0, 'lg', T.lg); if (E.ak) { u.legL.rotation.x = sw - lg * 0.6; u.legR.rotation.x = -sw + lg * 0.6; }
   // 구르기: 몸 가운데를 축으로 앞으로 한 바퀴 (발끝 축으로 돌면 머리가 바닥에 파묻혀요). 다리와 팔은 웅크려요
-  if (p.ro) { const a = E.rollA = Math.min(Math.PI * 2, (E.rollA || 0) + dt * 18), c = 1.45; u.body.rotation.set(a, 0, 0); u.body.position.set(0, 1.3 - c * Math.cos(a), -c * Math.sin(a)); u.legL.rotation.x = u.legR.rotation.x = -1.5; u.armL.rotation.x = u.armR.rotation.x = -2.2; u.body.scale.set(1, 0.85, 1); } else E.rollA = 0;
+  if (p.ro && role === 'squire') { // 종자: 발부터 미끄러져 들어가며 다리 걸기
+    u.body.rotation.set(-1.0, 0, 0.15); u.body.position.set(0, 0.55, 0.3); u.legL.rotation.x = -1.5; u.legR.rotation.x = -0.4; u.armL.rotation.x = 1.2; u.armR.rotation.x = -2.6; u.body.scale.set(1, 1, 1); E.rollA = 0;
+  } else if (p.ro) { const a = E.rollA = Math.min(Math.PI * 2, (E.rollA || 0) + dt * 18), c = 1.45; u.body.rotation.set(a, 0, 0); u.body.position.set(0, 1.3 - c * Math.cos(a), -c * Math.sin(a)); u.legL.rotation.x = u.legR.rotation.x = -1.5; u.armL.rotation.x = u.armR.rotation.x = -2.2; u.body.scale.set(1, 0.85, 1); } else E.rollA = 0;
   if (p.dn) { u.body.rotation.set(-Math.PI / 2 + 0.2, 0, 0); u.body.position.set(0, 0.4, -1); }
   floorGuard(m, u);
   if (u.light) u.light.intensity = (p.dn ? 3 : 15);
 }
 function animEnemy(E, e, dt, t, view) {
-  const m = E.m, u = m.userData; m.position.set(E.x, 0, E.z); m.rotation.y = Math.PI / 2 - E.a;
-  // 맞으면 잠깐 부풀었다 돌아와요
-  if (E.pop > 0) { E.pop = Math.max(0, E.pop - dt); const q = 1 + E.pop * 1.6; m.scale.set(E.base * q, E.base * (2 - q), E.base * q); } else if (E.pop === 0) { m.scale.setScalar(E.base); E.pop = null; }
+  const m = E.m, u = m.userData, boss = e.k === 'boss', wolf = u.kind === 'wolf', mim = u.kind === 'mimic', dead = e.hp <= 0; m.position.set(E.x, 0, E.z); m.rotation.y = Math.PI / 2 - E.a;
   E.ph += dt * (e.mv ? (e.sl ? 4.5 : 9) : 0); E.sw = (E.sw || 0) + ((e.mv ? Math.sin(E.ph) * 0.6 : 0) - (E.sw || 0)) * Math.min(1, dt * 14); const sw = E.sw;
-  u.legL.rotation.x = sw; u.legR.rotation.x = -sw;
-  let ar = -0.9 - sw * 0.3;
-  if (e.st === 'wind' || e.st === 'wind2') ar = -2.6 + Math.sin(t * 30) * 0.1;
-  if (e.k === 'boss') {
-    if (e.ak === 'slam') ar = -3.0; else if (e.ak === 'sweep') { ar = -1.6; u.body.rotation.y = 0.9; } else u.body.rotation.y = 0;
-    if (e.ak === 'charge!') { ar = -1.4; u.body.rotation.x = 0.35; } else u.body.rotation.x = e.sn ? 0.5 : 0;
-    if (u.light) u.light.intensity = 18 + Math.sin(t * 1.5) * 2 + (e.ph === 3 ? 10 : 0);
-    if (u.crack) { const on = e.ph === 3; u.crack.visible = on; u.cape.visible = !on; const pl = 0.5 + 0.5 * Math.sin(t * 6); u.ckM.emissiveIntensity = on ? 4 + pl * 5 : 0; u.ckL.intensity = on ? 10 + pl * 14 : 0; if (on && (E.ckT = (E.ckT || 0) - dt) <= 0) { E.ckT = 0.12; const bk = -E.a + Math.PI / 2, bx = E.x - Math.sin(bk) * 1.3, bz = E.z - Math.cos(bk) * 1.3; view.burst(bx, 4 + Math.random(), bz, 0xff7a20, 2, 2, 0.5, 0.12); } }
+  u.legL.rotation.x = sw * (e.mv ? 1.5 : 1); u.legR.rotation.x = -sw * (e.mv ? 1.5 : 1);
+  // 과장된 동작: 걸을 때 통통 튀고, 공격 전에는 크게 웅크려 젖혔다가, 휘두를 때 몸을 던지듯 앞으로 쏠려요. 맞으면 뒤로 휘청, 기절하면 비틀비틀
+  const ak = e.ak || '', go = ak.endsWith('!'), wind = e.st === 'wind' || e.st === 'wind2' || boss && ak && !go;
+  E.wT = wind ? (E.wT || 0) + dt : 0; if (E.swT > 0) E.swT -= dt; if (E.kb > 0) E.kb = Math.max(0, E.kb - dt * 3.5); if (E.roarT > 0) E.roarT -= dt;
+  const T = { bx: 0, bry: 0, brz: 0, sq: 0, jy: 0, ar: -0.9 - sw * 0.3, al: -0.9 + sw * 0.3, hx: 0, hz: 0 };
+  if (e.mv && !dead) { const b = Math.abs(Math.sin(E.ph)); T.jy = b * (boss ? 0.18 : 0.32); T.sq = (0.5 - b) * 0.12; T.bx = boss ? 0.12 : 0.22; T.brz = Math.sin(E.ph) * (boss ? 0.08 : 0.14); T.ar = -0.5 - sw * 1.1; T.al = -0.5 + sw * 1.1; T.hz = -T.brz * 0.6; }
+  else { T.sq = Math.sin(t * 2.4 + E.ph) * 0.04; T.hz = Math.sin(t * 1.3 + E.ph) * 0.1; }
+  if (wind) {
+    const w = Math.min(1, E.wT / (boss ? 0.45 : 0.3)), sh = Math.sin(t * 42) * 0.07 * w;
+    T.sq = (boss ? 0.32 : 0.28) * w; T.bx = -0.45 * w; T.bry = 0.75 * w; T.ar = -3.1 * w + T.ar * (1 - w) + sh; T.al = (boss ? -3.0 : -1.4) * w + T.al * (1 - w) - sh; T.hx = -0.35 * w; T.brz = sh; T.jy = 0;
+    if (e.k === 'archer') { T.ar = -1.7 + sh; T.al = -1.6; T.bry = 0.55 * w; T.bx = -0.3 * w; T.sq = 0.15 * w; }
+  }
+  if (e.st === 'charge' || ak === 'charge!' || ak === 'rollgo!') { T.bx = 0.85; T.sq = -0.25; T.ar = 0.7; T.al = 0.7; T.jy = Math.abs(Math.sin(t * 22)) * 0.35; T.brz = Math.sin(t * 22) * 0.12; }
+  else if (boss && go) { const q = Math.min(1, (E.goT = (E.goT || 0) + dt) / 0.15); T.bx = 0.6 * q; T.sq = -0.3 * q + (ak === 'slam!' || ak === 'stomp!' ? 0.4 * Math.max(0, q - 0.8) * 5 : 0); T.ar = -3.1 + 3.9 * q; T.al = -3.0 + 3.8 * q; T.bry = -0.6 * q; }
+  if (!go) E.goT = 0;
+  if (E.swT > 0) {
+    const v = 1 - E.swT / 0.42, hit = Math.min(1, v / 0.22), rc = Math.max(0, (v - 0.45) / 0.55), k = 1 - rc;
+    T.bx = 0.8 * hit * k; T.sq = -0.28 * hit * k + 0.2 * Math.max(0, 1 - Math.abs(v - 0.28) * 7); T.ar = (-3.1 + 3.9 * hit) * k + T.ar * rc; T.al = -0.3 * k + T.al * rc; T.bry = -0.85 * hit * k; T.jy = Math.sin(Math.min(1, v / 0.32) * Math.PI) * 0.55; T.hx = 0.25 * hit * k;
+  }
+  if (E.roarT > 0) { const r = Math.min(1, E.roarT / 0.3); T.ar = -2.7 * r; T.al = -2.7 * r; T.hx = -0.8 * r; T.bx = -0.4 * r; T.sq = -0.28 * r + Math.sin(t * 55) * 0.06 * r; T.jy = 0.3 * r; T.brz = Math.sin(t * 55) * 0.05; }
+  if (E.kb > 0) { T.bx -= E.kb * 0.9; T.hx -= E.kb * 1.2; T.sq += E.kb * 0.5; T.ar -= E.kb * 1.2; T.al -= E.kb * 1.2; }
+  if (e.sn && !dead) { T.brz = Math.sin(t * 9) * 0.32; T.bx = Math.sin(t * 5.3) * 0.18; T.ar = -0.2 + Math.sin(t * 9) * 0.4; T.al = -0.2 - Math.sin(t * 9) * 0.4; T.sq = 0.05; if ((E.stT = (E.stT || 0) - dt) <= 0) { E.stT = 0.22; const a = t * 6; view.burst(E.x + Math.cos(a) * 0.8, (boss ? 7 : 3.6), E.z + Math.sin(a) * 0.8, 0xffe060, 1, 0.6, 0.5, 0.16); } }
+  if (e.st === 'sleep' || e.st === 'home' && !e.mv) { const zz = 1; T.hx = 0.6 * zz; T.bx = 0.22 * zz; T.ar = -0.4; T.al = -0.4; }
+  const f = wolf ? 0.35 : 1, sk = (n, v) => { E[n] = E[n] == null ? v : E[n] + (v - E[n]) * Math.min(1, dt * 22); return E[n]; };
+  const bx = sk('_bx', T.bx * f), bry = sk('_bry', T.bry * f), brz = sk('_brz', T.brz * f), sq = sk('_sq', T.sq), jy = sk('_jy', T.jy);
+  if (!mim) { u.body.rotation.set(bx, bry, brz); u.body.scale.set(1 + sq * 0.5, 1 - sq * 0.6, 1 + sq * 0.5); u.head.rotation.x = sk('_hx', T.hx); u.head.rotation.z = T.hz; }
+  if (!wolf && !mim) { u.armR.rotation.x = sk('_ar', T.ar); if (u.armL) u.armL.rotation.x = sk('_al', T.al); }
+  if (boss) {
+    if (ak === 'sweep' || ak === 'sweep!') u.body.rotation.y = ak === 'sweep' ? 0.9 : -0.9;
+    if (u.light) u.light.intensity = 18 + Math.sin(t * 1.5) * 2 + (e.ph === 3 ? 10 : 0) + (wind ? 8 * Math.abs(Math.sin(t * 20)) : 0);
+    if (u.crack) { const on = e.ph === 3; u.crack.visible = on; u.cape.visible = !on; const pl = 0.5 + 0.5 * Math.sin(t * 6); u.ckM.emissiveIntensity = on ? 4 + pl * 5 : 0; u.ckL.intensity = on ? 10 + pl * 14 : 0; if (on && (E.ckT = (E.ckT || 0) - dt) <= 0) { E.ckT = 0.12; const bk = -E.a + Math.PI / 2, bx2 = E.x - Math.sin(bk) * 1.3, bz2 = E.z - Math.cos(bk) * 1.3; view.burst(bx2, 4 + Math.random(), bz2, 0xff7a20, 2, 2, 0.5, 0.12); } }
+    // 공격을 모으는 동안 몸에서 불똥이 튀어요
+    if (wind && (E.wfT = (E.wfT || 0) - dt) <= 0) { E.wfT = 0.06; view.burst(E.x + (Math.random() - .5) * 2.4, 1 + Math.random() * 4, E.z + (Math.random() - .5) * 2.4, CH.boss.col || 0xff7a3a, 1, 2.5, 0.4, 0.12); }
   }
   // 강타로 느려진 적: 파란 서리 알갱이가 몸에서 피어올라요
-  if (e.sl && (E.slT = (E.slT || 0) - dt) <= 0) { E.slT = 0.1; const sz = e.k === 'boss' ? 2.4 : 1; view.burst(E.x + (Math.random() - .5) * sz, 0.6 + Math.random() * 1.8 * sz, E.z + (Math.random() - .5) * sz, 0x7ac8ff, 2, 1.2, 0.6, 0.11); }
-  E.ar = E.ar == null ? ar : E.ar + (ar - E.ar) * Math.min(1, dt * 22); u.armR.rotation.x = E.ar;
-  m.position.y = e.k === 'boss' && CH.boss.ai === 'bishop' ? 0.6 + Math.sin(t * 1.6) * 0.25 : 0;
+  if (e.sl && (E.slT = (E.slT || 0) - dt) <= 0) { E.slT = 0.1; const sz = boss ? 2.4 : 1; view.burst(E.x + (Math.random() - .5) * sz, 0.6 + Math.random() * 1.8 * sz, E.z + (Math.random() - .5) * sz, 0x7ac8ff, 2, 1.2, 0.6, 0.11); }
+  m.position.y = (boss && CH.boss.ai === 'bishop' ? 0.6 + Math.sin(t * 1.6) * 0.25 : 0) + jy;
   if (e.st === 'rise') m.position.y = -1.5;
-  // 잠든 해골은 고개를 숙이고 있어요
-  const zz = e.st === 'sleep' || e.st === 'home' && !e.mv ? 1 : 0; E.zz = (E.zz || 0) + (zz - (E.zz || 0)) * Math.min(1, dt * 4);
-  if (e.k !== 'boss') { u.head.rotation.x = E.zz * 0.6; u.body.rotation.x = E.zz * 0.22 + (u.kind === 'wolf' && (e.st === 'wind' || e.st === 'charge') ? -0.25 : 0); }
-  if (e.hp <= 0) { E.dieT = (E.dieT || 0) + dt; m.position.y = -E.dieT * 1.8; u.body.rotation.z = E.dieT * 1.2; }
-  const pop = e.ht ? 1.08 : 1; m.scale.setScalar((E.base || 1) * pop);
+  // 종자에게 다리가 걸리면 뒤로 한 바퀴, 덫에 걸리면 높이 튕겨 올라요
+  if (E.tripT > 0) { E.tripT -= dt; const q = 1 - Math.max(0, E.tripT) / E.tripD; m.position.y += Math.sin(q * Math.PI) * E.tripH; if (!wolf && !mim) u.body.rotation.x -= q * Math.PI * 2 * (E.tripH > 2 ? 2 : 1); }
+  // 쓰러질 때: 보통 적은 위로 튕겨 빙글 돌다가 부서져요. 보스는 천천히 가라앉아요
+  if (dead) {
+    E.dieT = (E.dieT || 0) + dt; const d = E.dieT;
+    if (boss) { m.position.y = -d * 1.8; u.body.rotation.z = d * 1.2; }
+    else {
+      m.position.y = d < 0.45 ? Math.sin(d / 0.45 * Math.PI) * 2.2 : -(d - 0.45) * 4; u.body.rotation.set(-d * 9, 0, d * 5); u.body.scale.set(1, 1, 1);
+      if (!E.shat && d > 0.42) { E.shat = 1; view.shatter(E.x, E.z, u.kind === 'wolf' ? [0x5a5048, 0x3a3430, 0x8a7a6a] : [0xe8e0c8, 0xb8b0a0, 0x4a4450], 12); }
+      m.visible = d < 0.7;
+    }
+  }
+  // 맞으면 잠깐 부풀었다 돌아와요
+  if (E.pop > 0) { E.pop = Math.max(0, E.pop - dt); const q = 1 + E.pop * 2.2; m.scale.set(E.base * q, E.base * (2 - q), E.base * q); } else m.scale.setScalar((E.base || 1) * (e.ht ? 1.08 : 1));
   if (e.sn) u.head.rotation.y = t * 6; else u.head.rotation.y = 0;
   // 미믹: 뚜껑으로 덥석덥석, 걸을 때는 통통 튀어요
   if (u.kind === 'mimic') {
