@@ -268,6 +268,9 @@
     /* 꾸미기 */
     '모자': ['hat', 'sombrero', 'chapeau', 'Hut', '帽子'],
     '안경': ['glasses', 'gafas', 'lunettes', 'Brille', 'メガネ'],
+    /* 빌드 64 추가분 */
+    "줄이 발밑을 지날 때 점프": ["Jump as the rope passes under your feet", "Salta cuando la cuerda pase bajo tus pies", "Saute quand la corde passe sous tes pieds", "Spring, wenn das Seil unter den Füßen durchgeht", "縄が足元を通るときにジャンプ"],
+    "줄이 발밑을 지나가는 순간에 맞춰 A로 점프해요. 줄이 내려올 때 미리 뛰면 걸려요.": ["Press A to jump just as the rope passes under your feet. Jump while it's still coming down and you're tripped.", "Salta con A justo cuando la cuerda pase bajo tus pies. Si saltas mientras aún baja, te enreda.", "Saute avec A au moment où la corde passe sous tes pieds. Si tu sautes pendant qu'elle descend, tu es pris.", "Spring mit A, genau wenn das Seil unter den Füßen durchgeht. Wer springt, solange es noch herabkommt, bleibt hängen.", "縄が足元を通る瞬間にAでジャンプ。縄が降りてくる途中で跳ぶと引っかかる。"],
     /* 빌드 62 추가분 */
     "← Dummy Party 사이트로": ["← Dummy Party site", "← Sitio de Dummy Party", "← Site de Dummy Party", "← Dummy-Party-Seite", "← Dummy Party サイトへ"],
     /* 빌드 60 추가분 */
@@ -1528,7 +1531,9 @@ body.playing #emoBar{display:flex}
    <div class="row"><input id="codeIn" maxlength="5" placeholder="방 코드" autocomplete="off"><button class="pb dark" id="joinBtn" style="flex:0 0 auto">들어가기</button></div>
    <div class="msg" id="homeMsg"></div>
   </aside>
-  <template id="patchnotes"><details class="notes" open><summary>패치노트 · v0.1 (b63)</summary>
+  <template id="patchnotes"><details class="notes" open><summary>패치노트 · v0.1 (b64)</summary>
+   <b>2026-10-24 · v0.1 · b64 · 줄넘기 타이밍 수정</b>
+   <ul><li>줄넘기 대회에서 줄이 발밑을 지나가는 순간이 판정 순간과 같아졌어요 (줄이 내려올 때 미리 뛰면 걸려요)</li><li>안내 문구를 "줄이 발밑을 지날 때 점프"로 바꿨어요</li></ul>
    <b>2026-10-24 · v0.1 · b63 · 버전 표기 정리</b>
    <ul><li>사이트의 버전 목록을 플레이 버튼 아래로 옮기고 빌드를 "b63"처럼 표시해요</li></ul>
    <b>2026-10-24 · v0.1 · b62 · 정식 게임 사이트</b>
@@ -1653,7 +1658,7 @@ body.playing #emoBar{display:flex}
    <ul><li>무너지는 발판 칸 수 대폭 증가 (19×10)와 용암 동굴 맵</li><li>10개 맵 전부 새로 그림 (관중석, 야자수 섬, 링, 정원 미로, 서커스, 우노 테이블 등)</li><li>글자 대신 아이콘·말풍선·이펙트로 표현 (무기, 아이템, 카드 효과, 시작 안내)</li><li>타격·폭발·물보라 효과와 화면 흔들림 추가</li></ul>
    <b>2026-10-19 · v0.1 · b1 · 첫 시험판</b>
    <ul><li>마네킹 미니게임 10개 추가 (장애물 달리기, 섬 밀치기, 싸우기, 병맛 미로, 체스 대난투, 폭탄 돌리기, 병맛 우노, 쇼윈도 얼음땡, 무너지는 발판, 컨베이어 서바이벌)</li><li>방 코드로 최대 8명 멀티플레이, 빈자리는 봇으로 채우기</li><li>판마다 10개 중 5개를 무작위로 골라 점수를 합산</li><li>PC 키보드와 휴대폰 터치 조작 지원</li></ul></details></template>
-  <p class="foot">2~8명 · 판마다 36개 미니게임 중 7개 · v0.1 b63 · <a href="../">← Dummy Party 사이트로</a></p>
+  <p class="foot">2~8명 · 판마다 36개 미니게임 중 7개 · v0.1 b64 · <a href="../">← Dummy Party 사이트로</a></p>
   <p class="foot"><span class="ff-copy">© 2026 Frenchfries777 · <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.ko" target="_blank" rel="noopener">CC BY-NC-ND 4.0</a></span></p>
  </div>
 </section>
@@ -4535,7 +4540,7 @@ function snow(s, v) { if (s.t !== SNOW.st) { SNOW.st = s.t; SNOW.vt = v.t; } ret
   regMG({
     id: 'rope', name: '줄넘기 대회', time: 45,
     desc: '점점 빨라지는 줄을 끝까지 넘어요. 걸리면 탈락, 마지막까지 남으면 이겨요.',
-    how: '줄이 바닥에 닿기 직전에 A로 점프해요. 너무 일찍도, 너무 늦게도 걸려요.',
+    how: '줄이 발밑을 지나가는 순간에 맞춰 A로 점프해요. 줄이 내려올 때 미리 뛰면 걸려요.',
     keys: { a: '점프', b: null }, touch: true,
     init: function (ps, rng) {
       var pl = {}; ps.forEach(function (p) { pl[p.id] = { jt: -9, jc: 0, out: -1 }; });
@@ -4548,7 +4553,7 @@ function snow(s, v) { if (s.t !== SNOW.st) { SNOW.st = s.t; SNOW.vt = v.t; } ret
         if (i.ap && s.t - p.jt > AIR + 0.04) { p.jt = s.t; fx(s, 'pop'); }
       });
       if (s.t >= s.rt) {
-        s.ids.forEach(function (id) { var p = s.pl[id]; if (p.out >= 0) return; var d = s.rt - p.jt; if (d >= 0 && d <= AIR) p.jc++; else { p.out = s.t; fx(s, 'hit'); } });
+        s.ids.forEach(function (id) { var p = s.pl[id]; if (p.out >= 0) return; var d = s.rt - p.jt; if (d >= AIR * 0.12 && d <= AIR * 0.88) p.jc++; else { p.out = s.t; fx(s, 'hit'); } });
         s.k++; s.last = s.rt; s.per = Math.max(0.6, 1.5 - 0.04 * s.k); s.rt += s.per;
       }
     },
@@ -4565,9 +4570,9 @@ function snow(s, v) { if (s.t !== SNOW.st) { SNOW.st = s.t; SNOW.vt = v.t; } ret
       // v.t는 화면 시계라 시뮬 시계(s.t)와 달라요: s.t에 화면 시간 경과만 더해서 부드럽게
       if (s.t !== RP.st) { RP.st = s.t; RP.vt = v.t; } var now = s.t + clamp(v.t - RP.vt, 0, 0.1);
       var n = s.ids.length, gy = 420, ph = clamp(1 - (s.rt - now) / s.per, 0, 1);
-      // 줄: 한 바퀴마다 땅 밑으로 내려갔다가 머리 위로 올라와 발밑을 쓸고 지나가요 (잔상을 겹쳐 돌아가는 게 보이게)
+      // 줄: 판정 순간(ph=1)에 줄이 가장 아래(발밑)를 지나가고, 반 바퀴 뒤에 머리 위를 지나가요 (잔상을 겹쳐 돌아가는 게 보이게)
       for (var tr = 4; tr >= 0; tr--) {
-        var pp = ph - tr * 0.035, hh = -190 * Math.sin(2 * 3.1416 * pp), under = hh < 0;
+        var pp = ph - tr * 0.035, hh = -190 * Math.cos(2 * 3.1416 * pp), under = hh < 0;
         ctx.globalAlpha = tr === 0 ? 1 : 0.16 * (5 - tr) / 4;
         ctx.strokeStyle = under ? '#d98a12' : '#ffb02e'; ctx.lineWidth = tr === 0 ? 7 : 5; ctx.lineCap = 'round';
         ctx.beginPath(); ctx.moveTo(50, gy - 10); ctx.quadraticCurveTo(W / 2, gy - 10 - hh * 2, W - 50, gy - 10); ctx.stroke();
@@ -7621,7 +7626,7 @@ var INTRO = {
   ramen: { tip: '속으로 세다가 딱 8초에 멈춰요', hero: 'flame', a: 'mash' },
   balloon: { tip: '크게 불고 터지기 전에 챙겨요', hero: 'wind', a: 'wind', b: 'skip', click: true },
   simon: { tip: '"시몬 가라사대"가 붙은 명령만 따라 해요', hero: 'flame', a: 'jump', b: 'skip' },
-  rope: { tip: '줄이 닿기 직전에 점프', hero: 'flame', a: 'jump' },
+  rope: { tip: '줄이 발밑을 지날 때 점프', hero: 'flame', a: 'jump' },
   mole: { tip: '두더지는 잡고 폭탄은 피해요', hero: 'bat', a: 'attack' },
   rps: { tip: '가위바위보로 토너먼트, 아래 버튼으로 골라요', hero: 'tap', tapOnly: true },
   shell: { tip: '공이 든 컵을 눈으로 따라가요', hero: 'eye', tapOnly: true },
