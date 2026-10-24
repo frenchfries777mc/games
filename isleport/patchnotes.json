@@ -2,6 +2,64 @@
  "notes": [
   {
    "date": "2026-10-24",
+   "build": "v0.2 build 58",
+   "title": "항구 검역소",
+   "items": [
+    "병 소문 소식 추가",
+    "병 소문 항구에서 사 온 짐의 검역 대기",
+    "항구 검역소 건설과 검역 시간 단축",
+    "배 창에 검역 중인 짐과 남은 시간 표시"
+   ],
+   "tr": {
+    "en": {
+     "title": "Harbor quarantine",
+     "items": [
+      "New sea news: sickness rumors",
+      "Goods bought at a sick port wait in quarantine",
+      "Build a quarantine station to shorten the wait",
+      "Ships window shows quarantined goods and time left"
+     ]
+    },
+    "ja": {
+     "title": "Harbor quarantine",
+     "items": [
+      "New sea news: sickness rumors",
+      "Goods bought at a sick port wait in quarantine",
+      "Build a quarantine station to shorten the wait",
+      "Ships window shows quarantined goods and time left"
+     ]
+    },
+    "es": {
+     "title": "Harbor quarantine",
+     "items": [
+      "New sea news: sickness rumors",
+      "Goods bought at a sick port wait in quarantine",
+      "Build a quarantine station to shorten the wait",
+      "Ships window shows quarantined goods and time left"
+     ]
+    },
+    "fr": {
+     "title": "Harbor quarantine",
+     "items": [
+      "New sea news: sickness rumors",
+      "Goods bought at a sick port wait in quarantine",
+      "Build a quarantine station to shorten the wait",
+      "Ships window shows quarantined goods and time left"
+     ]
+    },
+    "de": {
+     "title": "Harbor quarantine",
+     "items": [
+      "New sea news: sickness rumors",
+      "Goods bought at a sick port wait in quarantine",
+      "Build a quarantine station to shorten the wait",
+      "Ships window shows quarantined goods and time left"
+     ]
+    }
+   }
+  },
+  {
+   "date": "2026-10-24",
    "build": "v0.2 build 57",
    "title": "계정 기록 이름",
    "items": [
