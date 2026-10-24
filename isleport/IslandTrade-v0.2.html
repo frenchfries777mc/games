@@ -477,7 +477,7 @@ const TUT=[
  [P('다 자라면 ▼ 표시의 밭을 눌러 수확해요','When it is grown, tap the field with the ▼ to harvest'),s=>s.stats.harvest>=1],
  [P('마을 장터에서 수확한 것을 팔아요','Sell your harvest at the town market'),s=>(s.stats.shop||0)>=1],
  [P('항구에서 배에 짐을 싣고 보내요','Load a ship at the harbor and send it off'),s=>s.stats.sailed>=1]];
-const OUTMAX=12,BUILD=56;
+const OUTMAX=12,BUILD=57;
 const hasB=(s,b)=>s.slots.some(x=>x&&x.b===b);
 const rankOf=e=>{let r=0;RANKS.forEach((x,i)=>{if(e>=x[0])r=i;});return r;};
 /* 업적: id, 이름, 설명, 조건 */
@@ -599,6 +599,9 @@ A('nw1m',P('백만장자','Millionaire'),P('재산 1,000,000 모으기','Reach a
 const CROPK=Object.keys(CROPS),SPEC=['goldbarley','pomegranate','saffron','cloudcotton','seaweed','dragonfruit'],CROPK17=CROPK.filter(c=>!SPEC.includes(c));
 const ACHN={};ACH.forEach(a=>ACHN[a.id]=a);
 const NOTES=[
+ {date:'2026-10-24',build:'v0.2 build 57',title:P('계정 기록 이름','Account record name'),items:[
+  P('계정에 보내는 업적과 플레이 기록의 게임 이름을 isleport로 맞췄어요','Achievements and play records sent to your account now use the game id isleport')
+ ]},
  {date:'2026-10-23',build:'v0.2 build 56',title:P('최적화 옵션과 가로 화면','Optimize option and landscape fixes'),items:[
   P('설정에 "최적화"를 넣었어요. 켜면 화면을 30프레임으로 그리고 비·눈 효과를 꺼서 폰이 덜 뜨거워져요','Settings now has "Optimize": it draws at 30 fps and turns off rain and snow effects so phones run cooler'),
   P('성능이 낮아 보이는 폰은 처음부터 최적화가 켜져 있어요','Low-end phones start with Optimize on'),
@@ -27205,8 +27208,8 @@ async function initAuth(){try{if(!window.supabase)return;
   const {data}=await sb.auth.getSession();const u=data&&data.session&&data.session.user;if(!u)return;if(S){save();if(MP.on)mpLeave();S=null;}UID=u.id;
   const q=await sb.from('profiles').select('display_name,username').eq('id',UID).maybeSingle();UNAME=q.data&&(q.data.display_name||q.data.username)||null;
   applyStatic();showTitle();}catch(e){}}
-function syncAch(){try{if(window.FFProfile&&FFProfile.setAchievements&&sb&&UID)FFProfile.setAchievements(sb,'islandtrade',Object.keys(S.ach).length,ACH.length,Object.keys(S.ach));}catch(e){}}
-let marked=false;function markOnce(){try{if(!marked&&window.FFProfile&&sb&&UID){marked=true;FFProfile.markPlayed(sb,'islandtrade');}}catch(e){}}
+function syncAch(){try{if(window.FFProfile&&FFProfile.setAchievements&&sb&&UID)FFProfile.setAchievements(sb,'isleport',Object.keys(S.ach).length,ACH.length,Object.keys(S.ach));}catch(e){}}
+let marked=false;function markOnce(){try{if(!marked&&window.FFProfile&&sb&&UID){marked=true;FFProfile.markPlayed(sb,'isleport');}}catch(e){}}
 const rid=()=>Math.random().toString(36).slice(2,8);
 /* 사이트·다른 게임에서 닉네임을 바꾸면 돌아왔을 때 바로 반영해요 */
 async function refreshUname(){try{if(!sb||!UID)return;const q=await sb.from('profiles').select('display_name,username').eq('id',UID).maybeSingle();const n=q.data&&(q.data.display_name||q.data.username)||null;if(n&&n!==UNAME){UNAME=n;applyStatic();}}catch(e){}}
