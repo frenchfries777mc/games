@@ -1113,7 +1113,16 @@ function botThink(G, p, dt) {
   if (!foes.length && (botCut(G, p, inp, leader) || botPuzzle(G, p, inp, leader))) return inp;
   if (!foes.length) {
     if (leader === p) {
-      const wp = MAP.route[Math.min(G.route, MAP.route.length - 1)], wx = cw(wp[0]), wz = cw(wp[1]);
+      // 이미 지나온 방의 길목이나, 다 올라온 승강기 아래층 길목은 건너뛰어요
+      for (let la = areaAt(p.x, p.z); G.route < MAP.route.length - 1;) {
+        const w = MAP.route[G.route], o = { x: cw(w[0]), z: cw(w[1]) }, wa = areaAt(o.x, o.z);
+        if (wa >= 0 && la >= 0 && wa < la) G.route++;
+        else if (wa >= 0 && wa === la && MAP.lifts.some((q, k) => q.area === wa && G.lifts[k].done && liftSide(q, p) === 1 && liftSide(q, o) !== 1)) G.route++;
+        else break;
+      }
+      const wp = MAP.route[Math.min(G.route, MAP.route.length - 1)]; let wx = cw(wp[0]), wz = cw(wp[1]);
+      // 끊어진 길 건너편이 목적지면 먼저 방 안(기둥 앞)까지 들어가요
+      { const wa = areaAt(wx, wz); MAP.pits.forEach((q, k) => { if (!G.pits[k].down && q.area === wa && areaAt(p.x, p.z) !== q.area) { const o = pillarAt(k); wx = o.x; wz = o.z; } }); }
       if (Math.hypot(wx - p.x, wz - p.z) < 3 && G.route < MAP.route.length - 1) G.route++;
       moveTo(G, p, inp, wx, wz, 1);
     } else if (leader) {
