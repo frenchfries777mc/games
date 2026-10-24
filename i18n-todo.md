@@ -356,3 +356,5 @@ crownenvoy/CrownEnvoy-v0.4.html | 전신망 (정치 탭 카드) | "📡 전신�
 - patchnotes.json, vowkeep/patchnotes.json | "Vowkeep 궁수 화살 수, 대검, 승강기 갇힘" 5줄 | Vowkeep b42 | 2026-10-25
 - vowkeep/play/js/data.js, main.js | 새 수수께끼 9가지 이름·설명·안내 (GEN_PUZ, ROLE_PUZ, puzPrompt), 패치 노트 "Vowkeep 장마다 다른 수수께끼" | Vowkeep b43 | 2026-10-25
 - patchnotes.json, vowkeep/patchnotes.json | "Vowkeep 장마다 다른 지도" 4줄 | Vowkeep b44 | 2026-10-25
+- crownenvoy/CrownEnvoy-v0.5.html b98 | 로비(방 만들기·방 참여하기·시나리오·저장된 게임 버튼과 설명, 공개 방/비공개 방 고르기, 방 이름, 공개 방 목록 카드·상태·빈 목록 안내, 코드로 입장), 시나리오 메뉴(시나리오 만들기·시나리오 둘러보기), 대기실 제목 '공개 방'·'비공개 방'과 안내, 중세 병종 이름·능력(창병·중무장보병·궁병·기사·사석포·거포)과 기술 5개(장창 전술·판금 갑옷·기사도·장궁 부대·거포 주조), '이 시대에는 더 올릴 수 없어요'·'이 시대에는 없는 기술이에요', 전투 화면 '검·창·활·공성 병기', 휴전회의 결렬·성립 결과 카드와 요청 알림 2종, 반격 취소 알림 | 2026-10-25
+- crownenvoy/patchnotes.json·i18n.js | N["b98"] 13줄, V["0.5"] 제목·요약 (en·es·fr·de·ja·ar 한국어 임시) | Crown Envoy b98 | 2026-10-25
