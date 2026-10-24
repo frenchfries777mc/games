@@ -157,7 +157,7 @@ function menu(go) {
   else if (go === 'roles') { paintRoles(); show('sRoles'); }
   else if (go === 'achs') { paintAchs(); show('sAchs'); }
   else if (go === 'settings') { paintSettings(); show('sSettings'); }
-  else if (go === 'site') { location.href = '../'; }
+  else if (go === 'site') { try { window.close(); } catch (e) { } setTimeout(() => { if (!window.closed) location.href = '../'; }, 300); }
 }
 
 function paintRoles() {
@@ -489,7 +489,7 @@ function localMove(p, inp, dt) {
   const fl = S.snap.w.fl && S.snap.w.fl[2] === p.id;
   if (inp.roll && !fl && L.rollCd <= 0 && !(L.roll > 0)) { L.roll = 0.35; L.rollCd = 1.2 * ((p.b || []).indexOf('roll') >= 0 ? 0.6 : 1); const ra = ml > 0.1 ? Math.atan2(mz, mx) : p.a; L.rdx = Math.cos(ra); L.rdz = Math.sin(ra); }
   if (L.roll > 0) { L.roll -= dt; L.x += L.rdx * 15 * dt; L.z += L.rdz * 15 * dt; }
-  else { const sp = R.speed * ((p.b || []).indexOf('feet') >= 0 ? 1.12 : 1) * (p.ra ? 1.3 : 1) * (p.bk ? 0.8 : 1) * (fl ? 0.7 : 1) * (p.cl ? 0.6 : 1); L.x += mx * sp * dt; L.z += mz * sp * dt; }
+  else { const sp = R.speed * ((p.b || []).indexOf('feet') >= 0 ? 1.12 : 1) * (p.ra ? 1.3 : 1) * (p.bk ? 0.8 : 1) * (fl ? 0.7 : 1) * (p.cl ? 0.6 : 1) * (p.em ? 0.75 : 1); L.x += mx * sp * dt; L.z += mz * sp * dt; }
   mapCollide(L, 0.6);
   if (!liftOk(ox, oz, L.x, L.z)) { L.x = ox; L.z = oz; }
 }
@@ -606,6 +606,11 @@ function onEvent(e) {
     case 'pwrong': toast('순서가 틀렸어요. 화로 불이 모두 꺼졌어요.', 2600); SFX.play('warn'); view.burst(e.x, 2, e.z, 0x6a6470, 12, 4, 0.7, 0.14); break;
     case 'pburn': SFX.play('fire'); view.burst(e.x, 1.4, e.z, 0xff8a2a, 16, 5, 0.7, 0.12); view.rise(e.x, e.z, 0x5a5050, 10, 1.2, 0.9, 5); view.flash(e.x, e.z, 0xff7a20, 90); break;
     case 'ptime': toast('10초가 지났어요. 과녁을 처음부터 다시 맞혀요.', 2600); SFX.play('warn'); break;
+    case 'plever': SFX.play('clang'); view.burst(e.x, 1.2, e.z, 0xffd36b, 6, 3, 0.4, 0.1); break;
+    case 'pshatter': SFX.play('clang'); view.shatter(e.x, e.z, [0xbfe8ff, 0x9ae0ff, 0xffffff], 22, true); view.flash(e.x, e.z, 0x9ae0ff, 90); break;
+    case 'pdouse': SFX.play('fire'); view.rise(e.x, e.z, 0xb0a8c0, 14, 1.2, 1.1, 5); view.burst(e.x, 1.2, e.z, 0x9af0e0, 10, 4, 0.5, 0.1); break;
+    case 'pout': view.burst(e.x, 1.5, e.z, 0x6a4a8a, 6, 2, 0.5, 0.1); break;
+    case 'emb': if (e.on) { SFX.play('fire'); view.burst(e.x, 1.6, e.z, 0xffb060, 10, 3, 0.5, 0.1); } break;
     case 'prot': SFX.play('clang'); view.burst(e.x, 0.6, e.z, 0x9a9aa6, 6, 3, 0.4, 0.1); break;
     case 'phelp': toast(e.pk === -1 ? '봇 동료가 기둥을 쳐서 쓰러뜨려요.' : '봇 동료가 수수께끼를 도와줘요.', 2600); break;
     case 'pcrack': SFX.play('clang'); view.burst(e.x, 2 + Math.random() * 4, e.z + 1, 0x9a8e84, 8, 4, 0.6, 0.14); view.shake = Math.max(view.shake, 0.25); break;
@@ -739,8 +744,18 @@ function puzPrompt(sn, pos) {
       if (q.k === 'oath') return mine ? '방패 석판 위에 서서 막기(' + (TOUCH ? 'Q 버튼' : 'Q') + ')를 써요 · ' + n : who + '만 풀 수 있어요. 방패 석판 위에서 막기를 써야 해요 · ' + n;
       if (q.k === 'targets') return mine ? '벽 높이 걸린 과녁을 10초 안에 모두 화살로 맞혀요 · ' + n : who + '만 화살로 과녁을 맞힐 수 있어요 · ' + n;
       if (q.k === 'basins') return mine ? '빛 구슬이나 치유로 성수반을 채워요 · ' + n : who + '만 빛으로 성수반을 채울 수 있어요 · ' + n;
+      if (q.k === 'icecrys') return mine ? '공격·공격·강타의 강타로 얼음 수정을 깨요 · ' + n : who + '만 강타로 얼음 수정을 깰 수 있어요 · ' + n;
+      if (q.k === 'lanterns') return mine ? '등불 줄 끝에 서서 관통 화살(' + (TOUCH ? 'Q 버튼' : 'Q') + ') 한 발로 셋을 꿰뚫어요 · ' + n : who + '만 관통 화살로 등불을 켤 수 있어요 · ' + n;
+      if (q.k === 'vigil') return mine ? '빛의 원 안에 2초씩 서서 기도해요 · ' + n : who + '만 기도의 원을 채울 수 있어요 · ' + n;
+      if (q.k === 'blackfire') return mine ? '물약(' + (TOUCH ? 'Q 버튼' : 'Q') + ')을 던져 검은 불꽃을 꺼요 · ' + n : who + '만 물약으로 검은 불꽃을 끌 수 있어요 · ' + n;
       return mine ? '횃불 든 공격으로 가시덩굴을 태워요 · ' + n : who + '만 횃불로 가시덩굴을 태울 수 있어요 · ' + n;
     }
+    const lc = z.l.split('').filter(c => c === '1').length;
+    if (q.k === 'levers') return near ? F + '를 눌러 지렛대 당기기' : '등불 넷을 모두 켜요 (지렛대는 양옆 등불도 바꿔요) · ' + lc + '/4';
+    if (q.k === 'sigils') return '빛나는 칸 옆으로 이어서 아홉 칸을 한 번씩 밟아요 · ' + lc + '/9';
+    if (q.k === 'crystals') return '수정 넷을 공격해 함께 빛나게 해요 (8초 뒤 꺼져요) · ' + lc + '/4';
+    if (q.k === 'mirrors') return near ? F + '를 눌러 거울 돌리기' : '거울을 돌려 햇빛을 창살문까지 보내요';
+    if (q.k === 'embers') { const me = sn.pl.find(p => p.id === S.me); return near ? F + (me && me.em ? '를 눌러 불씨 올리기' : '를 눌러 불씨 들기') : '불씨를 들어 빈 제단 셋에 올려요 · ' + lc + '/3'; }
     if (q.k === 'braziers') return near ? F + '를 눌러 화로에 불 붙이기 (공격이나 화살로도 돼요)' : '비석의 색 순서대로 화로에 불을 붙여요 · ' + z.l.split('').filter(c => c === '1').length + '/4';
     return near ? F + '를 눌러 석상 돌리기' : '석상 넷이 모두 가운데 문양을 보게 돌려요';
   }

@@ -166,3 +166,9 @@ patchnotes.json | v371 title | 피사로 스킬 변경 | build 371 | 2026-10-20
 patchnotes.json | v371 items[0] | 피사로 스킬을 정복자의 휴식으로 변경: 3초 동안 받는 피해 40% 감소와 초당 체력 12 회복, 움직이면 끊김 | build 371 | 2026-10-20
 patchnotes.json | v371 items[1] | 하늘의 십자가와 표식 효과 삭제 | build 371 | 2026-10-20
 patchnotes.json | v371 items[2] | 피사로 밸런스 다시 측정 | build 371 | 2026-10-20
+patchnotes.json | v372 title | 피사로 조정과 모드 정리 | build 372 | 2026-10-20
+patchnotes.json | v372 items[0] | 피사로 1단계 대쉬 쿨타임 3초에서 1.8초로 감소 | build 372 | 2026-10-20
+patchnotes.json | v372 items[1] | 피사로 단계별 공격력 1씩 증가 (25, 31, 37, 43) | build 372 | 2026-10-20
+patchnotes.json | v372 items[2] | 왕 지키기에서 왕이 된 봇은 적에게서 최대한 도망 | build 372 | 2026-10-20
+patchnotes.json | v372 items[3] | 거울 미로 맵 삭제 | build 372 | 2026-10-20
+patchnotes.json | v372 items[4] | 좀비게임 모드 삭제 | build 372 | 2026-10-20
