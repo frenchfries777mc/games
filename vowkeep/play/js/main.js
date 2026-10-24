@@ -541,7 +541,7 @@ function onEvent(e) {
     case 'charge': view.ring(e.x, e.z, e.n === 3 ? 2.4 : 1.6, e.n === 3 ? 0xffd36b : 0x9af0a8, 0.4); view.burst(e.x, 1.8, e.z, e.n === 3 ? 0xffd36b : 0x9af0a8, e.n === 3 ? 12 : 6, 3, 0.4, 0.1); if (e.id === S.me) SFX.play(e.n === 3 ? 'clear' : 'clang'); break;
     case 'raising': view.column(e.x, e.z, 0xfff0b0, 1.1); view.ring(e.x, e.z, 6, 0xfff0b0, 1.0); break;
     case 'eshoot': SFX.play('arrow'); break;
-    case 'ehit': if (e.hv) view.spark(e.x, e.z, e.id, true); else view.burst(e.x, 1.6, e.z, 0xe8e0c8, e.crit ? 6 : 3, 4, 0.3, 0.09); num(e.x, e.z, e.v, e.crit ? '#ffd36b' : '#ffffff', e.crit ? 1.3 : 1); SFX.play('hit'); break;
+    case 'ehit': view.react(e.id, e.hv || e.crit); if (e.hv) view.spark(e.x, e.z, e.id, true); else view.burst(e.x, 1.6, e.z, 0xe8e0c8, e.crit ? 6 : 3, 4, 0.3, 0.09); num(e.x, e.z, e.v, e.crit ? '#ffd36b' : '#ffffff', e.crit ? 1.3 : 1); SFX.play('hit'); break;
     case 'pdodge': view.ring(e.x, e.z, 2.6, 0x9ad0ff, 0.4); view.streak(e.x, e.z, 0, 0.1, 0x9ad0ff, 0.2, 0.1); view.rise(e.x, e.z, 0x9ad0ff, 10, 1, 0.6, 6); if (e.id === me) { num(e.x, e.z, '완벽한 회피!', '#9ad0ff', 1.3, 4.2); view.flash(e.x, e.z, 0x9ad0ff, 120); SFX.play('parry'); if (S.net === 'solo') S.slowT = Math.max(S.slowT || 0, 0.45); } break;
     case 'heavy': { // 내려찍은 자리: 큰 충격파 두 겹, 흙먼지, 땅 문양, 화면 크게 흔들기
       const hp = view.entPos('p' + e.id); if (hp) { view.ring(hp.x + Math.cos(e.a) * 1.4, hp.z + Math.sin(e.a) * 1.4, 3.4, 0xffe08a, 0.4); view.burst(hp.x + Math.cos(e.a) * 1.4, 0.3, hp.z + Math.sin(e.a) * 1.4, 0xbcae94, 26, 9, 0.6, 0.18); }
@@ -579,7 +579,11 @@ function onEvent(e) {
     case 'bwind': SFX.play('warn'); break;
     case 'bcharge': SFX.play('roar'); break;
     case 'roar': SFX.play('roar'); view.shake = 1; break;
-    case 'bphase': { const P = e.p === 2 ? CH.boss.p2 : e.p === 3 ? CH.boss.p3 : null, sub = P && P[1], mp = myP();
+    case 'eswing': view.eAct(e.id); break;
+    case 'trip': SFX.play('clang'); view.trip(e.id, false); view.burst(e.x, 0.4, e.z, 0xb8a888, 10, 4, 0.4, 0.12); break;
+    case 'launch': view.trip(e.id, true); view.burst(e.x, 0.6, e.z, 0xff8a2a, 22, 7, 0.6, 0.14); view.shock(e.x, e.z, 3, 0xff7a20, 0.4); view.flash(e.x, e.z, 0xff7a20, 110); break;
+    case 'flare': view.burst(e.x, 1.4, e.z, 0xffa040, 12, 6, 0.4, 0.1); break;
+    case 'bphase': { view.roar(); const P = e.p === 2 ? CH.boss.p2 : e.p === 3 ? CH.boss.p3 : null, sub = P && P[1], mp = myP();
       // 기사단장 3단계: 망토가 찢겨 날아가요
       if (e.p === 3 && CH.boss.ai === 'warden') { const b = S.snap && S.snap.en.find(q => q.k === 'boss'); if (b) { view.shatter(b.x, b.z, [0x3a0e14, 0x5a1a22, 0x2a0a10], 36, true); view.shock(b.x, b.z, 7, 0xff5a20, 0.6); view.flash(b.x, b.z, 0xff5a20, 220); } } if (P) { if (mp && mp.dn) toast(P[0] + ' · ' + sub, 3600); else bigMsg(P[0], sub, 3700); } } SFX.play('roar'); view.shake = 1.2; break;
     case 'parry': bigMsg('완벽한 막기!', '보스가 기절했어요. 지금 공격해요', 2400); SFX.play('parry'); view.burst(e.x, 2, e.z, 0xffffff, 16, 8, 0.6, 0.12); view.shake = 0.8; break;
@@ -628,7 +632,7 @@ function onEvent(e) {
     case 'altar': bigMsg('제단의 축복', '축복을 하나 골라요', 2200); SFX.play('clear'); view.column(e.x, e.z, 0xffe08a, 1.2); break;
     case 'checkpoint': bigMsg('모닥불에 불을 붙였어요', '모두 쓰러지면 여기서 다시 시작해요', 3000); SFX.play('door'); break;
     case 'wake': if (!S.wakeT || performance.now() - S.wakeT > 1500) { S.wakeT = performance.now(); SFX.play('spawn'); } view.burst(e.x, 0.3, e.z, 0x6a5a7a, 6, 3, 0.6, 0.12); break;
-    case 'bossIntro': { talk('boss', 3400); bigMsg(CH.boss.name, MAP.areas.find(a => a.boss).line, 3400); const b = S.snap && S.snap.en.find(q => q.k === 'boss'); if (b) { view.focusOn(b.x, b.z, 3); view.shock(b.x, b.z, 8, 0xff5a3a, 0.8); view.flash(b.x, b.z, 0xff5a3a, 200); } view.shake = Math.max(view.shake, 0.8); letterbox(3000); break; }
+    case 'bossIntro': { view.roar(); talk('boss', 3400); bigMsg(CH.boss.name, MAP.areas.find(a => a.boss).line, 3400); const b = S.snap && S.snap.en.find(q => q.k === 'boss'); if (b) { view.focusOn(b.x, b.z, 3); view.shock(b.x, b.z, 8, 0xff5a3a, 0.8); view.flash(b.x, b.z, 0xff5a3a, 200); } view.shake = Math.max(view.shake, 0.8); letterbox(3000); break; }
     case 'bvolley': SFX.play('arrow'); view.burst(e.x, 1.8, e.z, 0xffb060, 8, 4, 0.3, 0.1); break;
     case 'nova': SFX.play('orb'); { const nc = CH.boss.col || (CH.boss.ai === 'king' ? 0xff7a20 : 0x6ab0ff); view.shock(e.x, e.z, 4, nc, 0.4); view.flash(e.x, e.z, nc, 120); } break;
     case 'zfx': { // 늦게 터지는 보스 장판: 얼음 창, 불기둥, 고드름, 불덩이
