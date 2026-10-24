@@ -1289,7 +1289,7 @@ function cleanOpts(o){ return {balance:!!(o&&o.balance), vote:!!(o&&o.vote)}; }
 function ruleHp(){ return Math.round(MAX_HP*roomRules.hp*(gameMode==='zombie'?2:1)); }   // zombie game: humans get double health
 const MOVE_SPEED = 250, JUMP_VELOCITY = -680;
 const DASH_FORCE = 700, DASH_CD = 1.5;
-const PZ_MAX=3, PZ_DMG=[24,30,36,42], PZ_ATK_CD=[0.6,0.5,0.4,0.3], PZ_DASH_CD=[3,1.5,0.7,0.4], PZ_CD_STEP=0.12, PZ_ULT_HEAL=30, PZ_ULT_HEAL_MAX=50, PZ_MAX_SPEED=1.25;       // 피사로 has four stages (the start, then one per ultimate): damage, attack cooldown and dash cooldown come from these tables; the skill and ultimate cooldowns are 12% shorter per stage; the last stage also runs at 125% speed       // (+5 damage per stack; at the 4th stack: a 0.5 s dash and 125% speed)
+const PZ_MAX=3, PZ_DMG=[25,31,37,43], PZ_ATK_CD=[0.6,0.5,0.4,0.3], PZ_DASH_CD=[1.8,1.5,0.7,0.4], PZ_CD_STEP=0.12, PZ_ULT_HEAL=30, PZ_ULT_HEAL_MAX=50, PZ_MAX_SPEED=1.25;       // 피사로 has four stages (the start, then one per ultimate): damage, attack cooldown and dash cooldown come from these tables; the skill and ultimate cooldowns are 12% shorter per stage; the last stage also runs at 125% speed       // (+5 damage per stack; at the 4th stack: a 0.5 s dash and 125% speed)
 const KAN_POISON_DPS=2, KAN_POISON_SEC=3, KAN_POISON_MAX=4, KAN_TRAP_SEC=10, KAN_TRAP_R=75, KAN_TRAP_MAX=2, KAN_ULT_SEC=5, KAN_ULT_CD_MULT=0.6;      // 칸: every dart adds a poison stack (2 damage a second each, up to 4, the 3 s timer restarts); the frog trap poisons and slows; the wings fly for 5 s and shoot three darts at once
 let poisonZones=[];
 function applyPoison(p, ownerId, ownerName, stacks, tMs){ if(!p || !p.alive) return; const tS=tMs/1000, cur=(p.poison && p.poison.until>tS)?p.poison.stacks:0; p.poison={until:tS+KAN_POISON_SEC, stacks:Math.min(KAN_POISON_MAX,cur+(stacks||1)), owner:ownerId, ownerName:ownerName}; }
@@ -1318,8 +1318,8 @@ const WEAPONS = {
             desc:'데미지 26 · 쿨타임 1.1초 · 사거리 100 · 광선검을 휘둘러 맞은 상대를 크게 날려보냄 · 휘두른 순간부터 0.25초 동안 날아오는 투사체를 쏜 사람에게 튕겨내고, 단거리 공격도 막아내고, 막아내면 쿨타임 없이 한 번 더 휘두를 수 있음 (공격받기 0.25초 전에 눌러야 함)'},
   horemheb:{id:'horemheb', name:'쇠스랑', emoji:'🔱', kind:'melee', dmg:34, cd:0.55, range:105, shape:'pitchfork',
             desc:'데미지 34 · 쿨타임 0.55초 · 사거리 105 · 쇠스랑을 휘둘러 근접 공격'},
-  pizarro: {id:'pizarro', name:'창',       emoji:'🪖', kind:'melee',    dmg:24, cd:0.6, range:160, shape:'spear', thrust:true, kbMult:2.6,
-            desc:'데미지 27 · 쿨타임 0.55초 · 사거리 160 · 앞으로 창을 찔러 상대를 멀리 밀어냄 · 궁극기를 쓸수록 강해짐(죽으면 초기화)'},
+  pizarro: {id:'pizarro', name:'창',       emoji:'🪖', kind:'melee',    dmg:25, cd:0.6, range:160, shape:'spear', thrust:true, kbMult:2.6,
+            desc:'데미지 25 · 쿨타임 0.6초 · 사거리 160 · 앞으로 창을 찔러 상대를 멀리 밀어냄 · 궁극기를 쓸수록 강해짐(죽으면 초기화)'},
   puppeteer:{id:'puppeteer', name:'실 바늘', emoji:'🪆', kind:'gun', dmg:10, cd:0.6, bulletSpeed:1300, shape:'needle', hitR:14,
             desc:'데미지 10 · 쿨타임 0.6초 · 빠르게 날아가는 바늘 · 궁극기로 상대를 조종해 싸움'},
   kan:     {id:'kan',     name:'독침대롱', emoji:'🐸', kind:'gun',      dmg:5, cd:0.5, bulletSpeed:1500, shape:'blowgun', poison:1, hitR:10,
@@ -1417,7 +1417,7 @@ function pirateFlyVel(p, ax, ay){      // launch velocity of the cannon ride: to
   return {vx:Math.cos(a)*PIRATE_FLY_SPEED, vy:Math.sin(a)*PIRATE_FLY_SPEED};
 }
 const ULTS = {
-  pizarro:  {name:'정복자의 기세', desc:'체력 30 회복(최종 단계에서 쓰면 50) + 공격력 24→30→36→42, 공격 쿨타임 0.6→0.5→0.4→0.3초, 대쉬 쿨타임 3→1.5→0.7→0.4초로 단계가 오르고 스킬·궁극기 쿨타임도 단계마다 12% 단축됨 (최대 3번 중첩 = 4단계, 4단계엔 이동속도 125%, 죽으면 초기화)'},
+  pizarro:  {name:'정복자의 기세', desc:'체력 30 회복(최종 단계에서 쓰면 50) + 공격력 25→31→37→43, 공격 쿨타임 0.6→0.5→0.4→0.3초, 대쉬 쿨타임 1.8→1.5→0.7→0.4초로 단계가 오르고 스킬·궁극기 쿨타임도 단계마다 12% 단축됨 (최대 3번 중첩 = 4단계, 4단계엔 이동속도 125%, 죽으면 초기화)'},
   puppeteer:{name:'꼭두각시 조종', desc:'조준한 방향으로 실을 날려 맞힌 상대를 5초간 조종 (맞히지 못하면 조종 못 함) · 조종하는 동안 내 이동·점프·조준·일반 공격 입력대로 움직이고 내 시야도 상대 시점이 됨, 상대는 스킬과 궁극기를 쓸 수 없음 · 조종하는 동안 내 몸은 움직이지 못하고 받는 데미지 50% 감소 · 조종이 끝나면 조종당한 상대가 자폭해 본인은 60, 주변(220) 적에게는 30 피해'},
   kan:      {name:'케찰코아틀의 날개', desc:'5초 동안 날개를 펴고 날아올라 (점프 키를 누르면 위로, 떼면 천천히 내려옴) 독침을 한 번에 3발씩, 더 빠르게 발사'},
   pistol:   {name:'강화탄',       desc:'다음 발사 때 데미지 66의 크고 빠른 탄환 1발'},
@@ -1978,7 +1978,7 @@ const ACHIEVEMENTS=[
   {id:'assists_20',  name:'든든한 지원군', desc:'누적 어시스트 20회', icon:'🤝', reward:40, check:sd=>(sd.totalAssists||0)>=20},
   {id:'matches_100', name:'단골 손님', desc:'누적 100경기 참가', icon:'🎮', reward:100, check:sd=>(sd.totalMatches||0)>=100},
   {id:'all_classic', name:'만능 플레이어', desc:'데스매치부터 점령전까지 6개 모드 전체 플레이', icon:'🗺️', reward:60, check:sd=>MODE_ORDER.every(m=>((sd.modeMatches&&sd.modeMatches[m])||0)>0)},
-  {id:'all_minigame',name:'모드 수집가', desc:'좀비게임부터 토너먼트까지 8개 모드 전체 플레이', icon:'🎲', reward:60, check:sd=>MORE_MODES.every(it=>((sd.modeMatches&&sd.modeMatches[it.id])||0)>0)},
+  {id:'all_minigame',name:'모드 수집가', desc:'폭탄 돌리기부터 토너먼트까지 7개 모드 전체 플레이', icon:'🎲', reward:60, check:sd=>MORE_MODES.every(it=>((sd.modeMatches&&sd.modeMatches[it.id])||0)>0)},
   {id:'pro_gamer',   name:'진정한 프로게이머', desc:'모든 모드를 각각 100경기씩, 일일 모드를 100경기 플레이', icon:'🏅', reward:500, check:sd=>MODE_ORDER.concat(MORE_MODES.map(it=>it.id)).every(m=>((sd.modeMatches&&sd.modeMatches[m])||0)>=100) && dailyMatchCount(sd)>=100},
   {id:'level_10',    name:'성장하는 전사', desc:'레벨 10 달성', icon:'⭐', reward:50, check:sd=>levelFromXp(sd.xp||0)>=10},
   {id:'level_25',    name:'베테랑', desc:'레벨 25 달성', icon:'🌟', reward:150, check:sd=>levelFromXp(sd.xp||0)>=25},
@@ -2329,7 +2329,7 @@ const DAILY_POOL=[
 ];
 const WEEKLY_POOL=[
   {t:'kills', ns:[25,40]}, {t:'wins', ns:[4,6]}, {t:'matches', ns:[12,18]}, {t:'damage', ns:[4000,6000]}, {t:'assists', ns:[10,15]},
-  {t:'mode', m:'conquest', ns:[3]}, {t:'mode', m:'ctf', ns:[2]}, {t:'mode', m:'zombie', ns:[2]}, {t:'kind', k:'gun', ns:[15]}, {t:'kind', k:'melee', ns:[15]}
+  {t:'mode', m:'conquest', ns:[3]}, {t:'mode', m:'ctf', ns:[2]}, {t:'kind', k:'gun', ns:[15]}, {t:'kind', k:'melee', ns:[15]}
 ];
 function makeMissions(pool, seed, count){
   const rnd=seededRand(seed), list=pool.slice(), out=[];
@@ -2343,6 +2343,7 @@ function ensureMissions(){
   if(ms.wk!==wk && !(ms.wk && wk<ms.wk)){ ms.wk=wk; ms.weekly=makeMissions(WEEKLY_POOL, 'w'+wk, 3); changed=true; }
   if(!Array.isArray(ms.daily)){ ms.daily=makeMissions(DAILY_POOL, 'd'+dk, 3); changed=true; }
   if(!Array.isArray(ms.weekly)){ ms.weekly=makeMissions(WEEKLY_POOL, 'w'+wk, 3); changed=true; }
+  if(Array.isArray(ms.weekly) && ms.weekly.some(m=>m.m==='zombie')){ ms.weekly=makeMissions(WEEKLY_POOL, 'w'+wk, 3); changed=true; }       // (the zombie game was removed: a weekly mission for it is drawn again)
   if(Array.isArray(ms.daily)) for(const m of ms.daily){ if(m.t==='damage' && m.n!==1000){ m.n=1000; changed=true; } if(m.t==='assists' && m.n!==4){ m.n=4; changed=true; } }       // (daily damage is 1000 and assists 4)
   saveData.missions=ms; if(changed) persistSave();
   return ms;
@@ -4446,14 +4447,6 @@ MAP_TEMPLATES['ruins'] = {
   ])).concat([{x:1050,y:700,w:300,h:24},{x:1130,y:520,w:140,h:24}]),
   spawns:[{x:250,y:890},{x:500,y:890},{x:1450,y:890},{x:1900,y:890},{x:2150,y:890},{x:240,y:750},{x:2160,y:750},{x:1200,y:690}]
 };
-// ---- 거울 미로: a left-right mirrored maze of narrow corridors ----
-MAP_TEMPLATES['mirrormaze'] = {
-  id:'mirrormaze', name:THEMES.mirrormaze.name, maxPlayers:6, arenaW:2000, arenaH:1000, theme:THEMES.mirrormaze,
-  platforms:[{x:0,y:900,w:2000,h:100}].concat(mirrorPl(2000,[
-    {x:0,y:760,w:520,h:24},{x:300,y:620,w:700,h:24},{x:0,y:480,w:600,h:24},{x:300,y:340,w:700,h:24}
-  ])).concat([{x:985,y:810,w:30,h:90},{x:985,y:344,w:30,h:136}]),
-  spawns:[{x:150,y:890},{x:1850,y:890},{x:250,y:750},{x:1750,y:750},{x:300,y:470},{x:1700,y:470}]
-};
 // ---- map hazards (host-driven; the state rides in the snapshot as `hz` so every screen draws the same thing) ----
 let hzDraw=null;       // {w: wave front x or null, dir, v:[[x,y,0|1|2],...]}
 function mapHazardTick(dt,t){
@@ -5018,7 +5011,7 @@ function shuffle(arr){ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.
 /* ===== the version of this file =====
    Players with different versions CAN meet and play together: the automatic matchmaking uses the same room names for every version (online-<mode>-<map>-<slot>), and nobody is refused because of a different build.
    The build is only sent along with the join message and the lobby (for information); the corner of the screen shows it. */
-const GAME_BUILD='build 2026-10-18-v371';
+const GAME_BUILD='build 2026-10-18-v372';
 const GAME_VERSION='0.8', GAME_VERSION_NAME='황금을 찾아서';   // 게임 버전 이름: versions.json의 title과 같게 (빌드마다 바꾸지 않음)
 const WEEKLY_EVENTS=[
   {id:'lowg',    name:'저중력 난투', desc:'몸이 둥실둥실, 중력이 약해진 난투', rules:{grav:0.6}},
@@ -6315,7 +6308,6 @@ function renderModePanelCanvas(canvas, mapId, weaponPair, centerPct){
   drawArmedFighter(cx2, x2, gy2, COLORS[3], -1, wp[1], fighterScale);
 }
 const MORE_MODES=[
-  {id:'zombie',    name:'좀비게임',   mapId:'canyon_volcano',    weapons:['dagger','fist']},
   {id:'hotpotato', name:'폭탄 돌리기', mapId:'grid_programming',  weapons:['bullet','bullet']},
   {id:'hideseek',  name:'숨바꼭질',   mapId:'grid_school',      weapons:['fist','fist']},
   {id:'survival',  name:'서바이벌',   mapId:'grid_sea',         weapons:['fist','fist']},
@@ -6375,7 +6367,6 @@ const MODE_LIST=[
   {id:'team', icon:'🛡️', desc:'두 팀으로 나뉘어 겨루는 팀전'},
   {id:'duel', icon:'🤺', desc:'1대1 승부, 라운드마다 무기를 다시 골라요'},
   {id:'conquest', icon:'🏰', desc:'거점을 차지해 점수를 얻는 점령전'},
-  {id:'zombie', icon:'🧟', desc:'좀비 한 명이 모두를 감염시켜요'},
   {id:'hotpotato', icon:'💣', desc:'터지기 전에 폭탄을 넘겨요'},
   {id:'survival', icon:'🌪️', desc:'쏟아지는 재해 속에서 끝까지 생존'},
   {id:'gold', icon:'⛏️', desc:'중앙의 금을 우리 팀 광차로 실어 날라요'},
@@ -8726,12 +8717,12 @@ let mapOrder=[], mapCarouselIdx=0;
 function buildMapOrder(){
   mapOrder=[];
   for(const shapeId in SHAPE_THEMES) for(const themeKey of SHAPE_THEMES[shapeId]) mapOrder.push(shapeId+'_'+themeKey);
-  mapOrder.push('steampunk'); mapOrder.push('skyport'); mapOrder.push('colosseum'); mapOrder.push('lifttower'); mapOrder.push('stormship'); mapOrder.push('pipefactory'); mapOrder.push('mine'); mapOrder.push('icelake'); mapOrder.push('dungeon'); mapOrder.push('swamp'); mapOrder.push('waterfall'); mapOrder.push('collapsebridge'); mapOrder.push('lavaland'); mapOrder.push('ruins'); mapOrder.push('mirrormaze');
+  mapOrder.push('steampunk'); mapOrder.push('skyport'); mapOrder.push('colosseum'); mapOrder.push('lifttower'); mapOrder.push('stormship'); mapOrder.push('pipefactory'); mapOrder.push('mine'); mapOrder.push('icelake'); mapOrder.push('dungeon'); mapOrder.push('swamp'); mapOrder.push('waterfall'); mapOrder.push('collapsebridge'); mapOrder.push('lavaland'); mapOrder.push('ruins');
   mapOrder.push('mega_arena');
 }
-const shapeLabel={canyon:'4인 맵',grid:'8인 맵',steampunk:'6인 맵',skyport:'8인 맵',colosseum:'8인 맵',lifttower:'8인 맵',stormship:'8인 맵',pipefactory:'8인 맵',mine:'8인 맵',icelake:'8인 맵',dungeon:'8인 맵',swamp:'8인 맵',waterfall:'8인 맵',collapsebridge:'8인 맵',lavaland:'8인 맵',ruins:'8인 맵',mirrormaze:'6인 맵',parkour1:'파쿠르',parkour2:'파쿠르',parkour3:'파쿠르',parkour4:'파쿠르'};
+const shapeLabel={canyon:'4인 맵',grid:'8인 맵',steampunk:'6인 맵',skyport:'8인 맵',colosseum:'8인 맵',lifttower:'8인 맵',stormship:'8인 맵',pipefactory:'8인 맵',mine:'8인 맵',icelake:'8인 맵',dungeon:'8인 맵',swamp:'8인 맵',waterfall:'8인 맵',collapsebridge:'8인 맵',lavaland:'8인 맵',ruins:'8인 맵',parkour1:'파쿠르',parkour2:'파쿠르',parkour3:'파쿠르',parkour4:'파쿠르'};
 const mapSelectBtn=document.getElementById('mapSelectBtn');
-const MAP_GIMMICKS={collapsebridge:['🌉 무너지는 다리 판자','🌊 강물 (25 피해)'], lavaland:['🌋 용암 웅덩이 (30 피해)'], ruins:['🧱 기둥과 벽 엄폐물'], mirrormaze:['🪞 좌우 대칭 미로'], waterfall:['🌊 폭포 물살 (공중에서 위로 떠오름)','💧 얕은 물 (이동속도 20% 감소)'], swamp:['🟣 중앙 늪 (이동속도 33% 감소 · 시야 제한)'], stormship:['🌊 흔들리는 갑판','🌊 파도'], pipefactory:['➡️ 컨베이어','💨 증기 분출'], mine:['🛒 광차 (50 피해)','🔦 정전'], icelake:['🧊 미끄러운 얼음','💧 얼음 깨짐'], dungeon:['🚪 철창 문 개폐'], steampunk:['⚙️ 움직이는 발판'], skyport:['↔️ 움직이는 발판'], lifttower:['↔️ 움직이는 발판'], colosseum:['🏟️ 계단식 구조']};
+const MAP_GIMMICKS={collapsebridge:['🌉 무너지는 다리 판자','🌊 강물 (25 피해)'], lavaland:['🌋 용암 웅덩이 (30 피해)'], ruins:['🧱 기둥과 벽 엄폐물'], waterfall:['🌊 폭포 물살 (공중에서 위로 떠오름)','💧 얕은 물 (이동속도 20% 감소)'], swamp:['🟣 중앙 늪 (이동속도 33% 감소 · 시야 제한)'], stormship:['🌊 흔들리는 갑판','🌊 파도'], pipefactory:['➡️ 컨베이어','💨 증기 분출'], mine:['🛒 광차 (50 피해)','🔦 정전'], icelake:['🧊 미끄러운 얼음','💧 얼음 깨짐'], dungeon:['🚪 철창 문 개폐'], steampunk:['⚙️ 움직이는 발판'], skyport:['↔️ 움직이는 발판'], lifttower:['↔️ 움직이는 발판'], colosseum:['🏟️ 계단식 구조']};
 function mapGimmickTags(id){
   const t=MAP_TEMPLATES[id]; if(!t) return [];
   if(MAP_GIMMICKS[id]) return MAP_GIMMICKS[id];
@@ -12339,8 +12330,8 @@ function botNavStep(p, goalX, goalY){
 const BOT_ZOMBIE_RANGED_CHANCE=0.85, BOT_ZOMBIE_FLEE_R=360;
 function botCloseRange(wid){ const k=(WEAPONS[wid]||{}).kind; return k==='melee' || k==='vacuum' || k==='flame'; }
 // zombie game, human bot: the platform spot farthest from every zombie (re-chosen when a zombie gets near the old one)
-function botZombieFleeGoal(p, ai, t){
-  const zs=Object.values(players).filter(o=>o.alive && o.isZombie && o.x!==undefined);
+function botZombieFleeGoal(p, ai, t, threats){
+  const zs=threats || Object.values(players).filter(o=>o.alive && o.isZombie && o.x!==undefined);
   const far=(x,y)=>{ let m=1e9; for(const z of zs) m=Math.min(m, Math.hypot(z.x-x, z.y-y)); return m; };
   if(ai.flee && t<ai.flee.until && far(ai.flee.x, ai.flee.y)>BOT_ZOMBIE_FLEE_R) return ai.flee;
   let best=null, bs=-1;
@@ -12770,8 +12761,9 @@ function botThink(p, t, dt){
         } else if(!wantRetreat){ ai.retreatSince=null; }
         else retreat=false;                                                                                   // wants to, but is in its stand-your-ground phase
       }
-      const zFlee = gameMode==='zombie' && !p.isZombie && target.isZombie;   // zombie game: a human bot keeps away from zombies (a close-range one never walks up to them)
-      if(zFlee){ const fg=botZombieFleeGoal(p, ai, t); goalX=fg.x; goalY=fg.y; ai.rangeMode='back'; if(d<260 && !navBusy && Math.random()<0.5) inp.dash=true; }
+      const kFlee = gameMode==='vip' && !!(xm && xm.kings && xm.kings[p.team]===p.id);   // 왕 지키기: a bot that is the king keeps as far from the enemies as it can (and still shoots back)
+      const zFlee = (gameMode==='zombie' && !p.isZombie && target.isZombie) || kFlee;   // zombie game: a human bot keeps away from zombies (a close-range one never walks up to them)
+      if(zFlee){ const fg=botZombieFleeGoal(p, ai, t, kFlee ? enemiesOf(p) : null); goalX=fg.x; goalY=fg.y; ai.rangeMode='back'; if(d<260 && !navBusy && Math.random()<0.5) inp.dash=true; }
       else if(gameMode==='conquest' && cq && !BOT_CONQUEST_FOCUS && d>=420){ goalX=cq.zone.x; goalY=cq.zone.y; }   // (the old rule: only when nobody is close)
       else if(lowHp && d<380 && retreat){ goalX=p.x-Math.sign(dx||1)*240; goalY=p.y; if(!navBusy && Math.random()<0.2) inp.dash=true; } // hurt: back off
       else if(d>band.max || (BOT_CALM && ai.rangeMode==='close' && d>band.max*0.8)){ ai.rangeMode='close'; goalX=target.x; goalY=target.y; }   // too far: close in (and keep going until comfortably inside, so it does not turn around at the very edge of its range)
