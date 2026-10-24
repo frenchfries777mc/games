@@ -60,7 +60,7 @@ const THEME = () => THEMES[CH.theme] || THEMES.dungeon;
 
 /* ---------- 캐릭터 모델 ---------- */
 const HERO = {
-  knight: { body: 0x3f6fd0, leg: 'dm', arm: 'mt', helm: 1, sword: 1, shield: 1, cape: 0x24479a, belt: 1 },
+  knight: { body: 0x3f6fd0, leg: 'dm', arm: 'mt', helm: 1, sword: 2, shield: 1, cape: 0x24479a, belt: 1 },
   archer: { body: 0x467a3e, leg: 0x3a3a44, arm: 0x467a3e, hood: 0x2f5a32, bow: 1, quiver: 1, belt: 1 },
   priest: { body: 0xe8e4ef, robe: 1, leg: 0x9a96a8, arm: 0xe8e4ef, hood: 0xcfc8dc, staff: 1 },
   squire: { body: 0x8a6a44, leg: 0x4a4250, arm: 0x8a6a44, cap: 0xb9443a, torch: 1, sack: 1, belt: 1 }
@@ -96,7 +96,9 @@ function makeFigure(o) {
   const armR = new THREE.Group(); armR.position.set(0.72, 2.15, 0); body.add(armR); cap(0.17, 0.7, am, 0, -0.45, 0, armR);
   const armL = new THREE.Group(); armL.position.set(-0.72, 2.15, 0); body.add(armL); cap(0.17, 0.7, am, 0, -0.45, 0, armL);
   let light = null;
-  if (o.sword) { const sw = new THREE.Group(); sw.position.set(0, -0.9, 0.1); armR.add(sw); box(0.12, 2, 0.04, M(0xe9edf5, { m: 0.9, r: 0.2 }), 0, 1.1, 0, sw); box(0.6, 0.1, 0.14, gold(), 0, 0.1, 0, sw); box(0.08, 0.35, 0.08, leather(), 0, -0.1, 0, sw); sw.rotation.x = Math.PI / 2; }
+  // 기사: 검고 두꺼운 대검 (넓은 날, 긴 손잡이, 날 가운데 홈)
+  if (o.sword === 2) { const sw = new THREE.Group(); sw.position.set(0, -0.9, 0.1); armR.add(sw); const bk = M(0x1c1b22, { m: 0.85, r: 0.35 }); box(0.42, 2.5, 0.22, bk, 0, 1.45, 0, sw); box(0.1, 2.2, 0.23, M(0x3a3946, { m: 0.9, r: 0.25 }), 0, 1.35, 0, sw); cone(0.26, 0.34, 4, bk, 0, 2.86, 0, sw).rotation.y = Math.PI / 4; box(0.85, 0.16, 0.2, M(0x2a2830, { m: 0.8, r: 0.4 }), 0, 0.15, 0, sw); box(0.11, 0.55, 0.11, leather(), 0, -0.2, 0, sw); box(0.18, 0.14, 0.18, M(0x2a2830, { m: 0.8, r: 0.4 }), 0, -0.52, 0, sw); sw.rotation.x = Math.PI / 2; }
+  else if (o.sword) { const sw = new THREE.Group(); sw.position.set(0, -0.9, 0.1); armR.add(sw); box(0.12, 2, 0.04, M(0xe9edf5, { m: 0.9, r: 0.2 }), 0, 1.1, 0, sw); box(0.6, 0.1, 0.14, gold(), 0, 0.1, 0, sw); box(0.08, 0.35, 0.08, leather(), 0, -0.1, 0, sw); sw.rotation.x = Math.PI / 2; }
   if (o.shield) { const shc = o.shieldC || 0x2c4f9e; const sh = new THREE.Group(); sh.position.set(-0.15, -0.7, 0.45); armL.add(sh); sh.rotation.x = 0.6; box(1.1, 1.4, 0.14, M(shc), 0, 0, 0, sh); const c = cone(0.78, 0.7, 4, M(shc), 0, -0.95, 0, sh); c.rotation.set(Math.PI, Math.PI / 4, 0); box(0.18, 1.2, 0.05, gold(), 0, -0.1, 0.09, sh); box(0.8, 0.18, 0.05, gold(), 0, 0.25, 0.09, sh); }
   // 활: 왼손에 쥐고, 팔을 앞으로 뻗으면 위아래로 선 활이 조준 방향으로 휘어요 (시위는 몸 쪽)
   let bowS = null;
@@ -107,8 +109,8 @@ function makeFigure(o) {
     box(0.14, 0.22, 0.14, leather(), 0.12, -0.95, 0, armL);
     const sm = M(0xe8e0c8), sa = mesh(geo('str', () => new THREE.BoxGeometry(0.025, 0.025, 1)), sm, 0, 0, 0, armL, false), sb = mesh(geo('str', () => new THREE.BoxGeometry(0.025, 0.025, 1)), sm, 0, 0, 0, armL, false);
     const ar = new THREE.Group(); armL.add(ar); box(0.05, 1.3, 0.05, M(0x8a5a2a), 0, 0, 0, ar); const ah = cone(0.08, 0.25, 4, metal(), 0, -0.75, 0, ar); ah.rotation.x = Math.PI;
-    // 모아 쏘기용 화살 두 대: 두 발·세 발을 모으면 첫 화살 양옆으로 부채꼴로 메겨져요 (촉이 빛나요)
-    const ex = [0.2, -0.2].map((dz, k) => { const g2 = new THREE.Group(); g2.position.z = dz; g2.rotation.x = k ? -0.2 : 0.2; ar.add(g2); box(0.05, 1.3, 0.05, M(0x8a5a2a), 0, 0, 0, g2); const hm = M(0xffd36b, { e: 0xffb040, ei: 2.5, uniq: true }), h2 = cone(0.11, 0.32, 4, hm, 0, -0.75, 0, g2); h2.rotation.x = Math.PI; box(0.16, 0.2, 0.03, M(0xe8e0c8), 0, 0.58, 0, g2); g2.visible = false; return { g: g2, hm }; });
+    // 모아 쏘기용 화살 두 대: 두 발·세 발을 모으면 첫 화살 양옆(위에서 볼 때 좌우)으로 부채꼴로 메겨져요 (촉이 빛나요)
+    const ex = [0.24, -0.24].map((dx, k) => { const g2 = new THREE.Group(); g2.position.x = dx; g2.rotation.z = k ? -0.3 : 0.3; ar.add(g2); box(0.05, 1.3, 0.05, M(0x8a5a2a), 0, 0, 0, g2); const hm = M(0xffd36b, { e: 0xffb040, ei: 2.5, uniq: true }), h2 = cone(0.11, 0.32, 4, hm, 0, -0.75, 0, g2); h2.rotation.x = Math.PI; box(0.16, 0.2, 0.03, M(0xe8e0c8), 0, 0.58, 0, g2); g2.visible = false; return { g: g2, hm }; });
     bowS = { sa, sb, ar, ex }; setPull(bowS, 0.05);
   }
   if (o.staff) { const sc = o.staffC || 0x9af0d0; const st = new THREE.Group(); st.position.set(0, -0.9, 0.1); armR.add(st); st.rotation.x = 0.7; cyl(0.07, 0.07, 3.2, 6, M(0x7a5a2a), 0, 0.5, 0, st); mesh(geo('oct', () => new THREE.OctahedronGeometry(0.32)), M(sc, { e: sc, ei: 4 }), 0, 2.3, 0, st); if (!o.noLight) { light = new THREE.PointLight(0x6af0c0, 14, 8, 1.6); light.position.set(0, 2.4, 0); st.add(light); } }
@@ -643,6 +645,58 @@ export class View {
           const fg = new THREE.Group(); fg.visible = false; g2.add(fg); for (let n = 0; n < 5; n++) cone(0.3, 1.1, 6, M(0xff8a2a, { e: 0xff6a10, ei: 3 }), (R() - .5) * 1.2, 1.4, (R() - .5) * 1.2, fg);
           return { g: g2, fg, burn: 0 };
         });
+      } else if (q.k === 'levers') {
+        // 지렛대 넷: 기둥 위 등불이 켜지면 금빛, 손잡이는 켜짐/꺼짐에 따라 앞뒤로 젖혀져요
+        P.items = q.items.map(([ix, iy], i) => {
+          const x = cw(ix), z = cw(iy); box(1.4, 0.4, 1.0, stoneD, x, 0.2, z, s); box(0.3, 3.2, 0.3, M(0x4a3020), x, 1.8, z - 0.6, s);
+          const cage = M(0x3a3640, { m: 0.7, r: 0.4 }); box(0.8, 0.1, 0.8, cage, x, 3.45, z - 0.6, s); box(0.8, 0.1, 0.8, cage, x, 4.35, z - 0.6, s);
+          const lm = M(0x4a4652, { e: 0xffc060, ei: 0, uniq: true }), core = box(0.5, 0.7, 0.5, lm, x, 3.9, z - 0.6, s);
+          const h = new THREE.Group(); h.position.set(x, 0.45, z + 0.1); s.add(h); box(0.12, 1.3, 0.12, M(0x3a3640, { m: 0.7 }), 0, 0.65, 0, h); sph(0.18, 6, 5, M(0xc0392b), 0, 1.35, 0, h);
+          const Lt = new THREE.PointLight(0xffc060, 0, 10, 1.6); Lt.position.set(x, 4, z); s.add(Lt);
+          return { lm, h, Lt };
+        });
+      } else if (q.k === 'sigils') {
+        // 얼음 문양 아홉 칸: 밟으면 하늘빛, 지금 밟고 있는 끝 칸은 하얗게
+        P.items = q.items.map(([ix, iy]) => { const x = cw(ix), z = cw(iy), m = M(0x5a7a94, { e: 0x7ad0ff, ei: 0.25, uniq: true }), t2 = box(3.6, 0.1, 3.6, m, x, 0.06, z, s); t2.castShadow = false; for (let r = 0; r < 2; r++) { const b = box(0.18, 0.06, 2.4, M(0xd8f0ff, { e: 0x9ae0ff, ei: 0.6 }), x, 0.13, z, s); b.rotation.y = Math.PI / 4 + r * Math.PI / 2; b.castShadow = false; } return { m }; });
+      } else if (q.k === 'crystals' || q.k === 'icecrys') {
+        // 빛 수정(보라)·얼음 수정(하늘): 길쭉한 수정 덩어리
+        const ice = q.k === 'icecrys', col = ice ? 0x9ae0ff : 0xb07aff;
+        P.items = q.items.map(([ix, iy]) => {
+          const x = cw(ix), z = cw(iy), g2 = new THREE.Group(); g2.position.set(x, 0, z); s.add(g2); const m = M(ice ? 0xbfe8ff : 0x6a4a8a, { e: col, ei: ice ? 0.6 : 0.2, uniq: true });
+          for (let n = 0; n < 5; n++) { const c = mesh(geo('oct', () => new THREE.OctahedronGeometry(0.32)), m, (n ? Math.cos(n * 1.6) * 0.55 : 0), n ? 0.8 : 1.3, (n ? Math.sin(n * 1.6) * 0.55 : 0), g2); c.scale.set(n ? 1.4 : 2, n ? 3.2 : 5, n ? 1.4 : 2); c.rotation.z = n ? Math.cos(n * 1.6) * 0.4 : 0; c.rotation.x = n ? Math.sin(n * 1.6) * 0.4 : 0; }
+          const Lt = new THREE.PointLight(col, 0, 10, 1.6); Lt.position.set(x, 2.4, z); s.add(Lt); return { g: g2, m, Lt };
+        });
+      } else if (q.k === 'mirrors') {
+        // 거울 셋: 창문 빛(src)이 거울을 차례로 지나 창살문까지. 맞게 돌린 거울까지만 빛줄기가 이어져요
+        const pts = [[cw(q.src[0]), cw(q.src[1])], ...q.items.map(([ix, iy]) => [cw(ix), cw(iy)]), [(q.gate[0] + q.gate[2] / 2) * CS, (q.gate[1] + q.gate[3] / 2) * CS]];
+        sph(0.9, 10, 8, M(0xfff0c0, { e: 0xfff0c0, ei: 3 }), pts[0][0], 2.4, pts[0][1], s);
+        const bm = M(0xfff0b0, { e: 0xffe08a, ei: 3, op: 0.75 });
+        P.beams = pts.slice(0, -1).map((a2, n) => { const b2 = pts[n + 1], L2 = Math.hypot(b2[0] - a2[0], b2[1] - a2[1]), bb = box(0.25, 0.25, L2, bm, (a2[0] + b2[0]) / 2, 2.4, (a2[1] + b2[1]) / 2, s, false); bb.rotation.y = Math.atan2(b2[0] - a2[0], b2[1] - a2[1]); bb.castShadow = false; return bb; });
+        P.items = q.items.map(([ix, iy], i) => {
+          const x = cw(ix), z = cw(iy), a2 = pts[i], b2 = pts[i + 2], din = [x - a2[0], z - a2[1]], dout = [b2[0] - x, b2[1] - z], l1 = Math.hypot(...din), l2 = Math.hypot(...dout);
+          const nx = -din[0] / l1 + dout[0] / l2, nz = -din[1] / l1 + dout[1] / l2, ok = Math.atan2(nx, nz);
+          box(1.6, 0.5, 1.6, stoneD, x, 0.25, z, s); const g2 = new THREE.Group(); g2.position.set(x, 0.5, z); s.add(g2);
+          box(0.2, 1.6, 0.2, M(0x8a6a30, { m: 0.6 }), 0, 0.8, 0, g2); box(1.7, 1.9, 0.16, M(0x8a6a30, { m: 0.6 }), 0, 1.9, 0, g2); box(1.4, 1.6, 0.06, M(0xd8e4f0, { m: 0.9, r: 0.1, e: 0x6a7a8a, ei: 0.5 }), 0, 1.9, 0.09, g2);
+          return { g: g2, ok, cur: ok + q.rot0[i] * Math.PI / 4 };
+        });
+      } else if (q.k === 'embers') {
+        // 불씨 더미(가운데)와 빈 제단 셋. 올리면 불이 붙어요
+        P.items = q.items.map(([ix, iy], i) => {
+          const x = cw(ix), z = cw(iy); cyl(0.7, 0.9, 1.0, 8, stoneD, x, 0.5, z, s); cyl(1.0, 0.7, 0.4, 10, M(0x3a3236, { m: 0.5 }), x, 1.2, z, s);
+          const fg = new THREE.Group(); fg.position.set(x, 1.45, z); s.add(fg); for (let n = 0; n < 4; n++) cone(0.25, 0.8, 6, M(0xff7a2a, { e: 0xff5a10, ei: 3 }), (n % 2 - .5) * 0.4, 0.3, (n >> 1) * 0.4 - 0.2, fg);
+          if (i === 0) for (let n = 0; n < 5; n++) sph(0.18, 6, 5, M(0xffb060, { e: 0xff8a20, ei: 3 }), x + Math.cos(n * 1.3) * 0.5, 1.5, z + Math.sin(n * 1.3) * 0.5, s);
+          const Lt = new THREE.PointLight(0xff8a30, i === 0 ? 20 : 0, 10, 1.6); Lt.position.set(x, 2.5, z); s.add(Lt); fg.visible = i === 0; return { fg, Lt };
+        });
+      } else if (q.k === 'lanterns') {
+        // 일렬 등불 셋: 쇠기둥에 걸린 등불. 관통 화살이 꿰뚫으면 켜져요
+        P.items = q.items.map(([ix, iy]) => { const x = cw(ix), z = cw(iy); box(0.25, 2.2, 0.25, M(0x3a3640, { m: 0.7 }), x, 1.1, z + 0.9, s); box(0.9, 0.12, 0.12, M(0x3a3640, { m: 0.7 }), x, 2.2, z + 0.5, s); const lm = M(0x4a4652, { e: 0xffd36b, ei: 0, uniq: true }); box(0.6, 0.8, 0.6, lm, x, 1.6, z, s); const Lt = new THREE.PointLight(0xffd36b, 0, 10, 1.6); Lt.position.set(x, 2, z); s.add(Lt); return { lm, Lt }; });
+        box(0.2, 0.05, 13, M(0xd8c8a0, { e: 0x6a5a30, ei: 0.4 }), cw(q.items[0][0]) - 6, 0.06, cw(q.items[0][1]), s).rotation.y = Math.PI / 2;
+      } else if (q.k === 'vigil') {
+        // 기도의 원 셋: 사제가 서 있으면 안쪽 원이 차올라요
+        P.items = q.items.map(([ix, iy]) => { const x = cw(ix), z = cw(iy), rm = M(0xe8e4ef, { e: 0xfff4c0, ei: 0.6, uniq: true }), ring = mesh(geo('vring', () => new THREE.RingGeometry(1.3, 1.6, 28)), rm, x, 0.1, z, s, false); ring.rotation.x = -Math.PI / 2; const fm = M(0xfff4c0, { e: 0xfff4c0, ei: 2, op: 0.55 }), fill = mesh(geo('vdisc', () => new THREE.CircleGeometry(1.3, 24)), fm, x, 0.09, z, s, false); fill.rotation.x = -Math.PI / 2; fill.scale.setScalar(0.01); const Lt = new THREE.PointLight(0xfff4c0, 0, 10, 1.6); Lt.position.set(x, 2, z); s.add(Lt); return { rm, fill, Lt }; });
+      } else if (q.k === 'blackfire') {
+        // 검은 불꽃 셋: 보랏빛 검은 불. 물약에 꺼지면 연기만 남아요
+        P.items = q.items.map(([ix, iy]) => { const x = cw(ix), z = cw(iy); cyl(0.8, 1.0, 0.8, 8, stoneD, x, 0.4, z, s); const fg = new THREE.Group(); fg.position.set(x, 0.8, z); s.add(fg); for (let n = 0; n < 5; n++) cone(0.3 + R() * 0.15, 1.2 + R() * 0.6, 6, M(0x1a0a24, { e: 0x6a2aa0, ei: 1.6 }), (R() - .5) * 0.6, 0.6, (R() - .5) * 0.6, fg); const Lt = new THREE.PointLight(0x8a3ad0, 18, 9, 1.6); Lt.position.set(x, 2, z); s.add(Lt); return { fg, Lt }; });
       } else {
         // 석상: 칼을 앞으로 내민 기사. 가운데 문양을 바라보면 문양에 빛이 들어와요
         const ring = mesh(geo('pring2', () => new THREE.RingGeometry(1.7, 2.1, 32)), M(0x8a8494, { e: 0x8a8494, ei: 0.5, uniq: true }), cxw, 0.14, czw, s, false); ring.rotation.x = -Math.PI / 2;
@@ -943,12 +997,24 @@ export class View {
       else if (P.k === 'targets') P.items.forEach((it, i) => { const on = done || z.l[i] === '1'; it.ar.visible = on; it.mr.color.setHex(on ? 0x4cc06a : 0xc0392b); it.mr.emissive.setHex(on ? 0x2a8a3a : 0x601010); it.mr.emissiveIntensity = on ? 1.6 : 0.3 + Math.max(0, Math.sin(t * 3 + i)) * 0.4; });
       else if (P.k === 'basins') P.items.forEach((it, i) => { const on = done || z.l[i] === '1'; it.m.color.setHex(on ? 0xcffff6 : 0x4a4652); it.m.emissiveIntensity = on ? 2.4 + Math.sin(t * 3 + i) * 0.3 : 0; it.Lt.intensity = on ? 26 : 0; });
       else if (P.k === 'vines') P.items.forEach((it, i) => { const on = done || z.l[i] === '1'; if (on) it.burn = Math.min(1.6, it.burn + dt); const b = it.burn; it.fg.visible = b > 0 && b < 1.5; it.fg.children.forEach((c, n) => c.scale.y = 0.8 + Math.sin(t * 9 + n) * 0.25); const sc = Math.max(0, 1 - Math.max(0, b - 0.5)); it.g.scale.set(1, Math.max(0.01, sc), 1); it.g.visible = sc > 0.02 || it.fg.visible; });
+      else if (P.k === 'levers') P.items.forEach((it, i) => { const on = done || z.l[i] === '1'; it.lm.emissiveIntensity = on ? 3 : 0; it.lm.color.setHex(on ? 0xffe0a0 : 0x4a4652); it.Lt.intensity = on ? 22 : 0; it.h.rotation.x += ((on ? 0.7 : -0.7) - it.h.rotation.x) * Math.min(1, dt * 10); });
+      else if (P.k === 'sigils') P.items.forEach((it, i) => { const on = done || z.l[i] === '1'; it.m.emissiveIntensity = on ? 2.2 : 0.25 + Math.sin(t * 2 + i) * 0.1; it.m.color.setHex(on ? 0xbfefff : 0x5a7a94); });
+      else if (P.k === 'crystals' || P.k === 'icecrys') { const cs = (z.c || '').split(','); P.items.forEach((it, i) => { const on = done || z.l[i] === '1';
+        if (P.k === 'icecrys') { it.g.scale.y += ((on ? 0.01 : 1) - it.g.scale.y) * Math.min(1, dt * 12); it.g.visible = it.g.scale.y > 0.03; it.Lt.intensity = on ? 0 : 6; return; }
+        const left = +cs[i] || 0, blink = !done && on && left <= 3 ? (Math.sin(t * 14) > 0 ? 1 : 0.35) : 1; it.m.emissiveIntensity = on ? 3 * blink : 0.2; it.Lt.intensity = on ? 24 * blink : 0; it.g.rotation.y += dt * (on ? 1.5 : 0.2); }); }
+      else if (P.k === 'mirrors') { let ok = true; P.items.forEach((it, i) => { const r = +z.r[i], want = it.ok + r * Math.PI / 4; it.cur += (want - it.cur) * Math.min(1, dt * 8); it.g.rotation.y = it.cur; }); P.beams.forEach((b2, n) => { b2.visible = ok; if (n < P.items.length) ok = ok && (done || z.r[n] === '0'); }); }
+      else if (P.k === 'embers') P.items.forEach((it, i) => { if (!i) return; const on = done || z.l[i] === '1'; it.fg.visible = on; it.Lt.intensity = on ? 22 : 0; if (on) it.fg.children.forEach((c, n) => c.scale.y = 0.85 + Math.sin(t * 6 + n) * 0.15); });
+      else if (P.k === 'lanterns') P.items.forEach((it, i) => { const on = done || z.l[i] === '1'; it.lm.emissiveIntensity = on ? 3 : 0; it.lm.color.setHex(on ? 0xffe0a0 : 0x4a4652); it.Lt.intensity = on ? 22 : 0; });
+      else if (P.k === 'vigil') P.items.forEach((it, i) => { const on = done || z.l[i] === '1', v = on ? 1 : (+(z.v || '')[i] || 0) / 10; it.fill.scale.setScalar(Math.max(0.01, v)); it.rm.emissiveIntensity = on ? 3 : 0.6 + Math.sin(t * 2 + i) * 0.3; it.Lt.intensity = on ? 20 : v * 10; });
+      else if (P.k === 'blackfire') P.items.forEach((it, i) => { const on = done || z.l[i] === '1'; it.fg.visible = !on; it.Lt.intensity = on ? 0 : 18; if (!on) it.fg.children.forEach((c, n) => c.scale.y = 0.8 + Math.sin(t * 7 + n) * 0.25); });
       else { P.items.forEach((it, i) => { const r = +z.r[i], want = -r * Math.PI / 2; let d = want - it.cur; while (d > Math.PI) d -= Math.PI * 2; while (d < -Math.PI) d += Math.PI * 2; it.cur += d * Math.min(1, dt * 8); it.g.rotation.y = it.cur; const ok = r === i; it.eye.emissiveIntensity = ok ? 4 : 0; });
         const m = P.ring.material, c = done ? 0x9af0a8 : 0x8a8494; m.color.setHex(c); m.emissive.setHex(c); m.emissiveIntensity = done ? 2.4 : 0.5; }
     });
   }
   // 어둠의 방: 동료마다 작은 빛, 횃불을 든 동료는 큰 빛
   syncDark(S, dt, t) {
+    // 불씨 제단: 불씨를 든 동료는 머리 위에 불씨가 떠 있어요
+    for (const p of S.pl) { const E = this.ents.get('p' + p.id); if (!E) continue; if (p.em && !E.embG) { const g = new THREE.Group(); sph(0.35, 8, 6, M(0xffb060, { e: 0xff8a20, ei: 4 }), 0, 0, 0, g); cone(0.25, 0.7, 6, M(0xff7a2a, { e: 0xff5a10, ei: 3 }), 0, 0.35, 0, g); this.scene.add(g); E.embG = g; } if (E.embG) { E.embG.visible = !!p.em; if (p.em) E.embG.position.set(E.x, 4.6 + Math.sin(t * 4) * 0.15, E.z); } }
     if (!this.darkR) return; const { H, SH } = this.darkH, carriers = [];
     const ls = []; for (const p of S.pl) { if (p.dd) continue; const E = this.ents.get('p' + p.id); if (!E) continue; if (p.tc) carriers.push({ E, p }); ls.push([E.x, E.z + SH * (H - 1.2), p.tc ? 11 + Math.sin(t * 7 + E.x) * 0.4 : 2.6]); }
     this.darkR.forEach((D, k) => {
@@ -1189,10 +1255,11 @@ function kPose(c, v, base) {
 // 궁수·사제·종자 연속 공격 자세. [1타 감기, 1타 끝, 2타 감기, 2타 끝]. 1타 끝 자세에서 2타가 바로 이어져요 (lxo = 왼팔 기본에서 벗어난 만큼)
 const CHAIN = {
   archer: [
-    { pull: 0.8, rpz: -0.65, rz: -0.35, bry: 0.35, bx: -0.08, lg: 0.3 },
-    { pull: 0, rpz: -0.85, rx: -1.15, rz: -0.95, lxo: -0.2, bry: 0.9, bx: -0.1, bz: -0.3, sq: 0.15, lg: 0.9, hx: -0.05 },
-    { pull: 0.55, rpz: -0.45, rx: -2.8, rz: 0.45, lxo: -0.05, bry: 0.25, bx: -0.05, lg: 0.6, sq: -0.08 },
-    { pull: 0, rpz: -0.9, rx: -1.2, rz: -0.8, lxo: -0.25, lz: 0.4, bry: -0.9, bx: -0.1, bz: -0.3, sq: 0.18, lg: 1.0, hx: -0.05 }
+    // 활 든 팔은 과녁을 향해 그대로 두고, 시위만 뺨까지 당겼다가 놓아요. 놓으면 오른손이 뒤로 튕기고 몸이 살짝 밀려요
+    { pull: 0.8, rpz: -0.7, rz: -0.3, bry: 0.18, bx: -0.05, lg: 0.35 },
+    { pull: 0, rpz: -0.95, rx: -1.35, rz: -0.7, bry: 0.1, bx: -0.12, sq: 0.06, lg: 0.4, hx: -0.04 },
+    { pull: 0.8, rpz: -0.7, rz: -0.3, bry: 0.2, bx: -0.05, lg: 0.4 },
+    { pull: 0, rpz: -1.0, rx: -1.3, rz: -0.75, bry: 0.12, bx: -0.14, sq: 0.07, lg: 0.45, hx: -0.05 }
   ],
   priest: [
     { rx: -2.6, rz: -0.6, bry: -0.5, bx: -0.15, lxo: -0.6, sq: -0.1, hx: -0.15 },

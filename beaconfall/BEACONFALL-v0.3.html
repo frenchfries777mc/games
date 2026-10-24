@@ -378,7 +378,7 @@ window.bfIntro=function(){if(run)return;run=1;t0=Date.now();el.classList.add('ru
     <button class="btn" data-act="skins"><span class="arrow">▶</span>스킨 상점<span class="en">SKIN SHOP</span></button>
     <button class="btn" data-act="stats"><span class="arrow">▶</span>통계<span class="en">STATS</span></button>
     <button class="btn" data-act="settings"><span class="arrow">▶</span>설정<span class="en">SETTINGS</span></button>
-    <p class="foot">v0.3<br>build 99</p>
+    <p class="foot">v0.3<br>build 100</p>
   </nav>
 </div>
 
@@ -1479,6 +1479,10 @@ ITEMS.dinoskel={name:'공룡 골격 전시',place:'dinoskel',icon(g){
   g.fillStyle='#3a3426';g.fillRect(0,9,12,1);g.fillRect(1,4,6,4);g.fillRect(6,2,5,3);
   g.fillStyle='#efe6cf';g.fillRect(2,5,4,2);g.fillRect(7,3,3,1);g.fillRect(2,7,1,2);g.fillRect(5,7,1,2);g.fillRect(8,4,1,1);g.fillStyle='#b8ad92';g.fillRect(0,8,12,1);
 }};
+ITEMS.hammock={name:'해먹',place:'hammock',icon(g){g.fillStyle='#14161c';g.fillRect(0,2,2,9);g.fillRect(10,2,2,9);g.fillStyle='#8a5a2b';g.fillRect(0,2,1,8);g.fillRect(11,2,1,8);
+  g.fillStyle='#14161c';g.fillRect(1,5,10,4);g.fillStyle='#4aa6b8';g.fillRect(2,6,8,2);g.fillStyle='#8ad8e4';g.fillRect(2,6,8,1);g.fillStyle='#e9dfc9';g.fillRect(8,5,2,1);}};
+ITEMS.fishtrap={name:'통발',place:'fishtrap',icon(g){g.fillStyle='#14161c';g.fillRect(1,3,10,7);g.fillStyle='#b5834a';g.fillRect(2,4,8,5);
+  g.fillStyle='#14161c';for(let i=0;i<4;i++)g.fillRect(3+i*2,4,1,5);g.fillRect(2,6,8,1);g.fillStyle='#8a5a2b';g.fillRect(0,5,2,3);g.fillStyle='#7ec8ff';g.fillRect(6,7,2,1);}};
 ITEMS.monument={name:'방명록 비석',place:'monument',icon(g){g.fillStyle='#14161c';g.fillRect(2,0,8,12);g.fillRect(1,2,10,10);g.fillStyle='#8a8ea0';g.fillRect(3,1,6,10);g.fillRect(2,3,8,8);g.fillStyle='#b4b8c8';g.fillRect(3,1,6,1);g.fillRect(2,3,1,7);g.fillStyle='#4a4e60';g.fillRect(4,4,4,1);g.fillRect(4,6,3,1);g.fillRect(4,8,4,1);g.fillStyle='#3a3e4c';g.fillRect(1,11,10,1);}};
 function fellerIcon(mat){
   return function(g){
@@ -2049,6 +2053,8 @@ RECIPES.push({grp:'건축',bench:true,name:'석재벽돌',note:'강화석재 3�
    RECIPES.push({grp:'시설',bench:true,name:'열기구',note:'실 6 · 판자 4 · 가죽 4 · 들고 Shift로 떠올라요 (2분)',pat:[{id:'thread',n:3},{id:'thread',n:3},{id:'plank',n:2},{id:'plank',n:2},{id:'leather',n:2},{id:'leather',n:2}],out:[{id:'balloon',n:1}]});
    RECIPES.push({grp:'건축',bench:true,name:'가판대',note:'판자 3 · 막대기 2 · 실 2 · 가격을 정해 다른 플레이어에게 팔아요',pat:[P1,P1,P1,S1,S1,TH,TH],out:[{id:'stall',n:1}]});
    RECIPES.push({grp:'건축',bench:true,name:'우체통',note:'판자 2 · 철괴 1 · 종이 1 · 다른 플레이어에게 편지와 선물을 보내요',pat:[P1,P1,{id:'iron_ingot',n:1},{id:'paper',n:1}],out:[{id:'mailbox',n:1}]});
+   RECIPES.push({grp:'건축',bench:true,name:'해먹',note:'막대기 2 · 실 4 — 낮잠을 자면 체력이 다 차고, 혼자일 때는 시간도 빨리 가요',pat:[S1,S1,TH,TH,TH,TH],out:[{id:'hammock',n:1}]});
+   RECIPES.push({grp:'건축',bench:true,name:'통발',note:'막대기 4 · 실 3 — 물가에 놓아 두면 물고기와 가끔 진주가 들어 있어요',pat:[S1,S1,S1,S1,TH,TH,TH],out:[{id:'fishtrap',n:1}]});
    RECIPES.push({grp:'건축',bench:true,name:'공룡 골격 전시',note:'공룡 뼈 조각 12 — 설치하면 커다란 공룡 골격이 서요 (뼈는 섬 곳곳 땅속에 묻혀 있어요)',pat:[{id:'dino_bone',n:4},{id:'dino_bone',n:4},{id:'dino_bone',n:4}],out:[{id:'dinoskel',n:1}]});
    RECIPES.push({grp:'건축',bench:true,name:'방명록 비석',note:'돌 6 · 막대기 1 · 종이 1 · 한 줄 글을 새겨 다른 플레이어에게 남겨요',pat:[{id:'stone',n:3},{id:'stone',n:3},S1,{id:'paper',n:1}],out:[{id:'monument',n:1}]});
    RECIPES.push({grp:'건축',bench:true,name:'책장',note:'판자 6개',pat:[P1,P1,P1,P1,P1,P1],out:[{id:'shelf',n:1}]});}
@@ -2242,10 +2248,75 @@ function trapAccrue(b){
   }
   return true;
 }
+/* ===== 통발: 물가에 놓으면 물고기가 들어요 (덫과 같은 방식) ===== */
+const FT_SEC=150,FT_MAXST=24;
+function ftHab(b){for(const [dx,dy] of [[-20,0],[20,0],[0,-20],[0,20],[-34,0],[34,0],[0,34],[0,-34]])if(hAt(b.x+dx,b.y+dy)<SEA)return 'sea';return 'river';}
+function fishtrapAccrue(b){
+  b.ps=b.ps||{};
+  const lt=b.pl===undefined?world.clock:b.pl,n=Math.floor((world.clock-lt)/FT_SEC);
+  if(n<=0)return false;
+  b.pl=lt+n*FT_SEC;
+  const hab=ftHab(b),pool=FISH.filter(q=>q.hab===hab),W=[50,25,8,1],tot=()=>Object.values(b.ps).reduce((a,v)=>a+v,0);
+  for(let i=0;i<Math.min(n,FT_MAXST);i++){
+    let id,cnt=1;
+    if(hab==='sea'&&Math.random()<0.04)id='pearl';
+    else{
+      let r=Math.random()*pool.reduce((a,q)=>a+W[q.tier],0),pick=pool[0];
+      for(const q of pool){r-=W[q.tier];if(r<=0){pick=q;break;}}
+      id=pick.id;cnt=pick.tier===0?1+((Math.random()*2)|0):1;
+    }
+    if(tot()+cnt>FT_MAXST){b.pl=world.clock;break;}
+    b.ps[id]=(b.ps[id]|0)+cnt;
+  }
+  if(tot()>=FT_MAXST)b.pl=world.clock;
+  return true;
+}
+function openFishTrap(b){
+  const sendOp=op=>sendHost({t:'trop',gx:b.gx,gy:b.gy,op});
+  if(isGuest())sendOp('sync');else fishtrapAccrue(b);
+  const draw=()=>{
+    const ps=b.ps||{},ids=Object.keys(ps),sum=ids.reduce((a,k)=>a+(ps[k]|0),0);
+    const left=sum>=FT_MAXST?0:Math.max(0,Math.ceil(FT_SEC-(world.clock-(b.pl===undefined?world.clock:b.pl))));
+    return `<h2>통발<small>FISH TRAP · ${sum}/${FT_MAXST}</small></h2>
+      <div class="row col"><label>물가에 두면 약 ${FT_SEC}초마다 물고기가 들어요. 바다에서는 가끔 진주도 나와요. 자리를 비워도 계속돼요.</label></div>
+      <div class="achrow"><b>${sum>=FT_MAXST?'통발이 가득 찼어요':'다음 수확까지 약 '+left+'초'}</b></div>
+      <div class="achcat">잡힌 것</div>
+      ${ids.length?ids.map(id=>`<div class="achrow"><b>${icoH(id)} ${esc((ITEMS[id]||{name:id}).name)} ×${ps[id]}</b></div>`).join('')+'<div class="actions"><button class="btn sm" data-take="1">모두 받기</button></div>':'<div class="achrow"><span>아직 아무것도 안 들었어요</span></div>'}
+      <div class="actions"><button class="btn sm ghost" data-close>닫기</button></div>`;
+  };
+  openModal(draw(),m=>{
+    m.querySelector('.modal').dataset.shop='general';
+    const bind=()=>{
+      const box=m.querySelector('.modal'),rd=()=>{const sc=box.scrollTop;box.innerHTML=draw();box.scrollTop=sc;bind();};
+      box.querySelector('[data-close]').onclick=closeModal;
+      const tk=box.querySelector('[data-take]');
+      if(tk)tk.onclick=()=>{
+        const ps=b.ps||{};
+        for(const id of Object.keys(ps)){const n=ps[id]|0;if(n>0&&ITEMS[id]&&!isGuest())giveReward(id,n);}
+        if(isGuest())sendOp('take');
+        b.ps={};b.pl=world.clock;
+        if(!isGuest()){saveWorld(true);bcastAll({t:'trset',gx:b.gx,gy:b.gy,ps:b.ps,pc:b.pc,pl:b.pl});}
+        rd();
+      };
+    };
+    bind();
+  },'shop');
+}
+/* ===== 해먹: 낮잠으로 체력을 채워요. 혼자 있을 때는 시간도 두 시간쯤 빨리 가요 ===== */
+const NAP_SEC=5;
+function napStart(b){
+  if(P.sleeping||P.dead||P.nap>0)return;
+  if(monsters.some(m=>!m.burn&&Math.hypot(m.x-P.x,m.y-P.y)<90)){toast('근처에 몬스터가 있어서 쉴 수 없어요.');return;}
+  P.nap=NAP_SEC;P.napHp=P.hp;P.hold=false;keys.clear();
+}
+function napEnd(msg){
+  P.nap=0;$('#sleepfade').classList.remove('on');
+  if(msg)toast(msg);
+}
 let trT=0;
 function updateTraps(dt){
   trT-=dt;if(trT>0)return;trT=20;let any=false;
-  for(const b of world.structs){if(b.id!=='trap')continue;if(trapAccrue(b)){any=true;bcastAll({t:'trset',gx:b.gx,gy:b.gy,ps:b.ps,pc:b.pc,pl:b.pl});}}
+  for(const b of world.structs){if(b.id==='fishtrap'){if(fishtrapAccrue(b)){any=true;bcastAll({t:'trset',gx:b.gx,gy:b.gy,ps:b.ps,pc:b.pc,pl:b.pl});}continue;}if(b.id!=='trap')continue;if(trapAccrue(b)){any=true;bcastAll({t:'trset',gx:b.gx,gy:b.gy,ps:b.ps,pc:b.pc,pl:b.pl});}}
   if(any)saveWorld(true);
 }
 function openTrap(b){
@@ -2457,6 +2528,24 @@ function drawTrap(g,b){
   g.fillStyle='#b5834a';g.fillRect(cx+2,cy+6,12,1);g.fillRect(cx+2,cy+13,12,1);
   g.fillStyle='#14161c';g.fillRect(cx+2,cy+4,12,1);
   if(has&&(((time*3)|0)&1)){g.fillStyle='#f2c75a';g.fillRect(cx+7,cy-3,2,4);g.fillRect(cx+7,cy+2,2,1);}
+}
+function drawHammock(g,b){
+  const cx=b.gx*GRID,cy=b.gy*GRID;
+  g.fillStyle='rgba(8,24,12,0.3)';g.fillRect(cx,cy+14,16,2);
+  g.fillStyle='#14161c';g.fillRect(cx,cy+1,3,14);g.fillRect(cx+13,cy+1,3,14);
+  g.fillStyle='#8a5a2b';g.fillRect(cx+1,cy+1,1,13);g.fillRect(cx+14,cy+1,1,13);
+  g.fillStyle='#14161c';g.fillRect(cx+2,cy+5,12,7);
+  g.fillStyle='#e9dfc9';g.fillRect(cx+3,cy+6,10,1);g.fillStyle='#4aa6b8';g.fillRect(cx+3,cy+7,10,4);g.fillStyle='#8ad8e4';g.fillRect(cx+3,cy+7,10,1);
+  g.fillStyle='#fffaf0';g.fillRect(cx+3,cy+6,3,2);
+}
+function drawFishTrap(g,b){
+  const cx=b.gx*GRID,cy=b.gy*GRID,has=Object.keys(b.ps||{}).length>0;
+  g.fillStyle='rgba(8,24,12,0.3)';g.fillRect(cx+1,cy+14,14,2);
+  g.fillStyle='#14161c';g.fillRect(cx+1,cy+4,14,10);
+  g.fillStyle='#b5834a';g.fillRect(cx+2,cy+5,12,8);
+  g.fillStyle='#14161c';for(let i=0;i<5;i++)g.fillRect(cx+3+i*2,cy+5,1,8);g.fillRect(cx+2,cy+8,12,1);
+  g.fillStyle='#8a5a2b';g.fillRect(cx,cy+7,3,4);g.fillStyle='#14161c';g.fillRect(cx+13,cy+7,3,4);
+  if(has){g.fillStyle='#9ab0d8';g.fillRect(cx+5,cy+10,4,2);g.fillRect(cx+9,cy+10,1,1);if(((time*3)|0)&1){g.fillStyle='#f2c75a';g.fillRect(cx+7,cy-3,2,4);g.fillRect(cx+7,cy+2,2,1);}}
 }
 /* ===== 탐험 일지 ===== */
 const JR_MS=[[5,[['coin',60]]],[10,[['crystal',3],['coin',120]]],[20,[['gold_ingot',4],['coin',300]]],[0,[['crystal',5],['coin',600]]]];
@@ -4214,6 +4303,8 @@ const STRUCT={
   mailbox:{layer:'o',block:true,item:'mailbox',n:1,need:1.5},
   monument:{layer:'o',block:true,item:'monument',n:1,need:3},
   dinoskel:{layer:'o',block:true,item:'dinoskel',n:1,need:3},
+  hammock:{layer:'o',block:false,item:'hammock',n:1,need:1.2},
+  fishtrap:{layer:'o',block:true,item:'fishtrap',n:1,need:1.2},
   flag:{layer:'o',block:true,item:'flag',n:1,need:1.2},
   roof:{layer:'r',block:false,item:'roof',n:1,need:0.9},
   carpet:{layer:'f',block:false,item:'carpet',n:1,need:0.6},
@@ -4563,6 +4654,8 @@ function drawStructSprite(g,kind,cx,cy,mat){
   else if(kind==='armorbench')drawArmorBench(g,{gx:cx/GRID,gy:cy/GRID});
   else if(kind==='furnace')drawFurnace(g,{gx:cx/GRID,gy:cy/GRID});
   else if(kind==='bed')drawBed(g,{gx:cx/GRID,gy:cy/GRID});
+  else if(kind==='hammock')drawHammock(g,{gx:cx/GRID,gy:cy/GRID});
+  else if(kind==='fishtrap')drawFishTrap(g,{gx:cx/GRID,gy:cy/GRID,ps:{}});
   else if(kind==='miner')drawMiner(g,{gx:cx/GRID,gy:cy/GRID,mat,pf:-1});
   else if(kind==='conveyor')drawBelt8(g,cx,cy,mat|0,false,0,null,false,false);
   else if(kind==='bell')drawBell(g,{gx:cx/GRID,gy:cy/GRID,rg:0});
@@ -4621,6 +4714,8 @@ function drawStruct(g,b){
   if(b.id==='alchemy'){drawAlchemy(g,b);return;}
   if(b.id==='runetable'){drawRuneTable(g,b);return;}
   if(b.id==='trap'){drawTrap(g,b);return;}
+  if(b.id==='hammock'){drawHammock(g,b);return;}
+  if(b.id==='fishtrap'){drawFishTrap(g,b);return;}
   if(b.id==='hut'){drawHut(g,b);return;}
   if(b.id==='stall'){drawStall(g,b);return;}
   if(b.id==='mailbox'){drawMailbox(g,b);return;}
@@ -4679,7 +4774,7 @@ addEventListener('blur',()=>{ctrlDown=false;});
 
 /* ===== Ctrl+커서 선택: Ctrl을 누른 채 사거리 안 블록에 커서를 올리면 선택, F로 상호작용·부수기 ===== */
 let csel=null,fHold=false;
-const SEL_IDS=new Set(['bench','trash','chest','bed','oven','furnace','armorbench','anvil','rsd','gauge','bell','controller','beacon','crafter','relay','tele','port','guard','feller','door','aquarium','tradepost','alchemy','runetable','trap','stall','mailbox','monument','flag','hut','conveyor','sorter']);
+const SEL_IDS=new Set(['bench','trash','chest','bed','oven','furnace','armorbench','anvil','rsd','gauge','bell','controller','beacon','crafter','relay','tele','port','guard','feller','door','aquarium','tradepost','alchemy','runetable','trap','hammock','fishtrap','stall','mailbox','monument','flag','hut','conveyor','sorter']);
 function cursorSel(){
   if(!ctrlDown||!mouse.on||mode!=='play'||!world||crafting||P.dead||P.down||P.sleeping||P.sailing||P.air||mapOn)return null;
   const wx=cam.x+mouse.x/S,wy=cam.y+mouse.y/S;
@@ -4772,6 +4867,7 @@ function canPlaceCell(gx,gy,kind,skipCreatures){
   if(bioRaw(x0+8,y0+8)&128)return false;
   for(const [dx,dy] of [[4,4],[11,4],[4,11],[11,11],[8,8]]){const xx=x0+dx,yy=y0+dy;if(hAt(xx,yy)<SEA+0.01||rvAt(xx,yy)>0)return false;}
   if(kind==='port'){let w=false;for(const [dx,dy] of [[-40,0],[40,0],[0,-40],[0,40],[-28,-28],[28,28],[-28,28],[28,-28],[-56,0],[56,0],[0,56],[0,-56]]){const xx=x0+8+dx,yy=y0+8+dy;if(hAt(xx,yy)<SEA||rvAt(xx,yy)>0){w=true;break;}}if(!w)return false;}
+  if(kind==='fishtrap'){let w=false;for(const [dx,dy] of [[-20,0],[20,0],[0,-20],[0,20],[-34,0],[34,0],[0,34],[0,-34],[-24,-24],[24,24],[-24,24],[24,-24]]){const xx=x0+8+dx,yy=y0+8+dy;if(hAt(xx,yy)<SEA||rvAt(xx,yy)>0){w=true;break;}}if(!w)return false;}
   if(kind==='farm'){if(world.sgrid.has(gy*GW+gx))return false;const c=world.camp;if(c.x+4>x0&&c.x-4<x0+GRID&&c.y+3>y0&&c.y-3<y0+GRID)return false;}
   if(kind==='crop'){const fm=world.fgrid.get(gy*GW+gx);if(!fm||fm.id!=='farm')return false;}
   if(kind==='sapling'||kind==='farm')for(const [dx,dy] of [[4,4],[11,4],[4,11],[11,11],[8,8]]){const hv=hAt(x0+dx,y0+dy);if(hv<SEA+0.02||hv>0.95)return false;}
@@ -4812,7 +4908,7 @@ function structExtra(kind,item,dr){
   if(kind==='tele'||kind==='port')return {fq:''};
   if(kind==='guard')return {ar:0};
   if(kind==='aquarium')return {aq:[]};
-  if(kind==='tradepost'||kind==='trap')return {ps:{},pc:0,pl:Math.round(world.clock)};
+  if(kind==='tradepost'||kind==='trap'||kind==='fishtrap')return {ps:{},pc:0,pl:Math.round(world.clock)};
   if(kind==='hut')return {ps:{},rj:-1,rn:0,pl:-1};
   if(kind==='stall')return {ps:{},pp:{},pc:0,ow:'',on:''};
   if(kind==='mailbox')return {ml:[],ow:'',on:''};
@@ -4901,12 +4997,12 @@ function stationNear(mode){
   return true;
 }
 function doInteract(o,code){
-  if(o.id==='bench')openCraft('bench');else if(o.id==='chest')openChest(o);else if(o.id==='trader')tradeWith();else if(o.id==='trash')openTrash(o);else if(o.id==='oven'||o.id==='campfire')openCraft('cook');else if(o.id==='furnace'){smeltRef=o;smeltLast=o.fo?o.fo.n:0;openCraft('smelt');}else if(o.id==='armorbench')openArmor();else if(o.id==='anvil')openAnvil();else if(o.id==='cow')milkCow(o.a);else if(o.id==='chicken'||o.id==='penguin')feedChicken(o.a);else if(o.id==='bone')startDig(o.q);else if(o.id==='conveyor')rotateConveyor(o);else if(o.id==='sorter'){if(code==='KeyF')rotateConveyor(o);else toggleSorterSide(o);}else if(o.id==='rsd'||o.id==='gauge'||o.id==='relay'||o.id==='tele'||o.id==='port')openSignalUI(o);else if(o.id==='bell')ringBell(o);else if(o.id==='guard')openGuardUI(o);else if(o.id==='vnpc')openShop(o.n);else if(o.id==='controller')toggleControl(o);else if(o.id==='beacon')callShip(o);else if(o.id==='ship')boardShip();else if(o.id==='crafter')openCrafterUI(o);else if(o.id==='feller')openFellerUI(o);else if(o.id==='door')toggleDoor(o);else if(o.id==='aquarium')openAquarium(o);else if(o.id==='cart')openCart();else if(o.id==='tradepost')openTradepost(o);else if(o.id==='alchemy')openAlchemy();else if(o.id==='runetable')openRunes();else if(o.id==='trap')openTrap(o);else if(o.id==='hut')openHut(o);else if(o.id==='stall')openStall(o);else if(o.id==='mailbox')openMailbox(o);else if(o.id==='monument')openMonument(o);else if(o.id==='flag')openFlag(o);else if(o.id==='revive')reviveReq(o.peer);else if(o.id==='dunin')dunGo(1,'down');else if(o.id==='dunst')dunGo(o.k,o.dir);else trySleep(o);
+  if(o.id==='bench')openCraft('bench');else if(o.id==='chest')openChest(o);else if(o.id==='trader')tradeWith();else if(o.id==='trash')openTrash(o);else if(o.id==='oven'||o.id==='campfire')openCraft('cook');else if(o.id==='furnace'){smeltRef=o;smeltLast=o.fo?o.fo.n:0;openCraft('smelt');}else if(o.id==='armorbench')openArmor();else if(o.id==='anvil')openAnvil();else if(o.id==='cow')milkCow(o.a);else if(o.id==='chicken'||o.id==='penguin')feedChicken(o.a);else if(o.id==='bone')startDig(o.q);else if(o.id==='conveyor')rotateConveyor(o);else if(o.id==='sorter'){if(code==='KeyF')rotateConveyor(o);else toggleSorterSide(o);}else if(o.id==='rsd'||o.id==='gauge'||o.id==='relay'||o.id==='tele'||o.id==='port')openSignalUI(o);else if(o.id==='bell')ringBell(o);else if(o.id==='guard')openGuardUI(o);else if(o.id==='vnpc')openShop(o.n);else if(o.id==='controller')toggleControl(o);else if(o.id==='beacon')callShip(o);else if(o.id==='ship')boardShip();else if(o.id==='crafter')openCrafterUI(o);else if(o.id==='feller')openFellerUI(o);else if(o.id==='door')toggleDoor(o);else if(o.id==='aquarium')openAquarium(o);else if(o.id==='cart')openCart();else if(o.id==='tradepost')openTradepost(o);else if(o.id==='alchemy')openAlchemy();else if(o.id==='runetable')openRunes();else if(o.id==='trap')openTrap(o);else if(o.id==='hammock')napStart(o);else if(o.id==='fishtrap')openFishTrap(o);else if(o.id==='hut')openHut(o);else if(o.id==='stall')openStall(o);else if(o.id==='mailbox')openMailbox(o);else if(o.id==='monument')openMonument(o);else if(o.id==='flag')openFlag(o);else if(o.id==='revive')reviveReq(o.peer);else if(o.id==='dunin')dunGo(1,'down');else if(o.id==='dunst')dunGo(o.k,o.dir);else trySleep(o);
 }
 function nearInteract(){
   let best=null,bd=1e9;
   for(const b of world.structs){
-    if(b.id!=='bench'&&b.id!=='trash'&&b.id!=='chest'&&b.id!=='bed'&&b.id!=='oven'&&b.id!=='furnace'&&b.id!=='armorbench'&&b.id!=='anvil'&&b.id!=='rsd'&&b.id!=='gauge'&&b.id!=='bell'&&b.id!=='controller'&&b.id!=='beacon'&&b.id!=='crafter'&&b.id!=='relay'&&b.id!=='tele'&&b.id!=='port'&&b.id!=='guard'&&b.id!=='feller'&&b.id!=='door'&&b.id!=='aquarium'&&b.id!=='tradepost'&&b.id!=='alchemy'&&b.id!=='runetable'&&b.id!=='trap'&&b.id!=='stall'&&b.id!=='mailbox'&&b.id!=='monument'&&b.id!=='flag'&&b.id!=='hut')continue;
+    if(b.id!=='hammock'&&b.id!=='fishtrap'&&b.id!=='bench'&&b.id!=='trash'&&b.id!=='chest'&&b.id!=='bed'&&b.id!=='oven'&&b.id!=='furnace'&&b.id!=='armorbench'&&b.id!=='anvil'&&b.id!=='rsd'&&b.id!=='gauge'&&b.id!=='bell'&&b.id!=='controller'&&b.id!=='beacon'&&b.id!=='crafter'&&b.id!=='relay'&&b.id!=='tele'&&b.id!=='port'&&b.id!=='guard'&&b.id!=='feller'&&b.id!=='door'&&b.id!=='aquarium'&&b.id!=='tradepost'&&b.id!=='alchemy'&&b.id!=='runetable'&&b.id!=='trap'&&b.id!=='stall'&&b.id!=='mailbox'&&b.id!=='monument'&&b.id!=='flag'&&b.id!=='hut')continue;
     const d0=Math.hypot(P.x-b.x,P.y-(b.y-7)),d=d0-(b===P.starget&&d0<=20?100:0);if(d0<=20&&d<bd){bd=d;best=b;}   // 흰 테두리로 가리킨 시설이 먼저
   }
   if(!best)for(const b of world.cgrid.values()){const d=Math.hypot(P.x-(b.gx*CG+4),P.y-(b.gy*CG+4));if(d<=10&&d<bd){bd=d;best=b;}}
@@ -5823,8 +5919,9 @@ function drawHeldBow(g){
 function drawHeldItem(g,dy){
   if(P.dead||P.down||P.air||P.sleeping||bowMat())return;
   const q=inv[P.sel];if(!q||!ITEMS[q.id])return;
-  const sw=(P.chopping||P.atkAnim>0)?(((P.swing*6)|0)&1):0,s=P.f>=0?1:-1,x=Math.round(P.x)+(s>0?3:-10)+(sw?s*2:0),y=Math.round(P.y)-7+(dy||0)+(sw?1:0);
+  const sw=(P.chopping||P.atkAnim>0)?(((P.swing*6)|0)&1):0,s=P.f>=0?1:-1,x=Math.round(P.x)+(s>0?1:-8)+(sw?s*2:0),y=Math.round(P.y)-9+(dy||0)+(sw?1:0);
   g.drawImage(itemIcon(q.id),0,0,12,12,x,y,8,8);
+  g.fillStyle='#f2c9a0';g.fillRect(Math.round(P.x)+(s>0?3:-3)+(sw?s*2:0),Math.round(P.y)-5+(dy||0)+(sw?1:0),1,2);   // 손
 }
 function hitMonster(m,dmg,far,rune,noRoll){
   let kind=0;
@@ -5839,6 +5936,19 @@ function updatePlayer(dt){
   if(P.dead){
     P.deadT+=dt;P.moving=false;P.walk=0;P.chopT=0;P.chopK=-1;P.workKind='';P.workKey=-1;P.chopping=false;P.mtarget=null;P.starget=null;P.target=-1;
     if(P.deadT>=3){if(WOPT.hard&&!isGuest()){P.deadT=-999;endHardcore();}else respawn();}
+  }else if(P.nap>0){
+    P.moving=false;P.walk=0;P.chopT=0;P.chopK=-1;P.workKind='';P.workKey=-1;P.chopping=false;P.mtarget=null;P.starget=null;P.target=-1;P.btarget=-1;
+    P.nap-=dt;
+    if(P.hp<P.napHp-0.01)napEnd('맞아서 깼어요.');
+    else{
+      P.hp=Math.min(P.maxhp,P.hp+P.maxhp*dt/NAP_SEC*1.2);P.napHp=P.hp;renderHp();
+      if(!isGuest()&&remotes.size===0&&world)world.clock+=dt*11;
+      $('#sleeptxt').textContent='쿨쿨… 낮잠 중\n움직이면 일어나요';
+      $('#sleepfade').classList.add('on');
+      let mv=false;for(const kk of ['KeyW','KeyA','KeyS','KeyD','ArrowUp','ArrowDown','ArrowLeft','ArrowRight'])if(keys.has(kk)){mv=true;break;}
+      if(mv)napEnd();
+      else if(P.nap<=0){P.hp=P.maxhp;renderHp();napEnd('푹 쉬었어요. 체력이 가득 찼어요.');}
+    }
   }else if(P.sleeping){
     P.moving=false;P.walk=0;P.chopT=0;P.chopK=-1;P.workKind='';P.workKey=-1;P.chopping=false;P.mtarget=null;P.starget=null;P.target=-1;P.btarget=-1;
     P.sleepT+=dt;
@@ -8981,8 +9091,12 @@ const ACH_BOSSES=['bwolf','bscorp','bmagma','bspider','bsnake','bgolem','bcroc',
 const achCount=k=>Object.keys(settings.achc[k]||{}).length;
 function achMark(k,key){const c=(settings.achc[k]=settings.achc[k]||{});if(!c[key]){c[key]=1;saveSettings();}return Object.keys(c).length;}
 let achQ=[],achShowT=0;
+/* 샌드박스를 한 번이라도 켠 세계에서는 업적이 올라가지 않아요 (끄더라도 그대로) */
+let sbToast=false;
+function sbLocked(){const w=settings.worlds&&settings.worlds.find(q=>q.id===settings.current);return !!(w&&(w.sandbox||w.sbEver));}
 function achGrant(id){
   if(settings.ach[id])return;
+  if(sbLocked()){if(!sbToast&&mode==='play'){sbToast=true;toast('샌드박스를 켠 적이 있는 세계에서는 업적이 올라가지 않아요.');}return;}
   settings.ach[id]=Date.now();settings.bc=(settings.bc|0)+achBc(id);saveSettings();
   const a=ACH.find(q=>q.id===id);if(a)achQ.push(Object.assign({bc:achBc(id)},a));
   achSync();
@@ -11245,7 +11359,7 @@ function enterPlay(){
   const sp=world.savedPlayer;
   if(sp&&walkable(sp.x,sp.y)){P.x=sp.x;P.y=sp.y;P.f=sp.f;}
   else if(!walkable(P.x,P.y)){P.x=c.x;P.y=c.y+7;}
-  P.sleeping=false;P.sailing=false;P.air=false;P.reefBack=null;P.fortBack=null;mapOn=false;$('#mapwrap').classList.remove('on');P.bed=null;$('#sleepfade').classList.remove('on');P.hold=false;P.chopT=0;P.chopK=-1;P.fx=P.f;P.fy=0;resize();cam.x=P.x-VW/2;cam.y=P.y-VH/2-4;vel.x=vel.y=0;clampCam();setTag();
+  P.nap=0;P.sleeping=false;P.sailing=false;P.air=false;P.reefBack=null;P.fortBack=null;mapOn=false;$('#mapwrap').classList.remove('on');P.bed=null;$('#sleepfade').classList.remove('on');P.hold=false;P.chopT=0;P.chopK=-1;P.fx=P.f;P.fy=0;resize();cam.x=P.x-VW/2;cam.y=P.y-VH/2-4;vel.x=vel.y=0;clampCam();setTag();
   if(!(isHost()&&net.conns.length))monsters=[];lastClockTxt='';
   P.hp=P.maxhp;P.dead=false;P.kx=P.ky=0;P.hurtT=0;P.sinceHit=99;$('#dead').classList.remove('on');renderHp();
 }
@@ -11506,7 +11620,11 @@ function onHostData(c,d){
     }
   }else if(d.t==='trop'){
     const b=world.sgrid.get((d.gy|0)*GW+(d.gx|0)),r=remotes.get(c.peer);
-    if(b&&b.id==='trap'&&r&&Math.hypot(r.x-b.x,r.y-b.y)<=80){
+    if(b&&b.id==='fishtrap'&&r&&Math.hypot(r.x-b.x,r.y-b.y)<=80){
+      fishtrapAccrue(b);b.ps=b.ps||{};
+      if(d.op==='take'){const o=b.ps;b.ps={};b.pl=world.clock;for(const k of Object.keys(o))if(ITEMS[k]&&o[k]>0)try{c.send({t:'treward',item:k,n:o[k]|0});}catch(e){}}
+      saveWorld(true);bcastAll({t:'trset',gx:b.gx,gy:b.gy,ps:b.ps,pc:b.pc,pl:b.pl});
+    }else if(b&&b.id==='trap'&&r&&Math.hypot(r.x-b.x,r.y-b.y)<=80){
       trapAccrue(b);b.ps=b.ps||{};const id=String(d.id||'');
       if(d.op==='take'){const o=b.ps;b.ps={};for(const k of Object.keys(o))if(ITEMS[k]&&o[k]>0)try{c.send({t:'treward',item:k,n:o[k]|0});}catch(e){}}
       else if(d.op==='bait'&&TRAP_BAIT[id]&&(b.pc|0)<TRAP_MAXB){if((b.pc|0)<=0)b.pl=world.clock;b.pc=(b.pc|0)+1;}
@@ -11785,7 +11903,7 @@ async function guestHandle(d){
   else if(d.t==='hutset'){const b=world.sgrid.get((d.gy|0)*GW+(d.gx|0));if(b&&b.id==='hut'&&d.ps&&typeof d.ps==='object'){const o={};for(const k of Object.keys(d.ps))if(ITEMS[k]&&(d.ps[k]|0)>0)o[k]=d.ps[k]|0;b.ps=o;b.rj=Math.max(-1,Math.min(4,d.rj|0));b.rn=Math.max(0,Math.min(11,d.rn|0));b.pl=d.pl;}}
   else if(d.t==='hutfx'){hutFx(+d.x,+d.y,+d.tx,+d.ty);}
   else if(d.t==='hutmsg'){achQ.push({h:'🏠 정착지',name:'새 주민이 이사 왔어요'});}
-  else if(d.t==='trset'){const b=world.sgrid.get((d.gy|0)*GW+(d.gx|0));if(b&&b.id==='trap'&&d.ps&&typeof d.ps==='object'){const o={};for(const k of Object.keys(d.ps))if(ITEMS[k]&&(d.ps[k]|0)>0)o[k]=d.ps[k]|0;b.ps=o;b.pc=d.pc|0;b.pl=d.pl;}}
+  else if(d.t==='trset'){const b=world.sgrid.get((d.gy|0)*GW+(d.gx|0));if(b&&(b.id==='trap'||b.id==='fishtrap')&&d.ps&&typeof d.ps==='object'){const o={};for(const k of Object.keys(d.ps))if(ITEMS[k]&&(d.ps[k]|0)>0)o[k]=d.ps[k]|0;b.ps=o;b.pc=d.pc|0;b.pl=d.pl;}}
   else if(d.t==='stset'){const b=world.sgrid.get((d.gy|0)*GW+(d.gx|0));if(b&&b.id==='stall'&&d.ps&&typeof d.ps==='object'){const o={},pp={};for(const k of Object.keys(d.ps))if(ITEMS[k]&&(d.ps[k]|0)>0){o[k]=d.ps[k]|0;pp[k]=clampN((d.pp||{})[k],1,9999);}b.ps=o;b.pp=pp;b.pc=d.pc|0;if(stallRd&&uiAlive('stalluid'))stallRd();}}
   else if(d.t==='mlset'){const b=world.sgrid.get((d.gy|0)*GW+(d.gx|0));if(b&&b.id==='mailbox'&&Array.isArray(d.ml)){b.ml=d.ml.filter(m=>m&&Array.isArray(m.it)).slice(0,ML_MAX);if(mailRd&&uiAlive('mailuid'))mailRd();}}
   else if(d.t==='revived'){reviveMe();}
@@ -11931,7 +12049,7 @@ document.addEventListener('click',async e=>{
   if('newworld' in d){
     const seed=($('#nseed').value.replace(/\D/g,'')||randSeedNum()).replace(/^0+(?=\d)/,'');
     const name=($('#nname').value.trim()||`${seed}번 섬`).slice(0,16);
-    const w={id:'w'+Date.now().toString(36),name,seed,created:Date.now(),sandbox:$('#nsand').getAttribute('aria-pressed')==='true'};
+    const w={id:'w'+Date.now().toString(36),name,seed,created:Date.now(),sandbox:$('#nsand').getAttribute('aria-pressed')==='true'};if(w.sandbox)w.sbEver=true;
     {const df=document.querySelector('#ndiff [aria-pressed="true"]');if(df&&df.dataset.diff!=='normal')w.diff=df.dataset.diff;if($('#nkeep').getAttribute('aria-pressed')==='true')w.keep=true;if($('#nhard').getAttribute('aria-pressed')==='true')w.hard=true;}
     settings.worlds.push(w);settings.current=w.id;saveSettings();closeModal();
     if(net.role)netLeave('');
@@ -11963,7 +12081,7 @@ document.addEventListener('click',async e=>{
     if(BPS.arm!==d.bpdel){BPS.arm=d.bpdel;t.textContent='한 번 더 누르면 삭제';return;}
     BPS.arm='';settings.bp=bpList().filter(x=>x.id!==d.bpdel);saveSettings();bpMenu();return;
   }
-  if(d.sbtog){const w=settings.worlds.find(q=>q.id===d.sbtog);if(w){w.sandbox=!w.sandbox;saveSettings();}showSingle();return;}
+  if(d.sbtog){const w=settings.worlds.find(q=>q.id===d.sbtog);if(w){w.sandbox=!w.sandbox;if(w.sandbox)w.sbEver=true;saveSettings();}showSingle();return;}
   if(d.bak){showBackups(d.bak);return;}
   if('baktoback' in d){showSingle();return;}
   if(d.baknow){const ok=bakPush(d.baknow);showBackups(d.baknow);if(!ok){const h=$('#modal .hint');if(h)h.textContent='백업할 저장이 아직 없어요.';}return;}
