@@ -440,12 +440,12 @@ if(document.readyState==='loading') document.addEventListener('DOMContentLoaded'
   /* 첫 화면 배경: 네 게임의 실제 장면이 번갈아 천천히 나타나요 (오른쪽에서 왼쪽으로 사라지게 깔려서 글자는 그대로 읽혀요) */
   .hero{position:relative;}
   .hero-bg{position:absolute; z-index:-1; left:50%; width:100vw; margin-left:-50vw; top:-130px; bottom:-30px; pointer-events:none; overflow:hidden; -webkit-mask-image:linear-gradient(180deg,#000 0,#000 66%,transparent 100%); mask-image:linear-gradient(180deg,#000 0,#000 66%,transparent 100%);}
-  .hero-bg i{position:absolute; inset:0; opacity:0; animation:hbFade 32s linear infinite;}
-  .hero-bg i:nth-child(1){animation-delay:-2s;} .hero-bg i:nth-child(2){animation-delay:6s;} .hero-bg i:nth-child(3){animation-delay:14s;} .hero-bg i:nth-child(4){animation-delay:22s;}
+  .hero-bg i{position:absolute; inset:0; opacity:0; animation:hbFade 40s linear infinite;}
+  .hero-bg i:nth-child(1){animation-delay:-2s;} .hero-bg i:nth-child(2){animation-delay:6s;} .hero-bg i:nth-child(3){animation-delay:14s;} .hero-bg i:nth-child(4){animation-delay:22s;} .hero-bg i:nth-child(5){animation-delay:30s;}
   .hero-bg img,.hero-bg video{position:absolute; top:0; right:0; width:72%; height:100%; object-fit:cover; opacity:.8; -webkit-mask-image:linear-gradient(90deg,transparent 0,#000 48%); mask-image:linear-gradient(90deg,transparent 0,#000 48%); animation:hbKen 32s ease-in-out infinite alternate;}
   .hero-bg i::after{content:''; position:absolute; inset:0; background:radial-gradient(ellipse 60% 80% at 82% 55%, color-mix(in srgb,var(--c) 38%,transparent), transparent 70%), radial-gradient(ellipse 50% 60% at 8% 30%, color-mix(in srgb,var(--c) 14%,transparent), transparent 70%);}
   .hero-bg::after{content:''; position:absolute; inset:0; background:linear-gradient(180deg,color-mix(in srgb,var(--bg) 90%,transparent) 0,color-mix(in srgb,var(--bg) 55%,transparent) 14%,transparent 34%);}
-  @keyframes hbFade{0%{opacity:0;} 5%{opacity:1;} 25%{opacity:1;} 31%{opacity:0;} 100%{opacity:0;}}
+  @keyframes hbFade{0%{opacity:0;} 4%{opacity:1;} 18%{opacity:1;} 22%{opacity:0;} 100%{opacity:0;}}
   @keyframes hbKen{from{transform:scale(1.03) translate3d(0,0,0);} to{transform:scale(1.14) translate3d(-2%,-2%,0);}}
   @keyframes hbRise{from{opacity:0; transform:translateY(18px);} to{opacity:1; transform:none;}}
   .hero-t>*:not(.ffs){animation:hbRise .6s cubic-bezier(.2,.7,.2,1) both;} .hero-t>:nth-child(2){animation-delay:.07s;} .hero-t>:nth-child(3){animation-delay:.14s;} .hero-t>:nth-child(4){animation-delay:.21s;} .hero-t>:nth-child(5){animation-delay:.28s;}
@@ -700,7 +700,7 @@ if(document.readyState==='loading') document.addEventListener('DOMContentLoaded'
   try{ if(window.FFLang&&FFLang.get()==='nw') return; }catch(e){}      /* Newspeak: ff-hate.js draws the Two Minutes Hate instead */
   var rm=matchMedia('(prefers-reduced-motion:reduce)').matches, narrow=matchMedia('(max-width:640px)').matches;
   if(rm) return;
-  var clips=['stk','ce','bf','ip'], vids=[], mp4=document.createElement('video').canPlayType('video/mp4; codecs="avc1.42E01E"');
+  var clips=['stk','ce','bf','ip','vk'], vids=[], mp4=document.createElement('video').canPlayType('video/mp4; codecs="avc1.42E01E"');
   bg.querySelectorAll('i').forEach(function(el,k){
     var v=document.createElement('video'); v.muted=true; v.defaultMuted=true; v.loop=true; v.playsInline=true; v.autoplay=true; v.preload='auto';
     ['muted','loop','playsinline','webkit-playsinline','autoplay','disablepictureinpicture','aria-hidden'].forEach(function(n){ v.setAttribute(n,n==='aria-hidden'?'true':''); });
