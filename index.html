@@ -726,7 +726,7 @@ if(document.readyState==='loading') document.addEventListener('DOMContentLoaded'
   try{ if(window.FFLang&&FFLang.get()==='nw') return; }catch(e){}      /* Newspeak: ff-hate.js draws the Two Minutes Hate instead */
   var rm=matchMedia('(prefers-reduced-motion:reduce)').matches, narrow=matchMedia('(max-width:640px)').matches;
   if(rm) return;
-  var clips=['stk','ce','bf','ip','vk'], vids=[], mp4=document.createElement('video').canPlayType('video/mp4; codecs="avc1.42E01E"');
+  var clips=['stk','ce','bf','ip','vk','dp'], vids=[], mp4=document.createElement('video').canPlayType('video/mp4; codecs="avc1.42E01E"');
   bg.querySelectorAll('i').forEach(function(el,k){
     var v=document.createElement('video'); v.muted=true; v.defaultMuted=true; v.loop=true; v.playsInline=true; v.autoplay=true; v.preload='auto';
     ['muted','loop','playsinline','webkit-playsinline','autoplay','disablepictureinpicture','aria-hidden'].forEach(function(n){ v.setAttribute(n,n==='aria-hidden'?'true':''); });
