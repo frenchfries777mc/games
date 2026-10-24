@@ -315,7 +315,7 @@ crownenvoy/CrownEnvoy-v0.4.html | 전신망 (정치 탭 카드) | "📡 전신�
 | CrownEnvoy-v0.4.html | 정치 탭 카드 | 🏙 점령지 동화 (설명·안정·동화 중·동화 버튼 문구 전체) | b97 | 2026-10-23 |
 | CrownEnvoy-v0.4.html | 알림 | 〇〇이(가) 완전히 안정됐어요. / 동화 정책을 폈어요 문구 | b97 | 2026-10-23 |
 
-## Dummy Party 사이트 (games/dummyparty/, 디자인 단계, 카드 미등록)
+## Dummy Party 사이트 (games/dummyparty/) b62 (2026-10-24)
 - 페이지 전체 문구(소개, 미니게임, 노는 법, 패치노트, 버전)가 한국어 전용이에요. 번역은 게임 공개 결정 뒤에 해요.
 ## Vowkeep b37 (2026-10-23)
 - vowkeep/i18n.js | 게임 사이트 문구 전체 (소개, 특징 6개, 공략 12개, 도움말, 질문 3개) | 한국어만 있음 (L: ['ko']) | Vowkeep b37 | 2026-10-23
@@ -330,3 +330,4 @@ crownenvoy/CrownEnvoy-v0.4.html | 전신망 (정치 탭 카드) | "📡 전신�
 - index.html | Vowkeep 카드 문구 (배지 '협동 던전', 태그 3개, 설명 1줄과 목록 3줄) | 한국어만 있음 | 2026-10-23
 - ach/vowkeep.json | 업적 33개 이름과 설명 | 한국어만 있음 | 2026-10-23
 - patchnotes.json | "Vowkeep 정식 공개" 4줄 | 2026-10-23
+- index.html | Dummy Party 카드 문구 (배지 '파티 게임', 태그 3개, 설명 1줄과 목록 3줄) | 한국어만 있음 | b62 | 2026-10-24
