@@ -172,3 +172,60 @@ patchnotes.json | v372 items[1] | 피사로 단계별 공격력 1씩 증가 (25,
 patchnotes.json | v372 items[2] | 왕 지키기에서 왕이 된 봇은 적에게서 최대한 도망 | build 372 | 2026-10-20
 patchnotes.json | v372 items[3] | 거울 미로 맵 삭제 | build 372 | 2026-10-20
 patchnotes.json | v372 items[4] | 좀비게임 모드 삭제 | build 372 | 2026-10-20
+Stickseum-v0.8.html | 4000G 스킨 이름 | 심야 인형극장의 모자 | build 373 | 2026-10-25
+Stickseum-v0.8.html | 4000G 스킨 이름 | 태양의 정복자 투구 | build 373 | 2026-10-25
+Stickseum-v0.8.html | 4000G 스킨 이름 | 비취 뱀신의 깃털관 | build 373 | 2026-10-25
+Stickseum-v0.8.html | 4000G 스킨 이름 | 황금 매의 두건 | build 373 | 2026-10-25
+Stickseum-v0.8.html | 4000G 스킨 이름 | 쌍성 수호자 후드 | build 373 | 2026-10-25
+Stickseum-v0.8.html | 4000G 스킨 이름 | 다이아 요원 타이 | build 373 | 2026-10-25
+Stickseum-v0.8.html | 4000G 스킨 이름 | 블랙아웃 작전 고글 | build 373 | 2026-10-25
+Stickseum-v0.8.html | 4000G 스킨 이름 | 달빛 궁수의 후드 | build 373 | 2026-10-25
+Stickseum-v0.8.html | 4000G 스킨 이름 | 성검 기사단 투구 | build 373 | 2026-10-25
+Stickseum-v0.8.html | 4000G 스킨 이름 | 월드시리즈 캡 | build 373 | 2026-10-25
+Stickseum-v0.8.html | 4000G 스킨 이름 | 사막 폭풍 부시햇 | build 373 | 2026-10-25
+Stickseum-v0.8.html | 4000G 스킨 이름 | 천둥 닌자 두건 | build 373 | 2026-10-25
+Stickseum-v0.8.html | 4000G 스킨 이름 | 무법자의 검은 스텟슨 | build 373 | 2026-10-25
+Stickseum-v0.8.html | 4000G 스킨 이름 | 특전사 야간 방탄모 | build 373 | 2026-10-25
+Stickseum-v0.8.html | 4000G 스킨 이름 | 세계 챔피언 헤드기어 | build 373 | 2026-10-25
+Stickseum-v0.8.html | 4000G 스킨 이름 | 불꽃놀이 고글 | build 373 | 2026-10-25
+Stickseum-v0.8.html | 4000G 스킨 이름 | 강철 거신 방독면 | build 373 | 2026-10-25
+Stickseum-v0.8.html | 4000G 스킨 이름 | 그림자 연꽃 삿갓 | build 373 | 2026-10-25
+Stickseum-v0.8.html | 4000G 스킨 이름 | 무대 거장의 실크햇 | build 373 | 2026-10-25
+Stickseum-v0.8.html | 4000G 스킨 이름 | 핏빛 백작의 망토 | build 373 | 2026-10-25
+Stickseum-v0.8.html | 4000G 스킨 이름 | 다이아 잭팟 바이저 | build 373 | 2026-10-25
+Stickseum-v0.8.html | 4000G 스킨 이름 | 성운 대현자의 모자 | build 373 | 2026-10-25
+Stickseum-v0.8.html | 4000G 스킨 이름 | 태양 용광로 방독면 | build 373 | 2026-10-25
+Stickseum-v0.8.html | 4000G 스킨 이름 | 다중우주 고글 | build 373 | 2026-10-25
+Stickseum-v0.8.html | 4000G 스킨 이름 | 블랙홀 청소부 반다나 | build 373 | 2026-10-25
+Stickseum-v0.8.html | 4000G 스킨 이름 | 심해 해적왕 모자 | build 373 | 2026-10-25
+Stickseum-v0.8.html | 4000G 스킨 이름 | 천하 통일 투구띠 | build 373 | 2026-10-25
+Stickseum-v0.8.html | 4000G 스킨 이름 | 칠흑 여왕의 두건 | build 373 | 2026-10-25
+Stickseum-v0.8.html | 스킨 이름 skin_puppeteer | 청록 광대 모자 | build 373 | 2026-10-25
+Stickseum-v0.8.html | 스킬 설명 kan | 바라보는 방향으로 독 두꺼비를 던짐 · 포물선으로 날아가 바닥에 닿으면 그 바닥이 독 바닥이 됨 (15초, 최대 2개, 나에게만 보임) · 적이 밟으면 독 바닥이 나타나고 3초 뒤 사라짐 · 밟은 적은 3초 동안 0.5초마다 5 피해 | build 373 | 2026-10-25
+Stickseum-v0.8.html | 스킬 설명 pizarro | 3초 동안 받는 피해 20% 감소 + 초당 체력 6 회복 · 움직여도 끊기지 않음 | build 373 | 2026-10-25
+Stickseum-v0.8.html | 스킬 설명 puppeteer | 실이 달린 바늘을 조준한 방향으로 발사 · 맞은 상대와 실이 이어지고 이동속도 25% 감소, 실로 이어진 동안 내가 받는 피해의 50%를 상대도 받음 · 맞히면 쿨타임 없이 바로 바늘 빼기를 쓸 수 있음 (최대 8초) · 바늘 빼기: 실을 당겨 상대에게 30 피해를 주고 실이 끊김, 쿨타임은 바늘 빼기를 쓴 뒤부터 돌아요 (못 맞히면 바로 쿨타임) | build 373 | 2026-10-25
+Stickseum-v0.8.html | 궁극기 설명 pizarro | TYPE html>
+<!-- © 2026 Frenchfries777 · CC BY-NC-ND 4.0 · https://creativecommons.org/licenses/by-nc-nd/4.0/deed.ko -->
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<title>Stickseum</title>
+<script src="https://frenchfries777mc.github.io/games/ff-lang.js"></script>   <!-- Frenchfries777 공용 언어: 허브·다른 게임과 언어 설정을 맞춤 (언어를 읽는 코드보다 먼저) -->
+<script id="i18nEngine">
+(function(){
+var LS= | build 373 | 2026-10-25
+patchnotes.json | v373 title | 밀린 요청 정리 | build 373 | 2026-10-25
+patchnotes.json | v373 items[0] | 칸 스킬 독 두꺼비 함정 변경: 던진 두꺼비가 떨어진 바닥이 숨은 독 바닥으로 변함 | build 373 | 2026-10-25
+patchnotes.json | v373 items[1] | 독 바닥은 칸에게만 보이고 밟히면 나타나 3초 뒤 사라짐, 밟은 적은 3초 동안 0.5초마다 5 피해 | build 373 | 2026-10-25
+patchnotes.json | v373 items[2] | 인형술사 바느질 실로 이어진 상대가 인형술사가 받는 피해의 50%를 같이 받음 | build 373 | 2026-10-25
+patchnotes.json | v373 items[3] | 바느질 실 굵기와 밝기 강화 | build 373 | 2026-10-25
+patchnotes.json | v373 items[4] | 피사로 정복자의 휴식 성능 절반(피해 감소 20%, 초당 회복 6), 움직여도 안 끊김 | build 373 | 2026-10-25
+patchnotes.json | v373 items[5] | 피사로 1단계 대쉬 쿨타임 1.8 → 3초 | build 373 | 2026-10-25
+patchnotes.json | v373 items[6] | 보스 레이드 보스 체력과 공격력 강화 | build 373 | 2026-10-25
+patchnotes.json | v373 items[7] | 봇의 광차 피하기 | build 373 | 2026-10-25
+patchnotes.json | v373 items[8] | 깃발 뺏기에서 양쪽 깃발이 모두 뺏기면 봇 전원이 도둑 추격 | build 373 | 2026-10-25
+patchnotes.json | v373 items[9] | 인형술사 분홍 광대 모자 스킨을 청록 광대 모자로 변경(기본 모자와 같은 색이던 문제) | build 373 | 2026-10-25
+patchnotes.json | v373 items[10] | 캐릭터마다 4000G 스킨 1개씩 추가(스킨 탭 맨 아래) | build 373 | 2026-10-25
+patchnotes.json | v373 items[11] | 랜덤 상자 모두 열기 버튼 추가 | build 373 | 2026-10-25
+patchnotes.json | v373 items[12] | 밸런스 그래프의 패치 때만 보기에서 패치 없는 빌드 칸 제외, 스크롤바 어둡게 | build 373 | 2026-10-25
