@@ -1289,8 +1289,8 @@ function cleanOpts(o){ return {balance:!!(o&&o.balance), vote:!!(o&&o.vote)}; }
 function ruleHp(){ return Math.round(MAX_HP*roomRules.hp*(gameMode==='zombie'?2:1)); }   // zombie game: humans get double health
 const MOVE_SPEED = 250, JUMP_VELOCITY = -680;
 const DASH_FORCE = 700, DASH_CD = 1.5;
-const PZ_MAX=3, PZ_DMG=[25,31,37,43], PZ_ATK_CD=[0.6,0.5,0.4,0.3], PZ_DASH_CD=[1.8,1.5,0.7,0.4], PZ_CD_STEP=0.12, PZ_ULT_HEAL=30, PZ_ULT_HEAL_MAX=50, PZ_MAX_SPEED=1.25;       // 피사로 has four stages (the start, then one per ultimate): damage, attack cooldown and dash cooldown come from these tables; the skill and ultimate cooldowns are 12% shorter per stage; the last stage also runs at 125% speed       // (+5 damage per stack; at the 4th stack: a 0.5 s dash and 125% speed)
-const KAN_POISON_DPS=2, KAN_POISON_SEC=3, KAN_POISON_MAX=4, KAN_TRAP_SEC=10, KAN_TRAP_R=75, KAN_TRAP_MAX=2, KAN_ULT_SEC=5, KAN_ULT_CD_MULT=0.6;      // 칸: every dart adds a poison stack (2 damage a second each, up to 4, the 3 s timer restarts); the frog trap poisons and slows; the wings fly for 5 s and shoot three darts at once
+const PZ_MAX=3, PZ_DMG=[25,31,37,43], PZ_ATK_CD=[0.6,0.5,0.4,0.3], PZ_DASH_CD=[3,1.5,0.7,0.4], PZ_CD_STEP=0.12, PZ_ULT_HEAL=30, PZ_ULT_HEAL_MAX=50, PZ_MAX_SPEED=1.25;       // 피사로 has four stages (the start, then one per ultimate): damage, attack cooldown and dash cooldown come from these tables; the skill and ultimate cooldowns are 12% shorter per stage; the last stage also runs at 125% speed       // (+5 damage per stack; at the 4th stack: a 0.5 s dash and 125% speed)
+const KAN_POISON_DPS=2, KAN_POISON_SEC=3, KAN_POISON_MAX=4, KAN_TRAP_SEC=15, KAN_TRAP_R=75, KAN_TRAP_MAX=2, KAN_TOAD_SEC=3, KAN_TOAD_TICK=0.5, KAN_TOAD_DMG=5, KAN_TOAD_SPEED=760, KAN_ULT_SEC=5, KAN_ULT_CD_MULT=0.6;      // 칸: every dart adds a poison stack (2 damage a second each, up to 4, the 3 s timer restarts); the frog trap poisons and slows; the wings fly for 5 s and shoot three darts at once
 let poisonZones=[];
 function applyPoison(p, ownerId, ownerName, stacks, tMs){ if(!p || !p.alive) return; const tS=tMs/1000, cur=(p.poison && p.poison.until>tS)?p.poison.stacks:0; p.poison={until:tS+KAN_POISON_SEC, stacks:Math.min(KAN_POISON_MAX,cur+(stacks||1)), owner:ownerId, ownerName:ownerName}; }
 const PZ_LUNGE_WIN=0.7, PZ_LUNGE_KB=1.3, PZ_LUNGE_STUN=0.2;       // 돌격 찌르기: the first thrust within 0.7 s after a dash shoves harder and staggers       // 피사로: the ultimate stacks (up to 4): +15% damage and 12% shorter cooldowns (attack, skill, ultimate, dash) each; dying resets it
@@ -1417,7 +1417,7 @@ function pirateFlyVel(p, ax, ay){      // launch velocity of the cannon ride: to
   return {vx:Math.cos(a)*PIRATE_FLY_SPEED, vy:Math.sin(a)*PIRATE_FLY_SPEED};
 }
 const ULTS = {
-  pizarro:  {name:'정복자의 기세', desc:'체력 30 회복(최종 단계에서 쓰면 50) + 공격력 25→31→37→43, 공격 쿨타임 0.6→0.5→0.4→0.3초, 대쉬 쿨타임 1.8→1.5→0.7→0.4초로 단계가 오르고 스킬·궁극기 쿨타임도 단계마다 12% 단축됨 (최대 3번 중첩 = 4단계, 4단계엔 이동속도 125%, 죽으면 초기화)'},
+  pizarro:  {name:'정복자의 기세', desc:'체력 30 회복(최종 단계에서 쓰면 50) + 공격력 25→31→37→43, 공격 쿨타임 0.6→0.5→0.4→0.3초, 대쉬 쿨타임 3→1.5→0.7→0.4초로 단계가 오르고 스킬·궁극기 쿨타임도 단계마다 12% 단축됨 (최대 3번 중첩 = 4단계, 4단계엔 이동속도 125%, 죽으면 초기화)'},
   puppeteer:{name:'꼭두각시 조종', desc:'조준한 방향으로 실을 날려 맞힌 상대를 5초간 조종 (맞히지 못하면 조종 못 함) · 조종하는 동안 내 이동·점프·조준·일반 공격 입력대로 움직이고 내 시야도 상대 시점이 됨, 상대는 스킬과 궁극기를 쓸 수 없음 · 조종하는 동안 내 몸은 움직이지 못하고 받는 데미지 50% 감소 · 조종이 끝나면 조종당한 상대가 자폭해 본인은 60, 주변(220) 적에게는 30 피해'},
   kan:      {name:'케찰코아틀의 날개', desc:'5초 동안 날개를 펴고 날아올라 (점프 키를 누르면 위로, 떼면 천천히 내려옴) 독침을 한 번에 3발씩, 더 빠르게 발사'},
   pistol:   {name:'강화탄',       desc:'다음 발사 때 데미지 66의 크고 빠른 탄환 1발'},
@@ -2089,7 +2089,7 @@ const COSMETICS={
   skin_gambler:{cat:'skin',char:'gambler',name:'하이롤러 바이저',price:900,tint:'#7a1620'},
   skin_wizard:{cat:'skin',char:'wizard',name:'에메랄드 로브',price:1200,tint:'#1c6b4a'},
   skin_lightsaber:{cat:'skin',char:'lightsaber',name:'사막 수련 로브',price:300,tint:'#c9b48a'},        // (these five characters had no basic skin; they are also the skins a random box can give: 400 G or less)
-  skin_puppeteer:{cat:'skin',char:'puppeteer',name:'분홍 광대 모자',price:400,tint:'#ff7fb5'},
+  skin_puppeteer:{cat:'skin',char:'puppeteer',name:'청록 광대 모자',price:400,tint:'#33c7bd'},        // (was pink #ff7fb5 = the same as the bare hat)
   skin_puppeteer_c:{cat:'skin',char:'puppeteer',name:'자줏빛 광대 모자',price:300,tint:'#8a4fd6'},
   skin_pizarro:{cat:'skin',char:'pizarro',name:'황금빛 모리온 투구',price:400,tint:'#d4a437'},
   skin_pizarro_c:{cat:'skin',char:'pizarro',name:'흑강철 모리온 투구',price:300,tint:'#3a3f4a'},
@@ -2665,6 +2665,20 @@ for(const [ch,nm,tint,fx] of NEW_SKINS) COSMETICS['skin_'+ch+'_new']={cat:'skin'
 COSMETICS.skin_pistol_s1={cat:'skin', char:'pistol', name:'오로라 총잡이', price:0, tint:'#7bf3ff', fx:'halo', lux:1, seasonOnly:true};      // (season pass only)
 COSMETICS.skin_sword_s1={cat:'skin', char:'sword', name:'황금 시즌 기사', price:0, tint:'#ffd34d', fx:'crown', lux:2, seasonOnly:true};
 for(const [ch,a,b] of TIER_SKINS) [a,b].forEach((s,i)=>{ COSMETICS['skin_'+ch+'_t'+(i+1)]={cat:'skin', char:ch, name:s[0], price:0, tint:s[1], fx:s[2], tier:TIER_SKIN_TIERS[i], lux:i+1}; });
+const PREMIUM_SKIN_PRICE=4000;      // one 4000 G skin per character: the last cards of the skin tab
+const PREMIUM_SKINS=[
+  ['puppeteer','심야 인형극장의 모자','#7a3cff','void'], ['pizarro','태양의 정복자 투구','#ffb02e','flame'], ['kan','비취 뱀신의 깃털관','#2bffb0','halo'],
+  ['horemheb','황금 매의 두건','#ffd34d','crown'], ['lightsaber','쌍성 수호자 후드','#9a85ff','electric'], ['pistol','다이아 요원 타이','#bff6ff','sparkle'],
+  ['smg','블랙아웃 작전 고글','#ff3b5c','electric'], ['bow','달빛 궁수의 후드','#d9e4ff','frost'], ['sword','성검 기사단 투구','#fff1a8','halo'],
+  ['bat','월드시리즈 캡','#ff7a2b','crown'], ['boomerang','사막 폭풍 부시햇','#e0b060','flame'], ['shuriken','천둥 닌자 두건','#62e6ff','electric'],
+  ['shotgun','무법자의 검은 스텟슨','#2a2a33','void'], ['rifle','특전사 야간 방탄모','#3fe07a','glow'], ['gloves','세계 챔피언 헤드기어','#ffd34d','crown'],
+  ['grenade','불꽃놀이 고글','#ff5fd2','sparkle'], ['bazooka','강철 거신 방독면','#9fb4c8','electric'], ['dagger','그림자 연꽃 삿갓','#c17bff','void'],
+  ['magiccard','무대 거장의 실크햇','#ffd34d','sparkle'], ['dracula','핏빛 백작의 망토','#ff2b4a','void'], ['gambler','다이아 잭팟 바이저','#7bf3ff','crown'],
+  ['wizard','성운 대현자의 모자','#5c7cff','halo'], ['flamethrower','태양 용광로 방독면','#ffe14d','flame'], ['portalgun','다중우주 고글','#39ffd6','void'],
+  ['vacuum','블랙홀 청소부 반다나','#1a1030','void'], ['pirate','심해 해적왕 모자','#2bc3ff','glow'], ['samurai','천하 통일 투구띠','#ff3b3b','crown'],
+  ['kurus','칠흑 여왕의 두건','#b47bff','halo']
+];
+for(const [ch,nm,tint,fx] of PREMIUM_SKINS) COSMETICS['skin_'+ch+'_p']={cat:'skin', char:ch, name:nm, price:PREMIUM_SKIN_PRICE, tint, fx, lux:1, premium:true};
 /* ===== the character's own color in a match: plain colors are free, the shiny ones are bought (cat 'bcol', equipped as saveData.equipped.bcol, sent as cos.col) ===== */
 [['red','빨강','#ff4d4d'],['mint','민트','#3fe0c5'],['yellow','노랑','#f5c94c'],['blue','파랑','#7c9eff'],['pink','분홍','#ff8fd9'],['lime','연두','#8dff7c'],
  ['orange','주황','#ff9d4d'],['purple','보라','#b98cff'],['sky','하늘','#4dd9ff'],['rose','장미','#ff6b9d'],['emerald','에메랄드','#6bffb3'],['white','하양','#eef1f6']]
@@ -3252,11 +3266,12 @@ function renderBoxTab(grid){
   card.innerHTML='<div class="bIcon">🎁</div><div class="bMain"><div class="bName">랜덤 상자</div>'+
     '<div class="bSub"><span style="color:'+SOUL.color+'; font-weight:800;">'+SOUL.icon+' '+BOX_PRICE+' '+SOUL.name+'</span> · 킬하면 '+SOUL.name+' +'+SOUL_PER_KILL+' · 보유 <b id="boxOwnedN">'+n+'</b>개'+(left?'':' · 받을 수 있는 스킨은 모두 가졌어요')+'</div>'+
     '<ul>'+BOX_REWARDS.map(r=>'<li><b>'+boxRewardLabel(r)+'</b> · '+rewardChancePct(BOX_REWARDS,r)+'%</li>').join('')+'</ul>'+
-    '<div class="bBtns"><button id="boxBuyBtn" class="buy" style="background:linear-gradient(135deg,#b86bff,#8a4dff); color:#fff;">구매 ('+SOUL.icon+' '+BOX_PRICE+')</button><button id="boxOpenBtn" class="alt">열기 ('+n+')</button></div></div>';
+    '<div class="bBtns"><button id="boxBuyBtn" class="buy" style="background:linear-gradient(135deg,#b86bff,#8a4dff); color:#fff;">구매 ('+SOUL.icon+' '+BOX_PRICE+')</button><button id="boxOpenBtn" class="alt">열기 ('+n+')</button><button id="boxOpenAllBtn" class="alt">모두 열기 ('+n+')</button></div></div>';
   grid.appendChild(card);
   const buy=document.getElementById('boxBuyBtn'), open=document.getElementById('boxOpenBtn');
   if(buy){ buy.disabled=(saveData.souls||0)<BOX_PRICE; buy.onclick=()=>{ if(buyBox()) renderShop(); }; }
   if(open){ open.disabled=n<=0; open.onclick=()=>{ if((saveData.boxes||0)>0) playBoxOpening(); }; }
+  const openAll=document.getElementById('boxOpenAllBtn'); if(openAll){ openAll.disabled=n<2; openAll.onclick=()=>{ if((saveData.boxes||0)>0) playAllBoxesOpening(); }; }
 }
 function renderShop(){
   shopAnimList=[];
@@ -3330,6 +3345,12 @@ function renderShop(){
 function markHit(target, attackerId, t, dmg){
   dmg=skillMitigate(target, dmg, t);   // armour / barrier skills give part of the damage back (hp is restored right here, before anyone checks for death)
   if(practiceMode && dmg>0 && attackerId===myId && target.id!==myId) pracDpsHits.push({t:t, d:dmg});     // the practice DPS meter
+  if(dmg>0 && target.weapon==='puppeteer' && target.sewTo && !target._sewShare && sewActive(target, t/1000)){      // 바느질: the one on the thread takes half of what the puppeteer takes
+    const v=players[target.sewTo], sh=dmg*SEW_SHARE;
+    target._sewShare=true; v.hp-=sh; markHit(v, target.id, t, sh); target._sewShare=false;
+    pushFx('dmg', v.x, v.y-PLAYER_H-6, t, {v:Math.round(sh), color:'#ff9ecb'});
+    if(v.hp<=0 && v.alive) handleDeath(v, target, t, target.name);
+  }
   if(dmg>0 && gameMode==='raid' && !target.isBoss && !target.isMinion) target.raidTaken=(target.raidTaken||0)+dmg;
   if(dmg>0 && gameMode==='raid' && target.isBoss && attackerId && players[attackerId] && !players[attackerId].isMinion) players[attackerId].raidDmg=(players[attackerId].raidDmg||0)+dmg;
   if(dmg>0) recordReplayEvent(target.id, 'hit', {dmg}); // record even self/environmental damage (attackerId null) so the killcam can show it was actually hurting, not just moving
@@ -3493,7 +3514,14 @@ function cannonFlyTick(p,t){
     }
   }
 }
-function poisonZoneTick(dt,t){       // 칸's frog traps: every enemy standing in one is slowed and gets a poison stack twice a second
+function kanToadLand(b, x, y, pl, t){      // only a toad that comes down on top of a floor makes a poison floor
+  if(!pl || b.vy<=0 || b.y>pl.y+2) return;
+  const ow=players[b.owner]; if(!ow) return;
+  const tSec=t/1000, mine=poisonZones.filter(z=>z.owner===ow.id);
+  if(mine.length>=KAN_TRAP_MAX) poisonZones.splice(poisonZones.indexOf(mine[0]),1);
+  poisonZones.push({id:++wallSeq, owner:ow.id, team:ow.team, x:clamp(x, pl.x, pl.x+pl.w), y:pl.y, r:KAN_TRAP_R, until:tSec+KAN_TRAP_SEC, hitIds:{}, revealAt:undefined});
+}
+function poisonZoneTick(dt,t){       // 칸's poison floors: hidden from the enemies until one steps on it - then it shows, vanishes 3 s later and poisons whoever touched it (5 every 0.5 s for 3 s)
   if(!poisonZones.length) return;
   const tSec=t/1000;
   poisonZones = poisonZones.filter(z=>z.until>tSec);
@@ -3502,8 +3530,9 @@ function poisonZoneTick(dt,t){       // 칸's frog traps: every enemy standing i
     for(const e of enemiesOf(ow)){
       if(!tnSameMatch(e.id, z.owner)) continue;
       if(Math.abs(e.x-z.x)>z.r || e.y>z.y+14 || e.y<z.y-80) continue;
-      e.slowUntil=Math.max(e.slowUntil||0, tSec+0.5);
-      if(tSec-(z.last[e.id]||0)>=0.5){ z.last[e.id]=tSec; applyPoison(e, z.owner, ow.name, 1, t); }
+      if(z.revealAt===undefined){ z.revealAt=tSec; z.until=tSec+KAN_TOAD_SEC; pushFx('skillring', z.x, z.y-6, t, {color:'#2fb87a', r:z.r}); }
+      if(z.hitIds[e.id]) continue;
+      z.hitIds[e.id]=1; e.toadPois={left:Math.round(KAN_TOAD_SEC/KAN_TOAD_TICK), next:tSec+KAN_TOAD_TICK, owner:z.owner, ownerName:ow.name};
     }
   }
 }
@@ -5011,7 +5040,7 @@ function shuffle(arr){ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.
 /* ===== the version of this file =====
    Players with different versions CAN meet and play together: the automatic matchmaking uses the same room names for every version (online-<mode>-<map>-<slot>), and nobody is refused because of a different build.
    The build is only sent along with the join message and the lobby (for information); the corner of the screen shows it. */
-const GAME_BUILD='build 2026-10-18-v372';
+const GAME_BUILD='build 2026-10-18-v373';
 const GAME_VERSION='0.8', GAME_VERSION_NAME='황금을 찾아서';   // 게임 버전 이름: versions.json의 title과 같게 (빌드마다 바꾸지 않음)
 const WEEKLY_EVENTS=[
   {id:'lowg',    name:'저중력 난투', desc:'몸이 둥실둥실, 중력이 약해진 난투', rules:{grav:0.6}},
@@ -5615,7 +5644,7 @@ window.addEventListener('keydown', e=>{
   if(e.code===keyBindings.emote && inMatchHud()){ e.preventDefault(); ensureEmoteWheel().style.display='block'; }
 }, true);
 /* ================= BOSS RAID + TOURNAMENT ================= */
-const RAID_DURATION=180, RAID_BOSS_BASE_HP=1500, RAID_BOSS_HP_PER=880, RAID_SLAM_R=190, RAID_SLAM_DMG=22, RAID_SLAM_WARN=1.4, RAID_BOSS_SCALE=1.5, RAID_RESPAWN=6;
+const RAID_DURATION=180, RAID_BOSS_BASE_HP=1700, RAID_BOSS_HP_PER=1000, RAID_SLAM_R=190, RAID_SLAM_DMG=25, RAID_SLAM_WARN=1.4, RAID_BOSS_SCALE=1.5, RAID_RESPAWN=6;
 const RAID_TYPES=[
   {id:'fire',    name:'🔥 화염 거인', hp:1.0,  spd:0.55, kinds:['slam','meteor','leap'],        body:'#3b2430', plate:'#6b3a4a', glow:'#ffb347', aura:'255,150,50'},
   {id:'ice',     name:'❄️ 얼음 골렘', hp:1.1,  spd:0.45, kinds:['slam','meteor','leap'],        body:'#1f3a52', plate:'#5aa0c8', glow:'#9ff3ff', aura:'120,200,255', slow:true},
@@ -5625,9 +5654,9 @@ const RAID_PHASE_HP=[0.7,0.5,0.3];
 const RAID_MINIONS=[{name:'🔥 화염의 검사', color:'#e8742c'}, {name:'❄️ 얼음의 검사', color:'#6cc8ee'}, {name:'⚡ 번개의 검사', color:'#e8cf2a'}];   // the summoned fighters follow their boss (and are not zombie green)
 /* every boss carries a weapon no fighter has (the boss itself is unarmed for the normal weapon code; raidTick fires these). dmg is the base: a boss is a zombie-type, so it is multiplied by ZOMBIE_DMG_MULT */
 const RAID_WEAPONS=[
-  {id:'bw_flame', name:'화염방사기', color:'#ff8a2b', n:7, spread:0.5,  dmg:2.4, speed:640, life:0.5,  hitR:11, every:2.8, rounds:1, gap:0},
-  {id:'bw_spear', name:'빙창',       color:'#8fe8ff', n:1, spread:0,    dmg:3.4, speed:760, life:1.5,  hitR:13, every:3.4, rounds:3, gap:0.28, pierce:true},
-  {id:'bw_orb',   name:'전기 구슬',  color:'#ffe94d', n:2, spread:0.32, dmg:2.4, speed:560, life:1.9,  hitR:12, every:3.0, rounds:2, gap:0.35, bounces:2}
+  {id:'bw_flame', name:'화염방사기', color:'#ff8a2b', n:7, spread:0.5,  dmg:2.8, speed:640, life:0.5,  hitR:11, every:2.8, rounds:1, gap:0},
+  {id:'bw_spear', name:'빙창',       color:'#8fe8ff', n:1, spread:0,    dmg:3.9, speed:760, life:1.5,  hitR:13, every:3.4, rounds:3, gap:0.28, pierce:true},
+  {id:'bw_orb',   name:'전기 구슬',  color:'#ffe94d', n:2, spread:0.32, dmg:2.8, speed:560, life:1.9,  hitR:12, every:3.0, rounds:2, gap:0.35, bounces:2}
 ];
 function raidFireWeapon(b, foes, W, t){
   let tgt=null, bd=1e9; for(const f of foes){ const d=Math.hypot(f.x-b.x,f.y-b.y); if(d<bd){ bd=d; tgt=f; } } if(!tgt) return;
@@ -5769,7 +5798,7 @@ function tnResetFighter(p){
   const clock=performance.now()/1000;
   const sp=spawnPoint(); p.x=sp.x; p.y=sp.y; p.vx=0; p.vy=0; p.kbX=0; p.spin=0; p.spinAngle=0; p.hp=ruleHp(); p.alive=true; p.respawnAt=0;
   p.lastDash=clock; p.lastTeleport=clock; p.lastUlt=clock; p.lastSkill=clock; p.skillUses=0; p.ultUses=0; p.lastShot=0;
-  p.cardDmg=0; p.queenUntil=0; p.puppetUntil=0; p.puppetTarget=null; p.puppetBy=null; p.buffs={}; p.barrier=null; p.buff=null; p.hasted=false; p.focusOn=false; p.ultPending=null; p.rushUntil=0; p.invisUntil=0; p.burn=null; p.poison=null; p.kanWingsUntil=0; p.batUntil=0; p.batting=false; p.slowUntil=0; p.slowed=false; p.stunUntil=0; p.stunned=false;
+  p.cardDmg=0; p.queenUntil=0; p.puppetUntil=0; p.puppetTarget=null; p.puppetBy=null; p.buffs={}; p.barrier=null; p.buff=null; p.hasted=false; p.focusOn=false; p.ultPending=null; p.rushUntil=0; p.invisUntil=0; p.burn=null; p.poison=null; p.toadPois=null; p.kanWingsUntil=0; p.batUntil=0; p.batting=false; p.slowUntil=0; p.slowed=false; p.stunUntil=0; p.stunned=false;
   p.flameHeldSince=null; p.flameOverheatUntil=0; p.flaming=false; p.portalPair=null; p.portalCooldownUntil=0; p.vacuumStacks=0; p.chips=0; p.freeVolleys=0; p.teleportChannel=null; p.dmgBy={}; p.darkSub=null; p.darkArmUntil=0; p.darkLand=null;  p.pzStacks=0; p.pzMarkUntil=0;
   pushFx('respawn', p.x, p.y-30, performance.now(), {color:p.color, ta:p.id});
 }
@@ -6064,6 +6093,34 @@ function playBoxOpening(){
   if((saveData.boxes||0)<=0) return false;
   showRewardWindow('🎁 랜덤 상자', '🎁', '', []);
   shakeThen('랜덤 상자를 열었어요!', ()=>openBox(), ()=>playBoxOpening());
+  return true;
+}
+function openAllBoxes(){        // 모두 열기: every box at once, one shake, the gifts added up on one card
+  const n=saveData.boxes||0; if(n<=0) return null;
+  const sum={gold:0, soul:0, playerxp:0, pickxp:0, box:0, char:{}, skins:[]};
+  for(let i=0;i<n;i++){ const r=openBox(); if(!r) break;
+    if(r.kind==='gold') sum.gold+=+(r.title.match(/\d+/)||[0])[0];
+    else if(r.kind==='soul') sum.soul+=+(r.title.match(/\d+/)||[0])[0];
+    else if(r.kind==='playerxp') sum.playerxp+=+(r.title.match(/\d+/)||[0])[0];
+    else if(r.kind==='pickxp') sum.pickxp+=+(r.title.match(/\d+/)||[0])[0];
+    else if(r.kind==='box') sum.box+=+(r.title.match(/\d+/)||[1])[0];
+    else if(r.kind==='charxp'){ const nm=WEAPON_PERSONA_NAME[r.wid]||r.wid; sum.char[nm]=(sum.char[nm]||0)+(+(r.title.match(/\+(\d+)/)||[0,0])[1]); }
+    else if(r.kind==='skin') sum.skins.push(COSMETICS[r.id].name+' ('+(WEAPON_PERSONA_NAME[COSMETICS[r.id].char]||'')+')');
+  }
+  const L=[];
+  if(sum.skins.length) L.push('🎨 스킨: '+sum.skins.join(', '));
+  if(sum.gold) L.push('💰 골드 +'+sum.gold);
+  if(sum.soul) L.push(SOUL.icon+' '+SOUL.name+' +'+sum.soul);
+  if(sum.playerxp) L.push('⭐ 플레이어 XP +'+sum.playerxp);
+  if(sum.pickxp) L.push('⭐ 선택 XP +'+sum.pickxp);
+  const cx=Object.keys(sum.char); if(cx.length) L.push('🎖️ 숙련도 XP: '+cx.map(k=>k+' +'+sum.char[k]).join(', '));
+  if(sum.box) L.push('🎁 랜덤 상자 +'+sum.box);
+  return {kind:sum.skins.length?'skin':'gold', icon:sum.skins.length?'🎨':'🎁', title:'랜덤 상자 '+n+'개를 열었어요', detail:L.join('\n')};
+}
+function playAllBoxesOpening(){
+  if((saveData.boxes||0)<=0) return false;
+  showRewardWindow('🎁 랜덤 상자 모두 열기', '🎁', '', []);
+  shakeThen('랜덤 상자를 모두 열었어요!', ()=>openAllBoxes(), null);
   return true;
 }
 function openDailyWindow(){
@@ -11124,9 +11181,9 @@ function skillCdOf(p){ return SKILL_CD*pzCdMult(p); }
 function ultCdOf(p){ return ULT_CD*pzCdMult(p); }
 const PRACTICE_SKILL_CD=2;
 const SKILLS={
-  pizarro:  {name:'정복자의 휴식', kind:'buff', desc:'3초 동안 받는 피해 40% 감소 + 초당 체력 12 회복 · 움직이거나 점프, 대쉬를 하면 끊김 (서서 창으로 싸우는 건 가능)'},
-  puppeteer:{name:'바느질', kind:'hit', desc:'실이 달린 바늘을 조준한 방향으로 발사 · 맞은 상대와 실이 이어지고 이동속도 25% 감소 · 맞히면 쿨타임 없이 바로 바늘 빼기를 쓸 수 있음 (최대 8초) · 바늘 빼기: 실을 당겨 상대에게 30 피해를 주고 실이 끊김, 쿨타임은 바늘 빼기를 쓴 뒤부터 돌아요 (못 맞히면 바로 쿨타임)'},
-  kan:      {name:'독두꺼비 함정', kind:'hit', desc:'내 발밑에 독두꺼비 함정을 설치 (10초 지속, 최대 2개) · 들어온 적에게 독이 쌓이고 이동 속도가 느려짐'},
+  pizarro:  {name:'정복자의 휴식', kind:'buff', desc:'3초 동안 받는 피해 20% 감소 + 초당 체력 6 회복 · 움직여도 끊기지 않음'},
+  puppeteer:{name:'바느질', kind:'hit', desc:'실이 달린 바늘을 조준한 방향으로 발사 · 맞은 상대와 실이 이어지고 이동속도 25% 감소, 실로 이어진 동안 내가 받는 피해의 50%를 상대도 받음 · 맞히면 쿨타임 없이 바로 바늘 빼기를 쓸 수 있음 (최대 8초) · 바늘 빼기: 실을 당겨 상대에게 30 피해를 주고 실이 끊김, 쿨타임은 바늘 빼기를 쓴 뒤부터 돌아요 (못 맞히면 바로 쿨타임)'},
+  kan:      {name:'독두꺼비 함정', kind:'hit', desc:'바라보는 방향으로 독 두꺼비를 던짐 · 포물선으로 날아가 바닥에 닿으면 그 바닥이 독 바닥이 됨 (15초, 최대 2개, 나에게만 보임) · 적이 밟으면 독 바닥이 나타나고 3초 뒤 사라짐 · 밟은 적은 3초 동안 0.5초마다 5 피해'},
   pistol:   {name:'속사',        kind:'buff', desc:'1.8초 동안 연사 속도 2배'},
   smg:      {name:'연막탄',      kind:'hit',  desc:'주변 적을 2.5초 동안 둔화'},
   bow:      {name:'백스텝',      kind:'move', desc:'뒤로 도약하며 활 재장전이 즉시 끝남'},
@@ -11157,13 +11214,11 @@ const SKILL_SFX={buff:'skill_buff', hit:'skill_hit', move:'skill_move'};
 const SANDSTORM_LEN=1725, SANDSTORM_H=360, SANDSTORM_KB=1200, SANDSTORM_SLOW_SEC=3.5, SAND_SLOW_MULT=0.3, SANDSTORM_DMG=36, SANDSTORM_STUN=2.0;     // the sandstorm of 호렘헵: reach, height, push, how long and how much it slows
 const BUFF_ORDER=['barrier','guard','reflect','focus','rapid','haste','rest'];
 const BUFF_COLORS={barrier:'#c17bff', guard:'#6ec6ff', reflect:'#ffffff', focus:'#ff8a3d', rapid:'#ffd34d', haste:'#7ef0a8', rest:'#ffc93c'};
-const PZ_REST_SEC=3, PZ_REST_CUT=0.4, PZ_REST_HPS=12;      // 피사로's skill 정복자의 휴식: 3 s, 40% less damage, 12 hp every second; walking, jumping or dashing breaks it
+const PZ_REST_SEC=3, PZ_REST_CUT=0.2, PZ_REST_HPS=6;      // 피사로's skill 정복자의 휴식: 3 s, 20% less damage, 6 hp every second (moving no longer breaks it)
 function pzRestTick(tS){
   for(const id in players){
     const p=players[id]; if(!p.buffs || !(p.buffs.rest>tS)){ if(p.restLast!==undefined) p.restLast=undefined; continue; }
     if(!p.alive){ p.buffs.rest=0; continue; }
-    const i=p.input||{};
-    if(i.left||i.right||i.jump||i.dash){ p.buffs.rest=0; p.restLast=undefined; continue; }          // moving ends the rest
     if(p.restLast===undefined){ p.restLast=tS; p.restAcc=0; }
     const dt=Math.min(0.1, Math.max(0, tS-p.restLast)); p.restLast=tS;
     const before=p.hp; p.hp=Math.min(maxHpFor(p), p.hp+PZ_REST_HPS*dt); p.restAcc=(p.restAcc||0)+(p.hp-before);
@@ -11180,7 +11235,7 @@ function skillActiveBuff(p, tSec){
 // part of an incoming hit is given back (hp restored) while a guard / barrier is up; returns the damage that really got through
 // 인형술사 궁극기: 가장 가까운 상대를 PUP_SEC초 동안 조종한다 (조종당하는 쪽은 인형술사의 입력대로 움직이고 일반 공격만 하며, 인형술사의 몸은 데미지 50% 감소)
 const PUP_SEC=5, PUP_RANGE=700;
-const SEW_PULL_NAME='바늘 빼기';
+const SEW_PULL_NAME='바늘 빼기', SEW_SHARE=0.5;
 const PUP_BLAST_SELF=60, PUP_BLAST_NEAR=30, PUP_BLAST_R=220;     // when the 5 seconds are over the puppet blows itself up: 60 to it, 30 to every enemy of the puppeteer around it
 const SEW_MAX_SEC=8, SEW_SLOW_MULT=0.75, SEW_DMG=30;             // 바느질 (the needle with a thread) ties the one it hits for at most 8 s: 25% slower until 바늘 빼기 (30 damage) cuts the thread
 let puppetOK=false;                    // true only while the tick itself runs a controlled player's dash / shot
@@ -11232,7 +11287,7 @@ function skillMitigate(target, dmg, tMs){
   if(target.darkSub){ target.hp=Math.min(maxHpFor(target), target.hp+dmg); return 0; }                                         // 쿠루스 inside his darkness: nothing reaches him
   const tSec=tMs/1000; let left=dmg;
   if(puppetMaster(target,tSec)){ const back=left*0.5; target.hp=Math.min(maxHpFor(target), target.hp+back); left-=back; }   // 인형술사: half the damage while he pulls the strings
-  if(skillHasBuff(target,'rest',tSec)){ const back=left*PZ_REST_CUT; target.hp=Math.min(maxHpFor(target), target.hp+back); left-=back; }       // 정복자의 휴식: 40% of every hit is given back
+  if(skillHasBuff(target,'rest',tSec)){ const back=left*PZ_REST_CUT; target.hp=Math.min(maxHpFor(target), target.hp+back); left-=back; }       // 정복자의 휴식: 20% of every hit is given back
   if(skillHasBuff(target,'guard',tSec)){ const back=left*0.5; target.hp=Math.min(maxHpFor(target), target.hp+back); left-=back; }
   if(target.barrier && target.barrier.until>tSec && target.barrier.hp>0 && left>0){
     const ab=Math.min(left, target.barrier.hp); target.barrier.hp-=ab; target.hp=Math.min(maxHpFor(target), target.hp+ab); left-=ab;
@@ -11360,14 +11415,12 @@ const SKILL_IMPL={
     spawnBullet(p, (hasAim(ax,ay)?aimAngleOf(p,ax,ay):(p.angle||0)), {id:'puppeteer', bulletSpeed:1400, life:0.75, dmg:0, hitR:18}, {pthread:true, sew:true});   // 바느질: the needle with the thread
     return true;
   },
-  kan(p,tSec,tMs){
-    const mine=poisonZones.filter(z=>z.owner===p.id);
-    if(mine.length>=KAN_TRAP_MAX) poisonZones.splice(poisonZones.indexOf(mine[0]),1);
-    poisonZones.push({id:++wallSeq, owner:p.id, team:p.team, x:p.x, y:p.y, r:KAN_TRAP_R, until:tSec+KAN_TRAP_SEC, last:{}});
-    pushFx('skillring', p.x, p.y-6, tMs, {color:'#2fb87a', r:KAN_TRAP_R});
+  kan(p,tSec,tMs,ax){              // 독 두꺼비 함정: the toad is thrown the way 칸 faces, flies in an arc and turns the floor it lands on into a hidden poison floor
+    const d=skillAimDir(p,ax), ang=(d>0)?-0.62:Math.PI+0.62;
+    spawnBullet(p, ang, {id:'kan', bulletSpeed:KAN_TOAD_SPEED, life:3, dmg:0, hitR:10}, {toad:true, arcs:true, color:'#2fb87a'});
     return true;
   },
-  pizarro(p,tSec,tMs){          // 정복자의 휴식: stand still for 3 s - 40% less damage and 12 hp a second (moving breaks it)
+  pizarro(p,tSec,tMs){          // 정복자의 휴식: 3 s - 20% less damage and 6 hp a second
     skillSetBuff(p,'rest',PZ_REST_SEC,tSec); p.restLast=undefined;
     pushFx('skillring', p.x, p.y-30, tMs, {color:'#ffd34d', r:70});
     return true;
@@ -12431,7 +12484,7 @@ function botWantsSkill(p, target, d, tSec){
     case 'flamethrower': return d<135;
     case 'portalgun': { const old=p.hist && p.hist.find(h=>tSec-h.t<=2.2 && tSec-h.t>=1.6); return !!old && old.hp-p.hp>=60; }
     case 'vacuum': return d>110 && d<260;
-    case 'kan': return d>60 && d<520 && Math.abs(target.y-p.y)<140;                 // the frog trap: at a medium distance, under the enemy's feet
+    case 'kan': return d>140 && d<560 && Math.abs(target.y-p.y)<160;                // the toad: thrown toward an enemy at a medium distance
     case 'kurus': return d<DARK_SWORD_RANGE+10 && Math.abs(target.y-p.y)<60;     // the dark sword only reaches up close
   }
   return false;
@@ -12559,8 +12612,9 @@ function botBrainCtf(p, ai, t, inp){
   const byDist=(x,y)=>mates.slice().sort((a,b)=>Math.hypot(a.x-x,a.y-y)-Math.hypot(b.x-x,b.y-y));
   const collector = ai.personality==='collector';                  // the collector only ever goes for the flag (never hunts a thief, never defends)
   const thief = own.state==='carried' ? players[own.carrierId] : null;
-  if(!collector && thief && thief.alive && thief.x!==undefined){
-    if(byDist(thief.x, thief.y).slice(0,2).some(o=>o.id===p.id)){ ai.tgt=thief.id; return {goalX:thief.x, goalY:thief.y}; }
+  if(thief && thief.alive && thief.x!==undefined){
+    const standoff = en.state==='carried' && players[en.carrierId] && players[en.carrierId].team===myT;     // both flags are out: nobody can score until ours comes back, so every bot but our carrier hunts the thief
+    if(standoff || (!collector && byDist(thief.x, thief.y).slice(0,2).some(o=>o.id===p.id))){ ai.tgt=thief.id; return {goalX:thief.x, goalY:thief.y}; }
   }
   if(!collector && own.state==='dropped'){ const c=byDist(own.x, own.y)[0]; if(c && c.id===p.id) return {goalX:own.x, goalY:own.y}; }
   if(en.state==='dropped'){ const c=byDist(en.x, en.y)[0]; if(c && c.id===p.id) return {goalX:en.x, goalY:en.y}; }
@@ -12841,6 +12895,7 @@ function botMoveStep(p, ai, inp, t){
   else if(ai.hopAt!==undefined && ai.hopAt!==null){ if(p.grounded && botHeadroomClear(p) && t>=ai.jumpOkAt){ inp.jump=true; ai.jumpOkAt=t+450; } ai.hopAt=null; }
   if(gameMode==='dashbr' && (inp.left||inp.right) && t/1000-(p.lastDash===undefined?-9999:p.lastDash)>=(ai.dbGap||0)){ inp.dash=true; ai.dbGap=0.9+Math.random()*0.9; }   // infinite-dash battle royale: bots keep dashing whenever they move (the lava guard below can still cancel it)
   botLavaGuard(p, inp, t);
+  botMineGuard(p, inp, t);
 }
 // 화산 지대: the floor pools glow from 5 s into every cycle and burn from 7 s. A bot stays out of a pool from 4 s on and leaves one it is standing in.
 function botLavaGuard(p, inp, t){
@@ -12865,6 +12920,20 @@ function botLavaGuard(p, inp, t){
       return;
     }
   }
+}
+// 광산: the mine cart runs along the floor (50 damage and a big knockback). A bot on the rails jumps over it just before it arrives, and when the cart is slow (turning round) it walks away from it instead.
+function botMineGuard(p, inp, t){
+  if(!MAP || MAP.hazard!=='mine' || !p.alive || p.x===undefined) return;
+  const C=MINE_CART, gy=MAP.platforms[0].y; if(p.y<gy-C.h+6) return;
+  const ts=t/1000, cxAt=s=>C.base+C.amp*Math.sin(2*Math.PI*s/C.period), reach=C.w/2+PLAYER_W/2+10;
+  let hitIn=null; for(let k=0;k<=0.9;k+=0.05){ if(Math.abs(p.x-cxAt(ts+k))<reach){ hitIn=k; break; } }
+  if(hitIn===null) return;
+  const cx=cxAt(ts), cv=C.amp*2*Math.PI/C.period*Math.cos(2*Math.PI*ts/C.period), away=(p.x>=cx)?1:-1;
+  if(!p.grounded){ if(p.vy>-200){ inp.left=away<0; inp.right=away>0; } return; }              // in the air over the rails: drift away from it
+  if(Math.abs(cv)>160){
+    if(hitIn<=0.16){ inp.jump=true; inp.left=inp.right=false; inp.dash=false; }                     // jump straight up: the cart rolls under
+    else { if(hitIn<0.8) inp.jump=false; if((inp.left && away>0) || (inp.right && away<0)){ inp.left=inp.right=false; inp.dash=false; } }  // wait for the right moment (an early jump lands on it) and do not walk into it
+  } else { inp.left=away<0; inp.right=away>0; }
 }
 // A practice dummy: a player-shaped target that never attacks. 'still' stands where it was put; 'moving' walks back and forth along its platform and hops now and then.
 function botDummyThink(p, t, dt){
@@ -12938,7 +13007,6 @@ function botsThink(dt, t){
     if(p.isDummy){ botDummyThink(p, t, dt); continue; }
     if(grace){ const i=p.input; i.left=i.right=i.shoot=i.jump=i.dash=i.down=false; continue; }
     botThink(p, t, dt);
-    if(p.weapon==='pizarro' && skillHasBuff(p,'rest',t/1000)){ const i=p.input; i.left=i.right=i.jump=i.dash=false; }       // a resting 피사로 stands still (and keeps thrusting)
   }
 }
 
@@ -13406,10 +13474,16 @@ function hostTickCore(dt,t){
         if(p.poisonAccT>=0.5){ if(p.poisonAcc>=1) pushFx('dmg', p.x, p.y-PLAYER_H-6, t, {v:Math.round(p.poisonAcc), color:'#0e7a30', el:'poison'}); p.poisonAcc=0; p.poisonAccT=0; }
         if(p.hp<=0 && beforeHp>0){ handleDeath(p, players[p.poison.owner], t, p.poison.ownerName); continue; } }
     }
+    if(p.toadPois){      // 독 바닥: 5 damage every 0.5 s for 3 s
+      const tp=p.toadPois, tS=t/1000;
+      while(tp.left>0 && tS>=tp.next){ tp.next+=KAN_TOAD_TICK; tp.left--; p.hp-=KAN_TOAD_DMG; markHit(p, tp.owner, t, KAN_TOAD_DMG); pushFx('dmg', p.x, p.y-PLAYER_H-6, t, {v:KAN_TOAD_DMG, color:'#0e7a30', el:'poison'}); }
+      if(tp.left<=0) p.toadPois=null;
+      if(p.hp<=0 && beforeHp>0){ handleDeath(p, players[tp.owner], t, tp.ownerName); continue; }
+    }
     if(p.hp<=0 && beforeHp>0){ handleDeath(p,null,t); continue; }
     p.ultOn = !!p.ultPending || (p.rushUntil>t/1000) || p.batting || (p.kanWingsUntil>t/1000);
     p.invis = (p.invisUntil>t/1000);
-    p.burning = !!p.burn; p.poisoned = !!p.poison;
+    p.burning = !!p.burn; p.poisoned = !!p.poison || !!p.toadPois;
     if(matchEnded) continue;
     puppetOK=true;
     if(p.input && p.input.dash && !p.teleportChannel) tryDash(p, p.input, t);
@@ -13557,6 +13631,7 @@ function hostTickCore(dt,t){
         if(b.pierce){ b.hitSet=b.hitSet||{}; if(b.hitSet[id]) continue; }
         const cy=p.y-PLAYER_H/2;
         if(dist(nx,ny,p.x,cy) <= PLAYER_H/2+(b.hitR||BULLET_R)){
+          if(b.toad) continue;      // the toad flies over people, it only stops on the floor
           if(gameMode==='hideseek'){
             handleHideseekShot(p, players[b.owner], t);
             hit=true; break;
@@ -13607,6 +13682,7 @@ function hostTickCore(dt,t){
         }
       }
     }
+    if(hit && b.toad) kanToadLand(b, nx, ny, hitPl, t);
     if(hit && b.wid==='kurus') darkPotionLand(b, nx, ny, hitPl, hitWho, hitPlatform, t);
     if(hit && b.splash){ explodeAt(nx, ny, b, t); pushFx('explosion', nx, ny, t, {}); }
     else if(hit && hitPlatform && !b.dmgless){ pushFx('spark', nx, ny, t, {color:b.color, ang:Math.atan2(b.vy,b.vx)}); }
@@ -13649,7 +13725,7 @@ function hostTickCore(dt,t){
       bullets:bullets.map(b=>({x:b.x,y:b.y,color:b.color,wid:b.wid,vx:b.vx,vy:b.vy,dmgless:b.dmgless,swingAngle:b.swingAngle,splash:b.splash,life:b.life,life0:b.life0,sx:b.spawnX,sy:b.spawnY,ult:b.ult,fire:b.fire,reach:b.reach})),
       walls:walls.map(w=>({x:w.x,y:w.y,w:w.w,h:w.h,owner:w.owner,rem:w.until-t/1000})),
       magicCircles:magicCircles.map(z=>({x:z.x,y:z.y,r:z.r,owner:z.owner,team:z.team,rem:z.until-t/1000})),
-      poisonZones:poisonZones.map(z=>({x:z.x,y:z.y,r:z.r,owner:z.owner,team:z.team,rem:z.until-t/1000})),
+      poisonZones:poisonZones.map(z=>({x:z.x,y:z.y,r:z.r,owner:z.owner,team:z.team,rem:z.until-t/1000,rv:(z.revealAt!==undefined)?1:0})),
       hz:hzDraw,
       turrets:turrets.map(z=>({x:Math.round(z.x),y:Math.round(z.y),a:Math.round(z.ang*100)/100,owner:z.owner,team:z.team,rem:z.until-t/1000})),
       dark:darkSnap(t),
@@ -13700,7 +13776,7 @@ function handleDeath(p, killer, t, killerNameFallback){
   pushFx('death', p.x, p.y-PLAYER_H/2, t, {color:p.color});
   if(killer && killer.id!==p.id && killer.cos && killer.cos.kfx) pushFx('kfx', (MAP?clamp(p.x,40,MAP.arenaW-40):p.x), (MAP?clamp(p.y-PLAYER_H/2,50,MAP.arenaH-60):p.y-PLAYER_H/2), t, {k:killer.cos.kfx, vc:p.color});
   p.cardDmg=0; p.queenUntil=0; p.puppetUntil=0; p.puppetTarget=null; p.puppetBy=null; p.buffs={}; p.barrier=null; p.buff=null; p.hasted=false; p.focusOn=false;
-  p.ultPending=null; p.rushUntil=0; p.invisUntil=0; p.burn=null; p.poison=null; p.kanWingsUntil=0; p.batUntil=0; p.batting=false; p.batDamageDealt=0; p.slowUntil=0; p.slowed=false; p.sandSlowUntil=0; p.sandSlowed=false; p.gambleDouble=false; p.teleportChannel=null; p.stunUntil=0; p.stunned=false; p.cardSlowUntil=0; p.cardSlowed=false; swordEnd(p);
+  p.ultPending=null; p.rushUntil=0; p.invisUntil=0; p.burn=null; p.poison=null; p.toadPois=null; p.kanWingsUntil=0; p.batUntil=0; p.batting=false; p.batDamageDealt=0; p.slowUntil=0; p.slowed=false; p.sandSlowUntil=0; p.sandSlowed=false; p.gambleDouble=false; p.teleportChannel=null; p.stunUntil=0; p.stunned=false; p.cardSlowUntil=0; p.cardSlowed=false; swordEnd(p);
   p.flameHeldSince=null; p.flameOverheatUntil=0; p.flaming=false; p.flameFxTimer=0;
   p.portalPair=null; p.portalCooldownUntil=0;
   p.vacuumStacks=0; p.chips=0; p.darkSub=null; p.darkArmUntil=0; p.darkLand=null;
@@ -14416,7 +14492,7 @@ function finishDuelRepick(){
     const p=players[id]; map[id]=p.weapon;
     if(gameMode!=='tournament'){ p.duelUsed=(p.duelUsed||[]); if(p.weapon && !p.duelUsed.includes(p.weapon)) p.duelUsed.push(p.weapon); }
     p.lastDash=clock; p.lastTeleport=clock; p.lastUlt=clock; p.lastSkill=clock; p.skillUses=0; p.ultUses=0; p.lastShot=0;
-    p.cardDmg=0; p.queenUntil=0; p.puppetUntil=0; p.puppetTarget=null; p.puppetBy=null; p.buffs={}; p.barrier=null; p.buff=null; p.hasted=false; p.focusOn=false; p.ultPending=null; p.rushUntil=0; p.invisUntil=0; p.burn=null; p.poison=null; p.kanWingsUntil=0; p.batUntil=0; p.batting=false; p.slowUntil=0; p.slowed=false;
+    p.cardDmg=0; p.queenUntil=0; p.puppetUntil=0; p.puppetTarget=null; p.puppetBy=null; p.buffs={}; p.barrier=null; p.buff=null; p.hasted=false; p.focusOn=false; p.ultPending=null; p.rushUntil=0; p.invisUntil=0; p.burn=null; p.poison=null; p.toadPois=null; p.kanWingsUntil=0; p.batUntil=0; p.batting=false; p.slowUntil=0; p.slowed=false;
     p.flameHeldSince=null; p.flameOverheatUntil=0; p.flaming=false; p.portalPair=null; p.portalCooldownUntil=0; p.vacuumStacks=0; p.pzStacks=0; p.pzMarkUntil=0; p.chips=0; p.freeVolleys=0; p.darkSub=null; p.darkArmUntil=0; p.darkLand=null;
   }
   }catch(e){ recordDiagError('duel-finish', e); console.error('[duel] re-pick finish:', e); }
@@ -16045,7 +16121,10 @@ function drawPoisonZones(){
   const now=performance.now();
   for(const z of poisonZones){
     if(!tnOwnerShown(z.owner)) continue;
-    const fade=Math.min(1,(z.rem===undefined?1:z.rem)/0.6);
+    const shown=(z.revealAt!==undefined) || z.rv || z.owner===myId;      // the poison floor: only 칸 sees it until somebody steps on it
+    if(!shown) continue;
+    let rem=z.rem; if(rem===undefined) rem=z.until-performance.now()/1000;
+    const fade=Math.min(1,rem/0.6)*((z.revealAt!==undefined || z.rv)?1:0.55);
     ctx.save(); ctx.globalAlpha=0.9*fade;
     const g=ctx.createRadialGradient(z.x,z.y,0,z.x,z.y,z.r); g.addColorStop(0,'rgba(20,120,50,0.55)'); g.addColorStop(0.85,'rgba(20,100,45,0.4)'); g.addColorStop(1,'rgba(20,100,45,0)');
     ctx.fillStyle=g; ctx.beginPath(); ctx.ellipse(z.x,z.y,z.r,z.r*0.3,0,0,7); ctx.fill();
@@ -16425,7 +16504,7 @@ function drawStickman(p){
   const luxLv=(skinId && COSMETICS[skinId] && COSMETICS[skinId].lux) || 0, luxNow=performance.now(), luxSeed=((p.id||'').length*7+((p.id||'x').charCodeAt(0)||0))%97;
   if(luxLv && p.alive!==false) drawSkinLux(ctx, luxLv, skinTint, luxNow, luxSeed, 'back');
   if(p.kw && p.alive!==false) drawKanWings(ctx, luxNow);
-  if(p.pp && players[p.pp] && p.alive!==false){ const q=players[p.pp], dx=(q.x-p.x), dy=(q.y-p.y); ctx.save(); ctx.strokeStyle='#ffd0e6'; ctx.lineWidth=1.6; ctx.globalAlpha=0.9; ctx.setLineDash([6,4]); ctx.lineDashOffset=-performance.now()/40; ctx.beginPath(); ctx.moveTo(0,-34); ctx.quadraticCurveTo(dx/2, Math.min(-34,dy-60)-24, dx, dy-60); ctx.stroke(); ctx.restore(); }   // 인형술사: the strings to his puppet if(p.sw && players[p.sw] && p.alive!==false){ const q=players[p.sw], dx=(q.x-p.x), dy=(q.y-p.y); ctx.save(); ctx.strokeStyle='#ff9ecb'; ctx.lineWidth=2; ctx.globalAlpha=0.95; ctx.beginPath(); ctx.moveTo(0,-34); ctx.quadraticCurveTo(dx/2, Math.min(-34,dy-60)+Math.sin(performance.now()/160)*6, dx, dy-60); ctx.stroke(); ctx.restore(); }   // 바느질: the thread to the one it holds
+  if(p.pp && players[p.pp] && p.alive!==false){ const q=players[p.pp], dx=(q.x-p.x), dy=(q.y-p.y); ctx.save(); ctx.strokeStyle='#ffd0e6'; ctx.lineWidth=1.6; ctx.globalAlpha=0.9; ctx.setLineDash([6,4]); ctx.lineDashOffset=-performance.now()/40; ctx.beginPath(); ctx.moveTo(0,-34); ctx.quadraticCurveTo(dx/2, Math.min(-34,dy-60)-24, dx, dy-60); ctx.stroke(); ctx.restore(); }   // 인형술사: the strings to his puppet if(p.sw && players[p.sw] && p.alive!==false){ const q=players[p.sw], dx=(q.x-p.x), dy=(q.y-p.y); ctx.save(); const cy2=Math.min(-34,dy-60)+Math.sin(performance.now()/160)*6; ctx.lineCap='round'; for(const [lw,col,al] of [[7,'#ff5fa8',0.35],[3.5,'#ffd0e6',1]]){ ctx.strokeStyle=col; ctx.lineWidth=lw; ctx.globalAlpha=al; ctx.beginPath(); ctx.moveTo(0,-34); ctx.quadraticCurveTo(dx/2, cy2, dx, dy-60); ctx.stroke(); } ctx.restore(); }   // 바느질: the thread to the one it holds
   if(p.pm && p.alive!==false) drawPizarroMark(ctx, luxNow);
   if(p.weapon==='pizarro' && p.alive!==false) drawPizarroAura(ctx, p, luxNow);      // 기세: a golden glow that grows with every stack, flames at the feet at the 4th, gold marks over the head      // a tier skin: the aura, the sunburst and the rings behind the body
   if(p.invis) ctx.globalAlpha=0.35;
