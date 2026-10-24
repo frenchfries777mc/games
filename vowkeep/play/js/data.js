@@ -1,7 +1,7 @@
 // Vowkeep · © 2026 Frenchfries777 · CC BY-NC-ND 4.0
 // 게임 데이터: 역할, 적, 축복, 1장 지도
 
-export const VERSION = 'v0.1', BUILD = 39;
+export const VERSION = 'v0.1', BUILD = 40;
 
 export const ROLES = {
   knight: {
@@ -281,7 +281,7 @@ export const CHAPTERS = [
       '하랄드가 떨리는 손으로 남쪽 산을 가리켰어요. "불꽃은... 잊힌 광산에서 캐낸 돌이다."',
       '네 사람은 눈보라를 뚫고 광산으로 향했어요.'
     ],
-    boss: { name: '서리 맹세의 하랄드', ai: 'king', hp: 15000, speed: 4.0, r: 1.5, dmg: 50, col: 0x6ad0ff, fig: { body: 0x4a5a6a, helmC: 0x9ab0c8, eye: 0x6ad0ff, great: 0xb8d8f0, greatE: 0x6ad0ff, cape: 0x2a4a6a, crown: 0 }, p2: ['하랄드가 얼어붙은 형제들을 깨워요', '돌진은 기사가 막기로 받아칠 수 있어요'], p3: ['요새 전체가 얼음 불꽃에 휩싸여요', '얼음 불길을 피하고 빈틈을 노려요'], ph: ['형제 소환', '얼음 불꽃'] },
+    boss: { name: '서리 맹세의 하랄드', ai: 'king', pat: 'frost', hp: 15000, speed: 4.0, r: 1.5, dmg: 50, col: 0x6ad0ff, fig: { body: 0x4a5a6a, helmC: 0x9ab0c8, eye: 0x6ad0ff, great: 0xb8d8f0, greatE: 0x6ad0ff, cape: 0x2a4a6a, crown: 0 }, p2: ['하랄드가 얼어붙은 형제들을 깨워요', '얼음 창 세 줄 사이로 비켜서요. 맞으면 몸이 얼어 느려져요'], p3: ['요새 천장에서 고드름이 떨어져요', '발밑 그림자를 보고 계속 움직여요'], ph: ['형제 소환', '얼음 불꽃'] },
     theme: 'frost'
   },
   {
@@ -297,7 +297,7 @@ export const CHAPTERS = [
       '벽에는 불꽃을 섬기는 사원의 문장이 새겨져 있었어요.',
       '누군가 이 돌을 사원으로 실어 날랐던 거예요.'
     ],
-    boss: { name: '돌을 삼킨 거인 그롬', ai: 'hunter', hp: 16000, speed: 4.4, r: 1.5, dmg: 52, col: 0xffb060, fig: { body: 0x5a4a3a, leg: 0x3a3028, arm: 0x5a4a3a, hood: 0x4a3a2a, antler: 0, cape: 0x3a2a1a, skinC: 0x8a7a6a, eye: 0xffb060, scale: 2.3 }, p2: ['그롬이 갱도의 짐승들을 불러요', '짐승부터 쓰러뜨리고 도약은 굴러서 피해요'], p3: ['무너지는 돌이 갱도를 막아요', '돌 고리 안쪽으로 파고들어요'], ph: ['갱도 짐승', '무너지는 돌'] },
+    boss: { name: '돌을 삼킨 거인 그롬', ai: 'hunter', pat: 'giant', hp: 16000, speed: 4.4, r: 1.5, dmg: 52, col: 0xffb060, fig: { body: 0x5a4a3a, leg: 0x3a3028, arm: 0x5a4a3a, hood: 0x4a3a2a, antler: 0, cape: 0x3a2a1a, skinC: 0x8a7a6a, eye: 0xffb060, scale: 2.3 }, p2: ['그롬이 몸을 말아 굴러다녀요', '벽에 튕겨 세 번까지 굴러요. 길목에서 비켜서요'], p3: ['무너지는 돌이 갱도에 쏟아져요', '발 구르기는 멀리, 바위는 옆으로 피해요'], ph: ['갱도 짐승', '무너지는 돌'] },
     theme: 'mine'
   },
   {
@@ -313,7 +313,7 @@ export const CHAPTERS = [
       '세라핀은 웃으며 말했어요. "불꽃은 심연에서 올라온다. 너희가 닿기 전에 모든 것이 탈 것이다."',
       '사원 제단 아래로, 끝이 보이지 않는 계단이 열렸어요.'
     ],
-    boss: { name: '불꽃의 예언자 세라핀', ai: 'bishop', hp: 15000, speed: 3.3, r: 1.3, dmg: 50, col: 0xff8a30, fig: { body: 0x8a2a1a, leg: 0x5a1a10, arm: 0x8a2a1a, skinC: 0xb09080, eye: 0xffb040, staffC: 0xff8a30, cape: 0x6a3a10 }, p2: ['세라핀이 불꽃 신도들을 불러요', '순간이동한 자리를 놓치지 말아요'], p3: ['사원 바닥에서 불길이 솟아요', '불길을 피하며 끝까지 버텨요'], ph: ['신도 소환', '솟는 불길'] },
+    boss: { name: '불꽃의 예언자 세라핀', ai: 'bishop', pat: 'prophet', hp: 15000, speed: 3.3, r: 1.3, dmg: 50, col: 0xff8a30, fig: { body: 0x8a2a1a, leg: 0x5a1a10, arm: 0x8a2a1a, skinC: 0xb09080, eye: 0xffb040, staffC: 0xff8a30, cape: 0x6a3a10 }, p2: ['세라핀이 불꽃 신도들을 불러요', '십자 불기둥은 선과 선 사이로 피해요'], p3: ['세라핀 둘레로 불기둥이 돌아가요', '돌아가는 불기둥을 따라 함께 돌아요'], ph: ['신도 소환', '솟는 불길'] },
     theme: 'temple'
   },
   {
@@ -329,7 +329,7 @@ export const CHAPTERS = [
       '네 사람은 그 불씨를 서약의 탑으로 가져가 모두를 지키는 등불로 바꾸었어요.',
       '사람들은 끝까지 서약을 지킨 네 사람을 Vowkeep, 서약을 지킨 자들이라 불렀어요.'
     ],
-    boss: { name: '꺼지지 않는 불꽃', ai: 'king', hp: 18000, speed: 4.2, r: 1.6, dmg: 52, col: 0xb06aff, fig: { body: 0x2a2234, helmC: 0x3a2a48, eye: 0xd08aff, great: 0x4a3a5a, greatE: 0xb06aff, cape: 0x3a1a5a, crown: 1, scale: 2.5 }, p2: ['불꽃이 깨진 서약의 기사들을 불러내요', '돌진은 기사가 막기로 받아칠 수 있어요'], p3: ['심연 전체가 보랏빛 불꽃으로 타올라요', '불길을 피하고 마지막 일격을 노려요'], ph: ['깨진 서약 소환', '심연의 불꽃'] },
+    boss: { name: '꺼지지 않는 불꽃', ai: 'king', pat: 'flame', hp: 18000, speed: 4.2, r: 1.6, dmg: 52, col: 0xb06aff, fig: { body: 0x2a2234, helmC: 0x3a2a48, eye: 0xd08aff, great: 0x4a3a5a, greatE: 0xb06aff, cape: 0x3a1a5a, crown: 1, scale: 2.5 }, p2: ['불꽃이 깨진 서약의 기사들을 불러내요', '소용돌이 불꽃은 세 번 이어서 퍼져요'], p3: ['심연 하늘에서 불덩이가 쏟아져요', '불덩이 그림자를 피하고 마지막 일격을 노려요'], ph: ['깨진 서약 소환', '심연의 불꽃'] },
     theme: 'abyss'
   }
 ];
