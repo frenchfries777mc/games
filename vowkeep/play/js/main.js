@@ -473,7 +473,7 @@ function localMove(p, inp, dt) {
   const fl = S.snap.w.fl && S.snap.w.fl[2] === p.id;
   if (inp.roll && !fl && L.rollCd <= 0 && !(L.roll > 0)) { L.roll = 0.35; L.rollCd = 1.2 * ((p.b || []).indexOf('roll') >= 0 ? 0.6 : 1); const ra = ml > 0.1 ? Math.atan2(mz, mx) : p.a; L.rdx = Math.cos(ra); L.rdz = Math.sin(ra); }
   if (L.roll > 0) { L.roll -= dt; L.x += L.rdx * 15 * dt; L.z += L.rdz * 15 * dt; }
-  else { const sp = R.speed * ((p.b || []).indexOf('feet') >= 0 ? 1.12 : 1) * (p.ra ? 1.3 : 1) * (p.bk ? 0.8 : 1) * (fl ? 0.7 : 1); L.x += mx * sp * dt; L.z += mz * sp * dt; }
+  else { const sp = R.speed * ((p.b || []).indexOf('feet') >= 0 ? 1.12 : 1) * (p.ra ? 1.3 : 1) * (p.bk ? 0.8 : 1) * (fl ? 0.7 : 1) * (p.cl ? 0.6 : 1); L.x += mx * sp * dt; L.z += mz * sp * dt; }
   mapCollide(L, 0.6);
   if (!liftOk(ox, oz, L.x, L.z)) { L.x = ox; L.z = oz; }
 }
@@ -610,6 +610,11 @@ function onEvent(e) {
     case 'bossIntro': { talk('boss', 3400); bigMsg(CH.boss.name, MAP.areas.find(a => a.boss).line, 3400); const b = S.snap && S.snap.en.find(q => q.k === 'boss'); if (b) { view.focusOn(b.x, b.z, 3); view.shock(b.x, b.z, 8, 0xff5a3a, 0.8); view.flash(b.x, b.z, 0xff5a3a, 200); } view.shake = Math.max(view.shake, 0.8); letterbox(3000); break; }
     case 'bvolley': SFX.play('arrow'); view.burst(e.x, 1.8, e.z, 0xffb060, 8, 4, 0.3, 0.1); break;
     case 'nova': SFX.play('orb'); { const nc = CH.boss.col || (CH.boss.ai === 'king' ? 0xff7a20 : 0x6ab0ff); view.shock(e.x, e.z, 4, nc, 0.4); view.flash(e.x, e.z, nc, 120); } break;
+    case 'zfx': { // 늦게 터지는 보스 장판: 얼음 창, 불기둥, 고드름, 불덩이
+      const col = { lance: 0x9ad8ff, icicle: 0xc8ecff, frostnova: 0x6ad0ff, beam: 0xff8a30, meteor: 0xb06aff }[e.f] || 0xffffff;
+      if (e.len) { for (let i = 1; i <= 5; i++) { const x = e.x + Math.cos(e.a) * e.len * i / 5, z = e.z + Math.sin(e.a) * e.len * i / 5; view.burst(x, 0.6, z, col, 6, 5, 0.5, 0.12); if (i % 2) view.column(x, z, col, 0.4); } view.flash(e.x, e.z, col, 90); SFX.play(e.f === 'beam' ? 'fire' : 'clang'); }
+      else { if (e.f === 'frostnova') view.shock(e.x, e.z, e.r || 6, col, 0.5); else view.column(e.x, e.z, col, 0.7); view.burst(e.x, 0.5, e.z, col, 14, 6, 0.6, 0.14); view.flash(e.x, e.z, col, 100); view.shake = Math.max(view.shake, 0.4); SFX.play('slam'); }
+      break; }
     case 'pillar': view.column(e.x, e.z, 0x6ab0ff, 0.9); view.burst(e.x, 0.5, e.z, 0x9ad0ff, 14, 6, 0.6, 0.14); view.flash(e.x, e.z, 0x6ab0ff, 80); SFX.play('slam'); break;
     case 'blink': view.column(e.x, e.z, 0x9ad0ff, 0.5); view.rise(e.x, e.z, 0x9ad0ff, 12, 1.5, 0.7, 6); SFX.play('orb'); break;
     case 'respawn': view.column(e.x, e.z, 0xff9a48); if (e.id === me) bigMsg('모닥불에서 다시 일어났어요', '', 1800); break;
@@ -777,10 +782,10 @@ function drawOverlay(dt) {
     const E = view.ents.get('e' + e.id); if (!E) continue;
     const h = e.k === 'elite' ? 4.6 : 3.4, s = view.project(E.x, h, E.z), w = e.k === 'elite' ? 54 : 38;
     if (e.hp < e.mx) { oc.fillStyle = 'rgba(20,10,14,.85)'; oc.fillRect(s.x - w / 2 - 1, s.y - 1, w + 2, 6); oc.fillStyle = '#d0443a'; oc.fillRect(s.x - w / 2, s.y, w * e.hp / e.mx, 4); }
-    if (e.mk) { oc.fillStyle = '#ff5a4a'; oc.font = 'bold 16px system-ui'; oc.fillText('▼', s.x, s.y - 12); }
-    if (e.sl && !e.sn && !e.mk) { oc.fillStyle = '#7ac8ff'; oc.font = 'bold 12px system-ui'; oc.strokeStyle = '#140f18'; oc.lineWidth = 3; const ly = s.y - (e.k === 'elite' ? 28 : 11); oc.strokeText('둔화', s.x, ly); oc.fillText('둔화', s.x, ly); }
-    if (e.sn) { oc.fillStyle = '#ffe08a'; oc.font = 'bold 14px system-ui'; oc.fillText('★ ★', s.x, s.y - 12); }
-    if (e.k === 'elite') { oc.fillStyle = '#efe3c8'; oc.font = 'bold 13px system-ui'; oc.strokeStyle = '#140f18'; oc.lineWidth = 4; oc.strokeText(FOES[chapterIndex()].elite.name, s.x, s.y - 12); oc.fillText(FOES[chapterIndex()].elite.name, s.x, s.y - 12); }
+    if (e.mk) { oc.fillStyle = '#ff5a4a'; oc.font = 'bold 16px Galmuri, system-ui'; oc.fillText('▼', s.x, s.y - 12); }
+    if (e.sl && !e.sn && !e.mk) { oc.fillStyle = '#7ac8ff'; oc.font = 'bold 12px Galmuri, system-ui'; oc.strokeStyle = '#140f18'; oc.lineWidth = 3; const ly = s.y - (e.k === 'elite' ? 28 : 11); oc.strokeText('둔화', s.x, ly); oc.fillText('둔화', s.x, ly); }
+    if (e.sn) { oc.fillStyle = '#ffe08a'; oc.font = 'bold 14px Galmuri, system-ui'; oc.fillText('★ ★', s.x, s.y - 12); }
+    if (e.k === 'elite') { oc.fillStyle = '#efe3c8'; oc.font = 'bold 13px Galmuri, system-ui'; oc.strokeStyle = '#140f18'; oc.lineWidth = 4; oc.strokeText(FOES[chapterIndex()].elite.name, s.x, s.y - 12); oc.fillText(FOES[chapterIndex()].elite.name, s.x, s.y - 12); }
   }
   // 동료 이름, 쓰러짐
   const tags = [];
@@ -788,27 +793,27 @@ function drawOverlay(dt) {
     if (p.dd) continue; const E = view.ents.get('p' + p.id); if (!E) continue;
     const s = view.project(E.x, 3.9, E.z);
     // 이름표가 겹치면 위로 비켜 올려요
-    if (p.id !== S.me) { for (let k = 0; k < 4 && tags.some(t => Math.abs(t.x - s.x) < 64 && Math.abs(t.y - s.y) < 20); k++) s.y -= 20; tags.push({ x: s.x, y: s.y }); oc.font = 'bold 13px system-ui'; oc.lineWidth = 4; oc.strokeStyle = '#140f18'; const t = p.bot ? ROLES[p.role].name + ' 봇' : p.name; oc.strokeText(t, s.x, s.y - 10); oc.fillStyle = ROLES[p.role].color; oc.fillText(t, s.x, s.y - 10); oc.fillStyle = 'rgba(20,10,14,.85)'; oc.fillRect(s.x - 20, s.y - 1, 40, 6); oc.fillStyle = '#4cc06a'; oc.fillRect(s.x - 19, s.y, 38 * p.hp / p.mx, 4); }
+    if (p.id !== S.me) { for (let k = 0; k < 4 && tags.some(t => Math.abs(t.x - s.x) < 64 && Math.abs(t.y - s.y) < 20); k++) s.y -= 20; tags.push({ x: s.x, y: s.y }); oc.font = 'bold 13px Galmuri, system-ui'; oc.lineWidth = 4; oc.strokeStyle = '#140f18'; const t = p.bot ? ROLES[p.role].name + ' 봇' : p.name; oc.strokeText(t, s.x, s.y - 10); oc.fillStyle = ROLES[p.role].color; oc.fillText(t, s.x, s.y - 10); oc.fillStyle = 'rgba(20,10,14,.85)'; oc.fillRect(s.x - 20, s.y - 1, 40, 6); oc.fillStyle = '#4cc06a'; oc.fillRect(s.x - 19, s.y, 38 * p.hp / p.mx, 4); }
     if (p.dn) {
       const c = view.project(E.x, 1.5, E.z); oc.lineWidth = 5; oc.strokeStyle = 'rgba(20,10,14,.85)'; oc.beginPath(); oc.arc(c.x, c.y - 30, 16, 0, 7); oc.stroke();
       oc.strokeStyle = '#fff0b0'; oc.beginPath(); oc.arc(c.x, c.y - 30, 16, -Math.PI / 2, -Math.PI / 2 + Math.PI * 2 * Math.min(1, p.rv / 1.6)); oc.stroke();
-      oc.fillStyle = '#ff9c94'; oc.font = 'bold 13px system-ui'; oc.fillText(Math.ceil(p.bl), c.x, c.y - 30);
+      oc.fillStyle = '#ff9c94'; oc.font = 'bold 13px Galmuri, system-ui'; oc.fillText(Math.ceil(p.bl), c.x, c.y - 30);
     }
   }
   // 내 연타 수와 집중 상태
   { const p = sn.pl.find(q => q.id === S.me), E = p && view.ents.get('p' + p.id);
     if (E && !p.dn) { const c = view.project(E.x, 4.1, E.z); oc.lineWidth = 4; oc.strokeStyle = '#140f18';
-      if (p.fc) { oc.font = 'bold 13px system-ui'; oc.strokeText('집중 · 피해 +50%', c.x, c.y - 18); oc.fillStyle = '#9ad0ff'; oc.fillText('집중 · 피해 +50%', c.x, c.y - 18); } } }
+      if (p.fc) { oc.font = 'bold 13px Galmuri, system-ui'; oc.strokeText('집중 · 피해 +50%', c.x, c.y - 18); oc.fillStyle = '#9ad0ff'; oc.fillText('집중 · 피해 +50%', c.x, c.y - 18); } } }
   // 무너지는 성: 남은 시간과 출구 방향 화살표
   if (sn.w.es && MAP.exit) {
-    const left = Math.max(0, Math.ceil(sn.w.es[0])), urg = left <= 10; oc.font = 'bold ' + (urg ? 34 : 28) + 'px system-ui'; oc.lineWidth = 6; oc.strokeStyle = '#140f18';
+    const left = Math.max(0, Math.ceil(sn.w.es[0])), urg = left <= 10; oc.font = 'bold ' + (urg ? 34 : 28) + 'px Galmuri, system-ui'; oc.lineWidth = 6; oc.strokeStyle = '#140f18';
     const tx = '출구까지 ' + left + '초'; oc.strokeText(tx, innerWidth / 2, 96); oc.fillStyle = urg && (performance.now() / 250 | 0) % 2 ? '#ff5a4a' : '#ffd36b'; oc.fillText(tx, innerWidth / 2, 96);
     const p = sn.pl.find(q => q.id === S.me), E = p && view.ents.get('p' + p.id);
     if (E) { const ex = cw(MAP.exit[0]), ez = cw(MAP.exit[1]), d = Math.hypot(ex - E.x, ez - E.z); if (d > 6) { const c = view.project(E.x, 1, E.z), f = view.project(E.x + (ex - E.x) / d * 4, 1, E.z + (ez - E.z) / d * 4), a = Math.atan2(f.y - c.y, f.x - c.x), r = 62;
       oc.save(); oc.translate(c.x + Math.cos(a) * r, c.y + Math.sin(a) * r); oc.rotate(a); oc.fillStyle = '#9af0a8'; oc.strokeStyle = '#140f18'; oc.lineWidth = 3; oc.beginPath(); oc.moveTo(14, 0); oc.lineTo(-8, -10); oc.lineTo(-3, 0); oc.lineTo(-8, 10); oc.closePath(); oc.stroke(); oc.fill(); oc.restore(); } }
   }
   // 피해 숫자
-  for (const n of S.nums) { n.t += dt; const s = view.project(n.x, n.y + n.t * 2.2, n.z); oc.globalAlpha = Math.max(0, 1 - n.t / 0.9); oc.font = 'bold ' + Math.round(18 * n.sc) + 'px system-ui'; oc.lineWidth = 4; oc.strokeStyle = '#140f18'; oc.strokeText(n.v, s.x, s.y); oc.fillStyle = n.col; oc.fillText(n.v, s.x, s.y); }
+  for (const n of S.nums) { n.t += dt; const s = view.project(n.x, n.y + n.t * 2.2, n.z); oc.globalAlpha = Math.max(0, 1 - n.t / 0.9); oc.font = 'bold ' + Math.round(18 * n.sc) + 'px Galmuri, system-ui'; oc.lineWidth = 4; oc.strokeStyle = '#140f18'; oc.strokeText(n.v, s.x, s.y); oc.fillStyle = n.col; oc.fillText(n.v, s.x, s.y); }
   oc.globalAlpha = 1; S.nums = S.nums.filter(n => n.t < 0.9);
 }
 // 장을 깼을 때: 명예와 이야기 진행을 저장해요 (한 장에 한 번)
