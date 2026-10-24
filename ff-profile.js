@@ -496,7 +496,7 @@ function hubIds(d, c){
     if((d.played&&d.played[g.id]) || (g.id==='stickseum'&&((+st.matches||0)>0||(+st.xp||0)>0)) || k>0) played++; });
   c=c||{}; var out=['hub_join'];
   if(played>=2) out.push('play_2'); if(played>=3) out.push('play_3'); if(each1) out.push('ach_each');
-  if(total>=10) out.push('ach_10'); if(total>=30) out.push('ach_30'); if(total>=60) out.push('ach_60'); if(each10) out.push('each_10');
+  if(total>=10) out.push('ach_10'); if(total>=30) out.push('ach_30'); if(total>=80) out.push('ach_60');   /* 아이디 ach_60은 그대로 두고 기준만 80개 (달인 칭호와 저장된 기록이 이 아이디에 묶여 있어요) */ if(each10) out.push('each_10');
   if(c.friends>=1) out.push('friend_1'); if(c.friends>=5) out.push('friend_5'); if(c.posts>=1) out.push('post_1'); if(c.comments>=1) out.push('comment_1');
   if(c.chats>=1) out.push('chat_1'); if(c.feedback>=1) out.push('feedback_1');
   return out;
