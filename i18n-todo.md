@@ -347,3 +347,7 @@ crownenvoy/CrownEnvoy-v0.4.html | 전신망 (정치 탭 카드) | "📡 전신�
 - ach/hub.json | ach_60 설명 15개 언어는 숫자만 80으로 고침 (번역 필요 없음) | 2026-10-24
 - patchnotes.json | "허브 도전과제 도전의 왕 80개" 1줄 | 2026-10-24
 - beaconfall/BEACONFALL-v0.3.html b99 | 업적 '비콘 생태 조사서'(kill_all) 이름·설명 | 2026-10-24
+
+## 프로필 카드 게임 6개 (2026-10-24)
+- ff-profile.js | 새 게임 이름은 영어 고유명이라 번역 없음 | 2026-10-24
+- patchnotes.json | "프로필 카드에 게임 6개" 4줄 | 2026-10-24
