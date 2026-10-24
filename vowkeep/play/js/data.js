@@ -1,7 +1,7 @@
 // Vowkeep · © 2026 Frenchfries777 · CC BY-NC-ND 4.0
 // 게임 데이터: 역할, 적, 축복, 1장 지도
 
-export const VERSION = 'v0.1', BUILD = 44;
+export const VERSION = 'v0.1', BUILD = 45;
 
 export const ROLES = {
   knight: {
@@ -39,10 +39,10 @@ export const ROLES = {
     atk: { kind: 'melee', range: 2.3, arc: 1.7, dmg: 15, cd: 0.38, burn: true },
     skills: [
       { id: 'potion', name: '물약 던지기', key: 'Q', cd: 7, desc: '조준한 곳에 물약을 던져 그 자리 동료의 체력을 40 회복해요.' },
-      { id: 'trap', name: '덫 놓기', key: 'E', cd: 7, desc: '발밑에 덫을 놓아 밟은 적을 2.5초 묶고 40 피해를 줘요.' },
-      { id: 'rally', name: '함성', key: 'R', cd: 15, desc: '주변 동료의 공격력과 속도를 7초 동안 30% 올려요.' }
+      { id: 'trap', name: '덫 놓기', key: 'E', cd: 7, desc: '발밑에 덫을 놓아요. 밟은 적은 공중으로 튕겨 2.5초 묶이고 40 피해를 받아요. 덫이 터지며 불길이 번져 둘레 적도 불타요.' },
+      { id: 'rally', name: '함성', key: 'R', cd: 15, desc: '주변 동료의 공격력과 속도를 7초 동안 30% 올려요. 그동안 종자의 횃불 공격은 불똥이 튀어 옆의 적도 태워요.' }
     ],
-    role: '물약과 덫으로 돕고, 바닥 함정을 밟아도 다치지 않고 해체해요.'
+    role: '물약과 덫으로 돕고, 바닥 함정을 밟아도 다치지 않고 해체해요. 구르기 대신 미끄러지며 적의 다리를 걸어 넘어뜨려요.'
   }
 };
 export const ROLE_IDS = ['knight', 'archer', 'priest', 'squire'];
