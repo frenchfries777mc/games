@@ -352,3 +352,4 @@ crownenvoy/CrownEnvoy-v0.4.html | 전신망 (정치 탭 카드) | "📡 전신�
 - ff-profile.js | 새 게임 이름은 영어 고유명이라 번역 없음 | 2026-10-24
 - patchnotes.json | "프로필 카드에 게임 6개" 4줄 | 2026-10-24
 - patchnotes.json, vowkeep/patchnotes.json | "Vowkeep 계정 업적 연동" 1줄 | Vowkeep b41 | 2026-10-24
+- beaconfall/BEACONFALL-v0.3.html b100 | 해먹·통발 이름/설명/모달 문구, 낮잠 문구('쿨쿨… 낮잠 중'), 샌드박스 업적 안내 토스트 | 2026-10-25
