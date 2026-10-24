@@ -355,3 +355,4 @@ crownenvoy/CrownEnvoy-v0.4.html | 전신망 (정치 탭 카드) | "📡 전신�
 - beaconfall/BEACONFALL-v0.3.html b100 | 해먹·통발 이름/설명/모달 문구, 낮잠 문구('쿨쿨… 낮잠 중'), 샌드박스 업적 안내 토스트 | 2026-10-25
 - patchnotes.json, vowkeep/patchnotes.json | "Vowkeep 궁수 화살 수, 대검, 승강기 갇힘" 5줄 | Vowkeep b42 | 2026-10-25
 - vowkeep/play/js/data.js, main.js | 새 수수께끼 9가지 이름·설명·안내 (GEN_PUZ, ROLE_PUZ, puzPrompt), 패치 노트 "Vowkeep 장마다 다른 수수께끼" | Vowkeep b43 | 2026-10-25
+- patchnotes.json, vowkeep/patchnotes.json | "Vowkeep 장마다 다른 지도" 4줄 | Vowkeep b44 | 2026-10-25
