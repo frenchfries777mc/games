@@ -1,7 +1,7 @@
 // Vowkeep · © 2026 Frenchfries777 · CC BY-NC-ND 4.0
 // 게임 데이터: 역할, 적, 축복, 1장 지도
 
-export const VERSION = 'v0.1', BUILD = 42;
+export const VERSION = 'v0.1', BUILD = 43;
 
 export const ROLES = {
   knight: {
@@ -130,6 +130,15 @@ function genMap(seed, rooms, opt = {}) {
       else if (r.puz === 'targets') q.items = [[r.x + 2, r.y], [r.x + 4, r.y], [r.x + r.rw - 3, r.y]];
       else if (r.puz === 'basins') q.items = c4;
       else if (r.puz === 'vines') q.items = [[r.x + 3, r.cy], [r.cx, r.y + 3], [r.x + r.rw - 4, r.cy]];
+      else if (r.puz === 'levers') { q.items = [-6, -2, 2, 6].map(d => [r.cx + d, r.cy + 2]); const o = [1, 0, 0, 0].map((_, k) => rnd() < 0.5 ? 1 : 0); if (o.every(v => v) || o.every(v => !v)) o[1] = 1 - o[0]; q.lit0 = o; }
+      else if (r.puz === 'sigils') { q.items = []; for (let b = -1; b <= 1; b++) for (let a = -1; a <= 1; a++) q.items.push([r.cx + a * 3, r.cy + b * 3]); }
+      else if (r.puz === 'crystals') q.items = [[r.cx - 4, r.cy - 3], [r.cx + 4, r.cy - 3], [r.cx + 4, r.cy + 3], [r.cx - 4, r.cy + 3]];
+      else if (r.puz === 'mirrors') { q.items = [[r.x + 3, r.cy + 3], [r.cx, r.cy - 3], [r.x + r.rw - 4, r.cy + 3]]; q.src = [r.x + 1, r.y + r.rh - 2]; q.ok = [0, 0, 0]; q.rot0 = q.items.map(() => 1 + Math.floor(rnd() * 3)); }
+      else if (r.puz === 'embers') q.items = [[r.cx, r.cy], [r.x + 3, r.y + 3], [r.x + r.rw - 4, r.y + 3], [r.cx, r.y + r.rh - 3]];
+      else if (r.puz === 'icecrys') q.items = [[r.cx - 5, r.cy], [r.cx, r.cy - 3], [r.cx + 5, r.cy]];
+      else if (r.puz === 'lanterns') q.items = [[r.cx - 3, r.cy - 2], [r.cx, r.cy - 2], [r.cx + 3, r.cy - 2]];
+      else if (r.puz === 'vigil') q.items = [[r.x + 3, r.cy], [r.cx, r.y + 3], [r.x + r.rw - 4, r.cy]];
+      else if (r.puz === 'blackfire') q.items = [[r.x + 3, r.y + 3], [r.cx, r.cy], [r.x + r.rw - 4, r.y + 3]];
       else { q.items = [[r.cx, r.cy - 4], [r.cx + 5, r.cy], [r.cx, r.cy + 4], [r.cx - 5, r.cy]]; q.rot0 = q.items.map((_, k) => (k + 1 + Math.floor(rnd() * 3)) % 4); }
       m.puzzles.push(q);
     }
@@ -194,9 +203,26 @@ export const ROLE_PUZ = {
   basins: { role: 'priest', name: '성수반의 방', line: '사제만 풀 수 있어요. 빛 구슬이나 치유로 성수반 넷에 모두 빛을 채워요.' },
   vines: { role: 'squire', name: '가시덩굴 방', line: '종자만 풀 수 있어요. 횃불 든 공격으로 가시덩굴 셋을 모두 태워요.' }
 };
-const RP_ORDER = ['oath', 'targets', 'basins', 'vines'];
+// 5장부터는 역할 수수께끼도 새것이에요
+Object.assign(ROLE_PUZ, {
+  icecrys: { role: 'knight', name: '얼음 수정 방', line: '기사만 풀 수 있어요. 강타(공격·공격·강타)로 얼음 수정 셋을 깨요.' },
+  lanterns: { role: 'archer', name: '일렬 등불 갱도', line: '궁수만 풀 수 있어요. 한 줄로 선 등불 셋을 관통 화살(Q) 한 발로 모두 켜요.' },
+  vigil: { role: 'priest', name: '기도의 원', line: '사제만 풀 수 있어요. 빛의 원 셋에 각각 2초씩 서서 기도해요.' },
+  blackfire: { role: 'squire', name: '검은 불꽃 제단', line: '종자만 풀 수 있어요. 물약(Q)을 던져 검은 불꽃 셋을 꺼요.' }
+});
+const RP_ORDER = ['oath', 'targets', 'basins', 'vines', 'icecrys', 'lanterns', 'vigil', 'blackfire'];
+// 장마다 다른 일반 수수께끼 (1~3장은 원래 방 그대로, 4장부터 새것)
+export const GEN_PUZ = {
+  levers: { name: '탑 지렛대 방', line: '지렛대를 당기면 그 등불과 양옆 등불이 함께 켜지거나 꺼져요. 등불 넷을 모두 켜요.' },
+  sigils: { name: '얼음 문양 바닥', line: '얼음 문양 아홉 칸을 이어서 한 번씩만 밟아 모두 빛나게 해요. 빛나는 칸을 다시 밟으면 처음부터예요.' },
+  crystals: { name: '빛 수정 갱도', line: '수정 넷을 공격해 빛을 켜요. 빛은 8초 뒤 꺼지니 넷이 함께 빛나게 해요.' },
+  mirrors: { name: '거울 회랑', line: '거울 셋을 돌려(F) 햇빛이 창살문까지 닿게 해요.' },
+  embers: { name: '불씨 제단', line: '가운데 불씨 더미에서 불씨를 들어(F) 제단 셋에 하나씩 올려요(F).' }
+};
+const GEN_ORDER = [null, null, null, 'levers', 'sigils', 'crystals', 'mirrors', 'embers'];
 function grow(ci, rooms, [p1, dk, p2]) {
-  { const k = RP_ORDER[ci % 4]; p2 = Object.assign({}, p2, { puz: k, name: ROLE_PUZ[k].name, line: ROLE_PUZ[k].line }); }
+  { const k = RP_ORDER[ci % 8]; p2 = Object.assign({}, p2, { puz: k, name: ROLE_PUZ[k].name, line: ROLE_PUZ[k].line }); }
+  { const k = GEN_ORDER[ci]; if (k) p1 = Object.assign({}, p1, { puz: k, name: GEN_PUZ[k].name, line: GEN_PUZ[k].line }); }
   const r = rooms.map((o, i) => Object.assign({ t: i }, o)), [pn, ln] = CUTS[ci];
   const pit = { name: pn, line: PIT_LINE, cut: 'pit', t: 'pit', w: 20, h: 17 }, lift = { name: ln, line: LIFT_LINE, cut: 'lift', t: 'lift', w: 20, h: 17 };
   return [r[0], r[1], Object.assign({ t: 'puz' }, p1), r[2], pit, r[3], r[4], Object.assign({ t: 'dark' }, dk), r[5], lift, Object.assign({ t: 'puz' }, p2), r[6], r[7], r[8]];
@@ -570,7 +596,7 @@ export function makeDeep(d) {
   const map = genMap(DEEP.seed * 31 + f * 977, [
     { name: N[0], line, w: 12, h: 12 },
     { name: N[1], line, foes: { skel: 5, archer: 2 } },
-    { name: '심연의 수수께끼', line: ['바닥에 발판 네 개가 있어요. 모두 하나씩 올라서면 창살문이 열려요.', '비석에 그려진 순서대로 화로에 불을 붙여요. 틀리면 모두 꺼져요.', '석상 넷이 모두 가운데 문양을 바라보게 돌려요.', ROLE_PUZ.oath.line, ROLE_PUZ.targets.line, ROLE_PUZ.basins.line, ROLE_PUZ.vines.line][f % 7], puz: ['plates', 'braziers', 'statues', 'oath', 'targets', 'basins', 'vines'][f % 7], w: 16, h: 13, t: 'puz' },
+    { name: '심연의 수수께끼', line: ['바닥에 발판 네 개가 있어요. 모두 하나씩 올라서면 창살문이 열려요.', '비석에 그려진 순서대로 화로에 불을 붙여요. 틀리면 모두 꺼져요.', '석상 넷이 모두 가운데 문양을 바라보게 돌려요.', ...RP_ORDER.map(k => ROLE_PUZ[k].line), ...Object.values(GEN_PUZ).map(o => o.line)][f % 16], puz: ['plates', 'braziers', 'statues', ...RP_ORDER, ...Object.keys(GEN_PUZ)][f % 16], w: 16, h: 13, t: 'puz' },
     { name: N[2], line: f % 2 ? line : '불빛 하나 없는 방이에요. 입구의 횃불을 들어야 앞이 보여요.', foes: { skel: 4, archer: 3, shield: 2 }, altar: 1, pil: 1, dark: f % 2 ? 0 : 1, t: f % 2 ? undefined : 'dark' },
     { name: N[3], line: '꺼진 모닥불이 있어요. 불을 붙이면 쓰러졌을 때 여기서 다시 시작해요.', rest: 1, chest: 1, w: 12, h: 11 },
     { name: N[4], line, foes: { elite: 1 + n('elite'), skel: 4, archer: 2, shield: 2 }, traps: 3 },

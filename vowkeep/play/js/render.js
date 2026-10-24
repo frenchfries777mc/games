@@ -645,6 +645,58 @@ export class View {
           const fg = new THREE.Group(); fg.visible = false; g2.add(fg); for (let n = 0; n < 5; n++) cone(0.3, 1.1, 6, M(0xff8a2a, { e: 0xff6a10, ei: 3 }), (R() - .5) * 1.2, 1.4, (R() - .5) * 1.2, fg);
           return { g: g2, fg, burn: 0 };
         });
+      } else if (q.k === 'levers') {
+        // 지렛대 넷: 기둥 위 등불이 켜지면 금빛, 손잡이는 켜짐/꺼짐에 따라 앞뒤로 젖혀져요
+        P.items = q.items.map(([ix, iy], i) => {
+          const x = cw(ix), z = cw(iy); box(1.4, 0.4, 1.0, stoneD, x, 0.2, z, s); box(0.3, 3.2, 0.3, M(0x4a3020), x, 1.8, z - 0.6, s);
+          const cage = M(0x3a3640, { m: 0.7, r: 0.4 }); box(0.8, 0.1, 0.8, cage, x, 3.45, z - 0.6, s); box(0.8, 0.1, 0.8, cage, x, 4.35, z - 0.6, s);
+          const lm = M(0x4a4652, { e: 0xffc060, ei: 0, uniq: true }), core = box(0.5, 0.7, 0.5, lm, x, 3.9, z - 0.6, s);
+          const h = new THREE.Group(); h.position.set(x, 0.45, z + 0.1); s.add(h); box(0.12, 1.3, 0.12, M(0x3a3640, { m: 0.7 }), 0, 0.65, 0, h); sph(0.18, 6, 5, M(0xc0392b), 0, 1.35, 0, h);
+          const Lt = new THREE.PointLight(0xffc060, 0, 10, 1.6); Lt.position.set(x, 4, z); s.add(Lt);
+          return { lm, h, Lt };
+        });
+      } else if (q.k === 'sigils') {
+        // 얼음 문양 아홉 칸: 밟으면 하늘빛, 지금 밟고 있는 끝 칸은 하얗게
+        P.items = q.items.map(([ix, iy]) => { const x = cw(ix), z = cw(iy), m = M(0x5a7a94, { e: 0x7ad0ff, ei: 0.25, uniq: true }), t2 = box(3.6, 0.1, 3.6, m, x, 0.06, z, s); t2.castShadow = false; for (let r = 0; r < 2; r++) { const b = box(0.18, 0.06, 2.4, M(0xd8f0ff, { e: 0x9ae0ff, ei: 0.6 }), x, 0.13, z, s); b.rotation.y = Math.PI / 4 + r * Math.PI / 2; b.castShadow = false; } return { m }; });
+      } else if (q.k === 'crystals' || q.k === 'icecrys') {
+        // 빛 수정(보라)·얼음 수정(하늘): 길쭉한 수정 덩어리
+        const ice = q.k === 'icecrys', col = ice ? 0x9ae0ff : 0xb07aff;
+        P.items = q.items.map(([ix, iy]) => {
+          const x = cw(ix), z = cw(iy), g2 = new THREE.Group(); g2.position.set(x, 0, z); s.add(g2); const m = M(ice ? 0xbfe8ff : 0x6a4a8a, { e: col, ei: ice ? 0.6 : 0.2, uniq: true });
+          for (let n = 0; n < 5; n++) { const c = mesh(geo('oct', () => new THREE.OctahedronGeometry(0.32)), m, (n ? Math.cos(n * 1.6) * 0.55 : 0), n ? 0.8 : 1.3, (n ? Math.sin(n * 1.6) * 0.55 : 0), g2); c.scale.set(n ? 1.4 : 2, n ? 3.2 : 5, n ? 1.4 : 2); c.rotation.z = n ? Math.cos(n * 1.6) * 0.4 : 0; c.rotation.x = n ? Math.sin(n * 1.6) * 0.4 : 0; }
+          const Lt = new THREE.PointLight(col, 0, 10, 1.6); Lt.position.set(x, 2.4, z); s.add(Lt); return { g: g2, m, Lt };
+        });
+      } else if (q.k === 'mirrors') {
+        // 거울 셋: 창문 빛(src)이 거울을 차례로 지나 창살문까지. 맞게 돌린 거울까지만 빛줄기가 이어져요
+        const pts = [[cw(q.src[0]), cw(q.src[1])], ...q.items.map(([ix, iy]) => [cw(ix), cw(iy)]), [(q.gate[0] + q.gate[2] / 2) * CS, (q.gate[1] + q.gate[3] / 2) * CS]];
+        sph(0.9, 10, 8, M(0xfff0c0, { e: 0xfff0c0, ei: 3 }), pts[0][0], 2.4, pts[0][1], s);
+        const bm = M(0xfff0b0, { e: 0xffe08a, ei: 3, op: 0.75 });
+        P.beams = pts.slice(0, -1).map((a2, n) => { const b2 = pts[n + 1], L2 = Math.hypot(b2[0] - a2[0], b2[1] - a2[1]), bb = box(0.25, 0.25, L2, bm, (a2[0] + b2[0]) / 2, 2.4, (a2[1] + b2[1]) / 2, s, false); bb.rotation.y = Math.atan2(b2[0] - a2[0], b2[1] - a2[1]); bb.castShadow = false; return bb; });
+        P.items = q.items.map(([ix, iy], i) => {
+          const x = cw(ix), z = cw(iy), a2 = pts[i], b2 = pts[i + 2], din = [x - a2[0], z - a2[1]], dout = [b2[0] - x, b2[1] - z], l1 = Math.hypot(...din), l2 = Math.hypot(...dout);
+          const nx = -din[0] / l1 + dout[0] / l2, nz = -din[1] / l1 + dout[1] / l2, ok = Math.atan2(nx, nz);
+          box(1.6, 0.5, 1.6, stoneD, x, 0.25, z, s); const g2 = new THREE.Group(); g2.position.set(x, 0.5, z); s.add(g2);
+          box(0.2, 1.6, 0.2, M(0x8a6a30, { m: 0.6 }), 0, 0.8, 0, g2); box(1.7, 1.9, 0.16, M(0x8a6a30, { m: 0.6 }), 0, 1.9, 0, g2); box(1.4, 1.6, 0.06, M(0xd8e4f0, { m: 0.9, r: 0.1, e: 0x6a7a8a, ei: 0.5 }), 0, 1.9, 0.09, g2);
+          return { g: g2, ok, cur: ok + q.rot0[i] * Math.PI / 4 };
+        });
+      } else if (q.k === 'embers') {
+        // 불씨 더미(가운데)와 빈 제단 셋. 올리면 불이 붙어요
+        P.items = q.items.map(([ix, iy], i) => {
+          const x = cw(ix), z = cw(iy); cyl(0.7, 0.9, 1.0, 8, stoneD, x, 0.5, z, s); cyl(1.0, 0.7, 0.4, 10, M(0x3a3236, { m: 0.5 }), x, 1.2, z, s);
+          const fg = new THREE.Group(); fg.position.set(x, 1.45, z); s.add(fg); for (let n = 0; n < 4; n++) cone(0.25, 0.8, 6, M(0xff7a2a, { e: 0xff5a10, ei: 3 }), (n % 2 - .5) * 0.4, 0.3, (n >> 1) * 0.4 - 0.2, fg);
+          if (i === 0) for (let n = 0; n < 5; n++) sph(0.18, 6, 5, M(0xffb060, { e: 0xff8a20, ei: 3 }), x + Math.cos(n * 1.3) * 0.5, 1.5, z + Math.sin(n * 1.3) * 0.5, s);
+          const Lt = new THREE.PointLight(0xff8a30, i === 0 ? 20 : 0, 10, 1.6); Lt.position.set(x, 2.5, z); s.add(Lt); fg.visible = i === 0; return { fg, Lt };
+        });
+      } else if (q.k === 'lanterns') {
+        // 일렬 등불 셋: 쇠기둥에 걸린 등불. 관통 화살이 꿰뚫으면 켜져요
+        P.items = q.items.map(([ix, iy]) => { const x = cw(ix), z = cw(iy); box(0.25, 2.2, 0.25, M(0x3a3640, { m: 0.7 }), x, 1.1, z + 0.9, s); box(0.9, 0.12, 0.12, M(0x3a3640, { m: 0.7 }), x, 2.2, z + 0.5, s); const lm = M(0x4a4652, { e: 0xffd36b, ei: 0, uniq: true }); box(0.6, 0.8, 0.6, lm, x, 1.6, z, s); const Lt = new THREE.PointLight(0xffd36b, 0, 10, 1.6); Lt.position.set(x, 2, z); s.add(Lt); return { lm, Lt }; });
+        box(0.2, 0.05, 13, M(0xd8c8a0, { e: 0x6a5a30, ei: 0.4 }), cw(q.items[0][0]) - 6, 0.06, cw(q.items[0][1]), s).rotation.y = Math.PI / 2;
+      } else if (q.k === 'vigil') {
+        // 기도의 원 셋: 사제가 서 있으면 안쪽 원이 차올라요
+        P.items = q.items.map(([ix, iy]) => { const x = cw(ix), z = cw(iy), rm = M(0xe8e4ef, { e: 0xfff4c0, ei: 0.6, uniq: true }), ring = mesh(geo('vring', () => new THREE.RingGeometry(1.3, 1.6, 28)), rm, x, 0.1, z, s, false); ring.rotation.x = -Math.PI / 2; const fm = M(0xfff4c0, { e: 0xfff4c0, ei: 2, op: 0.55 }), fill = mesh(geo('vdisc', () => new THREE.CircleGeometry(1.3, 24)), fm, x, 0.09, z, s, false); fill.rotation.x = -Math.PI / 2; fill.scale.setScalar(0.01); const Lt = new THREE.PointLight(0xfff4c0, 0, 10, 1.6); Lt.position.set(x, 2, z); s.add(Lt); return { rm, fill, Lt }; });
+      } else if (q.k === 'blackfire') {
+        // 검은 불꽃 셋: 보랏빛 검은 불. 물약에 꺼지면 연기만 남아요
+        P.items = q.items.map(([ix, iy]) => { const x = cw(ix), z = cw(iy); cyl(0.8, 1.0, 0.8, 8, stoneD, x, 0.4, z, s); const fg = new THREE.Group(); fg.position.set(x, 0.8, z); s.add(fg); for (let n = 0; n < 5; n++) cone(0.3 + R() * 0.15, 1.2 + R() * 0.6, 6, M(0x1a0a24, { e: 0x6a2aa0, ei: 1.6 }), (R() - .5) * 0.6, 0.6, (R() - .5) * 0.6, fg); const Lt = new THREE.PointLight(0x8a3ad0, 18, 9, 1.6); Lt.position.set(x, 2, z); s.add(Lt); return { fg, Lt }; });
       } else {
         // 석상: 칼을 앞으로 내민 기사. 가운데 문양을 바라보면 문양에 빛이 들어와요
         const ring = mesh(geo('pring2', () => new THREE.RingGeometry(1.7, 2.1, 32)), M(0x8a8494, { e: 0x8a8494, ei: 0.5, uniq: true }), cxw, 0.14, czw, s, false); ring.rotation.x = -Math.PI / 2;
@@ -945,12 +997,24 @@ export class View {
       else if (P.k === 'targets') P.items.forEach((it, i) => { const on = done || z.l[i] === '1'; it.ar.visible = on; it.mr.color.setHex(on ? 0x4cc06a : 0xc0392b); it.mr.emissive.setHex(on ? 0x2a8a3a : 0x601010); it.mr.emissiveIntensity = on ? 1.6 : 0.3 + Math.max(0, Math.sin(t * 3 + i)) * 0.4; });
       else if (P.k === 'basins') P.items.forEach((it, i) => { const on = done || z.l[i] === '1'; it.m.color.setHex(on ? 0xcffff6 : 0x4a4652); it.m.emissiveIntensity = on ? 2.4 + Math.sin(t * 3 + i) * 0.3 : 0; it.Lt.intensity = on ? 26 : 0; });
       else if (P.k === 'vines') P.items.forEach((it, i) => { const on = done || z.l[i] === '1'; if (on) it.burn = Math.min(1.6, it.burn + dt); const b = it.burn; it.fg.visible = b > 0 && b < 1.5; it.fg.children.forEach((c, n) => c.scale.y = 0.8 + Math.sin(t * 9 + n) * 0.25); const sc = Math.max(0, 1 - Math.max(0, b - 0.5)); it.g.scale.set(1, Math.max(0.01, sc), 1); it.g.visible = sc > 0.02 || it.fg.visible; });
+      else if (P.k === 'levers') P.items.forEach((it, i) => { const on = done || z.l[i] === '1'; it.lm.emissiveIntensity = on ? 3 : 0; it.lm.color.setHex(on ? 0xffe0a0 : 0x4a4652); it.Lt.intensity = on ? 22 : 0; it.h.rotation.x += ((on ? 0.7 : -0.7) - it.h.rotation.x) * Math.min(1, dt * 10); });
+      else if (P.k === 'sigils') P.items.forEach((it, i) => { const on = done || z.l[i] === '1'; it.m.emissiveIntensity = on ? 2.2 : 0.25 + Math.sin(t * 2 + i) * 0.1; it.m.color.setHex(on ? 0xbfefff : 0x5a7a94); });
+      else if (P.k === 'crystals' || P.k === 'icecrys') { const cs = (z.c || '').split(','); P.items.forEach((it, i) => { const on = done || z.l[i] === '1';
+        if (P.k === 'icecrys') { it.g.scale.y += ((on ? 0.01 : 1) - it.g.scale.y) * Math.min(1, dt * 12); it.g.visible = it.g.scale.y > 0.03; it.Lt.intensity = on ? 0 : 6; return; }
+        const left = +cs[i] || 0, blink = !done && on && left <= 3 ? (Math.sin(t * 14) > 0 ? 1 : 0.35) : 1; it.m.emissiveIntensity = on ? 3 * blink : 0.2; it.Lt.intensity = on ? 24 * blink : 0; it.g.rotation.y += dt * (on ? 1.5 : 0.2); }); }
+      else if (P.k === 'mirrors') { let ok = true; P.items.forEach((it, i) => { const r = +z.r[i], want = it.ok + r * Math.PI / 4; it.cur += (want - it.cur) * Math.min(1, dt * 8); it.g.rotation.y = it.cur; }); P.beams.forEach((b2, n) => { b2.visible = ok; if (n < P.items.length) ok = ok && (done || z.r[n] === '0'); }); }
+      else if (P.k === 'embers') P.items.forEach((it, i) => { if (!i) return; const on = done || z.l[i] === '1'; it.fg.visible = on; it.Lt.intensity = on ? 22 : 0; if (on) it.fg.children.forEach((c, n) => c.scale.y = 0.85 + Math.sin(t * 6 + n) * 0.15); });
+      else if (P.k === 'lanterns') P.items.forEach((it, i) => { const on = done || z.l[i] === '1'; it.lm.emissiveIntensity = on ? 3 : 0; it.lm.color.setHex(on ? 0xffe0a0 : 0x4a4652); it.Lt.intensity = on ? 22 : 0; });
+      else if (P.k === 'vigil') P.items.forEach((it, i) => { const on = done || z.l[i] === '1', v = on ? 1 : (+(z.v || '')[i] || 0) / 10; it.fill.scale.setScalar(Math.max(0.01, v)); it.rm.emissiveIntensity = on ? 3 : 0.6 + Math.sin(t * 2 + i) * 0.3; it.Lt.intensity = on ? 20 : v * 10; });
+      else if (P.k === 'blackfire') P.items.forEach((it, i) => { const on = done || z.l[i] === '1'; it.fg.visible = !on; it.Lt.intensity = on ? 0 : 18; if (!on) it.fg.children.forEach((c, n) => c.scale.y = 0.8 + Math.sin(t * 7 + n) * 0.25); });
       else { P.items.forEach((it, i) => { const r = +z.r[i], want = -r * Math.PI / 2; let d = want - it.cur; while (d > Math.PI) d -= Math.PI * 2; while (d < -Math.PI) d += Math.PI * 2; it.cur += d * Math.min(1, dt * 8); it.g.rotation.y = it.cur; const ok = r === i; it.eye.emissiveIntensity = ok ? 4 : 0; });
         const m = P.ring.material, c = done ? 0x9af0a8 : 0x8a8494; m.color.setHex(c); m.emissive.setHex(c); m.emissiveIntensity = done ? 2.4 : 0.5; }
     });
   }
   // 어둠의 방: 동료마다 작은 빛, 횃불을 든 동료는 큰 빛
   syncDark(S, dt, t) {
+    // 불씨 제단: 불씨를 든 동료는 머리 위에 불씨가 떠 있어요
+    for (const p of S.pl) { const E = this.ents.get('p' + p.id); if (!E) continue; if (p.em && !E.embG) { const g = new THREE.Group(); sph(0.35, 8, 6, M(0xffb060, { e: 0xff8a20, ei: 4 }), 0, 0, 0, g); cone(0.25, 0.7, 6, M(0xff7a2a, { e: 0xff5a10, ei: 3 }), 0, 0.35, 0, g); this.scene.add(g); E.embG = g; } if (E.embG) { E.embG.visible = !!p.em; if (p.em) E.embG.position.set(E.x, 4.6 + Math.sin(t * 4) * 0.15, E.z); } }
     if (!this.darkR) return; const { H, SH } = this.darkH, carriers = [];
     const ls = []; for (const p of S.pl) { if (p.dd) continue; const E = this.ents.get('p' + p.id); if (!E) continue; if (p.tc) carriers.push({ E, p }); ls.push([E.x, E.z + SH * (H - 1.2), p.tc ? 11 + Math.sin(t * 7 + E.x) * 0.4 : 2.6]); }
     this.darkR.forEach((D, k) => {
