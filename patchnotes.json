@@ -3,6 +3,16 @@
   {
    "date": "2026-10-25",
    "build": "",
+   "title": "패치노트 검색",
+   "items": [
+    "Stickseum·Beaconfall·Crown Envoy·Isleport·Vowkeep·Dummy Party 사이트 패치노트에 검색칸 추가",
+    "빌드 번호(371, b371, 빌드 371)나 내용으로 찾기",
+    "찾는 동안 맞는 패치노트를 모두 펼쳐 보여 주고 찾은 개수 표시"
+   ]
+  },
+  {
+   "date": "2026-10-25",
+   "build": "",
    "title": "Vowkeep 종자 다리 걸기, 과장된 적 동작",
    "items": [
     "종자 미끄러지기: 구르기 대신 발부터 미끄러져 닿은 적을 넘어뜨림 (뒤로 한 바퀴 돌며 기절)",

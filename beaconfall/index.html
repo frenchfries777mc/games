@@ -4,6 +4,7 @@
 <meta name="copyright" content="© 2026 Frenchfries777. CC BY-NC-ND 4.0 (https://creativecommons.org/licenses/by-nc-nd/4.0/)">
 <meta charset="UTF-8">
 <script src="https://frenchfries777mc.github.io/games/ff-lang.js"></script>
+<script src="../ff-pnsearch.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>BEACONFALL</title>
 <meta name="description" content="외계 원시 행성에 갇힌 채 재료를 모아 장비를 만들고, 신호기를 완성해 탈출하는 픽셀 생존 제작 게임. 브라우저에서 바로, 친구와 함께.">
@@ -202,13 +203,14 @@ function render(d){
 }
 const SHOWN=5;
 function renderNotes(d){
- NDATA=d;const list=(d&&Array.isArray(d.notes))?d.notes:[],box=document.getElementById('notesBox'),more=document.getElementById('notesMore');
- if(!list.length){box.innerHTML='<span style="text-shadow:2px 2px 0 #000">'+t('nt_none')+'</span>';more.style.display='none';return;}
- const all=box.dataset.all==='1',sh=all?list:list.slice(0,SHOWN);
+ NDATA=d;const raw=(d&&Array.isArray(d.notes))?d.notes:[],list=window.FFPN?FFPN.filter(raw):raw,box=document.getElementById('notesBox'),more=document.getElementById('notesMore');
+ if(window.FFPN){FFPN.mount('notesBox',()=>renderNotes(NDATA));FFPN.count(list.length);}
+ if(!list.length){box.innerHTML=(raw.length&&window.FFPN)?FFPN.none():'<span style="text-shadow:2px 2px 0 #000">'+t('nt_none')+'</span>';more.style.display='none';return;}
+ const all=box.dataset.all==='1'||!!(window.FFPN&&FFPN.q()),sh=all?list:list.slice(0,SHOWN);
  box.innerHTML=sh.map((n,ni)=>{const k='v'+String(n.build||'').replace(/^v/,''),e=I.N[k];
   const title=(e&&e.title&&(e.title[LANG]||e.title.en||e.title.ko))||n.title;
   const items=(n.items||[]).map((x,ix)=>{const it=e&&e.items&&e.items[ix];return (it&&(it[LANG]||it.en||it.ko))||x;});
-  return '<details'+(ni?'':' open')+'><summary class="pb nlh">'+esc(title)+'<small>'+esc(n.date)+(n.build?' · '+esc(n.build):'')+'</small></summary><ul>'+items.map(i=>'<li>'+esc(i)+'</li>').join('')+'</ul></details>';}).join('');
+  return '<details'+(ni&&!(window.FFPN&&FFPN.q())?'':' open')+'><summary class="pb nlh">'+esc(title)+'<small>'+esc(n.date)+(n.build?' · '+esc(n.build):'')+'</small></summary><ul>'+items.map(i=>'<li>'+esc(i)+'</li>').join('')+'</ul></details>';}).join('');
  more.style.display=(!all&&list.length>SHOWN)?'':'none';
  more.onclick=()=>{box.dataset.all='1';renderNotes(d);};
 }

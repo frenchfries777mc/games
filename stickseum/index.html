@@ -11,6 +11,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet">
 <script src="https://frenchfries777mc.github.io/games/ff-lang.js"></script>
+<script src="../ff-pnsearch.js"></script>
 <script src="site-i18n.js"></script>
 <style>
   :root{ --bg:#0a0b0f; --bg2:#0e1420; --panel:#121825; --panel-2:#171f2e; --line:#232c3d; --text:#e8eaf0; --text-dim:#8893a6; --red:#ff4d5e; --teal:#3fe0c5; --gold:#ffd34d; }
@@ -193,11 +194,12 @@ const NOTES_SHOWN=5;
 let NOTES_NOW=null;
 function renderNotes(d){
   NOTES_NOW=d;
-  const list=(d && Array.isArray(d.notes))?d.notes:[], box=document.getElementById('notesBox'), more=document.getElementById('notesMore');
-  if(!list.length){ box.innerHTML='<div class="s" style="color:var(--text-dim)">아직 패치노트가 없어요.</div>'; more.style.display='none'; return; }
-  const all=box.dataset.all==='1', shown=all?list:list.slice(0,NOTES_SHOWN);
+  const raw=(d && Array.isArray(d.notes))?d.notes:[], list=window.FFPN?FFPN.filter(raw):raw, box=document.getElementById('notesBox'), more=document.getElementById('notesMore');
+  if(window.FFPN){ FFPN.mount('notesBox',()=>renderNotes(NOTES_NOW)); FFPN.count(list.length); }
+  if(!list.length){ box.innerHTML=(raw.length&&window.FFPN)?FFPN.none():'<div class="s" style="color:var(--text-dim)">아직 패치노트가 없어요.</div>'; more.style.display='none'; return; }
+  const all=box.dataset.all==='1'||!!(window.FFPN&&FFPN.q()), shown=all?list:list.slice(0,NOTES_SHOWN);
   box.innerHTML=shown.map(n0=>{ const n=Object.assign({}, n0, SI18N.pick(n0)); return n; }).map(n=>'<div class="note"><div class="nh"><span class="nt">'+esc(n.title)+'</span><span class="nd">'+esc(n.date)+(n.build?' · '+esc(String(n.build).replace(/^v(\d+)$/,'build $1')):'')+'</span></div><ul>'+(n.items||[]).map(i=>'<li>'+esc(i)+'</li>').join('')+'</ul></div>').join('');
-  more.style.display=(list.length>NOTES_SHOWN)?'':'none';
+  more.style.display=(!(window.FFPN&&FFPN.q())&&list.length>NOTES_SHOWN)?'':'none';
   more.textContent=SI18N.T(all?'패치노트 접기':'이전 패치노트 더 보기');
   more.onclick=()=>{ box.dataset.all=all?'':'1'; renderNotes(d); if(all) document.getElementById('notes').scrollIntoView({behavior:'smooth', block:'start'}); };
 }
