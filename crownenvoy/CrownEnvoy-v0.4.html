@@ -225,6 +225,7 @@ input[type=checkbox]{accent-color:var(--gold)}
 @media (prefers-reduced-motion:reduce){.toast,#bpop.show{animation:none}.seal,.btn{transition:none}}
 #evwin{position:absolute;inset:0;z-index:60;background:#050a14f0;display:flex;align-items:center;justify-content:center;cursor:pointer}
 #evwin.hidden{display:none}
+.tcend{text-align:center;padding:26px 10px 10px}.tcend .ic{font-size:54px;line-height:1}.tcend h2{font-size:30px;margin:8px 0 6px;font-family:var(--serif)}.tcend.no h2{color:#ff9a86}.tcend.ok h2{color:#8fe0a6}.tcend p{margin:6px 0}.tcend .btn{margin-top:12px;min-width:120px}
 .evcard{width:min(780px,94vw);max-height:96vh;display:flex;flex-direction:column;background:#efe6cf;color:#1c1710;border:2px solid #5a4a2a;box-shadow:0 0 0 4px #00000066,0 30px 80px #000;overflow:hidden;font-family:Georgia,'Noto Serif KR','Batang','Malgun Gothic',serif}
 .evphoto{padding:14px 14px 8px;background:#d9ceb2;border-bottom:2px solid #5a4a2a}
 .evphoto canvas{display:block;width:100%;height:auto;border:6px solid #f6f1e2;box-shadow:0 2px 8px #0008}
@@ -1310,18 +1311,34 @@ function resolveRound(){
   pendApply();/* 징집한 병사는 공격과 이동보다 먼저 도착한다 */
   Object.keys(G.hostile).forEach(k=>{const [x,y]=k.split('-').map(Number);if(truceLeft(x,y)>0)delete G.hostile[k];});
   const rep={round:G.round,attacks:[],moves:[],battles:[]};const plans={};const moves=[];
-  for(const p of G.players){if(!p.alive)continue;const list=sanitizeOrders(p.id,G.orders[p.id]);G.lastOrders[p.id]=list.map(o=>({...o}));
-    for(const o of list){if(o.mv){moves.push({pid:p.id,...o});rep.moves.push({pid:p.id,from:o.from,to:o.to});continue;}
-      const F=G.terr[o.from];const gSrc=F.owner!==p.id&&F.gst;const tk=takeUnits(F,gSrc?p.id:null,o.u||{i:o.n});o.u=tk;const T=G.terr[o.to];if(T.owner!=null&&T.owner!==p.id){breachCheck(p.id,T.owner);G.players[T.owner].warUntil=G.round+6;{const vv=G.players[T.owner];vv.grudge=vv.grudge||{};vv.grudge[p.id]=Math.min(3,(vv.grudge[p.id]||0)+0.25);vv.lostRecent=G.round;opnAdd(T.owner,p.id,'atk','우리 영토를 공격했다',-2,12);}if(G.tplId){const vic=T.owner;if(!isHostile(p.id,vic))log(`${pname(p.id)}이(가) ${pname(vic)}에 선전포고했다.`,'dip');setHostile(p.id,vic);G.players.forEach(x=>{if(x.alive&&!x.neu&&x.id!==p.id&&x.id!==vic&&treatyBetween(x.id,vic,'alliance')&&!treatyBetween(x.id,p.id,'alliance')&&truceLeft(x.id,p.id)===0)setHostile(x.id,p.id);});}}
+  const LISTS={};for(const p of G.players){if(!p.alive)continue;LISTS[p.id]=sanitizeOrders(p.id,G.orders[p.id]);G.lastOrders[p.id]=LISTS[p.id].map(o=>({...o}));}
+  /* 공격받는 영토에서 나가는 공격은 받는 공격이 끝난 뒤에 나간다. 그때 영토를 지켰고 병력이 공격 최소 병력 이상 남았으면 출발한다 */
+  const hitAt={};Object.keys(LISTS).forEach(k=>LISTS[k].forEach(o=>{if(o.mv)return;const T=G.terr[o.to];if(T.owner!=null&&T.owner!==+k)hitAt[o.to]=true;}));
+  const deferred=[];
+  const addAtk=(p,o)=>{const F=G.terr[o.from];const gSrc=F.owner!==p.id&&F.gst;const tk=takeUnits(F,gSrc?p.id:null,o.u||{i:o.n});o.u=tk;const T=G.terr[o.to];if(T.owner!=null&&T.owner!==p.id){breachCheck(p.id,T.owner);G.players[T.owner].warUntil=G.round+6;{const vv=G.players[T.owner];vv.grudge=vv.grudge||{};vv.grudge[p.id]=Math.min(3,(vv.grudge[p.id]||0)+0.25);vv.lostRecent=G.round;opnAdd(T.owner,p.id,'atk','우리 영토를 공격했다',-2,12);}if(G.tplId){const vic=T.owner;if(!isHostile(p.id,vic))log(`${pname(p.id)}이(가) ${pname(vic)}에 선전포고했다.`,'dip');setHostile(p.id,vic);G.players.forEach(x=>{if(x.alive&&!x.neu&&x.id!==p.id&&x.id!==vic&&treatyBetween(x.id,vic,'alliance')&&!treatyBetween(x.id,p.id,'alliance')&&truceLeft(x.id,p.id)===0)setHostile(x.id,p.id);});}}
       const key=o.to+'|'+p.id;const pl=plans[key]||(plans[key]={pid:p.id,to:o.to,n:0,srcs:[],gid:null,u:{i:0,c:0,a:0}});pl.n+=sumU(o.u);pl.u.v=mergeV(pl.u,o.u);pl.u.i+=o.u.i;pl.u.c+=o.u.c;pl.u.a+=o.u.a;pl.srcs.push({from:o.from,n:sumU(o.u),u:o.u});
       if(o.gid){const g=G.gens.find(x=>x.id===o.gid),cur=pl.gid&&G.gens.find(x=>x.id===pl.gid);if(!cur||g.atk>cur.atk)pl.gid=o.gid;}
-      rep.attacks.push({pid:p.id,from:o.from,to:o.to,n:o.n,gid:o.gid});p.fought=true;}}
+      rep.attacks.push({pid:p.id,from:o.from,to:o.to,n:o.n,gid:o.gid});p.fought=true;};
+  for(const p of G.players){if(!p.alive)continue;const list=LISTS[p.id];
+    for(const o of list){if(o.mv){moves.push({pid:p.id,...o});rep.moves.push({pid:p.id,from:o.from,to:o.to});continue;}
+      {const F0=G.terr[o.from];if(hitAt[o.from]&&F0.owner===p.id&&!F0.sea){deferred.push({p,o});continue;}}
+      addAtk(p,o);}}
+  const phase2=()=>{Object.keys(plans).forEach(k=>delete plans[k]);
+    deferred.forEach(({p,o})=>{const F=G.terr[o.from],nm=TDEF[o.from].name;if(!p.alive)return;
+      if(F.owner!==p.id){hooks.toast(p.id,`${nm}이(가) 먼저 함락돼 그곳에서의 공격이 취소됐어요.`);return;}
+      const cur=compOf(F,null),want=o.u||{i:o.n,c:0,a:0},u={i:Math.min(want.i||0,cur.i),c:Math.min(want.c||0,cur.c),a:Math.min(want.a||0,cur.a)};
+      let rem=Math.min(o.n,sumU(cur))-sumU(u);for(const t of ['i','c','a']){if(rem<=0)break;const x=Math.min(rem,cur[t]-u[t]);if(x>0){u[t]+=x;rem-=x;}}
+      const n=sumU(u);if(n<CFG.minAttack){hooks.toast(p.id,`${nm}이(가) 먼저 공격받아 병력이 모자라서 그곳에서의 공격이 취소됐어요.`);return;}
+      if(o.gid){const g=G.gens.find(x=>x.id===o.gid);if(!g||g.status!=='ok'||g.loc!==o.from||g.owner!==p.id)o.gid=null;}
+      o.u=u;o.n=n;if(G.terr[o.to].owner===p.id){moves.push({pid:p.id,...o,mv:true});return;}addAtk(p,o);});
+    const nb={};Object.values(plans).forEach(pl=>(nb[pl.to]=nb[pl.to]||[]).push(pl));Object.keys(nb).forEach(t=>{byT[t]=nb[t];});
+    return Object.keys(nb).map(Number).sort((x,y)=>imp(y)-imp(x));};
   const byT={};Object.values(plans).forEach(pl=>(byT[pl.to]=byT[pl.to]||[]).push(pl));
   const imp=tid=>{const T=G.terr[tid];const isCap=T.owner!=null&&G.players[T.owner].cap===tid;return (isCap?5000:0)+T.troops+byT[tid].reduce((s,x)=>s+x.n,0);};
   const order=Object.keys(byT).map(Number).sort((x,y)=>imp(y)-imp(x));
   const retreats=[],escapees=[];
   const retreatSrcs=(pl,n)=>{if(n<=0)return;const tot=pl.n;pl.srcs.forEach(s=>retreats.push({pid:pl.pid,n:Math.round(n*s.n/tot),prefer:[s.from],from:s.from,mix:mixOfU(s.u||{i:s.n,c:0,a:0})}));};
-  for(const tid of order){
+  for(let oi=0,ph2=false;;oi++){if(oi>=order.length){if(ph2||!deferred.length)break;ph2=true;const add=phase2();if(!add.length)break;order.push(...add);}const tid=order[oi];
     const T=G.terr[tid];const old=T.owner;
     const atts=byT[tid].map(a=>({...a,mix:mixOfU(a.u||{i:a.n,c:0,a:0}),gen:a.gid?G.gens.find(g=>g.id===a.gid):null})).sort((x,y)=>y.n*(1+GEN_K*genScale(y.n)*(y.gen?y.gen.atk:0))-x.n*(1+GEN_K*genScale(x.n)*(x.gen?x.gen.atk:0)));
     if(siegeEra()&&T.owner!=null&&(T.fort||0)>=1&&!T.sea){const ha=atts.filter(a=>a.pid!==T.owner);const sum=ha.reduce((s,a)=>s+a.n,0);const need=Math.max(0.5,1+0.3*(T.fort||0)-0.3*(T.siege||0)-(ha.some(a=>techHas(a.pid,'art'))?0.3:0));
@@ -1533,8 +1550,8 @@ function tcOpen(){const q=G.tcq||[];G.tcq=[];G.tcs=(G.tcs||[]).filter(c=>c.live)
   q.forEach(r=>{const A=G.players[r.a],B=G.players[r.b];if(!A||!B||!A.alive||!B.alive||!isHostile(r.a,r.b)||tcOf(r.a,r.b))return;
     const c={id:G.uid++,a:r.a,b:r.b,req:r.a,t0:Date.now(),s:{[r.a]:tcBlank(),[r.b]:tcBlank()},log:[],ver:1,live:true,thr:0.1+0.8*Math.random(),chg:Date.now(),bs:{}};
     if(A.isBot&&B.isBot){if(Math.random()<truceChance(r.b,r.a)){tcBotKeep(c,r.a,1);tcBotKeep(c,r.b,1);makeTruce(r.a,r.b,null,{fn:()=>tcApply(c)});}return;}
-    G.tcs.push(c);tcSay(c,`${snm(r.a)}의 요청으로 휴전회의가 열렸다.`);hooks.toast(r.a,'휴전회의가 열렸어요.');hooks.toast(r.b,'휴전회의가 열렸어요.');});}
-function tcEnd(c,why,cd){if(!c.live)return;c.live=false;if(why){log(`${pname(c.a)}와(과) ${pname(c.b)}의 ${why}`,'dip');[c.a,c.b].forEach(x=>hooks.toast(x,why));}
+    G.tcs.push(c);tcSay(c,`${snm(r.a)}의 요청으로 휴전회의가 열렸다.`);hooks.toast(r.a,`${snm(r.b)}와(과)의 휴전회의가 열렸어요.`);hooks.toast(r.b,`${snm(r.a)}이(가) 요청한 휴전회의가 열렸어요. 외교 탭의 휴전회의에서 회의장을 열 수 있어요.`);});}
+function tcEnd(c,why,cd){if(!c.live)return;c.live=false;G.tcDone=(G.tcDone||[]).filter(d=>G.round-d.r<2).concat([{id:c.id,a:c.a,b:c.b,r:G.round,ok:false,why:c.why||why||''}]);if(why){log(`${pname(c.a)}와(과) ${pname(c.b)}의 ${why}`,'dip');[c.a,c.b].forEach(x=>hooks.toast(x,why));}
   if(cd){[c.a,c.b].forEach(x=>{const p=G.players[x];p.truceCd=p.truceCd||{};p.truceCd[tcOther(c,x)]=G.round+2;});}}
 function tcEndAll(){(G.tcs||[]).forEach(c=>tcEnd(c,''));}
 function tcNote(c,x,o,n){const y=tcOther(c,x),nm=snm(x),add=(a,b)=>a.filter(i=>!b.includes(i));let k;
@@ -1584,10 +1601,11 @@ function tcBotTick(c,now){[c.a,c.b].forEach(x=>{const P=G.players[x];if(!P.isBot
     o.ids.filter(i=>!s.def.includes(i)).sort((p,q)=>landVal(q)-landVal(p)).forEach(i=>{const k=tcCost(c,i);if(k<=left){s.def.push(i);left-=k;}});
     st.ev=(st.ev||0)+1;if(s.ids.length&&(st.rz||0)<2&&Math.random()<0.5){st.rz=(st.rz||0)+1;const i=s.ids.filter(z=>o.def.includes(z)&&((c.lv||{})[z]||0)<3).sort((p,q)=>landVal(q)-landVal(p))[0];if(i!=null&&left>=1&&warBalance(x,y)>-0.25)tcRaise(c,x,i);}
     if(s.def.length!==old.def.length)tcNote(c,x,old,s);
-    const r=tcBotOk(c,x);if(r.ok!==st.v){st.v=r.ok;tcSay(c,r.ok?`${snm(x)}이(가) 이 조건으로 휴전에 동의했다.`:`${snm(x)}이(가) 거절했다. ${r.why}`);}s.ok=r.ok;c.ver++;}});}
+    const r=tcBotOk(c,x);if(r.ok!==st.v){st.v=r.ok;tcSay(c,r.ok?`${snm(x)}이(가) 이 조건으로 휴전에 동의했다.`:`${snm(x)}이(가) 거절했다. ${r.why}`);}s.ok=r.ok;c.ver++;
+    if(!r.ok&&o.ok&&!G.players[y].isBot){c.why=`${snm(x)}이(가) 확정한 조건을 거절했다. ${r.why}`;tcEnd(c,`휴전회의가 결렬됐다. (${snm(x)}이(가) 조건을 거절했다)`,true);}}});}
 function tcCheck(c){if(c.live&&c.s[c.a].ok&&c.s[c.b].ok)tcResolve(c);}
 function tcResolve(c){for(const x of [c.a,c.b]){if(tcSpend(c,x)>peaceNet(x,tcOther(c,x))+1e-9){c.s[x].ok=false;return;}}
-  c.live=false;makeTruce(c.a,c.b,null,{fn:()=>tcApply(c)});[c.a,c.b].forEach(x=>hooks.toast(x,'휴전이 성립했어요.'));}
+  c.live=false;G.tcDone=(G.tcDone||[]).filter(d=>G.round-d.r<2).concat([{id:c.id,a:c.a,b:c.b,r:G.round,ok:true,why:''}]);makeTruce(c.a,c.b,null,{fn:()=>tcApply(c)});[c.a,c.b].forEach(x=>hooks.toast(x,'휴전이 성립했어요.'));}
 /* 돌려줄 점령지 → 원래 주인에게 (병력은 80%가 물러난다) */
 function tcReturn(t,x,y){const n=t.troops||0;const dst=owned(x).find(o=>o.id!==t.id&&GEO.adj[t.id].includes(o.id))||owned(x).find(o=>o.id!==t.id);
   if(dst)dst.troops+=Math.round(n*0.8/10)*10;t.owner=y;t.home=y;t.troops=Math.max(10*UN,Math.round(n*0.2/10)*10);t.unrest=0;t.occAt=null;
@@ -1612,7 +1630,7 @@ function tcTick(){const now=Date.now();(G.tcs||[]).forEach(c=>{if(!c.live)return
 const tcLive=()=>(G.tcs||[]).some(c=>c.live&&(!G.players[c.a].isBot||!G.players[c.b].isBot));
 function tcView(c,pid){const y=tcOther(c,pid),pr={};G.terr.forEach(t=>{if(t.sea||(t.owner!==c.a&&t.owner!==c.b))return;pr[t.id]=[tcCost(c,t.id),tcKeepCost(t.id)];});
   const mk=x=>Object.assign(peaceStat(x,tcOther(c,x)),{n:peaceNet(x,tcOther(c,x)),spent:tcSpend(c,x)});
-  return {id:c.id,a:c.a,b:c.b,me:pid,you:y,lv:Object.assign({},c.lv||{}),s:JSON.parse(JSON.stringify(c.s)),pr,st:{[c.a]:mk(c.a),[c.b]:mk(c.b)},held:{[c.a]:tcHeld(c.a,c.b),[c.b]:tcHeld(c.b,c.a)},log:c.log.slice(-14),no:!!(c.bs&&c.bs[y]&&c.bs[y].v===false),ver:c.ver||0,left:Math.max(0,TC_HOLD-(Date.now()-c.t0))};}
+  return {id:c.id,a:c.a,b:c.b,req:c.req,me:pid,you:y,lv:Object.assign({},c.lv||{}),s:JSON.parse(JSON.stringify(c.s)),pr,st:{[c.a]:mk(c.a),[c.b]:mk(c.b)},held:{[c.a]:tcHeld(c.a,c.b),[c.b]:tcHeld(c.b,c.a)},log:c.log.slice(-14),no:!!(c.bs&&c.bs[y]&&c.bs[y].v===false),ver:c.ver||0,left:Math.max(0,TC_HOLD-(Date.now()-c.t0))};}
 /* ===== 귀족 파벌 · 국채 · 산적 소굴 ===== */
 const FAC={lord:{n:'영주',ic:'🏰',req:'영지 세습권 인정',d:'충성이 높으면 안정도와 징집 상한이 오르고, 낮으면 반란 위험이 커져요'},
   mil:{n:'군부',ic:'⚔️',req:'군비 증액',d:'충성이 높으면 사기가 오르고, 낮으면 쿠데타 위험이 커져요'},
@@ -3126,7 +3144,7 @@ function extAct(pid,m){const p=G.players[pid];const inPlan=G.phase==='plan';if(m
   case 'bandit':return bandAct(pid,m);
   case 'tcset':{const c=(G.tcs||[]).find(x=>x.id===+m.id&&x.live);if(!c||(c.a!==pid&&c.b!==pid))return fail('열린 휴전회의가 없어요.');if(!inPlan)return fail('지금은 불가능합니다.');const r=tcSet(c,pid,m);if(r.ok)tcCheck(c);return r;}
   case 'tcraise':{const c=(G.tcs||[]).find(x=>x.id===+m.id&&x.live);if(!c||(c.a!==pid&&c.b!==pid))return fail('열린 휴전회의가 없어요.');if(!inPlan)return fail('지금은 불가능합니다.');return tcRaise(c,pid,m.tid);}
-  case 'tcok':{const c=(G.tcs||[]).find(x=>x.id===+m.id&&x.live);if(!c||(c.a!==pid&&c.b!==pid))return fail('열린 휴전회의가 없어요.');c.s[pid].ok=!!m.v;c.ver=(c.ver||0)+1;if(m.v)tcSay(c,`${snm(pid)}이(가) 이 조건으로 휴전을 확정했다.`);tcCheck(c);return ok(m.v?'확정했어요. 상대도 확정하면 휴전이 성립해요.':'확정을 취소했어요.');}
+  case 'tcok':{const c=(G.tcs||[]).find(x=>x.id===+m.id&&x.live);if(!c||(c.a!==pid&&c.b!==pid))return fail('열린 휴전회의가 없어요.');c.s[pid].ok=!!m.v;c.ver=(c.ver||0)+1;if(m.v){tcSay(c,`${snm(pid)}이(가) 이 조건으로 휴전을 확정했다.`);c.chg=Date.now();}tcCheck(c);return ok(m.v?'확정했어요. 상대도 확정하면 휴전이 성립해요.':'확정을 취소했어요.');}
   case 'tcquit':{const c=(G.tcs||[]).find(x=>x.id===+m.id&&x.live);if(!c||(c.a!==pid&&c.b!==pid))return fail('열린 휴전회의가 없어요.');tcEnd(c,`휴전회의가 결렬됐다. (${snm(pid)}이(가) 회의장을 떠났다)`,true);return ok('회의가 결렬됐어요. 전쟁이 계속돼요.');}
   case 'expedition':return expAct(pid,m);
   case 'form':{if(!inPlan)return fail('계획 단계에서만 가능합니다.');if(!FORMS[m.f])return fail('대형 오류');p.form=m.f;return ok(`전투 대형: ${FORMS[m.f].ic} ${FORMS[m.f].n}`);}
@@ -3651,7 +3669,7 @@ function makeView(pid,opts){const omni=!!(opts&&opts.omni);const DPT=cedeGeo();
     gens:G.gens.filter(g=>g.status!=='dead').map(g=>{const full=g.owner===pid||sees(g.owner)||g.captor===pid;const o={id:g.id,owner:g.owner,name:g.name,xp:g.xp||0,grade:gradeOf(g),loc:g.loc,status:g.status,captor:g.captor};if(full){o.atk=g.atk;o.def=g.def;o.lead=g.lead;o.trait=g.trait;}return o;}),
     relics:Object.assign({},G.relics||{}),
     fac:omni?null:facView(pid),bonds:omni?[]:((G.players[pid].bonds||[]).map(b=>({id:b.id,amt:b.amt,per:b.per,left:b.left,miss:b.miss||0,pay:Math.round(b.left*b.per*0.9)}))),bondLim:omni?0:bondLimit(pid),band:omni?[]:bandView(pid),
-    tc:omni?null:(G.tcs||[]).filter(c=>c.live&&(c.a===pid||c.b===pid)).map(c=>tcView(c,pid)),tcq:omni?[]:(G.tcq||[]).filter(r=>r.a===pid||r.b===pid).map(r=>({a:r.a,b:r.b})),
+    tc:omni?null:(G.tcs||[]).filter(c=>c.live&&(c.a===pid||c.b===pid)).map(c=>tcView(c,pid)),tcq:omni?[]:(G.tcq||[]).filter(r=>r.a===pid||r.b===pid).map(r=>({a:r.a,b:r.b})),tcDone:omni?[]:(G.tcDone||[]).filter(d=>d.a===pid||d.b===pid),
     guar:(G.guar||[]).filter(x=>x.until>=G.round&&(omni||x.from===pid||x.to===pid||true)).map(x=>({...x})),emb:(G.emb||[]).filter(x=>x.until>=G.round&&(omni||x.from===pid||x.to===pid)).map(x=>({...x})),
     dips:G.dips.map(d=>({...d})),treaties:G.treaties.filter(t=>omni||!t.secret||t.a===pid||t.b===pid).map(t=>({...t})),props:omni?[]:G.props.filter(x=>x.from===pid||x.to===pid).map(x=>({...x})),
     log:G.log.slice(-200),wl:(G.warlog||[]).slice(-300),spec:omni,eliminated:!me.alive,pol:omni?null:G.pol[pid],marr:(G.marr||[]).filter(x=>x.until>=G.round&&(omni||x.a===pid||x.b===pid)),canUndo:!omni&&Host.canUndo(),hasLast:!omni&&!!(G.lastOrders[pid]&&G.lastOrders[pid].length),orders:omni?null:(G.orders[pid]||null),report:G.phase==='report'?G.report:null,
@@ -6344,7 +6362,14 @@ function tcConf(){const v=C.view;return v&&v.tc?(v.tc.find(c=>c.id===TCW.cid)||n
 function tcSp(c,s,o){return s.keep.reduce((a,i)=>a+c.pr[i][1],0)+s.ids.reduce((a,i)=>a+c.pr[i][0],0)+s.def.filter(i=>o.ids.includes(i)).reduce((a,i)=>a+c.pr[i][0],0)+s.tk+(s.vs?6:0);}
 function tcPush(c,patch){const s=Object.assign({},c.s[c.me],patch);const o=c.s[c.you];if(tcSp(c,s,o)>c.st[c.me].n+1e-9)return false;
   c.s[c.me]=Object.assign(s,{ok:false});o.ok=false;TCW.dirty=true;send({a:'tcset',id:c.id,keep:s.keep,ids:s.ids,def:s.def,tk:s.tk,pow:s.pow,vs:s.vs,wr:s.wr});return true;}
-function tcClose(){if(TCW.ov){TCW.ov.remove();TCW.ov=null;TCW.box=null;}}
+function tcClose(){if(TCW.ov){TCW.ov.remove();TCW.ov=null;TCW.box=null;}TCW.end=false;clearTimeout(TCW.endT);}
+/* 회의가 끝나면(성립·결렬) 결과를 크게 보여 주고 닫는다 */
+function tcOutcome(v){const id=TCW.cid,d=(v.tcDone||[]).find(x=>x.id===id),lc=TCW.lastC;if(!TCW.box){tcClose();return;}
+  const you=lc?lc.you:d?(d.a===v.me?d.b:d.a):null,nm=you!=null&&v.players[you]?esc(v.players[you].kingdom):'상대';
+  const ok=d?d.ok:(you!=null&&v.players[you]&&!v.players[you].hostile);
+  TCW.end=true;TCW.cid=null;C.tcClosed=C.tcClosed||{};C.tcClosed[id]=true;
+  TCW.box.innerHTML=`<div class="tcend ${ok?'ok':'no'}"><div class="ic">${ok?'🕊':'⚔️'}</div><h2>${ok?'휴전 성립':'회의 결렬'}</h2><p>${ok?`${nm}와(과)의 전쟁이 멈췄어요.`:`${nm}와(과)의 휴전회의가 결렬됐어요. 전쟁은 계속돼요.`}</p>${!ok&&d&&d.why?`<p class="sm muted">${esc(d.why)}</p>`:''}${!ok?'<p class="sm muted">2라운드 뒤에 다시 휴전회의를 요청할 수 있어요.</p>':''}<button class="btn primary" data-pa="endx">확인</button></div>`;
+  const b=TCW.box.querySelector('[data-pa="endx"]');if(b)b.onclick=()=>tcClose();TCW.endT=setTimeout(()=>{if(TCW.end)tcClose();},6000);}
 function tcOpenWin(){const ov=document.createElement('div');ov.className='mvov';ov.innerHTML='<div class="mvbox" style="width:min(96vw,900px)"></div>';document.body.appendChild(ov);TCW.ov=ov;TCW.box=ov.firstChild;TCW.vk=null;TCW.ver=-1;
   const box=TCW.box;
   const hit=ev=>{const cv=box.querySelector('#pcv'),r=cv.getBoundingClientRect(),x=(ev.clientX-r.left)/r.width*1000,y=(ev.clientY-r.top)/r.height*700;const c2=cv.getContext('2d');const V=TCW.v||{s:1,x:0,y:0};c2.setTransform(1,0,0,1,0,0);const wx=(x-V.x)/V.s,wy=(y-V.y)/V.s;
@@ -6399,10 +6424,10 @@ function tcRender(){const box=TCW.box,v=C.view,c=tcConf();if(!box||!c){return;}T
   const defL=o.ids.map(i=>tag(i,s.def.includes(i)?'good':'hot',(s.def.includes(i)?'방어 ':'방어하려면 ')+c.pr[i][0]+((c.lv||{})[i]?' · 상대가 올림 +'+c.lv[i]:''))).join('')||'<span class="muted">상대가 요구한 내 땅이 아직 없어요</span>';
   const back=c.held[c.you].filter(i=>!o.keep.includes(i)).length;
   const cs=v.players.filter(p=>p.id!==c.me&&p.id!==c.you&&p.alive&&p.hostile).map(p=>p.id);
-  const oth=v.tc.length>1?`<div class="mvtabs" style="flex-wrap:wrap">${v.tc.map(x=>`<button class="btn sm ${x.id===c.id?'on':''}" data-pt="${x.id}" style="${x.id===c.id?'':'opacity:.8'}">${nm(x.you)}</button>`).join('')}</div>`:'';
+  const oth='';TCW.lastC={you:c.you};
   const nk=c.held[c.me].filter(i=>!s.keep.includes(i)).length,warn=!s.ok&&nk>0&&TCW.warnId===c.id;
   const stat=warn?`<span style="color:#ffb0a8">지키지 않은 점령지 ${nk}곳은 원래 주인에게 돌아가요.</span>`:o.ok?`<span style="color:#7fe0a0">상대가 확정했어요</span>`:c.no?`<span style="color:#ffb0a8">상대가 이 조건을 받아들이지 않아요. 조건을 바꿔 보세요.</span>`:`<span class="muted">상대가 검토 중이에요</span>`;
-  box.innerHTML=`<h2>🕊 휴전회의 <small class="muted" style="font-size:12px">남은 시간 <span id="tcleft">${Math.round(c.left/1000)}초</span></small></h2>${oth}
+  box.innerHTML=`<h2>🕊 ${nm(c.you)}와(과) 휴전회의 <small class="muted" style="font-size:12px">남은 시간 <span id="tcleft">${Math.round(c.left/1000)}초</span></small></h2>${oth}
   <div class="row" style="justify-content:space-between;gap:8px;flex-wrap:wrap;margin-bottom:6px"><span style="color:${PC_BLUE}">● ${nm(c.me)}</span><span style="color:${PC_RED}">● ${nm(c.you)}</span></div>
   <canvas id="pcv" width="1000" height="700" style="display:block;margin:0 auto;width:min(100%,calc(46vh*1.4286));height:auto;border:1px solid #c9a24a;border-radius:8px;background:#10202b;touch-action:manipulation"></canvas>
   <div id="pcinfo" class="sm muted" style="min-height:20px;margin:4px 0">초록 = 토큰으로 지키는 점령지 · 연파랑 = 돌려줄 점령지 · 노랑 = 내가 요구한 땅 · 주황 = 상대가 요구한 내 땅 · 하늘 = 방어</div>
@@ -6418,9 +6443,9 @@ function tcRender(){const box=TCW.box,v=C.view,c=tcConf();if(!box||!c){return;}T
   <div class="sm muted" style="margin-top:6px">두 나라가 모두 확정하면 휴전이 성립해요. 조건을 바꾸면 확정이 풀려요. 회의 중에는 턴이 넘어가지 않아요.</div>
   <div class="row" style="gap:8px;justify-content:space-between;margin-top:10px;flex-wrap:wrap;position:sticky;bottom:-14px;background:#0e182b;padding:8px 0;border-top:1px solid #c9a24a55"><span class="sm">${stat}</span><span class="row" style="gap:8px"><button class="btn sm ${s.ok?'':'primary'}" data-pa="ok">${s.ok?'확정 취소':warn?'그래도 확정':'이 조건으로 확정'}</button><button class="btn sm danger" data-pa="quit">회의 결렬</button><button class="btn sm" data-pa="x">닫기</button></span></div>`;
   if(TCW.vk!==c.id){TCW.vk=c.id;TCW.v=tcFit(c);}tcDraw(c);}
-window.tcWin=function(v){const cs=v&&v.tc;if(!cs||!cs.length||v.spec||v.draft){tcClose();return;}
-  if(!TCW.ov){const nc=cs.find(x=>!(C.tcClosed||{})[x.id]);if(!nc||!MapView.p2)return;TCW.cid=nc.id;tcOpenWin();tcRender();return;}
-  if(!cs.find(x=>x.id===TCW.cid)){TCW.cid=cs[0].id;TCW.vk=null;tcRender();return;}
+window.tcWin=function(v){const cs=(v&&v.tc)||[];if(TCW.ov&&TCW.cid!=null&&!TCW.end&&!cs.find(x=>x.id===TCW.cid)&&v&&!v.spec){tcOutcome(v);return;}
+  if(TCW.end)return;if(!cs.length||v.spec||v.draft){tcClose();return;}
+  if(!TCW.ov){const nc=cs.find(x=>x.req===v.me&&!(C.tcClosed||{})[x.id]);if(!nc||!MapView.p2)return;TCW.cid=nc.id;tcOpenWin();tcRender();return;}
   const c=cs.find(x=>x.id===TCW.cid);TCW.leftAt=Date.now()+c.left;if(c.ver!==TCW.ver||TCW.dirty){TCW.dirty=false;tcRender();}};
 window.openConf=function(id){const v=C.view;if(!v||!v.tc||!v.tc.length)return;if(C.tcClosed)delete C.tcClosed[id];tcClose();TCW.cid=id!=null?+id:v.tc[0].id;tcOpenWin();tcRender();};
 
