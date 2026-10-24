@@ -123,7 +123,7 @@ function paintWho() {
 let ffMarked = '', ffAchT = 0;
 function ffProfile() {
   if (window.FFProfile) return Promise.resolve(true);
-  return new Promise(res => { const s = document.createElement('script'); s.src = 'https://frenchfries777mc.github.io/games/ff-profile.js?v=20261024a'; s.onload = () => res(!!window.FFProfile); s.onerror = () => res(false); document.head.appendChild(s); });
+  return new Promise(res => { const s = document.createElement('script'); s.src = 'https://frenchfries777mc.github.io/games/ff-profile.js?v=20261024b'; s.onload = () => res(!!window.FFProfile); s.onerror = () => res(false); document.head.appendChild(s); });
 }
 function ffSync() {
   clearTimeout(ffAchT); ffAchT = setTimeout(async () => {
