@@ -148,13 +148,14 @@ function aimPoint(p, inp, range) {
   if (inp.ax != null) { const d = Math.hypot(inp.ax - p.x, inp.az - p.z); if (d <= range) return { x: inp.ax, z: inp.az }; }
   return { x: p.x + Math.cos(p.a) * range, z: p.z + Math.sin(p.a) * range };
 }
+export const COMBO_T = 0.5;
 function basicAttack(G, p, inp, nShot = 1) {
   const R = ROLES[p.role], A = R.atk;
   p.cd.atk = A.cd * cdMul(p, 'atk');
-  // 기사 3단 베기: 공격, 공격, 강타 뒤 처음부터 (0.8초 안에 다시 치지 않으면 처음부터). 봇은 쓰지 않아요
+  // 기사 3단 베기: 공격, 공격, 강타 뒤 처음부터 (0.5초 안에 다시 치지 않으면 처음부터, 공격 간격이 긴 사제는 간격 + 0.1초). 봇은 쓰지 않아요
   // 사제·종자: 세 번째 공격마다 크게 휘두르는 큰 공격 (피해 1.5배). 봇은 쓰지 않아요
   const cmb = !p.bot && (p.role === 'knight' || p.role === 'priest' || p.role === 'squire'), aid = p.atkN = (p.atkN || 0) + 1;
-  if (cmb) { p.combo = p.comboT > 0 ? ((p.combo || 0) + 1) % 3 : 0; p.comboT = 0.8; }
+  if (cmb) { p.combo = p.comboT > 0 ? ((p.combo || 0) + 1) % 3 : 0; p.comboT = Math.max(COMBO_T, p.cd.atk + 0.1); }
   const third = cmb && p.combo === 2, heavy = third && p.role === 'knight', big = third && !heavy, hm = big ? 1.5 : 1;
   p.anim = heavy ? 'hv' : big ? 'big' : 'atk'; p.animT = heavy ? 0.95 : big ? 0.6 : 0.32; p.animN = (p.animN || 0) + 1;
   // 기사 베기 방향: 1타 오른쪽 위→왼쪽 아래, 2타 왼쪽 아래→오른쪽 아래 (봇은 둘을 번갈아)

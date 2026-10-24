@@ -335,3 +335,7 @@ crownenvoy/CrownEnvoy-v0.4.html | 전신망 (정치 탭 카드) | "📡 전신�
 ## Dummy Party 허브 연결 (2026-10-24)
 - hub.js | 통합 검색 Dummy Party 설명 '마네킹들이 벌이는 병맛 미니게임 파티' | 한국어만 있음 | 2026-10-24
 - patchnotes.json | "Dummy Party 허브 연결" 4줄 | 2026-10-24
+
+## Vowkeep b38 (2026-10-24)
+- vowkeep/i18n.js | v_build '마지막 빌드 {b} · {d}' | 한국어만 있음 | Vowkeep b38 | 2026-10-24
+- patchnotes.json, vowkeep/patchnotes.json | "Vowkeep 연타 시간, 버전 목록" 4줄 | Vowkeep b38 | 2026-10-24

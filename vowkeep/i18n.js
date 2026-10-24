@@ -33,6 +33,9 @@ window.I18N = {
 "meta": {
 "ko": "v{v} · {d} 업데이트"
 },
+"v_build": {
+"ko": "마지막 빌드 {b} · {d}"
+},
 "st1": {
 "ko": "역할 4개"
 },
@@ -199,7 +202,7 @@ window.I18N = {
 "ko": "Vowkeep"
 },
 "foot_v": {
-"ko": "v{v} · {d}"
+"ko": "{v} · {d}"
 },
 "back": {
 "ko": "사이트로 돌아가기"
