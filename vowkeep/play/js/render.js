@@ -60,7 +60,7 @@ const THEME = () => THEMES[CH.theme] || THEMES.dungeon;
 
 /* ---------- 캐릭터 모델 ---------- */
 const HERO = {
-  knight: { body: 0x3f6fd0, leg: 'dm', arm: 'mt', helm: 1, sword: 1, shield: 1, cape: 0x24479a, belt: 1 },
+  knight: { body: 0x3f6fd0, leg: 'dm', arm: 'mt', helm: 1, sword: 2, shield: 1, cape: 0x24479a, belt: 1 },
   archer: { body: 0x467a3e, leg: 0x3a3a44, arm: 0x467a3e, hood: 0x2f5a32, bow: 1, quiver: 1, belt: 1 },
   priest: { body: 0xe8e4ef, robe: 1, leg: 0x9a96a8, arm: 0xe8e4ef, hood: 0xcfc8dc, staff: 1 },
   squire: { body: 0x8a6a44, leg: 0x4a4250, arm: 0x8a6a44, cap: 0xb9443a, torch: 1, sack: 1, belt: 1 }
@@ -96,7 +96,9 @@ function makeFigure(o) {
   const armR = new THREE.Group(); armR.position.set(0.72, 2.15, 0); body.add(armR); cap(0.17, 0.7, am, 0, -0.45, 0, armR);
   const armL = new THREE.Group(); armL.position.set(-0.72, 2.15, 0); body.add(armL); cap(0.17, 0.7, am, 0, -0.45, 0, armL);
   let light = null;
-  if (o.sword) { const sw = new THREE.Group(); sw.position.set(0, -0.9, 0.1); armR.add(sw); box(0.12, 2, 0.04, M(0xe9edf5, { m: 0.9, r: 0.2 }), 0, 1.1, 0, sw); box(0.6, 0.1, 0.14, gold(), 0, 0.1, 0, sw); box(0.08, 0.35, 0.08, leather(), 0, -0.1, 0, sw); sw.rotation.x = Math.PI / 2; }
+  // 기사: 검고 두꺼운 대검 (넓은 날, 긴 손잡이, 날 가운데 홈)
+  if (o.sword === 2) { const sw = new THREE.Group(); sw.position.set(0, -0.9, 0.1); armR.add(sw); const bk = M(0x1c1b22, { m: 0.85, r: 0.35 }); box(0.42, 2.5, 0.22, bk, 0, 1.45, 0, sw); box(0.1, 2.2, 0.23, M(0x3a3946, { m: 0.9, r: 0.25 }), 0, 1.35, 0, sw); cone(0.26, 0.34, 4, bk, 0, 2.86, 0, sw).rotation.y = Math.PI / 4; box(0.85, 0.16, 0.2, M(0x2a2830, { m: 0.8, r: 0.4 }), 0, 0.15, 0, sw); box(0.11, 0.55, 0.11, leather(), 0, -0.2, 0, sw); box(0.18, 0.14, 0.18, M(0x2a2830, { m: 0.8, r: 0.4 }), 0, -0.52, 0, sw); sw.rotation.x = Math.PI / 2; }
+  else if (o.sword) { const sw = new THREE.Group(); sw.position.set(0, -0.9, 0.1); armR.add(sw); box(0.12, 2, 0.04, M(0xe9edf5, { m: 0.9, r: 0.2 }), 0, 1.1, 0, sw); box(0.6, 0.1, 0.14, gold(), 0, 0.1, 0, sw); box(0.08, 0.35, 0.08, leather(), 0, -0.1, 0, sw); sw.rotation.x = Math.PI / 2; }
   if (o.shield) { const shc = o.shieldC || 0x2c4f9e; const sh = new THREE.Group(); sh.position.set(-0.15, -0.7, 0.45); armL.add(sh); sh.rotation.x = 0.6; box(1.1, 1.4, 0.14, M(shc), 0, 0, 0, sh); const c = cone(0.78, 0.7, 4, M(shc), 0, -0.95, 0, sh); c.rotation.set(Math.PI, Math.PI / 4, 0); box(0.18, 1.2, 0.05, gold(), 0, -0.1, 0.09, sh); box(0.8, 0.18, 0.05, gold(), 0, 0.25, 0.09, sh); }
   // 활: 왼손에 쥐고, 팔을 앞으로 뻗으면 위아래로 선 활이 조준 방향으로 휘어요 (시위는 몸 쪽)
   let bowS = null;
@@ -107,8 +109,8 @@ function makeFigure(o) {
     box(0.14, 0.22, 0.14, leather(), 0.12, -0.95, 0, armL);
     const sm = M(0xe8e0c8), sa = mesh(geo('str', () => new THREE.BoxGeometry(0.025, 0.025, 1)), sm, 0, 0, 0, armL, false), sb = mesh(geo('str', () => new THREE.BoxGeometry(0.025, 0.025, 1)), sm, 0, 0, 0, armL, false);
     const ar = new THREE.Group(); armL.add(ar); box(0.05, 1.3, 0.05, M(0x8a5a2a), 0, 0, 0, ar); const ah = cone(0.08, 0.25, 4, metal(), 0, -0.75, 0, ar); ah.rotation.x = Math.PI;
-    // 모아 쏘기용 화살 두 대: 두 발·세 발을 모으면 첫 화살 양옆으로 부채꼴로 메겨져요 (촉이 빛나요)
-    const ex = [0.2, -0.2].map((dz, k) => { const g2 = new THREE.Group(); g2.position.z = dz; g2.rotation.x = k ? -0.2 : 0.2; ar.add(g2); box(0.05, 1.3, 0.05, M(0x8a5a2a), 0, 0, 0, g2); const hm = M(0xffd36b, { e: 0xffb040, ei: 2.5, uniq: true }), h2 = cone(0.11, 0.32, 4, hm, 0, -0.75, 0, g2); h2.rotation.x = Math.PI; box(0.16, 0.2, 0.03, M(0xe8e0c8), 0, 0.58, 0, g2); g2.visible = false; return { g: g2, hm }; });
+    // 모아 쏘기용 화살 두 대: 두 발·세 발을 모으면 첫 화살 양옆(위에서 볼 때 좌우)으로 부채꼴로 메겨져요 (촉이 빛나요)
+    const ex = [0.24, -0.24].map((dx, k) => { const g2 = new THREE.Group(); g2.position.x = dx; g2.rotation.z = k ? -0.3 : 0.3; ar.add(g2); box(0.05, 1.3, 0.05, M(0x8a5a2a), 0, 0, 0, g2); const hm = M(0xffd36b, { e: 0xffb040, ei: 2.5, uniq: true }), h2 = cone(0.11, 0.32, 4, hm, 0, -0.75, 0, g2); h2.rotation.x = Math.PI; box(0.16, 0.2, 0.03, M(0xe8e0c8), 0, 0.58, 0, g2); g2.visible = false; return { g: g2, hm }; });
     bowS = { sa, sb, ar, ex }; setPull(bowS, 0.05);
   }
   if (o.staff) { const sc = o.staffC || 0x9af0d0; const st = new THREE.Group(); st.position.set(0, -0.9, 0.1); armR.add(st); st.rotation.x = 0.7; cyl(0.07, 0.07, 3.2, 6, M(0x7a5a2a), 0, 0.5, 0, st); mesh(geo('oct', () => new THREE.OctahedronGeometry(0.32)), M(sc, { e: sc, ei: 4 }), 0, 2.3, 0, st); if (!o.noLight) { light = new THREE.PointLight(0x6af0c0, 14, 8, 1.6); light.position.set(0, 2.4, 0); st.add(light); } }
@@ -1189,10 +1191,11 @@ function kPose(c, v, base) {
 // 궁수·사제·종자 연속 공격 자세. [1타 감기, 1타 끝, 2타 감기, 2타 끝]. 1타 끝 자세에서 2타가 바로 이어져요 (lxo = 왼팔 기본에서 벗어난 만큼)
 const CHAIN = {
   archer: [
-    { pull: 0.8, rpz: -0.65, rz: -0.35, bry: 0.35, bx: -0.08, lg: 0.3 },
-    { pull: 0, rpz: -0.85, rx: -1.15, rz: -0.95, lxo: -0.2, bry: 0.9, bx: -0.1, bz: -0.3, sq: 0.15, lg: 0.9, hx: -0.05 },
-    { pull: 0.55, rpz: -0.45, rx: -2.8, rz: 0.45, lxo: -0.05, bry: 0.25, bx: -0.05, lg: 0.6, sq: -0.08 },
-    { pull: 0, rpz: -0.9, rx: -1.2, rz: -0.8, lxo: -0.25, lz: 0.4, bry: -0.9, bx: -0.1, bz: -0.3, sq: 0.18, lg: 1.0, hx: -0.05 }
+    // 활 든 팔은 과녁을 향해 그대로 두고, 시위만 뺨까지 당겼다가 놓아요. 놓으면 오른손이 뒤로 튕기고 몸이 살짝 밀려요
+    { pull: 0.8, rpz: -0.7, rz: -0.3, bry: 0.18, bx: -0.05, lg: 0.35 },
+    { pull: 0, rpz: -0.95, rx: -1.35, rz: -0.7, bry: 0.1, bx: -0.12, sq: 0.06, lg: 0.4, hx: -0.04 },
+    { pull: 0.8, rpz: -0.7, rz: -0.3, bry: 0.2, bx: -0.05, lg: 0.4 },
+    { pull: 0, rpz: -1.0, rx: -1.3, rz: -0.75, bry: 0.12, bx: -0.14, sq: 0.07, lg: 0.45, hx: -0.05 }
   ],
   priest: [
     { rx: -2.6, rz: -0.6, bry: -0.5, bx: -0.15, lxo: -0.6, sq: -0.1, hx: -0.15 },

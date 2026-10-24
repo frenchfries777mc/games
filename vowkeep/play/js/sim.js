@@ -618,7 +618,11 @@ function stepCuts(G, dt) {
     if (L.done) {
       // 모두 한 번 올라간 뒤에는 혼자서도 탈 수 있게 저절로 움직여요 (다시 일어난 동료가 갇히지 않게)
       const tgt = onP ? 1 : 0; L.h = tgt > L.h ? Math.min(1, L.h + dt / LIFT_T) : Math.max(0, L.h - dt / LIFT_T);
-    } else if (!hold.length) L.lock = false;
+    } else if (!hold.length) {
+      // 손잡이를 놓으면 중간에 멈추지 않고 천천히 아래로 내려가요 (발판 위에 갇히지 않게)
+      L.lock = false;
+      if (L.h > 0 && L.h < 1) { L.h = Math.max(0, L.h - dt / (LIFT_T * 1.5)); if (L.h <= 0) L.dir = 1; }
+    }
     else if (!L.lock) {
       L.h = clamp(L.h + L.dir * dt / LIFT_T, 0, 1);
       if (L.h >= 1 && L.dir > 0) { L.dir = -1; L.lock = true; ev(G, 'lstop', { x: cw(q.plat[0] + 1), z: cw(q.plat[1] + 1), up: 1 }); }
