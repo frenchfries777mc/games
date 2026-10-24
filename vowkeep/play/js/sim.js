@@ -289,7 +289,7 @@ function revive(G, q, frac, by) {
 // inputs[pid] = { mx, mz, aim, ax, az, atk(held), q, e, r, roll, skip (one-shot), f(held), px, pz (원격 이동) }
 export function step(G, dt, inputs) {
   G.t += dt; G.phaseT += dt;
-  for (const p of G.players) if (p.bot) inputs[p.id] = botThink(G, p, dt);
+  for (const p of G.players) if (p.bot) inputs[p.id] = botFace(botThink(G, p, dt));
 
   // 이야기 건너뛰기: 사람 모두가 누르면 넘어가요
   if (G.phase === 'intro') {
@@ -961,6 +961,8 @@ function moveTo(G, p, inp, gx, gz, near = 0.6) {
   const a = navDir(p.x, p.z, gx, gz, G.t); if (a == null) return false;
   inp.mx = Math.cos(a); inp.mz = Math.sin(a); return true;
 }
+// 봇이 조준할 곳이 없으면 걸어가는 쪽을 바라봐요
+function botFace(inp) { if (inp.aim == null && Math.hypot(inp.mx || 0, inp.mz || 0) > 0.1) inp.aim = Math.atan2(inp.mz, inp.mx); return inp; }
 function botThink(G, p, dt) {
   const inp = {}; if (p.dead || p.down) return inp;
   const R = ROLES[p.role], ai = p.ai; ai.t -= dt;
