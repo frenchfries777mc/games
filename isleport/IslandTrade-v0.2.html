@@ -477,7 +477,7 @@ const TUT=[
  [P('다 자라면 ▼ 표시의 밭을 눌러 수확해요','When it is grown, tap the field with the ▼ to harvest'),s=>s.stats.harvest>=1],
  [P('마을 장터에서 수확한 것을 팔아요','Sell your harvest at the town market'),s=>(s.stats.shop||0)>=1],
  [P('항구에서 배에 짐을 싣고 보내요','Load a ship at the harbor and send it off'),s=>s.stats.sailed>=1]];
-const OUTMAX=12,BUILD=58;
+const OUTMAX=12,BUILD=59;
 const hasB=(s,b)=>s.slots.some(x=>x&&x.b===b);
 const rankOf=e=>{let r=0;RANKS.forEach((x,i)=>{if(e>=x[0])r=i;});return r;};
 /* 업적: id, 이름, 설명, 조건 */
@@ -599,6 +599,10 @@ A('nw1m',P('백만장자','Millionaire'),P('재산 1,000,000 모으기','Reach a
 const CROPK=Object.keys(CROPS),SPEC=['goldbarley','pomegranate','saffron','cloudcotton','seaweed','dragonfruit'],CROPK17=CROPK.filter(c=>!SPEC.includes(c));
 const ACHN={};ACH.forEach(a=>ACHN[a.id]=a);
 const NOTES=[
+ {date:'2026-10-25',build:'v0.2 build 59',title:P('로비로 돌아가기','Back to lobby'),items:[
+  P('게임 화면 오른쪽 위 로비 버튼 추가','Lobby button added to the top right of the game screen'),
+  P('저장 후 로비로 돌아가는 확인 창','Confirm window that saves and returns to the lobby')
+ ]},
  {date:'2026-10-24',build:'v0.2 build 58',title:P('항구 검역소','Harbor quarantine'),items:[
   P('병 소문 소식 추가','New sea news: sickness rumors'),
   P('병 소문 항구에서 사 온 짐의 검역 대기','Goods bought at a sick port wait in quarantine'),
@@ -28194,7 +28198,7 @@ function applyStatic(){
   $('hud').hidden=!S;
   document.title='Isleport';
   $('hud').innerHTML=`<div class="hl"><div class="gold1"><span id="sMoney">0</span> <small style="font:11px var(--ko)">${UG()}</small></div><div class="rkb"><i id="sRankBar"></i></div><div class="sm1"><span id="sRank"></span> · <span id="sSeason"></span> <span id="sWx"></span></div><div class="qline" id="sQuest"></div><div><button class="pb sm dark" id="backBtn" data-act="seaback" hidden>${T('돌아가기','Back')}</button></div></div>
-   <span class="sp"></span><span id="roomTag" class="sm1" ${MP.on?'':'hidden'}>${MP.on?T('방 {0}','Room {0}',MP.code):''}</span>
+   <span class="sp"></span><span id="roomTag" class="sm1" ${MP.on?'':'hidden'}>${MP.on?T('방 {0}','Room {0}',MP.code):''}</span><button class="pb sm dark" id="lobbyBtn" data-act="m:lobby">${T('로비','Lobby')}</button>
 `;
   $('actBtn').textContent=T('행동','Act');
   renderTitle();
@@ -28937,6 +28941,7 @@ ACT.ltgold=a=>{const v=+a;LT.on&&ltSet(v===0?0:LT.my.gold+v,LT.my.g);};
 ACT.ltg=a=>{const [k,v]=a.split(':');const g=Object.assign({},LT.my.g);g[k]=Math.max(0,(g[k]||0)+(+v));if(!g[k])delete g[k];LT.on&&ltSet(LT.my.gold,g);};
 ACT.ltrdy=()=>ltReady();ACT.ltun=()=>ltUnready();ACT.ltcx=()=>ltCancel();
 MODS.chat=()=>`<h2>${T('채팅','Chat')}</h2><div id="chatLog" style="height:150px;overflow-y:auto;font-size:12px;background:#120a04;border:1px solid #4a2e14;border-radius:4px;padding:5px;margin-bottom:6px"></div><div class="row"><input id="chatIn" type="text" maxlength="80" placeholder="${T('말하기','Say something')}"><button class="pb sm" data-act="chatSend">${T('보내기','Send')}</button></div><div class="btns">${[P('안녕하세요!','Hello!'),P('좋아요!','Nice!'),P('거래해요','Let us trade'),P('도와주세요','Help me'),P('고마워요','Thanks')].map(q=>`<button class="pb sm dark" data-act="chatQ:${esc(q[0])}">${tx(q)}</button>`).join('')}</div>`;
+MODS.lobby=()=>`<h2>${T('로비로 돌아갈까요?','Back to the lobby?')}</h2><div class="muted">${MP.on?T('지금 방에서 나가요. 내 섬은 저장돼요.','You will leave this room. Your island is saved.'):T('지금까지 한 것은 저장돼요. 로비에서 이어하기로 다시 시작할 수 있어요.','Your progress is saved. Pick Continue in the lobby to come back.')}</div><div class="btns" style="margin-top:12px"><button class="pb gold" data-act="menu">${T('로비로 돌아가기','Back to lobby')}</button></div>`;
 MODS.menu=()=>{const it=[['wh',P('창고','Warehouse')],['fleet',P('배','Ships')],['contracts',P('계약','Contracts')],['proj',P('공공 공사','Projects')]];
   if(MP.on)it.push(['mp',P('상회 순위','Ranking')],['auction',P('경매장','Auction house')],['chat',P('채팅','Chat')]);
   it.push(['tech',P('연구','Research')],['bank',P('은행','Bank')],['codex',P('도감','Codex')],['stats',P('통계','Stats')],['ach',P('업적','Goals')],['settings',P('설정','Settings')],['help',P('하는 법','How to play')]);
