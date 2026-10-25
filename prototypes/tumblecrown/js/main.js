@@ -75,6 +75,7 @@ function homeMsg(t) { $('homeMsg').textContent = t || ''; }
 function toast(t, ms = 2200) { const el = $('toast'); el.textContent = t; el.style.display = 'block'; clearTimeout(toast._t); toast._t = setTimeout(() => el.style.display = 'none', ms); }
 // 보스 등장 때 위아래 검은 띠, 보스가 쓰러질 때 하얀 번쩍임
 function letterbox(ms) { document.body.classList.add('lbox'); clearTimeout(letterbox._t); letterbox._t = setTimeout(() => document.body.classList.remove('lbox'), ms); }
+function redFlash(a) { const f = $('wflash'); f.style.transition = 'none'; f.style.background = '#ff3a2a'; f.style.opacity = a; requestAnimationFrame(() => { f.style.transition = 'opacity .35s'; f.style.opacity = 0; setTimeout(() => { f.style.background = ''; }, 400); }); }
 function flashScreen() { const f = $('wflash'); f.style.transition = 'none'; f.style.opacity = 0.85; requestAnimationFrame(() => { f.style.transition = 'opacity 1.1s'; f.style.opacity = 0; }); }
 function bigMsg(a, b, ms = 2400) { $('bigMsg').textContent = a || ''; $('subMsg').textContent = b || ''; $('bigMsg').style.opacity = a ? 1 : 0; $('subMsg').style.opacity = b ? 1 : 0; clearTimeout(bigMsg._t); if (ms) bigMsg._t = setTimeout(() => { $('bigMsg').style.opacity = 0; $('subMsg').style.opacity = 0; }, ms); }
 
@@ -560,6 +561,13 @@ function skillFx(e) {
     case 'potion': view.burst(e.x + c, 1.8, e.z + s, 0xd0543a, 6, 3, 0.3, 0.1); break;
     case 'trap': view.rune(e.x, e.z, 1.5, 0xffb060, 0.8, 6); view.burst(e.x, 0.3, e.z, 0x9a9aa6, 10, 4, 0.4, 0.12); SFX.play('click'); break;
     case 'whirl': view.shock(e.x, e.z, 4.4, 0xffd0a0, 0.45); view.ring(e.x, e.z, 3.4, 0xffd0a0, 0.5); view.burst(e.x, 1.2, e.z, 0xffd0a0, 18, 7, 0.5, 0.12); view.flash(e.x, e.z, 0xffd0a0, 90); if (mine) view.shake = Math.max(view.shake, 0.6); break;
+    case 'leap': view.streak(e.x, e.z, e.a, 7, 0xffd0a0, 0.45, 1.4); view.burst(e.x, 0.4, e.z, 0xbcae94, 14, 5, 0.6, 0.16); SFX.play('roll'); break;
+    case 'bloodlust': view.shock(e.x, e.z, 6, 0xd03030, 0.6); view.rise(e.x, e.z, 0xe04040, 22, 2, 1.2, 7); view.rune(e.x, e.z, 2.6, 0xd03030, 1.0, 3); view.flash(e.x, e.z, 0xd03030, 110); if (mine) view.shake = Math.max(view.shake, 0.6); SFX.play('roar'); break;
+    case 'flurry': view.streak(e.x, e.z, e.a, 3.4, 0xffe0c0, 0.25, 0.6); view.streak(e.x, e.z + 0.5, e.a, 3.4, 0xffe0c0, 0.3, 0.6); view.burst(e.x + c * 2.4, 1.4, e.z + s * 2.4, 0xffe0c0, 12, 7, 0.35, 0.1); SFX.play('swing'); break;
+    case 'blink': view.burst(e.x, 1.2, e.z, 0xb06aff, 20, 6, 0.5, 0.14); view.shock(e.x, e.z, 3, 0xb06aff, 0.4); view.flash(e.x, e.z, 0xb06aff, 100); if (mine) view.shake = Math.max(view.shake, 0.5); SFX.play('parry'); break;
+    case 'scatter': view.streak(e.x, e.z, e.a + Math.PI, 5, 0xe8e0c8, 0.35, 1.0); view.burst(e.x, 1.2, e.z, 0xe8e0c8, 18, 7, 0.5, 0.14); SFX.play('roll'); break;
+    case 'fan': view.burst(e.x + c, 1.4, e.z + s, 0xe8e0c8, 8, 5, 0.3, 0.1); SFX.play('swing'); break;
+    case 'bonestorm': view.shock(e.x, e.z, 5, 0xe8e0c8, 0.5); view.ring(e.x, e.z, 3.2, 0xe8e0c8, 0.5); view.rise(e.x, e.z, 0xe8e0c8, 14, 1.5, 0.8, 7); if (mine) view.shake = Math.max(view.shake, 0.5); SFX.play('roar'); break;
     case 'quake': view.shock(e.x, e.z, 8, 0xffb060, 0.6); view.ring(e.x, e.z, 4.4, 0xffb060, 0.6); view.burst(e.x, 0.4, e.z, 0xbcae94, 26, 9, 0.7, 0.18); view.flash(e.x, e.z, 0xffb060, 120); if (mine) view.shake = Math.max(view.shake, 1.0); break;
     case 'smite': case 'curse': view.rune(e.x + c * 2, e.z + s * 2, 1.4, e.s === 'smite' ? 0xfff0b0 : 0xb06aff, 0.6, 3); view.rise(e.x, e.z, e.s === 'smite' ? 0xfff0b0 : 0xb06aff, 8, 1, 0.6, 6); break;
     case 'rally': view.shock(e.x, e.z, 9, 0xffd36b, 0.6); view.rune(e.x, e.z, 3, 0xffb040, 1.2, -3); view.flash(e.x, e.z, 0xffb040, 120); if (mine) view.shake = Math.max(view.shake, 0.9); SFX.play('roar'); break;
@@ -586,7 +594,14 @@ function onEvent(e) {
       const col = e.role === 'priest' ? 0xfff0b0 : e.role === 'witch' ? 0xd8a0ff : 0xffb060; view.shock(e.x, e.z, 3.6, col, 0.4); view.burst(e.x, 1.4, e.z, col, 18, 8, 0.45, 0.14); view.rise(e.x, e.z, col, 10, 1.2, 0.5, 7); view.flash(e.x, e.z, col, 110);
       if (e.id === me) view.shake = Math.max(view.shake, 0.6); SFX.play('clang'); break; }
     case 'weak': num(e.x, e.z, T('약점!'), '#ff9c4a', 1.4, 3.8); view.shock(e.x, e.z, 3, 0xff7a20, 0.35); view.burst(e.x, 2.4, e.z, 0xffb060, 14, 9, 0.5, 0.14); view.flash(e.x, e.z, 0xff7a20, 90); view.shake = Math.max(view.shake, 0.35); SFX.play('parry'); break;
-    case 'phit': view.burst(e.x, 1.6, e.z, 0xe8e0c8, 4, 4, 0.3, 0.09); num(e.x, e.z, '-' + e.v, '#ff7a6a', 1); if (e.id === me) { view.shake = Math.max(view.shake, 0.5); SFX.play('phit'); } break;
+    case 'phit': { // 맞는 순간: 빨간 불꽃과 충격파, 번쩍임, 큰 피해일수록 큰 숫자와 화면 흔들림, 때린 사람·맞은 사람 모두 잠깐 멈칫해요
+      const big = e.v >= 25, hv = Math.min(1, e.v / 45);
+      view.burst(e.x, 1.6, e.z, 0xff5a4a, 8 + (big ? 10 : 0), 6 + hv * 4, 0.35, 0.11); view.burst(e.x, 1.6, e.z, 0xfff0d0, 4, 5, 0.25, 0.08); view.shock(e.x, e.z, 2.2 + hv * 2.4, 0xff6a5a, 0.3); view.flash(e.x, e.z, 0xff6a5a, 70 + hv * 90);
+      num(e.x, e.z, '-' + e.v, big ? '#ffd36b' : '#ff7a6a', big ? 1.5 : 1.1);
+      if (e.id === me) { view.shake = Math.max(view.shake, 0.6 + hv * 0.8); SFX.play('phit'); redFlash(0.25 + hv * 0.3); }
+      else if (e.by === me) { view.shake = Math.max(view.shake, 0.3 + hv * 0.5); SFX.play('hit'); }
+      if ((e.id === me || e.by === me) && S.net === 'solo') S.slowT = Math.max(S.slowT || 0, big ? 0.1 : 0.05);
+      break; }
     case 'ekill': {
       const boss = e.en === 'boss', big = boss || e.en === 'elite';
       view.shatter(e.x, e.z, boss ? [0x3a2e2a, 0xff5a3a, 0xe6c15a, 0x5a5f70] : [0xd8d0bc, 0x6a6470, 0x5a5040, 0x8a8a96], boss ? 70 : big ? 30 : 16, big);
