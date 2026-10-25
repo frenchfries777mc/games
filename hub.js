@@ -663,6 +663,7 @@ function giftForm(){
 }
 
 /* ===================== 지금 접속 중 (ff_online · ff_online_friends · ff_hub_ping) ===================== */
+var AV={}; async function loadAv(ids){ AV={}; if(!ids.length) return; try{ var r=await sb.from('ff_avatar').select('user_id,pick').in('user_id',ids); ((r&&!r.error&&r.data)||[]).forEach(function(x){ AV[x.user_id]=x.pick; }); }catch(e){} }
 var onlT=null, PLACE={hub:'허브'}, SITES=window.FF_SITES||[], SITE_IDS=SITES.map(function(x){ return x.id; });
 function placeName(g){ if(GAMES[g]) return GAMES[g].name; for(var i=0;i<SITES.length;i++) if(SITES[i].id===g) return SITES[i].name; return g==='hub'?'Hub':g; }
 async function online(){
@@ -673,8 +674,8 @@ async function online(){
   var html='<span class="on-dot"></span><b>'+esc(F('지금 {0}명 접속 중',c.all||0))+'</b>';
   GLIST.concat(['hub'],SITE_IDS).forEach(function(g){ if(c[g]) html+='<span class="on-c">'+(g==='hub'?'<span>허브</span>':'<span data-notr>'+esc(placeName(g))+'</span>')+' <b data-notr>'+c[g]+'</b></span>'; });
   if(me){ var f=await sb.rpc('ff_online_friends'), rows=((f&&!f.error&&f.data)||[]).filter(function(x){ return !blocked(x.user_id); });
-    if(rows.length){ await loadNames(rows.map(function(x){ return x.user_id; }));
-      html+='<span class="on-f"><span>친구</span> '+rows.slice(0,8).map(function(x){ var pn=placeName(x.place); return '<a class="who on-p" data-uid="'+esc(x.user_id)+'" data-notr title="'+esc(pn)+'">'+esc(names[x.user_id]||'???')+'<small>'+esc(pn)+'</small></a>'; }).join('')+(rows.length>8?'<span>+'+(rows.length-8)+'</span>':'')+'</span>'; } }
+    if(rows.length){ await loadNames(rows.map(function(x){ return x.user_id; })); await loadAv(rows.slice(0,8).map(function(x){ return x.user_id; }));
+      html+='<span class="on-f"><span>친구</span> '+rows.slice(0,8).map(function(x){ var pn=placeName(x.place); return '<a class="who on-p" data-uid="'+esc(x.user_id)+'" data-notr title="'+esc(pn)+'">'+'<img class="on-i" src="https://frenchfries777mc.github.io/games/avatars/'+encodeURIComponent(/^[a-z0-9-]{2,24}$/.test(AV[x.user_id]||'')?AV[x.user_id]:'account')+'.svg" alt="" width="20" height="20" onerror="this.style.display=\'none\'">'+esc(names[x.user_id]||'???')+'<small>'+esc(pn)+'</small></a>'; }).join('')+(rows.length>8?'<span>+'+(rows.length-8)+'</span>':'')+'</span>'; } }
   b.innerHTML=html;
 }
 function onlineLoop(){ clearInterval(onlT); online(); onlT=setInterval(function(){ if(document.visibilityState==='visible') online(); },20000); }

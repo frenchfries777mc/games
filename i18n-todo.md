@@ -416,3 +416,4 @@ crownenvoy/CrownEnvoy-v0.4.html | 전신망 (정치 탭 카드) | "📡 전신�
 
 ## 랭킹 Dummy Party 탭 (2026-10-25)
 - hub.js/index.html | 랭킹 탭 "Dummy Party"(기존 문구 재사용: 점수·승리·판, 아직 순위가 없어요. 게임을 끝내면 점수가 쌓여요.) | 번역 불필요
+- 접속 표시줄 친구 칸 프로필 사진: 새 문구 없음
