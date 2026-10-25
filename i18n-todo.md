@@ -367,6 +367,7 @@ crownenvoy/CrownEnvoy-v0.4.html | 전신망 (정치 탭 카드) | "📡 전신�
 - index.html | 계정 안내 문장은 모든 언어에 새 문구를 직접 넣음 (게임 이름은 이름표가 따로 보여줌) | 번역 필요 없음 | 2026-10-24
 - patchnotes.json | "게임 목록 자동 반영, 플레이 횟수 수정" 4줄 | 2026-10-24
 - ff-pnsearch.js | 빌드 번호나 내용으로 검색, {0}개 찾음, 찾는 패치노트가 없어요. | 패치노트 검색 | 2026-10-25
+- crownenvoy/i18n.js·versions.json | V["0.1"].title "첫 사절의 시대", V["0.2"].title "여론과 왕위 계승의 시대" (en·es·fr·de·ja·ar 한국어 임시) | Crown Envoy 버전 이름 | 2026-10-25
 
 ## Dummy Party 사이트 버전 이름 (2026-10-25)
 - 하얀 마네킹들의 첫 파티
