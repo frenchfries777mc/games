@@ -224,7 +224,7 @@ if(document.readyState==='loading') document.addEventListener('DOMContentLoaded'
   #pendingNotice .pnRow span{ min-width:0; overflow:hidden; text-overflow:ellipsis; }
   #pendingNotice button{ padding:5px 10px; font-size:12px; flex:0 0 auto; }
   .shopItem canvas{width:80px; height:80px; background:#151821; border-radius:8px;}
-  .shopItem.lux1 canvas,.shopItem.lux2 canvas{width:112px; height:112px; background:radial-gradient(circle at 50% 70%, #1d2230 0%, #10131b 80%);}   /* (room for the whole show) */
+  .shopItem.lux1 canvas,.shopItem.lux2 canvas,.shopItem.lux4 canvas{width:112px; height:112px; background:radial-gradient(circle at 50% 70%, #1d2230 0%, #10131b 80%);}   /* (room for the whole show) */
   .shopItem .wk{font-size:11px; color:var(--text-dim); font-weight:700; margin-top:4px;}
   .shopItem .nm{font-weight:700; margin:2px 0 2px;}
   .boxCard{ grid-column:1/-1; display:flex; gap:18px; align-items:center; background:var(--panel-2); border:1px solid var(--line); border-radius:12px; padding:16px; flex-wrap:wrap; }
@@ -318,6 +318,7 @@ if(document.readyState==='loading') document.addEventListener('DOMContentLoaded'
   .shopItem{position:relative;}
   .shopItem.lux1{ box-shadow:0 0 12px var(--luxc,#7bf3ff); border-color:var(--luxc,#7bf3ff); }
   .shopItem.lux2{ box-shadow:0 0 18px var(--luxc,#ff5252), inset 0 0 14px rgba(255,255,255,.07); border-color:var(--luxc,#ff5252); animation:luxPulse 2.2s ease-in-out infinite; }
+  .shopItem.lux4{ box-shadow:0 0 26px var(--luxc,#ff5252), 0 0 4px #fff, inset 0 0 18px rgba(255,255,255,.1); border-color:var(--luxc,#ff5252); animation:luxPulse 1.6s ease-in-out infinite; }
   @keyframes luxPulse{ 0%,100%{ box-shadow:0 0 12px var(--luxc,#ff5252), inset 0 0 8px rgba(255,255,255,.05); } 50%{ box-shadow:0 0 26px var(--luxc,#ff5252), inset 0 0 18px rgba(255,255,255,.12); } }
   .shopItem .badgeNew{position:absolute; top:6px; right:6px; background:#ff3d71; color:#fff; font-size:10px; font-weight:800; padding:2px 6px; border-radius:6px; letter-spacing:.5px;}
   .shopItem .pr{color:#ffd34d; font-size:13px; margin-bottom:6px; font-family:'JetBrains Mono',monospace;}
@@ -2675,7 +2676,7 @@ const TIER_SKINS=[
 for(const [ch,nm,tint,fx] of NEW_SKINS) COSMETICS['skin_'+ch+'_new']={cat:'skin', char:ch, name:nm, price:NEW_SKIN_PRICE, tint, fx, isNew:true};
 COSMETICS.skin_pistol_s1={cat:'skin', char:'pistol', name:'오로라 총잡이', price:0, tint:'#7bf3ff', fx:'halo', lux:1, seasonOnly:true};      // (season pass only)
 COSMETICS.skin_sword_s1={cat:'skin', char:'sword', name:'황금 시즌 기사', price:0, tint:'#ffd34d', fx:'crown', lux:2, seasonOnly:true};
-for(const [ch,a,b] of TIER_SKINS) [a,b].forEach((s,i)=>{ COSMETICS['skin_'+ch+'_t'+(i+1)]={cat:'skin', char:ch, name:s[0], price:0, tint:s[1], fx:s[2], tier:TIER_SKIN_TIERS[i], lux:i+1}; });
+for(const [ch,a,b] of TIER_SKINS) [a,b].forEach((s,i)=>{ COSMETICS['skin_'+ch+'_t'+(i+1)]={cat:'skin', char:ch, name:s[0], price:0, tint:s[1], fx:s[2], tier:TIER_SKIN_TIERS[i], lux:(i===1?4:1)}; });
 const PREMIUM_SKIN_PRICE=4000;      // one 4000 G skin per character: the last cards of the skin tab
 const PREMIUM_SKINS=[
   ['puppeteer','심야 인형극장의 모자','#7a3cff','void'], ['pizarro','태양의 정복자 투구','#ffb02e','flame'], ['kan','비취 뱀신의 깃털관','#2bffb0','halo'],
@@ -3188,7 +3189,7 @@ function luxSprite(kind, col, col2, big){
 }
 function drawSkinLux(c, lux, tint, now, seed, layer){
   if(!lux) return;
-  const t=(now||0)/1000+(seed||0)*0.37, col=tint||'#ffffff', col2=(lux>=2)?shiftHex(col,45):col, big=lux>=2, q=fxQuality;
+  const seedNum=Math.floor((seed||0)*37)%1000, t=(now||0)/1000+(seed||0)*0.37, col=tint||'#ffffff', col2=(lux>=2)?shiftHex(col,45):col, big=lux>=2, q=fxQuality;
   const fr=(v)=>v-Math.floor(v);
   c.save(); c.lineCap='round'; c.lineJoin='round'; c.globalCompositeOperation='lighter';
   const cross=(x,y,s)=>{ c.fillRect(x-s,y-0.6,2*s,1.2); c.fillRect(x-0.6,y-s*1.5,1.2,3*s); };        // a little twinkle: two thin bars (cheaper than a stroked path)
@@ -3208,11 +3209,18 @@ function drawSkinLux(c, lux, tint, now, seed, layer){
     c.restore();
     // the 4000 sC tier (lux 3): a counter-rotating second sunburst, a pulsing ground glow and waves that spread over the floor
     if(lux>=3 && q>=1){
-      c.save(); c.translate(0,-32); c.rotate(-t*0.65); const cA3=hexA(col2,0.2), cB3=hexA('#ffffff',0.12);
-      for(let k=0;k<12;k++){ const a=k*Math.PI/6, w=0.07+0.02*Math.sin(t*3+k), R=96+10*Math.sin(t*2.1+k*1.3); c.fillStyle=(k%2)?cA3:cB3; c.beginPath(); c.moveTo(0,0); c.arc(0,0,R,a-w,a+w); c.closePath(); c.fill(); }
+      c.save(); c.translate(0,-32); c.rotate(-t*0.65); const cA3=hexA(col2,lux>=4?0.22:0.12), cB3=hexA('#ffffff',lux>=4?0.14:0.07);
+      for(let k=0;k<(lux>=4?12:8);k++){ const a=k*Math.PI*2/(lux>=4?12:8), w=0.07+0.02*Math.sin(t*3+k), R=(lux>=4?100:80)+8*Math.sin(t*2.1+k*1.3); c.fillStyle=(k%2)?cA3:cB3; c.beginPath(); c.moveTo(0,0); c.arc(0,0,R,a-w,a+w); c.closePath(); c.fill(); }
       c.restore();
-      const gl=0.5+0.5*Math.sin(t*2.6); c.save(); c.translate(0,2); c.scale(1,0.26); const gg=c.createRadialGradient(0,0,2,0,0,58); gg.addColorStop(0,hexA(col,0.55+0.25*gl)); gg.addColorStop(1,hexA(col2,0)); c.fillStyle=gg; c.beginPath(); c.arc(0,0,58,0,7); c.fill(); c.restore();
-      for(let k=0;k<3;k++){ const ph=fr(t*0.55+k/3); c.strokeStyle=hexA(k%2?col:'#ffffff',(1-ph)*0.6); c.lineWidth=3*(1-ph)+0.8; c.beginPath(); c.ellipse(0,1,20+70*ph,5+17*ph,0,0,7); c.stroke(); }
+      const gl=0.5+0.5*Math.sin(t*2.6); c.save(); c.translate(0,2); c.scale(1,0.26); const gg=c.createRadialGradient(0,0,2,0,0,58); gg.addColorStop(0,hexA(col,lux>=4?0.55+0.25*gl:0.32+0.14*gl)); gg.addColorStop(1,hexA(col2,0)); c.fillStyle=gg; c.beginPath(); c.arc(0,0,58,0,7); c.fill(); c.restore();
+      { const nw=(lux>=4?3:2); for(let k=0;k<nw;k++){ const ph=fr(t*0.55+k/nw); c.strokeStyle=hexA(k%2?col:'#ffffff',(1-ph)*(lux>=4?0.6:0.4)); c.lineWidth=(lux>=4?3:2.2)*(1-ph)+0.8; c.beginPath(); c.ellipse(0,1,20+(lux>=4?70:56)*ph,5+(lux>=4?17:13)*ph,0,0,7); c.stroke(); } }
+      if(lux>=4){      // 그랜드 마스터 only (back): a pillar of light, a huge slow sunburst and a heavy shock ring that rolls over the floor
+        const pw=11+4*Math.sin(t*3.2), pg=c.createLinearGradient(0,-170,0,0); pg.addColorStop(0,hexA(col,0)); pg.addColorStop(0.55,hexA(col2,0.2)); pg.addColorStop(1,hexA('#ffffff',0.38));
+        c.fillStyle=pg; c.fillRect(-pw,-170,pw*2,170); c.fillStyle=hexA('#ffffff',0.22); c.fillRect(-pw*0.35,-170,pw*0.7,170);
+        c.save(); c.translate(0,-34); c.rotate(t*0.22); for(let k=0;k<16;k++){ const a=k*Math.PI/8, w=0.045; c.fillStyle=hexA((k%2)?col:col2,0.16); c.beginPath(); c.moveTo(0,0); c.arc(0,0,150+14*Math.sin(t*1.7+k),a-w,a+w); c.closePath(); c.fill(); } c.restore();
+        const ph=fr(t*0.45); c.strokeStyle=hexA('#ffffff',(1-ph)*0.8); c.lineWidth=5*(1-ph)+1; c.beginPath(); c.ellipse(0,1,24+120*ph,6+30*ph,0,0,7); c.stroke();
+        c.strokeStyle=hexA(col2,(1-ph)*0.5); c.lineWidth=2; c.beginPath(); c.ellipse(0,1,12+90*ph,3+22*ph,0,0,7); c.stroke();
+      }
     }
     // the gems that are behind the body
     if(big && q>=2){ for(let k=0;k<3;k++){ const a=t*1.7+k*Math.PI*2/3; if(Math.sin(a)>0) continue; diamond(Math.cos(a)*27, -30+Math.sin(a)*9, 2.4, hexA(k%2?col:col2,0.55), a); } }
@@ -3227,9 +3235,15 @@ function drawSkinLux(c, lux, tint, now, seed, layer){
     if(big && q>=2){ for(let k=0;k<2;k++){ c.strokeStyle=hexA(k?col2:col,0.8-k*0.25); c.lineWidth=2.2-k*0.7; c.beginPath(); c.ellipse(0,-72-k*5,15+k*5,4.2+k*1.4,0,0,7); c.stroke(); } }
     // lux 3 in front: a comet with a long tail circling the body, little flames at the head, and sparks that burst outward
     if(lux>=3 && q>=1){
-      for(let k=0;k<2;k++){ for(let j=0;j<14;j++){ const a=t*2.4+k*Math.PI-j*0.09, fade=1-j/14; if(Math.sin(a)<=0) continue; c.fillStyle=hexA(j===0?'#ffffff':(k?col:col2),fade*0.9); const rr=(3.2*fade+0.6); c.beginPath(); c.arc(Math.cos(a)*34, -30+Math.sin(a)*14, rr, 0, 7); c.fill(); } }
-      for(let k=0;k<5;k++){ const ph=fr(t*1.3+k*0.2), a=k*1.256+t*0.5, d=10+46*ph; c.fillStyle=hexA((k%2)?'#ffffff':col2,(1-ph)*0.9); cross(Math.cos(a)*d, -34+Math.sin(a)*d*0.8, 2.6*(1-ph)+0.8); }
-      if(q>=2){ for(let k=0;k<3;k++){ const fl=0.6+0.4*Math.sin(t*9+k*2); c.fillStyle=hexA(k===1?'#ffffff':col,0.7*fl); c.beginPath(); c.moveTo(-8+k*8,-80); c.quadraticCurveTo(-11+k*8,-90-8*fl,-8+k*8+3,-98-10*fl); c.quadraticCurveTo(-6+k*8,-88,-8+k*8,-80); c.fill(); } }
+      { const nc=(lux>=4?3:1); for(let k=0;k<nc;k++){ for(let j=0;j<14;j++){ const a=t*(lux>=4?2.8:2.4)+k*Math.PI*2/nc-j*0.09, fade=1-j/14; if(Math.sin(a)<=0) continue; c.fillStyle=hexA(j===0?'#ffffff':(k%2?col:col2),fade*(lux>=4?0.95:0.7)); const rr=(3.2*fade+0.6); c.beginPath(); c.arc(Math.cos(a)*(lux>=4?38:34), -30+Math.sin(a)*14, rr, 0, 7); c.fill(); } } }
+      { const nb=(lux>=4?9:3); for(let k=0;k<nb;k++){ const ph=fr(t*1.3+k/nb), a=k*2.399+t*0.5, d=10+(lux>=4?62:46)*ph; c.fillStyle=hexA((k%2)?'#ffffff':col2,(1-ph)*(lux>=4?0.95:0.7)); cross(Math.cos(a)*d, -34+Math.sin(a)*d*0.8, 2.6*(1-ph)+0.8); } }
+      if(q>=2){ for(let k=0;k<3;k++){ const fl=0.6+0.4*Math.sin(t*9+k*2); c.fillStyle=hexA(k===1?'#ffffff':col,(lux>=4?0.7:0.45)*fl); c.beginPath(); c.moveTo(-8+k*8,-80); c.quadraticCurveTo(-11+k*8,-90-8*fl,-8+k*8+3,-98-10*fl); c.quadraticCurveTo(-6+k*8,-88,-8+k*8,-80); c.fill(); } }
+      if(lux>=4){      // 그랜드 마스터 only (front): a crown of flame spikes, jagged lightning that jumps off the body and a white flash ring that pulses out
+        for(let k=0;k<7;k++){ const fl=0.55+0.45*Math.sin(t*8+k*1.9), bx=-18+k*6, hgt=14+10*fl+(k===3?9:0); c.fillStyle=hexA(k%2?col2:col,0.75*fl+0.15); c.beginPath(); c.moveTo(bx-3,-71); c.lineTo(bx,-71-hgt); c.lineTo(bx+3,-71); c.closePath(); c.fill(); }
+        const bolt=Math.floor(t*6), bp=fr(t*6);
+        for(let k=0;k<2;k++){ let sd=(bolt*131+k*977+seedNum)%1000, rnd=()=>{ sd=(sd*9301+49297)%233280; return sd/233280; }; let a=rnd()*Math.PI*2, x=0, y=-34; c.strokeStyle=hexA(k?col2:'#ffffff',(1-bp)*0.9); c.lineWidth=1.8; c.beginPath(); c.moveTo(x,y); for(let j=0;j<5;j++){ a+=(rnd()-0.5)*1.2; x+=Math.cos(a)*11; y+=Math.sin(a)*9; c.lineTo(x,y); } c.stroke(); }
+        const fp=fr(t*0.55+0.2); c.strokeStyle=hexA('#ffffff',(1-fp)*0.55); c.lineWidth=3.5*(1-fp)+0.6; c.beginPath(); c.ellipse(0,-34,14+70*fp,20+95*fp,0,0,7); c.stroke();
+      }
     }
     // the gems in front of the body
     if(big && q>=2){ for(let k=0;k<3;k++){ const a=t*1.7+k*Math.PI*2/3; if(Math.sin(a)<=0) continue; const sc=0.9+0.4*Math.sin(a), gx=Math.cos(a)*27, gy=-30+Math.sin(a)*9; diamond(gx, gy, 2.6*sc, hexA(k%2?col:col2,0.95), a); c.fillStyle=hexA('#ffffff',0.8); c.fillRect(gx-0.8,gy-0.8,1.6,1.6); } }
@@ -5037,7 +5051,7 @@ function shuffle(arr){ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.
 /* ===== the version of this file =====
    Players with different versions CAN meet and play together: the automatic matchmaking uses the same room names for every version (online-<mode>-<map>-<slot>), and nobody is refused because of a different build.
    The build is only sent along with the join message and the lobby (for information); the corner of the screen shows it. */
-const GAME_BUILD='build 2026-10-18-v389';
+const GAME_BUILD='build 2026-10-18-v390';
 const GAME_VERSION='0.8', GAME_VERSION_NAME='황금을 찾아서';   // 게임 버전 이름: versions.json의 title과 같게 (빌드마다 바꾸지 않음)
 const WEEKLY_EVENTS=[
   {id:'lowg',    name:'저중력 난투', desc:'몸이 둥실둥실, 중력이 약해진 난투', rules:{grav:0.6}},
@@ -8489,13 +8503,19 @@ async function renderClanMy(pane){
   const isOwner=(myClan.role==='owner');
   members.forEach(m=>{
     const nm=pn[m.user_id]||m.uname||'?', canKick=isOwner && m.role!=='owner' && sbUser && m.user_id!==sbUser.id;
-    const row=clanRowBtn(m.role==='owner'?'👑':'👤', nm, '클랜 토큰 '+(m.score==null?0:m.score)+(canKick?' · 눌러서 추방':''), canKick?'':'pointer-events:none;');
-    if(canKick) row.onclick=async()=>{      // 클랜 추방: only the owner (RPC clan_kick, see supabase-clan-kick.sql)
-      if(!(await uiConfirm(nm+' 님을 클랜에서 추방할까요?'))) return;
-      const r=await sb.rpc('clan_kick',{p_user:m.user_id});
-      if(r&&r.error){ clanNotice('추방하지 못했어요 (서버에 supabase-clan-kick.sql을 적용했는지 확인해 주세요)'); return; }
-      clanNotice(nm+' 님을 추방했어요'); renderClanMy(pane);
-    };
+    const row=clanRowBtn(m.role==='owner'?'👑':'👤', nm, '클랜 토큰 '+(m.score==null?0:m.score)+' · 눌러서 프로필 보기', '');
+    row.onclick=()=>{ if(m.user_id) openPublicProfile(m.user_id); };      // the member's Stickseum profile (the same card as in the friend list)
+    if(canKick){      // 클랜 추방: only the owner (RPC clan_kick, see supabase-clan-kick.sql); its own little button so it never opens the profile
+      const kb=document.createElement('span'); kb.textContent='추방'; kb.setAttribute('role','button');
+      kb.style.cssText='margin-left:auto; padding:6px 12px; border-radius:8px; border:1px solid #ff6a6a; color:#ff8a8a; font-weight:800; font-size:13px; flex:0 0 auto;';
+      kb.onclick=async(e)=>{ e.stopPropagation();
+        if(!(await uiConfirm(nm+' 님을 클랜에서 추방할까요?'))) return;
+        const r=await sb.rpc('clan_kick',{p_user:m.user_id});
+        if(r&&r.error){ clanNotice('추방하지 못했어요 (서버에 supabase-clan-kick.sql을 적용했는지 확인해 주세요)'); return; }
+        clanNotice(nm+' 님을 추방했어요'); renderClanMy(pane);
+      };
+      row.appendChild(kb);
+    }
     L.appendChild(row);
   });
   const myRow=members.find(m=>sbUser && m.user_id===sbUser.id), myTok=(myRow&&myRow.score)||0;
@@ -14301,9 +14321,6 @@ function drawGold(){
   const pl=gdm.pile;
   { const gg=ctx.createRadialGradient(pl.x,pl.y,0,pl.x,pl.y,GOLD_PILE_R*1.4); gg.addColorStop(0,'rgba(255,214,77,.28)'); gg.addColorStop(1,'rgba(255,214,77,0)'); ctx.fillStyle=gg; ctx.beginPath(); ctx.ellipse(pl.x,pl.y,GOLD_PILE_R*1.4,30,0,0,7); ctx.fill(); }
   drawGoldHeap(pl.x, pl.y, Math.min(18, Math.ceil(pl.n/2)), 1.7, now);
-  ctx.save(); ctx.fillStyle='#ffe27a'; ctx.font='bold 18px sans-serif'; ctx.textAlign='center'; ctx.lineWidth=4; ctx.strokeStyle='rgba(0,0,0,.7)';
-  const lab=pl.n>0 ? '금 '+pl.n : (gdm.rf!==undefined && !isHost ? '금 새로 쌓이는 중 '+Math.ceil(gdm.rf||0) : '금 새로 쌓이는 중 '+Math.max(0,Math.ceil((gdm.refillAt||0)-now/1000)));
-  ctx.strokeText(lab, pl.x, pl.y-148); ctx.fillText(lab, pl.x, pl.y-148); ctx.restore();
   for(const d of gdm.drops) drawGoldHeap(d.x, d.y, d.n, 0.8, now);
   for(const id in players){ const p=players[id]; if(!(p.gp>0) || p.alive===false || p.x===undefined) continue;      // the 0.8 s bar while standing at the pile
     const bx=p.x-18, by=p.y-PLAYER_H-38; ctx.fillStyle='rgba(0,0,0,0.55)'; ctx.fillRect(bx,by,36,5); ctx.fillStyle='#ffd34d'; ctx.fillRect(bx,by,36*p.gp,5); }
