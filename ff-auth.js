@@ -58,6 +58,7 @@ var L={
 function lang(){ var c=[]; try{ var s=localStorage.getItem('arenaClashLang'); if(s) c.push(s); }catch(e){} try{ c=c.concat(navigator.languages||[navigator.language||'']); }catch(e){}
   for(var i=0;i<c.length;i++){ var b=String(c[i]||'').toLowerCase().split('-')[0]; if(L[b]) return b; } return 'en'; }
 var T=L[lang()];
+var ACHL={es:'🏆 Logros',fr:'🏆 Succès',de:'🏆 Erfolge',ja:'🏆 実績',zh:'🏆 成就',pt:'🏆 Conquistas',ru:'🏆 Достижения',tr:'🏆 Başarımlar',it:'🏆 Obiettivi',pl:'🏆 Osiągnięcia',ar:'🏆 الإنجازات',nw:'🏆 Plusdoings',gk:'🏆 업적'};   // 도전과제 버튼 이름 (ko/en은 위 사전에 있어요)
 /* the shared language setting (ff-lang.js): pages that load only this script still keep the games' language keys in step */
 if(!window.FFLang){ try{ var ls=document.createElement('script'); ls.src=BASE+'ff-lang.js'; document.head.appendChild(ls); }catch(e){} }
 function fmt(s,a){ return String(s).replace('{0}',a); }
@@ -215,7 +216,7 @@ var CSS='.ffa-btn{display:inline-flex;align-items:center;gap:6px;background:line
  '.ffa-hub:hover{border-color:var(--fry,#ffc93c);color:var(--fry,#ffc93c)}.ffa-hub+.ffa-wrap{margin-left:8px}'+
  '@media(max-width:620px){.ffa-hub{position:fixed;left:12px;bottom:12px;z-index:2147481000;margin:0;padding:9px 14px;border-radius:999px;box-shadow:0 6px 18px rgba(0,0,0,.45)}.ffa-hub+.ffa-wrap{margin-left:16px}}'+
  '.ffa-chip{display:inline-flex;align-items:center;gap:7px;background:#10131b;color:#eef0f5;border:1px solid #2b3245;border-radius:9px;padding:6px 11px;font:inherit;font-size:14px;font-weight:700;cursor:pointer;width:124px;max-width:124px;box-sizing:border-box}'+
- '.ffa-ic{width:20px;height:20px;flex:none;vertical-align:middle;object-fit:contain}'+
+ '.ffa-ic{width:20px;height:20px;flex:none;vertical-align:middle;object-fit:contain}'+'.ffa-av{border-radius:50%}'+
  '.ffa-chip span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.ffa-chip:hover{border-color:var(--fry,#ffc93c)}'+
  '.ffa-menu{position:absolute;right:0;top:calc(100% + 6px);background:#10131b;border:1px solid #2b3245;border-radius:10px;padding:6px;min-width:170px;z-index:2147482000;box-shadow:0 12px 30px rgba(0,0,0,.45);display:none}'+
  '.ffa-menu button{display:block;width:100%;text-align:left;background:none;border:0;color:#eef0f5;font:inherit;font-size:14px;padding:9px 10px;border-radius:7px;cursor:pointer}.ffa-menu button:hover{background:#1b2030}'+
@@ -280,8 +281,8 @@ function fill(){ var el=modal(); el.querySelector('h3').textContent=mode==='in'?
 function openLogin(m){ mode=m==='up'?'up':'in'; fill(); var el=modal(); el.style.display='flex'; setTimeout(function(){ try{ el.querySelector('input').focus(); }catch(e){} },30); }
 function close(){ var el=document.getElementById('ffaModal'); if(el) el.style.display='none'; }
 
-function profileLib(){ return loadScript(BASE+'ff-profile.js?v=20261025a', function(){ return !!window.FFProfile; }); }
-async function openProfile(uid){ if(!sb) return; if(!uid&&!user) return openLogin(); if(await profileLib()) window.FFProfile.open(sb, uid||user.id); }
+function profileLib(){ return loadScript(BASE+'ff-profile.js?v=20261025b', function(){ return !!window.FFProfile; }); }
+async function openProfile(uid, o){ if(!sb) return; if(!uid&&!user) return openLogin(); if(await profileLib()) window.FFProfile.open(sb, uid||user.id, o); }
 
 /* 게임 사이트(허브가 아닌 페이지)에는 계정 버튼 옆에 '← 허브' 버튼을 붙여요. 빼고 싶으면 자리에 data-ff-nohub */
 var HUB=BASE, HUBSITE='https://frenchfries777mc.github.io/hub/', onHub=/\/hub\//.test(location.pathname||'') || location.href.indexOf(HUB)===0 && !/\/(stickseum|crownenvoy|beaconfall|isleport|vowkeep|dummyparty|educations|tools)\//i.test(location.pathname||''), SETURL='https://frenchfries777mc.github.io/hub/settings/';
@@ -290,18 +291,23 @@ var SITES={hub:1, games:1, educations:1, tools:1};
 function siteOf(u){ try{ var x=new URL(u, location.href); if(x.origin!==location.origin) return ''; var m=x.pathname.split('/')[1]; return SITES[m]?m:''; }catch(e){ return ''; } }
 function backSite(){ var own=siteOf(location.href)||'games', from=siteOf(document.referrer); return from||own; }
 function hubLink(s){ if(onHub||s.hasAttribute('data-ff-nohub')) return ''; var k=backSite(); return '<a class="ffa-hub" href="'+esc('https://frenchfries777mc.github.io/'+k+'/')+'" title="'+esc(T.hubT)+'" aria-label="'+esc(T.hubT)+'">\u2190<span class="t">'+esc(T.hub)+'</span></a>'; }
+/* 계정 버튼 옆 사진: 허브에서 고른 프로필 사진(ff_avatar), 없으면 기본 "내 계정" 아이콘 */
+var avPick=null, avFor=null;
+function avSrc(){ return avPick&&/^[a-z0-9_-]{1,30}$/i.test(avPick)?BASE+'avatars/'+avPick+'.svg':BASE+'hubicons/account.svg'; }
+function loadAv(){ if(!sb||!user||avFor===user.id) return; var id=user.id; avFor=id; avPick=null;
+  Promise.resolve(sb.from('ff_avatar').select('pick').eq('user_id',id).limit(1)).then(function(r){ var p=r&&!r.error&&r.data&&r.data[0]&&r.data[0].pick||null; if(p&&p!==avPick){ avPick=p; paint(); } },function(){}); }
 function paint(){
-  css(); var slots=document.querySelectorAll('[data-ff-account]');
+  css(); loadAv(); var slots=document.querySelectorAll('[data-ff-account]');
   for(var i=0;i<slots.length;i++){
     var s=slots[i]; s.setAttribute('data-notr','');
     if(!user){ s.innerHTML=hubLink(s)+'<span class="ffa-wrap"><button type="button" class="ffa-btn"><img class="ffa-ic" src="https://frenchfries777mc.github.io/games/hubicons/account.svg" alt="" width="20" height="20" draggable="false"> '+esc(T.login)+'</button></span>'; s.querySelector('button').onclick=function(){ openLogin(); }; continue; }
-    s.innerHTML=hubLink(s)+'<span class="ffa-wrap"><button type="button" class="ffa-chip" aria-haspopup="true"><img class="ffa-ic" src="https://frenchfries777mc.github.io/games/hubicons/account.svg" alt="" width="20" height="20" draggable="false"> <span>'+esc(fmt(T.hi,nick()))+'</span><i class="ffa-badge" style="display:none;font-style:normal"></i><i class="ffa-badge ffa-nb ffa-nbc" style="display:none;font-style:normal"></i> ▾</button>'+
-      '<span class="ffa-menu" role="menu"><button type="button" data-a="friends">'+esc(F.friends)+'<span class="ffa-badge" style="display:none"></span></button><button type="button" data-a="card">'+esc(T.card)+'</button><button type="button" data-a="ach" style="display:none">'+esc(T.ach||'🏆 Achievements')+'</button><button type="button" data-a="acct">'+esc(AL().menu)+'</button><button type="button" data-a="notes" class="ffa-ph">🔔 '+esc(N.bell)+'<span class="ffa-badge ffa-nb" style="display:none"></span></button><button type="button" data-a="set" class="ffa-ph">'+esc('⚙️ '+S_.set)+'</button><button type="button" data-a="out">'+esc(T.logout)+'</button></span></span>';
+    s.innerHTML=hubLink(s)+'<span class="ffa-wrap"><button type="button" class="ffa-chip" aria-haspopup="true"><img class="ffa-ic ffa-av" src="'+esc(avSrc())+'" alt="" width="20" height="20" draggable="false"> <span>'+esc(fmt(T.hi,nick()))+'</span><i class="ffa-badge" style="display:none;font-style:normal"></i><i class="ffa-badge ffa-nb ffa-nbc" style="display:none;font-style:normal"></i> ▾</button>'+
+      '<span class="ffa-menu" role="menu"><button type="button" data-a="friends">'+esc(F.friends)+'<span class="ffa-badge" style="display:none"></span></button><button type="button" data-a="card">'+esc(T.card)+'</button><button type="button" data-a="ach">'+esc(T.ach||ACHL[lang()]||'🏆 Achievements')+'</button><button type="button" data-a="acct">'+esc(AL().menu)+'</button><button type="button" data-a="notes" class="ffa-ph">🔔 '+esc(N.bell)+'<span class="ffa-badge ffa-nb" style="display:none"></span></button><button type="button" data-a="set" class="ffa-ph">'+esc('⚙️ '+S_.set)+'</button><button type="button" data-a="out">'+esc(T.logout)+'</button></span></span>';
     (function(s){ var menu=s.querySelector('.ffa-menu');
-      s.querySelector('.ffa-chip').onclick=function(e){ e.stopPropagation(); var open=menu.style.display==='block'; closeMenus(); var ab=menu.querySelector('[data-a=ach]'); if(ab) ab.style.display=(typeof window.ffOpenAch==='function')?'':'none'; menu.style.display=open?'none':'block'; };
+      s.querySelector('.ffa-chip').onclick=function(e){ e.stopPropagation(); var open=menu.style.display==='block'; closeMenus(); menu.style.display=open?'none':'block'; };
       menu.querySelector('[data-a=friends]').onclick=function(){ closeMenus(); openFriends(); };
       menu.querySelector('[data-a=card]').onclick=function(){ closeMenus(); openProfile(); };
-      menu.querySelector('[data-a=ach]').onclick=function(){ closeMenus(); try{ if(typeof window.ffOpenAch==='function') window.ffOpenAch(); }catch(e){} };   // 게임이 window.ffOpenAch를 정하면 도전과제 버튼이 보여요
+      menu.querySelector('[data-a=ach]').onclick=function(){ closeMenus(); try{ if(typeof window.ffOpenAch==='function') window.ffOpenAch(); else openProfile(null,{openAch:true}); }catch(e){} };   // 게임이 window.ffOpenAch를 정하면 그 게임의 도전과제 창, 아니면 프로필 카드의 도전과제 창이 열려요
       menu.querySelector('[data-a=acct]').onclick=function(){ closeMenus(); location.href=SETURL+'#account'; };
       menu.querySelector('[data-a=set]').onclick=function(){ closeMenus(); location.href=SETURL; };
       menu.querySelector('[data-a=notes]').onclick=function(e){ e.stopPropagation(); closeMenus(); var w=s.querySelector('.ffa-wrap'), pn=w&&w.querySelector('.ffa-notes'); if(!pn) return; pn.style.display='block'; paintNotes(pn); markRead(); };
