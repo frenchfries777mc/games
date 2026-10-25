@@ -89,7 +89,7 @@ export function animate(E, m, d, dt, t) {
   if (fresh) {
     let ak = null, D = 0.5;
     if (st === ST.swing) {
-      if (E.pst === ST.charge) { ak = E.lastC >= 0.55 ? 'hv' : 'atk'; D = ak === 'hv' ? 0.5 : Math.max(0.2, W.swing + 0.06); }
+      if (E.pst === ST.charge) { ak = E.lastC >= 0.45 ? 'hv' : 'atk'; D = ak === 'hv' ? 0.5 : Math.max(0.2, W.swing + 0.06); }
       else if (E.pst === ST.grab || (E.ak && E.aT < 0.5 && (E.ak === 'heal' || E.ak === 'mark'))) ak = null;   // 기술 끝의 휘두름은 같은 동작으로 이어가요
       else if (cls === 'hunter') { ak = 'pierce'; D = SK.pierce; }
       else { ak = 'atk'; D = Math.max(0.2, W.swing + 0.06); }
@@ -143,7 +143,7 @@ export function animate(E, m, d, dt, t) {
         T.rx = (-1.2 * cr - 2.6 * up + 2.9 * dn) * x + base[0] * rc; T.lx = (-0.6 * cr - 2.6 * up + (two ? 2.9 : 2.6) * dn) * x + base[1] * rc;
         T.rz = (0.35 * cr - 0.35 * dn) * x; T.lz = two ? 0.3 * x : -0.5 * up * (1 - dn) * x;
         T.bx = (0.35 * cr - 0.85 * up + 1.45 * dn) * x; T.hx = (-0.25 * up + 0.45 * dn) * x;
-        T.jy = hop(0.07, L1, 1.6); T.bz = 0.3 * dn * x; T.bry = 0.5 * cr * (1 - dn) * x;
+        T.jy = hop(0.07, L1, 2.6); T.bz = 0.3 * dn * x; T.bry = 0.5 * cr * (1 - dn) * x;
         T.sq = 0.5 * cr * (1 - up) - 0.4 * up * (1 - dn) + land(L1, 0.75); T.by = (-0.35 * cr * (1 - up) - 0.45 * dn) * x; T.lg = (0.6 * cr * (1 - up) + 0.9 * dn) * x;
         if (role === 'archer') { T.rpz = -0.4 * up * (1 - dn); }
       } else if (role === 'knight') kApply(T, kPose(E.kc, v, base), 1);

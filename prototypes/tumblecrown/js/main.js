@@ -35,7 +35,7 @@ function demoScene() { view.setPlayers(DEMO); view.ring = undefined; view.resetT
 const DEMO_TL = Array.from({ length: NT }, (c, i) => PILLARS.includes(i) ? '3' : '0').join('');
 function demoSnap(t) {
   const ph = (t % 6) / 6;
-  return { ring: 6, tl: DEMO_TL, c: [0, 1.6, 0.6, null],
+  return { ring: 7, tl: DEMO_TL, c: [0, 1.6, 0.6, null],
     p: DEMO.map((d, i) => { const ch = i === 0 && ph > 0.55 && ph < 0.85; const sw = i === 0 && ph >= 0.85 && ph < 0.95;
       return [d.id, d.x, 0, d.z, -d.x * 0.3, 1, ch ? ST.charge : sw ? ST.swing : ST.idle, sw ? (ph - 0.85) * 6 : 0, ch ? Math.min(1, (ph - 0.55) / 0.25) : 0, 0, 0, 0, 0, 0, -d.x * 0.3, 1]; }) };
 }
