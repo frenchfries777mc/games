@@ -1,11 +1,11 @@
 // Tumblecrown · © 2026 Frenchfries777 · CC BY-NC-ND 4.0
 // 게임 숫자와 이름
 
-export const BUILD = 5, VERSION = '0.1';
+export const BUILD = 6, VERSION = '0.1';
 
 // 방 바닥: 네모 칸. 바깥 고리부터 무너져요
-export const RING = 6, CELL = 3, NX = 6, NZ = 5;   // 방 바닥: 가로 13칸 x 세로 11칸, 한 칸 3m (Vowkeep 1장 단장의 방을 넓힌 모양)
-export const SHRINK_AT = 20, SHRINK_EVERY = 8, MIN_RING = -1; // 섬이 바깥부터 무너지는 시점과 간격
+export const RING = 7, CELL = 3, NX = 7, NZ = 6;   // 방 바닥: 가로 13칸 x 세로 11칸, 한 칸 3m (Vowkeep 1장 단장의 방을 넓힌 모양)
+export const SHRINK_AT = 20, SHRINK_EVERY = 7, MIN_RING = -1; // 섬이 바깥부터 무너지는 시점과 간격
 export const MAX_PLAYERS = 6;
 export const FALL_Y = -14;
 
@@ -28,6 +28,8 @@ export const CLS = {
   skeleton: { name: '스켈레톤', desc: '가볍고 빠른 뼈다귀, 붙잡아 던져요', range: 1.8, arc: 2.0, chg: 0.4, cd: 0.22, dmg: [4, 9], kb: [5, 12], swing: 0.16, spd: 6.4, st: [2, 4, 1, 4],
     atk: '뼈 몽둥이', sk: { kind: 'grab', name: '잡아 던지기', desc: '앞의 상대를 붙잡아 등 뒤로 던져요', cd: 6 } }
 };
+// 캐릭터가 커진 만큼 무기 닿는 거리도 늘려요
+for (const k in CLS) CLS[k].range *= 1.25;
 export const CLS_IDS = ['knight', 'priest', 'hunter', 'viking', 'mamluk', 'witch', 'skeleton'];
 export const DASH = { spd: 19, t: 0.17, cd: 1.1 };
 
