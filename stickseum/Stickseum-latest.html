@@ -1025,7 +1025,7 @@ sting();})();</script>
   <div class="card" id="practiceScreen" style="width:min(560px,94vw); max-height:92vh; overflow-y:auto;">
     <button class="backlink" id="practiceBackBtn" style="position:absolute; top:14px; right:14px; margin:0;">&larr; 뒤로가기</button>
     <h2 style="margin:0;">🎯 연습 모드</h2>
-    <div style="font-size:12px; color:var(--text-dim); margin:4px 0 0; line-height:1.5;">혼자서 캐릭터와 궁극기·스킬을 마음껏 연습해요. 궁극기·스킬·순간이동 쿨타임이 짧고, 경험치·골드·도전과제·숙련도는 쌓이지 않아요.</div>
+    <div style="font-size:12px; color:var(--text-dim); margin:4px 0 0; line-height:1.5;">혼자서 캐릭터와 궁극기·스킬을 마음껏 연습해요. 궁극기·스킬·순간이동 쿨타임이 짧고, 경험치·sC·도전과제·숙련도는 쌓이지 않아요.</div>
     <div class="pracLabel">맵</div>
     <div style="display:flex; align-items:center; gap:8px;">
       <button class="btn-secondary" id="pracMapPrev" style="padding:6px 14px;">◀</button>
@@ -1115,7 +1115,7 @@ sting();})();</script>
 
   <div class="card" id="shopScreen">
     <button class="backlink" id="shopBackBtn" style="position:absolute; top:14px; right:14px; margin:0;">&larr; 뒤로가기</button>
-    <h2 style="margin:0;">🛍️ 치장품 상점<span id="shopGoldTag"><span id="goldAmt">0</span> G</span><span id="shopSoulTag"><span id="soulIcon">💜</span> <span id="soulAmt">0</span></span></h2>
+    <h2 style="margin:0;">🛍️ 치장품 상점<span id="shopGoldTag"><span id="goldAmt">0</span> sC</span><span id="shopSoulTag"><span id="soulIcon">💜</span> <span id="soulAmt">0</span></span></h2>
     <div id="shopTabs"></div>
     <div id="shopGrid"></div>
   </div>
@@ -1296,6 +1296,7 @@ const PZ_LUNGE_WIN=0.7, PZ_LUNGE_KB=1.3, PZ_LUNGE_STUN=0.2;       // 돌격 찌�
 function pzStacks(p){ return (p && p.weapon==='pizarro' && p.pzStacks) ? Math.min(PZ_MAX, p.pzStacks) : 0; }
 function pzCdMult(p){ return 1-PZ_CD_STEP*pzStacks(p); }
 function dashCdOf(p){ if(gameMode==='dashbr') return 0; if(p && p.queenUntil && performance.now()/1000<p.queenUntil) return 0; if(p && p.weapon==='pizarro') return PZ_DASH_CD[pzStacks(p)]; const w=WEAPONS[p && p.weapon], base=(w && w.dashCd!==undefined) ? w.dashCd : DASH_CD; return base*((p && p.isZombie) ? ZOMBIE_DASH_CD_MULT : 1)*pzCdMult(p); }   // how long a player waits between dashes (a zombie: half of it)
+const TELEPORT_CHANNEL_SEC = 1.2;   // how long the teleporter stands still before it arrives
 let TELEPORT_CD = 10;   // (a `let` only so the practice mode can shorten it)
 const PROJECTILE_GRAVITY = 700;
 const PLAYER_W = 26, PLAYER_H = 58;
@@ -1451,6 +1452,8 @@ const ULTS = {
 const SAVE_KEY='arenaClashSave_v1';
 window.addEventListener('DOMContentLoaded', ()=>{ const t=document.getElementById('buildTag'); if(t && typeof GAME_BUILD!=='undefined') t.textContent='v'+GAME_VERSION+' '+GAME_VERSION_NAME+' · '+GAME_BUILD.replace(/^build \S*-v(\d+)$/,'build $1'); });
 const KILL_GOLD=5, ASSIST_GOLD=3, ASSIST_WINDOW=10;
+const MATCH_KILL_GOLD_MAX=5, MATCH_ASSIST_GOLD_MAX=5;   // gold for kills and assists stops after 5 of each in one match (a duel gives about 2 kills, a respawn mode used to give 30)
+let rewardCount={};
 /* the purple currency: a kill gives SOUL_PER_KILL of them (an assist, a match end or practice give none); they are spent on random boxes only.
    To rename it change the name / icon / colour right here - every text, the shop and the kill feed read it from this one place. */
 const SOUL={name:'영혼석', icon:'💜', color:'#b86bff'};
@@ -2050,7 +2053,7 @@ function showAchievementToast(a, heading){
   if(!host) return;
   const el=document.createElement('div');
   el.className='achToast';
-  el.innerHTML='<div class="achToastIcon">'+a.icon+'</div><div><div class="achToastTitle">'+(heading||'도전과제 달성!')+'</div><div class="achToastName">'+a.name+'</div>'+((a.reward>0)?'<div class="achToastReward">+'+a.reward+' 골드</div>':(a.sub?'<div class="achToastReward">'+a.sub+'</div>':''))+'</div>';
+  el.innerHTML='<div class="achToastIcon">'+a.icon+'</div><div><div class="achToastTitle">'+(heading||'도전과제 달성!')+'</div><div class="achToastName">'+a.name+'</div>'+((a.reward>0)?'<div class="achToastReward">+'+a.reward+' sC</div>':(a.sub?'<div class="achToastReward">'+a.sub+'</div>':''))+'</div>';
   host.appendChild(el);
   setTimeout(()=>{ el.classList.add('out'); setTimeout(()=>el.remove(),400); }, 3400);
 }
@@ -2065,7 +2068,7 @@ function updateSoulUI(){ const el=document.getElementById('soulAmt'); if(el) el.
 function addSouls(n){ n=Math.floor(+n||0); if(n<=0) return; saveData.souls=Math.min(999999,(saveData.souls||0)+n); persistSave(); updateSoulUI(); try{ pushKillFeed(SOUL.icon+' +'+n+' '+SOUL.name); }catch(e){} }
 function addGold(amount,label){
   gold+=amount; persistSave(); updateGoldUI();
-  if(label) pushKillFeed('💰 +'+amount+' 골드 ('+label+')'+(label==='어시스트'?' · +'+ASSIST_XP+' XP':''));
+  if(label) pushKillFeed('💰 +'+amount+' sC ('+label+')'+(label==='어시스트'?' · +'+ASSIST_XP+' XP':''));
   if(label==='어시스트'){ saveData.totalAssists=(saveData.totalAssists||0)+1; matchAssists++; addXP(ASSIST_XP); persistSave(); }     // an assist: player xp now, weapon xp at the end of the match
 }
 const COSMETICS={
@@ -2417,7 +2420,7 @@ function addSeasonXp(n, quiet){ n=Math.floor(+n||0); if(n<=0) return; const s=en
 const SEASON_COS_TIERS={27:'skin_pistol_s1', 33:'pose_levitate', 38:'kfx_blackhole', 47:'skin_sword_s1', 53:'pose_trophy', 57:'kfx_phoenix'};      // (the exclusive looks; the two emotes are put in where they are made)
 for(const t in SEASON_COS_TIERS) SEASON_REWARDS[t-1]={kind:'cos', id:SEASON_COS_TIERS[t]};
 function seasonRewardLabel(r){
-  if(r.kind==='gold') return '💰 골드 '+r.amount;
+  if(r.kind==='gold') return '💰 sC '+r.amount;
   if(r.kind==='soul') return SOUL.icon+' '+SOUL.name+' '+r.amount;
   if(r.kind==='box') return '🎁 랜덤 상자 ×'+r.amount;
   if(r.kind==='playerxp') return '⭐ 플레이어 XP '+r.amount;
@@ -2475,7 +2478,7 @@ function renderMissionScreen(){
   const nextDay=msToNextDay(), hh=Math.floor(nextDay/3600000), mm=Math.floor((nextDay%3600000)/60000);
   const msBox=(scope, label)=>{
     const rw=MISSION_REWARD[scope];
-    sec(label+' · 보상 골드 '+rw.gold+(rw.souls?' · '+SOUL.name+' '+rw.souls:'')+' · 시즌 XP '+rw.sxp);
+    sec(label+' · 보상 sC '+rw.gold+(rw.souls?' · '+SOUL.name+' '+rw.souls:'')+' · 시즌 XP '+rw.sxp);
     ms[scope].forEach((m,i)=>{
       const row=document.createElement('div'); row.style.cssText='display:flex; align-items:center; gap:10px; padding:8px 10px; margin-bottom:6px; border:1px solid var(--line); border-radius:10px; background:var(--panel-2);';
       const left=document.createElement('div'); left.style.cssText='flex:1; min-width:0;';
@@ -2483,7 +2486,7 @@ function renderMissionScreen(){
       left.appendChild(t); const bar=document.createElement('div'); bar.innerHTML=barHtml(m.p/m.n, m.p>=m.n?'#ffd34d':'#3fe0c5'); left.appendChild(bar);
       const btn=document.createElement('button'); btn.style.cssText='padding:6px 12px; flex:none;';
       if(m.c){ btn.textContent='받음'; btn.className='off'; btn.disabled=true; }
-      else if(m.p>=m.n){ btn.textContent='받기'; btn.onclick=(ev)=>{ const rc=ev.currentTarget.getBoundingClientRect(), rw=MISSION_REWARD[scope]; if(claimMission(scope,i)){ claimSparkle(rc.left+rc.width/2, rc.top, '+'+rw.gold+' 골드'+(rw.souls?' · '+SOUL.name+' +'+rw.souls:'')+' · 시즌 XP +'+rw.sxp, scope==='weekly'); renderMissionScreen(); } }; }
+      else if(m.p>=m.n){ btn.textContent='받기'; btn.onclick=(ev)=>{ const rc=ev.currentTarget.getBoundingClientRect(), rw=MISSION_REWARD[scope]; if(claimMission(scope,i)){ claimSparkle(rc.left+rc.width/2, rc.top, '+'+rw.gold+' sC'+(rw.souls?' · '+SOUL.name+' +'+rw.souls:'')+' · 시즌 XP +'+rw.sxp, scope==='weekly'); renderMissionScreen(); } }; }
       else { btn.textContent='진행 중'; btn.className='off'; btn.disabled=true; }
       row.appendChild(left); row.appendChild(btn); body.appendChild(row);
     });
@@ -2678,7 +2681,7 @@ const PREMIUM_SKINS=[
   ['vacuum','블랙홀 청소부 반다나','#1a1030','void'], ['pirate','심해 해적왕 모자','#2bc3ff','glow'], ['samurai','천하 통일 투구띠','#ff3b3b','crown'],
   ['kurus','칠흑 여왕의 두건','#b47bff','halo']
 ];
-for(const [ch,nm,tint,fx] of PREMIUM_SKINS) COSMETICS['skin_'+ch+'_p']={cat:'skin', char:ch, name:nm, price:PREMIUM_SKIN_PRICE, tint, fx, lux:1, premium:true};
+for(const [ch,nm,tint,fx] of PREMIUM_SKINS) COSMETICS['skin_'+ch+'_p']={cat:'skin', char:ch, name:nm, price:PREMIUM_SKIN_PRICE, tint, fx, lux:2, premium:true};
 /* ===== the character's own color in a match: plain colors are free, the shiny ones are bought (cat 'bcol', equipped as saveData.equipped.bcol, sent as cos.col) ===== */
 [['red','빨강','#ff4d4d'],['mint','민트','#3fe0c5'],['yellow','노랑','#f5c94c'],['blue','파랑','#7c9eff'],['pink','분홍','#ff8fd9'],['lime','연두','#8dff7c'],
  ['orange','주황','#ff9d4d'],['purple','보라','#b98cff'],['sky','하늘','#4dd9ff'],['rose','장미','#ff6b9d'],['emerald','에메랄드','#6bffb3'],['white','하양','#eef1f6']]
@@ -2762,18 +2765,18 @@ function openPickXp(onDone){
 }
 function giveReward(r, rand){                // hands the gift over and tells what it was (for the screen)
   rand=rand||Math.random;
-  if(r.kind==='gold'){ gold+=r.amount; persistSave(); updateGoldUI(); return {kind:'gold', icon:'💰', title:'+'+r.amount+' 골드', detail:''}; }
+  if(r.kind==='gold'){ gold+=r.amount; persistSave(); updateGoldUI(); return {kind:'gold', icon:'💰', title:'+'+r.amount+' sC', detail:''}; }
   if(r.kind==='playerxp'){ addXP(r.amount); return {kind:'playerxp', icon:'⭐', title:'플레이어 XP +'+r.amount, detail:'현재 Lv.'+levelFromXp(saveData.xp)}; }
   if(r.kind==='pickxp'){ saveData.pxEarned=(saveData.pxEarned||0)+r.amount; persistSave(); return {kind:'pickxp', icon:'⭐', title:'선택 XP +'+r.amount, detail:'프로필에서 쓸 수 있어요 (보유 '+pickXpHave()+')'}; }
   if(r.kind==='charxp'){
     const wid=SELECTABLE_WEAPONS[Math.floor(rand()*SELECTABLE_WEAPONS.length)], m=grantWeaponXp(wid, r.amount); persistSave(); updateGoldUI();
-    return {kind:'charxp', wid, icon:(WEAPONS[wid]||{}).emoji||'🎖️', title:(WEAPON_PERSONA_NAME[wid]||wid)+' 숙련도 XP +'+r.amount, detail:(m.newLv>m.oldLv ? 'Lv.'+m.oldLv+' → Lv.'+m.newLv+' 레벨 업! +'+m.gold+' 골드' : '숙련 Lv.'+m.newLv)};
+    return {kind:'charxp', wid, icon:(WEAPONS[wid]||{}).emoji||'🎖️', title:(WEAPON_PERSONA_NAME[wid]||wid)+' 숙련도 XP +'+r.amount, detail:(m.newLv>m.oldLv ? 'Lv.'+m.oldLv+' → Lv.'+m.newLv+' 레벨 업! +'+m.gold+' sC' : '숙련 Lv.'+m.newLv)};
   }
   if(r.kind==='soul'){ saveData.souls=Math.min(999999,(saveData.souls||0)+r.amount); persistSave(); updateSoulUI(); return {kind:'soul', icon:SOUL.icon, title:'+'+r.amount+' '+SOUL.name, detail:'상자를 사는 데 쓸 수 있어요'}; }
   if(r.kind==='box'){ saveData.boxes=Math.min(9999,(saveData.boxes||0)+(r.amount||1)); persistSave(); return {kind:'box', icon:'🎁', title:'랜덤 상자 ×'+(r.amount||1), detail:'치장품 상점의 🎁 상자 탭에서 열 수 있어요'}; }
   if(r.kind==='skin'){
     const c=boxSkinCandidates();
-    if(!c.length){ const res=giveReward({kind:'gold', amount:50}, rand); res.detail='(받을 수 있는 스킨이 이제 없어서 골드로 바뀌었어요)'; res.fallback=true; return res; }
+    if(!c.length){ const res=giveReward({kind:'gold', amount:50}, rand); res.detail='(받을 수 있는 스킨이 이제 없어서 sC로 바뀌었어요)'; res.fallback=true; return res; }
     const id=c[Math.floor(rand()*c.length)], it=COSMETICS[id]; saveData.owned[id]=true; persistSave();
     return {kind:'skin', id, icon:'🎨', title:'스킨 획득: '+it.name, detail:(WEAPON_PERSONA_NAME[it.char]||it.char)+' · 치장품 상점에서 장착할 수 있어요'};
   }
@@ -3259,7 +3262,7 @@ function shopAnimLoop(ts){
   requestAnimationFrame(shopAnimLoop);
 }
 function shopAnimStart(){ if(shopAnimOn || !shopAnimList.length || typeof requestAnimationFrame!=='function') return; shopAnimOn=true; requestAnimationFrame(shopAnimLoop); }
-function boxRewardLabel(r){ return r.kind==='soul' ? SOUL.icon+' '+SOUL.name+' '+r.amount+'개' : r.kind==='gold' ? r.amount+' 골드' : r.kind==='charxp' ? '랜덤 캐릭터 XP '+r.amount : r.kind==='pickxp' ? '선택 XP '+r.amount : r.kind==='playerxp' ? '플레이어 XP '+r.amount : r.kind==='skin' ? '스킨 1개 ('+BOX_SKIN_MAX_PRICE+'G 이하)' : '랜덤 상자'; }
+function boxRewardLabel(r){ return r.kind==='soul' ? SOUL.icon+' '+SOUL.name+' '+r.amount+'개' : r.kind==='gold' ? r.amount+' sC' : r.kind==='charxp' ? '랜덤 캐릭터 XP '+r.amount : r.kind==='pickxp' ? '선택 XP '+r.amount : r.kind==='playerxp' ? '플레이어 XP '+r.amount : r.kind==='skin' ? '스킨 1개 ('+BOX_SKIN_MAX_PRICE+'G 이하)' : '랜덤 상자'; }
 function renderBoxTab(grid){
   const card=document.createElement('div'); card.className='boxCard';
   const n=saveData.boxes||0, left=boxSkinCandidates().length;
@@ -3303,7 +3306,7 @@ function renderShop(){
       pr.innerHTML='<span style="color:'+(rk?rk.color:'#fff')+'; font-weight:800;">'+it.tier+' 전용</span>'+(owned?'<br>해금됨':'<br>'+Math.min(kc,need)+' / '+need+'킬'); }
     else if(it.mast) pr.innerHTML=owned?'<span style="color:#7ef0a8; font-weight:800;">마스터리 해금</span>':'<span style="color:#ffd34d; font-weight:800;">마스터리 Lv.'+it.mast.lv+'</span><br>'+Math.min(masteryInfo(it.mast.wid).lv,it.mast.lv)+' / '+it.mast.lv;
     else if(it.free) pr.textContent='무료';
-    else pr.textContent=owned?'보유 중':(it.seasonOnly?'시즌 패스 보상':(it.price+' G'));
+    else pr.textContent=owned?'보유 중':(it.seasonOnly?'시즌 패스 보상':(it.price+' sC'));
     box.appendChild(pr);
     const btn=document.createElement('button');
     if(it.cat==='emo'){
@@ -3403,7 +3406,7 @@ const MODES = {
   hotpotato: {id:'hotpotato', name:'폭탄 돌리기', desc:'무기·궁극기·순간이동 없이 대쉬만 가능한 맨손 스틱맨으로 바로 시작 · 한 명이 폭탄을 들고 시작, 20초 후 터짐 · 가까운 사람을 클릭하면 폭탄을 넘길 수 있음 · 터지면 들고 있던 사람 탈락, 생존자가 처음 인원의 절반 넘게 남아있으면 3초 뒤 다음 라운드 · 절반 이하가 된 상태에서 터지면 그때 생존자들이 승리', teams:false, extra:0, elim:true, ownMapRules:true, noWeapon:true, minPlayers:4},
   hideseek: {id:'hideseek', name:'숨바꼭질', desc:'32인용 대형 맵 고정 · 대쉬·궁극기·순간이동·무기선택 없는 맨몸 스틱맨 · 체력 1 · 최소 5명 · 술래 한 명이 정해지고 나머지는 움직이지 않는 발판으로 변신해 숨음 · 술래는 10초간 화면이 가려지고 그 동안 숨는 사람들은 자유롭게 움직여 위치를 잡음 · 카운트다운이 끝나면 술래에게 권총 지급, 첫 발은 발판을 다시 스틱맨으로 되돌리고(움직일 수 있게 됨), 두 번째 발이 명중하면 탈락 · 1분 30초 안에 술래가 전원을 찾아내면 술래 승리, 한 명이라도 남으면 생존자 승리', teams:false, extra:0, elim:true, ownMapRules:true, noWeapon:true, noAbility:true, minPlayers:5, fixedMapId:'mega_arena'},
   survival: {id:'survival', name:'서바이벌', desc:'8인 이상 맵에서만 가능 · 최소 6명 · 무기선택·순간이동·캐릭터 없음(대쉬는 있음) · 체력 1: 재해에 한 번이라도 맞으면 탈락 · 9초 대기 후 번개·해일·화산·산성비·홍수·운석·폭탄·좀비 중 하나가 랜덤으로 12초간 발생, 버티면 사라지고 다시 9초 대기 · 라운드가 갈수록 재해가 더 자주·더 넓게·더 빠르게 몰아침 · 총 5번의 재해에서 살아남으면 승리, 먼저 죽으면 관전하거나 나갈 수 있음', teams:false, extra:0, elim:true, ownMapRules:true, noWeapon:true, noTeleport:true, minPlayers:6, mapFilterMinPlayers:8}, // noTeleport made explicit here (previously implied only indirectly through noWeapon) to match the mode's own description, which promises no teleport
-  ctf: {id:'ctf', name:'깃발 뺏기', desc:'전용 대형 맵 4종 중 선택 · 두 팀이 상대 기지의 깃발을 가져와 우리 기지에 가져오면 1점(우리 깃발이 기지에 있어야 득점) · 깃발을 든 사람은 조금 느려지고 순간이동을 못 씀 · 든 사람이 죽으면 깃발이 떨어지고 10초 뒤 기지로 돌아감(우리 팀이 닿으면 바로 복귀) · 먼저 3점 또는 8분 안에 더 많이 득점한 팀 승리, 동점이면 무승부 · 처치당하면 5초 후 우리 기지에서 부활 · 최소 4명(비공개 방에서는 봇 추가 가능)', teams:true, teamSize:'half', extra:0, elim:false, ownMapRules:true, isCtfMode:true, minPlayers:4, respawnTime:5},
+  ctf: {id:'ctf', name:'깃발 뺏기', desc:'전용 대형 맵 4종 중 선택 · 두 팀이 상대 기지의 깃발을 가져와 우리 기지에 가져오면 1점(우리 깃발이 기지에 있어야 득점) · 깃발을 든 사람은 순간이동을 못 씀 · 든 사람이 죽으면 깃발이 떨어지고 4초 뒤 기지로 돌아감(우리 팀이 닿으면 바로 복귀) · 먼저 3점 또는 8분 안에 더 많이 득점한 팀 승리, 동점이면 무승부 · 처치당하면 5초 후 우리 기지에서 부활 · 최소 4명(비공개 방에서는 봇 추가 가능)', teams:true, teamSize:'half', extra:0, elim:false, ownMapRules:true, isCtfMode:true, minPlayers:4, respawnTime:5},
   gold: {id:'gold', name:'황금 쟁탈', desc:'전용 대형 맵 4종 중 선택 · 두 팀 대항 3분 · 맵 중앙의 금 덩이 더미에서 금을 집어(한 번에 최대 3개, 들수록 조금 느려짐) 우리 팀 광차에 실으면 1개당 10점 · 광차에 닿으면 자동으로 실려요 · 금을 든 사람이 쓰러지면 그 자리에 금이 떨어져 누구나 주울 수 있어요 · 더미가 비면 15초마다 6개씩 새로 쌓여요 · 3분 뒤 점수가 높은 팀 승리, 동점이면 무승부 · 쓰러지면 5초 후 우리 기지에서 부활 · 최소 4명(비공개 방에서는 봇 추가 가능)', teams:true, teamSize:'half', extra:0, elim:false, ownMapRules:true, isCtfMode:true, minPlayers:4, respawnTime:5},
   raid: {id:'raid', name:'보스 레이드', desc:'8인 이상 맵에서만 가능 · 4명 고정 · 모두가 한 팀이 되어 거대한 보스 한 마리를 쓰러뜨리는 협동 모드 · 보스는 인원에 맞춰 체력이 늘어나고, 주기적으로 바닥을 내려쳐요(빨간 원이 번쩍이면 점프!) · 팀 목숨이 정해져 있고 쓰러지면 6초 뒤 부활 · 3분 안에 보스를 잡으면 성공', teams:true, teamSize:'half', soloTeam:true, extra:0, fixedPlayers:4, elim:false, ownMapRules:true, mapFilterMinPlayers:8, respawnTime:6},
   tournament: {id:'tournament', name:'토너먼트', desc:'16명이 1대1 3판 2선승제로 겨루는 단판 토너먼트(16강 → 8강 → 4강 → 결승) · 같은 라운드 경기는 동시에 진행되고 내 경기만 보여요 · 라운드마다 캐릭터를 새로 골라요 · 끝난 사람은 다른 경기를 관전 · 결승은 경기장이 점점 좁아져요', teams:false, fixedPlayers:16, elim:true, ownMapRules:true, mapFilterMinPlayers:8, tnMode:true},
@@ -3892,7 +3895,7 @@ function drawMapDecorations(){
   ctx.globalAlpha=1;
 }
 const CTF_CAPTURE_XP=25;       // whoever brings the enemy flag home gets this much player xp AND this much xp for the character he plays
-const CTF_TARGET=3, CTF_DURATION=480, CTF_PICKUP_R=44, CTF_CAPTURE_R=64, CTF_RETURN_SEC=10, CTF_CARRIER_SPEED=0.85, CTF_TEAM_NAMES=['블루','레드'];
+const CTF_TARGET=3, CTF_DURATION=480, CTF_PICKUP_R=44, CTF_CAPTURE_R=64, CTF_RETURN_SEC=4, CTF_CARRIER_SPEED=1, CTF_TEAM_NAMES=['블루','레드'];
 let ctf=null, ctfEndsLocal=0;          // ctf: {flags:[{team,homeX,homeY,state:'home'|'carried'|'dropped',x,y,carrierId,returnAt|retRemain}], scores:[a,b], overtime, target}
 function ctfRetRemain(f){ return isHost ? Math.max(0, (f.returnAt||0)-performance.now()/1000) : (f.retRemain||0); }
 function drawFlagIcon(x, y, col, mode, now){            // mode: 'stand' | 'carried' | 'dropped'
@@ -5019,7 +5022,7 @@ function shuffle(arr){ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.
 /* ===== the version of this file =====
    Players with different versions CAN meet and play together: the automatic matchmaking uses the same room names for every version (online-<mode>-<map>-<slot>), and nobody is refused because of a different build.
    The build is only sent along with the join message and the lobby (for information); the corner of the screen shows it. */
-const GAME_BUILD='build 2026-10-18-v381';
+const GAME_BUILD='build 2026-10-18-v382';
 const GAME_VERSION='0.8', GAME_VERSION_NAME='황금을 찾아서';   // 게임 버전 이름: versions.json의 title과 같게 (빌드마다 바꾸지 않음)
 const WEEKLY_EVENTS=[
   {id:'lowg',    name:'저중력 난투', desc:'몸이 둥실둥실, 중력이 약해진 난투', rules:{grav:0.6}},
@@ -5337,7 +5340,7 @@ function tryTeleportChannel(p, x, y, tMs){
   p.lastTeleport = tSec;
   const dx=clamp(x, PLAYER_W/2+4, MAP.arenaW-PLAYER_W/2-4);
   const dy=clamp(y, PLAYER_H, MAP.arenaH-4);
-  p.teleportChannel = {x:dx, y:dy, until:tSec+1.0};
+  p.teleportChannel = {x:dx, y:dy, until:tSec+TELEPORT_CHANNEL_SEC};
   pushFx('blink', p.x, p.y-30, tMs, {color:'#5fd0ff'});
   pushFx('sfx', p.x, p.y-30, tMs, {name:'warp'}); // charge-up sound, cut to the same 1 second as the channel so it ends right as the player pops out
 }
@@ -6088,7 +6091,7 @@ function openAllBoxes(){        // 모두 열기: every box at once, one shake, 
   }
   const L=[];
   if(sum.skins.length) L.push('🎨 스킨: '+sum.skins.join(', '));
-  if(sum.gold) L.push('💰 골드 +'+sum.gold);
+  if(sum.gold) L.push('💰 sC +'+sum.gold);
   if(sum.soul) L.push(SOUL.icon+' '+SOUL.name+' +'+sum.soul);
   if(sum.playerxp) L.push('⭐ 플레이어 XP +'+sum.playerxp);
   if(sum.pickxp) L.push('⭐ 선택 XP +'+sum.pickxp);
@@ -6105,7 +6108,7 @@ function playAllBoxesOpening(){
 function openDailyWindow(){
   const st=dailyStatus();
   if(st.can){
-    showRewardWindow('🎁 오늘의 일일 보상', '🎁', '하루에 한 번 받을 수 있어요.\n골드 '+DAILY_GOLD+' · 랜덤 캐릭터 XP '+DAILY_XP+' · 플레이어 XP '+DAILY_XP+' · 선택 XP 25/50/100 · 랜덤 상자 중 하나가 나와요.', [
+    showRewardWindow('🎁 오늘의 일일 보상', '🎁', '하루에 한 번 받을 수 있어요.\nsC '+DAILY_GOLD+' · 랜덤 캐릭터 XP '+DAILY_XP+' · 플레이어 XP '+DAILY_XP+' · 선택 XP 25/50/100 · 랜덤 상자 중 하나가 나와요.', [
       {text:'받기', onclick:()=>{ shakeThen('오늘의 일일 보상!', ()=>claimDaily(), null); }},
       {text:'나중에', alt:true, onclick:closeRewardModal}]);
   } else if(st.reason==='clock'){
@@ -7050,7 +7053,7 @@ function achRowHtml(a, done){
       (ACH_SHOW_DESC ? '<div style="font-size:12px; color:var(--text-dim);">'+escapeHtmlText(a.desc)+'</div>' : '')+
       '<div class="achPct" style="font-size:11px; font-weight:700; color:'+pct.color+';">'+pct.text+'</div>'+
     '</div>'+
-    '<div style="font-size:12px; color:#ffd34d; font-weight:700; white-space:nowrap;">'+(done?'+'+a.reward+' G':'')+'</div>';
+    '<div style="font-size:12px; color:#ffd34d; font-weight:700; white-space:nowrap;">'+(done?'+'+a.reward+' sC':'')+'</div>';
 }
 function renderAchievements(){
   const unlocked=saveData.achievements||{};
@@ -7944,7 +7947,7 @@ async function tutorialMaybeOffer(){
   for(let i=0;i<50 && !document.getElementById('menuScreen').classList.contains('active');i++) await new Promise(r=>setTimeout(r,200));   // (the sign-up form goes to the menu a moment later)
   if(!sbUser || sbUser.id!==me || !tutorialPendingFor(me) || started || peer || practiceMode || document.getElementById('tutOffer')) return;
   const box=document.createElement('div'); box.id='tutOffer';
-  box.innerHTML='<div class="toHead">🎓 처음 오셨네요!</div><div class="toBody">이동, 점프, 대쉬, 공격, 스킬, 궁극기를 하나씩 해 보는 짧은 튜토리얼이 있어요. 끝까지 하면 '+TUTORIAL_GOLD+' 골드를 드려요.</div>';
+  box.innerHTML='<div class="toHead">🎓 처음 오셨네요!</div><div class="toBody">이동, 점프, 대쉬, 공격, 스킬, 궁극기를 하나씩 해 보는 짧은 튜토리얼이 있어요. 끝까지 하면 '+TUTORIAL_GOLD+' sC를 드려요.</div>';
   const row=document.createElement('div'); row.className='toBtns';
   const go=document.createElement('button'); go.className='btn-primary'; go.textContent='튜토리얼 시작';
   const skip=document.createElement('button'); skip.className='btn-secondary'; skip.textContent='건너뛰기';
@@ -7986,7 +7989,7 @@ function tutorialShowStep(){
   const quit=document.createElement('button'); quit.className='btn-secondary'; quit.textContent=tut.done?'메뉴로':'그만두기'; quit.onclick=()=>exitPractice(); top.appendChild(quit);
   box.appendChild(top);
   const t=document.createElement('div'); t.className='tbText';
-  t.textContent=tut.done ? ('잘했어요! '+TUTORIAL_GOLD+' 골드를 받았어요. 이제 온라인 플레이에서 진짜 상대와 겨뤄 보세요') : tut.steps[tut.step].text;
+  t.textContent=tut.done ? ('잘했어요! '+TUTORIAL_GOLD+' sC를 받았어요. 이제 온라인 플레이에서 진짜 상대와 겨뤄 보세요') : tut.steps[tut.step].text;
   box.appendChild(t);
   if(tut.done){ const more=document.createElement('button'); more.className='btn-primary'; more.textContent='계속 연습하기'; more.onclick=()=>{ tutorialEnd(); document.getElementById('practicePanel').style.display='block'; }; box.appendChild(more); }
   try{ quit.blur(); }catch(e){}
@@ -8062,7 +8065,7 @@ function openGiftPicker(toId, toName){
     const x=document.createElement('button'); x.className='btn-secondary'; x.textContent='닫기'; x.onclick=closeGiftPicker; head.appendChild(x);
     box.appendChild(head);
     const sub=document.createElement('div'); sub.className='hint'; sub.style.marginBottom='10px';
-    sub.textContent='내 골드: '+gold+' G · 친구가 이미 가진 아이템이면 그 가격만큼 골드로 받아요'; box.appendChild(sub);
+    sub.textContent='내 sC: '+gold+' sC · 친구가 이미 가진 아이템이면 그 가격만큼 sC로 받아요'; box.appendChild(sub);
     const tabs=document.createElement('div'); tabs.style.cssText='display:flex; flex-wrap:wrap; gap:6px; margin-bottom:10px;';
     for(const [cat,label] of GIFT_CATS){ const b=document.createElement('button'); b.className='shopTab'+(cat===giftCat?' on':''); b.textContent=label; b.onclick=()=>{ giftCat=cat; draw(); }; tabs.appendChild(b); }
     box.appendChild(tabs);
@@ -8073,7 +8076,7 @@ function openGiftPicker(toId, toName){
       card.appendChild(giftItemThumb(id));
       if(it.cat==='skin'){ const cn=document.createElement('div'); cn.className='wk'; cn.style.display='block'; cn.textContent=(WEAPON_PERSONA_NAME[it.char]||it.char); card.appendChild(cn); }
       const nm=document.createElement('div'); nm.className='nm'; nm.textContent=cosDisplayName(it); card.appendChild(nm);
-      const pr=document.createElement('div'); pr.className='pr'; pr.textContent=it.price+' G'; card.appendChild(pr);
+      const pr=document.createElement('div'); pr.className='pr'; pr.textContent=it.price+' sC'; card.appendChild(pr);
       const b=document.createElement('button'); b.textContent='선물'; if(gold<it.price) b.className='off';
       b.onclick=()=>sendGift(toId, toName, id).then(sent=>{ if(sent) closeGiftPicker(); else draw(); });
       card.appendChild(b); grid.appendChild(card);
@@ -8085,15 +8088,15 @@ function openGiftPicker(toId, toName){
 }
 async function sendGift(toId, toName, id){
   const it=COSMETICS[id]; if(!giftable(it) || !sb || !sbUser) return false;
-  if(gold<it.price){ await uiAlert('골드가 부족해요 ('+it.price+' G 필요, 지금 '+gold+' G)'); return false; }
-  if(!await uiConfirm(toName+'님에게 「'+cosDisplayName(it)+'」을(를) '+it.price+' G에 선물할까요?')) return false;
+  if(gold<it.price){ await uiAlert('sC가 부족해요 ('+it.price+' sC 필요, 지금 '+gold+' sC)'); return false; }
+  if(!await uiConfirm(toName+'님에게 「'+cosDisplayName(it)+'」을(를) '+it.price+' sC에 선물할까요?')) return false;
   let msg=await uiPrompt('함께 보낼 한마디 (비워 둬도 돼요, 최대 '+GIFT_MSG_MAX+'자)', '', GIFT_MSG_MAX);
   if(msg===null) return false;
   msg=String(msg||'').trim().slice(0,GIFT_MSG_MAX);
   if(gold<it.price) return false;
   const fromName=String((myNameSet && myName) ? myName : sbUser.username).slice(0,16);
   let r; try{ r=await sb.from('gifts').insert({from_id:sbUser.id, to_id:toId, item_id:id, from_name:fromName, msg}); }catch(e){ r={error:e}; }
-  if(!r || r.error){ console.warn('[gift]', r&&r.error); await uiAlert('선물을 보내지 못했어요. 골드는 그대로예요.\n(친구 사이인지, 서버에 supabase-ranked-gifts.sql을 적용했는지 확인해 주세요)'); return false; }
+  if(!r || r.error){ console.warn('[gift]', r&&r.error); await uiAlert('선물을 보내지 못했어요. sC는 그대로예요.\n(친구 사이인지, 서버에 supabase-ranked-gifts.sql을 적용했는지 확인해 주세요)'); return false; }
   gold-=it.price; persistSave(); updateGoldUI();
   try{ showAchievementToast({icon:'🎁', name:cosDisplayName(it)+' → '+toName, reward:0}, '선물을 보냈어요!'); }catch(e){}
   return true;
@@ -8118,7 +8121,7 @@ async function giftCheckInbox(){
       const row=c && !c.error && (Array.isArray(c.data)?c.data[0]:c.data); if(!row || row.item_id!==g.item_id) continue;   // (taken already, e.g. in another browser)
       const it=COSMETICS[g.item_id], name=cosDisplayName(it);
       let extra='';
-      if(cosOwned(g.item_id)){ gold+=Math.max(0,+it.price||0); extra='\n(이미 가진 아이템이라 '+it.price+' G로 받았어요)'; }
+      if(cosOwned(g.item_id)){ gold+=Math.max(0,+it.price||0); extra='\n(이미 가진 아이템이라 '+it.price+' sC로 받았어요)'; }
       else { saveData.owned[g.item_id]=true; extra='\n상점에서 장착할 수 있어요'; }
       persistSave(); updateGoldUI();
       const from=String(row.from_name||'친구').slice(0,16), note=String(row.msg||'').slice(0,GIFT_MSG_MAX);
@@ -8139,7 +8142,7 @@ async function ffCoinClaim(){
   try{
     const r=await sb.rpc('ff_coin_claim', {p_game:'stickseum'});
     const n=Math.floor(+(r && r.data) || 0);
-    if(!r.error && n>0){ gold+=n; persistSave(); updateGoldUI(); partyToast('🪙 Hub Coin 환전: 골드 +'+n, null, 6000); }
+    if(!r.error && n>0){ gold+=n; persistSave(); updateGoldUI(); partyToast('🪙 Hub Coin 환전: sC +'+n, null, 6000); }
   }catch(e){}
   finally{ ffCoinBusy=false; }
 }
@@ -8155,7 +8158,7 @@ const RANKED_START=1000, RANKED_PAIR_DAILY=3;
 const RANKED_TIERS=[
   {min:0,    name:'브론즈',       color:'#c47a3d'},
   {min:950,  name:'실버',         color:'#c7ccd6'},
-  {min:1050, name:'골드',         color:'#ffd34d', title:'rk_gold'},
+  {min:1050, name:'sC',         color:'#ffd34d', title:'rk_gold'},
   {min:1150, name:'플래티넘',     color:'#4dd9ff'},
   {min:1250, name:'다이아',       color:'#7bf3ff', title:'rk_dia'},
   {min:1400, name:'마스터',       color:'#ff5fd2', title:'rk_master'},
@@ -8645,7 +8648,7 @@ function renderProfile(){
     '<div class="profRow"><span class="k">누적 피해량</span><span class="v">'+(saveData.totalDamage||0)+'</span></div>'+
     '<div class="profRow"><span class="k">누적 처치</span><span class="v">'+(saveData.totalKills||0)+'</span></div>'+
     '<div class="profRow"><span class="k">누적 어시스트</span><span class="v">'+(saveData.totalAssists||0)+'</span></div>'+
-    '<div class="profRow"><span class="k">보유 골드</span><span class="v">'+gold+' G</span></div>'+
+    '<div class="profRow"><span class="k">보유 sC</span><span class="v">'+gold+' sC</span></div>'+
     '<div class="profRow"><span class="k">보유 치장품</span><span class="v">'+ownedCosCount()+'개</span></div>'+
     '<div class="profRow"><span class="k">숙련도 Lv.'+MASTERY_STAR_LV+' 이상 캐릭터</span><span class="v">'+masteryCount()+' / '+SELECTABLE_WEAPONS.length+'</span></div>'+
     '<div class="profRow"><span class="k">⭐ 선택 XP</span><span class="v">'+pickXpHave()+' <button class="btn-secondary" id="profPickXpBtn" style="padding:3px 12px;margin-left:6px;font-size:12px;"'+(pickXpHave()>0?'':' disabled')+'>쓰기</button></span></div>'+
@@ -10100,7 +10103,7 @@ function finishMatchEndOverlay(resultText){
   { const s=document.getElementById('matchEndSub'); if(s){ s.textContent=vd.sub||''; if(s.style) s.style.display=vd.sub?'':'none'; } }
   const xEl=document.getElementById('matchEndXp');
   if(xEl){                                                                                                  // the xp of the PLAYER: kills (as they came during the match) + the match itself + the win
-    if(currentMode==='private' && !practiceMode){ xEl.textContent='🔒 비공개 게임은 보상(경험치·골드·영혼석·시즌패스)이 없어요'; xEl.style.display='block'; }
+    if(currentMode==='private' && !practiceMode){ xEl.textContent='🔒 비공개 게임은 보상(경험치·sC·영혼석·시즌패스)이 없어요'; xEl.style.display='block'; }
     else if(!practiceMode && (lastMatchXp.kills>0 || lastMatchXp.finish>0)){
       const parts=[]; if(lastMatchXp.kills>0) parts.push('처치 '+lastMatchXp.kills+'×'+KILL_XP); parts.push('완주 '+lastMatchXp.finish); if(lastMatchXp.win>0) parts.push('승리 '+lastMatchXp.win);
       const total=lastMatchXp.kills*KILL_XP+lastMatchXp.finish+lastMatchXp.win;
@@ -10113,7 +10116,7 @@ function finishMatchEndOverlay(resultText){
     if(lastMastery){
       const lm=lastMastery, mi=masteryInfo(lm.wid), nm=WEAPON_PERSONA_NAME[lm.wid]||lm.wid;
       let line1='🎖️ '+nm+' 숙련도 <b style="color:#ffd34d">+'+lm.gained+'</b> <span style="color:#9aa0a6">(처치 '+lm.kills+'×'+MASTERY_KILL_XP+(lm.assists>0?' + 어시스트 '+lm.assists+'×'+MASTERY_ASSIST_XP:'')+' + 완주 '+MASTERY_MATCH_XP+(lm.won?' + 승리 '+MASTERY_WIN_XP:'')+')</span>';
-      let line2 = lm.newLv>lm.oldLv ? ('<b style="color:#7ef0a8">Lv.'+lm.oldLv+' → Lv.'+lm.newLv+' 레벨 업!</b> +'+lm.gold+' 골드') : ('Lv.'+mi.lv+(mi.next===null?' (최고 레벨)':' · 다음 레벨까지 '+(mi.next-mi.xp)+' XP'));
+      let line2 = lm.newLv>lm.oldLv ? ('<b style="color:#7ef0a8">Lv.'+lm.oldLv+' → Lv.'+lm.newLv+' 레벨 업!</b> +'+lm.gold+' sC') : ('Lv.'+mi.lv+(mi.next===null?' (최고 레벨)':' · 다음 레벨까지 '+(mi.next-mi.xp)+' XP'));
       mEl.innerHTML=line1+'<br>'+line2+''; mEl.style.display='block';
     }
     else mEl.style.display='none';
@@ -10447,7 +10450,7 @@ const CHAR_RANKS=[
   {min:0,   name:'입문',    color:'#8890a4'},
   {min:10,  name:'브론즈',  color:'#c47a3d'},
   {min:30,  name:'실버',    color:'#c7ccd6'},
-  {min:60,  name:'골드',    color:'#ffd34d'},
+  {min:60,  name:'sC',    color:'#ffd34d'},
   {min:100, name:'플래티넘',color:'#4dd9ff'},
   {min:200, name:'다이아',  color:'#7bf3ff'},
   {min:350, name:'옵시디언',color:'#9a85ff'},
@@ -10771,7 +10774,7 @@ function finalizeGameplayStart(mte){
   // loop starts regardless, so at minimum the player sees a live (if visibly broken) screen instead of a
   // silent freeze, and the error banner mechanism gets its chance to work.
   try{
-    matchEnded=false; try{ rpRecStart(); }catch(e){}
+    matchEnded=false; rewardCount={}; try{ rpRecStart(); }catch(e){}
     xm=null; xmV=null; brz=null; brzV=null; particles=[]; fxSeen={}; prevGround={}; prevHp={}; hitFlashUntil={}; screenShake=0; walls=[]; hostTimers=[]; magicCircles=[]; poisonZones=[]; turrets=[]; darkPools=[]; darkView=[]; lastKnownKills=0; matchAssists=0;
     matchKillLog=[]; killcamActive=false; killcamOverride=null; killcamSnapshot=null; killcamReplay=null; killcamReplayStartAt=0; replayBuffer={}; replayFrames=[]; replayFxLog=[]; replayDefs={};
     hitStopUntil=0; staggers={}; setTimeout(()=>{ try{ entranceShow(); }catch(e){ console.error('[entrance]', e); } }, 450);
@@ -13766,11 +13769,12 @@ function handleDeath(p, killer, t, killerNameFallback){
   if(p.flameShield){ const wi=walls.indexOf(p.flameShield); if(wi!==-1) walls.splice(wi,1); p.flameShield=null; }
 
   if(!matchEnded && killer && killer.id!==p.id && !(killer.team!==null && killer.team!==undefined && killer.team===p.team)){
-    awardGold(killer.id, KILL_GOLD, '처치');
+    const rck=rewardCount[killer.id]||(rewardCount[killer.id]={k:0,a:0});
+    if(rck.k<MATCH_KILL_GOLD_MAX){ rck.k++; awardGold(killer.id, KILL_GOLD, '처치'); }
     const nowS=t/1000;
     for(const aid in (p.dmgBy||{})){
       if(aid===killer.id || aid===p.id || !players[aid]) continue;
-      if(nowS-p.dmgBy[aid]<=ASSIST_WINDOW){ players[aid].assistN=(players[aid].assistN||0)+1; awardGold(aid, ASSIST_GOLD, '어시스트'); }
+      if(nowS-p.dmgBy[aid]<=ASSIST_WINDOW){ players[aid].assistN=(players[aid].assistN||0)+1; const rca=rewardCount[aid]||(rewardCount[aid]={k:0,a:0}); if(rca.a<MATCH_ASSIST_GOLD_MAX){ rca.a++; awardGold(aid, ASSIST_GOLD, '어시스트'); } }
     }
   }
   p.dmgBy={};
