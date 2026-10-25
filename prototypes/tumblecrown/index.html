@@ -6,15 +6,15 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <title>Tumblecrown</title>
 <!-- 옛 화면이 캐시에 남았으면 새 빌드로 한 번 다시 불러와요 (build.json은 항상 새로 받아요) -->
-<script>(function(){var B=7;try{fetch('build.json?t='+Date.now(),{cache:'no-store'}).then(function(r){return r.json()}).then(function(d){if(d&&d.build>B&&sessionStorage.getItem('tcReload')!=String(d.build)){sessionStorage.setItem('tcReload',String(d.build));var u=new URL(location.href);u.searchParams.set('b',d.build);location.replace(u.toString());}}).catch(function(){});}catch(e){}})();</script>
+<script>(function(){var B=8;try{fetch('build.json?t='+Date.now(),{cache:'no-store'}).then(function(r){return r.json()}).then(function(d){if(d&&d.build>B&&sessionStorage.getItem('tcReload')!=String(d.build)){sessionStorage.setItem('tcReload',String(d.build));var u=new URL(location.href);u.searchParams.set('b',d.build);location.replace(u.toString());}}).catch(function(){});}catch(e){}})();</script>
 
-<meta name="description" content="무너지는 던전 방에서 일곱 직업이 마지막 한 명을 가리는 배틀로얄">
+<meta name="description" content="던전 방에서 일곱 직업이 마지막 한 명을 가리는 배틀로얄">
 <meta name="robots" content="noindex">
 <link rel="icon" href="logo.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Lilita+One&display=swap" rel="stylesheet">
 <!-- 새 빌드마다 아래 ?v= 숫자를 BUILD와 같게 올려요 (브라우저가 옛 파일을 쓰지 않게) -->
-<script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/","./js/data.js":"./js/data.js?v=7","./js/main.js":"./js/main.js?v=7","./js/render.js":"./js/render.js?v=7","./js/sfx.js":"./js/sfx.js?v=7","./js/sim.js":"./js/sim.js?v=7"}}</script>
+<script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/","./js/data.js":"./js/data.js?v=8","./js/main.js":"./js/main.js?v=8","./js/render.js":"./js/render.js?v=8","./js/sfx.js":"./js/sfx.js?v=8","./js/sim.js":"./js/sim.js?v=8"}}</script>
 <script src="https://cdn.jsdelivr.net/npm/peerjs@1.5.4/dist/peerjs.min.js"></script>
 <script src="https://frenchfries777mc.github.io/games/ff-lang.js"></script>
 <script src="https://frenchfries777mc.github.io/games/ff-auth.js"></script>
@@ -170,7 +170,7 @@ body.touch #board .bd{width:92px}
 <!-- 로비 -->
 <section class="scr on" id="sLobby">
   <div id="who"></div>
-  <div class="title"><h1>Tumblecrown</h1><p class="tx">무너지는 방, 마지막 한 명이 왕관 · 일곱 직업 배틀로얄</p></div>
+  <div class="title"><h1>Tumblecrown</h1><p class="tx">던전 방, 마지막 한 명이 왕관 · 일곱 직업 배틀로얄</p></div>
   <nav id="menu">
     <button class="big" data-go="host">친구와 대결</button>
     <button data-go="solo">봇과 연습</button>
@@ -200,10 +200,10 @@ body.touch #board .bd{width:92px}
 <!-- 무기·조작 -->
 <section class="scr" id="sWeps"><div class="pan"><button class="x" data-back>×</button>
   <h2>직업·조작</h2>
-  <p class="note">배틀로얄이에요. 방 바닥이 바깥부터 무너지고, 방 밖으로 떨어지면 탈락이에요. 마지막까지 남은 한 명이 왕관을 써요! 맞을수록 머리 위 체력바가 줄어들고 더 멀리 날아가요. 20초가 지나면 바닥이 8초마다 한 겹씩 무너져요.</p>
+  <p class="note">배틀로얄이에요. 맞을수록 머리 위 체력바가 줄고, 다 닳으면 쓰러져요. 마지막까지 남은 한 명이 왕관을 써요! 맞아도 밀려나지 않고 바닥도 무너지지 않아요.</p>
   <div class="weps" id="wepInfo"></div>
   <h3>조작</h3>
-  <p class="note">PC: WASD 이동 · 마우스 조준 · 왼쪽 클릭 꾹 눌러 모으고 놓아서 공격 · 직업 고르기에서 숫자 1~7 · Space 대시 (떨어질 때 한 번 더 쓸 수 있어요) · Q 또는 오른쪽 클릭 기술<br>휴대폰: 왼쪽 엄지로 이동 · 공격 버튼 꾹 눌러 모으기 (가까운 상대 자동 조준) · 대시 · 기술</p>
+  <p class="note">PC: WASD 이동 · 마우스 조준 · 왼쪽 클릭 꾹 눌러 모으고 놓아서 공격 · 직업 고르기에서 숫자 1~7 · Space 대시 · Q 또는 오른쪽 클릭 기술<br>휴대폰: 왼쪽 엄지로 이동 · 공격 버튼 꾹 눌러 모으기 (가까운 상대 자동 조준) · 대시 · 기술</p>
 </div></section>
 
 <!-- 패치노트 -->
@@ -235,6 +235,6 @@ body.touch #board .bd{width:92px}
 <div id="touch"><div id="joy"><div id="joyBase"><div id="joyKnob"></div></div></div>
   <div id="tbtns"><button id="tA"><span>공격</span></button><button id="tD"><i class="cd"></i><span>대시</span></button><button id="tS"><i class="cd"></i><span>기술</span></button></div>
 </div>
-<script type="module" src="js/main.js?v=7"></script>
+<script type="module" src="js/main.js?v=8"></script>
 </body>
 </html>
