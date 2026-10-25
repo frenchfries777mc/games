@@ -61,3 +61,17 @@ patchnotes.json | v393 title | 클랜 가입 조건과 봇 채우기 수정 | bu
 patchnotes.json | v393 items[0] | 클랜장이 클랜 가입 조건 설정 가능 (최소 레벨, 마스터 캐릭터 수) | build 393 | 2026-10-25
 patchnotes.json | v393 items[1] | 클랜 찾기와 가입 때 조건과 충족 여부 표시, 부족하면 가입 불가 | build 393 | 2026-10-25
 patchnotes.json | v393 items[2] | 온라인 매칭 봇 채우기를 게임에 접속한 경기 중이 아닌 사람 기준으로 수정 (있으면 15초 뒤 봇 채움, 없으면 바로 채움) | build 393 | 2026-10-25
+Stickseum-v0.8.html | friend chat | 💬 대화 | build 394 | 2026-10-25
+Stickseum-v0.8.html | friend chat | 대화하려면 로그인해야 해요 | build 394 | 2026-10-25
+Stickseum-v0.8.html | friend chat | 아직 대화가 없어요. 먼저 말을 걸어 보세요! | build 394 | 2026-10-25
+Stickseum-v0.8.html | friend chat | 메시지 (Enter로 보내기) / 보내기 | build 394 | 2026-10-25
+Stickseum-v0.8.html | friend chat | 보내지 못했어요 (친구 사이인지, 서버에 supabase-friend-chat.sql을 적용했는지 확인해 주세요) | build 394 | 2026-10-25
+Stickseum-v0.8.html | friend chat | 💬 (친구 이름): (내용) / 답장 / 닫기 | build 394 | 2026-10-25
+Stickseum-v0.8.html | ranked | 🔴 지금 랭크 매칭 중 N명 | build 394 | 2026-10-25
+Stickseum-v0.8.html | ranked | 지금 랭크 매칭 중인 사람이 없어요 | build 394 | 2026-10-25
+Stickseum-v0.8.html | ranked | 🔍 랭크 매칭 시작 (N명 대기 중) | build 394 | 2026-10-25
+Stickseum-v0.8.html | gift | 🎁 sC +N 선물이 도착했어요 | build 394 | 2026-10-25
+patchnotes.json | v394 title | 친구 대화와 랭크 매칭 인원 표시 | build 394 | 2026-10-25
+patchnotes.json | v394 items[0] | 친구 목록에서 친구와 대화 가능 (안 읽은 대화 표시, 새 대화 알림) | build 394 | 2026-10-25
+patchnotes.json | v394 items[1] | 랭크전 화면에 지금 매칭 중인 인원 표시 | build 394 | 2026-10-25
+patchnotes.json | v394 items[2] | 랭크 순위표와 캐릭터 계급의 골드 이름이 sC로 표시되던 오류 수정 | build 394 | 2026-10-25
