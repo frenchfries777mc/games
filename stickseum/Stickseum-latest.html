@@ -1304,7 +1304,7 @@ const BULLET_R = 5, BULLET_LIFE = 1.2, PORTAL_BOUNCE_DMG = 1.3;
 /* ================= WEAPONS (13) — damage/cooldown balanced by real-world weapon character ================= */
 const FLAME_RANGE=400, FLAME_HALF_ANGLE=0.32, FLAME_DIRECT_DPS=34;
 const VACUUM_RANGE=480, VACUUM_HALF_ANGLE=0.34, VACUUM_MAX_STACKS=8, VACUUM_PULL_FORCE=90;
-const FLAME_MAX_HOLD=7.5, FLAME_OVERHEAT_COOLDOWN=2;
+const FLAME_MAX_HOLD=8, FLAME_OVERHEAT_COOLDOWN=2;
 const FLAME_SHIELD_MAXHP=60, FLAME_SHIELD_DURATION=8;
 const WEAPONS = {
   pistol:  {id:'pistol',  name:'권총',     emoji:'🔫', kind:'gun',      dmg:17, cd:0.85, bulletSpeed:950, shape:'bullet',
@@ -1354,7 +1354,7 @@ const WEAPONS = {
   magiccard:{id:'magiccard',name:'마술 카드',emoji:'🃏', kind:'cards',    dmg:10,  cd:0.9,  bulletSpeed:820, shape:'card', hitR:26, comboBonus:5, freeVolleys:3,
             desc:'트럼프 카드 3장이 넓게 퍼져 날아감 · 장당 데미지 10 · 쿨타임 0.9초 · 맞은 상대는 이동속도가 조금 느려짐 · 3장이 모두 맞으면 추가 5 데미지 + 0.5초 기절'},
   flamethrower:{id:'flamethrower',name:'화염방사기',emoji:'🔥', kind:'flame', dmg:0, cd:0, range:FLAME_RANGE, shape:'flamethrower',
-            desc:'중거리 화염방사 · 꾹 눌러 최대 7.5초간 유지 · 닿으면 초당 '+FLAME_DIRECT_DPS+' 직접 피해 · 발판에 막힘 · 7.5초 다 쓰면 2초간 과열'},
+            desc:'중거리 화염방사 · 쏜 시간이 합쳐서 8초가 되면 2초간 과열(끊었다 다시 쏴도 이어서 셈) · 닿으면 초당 '+FLAME_DIRECT_DPS+' 직접 피해 · 발판에 막힘'},
   portalgun:{id:'portalgun',name:'포탈건',emoji:'🌀', kind:'gun', dmg:15, cd:0.55, bulletSpeed:700, shape:'portalbullet', bounces:3,
             desc:'데미지 15 · 쿨타임 0.55초 · 바닥이나 발판에 닿으면 최대 3번까지 튕기는 탄환 · 튕길 때마다 데미지 30% 증가'},
   vacuum:{id:'vacuum',name:'청소기',emoji:'🧹', kind:'vacuum', dmg:24, cd:0.9, range:VACUUM_RANGE, shape:'vacuum',
@@ -3618,7 +3618,7 @@ function xmPickZone(prev){
   return {x:pl.x+pl.w/2, y:pl.y, w:Math.min(260,pl.w+40)};
 }
 function xmSetWeapon(p,w,t){
-  p.weapon=w; p.chips=0; p.vacuumStacks=0; p.pzStacks=0; p.pzMarkUntil=0; p.darkSub=null; p.darkArmUntil=0; p.flaming=false; p.flameHeldSince=null; p.ultOn=false; p.ultPending=null; p.batting=false; p.batUntil=0;
+  p.weapon=w; p.chips=0; p.vacuumStacks=0; p.pzStacks=0; p.pzMarkUntil=0; p.darkSub=null; p.darkArmUntil=0; p.flaming=false; p.flameHeldSince=null; p.flameUsed=0; p.ultOn=false; p.ultPending=null; p.batting=false; p.batUntil=0;
   p.lastUlt=t/1000; p.lastSkill=t/1000;
   if(p.alive) pushFx('spark', p.x, p.y-44, t, {ang:-Math.PI/2, color:'#ffd34d'});
 }
@@ -5019,7 +5019,7 @@ function shuffle(arr){ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.
 /* ===== the version of this file =====
    Players with different versions CAN meet and play together: the automatic matchmaking uses the same room names for every version (online-<mode>-<map>-<slot>), and nobody is refused because of a different build.
    The build is only sent along with the join message and the lobby (for information); the corner of the screen shows it. */
-const GAME_BUILD='build 2026-10-18-v379';
+const GAME_BUILD='build 2026-10-18-v380';
 const GAME_VERSION='0.8', GAME_VERSION_NAME='황금을 찾아서';   // 게임 버전 이름: versions.json의 title과 같게 (빌드마다 바꾸지 않음)
 const WEEKLY_EVENTS=[
   {id:'lowg',    name:'저중력 난투', desc:'몸이 둥실둥실, 중력이 약해진 난투', rules:{grav:0.6}},
@@ -5778,7 +5778,7 @@ function tnResetFighter(p){
   const sp=spawnPoint(); p.x=sp.x; p.y=sp.y; p.vx=0; p.vy=0; p.kbX=0; p.spin=0; p.spinAngle=0; p.hp=ruleHp(); p.alive=true; p.respawnAt=0;
   p.lastDash=clock; p.lastTeleport=clock; p.lastUlt=clock; p.lastSkill=clock; p.skillUses=0; p.ultUses=0; p.lastShot=0;
   p.cardDmg=0; p.queenUntil=0; p.puppetUntil=0; p.puppetTarget=null; p.puppetBy=null; p.buffs={}; p.barrier=null; p.buff=null; p.hasted=false; p.focusOn=false; p.ultPending=null; p.rushUntil=0; p.invisUntil=0; p.burn=null; p.poison=null; p.toadPois=null; p.kanWingsUntil=0; p.batUntil=0; p.batting=false; p.slowUntil=0; p.slowed=false; p.stunUntil=0; p.stunned=false;
-  p.flameHeldSince=null; p.flameOverheatUntil=0; p.flaming=false; p.portalPair=null; p.portalCooldownUntil=0; p.vacuumStacks=0; p.chips=0; p.freeVolleys=0; p.teleportChannel=null; p.dmgBy={}; p.darkSub=null; p.darkArmUntil=0; p.darkLand=null;  p.pzStacks=0; p.pzMarkUntil=0;
+  p.flameHeldSince=null; p.flameUsed=0; p.flameOverheatUntil=0; p.flaming=false; p.portalPair=null; p.portalCooldownUntil=0; p.vacuumStacks=0; p.chips=0; p.freeVolleys=0; p.teleportChannel=null; p.dmgBy={}; p.darkSub=null; p.darkArmUntil=0; p.darkLand=null;  p.pzStacks=0; p.pzMarkUntil=0;
   pushFx('respawn', p.x, p.y-30, performance.now(), {color:p.color, ta:p.id});
 }
 
@@ -6932,7 +6932,7 @@ function practiceSetWeapon(wid){
   const me=players[myId]; if(!practiceMode || !me || !SELECTABLE_WEAPONS.includes(wid)) return;
   me.weapon=wid; me.pick=wid; me.weaponChosen=true;
   me.lastShot=-9999; me.lastUlt=-9999; me.lastSkill=-9999; me.buffs={}; me.barrier=null; me.hist=[]; me.stunUntil=0; me.stunned=false; me.cardSlowUntil=0; me.cardSlowed=false; swordEnd(me); me.ultPending=null; me.rushUntil=0; me.invisUntil=0; me.burn=null; me.batUntil=0; me.batting=false; me.batDamageDealt=0;
-  me.boomerangOut=false; me.boomerangReadyAt=0; me.flaming=false; me.pzStacks=0; me.pzMarkUntil=0; me.flameHeldSince=null; me.flameOverheatUntil=0; me.portalPair=null; me.vacuumStacks=0; me.darkSub=null; me.darkArmUntil=0; me.chips=0; me.freeVolleys=0; me.teleportChannel=null; me.gambleDouble=false;
+  me.boomerangOut=false; me.boomerangReadyAt=0; me.flaming=false; me.pzStacks=0; me.pzMarkUntil=0; me.flameHeldSince=null; me.flameUsed=0; me.flameOverheatUntil=0; me.portalPair=null; me.vacuumStacks=0; me.darkSub=null; me.darkArmUntil=0; me.chips=0; me.freeVolleys=0; me.teleportChannel=null; me.gambleDouble=false;
   if(me.flameShield){ const wi=walls.indexOf(me.flameShield); if(wi!==-1) walls.splice(wi,1); me.flameShield=null; }
   bullets=bullets.filter(b=>b.owner!==myId);
   practiceCfg.wid=wid; savePracticeCfg();
@@ -7578,7 +7578,7 @@ function renderPublicProfileHtml(prof, rel){        // rel: {friend, outgoing, i
     html+=ppAchievementsHtml(st.ach);
     const top=SELECTABLE_WEAPONS.map(w=>({w, k:(st.ck&&st.ck[w])||0, m:masteryLevelFor((st.wx&&st.wx[w])||0)})).filter(o=>o.k>0||o.m>1).sort((a,b)=>b.k-a.k||b.m-a.m).slice(0,5);
     html+='<div style="font-size:12px; color:var(--text-dim); font-weight:700; margin:12px 0 6px;">많이 쓴 캐릭터</div>';
-    html+= top.length ? top.map(o=>row(WEAPONS[o.w].emoji+' '+WEAPONS[o.w].name+charTierHtml(o.k), o.k+'킬 · 숙련 Lv.'+o.m)).join('') : '<div class="hint">아직 기록이 없어요.</div>';
+    html+= top.length ? top.map(o=>row(WEAPONS[o.w].emoji+' '+(WEAPON_PERSONA_NAME[o.w]||WEAPONS[o.w].name)+charTierHtml(o.k), o.k+'킬 · 숙련 Lv.'+o.m)).join('') : '<div class="hint">아직 기록이 없어요.</div>';
     const modeRows=Object.keys(st.modes||{}).sort((a,b)=>st.modes[b]-st.modes[a]);
     if(modeRows.length){ html+='<div style="font-size:12px; color:var(--text-dim); font-weight:700; margin:12px 0 6px;">모드별 플레이한 경기</div>'+modeRows.map(m=>row(m==='daily'?'📅 일일 모드':((MODES[m]&&MODES[m].name)||m), st.modes[m]+'경기')).join(''); }
   }
@@ -8221,6 +8221,9 @@ async function renderRankedScreen(){
     const r=await sb.from('ranked_ratings').select('user_id,name,rating,wins,losses').eq('season', season).order('rating',{ascending:false}).order('updated_at',{ascending:true}).limit(50);
     if(r.error) throw r.error;
     const rows=r.data||[];
+    const ids=rows.map(x=>x.user_id).filter(Boolean), nick={};                // the hub nickname (profiles.display_name), not the name saved at match time
+    if(ids.length){ try{ const pr=await sb.from('profiles').select('id,username,display_name').in('id', ids); (pr&&pr.data||[]).forEach(o=>nick[o.id]=nicknameOf(o)); }catch(e){} }
+    rows.forEach(x=>{ if(nick[x.user_id]) x.name=nick[x.user_id]; });
     board.innerHTML=rows.length ? rows.map((x,i)=>{
       const mine=sbUser && x.user_id===sbUser.id;
       return '<div class="socialRow" style="padding:8px 12px; margin-bottom:6px;'+(mine?' border-color:#ffd34d;':'')+'"><span><b style="display:inline-block; min-width:2.2em;">'+(i+1)+'</b><span class="profLink" data-prof="'+escapeHtmlText(x.user_id)+'">'+escapeHtmlText(x.name||'???')+'</span>'+(mine?' <span class="hint">(나)</span>':'')+'</span><span>'+rankedTierTag(x.rating)+' <b style="margin-left:6px;">'+x.rating+'</b> <span class="hint" style="margin-left:6px;">'+'승리 '+x.wins+' · 패배 '+x.losses+'</span></span></div>';
@@ -9525,7 +9528,7 @@ function mvpCand(p){ return {id:p.id, name:p.name, w:p.weapon||null, k:p.kills||
 function startMvpVote(wIds){
   // only the team modes have an MVP, and only the members of the WINNING team take part (they are the candidates and the only voters)
   const mode=MODES[gameMode]||{};
-  if(!mode.teams || mode.soloTeam || !Array.isArray(wIds) || !wIds.length) return;
+  if(!mode.teams || mode.soloTeam || gameMode==='duo' || !Array.isArray(wIds) || !wIds.length) return;   // (battle royale duo: no MVP vote, owner 10-25)
   const win=new Set(wIds);
   const humans=Object.values(players).filter(p=>win.has(p.id) && !p.isBot && !p.isBoss && !p.isMinion && !p.isDummy);
   if(!humans.length) return;                            // the winners are all bots: nobody to pay, no vote
@@ -11718,9 +11721,10 @@ function processFlamethrower(p, tMs, dt){
   const overheated = p.flameOverheatUntil && tSec < p.flameOverheatUntil;
   if(!held || overheated){ p.flameHeldSince=null; p.flaming=false; p.flameSfxTimer=0; return; }
   if(p.flameHeldSince===null || p.flameHeldSince===undefined) p.flameHeldSince=tSec;
-  if(tSec - p.flameHeldSince >= FLAME_MAX_HOLD){
+  p.flameUsed=(p.flameUsed||0)+dt;                     // the 8 s add up: letting go and firing again keeps counting until the overheat
+  if(p.flameUsed >= FLAME_MAX_HOLD){
     p.flameOverheatUntil = tSec + FLAME_OVERHEAT_COOLDOWN;
-    p.flameHeldSince=null;
+    p.flameHeldSince=null; p.flameUsed=0;
     p.flaming=false;
     p.flameSfxTimer=0;
     return;
@@ -13756,7 +13760,7 @@ function handleDeath(p, killer, t, killerNameFallback){
   if(killer && killer.id!==p.id && killer.cos && killer.cos.kfx) pushFx('kfx', (MAP?clamp(p.x,40,MAP.arenaW-40):p.x), (MAP?clamp(p.y-PLAYER_H/2,50,MAP.arenaH-60):p.y-PLAYER_H/2), t, {k:killer.cos.kfx, vc:p.color});
   p.cardDmg=0; p.queenUntil=0; p.puppetUntil=0; p.puppetTarget=null; p.puppetBy=null; p.buffs={}; p.barrier=null; p.buff=null; p.hasted=false; p.focusOn=false;
   p.ultPending=null; p.rushUntil=0; p.invisUntil=0; p.burn=null; p.poison=null; p.toadPois=null; p.kanWingsUntil=0; p.batUntil=0; p.batting=false; p.batDamageDealt=0; p.slowUntil=0; p.slowed=false; p.sandSlowUntil=0; p.sandSlowed=false; p.gambleDouble=false; p.teleportChannel=null; p.stunUntil=0; p.stunned=false; p.cardSlowUntil=0; p.cardSlowed=false; swordEnd(p);
-  p.flameHeldSince=null; p.flameOverheatUntil=0; p.flaming=false; p.flameFxTimer=0;
+  p.flameHeldSince=null; p.flameUsed=0; p.flameOverheatUntil=0; p.flaming=false; p.flameFxTimer=0;
   p.portalPair=null; p.portalCooldownUntil=0;
   p.vacuumStacks=0; p.chips=0; p.darkSub=null; p.darkArmUntil=0; p.darkLand=null;
   if(p.flameShield){ const wi=walls.indexOf(p.flameShield); if(wi!==-1) walls.splice(wi,1); p.flameShield=null; }
@@ -14472,7 +14476,7 @@ function finishDuelRepick(){
     if(gameMode!=='tournament'){ p.duelUsed=(p.duelUsed||[]); if(p.weapon && !p.duelUsed.includes(p.weapon)) p.duelUsed.push(p.weapon); }
     p.lastDash=clock; p.lastTeleport=clock; p.lastUlt=clock; p.lastSkill=clock; p.skillUses=0; p.ultUses=0; p.lastShot=0;
     p.cardDmg=0; p.queenUntil=0; p.puppetUntil=0; p.puppetTarget=null; p.puppetBy=null; p.buffs={}; p.barrier=null; p.buff=null; p.hasted=false; p.focusOn=false; p.ultPending=null; p.rushUntil=0; p.invisUntil=0; p.burn=null; p.poison=null; p.toadPois=null; p.kanWingsUntil=0; p.batUntil=0; p.batting=false; p.slowUntil=0; p.slowed=false;
-    p.flameHeldSince=null; p.flameOverheatUntil=0; p.flaming=false; p.portalPair=null; p.portalCooldownUntil=0; p.vacuumStacks=0; p.pzStacks=0; p.pzMarkUntil=0; p.chips=0; p.freeVolleys=0; p.darkSub=null; p.darkArmUntil=0; p.darkLand=null;
+    p.flameHeldSince=null; p.flameUsed=0; p.flameOverheatUntil=0; p.flaming=false; p.portalPair=null; p.portalCooldownUntil=0; p.vacuumStacks=0; p.pzStacks=0; p.pzMarkUntil=0; p.chips=0; p.freeVolleys=0; p.darkSub=null; p.darkArmUntil=0; p.darkLand=null;
   }
   }catch(e){ recordDiagError('duel-finish', e); console.error('[duel] re-pick finish:', e); }
   duelPick=false;
@@ -16483,7 +16487,8 @@ function drawStickman(p){
   const luxLv=(skinId && COSMETICS[skinId] && COSMETICS[skinId].lux) || 0, luxNow=performance.now(), luxSeed=((p.id||'').length*7+((p.id||'x').charCodeAt(0)||0))%97;
   if(luxLv && p.alive!==false) drawSkinLux(ctx, luxLv, skinTint, luxNow, luxSeed, 'back');
   if(p.kw && p.alive!==false) drawKanWings(ctx, luxNow);
-  if(p.pp && players[p.pp] && p.alive!==false){ const q=players[p.pp], dx=(q.x-p.x), dy=(q.y-p.y); ctx.save(); ctx.strokeStyle='#ffd0e6'; ctx.lineWidth=1.6; ctx.globalAlpha=0.9; ctx.setLineDash([6,4]); ctx.lineDashOffset=-performance.now()/40; ctx.beginPath(); ctx.moveTo(0,-34); ctx.quadraticCurveTo(dx/2, Math.min(-34,dy-60)-24, dx, dy-60); ctx.stroke(); ctx.restore(); }   // 인형술사: the strings to his puppet if(p.sw && players[p.sw] && p.alive!==false){ const q=players[p.sw], dx=(q.x-p.x), dy=(q.y-p.y); ctx.save(); const cy2=Math.min(-34,dy-60)+Math.sin(performance.now()/160)*6; ctx.lineCap='round'; for(const [lw,col,al] of [[7,'#ff5fa8',0.35],[3.5,'#ffd0e6',1]]){ ctx.strokeStyle=col; ctx.lineWidth=lw; ctx.globalAlpha=al; ctx.beginPath(); ctx.moveTo(0,-34); ctx.quadraticCurveTo(dx/2, cy2, dx, dy-60); ctx.stroke(); } ctx.restore(); }   // 바느질: the thread to the one it holds
+  if(p.pp && players[p.pp] && p.alive!==false){ const q=players[p.pp], dx=(q.x-p.x), dy=(q.y-p.y); ctx.save(); ctx.strokeStyle='#ffd0e6'; ctx.lineWidth=1.6; ctx.globalAlpha=0.9; ctx.setLineDash([6,4]); ctx.lineDashOffset=-performance.now()/40; ctx.beginPath(); ctx.moveTo(0,-34); ctx.quadraticCurveTo(dx/2, Math.min(-34,dy-60)-24, dx, dy-60); ctx.stroke(); ctx.restore(); }   // 인형술사: the strings to his puppet
+  if(p.sw && players[p.sw] && p.alive!==false){ const q=players[p.sw], dx=(q.x-p.x), dy=(q.y-p.y); ctx.save(); const cy2=Math.min(-34,dy-60)+Math.sin(performance.now()/160)*6; ctx.lineCap='round'; for(const [lw,col,al] of [[9,'#ffffff',0.25],[3.5,'#ffffff',1]]){ ctx.strokeStyle=col; ctx.lineWidth=lw; ctx.globalAlpha=al; ctx.beginPath(); ctx.moveTo(0,-34); ctx.quadraticCurveTo(dx/2, cy2, dx, dy-60); ctx.stroke(); } ctx.restore(); }   // 바느질: a white thread to the one it holds (it used to sit behind the comment above and was never drawn)
   if(p.pm && p.alive!==false) drawPizarroMark(ctx, luxNow);
   if(p.weapon==='pizarro' && p.alive!==false) drawPizarroAura(ctx, p, luxNow);      // 기세: a golden glow that grows with every stack, flames at the feet at the 4th, gold marks over the head      // a tier skin: the aura, the sunburst and the rings behind the body
   if(p.invis) ctx.globalAlpha=0.35;
