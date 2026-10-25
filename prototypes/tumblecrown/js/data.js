@@ -3,80 +3,97 @@
 
 import { T } from './tr.js';
 
-export const VERSION = 'v0.1', BUILD = 11;
+export const VERSION = 'v0.1', BUILD = 12;
 
 export const ROLES = {
   knight: {
-    name: T('기사'), color: '#3f6fd0', hp: 170, speed: 6.0,
+    name: T('기사'), color: '#3f6fd0', hp: 285, speed: 6.0,
     atk: { kind: 'melee', range: 2.5, arc: 1.9, dmg: 18, cd: 0.45 },
     skills: [
       { id: 'block', name: T('막기'), key: 'Q', cd: 5, desc: T('1.2초 동안 방패를 들어 앞에서 오는 피해를 70% 줄여요.') },
       { id: 'dash', name: T('돌진'), key: 'E', cd: 6, desc: T('앞으로 돌진하며 부딪힌 상대에게 30 피해를 줘요.') },
       { id: 'taunt', name: T('외침'), key: 'R', cd: 12, desc: T('4초 동안 받는 피해가 30% 줄어요.') }
     ],
+    st: [3, 3, 2, 1], atkTxt: T('칼 베기 (이어 치면 세 번째에 내려찍는 강타)'),
     role: T('튼튼하게 버티며 공격·공격·강타로 몰아붙여요.')
   },
   priest: {
-    name: T('사제'), color: '#e8e4ef', hp: 125, speed: 6.0,
+    name: T('사제'), color: '#e8e4ef', hp: 190, speed: 6.0,
     atk: { kind: 'orb', dmg: 11, cd: 0.5, speed: 16 },
     skills: [
       { id: 'heal', name: T('치유'), key: 'Q', cd: 7, desc: T('내 체력을 35 회복해요.') },
       { id: 'ward', name: T('보호막'), key: 'E', cd: 14, desc: T('5초 동안 피해 25를 막는 보호막을 씌워요.') },
       { id: 'smite', name: T('천벌'), key: 'R', cd: 12, desc: T('조준한 곳에 빛기둥을 세워요. 잠시 뒤 안에 있는 상대가 큰 피해를 받아요.') }
     ],
+    st: [2, 3, 4, 2], atkTxt: T('빛 구슬 (세 번째는 꿰뚫는 큰 빛)'),
     role: T('빛 구슬로 따라붙고, 세 번째 공격은 큰 빛을 꿰뚫어 쏴요.')
   },
   archer: {
-    name: T('사냥꾼'), color: '#5a9a4e', hp: 115, speed: 6.4,
+    name: T('사냥꾼'), color: '#5a9a4e', hp: 200, speed: 6.4,
     atk: { kind: 'arrow', dmg: 9, cd: 0.36, speed: 26 },
     skills: [
       { id: 'pierce', name: T('관통 화살'), key: 'Q', cd: 5, desc: T('상대를 꿰뚫고 날아가는 강한 화살이에요. 45 피해.') },
       { id: 'rain', name: T('화살비'), key: 'E', cd: 9, desc: T('조준한 곳에 1.5초 동안 화살비를 내려요.') },
       { id: 'mark', name: T('약점 표시'), key: 'R', cd: 12, desc: T('조준한 상대에게 6초 동안 표시를 남겨 그 상대가 받는 피해가 50% 늘어요.') }
     ],
+    st: [2, 4, 5, 3], atkTxt: T('화살 (꾹 누르면 여러 발)'),
     role: T('멀리서 쏴요. 공격을 꾹 누르면 0.8초에 두 발, 2초에 세 발을 한 번에 쏴요.')
   },
   viking: {
-    name: T('바이킹'), color: '#c8873a', hp: 190, speed: 5.6,
+    name: T('바이킹'), color: '#c8873a', hp: 290, speed: 5.6,
     atk: { kind: 'melee', range: 2.6, arc: 2.0, dmg: 20, cd: 0.55 },
     skills: [
       { id: 'dash', name: T('돌격'), key: 'Q', cd: 6, desc: T('앞으로 돌격하며 부딪힌 상대에게 30 피해를 줘요.') },
       { id: 'taunt', name: T('포효'), key: 'E', cd: 12, desc: T('4초 동안 받는 피해가 30% 줄어요.') },
       { id: 'quake', name: T('지진'), key: 'R', cd: 12, desc: T('땅을 내려쳐 둘레 모두에게 45 피해를 주고 느려지게 해요.') }
     ],
+    st: [5, 2, 2, 2], atkTxt: T('도끼 내리치기'),
     role: T('느리지만 도끼 한 방이 무거운 가장 튼튼한 전사예요.')
   },
   mamluk: {
-    name: T('맘루크'), color: '#d0443a', hp: 125, speed: 7.2,
+    name: T('맘루크'), color: '#d0443a', hp: 305, speed: 7.2,
     atk: { kind: 'melee', range: 2.2, arc: 1.8, dmg: 12, cd: 0.3 },
     skills: [
       { id: 'dash', name: T('질주'), key: 'Q', cd: 5, desc: T('앞으로 질주하며 부딪힌 상대를 베어 30 피해를 줘요.') },
       { id: 'whirl', name: T('회전 베기'), key: 'E', cd: 8, desc: T('제자리에서 크게 한 바퀴 돌며 둘레 모두를 베어 34 피해를 줘요.') },
       { id: 'mark', name: T('낙인'), key: 'R', cd: 12, desc: T('조준한 상대에게 6초 동안 표시를 남겨 그 상대가 받는 피해가 50% 늘어요.') }
     ],
+    st: [2, 5, 2, 3], atkTxt: T('굽은 칼 연속 베기'),
     role: T('굽은 칼로 빠르게 베고 파고드는 날랜 전사예요.')
   },
   witch: {
-    name: T('마녀'), color: '#a56ad8', hp: 110, speed: 6.2,
+    name: T('마녀'), color: '#a56ad8', hp: 215, speed: 6.2,
     atk: { kind: 'orb', dmg: 10, cd: 0.45, speed: 16 },
     skills: [
       { id: 'potion', name: T('독 물약'), key: 'Q', cd: 7, desc: T('조준한 곳에 물약을 던져 터진 자리 둘레 상대에게 30 피해를 주고 불태워요.') },
       { id: 'curse', name: T('저주'), key: 'E', cd: 10, desc: T('조준한 곳에 저주를 터뜨려 잠시 뒤 큰 피해를 줘요.') },
       { id: 'rally', name: T('주문 가속'), key: 'R', cd: 15, desc: T('7초 동안 공격력과 속도가 30% 올라요.') }
     ],
+    st: [3, 3, 4, 4], atkTxt: T('마법 구슬'),
     role: T('마법 구슬과 저주로 멀리서 괴롭혀요.')
   },
   skeleton: {
-    name: T('스켈레톤'), color: '#cfc8b0', hp: 115, speed: 7.0,
+    name: T('스켈레톤'), color: '#cfc8b0', hp: 275, speed: 7.0,
     atk: { kind: 'melee', range: 2.0, arc: 2.0, dmg: 13, cd: 0.32 },
     skills: [
       { id: 'pierce', name: T('뼈 창'), key: 'Q', cd: 5, desc: T('상대를 꿰뚫고 날아가는 뼈 창을 던져요. 45 피해.') },
       { id: 'dash', name: T('뼈 돌진'), key: 'E', cd: 6, desc: T('앞으로 뛰어들며 부딪힌 상대에게 30 피해를 줘요.') },
       { id: 'rally', name: T('광란'), key: 'R', cd: 15, desc: T('7초 동안 공격력과 속도가 30% 올라요.') }
     ],
+    st: [2, 5, 1, 4], atkTxt: T('뼈 몽둥이'),
     role: T('가볍고 빠른 뼈다귀예요. 몸이 약하니 파고들었다 빠져요.')
   }
 };
+export const COLORS = [
+  { id: 'red', name: T('빨강'), c: 0xd9483b },
+  { id: 'blue', name: T('파랑'), c: 0x3b78d9 },
+  { id: 'green', name: T('초록'), c: 0x48a84a },
+  { id: 'yellow', name: T('노랑'), c: 0xe0b52e },
+  { id: 'purple', name: T('보라'), c: 0x8a52c8 },
+  { id: 'orange', name: T('주황'), c: 0xe57a2a }
+];
+export const BOT_NAMES = ['데굴이', '휘청이', '꽈당이', '비틀이', '아슬이', '쿵쾅이'];
+export const MAX_PLAYERS = 6;
 export const ROLE_IDS = ['knight', 'priest', 'archer', 'viking', 'mamluk', 'witch', 'skeleton'];
 
 export const ENEMIES = {
@@ -320,10 +337,8 @@ function arenaMap() {
   return m;
 }
 export const CHAPTERS = [{
-  id: 1, pvp: 1, title: T('투기장'), place: T('투기장'), diff: 1, introT: 5,
-  intro: [T('마지막 한 명이 남을 때까지 싸우는 투기장이다.'), T('체력이 다하면 탈락한다. 쓰러진 동료를 일으킬 수는 없다.')],
-  outro: [T('투기장에 마지막 한 명이 남았다.'), T('그 사람이 오늘의 왕관을 쓴다.')],
-  boss: {}, theme: 'dungeon', map: arenaMap()
+  id: 1, pvp: 1, title: T('투기장'), place: T('투기장'), diff: 1, introT: 3.5,
+    boss: {}, theme: 'dungeon', map: arenaMap()
 }];
 // 게임 중 대사: 장마다 구역에 처음 들어가면(숫자는 구역 순서), boss는 보스가 나타날 때
 // 기사는 하오체, 궁수는 반말, 사제는 존댓말, 종자는 밝은 해요체로 말해요
