@@ -3,6 +3,101 @@
   {
    "date": "2026-10-25",
    "build": "",
+   "title": "계정 메뉴 도전과제 버튼과 프로필 사진",
+   "items": [
+    "계정 메뉴의 \"🏆 도전과제\" 버튼이 모든 사이트에서 보이고, 게임 안에서는 그 게임의 도전과제 창이, 그 밖에서는 프로필 카드의 도전과제 창이 열려요",
+    "계정 버튼 옆에 허브에서 고른 프로필 사진이 나와요 (없으면 기본 아이콘)"
+   ],
+   "tr": {
+    "en": {
+     "title": "Achievements button in the account menu and profile photo",
+     "items": [
+      "The “🏆 Achievements” button in the account menu shows on every site: inside a game it opens that game's achievements window, elsewhere the profile card's achievements window",
+      "Your profile photo chosen in the hub now shows next to the account button (a default icon if none)"
+     ]
+    },
+    "es": {
+     "title": "Botón de logros en el menú de cuenta y foto de perfil",
+     "items": [
+      "El botón «🏆 Logros» del menú de cuenta aparece en todos los sitios: dentro de un juego abre la ventana de logros de ese juego y fuera, la de la tarjeta de perfil",
+      "Junto al botón de cuenta aparece la foto de perfil elegida en el Portal (un icono básico si no hay)"
+     ]
+    },
+    "fr": {
+     "title": "Bouton Succès dans le menu du compte et photo de profil",
+     "items": [
+      "Le bouton « 🏆 Succès » du menu du compte apparaît sur tous les sites : dans un jeu il ouvre la fenêtre des succès du jeu, ailleurs celle de la carte de profil",
+      "La photo de profil choisie sur le Portail s’affiche à côté du bouton du compte (une icône par défaut sinon)"
+     ]
+    },
+    "de": {
+     "title": "Erfolge-Button im Kontomenü und Profilbild",
+     "items": [
+      "Der Button „🏆 Erfolge“ im Kontomenü erscheint auf allen Seiten: im Spiel öffnet er das Erfolgsfenster des Spiels, sonst das der Profilkarte",
+      "Neben dem Konto-Button erscheint das im Hub gewählte Profilbild (sonst ein Standardsymbol)"
+     ]
+    },
+    "ja": {
+     "title": "アカウントメニューの実績ボタンとプロフィール写真",
+     "items": [
+      "アカウントメニューの「🏆 実績」ボタンがすべてのサイトで表示され、ゲーム内ではそのゲームの実績ウィンドウ、それ以外ではプロフィールカードの実績ウィンドウが開く",
+      "アカウントボタンの横にハブで選んだプロフィール写真を表示（なければ基本アイコン）"
+     ]
+    },
+    "zh": {
+     "title": "账号菜单的成就按钮和头像",
+     "items": [
+      "账号菜单中的「🏆 成就」按钮在所有网站都会显示：在游戏内打开该游戏的成就窗口，其他地方则打开个人资料卡的成就窗口",
+      "账号按钮旁会显示在主页选的头像（没有则显示默认图标）"
+     ]
+    },
+    "pt": {
+     "title": "Botão de conquistas no menu da conta e foto de perfil",
+     "items": [
+      "O botão “🏆 Conquistas” do menu da conta aparece em todos os sites: dentro de um jogo abre a janela de conquistas dele e, fora, a do cartão de perfil",
+      "Ao lado do botão da conta aparece a foto de perfil escolhida no Início (um ícone padrão se não houver)"
+     ]
+    },
+    "ru": {
+     "title": "Кнопка достижений в меню аккаунта и фото профиля",
+     "items": [
+      "Кнопка «🏆 Достижения» в меню аккаунта теперь есть на всех сайтах: в игре она открывает окно достижений этой игры, в остальных местах — окно достижений карточки профиля",
+      "Рядом с кнопкой аккаунта показывается фото профиля, выбранное в хабе (иначе значок по умолчанию)"
+     ]
+    },
+    "tr": {
+     "title": "Hesap menüsünde başarım düğmesi ve profil fotoğrafı",
+     "items": [
+      "Hesap menüsündeki “🏆 Başarımlar” düğmesi tüm sitelerde görünüyor: oyunun içinde o oyunun başarım penceresini, başka yerde profil kartının başarım penceresini açıyor",
+      "Hesap düğmesinin yanında Merkez'de seçtiğin profil fotoğrafı görünüyor (yoksa varsayılan simge)"
+     ]
+    },
+    "it": {
+     "title": "Pulsante obiettivi nel menu account e foto profilo",
+     "items": [
+      "Il pulsante «🏆 Obiettivi» nel menu account compare su tutti i siti: dentro un gioco apre la finestra degli obiettivi di quel gioco, altrove quella della scheda profilo",
+      "Accanto al pulsante account compare la foto profilo scelta nell’Hub (un’icona predefinita se manca)"
+     ]
+    },
+    "pl": {
+     "title": "Przycisk osiągnięć w menu konta i zdjęcie profilowe",
+     "items": [
+      "Przycisk „🏆 Osiągnięcia” w menu konta jest na wszystkich stronach: w grze otwiera okno osiągnięć tej gry, gdzie indziej okno osiągnięć karty profilu",
+      "Obok przycisku konta widać zdjęcie profilowe wybrane w Hubie (domyślna ikona, gdy brak)"
+     ]
+    },
+    "ar": {
+     "title": "زر الإنجازات في قائمة الحساب وصورة الملف الشخصي",
+     "items": [
+      "يظهر زر «🏆 الإنجازات» في قائمة الحساب على كل المواقع: داخل اللعبة يفتح نافذة إنجازات تلك اللعبة، وفي غيرها يفتح نافذة إنجازات بطاقة الملف الشخصي",
+      "تظهر بجوار زر الحساب صورة الملف الشخصي التي اخترتها في المركز (أيقونة افتراضية إن لم توجد)"
+     ]
+    }
+   }
+  },
+  {
+   "date": "2026-10-25",
+   "build": "",
    "title": "Vowkeep 새 보스 모습, 4단계 보스, 새 심연",
    "items": [
     "Vowkeep b49: 5~8장 보스 모습을 모두 새로: 서리 망토와 얼음 왕관의 하랄드, 바위 몸에 돌망치를 든 거인 그롬, 불꽃 날개와 후광의 세라핀, 불타는 머리와 빛나는 심장의 꺼지지 않는 불꽃",

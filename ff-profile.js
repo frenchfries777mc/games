@@ -669,6 +669,7 @@ async function open(sb, uid, o){
       dcb.style.display=''; dcb.onclick=function(){ var P=el.querySelector('.D'); if(P.classList.toggle('on')) decoPanel(el, sb, uid, d, cv, o); }; } }catch(e){}
   acb.style.display=''; acb.onclick=async function(){ var w=achWin(T), box=w.querySelector('.L'); box.innerHTML='<div class="n">'+esc(T.loading)+'</div>'; box.scrollTop=0; w.classList.add('on');
     try{ await list(box, sb, d, o); }catch(e){ box.innerHTML='<div class="n">'+esc(T.fail)+'</div>'; } };
+  if(o&&o.openAch) acb.click();
   var lk=el.querySelector('.k'), un=d.profile&&d.profile.username; lk.style.display=un?'':'none';
   lk.onclick=function(){ var u='https://frenchfries777mc.github.io/games/?card='+encodeURIComponent(un);
     var done=function(){ lk.textContent='✓ '+T.copied; setTimeout(function(){ lk.textContent=T.link; },2000); };
