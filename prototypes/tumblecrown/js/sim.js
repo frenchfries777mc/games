@@ -97,6 +97,7 @@ function hurtProxy(G, e, dmg, p, o) {
   if (e.mark > 0) d *= 1.5;
   const r = hurtPlayer(G, t, Math.max(1, d * PVP_DMG), p);
   if (r > 0 && o.burn) t.burn = 3;
+  if (r > 0 && p && p.leech > 0) p.hp = Math.min(p.maxhp, p.hp + r * 0.6);
   return r;
 }
 // 체력이 다하면 탈락해요: 일으켜 주는 사람도, 다시 일어나는 일도 없어요
@@ -158,7 +159,7 @@ function hurtPlayer(G, p, dmg, src) {
   if (hasB(p, 'last') && p.hp < p.maxhp * 0.3) d *= 0.75;
   if (p.shield > 0) { const s = Math.min(p.shield, d); p.shield -= s; d -= s; }
   d = Math.round(d); if (d <= 0) return 0;
-  p.hp -= d; p.hitT = 0.25; ev(G, 'phit', { id: p.id, x: p.x, z: p.z, v: d });
+  p.hp -= d; p.hitT = 0.25; p.noHit = 0; ev(G, 'phit', { id: p.id, x: p.x, z: p.z, v: d, by: src && src.id || null });
   if (hasB(p, 'thorn') && src && src.hp > 0 && src.id) hurtEnemy(G, src, 8, null, {});
   if (p.hp <= 0 && G.pvp) { koPlayer(G, p, src); return d; }
   if (p.hp <= 0) { if (p.emb) { p.emb = 0; ev(G, 'emb', { id: p.id, on: 0 }); } p.hp = 0; p.down = true; p.bleed = 20; p.revT = 0; p.everDown = true; G.stats.downs++; ev(G, 'down', { id: p.id, x: p.x, z: p.z }); }
@@ -299,11 +300,12 @@ function comboFx(G, C, A, B) {
   ev(G, 'combo', { c: C.id, name: C.name, x, z, a: A.id, b: B.id });
   if (!A.bot || !B.bot) { for (const o of [A, B]) if (!o.bot) { ev(G, 'ach', { id: 'combo', pid: o.id }); ev(G, 'combo1', { c: C.id, pid: o.id }); } }
 }
+const ANIMOF = { leap: 'whirl', bloodlust: 'taunt', flurry: 'dash', blink: 'dash', scatter: 'dash', fan: 'pierce', bonestorm: 'whirl' };
 const friends = (G, p) => G.pvp ? [p] : G.players;   // 대전에서는 내 편이 나뿐이에요
 function useSkill(G, p, si, inp) {
   const R = ROLES[p.role], S = R.skills[si], key = 's' + si;
   if (p.cd[key] > 0) return;
-  p.cd[key] = S.cd * cdMul(p, 'skill', G); p.anim = S.id; p.animT = 0.8; p.animN = (p.animN || 0) + 1;
+  p.cd[key] = S.cd * cdMul(p, 'skill', G); p.anim = ANIMOF[S.id] || S.id; p.animT = 0.8; p.animN = (p.animN || 0) + 1;
   ev(G, 'skill', { id: p.id, s: S.id, x: p.x, z: p.z, a: p.a });
   switch (S.id) {
     case 'block': p.block = 1.2; rolePuz(G, p, 'oath', 1.7); break;
@@ -343,6 +345,33 @@ function useSkill(G, p, si, inp) {
       for (const e of G.enemies) if (e.hp > 0 && e.pid !== p.id && dist(p, e) < 4.4 + e.r) { hurtEnemy(G, e, 45, p, {}); if (e.hp > 0) { e.slow = 2; e.slowM = 0.5; } }
       break;
     }
+    case 'leap': { // 앞으로 크게 뛰어올라 내려앉으며 둘레에 피해
+      p.x += Math.cos(p.a) * 7; p.z += Math.sin(p.a) * 7; collide(G, p, 0.6); p.inv = 0.4;
+      ev(G, 'skill', { id: p.id, s: 'quake', x: p.x, z: p.z, a: p.a });
+      for (const e of G.enemies) if (e.hp > 0 && e.pid !== p.id && dist(p, e) < 3.2 + e.r) hurtEnemy(G, e, 36, p, {});
+      break;
+    }
+    case 'bloodlust': p.leech = 5; ev(G, 'rally', { id: p.id }); break;   // 5초 동안 준 피해의 일부를 체력으로 되찾아요
+    case 'flurry': { // 앞쪽에 세 번 연달아 찔러요
+      ev(G, 'swing', { id: p.id, x: p.x, z: p.z, a: p.a, r: 3.0, role: p.role });
+      for (let k = 0; k < 3; k++) for (const e of G.enemies) if (e.hp > 0 && e.pid !== p.id && dist(p, e) < 3.0 + e.r && angDiff(p.a, angTo(p, e)) < 1.0) hurtEnemy(G, e, 11, p, {});
+      break;
+    }
+    case 'blink': { // 가장 가까운 상대 뒤로 순간이동해 베요
+      let best = null, bd = 13;
+      for (const e of G.enemies) if (e.hp > 0 && e.pid !== p.id && dist(p, e) < bd) { bd = dist(p, e); best = e; }
+      if (!best) { p.cd[key] = 2; break; }
+      const a = angTo(p, best); p.x = best.x + Math.cos(a) * 1.7; p.z = best.z + Math.sin(a) * 1.7; collide(G, p, 0.6); p.a = angTo(p, best); p.inv = 0.4;
+      hurtEnemy(G, best, 34, p, {}); break;
+    }
+    case 'scatter': { // 뼈가 흩어지며 뒤로 빠지고, 있던 자리에 뼛조각이 터져요
+      const ox = p.x, oz = p.z; p.x -= Math.cos(p.a) * 6; p.z -= Math.sin(p.a) * 6; collide(G, p, 0.6); p.inv = 0.5;
+      for (const e of G.enemies) if (e.hp > 0 && e.pid !== p.id && Math.hypot(e.x - ox, e.z - oz) < 2.8 + e.r) hurtEnemy(G, e, 26, p, {});
+      ev(G, 'skill', { id: p.id, s: 'quake', x: ox, z: oz, a: p.a });
+      break;
+    }
+    case 'fan': for (const da of [-0.3, 0, 0.3]) G.projs.push({ id: G.uid++, k: 'pierce', own: p.id, x: p.x, z: p.z, vx: Math.cos(p.a + da) * 28, vz: Math.sin(p.a + da) * 28, dmg: 22, life: 0.9, pierce: true, hit: [], team: 0 }); break;
+    case 'bonestorm': p.stormT = 1.4; p.stormTick = 0; break;   // 1.4초 동안 몸을 돌리며 둘레를 계속 쳐요
     case 'smite': case 'curse': { // 조준한 곳에 표시가 생기고, 잠시 뒤 터져요 (모두에게 보여서 피할 수 있어요)
       const sm = S.id === 'smite', q = aimPoint(p, inp, 12);
       G.zones.push({ id: G.uid++, k: 'tcircle', x: q.x, z: q.z, r: sm ? 3.2 : 2.6, t: sm ? 1.0 : 0.9, T: sm ? 1.0 : 0.9, dmg: sm ? 42 : 40, fx: S.id, own: p.id });
@@ -475,6 +504,12 @@ function resetEnemy(e) {
 function stepPlayer(G, p, inp, dt) {
   if (p.px) p.px.hp = 0;
   stepPlayer0(G, p, inp, dt);
+  if (G.pvp && alive(p) && G.phase === 'play') {
+    p.noHit = (p.noHit || 0) + dt;
+    if (p.noHit > 4 && p.hp < p.maxhp) p.hp = Math.min(p.maxhp, p.hp + p.maxhp * 0.03 * dt);   // 맞지 않고 4초가 지나면 체력이 저절로 차올라요
+    if (p.leech > 0) p.leech = Math.max(0, p.leech - dt);
+    if (p.stormT > 0) { p.stormT -= dt; p.stormTick -= dt; if (p.stormTick <= 0) { p.stormTick = 0.35; ev(G, 'swing', { id: p.id, x: p.x, z: p.z, a: p.a, r: 3.2, role: p.role }); for (const e of G.enemies) if (e.hp > 0 && e.pid !== p.id && dist(p, e) < 3.2 + e.r) hurtEnemy(G, e, 13, p, {}); } }
+  }
   if (p.px) p.px.hp = alive(p) ? 1 : 0;
 }
 function stepPlayer0(G, p, inp, dt) {
@@ -1338,7 +1373,13 @@ function botPvp(G, p, dt) {
       case 'heal': go = p.hp < p.maxhp * 0.6 && r < 0.05; break;
       case 'ward': go = d < 10 && r < 0.03; break;
       case 'smite': case 'curse': go = d < 11 && r < 0.05; break;
-      case 'whirl': go = d < 3.2 && r < 0.08; break;
+      case 'whirl': case 'bonestorm': go = d < 3.2 && r < 0.08; break;
+      case 'leap': go = d > 3 && d < 9 && r < 0.05; break;
+      case 'bloodlust': go = d < 6 && r < 0.03; break;
+      case 'flurry': go = d < 3 && r < 0.08; break;
+      case 'blink': go = d < 12 && r < 0.04; break;
+      case 'scatter': go = d < 3 && r < 0.05; break;
+      case 'fan': go = d < 12 && r < 0.06; break;
       case 'quake': go = d < 4.2 && r < 0.08; break;
     }
     if (go) { inp[i === 0 ? 'q' : i === 1 ? 'e' : 'r'] = true; }
