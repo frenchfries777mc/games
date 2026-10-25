@@ -332,7 +332,7 @@ export class View {
     const w = Math.ceil(innerWidth * dpr / P) * P, h = Math.ceil(innerHeight * dpr / P) * P; this.W = w; this.H = h;
     this.r.setPixelRatio(1); this.r.setSize(w, h, false);
     this.cw = w / dpr; this.ch = h / dpr; this.r.domElement.style.width = (w / dpr) + 'px'; this.r.domElement.style.height = (h / dpr) + 'px';
-    const asp = w / h, vs = this.mode === 'lobby' ? 7.6 : this.mode === 'intro' ? 6.4 : this.zoom * (asp < 1 ? 1.35 : 1);
+    const asp = w / h, vs = this.mode === 'lobby' ? 8.6 : this.mode === 'ped' ? 6.6 : this.mode === 'intro' ? 6.4 : this.zoom * (asp < 1 ? 1.35 : 1);
     this.cam.left = -vs * asp; this.cam.right = vs * asp; this.cam.top = vs; this.cam.bottom = -vs; this.cam.updateProjectionMatrix();
     if (this.comp) this.comp.setSize(w, h);
     if (this.pp) this.pp.setPixelSize(P);
@@ -366,48 +366,55 @@ export class View {
     if (light) { const L = new THREE.PointLight(0xff9a48, 55 * k, 24, 1.6); L.position.set(x, y + 0.4, z + 0.8); p.add(L); this.flick.push({ L, b: 55 * k, ph: R() * 9 }); }
   }
 
-  /* ----- 로비: 밤의 성 안뜰 모닥불 ----- */
+  /* ----- 로비: 보랏빛 노을 아래 돌 투기장, 가운데 떠도는 왕관 ----- */
+  crownMesh(p, x, y, z, k = 1) {
+    const g = new THREE.Group(); g.position.set(x, y, z); p.add(g);
+    const gm = M(0xffd36b, { e: 0xffb020, ei: 0.7, uniq: true });
+    cyl(0.9 * k, 1.0 * k, 0.5 * k, 10, gm, 0, 0, 0, g);
+    for (let i = 0; i < 5; i++) { const a = i / 5 * 6.283, c = cone(0.22 * k, 0.9 * k, 4, gm, Math.cos(a) * 0.82 * k, 0.65 * k, Math.sin(a) * 0.82 * k, g); sph(0.14 * k, 6, 5, M(0xe0504a, { e: 0xff3020, ei: 2, uniq: true }), Math.cos(a) * 0.82 * k, 1.18 * k, Math.sin(a) * 0.82 * k, g); }
+    return g;
+  }
   buildLobby() {
-    this.mode = 'lobby'; this.introHeroes = null; this.pool = null; this.trapM = null; const s = this.newScene(0x0e1024, 0x12142a); this.flick = []; this.lights(s);
-    const cob = [0x4a4550, 0x534d5a, 0x5c5664, 0x45404c];
-    instBoxes(s, (add) => { for (let x = -24; x <= 24; x += 1.4) for (let z = -12; z <= 24; z += 1.4) { const h = 0.25 + R() * 0.1; add(x + (R() - .5) * 0.15, h / 2 - 0.25, z + (R() - .5) * 0.15, 1.36, h, 1.36, cob[R() * 4 | 0]); } });
-    const brick = [0x3e3846, 0x463f50, 0x4e4658, 0x38323f];
-    instBoxes(s, (add) => {
-      for (let y = 0; y < 9; y++) for (let x = -26; x <= 26; x += 2.2) { if (Math.abs(x) < 3.5 && y < 6) continue; add(x + (y % 2 ? 1.1 : 0), y + 0.45, -12, 2.1, 0.95, 1.6, brick[R() * 4 | 0]); }
-      for (let x = -26; x <= 26; x += 2.2) add(x, 9.6, -12, 1.2, 1.3, 1.8, 0x5c5468);
+    this.mode = 'lobby'; this.introHeroes = null; this.lobbyHeroes = null; this.pool = null; this.trapM = null; this.pv = null; const s = this.newScene(0x2a1e44, 0x3a2a5a); s.fog.near = 40; s.fog.far = 90; this.flick = []; this.lights(s, 1.1);
+    // 돌바닥 투기장 (둥근 단 두 겹) 과 바깥 어둠
+    const st = [0x6a6078, 0x756a84, 0x5e546c, 0x7e7490];
+    instBoxes(s, (add) => { for (let x = -22; x <= 22; x += 1.5) for (let z = -16; z <= 20; z += 1.5) { const d = Math.hypot(x, z - 3); const h = d < 12 ? 0.5 : 0.22; add(x, h / 2 - 0.3, z, 1.46, h, 1.46, st[R() * 4 | 0]); } });
+    cyl(11.6, 12, 0.35, 28, M(0x8a7ea0), 0, 0.12, 3, s); cyl(8.5, 8.8, 0.2, 24, M(0xd8b860, { e: 0x604010, ei: 0.4 }), 0, 0.38, 3, s);
+    for (let i = 0; i < 14; i++) { const a = i / 14 * 6.283; box(1.1, 4 + (i % 3) * 1.2, 1.1, M(0x4e4660), Math.cos(a) * 15, 2, 3 + Math.sin(a) * 15, s); }
+    for (let i = 0; i < 6; i++) { const a = (i + 0.5) / 6 * 6.283 + 0.4, x = Math.cos(a) * 13, z = 3 + Math.sin(a) * 13; box(0.28, 2.6, 0.28, M(0x4a3020), x, 1.3, z, s); this.flame(s, x, 3, z, 0.9); }
+    this.crownG = this.crownMesh(s, 0, 6.4, 3, 1.2);
+    const cl = new THREE.PointLight(0xffd070, 22, 22, 1.5); cl.position.set(0, 7, 3); s.add(cl); this.flick.push({ L: cl, b: 22, ph: 1 });
+    for (let i = 0; i < 80; i++) box(0.12, 0.12, 0.12, M(0xffffff, { e: 0xdfe6ff, ei: 2 }), (R() - .5) * 80, 16 + R() * 12, -34, s);
+    sph(2.4, 12, 10, M(0xffe8c8, { e: 0xffc890, ei: 2 }), 22, 20, -34, s);
+    // 둘러선 싸움꾼들: 직업마다 다른 색 고리
+    const cols = [0xd9483b, 0x3b78d9, 0x48a84a, 0xe0b52e, 0x8a52c8, 0xe57a2a], who = ['knight', 'witch', 'viking', 'archer', 'mamluk', 'skeleton'];
+    this.lobbyHeroes = who.map((r, i) => {
+      const a = i / 6 * 6.283 + 0.5, x = Math.cos(a) * 6.2, z = 3 + Math.sin(a) * 4.6, h = makeHero(r, this.cos); h.position.set(x, 0.5, z); h.rotation.y = Math.atan2(-x, -(z - 3)); s.add(h);
+      const rg = ringMesh(s, cols[i]); rg.position.set(x, 0.62, z); return h;
     });
-    box(7, 6, 0.3, M(0x1a1018, { e: 0x401808, ei: 1 }), 0, 3, -12.2, s);
-    const tent = (x, z, c, rot) => { const t = cone(3.2, 4.2, 4, M(c), x, 2.1, z, s); t.rotation.y = rot; cyl(0.08, 0.08, 5.4, 5, leather(), x, 2.7, z, s); box(0.1, 0.8, 1.2, gold(), x, 5.6, z + 0.6, s); };
-    tent(-10, -3, 0x2c4f9e, 0.6); tent(-14.5, 2.5, 0xd8d0bc, 0.9);
-    for (let i = 0; i < 4; i++) { const sp = box(0.1, 3.4, 0.1, M(0x8a8f9c, { m: 0.8, r: 0.3 }), 8 + i * 0.7, 1.7, -1.5, s); sp.rotation.z = 0.12; }
-    box(3.4, 0.2, 0.3, leather(), 9, 0.9, -1.5, s); box(3.4, 0.2, 0.3, leather(), 9, 2.6, -1.5, s);
-    for (let i = 0; i < 8; i++) { const a = i / 8 * 6.283; mesh(geo('dod', () => new THREE.DodecahedronGeometry(0.35)), M(0x5a5462), Math.cos(a) * 1.1, 0.15, 2 + Math.sin(a) * 1.1, s); }
-    for (let i = 0; i < 4; i++) { const l = cyl(0.15, 0.15, 1.8, 6, M(0x4a3020), 0, 0.3, 2, s); l.rotation.set(Math.PI / 2.3, i * 0.8, 0); }
-    this.fireG = new THREE.Group(); this.fireG.position.set(0, 0.9, 2); s.add(this.fireG);
-    for (let i = 0; i < 7; i++) cone(0.35 + R() * 0.2, 1.2 + R() * 0.9, 6, M(0xff8a2a, { e: 0xff6a10, ei: 3 }), (R() - .5) * 0.7, 0.1, (R() - .5) * 0.7, this.fireG);
-    cone(0.3, 1.1, 6, M(0xffe08a, { e: 0xfff0b0, ei: 4 }), 0, 0, 0, this.fireG);
-    const cf = new THREE.PointLight(0xff9040, 60, 26, 1.5); cf.position.set(0, 2.5, 2); cf.castShadow = true; cf.shadow.mapSize.set(512, 512); s.add(cf); this.flick.push({ L: cf, b: 60, ph: 0 });
-    box(3, 0.6, 0.7, M(0x5a3a22), -3.6, 0.3, 4.6, s).rotation.y = 0.5; box(3, 0.6, 0.7, M(0x5a3a22), 3.4, 0.3, 4.8, s).rotation.y = -0.5;
-    for (const tx of [-5, 5]) { box(0.3, 1, 0.3, M(0x4a3020), tx, 4, -11, s); this.flame(s, tx, 5, -11, 1); }
-    // 성벽의 기사단 깃발: 장을 깰 때 든 채로 지킨 깃발만 걸려요. 빈 자리에는 걸쇠만 있어요
-    const FL = this.lobbyFlags || {}; this.flagGlow = []; this.flagDust = [];
-    for (let i = 0; i < 8; i++) {
-      const x = -14.4 + i * 1.15; box(0.3, 0.16, 0.3, dmetal(), x, 5.45, -11.15, s);
-      if (!FL[i]) continue;
-      // 걸린 깃발은 금빛 테두리와 함께 은은하게 빛나고 금가루가 피어올라요
-      const fm = M(FLAG_COL[i], { e: FLAG_COL[i], ei: 1.2, uniq: true }), gm = M(0xffd36b, { e: 0xffc040, ei: 2.5, uniq: true });
-      box(1.2, 2.2, 0.04, gm, x, 4.25, -11.02, s); this.flagGlow.push({ fm, gm, ph: i * 0.8, x });
-      box(1.15, 0.1, 0.1, gold(), x, 5.35, -10.98, s); box(1.0, 2.0, 0.06, fm, x, 4.3, -10.98, s);
-      box(0.36, 0.7, 0.08, gold(), x, 4.4, -10.93, s); for (const dx of [-0.33, 0.33]) box(0.42, 0.3, 0.06, M(FLAG_COL[i]), x + dx * 0.75, 3.2, -10.98, s).rotation.z = dx > 0 ? -0.78 : 0.78;
-    }
-    if (this.flagGlow.length) { const L = new THREE.PointLight(0xffd080, 22, 9, 1.4); L.position.set(-10.4, 4.4, -8.6); s.add(L); for (let i = 0; i < 24; i++) { const d = box(0.09, 0.09, 0.09, M(0xffe08a, { e: 0xffc040, ei: 5 }), 0, -5, 0, s); d.castShadow = false; this.flagDust.push({ m: d, t: R() * 2.5, f: this.flagGlow[i % this.flagGlow.length] }); } }
-    for (let i = 0; i < 80; i++) box(0.12, 0.12, 0.12, M(0xffffff, { e: 0xdfe6ff, ei: 2 }), (R() - .5) * 70, 14 + R() * 10, -30, s);
-    sph(2, 12, 10, M(0xffffff, { e: 0xe8ecff, ei: 2 }), -20, 22, -30, s);
-    const poses = [['knight', -3.8, 4.6, 2.4], ['archer', 3.8, 4.8, -2.5], ['priest', -2.6, -1.2, 0.6], ['viking', 2.8, -0.8, -0.7]];
-    this.lobbyHeroes = poses.map(([r, x, z, ry]) => { const h = makeHero(r, this.cos); h.position.set(x, 0, z); h.rotation.y = ry; s.add(h); return h; });
-    this.embers = []; for (let i = 0; i < 18; i++) { const e = box(0.14, 0.14, 0.14, M(0xffb050, { e: 0xff8a30, ei: 5 }), 0, 0, 0, s); e.castShadow = false; this.embers.push({ m: e, t: R() * 3 }); }
     this.resize();
-    this.cam.position.set(-1.5, 13, 30); this.cam.lookAt(-1.5, 3.0, 1.5);
+    this.cam.position.set(0, 15, 34); this.cam.lookAt(0, 2.2, 3);
+  }
+  /* ----- 직업 고르기: 받침돌 위 영웅 (왼쪽엔 목록, 오른쪽엔 능력 카드가 얹혀요) ----- */
+  buildPedestal() {
+    this.mode = 'ped'; this.introHeroes = null; this.lobbyHeroes = null; this.pool = null; this.trapM = null; this.pv = null; const s = this.newScene(0x1a1428, 0x241a38); s.fog.near = 20; s.fog.far = 50; this.flick = []; this.lights(s, 1.0);
+    instBoxes(s, (add) => { for (let x = -16; x <= 16; x += 1.5) for (let z = -10; z <= 10; z += 1.5) add(x, -0.3, z, 1.46, 0.5, 1.46, [0x3c3448, 0x443b52, 0x372f42][R() * 3 | 0]); });
+    cyl(2.6, 2.9, 0.5, 8, M(0x6c6280), 0, 0.0, 0, s); cyl(2.2, 2.4, 0.5, 8, M(0x7e7494), 0, 0.5, 0, s);
+    for (const sx of [-1, 1]) { box(0.3, 2.8, 0.3, M(0x4a3020), sx * 5.2, 1.4, -1.5, s); this.flame(s, sx * 5.2, 3.2, -1.5, 1, false); const L = new THREE.PointLight(0xff9a48, 30, 16, 1.6); L.position.set(sx * 4.6, 3.6, 0.5); s.add(L); this.flick.push({ L, b: 30, ph: sx + 2 }); }
+    this.crownG = this.crownMesh(s, 0, 6.2, -3, 0.9);
+    const sp = new THREE.PointLight(0xfff0d0, 28, 18, 1.4); sp.position.set(0, 6, 6); s.add(sp);
+    this.pedY = 1.0; this.resize();
+    this.cam.position.set(0, 7.5, 16); this.cam.lookAt(0, 3.1, 0);
+  }
+  // 직업 고르기 화면 켜고 끄기: 영웅과 고리 색을 바꿔 가며 보여줘요
+  setPreview(role, col) {
+    if (role == null) { if (this.mode === 'ped') this.buildLobby(); return; }
+    if (this.mode !== 'ped') this.buildPedestal();
+    if (this.pv && this.pv.role === role && this.pv.col === col) return;
+    if (this.pv) { this.scene.remove(this.pv.g); this.scene.remove(this.pv.rg); }
+    const g = makeHero(role, this.cos); g.scale.setScalar(1.35); g.position.set(0, 1.0, 0); g.rotation.y = 0.45; this.scene.add(g);
+    const rg = ringMesh(this.scene, col); rg.scale.setScalar(1.7); rg.position.set(0, 1.08, 0);
+    this.pv = { g, rg, role, col, t0: performance.now() / 1000 };
   }
 
   /* ----- 처음 인트로: 횃불 켜진 던전 복도를 네 영웅이 걸어 나와요 ----- */
@@ -991,7 +998,7 @@ export class View {
     // 플레이어
     for (const p of S.pl) {
       const key = 'p' + p.id; seen.add(key); let E = this.ents.get(key);
-      if (!E) { const m = makeHero(p.role, p.cos); s.add(m); E = { m, x: p.x, z: p.z, a: p.a, ph: 0 }; this.ents.set(key, E); E.ring = ringMesh(s, ROLES[p.role].color); E.ward = sph(1.3, 12, 10, M(0x9af0e0, { e: 0x6ad0c0, ei: 0.5, op: 0.08, uniq: true }), 0, 1.5, 0, m); E.ward.castShadow = false; }
+      if (!E) { const m = makeHero(p.role, p.cos); s.add(m); E = { m, x: p.x, z: p.z, a: p.a, ph: 0 }; this.ents.set(key, E); E.ring = ringMesh(s, p.col || ROLES[p.role].color); E.ward = sph(1.3, 12, 10, M(0x9af0e0, { e: 0x6ad0c0, ei: 0.5, op: 0.08, uniq: true }), 0, 1.5, 0, m); E.ward.castShadow = false; }
       const k = exact || p.id === me ? 1 : Math.min(1, dt * 12);
       E.x += (p.x - E.x) * k; E.z += (p.z - E.z) * k; E.a = lerpA(E.a, p.a, Math.min(1, dt * 18));
       animHero(E, p, dt, t); E.hy = hy(E, exact ? 1 : dt); E.m.position.y += E.hy; E.ring.position.set(E.x, 0.12 + E.hy, E.z); E.ring.visible = !p.dd;
@@ -1037,7 +1044,7 @@ export class View {
     if (!es && this.escOn) { this.escOn = false; if (this.exitG) { this.exitG.children.forEach(c => { if (!c.isLight) c.visible = false; }); this.exitL.intensity = 0; } }
     if (this.escOn) { this.exitG.rotation.y += dt; this.exitM.opacity = 0.22 + Math.sin(t * 5) * 0.08; this.shake = Math.max(this.shake, 0.18); if ((this.dustT = (this.dustT || 0) - dt) <= 0) { this.dustT = 0.08; this.burst(this.camT.x + (Math.random() - .5) * 34, 9 + Math.random() * 4, this.camT.z + (Math.random() - .5) * 20, [0x8a7a6a, 0x6a5e54, 0xa09080][Math.random() * 3 | 0], 2, 1, 1.2, 0.16); } }
     // 카메라: 내 캐릭터를 부드럽게 따라가요
-    const mp = this.ents.get('p' + me);
+    const mp = this.ents.get('p' + (this.camId || me));
     if (mp) {
       if (!this.camInit) { this.camT.set(mp.x, 0, mp.z); this.camInit = true; }
       let tx = mp.x, tz = mp.z - 1.5, zm = 1;
@@ -1123,6 +1130,8 @@ export class View {
       }
     }
     for (const d of this.drips || []) { d.t += dt; const u = d.t / d.T; if (u >= 1) { d.t = 0; this.ring(d.x, d.z, 1.1, 0x9ad0ff, 0.7); } d.m.position.y = u < 0.55 ? 8 : 8 - Math.pow((u - 0.55) / 0.45, 2) * 8; d.m.visible = u > 0.4; }
+    if (this.crownG) { this.crownG.rotation.y += dt * 0.9; this.crownG.position.y = (this.mode === 'ped' ? 6.2 : 6.4) + Math.sin(t * 1.6) * 0.25; }
+    if (this.pv) { this.pv.g.rotation.y = 0.45 + Math.sin(t * 0.7) * 0.5; const u = this.pv.g.userData; if (u.body) u.body.position.y = Math.sin(t * 1.6) * 0.04; }
     if (this.lobbyHeroes) this.lobbyHeroes.forEach((h, i) => { h.userData.body.position.y = Math.sin(t * 1.5 + i) * 0.03; h.userData.head.rotation.y = Math.sin(t * 0.6 + i * 2) * 0.3; });
     if (this.fxL && this.fxLI > 0) { this.fxLI = Math.max(0, this.fxLI - dt * this.fxLI * 5 - dt * 10); this.fxL.intensity = this.fxLI; }
     for (const f of this.fx) { f.t += dt; f.up(f, dt); }
