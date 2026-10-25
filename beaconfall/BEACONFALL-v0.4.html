@@ -387,7 +387,7 @@ window.bfIntro=function(){if(run)return;run=1;t0=Date.now();el.classList.add('ru
     <button class="btn" data-act="skins"><span class="arrow">▶</span>스킨 상점<span class="en">SKIN SHOP</span></button>
     <button class="btn" data-act="stats"><span class="arrow">▶</span>통계<span class="en">STATS</span></button>
     <button class="btn" data-act="settings"><span class="arrow">▶</span>설정<span class="en">SETTINGS</span></button>
-    <p class="foot">v0.4<br>build 109</p>
+    <p class="foot">v0.4<br>build 111</p>
   </nav>
 </div>
 
@@ -1231,6 +1231,7 @@ function draw(){
   }
   {const tr=world.trader;if(tr){const sp=shipPos(tr);list.push({y:sp.y,k:6,o:sp});if(tr.phase==='docked')list.push({y:tr.my,k:7,o:tr});}}
   {const ss=shipState();if(ss)list.push({y:ss.y,k:9,o:ss});}
+  {const pe=world.pilE;if(pe)list.push({y:pe.y,k:14,o:pe});}
   for(const e of (world.cargo||[])){const u=Math.max(0,Math.min(1,1-e.rem/e.tot)),cp=cargoPose(e,u),x=cp.x,y=cp.y;if(x>cam.x-40&&x<cam.x+VW+40&&y>cam.y-40&&y<cam.y+VH+40){const ang=cp.ang;list.push({y,k:12,o:{x,y,e,ang}});
     if(e.pir){const w=e.rem/e.tot;if(w<0.66&&w>0.34){const off=w>0.5?14+(w-0.5)/0.16*90:14+(0.5-w)/0.16*90,px=x-Math.sin(ang)*off,py=y+Math.cos(ang)*off*0.6+4;list.push({y:py,k:13,o:{x:px,y:py,f:Math.cos(ang)>=0?1:-1}});}}}}
   for(const n of (world.vnpcs||[]))if(n.y>=y0&&n.y<=y1+20&&n.x>=x0-12&&n.x<=x1+12)list.push({y:n.y,k:10,o:n});
@@ -1238,7 +1239,7 @@ function draw(){
   list.sort((a,b)=>a.y-b.y);
   drawCastShadows(g,tvis,list);
   let li=0;
-  const flush=ly=>{while(li<list.length&&list[li].y<=ly){const it=list[li++];if(it.k===0)drawStruct(g,it.o);else if(it.k===1)drawPlayer(g);else if(it.k===2)drawRemote(g,it.o);else if(it.k===4)drawBoulder(g,it.o);else if(it.k===9)drawSpaceship(g,it.o);else if(it.k===8)drawAnimal(g,it.o);else if(it.k===6)drawShip(g,it.o);else if(it.k===7)drawMerchant(g,it.o);else if(it.k===10)drawVNpc(g,it.o);else if(it.k===11)drawVfolk(g,it.o);else if(it.k===12)drawCargoShip(g,it.o);else if(it.k===13)drawPirateShip(g,it.o);else drawMonster(g,it.o);}};
+  const flush=ly=>{while(li<list.length&&list[li].y<=ly){const it=list[li++];if(it.k===0)drawStruct(g,it.o);else if(it.k===1)drawPlayer(g);else if(it.k===2)drawRemote(g,it.o);else if(it.k===4)drawBoulder(g,it.o);else if(it.k===9)drawSpaceship(g,it.o);else if(it.k===14)drawPilot(g,it.o);else if(it.k===8)drawAnimal(g,it.o);else if(it.k===6)drawShip(g,it.o);else if(it.k===7)drawMerchant(g,it.o);else if(it.k===10)drawVNpc(g,it.o);else if(it.k===11)drawVfolk(g,it.o);else if(it.k===12)drawCargoShip(g,it.o);else if(it.k===13)drawPirateShip(g,it.o);else drawMonster(g,it.o);}};
   for(let ti=0;ti<tvis.length;ti++){
     const k=tvis[ti],y=T.y[k];
     flush(y);
@@ -1314,7 +1315,7 @@ async function loadWorld(seed,name,id){
   await progress(0,'월드를 준비하는 중…');
   world=null;base=null;    // 이전 월드의 큰 메모리를 먼저 놓아줘요
   world=await generateTerrain(seed,(p,m)=>progress(p*0.8,m));
-  world.voidWon=0;world.voidBD=0;world.rit=null;ritV=null;world.seedStr=String(seed);world.id=id||null;world.savedPlayer=null;world.clock=DAY_SEC*2/24;monsters=[];world.conv=[];world.pend=new Map();world.trader=null;world.lastTraderDay=0;world.weather={t:'clear',left:120};animals=[];world.expl=new Uint8Array(EW*EH);world.mapBase=null;world.treasureInit=false;world.esc={ph:'idle',t:0};world.escaped=false;world.introSeen=false;world.disc=world.islands.map((o,i)=>i===0);world.seen=world.islands.map(()=>false);world.lm=[];world.bossDay=world.islands.map(()=>0);oreT=30;
+  world.voidWon=0;world.voidBD=0;world.rit=null;ritV=null;world.seedStr=String(seed);world.id=id||null;world.savedPlayer=null;world.clock=DAY_SEC*2/24;monsters=[];world.conv=[];world.pend=new Map();world.trader=null;world.lastTraderDay=0;world.weather={t:'clear',left:120};animals=[];world.expl=new Uint8Array(EW*EH);world.mapBase=null;world.treasureInit=false;world.esc={ph:'idle',t:0};world.escaped=false;world.pilot=false;world.voidShip=null;world.pilE=null;PIL=null;world.introSeen=false;world.disc=world.islands.map((o,i)=>i===0);world.seen=world.islands.map(()=>false);world.lm=[];world.bossDay=world.islands.map(()=>0);oreT=30;
   world.structs=[];world.sgrid=new Map();world.fgrid=new Map();world.cgrid=new Map();world.rgrid=new Map();FIRE.clear();
   buildTreeGrid();drops=[];parts=[];
   applySave();
@@ -2053,7 +2054,7 @@ RECIPES.push({grp:'건축',bench:true,name:'석재벽돌',note:'강화석재 3�
    RECIPES.push({grp:'공허의 문',bench:true,name:'공허의 정수',note:'강화금 3 · 수정 3 · 서리 조각 2 · 화산석 2',pat:[{id:'rgold',n:3},{id:'crystal',n:3},{id:'frost',n:2},{id:'obsidian',n:2}],out:[{id:'void_essence',n:1}]});
    RECIPES.push({grp:'공허의 문',bench:true,name:'공허의 열쇠 · 동',note:'유물 4 (늑대왕·전갈·불꽃 거인·거미 여왕) · 공허의 정수 2 · 금 주괴 3 · 진주 2',pat:[{id:'rl_bwolf',n:1},{id:'rl_bscorp',n:1},{id:'rl_bmagma',n:1},{id:'rl_bspider',n:1},{id:'void_essence',n:2},{id:'gold_ingot',n:3},{id:'pearl',n:2}],out:[{id:'vkey_a',n:1}]});
    RECIPES.push({grp:'공허의 문',bench:true,name:'공허의 열쇠 · 서',note:'유물 4 (모래뱀·바위 거인·악어왕·대설인) · 공허의 정수 2 · 금 주괴 3 · 진주 2',pat:[{id:'rl_bsnake',n:1},{id:'rl_bgolem',n:1},{id:'rl_bcroc',n:1},{id:'rl_byeti',n:1},{id:'void_essence',n:2},{id:'gold_ingot',n:3},{id:'pearl',n:2}],out:[{id:'vkey_b',n:1}]});
-   RECIPES.push({grp:'공허의 문',bench:true,name:'공허의 핵',note:'열쇠 2개 · 공허의 정수 3 · 강화금 6 · 수정 3 · 진주 3 · 밤에 들고 사용하면 의식이 시작돼요',pat:[{id:'vkey_a',n:1},{id:'vkey_b',n:1},{id:'void_essence',n:3},{id:'rgold',n:3},{id:'rgold',n:3},{id:'crystal',n:3},{id:'pearl',n:3}],out:[{id:'voidcore',n:1}]});
+   RECIPES.push({grp:'공허의 문',bench:true,name:'공허의 핵',note:'열쇠 2개 · 공허의 정수 3 · 압축된 강화금판 6 · 압축된 강화철판 6 · 수정 3 · 진주 3 · 밤에 들고 사용하면 의식이 시작돼요 (6번의 습격을 버텨야 해요)',pat:[{id:'vkey_a',n:1},{id:'vkey_b',n:1},{id:'void_essence',n:3},{id:'rgold_cp',n:6},{id:'riron_cp',n:6},{id:'crystal',n:3},{id:'pearl',n:3}],out:[{id:'voidcore',n:1}]});
    RECIPES.push({grp:'건축',bench:true,name:'덫',note:'막대기 3 · 실 2 · 판자 1 · 미끼를 넣으면 짐승이 걸려요',pat:[S1,S1,S1,TH,TH,P1],out:[{id:'trap',n:1}]});
    RECIPES.push({grp:'건축',bench:true,name:'주민의 집',note:'판자 6 · 지붕 2 · 실 2 · 침대와 횃불 가까이에 두면 주민이 이사 와요',pat:[{id:'plank',n:3},{id:'plank',n:3},{id:'roof',n:2},{id:'thread',n:2}],out:[{id:'hut',n:1}]});
    RECIPES.push({grp:'시설',bench:true,name:'화염의 룬',note:'수정 1 · 재 2',pat:[{id:'crystal',n:1},{id:'ash',n:1},{id:'ash',n:1}],out:[{id:'rune_fire',n:1}]});
@@ -2568,7 +2569,7 @@ function openJournal(){
   const rec=[['유적 방문',`${seen} / ${lm.length}`],['지하 던전 최고 층',(J.c.dun|0)?`${J.c.dun}층`:'-'],['해저 유적',rt?`${rf} / ${rt}`:'-'],['하늘 보물',`${J.c.sky|0}개`],['유령선 격퇴',`${J.c.ghost|0}번`],['덫 사냥 포획',`${J.c.trap|0}마리`],['발견한 물약',`${ALCH.filter(r=>A[r.id]).length} / ${ALCH.length}`],['낚시 도감',`${fd} / ${FISH.length}`]];
   const draw=()=>{
     return `<h2>탐험 일지<small>${got} / ${isl.length} 섬</small></h2>
-    <div class="achrow" style="display:flex;gap:6px;align-items:center"><span>내 이름</span><input data-pname maxlength="12" value="${esc(myName())}" style="flex:1"><button class="btn sm ghost" data-pset="1">변경</button></div>
+    <div class="achrow" style="display:flex;gap:6px;align-items:center"><span>내 이름</span><input data-pname maxlength="15" value="${esc(myName())}" style="flex:1"><button class="btn sm ghost" data-pset="1">변경</button></div>
     <div class="achcat">섬 도장 · 처음 발견한 사람 이름이 남아요</div>
     <div class="achrow" style="display:flex;flex-wrap:wrap;gap:6px">${isl.map(([o,i])=>world.disc[i]?`<span style="border:2px solid #5ec86e;padding:2px 6px;font-size:12px">★ ${esc(islName(o))}${(world.discBy||{})['i'+i]?` <small style="opacity:.7">· ${esc(world.discBy['i'+i])}</small>`:''}</span>`:`<span style="border:2px dashed #7a8090;padding:2px 6px;font-size:12px;opacity:.55">? ? ?</span>`).join('')}</div>
     <div class="achcat">기록</div>
@@ -2581,7 +2582,7 @@ function openJournal(){
     const bind=()=>{
       const box=m.querySelector('.modal'),rd=()=>{const sc=box.scrollTop;box.innerHTML=draw();box.scrollTop=sc;bind();};
       box.querySelector('[data-close]').onclick=closeModal;
-      const ps=box.querySelector('[data-pset]');if(ps)ps.onclick=()=>{const v=box.querySelector('[data-pname]').value.trim().slice(0,12);if(v){settings.pname=v;saveSettings();try{if(window.FFAuth&&FFAuth.user()&&FFAuth.setNick)FFAuth.setNick(v);}catch(e){}}rd();};
+      const ps=box.querySelector('[data-pset]');if(ps)ps.onclick=()=>{const v=box.querySelector('[data-pname]').value.trim().slice(0,15);if(v){settings.pname=v;saveSettings();try{if(window.FFAuth&&FFAuth.user()&&FFAuth.setNick)FFAuth.setNick(v);}catch(e){}}rd();};
       box.querySelectorAll('[data-ms]').forEach(x=>x.onclick=()=>{
         const need=+x.dataset.ms,ms=JR_MS.find(q=>(q[0]||isl.length)===need);if(!ms||got<need||J.m[need])return;
         J.m[need]=1;saveSettings();for(const [id,c] of ms[1])giveReward(id,c);rd();
@@ -2934,8 +2935,8 @@ function skyReefTick(dt){
   if(!isGuest())ghostTick(dt);
 }
 /* ===== 패치20: 멀티플레이 — 가판대 · 우체통 · 파티 던전 · 공유 탐험 ===== */
-const myName=()=>{if(!settings.pname){settings.pname='탐험가'+(1000+((Math.random()*9000)|0));saveSettings();}return String(settings.pname).slice(0,12);};
-const nameOfPeer=by=>(!by||by==='host')?myName():String((remotes.get(by)||{}).name||'손님').slice(0,12);
+const myName=()=>{if(!settings.pname){settings.pname='탐험가'+(1000+((Math.random()*9000)|0));saveSettings();}return String(settings.pname).slice(0,15);};
+const nameOfPeer=by=>(!by||by==='host')?myName():String((remotes.get(by)||{}).name||'손님').slice(0,15);
 const clampN=(v,a,b)=>Math.max(a,Math.min(b,v|0));
 let stallRd=null,mailRd=null;
 const uiAlive=k=>!!document.querySelector('#modal [data-'+k+']');
@@ -3225,7 +3226,7 @@ function drawPotFly(g){
 const GB_MAX=12;let gbRd=null;
 function gbAdd(b,name,text){
   text=String(text||'').replace(/\s+/g,' ').trim().slice(0,40);if(!text)return false;
-  name=String(name||'').slice(0,12)||'이름 없음';
+  name=String(name||'').slice(0,15)||'이름 없음';
   b.gb=(b.gb||[]).filter(q=>q.n!==name);
   b.gb.push({n:name,t:text,d:Math.floor(world.clock/DAY_SEC)+1});
   if(b.gb.length>GB_MAX)b.gb.splice(0,b.gb.length-GB_MAX);
@@ -4098,7 +4099,7 @@ function saveWorld(force){
     const rem=collectRemoved(),brm=collectBrem();
     if(mode==='play')world.savedPlayer=(P.air&&P.airX!==undefined)?{x:Math.round(P.airX),y:Math.round(P.airY),f:P.f}:{x:Math.round(P.sailing&&P.landX!==undefined?P.landX:P.x),y:Math.round(P.sailing&&P.landY!==undefined?P.landY:P.y),f:P.f};
     localStorage.setItem(SAVE_KEY(world.id),JSON.stringify({
-      v:1,clock:Math.round(world.clock),removed:rem,brem:brm,ores:world.conv,trader:world.trader,lastTraderDay:world.lastTraderDay,expl:packBits(world.expl),treasureInit:!!world.treasureInit,lmChestInit:world.lmChestInit|0,pirInit:world.pirInit|0,ruinInit:world.ruinInit|0,trClean:world.trClean|0,dunFl:world.dunFl||{},dunBD:world.dunBD|0,fortBD:world.fortBD|0,skyDay:world.skyDay||{},dby:world.discBy||{},gsDay:world.gsDay|0,herd:animals.filter(a=>a.tame).map(a=>[ANIM_IDX.indexOf(a.type),Math.round(a.hx),Math.round(a.hy),a.baby?1:0,Math.round(a.gt||0)]),disc:world.disc.map(b=>b?'1':'0').join(''),seen:world.seen.map(b=>b?'1':'0').join(''),escaped:!!world.escaped,voidWon:world.voidWon|0,voidBD:world.voidBD|0,intro:world.introSeen?1:0,bossDay:world.bossDay.join(','),
+      v:1,clock:Math.round(world.clock),removed:rem,brem:brm,ores:world.conv,trader:world.trader,lastTraderDay:world.lastTraderDay,expl:packBits(world.expl),treasureInit:!!world.treasureInit,lmChestInit:world.lmChestInit|0,pirInit:world.pirInit|0,ruinInit:world.ruinInit|0,trClean:world.trClean|0,dunFl:world.dunFl||{},dunBD:world.dunBD|0,fortBD:world.fortBD|0,skyDay:world.skyDay||{},dby:world.discBy||{},gsDay:world.gsDay|0,herd:animals.filter(a=>a.tame).map(a=>[ANIM_IDX.indexOf(a.type),Math.round(a.hx),Math.round(a.hy),a.baby?1:0,Math.round(a.gt||0)]),disc:world.disc.map(b=>b?'1':'0').join(''),seen:world.seen.map(b=>b?'1':'0').join(''),escaped:!!world.escaped,pilot:world.pilot?1:0,vship:world.voidShip?world.voidShip.x+','+world.voidShip.y:'',voidWon:world.voidWon|0,voidBD:world.voidBD|0,intro:world.introSeen?1:0,bossDay:world.bossDay.join(','),
       beltv:2,
       structs:world.structs.filter(b=>!b.lm).map(b=>Object.assign({id:b.id,gx:b.gx,gy:b.gy},exOf(b))),
       drops:drops.map(d=>({x:Math.round(d.tx),y:Math.round(d.ty),v:d.v,item:d.item||'stick',n:d.n||1,dur:d.dur})),
@@ -4120,7 +4121,7 @@ function applySave(){
   if(!isGuest()&&Array.isArray(d.herd)){animals=animals.filter(a=>!a.tame);for(const q of d.herd){const ty=ANIM_IDX[q[0]];if(!ty||!Number.isFinite(+q[1]))continue;const T=ANIM_TYPES[ty],x=+q[1],y=+q[2];animals.push({id:nextAid++,type:ty,x,y,tx:x,ty:y,f:1,hp:T.hp,hurt:0,wt:0,wa:0,ws:0,flee:0,fx:0,fy:0,stun:0,kx:0,ky:0,lay:0,fed:0,mt:25,tame:1,baby:q[3]?1:0,gt:q[4]||0,hx:x,hy:y,love:0,bc:0});}}
   if(typeof d.disc==='string')for(let i=0;i<world.disc.length;i++)if(d.disc[i]==='1')world.disc[i]=true;
   if(typeof d.seen==='string')for(let i=0;i<world.seen.length;i++)if(d.seen[i]==='1')world.seen[i]=true;
-  world.escaped=!!d.escaped;world.voidWon=d.voidWon|0;world.voidBD=d.voidBD|0;world.introSeen=!!d.intro;
+  world.escaped=!!d.escaped;world.pilot=!!d.pilot;world.voidShip=null;if(typeof d.vship==='string'&&d.vship){const vs=d.vship.split(',').map(Number);if(vs.length===2&&vs.every(Number.isFinite))world.voidShip={x:vs[0],y:vs[1]};}world.voidWon=d.voidWon|0;world.voidBD=d.voidBD|0;world.introSeen=!!d.intro;
   if(typeof d.bossDay==='string')d.bossDay.split(',').forEach((v,i)=>{if(i<world.bossDay.length)world.bossDay[i]=+v||0;});
   if(d.trader&&ITEMS[d.trader.item]&&Number.isFinite(d.trader.sx)&&d.trader.day===Math.floor((6+world.clock/DAY_SEC*24)/24)+1)world.trader=d.trader;
   markRemoved(d.removed);markBrem(d.brem);markOres(d.ores,5);
@@ -6732,16 +6733,22 @@ function animalDamage(a,dmg,fx,fy){
     animals.splice(animals.indexOf(a),1);if(a.tame)saveWorld(true);
   }
 }
+function animalVoice(a,dt){   // 동물마다 가끔 제 목소리로 울어요 (가까이 있을 때만 들려요)
+  a.vt=(a.vt===undefined?3+Math.random()*12:a.vt)-dt;
+  if(a.vt>0)return;
+  a.vt=8+Math.random()*16;
+  if(mode==='play'&&Math.hypot(P.x-a.x,P.y-a.y)<260)SFX.animalCall(a.type,a.x,a.y);
+}
 function updateAnimals(dt){
   if(isGuest()){
-    for(const a of animals){const k=Math.min(1,dt*10);a.x+=(a.tx-a.x)*k;a.y+=(a.ty-a.y)*k;a.hurt-=dt;}
+    for(const a of animals){const k=Math.min(1,dt*10);a.x+=(a.tx-a.x)*k;a.y+=(a.ty-a.y)*k;a.hurt-=dt;animalVoice(a,dt);}
     return;
   }
   animT-=dt;if(animT<=0){animT=3;spawnAnimals();breedTick();}
   const pl=allPlayers();
   for(let i=animals.length-1;i>=0;i--){
     const a=animals[i],T=ANIM_TYPES[a.type];
-    a.hurt-=dt;a.flee-=dt;if(a.mt>0)a.mt-=dt;
+    a.hurt-=dt;a.flee-=dt;if(a.mt>0)a.mt-=dt;animalVoice(a,dt);
     if(!pl.length||!pl.some(q=>Math.hypot(q.x-a.x,q.y-a.y)<800)){if(!a.tame)animals.splice(i,1);continue;}   // 길들인 가축은 사라지지 않아요
     if(a.tame){
       if(a.love>0){a.love-=dt;if(Math.random()<dt*1.2)parts.push({x:a.x,y:a.y-8,vx:(Math.random()-0.5)*14,vy:-14,life:0.8,c:'#ff6a8a'});}
@@ -7572,12 +7579,20 @@ const SFX=(()=>{
       });
     },
     // 동물이 맞는 소리
-    animal(ty,x,y){
+    animal(ty,x,y){   // 맞았을 때: 놀란 비명
       play('an',120,x,y,0.9,(t,v,r)=>{
-        if(ty==='cow'){tone(t,0.3,'sawtooth',150*r,100,v*0.2);tone(t,0.3,'sine',170*r,110,v*0.3);}
-        else if(ty==='chicken'){tone(t,0.12,'square',900*r,1400,v*0.08);tone(t+0.1,0.12,'square',1100*r,800,v*0.07);}
-        else if(ty==='penguin'){tone(t,0.2,'sawtooth',520*r,380,v*0.12);tone(t,0.2,'sine',640*r,420,v*0.15);}
-        else tone(t,0.1,'triangle',1500*r,2200,v*0.12);
+        if(ty==='cow'){tone(t,0.45,'sawtooth',210*r,120,v*0.26);tone(t,0.45,'sine',250*r,130,v*0.34);tone(t+0.05,0.3,'square',420*r,200,v*0.05);}
+        else if(ty==='chicken'){for(let i=0;i<4;i++)tone(t+i*0.07,0.08,'square',(1100+i*140)*r,(1500+i*100),v*0.09);noise(t,0.3,'bandpass',2400,1600,1,v*0.12);}
+        else if(ty==='penguin'){tone(t,0.28,'sawtooth',700*r,420,v*0.15);tone(t,0.28,'square',880*r,500,v*0.05);tone(t+0.12,0.2,'sawtooth',640*r,380,v*0.12);}
+        else{tone(t,0.07,'triangle',2400*r,3200,v*0.14);tone(t+0.07,0.07,'triangle',2800*r,3600,v*0.12);tone(t+0.14,0.07,'triangle',2400*r,3000,v*0.1);}
+      });
+    },
+    animalCall(ty,x,y){   // 평소 울음소리: 소 음메, 닭 꼬꼬, 새 짹짹, 펭귄 꽥
+      play('ac',350,x,y,0.7,(t,v,r)=>{
+        if(ty==='cow'){tone(t,0.7,'sawtooth',120*r,95,v*0.16,0.08);tone(t,0.7,'sine',150*r,105,v*0.26,0.08);tone(t+0.1,0.5,'triangle',300*r,210,v*0.05,0.1);}
+        else if(ty==='chicken'){tone(t,0.09,'square',620*r,900,v*0.07);tone(t+0.13,0.09,'square',700*r,980,v*0.07);tone(t+0.26,0.16,'square',820*r,600,v*0.06);noise(t,0.35,'bandpass',1800,1400,1,v*0.05);}
+        else if(ty==='penguin'){tone(t,0.35,'sawtooth',420*r,360,v*0.1,0.03);tone(t,0.35,'square',560*r,470,v*0.04,0.03);tone(t+0.4,0.2,'sawtooth',380*r,320,v*0.08);}
+        else{const b=1900+Math.random()*700;for(let i=0;i<3;i++)tone(t+i*0.11,0.08,'sine',b*r,b*1.5*r,v*0.12);}
       });
     },
     // 내가 맞는 소리
@@ -9662,7 +9677,7 @@ function chatSend(t){
 }
 function chatAdd(id,name,t){
   t=chatClean(t);if(!t)return;chatUI();
-  name=String(name||'').slice(0,12)||'???';
+  name=String(name||'').slice(0,15)||'???';
   const d=document.createElement('div');d.innerHTML=`<b>${esc(name)}</b>${esc(t)}`;
   chatEl.appendChild(d);while(chatEl.children.length>8)chatEl.firstChild.remove();
   setTimeout(()=>d.classList.add('old'),12000);
@@ -9701,12 +9716,13 @@ function spiritsRise(){   // 우주선의 굉음에 각 섬의 고대 정령(보
   if(n){achQ.push({h:'🚀 우주선의 굉음',name:'주변 섬의 고대 정령들이 땅 속에서 나왔어요!'});bcastAll({t:'spirits'});}
 }
 function updateEscape(dt){
+  if(world.voidShip&&!world.pilot&&world.esc.ph==='idle'){world.esc={ph:'landed',t:0,sx:world.voidShip.x,sy:world.voidShip.y,v:1};escSend();return;}
   const e=world.esc;if(e.ph==='idle')return;
   const t0=e.t;e.t+=dt;
   if(e.ph==='calling'&&!sgAt(e.gx,e.gy)){world.esc={ph:'idle',t:0};escSend();return;}   // 신호기가 없어지면 취소
   if(e.ph==='calling'&&e.t>=CALL_T){e.ph='landing';e.t=0;escSend();spiritsRise();}
   else if(e.ph==='landing'&&e.t>=LAND_T){e.ph='landed';e.t=0;escSend();}
-  else if(e.ph==='landed'&&e.t>=STAY_T){e.ph='leaving';e.t=0;escSend();}
+  else if(e.ph==='landed'&&!e.v&&e.t>=STAY_T){e.ph='leaving';e.t=0;escSend();}
   else if(e.ph==='leaving'&&e.t>=LEAVE_T){world.esc={ph:'idle',t:0};escSend();}
   else if(((e.t)|0)!==((t0)|0))escSend();
 }
@@ -9730,6 +9746,7 @@ function drawSpaceship(g,s){
   if(s.fl){const f=((time*20)|0)&1;g.fillStyle='#ff9a2e';g.fillRect(x-9,ly-3,6,5+f*2);g.fillRect(x+3,ly-3,6,5+f*2);g.fillStyle='#ffe27a';g.fillRect(x-8,ly-3,4,3+f);g.fillRect(x+4,ly-3,4,3+f);}
 }
 function boardShip(){
+  if(world.esc&&world.esc.v){P.hold=false;showEnding(1);return;}
   if(isGuest())sendHost({t:'escb'});else{world.escaped=true;saveWorld(true);}
   P.hold=false;achGrant('escape');showEnding();
 }
@@ -9749,6 +9766,21 @@ function esTxt(){
     no:[L('e','그래? 아까는 따분하다고 하지 않았나?'),L('p','그래도 보고 싶은 사람들이 있어, 그들을 만나야 해.'),L('e','그러면 다시 은하 제국으로 돌아가 살겠다는 것인가?'),L('p','살겠다고는 안 했어. 언젠가는 다시 찾아갈 거야.'),L('e','그때도 내가 데려가 주지.'),L('p','고마워, 친구.')],
     no2:[L('e','여기가 그 행성인가?'),L('p','그래, 확실해.'),L('e','세월은 지나도 자네의 호기심은 지나지 않을 거라는 걸 명심해.'),L('p','나도 잘 알아, 언젠가는 내 작은 왕국에 초대해 주지.')]
   };
+}
+function esVoidTxt(){
+  const br=(settings.endBr&&settings.endBr[invKey()])||'no';
+  const L=(w,t)=>({w,t});
+  return [L('e','우주에서 누가 돌아왔게?'),L('p','너야?'),L('e','그래, 초록색 외계인이 돌아왔다!'),L('p','영상 좀 그만 보라니까 이 친구야'),
+    L('e','친구, 멋지던데? 제국에서 공허의 빛을 보고 황급히 달려왔지'),L('p','거기까지 공허가 미쳤나?'),
+    L('e','그래 시민들은 공포에 질렸지만 나는 너가 할 수 있다는 걸 알았지'),L('p','그런데 왜 이 행성에 그 대단한 것이 있는 거지?'),
+    L('e','이 행성은 그저 원시행성이 아니야'),L('p','물론 그렇겠지, 던전도 있고 섬도 인간의 흔적이 보이니까'),
+    L('e','이 행성은 어쩌면 인류가 은하계를 개척하기 전, 고대에 개척되었던 행성일 거야.'),L('p','잘은 모르겠지만 아주 오래전부터 인류가 살아왔다는 느낌이 드는 군'),
+    L('e','그래, 자네도 느낄거야. 이제 자네는 자네의 행성을 재건했지'),L('p','이제야 이 왕국을 비로소 나의 것으로 만들었다고 느껴지는 군,'),
+    L('e','그래, 자네는 내 친구들 중에서 가장 대단하네'),L('p','그야 당연히 자네는 친구가 한 명 밖에 없으니까,'),
+    L('p',br==='yes'?'자네, 오늘은 약속 같은 거 없겠지?':'나도 이번에 딱히 만날 사람은 없을 거 같군. 자네는 빼고 말이야'),
+    L('e','당연하지, 이번엔 나도 동행하겠네, 이 왕국의 군주의 친구로써'),L('p','너는 이 왕국 최고의 시민이야'),
+    L('e','그것도 당연하지, 이 왕국에는 시민이 나 밖에 없으니까 이 왕아'),L('p','이렇게 되돌려주다니 너의 유머감각이 감동스럽군'),
+    L('e','시답잖은 소리말고 어서 이 왕국의 안내나 해주세요'),L('p','그래, 나의 작은 왕국을 보여주겠네')];
 }
 function esDraw(g,mode,tm,who,old){
   const W2=256,H2=144,P=ES_PAL[mode==='B'?'dawn':'dusk'];
@@ -9779,12 +9811,12 @@ function esDraw(g,mode,tm,who,old){
   g.restore();
   g.fillStyle='rgba(8,12,24,0.35)';g.fillRect(58,121,26,2);g.fillRect(158,121,34,2);
 }
-function showEnding(){
-  const T=esTxt(),el=$('#ending'),day=dayNow(),isl=world.disc.filter((v,i)=>i>0&&v).length,tot=world.islands.length-1,ach=Object.keys(settings.ach).length;
+function showEnding(V){
+  const T=V?{main:esVoidTxt()}:esTxt(),el=$('#ending'),day=dayNow(),isl=world.disc.filter((v,i)=>i>0&&v).length,tot=world.islands.length-1,ach=Object.keys(settings.ach).length;
   el.classList.add('scene','on');
   el.innerHTML='<canvas id="escv" width="256" height="144"></canvas><div id="esbox"><div class="who"></div><div class="tx"></div><div class="nx">▼</div></div>';
   const cv=$('#escv'),g=cv.getContext('2d'),box=$('#esbox'),whoEl=box.querySelector('.who'),txEl=box.querySelector('.tx'),nx=box.querySelector('.nx');
-  let q=T.main.slice(),cur=null,pos=0,done=true,mode2='A',old=false,fade=0,fadeTxt='',busy=false,alive=true,after='',branch='';
+  let q=T.main.slice(),cur=null,pos=0,done=true,mode2=V?'B':'A',old=false,fade=0,fadeTxt='',busy=false,alive=true,after='',branch='';
   const t0=performance.now();
   const NAME={e:'외계인 조종사',p:'나'};
   const loop=()=>{if(!alive)return;const tm=(performance.now()-t0)/1000;esDraw(g,mode2,tm,cur&&!done?cur.w:(cur?cur.w:''),old);
@@ -9794,6 +9826,14 @@ function showEnding(){
   const typeT=setInterval(()=>{if(!cur||done||busy)return;pos+=1;txEl.textContent=cur.t.slice(0,pos);const ch=cur.t[pos-1];if(ch&&ch!==' '&&(pos%2===0))SFX.blip(cur.w);if(pos>=cur.t.length){done=true;nx.style.display='';}},34);
   const finish=()=>{
     alive=false;clearInterval(typeT);document.removeEventListener('keydown',onKey,true);
+    if(V){
+      const bs=(stObj().boss|0);
+      el.classList.remove('scene');
+      el.innerHTML=`<div class="endbox"><h1>공허를 넘어서</h1><p>공허의 군주가 무너지자 하늘의 균열이 닫혔다.<br>여덟 유물의 빛이 하나로 모여 이 행성의 새벽을 밝혔다.<br>우주선에서 내린 외계인 조종사가 당신의 곁에 섰다.</p><div class="endstat">생존 ${day}일 · 쓰러뜨린 보스 ${bs}마리 · 업적 ${ach} / ${ACH.length}</div><button class="btn" id="endok">계속 플레이</button><p class="hint">조종사는 이제 당신을 따라다니며 같이 싸워 줘요.</p></div>`;
+      $('#endok').onclick=()=>{el.classList.remove('on');if(isGuest())sendHost({t:'pjoin'});else hostPilotJoin();};
+      return;
+    }
+    {const k=invKey();if(k){const o=(settings.endBr=settings.endBr&&typeof settings.endBr==='object'?settings.endBr:{});o[k]=branch==='yes'?'yes':'no';saveSettings();}}
     const title=branch==='yes'?'이 행성에 남다':'다시 만날 날까지';
     el.classList.remove('scene');
     el.innerHTML=`<div class="endbox"><h1>${title}</h1><p>${branch==='yes'?'우주선은 약속을 안고 하늘 너머로 떠났다.<br>이 행성은 이제 당신의 작은 왕국이다.':'당신은 보고 싶은 사람들에게 돌아갔다가, 세월이 흐른 뒤 다시 이 행성을 찾았다.<br>작은 왕국은 그대로 당신을 기다리고 있었다.'}</p><p class="hint">우주선의 굉음으로 주변 섬의 고대 정령들이 땅 속에서 나왔다.</p><div class="endstat">생존 ${day}일 · 발견한 섬 ${isl} / ${tot} · 업적 ${ach} / ${ACH.length}</div><button class="btn" id="endok">계속 플레이</button><p class="hint">이후에도 이 행성에서 자유롭게 계속 플레이할 수 있어요.</p></div>`;
@@ -9811,7 +9851,7 @@ function showEnding(){
     if(cur&&!done){pos=cur.t.length;txEl.textContent=cur.t;done=true;nx.style.display='';return;}
     if(!q.length){
       if(after==='skip'){return;}
-      if(!branch&&T.main){cur=null;choose();return;}
+      if(!V&&!branch&&T.main){cur=null;choose();return;}
       if(branch==='no'&&!after){after='skip';busy=true;fade=0;
         const iv=setInterval(()=>{fade+=0.05;if(fade>=1.4){clearInterval(iv);mode2='B';old=true;fadeTxt='';setTimeout(()=>{const iv2=setInterval(()=>{fade-=0.05;if(fade<=0){clearInterval(iv2);fade=0;busy=false;after='no2';q=T.no2.slice();next();}},40);},500);}},40);
         fadeTxt='그리고 시간이 흘러…';return;}
@@ -10146,7 +10186,7 @@ function bossRun(m,dt,pl,best){
 }
 
 /* ===== 공허의 군주 (유물 8개 → 열쇠 2개 → 공허의 핵) ===== */
-const VOID_MSG={sum:['🌑 공허의 문','공허의 군주가 나타났어요!'],gone:['🌑 공허의 문','공허의 군주가 사라졌어요'],nope:['🌑 공허의 핵','여기서는 쓸 수 없어요'],live:['🌑 공허의 핵','공허의 군주가 이미 나타났어요'],cool:['🌑 공허의 핵','공허의 문이 아직 닫혀 있어요'],night:['🌑 공허의 핵','밤에만 쓸 수 있어요'],ritual:['🌑 공허의 의식','원 안에서 버텨요! 몬스터를 모두 쓰러뜨려야 해요'],ritfail:['🌑 공허의 의식','의식이 흩어졌어요'],shield:['🌑 공허의 군주','공허의 보호막! 하수인을 먼저 쓰러뜨리세요'],win:['🏆 공허의 군주','공허의 군주를 다시 쓰러뜨렸어요!']};
+const VOID_MSG={sum:['🌑 공허의 문','공허의 군주가 나타났어요!'],gone:['🌑 공허의 문','공허의 군주가 사라졌어요'],nope:['🌑 공허의 핵','여기서는 쓸 수 없어요'],live:['🌑 공허의 핵','공허의 군주가 이미 나타났어요'],cool:['🌑 공허의 핵','공허의 문이 아직 닫혀 있어요'],night:['🌑 공허의 핵','밤에만 쓸 수 있어요'],ritual:['🌑 공허의 의식','원 안에서 버텨요! 몬스터를 모두 쓰러뜨려야 해요'],ritfail:['🌑 공허의 의식','의식이 흩어졌어요'],shield:['🌑 공허의 군주','공허의 보호막! 하수인을 먼저 쓰러뜨리세요'],win:['🏆 공허의 군주','공허의 군주를 다시 쓰러뜨렸어요!'],ship:['🚀 우주선','공허의 군주를 쓰러뜨리자 우주선이 내려와요! F로 올라타요']};
 function voidBanner(k){const m=VOID_MSG[k];if(m)achQ.push({h:m[0],name:m[1]});}
 function relicGot(id){achGrant('relic_1');if(achMark('relic',id)>=RELICS.length)achGrant('relic_all');}
 function useVoidCore(){
@@ -10155,7 +10195,7 @@ function useVoidCore(){
   if(isGuest()){sendHost({t:'voidsum'});return;}
   voidSummon(P.x,P.y);
 }
-const RIT_R=190,RIT_T=50,RIT_WAVES=[[0,3,['wolf','spirit']],[14,4,['wolf','spirit','scorpion']],[28,4,['spirit','golem','croc']],[42,5,['golem','croc','spirit']]];
+const RIT_R=190,RIT_T=84,RIT_WAVES=[[0,4,['wolf','spirit']],[14,5,['wolf','spirit','scorpion']],[28,5,['spirit','golem','croc']],[42,6,['golem','croc','spirit']],[56,6,['golem','croc','scorpion','spirit']],[70,7,['golem','croc','spirit','scorpion']]];
 let ritV=null;
 function voidSummon(px,py){
   if((DUN&&dunFloorAt(px,py))||(world.vill>=0&&isleNear(px,py)===world.vill)){if(isHost())bcastAll({t:'voidmsg',k:'nope'});voidBanner('nope');return;}
@@ -10221,6 +10261,44 @@ function voidWatch(pl){
     voidBanner('gone');if(isHost())bcastAll({t:'voidmsg',k:'gone'});
   }
 }
+function voidShipCall(x,y){   // 공허의 군주를 처음 쓰러뜨리면 우주선이 위에서 내려와요
+  world.voidShip={x:Math.round(x),y:Math.round(y)};
+  world.esc={ph:'landing',t:0,sx:world.voidShip.x,sy:world.voidShip.y,v:1};
+  voidBanner('ship');if(isHost())bcastAll({t:'voidmsg',k:'ship'});escSend();saveWorld(true);
+}
+function hostPilotJoin(){   // 조종사가 일행이 되고 우주선은 떠나요
+  if(world.pilot)return;
+  world.pilot=true;world.voidShip=null;
+  if(world.esc&&world.esc.v&&world.esc.ph!=='idle'){world.esc.ph='leaving';world.esc.t=0;escSend();}
+  saveWorld(true);
+}
+let PIL=null;
+const PIL_COL={a:'#7ad08a',g:'#4aa86a',s:'#2a6a44',k:'#0a0c16',m:'#2a6a44',h:'#46557d',b:'#9ad0ff',d:'#2a3248'};
+let pilSpr=null;
+function pilotTick(dt){   // 우주선 조종사: 플레이어를 따라다니며 몬스터와 같이 싸워요
+  if(isGuest()){const p=world.pilE;if(p&&p.tx!==undefined){const k=Math.min(1,dt*10);p.x+=(p.tx-p.x)*k;p.y+=(p.ty-p.y)*k;if(p.sw>0)p.sw-=dt;}return;}
+  if(!world.pilot){PIL=null;world.pilE=null;return;}
+  const pl=allPlayers();if(!pl.length)return;
+  if(!PIL){PIL={x:pl[0].x-14,y:pl[0].y+4,f:1,at:0,sw:0,mv:0,tb:0};}
+  world.pilE=PIL;
+  let np=pl[0],nd=1e9;for(const p of pl){const d=Math.hypot(p.x-PIL.x,p.y-PIL.y);if(d<nd){nd=d;np=p;}}
+  if(nd>260){PIL.x=np.x-14;PIL.y=np.y+4;}
+  let tm=null,bd=120;
+  for(const m of monsters){if(m.burn||m.dead||m.hp<=0||m.hid)continue;if(Math.hypot(m.x-np.x,m.y-np.y)>150)continue;const d=Math.hypot(m.x-PIL.x,m.y-PIL.y);if(d<bd){bd=d;tm=m;}}
+  const gx=tm?tm.x:np.x-14,gy=tm?tm.y:np.y+4,stop=tm?14:22;
+  const dx=gx-PIL.x,dy=gy-PIL.y,d=Math.hypot(dx,dy);PIL.mv=0;
+  if(d>stop){const sp=(tm?86:78)*dt,nx=PIL.x+dx/d*sp,ny=PIL.y+dy/d*sp;if(walkable(nx,PIL.y))PIL.x=nx;if(walkable(PIL.x,ny))PIL.y=ny;PIL.mv=1;if(Math.abs(dx)>1)PIL.f=dx>0?1:-1;}
+  PIL.at-=dt;if(PIL.sw>0)PIL.sw-=dt;
+  if(tm&&Math.hypot(tm.x-PIL.x,tm.y-PIL.y)<=22&&PIL.at<=0){PIL.at=0.75;PIL.sw=0.25;PIL.f=tm.x>=PIL.x?1:-1;monsterDamage(tm,tm.boss?4:6,PIL.x,PIL.y,'',0);SFX.weaponHit&&SFX.weaponHit(PIL.x,PIL.y);}
+  PIL.tb-=dt;if(PIL.tb<=0&&net.role){PIL.tb=0.1;bcastAll({t:'pil',x:Math.round(PIL.x*10)/10,y:Math.round(PIL.y*10)/10,f:PIL.f,w:PIL.mv,s:PIL.sw>0?1:0});}
+}
+function drawPilot(g,o){
+  if(!pilSpr){pilSpr=document.createElement('canvas');pilSpr.width=12;pilSpr.height=14;const c=pilSpr.getContext('2d');for(let r2=0;r2<ES_ALIEN.length;r2++)for(let c2=0;c2<12;c2++){const ch=ES_ALIEN[r2][c2];if(ch==='.')continue;c.fillStyle=PIL_COL[ch];c.fillRect(c2,r2,1,1);}}
+  const x=Math.round(o.x),y=Math.round(o.y),bob=(o.mv||o.w)?(((time*10)|0)&1):0,f=o.f>=0?1:-1;
+  g.fillStyle='rgba(8,12,24,0.35)';g.fillRect(x-5,y-1,10,2);
+  g.save();g.translate(x,y-14-bob);if(f<0){g.translate(12-6,0);g.scale(-1,1);g.translate(-6,0);}else g.translate(-6,0);g.drawImage(pilSpr,0,0);g.restore();
+  if(o.sw>0||o.s){g.fillStyle='#ffffff';const sx=x+f*9;g.fillRect(sx-1,y-10,2,1);g.fillRect(sx,y-9,2,1);g.fillRect(sx+f,y-8,2,1);}
+}
 function voidWin(m){
   const first=!world.voidWon;world.voidWon=(world.voidWon|0)+1;world.voidBD=dayNow();
   for(const q of monsters)if(q.of===m.id&&!q.burn)q.burn=0.001;
@@ -10229,7 +10307,7 @@ function voidWin(m){
   for(let rr=0;rr<4*pn;rr++)for(const q of lootTable(Math.random)){if(q)spawnWorldDrop(q.id,q.n,m.x+(Math.random()-0.5)*24,m.y+(Math.random()-0.5)*10);}
   saveWorld(true);
   achAll('void_kill');
-  if(first){if(isHost())bcastAll({t:'voidend',day:dayNow()});showTrueEnding(dayNow());}
+  if(first)voidShipCall(m.x,m.y);
   else{voidBanner('win');if(isHost())bcastAll({t:'voidmsg',k:'win'});}
 }
 function showTrueEnding(day){
@@ -10320,6 +10398,7 @@ function drawBossFx(g,m){
   }
 }
 function updateMonsters(dt){
+  pilotTick(dt);
   if(isGuest()){
     for(const m of monsters){const k=Math.min(1,dt*10);m.x+=(m.tx-m.x)*k;m.y+=(m.ty2-m.y)*k;m.hurt-=dt;if(m.pat)m.pt=(m.pt||0)+dt;}
     return;
@@ -10341,6 +10420,7 @@ function updateMonsters(dt){
     const m=monsters[i],T=MT(m);m.born+=dt;m.cd-=dt;m.hurt-=dt;
     if(!night&&!m.burn&&!T.persist)m.burn=0.001;
     if(m.burn){m.burn+=dt;if(m.burn>1.3)monsters.splice(i,1);continue;}
+    if(m.boss&&!m.void&&!m.dun&&pl.length&&!pl.some(p=>Math.abs(p.x-m.x)<700&&Math.abs(p.y-m.y)<700)){m.cd=Math.max(m.cd,1);continue;}   // 멀리 있는 섬의 보스는 가까이 갈 때까지 잠들어 있어요 (계산을 아껴요)
     if(m.dotT>0||m.slowT>0){dotTick(m,dt);if(m.burn)continue;}
     if(m.ty==='gship'){gsTick(m,dt,pl);continue;}
     if(m.stun>0&&!(m.boss&&m.pat)){
@@ -11840,7 +11920,7 @@ function onHostData(c,d){
   if(d.t==='pos'&&Number.isFinite(d.x)&&Number.isFinite(d.y)){
     let r=remotes.get(c.peer);
     if(!r){r={x:d.x,y:d.y,tx:d.x,ty:d.y,f:1,m:0,walk:0,suit:suitOf(c.peer)};remotes.set(c.peer,r);}
-    r.tx=d.x;r.ty=d.y;r.f=d.f===-1?-1:1;r.m=d.m?1:0;r.dead=d.d?1:0;r.sleep=!!d.s;r.boat=!!d.b;r.horse=!!d.h;r.air=!!d.a;r.name=String(d.n||r.name||'').slice(0,12);r.down=!!d.dn;r.wk=String(d.w||'').slice(0,12);r.sk=cleanLook(d.k);if(r.sleep){r.x=d.x;r.y=d.y;}
+    r.tx=d.x;r.ty=d.y;r.f=d.f===-1?-1:1;r.m=d.m?1:0;r.dead=d.d?1:0;r.sleep=!!d.s;r.boat=!!d.b;r.horse=!!d.h;r.air=!!d.a;r.name=String(d.n||r.name||'').slice(0,15);r.down=!!d.dn;r.wk=String(d.w||'').slice(0,12);r.sk=cleanLook(d.k);if(r.sleep){r.x=d.x;r.y=d.y;}
   }else if(d.t==='chat'){
     const r=remotes.get(c.peer),t=chatClean(d.x),now=performance.now();
     if(t&&r&&!(r._ct>now-500)){r._ct=now;const n=r.name||'손님';chatAdd(c.peer,n,t);bcastAll({t:'chat',id:c.peer,n,x:t},c);}
@@ -11989,6 +12069,7 @@ function onHostData(c,d){
     const b=world.sgrid.get((d.gy|0)*GW+(d.gx|0)),r=remotes.get(c.peer);
     if(b&&b.id==='beacon'&&r&&Math.hypot(r.x-b.x,r.y-b.y)<=60)callShip(b);
   }else if(d.t==='voidsum'){const r=remotes.get(c.peer);if(r&&!r.dead)voidSummon(r.x,r.y);
+  }else if(d.t==='pjoin'){hostPilotJoin();
   }else if(d.t==='escb'){world.escaped=true;saveWorld(true);
   }else if(d.t==='ctlc'){
     const b=world.sgrid.get((d.gy|0)*GW+(d.gx|0)),r=remotes.get(c.peer);
@@ -12098,7 +12179,7 @@ async function guestHandle(d){
       seen.add(p.id);
       let r=remotes.get(p.id);
       if(!r){r={x:p.x,y:p.y,tx:p.x,ty:p.y,f:1,m:0,walk:0,suit:suitOf(p.id)};remotes.set(p.id,r);}
-      r.tx=p.x;r.ty=p.y;r.f=p.f===-1?-1:1;r.m=p.m?1:0;r.dead=p.d?1:0;r.sleep=!!p.s;r.boat=!!p.b;r.horse=!!p.h;r.air=!!p.a;r.name=String(p.n||'').slice(0,12);r.down=!!p.dn;r.wk=String(p.w||'').slice(0,12);r.sk=cleanLook(p.k);if(r.sleep){r.x=p.x;r.y=p.y;}
+      r.tx=p.x;r.ty=p.y;r.f=p.f===-1?-1:1;r.m=p.m?1:0;r.dead=p.d?1:0;r.sleep=!!p.s;r.boat=!!p.b;r.horse=!!p.h;r.air=!!p.a;r.name=String(p.n||'').slice(0,15);r.down=!!p.dn;r.wk=String(p.w||'').slice(0,12);r.sk=cleanLook(p.k);if(r.sleep){r.x=p.x;r.y=p.y;}
     }
     for(const id of [...remotes.keys()])if(!seen.has(id))remotes.delete(id);
   }else if(d.t==='mons'){
@@ -12132,6 +12213,7 @@ async function guestHandle(d){
   else if(d.t==='esc'){if(d.e&&typeof d.e.ph==='string')world.esc=d.e;}
   else if(d.t==='kill'){if(typeof d.ty==='string')achKill(d.ty);}
   else if(d.t==='voidend'){showTrueEnding(d.day|0);}
+  else if(d.t==='pil'){if(!world.pilE)world.pilE={x:+d.x,y:+d.y};const p=world.pilE;p.tx=+d.x;p.ty=+d.y;p.f=d.f===-1?-1:1;p.w=d.w?1:0;if(d.s)p.sw=0.25;}
   else if(d.t==='voidmsg'){voidBanner(d.k);}
   else if(d.t==='spirits'){achQ.push({h:'🚀 우주선의 굉음',name:'주변 섬의 고대 정령들이 땅 속에서 나왔어요!'});}
   else if(d.t==='rit'){ritV=d.on?{x:+d.x||0,y:+d.y||0}:null;}
@@ -12179,7 +12261,7 @@ async function guestHandle(d){
   else if(d.t==='pfly'){if(d.by!==net.id&&POT[d.id]&&Number.isFinite(d.tx)&&Number.isFinite(d.ty))potFlyAdd(d.id,+d.sx||0,+d.sy||0,d.tx,d.ty);}
   else if(d.t==='pbuff'){if(POT[d.id])potBuffApply(d.id);}
   else if(d.t==='flagset'){const b=world.sgrid.get((d.gy|0)*GW+(d.gx|0));if(b&&b.id==='flag'){flagSet(b,d.nm,+d.ft||Date.now());if(mapOn)drawMap();}}
-  else if(d.t==='gbset'){const b=world.sgrid.get((d.gy|0)*GW+(d.gx|0));if(b&&b.id==='monument'&&Array.isArray(d.gb)){b.gb=d.gb.filter(q=>q&&typeof q.t==='string').slice(0,GB_MAX).map(q=>({n:String(q.n||'').slice(0,12),t:q.t.slice(0,40),d:q.d|0}));if(gbRd&&uiAlive('gbuid'))gbRd();}}
+  else if(d.t==='gbset'){const b=world.sgrid.get((d.gy|0)*GW+(d.gx|0));if(b&&b.id==='monument'&&Array.isArray(d.gb)){b.gb=d.gb.filter(q=>q&&typeof q.t==='string').slice(0,GB_MAX).map(q=>({n:String(q.n||'').slice(0,15),t:q.t.slice(0,40),d:q.d|0}));if(gbRd&&uiAlive('gbuid'))gbRd();}}
   else if(d.t==='aqset'){const b=world.sgrid.get((d.gy|0)*GW+(d.gx|0));if(b&&b.id==='aquarium'&&Array.isArray(d.aq))b.aq=d.aq.filter(id=>FISH.some(f=>f.id===id)).slice(0,6);}
   else if(d.t==='dunok'){dunArrive(d.k|0,d.dir);}
   else if(d.t==='doorset'){const b=world.sgrid.get((d.gy|0)*GW+(d.gx|0));if(b&&b.id==='door')b.op=d.op?1:0;}
@@ -12542,7 +12624,7 @@ function frRoom(){try{return (net.role==='host'&&net.addr)?net.addr:'';}catch(e)
 let ffRoomSent=null;
 function ffRoomSync(){try{const r=frRoom();if(r===ffRoomSent||!window.FFAuth||!FFAuth.setRoom)return;ffRoomSent=r;FFAuth.setRoom(r?{game:'beaconfall',code:r,path:'beaconfall/BEACONFALL-v0.4.html'}:null);}catch(e){}}
 /* 로그인했으면 계정 닉네임(사이트·다른 게임에서 바꾼 이름 포함)이 곧 내 이름이에요 */
-function ffNickSync(){try{if(!window.FFAuth||!FFAuth.user())return;const n=String(FFAuth.nickname()||'').trim().slice(0,12);if(n&&settings.pname!==n){settings.pname=n;saveSettings();}}catch(e){}}
+function ffNickSync(){try{if(!window.FFAuth||!FFAuth.user())return;const n=String(FFAuth.nickname()||'').trim().slice(0,15);if(n&&settings.pname!==n){settings.pname=n;saveSettings();}}catch(e){}}
 window.addEventListener('ff-nick',ffNickSync);
 setInterval(()=>{ffRoomSync();ffNickSync();},2000);
 async function frTrack(force){
