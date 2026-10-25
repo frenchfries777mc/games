@@ -6,19 +6,19 @@
  "versions": [
   {
    "version": "0.2",
-   "build": 47,
+   "build": 50,
    "date": "2026-10-25",
    "file": "play/",
    "title": "갈라진 길",
-   "summary": "장마다 다른 수수께끼와 지도 짜임·크기, 과장된 적 동작, 하얀 대검",
+   "summary": "장마다 다른 수수께끼와 지도 짜임·크기, 갈림길 중간 보스, 주간 원정, 겉모습 꾸미기",
    "latest": true,
    "size": 0
   },
   {
    "version": "0.1",
-   "build": 45,
+   "build": 46,
    "date": "2026-10-24",
-   "file": "play/",
+   "file": "v0.1/",
    "title": "첫 서약",
    "summary": "네 역할, 여덟 장의 이야기, 끝없는 심연, 친구 초대 멀티플레이가 있는 첫 공개",
    "latest": false,
