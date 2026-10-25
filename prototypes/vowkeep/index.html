@@ -5,5 +5,16 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <script>(function(){var q=location.search||'',to=/[?&]join=/.test(q)?'../../vowkeep/play/':'../../vowkeep/';location.replace(to+q+(location.hash||''));})();</script>
 <noscript><meta http-equiv="refresh" content="0; url=../../vowkeep/"></noscript>
+<script src="https://frenchfries777mc.github.io/games/ff-lang.js"></script>
 <style>html,body{margin:0;height:100%;background:#0b0910;color:#efe3c8;font-family:system-ui,sans-serif;display:flex;align-items:center;justify-content:center}a{color:#ffd36b}</style>
-</head><body><p>Vowkeep이 새 주소로 옮겼어요. <a href="../../vowkeep/">새 주소로 가기</a></p></body></html>
+</head><body><p id="m">Vowkeep이 새 주소로 옮겼어요. <a href="../../vowkeep/">새 주소로 가기</a></p>
+<script>(function(){
+// 사이트 공용 언어(FFLang)를 따라 안내 문구를 바꿔요 (없으면 브라우저 언어, 표에 없으면 영어)
+var T={en:["Vowkeep has moved to a new address.","Go to the new address"],es:["Vowkeep se ha mudado a una nueva dirección.","Ir a la nueva dirección"],fr:["Vowkeep a déménagé à une nouvelle adresse.","Aller à la nouvelle adresse"],de:["Vowkeep ist unter eine neue Adresse umgezogen.","Zur neuen Adresse"],ja:["Vowkeepは新しいアドレスに移りました。","新しいアドレスへ"],zh:["Vowkeep 已迁移到新地址。","前往新地址"],pt:["O Vowkeep mudou para um novo endereço.","Ir para o novo endereço"],ru:["Vowkeep переехал на новый адрес.","Перейти на новый адрес"],tr:["Vowkeep yeni bir adrese taşındı.","Yeni adrese git"],it:["Vowkeep si è trasferito a un nuovo indirizzo.","Vai al nuovo indirizzo"],pl:["Vowkeep przeniósł się pod nowy adres.","Przejdź pod nowy adres"],ar:["انتقلت Vowkeep إلى عنوان جديد.","الانتقال إلى العنوان الجديد"],nw:["Vowkeep has gone to a new address.","Go to new address"],gk:["Vowkeep 이 새 주소 로 옮겼어요.","새 주소 로 가기"]};
+var l=null;try{l=window.FFLang&&FFLang.get();}catch(e){}
+if(!l){try{l=String(navigator.language||'ko').toLowerCase().split('-')[0];}catch(e){}}
+var t=T[l];if(!t)return;
+var p=document.getElementById('m');p.textContent='';p.appendChild(document.createTextNode(t[0]+' '));
+var a=document.createElement('a');a.href='../../vowkeep/';a.textContent=t[1];p.appendChild(a);
+document.documentElement.lang=l;if(l==='ar')document.documentElement.dir='rtl';
+})();</script></body></html>
