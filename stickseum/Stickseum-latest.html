@@ -1320,7 +1320,8 @@ const WEAPONS = {
             desc:'데미지 34 · 쿨타임 0.55초 · 사거리 105 · 쇠스랑을 휘둘러 근접 공격'},
   pizarro: {id:'pizarro', name:'창',       emoji:'🪖', kind:'melee',    dmg:25, cd:0.6, range:160, shape:'spear', thrust:true, kbMult:2.6,
             desc:'데미지 25 · 쿨타임 0.6초 · 사거리 160 · 앞으로 창을 찔러 상대를 멀리 밀어냄 · 궁극기를 쓸수록 강해짐(죽으면 초기화)'},
-  puppeteer:{id:'puppeteer', name:'실 바늘', emoji:'🪆', kind:'gun', dmg:10, cd:0.6, bulletSpeed:1300, shape:'needle', hitR:14,
+  puppeteer:{id:'puppeteer', name:'실 바늘', emoji:'🪆', kind:'gun', dmg:10, cd:0.6, bulletSpeed:1300, life:0.85, shape:'needle', hitR:14,      // range 1100 (was 1560 with the default 1.2 s life)
+           
             desc:'데미지 10 · 쿨타임 0.6초 · 빠르게 날아가는 바늘 · 궁극기로 상대를 조종해 싸움'},
   kan:     {id:'kan',     name:'독침대롱', emoji:'🐸', kind:'gun',      dmg:5, cd:0.5, bulletSpeed:1500, shape:'blowgun', poison:1, hitR:10,
             desc:'데미지 5 · 쿨타임 0.5초 · 맞으면 독이 쌓임 (최대 4중첩, 중첩마다 초당 2 피해, 3초 지속, 맞을 때마다 시간 갱신) · 빠르게 날아가는 독침'},
@@ -1450,7 +1451,7 @@ const ULTS = {
 /* ================= GOLD & COSMETICS ================= */
 const SAVE_KEY='arenaClashSave_v1';
 window.addEventListener('DOMContentLoaded', ()=>{ const t=document.getElementById('buildTag'); if(t && typeof GAME_BUILD!=='undefined') t.textContent='v'+GAME_VERSION+' '+GAME_VERSION_NAME+' · '+GAME_BUILD.replace(/^build \S*-v(\d+)$/,'build $1'); });
-const KILL_GOLD=10, ASSIST_GOLD=3, ASSIST_WINDOW=10;
+const KILL_GOLD=5, ASSIST_GOLD=3, ASSIST_WINDOW=10;
 /* the purple currency: a kill gives SOUL_PER_KILL of them (an assist, a match end or practice give none); they are spent on random boxes only.
    To rename it change the name / icon / colour right here - every text, the shop and the kill feed read it from this one place. */
 const SOUL={name:'영혼석', icon:'💜', color:'#b86bff'};
@@ -1945,7 +1946,7 @@ function masteryInfo(wid){
   const cur=masteryXpForLevel(lv), next=masteryXpForLevel(lv+1);
   return {xp, lv, cur, next, frac:clamp((xp-cur)/(next-cur),0,1)};
 }
-function masteryReward(lv){ return 5*Math.min(lv,MASTERY_FLAT_FROM) + (lv===MASTERY_STAR_LV?50:0); }   // gold for reaching a level (Lv.10 adds a 50 gold bonus; from Lv.20 the reward stops growing)
+function masteryReward(lv){ return lv<=5 ? 10 : lv<=10 ? 20 : lv<=15 ? 30 : 45; }   // gold for reaching a level: Lv.1-5 10, 6-10 20, 11-15 30, 16 and up 45 (owner 10-25)
 function masteryCount(){ let n=0; for(const w of SELECTABLE_WEAPONS) if(masteryInfo(w).lv>=MASTERY_STAR_LV) n++; return n; }
 // only counts when the player really picked this weapon: the no-weapon modes (hot potato, hide & seek, survival, parkour) hand out bare hands
 function applyWeaponMastery(me, won, assists){
@@ -2322,7 +2323,7 @@ function seasonKeyOf(d){ d=d||new Date(); return d.getFullYear()+'-'+String(d.ge
 function seededRand(str){ let h=2166136261; for(let i=0;i<str.length;i++){ h^=str.charCodeAt(i); h=Math.imul(h,16777619); } return ()=>{ h+=0x6D2B79F5; let t=h; t=Math.imul(t^(t>>>15),t|1); t^=t+Math.imul(t^(t>>>7),t|61); return ((t^(t>>>14))>>>0)/4294967296; }; }
 function msToNextMonth(now){ now=now||new Date(); return new Date(now.getFullYear(), now.getMonth()+1, 1)-now; }
 // ---- missions ----
-const MISSION_REWARD={daily:{gold:30, sxp:30}, weekly:{gold:150, souls:5, sxp:120}};
+const MISSION_REWARD={daily:{gold:15, sxp:30}, weekly:{gold:50, souls:5, sxp:120}};
 const DAILY_POOL=[
   {t:'kills', ns:[3,5,8]}, {t:'wins', ns:[1]}, {t:'matches', ns:[2,3,4]}, {t:'damage', ns:[1000]}, {t:'assists', ns:[4]},
   {t:'kind', k:'gun', ns:[3,4]}, {t:'kind', k:'melee', ns:[3,4]}, {t:'mode', m:'conquest', ns:[1]}, {t:'mode', m:'team', ns:[1]}, {t:'mode', m:'ffa', ns:[1,2]}
@@ -2706,12 +2707,12 @@ function drawShineGlints(c, now, seed){                                         
 const SHOP_CATS=[['skin','스킨'],['tier','🎖️ 티어 전용'],['name','이름 색상'],['bcol','🎨 캐릭터 색'],['kfx','💥 킬 이펙트'],['pbg','🖼️ 프로필 바탕'],['pfr','🔲 프로필 테두리'],['emo','😀 이모트'],['pose','🏆 승리 포즈'],['box','🎁 상자']];
 /* ===== the random box and the daily reward =====
    The box costs BOX_PRICE souls (the purple currency that kills give, not gold) in the shop (the "🎁 상자" tab) and is opened there. One box gives one of:
-   10 / 20 / 30 / 50 gold, 40 xp for a random character, 40 player xp, or ONE skin that costs 400 gold or less (one you do not own yet).
+   30 / 40 / 50 gold, 40 xp for a random character, 40 player xp, or ONE skin that costs 400 gold or less (one you do not own yet).
    The chances are the weights below (the small gifts are common, the skin is rare).
    Once a day (the date of this device) a daily reward can be taken: one gift, small on purpose - 30 gold, 30 xp for a random character, 30 player xp or a random box. */
-const BOX_PRICE=10, BOX_SKIN_MAX_PRICE=400, BOX_XP=40, DAILY_XP=30, DAILY_GOLD=30;       // BOX_PRICE: in souls (the purple currency), not in gold
+const BOX_PRICE=10, BOX_SKIN_MAX_PRICE=400, BOX_XP=40, DAILY_XP=30, DAILY_GOLD=50;       // BOX_PRICE: in souls (the purple currency), not in gold
 const BOX_REWARDS=[
-  {kind:'gold', amount:10, w:14}, {kind:'gold', amount:20, w:12}, {kind:'gold', amount:30, w:9}, {kind:'gold', amount:50, w:6},
+  {kind:'gold', amount:30, w:16}, {kind:'gold', amount:40, w:14}, {kind:'gold', amount:50, w:11},
   {kind:'charxp', amount:BOX_XP, w:10}, {kind:'playerxp', amount:BOX_XP*2, w:10},
   {kind:'pickxp', amount:25, w:6}, {kind:'pickxp', amount:50, w:4}, {kind:'pickxp', amount:100, w:2},
   {kind:'soul', amount:5, w:13}, {kind:'soul', amount:10, w:9}, {kind:'soul', amount:15, w:7},
@@ -5040,7 +5041,7 @@ function shuffle(arr){ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.
 /* ===== the version of this file =====
    Players with different versions CAN meet and play together: the automatic matchmaking uses the same room names for every version (online-<mode>-<map>-<slot>), and nobody is refused because of a different build.
    The build is only sent along with the join message and the lobby (for information); the corner of the screen shows it. */
-const GAME_BUILD='build 2026-10-18-v373';
+const GAME_BUILD='build 2026-10-18-v375';
 const GAME_VERSION='0.8', GAME_VERSION_NAME='황금을 찾아서';   // 게임 버전 이름: versions.json의 title과 같게 (빌드마다 바꾸지 않음)
 const WEEKLY_EVENTS=[
   {id:'lowg',    name:'저중력 난투', desc:'몸이 둥실둥실, 중력이 약해진 난투', rules:{grav:0.6}},
@@ -9921,7 +9922,7 @@ function showMatchEndOverlay(resultText, winnerIds, forcedPick){
   try{ recordMatchSummary(pendingMatchSummary); }catch(e){} pendingMatchSummary=null;
   lastMastery=null;
   try{ lastMastery=applyWeaponMastery(me, !!(winnerIds && winnerIds.indexOf(myId)!==-1)); }catch(e){ console.error('[mastery]', e); }
-  if(gameMode==='raid' && raidAwards && raidAwards[myId]){ const g=raidAwards[myId]*25; addGold(g,'레이드 역할 보너스'); }
+  if(gameMode==='raid' && raidAwards && raidAwards[myId]){ const g=raidAwards[myId]*15; addGold(g,'레이드 역할 보너스'); }
   persistSave();
   { const won=!!(winnerIds && winnerIds.indexOf(myId)!==-1); lastMatchXp={kills:Math.max(0,lastKnownKills||0), finish:FINISH_XP, win:won?WIN_XP:0}; addXP(FINISH_XP+(won?WIN_XP:0)); }       // (finishing a match: 5 xp; winning it: 18 more)
   checkAchievements({me, won:!!(winnerIds && winnerIds.indexOf(myId)!==-1), mode:gameMode});
@@ -10998,7 +10999,7 @@ function rifleBarrageXs(ax){                // three missiles around the point
 function magiccardTarget(p, ax, ay){ return hasAim(ax,ay) ? pickTarget(p, ax, ay) : nearestEnemyOf(p); }
 const ARM_FIRE_ULTS={pistol:1, bazooka:1, shuriken:1};   // ultimates that arm the next shot: a click while holding the key also fires that shot at the click
 const ULT_IMPL = {
-  puppeteer(p,tSec,tMs){ spawnBullet(p, p.angle||0, {id:'puppeteer', bulletSpeed:1500, life:0.85, dmg:0, hitR:26}, {pthread:true, ult:true}); },
+  puppeteer(p,tSec,tMs){ spawnBullet(p, p.angle||0, {id:'puppeteer', bulletSpeed:1500, life:0.67, dmg:0, hitR:26}, {pthread:true, ult:true}); },
   kan(p,tSec,tMs){ p.kanWingsUntil=tSec+KAN_ULT_SEC; p.vy=-800; p.grounded=false; pushFx('skillring', p.x, p.y-40, tMs, {color:'#35d08a', r:90}); },
   pizarro(p,tSec,tMs){ const _heal=((p.pzStacks||0)>=PZ_MAX)?PZ_ULT_HEAL_MAX:PZ_ULT_HEAL; p.pzStacks=Math.min(PZ_MAX,(p.pzStacks||0)+1); { const before=p.hp; p.hp=Math.min(maxHpFor(p), p.hp+_heal); if(p.hp>before) pushFx('heal', p.x, p.y-70, tMs, {v:Math.round(p.hp-before)}); } pushFx('spark', p.x, p.y-60, tMs, {ang:-Math.PI/2, color:'#ffd34d'}); pushFx('skill', p.x, p.y-70, tMs, {color:'#ffd34d', name:'기세 '+p.pzStacks+'/'+PZ_MAX}); },
   pistol(p){ p.ultPending='pistol'; },
@@ -11412,7 +11413,7 @@ const SKILL_IMPL={
       pushFx('spark', tg.x, tg.y-60, tMs, {ang:-Math.PI/2, color:'#ffd0e6'}); pushFx('skillring', tg.x, tg.y-50, tMs, {color:'#ff9ecb', r:50});
       return true;
     }
-    spawnBullet(p, (hasAim(ax,ay)?aimAngleOf(p,ax,ay):(p.angle||0)), {id:'puppeteer', bulletSpeed:1400, life:0.75, dmg:0, hitR:18}, {pthread:true, sew:true});   // 바느질: the needle with the thread
+    spawnBullet(p, (hasAim(ax,ay)?aimAngleOf(p,ax,ay):(p.angle||0)), {id:'puppeteer', bulletSpeed:1400, life:0.57, dmg:0, hitR:18}, {pthread:true, sew:true});   // 바느질: the needle with the thread
     return true;
   },
   kan(p,tSec,tMs,ax){              // 독 두꺼비 함정: the toad is thrown the way 칸 faces, flies in an arc and turns the floor it lands on into a hidden poison floor
@@ -11551,7 +11552,7 @@ function abilityPreviewOps(action, p, mx, my){
   }
   if(action==='ultimate'){
     switch(w){
-      case 'puppeteer': ops.push(ray(ang, 1275)); break;
+      case 'puppeteer': ops.push(ray(ang, 1000)); break;
       case 'pistol': case 'bazooka': case 'shuriken': ops.push(ray(ang, 900)); ops.push(mark(cx+Math.cos(ang)*900, cy+Math.sin(ang)*900, 12)); break;
       case 'bow': for(const o of [-0.11,0,0.11]) ops.push(ray(ang+o, 800)); break;
       case 'boomerang': for(const o of [-0.6,-0.3,0,0.3,0.6]) ops.push(ray(ang+o, 520)); break;
@@ -11580,7 +11581,7 @@ function abilityPreviewOps(action, p, mx, my){
       case 'lightsaber': { const d=skillAimDir(p,mx); ops.push({t:'rect', x:d>0?p.x:p.x-120, y:p.y-90, w:120, h:90}); break; }
       case 'kurus': { const d=skillAimDir(p,mx); ops.push({t:'rect', x:d>0?p.x:p.x-DARK_SWORD_RANGE, y:p.y-90, w:DARK_SWORD_RANGE, h:90}); break; }
       case 'horemheb': ops.push(ray(ang, 740)); break;
-      case 'puppeteer': { const tg=p.sw && players[p.sw]; if(tg){ ops.push({t:'line', x1:p.x, y1:p.y-30, x2:tg.x, y2:tg.y-40}); ops.push(mark(tg.x, tg.y-40, 40)); } else ops.push(ray(ang, 1050)); break; }
+      case 'puppeteer': { const tg=p.sw && players[p.sw]; if(tg){ ops.push({t:'line', x1:p.x, y1:p.y-30, x2:tg.x, y2:tg.y-40}); ops.push(mark(tg.x, tg.y-40, 40)); } else ops.push(ray(ang, 800)); break; }
       case 'pizarro': ops.push(selfRing(70)); break;
       case 'shuriken': { const a=Math.atan2(my-cy, mx-p.x), best=skillMoveSpot(p, p.x+Math.cos(a)*230, p.y+Math.sin(a)*230); ops.push({t:'line', x1:p.x, y1:p.y-30, x2:best.x, y2:best.y-30, dash:true}); ops.push(mark(best.x, best.y-30, 20)); break; }
       case 'dagger': { const t=nearestEnemyOf(p); if(t && Math.hypot(t.x-p.x,t.y-p.y)<=330){ ops.push({t:'line', x1:cx, y1:cy, x2:t.x, y2:t.y-30, dash:true}); ops.push(mark(t.x, t.y-30, 40)); } break; }
@@ -12466,7 +12467,7 @@ function botWantsSkill(p, target, d, tSec){
     case 'lightsaber': return d<115;                                  // the thrust only reaches up close
     case 'pizarro': return hpFrac<0.7 && d<260;                                    // the rest: when hurt and the fight is close
     case 'horemheb': return d>=170 && d<=640 && Math.abs(target.y-p.y)<150;       // the throw: from a distance, on about the same level
-    case 'puppeteer': return sewActive(p,tSec) ? (tSec-(p.sewAt||0)>1.2 || hurt) : (d<850 && Math.abs(target.y-p.y)<220);       // the needle from a distance; pulled out after a short while
+    case 'puppeteer': return sewActive(p,tSec) ? (tSec-(p.sewAt||0)>1.2 || hurt) : (d<700 && Math.abs(target.y-p.y)<220);       // the needle from a distance; pulled out after a short while
     case 'bat': return botIncomingShot(p, 230);
     case 'boomerang': return d>380 || hurt;
     case 'shuriken': return (hurt && d<400) || (d>260 && d<460);
