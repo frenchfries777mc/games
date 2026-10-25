@@ -913,7 +913,6 @@ sting();})();</script>
   <div id="survivalLabel" style="display:none; position:absolute; top:56px; left:50%; transform:translateX(-50%); font-family:'JetBrains Mono',monospace; font-weight:700; font-size:14px; color:var(--text); background:rgba(20,23,31,.85); border:1px solid var(--line); border-radius:8px; padding:5px 14px; text-align:center;"></div>
   <div id="xmLabel" style="display:none; position:absolute; top:56px; left:50%; transform:translateX(-50%); font-family:'JetBrains Mono',monospace; font-weight:700; font-size:14px; color:var(--text); background:rgba(20,23,31,.85); border:1px solid var(--line); border-radius:8px; padding:5px 14px; white-space:nowrap; z-index:5;"></div>
   <div id="ctfLabel" style="display:none; position:absolute; top:56px; left:50%; transform:translateX(-50%); font-family:'JetBrains Mono',monospace; font-weight:700; font-size:14px; color:var(--text); background:rgba(20,23,31,.85); border:1px solid var(--line); border-radius:8px; padding:5px 14px; text-align:center;"></div>
-  <canvas id="ctfMini" width="320" height="110" style="display:none; position:absolute; top:56px; left:12px; background:rgba(14,18,26,.72); border:1px solid var(--line); border-radius:8px;"></canvas>
   <div id="diceBannerContainer" style="position:absolute; top:98px; left:50%; transform:translateX(-50%); display:flex; flex-direction:column; align-items:center; gap:8px; pointer-events:none;"></div>
   <div id="matchEndOverlay" style="display:none; position:fixed; inset:0; z-index:20; background:rgba(8,9,12,.9); align-items:center; justify-content:center; flex-direction:column; pointer-events:auto;">
     <div style="font-size:28px; font-weight:700; color:var(--accent-2); margin-bottom:18px; text-align:center; padding:0 20px;" id="matchEndText"></div>
@@ -1320,9 +1319,9 @@ const WEAPONS = {
             desc:'데미지 34 · 쿨타임 0.55초 · 사거리 105 · 쇠스랑을 휘둘러 근접 공격'},
   pizarro: {id:'pizarro', name:'창',       emoji:'🪖', kind:'melee',    dmg:25, cd:0.6, range:160, shape:'spear', thrust:true, kbMult:2.6,
             desc:'데미지 25 · 쿨타임 0.6초 · 사거리 160 · 앞으로 창을 찔러 상대를 멀리 밀어냄 · 궁극기를 쓸수록 강해짐(죽으면 초기화)'},
-  puppeteer:{id:'puppeteer', name:'실 바늘', emoji:'🪆', kind:'gun', dmg:10, cd:0.6, bulletSpeed:1300, life:0.85, shape:'needle', hitR:14,      // range 1100 (was 1560 with the default 1.2 s life)
+  puppeteer:{id:'puppeteer', name:'실 바늘', emoji:'🪆', kind:'gun', dmg:9, cd:0.6, bulletSpeed:1300, life:0.85, shape:'needle', hitR:14,      // range 1100 (was 1560 with the default 1.2 s life)
            
-            desc:'데미지 10 · 쿨타임 0.6초 · 빠르게 날아가는 바늘 · 궁극기로 상대를 조종해 싸움'},
+            desc:'데미지 9 · 쿨타임 0.6초 · 빠르게 날아가는 바늘 · 궁극기로 상대를 조종해 싸움'},
   kan:     {id:'kan',     name:'독침대롱', emoji:'🐸', kind:'gun',      dmg:5, cd:0.5, bulletSpeed:1500, shape:'blowgun', poison:1, hitR:10,
             desc:'데미지 5 · 쿨타임 0.5초 · 맞으면 독이 쌓임 (최대 4중첩, 중첩마다 초당 2 피해, 3초 지속, 맞을 때마다 시간 갱신) · 빠르게 날아가는 독침'},
   sword:   {id:'sword',   name:'칼',       emoji:'🗡️', kind:'melee',    dmg:32, cd:0.5,  range:100, shape:'blade',
@@ -3347,10 +3346,11 @@ function markHit(target, attackerId, t, dmg){
   dmg=skillMitigate(target, dmg, t);   // armour / barrier skills give part of the damage back (hp is restored right here, before anyone checks for death)
   if(practiceMode && dmg>0 && attackerId===myId && target.id!==myId) pracDpsHits.push({t:t, d:dmg});     // the practice DPS meter
   if(dmg>0 && target.weapon==='puppeteer' && target.sewTo && !target._sewShare && sewActive(target, t/1000)){      // 바느질: the one on the thread takes half of what the puppeteer takes
-    const v=players[target.sewTo], sh=dmg*SEW_SHARE;
-    target._sewShare=true; v.hp-=sh; markHit(v, target.id, t, sh); target._sewShare=false;
-    pushFx('dmg', v.x, v.y-PLAYER_H-6, t, {v:Math.round(sh), color:'#ff9ecb'});
-    if(v.hp<=0 && v.alive) handleDeath(v, target, t, target.name);
+    const v=players[target.sewTo], sh=Math.min(dmg*SEW_SHARE, Math.max(0, SEW_SHARE_MAX-(target.sewShared||0)));
+    if(sh>0){ target.sewShared=(target.sewShared||0)+sh;
+      target._sewShare=true; v.hp-=sh; markHit(v, target.id, t, sh); target._sewShare=false;
+      pushFx('dmg', v.x, v.y-PLAYER_H-6, t, {v:Math.round(sh), color:'#ff9ecb'});
+      if(v.hp<=0 && v.alive) handleDeath(v, target, t, target.name); }
   }
   if(dmg>0 && gameMode==='raid' && !target.isBoss && !target.isMinion) target.raidTaken=(target.raidTaken||0)+dmg;
   if(dmg>0 && gameMode==='raid' && target.isBoss && attackerId && players[attackerId] && !players[attackerId].isMinion) players[attackerId].raidDmg=(players[attackerId].raidDmg||0)+dmg;
@@ -3921,28 +3921,6 @@ function drawCtf(){
     drawFlagIcon(f.x, f.y, col, f.state==='dropped'?'dropped':'stand', now);
     if(f.state==='dropped'){ const r=ctfRetRemain(f); ctx.save(); ctx.fillStyle='#fff'; ctx.font='bold 14px sans-serif'; ctx.textAlign='center'; ctx.fillText(Math.ceil(r)+'', f.x, f.y-86); ctx.restore(); }
   }
-}
-// a small map of the whole field: these maps are several screens wide
-function drawCtfMini(){
-  const cv=document.getElementById('ctfMini'); if(!cv) return;
-  if(!((gameMode==='ctf' && ctf) || (gameMode==='gold' && gdm)) || !MAP || !started || matchEnded){ cv.style.display='none'; return; }
-  cv.style.display='block';
-  const g=cv.getContext('2d'), W=cv.width, Hh=cv.height, s=Math.min((W-8)/MAP.arenaW, (Hh-8)/MAP.arenaH), ox=(W-MAP.arenaW*s)/2, oy=(Hh-MAP.arenaH*s)/2;
-  g.clearRect(0,0,W,Hh);
-  g.fillStyle='rgba(180,200,230,0.55)';
-  for(const pl of MAP.platforms) g.fillRect(ox+pl.x*s, oy+pl.y*s, Math.max(1.5,pl.w*s), Math.max(1.5, pl.h>40?3:2));
-  if(gameMode==='gold'){
-    for(let tm=0;tm<2;tm++){ const c=gdm.carts[tm]; g.fillStyle=TEAM_COLORS[tm]; g.fillRect(ox+c.x*s-4, oy+(c.y-14)*s-2, 8, 6); }
-    g.fillStyle='#ffd34d'; g.beginPath(); g.arc(ox+gdm.pile.x*s, oy+(gdm.pile.y-10)*s, gdm.pile.n>0?5:2.5, 0, 7); g.fill();
-    for(const d of gdm.drops){ g.fillStyle='#ffd34d'; g.fillRect(ox+d.x*s-1.5, oy+(d.y-8)*s, 3, 3); }
-  }
-  if(gameMode==='ctf') for(const f of ctf.flags){
-    let x=f.x, y=f.y; if(f.state==='carried'){ const c=players[f.carrierId]; if(c&&c.x!==undefined){ x=c.x; y=c.y; } }
-    g.fillStyle=TEAM_COLORS[f.team]; g.fillRect(ox+x*s-1, oy+(y-70)*s, 2, 70*s+2); g.beginPath(); g.moveTo(ox+x*s+1, oy+(y-70)*s); g.lineTo(ox+x*s+9, oy+(y-62)*s+2); g.lineTo(ox+x*s+1, oy+(y-50)*s); g.closePath(); g.fill();
-  }
-  for(const id in players){ const p=players[id]; if(p.x===undefined || p.alive===false || p.team===null || p.team===undefined) continue;
-    g.fillStyle=TEAM_COLORS[p.team]; g.beginPath(); g.arc(ox+p.x*s, oy+(p.y-20)*s, id===myId?3.6:2.4, 0, 7); g.fill();
-    if(id===myId){ g.strokeStyle='#fff'; g.lineWidth=1.5; g.stroke(); } }
 }
 /* ================= SURVIVAL DISASTERS: how they look =================
    A disaster is drawn from its state (the hazards the host sends) every frame; one-off bangs (impact flashes, explosions, rubble, shake) are effects
@@ -5041,7 +5019,7 @@ function shuffle(arr){ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.
 /* ===== the version of this file =====
    Players with different versions CAN meet and play together: the automatic matchmaking uses the same room names for every version (online-<mode>-<map>-<slot>), and nobody is refused because of a different build.
    The build is only sent along with the join message and the lobby (for information); the corner of the screen shows it. */
-const GAME_BUILD='build 2026-10-18-v376';
+const GAME_BUILD='build 2026-10-18-v377';
 const GAME_VERSION='0.8', GAME_VERSION_NAME='황금을 찾아서';   // 게임 버전 이름: versions.json의 title과 같게 (빌드마다 바꾸지 않음)
 const WEEKLY_EVENTS=[
   {id:'lowg',    name:'저중력 난투', desc:'몸이 둥실둥실, 중력이 약해진 난투', rules:{grav:0.6}},
@@ -11183,7 +11161,7 @@ function ultCdOf(p){ return ULT_CD*pzCdMult(p); }
 const PRACTICE_SKILL_CD=2;
 const SKILLS={
   pizarro:  {name:'정복자의 휴식', kind:'buff', desc:'3초 동안 받는 피해 20% 감소 + 초당 체력 6 회복 · 움직여도 끊기지 않음'},
-  puppeteer:{name:'바느질', kind:'hit', desc:'실이 달린 바늘을 조준한 방향으로 발사 · 맞은 상대와 실이 이어지고 이동속도 25% 감소, 실로 이어진 동안 내가 받는 피해의 50%를 상대도 받음 · 맞히면 쿨타임 없이 바로 바늘 빼기를 쓸 수 있음 (최대 8초) · 바늘 빼기: 실을 당겨 상대에게 30 피해를 주고 실이 끊김, 쿨타임은 바늘 빼기를 쓴 뒤부터 돌아요 (못 맞히면 바로 쿨타임)'},
+  puppeteer:{name:'바느질', kind:'hit', desc:'실이 달린 바늘을 조준한 방향으로 발사 · 맞은 상대와 실이 이어지고 이동속도 25% 감소, 실로 이어진 동안 내가 받는 피해의 50%를 상대도 받음(실 하나당 최대 30) · 맞히면 쿨타임 없이 바로 바늘 빼기를 쓸 수 있음 (최대 8초) · 바늘 빼기: 실을 당겨 상대에게 30 피해를 주고 실이 끊김, 쿨타임은 바늘 빼기를 쓴 뒤부터 돌아요 (못 맞히면 바로 쿨타임)'},
   kan:      {name:'독두꺼비 함정', kind:'hit', desc:'바라보는 방향으로 독 두꺼비를 던짐 · 포물선으로 날아가 바닥에 닿으면 그 바닥이 독 바닥이 됨 (15초, 최대 2개, 나에게만 보임) · 적이 밟으면 독 바닥이 나타나고 3초 뒤 사라짐 · 밟은 적은 3초 동안 0.5초마다 5 피해'},
   pistol:   {name:'속사',        kind:'buff', desc:'1.8초 동안 연사 속도 2배'},
   smg:      {name:'연막탄',      kind:'hit',  desc:'주변 적을 2.5초 동안 둔화'},
@@ -11236,7 +11214,7 @@ function skillActiveBuff(p, tSec){
 // part of an incoming hit is given back (hp restored) while a guard / barrier is up; returns the damage that really got through
 // 인형술사 궁극기: 가장 가까운 상대를 PUP_SEC초 동안 조종한다 (조종당하는 쪽은 인형술사의 입력대로 움직이고 일반 공격만 하며, 인형술사의 몸은 데미지 50% 감소)
 const PUP_SEC=5, PUP_RANGE=700;
-const SEW_PULL_NAME='바늘 빼기', SEW_SHARE=0.5;
+const SEW_PULL_NAME='바늘 빼기', SEW_SHARE=0.5, SEW_SHARE_MAX=30;      // half of what the puppeteer takes, but at most 30 in all per thread
 const PUP_BLAST_SELF=60, PUP_BLAST_NEAR=30, PUP_BLAST_R=220;     // when the 5 seconds are over the puppet blows itself up: 60 to it, 30 to every enemy of the puppeteer around it
 const SEW_MAX_SEC=8, SEW_SLOW_MULT=0.75, SEW_DMG=30;             // 바느질 (the needle with a thread) ties the one it hits for at most 8 s: 25% slower until 바늘 빼기 (30 damage) cuts the thread
 let puppetOK=false;                    // true only while the tick itself runs a controlled player's dash / shot
@@ -13641,7 +13619,7 @@ function hostTickCore(dt,t){
             const pow=players[b.owner], tS2=t/1000;
             if(pow && pow.alive && !puppetVictim(pow,tS2)){
               if(pow.sewTo && players[pow.sewTo]) players[pow.sewTo].sewBy=null;
-              pow.sewTo=p.id; pow.sewUntil=tS2+SEW_MAX_SEC; pow.sewAt=tS2; pow.lastSkill=-9999; p.sewBy=pow.id; p.sewSlowed=true;      // the skill is ready at once (바늘 빼기)
+              pow.sewTo=p.id; pow.sewShared=0; pow.sewUntil=tS2+SEW_MAX_SEC; pow.sewAt=tS2; pow.lastSkill=-9999; p.sewBy=pow.id; p.sewSlowed=true;      // the skill is ready at once (바늘 빼기)
               pushFx('slow', p.x, p.y-70, t, {});
             }
             pushFx('hit', nx, ny, t, {color:'#ff9ecb', ang:Math.atan2(b.vy,b.vx), v:0, el:dmgTypeOf(b.wid)});
@@ -17027,7 +17005,6 @@ function render(fxDt){
       let st = carry>0 ? '⛏ 금 '+carry+'개 운반 중 - 우리 광차로 가세요!' : (gdm.pile.n>0 ? '중앙의 금을 집어 우리 광차로 가져가세요 (최대 '+GOLD_MAX_CARRY+'개)' : '중앙의 금이 다 떨어졌어요 - 곧 새로 쌓여요');
       document.getElementById('ctfLabel').innerHTML = '<span style="color:'+TEAM_COLORS[0]+'">블루 '+gdm.pts[0]+'</span> : <span style="color:'+TEAM_COLORS[1]+'">'+gdm.pts[1]+' 레드</span>  ·  '+mm+':'+(ss<10?'0':'')+ss+'<br><span style="font-size:12px;font-weight:600;opacity:.9">'+st+'</span>';
     }
-    drawCtfMini();
     try{ renderModeHud(); }catch(e){}
     if(gameMode==='survival' && survivalPhase){
       const remain=Math.max(0, Math.ceil((survivalPhaseEndsAt-Date.now())/1000));
