@@ -1,7 +1,7 @@
 // Vowkeep · © 2026 Frenchfries777 · CC BY-NC-ND 4.0
 // 게임 데이터: 역할, 적, 축복, 1장 지도
 
-export const VERSION = 'v0.1', BUILD = 46;
+export const VERSION = 'v0.2', BUILD = 47;
 
 export const ROLES = {
   knight: {
@@ -90,12 +90,12 @@ function genMap(seed, rooms, opt = {}) {
   let sd = seed; const rnd = () => (sd = (sd * 16807) % 2147483647) / 2147483647;
   // 양옆에 10칸씩 여유를 둬서 바깥쪽 방 옆에 비밀 방을 붙여요
   // 장마다 다른 지도 짜임 (st): cols 열 수, cw 통로 너비, jit 방 위치 흔들기, zig 꺾인 통로, round 방 모서리 깎기
-  const st = opt.st || rooms.st || {}, cols = st.cols || 3, cwd = st.cw || 4, gw = Math.max(4, cwd + (cwd % 2)), jit = st.jit || 0;
-  const SW = 30, SH = 26, X0 = 10, rowsN = Math.ceil(rooms.length / cols), w = SW * cols + X0 * 2, h = SH * rowsN + 2;
+  const st = opt.st || rooms.st || {}, cols = st.cols || 3, cwd = st.cw || 4, gw = Math.max(4, cwd + (cwd % 2)), jit = st.jit || 0,
+    sc = st.sc || 1, SW = Math.max(26, Math.round(30 * sc)), SH = Math.max(24, Math.round(26 * sc)), X0 = 10, rowsN = Math.ceil(rooms.length / cols), w = SW * cols + X0 * 2, h = SH * rowsN + 2;
   const m = { w, h, cs: 2, floors: [], water: [], areas: [], spawns: [], pillars: [], traps: [], fires: [], altars: [], chests: [], route: [], secrets: [], puzzles: [], darks: [], pits: [], lifts: [], mimic: -1 };
   const R = rooms.map((r, i) => {
     const row = Math.floor(i / cols), c0 = row % 2 ? cols - 1 - (i % cols) : i % cols, col = opt.flip ? cols - 1 - c0 : c0, sy = (rowsN - 1 - row) * SH + 1;
-    const rw = r.boss ? 26 : r.w ? r.w + 3 : 15 + Math.floor(rnd() * 8), rh = r.boss ? 22 : r.h ? r.h + 2 : 13 + Math.floor(rnd() * 7);
+    const rw = r.boss ? Math.min(26, SW - 2) : r.w ? r.w + 3 : Math.min(SW - 4, Math.round((15 + Math.floor(rnd() * 8)) * sc)), rh = r.boss ? Math.min(22, SH - 2) : r.h ? r.h + 2 : Math.min(SH - 4, Math.round((13 + Math.floor(rnd() * 7)) * sc));
     const jx = Math.max(0, Math.min(jit, Math.floor((SW - rw) / 2) - 2)), jy = Math.max(0, Math.min(jit, Math.floor((SH - rh) / 2) - 2));
     const x = X0 + col * SW + Math.floor((SW - rw) / 2) + (jx ? Math.round((rnd() * 2 - 1) * jx) : 0), y = sy + Math.floor((SH - rh) / 2) + (jy ? Math.round((rnd() * 2 - 1) * jy) : 0);
     return Object.assign({ x, y, rw, rh, col, row, cx: x + Math.floor(rw / 2), cy: y + Math.floor(rh / 2) }, r);
@@ -230,7 +230,19 @@ export const GEN_PUZ = {
 };
 // 장마다 다른 지도 짜임: 1 지하 미로(3열, 곧은 통로) 2 숲(구불구불한 오솔길) 3 수도원(2열, 기둥 늘어선 넓은 회랑) 4 탑(1열로 곧게 올라가는 둥근 방)
 // 5 얼음 국경(4열, 둥근 동굴) 6 광산(4열, 좁고 꺾인 갱도) 7 사원(2열, 넓은 회랑과 둥근 성소) 8 심연(좁은 다리로 이어진 흩어진 방)
-export const MAP_ST = [{}, { zig: 1, jit: 4, cw: 3 }, { cols: 2, cw: 6, colon: 1 }, { cols: 1, round: 3 }, { cols: 4, round: 2, jit: 2, zig: 1 }, { cols: 4, cw: 2, zig: 1, jit: 3 }, { cols: 2, cw: 6, round: 3, colon: 1 }, { cw: 2, zig: 1, jit: 4 }];
+// sc 방 크기 배율, ex 덧붙는 통로 방 수 (장마다 지도 크기와 방 수가 달라져요)
+export const MAP_ST = [{ sc: 0.8 }, { zig: 1, jit: 4, cw: 3, sc: 1.05, ex: 2 }, { cols: 2, cw: 6, colon: 1, ex: 1 }, { cols: 1, round: 3, sc: 0.85 }, { cols: 4, round: 2, jit: 2, zig: 1, sc: 1.25, ex: 3 }, { cols: 4, cw: 2, zig: 1, jit: 3, sc: 0.75, ex: 1 }, { cols: 2, cw: 6, round: 3, colon: 1, sc: 1.15, ex: 2 }, { cw: 2, zig: 1, jit: 4, sc: 1.1, ex: 4 }];
+// 덧붙는 통로 방: 장마다 이름과 한 줄
+const EXTRA = [
+  [['무너진 복도', '천장에서 돌가루가 떨어져요. 해골 몇이 서성여요.']],
+  [['잿빛 오솔길', '나뭇가지 사이로 눈이 번뜩여요.'], ['쓰러진 고목', '고목 뒤에 무언가 숨어 있어요.']],
+  [['수도사 회랑', '긴 회랑에 발소리가 울려요.']],
+  [],
+  [['얼어붙은 다리', '발밑 얼음이 갈라지는 소리가 나요.'], ['눈보라 골짜기', '눈보라 속에서 그림자가 다가와요.'], ['얼음 동굴', '고드름 사이로 숨소리가 들려요.']],
+  [['버려진 갱도', '광부들이 남긴 수레가 뒤집혀 있어요.']],
+  [['순례자의 길', '무너진 석상이 길을 지켜요.'], ['향 피우던 방', '꺼진 향로에서 아직 연기가 나요.']],
+  [['떠도는 바위섬', '발밑이 끝없는 어둠이에요.'], ['불씨 다리', '다리 아래에서 불씨가 솟아요.'], ['잿빛 돌기둥', '돌기둥 사이에 그림자가 숨어요.'], ['마지막 길목', '불꽃의 숨결이 바로 앞이에요.']]
+];
 const GEN_ORDER = [null, null, null, 'levers', 'sigils', 'crystals', 'mirrors', 'embers'];
 function grow(ci, rooms, [p1, dk, p2]) {
   { const k = RP_ORDER[ci % 8]; p2 = Object.assign({}, p2, { puz: k, name: ROLE_PUZ[k].name, line: ROLE_PUZ[k].line }); }
@@ -238,6 +250,9 @@ function grow(ci, rooms, [p1, dk, p2]) {
   const r = rooms.map((o, i) => Object.assign({ t: i }, o)), [pn, ln] = CUTS[ci];
   const pit = { name: pn, line: PIT_LINE, cut: 'pit', t: 'pit', w: 20, h: 17 }, lift = { name: ln, line: LIFT_LINE, cut: 'lift', t: 'lift', w: 20, h: 17 };
   const out = [r[0], r[1], Object.assign({ t: 'puz' }, p1), r[2], pit, r[3], r[4], Object.assign({ t: 'dark' }, dk), r[5], lift, Object.assign({ t: 'puz' }, p2), r[6], r[7], r[8]];
+  // 통로 방은 전투 방 뒤에 끼워요 (뒤에서부터 넣어 자리가 밀리지 않게)
+  const ex = EXTRA[ci].slice(0, MAP_ST[ci].ex || 0), at = [12, 8, 6, 3];
+  ex.map((e, k) => ({ name: e[0], line: e[1], t: 'ex', foes: { skel: 2 + (ci >> 2), archer: 1 + (k % 2) }, traps: k % 2 ? 2 : 0, at: at[k] })).sort((a, b) => b.at - a.at).forEach(o => { const a = o.at; delete o.at; out.splice(a, 0, o); });
   out.st = MAP_ST[ci]; return out;
 }
 
