@@ -174,5 +174,34 @@ function emoji(){ var h=document.documentElement, base='https://frenchfries777mc
   setTimeout(function(){ h.classList.add('ff-em-ready'); },2500);
   var s=document.createElement('script'); s.src=base+'ff-emoji.js?v=1'; s.onerror=function(){ h.classList.add('ff-em-ready'); }; (document.head||h).appendChild(s); }
 if(scr()==='em'){ try{ emoji(); }catch(e){} }
+/* ===== 게임 목록 한 곳: 새 게임이 생기면 FF_REG에 한 줄만 넣으면 돼요. hub.js(글쓰기·필터·소식·소식 받기 등), 허브 패치노트 페이지, 위키 목록이 여기서 읽어요.
+   notes = 패치노트 파일 주소(site 기준), 없으면 tpl = 게임 페이지 안의 <template id="patchnotes"> 에서 읽어요. ===== */
+(function(){
+var B='https://frenchfries777mc.github.io/games/';
+var REG=[
+ {id:'hub',name:'허브',cls:'g0',c:'--g0',site:B,notes:'patchnotes.json',hub:true},
+ {id:'stickseum',name:'Stickseum',cls:'g1',c:'--g1',site:B+'stickseum/',notes:'patchnotes.json'},
+ {id:'crownenvoy',name:'Crown Envoy',cls:'g2',c:'--g2',site:B+'crownenvoy/',notes:'patchnotes.json'},
+ {id:'beaconfall',name:'Beaconfall',cls:'g3',c:'--g3',site:B+'beaconfall/',notes:'patchnotes.json'},
+ {id:'isleport',name:'Isleport',cls:'g3',c:'--g3',site:B+'isleport/',notes:'patchnotes.json'},
+ {id:'vowkeep',name:'Vowkeep',cls:'',c:'--g4',site:B+'vowkeep/',notes:'patchnotes.json'},
+ {id:'dummyparty',name:'Dummy Party',cls:'',c:'--g0',site:B+'dummyparty/',tpl:'play/'}
+];
+function tplNotes(html){
+  var d=new DOMParser().parseFromString(html,'text/html'), t=d.querySelector('template#patchnotes'); if(!t) return [];
+  var root=t.content||t, out=[], cur=null;
+  [].forEach.call(root.querySelectorAll('details > b, details > ul'),function(el){
+    if(el.tagName==='B'){ var a=el.textContent.split(' · '); cur={date:a[0]||'',build:/^b\d+/.test(a[2]||'')?a[2]:'',title:a.slice(/^b\d+/.test(a[2]||'')?3:2).join(' · ')||a[1]||'',items:[]}; out.push(cur); }
+    else if(cur){ [].forEach.call(el.children,function(li){ cur.items.push(li.textContent.trim()); }); }
+  });
+  return out;
+}
+function notes(e){
+  var f=e.notes?fetch(e.site+e.notes,{cache:'no-cache'}).then(function(r){ return r.ok?r.json():null; }).then(function(d){ return d&&d.notes||null; })
+         :fetch(e.site+e.tpl,{cache:'no-cache'}).then(function(r){ return r.ok?r.text():null; }).then(function(t){ return t?tplNotes(t):null; });
+  return f.catch(function(){ return null; });
+}
+window.FF_REG=REG; window.FF_REG_NOTES=notes;
+})();
 window.FFLang={ get:function(){ return now; }, script:function(){ return scr(); }, pick:function(){ return scr()||now; }, slogan:slogan, set:function(l){ set(l); now=SCR[l]?'en':l; }, sync:function(){ now=sync()||now; if(SCR[now]) now='en'; return now; } };
 })();
