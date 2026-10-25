@@ -106,7 +106,7 @@ export function step(G, dt, inputs) {
 
 function stepPlayer(G, p, dt, inp) {
   const w = W(p);
-  p.sa += dt; p.atkCd -= dt; p.dashCd -= dt; p.skCd -= dt; p.inv -= dt; p.noPick -= dt;
+  p.sa += dt; p.comboT -= dt; p.atkCd -= dt; p.dashCd -= dt; p.skCd -= dt; p.inv -= dt; p.noPick -= dt;
   if (p.st === ST.out) {
     return;
   }
@@ -180,15 +180,22 @@ function stepPlayer(G, p, dt, inp) {
 
 function swing(G, p) {
   const w = W(p), c = p.chg; setSt(p, ST.swing, w.swing); p.atkCd = w.cd; p.fx = p.ax; p.fz = p.az;
-  p.lastChg = c;
-  const dmg = lerp(w.dmg[0], w.dmg[1], c), kb = lerp(w.kb[0], w.kb[1], c), rg = w.range;
-  if (w.proj) { shoot(G, p, w.proj, c, 0); ev(G, { k: 'swing', id: p.id, c: Math.round(c * 10) / 10, pj: 1 }); p.chg = 0; return; }
+  p.lastChg = c; p.aN = (p.aN || 0) + 1;
+  let dmg = lerp(w.dmg[0], w.dmg[1], c), kb = lerp(w.kb[0], w.kb[1], c), rg = w.range, arc = w.arc;
+  if (w.proj) { p.akind = 0; shoot(G, p, w.proj, c, 0); ev(G, { k: 'swing', id: p.id, c: Math.round(c * 10) / 10, pj: 1 }); p.chg = 0; return; }
+  // Vowkeep처럼 빠르게 이어 치면 3연타: 공격, 공격, 세 번째는 강타 (기사) / 큰 공격 (나머지). 세게 모아 놓아도 강타예요
+  let kind = 0;
+  if (c >= 0.45) { kind = 1; p.combo = 0; p.comboT = 0; }
+  else { p.combo = p.comboT > 0 ? ((p.combo || 0) + 1) % 3 : 0; p.comboT = 0.65 + w.swing; if (p.combo === 2) { kind = p.cls === 'knight' ? 1 : 2; dmg = w.dmg[1] * 1.25; kb = w.kb[1] * 1.15; } }
+  p.akind = kind; p.cmb = p.combo || 0;
+  if (kind === 1 && p.cls === 'knight') { rg = Math.max(rg, 3.4); arc = Math.PI * 2; }
+  if (kind === 2) { rg *= 1.25; arc = Math.max(arc, 2.6); }
   // 조금 앞으로 내딛어요
   p.vx += p.ax * 3; p.vz += p.az * 3;
-  ev(G, { k: 'swing', id: p.id, c: Math.round(c * 10) / 10 });
-  // 세게 모은 근접 공격(강타)은 내려찍는 동작이 땅에 닿을 때 맞아요 (Vowkeep 강타와 같은 박자)
-  if (c >= 0.45) { p.stT = w.swing + 0.2; p.pend = { at: 0.2, dmg, kb, rg, arc: w.arc }; }
-  else strike(G, p, dmg, kb, rg, w.arc);
+  ev(G, { k: 'swing', id: p.id, c: Math.round(Math.max(c, kind ? 1 : 0) * 10) / 10 });
+  // 강타와 큰 공격은 동작이 땅에 닿을 때 맞아요 (Vowkeep과 같은 박자)
+  if (kind) { const at = kind === 1 ? 0.2 : (p.cls === 'priest' ? 0.45 : 0.14); p.stT = w.swing + at; p.pend = { at, dmg, kb, rg, arc }; }
+  else strike(G, p, dmg, kb, rg, arc);
   p.chg = 0;
 }
 function strike(G, p, dmg, kb, rg, arc) {
@@ -342,7 +349,7 @@ export function snapshot(G) {
   const r = n => Math.round(n * 100) / 100;
   return {
     t: r(G.t), ph: G.phase, cd: r(G.cd), ring: G.ring, pl: r(G.play), tl: Array.from(G.tl).join(''), w: G.winner, tg: G.n0,
-    p: G.players.map(p => [p.id, r(p.x), r(p.y), r(p.z), r(p.fx), r(p.fz), p.st, r(p.sa), r(p.chg), Math.round(p.pct), p.rank || 0, p.ko, p.falls, p.inv > 0 ? 1 : 0, r(p.ax), r(p.az), r(Math.max(0, p.dashCd)), r(Math.max(0, p.skCd)), r(Math.max(0, p.resp)), r(p.held)]),
+    p: G.players.map(p => [p.id, r(p.x), r(p.y), r(p.z), r(p.fx), r(p.fz), p.st, r(p.sa), r(p.chg), Math.round(p.pct), p.rank || 0, p.ko, p.falls, p.inv > 0 ? 1 : 0, r(p.ax), r(p.az), r(Math.max(0, p.dashCd)), r(Math.max(0, p.skCd)), r(Math.max(0, p.resp)), r(p.held), p.akind || 0, p.aN || 0, p.cmb || 0]),
     c: [r(G.crown.x), r(G.crown.y), r(G.crown.z), G.crown.h],
     j: G.pj.map(b => [b.kind === 'orb' ? 1 : 0, r(b.x), r(b.y), r(b.z), r(b.vx), r(b.vz)])
   };
