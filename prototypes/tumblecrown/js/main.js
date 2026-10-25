@@ -310,7 +310,15 @@ function peerOpts() {
   return o;
 }
 function newCode() { let s = ''; for (let i = 0; i < 6; i++) s += CODE_CH[Math.floor(Math.random() * CODE_CH.length)]; return s; }
+// 온라인: 방에 친구가 들어오면 3초 뒤 저절로 시작해요
+setInterval(() => {
+  if (S.autoT == null) return;
+  if (S.net !== 'host' || S.G || S.slots.length < 2) { S.autoT = null; if (S.scr === 'sRoom') paintRoom(); return; }
+  S.autoT -= 0.25; if (S.scr === 'sRoom') $('roomMsg').textContent = T('{0}초 뒤 시작해요', Math.max(1, Math.ceil(S.autoT)));
+  if (S.autoT <= 0) { S.autoT = null; beginGame(); }
+}, 250);
 function leaveNet() {
+  S.autoT = null;
   hubRoom(false); cancelInvites();
   if (S.peer) { try { S.peer.destroy(); } catch (e) { } }
   S.peer = null; S.conn = null; S.conns = {}; S.net = null; S.code = '';
@@ -349,6 +357,7 @@ function hostMsg(c, d) {
       sl = { uid, name, role: ROLES[d.role] ? d.role : 'knight', col }; S.slots.push(sl); S.botN = Math.min(S.botN, MAX_PLAYERS - S.slots.length);
     }
     S.conns[uid] = c;
+    if (S.net === 'host' && S.autoT == null) S.autoT = 3;   // 친구가 들어오면 3초 뒤 자동 시작
     c.send({ t: 'welcome', uid }); hostLobby(); if (S.scr === 'sRoom') paintRoom(); SFX.play('click');
     return;
   }
@@ -403,7 +412,7 @@ function beginGame(prevG) {
   if (S.chSel === DEEP_I && !prevG) { DEEP.floor = 1; DEEP.seed = (Math.random() * 1e6) | 0; DEEP.curses = []; }
   { const wk = !!S.wk && !prevG && S.chSel !== DEEP_I, was = WEEKLY.on; WEEKLY.on = wk; if (wk) { const w = weekInfo(); WEEKLY.id = w.id; WEEKLY.curses = w.curses; S.chSel = w.ch; } if (wk || was) useChapter(S.chSel, true); }
   S.G = createGame(sl, (Math.random() * 4e9) >>> 0, S.chSel);
-  S.G.lite = !!S.lite;
+  S.G.lite = !!S.lite; if (!prevG) S.G.phaseT = 99;   // 카운트다운 없이 바로 시작
   S.G.players.forEach((p, i) => { p.uid = sl[i].uid; });
   if (prevG) carryOver(S.G, prevG);
   S.me = sl.find(s => s.uid === UID).id;
