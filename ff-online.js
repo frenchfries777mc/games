@@ -12,8 +12,11 @@ if(!document.getElementById('ff-online-css')){
   document.head.appendChild(st);
 }
 var names={}, sb=null, T=null;
+/* 표시줄 글자: 페이지 언어(ff-lang.js)를 따라요. 표에 없는 언어는 영어 */
+var LT={ko:['지금 {0}명 접속 중','친구','허브'],en:['{0} online now','Friends','Hub'],es:['{0} conectados ahora','Amigos','Portal'],fr:['{0} en ligne','Amis','Portail'],de:['{0} jetzt online','Freunde','Hub'],ja:['今{0}人がオンライン','フレンド','ハブ'],zh:['当前 {0} 人在线','好友','主页'],pt:['{0} online agora','Amigos','Início'],ru:['Сейчас онлайн: {0}','Друзья','Хаб'],tr:['Şu an {0} çevrimiçi','Arkadaşlar','Merkez'],it:['{0} online ora','Amici','Hub'],pl:['Teraz online: {0}','Znajomi','Hub'],ar:['{0} متصل الآن','الأصدقاء','المركز'],nw:['{0} telescreened now','Comrades','Hub'],gk:['{0} 선 위에 지금','친구들','바퀴통']};
+function L(){ var l='ko'; try{ l=(window.FFLang&&FFLang.get())||(document.documentElement.lang||'ko'); }catch(e){} return LT[l]||LT.en; }
 function esc(s){ return String(s==null?'':s).replace(/[&<>"']/g,function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); }
-function gname(id){ var l=(window.FF_REG||[]).concat(window.FF_SITES||[]); for(var i=0;i<l.length;i++) if(l[i].id===id) return l[i].name; return id==='hub'?'허브':id; }
+function gname(id){ var l=(window.FF_REG||[]).concat(window.FF_SITES||[]); for(var i=0;i<l.length;i++) if(l[i].id===id) return l[i].name; return id==='hub'?L()[2]:id; }
 async function loadNames(ids){
   ids=ids.filter(function(id,i){ return id&&!names[id]&&ids.indexOf(id)===i; }); if(!ids.length) return;
   try{ var r=await sb.from('profiles').select('id,username,display_name').in('id',ids); ((r&&r.data)||[]).forEach(function(p){ names[p.id]=(p.display_name&&String(p.display_name).trim())||p.username||'???'; }); }catch(e){}
@@ -21,12 +24,12 @@ async function loadNames(ids){
 async function paint(){
   var r=await sb.rpc('ff_online'); if(r.error){ bar.innerHTML=''; return; }
   var c={}; (r.data||[]).forEach(function(x){ c[x.place]=x.people; });
-  var html='<span class="on-dot"></span><b>지금 '+(c.all||0)+'명 접속 중</b>';
+  var html='<span class="on-dot"></span><b>'+esc(L()[0].replace('{0}',c.all||0))+'</b>';
   (window.FF_REG||[]).concat(window.FF_SITES||[]).map(function(e){ return e.id; }).sort(function(a,b){ return a==='hub'?-1:b==='hub'?1:0; }).forEach(function(g){ if(c[g]) html+='<span class="on-c"><span>'+esc(gname(g))+'</span> <b>'+c[g]+'</b></span>'; });
   var u=FFAuth.user&&FFAuth.user();
   if(u){ var f=await sb.rpc('ff_online_friends'), rows=((f&&!f.error&&f.data)||[]).filter(function(x){ return !(FFAuth.isBlocked&&FFAuth.isBlocked(x.user_id)); });
     if(rows.length){ await loadNames(rows.map(function(x){ return x.user_id; }));
-      html+='<span class="on-f"><span>친구</span> '+rows.slice(0,8).map(function(x){ return '<span class="on-p">'+esc(names[x.user_id]||'???')+'<small>'+esc(gname(x.place))+'</small></span>'; }).join('')+(rows.length>8?'<span>+'+(rows.length-8)+'</span>':'')+'</span>'; } }
+      html+='<span class="on-f"><span>'+esc(L()[1])+'</span> '+rows.slice(0,8).map(function(x){ return '<span class="on-p">'+esc(names[x.user_id]||'???')+'<small>'+esc(gname(x.place))+'</small></span>'; }).join('')+(rows.length>8?'<span>+'+(rows.length-8)+'</span>':'')+'</span>'; } }
   bar.innerHTML=html;
 }
 function start(){ sb=FFAuth.client&&FFAuth.client(); if(!sb) return; paint(); setInterval(function(){ if(document.visibilityState==='visible') paint(); },20000);
