@@ -42,7 +42,7 @@ export function createGame(slots, opts = {}) {
       air: true, airDash: true, lastHit: null, grab: null, hitSet: null, bump: null, noPick: 0, prevAtk: false, bot2: { t: 0, mx: 0, mz: 0, atk: false, want: 0 }
     };
     // 처음 자리가 바위 기둥이면 옆으로 비켜요
-    if (!standable(G, p.x, p.z)) { p.x *= 0.82; p.z *= 0.82; }
+    if (!standable(G, p.x, p.z)) { let bi = 0, bd = 1e9; for (let i = 0; i < NT; i++) { if (G.tl[i] !== 0) continue; const d = Math.hypot(TILES[i].x - p.x, TILES[i].z - p.z); if (d < bd) { bd = d; bi = i; } } p.x = TILES[bi].x; p.z = TILES[bi].z; }
     G.players.push(p);
   });
   return G;
