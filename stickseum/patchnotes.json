@@ -2,6 +2,196 @@
  "notes": [
   {
    "date": "2026-10-25",
+   "build": "v392",
+   "title": "클랜 토큰 지급 조건 수정",
+   "items": [
+    "비공개 방에서 클랜원끼리 대결해도 클랜 토큰이 쌓이던 문제 수정",
+    "클랜 토큰은 클랜 경기에서만 지급"
+   ],
+   "tr": {
+    "en": {
+     "title": "Clan token reward fix",
+     "items": [
+      "Fixed clan tokens piling up when clan members fought in private rooms",
+      "Clan tokens are now awarded only in clan matches"
+     ]
+    },
+    "es": {
+     "title": "Corrección de las fichas del clan",
+     "items": [
+      "Corregido que se acumularan fichas del clan al enfrentarse miembros del clan en salas privadas",
+      "Las fichas del clan ahora solo se obtienen en partidas de clan"
+     ]
+    },
+    "fr": {
+     "title": "Correction des jetons de clan",
+     "items": [
+      "Correction d'un bug où des jetons de clan s'accumulaient quand des membres du clan s'affrontaient dans des salons privés",
+      "Les jetons de clan ne sont désormais attribués que lors des matchs de clan"
+     ]
+    },
+    "de": {
+     "title": "Korrektur der Clan-Token-Vergabe",
+     "items": [
+      "Behoben: Clan-Token sammelten sich an, wenn Clanmitglieder in privaten Räumen gegeneinander spielten",
+      "Clan-Token gibt es jetzt nur noch in Clan-Matches"
+     ]
+    },
+    "ja": {
+     "title": "クラントークン付与条件の修正",
+     "items": [
+      "非公開ルームでクランメンバー同士が対戦してもクラントークンが貯まる問題を修正",
+      "クラントークンはクラン戦でのみ付与"
+     ]
+    },
+    "zh": {
+     "title": "修正战队代币发放条件",
+     "items": [
+      "修复了战队成员在私人房间对战也会累积战队代币的问题",
+      "战队代币现在只在战队比赛中发放"
+     ]
+    },
+    "pt": {
+     "title": "Correção das fichas do clã",
+     "items": [
+      "Corrigido o acúmulo de fichas do clã quando membros do clã lutavam em salas privadas",
+      "As fichas do clã agora só são concedidas em partidas de clã"
+     ]
+    },
+    "ru": {
+     "title": "Исправлена выдача жетонов клана",
+     "items": [
+      "Исправлена ошибка: жетоны клана копились, когда члены клана сражались в закрытых комнатах",
+      "Жетоны клана теперь выдаются только в клановых матчах"
+     ]
+    },
+    "tr": {
+     "title": "Klan jetonu verilme koşulu düzeltildi",
+     "items": [
+      "Klan üyeleri özel odalarda karşılaştığında klan jetonlarının birikmesi sorunu düzeltildi",
+      "Klan jetonları artık yalnızca klan maçlarında veriliyor"
+     ]
+    },
+    "it": {
+     "title": "Correzione dei gettoni del clan",
+     "items": [
+      "Corretto l'accumulo di gettoni del clan quando i membri del clan si sfidavano in stanze private",
+      "I gettoni del clan ora vengono assegnati solo nelle partite del clan"
+     ]
+    },
+    "pl": {
+     "title": "Poprawka przyznawania żetonów klanu",
+     "items": [
+      "Naprawiono gromadzenie się żetonów klanu, gdy członkowie klanu walczyli w prywatnych pokojach",
+      "Żetony klanu są teraz przyznawane tylko w meczach klanowych"
+     ]
+    },
+    "ar": {
+     "title": "إصلاح شرط منح رموز العشيرة",
+     "items": [
+      "إصلاح تراكم رموز العشيرة عند تقاتل أعضاء العشيرة في غرف خاصة",
+      "لا تُمنح رموز العشيرة الآن إلا في مباريات العشيرة"
+     ]
+    }
+   }
+  },
+  {
+   "date": "2026-10-25",
+   "build": "v391",
+   "title": "방장 부담 감소",
+   "items": [
+    "방장이 보내는 데이터를 변한 값만 전송하도록 바꿔 전송량 약 70% 감소",
+    "참가자가 많을 때 방장 컴퓨터가 느려지는 문제 완화"
+   ],
+   "tr": {
+    "en": {
+     "title": "Lighter host load",
+     "items": [
+      "Changed the data the host sends to only the values that changed, cutting traffic by about 70%",
+      "Eased the slowdown on the host's computer when there are many players"
+     ]
+    },
+    "es": {
+     "title": "Menos carga para el anfitrión",
+     "items": [
+      "Los datos que envía el anfitrión ahora solo incluyen los valores que cambian, lo que reduce el tráfico en un 70 % aprox.",
+      "Reducida la ralentización del ordenador del anfitrión cuando hay muchos jugadores"
+     ]
+    },
+    "fr": {
+     "title": "Hôte allégé",
+     "items": [
+      "Les données envoyées par l'hôte ne contiennent plus que les valeurs modifiées, ce qui réduit le trafic d'environ 70 %",
+      "Atténuation des ralentissements de l'ordinateur de l'hôte quand il y a beaucoup de joueurs"
+     ]
+    },
+    "de": {
+     "title": "Weniger Last für den Host",
+     "items": [
+      "Der Host sendet jetzt nur noch geänderte Werte, wodurch sich der Datenverkehr um etwa 70 % verringert",
+      "Das Ruckeln auf dem Rechner des Hosts bei vielen Spielern wurde gemildert"
+     ]
+    },
+    "ja": {
+     "title": "ホストの負担を軽減",
+     "items": [
+      "ホストが送るデータを変化した値だけにして、通信量を約70%削減",
+      "参加者が多いときにホストのパソコンが重くなる問題を緩和"
+     ]
+    },
+    "zh": {
+     "title": "减轻房主负担",
+     "items": [
+      "房主发送的数据改为只发送变化的值，数据量减少约 70%",
+      "缓解了玩家较多时房主电脑变卡的问题"
+     ]
+    },
+    "pt": {
+     "title": "Menos carga para o anfitrião",
+     "items": [
+      "Os dados enviados pelo anfitrião agora incluem só os valores que mudaram, reduzindo o tráfego em cerca de 70%",
+      "Amenizada a lentidão no computador do anfitrião quando há muitos jogadores"
+     ]
+    },
+    "ru": {
+     "title": "Меньше нагрузки на хоста",
+     "items": [
+      "Хост теперь отправляет только изменившиеся значения, поэтому трафик снизился примерно на 70%",
+      "Смягчено замедление компьютера хоста, когда в игре много участников"
+     ]
+    },
+    "tr": {
+     "title": "Oda sahibinin yükü azaldı",
+     "items": [
+      "Oda sahibinin gönderdiği veriler yalnızca değişen değerlerle sınırlandı, trafik yaklaşık %70 azaldı",
+      "Çok oyuncu olduğunda oda sahibinin bilgisayarının yavaşlaması sorunu hafifletildi"
+     ]
+    },
+    "it": {
+     "title": "Meno carico per l'host",
+     "items": [
+      "I dati inviati dall'host ora contengono solo i valori cambiati, riducendo il traffico di circa il 70%",
+      "Ridotto il rallentamento del computer dell'host quando ci sono molti giocatori"
+     ]
+    },
+    "pl": {
+     "title": "Mniejsze obciążenie gospodarza",
+     "items": [
+      "Dane wysyłane przez gospodarza obejmują teraz tylko zmienione wartości, co zmniejsza ruch o około 70%",
+      "Złagodzono spowolnienie komputera gospodarza, gdy jest dużo graczy"
+     ]
+    },
+    "ar": {
+     "title": "تخفيف الحمل عن المضيف",
+     "items": [
+      "أصبحت البيانات التي يرسلها المضيف تقتصر على القيم المتغيرة فقط، مما يقلل حركة البيانات بنحو 70%",
+      "تخفيف بطء جهاز المضيف عند وجود لاعبين كثيرين"
+     ]
+    }
+   }
+  },
+  {
+   "date": "2026-10-25",
    "build": "v390",
    "title": "클랜원 프로필과 스킨 효과 조정",
    "items": [
@@ -4594,74 +4784,86 @@
    ],
    "tr": {
     "en": {
-     "title": "Bot pick wait fix",
+     "title": "Card visuals and bot pick wait fix",
      "items": [
+      "Removed the card background from the Gambler's ultimate, made the card back red and enlarged the cards",
       "Fixed bots waiting out the remaining ban time before picking even when the ban phase ended early (they now pick as soon as bans end)"
      ]
     },
     "es": {
-     "title": "Espera de bots corregida",
+     "title": "Mejora de las cartas y espera de bots corregida",
      "items": [
+      "Eliminado el fondo de las cartas de la definitiva del Apostador, el reverso de las cartas ahora es rojo y las cartas son más grandes",
       "Corregido que los bots esperaran el resto del tiempo de veto para elegir aunque la fase de veto terminara antes (ahora eligen en cuanto acaba)"
      ]
     },
     "fr": {
-     "title": "Attente des bots corrigée",
+     "title": "Cartes améliorées et attente des bots corrigée",
      "items": [
+      "Suppression du fond des cartes de l'ultime du Joueur, dos des cartes en rouge et cartes agrandies",
       "Correction : les bots attendaient la fin du temps de bannissement pour choisir même si la phase se terminait plus tôt (ils choisissent désormais dès la fin des bannissements)"
      ]
     },
     "de": {
-     "title": "Bot-Wartezeit behoben",
+     "title": "Kartenoptik verbessert und Bot-Wartezeit behoben",
      "items": [
+      "Kartenhintergrund der Zocker-Ultimate entfernt, Kartenrückseite jetzt rot und Karten vergrößert",
       "Behoben: Bots warteten die restliche Bannzeit ab, obwohl die Bannphase früher endete (sie wählen jetzt sofort nach den Banns)"
      ]
     },
     "ja": {
-     "title": "ボット選択待ちの修正",
+     "title": "カード演出の改善とボット選択待ちの修正",
      "items": [
+      "ギャンブラーの必殺技のカード背景を削除し、カードの裏面を赤色に変更、カードのサイズを拡大",
       "禁止フェーズが早く終わってもボットが残りの禁止時間だけ待ってから選んでいた現象を修正（禁止が終わるとすぐに選択）"
      ]
     },
     "zh": {
-     "title": "机器人选择等待修正",
+     "title": "卡牌演出改进与机器人选择等待修正",
      "items": [
+      "移除赌徒大招的卡牌背景，卡牌背面改为红色，并放大卡牌尺寸",
       "修复禁用阶段提前结束时机器人仍等完剩余禁用时间才选择的问题（禁用结束后立即选择）"
      ]
     },
     "pt": {
-     "title": "Espera dos bots corrigida",
+     "title": "Cartas melhoradas e espera dos bots corrigida",
      "items": [
+      "Removido o fundo das cartas do ultimate do Apostador, o verso das cartas agora é vermelho e as cartas ficaram maiores",
       "Corrigido: bots esperavam o tempo restante de banimento para escolher mesmo quando a fase acabava antes (agora escolhem assim que os banimentos terminam)"
      ]
     },
     "ru": {
-     "title": "Исправлено ожидание ботов",
+     "title": "Улучшены карты и исправлено ожидание ботов",
      "items": [
+      "У ульты Игрока убран фон карт, рубашка карт стала красной, а сами карты увеличены",
       "Исправлено: боты ждали остаток времени запрета перед выбором, даже если этап запрета закончился раньше (теперь выбирают сразу)"
      ]
     },
     "tr": {
-     "title": "Bot seçim beklemesi düzeltildi",
+     "title": "Kart görselleri iyileştirildi, bot seçim beklemesi düzeltildi",
      "items": [
+      "Kumarbaz'ın ulti kartlarının arka planı kaldırıldı, kartların arka yüzü kırmızı yapıldı ve kartlar büyütüldü",
       "Yasaklama aşaması erken bitse bile botların kalan yasak süresi kadar bekleyip seçmesi düzeltildi (artık yasaklar biter bitmez seçiyorlar)"
      ]
     },
     "it": {
-     "title": "Attesa dei bot corretta",
+     "title": "Carte migliorate e attesa dei bot corretta",
      "items": [
+      "Rimosso lo sfondo delle carte dell'ultimate del Giocatore d'azzardo, il dorso delle carte ora è rosso e le carte sono più grandi",
       "Corretto: i bot aspettavano il tempo di ban residuo per scegliere anche se la fase di ban finiva prima (ora scelgono appena finiscono i ban)"
      ]
     },
     "pl": {
-     "title": "Poprawka czekania botów",
+     "title": "Ulepszone karty i poprawka czekania botów",
      "items": [
+      "Usunięto tło kart z superumiejętności Hazardzisty, rewers kart jest teraz czerwony, a karty są większe",
       "Naprawiono czekanie botów do końca czasu banów przed wyborem, nawet gdy faza banów skończyła się wcześniej (teraz wybierają zaraz po banach)"
      ]
     },
     "ar": {
-     "title": "إصلاح انتظار البوتات",
+     "title": "تحسين عرض البطاقات وإصلاح انتظار البوتات",
      "items": [
+      "إزالة خلفية بطاقات قدرة المقامر الخارقة، وجعل ظهر البطاقات أحمر، وتكبير حجم البطاقات",
       "إصلاح انتظار البوتات بقية وقت الحظر قبل الاختيار حتى عند انتهاء مرحلة الحظر مبكرًا (تختار الآن فور انتهاء الحظر)"
      ]
     }
