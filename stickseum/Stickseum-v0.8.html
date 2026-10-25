@@ -5052,7 +5052,7 @@ function shuffle(arr){ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.
 /* ===== the version of this file =====
    Players with different versions CAN meet and play together: the automatic matchmaking uses the same room names for every version (online-<mode>-<map>-<slot>), and nobody is refused because of a different build.
    The build is only sent along with the join message and the lobby (for information); the corner of the screen shows it. */
-const GAME_BUILD='build 2026-10-18-v393';
+const GAME_BUILD='build 2026-10-18-v394';
 const GAME_VERSION='0.8', GAME_VERSION_NAME='황금을 찾아서';   // 게임 버전 이름: versions.json의 title과 같게 (빌드마다 바꾸지 않음)
 const WEEKLY_EVENTS=[
   {id:'lowg',    name:'저중력 난투', desc:'몸이 둥실둥실, 중력이 약해진 난투', rules:{grav:0.6}},
@@ -7244,6 +7244,7 @@ async function sbAfterLogin(id, username, userMeta){
   subscribeFriendRequests();
   subscribeGameInvites();
   try{ subscribeGifts(); }catch(e){}
+  try{ subscribeFriendChat(); }catch(e){}
   try{ subscribePartyInvites(); }catch(e){}
   await sbSyncAccountData(id, username, sameAccountAsLast);
   giftCheckInbox();
@@ -7293,9 +7294,17 @@ async function claimAchGrants(){          // achievements given to this account 
     got.forEach((a,i)=>setTimeout(()=>showAchievementToast(a), 1500+i*2600));
   }catch(e){}
 }
+async function claimGoldGrants(){          // sC given to this account from outside (supabase-stickseum-gold-grant.sql): added once, then the row is deleted on the server
+  if(!sb || !sbUser) return;
+  try{
+    const r=await sb.rpc('ff_claim_gold_grants', {p_game:'stickseum'}); const n=Math.floor(+(r && !r.error && r.data) || 0);
+    if(n>0){ addGold(n, null); persistSave(); partyToast('🎁 sC +'+n+' 선물이 도착했어요', null, 6000); }
+  }catch(e){}
+}
 async function sbSyncAccountData(id, username, sameAccountAsLast){
   await cloudSaveSync(username, sameAccountAsLast);                              // 1) progress AND nickname: the account's save comes into this browser (and the other way round)
   await claimAchGrants();                                                         // (achievements handed to this account from outside)
+  await claimGoldGrants();
   await nickSyncWithProfile(id);                                                  // 2) the nickname of the account (profiles.display_name, shared with the hub and the other games) and this game say the same
 }
 /* One nickname everywhere. profiles.display_name (the one the hub site and the other games change too) is the truth; this game adopts it, and also puts it into the clan list.
@@ -7499,7 +7508,7 @@ async function sbSignOut(){
   try{ clearTimeout(cloudSaveTimer); }catch(e){} cloudSaveReady=false; cloudSaveState='off'; cloudSaveNote=''; sbUserMeta={};
   sbForgetPassword();
   switchLocalAccount('');
-  sbUser=null; myClan=null; friendsCache=[]; presenceLastSeen={}; presenceBusySent=false; pendingNoticeDone=false; pendingNoticeClose();
+  sbUser=null; fcUnread={}; try{ closeFriendChat(); }catch(e){} myClan=null; friendsCache=[]; presenceLastSeen={}; presenceBusySent=false; pendingNoticeDone=false; pendingNoticeClose();
   renderSocialBox(); updateInviteFriendBox();
 }
 const PRESENCE_GRACE_MS=10000; // treat a friend as still online for a short grace window after they briefly drop out of a presence sync (reconnect blips, tab-switch pauses, etc.)
@@ -7519,24 +7528,31 @@ function startPresence(){
     const now=Date.now();
     for(const uid in state) presenceLastSeen[uid]=now;
     try{ renderOnlineCount(); }catch(e){}
+    try{ rankedQueueRefresh(); }catch(e){}
     // skip the (re-rendering) work entirely while neither screen that shows presence is on screen
     if(document.getElementById('profileScreen').classList.contains('active')) renderSocialBox();
     if(document.getElementById('roomScreen').classList.contains('active')){ updateInviteFriendBox(); const ib=document.getElementById('inviteFriendBox'); if(ib && ib.style.display!=='none' && ib.innerHTML) renderInviteFriendList(); }
   });
-  presenceChannel.subscribe(async (status)=>{ if(status==='SUBSCRIBED'){ presenceBusySent=myMatchBusy(); await presenceChannel.track({username:sbUser.username, at:Date.now(), busy:presenceBusySent}); } });
+  presenceChannel.subscribe(async (status)=>{ if(status==='SUBSCRIBED'){ presenceBusySent=myMatchBusy(); presenceRqSent=myRankedQueue(); await presenceChannel.track({username:sbUser.username, at:Date.now(), busy:presenceBusySent, rq:presenceRqSent}); } });
 }
 /* ===== "상대가 경기 중이에요" =====
    Everybody's presence also says whether they are in a match right now (busy). Next to a button that sends somebody a request
    (friend request, clan invite, invite to a private room) the game then shows that they are playing; the request can still be sent. */
 let presenceBusySent=false;
 function myMatchBusy(){ return !!(started && !practiceMode && (currentMode==='online' || currentMode==='private')); }
+function myRankedQueue(){ return !!(onlineRanked && currentMode==='online' && !started && !practiceMode && Object.keys(players).length>0); }      // waiting in a ranked room for the other player (shown on the ranked screen as "매칭 중 N명")
+let presenceRqSent=false;
 function presenceBusyTick(){
   if(!presenceChannel || !sbUser) return;
-  const b=myMatchBusy(); if(b===presenceBusySent) return;
-  presenceBusySent=b;
-  try{ presenceChannel.track({username:sbUser.username, at:Date.now(), busy:b}); }catch(e){}
+  const b=myMatchBusy(), q=myRankedQueue(); if(b===presenceBusySent && q===presenceRqSent) return;
+  presenceBusySent=b; presenceRqSent=q;
+  try{ presenceChannel.track({username:sbUser.username, at:Date.now(), busy:b, rq:q}); }catch(e){}
 }
 setInterval(presenceBusyTick, 2000);
+function rankedQueueCount(){          // how many logged-in people are waiting for a ranked match right now
+  try{ if(!presenceChannel) return 0; const st=presenceChannel.presenceState(); let n=0; for(const uid in st){ const m=st[uid]; if(Array.isArray(m) && m.some(x=>x && x.rq)) n++; } return n; }catch(e){ return 0; }
+}
+function rankedQueueRefresh(){ const n=rankedQueueCount(), b=document.getElementById('rankedQueueBtn'), l=document.getElementById('rankedQueueNow'); if(l) l.textContent=n>0 ? '🔴 지금 랭크 매칭 중 '+n+'명' : '지금 랭크 매칭 중인 사람이 없어요'; if(b) b.textContent='🔍 랭크 매칭 시작'+(n>0?' ('+n+'명 대기 중)':''); }
 function sbIsBusy(uid){
   if(!presenceChannel || !uid) return false;
   const metas=presenceChannel.presenceState()[uid];
@@ -8146,6 +8162,77 @@ async function sendGift(toId, toName, id){
   try{ showAchievementToast({icon:'🎁', name:cosDisplayName(it)+' → '+toName, reward:0}, '선물을 보냈어요!'); }catch(e){}
   return true;
 }
+/* ===== friend chat (table friend_messages, see supabase-friend-chat.sql) =====
+   A small window per friend: the last 50 lines both ways, new lines arrive live (and by a 6 s refresh while the window is open as a safety net).
+   Lines that were not read yet are counted on the 💬 button of the friend list. */
+let fcUnread={}, fcChannel=null, fcOpenId=null, fcTimer=null, fcLastSend=0;
+function fcTotalUnread(){ let n=0; for(const k in fcUnread) n+=fcUnread[k]; return n; }
+async function fcLoadUnread(){
+  if(!sb || !sbUser) return;
+  try{
+    const r=await sb.from('friend_messages').select('from_id').eq('to_id', sbUser.id).is('read_at', null).limit(300);
+    if(r.error || !Array.isArray(r.data)) return;
+    const u={}; r.data.forEach(x=>u[x.from_id]=(u[x.from_id]||0)+1); fcUnread=u;
+    if(document.getElementById('profileScreen').classList.contains('active')) renderSocialBox();
+  }catch(e){}
+}
+function subscribeFriendChat(){
+  if(!sb || !sbUser) return;
+  if(fcChannel){ try{ sb.removeChannel(fcChannel); }catch(e){} fcChannel=null; }
+  fcLoadUnread();
+  fcChannel=sb.channel('fchat-'+sbUser.id)
+    .on('postgres_changes', {event:'INSERT', schema:'public', table:'friend_messages', filter:'to_id=eq.'+sbUser.id}, payload=>{
+      const m=payload && payload.new; if(!m) return;
+      if(fcOpenId===m.from_id){ fcRefresh(); return; }
+      fcUnread[m.from_id]=(fcUnread[m.from_id]||0)+1;
+      const f=friendsCache.find(x=>x.otherId===m.from_id), nm=f?f.otherName:'친구';
+      if(!started) partyToast('💬 '+nm+': '+String(m.text||'').slice(0,40), [['답장',()=>openFriendChat(m.from_id, nm)],['닫기',null]], 7000);
+      if(document.getElementById('profileScreen').classList.contains('active')) renderSocialBox();
+    })
+    .subscribe();
+}
+function closeFriendChat(){ const ov=document.getElementById('fchatOverlay'); if(ov) ov.remove(); clearInterval(fcTimer); fcTimer=null; fcOpenId=null; }
+async function fcRefresh(){
+  const log=document.getElementById('fchatLog'); if(!log || !fcOpenId || !sb || !sbUser) return;
+  const other=fcOpenId;
+  try{
+    const r=await sb.from('friend_messages').select('from_id,text,created_at').or('and(from_id.eq.'+sbUser.id+',to_id.eq.'+other+'),and(from_id.eq.'+other+',to_id.eq.'+sbUser.id+')').order('created_at',{ascending:false}).limit(50);
+    if(r.error || !Array.isArray(r.data) || fcOpenId!==other) return;
+    const rows=r.data.slice().reverse(), atEnd=log.scrollTop+log.clientHeight>=log.scrollHeight-30;
+    log.innerHTML=rows.length ? rows.map(m=>{
+      const mine=m.from_id===sbUser.id, tm=new Date(m.created_at), hh=String(tm.getHours()).padStart(2,'0')+':'+String(tm.getMinutes()).padStart(2,'0');
+      return '<div style="display:flex; justify-content:'+(mine?'flex-end':'flex-start')+'; margin:3px 0;"><span style="max-width:78%; padding:6px 10px; border-radius:12px; background:'+(mine?'#2f6df0':'rgba(255,255,255,.1)')+'; color:#fff; font-size:13px; word-break:break-all;">'+escapeHtmlText(m.text)+' <span style="font-size:10px; opacity:.6;">'+hh+'</span></span></div>';
+    }).join('') : '<div class="hint" style="text-align:center; margin:20px 0;">아직 대화가 없어요. 먼저 말을 걸어 보세요!</div>';
+    if(atEnd || !log._seen) log.scrollTop=log.scrollHeight; log._seen=true;
+    if(fcUnread[other]){ delete fcUnread[other]; try{ sb.rpc('friend_chat_read',{p_other:other}).then(()=>{},()=>{}); }catch(e){} if(document.getElementById('profileScreen').classList.contains('active')) renderSocialBox(); }
+  }catch(e){}
+}
+function openFriendChat(otherId, name){
+  if(!sb || !sbUser){ uiAlert('대화하려면 로그인해야 해요'); return; }
+  closeFriendChat(); fcOpenId=otherId;
+  const ov=document.createElement('div'); ov.id='fchatOverlay';
+  ov.style.cssText='position:fixed; inset:0; z-index:9000; background:rgba(0,0,0,.6); display:flex; align-items:center; justify-content:center; padding:16px;';
+  const box=document.createElement('div');
+  box.style.cssText='width:min(440px,94vw); height:min(560px,86vh); display:flex; flex-direction:column; background:var(--panel); border:1px solid var(--line); border-radius:14px; padding:14px 16px; color:var(--text);';
+  box.innerHTML='<div style="display:flex; align-items:center; justify-content:space-between; gap:8px; margin-bottom:8px;"><h2 style="margin:0; font-size:17px;">💬 '+escapeHtmlText(name)+'</h2><button class="btn-secondary" id="fchatClose">닫기</button></div>'+
+    '<div id="fchatLog" style="flex:1; overflow-y:auto; padding:6px 4px;"><div class="hint">불러오는 중...</div></div>'+
+    '<div class="row" style="margin-top:8px;"><input type="text" id="fchatIn" maxlength="200" placeholder="메시지 (Enter로 보내기)" style="flex:1;"><button class="btn-primary" id="fchatSend">보내기</button></div>'+
+    '<div class="hint" id="fchatMsg" style="min-height:16px; margin-top:4px;"></div>';
+  ov.appendChild(box); ov.addEventListener('click', e=>{ if(e.target===ov) closeFriendChat(); }); document.body.appendChild(ov);
+  document.getElementById('fchatClose').onclick=closeFriendChat;
+  const send=async()=>{
+    const i=document.getElementById('fchatIn'), msg=document.getElementById('fchatMsg'); if(!i) return;
+    const t=i.value.trim().slice(0,200); if(!t) return;
+    if(Date.now()-fcLastSend<800) return; fcLastSend=Date.now();
+    i.value='';
+    let r; try{ r=await sb.from('friend_messages').insert({from_id:sbUser.id, to_id:otherId, text:t}); }catch(e){ r={error:e}; }
+    if(r && r.error){ msg.textContent='보내지 못했어요 (친구 사이인지, 서버에 supabase-friend-chat.sql을 적용했는지 확인해 주세요)'; i.value=t; } else { msg.textContent=''; fcRefresh(); }
+  };
+  document.getElementById('fchatSend').onclick=send;
+  document.getElementById('fchatIn').addEventListener('keydown',e=>{ if(e.key==='Enter' && !e.isComposing) send(); });
+  document.getElementById('fchatIn').focus();
+  fcRefresh(); fcTimer=setInterval(()=>{ if(!document.getElementById('fchatLog')){ closeFriendChat(); return; } fcRefresh(); }, 6000);
+}
 function subscribeGifts(){
   if(!sb || !sbUser) return;
   if(giftChannel){ try{ sb.removeChannel(giftChannel); }catch(e){} giftChannel=null; }
@@ -8203,7 +8290,7 @@ const RANKED_START=1000, RANKED_PAIR_DAILY=3;
 const RANKED_TIERS=[
   {min:0,    name:'브론즈',       color:'#c47a3d'},
   {min:950,  name:'실버',         color:'#c7ccd6'},
-  {min:1050, name:'sC',         color:'#ffd34d', title:'rk_gold'},
+  {min:1050, name:'골드',       color:'#ffd34d', title:'rk_gold'},
   {min:1150, name:'플래티넘',     color:'#4dd9ff'},
   {min:1250, name:'다이아',       color:'#7bf3ff', title:'rk_dia'},
   {min:1400, name:'마스터',       color:'#ff5fd2', title:'rk_master'},
@@ -8243,10 +8330,10 @@ async function renderRankedScreen(){
   const tierLine=RANKED_TIERS.map(t=>'<span style="color:'+t.color+'; font-weight:700;">'+t.name+'</span> '+t.min+'+').join(' · ');
   let html='<div class="hint" style="margin-bottom:12px;">시즌 '+season+' · 매달 1일에 모두 '+RANKED_START+'점에서 다시 시작해요</div>';
   html+='<div id="rankedMe" class="socialRow" style="flex-wrap:wrap;"><span class="hint">불러오는 중...</span></div>';
-  html+='<button class="btn-primary btn-full" id="rankedQueueBtn" style="margin:4px 0 10px;">🔍 랭크 매칭 시작</button>';
+  html+='<div id="rankedQueueNow" class="hint" style="text-align:center; font-weight:700; margin:4px 0;"></div><button class="btn-primary btn-full" id="rankedQueueBtn" style="margin:4px 0 10px;">🔍 랭크 매칭 시작</button>';
   html+='<div class="hint" style="line-height:1.6; margin-bottom:12px;">1대1 듀얼(3판 2선승) · 로그인한 사람끼리만 만나고 봇은 들어오지 않아요 · 이기면 점수가 오르고 지면 내려가요 (상대 점수가 높을수록 더 많이) · 같은 상대와는 하루 '+RANKED_PAIR_DAILY+'판까지만 점수가 바뀌어요<br>'+tierLine+'<br>골드 · 다이아 · 마스터에 처음 오르면 칭호를 받아요</div>';
   html+='<div style="font-size:12px; color:var(--text-dim); font-weight:700; margin:6px 0;">🏆 이번 시즌 순위 (상위 50명)</div><div id="rankedBoard"><div class="hint">불러오는 중...</div></div>';
-  body.innerHTML=html;
+  body.innerHTML=html; rankedQueueRefresh();
   const qb=document.getElementById('rankedQueueBtn');
   qb.onclick=()=>{
     if(!sb){ uiAlert('서버에 연결하지 못해서 랭크전을 할 수 없어요'); return; }
@@ -8681,7 +8768,7 @@ function renderSocialBox(){
   }
   html+='<div style="font-size:12px; color:var(--text-dim); font-weight:700; margin:10px 0 4px;">친구 목록</div>';
   if(accepted.length===0 && outgoing.length===0) html+='<div class="hint">아직 친구가 없어요.</div>';
-  for(const f of accepted) html+='<div class="socialRow"><span><span class="onlineDot'+(sbIsOnline(f.otherId)?' on':'')+'"></span><span class="profLink" data-prof="'+f.otherId+'" title="프로필 보기">'+escapeHtmlText(f.otherName)+'</span> '+(sbIsBusy(f.otherId)?'<span class="busyTag">(경기 중)</span>':(sbIsOnline(f.otherId)?'(온라인)':'(오프라인)'))+'</span><span style="display:flex; gap:6px;"><button data-gift="'+f.otherId+'" data-gname="'+escapeHtmlText(f.otherName)+'" title="선물하기">🎁 선물</button><button data-rm="'+f.rowId+'">삭제</button></span></div>';
+  for(const f of accepted) html+='<div class="socialRow"><span><span class="onlineDot'+(sbIsOnline(f.otherId)?' on':'')+'"></span><span class="profLink" data-prof="'+f.otherId+'" title="프로필 보기">'+escapeHtmlText(f.otherName)+'</span> '+(sbIsBusy(f.otherId)?'<span class="busyTag">(경기 중)</span>':(sbIsOnline(f.otherId)?'(온라인)':'(오프라인)'))+'</span><span style="display:flex; gap:6px;"><button data-chat="'+f.otherId+'" data-gname="'+escapeHtmlText(f.otherName)+'" title="대화하기">💬 대화'+(fcUnread[f.otherId]?' <b style="color:#ff6b6b;">'+fcUnread[f.otherId]+'</b>':'')+'</button><button data-gift="'+f.otherId+'" data-gname="'+escapeHtmlText(f.otherName)+'" title="선물하기">🎁 선물</button><button data-rm="'+f.rowId+'">삭제</button></span></div>';
   for(const f of outgoing) html+='<div class="socialRow"><span class="profLink" data-prof="'+f.otherId+'" title="프로필 보기">'+escapeHtmlText(f.otherName)+'</span><span class="hint">요청 대기중</span></div>';
   box.innerHTML=html;
   document.getElementById('sbSignOutBtn').onclick=sbSignOut;
@@ -8708,6 +8795,7 @@ function renderSocialBox(){
   box.querySelectorAll('[data-acc]').forEach(btn=>btn.onclick=()=>sbRespondFriendRequest(btn.dataset.acc, true).then(renderSocialBox));
   box.querySelectorAll('[data-dec]').forEach(btn=>btn.onclick=()=>sbRespondFriendRequest(btn.dataset.dec, false).then(renderSocialBox));
   box.querySelectorAll('[data-gift]').forEach(btn=>btn.onclick=()=>openGiftPicker(btn.dataset.gift, btn.dataset.gname));
+  box.querySelectorAll('[data-chat]').forEach(btn=>btn.onclick=()=>openFriendChat(btn.dataset.chat, btn.dataset.gname));
   box.querySelectorAll('[data-rm]').forEach(btn=>btn.onclick=()=>{ const rid=btn.dataset.rm; uiConfirm('친구를 삭제할까요?').then(ok=>{ if(ok) sbRemoveFriend(rid).then(renderSocialBox); }); });
 }
 function updateInviteFriendBox(){
@@ -10543,7 +10631,7 @@ const CHAR_RANKS=[
   {min:0,   name:'입문',    color:'#8890a4'},
   {min:10,  name:'브론즈',  color:'#c47a3d'},
   {min:30,  name:'실버',    color:'#c7ccd6'},
-  {min:60,  name:'sC',    color:'#ffd34d'},
+  {min:60,  name:'골드',  color:'#ffd34d'},
   {min:100, name:'플래티넘',color:'#4dd9ff'},
   {min:200, name:'다이아',  color:'#7bf3ff'},
   {min:350, name:'옵시디언',color:'#9a85ff'},
