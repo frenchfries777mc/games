@@ -1603,7 +1603,9 @@ body.playing #emoBar{display:flex}
    <div class="row"><input id="codeIn" maxlength="5" placeholder="방 코드" autocomplete="off"><button class="pb dark" id="joinBtn" style="flex:0 0 auto">들어가기</button></div>
    <div class="msg" id="homeMsg"></div>
   </aside>
-  <template id="patchnotes"><details class="notes" open><summary>패치노트 · v0.1 (b66)</summary>
+  <template id="patchnotes"><details class="notes" open><summary>패치노트 · v0.1 (b67)</summary>
+   <b>2026-10-25 · v0.1 · b67 · 줄넘기 점프 신호</b>
+   <ul><li>줄넘기 대회에서 뛰어야 할 순간에 "점프!"가 잠깐 깜빡여요</li></ul>
    <b>2026-10-25 · v0.1 · b66 · 봇 조정</b>
    <ul><li>쇼윈도 얼음땡 봇이 더 천천히 걷고, 불이 꺼져도 늦게 출발하고, 경비원이 돌아볼 때 반응이 늦어 가끔 걸려요</li><li>외줄타기 레이스 봇이 기운 걸 늦게 알아채고 더 자주 휘청거려요</li></ul>
    <b>2026-10-24 · v0.1 · b65 · 병맛 업적과 봇 손보기</b>
@@ -1734,7 +1736,7 @@ body.playing #emoBar{display:flex}
    <ul><li>무너지는 발판 칸 수 대폭 증가 (19×10)와 용암 동굴 맵</li><li>10개 맵 전부 새로 그림 (관중석, 야자수 섬, 링, 정원 미로, 서커스, 우노 테이블 등)</li><li>글자 대신 아이콘·말풍선·이펙트로 표현 (무기, 아이템, 카드 효과, 시작 안내)</li><li>타격·폭발·물보라 효과와 화면 흔들림 추가</li></ul>
    <b>2026-10-19 · v0.1 · b1 · 첫 시험판</b>
    <ul><li>마네킹 미니게임 10개 추가 (장애물 달리기, 섬 밀치기, 싸우기, 병맛 미로, 체스 대난투, 폭탄 돌리기, 병맛 우노, 쇼윈도 얼음땡, 무너지는 발판, 컨베이어 서바이벌)</li><li>방 코드로 최대 8명 멀티플레이, 빈자리는 봇으로 채우기</li><li>판마다 10개 중 5개를 무작위로 골라 점수를 합산</li><li>PC 키보드와 휴대폰 터치 조작 지원</li></ul></details></template>
-  <p class="foot">2~8명 · 판마다 36개 미니게임 중 7개 · v0.1 b66 · <a href="../">← Dummy Party 사이트로</a></p>
+  <p class="foot">2~8명 · 판마다 36개 미니게임 중 7개 · v0.1 b67 · <a href="../">← Dummy Party 사이트로</a></p>
   <p class="foot"><span class="ff-copy">© 2026 Frenchfries777 · <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.ko" target="_blank" rel="noopener">CC BY-NC-ND 4.0</a></span></p>
  </div>
 </section>
@@ -4673,6 +4675,9 @@ function snow(s, v) { if (s.t !== SNOW.st) { SNOW.st = s.t; SNOW.vt = v.t; } ret
         dummyOf(ctx, { x: x, y: gy - jump, face: 1, walk: 0, mvv: 0 }, v, id, { s: ds, pose: jump > 4 ? 'up' : 'stand' });
         txt(ctx, String(p.jc), x, gy + 40, { size: 18, c: col });
       });
+      // 뛸 타이밍 표시: 지금 뛰면 줄이 발밑을 지날 때 가장 높이 떠 있어요
+      var lead = s.rt - now;
+      if (lead <= AIR * 0.78 && lead >= AIR * 0.25) { var pu = 1 - (lead - AIR * 0.25) / (AIR * 0.53); ctx.globalAlpha = 0.6 + 0.4 * Math.sin(pu * 3.1416); txt(ctx, '점프!', W / 2, 170, { size: 46 + 10 * Math.sin(pu * 3.1416), c: '#ff5a3a' }); ctx.globalAlpha = 1; }
       txt(ctx, s.k + '번 넘음 · 점점 빨라져요', W / 2, 104, { size: 22, c: '#2d5a2a' });
     },
     result: function (s, forced) {
