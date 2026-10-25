@@ -229,3 +229,15 @@ patchnotes.json | v373 items[9] | 인형술사 분홍 광대 모자 스킨을 �
 patchnotes.json | v373 items[10] | 캐릭터마다 4000G 스킨 1개씩 추가(스킨 탭 맨 아래) | build 373 | 2026-10-25
 patchnotes.json | v373 items[11] | 랜덤 상자 모두 열기 버튼 추가 | build 373 | 2026-10-25
 patchnotes.json | v373 items[12] | 밸런스 그래프의 패치 때만 보기에서 패치 없는 빌드 칸 제외, 스크롤바 어둡게 | build 373 | 2026-10-25
+patchnotes.json | v374 title | 인형술사 사거리 감소 | build 374 | 2026-10-25
+patchnotes.json | v374 items[0] | 인형술사 일반 공격 사거리 1560 → 1100 | build 374 | 2026-10-25
+patchnotes.json | v374 items[1] | 인형술사 바느질 사거리 1050 → 800 | build 374 | 2026-10-25
+patchnotes.json | v374 items[2] | 인형술사 꼭두각시 조종 사거리 1275 → 1000 | build 374 | 2026-10-25
+patchnotes.json | v374 items[3] | 인형술사 밸런스 다시 측정 | build 374 | 2026-10-25
+patchnotes.json | v375 title | 골드 획득량 조정 | build 375 | 2026-10-25
+patchnotes.json | v375 items[0] | 처치 골드 10 → 5 (어시스트 3 그대로) | build 375 | 2026-10-25
+patchnotes.json | v375 items[1] | 일일 미션 골드 30 → 15, 주간 미션 골드 150 → 50 | build 375 | 2026-10-25
+patchnotes.json | v375 items[2] | 일일 보상 골드 30 → 50 | build 375 | 2026-10-25
+patchnotes.json | v375 items[3] | 숙련 레벨 업 골드: Lv.1~5 10, 6~10 20, 11~15 30, 16 이상 45 | build 375 | 2026-10-25
+patchnotes.json | v375 items[4] | 레이드 역할 보너스 25 → 15 | build 375 | 2026-10-25
+patchnotes.json | v375 items[5] | 랜덤 상자 골드 10~50 → 30~50 | build 375 | 2026-10-25
