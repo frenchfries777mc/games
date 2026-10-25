@@ -453,7 +453,7 @@ try{if(sessionStorage.getItem('ce_noIntro')){sessionStorage.removeItem('ce_noInt
 sting();})();</script>
 <div id="app">
  <div id="lobby" class="screen">
-  <canvas id="lobbyBg"></canvas><canvas id="lobbyWar"></canvas><div id="cpTag">© 2026 Frenchfries777 · <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.ko" target="_blank" rel="noopener">CC BY-NC-ND 4.0</a></div><div id="verTag">v0.5 · build 105</div>
+  <canvas id="lobbyBg"></canvas><canvas id="lobbyWar"></canvas><div id="cpTag">© 2026 Frenchfries777 · <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.ko" target="_blank" rel="noopener">CC BY-NC-ND 4.0</a></div><div id="verTag">v0.5 · build 106</div>
   <header class="brand"><h1>Crown Envoy</h1><div class="sub"><i></i>DIPLOMACY · WAR · EMPIRE<i></i></div></header>
   <div id="lobbyRight">
    <div id="lobbyHome" class="modes">
@@ -5060,13 +5060,15 @@ Object.assign(TPL_DIFF,{viking:{"dan":{"lv":"hard","why":"소국 · 적대 3개�
    '내 시나리오'로 저장한다. 저장한 시나리오는 역사 템플릿 목록 맨 아래에 나타난다. */
 /* 나라 난이도 (시나리오 편집기): AI가 맡았을 때 수입과 병사 숙련도에 반영 */
 const DIFF=[{n:'매우 쉬움',inc:0.75,vet:-6},{n:'쉬움',inc:0.88,vet:-3},{n:'보통',inc:1,vet:0},{n:'어려움',inc:1.15,vet:6},{n:'매우 어려움',inc:1.3,vet:12}];
-/* 시나리오 나라별 난이도 자동 계산(제작자가 안 정한 나라): 영토 수×병력 배율을 적대국·인접 비동맹국 수로 나눠 다른 나라들의 중간값과 비교 */
+/* 나라별 난이도 계산(템플릿·시나리오 공통): 적국이 있으면 적국 전력의 합, 적국이 없으면 이웃 나라 전력의 합의 2/5를 위협으로 보고 내 전력과 견준다 */
 const _adC=new WeakMap();function ceAutoDiff(tp,n){const C=_adC.get(tp)||(()=>{const r=(()=>{const N=tp.nations,own=tp.owner,adj=(mapBuild(tp.map).geo||{}).adj||[];const al=N.map(()=>new Set()),wr=N.map(()=>new Set()),nb=N.map(()=>new Set());
     (tp.al||[]).forEach(([a,b])=>{if(al[a]&&al[b]){al[a].add(b);al[b].add(a);}});(tp.war||[]).forEach(([a,b])=>{if(wr[a]&&wr[b]){wr[a].add(b);wr[b].add(a);}});
     own.forEach((o,ti)=>{if(o<0||!adj[ti])return;adj[ti].forEach(a=>{const q=own[a];if(q>=0&&q!==o&&!al[o].has(q))nb[o].add(q);});});
-    const sc=N.map((x,i)=>x.neu?0:(x.count||1)*(x.str||1)/(1+wr[i].size*0.6+nb[i].size*0.12));const live=sc.filter(v=>v>0).sort((a,b)=>a-b);return {al,wr,nb,sc,med:live.length?live[live.length>>1]:1};})();_adC.set(tp,r);return r;})();
-  const i=tp.nations.indexOf(n);if(i<0)return null;const r=C.sc[i]/(C.med||1),lv=r>=1.6?'easy':r<0.6?'hard':'normal',c=n.count||0;
-  return {lv,why:`${c<=3?'소국':c<=8?'중간 규모':c<=14?'강대국':'대국'} · 적대 ${C.wr[i].size}개국 · 동맹 ${C.al[i].size}개국 · 인접한 비동맹 나라 ${C.nb[i].size}곳 (자동 계산)`};}
+    const gs={};(tp.guests||[]).forEach(g=>{gs[g.k]=(gs[g.k]||0)+(g.n||0);});const pw=N.map(x=>Math.max(1,(x.count>0)?((x.count-1)*2000+4800)*(x.trp||1):(gs[x.k]||5000)));return {al,wr,nb,pw};})();_adC.set(tp,r);return r;})();
+  const i=tp.nations.indexOf(n);if(i<0)return null;const sum=set=>[...set].reduce((s,j)=>s+C.pw[j],0);
+  const foes=C.wr[i].size>0,threat=foes?sum(C.wr[i]):sum(C.nb[i])*0.4,mine=C.pw[i],ratio=threat>0?mine/threat:99;
+  const lv=ratio>=1?'easy':ratio<0.3?'hard':'normal',c=n.count||0;
+  return {lv,why:`${c<=3?'소국':c<=8?'중간 규모':c<=14?'강대국':'대국'} · ${foes?`적대 ${C.wr[i].size}개국 전력의 합`:`적국 없음, 이웃 ${C.nb[i].size}개국 전력의 2/5`} 대비 내 전력 ${threat>0?Math.round(ratio*100)+'%':'충분'} · 동맹 ${C.al[i].size}개국`};}
 /* 공유 시나리오 분류 정보: 둘러보기에서 시대·분류·규모·난이도로 거를 때 쓴다 */
 function ceScenMeta(t){const L=(t.nations||[]).filter(n=>!n.neu).map(n=>n.diff!=null&&!n.da&&DIFF[n.diff]?(n.diff<2?'easy':n.diff>2?'hard':'normal'):((ceAutoDiff(t,n)||{}).lv||'normal'));
   return {ns:(t.nations||[]).filter(n=>!n.neu).sort((a,b)=>(b.count||0)-(a.count||0)).slice(0,10).map(n=>({n:String(n.name||'').slice(0,12),c:n.color})),tg:(t.tags||[]).slice(0,3),y:t.year||0,n:(t.nations||[]).length,e:L.filter(x=>x==='easy').length,h:L.filter(x=>x==='hard').length,t:L.length};}
@@ -5702,7 +5704,7 @@ const UI={
     C.claimOpts=C.tplSel!=null?TDEF.filter(t=>tpl.owner[t.id]===C.tplSel).map(t=>t.id):[];
     C.tplLabel={};tpl.nations.forEach(n=>{C.tplLabel[n.cap]=n.name.split('(')[0];});
     UI.renderAll();},
-  diffOf(tpl,n){if(tpl.custom&&n.da)return ceAutoDiff(tpl,n);if(tpl.custom&&n.diff!=null&&DIFF[n.diff])return {lv:n.diff<2?'easy':n.diff>2?'hard':'normal',why:'시나리오 제작자가 정한 난이도: '+DIFF[n.diff].n};return(typeof TPL_DIFF!=='undefined'&&TPL_DIFF[tpl.id]&&TPL_DIFF[tpl.id][n.k])||null;},
+  diffOf(tpl,n){if(tpl.custom&&n.da)return ceAutoDiff(tpl,n);if(tpl.custom&&n.diff!=null&&DIFF[n.diff])return {lv:n.diff<2?'easy':n.diff>2?'hard':'normal',why:'시나리오 제작자가 정한 난이도: '+DIFF[n.diff].n};return ceAutoDiff(tpl,n);},
   diffTag(d){return d?`<span class="dtag d-${d.lv[0]}">${({easy:'쉬움',normal:'보통',hard:'어려움'})[d.lv]}</span>`:'';},
   diffHTML(tpl,n){const d=UI.diffOf(tpl,n);return d?`<div class="diffrow">난이도 ${UI.diffTag(d)}<span class="sm muted" style="font-weight:400"> ${esc(d.why)}</span></div>`:'';},
   tplRelHTML(tpl,k){
