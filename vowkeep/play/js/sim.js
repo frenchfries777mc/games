@@ -150,7 +150,7 @@ function aimPoint(p, inp, range) {
   if (inp.ax != null) { const d = Math.hypot(inp.ax - p.x, inp.az - p.z); if (d <= range) return { x: inp.ax, z: inp.az }; }
   return { x: p.x + Math.cos(p.a) * range, z: p.z + Math.sin(p.a) * range };
 }
-export const COMBO_T = 0.5, COMBO_PRIEST = 0.75;
+export const COMBO_T = 0.65, COMBO_PRIEST = 0.65;
 function basicAttack(G, p, inp, nShot = 1) {
   const R = ROLES[p.role], A = R.atk;
   p.cd.atk = A.cd * cdMul(p, 'atk');
