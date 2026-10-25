@@ -1378,7 +1378,7 @@ const REST_SEC=3, REST_INTERVAL=0.5, REST_AMOUNT=5, REST_MOVE_PX=6;
 const CARD_SLOW_MULT=0.75, CARD_SLOW_SEC=1.2, CARD_STUN_SEC=0.5;
 // Knight (기사) skill: the lunge now whirls the sword around the knight for SWORD_SPIN_SEC, whatever the cursor does. Everything the blade touches takes
 // SWORD_SPIN_DMG once per lunge. The blade is SWORD_SPIN_RADIUS long, turning SWORD_SPIN_RATE radians a second (about 4 turns a second).
-const SWORD_SPIN_SEC=0.6, SWORD_SPIN_DMG=32, SWORD_SPIN_RADIUS=92, SWORD_SPIN_RATE=26;   // (0 would make the skill a pure charge: no damage, enemies it brushes past are only shoved aside)
+const SWORD_SPIN_SEC=0.6, SWORD_SPIN_DMG=45, SWORD_SPIN_RADIUS=92, SWORD_SPIN_RATE=26;   // (0 would make the skill a pure charge: no damage, enemies it brushes past are only shoved aside)
 // The knight's charge lasts 5x as long as the old 0.6s dash (3 seconds) and does not fade out: the knight runs at SWORD_CHARGE_SPEED (about twice
 // running speed, ignores knockback) until the spinning blade TOUCHES an enemy - then it stops right there (the blade keeps whirling for
 // SWORD_STOP_SPIN_SEC, so the one it touched and anyone beside it are still cut) - or it hits a wall, or the time is up, or the player presses the
@@ -5019,7 +5019,7 @@ function shuffle(arr){ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.
 /* ===== the version of this file =====
    Players with different versions CAN meet and play together: the automatic matchmaking uses the same room names for every version (online-<mode>-<map>-<slot>), and nobody is refused because of a different build.
    The build is only sent along with the join message and the lobby (for information); the corner of the screen shows it. */
-const GAME_BUILD='build 2026-10-18-v377';
+const GAME_BUILD='build 2026-10-18-v378';
 const GAME_VERSION='0.8', GAME_VERSION_NAME='황금을 찾아서';   // 게임 버전 이름: versions.json의 title과 같게 (빌드마다 바꾸지 않음)
 const WEEKLY_EVENTS=[
   {id:'lowg',    name:'저중력 난투', desc:'몸이 둥실둥실, 중력이 약해진 난투', rules:{grav:0.6}},
@@ -11161,12 +11161,12 @@ function ultCdOf(p){ return ULT_CD*pzCdMult(p); }
 const PRACTICE_SKILL_CD=2;
 const SKILLS={
   pizarro:  {name:'정복자의 휴식', kind:'buff', desc:'3초 동안 받는 피해 20% 감소 + 초당 체력 6 회복 · 움직여도 끊기지 않음'},
-  puppeteer:{name:'바느질', kind:'hit', desc:'실이 달린 바늘을 조준한 방향으로 발사 · 맞은 상대와 실이 이어지고 이동속도 25% 감소, 실로 이어진 동안 내가 받는 피해의 50%를 상대도 받음(실 하나당 최대 30) · 맞히면 쿨타임 없이 바로 바늘 빼기를 쓸 수 있음 (최대 8초) · 바늘 빼기: 실을 당겨 상대에게 30 피해를 주고 실이 끊김, 쿨타임은 바늘 빼기를 쓴 뒤부터 돌아요 (못 맞히면 바로 쿨타임)'},
+  puppeteer:{name:'바느질', kind:'hit', desc:'실이 달린 바늘을 조준한 방향으로 발사 · 맞은 상대와 실이 이어지고 이동속도 25% 감소, 실로 이어진 동안 내가 받는 피해의 50%를 상대도 받음(실 하나당 최대 32) · 맞히면 쿨타임 없이 바로 바늘 빼기를 쓸 수 있음 (최대 8초) · 바늘 빼기: 실을 당겨 상대에게 30 피해를 주고 실이 끊김, 쿨타임은 바늘 빼기를 쓴 뒤부터 돌아요 (못 맞히면 바로 쿨타임)'},
   kan:      {name:'독두꺼비 함정', kind:'hit', desc:'바라보는 방향으로 독 두꺼비를 던짐 · 포물선으로 날아가 바닥에 닿으면 그 바닥이 독 바닥이 됨 (15초, 최대 2개, 나에게만 보임) · 적이 밟으면 독 바닥이 나타나고 3초 뒤 사라짐 · 밟은 적은 3초 동안 0.5초마다 5 피해'},
   pistol:   {name:'속사',        kind:'buff', desc:'1.8초 동안 연사 속도 2배'},
   smg:      {name:'연막탄',      kind:'hit',  desc:'주변 적을 2.5초 동안 둔화'},
   bow:      {name:'백스텝',      kind:'move', desc:'뒤로 도약하며 활 재장전이 즉시 끝남'},
-  sword:    {name:'돌진 베기',   kind:'move', desc:'앞으로 최대 3초 동안 돌진하며(돌진하는 동안 피해를 받지 않음) 칼을 빙글빙글 휘둘러, 닿는 적에게 32 피해를 주고 그 자리에서 멈춤 (스킬키를 다시 누르면 취소)'},
+  sword:    {name:'돌진 베기',   kind:'move', desc:'앞으로 최대 3초 동안 돌진하며(돌진하는 동안 피해를 받지 않음) 칼을 빙글빙글 휘둘러, 닿는 적에게 45 피해를 주고 그 자리에서 멈춤 (스킬키를 다시 누르면 취소)'},
   bat:      {name:'반사 스윙',   kind:'buff', desc:'0.7초 동안 주변 투사체를 되받아침'},
   boomerang:{name:'질주',        kind:'buff', desc:'2초 동안 이동 속도 +50%'},
   shuriken: {name:'그림자 이동', kind:'move', desc:'조준 방향으로 짧게 순간이동하고 1초 은신'},
@@ -11214,7 +11214,7 @@ function skillActiveBuff(p, tSec){
 // part of an incoming hit is given back (hp restored) while a guard / barrier is up; returns the damage that really got through
 // 인형술사 궁극기: 가장 가까운 상대를 PUP_SEC초 동안 조종한다 (조종당하는 쪽은 인형술사의 입력대로 움직이고 일반 공격만 하며, 인형술사의 몸은 데미지 50% 감소)
 const PUP_SEC=5, PUP_RANGE=700;
-const SEW_PULL_NAME='바늘 빼기', SEW_SHARE=0.5, SEW_SHARE_MAX=30;      // half of what the puppeteer takes, but at most 30 in all per thread
+const SEW_PULL_NAME='바늘 빼기', SEW_SHARE=0.5, SEW_SHARE_MAX=32;      // half of what the puppeteer takes, but at most 30 in all per thread
 const PUP_BLAST_SELF=60, PUP_BLAST_NEAR=30, PUP_BLAST_R=220;     // when the 5 seconds are over the puppet blows itself up: 60 to it, 30 to every enemy of the puppeteer around it
 const SEW_MAX_SEC=8, SEW_SLOW_MULT=0.75, SEW_DMG=30;             // 바느질 (the needle with a thread) ties the one it hits for at most 8 s: 25% slower until 바늘 빼기 (30 damage) cuts the thread
 let puppetOK=false;                    // true only while the tick itself runs a controlled player's dash / shot
@@ -12481,7 +12481,7 @@ function botCoveredAt(x, feetY){ // acid rain: is there a platform above the hea
 function botBrainHotpotato(p, ai, t, inp, navBusy){
   const others=Object.values(players).filter(o=>o.id!==p.id && o.alive && o.x!==undefined);
   if(!others.length) return {goalX:p.x, goalY:p.y, noCombat:true};
-  const dashReady = (t/1000)-(p.lastDash===undefined?-9999:p.lastDash) >= DASH_CD;
+  const dashReady = (t/1000)-(p.lastDash===undefined?-9999:p.lastDash) >= dashCdOf(p);   // each character's own dash cooldown (암살자 0.5 s, 피사로 by stage), not the default 1.5 s
   if(p.id===bombHolderId){                                       // I hold the bomb: run at someone catchable and hand it over
     // nearest by distance, but a person who is standing still (or running toward me) beats one who is running away
     let tg=null, bs=1e9;
@@ -12572,7 +12572,7 @@ function botBrainSurvival(p, ai, t, tSec, inp, navBusy){
       let back=0; for(const zz of survivalZombies){ const sx=(zz.x-p.x)*(-dirX); if(sx>0) back+=1/Math.max(60,Math.hypot(zz.x-p.x,zz.y-p.y)); }
       if(back<0.012) dirX=-dirX;
     }
-    const dashReady=(t/1000)-(p.lastDash===undefined?-9999:p.lastDash)>=DASH_CD;
+    const dashReady=(t/1000)-(p.lastDash===undefined?-9999:p.lastDash)>=dashCdOf(p);
     if(!navBusy && dashReady && near<150 && Math.random()<0.7){ inp.left=dirX<0; inp.right=dirX>0; inp.dash=true; }       // a kick of speed away from the one about to hit me
     return {goalX:clamp(p.x+dirX*380, 70, MAP.arenaW-70), goalY:p.y, noCombat:true, urgent:true};
   }
