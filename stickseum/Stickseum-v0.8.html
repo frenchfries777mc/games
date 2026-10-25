@@ -1983,7 +1983,7 @@ const ACHIEVEMENTS=[
   {id:'pro_gamer',   name:'진정한 프로게이머', desc:'모든 모드를 각각 100경기씩, 일일 모드를 100경기 플레이', icon:'🏅', reward:500, check:sd=>MODE_ORDER.concat(MORE_MODES.map(it=>it.id)).every(m=>((sd.modeMatches&&sd.modeMatches[m])||0)>=100) && dailyMatchCount(sd)>=100},
   {id:'level_10',    name:'성장하는 전사', desc:'레벨 10 달성', icon:'⭐', reward:50, check:sd=>levelFromXp(sd.xp||0)>=10},
   {id:'level_25',    name:'베테랑', desc:'레벨 25 달성', icon:'🌟', reward:150, check:sd=>levelFromXp(sd.xp||0)>=25},
-  {id:'sword_triple', name:'일격필살', desc:'기사 궁극기로 한 번에 3명 처치', icon:'🗡️', reward:300, check:(sd,m)=>{ const me=m && m.me; return !!(me && me.weapon==='sword' && (me.ultMulti||0)>=3); }},
+  {id:'sword_triple', group:'char', char:'sword', name:'일격필살', desc:'기사 궁극기로 한 번에 3명 처치', icon:'🗡️', reward:300, check:(sd,m)=>{ const me=m && m.me; return !!(me && me.weapon==='sword' && (me.ultMulti||0)>=3); }},
   {id:'mode_duel_100',    name:'싸움의 달인',     desc:'듀얼 100경기', icon:'🥋', reward:150, check:sd=>((sd.modeMatches&&sd.modeMatches.duel)||0)>=100},
   {id:'mode_ctf_100',     name:'전문 깃발 도둑',  desc:'깃발 뺏기 100경기', icon:'🚩', reward:150, check:sd=>((sd.modeMatches&&sd.modeMatches.ctf)||0)>=100},
   {id:'mode_conquest_100',name:'팽창주의자',      desc:'점령전 100경기', icon:'🏴', reward:150, check:sd=>((sd.modeMatches&&sd.modeMatches.conquest)||0)>=100},
@@ -5044,7 +5044,7 @@ function shuffle(arr){ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.
 /* ===== the version of this file =====
    Players with different versions CAN meet and play together: the automatic matchmaking uses the same room names for every version (online-<mode>-<map>-<slot>), and nobody is refused because of a different build.
    The build is only sent along with the join message and the lobby (for information); the corner of the screen shows it. */
-const GAME_BUILD='build 2026-10-18-v384';
+const GAME_BUILD='build 2026-10-18-v385';
 const GAME_VERSION='0.8', GAME_VERSION_NAME='황금을 찾아서';   // 게임 버전 이름: versions.json의 title과 같게 (빌드마다 바꾸지 않음)
 const WEEKLY_EVENTS=[
   {id:'lowg',    name:'저중력 난투', desc:'몸이 둥실둥실, 중력이 약해진 난투', rules:{grav:0.6}},
