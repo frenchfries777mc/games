@@ -1,7 +1,7 @@
 // Tumblecrown · © 2026 Frenchfries777 · CC BY-NC-ND 4.0
 // 게임 숫자와 이름
 
-export const BUILD = 6, VERSION = '0.1';
+export const BUILD = 7, VERSION = '0.1';
 
 // 방 바닥: 네모 칸. 바깥 고리부터 무너져요
 export const RING = 7, CELL = 3, NX = 7, NZ = 6;   // 방 바닥: 가로 13칸 x 세로 11칸, 한 칸 3m (Vowkeep 1장 단장의 방을 넓힌 모양)
