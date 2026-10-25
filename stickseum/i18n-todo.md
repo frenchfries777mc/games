@@ -250,3 +250,10 @@ patchnotes.json | v377 items[0] | 깃발 뺏기·황금 쟁탈 미니맵 삭제 
 patchnotes.json | v377 items[1] | 인형술사 일반 공격 데미지 10 → 9 | build 377 | 2026-10-25
 patchnotes.json | v377 items[2] | 인형술사 바느질 피해 공유 실 하나당 최대 30 | build 377 | 2026-10-25
 patchnotes.json | v377 items[3] | 인형술사 밸런스 다시 측정 | build 377 | 2026-10-25
+Stickseum-v0.8.html | puppeteer skill desc | (실 하나당 최대 32) | build 378 | 2026-10-25
+Stickseum-v0.8.html | sword skill desc | 닿는 적에게 45 피해 | build 378 | 2026-10-25
+patchnotes.json | v378 title | 기사 강화와 봇 대쉬 수정 | build 378 | 2026-10-25
+patchnotes.json | v378 items[0] | 기사 돌진 베기 피해 32 → 45 | build 378 | 2026-10-25
+patchnotes.json | v378 items[1] | 인형술사 바느질 피해 공유 실 하나당 최대 30 → 32 | build 378 | 2026-10-25
+patchnotes.json | v378 items[2] | 폭탄 돌리기·생존 모드 봇 대쉬 판단을 캐릭터별 대쉬 쿨타임 기준으로 수정(암살자, 피사로 3·4단계) | build 378 | 2026-10-25
+patchnotes.json | v378 items[3] | 밸런스 다시 측정 | build 378 | 2026-10-25
