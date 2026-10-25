@@ -2,6 +2,64 @@
  "notes": [
   {
    "date": "2026-10-25",
+   "build": "v0.2 build 61",
+   "title": "더 크고 화려한 섬",
+   "items": [
+    "다른 섬 크기 약 30% 확대",
+    "섬마다 저택, 탑, 분수, 집, 가판, 등불, 꽃밭 추가",
+    "섬 안 걷는 속도 상향",
+    "수상한 상인과 신고 기능 삭제"
+   ],
+   "tr": {
+    "en": {
+     "title": "Bigger, grander islands",
+     "items": [
+      "Other islands are about 30% bigger",
+      "Manors, towers, fountains, houses, stalls, lanterns, flower beds on every island",
+      "Faster walking on islands",
+      "Shady traders and the report button removed"
+     ]
+    },
+    "ja": {
+     "title": "Bigger, grander islands",
+     "items": [
+      "Other islands are about 30% bigger",
+      "Manors, towers, fountains, houses, stalls, lanterns, flower beds on every island",
+      "Faster walking on islands",
+      "Shady traders and the report button removed"
+     ]
+    },
+    "es": {
+     "title": "Bigger, grander islands",
+     "items": [
+      "Other islands are about 30% bigger",
+      "Manors, towers, fountains, houses, stalls, lanterns, flower beds on every island",
+      "Faster walking on islands",
+      "Shady traders and the report button removed"
+     ]
+    },
+    "fr": {
+     "title": "Bigger, grander islands",
+     "items": [
+      "Other islands are about 30% bigger",
+      "Manors, towers, fountains, houses, stalls, lanterns, flower beds on every island",
+      "Faster walking on islands",
+      "Shady traders and the report button removed"
+     ]
+    },
+    "de": {
+     "title": "Bigger, grander islands",
+     "items": [
+      "Other islands are about 30% bigger",
+      "Manors, towers, fountains, houses, stalls, lanterns, flower beds on every island",
+      "Faster walking on islands",
+      "Shady traders and the report button removed"
+     ]
+    }
+   }
+  },
+  {
+   "date": "2026-10-25",
    "build": "v0.2 build 59",
    "title": "로비로 돌아가기",
    "items": [
