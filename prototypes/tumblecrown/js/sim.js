@@ -1,6 +1,6 @@
 // Tumblecrown · © 2026 Frenchfries777 · CC BY-NC-ND 4.0
 // 게임 규칙: 방장 컴퓨터에서만 돌아가요 (1초에 30번). 다른 사람은 방장이 보낸 장면을 그려요
-import { RING, HEX, TARGET, SHRINK_AT, SHRINK_EVERY, MIN_RING, KO_PTS, FALL_Y, RESPAWN, WEPS, DASH } from './data.js';
+import { RING, HEX, TARGET, SHRINK_AT, SHRINK_EVERY, MIN_RING, KO_PTS, FALL_Y, RESPAWN, CLS, DASH } from './data.js';
 
 /* ---------- 육각 섬 ---------- */
 const S3 = Math.sqrt(3);
@@ -24,19 +24,19 @@ const solid = (G, i) => i >= 0 && (G.tl[i] === 0 || G.tl[i] === 1 || G.tl[i] ===
 export const standable = (G, x, z) => { const i = tileAt(x, z); return i >= 0 && (G.tl[i] === 0 || G.tl[i] === 1); };
 
 /* ---------- 상태 번호 (화면과 같이 써요) ---------- */
-export const ST = { idle: 0, run: 1, charge: 2, swing: 3, dash: 4, stun: 5, slam: 6, lunge: 7, grab: 8, held: 9, out: 10 };
+export const ST = { idle: 0, run: 1, charge: 2, swing: 3, dash: 4, stun: 5, cast: 6, lunge: 7, grab: 8, held: 9, out: 10, spin: 11 };
 
 export function createGame(slots, opts = {}) {
   const G = {
     t: 0, play: 0, phase: 'count', cd: 3, ring: RING, shrinkN: 0, tl: new Uint8Array(NT), tt: new Float32Array(NT), rg: new Float32Array(NT),
-    players: [], crown: { x: 0, y: 3, z: 0, vx: 0, vy: 0, vz: 0, h: null, cd: 0, gone: 0 }, ev: [], winner: null, target: opts.target || TARGET
+    players: [], pj: [], crown: { x: 0, y: 3, z: 0, vx: 0, vy: 0, vz: 0, h: null, cd: 0, gone: 0 }, ev: [], winner: null, target: opts.target || TARGET
   };
   for (const i of PILLARS) G.tl[i] = 3;
   const n = slots.length;
   slots.forEach((s, k) => {
     const a = k / n * Math.PI * 2 + 0.3, R = HEX * 1.5 * 3.6;
     const p = {
-      id: s.id, k, name: s.name, uid: s.uid || null, bot: !!s.bot, wep: s.wep, col: s.col,
+      id: s.id, k, name: s.name, uid: s.uid || null, bot: !!s.bot, cls: s.cls, col: s.col,
       x: Math.cos(a) * R, z: Math.sin(a) * R, y: 0, vx: 0, vz: 0, vy: 0, fx: -Math.cos(a), fz: -Math.sin(a), ax: -Math.cos(a), az: -Math.sin(a),
       st: ST.idle, stT: 0, sa: 0, chg: 0, atkCd: 0, dashCd: 0, skCd: 0, pct: 0, score: 0, ko: 0, falls: 0, held: 0, hs: 0, inv: 0, resp: 0,
       air: true, airDash: true, lastHit: null, grab: null, hitSet: null, bump: null, noPick: 0, prevAtk: false, bot2: { t: 0, mx: 0, mz: 0, atk: false, want: 0 }
@@ -48,7 +48,7 @@ export function createGame(slots, opts = {}) {
   return G;
 }
 
-const W = p => WEPS[p.wep] || WEPS.hammer;
+const W = p => CLS[p.cls] || CLS.knight;
 const lerp = (a, b, k) => a + (b - a) * k;
 const ev = (G, e) => G.ev.push(e);
 function setSt(p, st, T = 0) { p.st = st; p.stT = T; p.sa = 0; }
@@ -67,7 +67,7 @@ function hit(G, a, t, dx, dz, dmg, kb, kind) {
   const hs = Math.min(0.14, 0.04 + k * 0.004); t.hs = hs; if (a) a.hs = Math.max(a.hs, hs * 0.8);
   if (a) t.lastHit = { id: a.id, t: G.t };
   if (G.crown.h === t.id && k >= 6) dropCrown(G, t, dx * k * 0.45, dz * k * 0.45);
-  ev(G, { k: 'hit', x: t.x, y: t.y + 1, z: t.z, s: Math.round(k), w: kind || (a ? a.wep : ''), id: t.id });
+  ev(G, { k: 'hit', x: t.x, y: t.y + 1, z: t.z, s: Math.round(k), w: kind || (a ? a.cls : ''), id: t.id });
   return true;
 }
 function dropCrown(G, p, vx, vz) {
@@ -94,6 +94,7 @@ export function step(G, dt, inputs) {
     const inp = p.bot ? botInput(G, p, dt) : (inputs[p.id] || {});
     stepPlayer(G, p, dt, live ? inp : {});
   }
+  stepProj(G, dt);
   // 서로 겹치지 않게 살짝 밀어요
   const ps = G.players;
   for (let i = 0; i < ps.length; i++) for (let j = i + 1; j < ps.length; j++) {
@@ -127,7 +128,9 @@ function stepPlayer(G, p, dt, inp) {
   if (p.st === ST.stun && p.stT <= 0 && grounded) setSt(p, ST.idle);
   if (p.st === ST.dash && p.stT <= 0) { setSt(p, ST.idle); p.vx *= 0.35; p.vz *= 0.35; }
   if (p.st === ST.lunge && p.stT <= 0) { setSt(p, ST.idle); p.vx *= 0.3; p.vz *= 0.3; }
-  if (p.st === ST.slam && p.stT <= 0) { doSlam(G, p); setSt(p, ST.swing, 0.25); }
+  if (p.st === ST.cast && p.stT <= 0) { doCast(G, p); setSt(p, ST.swing, 0.22); }
+  if (p.st === ST.spin && p.stT <= 0) setSt(p, ST.idle);
+  if (p.st === ST.spin && !p.spun && p.sa >= 0.14) { p.spun = true; doSpin(G, p); }
   if (p.st === ST.grab && p.stT <= 0) doThrow(G, p);
   if (p.st === ST.held) { const g = G.players.find(q => q.id === p.heldBy); if (!g || g.st !== ST.grab) setSt(p, ST.stun, 0.2); else { p.x = g.x + g.ax * 1.0; p.z = g.z + g.az * 1.0; p.y = g.y + 0.9; p.vx = p.vz = p.vy = 0; return; } }
   // 공격 모으기와 휘두르기
@@ -161,7 +164,7 @@ function stepPlayer(G, p, dt, inp) {
     if (t === p || t.st === ST.out || (p.hitSet && p.hitSet.has(t.id))) continue;
     if (Math.hypot(t.x - p.x, t.z - p.z) < 1.3 && Math.abs(t.y - p.y) < 1.4) {
       (p.hitSet || (p.hitSet = new Set())).add(t.id);
-      if (p.st === ST.lunge) hit(G, p, t, p.ax * 2 + (t.x - p.x), p.az * 2 + (t.z - p.z), 12, 15, 'lunge');
+      if (p.st === ST.lunge) hit(G, p, t, p.ax * 2 + (t.x - p.x), p.az * 2 + (t.z - p.z), p.lunD || 12, p.lunK || 15, 'lunge');
       else hit(G, p, t, t.x - p.x, t.z - p.z, 2, 5.5, 'bump');
     }
   }
@@ -178,7 +181,8 @@ function stepPlayer(G, p, dt, inp) {
 function swing(G, p) {
   const w = W(p), c = p.chg; setSt(p, ST.swing, w.swing); p.atkCd = w.cd; p.fx = p.ax; p.fz = p.az;
   p.lastChg = c;
-  const dmg = lerp(w.dmg[0], w.dmg[1], c), kb = lerp(w.kb[0], w.kb[1], c), rg = w.range + (p.wep === 'spear' ? c * 0.6 : 0);
+  const dmg = lerp(w.dmg[0], w.dmg[1], c), kb = lerp(w.kb[0], w.kb[1], c), rg = w.range;
+  if (w.proj) { shoot(G, p, w.proj, c, 0); ev(G, { k: 'swing', id: p.id, c: Math.round(c * 10) / 10, pj: 1 }); p.chg = 0; return; }
   // 조금 앞으로 내딛어요
   p.vx += p.ax * 3; p.vz += p.az * 3;
   ev(G, { k: 'swing', id: p.id, c: Math.round(c * 10) / 10 });
@@ -199,9 +203,12 @@ function dash(G, p, mx, mz) {
   ev(G, { k: 'dash', id: p.id });
 }
 function skill(G, p) {
-  const w = W(p); p.skCd = w.sk.cd; p.chg = 0; p.fx = p.ax; p.fz = p.az; p.hitSet = new Set();
-  if (p.wep === 'hammer') { setSt(p, ST.slam, 0.38); p.vx = p.vz = 0; }
-  else if (p.wep === 'spear') { setSt(p, ST.lunge, 0.3); p.vx = p.ax * 21; p.vz = p.az * 21; }
+  const w = W(p), kind = w.sk.kind; p.skCd = w.sk.cd; p.chg = 0; p.fx = p.ax; p.fz = p.az; p.hitSet = new Set();
+  if (kind === 'bash') { setSt(p, ST.lunge, 0.3); p.vx = p.ax * 17; p.vz = p.az * 17; p.lunD = 10; p.lunK = 15; }
+  else if (kind === 'lunge') { setSt(p, ST.lunge, 0.3); p.vx = p.ax * 22; p.vz = p.az * 22; p.lunD = 12; p.lunK = 14; }
+  else if (kind === 'nova' || kind === 'curse') { setSt(p, ST.cast, kind === 'nova' ? 0.25 : 0.35); p.vx = p.vz = 0; }
+  else if (kind === 'spin') { setSt(p, ST.spin, 0.5); p.spun = false; p.vx *= 0.3; p.vz *= 0.3; }
+  else if (kind === 'volley') { for (const o of [-0.28, 0, 0.28]) shoot(G, p, 'arrow', 0.75, o); setSt(p, ST.swing, 0.25); }
   else {
     // 잡기: 앞쪽 가까운 상대 하나
     let best = null, bd = 2.3;
@@ -209,14 +216,50 @@ function skill(G, p) {
     if (best) { setSt(p, ST.grab, 0.42); p.grab = best.id; best.heldBy = p.id; setSt(best, ST.held, 9); best.chg = 0; if (G.crown.h === best.id) dropCrown(G, best, 0, 0); p.vx = p.vz = 0; }
     else { setSt(p, ST.swing, 0.3); p.skCd = 2; }
   }
-  ev(G, { k: 'skill', id: p.id, w: p.wep });
+  ev(G, { k: 'skill', id: p.id, w: kind });
 }
-function doSlam(G, p) {
-  const cx = p.x + p.ax * 1.7, cz = p.z + p.az * 1.7;
-  for (const t of G.players) { if (t === p || t.st === ST.out) continue; const dx = t.x - cx, dz = t.z - cz, d = Math.hypot(dx, dz); if (d < 3.3 && Math.abs(t.y - p.y) < 1.6) hit(G, p, t, dx || p.ax, dz || p.az, 10, 13.5, 'slam'); }
-  const ti = tileAt(cx, cz);
-  if (ti >= 0) for (let i = 0; i < NT; i++) if (G.tl[i] === 0 && hexDist(i, ti) <= 1) { G.tl[i] = 1; G.tt[i] = 1.4; G.rg[i] = 1; }
-  ev(G, { k: 'slam', x: cx, z: cz });
+function doCast(G, p) {
+  const kind = W(p).sk.kind;
+  if (kind === 'nova') {
+    for (const t of G.players) { if (t === p || t.st === ST.out) continue; const dx = t.x - p.x, dz = t.z - p.z, d = Math.hypot(dx, dz); if (d < 3.3 && Math.abs(t.y - p.y) < 1.6) hit(G, p, t, dx || p.ax, dz || p.az, 5, 12, 'nova'); }
+    p.pct = Math.max(0, p.pct - 25); ev(G, { k: 'nova', x: p.x, z: p.z, id: p.id });
+  } else {
+    const cx = p.x + p.ax * 4, cz = p.z + p.az * 4;
+    for (const t of G.players) { if (t === p || t.st === ST.out) continue; const dx = t.x - cx, dz = t.z - cz, d = Math.hypot(dx, dz); if (d < 2 && Math.abs(t.y - p.y) < 1.6) hit(G, p, t, dx || p.ax, dz || p.az, 6, 8, 'curse'); }
+    const ti = tileAt(cx, cz);
+    if (ti >= 0) for (let i = 0; i < NT; i++) if (G.tl[i] === 0 && hexDist(i, ti) <= 1) { G.tl[i] = 1; G.tt[i] = 1.2; G.rg[i] = 1; }
+    ev(G, { k: 'curse', x: cx, z: cz });
+  }
+}
+function doSpin(G, p) {
+  for (const t of G.players) { if (t === p || t.st === ST.out) continue; const dx = t.x - p.x, dz = t.z - p.z, d = Math.hypot(dx, dz); if (d < 3 && Math.abs(t.y - p.y) < 1.6) hit(G, p, t, dx || p.ax, dz || p.az, 12, 15, 'spin'); }
+  ev(G, { k: 'spin', x: p.x, z: p.z, id: p.id });
+}
+// 날아가는 공격: 화살은 빠르고 곧게, 마법 구슬은 느리고 닿으면 터져요
+function shoot(G, p, kind, c, off) {
+  const w = W(p), a = Math.atan2(p.az, p.ax) + off, sp = kind === 'arrow' ? 20 + c * 14 : 11 + c * 4;
+  G.pj.push({ kind, o: p.id, x: p.x + Math.cos(a) * 0.8, z: p.z + Math.sin(a) * 0.8, y: p.y + 1.5, vx: Math.cos(a) * sp, vz: Math.sin(a) * sp, t: 0, life: kind === 'arrow' ? 0.45 + c * 0.35 : 1.1,
+    dmg: lerp(w.dmg[0], w.dmg[1], c), kb: lerp(w.kb[0], w.kb[1], c), hit: new Set() });
+  p.vx -= Math.cos(a) * 1.5; p.vz -= Math.sin(a) * 1.5;
+}
+function boom(G, b) {
+  const o = G.players.find(q => q.id === b.o);
+  for (const t of G.players) { if (t.id === b.o || t.st === ST.out) continue; const dx = t.x - b.x, dz = t.z - b.z, d = Math.hypot(dx, dz); if (d < 1.8 && Math.abs(t.y + 1 - b.y) < 2) hit(G, o, t, dx || b.vx, dz || b.vz, b.dmg, b.kb, 'orb'); }
+  ev(G, { k: 'boom', x: b.x, y: b.y, z: b.z });
+}
+function stepProj(G, dt) {
+  for (let i = G.pj.length - 1; i >= 0; i--) {
+    const b = G.pj[i]; b.t += dt; b.x += b.vx * dt; b.z += b.vz * dt; let dead = b.t >= b.life;
+    for (const k of PILLARS) if (!dead && G.tl[k] === 3 && Math.hypot(b.x - TILES[k].x, b.z - TILES[k].z) < 1.0) dead = true;
+    if (!dead) for (const t of G.players) {
+      if (t.id === b.o || t.st === ST.out || t.st === ST.held || b.hit.has(t.id)) continue;
+      if (Math.hypot(t.x - b.x, t.z - b.z) < 0.75 && b.y > t.y - 0.2 && b.y < t.y + 2.6) {
+        if (b.kind === 'orb') { dead = true; break; }
+        b.hit.add(t.id); hit(G, G.players.find(q => q.id === b.o), t, b.vx, b.vz, b.dmg, b.kb, 'arrow'); dead = true; break;
+      }
+    }
+    if (dead) { if (b.kind === 'orb') boom(G, b); G.pj.splice(i, 1); }
+  }
 }
 function doThrow(G, p) {
   const t = G.players.find(q => q.id === p.grab); p.grab = null; setSt(p, ST.swing, 0.25);
@@ -260,7 +303,7 @@ function stepCrown(G, dt) {
 
 /* ---------- 봇 ---------- */
 function botInput(G, p, dt) {
-  const b = p.bot2, w = W(p), c = G.crown; b.t -= dt;
+  const b = p.bot2, w = W(p), c = G.crown, ar = w.proj ? 7 : w.range; b.t -= dt;
   const out = { mx: b.mx, mz: b.mz, ax: p.ax, az: p.az, atk: false, dash: false, sk: false };
   if (p.st === ST.out || G.phase !== 'play') return { atk: false };
   // 떨어지는 중이면 섬 가운데로 구르기
@@ -274,16 +317,16 @@ function botInput(G, p, dt) {
     const awx = near ? p.x - near.x : 0, awz = near ? p.z - near.z : 0, aL = Math.hypot(awx, awz) || 1;
     const lim = HEX * 1.5 * Math.max(1.5, G.ring - 1.2), cen = Math.min(1.6, Math.hypot(p.x, p.z) / lim * 1.4);
     tx = p.x + awx / aL * 2 - p.x / (Math.hypot(p.x, p.z) || 1) * cen * 2.4; tz = p.z + awz / aL * 2 - p.z / (Math.hypot(p.x, p.z) || 1) * cen * 2.4;
-    if (near && nd < w.range + 0.4) target = near;
-  } else if (holder) { tx = holder.x; tz = holder.z; target = holder; if (near && nd < w.range * 0.8 && near !== holder) target = near; }
-  else if (c.gone <= 0) { tx = c.x; tz = c.z; if (near && nd < w.range * 0.9) target = near; }
+    if (near && nd < ar + 0.4) target = near;
+  } else if (holder) { tx = holder.x; tz = holder.z; target = holder; if (near && nd < ar * 0.8 && near !== holder) target = near; }
+  else if (c.gone <= 0) { tx = c.x; tz = c.z; if (near && nd < ar * 0.9) target = near; }
   else { tx = 0; tz = 0; target = near; }
   if (b.t <= 0) {
     b.t = 0.12 + Math.random() * 0.12;
     let dx = tx - p.x, dz = tz - p.z; const L = Math.hypot(dx, dz);
     if (L > 0.3) { dx /= L; dz /= L; } else { dx = dz = 0; }
     // 지금 공격할 상대가 사거리 안이면 멈춰서 휘둘러요
-    if (target && target !== holder && Math.hypot(target.x - p.x, target.z - p.z) < w.range * 0.7) { dx *= 0.2; dz *= 0.2; }
+    if (target && target !== holder && Math.hypot(target.x - p.x, target.z - p.z) < ar * 0.7) { dx *= 0.2; dz *= 0.2; }
     // 낭떠러지를 피해요
     for (let a = 0; a < 6 && (dx || dz); a++) {
       if (standable(G, p.x + dx * 1.4, p.z + dz * 1.4) && standable(G, p.x + dx * 0.7, p.z + dz * 0.7)) break;
@@ -292,8 +335,8 @@ function botInput(G, p, dt) {
     }
     b.mx = dx; b.mz = dz;
     if (target) { const d = Math.hypot(target.x - p.x, target.z - p.z);
-      if (d < w.range + 0.3 && p.atkCd <= 0 && !b.atk && Math.random() < 0.75) { b.atk = true; b.want = Math.random() * (Math.random() < 0.4 ? 1 : 0.5); }
-      if (p.skCd <= 0 && Math.random() < 0.25 && ((p.wep === 'spear' && d > 2 && d < 5.5) || (p.wep === 'hammer' && d < 2.8) || (p.wep === 'fist' && d < 1.9))) out.sk = true;
+      if (d < ar + 0.3 && p.atkCd <= 0 && !b.atk && Math.random() < 0.75) { b.atk = true; b.want = Math.random() * (Math.random() < 0.4 ? 1 : 0.5); }
+      const sk = w.sk.kind; if (p.skCd <= 0 && Math.random() < 0.25 && (((sk === 'bash' || sk === 'lunge') && d > 2 && d < 5.5) || ((sk === 'nova' || sk === 'spin') && d < 2.8) || (sk === 'grab' && d < 1.9) || (sk === 'volley' && d < 8) || (sk === 'curse' && d > 3 && d < 5))) out.sk = true;
       if (p.dashCd <= 0 && target === holder && d > 3 && d < 7 && Math.random() < 0.18) out.dash = true;
     }
     out.mx = b.mx; out.mz = b.mz;
@@ -311,6 +354,7 @@ export function snapshot(G) {
   return {
     t: r(G.t), ph: G.phase, cd: r(G.cd), ring: G.ring, pl: r(G.play), tl: Array.from(G.tl).join(''), w: G.winner, tg: G.target,
     p: G.players.map(p => [p.id, r(p.x), r(p.y), r(p.z), r(p.fx), r(p.fz), p.st, r(p.sa), r(p.chg), Math.round(p.pct), r(p.score), p.ko, p.falls, p.inv > 0 ? 1 : 0, r(p.ax), r(p.az), r(Math.max(0, p.dashCd)), r(Math.max(0, p.skCd)), r(Math.max(0, p.resp)), r(p.held)]),
-    c: [r(G.crown.x), r(G.crown.y), r(G.crown.z), G.crown.h]
+    c: [r(G.crown.x), r(G.crown.y), r(G.crown.z), G.crown.h],
+    j: G.pj.map(b => [b.kind === 'orb' ? 1 : 0, r(b.x), r(b.y), r(b.z), r(b.vx), r(b.vz)])
   };
 }
