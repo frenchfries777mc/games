@@ -387,7 +387,7 @@ window.bfIntro=function(){if(run)return;run=1;t0=Date.now();el.classList.add('ru
     <button class="btn" data-act="skins"><span class="arrow">▶</span>스킨 상점<span class="en">SKIN SHOP</span></button>
     <button class="btn" data-act="stats"><span class="arrow">▶</span>통계<span class="en">STATS</span></button>
     <button class="btn" data-act="settings"><span class="arrow">▶</span>설정<span class="en">SETTINGS</span></button>
-    <p class="foot">v0.4<br>build 105</p>
+    <p class="foot">v0.4<br>build 106</p>
   </nav>
 </div>
 
@@ -5933,7 +5933,8 @@ function drawHeldItem(g,dy){
   if(P.dead||P.down||P.air||P.sleeping||bowMat())return;
   const q=inv[P.sel];if(!q||!ITEMS[q.id])return;
   const sw=(P.chopping||P.atkAnim>0)?(((P.swing*6)|0)&1):0,s=P.f>=0?1:-1,x=Math.round(P.x)+(s>0?1:-8)+(sw?s*2:0),y=Math.round(P.y)-9+(dy||0)+(sw?1:0);
-  g.drawImage(itemIcon(q.id),0,0,12,12,x,y,8,8);
+  if(s<0){g.save();g.translate(x+8,y);g.scale(-1,1);g.drawImage(itemIcon(q.id),0,0,12,12,0,0,8,8);g.restore();}   // 왼쪽을 볼 땐 도구도 뒤집어요
+  else g.drawImage(itemIcon(q.id),0,0,12,12,x,y,8,8);
   g.fillStyle='#f2c9a0';g.fillRect(Math.round(P.x)+(s>0?3:-3)+(sw?s*2:0),Math.round(P.y)-5+(dy||0)+(sw?1:0),1,2);   // 손
 }
 function hitMonster(m,dmg,far,rune,noRoll){
@@ -9283,7 +9284,8 @@ const ST_ROWS=[
 ];
 let stLX=null,stLY=0,stSaveT=0;
 const stObj=()=>(settings.st=settings.st&&typeof settings.st==='object'?settings.st:{});
-function stAdd(k,n){const o=stObj();o[k]=(+o[k]||0)+(n===undefined?1:n);}
+function stAdd(k,n){const o=stObj();o[k]=(+o[k]||0)+(n===undefined?1:n);
+  if((k==='tree'||k==='kill')&&typeof world!=='undefined'&&world){const w=(settings.wst=settings.wst&&typeof settings.wst==='object'?settings.wst:{}),wk=invKey();if(wk){const c=w[wk]=w[wk]||{};c[k]=(+c[k]||0)+(n===undefined?1:n);}}}   // 엔딩 대사용: 월드별 집계
 function stTick(dt){
   if(mode!=='play'||!world||typeof P==='undefined'||!P){stLX=null;return;}
   const o=stObj();
@@ -9727,7 +9729,7 @@ const ES_PAL={dusk:['#1a1440','#3a2358','#6a3466','#a8486a','#e0704e','#f4a24a']
 const ES_ALIEN=['....aaaa....','...agggga...','..aggggggs..','..gkkggkkg..','..gkkggkkg..','..gggggggg..','...gggmgg...','..hhhhhhhh..','.hhbbhhbbhh.','.hhhhhhhhhh.','.hh.hhhh.hh.','.gg.hhhh.gg.','....hh.hh...','...ddd.ddd..'];
 const ES_ALCOL={a:'#7ad08a',g:'#4aa86a',s:'#2a6a44',k:'#0a0c16',m:'#2a6a44',h:'#46557d',b:'#9ad0ff',d:'#2a3248'};
 function esTxt(){
-  const st=settings.st||{},tree=Math.max(1,(+st.tree||0)).toLocaleString(),kill=Math.max(1,(+st.kill||0)).toLocaleString();
+  const st=(settings.wst&&settings.wst[invKey()])||{},tree=Math.max(1,(+st.tree||0)).toLocaleString(),kill=Math.max(1,(+st.kill||0)).toLocaleString();
   const L=(w,t)=>({w,t});
   return {
     main:[L('e','이봐, 구조당한 기분이 어때?'),L('p','고마워, 하지만 무언가 아쉬운 느낌이 드는군.'),L('e','그렇겠지, 너는 너만의 작은 왕국을 여기에 세웠으니까.'),
@@ -9760,7 +9762,7 @@ function esDraw(g,mode,tm,who,old){
   g.fillStyle='#9ad0ff';for(let x=14;x<W2;x+=32){g.fillRect(x,114,3,1);g.fillRect(x,127,3,1);}
   g.fillStyle='#2a3248';g.fillRect(104,108,48,3);g.fillStyle='#e0434f';g.fillRect(8,108,3,2);g.fillRect(W2-11,108,3,2);
   // 인물
-  const by=(w)=>who===w?-Math.abs(Math.sin(tm*9))*1.6:0;
+  const by=(w)=>who===w?-Math.round(Math.abs(Math.sin(tm*9))*1.6):0;   // 정수 픽셀로만 움직여야 줄무늬가 안 생겨요
   g.save();g.translate(70,121+by('p'));g.scale(4,4);drawPerson(g,0,0,1,false,0,false,0,0,myLook());
   if(old){g.fillStyle='#d4d8e2';g.fillRect(-1,-8,3,1);g.fillRect(-2,-7,1,1);g.fillRect(2,-7,1,1);}g.restore();
   g.save();g.translate(176,121+by('e'));g.scale(3,3);
