@@ -534,6 +534,8 @@
     "카트 위에서 드리프트하는 마네킹, 오늘의 장보기는 목숨 걸고 합니다.": ["A mannequin drifting on a cart. Today's grocery run is life or death.", "Un maniquí derrapando en un carrito. Hoy las compras son a vida o muerte.", "Un mannequin qui dérape en caddie. Les courses du jour se font au péril de sa vie.", "Eine Puppe driftet im Wagen. Der Einkauf heute ist lebensgefährlich.", "カートでドリフトするマネキン。今日の買い物は命がけです。"],
     "물건이 쏟아졌습니다! 계산대 직원이 한숨을 쉽니다.": ["Goods everywhere! The cashier sighs.", "¡Compras por todas partes! La cajera suspira.", "Des courses partout ! La caissière soupire.", "Ware überall! Die Kassiererin seufzt.", "荷物が散らばりました！レジの店員がため息をつきます。"],
     "벽에 박았습니다. 카트는 괜찮습니다. 마네킹도 괜찮아 보입니다.": ["Hit the wall. The cart's fine. The mannequin looks fine too.", "Choque contra la pared. El carrito está bien. El maniquí también parece estar bien.", "Collision avec le mur. Le caddie va bien. Le mannequin aussi, apparemment.", "Gegen die Wand. Dem Wagen geht's gut. Der Puppe scheinbar auch.", "壁にぶつかりました。カートは無事です。マネキンも無事そうです。"],
+    /* 빌드 69 추가분 */
+    "컴퓨터가 느린 것 같아 그림을 가볍게 바꿨어요.": ["Your computer seems slow, so graphics were lightened.", "Tu equipo parece lento, así que se aligeraron los gráficos.", "Ton ordinateur semble lent, les graphismes ont été allégés.", "Dein Computer wirkt langsam, daher wurde die Grafik vereinfacht.", "パソコンが重そうなので、描画を軽くしました。"],
     /* 빌드 68 추가분 */
     "칭호": ["Title", "Título", "Titre", "Titel", "称号"],
     "칭호 없음": ["No title", "Sin título", "Aucun titre", "Kein Titel", "称号なし"],
@@ -1625,7 +1627,9 @@ body.playing #emoBar{display:flex}
    <div class="row"><input id="codeIn" maxlength="5" placeholder="방 코드" autocomplete="off"><button class="pb dark" id="joinBtn" style="flex:0 0 auto">들어가기</button></div>
    <div class="msg" id="homeMsg"></div>
   </aside>
-  <template id="patchnotes"><details class="notes" open><summary>패치노트 · v0.1 (b68)</summary>
+  <template id="patchnotes"><details class="notes" open><summary>패치노트 · v0.1 (b69)</summary>
+   <b>2026-10-25 · v0.1 · b69 · 방장 컴퓨터 부담 줄이기</b>
+   <ul><li>방장 컴퓨터가 느려도 게임이 덜 느려져요: 상태를 한 번만 만들어 가볍게 보내고, 회선이 막힌 사람에겐 건너뛰고, 방장이 밀려도 게임 속도를 따라잡아요</li><li>방장 컴퓨터가 계속 밀리면 그 컴퓨터에서만 그림을 자동으로 가볍게 바꾸고 보내는 횟수도 줄여요 (규칙은 그대로예요)</li></ul>
    <b>2026-10-25 · v0.1 · b68 · 칭호 상점과 연습장</b>
    <ul><li>상점에 "칭호" 탭이 생겼어요. 아무개, 방귀쟁이, 뿡뿡이, 12중 스파이, 대통령 같은 병맛 칭호 12개를 dC로 사고, 이름 옆에 작게 달 수 있어요</li><li>첫 화면에 "연습장" 추가: 미니게임 하나를 골라 봇 한 명과 3번 연습해요 (점수, 코인, 업적, 랭킹에는 안 들어가요)</li><li>로그인했다면 한 판이 끝날 때 허브 랭킹의 Dummy Party 칸에 점수가 쌓여요</li><li>닉네임을 최대 15글자까지 쓸 수 있어요</li><li>줄다리기에서 자리에 따라 유리하던 것을 고치고, 핫도그 먹기 봇 실력이 자리 번호로 정해지던 것을 판마다 랜덤으로 바꿨어요</li></ul>
    <b>2026-10-25 · v0.1 · b67 · 줄넘기 점프 신호</b>
@@ -1760,7 +1764,7 @@ body.playing #emoBar{display:flex}
    <ul><li>무너지는 발판 칸 수 대폭 증가 (19×10)와 용암 동굴 맵</li><li>10개 맵 전부 새로 그림 (관중석, 야자수 섬, 링, 정원 미로, 서커스, 우노 테이블 등)</li><li>글자 대신 아이콘·말풍선·이펙트로 표현 (무기, 아이템, 카드 효과, 시작 안내)</li><li>타격·폭발·물보라 효과와 화면 흔들림 추가</li></ul>
    <b>2026-10-19 · v0.1 · b1 · 첫 시험판</b>
    <ul><li>마네킹 미니게임 10개 추가 (장애물 달리기, 섬 밀치기, 싸우기, 병맛 미로, 체스 대난투, 폭탄 돌리기, 병맛 우노, 쇼윈도 얼음땡, 무너지는 발판, 컨베이어 서바이벌)</li><li>방 코드로 최대 8명 멀티플레이, 빈자리는 봇으로 채우기</li><li>판마다 10개 중 5개를 무작위로 골라 점수를 합산</li><li>PC 키보드와 휴대폰 터치 조작 지원</li></ul></details></template>
-  <p class="foot">2~8명 · 판마다 36개 미니게임 중 7개 · v0.1 b68 · <a href="../">← Dummy Party 사이트로</a></p>
+  <p class="foot">2~8명 · 판마다 36개 미니게임 중 7개 · v0.1 b69 · <a href="../">← Dummy Party 사이트로</a></p>
   <p class="foot"><span class="ff-copy">© 2026 Frenchfries777 · <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.ko" target="_blank" rel="noopener">CC BY-NC-ND 4.0</a></span></p>
  </div>
 </section>
@@ -7566,6 +7570,7 @@ function guestMsg(d) {
     if (G.snapCur && d.mg === G.snapCur.mg) G.snapPrev = G.snapCur; else G.snapPrev = null;
     var now = performance.now();
     if (G.snapAt) G.snapGap = lerp(G.snapGap, clamp(now - G.snapAt, 15, 120), 0.2);
+    if (d.j != null) { try { d.d = JSON.parse(d.j); } catch (er) { return; } }
     G.snapCur = { mg: d.mg, d: d.d, tl: d.tl }; G.snapAt = now;
     if (d.d && d.d._fx) onFxList(d.d._fx);
   }
@@ -7718,10 +7723,21 @@ function beginIntro() {
   setPhase('intro', T_INTRO);
 }
 function setPhase(ph, t) { var prev = G.phase; G.phase = ph; G.tl = t; G.phaseT = 0; sendMeta(); onPhase(prev); }
+var hAcc = 0, hLast = 0, hLag = 0, hLagT = 0;
 function hostTick() {
-  if (G.role !== 'host' && G.role !== 'solo') return;
-  if (G.phase === 'lobby') { lobTick(); return; }
-  if (G.phase === 'idle' || G.phase === 'final') return;
+  if (G.role !== 'host' && G.role !== 'solo') { hLast = 0; return; }
+  if (G.phase === 'lobby') { hAcc = 0; hLast = 0; lobTick(); return; }
+  if (G.phase === 'idle' || G.phase === 'final') { hAcc = 0; hLast = 0; return; }
+  // 방장 컴퓨터가 느려서 타이머가 늦게 불려도 게임 속도는 그대로예요: 밀린 만큼 (최대 3번) 더 계산해요
+  var now = performance.now(); hAcc += hLast ? Math.min(0.1, (now - hLast) / 1000) : 1 / 60; hLast = now;
+  var n = 0;
+  while (hAcc >= 1 / 60 - 0.002 && n < 3 && (G.phase !== 'idle' && G.phase !== 'final')) { hAcc -= 1 / 60; n++; hostStep(); }
+  if (hAcc < 0) hAcc = 0; if (n >= 3) hAcc = 0;
+  hLag += ((n > 1 ? 1 : 0) - hLag) * 0.02;
+  // 계속 밀리면(방장 컴퓨터가 느리면) 이 컴퓨터에서만 가벼운 그림 모드로 바꿔요 (설정은 안 바꿔요)
+  if (hLag > 0.25) { hLagT += 1 / 60; if (hLagT > 4 && !OPT) { OPT = OPTMID = true; if (window.resize && CV) resize(); toast('컴퓨터가 느린 것 같아 그림을 가볍게 바꿨어요.'); } } else hLagT = Math.max(0, hLagT - 1 / 60);
+}
+function hostStep() {
   var dt = 1 / 60, def = DP.MG[G.mgId];
   G.tl -= dt; G.phaseT += dt; G.frame++;
   if (G.phase === 'intro' && G.tl <= 0) setPhase('count', T_COUNT);
@@ -7744,7 +7760,7 @@ function hostTick() {
   def = DP.MG[G.mgId];
   // 보내는 횟수는 사람 수와 단계에 맞춰요: 사람이 많을수록, 가만히 있는 단계일수록 덜 보내요
   var live = G.phase === 'play' || G.phase === 'end', nG = G.role === 'host' ? Object.keys(G.conns).length : 0;
-  var every = !live ? 10 : nG >= 6 ? 4 : nG >= 4 ? 3 : 2;
+  var every = !live ? 10 : nG >= 6 ? 4 : nG >= 4 ? 3 : 2; if (live && hLag > 0.25) every = Math.min(6, every + 1);   // 방장이 밀리면 덜 보내요
   if (G.st && G.frame % every === 0) broadcastSnap(def);
   else if (G.st && G.st._fx && G.st._fx.length && G.role === 'solo') broadcastSnap(def);
 }
@@ -7769,13 +7785,17 @@ var myActs = [];
 function myRaw() { var r = INPUT.raw(); r.acts = myActs; myActs = []; return r; }
 function broadcastSnap(def) {
   var fxl = G.st._fx || []; G.st._fx = [];
+  var mine = def.snap(G.st, G.me); mine._fx = fxl; mine._ev = G.st._ev || [];
   if (G.role === 'host') {
-    for (var k in G.conns) {
-      var s = def.snap(G.st, k); s._fx = fxl; s._ev = G.st._ev || [];
-      try { G.conns[k].send({ t: 's', mg: G.mgId + ':' + G.round, d: s, tl: G.tl }); } catch (e) { }
+    // 한 번만 만들어 문자열로 보내요 (사람마다 다시 만들지 않고, 소수점은 2자리까지만)
+    var ks = Object.keys(G.conns), js = null;
+    for (var q = 0; q < ks.length; q++) {
+      var cn = G.conns[ks[q]], dc = cn && cn.dataChannel;
+      if (dc && dc.bufferedAmount > 120000) continue;   // 그 사람 회선이 막혀 있으면 이번 건 건너뛰어요 (쌓이면 점점 늦어져요)
+      if (js === null) js = JSON.stringify(mine).replace(/(\d\.\d\d)\d+/g, '$1');
+      try { cn.send({ t: 's', mg: G.mgId + ':' + G.round, j: js, tl: G.tl }); } catch (e) { }
     }
   }
-  var mine = def.snap(G.st, G.me); mine._fx = fxl; mine._ev = G.st._ev || [];
   onFxList(fxl);
   G.snapPrev = null; G.snapCur = { mg: G.mgId + ':' + G.round, d: mine, tl: G.tl }; G.snapAt = performance.now();
 }
