@@ -1022,6 +1022,8 @@ export default {
 "명장의 무기": "Arme de maître forgeron",
 "명장의 갑옷": "Armure de maître forgeron",
 "방이 가득 찼어요 (최대 4명).": "Le salon est plein (4 joueurs max).",
+"무기": "Arme",
+"갑옷": "Armure",
 "무너진 기사단의 마지막 기사들이 함께 떠나는 협동 던전 원정": "Une expédition coopérative en donjon pour les derniers chevaliers d'un Ordre déchu",
 "무너진 기사단의 마지막 기사들": "Les derniers chevaliers d'un Ordre déchu",
 "혼자 원정": "Expédition solo",

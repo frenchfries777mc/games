@@ -1022,6 +1022,8 @@ export default {
 "명장의 무기": "Arma de maestro herrero",
 "명장의 갑옷": "Armadura de maestro herrero",
 "방이 가득 찼어요 (최대 4명).": "La sala está llena (máx. 4 jugadores).",
+"무기": "Arma",
+"갑옷": "Armadura",
 "무너진 기사단의 마지막 기사들이 함께 떠나는 협동 던전 원정": "Una expedición cooperativa de mazmorras para los últimos caballeros de una Orden caída",
 "무너진 기사단의 마지막 기사들": "Los últimos caballeros de una Orden caída",
 "혼자 원정": "Expedición en solitario",

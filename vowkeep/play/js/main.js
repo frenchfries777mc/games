@@ -191,7 +191,7 @@ function paintRoles() {
     d.innerHTML = `<img class="pt" alt="" src="${view.portrait(r)}"><h3 style="color:${R.color === '#e8e4ef' ? '#efe3c8' : R.color}">${R.name}</h3><div class="lv">Lv ${lv} (${T('명예 {0} 받음', xp)})${cl}</div><div class="note">${R.role} ${T('체력 {0}', R.hp)}</div><ul>${R.skills.map(s => `<li><b>${s.key} ${s.name}</b>: ${s.desc}</li>`).join('')}</ul>`;
     const gr = document.createElement('div'); gr.className = 'gear';
     [['weapon', '무기'], ['armor', '갑옷']].forEach(([k, lab]) => {
-      const t = g[k] | 0, sp = document.createElement('span'); sp.textContent = lab + ': ' + GEAR_TIERS[t] + ' ' + lab; gr.appendChild(sp);
+      const t = g[k] | 0, sp = document.createElement('span'); sp.textContent = T(lab) + ': ' + T(GEAR_TIERS[t] + ' ' + lab); gr.appendChild(sp);
       if (t < 2) { const b = document.createElement('button'); b.className = 'btn'; b.textContent = T(GEAR_TIERS[t + 1] + ' ' + lab) + ' (' + T('명예 {0}', GEAR_COST[t + 1]) + ')'; b.disabled = SAVE.honor < GEAR_COST[t + 1]; b.onclick = () => { if (SAVE.honor < GEAR_COST[t + 1]) return; SAVE.honor -= GEAR_COST[t + 1]; g[k] = t + 1; SAVE.gear[r] = g; save(); SFX.play('bless'); paintRoles(); }; gr.appendChild(b); }
     });
     d.appendChild(gr);

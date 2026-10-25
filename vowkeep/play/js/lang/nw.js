@@ -1022,6 +1022,8 @@ export default {
 "명장의 무기": "Doubleplusgood Weapon",
 "명장의 갑옷": "Doubleplusgood Armor",
 "방이 가득 찼어요 (최대 4명).": "Room full (max 4).",
+"무기": "Weapon",
+"갑옷": "Armor",
 "무너진 기사단의 마지막 기사들이 함께 떠나는 협동 던전 원정": "Together dungeon outgo of last Bigknights of unbuilt Order",
 "무너진 기사단의 마지막 기사들": "Last Bigknights of unbuilt Order",
 "혼자 원정": "Alone outgo",

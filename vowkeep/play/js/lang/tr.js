@@ -1022,6 +1022,8 @@ export default {
 "명장의 무기": "Usta İşi Silah",
 "명장의 갑옷": "Usta İşi Zırh",
 "방이 가득 찼어요 (최대 4명).": "Oda dolu (en fazla 4 kişi).",
+"무기": "Silah",
+"갑옷": "Zırh",
 "무너진 기사단의 마지막 기사들이 함께 떠나는 협동 던전 원정": "Çökmüş bir tarikatın son şövalyelerinin birlikte çıktığı ortak zindan seferi",
 "무너진 기사단의 마지막 기사들": "Çökmüş bir tarikatın son şövalyeleri",
 "혼자 원정": "Tek başına sefer",

@@ -1022,6 +1022,8 @@ export default {
 "명장의 무기": "Master-forged Weapon",
 "명장의 갑옷": "Master-forged Armor",
 "방이 가득 찼어요 (최대 4명).": "The room is full (max 4 players).",
+"무기": "Weapon",
+"갑옷": "Armor",
 "무너진 기사단의 마지막 기사들이 함께 떠나는 협동 던전 원정": "A co-op dungeon expedition for the last knights of a fallen Order",
 "무너진 기사단의 마지막 기사들": "The last knights of a fallen Order",
 "혼자 원정": "Solo expedition",

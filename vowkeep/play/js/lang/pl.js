@@ -1022,6 +1022,8 @@ export default {
 "명장의 무기": "Mistrzowska broń",
 "명장의 갑옷": "Mistrzowska zbroja",
 "방이 가득 찼어요 (최대 4명).": "Pokój jest pełny (maks. 4 graczy).",
+"무기": "Broń",
+"갑옷": "Zbroja",
 "무너진 기사단의 마지막 기사들이 함께 떠나는 협동 던전 원정": "Kooperacyjna wyprawa do lochów ostatnich rycerzy upadłego Zakonu",
 "무너진 기사단의 마지막 기사들": "Ostatni rycerze upadłego Zakonu",
 "혼자 원정": "Samotna wyprawa",
