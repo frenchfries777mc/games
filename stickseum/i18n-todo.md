@@ -298,3 +298,22 @@ Stickseum-v0.8.html | 바느질 skill desc | 맞은 상대와 실이 이어지�
 patchnotes.json | v389 title | 인형술사 실 반사 피해 삭제와 클랜 경기 알림 | build 389 | 2026-10-25
 patchnotes.json | v389 items[0] | 인형술사의 바느질에 맞은 상대가 인형술사 피해의 50%를 대신 받던 효과 삭제 | build 389 | 2026-10-25
 patchnotes.json | v389 items[1] | 클랜 경기가 시작되면 접속 중인 클랜원 전원에게 알림 표시 | build 389 | 2026-10-25
+Stickseum-v0.8.html | clan | 클랜 경기 | build 390 | 2026-10-25
+Stickseum-v0.8.html | clan | 클랜원끼리 1대1 듀얼 (봇 없음) | build 390 | 2026-10-25
+Stickseum-v0.8.html | clan | 눌러서 바로 들어가요 | build 390 | 2026-10-25
+Stickseum-v0.8.html | clan | 명 매칭 중 | build 390 | 2026-10-25
+Stickseum-v0.8.html | clan | 같은 클랜의 상대를 찾는 중... | build 390 | 2026-10-25
+Stickseum-v0.8.html | clan | 클랜 경기 매칭! | build 390 | 2026-10-25
+Stickseum-v0.8.html | clan | 이 방은 같은 클랜원만 들어올 수 있어요 | build 390 | 2026-10-25
+Stickseum-v0.8.html | clan | 클랜 경기 (듀얼) | build 390 | 2026-10-25
+Stickseum-v0.8.html | clan | 클랜원 전용 | build 390 | 2026-10-25
+Stickseum-v0.8.html | clan | 님을 클랜에서 추방할까요? | build 390 | 2026-10-25
+Stickseum-v0.8.html | clan | 님을 추방했어요 | build 390 | 2026-10-25
+Stickseum-v0.8.html | clan | 추방하지 못했어요 (서버에 supabase-clan-kick.sql을 적용했는지 확인해 주세요) | build 390 | 2026-10-25
+Stickseum-v0.8.html | clan |  · 눌러서 프로필 보기 | build 390 | 2026-10-25
+Stickseum-v0.8.html | clan | 추방 | build 390 | 2026-10-25
+patchnotes.json | v390 title | 클랜원 프로필과 스킨 효과 조정 | build 390 | 2026-10-25
+patchnotes.json | v390 items[0] | 클랜원 목록에서 클랜원을 누르면 스틱시움 프로필 표시 (추방은 별도 버튼) | build 390 | 2026-10-25
+patchnotes.json | v390 items[1] | 황금 쟁탈 금 더미 남은 양 표시 삭제 | build 390 | 2026-10-25
+patchnotes.json | v390 items[2] | 4000 sC 스킨 효과를 조금 덜 화려하게 조정 | build 390 | 2026-10-25
+patchnotes.json | v390 items[3] | 그랜드 마스터 스킨 효과 강화 (빛기둥, 거대 햇살, 충격파, 혜성 3개, 불꽃 왕관, 번개) | build 390 | 2026-10-25
