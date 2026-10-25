@@ -387,7 +387,7 @@ window.bfIntro=function(){if(run)return;run=1;t0=Date.now();el.classList.add('ru
     <button class="btn" data-act="skins"><span class="arrow">▶</span>스킨 상점<span class="en">SKIN SHOP</span></button>
     <button class="btn" data-act="stats"><span class="arrow">▶</span>통계<span class="en">STATS</span></button>
     <button class="btn" data-act="settings"><span class="arrow">▶</span>설정<span class="en">SETTINGS</span></button>
-    <p class="foot">v0.4<br>build 108</p>
+    <p class="foot">v0.4<br>build 109</p>
   </nav>
 </div>
 
@@ -9691,11 +9691,20 @@ function callShip(b){
   world.esc={ph:'calling',t:0,gx:b.gx,gy:b.gy,sx:Math.round(b.x+66),sy:Math.round(b.y+2)};
   chimeAt(b.x,b.y);escSend();
 }
+function spiritsRise(){   // 우주선의 굉음에 각 섬의 고대 정령(보스)이 깨어나요
+  let n=0;
+  for(let i=1;i<world.islands.length;i++){
+    const o=world.islands[i];if(!BOSS_OF[o.b]||i===world.vill||i===world.pir)continue;
+    if(monsters.some(m=>m.boss&&m.isl===i&&!m.burn))continue;
+    if(spawnBoss(i))n++;
+  }
+  if(n){achQ.push({h:'🚀 우주선의 굉음',name:'주변 섬의 고대 정령들이 땅 속에서 나왔어요!'});bcastAll({t:'spirits'});}
+}
 function updateEscape(dt){
   const e=world.esc;if(e.ph==='idle')return;
   const t0=e.t;e.t+=dt;
   if(e.ph==='calling'&&!sgAt(e.gx,e.gy)){world.esc={ph:'idle',t:0};escSend();return;}   // 신호기가 없어지면 취소
-  if(e.ph==='calling'&&e.t>=CALL_T){e.ph='landing';e.t=0;escSend();}
+  if(e.ph==='calling'&&e.t>=CALL_T){e.ph='landing';e.t=0;escSend();spiritsRise();}
   else if(e.ph==='landing'&&e.t>=LAND_T){e.ph='landed';e.t=0;escSend();}
   else if(e.ph==='landed'&&e.t>=STAY_T){e.ph='leaving';e.t=0;escSend();}
   else if(e.ph==='leaving'&&e.t>=LEAVE_T){world.esc={ph:'idle',t:0};escSend();}
@@ -9787,7 +9796,7 @@ function showEnding(){
     alive=false;clearInterval(typeT);document.removeEventListener('keydown',onKey,true);
     const title=branch==='yes'?'이 행성에 남다':'다시 만날 날까지';
     el.classList.remove('scene');
-    el.innerHTML=`<div class="endbox"><h1>${title}</h1><p>${branch==='yes'?'우주선은 약속을 안고 하늘 너머로 떠났다.<br>이 행성은 이제 당신의 작은 왕국이다.':'당신은 보고 싶은 사람들에게 돌아갔다가, 세월이 흐른 뒤 다시 이 행성을 찾았다.<br>작은 왕국은 그대로 당신을 기다리고 있었다.'}</p><div class="endstat">생존 ${day}일 · 발견한 섬 ${isl} / ${tot} · 업적 ${ach} / ${ACH.length}</div><button class="btn" id="endok">계속 플레이</button><p class="hint">이후에도 이 행성에서 자유롭게 계속 플레이할 수 있어요.</p></div>`;
+    el.innerHTML=`<div class="endbox"><h1>${title}</h1><p>${branch==='yes'?'우주선은 약속을 안고 하늘 너머로 떠났다.<br>이 행성은 이제 당신의 작은 왕국이다.':'당신은 보고 싶은 사람들에게 돌아갔다가, 세월이 흐른 뒤 다시 이 행성을 찾았다.<br>작은 왕국은 그대로 당신을 기다리고 있었다.'}</p><p class="hint">우주선의 굉음으로 주변 섬의 고대 정령들이 땅 속에서 나왔다.</p><div class="endstat">생존 ${day}일 · 발견한 섬 ${isl} / ${tot} · 업적 ${ach} / ${ACH.length}</div><button class="btn" id="endok">계속 플레이</button><p class="hint">이후에도 이 행성에서 자유롭게 계속 플레이할 수 있어요.</p></div>`;
     $('#endok').onclick=()=>el.classList.remove('on');
   };
   const choose=()=>{
@@ -12124,6 +12133,7 @@ async function guestHandle(d){
   else if(d.t==='kill'){if(typeof d.ty==='string')achKill(d.ty);}
   else if(d.t==='voidend'){showTrueEnding(d.day|0);}
   else if(d.t==='voidmsg'){voidBanner(d.k);}
+  else if(d.t==='spirits'){achQ.push({h:'🚀 우주선의 굉음',name:'주변 섬의 고대 정령들이 땅 속에서 나왔어요!'});}
   else if(d.t==='rit'){ritV=d.on?{x:+d.x||0,y:+d.y||0}:null;}
   else if(d.t==='chat'){if(d.id!==net.id)chatAdd(String(d.id||''),d.n,d.x);}
   else if(d.t==='ach'){if(ACH.some(a=>a.id===d.id))achGrant(d.id);}
