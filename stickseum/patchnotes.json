@@ -2,6 +2,153 @@
  "notes": [
   {
    "date": "2026-10-25",
+   "build": "v382",
+   "title": "골드 이름 변경과 깃발 뺏기 조정",
+   "items": [
+    "재화 이름 골드 → sC로 변경",
+    "한 판에서 처치·어시스트 골드는 각각 5번까지만 지급",
+    "4000 sC 스킨 효과를 최고 등급 연출로 강화",
+    "깃발 뺏기 깃발 든 사람 속도 감소 삭제",
+    "깃발 뺏기 떨어진 깃발 복귀 시간 10초 → 4초(경기가 빨리 끝나도록)",
+    "텔레포트 제자리 대기 시간 1.0초 → 1.2초"
+   ],
+   "tr": {
+    "en": {
+     "title": "Currency renamed and Capture the Flag tweaks",
+     "items": [
+      "Renamed the currency from Gold to sC",
+      "Takedown and assist gold are now paid at most 5 times each per match",
+      "The 4000 sC skin effect upgraded to top-tier visuals",
+      "Removed the flag carrier's speed reduction in Capture the Flag",
+      "Capture the Flag dropped flag return time 10 s → 4 s (so matches end faster)",
+      "Teleport standing-still wait time 1.0 s → 1.2 s"
+     ]
+    },
+    "es": {
+     "title": "Cambio de nombre de la moneda y ajustes de Captura la bandera",
+     "items": [
+      "La moneda pasa de llamarse Oro a sC",
+      "El oro por derribos y asistencias se paga como máximo 5 veces cada uno por partida",
+      "El efecto de aspecto de 4000 sC mejora a una animación de categoría máxima",
+      "Eliminada la reducción de velocidad de quien lleva la bandera en Captura la bandera",
+      "Tiempo de retorno de la bandera caída en Captura la bandera 10 s → 4 s (para que las partidas acaben antes)",
+      "Tiempo de espera quieto del Teletransporte 1,0 s → 1,2 s"
+     ]
+    },
+    "fr": {
+     "title": "Monnaie renommée et ajustements de Capture du drapeau",
+     "items": [
+      "La monnaie Or est renommée sC",
+      "L’or des éliminations et des assistances n’est versé que 5 fois chacun par partie",
+      "L’effet du skin à 4000 sC passe à une mise en scène de rang maximal",
+      "Suppression du ralentissement du porteur de drapeau en Capture du drapeau",
+      "Délai de retour du drapeau tombé en Capture du drapeau 10 s → 4 s (pour des parties plus courtes)",
+      "Temps d’attente immobile de la Téléportation 1,0 s → 1,2 s"
+     ]
+    },
+    "de": {
+     "title": "Währung umbenannt und Flaggenraub angepasst",
+     "items": [
+      "Die Währung heißt jetzt sC statt Gold",
+      "Gold für Ausschaltungen und Assists wird pro Spiel jeweils höchstens 5-mal ausgezahlt",
+      "Der Effekt des 4000-sC-Skins wurde auf die höchste Stufe aufgewertet",
+      "Verlangsamung des Flaggenträgers in Flaggenraub entfernt",
+      "Rückkehrzeit der fallengelassenen Flagge in Flaggenraub 10 s → 4 s (damit Spiele schneller enden)",
+      "Wartezeit des Teleports im Stand 1,0 s → 1,2 s"
+     ]
+    },
+    "ja": {
+     "title": "通貨名の変更と旗取りの調整",
+     "items": [
+      "通貨名をゴールドからsCに変更",
+      "1試合での撃破・アシストのゴールドはそれぞれ5回までしか支給されない",
+      "4000sCのスキン効果を最高ランクの演出に強化",
+      "旗取りで旗を持つ人の速度低下を削除",
+      "旗取りで落とした旗の復帰時間 10秒 → 4秒（試合が早く終わるように）",
+      "テレポートの静止待機時間 1.0秒 → 1.2秒"
+     ]
+    },
+    "zh": {
+     "title": "货币更名与夺旗调整",
+     "items": [
+      "货币名称由金币改为 sC",
+      "每局击杀和助攻的金币各最多发放 5 次",
+      "4000 sC 皮肤特效强化为最高级演出",
+      "删除夺旗中持旗者的减速效果",
+      "夺旗中掉落旗帜的返回时间 10 秒 → 4 秒（让比赛更快结束）",
+      "瞬移原地等待时间 1.0 秒 → 1.2 秒"
+     ]
+    },
+    "pt": {
+     "title": "Moeda renomeada e ajustes em Capture a Bandeira",
+     "items": [
+      "A moeda deixou de se chamar Ouro e passou a ser sC",
+      "O ouro de abates e assistências agora é pago no máximo 5 vezes cada por partida",
+      "O efeito da skin de 4000 sC foi reforçado para a apresentação de nível máximo",
+      "Removida a redução de velocidade de quem carrega a bandeira em Capture a Bandeira",
+      "Tempo de retorno da bandeira caída em Capture a Bandeira 10 s → 4 s (para as partidas terminarem mais rápido)",
+      "Tempo de espera parado do Teleporte 1,0 s → 1,2 s"
+     ]
+    },
+    "ru": {
+     "title": "Валюта переименована, правки «Захвата флага»",
+     "items": [
+      "Валюта «Золото» теперь называется sC",
+      "Золото за убийства и помощь выдаётся не более 5 раз каждое за матч",
+      "Эффект скина за 4000 sC усилен до анимации высшего ранга",
+      "В «Захвате флага» убрано замедление носителя флага",
+      "В «Захвате флага» время возврата упавшего флага 10 с → 4 с (чтобы матчи заканчивались быстрее)",
+      "Время ожидания телепорта на месте 1,0 с → 1,2 с"
+     ]
+    },
+    "tr": {
+     "title": "Para birimi yeniden adlandırıldı, Bayrak Kapmaca ayarları",
+     "items": [
+      "Para biriminin adı Altın'dan sC'ye değişti",
+      "Alt etme ve asist altını bir maçta en fazla 5'er kez verilir",
+      "4000 sC'lik kostüm efekti en yüksek seviye görsele yükseltildi",
+      "Bayrak Kapmaca'da bayrak taşıyanın yavaşlaması kaldırıldı",
+      "Bayrak Kapmaca'da düşen bayrağın geri dönüş süresi 10 sn → 4 sn (maçlar daha çabuk bitsin diye)",
+      "Işınlanmanın yerinde bekleme süresi 1,0 sn → 1,2 sn"
+     ]
+    },
+    "it": {
+     "title": "Valuta rinominata e ritocchi a Cattura la bandiera",
+     "items": [
+      "La valuta passa da Oro a sC",
+      "L’oro per abbattimenti e assist viene dato al massimo 5 volte ciascuno per partita",
+      "L’effetto della skin da 4000 sC potenziato a una resa di livello massimo",
+      "Rimossa la riduzione di velocità di chi porta la bandiera in Cattura la bandiera",
+      "Tempo di ritorno della bandiera caduta in Cattura la bandiera 10 s → 4 s (per partite più brevi)",
+      "Tempo di attesa da fermo del Teletrasporto 1,0 s → 1,2 s"
+     ]
+    },
+    "pl": {
+     "title": "Zmiana nazwy waluty i poprawki w Zdobądź flagę",
+     "items": [
+      "Waluta zmieniła nazwę ze Złota na sC",
+      "Złoto za pokonania i asysty jest wypłacane maksymalnie po 5 razy w meczu",
+      "Efekt skórki za 4000 sC wzmocniony do oprawy najwyższej rangi",
+      "Usunięto spowolnienie nosiciela flagi w Zdobądź flagę",
+      "Czas powrotu upuszczonej flagi w Zdobądź flagę 10 s → 4 s (żeby mecze kończyły się szybciej)",
+      "Czas oczekiwania w miejscu przy Teleportacji 1,0 s → 1,2 s"
+     ]
+    },
+    "ar": {
+     "title": "تغيير اسم العملة وتعديلات التقاط العلم",
+     "items": [
+      "تغيير اسم العملة من الذهب إلى sC",
+      "يُمنح ذهب الإسقاط والمساعدة 5 مرات كحد أقصى لكل منهما في المباراة الواحدة",
+      "تعزيز مؤثر مظهر 4000 sC إلى أعلى مستوى من العرض",
+      "حذف إبطاء حامل العلم في التقاط العلم",
+      "زمن عودة العلم الساقط في التقاط العلم 10 ث → 4 ث (لتنتهي المباريات أسرع)",
+      "زمن انتظار الانتقال الآني وقوفًا 1.0 ث → 1.2 ث"
+     ]
+    }
+   }
+  },
+  {
+   "date": "2026-10-25",
    "build": "v381",
    "title": "밸런스표 색 조정",
    "items": [
@@ -5167,7 +5314,7 @@
    "build": "v333",
    "title": "은하 표준어 추가",
    "items": [
-    "가상 언어 은하 표준어 추가 (커맨더 킨·마인크래프트 인챈트 글자, 사진을 보고 만든 글꼴)"
+    "가상 언어 은하 표준어 추가 (커맨더 킨·마인크래프트 인챈트 글자, 직접 그린 글꼴)"
    ],
    "tr": {
     "en": {
