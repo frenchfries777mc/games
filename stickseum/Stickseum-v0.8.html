@@ -5052,7 +5052,7 @@ function shuffle(arr){ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.
 /* ===== the version of this file =====
    Players with different versions CAN meet and play together: the automatic matchmaking uses the same room names for every version (online-<mode>-<map>-<slot>), and nobody is refused because of a different build.
    The build is only sent along with the join message and the lobby (for information); the corner of the screen shows it. */
-const GAME_BUILD='build 2026-10-18-v391';
+const GAME_BUILD='build 2026-10-18-v392';
 const GAME_VERSION='0.8', GAME_VERSION_NAME='황금을 찾아서';   // 게임 버전 이름: versions.json의 title과 같게 (빌드마다 바꾸지 않음)
 const WEEKLY_EVENTS=[
   {id:'lowg',    name:'저중력 난투', desc:'몸이 둥실둥실, 중력이 약해진 난투', rules:{grav:0.6}},
@@ -9955,7 +9955,7 @@ function masteryCeremony(wid){
 }
 function showMatchEndOverlay(resultText, winnerIds, forcedPick){
   try{ const hum=Object.values(players).filter(q=>q && !q.isBot && !q.isMinion && !q.isBoss && !q.isSpectator);
-    if(currentMode==='private' && !practiceMode && !highlightViewing && myClan && hum.length>=2 && hum.every(q=>q.clan===clanMyTag()) && winnerIds && winnerIds.length) clanMemberReport(winnerIds.indexOf(myId)!==-1); }catch(e){}
+    if(onlineClan && currentMode==='online' && gameMode==='duel' && !practiceMode && !highlightViewing && myClan && String(onlineClan)===clanMyId() && hum.length===2 && hum.every(q=>q.clan===clanMyTag()) && winnerIds && winnerIds.length) clanMemberReport(winnerIds.indexOf(myId)!==-1); }catch(e){}
   try{ rpRecFinish(resultText, winnerIds); }catch(e){}
   matchEnded=true; lastWinnerIds=winnerIds||[];
   elimState=null; document.getElementById('elimOverlay').style.display='none'; document.getElementById('elimExitBtn').style.display='none';
