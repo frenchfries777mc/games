@@ -1620,6 +1620,7 @@ function sfxEnsureReady(){
   if(!sfxLoading){
     sfxLoading=true;      // the clips are decoded one at a time (not all in the first tap, which froze a slow iPad for a moment); one that is needed earlier is decoded on the spot
     let n=0; for(const k in SFX_DATA) setTimeout(()=>sfxDecode(k), 150+(n++)*90);
+    setTimeout(sfxLoadDraw, 150+(n++)*90);
   }
 }
 const sfxDecoding={};
@@ -1651,14 +1652,20 @@ window.addEventListener('pointerdown', e=>{
 }, true);
 // the victory / defeat song of the result screen: one voice of its own (it does not compete with the shots for a place), the same "효과음" switch as every sound
 let sfxResult=null;
-function playResultSound(kind){                  // kind: 'win' | 'lose'. Returns true when it started.
+// the draw song is a separate file (not embedded): fetched and decoded the first time it is needed
+function sfxLoadDraw(){
+  if(sfxBuffers.draw || sfxDecoding.draw || !sfxCtx) return; sfxDecoding.draw=true;
+  const get=u=>fetch(u).then(r=>{ if(!r.ok) throw 0; return r.arrayBuffer(); });
+  get('music-draw.mp3').catch(()=>get(BGM_ALT+'music-draw.mp3')).then(b=>sfxCtx.decodeAudioData(b, buf=>{ sfxBuffers.draw=buf; }, ()=>{ sfxDecoding.draw=false; })).catch(()=>{ sfxDecoding.draw=false; });
+}
+function playResultSound(kind){                  // kind: 'win' | 'lose' | 'draw'. Returns true when it started.
   stopResultSound();
-  if(kind!=='win' && kind!=='lose') return false;
+  if(kind!=='win' && kind!=='lose' && kind!=='draw') return false;
   if(otherSettings.sfx===false) return false;
   if(!sfxCtx) sfxEnsureReady();
   if(!sfxCtx) return false;
   if(sfxCtx.state==='suspended'){ try{ sfxCtx.resume().catch(()=>{}); }catch(e){} }
-  const buf=sfxBuffers[kind]; if(!buf){ sfxDecode(kind); return false; }
+  const buf=sfxBuffers[kind]; if(!buf){ if(kind==='draw') sfxLoadDraw(); else sfxDecode(kind); return false; }
   try{
     const src=sfxCtx.createBufferSource(); src.buffer=buf;
     const g=sfxCtx.createGain(); g.gain.value=1; src.connect(g); g.connect(sfxMaster);
@@ -5052,7 +5059,7 @@ function shuffle(arr){ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.
 /* ===== the version of this file =====
    Players with different versions CAN meet and play together: the automatic matchmaking uses the same room names for every version (online-<mode>-<map>-<slot>), and nobody is refused because of a different build.
    The build is only sent along with the join message and the lobby (for information); the corner of the screen shows it. */
-const GAME_BUILD='build 2026-10-18-v394';
+const GAME_BUILD='build 2026-10-18-v395';
 const GAME_VERSION='0.8', GAME_VERSION_NAME='황금을 찾아서';   // 게임 버전 이름: versions.json의 title과 같게 (빌드마다 바꾸지 않음)
 const WEEKLY_EVENTS=[
   {id:'lowg',    name:'저중력 난투', desc:'몸이 둥실둥실, 중력이 약해진 난투', rules:{grav:0.6}},
@@ -10306,7 +10313,7 @@ function finishMatchEndOverlay(resultText){
   if(!wasShown && gameMode==='tournament'){ try{ const wp=(lastWinnerIds||[]).map(id=>players[id]).find(q=>q); if(wp) tnChampIntro(wp.name); }catch(e){} }
   el.style.display='flex';
   if(!wasShown){ try{ winPoseStart(); }catch(e){ console.error(e); } }
-  if(!wasShown && (vd.kind==='win' || vd.kind==='lose')) playResultSound(vd.kind);     // the victory or the defeat song, once, when the screen comes up (a draw or no winner: silence)
+  if(!wasShown){ const rk=(vd.kind==='win' || vd.kind==='lose' || vd.kind==='draw') ? vd.kind : (/^무승부/.test(vd.main||'') ? 'draw' : ''); if(rk) playResultSound(rk); }     // the victory, defeat or draw song, once, when the screen comes up (an ending with no winner and no draw: silence)
 }
 
 /* ================= ONLINE MATCHMAKING (serverless: try real joins one at a time, never a throwaway probe) ================= */
