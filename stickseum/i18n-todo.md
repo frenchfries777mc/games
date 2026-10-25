@@ -294,3 +294,7 @@ patchnotes.json | v388 items[0] | 클랜장이 클랜원을 추방하는 기능 
 patchnotes.json | v388 items[1] | 클랜 경기를 온라인 듀얼 매칭 방식으로 변경 (클랜원끼리만, 봇 없음) | build 388 | 2026-10-25
 patchnotes.json | v388 items[2] | 클랜원이 매칭 중이면 클랜 경기 버튼에 알림 표시 | build 388 | 2026-10-25
 patchnotes.json | v388 items[3] | 기존 클랜경기 방 만들기와 지금 시작 버튼 삭제 | build 388 | 2026-10-25
+Stickseum-v0.8.html | 바느질 skill desc | 맞은 상대와 실이 이어지고 이동속도 25% 감소 | build 389 | 2026-10-25
+patchnotes.json | v389 title | 인형술사 실 반사 피해 삭제와 클랜 경기 알림 | build 389 | 2026-10-25
+patchnotes.json | v389 items[0] | 인형술사의 바느질에 맞은 상대가 인형술사 피해의 50%를 대신 받던 효과 삭제 | build 389 | 2026-10-25
+patchnotes.json | v389 items[1] | 클랜 경기가 시작되면 접속 중인 클랜원 전원에게 알림 표시 | build 389 | 2026-10-25
