@@ -453,7 +453,7 @@ try{if(sessionStorage.getItem('ce_noIntro')){sessionStorage.removeItem('ce_noInt
 sting();})();</script>
 <div id="app">
  <div id="lobby" class="screen">
-  <canvas id="lobbyBg"></canvas><canvas id="lobbyWar"></canvas><div id="cpTag">© 2026 Frenchfries777 · <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.ko" target="_blank" rel="noopener">CC BY-NC-ND 4.0</a></div><div id="verTag">v0.5 · build 108</div>
+  <canvas id="lobbyBg"></canvas><canvas id="lobbyWar"></canvas><div id="cpTag">© 2026 Frenchfries777 · <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.ko" target="_blank" rel="noopener">CC BY-NC-ND 4.0</a></div><div id="verTag">v0.5 · build 109</div>
   <header class="brand"><h1>Crown Envoy</h1><div class="sub"><i></i>DIPLOMACY · WAR · EMPIRE<i></i></div></header>
   <div id="lobbyRight">
    <div id="lobbyHome" class="modes">
@@ -5062,9 +5062,12 @@ const _adC=new WeakMap();function ceAutoDiff(tp,n){const C=_adC.get(tp)||(()=>{c
     (tp.al||[]).forEach(([a,b])=>{if(al[a]&&al[b]){al[a].add(b);al[b].add(a);}});(tp.war||[]).forEach(([a,b])=>{if(wr[a]&&wr[b]){wr[a].add(b);wr[b].add(a);}});
     own.forEach((o,ti)=>{if(o<0||!adj[ti])return;adj[ti].forEach(a=>{const q=own[a];if(q>=0&&q!==o&&!al[o].has(q))nb[o].add(q);});});
     const vs=N.map(()=>new Set()),ix=k=>N.findIndex(x=>x.k===k);((CE_VS[tp.id]||[]).map(([o,v])=>[ix(o),ix(v)]).concat(tp.vas||[])).forEach(([o,v])=>{if(o>=0&&v>=0&&vs[o]){vs[o].add(v);al[o].delete(v);al[v].delete(o);}});
-    const gs={};(tp.guests||[]).forEach(g=>{gs[g.k]=(gs[g.k]||0)+(g.n||0);});const pw=N.map(x=>Math.max(1,(x.count>0)?((x.count-1)*2000+4800)*(x.trp||1):(gs[x.k]||5000)));return {al,wr,nb,pw,vs};})();_adC.set(tp,r);return r;})();
+    const pe=N.map(()=>new Set());{const add=(x,y)=>{const p=ix(x),q=ix(y);if(p>=0&&q>=0&&p!==q){pe[p].add(q);pe[q].add(p);}};
+      (TPL_EVENTS[TK(tp.id)]||[]).forEach(e=>{const src=String(e[2]);let m;const r1=/warK\('(\w+)','(\w+)'\)/g;while((m=r1.exec(src)))add(m[1],m[2]);
+        const r2=/joinK\('(\w+)',\[[^\]]*\],\[([^\]]*)\]/g;while((m=r2.exec(src)))(m[2].match(/\w+/g)||[]).forEach(y=>add(m[1],y));});}
+    const gs={};(tp.guests||[]).forEach(g=>{gs[g.k]=(gs[g.k]||0)+(g.n||0);});const pw=N.map(x=>Math.max(1,(x.count>0)?((x.count-1)*2000+4800)*(x.trp||1):(gs[x.k]||5000)));return {al,wr,nb,pw,vs,pe};})();_adC.set(tp,r);return r;})();
   const i=tp.nations.indexOf(n);if(i<0)return null;const sum=set=>[...set].reduce((s,j)=>s+C.pw[j],0);
-  const foes=C.wr[i].size>0,threat=Math.max(0,(foes?sum(C.wr[i]):sum(C.nb[i])*0.4)-sum(C.al[i])-sum(C.vs[i])*0.8),mine=C.pw[i],ratio=threat>0?mine/threat:99;
+  const foes=C.wr[i].size>0,pot=[...C.pe[i]].filter(j=>!C.wr[i].has(j)&&!C.al[i].has(j)&&!C.vs[i].has(j)),threat=Math.max(0,(foes?sum(C.wr[i]):sum(C.nb[i])*0.4)+sum(pot)*5/3-sum(C.al[i])-sum(C.vs[i])*0.8),mine=C.pw[i],ratio=threat>0?mine/threat:99;
   const lv=ratio>=1?'easy':ratio<0.3?'hard':'normal',c=n.count||0;
   return {lv};}
 /* 공유 시나리오 분류 정보: 둘러보기에서 시대·분류·규모·난이도로 거를 때 쓴다 */
