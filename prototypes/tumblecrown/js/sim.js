@@ -113,7 +113,7 @@ function stepPlayer(G, p, dt, inp) {
   if (p.stT > 0) p.stT -= dt;
   const atk = !!inp.atk;
   // 상태 끝
-  if (p.pend) { if (p.st !== ST.swing) p.pend = null; else if ((p.pend.at -= dt) <= 0) { const q = p.pend; p.pend = null; strike(G, p, q.dmg, q.kb, q.rg, q.arc); } }
+  if (p.pend) { if (p.st !== ST.swing) p.pend = null; else if ((p.pend.at -= dt) <= 0) { const q = p.pend; p.pend = null; strike(G, p, q.dmg, q.kb, q.rg, q.arc, q.kind); } }
   if (p.st === ST.swing && p.stT <= 0) setSt(p, ST.idle);
   if (p.st === ST.stun && p.stT <= 0 && grounded) setSt(p, ST.idle);
   if (p.st === ST.dash && p.stT <= 0) { setSt(p, ST.idle); p.vx *= 0.35; p.vz *= 0.35; }
@@ -179,7 +179,7 @@ function swing(G, p) {
   const w = W(p), c = p.chg; setSt(p, ST.swing, w.swing); p.atkCd = w.cd; p.fx = p.ax; p.fz = p.az;
   p.lastChg = c; p.aN = (p.aN || 0) + 1;
   let dmg = lerp(w.dmg[0], w.dmg[1], c), kb = lerp(w.kb[0], w.kb[1], c), rg = w.range, arc = w.arc;
-  if (w.proj) { p.akind = 0; shoot(G, p, w.proj, c, 0); ev(G, { k: 'swing', id: p.id, c: Math.round(c * 10) / 10, pj: 1 }); p.chg = 0; return; }
+  if (w.proj) { p.akind = 0; shoot(G, p, w.proj, c, 0); ev(G, { k: 'swing', id: p.id, c: Math.round(c * 10) / 10, pj: 1, x: p.x, z: p.z, a: Math.atan2(p.az, p.ax), cl: p.cls }); p.chg = 0; return; }
   // Vowkeep처럼 빠르게 이어 치면 3연타: 공격, 공격, 세 번째는 강타 (기사) / 큰 공격 (나머지). 세게 모아 놓아도 강타예요
   let kind = 0;
   if (c >= 0.45) { kind = 1; p.combo = 0; p.comboT = 0; }
@@ -189,15 +189,17 @@ function swing(G, p) {
   if (kind === 2) { rg *= 1.25; arc = Math.max(arc, 2.6); }
   // 조금 앞으로 내딛어요 (강타·큰 공격은 제자리에서)
   if (!kind) { p.vx += p.ax * 3; p.vz += p.az * 3; } else { p.vx = p.vz = 0; }
-  ev(G, { k: 'swing', id: p.id, c: Math.round(Math.max(c, kind ? 1 : 0) * 10) / 10 });
+  ev(G, { k: 'swing', id: p.id, c: Math.round(Math.max(c, kind ? 1 : 0) * 10) / 10, x: p.x, z: p.z, a: Math.atan2(p.az, p.ax), cl: p.cls, kd: kind });
+  if (kind === 2 && p.cls === 'priest') ev(G, { k: 'pcharge', id: p.id, x: p.x, z: p.z });
   // 강타와 큰 공격은 동작이 땅에 닿을 때 맞아요 (Vowkeep과 같은 박자)
   // 강타: 0.95초 동작, 땅에 닿는 0.36초에 맞아요. 사제 큰 공격: 0.9초 동작, 0.45초에 맞아요. 나머지 큰 공격은 바로 맞아요 (Vowkeep과 같아요)
-  if (kind === 1) { p.stT = 0.95; p.atkCd = Math.max(p.atkCd, 0.95); p.pend = { at: 0.36, dmg, kb, rg, arc }; }
-  else if (kind === 2 && p.cls === 'priest') { p.stT = 0.9; p.atkCd = Math.max(p.atkCd, 0.9); p.pend = { at: 0.45, dmg, kb, rg, arc }; }
-  else { if (kind === 2) { p.stT = 0.6; p.atkCd = Math.max(p.atkCd, 0.6); } strike(G, p, dmg, kb, rg, arc); }
+  if (kind === 1) { p.stT = 0.95; p.atkCd = Math.max(p.atkCd, 0.95); p.pend = { at: 0.36, dmg, kb, rg, arc, kind }; }
+  else if (kind === 2 && p.cls === 'priest') { p.stT = 0.9; p.atkCd = Math.max(p.atkCd, 0.9); p.pend = { at: 0.45, dmg, kb, rg, arc, kind }; }
+  else { if (kind === 2) { p.stT = 0.6; p.atkCd = Math.max(p.atkCd, 0.6); } strike(G, p, dmg, kb, rg, arc, kind); }
   p.chg = 0;
 }
-function strike(G, p, dmg, kb, rg, arc) {
+function strike(G, p, dmg, kb, rg, arc, kind) {
+  { const a = Math.atan2(p.az, p.ax); if (kind === 1) ev(G, { k: 'heavy', id: p.id, a, x: p.x + p.ax * 1.4, z: p.z + p.az * 1.4 }); else if (kind === 2) ev(G, { k: 'big', id: p.id, role: p.cls === 'priest' ? 'priest' : 'squire', a, x: p.x + p.ax * 1.4, z: p.z + p.az * 1.4 }); }
   for (const t of G.players) {
     if (t === p || t.st === ST.out) continue;
     const dx = t.x - p.x, dz = t.z - p.z, d = Math.hypot(dx, dz);
@@ -227,7 +229,7 @@ function skill(G, p) {
     if (best) { setSt(p, ST.grab, 0.42); p.grab = best.id; best.heldBy = p.id; setSt(best, ST.held, 9); best.chg = 0; if (G.crown.h === best.id) dropCrown(G, best, 0, 0); p.vx = p.vz = 0; }
     else { setSt(p, ST.swing, 0.3); p.skCd = 2; }
   }
-  ev(G, { k: 'skill', id: p.id, w: kind });
+  ev(G, { k: 'skill', id: p.id, w: kind, x: p.x, z: p.z, a: Math.atan2(p.az, p.ax) });
 }
 function doCast(G, p) {
   const kind = W(p).sk.kind;
@@ -280,7 +282,7 @@ function fallOut(G, p) {
   if (p.grab) p.grab = null;
   const lh = p.lastHit; let by = null;
   if (lh && G.t - lh.t < 7) { const k = G.players.find(q => q.id === lh.id); if (k && k !== p) { k.ko++; by = k.id; } }
-  ev(G, { k: 'ko', id: p.id, by, left: p.rank - 1 });
+  ev(G, { k: 'ko', id: p.id, by, left: p.rank - 1, x: p.x, z: p.z });
   p.lastHit = null;
 }
 
