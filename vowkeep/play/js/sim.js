@@ -299,7 +299,12 @@ function revive(G, q, frac, by) {
 // inputs[pid] = { mx, mz, aim, ax, az, atk(held), q, e, r, roll, skip (one-shot), f(held), px, pz (원격 이동) }
 export function step(G, dt, inputs) {
   G.t += dt; G.phaseT += dt;
-  for (const p of G.players) if (p.bot) inputs[p.id] = botFace(botThink(G, p, dt));
+  // 가벼운 모드(방장 컴퓨터가 느릴 때): 봇은 두 번에 한 번만 생각하고 그 사이엔 직전 판단을 써요 (봇끼리 번갈아)
+  G.tick = (G.tick | 0) + 1;
+  for (const p of G.players) if (p.bot) {
+    if (G.lite && (G.tick + p.slot) % 2 && p.lastInp) { inputs[p.id] = p.lastInp; continue; }
+    inputs[p.id] = p.lastInp = botFace(botThink(G, p, G.lite ? dt * 2 : dt));
+  }
 
   // 이야기 건너뛰기: 사람 모두가 누르면 넘어가요
   if (G.phase === 'intro') {

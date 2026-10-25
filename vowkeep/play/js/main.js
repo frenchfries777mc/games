@@ -432,6 +432,7 @@ function beginGame(prevG) {
   if (S.chSel === DEEP_I && !prevG) { DEEP.floor = 1; DEEP.seed = (Math.random() * 1e6) | 0; DEEP.curses = []; }
   { const wk = !!S.wk && !prevG && S.chSel !== DEEP_I, was = WEEKLY.on; WEEKLY.on = wk; if (wk) { const w = weekInfo(); WEEKLY.id = w.id; WEEKLY.curses = w.curses; S.chSel = w.ch; } if (wk || was) useChapter(S.chSel, true); }
   S.G = createGame(sl, (Math.random() * 4e9) >>> 0, S.chSel);
+  S.G.lite = !!S.lite;
   S.G.players.forEach((p, i) => { p.uid = sl[i].uid; });
   if (prevG) carryOver(S.G, prevG);
   S.me = sl.find(s => s.uid === UID).id;
@@ -447,6 +448,7 @@ function startClient() {
   hubRoom(S.net === 'host');
 }
 function endToLobby(msg) {
+  if (S.lite) { S.lite = false; S.slowN = 0; try { view.setLow(!!SAVE.set.opt); } catch (e) { } }
   awardHonor(); S.wk = false; if (WEEKLY.on) { WEEKLY.on = false; useChapter(chapterIndex(), true); }
   leaveNet(); S.G = null; S.snap = null; setHud(false); $('bless').classList.remove('on');
   view.buildLobby(); show('sLobby'); paintWho(); if (msg) homeMsg(msg);
@@ -968,7 +970,10 @@ function frame(now) {
   requestAnimationFrame(frame);
   // 최적화를 켜면 1초에 30번만 그려요 (휴대폰 발열·배터리)
   if (FPS_CAP && now - lastF < 1000 / FPS_CAP - 2) return; lastF = now;
-  const dt = Math.min(0.05, (now - lastT) / 1000); lastT = now; const t = (now - S.t0) / 1000;
+  const raw = now - lastT; lastT = now; const dt = Math.min(0.05, raw / 1000);
+  // 방장 컴퓨터가 느리면(화면 간격이 길게 이어지면) 스스로 가벼운 모드로 바꿔요: 전송 줄이기, 봇 판단 줄이기, 가벼운 화질 (규칙은 그대로)
+  if (S.G && S.net === 'host' && S.scr === '' && !S.lite) { S.fAvg = (S.fAvg || 16) * 0.95 + Math.min(raw, 100) * 0.05; if (S.fAvg > 38) { S.slowN = (S.slowN | 0) + 1; if (S.slowN > 180) { S.lite = true; S.G.lite = true; try { view.setLow(true); } catch (e) { } toast('컴퓨터가 느려서 가벼운 모드로 바꿨어요. 친구 화면은 그대로예요.', 3600); } } else S.slowN = 0; }
+ const t = (now - S.t0) / 1000;
   musicTick(dt, now); talkTick(dt, !!S.snap && S.scr === '' && (S.snap.ph === 'play' || S.snap.ph === 'bossIntro'));
   if (S.snap && (S.G || S.net === 'guest') && S.scr !== 'sLobby' && S.scr !== 'sRoom') {
     const me = myP();
@@ -981,13 +986,14 @@ function frame(now) {
       if (S.slowT > 0) S.slowT -= dt;
       S.acc += dt * (S.slowT > 0 ? 0.35 : 1); const h = 1 / 30;
       while (S.acc >= h) {
-        S.acc -= h; S.prevPos = posMap(S.G); step(S.G, h, S.rin);
+        S.acc -= h; S.prevPos = posMap(S.G); step(S.G, h, S.rin); S.stepped = true;
         for (const pid in S.rin) { const r = S.rin[pid]; r.q = r.e = r.r = r.roll = r.skip = 0; }
         for (const e of S.G.ev) { S.evq.push(e); if (S.net === 'host') (S.netEv || (S.netEv = [])).push(e); }
         S.G.ev.length = 0;
       }
-      S.snap = snapshot(S.G); smoothSnap(S.snap, S.G, S.prevPos, S.acc / h);
-      if (S.net === 'host') { S.sendAcc += dt; if (S.sendAcc >= 1 / SNAP_HZ) { S.sendAcc = 0; bcast({ t: 's', S: S.snap, ev: S.netEv || [] }); S.netEv = []; } }
+      // 규칙이 새로 돌았을 때만 상태를 새로 만들고, 아니면 이어 그리기만 해요
+      if (S.stepped || !S.snap) { S.snap = snapshot(S.G); S.stepped = false; } smoothSnap(S.snap, S.G, S.prevPos, S.acc / h);
+      if (S.net === 'host') { S.sendAcc += dt; if (S.sendAcc >= 1 / (S.lite ? 12 : SNAP_HZ)) { S.sendAcc = 0; bcast({ t: 's', S: S.snap, ev: S.netEv || [] }); S.netEv = []; } }
     } else if (me) {
       // 게스트: 내 이동은 바로, 나머지는 방장에게 보내요
       if (!S.local || S.local.ri !== S.snap.ri) S.local = { x: me.x, z: me.z, ri: S.snap.ri, roll: 0, rollCd: 0 };
