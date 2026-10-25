@@ -5,10 +5,9 @@
 'use strict';
 var SI=window.SI18N||{lang:'ko',F:function(t){ var a=arguments; return String(t).replace(/\{(\d)\}/g,function(_,n){ return a[+n+1]; }); }};
 var LANG=SI.lang||'ko', F=SI.F;
-var GAMES={stickseum:{name:'Stickseum',cls:'g1',site:'https://frenchfries777mc.github.io/games/stickseum/'},crownenvoy:{name:'Crown Envoy',cls:'g2',site:'https://frenchfries777mc.github.io/games/crownenvoy/'},beaconfall:{name:'Beaconfall',cls:'g3',site:'https://frenchfries777mc.github.io/games/beaconfall/'},dummyparty:{name:'Dummy Party',cls:'',site:'https://frenchfries777mc.github.io/games/dummyparty/'},vowkeep:{name:'Vowkeep',cls:'',site:'https://frenchfries777mc.github.io/games/vowkeep/'}};
-GAMES.isleport={name:'Isleport',cls:'g3',site:'https://frenchfries777mc.github.io/games/isleport/'};
-/* 새 게임이 생기면 위 GAMES에 한 줄 넣고 아래 순서 목록에도 아이디를 넣으면, 글쓰기·필터·피드백·같이 하기·접속 인원·소식 받기 목록에 한꺼번에 나와요 */
-var GLIST=['stickseum','crownenvoy','beaconfall','isleport','vowkeep','dummyparty'];
+var GAMES={}, GLIST=[], NSRC={};
+(window.FF_REG||[]).forEach(function(e){ NSRC[e.id]=e; if(!e.hub){ GAMES[e.id]=e; GLIST.push(e.id); } });
+/* 새 게임이 생기면 ff-lang.js 의 FF_REG에 한 줄만 넣으면 글쓰기·필터·피드백·같이 하기·접속 인원·소식·소식 받기 목록에 한꺼번에 나와요 */
 window.FF_GAMES={list:GLIST,games:GAMES};
 function gOpts(first){ return (first||'')+GLIST.map(function(g){ return '<option value="'+g+'">'+GAMES[g].name+'</option>'; }).join(''); }
 function gBtns(){ return GLIST.map(function(g){ return '<button data-f="'+g+'">'+GAMES[g].name+'</button>'; }).join(''); }
@@ -22,7 +21,6 @@ function ago(iso){ var t=Date.parse(iso); if(!t) return ''; var m=Math.round((Da
 
 /* ===================== 뉴스: 세 게임과 허브의 패치노트 중 가장 최근 6개 ===================== */
 var NEWS_N=6, news=[], hubNotes=[], notesBy={};
-var NSRC={hub:{name:'허브',cls:'g0',site:'https://frenchfries777mc.github.io/games/'},stickseum:GAMES.stickseum,crownenvoy:GAMES.crownenvoy,beaconfall:GAMES.beaconfall,isleport:GAMES.isleport,vowkeep:GAMES.vowkeep};
 var NEWL=['zh','pt','ru','tr','it','pl','ar','nw'].indexOf(LANG)>=0;   /* the newer languages fall back to English, not Korean */
 function trNote(n, N){
   if(LANG==='ko') return {title:n.title, items:n.items||[]};
@@ -37,7 +35,7 @@ function siteDict(g){ return fetch(GAMES[g].site+'i18n.js',{cache:'no-cache'}).t
 function loadNews(){
   var box=$('#newsList'); if(!box) return Promise.resolve();
   return Promise.all(Object.keys(NSRC).map(function(g){
-    return Promise.all([fetch(NSRC[g].site+'patchnotes.json',{cache:'no-cache'}).then(function(r){ return r.ok?r.json():null; },function(){ return null; }), LANG==='ko'||!GAMES[g]||g==='stickseum'?null:siteDict(g)])
+    return Promise.all([window.FF_REG_NOTES(NSRC[g]).then(function(l){ return l?{notes:l}:null; }), LANG==='ko'||!GAMES[g]||g==='stickseum'?null:siteDict(g)])
       .then(function(x){ var d=x[0]; return ((d&&d.notes)||[]).map(function(n,i){ var t=trNote(n,x[1]); return {g:g, i:i, date:n.date||'', build:n.build||'', title:t.title, items:t.items, key:(n.date||'')+'|'+(n.build||'')+'|'+(n.title||'')}; }); });
   })).then(function(all){ hubNotes=all[0]; all.forEach(function(l){ if(l[0]) notesBy[l[0].g]=l.map(function(n){ return n.key; }); }); news=[].concat.apply([],all).sort(function(a,b){ return (b.date>a.date?1:b.date<a.date?-1:0)||(a.i-b.i); }); paintNews(); paintFollow(); });
 }
@@ -52,7 +50,7 @@ function paintNews(){
 }
 
 /* ---- 게임별 소식 받기: 구독한 게임에 새 패치노트가 올라오면 뉴스에 표시 (supabase-ff-follow.sql) ---- */
-var FOLLOW_G=['stickseum','crownenvoy','beaconfall','isleport','vowkeep'], follows={}, followOK=true;
+var FOLLOW_G=GLIST, follows={}, followOK=true;
 function unseenN(g){ if(follows[g]===undefined||!follows[g]) return 0; var l=notesBy[g]||[]; for(var i=0;i<l.length;i++) if(l[i]===follows[g]) return i; return 0; }
 function isNew(n){ return follows[n.g]!==undefined&&n.i<unseenN(n.g); }
 async function loadFollows(){
