@@ -49,6 +49,7 @@ const HERO = {
   skeleton: { skel: 1 }
 };
 function matOf(v) { return v === 'dm' ? dmetal() : v === 'mt' ? metal() : M(v); }
+const COL = { knight: 0xcfe0ff, priest: 0xfff0b0, hunter: 0xffe08a, viking: 0xffb060, mamluk: 0xffb060, witch: 0xd8a0ff, skeleton: 0xe8e0c8 };
 export const makeHero = toonify(function (cls, col) {
   const o = HERO[cls] || HERO.knight, g = o.skel ? makeSkel(col) : makeFigure(o, col);
   g.userData.cls = cls; g.scale.setScalar(1.2);
@@ -140,7 +141,7 @@ export class View {
     this.r.toneMapping = THREE.ACESFilmicToneMapping; this.r.toneMappingExposure = 1.0;
     this.ps = 3; this.bloomOn = true; this.vs = 11; this.vsT = 11; this.mode = 'arena';
     this.cam = new THREE.OrthographicCamera(-10, 10, 10, -10, 0.1, 300); this.camP = new THREE.OrthographicCamera(-3, 3, 3, -3, 0.1, 100);
-    this.ents = new Map(); this.fx = []; this.ray = new THREE.Raycaster(); this.plane = new THREE.Plane(new THREE.Vector3(0, 1, 0), 0); this.pjM = [];
+    this.shake = 0; this.ents = new Map(); this.fx = []; this.ray = new THREE.Raycaster(); this.plane = new THREE.Plane(new THREE.Vector3(0, 1, 0), 0); this.pjM = [];
     this.build(); this.resize();
   }
   resize() {
@@ -154,7 +155,7 @@ export class View {
   }
   // 섬 전체가 화면에 들어오게 크기를 맞춰요 (카메라는 움직이지 않아요)
   fit(now) {
-    const asp = this.W / this.H, g = this.ring ?? 6, hw = (Math.min(g, NX) + 0.5) * CELL, hz = (Math.min(g, NZ) + 0.5) * CELL;
+    const asp = this.W / this.H, g = this.rN ?? 6, hw = (Math.min(g, NX) + 0.5) * CELL, hz = (Math.min(g, NZ) + 0.5) * CELL;
     this.vsT = Math.max((hw + 2.5) / asp, hz * 0.74 + 3.5, 7);
     if (now) this.vs = this.vsT; this.applyVs();
   }
@@ -217,6 +218,7 @@ export class View {
     // 왕관
     this.crown = makeCrown(); s.add(this.crown);
     this.crownL = new THREE.PointLight(0xffd070, 22, 8, 1.6); s.add(this.crownL);
+    this.fxL = new THREE.PointLight(0xffffff, 0, 16, 1.6); this.fxL.position.set(0, -50, 0); s.add(this.fxL); this.fxLI = 0;
     this.beam = mesh(geo('beam', () => new THREE.CylinderGeometry(0.5, 0.5, 14, 10, 1, true)), M(0xffe08a, { op: 0.14, ds: true }), 0, 7, 0, s, false);
     this.ringMk = mesh(geo('ringMk', () => new THREE.RingGeometry(0.9, 1.15, 16)), M(0xffd36b, { op: 0.6, ds: true }), 0, 0.03, 0, s, false); this.ringMk.rotation.x = -Math.PI / 2;
     // 직업 고르기 받침돌 (섬에서 멀리 떨어진 곳)
@@ -285,7 +287,7 @@ export class View {
       this.stepFx(dt); return;
     }
     if (snap) {
-      if (snap.ring !== this.ring) { this.ring = snap.ring; this.fit(false); }
+      if (snap.ring !== this.rN) { this.rN = snap.ring; this.fit(false); }
       this.setTiles(snap.tl, dt, t);
       for (const a of snap.p) this.syncPlayer(a, dt, t);
       const [cx, cy, cz, ch] = snap.c, C = this.crown;
@@ -304,8 +306,9 @@ export class View {
     }
     if (Math.abs(this.vs - this.vsT) > 0.01) { this.vs += (this.vsT - this.vs) * Math.min(1, dt * 1.5); this.applyVs(); }
     // 큰 타격에는 화면이 흔들려요
-    this.shake = (this.shake || 0) * Math.exp(-dt * 9);
-    this.cam.position.set((Math.random() - 0.5) * this.shake, 22 + (Math.random() - 0.5) * this.shake, 30); this.cam.updateMatrixWorld();
+    let sx = 0, sy = 0; if (this.shake > 0) { sx = (Math.random() - .5) * this.shake * 0.6; sy = (Math.random() - .5) * this.shake * 0.6; this.shake = Math.max(0, this.shake - dt * 3); }
+    this.cam.position.set(sx, 22 + sy, 30); this.cam.updateMatrixWorld();
+    if (this.fxL && this.fxLI > 0) { this.fxLI = Math.max(0, this.fxLI - dt * this.fxLI * 5 - dt * 10); this.fxL.intensity = this.fxLI; }
     this.stepFx(dt);
   }
   syncPlayer(a, dt, t) {
@@ -322,8 +325,8 @@ export class View {
     let d = ry - e.ry; d = Math.atan2(Math.sin(d), Math.cos(d)); e.ry += d * Math.min(1, dt * 18); g.rotation.y = e.ry;
     u.bub.visible = !!inv; u.ring.visible = e.y > -0.5 && e.y < 0.5;
     animate(e, g, { kind: a[20], aN: a[21], cmb: a[22], y: e.y, cls: e.cls, st, s, chg, run: Math.min(1, e.spd / 5), air: Math.abs(e.y) > 0.4 }, dt, t);
-    if ((st === ST.dash || st === ST.lunge) && Math.random() < dt * 30) this.puff(e.x, e.y + 0.2, e.z);
-    if (st === ST.charge && chg >= 1 && Math.random() < dt * 12) this.spark(e.x + (Math.random() - 0.5), e.y + 1.4 + Math.random(), e.z + (Math.random() - 0.5), 0xfff0a0);
+    if ((st === ST.dash || st === ST.lunge) && Math.random() < dt * 14) this.burst(e.x, 0.3, e.z, 0xbcae94, 2, 3, 0.5, 0.14);
+    if (st === ST.charge && chg >= 1 && Math.random() < dt * 12) this.burst(e.x + (Math.random() - 0.5), e.y + 1.4 + Math.random(), e.z + (Math.random() - 0.5), 0xfff0a0, 1, 1, 0.35, 0.12);
   }
   // 화살과 마법 구슬
   syncProj(list, t) {
@@ -336,45 +339,114 @@ export class View {
     this.pjM.forEach((m, i) => {
       const b = list[i]; m.g.visible = !!b; if (!b) return;
       m.g.position.set(b[1], b[2], b[3]); m.g.rotation.y = Math.atan2(b[4], b[5]);
-      m.arrow.visible = !b[0]; m.orb.visible = m.o2.visible = !!b[0]; if (b[0]) { m.o2.scale.setScalar(1 + Math.sin(t * 9) * 0.12); if (Math.random() < 0.3) this.spark(b[1], b[2], b[3], 0xd8a0ff); }
+      m.arrow.visible = !b[0]; m.orb.visible = m.o2.visible = !!b[0]; if (b[0]) { m.o2.scale.setScalar(1 + Math.sin(t * 9) * 0.12); if (Math.random() < 0.3) this.burst(b[1], b[2], b[3], 0xd8a0ff, 1, 1, 0.35, 0.12); }
     });
   }
 
-  /* ---------- 효과 ---------- */
-  addFx(m, T, up) { this.fx.push({ m, t: 0, T, up }); }
-  burst(x, y, z, col, n, sp, life = 0.5, size = 0.14) {
+  /* ---------- 효과 (Vowkeep과 같은 파티클) ---------- */
+  burst(x, y, z, col, n = 8, sp = 4, life = 0.5, size = 0.12) {
     for (let i = 0; i < n; i++) {
       const m = box(size, size, size, M(col, { e: col, ei: 2 }), x, y, z, this.scene); m.castShadow = false;
-      const vx = (Math.random() - 0.5) * sp, vy = Math.random() * sp * 0.8 + 1, vz = (Math.random() - 0.5) * sp;
-      this.addFx(m, life * (0.6 + Math.random() * 0.6), (f, dt) => { m.position.x += vx * dt; m.position.y += (vy - 14 * f.t) * dt; m.position.z += vz * dt; m.scale.setScalar(1 - f.t / f.T); });
+      const vx = (Math.random() - .5) * sp, vy = Math.random() * sp, vz = (Math.random() - .5) * sp;
+      this.fx.push({ m, t: 0, T: life * (0.6 + Math.random() * 0.6), up: (f, dt) => { m.position.x += vx * dt; m.position.y += (vy - 9 * f.t) * dt; m.position.z += vz * dt; } });
     }
   }
-  spark(x, y, z, col) { const m = box(0.12, 0.12, 0.12, M(col, { e: col, ei: 2 }), x, y, z, this.scene); m.castShadow = false; this.addFx(m, 0.35, (f, dt) => { m.position.y += dt * 2; m.scale.setScalar(1 - f.t / f.T); }); }
-  puff(x, y, z) { const m = dod(0.25, M(0x8a8494), x + (Math.random() - 0.5) * 0.4, y, z + (Math.random() - 0.5) * 0.4, this.scene); m.castShadow = false; this.addFx(m, 0.4, (f, dt) => { m.position.y += dt * 1.2; m.scale.setScalar(1 + f.t * 2 - (f.t / f.T) * 1.5); }); }
-  dust(x, y, z, n) { for (let i = 0; i < n; i++) this.puff(x + (Math.random() - 0.5) * 2, y + Math.random() * 0.4, z + (Math.random() - 0.5) * 2); }
-  shock(x, z, r, col = 0xfff4d0) {
-    const m = mesh(geo('shock', () => new THREE.RingGeometry(0.75, 1, 24)), M(col, { op: 0.7, ds: true, uniq: true }), x, 0.08, z, this.scene, false); m.rotation.x = -Math.PI / 2;
-    this.addFx(m, 0.35, f => { const k = f.t / f.T; m.scale.setScalar(0.4 + k * r); m.material.opacity = 0.7 * (1 - k); });
+  tail(x, z, a, len, col, w) {
+    const m = mesh(geo('tail', () => new THREE.BoxGeometry(1, 0.06, 1)), M(col, { e: col, ei: 3, op: 0.7, uniq: true }), x + Math.cos(a) * len / 2, 1.6, z + Math.sin(a) * len / 2, this.scene, false);
+    m.rotation.y = -a; m.scale.set(len + 0.1, 1, w);
+    this.fx.push({ m, t: 0, T: 0.22, up: (f) => { const u = f.t / f.T; m.material.opacity = 0.7 * (1 - u); m.scale.z = w * (1 - u); } });
   }
-  star(x, y, z, s) {
-    const g = new THREE.Group(); g.position.set(x, y, z); this.scene.add(g);
-    for (let i = 0; i < 4; i++) { const b = box(0.12, 0.12, 0.8 + s * 0.04, M(0xffffff, { e: 0xfff0b0, ei: 2 }), 0, 0, 0, g); b.castShadow = false; b.rotation.y = i * Math.PI / 4; }
-    this.addFx(g, 0.16, f => { g.scale.setScalar(0.6 + f.t / f.T * 1.2); });
+  arc(x, z, a, r, col) {
+    const m = mesh(geo('arc' + r, () => new THREE.TorusGeometry(r * 0.8, 0.12, 3, 20, Math.PI * 0.75)), M(col, { e: col, ei: 3, op: 0.9, uniq: true }), x, 1.6, z, this.scene, false);
+    m.rotation.set(-Math.PI / 2, 0, -a - Math.PI * 0.375);
+    this.fx.push({ m, t: 0, T: 0.18, up: (f) => { m.material.opacity = 0.9 * (1 - f.t / f.T); m.scale.setScalar(1 + f.t * 2); } });
+  }
+  ring(x, z, r, col, T = 0.5) {
+    const m = mesh(geo('ring1', () => new THREE.RingGeometry(0.9, 1, 32)), M(col, { e: col, ei: 2, op: 0.8, uniq: true }), x, 0.2, z, this.scene, false); m.rotation.x = -Math.PI / 2;
+    this.fx.push({ m, t: 0, T, up: (f) => { const u = f.t / f.T; m.scale.setScalar(r * u + 0.2); m.material.opacity = 0.8 * (1 - u); } });
+  }
+  column(x, z, col, T = 0.8) {
+    const m = mesh(geo('col', () => new THREE.CylinderGeometry(0.9, 0.9, 6, 12, 1, true)), M(col, { e: col, ei: 2, op: 0.5, uniq: true, ds: true }), x, 3, z, this.scene, false);
+    this.fx.push({ m, t: 0, T, up: (f) => { m.material.opacity = 0.5 * (1 - f.t / f.T); m.scale.x = m.scale.z = 1 - f.t / f.T * 0.6; } });
+  }
+  // 역할 그림: 캐릭터 모델을 작게 그려서 픽셀 그림으로 만들어요 (한 번 그리고 저장해 둬요)
+  flash(x, z, col, I = 120) { if (!this.fxL) return; I *= 0.5; this.fxL.color.setHex(col); this.fxL.position.set(x, 3, z); this.fxLI = Math.max(this.fxLI, I); this.fxL.intensity = this.fxLI; }
+  rune(x, z, r, col, T = 1.2, spin = 2) {
+    const g = new THREE.Group(); g.position.set(x, 0.16, z); this.scene.add(g); const mat = M(col, { e: col, ei: 0.8, op: 0.3, uniq: true });
+    const a = mesh(geo('rn1', () => new THREE.RingGeometry(0.92, 1, 32)), mat, 0, 0, 0, g, false); a.rotation.x = -Math.PI / 2;
+    const b = mesh(geo('rn2', () => new THREE.RingGeometry(0.62, 0.68, 6)), mat, 0, 0.01, 0, g, false); b.rotation.x = -Math.PI / 2;
+    for (let i = 0; i < 6; i++) { const q = i / 6 * 6.283; const d = box(0.16, 0.04, 0.34, mat, Math.cos(q) * 0.8, 0.02, Math.sin(q) * 0.8, g); d.rotation.y = -q; d.castShadow = false; }
+    this.fx.push({ m: g, t: 0, T, up: (f, dt) => { const u = f.t / f.T; g.rotation.y += dt * spin; g.scale.setScalar(r * Math.min(1, u * 5)); mat.opacity = 0.3 * (u < 0.7 ? 1 : (1 - u) / 0.3); } });
+  }
+  rise(x, z, col, n = 14, r = 1.5, T = 1, sp = 5) {
+    const mat = M(col, { e: col, ei: 4 });
+    for (let i = 0; i < n; i++) {
+      const q = Math.random() * 6.283, d = Math.sqrt(Math.random()) * r, m = box(0.14, 0.14, 0.14, mat, x + Math.cos(q) * d, 0.3, z + Math.sin(q) * d, this.scene); m.castShadow = false;
+      const v = sp * (0.5 + Math.random() * 0.7), w = (Math.random() - .5) * 2;
+      this.fx.push({ m, t: -Math.random() * T * 0.4, T: T * (0.6 + Math.random() * 0.4), up: (f, dt) => { if (f.t < 0) { m.visible = false; return; } m.visible = true; m.position.y += v * dt; m.position.x += Math.cos(q + f.t * 3) * w * dt; m.position.z += Math.sin(q + f.t * 3) * w * dt; m.scale.setScalar(1 - f.t / f.T * 0.7); } });
+    }
+  }
+  shock(x, z, r, col, T = 0.45) {
+    this.ring(x, z, r, col, T); this.ring(x, z, r * 0.6, 0xffffff, T * 0.7);
+    const mat = M(col, { e: col, ei: 3 });
+    for (let i = 0; i < 18; i++) {
+      const q = i / 18 * 6.283 + Math.random() * 0.2, m = box(0.18, 0.18, 0.18, mat, x, 0.3, z, this.scene); m.castShadow = false; const v = r / T * (0.8 + Math.random() * 0.3);
+      this.fx.push({ m, t: 0, T: T * 1.1, up: (f, dt) => { m.position.x += Math.cos(q) * v * dt; m.position.z += Math.sin(q) * v * dt; m.position.y = 0.3 + Math.sin(f.t / f.T * 3.14) * 0.8; } });
+    }
+  }
+  streak(x, z, a, len, col, T = 0.35, w = 0.5) {
+    const m = mesh(geo('stk', () => new THREE.BoxGeometry(1, 0.1, 1)), M(col, { e: col, ei: 4, op: 0.85, uniq: true }), x + Math.cos(a) * len / 2, 1.2, z + Math.sin(a) * len / 2, this.scene, false);
+    m.rotation.y = -a; m.scale.set(len, 1, w);
+    this.fx.push({ m, t: 0, T, up: (f) => { const u = f.t / f.T; m.material.opacity = 0.85 * (1 - u); m.scale.z = w * (1 - u * 0.8); } });
+  }
+  dome(x, z, r, col, T = 0.7) {
+    const m = mesh(geo('dome', () => new THREE.SphereGeometry(1, 10, 6, 0, 6.3, 0, 1.6)), M(col, { e: col, ei: 1, op: 0.3, uniq: true, ds: true }), x, 0, z, this.scene, false);
+    this.fx.push({ m, t: 0, T, up: (f) => { const u = f.t / f.T; m.scale.setScalar(r * (0.6 + Math.min(1, u * 4) * 0.4)); m.material.opacity = 0.3 * (1 - u); } });
+  }
+  hitSpark(x, z, big) {
+    const g = new THREE.Group(); g.position.set(x, 1.7, z); this.scene.add(g); const mat = M(0xffffff, { e: 0xffffff, ei: 4, op: 0.95, uniq: true });
+    for (let i = 0; i < 2; i++) { const b = box(1.2, 0.08, 0.16, mat, 0, 0, 0, g); b.rotation.y = i * Math.PI / 2 + 0.4; b.castShadow = false; }
+    this.fx.push({ m: g, t: 0, T: 0.12, up: (f) => { const u = f.t / f.T; g.scale.setScalar((big ? 1.5 : 1) * (0.5 + u)); mat.opacity = 0.95 * (1 - u); } });
+    this.burst(x, 1.6, z, big ? 0xffd36b : 0xffe8b0, big ? 9 : 5, 7, 0.3, 0.09);
+  }
+  // 쓰러질 때 픽셀 조각으로 부서져요
+  shatter(x, z, cols, n, big) {
+    for (let i = 0; i < n; i++) {
+      const c = cols[i % cols.length], sz = (big ? 0.3 : 0.18) * (0.6 + Math.random() * 0.8), m = box(sz, sz, sz, M(c), x + (Math.random() - .5) * 0.8, 0.6 + Math.random() * 2, z + (Math.random() - .5) * 0.8, this.scene); m.castShadow = false;
+      const q = Math.random() * 6.283, v = (big ? 9 : 5) * (0.4 + Math.random()), vy = 3 + Math.random() * (big ? 9 : 5), sp = (Math.random() - .5) * 14; let vY = vy, land = false;
+      this.fx.push({ m, t: 0, T: 1.1 + Math.random() * 0.5, up: (f, dt) => { if (!land) { m.position.x += Math.cos(q) * v * dt; m.position.z += Math.sin(q) * v * dt; vY -= 22 * dt; m.position.y += vY * dt; m.rotation.x += sp * dt; m.rotation.z += sp * dt; if (m.position.y < 0.1) { m.position.y = 0.1; land = true; } } if (f.t > f.T - 0.3) m.scale.setScalar(Math.max(0.01, (f.T - f.t) / 0.3)); } });
+    }
+  }
+  // 보스 등장: 화면이 보스 쪽으로 다가갔다가 돌아와요
+  dust(x, y, z, n) { this.burst(x, 0.4, z, 0xbcae94, n * 3, 5, 0.6, 0.16); }
+  // 사건마다 Vowkeep과 같은 연출을 붙여요
+  onEvent(e) {
+    const P = id => this.ents.get(id), c = Math.cos(e.a || 0), s = Math.sin(e.a || 0);
+    switch (e.k) {
+      case 'hit': { const big = e.s >= 14; this.hitSpark(e.x, e.z, big); this.burst(e.x, 1.6, e.z, 0xe8e0c8, big ? 6 : 3, 4, 0.3, 0.09); this.shake = Math.max(this.shake, big ? 0.5 : 0.25); break; }
+      case 'swing': if (!e.kd && !e.pj) this.arc(e.x, e.z, e.a, 2.4, COL[e.cl] || 0xcfe0ff); break;
+      case 'pcharge': this.rune(e.x, e.z, 2.0, 0xfff0b0, 0.5, 0); this.rise(e.x, e.z, 0xfff0b0, 14, 1.0, 0.45, 5); this.ring(e.x, e.z, 2.4, 0x9af0d0, 0.45); this.flash(e.x, e.z, 0xfff0b0, 80); break;
+      case 'heavy': { // 내려찍은 자리: 큰 충격파 두 겹, 흙먼지, 땅 문양, 화면 크게 흔들기
+        this.ring(e.x - c * 1.4 + c * 1.4, e.z, 3.4, 0xffe08a, 0.4); this.burst(e.x, 0.3, e.z, 0xbcae94, 26, 9, 0.6, 0.18);
+        this.shock(e.x, e.z, 6, 0xffe08a, 0.45); this.ring(e.x - c * 0.4, e.z - s * 0.4, 3.2, 0x7ac8ff, 0.6); this.shock(e.x, e.z, 3.2, 0xffffff, 0.3); this.rune(e.x, e.z, 2.2, 0xffb040, 0.7, 0); this.streak(e.x - c * 2.5, e.z - s * 2.5, e.a, 5, 0xfff0b0, 0.28, 0.9); this.rise(e.x, e.z, 0xffd36b, 16, 1.6, 0.6, 9); this.flash(e.x, e.z, 0xffe08a, 150);
+        this.shake = Math.max(this.shake, 1.0); break; }
+      case 'big': { const col = e.role === 'priest' ? 0xfff0b0 : 0xffb060; this.shock(e.x, e.z, 3.6, col, 0.4); this.burst(e.x, 1.4, e.z, col, 18, 8, 0.45, 0.14); this.rise(e.x, e.z, col, 10, 1.2, 0.5, 7); this.flash(e.x, e.z, col, 110); this.shake = Math.max(this.shake, 0.6); break; }
+      case 'ko': { this.shatter(e.x, e.z, [0xd8d0bc, 0x6a6470, 0x5a5040, 0x8a8a96], 30, true); this.burst(e.x, 1.2, e.z, 0xffe8b0, 8, 7, 0.6, 0.12); this.shock(e.x, e.z, 5, 0xffe08a, 0.5); this.flash(e.x, e.z, 0xffd08a, 120); this.shake = Math.max(this.shake, 0.6); break; }
+      case 'dash': { const p = P(e.id); if (p) this.burst(p.x, 0.4, p.z, 0xbcae94, 8, 4, 0.5, 0.14); break; }
+      case 'skill': { // 기술 연출
+        const x = e.x, z = e.z;
+        if (e.w === 'bash' || e.w === 'lunge') { this.streak(x, z, e.a, 6, 0xcfe0ff, 0.4, 1.2); this.burst(x, 0.4, z, 0xbcae94, 16, 5, 0.6, 0.16); this.flash(x + c * 4, z + s * 4, 0xcfe0ff, 90); }
+        else if (e.w === 'volley') { this.streak(x, z, e.a, 18, 0xffe08a, 0.3, 0.35); this.burst(x + c, 1.6, z + s, 0xffe08a, 12, 6, 0.4, 0.12); this.flash(x, z, 0xffe08a, 80); }
+        else if (e.w === 'grab') { this.burst(x + c, 1.8, z + s, 0xd0543a, 6, 3, 0.3, 0.1); }
+        break; }
+      case 'nova': this.rune(e.x, e.z, 4.5, 0x9af0a8, 0.9, 1.5); this.rise(e.x, e.z, 0x9af0a8, 12, 4, 1, 4); this.column(e.x, e.z, 0x9af0a8, 0.5); this.flash(e.x, e.z, 0x9af0a8, 45); this.shock(e.x, e.z, 4, 0xfff0b0, 0.4); break;
+      case 'curse': this.rune(e.x, e.z, 1.6, 0xff3a3a, 1.4, 4); this.column(e.x, e.z, 0xff3a3a, 0.6); this.flash(e.x, e.z, 0xff3a3a, 60); this.burst(e.x, 0.2, e.z, 0x9a3aff, 14, 6, 0.7, 0.18); break;
+      case 'boom': this.burst(e.x, e.y, e.z, 0xc06aff, 14, 7, 0.5, 0.16); this.shock(e.x, e.z, 2.2, 0xd8a0ff, 0.35); this.flash(e.x, e.z, 0xc06aff, 70); break;
+      case 'spin': this.shock(e.x, e.z, 3.4, 0xe8eef8, 0.4); this.burst(e.x, 0.3, e.z, 0xbcae94, 10, 6, 0.5, 0.14); break;
+      case 'win': { const p = P(e.id); if (p) { this.column(p.x, p.z, 0xfff0b0, 1.6); this.rise(p.x, p.z, 0xffd08a, 40, 4, 2, 6); this.flash(p.x, p.z, 0xffd08a, 200); } break; }
+    }
   }
   stepFx(dt) { for (let i = this.fx.length - 1; i >= 0; i--) { const f = this.fx[i]; f.t += dt; f.up(f, dt); if (f.t >= f.T) { this.scene.remove(f.m); this.fx.splice(i, 1); } } }
-  onEvent(e) {
-    const P = id => this.ents.get(id);
-    if (e.k === 'hit') { this.shake = Math.max(this.shake || 0, Math.min(1.1, e.s * 0.05)); this.burst(e.x, e.y, e.z, 0xfff6d8, Math.min(20, 4 + e.s), 3 + e.s * 0.35, 0.45); this.star(e.x, e.y, e.z, e.s); if (e.s >= 14) this.burst(e.x, e.y, e.z, 0xffc040, 6, 8, 0.6, 0.18); }
-    else if (e.k === 'curse') { this.shock(e.x, e.z, 3, 0xc06aff); this.burst(e.x, 0.2, e.z, 0x9a3aff, 14, 6, 0.7, 0.18); }
-    else if (e.k === 'boom') { this.burst(e.x, e.y, e.z, 0xc06aff, 14, 7, 0.5, 0.16); this.shock(e.x, e.z, 2.2, 0xd8a0ff); }
-    else if (e.k === 'nova') { this.shock(e.x, e.z, 4, 0xfff0a0); this.burst(e.x, 1.5, e.z, 0xffe08a, 18, 7, 0.6); }
-    else if (e.k === 'ko') { const p = P(e.id); if (p) { this.burst(p.x, 0.5, p.z, 0xffe08a, 16, 8, 0.7, 0.2); this.shock(p.x, p.z, 3, 0xffe08a); } this.shake = 1.2; }
-    else if (e.k === 'spin') { this.shock(e.x, e.z, 3.4, 0xe8eef8); this.dust(e.x, 0, e.z, 5); }
-    else if (e.k === 'dash') { const p = P(e.id); if (p) this.dust(p.x, 0, p.z, 2); }
-    else if (e.k === 'pick') { const p = P(e.id); if (p) { this.burst(p.x, 2.6, p.z, 0xffd36b, 14, 5, 0.6); this.shock(p.x, p.z, 2.4, 0xffe08a); } }
-    else if (e.k === 'spawn') { const p = P(e.id); if (p) p.init = false; }
-    else if (e.k === 'swing') { const p = P(e.id); if (p && e.c >= 0.9 && !e.pj) this.shock(p.x, p.z, 1.6, 0xfff0a0); }
-  }
   project(x, y, z) { const v = new THREE.Vector3(x, y, z).project(this.cam); return { x: (v.x + 1) / 2 * this.cssW, y: (1 - v.y) / 2 * this.cssH }; }
   ground(cx, cy, h = 0) {
     const v = new THREE.Vector2(cx / this.cssW * 2 - 1, -(cy / this.cssH) * 2 + 1); this.ray.setFromCamera(v, this.cam); this.plane.constant = -h;
