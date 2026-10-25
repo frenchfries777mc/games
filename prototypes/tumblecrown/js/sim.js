@@ -1,24 +1,15 @@
 // Tumblecrown · © 2026 Frenchfries777 · CC BY-NC-ND 4.0
 // 게임 규칙: 방장 컴퓨터에서만 돌아가요 (1초에 30번). 다른 사람은 방장이 보낸 장면을 그려요
-import { RING, HEX, TARGET, SHRINK_AT, SHRINK_EVERY, MIN_RING, KO_PTS, FALL_Y, RESPAWN, CLS, DASH } from './data.js';
+import { RING, CELL, NX, NZ, TARGET, SHRINK_AT, SHRINK_EVERY, MIN_RING, KO_PTS, FALL_Y, RESPAWN, CLS, DASH } from './data.js';
 
-/* ---------- 육각 섬 ---------- */
-const S3 = Math.sqrt(3);
+/* ---------- 방 바닥 (네모 칸) ---------- */
 export const TILES = []; const TIX = new Map();
-for (let q = -RING; q <= RING; q++) for (let r = Math.max(-RING, -q - RING); r <= Math.min(RING, -q + RING); r++) {
-  const i = TILES.length; TILES.push({ q, r, x: HEX * S3 * (q + r / 2), z: HEX * 1.5 * r, ring: (Math.abs(q) + Math.abs(r) + Math.abs(q + r)) / 2 }); TIX.set(q + ',' + r, i);
-}
+for (let b = -NZ; b <= NZ; b++) for (let a = -NX; a <= NX; a++) { const i = TILES.length; TILES.push({ q: a, r: b, x: a * CELL, z: b * CELL, ring: Math.max(Math.abs(a), Math.abs(b)) }); TIX.set(a + ',' + b, i); }
 export const NT = TILES.length;
-// 바위 기둥: 가운데를 둘러싼 여섯 자리 (부딪히면 막혀요)
-export const PILLARS = [[3, -1], [-2, 3], [-1, -2], [2, 1], [-3, 1], [0, -3]].map(([q, r]) => TIX.get(q + ',' + r));
-export function tileAt(x, z) {
-  const fq = (S3 / 3 * x - z / 3) / HEX, fr = (2 / 3 * z) / HEX, fs = -fq - fr;
-  let q = Math.round(fq), r = Math.round(fr); const s = Math.round(fs);
-  const dq = Math.abs(q - fq), dr = Math.abs(r - fr), ds = Math.abs(s - fs);
-  if (dq > dr && dq > ds) q = -r - s; else if (dr > ds) r = -q - s;
-  const i = TIX.get(q + ',' + r); return i == null ? -1 : i;
-}
-const hexDist = (a, b) => { const A = TILES[a], B = TILES[b]; return (Math.abs(A.q - B.q) + Math.abs(A.r - B.r) + Math.abs(A.q + A.r - B.q - B.r)) / 2; };
+// 기둥 네 개: Vowkeep 단장의 방과 같은 자리 (가로 22%·78%, 세로 28%·72%)
+export const PILLARS = [[-4, -2], [4, -2], [-4, 2], [4, 2]].map(([a, b]) => TIX.get(a + ',' + b));
+export function tileAt(x, z) { const a = Math.round(x / CELL), b = Math.round(z / CELL); const i = TIX.get(a + ',' + b); return i == null ? -1 : i; }
+const hexDist = (a, b) => Math.max(Math.abs(TILES[a].q - TILES[b].q), Math.abs(TILES[a].r - TILES[b].r));
 // 타일 상태: 0 단단함, 1 금 감(곧 떨어짐), 2 없음, 3 바위 기둥
 const solid = (G, i) => i >= 0 && (G.tl[i] === 0 || G.tl[i] === 1 || G.tl[i] === 3);
 export const standable = (G, x, z) => { const i = tileAt(x, z); return i >= 0 && (G.tl[i] === 0 || G.tl[i] === 1); };
@@ -34,10 +25,10 @@ export function createGame(slots, opts = {}) {
   for (const i of PILLARS) G.tl[i] = 3;
   const n = slots.length;
   slots.forEach((s, k) => {
-    const a = k / n * Math.PI * 2 + 0.3, R = HEX * 1.5 * 3.6;
+    const a = k / n * Math.PI * 2 + 0.3, RX = CELL * 3.4, RZ = CELL * 2.6;
     const p = {
       id: s.id, k, name: s.name, uid: s.uid || null, bot: !!s.bot, cls: s.cls, col: s.col,
-      x: Math.cos(a) * R, z: Math.sin(a) * R, y: 0, vx: 0, vz: 0, vy: 0, fx: -Math.cos(a), fz: -Math.sin(a), ax: -Math.cos(a), az: -Math.sin(a),
+      x: Math.cos(a) * RX, z: Math.sin(a) * RZ, y: 0, vx: 0, vz: 0, vy: 0, fx: -Math.cos(a), fz: -Math.sin(a), ax: -Math.cos(a), az: -Math.sin(a),
       st: ST.idle, stT: 0, sa: 0, chg: 0, atkCd: 0, dashCd: 0, skCd: 0, pct: 0, score: 0, ko: 0, falls: 0, held: 0, hs: 0, inv: 0, resp: 0,
       air: true, airDash: true, lastHit: null, grab: null, hitSet: null, bump: null, noPick: 0, prevAtk: false, bot2: { t: 0, mx: 0, mz: 0, atk: false, want: 0 }
     };
@@ -315,7 +306,7 @@ function botInput(G, p, dt) {
   if (holder === p) {
     // 왕관을 들고 있으면: 가까운 적에게서 멀어지되 섬 안쪽으로
     const awx = near ? p.x - near.x : 0, awz = near ? p.z - near.z : 0, aL = Math.hypot(awx, awz) || 1;
-    const lim = HEX * 1.5 * Math.max(1.5, G.ring - 1.2), cen = Math.min(1.6, Math.hypot(p.x, p.z) / lim * 1.4);
+    const lim = CELL * Math.max(1.5, G.ring - 0.6), cen = Math.min(1.6, Math.hypot(p.x, p.z) / lim * 1.4);
     tx = p.x + awx / aL * 2 - p.x / (Math.hypot(p.x, p.z) || 1) * cen * 2.4; tz = p.z + awz / aL * 2 - p.z / (Math.hypot(p.x, p.z) || 1) * cen * 2.4;
     if (near && nd < ar + 0.4) target = near;
   } else if (holder) { tx = holder.x; tz = holder.z; target = holder; if (near && nd < ar * 0.8 && near !== holder) target = near; }
