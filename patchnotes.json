@@ -3,6 +3,15 @@
   {
    "date": "2026-10-25",
    "build": "",
+   "title": "Vowkeep 하얀 대검, 연타 시간 0.65초",
+   "items": [
+    "Vowkeep b46: 기사 대검 색을 검은색에서 하얀색으로 바꿈",
+    "Vowkeep b46: 기사·사제·종자 연타가 이어지는 시간을 모두 0.65초로 맞춤 (기사·종자 0.5초, 사제 0.75초에서)"
+   ]
+  },
+  {
+   "date": "2026-10-25",
+   "build": "",
    "title": "패치노트 검색",
    "items": [
     "Stickseum·Beaconfall·Crown Envoy·Isleport·Vowkeep·Dummy Party 사이트 패치노트에 검색칸 추가",
