@@ -875,6 +875,216 @@
     "nw": "Shadow in Swamp",
     "gk": "Shadow 안에 그 Swamp"
    }
+  },
+  {
+   "id": "sword_triple",
+   "icon": "🗡️",
+   "n": {
+    "ko": "일격필살",
+    "en": "One Strike, Three Down",
+    "es": "Un golpe, tres caídos",
+    "fr": "Un coup, trois victimes",
+    "de": "Ein Schlag, drei Treffer",
+    "ja": "一撃必殺",
+    "zh": "一击三杀",
+    "pt": "Um Golpe, Três Abates",
+    "ru": "Один удар, три жертвы",
+    "tr": "Tek Vuruş, Üç Kurban",
+    "it": "Un colpo, tre a terra",
+    "pl": "Jeden cios, trzech padło",
+    "ar": "ضربة واحدة وثلاثة سقطوا",
+    "nw": "One Strike Three Ungood",
+    "gk": "일격필살"
+   }
+  },
+  {
+   "id": "mode_duel_100",
+   "icon": "🥋",
+   "n": {
+    "ko": "싸움의 달인",
+    "en": "Master Duelist",
+    "es": "Maestro del duelo",
+    "fr": "Maître du duel",
+    "de": "Duellmeister",
+    "ja": "決闘の達人",
+    "zh": "决斗大师",
+    "pt": "Mestre do Duelo",
+    "ru": "Мастер дуэли",
+    "tr": "Düello Ustası",
+    "it": "Maestro dei duelli",
+    "pl": "Mistrz pojedynków",
+    "ar": "سيد المبارزات",
+    "nw": "Duel Mastergood",
+    "gk": "싸움 의 달인"
+   }
+  },
+  {
+   "id": "mode_ctf_100",
+   "icon": "🚩",
+   "n": {
+    "ko": "전문 깃발 도둑",
+    "en": "Professional Flag Thief",
+    "es": "Ladrón de banderas profesional",
+    "fr": "Voleur de drapeaux professionnel",
+    "de": "Professioneller Flaggendieb",
+    "ja": "プロの旗泥棒",
+    "zh": "专业夺旗贼",
+    "pt": "Ladrão de Bandeiras Profissional",
+    "ru": "Профессиональный похититель флагов",
+    "tr": "Profesyonel Bayrak Hırsızı",
+    "it": "Ladro di bandiere professionista",
+    "pl": "Zawodowy złodziej flag",
+    "ar": "لص أعلام محترف",
+    "nw": "Pro Flag Thief",
+    "gk": "전문 깃발 도둑"
+   }
+  },
+  {
+   "id": "mode_conquest_100",
+   "icon": "🏴",
+   "n": {
+    "ko": "팽창주의자",
+    "en": "Expansionist",
+    "es": "Expansionista",
+    "fr": "Expansionniste",
+    "de": "Expansionist",
+    "ja": "拡張主義者",
+    "zh": "扩张主义者",
+    "pt": "Expansionista",
+    "ru": "Экспансионист",
+    "tr": "Yayılmacı",
+    "it": "Espansionista",
+    "pl": "Ekspansjonista",
+    "ar": "توسعي",
+    "nw": "Expandgood",
+    "gk": "팽창주의자"
+   }
+  },
+  {
+   "id": "mode_br_100",
+   "icon": "☠️",
+   "n": {
+    "ko": "너 죽고 나 살자",
+    "en": "Every Man for Himself",
+    "es": "Sálvese quien pueda",
+    "fr": "Chacun pour soi",
+    "de": "Jeder für sich",
+    "ja": "お前が死んで俺が生きる",
+    "zh": "你死我活",
+    "pt": "Cada um por si",
+    "ru": "Каждый за себя",
+    "tr": "Herkes Kendi Başının Çaresine",
+    "it": "Si salvi chi può",
+    "pl": "Każdy sobie",
+    "ar": "كل واحد لنفسه",
+    "nw": "Each for Self",
+    "gk": "너 죽고 나 살자"
+   }
+  },
+  {
+   "id": "mode_duo_100",
+   "icon": "👫",
+   "n": {
+    "ko": "함께하는 재미",
+    "en": "Fun Together",
+    "es": "Diversión en pareja",
+    "fr": "Le plaisir à deux",
+    "de": "Zusammen macht es Spaß",
+    "ja": "一緒に楽しもう",
+    "zh": "一起才有趣",
+    "pt": "Diversão em Dupla",
+    "ru": "Весело вместе",
+    "tr": "Birlikte Eğlence",
+    "it": "Il bello di giocare insieme",
+    "pl": "Razem raźniej",
+    "ar": "متعة اللعب معًا",
+    "nw": "Joy Together",
+    "gk": "함께 하는 재미"
+   }
+  },
+  {
+   "id": "mode_ffa_100",
+   "icon": "🔪",
+   "n": {
+    "ko": "연쇄살인마",
+    "en": "Serial Killer",
+    "es": "Asesino en serie",
+    "fr": "Tueur en série",
+    "de": "Serienkiller",
+    "ja": "連続殺人鬼",
+    "zh": "连环杀手",
+    "pt": "Serial Killer",
+    "ru": "Серийный убийца",
+    "tr": "Seri Katil",
+    "it": "Serial killer",
+    "pl": "Seryjny zabójca",
+    "ar": "قاتل متسلسل",
+    "nw": "Serial Killdoer",
+    "gk": "연쇄 살인마"
+   }
+  },
+  {
+   "id": "mode_tournament_50",
+   "icon": "🏆",
+   "n": {
+    "ko": "진정한 챔피언",
+    "en": "True Champion",
+    "es": "Verdadero campeón",
+    "fr": "Vrai champion",
+    "de": "Wahrer Champion",
+    "ja": "真のチャンピオン",
+    "zh": "真正的冠军",
+    "pt": "Verdadeiro Campeão",
+    "ru": "Настоящий чемпион",
+    "tr": "Gerçek Şampiyon",
+    "it": "Vero campione",
+    "pl": "Prawdziwy mistrz",
+    "ar": "البطل الحقيقي",
+    "nw": "True Champion",
+    "gk": "진짜 챔피언"
+   }
+  },
+  {
+   "id": "mode_gold_100",
+   "icon": "🪙",
+   "n": {
+    "ko": "금에 눈이 멀다",
+    "en": "Blinded by Gold",
+    "es": "Cegado por el oro",
+    "fr": "Aveuglé par l’or",
+    "de": "Vom Gold geblendet",
+    "ja": "金に目がくらむ",
+    "zh": "财迷心窍",
+    "pt": "Cego pelo Ouro",
+    "ru": "Ослеплённый золотом",
+    "tr": "Altına Gözü Dönmüş",
+    "it": "Accecato dall’oro",
+    "pl": "Zaślepiony złotem",
+    "ar": "أعماه الذهب",
+    "nw": "Goldblind",
+    "gk": "금 에 눈 이 멀다"
+   }
+  },
+  {
+   "id": "mode_team_100",
+   "icon": "🤝",
+   "n": {
+    "ko": "환장의 팀워크",
+    "en": "Teamwork Gone Wild",
+    "es": "Trabajo en equipo descontrolado",
+    "fr": "Un travail d’équipe fou",
+    "de": "Wahnsinniger Teamgeist",
+    "ja": "狂気のチームワーク",
+    "zh": "疯狂的团队合作",
+    "pt": "Trabalho em Equipe Insano",
+    "ru": "Безумная командная работа",
+    "tr": "Çılgın Takım Çalışması",
+    "it": "Gioco di squadra scatenato",
+    "pl": "Szalona współpraca",
+    "ar": "عمل جماعي جنوني",
+    "nw": "Crazy Teamdoing",
+    "gk": "환장 의 팀워크"
+   }
   }
  ]
 }
