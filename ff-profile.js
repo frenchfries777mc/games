@@ -490,14 +490,14 @@ async function draw(cv, d, o){
 
 /* ---- hub achievements (ach/hub.json): worked out from the account's games, friends, posts, chats and feedback ---- */
 function hubIds(d, c){
-  var st=(d.profile&&d.profile.stats)||{}, ids=d.ids||{}, n={}, played=0, total=0, each1=true, each10=true;
+  var st=(d.profile&&d.profile.stats)||{}, ids=d.ids||{}, n={}, played=0, total=0, each1=0, each10=0;
   GAMES.forEach(function(g){ var k=Object.keys(ids[g.id]||{}).length, A=d.ach&&d.ach[g.id];
     if(g.id==='stickseum'&&Array.isArray(st.ach)) k=Math.max(k, st.ach.length);
-    if(A) k=Math.max(k, A[0]||0); n[g.id]=k; total+=k; if(CORE.indexOf(g)>=0){ if(k<1) each1=false; if(k<10) each10=false; }
+    if(A) k=Math.max(k, A[0]||0); n[g.id]=k; total+=k; if(k>=1) each1++; if(k>=10) each10++;
     if((d.played&&d.played[g.id]) || (g.id==='stickseum'&&((+st.matches||0)>0||(+st.xp||0)>0)) || k>0) played++; });
   c=c||{}; var out=['hub_join'];
-  if(played>=2) out.push('play_2'); if(played>=3) out.push('play_3'); if(each1) out.push('ach_each');
-  if(total>=10) out.push('ach_10'); if(total>=30) out.push('ach_30'); if(total>=80) out.push('ach_60');   /* 아이디 ach_60은 그대로 두고 기준만 80개 (달인 칭호와 저장된 기록이 이 아이디에 묶여 있어요) */ if(each10) out.push('each_10');
+  if(played>=2) out.push('play_2'); if(played>=3) out.push('play_3'); if(each1>=3) out.push('ach_each');
+  if(total>=10) out.push('ach_10'); if(total>=30) out.push('ach_30'); if(total>=80) out.push('ach_60');   /* 아이디 ach_60은 그대로 두고 기준만 80개 (달인 칭호와 저장된 기록이 이 아이디에 묶여 있어요) */ if(each10>=3) out.push('each_10');
   if(c.friends>=1) out.push('friend_1'); if(c.friends>=5) out.push('friend_5'); if(c.posts>=1) out.push('post_1'); if(c.comments>=1) out.push('comment_1');
   if(c.chats>=1) out.push('chat_1'); if(c.feedback>=1) out.push('feedback_1');
   return out;
