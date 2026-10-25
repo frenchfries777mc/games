@@ -7,7 +7,7 @@ export const TILES = []; const TIX = new Map();
 for (let b = -NZ; b <= NZ; b++) for (let a = -NX; a <= NX; a++) { const i = TILES.length; TILES.push({ q: a, r: b, x: a * CELL, z: b * CELL, ring: Math.max(Math.abs(a), Math.abs(b)) }); TIX.set(a + ',' + b, i); }
 export const NT = TILES.length;
 // 기둥 네 개: Vowkeep 단장의 방과 같은 자리 (가로 22%·78%, 세로 28%·72%)
-export const PILLARS = [[-4, -2], [4, -2], [-4, 2], [4, 2]].map(([a, b]) => TIX.get(a + ',' + b));
+export const PILLARS = [[-4, -3], [4, -3], [-4, 3], [4, 3]].map(([a, b]) => TIX.get(a + ',' + b));
 export function tileAt(x, z) { const a = Math.round(x / CELL), b = Math.round(z / CELL); const i = TIX.get(a + ',' + b); return i == null ? -1 : i; }
 const hexDist = (a, b) => Math.max(Math.abs(TILES[a].q - TILES[b].q), Math.abs(TILES[a].r - TILES[b].r));
 // 타일 상태: 0 단단함, 1 금 감(곧 떨어짐), 2 없음, 3 바위 기둥
@@ -25,7 +25,7 @@ export function createGame(slots, opts = {}) {
   for (const i of PILLARS) G.tl[i] = 3;
   const n = slots.length;
   slots.forEach((s, k) => {
-    const a = k / n * Math.PI * 2 + 0.3, RX = CELL * 3.4, RZ = CELL * 2.6;
+    const a = k / n * Math.PI * 2 + 0.3, RX = CELL * 4.2, RZ = CELL * 3.2;
     const p = {
       id: s.id, k, name: s.name, uid: s.uid || null, bot: !!s.bot, cls: s.cls, col: s.col,
       x: Math.cos(a) * RX, z: Math.sin(a) * RZ, y: 0, vx: 0, vz: 0, vy: 0, fx: -Math.cos(a), fz: -Math.sin(a), ax: -Math.cos(a), az: -Math.sin(a),
@@ -91,7 +91,7 @@ export function step(G, dt, inputs) {
   for (let i = 0; i < ps.length; i++) for (let j = i + 1; j < ps.length; j++) {
     const a = ps[i], b = ps[j]; if (a.st === ST.out || b.st === ST.out || a.st === ST.held || b.st === ST.held || Math.abs(a.y - b.y) > 1.2) continue;
     const dx = b.x - a.x, dz = b.z - a.z, d = Math.hypot(dx, dz);
-    if (d < 0.95 && d > 0.001) { const o = (0.95 - d) / 2; a.x -= dx / d * o; a.z -= dz / d * o; b.x += dx / d * o; b.z += dz / d * o; }
+    if (d < 1.3 && d > 0.001) { const o = (1.3 - d) / 2; a.x -= dx / d * o; a.z -= dz / d * o; b.x += dx / d * o; b.z += dz / d * o; }
   }
   stepCrown(G, dt);
   // 배틀로얄: 마지막까지 남은 사람이 이겨요 (같은 순간에 다 떨어지면 마지막에 떨어진 사람)
@@ -118,6 +118,7 @@ function stepPlayer(G, p, dt, inp) {
   if (p.stT > 0) p.stT -= dt;
   const atk = !!inp.atk;
   // 상태 끝
+  if (p.pend) { if (p.st !== ST.swing) p.pend = null; else if ((p.pend.at -= dt) <= 0) { const q = p.pend; p.pend = null; strike(G, p, q.dmg, q.kb, q.rg, q.arc); } }
   if (p.st === ST.swing && p.stT <= 0) setSt(p, ST.idle);
   if (p.st === ST.stun && p.stT <= 0 && grounded) setSt(p, ST.idle);
   if (p.st === ST.dash && p.stT <= 0) { setSt(p, ST.idle); p.vx *= 0.35; p.vz *= 0.35; }
@@ -150,13 +151,18 @@ function stepPlayer(G, p, dt, inp) {
   p.x += p.vx * dt; p.z += p.vz * dt;
   // 바위 기둥에 막혀요
   for (const i of PILLARS) if (G.tl[i] === 3 && p.y < 2.5) {
-    const T = TILES[i], dx = p.x - T.x, dz = p.z - T.z, d = Math.hypot(dx, dz), R = 1.15;
-    if (d < R && d > 0.001) { p.x = T.x + dx / d * R; p.z = T.z + dz / d * R; if (p.st === ST.stun) { const dot = (p.vx * dx + p.vz * dz) / d; if (dot < 0) { p.vx -= 1.6 * dot * dx / d; p.vz -= 1.6 * dot * dz / d; } } }
+    // 기둥 칸 전체가 막혀요 (모서리를 밟아 떨어지지 않게)
+    const T = TILES[i], H = CELL / 2 + 0.55, dx = p.x - T.x, dz = p.z - T.z;
+    if (Math.abs(dx) < H && Math.abs(dz) < H) {
+      let nx = 0, nz = 0;
+      if (H - Math.abs(dx) < H - Math.abs(dz)) { p.x = T.x + Math.sign(dx || 1) * H; nx = Math.sign(dx || 1); } else { p.z = T.z + Math.sign(dz || 1) * H; nz = Math.sign(dz || 1); }
+      if (p.st === ST.stun) { const dot = p.vx * nx + p.vz * nz; if (dot < 0) { p.vx -= 1.6 * dot * nx; p.vz -= 1.6 * dot * nz; } }
+    }
   }
   // 돌진과 구르기 중 부딪힘
   if (p.st === ST.lunge || p.st === ST.dash) for (const t of G.players) {
     if (t === p || t.st === ST.out || (p.hitSet && p.hitSet.has(t.id))) continue;
-    if (Math.hypot(t.x - p.x, t.z - p.z) < 1.3 && Math.abs(t.y - p.y) < 1.4) {
+    if (Math.hypot(t.x - p.x, t.z - p.z) < 1.7 && Math.abs(t.y - p.y) < 1.6) {
       (p.hitSet || (p.hitSet = new Set())).add(t.id);
       if (p.st === ST.lunge) hit(G, p, t, p.ax * 2 + (t.x - p.x), p.az * 2 + (t.z - p.z), p.lunD || 12, p.lunK || 15, 'lunge');
       else hit(G, p, t, t.x - p.x, t.z - p.z, 2, 5.5, 'bump');
@@ -180,15 +186,20 @@ function swing(G, p) {
   // 조금 앞으로 내딛어요
   p.vx += p.ax * 3; p.vz += p.az * 3;
   ev(G, { k: 'swing', id: p.id, c: Math.round(c * 10) / 10 });
+  // 세게 모은 근접 공격(강타)은 내려찍는 동작이 땅에 닿을 때 맞아요 (Vowkeep 강타와 같은 박자)
+  if (c >= 0.45) { p.stT = w.swing + 0.2; p.pend = { at: 0.2, dmg, kb, rg, arc: w.arc }; }
+  else strike(G, p, dmg, kb, rg, w.arc);
+  p.chg = 0;
+}
+function strike(G, p, dmg, kb, rg, arc) {
   for (const t of G.players) {
     if (t === p || t.st === ST.out) continue;
     const dx = t.x - p.x, dz = t.z - p.z, d = Math.hypot(dx, dz);
     if (d > rg + 0.45 || Math.abs(t.y - p.y) > 1.6) continue;
     const ang = Math.acos(Math.max(-1, Math.min(1, (dx * p.ax + dz * p.az) / (d || 1))));
-    if (d > 0.6 && ang > w.arc / 2) continue;
+    if (d > 0.6 && ang > arc / 2) continue;
     hit(G, p, t, dx / (d || 1) + p.ax, dz / (d || 1) + p.az, dmg, kb);
   }
-  p.chg = 0;
 }
 function dash(G, p, mx, mz) {
   let dx = mx, dz = mz; if (Math.hypot(dx, dz) < 0.2) { dx = p.ax; dz = p.az; } const L = Math.hypot(dx, dz) || 1; dx /= L; dz /= L;
