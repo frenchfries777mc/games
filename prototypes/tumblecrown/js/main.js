@@ -365,7 +365,7 @@ const nameOf = id => { const m = S.meta.find(x => x.id === id); return m ? m.nam
 function paintBoard(force) {
   const s = S.snap; if (!s) return; const B = $('board');
   if (force || B.children.length !== s.p.length) B.innerHTML = s.p.map(a => { const m = S.meta.find(x => x.id === a[0]) || {}; return '<div class="bd" data-id="' + a[0] + '"><div class="n"><i style="background:' + hex(m.col || 0) + '"></i><span>' + esc(m.name || '') + '</span></div><div class="bar"><u></u></div></div>'; }).join('');
-  for (const el of B.children) { const a = s.p.find(x => x[0] === el.dataset.id); if (!a) continue; const dead = a[6] === ST.out; el.querySelector('u').style.width = dead ? '0%' : Math.min(100, 100 - Math.min(100, a[9] / 2)) + '%'; el.classList.toggle('out', dead); el.classList.toggle('hold', s.w === a[0]); el.classList.toggle('me', a[0] === S.me); }
+  for (const el of B.children) { const a = s.p.find(x => x[0] === el.dataset.id); if (!a) continue; const dead = a[6] === ST.out; el.querySelector('u').style.width = dead ? '0%' : Math.max(4, 100 - Math.min(100, a[9] / 1.5)) + '%'; el.classList.toggle('out', dead); el.classList.toggle('hold', s.w === a[0]); el.classList.toggle('me', a[0] === S.me); }
   const n = s.p.filter(a => a[6] !== ST.out).length; $('alive').textContent = s.ph === 'over' ? '' : '남은 사람 ' + n + '명';
 }
 function onEvent(e) {
@@ -388,8 +388,11 @@ function drawOverlay(s, t) {
     if (a[6] === ST.out) continue; const e = view.ents.get(a[0]); if (!e) continue;
     const m = S.meta.find(x => x.id === a[0]) || {}, p = view.project(e.x, e.y + 3.4 + (s.c[3] === a[0] ? 0.9 : 0), e.z);
     const pct = a[9], c = pct < 40 ? '#ffffff' : pct < 90 ? '#ffe08a' : pct < 140 ? '#ff9c4a' : '#ff5a4a';
-    oc.font = '700 12px Galmuri, sans-serif'; oc.lineWidth = 4; oc.strokeStyle = '#14203a'; oc.strokeText(m.name || '', p.x, p.y - 16); oc.fillStyle = a[0] === S.me ? '#ffe08a' : '#fff8ea'; oc.fillText(m.name || '', p.x, p.y - 16);
-    oc.font = '700 16px Galmuri, sans-serif'; oc.strokeText(pct + '%', p.x, p.y); oc.fillStyle = c; oc.fillText(pct + '%', p.x, p.y);
+    oc.font = '700 12px Galmuri, sans-serif'; oc.lineWidth = 4; oc.strokeStyle = '#14203a'; oc.strokeText(m.name || '', p.x, p.y - 14); oc.fillStyle = a[0] === S.me ? '#ffe08a' : '#fff8ea'; oc.fillText(m.name || '', p.x, p.y - 14);
+    // 체력바: 가득 찬 상태에서 맞을수록 줄어요 (150%면 텅 비어요. 줄어들수록 더 멀리 날아가요)
+    const hp = Math.max(0, 1 - pct / 150), bw = 46, bx = p.x - bw / 2, by = p.y - 8;
+    oc.fillStyle = '#14203a'; oc.fillRect(bx - 2, by - 2, bw + 4, 11); oc.fillStyle = '#3a2430'; oc.fillRect(bx, by, bw, 7);
+    oc.fillStyle = hp > 0.6 ? '#7ae07a' : hp > 0.35 ? '#ffe08a' : hp > 0.15 ? '#ff9c4a' : '#ff5a4a'; oc.fillRect(bx, by, Math.round(bw * hp), 7);
     if (a[0] === S.me) { oc.fillStyle = '#ffe08a'; oc.beginPath(); oc.moveTo(p.x - 6, p.y + 6); oc.lineTo(p.x + 6, p.y + 6); oc.lineTo(p.x, p.y + 13); oc.fill(); }
   }
   // 조준선: 내 캐릭터 앞에 짧은 화살표 (PC)
