@@ -2,7 +2,7 @@
 // 화면 흐름, 조작, 멀티(친구 초대, PeerJS), 저장
 import { View } from './render.js';
 import { createGame, step, snapshot, chooseBless, carryOver, INTRO_T, HV_DELAY } from './sim.js';
-import { ROLES, ROLE_IDS, BLESSINGS, CHAPTERS, CH, FOES, MAP, ACHIEVEMENTS, TALK, GEAR_TIERS, GEAR_COST, VERSION, BUILD, roleLevel, LORE, COMBOS, CURSES, DEEP, DEEP_I, TALK_X, ROLE_PUZ, flagShown } from './data.js';
+import { ROLES, ROLE_IDS, BLESSINGS, CHAPTERS, CH, FOES, MAP, ACHIEVEMENTS, TALK, GEAR_TIERS, GEAR_COST, COSMETICS, MIDB, WEEKLY, weekInfo, VERSION, BUILD, roleLevel, LORE, COMBOS, CURSES, DEEP, DEEP_I, TALK_X, ROLE_PUZ, flagShown } from './data.js';
 import { collide as mapCollide, areaAt, floorCell, MW, MH, CS, cw, useChapter, chapterIndex, SOPEN, openSecret, resetSecrets, hiddenCell, GOPEN, openGate, PDOWN, dropPillar, LIFTH, liftOk, CUT } from './map.js';
 import * as SFX from './sfx.js';
 import * as MUS from './music.js';
@@ -16,7 +16,7 @@ if (TOUCH) document.body.classList.add('touch');
 /* ---------- 저장 ---------- */
 function lsGet(k, d) { try { const v = localStorage.getItem(k); return v ? JSON.parse(v) : d; } catch (e) { return d; } }
 function lsSet(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) { } }
-const SAVE = Object.assign({ honor: 0, xp: {}, gear: {}, ach: {}, clears: {}, role: 'knight', set: { vol: 70, px: 3, bloom: 1, shake: 1 } }, lsGet('vowkeep.save', {}));
+const SAVE = Object.assign({ honor: 0, xp: {}, gear: {}, ach: {}, clears: {}, role: 'knight', cos: { own: {}, on: {} }, set: { vol: 70, px: 3, bloom: 1, shake: 1 } }, lsGet('vowkeep.save', {}));
 SAVE.set = Object.assign({ vol: 70, px: 3, bloom: 1, shake: 1, opt: matchMedia('(pointer: coarse)').matches ? 1 : 0 }, SAVE.set || {});
 // 최적화: 허브 설정의 공용 값(ff_perf)이 있으면 그걸 따르고, 여기서 바꾸면 공용 값도 같이 바꿔요
 let FPS_CAP = 0;
@@ -31,6 +31,7 @@ perfApply();
 addEventListener('ffperf', () => { perfApply(); if (S.scr === 'sSettings') paintSettings(); });
 // 깬 장 수 (예전 저장은 1장을 깼으면 1)
 if (SAVE.chMax == null) SAVE.chMax = Object.keys(SAVE.clears || {}).length ? 1 : 0;
+SAVE.cos = SAVE.cos || { own: {}, on: {} }; SAVE.cos.own = SAVE.cos.own || {}; SAVE.cos.on = SAVE.cos.on || {};
 SAVE.lore = SAVE.lore || {}; SAVE.flags = SAVE.flags || {}; SAVE.puz = SAVE.puz | 0; SAVE.combos = SAVE.combos || {}; SAVE.deepBest = SAVE.deepBest | 0;
 // 다음에 이어서 할 장 (모든 장을 깼으면 1장부터 새 원정)
 const chOpen = () => (SAVE.chMax | 0) >= CHAPTERS.length ? 0 : SAVE.chMax | 0;
@@ -46,7 +47,7 @@ const S = {
 };
 S.chSel = chOpen();
 const view = new View($('gl'));
-view.lobbyFlags = SAVE.flags; view.setLow(!!SAVE.set.opt); view.setPixel(SAVE.set.px); view.setBloom(!!SAVE.set.bloom); view.shakeOn = !!SAVE.set.shake; SFX.setVol(SAVE.set.vol / 100); MUS.setVol(SAVE.set.vol / 100);
+view.lobbyFlags = SAVE.flags; view.cos = SAVE.cos.on; view.setLow(!!SAVE.set.opt); view.setPixel(SAVE.set.px); view.setBloom(!!SAVE.set.bloom); view.shakeOn = !!SAVE.set.shake; SFX.setVol(SAVE.set.vol / 100); MUS.setVol(SAVE.set.vol / 100);
 // 처음 인트로: 던전 복도를 네 영웅이 걸어 나와요. 건너뛸 수 없어요 (끝까지 재생). 끝나면 로비로
 let INTRO = !(qs.get('test') && /^(localhost|127\.0\.0\.1)$/.test(location.hostname));
 window.__introSongDone = INTRO ? 0 : 1;
@@ -112,7 +113,7 @@ function talkTick(dt, on) {
 
 /* ---------- 로그인 ---------- */
 function loggedIn() { try { return !!(window.FFAuth && FFAuth.user()); } catch (e) { return false; } }
-function myName() { try { const n = window.FFAuth && FFAuth.user() && FFAuth.nickname(); if (n) return String(n).slice(0, 12); } catch (e) { } return '기사'; }
+function myName() { try { const n = window.FFAuth && FFAuth.user() && FFAuth.nickname(); if (n) return String(n).slice(0, 15); } catch (e) { } return '기사'; }
 function paintWho() {
   const lv = roleLevel(SAVE.xp[SAVE.role] || 0);
   $('who').innerHTML = '';
@@ -160,7 +161,25 @@ function menu(go) {
   else if (go === 'site') { try { window.close(); } catch (e) { } setTimeout(() => { if (!window.closed) location.href = '../'; }, 300); }
 }
 
+// 겉모습 꾸미기: 한 번 사면 계속 쓰고, 마음대로 바꿔 껴요 (능력치 변화 없음)
+function paintCos() {
+  const box = $('cosBox'); box.innerHTML = '';
+  Object.keys(COSMETICS).forEach(k => {
+    const C = COSMETICS[k], row = document.createElement('div'); row.className = 'cosrow'; row.innerHTML = `<b>${C.name}</b>`;
+    C.items.forEach(it => {
+      const key = k + ':' + it.id, own = !it.cost || SAVE.cos.own[key], on = (SAVE.cos.on[k] || '') === it.id;
+      const b = document.createElement('button'); b.className = 'btn' + (on ? ' gold' : ''); b.textContent = it.name + (own ? '' : ' (명예 ' + it.cost + ')'); b.disabled = !own && SAVE.honor < it.cost;
+      b.onclick = () => {
+        if (!own) { if (SAVE.honor < it.cost) return; SAVE.honor -= it.cost; SAVE.cos.own[key] = 1; SFX.play('bless'); }
+        SAVE.cos.on[k] = it.id; save(); view.cos = SAVE.cos.on; try { view.refreshHeroes(); } catch (e) { } paintRoles(); paintWho();
+      };
+      row.appendChild(b);
+    });
+    box.appendChild(row);
+  });
+}
 function paintRoles() {
+  paintCos();
   $('honorNow').textContent = '지금 명예 ' + SAVE.honor;
   const box = $('roleCards'); box.innerHTML = '';
   ROLE_IDS.forEach(r => {
@@ -192,18 +211,40 @@ $('setVol').oninput = e => { SAVE.set.vol = +e.target.value; SFX.setVol(SAVE.set
 
 /* ---------- 대기실 ---------- */
 // 대기실: 장은 고르지 않고, 저장된 이야기에서 이어서 시작해요. 친구 방은 방장의 이야기를 따라가요
+const fmtT = s => Math.floor(s / 60) + '분 ' + String(Math.floor(s % 60)).padStart(2, '0') + '초';
+function weeklyRec(id) { SAVE.wkRec = SAVE.wkRec || {}; return SAVE.wkRec[id] || {}; }
+function weeklyDone() {
+  const W = S.snap.wk, t = S.snap.wt || 0, r = Object.assign({}, weeklyRec(W.id)), first = !r.paid; const old = r.best || 0;
+  r.best = old ? Math.min(old, t) : t; r.tries = (r.tries | 0) + 1; r.paid = 1; SAVE.wkRec[W.id] = r;
+  const ks = Object.keys(SAVE.wkRec).sort(); while (ks.length > 12) delete SAVE.wkRec[ks.shift()];
+  if (first) SAVE.honor += 60; save();
+  return { t, best: r.best, first, rec: !old || t < old, W };
+}
+function showWeeklyResult(h) {
+  S.resultShown = true; const R = weeklyDone(), cn = R.W.curses.map(c => CURSES.find(x => x.id === c).name).join(', ');
+  $('result').innerHTML = `<div class="big">주간 원정 완료</div><p class="note">${CH.title}</p><p class="note">이번 주 저주: ${cn}</p><p>걸린 시간 <b style="color:#ffd36b">${fmtT(R.t)}</b>${R.rec ? ' · 새 최고 기록' : ''} · 내 최고 ${fmtT(R.best)}</p><p>받은 명예 <b style="color:#ffd36b">${h + (R.first ? 60 : 0)}</b>${R.first ? ' (첫 완주 보너스 60 포함)' : ''} · 지금 명예 ${SAVE.honor}</p><div class="row"><button class="btn gold" id="resBack">로비로</button></div>`;
+  $('resBack').onclick = () => endToLobby('');
+  setHud(false); show('sResult');
+}
 function paintChapters() {
   const deep = S.chSel === DEEP_I, c = deep ? null : CHAPTERS[S.chSel], prev = CHAPTERS[S.chSel - 1];
   // 깬 장까지는 골라서 다시 할 수 있어요 (기본은 이어서 할 장). 8장을 깨면 끝없는 심연이 열려요
   const top = Math.min(CHAPTERS.length - 1, SAVE.chMax | 0), dOpen = (SAVE.chMax | 0) >= CHAPTERS.length, pick = S.net !== 'guest' && (top > 0 || dOpen);
-  const story = deep ? `<div class="story"><b>끝없는 심연</b><small>층마다 무작위 구역과 저주가 하나씩 쌓여요. 모두 쓰러지면 끝나요.${S.net !== 'guest' ? ' 최고 기록 ' + (SAVE.deepBest || 0) + '층' : ''}</small></div>` : `<div class="story"><b>${S.chSel ? '이어서 ' : ''}${esc(c.title)}</b><small>${esc(prev ? prev.outro[prev.outro.length - 1] : c.intro[0])}</small></div>`;
-  $('chRow').innerHTML = (pick ? `<div class="chpick">${CHAPTERS.slice(0, top + 1).map((ch, i) => `<button class="btn${i === S.chSel ? ' gold' : ''}" data-ch="${i}">${i + 1}장</button>`).join('')}${dOpen ? `<button class="btn${deep ? ' gold' : ''}" data-ch="${DEEP_I}">끝없는 심연</button>` : ''}</div>` : '') + story;
+  const story = S.wk ? '' : deep ? `<div class="story"><b>끝없는 심연</b><small>층마다 무작위 구역과 저주가 하나씩 쌓여요. 모두 쓰러지면 끝나요.${S.net !== 'guest' ? ' 최고 기록 ' + (SAVE.deepBest || 0) + '층' : ''}</small></div>` : `<div class="story"><b>${S.chSel ? '이어서 ' : ''}${esc(c.title)}</b><small>${esc(prev ? prev.outro[prev.outro.length - 1] : c.intro[0])}</small></div>`;
+  $('chRow').innerHTML = (pick ? `<div class="chpick">${CHAPTERS.slice(0, top + 1).map((ch, i) => `<button class="btn${i === S.chSel && !S.wk ? ' gold' : ''}" data-ch="${i}">${i + 1}장</button>`).join('')}${dOpen ? `<button class="btn${deep ? ' gold' : ''}" data-ch="${DEEP_I}">끝없는 심연</button>` : ''}</div>` : '') + story;
+  { const W = weekInfo(), cn = W.curses.map(c => CURSES.find(x => x.id === c).name).join(' · '), rec = weeklyRec(W.id), open = (SAVE.chMax | 0) >= W.ch;
+    const wkS = `<div class="story"><b>주간 원정 · ${esc(CHAPTERS[W.ch].title)}</b><small>이번 주 저주: ${cn}</small></div>`, wk = S.net === 'guest' ? (S.wk ? `<div class="story"><b>주간 원정 · ${esc(CHAPTERS[S.chSel].title)}</b><small>이번 주 저주: ${cn}</small></div>` : '')
+      : (S.wk ? wkS : '') + `<div class="chpick"><button class="btn${S.wk ? ' gold' : ''}" id="wkBtn"${open ? '' : ' disabled'}>주간 원정 · ${W.ch + 1}장 · 저주 ${cn}</button></div><small class="note">${open ? '이번 주(' + W.id + ') 같은 장, 같은 저주로 걸린 시간을 겨뤄요. ' + (rec.best ? '내 최고 ' + fmtT(rec.best) : '아직 기록이 없어요') + (rec.paid ? '' : ' · 첫 완주 명예 +60') : W.ch + 1 + '장까지 깨면 열려요.'}</small>`;
+    $('chRow').insertAdjacentHTML('beforeend', wk);
+    const wb = $('wkBtn'); if (wb) wb.onclick = () => { SFX.play('click'); S.wk = !S.wk; if (S.wk) S.chSel = W.ch; else S.chSel = chOpen(); paintChapters(); hostLobby(); };
+  }
   $('chNote').textContent = S.net === 'guest' ? '방장의 원정을 함께 이어 가요.' : S.chSel === chOpen() && S.chSel ? '지난번에 멈춘 곳에서 이야기가 이어져요.' : '';
   if (S.net !== 'guest') $('startBtn').textContent = deep ? '심연으로 내려가기' : S.chSel ? S.chSel + 1 + '장 시작' : '원정 시작';
-  $('chRow').querySelectorAll('[data-ch]').forEach(b => b.onclick = () => { SFX.play('click'); S.chSel = +b.dataset.ch; paintChapters(); hostLobby(); });
+  if (S.wk && S.net !== 'guest') $('startBtn').textContent = '주간 원정 시작';
+  $('chRow').querySelectorAll('[data-ch]').forEach(b => b.onclick = () => { SFX.play('click'); S.chSel = +b.dataset.ch; S.wk = false; paintChapters(); hostLobby(); });
 }
 function openRoom() {
-  show('sRoom'); const solo = S.net === 'solo'; if (S.net !== 'guest') S.chSel = chOpen(); paintChapters();
+  show('sRoom'); const solo = S.net === 'solo'; if (S.net !== 'guest') { S.chSel = chOpen(); S.wk = false; } paintChapters();
   $('roomTitle').textContent = solo ? '혼자 원정 준비' : S.net === 'host' ? '친구와 원정' : '친구 방';
   $('codeRow').style.display = S.net === 'host' ? 'flex' : 'none';
   $('roomNote').textContent = solo ? '내 역할을 고르세요. 나머지 세 자리는 봇 동료가 맡아요.' : '역할을 하나 골라 주세요. 빈 자리는 봇 동료가 맡아요.';
@@ -313,19 +354,19 @@ function startHost(tries = 0) {
   p.on('disconnected', () => { if (S.peer === p && !p.destroyed) setTimeout(() => { if (S.peer === p && !p.destroyed) p.reconnect(); }, 1000); });
   p.on('error', err => { if (S.peer !== p) return; if (err.type === 'unavailable-id' && tries < 5) { startHost(tries + 1); return; } if (S.scr !== 'sRoom' && !inGame()) { homeMsg('방을 만들지 못했어요 (' + err.type + '). 잠시 후 다시 해 보세요.'); leaveNet(); } });
 }
-function lobbyMeta() { return { t: 'lobby', slots: S.slots.map(s => ({ role: s.role, uid: s.uid, name: s.name })), code: S.code, ch: S.chSel }; }
+function lobbyMeta() { return { t: 'lobby', slots: S.slots.map(s => ({ role: s.role, uid: s.uid, name: s.name })), code: S.code, ch: S.chSel, wk: S.wk ? 1 : 0 }; }
 function hostLobby() { if (S.net === 'host') bcast(lobbyMeta()); }
 function hostMsg(c, d) {
   if (!d || typeof d !== 'object') return;
   if (d.t === 'hello') {
-    const uid = String(d.uid || '').slice(0, 20), name = String(d.name || '기사').slice(0, 12);
-    c._uid = uid; c._name = name; c._xp = d.xp || {}; c._gear = d.gear || {};
+    const uid = String(d.uid || '').slice(0, 20), name = String(d.name || '기사').slice(0, 15);
+    c._uid = uid; c._name = name; c._xp = d.xp || {}; c._gear = d.gear || {}; c._cos = d.cos || null;
     if (S.G) { // 진행 중: 내 자리로 돌아오거나, 봇 자리를 맡아요
       let p = S.G.players.find(q => q.uid === uid) || S.G.players.find(q => q.bot && q.wasHuman == null) || S.G.players.find(q => q.bot);
       if (!p || (!p.bot && p.uid !== uid)) { c.send({ t: 'deny', why: '방이 가득 찼어요 (최대 4명).' }); setTimeout(() => c.close(), 300); return; }
       p.bot = false; p.uid = uid; p.name = name; p.wasHuman = true; S.G.humans = S.G.players.filter(q => !q.bot).length;
       S.conns[uid] = c; c._pid = p.id;
-      c.send({ t: 'welcome', uid, start: true, pid: p.id, ch: S.G.ch, dp: S.G.deep }); toast(name + '님이 ' + ROLES[p.role].name + ' 자리에 들어왔어요.');
+      c.send({ t: 'welcome', uid, start: true, pid: p.id, ch: S.G.ch, dp: S.G.deep, wk: S.G.weekly }); toast(name + '님이 ' + ROLES[p.role].name + ' 자리에 들어왔어요.');
       return;
     }
     let sl = S.slots.find(s => s.uid === uid) || S.slots.find(s => !s.uid && s.role === d.role) || S.slots.find(s => !s.uid);
@@ -351,7 +392,7 @@ function startGuest(code) {
   const tm = setTimeout(() => { if (S.peer === p && S.scr !== 'sRoom' && !inGame()) { homeMsg('연결 시간이 초과됐어요. 초대를 다시 받아 주세요.'); leaveNet(); } }, 15000);
   p.on('open', () => {
     const c = p.connect(PREFIX + code, { reliable: true, serialization: 'json' }); S.conn = c;
-    c.on('open', () => { c.send({ t: 'hello', uid: UID, name: myName(), role: SAVE.role, xp: SAVE.xp, gear: SAVE.gear }); });
+    c.on('open', () => { c.send({ t: 'hello', uid: UID, name: myName(), role: SAVE.role, xp: SAVE.xp, gear: SAVE.gear, cos: SAVE.cos.on }); });
     c.on('data', d => { clearTimeout(tm); guestMsg(d); });
     c.on('close', () => { if (S.conn !== c) return; const wasGame = inGame(); endToLobby(wasGame ? '방장이 나가서 원정이 끝났어요.' : '방이 닫혔어요.'); });
   });
@@ -359,36 +400,38 @@ function startGuest(code) {
 }
 function guestMsg(d) {
   if (!d || typeof d !== 'object') return;
-  if (d.t === 'welcome') { homeMsg(''); if (d.start) { S.me = d.pid; useDeep(d.dp); useChapter(d.ch | 0, !!d.dp); startClient(); } else { openRoom(); } }
-  else if (d.t === 'lobby') { S.slots = d.slots; S.chSel = d.ch | 0; if (S.scr === 'sRoom') { paintSlots(); paintChapters(); } }
+  if (d.t === 'welcome') { homeMsg(''); if (d.start) { S.me = d.pid; useDeep(d.dp); { const fw = useWk(d.wk); useChapter(d.ch | 0, !!d.dp || fw); } startClient(); } else { openRoom(); } }
+  else if (d.t === 'lobby') { S.slots = d.slots; S.chSel = d.ch | 0; S.wk = !!d.wk; if (S.scr === 'sRoom') { paintSlots(); paintChapters(); } }
   else if (d.t === 'deny') { homeMsg(d.why || '들어갈 수 없어요.'); leaveNet(); }
-  else if (d.t === 'start') { if (S.snap && S.snap.won) clearChapter(); S.me = d.pid; useDeep(d.dp); useChapter(d.ch | 0, !!d.dp); startClient(); }
+  else if (d.t === 'start') { if (S.snap && S.snap.won) clearChapter(); S.me = d.pid; useDeep(d.dp); { const fw = useWk(d.wk); useChapter(d.ch | 0, !!d.dp || fw); } startClient(); }
   else if (d.t === 's') {
-    if (d.S && d.S.c != null && (d.S.c !== chapterIndex() || (d.S.dp && d.S.dp.floor !== DEEP.floor))) { useDeep(d.S.dp); useChapter(d.S.c, !!d.S.dp); S.built = false; }
+    if (d.S && d.S.c != null && (d.S.c !== chapterIndex() || (d.S.dp && d.S.dp.floor !== DEEP.floor) || !!d.S.wk !== WEEKLY.on)) { useDeep(d.S.dp); useWk(d.S.wk); useChapter(d.S.c, true); S.built = false; }
     S.snap = d.S; if (d.ev) for (const e of d.ev) S.evq.push(e);
   }
 }
 
 // 끝없는 심연: 방장이 보낸 층·씨앗·저주로 같은 층을 만들어요
+function useWk(wk) { const was = WEEKLY.on; WEEKLY.on = !!wk; if (wk) { WEEKLY.id = wk.id; WEEKLY.curses = wk.curses.slice(); } return was || !!wk; }
 function useDeep(dp) { if (dp) { DEEP.floor = dp.floor; DEEP.seed = dp.seed; DEEP.curses = dp.curses.slice(); } }
 /* ---------- 게임 시작 ---------- */
 function beginGame(prevG) {
   const solo = S.net === 'solo';
   const sl = prevG ? S.lastSl : S.slots.map((s, i) => {
     const id = 's' + i;
-    if (s.uid === UID) return { id, uid: UID, role: s.role, name: myName(), bot: false, lv: roleLevel(SAVE.xp[s.role] || 0), gear: gearOf(s.role) };
-    if (s.uid) { const c = S.conns[s.uid]; const xp = c && c._xp ? c._xp[s.role] : 0, gr = c && c._gear ? c._gear[s.role] : null; return { id, uid: s.uid, role: s.role, name: s.name, bot: false, lv: roleLevel(xp || 0), gear: gr || { weapon: 0, armor: 0 } }; }
+    if (s.uid === UID) return { id, uid: UID, role: s.role, name: myName(), bot: false, lv: roleLevel(SAVE.xp[s.role] || 0), gear: gearOf(s.role), cos: SAVE.cos.on };
+    if (s.uid) { const c = S.conns[s.uid]; const xp = c && c._xp ? c._xp[s.role] : 0, gr = c && c._gear ? c._gear[s.role] : null; return { id, uid: s.uid, role: s.role, name: s.name, bot: false, lv: roleLevel(xp || 0), gear: gr || { weapon: 0, armor: 0 }, cos: c && c._cos || null }; }
     return { id, role: s.role, name: ROLES[s.role].name + ' (봇)', bot: true, lv: 1 };
   });
   if (!prevG && !sl.some(s => s.uid === UID)) { $('roomMsg').textContent = '내 역할을 먼저 골라 주세요.'; return; }
   if (prevG) sl.forEach((s, i) => { const q = prevG.players[i]; s.bot = q.bot; s.uid = q.uid; s.name = q.name; });
   S.lastSl = sl;
   if (S.chSel === DEEP_I && !prevG) { DEEP.floor = 1; DEEP.seed = (Math.random() * 1e6) | 0; DEEP.curses = []; }
+  { const wk = !!S.wk && !prevG && S.chSel !== DEEP_I, was = WEEKLY.on; WEEKLY.on = wk; if (wk) { const w = weekInfo(); WEEKLY.id = w.id; WEEKLY.curses = w.curses; S.chSel = w.ch; } if (wk || was) useChapter(S.chSel, true); }
   S.G = createGame(sl, (Math.random() * 4e9) >>> 0, S.chSel);
   S.G.players.forEach((p, i) => { p.uid = sl[i].uid; });
   if (prevG) carryOver(S.G, prevG);
   S.me = sl.find(s => s.uid === UID).id;
-  if (!solo) { for (const uid in S.conns) { const p = S.G.players.find(q => q.uid === uid); if (p) { S.conns[uid]._pid = p.id; S.conns[uid].send({ t: 'start', pid: p.id, ch: S.G.ch, dp: S.G.deep }); } } }
+  if (!solo) { for (const uid in S.conns) { const p = S.G.players.find(q => q.uid === uid); if (p) { S.conns[uid]._pid = p.id; S.conns[uid].send({ t: 'start', pid: p.id, ch: S.G.ch, dp: S.G.deep, wk: S.G.weekly }); } } }
   if (S.G.humans > 1) unlock('friends');
   startClient();
 }
@@ -400,7 +443,7 @@ function startClient() {
   hubRoom(S.net === 'host');
 }
 function endToLobby(msg) {
-  awardHonor();
+  awardHonor(); S.wk = false; if (WEEKLY.on) { WEEKLY.on = false; useChapter(chapterIndex(), true); }
   leaveNet(); S.G = null; S.snap = null; setHud(false); $('bless').classList.remove('on');
   view.buildLobby(); show('sLobby'); paintWho(); if (msg) homeMsg(msg);
 }
@@ -470,9 +513,6 @@ function gatherInput(p) {
   } else {
     const g = view.groundAt(mouse.x, mouse.y); inp.aim = Math.atan2(g.z - pos.z, g.x - pos.x); inp.ax = g.x; inp.az = g.z;
     inp.atk = mouse.down; inp.f = keyDown('f', 'ㄹ');
-    // 키보드 이동은 바라보는 쪽(마우스 쪽) 기준: W 앞, S 뒤, A·D 왼쪽·오른쪽 옆걸음. 마우스가 캐릭터에 너무 가까우면 마지막 방향을 써요
-    if (Math.hypot(g.x - pos.x, g.z - pos.z) > 1.2 || S.mvA == null) S.mvA = inp.aim;
-    if (mx || mz) { const a = S.mvA, fw = -mz, rt = mx; inp.mx = Math.cos(a) * fw - Math.sin(a) * rt; inp.mz = Math.sin(a) * fw + Math.cos(a) * rt; }
   }
   inp.q = once.q; inp.e = once.e; inp.r = once.r; inp.roll = once.roll; if (once.skip) S.voted = true; inp.skip = once.skip; once.q = once.e = once.r = once.roll = once.skip = 0;
   return inp;
@@ -632,6 +672,8 @@ function onEvent(e) {
     case 'rock': view.shatter(e.x, e.z, [0x6a625a, 0x58504a, 0x8a8076], 12, false); view.ring(e.x, e.z, 2, 0x8a7a6a, 0.4); view.burst(e.x, 0.4, e.z, 0x8a7a6a, 10, 5, 0.6, 0.14); if (Math.random() < 0.5) SFX.play('slam'); break;
     case 'escfail': bigMsg('무너진 돌에 길이 막혔어요', '보스 방에서 다시 달려요', 3000); SFX.play('wipe'); break;
     case 'escaped': bigMsg('무너지는 곳을 빠져나왔어요', '', 2400); SFX.play('clear'); break;
+    case 'fork': bigMsg(MIDB[chapterIndex()][e.k], e.k ? '부하를 부르는 중간 보스예요' : '돌진하는 중간 보스예요', 2400); SFX.play('clear'); view.column(e.x, e.z, e.k ? 0x6ab0ff : 0xff6a50, 1.6); break;
+    case 'mbkill': bigMsg('중간 보스 처치', '명예 30', 2000); SFX.play('clear'); view.rise(e.x, e.z, 0xffd36b, 24, 2, 1.2, 6); break;
     case 'altar': bigMsg('제단의 축복', '축복을 하나 골라요', 2200); SFX.play('clear'); view.column(e.x, e.z, 0xffe08a, 1.2); break;
     case 'checkpoint': bigMsg('모닥불에 불을 붙였어요', '모두 쓰러지면 여기서 다시 시작해요', 3000); SFX.play('door'); break;
     case 'wake': if (!S.wakeT || performance.now() - S.wakeT > 1500) { S.wakeT = performance.now(); SFX.play('spawn'); } view.burst(e.x, 0.3, e.z, 0x6a5a7a, 6, 3, 0.6, 0.12); break;
@@ -732,6 +774,7 @@ function paintHud() {
     else if (MAP.darks.some((D, k) => Math.hypot(cw(D.stand[0]) - pos.x, cw(D.stand[1]) - pos.z) < 2.6 && (me.tc === k + 1 || sn.pl.filter(q => q.tc === k + 1).length < 2))) pr = (TOUCH ? 'F 버튼' : 'F') + '를 눌러 횃불 ' + (me.tc ? '내려놓기' : '들기 (드는 동안 기술 못 씀)');
     else if (puzPrompt(sn, pos)) pr = puzPrompt(sn, pos);
     else if (cutPrompt(sn, pos)) pr = cutPrompt(sn, pos);
+    else if (MAP.fork && sn.w.fk && sn.w.fk[0] < 0 && [MAP.fork.a, MAP.fork.b].some(q => Math.hypot(cw(q[0]) - pos.x, cw(q[1]) - pos.z) < 2.8)) { const k = Math.hypot(cw(MAP.fork.a[0]) - pos.x, cw(MAP.fork.a[1]) - pos.z) < 2.8 ? 0 : 1; pr = (TOUCH ? 'F 버튼' : 'F') + '를 꾹 눌러 ' + (k ? '오른쪽' : '왼쪽') + ' 길 고르기 · ' + MIDB[chapterIndex()][k] + (k ? ' (부하를 불러요)' : ' (돌진해요)'); }
     else if (MAP.altars.some(([x, y], k) => !sn.w.al[k] && Math.hypot(cw(x) - pos.x, cw(y) - pos.z) < 2.8)) pr = (TOUCH ? 'F 버튼' : 'F') + '를 꾹 눌러 제단에서 축복 받기';
     else if (MAP.fires.some(([x, y], k) => sn.w.fi[k] && Math.hypot(cw(x) - pos.x, cw(y) - pos.z) < 4) && me.hp < me.mx) pr = '모닥불 곁에서 체력이 차올라요';
     else if (sn.bless && Object.values(sn.bless).some(Boolean) && !(sn.bless[S.me])) pr = '동료가 축복을 고르는 중이에요';
@@ -823,7 +866,7 @@ function drawOverlay(dt) {
     if (e.mk) { oc.fillStyle = '#ff5a4a'; oc.font = 'bold 16px Galmuri, system-ui'; oc.fillText('▼', s.x, s.y - 12); }
     if (e.sl && !e.sn && !e.mk) { oc.fillStyle = '#7ac8ff'; oc.font = 'bold 12px Galmuri, system-ui'; oc.strokeStyle = '#140f18'; oc.lineWidth = 3; const ly = s.y - (e.k === 'elite' ? 28 : 11); oc.strokeText('둔화', s.x, ly); oc.fillText('둔화', s.x, ly); }
     if (e.sn) { oc.fillStyle = '#ffe08a'; oc.font = 'bold 14px Galmuri, system-ui'; oc.fillText('★ ★', s.x, s.y - 12); }
-    if (e.k === 'elite') { oc.fillStyle = '#efe3c8'; oc.font = 'bold 13px Galmuri, system-ui'; oc.strokeStyle = '#140f18'; oc.lineWidth = 4; oc.strokeText(FOES[chapterIndex()].elite.name, s.x, s.y - 12); oc.fillText(FOES[chapterIndex()].elite.name, s.x, s.y - 12); }
+    if (e.k === 'elite') { oc.fillStyle = '#efe3c8'; oc.font = 'bold 13px Galmuri, system-ui'; oc.strokeStyle = '#140f18'; oc.lineWidth = 4; const nm = e.mb ? '★ ' + MIDB[chapterIndex()][e.mb - 1] : FOES[chapterIndex()].elite.name; oc.strokeText(nm, s.x, s.y - 12); oc.fillText(nm, s.x, s.y - 12); }
   }
   // 동료 이름, 쓰러짐
   const tags = [];
@@ -859,6 +902,7 @@ function clearChapter() {
   if (S.cleared) return S.lastH || 0; S.cleared = true;
   const h = S.lastH = awardHonor() || 0, me = myP(), ci = chapterIndex();
   if (CH.deep) { deepRecord(DEEP.floor + 1); return h; }
+  if (S.snap && S.snap.wk) return h;
   if (me) { SAVE.clears[me.role] = Math.max(SAVE.clears[me.role] || 0, ci + 1); if (!S.everDown) unlock('nodown'); if (ROLE_IDS.every(r => SAVE.clears[r])) unlock('all4'); }
   if (ci === 0) unlock('boss'); else unlock('ch' + (ci + 1));
   if (S.flagGot) { SAVE.flags[ci] = 1; unlock('flag1'); if (CHAPTERS.every((c, i) => SAVE.flags[i])) unlock('flags'); toast('기사단 깃발을 로비 벽에 걸었어요.', 3600); }
@@ -869,6 +913,7 @@ function clearChapter() {
 function deepRecord(f) { SAVE.deepBest = Math.max(SAVE.deepBest | 0, f); save(); if (f >= 5) unlock('deep5'); if (f >= 10) unlock('deep10'); }
 function afterOutro() {
   const ci = chapterIndex(), h = clearChapter();
+  if (S.snap && S.snap.wk) { showWeeklyResult(h); return; }
   if (CH.deep) { // 다음 층: 저주가 하나 더 쌓여요
     S.resultShown = true;
     if (S.net === 'guest') { bigMsg(CH.title + ' 완료', '명예 ' + h + ' · 방장과 함께 더 내려가요', 0); return; }

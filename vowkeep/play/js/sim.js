@@ -38,6 +38,8 @@ export function createGame(slots, seed, ch = 0) {
     humans: slots.filter(s => !s.bot).length, bless: {}, honor: {}, won: false,
     skip: {}, cp: { x: cw(MAP.start[0]), z: cw(MAP.start[1]) }, cpI: -1, bossIntro: false, bossDead: false, route: 0,
     fires: MAP.fires.map(([x, y]) => ({ x: cw(x), z: cw(y), lit: false })),
+    weekly: D.WEEKLY.on ? { id: D.WEEKLY.id, curses: D.WEEKLY.curses.slice() } : null,
+    fork: MAP.fork ? { pick: -1, prog: [0, 0], done: 0 } : null,
     altars: MAP.altars.map(([x, y]) => ({ x: cw(x), z: cw(y), used: false, prog: 0 })),
     chests: MAP.chests.map(([x, y, sec], i) => ({ x: cw(x), z: cw(y), open: false, prog: 0, sec: sec || 0, mim: i === MAP.mimic })),
     puz: MAP.puzzles.map(q => ({ done: false, occ: [0, 0, 0, 0], hold: 0, n: 0, lit: q.lit0 ? q.lit0.slice() : q.items.map(() => 0), rot: q.rot0 ? q.rot0.slice() : [0, 0, 0, 0], idle: 0, help: false, tT: 0, ct: q.items.map(() => 0), pg: q.items.map(() => 0), head: -1, on: {} })),
@@ -50,7 +52,7 @@ export function createGame(slots, seed, ch = 0) {
     const R = ROLES[s.role], lv = s.lv || 1, gear = s.gear || { weapon: 0, armor: 0 };
     const maxhp = Math.round(R.hp * (1 + 0.03 * (lv - 1)) + GEAR_BONUS.armor[gear.armor | 0]);
     G.players.push({
-      id: s.id, role: s.role, name: s.name, bot: !!s.bot, slot: i, x: 0, z: 0, vx: 0, vz: 0, a: -Math.PI / 2,
+      id: s.id, role: s.role, cos: s.cos || null, name: s.name, bot: !!s.bot, slot: i, x: 0, z: 0, vx: 0, vz: 0, a: -Math.PI / 2,
       hp: maxhp, maxhp, baseHp: maxhp, down: false, dead: false, bleed: 0, revT: 0, respT: 0, roll: 0, rollCd: 0, inv: 0,
       cd: { atk: 0, s0: 0, s1: 0, s2: 0 }, block: 0, taunt: 0, rally: 0, shield: 0, shieldT: 0,
       dmgMul: 1 + 0.03 * (lv - 1) + GEAR_BONUS.weapon[gear.weapon | 0], bl: [], anim: '', animT: 0, hitT: 0,
@@ -140,6 +142,7 @@ function killEnemy(G, e) {
   e.hp = 0; G.stats.kills++; ev(G, 'ekill', { x: e.x, z: e.z, en: e.k, id: e.id }); ev(G, 'ach', { id: 'room1' });
   const h = G.EN[e.k].honor; for (const p of G.players) G.honor[p.id] += h;
   if (e.k === 'elite') ev(G, 'ach', { id: 'elite' });
+  if (e.mb) { for (const p of G.players) G.honor[p.id] += 30; if (G.fork) G.fork.done = 1; ev(G, 'chest', { x: e.x, z: e.z, h: 30 }); ev(G, 'mbkill', { x: e.x, z: e.z }); }
   if (e.k === 'mimic') { for (const p of G.players) G.honor[p.id] += 40; ev(G, 'chest', { x: e.x, z: e.z, h: 40 }); for (const p of G.players) if (!p.bot) ev(G, 'ach', { id: 'mimic', pid: p.id }); }
   if (e.k === 'boss') { G.bossDead = true; for (const o of G.enemies) if (o !== e && o.hp > 0 && o.summoned) { o.hp = 0; ev(G, 'ekill', { x: o.x, z: o.z, en: o.k, id: o.id }); } }
 }
@@ -358,7 +361,7 @@ function win(G) {
   if (G.flag && G.flag.by) { const c = G.players.find(p => p.id === G.flag.by); if (c && alive(c)) { G.flag.got = 1; ev(G, 'flaggot', { id: c.id }); } }
   // 빠른 보스 사냥: 보스 방에 들어간 뒤 3분 안에 쓰러뜨리기
   if (!G.deep && G.bossT0 != null && G.t - G.bossT0 <= 180) for (const p of G.players) if (!p.bot) ev(G, 'ach', { id: 'escape', pid: p.id });
-  G.won = true; G.phase = 'won'; G.phaseT = 0; ev(G, 'won', {});
+  G.won = true; G.winT = G.t; G.phase = 'won'; G.phaseT = 0; ev(G, 'won', {});
 }
 function offerBless(G) {
   for (const p of G.players) {
@@ -483,6 +486,18 @@ function stepPlayer(G, p, inp, dt) {
     const L = MAP.lores[k]; if (lo.read || !inp.f || !G.secrets[L[2]].open || Math.hypot(p.x - cw(L[0]), p.z - cw(L[1])) > 2.4) return;
     lo.prog += dt; if (lo.prog > 0.8) { lo.read = true; ev(G, 'lore', { li: k, x: cw(L[0]), z: cw(L[1]) }); }
   });
+  // 갈림길 비석: 한 번 고르면 다른 길은 닫혀요
+  if (G.fork && G.fork.pick < 0) {
+    const F = MAP.fork;
+    [F.a, F.b].forEach((q, k) => {
+      if (!inp.f || Math.hypot(p.x - cw(q[0]), p.z - cw(q[1])) > 2.4) return;
+      G.fork.prog[k] += dt; if (G.fork.prog[k] > 1.2) {
+        G.fork.pick = k;
+        const e = spawnEnemy(G, 'elite', cw(F.c[0]), cw(F.c[1]), false); e.mb = k + 1; e.hp = e.maxhp = Math.round(e.maxhp * 3.2); e.dm = e.dm * (k ? 1 : 1.25); e.r = e.r * 1.25; e.sumT = 5;
+        ev(G, 'fork', { x: cw(F.c[0]), z: cw(F.c[1]), k });
+      }
+    });
+  }
   for (const al of G.altars) {
     if (al.used || !inp.f || Math.hypot(p.x - al.x, p.z - al.z) > 2.4) continue;
     al.prog += dt; if (al.prog > 1) { al.used = true; for (const q of G.players) G.honor[q.id] += 10; offerBless(G); ev(G, 'altar', { x: al.x, z: al.z }); }
@@ -830,6 +845,8 @@ function stepEnemy(G, e, dt) {
   if (e.k === 'boss') { stepBoss(G, e, dt); return; }
   if (!e.summoned && e.hx != null && !G.players.some(p => alive(p) && dist(p, e) < LEASH_R) && Math.hypot(e.hx - e.x, e.hz - e.z) > 4) { e.st = 'home'; e.tgt = null; return; }
   if (e.stun > 0) return;
+  // 소환형 중간 보스: 아홉 초마다 부하 둘을 불러요
+  if (e.mb === 2 && e.st !== 'rise') { e.sumT = (e.sumT || 5) - dt; if (e.sumT <= 0) { e.sumT = 9; for (let i = 0; i < 2; i++) { const a = G.rng() * TAU; let sx = e.x + Math.cos(a) * 3, sz = e.z + Math.sin(a) * 3; if (isWall(sx, sz) || !lineClear(e.x, e.z, sx, sz)) { sx = e.x; sz = e.z; } spawnEnemy(G, 'skel', sx, sz, false); } ev(G, 'summon', {}); } }
   // 함정
   for (const z of G.zones) if (z.k === 'ptrap' && Math.hypot(z.x - e.x, z.z - e.z) < z.r) { const ow = G.players.find(p => p.id === z.own); e.root = 2; hurtEnemy(G, e, 40, ow, {}); e.root = 2.5; z.t = 0; ev(G, 'snap', { x: z.x, z: z.z }); ev(G, 'launch', { id: e.id, x: e.x, z: e.z });
     // 덫이 터지며 불길이 번져요: 둘레 적이 불타고 조금 다쳐요
@@ -869,7 +886,7 @@ function stepEnemy(G, e, dt) {
     const sm = e.slow > 0 ? e.slowM : 1; e.x += (Math.cos(ma) * want * E.speed * sm + sx * 1.5) * dt; e.z += (Math.sin(ma) * want * E.speed * sm + sz * 1.5) * dt; e.moving = true;
   } else e.moving = false;
   if (e.cd <= 0 && sees) {
-    if (e.k === 'elite' && d > 4 && d < 11 && G.rng() < 0.5) { e.st = 'chargeWind'; }
+    if (e.k === 'elite' && d > (e.mb === 1 ? 3 : 4) && d < 11 && G.rng() < (e.mb === 1 ? 0.85 : e.mb === 2 ? 0.15 : 0.5)) { e.st = 'chargeWind'; }
     else if (e.k === 'archer' ? d < E.range : d < E.range + 0.4) { e.st = 'wind'; e.wind = E.windup; e.a = ta; ev(G, 'ewind', { id: e.id }); }
   }
   if (e.st === 'chargeWind') { e.st = 'wind2'; e.wind = 0.8; e.a = ta; G.zones.push({ id: G.uid++, k: 'tline', x: e.x, z: e.z, a: ta, len: 9, w: 1.6, t: 0.8, T: 0.8 }); }
@@ -1213,13 +1230,13 @@ const r1 = v => Math.round(v * 100) / 100;
 export function snapshot(G) {
   const near = e => e.k === 'boss' || (e.st !== 'sleep') || G.players.some(p => Math.abs(p.x - e.x) < 34 && Math.abs(p.z - e.z) < 26);
   return {
-    t: r1(G.t), ph: G.phase, pt: r1(G.phaseT), c: G.ch, dp: G.deep, msg: G.msg, won: G.won,
+    t: r1(G.t), ph: G.phase, pt: r1(G.phaseT), c: G.ch, dp: G.deep, wk: G.weekly, wt: r1(G.winT || 0), msg: G.msg, won: G.won,
     sk: G.players.filter(p => !p.bot && G.skip[p.id]).length, hu: G.players.filter(p => !p.bot).length,
-    pl: G.players.map(p => ({ id: p.id, role: p.role, name: p.name, bot: p.bot, x: r1(p.x), z: r1(p.z), a: r1(p.a), hp: Math.round(p.hp), mx: p.maxhp, dn: p.down ? 1 : 0, dd: p.dead ? 1 : 0, bl: r1(p.bleed), rs: r1(p.respT), rv: r1(p.revT), ro: p.roll > 0 ? 1 : 0, bk: p.block > 0 ? 1 : 0, sh: Math.round(p.shield), tn: p.taunt > 0 ? 1 : 0, ra: p.rally > 0 ? 1 : 0, an: p.animT > 0 ? p.anim : '', aN: p.animN || 0, ak: p.anim, mv: p.moving ? 1 : 0, cd: [r1(p.cd.s0), r1(p.cd.s1), r1(p.cd.s2)], rc: r1(p.rollCd), b: p.bl, cb: p.comboT > 0 ? p.combo : 0, ac: p.animC || 0, fc: p.focus > 0 ? 1 : 0, tc: p.torch || 0, cg: p.chg > 0 ? r1(p.chg) : 0, cl: p.chill > 0 ? 1 : 0, em: p.emb ? 1 : 0 })),
-    en: G.enemies.filter(near).map(e => ({ id: e.id, k: e.k, x: r1(e.x), z: r1(e.z), a: r1(e.a), hp: Math.round(e.hp), mx: e.maxhp, st: e.st, mk: e.mark > 0 ? 1 : 0, sn: e.stun > 0 ? 1 : 0, sl: e.slow > 0 ? 1 : 0, bu: e.burn > 0 ? 1 : 0, ph: e.phase || 0, mv: e.moving ? 1 : 0, ak: e.atk ? e.atk.k + (e.atk.go ? '!' : '') : '', ht: e.hitT > 0 ? 1 : 0 })),
+    pl: G.players.map(p => ({ id: p.id, role: p.role, cos: p.cos, name: p.name, bot: p.bot, x: r1(p.x), z: r1(p.z), a: r1(p.a), hp: Math.round(p.hp), mx: p.maxhp, dn: p.down ? 1 : 0, dd: p.dead ? 1 : 0, bl: r1(p.bleed), rs: r1(p.respT), rv: r1(p.revT), ro: p.roll > 0 ? 1 : 0, bk: p.block > 0 ? 1 : 0, sh: Math.round(p.shield), tn: p.taunt > 0 ? 1 : 0, ra: p.rally > 0 ? 1 : 0, an: p.animT > 0 ? p.anim : '', aN: p.animN || 0, ak: p.anim, mv: p.moving ? 1 : 0, cd: [r1(p.cd.s0), r1(p.cd.s1), r1(p.cd.s2)], rc: r1(p.rollCd), b: p.bl, cb: p.comboT > 0 ? p.combo : 0, ac: p.animC || 0, fc: p.focus > 0 ? 1 : 0, tc: p.torch || 0, cg: p.chg > 0 ? r1(p.chg) : 0, cl: p.chill > 0 ? 1 : 0, em: p.emb ? 1 : 0 })),
+    en: G.enemies.filter(near).map(e => ({ id: e.id, k: e.k, x: r1(e.x), z: r1(e.z), a: r1(e.a), hp: Math.round(e.hp), mx: e.maxhp, st: e.st, mk: e.mark > 0 ? 1 : 0, sn: e.stun > 0 ? 1 : 0, sl: e.slow > 0 ? 1 : 0, bu: e.burn > 0 ? 1 : 0, ph: e.phase || 0, mb: e.mb || 0, mv: e.moving ? 1 : 0, ak: e.atk ? e.atk.k + (e.atk.go ? '!' : '') : '', ht: e.hitT > 0 ? 1 : 0 })),
     pr: G.projs.map(p => ({ id: p.id, k: p.k, x: r1(p.x), z: r1(p.z), y: r1(p.y || 0), bg: p.big ? 1 : 0, a: r1(Math.atan2(p.vz || (p.tz - p.sz) || 0, p.vx || (p.tx - p.sx) || 1)) })),
     zn: G.zones.map(z => ({ id: z.id, k: z.k, x: r1(z.x), z: r1(z.z), r: z.r, a: z.a, len: z.len, w: z.w, arc: z.arc, t: r1(z.t), T: z.T, dl: z.delay > 0 ? 1 : 0 })),
-    w: { cp: G.cpI, fi: G.fires.map(f => f.lit ? 1 : 0), al: G.altars.map(a => a.used ? 1 : 0), ap: G.altars.map(a => r1(a.prog)), ch: G.chests.map(c => c.open ? 1 : 0), cp2: G.chests.map(c => r1(c.prog)), tr: G.traps.map(t => (t.on ? 1 : 0) + (t.up ? 2 : 0)), boss: G.bossIntro ? 1 : 0, bd: G.bossDead ? 1 : 0, sc: G.secrets.map(q => q.open ? 1 : 0), lr: G.lores.map(q => q.read ? 1 : 0), pz: G.puz.map(q => ({ d: q.done ? 1 : 0, o: q.occ.join(''), l: q.lit.join(''), r: q.rot.join(''), v: q.pg.map(v => Math.min(9, Math.floor(v * 10))).join(''), c: q.ct.map(v => Math.ceil(v)).join(',') })), es: G.esc ? [r1(G.esc.t), G.esc.T] : 0, fl: G.flag ? [r1(G.flag.x), r1(G.flag.z), G.flag.by, r1(G.flag.prog), G.flag.got] : 0, pt: G.pits.map(q => q.down ? -1 : q.hits), lf: G.lifts.map(q => [r1(q.h), q.done ? 1 : 0, q.mv]), left: G.enemies.filter(e => e.hp > 0 && !e.summoned && e.k !== 'boss').length },
+    w: { fk: G.fork ? [G.fork.pick, r1(G.fork.prog[0]), r1(G.fork.prog[1])] : 0, cp: G.cpI, fi: G.fires.map(f => f.lit ? 1 : 0), al: G.altars.map(a => a.used ? 1 : 0), ap: G.altars.map(a => r1(a.prog)), ch: G.chests.map(c => c.open ? 1 : 0), cp2: G.chests.map(c => r1(c.prog)), tr: G.traps.map(t => (t.on ? 1 : 0) + (t.up ? 2 : 0)), boss: G.bossIntro ? 1 : 0, bd: G.bossDead ? 1 : 0, sc: G.secrets.map(q => q.open ? 1 : 0), lr: G.lores.map(q => q.read ? 1 : 0), pz: G.puz.map(q => ({ d: q.done ? 1 : 0, o: q.occ.join(''), l: q.lit.join(''), r: q.rot.join(''), v: q.pg.map(v => Math.min(9, Math.floor(v * 10))).join(''), c: q.ct.map(v => Math.ceil(v)).join(',') })), es: G.esc ? [r1(G.esc.t), G.esc.T] : 0, fl: G.flag ? [r1(G.flag.x), r1(G.flag.z), G.flag.by, r1(G.flag.prog), G.flag.got] : 0, pt: G.pits.map(q => q.down ? -1 : q.hits), lf: G.lifts.map(q => [r1(q.h), q.done ? 1 : 0, q.mv]), left: G.enemies.filter(e => e.hp > 0 && !e.summoned && e.k !== 'boss').length },
     bless: G.bless, honor: G.honor
   };
 }
