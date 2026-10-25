@@ -7,6 +7,7 @@ import { OutputPass } from 'three/addons/postprocessing/OutputPass.js';
 import { RenderPixelatedPass } from 'three/addons/postprocessing/RenderPixelatedPass.js';
 import { CELL, NX, NZ } from './data.js';
 import { TILES, NT, PILLARS, ST } from './sim.js';
+import { animate } from './anim.js';
 
 let seed = 7; const R = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
 const MC = new Map();
@@ -131,41 +132,6 @@ function makeCrown() {
   return g;
 }
 
-/* ---------- 동작: 팔다리를 크게 움직여요 ---------- */
-// u: 모델 부품, st: 상태, s: 상태 시간, c: 모으기, run: 달리기 정도
-export function pose(u, cls, st, s, c, run, t, inAir) {
-  const B = u.body, aL = u.armL, aR = u.armR, lL = u.legL, lR = u.legR, H = u.head;
-  B.position.set(0, 0, 0); B.rotation.set(0, 0, 0); aL.rotation.set(0, 0, 0); aR.rotation.set(0, 0, 0); lL.rotation.set(0, 0, 0); lR.rotation.set(0, 0, 0); H.rotation.set(0, 0, 0);
-  if (u.bow) u.bow.visible = false;
-  const ranged = cls === 'hunter' || cls === 'witch';
-  if (st === ST.idle || st === ST.run) {
-    const ph = t * 11;
-    lL.rotation.x = Math.sin(ph) * 0.9 * run; lR.rotation.x = -Math.sin(ph) * 0.9 * run; aL.rotation.x = -Math.sin(ph) * 0.8 * run; aR.rotation.x = Math.sin(ph) * 0.6 * run - 0.25;
-    B.position.y = Math.abs(Math.sin(ph)) * 0.18 * run + Math.sin(t * 2.2) * 0.04 * (1 - run); B.rotation.x = 0.16 * run;
-    H.rotation.y = Math.sin(t * 0.8) * 0.4 * (1 - run); aL.rotation.z = 0.08 + Math.sin(t * 2.2) * 0.03; aR.rotation.z = -0.08;
-    if (cls === 'hunter') aL.rotation.x = -0.4;
-  } else if (st === ST.charge) {
-    const j = c >= 1 ? Math.sin(t * 40) * 0.03 : 0; B.position.x = j;
-    if (cls === 'hunter') { aL.rotation.x = -1.55; aL.rotation.z = -0.05; aR.rotation.x = -1.55; aR.rotation.y = 0.4 + c * 0.6; aR.rotation.z = 0.5 * c; B.rotation.y = 0.5; if (u.bow) u.bow.visible = true; }
-    else if (cls === 'witch') { aR.rotation.x = -2.6 - c * 0.3; aL.rotation.x = -1.2 * c; B.rotation.x = -0.2 * c; if (u.orb) u.orb.scale.setScalar(1 + c * 0.8); }
-    else { aR.rotation.x = -2.2 - c * 0.9; aR.rotation.z = 0.3 * c; aL.rotation.x = -0.6; B.rotation.x = -0.25 * c; B.rotation.y = 0.45 * c; B.scale && B.scale.set(1 + c * 0.06, 1 - c * 0.08, 1 + c * 0.06); lL.rotation.x = -0.4; lR.rotation.x = 0.5; }
-  } else if (st === ST.swing) {
-    const f = Math.min(1, s / 0.08), o = 1 - Math.min(1, Math.max(0, s - 0.14) / 0.2);
-    if (ranged) { aR.rotation.x = -1.6 + (1 - f) * 0.3; aL.rotation.x = cls === 'hunter' ? -1.55 : -0.3; B.rotation.x = -0.15 * o; if (u.orb) u.orb.scale.setScalar(1); }
-    else { aR.rotation.x = -3.0 + f * 2.8; aR.rotation.z = -0.4 * f; B.rotation.x = 0.4 * f * o; B.rotation.y = 0.45 - 1.0 * f * o; lL.rotation.x = -0.6 * f; lR.rotation.x = 0.6 * f; aL.rotation.x = 0.4 * f; }
-  } else if (st === ST.dash) { B.rotation.x = 0.55; aL.rotation.x = 1.0; aR.rotation.x = 1.0; lL.rotation.x = -1.0; lR.rotation.x = 0.8; }
-  else if (st === ST.lunge) { B.rotation.x = 0.6; aR.rotation.x = -1.6; aL.rotation.x = cls === 'knight' ? -1.5 : 0.8; lL.rotation.x = -1.2; lR.rotation.x = 1.0; }
-  else if (st === ST.cast) { const f = Math.min(1, s / 0.2); if (cls === 'priest') { aL.rotation.x = aR.rotation.x = -2.9 * f; aL.rotation.z = 0.4 * f; aR.rotation.z = -0.4 * f; B.position.y = 0.3 * f; } else { aR.rotation.x = -1.6; aL.rotation.x = -1.6 * f; B.rotation.x = -0.2; } }
-  else if (st === ST.spin) { B.rotation.y = s * 22; aL.rotation.z = 1.5; aR.rotation.z = -1.5; aR.rotation.x = -0.3; lL.rotation.z = 0.25; lR.rotation.z = -0.25; }
-  else if (st === ST.grab) { const f = Math.min(1, s / 0.42); B.rotation.y = -f * Math.PI * 1.1; aL.rotation.x = aR.rotation.x = -1.5; }
-  else if (st === ST.stun || st === ST.held) {
-    const tw = (st === ST.held ? t : s) * 16; B.rotation.set(Math.sin(tw) * 0.5 - 0.3, 0, Math.cos(tw) * 0.5); aL.rotation.set(0, 0, 2.4 + Math.sin(tw) * 0.4); aR.rotation.set(0, 0, -2.4 - Math.sin(tw) * 0.4); lL.rotation.x = Math.sin(tw) * 0.9; lR.rotation.x = -Math.sin(tw) * 0.9;
-    if (inAir && st === ST.stun) B.rotation.x = -s * 8;
-  }
-  if (st !== ST.charge && u.orb) u.orb.scale.setScalar(1);
-  if (st !== ST.charge) B.scale.set(1, 1, 1);
-}
-
 /* ---------- 장면 ---------- */
 export class View {
   constructor(canvas) {
@@ -277,7 +243,7 @@ export class View {
     this.mode = 'preview'; this.pp.camera = this.camP;
     if (this.pv && this.pv.cls === cls && this.pv.col === col) return;
     if (this.pv) this.ped.remove(this.pv.g);
-    const g = makeHero(cls, col); g.scale.setScalar(1); g.rotation.y = 0.45; g.userData.ring.visible = false; this.ped.add(g); this.pv = { g, cls, col, t0: performance.now() / 1000 };
+    const g = makeHero(cls, col); g.scale.setScalar(1); g.rotation.y = 0.45; g.userData.ring.visible = false; this.ped.add(g); this.pv = { g, cls, col, t0: performance.now() / 1000, y0: g.position.y };
   }
   setTiles(tl, dt, t) {
     for (let i = 0; i < NT; i++) {
@@ -306,9 +272,16 @@ export class View {
     for (const c of this.clouds) { c.c.position.x += c.v * dt; if (c.c.position.x > 50) c.c.position.x = -50; }
     for (const e of this.embers) { e.t += dt; const k = (e.t % 4) / 4; e.m.position.set(e.x + Math.sin(e.t * 0.7) * 0.6, -2 + k * 10, e.z); e.m.scale.setScalar(1 - k); }
     if (this.mode === 'preview' && this.pv) {
-      // 직업 시범: 서 있다가 모으고 휘둘러요 (3.4초마다)
-      const u = this.pv.g.userData, s = (t - this.pv.t0 / 1) % 3.4, cls = this.pv.cls;
-      if (s < 1.6) pose(u, cls, ST.idle, s, 0, 0, t, false); else if (s < 2.5) pose(u, cls, ST.charge, s - 1.6, Math.min(1, (s - 1.6) / 0.8), 0, t, false); else pose(u, cls, ST.swing, s - 2.5, 0, 0, t, false);
+      // 직업 시범: 서 있기, 걷기, 모아 베기, 기술, 구르기를 7초마다 되풀이해요
+      const pv = this.pv, tt = (((t - pv.t0) % 7) + 7) % 7, cls = pv.cls, E = pv.E || (pv.E = {});
+      const SKST = { knight: ST.lunge, mamluk: ST.lunge, priest: ST.cast, witch: ST.cast, viking: ST.spin, skeleton: ST.grab, hunter: ST.swing }[cls];
+      let st = ST.idle, s0 = 0, chg = 0, run = 0;
+      if (tt >= 1.4 && tt < 2.5) { st = ST.run; run = 1; }
+      else if (tt >= 2.6 && tt < 3.4) { st = ST.charge; chg = Math.min(1, (tt - 2.6) / 0.7); s0 = tt - 2.6; }
+      else if (tt >= 3.4 && tt < 3.8) { st = ST.swing; s0 = tt - 3.4; }
+      else if (tt >= 4.6 && tt < 5.1) { st = SKST; s0 = tt - 4.6; }
+      else if (tt >= 6.0 && tt < 6.17) { st = ST.dash; s0 = tt - 6.0; }
+      animate(E, pv.g, { y: pv.y0, cls, st, s: s0, chg, run, air: false }, dt, t);
       this.stepFx(dt); return;
     }
     if (snap) {
@@ -330,6 +303,9 @@ export class View {
       this.syncProj(snap.j || [], t);
     }
     if (Math.abs(this.vs - this.vsT) > 0.01) { this.vs += (this.vsT - this.vs) * Math.min(1, dt * 1.5); this.applyVs(); }
+    // 큰 타격에는 화면이 흔들려요
+    this.shake = (this.shake || 0) * Math.exp(-dt * 9);
+    this.cam.position.set((Math.random() - 0.5) * this.shake, 22 + (Math.random() - 0.5) * this.shake, 30); this.cam.updateMatrixWorld();
     this.stepFx(dt);
   }
   syncPlayer(a, dt, t) {
@@ -345,7 +321,7 @@ export class View {
     let ry = Math.atan2(fx, fz); if (st === ST.charge || st === ST.swing || st === ST.cast || st === ST.lunge || st === ST.grab) ry = Math.atan2(ax, az);
     let d = ry - e.ry; d = Math.atan2(Math.sin(d), Math.cos(d)); e.ry += d * Math.min(1, dt * 18); g.rotation.y = e.ry;
     u.bub.visible = !!inv; u.ring.visible = e.y > -0.5 && e.y < 0.5;
-    pose(u, e.cls, st, s, chg, Math.min(1, e.spd / 5), t, Math.abs(e.y) > 0.4);
+    animate(e, g, { y: e.y, cls: e.cls, st, s, chg, run: Math.min(1, e.spd / 5), air: Math.abs(e.y) > 0.4 }, dt, t);
     if ((st === ST.dash || st === ST.lunge) && Math.random() < dt * 30) this.puff(e.x, e.y + 0.2, e.z);
     if (st === ST.charge && chg >= 1 && Math.random() < dt * 12) this.spark(e.x + (Math.random() - 0.5), e.y + 1.4 + Math.random(), e.z + (Math.random() - 0.5), 0xfff0a0);
   }
@@ -388,10 +364,11 @@ export class View {
   stepFx(dt) { for (let i = this.fx.length - 1; i >= 0; i--) { const f = this.fx[i]; f.t += dt; f.up(f, dt); if (f.t >= f.T) { this.scene.remove(f.m); this.fx.splice(i, 1); } } }
   onEvent(e) {
     const P = id => this.ents.get(id);
-    if (e.k === 'hit') { this.burst(e.x, e.y, e.z, 0xfff6d8, Math.min(20, 4 + e.s), 3 + e.s * 0.35, 0.45); this.star(e.x, e.y, e.z, e.s); if (e.s >= 14) this.burst(e.x, e.y, e.z, 0xffc040, 6, 8, 0.6, 0.18); }
+    if (e.k === 'hit') { this.shake = Math.max(this.shake || 0, Math.min(1.1, e.s * 0.05)); this.burst(e.x, e.y, e.z, 0xfff6d8, Math.min(20, 4 + e.s), 3 + e.s * 0.35, 0.45); this.star(e.x, e.y, e.z, e.s); if (e.s >= 14) this.burst(e.x, e.y, e.z, 0xffc040, 6, 8, 0.6, 0.18); }
     else if (e.k === 'curse') { this.shock(e.x, e.z, 3, 0xc06aff); this.burst(e.x, 0.2, e.z, 0x9a3aff, 14, 6, 0.7, 0.18); }
     else if (e.k === 'boom') { this.burst(e.x, e.y, e.z, 0xc06aff, 14, 7, 0.5, 0.16); this.shock(e.x, e.z, 2.2, 0xd8a0ff); }
     else if (e.k === 'nova') { this.shock(e.x, e.z, 4, 0xfff0a0); this.burst(e.x, 1.5, e.z, 0xffe08a, 18, 7, 0.6); }
+    else if (e.k === 'ko') { const p = P(e.id); if (p) { this.burst(p.x, 0.5, p.z, 0xffe08a, 16, 8, 0.7, 0.2); this.shock(p.x, p.z, 3, 0xffe08a); } this.shake = 1.2; }
     else if (e.k === 'spin') { this.shock(e.x, e.z, 3.4, 0xe8eef8); this.dust(e.x, 0, e.z, 5); }
     else if (e.k === 'dash') { const p = P(e.id); if (p) this.dust(p.x, 0, p.z, 2); }
     else if (e.k === 'pick') { const p = P(e.id); if (p) { this.burst(p.x, 2.6, p.z, 0xffd36b, 14, 5, 0.6); this.shock(p.x, p.z, 2.4, 0xffe08a); } }
