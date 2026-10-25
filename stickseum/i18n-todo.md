@@ -289,3 +289,8 @@ patchnotes.json | v386 title | 칸 스킬 미리보기 | build 386 | 2026-10-25
 patchnotes.json | v386 items[0] | 칸의 독 두꺼비 스킬 조준 미리보기 추가 (날아가는 길과 독 바닥 위치 표시) | build 386 | 2026-10-25
 patchnotes.json | v387 title | 인형술사 실 공격 수정 | build 387 | 2026-10-25
 patchnotes.json | v387 items[0] | 실에 묶인 캐릭터가 조종하는 인형술사를 공격해도 피해가 들어가지 않던 문제 수정 | build 387 | 2026-10-25
+patchnotes.json | v388 title | 클랜 경기와 클랜 추방 | build 388 | 2026-10-25
+patchnotes.json | v388 items[0] | 클랜장이 클랜원을 추방하는 기능 추가 | build 388 | 2026-10-25
+patchnotes.json | v388 items[1] | 클랜 경기를 온라인 듀얼 매칭 방식으로 변경 (클랜원끼리만, 봇 없음) | build 388 | 2026-10-25
+patchnotes.json | v388 items[2] | 클랜원이 매칭 중이면 클랜 경기 버튼에 알림 표시 | build 388 | 2026-10-25
+patchnotes.json | v388 items[3] | 기존 클랜경기 방 만들기와 지금 시작 버튼 삭제 | build 388 | 2026-10-25
