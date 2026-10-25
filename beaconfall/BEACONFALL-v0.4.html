@@ -387,7 +387,7 @@ window.bfIntro=function(){if(run)return;run=1;t0=Date.now();el.classList.add('ru
     <button class="btn" data-act="skins"><span class="arrow">▶</span>스킨 상점<span class="en">SKIN SHOP</span></button>
     <button class="btn" data-act="stats"><span class="arrow">▶</span>통계<span class="en">STATS</span></button>
     <button class="btn" data-act="settings"><span class="arrow">▶</span>설정<span class="en">SETTINGS</span></button>
-    <p class="foot">v0.4<br>build 103</p>
+    <p class="foot">v0.4<br>build 104</p>
   </nav>
 </div>
 
@@ -9607,6 +9607,7 @@ function toggleSandbox(){
       L.onclick=e=>{const b=e.target.closest('[data-id]');if(!b)return;const id=b.dataset.id,mx=ITEMS[id].max||(durMax(id)?1:99);if(roomFor(id,mx))addStack(id,mx,durMax(id)?durMax(id):undefined);renderInv();persist();};
     },'sandbox');
 }
+window.ffOpenAch=function(){if($('#modal').hidden)toggleAch();};   // 공용 계정 메뉴의 '도전과제' 버튼
 function toggleAch(){
   if(!$('#modal').hidden){closeModal();return;}
   const cats=[...new Set(ACH.map(a=>a.cat))];
