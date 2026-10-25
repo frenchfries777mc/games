@@ -16,7 +16,7 @@ patchnotes.json | v332 items[0] | 중국어 간체, 포르투갈어(브라질), 
 patchnotes.json | v332 items[1] | 가상 언어 신어, 번역기 한국어, 오라베쉬 추가 | build 332 | 2026-10-21
 patchnotes.json | v332 items[2] | 봇 이름을 새 언어별 이름으로 | build 332 | 2026-10-21
 patchnotes.json | v333 title | 은하 표준어 추가 | build 333 | 2026-10-22
-patchnotes.json | v333 items[0] | 가상 언어 은하 표준어 추가 (커맨더 킨·마인크래프트 인챈트 글자, 사진을 보고 만든 글꼴) | build 333 | 2026-10-22
+patchnotes.json | v333 items[0] | 가상 언어 은하 표준어 추가 (커맨더 킨·마인크래프트 인챈트 글자, 직접 그린 글꼴) | build 333 | 2026-10-22
 patchnotes.json | v334 title | 신어 표현 수정 | build 334 | 2026-10-22
 patchnotes.json | v334 items[0] | 신어 표현 수정: plusplus를 doubleplus로 | build 334 | 2026-10-22
 patchnotes.json | v335 title | 언어 3개 추가 | build 335 | 2026-10-22
@@ -273,3 +273,11 @@ patchnotes.json | v380 items[6] | 밸런스 그래프 패치 때만 보기에서
 patchnotes.json | v380 items[7] | 화염방사기 밸런스 다시 측정 | build 380 | 2026-10-25
 patchnotes.json | v381 title | 밸런스표 색 조정 | build 381 | 2026-10-25
 patchnotes.json | v381 items[0] | 밸런스표 승률 55% 이상 막대를 빨간색으로 표시 | build 381 | 2026-10-25
+Stickseum-v0.8.html | ctf mode desc | 깃발을 든 사람은 순간이동을 못 씀 · 든 사람이 죽으면 깃발이 떨어지고 4초 뒤 기지로 돌아감 | build 382 | 2026-10-25
+patchnotes.json | v382 title | 골드 이름 변경과 깃발 뺏기 조정 | build 382 | 2026-10-25
+patchnotes.json | v382 items[0] | 재화 이름 골드 → sC로 변경 | build 382 | 2026-10-25
+patchnotes.json | v382 items[1] | 한 판에서 처치·어시스트 골드는 각각 5번까지만 지급 | build 382 | 2026-10-25
+patchnotes.json | v382 items[2] | 4000 sC 스킨 효과를 최고 등급 연출로 강화 | build 382 | 2026-10-25
+patchnotes.json | v382 items[3] | 깃발 뺏기 깃발 든 사람 속도 감소 삭제 | build 382 | 2026-10-25
+patchnotes.json | v382 items[4] | 깃발 뺏기 떨어진 깃발 복귀 시간 10초 → 4초(경기가 빨리 끝나도록) | build 382 | 2026-10-25
+patchnotes.json | v382 items[5] | 텔레포트 제자리 대기 시간 1.0초 → 1.2초 | build 382 | 2026-10-25
