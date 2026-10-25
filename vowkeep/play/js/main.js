@@ -2,7 +2,7 @@
 // 화면 흐름, 조작, 멀티(친구 초대, PeerJS), 저장
 import { View } from './render.js';
 import { createGame, step, snapshot, chooseBless, carryOver, INTRO_T, HV_DELAY } from './sim.js';
-import { ROLES, ROLE_IDS, BLESSINGS, CHAPTERS, CH, FOES, MAP, ACHIEVEMENTS, TALK, GEAR_TIERS, GEAR_COST, VERSION, BUILD, roleLevel, LORE, COMBOS, CURSES, DEEP, DEEP_I, TALK_X, ROLE_PUZ } from './data.js';
+import { ROLES, ROLE_IDS, BLESSINGS, CHAPTERS, CH, FOES, MAP, ACHIEVEMENTS, TALK, GEAR_TIERS, GEAR_COST, VERSION, BUILD, roleLevel, LORE, COMBOS, CURSES, DEEP, DEEP_I, TALK_X, ROLE_PUZ, flagShown } from './data.js';
 import { collide as mapCollide, areaAt, floorCell, MW, MH, CS, cw, useChapter, chapterIndex, SOPEN, openSecret, resetSecrets, hiddenCell, GOPEN, openGate, PDOWN, dropPillar, LIFTH, liftOk, CUT } from './map.js';
 import * as SFX from './sfx.js';
 import * as MUS from './music.js';
@@ -470,6 +470,9 @@ function gatherInput(p) {
   } else {
     const g = view.groundAt(mouse.x, mouse.y); inp.aim = Math.atan2(g.z - pos.z, g.x - pos.x); inp.ax = g.x; inp.az = g.z;
     inp.atk = mouse.down; inp.f = keyDown('f', 'ㄹ');
+    // 키보드 이동은 바라보는 쪽(마우스 쪽) 기준: W 앞, S 뒤, A·D 왼쪽·오른쪽 옆걸음. 마우스가 캐릭터에 너무 가까우면 마지막 방향을 써요
+    if (Math.hypot(g.x - pos.x, g.z - pos.z) > 1.2 || S.mvA == null) S.mvA = inp.aim;
+    if (mx || mz) { const a = S.mvA, fw = -mz, rt = mx; inp.mx = Math.cos(a) * fw - Math.sin(a) * rt; inp.mz = Math.sin(a) * fw + Math.cos(a) * rt; }
   }
   inp.q = once.q; inp.e = once.e; inp.r = once.r; inp.roll = once.roll; if (once.skip) S.voted = true; inp.skip = once.skip; once.q = once.e = once.r = once.roll = once.skip = 0;
   return inp;
@@ -583,7 +586,7 @@ function onEvent(e) {
     case 'trip': SFX.play('clang'); view.trip(e.id, false); view.burst(e.x, 0.4, e.z, 0xb8a888, 10, 4, 0.4, 0.12); break;
     case 'launch': view.trip(e.id, true); view.burst(e.x, 0.6, e.z, 0xff8a2a, 22, 7, 0.6, 0.14); view.shock(e.x, e.z, 3, 0xff7a20, 0.4); view.flash(e.x, e.z, 0xff7a20, 110); break;
     case 'flare': view.burst(e.x, 1.4, e.z, 0xffa040, 12, 6, 0.4, 0.1); break;
-    case 'bphase': { view.roar(); const P = e.p === 2 ? CH.boss.p2 : e.p === 3 ? CH.boss.p3 : null, sub = P && P[1], mp = myP();
+    case 'bphase': { view.roar(); const P = e.p === 2 ? CH.boss.p2 : e.p === 3 ? CH.boss.p3 : e.p === 4 ? CH.boss.p4 : null, sub = P && P[1], mp = myP();
       // 기사단장 3단계: 망토가 찢겨 날아가요
       if (e.p === 3 && CH.boss.ai === 'warden') { const b = S.snap && S.snap.en.find(q => q.k === 'boss'); if (b) { view.shatter(b.x, b.z, [0x3a0e14, 0x5a1a22, 0x2a0a10], 36, true); view.shock(b.x, b.z, 7, 0xff5a20, 0.6); view.flash(b.x, b.z, 0xff5a20, 220); } } if (P) { if (mp && mp.dn) toast(P[0] + ' · ' + sub, 3600); else bigMsg(P[0], sub, 3700); } } SFX.play('roar'); view.shake = 1.2; break;
     case 'parry': bigMsg('완벽한 막기!', '보스가 기절했어요. 지금 공격해요', 2400); SFX.play('parry'); view.burst(e.x, 2, e.z, 0xffffff, 16, 8, 0.6, 0.12); view.shake = 0.8; break;
@@ -636,9 +639,9 @@ function onEvent(e) {
     case 'bvolley': SFX.play('arrow'); view.burst(e.x, 1.8, e.z, 0xffb060, 8, 4, 0.3, 0.1); break;
     case 'nova': SFX.play('orb'); { const nc = CH.boss.col || (CH.boss.ai === 'king' ? 0xff7a20 : 0x6ab0ff); view.shock(e.x, e.z, 4, nc, 0.4); view.flash(e.x, e.z, nc, 120); } break;
     case 'zfx': { // 늦게 터지는 보스 장판: 얼음 창, 불기둥, 고드름, 불덩이
-      const col = { lance: 0x9ad8ff, icicle: 0xc8ecff, frostnova: 0x6ad0ff, beam: 0xff8a30, meteor: 0xb06aff }[e.f] || 0xffffff;
+      const col = { lance: 0x9ad8ff, icicle: 0xc8ecff, frostnova: 0x6ad0ff, beam: 0xff8a30, meteor: 0xb06aff, rock: 0xb8a890 }[e.f] || 0xffffff;
       if (e.len) { for (let i = 1; i <= 5; i++) { const x = e.x + Math.cos(e.a) * e.len * i / 5, z = e.z + Math.sin(e.a) * e.len * i / 5; view.burst(x, 0.6, z, col, 6, 5, 0.5, 0.12); if (i % 2) view.column(x, z, col, 0.4); } view.flash(e.x, e.z, col, 90); SFX.play(e.f === 'beam' ? 'fire' : 'clang'); }
-      else { if (e.f === 'frostnova') view.shock(e.x, e.z, e.r || 6, col, 0.5); else view.column(e.x, e.z, col, 0.7); view.burst(e.x, 0.5, e.z, col, 14, 6, 0.6, 0.14); view.flash(e.x, e.z, col, 100); view.shake = Math.max(view.shake, 0.4); SFX.play('slam'); }
+      else { if (e.f === 'frostnova' || (e.f === 'rock' && e.r > 4)) view.shock(e.x, e.z, e.r || 6, col, 0.5); else view.column(e.x, e.z, col, 0.7); view.burst(e.x, 0.5, e.z, col, 14, 6, 0.6, 0.14); view.flash(e.x, e.z, col, 100); view.shake = Math.max(view.shake, 0.4); SFX.play('slam'); }
       break; }
     case 'pillar': view.column(e.x, e.z, 0x6ab0ff, 0.9); view.burst(e.x, 0.5, e.z, 0x9ad0ff, 14, 6, 0.6, 0.14); view.flash(e.x, e.z, 0x6ab0ff, 80); SFX.play('slam'); break;
     case 'blink': view.column(e.x, e.z, 0x9ad0ff, 0.5); view.rise(e.x, e.z, 0x9ad0ff, 12, 1.5, 0.7, 6); SFX.play('orb'); break;
@@ -696,7 +699,7 @@ function paintHud() {
   $('roomTag').textContent = CH.title + (S.area >= 0 ? ' · ' + MAP.areas[S.area].name : '') + ' · 남은 적 ' + sn.w.left;
   const boss = sn.w.boss && !sn.w.bd ? sn.en.find(e => e.k === 'boss') : null;
   $('bossBar').style.display = boss ? 'block' : 'none'; if (boss && $('bossName').textContent !== CH.boss.name) $('bossName').textContent = CH.boss.name;
-  if (boss) { $('bossHp').style.width = Math.max(0, boss.hp / boss.mx * 100) + '%'; $('bossPh').textContent = boss.sn ? '기절!' : ['', '1단계', '2단계 · ' + CH.boss.ph[0], '3단계 · ' + CH.boss.ph[1]][boss.ph] || ''; }
+  if (boss) { $('bossHp').style.width = Math.max(0, boss.hp / boss.mx * 100) + '%'; $('bossPh').textContent = boss.sn ? '기절!' : ['', '1단계', '2단계 · ' + CH.boss.ph[0], '3단계 · ' + CH.boss.ph[1], '마지막 단계 · ' + (CH.boss.ph[2] || '')][boss.ph] || ''; }
   // 동료 칸
   const pb = $('party'); if (pb.children.length !== sn.pl.length) { pb.innerHTML = ''; sn.pl.forEach(() => { const d = document.createElement('div'); d.className = 'pf'; d.innerHTML = '<div class="n"><i></i><b></b><span></span></div><div class="hp"><i></i><em></em></div><div class="st"></div>'; pb.appendChild(d); }); }
   sn.pl.forEach((p, i) => {
@@ -722,7 +725,7 @@ function paintHud() {
     const fw = sn.w.fl, F = TOUCH ? 'F 버튼' : 'F';
     if (fw && fw[2] === me.id) pr = '깃발을 든 채 장을 끝내요 · ' + F + ' 내려놓기';
     else if (dn) pr = (TOUCH ? 'F 버튼' : 'F') + '를 꾹 눌러 ' + ROLES[dn.role].name + ' 일으키기';
-    else if (fw && !fw[2] && sn.w.sc[MAP.flag[2]] && Math.hypot(fw[0] - pos.x, fw[1] - pos.z) < 2.6) pr = F + '를 꾹 눌러 기사단 깃발 들기' + (fw[3] > 0 ? ' ' + Math.round(fw[3] / 1.5 * 100) + '%' : '');
+    else if (fw && !fw[2] && flagShown(sn.w.sc, sn.w.pz.map(q => q.d)) && Math.hypot(fw[0] - pos.x, fw[1] - pos.z) < 2.6) pr = F + '를 꾹 눌러 기사단 깃발 들기' + (fw[3] > 0 ? ' ' + Math.round(fw[3] / 1.5 * 100) + '%' : '');
     else if (MAP.chests.some(([x, y], k) => !sn.w.ch[k] && Math.hypot(cw(x) - pos.x, cw(y) - pos.z) < 2.6)) pr = (TOUCH ? 'F 버튼' : 'F') + '를 꾹 눌러 상자 열기';
     else if (MAP.lores.some(([x, y, q], k) => sn.w.sc[q] && !sn.w.lr[k] && Math.hypot(cw(x) - pos.x, cw(y) - pos.z) < 2.6)) pr = (TOUCH ? 'F 버튼' : 'F') + '를 꾹 눌러 옛 기록 읽기';
     else if (MAP.fires.some(([x, y], k) => !sn.w.fi[k] && Math.hypot(cw(x) - pos.x, cw(y) - pos.z) < 3)) pr = (TOUCH ? 'F 버튼' : 'F') + '를 꾹 눌러 모닥불 피우기';
