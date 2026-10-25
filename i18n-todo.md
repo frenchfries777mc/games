@@ -102,3 +102,7 @@
 ## Tumblecrown b5 (2026-10-25)
 - 체력바 (제목)
 - 맞을수록 머리 위 체력바가 줄어들고 더 멀리 날아가요
+
+## 허브 카드 다듬기, Dummy Party 업적 (2026-10-25)
+- ach/dummyparty.json | 업적 33개: ko+en/es/fr/de/ja는 게임 안 번역표에서 가져옴, 나머지 언어(zh,pt,ru,tr,it,pl,ar 등)는 en으로 대체돼요 | 번역 필요
+- prototypes/index.html | 시험 게임을 모아 두는 곳이에요. / Tumblecrown / 무너지는 섬에서 일곱 직업으로 왕관 하나를 두고 싸우는 난투예요.
