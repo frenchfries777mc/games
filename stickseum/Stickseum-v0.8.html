@@ -3370,13 +3370,6 @@ function renderShop(){
 function markHit(target, attackerId, t, dmg){
   dmg=skillMitigate(target, dmg, t);   // armour / barrier skills give part of the damage back (hp is restored right here, before anyone checks for death)
   if(practiceMode && dmg>0 && attackerId===myId && target.id!==myId) pracDpsHits.push({t:t, d:dmg});     // the practice DPS meter
-  if(dmg>0 && target.weapon==='puppeteer' && target.sewTo && !target._sewShare && sewActive(target, t/1000)){      // 바느질: the one on the thread takes half of what the puppeteer takes
-    const v=players[target.sewTo], sh=Math.min(dmg*SEW_SHARE, Math.max(0, SEW_SHARE_MAX-(target.sewShared||0)));
-    if(sh>0){ target.sewShared=(target.sewShared||0)+sh;
-      target._sewShare=true; v.hp-=sh; markHit(v, target.id, t, sh); target._sewShare=false;
-      pushFx('dmg', v.x, v.y-PLAYER_H-6, t, {v:Math.round(sh), color:'#ff9ecb'});
-      if(v.hp<=0 && v.alive) handleDeath(v, target, t, target.name); }
-  }
   if(dmg>0 && gameMode==='raid' && !target.isBoss && !target.isMinion) target.raidTaken=(target.raidTaken||0)+dmg;
   if(dmg>0 && gameMode==='raid' && target.isBoss && attackerId && players[attackerId] && !players[attackerId].isMinion) players[attackerId].raidDmg=(players[attackerId].raidDmg||0)+dmg;
   if(dmg>0) recordReplayEvent(target.id, 'hit', {dmg}); // record even self/environmental damage (attackerId null) so the killcam can show it was actually hurting, not just moving
@@ -5044,7 +5037,7 @@ function shuffle(arr){ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.
 /* ===== the version of this file =====
    Players with different versions CAN meet and play together: the automatic matchmaking uses the same room names for every version (online-<mode>-<map>-<slot>), and nobody is refused because of a different build.
    The build is only sent along with the join message and the lobby (for information); the corner of the screen shows it. */
-const GAME_BUILD='build 2026-10-18-v388';
+const GAME_BUILD='build 2026-10-18-v389';
 const GAME_VERSION='0.8', GAME_VERSION_NAME='황금을 찾아서';   // 게임 버전 이름: versions.json의 title과 같게 (빌드마다 바꾸지 않음)
 const WEEKLY_EVENTS=[
   {id:'lowg',    name:'저중력 난투', desc:'몸이 둥실둥실, 중력이 약해진 난투', rules:{grav:0.6}},
@@ -8316,7 +8309,26 @@ async function clanLoadMine(){
     const r=await sb.from('clan_members').select('role, clans(id,name,tag,wins,score,owner,emblem,color,intro,notice,treasury,unlocks)').eq('user_id', sbUser.id).maybeSingle();
     if(r && !r.error && r.data && r.data.clans) myClan=Object.assign({role:r.data.role}, r.data.clans);
   }catch(e){}
+  clanBroadcastInit();
   return myClan;
+}
+let clanBcCh=null, clanBcFor='';
+function clanBroadcastInit(){          // a live line to the whole clan (Supabase Realtime broadcast, no table): "클랜 경기 매칭!" reaches every clan member who has the game open
+  try{
+    if(!sb || !sbUser || !myClan) return;
+    const cid=String(myClan.id); if(clanBcCh && clanBcFor===cid) return;
+    if(clanBcCh){ try{ sb.removeChannel(clanBcCh); }catch(e){} }
+    clanBcFor=cid;
+    clanBcCh=sb.channel('stk-clan-'+cid, {config:{broadcast:{self:false}}}).on('broadcast', {event:'duel'}, msg=>clanDuelToast(msg && msg.payload)).subscribe();
+  }catch(e){}
+}
+function clanDuelToast(p){ if(!p || !p.a || !p.b) return; try{ showAchievementToast({icon:'⚔', name:escapeHtmlText(String(p.a).slice(0,15))+' vs '+escapeHtmlText(String(p.b).slice(0,15)), reward:0}, '클랜 경기 매칭!'); }catch(e){} }
+function clanDuelAnnounce(){          // (host, when the clan duel starts) tells the rest of the clan who is playing
+  try{
+    if(!onlineClan || !clanBcCh) return;
+    const names=Object.values(players).filter(q=>q && !q.isBot).map(q=>q.name); if(names.length<2) return;
+    clanBcCh.send({type:'broadcast', event:'duel', payload:{a:names[0], b:names[1]}});
+  }catch(e){}
 }
 function clanMyId(){ return myClan ? String(myClan.id) : ''; }
 function clanMyTag(){ return myClan ? cleanClanTag(myClan.tag) : ''; }
@@ -9701,7 +9713,7 @@ function doStart(){
   const modeMin=(MODES[gameMode]||{}).minPlayers;
   if(modeMin && Object.keys(players).length<modeMin){ uiAlert((MODES[gameMode].name)+'는 최소 '+modeMin+'명이 필요해요. (현재 '+Object.keys(players).length+'명)'); return; }
   if(currentMode==='private' && Object.keys(players).length<2){ uiAlert('비공개 플레이는 최소 2명이 필요해요'); return; }      // (a private room alone: nobody to play with; add a friend or a bot first)
-  started=true; countdownEndsAt=null; try{ clanWaitSet(false); }catch(e){} // this flag is a one-way guard (see the line above) - same reasoning
+  started=true; countdownEndsAt=null; try{ clanWaitSet(false); clanDuelAnnounce(); }catch(e){} // this flag is a one-way guard (see the line above) - same reasoning
   // as gameLoopStarted in finalizeGameplayStart: if anything below throws before we actually reach
   // beginGame()/enterWeaponPhase(), the player would be stuck forever with no way to retry "시작" again
   try{
@@ -11207,7 +11219,7 @@ function ultCdOf(p){ return ULT_CD*pzCdMult(p); }
 const PRACTICE_SKILL_CD=2;
 const SKILLS={
   pizarro:  {name:'정복자의 휴식', kind:'buff', desc:'3초 동안 받는 피해 20% 감소 + 초당 체력 6 회복 · 움직여도 끊기지 않음'},
-  puppeteer:{name:'바느질', kind:'hit', desc:'실이 달린 바늘을 조준한 방향으로 발사 · 맞은 상대와 실이 이어지고 이동속도 25% 감소, 실로 이어진 동안 내가 받는 피해의 50%를 상대도 받음(실 하나당 최대 32) · 맞히면 쿨타임 없이 바로 바늘 빼기를 쓸 수 있음 (바늘 빼기를 쓰기 전까지 실이 계속 이어짐) · 바늘 빼기: 실을 당겨 상대에게 30 피해를 주고 실이 끊김, 쿨타임은 바늘 빼기를 쓴 뒤부터 돌아요 (못 맞히면 바로 쿨타임)'},
+  puppeteer:{name:'바느질', kind:'hit', desc:'실이 달린 바늘을 조준한 방향으로 발사 · 맞은 상대와 실이 이어지고 이동속도 25% 감소 · 맞히면 쿨타임 없이 바로 바늘 빼기를 쓸 수 있음 (바늘 빼기를 쓰기 전까지 실이 계속 이어짐) · 바늘 빼기: 실을 당겨 상대에게 30 피해를 주고 실이 끊김, 쿨타임은 바늘 빼기를 쓴 뒤부터 돌아요 (못 맞히면 바로 쿨타임)'},
   kan:      {name:'독두꺼비 함정', kind:'hit', desc:'바라보는 방향으로 독 두꺼비를 던짐 · 포물선으로 날아가 바닥에 닿으면 그 바닥이 독 바닥이 됨 (15초, 최대 2개, 나에게만 보임) · 적이 밟으면 독 바닥이 나타나고 3초 뒤 사라짐 · 밟은 적은 3초 동안 0.5초마다 5 피해'},
   pistol:   {name:'속사',        kind:'buff', desc:'1.8초 동안 연사 속도 2배'},
   smg:      {name:'연막탄',      kind:'hit',  desc:'주변 적을 2.5초 동안 둔화'},
@@ -11260,7 +11272,7 @@ function skillActiveBuff(p, tSec){
 // part of an incoming hit is given back (hp restored) while a guard / barrier is up; returns the damage that really got through
 // 인형술사 궁극기: 가장 가까운 상대를 PUP_SEC초 동안 조종한다 (조종당하는 쪽은 인형술사의 입력대로 움직이고 일반 공격만 하며, 인형술사의 몸은 데미지 50% 감소)
 const PUP_SEC=5, PUP_RANGE=700;
-const SEW_PULL_NAME='바늘 빼기', SEW_SHARE=0.5, SEW_SHARE_MAX=32;      // half of what the puppeteer takes, but at most 30 in all per thread
+const SEW_PULL_NAME='바늘 빼기';      // half of what the puppeteer takes, but at most 30 in all per thread
 const PUP_BLAST_SELF=60, PUP_BLAST_NEAR=30, PUP_BLAST_R=220;     // when the 5 seconds are over the puppet blows itself up: 60 to it, 30 to every enemy of the puppeteer around it
 const SEW_MAX_SEC=1e9, SEW_SLOW_MULT=0.75, SEW_DMG=30;             // 바느질 (the needle with a thread) ties the one it hits until the pull (no time limit now): 25% slower until 바늘 빼기 (30 damage) cuts the thread
 let puppetOK=false;                    // true only while the tick itself runs a controlled player's dash / shot
@@ -13684,7 +13696,7 @@ function hostTickCore(dt,t){
             const pow=players[b.owner], tS2=t/1000;
             if(pow && pow.alive && !puppetVictim(pow,tS2)){
               if(pow.sewTo && players[pow.sewTo]) players[pow.sewTo].sewBy=null;
-              pow.sewTo=p.id; pow.sewShared=0; pow.sewUntil=tS2+SEW_MAX_SEC; pow.sewAt=tS2; pow.lastSkill=-9999; p.sewBy=pow.id; p.sewSlowed=true;      // the skill is ready at once (바늘 빼기)
+              pow.sewTo=p.id; pow.sewUntil=tS2+SEW_MAX_SEC; pow.sewAt=tS2; pow.lastSkill=-9999; p.sewBy=pow.id; p.sewSlowed=true;      // the skill is ready at once (바늘 빼기)
               pushFx('slow', p.x, p.y-70, t, {});
             }
             pushFx('hit', nx, ny, t, {color:'#ff9ecb', ang:Math.atan2(b.vy,b.vx), v:0, el:dmgTypeOf(b.wid)});
