@@ -287,3 +287,5 @@ patchnotes.json | v385 title | 일격필살 도전과제 분류 | build 385 | 20
 patchnotes.json | v385 items[0] | 일격필살이 캐릭터 도전과제 항목에 표시 | build 385 | 2026-10-25
 patchnotes.json | v386 title | 칸 스킬 미리보기 | build 386 | 2026-10-25
 patchnotes.json | v386 items[0] | 칸의 독 두꺼비 스킬 조준 미리보기 추가 (날아가는 길과 독 바닥 위치 표시) | build 386 | 2026-10-25
+patchnotes.json | v387 title | 인형술사 실 공격 수정 | build 387 | 2026-10-25
+patchnotes.json | v387 items[0] | 실에 묶인 캐릭터가 조종하는 인형술사를 공격해도 피해가 들어가지 않던 문제 수정 | build 387 | 2026-10-25
