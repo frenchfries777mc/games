@@ -1,7 +1,7 @@
 // Tumblecrown · © 2026 Frenchfries777 · CC BY-NC-ND 4.0
 // 게임 숫자와 이름
 
-export const BUILD = 1, VERSION = '0.1';
+export const BUILD = 2, VERSION = '0.1';
 
 // 섬: 육각 타일, 가운데에서 RING칸까지
 export const RING = 5, HEX = 1.5;
@@ -11,16 +11,26 @@ export const KO_PTS = 1;           // 남을 떨어뜨리면 받는 점수
 export const MAX_PLAYERS = 6;
 export const FALL_Y = -14, RESPAWN = 3;
 
-// 무기: 기본 공격은 꾹 눌러 모았다가 놓으면 휘둘러요 (모을수록 멀리 날려요)
-export const WEPS = {
-  hammer: { name: '망치', desc: '느리지만 가장 멀리 날려요', range: 2.3, arc: 2.1, chg: 0.9, cd: 0.55, dmg: [7, 18], kb: [8, 19], swing: 0.32, spd: 5.6,
-    sk: { name: '땅 울리기', desc: '앞을 내리쳐 주변을 날리고 바닥을 깨요 (잠시 뒤 다시 자라요)', cd: 7 } },
-  spear: { name: '창', desc: '길게 찌르고, 돌진으로 파고들어요', range: 3.4, arc: 0.8, chg: 0.6, cd: 0.42, dmg: [5, 12], kb: [7, 15], swing: 0.25, spd: 6.0,
-    sk: { name: '돌진 찌르기', desc: '앞으로 빠르게 뛰어들며 부딪힌 상대를 날려요', cd: 6 } },
-  fist: { name: '주먹', desc: '빠르게 연타하고, 붙잡아 뒤로 던져요', range: 1.7, arc: 1.9, chg: 0.4, cd: 0.22, dmg: [4, 9], kb: [5, 12], swing: 0.16, spd: 6.6,
-    sk: { name: '잡아 던지기', desc: '앞의 상대를 붙잡아 등 뒤로 던져요', cd: 6 } }
+// 직업: 기본 공격은 꾹 눌러 모았다가 놓으면 나가요 (모을수록 멀리 날려요)
+// proj: 화살·마법 구슬처럼 날아가는 공격 / sk.kind: 기술 종류 (sim.js)
+// st: 선택 화면 막대 (힘, 속도, 사거리, 난이도) 1~5
+export const CLS = {
+  knight: { name: '기사', desc: '칼과 방패로 버티는 기본기 좋은 전사', range: 2.3, arc: 2.0, chg: 0.7, cd: 0.42, dmg: [6, 14], kb: [8, 16], swing: 0.26, spd: 5.6, st: [3, 3, 2, 1],
+    atk: '칼 베기', sk: { kind: 'bash', name: '방패 돌진', desc: '방패를 앞세워 뛰어들어 부딪힌 상대를 날려요', cd: 6 } },
+  priest: { name: '사제', desc: '빛으로 밀어내고 스스로 상처를 낫게 해요', range: 2.0, arc: 2.2, chg: 0.6, cd: 0.45, dmg: [5, 11], kb: [7, 13], swing: 0.26, spd: 5.6, st: [2, 3, 2, 2],
+    atk: '지팡이 치기', sk: { kind: 'nova', name: '빛의 폭발', desc: '주변을 빛으로 밀어내고 내 %를 25 낮춰요', cd: 9 } },
+  hunter: { name: '사냥꾼', desc: '멀리서 화살로 밀어 떨어뜨려요', range: 1.6, arc: 1.6, chg: 0.8, cd: 0.5, dmg: [4, 11], kb: [6, 14], swing: 0.22, spd: 6.0, st: [2, 4, 5, 3], proj: 'arrow',
+    atk: '활 쏘기 (모을수록 빠르고 멀리)', sk: { kind: 'volley', name: '세 갈래 화살', desc: '화살 세 대를 부채꼴로 한꺼번에 쏴요', cd: 6 } },
+  viking: { name: '바이킹', desc: '느리지만 도끼 한 방이 가장 무거워요', range: 2.4, arc: 2.2, chg: 1.0, cd: 0.6, dmg: [8, 19], kb: [9, 20], swing: 0.34, spd: 5.3, st: [5, 2, 3, 2],
+    atk: '도끼 내리치기', sk: { kind: 'spin', name: '회오리 도끼', desc: '도끼를 휘두르며 한 바퀴 돌아 둘레를 모두 날려요', cd: 7 } },
+  mamluk: { name: '맘루크', desc: '굽은 칼로 빠르게 베고 질주해 파고들어요', range: 2.0, arc: 1.8, chg: 0.4, cd: 0.24, dmg: [4, 9], kb: [5, 12], swing: 0.17, spd: 6.5, st: [2, 5, 2, 3],
+    atk: '굽은 칼 연속 베기', sk: { kind: 'lunge', name: '질주 베기', desc: '앞으로 빠르게 질주하며 지나간 상대를 날려요', cd: 6 } },
+  witch: { name: '마녀', desc: '터지는 마법 구슬과 바닥을 깨는 저주', range: 1.6, arc: 1.6, chg: 0.7, cd: 0.7, dmg: [6, 13], kb: [8, 15], swing: 0.24, spd: 5.5, st: [3, 2, 4, 4], proj: 'orb',
+    atk: '마법 구슬 (닿으면 터져요)', sk: { kind: 'curse', name: '땅 저주', desc: '조준한 곳의 바닥을 깨뜨려 떨어뜨려요 (잠시 뒤 다시 생겨요)', cd: 8 } },
+  skeleton: { name: '스켈레톤', desc: '가볍고 빠른 뼈다귀, 붙잡아 던져요', range: 1.8, arc: 2.0, chg: 0.4, cd: 0.22, dmg: [4, 9], kb: [5, 12], swing: 0.16, spd: 6.4, st: [2, 4, 1, 4],
+    atk: '뼈 몽둥이', sk: { kind: 'grab', name: '잡아 던지기', desc: '앞의 상대를 붙잡아 등 뒤로 던져요', cd: 6 } }
 };
-export const WEP_IDS = ['hammer', 'spear', 'fist'];
+export const CLS_IDS = ['knight', 'priest', 'hunter', 'viking', 'mamluk', 'witch', 'skeleton'];
 export const DASH = { spd: 19, t: 0.17, cd: 1.1 };
 
 export const COLORS = [
