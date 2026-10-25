@@ -411,7 +411,7 @@ async function rankingBy(g,box){
   if(!rows.length){ box.innerHTML='<div class="cm-e">'+(st?'이번 시즌 랭크전 기록이 아직 없어요.':bf?'아직 생존 기록을 보낸 사람이 없어요.':'아직 재산을 보낸 사람이 없어요.')+'</div>'; return; }
   var n=function(v){ try{ return Number(v).toLocaleString(); }catch(e){ return v; } };
   var h='<table class="rkt"><tr><th></th><th>닉네임</th><th>'+(st?'랭크 점수':bf?'최장 생존 일수':'재산')+'</th>'+(st?'<th>승</th><th>패</th>':'')+'</tr>';
-  rows.forEach(function(x,i){ h+='<tr class="'+(i<3?'t'+(i+1):'')+(me&&x.user_id===me.id?' me':'')+'"><td>'+(i<3?['🥇','🥈','🥉'][i]:i+1)+'</td><td>'+who(x.user_id)+'</td><td class="pt" data-notr>'+n(x[col])+(bf?'일':'')+'</td>'+(st?'<td data-notr>'+x.wins+'</td><td data-notr>'+x.losses+'</td>':'')+'</tr>'; });
+  rows.forEach(function(x,i){ h+='<tr class="'+(i<3?'t'+(i+1):'')+(me&&x.user_id===me.id?' me':'')+'"><td>'+(i<3?['🥇','🥈','🥉'][i]:i+1)+'</td><td>'+who(x.user_id)+'</td><td class="pt" data-notr>'+(bf?esc(F('{0}일',n(x[col]))):n(x[col]))+'</td>'+(st?'<td data-notr>'+x.wins+'</td><td data-notr>'+x.losses+'</td>':'')+'</tr>'; });
   h+='</table>';
   if(st) h+='<div class="rk-n">'+esc(F('{0} 시즌 · 매달 새로 시작해요',season))+'</div>';
   if(me&&!rows.some(function(x){ return x.user_id===me.id; })){
