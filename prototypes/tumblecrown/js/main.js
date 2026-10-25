@@ -392,7 +392,7 @@ function drawOverlay(s, t) {
     // 체력바: 가득 찬 상태에서 맞을수록 줄어요 (150%면 텅 비어요. 줄어들수록 더 멀리 날아가요)
     const hp = Math.max(0, 1 - pct / 150), bw = 46, bx = p.x - bw / 2, by = p.y - 8;
     oc.fillStyle = '#14203a'; oc.fillRect(bx - 2, by - 2, bw + 4, 11); oc.fillStyle = '#3a2430'; oc.fillRect(bx, by, bw, 7);
-    oc.fillStyle = hp > 0.6 ? '#7ae07a' : hp > 0.35 ? '#ffe08a' : hp > 0.15 ? '#ff9c4a' : '#ff5a4a'; oc.fillRect(bx, by, Math.round(bw * hp), 7);
+    oc.fillStyle = a[0] !== S.me ? '#e0403a' : hp > 0.6 ? '#7ae07a' : hp > 0.35 ? '#ffe08a' : hp > 0.15 ? '#ff9c4a' : '#ff5a4a'; oc.fillRect(bx, by, Math.round(bw * hp), 7);
     if (a[0] === S.me) { oc.fillStyle = '#ffe08a'; oc.beginPath(); oc.moveTo(p.x - 6, p.y + 6); oc.lineTo(p.x + 6, p.y + 6); oc.lineTo(p.x, p.y + 13); oc.fill(); }
   }
   // 조준선: 내 캐릭터 앞에 짧은 화살표 (PC)

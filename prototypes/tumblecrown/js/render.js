@@ -321,7 +321,7 @@ export class View {
     let ry = Math.atan2(fx, fz); if (st === ST.charge || st === ST.swing || st === ST.cast || st === ST.lunge || st === ST.grab) ry = Math.atan2(ax, az);
     let d = ry - e.ry; d = Math.atan2(Math.sin(d), Math.cos(d)); e.ry += d * Math.min(1, dt * 18); g.rotation.y = e.ry;
     u.bub.visible = !!inv; u.ring.visible = e.y > -0.5 && e.y < 0.5;
-    animate(e, g, { y: e.y, cls: e.cls, st, s, chg, run: Math.min(1, e.spd / 5), air: Math.abs(e.y) > 0.4 }, dt, t);
+    animate(e, g, { kind: a[20], aN: a[21], cmb: a[22], y: e.y, cls: e.cls, st, s, chg, run: Math.min(1, e.spd / 5), air: Math.abs(e.y) > 0.4 }, dt, t);
     if ((st === ST.dash || st === ST.lunge) && Math.random() < dt * 30) this.puff(e.x, e.y + 0.2, e.z);
     if (st === ST.charge && chg >= 1 && Math.random() < dt * 12) this.spark(e.x + (Math.random() - 0.5), e.y + 1.4 + Math.random(), e.z + (Math.random() - 0.5), 0xfff0a0);
   }
