@@ -163,6 +163,7 @@ function pick(){let s=null;try{s=localStorage.getItem(KEY);}catch(e){}
 let LANG=pick(),DATA=FALLBACK,NDATA=NOTES_FALLBACK;
 let LATEST_FILE=FALLBACK.latestFile;
 const t=(k,v)=>{const e=I.D[k];let s=(e&&(e[LANG]||e.en||e.ko))||'';if(v)for(const q in v)s=s.split('{'+q+'}').join(v[q]);return s;};
+window.FFT={T:s=>{const m={'빌드 번호나 내용으로 검색':'pn_ph','{0}개 찾음':'pn_hit','찾는 패치노트가 없어요.':'pn_none'}[s];return m?t(m):s;}};
 const nm=ko=>{const e=I.NM[ko];return (e&&e[LANG])||ko;};
 const tv=(ver,f,ko)=>{const e=I.V[ver];return (e&&e[f]&&(e[f][LANG]||e[f].en||e[f].ko))||ko;};
 /* 친구 방 바로 참가: 방 주소를 넣으면 게임이 열리면서 그 방에 참가해요 */
