@@ -5019,7 +5019,7 @@ function shuffle(arr){ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.
 /* ===== the version of this file =====
    Players with different versions CAN meet and play together: the automatic matchmaking uses the same room names for every version (online-<mode>-<map>-<slot>), and nobody is refused because of a different build.
    The build is only sent along with the join message and the lobby (for information); the corner of the screen shows it. */
-const GAME_BUILD='build 2026-10-18-v378';
+const GAME_BUILD='build 2026-10-18-v379';
 const GAME_VERSION='0.8', GAME_VERSION_NAME='황금을 찾아서';   // 게임 버전 이름: versions.json의 title과 같게 (빌드마다 바꾸지 않음)
 const WEEKLY_EVENTS=[
   {id:'lowg',    name:'저중력 난투', desc:'몸이 둥실둥실, 중력이 약해진 난투', rules:{grav:0.6}},
@@ -8753,7 +8753,7 @@ let mapOrder=[], mapCarouselIdx=0;
 function buildMapOrder(){
   mapOrder=[];
   for(const shapeId in SHAPE_THEMES) for(const themeKey of SHAPE_THEMES[shapeId]) mapOrder.push(shapeId+'_'+themeKey);
-  mapOrder.push('steampunk'); mapOrder.push('skyport'); mapOrder.push('colosseum'); mapOrder.push('lifttower'); mapOrder.push('stormship'); mapOrder.push('pipefactory'); mapOrder.push('mine'); mapOrder.push('icelake'); mapOrder.push('dungeon'); mapOrder.push('swamp'); mapOrder.push('waterfall'); mapOrder.push('collapsebridge'); mapOrder.push('lavaland'); mapOrder.push('ruins');
+  mapOrder.push('steampunk'); mapOrder.push('skyport'); mapOrder.push('colosseum'); mapOrder.push('lifttower'); mapOrder.push('stormship'); mapOrder.push('pipefactory'); mapOrder.push('mine'); mapOrder.push('icelake'); mapOrder.push('dungeon'); mapOrder.push('swamp'); mapOrder.push('waterfall'); mapOrder.push('lavaland'); mapOrder.push('ruins');
   mapOrder.push('mega_arena');
 }
 const shapeLabel={canyon:'4인 맵',grid:'8인 맵',steampunk:'6인 맵',skyport:'8인 맵',colosseum:'8인 맵',lifttower:'8인 맵',stormship:'8인 맵',pipefactory:'8인 맵',mine:'8인 맵',icelake:'8인 맵',dungeon:'8인 맵',swamp:'8인 맵',waterfall:'8인 맵',collapsebridge:'8인 맵',lavaland:'8인 맵',ruins:'8인 맵',parkour1:'파쿠르',parkour2:'파쿠르',parkour3:'파쿠르',parkour4:'파쿠르'};
@@ -12481,7 +12481,7 @@ function botCoveredAt(x, feetY){ // acid rain: is there a platform above the hea
 function botBrainHotpotato(p, ai, t, inp, navBusy){
   const others=Object.values(players).filter(o=>o.id!==p.id && o.alive && o.x!==undefined);
   if(!others.length) return {goalX:p.x, goalY:p.y, noCombat:true};
-  const dashReady = (t/1000)-(p.lastDash===undefined?-9999:p.lastDash) >= dashCdOf(p);   // each character's own dash cooldown (암살자 0.5 s, 피사로 by stage), not the default 1.5 s
+  const dashReady = (t/1000)-(p.lastDash===undefined?-9999:p.lastDash) >= DASH_CD;
   if(p.id===bombHolderId){                                       // I hold the bomb: run at someone catchable and hand it over
     // nearest by distance, but a person who is standing still (or running toward me) beats one who is running away
     let tg=null, bs=1e9;
@@ -12572,7 +12572,7 @@ function botBrainSurvival(p, ai, t, tSec, inp, navBusy){
       let back=0; for(const zz of survivalZombies){ const sx=(zz.x-p.x)*(-dirX); if(sx>0) back+=1/Math.max(60,Math.hypot(zz.x-p.x,zz.y-p.y)); }
       if(back<0.012) dirX=-dirX;
     }
-    const dashReady=(t/1000)-(p.lastDash===undefined?-9999:p.lastDash)>=dashCdOf(p);
+    const dashReady=(t/1000)-(p.lastDash===undefined?-9999:p.lastDash)>=DASH_CD;
     if(!navBusy && dashReady && near<150 && Math.random()<0.7){ inp.left=dirX<0; inp.right=dirX>0; inp.dash=true; }       // a kick of speed away from the one about to hit me
     return {goalX:clamp(p.x+dirX*380, 70, MAP.arenaW-70), goalY:p.y, noCombat:true, urgent:true};
   }

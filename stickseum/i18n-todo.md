@@ -257,3 +257,7 @@ patchnotes.json | v378 items[0] | 기사 돌진 베기 피해 32 → 45 | build 
 patchnotes.json | v378 items[1] | 인형술사 바느질 피해 공유 실 하나당 최대 30 → 32 | build 378 | 2026-10-25
 patchnotes.json | v378 items[2] | 폭탄 돌리기·생존 모드 봇 대쉬 판단을 캐릭터별 대쉬 쿨타임 기준으로 수정(암살자, 피사로 3·4단계) | build 378 | 2026-10-25
 patchnotes.json | v378 items[3] | 밸런스 다시 측정 | build 378 | 2026-10-25
+patchnotes.json | v379 title | 무너지는 다리 맵 삭제 | build 379 | 2026-10-25
+patchnotes.json | v379 items[0] | 무너지는 다리 맵 삭제 | build 379 | 2026-10-25
+patchnotes.json | v379 items[1] | 폭탄 돌리기·생존 모드 봇 대쉬 변경 되돌림 | build 379 | 2026-10-25
+patchnotes.json | v379 items[2] | 밸런스 다시 측정(무너지는 다리 제외) | build 379 | 2026-10-25
