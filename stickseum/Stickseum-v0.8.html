@@ -5014,6 +5014,7 @@ function broadcastAll(msg){ for(const id in conns) safeSend(conns[id], msg); }
 let effectLocalTimes={}; // client-side only: maps effect id -> this tab's own performance.now() at first sight
 let localInput={left:false,right:false,jump:false,down:false,up:false,angle:0,shoot:false,dash:false};
 let started=false;
+var netLastFull=null;
 let lastStateReceivedAt=0; // client-side only: when the last 'state' broadcast actually arrived (0 = never)
 let gameLoopStartedAt=0; // when THIS client's own loop started - the fallback baseline for staleness when
 // lastStateReceivedAt is still 0, i.e. not a single 'state' message has EVER arrived since the match began,
@@ -5051,7 +5052,7 @@ function shuffle(arr){ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.
 /* ===== the version of this file =====
    Players with different versions CAN meet and play together: the automatic matchmaking uses the same room names for every version (online-<mode>-<map>-<slot>), and nobody is refused because of a different build.
    The build is only sent along with the join message and the lobby (for information); the corner of the screen shows it. */
-const GAME_BUILD='build 2026-10-18-v390';
+const GAME_BUILD='build 2026-10-18-v392';
 const GAME_VERSION='0.8', GAME_VERSION_NAME='황금을 찾아서';   // 게임 버전 이름: versions.json의 title과 같게 (빌드마다 바꾸지 않음)
 const WEEKLY_EVENTS=[
   {id:'lowg',    name:'저중력 난투', desc:'몸이 둥실둥실, 중력이 약해진 난투', rules:{grav:0.6}},
@@ -9024,7 +9025,7 @@ function showErrorAndReturnToMenu(msg){
   stkRoomSync(null);
   if(peer){ try{peer.destroy();}catch(e){} peer=null; }
   window.__versionNoted=false; chatPending=[];
-  spectatorMode=false; onlineClan=''; try{ clanWaitSet(false); }catch(e){} document.body.classList.remove('specView'); conns={}; players={}; isHost=false; hostConn=null; MAP=null; started=false; currentMode=null; currentMapId=null; countdownEndsAt=null; gameLoopStarted=false; weaponChosenLocally=false; hostRoomLive=false; if(typeof weaponCountdownTimer!=='undefined' && weaponCountdownTimer){ clearInterval(weaponCountdownTimer); weaponCountdownTimer=null; } matchEnded=false; duelScores={}; duelRoundEndsAt=null; duelPick=false; matchTimerEndsAt=null; document.getElementById('matchTimerLabel').style.display='none'; document.getElementById('duelScoreLabel').style.display='none'; cq=null; walls=[]; hostTimers=[]; magicCircles=[]; poisonZones=[]; turrets=[]; weaponPhase=null; document.getElementById('cqLabel').style.display='none'; bombHolderId=null; bombTimerEndsAt=0; hotpotatoOriginalCount=0; seekerId=null; hideseekPhase=null; hideseekPhaseEndsAt=0; survivalRound=0; survivalPhase=null; survivalPhaseEndsAt=0; survivalCurrentDisaster=null; survivalHazards=[]; survivalZombies=[]; document.getElementById('survivalLabel').style.display='none'; ctf=null; ctfEndsLocal=0; document.getElementById('ctfLabel').style.display='none'; { const mini=document.getElementById('ctfMini'); if(mini) mini.style.display='none'; }
+  spectatorMode=false; onlineClan=''; netLastFull=null; try{ clanWaitSet(false); }catch(e){} document.body.classList.remove('specView'); conns={}; players={}; isHost=false; hostConn=null; MAP=null; started=false; currentMode=null; currentMapId=null; countdownEndsAt=null; gameLoopStarted=false; weaponChosenLocally=false; hostRoomLive=false; if(typeof weaponCountdownTimer!=='undefined' && weaponCountdownTimer){ clearInterval(weaponCountdownTimer); weaponCountdownTimer=null; } matchEnded=false; duelScores={}; duelRoundEndsAt=null; duelPick=false; matchTimerEndsAt=null; document.getElementById('matchTimerLabel').style.display='none'; document.getElementById('duelScoreLabel').style.display='none'; cq=null; walls=[]; hostTimers=[]; magicCircles=[]; poisonZones=[]; turrets=[]; weaponPhase=null; document.getElementById('cqLabel').style.display='none'; bombHolderId=null; bombTimerEndsAt=0; hotpotatoOriginalCount=0; seekerId=null; hideseekPhase=null; hideseekPhaseEndsAt=0; survivalRound=0; survivalPhase=null; survivalPhaseEndsAt=0; survivalCurrentDisaster=null; survivalHazards=[]; survivalZombies=[]; document.getElementById('survivalLabel').style.display='none'; ctf=null; ctfEndsLocal=0; document.getElementById('ctfLabel').style.display='none'; { const mini=document.getElementById('ctfMini'); if(mini) mini.style.display='none'; }
   resetFlowState();
   showScreen('menuScreen');
   if(msg) uiAlert(msg);
@@ -9784,7 +9785,7 @@ function leaveRoom(){
   if(peer){ const op=peer; peer=null; if(handOff) setTimeout(()=>{ try{op.destroy();}catch(e){} }, 900); else { try{op.destroy();}catch(e){} } }   // (the last messages need a moment to go out)
   migState=null; migBundle=null; migOrderIds=[]; migPending=[]; try{ migBanner(false); }catch(e){}
   window.__versionNoted=false; chatPending=[];
-  spectatorMode=false; onlineClan=''; try{ clanWaitSet(false); }catch(e){} document.body.classList.remove('specView'); conns={}; players={}; isHost=false; hostConn=null; MAP=null; started=false; currentMode=null; currentMapId=null; countdownEndsAt=null; gameLoopStarted=false; weaponChosenLocally=false; hostRoomLive=false; if(typeof weaponCountdownTimer!=='undefined' && weaponCountdownTimer){ clearInterval(weaponCountdownTimer); weaponCountdownTimer=null; } matchEnded=false; duelScores={}; duelRoundEndsAt=null; duelPick=false; matchTimerEndsAt=null; document.getElementById('matchTimerLabel').style.display='none'; document.getElementById('duelScoreLabel').style.display='none'; cq=null; walls=[]; hostTimers=[]; magicCircles=[]; poisonZones=[]; turrets=[]; weaponPhase=null; document.getElementById('cqLabel').style.display='none'; bombHolderId=null; bombTimerEndsAt=0; hotpotatoOriginalCount=0; seekerId=null; hideseekPhase=null; hideseekPhaseEndsAt=0; survivalRound=0; survivalPhase=null; survivalPhaseEndsAt=0; survivalCurrentDisaster=null; survivalHazards=[]; survivalZombies=[]; document.getElementById('survivalLabel').style.display='none'; ctf=null; ctfEndsLocal=0; document.getElementById('ctfLabel').style.display='none'; { const mini=document.getElementById('ctfMini'); if(mini) mini.style.display='none'; }
+  spectatorMode=false; onlineClan=''; netLastFull=null; try{ clanWaitSet(false); }catch(e){} document.body.classList.remove('specView'); conns={}; players={}; isHost=false; hostConn=null; MAP=null; started=false; currentMode=null; currentMapId=null; countdownEndsAt=null; gameLoopStarted=false; weaponChosenLocally=false; hostRoomLive=false; if(typeof weaponCountdownTimer!=='undefined' && weaponCountdownTimer){ clearInterval(weaponCountdownTimer); weaponCountdownTimer=null; } matchEnded=false; duelScores={}; duelRoundEndsAt=null; duelPick=false; matchTimerEndsAt=null; document.getElementById('matchTimerLabel').style.display='none'; document.getElementById('duelScoreLabel').style.display='none'; cq=null; walls=[]; hostTimers=[]; magicCircles=[]; poisonZones=[]; turrets=[]; weaponPhase=null; document.getElementById('cqLabel').style.display='none'; bombHolderId=null; bombTimerEndsAt=0; hotpotatoOriginalCount=0; seekerId=null; hideseekPhase=null; hideseekPhaseEndsAt=0; survivalRound=0; survivalPhase=null; survivalPhaseEndsAt=0; survivalCurrentDisaster=null; survivalHazards=[]; survivalZombies=[]; document.getElementById('survivalLabel').style.display='none'; ctf=null; ctfEndsLocal=0; document.getElementById('ctfLabel').style.display='none'; { const mini=document.getElementById('ctfMini'); if(mini) mini.style.display='none'; }
   resetFlowState();
   showScreen('menuScreen');
   setChatVisible(false);
@@ -9876,6 +9877,7 @@ function onClientData(data, mode, code){
   else if(data.t==='weaponReveal'){ showWeaponReveal(data.list, data.endsAt); }
   else if(data.t==='begin'){ started=true; finalizeGameplayStart(data.matchTimerEndsAt); } // THE root cause of the long-standing survival black-screen reports: a client only ever set started=true upon receiving 'weaponPhase', but noWeapon modes (hotpotato/hideseek/survival/parkour) never send that message at all - so on any CLIENT (never the host, which is why host-side testing never caught it), started stayed false forever and render()'s "if(!started||!MAP) return" permanently blacked out the canvas, with the HUD's static "1" placeholder never getting overwritten. No exception was ever thrown, which is also why no error banner or diagnostic line ever caught it.
   else if(data.t==='state'){
+    { const lf=(netLastFull=netLastFull||{}); data.players=data.players.map(sp=>{ const m=Object.assign(lf[sp.id]||{}, sp); lf[sp.id]=m; return Object.assign({}, m); }); for(const id in lf) if(!data.players.some(sp=>sp.id===id)) delete lf[id]; }      // (the host sends only what changed: put the full player back together)
     if(!isHost) rpRecAdd(data);
     lastStateReceivedAt=performance.now(); // feeds the staleness watchdog below - a client that stops receiving these needs to know, instead of silently sitting on stale/default data forever
     for(const sp of data.players){
@@ -9953,7 +9955,7 @@ function masteryCeremony(wid){
 }
 function showMatchEndOverlay(resultText, winnerIds, forcedPick){
   try{ const hum=Object.values(players).filter(q=>q && !q.isBot && !q.isMinion && !q.isBoss && !q.isSpectator);
-    if(currentMode==='private' && !practiceMode && !highlightViewing && myClan && hum.length>=2 && hum.every(q=>q.clan===clanMyTag()) && winnerIds && winnerIds.length) clanMemberReport(winnerIds.indexOf(myId)!==-1); }catch(e){}
+    if(onlineClan && currentMode==='online' && gameMode==='duel' && !practiceMode && !highlightViewing && myClan && String(onlineClan)===clanMyId() && hum.length===2 && hum.every(q=>q.clan===clanMyTag()) && winnerIds && winnerIds.length) clanMemberReport(winnerIds.indexOf(myId)!==-1); }catch(e){}
   try{ rpRecFinish(resultText, winnerIds); }catch(e){}
   matchEnded=true; lastWinnerIds=winnerIds||[];
   elimState=null; document.getElementById('elimOverlay').style.display='none'; document.getElementById('elimExitBtn').style.display='none';
@@ -13809,8 +13811,32 @@ function hostTickCore(dt,t){
     };
     { const now=Date.now(); chatOutbox=chatOutbox.filter(m=>now-m.at<CHAT_CARRY_MS); if(chatOutbox.length) snap.chat=chatOutbox.map(m=>({cid:m.cid, from:m.from, text:m.text, fromId:m.fromId})); }
     rpRecAdd(snap);
-    broadcastAll(snap);
+    broadcastAll(snapDeltaFor(snap));
   }
+}
+/* The snapshot is about 10 KB with 9 players, nearly all of it fields that did not change since the last one (flags that stay false, counters, names ...). Every player is sent as ONLY what changed (a client does
+   Object.assign into the player it already has, which is also what it did before), with a full copy every 20th snapshot (1 s) and whenever somebody joins or leaves, so a late joiner is complete within a second.
+   The data channel is reliable and ordered, so no delta is ever lost. x, y, vx, angle, hp and alive are always sent (the client's smoothing reads them from every entry). */
+const SNAP_ALWAYS={x:1,y:1,vx:1,angle:1,hp:1,alive:1};
+let snapPrev={}, snapFullN=0, snapLastIds='';
+function snapSame(a,b){ return a===b || (a && b && typeof a==='object' && typeof b==='object' && JSON.stringify(a)===JSON.stringify(b)); }
+function snapDeltaFor(snap){
+  const list=snap.players, ids=list.map(p=>p.id).join(','), full=(snapFullN++%20===0) || ids!==snapLastIds;
+  snapLastIds=ids;
+  const out=[], seen={};
+  for(const cur of list){
+    seen[cur.id]=1; const prev=snapPrev[cur.id]; let d=null;
+    if(!full && prev){
+      d={id:cur.id}; let lost=false;
+      for(const k in cur){ if(k==='id') continue; if(SNAP_ALWAYS[k] || !snapSame(cur[k], prev[k])) d[k]=cur[k]; }
+      for(const k in prev){ if(cur[k]===undefined && prev[k]!==undefined){ lost=true; break; } }      // a field that went away: send the whole player once (a missing field would keep its old value on the client)
+      if(lost) d=null;
+    }
+    snapPrev[cur.id]=Object.assign({}, cur);
+    out.push(d||cur);
+  }
+  for(const id in snapPrev) if(!seen[id]) delete snapPrev[id];
+  return Object.assign({}, snap, {players:out});
 }
 function snapshotFor(p){
   // enough fields to redraw a frozen, recognizable pose of this player later (killcam replay)

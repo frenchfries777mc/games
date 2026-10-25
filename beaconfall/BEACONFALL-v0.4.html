@@ -387,7 +387,7 @@ window.bfIntro=function(){if(run)return;run=1;t0=Date.now();el.classList.add('ru
     <button class="btn" data-act="skins"><span class="arrow">▶</span>스킨 상점<span class="en">SKIN SHOP</span></button>
     <button class="btn" data-act="stats"><span class="arrow">▶</span>통계<span class="en">STATS</span></button>
     <button class="btn" data-act="settings"><span class="arrow">▶</span>설정<span class="en">SETTINGS</span></button>
-    <p class="foot">v0.4<br>build 112</p>
+    <p class="foot">v0.4<br>build 113</p>
   </nav>
 </div>
 
@@ -12298,13 +12298,16 @@ function netTick(now){
   if(isGuest()){
     if(mode==='play'&&now-net.tPos>100){net.tPos=now;sendHost({t:'pos',x:Math.round(P.x*10)/10,y:Math.round(P.y*10)/10,f:P.f,m:P.moving?1:0,d:P.dead?1:0,s:P.sleeping?1:0,b:P.sailing?1:0,h:P.mount?1:0,a:P.air?1:0,n:myName(),dn:P.down?1:0,w:wkStr(),k:myLook()});}
   }else if(isHost()&&net.conns.length){
-    if(now-net.tPlayers>100){net.tPlayers=now;bcastAll({t:'players',list:playerList()});}
-    if(now-net.tMons>125){net.tMons=now;bcastAll({t:'mons',list:monsters.map(m=>[m.id,Math.round(m.x*10)/10,Math.round(m.y*10)/10,m.f,Math.round(m.born*10)/10,Math.round(m.burn*10)/10,m.hp,m.st,Math.round(Math.max(0,m.hurt)*10)/10,Math.max(0,MT_KEYS.indexOf(m.ty||'slime')),m.boss?1:0,m.isl|0,Math.round(Math.max(0,m.swt||0)*10)/10,m.pat?PK.indexOf(m.pat):-1,Math.round((m.pt||0)*100)/100,m.hid?1:0,m.tg&&m.pat?m.tg:0,Math.round((m.ag||0)*100)/100,m.zn&&m.zn.length?m.zn.map(z=>[z[0],z[1],z[2],Math.round(z[3]*10)/10]):0,m.rage?1:0,m.elite?1:0])});}
+    const lowH=!!(typeof PERF!=='undefined'&&PERF&&PERF.low),pls=allPlayers();   // 방장 부담 줄이기: 멀리 있는 것은 보내지 않고, 몬스터가 많거나 저사양이면 전송 간격을 늘려요
+    const nearP=(x,y,rr)=>{for(const p of pls)if(Math.abs(p.x-x)<rr&&Math.abs(p.y-y)<rr)return true;return false;};
+    if(now-net.tPlayers>(lowH?170:110)){net.tPlayers=now;bcastAll({t:'players',list:playerList()});}
+    const monL=monsters.length>30?190:125;
+    if(now-net.tMons>(lowH?Math.max(200,monL):monL)){net.tMons=now;const ml=monsters.filter(m=>m.void||m.rit||nearP(m.x,m.y,1100));if(ml.length||net.tMonN)bcastAll({t:'mons',list:ml.map(m=>[m.id,Math.round(m.x*10)/10,Math.round(m.y*10)/10,m.f,Math.round(m.born*10)/10,Math.round(m.burn*10)/10,m.hp,m.st,Math.round(Math.max(0,m.hurt)*10)/10,Math.max(0,MT_KEYS.indexOf(m.ty||'slime')),m.boss?1:0,m.isl|0,Math.round(Math.max(0,m.swt||0)*10)/10,m.pat?PK.indexOf(m.pat):-1,Math.round((m.pt||0)*100)/100,m.hid?1:0,m.tg&&m.pat?m.tg:0,Math.round((m.ag||0)*100)/100,m.zn&&m.zn.length?m.zn.map(z=>[z[0],z[1],z[2],Math.round(z[3]*10)/10]):0,m.rage?1:0,m.elite?1:0])});net.tMonN=ml.length;}
     if(now-net.tClock>2000){net.tClock=now;bcastAll({t:'clock',c:world.clock});}
     if(world.trader&&now-(net.tTrader||0)>1000){net.tTrader=now;bcastAll({t:'trader',tr:world.trader});}
     if(now-(net.tDmov||0)>150){net.tDmov=now;const mv=drops.filter(o=>o.mv);if(mv.length){bcastAll({t:'dmov',list:mv.map(o=>[o.id,Math.round(o.tx*10)/10,Math.round(o.ty*10)/10])});for(const o of mv)o.mv=false;}}
-    if(now-(net.tAnim||0)>200){net.tAnim=now;if(animals.length||net.tAnimN)bcastAll({t:'anims',list:animals.map(a=>[a.id,ANIM_IDX.indexOf(a.type),Math.round(a.x*10)/10,Math.round(a.y*10)/10,a.f,a.hp,a.hurt>0?1:0,a.ws?1:0,a.baby?1:0,a.love>0?1:0])});net.tAnimN=animals.length;}
-    if(now-(net.tFell||0)>250){net.tFell=now;const fl=world.structs.filter(b=>b.id==='feller'||b.id==='miner'||b.id==='crafter').map(b=>[b.gx,b.gy,b.pf===undefined?-1:Math.round(b.pf*100)/100,b.ru|0]);if(fl.length)bcastAll({t:'fell',list:fl});}
+    if(now-(net.tAnim||0)>(lowH?400:250)){net.tAnim=now;const an=animals.filter(a=>nearP(a.x,a.y,700));if(an.length||net.tAnimN)bcastAll({t:'anims',list:an.map(a=>[a.id,ANIM_IDX.indexOf(a.type),Math.round(a.x*10)/10,Math.round(a.y*10)/10,a.f,a.hp,a.hurt>0?1:0,a.ws?1:0,a.baby?1:0,a.love>0?1:0])});net.tAnimN=an.length;}
+    if(now-(net.tFell||0)>(lowH?800:500)){net.tFell=now;if(!net.fellC||now-(net.fellT||0)>2000){net.fellT=now;net.fellC=world.structs.filter(b=>b.id==='feller'||b.id==='miner'||b.id==='crafter');}const fl=net.fellC.map(b=>[b.gx,b.gy,b.pf===undefined?-1:Math.round(b.pf*100)/100,b.ru|0]);if(fl.length)bcastAll({t:'fell',list:fl});}
   }
 }
 async function hostRoom(addr,wid){
