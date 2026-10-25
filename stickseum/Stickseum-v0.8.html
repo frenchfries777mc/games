@@ -1123,7 +1123,7 @@ sting();})();</script>
   <div class="card" id="nameScreen">
     <button class="backlink" id="nameBackBtn">&larr; 뒤로가기</button>
     <h2>닉네임을 입력하세요</h2>
-    <input type="text" id="nameScreenInput" maxlength="12" placeholder="닉네임 (필수)">
+    <input type="text" id="nameScreenInput" maxlength="15" placeholder="닉네임 (필수)">
     <button class="btn-primary btn-full" id="nameConfirmBtn" style="margin-top:14px;" disabled>확인</button>
   </div>
 
@@ -1452,8 +1452,6 @@ const ULTS = {
 const SAVE_KEY='arenaClashSave_v1';
 window.addEventListener('DOMContentLoaded', ()=>{ const t=document.getElementById('buildTag'); if(t && typeof GAME_BUILD!=='undefined') t.textContent='v'+GAME_VERSION+' '+GAME_VERSION_NAME+' · '+GAME_BUILD.replace(/^build \S*-v(\d+)$/,'build $1'); });
 const KILL_GOLD=5, ASSIST_GOLD=3, ASSIST_WINDOW=10;
-const MATCH_KILL_GOLD_MAX=5, MATCH_ASSIST_GOLD_MAX=5;   // gold for kills and assists stops after 5 of each in one match (a duel gives about 2 kills, a respawn mode used to give 30)
-let rewardCount={};
 /* the purple currency: a kill gives SOUL_PER_KILL of them (an assist, a match end or practice give none); they are spent on random boxes only.
    To rename it change the name / icon / colour right here - every text, the shop and the kill feed read it from this one place. */
 const SOUL={name:'영혼석', icon:'💜', color:'#b86bff'};
@@ -1496,7 +1494,7 @@ function loadSave(){
       saveData.modeMatches=(s.modeMatches&&typeof s.modeMatches==='object')?s.modeMatches:{};
       saveData.charKills=(s.charKills&&typeof s.charKills==='object')?s.charKills:{};
       saveData.avatar=Object.assign({bg:'#274d3a', color:'#3fe0c5', accessory:null}, s.avatar||{});
-      if(typeof s.playerName==='string' && s.playerName.trim()) saveData.playerName=s.playerName.slice(0,12);
+      if(typeof s.playerName==='string' && s.playerName.trim()) saveData.playerName=s.playerName.slice(0,15);
       saveData.nameDirty=!!s.nameDirty;
       saveData.achievements=(s.achievements&&typeof s.achievements==='object')?s.achievements:{};
       saveData.weaponXp=(s.weaponXp&&typeof s.weaponXp==='object')?s.weaponXp:{};
@@ -1926,11 +1924,11 @@ document.getElementById('settingsToSiteBtn').onclick=async ()=>{      // 나가�
 document.getElementById('keybindResetBtn').onclick=()=>{ keyBindings=defaultKeyBindings(); persistKeyBindings(); renderKeybinds(); updateControlsHint(); };
 // ===== Weapon mastery =====
 // Every weapon (character) levels up on its own the more it is used. Mastery XP is earned when a match ends with that
-// weapon in hand: +10 per kill, +5 per assist, +5 for finishing, +10 more for a win. There is no top level: Lv.1..10 as in the table, then growing a little per level until Lv.20, then the same XP for every level.
+// weapon in hand: +6 per kill, +3 per assist, +3 for finishing, +6 more for a win. There is no top level: Lv.1..10 as in the table, then growing a little per level until Lv.20, then the same XP for every level.
 const MASTERY_XP_NEEDED=[0,40,100,200,350,550,800,1100,1450,1850];       // Lv.1 .. Lv.10 (unchanged)
 const MASTERY_STAR_LV=MASTERY_XP_NEEDED.length;      // Lv.10: the old top level. There is no top level any more, but Lv.10 keeps the gold colour, the ★ and its 50 gold bonus
 const MASTERY_FLAT_FROM=20;                          // from Lv.20 on every level costs XP_FLAT
-const MASTERY_KILL_XP=10, MASTERY_ASSIST_XP=5, MASTERY_MATCH_XP=5, MASTERY_WIN_XP=10;
+const MASTERY_KILL_XP=6, MASTERY_ASSIST_XP=3, MASTERY_MATCH_XP=3, MASTERY_WIN_XP=6;      // (owner 10-25: harder, about 40% less XP per match than the old 10 / 5 / 5 / 10; levels already reached stay)
 function masteryIncrement(n){ return n<MASTERY_STAR_LV ? MASTERY_XP_NEEDED[n]-MASTERY_XP_NEEDED[n-1] : Math.min(XP_FLAT, 400+50*(n-9)); }   // what it costs to go from level n to n+1
 function masteryXpForLevel(lv){                      // the total XP at which level lv is reached
   lv=Math.max(1,Math.floor(lv||1));
@@ -1985,6 +1983,16 @@ const ACHIEVEMENTS=[
   {id:'pro_gamer',   name:'진정한 프로게이머', desc:'모든 모드를 각각 100경기씩, 일일 모드를 100경기 플레이', icon:'🏅', reward:500, check:sd=>MODE_ORDER.concat(MORE_MODES.map(it=>it.id)).every(m=>((sd.modeMatches&&sd.modeMatches[m])||0)>=100) && dailyMatchCount(sd)>=100},
   {id:'level_10',    name:'성장하는 전사', desc:'레벨 10 달성', icon:'⭐', reward:50, check:sd=>levelFromXp(sd.xp||0)>=10},
   {id:'level_25',    name:'베테랑', desc:'레벨 25 달성', icon:'🌟', reward:150, check:sd=>levelFromXp(sd.xp||0)>=25},
+  {id:'sword_triple', name:'일격필살', desc:'기사 궁극기로 한 번에 3명 처치', icon:'🗡️', reward:300, check:(sd,m)=>{ const me=m && m.me; return !!(me && me.weapon==='sword' && (me.ultMulti||0)>=3); }},
+  {id:'mode_duel_100',    name:'싸움의 달인',     desc:'듀얼 100경기', icon:'🥋', reward:150, check:sd=>((sd.modeMatches&&sd.modeMatches.duel)||0)>=100},
+  {id:'mode_ctf_100',     name:'전문 깃발 도둑',  desc:'깃발 뺏기 100경기', icon:'🚩', reward:150, check:sd=>((sd.modeMatches&&sd.modeMatches.ctf)||0)>=100},
+  {id:'mode_conquest_100',name:'팽창주의자',      desc:'점령전 100경기', icon:'🏴', reward:150, check:sd=>((sd.modeMatches&&sd.modeMatches.conquest)||0)>=100},
+  {id:'mode_br_100',      name:'너 죽고 나 살자', desc:'배틀로얄 100경기', icon:'☠️', reward:150, check:sd=>((sd.modeMatches&&sd.modeMatches.br)||0)>=100},
+  {id:'mode_duo_100',     name:'함께하는 재미',   desc:'배틀로얄 듀오 100경기', icon:'👫', reward:150, check:sd=>((sd.modeMatches&&sd.modeMatches.duo)||0)>=100},
+  {id:'mode_ffa_100',     name:'연쇄살인마',      desc:'데스매치 100경기', icon:'🔪', reward:150, check:sd=>((sd.modeMatches&&sd.modeMatches.ffa)||0)>=100},
+  {id:'mode_tournament_50',name:'진정한 챔피언',  desc:'토너먼트 50경기', icon:'🏆', reward:200, check:sd=>((sd.modeMatches&&sd.modeMatches.tournament)||0)>=50},
+  {id:'mode_gold_100',    name:'금에 눈이 멀다',  desc:'황금 쟁탈 100경기', icon:'🪙', reward:150, check:sd=>((sd.modeMatches&&sd.modeMatches.gold)||0)>=100},
+  {id:'mode_team_100',    name:'환장의 팀워크',   desc:'팀전 100경기', icon:'🤝', reward:150, check:sd=>((sd.modeMatches&&sd.modeMatches.team)||0)>=100},
   {id:'ff_all3',     name:'Frenchfries777 탐험가', desc:'Stickseum, Crown Envoy, Beaconfall 세 게임 모두 플레이', icon:'🍟', reward:300, check:()=>FF_GAMES.every(g=>ffHasPlayed(g.id))}
 ];
 /* ---- one achievement per character: use its skill or its ultimate N times in ONE match ----
@@ -2681,7 +2689,7 @@ const PREMIUM_SKINS=[
   ['vacuum','블랙홀 청소부 반다나','#1a1030','void'], ['pirate','심해 해적왕 모자','#2bc3ff','glow'], ['samurai','천하 통일 투구띠','#ff3b3b','crown'],
   ['kurus','칠흑 여왕의 두건','#b47bff','halo']
 ];
-for(const [ch,nm,tint,fx] of PREMIUM_SKINS) COSMETICS['skin_'+ch+'_p']={cat:'skin', char:ch, name:nm, price:PREMIUM_SKIN_PRICE, tint, fx, lux:2, premium:true};
+for(const [ch,nm,tint,fx] of PREMIUM_SKINS) COSMETICS['skin_'+ch+'_p']={cat:'skin', char:ch, name:nm, price:PREMIUM_SKIN_PRICE, tint, fx, lux:3, premium:true};
 /* ===== the character's own color in a match: plain colors are free, the shiny ones are bought (cat 'bcol', equipped as saveData.equipped.bcol, sent as cos.col) ===== */
 [['red','빨강','#ff4d4d'],['mint','민트','#3fe0c5'],['yellow','노랑','#f5c94c'],['blue','파랑','#7c9eff'],['pink','분홍','#ff8fd9'],['lime','연두','#8dff7c'],
  ['orange','주황','#ff9d4d'],['purple','보라','#b98cff'],['sky','하늘','#4dd9ff'],['rose','장미','#ff6b9d'],['emerald','에메랄드','#6bffb3'],['white','하양','#eef1f6']]
@@ -3198,6 +3206,14 @@ function drawSkinLux(c, lux, tint, now, seed, layer){
     c.save(); c.translate(0,1); c.lineWidth=big?2:1.6; c.strokeStyle=hexA(col,0.9); c.setLineDash([7,5]); c.lineDashOffset=-t*34; c.beginPath(); c.ellipse(0,0,big?32:26,big?8:7,0,0,7); c.stroke(); c.setLineDash([]);
     if(big && q>=1){ for(let k=0;k<2;k++){ const ph=fr(t*0.7+k*0.5); c.strokeStyle=hexA(col2,(1-ph)*0.75); c.lineWidth=2.2*(1-ph)+0.6; c.beginPath(); c.ellipse(0,0,14+38*ph,3.5+9*ph,0,0,7); c.stroke(); } }
     c.restore();
+    // the 4000 sC tier (lux 3): a counter-rotating second sunburst, a pulsing ground glow and waves that spread over the floor
+    if(lux>=3 && q>=1){
+      c.save(); c.translate(0,-32); c.rotate(-t*0.65); const cA3=hexA(col2,0.2), cB3=hexA('#ffffff',0.12);
+      for(let k=0;k<12;k++){ const a=k*Math.PI/6, w=0.07+0.02*Math.sin(t*3+k), R=96+10*Math.sin(t*2.1+k*1.3); c.fillStyle=(k%2)?cA3:cB3; c.beginPath(); c.moveTo(0,0); c.arc(0,0,R,a-w,a+w); c.closePath(); c.fill(); }
+      c.restore();
+      const gl=0.5+0.5*Math.sin(t*2.6); c.save(); c.translate(0,2); c.scale(1,0.26); const gg=c.createRadialGradient(0,0,2,0,0,58); gg.addColorStop(0,hexA(col,0.55+0.25*gl)); gg.addColorStop(1,hexA(col2,0)); c.fillStyle=gg; c.beginPath(); c.arc(0,0,58,0,7); c.fill(); c.restore();
+      for(let k=0;k<3;k++){ const ph=fr(t*0.55+k/3); c.strokeStyle=hexA(k%2?col:'#ffffff',(1-ph)*0.6); c.lineWidth=3*(1-ph)+0.8; c.beginPath(); c.ellipse(0,1,20+70*ph,5+17*ph,0,0,7); c.stroke(); }
+    }
     // the gems that are behind the body
     if(big && q>=2){ for(let k=0;k<3;k++){ const a=t*1.7+k*Math.PI*2/3; if(Math.sin(a)>0) continue; diamond(Math.cos(a)*27, -30+Math.sin(a)*9, 2.4, hexA(k%2?col:col2,0.55), a); } }
   } else {
@@ -3209,6 +3225,12 @@ function drawSkinLux(c, lux, tint, now, seed, layer){
     if(q>=1){ const m=big?5:4; for(let k=0;k<m;k++){ const a=-t*1.6+k*(Math.PI*2/m); c.fillStyle=hexA(k%2?col2:'#ffffff',0.85); cross(Math.cos(a)*20, -52+Math.sin(a)*13, 2.2+1.6*Math.abs(Math.sin(t*4+k))); } }
     // a double halo (legendary only)
     if(big && q>=2){ for(let k=0;k<2;k++){ c.strokeStyle=hexA(k?col2:col,0.8-k*0.25); c.lineWidth=2.2-k*0.7; c.beginPath(); c.ellipse(0,-72-k*5,15+k*5,4.2+k*1.4,0,0,7); c.stroke(); } }
+    // lux 3 in front: a comet with a long tail circling the body, little flames at the head, and sparks that burst outward
+    if(lux>=3 && q>=1){
+      for(let k=0;k<2;k++){ for(let j=0;j<14;j++){ const a=t*2.4+k*Math.PI-j*0.09, fade=1-j/14; if(Math.sin(a)<=0) continue; c.fillStyle=hexA(j===0?'#ffffff':(k?col:col2),fade*0.9); const rr=(3.2*fade+0.6); c.beginPath(); c.arc(Math.cos(a)*34, -30+Math.sin(a)*14, rr, 0, 7); c.fill(); } }
+      for(let k=0;k<5;k++){ const ph=fr(t*1.3+k*0.2), a=k*1.256+t*0.5, d=10+46*ph; c.fillStyle=hexA((k%2)?'#ffffff':col2,(1-ph)*0.9); cross(Math.cos(a)*d, -34+Math.sin(a)*d*0.8, 2.6*(1-ph)+0.8); }
+      if(q>=2){ for(let k=0;k<3;k++){ const fl=0.6+0.4*Math.sin(t*9+k*2); c.fillStyle=hexA(k===1?'#ffffff':col,0.7*fl); c.beginPath(); c.moveTo(-8+k*8,-80); c.quadraticCurveTo(-11+k*8,-90-8*fl,-8+k*8+3,-98-10*fl); c.quadraticCurveTo(-6+k*8,-88,-8+k*8,-80); c.fill(); } }
+    }
     // the gems in front of the body
     if(big && q>=2){ for(let k=0;k<3;k++){ const a=t*1.7+k*Math.PI*2/3; if(Math.sin(a)<=0) continue; const sc=0.9+0.4*Math.sin(a), gx=Math.cos(a)*27, gy=-30+Math.sin(a)*9; diamond(gx, gy, 2.6*sc, hexA(k%2?col:col2,0.95), a); c.fillStyle=hexA('#ffffff',0.8); c.fillRect(gx-0.8,gy-0.8,1.6,1.6); } }
   }
@@ -3406,7 +3428,7 @@ const MODES = {
   hotpotato: {id:'hotpotato', name:'폭탄 돌리기', desc:'무기·궁극기·순간이동 없이 대쉬만 가능한 맨손 스틱맨으로 바로 시작 · 한 명이 폭탄을 들고 시작, 20초 후 터짐 · 가까운 사람을 클릭하면 폭탄을 넘길 수 있음 · 터지면 들고 있던 사람 탈락, 생존자가 처음 인원의 절반 넘게 남아있으면 3초 뒤 다음 라운드 · 절반 이하가 된 상태에서 터지면 그때 생존자들이 승리', teams:false, extra:0, elim:true, ownMapRules:true, noWeapon:true, minPlayers:4},
   hideseek: {id:'hideseek', name:'숨바꼭질', desc:'32인용 대형 맵 고정 · 대쉬·궁극기·순간이동·무기선택 없는 맨몸 스틱맨 · 체력 1 · 최소 5명 · 술래 한 명이 정해지고 나머지는 움직이지 않는 발판으로 변신해 숨음 · 술래는 10초간 화면이 가려지고 그 동안 숨는 사람들은 자유롭게 움직여 위치를 잡음 · 카운트다운이 끝나면 술래에게 권총 지급, 첫 발은 발판을 다시 스틱맨으로 되돌리고(움직일 수 있게 됨), 두 번째 발이 명중하면 탈락 · 1분 30초 안에 술래가 전원을 찾아내면 술래 승리, 한 명이라도 남으면 생존자 승리', teams:false, extra:0, elim:true, ownMapRules:true, noWeapon:true, noAbility:true, minPlayers:5, fixedMapId:'mega_arena'},
   survival: {id:'survival', name:'서바이벌', desc:'8인 이상 맵에서만 가능 · 최소 6명 · 무기선택·순간이동·캐릭터 없음(대쉬는 있음) · 체력 1: 재해에 한 번이라도 맞으면 탈락 · 9초 대기 후 번개·해일·화산·산성비·홍수·운석·폭탄·좀비 중 하나가 랜덤으로 12초간 발생, 버티면 사라지고 다시 9초 대기 · 라운드가 갈수록 재해가 더 자주·더 넓게·더 빠르게 몰아침 · 총 5번의 재해에서 살아남으면 승리, 먼저 죽으면 관전하거나 나갈 수 있음', teams:false, extra:0, elim:true, ownMapRules:true, noWeapon:true, noTeleport:true, minPlayers:6, mapFilterMinPlayers:8}, // noTeleport made explicit here (previously implied only indirectly through noWeapon) to match the mode's own description, which promises no teleport
-  ctf: {id:'ctf', name:'깃발 뺏기', desc:'전용 대형 맵 4종 중 선택 · 두 팀이 상대 기지의 깃발을 가져와 우리 기지에 가져오면 1점(우리 깃발이 기지에 있어야 득점) · 깃발을 든 사람은 순간이동을 못 씀 · 든 사람이 죽으면 깃발이 떨어지고 4초 뒤 기지로 돌아감(우리 팀이 닿으면 바로 복귀) · 먼저 3점 또는 8분 안에 더 많이 득점한 팀 승리, 동점이면 무승부 · 처치당하면 5초 후 우리 기지에서 부활 · 최소 4명(비공개 방에서는 봇 추가 가능)', teams:true, teamSize:'half', extra:0, elim:false, ownMapRules:true, isCtfMode:true, minPlayers:4, respawnTime:5},
+  ctf: {id:'ctf', name:'깃발 뺏기', desc:'전용 대형 맵 4종 중 선택 · 두 팀이 상대 기지의 깃발을 가져와 우리 기지에 가져오면 1점(우리 깃발이 밖에 있어도 득점) · 깃발을 든 사람은 순간이동을 못 씀 · 든 사람이 죽으면 깃발이 그 자리에 떨어져 있고 우리 팀이 닿아야 기지로 돌아감 · 먼저 3점 또는 8분 안에 더 많이 득점한 팀 승리, 동점이면 무승부 · 처치당하면 5초 후 우리 기지에서 부활 · 최소 4명(비공개 방에서는 봇 추가 가능)', teams:true, teamSize:'half', extra:0, elim:false, ownMapRules:true, isCtfMode:true, minPlayers:4, respawnTime:5},
   gold: {id:'gold', name:'황금 쟁탈', desc:'전용 대형 맵 4종 중 선택 · 두 팀 대항 3분 · 맵 중앙의 금 덩이 더미에서 금을 집어(한 번에 최대 3개, 들수록 조금 느려짐) 우리 팀 광차에 실으면 1개당 10점 · 광차에 닿으면 자동으로 실려요 · 금을 든 사람이 쓰러지면 그 자리에 금이 떨어져 누구나 주울 수 있어요 · 더미가 비면 15초마다 6개씩 새로 쌓여요 · 3분 뒤 점수가 높은 팀 승리, 동점이면 무승부 · 쓰러지면 5초 후 우리 기지에서 부활 · 최소 4명(비공개 방에서는 봇 추가 가능)', teams:true, teamSize:'half', extra:0, elim:false, ownMapRules:true, isCtfMode:true, minPlayers:4, respawnTime:5},
   raid: {id:'raid', name:'보스 레이드', desc:'8인 이상 맵에서만 가능 · 4명 고정 · 모두가 한 팀이 되어 거대한 보스 한 마리를 쓰러뜨리는 협동 모드 · 보스는 인원에 맞춰 체력이 늘어나고, 주기적으로 바닥을 내려쳐요(빨간 원이 번쩍이면 점프!) · 팀 목숨이 정해져 있고 쓰러지면 6초 뒤 부활 · 3분 안에 보스를 잡으면 성공', teams:true, teamSize:'half', soloTeam:true, extra:0, fixedPlayers:4, elim:false, ownMapRules:true, mapFilterMinPlayers:8, respawnTime:6},
   tournament: {id:'tournament', name:'토너먼트', desc:'16명이 1대1 3판 2선승제로 겨루는 단판 토너먼트(16강 → 8강 → 4강 → 결승) · 같은 라운드 경기는 동시에 진행되고 내 경기만 보여요 · 라운드마다 캐릭터를 새로 골라요 · 끝난 사람은 다른 경기를 관전 · 결승은 경기장이 점점 좁아져요', teams:false, fixedPlayers:16, elim:true, ownMapRules:true, mapFilterMinPlayers:8, tnMode:true},
@@ -3922,7 +3944,7 @@ function drawCtf(){
     const col=TEAM_COLORS[f.team];
     if(f.state==='carried'){ const c=players[f.carrierId]; if(c && c.x!==undefined && c.alive!==false){ drawFlagIcon(c.x-4, c.y-8, col, 'carried', now); continue; } }
     drawFlagIcon(f.x, f.y, col, f.state==='dropped'?'dropped':'stand', now);
-    if(f.state==='dropped'){ const r=ctfRetRemain(f); ctx.save(); ctx.fillStyle='#fff'; ctx.font='bold 14px sans-serif'; ctx.textAlign='center'; ctx.fillText(Math.ceil(r)+'', f.x, f.y-86); ctx.restore(); }
+    
   }
 }
 /* ================= SURVIVAL DISASTERS: how they look =================
@@ -5022,7 +5044,7 @@ function shuffle(arr){ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.
 /* ===== the version of this file =====
    Players with different versions CAN meet and play together: the automatic matchmaking uses the same room names for every version (online-<mode>-<map>-<slot>), and nobody is refused because of a different build.
    The build is only sent along with the join message and the lobby (for information); the corner of the screen shows it. */
-const GAME_BUILD='build 2026-10-18-v382';
+const GAME_BUILD='build 2026-10-18-v383';
 const GAME_VERSION='0.8', GAME_VERSION_NAME='황금을 찾아서';   // 게임 버전 이름: versions.json의 title과 같게 (빌드마다 바꾸지 않음)
 const WEEKLY_EVENTS=[
   {id:'lowg',    name:'저중력 난투', desc:'몸이 둥실둥실, 중력이 약해진 난투', rules:{grav:0.6}},
@@ -5779,7 +5801,7 @@ function tnPairs(list){ const out=[]; for(let i=0;i<list.length;i+=2) out.push({
 function tnResetFighter(p){
   const clock=performance.now()/1000;
   const sp=spawnPoint(); p.x=sp.x; p.y=sp.y; p.vx=0; p.vy=0; p.kbX=0; p.spin=0; p.spinAngle=0; p.hp=ruleHp(); p.alive=true; p.respawnAt=0;
-  p.lastDash=clock; p.lastTeleport=clock; p.lastUlt=clock; p.lastSkill=clock; p.skillUses=0; p.ultUses=0; p.lastShot=0;
+  p.lastDash=clock; p.lastTeleport=clock; p.lastUlt=clock; p.lastSkill=clock; p.skillUses=0; p.ultUses=0; p.ultMulti=0; p.lastShot=0;
   p.cardDmg=0; p.queenUntil=0; p.puppetUntil=0; p.puppetTarget=null; p.puppetBy=null; p.buffs={}; p.barrier=null; p.buff=null; p.hasted=false; p.focusOn=false; p.ultPending=null; p.rushUntil=0; p.invisUntil=0; p.burn=null; p.poison=null; p.toadPois=null; p.kanWingsUntil=0; p.batUntil=0; p.batting=false; p.slowUntil=0; p.slowed=false; p.stunUntil=0; p.stunned=false;
   p.flameHeldSince=null; p.flameUsed=0; p.flameOverheatUntil=0; p.flaming=false; p.portalPair=null; p.portalCooldownUntil=0; p.vacuumStacks=0; p.chips=0; p.freeVolleys=0; p.teleportChannel=null; p.dmgBy={}; p.darkSub=null; p.darkArmUntil=0; p.darkLand=null;  p.pzStacks=0; p.pzMarkUntil=0;
   pushFx('respawn', p.x, p.y-30, performance.now(), {color:p.color, ta:p.id});
@@ -6455,7 +6477,7 @@ nameScreenInput.addEventListener('keydown', e=>{ if(e.code==='Enter' && !nameCon
 nameConfirmBtn.onclick=()=>{
   const val=nameScreenInput.value.trim();
   if(!val) return;
-  myName=val.slice(0,12);
+  myName=val.slice(0,15);
   myNameSet=true;
   saveData.playerName=myName; persistSave();
   if(pendingJoinCode){ const c=pendingJoinCode; pendingJoinCode=null; joinPrivateByCode(c); return; }
@@ -7249,8 +7271,21 @@ function switchLocalAccount(to){
     return true;
   }catch(e){ return false; }
 }
+async function claimAchGrants(){          // achievements given to this account from outside: unlock them here (with their reward) once
+  if(!sb || !sbUser) return;
+  try{
+    const r=await sb.rpc('ff_claim_ach_grants', {p_game:'stickseum'}); const ids=(r && !r.error && Array.isArray(r.data)) ? r.data : [];
+    saveData.achievements=saveData.achievements||{}; const got=[];
+    for(const id of ids){ const a=ACHIEVEMENTS.find(x=>x.id===id); if(a && !saveData.achievements[a.id]){ saveData.achievements[a.id]=Date.now(); got.push(a); } }
+    if(!got.length) return;
+    persistSave(); ffSyncAch();
+    let tot=0; for(const a of got) tot+=a.reward; if(tot>0) addGold(tot, null);
+    got.forEach((a,i)=>setTimeout(()=>showAchievementToast(a), 1500+i*2600));
+  }catch(e){}
+}
 async function sbSyncAccountData(id, username, sameAccountAsLast){
   await cloudSaveSync(username, sameAccountAsLast);                              // 1) progress AND nickname: the account's save comes into this browser (and the other way round)
+  await claimAchGrants();                                                         // (achievements handed to this account from outside)
   await nickSyncWithProfile(id);                                                  // 2) the nickname of the account (profiles.display_name, shared with the hub and the other games) and this game say the same
 }
 /* One nickname everywhere. profiles.display_name (the one the hub site and the other games change too) is the truth; this game adopts it, and also puts it into the clan list.
@@ -7259,8 +7294,8 @@ async function nickSyncWithProfile(id){
   if(!sb || !id) return false;
   let profileName=null;
   try{ const r=await sb.from('profiles').select('display_name').eq('id',id).single(); profileName=(r && r.data && r.data.display_name) || null; }catch(e){ return false; }
-  profileName=profileName ? String(profileName).trim().slice(0,12) : null;
-  const localName=(myNameSet && myName) ? String(myName).slice(0,12) : null;
+  profileName=profileName ? String(profileName).trim().slice(0,15) : null;
+  const localName=(myNameSet && myName) ? String(myName).slice(0,15) : null;
   let changed=false;
   if(localName && (saveData.nameDirty || !profileName)){                          // my rename here is newer (or the profile has no nickname yet): it goes to the profile
     if(profileName!==localName){ try{ const u=await sb.from('profiles').update({display_name:localName}).eq('id',id); if(!(u&&u.error)){ saveData.nameDirty=false; persistSave(); } }catch(e){} }
@@ -7319,7 +7354,7 @@ function applyCloudSave(s){
   for(const k of ['xp','totalKills','totalMatches','totalWins','totalDamage','totalAssists','boxes','boxesOpened','dailyCount','souls','pxEarned','pxSpent']) saveData[k]=Math.max(0,+s[k]||0);
   saveData.modeMatches=(s.modeMatches&&typeof s.modeMatches==='object')?s.modeMatches:{}; saveData.charKills=(s.charKills&&typeof s.charKills==='object')?s.charKills:{};
   saveData.avatar=Object.assign({bg:'#274d3a', color:'#3fe0c5', accessory:null}, s.avatar||{});
-  if(!saveData.nameDirty && typeof s.playerName==='string' && s.playerName.trim()){ saveData.playerName=s.playerName.trim().slice(0,12); myName=saveData.playerName; myNameSet=true; }     // the account's nickname wins
+  if(!saveData.nameDirty && typeof s.playerName==='string' && s.playerName.trim()){ saveData.playerName=s.playerName.trim().slice(0,15); myName=saveData.playerName; myNameSet=true; }     // the account's nickname wins
   saveData.achievements=(s.achievements&&typeof s.achievements==='object')?s.achievements:{}; saveData.weaponXp=(s.weaponXp&&typeof s.weaponXp==='object')?s.weaponXp:{};
   saveData.dailyLast=(typeof s.dailyLast==='string' && /^\d{4}-\d{2}-\d{2}$/.test(s.dailyLast)) ? s.dailyLast : '';
   saveData.missions=(s.missions&&typeof s.missions==='object')?s.missions:null; saveData.season=(s.season&&typeof s.season==='object')?s.season:null;
@@ -8662,9 +8697,9 @@ function renderProfile(){
   drawAvatarPreview(document.getElementById('avatarBigCanvas'), saveData.avatar);
   document.getElementById('avatarBigCanvas').onclick=()=>{ avatarEditorOpen=!avatarEditorOpen; renderAvatarEditor(); };
   document.getElementById('profNameEditBtn').onclick=()=>{
-    uiPrompt('새 닉네임 (최대 12자)', (typeof myName!=='undefined'&&myName)?myName:'', 12).then(v=>{
+    uiPrompt('새 닉네임 (최대 15자)', (typeof myName!=='undefined'&&myName)?myName:'', 15).then(v=>{
     if(v===null) return;
-    const trimmed=v.trim().slice(0,12);
+    const trimmed=v.trim().slice(0,15);
     if(!trimmed) return;
     myName=trimmed; myNameSet=true; saveData.playerName=trimmed; saveData.nameDirty=!!(sb && sbUser) || saveData.nameDirty; persistSave();      // (nameDirty: until the profile has it, see nickSyncWithProfile)
     if(sb && sbUser){ sb.from('profiles').update({display_name:trimmed}).eq('id',sbUser.id).then(r=>{ if(!(r&&r.error)){ saveData.nameDirty=false; persistSave(); clanSyncMyName(sbUser.id); } }); }
@@ -9348,7 +9383,7 @@ function onHostData(conn, data){
     else safeSend(conn, {t:'rejoinNo'});
     return;
   }
-  if(data.t==='join' && data.build!==GAME_BUILD){ try{ pushSystemLine((String(data.name||'플레이어').slice(0,12))+'님은 다른 버전이에요 ('+(data.build?data.build.replace('build ',''):'오래된 버전')+' / 내 버전 '+GAME_BUILD.replace('build ','')+') - 채팅·스킨이 다르게 보일 수 있어요'); }catch(e){} }
+  if(data.t==='join' && data.build!==GAME_BUILD){ try{ pushSystemLine((String(data.name||'플레이어').slice(0,15))+'님은 다른 버전이에요 ('+(data.build?data.build.replace('build ',''):'오래된 버전')+' / 내 버전 '+GAME_BUILD.replace('build ','')+') - 채팅·스킨이 다르게 보일 수 있어요'); }catch(e){} }
   if(data.t==='probe'){
     safeSend(conn, {t:'probeReply', count:Object.keys(players).length, max:effectiveMaxPlayers(currentMapId,gameMode), started:started});
     return;
@@ -9383,7 +9418,7 @@ function onHostData(conn, data){
     const color=cosBaseColor(sanitizeCos(data.cos)) || COLORS.find(c=>!Object.values(players).some(o=>o.color===c)) || COLORS[order % COLORS.length];      // (a color the player picked in the shop comes first)
     const sp=spawnPoint();
     noteHumanJoined(); // the 15 second wait for more people starts over
-    players[peerId]={id:peerId,name:String(data.name||'플레이어').slice(0,12),cos:sanitizeCos(data.cos),color,team:(cwTeam!==null?cwTeam:hostJoinTeam(order, ptag, tookBotSeat)),x:sp.x,y:sp.y,vx:0,vy:0,angle:0,grounded:false,
+    players[peerId]={id:peerId,name:String(data.name||'플레이어').slice(0,15),cos:sanitizeCos(data.cos),color,team:(cwTeam!==null?cwTeam:hostJoinTeam(order, ptag, tookBotSeat)),x:sp.x,y:sp.y,vx:0,vy:0,angle:0,grounded:false,
       hp:ruleHp(),kills:0,deaths:0,alive:true,respawnAt:0,isHost:false,joinOrder:order,
       level:(Number.isFinite(data.level) && data.level>=1) ? Math.floor(data.level) : 1, // each client reports its own locally-computed level (from its own saveData.xp) on join - trusted at face value like name/cos, same as the rest of this payload
       sbId:(typeof data.sbId==='string'?data.sbId:null), sbUsername:(typeof data.sbUsername==='string'?data.sbUsername.slice(0,16):null), clan:(typeof data.clan==='string'?cleanClanTag(data.clan):''), clanId:(typeof data.clanId==='string'?data.clanId.slice(0,40):''), ce:((typeof data.clan==='string'&&data.clan)?clanSafeEmblem(data.ce):''), cc:clanSafeColor(data.cc), cn:((typeof data.clan==='string'&&data.clan&&typeof data.cn==='string')?data.cn.slice(0,12):''),
@@ -10409,7 +10444,7 @@ function beginGame(){
     tn=null; raid=null; tnView=null; raidView=null; tnBk=null; tnVisSet=null;
     if(currentMode==='online' && onlineEvent && isHost) ctfMsg('🎪 이번 주 이벤트: '+currentEvent().name, true);
     if(gameMode==='raid') raidSpawnBoss();                              // the boss joins first, so it gets its own spot and its cooldowns start empty too
-    for(const id in players){ players[id].lastDash = startClock; players[id].lastTeleport = startClock; players[id].lastUlt = startClock; players[id].lastSkill = startClock; players[id].skillUses = 0; players[id].ultUses = 0; } // cooldowns begin empty
+    for(const id in players){ players[id].lastDash = startClock; players[id].lastTeleport = startClock; players[id].lastUlt = startClock; players[id].lastSkill = startClock; players[id].skillUses = 0; players[id].ultUses = 0; players[id].ultMulti = 0; } // cooldowns begin empty
     buildTeamSpawnSlots(); placeAtTeamSlots();                      // team modes: every team starts together on its own spot, not pre-charged
     if(gameMode==='zombie'){
       const ids=Object.keys(players);
@@ -10774,7 +10809,7 @@ function finalizeGameplayStart(mte){
   // loop starts regardless, so at minimum the player sees a live (if visibly broken) screen instead of a
   // silent freeze, and the error banner mechanism gets its chance to work.
   try{
-    matchEnded=false; rewardCount={}; try{ rpRecStart(); }catch(e){}
+    matchEnded=false; try{ rpRecStart(); }catch(e){}
     xm=null; xmV=null; brz=null; brzV=null; particles=[]; fxSeen={}; prevGround={}; prevHp={}; hitFlashUntil={}; screenShake=0; walls=[]; hostTimers=[]; magicCircles=[]; poisonZones=[]; turrets=[]; darkPools=[]; darkView=[]; lastKnownKills=0; matchAssists=0;
     matchKillLog=[]; killcamActive=false; killcamOverride=null; killcamSnapshot=null; killcamReplay=null; killcamReplayStartAt=0; replayBuffer={}; replayFrames=[]; replayFxLog=[]; replayDefs={};
     hitStopUntil=0; staggers={}; setTimeout(()=>{ try{ entranceShow(); }catch(e){ console.error('[entrance]', e); } }, 450);
@@ -11071,14 +11106,16 @@ const ULT_IMPL = {
     const sx=spot.x, iy=spot.y, dur=0.7;
     pushFx('swordfall', sx, iy, tMs, {dur:dur});
     hostTimers.push({ta:fxActor, at:tSec+dur, fn:(tt)=>{
+      let slain=0;
       for(const o of enemiesOf(p)){
         if(Math.abs(o.x-sx)<=SKY_SWORD_HALF && o.y>=iy-340 && o.y<=iy+60){
           const dmg=SKY_SWORD_DMG; o.hp-=dmg; markHit(o,p.id,tt,dmg);
           applyHitKnockback(o, 0, -1, dmg);
           pushFx('hit', o.x, o.y-29, tt, {color:'#dfe9ff', ang:Math.PI/2, v:dmg});
-          if(o.hp<=0) handleDeath(o,p,tt,p.name);
+          if(o.hp<=0){ slain++; handleDeath(o,p,tt,p.name); }
         }
       }
+      if(slain>(p.ultMulti||0)) p.ultMulti=slain;      // the most players one sword fall has killed this match (the 'sword_triple' achievement)
       pushFx('swordhit', sx, iy, tt, {});
     }});
   },
@@ -11167,7 +11204,7 @@ function ultCdOf(p){ return ULT_CD*pzCdMult(p); }
 const PRACTICE_SKILL_CD=2;
 const SKILLS={
   pizarro:  {name:'정복자의 휴식', kind:'buff', desc:'3초 동안 받는 피해 20% 감소 + 초당 체력 6 회복 · 움직여도 끊기지 않음'},
-  puppeteer:{name:'바느질', kind:'hit', desc:'실이 달린 바늘을 조준한 방향으로 발사 · 맞은 상대와 실이 이어지고 이동속도 25% 감소, 실로 이어진 동안 내가 받는 피해의 50%를 상대도 받음(실 하나당 최대 32) · 맞히면 쿨타임 없이 바로 바늘 빼기를 쓸 수 있음 (최대 8초) · 바늘 빼기: 실을 당겨 상대에게 30 피해를 주고 실이 끊김, 쿨타임은 바늘 빼기를 쓴 뒤부터 돌아요 (못 맞히면 바로 쿨타임)'},
+  puppeteer:{name:'바느질', kind:'hit', desc:'실이 달린 바늘을 조준한 방향으로 발사 · 맞은 상대와 실이 이어지고 이동속도 25% 감소, 실로 이어진 동안 내가 받는 피해의 50%를 상대도 받음(실 하나당 최대 32) · 맞히면 쿨타임 없이 바로 바늘 빼기를 쓸 수 있음 (바늘 빼기를 쓰기 전까지 실이 계속 이어짐) · 바늘 빼기: 실을 당겨 상대에게 30 피해를 주고 실이 끊김, 쿨타임은 바늘 빼기를 쓴 뒤부터 돌아요 (못 맞히면 바로 쿨타임)'},
   kan:      {name:'독두꺼비 함정', kind:'hit', desc:'바라보는 방향으로 독 두꺼비를 던짐 · 포물선으로 날아가 바닥에 닿으면 그 바닥이 독 바닥이 됨 (15초, 최대 2개, 나에게만 보임) · 적이 밟으면 독 바닥이 나타나고 3초 뒤 사라짐 · 밟은 적은 3초 동안 0.5초마다 5 피해'},
   pistol:   {name:'속사',        kind:'buff', desc:'1.8초 동안 연사 속도 2배'},
   smg:      {name:'연막탄',      kind:'hit',  desc:'주변 적을 2.5초 동안 둔화'},
@@ -11222,7 +11259,7 @@ function skillActiveBuff(p, tSec){
 const PUP_SEC=5, PUP_RANGE=700;
 const SEW_PULL_NAME='바늘 빼기', SEW_SHARE=0.5, SEW_SHARE_MAX=32;      // half of what the puppeteer takes, but at most 30 in all per thread
 const PUP_BLAST_SELF=60, PUP_BLAST_NEAR=30, PUP_BLAST_R=220;     // when the 5 seconds are over the puppet blows itself up: 60 to it, 30 to every enemy of the puppeteer around it
-const SEW_MAX_SEC=8, SEW_SLOW_MULT=0.75, SEW_DMG=30;             // 바느질 (the needle with a thread) ties the one it hits for at most 8 s: 25% slower until 바늘 빼기 (30 damage) cuts the thread
+const SEW_MAX_SEC=1e9, SEW_SLOW_MULT=0.75, SEW_DMG=30;             // 바느질 (the needle with a thread) ties the one it hits until the pull (no time limit now): 25% slower until 바늘 빼기 (30 damage) cuts the thread
 let puppetOK=false;                    // true only while the tick itself runs a controlled player's dash / shot
 function startPuppet(m, v, tSec, tMs){      // the thread of the puppeteer m has hit v: v is his puppet for PUP_SEC seconds
   m.puppetTarget=v.id; m.puppetUntil=tSec+PUP_SEC; v.puppetBy=m.id; v.puppetUntil=tSec+PUP_SEC;
@@ -13468,6 +13505,7 @@ function hostTickCore(dt,t){
     }
     if(p.hp<=0 && beforeHp>0){ handleDeath(p,null,t); continue; }
     p.ultOn = !!p.ultPending || (p.rushUntil>t/1000) || p.batting || (p.kanWingsUntil>t/1000);
+    p.kw = (p.kanWingsUntil>t/1000) ? 1 : 0;      // (the host and practice mode draw from this too: it used to be set only on clients from the snapshot, so 칸's wings showed in the replay but never on the host's own screen)
     p.invis = (p.invisUntil>t/1000);
     p.burning = !!p.burn; p.poisoned = !!p.poison || !!p.toadPois;
     if(matchEnded) continue;
@@ -13691,8 +13729,8 @@ function hostTickCore(dt,t){
         teleportCdRemain: snapR(Math.max(0, TELEPORT_CD - (t/1000-(p.lastTeleport===undefined?-9999:p.lastTeleport))),20),
         fireCdRemain: snapR(p.fireCdRemain||0,20),
         ultCdRemain: p.darkSub ? 0 : snapR(Math.max(0, ultCdOf(p) - (t/1000-(p.lastUlt===undefined?-9999:p.lastUlt))),20), darkSub:p.darkSub?1:0, darkArm:(p.darkArmUntil>t/1000)?1:0,
-        skillCdRemain: snapR(Math.max(0, skillCdOf(p) - (t/1000-(p.lastSkill===undefined?-9999:p.lastSkill))),20), buff:p.buff||null, skillUses:p.skillUses||0, ultUses:p.ultUses||0,
-        pz:p.pzStacks||0, pm:(p.pzMarkUntil>t/1000)?1:0, ultOn:!!p.ultOn, invis:!!p.invis, burning:!!p.burning, poisoned:!!p.poisoned, kw:(p.kanWingsUntil>t/1000)?1:0, gc:p.gc||0, pp:puppetMaster(p,t/1000)?p.puppetTarget:null, sw:p.sw||null, sewSlowed:!!p.sewSlowed, slowed:!!p.slowed, stunned:!!p.stunned, cardSlowed:!!p.cardSlowed, bladeSpin:!!p.bladeSpin, swordCharging:!!p.swordCharge, cannonFlying:!!p.cannonFly, chips:p.chips||0, cannonAng:p.cannonFly?Math.round(Math.atan2(p.vy||0,p.cannonFly.vx)*100)/100:0, totalDamageDealt:p.totalDamageDealt||0, channeling:!!p.teleportChannel, flaming:!!p.flaming, portalPair:p.portalPair||null, batting:!!p.batting, vacuumStacks:p.vacuumStacks||0, isZombie:!!p.isZombie, parkourItem:!!p.parkourItem, hsHiding:!!p.hsHiding, hsDisguiseW:p.hsDisguiseW, hsDisguiseH:p.hsDisguiseH, isSeeker:!!p.isSeeker,
+        skillCdRemain: snapR(Math.max(0, skillCdOf(p) - (t/1000-(p.lastSkill===undefined?-9999:p.lastSkill))),20), buff:p.buff||null, skillUses:p.skillUses||0, ultUses:p.ultUses||0, ultMulti:p.ultMulti||0,
+        pz:p.pzStacks||0, pm:(p.pzMarkUntil>t/1000)?1:0, ultOn:!!p.ultOn, invis:!!p.invis, burning:!!p.burning, poisoned:!!p.poisoned, kw:(p.kanWingsUntil>t/1000)?1:0, gc:p.gc||0, gp:Math.round(Math.min(1,(p.goldStay||0)/GOLD_PICK_STAY)*20)/20, pp:puppetMaster(p,t/1000)?p.puppetTarget:null, sw:p.sw||null, sewSlowed:!!p.sewSlowed, slowed:!!p.slowed, stunned:!!p.stunned, cardSlowed:!!p.cardSlowed, bladeSpin:!!p.bladeSpin, swordCharging:!!p.swordCharge, cannonFlying:!!p.cannonFly, chips:p.chips||0, cannonAng:p.cannonFly?Math.round(Math.atan2(p.vy||0,p.cannonFly.vx)*100)/100:0, totalDamageDealt:p.totalDamageDealt||0, channeling:!!p.teleportChannel, flaming:!!p.flaming, portalPair:p.portalPair||null, batting:!!p.batting, vacuumStacks:p.vacuumStacks||0, isZombie:!!p.isZombie, parkourItem:!!p.parkourItem, hsHiding:!!p.hsHiding, hsDisguiseW:p.hsDisguiseW, hsDisguiseH:p.hsDisguiseH, isSeeker:!!p.isSeeker,
         isHost:p.isHost,clan:p.clan||'',joinOrder:p.joinOrder,weapon:p.weapon,team:p.team,spinAngle:p.spinAngle,cos:p.cos,isBoss:p.isBoss?1:0,isMinion:p.isMinion?1:0,bt:p.bt,bossMaxHp:p.bossMaxHp,emIdx:p.emIdx,emRem:(p.emUntil?Math.max(0,Math.round((p.emUntil-t/1000)*20)/20):0)})),
       cq: (gameMode==='conquest' && cq) ? {s:cq.scores, h:cq.holder, c:cq.contested} : undefined,
       xm: (xm && xmV) ? xmV : undefined,
@@ -13769,12 +13807,11 @@ function handleDeath(p, killer, t, killerNameFallback){
   if(p.flameShield){ const wi=walls.indexOf(p.flameShield); if(wi!==-1) walls.splice(wi,1); p.flameShield=null; }
 
   if(!matchEnded && killer && killer.id!==p.id && !(killer.team!==null && killer.team!==undefined && killer.team===p.team)){
-    const rck=rewardCount[killer.id]||(rewardCount[killer.id]={k:0,a:0});
-    if(rck.k<MATCH_KILL_GOLD_MAX){ rck.k++; awardGold(killer.id, KILL_GOLD, '처치'); }
+    awardGold(killer.id, KILL_GOLD, '처치');
     const nowS=t/1000;
     for(const aid in (p.dmgBy||{})){
       if(aid===killer.id || aid===p.id || !players[aid]) continue;
-      if(nowS-p.dmgBy[aid]<=ASSIST_WINDOW){ players[aid].assistN=(players[aid].assistN||0)+1; const rca=rewardCount[aid]||(rewardCount[aid]={k:0,a:0}); if(rca.a<MATCH_ASSIST_GOLD_MAX){ rca.a++; awardGold(aid, ASSIST_GOLD, '어시스트'); } }
+      if(nowS-p.dmgBy[aid]<=ASSIST_WINDOW){ players[aid].assistN=(players[aid].assistN||0)+1; awardGold(aid, ASSIST_GOLD, '어시스트'); }
     }
   }
   p.dmgBy={};
@@ -14100,11 +14137,11 @@ function tickCtf(t, dt){
       if(!c || !c.alive || c.x===undefined){                       // the carrier died (or left): the flag falls where it was
         const lx=(c&&c.x!==undefined)?c.x:f.x, ly=(c&&c.y!==undefined)?c.y:f.y;
         if(c) c.ctfCarrying=false;
-        f.state='dropped'; f.carrierId=null; f.x=lx; f.y=ctfGroundBelow(lx, ly); f.returnAt=tSec+CTF_RETURN_SEC;
+        f.state='dropped'; f.carrierId=null; f.x=lx; f.y=ctfGroundBelow(lx, ly); f.returnAt=0;
         ctfMsg((c?c.name+'님이 ':'')+CTF_TEAM_NAMES[f.team]+' 깃발을 떨어뜨렸어요!');
         pushFx('spark', f.x, f.y-20, t, {color:TEAM_COLORS[f.team], ang:-Math.PI/2});
       } else { f.x=c.x; f.y=c.y; }
-    } else if(f.state==='dropped' && tSec>=f.returnAt){ ctfSendHome(f); ctfMsg(CTF_TEAM_NAMES[f.team]+' 깃발이 기지로 돌아갔어요'); }
+    }   // (a dropped flag no longer returns by itself: only a touch from its own team sends it home)
   }
   for(const id in players){
     const p=players[id];
@@ -14118,7 +14155,7 @@ function tickCtf(t, dt){
     }
     p.ctfCarrying=!!carrying;
     const own=ctf.flags[p.team];
-    if(carrying && own.state==='home' && Math.abs(p.x-own.homeX)<=CTF_CAPTURE_R && Math.abs(p.y-own.homeY)<=PLAYER_H+16){
+    if(carrying && Math.abs(p.x-own.homeX)<=CTF_CAPTURE_R && Math.abs(p.y-own.homeY)<=PLAYER_H+16){
       ctf.scores[p.team]++; ctfSendHome(carrying); p.ctfCarrying=false;
       awardObjectiveXp(id, CTF_CAPTURE_XP, CTF_CAPTURE_XP, '깃발 득점', p.weapon);       // (before the match can end on this very point)
       ctfMsg(p.name+'님이 깃발을 가져왔어요! '+teamLabelCtf(p.team)+' 득점 (블루 '+ctf.scores[0]+' : '+ctf.scores[1]+' 레드)', true);
@@ -14140,7 +14177,7 @@ function applyCtfSnapshot(d){
    Two teams on the flag maps. The pile in the middle holds GOLD_PILE lumps; a player takes one lump at a time (up to GOLD_MAX_CARRY, 10% slower per lump), and
    touching the own cart loads everything carried (GOLD_PTS points per lump, loaded gold is safe). A carrier who dies drops the lumps where he fell; anybody can pick
    them up. When the pile is empty it grows GOLD_REFILL_N lumps every GOLD_REFILL_SEC seconds. The better score after GOLD_DURATION seconds wins (a tie is a draw). */
-const GOLD_DURATION=180, GOLD_MAX_CARRY=3, GOLD_PILE=40, GOLD_REFILL_SEC=15, GOLD_REFILL_N=6, GOLD_PTS=10, GOLD_SLOW=0.1, GOLD_PILE_R=110, GOLD_CART_R=72, GOLD_DROP_R=48, GOLD_PICK_GAP=0.35, GOLD_XP_PER_LUMP=2;
+const GOLD_DURATION=180, GOLD_MAX_CARRY=3, GOLD_PILE=40, GOLD_REFILL_SEC=15, GOLD_REFILL_N=6, GOLD_PTS=10, GOLD_SLOW=0.1, GOLD_PILE_R=110, GOLD_CART_R=72, GOLD_DROP_R=48, GOLD_PICK_GAP=0.35, GOLD_PICK_STAY=0.8, GOLD_XP_PER_LUMP=2;
 let gdm=null, goldEndsLocal=0;          // gdm: {pile:{x,y,n}, carts:[{x,y,lumps}], pts:[a,b], drops:[{x,y,n}], endsAt, refillAt}
 function startGoldMatch(){
   if(!MAP || !MAP.ctf) return;
@@ -14164,7 +14201,7 @@ function goldNear(p, x, y, r){ return Math.abs(p.x-x)<=r && Math.abs(p.y-y)<=PLA
 function tickGold(t, dt){
   if(gameMode!=='gold' || !gdm || matchEnded) return;
   const tSec=t/1000;
-  if(gdm.pile.n<=0){ if(!gdm.refillAt) gdm.refillAt=tSec+GOLD_REFILL_SEC; else if(tSec>=gdm.refillAt){ gdm.pile.n=GOLD_REFILL_N; gdm.refillAt=0; ctfMsg('⛏ 중앙에 금이 새로 쌓였어요!'); } }
+  gdm.pile.n=GOLD_PILE;      // (never runs out)
   for(const id in players){
     const p=players[id];
     if(!p.alive && (p.gc||0)>0){                                         // a carrier who fell drops what he carried
@@ -14177,10 +14214,10 @@ function tickGold(t, dt){
       const d=gdm.drops[i]; if(!goldNear(p,d.x,d.y,GOLD_DROP_R)) continue;
       const take=Math.min(d.n, GOLD_MAX_CARRY-p.gc); p.gc+=take; d.n-=take; if(d.n<=0) gdm.drops.splice(i,1);
     }
-    if(p.gc<GOLD_MAX_CARRY && gdm.pile.n>0 && tSec>=(p.goldAt||0) && goldNear(p, gdm.pile.x, gdm.pile.y, GOLD_PILE_R)){
-      p.gc++; gdm.pile.n--; p.goldAt=tSec+GOLD_PICK_GAP;
-      pushFx('spark', gdm.pile.x, gdm.pile.y-30, t, {color:'#ffd34d', ang:-Math.PI/2});
-    }
+    if(p.gc<GOLD_MAX_CARRY && goldNear(p, gdm.pile.x, gdm.pile.y, GOLD_PILE_R)){      // the pile never runs out: one lump for every GOLD_PICK_STAY seconds spent standing at it
+      p.goldStay=(p.goldStay||0)+dt;
+      if(p.goldStay>=GOLD_PICK_STAY){ p.goldStay=0; p.gc++; pushFx('spark', gdm.pile.x, gdm.pile.y-30, t, {color:'#ffd34d', ang:-Math.PI/2}); }
+    } else p.goldStay=0;
     const cart=gdm.carts[p.team];
     if(p.gc>0 && cart && goldNear(p, cart.x, cart.y, GOLD_CART_R)){
       const n=p.gc; p.gc=0; cart.lumps+=n; gdm.pts[p.team]+=n*GOLD_PTS;
@@ -14235,6 +14272,8 @@ function drawGold(){
   const lab=pl.n>0 ? '금 '+pl.n : (gdm.rf!==undefined && !isHost ? '금 새로 쌓이는 중 '+Math.ceil(gdm.rf||0) : '금 새로 쌓이는 중 '+Math.max(0,Math.ceil((gdm.refillAt||0)-now/1000)));
   ctx.strokeText(lab, pl.x, pl.y-148); ctx.fillText(lab, pl.x, pl.y-148); ctx.restore();
   for(const d of gdm.drops) drawGoldHeap(d.x, d.y, d.n, 0.8, now);
+  for(const id in players){ const p=players[id]; if(!(p.gp>0) || p.alive===false || p.x===undefined) continue;      // the 0.8 s bar while standing at the pile
+    const bx=p.x-18, by=p.y-PLAYER_H-38; ctx.fillStyle='rgba(0,0,0,0.55)'; ctx.fillRect(bx,by,36,5); ctx.fillStyle='#ffd34d'; ctx.fillRect(bx,by,36*p.gp,5); }
   for(const id in players){ const p=players[id]; if((p.gc||0)<=0 || p.alive===false || p.x===undefined) continue;
     for(let i=0;i<p.gc;i++){ const lx=p.x+(i-(p.gc-1)/2)*16, ly=p.y-PLAYER_H-20; ctx.fillStyle='#e0a81c'; ctx.strokeStyle='#8a5f00'; ctx.lineWidth=1.5; ctx.beginPath(); ctx.ellipse(lx,ly,8,6,0,0,7); ctx.fill(); ctx.stroke(); ctx.fillStyle='#ffe27a'; ctx.beginPath(); ctx.ellipse(lx-2,ly-2,3,2,-0.5,0,7); ctx.fill(); } }
 }
@@ -14478,7 +14517,7 @@ function finishDuelRepick(){
   for(const id in players){
     const p=players[id]; map[id]=p.weapon;
     if(gameMode!=='tournament'){ p.duelUsed=(p.duelUsed||[]); if(p.weapon && !p.duelUsed.includes(p.weapon)) p.duelUsed.push(p.weapon); }
-    p.lastDash=clock; p.lastTeleport=clock; p.lastUlt=clock; p.lastSkill=clock; p.skillUses=0; p.ultUses=0; p.lastShot=0;
+    p.lastDash=clock; p.lastTeleport=clock; p.lastUlt=clock; p.lastSkill=clock; p.skillUses=0; p.ultUses=0; p.ultMulti=0; p.lastShot=0;
     p.cardDmg=0; p.queenUntil=0; p.puppetUntil=0; p.puppetTarget=null; p.puppetBy=null; p.buffs={}; p.barrier=null; p.buff=null; p.hasted=false; p.focusOn=false; p.ultPending=null; p.rushUntil=0; p.invisUntil=0; p.burn=null; p.poison=null; p.toadPois=null; p.kanWingsUntil=0; p.batUntil=0; p.batting=false; p.slowUntil=0; p.slowed=false;
     p.flameHeldSince=null; p.flameUsed=0; p.flameOverheatUntil=0; p.flaming=false; p.portalPair=null; p.portalCooldownUntil=0; p.vacuumStacks=0; p.pzStacks=0; p.pzMarkUntil=0; p.chips=0; p.freeVolleys=0; p.darkSub=null; p.darkArmUntil=0; p.darkLand=null;
   }
@@ -17002,16 +17041,16 @@ function render(fxDt){
       const timeTxt = ctf.overtime ? '연장! 다음 득점이 결승점' : (mm+':'+(ss<10?'0':'')+ss);
       const myT=(me && me.team!==null && me.team!==undefined) ? me.team : 0, own=ctf.flags[myT], en=ctf.flags[1-myT];
       let st='상대 깃발을 우리 기지로 가져오세요 ('+ctf.target+'점 선취)';
-      if(en.state==='carried' && en.carrierId===myId) st = own.state==='home' ? '🚩 깃발을 들고 있어요! 우리 기지로 가세요' : '🚩 깃발을 들고 있어요 - 우리 깃발이 기지에 없어서 득점할 수 없어요!';
+      if(en.state==='carried' && en.carrierId===myId) st = '🚩 깃발을 들고 있어요! 우리 기지로 가세요';
       else if(own.state==='carried') st='⚠ 우리 깃발을 뺏겼어요! 깃발을 든 상대를 막으세요';
-      else if(own.state==='dropped') st='우리 깃발이 떨어졌어요 - 닿으면 바로 기지로 돌아가요';
+      else if(own.state==='dropped') st='우리 깃발이 떨어졌어요 - 닿으면 바로 기지로 돌아가요 (저절로는 안 돌아가요)';
       else if(en.state==='carried') st='우리 팀이 상대 깃발을 가졌어요! 지켜 주세요';
       else if(en.state==='dropped') st='상대 깃발이 떨어졌어요 - 가서 주우세요';
       document.getElementById('ctfLabel').innerHTML = '<span style="color:'+TEAM_COLORS[0]+'">블루 '+ctf.scores[0]+'</span> : <span style="color:'+TEAM_COLORS[1]+'">'+ctf.scores[1]+' 레드</span>  ·  '+timeTxt+'<br><span style="font-size:12px;font-weight:600;opacity:.9">'+st+'</span>';
     }
     if(gameMode==='gold' && gdm){
       const remain=Math.max(0, Math.ceil((goldEndsLocal-Date.now())/1000)), mm=Math.floor(remain/60), ss=remain%60, carry=(me&&me.gc)||0;
-      let st = carry>0 ? '⛏ 금 '+carry+'개 운반 중 - 우리 광차로 가세요!' : (gdm.pile.n>0 ? '중앙의 금을 집어 우리 광차로 가져가세요 (최대 '+GOLD_MAX_CARRY+'개)' : '중앙의 금이 다 떨어졌어요 - 곧 새로 쌓여요');
+      let st = carry>0 ? '⛏ 금 '+carry+'개 운반 중 - 우리 광차로 가세요!' : '중앙 금 더미 위에 0.8초 서 있으면 금이 하나씩 쌓여요 → 우리 광차로 가져가세요 (최대 '+GOLD_MAX_CARRY+'개)';
       document.getElementById('ctfLabel').innerHTML = '<span style="color:'+TEAM_COLORS[0]+'">블루 '+gdm.pts[0]+'</span> : <span style="color:'+TEAM_COLORS[1]+'">'+gdm.pts[1]+' 레드</span>  ·  '+mm+':'+(ss<10?'0':'')+ss+'<br><span style="font-size:12px;font-weight:600;opacity:.9">'+st+'</span>';
     }
     try{ renderModeHud(); }catch(e){}
