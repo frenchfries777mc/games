@@ -5044,7 +5044,7 @@ function shuffle(arr){ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.
 /* ===== the version of this file =====
    Players with different versions CAN meet and play together: the automatic matchmaking uses the same room names for every version (online-<mode>-<map>-<slot>), and nobody is refused because of a different build.
    The build is only sent along with the join message and the lobby (for information); the corner of the screen shows it. */
-const GAME_BUILD='build 2026-10-18-v386';
+const GAME_BUILD='build 2026-10-18-v387';
 const GAME_VERSION='0.8', GAME_VERSION_NAME='황금을 찾아서';   // 게임 버전 이름: versions.json의 title과 같게 (빌드마다 바꾸지 않음)
 const WEEKLY_EVENTS=[
   {id:'lowg',    name:'저중력 난투', desc:'몸이 둥실둥실, 중력이 약해진 난투', rules:{grav:0.6}},
@@ -11668,7 +11668,7 @@ function drawAbilityPreview(){
 }
 function puppetSide(a){ if(a && a.puppetBy && a.puppetUntil>(curTickSec||0)){ const m=players[a.puppetBy]; if(m && m.puppetTarget===a.id) return m; } return a; }   // a puppet fights on the side of the one who pulls his strings
 let curTickSec=0;
-function isAlly(a,b){ if(a && b && a.id!==b.id && (a.puppetBy||b.puppetBy)){ const a2=puppetSide(a), b2=puppetSide(b); if(a2!==a || b2!==b){ if(a2.id===b2.id) return true; a=a2; b=b2; } }
+function isAlly(a,b){ if(a && b && a.id!==b.id && (a.puppetBy||b.puppetBy)){ const a2=puppetSide(a), b2=puppetSide(b); if(a2!==a || b2!==b){ if(a2.id===b2.id) return !((a2===b && b2===b) || (b2===a && a2===a)); a=a2; b=b2; } }      // (a puppet and the one pulling his strings are NOT allies: the puppet can hurt him)
   if(tn && gameMode==='tournament'){ if(!a || !b || a.id===b.id) return false; return tn.partner[a.id]!==b.id; }      // (tournament: everybody except my own opponent is untouchable)
   return !!a && !!b && a.id!==b.id && a.team!==null && a.team!==undefined && a.team===b.team; }
 const GAMBLE_SLOW_SEC = 3;
