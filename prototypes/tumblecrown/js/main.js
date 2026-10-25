@@ -1,6 +1,6 @@
 // Tumblecrown · © 2026 Frenchfries777 · CC BY-NC-ND 4.0
 // 로비, 대기실, 멀티(PeerJS), 입력, 화면 갱신
-import { BUILD, VERSION, WEPS, WEP_IDS, COLORS, BOT_NAMES, MAX_PLAYERS, DASH } from './data.js';
+import { BUILD, VERSION, CLS, CLS_IDS, COLORS, BOT_NAMES, MAX_PLAYERS, DASH } from './data.js';
 import { createGame, step, snapshot, ST, PILLARS, NT } from './sim.js';
 import { View } from './render.js';
 import { SFX } from './sfx.js';
@@ -15,7 +15,7 @@ const lsSet = (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)); } ca
 const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 const hex = c => '#' + c.toString(16).padStart(6, '0');
 
-const SAVE = Object.assign({ wep: 'hammer', col: 0, bots: 3, set: { vol: 70, px: 3, bloom: 1 } }, lsGet('tumblecrown.v1', {}));
+const SAVE = Object.assign({ cls: 'knight', col: 0, bots: 3, set: { vol: 70, px: 3, bloom: 1 } }, lsGet('tumblecrown.v1', {}));
 const save = () => lsSet('tumblecrown.v1', SAVE);
 let UID = lsGet('tumblecrown.uid', null); if (!UID) { UID = 'u' + Math.random().toString(36).slice(2, 10); lsSet('tumblecrown.uid', UID); }
 $('ver').textContent = 'v' + VERSION + ' · 빌드 ' + BUILD + ' · 프로토타입';
@@ -30,7 +30,7 @@ function sizeOv() { const d = Math.min(2, devicePixelRatio || 1); ov.width = inn
 sizeOv();
 
 // 로비 뒤 장면: 섬 가운데 왕관을 둘러싼 세 싸움꾼
-const DEMO = [{ id: 'd0', col: COLORS[0].c, wep: 'hammer', x: -2.6, z: 1.2 }, { id: 'd1', col: COLORS[1].c, wep: 'spear', x: 2.8, z: 1.0 }, { id: 'd2', col: COLORS[2].c, wep: 'fist', x: 0.2, z: 3.4 }];
+const DEMO = [{ id: 'd0', col: COLORS[0].c, cls: 'knight', x: -3.4, z: 1.6 }, { id: 'd1', col: COLORS[1].c, cls: 'witch', x: 3.4, z: 1.2 }, { id: 'd2', col: COLORS[2].c, cls: 'viking', x: -0.4, z: 4.2 }, { id: 'd3', col: COLORS[3].c, cls: 'skeleton', x: 5.8, z: 4.6 }, { id: 'd4', col: COLORS[4].c, cls: 'hunter', x: -6.2, z: 4.2 }];
 function demoScene() { view.setPlayers(DEMO); view.ring = undefined; view.resetTiles(); view.fit(true); S.demoT = 0; }
 const DEMO_TL = Array.from({ length: NT }, (c, i) => PILLARS.includes(i) ? '3' : '0').join('');
 function demoSnap(t) {
@@ -48,6 +48,7 @@ demoScene();
 
 /* ---------- 화면 전환 ---------- */
 function show(id) {
+  if (id !== 'sRoom') view.setPreview(null);
   S.scr = id; document.querySelectorAll('.scr').forEach(e => e.classList.toggle('on', e.id === id));
   const game = id === 'game'; $('hud').classList.toggle('on', game); $('touch').classList.toggle('on', game && document.body.classList.contains('touch'));
 }
@@ -87,11 +88,11 @@ function menu(go) {
   else if (go === 'settings') { paintSettings(); show('sSettings'); }
   else if (go === 'site') location.href = '../../';
 }
-function meSlot() { return { uid: UID, name: myName(), wep: SAVE.wep, col: SAVE.col }; }
+function meSlot() { return { uid: UID, name: myName(), cls: SAVE.cls, col: SAVE.col }; }
 
-/* ---------- 무기 소개 ---------- */
-function wepCard(id, on) { const w = WEPS[id]; return '<div class="wc' + (on ? ' on' : '') + '" data-w="' + id + '"><b>' + w.name + '</b><small>' + w.desc + '</small><em>기술: ' + w.sk.name + '</em><small>' + w.sk.desc + '</small></div>'; }
-function paintWepInfo() { $('wepInfo').innerHTML = WEP_IDS.map(id => wepCard(id, false)).join(''); }
+/* ---------- 직업 소개 ---------- */
+function clsCard(id) { const c = CLS[id]; return '<div class="wc"><b>' + c.name + '</b><small>' + c.desc + '</small><em>공격: ' + c.atk + '</em><em>기술: ' + c.sk.name + '</em><small>' + c.sk.desc + '</small></div>'; }
+function paintWepInfo() { $('wepInfo').innerHTML = CLS_IDS.map(clsCard).join(''); }
 
 /* ---------- 설정 ---------- */
 function seg(id, cur, f) { const el = $(id); el.querySelectorAll('button').forEach(b => { b.classList.toggle('on', +b.dataset.v === +cur); b.onclick = () => { SFX.play('click'); f(+b.dataset.v); el.querySelectorAll('button').forEach(x => x.classList.toggle('on', x === b)); save(); }; }); }
@@ -111,38 +112,44 @@ function renderNotes() {
   box.innerHTML = list.map((n, i) => '<details' + (i ? '' : ' open') + '><summary><b>' + esc(n.title) + '</b><small>' + esc(n.date) + ' · ' + esc(n.build) + '</small></summary><ul>' + n.items.map(t => '<li>' + esc(t) + '</li>').join('') + '</ul></details>').join('');
 }
 
-/* ---------- 대기실 ---------- */
+/* ---------- 대기실 = 직업 고르기 화면 ---------- */
+// 왼쪽 직업 목록, 가운데 받침돌 위 캐릭터, 오른쪽 능력 카드, 위에 참가자 줄, 아래에 색·봇·시작
 function openRoom() { show('sRoom'); paintRoom(); }
+const BARS = ['힘', '속도', '사거리', '난이도'];
 function paintRoom() {
-  const host = S.net !== 'guest', mine = S.slots.find(s => s.uid === UID) || meSlot();
+  const host = S.net !== 'guest', mine = S.slots.find(s => s.uid === UID) || meSlot(), c = CLS[mine.cls] || CLS.knight;
   $('roomTitle').textContent = S.net === 'solo' ? '봇과 연습' : host ? '대결 준비 · 방장' : '대결 준비';
-  $('invRow').style.display = S.net === 'host' ? '' : 'none';
-  $('wepPick').innerHTML = WEP_IDS.map(id => wepCard(id, mine.wep === id)).join('');
-  $('wepPick').querySelectorAll('.wc').forEach(el => el.onclick = () => { SFX.play('click'); SAVE.wep = el.dataset.w; save(); pick(); });
+  $('inviteBtn').style.display = S.net === 'host' ? '' : 'none';
+  $('clsList').innerHTML = CLS_IDS.map((id, k) => '<button data-c="' + id + '"' + (mine.cls === id ? ' class="on"' : '') + '><i>' + (k + 1) + '</i><b>' + CLS[id].name + '</b></button>').join('');
+  $('clsList').querySelectorAll('button').forEach(el => el.onclick = () => { SFX.play('click'); SAVE.cls = el.dataset.c; save(); pick(); });
+  $('clsInfo').innerHTML = '<h2>' + c.name + '</h2><p>' + c.desc + '</p>' + BARS.map((n, k) => '<div class="bar"><span>' + n + '</span><u>' + '<i class="on"></i>'.repeat(c.st[k]) + '<i></i>'.repeat(5 - c.st[k]) + '</u></div>').join('') +
+    '<h4>기본 공격</h4><p>' + c.atk + '</p><h4>기술 · ' + c.sk.name + '</h4><p>' + c.sk.desc + '</p>';
   const taken = new Set(S.slots.filter(s => s.uid !== UID).map(s => s.col));
-  $('colPick').innerHTML = COLORS.map((c, i) => '<button style="background:' + hex(c.c) + '" title="' + c.name + '" data-c="' + i + '"' + (mine.col === i ? ' class="on"' : '') + (taken.has(i) ? ' disabled' : '') + '></button>').join('');
+  $('colPick').innerHTML = COLORS.map((cc, i) => '<button style="background:' + hex(cc.c) + '" title="' + cc.name + '" data-c="' + i + '"' + (mine.col === i ? ' class="on"' : '') + (taken.has(i) ? ' disabled' : '') + '></button>').join('');
   $('colPick').querySelectorAll('button').forEach(el => el.onclick = () => { SFX.play('click'); SAVE.col = +el.dataset.c; save(); pick(); });
   const all = roster();
-  $('cnt').textContent = '(' + all.length + '/' + MAX_PLAYERS + ')';
-  $('slots').innerHTML = all.map(s => '<div class="slot' + (s.uid === UID ? ' me' : '') + '"><i style="background:' + hex(COLORS[s.col].c) + '"></i><b>' + esc(s.name) + '</b><small>' + WEPS[s.wep].name + (s.bot ? ' · 봇' : '') + '</small></div>').join('');
+  $('slots').innerHTML = all.map(s => '<div class="slot' + (s.uid === UID ? ' me' : '') + '"><i style="background:' + hex(COLORS[s.col].c) + '"></i><b>' + esc(s.name) + '</b><small>' + CLS[s.cls].name + (s.bot ? ' · 봇' : '') + '</small></div>').join('') +
+    '<span class="cnt">' + all.length + '/' + MAX_PLAYERS + '</span>';
   $('botN').textContent = S.botN; $('botRow').style.display = host ? '' : 'none';
   $('startBtn').style.display = host ? '' : 'none';
-  $('roomMsg').textContent = host ? (all.length < 2 ? '봇을 한 명 이상 넣거나 친구를 초대해 주세요.' : '') : '방장이 시작하기를 기다리는 중...';
+  $('roomMsg').textContent = host ? (all.length < 2 ? '봇을 넣거나 친구를 초대해 주세요.' : '') : '방장이 시작하기를 기다리는 중...';
+  view.setPreview(mine.cls, COLORS[mine.col].c);
 }
+addEventListener('keydown', e => { if (S.scr !== 'sRoom') return; const n = +e.key; if (n >= 1 && n <= 7) { SAVE.cls = CLS_IDS[n - 1]; save(); pick(); } });
 // 사람 + 봇 목록 (봇은 남은 색과 무기를 받아요)
 function roster() {
   const out = S.slots.map(s => Object.assign({}, s)), used = new Set();
   for (const s of out) { if (used.has(s.col)) s.col = COLORS.findIndex((c, i) => !used.has(i)); used.add(s.col); }
   const nb = Math.max(0, Math.min(S.botN, MAX_PLAYERS - out.length));
-  for (let i = 0; i < nb; i++) { const col = COLORS.findIndex((c, k) => !used.has(k)); used.add(col); out.push({ bot: true, name: BOT_NAMES[i], wep: WEP_IDS[(i + 1) % 3], col }); }
+  for (let i = 0; i < nb; i++) { const col = COLORS.findIndex((c, k) => !used.has(k)); used.add(col); out.push({ bot: true, name: BOT_NAMES[i], cls: CLS_IDS[(i * 3 + 1) % 7], col }); }
   return out;
 }
 S.botN = SAVE.bots;
 $('botMinus').onclick = () => { SFX.play('click'); S.botN = Math.max(0, S.botN - 1); SAVE.bots = S.botN; save(); paintRoom(); hostLobby(); };
 $('botPlus').onclick = () => { SFX.play('click'); S.botN = Math.min(MAX_PLAYERS - S.slots.length, S.botN + 1); SAVE.bots = S.botN; save(); paintRoom(); hostLobby(); };
 function pick() {
-  if (S.net === 'guest') { send({ t: 'pick', wep: SAVE.wep, col: SAVE.col }); const m = S.slots.find(s => s.uid === UID); if (m) { m.wep = SAVE.wep; m.col = SAVE.col; } paintRoom(); return; }
-  const m = S.slots.find(s => s.uid === UID); if (m) { m.wep = SAVE.wep; if (!S.slots.some(s => s !== m && s.col === SAVE.col)) m.col = SAVE.col; }
+  if (S.net === 'guest') { send({ t: 'pick', cls: SAVE.cls, col: SAVE.col }); const m = S.slots.find(s => s.uid === UID); if (m) { m.cls = SAVE.cls; m.col = SAVE.col; } paintRoom(); return; }
+  const m = S.slots.find(s => s.uid === UID); if (m) { m.cls = SAVE.cls; if (!S.slots.some(s => s !== m && s.col === SAVE.col)) m.col = SAVE.col; }
   paintRoom(); hostLobby();
 }
 $('startBtn').onclick = () => { SFX.unlock(); SFX.play('click'); if (S.net === 'guest') return; if (roster().length < 2) return; beginGame(); };
@@ -228,7 +235,7 @@ function hostMsg(c, d) {
   if (d.t === 'hello') {
     const uid = String(d.uid || '').slice(0, 20), name = String(d.name || '손님').slice(0, 15);
     c._uid = uid; c._name = name;
-    const wep = WEPS[d.wep] ? d.wep : 'hammer';
+    const cls = CLS[d.cls] ? d.cls : 'knight';
     if (S.G) { // 경기 중: 봇 자리를 맡거나 내 자리로 돌아와요
       const p = S.G.players.find(q => q.uid === uid) || S.G.players.find(q => q.bot);
       if (!p) { c.send({ t: 'deny', why: '방이 가득 찼어요 (최대 6명).' }); setTimeout(() => c.close(), 300); return; }
@@ -241,13 +248,13 @@ function hostMsg(c, d) {
     if (!sl) {
       if (S.slots.length >= MAX_PLAYERS) { c.send({ t: 'deny', why: '방이 가득 찼어요 (최대 6명).' }); setTimeout(() => c.close(), 300); return; }
       const used = new Set(S.slots.map(s => s.col)); let col = +d.col | 0; if (used.has(col) || !COLORS[col]) col = COLORS.findIndex((x, i) => !used.has(i));
-      sl = { uid, name, wep, col }; S.slots.push(sl); S.botN = Math.min(S.botN, MAX_PLAYERS - S.slots.length);
+      sl = { uid, name, cls, col }; S.slots.push(sl); S.botN = Math.min(S.botN, MAX_PLAYERS - S.slots.length);
     }
     S.conns[uid] = c; c.send({ t: 'welcome', uid }); hostLobby(); if (S.scr === 'sRoom') paintRoom(); SFX.play('click');
     return;
   }
   const uid = c._uid; if (!uid) return;
-  if (d.t === 'pick' && !S.G) { const sl = S.slots.find(s => s.uid === uid); if (sl) { if (WEPS[d.wep]) sl.wep = d.wep; const col = +d.col | 0; if (COLORS[col] && !S.slots.some(s => s !== sl && s.col === col)) sl.col = col; hostLobby(); if (S.scr === 'sRoom') paintRoom(); } }
+  if (d.t === 'pick' && !S.G) { const sl = S.slots.find(s => s.uid === uid); if (sl) { if (CLS[d.cls]) sl.cls = d.cls; const col = +d.col | 0; if (COLORS[col] && !S.slots.some(s => s !== sl && s.col === col)) sl.col = col; hostLobby(); if (S.scr === 'sRoom') paintRoom(); } }
   else if (d.t === 'i' && S.G) { const pid = c._pid; if (!pid) return; const r = S.rin[pid] || (S.rin[pid] = {}); const once = { dash: r.dash || d.dash, sk: r.sk || d.sk }; Object.assign(r, d, once); }
 }
 function dropConn(c) {
@@ -263,7 +270,7 @@ function startGuest(code) {
   const tm = setTimeout(() => { if (S.peer === p && S.scr !== 'sRoom' && !inGame()) { homeMsg('연결 시간이 초과됐어요. 초대를 다시 받아 주세요.'); leaveNet(); } }, 15000);
   p.on('open', () => {
     const c = p.connect(PREFIX + code, { reliable: true, serialization: 'json' }); S.conn = c;
-    c.on('open', () => c.send({ t: 'hello', uid: UID, name: myName(), wep: SAVE.wep, col: SAVE.col }));
+    c.on('open', () => c.send({ t: 'hello', uid: UID, name: myName(), cls: SAVE.cls, col: SAVE.col }));
     c.on('data', d => { clearTimeout(tm); guestMsg(d); });
     c.on('close', () => { if (S.conn !== c) return; const was = inGame(); leaveNet(); toLobby(was ? '방장이 나가서 대결이 끝났어요.' : '방이 닫혔어요.'); });
   });
@@ -283,9 +290,9 @@ function guestMsg(d) {
 /* ---------- 경기 시작 ---------- */
 function beginGame() {
   const all = roster();
-  const slots = all.map((s, i) => ({ id: 'p' + i, uid: s.uid || null, name: s.name, bot: !!s.bot, wep: s.wep, col: COLORS[s.col].c }));
+  const slots = all.map((s, i) => ({ id: 'p' + i, uid: s.uid || null, name: s.name, bot: !!s.bot, cls: s.cls, col: COLORS[s.col].c }));
   S.G = createGame(slots); S.rin = {};
-  S.meta = slots.map(s => ({ id: s.id, name: s.name, wep: s.wep, col: s.col, bot: s.bot }));
+  S.meta = slots.map(s => ({ id: s.id, name: s.name, cls: s.cls, col: s.col, bot: s.bot }));
   S.me = slots.find(s => s.uid === UID).id;
   if (S.net === 'host') for (const uid in S.conns) { const p = S.G.players.find(q => q.uid === uid); if (p) { S.conns[uid]._pid = p.id; S.conns[uid].send({ t: 'start', pid: p.id, meta: S.meta }); } }
   startClient();
@@ -294,7 +301,7 @@ function startClient() {
   S.acc = 0; S.sendAcc = 0; S.evq = []; S.sendEv = []; S.overT = 0; S.resultShown = false; S.lastCd = 9;
   if (S.G) S.snap = snapshot(S.G);
   view.setPlayers(S.meta); view.resetTiles(); view.ring = undefined; view.fit(true);
-  $('feed').innerHTML = ''; $('skName').textContent = WEPS[(S.meta.find(m => m.id === S.me) || {}).wep || 'hammer'].sk.name;
+  $('feed').innerHTML = ''; $('skName').textContent = CLS[(S.meta.find(m => m.id === S.me) || {}).cls || 'knight'].sk.name;
   exitArm(false); show('game'); paintBoard(true);
 }
 function toLobby(msg) { show('sLobby'); demoScene(); homeMsg(msg || ''); }
@@ -381,7 +388,7 @@ function drawOverlay(s, t) {
   oc.textAlign = 'center'; oc.lineJoin = 'round';
   for (const a of s.p) {
     if (a[6] === ST.out) continue; const e = view.ents.get(a[0]); if (!e) continue;
-    const m = S.meta.find(x => x.id === a[0]) || {}, p = view.project(e.x, e.y + 3.15 + (s.c[3] === a[0] ? 0.9 : 0), e.z);
+    const m = S.meta.find(x => x.id === a[0]) || {}, p = view.project(e.x, e.y + 3.4 + (s.c[3] === a[0] ? 0.9 : 0), e.z);
     const pct = a[9], c = pct < 40 ? '#ffffff' : pct < 90 ? '#ffe08a' : pct < 140 ? '#ff9c4a' : '#ff5a4a';
     oc.font = '700 12px Galmuri, sans-serif'; oc.lineWidth = 4; oc.strokeStyle = '#14203a'; oc.strokeText(m.name || '', p.x, p.y - 16); oc.fillStyle = a[0] === S.me ? '#ffe08a' : '#fff8ea'; oc.fillText(m.name || '', p.x, p.y - 16);
     oc.font = '700 16px Galmuri, sans-serif'; oc.strokeText(pct + '%', p.x, p.y); oc.fillStyle = c; oc.fillText(pct + '%', p.x, p.y);
@@ -400,7 +407,7 @@ function hudTick(s, dt) {
   const me = s.p.find(a => a[0] === S.me);
   if (me) {
     if (me[6] === ST.out && s.ph === 'play') { $('subMsg').textContent = '다시 등장까지 ' + Math.ceil(me[18]); $('subMsg').style.opacity = 1; bigT = Math.max(bigT, 0.1); }
-    const w = WEPS[(S.meta.find(m => m.id === S.me) || {}).wep || 'hammer'];
+    const w = CLS[(S.meta.find(m => m.id === S.me) || {}).cls || 'knight'];
     const dc = Math.min(1, me[16] / DASH.cd), sc = Math.min(1, me[17] / w.sk.cd);
     $('skD').querySelector('.cd').style.height = dc * 100 + '%'; $('skS').querySelector('.cd').style.height = sc * 100 + '%';
     $('tD').querySelector('.cd').style.height = dc * 100 + '%'; $('tS').querySelector('.cd').style.height = sc * 100 + '%';
