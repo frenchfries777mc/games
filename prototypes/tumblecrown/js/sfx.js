@@ -1,31 +1,50 @@
 // Tumblecrown · © 2026 Frenchfries777 · CC BY-NC-ND 4.0
-// 효과음: 파일 없이 소리를 바로 만들어요
-let ctx = null, master = null, vol = 0.7;
-export const SFX = {
-  unlock() { if (ctx) { if (ctx.state === 'suspended') ctx.resume(); return; } try { ctx = new (window.AudioContext || window.webkitAudioContext)(); master = ctx.createGain(); master.gain.value = vol; master.connect(ctx.destination); } catch (e) { ctx = null; } },
-  setVol(v) { vol = v; if (master) master.gain.value = v; },
-  play(k, s = 1) {
-    if (!ctx || vol <= 0) return; const t = ctx.currentTime;
-    if (k === 'click') tone(660, 0.05, 'square', 0.12, t);
-    else if (k === 'swing') noise(0.12, 900 + s * 900, 0.18, t, 'bandpass');
-    else if (k === 'hit') { noise(0.08 + s * 0.006, 1400, 0.35 + Math.min(0.4, s * 0.02), t, 'lowpass'); sweep(180 + s * 4, 50, 0.16 + s * 0.006, 'sine', 0.5, t); }
-    else if (k === 'dash') noise(0.14, 2200, 0.12, t, 'highpass');
-    else if (k === 'slam') { sweep(120, 35, 0.4, 'sine', 0.7, t); noise(0.3, 500, 0.4, t, 'lowpass'); }
-    else if (k === 'pick') { [784, 988, 1319].forEach((f, i) => tone(f, 0.12, 'triangle', 0.18, t + i * 0.07)); }
-    else if (k === 'drop') sweep(700, 300, 0.2, 'triangle', 0.18, t);
-    else if (k === 'fall') sweep(900, 120, 0.7, 'sine', 0.16, t);
-    else if (k === 'ko') { tone(392, 0.1, 'square', 0.12, t); tone(523, 0.16, 'square', 0.12, t + 0.09); }
-    else if (k === 'crack') noise(0.25, 300, 0.25, t, 'lowpass');
-    else if (k === 'count') tone(523, 0.12, 'square', 0.14, t);
-    else if (k === 'go') { tone(784, 0.25, 'square', 0.16, t); tone(1047, 0.3, 'square', 0.12, t + 0.05); }
-    else if (k === 'win') { [523, 659, 784, 1047].forEach((f, i) => tone(f, 0.22, 'triangle', 0.2, t + i * 0.12)); }
+// 효과음: 파일 없이 소리를 만들어요 (배경음악은 music.js)
+let ac = null, master = null, vol = 0.7, noiseBuf = null;
+function ctx() {
+  if (!ac) { try { ac = new (window.AudioContext || window.webkitAudioContext)(); master = ac.createGain(); master.gain.value = vol; master.connect(ac.destination); const n = ac.sampleRate; noiseBuf = ac.createBuffer(1, n, n); const d = noiseBuf.getChannelData(0); for (let i = 0; i < n; i++) d[i] = Math.random() * 2 - 1; } catch (e) { return null; } }
+  if (ac.state === 'suspended') ac.resume();
+  return ac;
+}
+export function setVol(v) { vol = v; if (master) master.gain.value = v; }
+export function unlock() { ctx(); }
+function tone(f0, f1, dur, type = 'square', g = 0.2, delay = 0) {
+  const a = ctx(); if (!a) return; const t = a.currentTime + delay, o = a.createOscillator(), gn = a.createGain();
+  o.type = type; o.frequency.setValueAtTime(f0, t); o.frequency.exponentialRampToValueAtTime(Math.max(20, f1), t + dur);
+  gn.gain.setValueAtTime(g, t); gn.gain.exponentialRampToValueAtTime(0.001, t + dur); o.connect(gn); gn.connect(master); o.start(t); o.stop(t + dur + 0.02);
+}
+function noise(dur, f, q = 1, g = 0.25, type = 'bandpass', delay = 0, f1) {
+  const a = ctx(); if (!a) return; const t = a.currentTime + delay, s = a.createBufferSource(), fl = a.createBiquadFilter(), gn = a.createGain();
+  s.buffer = noiseBuf; fl.type = type; fl.frequency.setValueAtTime(f, t); if (f1) fl.frequency.exponentialRampToValueAtTime(f1, t + dur); fl.Q.value = q;
+  gn.gain.setValueAtTime(g, t); gn.gain.exponentialRampToValueAtTime(0.001, t + dur); s.connect(fl); fl.connect(gn); gn.connect(master); s.start(t, Math.random() * 0.5); s.stop(t + dur + 0.02);
+}
+let last = {};
+export function play(k) {
+  const now = performance.now(); if (last[k] && now - last[k] < 40) return; last[k] = now;
+  switch (k) {
+    case 'swing': noise(0.14, 2400, 1.5, 0.22, 'bandpass', 0, 700); break;
+    case 'charge': tone(300, 900, 0.42, 'sine', 0.12); tone(450, 1350, 0.42, 'triangle', 0.06, 0.05); break;
+    case 'hit': noise(0.08, 900, 1, 0.3, 'lowpass'); tone(180, 70, 0.1, 'triangle', 0.25); break;
+    case 'clang': tone(1400, 900, 0.18, 'square', 0.08); tone(2100, 1500, 0.15, 'triangle', 0.08); break;
+    case 'arrow': noise(0.18, 3200, 3, 0.12, 'bandpass', 0, 1200); break;
+    case 'orb': tone(900, 1400, 0.15, 'sine', 0.12); break;
+    case 'heal': tone(660, 660, 0.16, 'sine', 0.12); tone(990, 990, 0.2, 'sine', 0.1, 0.08); break;
+    case 'phit': noise(0.1, 600, 1, 0.3, 'lowpass'); tone(140, 60, 0.12, 'sawtooth', 0.12); break;
+    case 'down': tone(300, 90, 0.5, 'sawtooth', 0.15); break;
+    case 'revive': [523, 659, 784].forEach((f, i) => tone(f, f, 0.18, 'triangle', 0.12, i * 0.08)); break;
+    case 'roll': noise(0.15, 500, 1, 0.15, 'lowpass'); break;
+    case 'kill': noise(0.25, 1800, 0.8, 0.18, 'highpass'); tone(260, 120, 0.2, 'square', 0.06); break;
+    case 'slam': noise(0.5, 200, 0.7, 0.5, 'lowpass'); tone(80, 35, 0.5, 'sine', 0.45); break;
+    case 'roar': tone(110, 55, 1.2, 'sawtooth', 0.22); noise(1.0, 300, 0.6, 0.2, 'lowpass'); break;
+    case 'warn': tone(440, 440, 0.08, 'square', 0.05); break;
+    case 'door': noise(0.8, 160, 0.6, 0.3, 'lowpass'); tone(60, 50, 0.8, 'triangle', 0.2); break;
+    case 'clear': [392, 523, 659, 784].forEach((f, i) => tone(f, f, 0.22, 'triangle', 0.11, i * 0.1)); break;
+    case 'click': tone(700, 500, 0.05, 'square', 0.05); break;
+    case 'bless': [659, 880].forEach((f, i) => tone(f, f, 0.2, 'sine', 0.12, i * 0.1)); break;
+    case 'parry': tone(1800, 1200, 0.25, 'square', 0.12); tone(2600, 2000, 0.3, 'triangle', 0.1); break;
+    case 'fire': noise(0.6, 800, 0.5, 0.2, 'bandpass', 0, 300); break;
+    case 'spawn': noise(0.4, 400, 1, 0.12, 'bandpass', 0, 1200); break;
+    case 'won': [523, 659, 784, 1046].forEach((f, i) => tone(f, f, 0.4, 'triangle', 0.12, i * 0.16)); break;
+    case 'wipe': [392, 330, 262].forEach((f, i) => tone(f, f * 0.98, 0.4, 'triangle', 0.12, i * 0.22)); break;
   }
-};
-function env(g, a, d, t) { g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(a, t + 0.008); g.gain.exponentialRampToValueAtTime(0.0001, t + d); }
-function tone(f, d, type, a, t) { const o = ctx.createOscillator(), g = ctx.createGain(); o.type = type; o.frequency.value = f; env(g, a, d, t); o.connect(g).connect(master); o.start(t); o.stop(t + d + 0.02); }
-function sweep(f0, f1, d, type, a, t) { const o = ctx.createOscillator(), g = ctx.createGain(); o.type = type; o.frequency.setValueAtTime(f0, t); o.frequency.exponentialRampToValueAtTime(f1, t + d); env(g, a, d, t); o.connect(g).connect(master); o.start(t); o.stop(t + d + 0.02); }
-let NB = null;
-function noise(d, f, a, t, type) {
-  if (!NB) { NB = ctx.createBuffer(1, ctx.sampleRate, ctx.sampleRate); const c = NB.getChannelData(0); for (let i = 0; i < c.length; i++) c[i] = Math.random() * 2 - 1; }
-  const s = ctx.createBufferSource(), fl = ctx.createBiquadFilter(), g = ctx.createGain(); s.buffer = NB; fl.type = type; fl.frequency.value = f; env(g, a, d, t); s.connect(fl).connect(g).connect(master); s.start(t); s.stop(t + d + 0.02);
 }
