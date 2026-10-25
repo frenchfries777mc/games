@@ -1,7 +1,7 @@
 // Vowkeep · © 2026 Frenchfries777 · CC BY-NC-ND 4.0
 // 게임 데이터: 역할, 적, 축복, 1장 지도
 
-export const VERSION = 'v0.2', BUILD = 48;
+export const VERSION = 'v0.2', BUILD = 49;
 
 export const ROLES = {
   knight: {
@@ -199,6 +199,19 @@ function genMap(seed, rooms, opt = {}) {
     const left = r.col === 0, py = r.cy - 1, px = left ? r.x - 3 : r.x + r.rw, rx = left ? r.x - 10 : r.x + r.rw + 3, ry = r.cy - 3;
     m.secrets.push({ pass: [px, py, 3, 2], room: [rx, ry, 7, 7], face: [left ? r.x - 1 : r.x + r.rw, py, 1, 2], chest: [rx + (left ? 1 : 5), ry + 1], lore: [rx + 3, ry + 4], flag: [rx + (left ? 1 : 5), ry + 5] });
   }
+  // 깃발을 숨길 작은 벽감: 어둠의 방 뒤쪽 구석(횃불 없이는 안 보여요)과 마지막 수수께끼 방 뒤쪽 구석(풀면 깃발이 솟아요)
+  // 벽감은 통로나 다른 방에 닿지 않는 구석을 골라요 (닿으면 창살문을 돌아가는 샛길이 생겨요)
+  const touch = (a, b) => a[0] - 1 < b[0] + b[2] && b[0] < a[0] + a[2] + 1 && a[1] - 1 < b[1] + b[3] && b[1] < a[1] + a[3] + 1;
+  const nich = (i, right) => {
+    const r = R[i], rd = st.round && !r.boss && !r.cut ? st.round : 0, own = m.areas[i].r.slice(), xs = right ? [r.x + r.rw - rd - 4, r.x + rd + 1] : [r.x + rd + 1, r.x + r.rw - rd - 4];
+    for (const [x0, y0, fy] of [[xs[0], r.y - 2, r.y - 1], [xs[1], r.y - 2, r.y - 1], [xs[0], r.y + r.rh, r.y + r.rh], [xs[1], r.y + r.rh, r.y + r.rh]]) {
+      const rc = [x0, y0, 3, 2]; if (m.floors.some(f => !own.some(o => o === f || (o[0] === f[0] && o[1] === f[1] && o[2] === f[2] && o[3] === f[3])) && touch(rc, f))) continue;
+      m.floors.push(rc); m.areas[i].r.push(rc); return [x0 + 1, fy];
+    }
+    return null;
+  };
+  const di = R.findIndex(r => r.dark), pis = R.map((r, i) => r.puz ? i : -1).filter(i => i >= 0), pi = pis[pis.length - 1];
+  m.niches = {}; if (!opt.noSecret) { if (di >= 0) m.niches.d = nich(di, false); const np = pi != null && nich(pi, true); if (np) m.niches.p = [...np, m.puzzles.findIndex(q => q.area === pi)]; }
   return m;
 }
 // 장마다 수수께끼 방 둘과 어둠의 방 하나를 끼워 넣어요 (원래 방 번호는 대사 번호로 남겨요)
@@ -335,7 +348,7 @@ export const CHAPTERS = [
       '하랄드가 떨리는 손으로 남쪽 산을 가리켰어요. "불꽃은... 잊힌 광산에서 캐낸 돌이다."',
       '네 사람은 눈보라를 뚫고 광산으로 향했어요.'
     ],
-    boss: { name: '서리 맹세의 하랄드', ai: 'king', pat: 'frost', hp: 15000, speed: 4.0, r: 1.5, dmg: 50, col: 0x6ad0ff, fig: { body: 0x4a5a6a, helmC: 0x9ab0c8, eye: 0x6ad0ff, great: 0xb8d8f0, greatE: 0x6ad0ff, cape: 0x2a4a6a, crown: 0 }, p2: ['하랄드가 얼어붙은 형제들을 깨워요', '얼음 창 세 줄 사이로 비켜서요. 맞으면 몸이 얼어 느려져요'], p3: ['요새 천장에서 고드름이 떨어져요', '발밑 그림자를 보고 계속 움직여요'], ph: ['형제 소환', '얼음 불꽃'] },
+    boss: { name: '서리 맹세의 하랄드', ai: 'king', pat: 'frost', hp: 15000, speed: 4.0, r: 1.5, dmg: 50, col: 0x6ad0ff, fig: { body: 0x4a5a6a, helmC: 0x9ab0c8, eye: 0x6ad0ff, great: 0xb8d8f0, greatE: 0x6ad0ff, cape: 0x2a4a6a, crown: 0, mantle: 0xe8eef4, icecrown: 1, scale: 2.3 }, p2: ['하랄드가 얼어붙은 형제들을 깨워요', '얼음 창 세 줄 사이로 비켜서요. 맞으면 몸이 얼어 느려져요'], p3: ['요새 천장에서 고드름이 떨어져요', '발밑 그림자를 보고 계속 움직여요'], ph: ['형제 소환', '얼음 불꽃'] },
     theme: 'frost'
   },
   {
@@ -351,7 +364,7 @@ export const CHAPTERS = [
       '벽에는 불꽃을 섬기는 사원의 문장이 새겨져 있었어요.',
       '누군가 이 돌을 사원으로 실어 날랐던 거예요.'
     ],
-    boss: { name: '돌을 삼킨 거인 그롬', ai: 'hunter', pat: 'giant', hp: 16000, speed: 4.4, r: 1.5, dmg: 52, col: 0xffb060, fig: { body: 0x5a4a3a, leg: 0x3a3028, arm: 0x5a4a3a, hood: 0x4a3a2a, antler: 0, cape: 0x3a2a1a, skinC: 0x8a7a6a, eye: 0xffb060, scale: 2.3 }, p2: ['그롬이 몸을 말아 굴러다녀요', '벽에 튕겨 세 번까지 굴러요. 길목에서 비켜서요'], p3: ['무너지는 돌이 갱도에 쏟아져요', '발 구르기는 멀리, 바위는 옆으로 피해요'], ph: ['갱도 짐승', '무너지는 돌'] },
+    boss: { name: '돌을 삼킨 거인 그롬', ai: 'hunter', pat: 'giant', hp: 21000, speed: 4.4, r: 1.5, dmg: 52, col: 0xffb060, fig: { body: 0x5a5448, leg: 0x4a443a, arm: 0x5a5448, hood: 0, antler: 0, spear: 0, cape: 0, belt: 0, skinC: 0x6a6458, eye: 0xffb060, wide: 1.45, fists: 0x6a6256, rocks: 1, crystal: 0xffb060, maul: 0xffb060, scale: 2.4 }, p2: ['그롬이 몸을 말아 굴러다녀요', '벽에 튕겨 세 번까지 굴러요. 길목에서 비켜서요'], p3: ['무너지는 돌이 갱도에 쏟아져요', '발 구르기는 멀리, 바위는 옆으로 피해요'], ph: ['갱도 짐승', '무너지는 돌', '땅 울림'], p4: ['그롬이 온 힘으로 땅을 내리쳐요', '세 번 울리는 땅울림 원 밖으로 피해요'] },
     theme: 'mine'
   },
   {
@@ -367,7 +380,7 @@ export const CHAPTERS = [
       '세라핀은 웃으며 말했어요. "불꽃은 심연에서 올라온다. 너희가 닿기 전에 모든 것이 탈 것이다."',
       '사원 제단 아래로, 끝이 보이지 않는 계단이 열렸어요.'
     ],
-    boss: { name: '불꽃의 예언자 세라핀', ai: 'bishop', pat: 'prophet', hp: 15000, speed: 3.3, r: 1.3, dmg: 50, col: 0xff8a30, fig: { body: 0x8a2a1a, leg: 0x5a1a10, arm: 0x8a2a1a, skinC: 0xb09080, eye: 0xffb040, staffC: 0xff8a30, cape: 0x6a3a10 }, p2: ['세라핀이 불꽃 신도들을 불러요', '십자 불기둥은 선과 선 사이로 피해요'], p3: ['세라핀 둘레로 불기둥이 돌아가요', '돌아가는 불기둥을 따라 함께 돌아요'], ph: ['신도 소환', '솟는 불길'] },
+    boss: { name: '불꽃의 예언자 세라핀', ai: 'bishop', pat: 'prophet', hp: 20000, speed: 3.3, r: 1.3, dmg: 50, col: 0xff8a30, fig: { body: 0xe8d8b8, leg: 0xb09060, arm: 0xe8d8b8, skinC: 0xe0c0a0, eye: 0xffb040, staffC: 0xff8a30, cape: 0, mitre: 0, halo: 0xffb040, wings: 0xff8a30 }, p2: ['세라핀이 불꽃 신도들을 불러요', '십자 불기둥은 선과 선 사이로 피해요'], p3: ['세라핀 둘레로 불기둥이 돌아가요', '돌아가는 불기둥을 따라 함께 돌아요'], ph: ['신도 소환', '솟는 불길', '태양의 심판'], p4: ['세라핀이 태양의 심판을 내려요', '여덟 줄 불기둥이 두 번 갈라져요. 줄 사이로 비켜서요'] },
     theme: 'temple'
   },
   {
@@ -383,7 +396,7 @@ export const CHAPTERS = [
       '네 사람은 그 불씨를 서약의 탑으로 가져가 모두를 지키는 등불로 바꾸었어요.',
       '사람들은 끝까지 서약을 지킨 네 사람을 Vowkeep, 서약을 지킨 자들이라 불렀어요.'
     ],
-    boss: { name: '꺼지지 않는 불꽃', ai: 'king', pat: 'flame', hp: 18000, speed: 4.2, r: 1.6, dmg: 52, col: 0xb06aff, fig: { body: 0x2a2234, helmC: 0x3a2a48, eye: 0xd08aff, great: 0x4a3a5a, greatE: 0xb06aff, cape: 0x3a1a5a, crown: 1, scale: 2.5 }, p2: ['불꽃이 깨진 서약의 기사들을 불러내요', '소용돌이 불꽃은 세 번 이어서 퍼져요'], p3: ['심연 하늘에서 불덩이가 쏟아져요', '불덩이 그림자를 피하고 마지막 일격을 노려요'], ph: ['깨진 서약 소환', '심연의 불꽃'] },
+    boss: { name: '꺼지지 않는 불꽃', ai: 'king', pat: 'flame', hp: 26000, speed: 4.2, r: 1.6, dmg: 52, col: 0xb06aff, fig: { body: 0x1a1420, leg: 0x1a1420, arm: 0x2a2234, helm: 0, crown: 0, skinC: 0x2a1a3a, eye: 0xd08aff, great: 0x4a3a5a, greatE: 0xb06aff, cape: 0x3a1a5a, flamehead: 0xb06aff, core: 0xd08aff, spikes: 1, horns: 1, scale: 2.6 }, p2: ['불꽃이 깨진 서약의 기사들을 불러내요', '소용돌이 불꽃은 세 번 이어서 퍼져요'], p3: ['심연 하늘에서 불덩이가 쏟아져요', '불덩이 그림자를 피하고 마지막 일격을 노려요'], ph: ['깨진 서약 소환', '심연의 불꽃', '꺼지지 않는 불'], p4: ['불꽃이 마지막 힘을 다해 타올라요', '다섯 겹 소용돌이와 불덩이 비를 함께 피해요'] },
     theme: 'abyss'
   }
 ];
@@ -618,18 +631,20 @@ export const CURSES = [
 export const DEEP = { floor: 1, seed: 1, curses: [] };
 const DEEP_NAMES = [['무너진 계단', '뼈의 방', '녹슨 제단', '꺼진 화로', '함정 회랑', '수호자의 방'], ['잿빛 오솔길', '늑대 굴', '사냥꾼 야영지', '버려진 오두막', '가시밭', '수호자의 숲'], ['물에 잠긴 문', '기도실', '종탑 아래', '젖은 서고', '납골당', '수호자의 성당'], ['탑 계단', '병영', '무기 창고', '맹세의 방', '불타는 복도', '수호자의 왕좌'], ['눈 덮인 문', '얼음 연병장', '서리 성벽', '얼음 식당', '서리 회랑', '수호자의 얼음 방'], ['광산 입구', '갱도', '수레 선로', '광부 쉼터', '무너진 채굴장', '수호자의 갱도'], ['모래 계단', '순례자의 뜰', '향로의 방', '사제 숙소', '타오르는 회랑', '수호자의 성소'], ['끝없는 계단', '서약의 무덤', '떠 있는 다리', '불씨 쉼터', '불타는 강', '수호자의 바닥']];
 // 층 하나 만들기: 모양은 층마다 바뀌는 장(1~8장)을 빌려 와요. 같은 층·씨앗이면 늘 같은 지도예요
+// 끝없는 심연만의 지도 짜임: 둥근 방이 구불구불한 좁은 다리로 이어져요
+const DEEP_ST = { cols: 3, cw: 3, round: 3, jit: 3, zig: 1, sc: 1.05 };
 export function makeDeep(d) {
   Object.assign(DEEP, d); const f = DEEP.floor, src = (f - 1 + (DEEP.seed % 8)) % 8, C = CHAPTERS[src], n = c => DEEP.curses.filter(x => x === c).length, N = DEEP_NAMES[src];
   const line = '심연 ' + f + '층 · 저주 ' + DEEP.curses.length + '개';
   const map = genMap(DEEP.seed * 31 + f * 977, [
     { name: N[0], line, w: 12, h: 12 },
     { name: N[1], line, foes: { skel: 5, archer: 2 } },
-    { name: '심연의 수수께끼', line: ['바닥에 발판 네 개가 있어요. 모두 하나씩 올라서면 창살문이 열려요.', '비석에 그려진 순서대로 화로에 불을 붙여요. 틀리면 모두 꺼져요.', '석상 넷이 모두 가운데 문양을 바라보게 돌려요.', ...RP_ORDER.map(k => ROLE_PUZ[k].line), ...Object.values(GEN_PUZ).map(o => o.line)][f % 16], puz: ['plates', 'braziers', 'statues', ...RP_ORDER, ...Object.keys(GEN_PUZ)][f % 16], w: 16, h: 13, t: 'puz' },
+    { name: N[6] || '떠도는 돌길', line, foes: { skel: 4, archer: 2, shield: 1 }, traps: 2 },
     { name: N[2], line: f % 2 ? line : '불빛 하나 없는 방이에요. 입구의 횃불을 들어야 앞이 보여요.', foes: { skel: 4, archer: 3, shield: 2 }, altar: 1, pil: 1, dark: f % 2 ? 0 : 1, t: f % 2 ? undefined : 'dark' },
     { name: N[3], line: '꺼진 모닥불이 있어요. 불을 붙이면 쓰러졌을 때 여기서 다시 시작해요.', rest: 1, chest: 1, w: 12, h: 11 },
     { name: N[4], line, foes: { elite: 1 + n('elite'), skel: 4, archer: 2, shield: 2 }, traps: 3 },
     { name: N[5], line: '"더 내려가고 싶다면, 나를 넘어라."', boss: 1 }
-  ], { noSecret: 1, flip: f % 2, st: MAP_ST[src] });
+  ], { noSecret: 1, flip: f % 2, st: DEEP_ST });
   const B = C.boss;
   return {
     id: 9, deep: 1, src, title: '끝없는 심연 · ' + f + '층', place: '끝없는 심연', diff: 1.2 + 0.06 * (f - 1), introT: 7,
@@ -637,10 +652,12 @@ export function makeDeep(d) {
     outro: [f + '층을 지났어요.', '아래에서 더 차가운 바람이 올라와요.'],
     boss: Object.assign({}, B, { name: '심연의 ' + B.name, hp: Math.round(B.hp * 0.45 * (1 + 0.1 * (f - 1)) * (1 + 0.3 * n('boss'))) }),
     curse: { hp: 1 + 0.2 * n('hp'), dmg: 1 + 0.15 * n('dmg'), spd: 1 + 0.1 * n('spd'), heal: Math.pow(0.75, n('heal')), cd: 1 + 0.15 * n('cd') },
-    theme: C.theme, map
+    theme: 'deep', map
   };
 }
 export const DEEP_I = 8;
+// 깃발이 드러났는지: 비밀 방이 열렸거나, 수수께끼를 풀었거나, 어둠의 방이면 늘 (sc = 비밀 방 열림 목록, pd = 수수께끼 풀림 목록)
+export function flagShown(sc, pd) { const F = MAP.flag; if (!F) return false; return F[2] === 'd' ? true : F[2] === 'p' ? !!pd[F[3]] : !!sc[F[3]]; }
 
 // 지금 고른 장의 지도. map.js의 useChapter로 바꿔요
 export const MAP = {};
@@ -654,9 +671,10 @@ export function setChapterData(i) {
   MAP.secrets = MAP.secrets || [];
   MAP.chests = MAP.chests.concat(MAP.secrets.map((q, k) => [q.chest[0], q.chest[1], k + 1]));
   MAP.lores = MAP.secrets.map((q, k) => [q.lore[0], q.lore[1], k]);
-  // 기사단 깃발: 뒤쪽 비밀 방 구석에 하나 (심연에는 없어요)
-  const fq = !CH.deep && MAP.secrets.length > 1 && MAP.secrets[MAP.secrets.length - 1];
-  MAP.flag = fq && fq.flag ? [fq.flag[0], fq.flag[1], MAP.secrets.length - 1] : null;
+  // 기사단 깃발 (심연에는 없어요). 장마다 숨은 곳이 달라요: 금 간 벽 뒤 비밀 방 / 수수께끼를 풀면 솟는 벽감 / 어둠의 방 구석 벽감
+  // [x, y, 종류, 번호] 종류 's' = 비밀 방 번호, 'p' = 수수께끼 번호, 'd' = 어둠의 방 (늘 열려 있어요)
+  const fq = !CH.deep && MAP.secrets.length > 1 && MAP.secrets[MAP.secrets.length - 1], NI = MAP.niches || {}, fk = ['s', 'p', 'd'][i % 3];
+  MAP.flag = CH.deep ? null : fk === 'p' && NI.p && NI.p[2] >= 0 ? [NI.p[0], NI.p[1], 'p', NI.p[2]] : fk === 'd' && NI.d ? [NI.d[0], NI.d[1], 'd', 0] : fq && fq.flag ? [fq.flag[0], fq.flag[1], 's', MAP.secrets.length - 1] : null;
   return CH;
 }
 setChapterData(0);
@@ -690,7 +708,7 @@ export const ACHIEVEMENTS = [
   { id: 'puzzle', name: '첫 수수께끼', desc: '수수께끼 방의 창살문을 처음 열어요.' },
   { id: 'puzzle10', name: '수수께끼 장인', desc: '수수께끼를 10개 풀어요.' },
   { id: 'torch', name: '어둠 속 횃불', desc: '어둠의 방에서 횃불을 들어요.' },
-  { id: 'escape', name: '무너지는 성에서', desc: '보스를 쓰러뜨린 뒤 무너지는 곳에서 탈출해요.' },
+  { id: 'escape', name: '빠른 보스 사냥', desc: '보스 방에 들어간 뒤 3분 안에 보스를 쓰러뜨려요.' },
   { id: 'bridge', name: '기둥 다리', desc: '금 간 기둥을 쓰러뜨려 끊어진 길을 이어요.' },
   { id: 'lift', name: '도르래 일꾼', desc: '모두 함께 승강기로 위층에 올라가요.' },
   { id: 'nodown', name: '한 번도 안 쓰러짐', desc: '한 번도 쓰러지지 않고 한 장을 깨요.' },
