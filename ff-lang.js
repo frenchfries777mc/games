@@ -202,6 +202,8 @@ function notes(e){
   return f.catch(function(){ return null; });
 }
 window.FF_REG=REG; window.FF_REG_NOTES=notes;
+/* 게임이 아닌 사이트: 접속 표시(ff_online)에서 인원 칸으로만 써요 */
+window.FF_SITES=[{id:'educations',name:'Educations'},{id:'tools',name:'Tools'}];
 })();
 window.FFLang={ get:function(){ return now; }, script:function(){ return scr(); }, pick:function(){ return scr()||now; }, slogan:slogan, set:function(l){ set(l); now=SCR[l]?'en':l; }, sync:function(){ now=sync()||now; if(SCR[now]) now='en'; return now; } };
 })();
