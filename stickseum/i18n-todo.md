@@ -241,3 +241,5 @@ patchnotes.json | v375 items[2] | 일일 보상 골드 30 → 50 | build 375 | 2
 patchnotes.json | v375 items[3] | 숙련 레벨 업 골드: Lv.1~5 10, 6~10 20, 11~15 30, 16 이상 45 | build 375 | 2026-10-25
 patchnotes.json | v375 items[4] | 레이드 역할 보너스 25 → 15 | build 375 | 2026-10-25
 patchnotes.json | v375 items[5] | 랜덤 상자 골드 10~50 → 30~50 | build 375 | 2026-10-25
+patchnotes.json | v376 title | 폐허 도시 발판 수정 | build 376 | 2026-10-25
+patchnotes.json | v376 items[0] | 폐허 도시에서 올라갈 수 없던 발판 높이 수정(양쪽 아래 발판과 가운데 위 발판) | build 376 | 2026-10-25

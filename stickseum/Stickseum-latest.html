@@ -4473,9 +4473,9 @@ MAP_TEMPLATES['lavaland'] = {
 MAP_TEMPLATES['ruins'] = {
   id:'ruins', name:THEMES.ruins.name, maxPlayers:8, arenaW:2400, arenaH:1000, theme:THEMES.ruins,
   platforms:[{x:0,y:900,w:2400,h:100}].concat(mirrorPl(2400,[
-    {x:120,y:760,w:240,h:24},{x:420,y:640,w:200,h:24},{x:600,y:810,w:44,h:90},{x:760,y:560,w:220,h:24},{x:200,y:510,w:180,h:24},{x:880,y:800,w:120,h:100}
+    {x:120,y:780,w:240,h:24},{x:420,y:640,w:200,h:24},{x:600,y:810,w:44,h:90},{x:760,y:575,w:220,h:24},{x:200,y:510,w:180,h:24},{x:880,y:800,w:120,h:100}      // (780 / 575: 140 above the floor / the middle ledge was more than a jump reaches)
   ])).concat([{x:1050,y:700,w:300,h:24},{x:1130,y:520,w:140,h:24}]),
-  spawns:[{x:250,y:890},{x:500,y:890},{x:1450,y:890},{x:1900,y:890},{x:2150,y:890},{x:240,y:750},{x:2160,y:750},{x:1200,y:690}]
+  spawns:[{x:250,y:890},{x:500,y:890},{x:1450,y:890},{x:1900,y:890},{x:2150,y:890},{x:240,y:770},{x:2160,y:770},{x:1200,y:690}]
 };
 // ---- map hazards (host-driven; the state rides in the snapshot as `hz` so every screen draws the same thing) ----
 let hzDraw=null;       // {w: wave front x or null, dir, v:[[x,y,0|1|2],...]}
@@ -5041,7 +5041,7 @@ function shuffle(arr){ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.
 /* ===== the version of this file =====
    Players with different versions CAN meet and play together: the automatic matchmaking uses the same room names for every version (online-<mode>-<map>-<slot>), and nobody is refused because of a different build.
    The build is only sent along with the join message and the lobby (for information); the corner of the screen shows it. */
-const GAME_BUILD='build 2026-10-18-v375';
+const GAME_BUILD='build 2026-10-18-v376';
 const GAME_VERSION='0.8', GAME_VERSION_NAME='황금을 찾아서';   // 게임 버전 이름: versions.json의 title과 같게 (빌드마다 바꾸지 않음)
 const WEEKLY_EVENTS=[
   {id:'lowg',    name:'저중력 난투', desc:'몸이 둥실둥실, 중력이 약해진 난투', rules:{grav:0.6}},
