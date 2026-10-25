@@ -5,7 +5,23 @@
 (function(){
 'use strict';
 var Q='', MSG={ph:'빌드 번호나 내용으로 검색', hit:'{0}개 찾음', none:'찾는 패치노트가 없어요.'};
-function L(k){ try{ if(window.FFT&&FFT.T) return FFT.T(MSG[k]); }catch(e){} return MSG[k]; }
+/* 다른 언어: ph, hit, none 순서. 언어는 ff-lang.js(없으면 저장된 언어, 브라우저 언어)를 따르고, 표에 없으면 영어 */
+var ML={en:['Search by build number or text','{0} found','No matching patch notes.'],
+ es:['Busca por número de build o texto','{0} encontradas','No hay notas que coincidan.'],
+ fr:['Rechercher par numéro de build ou texte','{0} trouvée(s)','Aucune note correspondante.'],
+ de:['Nach Build-Nummer oder Text suchen','{0} gefunden','Keine passenden Patchnotes.'],
+ ja:['ビルド番号や内容で検索','{0}件見つかりました','該当するパッチノートはありません。'],
+ zh:['按版本号或内容搜索','找到 {0} 条','没有符合的补丁说明。'],
+ pt:['Busque por número da build ou texto','{0} encontradas','Nenhuma nota encontrada.'],
+ ru:['Поиск по номеру сборки или тексту','Найдено: {0}','Подходящих патчноутов нет.'],
+ tr:['Sürüm numarası veya metinle ara','{0} bulundu','Eşleşen yama notu yok.'],
+ it:['Cerca per numero di build o testo','{0} trovate','Nessuna nota corrispondente.'],
+ pl:['Szukaj po numerze buildu lub treści','Znaleziono: {0}','Brak pasujących aktualizacji.'],
+ ar:['ابحث برقم الإصدار أو النص','تم العثور على {0}','لا توجد ملاحظات تحديث مطابقة.'],
+ nw:['Seek by build number or truthword','{0} found, comrade','No Minitrue corrections found. They never existed.'],
+ gk:['찾다 에 의해 짓다 숫자 또는 글자','{0} 찾았다','아니요 어울리는 반창고 쪽지들.']};
+function lg(){ var l=''; try{ if(window.FFLang&&FFLang.get) l=FFLang.get(); }catch(e){} if(!l){ try{ l=localStorage.getItem('arenaClashLang')||''; }catch(e){} } if(!l){ try{ l=String(navigator.language||'').toLowerCase().split('-')[0]; }catch(e){} } return l||'en'; }
+function L(k){ try{ if(window.FFT&&FFT.T) return FFT.T(MSG[k]); }catch(e){} var l=lg(); if(l==='ko') return MSG[k]; var r=ML[l]||ML.en; return r[{ph:0,hit:1,none:2}[k]]; }
 function css(){
   if(document.getElementById('ffpnCss')) return;
   var s=document.createElement('style'); s.id='ffpnCss';
