@@ -281,3 +281,21 @@ patchnotes.json | v382 items[2] | 4000 sC 스킨 효과를 최고 등급 연출�
 patchnotes.json | v382 items[3] | 깃발 뺏기 깃발 든 사람 속도 감소 삭제 | build 382 | 2026-10-25
 patchnotes.json | v382 items[4] | 깃발 뺏기 떨어진 깃발 복귀 시간 10초 → 4초(경기가 빨리 끝나도록) | build 382 | 2026-10-25
 patchnotes.json | v382 items[5] | 텔레포트 제자리 대기 시간 1.0초 → 1.2초 | build 382 | 2026-10-25
+Stickseum-v0.8.html | ctf mode desc | 깃발 뺏기 규칙 문구(득점 조건, 떨어진 깃발) | build 383 | 2026-10-25
+Stickseum-v0.8.html | puppeteer skill desc | 바늘 빼기를 쓰기 전까지 실이 계속 이어짐 | build 383 | 2026-10-25
+Stickseum-v0.8.html | achievements | 일격필살, 싸움의 달인, 전문 깃발 도둑, 팽창주의자, 너 죽고 나 살자, 함께하는 재미, 연쇄살인마, 진정한 챔피언, 금에 눈이 멀다, 환장의 팀워크 | build 383 | 2026-10-25
+Stickseum-v0.8.html | gold mode hud | 중앙 금 더미 위에 0.8초 서 있으면 금이 하나씩 쌓여요 | build 383 | 2026-10-25
+Stickseum-v0.8.html | nickname prompt | 새 닉네임 (최대 15자) | build 383 | 2026-10-25
+patchnotes.json | v383 title | 깃발 규칙과 업적 추가 | build 383 | 2026-10-25
+patchnotes.json | v383 items[0] | 깃발 뺏기 득점 조건 변경: 우리 깃발이 밖에 있어도 득점 | build 383 | 2026-10-25
+patchnotes.json | v383 items[1] | 깃발 뺏기 떨어진 깃발이 저절로 돌아가지 않고 우리 팀이 닿아야 복귀 | build 383 | 2026-10-25
+patchnotes.json | v383 items[2] | 기사 궁극기로 한 번에 3명 처치하는 도전과제 추가 | build 383 | 2026-10-25
+patchnotes.json | v383 items[3] | 듀얼·깃발 뺏기·점령전·배틀로얄·배틀로얄 듀오·데스매치·토너먼트·황금 쟁탈·팀전 경기 횟수 도전과제 9개 추가 | build 383 | 2026-10-25
+patchnotes.json | v383 items[4] | 칸 궁극기의 날개가 인게임에서 보이지 않던 문제 수정 | build 383 | 2026-10-25
+patchnotes.json | v383 items[5] | 인형술사 바느질 실이 바늘 빼기를 쓰기 전까지 계속 유지 | build 383 | 2026-10-25
+patchnotes.json | v383 items[6] | 4000 sC 스킨 시각 효과 강화 | build 383 | 2026-10-25
+patchnotes.json | v383 items[7] | 황금 쟁탈 금 더미에 0.8초 머물러야 금 1개 획득, 금 더미가 바닥나지 않음 | build 383 | 2026-10-25
+patchnotes.json | v383 items[8] | 처치·어시스트 골드 지급 횟수 제한 없음 | build 383 | 2026-10-25
+patchnotes.json | v383 items[9] | 캐릭터 숙련도 경험치 획득량 약 40% 감소 | build 383 | 2026-10-25
+patchnotes.json | v383 items[10] | 닉네임 최대 글자 수 12 → 15 | build 383 | 2026-10-25
+patchnotes.json | v383 items[11] | 인형술사 밸런스 다시 측정 | build 383 | 2026-10-25
