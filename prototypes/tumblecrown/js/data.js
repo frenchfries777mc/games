@@ -1,7 +1,7 @@
 // Tumblecrown · © 2026 Frenchfries777 · CC BY-NC-ND 4.0
 // 게임 숫자와 이름
 
-export const BUILD = 7, VERSION = '0.1';
+export const BUILD = 8, VERSION = '0.1';
 
 // 방 바닥: 네모 칸. 바깥 고리부터 무너져요
 export const RING = 7, CELL = 3, NX = 7, NZ = 6;   // 방 바닥: 가로 13칸 x 세로 11칸, 한 칸 3m (Vowkeep 1장 단장의 방을 넓힌 모양)
@@ -24,7 +24,7 @@ export const CLS = {
   mamluk: { name: '맘루크', desc: '굽은 칼로 빠르게 베고 질주해 파고들어요', range: 2.0, arc: 1.8, chg: 0.4, cd: 0.24, dmg: [4, 9], kb: [5, 12], swing: 0.17, spd: 6.5, st: [2, 5, 2, 3],
     atk: '굽은 칼 연속 베기', sk: { kind: 'lunge', name: '질주 베기', desc: '앞으로 빠르게 질주하며 지나간 상대를 날려요', cd: 6 } },
   witch: { name: '마녀', desc: '터지는 마법 구슬과 바닥을 깨는 저주', range: 1.6, arc: 1.6, chg: 0.7, cd: 0.7, dmg: [6, 13], kb: [8, 15], swing: 0.24, spd: 5.5, st: [3, 2, 4, 4], proj: 'orb',
-    atk: '마법 구슬 (닿으면 터져요)', sk: { kind: 'curse', name: '땅 저주', desc: '조준한 곳의 바닥을 깨뜨려 떨어뜨려요 (잠시 뒤 다시 생겨요)', cd: 8 } },
+    atk: '마법 구슬 (닿으면 터져요)', sk: { kind: 'curse', name: '땅 저주', desc: '조준한 곳에 저주를 터뜨려 큰 피해를 줘요', cd: 8 } },
   skeleton: { name: '스켈레톤', desc: '가볍고 빠른 뼈다귀, 붙잡아 던져요', range: 1.8, arc: 2.0, chg: 0.4, cd: 0.22, dmg: [4, 9], kb: [5, 12], swing: 0.16, spd: 6.4, st: [2, 4, 1, 4],
     atk: '뼈 몽둥이', sk: { kind: 'grab', name: '잡아 던지기', desc: '앞의 상대를 붙잡아 등 뒤로 던져요', cd: 6 } }
 };
