@@ -3,7 +3,7 @@
 
 import { T } from './tr.js';
 
-export const VERSION = 'v0.2', BUILD = 52;
+export const VERSION = 'v0.2', BUILD = 53;
 
 export const ROLES = {
   knight: {
@@ -70,7 +70,7 @@ export const BLESSINGS = [
   { id: 'thorn', name: T('가시 갑옷'), desc: T('맞으면 때린 적에게 8 피해') },
   { id: 'bond', name: T('전우애'), desc: T('동료를 두 배 빨리 일으켜요') },
   { id: 'last', name: T('마지막 버팀'), desc: T('체력이 30% 아래면 받는 피해 -25%') },
-  { id: 'honor', name: T('명예의 길'), desc: T('이번 원정에서 받는 명예 +25%') }
+  { id: 'honor', name: T('vC의 길'), desc: T('이번 원정에서 받는 vC +25%') }
 ];
 
 // 장마다 적의 이름·모습·능력치가 달라요 (규칙은 해골 병사·궁수·방패·근위대장 네 가지를 같이 써요)
@@ -740,11 +740,14 @@ export const MIDB = [
 ];
 export const GEAR_TIERS = ['낡은', '쓸만한', '명장의'];
 export const GEAR_COST = [0, 120, 320];
-// 겉모습 꾸미기: 능력치는 그대로, 명예로 사서 모든 역할에 입혀요
+// 겉모습 꾸미기: 능력치는 그대로, vC로 사서 모든 역할에 입혀요
 export const COSMETICS = {
-  cape: { name: T('망토 색'), items: [{ id: '', name: T('기본'), cost: 0 }, { id: 'crimson', name: T('진홍'), cost: 60, col: 0xa02030 }, { id: 'forest', name: T('숲 녹색'), cost: 60, col: 0x2f6a3a }, { id: 'violet', name: T('보랏빛'), cost: 90, col: 0x6a3a9a }, { id: 'dawn', name: T('새벽 금빛'), cost: 160, col: 0xd4a63a }] },
-  helm: { name: T('투구 장식'), items: [{ id: '', name: T('기본'), cost: 0 }, { id: 'plume', name: T('붉은 깃털'), cost: 80 }, { id: 'horns', name: T('뼈 뿔'), cost: 100 }, { id: 'wreath', name: T('월계관'), cost: 120 }, { id: 'crown', name: T('작은 왕관'), cost: 220 }] },
-  emblem: { name: T('방패 문장'), items: [{ id: '', name: T('기본'), cost: 0 }, { id: 'cross', name: T('십자'), cost: 70 }, { id: 'star', name: T('별'), cost: 90 }, { id: 'flame', name: T('불꽃'), cost: 110 }, { id: 'moon', name: T('달'), cost: 140 }] }
+  cape: { name: T('망토 색'), items: [{ id: '', name: T('기본'), cost: 0 }, { id: 'crimson', name: T('진홍'), cost: 240, col: 0xa02030 }, { id: 'forest', name: T('숲 녹색'), cost: 240, col: 0x2f6a3a }, { id: 'violet', name: T('보랏빛'), cost: 360, col: 0x6a3a9a }, { id: 'dawn', name: T('새벽 금빛'), cost: 640, col: 0xd4a63a }] },
+  helm: { name: T('투구 장식'), items: [{ id: '', name: T('기본'), cost: 0 }, { id: 'plume', name: T('붉은 깃털'), cost: 320 }, { id: 'horns', name: T('뼈 뿔'), cost: 400 }, { id: 'wreath', name: T('월계관'), cost: 480 }, { id: 'crown', name: T('작은 왕관'), cost: 880 }] },
+  emblem: { name: T('방패 문장'), items: [{ id: '', name: T('기본'), cost: 0 }, { id: 'cross', name: T('십자'), cost: 280 }, { id: 'star', name: T('별'), cost: 360 }, { id: 'flame', name: T('불꽃'), cost: 440 }, { id: 'moon', name: T('달'), cost: 560 }] },
+  skin: { name: T('갑옷 스킨'), items: [{ id: '', name: T('기본'), cost: 0 }, { id: 'dark', name: T('흑철'), cost: 800, col: 0x2a2e3a, shield: 0x1a1c24 }, { id: 'snow', name: T('설원'), cost: 800, col: 0xdfe8f4, shield: 0x9ab4d8 }, { id: 'ruby', name: T('진홍 갑주'), cost: 1000, col: 0xa8242c, shield: 0x701820 }, { id: 'gold', name: T('황금 갑주'), cost: 2400, col: 0xe0b840, shield: 0xb08820 }] },
+  aura: { name: T('움직이는 오라'), items: [{ id: '', name: T('기본'), cost: 0 }, { id: 'ember', name: T('떠도는 불씨'), cost: 1200 }, { id: 'frost', name: T('서리 결정'), cost: 1500 }, { id: 'spirit', name: T('푸른 영혼불'), cost: 1800 }, { id: 'moon', name: T('달빛 후광'), cost: 2200 }] },
+  wings: { name: T('움직이는 날개'), items: [{ id: '', name: T('기본'), cost: 0 }, { id: 'angel', name: T('천사 날개'), cost: 3000 }, { id: 'flame', name: T('불꽃 날개'), cost: 3400 }, { id: 'shadow', name: T('그림자 날개'), cost: 3600 }] }
 };
 export const GEAR_BONUS = { weapon: [0, 0.1, 0.22], armor: [0, 15, 35] };
 export function roleLevel(xp) { return Math.min(10, 1 + Math.floor(Math.sqrt((xp || 0) / 25))); }

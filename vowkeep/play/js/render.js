@@ -69,12 +69,29 @@ const HERO = {
 };
 function matOf(v) { return v === 'dm' ? dmetal() : v === 'mt' ? metal() : M(v); }
 export const makeHero = toonify(function (role, cos) {
-  const o = Object.assign({}, HERO[role]), cp = cos && COSMETICS.cape.items.find(i => i.id === cos.cape && i.col);
+  const o = Object.assign({}, HERO[role]), cp = cos && COSMETICS.cape.items.find(i => i.id === cos.cape && i.col), sk = cos && COSMETICS.skin.items.find(i => i.id === cos.skin && i.col);
   if (cp) o.cape = cp.col;
+  if (sk) { o.body = sk.col; if (typeof o.arm === 'number') o.arm = sk.col; if (o.shield) o.shieldC = sk.shield; if (o.robe) o.leg = sk.shield; if (o.hood) o.hood = sk.shield; if (o.cape && !cp) o.cape = sk.shield; }
   const g = makeFigure(o); g.userData.role = role; if (cos) dressHero(g, cos); return g;
 });
+// 움직이는 꾸밈: 오라(몸 둘레를 도는 것)와 날개(퍼덕여요). 매 프레임 u.cosAnim(시간)이 움직여요
+function dressMove(g, cos) {
+  const u = g.userData, fns = [], E = (c, i = 3) => M(c, { e: c, ei: i, uniq: true });
+  const ring = (n, mk, f) => { const a = []; for (let i = 0; i < n; i++) { const m = mk(i); g.add(m); m.castShadow = false; a.push(m); } fns.push(t => a.forEach((m, i) => f(m, i, t, n))); };
+  if (cos.aura === 'ember') ring(7, () => mesh(geo('oct2', () => new THREE.OctahedronGeometry(0.45)), E(0xff8a30, 4), 0, 0, 0, null, false), (m, i, t, n) => { const a = t * 1.5 + i / n * 6.283; m.position.set(Math.cos(a) * 1.15, 1.0 + ((t * 0.5 + i / n) % 1) * 2.4, Math.sin(a) * 1.15); m.scale.setScalar(0.3 * (1 - ((t * 0.5 + i / n) % 1) * 0.7)); m.rotation.y = t * 3; });
+  else if (cos.aura === 'frost') ring(6, () => mesh(geo('oct2', () => new THREE.OctahedronGeometry(0.45)), E(0x9ae0ff, 2.5), 0, 0, 0, null, false), (m, i, t, n) => { const a = -t * 1.1 + i / n * 6.283; m.position.set(Math.cos(a) * 1.25, 1.5 + Math.sin(t * 1.7 + i * 2) * 0.35, Math.sin(a) * 1.25); m.scale.set(0.22, 0.6, 0.22); m.rotation.set(0, t * 2, Math.sin(t + i) * 0.4); });
+  else if (cos.aura === 'spirit') ring(8, () => mesh(geo('sph8', () => new THREE.SphereGeometry(0.5, 6, 5)), E(0x6ab0ff, 3.5), 0, 0, 0, null, false), (m, i, t, n) => { const k = i % 4, a = t * 2.2 - k * 0.32 + (i < 4 ? 0 : 3.14), s = 1 - k * 0.2; m.position.set(Math.cos(a) * 1.2, 1.2 + Math.sin(t * 1.3 + (i < 4 ? 0 : 2)) * 0.5 + k * 0.05, Math.sin(a) * 1.2); m.scale.setScalar(0.2 * s); });
+  else if (cos.aura === 'moon') { const h = mesh(geo('halo2', () => new THREE.TorusGeometry(0.8, 0.05, 5, 24)), E(0xfff0b0, 3), 0, 3.9, 0, g, false); h.rotation.x = Math.PI / 2; ring(3, () => mesh(geo('oct2', () => new THREE.OctahedronGeometry(0.45)), E(0xfff0b0, 4), 0, 0, 0, null, false), (m, i, t, n) => { const a = t * 1.8 + i / n * 6.283; m.position.set(Math.cos(a) * 0.8, 3.9 + Math.sin(t * 3 + i) * 0.1, Math.sin(a) * 0.8); m.scale.setScalar(0.16); m.rotation.y = t * 4; }); fns.push(t => { h.rotation.z = t * 0.8; h.position.y = 3.9 + Math.sin(t * 1.5) * 0.06; }); }
+  if (cos.wings) {
+    const WC = { angel: [0xf4f0ff, 0xcfd8ff, 0.25], flame: [0xff8a30, 0xff5a10, 0.9], shadow: [0x2a1a3a, 0x8a4ad0, 0.7] }[cos.wings];
+    if (WC) { const ws = []; for (const sx of [-1, 1]) for (let k = 0; k < 3; k++) { const w = mesh(geo('wing', () => new THREE.PlaneGeometry(0.9, 2.0)), M(WC[0], { e: WC[1], ei: WC[2], ds: true, uniq: true }), 0, 0, 0, u.body); w.castShadow = false; w.scale.setScalar(0.75); ws.push([w, sx, k]); }
+      fns.push(t => { const f = Math.sin(t * 3.2); for (const [w, sx, k] of ws) { w.position.set(sx * (0.55 + k * 0.42), 2.45 - k * 0.5, -0.7); w.rotation.set(0.2, sx * (0.35 + f * 0.22 + k * 0.05), -sx * (0.55 + k * 0.38 + f * 0.28)); } }); }
+  }
+  if (fns.length) u.cosAnim = t => { for (const f of fns) f(t); };
+}
 // 꾸밈: 투구 장식, 방패(없으면 가슴) 문장
 function dressHero(g, cos) {
+  dressMove(g, cos);
   const u = g.userData, head = u.head, hy = HERO[g.userData.role] && HERO[g.userData.role].helm ? 0.45 : 0.1, lit = c => M(c, { e: c, ei: 1.2 }), hold = [];
   if (cos.helm === 'plume') for (let i = 0; i < 3; i++) { const p = cone(0.13, 0.9 - i * 0.12, 5, M(0xc02a2a), 0, hy + 0.95 - i * 0.04, -0.12 - i * 0.14, head); p.rotation.x = -0.5 - i * 0.25; }
   else if (cos.helm === 'horns') for (const sx of [-1, 1]) { const h = cone(0.11, 0.85, 5, bone(), sx * 0.44, hy + 0.35, 0, head); h.rotation.z = -sx * 0.75; }
@@ -1110,7 +1127,7 @@ export class View {
       }
     }
     for (const d of this.drips || []) { d.t += dt; const u = d.t / d.T; if (u >= 1) { d.t = 0; this.ring(d.x, d.z, 1.1, 0x9ad0ff, 0.7); } d.m.position.y = u < 0.55 ? 8 : 8 - Math.pow((u - 0.55) / 0.45, 2) * 8; d.m.visible = u > 0.4; }
-    if (this.lobbyHeroes) this.lobbyHeroes.forEach((h, i) => { h.userData.body.position.y = Math.sin(t * 1.5 + i) * 0.03; h.userData.head.rotation.y = Math.sin(t * 0.6 + i * 2) * 0.3; });
+    if (this.lobbyHeroes) this.lobbyHeroes.forEach((h, i) => { if (h.userData.cosAnim) h.userData.cosAnim(t); h.userData.body.position.y = Math.sin(t * 1.5 + i) * 0.03; h.userData.head.rotation.y = Math.sin(t * 0.6 + i * 2) * 0.3; });
     if (this.fxL && this.fxLI > 0) { this.fxLI = Math.max(0, this.fxLI - dt * this.fxLI * 5 - dt * 10); this.fxL.intensity = this.fxLI; }
     for (const f of this.fx) { f.t += dt; f.up(f, dt); }
     this.fx = this.fx.filter(f => { if (f.t >= f.T) { this.scene.remove(f.m); return false; } return true; });
@@ -1360,7 +1377,7 @@ function floorGuard(m, u) {
 }
 function kApply(T, P, f) { if (f <= 0) return; for (const q in P) T[q] = T[q] * (1 - f) + P[q] * f; }
 function animHero(E, p, dt, t) {
-  const m = E.m, u = m.userData, role = p.role; m.position.set(E.x, 0, E.z); m.rotation.y = Math.PI / 2 - E.a;
+  const m = E.m, u = m.userData, role = p.role; m.position.set(E.x, 0, E.z); m.rotation.y = Math.PI / 2 - E.a; if (u.cosAnim) u.cosAnim(t);
   E.ph += dt * (p.mv ? 11 : 0); E.sw = (E.sw || 0) + ((p.mv ? Math.sin(E.ph) * 0.95 : 0) - (E.sw || 0)) * Math.min(1, dt * 14); const sw = E.sw;
   // 걷기 세기 (멈추면 부드럽게 0으로)
   E.wk = (E.wk || 0) + ((p.mv ? 1 : 0) - (E.wk || 0)) * Math.min(1, dt * 10); const wk = E.wk, sn = Math.sin(E.ph);
