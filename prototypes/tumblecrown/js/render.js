@@ -51,7 +51,7 @@ const HERO = {
 function matOf(v) { return v === 'dm' ? dmetal() : v === 'mt' ? metal() : M(v); }
 export const makeHero = toonify(function (cls, col) {
   const o = HERO[cls] || HERO.knight, g = o.skel ? makeSkel(col) : makeFigure(o, col);
-  g.userData.cls = cls; g.scale.setScalar(0.82);
+  g.userData.cls = cls; g.scale.setScalar(1.2);
   // 발밑 고리: 플레이어 색
   const ring = mesh(geo('pring', () => new THREE.RingGeometry(0.95, 1.2, 20)), M(col, { op: 0.75, ds: true, uniq: true }), 0, 0.06, 0, g, false); ring.rotation.x = -Math.PI / 2; g.userData.ring = ring;
   const bub = sph(1.9, 12, 9, M(0xbfe8ff, { op: 0.18, uniq: true }), 0, 1.6, 0, g); bub.castShadow = bub.receiveShadow = false; bub.visible = false; g.userData.bub = bub;
@@ -155,7 +155,7 @@ export class View {
   // 섬 전체가 화면에 들어오게 크기를 맞춰요 (카메라는 움직이지 않아요)
   fit(now) {
     const asp = this.W / this.H, g = this.ring ?? 6, hw = (Math.min(g, NX) + 0.5) * CELL, hz = (Math.min(g, NZ) + 0.5) * CELL;
-    this.vsT = Math.max((hw + 5) / asp, hz * 0.74 + 5, 7);
+    this.vsT = Math.max((hw + 2.5) / asp, hz * 0.74 + 3.5, 7);
     if (now) this.vs = this.vsT; this.applyVs();
   }
   applyVs() { const asp = this.W / this.H, v = this.vs; this.cam.left = -v * asp; this.cam.right = v * asp; this.cam.top = v + 1; this.cam.bottom = -v + 1; this.cam.updateProjectionMatrix(); }
@@ -176,7 +176,7 @@ export class View {
     const under = geo('hunder', () => new THREE.BoxGeometry(CELL * 0.97, 1.8, CELL * 0.97)), cob = geo('hcob', () => new THREE.BoxGeometry(CELL * 0.485, 0.5, CELL * 0.485));
     for (let i = 0; i < NT; i++) {
       const T = TILES[i], g = new THREE.Group(); g.position.set(T.x, 0, T.z); s.add(g);
-      const boss = Math.abs(T.q) <= 5 && Math.abs(T.r) <= 4, tops = [], gms = [];
+      const boss = Math.abs(T.q) <= NX - 1 && Math.abs(T.r) <= NZ - 1, tops = [], gms = [];
       for (let k = 0; k < 4; k++) {
         const gm = M((boss ? BFLOOR : FLOOR)[(R() * 5) | 0]); gms.push(gm);
         const h = 0.9 + R() * 0.2, c = mesh(cob, gm, (k % 2 ? 1 : -1) * CELL * 0.245 + (R() - 0.5) * 0.06, -0.25 + (h - 1) * 0.5 * 0.5, (k < 2 ? -1 : 1) * CELL * 0.245 + (R() - 0.5) * 0.06, g); c.scale.y = h; tops.push(c);
@@ -243,7 +243,7 @@ export class View {
     this.mode = 'preview'; this.pp.camera = this.camP;
     if (this.pv && this.pv.cls === cls && this.pv.col === col) return;
     if (this.pv) this.ped.remove(this.pv.g);
-    const g = makeHero(cls, col); g.scale.setScalar(1); g.rotation.y = 0.45; g.userData.ring.visible = false; this.ped.add(g); this.pv = { g, cls, col, t0: performance.now() / 1000, y0: g.position.y };
+    const g = makeHero(cls, col); g.scale.setScalar(1.4); g.rotation.y = 0.45; g.userData.ring.visible = false; this.ped.add(g); this.pv = { g, cls, col, t0: performance.now() / 1000, y0: g.position.y };
   }
   setTiles(tl, dt, t) {
     for (let i = 0; i < NT; i++) {
