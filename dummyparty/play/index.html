@@ -1627,7 +1627,9 @@ body.playing #emoBar{display:flex}
    <div class="row"><input id="codeIn" maxlength="5" placeholder="방 코드" autocomplete="off"><button class="pb dark" id="joinBtn" style="flex:0 0 auto">들어가기</button></div>
    <div class="msg" id="homeMsg"></div>
   </aside>
-  <template id="patchnotes"><details class="notes" open><summary>패치노트 · v0.1 (b69)</summary>
+  <template id="patchnotes"><details class="notes" open><summary>패치노트 · v0.1 (b70)</summary>
+   <b>2026-10-25 · v0.1 · b70 · 화면 배경음악</b>
+   <ul><li>첫 화면, 대기실, 결과 화면에서 새 배경음악이 나와요</li></ul>
    <b>2026-10-25 · v0.1 · b69 · 방장 컴퓨터 부담 줄이기</b>
    <ul><li>방장 컴퓨터가 느려도 게임이 덜 느려져요: 상태를 한 번만 만들어 가볍게 보내고, 회선이 막힌 사람에겐 건너뛰고, 방장이 밀려도 게임 속도를 따라잡아요</li><li>방장 컴퓨터가 계속 밀리면 그 컴퓨터에서만 그림을 자동으로 가볍게 바꾸고 보내는 횟수도 줄여요 (규칙은 그대로예요)</li></ul>
    <b>2026-10-25 · v0.1 · b68 · 칭호 상점과 연습장</b>
@@ -1764,7 +1766,7 @@ body.playing #emoBar{display:flex}
    <ul><li>무너지는 발판 칸 수 대폭 증가 (19×10)와 용암 동굴 맵</li><li>10개 맵 전부 새로 그림 (관중석, 야자수 섬, 링, 정원 미로, 서커스, 우노 테이블 등)</li><li>글자 대신 아이콘·말풍선·이펙트로 표현 (무기, 아이템, 카드 효과, 시작 안내)</li><li>타격·폭발·물보라 효과와 화면 흔들림 추가</li></ul>
    <b>2026-10-19 · v0.1 · b1 · 첫 시험판</b>
    <ul><li>마네킹 미니게임 10개 추가 (장애물 달리기, 섬 밀치기, 싸우기, 병맛 미로, 체스 대난투, 폭탄 돌리기, 병맛 우노, 쇼윈도 얼음땡, 무너지는 발판, 컨베이어 서바이벌)</li><li>방 코드로 최대 8명 멀티플레이, 빈자리는 봇으로 채우기</li><li>판마다 10개 중 5개를 무작위로 골라 점수를 합산</li><li>PC 키보드와 휴대폰 터치 조작 지원</li></ul></details></template>
-  <p class="foot">2~8명 · 판마다 36개 미니게임 중 7개 · v0.1 b69 · <a href="../">← Dummy Party 사이트로</a></p>
+  <p class="foot">2~8명 · 판마다 36개 미니게임 중 7개 · v0.1 b70 · <a href="../">← Dummy Party 사이트로</a></p>
   <p class="foot"><span class="ff-copy">© 2026 Frenchfries777 · <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.ko" target="_blank" rel="noopener">CC BY-NC-ND 4.0</a></span></p>
  </div>
 </section>
@@ -7343,7 +7345,17 @@ var CHM = (function () {
       if (mel.paused) { var q = mel.play(); if (q && q.catch) q.catch(function () { }); }
     } catch (e) { }
   }
-  return { tick: function (m, s) { tick(m, s); mainTick(m); } };
+  // 첫 화면·대기실·결과 화면에 나오는 곡 한 곡
+  var hel = null, halt = false;
+  function homeTick(want) {
+    want = !!(want && lsGet('dummyparty.sfx') !== '0');
+    if (!want) { if (hel && !hel.paused) { try { hel.pause(); } catch (e) { } } return; }
+    try {
+      if (!hel) { hel = new Audio('party-home.mp3'); hel.loop = true; hel.preload = 'auto'; hel.volume = 0.45; hel.onerror = function () { if (!halt) { halt = true; hel.src = ALT + 'party-home.mp3'; hel.load(); } }; }
+      if (hel.paused) { var q = hel.play(); if (q && q.catch) q.catch(function () { }); }
+    } catch (e) { }
+  }
+  return { tick: function (m, s) { tick(m, s); mainTick(m); }, home: homeTick };
 })();
 
 /* ===== 시작 화면 배경: 봇들이 하는 실제 미니게임 장면을 뒤에서 계속 돌려요 ===== */
@@ -7974,10 +7986,11 @@ function lerpSnap(a, b, f) {
 var lastFrame = performance.now();
 function frame() {
   requestAnimationFrame(frame);
-  if (!$('sGame').classList.contains('on')) { CHM.tick(null, null); return; }
+  if (!$('sGame').classList.contains('on')) { CHM.tick(null, null); CHM.home($('sHome').classList.contains('on') || $('sLobby').classList.contains('on')); return; }
   if (FPSCAP && performance.now() - lastFrame < 1000 / FPSCAP - 3) return;
   var now = performance.now(), dt = Math.min(0.1, (now - lastFrame) / 1000); lastFrame = now;
   var m = G.meta; if (!m) return;
+  CHM.home(m.phase === 'result' || m.phase === 'final');
   var def = DP.MG[m.mg];
   CX.setTransform(1, 0, 0, 1, 0, 0); CX.fillStyle = '#1b1712'; CX.fillRect(0, 0, CV.width, CV.height);
   CX.setTransform(SCALE, 0, 0, SCALE, OFFX, OFFY);
