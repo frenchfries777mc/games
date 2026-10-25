@@ -31,7 +31,7 @@ sizeOv();
 
 // 로비 뒤 장면: 방 가운데 모인 싸움꾼들
 const DEMO = [{ id: 'd0', col: COLORS[0].c, cls: 'knight', x: -4, z: 1.6 }, { id: 'd1', col: COLORS[1].c, cls: 'witch', x: 4, z: 1.2 }, { id: 'd2', col: COLORS[2].c, cls: 'viking', x: -0.4, z: 4.4 }, { id: 'd3', col: COLORS[3].c, cls: 'skeleton', x: 8, z: 5.2 }, { id: 'd4', col: COLORS[4].c, cls: 'hunter', x: -8.4, z: 4.6 }];
-function demoScene() { view.setPlayers(DEMO); view.ring = undefined; view.resetTiles(); view.fit(true); S.demoT = 0; }
+function demoScene() { view.setPlayers(DEMO); view.rN = undefined; view.resetTiles(); view.fit(true); S.demoT = 0; }
 const DEMO_TL = Array.from({ length: NT }, (c, i) => PILLARS.includes(i) ? '3' : '0').join('');
 function demoSnap(t) {
   const ph = (t % 6) / 6;
@@ -300,7 +300,7 @@ function beginGame() {
 function startClient() {
   S.acc = 0; S.sendAcc = 0; S.evq = []; S.sendEv = []; S.overT = 0; S.resultShown = false; S.lastCd = 9;
   if (S.G) S.snap = snapshot(S.G);
-  view.setPlayers(S.meta); view.resetTiles(); view.ring = undefined; view.fit(true);
+  view.setPlayers(S.meta); view.resetTiles(); view.rN = undefined; view.fit(true);
   $('feed').innerHTML = ''; $('skName').textContent = CLS[(S.meta.find(m => m.id === S.me) || {}).cls || 'knight'].sk.name;
   exitArm(false); show('game'); paintBoard(true);
 }
