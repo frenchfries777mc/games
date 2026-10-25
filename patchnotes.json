@@ -3,6 +3,17 @@
   {
    "date": "2026-10-25",
    "build": "",
+   "title": "패치노트·위키 목록에 모든 게임",
+   "items": [
+    "허브 패치노트 페이지에 Isleport, Vowkeep, Dummy Party가 들어왔어요",
+    "허브 소식과 소식 받기에도 Dummy Party가 들어왔어요",
+    "위키 목록에 Vowkeep과 Dummy Party 칸이 생겼어요",
+    "게임 목록이 한 곳(ff-lang.js)에서 나와서, 새 게임을 넣으면 패치노트·소식·위키·글쓰기 목록에 같이 나와요"
+   ]
+  },
+  {
+   "date": "2026-10-25",
+   "build": "",
    "title": "Vowkeep 기사 2타 자세",
    "items": [
     "Vowkeep b48: 기사 2타 자세: 납작하게 짜부라지지 않고 몸을 펴며 베게 바꿈"
