@@ -2,6 +2,231 @@
  "notes": [
   {
    "date": "2026-10-25",
+   "build": "v383",
+   "title": "깃발 규칙과 업적 추가",
+   "items": [
+    "깃발 뺏기 득점 조건 변경: 우리 깃발이 밖에 있어도 득점",
+    "깃발 뺏기 떨어진 깃발이 저절로 돌아가지 않고 우리 팀이 닿아야 복귀",
+    "기사 궁극기로 한 번에 3명 처치하는 도전과제 추가",
+    "듀얼·깃발 뺏기·점령전·배틀로얄·배틀로얄 듀오·데스매치·토너먼트·황금 쟁탈·팀전 경기 횟수 도전과제 9개 추가",
+    "칸 궁극기의 날개가 인게임에서 보이지 않던 문제 수정",
+    "인형술사 바느질 실이 바늘 빼기를 쓰기 전까지 계속 유지",
+    "4000 sC 스킨 시각 효과 강화",
+    "황금 쟁탈 금 더미에 0.8초 머물러야 금 1개 획득, 금 더미가 바닥나지 않음",
+    "처치·어시스트 골드 지급 횟수 제한 없음",
+    "캐릭터 숙련도 경험치 획득량 약 40% 감소",
+    "닉네임 최대 글자 수 12 → 15",
+    "인형술사 밸런스 다시 측정"
+   ],
+   "tr": {
+    "en": {
+     "title": "Flag rules and achievements",
+     "items": [
+      "Capture the Flag scoring changed: you score even if your flag is out",
+      "Capture the Flag dropped flags no longer return on their own; your team must touch them to send them back",
+      "Added an achievement for taking down 3 enemies at once with the Knight's ultimate",
+      "Added 9 match-count achievements for Duel, Capture the Flag, Domination, Battle Royale, Battle Royale Duo, Deathmatch, Tournament, Gold Rush and Team Battle",
+      "Fixed the Kan ultimate's wings not showing in game",
+      "The Puppeteer's Stitching thread now stays tied until Pull Needle is used",
+      "Strengthened the visual effects of the 4000 sC skin",
+      "In Gold Rush you must stay on the gold pile for 0.8 s to get 1 gold, and the pile never runs out",
+      "Takedown and assist gold payouts are no longer limited in number",
+      "Character mastery XP gain reduced by about 40%",
+      "Max nickname length 12 → 15",
+      "Puppeteer balance re-measured"
+     ]
+    },
+    "es": {
+     "title": "Reglas de la bandera y logros",
+     "items": [
+      "Puntuación de Captura la bandera cambiada: se puntúa aunque tu bandera esté fuera",
+      "En Captura la bandera, las banderas caídas ya no vuelven solas; tu equipo debe tocarlas para devolverlas",
+      "Nuevo logro por derribar a 3 enemigos de una vez con la definitiva del Caballero",
+      "Añadidos 9 logros por número de partidas de Dúo, Captura la bandera, Conquista, Battle royale, Battle royale dúo, Combate a muerte, Torneo, Fiebre del oro y Por equipos",
+      "Corregido que las alas de la definitiva de Kan no se vieran en la partida",
+      "El hilo de Costura del Titiritero ahora sigue unido hasta usar Sacar aguja",
+      "Mejorados los efectos visuales del aspecto de 4000 sC",
+      "En Fiebre del oro hay que quedarse 0,8 s en el montón para conseguir 1 de oro, y el montón nunca se agota",
+      "El oro por derribos y asistencias ya no tiene límite de veces",
+      "La experiencia de maestría de personaje se reduce aproximadamente un 40%",
+      "Longitud máxima del apodo 12 → 15",
+      "Equilibrio del Titiritero medido de nuevo"
+     ]
+    },
+    "fr": {
+     "title": "Règles du drapeau et succès",
+     "items": [
+      "Score de Capture du drapeau modifié : on marque même si son drapeau est dehors",
+      "En Capture du drapeau, un drapeau tombé ne revient plus seul ; votre équipe doit le toucher pour le renvoyer",
+      "Nouveau succès pour avoir éliminé 3 ennemis d’un coup avec l’ultime du Chevalier",
+      "9 succès de nombre de matchs ajoutés pour Duel, Capture du drapeau, Conquête, Battle royale, Battle royale en duo, Deathmatch, Tournoi, Ruée vers l’or et Mode équipes",
+      "Correction : les ailes de l’ultime de Kan n’apparaissaient pas en jeu",
+      "Le fil de Couture du Marionnettiste reste attaché jusqu’à l’utilisation de Retirer l’aiguille",
+      "Effets visuels du skin à 4000 sC renforcés",
+      "En Ruée vers l’or, il faut rester 0,8 s sur le tas pour obtenir 1 pépite, et le tas ne s’épuise jamais",
+      "L’or des éliminations et des assistances n’est plus limité en nombre",
+      "Gain d’XP de maîtrise des personnages réduit d’environ 40 %",
+      "Longueur maximale du pseudo 12 → 15",
+      "Équilibrage du Marionnettiste remesuré"
+     ]
+    },
+    "de": {
+     "title": "Flaggenregeln und Erfolge",
+     "items": [
+      "Wertung bei Flaggenraub geändert: Man punktet auch, wenn die eigene Flagge draußen ist",
+      "Fallengelassene Flaggen in Flaggenraub kehren nicht mehr von selbst zurück; dein Team muss sie berühren",
+      "Neuer Erfolg für das Ausschalten von 3 Gegnern auf einmal mit dem Ultimate des Ritters",
+      "9 Erfolge für die Matchanzahl in Duell, Flaggenraub, Eroberung, Battle Royale, Battle Royale Duo, Deathmatch, Turnier, Goldrausch und Teamkampf hinzugefügt",
+      "Behoben: Die Flügel des Kan-Ultimates waren im Spiel nicht zu sehen",
+      "Der Faden von Nähen des Puppenspielers bleibt jetzt bis zum Einsatz von Nadel ziehen verbunden",
+      "Visuelle Effekte des 4000-sC-Skins verstärkt",
+      "In Goldrausch muss man 0,8 s auf dem Haufen bleiben, um 1 Gold zu bekommen, und der Haufen geht nie aus",
+      "Gold für Ausschaltungen und Assists ist nicht mehr zahlenmäßig begrenzt",
+      "Meisterschafts-EP der Charaktere um etwa 40 % verringert",
+      "Maximale Spitznamenlänge 12 → 15",
+      "Balance des Puppenspielers neu gemessen"
+     ]
+    },
+    "ja": {
+     "title": "旗のルールと実績の追加",
+     "items": [
+      "旗取りの得点条件を変更：自チームの旗が外にあっても得点",
+      "旗取りで落とした旗は自然には戻らず、味方が触れると戻るように",
+      "騎士の必殺技で一度に3人撃破する実績を追加",
+      "デュアル・旗取り・占領戦・バトルロイヤル・バトルロイヤルデュオ・デスマッチ・トーナメント・ゴールドラッシュ・チーム戦の試合数実績9個を追加",
+      "カンの必殺技の翼がゲーム内で見えなかった問題を修正",
+      "人形使いの縫い合わせの糸が針抜きを使うまで維持されるように",
+      "4000sCスキンのビジュアル効果を強化",
+      "ゴールドラッシュで金の山に0.8秒とどまると金1個を獲得、金の山はなくならない",
+      "撃破・アシストのゴールド支給回数の制限を撤廃",
+      "キャラクター熟練度の経験値獲得量を約40%減少",
+      "ニックネームの最大文字数 12 → 15",
+      "人形使いのバランスを再測定"
+     ]
+    },
+    "zh": {
+     "title": "旗帜规则与成就",
+     "items": [
+      "夺旗得分条件变更：即使己方旗帜在外也能得分",
+      "夺旗中掉落的旗帜不再自行返回，需要己方队友触碰才会返回",
+      "新增用骑士大招一次击杀 3 名敌人的成就",
+      "新增决斗、夺旗、占领战、大逃杀、大逃杀双人、死亡竞赛、锦标赛、黄金争夺、团队战的场次成就共 9 个",
+      "修复 Kan 大招的翅膀在游戏中看不到的问题",
+      "傀儡师缝合的线会一直保持到使用拔针",
+      "强化 4000 sC 皮肤的视觉效果",
+      "黄金争夺中需在金堆上停留 0.8 秒才能获得 1 块金块，金堆不会耗尽",
+      "击杀和助攻金币的发放次数不再受限",
+      "角色熟练度经验值获取量减少约 40%",
+      "昵称最大字数 12 → 15",
+      "重新测量傀儡师平衡"
+     ]
+    },
+    "pt": {
+     "title": "Regras da bandeira e conquistas",
+     "items": [
+      "Pontuação de Capture a Bandeira alterada: pontua-se mesmo com a sua bandeira fora da base",
+      "Em Capture a Bandeira, bandeiras caídas não voltam mais sozinhas; sua equipe precisa tocá-las para devolvê-las",
+      "Nova conquista por abater 3 inimigos de uma vez com o especial do Cavaleiro",
+      "Adicionadas 9 conquistas de número de partidas em Duelo, Capture a Bandeira, Dominação, Battle Royale, Battle Royale em Dupla, Deathmatch, Torneio, Corrida do Ouro e Batalha em Equipe",
+      "Corrigido: as asas do especial de Kan não apareciam no jogo",
+      "A linha da Costura do Titereiro agora permanece presa até usar Puxar Agulha",
+      "Efeitos visuais da skin de 4000 sC reforçados",
+      "Na Corrida do Ouro é preciso ficar 0,8 s na pilha para pegar 1 de ouro, e a pilha nunca acaba",
+      "O ouro de abates e assistências não tem mais limite de vezes",
+      "O XP de maestria de personagem diminuiu cerca de 40%",
+      "Tamanho máximo do apelido 12 → 15",
+      "Balanceamento do Titereiro medido de novo"
+     ]
+    },
+    "ru": {
+     "title": "Правила флага и достижения",
+     "items": [
+      "Изменено начисление очков в «Захвате флага»: очко засчитывается, даже если ваш флаг вне базы",
+      "В «Захвате флага» упавший флаг больше не возвращается сам; ваша команда должна коснуться его",
+      "Добавлено достижение за убийство 3 врагов за раз ультой Рыцаря",
+      "Добавлено 9 достижений за число матчей: «Дуэль», «Захват флага», «Захват точек», «Королевская битва», «Королевская битва: дуо», «Бой насмерть», «Турнир», «Золотая лихорадка» и «Командный бой»",
+      "Исправлено: крылья ульты Кана не были видны в игре",
+      "Нить «Шитья» Кукловода теперь держится, пока не будет использовано «Выдернуть иглу»",
+      "Усилены визуальные эффекты скина за 4000 sC",
+      "В «Золотой лихорадке» нужно стоять на куче 0,8 с, чтобы получить 1 слиток, а куча никогда не заканчивается",
+      "Выдача золота за убийства и помощь больше не ограничена по числу раз",
+      "Получение опыта мастерства персонажей снижено примерно на 40%",
+      "Максимальная длина никнейма 12 → 15",
+      "Баланс Кукловода измерен заново"
+     ]
+    },
+    "tr": {
+     "title": "Bayrak kuralları ve başarımlar",
+     "items": [
+      "Bayrak Kapmaca puanlaması değişti: kendi bayrağın dışarıda olsa bile puan alırsın",
+      "Bayrak Kapmaca'da düşen bayrak artık kendiliğinden dönmüyor; takımının dokunması gerekiyor",
+      "Şövalyenin ultisiyle aynı anda 3 rakibi alt etme başarımı eklendi",
+      "Düello, Bayrak Kapmaca, Hakimiyet, Battle Royale, Battle Royale İkili, Ölüm Maçı, Turnuva, Altına Hücum ve Takım Savaşı için 9 maç sayısı başarımı eklendi",
+      "Kan'ın ultisinin kanatlarının oyunda görünmemesi düzeltildi",
+      "Kuklacı Dikiş ipliği artık İğneyi Çek kullanılana kadar bağlı kalıyor",
+      "4000 sC'lik kostümün görsel efektleri güçlendirildi",
+      "Altına Hücum'da 1 altın almak için yığının üstünde 0,8 sn durmak gerekiyor, yığın hiç tükenmiyor",
+      "Alt etme ve asist altını artık sayı sınırına tabi değil",
+      "Karakter ustalık XP kazancı yaklaşık %40 azaldı",
+      "Takma ad en fazla uzunluğu 12 → 15",
+      "Kuklacı dengesi yeniden ölçüldü"
+     ]
+    },
+    "it": {
+     "title": "Regole della bandiera e obiettivi",
+     "items": [
+      "Punteggio di Cattura la bandiera cambiato: si segna anche se la propria bandiera è fuori",
+      "In Cattura la bandiera le bandiere cadute non tornano più da sole; la tua squadra deve toccarle per farle tornare",
+      "Aggiunto un obiettivo per aver abbattuto 3 nemici in un colpo con la suprema del Cavaliere",
+      "Aggiunti 9 obiettivi sul numero di partite per Duello, Cattura la bandiera, Dominio, Battle royale, Battle royale in coppia, Deathmatch, Torneo, Corsa all'oro e Battaglia a squadre",
+      "Corretto: le ali della suprema di Kan non si vedevano in partita",
+      "Il filo della Cucitura del Burattinaio ora resta legato finché non si usa Strappa l'ago",
+      "Potenziati gli effetti visivi della skin da 4000 sC",
+      "In Corsa all'oro bisogna restare 0,8 s sul mucchio per prendere 1 pepita, e il mucchio non finisce mai",
+      "L'oro per abbattimenti e assist non ha più un limite di volte",
+      "XP di maestria dei personaggi ridotta di circa il 40%",
+      "Lunghezza massima del nickname 12 → 15",
+      "Bilanciamento del Burattinaio rimisurato"
+     ]
+    },
+    "pl": {
+     "title": "Zasady flagi i osiągnięcia",
+     "items": [
+      "Zmieniono punktowanie w Zdobądź flagę: punkt liczy się, nawet gdy twoja flaga jest poza bazą",
+      "W Zdobądź flagę upuszczone flagi nie wracają już same; twoja drużyna musi je dotknąć",
+      "Dodano osiągnięcie za powalenie 3 wrogów naraz superumiejętnością Rycerza",
+      "Dodano 9 osiągnięć za liczbę meczów w trybach Pojedynek, Zdobądź flagę, Dominacja, Battle royale, Battle royale w duecie, Deathmatch, Turniej, Gorączka złota i Bitwa drużyn",
+      "Naprawiono niewidoczne w grze skrzydła superumiejętności Kana",
+      "Nić Szycia Lalkarza pozostaje teraz do użycia Wyrwania igły",
+      "Wzmocniono efekty wizualne skórki za 4000 sC",
+      "W Gorączce złota trzeba stać na stosie 0,8 s, by zdobyć 1 sztukę złota, a stos nigdy się nie wyczerpuje",
+      "Wypłata złota za pokonania i asysty nie jest już ograniczona liczbowo",
+      "Zdobywanie XP mistrzostwa postaci zmniejszone o ok. 40%",
+      "Maksymalna długość pseudonimu 12 → 15",
+      "Balans Lalkarza zmierzony ponownie"
+     ]
+    },
+    "ar": {
+     "title": "قواعد العلم والإنجازات",
+     "items": [
+      "تغيير احتساب النقاط في التقاط العلم: تُحتسب النقطة حتى لو كانت رايتك خارج القاعدة",
+      "لم تعد الرايات الساقطة في التقاط العلم تعود من تلقاء نفسها، بل يجب أن يلمسها فريقك لتعود",
+      "إضافة إنجاز لإسقاط 3 أعداء دفعة واحدة بالقدرة الخارقة للفارس",
+      "إضافة 9 إنجازات لعدد المباريات في المبارزة والتقاط العلم والهيمنة وباتل رويال وباتل رويال الثنائي ومباراة الموت والبطولة وحمى الذهب ومعركة الفرق",
+      "إصلاح عدم ظهور أجنحة القدرة الخارقة لكان داخل اللعبة",
+      "يبقى خيط خياطة محرك الدمى متصلًا حتى استخدام سحب الإبرة",
+      "تعزيز المؤثرات البصرية لمظهر 4000 sC",
+      "في حمى الذهب يجب البقاء على الكومة 0.8 ث للحصول على قطعة ذهب واحدة، ولا تنفد الكومة أبدًا",
+      "لم يعد ذهب الإسقاط والمساعدة محدودًا بعدد المرات",
+      "خفض خبرة براعة الشخصيات بنحو 40%",
+      "الحد الأقصى لطول الاسم المستعار 12 → 15",
+      "إعادة قياس توازن محرك الدمى"
+     ]
+    }
+   }
+  },
+  {
+   "date": "2026-10-25",
    "build": "v382",
    "title": "골드 이름 변경과 깃발 뺏기 조정",
    "items": [
