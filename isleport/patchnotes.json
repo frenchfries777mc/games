@@ -2,6 +2,64 @@
  "notes": [
   {
    "date": "2026-10-25",
+   "build": "v0.2 build 62",
+   "title": "방장 컴퓨터 부담 줄이기",
+   "items": [
+    "방장이 보내는 시장 소식 간격 늘리기 (저사양 옵션이면 더 늘림)",
+    "움직임이 없을 때 위치 전송 생략",
+    "다른 사람에게 가는 메시지를 받는 사람에게만 전달",
+    "섬 만드는 시간 단축, 저사양 옵션에서는 섬 크기 줄이기"
+   ],
+   "tr": {
+    "en": {
+     "title": "Lighter load for the room host",
+     "items": [
+      "Host market updates are sent less often (even less with the low-spec option)",
+      "Position updates are skipped while nothing moves",
+      "Messages for one player are no longer relayed to everyone",
+      "Faster island generation, smaller islands with the low-spec option"
+     ]
+    },
+    "ja": {
+     "title": "Lighter load for the room host",
+     "items": [
+      "Host market updates are sent less often (even less with the low-spec option)",
+      "Position updates are skipped while nothing moves",
+      "Messages for one player are no longer relayed to everyone",
+      "Faster island generation, smaller islands with the low-spec option"
+     ]
+    },
+    "es": {
+     "title": "Lighter load for the room host",
+     "items": [
+      "Host market updates are sent less often (even less with the low-spec option)",
+      "Position updates are skipped while nothing moves",
+      "Messages for one player are no longer relayed to everyone",
+      "Faster island generation, smaller islands with the low-spec option"
+     ]
+    },
+    "fr": {
+     "title": "Lighter load for the room host",
+     "items": [
+      "Host market updates are sent less often (even less with the low-spec option)",
+      "Position updates are skipped while nothing moves",
+      "Messages for one player are no longer relayed to everyone",
+      "Faster island generation, smaller islands with the low-spec option"
+     ]
+    },
+    "de": {
+     "title": "Lighter load for the room host",
+     "items": [
+      "Host market updates are sent less often (even less with the low-spec option)",
+      "Position updates are skipped while nothing moves",
+      "Messages for one player are no longer relayed to everyone",
+      "Faster island generation, smaller islands with the low-spec option"
+     ]
+    }
+   }
+  },
+  {
+   "date": "2026-10-25",
    "build": "v0.2 build 61",
    "title": "더 크고 화려한 섬",
    "items": [
