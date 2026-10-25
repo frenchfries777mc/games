@@ -387,7 +387,7 @@ window.bfIntro=function(){if(run)return;run=1;t0=Date.now();el.classList.add('ru
     <button class="btn" data-act="skins"><span class="arrow">▶</span>스킨 상점<span class="en">SKIN SHOP</span></button>
     <button class="btn" data-act="stats"><span class="arrow">▶</span>통계<span class="en">STATS</span></button>
     <button class="btn" data-act="settings"><span class="arrow">▶</span>설정<span class="en">SETTINGS</span></button>
-    <p class="foot">v0.4<br>build 106</p>
+    <p class="foot">v0.4<br>build 107</p>
   </nav>
 </div>
 
@@ -2091,9 +2091,9 @@ RECIPES.push({grp:'건축',bench:true,name:'석재벽돌',note:'강화석재 3�
       RECIPES.push({grp:'강화·압축',name:'압축된 '+(nm==='황동'?'강화황동':nm)+'판',note:'압축된 '+(nm==='황동'?'강화황동':nm)+' 3개 → 6개',pat:three(base+'_c'),out:[{id:base+'_cp',n:6}]});
     }
     RECIPES.push({grp:'신호기 부품',name:'회로 결정체',note:'회로조각 · 회로장치 ×5 · 회로조각',pat:[z('circuit'),z('circuit_device'),z('circuit_device'),z('circuit_device'),z('circuit_device'),z('circuit_device'),z('circuit')],out:[{id:'circuit_crystal',n:1}]});
-    RECIPES.push({grp:'신호기 부품',name:'초장거리 신호 장치',note:'압축된 강화철판 ×4 + 원격신호장치 ×3',pat:[z('riron_cp'),z('riron_cp'),z('rsd'),z('rsd'),z('rsd'),z('riron_cp'),z('riron_cp')],out:[{id:'ult_signal',n:1}]});
-    RECIPES.push({grp:'신호기 부품',name:'파동음파장치',note:'압축된 강화황동판 ×6 + 종',pat:[z('brass_cp'),z('brass_cp'),z('brass_cp'),z('bell'),z('brass_cp'),z('brass_cp'),z('brass_cp')],out:[{id:'wave_device',n:1}]});
-    RECIPES.push({grp:'신호기 부품',name:'신호기',note:'우주선을 부르는 신호기',pat:[z('circuit_crystal'),z('rgold_cp'),z('ult_signal'),z('wave_device'),z('ult_signal'),z('rgold_cp'),z('circuit_crystal')],out:[{id:'beacon',n:1}]});
+    RECIPES.push({grp:'신호기 부품',name:'초장거리 신호 장치',note:'강화철판 ×4 + 원격신호장치 ×3',pat:[z('riron_plate'),z('riron_plate'),z('rsd'),z('rsd'),z('rsd'),z('riron_plate'),z('riron_plate')],out:[{id:'ult_signal',n:1}]});
+    RECIPES.push({grp:'신호기 부품',name:'파동음파장치',note:'강화황동판 ×6 + 종',pat:[z('brass_plate'),z('brass_plate'),z('brass_plate'),z('bell'),z('brass_plate'),z('brass_plate'),z('brass_plate')],out:[{id:'wave_device',n:1}]});
+    RECIPES.push({grp:'신호기 부품',name:'신호기',note:'우주선을 부르는 신호기',pat:[z('circuit_crystal'),z('rgold_plate'),z('ult_signal'),z('wave_device'),z('ult_signal'),z('rgold_plate'),z('circuit_crystal')],out:[{id:'beacon',n:1}]});
   }
   RECIPES.push({grp:'맨손',name:'횃불',note:'막대 + 송진',pat:[S1,{id:'resin',n:1}],out:[{id:'torch',n:2}]});
   RECIPES.push({grp:'맨손',name:'벽돌',note:'점토 2개',pat:[{id:'clay',n:1},{id:'clay',n:1}],out:[{id:'brick',n:4}]});
