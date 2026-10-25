@@ -1,7 +1,7 @@
 // Vowkeep · © 2026 Frenchfries777 · CC BY-NC-ND 4.0
 // 게임 데이터: 역할, 적, 축복, 1장 지도
 
-export const VERSION = 'v0.2', BUILD = 47;
+export const VERSION = 'v0.2', BUILD = 48;
 
 export const ROLES = {
   knight: {
