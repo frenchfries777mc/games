@@ -3,6 +3,166 @@
   {
    "date": "2026-10-25",
    "build": "",
+   "title": "허브 카드 다듬기, Dummy Party 업적",
+   "items": [
+    "플레이 버튼 모양을 모든 게임 카드에서 같게 맞췄어요 (색만 달라요)",
+    "Dummy Party 카드에도 다른 카드처럼 위쪽 색 띠가 생겼어요",
+    "허브 업적에 Dummy Party 업적 33개가 들어왔어요",
+    "프로필 카드에서 게임별 플레이 시간 표시를 없앴어요",
+    "Educations와 Tools의 접속 표시 위치를 Games와 똑같이 맞췄어요",
+    "첫 화면의 '계정 하나로 모든 게임' 안내를 없애서 세 사이트가 같은 모양이 됐어요",
+    "프로토타입 목록에 Tumblecrown 카드가 생겼어요"
+   ],
+   "tr": {
+    "en": {
+     "title": "Hub cards polished, Dummy Party achievements",
+     "items": [
+      "The Play button now has the same shape on every game card (only the color differs)",
+      "The Dummy Party card now has the colored top strip like the others",
+      "Dummy Party's 33 achievements are now in the hub achievements",
+      "Removed per-game play time from the profile card",
+      "The online bar on Educations and Tools now sits in the same place as on Games",
+      "Removed the 'one account for all games' banner so the three sites look alike",
+      "Added a Tumblecrown card to the prototypes list"
+     ]
+    },
+    "es": {
+     "title": "Tarjetas del portal pulidas, logros de Dummy Party",
+     "items": [
+      "El botón de jugar tiene la misma forma en todas las tarjetas (solo cambia el color)",
+      "La tarjeta de Dummy Party ahora tiene la franja de color superior como las demás",
+      "Los 33 logros de Dummy Party ya están en los logros del portal",
+      "Quitamos el tiempo de juego por juego de la tarjeta de perfil",
+      "La barra de conectados de Educations y Tools está en el mismo sitio que en Games",
+      "Quitamos el aviso «una cuenta para todos los juegos» para que los tres sitios se vean igual",
+      "Añadida una tarjeta de Tumblecrown a la lista de prototipos"
+     ]
+    },
+    "fr": {
+     "title": "Cartes du portail retouchées, succès de Dummy Party",
+     "items": [
+      "Le bouton Jouer a la même forme sur toutes les cartes (seule la couleur change)",
+      "La carte Dummy Party a maintenant la bande de couleur en haut comme les autres",
+      "Les 33 succès de Dummy Party sont dans les succès du portail",
+      "Le temps de jeu par jeu a été retiré de la carte de profil",
+      "La barre des connectés d’Educations et Tools est au même endroit que sur Games",
+      "Le bandeau « un compte pour tous les jeux » a été retiré pour que les trois sites se ressemblent",
+      "Une carte Tumblecrown a été ajoutée à la liste des prototypes"
+     ]
+    },
+    "de": {
+     "title": "Hub-Karten überarbeitet, Dummy-Party-Erfolge",
+     "items": [
+      "Der Spielen-Button hat auf allen Spielkarten dieselbe Form (nur die Farbe unterscheidet sich)",
+      "Die Dummy-Party-Karte hat jetzt den farbigen Streifen oben wie die anderen",
+      "Die 33 Erfolge von Dummy Party sind jetzt in den Hub-Erfolgen",
+      "Die Spielzeit pro Spiel wurde von der Profilkarte entfernt",
+      "Die Online-Leiste von Educations und Tools sitzt jetzt an derselben Stelle wie bei Games",
+      "Das Banner „Ein Konto für alle Spiele“ wurde entfernt, damit die drei Seiten gleich aussehen",
+      "Eine Tumblecrown-Karte in der Prototypen-Liste hinzugefügt"
+     ]
+    },
+    "ja": {
+     "title": "ハブのカードを整理、Dummy Partyの実績",
+     "items": [
+      "プレイボタンの形をすべてのゲームカードで揃えました(色だけ違います)",
+      "Dummy Partyのカードにも他と同じ上の色の帯がつきました",
+      "ハブの実績にDummy Partyの実績33個が入りました",
+      "プロフィールカードのゲーム別プレイ時間を消しました",
+      "EducationsとToolsのオンライン表示をGamesと同じ位置にそろえました",
+      "「1つのアカウントで全ゲーム」の案内を消して3つのサイトを同じ見た目にしました",
+      "プロトタイプ一覧にTumblecrownのカードを追加しました"
+     ]
+    },
+    "zh": {
+     "title": "中心卡片整理，Dummy Party 成就",
+     "items": [
+      "所有游戏卡片的“开始”按钮形状统一（只有颜色不同）",
+      "Dummy Party 卡片现在也有和其他卡片一样的顶部彩带",
+      "中心成就中加入了 Dummy Party 的 33 个成就",
+      "移除了资料卡上各游戏的游玩时间",
+      "Educations 和 Tools 的在线栏位置与 Games 一致",
+      "移除了“一个账号玩所有游戏”的横幅，让三个站点外观一致",
+      "原型列表中新增 Tumblecrown 卡片"
+     ]
+    },
+    "pt": {
+     "title": "Cartões do hub ajustados, conquistas do Dummy Party",
+     "items": [
+      "O botão de jogar tem o mesmo formato em todos os cartões (só a cor muda)",
+      "O cartão do Dummy Party agora tem a faixa colorida no topo como os outros",
+      "As 33 conquistas do Dummy Party agora estão nas conquistas do hub",
+      "Removemos o tempo de jogo por jogo do cartão de perfil",
+      "A barra de online de Educations e Tools fica no mesmo lugar que em Games",
+      "Removemos o aviso «uma conta para todos os jogos» para os três sites ficarem iguais",
+      "Adicionamos um cartão do Tumblecrown à lista de protótipos"
+     ]
+    },
+    "ru": {
+     "title": "Карточки хаба доработаны, достижения Dummy Party",
+     "items": [
+      "Кнопка «Играть» теперь одной формы на всех карточках (отличается только цвет)",
+      "У карточки Dummy Party появилась цветная полоса сверху, как у остальных",
+      "33 достижения Dummy Party теперь в достижениях хаба",
+      "Убрано время игры по каждой игре с карточки профиля",
+      "Панель «онлайн» на Educations и Tools стоит там же, где на Games",
+      "Убрали баннер «один аккаунт для всех игр», чтобы три сайта выглядели одинаково",
+      "В список прототипов добавлена карточка Tumblecrown"
+     ]
+    },
+    "tr": {
+     "title": "Hub kartları düzenlendi, Dummy Party başarımları",
+     "items": [
+      "Oyna düğmesi tüm oyun kartlarında aynı şekilde (yalnızca renk farklı)",
+      "Dummy Party kartında da diğerleri gibi üstte renkli şerit var",
+      "Dummy Party'nin 33 başarımı hub başarımlarına eklendi",
+      "Profil kartından oyun başına oynama süresi kaldırıldı",
+      "Educations ve Tools'taki çevrimiçi çubuğu Games ile aynı yerde",
+      "Üç site aynı görünsün diye «tek hesapla tüm oyunlar» başlığı kaldırıldı",
+      "Prototip listesine Tumblecrown kartı eklendi"
+     ]
+    },
+    "it": {
+     "title": "Schede dell'hub rifinite, obiettivi di Dummy Party",
+     "items": [
+      "Il pulsante Gioca ha la stessa forma su tutte le schede (cambia solo il colore)",
+      "La scheda di Dummy Party ora ha la striscia colorata in alto come le altre",
+      "I 33 obiettivi di Dummy Party sono ora negli obiettivi dell'hub",
+      "Rimosso il tempo di gioco per gioco dalla scheda del profilo",
+      "La barra degli online di Educations e Tools è nello stesso punto di Games",
+      "Rimosso il banner «un account per tutti i giochi» perché i tre siti siano uguali",
+      "Aggiunta una scheda Tumblecrown all'elenco dei prototipi"
+     ]
+    },
+    "pl": {
+     "title": "Karty huba dopracowane, osiągnięcia Dummy Party",
+     "items": [
+      "Przycisk Graj ma ten sam kształt na wszystkich kartach (różni się tylko kolor)",
+      "Karta Dummy Party ma teraz kolorowy pasek u góry jak pozostałe",
+      "33 osiągnięcia Dummy Party są teraz w osiągnięciach huba",
+      "Usunięto czas gry w poszczególnych grach z karty profilu",
+      "Pasek online w Educations i Tools jest w tym samym miejscu co w Games",
+      "Usunięto baner „jedno konto do wszystkich gier”, aby trzy strony wyglądały tak samo",
+      "Dodano kartę Tumblecrown do listy prototypów"
+     ]
+    },
+    "ar": {
+     "title": "تحسين بطاقات المركز وإنجازات Dummy Party",
+     "items": [
+      "زر اللعب له الشكل نفسه في كل بطاقات الألعاب (اللون فقط يختلف)",
+      "بطاقة Dummy Party صار لها الشريط الملون في الأعلى مثل البقية",
+      "أُضيفت إنجازات Dummy Party الـ33 إلى إنجازات المركز",
+      "أُزيل وقت اللعب لكل لعبة من بطاقة الملف الشخصي",
+      "شريط المتصلين في Educations وTools في المكان نفسه كما في Games",
+      "أُزيلت لافتة «حساب واحد لكل الألعاب» لتبدو المواقع الثلاثة متشابهة",
+      "أُضيفت بطاقة Tumblecrown إلى قائمة النماذج الأولية"
+     ]
+    }
+   }
+  },
+  {
+   "date": "2026-10-25",
+   "build": "",
    "title": "Vowkeep 방장 컴퓨터 부담 줄이기",
    "items": [
     "Vowkeep b51: 방장 컴퓨터 부담 줄이기: 규칙이 새로 돌 때만 상태를 새로 만들어 화면 계산을 줄임",
