@@ -8,10 +8,12 @@ if(!document.getElementById('ff-online-css')){
   st.textContent='#onlineBar{display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px;margin-top:18px;font-size:14.5px;color:var(--dim,#8a93a6);} #onlineBar:empty{display:none;} #onlineBar>b{color:var(--text,#eef0f5);}'
    +'.on-dot{width:9px;height:9px;border-radius:50%;background:#3fe0c5;box-shadow:0 0 0 0 rgba(63,224,197,.6);animation:onp 2s infinite;} @keyframes onp{70%{box-shadow:0 0 0 8px rgba(63,224,197,0);}100%{box-shadow:0 0 0 0 rgba(63,224,197,0);}}'
    +'.on-c{padding:3px 10px;border-radius:99px;border:1px solid var(--line,#222837);background:var(--panel,#10131b);} .on-c b{color:var(--text,#eef0f5);} .on-f{display:flex;flex-wrap:wrap;align-items:center;gap:6px;}'
-   +'.on-p{display:inline-flex;align-items:baseline;gap:5px;padding:3px 10px;border-radius:99px;background:rgba(63,224,197,.1);border:1px solid rgba(63,224,197,.3);color:var(--text,#eef0f5);text-decoration:none;} .on-p small{color:var(--dim,#8a93a6);font-size:11.5px;}';
+   +'.on-p{display:inline-flex;align-items:baseline;gap:5px;padding:3px 10px;border-radius:99px;background:rgba(63,224,197,.1);border:1px solid rgba(63,224,197,.3);color:var(--text,#eef0f5);text-decoration:none;} .on-i{width:20px;height:20px;border-radius:50%;object-fit:cover;flex:none;align-self:center;} .on-p small{color:var(--dim,#8a93a6);font-size:11.5px;}';
   document.head.appendChild(st);
 }
 var names={}, sb=null, T=null;
+var AV={}; async function loadAv(ids){ AV={}; if(!ids.length) return; try{ var r=await sb.from('ff_avatar').select('user_id,pick').in('user_id',ids); ((r&&!r.error&&r.data)||[]).forEach(function(x){ AV[x.user_id]=x.pick; }); }catch(e){} }
+
 /* 표시줄 글자: 페이지 언어(ff-lang.js)를 따라요. 표에 없는 언어는 영어 */
 var LT={ko:['지금 {0}명 접속 중','친구','허브'],en:['{0} online now','Friends','Hub'],es:['{0} conectados ahora','Amigos','Portal'],fr:['{0} en ligne','Amis','Portail'],de:['{0} jetzt online','Freunde','Hub'],ja:['今{0}人がオンライン','フレンド','ハブ'],zh:['当前 {0} 人在线','好友','主页'],pt:['{0} online agora','Amigos','Início'],ru:['Сейчас онлайн: {0}','Друзья','Хаб'],tr:['Şu an {0} çevrimiçi','Arkadaşlar','Merkez'],it:['{0} online ora','Amici','Hub'],pl:['Teraz online: {0}','Znajomi','Hub'],ar:['{0} متصل الآن','الأصدقاء','المركز'],nw:['{0} telescreened now','Comrades','Hub'],gk:['{0} 선 위에 지금','친구들','바퀴통']};
 function L(){ var l='ko'; try{ l=(window.FFLang&&FFLang.get())||(document.documentElement.lang||'ko'); }catch(e){} return LT[l]||LT.en; }
@@ -28,8 +30,8 @@ async function paint(){
   (window.FF_REG||[]).concat(window.FF_SITES||[]).map(function(e){ return e.id; }).sort(function(a,b){ return a==='hub'?-1:b==='hub'?1:0; }).forEach(function(g){ if(c[g]) html+='<span class="on-c"><span>'+esc(gname(g))+'</span> <b>'+c[g]+'</b></span>'; });
   var u=FFAuth.user&&FFAuth.user();
   if(u){ var f=await sb.rpc('ff_online_friends'), rows=((f&&!f.error&&f.data)||[]).filter(function(x){ return !(FFAuth.isBlocked&&FFAuth.isBlocked(x.user_id)); });
-    if(rows.length){ await loadNames(rows.map(function(x){ return x.user_id; }));
-      html+='<span class="on-f"><span>'+esc(L()[1])+'</span> '+rows.slice(0,8).map(function(x){ return '<span class="on-p">'+esc(names[x.user_id]||'???')+'<small>'+esc(gname(x.place))+'</small></span>'; }).join('')+(rows.length>8?'<span>+'+(rows.length-8)+'</span>':'')+'</span>'; } }
+    if(rows.length){ await loadNames(rows.map(function(x){ return x.user_id; })); await loadAv(rows.slice(0,8).map(function(x){ return x.user_id; }));
+      html+='<span class="on-f"><span>'+esc(L()[1])+'</span> '+rows.slice(0,8).map(function(x){ return '<span class="on-p">'+'<img class="on-i" src="https://frenchfries777mc.github.io/games/avatars/'+encodeURIComponent(/^[a-z0-9-]{2,24}$/.test(AV[x.user_id]||'')?AV[x.user_id]:'account')+'.svg" alt="" width="20" height="20" onerror="this.style.display=\'none\'">'+esc(names[x.user_id]||'???')+'<small>'+esc(gname(x.place))+'</small></span>'; }).join('')+(rows.length>8?'<span>+'+(rows.length-8)+'</span>':'')+'</span>'; } }
   bar.innerHTML=html;
 }
 function start(){ sb=FFAuth.client&&FFAuth.client(); if(!sb) return; paint(); setInterval(function(){ if(document.visibilityState==='visible') paint(); },20000);
