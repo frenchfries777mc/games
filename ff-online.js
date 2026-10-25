@@ -13,7 +13,7 @@ if(!document.getElementById('ff-online-css')){
 }
 var names={}, sb=null, T=null;
 function esc(s){ return String(s==null?'':s).replace(/[&<>"']/g,function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); }
-function gname(id){ var l=window.FF_REG||[]; for(var i=0;i<l.length;i++) if(l[i].id===id) return l[i].name; return id==='hub'?'허브':id; }
+function gname(id){ var l=(window.FF_REG||[]).concat(window.FF_SITES||[]); for(var i=0;i<l.length;i++) if(l[i].id===id) return l[i].name; return id==='hub'?'허브':id; }
 async function loadNames(ids){
   ids=ids.filter(function(id,i){ return id&&!names[id]&&ids.indexOf(id)===i; }); if(!ids.length) return;
   try{ var r=await sb.from('profiles').select('id,username,display_name').in('id',ids); ((r&&r.data)||[]).forEach(function(p){ names[p.id]=(p.display_name&&String(p.display_name).trim())||p.username||'???'; }); }catch(e){}
@@ -22,7 +22,7 @@ async function paint(){
   var r=await sb.rpc('ff_online'); if(r.error){ bar.innerHTML=''; return; }
   var c={}; (r.data||[]).forEach(function(x){ c[x.place]=x.people; });
   var html='<span class="on-dot"></span><b>지금 '+(c.all||0)+'명 접속 중</b>';
-  (window.FF_REG||[]).map(function(e){ return e.id; }).sort(function(a,b){ return a==='hub'?-1:b==='hub'?1:0; }).forEach(function(g){ if(c[g]) html+='<span class="on-c"><span>'+esc(gname(g))+'</span> <b>'+c[g]+'</b></span>'; });
+  (window.FF_REG||[]).concat(window.FF_SITES||[]).map(function(e){ return e.id; }).sort(function(a,b){ return a==='hub'?-1:b==='hub'?1:0; }).forEach(function(g){ if(c[g]) html+='<span class="on-c"><span>'+esc(gname(g))+'</span> <b>'+c[g]+'</b></span>'; });
   var u=FFAuth.user&&FFAuth.user();
   if(u){ var f=await sb.rpc('ff_online_friends'), rows=((f&&!f.error&&f.data)||[]).filter(function(x){ return !(FFAuth.isBlocked&&FFAuth.isBlocked(x.user_id)); });
     if(rows.length){ await loadNames(rows.map(function(x){ return x.user_id; }));
