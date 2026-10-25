@@ -29,13 +29,13 @@ const ov = $('ov'), oc = ov.getContext('2d');
 function sizeOv() { const d = Math.min(2, devicePixelRatio || 1); ov.width = innerWidth * d; ov.height = innerHeight * d; oc.setTransform(d, 0, 0, d, 0, 0); }
 sizeOv();
 
-// 로비 뒤 장면: 섬 가운데 왕관을 둘러싼 세 싸움꾼
-const DEMO = [{ id: 'd0', col: COLORS[0].c, cls: 'knight', x: -3.4, z: 1.6 }, { id: 'd1', col: COLORS[1].c, cls: 'witch', x: 3.4, z: 1.2 }, { id: 'd2', col: COLORS[2].c, cls: 'viking', x: -0.4, z: 4.2 }, { id: 'd3', col: COLORS[3].c, cls: 'skeleton', x: 5.8, z: 4.6 }, { id: 'd4', col: COLORS[4].c, cls: 'hunter', x: -6.2, z: 4.2 }];
+// 로비 뒤 장면: 방 가운데 모인 싸움꾼들
+const DEMO = [{ id: 'd0', col: COLORS[0].c, cls: 'knight', x: -4, z: 1.6 }, { id: 'd1', col: COLORS[1].c, cls: 'witch', x: 4, z: 1.2 }, { id: 'd2', col: COLORS[2].c, cls: 'viking', x: -0.4, z: 4.4 }, { id: 'd3', col: COLORS[3].c, cls: 'skeleton', x: 8, z: 5.2 }, { id: 'd4', col: COLORS[4].c, cls: 'hunter', x: -8.4, z: 4.6 }];
 function demoScene() { view.setPlayers(DEMO); view.ring = undefined; view.resetTiles(); view.fit(true); S.demoT = 0; }
 const DEMO_TL = Array.from({ length: NT }, (c, i) => PILLARS.includes(i) ? '3' : '0').join('');
 function demoSnap(t) {
   const ph = (t % 6) / 6;
-  return { ring: 5, tl: DEMO_TL, c: [0, 1.6, 0.6, null],
+  return { ring: 6, tl: DEMO_TL, c: [0, 1.6, 0.6, null],
     p: DEMO.map((d, i) => { const ch = i === 0 && ph > 0.55 && ph < 0.85; const sw = i === 0 && ph >= 0.85 && ph < 0.95;
       return [d.id, d.x, 0, d.z, -d.x * 0.3, 1, ch ? ST.charge : sw ? ST.swing : ST.idle, sw ? (ph - 0.85) * 6 : 0, ch ? Math.min(1, (ph - 0.55) / 0.25) : 0, 0, 0, 0, 0, 0, -d.x * 0.3, 1]; }) };
 }
@@ -365,8 +365,8 @@ const nameOf = id => { const m = S.meta.find(x => x.id === id); return m ? m.nam
 function paintBoard(force) {
   const s = S.snap; if (!s) return; const B = $('board');
   if (force || B.children.length !== s.p.length) B.innerHTML = s.p.map(a => { const m = S.meta.find(x => x.id === a[0]) || {}; return '<div class="bd" data-id="' + a[0] + '"><div class="n"><i style="background:' + hex(m.col || 0) + '"></i><span>' + esc(m.name || '') + '</span></div><div class="bar"><u></u></div></div>'; }).join('');
-  const tg = s.tg || 30;
-  for (const el of B.children) { const a = s.p.find(x => x[0] === el.dataset.id); if (!a) continue; el.querySelector('u').style.width = Math.min(100, a[10] / tg * 100) + '%'; el.classList.toggle('hold', s.c[3] === a[0]); el.classList.toggle('me', a[0] === S.me); }
+  for (const el of B.children) { const a = s.p.find(x => x[0] === el.dataset.id); if (!a) continue; const dead = a[6] === ST.out; el.querySelector('u').style.width = dead ? '0%' : Math.max(4, 100 - Math.min(100, a[9] / 1.5)) + '%'; el.classList.toggle('out', dead); el.classList.toggle('hold', s.w === a[0]); el.classList.toggle('me', a[0] === S.me); }
+  const n = s.p.filter(a => a[6] !== ST.out).length; $('alive').textContent = s.ph === 'over' ? '' : '남은 사람 ' + n + '명';
 }
 function onEvent(e) {
   view.onEvent(e);
@@ -374,13 +374,11 @@ function onEvent(e) {
   else if (e.k === 'swing') SFX.play('swing', e.c);
   else if (e.k === 'dash') SFX.play('dash');
   else if (e.k === 'slam') SFX.play('slam');
-  else if (e.k === 'pick') { SFX.play('pick'); if (e.id === S.me) big('왕관!', '들고 버티면 점수가 올라요', 1.1); else feed(nameOf(e.id) + '님이 왕관을 주웠어요'); }
   else if (e.k === 'drop') SFX.play('drop');
-  else if (e.k === 'ko') { SFX.play(e.id === S.me ? 'fall' : 'ko'); feed(e.by ? nameOf(e.by) + '님이 ' + nameOf(e.id) + '님을 떨어뜨렸어요' : nameOf(e.id) + '님이 떨어졌어요'); if (e.by === S.me) big('떨어뜨림!', '+1점', 0.9); }
+  else if (e.k === 'ko') { SFX.play(e.id === S.me ? 'fall' : 'ko'); feed((e.by ? nameOf(e.by) + '님이 ' + nameOf(e.id) + '님을 떨어뜨렸어요' : nameOf(e.id) + '님이 떨어졌어요') + ' (남은 ' + e.left + '명)'); if (e.id === S.me) big('탈락!', e.left + '명 남았어요 · ' + (e.left + 1) + '등', 1.6); else if (e.by === S.me) big('떨어뜨림!', '남은 ' + e.left + '명', 0.9); }
   else if (e.k === 'shrink') { SFX.play('crack'); big('섬이 무너져요!', '바깥 고리가 곧 떨어져요', 1.6); }
   else if (e.k === 'tfall') { }
   else if (e.k === 'go') { SFX.play('go'); big('시작!', '', 0.8); }
-  else if (e.k === 'crownfall') feed('왕관이 떨어졌어요. 곧 가운데에 다시 나타나요');
   else if (e.k === 'win') SFX.play('win');
 }
 function drawOverlay(s, t) {
@@ -390,8 +388,11 @@ function drawOverlay(s, t) {
     if (a[6] === ST.out) continue; const e = view.ents.get(a[0]); if (!e) continue;
     const m = S.meta.find(x => x.id === a[0]) || {}, p = view.project(e.x, e.y + 3.4 + (s.c[3] === a[0] ? 0.9 : 0), e.z);
     const pct = a[9], c = pct < 40 ? '#ffffff' : pct < 90 ? '#ffe08a' : pct < 140 ? '#ff9c4a' : '#ff5a4a';
-    oc.font = '700 12px Galmuri, sans-serif'; oc.lineWidth = 4; oc.strokeStyle = '#14203a'; oc.strokeText(m.name || '', p.x, p.y - 16); oc.fillStyle = a[0] === S.me ? '#ffe08a' : '#fff8ea'; oc.fillText(m.name || '', p.x, p.y - 16);
-    oc.font = '700 16px Galmuri, sans-serif'; oc.strokeText(pct + '%', p.x, p.y); oc.fillStyle = c; oc.fillText(pct + '%', p.x, p.y);
+    oc.font = '700 12px Galmuri, sans-serif'; oc.lineWidth = 4; oc.strokeStyle = '#14203a'; oc.strokeText(m.name || '', p.x, p.y - 14); oc.fillStyle = a[0] === S.me ? '#ffe08a' : '#fff8ea'; oc.fillText(m.name || '', p.x, p.y - 14);
+    // 체력바: 가득 찬 상태에서 맞을수록 줄어요 (150%면 텅 비어요. 줄어들수록 더 멀리 날아가요)
+    const hp = Math.max(0, 1 - pct / 150), bw = 46, bx = p.x - bw / 2, by = p.y - 8;
+    oc.fillStyle = '#14203a'; oc.fillRect(bx - 2, by - 2, bw + 4, 11); oc.fillStyle = '#3a2430'; oc.fillRect(bx, by, bw, 7);
+    oc.fillStyle = hp > 0.6 ? '#7ae07a' : hp > 0.35 ? '#ffe08a' : hp > 0.15 ? '#ff9c4a' : '#ff5a4a'; oc.fillRect(bx, by, Math.round(bw * hp), 7);
     if (a[0] === S.me) { oc.fillStyle = '#ffe08a'; oc.beginPath(); oc.moveTo(p.x - 6, p.y + 6); oc.lineTo(p.x + 6, p.y + 6); oc.lineTo(p.x, p.y + 13); oc.fill(); }
   }
   // 조준선: 내 캐릭터 앞에 짧은 화살표 (PC)
@@ -403,10 +404,9 @@ function drawOverlay(s, t) {
 }
 function hudTick(s, dt) {
   if (bigT > 0 && (bigT -= dt) <= 0) { $('bigMsg').style.opacity = 0; $('subMsg').style.opacity = 0; }
-  if (s.ph === 'count') { const n = Math.ceil(s.cd); if (n !== S.lastCd && n > 0) { S.lastCd = n; big(String(n), '왕관을 먼저 차지하세요', 1); SFX.play('count'); } }
+  if (s.ph === 'count') { const n = Math.ceil(s.cd); if (n !== S.lastCd && n > 0) { S.lastCd = n; big(String(n), '마지막까지 살아남으세요', 1); SFX.play('count'); } }
   const me = s.p.find(a => a[0] === S.me);
   if (me) {
-    if (me[6] === ST.out && s.ph === 'play') { $('subMsg').textContent = '다시 등장까지 ' + Math.ceil(me[18]); $('subMsg').style.opacity = 1; bigT = Math.max(bigT, 0.1); }
     const w = CLS[(S.meta.find(m => m.id === S.me) || {}).cls || 'knight'];
     const dc = Math.min(1, me[16] / DASH.cd), sc = Math.min(1, me[17] / w.sk.cd);
     $('skD').querySelector('.cd').style.height = dc * 100 + '%'; $('skS').querySelector('.cd').style.height = sc * 100 + '%';
@@ -414,16 +414,16 @@ function hudTick(s, dt) {
   }
   paintBoard(false);
   if (s.ph === 'over' && !S.resultShown) {
-    if (!S.overT) { S.overT = 0.001; const w = s.w; big(nameOf(w) + ' 승리!', w === S.me ? '왕관은 당신의 것!' : '', 3); }
+    if (!S.overT) { S.overT = 0.001; const w = s.w; big(nameOf(w) + ' 승리!', w === S.me ? '마지막까지 살아남았어요!' : '', 3); }
     S.overT += dt; if (S.overT > 2.6) { S.resultShown = true; showResult(s); }
   }
 }
 function showResult(s) {
-  const rows = s.p.slice().sort((a, b) => b[10] - a[10]);
+  const rows = s.p.slice().sort((a, b) => a[10] - b[10]);
   const host = S.net !== 'guest';
-  $('result').innerHTML = '<div class="big">' + esc(nameOf(s.w)) + ' 승리!</div><p class="note">' + (s.w === S.me ? '왕관을 끝까지 지켰어요.' : '다음 판에는 왕관을 빼앗아 보세요.') + '</p>' +
-    '<table><tr><th>순위</th><th>이름</th><th>점수</th><th>왕관 시간</th><th>떨어뜨림</th><th>떨어짐</th></tr>' +
-    rows.map((a, i) => '<tr' + (a[0] === S.me ? ' style="color:#ffe08a"' : '') + '><td>' + (i + 1) + '</td><td>' + esc(nameOf(a[0])) + '</td><td>' + Math.floor(a[10]) + '</td><td>' + Math.floor(a[19]) + '초</td><td>' + a[11] + '</td><td>' + a[12] + '</td></tr>').join('') + '</table>' +
+  $('result').innerHTML = '<div class="big">' + esc(nameOf(s.w)) + ' 승리!</div><p class="note">' + (s.w === S.me ? '마지막까지 살아남았어요.' : '다음 판에는 끝까지 버텨 보세요.') + '</p>' +
+    '<table><tr><th>순위</th><th>이름</th><th>버틴 시간</th><th>떨어뜨림</th></tr>' +
+    rows.map(a => '<tr' + (a[0] === S.me ? ' style="color:#ffe08a"' : '') + '><td>' + a[10] + '</td><td>' + esc(nameOf(a[0])) + '</td><td>' + Math.floor(a[19]) + '초</td><td>' + a[11] + '</td></tr>').join('') + '</table>' +
     '<div class="row">' + (host ? '<button class="btn gold" id="againBtn">다시 하기</button><button class="btn" id="roomBtn">대기실로</button>' : '<span class="note">방장이 다음 판을 고르는 중...</span>') + '<button class="btn" id="quitBtn">나가기</button></div>';
   show('sResult'); $('hud').classList.add('on');
   if (host) { $('againBtn').onclick = () => { SFX.play('click'); beginGame(); }; $('roomBtn').onclick = () => { SFX.play('click'); S.G = null; S.snap = null; bcast({ t: 'room' }); demoScene(); openRoom(); }; }
