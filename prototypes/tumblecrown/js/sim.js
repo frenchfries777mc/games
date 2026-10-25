@@ -1,6 +1,6 @@
 // Tumblecrown · © 2026 Frenchfries777 · CC BY-NC-ND 4.0
 // 게임 규칙: 방장 컴퓨터에서만 돌아가요 (1초에 30번). 다른 사람은 방장이 보낸 장면을 그려요
-import { RING, CELL, NX, NZ, TARGET, SHRINK_AT, SHRINK_EVERY, MIN_RING, KO_PTS, FALL_Y, RESPAWN, CLS, DASH } from './data.js';
+import { RING, CELL, NX, NZ, SHRINK_AT, SHRINK_EVERY, MIN_RING, FALL_Y, CLS, DASH } from './data.js';
 
 /* ---------- 방 바닥 (네모 칸) ---------- */
 export const TILES = []; const TIX = new Map();
@@ -20,7 +20,7 @@ export const ST = { idle: 0, run: 1, charge: 2, swing: 3, dash: 4, stun: 5, cast
 export function createGame(slots, opts = {}) {
   const G = {
     t: 0, play: 0, phase: 'count', cd: 3, ring: RING, shrinkN: 0, tl: new Uint8Array(NT), tt: new Float32Array(NT), rg: new Float32Array(NT),
-    players: [], pj: [], crown: { x: 0, y: 3, z: 0, vx: 0, vy: 0, vz: 0, h: null, cd: 0, gone: 0 }, ev: [], winner: null, target: opts.target || TARGET
+    players: [], pj: [], crown: { x: 0, y: -50, z: 0, vx: 0, vy: 0, vz: 0, h: null, cd: 0, gone: 1e9 }, ev: [], winner: null, elim: [], n0: slots.length
   };
   for (const i of PILLARS) G.tl[i] = 3;
   const n = slots.length;
@@ -94,9 +94,13 @@ export function step(G, dt, inputs) {
     if (d < 0.95 && d > 0.001) { const o = (0.95 - d) / 2; a.x -= dx / d * o; a.z -= dz / d * o; b.x += dx / d * o; b.z += dz / d * o; }
   }
   stepCrown(G, dt);
-  if (live) for (const p of G.players) if (G.crown.h === p.id) {
-    p.score += dt; p.held += dt;
-    if (p.score >= G.target) { G.phase = 'over'; G.winner = p.id; ev(G, { k: 'win', id: p.id }); break; }
+  // 배틀로얄: 마지막까지 남은 사람이 이겨요 (같은 순간에 다 떨어지면 마지막에 떨어진 사람)
+  if (live && G.n0 >= 2) {
+    const alive = G.players.filter(p => !p.dead);
+    if (alive.length <= 1) {
+      const w = alive[0] || G.players.find(p => p.id === G.elim[G.elim.length - 1]);
+      G.phase = 'over'; G.winner = w.id; w.rank = 1; w.held = G.play; G.crown.h = w.id; ev(G, { k: 'win', id: w.id });
+    }
   }
 }
 
@@ -104,8 +108,7 @@ function stepPlayer(G, p, dt, inp) {
   const w = W(p);
   p.sa += dt; p.atkCd -= dt; p.dashCd -= dt; p.skCd -= dt; p.inv -= dt; p.noPick -= dt;
   if (p.st === ST.out) {
-    if (G.phase === 'over') return;
-    if ((p.resp -= dt) <= 0) respawn(G, p); return;
+    return;
   }
   if (p.hs > 0) { p.hs -= dt; return; }
   // 조준 방향
@@ -137,7 +140,7 @@ function stepPlayer(G, p, dt, inp) {
   p.prevAtk = atk;
   // 움직임
   if (canAct(p) && grounded) {
-    const sp = w.spd * (p.st === ST.charge ? 0.45 : 1) * (G.crown.h === p.id ? 0.86 : 1);
+    const sp = w.spd * (p.st === ST.charge ? 0.45 : 1);
     const k = 1 - Math.exp(-dt * 14); p.vx = lerp(p.vx, mx * sp, k); p.vz = lerp(p.vz, mz * sp, k);
     if (p.st !== ST.charge) { if (ml > 0.1) { p.fx = mx; p.fz = mz; if (p.st === ST.idle) setSt(p, ST.run); } else if (p.st === ST.run) setSt(p, ST.idle); }
     if (p.st === ST.charge) { p.fx = p.ax; p.fz = p.az; }
@@ -257,24 +260,13 @@ function doThrow(G, p) {
   if (t && t.st === ST.held) { t.x = p.x - p.ax * 0.8; t.z = p.z - p.az * 0.8; t.y = 0.6; setSt(t, ST.stun, 0); hit(G, p, t, -p.ax, -p.az, 9, 16, 'throw'); }
 }
 function fallOut(G, p) {
-  if (G.crown.h === p.id) { G.crown.h = null; G.crown.gone = 1.2; G.crown.y = -50; }
-  setSt(p, ST.out); p.resp = RESPAWN; p.falls++; p.vx = p.vz = p.vy = 0; p.chg = 0;
+  setSt(p, ST.out); p.falls++; p.vx = p.vz = p.vy = 0; p.chg = 0; p.dead = true; G.elim.push(p.id);
+  p.rank = G.players.filter(q => !q.dead).length + 1; p.held = G.play;
   if (p.grab) p.grab = null;
   const lh = p.lastHit; let by = null;
-  if (lh && G.t - lh.t < 7) { const k = G.players.find(q => q.id === lh.id); if (k && k !== p) { k.ko++; if (G.phase === 'play') k.score = Math.min(G.target - 0.5, k.score + KO_PTS); by = k.id; } }
-  ev(G, { k: 'ko', id: p.id, by });
+  if (lh && G.t - lh.t < 7) { const k = G.players.find(q => q.id === lh.id); if (k && k !== p) { k.ko++; by = k.id; } }
+  ev(G, { k: 'ko', id: p.id, by, left: p.rank - 1 });
   p.lastHit = null;
-}
-function respawn(G, p) {
-  let best = -1, bs = -1;
-  for (let i = 0; i < NT; i++) {
-    if (G.tl[i] !== 0 || TILES[i].ring > Math.max(1, G.ring - 1)) continue;
-    let md = 99; for (const q of G.players) if (q !== p && q.st !== ST.out) md = Math.min(md, Math.hypot(q.x - TILES[i].x, q.z - TILES[i].z));
-    const sc = Math.min(md, 7) + Math.random() * 1.5; if (sc > bs) { bs = sc; best = i; }
-  }
-  const T = TILES[best >= 0 ? best : 0];
-  p.x = T.x; p.z = T.z; p.y = 7; p.vx = p.vz = 0; p.vy = 0; p.air = true; p.airDash = true; p.pct = 0; p.inv = 1.6; setSt(p, ST.idle);
-  ev(G, { k: 'spawn', id: p.id });
 }
 
 function stepCrown(G, dt) {
@@ -301,23 +293,18 @@ function botInput(G, p, dt) {
   if (p.air && p.y < -0.3 && p.airDash) { const L = Math.hypot(p.x, p.z) || 1; return { mx: -p.x / L, mz: -p.z / L, dash: true }; }
   const foes = G.players.filter(q => q !== p && q.st !== ST.out);
   let near = null, nd = 99; for (const q of foes) { const d = Math.hypot(q.x - p.x, q.z - p.z); if (d < nd) { nd = d; near = q; } }
-  const holder = c.h && G.players.find(q => q.id === c.h);
-  let tx, tz, target = null;
-  if (holder === p) {
-    // 왕관을 들고 있으면: 가까운 적에게서 멀어지되 섬 안쪽으로
-    const awx = near ? p.x - near.x : 0, awz = near ? p.z - near.z : 0, aL = Math.hypot(awx, awz) || 1;
-    const lim = CELL * Math.max(1.5, G.ring - 0.6), cen = Math.min(1.6, Math.hypot(p.x, p.z) / lim * 1.4);
-    tx = p.x + awx / aL * 2 - p.x / (Math.hypot(p.x, p.z) || 1) * cen * 2.4; tz = p.z + awz / aL * 2 - p.z / (Math.hypot(p.x, p.z) || 1) * cen * 2.4;
-    if (near && nd < ar + 0.4) target = near;
-  } else if (holder) { tx = holder.x; tz = holder.z; target = holder; if (near && nd < ar * 0.8 && near !== holder) target = near; }
-  else if (c.gone <= 0) { tx = c.x; tz = c.z; if (near && nd < ar * 0.9) target = near; }
-  else { tx = 0; tz = 0; target = near; }
+  const holder = null;
+  // 바깥 고리에 서 있으면 곧 무너지니 안쪽으로, 아니면 가장 가까운 상대에게 다가가요
+  const myRing = Math.max(Math.abs(Math.round(p.x / CELL)), Math.abs(Math.round(p.z / CELL)));
+  let tx = 0, tz = 0, target = near;
+  if (near && myRing < G.ring) { tx = near.x; tz = near.z; }
+  else if (near && G.ring < 0) { tx = near.x; tz = near.z; }
   if (b.t <= 0) {
     b.t = 0.12 + Math.random() * 0.12;
     let dx = tx - p.x, dz = tz - p.z; const L = Math.hypot(dx, dz);
     if (L > 0.3) { dx /= L; dz /= L; } else { dx = dz = 0; }
     // 지금 공격할 상대가 사거리 안이면 멈춰서 휘둘러요
-    if (target && target !== holder && Math.hypot(target.x - p.x, target.z - p.z) < ar * 0.7) { dx *= 0.2; dz *= 0.2; }
+    if (target && Math.hypot(target.x - p.x, target.z - p.z) < ar * 0.7) { dx *= 0.2; dz *= 0.2; }
     // 낭떠러지를 피해요
     for (let a = 0; a < 6 && (dx || dz); a++) {
       if (standable(G, p.x + dx * 1.4, p.z + dz * 1.4) && standable(G, p.x + dx * 0.7, p.z + dz * 0.7)) break;
@@ -328,7 +315,7 @@ function botInput(G, p, dt) {
     if (target) { const d = Math.hypot(target.x - p.x, target.z - p.z);
       if (d < ar + 0.3 && p.atkCd <= 0 && !b.atk && Math.random() < 0.75) { b.atk = true; b.want = Math.random() * (Math.random() < 0.4 ? 1 : 0.5); }
       const sk = w.sk.kind; if (p.skCd <= 0 && Math.random() < 0.25 && (((sk === 'bash' || sk === 'lunge') && d > 2 && d < 5.5) || ((sk === 'nova' || sk === 'spin') && d < 2.8) || (sk === 'grab' && d < 1.9) || (sk === 'volley' && d < 8) || (sk === 'curse' && d > 3 && d < 5))) out.sk = true;
-      if (p.dashCd <= 0 && target === holder && d > 3 && d < 7 && Math.random() < 0.18) out.dash = true;
+      if (p.dashCd <= 0 && d > 3 && d < 7 && Math.random() < 0.12) out.dash = true;
     }
     out.mx = b.mx; out.mz = b.mz;
   }
@@ -343,8 +330,8 @@ function botInput(G, p, dt) {
 export function snapshot(G) {
   const r = n => Math.round(n * 100) / 100;
   return {
-    t: r(G.t), ph: G.phase, cd: r(G.cd), ring: G.ring, pl: r(G.play), tl: Array.from(G.tl).join(''), w: G.winner, tg: G.target,
-    p: G.players.map(p => [p.id, r(p.x), r(p.y), r(p.z), r(p.fx), r(p.fz), p.st, r(p.sa), r(p.chg), Math.round(p.pct), r(p.score), p.ko, p.falls, p.inv > 0 ? 1 : 0, r(p.ax), r(p.az), r(Math.max(0, p.dashCd)), r(Math.max(0, p.skCd)), r(Math.max(0, p.resp)), r(p.held)]),
+    t: r(G.t), ph: G.phase, cd: r(G.cd), ring: G.ring, pl: r(G.play), tl: Array.from(G.tl).join(''), w: G.winner, tg: G.n0,
+    p: G.players.map(p => [p.id, r(p.x), r(p.y), r(p.z), r(p.fx), r(p.fz), p.st, r(p.sa), r(p.chg), Math.round(p.pct), p.rank || 0, p.ko, p.falls, p.inv > 0 ? 1 : 0, r(p.ax), r(p.az), r(Math.max(0, p.dashCd)), r(Math.max(0, p.skCd)), r(Math.max(0, p.resp)), r(p.held)]),
     c: [r(G.crown.x), r(G.crown.y), r(G.crown.z), G.crown.h],
     j: G.pj.map(b => [b.kind === 'orb' ? 1 : 0, r(b.x), r(b.y), r(b.z), r(b.vx), r(b.vz)])
   };
