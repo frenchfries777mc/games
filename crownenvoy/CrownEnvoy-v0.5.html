@@ -453,7 +453,7 @@ try{if(sessionStorage.getItem('ce_noIntro')){sessionStorage.removeItem('ce_noInt
 sting();})();</script>
 <div id="app">
  <div id="lobby" class="screen">
-  <canvas id="lobbyBg"></canvas><canvas id="lobbyWar"></canvas><div id="cpTag">© 2026 Frenchfries777 · <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.ko" target="_blank" rel="noopener">CC BY-NC-ND 4.0</a></div><div id="verTag">v0.5 · build 107</div>
+  <canvas id="lobbyBg"></canvas><canvas id="lobbyWar"></canvas><div id="cpTag">© 2026 Frenchfries777 · <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.ko" target="_blank" rel="noopener">CC BY-NC-ND 4.0</a></div><div id="verTag">v0.5 · build 108</div>
   <header class="brand"><h1>Crown Envoy</h1><div class="sub"><i></i>DIPLOMACY · WAR · EMPIRE<i></i></div></header>
   <div id="lobbyRight">
    <div id="lobbyHome" class="modes">
@@ -2007,10 +2007,6 @@ function plagueTick(){
     if(T.plg<=0){T.plg=0;}});
   if(!sick.length&&Math.random()<0.045){const c=G.terr.filter(T=>!T.sea&&T.owner!=null&&G.players[T.owner]&&G.players[T.owner].alive&&!G.players[T.owner].neu&&(isPort(T.id)||(T.city||0)>=2||G.players[T.owner].cap===T.id));
     if(c.length){const T=c[Math.floor(Math.random()*c.length)];T.plg=med(T)?2:3;const p=G.players[T.owner];morAdd(p,-3,'역병');log(`역병이 ${TDEF[T.id].name}에서 퍼지기 시작했다! (${pname(T.owner)})`,'war');wlog('plague',T.owner,null,`${TDEF[T.id].name}에 역병이 돌기 시작했다`);}}}
-function partisanTick(){let n=0;G.terr.forEach(T=>{if(n>=4||T.sea||T.owner==null||T.home==null||T.home===T.owner)return;const hp=G.players[T.home],op=G.players[T.owner];if(!hp||!hp.alive||!op)return;const un=Math.max(T.unrest||0,T.st!=null&&T.st<30?3:0);if(un<2||Math.random()>0.12*un)return;
-    const loss=Math.min(Math.max(0,T.troops-30),Math.round(T.troops*(0.05+0.03*un)));T.troops-=loss;n++;
-    if(T.troops<150&&Math.random()<0.5&&G.players[T.home].alive&&T.id!==op.cap){T.owner=T.home;T.troops=Math.max(T.troops,200);T.unrest=0;log(`의용군이 봉기해 ${TDEF[T.id].name}을(를) 되찾았다! (${pname(T.home)})`,'war');wlog('revolt',T.home,op.id,`${TDEF[T.id].name}에서 의용군이 봉기해 ${snm(T.home)}이(가) 되찾았다`);hooks.toast(op.id,`${TDEF[T.id].name}에서 의용군이 봉기해 땅을 빼앗겼어요. 점령지는 병력을 남겨 두지 않으면 이렇게 돼요.`);hooks.toast(T.home,`${TDEF[T.id].name}에서 의용군이 봉기해 땅을 되찾았어요!`);}
-    else{log(`${TDEF[T.id].name}에서 의용군이 봉기해 ${pname(T.owner)}군 ${loss}명이 쓰러졌다.`,'war');if(T.troops<250)hooks.toast(op.id,`${TDEF[T.id].name}의 점령군이 모자라요. 의용군이 땅을 되찾을 수 있어요.`);}});}
 /* ---- 난민: 점령당한 영토의 백성이 이웃 영토로 피난한다 (받는 쪽은 병력·금화가 늘지만 안정도가 흔들린다) ---- */
 function refugees(old,tid){const p=G.players[old];if(!p||!p.alive)return;const L=GEO.adj[tid].map(n=>G.terr[n]).filter(x=>x&&!x.sea&&x.owner===old);if(!L.length)return;const D=L[Math.floor(Math.random()*L.length)];const R=15*UN;D.troops+=R;p.gold+=25;p.stab=clamp(p.stab-2,0,100);log(`${TDEF[tid].name}의 피란민 ${R}명이 ${TDEF[D.id].name}(으)로 몰려들었다. (병력 +${R}, 금화 +25, 안정도 -2)`,'war');}
 /* ---- 쿠데타: 안정도가 바닥이고 전쟁에 지친 나라에서 군부가 정권을 잡는다 ---- */
@@ -2024,7 +2020,7 @@ function independenceTick(){let n=0;G.terr.forEach(T=>{if(n>=2||T.sea||T.owner==
 /* ---- 중재: 제3국이 싸우는 두 나라를 화해시킨다 ---- */
 function medPairs(pid){const out=[];const p=G.players[pid];if(!p||!p.alive||p.landless||p.neu)return out;const L=G.players.filter(q=>q.alive&&q.id!==pid&&!q.landless&&!q.neu&&!isHostile(pid,q.id)&&hasChannel(pid,q.id));for(let i=0;i<L.length;i++)for(let j=i+1;j<L.length;j++)if(isHostile(L[i].id,L[j].id))out.push([L[i].id,L[j].id]);return out.slice(0,10);}
 function settle(){
-  plagueTick();partisanTick();coupTick();independenceTick();
+  plagueTick();coupTick();independenceTick();
   for(const p of G.players){if(!p.alive)continue;
     const inc=income(p.id),up=upkeep(p.id);p.gold+=inc-up;p.tradeSum=(p.tradeSum||0)+tradeIncome(p.id);
     if(p.gold<0){const d=Math.round(totalTroops(p.id)*0.05);let left=d;owned(p.id).sort((a,b)=>b.troops-a.troops).forEach(t=>{const x=Math.min(t.troops,Math.ceil(d/Math.max(1,owned(p.id).length)));t.troops-=x;left-=x;});
