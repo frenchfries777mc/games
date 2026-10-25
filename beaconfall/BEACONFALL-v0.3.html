@@ -441,14 +441,15 @@ const BGM=(()=>{
     return ch[key]={a,g};
   };
   const playing=()=>{try{return typeof mode!=='undefined'&&mode!=='lobby'&&!!world;}catch(e){return false;}};
-  const LOBBYX=['bgm-startagain.mp3'];   // 로비에서만 나오는 곡
-  const pickLobby=()=>{const L=SEASON.concat(LOBBYX);return L[(Math.random()*L.length)|0];};   // 로비 곡: 사계절 곡 중 무작위 (로비로 돌아올 때마다 새로 뽑아요)
-  let lobbyK=pickLobby(),wasIn=false;
+  const pickLobby=()=>'bgm-startagain.mp3';   // 로비 곡: 새 곡만 (여름 곡은 로비에서 빼요)
+  let lobbyK=pickLobby(),wasIn=false;let rare=false,rareFor='';
   const musicKey=()=>{
     if(!playing()){if(wasIn){lobbyK=pickLobby();wasIn=false;}return ch[lobbyK]&&ch[lobbyK].a.dataset.bad?'base':lobbyK;}
     wasIn=true;
     try{if(!(P.sailing||P.air)){const b=bioAt(P.x,P.y);if(b!==isle){if(++isleT>=3){isle=b;isleT=0;}}else isleT=0;}}catch(e){}   // 섬 경계에서 곡이 자꾸 바뀌지 않게 3초 머물러야 바꿈
     let k=ISLE[isle];if(!k){try{k=SEASON[seasonNow()];}catch(e){k='base';}}
+    if(k!==rareFor){rareFor=k;rare=Math.random()<0.05;}   // 섬·계절이 바뀔 때마다 한 번 뽑아서, 아주 가끔 새 곡이 나와요
+    if(rare)k='bgm-startagain.mp3';
     return ch[k]&&ch[k].a.dataset.bad?'base':k;
   };
   const tick=()=>{
