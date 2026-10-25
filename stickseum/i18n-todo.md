@@ -271,3 +271,5 @@ patchnotes.json | v380 items[4] | 랭크 순위표 이름을 허브 닉네임으
 patchnotes.json | v380 items[5] | 밸런스 캐릭터 창 닫기 버튼이 눌리지 않던 문제 수정 | build 380 | 2026-10-25
 patchnotes.json | v380 items[6] | 밸런스 그래프 패치 때만 보기에서 측정 전 빈 칸 삭제 | build 380 | 2026-10-25
 patchnotes.json | v380 items[7] | 화염방사기 밸런스 다시 측정 | build 380 | 2026-10-25
+patchnotes.json | v381 title | 밸런스표 색 조정 | build 381 | 2026-10-25
+patchnotes.json | v381 items[0] | 밸런스표 승률 55% 이상 막대를 빨간색으로 표시 | build 381 | 2026-10-25
