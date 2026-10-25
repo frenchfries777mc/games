@@ -5044,7 +5044,7 @@ function shuffle(arr){ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.
 /* ===== the version of this file =====
    Players with different versions CAN meet and play together: the automatic matchmaking uses the same room names for every version (online-<mode>-<map>-<slot>), and nobody is refused because of a different build.
    The build is only sent along with the join message and the lobby (for information); the corner of the screen shows it. */
-const GAME_BUILD='build 2026-10-18-v385';
+const GAME_BUILD='build 2026-10-18-v386';
 const GAME_VERSION='0.8', GAME_VERSION_NAME='황금을 찾아서';   // 게임 버전 이름: versions.json의 title과 같게 (빌드마다 바꾸지 않음)
 const WEEKLY_EVENTS=[
   {id:'lowg',    name:'저중력 난투', desc:'몸이 둥실둥실, 중력이 약해진 난투', rules:{grav:0.6}},
@@ -11559,6 +11559,22 @@ function trySkill(p, tMs, aimX, aimY){
    abilityPreviewOps(action, p, mx, my) says what to draw for the held ability, using the SAME spot functions as the real effects (swordFallSpot, wizardCircleSpot,
    smgWallSpot, rifleBarrageXs ...), so what is drawn is where it will really go. */
 const MINT='#7fffd4';
+function kanToadPath(p, dir){      // the flight of the 독 두꺼비 (same start, speed, gravity and platform test as the real bullet): the dots on the way and where it comes down (land = on top of a floor = a poison floor)
+  const a=(dir>0)?-0.62:Math.PI+0.62, ax=Math.cos(a), ay=Math.sin(a), dt=1/60;
+  let x=p.x+ax*(PLAYER_W/2+14), y=(p.y-40)+ay*(PLAYER_W/2+14), vx=ax*KAN_TOAD_SPEED, vy=ay*KAN_TOAD_SPEED; const pts=[{x,y}];
+  for(let i=0;i<180;i++){
+    vy+=PROJECTILE_GRAVITY*dt; const nx=x+vx*dt, ny=y+vy*dt;
+    if(nx<0||nx>MAP.arenaW||ny>MAP.arenaH) return {pts, land:null};
+    for(const pl of MAP.platforms){
+      if(nx>=pl.x-BULLET_R && nx<=pl.x+pl.w+BULLET_R && ny>=pl.y-BULLET_R && ny<=pl.y+pl.h+BULLET_R){
+        pts.push({x:nx,y:ny}); return {pts, land:(vy>0 && y<=pl.y+2)?{x:clamp(nx,pl.x,pl.x+pl.w), y:pl.y}:null};
+      }
+    }
+    x=nx; y=ny; if(i%3===2) pts.push({x,y});
+  }
+  return {pts, land:null};
+}
+
 function abilityPreviewOps(action, p, mx, my){
   const ops=[], cx=p.x, cy=p.y-40, ang=Math.atan2(my-cy, mx-cx);
   const ray=(a,len)=>({t:'line', x1:cx, y1:cy, x2:cx+Math.cos(a)*len, y2:cy+Math.sin(a)*len});
@@ -11604,6 +11620,7 @@ function abilityPreviewOps(action, p, mx, my){
       case 'horemheb': ops.push(ray(ang, 740)); break;
       case 'puppeteer': { const tg=p.sw && players[p.sw]; if(tg){ ops.push({t:'line', x1:p.x, y1:p.y-30, x2:tg.x, y2:tg.y-40}); ops.push(mark(tg.x, tg.y-40, 40)); } else ops.push(ray(ang, 800)); break; }
       case 'pizarro': ops.push(selfRing(70)); break;
+      case 'kan': { const kp=kanToadPath(p, skillAimDir(p,mx)); for(let i=1;i<kp.pts.length;i++) ops.push({t:'line', x1:kp.pts[i-1].x, y1:kp.pts[i-1].y, x2:kp.pts[i].x, y2:kp.pts[i].y, dash:true}); const e=kp.pts[kp.pts.length-1]; if(kp.land) ops.push({t:'ellipse', x:kp.land.x, y:kp.land.y, rx:KAN_TRAP_R, ry:KAN_TRAP_R*0.22}); else ops.push({t:'cross', x:e.x, y:e.y, r:10}); break; }
       case 'shuriken': { const a=Math.atan2(my-cy, mx-p.x), best=skillMoveSpot(p, p.x+Math.cos(a)*230, p.y+Math.sin(a)*230); ops.push({t:'line', x1:p.x, y1:p.y-30, x2:best.x, y2:best.y-30, dash:true}); ops.push(mark(best.x, best.y-30, 20)); break; }
       case 'dagger': { const t=nearestEnemyOf(p); if(t && Math.hypot(t.x-p.x,t.y-p.y)<=330){ ops.push({t:'line', x1:cx, y1:cy, x2:t.x, y2:t.y-30, dash:true}); ops.push(mark(t.x, t.y-30, 40)); } break; }
       case 'magiccard': ops.push(ray(ang, 820)); break;
