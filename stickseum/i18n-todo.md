@@ -37,3 +37,6 @@ patchnotes.json | v390 items[0] | 클랜원 목록에서 클랜원을 누르면 
 patchnotes.json | v390 items[1] | 황금 쟁탈 금 더미 남은 양 표시 삭제 | build 390 | 2026-10-25
 patchnotes.json | v390 items[2] | 4000 sC 스킨 효과를 조금 덜 화려하게 조정 | build 390 | 2026-10-25
 patchnotes.json | v390 items[3] | 그랜드 마스터 스킨 효과 강화 (빛기둥, 거대 햇살, 충격파, 혜성 3개, 불꽃 왕관, 번개) | build 390 | 2026-10-25
+patchnotes.json | v391 title | 방장 부담 감소 | build 391 | 2026-10-25
+patchnotes.json | v391 items[0] | 방장이 보내는 데이터를 변한 값만 전송하도록 바꿔 전송량 약 70% 감소 | build 391 | 2026-10-25
+patchnotes.json | v391 items[1] | 참가자가 많을 때 방장 컴퓨터가 느려지는 문제 완화 | build 391 | 2026-10-25
