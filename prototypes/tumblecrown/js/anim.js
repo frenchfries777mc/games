@@ -85,11 +85,16 @@ export function animate(E, m, d, dt, t) {
   const mv = d.run > 0.15 && !d.air, st = d.st;
   if (E.ph == null) { E.ph = Math.random() * 6; E.pst = -1; E.ps = 0; E.aN = 0; E.lastC = 0; }
   // 동작 시작 알아채기 (상태가 바뀌었거나 같은 상태가 처음부터 다시 시작)
-  const fresh = ACT.has(st) && (st !== E.pst || d.s < E.ps - 0.001);
+  const fresh = ACT.has(st) && (st !== E.pst || d.s < E.ps - 0.001 || (st === ST.swing && d.aN != null && d.aN !== E.paN));
+  if (d.aN != null) E.paN = d.aN;
   if (fresh) {
     let ak = null, D = 0.5;
     if (st === ST.swing) {
-      if (E.pst === ST.charge) { ak = E.lastC >= 0.45 ? 'hv' : 'atk'; D = ak === 'hv' ? 0.5 : Math.max(0.2, W.swing + 0.06); }
+      if (d.kind != null && cls !== 'hunter' && cls !== 'witch' && !(E.ak && E.aT < 0.5 && (E.ak === 'heal' || E.ak === 'mark')) && E.pst !== ST.grab) {
+        ak = d.kind === 1 ? 'hv' : d.kind === 2 ? 'big' : 'atk'; D = ak === 'hv' ? 0.5 : ak === 'big' ? (cls === 'priest' ? 0.9 : SK.big) : Math.max(0.2, W.swing + 0.06);
+        d.kc = d.cmb % 2;
+      }
+      else if (E.pst === ST.charge) { ak = E.lastC >= 0.45 ? 'hv' : 'atk'; D = ak === 'hv' ? 0.5 : Math.max(0.2, W.swing + 0.06); }
       else if (E.pst === ST.grab || (E.ak && E.aT < 0.5 && (E.ak === 'heal' || E.ak === 'mark'))) ak = null;   // 기술 끝의 휘두름은 같은 동작으로 이어가요
       else if (cls === 'hunter') { ak = 'pierce'; D = SK.pierce; }
       else { ak = 'atk'; D = Math.max(0.2, W.swing + 0.06); }
@@ -98,7 +103,7 @@ export function animate(E, m, d, dt, t) {
     else if (st === ST.lunge) { ak = 'dash'; D = SK.dash; }
     else if (st === ST.grab) { ak = 'potion'; D = SK.potion; }
     else if (st === ST.dash) { E.roT = 0.35; E.rollQ = 0; }
-    if (ak) { if (E.ak || E.kh) E.blT = 0.1; E.ak = ak; E.aT = 0; E.D = D; E.aN++; E.kc = E.aN % 2; E.kh = null; }
+    if (ak) { if (E.ak || E.kh) E.blT = 0.1; E.ak = ak; E.aT = 0; E.D = D; E.aN++; E.kc = d.kc != null ? d.kc : E.aN % 2; E.kh = null; }
     E.lastC = 0;
   }
   if (st === ST.charge) E.lastC = d.chg;
@@ -134,7 +139,12 @@ export function animate(E, m, d, dt, t) {
   }
   if (E.ak) {
     const a = E.ak;
-    if (a === 'big') { // 바이킹 회오리: 웅크렸다가 뛰어오르며 한 바퀴
+    if (a === 'big' && role === 'priest') { // 사제 세 번째: 지팡이를 머리 위로 들고 웅크려 빛을 모았다가 앞으로 내질러요
+      const ch = seg(v, 0, 0.2), fi = seg(v, 0.48, 0.56), rc2 = seg(v, 0.72, 1), x2 = 1 - rc2, sh = v < 0.5 ? Math.sin(t * 60) * 0.05 * seg(v, 0.15, 0.5) : 0, hc = ch * (1 - fi);
+      T.rx = (-3.1 * hc + (-1.5) * fi) * x2 + base[0] * rc2 + sh; T.lx = (-2.9 * hc - 1.4 * fi) * x2 + base[1] * rc2 - sh; T.lz = 0.4 * hc * x2; T.rz = -0.3 * hc * x2;
+      T.bx = (-0.35 * hc + 0.75 * fi) * x2; T.hx = (-0.45 * hc + 0.15 * fi) * x2; T.bz = (-0.2 * hc + 0.7 * fi) * x2; T.by = -0.25 * hc * x2;
+      T.sq = (0.35 * hc + land(0.48, 0.4)); T.lg = (0.7 * hc + 1.0 * fi) * x2; T.jy = hop(0.2, 0.46, 0.35);
+    } else if (a === 'big') { // 바이킹 회오리: 웅크렸다가 뛰어오르며 한 바퀴
       const cr = seg(v, 0, 0.18), go = seg(v, 0.18, 0.5), rc = seg(v, 0.7, 1), x = 1 - rc, pc = cr * (1 - go);
       T.spin = -Math.PI * 2 * go; T.rx = -1.5 * x + base[0] * rc; T.rz = (1.2 * pc - 1.6 * go) * x; T.bx = 0.45 * pc - 0.2 * go * x; T.jy = hop(0.16, 0.55, 0.8); T.sq = 0.5 * pc - 0.3 * go * x * (1 - seg(v, 0.45, 0.55)) + land(0.55, 0.6); T.lg = 0.9 * pc + 0.7 * go * x; T.lx = -1.2 * go * x + base[1];
     } else if (a === 'atk' || a === 'hv') {
