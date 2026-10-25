@@ -360,6 +360,7 @@ crownenvoy/CrownEnvoy-v0.4.html | 전신망 (정치 탭 카드) | "📡 전신�
 - patchnotes.json, vowkeep/patchnotes.json | "Vowkeep 하얀 대검, 연타 시간 0.65초" 2줄 | Vowkeep b46 | 2026-10-25
 - vowkeep/play/js/data.js, vowkeep/versions.json, patchnotes.json | 새 통로 방 이름·한 줄 14개 (EXTRA), 버전 0.2 "갈라진 길" 제목·요약, 패치 노트 4줄 | Vowkeep b47 | 2026-10-25
 - patchnotes.json, vowkeep/patchnotes.json | "Vowkeep 기사 2타 자세" 1줄 | Vowkeep b48 | 2026-10-25
+- vowkeep/play/js/data.js, main.js, ach/vowkeep.json, vowkeep/i18n.js, vowkeep/play/index.html | 6~8장 보스 4단계 이름·안내(p4, ph[2]), '마지막 단계', 도전과제 '빠른 보스 사냥' 이름·설명, 심연 방 이름 '떠도는 돌길', 사이트 f2 문장, PC 조작 안내 문장, 패치 노트 13줄 | Vowkeep b49 | 2026-10-25
 - crownenvoy/CrownEnvoy-v0.5.html b98 | 로비(방 만들기·방 참여하기·시나리오·저장된 게임 버튼과 설명, 공개 방/비공개 방 고르기, 방 이름, 공개 방 목록 카드·상태·빈 목록 안내, 코드로 입장), 시나리오 메뉴(시나리오 만들기·시나리오 둘러보기), 대기실 제목 '공개 방'·'비공개 방'과 안내, 중세 병종 이름·능력(창병·중무장보병·궁병·기사·사석포·거포)과 기술 5개(장창 전술·판금 갑옷·기사도·장궁 부대·거포 주조), '이 시대에는 더 올릴 수 없어요'·'이 시대에는 없는 기술이에요', 전투 화면 '검·창·활·공성 병기', 휴전회의 결렬·성립 결과 카드와 요청 알림 2종, 반격 취소 알림 | 2026-10-25
 - crownenvoy/patchnotes.json·i18n.js | N["b98"] 13줄, V["0.5"] 제목·요약 (en·es·fr·de·ja·ar 한국어 임시) | Crown Envoy b98 | 2026-10-25
 
@@ -379,3 +380,12 @@ crownenvoy/CrownEnvoy-v0.4.html | 전신망 (정치 탭 카드) | "📡 전신�
 - 허브 소식과 소식 받기에도 Dummy Party가 들어왔어요
 - 위키 목록에 Vowkeep과 Dummy Party 칸이 생겼어요
 - 게임 목록이 한 곳(ff-lang.js)에서 나와서, 새 게임을 넣으면 패치노트·소식·위키·글쓰기 목록에 같이 나와요
+- beaconfall/BEACONFALL-v0.4.html b103 | 엔딩 대사·이름표(외계인 조종사/나)·'수락한다/거절한다'·'그리고 시간이 흘러…'·결말 제목, 설정 '효과음' 라벨, 도감 새 아이템 4개 이름(번역 없음) | 2026-10-25
+- presence.js (educations) | 지금 {n}명 접속 중, 친구 (Educations 첫 화면 접속 표시줄, 허브 hub.js 와 같은 한국어 문구) | educations | 2026-10-25
+
+## 업적 조건과 접속 표시줄 (2026-10-25)
+- 업적 조건과 접속 표시줄 (제목)
+- 허브 업적 "고른 실력"과 "세 개의 왕관"이 아무 게임 3개에서 달성하면 되도록 바뀌었어요
+- "지금 N명 접속 중" 표시줄이 Educations와 Tools 사이트에도 나와요
+- ff-auth.js + beaconfall/BEACONFALL-v0.4.html b104 | 계정 메뉴 '🏆 도전과제' 버튼 (ko/en만, 다른 언어는 영어) | 2026-10-25
+- crownenvoy/CrownEnvoy-v0.5.html b99 | 휴전회의 '내가 낼 배상금'·'상대가 낼 배상금'·안내 문구, 회의 기록 '배상금 N금을 내겠다고 했다'·'내겠다던 배상금을 거뒀다'·'배상금 N금을 냈다' | 속국 만들기 '속국 색'·'지도에서 속국을 이 색으로 칠해요.'·'직접 고르기' | 지도 정보창 '종주국'·'속국' | 나라 이름 '동고트족'·'왈라키아·몰다비아'·'네덜란드 왕국'·'벨기에 왕국'·'스위스 연방' | 2026-10-25

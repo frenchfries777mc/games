@@ -11,8 +11,8 @@
    "title": "큰 항해",
    "summary": "캐릭터를 직접 조종하고, 하나로 이어진 섬 지도에서 키우고 팔고, 배를 몰아 다른 섬과 비밀 섬을 찾아가는 버전",
    "latest": true,
-   "size": 1701799,
-   "sha256": "446f8ac414a4c7622106eacdd3db1f0bec355d69a1d38e0b1b1508a437b4a32a",
+   "size": 1880664,
+   "sha256": "27ab7775224a32865855b9656b0aba76fa064a84a81263aa8811d943e41f4ff0",
    "tr": {
     "title": {
      "en": "The big voyage",
@@ -24,6 +24,9 @@
      "pt": "A grande travessia",
      "ru": "Большое плавание",
      "tr": "Büyük yolculuk",
+     "it": "Il grande viaggio",
+     "pl": "Wielka wyprawa",
+     "ar": "الرحلة الكبرى",
      "nw": "Plusbig voyage",
      "gk": "그 큰 voyage"
     },
@@ -37,11 +40,14 @@
      "pt": "Controle seu personagem diretamente, cultive e venda num mapa de ilha conectado e navegue até outras ilhas e ilhas secretas",
      "ru": "Управляйте персонажем напрямую, выращивайте и продавайте на единой карте острова и плывите к другим и тайным островам",
      "tr": "Karakterini doğrudan yönet, birbirine bağlı tek bir ada haritasında üret ve sat, diğer adalara ve gizli adalara yelken aç",
+     "it": "Guida direttamente il personaggio, coltiva e vendi su un’unica mappa dell’isola e naviga verso altre isole e isole segrete",
+     "pl": "Steruj postacią bezpośrednio, uprawiaj i sprzedawaj na jednej połączonej mapie wyspy i płyń na inne oraz sekretne wyspy",
+     "ar": "تحكّم بشخصيتك مباشرة، وازرع وبِع على خريطة جزيرة واحدة متصلة، وأبحر إلى جزر أخرى وجزر سرية",
      "nw": "Steer your comrade directwise, farm plus unbuy on one connected airstrip oceania, plus sail to unsame airstrips plus unpublic airstrips",
      "gk": "Steer 당신의 성격 directly, farm 그리고 팔다 위에 하나 connected 섬 지도, 그리고 sail 에게 다른 섬들 그리고 secret 섬들"
     }
    },
-   "build": 59
+   "build": 60
   },
   {
    "version": "0.1",
@@ -63,6 +69,9 @@
      "pt": "Primeira partida",
      "ru": "Первое плавание",
      "tr": "İlk sefer",
+     "it": "Prima traversata",
+     "pl": "Pierwszy rejs",
+     "ar": "الإبحار الأول",
      "nw": "One sailing",
      "gk": "첫째 sailing"
     },
@@ -76,6 +85,9 @@
      "pt": "Primeira versão com campos, rancho, comércio no porto e códigos de sala multijogador",
      "ru": "Первая версия: поля, ферма, торговля в гавани и коды комнат для мультиплеера",
      "tr": "Tarlalar, çiftlik, liman ticareti ve çok oyunculu oda kodlarıyla ilk sürüm",
+     "it": "La prima versione pubblica con campi, ranch, commercio portuale e codici stanza per il multigiocatore",
+     "pl": "Pierwsze wydanie z polami, ranczem, handlem portowym i kodami pokojów do gry wieloosobowej",
+     "ar": "الإصدار الأول مع الحقول والمزرعة وتجارة الميناء ورموز غرف اللعب الجماعي",
      "nw": "One release with fields, ranch, shipplace swap plus manycomrade place codes",
      "gk": "첫째 release 와 함께 fields, 하나의 ranch, 항구 trade 그리고 다수 선수 방 암호들"
     }

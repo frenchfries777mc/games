@@ -1,6 +1,6 @@
 // Vowkeep · © 2026 Frenchfries777 · CC BY-NC-ND 4.0
 // 게임 규칙 (방장·혼자 하기에서만 돌아가요). three.js를 쓰지 않아서 node에서도 시험할 수 있어요.
-import { ROLES, ROLE_IDS, ENEMIES, BLESSINGS, CHAPTERS, FOES, MAP, GEAR_BONUS, COMBOS, DEEP, ROLE_PUZ } from './data.js';
+import { ROLES, ROLE_IDS, ENEMIES, BLESSINGS, CHAPTERS, FOES, MAP, GEAR_BONUS, COMBOS, DEEP, ROLE_PUZ, flagShown } from './data.js';
 import * as D from './data.js';
 import { collide as mapCollide, isWall, lineClear, navDir, areaAt, cw, useChapter, PILLARS, resetSecrets, openSecret, secretFace, openGate, dropPillar, pillarAt, LIFTH, liftOk } from './map.js';
 
@@ -25,7 +25,7 @@ function enemyStats(ch) {
     o[k] = Object.assign({}, b, { name: f.name || b.name, hp: Math.round(b.hp * (f.hp || 1) * C.diff * eh * (cu.hp || 1)), dmg: Math.round(b.dmg * C.diff * ed * (cu.dmg || 1)), speed: b.speed * (f.speed || 1) * (cu.spd || 1), r: f.r || b.r, proj: f.proj || 'earrow', psp: f.psp || 17 });
   }
   const mi = ENEMIES.mimic; o.mimic = Object.assign({}, mi, { hp: Math.round(mi.hp * C.diff * (cu.hp || 1)), dmg: Math.round(mi.dmg * C.diff * 0.85 * (cu.dmg || 1)), speed: mi.speed * (cu.spd || 1) });
-  o.boss = Object.assign({}, ENEMIES.boss, C.boss, { honor: 0 }); if (cu.dmg) o.boss.dmg = Math.round(o.boss.dmg * cu.dmg);
+  o.boss = Object.assign({}, ENEMIES.boss, C.boss, { honor: 0 }); o.boss.dmg = Math.round(o.boss.dmg * BOSS_DMG * (cu.dmg || 1));
   return o;
 }
 export function createGame(slots, seed, ch = 0) {
@@ -150,6 +150,8 @@ function aimPoint(p, inp, range) {
   if (inp.ax != null) { const d = Math.hypot(inp.ax - p.x, inp.az - p.z); if (d <= range) return { x: inp.ax, z: inp.az }; }
   return { x: p.x + Math.cos(p.a) * range, z: p.z + Math.sin(p.a) * range };
 }
+// 보스 피해 배율 (모든 보스 공격이 세져요)
+export const BOSS_DMG = 1.3;
 export const COMBO_T = 0.65, COMBO_PRIEST = 0.65;
 function basicAttack(G, p, inp, nShot = 1) {
   const R = ROLES[p.role], A = R.atk;
@@ -199,9 +201,12 @@ function breakWall(G, x, z, r, p) {
   G.pits.forEach((P, k) => { if (!P.down) { const o = pillarAt(k); if (Math.hypot(o.x - x, o.z - z) < r + 1.6) fellPillar(G, k, p); } });
   G.secrets.forEach((q, k) => {
     if (q.open) return; const f = secretFace(k); if (Math.hypot(f.x - x, f.z - z) > r + 1.4) return;
-    q.open = true; openSecret(k); ev(G, 'secret', { i: k, x: f.x, z: f.z }); for (const o of G.players) G.honor[o.id] += 20;
-    if (p && !p.bot) ev(G, 'ach', { id: 'secret', pid: p.id });
+    openWall(G, k, p);
   });
+}
+function openWall(G, k, p) {
+  const q = G.secrets[k], f = secretFace(k); q.open = true; openSecret(k); ev(G, 'secret', { i: k, x: f.x, z: f.z }); for (const o of G.players) G.honor[o.id] += 20;
+  if (p && !p.bot) ev(G, 'ach', { id: 'secret', pid: p.id });
 }
 // 합동기: 짝이 맞는 기술을 다른 동료가 1초 안에 썼으면 함께 터져요
 function tryCombo(G, p, sid) {
@@ -308,7 +313,7 @@ export function step(G, dt, inputs) {
   for (const p of G.players) stepPlayer(G, p, inputs[p.id] || {}, dt);
 
   // 보스 방에 들어가면 단장이 깨어나요
-  if (!G.bossIntro && !G.bossDead && G.players.some(p => alive(p) && inTrig(p))) { G.bossIntro = true; G.phase = 'bossIntro'; G.phaseT = 0; ev(G, 'bossIntro', {}); }
+  if (!G.bossIntro && !G.bossDead && G.players.some(p => alive(p) && inTrig(p))) { G.bossIntro = true; G.bossT0 = G.t; G.phase = 'bossIntro'; G.phaseT = 0; ev(G, 'bossIntro', {}); }
 
   // 적: 깨어 있거나 가까운 적만 움직여요
   for (const e of G.enemies) if (e.hp > 0) stepEnemy(G, e, dt);
@@ -343,14 +348,16 @@ export function step(G, dt, inputs) {
     if (G.deep) { G.phase = 'over'; G.phaseT = 0; ev(G, 'over', { floor: G.deep.floor }); }
     else { G.phase = 'wipe'; G.phaseT = 0; ev(G, 'wipe', {}); }
   }
-  // 보스가 쓰러지면 성이 무너지기 시작해요 (끝없는 심연은 바로 끝나요)
-  if (G.bossDead && !G.won && !G.esc && !G.enemies.some(e => e.k === 'boss')) { if (G.deep || !MAP.exit) win(G); else startEsc(G); }
+  // 보스가 쓰러지면 바로 장을 깨요
+  if (G.bossDead && !G.won && !G.enemies.some(e => e.k === 'boss')) win(G);
 }
 
 function inTrig(p) { const [x, y, w, h] = MAP.bossTrig, i = p.x / 2, j = p.z / 2; return i >= x && i < x + w && j >= y && j < y + h; }
 function win(G) {
   for (const p of G.players) G.honor[p.id] += 90;
   if (G.flag && G.flag.by) { const c = G.players.find(p => p.id === G.flag.by); if (c && alive(c)) { G.flag.got = 1; ev(G, 'flaggot', { id: c.id }); } }
+  // 빠른 보스 사냥: 보스 방에 들어간 뒤 3분 안에 쓰러뜨리기
+  if (!G.deep && G.bossT0 != null && G.t - G.bossT0 <= 180) for (const p of G.players) if (!p.bot) ev(G, 'ach', { id: 'escape', pid: p.id });
   G.won = true; G.phase = 'won'; G.phaseT = 0; ev(G, 'won', {});
 }
 function offerBless(G) {
@@ -462,7 +469,7 @@ function stepPlayer(G, p, inp, dt) {
   else if (fe) interact(G, p);
   // 기사단 깃발: F를 꾹 눌러 들어요
   const F = G.flag;
-  if (F && !F.by && !p.bot && inp.f && !p.flNo && !p.torch && G.secrets[MAP.flag[2]].open && Math.hypot(p.x - F.x, p.z - F.z) < 2.2) {
+  if (F && !F.by && !p.bot && inp.f && !p.flNo && !p.torch && flagShown(G.secrets.map(q => q.open), G.puz.map(q => q.done)) && Math.hypot(p.x - F.x, p.z - F.z) < 2.2) {
     F.prog += dt; F.pT = G.t; if (F.prog >= FLAG_T) { F.by = p.id; F.prog = 0; ev(G, 'flag', { id: p.id, on: 1, x: F.x, z: F.z }); }
   }
   // 상자와 제단: F를 꾹 눌러요
@@ -553,6 +560,11 @@ function hitPuzzle(G, x, z, r, p, pw = 1, src = '') {
     if (P.down) return; const o = pillarAt(k); if (Math.hypot(o.x - x, o.z - z) > r + 1.3) return;
     hit = true; P.hits += pw; if (p && !p.bot) P.idle = 0;
     if (P.hits >= PIT_HITS) fellPillar(G, k, p); else ev(G, 'pcrack', { pk: k, x: o.x, z: o.z, n: P.hits });
+  });
+  // 금 간 벽: 누구든 보통 공격을 여섯 번 맞히면 무너져요 (강타·큰 공격·관통 화살은 한 번에)
+  if (p) G.secrets.forEach((q, k) => {
+    if (q.open) return; const f = secretFace(k); if (Math.hypot(f.x - x, f.z - z) > r + 1.4) return;
+    hit = true; q.hits = (q.hits || 0) + pw; if (q.hits >= PIT_HITS) openWall(G, k, p); else ev(G, 'pcrack', { x: f.x, z: f.z, n: q.hits });
   });
   MAP.puzzles.forEach((q, k) => {
     const P = G.puz[k]; if (P.done || q.k !== 'braziers') return;
@@ -870,18 +882,21 @@ function eliteWind(G, e, dt) { e.wind -= dt; if (e.wind <= 0) { e.st = 'charge';
 // 장마다 보스가 달라요. 공통: 체력 60%·30%에서 단계가 바뀌고, 자기 방 안에 있는 사람만 쫓아요
 function stepBoss(G, b, dt) {
   const f = b.hp / b.maxhp, B = G.EN.boss;
-  const np = f > 0.6 ? 1 : f > 0.3 ? 2 : 3;
-  if (np !== b.phase) { b.phase = np; ev(G, 'bphase', { p: np }); b.cdT = 1.2; b.atk = null; b.st = 'idle'; if (np === 2) b.summonT = 1; if (np === 3) b.fireT = 1; }
+  // p4가 있는 보스(6~8장)는 체력 12%에서 마지막 4단계로 넘어가요
+  const np = f > 0.6 ? 1 : f > 0.3 ? 2 : (B.p4 && f <= 0.12) ? 4 : 3;
+  if (np !== b.phase) { b.phase = np; ev(G, 'bphase', { p: np }); b.cdT = 1.2; b.atk = null; b.st = 'idle'; if (np === 2) b.summonT = 1; if (np >= 3) b.fireT = 1; if (np === 4) { b.summonT = 2; b.p4T = 3; } }
   if (b.stun > 0) { b.atk = null; b.st = 'stun'; return; }
   if (b.st === 'stun') b.st = 'idle';
   let t = null, bd = 1e9; for (const p of G.players) { if (!alive(p) || areaAt(p.x, p.z) !== G.bossArea) continue; const dd = dist(b, p) - (p.taunt > 0 ? 6 : 0) - (hasFlag(G, p) ? 4 : 0); if (dd < bd) { bd = dd; t = p; } }
   if (!t) { b.atk = null; const hd = Math.hypot(b.hx - b.x, b.hz - b.z); if (hd > 1) { const a = Math.atan2(b.hz - b.z, b.hx - b.x); b.x += Math.cos(a) * 3 * dt; b.z += Math.sin(a) * 3 * dt; b.a = a; b.moving = true; } else b.moving = false; return; }
-  const K = B.dmg / 55, ai = B.pat || B.ai || 'warden', d = dist(b, t), ta = angTo(b, t);
+  const K = B.dmg / 55, ai = B.pat || B.ai || 'warden', d = dist(b, t), ta = angTo(b, t), P4 = b.phase === 4;
+  // 4단계: 보스마다 다른 마지막 큰 공격이 자주 터져요
+  if (P4) { b.p4T -= dt; if (b.p4T <= 0 && !b.atk) { b.p4T = 6.5; finale(G, b, t, K, ai); } }
   // 부하 부르기 (2단계부터)
-  if (b.phase >= 2) { b.summonT -= dt; if (b.summonT <= 0) { b.summonT = ai === 'bishop' ? 13 : 15; const n = 3; for (let i = 0; i < n; i++) { const a = i / n * TAU + G.rng(); let sx = b.x + Math.cos(a) * 4, sz = b.z + Math.sin(a) * 4; if (isWall(sx, sz) || !lineClear(b.x, b.z, sx, sz)) { sx = b.x; sz = b.z; } spawnEnemy(G, i === n - 1 && G.rng() < 0.6 ? 'archer' : 'skel', sx, sz, false); } ev(G, 'summon', {}); } }
+  if (b.phase >= 2) { b.summonT -= dt; if (b.summonT <= 0) { b.summonT = ai === 'bishop' ? 13 : P4 ? 11 : 15; const n = P4 ? 4 : 3; for (let i = 0; i < n; i++) { const a = i / n * TAU + G.rng(); let sx = b.x + Math.cos(a) * 4, sz = b.z + Math.sin(a) * 4; if (isWall(sx, sz) || !lineClear(b.x, b.z, sx, sz)) { sx = b.x; sz = b.z; } spawnEnemy(G, i === n - 1 && G.rng() < 0.6 ? 'archer' : 'skel', sx, sz, false); } ev(G, 'summon', {}); } }
   // 3단계: 보스마다 다른 바닥 공격
   if (b.phase >= 3) {
-    b.fireT -= dt;
+    b.fireT -= dt * (P4 ? 1.4 : 1);
     if (b.fireT <= 0) {
       if (ai === 'warden') { b.fireT = 2.4; fireTrail(G, b, t); }
       else if (ai === 'hunter') { b.fireT = 5.5; fireRing(G, b.x, b.z, 6.5, 14); }
@@ -895,13 +910,13 @@ function stepBoss(G, b, dt) {
   }
   if (b.atk) { bossAttack(G, b, dt, K); return; }
   // 걷기: 대주교는 거리를 두고, 나머지는 다가와요
-  const sp = B.speed * (b.phase === 3 ? 1.25 : 1) * (b.slow > 0 ? b.slowM : 1) * (ai === 'giant' ? 0.8 : 1);
+  const sp = B.speed * (b.phase === 4 ? 1.4 : b.phase === 3 ? 1.25 : 1) * (b.slow > 0 ? b.slowM : 1) * (ai === 'giant' ? 0.8 : 1);
   let da = ta - b.a; while (da > Math.PI) da -= TAU; while (da < -Math.PI) da += TAU; b.a += clamp(da, -2.6 * dt, 2.6 * dt);
   let want = d > 3 ? 1 : 0; if (ai === 'bishop' || ai === 'prophet') want = d > 9 ? 1 : d < 5 ? -1 : 0;
   if (want) { const ma = lineClear(b.x, b.z, t.x, t.z) ? ta : (navDir(b.x, b.z, t.x, t.z, G.t) ?? ta); b.x += Math.cos(ma) * sp * want * dt; b.z += Math.sin(ma) * sp * want * dt; collide(G, b, b.r); b.moving = true; } else b.moving = false;
   b.cdT = (b.cdT || 0) - dt;
   if (b.cdT > 0) return;
-  const r = G.rng(), tw = b.phase === 3 ? 0.75 : 1;
+  const r = G.rng(), tw = b.phase === 4 ? 0.65 : b.phase === 3 ? 0.75 : 1;
   const warn = (k, z) => { if (z) G.zones.push(Object.assign({ id: G.uid++, t: z.T }, z)); ev(G, 'bwind', { w: k }); };
   if (ai === 'warden' || ai === 'king') {
     const ring = ai === 'king' && b.phase >= 3 && r < 0.22;
@@ -926,21 +941,36 @@ function stepBoss(G, b, dt) {
     else { b.atk = { k: 'slam', t: 0.95 * tw, x: t.x, z: t.z, r: 3.2 }; b.a = ta; warn('slam', { k: 'tcircle', x: t.x, z: t.z, r: 3.2, T: 0.95 * tw }); }
   } else if (ai === 'giant') {
     // 그롬: 몸을 말아 벽에 튕기며 구르기, 발 구르기(밀쳐 냄), 바위 던지기. 느리지만 한 방이 커요
-    if (b.phase >= 2 && (d > 4 ? r < 0.45 : r < 0.2)) { b.a = ta; b.atk = { k: 'roll', t: 1.0 * tw }; warn('roll', { k: 'tline', x: b.x, z: b.z, a: ta, len: 15, w: 3.2, T: 1.0 * tw }); }
+    if (b.phase >= 2 && r < 0.16) { const ps = G.players.filter(p => alive(p) && areaAt(p.x, p.z) === G.bossArea); for (let i = 0; i < 5; i++) { const p = ps[i % ps.length] || t, x = p.x + (G.rng() - 0.5) * 7, z = p.z + (G.rng() - 0.5) * 7; if (!isWall(x, z)) hazard(G, { k: 'tcircle', x, z, r: 2, T: 1.1 + i * 0.15, dmg: 34 * K, fx: 'rock' }); } b.atk = { k: 'wait', t: 1.0 }; ev(G, 'bwind', { w: 'rockrain' }); }
+    else if (b.phase >= 2 && (d > 4 ? r < 0.45 : r < 0.2)) { b.a = ta; b.atk = { k: 'roll', t: 1.0 * tw }; warn('roll', { k: 'tline', x: b.x, z: b.z, a: ta, len: 15, w: 3.2, T: 1.0 * tw }); }
     else if (d < 6 && r < 0.7) { b.atk = { k: 'stomp', t: 1.2 * tw, r: 5.8 }; warn('stomp', { k: 'tcircle', x: b.x, z: b.z, r: 5.8, T: 1.2 * tw }); }
     else { b.a = ta; b.atk = { k: 'boulder', t: 1.3 * tw, x: t.x, z: t.z, r: 3 }; warn('boulder', { k: 'tcircle', x: t.x, z: t.z, r: 3, T: 1.3 * tw }); }
   } else if (ai === 'prophet') {
     // 세라핀: 가까우면 순간이동, 십자 불기둥, 불의 벽, 불씨 부채꼴
     if (d < 4 || r < 0.15) { const q = bossSpot(G, b); b.atk = { k: 'blink', t: 0.6, x: q.x, z: q.z }; warn('blink', { k: 'tcircle', x: q.x, z: q.z, r: 1.6, T: 0.6 }); }
+    else if (b.phase >= 2 && r < 0.27) { b.atk = { k: 'nova', t: 0.8 * tw, n: 14, pk: 'ember' }; warn('nova', { k: 'tcircle', x: b.x, z: b.z, r: 2.5, T: 0.8 * tw }); }
     else if (r < 0.5) { const T = 1.0 * tw, o = (b.crs = !b.crs) ? 0 : Math.PI / 4; for (let i = 0; i < 4; i++) hazard(G, { k: 'tline', x: b.x, z: b.z, a: o + i * Math.PI / 2, len: 18, w: 2, T, dmg: 34 * K, fx: 'beam' }); b.atk = { k: 'wait', t: T }; ev(G, 'bwind', { w: 'beam' }); }
     else if (r < 0.78) { const pa = ta + Math.PI / 2, cx = (b.x + t.x) / 2, cz = (b.z + t.z) / 2; for (let i = -3; i <= 3; i++) { const x = cx + Math.cos(pa) * i * 1.8, z = cz + Math.sin(pa) * i * 1.8; if (!isWall(x, z)) G.zones.push({ id: G.uid++, k: 'tcircle', x, z, r: 1.3, t: 0.9, T: 0.9, then: 'fire' }); } b.atk = { k: 'wait', t: 0.9 }; ev(G, 'bwind', { w: 'firewall' }); }
     else { b.a = ta; b.atk = { k: 'volley', t: 0.7 * tw, n: b.phase >= 2 ? 7 : 5, pk: 'ember', sp: 15 }; warn('volley', { k: 'tcone', x: b.x, z: b.z, a: ta, r: 12, arc: 1.1, T: 0.7 * tw }); }
   } else if (ai === 'flame') {
     // 꺼지지 않는 불꽃: 세 번 이어지는 소용돌이 불씨, 불덩이 비, 휘두르기, 둘레 폭발
-    if (r < 0.3) { b.atk = { k: 'spiral', t: 0.8 * tw, n: 3, o: G.rng() * TAU }; warn('nova', { k: 'tcircle', x: b.x, z: b.z, r: 2.5, T: 0.8 * tw }); }
+    if (b.phase >= 2 && r < 0.14) { const T = 1.1 * tw, o = G.rng() * TAU; for (let i = 0; i < 6; i++) hazard(G, { k: 'tline', x: b.x, z: b.z, a: o + i * TAU / 6, len: 18, w: 1.8, T, dmg: 34 * K, fx: 'beam' }); b.atk = { k: 'wait', t: T }; ev(G, 'bwind', { w: 'beam' }); }
+    else if (r < 0.3) { b.atk = { k: 'spiral', t: 0.8 * tw, n: b.phase >= 3 ? 4 : 3, o: G.rng() * TAU }; warn('nova', { k: 'tcircle', x: b.x, z: b.z, r: 2.5, T: 0.8 * tw }); }
     else if (r < 0.55) { meteors(G, b, 3, K); b.atk = { k: 'wait', t: 0.8 }; }
     else if (d < 5 && r < 0.8) { b.a = ta; b.atk = { k: 'sweep', t: 0.7 * tw }; warn('sweep', { k: 'tcone', x: b.x, z: b.z, a: ta, r: 5.2, arc: 2.1, T: 0.7 * tw }); }
     else { b.atk = { k: 'ring', t: 1.3 * tw, r: 6.5 }; warn('ring', { k: 'tcircle', x: b.x, z: b.z, r: 6.5, T: 1.3 * tw }); }
+  }
+}
+// 4단계 마지막 큰 공격
+function finale(G, b, t, K, ai) {
+  if (ai === 'giant') { // 땅 울림: 제자리에서 세 번 연달아 땅을 내리쳐요. 원 밖으로 피해 있어야 해요
+    for (let i = 0; i < 3; i++) hazard(G, { k: 'tcircle', x: b.x, z: b.z, r: 6.5, T: 1.0 + i * 0.8, dmg: 30 * K, fx: 'rock' });
+    b.atk = { k: 'wait', t: 2.8 }; ev(G, 'bwind', { w: 'quake' });
+  } else if (ai === 'prophet') { // 태양의 심판: 여덟 줄 불기둥 두 번, 두 번째는 비스듬히
+    for (let k = 0; k < 2; k++) for (let i = 0; i < 4; i++) hazard(G, { k: 'tline', x: b.x, z: b.z, a: k * Math.PI / 4 + i * Math.PI / 2, len: 20, w: 2, T: 1.0 + k * 0.9, dmg: 34 * K, fx: 'beam' });
+    b.atk = { k: 'wait', t: 2.0 }; ev(G, 'bwind', { w: 'beam' });
+  } else if (ai === 'flame') { // 꺼지지 않는 불: 다섯 겹 소용돌이와 불덩이 비가 한꺼번에
+    meteors(G, b, 5, K); b.atk = { k: 'spiral', t: 0.6, n: 5, o: G.rng() * TAU }; ev(G, 'bwind', { w: 'meteor' });
   }
 }
 // 늦게 터지는 경고 장판: 시간이 다 되면 그 안(선 위)에 있는 사람이 맞아요. chill이면 잠깐 몸이 얼어 느려져요

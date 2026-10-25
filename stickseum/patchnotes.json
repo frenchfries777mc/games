@@ -2,6 +2,261 @@
  "notes": [
   {
    "date": "2026-10-25",
+   "build": "v381",
+   "title": "밸런스표 색 조정",
+   "items": [
+    "밸런스표 승률 55% 이상 막대를 빨간색으로 표시"
+   ],
+   "tr": {
+    "en": {
+     "title": "Balance table colors adjusted",
+     "items": [
+      "Bars at 55% win rate or higher in the balance table are now red"
+     ]
+    },
+    "es": {
+     "title": "Colores de la tabla de equilibrio ajustados",
+     "items": [
+      "En la tabla de equilibrio, las barras con 55% de victorias o más se muestran en rojo"
+     ]
+    },
+    "fr": {
+     "title": "Couleurs du tableau d'équilibrage ajustées",
+     "items": [
+      "Dans le tableau d'équilibrage, les barres à 55 % de victoires ou plus sont en rouge"
+     ]
+    },
+    "de": {
+     "title": "Farben der Balance-Tabelle angepasst",
+     "items": [
+      "Balken mit 55 % Siegquote oder mehr werden in der Balance-Tabelle rot angezeigt"
+     ]
+    },
+    "ja": {
+     "title": "バランス表の色を調整",
+     "items": [
+      "バランス表で勝率55%以上のバーを赤で表示"
+     ]
+    },
+    "zh": {
+     "title": "平衡表颜色调整",
+     "items": [
+      "平衡表中胜率 55% 及以上的条形显示为红色"
+     ]
+    },
+    "pt": {
+     "title": "Cores da tabela de balanceamento ajustadas",
+     "items": [
+      "Na tabela de balanceamento, barras com 55% de vitórias ou mais ficam vermelhas"
+     ]
+    },
+    "ru": {
+     "title": "Изменены цвета таблицы баланса",
+     "items": [
+      "Полосы с долей побед от 55% в таблице баланса теперь красные"
+     ]
+    },
+    "tr": {
+     "title": "Denge tablosu renkleri ayarlandı",
+     "items": [
+      "Denge tablosunda %55 ve üzeri kazanma oranı çubukları kırmızı gösteriliyor"
+     ]
+    },
+    "it": {
+     "title": "Colori della tabella di bilanciamento ritoccati",
+     "items": [
+      "Nella tabella di bilanciamento le barre con il 55% di vittorie o più sono rosse"
+     ]
+    },
+    "pl": {
+     "title": "Zmiana kolorów tabeli balansu",
+     "items": [
+      "W tabeli balansu paski z odsetkiem wygranych 55% lub więcej są czerwone"
+     ]
+    },
+    "ar": {
+     "title": "تعديل ألوان جدول التوازن",
+     "items": [
+      "تظهر أشرطة نسبة الفوز 55% فأكثر في جدول التوازن باللون الأحمر"
+     ]
+    }
+   }
+  },
+  {
+   "date": "2026-10-25",
+   "build": "v380",
+   "title": "밀린 요청 반영",
+   "items": [
+    "인형술사 바느질 실이 그려지지 않던 문제 수정(하얀 실로 표시)",
+    "화염방사기 최대 사용 시간 7.5초 → 8초, 끊었다 다시 쏴도 누적",
+    "배틀로얄 듀오 MVP 투표 삭제",
+    "프로필 많이 쓴 캐릭터를 무기 이름 대신 캐릭터 이름으로 표시",
+    "랭크 순위표 이름을 허브 닉네임으로 표시",
+    "밸런스 캐릭터 창 닫기 버튼이 눌리지 않던 문제 수정",
+    "밸런스 그래프 패치 때만 보기에서 측정 전 빈 칸 삭제",
+    "화염방사기 밸런스 다시 측정"
+   ],
+   "tr": {
+    "en": {
+     "title": "Pending requests applied",
+     "items": [
+      "Fixed the Puppeteer's Stitching thread not being drawn (now shown as a white thread)",
+      "Flamethrower max use time 7.5 s → 8 s, and it keeps adding up even if you stop and fire again",
+      "Removed the MVP vote from Battle Royale Duo",
+      "Profile's most-played characters now show character names instead of weapon names",
+      "Ranked leaderboard names now show hub nicknames",
+      "Fixed the close button of the balance character window not responding",
+      "Removed empty pre-measurement columns from the balance graph's \"patches only\" view",
+      "Flamethrower balance re-measured"
+     ]
+    },
+    "es": {
+     "title": "Peticiones pendientes aplicadas",
+     "items": [
+      "Corregido que no se dibujara el hilo de Costura del Titiritero (ahora se ve como un hilo blanco)",
+      "Tiempo máximo de uso del Lanzallamas 7,5 s → 8 s, y se acumula aunque dejes de disparar y vuelvas a hacerlo",
+      "Eliminada la votación de MVP en Battle royale dúo",
+      "Los personajes más usados del perfil muestran el nombre del personaje en vez del arma",
+      "Los nombres de la clasificación clasificatoria muestran el apodo del hub",
+      "Corregido el botón de cerrar de la ventana de personaje de equilibrio, que no respondía",
+      "Quitadas las columnas vacías previas a la medición en la vista «solo parches» del gráfico de equilibrio",
+      "Equilibrio del Lanzallamas medido de nuevo"
+     ]
+    },
+    "fr": {
+     "title": "Demandes en attente appliquées",
+     "items": [
+      "Correction du fil de Couture du Marionnettiste qui ne s'affichait pas (désormais un fil blanc)",
+      "Durée d'utilisation max. du Lance-flammes 7,5 s → 8 s, cumulée même si on arrête puis on reprend",
+      "Vote MVP retiré du Battle royale en duo",
+      "Les personnages les plus joués du profil affichent le nom du personnage au lieu de l'arme",
+      "Le classement classé affiche les pseudos du hub",
+      "Correction du bouton de fermeture de la fenêtre de personnage d'équilibrage qui ne répondait pas",
+      "Colonnes vides d'avant la mesure retirées de la vue « patchs seulement » du graphique d'équilibrage",
+      "Équilibrage du Lance-flammes remesuré"
+     ]
+    },
+    "de": {
+     "title": "Offene Wünsche umgesetzt",
+     "items": [
+      "Behoben: Der Faden von Nähen des Puppenspielers wurde nicht gezeichnet (jetzt als weißer Faden)",
+      "Maximale Nutzungsdauer des Flammenwerfers 7,5 s → 8 s, zählt auch nach Absetzen und erneutem Feuern weiter",
+      "MVP-Abstimmung im Battle Royale Duo entfernt",
+      "Meistgespielte Charaktere im Profil zeigen jetzt Charakter- statt Waffennamen",
+      "Die Ranglisten-Bestenliste zeigt jetzt Hub-Spitznamen",
+      "Behoben: Der Schließen-Button im Balance-Charakterfenster reagierte nicht",
+      "Leere Spalten vor der Messung aus der Ansicht „nur Patches“ der Balance-Grafik entfernt",
+      "Flammenwerfer-Balance neu gemessen"
+     ]
+    },
+    "ja": {
+     "title": "たまっていた要望を反映",
+     "items": [
+      "人形使いの縫い合わせの糸が描かれなかった問題を修正（白い糸で表示）",
+      "火炎放射器の最大使用時間 7.5秒 → 8秒、途中で止めて撃ち直しても累積",
+      "バトルロイヤル・デュオのMVP投票を削除",
+      "プロフィールのよく使うキャラクターを武器名ではなくキャラクター名で表示",
+      "ランク戦ランキングの名前をハブのニックネームで表示",
+      "バランスのキャラクターウィンドウの閉じるボタンが押せなかった問題を修正",
+      "バランスグラフの「パッチ時のみ表示」で測定前の空欄を削除",
+      "火炎放射器のバランスを再測定"
+     ]
+    },
+    "zh": {
+     "title": "处理积压的请求",
+     "items": [
+      "修复傀儡师缝合的线不显示的问题（以白线显示）",
+      "火焰喷射器最长使用时间 7.5 秒 → 8 秒，中途松开再喷也会累计",
+      "删除大逃杀双人模式的 MVP 投票",
+      "个人资料中的常用角色改为显示角色名而非武器名",
+      "排位排行榜改为显示中心昵称",
+      "修复平衡角色窗口关闭按钮无法点击的问题",
+      "平衡图表“仅看补丁”中删除测量前的空白列",
+      "重新测量火焰喷射器平衡"
+     ]
+    },
+    "pt": {
+     "title": "Pedidos pendentes aplicados",
+     "items": [
+      "Corrigida a linha da Costura do Titereiro que não aparecia (agora é uma linha branca)",
+      "Tempo máximo de uso do Lança-chamas 7,5 s → 8 s, e acumula mesmo se você parar e voltar a atirar",
+      "Votação de MVP removida do Battle Royale em Dupla",
+      "Os personagens mais usados no perfil mostram o nome do personagem em vez da arma",
+      "Os nomes do ranking ranqueado mostram o apelido do hub",
+      "Corrigido o botão de fechar da janela de personagem do balanceamento que não funcionava",
+      "Removidas as colunas vazias antes da medição na visão \"só patches\" do gráfico de balanceamento",
+      "Balanceamento do Lança-chamas medido de novo"
+     ]
+    },
+    "ru": {
+     "title": "Выполнены накопившиеся просьбы",
+     "items": [
+      "Исправлено: нить «Шитья» Кукловода не отрисовывалась (теперь видна белая нить)",
+      "Максимальное время огнемёта 7,5 с → 8 с, время суммируется, даже если прекратить и снова стрелять",
+      "Убрано голосование за MVP в «Королевской битве: дуо»",
+      "В профиле самые используемые персонажи показаны по имени персонажа, а не оружия",
+      "В рейтинговой таблице теперь показываются никнеймы хаба",
+      "Исправлено: не нажималась кнопка закрытия окна персонажа на странице баланса",
+      "В графике баланса в режиме «только патчи» убраны пустые столбцы до замеров",
+      "Баланс огнемёта измерен заново"
+     ]
+    },
+    "tr": {
+     "title": "Bekleyen istekler uygulandı",
+     "items": [
+      "Kuklacı Dikiş ipliğinin çizilmemesi düzeltildi (artık beyaz iplik)",
+      "Alev Makinesi en uzun kullanım süresi 7,5 sn → 8 sn, bırakıp yeniden ateş etsen de birikiyor",
+      "Battle Royale Düo'da MVP oylaması kaldırıldı",
+      "Profildeki en çok kullanılan karakterler silah adı yerine karakter adıyla gösteriliyor",
+      "Dereceli sıralama tablosunda hub takma adları gösteriliyor",
+      "Denge karakter penceresinin kapatma düğmesinin çalışmaması düzeltildi",
+      "Denge grafiğinin \"yalnızca yamalar\" görünümünden ölçüm öncesi boş sütunlar kaldırıldı",
+      "Alev Makinesi dengesi yeniden ölçüldü"
+     ]
+    },
+    "it": {
+     "title": "Richieste in sospeso applicate",
+     "items": [
+      "Corretto il filo della Cucitura del Burattinaio che non veniva disegnato (ora è un filo bianco)",
+      "Tempo d'uso massimo del Lanciafiamme 7,5 s → 8 s, e si somma anche se smetti e riprendi a sparare",
+      "Rimosso il voto MVP dalla Battle royale in coppia",
+      "I personaggi più usati nel profilo mostrano il nome del personaggio invece dell'arma",
+      "La classifica classificata mostra i nickname dell'hub",
+      "Corretto il pulsante di chiusura della finestra personaggio del bilanciamento che non rispondeva",
+      "Tolte le colonne vuote prima della misurazione nella vista \"solo patch\" del grafico di bilanciamento",
+      "Bilanciamento del Lanciafiamme rimisurato"
+     ]
+    },
+    "pl": {
+     "title": "Uwzględniono zaległe prośby",
+     "items": [
+      "Naprawiono nierysowaną nić Szycia Lalkarza (teraz widać białą nić)",
+      "Maksymalny czas użycia Miotacza ognia 7,5 s → 8 s, sumuje się nawet po przerwaniu i ponownym strzale",
+      "Usunięto głosowanie na MVP w battle royale duetów",
+      "Najczęściej używane postacie w profilu pokazują nazwę postaci zamiast broni",
+      "Tabela rankingowa pokazuje pseudonimy z huba",
+      "Naprawiono niedziałający przycisk zamknięcia okna postaci w balansie",
+      "Usunięto puste kolumny sprzed pomiarów w widoku „tylko łatki” wykresu balansu",
+      "Balans Miotacza ognia zmierzony ponownie"
+     ]
+    },
+    "ar": {
+     "title": "تطبيق الطلبات المتراكمة",
+     "items": [
+      "إصلاح عدم ظهور خيط الخياطة لمحرك الدمى (يظهر الآن خيطًا أبيض)",
+      "أقصى مدة استخدام لقاذف اللهب 7.5 ث → 8 ث، وتتراكم حتى لو توقفت ثم أطلقت مجددًا",
+      "حذف تصويت أفضل لاعب من باتل رويال الثنائي",
+      "تعرض الشخصيات الأكثر استخدامًا في الملف الشخصي اسم الشخصية بدل اسم السلاح",
+      "تعرض قائمة التصنيف أسماء المستخدمين في المركز",
+      "إصلاح زر إغلاق نافذة الشخصية في صفحة التوازن الذي لم يكن يستجيب",
+      "حذف الأعمدة الفارغة قبل القياس في عرض \"عند التحديثات فقط\" في رسم التوازن",
+      "إعادة قياس توازن قاذف اللهب"
+     ]
+    }
+   }
+  },
+  {
+   "date": "2026-10-25",
    "build": "v379",
    "title": "무너지는 다리 맵 삭제",
    "items": [
@@ -4912,79 +5167,79 @@
    "build": "v333",
    "title": "은하 표준어 추가",
    "items": [
-    "가상 언어 은하 표준어 추가 (커맨더 킨·마인크래프트 인챈트 글자, 직접 그린 글꼴)"
+    "가상 언어 은하 표준어 추가 (커맨더 킨·마인크래프트 인챈트 글자, 사진을 보고 만든 글꼴)"
    ],
    "tr": {
     "en": {
      "title": "Standard Galactic added",
      "items": [
-      "Added the fictional language Standard Galactic (the Commander Keen and Minecraft enchanting alphabet, in a hand-drawn font)"
+      "Added the fictional language Standard Galactic (the Commander Keen and Minecraft enchanting alphabet, in a font made from photos of the letters)"
      ]
     },
     "es": {
      "title": "Llega el Standard Galactic",
      "items": [
-      "Nuevo idioma ficticio Standard Galactic (el alfabeto de Commander Keen y de los encantamientos de Minecraft, con una fuente dibujada a mano)"
+      "Nuevo idioma ficticio Standard Galactic (el alfabeto de Commander Keen y de los encantamientos de Minecraft, con una fuente hecha a partir de fotos)"
      ]
     },
     "fr": {
      "title": "Ajout du Standard Galactic",
      "items": [
-      "Ajout de la langue fictive Standard Galactic (l'alphabet de Commander Keen et des enchantements de Minecraft, avec une police dessinée à la main)"
+      "Ajout de la langue fictive Standard Galactic (l'alphabet de Commander Keen et des enchantements de Minecraft, avec une police créée d'après des photos)"
      ]
     },
     "de": {
      "title": "Standard Galactic hinzugefügt",
      "items": [
-      "Fiktive Sprache Standard Galactic hinzugefügt (das Alphabet aus Commander Keen und den Minecraft-Verzauberungen, in einer selbst gezeichneten Schrift)"
+      "Fiktive Sprache Standard Galactic hinzugefügt (das Alphabet aus Commander Keen und den Minecraft-Verzauberungen, in einer nach Fotos erstellten Schrift)"
      ]
     },
     "ja": {
      "title": "銀河標準語を追加",
      "items": [
-      "架空言語「銀河標準語」を追加（コマンダー・キーンとマインクラフトのエンチャント文字、手描きフォント）"
+      "架空言語「銀河標準語」を追加（コマンダー・キーンとマインクラフトのエンチャント文字、写真を見て作ったフォント）"
      ]
     },
     "zh": {
      "title": "新增银河标准语",
      "items": [
-      "新增虚构语言银河标准语（Commander Keen 和 Minecraft 附魔文字，手绘字体）"
+      "新增虚构语言银河标准语（Commander Keen 和 Minecraft 附魔文字，参照照片制作的字体）"
      ]
     },
     "pt": {
      "title": "Standard Galactic adicionado",
      "items": [
-      "Novo idioma fictício Standard Galactic (o alfabeto de Commander Keen e dos encantamentos de Minecraft, em uma fonte desenhada à mão)"
+      "Novo idioma fictício Standard Galactic (o alfabeto de Commander Keen e dos encantamentos de Minecraft, em uma fonte feita a partir de fotos)"
      ]
     },
     "ru": {
      "title": "Добавлен Standard Galactic",
      "items": [
-      "Добавлен вымышленный язык Standard Galactic (алфавит из Commander Keen и зачарований Minecraft, рисованный шрифт)"
+      "Добавлен вымышленный язык Standard Galactic (алфавит из Commander Keen и зачарований Minecraft, шрифт, сделанный по фотографиям)"
      ]
     },
     "tr": {
      "title": "Standard Galactic eklendi",
      "items": [
-      "Kurgusal dil Standard Galactic eklendi (Commander Keen ve Minecraft büyü alfabesi, elle çizilmiş yazı tipiyle)"
+      "Kurgusal dil Standard Galactic eklendi (Commander Keen ve Minecraft büyü alfabesi, fotoğraflardan yapılmış yazı tipiyle)"
      ]
     },
     "it": {
      "title": "Aggiunto lo Standard Galactic",
      "items": [
-      "Aggiunta la lingua immaginaria Standard Galactic (l'alfabeto di Commander Keen e degli incantesimi di Minecraft, con un font disegnato a mano)"
+      "Aggiunta la lingua immaginaria Standard Galactic (l'alfabeto di Commander Keen e degli incantesimi di Minecraft, con un font ricavato da foto)"
      ]
     },
     "pl": {
      "title": "Dodano Standard Galactic",
      "items": [
-      "Dodano fikcyjny język Standard Galactic (alfabet z Commander Keen i zaklęć Minecrafta, ręcznie rysowana czcionka)"
+      "Dodano fikcyjny język Standard Galactic (alfabet z Commander Keen i zaklęć Minecrafta, czcionka zrobiona na podstawie zdjęć)"
      ]
     },
     "ar": {
      "title": "إضافة Standard Galactic",
      "items": [
-      "إضافة اللغة الخيالية Standard Galactic (أبجدية Commander Keen وسحر Minecraft، بخط مرسوم يدويًا)"
+      "إضافة اللغة الخيالية Standard Galactic (أبجدية Commander Keen وسحر Minecraft، بخط مصنوع اعتمادًا على صور)"
      ]
     }
    }

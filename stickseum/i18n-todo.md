@@ -16,7 +16,7 @@ patchnotes.json | v332 items[0] | 중국어 간체, 포르투갈어(브라질), 
 patchnotes.json | v332 items[1] | 가상 언어 신어, 번역기 한국어, 오라베쉬 추가 | build 332 | 2026-10-21
 patchnotes.json | v332 items[2] | 봇 이름을 새 언어별 이름으로 | build 332 | 2026-10-21
 patchnotes.json | v333 title | 은하 표준어 추가 | build 333 | 2026-10-22
-patchnotes.json | v333 items[0] | 가상 언어 은하 표준어 추가 (커맨더 킨·마인크래프트 인챈트 글자, 직접 그린 글꼴) | build 333 | 2026-10-22
+patchnotes.json | v333 items[0] | 가상 언어 은하 표준어 추가 (커맨더 킨·마인크래프트 인챈트 글자, 사진을 보고 만든 글꼴) | build 333 | 2026-10-22
 patchnotes.json | v334 title | 신어 표현 수정 | build 334 | 2026-10-22
 patchnotes.json | v334 items[0] | 신어 표현 수정: plusplus를 doubleplus로 | build 334 | 2026-10-22
 patchnotes.json | v335 title | 언어 3개 추가 | build 335 | 2026-10-22
@@ -261,3 +261,15 @@ patchnotes.json | v379 title | 무너지는 다리 맵 삭제 | build 379 | 2026
 patchnotes.json | v379 items[0] | 무너지는 다리 맵 삭제 | build 379 | 2026-10-25
 patchnotes.json | v379 items[1] | 폭탄 돌리기·생존 모드 봇 대쉬 변경 되돌림 | build 379 | 2026-10-25
 patchnotes.json | v379 items[2] | 밸런스 다시 측정(무너지는 다리 제외) | build 379 | 2026-10-25
+Stickseum-v0.8.html | flamethrower weapon desc | 중거리 화염방사 · 쏜 시간이 합쳐서 8초가 되면 2초간 과열(끊었다 다시 쏴도 이어서 셈) · 닿으면 초당 N 직접 피해 · 발판에 막힘 | build 380 | 2026-10-25
+patchnotes.json | v380 title | 밀린 요청 반영 | build 380 | 2026-10-25
+patchnotes.json | v380 items[0] | 인형술사 바느질 실이 그려지지 않던 문제 수정(하얀 실로 표시) | build 380 | 2026-10-25
+patchnotes.json | v380 items[1] | 화염방사기 최대 사용 시간 7.5초 → 8초, 끊었다 다시 쏴도 누적 | build 380 | 2026-10-25
+patchnotes.json | v380 items[2] | 배틀로얄 듀오 MVP 투표 삭제 | build 380 | 2026-10-25
+patchnotes.json | v380 items[3] | 프로필 많이 쓴 캐릭터를 무기 이름 대신 캐릭터 이름으로 표시 | build 380 | 2026-10-25
+patchnotes.json | v380 items[4] | 랭크 순위표 이름을 허브 닉네임으로 표시 | build 380 | 2026-10-25
+patchnotes.json | v380 items[5] | 밸런스 캐릭터 창 닫기 버튼이 눌리지 않던 문제 수정 | build 380 | 2026-10-25
+patchnotes.json | v380 items[6] | 밸런스 그래프 패치 때만 보기에서 측정 전 빈 칸 삭제 | build 380 | 2026-10-25
+patchnotes.json | v380 items[7] | 화염방사기 밸런스 다시 측정 | build 380 | 2026-10-25
+patchnotes.json | v381 title | 밸런스표 색 조정 | build 381 | 2026-10-25
+patchnotes.json | v381 items[0] | 밸런스표 승률 55% 이상 막대를 빨간색으로 표시 | build 381 | 2026-10-25
