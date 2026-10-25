@@ -40,3 +40,6 @@ patchnotes.json | v390 items[3] | 그랜드 마스터 스킨 효과 강화 (빛�
 patchnotes.json | v391 title | 방장 부담 감소 | build 391 | 2026-10-25
 patchnotes.json | v391 items[0] | 방장이 보내는 데이터를 변한 값만 전송하도록 바꿔 전송량 약 70% 감소 | build 391 | 2026-10-25
 patchnotes.json | v391 items[1] | 참가자가 많을 때 방장 컴퓨터가 느려지는 문제 완화 | build 391 | 2026-10-25
+patchnotes.json | v392 title | 클랜 토큰 지급 조건 수정 | build 392 | 2026-10-25
+patchnotes.json | v392 items[0] | 비공개 방에서 클랜원끼리 대결해도 클랜 토큰이 쌓이던 문제 수정 | build 392 | 2026-10-25
+patchnotes.json | v392 items[1] | 클랜 토큰은 클랜 경기에서만 지급 | build 392 | 2026-10-25
