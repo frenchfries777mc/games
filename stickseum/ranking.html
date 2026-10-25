@@ -97,7 +97,7 @@
 <script>
 const SUPABASE_URL = "https://kebsbuvuutilitwlvxzv.supabase.co";
 const SUPABASE_KEY = "sb_publishable_4Egu0zm3p6cxWGvP_-GlIw_mlCpO1Nf";
-const TIERS = [{"min":0,"name":"브론즈","color":"#c47a3d"},{"min":950,"name":"실버","color":"#c7ccd6"},{"min":1050,"name":"골드","color":"#ffd34d"},{"min":1150,"name":"플래티넘","color":"#4dd9ff"},{"min":1250,"name":"다이아","color":"#7bf3ff"},{"min":1400,"name":"마스터","color":"#ff5fd2"},{"min":1550,"name":"그랜드 마스터","color":"#ff5252"}];
+const TIERS = [{"min":0,"name":"브론즈","color":"#c47a3d"},{"min":950,"name":"실버","color":"#c7ccd6"},{"min":1050,"name":"sC","color":"#ffd34d"},{"min":1150,"name":"플래티넘","color":"#4dd9ff"},{"min":1250,"name":"다이아","color":"#7bf3ff"},{"min":1400,"name":"마스터","color":"#ff5fd2"},{"min":1550,"name":"그랜드 마스터","color":"#ff5252"}];
 let sb = null; try { if (window.supabase) sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY); } catch (e) {}
 window.FFAuthClient = sb;   // ff-auth.js 로그인 버튼이 같은 클라이언트를 쓰도록
 const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
@@ -127,7 +127,10 @@ async function load(){
     if (tab === 'ranked'){
       const r = await sb.from('ranked_ratings').select('user_id,name,rating,wins,losses').eq('season', season).order('rating', {ascending: false}).order('updated_at', {ascending: true}).limit(100);
       if (my !== seq) return; if (r.error) throw r.error;
-      ranked(r.data || []);
+      const rows = r.data || [], ids = rows.map(x => x.user_id).filter(Boolean);      // show the hub nickname (profiles.display_name), not the name saved at match time
+      if (ids.length){ try { const pr = await sb.from('profiles').select('id,username,display_name').in('id', ids); const nk = {}; ((pr && pr.data) || []).forEach(o => { const n = (typeof o.display_name === 'string' ? o.display_name.trim() : '') || o.username; if (n) nk[o.id] = n; }); rows.forEach(x => { if (nk[x.user_id]) x.name = nk[x.user_id]; }); } catch (e) {} }
+      if (my !== seq) return;
+      ranked(rows);
     } else {
       const r = await sb.from('clans').select('id,name,tag,wins,score,emblem,color,clan_members(count)').order('score', {ascending: false}).limit(50);
       if (my !== seq) return; if (r.error) throw r.error;

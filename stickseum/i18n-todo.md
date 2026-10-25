@@ -261,3 +261,25 @@ patchnotes.json | v379 title | 무너지는 다리 맵 삭제 | build 379 | 2026
 patchnotes.json | v379 items[0] | 무너지는 다리 맵 삭제 | build 379 | 2026-10-25
 patchnotes.json | v379 items[1] | 폭탄 돌리기·생존 모드 봇 대쉬 변경 되돌림 | build 379 | 2026-10-25
 patchnotes.json | v379 items[2] | 밸런스 다시 측정(무너지는 다리 제외) | build 379 | 2026-10-25
+Stickseum-v0.8.html | flamethrower weapon desc | 중거리 화염방사 · 쏜 시간이 합쳐서 8초가 되면 2초간 과열(끊었다 다시 쏴도 이어서 셈) · 닿으면 초당 N 직접 피해 · 발판에 막힘 | build 380 | 2026-10-25
+patchnotes.json | v380 title | 밀린 요청 반영 | build 380 | 2026-10-25
+patchnotes.json | v380 items[0] | 인형술사 바느질 실이 그려지지 않던 문제 수정(하얀 실로 표시) | build 380 | 2026-10-25
+patchnotes.json | v380 items[1] | 화염방사기 최대 사용 시간 7.5초 → 8초, 끊었다 다시 쏴도 누적 | build 380 | 2026-10-25
+patchnotes.json | v380 items[2] | 배틀로얄 듀오 MVP 투표 삭제 | build 380 | 2026-10-25
+patchnotes.json | v380 items[3] | 프로필 많이 쓴 캐릭터를 무기 이름 대신 캐릭터 이름으로 표시 | build 380 | 2026-10-25
+patchnotes.json | v380 items[4] | 랭크 순위표 이름을 허브 닉네임으로 표시 | build 380 | 2026-10-25
+patchnotes.json | v380 items[5] | 밸런스 캐릭터 창 닫기 버튼이 눌리지 않던 문제 수정 | build 380 | 2026-10-25
+patchnotes.json | v380 items[6] | 밸런스 그래프 패치 때만 보기에서 측정 전 빈 칸 삭제 | build 380 | 2026-10-25
+patchnotes.json | v380 items[7] | 화염방사기 밸런스 다시 측정 | build 380 | 2026-10-25
+patchnotes.json | v381 title | 밸런스표 색 조정 | build 381 | 2026-10-25
+patchnotes.json | v381 items[0] | 밸런스표 승률 55% 이상 막대를 빨간색으로 표시 | build 381 | 2026-10-25
+Stickseum-v0.8.html | ctf mode desc | 깃발을 든 사람은 순간이동을 못 씀 · 든 사람이 죽으면 깃발이 떨어지고 4초 뒤 기지로 돌아감 | build 382 | 2026-10-25
+patchnotes.json | v382 title | 골드 이름 변경과 깃발 뺏기 조정 | build 382 | 2026-10-25
+patchnotes.json | v382 items[0] | 재화 이름 골드 → sC로 변경 | build 382 | 2026-10-25
+patchnotes.json | v382 items[1] | 한 판에서 처치·어시스트 골드는 각각 5번까지만 지급 | build 382 | 2026-10-25
+patchnotes.json | v382 items[2] | 4000 sC 스킨 효과를 최고 등급 연출로 강화 | build 382 | 2026-10-25
+patchnotes.json | v382 items[3] | 깃발 뺏기 깃발 든 사람 속도 감소 삭제 | build 382 | 2026-10-25
+patchnotes.json | v382 items[4] | 깃발 뺏기 떨어진 깃발 복귀 시간 10초 → 4초(경기가 빨리 끝나도록) | build 382 | 2026-10-25
+patchnotes.json | v382 items[5] | 텔레포트 제자리 대기 시간 1.0초 → 1.2초 | build 382 | 2026-10-25
+patchnotes.json | v384 title | 인형술사 처치 판정 수정 | build 384 | 2026-10-25
+patchnotes.json | v384 items[0] | 인형술사가 조종한 캐릭터가 처치한 상대도 인형술사의 처치로 집계 | build 384 | 2026-10-25

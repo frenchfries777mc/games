@@ -2,6 +2,64 @@
  "notes": [
   {
    "date": "2026-10-25",
+   "build": "v0.2 build 61",
+   "title": "더 크고 화려한 섬",
+   "items": [
+    "다른 섬 크기 약 30% 확대",
+    "섬마다 저택, 탑, 분수, 집, 가판, 등불, 꽃밭 추가",
+    "섬 안 걷는 속도 상향",
+    "수상한 상인과 신고 기능 삭제"
+   ],
+   "tr": {
+    "en": {
+     "title": "Bigger, grander islands",
+     "items": [
+      "Other islands are about 30% bigger",
+      "Manors, towers, fountains, houses, stalls, lanterns, flower beds on every island",
+      "Faster walking on islands",
+      "Shady traders and the report button removed"
+     ]
+    },
+    "ja": {
+     "title": "Bigger, grander islands",
+     "items": [
+      "Other islands are about 30% bigger",
+      "Manors, towers, fountains, houses, stalls, lanterns, flower beds on every island",
+      "Faster walking on islands",
+      "Shady traders and the report button removed"
+     ]
+    },
+    "es": {
+     "title": "Bigger, grander islands",
+     "items": [
+      "Other islands are about 30% bigger",
+      "Manors, towers, fountains, houses, stalls, lanterns, flower beds on every island",
+      "Faster walking on islands",
+      "Shady traders and the report button removed"
+     ]
+    },
+    "fr": {
+     "title": "Bigger, grander islands",
+     "items": [
+      "Other islands are about 30% bigger",
+      "Manors, towers, fountains, houses, stalls, lanterns, flower beds on every island",
+      "Faster walking on islands",
+      "Shady traders and the report button removed"
+     ]
+    },
+    "de": {
+     "title": "Bigger, grander islands",
+     "items": [
+      "Other islands are about 30% bigger",
+      "Manors, towers, fountains, houses, stalls, lanterns, flower beds on every island",
+      "Faster walking on islands",
+      "Shady traders and the report button removed"
+     ]
+    }
+   }
+  },
+  {
+   "date": "2026-10-25",
    "build": "v0.2 build 59",
    "title": "로비로 돌아가기",
    "items": [
@@ -17,31 +75,94 @@
      ]
     },
     "ja": {
-     "title": "Back to lobby",
+     "title": "ロビーに戻る",
      "items": [
-      "Lobby button added to the top right of the game screen",
-      "Confirm window that saves and returns to the lobby"
+      "ゲーム画面の右上にロビーボタンを追加",
+      "セーブしてロビーに戻る確認画面"
      ]
     },
     "es": {
-     "title": "Back to lobby",
+     "title": "Volver al vestíbulo",
      "items": [
-      "Lobby button added to the top right of the game screen",
-      "Confirm window that saves and returns to the lobby"
+      "Botón de vestíbulo en la esquina superior derecha de la pantalla",
+      "Ventana de confirmación que guarda y vuelve al vestíbulo"
      ]
     },
     "fr": {
-     "title": "Back to lobby",
+     "title": "Retour au hall",
      "items": [
-      "Lobby button added to the top right of the game screen",
-      "Confirm window that saves and returns to the lobby"
+      "Bouton Hall ajouté en haut à droite de l’écran de jeu",
+      "Fenêtre de confirmation qui sauvegarde et revient au hall"
      ]
     },
     "de": {
-     "title": "Back to lobby",
+     "title": "Zurück zur Lobby",
      "items": [
-      "Lobby button added to the top right of the game screen",
-      "Confirm window that saves and returns to the lobby"
+      "Lobby-Knopf oben rechts im Spielbildschirm",
+      "Bestätigungsfenster, das speichert und zur Lobby zurückkehrt"
+     ]
+    },
+    "zh": {
+     "title": "返回大厅",
+     "items": [
+      "游戏画面右上角新增大厅按钮",
+      "存档后返回大厅的确认窗口"
+     ]
+    },
+    "pt": {
+     "title": "Voltar ao saguão",
+     "items": [
+      "Botão de saguão no canto superior direito da tela",
+      "Janela de confirmação que salva e volta ao saguão"
+     ]
+    },
+    "ru": {
+     "title": "Вернуться в лобби",
+     "items": [
+      "Кнопка лобби в правом верхнем углу экрана игры",
+      "Окно подтверждения: сохранить и вернуться в лобби"
+     ]
+    },
+    "tr": {
+     "title": "Lobiye dön",
+     "items": [
+      "Oyun ekranının sağ üstüne lobi düğmesi eklendi",
+      "Kaydedip lobiye dönen onay penceresi"
+     ]
+    },
+    "it": {
+     "title": "Torna alla lobby",
+     "items": [
+      "Aggiunto il pulsante Lobby in alto a destra nella schermata di gioco",
+      "Finestra di conferma che salva e torna alla lobby"
+     ]
+    },
+    "pl": {
+     "title": "Wróć do lobby",
+     "items": [
+      "Przycisk lobby w prawym górnym rogu ekranu gry",
+      "Okno potwierdzenia, które zapisuje i wraca do lobby"
+     ]
+    },
+    "ar": {
+     "title": "العودة إلى الردهة",
+     "items": [
+      "زر الردهة في أعلى يمين شاشة اللعبة",
+      "نافذة تأكيد تحفظ اللعبة وتعود إلى الردهة"
+     ]
+    },
+    "nw": {
+     "title": "Ungo to ministry",
+     "items": [
+      "Ministry button added to up right of telescreen",
+      "Yeswindow that saves plus ungoes to ministry"
+     ]
+    },
+    "gk": {
+     "title": "등 에게 로비",
+     "items": [
+      "로비 단추 더해진 에게 그 꼭대기 옳은 의 그 게임 칸막이",
+      "확인하다 창문 저것 구하다 그리고 반환 에게 그 로비"
      ]
     }
    }
@@ -67,39 +188,120 @@
      ]
     },
     "ja": {
-     "title": "Harbor quarantine",
+     "title": "港の検疫所",
      "items": [
-      "New sea news: sickness rumors",
-      "Goods bought at a sick port wait in quarantine",
-      "Build a quarantine station to shorten the wait",
-      "Ships window shows quarantined goods and time left"
+      "疫病のうわさのニュースを追加",
+      "疫病のうわさがある港で買った荷物は検疫待ち",
+      "港の検疫所の建設と検疫時間の短縮",
+      "船の画面に検疫中の荷物と残り時間を表示"
      ]
     },
     "es": {
-     "title": "Harbor quarantine",
+     "title": "Cuarentena portuaria",
      "items": [
-      "New sea news: sickness rumors",
-      "Goods bought at a sick port wait in quarantine",
-      "Build a quarantine station to shorten the wait",
-      "Ships window shows quarantined goods and time left"
+      "Nueva noticia del mar: rumores de enfermedad",
+      "La mercancía comprada en un puerto con enfermedad espera en cuarentena",
+      "Construye una estación de cuarentena para acortar la espera",
+      "La ventana de barcos muestra la mercancía en cuarentena y el tiempo restante"
      ]
     },
     "fr": {
-     "title": "Harbor quarantine",
+     "title": "Quarantaine au port",
      "items": [
-      "New sea news: sickness rumors",
-      "Goods bought at a sick port wait in quarantine",
-      "Build a quarantine station to shorten the wait",
-      "Ships window shows quarantined goods and time left"
+      "Nouvelle maritime : rumeurs d’épidémie",
+      "Les marchandises achetées dans un port touché attendent en quarantaine",
+      "Construisez un poste de quarantaine pour raccourcir l’attente",
+      "La fenêtre des navires affiche les marchandises en quarantaine et le temps restant"
      ]
     },
     "de": {
-     "title": "Harbor quarantine",
+     "title": "Hafenquarantäne",
      "items": [
-      "New sea news: sickness rumors",
-      "Goods bought at a sick port wait in quarantine",
-      "Build a quarantine station to shorten the wait",
-      "Ships window shows quarantined goods and time left"
+      "Neue Seenachricht: Krankheitsgerüchte",
+      "Ware aus einem kranken Hafen wartet in Quarantäne",
+      "Baue eine Quarantänestation, um die Wartezeit zu verkürzen",
+      "Das Schiffsfenster zeigt Ware in Quarantäne und die Restzeit"
+     ]
+    },
+    "zh": {
+     "title": "港口检疫所",
+     "items": [
+      "新增海上消息：疫病传闻",
+      "在有疫病传闻的港口买的货要等待检疫",
+      "建造港口检疫所，缩短检疫时间",
+      "船只窗口显示检疫中的货物和剩余时间"
+     ]
+    },
+    "pt": {
+     "title": "Quarentena no porto",
+     "items": [
+      "Nova notícia do mar: rumores de doença",
+      "Mercadorias compradas em porto com doença esperam em quarentena",
+      "Construa um posto de quarentena para encurtar a espera",
+      "A janela de navios mostra a carga em quarentena e o tempo restante"
+     ]
+    },
+    "ru": {
+     "title": "Портовый карантин",
+     "items": [
+      "Новая морская новость: слухи о болезни",
+      "Товар из порта, где ходит болезнь, ждёт на карантине",
+      "Постройте карантинный пост, чтобы сократить ожидание",
+      "В окне кораблей виден груз на карантине и оставшееся время"
+     ]
+    },
+    "tr": {
+     "title": "Liman karantinası",
+     "items": [
+      "Yeni deniz haberi: salgın söylentileri",
+      "Salgınlı limandan alınan mallar karantinada bekler",
+      "Bekleme süresini kısaltmak için karantina istasyonu kurun",
+      "Gemi penceresi karantinadaki malları ve kalan süreyi gösterir"
+     ]
+    },
+    "it": {
+     "title": "Quarantena portuale",
+     "items": [
+      "Nuova notizia dal mare: voci di epidemia",
+      "Le merci comprate in un porto colpito aspettano in quarantena",
+      "Costruisci una stazione di quarantena per accorciare l'attesa",
+      "La finestra delle navi mostra le merci in quarantena e il tempo rimasto"
+     ]
+    },
+    "pl": {
+     "title": "Kwarantanna portowa",
+     "items": [
+      "Nowa wieść z morza: plotki o chorobie",
+      "Towar kupiony w porcie z chorobą czeka na kwarantannie",
+      "Zbuduj stację kwarantanny, by skrócić czekanie",
+      "Okno statków pokazuje towar na kwarantannie i pozostały czas"
+     ]
+    },
+    "ar": {
+     "title": "الحجر الصحي في الميناء",
+     "items": [
+      "خبر بحري جديد: شائعات المرض",
+      "البضائع المشتراة من ميناء موبوء تنتظر في الحجر",
+      "ابنِ محطة حجر صحي لتقصير الانتظار",
+      "تعرض نافذة السفن البضائع المحجوزة والوقت المتبقي"
+     ]
+    },
+    "nw": {
+     "title": "Port holdhouse",
+     "items": [
+      "Plusnew sea news: unwell rumors",
+      "Goods buyed at unwell port wait in quarantine",
+      "Build holdhouse to unlong wait",
+      "Ships window shows held goods plus time left"
+     ]
+    },
+    "gk": {
+     "title": "항구 사십일",
+     "items": [
+      "새로운 바다 뉴스: 아픔 소문들",
+      "상품들 산 에서 하나의 아픈 항구 기다리다 안에 사십일",
+      "짓다 하나의 사십일 역 에게 짧게 하다 그 기다리다",
+      "배들 창문 쇼 사십일된 상품들 그리고 시간 왼쪽"
      ]
     }
    }
@@ -119,27 +321,81 @@
      ]
     },
     "ja": {
-     "title": "Account record name",
+     "title": "アカウント記録の名前",
      "items": [
-      "Achievements and play records sent to your account now use the game id isleport"
+      "アカウントに送る実績とプレイ記録のゲーム名を isleport にそろえました"
      ]
     },
     "es": {
-     "title": "Account record name",
+     "title": "Nombre en los registros de la cuenta",
      "items": [
-      "Achievements and play records sent to your account now use the game id isleport"
+      "Los logros y registros de juego que se envían a tu cuenta ahora usan el id isleport"
      ]
     },
     "fr": {
-     "title": "Account record name",
+     "title": "Nom dans les données du compte",
      "items": [
-      "Achievements and play records sent to your account now use the game id isleport"
+      "Les succès et l’historique envoyés à votre compte utilisent désormais l’identifiant isleport"
      ]
     },
     "de": {
-     "title": "Account record name",
+     "title": "Name in den Kontodaten",
      "items": [
-      "Achievements and play records sent to your account now use the game id isleport"
+      "An dein Konto gesendete Erfolge und Spielstatistiken nutzen jetzt die Spiel-ID isleport"
+     ]
+    },
+    "zh": {
+     "title": "账号记录名称",
+     "items": [
+      "发送到账号的成就和游戏记录，游戏名统一为 isleport"
+     ]
+    },
+    "pt": {
+     "title": "Nome nos registros da conta",
+     "items": [
+      "Conquistas e registros enviados à sua conta agora usam o id isleport"
+     ]
+    },
+    "ru": {
+     "title": "Название в записях аккаунта",
+     "items": [
+      "Достижения и игровые записи в аккаунте теперь используют идентификатор isleport"
+     ]
+    },
+    "tr": {
+     "title": "Hesap kaydı adı",
+     "items": [
+      "Hesabınıza gönderilen başarımlar ve oyun kayıtları artık isleport kimliğini kullanıyor"
+     ]
+    },
+    "it": {
+     "title": "Nome nei dati dell'account",
+     "items": [
+      "Obiettivi e registri di gioco inviati al tuo account ora usano l'id isleport"
+     ]
+    },
+    "pl": {
+     "title": "Nazwa w danych konta",
+     "items": [
+      "Osiągnięcia i zapisy gry wysyłane na konto używają teraz identyfikatora isleport"
+     ]
+    },
+    "ar": {
+     "title": "اسم السجل في الحساب",
+     "items": [
+      "الإنجازات وسجلات اللعب المرسلة إلى حسابك تستخدم الآن المعرّف isleport"
+     ]
+    },
+    "nw": {
+     "title": "Selfgive record name",
+     "items": [
+      "Plusdoings plus playrecords gived to your selfgive now use game name isleport"
+     ]
+    },
+    "gk": {
+     "title": "계좌 기록 이름",
+     "items": [
+      "업적들 그리고 놀다 기록들 보낸 에게 당신의 계좌 지금 사용하다 그 게임 이드 isleport"
      ]
     }
    }
@@ -169,47 +425,146 @@
      ]
     },
     "ja": {
-     "title": "Optimize option and landscape fixes",
+     "title": "最適化オプションと横画面",
      "items": [
-      "Settings now has \"Optimize\": it draws at 30 fps and turns off rain and snow effects so phones run cooler",
-      "Low-end phones start with Optimize on",
-      "In landscape the tutorial box and title menu are smaller and no longer cover the game",
-      "The field intro is drawn in higher quality; Optimize keeps it low-res",
-      "The game now runs in one window at a time; a second window shows a notice and saves never overwrite each other",
-      "The browser tab title is now always Isleport"
+      "設定に「最適化」を追加しました。オンにすると画面を30フレームで描き、雨・雪の効果を切ってスマホが熱くなりにくくなります",
+      "性能が低そうなスマホでは、最初から最適化がオンになっています",
+      "スマホを横向きにしたとき、チュートリアルの案内とタイトル画面のメニューが画面をあまり隠さないよう小さくしました",
+      "畑のイントロをより鮮明な画質で描きます。最適化をオンにすると低画質になります",
+      "ゲームは1つのウィンドウでのみ動きます。別のウィンドウですでに動いていると案内が出て、セーブデータが上書きし合いません",
+      "ブラウザのタブ名を常に Isleport にそろえました"
      ]
     },
     "es": {
-     "title": "Optimize option and landscape fixes",
+     "title": "Opción Optimizar y ajustes en horizontal",
      "items": [
-      "Settings now has \"Optimize\": it draws at 30 fps and turns off rain and snow effects so phones run cooler",
-      "Low-end phones start with Optimize on",
-      "In landscape the tutorial box and title menu are smaller and no longer cover the game",
-      "The field intro is drawn in higher quality; Optimize keeps it low-res",
-      "The game now runs in one window at a time; a second window shows a notice and saves never overwrite each other",
-      "The browser tab title is now always Isleport"
+      "Ajustes ahora tiene \"Optimizar\": dibuja a 30 fps y quita la lluvia y la nieve para que el móvil se caliente menos",
+      "Los móviles de gama baja empiezan con Optimizar activado",
+      "En horizontal, el cuadro del tutorial y el menú de inicio son más pequeños y ya no tapan el juego",
+      "La intro del campo se dibuja con más calidad; Optimizar la mantiene en baja resolución",
+      "Ahora el juego solo se ejecuta en una ventana a la vez; una segunda ventana muestra un aviso y las partidas guardadas nunca se pisan",
+      "El título de la pestaña del navegador ahora siempre es Isleport"
      ]
     },
     "fr": {
-     "title": "Optimize option and landscape fixes",
+     "title": "Option Optimiser et mode paysage",
      "items": [
-      "Settings now has \"Optimize\": it draws at 30 fps and turns off rain and snow effects so phones run cooler",
-      "Low-end phones start with Optimize on",
-      "In landscape the tutorial box and title menu are smaller and no longer cover the game",
-      "The field intro is drawn in higher quality; Optimize keeps it low-res",
-      "The game now runs in one window at a time; a second window shows a notice and saves never overwrite each other",
-      "The browser tab title is now always Isleport"
+      "Les réglages ont maintenant « Optimiser » : affichage à 30 i/s, sans pluie ni neige, pour que le téléphone chauffe moins",
+      "Les téléphones peu puissants démarrent avec Optimiser activé",
+      "En mode paysage, la bulle du tutoriel et le menu d’accueil sont plus petits et ne cachent plus le jeu",
+      "L’intro du champ s’affiche en meilleure qualité ; Optimiser la garde en basse résolution",
+      "Le jeu ne tourne plus que dans une fenêtre à la fois ; une deuxième fenêtre affiche un avis et les sauvegardes ne s’écrasent jamais",
+      "Le titre de l’onglet du navigateur est désormais toujours Isleport"
      ]
     },
     "de": {
-     "title": "Optimize option and landscape fixes",
+     "title": "Option Optimieren und Querformat",
      "items": [
-      "Settings now has \"Optimize\": it draws at 30 fps and turns off rain and snow effects so phones run cooler",
-      "Low-end phones start with Optimize on",
-      "In landscape the tutorial box and title menu are smaller and no longer cover the game",
-      "The field intro is drawn in higher quality; Optimize keeps it low-res",
-      "The game now runs in one window at a time; a second window shows a notice and saves never overwrite each other",
-      "The browser tab title is now always Isleport"
+      "In den Einstellungen gibt es jetzt „Optimieren“: 30 fps, ohne Regen- und Schneeeffekte, damit das Handy kühler bleibt",
+      "Schwächere Handys starten mit eingeschaltetem Optimieren",
+      "Im Querformat sind Tutorial-Box und Titelmenü kleiner und verdecken das Spiel nicht mehr",
+      "Das Feld-Intro wird schärfer gezeichnet; mit Optimieren bleibt es niedrig aufgelöst",
+      "Das Spiel läuft jetzt nur in einem Fenster; ein zweites Fenster zeigt einen Hinweis, und Spielstände überschreiben sich nie",
+      "Der Tab-Titel im Browser lautet jetzt immer Isleport"
+     ]
+    },
+    "zh": {
+     "title": "优化选项与横屏",
+     "items": [
+      "设置中新增“优化”：开启后以30帧绘制并关闭雨雪效果，手机不容易发烫",
+      "性能较低的手机默认开启优化",
+      "手机横放时，教程提示框和标题菜单缩小，不再挡住画面",
+      "田野开场以更清晰的画质绘制；开启优化后使用低画质",
+      "游戏同一时间只能在一个窗口运行；在另一个窗口打开会出现提示，存档不会互相覆盖",
+      "浏览器标签页标题始终为 Isleport"
+     ]
+    },
+    "pt": {
+     "title": "Opção Otimizar e tela na horizontal",
+     "items": [
+      "As configurações agora têm \"Otimizar\": desenha a 30 fps e desliga chuva e neve para o celular esquentar menos",
+      "Celulares mais fracos já começam com Otimizar ligado",
+      "Na horizontal, a caixa do tutorial e o menu inicial ficaram menores e não cobrem mais o jogo",
+      "A intro do campo é desenhada em qualidade maior; Otimizar a mantém em baixa resolução",
+      "O jogo agora roda em uma janela por vez; uma segunda janela mostra um aviso e os salvamentos nunca se sobrescrevem",
+      "O título da aba do navegador agora é sempre Isleport"
+     ]
+    },
+    "ru": {
+     "title": "Оптимизация и горизонтальный экран",
+     "items": [
+      "В настройках появилась «Оптимизация»: 30 кадров в секунду и без дождя и снега, чтобы телефон меньше грелся",
+      "На слабых телефонах оптимизация включена с самого начала",
+      "В горизонтальном режиме подсказка обучения и меню заставки стали меньше и не закрывают игру",
+      "Заставка с полем рисуется в более высоком качестве; с оптимизацией — в низком",
+      "Игра теперь работает только в одном окне; во втором окне появится уведомление, и сохранения не перезапишут друг друга",
+      "Заголовок вкладки браузера теперь всегда Isleport"
+     ]
+    },
+    "tr": {
+     "title": "Optimize seçeneği ve yatay ekran",
+     "items": [
+      "Ayarlara \"Optimize\" eklendi: 30 fps çizer ve yağmur ile kar efektlerini kapatır, telefon daha az ısınır",
+      "Düşük donanımlı telefonlarda Optimize baştan açık gelir",
+      "Yatay ekranda eğitim kutusu ve başlık menüsü küçüldü, artık oyunu kapatmıyor",
+      "Tarla girişi daha yüksek kalitede çiziliyor; Optimize açıkken düşük çözünürlükte kalır",
+      "Oyun artık aynı anda tek pencerede çalışıyor; ikinci pencere uyarı gösterir ve kayıtlar birbirinin üzerine yazılmaz",
+      "Tarayıcı sekmesinin başlığı artık hep Isleport"
+     ]
+    },
+    "it": {
+     "title": "Opzione Ottimizza e modalità orizzontale",
+     "items": [
+      "Le impostazioni ora hanno \"Ottimizza\": disegna a 30 fps e spegne pioggia e neve così il telefono scalda meno",
+      "I telefoni meno potenti partono con Ottimizza attivo",
+      "In orizzontale il riquadro del tutorial e il menu iniziale sono più piccoli e non coprono più il gioco",
+      "L'intro del campo è disegnata in qualità più alta; Ottimizza la mantiene a bassa risoluzione",
+      "Il gioco ora gira in una sola finestra alla volta; una seconda finestra mostra un avviso e i salvataggi non si sovrascrivono mai",
+      "Il titolo della scheda del browser ora è sempre Isleport"
+     ]
+    },
+    "pl": {
+     "title": "Opcja Optymalizacja i ekran poziomy",
+     "items": [
+      "W ustawieniach jest teraz „Optymalizacja”: 30 kl./s i bez deszczu i śniegu, żeby telefon mniej się grzał",
+      "Słabsze telefony startują z włączoną Optymalizacją",
+      "W poziomie okienko samouczka i menu tytułowe są mniejsze i nie zasłaniają gry",
+      "Intro z polem rysuje się w wyższej jakości; Optymalizacja zostawia niską rozdzielczość",
+      "Gra działa teraz tylko w jednym oknie naraz; drugie okno pokazuje komunikat, a zapisy nigdy się nie nadpisują",
+      "Tytuł karty przeglądarki to teraz zawsze Isleport"
+     ]
+    },
+    "ar": {
+     "title": "خيار التحسين والشاشة الأفقية",
+     "items": [
+      "أصبح في الإعدادات خيار \"تحسين\": يرسم بـ30 إطارًا ويُطفئ تأثيرات المطر والثلج كي يسخن الهاتف أقل",
+      "الهواتف الضعيفة تبدأ وخيار التحسين مفعّل",
+      "في الوضع الأفقي صار مربع الشرح وقائمة البداية أصغر ولم يعودا يغطيان اللعبة",
+      "تُرسم مقدمة الحقل بجودة أعلى؛ ويُبقيها خيار التحسين بدقة منخفضة",
+      "تعمل اللعبة الآن في نافذة واحدة فقط؛ تُظهر النافذة الثانية تنبيهًا ولا تُستبدل الحفظات ببعضها",
+      "عنوان تبويب المتصفح الآن دائمًا Isleport"
+     ]
+    },
+    "nw": {
+     "title": "Optimize choice plus sideways telescreen",
+     "items": [
+      "Rules now has \"Optimize\": it draws at 30 fps plus unons rain plus snow so phones run unhot",
+      "Unhigh phones start with Optimize on",
+      "In sideways the tutorial box plus title menu is unbig plus no longer cover game",
+      "Field intro is drawn in plusgood quality; Optimize keeps it unhigh",
+      "Game now runs in one window at time; secondful window shows notice plus saves never overwrite each other",
+      "Browser tab name is now always Isleport"
+     ]
+    },
+    "gk": {
+     "title": "최적화하다 선택권 그리고 풍경 고침들",
+     "items": [
+      "환경들 지금 가지다 \"최적화하다\": 그것 무승부 에서 30 fps 그리고 돌다 떨어져 비 그리고 눈 효과들 그래서 전화들 달리다 시원한",
+      "낮은-끝 전화들 시작하다 와 함께 최적화하다 위에",
+      "안에 풍경 그 지도 상자 그리고 제목 차림표 이다 더 작은 그리고 아니요 더 길게 덮개 그 게임",
+      "그 들판 소개 이다 그려진 안에 더 높은 품질; 최적화하다 지키다 그것 낮은-해상도",
+      "그 게임 지금 달리다 안에 하나 창문 에서 하나의 시간; 하나의 둘째 창문 쇼 하나의 알아차리다 그리고 구하다 절대 아니다 덮어쓰다 각각 다른",
+      "그 브라우저 계산서 제목 이다 지금 항상 Isleport"
      ]
     }
    }
@@ -229,27 +584,81 @@
      ]
     },
     "ja": {
-     "title": "Intro song",
+     "title": "イントロ曲",
      "items": [
-      "The intro now has a song, and the game music follows it. If the browser blocks sound, tap the screen to start the intro"
+      "イントロに曲が流れ、ゲーム音楽はその後に続きます。音が止められているブラウザでは、画面を押すとイントロが始まります"
      ]
     },
     "es": {
-     "title": "Intro song",
+     "title": "Canción de intro",
      "items": [
-      "The intro now has a song, and the game music follows it. If the browser blocks sound, tap the screen to start the intro"
+      "La intro ahora tiene canción, y la música del juego sigue después. Si el navegador bloquea el sonido, toca la pantalla para empezar la intro"
      ]
     },
     "fr": {
-     "title": "Intro song",
+     "title": "Musique d’intro",
      "items": [
-      "The intro now has a song, and the game music follows it. If the browser blocks sound, tap the screen to start the intro"
+      "L’intro a maintenant sa musique, suivie de celle du jeu. Si le navigateur bloque le son, touchez l’écran pour lancer l’intro"
      ]
     },
     "de": {
+     "title": "Intro-Song",
+     "items": [
+      "Das Intro hat jetzt einen Song, danach folgt die Spielmusik. Blockiert der Browser den Ton, tippe auf den Bildschirm, um das Intro zu starten"
+     ]
+    },
+    "zh": {
+     "title": "开场曲",
+     "items": [
+      "开场会播放歌曲，之后接上游戏音乐。在禁止声音的浏览器中，点击画面即可开始开场"
+     ]
+    },
+    "pt": {
+     "title": "Música de abertura",
+     "items": [
+      "A abertura agora tem música, e a trilha do jogo vem depois. Se o navegador bloquear o som, toque na tela para começar a intro"
+     ]
+    },
+    "ru": {
+     "title": "Песня заставки",
+     "items": [
+      "В заставке теперь звучит песня, а за ней — музыка игры. Если браузер блокирует звук, коснитесь экрана, чтобы запустить заставку"
+     ]
+    },
+    "tr": {
+     "title": "Giriş şarkısı",
+     "items": [
+      "Girişte artık bir şarkı çalıyor, ardından oyun müziği geliyor. Tarayıcı sesi engellerse girişi başlatmak için ekrana dokunun"
+     ]
+    },
+    "it": {
+     "title": "Brano dell'intro",
+     "items": [
+      "L'intro ora ha una canzone, seguita dalla musica del gioco. Se il browser blocca l'audio, tocca lo schermo per avviare l'intro"
+     ]
+    },
+    "pl": {
+     "title": "Piosenka w intro",
+     "items": [
+      "Intro ma teraz piosenkę, a po niej gra muzyka z gry. Jeśli przeglądarka blokuje dźwięk, dotknij ekranu, by uruchomić intro"
+     ]
+    },
+    "ar": {
+     "title": "أغنية المقدمة",
+     "items": [
+      "صار للمقدمة أغنية تتبعها موسيقى اللعبة. إن حجب المتصفح الصوت، المس الشاشة لبدء المقدمة"
+     ]
+    },
+    "nw": {
      "title": "Intro song",
      "items": [
-      "The intro now has a song, and the game music follows it. If the browser blocks sound, tap the screen to start the intro"
+      "Intro now has song, plus game music goes after it. If browser unallows sound, touch telescreen to start intro"
+     ]
+    },
+    "gk": {
+     "title": "소개 노래",
+     "items": [
+      "그 소개 지금 가지다 하나의 노래, 그리고 그 게임 음악 따르다 그것. 만약 그 브라우저 블록들 건전한, 수도꼭지 그 칸막이 에게 시작하다 그 소개"
      ]
     }
    }
@@ -269,27 +678,81 @@
      ]
     },
     "ja": {
-     "title": "Emoji language added",
+     "title": "絵文字語を追加",
      "items": [
-      "Fictional language Emoji added (text is shown as emoji; hover to see the original)"
+      "架空の言語「絵文字語」を追加（文字を絵文字に置き換えて表示、マウスを乗せると原文）"
      ]
     },
     "es": {
-     "title": "Emoji language added",
+     "title": "Añadido el idioma Emoji",
      "items": [
-      "Fictional language Emoji added (text is shown as emoji; hover to see the original)"
+      "Añadido el idioma ficticio Emoji (el texto se muestra como emojis; pasa el ratón para ver el original)"
      ]
     },
     "fr": {
-     "title": "Emoji language added",
+     "title": "Langue Émoji ajoutée",
      "items": [
-      "Fictional language Emoji added (text is shown as emoji; hover to see the original)"
+      "Langue fictive Émoji ajoutée (le texte s’affiche en émojis ; survolez pour voir l’original)"
      ]
     },
     "de": {
-     "title": "Emoji language added",
+     "title": "Emoji-Sprache hinzugefügt",
      "items": [
-      "Fictional language Emoji added (text is shown as emoji; hover to see the original)"
+      "Fiktive Sprache Emoji hinzugefügt (Text erscheint als Emojis; Maus darüber zeigt das Original)"
+     ]
+    },
+    "zh": {
+     "title": "新增表情符号语",
+     "items": [
+      "新增虚构语言“表情符号语”（文字以表情符号显示，鼠标悬停可看原文）"
+     ]
+    },
+    "pt": {
+     "title": "Idioma Emoji adicionado",
+     "items": [
+      "Idioma fictício Emoji adicionado (o texto aparece em emojis; passe o mouse para ver o original)"
+     ]
+    },
+    "ru": {
+     "title": "Добавлен язык «Эмодзи»",
+     "items": [
+      "Добавлен вымышленный язык «Эмодзи» (текст показан эмодзи; наведите мышь, чтобы увидеть оригинал)"
+     ]
+    },
+    "tr": {
+     "title": "Emoji dili eklendi",
+     "items": [
+      "Kurgusal dil Emoji eklendi (yazılar emoji olarak görünür; aslını görmek için fareyle üzerine gelin)"
+     ]
+    },
+    "it": {
+     "title": "Aggiunta la lingua Emoji",
+     "items": [
+      "Aggiunta la lingua fittizia Emoji (il testo appare in emoji; passa il mouse per vedere l'originale)"
+     ]
+    },
+    "pl": {
+     "title": "Dodano język Emoji",
+     "items": [
+      "Dodano fikcyjny język Emoji (tekst wyświetla się jako emoji; najedź myszą, by zobaczyć oryginał)"
+     ]
+    },
+    "ar": {
+     "title": "أُضيفت لغة الإيموجي",
+     "items": [
+      "أُضيفت اللغة الخيالية \"الإيموجي\" (يظهر النص كرموز تعبيرية؛ مرّر الفأرة لرؤية الأصل)"
+     ]
+    },
+    "nw": {
+     "title": "Facepic speak added",
+     "items": [
+      "Unreal speak Emoji added (words is shown as facepics; hover to see oldwords)"
+     ]
+    },
+    "gk": {
+     "title": "감정그림 혀 더해진",
+     "items": [
+      "허구의 혀 감정그림 더해진 (문자 이다 보여진 처럼 감정그림; 맴돌다 에게 보다 그 독창적인)"
      ]
     }
    }
@@ -309,27 +772,81 @@
      ]
     },
     "ja": {
-     "title": "Field intro",
+     "title": "畑のイントロ",
      "items": [
-      "The game now opens with a dawn field where crops grow and a ship sails by far away. It cannot be skipped"
+      "ゲームを起動すると、夜明けの畑で作物が育ち、遠くを船が通るイントロが流れます。スキップはできません"
      ]
     },
     "es": {
-     "title": "Field intro",
+     "title": "Intro del campo",
      "items": [
-      "The game now opens with a dawn field where crops grow and a ship sails by far away. It cannot be skipped"
+      "Ahora el juego empieza con un campo al amanecer donde crecen los cultivos y un barco pasa a lo lejos. No se puede saltar"
      ]
     },
     "fr": {
-     "title": "Field intro",
+     "title": "Intro du champ",
      "items": [
-      "The game now opens with a dawn field where crops grow and a ship sails by far away. It cannot be skipped"
+      "Le jeu s’ouvre sur un champ à l’aube où poussent les cultures tandis qu’un navire passe au loin. Impossible de la passer"
      ]
     },
     "de": {
+     "title": "Feld-Intro",
+     "items": [
+      "Das Spiel beginnt mit einem Feld im Morgengrauen, auf dem Pflanzen wachsen, während fern ein Schiff vorbeizieht. Nicht überspringbar"
+     ]
+    },
+    "zh": {
+     "title": "田野开场",
+     "items": [
+      "游戏开始时会播放开场：黎明的田里作物生长，远处有船驶过。无法跳过"
+     ]
+    },
+    "pt": {
+     "title": "Intro do campo",
+     "items": [
+      "O jogo agora abre com um campo ao amanhecer, onde as plantas crescem e um navio passa ao longe. Não dá para pular"
+     ]
+    },
+    "ru": {
+     "title": "Заставка с полем",
+     "items": [
+      "Теперь игра начинается с поля на рассвете: растут посевы, вдали проходит корабль. Пропустить нельзя"
+     ]
+    },
+    "tr": {
+     "title": "Tarla girişi",
+     "items": [
+      "Oyun artık şafakta ekinlerin büyüdüğü ve uzaktan bir geminin geçtiği bir tarlayla açılıyor. Atlanamaz"
+     ]
+    },
+    "it": {
+     "title": "Intro del campo",
+     "items": [
+      "Il gioco ora si apre su un campo all'alba dove crescono le colture e una nave passa in lontananza. Non si può saltare"
+     ]
+    },
+    "pl": {
+     "title": "Intro z polem",
+     "items": [
+      "Gra zaczyna się teraz od pola o świcie, na którym rosną plony, a w oddali płynie statek. Nie można pominąć"
+     ]
+    },
+    "ar": {
+     "title": "مقدمة الحقل",
+     "items": [
+      "تبدأ اللعبة الآن بحقل عند الفجر تنمو فيه المحاصيل وتمر سفينة من بعيد. لا يمكن تخطيها"
+     ]
+    },
+    "nw": {
      "title": "Field intro",
      "items": [
-      "The game now opens with a dawn field where crops grow and a ship sails by far away. It cannot be skipped"
+      "Game now opens with dawn field where crops plusbig plus boat sails by far ungo. It cannot be unwatched"
+     ]
+    },
+    "gk": {
+     "title": "들판 소개",
+     "items": [
+      "그 게임 지금 열다들 와 함께 하나의 새벽 들판 어디 농작물 자라다 그리고 하나의 배 판매들 에 의해 멀리 멀리. 그것 할 수 없다 이다 건너뛴"
      ]
     }
    }
@@ -353,35 +870,107 @@
      ]
     },
     "ja": {
-     "title": "Food critic, port calendar, shady traders",
+     "title": "料理評論家、港カレンダー、怪しい商人",
      "items": [
-      "A food critic sometimes visits the diner: serve the dish they want for a star rating, gold and reputation",
-      "The town hall port calendar shows upcoming festivals, demand booms and storms",
-      "Some visiting traders are frauds: spot the clues and report them for a bounty"
+      "食堂にときどき料理評論家が来ます。望みの料理を出すと、星の数に応じて大きな報酬と評判がもらえます",
+      "町役場の港カレンダーで、もうすぐ来る祭り・需要急増・嵐を前もって確認できます",
+      "行商人の中に詐欺師が混じっています。怪しい手がかりを見つけて通報すると報奨金がもらえます"
      ]
     },
     "es": {
-     "title": "Food critic, port calendar, shady traders",
+     "title": "Crítico gastronómico, calendario del puerto y comerciantes sospechosos",
      "items": [
-      "A food critic sometimes visits the diner: serve the dish they want for a star rating, gold and reputation",
-      "The town hall port calendar shows upcoming festivals, demand booms and storms",
-      "Some visiting traders are frauds: spot the clues and report them for a bounty"
+      "A veces un crítico gastronómico visita el restaurante: sírvele el plato que quiere y, según las estrellas, ganarás oro y reputación",
+      "El calendario del puerto del ayuntamiento muestra próximos festivales, auges de demanda y tormentas",
+      "Algunos comerciantes son estafadores: detecta las pistas y denúncialos para cobrar una recompensa"
      ]
     },
     "fr": {
-     "title": "Food critic, port calendar, shady traders",
+     "title": "Critique gastronomique, calendrier du port et marchands louches",
      "items": [
-      "A food critic sometimes visits the diner: serve the dish they want for a star rating, gold and reputation",
-      "The town hall port calendar shows upcoming festivals, demand booms and storms",
-      "Some visiting traders are frauds: spot the clues and report them for a bounty"
+      "Un critique gastronomique passe parfois au restaurant : servez-lui le plat voulu pour une note en étoiles, de l’or et de la réputation",
+      "Le calendrier du port, à la mairie, annonce festivals, pics de demande et tempêtes à venir",
+      "Certains marchands sont des escrocs : repérez les indices et dénoncez-les pour une prime"
      ]
     },
     "de": {
-     "title": "Food critic, port calendar, shady traders",
+     "title": "Restaurantkritiker, Hafenkalender und zwielichtige Händler",
      "items": [
-      "A food critic sometimes visits the diner: serve the dish they want for a star rating, gold and reputation",
-      "The town hall port calendar shows upcoming festivals, demand booms and storms",
-      "Some visiting traders are frauds: spot the clues and report them for a bounty"
+      "Manchmal kommt ein Restaurantkritiker vorbei: Serviere das gewünschte Gericht und erhalte je nach Sternen Gold und Ansehen",
+      "Der Hafenkalender im Rathaus zeigt kommende Feste, Nachfrageschübe und Stürme",
+      "Manche Händler sind Betrüger: Achte auf Hinweise und melde sie für eine Belohnung"
+     ]
+    },
+    "zh": {
+     "title": "美食评论家、港口日历、可疑商人",
+     "items": [
+      "小餐馆偶尔会来一位美食评论家。端上他想要的菜，按星级获得丰厚奖励和声望",
+      "在镇公所的港口日历里，可以提前看到即将到来的节庆、需求激增和风暴",
+      "行商里混有骗子。发现可疑线索并举报，就能拿到赏金"
+     ]
+    },
+    "pt": {
+     "title": "Crítico gastronômico, calendário do porto e comerciantes suspeitos",
+     "items": [
+      "Às vezes um crítico gastronômico visita a lanchonete: sirva o prato que ele quer e ganhe ouro e reputação conforme as estrelas",
+      "O calendário do porto na prefeitura mostra festivais, altas de demanda e tempestades que vêm aí",
+      "Alguns comerciantes são golpistas: repare nas pistas e denuncie-os para ganhar recompensa"
+     ]
+    },
+    "ru": {
+     "title": "Ресторанный критик, портовый календарь и подозрительные торговцы",
+     "items": [
+      "Иногда в закусочную заходит ресторанный критик: подайте нужное блюдо и получите золото и репутацию по звёздам",
+      "Портовый календарь в ратуше показывает ближайшие праздники, всплески спроса и штормы",
+      "Среди торговцев попадаются мошенники: заметьте улики и сообщите о них за награду"
+     ]
+    },
+    "tr": {
+     "title": "Yemek eleştirmeni, liman takvimi ve şüpheli tüccarlar",
+     "items": [
+      "Lokantaya bazen bir yemek eleştirmeni gelir: istediği yemeği sunarsanız yıldıza göre büyük ödül ve itibar kazanırsınız",
+      "Belediyedeki liman takvimi yaklaşan festivalleri, talep patlamalarını ve fırtınaları gösterir",
+      "Bazı tüccarlar dolandırıcı: ipuçlarını fark edip ihbar ederseniz ödül alırsınız"
+     ]
+    },
+    "it": {
+     "title": "Critico gastronomico, calendario del porto e mercanti loschi",
+     "items": [
+      "A volte un critico gastronomico visita la trattoria: servi il piatto che vuole e, in base alle stelle, otterrai oro e reputazione",
+      "Il calendario del porto in municipio mostra feste, boom di domanda e tempeste in arrivo",
+      "Alcuni mercanti sono truffatori: nota gli indizi e denunciali per una taglia"
+     ]
+    },
+    "pl": {
+     "title": "Krytyk kulinarny, kalendarz portowy i podejrzani handlarze",
+     "items": [
+      "Czasem do jadłodajni zagląda krytyk kulinarny: podaj danie, którego chce, a dostaniesz złoto i reputację według gwiazdek",
+      "Kalendarz portowy w ratuszu pokazuje nadchodzące festyny, skoki popytu i sztormy",
+      "Niektórzy handlarze to oszuści: wypatrz poszlaki i zgłoś ich za nagrodę"
+     ]
+    },
+    "ar": {
+     "title": "ناقد الطعام وتقويم الميناء والتجار المريبون",
+     "items": [
+      "يزور ناقد طعام المطعم أحيانًا: قدّم له الطبق الذي يريده لتحصل على ذهب وسمعة حسب عدد النجوم",
+      "يعرض تقويم الميناء في دار البلدية المهرجانات وطفرات الطلب والعواصف القادمة",
+      "بعض التجار محتالون: انتبه للدلائل وأبلغ عنهم لتنال مكافأة"
+     ]
+    },
+    "nw": {
+     "title": "Food critic, port calendar, unhonest traders",
+     "items": [
+      "Food critic sometimes visits diner: give the dish they want for star rank, plenty plus rep",
+      "Town hall port calendar shows plusnear festivals, wanting booms plus storms",
+      "Some traders is unhonest: spot clues plus report them for plusgift"
+     ]
+    },
+    "gk": {
+     "title": "음식 비평가, 항구 달력, 그늘진 상인들",
+     "items": [
+      "하나의 음식 비평가 때때로 방문하다 그 식당: 봉사하다 그 접시 그들 원하다 위하여 하나의 별 평가, 금 그리고 평판",
+      "그 마을 홀 항구 달력 쇼 다가오는 축제들, 요구하다 쾅들 그리고 폭풍들",
+      "일부 방문하는 중 상인들 이다 사기들: 점 그 단서들 그리고 보고서 그들을 위하여 하나의 하사품"
      ]
     }
    }
@@ -407,39 +996,120 @@
      ]
     },
     "ja": {
-     "title": "Supply boats, haggling, pre-orders, credit",
+     "title": "補給船、値段交渉、先行注文、掛け売り",
      "items": [
-      "Send a supply boat to a ship at sea to patch the hull and load more goods",
-      "Haggle with customers at the market stall before they walk away",
-      "Take pre-orders at the notice board: deposit now, bonus when delivered in time",
-      "Turn on credit sales in the ship list: regular ports pay more, collected on your next visit"
+      "海に出た船に補給船を送って、船体を直したり倉庫の荷物を追加で積んだりできます",
+      "市場で露店の値段交渉ができます。お客が去る前にうまく値段を合わせてみましょう",
+      "掲示板の先行注文で手付金を受け取り、期限内に納品するとボーナスがもらえます",
+      "船の一覧で掛け売りをオンにすると、なじみの港に高く売れます。代金は次の訪問で受け取ります"
      ]
     },
     "es": {
-     "title": "Supply boats, haggling, pre-orders, credit",
+     "title": "Barcos de suministros, regateo, preencargos y crédito",
      "items": [
-      "Send a supply boat to a ship at sea to patch the hull and load more goods",
-      "Haggle with customers at the market stall before they walk away",
-      "Take pre-orders at the notice board: deposit now, bonus when delivered in time",
-      "Turn on credit sales in the ship list: regular ports pay more, collected on your next visit"
+      "Envía un barco de suministros a un barco en alta mar para reparar el casco y cargar más mercancía",
+      "Regatea con los clientes en el puesto del mercado antes de que se vayan",
+      "Acepta preencargos en el tablón: cobras una señal y recibes un extra si entregas a tiempo",
+      "Activa la venta a crédito en la lista de barcos: los puertos habituales pagan más y cobras en la siguiente visita"
      ]
     },
     "fr": {
-     "title": "Supply boats, haggling, pre-orders, credit",
+     "title": "Ravitailleurs, marchandage, précommandes et crédit",
      "items": [
-      "Send a supply boat to a ship at sea to patch the hull and load more goods",
-      "Haggle with customers at the market stall before they walk away",
-      "Take pre-orders at the notice board: deposit now, bonus when delivered in time",
-      "Turn on credit sales in the ship list: regular ports pay more, collected on your next visit"
+      "Envoyez un ravitailleur à un navire en mer pour réparer la coque et charger plus de marchandises",
+      "Marchandez avec les clients au stand du marché avant qu’ils ne s’en aillent",
+      "Prenez des précommandes au panneau d’affichage : acompte tout de suite, prime si vous livrez à temps",
+      "Activez la vente à crédit dans la liste des navires : les ports habitués paient plus, encaissé à la visite suivante"
      ]
     },
     "de": {
-     "title": "Supply boats, haggling, pre-orders, credit",
+     "title": "Versorgungsboote, Feilschen, Vorbestellungen, Kredit",
      "items": [
-      "Send a supply boat to a ship at sea to patch the hull and load more goods",
-      "Haggle with customers at the market stall before they walk away",
-      "Take pre-orders at the notice board: deposit now, bonus when delivered in time",
-      "Turn on credit sales in the ship list: regular ports pay more, collected on your next visit"
+      "Schick ein Versorgungsboot zu einem Schiff auf See, um den Rumpf zu flicken und mehr Ware zu laden",
+      "Feilsche am Marktstand mit Kunden, bevor sie weitergehen",
+      "Nimm am Schwarzen Brett Vorbestellungen an: Anzahlung sofort, Bonus bei pünktlicher Lieferung",
+      "Schalte in der Schiffsliste Kreditverkauf ein: Stammhäfen zahlen mehr, kassiert wird beim nächsten Besuch"
+     ]
+    },
+    "zh": {
+     "title": "补给船、讨价还价、预订单、赊账",
+     "items": [
+      "可以给出海的船派补给船，修补船体并追加装载仓库货物",
+      "可以在市场摊位讨价还价。在顾客离开前把价格谈拢吧",
+      "在公告板接预订单：先收订金，按期交货还有奖金",
+      "在船只列表开启赊账销售，熟客港口出价更高，下次到访时收款"
+     ]
+    },
+    "pt": {
+     "title": "Barcos de suprimentos, pechincha, encomendas e fiado",
+     "items": [
+      "Envie um barco de suprimentos a um navio no mar para remendar o casco e carregar mais mercadorias",
+      "Pechinche com os clientes na barraca do mercado antes que eles vão embora",
+      "Aceite encomendas no quadro de avisos: sinal agora, bônus se entregar no prazo",
+      "Ative a venda fiada na lista de navios: portos frequentes pagam mais, e você recebe na próxima visita"
+     ]
+    },
+    "ru": {
+     "title": "Снабжение, торг, предзаказы и продажа в долг",
+     "items": [
+      "Отправьте судно снабжения к кораблю в море, чтобы залатать корпус и догрузить товар со склада",
+      "Торгуйтесь с покупателями у прилавка на рынке, пока они не ушли",
+      "Берите предзаказы на доске объявлений: задаток сразу, бонус за поставку в срок",
+      "Включите продажу в долг в списке кораблей: постоянные порты платят больше, деньги — при следующем визите"
+     ]
+    },
+    "tr": {
+     "title": "İkmal tekneleri, pazarlık, ön siparişler, veresiye",
+     "items": [
+      "Denizdeki bir gemiye ikmal teknesi gönderip gövdeyi yamayabilir ve depodan daha fazla mal yükleyebilirsiniz",
+      "Pazardaki tezgâhta müşteriler gitmeden önce pazarlık edin",
+      "İlan panosundan ön sipariş alın: kaparo hemen, zamanında teslimde bonus",
+      "Gemi listesinden veresiye satışı açın: müdavim limanlar daha çok öder, tahsilat bir sonraki ziyarette"
+     ]
+    },
+    "it": {
+     "title": "Barche di rifornimento, contrattazione, preordini e credito",
+     "items": [
+      "Manda una barca di rifornimento a una nave in mare per riparare lo scafo e caricare altre merci",
+      "Contratta con i clienti alla bancarella del mercato prima che se ne vadano",
+      "Accetta preordini in bacheca: acconto subito, bonus se consegni in tempo",
+      "Attiva la vendita a credito nell'elenco navi: i porti abituali pagano di più, riscuoti alla visita successiva"
+     ]
+    },
+    "pl": {
+     "title": "Łodzie zaopatrzeniowe, targowanie, zamówienia i kredyt",
+     "items": [
+      "Wyślij łódź zaopatrzeniową do statku na morzu, by załatać kadłub i dołożyć towaru z magazynu",
+      "Targuj się z klientami przy straganie na rynku, zanim odejdą",
+      "Przyjmuj zamówienia z tablicy ogłoszeń: zaliczka od razu, premia za dostawę na czas",
+      "Włącz sprzedaż na kredyt na liście statków: stałe porty płacą więcej, odbierasz przy następnej wizycie"
+     ]
+    },
+    "ar": {
+     "title": "قوارب الإمداد والمساومة والطلبات المسبقة والبيع بالآجل",
+     "items": [
+      "أرسل قارب إمداد إلى سفينة في البحر لترقيع الهيكل وتحميل مزيد من البضائع",
+      "ساوم الزبائن في كشك السوق قبل أن يغادروا",
+      "اقبل الطلبات المسبقة من لوحة الإعلانات: عربون الآن ومكافأة عند التسليم في الموعد",
+      "فعّل البيع بالآجل في قائمة السفن: الموانئ المعتادة تدفع أكثر، وتحصّل في الزيارة التالية"
+     ]
+    },
+    "nw": {
+     "title": "Supply boats, haggling, beforeorders, owegive",
+     "items": [
+      "Give supply boat to ship at sea to plusfix hull plus load plus goods",
+      "Haggle with customers at market stall unbefore they walk ungo",
+      "Take beforeorders at wallwrite: downgive now, plusgift when gived in time",
+      "Turn on owegive in ship list: regular ports give plus, getted on your nextful visit"
+     ]
+    },
+    "gk": {
+     "title": "공급 배들, 흥정하는 중, 전-명령들, 신용",
+     "items": [
+      "보내다 하나의 공급 배 에게 하나의 배 에서 바다 에게 반창고 그 껍질 그리고 짐 더 상품들",
+      "흥정하다 와 함께 고객들 에서 그 시장 마구간 전에 그들 걷다 멀리",
+      "가지고 가다 전-명령들 에서 그 알아차리다 판자: 보증금 지금, 상여금 언제 배달된 안에 시간",
+      "돌다 위에 신용 판매 안에 그 배 목록: 정규 항구들 지불하다 더, 모은 위에 당신의 다음 방문하다"
      ]
     }
    }
@@ -463,35 +1133,107 @@
      ]
     },
     "ja": {
-     "title": "Story ending and credits",
+     "title": "物語の結末とクレジット",
      "items": [
-      "Choosing the ledger's fate in the last chapter now plays an ending scene with dialogue",
-      "Credits roll after the ending. You can skip them, and the game goes on",
-      "Rewatch the ending from the Story page at the town hall"
+      "最終章で帳簿の行き先を決めると、エンディングの演出とセリフが流れます",
+      "エンディングの後にクレジットが流れます。スキップでき、終わってもゲームは続きます",
+      "町役場の「物語」でエンディングをもう一度見られます"
      ]
     },
     "es": {
-     "title": "Story ending and credits",
+     "title": "El final de la historia y los créditos",
      "items": [
-      "Choosing the ledger's fate in the last chapter now plays an ending scene with dialogue",
-      "Credits roll after the ending. You can skip them, and the game goes on",
-      "Rewatch the ending from the Story page at the town hall"
+      "Al decidir el destino del libro de cuentas en el último capítulo, se reproduce una escena final con diálogos",
+      "Tras el final aparecen los créditos. Puedes saltarlos y el juego continúa",
+      "Vuelve a ver el final en la página Historia del ayuntamiento"
      ]
     },
     "fr": {
-     "title": "Story ending and credits",
+     "title": "La fin de l’histoire et le générique",
      "items": [
-      "Choosing the ledger's fate in the last chapter now plays an ending scene with dialogue",
-      "Credits roll after the ending. You can skip them, and the game goes on",
-      "Rewatch the ending from the Story page at the town hall"
+      "Choisir le sort du registre au dernier chapitre lance désormais une scène de fin avec dialogues",
+      "Le générique défile après la fin. Vous pouvez le passer, et la partie continue",
+      "Revoyez la fin depuis la page Histoire de la mairie"
      ]
     },
     "de": {
-     "title": "Story ending and credits",
+     "title": "Das Ende der Geschichte und die Credits",
      "items": [
-      "Choosing the ledger's fate in the last chapter now plays an ending scene with dialogue",
-      "Credits roll after the ending. You can skip them, and the game goes on",
-      "Rewatch the ending from the Story page at the town hall"
+      "Wer im letzten Kapitel über das Kontobuch entscheidet, sieht jetzt eine Schlussszene mit Dialogen",
+      "Nach dem Ende laufen die Credits. Du kannst sie überspringen, und das Spiel geht weiter",
+      "Das Ende lässt sich auf der Seite Geschichte im Rathaus erneut ansehen"
+     ]
+    },
+    "zh": {
+     "title": "故事结局与制作名单",
+     "items": [
+      "在最后一章决定账本的去向后，会播放结局演出和台词",
+      "结局后会滚动制作名单。可以跳过，结束后游戏仍会继续",
+      "可以在镇公所的“故事”里重看结局"
+     ]
+    },
+    "pt": {
+     "title": "O final da história e os créditos",
+     "items": [
+      "Ao decidir o destino do livro-razão no último capítulo, toca uma cena final com diálogos",
+      "Os créditos rolam depois do final. Dá para pular, e o jogo continua",
+      "Reveja o final na página História da prefeitura"
+     ]
+    },
+    "ru": {
+     "title": "Финал истории и титры",
+     "items": [
+      "Если в последней главе решить судьбу книги учёта, покажется финальная сцена с репликами",
+      "После концовки идут титры. Их можно пропустить, а игра продолжается",
+      "Концовку можно пересмотреть на странице «История» в ратуше"
+     ]
+    },
+    "tr": {
+     "title": "Hikâyenin sonu ve jenerik",
+     "items": [
+      "Son bölümde defterin kaderini seçince artık diyaloglu bir son sahnesi oynuyor",
+      "Sondan sonra jenerik akar. Atlayabilirsiniz ve oyun devam eder",
+      "Sonu belediyedeki Hikâye sayfasından yeniden izleyebilirsiniz"
+     ]
+    },
+    "it": {
+     "title": "Il finale della storia e i titoli di coda",
+     "items": [
+      "Scegliere il destino del libro mastro nell'ultimo capitolo ora avvia una scena finale con dialoghi",
+      "Dopo il finale scorrono i titoli di coda. Puoi saltarli e il gioco continua",
+      "Rivedi il finale dalla pagina Storia del municipio"
+     ]
+    },
+    "pl": {
+     "title": "Zakończenie historii i napisy",
+     "items": [
+      "Wybór losu księgi w ostatnim rozdziale uruchamia teraz scenę końcową z dialogami",
+      "Po zakończeniu lecą napisy. Można je pominąć, a gra toczy się dalej",
+      "Zakończenie obejrzysz ponownie na stronie Historia w ratuszu"
+     ]
+    },
+    "ar": {
+     "title": "نهاية القصة والشارة",
+     "items": [
+      "اختيار مصير الدفتر في الفصل الأخير يعرض الآن مشهد نهاية مع حوارات",
+      "تظهر الشارة بعد النهاية. يمكنك تخطيها وتستمر اللعبة",
+      "أعد مشاهدة النهاية من صفحة القصة في دار البلدية"
+     ]
+    },
+    "nw": {
+     "title": "Story unbeginning plus thanklist",
+     "items": [
+      "Choosing ledger's fate in lastful chapter now plays unbeginning scene with talkwords",
+      "Thanklist rolls unbefore ending. You can skip it, plus game goes on",
+      "Rewatch unbeginning from Story page at town hall"
+     ]
+    },
+    "gk": {
+     "title": "층 끝하는 중 그리고 신용들",
+     "items": [
+      "고르는 중 그 ledger의 운명 안에 그 마지막 장 지금 연극 하나의 끝하는 중 장면 와 함께 대화",
+      "신용들 구르다 후에 그 끝하는 중. 당신 할 수 있다 건너뛰다 그들을, 그리고 그 게임 가다 위에",
+      "다시시계 그 끝하는 중 로부터 그 층 층 에서 그 마을 홀"
      ]
     }
    }
@@ -515,35 +1257,107 @@
      ]
     },
     "ja": {
-     "title": "Hull wear and dock repairs",
+     "title": "船体の耐久とドック修理",
      "items": [
-      "Sailing into storms or being raided now damages the hull",
-      "Below 70% hull the ship slows down, and below 30% it leaks cargo",
-      "Repair docked ships with the Repair button in the ship list"
+      "嵐を突っ切ったり海賊にやられたりすると船の船体が傷みます",
+      "船体が70%を下回ると船が遅くなり、30%を下回ると航海中に荷物が漏れます",
+      "停泊中に船の一覧の「修理」ボタンでドック修理ができます"
      ]
     },
     "es": {
-     "title": "Hull wear and dock repairs",
+     "title": "Desgaste del casco y reparaciones en el muelle",
      "items": [
-      "Sailing into storms or being raided now damages the hull",
-      "Below 70% hull the ship slows down, and below 30% it leaks cargo",
-      "Repair docked ships with the Repair button in the ship list"
+      "Navegar entre tormentas o sufrir un asalto pirata ahora daña el casco",
+      "Con el casco por debajo del 70% el barco va más lento, y por debajo del 30% pierde carga",
+      "Repara los barcos atracados con el botón Reparar de la lista de barcos"
      ]
     },
     "fr": {
-     "title": "Hull wear and dock repairs",
+     "title": "Usure de la coque et réparations au quai",
      "items": [
-      "Sailing into storms or being raided now damages the hull",
-      "Below 70% hull the ship slows down, and below 30% it leaks cargo",
-      "Repair docked ships with the Repair button in the ship list"
+      "Traverser une tempête ou subir un raid pirate endommage désormais la coque",
+      "Sous 70 % de coque le navire ralentit, et sous 30 % il perd de la cargaison",
+      "Réparez les navires à quai avec le bouton Réparer de la liste des navires"
      ]
     },
     "de": {
-     "title": "Hull wear and dock repairs",
+     "title": "Rumpfverschleiß und Dockreparaturen",
      "items": [
-      "Sailing into storms or being raided now damages the hull",
-      "Below 70% hull the ship slows down, and below 30% it leaks cargo",
-      "Repair docked ships with the Repair button in the ship list"
+      "Fahrten durch Stürme oder Piratenüberfälle beschädigen jetzt den Rumpf",
+      "Unter 70 % Rumpf wird das Schiff langsamer, unter 30 % verliert es Fracht",
+      "Repariere angedockte Schiffe mit dem Knopf Reparieren in der Schiffsliste"
+     ]
+    },
+    "zh": {
+     "title": "船体耐久与船坞维修",
+     "items": [
+      "穿越风暴或遭海盗袭击时，船体会受损",
+      "船体低于70%时船会变慢，低于30%时航行中会漏掉货物",
+      "船停泊时可在船只列表点“修理”进行船坞维修"
+     ]
+    },
+    "pt": {
+     "title": "Desgaste do casco e reparos na doca",
+     "items": [
+      "Navegar em tempestades ou sofrer ataques piratas agora danifica o casco",
+      "Com o casco abaixo de 70% o navio fica lento, e abaixo de 30% perde carga",
+      "Repare navios atracados com o botão Reparar na lista de navios"
+     ]
+    },
+    "ru": {
+     "title": "Износ корпуса и ремонт в доке",
+     "items": [
+      "Плавание сквозь шторм и нападения пиратов теперь повреждают корпус",
+      "Ниже 70% корпуса корабль замедляется, а ниже 30% теряет груз в пути",
+      "Корабли в порту чинятся кнопкой «Починить» в списке кораблей"
+     ]
+    },
+    "tr": {
+     "title": "Gövde aşınması ve havuz onarımı",
+     "items": [
+      "Fırtınaya dalmak ya da korsan baskınına uğramak artık gövdeye zarar veriyor",
+      "Gövde %70'in altına inince gemi yavaşlar, %30'un altında yük kaybeder",
+      "Limandaki gemileri gemi listesindeki Onar düğmesiyle onarın"
+     ]
+    },
+    "it": {
+     "title": "Usura dello scafo e riparazioni in bacino",
+     "items": [
+      "Navigare nelle tempeste o subire un assalto dei pirati ora danneggia lo scafo",
+      "Sotto il 70% di scafo la nave rallenta, sotto il 30% perde carico",
+      "Ripara le navi ormeggiate con il pulsante Ripara nell'elenco navi"
+     ]
+    },
+    "pl": {
+     "title": "Zużycie kadłuba i naprawy w doku",
+     "items": [
+      "Rejs przez sztorm lub napad piratów uszkadza teraz kadłub",
+      "Poniżej 70% kadłuba statek zwalnia, a poniżej 30% gubi ładunek",
+      "Naprawiaj statki w porcie przyciskiem Napraw na liście statków"
+     ]
+    },
+    "ar": {
+     "title": "تآكل الهيكل وإصلاحات الحوض",
+     "items": [
+      "الإبحار وسط العواصف أو التعرض لغارة قراصنة يضرّ الآن بالهيكل",
+      "تحت 70% من الهيكل تبطئ السفينة، وتحت 30% تتسرب منها الحمولة",
+      "أصلح السفن الراسية بزر \"إصلاح\" في قائمة السفن"
+     ]
+    },
+    "nw": {
+     "title": "Hull unwear plus dock fixes",
+     "items": [
+      "Sailing into storms or being raided now ungoods hull",
+      "Unup 70% hull ship goes unfast, plus unup 30% it leaks goods",
+      "Plusfix docked ships with Plusfix button in ship list"
+     ]
+    },
+    "gk": {
+     "title": "껍질 입다 그리고 부두 수리들",
+     "items": [
+      "항해하는 중 안으로 폭풍들 또는 존재 습격된 지금 손상 그 껍질",
+      "아래에 70% 껍질 그 배 느리게 하다 아래로, 그리고 아래에 30% 그것 새다 화물",
+      "수리하다 부두된 배들 와 함께 그 수리하다 단추 안에 그 배 목록"
      ]
     }
    }
@@ -563,27 +1377,81 @@
      ]
     },
     "ja": {
-     "title": "Exit button",
+     "title": "退出ボタン",
      "items": [
-      "The settings button \"Back to site\" is now \"Exit\": it saves and closes the game window"
+      "設定の「サイトに戻る」を「退出」に変えました。押すとセーブしてゲームのウィンドウが閉じます"
      ]
     },
     "es": {
-     "title": "Exit button",
+     "title": "Botón Salir",
      "items": [
-      "The settings button \"Back to site\" is now \"Exit\": it saves and closes the game window"
+      "El botón \"Volver al sitio\" de los ajustes ahora es \"Salir\": guarda y cierra la ventana del juego"
      ]
     },
     "fr": {
-     "title": "Exit button",
+     "title": "Bouton Quitter",
      "items": [
-      "The settings button \"Back to site\" is now \"Exit\": it saves and closes the game window"
+      "Le bouton « Retour au site » des réglages devient « Quitter » : il sauvegarde et ferme la fenêtre du jeu"
      ]
     },
     "de": {
-     "title": "Exit button",
+     "title": "Verlassen-Knopf",
      "items": [
-      "The settings button \"Back to site\" is now \"Exit\": it saves and closes the game window"
+      "Der Knopf „Zurück zur Website“ in den Einstellungen heißt jetzt „Verlassen“: Er speichert und schließt das Spielfenster"
+     ]
+    },
+    "zh": {
+     "title": "离开按钮",
+     "items": [
+      "设置中的“返回网站”改为“离开”。点击后会存档并关闭游戏窗口"
+     ]
+    },
+    "pt": {
+     "title": "Botão Sair",
+     "items": [
+      "O botão \"Voltar ao site\" das configurações agora é \"Sair\": salva e fecha a janela do jogo"
+     ]
+    },
+    "ru": {
+     "title": "Кнопка «Выйти»",
+     "items": [
+      "Кнопка «Вернуться на сайт» в настройках теперь называется «Выйти»: она сохраняет игру и закрывает окно"
+     ]
+    },
+    "tr": {
+     "title": "Çık düğmesi",
+     "items": [
+      "Ayarlardaki \"Siteye dön\" düğmesi artık \"Çık\": kaydeder ve oyun penceresini kapatır"
+     ]
+    },
+    "it": {
+     "title": "Pulsante Esci",
+     "items": [
+      "Il pulsante \"Torna al sito\" nelle impostazioni ora è \"Esci\": salva e chiude la finestra di gioco"
+     ]
+    },
+    "pl": {
+     "title": "Przycisk Wyjdź",
+     "items": [
+      "Przycisk „Wróć na stronę” w ustawieniach to teraz „Wyjdź”: zapisuje grę i zamyka okno"
+     ]
+    },
+    "ar": {
+     "title": "زر المغادرة",
+     "items": [
+      "صار زر \"العودة إلى الموقع\" في الإعدادات \"مغادرة\": يحفظ اللعبة ويغلق نافذتها"
+     ]
+    },
+    "nw": {
+     "title": "Unenter button",
+     "items": [
+      "Rules button \"Ungo to site\" is now \"Unenter\": it saves plus unopens game window"
+     ]
+    },
+    "gk": {
+     "title": "출구 단추",
+     "items": [
+      "그 환경들 단추 \"등 에게 장소\" 이다 지금 \"출구\": 그것 구하다 그리고 가까운 그 게임 창문"
      ]
     }
    }
@@ -603,27 +1471,81 @@
      ]
     },
     "ja": {
-     "title": "Italian, Polish and Arabic",
+     "title": "イタリア語、ポーランド語、アラビア語",
      "items": [
-      "3 languages added: Italian, Polish and Arabic (game and site)"
+      "言語を3つ追加：イタリア語、ポーランド語、アラビア語（ゲームとサイトの両方）"
      ]
     },
     "es": {
-     "title": "Italian, Polish and Arabic",
+     "title": "Italiano, polaco y árabe",
      "items": [
-      "3 languages added: Italian, Polish and Arabic (game and site)"
+      "3 idiomas añadidos: italiano, polaco y árabe (juego y sitio)"
      ]
     },
     "fr": {
-     "title": "Italian, Polish and Arabic",
+     "title": "Italien, polonais et arabe",
      "items": [
-      "3 languages added: Italian, Polish and Arabic (game and site)"
+      "3 langues ajoutées : italien, polonais et arabe (jeu et site)"
      ]
     },
     "de": {
-     "title": "Italian, Polish and Arabic",
+     "title": "Italienisch, Polnisch und Arabisch",
      "items": [
-      "3 languages added: Italian, Polish and Arabic (game and site)"
+      "3 Sprachen hinzugefügt: Italienisch, Polnisch und Arabisch (Spiel und Website)"
+     ]
+    },
+    "zh": {
+     "title": "意大利语、波兰语、阿拉伯语",
+     "items": [
+      "新增3种语言：意大利语、波兰语、阿拉伯语（游戏和网站）"
+     ]
+    },
+    "pt": {
+     "title": "Italiano, polonês e árabe",
+     "items": [
+      "3 idiomas adicionados: italiano, polonês e árabe (jogo e site)"
+     ]
+    },
+    "ru": {
+     "title": "Итальянский, польский и арабский",
+     "items": [
+      "Добавлены 3 языка: итальянский, польский и арабский (игра и сайт)"
+     ]
+    },
+    "tr": {
+     "title": "İtalyanca, Lehçe ve Arapça",
+     "items": [
+      "3 dil eklendi: İtalyanca, Lehçe ve Arapça (oyun ve site)"
+     ]
+    },
+    "it": {
+     "title": "Italiano, polacco e arabo",
+     "items": [
+      "Aggiunte 3 lingue: italiano, polacco e arabo (gioco e sito)"
+     ]
+    },
+    "pl": {
+     "title": "Włoski, polski i arabski",
+     "items": [
+      "Dodano 3 języki: włoski, polski i arabski (gra i strona)"
+     ]
+    },
+    "ar": {
+     "title": "الإيطالية والبولندية والعربية",
+     "items": [
+      "إضافة 3 لغات: الإيطالية والبولندية والعربية (اللعبة والموقع)"
+     ]
+    },
+    "nw": {
+     "title": "Italian, Polish plus Arabic",
+     "items": [
+      "3 speaks added: Italian, Polish plus Arabic (game plus site)"
+     ]
+    },
+    "gk": {
+     "title": "이탈리아의, 광택 그리고 아라비아의",
+     "items": [
+      "3 혀들 더해진: 이탈리아의, 광택 그리고 아라비아의 (게임 그리고 장소)"
      ]
     }
    }
@@ -649,39 +1571,120 @@
      ]
     },
     "ja": {
-     "title": "Aquarium and tavern",
+     "title": "水族館と酒場",
      "items": [
-      "An aquarium opens south of the town. Fishing now also catches one of 14 species; show them in the tanks to earn admission fees",
-      "The aquarium can be upgraded twice and gives a bonus for each new species",
-      "A tavern opens near the harbor. Buy a drink to hear which port pays well, what is in demand and where storms are",
-      "Once in a while a sailor hands you an old map piece"
+      "町の南に水族館ができました。釣りで魚を釣ると14種類の魚のどれかも一緒に釣れます。水槽に展示すると入館料がたまります",
+      "水族館は2回拡張でき、初めて釣った魚の種類ごとにボーナス金貨がもらえます",
+      "港のそばに酒場ができました。一杯おごると、いま相場のいい港、需要が集まった品物、嵐の知らせを船乗りが教えてくれます",
+      "ごくたまに、船乗りが古い地図のかけらを出してくれます"
      ]
     },
     "es": {
-     "title": "Aquarium and tavern",
+     "title": "Acuario y taberna",
      "items": [
-      "An aquarium opens south of the town. Fishing now also catches one of 14 species; show them in the tanks to earn admission fees",
-      "The aquarium can be upgraded twice and gives a bonus for each new species",
-      "A tavern opens near the harbor. Buy a drink to hear which port pays well, what is in demand and where storms are",
-      "Once in a while a sailor hands you an old map piece"
+      "Abre un acuario al sur del pueblo. Al pescar ahora también sacas una de 14 especies; exhíbelas en los tanques para cobrar entradas",
+      "El acuario se puede mejorar dos veces y da un extra por cada especie nueva",
+      "Abre una taberna junto al puerto. Invita a una copa para saber qué puerto paga bien, qué se demanda y dónde hay tormentas",
+      "De vez en cuando un marinero te da un viejo trozo de mapa"
      ]
     },
     "fr": {
-     "title": "Aquarium and tavern",
+     "title": "Aquarium et taverne",
      "items": [
-      "An aquarium opens south of the town. Fishing now also catches one of 14 species; show them in the tanks to earn admission fees",
-      "The aquarium can be upgraded twice and gives a bonus for each new species",
-      "A tavern opens near the harbor. Buy a drink to hear which port pays well, what is in demand and where storms are",
-      "Once in a while a sailor hands you an old map piece"
+      "Un aquarium ouvre au sud du village. La pêche attrape aussi l’une de 14 espèces ; exposez-les dans les bassins pour encaisser des entrées",
+      "L’aquarium peut être amélioré deux fois et rapporte une prime pour chaque nouvelle espèce",
+      "Une taverne ouvre près du port. Payez un verre pour savoir quel port paie bien, ce qui est demandé et où sont les tempêtes",
+      "De temps en temps, un marin vous donne un vieux morceau de carte"
      ]
     },
     "de": {
-     "title": "Aquarium and tavern",
+     "title": "Aquarium und Taverne",
      "items": [
-      "An aquarium opens south of the town. Fishing now also catches one of 14 species; show them in the tanks to earn admission fees",
-      "The aquarium can be upgraded twice and gives a bonus for each new species",
-      "A tavern opens near the harbor. Buy a drink to hear which port pays well, what is in demand and where storms are",
-      "Once in a while a sailor hands you an old map piece"
+      "Südlich des Dorfes eröffnet ein Aquarium. Beim Angeln fängst du jetzt auch eine von 14 Arten; stell sie in Becken aus und kassiere Eintritt",
+      "Das Aquarium lässt sich zweimal ausbauen und gibt für jede neue Art einen Bonus",
+      "Am Hafen eröffnet eine Taverne. Gib eine Runde aus und erfahre, welcher Hafen gut zahlt, was gefragt ist und wo Stürme toben",
+      "Ab und zu gibt dir ein Matrose ein altes Kartenstück"
+     ]
+    },
+    "zh": {
+     "title": "水族馆与酒馆",
+     "items": [
+      "镇子南边开了一座水族馆。钓鱼时还会顺带钓到14种鱼中的一种。放进水族箱展出就能累积门票收入",
+      "水族馆可以升级两次，每钓到一种新鱼都能拿到奖励金币",
+      "港口旁开了一家酒馆。买一杯，水手就会告诉你哪个港口出价高、什么货需求旺、哪里有风暴",
+      "偶尔会有水手拿出一张旧地图碎片"
+     ]
+    },
+    "pt": {
+     "title": "Aquário e taverna",
+     "items": [
+      "Um aquário abre ao sul da vila. Pescar agora também pega uma de 14 espécies; exiba-as nos tanques para ganhar ingressos",
+      "O aquário pode ser melhorado duas vezes e dá bônus por cada espécie nova",
+      "Uma taverna abre perto do porto. Pague uma dose para saber qual porto paga bem, o que está em alta e onde há tempestades",
+      "De vez em quando um marinheiro te entrega um velho pedaço de mapa"
+     ]
+    },
+    "ru": {
+     "title": "Аквариум и таверна",
+     "items": [
+      "К югу от городка открылся аквариум. Рыбалка теперь приносит и одну из 14 пород; выставляйте их в аквариумах за плату за вход",
+      "Аквариум можно улучшить дважды, и за каждый новый вид дают бонус",
+      "У гавани открылась таверна. Купите кружку и узнаете, какой порт хорошо платит, что в спросе и где штормы",
+      "Изредка моряк отдаёт вам обрывок старой карты"
+     ]
+    },
+    "tr": {
+     "title": "Akvaryum ve meyhane",
+     "items": [
+      "Kasabanın güneyinde bir akvaryum açıldı. Balık tutarken artık 14 türden biri de yakalanıyor; tanklarda sergileyip giriş ücreti kazanın",
+      "Akvaryum iki kez geliştirilebilir ve her yeni tür için bonus verir",
+      "Limanın yanında bir meyhane açıldı. Hangi limanın iyi ödediğini, neyin talep gördüğünü ve fırtınaların nerede olduğunu öğrenmek için bir kadeh ısmarlayın",
+      "Arada bir bir denizci size eski bir harita parçası verir"
+     ]
+    },
+    "it": {
+     "title": "Acquario e taverna",
+     "items": [
+      "Un acquario apre a sud della città. Ora la pesca cattura anche una delle 14 specie; esponile nelle vasche per guadagnare biglietti d'ingresso",
+      "L'acquario può essere migliorato due volte e dà un bonus per ogni nuova specie",
+      "Una taverna apre vicino al porto. Offri da bere per sapere quale porto paga bene, cosa è richiesto e dove sono le tempeste",
+      "Ogni tanto un marinaio ti dà un vecchio pezzo di mappa"
+     ]
+    },
+    "pl": {
+     "title": "Akwarium i tawerna",
+     "items": [
+      "Na południe od miasta otwiera się akwarium. Łowiąc, złapiesz też jeden z 14 gatunków; pokaż je w zbiornikach, by zarabiać na biletach",
+      "Akwarium można ulepszyć dwa razy, a każdy nowy gatunek daje premię",
+      "Przy porcie otwiera się tawerna. Kup kolejkę, by usłyszeć, który port dobrze płaci, na co jest popyt i gdzie są burze",
+      "Od czasu do czasu marynarz daje ci stary kawałek mapy"
+     ]
+    },
+    "ar": {
+     "title": "حوض الأسماك والحانة",
+     "items": [
+      "يُفتتح حوض أسماك جنوب البلدة. صار الصيد يلتقط أيضًا نوعًا من 14 نوعًا؛ اعرضها في الأحواض لتكسب رسوم الدخول",
+      "يمكن تطوير الحوض مرتين ويعطي مكافأة عن كل نوع جديد",
+      "تُفتتح حانة قرب الميناء. اشترِ شرابًا لتسمع أي ميناء يدفع جيدًا وما المطلوب وأين العواصف",
+      "بين حين وآخر يعطيك بحار قطعة خريطة قديمة"
+     ]
+    },
+    "nw": {
+     "title": "Aquarium plus tavern",
+     "items": [
+      "Aquarium opens south of town. Fishing now plus catches one of 14 kinds; show them in tanks to get entrygift",
+      "Aquarium can be plusbigged twice plus gives plusgift for each plusnew kind",
+      "Tavern opens near harbor. Buy drink to hear which port pays plusgood, what is wanted plus where storms is",
+      "Once in while sailor gives you unnew map piece"
+     ]
+    },
+    "gk": {
+     "title": "수족관 그리고 선술집",
+     "items": [
+      "하나의 수족관 열다들 남쪽 의 그 마을. 낚시 지금 또한 잡다 하나 의 14 종들; 쇼 그들을 안에 그 탱크들 에게 벌다 입장 요금들",
+      "그 수족관 할 수 있다 이다 업그레이드된 두 번 그리고 주다 하나의 상여금 위하여 각각 새로운 종",
+      "하나의 선술집 열다들 가까운 그 항구. 사다 하나의 마시다 에게 듣다 어느 항구 지불하다 잘, 무엇 이다 안에 요구하다 그리고 어디 폭풍들 이다",
+      "한 번 안에 하나의 동안 하나의 선원 손들 당신 하나의 늙은 지도 조각"
      ]
     }
    }
@@ -701,27 +1704,81 @@
      ]
     },
     "ja": {
-     "title": "Newspeak wording fix",
+     "title": "ニュースピークの表現を修正",
      "items": [
-      "Newspeak wording fix: plusplus is now doubleplus"
+      "ニュースピークの表現を修正：plusplus を doubleplus に"
      ]
     },
     "es": {
-     "title": "Newspeak wording fix",
+     "title": "Corrección del texto en neolengua",
      "items": [
-      "Newspeak wording fix: plusplus is now doubleplus"
+      "Corrección en neolengua: plusplus ahora es doubleplus"
      ]
     },
     "fr": {
-     "title": "Newspeak wording fix",
+     "title": "Correction du novlangue",
      "items": [
-      "Newspeak wording fix: plusplus is now doubleplus"
+      "Correction du novlangue : plusplus devient doubleplus"
      ]
     },
     "de": {
-     "title": "Newspeak wording fix",
+     "title": "Neusprech-Formulierung korrigiert",
      "items": [
-      "Newspeak wording fix: plusplus is now doubleplus"
+      "Neusprech korrigiert: aus plusplus wird doubleplus"
+     ]
+    },
+    "zh": {
+     "title": "修正新话用语",
+     "items": [
+      "修正新话用语：plusplus 改为 doubleplus"
+     ]
+    },
+    "pt": {
+     "title": "Correção de texto em novilíngua",
+     "items": [
+      "Correção em novilíngua: plusplus agora é doubleplus"
+     ]
+    },
+    "ru": {
+     "title": "Правка формулировок новояза",
+     "items": [
+      "Правка новояза: plusplus теперь doubleplus"
+     ]
+    },
+    "tr": {
+     "title": "Yenikonuş ifadesi düzeltildi",
+     "items": [
+      "Yenikonuş düzeltmesi: plusplus artık doubleplus"
+     ]
+    },
+    "it": {
+     "title": "Correzione della Neolingua",
+     "items": [
+      "Correzione della Neolingua: plusplus ora è doubleplus"
+     ]
+    },
+    "pl": {
+     "title": "Poprawka Nowomowy",
+     "items": [
+      "Poprawka Nowomowy: plusplus to teraz doubleplus"
+     ]
+    },
+    "ar": {
+     "title": "تصحيح عبارات اللغة الجديدة",
+     "items": [
+      "تصحيح عبارات اللغة الجديدة: plusplus صارت doubleplus"
+     ]
+    },
+    "nw": {
+     "title": "Newspeak wording plusfix",
+     "items": [
+      "Newspeak wording plusfix: plusplus is now doubleplus"
+     ]
+    },
+    "gk": {
+     "title": "새로운말하기 단어 고정하다",
+     "items": [
+      "새로운말하기 단어 고정하다: plusplus 이다 지금 doubleplus"
      ]
     }
    }
@@ -731,37 +1788,91 @@
    "build": "v0.2 build 43",
    "title": "은하 표준어 추가",
    "items": [
-    "가상 언어 은하 표준어 추가 (커맨더 킨·마인크래프트 인챈트 글자, 직접 그린 글꼴)"
+    "가상 언어 은하 표준어 추가 (커맨더 킨·마인크래프트 인챈트 글자, 사진을 보고 만든 글꼴)"
    ],
    "tr": {
     "en": {
      "title": "Standard Galactic added",
      "items": [
-      "Fictional script Standard Galactic added (the Commander Keen and Minecraft enchanting letters, in our own drawn font)"
+      "Fictional script Standard Galactic added (the Commander Keen and Minecraft enchanting letters, in a font made from a reference photo)"
      ]
     },
     "ja": {
-     "title": "Standard Galactic added",
+     "title": "銀河標準語を追加",
      "items": [
-      "Fictional script Standard Galactic added (the Commander Keen and Minecraft enchanting letters, in our own drawn font)"
+      "架空の文字「銀河標準語」を追加（コマンダー・キーンやマインクラフトのエンチャント文字を写真をもとに作ったフォントで）"
      ]
     },
     "es": {
-     "title": "Standard Galactic added",
+     "title": "Añadido el Estándar Galáctico",
      "items": [
-      "Fictional script Standard Galactic added (the Commander Keen and Minecraft enchanting letters, in our own drawn font)"
+      "Añadida la escritura ficticia Estándar Galáctico (las letras de Commander Keen y de los encantamientos de Minecraft, con una fuente hecha a partir de una foto)"
      ]
     },
     "fr": {
-     "title": "Standard Galactic added",
+     "title": "Galactique standard ajouté",
      "items": [
-      "Fictional script Standard Galactic added (the Commander Keen and Minecraft enchanting letters, in our own drawn font)"
+      "Écriture fictive Galactique standard ajoutée (les lettres de Commander Keen et des enchantements de Minecraft, dans une police créée d'après une photo)"
      ]
     },
     "de": {
+     "title": "Standard Galactic hinzugefügt",
+     "items": [
+      "Fiktive Schrift Standard Galactic hinzugefügt (die Buchstaben aus Commander Keen und den Minecraft-Verzauberungen, in einer nach einem Foto erstellten Schrift)"
+     ]
+    },
+    "zh": {
+     "title": "新增银河标准语",
+     "items": [
+      "新增虚构文字“银河标准语”（指挥官基恩和《我的世界》附魔文字，使用照着照片制作的字体）"
+     ]
+    },
+    "pt": {
+     "title": "Padrão Galáctico adicionado",
+     "items": [
+      "Escrita fictícia Padrão Galáctico adicionada (as letras de Commander Keen e dos encantamentos do Minecraft, numa fonte feita a partir de uma foto)"
+     ]
+    },
+    "ru": {
+     "title": "Добавлен «Стандартный галактический»",
+     "items": [
+      "Добавлено вымышленное письмо «Стандартный галактический» (буквы из Commander Keen и чар Minecraft, шрифтом, сделанным по фотографии)"
+     ]
+    },
+    "tr": {
+     "title": "Standart Galaktik eklendi",
+     "items": [
+      "Kurgusal yazı Standart Galaktik eklendi (Commander Keen ve Minecraft büyü harfleri, bir fotoğraftan yapılan yazı tipiyle)"
+     ]
+    },
+    "it": {
+     "title": "Aggiunto lo Standard Galattico",
+     "items": [
+      "Aggiunta la scrittura immaginaria Standard Galattico (le lettere di Commander Keen e degli incantesimi di Minecraft, in un font creato da una foto)"
+     ]
+    },
+    "pl": {
+     "title": "Dodano Standard Galaktyczny",
+     "items": [
+      "Dodano fikcyjne pismo Standard Galaktyczny (litery z Commander Keen i zaklęć Minecrafta, w czcionce zrobionej na podstawie zdjęcia)"
+     ]
+    },
+    "ar": {
+     "title": "إضافة الأبجدية المجرية القياسية",
+     "items": [
+      "إضافة الكتابة الخيالية الأبجدية المجرية القياسية (حروف Commander Keen وسحر Minecraft، بخط صُنع من صورة)"
+     ]
+    },
+    "nw": {
      "title": "Standard Galactic added",
      "items": [
-      "Fictional script Standard Galactic added (the Commander Keen and Minecraft enchanting letters, in our own drawn font)"
+      "Unreal letters Standard Galactic added (Commander Keen plus Minecraft enchant letters, in photomade font)"
+     ]
+    },
+    "gk": {
+     "title": "표준 은하 더해진",
+     "items": [
+      "허구의 대본 표준 은하 더해진 (그 사령관 열망하는 그리고 마인크래프트 매혹하는 중 편지들, 안에 사진 만든 샘)"
      ]
     }
    }
@@ -848,6 +1959,30 @@
       "Site de aynı dilde gösterilir"
      ]
     },
+    "it": {
+     "title": "Aggiunte 4 lingue e 3 lingue immaginarie",
+     "items": [
+      "Aggiunte 4 lingue: cinese semplificato, portoghese (Brasile), russo, turco",
+      "Aggiunte le lingue immaginarie Neolingua, Coreano da traduttore e Aurebesh (gruppo Lingue immaginarie nel selettore della lingua)",
+      "Anche il sito mostra la stessa lingua"
+     ]
+    },
+    "pl": {
+     "title": "Dodano 4 języki i 3 języki fikcyjne",
+     "items": [
+      "Dodano 4 języki: chiński uproszczony, portugalski (Brazylia), rosyjski, turecki",
+      "Dodano języki fikcyjne Nowomowa, Koreański z translatora i Aurebesh (grupa Języki fikcyjne w wyborze języka)",
+      "Strona też wyświetla ten sam język"
+     ]
+    },
+    "ar": {
+     "title": "إضافة 4 لغات و3 لغات خيالية",
+     "items": [
+      "أُضيفت 4 لغات: الصينية المبسطة، البرتغالية (البرازيل)، الروسية، التركية",
+      "إضافة لغات خيالية: النيوسبيك، والكورية المترجمة آليًا، والأوربيش (مجموعة اللغات الخيالية في اختيار اللغة)",
+      "يظهر الموقع أيضًا باللغة نفسها"
+     ]
+    },
     "nw": {
      "title": "4 speaks plus 3 fictional speaks plussed",
      "items": [
@@ -881,27 +2016,81 @@
      ]
     },
     "ja": {
-     "title": "Hub wealth ranking",
+     "title": "ハブ資産ランキング",
      "items": [
-      "When you are logged in, your net worth is shown in the hub ranking"
+      "ログインしてプレイすると、自分の資産がハブのランキングに載ります"
      ]
     },
     "es": {
-     "title": "Hub wealth ranking",
+     "title": "Clasificación de patrimonio del hub",
      "items": [
-      "When you are logged in, your net worth is shown in the hub ranking"
+      "Si juegas con la sesión iniciada, tu patrimonio aparece en la clasificación del hub"
      ]
     },
     "fr": {
-     "title": "Hub wealth ranking",
+     "title": "Classement des fortunes du hub",
      "items": [
-      "When you are logged in, your net worth is shown in the hub ranking"
+      "Connecté, votre fortune apparaît dans le classement du hub"
      ]
     },
     "de": {
-     "title": "Hub wealth ranking",
+     "title": "Vermögensrangliste im Hub",
      "items": [
-      "When you are logged in, your net worth is shown in the hub ranking"
+      "Wenn du angemeldet bist, erscheint dein Vermögen in der Hub-Rangliste"
+     ]
+    },
+    "zh": {
+     "title": "中心财富排行",
+     "items": [
+      "登录后，你的净资产会显示在中心排行中"
+     ]
+    },
+    "pt": {
+     "title": "Ranking de riqueza do hub",
+     "items": [
+      "Com login, seu patrimônio aparece no ranking do hub"
+     ]
+    },
+    "ru": {
+     "title": "Рейтинг богатства в хабе",
+     "items": [
+      "Если вы вошли, ваш капитал показывается в рейтинге хаба"
+     ]
+    },
+    "tr": {
+     "title": "Merkez servet sıralaması",
+     "items": [
+      "Giriş yaptığında net servetin merkez sıralamasında görünür"
+     ]
+    },
+    "it": {
+     "title": "Classifica della ricchezza nell'hub",
+     "items": [
+      "Quando hai effettuato l'accesso, il tuo patrimonio appare nella classifica dell'hub"
+     ]
+    },
+    "pl": {
+     "title": "Ranking majątku w hubie",
+     "items": [
+      "Gdy jesteś zalogowany, Twój majątek jest pokazywany w rankingu huba"
+     ]
+    },
+    "ar": {
+     "title": "ترتيب الثروة في المركز",
+     "items": [
+      "عند تسجيل الدخول تظهر ثروتك الصافية في ترتيب المركز"
+     ]
+    },
+    "nw": {
+     "title": "Hub wealth goodlist",
+     "items": [
+      "When you is logged in, your net worth is shown in hub goodlist"
+     ]
+    },
+    "gk": {
+     "title": "바퀴통 wealth 순위",
+     "items": [
+      "언제 당신 이다 벌목된 안에, 당신의 net worth 이다 보여진 안에 그 바퀴통 순위"
      ]
     }
    }
@@ -929,43 +2118,133 @@
      ]
     },
     "ja": {
-     "title": "Polished start",
+     "title": "タイトル画面の手直し",
      "items": [
-      "A \"Made by Frenchfries777\" intro plays when the game opens",
-      "New games start on a spring day and the night tint is lighter so text stays readable",
-      "The guide marks a field you can plant with a ▼",
-      "On phones the guide box no longer covers the joystick and the title menu no longer overlaps the text",
-      "Pen times now read like \"49 s\""
+      "ゲームを起動すると「Made by Frenchfries777」の紹介画面が出ます",
+      "新しいゲームは春の昼に始まり、夜の画面が暗すぎないので文字が読みやすくなりました",
+      "案内が植えられる畑に▼の印を付けてくれます",
+      "スマホで案内ボックスがジョイスティックを隠さず、タイトル画面のメニューが文字と重ならなくなりました",
+      "牧場の囲いの時間表示が「49秒」のように出ます"
      ]
     },
     "es": {
-     "title": "Polished start",
+     "title": "Inicio pulido",
      "items": [
-      "A \"Made by Frenchfries777\" intro plays when the game opens",
-      "New games start on a spring day and the night tint is lighter so text stays readable",
-      "The guide marks a field you can plant with a ▼",
-      "On phones the guide box no longer covers the joystick and the title menu no longer overlaps the text",
-      "Pen times now read like \"49 s\""
+      "Al abrir el juego aparece una intro \"Made by Frenchfries777\"",
+      "Las partidas nuevas empiezan un día de primavera, y la noche es menos oscura para que el texto se lea bien",
+      "La guía marca con un ▼ el campo que puedes sembrar",
+      "En el móvil, el cuadro de ayuda ya no tapa el joystick y el menú de inicio no se superpone al texto",
+      "Los tiempos de los corrales ahora se ven como \"49 s\""
      ]
     },
     "fr": {
-     "title": "Polished start",
+     "title": "Démarrage peaufiné",
      "items": [
-      "A \"Made by Frenchfries777\" intro plays when the game opens",
-      "New games start on a spring day and the night tint is lighter so text stays readable",
-      "The guide marks a field you can plant with a ▼",
-      "On phones the guide box no longer covers the joystick and the title menu no longer overlaps the text",
-      "Pen times now read like \"49 s\""
+      "Une intro « Made by Frenchfries777 » s’affiche à l’ouverture du jeu",
+      "Les nouvelles parties commencent un jour de printemps, et la nuit est moins sombre pour que le texte reste lisible",
+      "Le guide signale d’un ▼ un champ où semer",
+      "Sur téléphone, la bulle d’aide ne cache plus le joystick et le menu d’accueil ne chevauche plus le texte",
+      "Les temps des enclos s’affichent désormais comme « 49 s »"
      ]
     },
     "de": {
+     "title": "Feinschliff beim Start",
+     "items": [
+      "Beim Start erscheint ein Intro „Made by Frenchfries777“",
+      "Neue Spiele beginnen an einem Frühlingstag, und die Nacht ist heller, damit Text lesbar bleibt",
+      "Die Anleitung markiert ein bepflanzbares Feld mit einem ▼",
+      "Auf dem Handy verdeckt die Hinweisbox den Joystick nicht mehr, und das Titelmenü überlappt den Text nicht mehr",
+      "Gehegezeiten werden jetzt wie „49 s“ angezeigt"
+     ]
+    },
+    "zh": {
+     "title": "开始画面优化",
+     "items": [
+      "打开游戏时会出现“Made by Frenchfries777”介绍画面",
+      "新游戏从春天白天开始，夜晚画面不再那么暗，文字更清楚",
+      "引导会在可以种植的田上标出▼",
+      "手机上提示框不再挡住摇杆，标题菜单也不再和文字重叠",
+      "牧场围栏的时间显示改为“49秒”这样的形式"
+     ]
+    },
+    "pt": {
+     "title": "Início caprichado",
+     "items": [
+      "Ao abrir o jogo aparece uma intro \"Made by Frenchfries777\"",
+      "Jogos novos começam num dia de primavera, e a noite ficou mais clara para o texto continuar legível",
+      "O guia marca com um ▼ o campo que você pode plantar",
+      "No celular, a caixa de ajuda não cobre mais o joystick e o menu inicial não se sobrepõe ao texto",
+      "Os tempos dos currais agora aparecem como \"49s\""
+     ]
+    },
+    "ru": {
+     "title": "Доработка начала игры",
+     "items": [
+      "При запуске игры показывается заставка «Made by Frenchfries777»",
+      "Новая игра начинается весенним днём, а ночь стала светлее, чтобы текст было видно",
+      "Подсказка отмечает ▼ поле, которое можно засеять",
+      "На телефоне подсказка больше не закрывает джойстик, а меню заставки не налезает на текст",
+      "Время в загонах теперь показывается как «49 с»"
+     ]
+    },
+    "tr": {
+     "title": "Başlangıç düzenlemeleri",
+     "items": [
+      "Oyun açılırken \"Made by Frenchfries777\" tanıtım ekranı çıkar",
+      "Yeni oyunlar bir bahar gününde başlıyor ve gece daha açık, yazılar okunur kalıyor",
+      "Rehber ekilebilecek tarlayı ▼ ile işaretler",
+      "Telefonda rehber kutusu artık joystick'i kapatmıyor ve başlık menüsü yazıyla çakışmıyor",
+      "Ağıl süreleri artık \"49 sn\" gibi görünüyor"
+     ]
+    },
+    "it": {
+     "title": "Avvio rifinito",
+     "items": [
+      "All'apertura del gioco parte un'intro \"Made by Frenchfries777\"",
+      "Le nuove partite iniziano in un giorno di primavera e la tinta notturna è più chiara, così il testo resta leggibile",
+      "La guida segna con una ▼ un campo che puoi piantare",
+      "Sui telefoni la finestra della guida non copre più il joystick e il menu del titolo non si sovrappone più al testo",
+      "I tempi dei recinti ora si leggono come \"49 s\""
+     ]
+    },
+    "pl": {
+     "title": "Dopracowany start",
+     "items": [
+      "Po uruchomieniu gry odtwarza się intro „Made by Frenchfries777”",
+      "Nowe gry zaczynają się wiosennym dniem, a nocny odcień jest jaśniejszy, więc tekst pozostaje czytelny",
+      "Przewodnik oznacza ▼ pole, które możesz obsiać",
+      "Na telefonach okno przewodnika nie zasłania już joysticka, a menu tytułowe nie nachodzi na tekst",
+      "Czasy zagród wyglądają teraz jak „49 s”"
+     ]
+    },
+    "ar": {
+     "title": "بداية مصقولة",
+     "items": [
+      "تُعرض مقدمة \"Made by Frenchfries777\" عند فتح اللعبة",
+      "تبدأ الألعاب الجديدة في يوم ربيعي وصبغة الليل أفتح فيبقى النص مقروءًا",
+      "يضع الدليل ▼ على حقل يمكنك زراعته",
+      "على الهواتف لم يعد مربع الدليل يغطي عصا التحكم ولم تعد قائمة العنوان تتداخل مع النص",
+      "أوقات الحظائر تُكتب الآن مثل \"49 ث\""
+     ]
+    },
+    "nw": {
      "title": "Polished start",
      "items": [
-      "A \"Made by Frenchfries777\" intro plays when the game opens",
-      "New games start on a spring day and the night tint is lighter so text stays readable",
-      "The guide marks a field you can plant with a ▼",
-      "On phones the guide box no longer covers the joystick and the title menu no longer overlaps the text",
-      "Pen times now read like \"49 s\""
+      "A \"Maked by Frenchfries777\" intro joyduties when joyduty opens",
+      "Plusnew joyduties start on spring day plus unday tint is lighter plusspeakwrite stays readable",
+      "Truthbook marks field you can plant with ▼",
+      "On phones truthbook thing unlonger covers joystick plus name ministry unlonger overlaps speakwrite",
+      "Pen times now see like \"49 s\""
+     ]
+    },
+    "gk": {
+     "title": "Polished 시작하다",
+     "items": [
+      "하나의 \"만든 옆에 Frenchfries777\" intro 놀다들 언제 그 사냥감 연다",
+      "새로운 사냥감들 시작하다 위에 하나의 spring 날 그리고 그 밤 tint 이다 lighter 그래서 본문 stays readable",
+      "그 안내인 marks 하나의 field 당신 깡통 plant 와 함께 하나의 ▼",
+      "위에 phones 그 안내인 상자 아니요 longer covers 그 joystick 그리고 그 제목 차림표 아니요 longer overlaps 그 본문",
+      "Pen 시간들 지금 읽다 처럼 \"49 s\""
      ]
     }
    }
@@ -1013,6 +2292,41 @@
       "Drücke P oder wähle zu Hause „Foto machen“, um den Bildschirm zu knipsen; das Album fasst bis zu zwölf Fotos",
       "Das erste Foto am Brunnenplatz, Uhrturm, See, Bahnhof, Leuchtturm, Museum oder Hafen bringt einen Goldbonus"
      ]
+    },
+    "it": {
+     "title": "Modalità foto",
+     "items": [
+      "Premi P o scegli Scatta una foto a casa per fotografare lo schermo; l'album ne conserva fino a dodici",
+      "La prima foto alla piazza della fontana, alla torre dell'orologio, al lago, alla stazione, al faro, al museo o al porto dà un bonus in oro"
+     ]
+    },
+    "pl": {
+     "title": "Tryb zdjęć",
+     "items": [
+      "Naciśnij P lub wybierz Zrób zdjęcie w domu, by uchwycić ekran; album mieści do dwunastu",
+      "Pierwsze zdjęcie na placu z fontanną, przy wieży zegarowej, jeziorze, stacji, latarni, muzeum lub porcie daje premię w złocie"
+     ]
+    },
+    "ar": {
+     "title": "وضع التصوير",
+     "items": [
+      "اضغط P أو اختر التقط صورة في المنزل لتصوير الشاشة؛ يحتفظ الألبوم بما يصل إلى اثنتي عشرة صورة",
+      "أول صورة في ساحة النافورة أو برج الساعة أو البحيرة أو المحطة أو المنارة أو المتحف أو الميناء تمنح مكافأة ذهبية"
+     ]
+    },
+    "nw": {
+     "title": "Telepic way",
+     "items": [
+      "Touch P or choose Get telepic at ministry to snap telescreen; album keeps up to twelve",
+      "One telepic at fountain plaza, clock tower, lake, station, lighthouse, museum or shipplace earns plenty plusgood"
+     ]
+    },
+    "gk": {
+     "title": "사진 방식",
+     "items": [
+      "언론 P 또는 고르다 가지고 가다 하나의 사진 에서 집 에게 snap 그 칸막이; 그 album 유지하다들 위로 에게 twelve",
+      "분수 광장, 시계탑, 호수, 기차역, 등대, 박물관, 항구 앞에서 처음 찍으면 금화 보너스를 받습니다"
+     ]
     }
    }
   },
@@ -1053,6 +2367,36 @@
      "items": [
       "Erstellst du einen Raum oder trittst einem bei, sehen ihn deine Hub-Freunde; tippst du auf eine Einladung, öffnet sich das Spiel direkt in diesem Raum"
      ]
+    },
+    "it": {
+     "title": "Unisciti agli amici dagli inviti",
+     "items": [
+      "Apri o entra in una stanza e gli amici dell'hub possono vederla; toccare un invito apre il gioco ed entra in quella stanza"
+     ]
+    },
+    "pl": {
+     "title": "Dołączaj do znajomych z zaproszeń",
+     "items": [
+      "Otwórz pokój lub dołącz do niego, a znajomi z huba go zobaczą; dotknięcie zaproszenia otwiera grę i dołącza do tego pokoju"
+     ]
+    },
+    "ar": {
+     "title": "انضم إلى الأصدقاء من الدعوات",
+     "items": [
+      "افتح غرفة أو انضم إليها فيراها أصدقاء المركز؛ لمس الدعوة يفتح اللعبة وينضم إلى تلك الغرفة"
+     ]
+    },
+    "nw": {
+     "title": "Enter comrades from invites",
+     "items": [
+      "Open or enter place plus hub comrades can see it; tapping summon opens joyduty plus joins that place"
+     ]
+    },
+    "gk": {
+     "title": "합류하다 친구들 로부터 초대하다들",
+     "items": [
+      "열다 또는 합류하다 하나의 방 그리고 바퀴통 친구들 깡통 보다 그것; tapping 하나의 초대하다 연다 그 사냥감 그리고 합류하다들 저것 방"
+     ]
     }
    }
   },
@@ -1092,6 +2436,36 @@
      "title": "Urheberrechtshinweis",
      "items": [
       "Urheberrechtshinweis (CC BY-NC-ND 4.0) in Spieldatei, Titelbildschirm und Einstellungen ergänzt"
+     ]
+    },
+    "it": {
+     "title": "Avviso di copyright",
+     "items": [
+      "Aggiunto un avviso di copyright (CC BY-NC-ND 4.0) al file del gioco, alla schermata del titolo e alle impostazioni"
+     ]
+    },
+    "pl": {
+     "title": "Informacja o prawach autorskich",
+     "items": [
+      "Dodano informację o prawach autorskich (CC BY-NC-ND 4.0) w pliku gry, na ekranie tytułowym i w ustawieniach"
+     ]
+    },
+    "ar": {
+     "title": "إشعار حقوق النشر",
+     "items": [
+      "إضافة إشعار حقوق النشر (CC BY-NC-ND 4.0) إلى ملف اللعبة وشاشة العنوان والإعدادات"
+     ]
+    },
+    "nw": {
+     "title": "Copyright telescreen",
+     "items": [
+      "Plussed copyright telescreen (CC BY-NC-ND 4.0) to joyduty record, name telescreen plus rules"
+     ]
+    },
+    "gk": {
+     "title": "Copyright 알아차리다",
+     "items": [
+      "더해진 하나의 copyright 알아차리다 (CC 옆에-NC-ND 4.0) 에게 그 사냥감 줄, 제목 칸막이 그리고 환경들"
      ]
     }
    }
@@ -1139,6 +2513,41 @@
       "Obstbäume, Tee, Kakao und andere Bäume brauchen jetzt doppelt so lange zum Reifen",
       "Arbeiter heuerst du zu Hause an, nachdem die Forschung „Arbeiter anheuern“ fertig ist; steht auch in der Hilfe"
      ]
+    },
+    "it": {
+     "title": "Gli alberi crescono più lentamente",
+     "items": [
+      "Alberi da frutto, tè e cacao ora impiegano il doppio del tempo a maturare",
+      "Assumi lavoratori a casa dopo aver completato la ricerca \"Assumi lavoratori\"; indicato anche nella guida"
+     ]
+    },
+    "pl": {
+     "title": "Drzewa rosną wolniej",
+     "items": [
+      "Drzewa owocowe, herbata i kakao dojrzewają teraz dwa razy dłużej",
+      "Zatrudniaj pracowników w domu po ukończeniu badania „Zatrudnij pracowników”; zaznaczone też w przewodniku"
+     ]
+    },
+    "ar": {
+     "title": "الأشجار تنمو أبطأ",
+     "items": [
+      "أشجار الفاكهة والشاي والكاكاو تحتاج الآن ضعف الوقت لتنضج",
+      "وظّف عمالًا في المنزل بعد إنهاء بحث \"وظّف عمالًا\"؛ مذكور أيضًا في الدليل"
+     ]
+    },
+    "nw": {
+     "title": "Trees plusbig slower",
+     "items": [
+      "Fruit trees, tea plus cocoa now get twice as long to ripen",
+      "Hire workers at ministry unbefore finishing \"Hire workers\" research; plus noted in truthbook"
+     ]
+    },
+    "gk": {
+     "title": "나무는 천천히",
+     "items": [
+      "과일나무와 차나무, 카카오 같은 나무류가 다 자라기까지 두 배 걸립니다",
+      "Hire workers 에서 집 후에 끝내하는 중 그 \"Hire workers\" research; 또한 아니했다 안에 그 안내인"
+     ]
     }
    }
   },
@@ -1178,6 +2587,36 @@
      "title": "Markt wie früher",
      "items": [
       "Der Markt am Dorfeingang öffnet wieder das Verkaufsfenster; Restaurantlieferungen gibt es nur in der Restaurantmeile"
+     ]
+    },
+    "it": {
+     "title": "Mercato tornato normale",
+     "items": [
+      "Il mercato alla porta della città apre di nuovo la finestra di vendita; le consegne ai ristoranti sono solo nella via dei ristoranti"
+     ]
+    },
+    "pl": {
+     "title": "Targ znów działa normalnie",
+     "items": [
+      "Targ przy bramie miasta znów otwiera okno sprzedaży; dostawy do restauracji są tylko na ulicy restauracji"
+     ]
+    },
+    "ar": {
+     "title": "عاد السوق إلى طبيعته",
+     "items": [
+      "سوق بوابة البلدة يفتح نافذة البيع من جديد؛ توصيلات المطاعم في شارع المطاعم فقط"
+     ]
+    },
+    "nw": {
+     "title": "Market ungo to good",
+     "items": [
+      "Market at town gate opens selling telescreen re; restaurant deliveries is only at restaurant row"
+     ]
+    },
+    "gk": {
+     "title": "Market 등 에게 정상",
+     "items": [
+      "그 market 에서 그 town 문 연다 그 팔하는 중 창문 다시; restaurant deliveries 이다 오직 에서 그 restaurant 노 젓다"
      ]
     }
    }
