@@ -172,7 +172,7 @@ try{ aurebesh(); }catch(e){}
 function emoji(){ var h=document.documentElement, base='https://frenchfries777mc.github.io/games/'; try{ var me=document.currentScript; if(me&&me.src) base=me.src.replace(/[^\/]*$/,''); }catch(x){}
   var st=document.createElement('style'); st.textContent='html.ff-em:not(.ff-em-ready) body{visibility:hidden}'; (document.head||h).appendChild(st);
   setTimeout(function(){ h.classList.add('ff-em-ready'); },2500);
-  var s=document.createElement('script'); s.src=base+'ff-emoji.js?v=1'; s.onerror=function(){ h.classList.add('ff-em-ready'); }; (document.head||h).appendChild(s); }
+  var s=document.createElement('script'); s.src=base+'ff-emoji.js?v=2'; s.onerror=function(){ h.classList.add('ff-em-ready'); }; (document.head||h).appendChild(s); }
 if(scr()==='em'){ try{ emoji(); }catch(e){} }
 /* ===== 게임 목록 한 곳: 새 게임이 생기면 FF_REG에 한 줄만 넣으면 돼요. hub.js(글쓰기·필터·소식·소식 받기 등), 허브 패치노트 페이지, 위키 목록이 여기서 읽어요.
    notes = 패치노트 파일 주소(site 기준), 없으면 tpl = 게임 페이지 안의 <template id="patchnotes"> 에서 읽어요. ===== */
