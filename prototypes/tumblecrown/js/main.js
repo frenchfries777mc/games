@@ -365,7 +365,7 @@ const nameOf = id => { const m = S.meta.find(x => x.id === id); return m ? m.nam
 function paintBoard(force) {
   const s = S.snap; if (!s) return; const B = $('board');
   if (force || B.children.length !== s.p.length) B.innerHTML = s.p.map(a => { const m = S.meta.find(x => x.id === a[0]) || {}; return '<div class="bd" data-id="' + a[0] + '"><div class="n"><i style="background:' + hex(m.col || 0) + '"></i><span>' + esc(m.name || '') + '</span></div><div class="bar"><u></u></div></div>'; }).join('');
-  for (const el of B.children) { const a = s.p.find(x => x[0] === el.dataset.id); if (!a) continue; const dead = a[6] === ST.out; el.querySelector('u').style.width = dead ? '0%' : Math.max(4, 100 - Math.min(100, a[9] / 1.5)) + '%'; el.classList.toggle('out', dead); el.classList.toggle('hold', s.w === a[0]); el.classList.toggle('me', a[0] === S.me); }
+  for (const el of B.children) { const a = s.p.find(x => x[0] === el.dataset.id); if (!a) continue; const dead = a[6] === ST.out; el.querySelector('u').style.width = dead ? '0%' : Math.max(4, 100 - Math.min(100, a[9])) + '%'; el.classList.toggle('out', dead); el.classList.toggle('hold', s.w === a[0]); el.classList.toggle('me', a[0] === S.me); }
   const n = s.p.filter(a => a[6] !== ST.out).length; $('alive').textContent = s.ph === 'over' ? '' : '남은 사람 ' + n + '명';
 }
 function onEvent(e) {
@@ -375,9 +375,8 @@ function onEvent(e) {
   else if (e.k === 'dash') SFX.play('dash');
   else if (e.k === 'slam') SFX.play('slam');
   else if (e.k === 'drop') SFX.play('drop');
-  else if (e.k === 'ko') { SFX.play(e.id === S.me ? 'fall' : 'ko'); feed((e.by ? nameOf(e.by) + '님이 ' + nameOf(e.id) + '님을 떨어뜨렸어요' : nameOf(e.id) + '님이 떨어졌어요') + ' (남은 ' + e.left + '명)'); if (e.id === S.me) big('탈락!', e.left + '명 남았어요 · ' + (e.left + 1) + '등', 1.6); else if (e.by === S.me) big('떨어뜨림!', '남은 ' + e.left + '명', 0.9); }
-  else if (e.k === 'shrink') { SFX.play('crack'); big('섬이 무너져요!', '바깥 고리가 곧 떨어져요', 1.6); }
-  else if (e.k === 'tfall') { }
+  else if (e.k === 'ko') { SFX.play(e.id === S.me ? 'fall' : 'ko'); feed((e.by ? nameOf(e.by) + '님이 ' + nameOf(e.id) + '님을 쓰러뜨렸어요' : nameOf(e.id) + '님이 쓰러졌어요') + ' (남은 ' + e.left + '명)'); if (e.id === S.me) big('탈락!', e.left + '명 남았어요 · ' + (e.left + 1) + '등', 1.6); else if (e.by === S.me) big('쓰러뜨림!', '남은 ' + e.left + '명', 0.9); }
+    else if (e.k === 'tfall') { }
   else if (e.k === 'go') { SFX.play('go'); big('시작!', '', 0.8); }
   else if (e.k === 'win') SFX.play('win');
 }
@@ -389,8 +388,8 @@ function drawOverlay(s, t) {
     const m = S.meta.find(x => x.id === a[0]) || {}, p = view.project(e.x, e.y + 3.4 + (s.c[3] === a[0] ? 0.9 : 0), e.z);
     const pct = a[9], c = pct < 40 ? '#ffffff' : pct < 90 ? '#ffe08a' : pct < 140 ? '#ff9c4a' : '#ff5a4a';
     oc.font = '700 12px Galmuri, sans-serif'; oc.lineWidth = 4; oc.strokeStyle = '#14203a'; oc.strokeText(m.name || '', p.x, p.y - 14); oc.fillStyle = a[0] === S.me ? '#ffe08a' : '#fff8ea'; oc.fillText(m.name || '', p.x, p.y - 14);
-    // 체력바: 가득 찬 상태에서 맞을수록 줄어요 (150%면 텅 비어요. 줄어들수록 더 멀리 날아가요)
-    const hp = Math.max(0, 1 - pct / 150), bw = 46, bx = p.x - bw / 2, by = p.y - 8;
+    // 체력바: 가득 찬 상태에서 맞을수록 줄고, 다 닳으면 쓰러져요
+    const hp = Math.max(0, 1 - pct / 100), bw = 46, bx = p.x - bw / 2, by = p.y - 8;
     oc.fillStyle = '#14203a'; oc.fillRect(bx - 2, by - 2, bw + 4, 11); oc.fillStyle = '#3a2430'; oc.fillRect(bx, by, bw, 7);
     oc.fillStyle = a[0] !== S.me ? '#e0403a' : hp > 0.6 ? '#7ae07a' : hp > 0.35 ? '#ffe08a' : hp > 0.15 ? '#ff9c4a' : '#ff5a4a'; oc.fillRect(bx, by, Math.round(bw * hp), 7);
     if (a[0] === S.me) { oc.fillStyle = '#ffe08a'; oc.beginPath(); oc.moveTo(p.x - 6, p.y + 6); oc.lineTo(p.x + 6, p.y + 6); oc.lineTo(p.x, p.y + 13); oc.fill(); }
@@ -422,7 +421,7 @@ function showResult(s) {
   const rows = s.p.slice().sort((a, b) => a[10] - b[10]);
   const host = S.net !== 'guest';
   $('result').innerHTML = '<div class="big">' + esc(nameOf(s.w)) + ' 승리!</div><p class="note">' + (s.w === S.me ? '마지막까지 살아남았어요.' : '다음 판에는 끝까지 버텨 보세요.') + '</p>' +
-    '<table><tr><th>순위</th><th>이름</th><th>버틴 시간</th><th>떨어뜨림</th></tr>' +
+    '<table><tr><th>순위</th><th>이름</th><th>버틴 시간</th><th>쓰러뜨림</th></tr>' +
     rows.map(a => '<tr' + (a[0] === S.me ? ' style="color:#ffe08a"' : '') + '><td>' + a[10] + '</td><td>' + esc(nameOf(a[0])) + '</td><td>' + Math.floor(a[19]) + '초</td><td>' + a[11] + '</td></tr>').join('') + '</table>' +
     '<div class="row">' + (host ? '<button class="btn gold" id="againBtn">다시 하기</button><button class="btn" id="roomBtn">대기실로</button>' : '<span class="note">방장이 다음 판을 고르는 중...</span>') + '<button class="btn" id="quitBtn">나가기</button></div>';
   show('sResult'); $('hud').classList.add('on');

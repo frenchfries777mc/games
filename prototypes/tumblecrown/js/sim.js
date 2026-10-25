@@ -49,16 +49,16 @@ function hit(G, a, t, dx, dz, dmg, kb, kind) {
   if (t.st === ST.out || t.inv > 0) return false;
   const L = Math.hypot(dx, dz) || 1; dx /= L; dz /= L;
   t.pct = Math.min(999, t.pct + dmg);
-  const k = kb * (1 + t.pct / 90);
-  t.vx = dx * k; t.vz = dz * k; t.vy = 3 + k * 0.32; t.air = true; t.y = Math.max(t.y, 0.05);
+  const k = kb; // 넉백 없음: 맞아도 밀려나지 않고 잠깐 멈칫만 해요
   if (t.st === ST.charge) t.chg = 0;
   if (t.grab) { const g = G.players.find(q => q.id === t.grab); if (g && g.st === ST.held) setSt(g, ST.stun, 0.3); t.grab = null; }
-  setSt(t, ST.stun, 0.22 + k * 0.022);
+  setSt(t, ST.stun, 0.2);
   // 잠깐 멈칫 (때린 쪽과 맞은 쪽 모두)
   const hs = Math.min(0.14, 0.04 + k * 0.004); t.hs = hs; if (a) a.hs = Math.max(a.hs, hs * 0.8);
   if (a) t.lastHit = { id: a.id, t: G.t };
   if (G.crown.h === t.id && k >= 6) dropCrown(G, t, dx * k * 0.45, dz * k * 0.45);
   ev(G, { k: 'hit', x: t.x, y: t.y + 1, z: t.z, s: Math.round(k), w: kind || (a ? a.cls : ''), id: t.id });
+  if (t.pct >= 100) fallOut(G, t); // 체력이 다 닳으면 쓰러져요
   return true;
 }
 function dropCrown(G, p, vx, vz) {
@@ -72,11 +72,6 @@ export function step(G, dt, inputs) {
   if (G.phase === 'count') { G.cd -= dt; if (G.cd <= 0) { G.phase = 'play'; ev(G, { k: 'go' }); } }
   const live = G.phase === 'play';
   if (live) G.play += dt;
-  // 섬이 바깥 고리부터 무너져요
-  if (live && G.ring > MIN_RING && G.play >= SHRINK_AT + G.shrinkN * SHRINK_EVERY) {
-    G.shrinkN++; for (let i = 0; i < NT; i++) if (TILES[i].ring === G.ring && G.tl[i] !== 2) { G.tl[i] = 1; G.tt[i] = 2.5; G.rg[i] = 0; }
-    G.ring--; ev(G, { k: 'shrink', r: G.ring + 1 });
-  }
   for (let i = 0; i < NT; i++) {
     if (G.tl[i] === 1 && (G.tt[i] -= dt) <= 0) { G.tl[i] = 2; ev(G, { k: 'tfall', i }); if (G.rg[i] > 0) G.rg[i] = 9; }
     else if (G.tl[i] === 2 && G.rg[i] > 0 && (G.rg[i] -= dt) <= 0) { G.rg[i] = 0; if (TILES[i].ring <= G.ring) { G.tl[i] = PILLARS.includes(i) ? 3 : 0; ev(G, { k: 'tgrow', i }); } }
@@ -159,6 +154,8 @@ function stepPlayer(G, p, dt, inp) {
       if (p.st === ST.stun) { const dot = p.vx * nx + p.vz * nz; if (dot < 0) { p.vx -= 1.6 * dot * nx; p.vz -= 1.6 * dot * nz; } }
     }
   }
+  // 방 가장자리는 벽이라 떨어지지 않아요
+  { const BX = NX * CELL + CELL / 2 - 0.7, BZ = NZ * CELL + CELL / 2 - 0.7; p.x = Math.max(-BX, Math.min(BX, p.x)); p.z = Math.max(-BZ, Math.min(BZ, p.z)); }
   // 돌진과 구르기 중 부딪힘
   if (p.st === ST.lunge || p.st === ST.dash) for (const t of G.players) {
     if (t === p || t.st === ST.out || (p.hitSet && p.hitSet.has(t.id))) continue;
@@ -186,16 +183,18 @@ function swing(G, p) {
   // Vowkeep처럼 빠르게 이어 치면 3연타: 공격, 공격, 세 번째는 강타 (기사) / 큰 공격 (나머지). 세게 모아 놓아도 강타예요
   let kind = 0;
   if (c >= 0.45) { kind = 1; p.combo = 0; p.comboT = 0; }
-  else { p.combo = p.comboT > 0 ? ((p.combo || 0) + 1) % 3 : 0; p.comboT = 0.65 + w.swing; if (p.combo === 2) { kind = p.cls === 'knight' ? 1 : 2; dmg = w.dmg[1] * 1.25; kb = w.kb[1] * 1.15; } }
+  else { p.combo = p.comboT > 0 ? ((p.combo || 0) + 1) % 3 : 0; p.comboT = 1.3; if (p.combo === 2) { kind = p.cls === 'knight' ? 1 : 2; dmg = w.dmg[1] * 1.25; kb = w.kb[1] * 1.15; } }
   p.akind = kind; p.cmb = p.combo || 0;
   if (kind === 1 && p.cls === 'knight') { rg = Math.max(rg, 3.4); arc = Math.PI * 2; }
   if (kind === 2) { rg *= 1.25; arc = Math.max(arc, 2.6); }
-  // 조금 앞으로 내딛어요
-  p.vx += p.ax * 3; p.vz += p.az * 3;
+  // 조금 앞으로 내딛어요 (강타·큰 공격은 제자리에서)
+  if (!kind) { p.vx += p.ax * 3; p.vz += p.az * 3; } else { p.vx = p.vz = 0; }
   ev(G, { k: 'swing', id: p.id, c: Math.round(Math.max(c, kind ? 1 : 0) * 10) / 10 });
   // 강타와 큰 공격은 동작이 땅에 닿을 때 맞아요 (Vowkeep과 같은 박자)
-  if (kind) { const at = kind === 1 ? 0.2 : (p.cls === 'priest' ? 0.45 : 0.14); p.stT = w.swing + at; p.pend = { at, dmg, kb, rg, arc }; }
-  else strike(G, p, dmg, kb, rg, arc);
+  // 강타: 0.95초 동작, 땅에 닿는 0.36초에 맞아요. 사제 큰 공격: 0.9초 동작, 0.45초에 맞아요. 나머지 큰 공격은 바로 맞아요 (Vowkeep과 같아요)
+  if (kind === 1) { p.stT = 0.95; p.atkCd = Math.max(p.atkCd, 0.95); p.pend = { at: 0.36, dmg, kb, rg, arc }; }
+  else if (kind === 2 && p.cls === 'priest') { p.stT = 0.9; p.atkCd = Math.max(p.atkCd, 0.9); p.pend = { at: 0.45, dmg, kb, rg, arc }; }
+  else { if (kind === 2) { p.stT = 0.6; p.atkCd = Math.max(p.atkCd, 0.6); } strike(G, p, dmg, kb, rg, arc); }
   p.chg = 0;
 }
 function strike(G, p, dmg, kb, rg, arc) {
@@ -237,9 +236,7 @@ function doCast(G, p) {
     p.pct = Math.max(0, p.pct - 25); ev(G, { k: 'nova', x: p.x, z: p.z, id: p.id });
   } else {
     const cx = p.x + p.ax * 4, cz = p.z + p.az * 4;
-    for (const t of G.players) { if (t === p || t.st === ST.out) continue; const dx = t.x - cx, dz = t.z - cz, d = Math.hypot(dx, dz); if (d < 2 && Math.abs(t.y - p.y) < 1.6) hit(G, p, t, dx || p.ax, dz || p.az, 6, 8, 'curse'); }
-    const ti = tileAt(cx, cz);
-    if (ti >= 0) for (let i = 0; i < NT; i++) if (G.tl[i] === 0 && hexDist(i, ti) <= 1) { G.tl[i] = 1; G.tt[i] = 1.2; G.rg[i] = 1; }
+    for (const t of G.players) { if (t === p || t.st === ST.out) continue; const dx = t.x - cx, dz = t.z - cz, d = Math.hypot(dx, dz); if (d < 2.4 && Math.abs(t.y - p.y) < 1.6) hit(G, p, t, dx || p.ax, dz || p.az, 14, 8, 'curse'); }
     ev(G, { k: 'curse', x: cx, z: cz });
   }
 }
