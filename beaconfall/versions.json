@@ -1,16 +1,27 @@
 {
  "name": "BEACONFALL",
- "latest": "0.3",
- "latestFile": "BEACONFALL-v0.3.html",
+ "latest": "0.4",
+ "latestFile": "BEACONFALL-v0.4.html",
  "updated": "2026-10-25",
  "versions": [
+  {
+   "version": "0.4",
+   "date": "2026-10-25",
+   "file": "BEACONFALL-v0.4.html",
+   "title": "섬의 소리",
+   "summary": "캐는 소리·때리는 소리가 재료와 몬스터마다 달라지고, 우주선 위에서 외계인 조종사와 나누는 대화 엔딩(수락·거절 두 갈래)이 생겼어요. 해먹·통발·샌드박스 업적 잠금도 함께 담겼어요.",
+   "latest": true,
+   "size": 3635062,
+   "sha256": "9dfd35973df6",
+   "build": 109
+  },
   {
    "version": "0.3",
    "date": "2026-10-17",
    "file": "BEACONFALL-v0.3.html",
    "title": "하늘 위의 신호",
    "summary": "사이트 도감, 상자 랜덤 배치, 멀티플레이 참가자 문제 수정, Ctrl+커서 블록 선택, 코드 정리",
-   "latest": true,
+   "latest": false,
    "size": 3611376,
    "sha256": "0c03a6e9fce8",
    "build": 102
