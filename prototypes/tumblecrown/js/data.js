@@ -1,15 +1,13 @@
 // Tumblecrown · © 2026 Frenchfries777 · CC BY-NC-ND 4.0
 // 게임 숫자와 이름
 
-export const BUILD = 3, VERSION = '0.1';
+export const BUILD = 4, VERSION = '0.1';
 
 // 방 바닥: 네모 칸. 바깥 고리부터 무너져요
 export const RING = 6, CELL = 3, NX = 6, NZ = 5;   // 방 바닥: 가로 13칸 x 세로 11칸, 한 칸 3m (Vowkeep 1장 단장의 방을 넓힌 모양)
-export const TARGET = 30;          // 왕관을 이만큼(초) 들고 있으면 승리
-export const SHRINK_AT = 30, SHRINK_EVERY = 11, MIN_RING = 2; // 섬이 바깥부터 무너지는 시점과 간격
-export const KO_PTS = 1;           // 남을 떨어뜨리면 받는 점수
+export const SHRINK_AT = 20, SHRINK_EVERY = 8, MIN_RING = -1; // 섬이 바깥부터 무너지는 시점과 간격
 export const MAX_PLAYERS = 6;
-export const FALL_Y = -14, RESPAWN = 3;
+export const FALL_Y = -14;
 
 // 직업: 기본 공격은 꾹 눌러 모았다가 놓으면 나가요 (모을수록 멀리 날려요)
 // proj: 화살·마법 구슬처럼 날아가는 공격 / sk.kind: 기술 종류 (sim.js)
