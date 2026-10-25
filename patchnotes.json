@@ -3,6 +3,88 @@
   {
    "date": "2026-10-25",
    "build": "",
+   "title": "허브 랭킹에 Dummy Party",
+   "items": [
+    "허브 랭킹에 Dummy Party 칸이 생겼어요. 점수가 높은 순서로 보여요"
+   ],
+   "tr": {
+    "en": {
+     "title": "Dummy Party in the hub ranking",
+     "items": [
+      "The hub ranking has a Dummy Party tab now, ordered by score"
+     ]
+    },
+    "es": {
+     "title": "Dummy Party en el ranking del hub",
+     "items": [
+      "El ranking del hub tiene una pestaña de Dummy Party, ordenada por puntos"
+     ]
+    },
+    "fr": {
+     "title": "Dummy Party dans le classement du hub",
+     "items": [
+      "Le classement du hub a un onglet Dummy Party, trié par score"
+     ]
+    },
+    "de": {
+     "title": "Dummy Party in der Hub-Rangliste",
+     "items": [
+      "Die Hub-Rangliste hat jetzt einen Dummy-Party-Tab, nach Punkten sortiert"
+     ]
+    },
+    "ja": {
+     "title": "ハブのランキングにDummy Party",
+     "items": [
+      "ハブのランキングにDummy Partyのタブができました。スコアが高い順に表示されます"
+     ]
+    },
+    "zh": {
+     "title": "中心排行榜新增 Dummy Party",
+     "items": [
+      "中心排行榜新增了 Dummy Party 标签页，按分数从高到低排列"
+     ]
+    },
+    "pt": {
+     "title": "Dummy Party no ranking do hub",
+     "items": [
+      "O ranking do hub agora tem uma aba de Dummy Party, ordenada por pontos"
+     ]
+    },
+    "ru": {
+     "title": "Dummy Party в рейтинге хаба",
+     "items": [
+      "В рейтинге хаба появилась вкладка Dummy Party, отсортированная по очкам"
+     ]
+    },
+    "tr": {
+     "title": "Hub sıralamasında Dummy Party",
+     "items": [
+      "Hub sıralamasında artık puana göre sıralanan bir Dummy Party sekmesi var"
+     ]
+    },
+    "it": {
+     "title": "Dummy Party nella classifica dell'hub",
+     "items": [
+      "La classifica dell'hub ha ora una scheda Dummy Party, ordinata per punteggio"
+     ]
+    },
+    "pl": {
+     "title": "Dummy Party w rankingu huba",
+     "items": [
+      "Ranking huba ma teraz zakładkę Dummy Party, posortowaną według punktów"
+     ]
+    },
+    "ar": {
+     "title": "Dummy Party في تصنيف المركز",
+     "items": [
+      "أصبح لتصنيف المركز تبويب Dummy Party مرتبًا حسب النقاط"
+     ]
+    }
+   }
+  },
+  {
+   "date": "2026-10-25",
+   "build": "",
    "title": "Vowkeep 갈림길 중간 보스, 주간 원정, 겉모습 꾸미기",
    "items": [
     "Vowkeep b50: 이야기 문장을 ~다, ~이었다 말투로 바꿈 (장 시작·끝 이야기, 옛 기록)",

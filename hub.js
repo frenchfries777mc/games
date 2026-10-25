@@ -388,7 +388,7 @@ async function ranking(){
   if(g!==rkGame) return;
   if(r.error){ box.innerHTML='<div class="cm-e">'+esc(errText(r.error))+'</div>'; return; }
   var rows=r.data||[]; await loadNames(rows.map(function(x){ return x.user_id; }));
-  if(!rows.length){ box.innerHTML='<div class="cm-e">'+(g==='crownenvoy'?'아직 순위가 없어요. 게임을 끝내면 점수가 쌓여요.':'이 게임은 아직 랭킹에 점수를 보내지 않아요.')+'</div>'; return; }
+  if(!rows.length){ box.innerHTML='<div class="cm-e">'+(g==='crownenvoy'||g==='dummyparty'?'아직 순위가 없어요. 게임을 끝내면 점수가 쌓여요.':'이 게임은 아직 랭킹에 점수를 보내지 않아요.')+'</div>'; return; }
   var h='<table class="rkt"><tr><th></th><th>닉네임</th><th>점수</th><th>승리</th><th>판</th></tr>';
   rows.forEach(function(x,i){ h+='<tr class="'+(i<3?'t'+(i+1):'')+(me&&x.user_id===me.id?' me':'')+'"><td>'+(i<3?['🥇','🥈','🥉'][i]:i+1)+'</td><td>'+who(x.user_id)+'</td><td class="pt" data-notr>'+x.points+'</td><td data-notr>'+x.wins+'</td><td data-notr>'+x.games+'</td></tr>'; });
   h+='</table>';
