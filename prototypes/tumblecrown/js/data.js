@@ -3,11 +3,11 @@
 
 import { T } from './tr.js';
 
-export const VERSION = 'v0.1', BUILD = 14;
+export const VERSION = 'v0.1', BUILD = 15;
 
 export const ROLES = {
   knight: {
-    name: T('기사'), color: '#3f6fd0', hp: 285, speed: 6.0,
+    name: T('기사'), color: '#3f6fd0', hp: 300, speed: 6.0,
     atk: { kind: 'melee', range: 2.5, arc: 1.9, dmg: 18, cd: 0.45 },
     skills: [
       { id: 'block', name: T('막기'), key: 'Q', cd: 5, desc: T('1.2초 동안 방패를 들어 앞에서 오는 피해를 70% 줄여요.') },
@@ -18,7 +18,7 @@ export const ROLES = {
     role: T('튼튼하게 버티며 공격·공격·강타로 몰아붙여요.')
   },
   priest: {
-    name: T('사제'), color: '#e8e4ef', hp: 190, speed: 6.0,
+    name: T('사제'), color: '#e8e4ef', hp: 200, speed: 6.0,
     atk: { kind: 'orb', dmg: 11, cd: 0.5, speed: 16 },
     skills: [
       { id: 'heal', name: T('치유'), key: 'Q', cd: 7, desc: T('내 체력을 35 회복해요.') },
@@ -43,26 +43,26 @@ export const ROLES = {
     name: T('바이킹'), color: '#c8873a', hp: 290, speed: 5.6,
     atk: { kind: 'melee', range: 2.6, arc: 2.0, dmg: 20, cd: 0.55 },
     skills: [
-      { id: 'dash', name: T('돌격'), key: 'Q', cd: 6, desc: T('앞으로 돌격하며 부딪힌 상대에게 30 피해를 줘요.') },
-      { id: 'taunt', name: T('포효'), key: 'E', cd: 12, desc: T('4초 동안 받는 피해가 30% 줄어요.') },
+      { id: 'leap', name: T('도약 강타'), key: 'Q', cd: 6, desc: T('앞으로 크게 뛰어올라 내려앉으며 둘레 상대에게 36 피해를 줘요.') },
+      { id: 'bloodlust', name: T('피의 갈증'), key: 'E', cd: 12, desc: T('5초 동안 상대에게 준 피해의 60%만큼 체력을 되찾아요.') },
       { id: 'quake', name: T('지진'), key: 'R', cd: 12, desc: T('땅을 내려쳐 둘레 모두에게 45 피해를 주고 느려지게 해요.') }
     ],
     st: [5, 2, 2, 2], atkTxt: T('도끼 내리치기'),
     role: T('느리지만 도끼 한 방이 무거운 가장 튼튼한 전사예요.')
   },
   mamluk: {
-    name: T('맘루크'), color: '#d0443a', hp: 305, speed: 7.2,
+    name: T('맘루크'), color: '#d0443a', hp: 330, speed: 7.2,
     atk: { kind: 'melee', range: 2.2, arc: 1.8, dmg: 12, cd: 0.3 },
     skills: [
-      { id: 'dash', name: T('질주'), key: 'Q', cd: 5, desc: T('앞으로 질주하며 부딪힌 상대를 베어 30 피해를 줘요.') },
+      { id: 'flurry', name: T('연속 찌르기'), key: 'Q', cd: 4, desc: T('앞쪽을 세 번 연달아 찔러 11씩 피해를 줘요.') },
       { id: 'whirl', name: T('회전 베기'), key: 'E', cd: 8, desc: T('제자리에서 크게 한 바퀴 돌며 둘레 모두를 베어 34 피해를 줘요.') },
-      { id: 'mark', name: T('낙인'), key: 'R', cd: 12, desc: T('조준한 상대에게 6초 동안 표시를 남겨 그 상대가 받는 피해가 50% 늘어요.') }
+      { id: 'blink', name: T('순간 베기'), key: 'R', cd: 10, desc: T('가장 가까운 상대 뒤로 순간이동해 베어 34 피해를 줘요.') }
     ],
     st: [2, 5, 2, 3], atkTxt: T('굽은 칼 연속 베기'),
     role: T('굽은 칼로 빠르게 베고 파고드는 날랜 전사예요.')
   },
   witch: {
-    name: T('마녀'), color: '#a56ad8', hp: 215, speed: 6.2,
+    name: T('마녀'), color: '#a56ad8', hp: 185, speed: 6.2,
     atk: { kind: 'orb', dmg: 10, cd: 0.45, speed: 16 },
     skills: [
       { id: 'potion', name: T('독 물약'), key: 'Q', cd: 7, desc: T('조준한 곳에 물약을 던져 터진 자리 둘레 상대에게 30 피해를 주고 불태워요.') },
@@ -73,12 +73,12 @@ export const ROLES = {
     role: T('마법 구슬과 저주로 멀리서 괴롭혀요.')
   },
   skeleton: {
-    name: T('스켈레톤'), color: '#cfc8b0', hp: 275, speed: 7.0,
+    name: T('스켈레톤'), color: '#cfc8b0', hp: 285, speed: 7.0,
     atk: { kind: 'melee', range: 2.0, arc: 2.0, dmg: 13, cd: 0.32 },
     skills: [
-      { id: 'pierce', name: T('뼈 창'), key: 'Q', cd: 5, desc: T('상대를 꿰뚫고 날아가는 뼈 창을 던져요. 45 피해.') },
-      { id: 'dash', name: T('뼈 돌진'), key: 'E', cd: 6, desc: T('앞으로 뛰어들며 부딪힌 상대에게 30 피해를 줘요.') },
-      { id: 'rally', name: T('광란'), key: 'R', cd: 15, desc: T('7초 동안 공격력과 속도가 30% 올라요.') }
+      { id: 'scatter', name: T('뼈 흩어지기'), key: 'Q', cd: 6, desc: T('뒤로 빠지며 있던 자리에 뼛조각을 터뜨려 26 피해를 줘요.') },
+      { id: 'fan', name: T('뼈 창 세 갈래'), key: 'E', cd: 6, desc: T('뼈 창 세 대를 부채꼴로 던져요. 하나에 22 피해.') },
+      { id: 'bonestorm', name: T('뼈 폭풍'), key: 'R', cd: 14, desc: T('1.4초 동안 몸을 돌리며 둘레를 계속 쳐 13씩 피해를 줘요.') }
     ],
     st: [2, 5, 1, 4], atkTxt: T('뼈 몽둥이'),
     role: T('가볍고 빠른 뼈다귀예요. 몸이 약하니 파고들었다 빠져요.')
