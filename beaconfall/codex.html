@@ -317,7 +317,7 @@ function calcPlan(id,qty){
 }
 function renderCalc(){
  const q=document.getElementById('qc').value.trim().toLowerCase();
- const list=Object.keys(MADE).filter(id=>C.items[id]&&(!q||nm(id).toLowerCase().includes(q)||C.items[id].n.includes(q))).slice(0,q?60:24);
+ const list=Object.keys(MADE).filter(id=>C.items[id]&&(!q||nm(id).toLowerCase().includes(q)||C.items[id].n.includes(q)));   // 만들 수 있는 아이템을 전부 보여줘요
  document.getElementById('cgrid').innerHTML=list.map(id=>`<button class="card${id===CI?' sel':''}" data-calc="${esc(id)}"><img src="${ic(id)}" alt="" loading="lazy">${esc(nm(id))}</button>`).join('');
  const box=document.getElementById('cres');
  if(!CI){box.innerHTML=`<p class="none" style="margin-top:14px">${esc(t('c_pick'))}</p>`;return;}
