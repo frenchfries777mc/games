@@ -1,12 +1,12 @@
 // Tumblecrown · © 2026 Frenchfries777 · CC BY-NC-ND 4.0
 // 게임 숫자와 이름
 
-export const BUILD = 2, VERSION = '0.1';
+export const BUILD = 3, VERSION = '0.1';
 
-// 섬: 육각 타일, 가운데에서 RING칸까지
-export const RING = 5, HEX = 1.5;
+// 방 바닥: 네모 칸. 바깥 고리부터 무너져요
+export const RING = 6, CELL = 3, NX = 6, NZ = 5;   // 방 바닥: 가로 13칸 x 세로 11칸, 한 칸 3m (Vowkeep 1장 단장의 방을 넓힌 모양)
 export const TARGET = 30;          // 왕관을 이만큼(초) 들고 있으면 승리
-export const SHRINK_AT = 40, SHRINK_EVERY = 14, MIN_RING = 2; // 섬이 바깥부터 무너지는 시점과 간격
+export const SHRINK_AT = 30, SHRINK_EVERY = 11, MIN_RING = 2; // 섬이 바깥부터 무너지는 시점과 간격
 export const KO_PTS = 1;           // 남을 떨어뜨리면 받는 점수
 export const MAX_PLAYERS = 6;
 export const FALL_Y = -14, RESPAWN = 3;

@@ -30,12 +30,12 @@ function sizeOv() { const d = Math.min(2, devicePixelRatio || 1); ov.width = inn
 sizeOv();
 
 // 로비 뒤 장면: 섬 가운데 왕관을 둘러싼 세 싸움꾼
-const DEMO = [{ id: 'd0', col: COLORS[0].c, cls: 'knight', x: -3.4, z: 1.6 }, { id: 'd1', col: COLORS[1].c, cls: 'witch', x: 3.4, z: 1.2 }, { id: 'd2', col: COLORS[2].c, cls: 'viking', x: -0.4, z: 4.2 }, { id: 'd3', col: COLORS[3].c, cls: 'skeleton', x: 5.8, z: 4.6 }, { id: 'd4', col: COLORS[4].c, cls: 'hunter', x: -6.2, z: 4.2 }];
+const DEMO = [{ id: 'd0', col: COLORS[0].c, cls: 'knight', x: -4, z: 1.6 }, { id: 'd1', col: COLORS[1].c, cls: 'witch', x: 4, z: 1.2 }, { id: 'd2', col: COLORS[2].c, cls: 'viking', x: -0.4, z: 4.4 }, { id: 'd3', col: COLORS[3].c, cls: 'skeleton', x: 8, z: 5.2 }, { id: 'd4', col: COLORS[4].c, cls: 'hunter', x: -8.4, z: 4.6 }];
 function demoScene() { view.setPlayers(DEMO); view.ring = undefined; view.resetTiles(); view.fit(true); S.demoT = 0; }
 const DEMO_TL = Array.from({ length: NT }, (c, i) => PILLARS.includes(i) ? '3' : '0').join('');
 function demoSnap(t) {
   const ph = (t % 6) / 6;
-  return { ring: 5, tl: DEMO_TL, c: [0, 1.6, 0.6, null],
+  return { ring: 6, tl: DEMO_TL, c: [0, 1.6, 0.6, null],
     p: DEMO.map((d, i) => { const ch = i === 0 && ph > 0.55 && ph < 0.85; const sw = i === 0 && ph >= 0.85 && ph < 0.95;
       return [d.id, d.x, 0, d.z, -d.x * 0.3, 1, ch ? ST.charge : sw ? ST.swing : ST.idle, sw ? (ph - 0.85) * 6 : 0, ch ? Math.min(1, (ph - 0.55) / 0.25) : 0, 0, 0, 0, 0, 0, -d.x * 0.3, 1]; }) };
 }
