@@ -243,3 +243,10 @@ patchnotes.json | v375 items[4] | 레이드 역할 보너스 25 → 15 | build 3
 patchnotes.json | v375 items[5] | 랜덤 상자 골드 10~50 → 30~50 | build 375 | 2026-10-25
 patchnotes.json | v376 title | 폐허 도시 발판 수정 | build 376 | 2026-10-25
 patchnotes.json | v376 items[0] | 폐허 도시에서 올라갈 수 없던 발판 높이 수정(양쪽 아래 발판과 가운데 위 발판) | build 376 | 2026-10-25
+Stickseum-v0.8.html | puppeteer weapon desc | 데미지 9 · 쿨타임 0.6초 · 빠르게 날아가는 바늘 · 궁극기로 상대를 조종해 싸움 | build 377 | 2026-10-25
+Stickseum-v0.8.html | puppeteer skill desc | (실 하나당 최대 30) 추가된 바느질 설명 | build 377 | 2026-10-25
+patchnotes.json | v377 title | 미니맵 삭제와 인형술사 조정 | build 377 | 2026-10-25
+patchnotes.json | v377 items[0] | 깃발 뺏기·황금 쟁탈 미니맵 삭제 | build 377 | 2026-10-25
+patchnotes.json | v377 items[1] | 인형술사 일반 공격 데미지 10 → 9 | build 377 | 2026-10-25
+patchnotes.json | v377 items[2] | 인형술사 바느질 피해 공유 실 하나당 최대 30 | build 377 | 2026-10-25
+patchnotes.json | v377 items[3] | 인형술사 밸런스 다시 측정 | build 377 | 2026-10-25
