@@ -386,3 +386,4 @@ crownenvoy/CrownEnvoy-v0.4.html | 전신망 (정치 탭 카드) | "📡 전신�
 - 업적 조건과 접속 표시줄 (제목)
 - 허브 업적 "고른 실력"과 "세 개의 왕관"이 아무 게임 3개에서 달성하면 되도록 바뀌었어요
 - "지금 N명 접속 중" 표시줄이 Educations와 Tools 사이트에도 나와요
+- ff-auth.js + beaconfall/BEACONFALL-v0.4.html b104 | 계정 메뉴 '🏆 도전과제' 버튼 (ko/en만, 다른 언어는 영어) | 2026-10-25

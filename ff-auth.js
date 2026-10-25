@@ -15,12 +15,12 @@ var SB_LIB='https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/s
 var me=document.currentScript, BASE=(me&&me.src)?me.src.replace(/[^\/]*$/,''):'https://frenchfries777mc.github.io/games/';
 
 var L={
- ko:{login:'로그인',signup:'계정 만들기',logout:'로그아웃',card:'🪪 프로필 카드',id:'아이디 (영문/숫자, 3~16자)',pw:'비밀번호 (6자 이상)',busy:'처리 중...',
+ ko:{login:'로그인',signup:'계정 만들기',logout:'로그아웃',card:'🪪 프로필 카드',ach:'🏆 도전과제',id:'아이디 (영문/숫자, 3~16자)',pw:'비밀번호 (6자 이상)',busy:'처리 중...',
      title:'Frenchfries777 계정',sub:'Stickseum, Crown Envoy, Beaconfall 모두 같은 계정이에요. 여기서 로그인하면 게임에서도 로그인된 채로 시작해요.',
      badId:'아이디는 영문/숫자/밑줄 3~16자로 해주세요.',badPw:'비밀번호는 6자 이상으로 해주세요.',taken:'이미 있는 아이디예요.',cred:'아이디 또는 비밀번호가 틀렸어요.',
      rate:'로그인을 너무 많이 시도했어요. 몇 분 뒤에 다시 해 주세요.',net:'서버에 연결하지 못했어요. 인터넷을 확인해 주세요.',fail:'로그인하지 못했어요.',
      noAcc:'계정이 없나요?',hasAcc:'이미 계정이 있나요?',close:'닫기',hi:'{0}님',hub:'허브',hubT:'Frenchfries777 허브로 돌아가기'},
- en:{login:'Log in',signup:'Create account',logout:'Log out',card:'🪪 Profile card',id:'Username (letters/numbers, 3–16)',pw:'Password (6+ characters)',busy:'Working...',
+ en:{login:'Log in',signup:'Create account',logout:'Log out',card:'🪪 Profile card',ach:'🏆 Achievements',id:'Username (letters/numbers, 3–16)',pw:'Password (6+ characters)',busy:'Working...',
      title:'Frenchfries777 account',sub:'Stickseum, Crown Envoy and Beaconfall share one account. Log in here and the games start logged in too.',
      badId:'Use 3–16 letters, numbers or underscores.',badPw:'Use at least 6 characters.',taken:'That username is taken.',cred:'Wrong username or password.',
      rate:'Too many tries. Please wait a few minutes.',net:'Could not reach the server. Check your connection.',fail:'Could not log in.',
@@ -296,11 +296,12 @@ function paint(){
     var s=slots[i]; s.setAttribute('data-notr','');
     if(!user){ s.innerHTML=hubLink(s)+'<span class="ffa-wrap"><button type="button" class="ffa-btn"><img class="ffa-ic" src="https://frenchfries777mc.github.io/games/hubicons/account.svg" alt="" width="20" height="20" draggable="false"> '+esc(T.login)+'</button></span>'; s.querySelector('button').onclick=function(){ openLogin(); }; continue; }
     s.innerHTML=hubLink(s)+'<span class="ffa-wrap"><button type="button" class="ffa-chip" aria-haspopup="true"><img class="ffa-ic" src="https://frenchfries777mc.github.io/games/hubicons/account.svg" alt="" width="20" height="20" draggable="false"> <span>'+esc(fmt(T.hi,nick()))+'</span><i class="ffa-badge" style="display:none;font-style:normal"></i><i class="ffa-badge ffa-nb ffa-nbc" style="display:none;font-style:normal"></i> ▾</button>'+
-      '<span class="ffa-menu" role="menu"><button type="button" data-a="friends">'+esc(F.friends)+'<span class="ffa-badge" style="display:none"></span></button><button type="button" data-a="card">'+esc(T.card)+'</button><button type="button" data-a="acct">'+esc(AL().menu)+'</button><button type="button" data-a="notes" class="ffa-ph">🔔 '+esc(N.bell)+'<span class="ffa-badge ffa-nb" style="display:none"></span></button><button type="button" data-a="set" class="ffa-ph">'+esc('⚙️ '+S_.set)+'</button><button type="button" data-a="out">'+esc(T.logout)+'</button></span></span>';
+      '<span class="ffa-menu" role="menu"><button type="button" data-a="friends">'+esc(F.friends)+'<span class="ffa-badge" style="display:none"></span></button><button type="button" data-a="card">'+esc(T.card)+'</button><button type="button" data-a="ach" style="display:none">'+esc(T.ach||'🏆 Achievements')+'</button><button type="button" data-a="acct">'+esc(AL().menu)+'</button><button type="button" data-a="notes" class="ffa-ph">🔔 '+esc(N.bell)+'<span class="ffa-badge ffa-nb" style="display:none"></span></button><button type="button" data-a="set" class="ffa-ph">'+esc('⚙️ '+S_.set)+'</button><button type="button" data-a="out">'+esc(T.logout)+'</button></span></span>';
     (function(s){ var menu=s.querySelector('.ffa-menu');
-      s.querySelector('.ffa-chip').onclick=function(e){ e.stopPropagation(); var open=menu.style.display==='block'; closeMenus(); menu.style.display=open?'none':'block'; };
+      s.querySelector('.ffa-chip').onclick=function(e){ e.stopPropagation(); var open=menu.style.display==='block'; closeMenus(); var ab=menu.querySelector('[data-a=ach]'); if(ab) ab.style.display=(typeof window.ffOpenAch==='function')?'':'none'; menu.style.display=open?'none':'block'; };
       menu.querySelector('[data-a=friends]').onclick=function(){ closeMenus(); openFriends(); };
       menu.querySelector('[data-a=card]').onclick=function(){ closeMenus(); openProfile(); };
+      menu.querySelector('[data-a=ach]').onclick=function(){ closeMenus(); try{ if(typeof window.ffOpenAch==='function') window.ffOpenAch(); }catch(e){} };   // 게임이 window.ffOpenAch를 정하면 도전과제 버튼이 보여요
       menu.querySelector('[data-a=acct]').onclick=function(){ closeMenus(); location.href=SETURL+'#account'; };
       menu.querySelector('[data-a=set]').onclick=function(){ closeMenus(); location.href=SETURL; };
       menu.querySelector('[data-a=notes]').onclick=function(e){ e.stopPropagation(); closeMenus(); var w=s.querySelector('.ffa-wrap'), pn=w&&w.querySelector('.ffa-notes'); if(!pn) return; pn.style.display='block'; paintNotes(pn); markRead(); };
