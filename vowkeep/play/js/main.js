@@ -120,7 +120,7 @@ function myName() { try { const n = window.FFAuth && FFAuth.user() && FFAuth.nic
 function paintWho() {
   const lv = roleLevel(SAVE.xp[SAVE.role] || 0);
   $('who').innerHTML = '';
-  const s = document.createElement('span'); s.className = 'tx'; s.textContent = (loggedIn() ? myName() : T('로그인 안 함')) + ' · ' + ROLES[SAVE.role].name + ' Lv ' + lv + ' · ' + T('명예 {0}', SAVE.honor); $('who').appendChild(s);
+  const s = document.createElement('span'); s.className = 'tx'; s.textContent = (loggedIn() ? myName() : T('로그인 안 함')) + ' · ' + ROLES[SAVE.role].name + ' Lv ' + lv + ' · ' + T('vC {0}', SAVE.honor); $('who').appendChild(s);
   if (!loggedIn() && window.FFAuth) { const b = document.createElement('button'); b.textContent = T('로그인'); b.onclick = () => { try { FFAuth.openLogin(); } catch (e) { } }; $('who').appendChild(b); }
 }
 // 계정 연동: 플레이 기록과 업적을 Frenchfries777 계정 프로필로 보내요
@@ -128,6 +128,14 @@ let ffMarked = '', ffAchT = 0;
 function ffProfile() {
   if (window.FFProfile) return Promise.resolve(true);
   return new Promise(res => { const s = document.createElement('script'); s.src = 'https://frenchfries777mc.github.io/games/ff-profile.js?v=20261024b'; s.onload = () => res(!!window.FFProfile); s.onerror = () => res(false); document.head.appendChild(s); });
+}
+// 허브 코인 → vC: 허브에서 바꾼 코인을 로그인할 때 한 번씩 받아 와요 (1코인 = 20vC)
+async function claimVC() {
+  try {
+    const sb = window.FFAuth && FFAuth.client && FFAuth.client(), u = window.FFAuth && FFAuth.user(); if (!sb || !u) return;
+    const r = await sb.rpc('ff_coin_claim', { p_game: 'vowkeep' }), n = r && r.data | 0; if (!n || r.error) return;
+    SAVE.honor += n; save(); toast(T('허브 코인에서 바꾼 vC {0}을 받았어요.', n), 4200); paintWho();
+  } catch (e) { }
 }
 function ffSync() {
   clearTimeout(ffAchT); ffAchT = setTimeout(async () => {
@@ -139,7 +147,7 @@ function ffSync() {
     } catch (e) { }
   }, 1500);
 }
-if (window.FFAuth) { FFAuth.ready.then(() => { paintWho(); autoJoin(); ffSync(); }); FFAuth.onChange(() => { paintWho(); ffSync(); }); }
+if (window.FFAuth) { FFAuth.ready.then(() => { paintWho(); autoJoin(); ffSync(); claimVC(); }); FFAuth.onChange(() => { paintWho(); ffSync(); claimVC(); }); }
 paintWho();
 function needLogin() { if (!window.FFAuth) return false; if (loggedIn()) return false; homeMsg(T('친구와 원정은 Frenchfries777 계정으로 로그인해야 해요.')); try { FFAuth.openLogin(); } catch (e) { } return true; }
 function hubRoom(on) { try { if (window.FFAuth && FFAuth.setRoom) FFAuth.setRoom(on && S.code ? { game: 'vowkeep', code: S.code, path: 'vowkeep/play/index.html' } : null); } catch (e) { } }
@@ -171,7 +179,7 @@ function paintCos() {
     const C = COSMETICS[k], row = document.createElement('div'); row.className = 'cosrow'; row.innerHTML = `<b>${C.name}</b>`;
     C.items.forEach(it => {
       const key = k + ':' + it.id, own = !it.cost || SAVE.cos.own[key], on = (SAVE.cos.on[k] || '') === it.id;
-      const b = document.createElement('button'); b.className = 'btn' + (on ? ' gold' : ''); b.textContent = it.name + (own ? '' : ' (' + T('명예 {0}', it.cost) + ')'); b.disabled = !own && SAVE.honor < it.cost;
+      const b = document.createElement('button'); b.className = 'btn' + (on ? ' gold' : ''); b.textContent = it.name + (own ? '' : ' (' + T('vC {0}', it.cost) + ')'); b.disabled = !own && SAVE.honor < it.cost;
       b.onclick = () => {
         if (!own) { if (SAVE.honor < it.cost) return; SAVE.honor -= it.cost; SAVE.cos.own[key] = 1; SFX.play('bless'); }
         SAVE.cos.on[k] = it.id; save(); view.cos = SAVE.cos.on; try { view.refreshHeroes(); } catch (e) { } paintRoles(); paintWho();
@@ -183,16 +191,16 @@ function paintCos() {
 }
 function paintRoles() {
   paintCos();
-  $('honorNow').textContent = T('지금 명예 {0}', SAVE.honor);
+  $('honorNow').textContent = T('지금 vC {0}', SAVE.honor);
   const box = $('roleCards'); box.innerHTML = '';
   ROLE_IDS.forEach(r => {
     const R = ROLES[r], xp = SAVE.xp[r] || 0, lv = roleLevel(xp), g = gearOf(r), cl = SAVE.clears[r] ? ' · ' + T('{0}장까지 완료', SAVE.clears[r]) : '';
     const d = document.createElement('div'); d.className = 'rc';
-    d.innerHTML = `<img class="pt" alt="" src="${view.portrait(r)}"><h3 style="color:${R.color === '#e8e4ef' ? '#efe3c8' : R.color}">${R.name}</h3><div class="lv">Lv ${lv} (${T('명예 {0} 받음', xp)})${cl}</div><div class="note">${R.role} ${T('체력 {0}', R.hp)}</div><ul>${R.skills.map(s => `<li><b>${s.key} ${s.name}</b>: ${s.desc}</li>`).join('')}</ul>`;
+    d.innerHTML = `<img class="pt" alt="" src="${view.portrait(r)}"><h3 style="color:${R.color === '#e8e4ef' ? '#efe3c8' : R.color}">${R.name}</h3><div class="lv">Lv ${lv} (${T('vC {0} 받음', xp)})${cl}</div><div class="note">${R.role} ${T('체력 {0}', R.hp)}</div><ul>${R.skills.map(s => `<li><b>${s.key} ${s.name}</b>: ${s.desc}</li>`).join('')}</ul>`;
     const gr = document.createElement('div'); gr.className = 'gear';
     [['weapon', '무기'], ['armor', '갑옷']].forEach(([k, lab]) => {
       const t = g[k] | 0, sp = document.createElement('span'); sp.textContent = T(lab) + ': ' + T(GEAR_TIERS[t] + ' ' + lab); gr.appendChild(sp);
-      if (t < 2) { const b = document.createElement('button'); b.className = 'btn'; b.textContent = T(GEAR_TIERS[t + 1] + ' ' + lab) + ' (' + T('명예 {0}', GEAR_COST[t + 1]) + ')'; b.disabled = SAVE.honor < GEAR_COST[t + 1]; b.onclick = () => { if (SAVE.honor < GEAR_COST[t + 1]) return; SAVE.honor -= GEAR_COST[t + 1]; g[k] = t + 1; SAVE.gear[r] = g; save(); SFX.play('bless'); paintRoles(); }; gr.appendChild(b); }
+      if (t < 2) { const b = document.createElement('button'); b.className = 'btn'; b.textContent = T(GEAR_TIERS[t + 1] + ' ' + lab) + ' (' + T('vC {0}', GEAR_COST[t + 1]) + ')'; b.disabled = SAVE.honor < GEAR_COST[t + 1]; b.onclick = () => { if (SAVE.honor < GEAR_COST[t + 1]) return; SAVE.honor -= GEAR_COST[t + 1]; g[k] = t + 1; SAVE.gear[r] = g; save(); SFX.play('bless'); paintRoles(); }; gr.appendChild(b); }
     });
     d.appendChild(gr);
     const pick = document.createElement('button'); pick.className = 'btn' + (SAVE.role === r ? ' gold' : ''); pick.style.marginTop = '8px'; pick.textContent = SAVE.role === r ? T('기본 역할') : T('기본 역할로 정하기');
@@ -221,12 +229,12 @@ function weeklyDone() {
   const W = S.snap.wk, t = S.snap.wt || 0, r = Object.assign({}, weeklyRec(W.id)), first = !r.paid; const old = r.best || 0;
   r.best = old ? Math.min(old, t) : t; r.tries = (r.tries | 0) + 1; r.paid = 1; SAVE.wkRec[W.id] = r;
   const ks = Object.keys(SAVE.wkRec).sort(); while (ks.length > 12) delete SAVE.wkRec[ks.shift()];
-  if (first) SAVE.honor += 60; save();
+  if (first) SAVE.honor += 300; save();
   return { t, best: r.best, first, rec: !old || t < old, W };
 }
 function showWeeklyResult(h) {
   S.resultShown = true; const R = weeklyDone(), cn = R.W.curses.map(c => CURSES.find(x => x.id === c).name).join(', ');
-  $('result').innerHTML = `<div class="big">${T('주간 원정 완료')}</div><p class="note">${CH.title}</p><p class="note">${T('이번 주 저주: {0}', cn)}</p><p>${T('걸린 시간 {0}', '<b style="color:#ffd36b">' + fmtT(R.t) + '</b>')}${R.rec ? ' · ' + T('새 최고 기록') : ''} · ${T('내 최고 {0}', fmtT(R.best))}</p><p>${T('받은 명예 {0}', '<b style="color:#ffd36b">' + (h + (R.first ? 60 : 0)) + '</b>')}${R.first ? ' ' + T('(첫 완주 보너스 60 포함)') : ''} · ${T('지금 명예 {0}', SAVE.honor)}</p><div class="row"><button class="btn gold" id="resBack">${T('로비로')}</button></div>`;
+  $('result').innerHTML = `<div class="big">${T('주간 원정 완료')}</div><p class="note">${CH.title}</p><p class="note">${T('이번 주 저주: {0}', cn)}</p><p>${T('걸린 시간 {0}', '<b style="color:#ffd36b">' + fmtT(R.t) + '</b>')}${R.rec ? ' · ' + T('새 최고 기록') : ''} · ${T('내 최고 {0}', fmtT(R.best))}</p><p>${T('받은 vC {0}', '<b style="color:#ffd36b">' + (h + (R.first ? 300 : 0)) + '</b>')}${R.first ? ' ' + T('(첫 완주 보너스 300 포함)') : ''} · ${T('지금 vC {0}', SAVE.honor)}</p><div class="row"><button class="btn gold" id="resBack">${T('로비로')}</button></div>`;
   $('resBack').onclick = () => endToLobby('');
   setHud(false); show('sResult');
 }
@@ -238,7 +246,7 @@ function paintChapters() {
   $('chRow').innerHTML = (pick ? `<div class="chpick">${CHAPTERS.slice(0, top + 1).map((ch, i) => `<button class="btn${i === S.chSel && !S.wk ? ' gold' : ''}" data-ch="${i}">${T('{0}장', i + 1)}</button>`).join('')}${dOpen ? `<button class="btn${deep ? ' gold' : ''}" data-ch="${DEEP_I}">${T('끝없는 심연')}</button>` : ''}</div>` : '') + story;
   { const W = weekInfo(), cn = W.curses.map(c => CURSES.find(x => x.id === c).name).join(' · '), rec = weeklyRec(W.id), open = (SAVE.chMax | 0) >= W.ch;
     const wkS = `<div class="story"><b>${T('주간 원정 · {0}', esc(CHAPTERS[W.ch].title))}</b><small>${T('이번 주 저주: {0}', cn)}</small></div>`, wk = S.net === 'guest' ? (S.wk ? `<div class="story"><b>${T('주간 원정 · {0}', esc(CHAPTERS[S.chSel].title))}</b><small>${T('이번 주 저주: {0}', cn)}</small></div>` : '')
-      : (S.wk ? wkS : '') + `<div class="chpick"><button class="btn${S.wk ? ' gold' : ''}" id="wkBtn"${open ? '' : ' disabled'}>${T('주간 원정 · {0}장 · 저주 {1}', W.ch + 1, cn)}</button></div><small class="note">${open ? T('이번 주({0}) 같은 장, 같은 저주로 걸린 시간을 겨뤄요.', weekLabel(W.id)) + ' ' + (rec.best ? T('내 최고 {0}', fmtT(rec.best)) : T('아직 기록이 없어요')) + (rec.paid ? '' : ' · ' + T('첫 완주 명예 +60')) : T('{0}장까지 깨면 열려요.', W.ch + 1)}</small>`;
+      : (S.wk ? wkS : '') + `<div class="chpick"><button class="btn${S.wk ? ' gold' : ''}" id="wkBtn"${open ? '' : ' disabled'}>${T('주간 원정 · {0}장 · 저주 {1}', W.ch + 1, cn)}</button></div><small class="note">${open ? T('이번 주({0}) 같은 장, 같은 저주로 걸린 시간을 겨뤄요.', weekLabel(W.id)) + ' ' + (rec.best ? T('내 최고 {0}', fmtT(rec.best)) : T('아직 기록이 없어요')) + (rec.paid ? '' : ' · ' + T('첫 완주 vC +300')) : T('{0}장까지 깨면 열려요.', W.ch + 1)}</small>`;
     $('chRow').insertAdjacentHTML('beforeend', wk);
     const wb = $('wkBtn'); if (wb) wb.onclick = () => { SFX.play('click'); S.wk = !S.wk; if (S.wk) S.chSel = W.ch; else S.chSel = chOpen(); paintChapters(); hostLobby(); };
   }
@@ -640,7 +648,7 @@ function onEvent(e) {
     case 'fire': SFX.play('fire'); break;
     case 'snap': SFX.play('clang'); break;
     case 'disarm': toast(T('종자가 바닥 함정을 해체했어요.')); SFX.play('click'); break;
-    case 'chest': toast(T('상자에서 명예 {0}을 얻었어요.', e.h || 25)); SFX.play('clear'); view.rise(e.x, e.z, 0xffd36b, 16, 1.2, 1, 6); break;
+    case 'chest': toast(T('상자에서 vC {0}을 얻었어요.', e.h || 25)); SFX.play('clear'); view.rise(e.x, e.z, 0xffd36b, 16, 1.2, 1, 6); break;
     case 'secret': { // 금 간 벽이 무너지고 비밀 방이 열려요
       view.shatter(e.x, e.z, [0x6e6a74, 0x58545e, 0x8a8494, 0x4a4650], 40, true); view.burst(e.x, 1.5, e.z, 0xbcae94, 30, 8, 0.8, 0.2); view.shock(e.x, e.z, 5, 0xffe08a, 0.5); view.flash(e.x, e.z, 0xffe08a, 200);
       view.shake = Math.max(view.shake, 1.2); SFX.play('slam'); bigMsg(T('비밀 방을 찾았어요'), T('무너진 벽 너머에 옛 기사단의 방이 있어요'), 3200); mini.dirty = true; break; }
@@ -679,7 +687,7 @@ function onEvent(e) {
     case 'escfail': bigMsg(T('무너진 돌에 길이 막혔어요'), T('보스 방에서 다시 달려요'), 3000); SFX.play('wipe'); break;
     case 'escaped': bigMsg(T('무너지는 곳을 빠져나왔어요'), '', 2400); SFX.play('clear'); break;
     case 'fork': bigMsg(MIDB[chapterIndex()][e.k], e.k ? T('부하를 부르는 중간 보스예요') : T('돌진하는 중간 보스예요'), 2400); SFX.play('clear'); view.column(e.x, e.z, e.k ? 0x6ab0ff : 0xff6a50, 1.6); break;
-    case 'mbkill': bigMsg(T('중간 보스 처치'), T('명예 30'), 2000); SFX.play('clear'); view.rise(e.x, e.z, 0xffd36b, 24, 2, 1.2, 6); break;
+    case 'mbkill': bigMsg(T('중간 보스 처치'), T('vC 30'), 2000); SFX.play('clear'); view.rise(e.x, e.z, 0xffd36b, 24, 2, 1.2, 6); break;
     case 'altar': bigMsg(T('제단의 축복'), T('축복을 하나 골라요'), 2200); SFX.play('clear'); view.column(e.x, e.z, 0xffe08a, 1.2); break;
     case 'checkpoint': bigMsg(T('모닥불에 불을 붙였어요'), T('모두 쓰러지면 여기서 다시 시작해요'), 3000); SFX.play('door'); break;
     case 'wake': if (!S.wakeT || performance.now() - S.wakeT > 1500) { S.wakeT = performance.now(); SFX.play('spawn'); } view.burst(e.x, 0.3, e.z, 0x6a5a7a, 6, 3, 0.6, 0.12); break;
@@ -903,7 +911,7 @@ function drawOverlay(dt) {
   for (const n of S.nums) { n.t += dt; const s = view.project(n.x, n.y + n.t * 2.2, n.z); oc.globalAlpha = Math.max(0, 1 - n.t / 0.9); oc.font = 'bold ' + Math.round(18 * n.sc) + 'px Galmuri, system-ui'; oc.lineWidth = 4; oc.strokeStyle = '#140f18'; oc.strokeText(n.v, s.x, s.y); oc.fillStyle = n.col; oc.fillText(n.v, s.x, s.y); }
   oc.globalAlpha = 1; S.nums = S.nums.filter(n => n.t < 0.9);
 }
-// 장을 깼을 때: 명예와 이야기 진행을 저장해요 (한 장에 한 번)
+// 장을 깼을 때: vC와 이야기 진행을 저장해요 (한 장에 한 번)
 function clearChapter() {
   if (S.cleared) return S.lastH || 0; S.cleared = true;
   const h = S.lastH = awardHonor() || 0, me = myP(), ci = chapterIndex();
@@ -922,21 +930,21 @@ function afterOutro() {
   if (S.snap && S.snap.wk) { showWeeklyResult(h); return; }
   if (CH.deep) { // 다음 층: 저주가 하나 더 쌓여요
     S.resultShown = true;
-    if (S.net === 'guest') { bigMsg(T('{0} 완료', CH.title), T('명예 {0}', h) + ' · ' + T('방장과 함께 더 내려가요'), 0); return; }
+    if (S.net === 'guest') { bigMsg(T('{0} 완료', CH.title), T('vC {0}', h) + ' · ' + T('방장과 함께 더 내려가요'), 0); return; }
     const c = CURSES[Math.floor(Math.random() * CURSES.length)]; DEEP.floor++; DEEP.curses.push(c.id);
-    toast(T('{0}층 완료', DEEP.floor - 1) + ' · ' + T('명예 {0}', h) + ' · ' + T('새 저주: {0}', c.name + ' (' + c.desc + ')'), 4200);
+    toast(T('{0}층 완료', DEEP.floor - 1) + ' · ' + T('vC {0}', h) + ' · ' + T('새 저주: {0}', c.name + ' (' + c.desc + ')'), 4200);
     S.chSel = DEEP_I; beginGame(S.G); return;
   }
   if (ci + 1 >= CHAPTERS.length) { showResult(); return; }
   S.resultShown = true;
-  if (S.net === 'guest') { bigMsg(T('{0} 완료', CH.title), T('명예 {0}', h) + ' · ' + T('방장과 함께 다음 장으로 가요'), 0); return; }
-  toast(T('{0} 완료', CH.title) + ' · ' + T('명예 {0}', h), 3200);
+  if (S.net === 'guest') { bigMsg(T('{0} 완료', CH.title), T('vC {0}', h) + ' · ' + T('방장과 함께 다음 장으로 가요'), 0); return; }
+  toast(T('{0} 완료', CH.title) + ' · ' + T('vC {0}', h), 3200);
   S.chSel = ci + 1; beginGame(S.G);
 }
 function showDeepResult() {
   S.resultShown = true; const h = awardHonor() || 0, f = S.snap.dp ? S.snap.dp.floor : DEEP.floor; deepRecord(f);
   const cs = (S.snap.dp ? S.snap.dp.curses : DEEP.curses).map(c => CURSES.find(x => x.id === c).name);
-  $('result').innerHTML = `<div class="big">${T('끝없는 심연 {0}층', f)}</div><p class="note">${T('{0}층에서 모두 쓰러졌어요. {1}층까지 지나왔어요.', f, f - 1)}</p><p class="note">${T('쌓인 저주: {0}', cs.length ? cs.join(', ') : T('없음'))}</p><p>${T('받은 명예 {0}', '<b style="color:#ffd36b">' + h + '</b>')} · ${T('최고 기록 {0}층', '<b style="color:#ffd36b">' + SAVE.deepBest)}</b></p><div class="row"><button class="btn gold" id="resBack">${T('로비로')}</button></div>`;
+  $('result').innerHTML = `<div class="big">${T('끝없는 심연 {0}층', f)}</div><p class="note">${T('{0}층에서 모두 쓰러졌어요. {1}층까지 지나왔어요.', f, f - 1)}</p><p class="note">${T('쌓인 저주: {0}', cs.length ? cs.join(', ') : T('없음'))}</p><p>${T('받은 vC {0}', '<b style="color:#ffd36b">' + h + '</b>')} · ${T('최고 기록 {0}층', '<b style="color:#ffd36b">' + SAVE.deepBest)}</b></p><div class="row"><button class="btn gold" id="resBack">${T('로비로')}</button></div>`;
   $('resBack').onclick = () => endToLobby('');
   setHud(false); show('sResult');
 }
@@ -945,7 +953,7 @@ function showResult() {
   const ci = chapterIndex(); S.chSel = chOpen();
   const next = ci + 1 < CHAPTERS.length ? `<p class="note">${T('{0}이 열렸어요.', CHAPTERS[ci + 1].title)}</p>` : '<p class="note">' + T('모든 장을 깼어요. 서약을 끝까지 지켰어요.') + '</p>';
   const rows = S.snap.pl.map(p => `<tr><td style="color:${ROLES[p.role].color}">${ROLES[p.role].name}</td><td>${esc(p.id === S.me ? T('나') : p.bot ? T('봇') : p.name)}</td><td>${(p.b || []).map(b => (BLESSINGS.find(x => x.id === b) || {}).name).join(', ') || '-'}</td></tr>`).join('');
-  $('result').innerHTML = `<div class="big">${T('{0} 완료', CH.title)}</div><p class="note">${CH.outro.join(' ')}</p><table>${rows}</table><p>${T('받은 명예 {0}', '<b style="color:#ffd36b">' + h + '</b>')} · ${T('지금 명예 {0}', SAVE.honor)}</p>${next}<div class="row"><button class="btn gold" id="resBack">${T('로비로')}</button></div>`;
+  $('result').innerHTML = `<div class="big">${T('{0} 완료', CH.title)}</div><p class="note">${CH.outro.join(' ')}</p><table>${rows}</table><p>${T('받은 vC {0}', '<b style="color:#ffd36b">' + h + '</b>')} · ${T('지금 vC {0}', SAVE.honor)}</p>${next}<div class="row"><button class="btn gold" id="resBack">${T('로비로')}</button></div>`;
   $('resBack').onclick = () => endToLobby('');
   setHud(false); show('sResult');
 }
