@@ -148,7 +148,7 @@ footer{padding:50px 0 40px;color:var(--gold);font-size:13px;text-shadow:2px 2px 
 </div>
 <script src="i18n.js"></script>
 <script>
-const FALLBACK={"name":"BEACONFALL","latest":"0.4","latestFile":"BEACONFALL-v0.4.html","updated":"2026-10-25","versions":[{"version":"0.4","date":"2026-10-25","file":"BEACONFALL-v0.4.html","title":"섬의 소리","summary":"캐는 소리·때리는 소리가 재료와 몬스터마다 달라지고, 우주선 위에서 외계인 조종사와 나누는 대화 엔딩(수락·거절 두 갈래)이 생겼어요. 해먹·통발·샌드박스 업적 잠금도 함께 담겼어요.","latest":true,"size":3633208,"sha256":"d01368d6d98d","build":103},{"version":"0.3","date":"2026-10-17","file":"BEACONFALL-v0.3.html","title":"하늘 위의 신호","summary":"사이트 도감, 상자 랜덤 배치, 멀티플레이 참가자 문제 수정, Ctrl+커서 블록 선택, 코드 정리","latest":false,"size":3611376,"sha256":"0c03a6e9fce8","build":102},{"version":"0.2","date":"2026-10-15","file":"BEACONFALL-v0.2.html","title":"함께 켠 봉화","summary":"인트로, Frenchfries777 계정 저장, 친구 바로 참가, 멀티 채팅(T), 확대·축소, 업적 20개 추가","latest":false,"size":3074953,"sha256":"b010c734731a","build":32},{"version":"0.1","date":"2026-10-14","file":"BEACONFALL-v0.1.html","title":"표류의 첫날","summary":"30개의 섬이 떠 있는 바다에서 짓고, 만들고, 탐험하는 협동 생존. 던전·보스·해적섬·마을섬, 최대 멀티플레이, 모바일 터치 조작, 6개 언어","latest":false,"size":2993237,"sha256":"6730194a251d","build":6}]};
+const FALLBACK={"name":"BEACONFALL","latest":"0.4","latestFile":"BEACONFALL-v0.4.html","updated":"2026-10-25","versions":[{"version":"0.4","date":"2026-10-25","file":"BEACONFALL-v0.4.html","title":"섬의 소리","summary":"캐는 소리·때리는 소리가 재료와 몬스터마다 달라지고, 우주선 위에서 외계인 조종사와 나누는 대화 엔딩(수락·거절 두 갈래)이 생겼어요. 해먹·통발·샌드박스 업적 잠금도 함께 담겼어요.","latest":true,"size":3902104,"sha256":"b0ed28a67f00","build":112},{"version":"0.3","date":"2026-10-17","file":"BEACONFALL-v0.3.html","title":"하늘 위의 신호","summary":"사이트 도감, 상자 랜덤 배치, 멀티플레이 참가자 문제 수정, Ctrl+커서 블록 선택, 코드 정리","latest":false,"size":3611376,"sha256":"0c03a6e9fce8","build":102},{"version":"0.2","date":"2026-10-15","file":"BEACONFALL-v0.2.html","title":"함께 켠 봉화","summary":"인트로, Frenchfries777 계정 저장, 친구 바로 참가, 멀티 채팅(T), 확대·축소, 업적 20개 추가","latest":false,"size":3074953,"sha256":"b010c734731a","build":32},{"version":"0.1","date":"2026-10-14","file":"BEACONFALL-v0.1.html","title":"표류의 첫날","summary":"30개의 섬이 떠 있는 바다에서 짓고, 만들고, 탐험하는 협동 생존. 던전·보스·해적섬·마을섬, 최대 멀티플레이, 모바일 터치 조작, 6개 언어","latest":false,"size":2993237,"sha256":"6730194a251d","build":6}]};
 const NOTES_FALLBACK={notes:[]};
 const I=window.I18N,esc=s=>String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const mb=n=>!n?'':(n>=1048576?(n/1048576).toFixed(1)+' MB':Math.round(n/1024)+' KB');
@@ -163,6 +163,7 @@ function pick(){let s=null;try{s=localStorage.getItem(KEY);}catch(e){}
 let LANG=pick(),DATA=FALLBACK,NDATA=NOTES_FALLBACK;
 let LATEST_FILE=FALLBACK.latestFile;
 const t=(k,v)=>{const e=I.D[k];let s=(e&&(e[LANG]||e.en||e.ko))||'';if(v)for(const q in v)s=s.split('{'+q+'}').join(v[q]);return s;};
+window.FFT={T:s=>{const m={'빌드 번호나 내용으로 검색':'pn_ph','{0}개 찾음':'pn_hit','찾는 패치노트가 없어요.':'pn_none'}[s];return m?t(m):s;}};
 const nm=ko=>{const e=I.NM[ko];return (e&&e[LANG])||ko;};
 const tv=(ver,f,ko)=>{const e=I.V[ver];return (e&&e[f]&&(e[f][LANG]||e[f].en||e[f].ko))||ko;};
 /* 친구 방 바로 참가: 방 주소를 넣으면 게임이 열리면서 그 방에 참가해요 */
