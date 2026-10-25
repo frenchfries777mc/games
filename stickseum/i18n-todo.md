@@ -43,3 +43,21 @@ patchnotes.json | v391 items[1] | 참가자가 많을 때 방장 컴퓨터가 �
 patchnotes.json | v392 title | 클랜 토큰 지급 조건 수정 | build 392 | 2026-10-25
 patchnotes.json | v392 items[0] | 비공개 방에서 클랜원끼리 대결해도 클랜 토큰이 쌓이던 문제 수정 | build 392 | 2026-10-25
 patchnotes.json | v392 items[1] | 클랜 토큰은 클랜 경기에서만 지급 | build 392 | 2026-10-25
+Stickseum-v0.8.html | clan | 가입 조건 · 최소 레벨 | build 393 | 2026-10-25
+Stickseum-v0.8.html | clan | 가입 조건 · 마스터 캐릭터 | build 393 | 2026-10-25
+Stickseum-v0.8.html | clan | 가입 조건 · 최소 레벨 (0이면 없음) | build 393 | 2026-10-25
+Stickseum-v0.8.html | clan | 가입 조건 · 마스터 캐릭터 수 (0이면 없음) | build 393 | 2026-10-25
+Stickseum-v0.8.html | clan | 없음 · 눌러서 정하기 | build 393 | 2026-10-25
+Stickseum-v0.8.html | clan | 개 이상 (숙련 Lv. | build 393 | 2026-10-25
+Stickseum-v0.8.html | clan | 가입 조건을 채우지 못했어요 | build 393 | 2026-10-25
+Stickseum-v0.8.html | clan | 조건 부족 | build 393 | 2026-10-25
+Stickseum-v0.8.html | clan | 가입 조건:  | build 393 | 2026-10-25
+Stickseum-v0.8.html | clan | (충족) | build 393 | 2026-10-25
+Stickseum-v0.8.html | clan | (부족) | build 393 | 2026-10-25
+Stickseum-v0.8.html | clan | 마스터 캐릭터  | build 393 | 2026-10-25
+Stickseum-v0.8.html | clan | 이상 | build 393 | 2026-10-25
+Stickseum-v0.8.html | clan | 저장하지 못했어요 (서버에 supabase-clan-requirements.sql을 적용했는지 확인해 주세요) | build 393 | 2026-10-25
+patchnotes.json | v393 title | 클랜 가입 조건과 봇 채우기 수정 | build 393 | 2026-10-25
+patchnotes.json | v393 items[0] | 클랜장이 클랜 가입 조건 설정 가능 (최소 레벨, 마스터 캐릭터 수) | build 393 | 2026-10-25
+patchnotes.json | v393 items[1] | 클랜 찾기와 가입 때 조건과 충족 여부 표시, 부족하면 가입 불가 | build 393 | 2026-10-25
+patchnotes.json | v393 items[2] | 온라인 매칭 봇 채우기를 게임에 접속한 경기 중이 아닌 사람 기준으로 수정 (있으면 15초 뒤 봇 채움, 없으면 바로 채움) | build 393 | 2026-10-25
