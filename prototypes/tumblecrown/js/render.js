@@ -264,9 +264,14 @@ export class View {
   }
   resetTiles() { for (let i = 0; i < NT; i++) { const T = this.tiles[i]; T.fall = 0; T.grow = 0; T.g.visible = true; T.g.position.y = 0; T.g.rotation.set(0, 0, 0); T.tops.forEach((c, k) => { c.material = T.gms[k]; }); this.tlState[i] = PILLARS.includes(i) ? 3 : 0; } }
   setPlayers(list) {
-    for (const [, e] of this.ents) this.scene.remove(e.g);
+    for (const [, e] of this.ents) { this.scene.remove(e.g); if (e.blob) this.scene.remove(e.blob); }
     this.ents.clear();
-    for (const p of list) { const g = makeHero(p.cls, p.col); this.scene.add(g); this.ents.set(p.id, { g, x: 0, y: 0, z: 0, ry: 0, init: false, spd: 0, cls: p.cls }); }
+    for (const p of list) {
+      const g = makeHero(p.cls, p.col); this.scene.add(g);
+      // 바닥 그림자: 뛰어오르면 작아지고 흐려져서 높이가 보여요
+      const blob = mesh(geo('blob', () => new THREE.CircleGeometry(1, 14)), M(0x000000, { op: 0.45, uniq: true }), 0, 0.07, 0, this.scene, false); blob.rotation.x = -Math.PI / 2; blob.renderOrder = 1;
+      this.ents.set(p.id, { g, blob, x: 0, y: 0, z: 0, ry: 0, init: false, spd: 0, cls: p.cls });
+    }
   }
 
   update(snap, dt, t) {
@@ -325,6 +330,7 @@ export class View {
     let d = ry - e.ry; d = Math.atan2(Math.sin(d), Math.cos(d)); e.ry += d * Math.min(1, dt * 18); g.rotation.y = e.ry;
     u.bub.visible = !!inv; u.ring.visible = e.y > -0.5 && e.y < 0.5;
     animate(e, g, { kind: a[20], aN: a[21], cmb: a[22], y: e.y, cls: e.cls, st, s, chg, run: Math.min(1, e.spd / 5), air: Math.abs(e.y) > 0.4 }, dt, t);
+    { const h = Math.max(0, g.position.y - e.y), k = 1 / (1 + h * 0.5); e.blob.visible = g.visible && e.y > -0.5; e.blob.position.set(e.x, Math.max(0, e.y) + 0.07, e.z); e.blob.scale.setScalar(1.15 * k); e.blob.material.opacity = 0.45 * k; }
     if ((st === ST.dash || st === ST.lunge) && Math.random() < dt * 14) this.burst(e.x, 0.3, e.z, 0xbcae94, 2, 3, 0.5, 0.14);
     if (st === ST.charge && chg >= 1 && Math.random() < dt * 12) this.burst(e.x + (Math.random() - 0.5), e.y + 1.4 + Math.random(), e.z + (Math.random() - 0.5), 0xfff0a0, 1, 1, 0.35, 0.12);
   }
