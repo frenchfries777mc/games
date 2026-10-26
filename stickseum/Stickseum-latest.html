@@ -1937,7 +1937,7 @@ document.getElementById('keybindResetBtn').onclick=()=>{ keyBindings=defaultKeyB
 const MASTERY_XP_NEEDED=[0,40,100,200,350,550,800,1100,1450,1850];       // Lv.1 .. Lv.10 (unchanged)
 const MASTERY_STAR_LV=MASTERY_XP_NEEDED.length;      // Lv.10: the old top level. There is no top level any more, but Lv.10 keeps the gold colour, the ★ and its 50 gold bonus
 const MASTERY_FLAT_FROM=20;                          // from Lv.20 on every level costs XP_FLAT
-const MASTERY_KILL_XP=6, MASTERY_ASSIST_XP=3, MASTERY_MATCH_XP=3, MASTERY_WIN_XP=6;      // (owner 10-25: harder, about 40% less XP per match than the old 10 / 5 / 5 / 10; levels already reached stay)
+const MASTERY_KILL_XP=4, MASTERY_ASSIST_XP=2, MASTERY_MATCH_XP=2, MASTERY_WIN_XP=4;      // (owner 10-26: harder again, 6 / 3 / 3 / 6 before; owner 10-25: harder, about 40% less XP per match than the old 10 / 5 / 5 / 10; levels already reached stay)
 function masteryIncrement(n){ return n<MASTERY_STAR_LV ? MASTERY_XP_NEEDED[n]-MASTERY_XP_NEEDED[n-1] : Math.min(XP_FLAT, 400+50*(n-9)); }   // what it costs to go from level n to n+1
 function masteryXpForLevel(lv){                      // the total XP at which level lv is reached
   lv=Math.max(1,Math.floor(lv||1));
@@ -5109,7 +5109,7 @@ function shuffle(arr){ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.
 /* ===== the version of this file =====
    Players with different versions CAN meet and play together: the automatic matchmaking uses the same room names for every version (online-<mode>-<map>-<slot>), and nobody is refused because of a different build.
    The build is only sent along with the join message and the lobby (for information); the corner of the screen shows it. */
-const GAME_BUILD='build 2026-10-18-v408';
+const GAME_BUILD='build 2026-10-18-v409';
 const GAME_VERSION='0.8', GAME_VERSION_NAME='황금을 찾아서';   // 게임 버전 이름: versions.json의 title과 같게 (빌드마다 바꾸지 않음)
 const WEEKLY_EVENTS=[
   {id:'lowg',    name:'저중력 난투', desc:'몸이 둥실둥실, 중력이 약해진 난투', rules:{grav:0.6}},
