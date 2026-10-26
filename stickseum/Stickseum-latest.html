@@ -5077,7 +5077,7 @@ function shuffle(arr){ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.
 /* ===== the version of this file =====
    Players with different versions CAN meet and play together: the automatic matchmaking uses the same room names for every version (online-<mode>-<map>-<slot>), and nobody is refused because of a different build.
    The build is only sent along with the join message and the lobby (for information); the corner of the screen shows it. */
-const GAME_BUILD='build 2026-10-18-v397';
+const GAME_BUILD='build 2026-10-18-v398';
 const GAME_VERSION='0.8', GAME_VERSION_NAME='황금을 찾아서';   // 게임 버전 이름: versions.json의 title과 같게 (빌드마다 바꾸지 않음)
 const WEEKLY_EVENTS=[
   {id:'lowg',    name:'저중력 난투', desc:'몸이 둥실둥실, 중력이 약해진 난투', rules:{grav:0.6}},
@@ -11435,7 +11435,7 @@ const SKILLS={
   gambler:  {name:'동전 던지기', kind:'buff', desc:'앞면(확률 50% + 칩당 7%): 체력 25 회복 + 칩 1개당 3 추가 / 뒷면: 가까운 적에게 18 피해 + 칩 1개당 4 추가 (칩은 소모되지 않음)'},
   wizard:   {name:'충격파',      kind:'hit',  desc:'주변 상대를 아주 크게 밀쳐내는 충격파 (10 피해)'},
   magiccard:{name:'카드 일렬 발사', kind:'hit', desc:'조준 방향으로 카드 4장을 일렬로 연달아 발사 (장당 10 피해)'},
-  flamethrower:{name:'화염병',kind:'hit',  desc:'조준한 곳으로 화염병을 던짐 · 떨어진 자리에 4초 동안 불바다 · 안에 있는 적은 계속 화상 (초당 9 피해)'},
+  flamethrower:{name:'화염 돌진',kind:'move', desc:'바라보는 방향으로 순식간에 돌진 · 지나가는 길의 적에게 20 피해와 화상 · 지나온 자리는 3초 동안 불길이 남아 적을 태움'},
   portalgun:{name:'시간 되감기', kind:'move', desc:'약 2초 전 위치로 돌아가고 그동안 잃은 체력의 절반 회복 · 포탈이 있을 때는 대신 내 포탈 둘을 폭파(연기 0.5초 뒤 50 피해와 큰 넉백)'},
   vacuum:   {name:'흡인',        kind:'hit',  desc:'주변 적을 끌어당기고 스택 +1'},
   pirate:   {name:'대포 비행',   kind:'move', desc:'대포를 타고 조준 방향으로 포물선을 그리며 날아감 · 부딪힌 상대에게 36 피해'},
@@ -11700,7 +11700,18 @@ const SKILL_IMPL={
     const w2=Object.assign({}, WEAPONS.magiccard, {dmg:CARD_LINE_DMG, bulletSpeed:980});
     for(let k=0;k<CARD_LINE_N;k++) hostTimers.push({ta:fxActor, at:tSec+k*0.07, fn:()=>{ if(p.alive){ spawnBullet(p, a, w2, {cardLine:true}); pushFx('sfx', p.x, p.y-40, performance.now(), {name:'magiccard'}); } }});
     return true; },
-  flamethrower(p,tSec,tMs,ax,ay){ spawnBullet(p, lobAngle(p,ax,ay), {id:'molotov', bulletSpeed:KAN_TOAD_SPEED, life:3, dmg:0, hitR:10}, {lob:'fire', arcs:true, color:'#ff7a2c'}); return true; },
+  flamethrower(p,tSec,tMs,ax){      // 화염 돌진: a rush along the aim direction - everyone on the way takes 20 damage and burns, and the floor behind stays on fire for 3 s
+    const dir=skillAimDir(p,ax), x0=p.x, y0=p.y, best=skillMoveSpot(p, x0+dir*FIRE_DASH_LEN, y0), x1=best.x;
+    const lo=Math.min(x0,x1)-35, hi=Math.max(x0,x1)+35, tS=tMs/1000;
+    for(const o of enemiesOf(p)){
+      if(o.swordCharge || o.darkSub || o.x<lo || o.x>hi || Math.abs(o.y-y0)>90) continue;
+      skillDamage(p, o, FIRE_DASH_DMG, tMs, {kb:180, up:150}); if(o.hp>0) o.burn={until:tS+2.5, dps:8, owner:p.id, ownerName:p.name};
+    }
+    const n=Math.max(2, Math.round(Math.abs(x1-x0)/70));
+    for(let k=0;k<=n;k++){ const f=k/n; fieldZones.push({kind:'fire', owner:p.id, team:p.team, ownerName:p.name, x:x0+(x1-x0)*f, y:best.y-20, r:55, dur:FIRE_TRAIL_SEC, until:tS+FIRE_TRAIL_SEC}); }
+    pushFx('firedash', x0, y0-30, tMs, {x2:x1, y2:best.y-30});
+    p.x=x1; p.y=best.y; p.vx=0; p.vy=0; p.kbX=0;
+    return true; },
   portalgun(p,tSec,tMs){
     if(p.portalPair){      // portals are standing: the skill blows them up instead (smoke first, the blast comes 0.5 s later)
       if(p.portalBlastPair===p.portalPair) return false;
@@ -11791,6 +11802,7 @@ function trySkill(p, tMs, aimX, aimY){
    abilityPreviewOps(action, p, mx, my) says what to draw for the held ability, using the SAME spot functions as the real effects (swordFallSpot, wizardCircleSpot,
    smgWallSpot, rifleBarrageXs ...), so what is drawn is where it will really go. */
 const MINT='#7fffd4';
+const FIRE_DASH_LEN=380, FIRE_DASH_DMG=20, FIRE_TRAIL_SEC=3;
 const SMOKE_R=150, SMOKE_SEC=2.5, FIRE_R=125, FIRE_SEC=4, FIRE_DPS=9, GUST_R=240, GUST_DMG=8, GUST_PULL=600;
 let fieldZones=[];       // smoke clouds (agent skill) and fire pools (slayer skill): {kind,owner,team,x,y,r,until} on the host; guests get {kind,x,y,r,rem,t0}
 function lobAngle(p, ax, ay){     // the launch angle that lands a thrown 독 두꺼비 / 연막탄 / 화염병 on the aimed spot (45 degrees when it is out of reach)
@@ -11813,7 +11825,7 @@ function lobLand(b, x, y, pl, t){     // a thrown smoke grenade / molotov comes 
   let lx=clamp(x,0,MAP.arenaW), ly=Math.min(y, MAP.arenaH);
   if(pl && b.vy>0 && b.y<=pl.y+2){ lx=clamp(x,pl.x,pl.x+pl.w); ly=pl.y; }
   const smoke=(b.lob==='smoke');
-  fieldZones.push({kind:b.lob, owner:b.owner, team:ow.team, ownerName:ow.name, x:lx, y:ly-20, r:smoke?SMOKE_R:FIRE_R, until:t/1000+(smoke?SMOKE_SEC:FIRE_SEC)});
+  fieldZones.push({kind:b.lob, owner:b.owner, team:ow.team, ownerName:ow.name, x:lx, y:ly-20, r:smoke?SMOKE_R:FIRE_R, dur:(smoke?SMOKE_SEC:FIRE_SEC), until:t/1000+(smoke?SMOKE_SEC:FIRE_SEC)});
   pushFx(smoke?'smokeland':'fireland', lx, ly-20, t, {});
 }
 function fieldZoneTick(dt, t){      // inside a cloud everybody moves at half speed; inside a fire pool every enemy of the thrower keeps burning
@@ -11836,7 +11848,7 @@ function drawFieldZones(){
   const now=performance.now();
   for(const z of fieldZones){
     const rem=fzRem(z); if(rem<=0 || !inView(z.x,z.y,z.r+80)) continue;
-    const total=(z.kind==='smoke')?SMOKE_SEC:FIRE_SEC, age=Math.max(0,total-rem), grow=Math.min(1,age/0.3), fade=Math.min(1,rem/0.5);
+    const total=z.dur||((z.kind==='smoke')?SMOKE_SEC:FIRE_SEC), age=Math.max(0,total-rem), grow=Math.min(1,age/0.3), fade=Math.min(1,rem/0.5);
     ctx.save();
     if(z.kind==='smoke'){
       for(let i=0;i<20;i++){
@@ -11934,7 +11946,8 @@ function abilityPreviewOps(action, p, mx, my){
       case 'horemheb': ops.push(ray(ang, 740)); break;
       case 'puppeteer': { const tg=p.sw && players[p.sw]; if(tg){ ops.push({t:'line', x1:p.x, y1:p.y-30, x2:tg.x, y2:tg.y-40}); ops.push(mark(tg.x, tg.y-40, 40)); } else ops.push(ray(ang, 800)); break; }
       case 'pizarro': ops.push(selfRing(70)); break;
-      case 'kan': case 'smg': case 'flamethrower': { const kp=kanToadPath(p, lobAngle(p,mx,my)); for(let i=1;i<kp.pts.length;i++) ops.push({t:'line', x1:kp.pts[i-1].x, y1:kp.pts[i-1].y, x2:kp.pts[i].x, y2:kp.pts[i].y, dash:true}); const e=kp.pts[kp.pts.length-1]; if(action==='skill' && p.weapon==='kan'){ if(kp.land) ops.push({t:'ellipse', x:kp.land.x, y:kp.land.y, rx:KAN_TRAP_R, ry:KAN_TRAP_R*0.22}); else ops.push({t:'cross', x:e.x, y:e.y, r:10}); } else if(action==='skill'){ const zr=(p.weapon==='smg')?SMOKE_R:FIRE_R; ops.push({t:'ellipse', x:e.x, y:e.y, rx:zr, ry:zr*0.5}); } break; }
+      case 'flamethrower': { const dd=skillAimDir(p,mx), bb=skillMoveSpot(p, p.x+dd*FIRE_DASH_LEN, p.y); ops.push({t:'rect', x:Math.min(p.x,bb.x)-30, y:p.y-85, w:Math.abs(bb.x-p.x)+60, h:85}); ops.push(mark(bb.x,bb.y-30,24)); break; }
+      case 'kan': case 'smg': { const kp=kanToadPath(p, lobAngle(p,mx,my)); for(let i=1;i<kp.pts.length;i++) ops.push({t:'line', x1:kp.pts[i-1].x, y1:kp.pts[i-1].y, x2:kp.pts[i].x, y2:kp.pts[i].y, dash:true}); const e=kp.pts[kp.pts.length-1]; if(action==='skill' && p.weapon==='kan'){ if(kp.land) ops.push({t:'ellipse', x:kp.land.x, y:kp.land.y, rx:KAN_TRAP_R, ry:KAN_TRAP_R*0.22}); else ops.push({t:'cross', x:e.x, y:e.y, r:10}); } else if(action==='skill'){ const zr=(p.weapon==='smg')?SMOKE_R:FIRE_R; ops.push({t:'ellipse', x:e.x, y:e.y, rx:zr, ry:zr*0.5}); } break; }
       case 'shuriken': { const a=Math.atan2(my-cy, mx-p.x), best=skillMoveSpot(p, p.x+Math.cos(a)*230, p.y+Math.sin(a)*230); ops.push({t:'line', x1:p.x, y1:p.y-30, x2:best.x, y2:best.y-30, dash:true}); ops.push(mark(best.x, best.y-30, 20)); break; }
       case 'dagger': { const t=nearestEnemyOf(p); if(t && Math.hypot(t.x-p.x,t.y-p.y)<=330){ ops.push({t:'line', x1:cx, y1:cy, x2:t.x, y2:t.y-30, dash:true}); ops.push(mark(t.x, t.y-30, 40)); } break; }
       case 'magiccard': ops.push(ray(ang, 820)); break;
@@ -12843,7 +12856,7 @@ function botWantsSkill(p, target, d, tSec){
     case 'gambler': return d<420 || hpFrac<0.7;
     case 'wizard': return d<WIZ_SHOCK_R-10;                            // the shockwave: only when the enemy is close
     case 'magiccard': return d<560 && Math.abs(target.y-p.y)<110;         // the line of cards: straight at the enemy
-    case 'flamethrower': return d>110 && d<460 && Math.abs(target.y-p.y)<200;      // the molotov: thrown at the enemy
+    case 'flamethrower': return d>130 && d<380 && Math.abs(target.y-p.y)<100;      // the rush: straight at an enemy on the same level
     case 'portalgun': { if(p.portalPair){ const pr=p.portalPair; return enemiesOf(p).some(o=>Math.hypot(o.x-pr.a.x,o.y-pr.a.y)<PORTAL_BLAST_R-30 || Math.hypot(o.x-pr.b.x,o.y-pr.b.y)<PORTAL_BLAST_R-30); } const old=p.hist && p.hist.find(h=>tSec-h.t<=2.2 && tSec-h.t>=1.6); return !!old && old.hp-p.hp>=60; }
     case 'vacuum': return d>110 && d<260;
     case 'kan': return d>140 && d<560 && Math.abs(target.y-p.y)<160;                // the toad: thrown toward an enemy at a medium distance
@@ -14104,7 +14117,7 @@ function hostTickCore(dt,t){
       bullets:bullets.map(b=>({lob:b.lob,x:b.x,y:b.y,color:b.color,wid:b.wid,vx:b.vx,vy:b.vy,dmgless:b.dmgless,swingAngle:b.swingAngle,splash:b.splash,life:b.life,life0:b.life0,sx:b.spawnX,sy:b.spawnY,ult:b.ult,fire:b.fire,reach:b.reach})),
       walls:walls.map(w=>({x:w.x,y:w.y,w:w.w,h:w.h,owner:w.owner,rem:w.until-t/1000})),
       magicCircles:magicCircles.map(z=>({x:z.x,y:z.y,r:z.r,owner:z.owner,team:z.team,rem:z.until-t/1000})),
-      fieldZones:fieldZones.map(z=>({kind:z.kind,x:Math.round(z.x),y:Math.round(z.y),r:z.r,owner:z.owner,rem:z.until-t/1000})),
+      fieldZones:fieldZones.map(z=>({kind:z.kind,x:Math.round(z.x),y:Math.round(z.y),r:z.r,owner:z.owner,dur:z.dur,rem:z.until-t/1000})),
       poisonZones:poisonZones.map(z=>({x:z.x,y:z.y,r:z.r,owner:z.owner,team:z.team,rem:z.until-t/1000,rv:(z.revealAt!==undefined)?1:0})),
       hz:hzDraw,
       turrets:turrets.map(z=>({x:Math.round(z.x),y:Math.round(z.y),a:Math.round(z.ang*100)/100,owner:z.owner,team:z.team,rem:z.until-t/1000})),
@@ -16114,6 +16127,12 @@ function spawnFx(e){
     case 'smokeland':
       burst(x,y,40,{a0:0,a1:6.28,s0:60,s1:260,l0:.6,l1:1.2,z0:20,z1:44,colors:['#c4cad4','#9aa2ae','#7d8591'],grav:-30,drag:1.6,shape:'smoke',add:false});
       break;
+    case 'firedash': {
+      const x2=e.x2, y2=e.y2, dir=(x2>=x)?1:-1;
+      addP({x:x-dir*20,y:y,x2:x2+dir*40,y2:y2,life:.4,color:'#ff6a1a',shape:'slash',size:34});
+      addP({x:x-dir*10,y:y,x2:x2+dir*30,y2:y2,life:.3,color:'#ffd23f',shape:'slash',size:16});
+      for(let i=0;i<=6;i++){ const f=i/6; burst(x+(x2-x)*f,y+(y2-y)*f,6,{a0:-3.3,a1:0.2,s0:60,s1:300,l0:.4,l1:.9,z0:6,z1:16,colors:['#ff5a1f','#ff9b2e','#ffd34d'],grav:260,drag:1.3,shape:'fire'}); }
+      break; }
     case 'fireland':
       addP({x:x,y:y+20,life:.5,color:'#ff9b2e',shape:'ring',r0:10,r1:FIRE_R,lw:8});
       burst(x,y,30,{a0:-3.3,a1:0.2,s0:80,s1:420,l0:.4,l1:.9,z0:6,z1:16,colors:['#ff5a1f','#ff9b2e','#ffd34d'],grav:260,drag:1.3,shape:'fire'});
