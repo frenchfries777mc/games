@@ -1463,7 +1463,7 @@ let matchAssists=0;                   // ... and counts for the weapon xp at the
 let gold=0;
 let lastKnownKills=0;
 let saveData={owned:{}, equipped:{name:null, skin:{}}, xp:0, totalKills:0, totalMatches:0,
-  totalWins:0, totalDamage:0, totalAssists:0, modeMatches:{}, charKills:{}, playerName:null,
+  totalWins:0, totalDamage:0, totalAssists:0, modeMatches:{}, charKills:{}, charPts:{}, playerName:null,
   avatar:{bg:'#274d3a', color:'#3fe0c5', accessory:null}, achievements:{}, weaponXp:{},
   boxes:0, boxesOpened:0, dailyLast:'', dailyCount:0, souls:0, pxEarned:0, pxSpent:0, missions:null, season:null};       // random boxes in the bag, how many were opened, the date (YYYY-MM-DD) of the last daily reward and how many were taken
 /* ---- levels: no upper limit; from a "knee" on, EVERY level costs the same XP ----
@@ -1494,7 +1494,7 @@ function loadSave(){
       saveData.xp=Math.max(0,+s.xp||0); saveData.totalKills=Math.max(0,+s.totalKills||0); saveData.totalMatches=Math.max(0,+s.totalMatches||0);
       saveData.totalWins=Math.max(0,+s.totalWins||0); saveData.totalDamage=Math.max(0,+s.totalDamage||0); saveData.totalAssists=Math.max(0,+s.totalAssists||0);
       saveData.modeMatches=(s.modeMatches&&typeof s.modeMatches==='object')?s.modeMatches:{};
-      saveData.charKills=(s.charKills&&typeof s.charKills==='object')?s.charKills:{};
+      saveData.charKills=(s.charKills&&typeof s.charKills==='object')?s.charKills:{}; saveData.charPts=(s.charPts&&typeof s.charPts==='object')?s.charPts:{};
       saveData.avatar=Object.assign({bg:'#274d3a', color:'#3fe0c5', accessory:null}, s.avatar||{});
       if(typeof s.playerName==='string' && s.playerName.trim()) saveData.playerName=s.playerName.slice(0,15);
       saveData.nameDirty=!!s.nameDirty;
@@ -1513,7 +1513,7 @@ function persistSave(){
     localStorage.setItem(SAVE_KEY, JSON.stringify({
       gold, owned:saveData.owned, equipped:saveData.equipped, xp:saveData.xp, xc:PLAYER_FLAT, totalKills:saveData.totalKills, totalMatches:saveData.totalMatches,
       totalWins:saveData.totalWins, totalDamage:saveData.totalDamage, totalAssists:saveData.totalAssists,
-      modeMatches:saveData.modeMatches, charKills:saveData.charKills, avatar:saveData.avatar, playerName:saveData.playerName, nameDirty:!!saveData.nameDirty,
+      modeMatches:saveData.modeMatches, charKills:saveData.charKills, charPts:saveData.charPts, avatar:saveData.avatar, playerName:saveData.playerName, nameDirty:!!saveData.nameDirty,
       achievements:saveData.achievements, weaponXp:saveData.weaponXp,
       boxes:saveData.boxes, boxesOpened:saveData.boxesOpened, dailyLast:saveData.dailyLast, dailyCount:saveData.dailyCount, souls:saveData.souls, pxEarned:saveData.pxEarned, pxSpent:saveData.pxSpent, missions:saveData.missions, season:saveData.season
     }));
@@ -1937,7 +1937,7 @@ document.getElementById('keybindResetBtn').onclick=()=>{ keyBindings=defaultKeyB
 const MASTERY_XP_NEEDED=[0,40,100,200,350,550,800,1100,1450,1850];       // Lv.1 .. Lv.10 (unchanged)
 const MASTERY_STAR_LV=MASTERY_XP_NEEDED.length;      // Lv.10: the old top level. There is no top level any more, but Lv.10 keeps the gold colour, the ★ and its 50 gold bonus
 const MASTERY_FLAT_FROM=20;                          // from Lv.20 on every level costs XP_FLAT
-const MASTERY_KILL_XP=4, MASTERY_ASSIST_XP=2, MASTERY_MATCH_XP=2, MASTERY_WIN_XP=4;      // (owner 10-26: harder again, 6 / 3 / 3 / 6 before; owner 10-25: harder, about 40% less XP per match than the old 10 / 5 / 5 / 10; levels already reached stay)
+const MASTERY_KILL_XP=6, MASTERY_ASSIST_XP=3, MASTERY_MATCH_XP=3, MASTERY_WIN_XP=6;      // (owner 10-25: harder, about 40% less XP per match than the old 10 / 5 / 5 / 10; levels already reached stay)
 function masteryIncrement(n){ return n<MASTERY_STAR_LV ? MASTERY_XP_NEEDED[n]-MASTERY_XP_NEEDED[n-1] : Math.min(XP_FLAT, 400+50*(n-9)); }   // what it costs to go from level n to n+1
 function masteryXpForLevel(lv){                      // the total XP at which level lv is reached
   lv=Math.max(1,Math.floor(lv||1));
@@ -2852,19 +2852,19 @@ let shopMaxGridHeight=0;
 let lastTierUps=[];     // toasts for the tier(s) the finished match took a character to, and the skins that came with them
 function codexTierHtml(wid, kc){       // under the numbers of the codex: how far to the next tier, and the two skins that belong to this character's tiers
   const idx=CHAR_RANKS.findIndex(r=>r.name===charRankFor(kc).name), nx=CHAR_RANKS[idx+1];
-  let s='<div style="margin-top:8px; font-size:12px; color:var(--text-dim);">'+(nx ? '다음 계급 <b style="color:'+nx.color+'">'+nx.name+'</b>까지 '+(nx.min-kc)+'킬' : '<b style="color:#ffd34d">최고 계급 달성!</b>')+'</div>';
+  let s='<div style="margin-top:8px; font-size:12px; color:var(--text-dim);">'+(nx ? '다음 계급 <b style="color:'+nx.color+'">'+nx.name+'</b>까지 '+(nx.min-kc)+'점' : '<b style="color:#ffd34d">최고 계급 달성!</b>')+'</div>';
   const skins=Object.keys(COSMETICS).filter(id=>COSMETICS[id].char===wid && COSMETICS[id].tier);
-  if(skins.length) s+='<div style="margin-top:6px; font-size:12px;">'+skins.map(id=>{ const it=COSMETICS[id], rk=CHAR_RANKS.find(r=>r.name===it.tier), ok=cosOwned(id); return '<div style="opacity:'+(ok?1:0.6)+'">'+(ok?'✨':'🔒')+' <span style="color:'+(rk?rk.color:'#fff')+'">'+it.tier+'</span> 전용 스킨 · '+it.name+(ok?'':' ('+(tierMinKills(it.tier)-kc)+'킬 남음)')+'</div>'; }).join('')+'</div>';
+  if(skins.length) s+='<div style="margin-top:6px; font-size:12px;">'+skins.map(id=>{ const it=COSMETICS[id], rk=CHAR_RANKS.find(r=>r.name===it.tier), ok=cosOwned(id); return '<div style="opacity:'+(ok?1:0.6)+'">'+(ok?'✨':'🔒')+' <span style="color:'+(rk?rk.color:'#fff')+'">'+it.tier+'</span> 전용 스킨 · '+it.name+(ok?'':' ('+(tierMinKills(it.tier)-kc)+'점 남음)')+'</div>'; }).join('')+'</div>';
   return s;
 }
 function tierUpsFor(wid, before, after){
   const out=[], rb=charRankFor(before), ra=charRankFor(after), nm=WEAPON_PERSONA_NAME[wid]||wid;
-  if(ra.name!==rb.name) out.push({icon:'🎖️', name:nm+' → '+ra.name+' 계급!', sub:'누적 '+after+'킬', heading:'계급 상승!'});
+  if(ra.name!==rb.name) out.push({icon:'🎖️', name:nm+' → '+ra.name+' 계급!', sub:'마스터리 포인트 '+after+'점', heading:'계급 상승!'});
   for(const id in COSMETICS){ const it=COSMETICS[id]; if(it.char!==wid || !it.tier) continue; const need=tierMinKills(it.tier); if(before<need && after>=need) out.push({icon:'✨', name:it.name, sub:it.tier+' 전용 스킨 해금', heading:nm+' 전용 스킨!'}); }
   return out;
 }
 function tierMinKills(name){ const r=CHAR_RANKS.find(x=>x.name===name); return r?r.min:Infinity; }
-function charKillsFor(ch){ return (saveData.charKills&&saveData.charKills[ch])||0; }
+function charKillsFor(ch){ const pt=saveData.charPts&&saveData.charPts[ch]; if(pt!==undefined) return pt; return Math.round(((saveData.charKills&&saveData.charKills[ch])||0)*TIER_PT_MULT); }      // (the character's 마스터리 포인트; before points existed, old kills count the same as before: x8.75)
 function tierSkinUnlocked(id){ const it=COSMETICS[id]; return !!(it && it.tier && charKillsFor(it.char)>=tierMinKills(it.tier)); }
 function cosOwned(id){ const it=COSMETICS[id]; if(!it) return false; return !!it.free || !!(saveData.owned && saveData.owned[id]) || (!!it.tier && tierSkinUnlocked(id)) || (!!it.mast && masteryInfo(it.mast.wid).lv>=it.mast.lv); }
 function ownedCosCount(){ let n=Object.keys(saveData.owned||{}).length; for(const id in COSMETICS){ const it=COSMETICS[id]; if(it.tier && !(saveData.owned&&saveData.owned[id]) && tierSkinUnlocked(id)) n++; } return n; }
@@ -3373,7 +3373,7 @@ function renderShop(){
   const grid=document.getElementById('shopGrid'); grid.style.minHeight=''; grid.innerHTML='';
   if(shopCat==='box'){ renderBoxTab(grid); return; }
   if(shopCat==='emo'){ const note=document.createElement('div'); note.className='hint'; note.style.cssText='grid-column:1/-1; margin-bottom:2px;'; note.textContent='이모트 휠('+codeToLabel(keyBindings.emote)+' 키)에는 가진 이모트 중 '+EMOTE_WHEEL_N+'개까지 넣을 수 있어요 · 지금 '+emoteWheelList().length+' / '+EMOTE_WHEEL_N; grid.appendChild(note); }
-  if(shopCat==='tier'){ const note=document.createElement('div'); note.className='hint'; note.style.cssText='grid-column:1/-1; margin-bottom:2px;'; note.textContent='캐릭터마다 2개: '+TIER_SKIN_TIERS.map(n=>n+' ('+tierMinKills(n)+'킬)').join(' · ')+' 계급에 오르면 그 캐릭터의 전용 스킨이 해금돼요. 구매는 불가능해요.'; grid.appendChild(note); }
+  if(shopCat==='tier'){ const note=document.createElement('div'); note.className='hint'; note.style.cssText='grid-column:1/-1; margin-bottom:2px;'; note.textContent='캐릭터마다 2개: '+TIER_SKIN_TIERS.map(n=>n+' ('+tierMinKills(n)+'점)').join(' · ')+' 계급에 오르면 그 캐릭터의 전용 스킨이 해금돼요. 마스터리 포인트는 그 캐릭터로 처치 3점, 어시스트 1점, 승리 4점, 한 판 1점이 쌓여요. 구매는 불가능해요.'; grid.appendChild(note); }
   for(const id in COSMETICS){
     const it=COSMETICS[id]; if(!shopItemInTab(it, shopCat)) continue;
     const box=document.createElement('div'); box.className='shopItem'+(it.lux?' lux'+it.lux:'');
@@ -3390,7 +3390,7 @@ function renderShop(){
     const owned=cosOwned(id), unlockedTier=!!(it.tier && owned);
     const pr=document.createElement('div'); pr.className='pr';
     if(it.tier){ const rk=CHAR_RANKS.find(r=>r.name===it.tier), kc=charKillsFor(it.char), need=tierMinKills(it.tier);
-      pr.innerHTML='<span style="color:'+(rk?rk.color:'#fff')+'; font-weight:800;">'+it.tier+' 전용</span>'+(owned?'<br>해금됨':'<br>'+Math.min(kc,need)+' / '+need+'킬'); }
+      pr.innerHTML='<span style="color:'+(rk?rk.color:'#fff')+'; font-weight:800;">'+it.tier+' 전용</span>'+(owned?'<br>해금됨':'<br>'+Math.min(kc,need)+' / '+need+'점'); }
     else if(it.mast) pr.innerHTML=owned?'<span style="color:#7ef0a8; font-weight:800;">마스터리 해금</span>':'<span style="color:#ffd34d; font-weight:800;">마스터리 Lv.'+it.mast.lv+'</span><br>'+Math.min(masteryInfo(it.mast.wid).lv,it.mast.lv)+' / '+it.mast.lv;
     else if(it.free) pr.textContent='무료';
     else pr.textContent=owned?'보유 중':(it.seasonOnly?'시즌 패스 보상':(it.price+' sC'));
@@ -5109,7 +5109,7 @@ function shuffle(arr){ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.
 /* ===== the version of this file =====
    Players with different versions CAN meet and play together: the automatic matchmaking uses the same room names for every version (online-<mode>-<map>-<slot>), and nobody is refused because of a different build.
    The build is only sent along with the join message and the lobby (for information); the corner of the screen shows it. */
-const GAME_BUILD='build 2026-10-18-v409';
+const GAME_BUILD='build 2026-10-18-v411';
 const GAME_VERSION='0.8', GAME_VERSION_NAME='황금을 찾아서';   // 게임 버전 이름: versions.json의 title과 같게 (빌드마다 바꾸지 않음)
 const WEEKLY_EVENTS=[
   {id:'lowg',    name:'저중력 난투', desc:'몸이 둥실둥실, 중력이 약해진 난투', rules:{grav:0.6}},
@@ -7332,7 +7332,7 @@ function switchLocalAccount(to){
     localStorage.setItem(ACCT_STASH+last, JSON.stringify(out));
     for(const k of acctLsKeys()){ localStorage.removeItem(k); if(incoming && typeof incoming[k]==='string') localStorage.setItem(k, incoming[k]); }
     localStorage.setItem(LAST_USER_KEY, to);
-    gold=0; Object.assign(saveData, {owned:{}, equipped:{name:null, skin:{}}, xp:0, totalKills:0, totalMatches:0, totalWins:0, totalDamage:0, totalAssists:0, modeMatches:{}, charKills:{}, playerName:null, nameDirty:false,
+    gold=0; Object.assign(saveData, {owned:{}, equipped:{name:null, skin:{}}, xp:0, totalKills:0, totalMatches:0, totalWins:0, totalDamage:0, totalAssists:0, modeMatches:{}, charKills:{}, charPts:{}, playerName:null, nameDirty:false,
       avatar:{bg:'#274d3a', color:'#3fe0c5', accessory:null}, achievements:{}, weaponXp:{}, boxes:0, boxesOpened:0, dailyLast:'', dailyCount:0, souls:0, pxEarned:0, pxSpent:0, missions:null, season:null});
     loadSave(); if(saveData.playerName){ myName=saveData.playerName; myNameSet=true; }
     try{ updateGoldUI(); }catch(e){}
@@ -7392,7 +7392,7 @@ function clanSyncMyName(id){            // my row in the clan list keeps the nic
    - the NICKNAME of the account is the one in the save (the account wins over what this browser had); the public profile is made to say the same (so an old copy that overwrote it is repaired);
    - while playing: the save goes up a little after changes (at most once in 30 s) and when the tab is left, but never before the first sync has finished (an empty browser cannot overwrite the account);
    - no connection / too big / refused: the game goes on as before (progress only in this browser) and the account window says so. */
-const SAVE_FIELDS=['gold','xp','owned','equipped','totalKills','totalMatches','totalWins','totalDamage','totalAssists','modeMatches','charKills','avatar','playerName','achievements','weaponXp','boxes','boxesOpened','dailyLast','dailyCount','souls','pxEarned','pxSpent','missions','season'];
+const SAVE_FIELDS=['gold','xp','owned','equipped','totalKills','totalMatches','totalWins','totalDamage','totalAssists','modeMatches','charKills','charPts','avatar','playerName','achievements','weaponXp','boxes','boxesOpened','dailyLast','dailyCount','souls','pxEarned','pxSpent','missions','season'];
 const CLOUD_META_KEY='stickseumSave', CLOUD_MAX_CHARS=3600, CLOUD_MIN_GAP_MS=30000, CLOUD_DEBOUNCE_MS=20000;
 let cloudSaveState='off', cloudSaveReady=false, cloudSaveTimer=null, cloudSaveLastJson='', cloudSaveLastAt=0, cloudSaveNote='', cloudSaveBackoffUntil=0, sbUserMeta={};
 function cloudSavePayload(){ const o={v:1}; for(const k of SAVE_FIELDS) o[k]=(k==='gold') ? gold : saveData[k]; o.xc=PLAYER_FLAT; o.at=Date.now(); return JSON.parse(JSON.stringify(o)); }
@@ -7404,7 +7404,7 @@ function mergeSaves(local, cloud){
   m.owned=Object.assign({}, other.owned||{}, base.owned||{});
   m.achievements=Object.assign({}, other.achievements||{}, base.achievements||{});
   for(const k of ['xp','totalKills','totalMatches','totalWins','totalDamage','totalAssists','boxesOpened','dailyCount','pxEarned','pxSpent']) m[k]=Math.max(+base[k]||0, +other[k]||0);
-  for(const k of ['weaponXp','charKills','modeMatches']){ m[k]=Object.assign({}, base[k]||{}); for(const w in (other[k]||{})) m[k][w]=Math.max(+m[k][w]||0, +other[k][w]||0); }
+  for(const k of ['weaponXp','charKills','charPts','modeMatches']){ m[k]=Object.assign({}, base[k]||{}); for(const w in (other[k]||{})) m[k][w]=Math.max(+m[k][w]||0, +other[k][w]||0); }
   m.dailyLast=((base.dailyLast||'')>(other.dailyLast||'')) ? (base.dailyLast||'') : (other.dailyLast||'');
   if(!(m.playerName && String(m.playerName).trim())) m.playerName=other.playerName||null;
   m.missions=mergeMissionState(local.missions, cloud.missions); m.season=mergeSeasonState(local.season, cloud.season);
@@ -7428,7 +7428,7 @@ function applyCloudSave(s){
   gold=Math.max(0,+s.gold||0);
   saveData.owned=s.owned||{}; saveData.equipped=Object.assign({name:null, skin:{}}, s.equipped||{}); if(!saveData.equipped.skin||typeof saveData.equipped.skin!=='object') saveData.equipped.skin={};
   for(const k of ['xp','totalKills','totalMatches','totalWins','totalDamage','totalAssists','boxes','boxesOpened','dailyCount','souls','pxEarned','pxSpent']) saveData[k]=Math.max(0,+s[k]||0);
-  saveData.modeMatches=(s.modeMatches&&typeof s.modeMatches==='object')?s.modeMatches:{}; saveData.charKills=(s.charKills&&typeof s.charKills==='object')?s.charKills:{};
+  saveData.modeMatches=(s.modeMatches&&typeof s.modeMatches==='object')?s.modeMatches:{}; saveData.charKills=(s.charKills&&typeof s.charKills==='object')?s.charKills:{}; saveData.charPts=(s.charPts&&typeof s.charPts==='object')?s.charPts:{};
   saveData.avatar=Object.assign({bg:'#274d3a', color:'#3fe0c5', accessory:null}, s.avatar||{});
   if(!saveData.nameDirty && typeof s.playerName==='string' && s.playerName.trim()){ saveData.playerName=s.playerName.trim().slice(0,15); myName=saveData.playerName; myNameSet=true; }     // the account's nickname wins
   saveData.achievements=(s.achievements&&typeof s.achievements==='object')?s.achievements:{}; saveData.weaponXp=(s.weaponXp&&typeof s.weaponXp==='object')?s.weaponXp:{};
@@ -7639,7 +7639,7 @@ async function sbSearchUsers(q){
 }
 /* ---- a public profile: what other people can see of you (the numbers of your own profile screen), kept in profiles.stats (a jsonb column) ---- */
 function buildPublicStats(){
-  const ck={}, wx={}; for(const w of SELECTABLE_WEAPONS){ const k=(saveData.charKills&&saveData.charKills[w])||0, x=(saveData.weaponXp&&saveData.weaponXp[w])||0; if(k>0) ck[w]=k; if(x>0) wx[w]=x; }
+  const ck={}, wx={}; for(const w of SELECTABLE_WEAPONS){ const k=Math.floor(charKillsFor(w)/TIER_PT_MULT), x=(saveData.weaponXp&&saveData.weaponXp[w])||0; if(k>0) ck[w]=k; if(x>0) wx[w]=x; }
   const modes={}; for(const m in (saveData.modeMatches||{})) if(saveData.modeMatches[m]>0 && SPECIAL_IDS.indexOf(m)===-1) modes[m]=saveData.modeMatches[m]; { const dn=dailyMatchCount(saveData); if(dn>0) modes.daily=dn; }
   return {v:1, xp:saveData.xp||0, wins:saveData.totalWins||0, kills:saveData.totalKills||0, damage:Math.round(saveData.totalDamage||0), assists:saveData.totalAssists||0, matches:saveData.totalMatches||0,
     avatar:saveData.avatar||null, pbg:myProfileDeco().pbg, pfr:myProfileDeco().pfr, ach:Object.keys(saveData.achievements||{}), owned:ownedCosCount(), modes, ck, wx, clan:(myClan?{t:myClan.tag, n:myClan.name, e:myClan.emblem, c:myClan.color}:null), nm:getEquippedCos().name||null, at:Date.now()};
@@ -10156,7 +10156,7 @@ function showMatchEndOverlay(resultText, winnerIds, forcedPick){
   if(me){
     saveData.totalDamage=(saveData.totalDamage||0)+Math.round(me.totalDamageDealt||0);
     const wid=me.weapon;
-    if(wid){ saveData.charKills=saveData.charKills||{}; const kb=saveData.charKills[wid]||0; saveData.charKills[wid]=kb+(me.kills||0); lastTierUps=tierUpsFor(wid, kb, saveData.charKills[wid]); }
+    if(wid){ saveData.charKills=saveData.charKills||{}; saveData.charPts=saveData.charPts||{}; const kb=charKillsFor(wid), won=!!(winnerIds && winnerIds.indexOf(myId)!==-1); saveData.charKills[wid]=(saveData.charKills[wid]||0)+(me.kills||0); saveData.charPts[wid]=kb+(me.kills||0)*TIER_PT_KILL+Math.max(0,matchAssists||0)*TIER_PT_ASSIST+(won?TIER_PT_WIN:0)+TIER_PT_MATCH; lastTierUps=tierUpsFor(wid, kb, saveData.charPts[wid]); }
   }
   recordRecentPlayers(); recordMatchStats(!!(winnerIds && winnerIds.indexOf(myId)!==-1));
   try{ if(currentMode==='online' && !practiceMode && winnerIds && winnerIds.indexOf(myId)!==-1 && Object.values(players).filter(q=>q && !q.isBot && !q.isMinion && !q.isBoss).length>=2) clanReportWin(); }catch(e){}
@@ -10734,10 +10734,15 @@ const CHAR_RANKS=[
   {min:550, name:'마스터',  color:'#ff5fd2'},
   {min:800, name:'그랜드 마스터', color:'#ff5252'}
 ];
+/* 계급(다이아, 마스터 ...) are earned with 마스터리 포인트 per character: kill 3, assist 1, win 4, match played 1 (owner 10-26). The thresholds above were kills; a typical match (3 kills, 1 assist, a win) is about 15 points, so x8.75 (5 x 1.75) makes every rank 1.75 times harder than before */
+const TIER_PT_KILL=3, TIER_PT_ASSIST=1, TIER_PT_WIN=4, TIER_PT_MATCH=1, TIER_PT_MULT=8.75;
+{ const base=CHAR_RANKS.slice(); CHAR_RANKS.length=0;      // two in-between steps (II, III) inside every rank from 브론즈 up, so a level-up comes often even though the points are 1.75x harder (owner 10-26); the skin ranks (다이아, 그랜드 마스터) keep their own names
+  base.forEach((r,i)=>{ CHAR_RANKS.push({min:Math.ceil(r.min*TIER_PT_MULT), name:r.name, color:r.color}); const nx=base[i+1];
+    if(nx && i>0) for(let k=1;k<=2;k++) CHAR_RANKS.push({min:Math.ceil((r.min+(nx.min-r.min)*k/3)*TIER_PT_MULT), name:r.name+' '+(k===1?'II':'III'), color:r.color}); }); }
 // the tier of a character (by its total kills) as a small coloured tag, to put after the character's name
 function tierLvTagHtml(kills, lv){ const r=charRankFor(kills||0); return '<span class="tagRow"><span class="tierTag" style="color:'+r.color+'">'+r.name+'</span><span class="lvTag'+(lv>=MASTERY_STAR_LV?' max':'')+'">Lv.'+lv+'</span></span>'; }
-function charTierTagHtml(wid){ if(!SELECTABLE_WEAPONS.includes(wid)) return ''; return tierLvTagHtml((saveData.charKills&&saveData.charKills[wid])||0, masteryInfo(wid).lv); }
-function myWeaponStats(wid){ return {ck:Math.max(0,Math.floor((saveData.charKills&&saveData.charKills[wid])||0)), ml:masteryInfo(wid).lv}; }     // what the others see next to my character in the reveal
+function charTierTagHtml(wid){ if(!SELECTABLE_WEAPONS.includes(wid)) return ''; return tierLvTagHtml(charKillsFor(wid), masteryInfo(wid).lv); }
+function myWeaponStats(wid){ return {ck:Math.max(0,Math.floor(charKillsFor(wid))), ml:masteryInfo(wid).lv}; }     // what the others see next to my character in the reveal
 function cleanStat(v, max){ v=Math.floor(+v); return (isFinite(v) && v>0) ? Math.min(v, max) : 0; }
 function charNameWithTierHtml(wid){ return escapeHtmlText(WEAPON_PERSONA_NAME[wid]||(WEAPONS[wid]&&WEAPONS[wid].name)||wid)+charTierTagHtml(wid); }
 function charRankFor(kills){
@@ -10989,11 +10994,11 @@ function renderWeaponUI(){
     det.appendChild(document.createTextNode(w.desc+'\n궁극기 [R] '+u.name+' - '+u.desc+(skd?('\n스킬 ['+codeToLabel(keyBindings.skill)+'] '+skd.name+' - '+skd.desc+' (쿨타임 '+SKILL_CD+'초)'):'')));
     const statsEl=document.getElementById('weaponCharStats');
     if(characterBrowseMode){
-      const kc=(saveData.charKills&&saveData.charKills[sel])||0;
+      const kc=charKillsFor(sel);
       const rank=charRankFor(kc);
       statsEl.style.display='block';
       const mi=masteryInfo(sel);
-      statsEl.innerHTML='누적 킬 '+kc+' · <span style="color:'+rank.color+';">'+rank.name+'</span>'+
+      statsEl.innerHTML='마스터리 포인트 '+kc+' · <span style="color:'+rank.color+';">'+rank.name+'</span>'+
         '<div style="margin-top:6px; font-size:13px;">🎖️ 숙련도 <b style="color:'+(mi.lv>=MASTERY_STAR_LV?'#ffd34d':'#7ef0a8')+'">Lv.'+mi.lv+'</b>'+
         ' · '+(mi.xp-mi.cur)+' / '+(mi.next-mi.cur)+' XP · 다음 레벨까지 '+(mi.next-mi.xp)+'</div>'+
         '<div style="height:6px; margin:5px auto 0; max-width:240px; background:#232733; border-radius:4px; overflow:hidden;"><div style="height:100%; width:'+Math.round(mi.frac*100)+'%; background:'+(mi.lv>=MASTERY_STAR_LV?'#ffd34d':'#3fe0c5')+';"></div></div>'+codexTierHtml(sel, kc)+'';
