@@ -85,3 +85,13 @@ patchnotes.json | v405 items[9] | 스킨 머리 위 효과가 사라지던 문�
 patchnotes.json | v405 items[10] | 밸런스 표 갱신 (쿠루스, 차원여행자 재측정) | build 405 | 2026-10-26
 patchnotes.json | v406 title | 청룡 그림 개선 | build 406 | 2026-10-26
 patchnotes.json | v406 items[0] | 청룡의 마법사 청룡을 비늘, 갈기, 뿔, 발톱, 수염이 있는 모습으로 새로 그림 | build 406 | 2026-10-26
+Stickseum-v0.8.html | COSMETICS.skin_bow_new name | 큐피트 | build 407 | 2026-10-26
+Stickseum-v0.8.html | COSMETICS.skin_pistol_new name | 바나나 제임스 | build 407 | 2026-10-26
+Stickseum-v0.8.html | WEAPONS.wizard desc | 데미지 15 · 쿨타임 0.7초 · 사거리 보통 · 발판을 통과하고, 플레이어 한 명을 관통한 뒤 두 번째로 맞힌 상대에게서 멈추는 화염 마법 | build 407 | 2026-10-26
+patchnotes.json | v407 title | 큐피트와 바나나 제임스 | build 407 | 2026-10-26
+patchnotes.json | v407 items[0] | 궁수 큐피트 스킨 (2000sC): 화살 뒤로 하트가 뿅뿅 나오고 눈이 하트 모양 | build 407 | 2026-10-26
+patchnotes.json | v407 items[1] | 권총 바나나 제임스 스킨 (1500sC): 바나나를 들고 쏘며 바나나 과육이 날아감 | build 407 | 2026-10-26
+patchnotes.json | v407 items[2] | 기존 궁수·권총 2000sC 스킨을 위 두 스킨으로 교체 | build 407 | 2026-10-26
+patchnotes.json | v407 items[3] | 리플레이에서도 스킨 탄환 표시 | build 407 | 2026-10-26
+patchnotes.json | v407 items[4] | 마법사 데미지 16 → 15, 사거리 증가 | build 407 | 2026-10-26
+patchnotes.json | v407 items[5] | 밸런스 표 갱신 (마법사 재측정) | build 407 | 2026-10-26
