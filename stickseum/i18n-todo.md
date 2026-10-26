@@ -13,3 +13,9 @@ patchnotes.json | v396 items[5] | 차원여행자 일반 공격 데미지 15 →
 patchnotes.json | v396 items[6] | 차원여행자 봇이 포탈을 오가며 제자리에서 맴도는 문제 수정 | build 396 | 2026-10-26
 patchnotes.json | v396 items[7] | 제임스 궁극기 탄환 관통 | build 396 | 2026-10-26
 patchnotes.json | v396 items[8] | 암살자 데미지 38 → 41 | build 396 | 2026-10-26
+patchnotes.json | v397 title | 스킬 시각 효과와 조준 투척 | build 397 | 2026-10-26
+patchnotes.json | v397 items[0] | 학살자 스킬을 화염병으로 교체 (던진 자리에 4초 동안 불바다, 안의 적은 화상) | build 397 | 2026-10-26
+patchnotes.json | v397 items[1] | 사냥꾼 스킬을 회수 돌풍으로 교체 (주변 적 끌어당김과 8 피해, 던진 부메랑 즉시 회수) | build 397 | 2026-10-26
+patchnotes.json | v397 items[2] | 칸 독 두꺼비를 조준한 곳으로 던지게 변경, 미리보기와 착지 지점 반영 | build 397 | 2026-10-26
+patchnotes.json | v397 items[3] | 특수요원 연막탄을 조준해서 던지는 방식으로 변경 (착지 지점에 2.5초 동안 연기, 안에서는 이동 속도 감소와 시야 차단) | build 397 | 2026-10-26
+patchnotes.json | v397 items[4] | 제임스 궁극기가 플레이어만 관통하고 발판에서 멈추도록 수정 | build 397 | 2026-10-26
