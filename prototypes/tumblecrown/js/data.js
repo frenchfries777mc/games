@@ -3,7 +3,7 @@
 
 import { T } from './tr.js';
 
-export const VERSION = 'v0.1', BUILD = 18;
+export const VERSION = 'v0.1', BUILD = 19;
 
 export const ROLES = {
   knight: {
@@ -12,7 +12,7 @@ export const ROLES = {
     skills: [
       { id: 'block', name: T('막기'), key: 'Q', cd: 5, desc: T('1.2초 동안 방패를 들어 앞에서 오는 피해를 70% 줄여요.') },
       { id: 'dash', name: T('돌진'), key: 'E', cd: 6, desc: T('앞으로 돌진하며 부딪힌 상대에게 30 피해를 줘요.') },
-      { id: 'shieldbash', name: T('방패 강타'), key: 'R', cd: 10, desc: T('방패로 앞을 세게 쳐 28 피해를 주고 상대를 1.1초 기절시켜요.') }
+      { id: 'shieldbash', name: T('방패 강타'), key: 'R', cd: 10, desc: T('방패를 앞세워 짧게 파고들며 28 피해를 주고 상대를 1.1초 기절시켜요.') }
     ],
     st: [3, 3, 2, 1], atkTxt: T('칼 베기 (이어 치면 세 번째에 내려찍는 강타)'),
     role: T('튼튼하게 버티며 공격·공격·강타로 몰아붙여요.')
@@ -44,8 +44,8 @@ export const ROLES = {
     atk: { kind: 'melee', range: 2.6, arc: 2.0, dmg: 20, cd: 0.55 },
     skills: [
       { id: 'leap', name: T('도약 강타'), key: 'Q', cd: 6, desc: T('앞으로 크게 뛰어올라 내려앉으며 둘레 상대에게 36 피해를 줘요.') },
-      { id: 'bloodlust', name: T('피의 갈증'), key: 'E', cd: 12, desc: T('5초 동안 상대에게 준 피해의 60%만큼 체력을 되찾아요.') },
-      { id: 'quake', name: T('지진'), key: 'R', cd: 12, desc: T('땅을 내려쳐 둘레 모두에게 45 피해를 주고 느려지게 해요.') }
+      { id: 'bloodlust', name: T('피의 갈증'), key: 'E', cd: 12, desc: T('5초 동안 공격이 30% 빨라지고, 준 피해의 일부를 체력으로 되찾아요.') },
+      { id: 'quake', name: T('지진'), key: 'R', cd: 12, desc: T('앞으로 11칸 길게 땅을 갈라 그 길 위 모두에게 42 피해를 주고 느려지게 해요.') }
     ],
     st: [5, 2, 2, 2], atkTxt: T('도끼 내리치기'),
     role: T('느리지만 도끼 한 방이 무거운 가장 튼튼한 전사예요.')
@@ -54,7 +54,7 @@ export const ROLES = {
     name: T('맘루크'), color: '#d0443a', hp: 410, speed: 7.2,
     atk: { kind: 'melee', range: 2.2, arc: 1.8, dmg: 12, cd: 0.3 },
     skills: [
-      { id: 'flurry', name: T('연속 찌르기'), key: 'Q', cd: 4, desc: T('앞쪽을 세 번 연달아 찔러 11씩 피해를 줘요.') },
+      { id: 'flurry', name: T('연속 찌르기'), key: 'Q', cd: 4, desc: T('앞으로 파고들며 다섯 번 빠르게 찔러 9씩 피해를 줘요.') },
       { id: 'whirl', name: T('회전 베기'), key: 'E', cd: 8, desc: T('제자리에서 크게 한 바퀴 돌며 둘레 모두를 베어 34 피해를 줘요.') },
       { id: 'blink', name: T('순간 베기'), key: 'R', cd: 10, desc: T('가장 가까운 상대 뒤로 순간이동해 베어 34 피해를 줘요.') }
     ],
@@ -66,8 +66,8 @@ export const ROLES = {
     atk: { kind: 'orb', dmg: 10, cd: 0.45, speed: 16 },
     skills: [
       { id: 'potion', name: T('독 물약'), key: 'Q', cd: 7, desc: T('조준한 곳에 물약을 던져 터진 자리 둘레 상대에게 30 피해를 주고 불태워요.') },
-      { id: 'curse', name: T('저주'), key: 'E', cd: 10, desc: T('조준한 곳에 저주를 터뜨려 잠시 뒤 큰 피해를 줘요.') },
-      { id: 'frost', name: T('서리 폭발'), key: 'R', cd: 12, desc: T('조준한 곳에 서리를 터뜨려 둘레 상대에게 22 피해를 주고 3초 동안 느리게 해요.') }
+      { id: 'curse', name: T('저주'), key: 'E', cd: 10, desc: T('조준한 곳에 저주를 터뜨려 잠시 뒤 40 피해를 주고 3초 동안 느리게 해요.') },
+      { id: 'frost', name: T('서리 폭발'), key: 'R', cd: 12, desc: T('조준한 곳에 서리를 터뜨려 둘레 상대에게 22 피해를 주고 0.6초 얼리고 3초 동안 느리게 해요.') }
     ],
     st: [3, 3, 4, 4], atkTxt: T('마법 구슬'),
     role: T('마법 구슬과 저주로 멀리서 괴롭혀요.')
@@ -76,8 +76,8 @@ export const ROLES = {
     name: T('스켈레톤'), color: '#cfc8b0', hp: 450, speed: 7.0,
     atk: { kind: 'melee', range: 2.0, arc: 2.0, dmg: 17, cd: 0.32 },
     skills: [
-      { id: 'scatter', name: T('뼈 흩어지기'), key: 'Q', cd: 6, desc: T('뒤로 빠지며 있던 자리에 뼛조각을 터뜨려 26 피해를 줘요.') },
-      { id: 'fan', name: T('뼈 창 세 갈래'), key: 'E', cd: 6, desc: T('뼈 창 세 대를 부채꼴로 던져요. 하나에 22 피해.') },
+      { id: 'scatter', name: T('뼈 흩어지기'), key: 'Q', cd: 6, desc: T('뒤로 빠지며 몸이 흩어져 뼛조각 여덟 개가 사방으로 튀어요. 하나에 12 피해.') },
+      { id: 'fan', name: T('뼈 창 다섯 갈래'), key: 'E', cd: 6, desc: T('뼈 창 다섯 대를 부채꼴로 던져요. 하나에 15 피해.') },
       { id: 'bonestorm', name: T('뼈 폭풍'), key: 'R', cd: 14, desc: T('1.4초 동안 몸을 돌리며 둘레를 계속 쳐 13씩 피해를 줘요.') }
     ],
     st: [2, 5, 1, 4], atkTxt: T('뼈 몽둥이'),
