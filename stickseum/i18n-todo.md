@@ -119,3 +119,7 @@ patchnotes.json | v412 items[1] | 깃발 뺏기 마스터리 포인트 조정 (�
 Stickseum-v0.8.html | shop tier hint | (봇이 8명 이상이고 부활이 있는 모드는 처치 2점, 어시스트 1점, 승리 3점) | build 413 | 2026-10-26
 patchnotes.json | v413 title | 마스터리 포인트 점수 조건 | build 413 | 2026-10-26
 patchnotes.json | v413 items[0] | 봇 8명 이상에 부활이 있는 모드는 처치 2점, 어시스트 1점, 승리 3점 (깃발 뺏기 등) | build 413 | 2026-10-26
+Stickseum-v0.8.html | shop tier hint | (듀얼 처치 8점, 배틀로얄 처치 5점, 6명 이상 부활 모드 처치 2점·승리 3점) | build 414 | 2026-10-26
+patchnotes.json | v414 title | 마스터리 포인트 점수 조정 | build 414 | 2026-10-26
+patchnotes.json | v414 items[0] | 듀얼 처치 8점, 배틀로얄 처치 5점 | build 414 | 2026-10-26
+patchnotes.json | v414 items[1] | 6명 이상 부활 모드 처치 2점, 어시스트 1점, 승리 3점 | build 414 | 2026-10-26
