@@ -5110,7 +5110,7 @@ function shuffle(arr){ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.
 /* ===== the version of this file =====
    Players with different versions CAN meet and play together: the automatic matchmaking uses the same room names for every version (online-<mode>-<map>-<slot>), and nobody is refused because of a different build.
    The build is only sent along with the join message and the lobby (for information); the corner of the screen shows it. */
-const GAME_BUILD='build 2026-10-18-v415';
+const GAME_BUILD='build 2026-10-18-v416';
 const GAME_VERSION='0.8', GAME_VERSION_NAME='황금을 찾아서';   // 게임 버전 이름: versions.json의 title과 같게 (빌드마다 바꾸지 않음)
 const WEEKLY_EVENTS=[
   {id:'lowg',    name:'저중력 난투', desc:'몸이 둥실둥실, 중력이 약해진 난투', rules:{grav:0.6}},
@@ -10395,9 +10395,9 @@ function finishMatchEndOverlay(resultText){
       const lm=lastMastery, mi=masteryInfo(lm.wid), nm=WEAPON_PERSONA_NAME[lm.wid]||lm.wid;
       let line1='🎖️ '+nm+' 숙련도 <b style="color:#ffd34d">+'+lm.gained+'</b> <span style="color:#9aa0a6">(처치 '+lm.kills+'×'+MASTERY_KILL_XP+(lm.assists>0?' + 어시스트 '+lm.assists+'×'+MASTERY_ASSIST_XP:'')+' + 완주 '+MASTERY_MATCH_XP+(lm.won?' + 승리 '+MASTERY_WIN_XP:'')+')</span>';
       let line2 = lm.newLv>lm.oldLv ? ('<b style="color:#7ef0a8">Lv.'+lm.oldLv+' → Lv.'+lm.newLv+' 레벨 업!</b> +'+lm.gold+' sC') : ('Lv.'+mi.lv+(mi.next===null?' (최고 레벨)':' · 다음 레벨까지 '+(mi.next-mi.xp)+' XP'));
-      mEl.innerHTML=line1+'<br>'+line2+''+tierGainHtml(); mEl.style.display='block';
+      mEl.innerHTML=line1+'<br>'+line2+tierGainHtml(); mEl.style.display='block';
     }
-    else if(lastTierGain){ mEl.innerHTML=tierGainHtml().replace(/^<br>/,''); mEl.style.display='block'; }
+    else if(lastTierGain){ mEl.innerHTML=tierGainHtml(); mEl.style.display='block'; }
     else mEl.style.display='none';
   }
   const wasShown=(el.style.display==='flex');
@@ -10747,11 +10747,26 @@ function charTierTagHtml(wid){ if(!SELECTABLE_WEAPONS.includes(wid)) return ''; 
 function myWeaponStats(wid){ return {ck:Math.max(0,Math.floor(charKillsFor(wid))), ml:masteryInfo(wid).lv}; }     // what the others see next to my character in the reveal
 function cleanStat(v, max){ v=Math.floor(+v); return (isFinite(v) && v>0) ? Math.min(v, max) : 0; }
 function charNameWithTierHtml(wid){ return escapeHtmlText(WEAPON_PERSONA_NAME[wid]||(WEAPONS[wid]&&WEAPONS[wid].name)||wid)+charTierTagHtml(wid); }
-function tierGainHtml(){      // "마스터리 포인트 +N (처치 3×3 + ...)" and where that leaves the character
+function rankEmblemSvg(rk, size){      // the badge of a 계급: a shield in the rank colour, a star with more points the higher the rank, and three pips for the II / III steps
+  const base=rk.name.replace(/ (II|III)$/,''), sub=/ III$/.test(rk.name)?2:(/ II$/.test(rk.name)?1:0);
+  let bi=0; for(const r of CHAR_RANKS){ const bn=r.name.replace(/ (II|III)$/,''); if(bn===base) break; if(r.name===bn) bi++; }
+  const n=bi+3, pts=[]; for(let k=0;k<n*2;k++){ const a=-Math.PI/2+k*Math.PI/n, rr=(k%2?7:16); pts.push((32+Math.cos(a)*rr*0.92).toFixed(1)+','+(28+Math.sin(a)*rr*0.92).toFixed(1)); }
+  const col=rk.color, gid='rg'+Math.floor(Math.random()*1e6);
+  let pips=''; for(let k=0;k<3;k++) pips+='<circle cx="'+(25+k*7)+'" cy="50" r="2.2" fill="'+(bi>0&&k<=sub?col:'#2b2f3a')+'"/>';
+  return '<svg width="'+size+'" height="'+size+'" viewBox="0 0 64 64" style="flex:none; filter:drop-shadow(0 0 6px '+col+'88);"><defs><linearGradient id="'+gid+'" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="'+col+'"/><stop offset="1" stop-color="#1a1d27"/></linearGradient></defs>'+
+    '<path d="M32 3 L57 12 L57 33 Q57 50 32 61 Q7 50 7 33 L7 12 Z" fill="url(#'+gid+')" stroke="'+col+'" stroke-width="2"/>'+
+    '<path d="M32 9 L51 16 L51 33 Q51 46 32 55 Q13 46 13 33 L13 16 Z" fill="#12141c" opacity=".85"/>'+
+    '<polygon points="'+pts.join(' ')+'" fill="'+col+'" stroke="#fff" stroke-opacity=".6" stroke-width="1"/>'+pips+'</svg>';
+}
+function tierGainHtml(){      // "마스터리 포인트 +N (처치 3×3 + ...)", the 계급 badge, its name and a bar to the next 계급
   const g=lastTierGain; if(!g) return '';
   const nm=WEAPON_PERSONA_NAME[g.wid]||g.wid, rk=charRankFor(g.total), idx=CHAR_RANKS.findIndex(r=>r.name===rk.name), nx=CHAR_RANKS[idx+1];
   const parts=[]; if(g.k>0) parts.push('처치 '+g.k+'×'+g.kp); if(g.a>0) parts.push('어시스트 '+g.a+'×'+TIER_PT_ASSIST); parts.push('완주 '+TIER_PT_MATCH); if(g.won) parts.push('승리 '+g.wp);
-  return '<br>🏅 '+nm+' 마스터리 포인트 <b style="color:#ffd34d">+'+g.gained+'</b> <span style="color:#9aa0a6">('+parts.join(' + ')+')</span><br><span style="color:'+rk.color+'; font-weight:700;">'+rk.name+'</span> · '+g.total+'점'+(nx?' · 다음 '+nx.name+'까지 '+(nx.min-g.total)+'점':' · 최고 계급');
+  const frac=nx?clamp((g.total-rk.min)/Math.max(1,nx.min-rk.min),0,1):1;
+  return '<div style="margin-top:8px; padding-top:8px; border-top:1px solid #3a3320;">🏅 '+escapeHtmlText(nm)+' 마스터리 포인트 <b style="color:#ffd34d">+'+g.gained+'</b> <span style="color:#9aa0a6">('+parts.join(' + ')+')</span>'+
+    '<div style="display:flex; align-items:center; gap:12px; justify-content:center; margin-top:6px;">'+rankEmblemSvg(rk,56)+'<div style="text-align:left; min-width:190px;"><div style="font-weight:800; font-size:15px; color:'+rk.color+';">'+rk.name+'</div>'+
+    '<div style="height:8px; margin:4px 0 3px; background:#232733; border-radius:5px; overflow:hidden;"><div style="height:100%; width:'+Math.round(frac*100)+'%; background:'+rk.color+';"></div></div>'+
+    '<div style="font-size:11px; color:#9aa0a6;">'+g.total+'점'+(nx?' · 다음 '+nx.name+'까지 '+(nx.min-g.total)+'점':' · 최고 계급')+'</div></div></div></div>';
 }
 function charRankFor(kills){
   let cur=CHAR_RANKS[0];
