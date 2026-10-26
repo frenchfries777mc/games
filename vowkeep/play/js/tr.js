@@ -1,9 +1,9 @@
 // Vowkeep · © 2026 Frenchfries777 · CC BY-NC-ND 4.0
 // 번역: 게임 글은 한국어가 원문이에요. 다른 언어는 lang/xx.js 표에서 한국어 문장을 그대로 찾아 바꿔요
 // 언어는 사이트 공용 언어(ff-lang.js의 FFLang)를 따르고, 없으면 브라우저 언어, 표에 없는 언어면 영어예요
-// 새 문구를 넣을 때: 코드에서 T('한국어 문장') 또는 T('명예 {0}', 값)처럼 쓰고, lang/ 아래 모든 언어 표에 같은 한국어 키로 번역을 넣어요
+// 새 문구를 넣을 때: 코드에서 T('한국어 문장') 또는 T('vC {0}', 값)처럼 쓰고, lang/ 아래 모든 언어 표에 같은 한국어 키로 번역을 넣어요
 export const LANGS = ['ko', 'en', 'es', 'fr', 'de', 'ja', 'zh', 'pt', 'ru', 'tr', 'it', 'pl', 'ar', 'nw', 'gk'];
-const LV = 51;   // lang/ 표를 바꾸면 BUILD와 같게 올려요
+const LV = 54;   // lang/ 표를 바꾸면 BUILD와 같게 올려요
 function pickLang() {
   let l = null;
   try { l = window.FFLang && FFLang.get(); } catch (e) { }
