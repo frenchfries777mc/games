@@ -3373,7 +3373,7 @@ function renderShop(){
   const grid=document.getElementById('shopGrid'); grid.style.minHeight=''; grid.innerHTML='';
   if(shopCat==='box'){ renderBoxTab(grid); return; }
   if(shopCat==='emo'){ const note=document.createElement('div'); note.className='hint'; note.style.cssText='grid-column:1/-1; margin-bottom:2px;'; note.textContent='이모트 휠('+codeToLabel(keyBindings.emote)+' 키)에는 가진 이모트 중 '+EMOTE_WHEEL_N+'개까지 넣을 수 있어요 · 지금 '+emoteWheelList().length+' / '+EMOTE_WHEEL_N; grid.appendChild(note); }
-  if(shopCat==='tier'){ const note=document.createElement('div'); note.className='hint'; note.style.cssText='grid-column:1/-1; margin-bottom:2px;'; note.textContent='캐릭터마다 2개: '+TIER_SKIN_TIERS.map(n=>n+' ('+tierMinKills(n)+'점)').join(' · ')+' 계급에 오르면 그 캐릭터의 전용 스킨이 해금돼요. 마스터리 포인트는 그 캐릭터로 처치 3점, 어시스트 1점, 승리 4점, 한 판 1점이 쌓여요 (봇이 8명 이상이고 부활이 있는 모드는 처치 2점, 어시스트 1점, 승리 3점). 구매는 불가능해요.'; grid.appendChild(note); }
+  if(shopCat==='tier'){ const note=document.createElement('div'); note.className='hint'; note.style.cssText='grid-column:1/-1; margin-bottom:2px;'; note.textContent='캐릭터마다 2개: '+TIER_SKIN_TIERS.map(n=>n+' ('+tierMinKills(n)+'점)').join(' · ')+' 계급에 오르면 그 캐릭터의 전용 스킨이 해금돼요. 마스터리 포인트는 그 캐릭터로 처치 3점, 어시스트 1점, 승리 4점, 한 판 1점이 쌓여요 (듀얼 처치 8점, 배틀로얄 처치 5점, 6명 이상 부활 모드 처치 2점·승리 3점). 구매는 불가능해요.'; grid.appendChild(note); }
   for(const id in COSMETICS){
     const it=COSMETICS[id]; if(!shopItemInTab(it, shopCat)) continue;
     const box=document.createElement('div'); box.className='shopItem'+(it.lux?' lux'+it.lux:'');
@@ -5109,7 +5109,7 @@ function shuffle(arr){ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.
 /* ===== the version of this file =====
    Players with different versions CAN meet and play together: the automatic matchmaking uses the same room names for every version (online-<mode>-<map>-<slot>), and nobody is refused because of a different build.
    The build is only sent along with the join message and the lobby (for information); the corner of the screen shows it. */
-const GAME_BUILD='build 2026-10-18-v413';
+const GAME_BUILD='build 2026-10-18-v414';
 const GAME_VERSION='0.8', GAME_VERSION_NAME='황금을 찾아서';   // 게임 버전 이름: versions.json의 title과 같게 (빌드마다 바꾸지 않음)
 const WEEKLY_EVENTS=[
   {id:'lowg',    name:'저중력 난투', desc:'몸이 둥실둥실, 중력이 약해진 난투', rules:{grav:0.6}},
@@ -10156,7 +10156,7 @@ function showMatchEndOverlay(resultText, winnerIds, forcedPick){
   if(me){
     saveData.totalDamage=(saveData.totalDamage||0)+Math.round(me.totalDamageDealt||0);
     const wid=me.weapon;
-    if(wid){ saveData.charKills=saveData.charKills||{}; saveData.charPts=saveData.charPts||{}; const kb=charKillsFor(wid), won=!!(winnerIds && winnerIds.indexOf(myId)!==-1); saveData.charKills[wid]=(saveData.charKills[wid]||0)+(me.kills||0); const bigm=Object.values(players).filter(q=>q && q.isBot && !q.isMinion && !q.isBoss).length>=TIER_PT_BIG_BOTS && !!MODES[gameMode] && !MODES[gameMode].elim; saveData.charPts[wid]=kb+(me.kills||0)*(bigm?TIER_PT_BIG_KILL:TIER_PT_KILL)+Math.max(0,matchAssists||0)*TIER_PT_ASSIST+(won?(bigm?TIER_PT_BIG_WIN:TIER_PT_WIN):0)+TIER_PT_MATCH; lastTierUps=tierUpsFor(wid, kb, saveData.charPts[wid]); }
+    if(wid){ saveData.charKills=saveData.charKills||{}; saveData.charPts=saveData.charPts||{}; const kb=charKillsFor(wid), won=!!(winnerIds && winnerIds.indexOf(myId)!==-1); saveData.charKills[wid]=(saveData.charKills[wid]||0)+(me.kills||0); const bigm=Object.values(players).filter(q=>q && !q.isMinion && !q.isBoss).length>=TIER_PT_BIG_PLAYERS && !!MODES[gameMode] && !MODES[gameMode].elim, kpt=(gameMode==='duel')?TIER_PT_DUEL_KILL:(brLike(gameMode)?TIER_PT_BR_KILL:(bigm?TIER_PT_BIG_KILL:TIER_PT_KILL)); saveData.charPts[wid]=kb+(me.kills||0)*kpt+Math.max(0,matchAssists||0)*TIER_PT_ASSIST+(won?(bigm?TIER_PT_BIG_WIN:TIER_PT_WIN):0)+TIER_PT_MATCH; lastTierUps=tierUpsFor(wid, kb, saveData.charPts[wid]); }
   }
   recordRecentPlayers(); recordMatchStats(!!(winnerIds && winnerIds.indexOf(myId)!==-1));
   try{ if(currentMode==='online' && !practiceMode && winnerIds && winnerIds.indexOf(myId)!==-1 && Object.values(players).filter(q=>q && !q.isBot && !q.isMinion && !q.isBoss).length>=2) clanReportWin(); }catch(e){}
@@ -10735,7 +10735,7 @@ const CHAR_RANKS=[
   {min:7000, name:'그랜드 마스터', color:'#ff5252'}
 ];
 /* 계급(다이아, 마스터 ...) are earned with 마스터리 포인트 per character: kill 3, assist 1, win 4, match played 1 (owner 10-26). The thresholds above were kills; a typical match (3 kills, 1 assist, a win) is about 15 points, the new thresholds (owner 10-26: 1.75x the old kills, rounded: 90 / 260 / 530 / 880 / 1750 / 3050 / 4800 / 7000) are about 1.75 times harder than before */
-const TIER_PT_KILL=3, TIER_PT_ASSIST=1, TIER_PT_WIN=4, TIER_PT_MATCH=1, TIER_PT_MULT=10, TIER_PT_BIG_KILL=2, TIER_PT_BIG_WIN=3, TIER_PT_BIG_BOTS=8;      // (a match with 8 or more bots and respawns has many kills (깃발 뺏기 about 21): kill 2, win 3 instead of 3 / 4. TIER_PT_MULT is only how old kills are carried over: x10 keeps every rank already reached)
+const TIER_PT_KILL=3, TIER_PT_ASSIST=1, TIER_PT_WIN=4, TIER_PT_MATCH=1, TIER_PT_MULT=10, TIER_PT_BIG_KILL=2, TIER_PT_BIG_WIN=3, TIER_PT_BIG_PLAYERS=6, TIER_PT_DUEL_KILL=8, TIER_PT_BR_KILL=5;      // (a match with 6 or more players and respawns has many kills (깃발 뺏기 about 21): kill 2, win 3 instead of 3 / 4; a duel kill is worth 8, a battle royale kill 5 (owner 10-26). TIER_PT_MULT is only how old kills are carried over: x10 keeps every rank already reached)
 { const base=CHAR_RANKS.slice(); CHAR_RANKS.length=0;      // two in-between steps (II, III) inside every rank from 브론즈 up, so a level-up comes often even though the points are 1.75x harder (owner 10-26); the skin ranks (다이아, 그랜드 마스터) keep their own names
   base.forEach((r,i)=>{ CHAR_RANKS.push({min:r.min, name:r.name, color:r.color}); const nx=base[i+1];
     if(nx && i>0) for(let k=1;k<=2;k++) CHAR_RANKS.push({min:Math.ceil(r.min+(nx.min-r.min)*k/3), name:r.name+' '+(k===1?'II':'III'), color:r.color}); }); }
