@@ -885,8 +885,8 @@ sting();})();</script>
 
 <canvas id="game"></canvas>
 
-<div id="hud">
   <div id="lobbyFoot" style="display:none; position:fixed; left:0; right:0; bottom:4px; z-index:5; text-align:center; font-size:10px; opacity:.55; pointer-events:none; color:#cfd6e4; text-shadow:0 1px 2px #000;"><span id="lobbyBuild"></span> · <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.ko" target="_blank" rel="noopener" style="color:inherit; pointer-events:auto;">© 2026 Frenchfries777 · CC BY-NC-ND 4.0</a></div>
+<div id="hud">
   <div id="topBar"><span id="hudMapName">맵</span><span id="hudConnWrap"> · 접속 <b id="hudCount">1</b>/<b id="hudMax">?</b></span> <span id="buildTag" style="opacity:0.65; font-size:11px;">build 2026-10-14-v210</span></div>
 
   <div id="bottomBar">
@@ -2850,6 +2850,18 @@ function claimDaily(now, rand){
 }
 let shopCat='skin';
 let shopMaxGridHeight=0;
+let myCharKb={}, myCharUsed=[], myTrackW=null, myTrackK=0;      // the characters I played in this match (a duel changes it every round) and the kills each one got
+function trackMyChar(me){
+  if(!me || !me.weapon || !SELECTABLE_WEAPONS.includes(me.weapon) || me.weapon===myTrackW) return;
+  const k=me.kills||0; if(myTrackW) myCharKb[myTrackW]=(myCharKb[myTrackW]||0)+Math.max(0,k-myTrackK);
+  myTrackK=k; myTrackW=me.weapon; if(!myCharUsed.includes(me.weapon)) myCharUsed.push(me.weapon);
+}
+function usedCharsOfMatch(me){      // every character that earns 마스터리 포인트 from this match: all the ones I picked (modes that hand out random characters count only the last one)
+  trackMyChar(me);
+  if(myTrackW) myCharKb[myTrackW]=(myCharKb[myTrackW]||0)+Math.max(0,(me.kills||0)-myTrackK), myTrackK=me.kills||0;
+  const md=MODES[gameMode]||{}; if(md.autoWeapon || !myCharUsed.length) return [me.weapon];
+  return myCharUsed.slice();
+}
 let lastTierGain=null;     // the 마스터리 포인트 the finished match gave (shown on the match-end screen)
 let lastTierUps=[];     // toasts for the tier(s) the finished match took a character to, and the skins that came with them
 function codexTierHtml(wid, kc){       // under the numbers of the codex: how far to the next tier, and the two skins that belong to this character's tiers
@@ -5111,7 +5123,7 @@ function shuffle(arr){ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.
 /* ===== the version of this file =====
    Players with different versions CAN meet and play together: the automatic matchmaking uses the same room names for every version (online-<mode>-<map>-<slot>), and nobody is refused because of a different build.
    The build is only sent along with the join message and the lobby (for information); the corner of the screen shows it. */
-const GAME_BUILD='build 2026-10-18-v418';
+const GAME_BUILD='build 2026-10-18-v420';
 const GAME_VERSION='0.8', GAME_VERSION_NAME='황금을 찾아서';   // 게임 버전 이름: versions.json의 title과 같게 (빌드마다 바꾸지 않음)
 const WEEKLY_EVENTS=[
   {id:'lowg',    name:'저중력 난투', desc:'몸이 둥실둥실, 중력이 약해진 난투', rules:{grav:0.6}},
@@ -10159,7 +10171,13 @@ function showMatchEndOverlay(resultText, winnerIds, forcedPick){
   if(me){
     saveData.totalDamage=(saveData.totalDamage||0)+Math.round(me.totalDamageDealt||0);
     const wid=me.weapon;
-    if(wid){ saveData.charKills=saveData.charKills||{}; saveData.charPts=saveData.charPts||{}; const kb=charKillsFor(wid), won=!!(winnerIds && winnerIds.indexOf(myId)!==-1); saveData.charKills[wid]=(saveData.charKills[wid]||0)+(me.kills||0); const bigm=Object.values(players).filter(q=>q && !q.isMinion && !q.isBoss).length>=TIER_PT_BIG_PLAYERS && !!MODES[gameMode] && !MODES[gameMode].elim, kpt=(gameMode==='duel')?TIER_PT_DUEL_KILL:(brLike(gameMode)?TIER_PT_BR_KILL:(bigm?TIER_PT_BIG_KILL:TIER_PT_KILL)); saveData.charPts[wid]=kb+(me.kills||0)*kpt+Math.max(0,matchAssists||0)*TIER_PT_ASSIST+(won?(bigm?TIER_PT_BIG_WIN:TIER_PT_WIN):0)+TIER_PT_MATCH; lastTierUps=tierUpsFor(wid, kb, saveData.charPts[wid]); lastTierGain={wid, gained:saveData.charPts[wid]-kb, k:me.kills||0, kp:kpt, a:Math.max(0,matchAssists||0), won, wp:(won?(bigm?TIER_PT_BIG_WIN:TIER_PT_WIN):0), total:saveData.charPts[wid]}; }
+    if(wid){ saveData.charKills=saveData.charKills||{}; saveData.charPts=saveData.charPts||{}; const won=!!(winnerIds && winnerIds.indexOf(myId)!==-1);
+      const bigm=Object.values(players).filter(q=>q && !q.isMinion && !q.isBoss).length>=TIER_PT_BIG_PLAYERS && !!MODES[gameMode] && !MODES[gameMode].elim, kpt=(gameMode==='duel')?TIER_PT_DUEL_KILL:(brLike(gameMode)?TIER_PT_BR_KILL:(bigm?TIER_PT_BIG_KILL:TIER_PT_KILL));
+      const used=usedCharsOfMatch(me), as=Math.max(0,matchAssists||0); lastTierGain=[];
+      for(const uw of used){ const kb=charKillsFor(uw), kk=(used.length>1)?(myCharKb[uw]||0):(me.kills||0), aa=(uw===wid)?as:0; saveData.charKills[uw]=(saveData.charKills[uw]||0)+kk;
+        saveData.charPts[uw]=kb+kk*kpt+aa*TIER_PT_ASSIST+(won?(bigm?TIER_PT_BIG_WIN:TIER_PT_WIN):0)+TIER_PT_MATCH;
+        lastTierUps=lastTierUps.concat(tierUpsFor(uw, kb, saveData.charPts[uw]));
+        lastTierGain.push({wid:uw, gained:saveData.charPts[uw]-kb, k:kk, kp:kpt, a:aa, won, wp:(won?(bigm?TIER_PT_BIG_WIN:TIER_PT_WIN):0), total:saveData.charPts[uw]}); } }
   }
   recordRecentPlayers(); recordMatchStats(!!(winnerIds && winnerIds.indexOf(myId)!==-1));
   try{ if(currentMode==='online' && !practiceMode && winnerIds && winnerIds.indexOf(myId)!==-1 && Object.values(players).filter(q=>q && !q.isBot && !q.isMinion && !q.isBoss).length>=2) clanReportWin(); }catch(e){}
@@ -10760,15 +10778,16 @@ function rankEmblemSvg(rk, size){      // the badge of a 계급: a shield in the
     '<path d="M32 9 L51 16 L51 33 Q51 46 32 55 Q13 46 13 33 L13 16 Z" fill="#12141c" opacity=".85"/>'+
     '<polygon points="'+pts.join(' ')+'" fill="'+col+'" stroke="#fff" stroke-opacity=".6" stroke-width="1"/>'+pips+'</svg>';
 }
-function tierGainHtml(){      // "마스터리 포인트 +N (처치 3×3 + ...)", the 계급 badge, its name and a bar to the next 계급
-  const g=lastTierGain; if(!g) return '';
+function tierGainHtml(){      // per character used: "마스터리 포인트 +N (처치 3×3 + ...)", the 계급 badge, its name and a bar to the next 계급
+  const list=Array.isArray(lastTierGain)?lastTierGain:(lastTierGain?[lastTierGain]:[]); if(!list.length) return '';
+  return list.map(g=>{
   const nm=WEAPON_PERSONA_NAME[g.wid]||g.wid, rk=charRankFor(g.total), idx=CHAR_RANKS.findIndex(r=>r.name===rk.name), nx=CHAR_RANKS[idx+1];
   const parts=[]; if(g.k>0) parts.push('처치 '+g.k+'×'+g.kp); if(g.a>0) parts.push('어시스트 '+g.a+'×'+TIER_PT_ASSIST); parts.push('완주 '+TIER_PT_MATCH); if(g.won) parts.push('승리 '+g.wp);
   const frac=nx?clamp((g.total-rk.min)/Math.max(1,nx.min-rk.min),0,1):1;
   return '<div style="margin-top:8px; padding-top:8px; border-top:1px solid #3a3320;">🏅 '+escapeHtmlText(nm)+' 마스터리 포인트 <b style="color:#ffd34d">+'+g.gained+'</b> <span style="color:#9aa0a6">('+parts.join(' + ')+')</span>'+
     '<div style="display:flex; align-items:center; gap:12px; justify-content:center; margin-top:6px;">'+rankEmblemSvg(rk,56)+'<div style="text-align:left; min-width:190px;"><div style="font-weight:800; font-size:15px; color:'+rk.color+';">'+rk.name+'</div>'+
     '<div style="height:8px; margin:4px 0 3px; background:#232733; border-radius:5px; overflow:hidden;"><div style="height:100%; width:'+Math.round(frac*100)+'%; background:'+rk.color+';"></div></div>'+
-    '<div style="font-size:11px; color:#9aa0a6;">'+g.total+'점'+(nx?' · 다음 '+nx.name+'까지 '+(nx.min-g.total)+'점':' · 최고 계급')+'</div></div></div></div>';
+    '<div style="font-size:11px; color:#9aa0a6;">'+g.total+'점'+(nx?' · 다음 '+nx.name+'까지 '+(nx.min-g.total)+'점':' · 최고 계급')+'</div></div></div></div>'; }).join('');
 }
 function charRankFor(kills){
   let cur=CHAR_RANKS[0];
@@ -11081,6 +11100,7 @@ function finalizeGameplayStart(mte){
   // silent freeze, and the error banner mechanism gets its chance to work.
   try{
     matchEnded=false; try{ rpRecStart(); }catch(e){}
+    myCharKb={}; myCharUsed=[]; myTrackW=null; myTrackK=0;
     xm=null; xmV=null; brz=null; brzV=null; particles=[]; fxSeen={}; prevGround={}; prevHp={}; hitFlashUntil={}; screenShake=0; walls=[]; hostTimers=[]; magicCircles=[]; fieldZones=[]; poisonZones=[]; turrets=[]; darkPools=[]; darkView=[]; lastKnownKills=0; matchAssists=0;
     matchKillLog=[]; killcamActive=false; killcamOverride=null; killcamSnapshot=null; killcamReplay=null; killcamReplayStartAt=0; replayBuffer={}; replayFrames=[]; replayFxLog=[]; replayDefs={};
     hitStopUntil=0; staggers={}; setTimeout(()=>{ try{ entranceShow(); }catch(e){ console.error('[entrance]', e); } }, 450);
@@ -17673,6 +17693,7 @@ function render(fxDt){
     document.getElementById('hudCount').textContent=Object.values(players).filter(p=>!p.isBoss && !p.isMinion).length;
     { const sm=document.getElementById('stunMsg'); if(sm) sm.style.display=(me.alive && me.stunned)?'block':'none'; }
     const curWeapon=WEAPONS[me.weapon];
+    trackMyChar(me);
     if(curWeapon) setWeaponLabel(me.weapon); // kept live (not just set once at match start) since some modes change a player's weapon mid-match (e.g. hide and seek's seeker goes bare-handed -> pistol)
     const vsWrap=document.getElementById('vacuumStackWrap');
     if(me.weapon==='vacuum'){
