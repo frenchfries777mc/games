@@ -101,3 +101,14 @@ patchnotes.json | v408 items[1] | 궁수 일반 공격은 일반 데미지로 �
 patchnotes.json | v409 title | 마스터리 더 어렵게 | build 409 | 2026-10-26
 patchnotes.json | v409 items[0] | 캐릭터 마스터리 경험치 획득량 감소 (처치 6 → 4, 도움 3 → 2, 판 완료 3 → 2, 승리 6 → 4) | build 409 | 2026-10-26
 patchnotes.json | v409 items[1] | 이미 달성한 마스터리 레벨은 유지 | build 409 | 2026-10-26
+Stickseum-v0.8.html | shop tier hint | 마스터리 포인트는 그 캐릭터로 처치 3점, 어시스트 1점, 승리 4점, 한 판 1점이 쌓여요. | build 410 | 2026-10-26
+Stickseum-v0.8.html | codex rank texts | 마스터리 포인트 N · 다음 계급까지 N점 · N점 남음 · N / N점 · 마스터리 포인트 N점 | build 410 | 2026-10-26
+patchnotes.json | v410 title | 마스터리 포인트 | build 410 | 2026-10-26
+patchnotes.json | v410 items[0] | 계급(다이아, 마스터 등)을 킬 수 대신 캐릭터별 마스터리 포인트로 해금 (처치 3점, 어시스트 1점, 승리 4점, 한 판 1점) | build 410 | 2026-10-26
+patchnotes.json | v410 items[1] | 계급 해금 난이도 기존의 1.25배 | build 410 | 2026-10-26
+patchnotes.json | v410 items[2] | 이미 얻은 계급은 유지 | build 410 | 2026-10-26
+patchnotes.json | v410 items[3] | 숙련도 경험치 감소 되돌림 | build 410 | 2026-10-26
+Stickseum-v0.8.html | CHAR_RANKS intermediate names | 브론즈 II · 브론즈 III · 실버 II · 실버 III · 골드 II · 골드 III · 플래티넘 II · 플래티넘 III · 다이아 II · 다이아 III · 옵시디언 II · 옵시디언 III · 마스터 II · 마스터 III | build 411 | 2026-10-26
+patchnotes.json | v411 title | 마스터리 포인트 난이도 | build 411 | 2026-10-26
+patchnotes.json | v411 items[0] | 마스터리 포인트 계급 해금 난이도 기존의 1.75배로 조정 | build 411 | 2026-10-26
+patchnotes.json | v411 items[1] | 계급 사이에 II, III 단계 추가 (브론즈부터 마스터까지) | build 411 | 2026-10-26
