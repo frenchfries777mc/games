@@ -1345,20 +1345,20 @@ const WEAPONS = {
             desc:'데미지 52 · 폭발반경 145 · 쿨타임 2.0초 · 중력에 의해 포물선으로 떨어지며 범위 안 전원에게 피해(자신 포함)'},
   bazooka: {id:'bazooka', name:'바주카포', emoji:'🚀', kind:'explosive',dmg:68, cd:2.8,  bulletSpeed:750, splash:150, shape:'rocket', arcs:true,
             desc:'데미지 68 · 폭발반경 150 · 쿨타임 2.8초 · 중력의 영향을 받는 포물선 궤도, 최고 위력이지만 느린 재장전'},
-  dagger:  {id:'dagger',  name:'단검',     emoji:'🔪', kind:'melee',    dmg:38, cd:0.4,  range:65, shape:'dagger', dashCd:0.5,
-            desc:'데미지 38 · 쿨타임 0.4초 · 사거리 65 · 대쉬 쿨타임이 0.5초로 줄어드는 기동형 단검'},
+  dagger:  {id:'dagger',  name:'단검',     emoji:'🔪', kind:'melee',    dmg:41, cd:0.4,  range:65, shape:'dagger', dashCd:0.5,
+            desc:'데미지 41 · 쿨타임 0.4초 · 사거리 65 · 대쉬 쿨타임이 0.5초로 줄어드는 기동형 단검'},
   dracula: {id:'dracula', name:'드라큘라', emoji:'🧛', kind:'melee',    dmg:12, cd:0.4, range:65, shape:'claw', lifesteal:true, lifestealFlat:5,
             desc:'데미지 12 · 쿨타임 0.4초 · 사거리 65 · 빠른 발톱 공격, 적중할 때마다 체력 5 흡수'},
   gambler: {id:'gambler', name:'도박사',   emoji:'🎲', kind:'gun', dmg:16, cd:1.0, bulletSpeed:1100, shape:'chip',
             desc:'데미지 16 · 쿨타임 1.0초 · 장거리 · 칩을 곧게 던짐, 맞힐 때마다 칩 +1 (최대 6) · 칩이 많을수록 스킬·궁극기가 강해짐'},
-  wizard:  {id:'wizard',  name:'마법사',   emoji:'🧙', kind:'gun',      dmg:14, cd:0.6,  bulletSpeed:750, shape:'fireball', pierce:true,
-            desc:'데미지 14 · 쿨타임 0.6초 · 발판과 플레이어를 그대로 통과하며 계속 날아가는 화염 마법'},
+  wizard:  {id:'wizard',  name:'마법사',   emoji:'🧙', kind:'gun',      dmg:18, cd:0.6,  bulletSpeed:750, shape:'fireball', pierce:true, pierceHits:1,
+            desc:'데미지 18 · 쿨타임 0.6초 · 발판을 통과하고, 플레이어 한 명을 관통한 뒤 두 번째로 맞힌 상대에게서 멈추는 화염 마법'},
   magiccard:{id:'magiccard',name:'마술 카드',emoji:'🃏', kind:'cards',    dmg:10,  cd:0.9,  bulletSpeed:820, shape:'card', hitR:26, comboBonus:5, freeVolleys:3,
             desc:'트럼프 카드 3장이 넓게 퍼져 날아감 · 장당 데미지 10 · 쿨타임 0.9초 · 맞은 상대는 이동속도가 조금 느려짐 · 3장이 모두 맞으면 추가 5 데미지 + 0.5초 기절'},
   flamethrower:{id:'flamethrower',name:'화염방사기',emoji:'🔥', kind:'flame', dmg:0, cd:0, range:FLAME_RANGE, shape:'flamethrower',
             desc:'중거리 화염방사 · 쏜 시간이 합쳐서 8초가 되면 2초간 과열(끊었다 다시 쏴도 이어서 셈) · 닿으면 초당 '+FLAME_DIRECT_DPS+' 직접 피해 · 발판에 막힘'},
-  portalgun:{id:'portalgun',name:'포탈건',emoji:'🌀', kind:'gun', dmg:15, cd:0.55, bulletSpeed:700, shape:'portalbullet', bounces:3,
-            desc:'데미지 15 · 쿨타임 0.55초 · 바닥이나 발판에 닿으면 최대 3번까지 튕기는 탄환 · 튕길 때마다 데미지 30% 증가'},
+  portalgun:{id:'portalgun',name:'포탈건',emoji:'🌀', kind:'gun', dmg:13, cd:0.55, bulletSpeed:700, shape:'portalbullet', bounces:3,
+            desc:'데미지 13 · 쿨타임 0.55초 · 바닥이나 발판에 닿으면 최대 3번까지 튕기는 탄환 · 튕길 때마다 데미지 30% 증가'},
   vacuum:{id:'vacuum',name:'청소기',emoji:'🧹', kind:'vacuum', dmg:24, cd:0.9, range:VACUUM_RANGE, shape:'vacuum',
             desc:'사거리 '+VACUUM_RANGE+'(화염방사기보다 조금 김) · 데미지 24 · 쿨타임 0.9초 · 맞힐 때마다 스택 축적(최대 8) · 맞은 상대를 나에게 살짝 끌어당김'},
   pirate:{id:'pirate',name:'갈고리손',emoji:'🏴‍☠️', kind:'melee', dmg:30, cd:0.3, range:70, shape:'hook',
@@ -1402,7 +1402,7 @@ let practiceMode=false;   // the offline practice mode: no rewards of any kind, 
 function noRewards(){ return practiceMode || currentMode==='private'; }   // practice and private rooms earn nothing: no gold, souls, player/season/character xp, missions, achievements or stats (owner, v227: fairness)
 const PRACTICE_ULT_CD=3, PRACTICE_TELEPORT_CD=2, PRACTICE_RESPAWN_SEC=2, PRACTICE_MAX_OPPONENTS=8;
 const BAT_DMG_MULT = 1.6, BAT_SPEED_MULT = 1.7, BAT_FORM_SEC = 7, BAT_TEAM_HEAL_SHARE = 0.5, BAT_VERT_SPEED = 260;   // (260px/s up with jump, the same down with S)
-const WIZ_CIRCLE_R = 330, WIZ_CIRCLE_SEC = 8, WIZ_HEAL_PER_SEC = 8, WIZ_ENEMY_DPS = 5, WIZ_SPEED_MULT = 1.4, WIZ_DMG_MULT = 1.25, WIZ_CD_MULT = 0.7;
+const WIZ_CIRCLE_R = 330, WIZ_CIRCLE_SEC = 10, WIZ_HEAL_PER_SEC = 12, WIZ_ENEMY_DPS = 9, WIZ_SPEED_MULT = 1.4, WIZ_DMG_MULT = 1.3, WIZ_CD_MULT = 0.7;
 const SHURIKEN_ULT_BLINK = 90;
 let magicCircles=[];
 let turrets=[];   // the pirate's cannon turrets: {owner,team,x,y,until,next,ang}
@@ -1422,7 +1422,7 @@ const ULTS = {
   pizarro:  {name:'정복자의 기세', desc:'체력 30 회복(최종 단계에서 쓰면 50) + 공격력 25→31→37→43, 공격 쿨타임 0.6→0.5→0.4→0.3초, 대쉬 쿨타임 3→1.5→0.7→0.4초로 단계가 오르고 스킬·궁극기 쿨타임도 단계마다 12% 단축됨 (최대 3번 중첩 = 4단계, 4단계엔 이동속도 125%, 죽으면 초기화)'},
   puppeteer:{name:'꼭두각시 조종', desc:'조준한 방향으로 실을 날려 맞힌 상대를 5초간 조종 (맞히지 못하면 조종 못 함) · 조종하는 동안 내 이동·점프·조준·일반 공격 입력대로 움직이고 내 시야도 상대 시점이 됨, 상대는 스킬과 궁극기를 쓸 수 없음 · 조종하는 동안 내 몸은 움직이지 못하고 받는 데미지 50% 감소 · 조종이 끝나면 조종당한 상대가 자폭해 본인은 60, 주변(220) 적에게는 30 피해'},
   kan:      {name:'케찰코아틀의 날개', desc:'5초 동안 날개를 펴고 날아올라 (점프 키를 누르면 위로, 떼면 천천히 내려옴) 독침을 한 번에 3발씩, 더 빠르게 발사'},
-  pistol:   {name:'강화탄',       desc:'다음 발사 때 데미지 66의 크고 빠른 탄환 1발'},
+  pistol:   {name:'강화탄',       desc:'다음 발사 때 데미지 66의 크고 빠른 탄환 1발 (플레이어를 관통)'},
   rifle:    {name:'미사일 폭격',   desc:'랜덤 3곳에 미사일이 떨어짐 (발판 통과, 나는 피해 없음)'},
   smg:      {name:'방벽',         desc:'3.5초간 플레이어와 탄환을 막는 벽 (내 탄환은 통과)'},
   magiccard:{name:'탈출 마법',     desc:'가장 가까운 상대 위치로 순간이동해 1초 동안 쿨타임 없이 카드를 3번 연속 발사, 1초 뒤 원래 있던 자리로 되돌아옴'},
@@ -1431,7 +1431,7 @@ const ULTS = {
   dagger:   {name:'은신',         desc:'4초간 나와 내 치장품이 보이지 않음'},
   dracula:  {name:'박쥐 변신',     desc:'7초간 박쥐로 변해 날아다니며(점프키 상승 · S 하강, 발판은 통과하지 못함) 이동속도·데미지 증가, 종료 시 그동안 입힌 피해만큼 체력 회복(팀원은 50%)'},
   gambler:  {name:'삼중 도박',     desc:'트럼프 카드(52장+조커 2장)에서 3장을 뽑아, 숫자의 합(A=1, J=11, Q=12, K=13)만큼 다음 일반 공격의 데미지가 됨 (가진 칩 1개당 +1, 칩 모두 사용)\n같은 무늬 +5 · 같은 숫자 +10 · 연속 세 숫자 +15 · 무늬와 숫자 모두 같음 +20\nA: 체력 30 회복 · K: 5초간 이동속도 +50% · J: 스킬·대쉬 쿨타임 초기화 · Q: 1초간 대쉬 쿨타임 0초 · 조커: 옆 카드와 똑같이'},
-  wizard:   {name:'마법진',       desc:'자신의 위치에 거대한 마법진 소환(8초): 나와 아군은 공격력 증가 + 초당 8 회복, 안에 들어온 적은 지속 피해'},
+  wizard:   {name:'마법진',       desc:'자신의 위치에 거대한 마법진 소환(10초): 나와 아군은 공격력 30% 증가 + 초당 12 회복, 안에 들어온 적은 초당 9 피해'},
   sword:    {name:'천검',         desc:'하늘에서 대형검이 상대를 내리찍음'},
   horemheb: {name:'모래바람',     desc:'앞쪽 멀리(1725)까지 거센 모래바람을 일으켜 범위 안의 상대에게 36 피해를 주고 아주 강하게 밀치며 2초 동안 기절시키고, 3.5초 동안 이동속도를 크게(70%) 줄임'},
   lightsaber:{name:'포스 라이트닝', desc:'가장 가까운 상대에게 내 손에서 상대의 머리까지 이어지는 번개를 쏘아 15 피해를 주고, 곧바로 그 상대 곁으로 이동'},
@@ -1442,7 +1442,7 @@ const ULTS = {
   gloves:   {name:'연타 러시',     desc:'4초간 공격 속도 3배'},
   grenade:  {name:'집속탄',       desc:'소형 수류탄 5개를 부채꼴로 투척'},
   flamethrower:{name:'화염 방패', desc:'내 앞에 최대 60 피해를 막는 방패를 설치 (8초 지속, 나를 따라 이동하며 항상 바라보는 방향 앞에 위치, 그만큼 막으면 소멸) · 관통 공격은 막지 못하지만 데미지가 절반으로 줄고 그만큼 방패 내구도도 깎임'},
-  portalgun:{name:'포탈 연결', desc:'현재 위치와 조준한 위치에 보라색 포탈 한 쌍을 생성 · 둘 중 하나에 닿으면 반대쪽으로 순간이동 (나만 사용 가능, 새로 생성하면 기존 포탈은 사라짐)'},
+  portalgun:{name:'포탈 연결', desc:'현재 위치와 조준한 위치에 보라색 포탈 한 쌍을 생성 · 둘 중 하나에 닿으면 반대쪽으로 순간이동 (아군도 사용 가능, 나올 때 근처 적에게 12 피해와 약한 넉백, 새로 생성하면 기존 포탈은 사라짐)'},
   pirate:{name:'대포 포탑', desc:'10초 동안 내 위치에 대포 포탑을 소환 · 가장 가까운 상대에게 포물선을 그리는 대포알을 발사 (대포알 데미지 20)'},
   samurai:{name:'심안 연참', desc:'사정거리 안의 가까운 적 최대 5명을 차례로 순간이동하며 베어 25 피해씩 주고, 끝나면 원래 자리로 돌아옴 · 발동하는 동안 무적'},
   vacuum:{name:'먼지 폭풍', desc:'청소기에서 먼지를 뱉어내 상대를 강하게 밀치고 쌓인 스택 수 × 10만큼 피해 (사거리는 일반공격의 절반, 사용하면 스택 초기화)'},
@@ -4986,6 +4986,12 @@ MAP_TEMPLATES['mega_arena'] = {
 let peer=null, isHost=false, roomCode="";
 let myId=null, myName="플레이어";
 let conns={}, hostConn=null;
+/* ===== dedicated host (전용 방장) =====
+   The page opened with ?dedicated=1 (by the host program on a server, see /tools/stickseum-dedicated-host/) only runs rooms and never plays: it hosts ranked duel rooms,
+   its own player (the "ghost") is kept OUT of the player list (a property that Object.keys / for-in / JSON never see, but players[myId] still finds), so the room counts only the
+   two real players. Nothing is drawn. The account it is logged in to reports the ranked result (supabase-ranked-referee.sql lets it do that). */
+const DED_HOST=/[?&]dedicated=1(&|$)/.test(location.search);
+const dedState={err:''};
 let players={}, bullets=[], effects=[], effectIdSeq=0;
 // Every gameplay-critical field a player object can be read for, with a safe fallback. The recurring class
 // of bug chased across this whole debugging session - a client's OWN player ending up with alive/respawnAt/
@@ -5071,7 +5077,7 @@ function shuffle(arr){ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.
 /* ===== the version of this file =====
    Players with different versions CAN meet and play together: the automatic matchmaking uses the same room names for every version (online-<mode>-<map>-<slot>), and nobody is refused because of a different build.
    The build is only sent along with the join message and the lobby (for information); the corner of the screen shows it. */
-const GAME_BUILD='build 2026-10-18-v395';
+const GAME_BUILD='build 2026-10-18-v396';
 const GAME_VERSION='0.8', GAME_VERSION_NAME='황금을 찾아서';   // 게임 버전 이름: versions.json의 title과 같게 (빌드마다 바꾸지 않음)
 const WEEKLY_EVENTS=[
   {id:'lowg',    name:'저중력 난투', desc:'몸이 둥실둥실, 중력이 약해진 난투', rules:{grav:0.6}},
@@ -7540,7 +7546,7 @@ function renderOnlineCount(){        // a small "how many are online" label at t
   el.style.display=(dailyBadgeScreenOk && presenceChannel && n>0)?'block':'none';
 }
 function startPresence(){
-  if(!sb || !sbUser) return;
+  if(!sb || !sbUser || DED_HOST) return;          // (a dedicated host is nobody's friend and no "online" player)
   presenceChannel=sb.channel('online-users', { config:{ presence:{ key: sbUser.id } } });
   presenceChannel.on('presence', {event:'sync'}, ()=>{
     const state=presenceChannel.presenceState();
@@ -9300,6 +9306,7 @@ function startHostPeer(idString, mapId, mode, code, attemptInfo, modeId){
       sbId:(sbUser?sbUser.id:null), sbUsername:(sbUser?sbUser.username:null),
       input:{left:false,right:false,jump:false,angle:0,shoot:false,dash:false}, lastShot:0, lastDash:-9999, lastTeleport:-9999, lastSeen:Date.now(), weapon:null, weaponChosen:false};
     players[myId].party=(mode==='online') ? partyJoinTag() : null;
+    if(DED_HOST) dedMakeGhost();
     enterRoomScreen(mode, mapId, code);
     resetFlowState();
     wireHostConnectionHandler();
@@ -9317,6 +9324,7 @@ function startHostPeer(idString, mapId, mode, code, attemptInfo, modeId){
       console.error('[host peer error, room already live - ignoring]', err);
       return;
     }
+    if(DED_HOST){ dedState.err=String(err.type).includes('unavailable') ? 'taken' : String(err.type); try{ p.destroy(); }catch(e){} return; }       // (a dedicated host never joins another room as a guest)
     if(String(err.type).includes('unavailable')){
       if(mode==='private'){
         attemptInfo = attemptInfo || {tries:0};
@@ -9330,6 +9338,21 @@ function startHostPeer(idString, mapId, mode, code, attemptInfo, modeId){
       showErrorAndReturnToMenu('오류: '+err.type);
     }
   });
+}
+function dedMakeGhost(){
+  const g=players[myId]; if(!g) return;
+  delete players[myId];
+  Object.assign(g, {isSpectator:true, alive:false, hp:0, x:-9999, y:-9999, team:null, respawnAt:Infinity, name:'전용 방장'});
+  Object.defineProperty(players, myId, {value:g, enumerable:false, configurable:true, writable:true});
+}
+if(DED_HOST){
+  window.__ffd={
+    open(mapId, slot){ dedState.err=''; onlineRanked=true; onlineEvent=false; onlineClan=''; selectedOnlineMode='duel'; gameMode='duel'; currentMode='online'; startHostPeer(roomIdFor(mapId, slot, 'duel'), mapId, 'online', null, null, 'duel'); },
+    status(){ return {live:!!hostRoomLive, humans:Object.keys(players).length, started:!!started, ended:!!matchEnded, err:dedState.err, mapId:currentMapId||'', id:myId||'', user:sbUser?sbUser.username:''}; },
+    maps(){ return onlineMapPoolFor('duel'); },
+    async login(u, pw){ try{ const r=await sbSignIn(u, pw, false); return (r && r.ok) ? 'ok' : String((r&&r.error)||'fail'); }catch(e){ return String(e&&e.message||e); } },
+    async signup(u, pw){ try{ const r=await sbSignUp(u, pw, false); return (r && r.ok) ? 'ok' : String((r&&r.error)||'fail'); }catch(e){ return String(e&&e.message||e); } }
+  };
 }
 function wireHostConnectionHandler(){
   peer.on('connection', safeHandler(conn=>hostWireConn(conn)));
@@ -10082,6 +10105,7 @@ function masteryCeremony(wid){
   el.addEventListener('pointerdown',close); setTimeout(close, 4800);
 }
 function showMatchEndOverlay(resultText, winnerIds, forcedPick){
+  if(DED_HOST){ matchEnded=true; lastWinnerIds=winnerIds||[]; return; }          // (the dedicated host plays nothing: no rewards, no screen)
   try{ const hum=Object.values(players).filter(q=>q && !q.isBot && !q.isMinion && !q.isBoss && !q.isSpectator);
     if(onlineClan && currentMode==='online' && gameMode==='duel' && !practiceMode && !highlightViewing && myClan && String(onlineClan)===clanMyId() && hum.length===2 && hum.every(q=>q.clan===clanMyTag()) && winnerIds && winnerIds.length) clanMemberReport(winnerIds.indexOf(myId)!==-1); }catch(e){}
   try{ rpRecFinish(resultText, winnerIds); }catch(e){}
@@ -11093,13 +11117,13 @@ function loop(t){
   // leave the canvas and HUD completely frozen/blank forever if any of those earlier steps kept failing on
   // the same broken state every frame. Now a failure in an earlier step can't prevent rendering from at
   // least attempting to run and show whatever it still safely can.
-  safeStep('gamepadPoll', gamepadPoll);
+  if(!DED_HOST) safeStep('gamepadPoll', gamepadPoll);
   safeStep('updateMovingPlatforms', ()=>updateMovingPlatforms(t));
   if(isHost) safeStep('hostTick', ()=>hostTick(dt,t));
   if(!isHost) safeStep('smoothNetPlayers', ()=>smoothNetPlayers(dt));
-  safeStep('updateAnimPhases', ()=>updateAnimPhases(dt));
+  if(!DED_HOST){ safeStep('updateAnimPhases', ()=>updateAnimPhases(dt));
   safeStep('recordReplaySamples', ()=>recordReplaySamples(t)); // runs identically on host and every client, since both always have an up-to-date players object (local physics on host, received snapshots on clients) - no extra network traffic needed just to keep this history
-  safeStep('render', ()=>render(dt));
+  safeStep('render', ()=>render(dt)); }
   requestAnimationFrame(loop);
 }
 // a client only receives positions SNAPSHOT_HZ times a second; drawing them raw looks like stutter even on a good connection.
@@ -11126,7 +11150,7 @@ function spawnBullet(p, angle, w, extra){
   const ax=Math.cos(angle), ay=Math.sin(angle);
   const sx=p.x+ax*(PLAYER_W/2+14), sy=(p.y-40)+ay*(PLAYER_W/2+14);
   bullets.push(Object.assign({x:sx, y:sy, spawnX:sx, spawnY:sy, vx:ax*w.bulletSpeed, vy:ay*w.bulletSpeed,
-    owner:p.id, ownerName:p.name, life:w.life||BULLET_LIFE, color:p.color, dmg:w.dmg*(p.focusOn?1.35:1), wid:w.id, arcs:!!w.arcs, dmgFalloff:w.dmgFalloff, hitR:w.hitR, pierce:!!w.pierce, bouncesLeft:w.bounces||0, poison:w.poison}, extra||{}));
+    owner:p.id, ownerName:p.name, life:w.life||BULLET_LIFE, color:p.color, dmg:w.dmg*(p.focusOn?1.35:1), wid:w.id, arcs:!!w.arcs, dmgFalloff:w.dmgFalloff, hitR:w.hitR, pierce:!!w.pierce, pierceHits:w.pierceHits||0, bouncesLeft:w.bounces||0, poison:w.poison}, extra||{}));
 }
 function registerCardHit(b, target, targetId, t){
   const tS=t/1000;
@@ -11379,6 +11403,8 @@ function tryUltimate(p, tMs, aimX, aimY, viaClick){
    kill button. The ones that need a target do not spend the cooldown when there is none in reach.                                         */
 const DRAC_REST_SEC=1.0, DRAC_REST_STEP=0.1, DRAC_REST_HEAL=5;   // Dracula's skill: standing still for a second, healing 5 every 0.1 s
 const CARD_LINE_N=4, CARD_LINE_DMG=10;   // the magic card skill
+const PORTAL_EXIT_R=120, PORTAL_EXIT_DMG=12, PORTAL_EXIT_KB=380, PORTAL_EXIT_UP=120;      // 차원여행자: whoever steps out of a portal hurts and pushes the enemies standing beside it
+const PORTAL_BLAST_DELAY=0.5, PORTAL_BLAST_R=190, PORTAL_BLAST_DMG=50, PORTAL_BLAST_KB=1000, PORTAL_BLAST_UP=420;   // ...and the skill blows both portals up half a second after the smoke starts
 const WIZ_SHOCK_R=160, WIZ_SHOCK_DMG=10, WIZ_SHOCK_KB=1000, WIZ_SHOCK_UP=300;   // the wizard's skill: a shockwave
 const BAT_ULT_HASTE_SEC=2.5, BAT_ULT_SPEED_MULT=2;
 const BOOMERANG_BACK_MULT=1.0;   // the returning boomerang's damage (was half of the throw)
@@ -11409,7 +11435,7 @@ const SKILLS={
   wizard:   {name:'충격파',      kind:'hit',  desc:'주변 상대를 아주 크게 밀쳐내는 충격파 (10 피해)'},
   magiccard:{name:'카드 일렬 발사', kind:'hit', desc:'조준 방향으로 카드 4장을 일렬로 연달아 발사 (장당 10 피해)'},
   flamethrower:{name:'화염 폭발',kind:'hit',  desc:'주변 적에게 10 피해 + 2초 화상'},
-  portalgun:{name:'시간 되감기', kind:'move', desc:'약 2초 전 위치로 돌아가고 그동안 잃은 체력의 절반 회복'},
+  portalgun:{name:'시간 되감기', kind:'move', desc:'약 2초 전 위치로 돌아가고 그동안 잃은 체력의 절반 회복 · 포탈이 있을 때는 대신 내 포탈 둘을 폭파(연기 0.5초 뒤 50 피해와 큰 넉백)'},
   vacuum:   {name:'흡인',        kind:'hit',  desc:'주변 적을 끌어당기고 스택 +1'},
   pirate:   {name:'대포 비행',   kind:'move', desc:'대포를 타고 조준 방향으로 포물선을 그리며 날아감 · 부딪힌 상대에게 36 피해'},
   samurai:  {name:'거합',       kind:'move', desc:'조준 방향으로 순식간에 베고 지나가며(최대 430) 경로 위의 적에게 30 피해'},
@@ -11549,18 +11575,18 @@ function skillDamage(p, t, dmg, tMs, o){   // one hit with the usual bookkeeping
   const mult=(p.isZombie?ZOMBIE_DMG_MULT:1)*(p.wizBuff?WIZ_DMG_MULT:1);
   const dealt=absorbIntoShield(t, dmg*mult); t.hp-=dealt; markHit(t, p.id, tMs, dealt);
   const ty=t.y-PLAYER_H/2; pushFx('hit', t.x, ty, tMs, {color:p.color, ang:Math.atan2(ty-(p.y-PLAYER_H/2), t.x-p.x), v:Math.round(dealt), el:dmgTypeOf(p.weapon)});
-  const dir=(t.x>=p.x)?1:-1;
+  const dir=(t.x>=(o&&o.cx!==undefined?o.cx:p.x))?1:-1;
   if(o && o.kb && !t.isZombie){ t.kbX=dir*o.kb; t.grounded=false; if(o.up) t.vy=-o.up; }
   if(o && o.stun && t.hp>0) stunPlayer(t, o.stun, tMs);
   if(t.hp<=0 && t.alive) handleDeath(t, p, tMs, p.name);
   return dealt;
 }
 function skillPulse(p, tMs, o){   // everything hostile within o.r: damage / knockback / pull / slow / burn
-  const tSec=tMs/1000, cx=p.x, cy=p.y-PLAYER_H/2; let n=0, total=0;
+  const tSec=tMs/1000, cx=(o.cx!==undefined?o.cx:p.x), cy=(o.cy!==undefined?o.cy:p.y-PLAYER_H/2); let n=0, total=0;
   for(const id in players){
     const t=players[id]; if(!t.alive || id===p.id || t.x===undefined || isAlly(p,t) || t.swordCharge || t.darkSub) continue;
     const ty=t.y-PLAYER_H/2; if(Math.hypot(t.x-cx, ty-cy)>o.r) continue;
-    n++; const dir=(t.x>=p.x)?1:-1;
+    n++; const dir=(t.x>=cx)?1:-1;
     if(o.pull && !t.isZombie){ t.kbX=-dir*o.pull; t.grounded=false; }
     if(o.slow){ t.slowUntil=tSec+o.slow; pushFx('slow', t.x, t.y-70, tMs, {}); }
     if(o.burn) t.burn={until:tSec+o.burn.dur, dps:o.burn.dps, owner:p.id, ownerName:p.name};
@@ -11670,6 +11696,21 @@ const SKILL_IMPL={
     return true; },
   flamethrower(p,tSec,tMs){ const n=skillPulse(p,tMs,{r:135, dmg:10, kb:260, burn:{dur:2, dps:8}}); if(n>0) pushFx('skillring', p.x, p.y-30, tMs, {color:'#ff7a2c', r:135}); return n>0; },
   portalgun(p,tSec,tMs){
+    if(p.portalPair){      // portals are standing: the skill blows them up instead (smoke first, the blast comes 0.5 s later)
+      if(p.portalBlastPair===p.portalPair) return false;
+      const pr=p.portalPair; p.portalBlastPair=pr;
+      pushFx('portalsmoke', pr.a.x, pr.a.y-30, tMs, {}); pushFx('portalsmoke', pr.b.x, pr.b.y-30, tMs, {});
+      hostTimers.push({ta:fxActor, at:tSec+PORTAL_BLAST_DELAY, fn:(tt)=>{
+        p.portalBlastPair=null;
+        if(p.portalPair!==pr) return;
+        for(const q of [pr.a, pr.b]){
+          skillPulse(p, tt, {r:PORTAL_BLAST_R, dmg:PORTAL_BLAST_DMG, kb:PORTAL_BLAST_KB, up:PORTAL_BLAST_UP, cx:q.x, cy:q.y-30});
+          pushFx('portalblast', q.x, q.y-30, tt, {});
+        }
+        p.portalPair=null; p.portalCooldownUntil=0;
+      }});
+      return true;
+    }
     if(!p.hist) return false;
     for(let i=p.hist.length-1;i>=0;i--){
       const h=p.hist[i]; if(tSec-h.t<1.6) continue;
@@ -11809,7 +11850,7 @@ function abilityPreviewOps(action, p, mx, my){
       case 'shuriken': { const a=Math.atan2(my-cy, mx-p.x), best=skillMoveSpot(p, p.x+Math.cos(a)*230, p.y+Math.sin(a)*230); ops.push({t:'line', x1:p.x, y1:p.y-30, x2:best.x, y2:best.y-30, dash:true}); ops.push(mark(best.x, best.y-30, 20)); break; }
       case 'dagger': { const t=nearestEnemyOf(p); if(t && Math.hypot(t.x-p.x,t.y-p.y)<=330){ ops.push({t:'line', x1:cx, y1:cy, x2:t.x, y2:t.y-30, dash:true}); ops.push(mark(t.x, t.y-30, 40)); } break; }
       case 'magiccard': ops.push(ray(ang, 820)); break;
-      case 'portalgun': { if(p.hist){ const tSec=performance.now()/1000; for(let i=p.hist.length-1;i>=0;i--){ const hh=p.hist[i]; if(tSec-hh.t<1.6) continue; if(!skillSpotFree(hh.x,hh.y)) continue; ops.push({t:'line', x1:p.x, y1:p.y-30, x2:hh.x, y2:hh.y-30, dash:true}); ops.push(mark(hh.x, hh.y-30, 24)); break; } } break; }
+      case 'portalgun': { if(p.portalPair){ ops.push({t:'ellipse', x:p.portalPair.a.x, y:p.portalPair.a.y, rx:PORTAL_BLAST_R, ry:PORTAL_BLAST_R*0.3}); ops.push({t:'ellipse', x:p.portalPair.b.x, y:p.portalPair.b.y, rx:PORTAL_BLAST_R, ry:PORTAL_BLAST_R*0.3}); break; } if(p.hist){ const tSec=performance.now()/1000; for(let i=p.hist.length-1;i>=0;i--){ const hh=p.hist[i]; if(tSec-hh.t<1.6) continue; if(!skillSpotFree(hh.x,hh.y)) continue; ops.push({t:'line', x1:p.x, y1:p.y-30, x2:hh.x, y2:hh.y-30, dash:true}); ops.push(mark(hh.x, hh.y-30, 24)); break; } } break; }
       case 'samurai': { const d=skillAimDir(p,mx), b=skillMoveSpot(p,p.x+d*430,p.y); ops.push({t:'rect', x:Math.min(p.x,b.x)-30, y:p.y-85, w:Math.abs(b.x-p.x)+60, h:85}); ops.push(mark(b.x,b.y-30,24)); break; }
       case 'pirate': { const v=pirateFlyVel(p,mx,my); let px=p.x, py=p.y-30; for(let i=1;i<=10;i++){ const tt=i*0.07, nx=p.x+v.vx*tt, ny=p.y-30+v.vy*tt+0.5*GRAVITY*tt*tt; ops.push({t:'line', x1:px, y1:py, x2:nx, y2:ny, dash:true}); px=nx; py=ny; } ops.push(mark(px,py,26)); break; }
       case 'smg': ops.push(selfRing(230)); break;
@@ -12148,7 +12189,7 @@ function tryFire(p, angle, tMs){
   }
   if(p.ultPending==='pistol' && w.id==='pistol'){ // ultimate: one big high-speed shot
     p.ultPending=null;
-    const w2=Object.assign({}, w, {dmg:66, bulletSpeed:w.bulletSpeed*2});
+    const w2=Object.assign({}, w, {dmg:66, bulletSpeed:w.bulletSpeed*2, pierce:true});
     spawnBullet(p, useAngle, w2, {ult:true, big:true});
     return;
   }
@@ -12716,7 +12757,7 @@ function botWantsSkill(p, target, d, tSec){
     case 'wizard': return d<WIZ_SHOCK_R-10;                            // the shockwave: only when the enemy is close
     case 'magiccard': return d<560 && Math.abs(target.y-p.y)<110;         // the line of cards: straight at the enemy
     case 'flamethrower': return d<135;
-    case 'portalgun': { const old=p.hist && p.hist.find(h=>tSec-h.t<=2.2 && tSec-h.t>=1.6); return !!old && old.hp-p.hp>=60; }
+    case 'portalgun': { if(p.portalPair){ const pr=p.portalPair; return enemiesOf(p).some(o=>Math.hypot(o.x-pr.a.x,o.y-pr.a.y)<PORTAL_BLAST_R-30 || Math.hypot(o.x-pr.b.x,o.y-pr.b.y)<PORTAL_BLAST_R-30); } const old=p.hist && p.hist.find(h=>tSec-h.t<=2.2 && tSec-h.t>=1.6); return !!old && old.hp-p.hp>=60; }
     case 'vacuum': return d>110 && d<260;
     case 'kan': return d>140 && d<560 && Math.abs(target.y-p.y)<160;                // the toad: thrown toward an enemy at a medium distance
     case 'kurus': return d<DARK_SWORD_RANGE+10 && Math.abs(target.y-p.y)<60;     // the dark sword only reaches up close
@@ -13219,7 +13260,13 @@ function botConquestGoal(p, ai, target, d, lowHp, band){
   return null;                                                                // hunt the enemy near the point
 }
 // Is this a good moment for the bot to spend its ultimate? (almost always yes; the bat form is the exception)
+function portalBotWorth(p, from, to){       // a bot only steps into a portal when the other end is clearly closer to an enemy (no endless back and forth)
+  let best=Infinity, bestTo=Infinity;
+  for(const o of enemiesOf(p)){ best=Math.min(best, Math.hypot(o.x-from.x, o.y-from.y)); bestTo=Math.min(bestTo, Math.hypot(o.x-to.x, o.y-to.y)); }
+  return bestTo<Infinity && bestTo+150<best;
+}
 function botUltSensible(p, target){
+  if(p.weapon==='portalgun') return Math.hypot(target.x-p.x,target.y-p.y)>380;      // the exit lands beside the enemy: pointless when it is already close
   if(p.weapon==='kurus'){ const d=Math.hypot(target.x-p.x,target.y-p.y); return !!darkPoolUnder(p, true) && (p.hp<maxHpFor(p)*0.55 || botIncomingShot(p, 220) || d<260); }   // only where it can sink right away
   if(p.weapon==='pizarro') return (p.pzStacks||0)<PZ_MAX;       // the stacking buff: worth casting until it is full
   if(p.weapon==='horemheb') return Math.hypot(target.x-p.x,target.y-p.y)<640 && Math.abs(target.y-p.y)<150;       // the sandstorm reaches 1150 in front, but a bot only uses an ultimate within 650 anyway: on the same level
@@ -13732,11 +13779,19 @@ function hostTickCore(dt,t){
       const cx=clamp(p.x+dir*50, 20, MAP.arenaW-20);
       p.flameShield.x=cx-8; p.flameShield.y=p.y-170;
     }
-    if(p.portalPair && (!p.portalCooldownUntil || t/1000>=p.portalCooldownUntil)){
-      const pp=p.portalPair, R=32;
-      const da=Math.hypot(p.x-pp.a.x, p.y-pp.a.y), db=Math.hypot(p.x-pp.b.x, p.y-pp.b.y);
-      if(da<=R){ p.x=pp.b.x; p.y=pp.b.y; p.vx=0; p.vy=0; p.portalCooldownUntil=t/1000+0.5; pushFx('portalwarp', p.x, p.y-30, t, {}); }
-      else if(db<=R){ p.x=pp.a.x; p.y=pp.a.y; p.vx=0; p.vy=0; p.portalCooldownUntil=t/1000+0.5; pushFx('portalwarp', p.x, p.y-30, t, {}); }
+    if(!p.portalCooldownUntil || t/1000>=p.portalCooldownUntil){       // anybody on the owner's team can use the owner's portals
+      for(const qid in players){
+        const q=players[qid], pp=q.portalPair; if(!pp) continue;
+        if(qid!==p.id && !(isAlly(q,p) && tnSameMatch(qid, p.id))) continue;
+        const R=32, da=Math.hypot(p.x-pp.a.x, p.y-pp.a.y), db=Math.hypot(p.x-pp.b.x, p.y-pp.b.y);
+        const from=(da<=R)?pp.a:((db<=R)?pp.b:null); if(!from) continue;
+        const to=(from===pp.a)?pp.b:pp.a;
+        if(p.isBot && !portalBotWorth(p, from, to)) continue;
+        p.x=to.x; p.y=to.y; p.vx=0; p.vy=0; p.portalCooldownUntil=t/1000+(p.isBot?2:0.5); pushFx('portalwarp', p.x, p.y-30, t, {});
+        skillPulse(p, t, {r:PORTAL_EXIT_R, dmg:PORTAL_EXIT_DMG, kb:PORTAL_EXIT_KB, up:PORTAL_EXIT_UP});
+        if(p.isBot && qid===p.id) q.portalPair=null;       // a bot uses its own portal once, it does not walk back and forth through it
+        break;
+      }
     }
     p.fireCdRemain = Math.max(0, (WEAPONS[p.weapon]?WEAPONS[p.weapon].cd:0) - (t/1000-(p.lastShot||-9999)));
   }
@@ -13913,7 +13968,7 @@ function hostTickCore(dt,t){
               }
             }
           }
-          if(b.pierce){ b.hitSet[id]=true; } else { hit=true; hitWho=p; break; }
+          if(b.pierce){ b.hitSet[id]=true; b.nHit=(b.nHit||0)+1; if(b.pierceHits && b.nHit>b.pierceHits){ hit=true; hitWho=p; break; } } else { hit=true; hitWho=p; break; }
         }
       }
     }
@@ -15965,6 +16020,15 @@ function spawnFx(e){
     case 'portalopen':
       addP({x:x,y:y,life:.4,color:'#a855f7',shape:'ring',r0:6,r1:50,lw:5});
       burst(x,y,16,{a0:0,a1:6.28,s0:40,s1:180,l0:.3,l1:.6,z0:2,z1:5,colors:['#a855f7','#e9d5ff'],grav:-10,drag:1.6});
+      break;
+    case 'portalsmoke':
+      burst(x,y,26,{a0:-3.0,a1:-0.1,s0:40,s1:160,l0:.5,l1:.9,z0:14,z1:30,colors:['#6d3fbf','#a78bfa','#3b2470'],grav:-60,drag:1.4,shape:'smoke',add:false});
+      break;
+    case 'portalblast':
+      playSfx('explosion', x, y);
+      addP({x:x,y:y,life:.24,color:'#f3e8ff',shape:'flash',size:150});
+      addP({x:x,y:y,life:.55,color:'#c084fc',shape:'ring',r0:10,r1:PORTAL_BLAST_R+20,lw:10});
+      burst(x,y,30,{a0:0,a1:6.28,s0:80,s1:520,l0:.4,l1:.9,z0:3,z1:7,colors:['#a855f7','#e9d5ff','#6d28d9'],grav:200,drag:1.6});
       break;
     case 'portalwarp':
       playSfx('portalwarp', x, y); // only ever pushed at the moment someone actually steps through a portal (exit point)
