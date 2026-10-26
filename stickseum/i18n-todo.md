@@ -64,3 +64,22 @@ patchnotes.json | v403 items[1] | 밸런스 표 갱신 (마법사 재측정) | b
 patchnotes.json | v404 title | 고급 스킨 공격 효과 | build 404 | 2026-10-26
 patchnotes.json | v404 items[0] | 4000sC 스킨과 그랜드 마스터 스킨의 탄환과 휘두르기 효과 대폭 강화 (스킨 테마별 효과와 회전하는 별, 그랜드 마스터는 무지개 색) | build 404 | 2026-10-26
 patchnotes.json | v404 items[1] | 밸런스 표 그래프 세로축을 데이터 범위에 맞게 조정 | build 404 | 2026-10-26
+Stickseum-v0.8.html | COSMETICS.skin_wizard_p.name | 청룡의 마법사 | build 405 | 2026-10-26
+Stickseum-v0.8.html | COSMETICS.skin_sword_p.name | 황금의 기사 | build 405 | 2026-10-26
+Stickseum-v0.8.html | COSMETICS.skin_kurus_p.name | 꿈의 쿠루스 | build 405 | 2026-10-26
+Stickseum-v0.8.html | COSMETICS.skin_magiccard_p.name | 우노 마술사 | build 405 | 2026-10-26
+Stickseum-v0.8.html | COSMETICS.skin_bat_new.name | 감자튀김 선수 | build 405 | 2026-10-26
+Stickseum-v0.8.html | SKILLS.kurus | 어둠 확산 | build 405 | 2026-10-26
+Stickseum-v0.8.html | SKILLS.kurus.desc | 내 발밑에 어둠을 일반 공격의 2배 폭으로 넓게 퍼뜨림 (공중에서는 사용 불가) | build 405 | 2026-10-26
+patchnotes.json | v405 title | 컨셉 스킨과 쿠루스 어둠 확산 | build 405 | 2026-10-26
+patchnotes.json | v405 items[0] | 컨셉 스킨 5종 추가 (청룡의 마법사, 황금의 기사, 꿈의 쿠루스, 우노 마술사, 감자튀김 선수) | build 405 | 2026-10-26
+patchnotes.json | v405 items[1] | 청룡의 마법사: 탄환이 여의주를 문 청룡, 궁극기 마법진 위에 청룡 두 마리 | build 405 | 2026-10-26
+patchnotes.json | v405 items[2] | 황금의 기사: 황금 검과 황금 휘두르기, 공격과 스킬에 황금 파티클, 궁극기 황금 천검 | build 405 | 2026-10-26
+patchnotes.json | v405 items[3] | 꿈의 쿠루스: 꿈빛 두건, 꿈빛 물약, 꿈빛 어둠 | build 405 | 2026-10-26
+patchnotes.json | v405 items[4] | 우노 마술사: 우노 카드 투척 | build 405 | 2026-10-26
+patchnotes.json | v405 items[5] | 감자튀김 선수: 종업원 모습, 방망이 대신 감자튀김 타격 | build 405 | 2026-10-26
+patchnotes.json | v405 items[6] | 쿠루스 일반 공격 어둠 폭 확대 (150 → 220) | build 405 | 2026-10-26
+patchnotes.json | v405 items[7] | 쿠루스 스킬을 어둠 확산으로 교체 (내 발밑에 일반 공격의 2배 폭으로 어둠 생성) | build 405 | 2026-10-26
+patchnotes.json | v405 items[8] | 차원여행자 일반 공격 데미지 13 → 15 | build 405 | 2026-10-26
+patchnotes.json | v405 items[9] | 스킨 머리 위 효과가 사라지던 문제 수정 | build 405 | 2026-10-26
+patchnotes.json | v405 items[10] | 밸런스 표 갱신 (쿠루스, 차원여행자 재측정) | build 405 | 2026-10-26
