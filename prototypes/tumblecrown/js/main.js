@@ -55,7 +55,10 @@ view.lobbyFlags = SAVE.flags; view.cos = SAVE.cos.on; view.setLow(!!SAVE.set.opt
 let INTRO = !(qs.get('test') && /^(localhost|127\.0\.0\.1)$/.test(location.hostname));
 window.__introSongDone = INTRO ? 0 : 1;
 view.buildLobby(INTRO);   // 인트로 동안은 세 쌍이 서로 싸우는 장면
-if (INTRO) setTimeout(() => { view.buildLobby(false); INTRO = false; window.__introSongDone = 1; document.documentElement.classList.add('tcReady'); $('tcIntro').classList.add('out'); setTimeout(() => $('tcIntro').remove(), 900); }, 6200);
+if (INTRO) MUS.sting(() => setTimeout(() => { view.buildLobby(false); INTRO = false; window.__introSongDone = 1; document.documentElement.classList.add('tcReady'); $('tcIntro').classList.add('out'); setTimeout(() => $('tcIntro').remove(), 900); }, 6200), h => {
+  const el = $('tcIntro'); el.classList.toggle('hold', h);
+  if (h) { const t = document.createElement('div'); t.id = 'tcHold'; t.textContent = T('화면을 누르면 시작해요'); el.appendChild(t); } else { const t = $('tcHold'); if (t) t.remove(); }
+});
 else { document.documentElement.classList.add('tcReady'); $('tcIntro').remove(); }
 addEventListener('resize', () => { view.resize(); sizeOv(); });
 const ov = $('ov'), oc = ov.getContext('2d');
