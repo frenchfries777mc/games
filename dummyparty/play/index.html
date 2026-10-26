@@ -1651,7 +1651,9 @@ body.playing #emoBar{display:flex}
    <div class="row"><input id="codeIn" maxlength="5" placeholder="방 코드" autocomplete="off"><button class="pb dark" id="joinBtn" style="flex:0 0 auto">들어가기</button></div>
    <div class="msg" id="homeMsg"></div>
   </aside>
-  <template id="patchnotes"><details class="notes" open><summary>패치노트 · v0.1 (b72)</summary>
+  <template id="patchnotes"><details class="notes" open><summary>패치노트 · v0.1 (b73)</summary>
+   <b>2026-10-26 · v0.1 · b73 · L을 가져가 춤</b>
+   <ul><li>승리 춤 "L을 가져가"를 진짜 동작에 가깝게 바꿨어요: 한 손을 이마에 올리고, 왼발을 왼쪽으로 찼다가 돌아오는 순간 오른발을 오른쪽으로 차는 동작을 계속 반복해요</li></ul>
    <b>2026-10-26 · v0.1 · b72 · 방 목록 창</b>
    <ul><li>공개방 목록이 첫 화면에서 빠지고, "방 목록" 버튼으로 여는 전체 화면 창으로 옮겨졌어요</li><li>공개방은 제목을 정할 수 있고 목록에 "(제목)-닉네임"으로 나와요. 오른쪽에는 미니게임 종류 수와 판 수, 인원이 보여요</li></ul>
    <b>2026-10-26 · v0.1 · b71 · 친구 초대</b>
@@ -1794,7 +1796,7 @@ body.playing #emoBar{display:flex}
    <ul><li>무너지는 발판 칸 수 대폭 증가 (19×10)와 용암 동굴 맵</li><li>10개 맵 전부 새로 그림 (관중석, 야자수 섬, 링, 정원 미로, 서커스, 우노 테이블 등)</li><li>글자 대신 아이콘·말풍선·이펙트로 표현 (무기, 아이템, 카드 효과, 시작 안내)</li><li>타격·폭발·물보라 효과와 화면 흔들림 추가</li></ul>
    <b>2026-10-19 · v0.1 · b1 · 첫 시험판</b>
    <ul><li>마네킹 미니게임 10개 추가 (장애물 달리기, 섬 밀치기, 싸우기, 병맛 미로, 체스 대난투, 폭탄 돌리기, 병맛 우노, 쇼윈도 얼음땡, 무너지는 발판, 컨베이어 서바이벌)</li><li>방 코드로 최대 8명 멀티플레이, 빈자리는 봇으로 채우기</li><li>판마다 10개 중 5개를 무작위로 골라 점수를 합산</li><li>PC 키보드와 휴대폰 터치 조작 지원</li></ul></details></template>
-  <p class="foot">2~8명 · 판마다 36개 미니게임 중 7개 · v0.1 b72 · <a href="../">← Dummy Party 사이트로</a></p>
+  <p class="foot">2~8명 · 판마다 36개 미니게임 중 7개 · v0.1 b73 · <a href="../">← Dummy Party 사이트로</a></p>
   <p class="foot"><span class="ff-copy">© 2026 Frenchfries777 · <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.ko" target="_blank" rel="noopener">CC BY-NC-ND 4.0</a></span></p>
  </div>
 </section>
@@ -2330,12 +2332,13 @@ var DANCES = [null,
     return o;
   }
   ,
-  // 5 L을 가져가: 이마에 L 손동작 + 좌우 스텝 + 어깨 들썩, 비 오듯 쏟아지는 L
+  // 5 L을 가져가: 한 손은 이마에 올리고, 왼발을 왼쪽으로 찼다가 돌아오는 순간 오른발을 오른쪽으로 차기를 계속 반복
   function (t) {
-    var T = 5.1, ph = t % T, o = { hx: 0, hr: 0, bob: 0, rot: 0, z: 0, l1: 0, l2: 0, f1: -2, f2: -2, aL: [-8, 12], aR: [8, 12] }, mode = 0, Lside = 1;
-    if (ph < 1.7) { mode = 0; var w = Math.sin(t * 7.5); o.rot = w * 0.12; o.hx = w * 3; o.hr = w * 0.12; o.bob = Math.abs(w) * 4; o.aR = [4, -19 + Math.sin(t * 15) * 0.8]; o.aL = [-13, 3]; o.l1 = w * 7; o.l2 = -w * 7; o.f1 = -2 - Math.max(0, w) * 5; o.f2 = -2 - Math.max(0, -w) * 5; Lside = 1; }
-    else if (ph < 3.4) { mode = 1; var s2 = Math.sin(t * 9), g = Math.sin(t * 18); o.rot = s2 * 0.06; o.bob = Math.abs(g) * 5; o.hr = s2 * 0.08; o.aL = [-5, -19 + g * 1.2]; o.aR = [5, -19 - g * 1.2]; o.l1 = 5 + g * 3; o.l2 = -5 - g * 3; o.f1 = -2 - Math.max(0, g) * 6; o.f2 = -2 - Math.max(0, -g) * 6; Lside = 0; }
-    else { mode = 2; var k = Math.sin(t * 8); o.rot = k * 0.1; o.hr = -k * 0.12 + 0.08; o.hx = k * 2; o.bob = Math.abs(k) * 4; o.aL = [-5, -19]; o.aR = [20 + Math.sin(t * 16) * 2, -17]; o.l1 = k * 6; o.l2 = -k * 6; o.f1 = -2 - Math.max(0, k) * 4; o.f2 = -2 - Math.max(0, -k) * 4; Lside = -1; }
+    var P = 0.8, w = Math.sin(t / P * 6.283), kL = Math.max(0, w), kR = Math.max(0, -w), o = { hx: 0, hr: 0, bob: 0, rot: 0, z: 0, l1: 0, l2: 0, f1: -2, f2: -2, aL: [-13, 3], aR: [4, -19] };
+    // 왼발: 옆으로 쭉 뻗으며 살짝 들어요 / 오른발도 똑같이 반대쪽으로
+    o.l1 = -kL * 17; o.f1 = -2 - kL * 9; o.l2 = kR * 17; o.f2 = -2 - kR * 9;
+    o.rot = (kR - kL) * 0.1; o.hx = (kR - kL) * 3; o.hr = (kR - kL) * 0.1; o.bob = Math.abs(w) * 3;
+    o.aR = [4, -19 + Math.sin(t * 14) * 0.6]; o.aL = [-13 - (kR - kL) * 3, 3 + Math.abs(w) * 2];
     var hx0 = o.hx;
     o.back = function (c, x, y, s, tt) {
       c.save(); var a = 0.2 + 0.1 * Math.sin(tt * 8); c.fillStyle = 'rgba(255,70,120,' + a + ')'; c.beginPath(); c.ellipse(x, y - 52 * s, 58 * s, 72 * s, 0, 0, 6.283); c.fill();
@@ -2344,12 +2347,7 @@ var DANCES = [null,
       c.restore();
     };
     o.front = function (c, x, y, s, tt) {
-      c.save(); var hy = y - 62 * s, bob = o.bob || 0, hxx = x + hx0 * s; c.lineJoin = 'round'; c.lineCap = 'round'; c.textAlign = 'center';
-      // 이마 위 L 손동작 (엄지와 검지)
-      function Lhand(lx, ly, f) { c.beginPath(); c.moveTo(lx, ly - 12 * s); c.lineTo(lx, ly + 4 * s); c.lineTo(lx + f * 11 * s, ly + 4 * s); c.strokeStyle = '#fff'; c.lineWidth = 7.5 * s; c.stroke(); c.strokeStyle = '#ff4f7a'; c.lineWidth = 4.2 * s; c.stroke(); }
-      if (mode === 0) Lhand(hxx + 6 * s, hy - 12 * s - bob * s * 0.1, 1);
-      else if (mode === 1) { Lhand(hxx - 7 * s, hy - 12 * s, 1); Lhand(hxx + 7 * s, hy - 12 * s, -1); }
-      else { Lhand(hxx - 6 * s, hy - 12 * s, 1); Lhand(x + 33 * s, hy + 2 * s, 1); }
+      c.save(); var hy = y - 62 * s; c.lineJoin = 'round'; c.lineCap = 'round'; c.textAlign = 'center';
       // 글자
       var ty = hy - 38 * s - ((tt * 11) % 7) * s, pulse = 1 + 0.08 * Math.sin(tt * 14);
       c.font = '900 ' + Math.round(21 * s * pulse) + 'px "Noto Sans KR",sans-serif'; c.lineWidth = 4.5 * s; c.strokeStyle = 'rgba(60,10,40,.85)'; c.fillStyle = '#ffe0ec';
