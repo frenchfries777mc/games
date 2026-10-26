@@ -2173,6 +2173,7 @@ const WIN_POSES={
   pose_dab:{name:'대브', price:550, icon:'💫'},
   pose_sit:{name:'여유롭게 앉기', price:650, icon:'😎'},
   pose_flip:{name:'백덤블링', price:800, icon:'🤸'},
+  pose_cossack:{name:'코사크 댄스', price:900, icon:'💃'},
   pose_taunt:{name:'약 올리기', price:1500, icon:'😝'},
   pose_levitate:{name:'공중 부양', price:0, icon:'🧘', season:true},
   pose_trophy:{name:'챔피언 트로피', price:0, icon:'🏆', season:true}
@@ -2225,6 +2226,15 @@ function drawWinPose(c, poseId, t, wid, tint){
     if(ph<0.55){ const q=ph/0.55, h=Math.sin(q*Math.PI)*24; c.translate(0,-30-h); c.rotate(-q*Math.PI*2); c.translate(0,30);
       ln([[-6,-6],[0,-22],[6,-6]]); ln([[0,-22],[0,-42]]); ln([[-12,-30],[0,-38],[12,-30]]); head(0,-52); persona(0,-52,-42); }
     else { const k=Math.sin(t*6)*3; ln([[-8,0],[0,-22],[8,0]]); ln([[0,-22],[0,-42]]); ln([[-18,-56-k],[0,-38],[18,-56+k]]); head(0,-52); persona(0,-52,-42); }
+  } else if(id==='pose_cossack'){      // 코사크 댄스 (hopak): a deep squat, arms folded on the chest, the legs kicking out to the front in turns
+    const sn=Math.sin(t*7), d=(sn>0)?1:-1, k=Math.abs(sn), hop=k*3; c.translate(0,-hop);
+    const lo=-13;                                                                    // the hips stay low the whole time
+    ln([[0,lo],[-d*8,lo+6],[-d*5,0]]);                                              // the leg that holds the weight
+    ln([[0,lo],[d*9,lo+1],[d*10+d*18*k,lo+2-k*2]]);                                  // the kicking leg flies out straight in front
+    ln([[0,lo],[1,-34]]);                                                            // the back stays straight
+    ln([[-10,-29],[0,-32],[10,-29]]); ln([[10,-29],[1,-27],[-9,-31]]);              // arms folded across the chest
+    head(1,-45); persona(1,-45,-36);
+    c.save(); c.shadowBlur=0; c.globalAlpha=0.35*k; for(let i=0;i<3;i++){ ln([[d*(14+i*6)+d*10,lo+8-i*3],[d*(18+i*6)+d*10,lo+8-i*3]]); } c.restore();
   } else if(id==='pose_levitate'){      // 공중 부양: cross-legged, floating, with orbs circling the body
     const fl=Math.sin(t*1.8)*4+10;
     c.save(); c.shadowBlur=0; c.globalAlpha=Math.max(0.1,0.34-fl*0.012); c.beginPath(); c.ellipse(0,2,20-fl*0.4,4,0,0,7); c.fill(); c.restore();
@@ -5077,7 +5087,7 @@ function shuffle(arr){ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.
 /* ===== the version of this file =====
    Players with different versions CAN meet and play together: the automatic matchmaking uses the same room names for every version (online-<mode>-<map>-<slot>), and nobody is refused because of a different build.
    The build is only sent along with the join message and the lobby (for information); the corner of the screen shows it. */
-const GAME_BUILD='build 2026-10-18-v398';
+const GAME_BUILD='build 2026-10-18-v399';
 const GAME_VERSION='0.8', GAME_VERSION_NAME='황금을 찾아서';   // 게임 버전 이름: versions.json의 title과 같게 (빌드마다 바꾸지 않음)
 const WEEKLY_EVENTS=[
   {id:'lowg',    name:'저중력 난투', desc:'몸이 둥실둥실, 중력이 약해진 난투', rules:{grav:0.6}},
@@ -11415,7 +11425,7 @@ function skillCdOf(p){ return SKILL_CD*pzCdMult(p); }
 function ultCdOf(p){ return ULT_CD*pzCdMult(p); }
 const PRACTICE_SKILL_CD=2;
 const SKILLS={
-  pizarro:  {name:'정복자의 휴식', kind:'buff', desc:'3초 동안 받는 피해 20% 감소 + 초당 체력 6 회복 · 움직여도 끊기지 않음'},
+  pizarro:  {name:'정복자의 질주', kind:'buff', desc:'체력 20 즉시 회복 + 3초 동안 이동 속도 50% 증가'},
   puppeteer:{name:'바느질', kind:'hit', desc:'실이 달린 바늘을 조준한 방향으로 발사 · 맞은 상대와 실이 이어지고 이동속도 25% 감소 · 맞히면 쿨타임 없이 바로 바늘 빼기를 쓸 수 있음 (바늘 빼기를 쓰기 전까지 실이 계속 이어짐) · 바늘 빼기: 실을 당겨 상대에게 30 피해를 주고 실이 끊김, 쿨타임은 바늘 빼기를 쓴 뒤부터 돌아요 (못 맞히면 바로 쿨타임)'},
   kan:      {name:'독두꺼비 함정', kind:'hit', desc:'조준한 곳으로 독 두꺼비를 던짐 (닿는 만큼, 최대 약 800) · 포물선으로 날아가 바닥에 닿으면 그 바닥이 독 바닥이 됨 (15초, 최대 2개, 나에게만 보임) · 적이 밟으면 독 바닥이 나타나고 3초 뒤 사라짐 · 밟은 적은 3초 동안 0.5초마다 5 피해'},
   pistol:   {name:'속사',        kind:'buff', desc:'1.8초 동안 연사 속도 2배'},
@@ -11448,6 +11458,7 @@ const SKILL_SFX={buff:'skill_buff', hit:'skill_hit', move:'skill_move'};
 const SANDSTORM_LEN=1725, SANDSTORM_H=360, SANDSTORM_KB=1200, SANDSTORM_SLOW_SEC=3.5, SAND_SLOW_MULT=0.3, SANDSTORM_DMG=36, SANDSTORM_STUN=2.0;     // the sandstorm of 호렘헵: reach, height, push, how long and how much it slows
 const BUFF_ORDER=['barrier','guard','reflect','focus','rapid','haste','rest'];
 const BUFF_COLORS={barrier:'#c17bff', guard:'#6ec6ff', reflect:'#ffffff', focus:'#ff8a3d', rapid:'#ffd34d', haste:'#7ef0a8', rest:'#ffc93c'};
+const PZ_RUN_SEC=3, PZ_RUN_HEAL=20;      // 피사로's skill 정복자의 질주: 20 hp at once + 50% speed for 3 s
 const PZ_REST_SEC=3, PZ_REST_CUT=0.2, PZ_REST_HPS=6;      // 피사로's skill 정복자의 휴식: 3 s, 20% less damage, 6 hp every second (moving no longer breaks it)
 function pzRestTick(tS){
   for(const id in players){
@@ -11654,8 +11665,9 @@ const SKILL_IMPL={
     spawnBullet(p, ang, {id:'kan', bulletSpeed:KAN_TOAD_SPEED, life:3, dmg:0, hitR:10}, {toad:true, arcs:true, color:'#2fb87a'});
     return true;
   },
-  pizarro(p,tSec,tMs){          // 정복자의 휴식: 3 s - 20% less damage and 6 hp a second
-    skillSetBuff(p,'rest',PZ_REST_SEC,tSec); p.restLast=undefined;
+  pizarro(p,tSec,tMs){          // 정복자의 질주: 20 hp back at once and 50% more speed for 3 s (a way to heal and to get away early in a fight)
+    const before=p.hp; p.hp=Math.min(maxHpFor(p), p.hp+PZ_RUN_HEAL); if(p.hp>before) pushFx('heal', p.x, p.y-70, tMs, {v:Math.round(p.hp-before)});
+    skillSetBuff(p,'haste',PZ_RUN_SEC,tSec);
     pushFx('skillring', p.x, p.y-30, tMs, {color:'#ffd34d', r:70});
     return true;
   },
