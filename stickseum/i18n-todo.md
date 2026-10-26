@@ -153,3 +153,5 @@ patchnotes.json | v425 items[0] | 랜덤 조합 시작 때 뽑힌 조합 안내 
 patchnotes.json | v425 items[1] | 랜덤 조합은 어느 캐릭터의 마스터리에도 포함되지 않음 | build 425 | 2026-10-26
 patchnotes.json | v426 title | 인형술사 반사 복구 | build 426 | 2026-10-26
 patchnotes.json | v426 items[0] | 인형술사 바느질 실이 이어진 동안 받는 피해의 50%를 상대에게 반사(실 하나당 최대 30) | build 426 | 2026-10-26
+patchnotes.json | v427 title | 봇 포물선 조준 조정 | build 427 | 2026-10-26
+patchnotes.json | v427 items[0] | 봇이 활·수류탄·바주카 같은 포물선 무기를 덜 정확하게 조준 | build 427 | 2026-10-26
