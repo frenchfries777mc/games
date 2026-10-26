@@ -885,7 +885,7 @@ sting();})();</script>
 
 <canvas id="game"></canvas>
 
-  <div id="lobbyFoot" style="display:none; position:fixed; left:0; right:0; bottom:4px; z-index:5; text-align:center; font-size:10px; opacity:.55; pointer-events:none; color:#cfd6e4; text-shadow:0 1px 2px #000;"><span id="lobbyBuild"></span> · <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.ko" target="_blank" rel="noopener" style="color:inherit; pointer-events:auto;">© 2026 Frenchfries777 · CC BY-NC-ND 4.0</a></div>
+  <div id="lobbyFoot" style="display:none; position:fixed; left:0; right:0; bottom:16px; z-index:5; text-align:center; font-size:12px; opacity:.8; pointer-events:none; color:#cfd6e4; text-shadow:0 1px 2px #000;"><span id="lobbyBuild"></span> · <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.ko" target="_blank" rel="noopener" style="color:inherit; pointer-events:auto;">© 2026 Frenchfries777 · CC BY-NC-ND 4.0</a></div>
 <div id="hud">
   <div id="topBar"><span id="hudMapName">맵</span><span id="hudConnWrap"> · 접속 <b id="hudCount">1</b>/<b id="hudMax">?</b></span> <span id="buildTag" style="opacity:0.65; font-size:11px;">build 2026-10-14-v210</span></div>
 
@@ -921,6 +921,7 @@ sting();})();</script>
     <div style="font-size:15px; color:#9aa0a6; margin:-10px 0 18px; text-align:center; padding:0 20px;" id="matchEndSub"></div>
     <div id="matchEndXp" style="display:none; margin:-6px 0 8px; padding:8px 16px; border:1px solid #1f3a30; background:rgba(63,224,197,.07); border-radius:10px; text-align:center; font-size:14px; line-height:1.6; color:#e8eaed;"></div>
     <div id="matchEndMastery" style="display:none; margin:-6px 0 18px; padding:8px 16px; border:1px solid #3a3320; background:rgba(255,211,77,.07); border-radius:10px; text-align:center; font-size:14px; line-height:1.6; color:#e8eaed;"></div>
+    <div id="matchEndVote" style="display:none; margin:-6px 0 16px; padding:10px 16px; border:1px solid #2d3b4d; background:rgba(93,170,255,.07); border-radius:10px; text-align:center; font-size:14px; color:#e8eaed;"></div>
     <button class="btn-primary" id="matchEndMenuBtn" style="padding:12px 28px;">메인으로</button>
   </div>
   <div id="elimOverlay" style="display:none; position:fixed; inset:0; z-index:19; background:rgba(8,9,12,.82); align-items:center; justify-content:center; flex-direction:column; pointer-events:auto;">
@@ -1295,6 +1296,9 @@ const KAN_POISON_DPS=2, KAN_POISON_SEC=3, KAN_POISON_MAX=4, KAN_TRAP_SEC=15, KAN
 let poisonZones=[];
 function applyPoison(p, ownerId, ownerName, stacks, tMs){ if(!p || !p.alive) return; const tS=tMs/1000, cur=(p.poison && p.poison.until>tS)?p.poison.stacks:0; p.poison={until:tS+KAN_POISON_SEC, stacks:Math.min(KAN_POISON_MAX,cur+(stacks||1)), owner:ownerId, ownerName:ownerName}; }
 const PZ_LUNGE_WIN=0.7, PZ_LUNGE_KB=1.3, PZ_LUNGE_STUN=0.2;       // 돌격 찌르기: the first thrust within 0.7 s after a dash shoves harder and staggers       // 피사로: the ultimate stacks (up to 4): +15% damage and 12% shorter cooldowns (attack, skill, ultimate, dash) each; dying resets it
+function lkW(p){ return (p && p.kit && p.kit.lk) || (p && p.weapon); }       // 랜덤 조합 모드: the look, the skill and the ultimate of a player may each come from another character than the normal attack (p.weapon)
+function skW(p){ return (p && p.kit && p.kit.sk) || (p && p.weapon); }
+function ulW(p){ return (p && p.kit && p.kit.ul) || (p && p.weapon); }
 function pzStacks(p){ return (p && p.weapon==='pizarro' && p.pzStacks) ? Math.min(PZ_MAX, p.pzStacks) : 0; }
 function pzCdMult(p){ return 1-PZ_CD_STEP*pzStacks(p); }
 function dashCdOf(p){ if(gameMode==='dashbr') return 0; if(p && p.queenUntil && performance.now()/1000<p.queenUntil) return 0; if(p && p.weapon==='pizarro') return PZ_DASH_CD[pzStacks(p)]; const w=WEAPONS[p && p.weapon], base=(w && w.dashCd!==undefined) ? w.dashCd : DASH_CD; return base*((p && p.isZombie) ? ZOMBIE_DASH_CD_MULT : 1)*pzCdMult(p); }   // how long a player waits between dashes (a zombie: half of it)
@@ -2079,6 +2083,7 @@ function setWeaponLabel(wid){        // the character next to "체력" in the HU
   const el=document.getElementById('weaponLabel'), sep=document.getElementById('weaponSep'), w=WEAPONS[wid]; if(!el) return;
   if(gameMode==='survival' || gameMode==='parkour' || gameMode==='hideseek' || gameMode==='hotpotato'){ el.textContent=''; if(sep) sep.style.display='none'; return; }
   if(sep) sep.style.display='';
+  { const me=players[myId]; if(me && me.kit){ const nmK=x=>escapeHtmlText((WEAPON_PERSONA_NAME[x]||(WEAPONS[x]&&WEAPONS[x].name)||x)); el.innerHTML='🎲 외형 '+nmK(me.kit.lk)+' · 공격 '+nmK(wid)+' · 스킬 '+nmK(me.kit.sk)+' · 궁극기 '+nmK(me.kit.ul); return; } }
   if(w) el.innerHTML=escapeHtmlText(w.emoji+' '+w.name)+charTierTagHtml(wid);
 }
 function updateGoldUI(){ const el=document.getElementById('goldAmt'); if(el) el.textContent=gold; updateSoulUI(); }
@@ -3513,6 +3518,8 @@ const MODES = {
   oneshot:  {id:'oneshot', name:'한 방 승부', desc:'모두의 체력이 1 · 한 대만 맞아도 쓰러져요(3초 뒤 부활) · 먼저 100킬을 달성하면 승리, 4분이 지나면 킬이 많은 사람이 승리', teams:false, extra:0, elim:false, respawnTime:3, special:true},
   turf:     {id:'turf', name:'색칠 전쟁', desc:'두 팀으로 나뉘어요 · 발판을 밟으면 그 칸이 우리 팀 색으로 칠해져요 · 칠한 칸이 많을수록 점수가 빨리 올라가고, 먼저 150점이거나 4분 뒤 점수가 높은 팀이 승리', teams:true, teamSize:'half', extra:2, elim:false, respawnTime:4, special:true},
   bounty:   {id:'bounty', name:'현상금 사냥', desc:'킬하면 1점 · 점수 선두(3점 이상)에게는 현상금이 붙어요(빨간 표시) · 현상금 대상을 잡으면 4점 · 먼저 20점이거나 5분 뒤 점수가 높은 사람이 승리', teams:false, extra:0, elim:false, respawnTime:4, special:true},
+  xkit:     {id:'xkit', name:'랜덤 조합 배틀로얄', desc:'🧪 실험적 모드 · 캐릭터를 고르지 않고 바로 시작해요 · 외형, 일반공격, 스킬, 궁극기가 각각 원래 캐릭터들 중에서 따로 랜덤으로 뽑혀요 · 부활 없이 최후의 1인이 승리', teams:false, extra:0, elim:true, autoWeapon:true, randomKit:true, exp:true},
+  bigcq:    {id:'bigcq', name:'거대 점령전', desc:'🧪 실험적 모드 · 24~32명이 두 팀으로 나뉘는 대규모 난투 · 아주 가로로 긴 맵 양 끝에서 시작하고 부활은 15초 · 왼쪽·중앙·오른쪽 깃발에 한 팀만 15초 서 있으면 그 팀 깃발이 돼요 · 세 깃발을 모두 차지한 팀이 승리 (12분이 지나면 깃발이 더 많은 팀) · 팀원끼리 캐릭터가 겹쳐도 돼요', teams:true, teamSize:'half', extra:0, elim:false, respawnTime:15, special:true, exp:true, fixedMapId:'giant_cq', minPlayers:24, fillTo:24, allowDup:true},
   lowg:     {id:'lowg', name:'저중력 난투', desc:'중력이 약하고 넉백이 강한 난투 · 높이 날아오르고 멀리 튕겨나가요 · 4분 동안 킬이 가장 많은 사람이 승리', teams:false, extra:0, elim:false, respawnTime:3, rules:{grav:0.6, kb:2}, special:true}
 };
 const MODE_ORDER = ['ffa','br','duo','team','duel','conquest'];
@@ -3689,11 +3696,12 @@ const SPECIAL_ITEMS=[
   {id:'dashbr',  icon:'💨', name:'무한 대쉬 배틀로얄', mapId:'canyon_volcano', weapons:['arrow','bullet'], desc:'대쉬 쿨타임 0초, 최후의 1인이 승리'}
 ];
 const DAILY_EXCLUDE={oneshot:1};      // (the one-hit mode is not in the daily rotation: balance, a short grind for xp)
-function brLike(m){ return m==='br' || m==='duo' || m==='dashbr'; }
+function brLike(m){ return m==='br' || m==='duo' || m==='dashbr' || m==='xkit'; }
 const SPECIAL_IDS=SPECIAL_ITEMS.map(i=>i.id);
 function dailyMatchCount(sd){ const mm=(sd&&sd.modeMatches)||{}; let n=0; for(const id of SPECIAL_IDS) n+=(mm[id]||0); return n; }
-const XM_END={vip:300,koth:360,relay:360,freeze:240,rush:240,roulette:300,oneshot:240,turf:240,bounty:300,lowg:240};
+const XM_END={bigcq:720,vip:300,koth:360,relay:360,freeze:240,rush:240,roulette:300,oneshot:240,turf:240,bounty:300,lowg:240};
 const XM_TARGET={koth:60,oneshot:100,turf:150,bounty:20,relay:10};
+const BCQ_CAP_SEC=15, BCQ_ZONE_HW=170, BCQ_ZONE_UP=230;       // 거대 점령전: 15 s alone on a flag; the zone is 340 wide and reaches 230 up
 const XM_SWAP_SEC=12, XM_ZONE_SEC=20, XM_RUSH_MAX=18;
 let xm=null, xmV=null;        // xm: the host's own state of a special mode; xmV: the small view of it that rides in every snapshot (everybody draws and reads the HUD from this)
 function xmPlayers(){ return Object.values(players).filter(p=>!p.isBoss && !p.isMinion); }
@@ -3739,7 +3747,9 @@ function xmStart(){
   } else if(id==='rush'){ xm.coins=[]; xm.sc={}; xm.nextCoin=now+600;
   } else if(id==='roulette'){ xm.nextSwap=now+XM_SWAP_SEC*1000;
   } else if(id==='turf'){ xm.segs=turfSegs(MAP); xm.own=xm.segs.map(()=>-1); xm.scF=[0,0];
-  } else if(id==='bounty'){ xm.sc={}; xm.tgt=null; }
+  } else if(id==='bounty'){ xm.sc={}; xm.tgt=null;
+  } else if(id==='bigcq'){ xm.fl=((MAP.bigcq&&MAP.bigcq.flags)||[]).map(()=>({o:-1, cap:-1, prog:0}));
+  }
   xmV=buildXmView(performance.now());
 }
 function xmWin(text, ids){ announceMatchEnd(text, ids||[]); }
@@ -3770,6 +3780,11 @@ function xmTimeUp(){
     else { const w=a>b?0:1; xmWin('팀 '+(w+1)+' 승리! ('+a+' : '+b+')', xmTeamMembers(w).map(p=>p.id)); }
   }
   else if(id==='bounty') xmTopBy(p=>xm.sc[p.id]||0, '점수');
+  else if(id==='bigcq'){
+    const a=xm.fl.filter(f=>f.o===0).length, b=xm.fl.filter(f=>f.o===1).length;
+    if(a===b) xmWin('무승부! 깃발 수가 같아요 ('+a+' : '+b+')', []);
+    else { const w=a>b?0:1; xmWin('팀 '+(w+1)+' 승리! (시간 종료 · 깃발 '+Math.max(a,b)+'개)', xmTeamMembers(w).map(p=>p.id)); }
+  }
   else endFFAMatchByKills();       // roulette / oneshot / lowg: the most kills
 }
 function xmTick(dt,t){
@@ -3819,6 +3834,19 @@ function xmTick(dt,t){
     const n=xm.segs.length||1;
     for(const tm of [0,1]){ const c=xm.own.filter(o=>o===tm).length; xm.scF[tm]+=(c/n)*1.5*dt; }
     for(const tm of [0,1]) if(xm.scF[tm]>=XM_TARGET.turf){ xmWin('팀 '+(tm+1)+' 승리! ('+Math.floor(xm.scF[0])+' : '+Math.floor(xm.scF[1])+')', xmTeamMembers(tm).map(p=>p.id)); break; }
+  } else if(id==='bigcq'){
+    const FL=(MAP.bigcq&&MAP.bigcq.flags)||[];
+    for(let i=0;i<FL.length;i++){
+      const f=FL[i], st=xm.fl[i]; let a=0, b=0;
+      for(const p of P){ if(!p.alive || p.x===undefined || (p.team!==0 && p.team!==1)) continue; if(Math.abs(p.x-f.x)<=BCQ_ZONE_HW && p.y<=f.y+12 && p.y>=f.y-BCQ_ZONE_UP){ if(p.team===0) a++; else b++; } }
+      const only=(a>0 && b===0)?0:((b>0 && a===0)?1:-1);
+      if(only>=0){
+        if(st.o===only){ st.prog=Math.max(0, st.prog-dt*2); if(st.prog===0) st.cap=-1; }       // the owner stands on its own flag: an enemy's progress runs back
+        else { if(st.cap!==only){ st.cap=only; st.prog=0; } st.prog+=dt;
+          if(st.prog>=BCQ_CAP_SEC){ st.o=only; st.cap=-1; st.prog=0; pushFx('skillring', f.x, f.y-30, t, {color:TEAM_COLORS[only], r:220}); } }
+      } else if(a===0 && b===0){ st.prog=Math.max(0, st.prog-dt*0.5); if(st.prog===0) st.cap=-1; }      // empty: the progress slowly runs back; both teams on it: it stands still
+    }
+    for(const tm of [0,1]) if(xm.fl.length && xm.fl.every(f=>f.o===tm)){ xmWin('팀 '+(tm+1)+' 승리! 깃발 세 개를 모두 차지했어요', xmTeamMembers(tm).map(q=>q.id)); break; }
   }
   xmV=buildXmView(t);
 }
@@ -3865,6 +3893,7 @@ function buildXmView(t){
     case 'oneshot': v.tg=XM_TARGET.oneshot; break;
     case 'turf': v.o=xm.own.map(o=>o<0?'-':String(o)).join(''); v.sc=[Math.floor(xm.scF[0]),Math.floor(xm.scF[1])]; v.tg=XM_TARGET.turf; break;
     case 'bounty': v.sc=xm.sc; v.b=xm.tgt; v.tg=XM_TARGET.bounty; break;
+    case 'bigcq': v.f=xm.fl.map(f=>[f.o, f.cap, Math.round(f.prog/BCQ_CAP_SEC*100)]); break;
   }
   return v;
 }
@@ -3878,6 +3907,8 @@ function xmBotGoal(p,target,d){
     case 'freeze': { if(near) return null; let b=null, bd=1e9; for(const k in xm.fz){ const q=players[k]; if(!q || q.team!==p.team) continue; const f=xm.fz[k], dd=Math.hypot(f.x-p.x,f.y-p.y); if(dd<bd){ bd=dd; b=f; } } return b?{x:b.x,y:b.y}:null; }
     case 'vip': { if(near) return null; const ek=players[xm.kings[1-p.team]]; return (ek && ek.alive && p.id!==xm.kings[p.team]) ? {x:ek.x,y:ek.y} : null; }
     case 'bounty': { const b=players[xm.tgt]; return (!near && b && b.alive && b.id!==p.id) ? {x:b.x,y:b.y} : null; }
+    case 'bigcq': { if(near || !MAP.bigcq) return null; const FL=MAP.bigcq.flags, cand=[]; for(let i=0;i<FL.length;i++){ const f=xm.fl[i]; if(f.o!==p.team || (f.cap>=0 && f.cap!==p.team && f.prog>0)) cand.push(i); }
+      const sl=p.teamSlot||0; if(!cand.length) return {x:FL[1].x, y:FL[1].y}; const k=cand[sl%cand.length]; return {x:FL[k].x+((sl%5)-2)*40, y:FL[k].y}; }
   }
   return null;
 }
@@ -3904,6 +3935,7 @@ function updateXmHud(me){
       h='<span style="color:'+TEAM_COLORS[0]+'">팀 1: '+v.sc[0]+' ('+cnt('0')+'칸)</span> <span style="color:var(--text-dim)">(목표 '+v.tg+')</span> <span style="color:'+TEAM_COLORS[1]+'">팀 2: '+v.sc[1]+' ('+cnt('1')+'칸)</span>'; break; }
     case 'bounty': h='🎯 현상금: '+(v.b?nm(v.b)+' (+3점)':'아직 없음')+' · 내 점수 '+((v.sc&&v.sc[myId2])||0)+'/'+v.tg; break;
     case 'lowg': h='🪐 저중력 난투 · 내 킬 '+(me?me.kills||0:0); break;
+    case 'bigcq': { const nmF=['왼쪽','중앙','오른쪽']; h='🚩 '+(v.f||[]).map((f,i)=>{ const col=f[0]>=0?TEAM_COLORS[f[0]]:'#8890a4'; const cp=(f[1]>=0 && f[2]>0)?' <span style="color:'+TEAM_COLORS[f[1]]+'">▶'+f[2]+'%</span>':''; return '<span style="color:'+col+'">'+nmF[i]+(f[0]>=0?' 팀'+(f[0]+1):' 중립')+'</span>'+cp; }).join(' · '); break; }
   }
   h+='<span style="color:var(--text-dim)"> · '+xmClock(v)+'</span>';
   if(el.style.display==='none') el.style.display='block';
@@ -3912,7 +3944,16 @@ function updateXmHud(me){
 function drawXmWorld(){
   const v=xmV; if(!v) return;
   const now=performance.now();
-  if(v.m==='koth' && v.z){
+  if(v.m==='bigcq' && v.f && MAP && MAP.bigcq){
+    ctx.save();
+    MAP.bigcq.flags.forEach((fl,i)=>{ const f=v.f[i]; if(!f) return; const col=f[0]>=0?TEAM_COLORS[f[0]]:'#c9ced8', ccol=f[1]>=0?TEAM_COLORS[f[1]]:col;
+      ctx.fillStyle=col; ctx.globalAlpha=0.10; ctx.fillRect(fl.x-BCQ_ZONE_HW, fl.y-BCQ_ZONE_UP, BCQ_ZONE_HW*2, BCQ_ZONE_UP);
+      ctx.globalAlpha=0.55; ctx.strokeStyle=col; ctx.lineWidth=3; ctx.setLineDash([14,10]); ctx.strokeRect(fl.x-BCQ_ZONE_HW, fl.y-BCQ_ZONE_UP, BCQ_ZONE_HW*2, BCQ_ZONE_UP); ctx.setLineDash([]); ctx.globalAlpha=1;
+      drawFlagIcon(fl.x, fl.y, col, 'stand', now);
+      if(f[1]>=0 && f[2]>0){ ctx.strokeStyle=ccol; ctx.lineWidth=7; ctx.lineCap='round'; ctx.beginPath(); ctx.arc(fl.x, fl.y-100, 30, -Math.PI/2, -Math.PI/2+Math.PI*2*f[2]/100); ctx.stroke(); }
+      ctx.font='800 20px sans-serif'; ctx.textAlign='center'; ctx.fillStyle='#fff'; ctx.fillText(['왼쪽 깃발','중앙 깃발','오른쪽 깃발'][i], fl.x, fl.y-BCQ_ZONE_UP-12); });
+    ctx.restore();
+  } else if(v.m==='koth' && v.z){
     const z=v.z, mine=v.h && v.h===myId, col=v.h==='c'?'255,90,90':(mine?'93,255,160':'255,210,77'), pulse=0.5+0.5*Math.sin(now/260);
     ctx.save();
     ctx.fillStyle='rgba('+col+','+(0.12+0.08*pulse)+')'; ctx.fillRect(z.x-z.w/2, z.y-CQ_ZONE_H, z.w, CQ_ZONE_H);
@@ -5004,6 +5045,16 @@ const CTF_MAP_CONFIGS=[
    half:[[120,100,160],[440,100,180],[740,180,180],[1060,100,220],[1400,190,200],[1720,100,200],[2040,200,200]], center:[[110,380]]}
 ];
 for(const cfg of CTF_MAP_CONFIGS) MAP_TEMPLATES[cfg.id]=buildCtfMap(cfg);
+/* 거대 점령전 map: 7200 wide; the two teams start at the two ends, three flags (left, centre, right) on the ground between them, every one with a few platforms around it */
+MAP_TEMPLATES['giant_cq']=(function(){
+  const W=7200, Hh=1500, G=Hh-100, plats=[{x:0, y:G, w:W, h:100}];
+  const half=[[150,110,200],[430,210,200],[720,320,220],[560,95,150],[1000,110,200],[1280,220,220],[1520,110,200],[1700,260,260],[2000,110,200],[2250,210,240],[2500,330,220],[2760,110,200],[3000,220,200],[1900,430,200],[3240,340,200]];
+  for(const [x,up,w] of half){ plats.push({x, y:G-up, w, h:24}); plats.push({x:W-x-w, y:G-up, w, h:24}); }
+  for(const [up,w] of [[110,640],[260,360],[420,200]]) plats.push({x:W/2-w/2, y:G-up, w, h:24});
+  const sp0=[40,100,160,220,280,340,400,460].map(x=>({x, y:G-12})), sp1=sp0.map(sp=>({x:W-sp.x, y:sp.y}));
+  return {id:'giant_cq', name:'거대 점령전 평원', maxPlayers:32, arenaW:W, arenaH:Hh, privateOnly:true, isGiant:true, theme:THEMES.grassland, platforms:plats,
+    bigcq:{flags:[{x:1800, y:G}, {x:W/2, y:G}, {x:W-1800, y:G}]}, teamSpawns:[sp0, sp1], spawns:sp0.concat(sp1)};
+})();
 MAP_TEMPLATES['mega_arena'] = {
   id:'mega_arena', name:THEMES.mega.name, maxPlayers:32, arenaW:3000, arenaH:1200, privateOnly:true,
   theme:THEMES.mega,
@@ -5123,7 +5174,7 @@ function shuffle(arr){ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.
 /* ===== the version of this file =====
    Players with different versions CAN meet and play together: the automatic matchmaking uses the same room names for every version (online-<mode>-<map>-<slot>), and nobody is refused because of a different build.
    The build is only sent along with the join message and the lobby (for information); the corner of the screen shows it. */
-const GAME_BUILD='build 2026-10-18-v421';
+const GAME_BUILD='build 2026-10-18-v422';
 const GAME_VERSION='0.8', GAME_VERSION_NAME='황금을 찾아서';   // 게임 버전 이름: versions.json의 title과 같게 (빌드마다 바꾸지 않음)
 const WEEKLY_EVENTS=[
   {id:'lowg',    name:'저중력 난투', desc:'몸이 둥실둥실, 중력이 약해진 난투', rules:{grav:0.6}},
@@ -6504,6 +6555,7 @@ function enterPrivateSetup(){
 const MODE_LIST=[
   {id:'ranked', icon:'🏅', desc:'1대1 듀얼 · 이기면 랭크 점수가 오르고 지면 내려가요 · 매달 새 시즌'},
   {id:'daily', icon:'📅', desc:''},
+  {id:'exp', icon:'🧪', desc:'아직 정식으로 나오지 않은 모드를 먼저 해 봐요 · 끝나고 좋아요/나빠요를 남겨 주세요'},
   {id:'ffa', icon:'⚔️', desc:'제한 없이 자유롭게 싸우는 기본 데스매치'},
   {id:'br', icon:'🏆', desc:'마지막까지 살아남는 서바이벌 대전'},
   {id:'duo', icon:'🤝', desc:'2인 1팀, 마지막 팀이 승리'},
@@ -6526,10 +6578,32 @@ function dailyModeItem(){
   try{ localStorage.setItem('stickseumDailyMode', JSON.stringify({key, id:it.id})); }catch(e){}
   return it;
 }
+const EXP_MODES=[{id:'xkit', icon:'🎲'}, {id:'bigcq', icon:'🏴'}];       // 실험적 모드: not released yet, the player votes 좋아요/나빠요 on the result screen
+function expVotes(){ try{ return JSON.parse(localStorage.getItem('stickseumExpVotes')||'{}')||{}; }catch(e){ return {}; } }
+function buildExpList(){
+  const body=document.getElementById('modeListBody'); if(!body) return;
+  body.innerHTML=''; const votes=expVotes();
+  const back=document.createElement('button'); back.className='modeRow';
+  back.innerHTML='<span class="mrIcon"></span><span class="mrText"><div class="mrName"></div><div class="mrDesc"></div></span>';
+  back.querySelector('.mrIcon').textContent='⬅️'; back.querySelector('.mrName').textContent='모드 목록으로'; back.querySelector('.mrDesc').textContent='';
+  back.onclick=()=>buildModeList(); body.appendChild(back);
+  for(const it of EXP_MODES){ const m=MODES[it.id]; if(!m) continue; const v=votes[it.id]||{up:0,down:0};
+    const row=document.createElement('button'); row.className='modeRow';
+    row.innerHTML='<span class="mrIcon"></span><span class="mrText"><div class="mrName"></div><div class="mrDesc"></div></span>';
+    row.querySelector('.mrIcon').textContent=it.icon; row.querySelector('.mrName').textContent='🧪 '+m.name;
+    row.querySelector('.mrDesc').textContent=m.desc.replace(/^🧪 실험적 모드 · /,'')+((v.up||v.down)?(' · 내 평가 👍 '+v.up+' · 👎 '+v.down):'');
+    if(partyActive()) row.classList.add('partyOff');
+    row.onclick=()=>pickOnlineModeAndMatch(it.id, false); body.appendChild(row); }
+  body.scrollTop=0;
+}
 function buildModeList(){
   const body=document.getElementById('modeListBody'); if(!body) return;
   body.innerHTML='';
-  for(const it of MODE_LIST){ if(it.id==='ranked'){ const rr=rankedModeRow(it); if(partyActive()) rr.classList.add('partyOff'); body.appendChild(rr); continue; }
+  for(const it of MODE_LIST){ if(it.id==='exp'){ const row=document.createElement('button'); row.className='modeRow';
+      row.innerHTML='<span class="mrIcon"></span><span class="mrText"><div class="mrName"></div><div class="mrDesc"></div></span>';
+      row.querySelector('.mrIcon').textContent=it.icon; row.querySelector('.mrName').textContent='실험적 모드'; row.querySelector('.mrDesc').textContent=it.desc;
+      if(partyActive()) row.classList.add('partyOff'); row.onclick=()=>buildExpList(); body.appendChild(row); continue; }
+    if(it.id==='ranked'){ const rr=rankedModeRow(it); if(partyActive()) rr.classList.add('partyOff'); body.appendChild(rr); continue; }
     const isEv=(it.id==='event'), isDay=(it.id==='daily'), m=isEv?{name:'주간 이벤트 · '+currentEvent().name}:(isDay?{name:'일일 모드 · '+dailyModeItem().name}:MODES[it.id]); if(!m) continue;
     const row=document.createElement('button'); row.className='modeRow';
     row.innerHTML='<span class="mrIcon"></span><span class="mrText"><div class="mrName"></div><div class="mrDesc"></div></span>';
@@ -6977,7 +7051,7 @@ const PRACTICE_KEY='arenaClashPractice';
 let practiceCfg={mapId:null, wid:'pistol', oppKind:'still', oppCount:2, botLevel:'normal'};
 let practiceDummySeq=0;
 const PRACTICE_OPP_KINDS=[{id:'none',name:'없음'},{id:'still',name:'허수아비'},{id:'moving',name:'움직이는 허수아비'},{id:'bot',name:'봇'}];
-function practiceMapIds(){ return Object.keys(MAP_TEMPLATES).filter(id=>!MAP_TEMPLATES[id].isParkour && !MAP_TEMPLATES[id].isCtf && !MAP_TEMPLATES[id].guestOnly); }
+function practiceMapIds(){ return Object.keys(MAP_TEMPLATES).filter(id=>!MAP_TEMPLATES[id].isParkour && !MAP_TEMPLATES[id].isCtf && !MAP_TEMPLATES[id].isGiant && !MAP_TEMPLATES[id].guestOnly); }
 function loadPracticeCfg(){
   try{
     const s=JSON.parse(localStorage.getItem(PRACTICE_KEY)||'null');
@@ -9953,10 +10027,11 @@ function doStart(){
   try{
     const now=Date.now();
     for(const p of Object.values(players)) p.lastSeen=now; // the stale-connection watchdog's timeout drops sharply the instant `started` flips true below - without this, a perfectly healthy connection whose last heartbeat is a few seconds old (easily the case coming out of the lobby, where the looser pre-start timeout never required a fresher one) would be wrongly flagged stale the very next watchdog tick
-    for(const p of Object.values(players)){ p.pick=null; p.weaponChosen=false; p.weapon=null; }
+    for(const p of Object.values(players)){ p.pick=null; p.weaponChosen=false; p.weapon=null; p.kit=null; }
   }catch(e){ recordDiagError('doStart-preReset', e); console.error('[doStart] pre-start player reset failed (recovering - still proceeding to start):', e); }
   if((MODES[gameMode]||{}).autoWeapon){ // relay / roulette: the game hands out the characters, nobody picks
-    try{ for(const p of Object.values(players)) p.weapon=SELECTABLE_WEAPONS[Math.floor(Math.random()*SELECTABLE_WEAPONS.length)]; }catch(e){ recordDiagError('doStart-autoWeapon', e); }
+    try{ const rw=()=>SELECTABLE_WEAPONS[Math.floor(Math.random()*SELECTABLE_WEAPONS.length)], rk=!!(MODES[gameMode]||{}).randomKit;
+      for(const p of Object.values(players)){ p.weapon=rw(); if(rk){ p.kit={lk:rw(), sk:rw(), ul:rw()}; if(p.kit.ul==='pizarro') p.weapon='pizarro'; p.pick=p.weapon; p.weaponChosen=true; } } }catch(e){ recordDiagError('doStart-autoWeapon', e); }
     gameLoopStarted=false;
     beginGame();
     return;
@@ -10408,6 +10483,16 @@ function winPoseStart(){
     requestAnimationFrame(frame);
   })(last);
 }
+let expVoted=null;      // the vote of the match that has just ended ('up' / 'down'), reset every time a new match starts
+function paintExpVote(vEl){
+  const md=MODES[gameMode]||{};
+  if(expVoted){ vEl.innerHTML='🧪 <b>'+escapeHtmlText(md.name||'')+'</b> · '+(expVoted==='up'?'👍 좋아요':'👎 나빠요')+'로 남겼어요. 고마워요!'; return; }
+  vEl.innerHTML='🧪 <b>'+escapeHtmlText(md.name||'')+'</b> 어땠어요?<div style="display:flex; gap:10px; justify-content:center; margin-top:8px;"><button class="btn-primary" id="expUpBtn" style="padding:8px 22px;">👍 좋아요</button><button class="btn-primary" id="expDownBtn" style="padding:8px 22px; background:#3b4252;">👎 나빠요</button></div>';
+  const go=v=>{ expVoted=v; try{ const all=expVotes(), m=all[gameMode]=all[gameMode]||{up:0,down:0}; m[v]=(m[v]||0)+1; localStorage.setItem('stickseumExpVotes', JSON.stringify(all)); }catch(e){}
+    try{ if(sb && sbUser) sb.rpc('ff_exp_vote',{p_mode:gameMode, p_vote:v}).then(()=>{}, ()=>{}); }catch(e){}
+    paintExpVote(vEl); };
+  document.getElementById('expUpBtn').onclick=()=>go('up'); document.getElementById('expDownBtn').onclick=()=>go('down');
+}
 function finishMatchEndOverlay(resultText){
   const el=document.getElementById('matchEndOverlay');
   if(!el) return;
@@ -10435,6 +10520,13 @@ function finishMatchEndOverlay(resultText){
     else if(lastTierGain){ mEl.innerHTML=tierGainHtml(); mEl.style.display='block'; }
     else mEl.style.display='none';
   }
+  { const vEl=document.getElementById('matchEndVote'), md=MODES[gameMode]||{};
+    if(vEl){
+      if(md.exp && !practiceMode){
+        const done=vEl.dataset.m===gameMode+':'+(lastMatchVerdict&&lastMatchVerdict.main||'')+':'+(vEl.dataset.v||'');
+        vEl.style.display='block'; paintExpVote(vEl);
+      } else vEl.style.display='none';
+    } }
   const wasShown=(el.style.display==='flex');
   if(!wasShown && gameMode==='tournament'){ try{ const wp=(lastWinnerIds||[]).map(id=>players[id]).find(q=>q); if(wp) tnChampIntro(wp.name); }catch(e){} }
   el.style.display='flex';
@@ -10579,6 +10671,7 @@ let weaponChosenLocally=false, weaponCountdownTimer=null;
 
 /* ---- host authority ---- */
 function dupRuleOn(p){
+  if((MODES[gameMode]||{}).allowDup) return false;       // 거대 점령전: teammates may play the same character
   if(p.team===null || p.team===undefined) return false;
   const n=Object.values(players).filter(o=>o.team===p.team).length;
   const need = weaponMode==='random' ? n*3 : n;
@@ -11115,7 +11208,7 @@ function finalizeGameplayStart(mte){
   // silent freeze, and the error banner mechanism gets its chance to work.
   try{
     matchEnded=false; try{ rpRecStart(); }catch(e){}
-    myCharKb={}; myCharUsed=[]; myTrackW=null; myTrackK=0;
+    myCharKb={}; myCharUsed=[]; myTrackW=null; myTrackK=0; expVoted=null;
     xm=null; xmV=null; brz=null; brzV=null; particles=[]; fxSeen={}; prevGround={}; prevHp={}; hitFlashUntil={}; screenShake=0; walls=[]; hostTimers=[]; magicCircles=[]; fieldZones=[]; poisonZones=[]; turrets=[]; darkPools=[]; darkView=[]; lastKnownKills=0; matchAssists=0;
     matchKillLog=[]; killcamActive=false; killcamOverride=null; killcamSnapshot=null; killcamReplay=null; killcamReplayStartAt=0; replayBuffer={}; replayFrames=[]; replayFxLog=[]; replayDefs={};
     hitStopUntil=0; staggers={}; setTimeout(()=>{ try{ entranceShow(); }catch(e){ console.error('[entrance]', e); } }, 450);
@@ -11482,15 +11575,15 @@ function tryUltimate(p, tMs, aimX, aimY, viaClick){
   if(isStunned(p, tMs/1000)) return;
   const tSec=tMs/1000;
   if(tSec-(p.lastUlt===undefined?-9999:p.lastUlt) < ultCdOf(p)) return;
-  const impl=ULT_IMPL[p.weapon]; if(!impl) return;
+  const impl=ULT_IMPL[ulW(p)]; if(!impl) return;
   if(impl(p,tSec,tMs,aimX,aimY)===false) return; // e.g. sword with no target: cooldown is not spent
   p.lastUlt=tSec;
   p.ultUses=(p.ultUses||0)+1;                    // (counted per match: the "character" achievements)
-  if(viaClick && ARM_FIRE_ULTS[p.weapon] && hasAim(aimX,aimY)) hostTimers.push({ta:fxActor, at:tSec+0.05, fn:(tt)=>{ if(p.alive && p.ultPending) tryFire(p, aimAngleOf(p,aimX,aimY), tt); }});   // (one tick later, so the armed shot is the one that flies)
-  recordReplayEvent(p.id, 'ult', {weapon:p.weapon});
-  pushFx('ult', p.x, p.y-40, tMs, {color:p.color, name:(ULTS[p.weapon]||{}).name||''});
-  if(p.weapon!=='samurai' && p.weapon!=='sword' && p.weapon!=='bazooka' && p.weapon!=='grenade' && p.weapon!=='kurus') pushFx('ultfx', p.x, p.y-34, tMs, {w:p.weapon});
-  if(ULT_SFX[p.weapon]) pushFx('sfx', p.x, p.y-40, tMs, {name:ULT_SFX[p.weapon]}); // cast sound, heard by everyone like the weapon sounds
+  if(viaClick && ARM_FIRE_ULTS[ulW(p)] && hasAim(aimX,aimY)) hostTimers.push({ta:fxActor, at:tSec+0.05, fn:(tt)=>{ if(p.alive && p.ultPending) tryFire(p, aimAngleOf(p,aimX,aimY), tt); }});   // (one tick later, so the armed shot is the one that flies)
+  recordReplayEvent(p.id, 'ult', {weapon:ulW(p)});
+  pushFx('ult', p.x, p.y-40, tMs, {color:p.color, name:(ULTS[ulW(p)]||{}).name||''});
+  { const uw=ulW(p); if(uw!=='samurai' && uw!=='sword' && uw!=='bazooka' && uw!=='grenade' && uw!=='kurus') pushFx('ultfx', p.x, p.y-34, tMs, {w:uw}); }
+  if(ULT_SFX[ulW(p)]) pushFx('sfx', p.x, p.y-40, tMs, {name:ULT_SFX[ulW(p)]}); // cast sound, heard by everyone like the weapon sounds
 }
 
 /* ================= CHARACTER SKILLS (F key) =================
@@ -11879,14 +11972,14 @@ function trySkill(p, tMs, aimX, aimY){
   if(p.teleportChannel) return;                                                     // busy teleporting
   if(p.darkSub) return;                                                             // inside the darkness: no skill
   const tSec=tMs/1000;
-  if(p.weapon==='sword' && p.swordCharge){ swordEnd(p); return; }                                      // the knight's skill key again = stop charging
+  if(skW(p)==='sword' && p.swordCharge){ swordEnd(p); return; }                                      // the knight's skill key again = stop charging
   if(tSec-(p.lastSkill===undefined?-9999:p.lastSkill) < skillCdOf(p)) return;
-  const impl=SKILL_IMPL[p.weapon]; if(!impl) return;
-  const pullNeedle=(p.weapon==='puppeteer' && sewActive(p,tSec));
+  const impl=SKILL_IMPL[skW(p)]; if(!impl) return;
+  const pullNeedle=(skW(p)==='puppeteer' && sewActive(p,tSec));
   if(impl(p,tSec,tMs,aimX,aimY)===false) return;                                   // nothing to use it on: the cooldown is not spent
   p.lastSkill=tSec;
   p.skillUses=(p.skillUses||0)+1;
-  const sd=SKILLS[p.weapon];
+  const sd=SKILLS[skW(p)];
   pushFx('skill', p.x, p.y-40, tMs, {color:p.color, name:pullNeedle?SEW_PULL_NAME:sd.name});
   pushFx('sfx', p.x, p.y-40, tMs, {name:SKILL_SFX[sd.kind]});
 }
@@ -11999,7 +12092,7 @@ function abilityPreviewOps(action, p, mx, my){
   const arrowX=(dir,len,y)=>({t:'arrow', x1:p.x, y1:y===undefined?p.y-30:y, x2:p.x+dir*len, y2:y===undefined?p.y-30:y});
   const selfRing=(r)=>({t:'ring', x:p.x, y:p.y-30, r});
   const mark=(x,y,r)=>({t:'ring', x, y, r});
-  const w=p.weapon;
+  const w=(action==='skill')?skW(p):((action==='ultimate')?ulW(p):p.weapon);
   if(action==='dash'){ ops.push(arrowX(localInput.left?-1:(localInput.right?1:(mx>=p.x?1:-1)), 190)); return ops; }
   if(action==='teleport'){
     const x=clamp(mx, PLAYER_W/2+4, MAP.arenaW-PLAYER_W/2-4), y=clamp(my, PLAYER_H, MAP.arenaH-4);
@@ -12441,7 +12534,7 @@ const BOT_PERSONALITIES=['coward','taunter','sniper','revenge','collector','riva
 const PERSONALITY_WEAPONS={sniper:['bow','rifle','pistol','bazooka','wizard'], taunter:['sword','gloves','dagger','lightsaber','horemheb','bat','dracula']};
 // modes the bots know how to play. (hide & seek is not here: a bot seeker/hider needs its own logic, so those rooms keep waiting for people)
 // hot potato, parkour, survival and the flag mode each have their own brain below (botBrain*); the rest use the generic fighter
-const BOT_MODES={ffa:1,br:1,dashbr:1,duo:1,team:1,duel:1,conquest:1,zombie:1,hotpotato:1,parkour:1,survival:1,ctf:1,gold:1,raid:1,tournament:1,vip:1,koth:1,relay:1,freeze:1,rush:1,roulette:1,oneshot:1,turf:1,bounty:1,lowg:1};
+const BOT_MODES={xkit:1,bigcq:1,ffa:1,br:1,dashbr:1,duo:1,team:1,duel:1,conquest:1,zombie:1,hotpotato:1,parkour:1,survival:1,ctf:1,gold:1,raid:1,tournament:1,vip:1,koth:1,relay:1,freeze:1,rush:1,roulette:1,oneshot:1,turf:1,bounty:1,lowg:1};
 let botSeq=0, lastHumanJoinAt=0, botFillAt=null, botFilling=false, botNextAt=0; // botFillAt: when the first bot will join (announced to everyone); botFilling: bots are walking in; botNextAt: when the next one does
 function botSupported(modeId){ return !!BOT_MODES[modeId]; }
 function humanPlayers(){ return Object.values(players).filter(p=>!p.isBot); }
@@ -12502,7 +12595,7 @@ function botFillWaitMs(){ return (humanPlayers().length<=1 && !partyActive() && 
 function botFillTick(){
   if(!isHost || started || !MAP || currentMode!=='online' || onlineRanked || onlineClan){ botFillAt=null; botFilling=false; return; }   // (a ranked or clan room waits for a person, never for bots)
   if(!botSupported(gameMode) || humanPlayers().length===0){ botFillAt=null; botFilling=false; return; }
-  const cap=effectiveMaxPlayers(currentMapId, gameMode), target=botFillTargetFor(cap), count=Object.keys(players).length;
+  const cap=effectiveMaxPlayers(currentMapId, gameMode), fillTo=(MODES[gameMode]||{}).fillTo, target=fillTo?Math.min(cap,fillTo):botFillTargetFor(cap), count=Object.keys(players).length;
   if(count>=target){
     if(botFillAt!==null){ botFillAt=null; broadcastLobby(); }
     botFilling=false;
@@ -12922,7 +13015,7 @@ function botRoamGoal(p, ai, t){
 function botIncomingShot(p, r){ for(const b of bullets){ if(b.dmgless || b.owner===p.id) continue; const ow=players[b.owner]; if(ow && isAlly(p,ow)) continue; if(Math.hypot(b.x-p.x, b.y-(p.y-40))<r) return true; } return false; }
 function botWantsSkill(p, target, d, tSec){
   const hpFrac=p.hp/maxHpFor(p), hurt=hpFrac<0.55;
-  switch(p.weapon){
+  switch(skW(p)){
     case 'pistol': case 'rifle': return d<600;                        // damage buffs: in a gunfight
     case 'smg': return d>150 && d<520 && Math.abs(target.y-p.y)<200;        // the smoke grenade: thrown at the enemy from a medium distance
     case 'bow': return d<280 || (hurt && d<420);
@@ -13301,7 +13394,7 @@ function botThink(p, t, dt){
     let sh=null, sd=1e9; for(const b of bullets){ if(b.dmgless || b.owner===p.id) continue; const ow=players[b.owner]; if(ow && isAlly(p,ow)) continue; const dd=Math.hypot(b.x-p.x, b.y-(p.y-40)); if(dd<sd){ sd=dd; sh=b; } }
     if(sh){ const a=Math.atan2(sh.y-(p.y-40), sh.x-p.x); p.input.angle=a; tryFire(p, a, t); ai.deflectAt=tSec+0.9; }
   }
-  if(!mb && SKILLS[p.weapon] && tSec-(p.lastSkill===undefined?-9999:p.lastSkill)>=skillCdOf(p) && tSec>=(ai.skillAt||0) && Math.random()<dif.useSkill && botWantsSkill(p, target, d, tSec)){ trySkill(p, t, target.x, target.y-30); ai.skillAt=tSec+1.2; }   // the character skill, used when it makes sense for that character
+  if(!mb && SKILLS[skW(p)] && tSec-(p.lastSkill===undefined?-9999:p.lastSkill)>=skillCdOf(p) && tSec>=(ai.skillAt||0) && Math.random()<dif.useSkill && botWantsSkill(p, target, d, tSec)){ trySkill(p, t, target.x, target.y-30); ai.skillAt=tSec+1.2; }   // the character skill, used when it makes sense for that character
       if(d<=band.max && p.grounded && Math.random()<0.035) ai.hopAt=t;                                       // an occasional hop makes a bot harder to hit
     } else if(gameMode==='conquest' && cq){ goalX=cq.zone.x; goalY=cq.zone.y; }
     else { const g=botRoamGoal(p, ai, t); goalX=g.x; goalY=g.y; }
@@ -13455,10 +13548,10 @@ function portalBotWorth(p, from, to){       // a bot only steps into a portal wh
   return bestTo<Infinity && bestTo+150<best;
 }
 function botUltSensible(p, target){
-  if(p.weapon==='portalgun') return Math.hypot(target.x-p.x,target.y-p.y)>380;      // the exit lands beside the enemy: pointless when it is already close
-  if(p.weapon==='kurus'){ const d=Math.hypot(target.x-p.x,target.y-p.y); return !!darkPoolUnder(p, true) && (p.hp<maxHpFor(p)*0.55 || botIncomingShot(p, 220) || d<260); }   // only where it can sink right away
-  if(p.weapon==='pizarro') return (p.pzStacks||0)<PZ_MAX;       // the stacking buff: worth casting until it is full
-  if(p.weapon==='horemheb') return Math.hypot(target.x-p.x,target.y-p.y)<640 && Math.abs(target.y-p.y)<150;       // the sandstorm reaches 1150 in front, but a bot only uses an ultimate within 650 anyway: on the same level
+  if(ulW(p)==='portalgun') return Math.hypot(target.x-p.x,target.y-p.y)>380;      // the exit lands beside the enemy: pointless when it is already close
+  if(ulW(p)==='kurus'){ const d=Math.hypot(target.x-p.x,target.y-p.y); return !!darkPoolUnder(p, true) && (p.hp<maxHpFor(p)*0.55 || botIncomingShot(p, 220) || d<260); }   // only where it can sink right away
+  if(ulW(p)==='pizarro') return (p.pzStacks||0)<PZ_MAX;       // the stacking buff: worth casting until it is full
+  if(ulW(p)==='horemheb') return Math.hypot(target.x-p.x,target.y-p.y)<640 && Math.abs(target.y-p.y)<150;       // the sandstorm reaches 1150 in front, but a bot only uses an ultimate within 650 anyway: on the same level
   return true;      // (Dracula used to skip the bat form against someone far below: a bat could not sink. Now it can - with S - so it is worth it anywhere)
 }
 let botLiveSince=null;
@@ -13885,7 +13978,7 @@ function hostTickCore(dt,t){
       p.rooted=!!p.restUntilD; } else if(p.rooted) p.rooted=false;
     { const tS2=t/1000; p.stunned=isStunned(p,tS2); p.cardSlowed=!!(p.cardSlowUntil && tS2<p.cardSlowUntil); p.bladeSpin=!!(p.bladeSpinUntil && tS2<p.bladeSpinUntil); }
     { const tS=t/1000; p.hasted=skillHasBuff(p,'haste',tS); p.batRun=!!(p.batRunUntil && tS<p.batRunUntil); p.focusOn=skillHasBuff(p,'focus',tS); p.buff=skillActiveBuff(p,tS);
-      if(p.weapon==='portalgun' && p.alive){                       // the portal gun's skill rewinds time: remember where it was and how healthy
+      if(skW(p)==='portalgun' && p.alive){                       // the portal gun's skill rewinds time: remember where it was and how healthy
         if(!p.hist) p.hist=[];
         if(!p.histAt || tS-p.histAt>=0.1){ p.histAt=tS; p.hist.push({x:p.x,y:p.y,hp:p.hp,t:tS}); while(p.hist.length && p.hist[0].t<tS-2.8) p.hist.shift(); }
       } else if(p.hist && p.hist.length) p.hist=[]; }
@@ -14190,7 +14283,7 @@ function hostTickCore(dt,t){
         ultCdRemain: p.darkSub ? 0 : snapR(Math.max(0, ultCdOf(p) - (t/1000-(p.lastUlt===undefined?-9999:p.lastUlt))),20), darkSub:p.darkSub?1:0, darkArm:(p.darkArmUntil>t/1000)?1:0,
         skillCdRemain: snapR(Math.max(0, skillCdOf(p) - (t/1000-(p.lastSkill===undefined?-9999:p.lastSkill))),20), buff:p.buff||null, skillUses:p.skillUses||0, ultUses:p.ultUses||0, ultMulti:p.ultMulti||0,
         pz:p.pzStacks||0, pm:(p.pzMarkUntil>t/1000)?1:0, ultOn:!!p.ultOn, invis:!!p.invis, burning:!!p.burning, poisoned:!!p.poisoned, kw:(p.kanWingsUntil>t/1000)?1:0, gc:p.gc||0, gp:Math.round(Math.min(1,(p.goldStay||0)/GOLD_PICK_STAY)*20)/20, pp:puppetMaster(p,t/1000)?p.puppetTarget:null, sw:p.sw||null, sewSlowed:!!p.sewSlowed, slowed:!!p.slowed, stunned:!!p.stunned, cardSlowed:!!p.cardSlowed, bladeSpin:!!p.bladeSpin, swordCharging:!!p.swordCharge, cannonFlying:!!p.cannonFly, chips:p.chips||0, cannonAng:p.cannonFly?Math.round(Math.atan2(p.vy||0,p.cannonFly.vx)*100)/100:0, totalDamageDealt:p.totalDamageDealt||0, channeling:!!p.teleportChannel, flaming:!!p.flaming, portalPair:p.portalPair||null, batting:!!p.batting, vacuumStacks:p.vacuumStacks||0, isZombie:!!p.isZombie, parkourItem:!!p.parkourItem, hsHiding:!!p.hsHiding, hsDisguiseW:p.hsDisguiseW, hsDisguiseH:p.hsDisguiseH, isSeeker:!!p.isSeeker,
-        isHost:p.isHost,clan:p.clan||'',joinOrder:p.joinOrder,weapon:p.weapon,team:p.team,spinAngle:p.spinAngle,cos:p.cos,isBoss:p.isBoss?1:0,isMinion:p.isMinion?1:0,bt:p.bt,bossMaxHp:p.bossMaxHp,emIdx:p.emIdx,emRem:(p.emUntil?Math.max(0,Math.round((p.emUntil-t/1000)*20)/20):0)})),
+        isHost:p.isHost,clan:p.clan||'',joinOrder:p.joinOrder,weapon:p.weapon,kit:p.kit||null,team:p.team,spinAngle:p.spinAngle,cos:p.cos,isBoss:p.isBoss?1:0,isMinion:p.isMinion?1:0,bt:p.bt,bossMaxHp:p.bossMaxHp,emIdx:p.emIdx,emRem:(p.emUntil?Math.max(0,Math.round((p.emUntil-t/1000)*20)/20):0)})),
       cq: (gameMode==='conquest' && cq) ? {s:cq.scores, h:cq.holder, c:cq.contested} : undefined,
       xm: (xm && xmV) ? xmV : undefined,
       bz: brzV||undefined,
@@ -17274,7 +17367,7 @@ function drawStickman(p){
   if(p.weapon==='gambler' && p.alive && (p.chips||0)>0){ const n=p.chips; for(let i=0;i<n;i++){ ctx.fillStyle='#d62839'; ctx.strokeStyle='#fff'; ctx.lineWidth=1; ctx.beginPath(); ctx.arc((i-(n-1)/2)*9,-88,3.6,0,7); ctx.fill(); ctx.stroke(); } }
   const skinId = p.cos && p.cos.skin && p.cos.skin[p.weapon];
   const skinTint = (skinId && COSMETICS[skinId]) ? COSMETICS[skinId].tint : null;
-  if(p.weapon==='dracula' && !p.batting){ drawDraculaCape(ctx,(Math.cos(p.angle||0)>=0)?-1:1, Math.sin(performance.now()/160)*2+Math.min(8,Math.abs(p.vx||0)/40), -42, skinTint); }
+  if(lkW(p)==='dracula' && !p.batting){ drawDraculaCape(ctx,(Math.cos(p.angle||0)>=0)?-1:1, Math.sin(performance.now()/160)*2+Math.min(8,Math.abs(p.vx||0)/40), -42, skinTint); }
   else if(p.weapon==='flamethrower'){ drawOxygenTank(ctx, -42); }
   else if(p.cos && p.cos.cape){ drawCape(ctx,p.cos.cape,(Math.cos(p.angle||0)>=0)?-1:1, Math.sin(performance.now()/160)*2+Math.min(8,Math.abs(p.vx||0)/40), -42); }
   const luxLv=(skinId && COSMETICS[skinId] && COSMETICS[skinId].lux) || 0, luxNow=performance.now(), luxSeed=((p.id||'').length*7+((p.id||'x').charCodeAt(0)||0))%97;
@@ -17339,7 +17432,7 @@ function drawStickman(p){
   ctx.beginPath(); ctx.arc(0,HEADCY,HEADR,0,7); ctx.fill();
   if(shineId) drawShineGlints(ctx, luxNow, luxSeed);
   if(p.weapon==='pizarro' && p.alive!==false) drawPizarroPlume(ctx,0,HEADCY,HEADR,Math.min(PZ_MAX,p.pzStacks||0));
-  if(WEAPON_PERSONA_NAME[p.weapon]){ drawWeaponPersona(ctx,p.weapon,0,HEADCY,HEADR,SH,skinTint,conceptOfSkin(skinId)); const sfx=(skinId && COSMETICS[skinId]) ? COSMETICS[skinId].fx : null; if(sfx && p.alive!==false) drawSkinFx(ctx,sfx,skinTint,0,HEADCY,luxLv?HEADR*1.3:HEADR,luxNow); if(luxLv && p.alive!==false) drawSkinLux(ctx, luxLv, skinTint, luxNow, luxSeed, 'front'); }
+  if(WEAPON_PERSONA_NAME[lkW(p)]){ drawWeaponPersona(ctx,lkW(p),0,HEADCY,HEADR,SH,skinTint,conceptOfSkin(skinId)); const sfx=(skinId && COSMETICS[skinId]) ? COSMETICS[skinId].fx : null; if(sfx && p.alive!==false) drawSkinFx(ctx,sfx,skinTint,0,HEADCY,luxLv?HEADR*1.3:HEADR,luxNow); if(luxLv && p.alive!==false) drawSkinLux(ctx, luxLv, skinTint, luxNow, luxSeed, 'front'); }
   else if(p.cos && p.cos.hat) drawHat(ctx,p.cos.hat,0,HEADCY,HEADR);
   let ang=p.angle||0;
   const whirling = !!(p.bladeSpin && p.weapon==='sword');
@@ -17395,10 +17488,10 @@ function drawOverheadExtras(p, HEADCY){
     ctx.beginPath(); ctx.arc(p.x-24, p.y+HEADCY-21, 4, 0, 7); ctx.fill();
   }
   const skRemain = isHost ? Math.max(0, skillCdOf(p)-(performance.now()/1000-(p.lastSkill===undefined?-9999:p.lastSkill))) : p.skillCdRemain;
-  const abilities=[['#3fe0c5', p.dashCdRemain], ['#c17bff', p.teleportCdRemain], ['#ffd34d', p.ultCdRemain], ['#7ef0a8', SKILLS[p.weapon] ? skRemain : 99]];
+  const abilities=[['#3fe0c5', p.dashCdRemain], ['#c17bff', p.teleportCdRemain], ['#ffd34d', p.ultCdRemain], ['#7ef0a8', SKILLS[skW(p)] ? skRemain : 99]];
   const dotY=p.y+HEADCY-25, dotSpacing=11, startX=p.x-dotSpacing*1.5;
   for(let i=0;i<4;i++){
-    if(i===3 && !SKILLS[p.weapon]) break;
+    if(i===3 && !SKILLS[skW(p)]) break;
     const ready = abilities[i][1]===undefined || abilities[i][1]<=0.05;
     ctx.beginPath(); ctx.arc(startX+i*dotSpacing, dotY, 3, 0, 7);
     ctx.fillStyle = ready ? abilities[i][0] : 'rgba(255,255,255,.18)';
@@ -17736,10 +17829,10 @@ function render(fxDt){
     { // unlike teleport (a whole-match mode setting), whether THIS player has an ultimate depends on their
       // current weapon, which can change mid-match even within a noWeapon mode (hide and seek's seeker
       // goes bare-handed -> pistol) - so this has to be re-checked every frame, not set once at match start
-      const hasUlt = !!ULTS[me.weapon];
+      const hasUlt = !!ULTS[ulW(me)];
       document.getElementById('ultWrap').style.display = hasUlt ? '' : 'none';
       if(hasUlt){
-        const ud=me.darkSub ? {name:DARK_ESCAPE_NAME} : (ULTS[me.weapon]||{name:''});
+        const ud=me.darkSub ? {name:DARK_ESCAPE_NAME} : (ULTS[ulW(me)]||{name:''});
         const uRemain = me.darkSub ? 0 : (isHost ? Math.max(0, ultCdOf(me)-(performance.now()/1000-(me.lastUlt===undefined?-9999:me.lastUlt))) : (me.ultCdRemain||0));
         const uFrac = clamp(1-uRemain/ultCdOf(me), 0, 1);
         document.getElementById('ultFill').style.width=(uFrac*100)+'%';
@@ -17748,12 +17841,12 @@ function render(fxDt){
       }
     }
     { // the character skill (F): every character with a weapon has one; modes without characters / abilities hide the bar
-      const sd=SKILLS[me.weapon], hasSkill=!!sd && !(MODES[gameMode]||{}).noWeapon && !(MODES[gameMode]||{}).noAbility;
+      const sd=SKILLS[skW(me)], hasSkill=!!sd && !(MODES[gameMode]||{}).noWeapon && !(MODES[gameMode]||{}).noAbility;
       const sw=document.getElementById('skillWrap'); sw.style.display = hasSkill ? '' : 'none';
       if(hasSkill){
         const sRemain = isHost ? Math.max(0, skillCdOf(me)-(performance.now()/1000-(me.lastSkill===undefined?-9999:me.lastSkill))) : (me.skillCdRemain||0);
         document.getElementById('skillFill').style.width=(clamp(1-sRemain/skillCdOf(me),0,1)*100)+'%';
-        const sdName=(me.weapon==='puppeteer' && me.sw) ? SEW_PULL_NAME : sd.name;
+        const sdName=(skW(me)==='puppeteer' && me.sw) ? SEW_PULL_NAME : sd.name;
         document.getElementById('skillLabel').textContent = sRemain>0.05 ? ('스킬 '+sdName+' '+sRemain.toFixed(1)) : ('스킬 ('+codeToLabel(keyBindings.skill)+') '+sdName);
         sw.classList.toggle('ready', sRemain<=0.05);
       }
