@@ -57,3 +57,7 @@ patchnotes.json | v402 items[1] | 청소부 공격 이펙트 강화 (흡입 범�
 patchnotes.json | v402 items[2] | 해적 포탑 강화 (공격 간격 1.2초 → 0.8초, 탄 크기 증가, 이동 예측 보정) | build 402 | 2026-10-26
 patchnotes.json | v402 items[3] | 도박사 기본 데미지 4 증가 (16 → 20), 칩 크기 증가 | build 402 | 2026-10-26
 patchnotes.json | v402 items[4] | 밸런스 표 갱신 (도박사, 청소부, 해적 재측정) | build 402 | 2026-10-26
+Stickseum-v0.8.html | WEAPONS.wizard.desc | 데미지 16 · 쿨타임 0.7초 · 사거리 짧음 · 발판을 통과하고, 플레이어 한 명을 관통한 뒤 두 번째로 맞힌 상대에게서 멈추는 화염 마법 | build 403 | 2026-10-26
+patchnotes.json | v403 title | 마법사 쿨타임 | build 403 | 2026-10-26
+patchnotes.json | v403 items[0] | 마법사 공격 쿨타임 증가 (0.6초 → 0.7초) | build 403 | 2026-10-26
+patchnotes.json | v403 items[1] | 밸런스 표 갱신 (마법사 재측정) | build 403 | 2026-10-26
