@@ -5088,7 +5088,7 @@ function shuffle(arr){ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.
 /* ===== the version of this file =====
    Players with different versions CAN meet and play together: the automatic matchmaking uses the same room names for every version (online-<mode>-<map>-<slot>), and nobody is refused because of a different build.
    The build is only sent along with the join message and the lobby (for information); the corner of the screen shows it. */
-const GAME_BUILD='build 2026-10-18-v403';
+const GAME_BUILD='build 2026-10-18-v404';
 const GAME_VERSION='0.8', GAME_VERSION_NAME='황금을 찾아서';   // 게임 버전 이름: versions.json의 title과 같게 (빌드마다 바꾸지 않음)
 const WEEKLY_EVENTS=[
   {id:'lowg',    name:'저중력 난투', desc:'몸이 둥실둥실, 중력이 약해진 난투', rules:{grav:0.6}},
@@ -16727,7 +16727,7 @@ function skinFxOf(sid){
   const col='#'+[mix((n>>16)&255),mix((n>>8)&255),mix(n&255)].map(v=>v.toString(16).padStart(2,'0')).join('');
   let h=0; for(let i=0;i<sid.length;i++) h=(h*31+sid.charCodeAt(i))|0;
   const styles=['spark','ring','ember','star','ribbon'];
-  r=skinFxCache[sid]={col, style:c.fx==='halo'?'ring':(c.fx==='crown'?'star':styles[Math.abs(h)%styles.length])};
+  r=skinFxCache[sid]={col, tint:t, lux:c.lux||0, theme:c.fx||'', style:c.fx==='halo'?'ring':(c.fx==='crown'?'star':styles[Math.abs(h)%styles.length])};
   return r;
 }
 function drawSkinFx(b){
@@ -16753,7 +16753,34 @@ function drawSkinFx(b){
     else if(fx.style==='ribbon'){ ctx.strokeStyle=hexA(col,0.7); ctx.lineWidth=2.5; ctx.beginPath(); for(let i=0;i<=8;i++){ const d=i/8*L*1.4, w=Math.sin(i*1.3-now*25)*4*(i/8); const x=b.x-ux*d-uy*w, y=b.y-uy*d+ux*w; i?ctx.lineTo(x,y):ctx.moveTo(x,y); } ctx.stroke(); }
     else { for(let i=1;i<=4;i++){ const d=i*L/4, j=Math.sin(now*40+i*5)*3; const x=b.x-ux*d-uy*j, y=b.y-uy*d+ux*j-(fx.style==='ember'?i*1.5:0); ctx.fillStyle=hexA(col,0.85-i*0.15); ctx.beginPath(); ctx.arc(x,y,(fx.style==='ember'?3.2:2)-i*0.3,0,7); ctx.fill(); } }
   }
+  if(fx.lux>=3) luxFx(b, fx, swing, now, sp);
   ctx.restore();
+}
+// the 4000 sC skins (lux 3) and the 그랜드 마스터 skins (lux 4) get a whole show on every attack: layered glow, a theme of their own and orbiting stars (lux 4 in rainbow colours)
+const LUX_THEME={flame:['#ff7a1a','#ffe27a'], frost:['#9fe8ff','#ffffff'], electric:['#7fd0ff','#ffffff'], void:['#b388ff','#2a1450'], halo:['#ffe27a','#ffffff'], crown:['#ffd34d','#fff6c8'], sparkle:['#ffffff','#ffd9f2']};
+function luxFx(b, fx, swing, now, sp){
+  const gm=fx.lux>=4, th=LUX_THEME[fx.theme]||[fx.tint,'#ffffff'], hue=(i)=>'hsl('+Math.round((now*220+i*47)%360)+',100%,68%)';
+  const c1=gm?hue(0):th[0], c2=th[1], sc=gm?2:1.5, n=gm?8:5;
+  const cross=(x,y,r,col,a)=>{ ctx.strokeStyle=col; ctx.globalAlpha=a; ctx.lineWidth=1.6; ctx.beginPath(); ctx.moveTo(x-r,y); ctx.lineTo(x+r,y); ctx.moveTo(x,y-r); ctx.lineTo(x,y+r); ctx.stroke(); ctx.globalAlpha=1; };
+  const theme=(x,y,i,r,a)=>{ const col=gm?hue(i):(i%2?c2:c1);
+    switch(fx.theme){
+      case 'flame': ctx.fillStyle=col; ctx.globalAlpha=a; ctx.beginPath(); ctx.arc(x,y-i*1.4,r*1.2,0,7); ctx.fill(); ctx.globalAlpha=1; break;
+      case 'frost': case 'sparkle': case 'crown': cross(x,y,r*1.7,col,a); break;
+      case 'void': ctx.fillStyle=gm?col:th[1]; ctx.globalAlpha=a; ctx.beginPath(); ctx.arc(x,y,r*1.3,0,7); ctx.fill(); ctx.strokeStyle=col; ctx.lineWidth=1.2; ctx.stroke(); ctx.globalAlpha=1; break;
+      case 'halo': ctx.strokeStyle=col; ctx.globalAlpha=a; ctx.lineWidth=1.4; ctx.beginPath(); ctx.ellipse(x,y,r*1.9,r*0.8,0,0,7); ctx.stroke(); ctx.globalAlpha=1; break;
+      default: ctx.fillStyle=col; ctx.globalAlpha=a; ctx.beginPath(); ctx.arc(x,y,r,0,7); ctx.fill(); ctx.globalAlpha=1; } };
+  if(swing){
+    const a=b.swingAngle, ax=Math.cos(a), ay=Math.sin(a), cx=b.x-ax*30, cy=b.y-ay*30, k=b.life0?clamp(b.life/b.life0,0,1):1;
+    for(let j=0;j<(gm?4:2);j++){ ctx.strokeStyle=gm?hue(j*2):(j?c2:c1); ctx.globalAlpha=(0.7-j*0.12)*k; ctx.lineWidth=7-j*1.4; ctx.beginPath(); ctx.arc(cx,cy,56+j*9,a-1.15,a+1.15); ctx.stroke(); }
+    ctx.globalAlpha=1;
+    for(let i=0;i<n*2;i++){ const q=a-1.15+i*(2.3/(n*2-1))+(1-k)*0.4, rr=62+Math.sin(i*2.3+now*12)*10+(1-k)*14; theme(cx+Math.cos(q)*rr, cy+Math.sin(q)*rr, i, 2.6, 0.9*k); }
+  } else {
+    const ux=b.vx/sp, uy=b.vy/sp, R=13*sc*(b.ult?1.4:1);
+    const rg=ctx.createRadialGradient(b.x,b.y,0,b.x,b.y,R*1.6); rg.addColorStop(0,hexA('#ffffff',0.55)); rg.addColorStop(0.35,hexA(gm?'#ffd9ff':th[0],0.5)); rg.addColorStop(1,hexA(gm?'#9fa8ff':th[0],0)); ctx.fillStyle=rg; ctx.beginPath(); ctx.arc(b.x,b.y,R*1.6,0,7); ctx.fill();
+    for(let i=0;i<n;i++){ const d=8+i*(40/n)*(gm?1.3:1), j=Math.sin(now*30+i*2.1)*(4+i*0.7); theme(b.x-ux*d-uy*j, b.y-uy*d+ux*j, i, 3.2-i*0.2, 0.85-i*0.07); }
+    for(let i=0;i<(gm?5:3);i++){ const q=now*9+i*6.283/(gm?5:3), rr=R*0.95; cross(b.x+Math.cos(q)*rr, b.y+Math.sin(q)*rr, 3.2, gm?hue(i):c2, 0.95); }
+    if(gm){ ctx.strokeStyle=hue(3); ctx.globalAlpha=0.5; ctx.lineWidth=2; ctx.beginPath(); ctx.arc(b.x,b.y,R*1.2+Math.sin(now*14)*2,0,7); ctx.stroke(); ctx.globalAlpha=1; }
+  }
 }
 function drawProjectile(b){ drawProjectileBase(b); drawSkinFx(b); }
 function drawProjectileBase(b){
