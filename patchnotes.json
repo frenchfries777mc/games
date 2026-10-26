@@ -3,6 +3,101 @@
   {
    "date": "2026-10-26",
    "build": "",
+   "title": "접속 인원을 허브로 합산",
+   "items": [
+    "Games, Educations, Tools 어디에 있든 접속 중인 사람이 허브 한 곳으로 합산돼요",
+    "접속 표시줄에서 Educations·Tools 칸을 없앴어요"
+   ],
+   "tr": {
+    "en": {
+     "title": "Online count combined under the hub",
+     "items": [
+      "Everyone online on Games, Educations or Tools is now counted together under the hub",
+      "Removed the separate Educations and Tools chips from the online bar"
+     ]
+    },
+    "es": {
+     "title": "Conectados sumados en el portal",
+     "items": [
+      "Quien esté en Games, Educations o Tools se cuenta ahora junto en el portal",
+      "Quitamos las casillas separadas de Educations y Tools de la barra de conectados"
+     ]
+    },
+    "fr": {
+     "title": "Connectés regroupés dans le portail",
+     "items": [
+      "Toutes les personnes en ligne sur Games, Educations ou Tools sont désormais comptées ensemble dans le portail",
+      "Les pastilles Educations et Tools ont été retirées de la barre des connectés"
+     ]
+    },
+    "de": {
+     "title": "Online-Zahl im Hub zusammengefasst",
+     "items": [
+      "Wer auf Games, Educations oder Tools online ist, wird jetzt gemeinsam im Hub gezählt",
+      "Die getrennten Chips für Educations und Tools in der Online-Leiste wurden entfernt"
+     ]
+    },
+    "ja": {
+     "title": "オンライン人数をハブに集計",
+     "items": [
+      "Games、Educations、Toolsのどこにいても、オンラインの人はハブにまとめて数えられます",
+      "オンライン表示からEducationsとToolsの欄を消しました"
+     ]
+    },
+    "zh": {
+     "title": "在线人数汇总到中心",
+     "items": [
+      "无论在 Games、Educations 还是 Tools，在线的人都会合并计入中心",
+      "在线栏中移除了 Educations 和 Tools 的单独标签"
+     ]
+    },
+    "pt": {
+     "title": "Online somados no hub",
+     "items": [
+      "Quem estiver em Games, Educations ou Tools agora é contado junto no hub",
+      "Removemos os itens separados de Educations e Tools da barra de online"
+     ]
+    },
+    "ru": {
+     "title": "Онлайн суммируется в хабе",
+     "items": [
+      "Все, кто онлайн на Games, Educations или Tools, теперь считаются вместе в хабе",
+      "Из панели онлайн убраны отдельные пункты Educations и Tools"
+     ]
+    },
+    "tr": {
+     "title": "Çevrimiçi sayısı hub'da birleşti",
+     "items": [
+      "Games, Educations veya Tools'ta çevrimiçi olan herkes artık hub'da birlikte sayılıyor",
+      "Çevrimiçi çubuğundan ayrı Educations ve Tools öğeleri kaldırıldı"
+     ]
+    },
+    "it": {
+     "title": "Online sommati nell'hub",
+     "items": [
+      "Chi è online su Games, Educations o Tools ora viene contato insieme nell'hub",
+      "Rimosse dalla barra online le voci separate di Educations e Tools"
+     ]
+    },
+    "pl": {
+     "title": "Liczba online zsumowana w hubie",
+     "items": [
+      "Wszyscy online w Games, Educations lub Tools są teraz liczeni razem w hubie",
+      "Usunięto osobne pozycje Educations i Tools z paska online"
+     ]
+    },
+    "ar": {
+     "title": "جمع المتصلين في المركز",
+     "items": [
+      "كل من يتصل في Games أو Educations أو Tools يُحسب الآن معًا في المركز",
+      "أُزيلت خانتا Educations وTools المنفصلتان من شريط المتصلين"
+     ]
+    }
+   }
+  },
+  {
+   "date": "2026-10-26",
+   "build": "",
    "title": "Vowkeep vC와 움직이는 스킨",
    "items": [
     "Vowkeep b53: 재화 이름을 명예에서 vC로 바꿈 (기존 명예는 숫자 그대로 vC로 이어짐)",
