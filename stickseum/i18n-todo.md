@@ -144,3 +144,5 @@ patchnotes.json | v420 items[1] | 클랜장은 만든 뒤에도 마스터리 계
 patchnotes.json | v422 title | 실험적 모드 | build 422 | 2026-10-26
 patchnotes.json | v422 items[0] | 실험적 모드 추가(랜덤 조합 배틀로얄, 거대 점령전)와 경기 후 좋아요/나빠요 평가 | build 422 | 2026-10-26
 patchnotes.json | v422 items[1] | 로비 빌드 표시 위치와 크기 조정 | build 422 | 2026-10-26
+patchnotes.json | v423 title | 거대 점령전 조정 | build 423 | 2026-10-26
+patchnotes.json | v423 items[0] | 거대 점령전에서 순간이동 사용 불가 | build 423 | 2026-10-26
