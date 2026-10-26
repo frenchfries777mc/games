@@ -332,7 +332,7 @@ export class View {
     const w = Math.ceil(innerWidth * dpr / P) * P, h = Math.ceil(innerHeight * dpr / P) * P; this.W = w; this.H = h;
     this.r.setPixelRatio(1); this.r.setSize(w, h, false);
     this.cw = w / dpr; this.ch = h / dpr; this.r.domElement.style.width = (w / dpr) + 'px'; this.r.domElement.style.height = (h / dpr) + 'px';
-    const asp = w / h, vs = this.mode === 'lobby' ? 8.6 : this.mode === 'ped' ? 6.6 : this.mode === 'intro' ? 6.4 : this.zoom * (asp < 1 ? 1.35 : 1);
+    const asp = w / h, vs = this.mode === 'lobby' ? (this.lobbyMap ? 12.5 : 8.6) : this.mode === 'ped' ? 6.6 : this.mode === 'intro' ? 6.4 : this.zoom * (asp < 1 ? 1.35 : 1);
     this.cam.left = -vs * asp; this.cam.right = vs * asp; this.cam.top = vs; this.cam.bottom = -vs; this.cam.updateProjectionMatrix();
     if (this.comp) this.comp.setSize(w, h);
     if (this.pp) this.pp.setPixelSize(P);
@@ -347,7 +347,7 @@ export class View {
   newScene(bg, fog) {
     if (this.scene) this.scene.traverse(o => { if (o.isLight && o.shadow && o.shadow.map) o.shadow.map.dispose(); });
     const s = new THREE.Scene(); s.background = new THREE.Color(bg); s.fog = new THREE.Fog(fog, 45, 90);
-    this.scene = s; this.ents.clear(); this.fx = []; this.nums = [];
+    this.scene = s; this.lobbyMap = false; this.crownG = null; this.ents.clear(); this.fx = []; this.nums = [];
     // 기술 번쩍임용 빛 하나 (빛 개수가 바뀌면 셰이더를 다시 만들어서 미리 넣어 둬요)
     this.fxL = new THREE.PointLight(0xffffff, 0, 16, 1.6); this.fxL.position.set(0, -50, 0); s.add(this.fxL); this.fxLI = 0;
     this.comp = new EffectComposer(this.r); this.pp = new RenderPixelatedPass(this.P, s, this.cam, { normalEdgeStrength: 0.2, depthEdgeStrength: 0.4 });
@@ -375,17 +375,11 @@ export class View {
     return g;
   }
   buildLobby(brawl) {
-    this.mode = 'lobby'; this.brawl = null; this.introHeroes = null; this.lobbyHeroes = null; this.pool = null; this.trapM = null; this.pv = null; const s = this.newScene(0x2a1e44, 0x3a2a5a); s.fog.near = 40; s.fog.far = 90; this.flick = []; this.lights(s, 1.1);
-    // 돌바닥 투기장 (둥근 단 두 겹) 과 바깥 어둠
-    const st = [0x6a6078, 0x756a84, 0x5e546c, 0x7e7490];
-    instBoxes(s, (add) => { for (let x = -22; x <= 22; x += 1.5) for (let z = -16; z <= 20; z += 1.5) { const d = Math.hypot(x, z - 3); const h = d < 12 ? 0.5 : 0.22; add(x, h / 2 - 0.3, z, 1.46, h, 1.46, st[R() * 4 | 0]); } });
-    cyl(11.6, 12, 0.35, 28, M(0x8a7ea0), 0, 0.12, 3, s); cyl(8.5, 8.8, 0.2, 24, M(0xd8b860, { e: 0x604010, ei: 0.4 }), 0, 0.38, 3, s);
-    for (let i = 0; i < 14; i++) { const a = i / 14 * 6.283; box(1.1, 4 + (i % 3) * 1.2, 1.1, M(0x4e4660), Math.cos(a) * 15, 2, 3 + Math.sin(a) * 15, s); }
-    for (let i = 0; i < 6; i++) { const a = (i + 0.5) / 6 * 6.283 + 0.4, x = Math.cos(a) * 13, z = 3 + Math.sin(a) * 13; box(0.28, 2.6, 0.28, M(0x4a3020), x, 1.3, z, s); this.flame(s, x, 3, z, 0.9); }
-    this.crownG = this.crownMesh(s, 0, 6.4, 3, 1.2);
-    const cl = new THREE.PointLight(0xffd070, 22, 22, 1.5); cl.position.set(0, 7, 3); s.add(cl); this.flick.push({ L: cl, b: 22, ph: 1 });
-    for (let i = 0; i < 80; i++) box(0.12, 0.12, 0.12, M(0xffffff, { e: 0xdfe6ff, ei: 2 }), (R() - .5) * 80, 16 + R() * 12, -34, s);
-    sph(2.4, 12, 10, M(0xffe8c8, { e: 0xffc890, ei: 2 }), 22, 20, -34, s);
+    // 로비·인트로 배경은 실제 게임 투기장이에요 (같은 지도, 같은 장식)
+    this.buildMap(); this.mode = 'lobby'; this.lobbyMap = true; this.brawl = null; this.introHeroes = null; this.lobbyHeroes = null; this.pv = null;
+    const s = this.scene, LX = cw(MAP.start[0]), LZ = cw(MAP.areas[0].r[0][1] + MAP.areas[0].r[0][3] / 2) + 2, LC = new THREE.Vector3(LX, 0, LZ); this.lobbyC = LC;
+    this.crownG = this.crownMesh(s, LX, 6.4, LZ, 1.2);
+    const cl = new THREE.PointLight(0xffd070, 22, 22, 1.5); cl.position.set(LX, 7, LZ); s.add(cl); this.flick.push({ L: cl, b: 22, ph: 1 });
     // 둘러선 싸움꾼들: 직업마다 다른 색 고리
     const cols = [0xd9483b, 0x3b78d9, 0x48a84a, 0xe0b52e, 0x8a52c8, 0xe57a2a], who = ['knight', 'witch', 'viking', 'archer', 'mamluk', 'skeleton'];
     if (brawl) {
@@ -393,15 +387,15 @@ export class View {
       const duels = [['knight', 'viking', -7.5, 0.5, 0.35, 0xd9483b, 0x3b78d9, 0], ['mamluk', 'skeleton', 7.5, 0.5, -0.35, 0x48a84a, 0xe0b52e, 0], ['archer', 'witch', 0, 8.5, 0, 0x8a52c8, 0xe57a2a, 1]];
       this.lobbyHeroes = []; this.brawl = duels.map(([ra, rb, cx, cz, rot, ca, cb, rg]) => {
         const half = rg ? 3.6 : 1.9, ux = Math.cos(rot), uz = Math.sin(rot), mk = (r, x, z, c) => { const h = makeHero(r, this.cos); h.position.set(x, 0.5, z); s.add(h); const ring = ringMesh(s, c); this.lobbyHeroes.push(h); return { m: h, ring, bx: x, bz: z, last: 0 }; };
-        const A = mk(ra, cx - ux * half, cz - uz * half, ca), B = mk(rb, cx + ux * half, cz + uz * half, cb);
+        const A = mk(ra, LX + cx - ux * half, LZ - 3 + cz - uz * half, ca), B = mk(rb, LX + cx + ux * half, LZ - 3 + cz + uz * half, cb);
         return { A, B, ranged: !!rg, reach: rg ? 0 : 1.5 };
       });
     } else this.lobbyHeroes = who.map((r, i) => {
-      const a = i / 6 * 6.283 + 0.5, x = Math.cos(a) * 6.2, z = 3 + Math.sin(a) * 4.6, h = makeHero(r, this.cos); h.position.set(x, 0.5, z); h.rotation.y = Math.atan2(-x, -(z - 3)); s.add(h);
+      const a = i / 6 * 6.283 + 0.5, x = LX + Math.cos(a) * 6.2, z = LZ - 3 + Math.sin(a) * 4.6, h = makeHero(r, this.cos); h.position.set(x, 0.5, z); h.rotation.y = Math.atan2(LX - x, LZ - 3 - z); s.add(h);
       const rg = ringMesh(s, cols[i]); rg.position.set(x, 0.62, z); return h;
     });
-    this.resize();
-    this.cam.position.set(0, 15, 34); this.cam.lookAt(0, 2.2, 3);
+    this.camT.set(LX, 0, LZ); this.resize();
+    this.cam.position.set(LX, 22, LZ + 33); this.cam.lookAt(LX, 1.8, LZ + 0.4); this.snapCam();
   }
   tickBrawl(t) {
     const T = 2.4;
@@ -1141,7 +1135,7 @@ export class View {
     if (this.mode === 'lobby') { for (const f of this.flagGlow || []) { const w = Math.sin(t * 2 + f.ph); f.fm.emissiveIntensity = 1.0 + 0.6 * w; f.gm.emissiveIntensity = 2 + 1.5 * w; } for (const d of this.flagDust || []) { d.t += dt; const u = (d.t % 2.5) / 2.5; d.m.position.set(d.f.x + Math.sin(d.t * 3 + d.m.id) * 0.5, 3.1 + u * 2.8, -10.8); d.m.scale.setScalar(1 - u * 0.7); } }
     if (this.mode === 'intro') this.tickIntro(dt, t);
     else for (const e of this.embers || []) {
-      e.t += dt; if (this.mode === 'lobby') { const u = (e.t % 3) / 3; e.m.position.set(Math.sin(e.t * 2 + e.m.id) * 1.2 * u, 1.5 + u * 7, 2 + Math.cos(e.t * 1.3 + e.m.id) * 1.2 * u); }
+      e.t += dt; if (this.mode === 'lobby' && !this.lobbyMap) { const u = (e.t % 3) / 3; e.m.position.set(Math.sin(e.t * 2 + e.m.id) * 1.2 * u, 1.5 + u * 7, 2 + Math.cos(e.t * 1.3 + e.m.id) * 1.2 * u); }
       else if (e.fly) { e.m.position.set(this.camT.x + e.x + Math.sin(e.t * 0.4 + e.ph) * 2.5, e.h + Math.sin(e.t * 0.9 + e.ph) * 0.6, this.camT.z + e.z + Math.cos(e.t * 0.3 + e.ph) * 2); e.m.material.emissiveIntensity = 2 + 5 * Math.max(0, Math.sin(e.t * 1.7 + e.ph)); }
       else { const u = (e.t % 6) / 6; e.m.position.set(this.camT.x + e.x + Math.sin(e.t) * 0.5, u * 8, this.camT.z + e.z); }
     }
