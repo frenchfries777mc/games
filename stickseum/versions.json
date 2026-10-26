@@ -1,93 +1,93 @@
 {
- "name": "Stickseum",
- "latest": "0.8",
- "latestFile": "Stickseum-latest.html",
- "updated": "2026-10-18",
- "versions": [
-  {
-   "version": "0.8",
-   "date": "2026-10-18",
-   "file": "Stickseum-v0.8.html",
-   "title": "황금을 찾아서",
-   "summary": "새 캐릭터 피사로(창·하늘의 십자가·중첩 궁극기)\n팀전 금지 캐릭터를 팀원마다 선택\n봇 순간이동·MVP 투표 카드·계정별 진행 상황 분리·클랜 검색 정렬",
-   "latest": true,
-   "size": 3209608,
-   "sha256": "130ec87cb8de919c3988802ca07910195070579ac82baf43a2d62c88d8095b47",
-   "build": "v420"
-  },
-  {
-   "version": "0.7",
-   "date": "2026-10-15",
-   "file": "Stickseum-v0.7.html",
-   "title": "어둠의 늪",
-   "summary": "새 캐릭터 쿠루스·신규 맵 어둠의 늪·보스 레이드 개편·MVP 투표 개편·Hub Coin 환전·모바일 조작 개선·배틀로얄·듀오 개편·온라인 렉 감소·봇 개선·클랜 이름·태그 변경·닉네임 통일·연습 모드 DPS 표시·밸런스 페이지·모드 구분 정리·신규 맵 4종·색약 모드·게임패드",
-   "latest": false,
-   "size": 2343916,
-   "sha256": "9e1991e25fd5d1b8729bb99f52a79c89caf90c4e558c6bc7afc407080a989241",
-   "build": "v299"
-  },
-  {
-   "version": "0.6",
-   "date": "2026-10-10",
-   "file": "Stickseum-v0.6.html",
-   "title": "챔피언의 길",
-   "summary": "모바일 터치 조작(자동 감지)·전적 화면·무기 밸런스 조정·보스 레이드와 토너먼트·주간 이벤트·새 맵 3장·하이라이트 저장, 모드 목록 통합, 이모트·프로필 카드·방 규칙, 일일/주간 미션·시즌 패스·킬 이펙트, 언어 자동 설정",
-   "latest": false,
-   "size": 2179761,
-   "sha256": "2065047fbd55c9533c9f0d915e6dcc57e856d96ed4c1978b098a6eeebffd4380",
-   "build": "v226"
-  },
-  {
-   "version": "0.5",
-   "date": "2026-10-07",
-   "file": "Stickseum-v0.5.html",
-   "size": 1542488,
-   "sha256": "9e788e3bac333aac0f6f93cffaf51929ebb4824f33d7c1b8419fa23cb304f7e8",
-   "title": "파라오의 보물",
-   "summary": "자다이·호렘헵 추가, 티어 스킨과 화려한 연출, 깃발 뺏기, 랜덤 상자·영혼석·일일 보상, 닉네임 검색, 승리/패배 음악, 채팅 개선, 성능 최적화, 다른 기기에서도 진행 상황 이어하기, 이름이 StickmanRumble로 바뀜",
-   "latest": false,
-   "build": "v123"
-  },
-  {
-   "version": "0.4",
-   "date": "2026-10-05",
-   "file": "Stickseum-v0.4.html",
-   "size": 788610,
-   "sha256": "173d54b14b3c65fb05b157eeb50e6f7cd0170cb631b5f51ef4cf6430ac077cee",
-   "title": "좀비 카니발",
-   "summary": "좀비 · 폭탄 돌리기 · 숨바꼭질 · 파쿠르 · 서바이벌, 킬캠 리플레이, 도전과제와 무기 숙련도, 온라인 AI 봇",
-   "latest": false,
-   "build": "v45"
-  },
-  {
-   "version": "0.3",
-   "date": "2026-10-02",
-   "file": "Stickseum-v0.3.html",
-   "size": 282123,
-   "sha256": "ce9c39fae96feefb92454f0e24c820385b1ae6aeb0d06cbf6b4e6b18604cdced",
-   "title": "밤의 초대장",
-   "summary": "드라큘라·도박사·마법사 추가, 킬캠과 킬 배너, 상점·프로필·레벨, 친구와 게임 초대",
-   "latest": false
-  },
-  {
-   "version": "0.2",
-   "date": "2026-09-29",
-   "file": "Stickseum-v0.2.html",
-   "size": 195634,
-   "sha256": "3ab313578dd5122de2b9f58d3bc0425c1727c53454a37f387637d5e05cc70575",
-   "title": "모래 고르기",
-   "summary": "화면과 이펙트 정리, 밸런스 조정",
-   "latest": false
-  },
-  {
-   "version": "0.1",
-   "date": "2026-09-29",
-   "file": "Stickseum-v0.1.html",
-   "size": 195433,
-   "sha256": "e2a2978c5565e9ae7b03b7ce3de7eb3da869120a517d26690b62f1d29656f48c",
-   "title": "콜로세움의 문",
-   "summary": "2~32인 온라인 스틱맨 난투, 무기와 궁극기, 점령전, 코스튬·골드의 기본 틀",
-   "latest": false
-  }
- ]
+  "name": "Stickseum",
+  "latest": "0.8",
+  "latestFile": "Stickseum-latest.html",
+  "updated": "2026-10-18",
+  "versions": [
+    {
+      "version": "0.8",
+      "date": "2026-10-18",
+      "file": "Stickseum-v0.8.html",
+      "title": "황금을 찾아서",
+      "summary": "새 캐릭터 피사로(창·하늘의 십자가·중첩 궁극기)\n팀전 금지 캐릭터를 팀원마다 선택\n봇 순간이동·MVP 투표 카드·계정별 진행 상황 분리·클랜 검색 정렬",
+      "latest": true,
+      "size": 3212357,
+      "sha256": "35434f4beb0e7cce7d9b26a9d2c74a97036d5315e7962b48114d01496b10d6d7",
+      "build": "v421"
+    },
+    {
+      "version": "0.7",
+      "date": "2026-10-15",
+      "file": "Stickseum-v0.7.html",
+      "title": "어둠의 늪",
+      "summary": "새 캐릭터 쿠루스·신규 맵 어둠의 늪·보스 레이드 개편·MVP 투표 개편·Hub Coin 환전·모바일 조작 개선·배틀로얄·듀오 개편·온라인 렉 감소·봇 개선·클랜 이름·태그 변경·닉네임 통일·연습 모드 DPS 표시·밸런스 페이지·모드 구분 정리·신규 맵 4종·색약 모드·게임패드",
+      "latest": false,
+      "size": 2343916,
+      "sha256": "9e1991e25fd5d1b8729bb99f52a79c89caf90c4e558c6bc7afc407080a989241",
+      "build": "v299"
+    },
+    {
+      "version": "0.6",
+      "date": "2026-10-10",
+      "file": "Stickseum-v0.6.html",
+      "title": "챔피언의 길",
+      "summary": "모바일 터치 조작(자동 감지)·전적 화면·무기 밸런스 조정·보스 레이드와 토너먼트·주간 이벤트·새 맵 3장·하이라이트 저장, 모드 목록 통합, 이모트·프로필 카드·방 규칙, 일일/주간 미션·시즌 패스·킬 이펙트, 언어 자동 설정",
+      "latest": false,
+      "size": 2179761,
+      "sha256": "2065047fbd55c9533c9f0d915e6dcc57e856d96ed4c1978b098a6eeebffd4380",
+      "build": "v226"
+    },
+    {
+      "version": "0.5",
+      "date": "2026-10-07",
+      "file": "Stickseum-v0.5.html",
+      "size": 1542488,
+      "sha256": "9e788e3bac333aac0f6f93cffaf51929ebb4824f33d7c1b8419fa23cb304f7e8",
+      "title": "파라오의 보물",
+      "summary": "자다이·호렘헵 추가, 티어 스킨과 화려한 연출, 깃발 뺏기, 랜덤 상자·영혼석·일일 보상, 닉네임 검색, 승리/패배 음악, 채팅 개선, 성능 최적화, 다른 기기에서도 진행 상황 이어하기, 이름이 StickmanRumble로 바뀜",
+      "latest": false,
+      "build": "v123"
+    },
+    {
+      "version": "0.4",
+      "date": "2026-10-05",
+      "file": "Stickseum-v0.4.html",
+      "size": 788610,
+      "sha256": "173d54b14b3c65fb05b157eeb50e6f7cd0170cb631b5f51ef4cf6430ac077cee",
+      "title": "좀비 카니발",
+      "summary": "좀비 · 폭탄 돌리기 · 숨바꼭질 · 파쿠르 · 서바이벌, 킬캠 리플레이, 도전과제와 무기 숙련도, 온라인 AI 봇",
+      "latest": false,
+      "build": "v45"
+    },
+    {
+      "version": "0.3",
+      "date": "2026-10-02",
+      "file": "Stickseum-v0.3.html",
+      "size": 282123,
+      "sha256": "ce9c39fae96feefb92454f0e24c820385b1ae6aeb0d06cbf6b4e6b18604cdced",
+      "title": "밤의 초대장",
+      "summary": "드라큘라·도박사·마법사 추가, 킬캠과 킬 배너, 상점·프로필·레벨, 친구와 게임 초대",
+      "latest": false
+    },
+    {
+      "version": "0.2",
+      "date": "2026-09-29",
+      "file": "Stickseum-v0.2.html",
+      "size": 195634,
+      "sha256": "3ab313578dd5122de2b9f58d3bc0425c1727c53454a37f387637d5e05cc70575",
+      "title": "모래 고르기",
+      "summary": "화면과 이펙트 정리, 밸런스 조정",
+      "latest": false
+    },
+    {
+      "version": "0.1",
+      "date": "2026-09-29",
+      "file": "Stickseum-v0.1.html",
+      "size": 195433,
+      "sha256": "e2a2978c5565e9ae7b03b7ce3de7eb3da869120a517d26690b62f1d29656f48c",
+      "title": "콜로세움의 문",
+      "summary": "2~32인 온라인 스틱맨 난투, 무기와 궁극기, 점령전, 코스튬·골드의 기본 틀",
+      "latest": false
+    }
+  ]
 }

@@ -5123,7 +5123,7 @@ function shuffle(arr){ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.
 /* ===== the version of this file =====
    Players with different versions CAN meet and play together: the automatic matchmaking uses the same room names for every version (online-<mode>-<map>-<slot>), and nobody is refused because of a different build.
    The build is only sent along with the join message and the lobby (for information); the corner of the screen shows it. */
-const GAME_BUILD='build 2026-10-18-v420';
+const GAME_BUILD='build 2026-10-18-v421';
 const GAME_VERSION='0.8', GAME_VERSION_NAME='황금을 찾아서';   // 게임 버전 이름: versions.json의 title과 같게 (빌드마다 바꾸지 않음)
 const WEEKLY_EVENTS=[
   {id:'lowg',    name:'저중력 난투', desc:'몸이 둥실둥실, 중력이 약해진 난투', rules:{grav:0.6}},
@@ -8549,7 +8549,7 @@ async function clanLoadInvites(){
   try{ const r=await sb.from('clan_invites').select('*,clans(id,name,tag,emblem,color)').eq('to_user', sbUser.id).limit(10); if(r && !r.error && Array.isArray(r.data)) clanInvites=r.data.filter(x=>x.clans && !requestExpired(x)); }catch(e){}
   try{ const b=document.getElementById('clanBadge'); if(b) b.classList.toggle('ready', clanInvites.length>0 && !myClan); }catch(e){}
 }
-let clanTab='my', clanFindQ='', clanDraft={name:'', tag:'', emblem:'🏰', color:'#3fe0c5', intro:'', pick:false};
+let clanTab='my', clanFindQ='', clanDraft={name:'', tag:'', emblem:'🏰', color:'#3fe0c5', intro:'', pick:false, reqLv:0, reqRank:0};
 function clanSafeColor(c){ return /^#[0-9a-f]{6}$/i.test(c||'') ? c : '#3fe0c5'; }
 const CLAN_PREMIUM=[['💎',100,'다이아'],['🌌',150,'은하'],['🔱',200,'삼지창'],['🐲',300,'용'],['☄️',300,'혜성'],['🏯',500,'성']];
 let clanVaultOpen=false, clanNoticeEdit=false, clanNoticeShown=false, clanRenameEdit=null;   // clanRenameEdit: null | 'name' | 'tag' (the owner is typing a new one)
@@ -8580,11 +8580,20 @@ function clanEditRow(icon, title, value, maxLen, onOk, onCancel){
 function openClanHub(tab){ if(sbUser) nickSyncWithProfile(sbUser.id); clanTab=tab||(myClan?'my':'find'); showScreen('clanScreen'); renderClanScreen(); }
 /* ===== 클랜 가입 조건: the clan leader sets a minimum player level and a number of 마스터 characters (mastery Lv.10 or more); columns clans.req_level / req_master, RPC clan_set_requirements and a trigger that checks it on the server: supabase-clan-requirements.sql ===== */
 let clanReqOk=true, clanReqEdit=null;          // clanReqOk turns false when the table has no such columns yet (the SQL was not run): the clan screen then works as before
-const CLAN_REQ_COLS=',req_level,req_master';
-async function clanQ(build){ let r=await build(clanReqOk?CLAN_REQ_COLS:''); if(r && r.error && clanReqOk){ clanReqOk=false; r=await build(''); } return r; }
-function clanReqOf(c){ return {lv:Math.max(0,+(c&&c.req_level)||0), ms:Math.max(0,+(c&&c.req_master)||0)}; }
-function clanReqText(c){ const r=clanReqOf(c), p=[]; if(r.lv>0) p.push('Lv.'+r.lv+' 이상'); if(r.ms>0) p.push('마스터 캐릭터 '+r.ms+'개 이상'); return p.join(' · '); }
-function clanReqMissing(c){ const r=clanReqOf(c), lv=levelFromXp(saveData.xp||0), ms=masteryCount(), m=[]; if(lv<r.lv) m.push('레벨 '+lv+' / '+r.lv); if(ms<r.ms) m.push('마스터 캐릭터 '+ms+' / '+r.ms+'개'); return m; }
+const CLAN_REQ_COLS=',req_level,req_master', CLAN_RANK_COL=',req_rank';
+let clanRankOk=true;          // false when the clans table has no req_rank column yet (supabase-clan-requirements-rank.sql was not run)
+const CLAN_RANK_NAMES=['없음','브론즈','실버','골드','플래티넘','다이아','옵시디언','마스터','그랜드 마스터'];       // req_rank 1..8: some character of the player must have this 마스터리 계급 (or higher)
+function clanRankMin(i){ const r=CHAR_RANKS.find(x=>x.name===CLAN_RANK_NAMES[i]); return r?r.min:0; }
+function clanBestRank(){ let b=0; for(const w of SELECTABLE_WEAPONS){ const k=charKillsFor(w); for(let i=CLAN_RANK_NAMES.length-1;i>b;i--) if(k>=clanRankMin(i)){ b=i; break; } } return b; }
+async function clanQ(build){
+  if(clanReqOk && clanRankOk){ const r=await build(CLAN_REQ_COLS+CLAN_RANK_COL); if(!(r && r.error)) return r; clanRankOk=false; }
+  if(clanReqOk){ const r=await build(CLAN_REQ_COLS); if(!(r && r.error)) return r; clanReqOk=false; }
+  return build('');
+}
+function clanReqOf(c){ return {lv:Math.max(0,+(c&&c.req_level)||0), ms:Math.max(0,+(c&&c.req_master)||0), rk:Math.max(0,Math.min(8,+(c&&c.req_rank)||0))}; }
+function clanReqText(c){ const r=clanReqOf(c), p=[]; if(r.lv>0) p.push('Lv.'+r.lv+' 이상'); if(r.rk>0) p.push('마스터리 '+CLAN_RANK_NAMES[r.rk]+' 이상'); if(r.ms>0) p.push('마스터 캐릭터 '+r.ms+'개 이상'); return p.join(' · '); }
+function clanReqMissing(c){ const r=clanReqOf(c), lv=levelFromXp(saveData.xp||0), ms=masteryCount(), rk=clanBestRank(), m=[]; if(lv<r.lv) m.push('레벨 '+lv+' / '+r.lv); if(rk<r.rk) m.push('마스터리 '+CLAN_RANK_NAMES[rk]+' / '+CLAN_RANK_NAMES[r.rk]); if(ms<r.ms) m.push('마스터 캐릭터 '+ms+' / '+r.ms+'개'); return m; }
+async function clanSetReq(lv, ms, rk){ let r=await sb.rpc('clan_set_requirements3',{p_level:lv, p_master:ms, p_rank:rk}); if(r && r.error && rk===0){ r=await sb.rpc('clan_set_requirements',{p_level:lv, p_master:ms}); } return r; }
 async function clanJoin(id, btn, viaInvite){
   if(!sb || !sbUser){ clanNotice('로그인이 필요해요'); return; }
   if(myClan){ clanNotice('이미 클랜에 가입해 있어요'); return; }
@@ -8711,9 +8720,10 @@ async function renderClanMy(pane){
   R.appendChild(clanInfoRow('⭐','클랜 점수', String(myClan.score==null?1000:myClan.score)+' (클랜 대항전으로 오르고 내려가요)'));
   R.appendChild(clanInfoRow('🏆','클랜전 승리', String(myClan.wins||0)+'회'));
   if(clanReqOk){      // 가입 조건: the leader sets them, everybody sees them
-    const rq=clanReqOf(myClan), saveReq=async(lv,ms)=>{ const r=await sb.rpc('clan_set_requirements',{p_level:lv, p_master:ms}); clanReqEdit=null; if(r&&r.error) fail(r,'저장하지 못했어요 (서버에 supabase-clan-requirements.sql을 적용했는지 확인해 주세요)'); else { myClan.req_level=lv; myClan.req_master=ms; } rerender(); };
+    const rq=clanReqOf(myClan), saveReq=async(lv,ms,rk)=>{ if(rk===undefined) rk=rq.rk; const r=await clanSetReq(lv,ms,rk); clanReqEdit=null; if(r&&r.error) fail(r,'저장하지 못했어요 (서버에 supabase-clan-requirements.sql / supabase-clan-requirements-rank.sql을 적용했는지 확인해 주세요)'); else { myClan.req_level=lv; myClan.req_master=ms; myClan.req_rank=rk; } rerender(); };
     if(isOwner && clanReqEdit==='lv') R.appendChild(clanEditRow('🎯','가입 조건 · 최소 레벨 (0이면 없음)', String(rq.lv), 3, v=>saveReq(Math.max(0,Math.min(999,parseInt(v,10)||0)), rq.ms), ()=>{ clanReqEdit=null; rerender(); }));
     else { const b1=clanRowBtn('🎯','가입 조건 · 최소 레벨', rq.lv>0?('Lv.'+rq.lv+' 이상'):(isOwner?'없음 · 눌러서 정하기':'없음'), isOwner?'':'pointer-events:none;'); if(isOwner) b1.onclick=()=>{ clanReqEdit='lv'; rerender(); }; R.appendChild(b1); }
+    { const b3=clanRowBtn('🎖️','가입 조건 · 마스터리 계급', rq.rk>0?('캐릭터 하나라도 '+CLAN_RANK_NAMES[rq.rk]+' 이상'):(isOwner?'없음 · 눌러서 바꾸기':'없음'), isOwner?'':'pointer-events:none;'); if(isOwner) b3.onclick=()=>saveReq(rq.lv, rq.ms, (rq.rk+1)%CLAN_RANK_NAMES.length); R.appendChild(b3); }
     if(isOwner && clanReqEdit==='ms') R.appendChild(clanEditRow('🏅','가입 조건 · 마스터 캐릭터 수 (0이면 없음)', String(rq.ms), 2, v=>saveReq(rq.lv, Math.max(0,Math.min(40,parseInt(v,10)||0))), ()=>{ clanReqEdit=null; rerender(); }));
     else { const b2=clanRowBtn('🏅','가입 조건 · 마스터 캐릭터', rq.ms>0?(rq.ms+'개 이상 (숙련 Lv.'+MASTERY_STAR_LV+' 이상)'):(isOwner?'없음 · 눌러서 정하기':'없음'), isOwner?'':'pointer-events:none;'); if(isOwner) b2.onclick=()=>{ clanReqEdit='ms'; rerender(); }; R.appendChild(b2); }
   }
@@ -8775,6 +8785,10 @@ function renderClanCreate(pane){
   if(d.edit!=='tag') bt.onclick=()=>{ d.edit='tag'; renderClanCreate(pane); };
   const bp=clanRowBtn(d.emblem,'프로필 정하기', '엠블럼·색·소개'+(d.intro?' · '+d.intro:'')); bp.onclick=()=>{ d.pick=!d.pick; renderClanCreate(pane); };
   box.appendChild(bn); box.appendChild(bt); box.appendChild(bp);
+  { const bl = d.edit==='reqLv' ? clanEditRow('🎯','가입 조건 · 최소 레벨 (0이면 없음)', String(d.reqLv||0), 3, v=>{ d.reqLv=Math.max(0,Math.min(999,parseInt(v,10)||0)); done(); }, done) : clanRowBtn('🎯','가입 조건 · 최소 레벨', d.reqLv>0?('Lv.'+d.reqLv+' 이상'):'없음 · 눌러서 정하기');
+    if(d.edit!=='reqLv') bl.onclick=()=>{ d.edit='reqLv'; renderClanCreate(pane); };
+    const br=clanRowBtn('🏅','가입 조건 · 마스터리 계급', d.reqRank>0?('캐릭터 하나라도 '+CLAN_RANK_NAMES[d.reqRank]+' 이상'):'없음 · 눌러서 바꾸기'); br.onclick=()=>{ d.reqRank=((d.reqRank||0)+1)%CLAN_RANK_NAMES.length; renderClanCreate(pane); };
+    box.appendChild(bl); box.appendChild(br); }
   const pp=document.getElementById('clanProfPanel');
   if(d.pick){
     pp.style.cssText='display:flex; flex-direction:column; gap:10px; margin-top:10px;';
@@ -8797,7 +8811,8 @@ function renderClanCreate(pane){
     if(r.error||!r.data){ cb.disabled=false; msg('만들 수 없어요 (이미 있는 이름/태그이거나 테이블이 없어요)'); return; }
     const m=await sb.from('clan_members').insert({user_id:sbUser.id, clan_id:r.data.id, role:'owner', uname:(myNameSet&&myName)?myName:sbUser.username});
     if(m.error){ await sb.from('clans').delete().eq('id', r.data.id); cb.disabled=false; msg('가입 처리에 실패했어요'); return; }
-    clanDraft={name:'', tag:'', emblem:'🏰', color:'#3fe0c5', intro:'', pick:false}; clanTab='my'; renderClanScreen();
+    if((d.reqLv||0)>0 || (d.reqRank||0)>0){ try{ const q=await clanSetReq(d.reqLv||0, 0, d.reqRank||0); if(q && q.error) clanNotice('클랜은 만들었지만 가입 조건은 저장하지 못했어요 (서버에 supabase-clan-requirements-rank.sql을 적용했는지 확인해 주세요)'); }catch(e){} }
+    clanDraft={name:'', tag:'', emblem:'🏰', color:'#3fe0c5', intro:'', pick:false, reqLv:0, reqRank:0}; clanTab='my'; renderClanScreen();
   };
 }
 
