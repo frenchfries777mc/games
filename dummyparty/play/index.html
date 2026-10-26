@@ -1651,7 +1651,9 @@ body.playing #emoBar{display:flex}
    <div class="row"><input id="codeIn" maxlength="5" placeholder="방 코드" autocomplete="off"><button class="pb dark" id="joinBtn" style="flex:0 0 auto">들어가기</button></div>
    <div class="msg" id="homeMsg"></div>
   </aside>
-  <template id="patchnotes"><details class="notes" open><summary>패치노트 · v0.1 (b73)</summary>
+  <template id="patchnotes"><details class="notes" open><summary>패치노트 · v0.1 (b74)</summary>
+   <b>2026-10-26 · v0.1 · b74 · 킹받는 L 춤</b>
+   <ul><li>"L을 가져가" 춤을 더 킹받게 다듬었어요: 손이 머리 앞에 보이도록 그리고 약 올리듯 흔들고, 발차기는 더 크고 탁 끊기게, 찰 때 번쩍이는 선과 떠오르는 "ㅋㅋ"를 넣었어요</li></ul>
    <b>2026-10-26 · v0.1 · b73 · L을 가져가 춤</b>
    <ul><li>승리 춤 "L을 가져가"를 진짜 동작에 가깝게 바꿨어요: 한 손을 이마에 올리고, 왼발을 왼쪽으로 찼다가 돌아오는 순간 오른발을 오른쪽으로 차는 동작을 계속 반복해요</li></ul>
    <b>2026-10-26 · v0.1 · b72 · 방 목록 창</b>
@@ -1796,7 +1798,7 @@ body.playing #emoBar{display:flex}
    <ul><li>무너지는 발판 칸 수 대폭 증가 (19×10)와 용암 동굴 맵</li><li>10개 맵 전부 새로 그림 (관중석, 야자수 섬, 링, 정원 미로, 서커스, 우노 테이블 등)</li><li>글자 대신 아이콘·말풍선·이펙트로 표현 (무기, 아이템, 카드 효과, 시작 안내)</li><li>타격·폭발·물보라 효과와 화면 흔들림 추가</li></ul>
    <b>2026-10-19 · v0.1 · b1 · 첫 시험판</b>
    <ul><li>마네킹 미니게임 10개 추가 (장애물 달리기, 섬 밀치기, 싸우기, 병맛 미로, 체스 대난투, 폭탄 돌리기, 병맛 우노, 쇼윈도 얼음땡, 무너지는 발판, 컨베이어 서바이벌)</li><li>방 코드로 최대 8명 멀티플레이, 빈자리는 봇으로 채우기</li><li>판마다 10개 중 5개를 무작위로 골라 점수를 합산</li><li>PC 키보드와 휴대폰 터치 조작 지원</li></ul></details></template>
-  <p class="foot">2~8명 · 판마다 36개 미니게임 중 7개 · v0.1 b73 · <a href="../">← Dummy Party 사이트로</a></p>
+  <p class="foot">2~8명 · 판마다 36개 미니게임 중 7개 · v0.1 b74 · <a href="../">← Dummy Party 사이트로</a></p>
   <p class="foot"><span class="ff-copy">© 2026 Frenchfries777 · <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.ko" target="_blank" rel="noopener">CC BY-NC-ND 4.0</a></span></p>
  </div>
 </section>
@@ -2332,14 +2334,17 @@ var DANCES = [null,
     return o;
   }
   ,
-  // 5 L을 가져가: 한 손은 이마에 올리고, 왼발을 왼쪽으로 찼다가 돌아오는 순간 오른발을 오른쪽으로 차기를 계속 반복
+  // 5 L을 가져가: 한 손은 이마 앞에서 약 올리듯 흔들고, 왼발을 왼쪽으로 찼다가 돌아오는 순간 오른발을 오른쪽으로 차기를 계속 반복
   function (t) {
-    var P = 0.8, w = Math.sin(t / P * 6.283), kL = Math.max(0, w), kR = Math.max(0, -w), o = { hx: 0, hr: 0, bob: 0, rot: 0, z: 0, l1: 0, l2: 0, f1: -2, f2: -2, aL: [-13, 3], aR: [4, -19] };
-    // 왼발: 옆으로 쭉 뻗으며 살짝 들어요 / 오른발도 똑같이 반대쪽으로
-    o.l1 = -kL * 17; o.f1 = -2 - kL * 9; o.l2 = kR * 17; o.f2 = -2 - kR * 9;
-    o.rot = (kR - kL) * 0.1; o.hx = (kR - kL) * 3; o.hr = (kR - kL) * 0.1; o.bob = Math.abs(w) * 3;
-    o.aR = [4, -19 + Math.sin(t * 14) * 0.6]; o.aL = [-13 - (kR - kL) * 3, 3 + Math.abs(w) * 2];
-    var hx0 = o.hx;
+    var P = 0.62, ph = (t / P) % 1, w = Math.sin(ph * 6.283);
+    // 쭉 뻗었다가 탁 끊는 발차기: 사인파를 눌러서 빠르게 나가고 잠깐 멈췄다 돌아와요
+    function snap(v) { v = Math.max(0, v); return Math.pow(v, 0.55); }
+    var kL = snap(w), kR = snap(-w), lean = kR - kL, hit = Math.pow(Math.abs(Math.cos(ph * 6.283)), 6);
+    var o = { hx: 0, hr: 0, bob: 0, rot: 0, z: 0, l1: 0, l2: 0, f1: -2, f2: -2, aL: [-13, 3], aR: [4, -19] };
+    o.l1 = -kL * 21; o.f1 = -2 - kL * 12; o.l2 = kR * 21; o.f2 = -2 - kR * 12;
+    o.rot = lean * 0.15; o.hx = lean * 4; o.hr = lean * 0.2 + Math.sin(t * 9) * 0.05; o.bob = (1 - hit) * 5;
+    o.aR = [5, -20 + Math.sin(t * 24) * 1.4]; o.aL = [-13 - lean * 4, 4 + Math.abs(w) * 3];
+    var hx0 = o.hx, bob0 = o.bob, kLx = kL, kRx = kR;
     o.back = function (c, x, y, s, tt) {
       c.save(); var a = 0.2 + 0.1 * Math.sin(tt * 8); c.fillStyle = 'rgba(255,70,120,' + a + ')'; c.beginPath(); c.ellipse(x, y - 52 * s, 58 * s, 72 * s, 0, 0, 6.283); c.fill();
       c.font = '900 ' + Math.round(15 * s) + 'px "Noto Sans KR",sans-serif'; c.textAlign = 'center'; c.fillStyle = 'rgba(255,120,150,.55)';
@@ -2348,10 +2353,21 @@ var DANCES = [null,
     };
     o.front = function (c, x, y, s, tt) {
       c.save(); var hy = y - 62 * s; c.lineJoin = 'round'; c.lineCap = 'round'; c.textAlign = 'center';
-      // 글자
-      var ty = hy - 38 * s - ((tt * 11) % 7) * s, pulse = 1 + 0.08 * Math.sin(tt * 14);
+      // 머리 앞에서 약 올리듯 흔드는 손: 머리 위에 겹쳐 그려서 가려지지 않아요
+      var hxp = x + (hx0 + 7) * s, hyp = y - (53 + bob0) * s, wig = Math.sin(tt * 24) * 0.5;
+      c.translate(hxp, hyp); c.rotate(wig); c.fillStyle = '#fff'; c.strokeStyle = '#8f8576'; c.lineWidth = 1.6 * s;
+      c.beginPath(); c.ellipse(0, 0, 5.2 * s, 6.4 * s, 0, 0, 6.283); c.fill(); c.stroke();
+      c.beginPath(); c.ellipse(-5.2 * s, 1 * s, 2.6 * s, 4 * s, -0.5, 0, 6.283); c.fill(); c.stroke();
+      c.rotate(-wig); c.translate(-hxp, -hyp);
+      // 발 차는 순간 찰싹 번쩍
+      [[-1, kLx], [1, kRx]].forEach(function (q) { if (q[1] > 0.7) { var fx = x + q[0] * 30 * s, fy = y - 12 * s; c.strokeStyle = 'rgba(255,255,255,' + (q[1] - 0.6) * 2 + ')'; c.lineWidth = 2.4 * s; for (var r = 0; r < 3; r++) { c.beginPath(); c.moveTo(fx + q[0] * 6 * s, fy - 8 * s + r * 8 * s); c.lineTo(fx + q[0] * 16 * s, fy - 12 * s + r * 12 * s); c.stroke(); } } });
+      // 글자 + 약 올리는 ㅋㅋ
+      var ty = hy - 38 * s - ((tt * 11) % 7) * s, pulse = 1 + 0.12 * Math.sin(tt * 20), sh = Math.sin(tt * 30) * 1.5 * s;
       c.font = '900 ' + Math.round(21 * s * pulse) + 'px "Noto Sans KR",sans-serif'; c.lineWidth = 4.5 * s; c.strokeStyle = 'rgba(60,10,40,.85)'; c.fillStyle = '#ffe0ec';
-      c.strokeText('L을 가져가!', x, ty); c.fillText('L을 가져가!', x, ty);
+      c.strokeText('L을 가져가!', x + sh, ty); c.fillText('L을 가져가!', x + sh, ty);
+      c.font = '900 ' + Math.round(14 * s) + 'px "Noto Sans KR",sans-serif'; c.fillStyle = '#fff'; c.strokeStyle = 'rgba(60,10,40,.85)'; c.lineWidth = 3.4 * s;
+      for (var k = 0; k < 2; k++) { var kk = (tt * 1.6 + k * 0.5) % 1; c.globalAlpha = 1 - kk; c.strokeText('ㅋㅋ', x + (k ? 40 : -42) * s, hy - 10 * s - kk * 30 * s); c.fillText('ㅋㅋ', x + (k ? 40 : -42) * s, hy - 10 * s - kk * 30 * s); }
+      c.globalAlpha = 1;
       c.restore();
     };
     return o;
