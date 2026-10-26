@@ -1422,7 +1422,7 @@ const ULTS = {
   pizarro:  {name:'정복자의 기세', desc:'체력 30 회복(최종 단계에서 쓰면 50) + 공격력 25→31→37→43, 공격 쿨타임 0.6→0.5→0.4→0.3초, 대쉬 쿨타임 3→1.5→0.7→0.4초로 단계가 오르고 스킬·궁극기 쿨타임도 단계마다 12% 단축됨 (최대 3번 중첩 = 4단계, 4단계엔 이동속도 125%, 죽으면 초기화)'},
   puppeteer:{name:'꼭두각시 조종', desc:'조준한 방향으로 실을 날려 맞힌 상대를 5초간 조종 (맞히지 못하면 조종 못 함) · 조종하는 동안 내 이동·점프·조준·일반 공격 입력대로 움직이고 내 시야도 상대 시점이 됨, 상대는 스킬과 궁극기를 쓸 수 없음 · 조종하는 동안 내 몸은 움직이지 못하고 받는 데미지 50% 감소 · 조종이 끝나면 조종당한 상대가 자폭해 본인은 60, 주변(220) 적에게는 30 피해'},
   kan:      {name:'케찰코아틀의 날개', desc:'5초 동안 날개를 펴고 날아올라 (점프 키를 누르면 위로, 떼면 천천히 내려옴) 독침을 한 번에 3발씩, 더 빠르게 발사'},
-  pistol:   {name:'강화탄',       desc:'다음 발사 때 데미지 66의 크고 빠른 탄환 1발 (플레이어를 관통)'},
+  pistol:   {name:'강화탄',       desc:'다음 발사 때 데미지 66의 크고 빠른 탄환 1발 (플레이어는 관통, 발판에서는 멈춤)'},
   rifle:    {name:'미사일 폭격',   desc:'랜덤 3곳에 미사일이 떨어짐 (발판 통과, 나는 피해 없음)'},
   smg:      {name:'방벽',         desc:'3.5초간 플레이어와 탄환을 막는 벽 (내 탄환은 통과)'},
   magiccard:{name:'탈출 마법',     desc:'가장 가까운 상대 위치로 순간이동해 1초 동안 쿨타임 없이 카드를 3번 연속 발사, 1초 뒤 원래 있던 자리로 되돌아옴'},
@@ -5077,7 +5077,7 @@ function shuffle(arr){ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.
 /* ===== the version of this file =====
    Players with different versions CAN meet and play together: the automatic matchmaking uses the same room names for every version (online-<mode>-<map>-<slot>), and nobody is refused because of a different build.
    The build is only sent along with the join message and the lobby (for information); the corner of the screen shows it. */
-const GAME_BUILD='build 2026-10-18-v396';
+const GAME_BUILD='build 2026-10-18-v397';
 const GAME_VERSION='0.8', GAME_VERSION_NAME='황금을 찾아서';   // 게임 버전 이름: versions.json의 title과 같게 (빌드마다 바꾸지 않음)
 const WEEKLY_EVENTS=[
   {id:'lowg',    name:'저중력 난투', desc:'몸이 둥실둥실, 중력이 약해진 난투', rules:{grav:0.6}},
@@ -9159,7 +9159,7 @@ function showErrorAndReturnToMenu(msg){
   stkRoomSync(null);
   if(peer){ try{peer.destroy();}catch(e){} peer=null; }
   window.__versionNoted=false; chatPending=[];
-  spectatorMode=false; onlineClan=''; netLastFull=null; try{ clanWaitSet(false); }catch(e){} document.body.classList.remove('specView'); conns={}; players={}; isHost=false; hostConn=null; MAP=null; started=false; currentMode=null; currentMapId=null; countdownEndsAt=null; gameLoopStarted=false; weaponChosenLocally=false; hostRoomLive=false; if(typeof weaponCountdownTimer!=='undefined' && weaponCountdownTimer){ clearInterval(weaponCountdownTimer); weaponCountdownTimer=null; } matchEnded=false; duelScores={}; duelRoundEndsAt=null; duelPick=false; matchTimerEndsAt=null; document.getElementById('matchTimerLabel').style.display='none'; document.getElementById('duelScoreLabel').style.display='none'; cq=null; walls=[]; hostTimers=[]; magicCircles=[]; poisonZones=[]; turrets=[]; weaponPhase=null; document.getElementById('cqLabel').style.display='none'; bombHolderId=null; bombTimerEndsAt=0; hotpotatoOriginalCount=0; seekerId=null; hideseekPhase=null; hideseekPhaseEndsAt=0; survivalRound=0; survivalPhase=null; survivalPhaseEndsAt=0; survivalCurrentDisaster=null; survivalHazards=[]; survivalZombies=[]; document.getElementById('survivalLabel').style.display='none'; ctf=null; ctfEndsLocal=0; document.getElementById('ctfLabel').style.display='none'; { const mini=document.getElementById('ctfMini'); if(mini) mini.style.display='none'; }
+  spectatorMode=false; onlineClan=''; netLastFull=null; try{ clanWaitSet(false); }catch(e){} document.body.classList.remove('specView'); conns={}; players={}; isHost=false; hostConn=null; MAP=null; started=false; currentMode=null; currentMapId=null; countdownEndsAt=null; gameLoopStarted=false; weaponChosenLocally=false; hostRoomLive=false; if(typeof weaponCountdownTimer!=='undefined' && weaponCountdownTimer){ clearInterval(weaponCountdownTimer); weaponCountdownTimer=null; } matchEnded=false; duelScores={}; duelRoundEndsAt=null; duelPick=false; matchTimerEndsAt=null; document.getElementById('matchTimerLabel').style.display='none'; document.getElementById('duelScoreLabel').style.display='none'; cq=null; walls=[]; hostTimers=[]; magicCircles=[]; fieldZones=[]; poisonZones=[]; turrets=[]; weaponPhase=null; document.getElementById('cqLabel').style.display='none'; bombHolderId=null; bombTimerEndsAt=0; hotpotatoOriginalCount=0; seekerId=null; hideseekPhase=null; hideseekPhaseEndsAt=0; survivalRound=0; survivalPhase=null; survivalPhaseEndsAt=0; survivalCurrentDisaster=null; survivalHazards=[]; survivalZombies=[]; document.getElementById('survivalLabel').style.display='none'; ctf=null; ctfEndsLocal=0; document.getElementById('ctfLabel').style.display='none'; { const mini=document.getElementById('ctfMini'); if(mini) mini.style.display='none'; }
   resetFlowState();
   showScreen('menuScreen');
   if(msg) uiAlert(msg);
@@ -9403,8 +9403,8 @@ function migDecode(root){
   };
   return dec(root);
 }
-function migGetVars(){ return {matchBans, brz, roomRules, roomOpts, magicCircles, turrets, darkPools, darkPoolSeq, cq, xm, xmV, ctf, gdm, hzDraw, volleys, volleySeq, walls, wallSeq, effectIdSeq, countdownEndsAt, teamSpawnSlots, raid, raidAwards, tn, weaponMode, onlineClan, weaponPhase, botSeq, botLiveSince, bombHolderId, bombTimerEndsAt, hotpotatoOriginalCount, lastBombPass, parkourItemStates, survivalRound, survivalPhase, survivalPhaseEndsAt, survivalCurrentDisaster, survivalHazards, survivalZombies, survivalStrikeTimer, survivalTickTimer, survivalHazSeq, survivalStartT, survivalWavePlan, seekerId, hideseekPhase, hideseekPhaseEndsAt, duelScores, duelRoundEndsAt, matchTimerEndsAt, duelPick, lastHumanJoinAt, chatSeq}; }
-function migSetVars(o){ if('gdm' in o) gdm=o.gdm; if('matchBans' in o) matchBans=o.matchBans; if('brz' in o) brz=o.brz; if('roomRules' in o) roomRules=o.roomRules; if('roomOpts' in o) roomOpts=o.roomOpts; if('magicCircles' in o) magicCircles=o.magicCircles; if('turrets' in o) turrets=o.turrets; if('darkPools' in o) darkPools=o.darkPools||[]; if('darkPoolSeq' in o) darkPoolSeq=o.darkPoolSeq||0; if('cq' in o) cq=o.cq; if('xm' in o) xm=o.xm; if('xmV' in o) xmV=o.xmV; if('ctf' in o) ctf=o.ctf; if('hzDraw' in o) hzDraw=o.hzDraw; if('volleys' in o) volleys=o.volleys; if('volleySeq' in o) volleySeq=o.volleySeq; if('walls' in o) walls=o.walls; if('wallSeq' in o) wallSeq=o.wallSeq; if('effectIdSeq' in o) effectIdSeq=o.effectIdSeq; if('countdownEndsAt' in o) countdownEndsAt=o.countdownEndsAt; if('teamSpawnSlots' in o) teamSpawnSlots=o.teamSpawnSlots; if('raid' in o) raid=o.raid; if('raidAwards' in o) raidAwards=o.raidAwards; if('tn' in o) tn=o.tn; if('weaponMode' in o) weaponMode=o.weaponMode; if('onlineClan' in o) onlineClan=o.onlineClan; if('weaponPhase' in o) weaponPhase=o.weaponPhase; if('botSeq' in o) botSeq=o.botSeq; if('botLiveSince' in o) botLiveSince=o.botLiveSince; if('bombHolderId' in o) bombHolderId=o.bombHolderId; if('bombTimerEndsAt' in o) bombTimerEndsAt=o.bombTimerEndsAt; if('hotpotatoOriginalCount' in o) hotpotatoOriginalCount=o.hotpotatoOriginalCount; if('lastBombPass' in o) lastBombPass=o.lastBombPass; if('parkourItemStates' in o) parkourItemStates=o.parkourItemStates; if('survivalRound' in o) survivalRound=o.survivalRound; if('survivalPhase' in o) survivalPhase=o.survivalPhase; if('survivalPhaseEndsAt' in o) survivalPhaseEndsAt=o.survivalPhaseEndsAt; if('survivalCurrentDisaster' in o) survivalCurrentDisaster=o.survivalCurrentDisaster; if('survivalHazards' in o) survivalHazards=o.survivalHazards; if('survivalZombies' in o) survivalZombies=o.survivalZombies; if('survivalStrikeTimer' in o) survivalStrikeTimer=o.survivalStrikeTimer; if('survivalTickTimer' in o) survivalTickTimer=o.survivalTickTimer; if('survivalHazSeq' in o) survivalHazSeq=o.survivalHazSeq; if('survivalStartT' in o) survivalStartT=o.survivalStartT; if('survivalWavePlan' in o) survivalWavePlan=o.survivalWavePlan; if('seekerId' in o) seekerId=o.seekerId; if('hideseekPhase' in o) hideseekPhase=o.hideseekPhase; if('hideseekPhaseEndsAt' in o) hideseekPhaseEndsAt=o.hideseekPhaseEndsAt; if('duelScores' in o) duelScores=o.duelScores; if('duelRoundEndsAt' in o) duelRoundEndsAt=o.duelRoundEndsAt; if('matchTimerEndsAt' in o) matchTimerEndsAt=o.matchTimerEndsAt; if('duelPick' in o) duelPick=o.duelPick; if('lastHumanJoinAt' in o) lastHumanJoinAt=o.lastHumanJoinAt; if('chatSeq' in o) chatSeq=o.chatSeq; }
+function migGetVars(){ return {matchBans, brz, roomRules, roomOpts, magicCircles, fieldZones, turrets, darkPools, darkPoolSeq, cq, xm, xmV, ctf, gdm, hzDraw, volleys, volleySeq, walls, wallSeq, effectIdSeq, countdownEndsAt, teamSpawnSlots, raid, raidAwards, tn, weaponMode, onlineClan, weaponPhase, botSeq, botLiveSince, bombHolderId, bombTimerEndsAt, hotpotatoOriginalCount, lastBombPass, parkourItemStates, survivalRound, survivalPhase, survivalPhaseEndsAt, survivalCurrentDisaster, survivalHazards, survivalZombies, survivalStrikeTimer, survivalTickTimer, survivalHazSeq, survivalStartT, survivalWavePlan, seekerId, hideseekPhase, hideseekPhaseEndsAt, duelScores, duelRoundEndsAt, matchTimerEndsAt, duelPick, lastHumanJoinAt, chatSeq}; }
+function migSetVars(o){ if('gdm' in o) gdm=o.gdm; if('matchBans' in o) matchBans=o.matchBans; if('brz' in o) brz=o.brz; if('roomRules' in o) roomRules=o.roomRules; if('roomOpts' in o) roomOpts=o.roomOpts; if('magicCircles' in o) magicCircles=o.magicCircles; if('fieldZones' in o) fieldZones=o.fieldZones||[]; if('turrets' in o) turrets=o.turrets; if('darkPools' in o) darkPools=o.darkPools||[]; if('darkPoolSeq' in o) darkPoolSeq=o.darkPoolSeq||0; if('cq' in o) cq=o.cq; if('xm' in o) xm=o.xm; if('xmV' in o) xmV=o.xmV; if('ctf' in o) ctf=o.ctf; if('hzDraw' in o) hzDraw=o.hzDraw; if('volleys' in o) volleys=o.volleys; if('volleySeq' in o) volleySeq=o.volleySeq; if('walls' in o) walls=o.walls; if('wallSeq' in o) wallSeq=o.wallSeq; if('effectIdSeq' in o) effectIdSeq=o.effectIdSeq; if('countdownEndsAt' in o) countdownEndsAt=o.countdownEndsAt; if('teamSpawnSlots' in o) teamSpawnSlots=o.teamSpawnSlots; if('raid' in o) raid=o.raid; if('raidAwards' in o) raidAwards=o.raidAwards; if('tn' in o) tn=o.tn; if('weaponMode' in o) weaponMode=o.weaponMode; if('onlineClan' in o) onlineClan=o.onlineClan; if('weaponPhase' in o) weaponPhase=o.weaponPhase; if('botSeq' in o) botSeq=o.botSeq; if('botLiveSince' in o) botLiveSince=o.botLiveSince; if('bombHolderId' in o) bombHolderId=o.bombHolderId; if('bombTimerEndsAt' in o) bombTimerEndsAt=o.bombTimerEndsAt; if('hotpotatoOriginalCount' in o) hotpotatoOriginalCount=o.hotpotatoOriginalCount; if('lastBombPass' in o) lastBombPass=o.lastBombPass; if('parkourItemStates' in o) parkourItemStates=o.parkourItemStates; if('survivalRound' in o) survivalRound=o.survivalRound; if('survivalPhase' in o) survivalPhase=o.survivalPhase; if('survivalPhaseEndsAt' in o) survivalPhaseEndsAt=o.survivalPhaseEndsAt; if('survivalCurrentDisaster' in o) survivalCurrentDisaster=o.survivalCurrentDisaster; if('survivalHazards' in o) survivalHazards=o.survivalHazards; if('survivalZombies' in o) survivalZombies=o.survivalZombies; if('survivalStrikeTimer' in o) survivalStrikeTimer=o.survivalStrikeTimer; if('survivalTickTimer' in o) survivalTickTimer=o.survivalTickTimer; if('survivalHazSeq' in o) survivalHazSeq=o.survivalHazSeq; if('survivalStartT' in o) survivalStartT=o.survivalStartT; if('survivalWavePlan' in o) survivalWavePlan=o.survivalWavePlan; if('seekerId' in o) seekerId=o.seekerId; if('hideseekPhase' in o) hideseekPhase=o.hideseekPhase; if('hideseekPhaseEndsAt' in o) hideseekPhaseEndsAt=o.hideseekPhaseEndsAt; if('duelScores' in o) duelScores=o.duelScores; if('duelRoundEndsAt' in o) duelRoundEndsAt=o.duelRoundEndsAt; if('matchTimerEndsAt' in o) matchTimerEndsAt=o.matchTimerEndsAt; if('duelPick' in o) duelPick=o.duelPick; if('lastHumanJoinAt' in o) lastHumanJoinAt=o.lastHumanJoinAt; if('chatSeq' in o) chatSeq=o.chatSeq; }
 /* -- the host's side -- */
 function migOrder(){ return Object.values(players).filter(p=>p.id!==myId && !p.isBot && !p.isSpectator && !p.isDummy && conns[p.id]).sort((a,b)=>(a.joinOrder||0)-(b.joinOrder||0)).map(p=>p.id); }
 function migCanRun(){ return !!(isHost && peer && MAP && started && !matchEnded && !practiceMode && !highlightViewing && !rpView); }
@@ -9936,7 +9936,7 @@ function leaveRoom(){
   if(peer){ const op=peer; peer=null; if(handOff) setTimeout(()=>{ try{op.destroy();}catch(e){} }, 900); else { try{op.destroy();}catch(e){} } }   // (the last messages need a moment to go out)
   migState=null; migBundle=null; migOrderIds=[]; migPending=[]; try{ migBanner(false); }catch(e){}
   window.__versionNoted=false; chatPending=[];
-  spectatorMode=false; onlineClan=''; netLastFull=null; try{ clanWaitSet(false); }catch(e){} document.body.classList.remove('specView'); conns={}; players={}; isHost=false; hostConn=null; MAP=null; started=false; currentMode=null; currentMapId=null; countdownEndsAt=null; gameLoopStarted=false; weaponChosenLocally=false; hostRoomLive=false; if(typeof weaponCountdownTimer!=='undefined' && weaponCountdownTimer){ clearInterval(weaponCountdownTimer); weaponCountdownTimer=null; } matchEnded=false; duelScores={}; duelRoundEndsAt=null; duelPick=false; matchTimerEndsAt=null; document.getElementById('matchTimerLabel').style.display='none'; document.getElementById('duelScoreLabel').style.display='none'; cq=null; walls=[]; hostTimers=[]; magicCircles=[]; poisonZones=[]; turrets=[]; weaponPhase=null; document.getElementById('cqLabel').style.display='none'; bombHolderId=null; bombTimerEndsAt=0; hotpotatoOriginalCount=0; seekerId=null; hideseekPhase=null; hideseekPhaseEndsAt=0; survivalRound=0; survivalPhase=null; survivalPhaseEndsAt=0; survivalCurrentDisaster=null; survivalHazards=[]; survivalZombies=[]; document.getElementById('survivalLabel').style.display='none'; ctf=null; ctfEndsLocal=0; document.getElementById('ctfLabel').style.display='none'; { const mini=document.getElementById('ctfMini'); if(mini) mini.style.display='none'; }
+  spectatorMode=false; onlineClan=''; netLastFull=null; try{ clanWaitSet(false); }catch(e){} document.body.classList.remove('specView'); conns={}; players={}; isHost=false; hostConn=null; MAP=null; started=false; currentMode=null; currentMapId=null; countdownEndsAt=null; gameLoopStarted=false; weaponChosenLocally=false; hostRoomLive=false; if(typeof weaponCountdownTimer!=='undefined' && weaponCountdownTimer){ clearInterval(weaponCountdownTimer); weaponCountdownTimer=null; } matchEnded=false; duelScores={}; duelRoundEndsAt=null; duelPick=false; matchTimerEndsAt=null; document.getElementById('matchTimerLabel').style.display='none'; document.getElementById('duelScoreLabel').style.display='none'; cq=null; walls=[]; hostTimers=[]; magicCircles=[]; fieldZones=[]; poisonZones=[]; turrets=[]; weaponPhase=null; document.getElementById('cqLabel').style.display='none'; bombHolderId=null; bombTimerEndsAt=0; hotpotatoOriginalCount=0; seekerId=null; hideseekPhase=null; hideseekPhaseEndsAt=0; survivalRound=0; survivalPhase=null; survivalPhaseEndsAt=0; survivalCurrentDisaster=null; survivalHazards=[]; survivalZombies=[]; document.getElementById('survivalLabel').style.display='none'; ctf=null; ctfEndsLocal=0; document.getElementById('ctfLabel').style.display='none'; { const mini=document.getElementById('ctfMini'); if(mini) mini.style.display='none'; }
   resetFlowState();
   showScreen('menuScreen');
   setChatVisible(false);
@@ -10041,6 +10041,7 @@ function onClientData(data, mode, code){
     if(Array.isArray(data.chat)) for(const m of data.chat.slice(0,12)){ if(m && typeof m.text==='string') onChatRelayed(m); }       // chat lines that ride along with the state (the second road: a state certainly arrives during a match)
     bullets=data.bullets;
     walls=data.walls||[];
+    { const nowMs=performance.now(); fieldZones=(data.fieldZones||[]).map(z=>Object.assign(z,{t0:nowMs})); }
     magicCircles=data.magicCircles||[]; poisonZones=data.poisonZones||[]; turrets=data.turrets||[]; hzDraw=data.hz||null; syncBridgePlatforms(); if(data.dark!==undefined){ const nowS=performance.now()/1000; darkView=(data.dark||[]).map(z=>Object.assign(z, {t0:nowS-(z.age||0)})); }
     if(data.cq && cq){ cq.scores=data.cq.s; cq.holder=data.cq.h; cq.contested=data.cq.c; }
     xmV=data.xm||null; if(!isHost) brzV=data.bz||null;
@@ -11019,7 +11020,7 @@ function finalizeGameplayStart(mte){
   // silent freeze, and the error banner mechanism gets its chance to work.
   try{
     matchEnded=false; try{ rpRecStart(); }catch(e){}
-    xm=null; xmV=null; brz=null; brzV=null; particles=[]; fxSeen={}; prevGround={}; prevHp={}; hitFlashUntil={}; screenShake=0; walls=[]; hostTimers=[]; magicCircles=[]; poisonZones=[]; turrets=[]; darkPools=[]; darkView=[]; lastKnownKills=0; matchAssists=0;
+    xm=null; xmV=null; brz=null; brzV=null; particles=[]; fxSeen={}; prevGround={}; prevHp={}; hitFlashUntil={}; screenShake=0; walls=[]; hostTimers=[]; magicCircles=[]; fieldZones=[]; poisonZones=[]; turrets=[]; darkPools=[]; darkView=[]; lastKnownKills=0; matchAssists=0;
     matchKillLog=[]; killcamActive=false; killcamOverride=null; killcamSnapshot=null; killcamReplay=null; killcamReplayStartAt=0; replayBuffer={}; replayFrames=[]; replayFxLog=[]; replayDefs={};
     hitStopUntil=0; staggers={}; setTimeout(()=>{ try{ entranceShow(); }catch(e){ console.error('[entrance]', e); } }, 450);
     if(gameMode==='parkour') initParkourItems(); // runs for host and every client alike, so everyone's item-icon rendering starts from the same "all available" state
@@ -11416,13 +11417,13 @@ const PRACTICE_SKILL_CD=2;
 const SKILLS={
   pizarro:  {name:'정복자의 휴식', kind:'buff', desc:'3초 동안 받는 피해 20% 감소 + 초당 체력 6 회복 · 움직여도 끊기지 않음'},
   puppeteer:{name:'바느질', kind:'hit', desc:'실이 달린 바늘을 조준한 방향으로 발사 · 맞은 상대와 실이 이어지고 이동속도 25% 감소 · 맞히면 쿨타임 없이 바로 바늘 빼기를 쓸 수 있음 (바늘 빼기를 쓰기 전까지 실이 계속 이어짐) · 바늘 빼기: 실을 당겨 상대에게 30 피해를 주고 실이 끊김, 쿨타임은 바늘 빼기를 쓴 뒤부터 돌아요 (못 맞히면 바로 쿨타임)'},
-  kan:      {name:'독두꺼비 함정', kind:'hit', desc:'바라보는 방향으로 독 두꺼비를 던짐 · 포물선으로 날아가 바닥에 닿으면 그 바닥이 독 바닥이 됨 (15초, 최대 2개, 나에게만 보임) · 적이 밟으면 독 바닥이 나타나고 3초 뒤 사라짐 · 밟은 적은 3초 동안 0.5초마다 5 피해'},
+  kan:      {name:'독두꺼비 함정', kind:'hit', desc:'조준한 곳으로 독 두꺼비를 던짐 (닿는 만큼, 최대 약 800) · 포물선으로 날아가 바닥에 닿으면 그 바닥이 독 바닥이 됨 (15초, 최대 2개, 나에게만 보임) · 적이 밟으면 독 바닥이 나타나고 3초 뒤 사라짐 · 밟은 적은 3초 동안 0.5초마다 5 피해'},
   pistol:   {name:'속사',        kind:'buff', desc:'1.8초 동안 연사 속도 2배'},
-  smg:      {name:'연막탄',      kind:'hit',  desc:'주변 적을 2.5초 동안 둔화'},
+  smg:      {name:'연막탄',      kind:'hit',  desc:'조준한 곳으로 연막탄을 던짐 · 떨어진 자리에 2.5초 동안 짙은 연기 · 안에 있는 사람은 이동 속도가 절반으로 느려지고 시야가 가려짐'},
   bow:      {name:'백스텝',      kind:'move', desc:'뒤로 도약하며 활 재장전이 즉시 끝남'},
   sword:    {name:'돌진 베기',   kind:'move', desc:'앞으로 최대 3초 동안 돌진하며(돌진하는 동안 피해를 받지 않음) 칼을 빙글빙글 휘둘러, 닿는 적에게 45 피해를 주고 그 자리에서 멈춤 (스킬키를 다시 누르면 취소)'},
   bat:      {name:'반사 스윙',   kind:'buff', desc:'0.7초 동안 주변 투사체를 되받아침'},
-  boomerang:{name:'질주',        kind:'buff', desc:'2초 동안 이동 속도 +50%'},
+  boomerang:{name:'회수 돌풍',  kind:'hit',  desc:'주변 적을 8 피해와 함께 내 쪽으로 끌어당기고, 던진 부메랑을 즉시 불러들임'},
   shuriken: {name:'그림자 이동', kind:'move', desc:'조준 방향으로 짧게 순간이동하고 1초 은신'},
   shotgun:  {name:'충격파',      kind:'hit',  desc:'주변 적에게 14 피해 + 강하게 밀쳐냄'},
   rifle:    {name:'집중 사격',   kind:'buff', desc:'2초 동안 총알 피해 +35%'},
@@ -11434,7 +11435,7 @@ const SKILLS={
   gambler:  {name:'동전 던지기', kind:'buff', desc:'앞면(확률 50% + 칩당 7%): 체력 25 회복 + 칩 1개당 3 추가 / 뒷면: 가까운 적에게 18 피해 + 칩 1개당 4 추가 (칩은 소모되지 않음)'},
   wizard:   {name:'충격파',      kind:'hit',  desc:'주변 상대를 아주 크게 밀쳐내는 충격파 (10 피해)'},
   magiccard:{name:'카드 일렬 발사', kind:'hit', desc:'조준 방향으로 카드 4장을 일렬로 연달아 발사 (장당 10 피해)'},
-  flamethrower:{name:'화염 폭발',kind:'hit',  desc:'주변 적에게 10 피해 + 2초 화상'},
+  flamethrower:{name:'화염병',kind:'hit',  desc:'조준한 곳으로 화염병을 던짐 · 떨어진 자리에 4초 동안 불바다 · 안에 있는 적은 계속 화상 (초당 9 피해)'},
   portalgun:{name:'시간 되감기', kind:'move', desc:'약 2초 전 위치로 돌아가고 그동안 잃은 체력의 절반 회복 · 포탈이 있을 때는 대신 내 포탈 둘을 폭파(연기 0.5초 뒤 50 피해와 큰 넉백)'},
   vacuum:   {name:'흡인',        kind:'hit',  desc:'주변 적을 끌어당기고 스택 +1'},
   pirate:   {name:'대포 비행',   kind:'move', desc:'대포를 타고 조준 방향으로 포물선을 그리며 날아감 · 부딪힌 상대에게 36 피해'},
@@ -11648,8 +11649,8 @@ const SKILL_IMPL={
     spawnBullet(p, (hasAim(ax,ay)?aimAngleOf(p,ax,ay):(p.angle||0)), {id:'puppeteer', bulletSpeed:1400, life:0.57, dmg:0, hitR:18}, {pthread:true, sew:true});   // 바느질: the needle with the thread
     return true;
   },
-  kan(p,tSec,tMs,ax){              // 독 두꺼비 함정: the toad is thrown the way 칸 faces, flies in an arc and turns the floor it lands on into a hidden poison floor
-    const d=skillAimDir(p,ax), ang=(d>0)?-0.62:Math.PI+0.62;
+  kan(p,tSec,tMs,ax,ay){           // 독 두꺼비 함정: the toad is thrown at the aimed spot (as far as it reaches), flies in an arc and turns the floor it lands on into a hidden poison floor
+    const ang=lobAngle(p,ax,ay);
     spawnBullet(p, ang, {id:'kan', bulletSpeed:KAN_TOAD_SPEED, life:3, dmg:0, hitR:10}, {toad:true, arcs:true, color:'#2fb87a'});
     return true;
   },
@@ -11659,11 +11660,16 @@ const SKILL_IMPL={
     return true;
   },
   pistol(p,tSec){ skillSetBuff(p,'rapid',1.8,tSec); return true; },
-  smg(p,tSec,tMs){ const n=skillPulse(p,tMs,{r:230, slow:2.5}); if(n>0) pushFx('skillring', p.x, p.y-30, tMs, {color:'#9aa3b2', r:230}); return n>0; },
+  smg(p,tSec,tMs,ax,ay){ spawnBullet(p, lobAngle(p,ax,ay), {id:'smoke', bulletSpeed:KAN_TOAD_SPEED, life:3, dmg:0, hitR:10}, {lob:'smoke', arcs:true, color:'#b8c0cc'}); return true; },
   bow(p,tSec,tMs,ax){ const d=skillAimDir(p,ax); p.kbX=-d*560; p.vy=-430; p.grounded=false; p.lastShot=-9999; return true; },
   sword(p,tSec,tMs,ax){ const d=skillAimDir(p,ax); p.swordCharge={dir:d, until:tSec+SWORD_CHARGE_SEC, lastX:p.x, lastT:tSec, blockedFor:0}; p.chargeDir=d; p.kbX=0; p.bladeSpinUntil=p.swordCharge.until; p.bladeSpin=true; p.bladeHit={}; pushFx('skillring', p.x, p.y-40, tMs, {color:'#dfe6f0', r:SWORD_SPIN_RADIUS}); return true; },   // charge toward the side of the cursor; the sword spins on its own and hurts what it touches (bladeSpinTick)   // lunge in the direction of the cursor's side; the sword then spins on its own and hurts whatever it touches (bladeSpinTick)
   bat(p,tSec){ skillSetBuff(p,'reflect',0.7,tSec); return true; },
-  boomerang(p,tSec){ skillSetBuff(p,'haste',2.0,tSec); return true; },
+  boomerang(p,tSec,tMs){     // 회수 돌풍: a whirlwind drags the enemies around me in (8 damage) and calls every boomerang I threw straight back
+    skillPulse(p,tMs,{r:GUST_R, dmg:GUST_DMG, pull:GUST_PULL});
+    for(const b of bullets){ if(b.owner===p.id && b.boomerang && !b.free && !b.turned) b.bornAt=tSec-BOOMERANG_OUT_SEC-1; }
+    p.boomerangReadyAt=0;
+    pushFx('gust', p.x, p.y-40, tMs, {r:GUST_R});
+    return true; },
   shuriken(p,tSec,tMs,ax,ay){
     const a=(ax===undefined||ay===undefined) ? (p.angle||0) : Math.atan2(ay-(p.y-40), ax-p.x);
     const x0=p.x, y0=p.y; const moved=skillMoveToward(p, p.x+Math.cos(a)*230, p.y+Math.sin(a)*230);
@@ -11694,7 +11700,7 @@ const SKILL_IMPL={
     const w2=Object.assign({}, WEAPONS.magiccard, {dmg:CARD_LINE_DMG, bulletSpeed:980});
     for(let k=0;k<CARD_LINE_N;k++) hostTimers.push({ta:fxActor, at:tSec+k*0.07, fn:()=>{ if(p.alive){ spawnBullet(p, a, w2, {cardLine:true}); pushFx('sfx', p.x, p.y-40, performance.now(), {name:'magiccard'}); } }});
     return true; },
-  flamethrower(p,tSec,tMs){ const n=skillPulse(p,tMs,{r:135, dmg:10, kb:260, burn:{dur:2, dps:8}}); if(n>0) pushFx('skillring', p.x, p.y-30, tMs, {color:'#ff7a2c', r:135}); return n>0; },
+  flamethrower(p,tSec,tMs,ax,ay){ spawnBullet(p, lobAngle(p,ax,ay), {id:'molotov', bulletSpeed:KAN_TOAD_SPEED, life:3, dmg:0, hitR:10}, {lob:'fire', arcs:true, color:'#ff7a2c'}); return true; },
   portalgun(p,tSec,tMs){
     if(p.portalPair){      // portals are standing: the skill blows them up instead (smoke first, the blast comes 0.5 s later)
       if(p.portalBlastPair===p.portalPair) return false;
@@ -11785,8 +11791,90 @@ function trySkill(p, tMs, aimX, aimY){
    abilityPreviewOps(action, p, mx, my) says what to draw for the held ability, using the SAME spot functions as the real effects (swordFallSpot, wizardCircleSpot,
    smgWallSpot, rifleBarrageXs ...), so what is drawn is where it will really go. */
 const MINT='#7fffd4';
-function kanToadPath(p, dir){      // the flight of the 독 두꺼비 (same start, speed, gravity and platform test as the real bullet): the dots on the way and where it comes down (land = on top of a floor = a poison floor)
-  const a=(dir>0)?-0.62:Math.PI+0.62, ax=Math.cos(a), ay=Math.sin(a), dt=1/60;
+const SMOKE_R=150, SMOKE_SEC=2.5, FIRE_R=125, FIRE_SEC=4, FIRE_DPS=9, GUST_R=240, GUST_DMG=8, GUST_PULL=600;
+let fieldZones=[];       // smoke clouds (agent skill) and fire pools (slayer skill): {kind,owner,team,x,y,r,until} on the host; guests get {kind,x,y,r,rem,t0}
+function lobAngle(p, ax, ay){     // the launch angle that lands a thrown 독 두꺼비 / 연막탄 / 화염병 on the aimed spot (45 degrees when it is out of reach)
+  const facing=(ax===undefined||ax===null) ? ((Math.cos(p.angle||0)>=0)?1:-1) : (ax>=p.x?1:-1);
+  let a=(facing>0)?-0.62:Math.PI+0.62;
+  if(ax===undefined||ax===null||ay===undefined||ay===null) return a;
+  const v=KAN_TOAD_SPEED, g=PROJECTILE_GRAVITY;
+  for(let it=0;it<3;it++){
+    const sx=p.x+Math.cos(a)*(PLAYER_W/2+14), sy=(p.y-40)+Math.sin(a)*(PLAYER_W/2+14), dx=ax-sx, dy=ay-sy;
+    if(Math.abs(dx)<30) return (facing>0)?-1.3:Math.PI+1.3;
+    const k=g*dx*dx/(2*v*v), disc=dx*dx-4*k*(k-dy);
+    if(disc<0) return (dx>0)?-Math.PI/4:Math.PI+Math.PI/4;
+    const u1=(-dx+Math.sqrt(disc))/(2*k), u2=(-dx-Math.sqrt(disc))/(2*k), u=(Math.abs(u1)<Math.abs(u2))?u1:u2;
+    a=(dx>0)?Math.atan(u):Math.PI+Math.atan(u);
+  }
+  return a;
+}
+function lobLand(b, x, y, pl, t){     // a thrown smoke grenade / molotov comes down: the cloud or the fire pool starts there
+  const ow=players[b.owner]; if(!ow || !MAP) return;
+  let lx=clamp(x,0,MAP.arenaW), ly=Math.min(y, MAP.arenaH);
+  if(pl && b.vy>0 && b.y<=pl.y+2){ lx=clamp(x,pl.x,pl.x+pl.w); ly=pl.y; }
+  const smoke=(b.lob==='smoke');
+  fieldZones.push({kind:b.lob, owner:b.owner, team:ow.team, ownerName:ow.name, x:lx, y:ly-20, r:smoke?SMOKE_R:FIRE_R, until:t/1000+(smoke?SMOKE_SEC:FIRE_SEC)});
+  pushFx(smoke?'smokeland':'fireland', lx, ly-20, t, {});
+}
+function fieldZoneTick(dt, t){      // inside a cloud everybody moves at half speed; inside a fire pool every enemy of the thrower keeps burning
+  if(!fieldZones.length) return;
+  const tS=t/1000; fieldZones=fieldZones.filter(z=>z.until>tS); if(!fieldZones.length) return;
+  for(const id in players){
+    const p=players[id]; if(!p.alive || p.x===undefined || p.swordCharge || p.darkSub) continue;
+    const cy=p.y-PLAYER_H/2;
+    for(const z of fieldZones){
+      if(Math.hypot(p.x-z.x, cy-z.y)>z.r) continue;
+      if(z.kind==='smoke'){ p.slowUntil=Math.max(p.slowUntil||0, tS+0.3); continue; }
+      const ow=players[z.owner]; if(id===z.owner || (ow && isAlly(ow,p)) || !tnSameMatch(z.owner,id)) continue;
+      p.burn={until:tS+1.5, dps:FIRE_DPS, owner:z.owner, ownerName:z.ownerName||(ow&&ow.name)};
+    }
+  }
+}
+function fzRem(z){ return (z.until!==undefined) ? z.until-performance.now()/1000 : z.rem-(performance.now()-(z.t0||0))/1000; }
+function drawFieldZones(){
+  if(!fieldZones.length) return;
+  const now=performance.now();
+  for(const z of fieldZones){
+    const rem=fzRem(z); if(rem<=0 || !inView(z.x,z.y,z.r+80)) continue;
+    const total=(z.kind==='smoke')?SMOKE_SEC:FIRE_SEC, age=Math.max(0,total-rem), grow=Math.min(1,age/0.3), fade=Math.min(1,rem/0.5);
+    ctx.save();
+    if(z.kind==='smoke'){
+      for(let i=0;i<20;i++){
+        const ph=i*2.399+(i%2?now/2600:-now/3100), ox=Math.cos(ph)*z.r*0.6*(((i*53)%10)/10+0.2)*grow, oy=Math.sin(ph*1.3+i)*z.r*0.5*(((i*29)%10)/10+0.2)*grow;
+        const pr=z.r*0.5*grow*(0.75+((i*17)%7)/14), cx=z.x+ox, cy=z.y+oy, g=ctx.createRadialGradient(cx,cy,0,cx,cy,pr);
+        g.addColorStop(0,'rgba(196,202,212,'+(0.95*fade)+')'); g.addColorStop(0.6,'rgba(170,178,190,'+(0.8*fade)+')'); g.addColorStop(1,'rgba(150,158,170,0)');
+        ctx.fillStyle=g; ctx.beginPath(); ctx.arc(cx,cy,pr,0,7); ctx.fill();
+      }
+    } else {
+      const fy=z.y+20, gg=ctx.createRadialGradient(z.x,fy,0,z.x,fy,z.r);
+      gg.addColorStop(0,'rgba(255,170,60,'+(0.55*fade)+')'); gg.addColorStop(0.7,'rgba(255,90,20,'+(0.35*fade)+')'); gg.addColorStop(1,'rgba(255,60,0,0)');
+      ctx.fillStyle=gg; ctx.beginPath(); ctx.ellipse(z.x,fy,z.r*grow,z.r*0.3*grow,0,0,7); ctx.fill();
+      ctx.globalCompositeOperation='lighter';
+      for(let i=0;i<16;i++){
+        const fx=z.x+((i+0.5)/16-0.5)*2*z.r*0.92*grow, h=(34+46*Math.abs(Math.sin(now/170+i*1.7)))*grow*(0.6+0.4*Math.sin(i*2.1)), w=15+((i*7)%5);
+        const g=ctx.createLinearGradient(fx,fy,fx,fy-h); g.addColorStop(0,'rgba(255,70,10,'+(0.85*fade)+')'); g.addColorStop(0.55,'rgba(255,160,40,'+(0.7*fade)+')'); g.addColorStop(1,'rgba(255,230,120,0)');
+        ctx.fillStyle=g; ctx.beginPath(); ctx.moveTo(fx-w/2,fy); ctx.quadraticCurveTo(fx-w/3,fy-h*0.6,fx+Math.sin(now/130+i)*5,fy-h); ctx.quadraticCurveTo(fx+w/3,fy-h*0.6,fx+w/2,fy); ctx.fill();
+      }
+    }
+    ctx.restore();
+  }
+}
+let smokeA=0, smokeCv=null;
+function drawSmokeVeil(cam, dt){      // standing inside a smoke cloud: everything is grey except a small circle around me
+  const me=players[myId]; let want=0;
+  if(me && me.alive && me.x!==undefined && !killcamActive && !rpView){ const cy=me.y-PLAYER_H/2; for(const z of fieldZones){ if(z.kind==='smoke' && fzRem(z)>0 && Math.hypot(me.x-z.x,cy-z.y)<=z.r){ want=1; break; } } }
+  smokeA += (want-smokeA)*Math.min(1, dt*(want?10:5)); if(smokeA<0.02){ smokeA=0; return; }
+  if(!smokeCv) smokeCv=document.createElement('canvas');
+  if(smokeCv.width!==canvas.width || smokeCv.height!==canvas.height){ smokeCv.width=canvas.width; smokeCv.height=canvas.height; }
+  const c=smokeCv.getContext('2d'); c.globalCompositeOperation='source-over'; c.clearRect(0,0,canvas.width,canvas.height);
+  c.fillStyle='rgba(168,176,188,'+(0.94*smokeA)+')'; c.fillRect(0,0,canvas.width,canvas.height);
+  c.globalCompositeOperation='destination-out';
+  const sx=me.x-cam.x, sy=me.y-30-cam.y, r=110, g=c.createRadialGradient(sx,sy,6,sx,sy,r); g.addColorStop(0,'rgba(0,0,0,1)'); g.addColorStop(0.55,'rgba(0,0,0,0.8)'); g.addColorStop(1,'rgba(0,0,0,0)');
+  c.fillStyle=g; c.beginPath(); c.arc(sx,sy,r,0,7); c.fill();
+  ctx.drawImage(smokeCv,0,0);
+}
+function kanToadPath(p, a){      // the flight of the 독 두꺼비 (same start, speed, gravity and platform test as the real bullet): the dots on the way and where it comes down (land = on top of a floor = a poison floor)
+  const ax=Math.cos(a), ay=Math.sin(a), dt=1/60;
   let x=p.x+ax*(PLAYER_W/2+14), y=(p.y-40)+ay*(PLAYER_W/2+14), vx=ax*KAN_TOAD_SPEED, vy=ay*KAN_TOAD_SPEED; const pts=[{x,y}];
   for(let i=0;i<180;i++){
     vy+=PROJECTILE_GRAVITY*dt; const nx=x+vx*dt, ny=y+vy*dt;
@@ -11846,18 +11934,17 @@ function abilityPreviewOps(action, p, mx, my){
       case 'horemheb': ops.push(ray(ang, 740)); break;
       case 'puppeteer': { const tg=p.sw && players[p.sw]; if(tg){ ops.push({t:'line', x1:p.x, y1:p.y-30, x2:tg.x, y2:tg.y-40}); ops.push(mark(tg.x, tg.y-40, 40)); } else ops.push(ray(ang, 800)); break; }
       case 'pizarro': ops.push(selfRing(70)); break;
-      case 'kan': { const kp=kanToadPath(p, skillAimDir(p,mx)); for(let i=1;i<kp.pts.length;i++) ops.push({t:'line', x1:kp.pts[i-1].x, y1:kp.pts[i-1].y, x2:kp.pts[i].x, y2:kp.pts[i].y, dash:true}); const e=kp.pts[kp.pts.length-1]; if(kp.land) ops.push({t:'ellipse', x:kp.land.x, y:kp.land.y, rx:KAN_TRAP_R, ry:KAN_TRAP_R*0.22}); else ops.push({t:'cross', x:e.x, y:e.y, r:10}); break; }
+      case 'kan': case 'smg': case 'flamethrower': { const kp=kanToadPath(p, lobAngle(p,mx,my)); for(let i=1;i<kp.pts.length;i++) ops.push({t:'line', x1:kp.pts[i-1].x, y1:kp.pts[i-1].y, x2:kp.pts[i].x, y2:kp.pts[i].y, dash:true}); const e=kp.pts[kp.pts.length-1]; if(action==='skill' && p.weapon==='kan'){ if(kp.land) ops.push({t:'ellipse', x:kp.land.x, y:kp.land.y, rx:KAN_TRAP_R, ry:KAN_TRAP_R*0.22}); else ops.push({t:'cross', x:e.x, y:e.y, r:10}); } else if(action==='skill'){ const zr=(p.weapon==='smg')?SMOKE_R:FIRE_R; ops.push({t:'ellipse', x:e.x, y:e.y, rx:zr, ry:zr*0.5}); } break; }
       case 'shuriken': { const a=Math.atan2(my-cy, mx-p.x), best=skillMoveSpot(p, p.x+Math.cos(a)*230, p.y+Math.sin(a)*230); ops.push({t:'line', x1:p.x, y1:p.y-30, x2:best.x, y2:best.y-30, dash:true}); ops.push(mark(best.x, best.y-30, 20)); break; }
       case 'dagger': { const t=nearestEnemyOf(p); if(t && Math.hypot(t.x-p.x,t.y-p.y)<=330){ ops.push({t:'line', x1:cx, y1:cy, x2:t.x, y2:t.y-30, dash:true}); ops.push(mark(t.x, t.y-30, 40)); } break; }
       case 'magiccard': ops.push(ray(ang, 820)); break;
       case 'portalgun': { if(p.portalPair){ ops.push({t:'ellipse', x:p.portalPair.a.x, y:p.portalPair.a.y, rx:PORTAL_BLAST_R, ry:PORTAL_BLAST_R*0.3}); ops.push({t:'ellipse', x:p.portalPair.b.x, y:p.portalPair.b.y, rx:PORTAL_BLAST_R, ry:PORTAL_BLAST_R*0.3}); break; } if(p.hist){ const tSec=performance.now()/1000; for(let i=p.hist.length-1;i>=0;i--){ const hh=p.hist[i]; if(tSec-hh.t<1.6) continue; if(!skillSpotFree(hh.x,hh.y)) continue; ops.push({t:'line', x1:p.x, y1:p.y-30, x2:hh.x, y2:hh.y-30, dash:true}); ops.push(mark(hh.x, hh.y-30, 24)); break; } } break; }
       case 'samurai': { const d=skillAimDir(p,mx), b=skillMoveSpot(p,p.x+d*430,p.y); ops.push({t:'rect', x:Math.min(p.x,b.x)-30, y:p.y-85, w:Math.abs(b.x-p.x)+60, h:85}); ops.push(mark(b.x,b.y-30,24)); break; }
       case 'pirate': { const v=pirateFlyVel(p,mx,my); let px=p.x, py=p.y-30; for(let i=1;i<=10;i++){ const tt=i*0.07, nx=p.x+v.vx*tt, ny=p.y-30+v.vy*tt+0.5*GRAVITY*tt*tt; ops.push({t:'line', x1:px, y1:py, x2:nx, y2:ny, dash:true}); px=nx; py=ny; } ops.push(mark(px,py,26)); break; }
-      case 'smg': ops.push(selfRing(230)); break;
+      case 'boomerang': ops.push(selfRing(GUST_R)); break;
       case 'shotgun': ops.push(selfRing(140)); break;
       case 'wizard': ops.push(selfRing(WIZ_SHOCK_R)); break;
       case 'grenade': ops.push(selfRing(110)); break;
-      case 'flamethrower': ops.push(selfRing(135)); break;
       case 'vacuum': ops.push(selfRing(260)); break;
       default: ops.push(selfRing(40));       // pistol, bat, boomerang, rifle, bazooka, gambler, wizard: buffs on the caster
     }
@@ -12189,8 +12276,8 @@ function tryFire(p, angle, tMs){
   }
   if(p.ultPending==='pistol' && w.id==='pistol'){ // ultimate: one big high-speed shot
     p.ultPending=null;
-    const w2=Object.assign({}, w, {dmg:66, bulletSpeed:w.bulletSpeed*2, pierce:true});
-    spawnBullet(p, useAngle, w2, {ult:true, big:true});
+    const w2=Object.assign({}, w, {dmg:66, bulletSpeed:w.bulletSpeed*2});
+    spawnBullet(p, useAngle, w2, {ult:true, big:true, passPlayers:true});      // goes through players, but platforms still stop it
     return;
   }
   if(p.ultPending==='shuriken' && w.id==='shuriken'){ // ultimate: the next shuriken that actually lands deals double damage and blinks the thrower back (stays armed until it hits)
@@ -12735,7 +12822,7 @@ function botWantsSkill(p, target, d, tSec){
   const hpFrac=p.hp/maxHpFor(p), hurt=hpFrac<0.55;
   switch(p.weapon){
     case 'pistol': case 'rifle': return d<600;                        // damage buffs: in a gunfight
-    case 'smg': return d<230;
+    case 'smg': return d>150 && d<520 && Math.abs(target.y-p.y)<200;        // the smoke grenade: thrown at the enemy from a medium distance
     case 'bow': return d<280 || (hurt && d<420);
     case 'sword': return d<900 && Math.abs(target.y-p.y)<110 && !p.swordCharge;   // a 3 second charge: worth it from a long way off (same level), and never while already charging
     case 'lightsaber': return d<115;                                  // the thrust only reaches up close
@@ -12743,7 +12830,7 @@ function botWantsSkill(p, target, d, tSec){
     case 'horemheb': return d>=170 && d<=640 && Math.abs(target.y-p.y)<150;       // the throw: from a distance, on about the same level
     case 'puppeteer': return sewActive(p,tSec) ? (tSec-(p.sewAt||0)>1.2 || hurt) : (d<700 && Math.abs(target.y-p.y)<220);       // the needle from a distance; pulled out after a short while
     case 'bat': return botIncomingShot(p, 230);
-    case 'boomerang': return d>380 || hurt;
+    case 'boomerang': return d<GUST_R-20 || (!!p.boomerangOut && d<420);       // the whirlwind: when an enemy is close, or to call the boomerang back
     case 'shuriken': return (hurt && d<400) || (d>260 && d<460);
     case 'shotgun': return d<140;
     case 'gloves': return d<105;
@@ -12756,7 +12843,7 @@ function botWantsSkill(p, target, d, tSec){
     case 'gambler': return d<420 || hpFrac<0.7;
     case 'wizard': return d<WIZ_SHOCK_R-10;                            // the shockwave: only when the enemy is close
     case 'magiccard': return d<560 && Math.abs(target.y-p.y)<110;         // the line of cards: straight at the enemy
-    case 'flamethrower': return d<135;
+    case 'flamethrower': return d>110 && d<460 && Math.abs(target.y-p.y)<200;      // the molotov: thrown at the enemy
     case 'portalgun': { if(p.portalPair){ const pr=p.portalPair; return enemiesOf(p).some(o=>Math.hypot(o.x-pr.a.x,o.y-pr.a.y)<PORTAL_BLAST_R-30 || Math.hypot(o.x-pr.b.x,o.y-pr.b.y)<PORTAL_BLAST_R-30); } const old=p.hist && p.hist.find(h=>tSec-h.t<=2.2 && tSec-h.t>=1.6); return !!old && old.hp-p.hp>=60; }
     case 'vacuum': return d>110 && d<260;
     case 'kan': return d>140 && d<560 && Math.abs(target.y-p.y)<160;                // the toad: thrown toward an enemy at a medium distance
@@ -13652,7 +13739,7 @@ function hostTickCore(dt,t){
   conquestTick(dt);
   if(brz){ try{ brzTick(dt,t); }catch(e){ recordDiagError('brzTick', e); } }
   if(xm){ try{ xmTick(dt,t); }catch(e){ recordDiagError('xmTick', e); } }
-  wizardZoneTick(dt,t); poisonZoneTick(dt,t);
+  wizardZoneTick(dt,t); poisonZoneTick(dt,t); fieldZoneTick(dt,t);
   if(darkPools.length || hasDarkPlayers()) darkPoolTick(dt,t);
   if(turrets.length) turretTick(dt,t);
   fxActor=null; mapHazardTick(dt,t);
@@ -13918,10 +14005,10 @@ function hostTickCore(dt,t){
       for(const id in players){
         const p=players[id];
         if(!p.alive || id===b.owner || isAlly(players[b.owner],p) || p.swordCharge || p.darkSub) continue;   // (a charging knight is untouchable: bullets fly through it)
-        if(b.pierce){ b.hitSet=b.hitSet||{}; if(b.hitSet[id]) continue; }
+        if(b.pierce || b.passPlayers){ b.hitSet=b.hitSet||{}; if(b.hitSet[id]) continue; }
         const cy=p.y-PLAYER_H/2;
         if(dist(nx,ny,p.x,cy) <= PLAYER_H/2+(b.hitR||BULLET_R)){
-          if(b.toad) continue;      // the toad flies over people, it only stops on the floor
+          if(b.toad || b.lob) continue;      // the toad / smoke grenade / molotov fly over people, they only stop on the floor
           if(gameMode==='hideseek'){
             handleHideseekShot(p, players[b.owner], t);
             hit=true; break;
@@ -13968,11 +14055,13 @@ function hostTickCore(dt,t){
               }
             }
           }
-          if(b.pierce){ b.hitSet[id]=true; b.nHit=(b.nHit||0)+1; if(b.pierceHits && b.nHit>b.pierceHits){ hit=true; hitWho=p; break; } } else { hit=true; hitWho=p; break; }
+          if(b.pierce || b.passPlayers){ b.hitSet[id]=true; b.nHit=(b.nHit||0)+1; if(b.pierceHits && b.nHit>b.pierceHits){ hit=true; hitWho=p; break; } } else { hit=true; hitWho=p; break; }
         }
       }
     }
+    if(!hit && b.lob && b.life-dt<=0) hit=true;
     if(hit && b.toad) kanToadLand(b, nx, ny, hitPl, t);
+    if(hit && b.lob) lobLand(b, nx, ny, hitPl, t);
     if(hit && b.wid==='kurus') darkPotionLand(b, nx, ny, hitPl, hitWho, hitPlatform, t);
     if(hit && b.splash){ explodeAt(nx, ny, b, t); pushFx('explosion', nx, ny, t, {}); }
     else if(hit && hitPlatform && !b.dmgless){ pushFx('spark', nx, ny, t, {color:b.color, ang:Math.atan2(b.vy,b.vx)}); }
@@ -14012,9 +14101,10 @@ function hostTickCore(dt,t){
       survival: (gameMode==='survival') ? {zombies:survivalZombies.map(z=>({x:Math.round(z.x*10)/10,y:Math.round(z.y*10)/10,f:z.face,g:z.grounded?1:0,w:(t/1000<z.awakeAt)?1:0,s:Math.round(Math.abs(z.vx||0))})), hazards:survivalHazards.map(hz=>Object.assign({}, hz, hz.warnUntil!==undefined ? {warnRemain: hz.warnUntil - t/1000, warnUntil:undefined} : {}, hz.until!==undefined ? {untilRemain: hz.until - t/1000, until:undefined} : {}, hz.goAt!==undefined ? {goRemain: hz.goAt - t/1000, goAt:undefined} : {}))} : undefined,
       gd: (gameMode==='gold' && gdm) ? {n:gdm.pile.n, ps:gdm.pts, cl:gdm.carts.map(c=>c.lumps), dr:gdm.drops.map(d=>[Math.round(d.x),Math.round(d.y),d.n]), rm:Math.max(0,Math.round((gdm.endsAt-Date.now())/1000)), rf:Math.max(0,Math.ceil((gdm.refillAt||0)-t/1000))} : undefined,
       ctf: (gameMode==='ctf' && ctf) ? {f:ctf.flags.map(f=>({s:(f.state==='home'?0:(f.state==='carried'?1:2)), x:Math.round(f.x), y:Math.round(f.y), c:f.carrierId||null, r:(f.state==='dropped'?Math.round(Math.max(0,f.returnAt-t/1000)*10)/10:0)})), sc:ctf.scores, rm:Math.max(0,Math.round((ctf.endsAt-Date.now())/1000)), ot:!!ctf.overtime, tg:ctf.target} : undefined,
-      bullets:bullets.map(b=>({x:b.x,y:b.y,color:b.color,wid:b.wid,vx:b.vx,vy:b.vy,dmgless:b.dmgless,swingAngle:b.swingAngle,splash:b.splash,life:b.life,life0:b.life0,sx:b.spawnX,sy:b.spawnY,ult:b.ult,fire:b.fire,reach:b.reach})),
+      bullets:bullets.map(b=>({lob:b.lob,x:b.x,y:b.y,color:b.color,wid:b.wid,vx:b.vx,vy:b.vy,dmgless:b.dmgless,swingAngle:b.swingAngle,splash:b.splash,life:b.life,life0:b.life0,sx:b.spawnX,sy:b.spawnY,ult:b.ult,fire:b.fire,reach:b.reach})),
       walls:walls.map(w=>({x:w.x,y:w.y,w:w.w,h:w.h,owner:w.owner,rem:w.until-t/1000})),
       magicCircles:magicCircles.map(z=>({x:z.x,y:z.y,r:z.r,owner:z.owner,team:z.team,rem:z.until-t/1000})),
+      fieldZones:fieldZones.map(z=>({kind:z.kind,x:Math.round(z.x),y:Math.round(z.y),r:z.r,owner:z.owner,rem:z.until-t/1000})),
       poisonZones:poisonZones.map(z=>({x:z.x,y:z.y,r:z.r,owner:z.owner,team:z.team,rem:z.until-t/1000,rv:(z.revealAt!==undefined)?1:0})),
       hz:hzDraw,
       turrets:turrets.map(z=>({x:Math.round(z.x),y:Math.round(z.y),a:Math.round(z.ang*100)/100,owner:z.owner,team:z.team,rem:z.until-t/1000})),
@@ -16021,6 +16111,19 @@ function spawnFx(e){
       addP({x:x,y:y,life:.4,color:'#a855f7',shape:'ring',r0:6,r1:50,lw:5});
       burst(x,y,16,{a0:0,a1:6.28,s0:40,s1:180,l0:.3,l1:.6,z0:2,z1:5,colors:['#a855f7','#e9d5ff'],grav:-10,drag:1.6});
       break;
+    case 'smokeland':
+      burst(x,y,40,{a0:0,a1:6.28,s0:60,s1:260,l0:.6,l1:1.2,z0:20,z1:44,colors:['#c4cad4','#9aa2ae','#7d8591'],grav:-30,drag:1.6,shape:'smoke',add:false});
+      break;
+    case 'fireland':
+      addP({x:x,y:y+20,life:.5,color:'#ff9b2e',shape:'ring',r0:10,r1:FIRE_R,lw:8});
+      burst(x,y,30,{a0:-3.3,a1:0.2,s0:80,s1:420,l0:.4,l1:.9,z0:6,z1:16,colors:['#ff5a1f','#ff9b2e','#ffd34d'],grav:260,drag:1.3,shape:'fire'});
+      break;
+    case 'gust': {
+      const r=e.r||GUST_R;
+      addP({x:x,y:y,life:.5,color:'#9be8ff',shape:'ring',r0:20,r1:r,lw:7});
+      addP({x:x,y:y,life:.7,color:'#d6f6ff',shape:'ring',r0:10,r1:r*0.7,lw:4});
+      for(let i=0;i<14;i++){ const a=i*0.9, rr=r*(0.35+(i%5)*0.12); burst(x+Math.cos(a)*rr,y+Math.sin(a)*rr*0.5,2,{a0:a+1.4,a1:a+1.9,s0:260,s1:520,l0:.25,l1:.5,z0:2,z1:4,colors:['#d6f6ff','#9be8ff'],drag:2,shape:'streak'}); }
+      break; }
     case 'portalsmoke':
       burst(x,y,26,{a0:-3.0,a1:-0.1,s0:40,s1:160,l0:.5,l1:.9,z0:14,z1:30,colors:['#6d3fbf','#a78bfa','#3b2470'],grav:-60,drag:1.4,shape:'smoke',add:false});
       break;
@@ -16574,6 +16677,12 @@ function drawProjectile(b){
   ctx.translate(b.x, b.y);
   ctx.rotate(ang);
   if(rs!==1) ctx.scale(rs, rs);
+  if(b.lob){      // thrown smoke grenade / molotov: a spinning can or bottle
+    ctx.rotate(performance.now()*0.012-ang);
+    if(b.lob==='smoke'){ ctx.fillStyle='#8a929e'; ctx.fillRect(-6,-8,12,16); ctx.fillStyle='#d9dee6'; ctx.fillRect(-6,-3,12,5); ctx.fillStyle='#4a505a'; ctx.fillRect(-3,-11,6,4); }
+    else { ctx.fillStyle='#7a4a1c'; ctx.beginPath(); ctx.roundRect(-5,-6,10,14,3); ctx.fill(); ctx.fillRect(-2,-11,4,6); const fl=3+Math.random()*3; ctx.fillStyle='#ffb02e'; ctx.beginPath(); ctx.arc(0,-13,fl,0,7); ctx.fill(); }
+    ctx.restore(); return;
+  }
   ctx.fillStyle=b.color; ctx.strokeStyle=b.color;
   switch(shape){
     case 'blowgun':
@@ -17220,6 +17329,7 @@ function render(fxDt){
     // block every OTHER player from being drawn, not just the HUD code after
     for(const id in players){ const p=players[id]; if(p.x===undefined) continue; if(id!==myId && !inView(p.x,p.y,320)) continue; if(gameMode==='tournament' && (!p.alive || !(tnVisSet && tnVisSet.has(id)))) continue; safeDraw(()=>{ if(p.isBoss){ ctx.save(); ctx.translate(p.x,p.y); ctx.scale(RAID_BOSS_SCALE,RAID_BOSS_SCALE); ctx.translate(-p.x,-p.y); drawBoss(p); ctx.restore(); } else drawStickman(p); }); }   // (a figure far off the screen is not drawn: its show reaches 90 px, its weapon 250)
   }
+  if(!kcScene) safeDraw(drawFieldZones);
   if(xmV && !kcScene) safeDraw(drawXmOver);
   if(gameMode==='tournament' && !kcScene) safeDraw(drawTnOver);
   if(!kcScene) safeDraw(drawAbilityPreview);     // the mint aim of a held ability key
@@ -17229,6 +17339,7 @@ function render(fxDt){
   ctx.restore();
   if(hzDraw && hzDraw.dark>0 && !kcScene) safeDraw(()=>drawMineDark(getCamera()));
   if(!kcScene) safeDraw(()=>drawBlind(getCamera(), dtN));
+  if(!kcScene) safeDraw(()=>drawSmokeVeil(getCamera(), dtN));
   safeDraw(drawSamScreen);
   if(gameMode==='hideseek' && hideseekPhase==='hide' && players[myId] && players[myId].isSeeker){
     const remain=Math.max(0, (hideseekPhaseEndsAt-Date.now())/1000);
