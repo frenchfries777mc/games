@@ -3,7 +3,7 @@
 
 import { T } from './tr.js';
 
-export const VERSION = 'v0.1', BUILD = 19;
+export const VERSION = 'v0.1', BUILD = 20;
 
 export const ROLES = {
   knight: {
@@ -54,8 +54,8 @@ export const ROLES = {
     name: T('맘루크'), color: '#d0443a', hp: 410, speed: 7.2,
     atk: { kind: 'melee', range: 2.2, arc: 1.8, dmg: 12, cd: 0.3 },
     skills: [
-      { id: 'flurry', name: T('연속 찌르기'), key: 'Q', cd: 4, desc: T('앞으로 파고들며 다섯 번 빠르게 찔러 9씩 피해를 줘요.') },
-      { id: 'whirl', name: T('회전 베기'), key: 'E', cd: 8, desc: T('제자리에서 크게 한 바퀴 돌며 둘레 모두를 베어 34 피해를 줘요.') },
+      { id: 'flurry', name: T('연속 베기'), key: 'Q', cd: 4, desc: T('앞으로 파고들며 다섯 번 번갈아 베어 9씩 피해를 줘요.') },
+      { id: 'whirl', name: T('회전 베기'), key: 'E', cd: 8, desc: T('제자리에서 두 바퀴 돌며 둘레 모두를 세 번 베어 12씩 피해를 줘요.') },
       { id: 'blink', name: T('순간 베기'), key: 'R', cd: 10, desc: T('가장 가까운 상대 뒤로 순간이동해 베어 34 피해를 줘요.') }
     ],
     st: [2, 5, 2, 3], atkTxt: T('굽은 칼 연속 베기'),
