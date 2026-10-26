@@ -5109,7 +5109,7 @@ function shuffle(arr){ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.
 /* ===== the version of this file =====
    Players with different versions CAN meet and play together: the automatic matchmaking uses the same room names for every version (online-<mode>-<map>-<slot>), and nobody is refused because of a different build.
    The build is only sent along with the join message and the lobby (for information); the corner of the screen shows it. */
-const GAME_BUILD='build 2026-10-18-v407';
+const GAME_BUILD='build 2026-10-18-v408';
 const GAME_VERSION='0.8', GAME_VERSION_NAME='황금을 찾아서';   // 게임 버전 이름: versions.json의 title과 같게 (빌드마다 바꾸지 않음)
 const WEEKLY_EVENTS=[
   {id:'lowg',    name:'저중력 난투', desc:'몸이 둥실둥실, 중력이 약해진 난투', rules:{grav:0.6}},
@@ -15962,7 +15962,7 @@ function shakeFrom(x,y,amp,range){
   screenShake=Math.max(screenShake, amp*k);
 }
 const DMG_TYPE_COLORS={fire:'#ff3b30', poison:'#0e7a30', electric:'#ffe018'};        // the colour of a damage number by its kind: fire red, poison dark green, electric yellow (the other kinds stay white)
-const DMG_TYPE_OF_WEAPON={kan:'poison', bow:'fire', flamethrower:'fire', bazooka:'fire', grenade:'fire', lightsaber:'electric', smg:'electric'};      // (no poison character yet)
+const DMG_TYPE_OF_WEAPON={kan:'poison', flamethrower:'fire', bazooka:'fire', grenade:'fire', lightsaber:'electric', smg:'electric'};      // (no poison character yet)
 function dmgTypeOf(wid){ return DMG_TYPE_OF_WEAPON[wid]||undefined; }
 function dmgText(x,y,v,col,el){
   if(otherSettings.damageNumbers===false) return; // convenience setting - some players prefer a cleaner screen without floating numbers
@@ -15984,7 +15984,7 @@ const ULT_THEMES={
   gambler:{c:['#35e86a','#ffd23f','#ff3d4d'],k:'card',f:'200,255,200'}, wizard:{c:['#9a5cff','#35a8ff','#ff6fd8'],k:'wave',f:'205,185,255'},
   sword:{c:['#ffd23f','#ffffff','#ff9a3d'],k:'wave',f:'255,240,190'}, horemheb:{c:['#ffc24d','#e08a2b','#fff0b0'],k:'wave',f:'255,230,170'},
   lightsaber:{c:['#35a8ff','#9fe8ff','#b45cff'],k:'bolt',f:'180,220,255'}, bazooka:{c:['#ff3d3d','#ff8a2b','#ffd23f'],k:'fire',f:'255,180,130'},
-  bow:{c:['#ff8a2b','#ffd23f','#ff3d3d'],k:'fire',f:'255,210,150'}, boomerang:{c:['#b6ff3d','#ffd23f','#35e0a0'],k:'',f:'225,255,170'},
+  bow:{c:['#ff8a2b','#ffd23f','#ff3d3d'],k:'',f:'255,210,150'}, boomerang:{c:['#b6ff3d','#ffd23f','#35e0a0'],k:'',f:'225,255,170'},
   shotgun:{c:['#ff8a2b','#ff3d3d','#ffe08a'],k:'fire',f:'255,200,150'}, gloves:{c:['#ff3d3d','#ffd23f','#ffffff'],k:'wave',f:'255,190,170'},
   grenade:{c:['#7dff4a','#ff8a2b','#ffd23f'],k:'fire',f:'210,255,170'}, flamethrower:{c:['#ff6a1f','#ffd23f','#ff2b2b'],k:'fire',f:'255,190,120'},
   portalgun:{c:['#b45cff','#35e0ff','#ff9a3d'],k:'wave',f:'215,190,255'}, pirate:{c:['#ffd23f','#35c8ff','#ff5a3d'],k:'fire',f:'255,235,170'},
