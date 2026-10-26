@@ -3,7 +3,7 @@
 
 import { T } from './tr.js';
 
-export const VERSION = 'v0.1', BUILD = 20;
+export const VERSION = 'v0.1', BUILD = 21;
 
 export const ROLES = {
   knight: {
