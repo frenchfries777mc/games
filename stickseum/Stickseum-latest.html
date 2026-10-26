@@ -1351,8 +1351,8 @@ const WEAPONS = {
             desc:'데미지 12 · 쿨타임 0.4초 · 사거리 65 · 빠른 발톱 공격, 적중할 때마다 체력 5 흡수'},
   gambler: {id:'gambler', name:'도박사',   emoji:'🎲', kind:'gun', dmg:16, cd:1.0, bulletSpeed:1100, shape:'chip',
             desc:'데미지 16 · 쿨타임 1.0초 · 장거리 · 칩을 곧게 던짐, 맞힐 때마다 칩 +1 (최대 6) · 칩이 많을수록 스킬·궁극기가 강해짐'},
-  wizard:  {id:'wizard',  name:'마법사',   emoji:'🧙', kind:'gun',      dmg:16, cd:0.6,  bulletSpeed:750, shape:'fireball', pierce:true, pierceHits:1,
-            desc:'데미지 16 · 쿨타임 0.6초 · 발판을 통과하고, 플레이어 한 명을 관통한 뒤 두 번째로 맞힌 상대에게서 멈추는 화염 마법'},
+  wizard:  {id:'wizard',  name:'마법사',   emoji:'🧙', kind:'gun',      dmg:16, cd:0.6,  bulletSpeed:750, shape:'fireball', pierce:true, pierceHits:1, life:0.95,
+            desc:'데미지 16 · 쿨타임 0.6초 · 사거리 짧음 · 발판을 통과하고, 플레이어 한 명을 관통한 뒤 두 번째로 맞힌 상대에게서 멈추는 화염 마법'},
   magiccard:{id:'magiccard',name:'마술 카드',emoji:'🃏', kind:'cards',    dmg:10,  cd:0.9,  bulletSpeed:820, shape:'card', hitR:26, comboBonus:5, freeVolleys:3,
             desc:'트럼프 카드 3장이 넓게 퍼져 날아감 · 장당 데미지 10 · 쿨타임 0.9초 · 맞은 상대는 이동속도가 조금 느려짐 · 3장이 모두 맞으면 추가 5 데미지 + 0.5초 기절'},
   flamethrower:{id:'flamethrower',name:'화염방사기',emoji:'🔥', kind:'flame', dmg:0, cd:0, range:FLAME_RANGE, shape:'flamethrower',
@@ -5087,7 +5087,7 @@ function shuffle(arr){ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.
 /* ===== the version of this file =====
    Players with different versions CAN meet and play together: the automatic matchmaking uses the same room names for every version (online-<mode>-<map>-<slot>), and nobody is refused because of a different build.
    The build is only sent along with the join message and the lobby (for information); the corner of the screen shows it. */
-const GAME_BUILD='build 2026-10-18-v400';
+const GAME_BUILD='build 2026-10-18-v401';
 const GAME_VERSION='0.8', GAME_VERSION_NAME='황금을 찾아서';   // 게임 버전 이름: versions.json의 title과 같게 (빌드마다 바꾸지 않음)
 const WEEKLY_EVENTS=[
   {id:'lowg',    name:'저중력 난투', desc:'몸이 둥실둥실, 중력이 약해진 난투', rules:{grav:0.6}},
@@ -11700,8 +11700,8 @@ const SKILL_IMPL={
   dracula(p,tSec,tMs){ p.restUntilD=tSec+DRAC_REST_SEC; p.restNextD=tSec+DRAC_REST_STEP; p.vx=0; p.kbX=0; pushFx('skillring', p.x, p.y-30, tMs, {color:'#b01030', r:52}); return true; },
   gambler(p,tSec,tMs){
     const ch=p.chips||0, t=nearestEnemyOf(p); const heads=Math.random()<(0.5+0.07*ch) || !t || Math.hypot(t.x-p.x,t.y-p.y)>420;
-    if(heads){ const hv=25+3*ch; p.hp=Math.min(maxHpFor(p), p.hp+hv); pushFx('heal', p.x, p.y-70, tMs, {v:hv}); }
-    else skillDamage(p, t, 18+4*ch, tMs, {kb:160});
+    if(heads){ const hv=25+3*ch; p.hp=Math.min(maxHpFor(p), p.hp+hv); pushFx('coinflip', p.x, p.y-80, tMs, {heads:true}); pushFx('heal', p.x, p.y-70, tMs, {v:hv}); }
+    else { pushFx('coinflip', p.x, p.y-80, tMs, {heads:false, tx:t.x, ty:t.y-PLAYER_H/2}); skillDamage(p, t, 18+4*ch, tMs, {kb:160}); }
     return true; },
   wizard(p,tSec,tMs){   // a shockwave around the wizard: 10 damage and a very big push
     skillPulse(p,tMs,{r:WIZ_SHOCK_R, dmg:WIZ_SHOCK_DMG, kb:WIZ_SHOCK_KB, up:WIZ_SHOCK_UP});
@@ -16276,6 +16276,14 @@ function spawnFx(e){
       break; }
     case 'skillring': {
       addP({x:x,y:y,life:.4,color:col,shape:'ring',r0:10,r1:(e.r||120),lw:5});
+      break; }
+    case 'coinflip': {      // 도박사 skill: the result must be readable at a glance (heads = green/gold and a big 앞면, tails = red and a big 뒷면 with a strike on the target)
+      const hd=!!e.heads, cc=hd?'#7dffa3':'#ff5a6a';
+      addP({x:x,y:y,life:.6,color:cc,shape:'ring',r0:12,r1:70,lw:6});
+      addP({x:x,y:y,life:.9,color:'#ffe27a',shape:'ring',r0:6,r1:44,lw:3});
+      addP({x:x,y:y-28,vx:0,vy:-50,drag:1.2,life:1.3,size:34,color:cc,outline:hd?'#1c7a3a':'#7a1c26',shape:'text',add:false,text:hd?'🪙 앞면!':'🪙 뒷면!'});
+      burst(x,y,16,{a0:-3.14,a1:0,s0:80,s1:260,l0:.5,l1:.9,z0:2,z1:4,colors:hd?['#7dffa3','#ffe27a','#ffffff']:['#ff5a6a','#ffe27a','#ffffff'],grav:200,drag:1.2});
+      if(!hd && e.tx!==undefined){ const ang=Math.atan2(e.ty-y,e.tx-x); burst(e.tx,e.ty,18,{a0:ang-0.7,a1:ang+0.7,s0:120,s1:380,l0:.3,l1:.6,z0:2,z1:4,colors:['#ff5a6a','#ffffff'],drag:1.5}); addP({x:e.tx,y:e.ty,life:.45,color:'#ff5a6a',shape:'ring',r0:8,r1:60,lw:5}); }
       break; }
     case 'heal': {
       burst(x,y+10,14,{a0:-2.3,a1:-0.85,s0:50,s1:200,l0:.6,l1:1.0,z0:2,z1:4,colors:['#5fff8a','#ffffff'],grav:-60,drag:1.4});
