@@ -127,3 +127,6 @@ Stickseum-v0.8.html | match-end mastery points line | 마스터리 포인트 +N 
 patchnotes.json | v415 title | 경기 후 마스터리 포인트 표시 | build 415 | 2026-10-26
 patchnotes.json | v415 items[0] | 경기가 끝나면 얻은 마스터리 포인트와 현재 계급, 다음 계급까지 남은 점수 표시 | build 415 | 2026-10-26
 patchnotes.json | v415 items[1] | 계급 중간 단계 점수를 10 단위로 정리 | build 415 | 2026-10-26
+Stickseum-v0.8.html | match-end mastery rank block | 마스터리 포인트 +N · 계급 이름 · N점 · 다음 계급까지 N점 · 최고 계급 | build 416 | 2026-10-26
+patchnotes.json | v416 title | 마스터리 계급 엠블럼과 진행 막대 | build 416 | 2026-10-26
+patchnotes.json | v416 items[0] | 경기 결과창에 현재 마스터리 계급 엠블럼과 다음 계급까지의 진행 막대 표시 | build 416 | 2026-10-26
