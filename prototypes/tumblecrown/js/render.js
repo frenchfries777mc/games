@@ -1340,7 +1340,7 @@ function setPull(B, pull, n = 1) {
 const ease = u => u < 0 ? 0 : u > 1 ? 1 : u * u * (3 - 2 * u);
 const seg = (u, a, b) => ease((u - a) / (b - a));
 // 역할마다 공격·기술 동작. 몸 전체(허리 비틀기, 내딛기, 뛰어오르기)가 같이 움직여요
-const ANIM_T = { atk: 0.32, hv: 0.95, big: 0.6, skill: 0.8 };
+const ANIM_T = { atk: 0.32, hv: 0.95, big: 0.6, skill: 0.8 }, SK_T = { whirl: 1.0, storm: 1.5, flurry: 0.7, leap: 0.9, shadow: 0.6, scatter: 0.7 };
 // 기사 베기 좌우 방향 (1이면 화면 오른쪽에서 시작)
 const KS = 1, KR = 1, KH_T = 0.5;
 // 기사 베기 자세. 1타: 오른쪽 위에서 감았다가 왼쪽 아래로 / 2타: 1타가 끝난 왼쪽 아래에서 조금 더 감았다가 오른쪽 아래로 낮게
@@ -1413,7 +1413,7 @@ function animHero(E, p, dt, t) {
   // 동작 시작: 동작 번호가 바뀌면 처음부터
   // 앞 동작이 아직 남아 있으면 그 자세에서 이어서 시작해요 (blT 동안 천천히 따라가요)
   if (p.aN !== E.aN) { E.aN = p.aN; if (E.aN != null && p.ak) { if (E.ak || E.kh) E.blT = 0.1; E.ak = p.ak; E.aT = 0; E.kc = (p.ac | 0) % 2; E.kh = null; } }
-  const kind = E.ak ? (E.ak === 'atk' || E.ak === 'hv' || E.ak === 'big' ? E.ak : 'skill') : '', D = kind === 'big' && role === 'priest' ? 0.9 : ANIM_T[kind] || 0.5;
+  const kind = E.ak ? (E.ak === 'atk' || E.ak === 'hv' || E.ak === 'big' ? E.ak : 'skill') : '', D = kind === 'big' && role === 'priest' ? 0.9 : kind === 'skill' && SK_T[E.ak] ? SK_T[E.ak] : ANIM_T[kind] || 0.5;
   // 기사 베기가 끝나면 끝 자세를 잠깐 들고 있다가 (연타가 이어질 수 있는 동안) 천천히 돌아와요
   if (E.ak) { E.aT += dt; if (E.aT > D) { if ((role === 'knight' || CHAIN[role]) && E.ak === 'atk') E.kh = { c: E.kc, t: 0 }; E.ak = null; } }
   if (E.kh && (E.kh.t += dt) > KH_T) E.kh = null;
@@ -1490,8 +1490,21 @@ function animHero(E, p, dt, t) {
           const th = seg(v, 0.18, 0.36); T.rx = -3.3 * (1 - th) * hold - 0.6 * th * hold + base[0] * (1 - hold); T.rz = 0.6 * (1 - th) * hold; T.bx = (-0.55 * (1 - th) + 0.8 * th) * hold; T.bry = (0.8 - 1.6 * th) * hold; T.bz = 0.6 * th * hold; T.lx = -1.2 * th * hold; T.lg = 1.0 * pk; T.sq = -0.15 * (1 - th) * pre; break; }
         case 'trap': // 바닥에 납작 엎드려 덫을 쾅 박아요
           T.by = -0.8 * pk - 0.2 * cr; T.bx = 0.95 * pk; T.rx = -0.3 * pk + base[0] * (1 - pk); T.lx = -0.3 * pk; T.sq = 0.25 * pk + land(0.34, 0.35); T.jy = hop(0.0, 0.2, 0.4); T.lg = 1.0 * pk; break;
-        case 'whirl': // 웅크렸다가 뛰어오르며 제자리에서 한 바퀴 빙글 돌려 베어요
-          T.spin = -Math.PI * 2 * go; T.rx = -1.5 * hold + base[0] * (1 - hold); T.rz = (1.2 * cr - 1.6 * go) * hold; T.bx = 0.45 * cr - 0.2 * go * hold; T.jy = hop(0.16, 0.6, 1.4); T.sq = 0.5 * cr + land(0.6, 0.5); T.lg = 0.7 * pk; break;
+        case 'whirl': case 'storm': { // 웅크렸다가 팔을 활짝 펴고 제자리에서 팽이처럼 계속 돌아요 (회전 베기 두 바퀴, 뼈 폭풍 다섯 바퀴)
+          const sp = seg(v, 0.12, 0.85), ms = seg(v, 0.08, 0.2) * (1 - seg(v, 0.86, 1)), c0 = seg(v, 0, 0.1) * (1 - seg(v, 0.08, 0.2));
+          T.spin = -Math.PI * 2 * (a === 'storm' ? 5 : 2) * sp; T.rx = -1.55 * ms + base[0] * (1 - ms); T.rz = 1.2 * ms; T.lx = -1.4 * ms + base[1] * (1 - ms); T.lz = -1.2 * ms; T.bx = 0.3 * ms + 0.4 * c0; T.jy = hop(0.12, 0.88, a === 'storm' ? 0.7 : 0.5); T.sq = 0.4 * c0 + land(0.88, 0.4); T.lg = 0.8 * ms; break; }
+        case 'flurry': { // 몸을 숙여 파고들며 두 칼을 번갈아 다섯 번 내질러요
+          const ph = Math.max(0, (v - 0.08) / 0.8) * 5, k = Math.min(4, Math.floor(ph)), q = ph - Math.floor(ph), st = v > 0.08 && v < 0.88 ? Math.sin(Math.min(1, q) * Math.PI) : 0, sd = k % 2 ? 1 : -1, ms = seg(v, 0.04, 0.14) * (1 - seg(v, 0.88, 1));
+          T.rx = -1.5 - (sd < 0 ? 0.35 * st : 0) + 0.4 * (sd > 0 ? st : 0); T.lx = -1.5 - (sd > 0 ? 0.35 * st : 0) + 0.4 * (sd < 0 ? st : 0); T.rz = sd < 0 ? -0.5 * st : 0.3 * ms; T.lz = sd > 0 ? 0.5 * st : -0.3 * ms; T.bry = sd * 0.55 * st; T.bx = 0.35 * ms + 0.25 * st; T.bz = 0.4 * st; T.jy = 0.15 * st; T.lg = 0.7 * ms; break; }
+        case 'leap': { // 한껏 웅크렸다가 높이 솟구쳐 올라, 두 팔을 하늘로 치켜들었다가 내려꽂혀요
+          const up = seg(v, 0.12, 0.45), dn = seg(v, 0.55, 0.66), c0 = seg(v, 0, 0.14) * (1 - up);
+          T.jy = hop(0.12, 0.62, 3.4); T.rx = -3.0 * up * (1 - dn) + 2.0 * dn * (1 - seg(v, 0.8, 1)); T.lx = -3.0 * up * (1 - dn) + 2.0 * dn * (1 - seg(v, 0.8, 1)); T.bx = 0.5 * c0 - 0.4 * up * (1 - dn) + 1.2 * dn * (1 - seg(v, 0.8, 1)); T.sq = 0.5 * c0 + land(0.62, 0.8); T.lg = 0.9 * up * (1 - dn); break; }
+        case 'shadow': { // 휙 몸을 낮추고 두 칼을 가로로 크게 그으며 비틀어 베요
+          const sl = seg(v, 0.1, 0.36), ms = seg(v, 0, 0.1) * (1 - seg(v, 0.7, 1)) + sl * (1 - seg(v, 0.7, 1));
+          T.rx = -1.6 * ms; T.lx = -1.6 * ms; T.rz = (1.7 - 3.6 * sl) * ms; T.lz = (-1.7 + 3.6 * sl) * ms; T.bry = (1.0 - 2.2 * sl) * ms; T.bx = 0.5 * ms; T.sq = 0.3 * ms; T.lg = 0.8 * ms; T.jy = hop(0, 0.4, 0.25); break; }
+        case 'scatter': { // 팔다리를 활짝 펴고 뼈가 흩어지듯 뒤로 튀어 올라요
+          const pk2 = seg(v, 0.05, 0.25) * (1 - seg(v, 0.7, 1));
+          T.rz = 1.5 * pk2; T.lz = -1.5 * pk2; T.rx = -0.4 * pk2; T.lx = -0.4 * pk2; T.bx = -0.55 * pk2; T.jy = hop(0, 0.7, 1.3); T.lg = 1.0 * pk2; T.hx = -0.5 * pk2; T.sq = -0.2 * pk2; T.spin = 0.4 * Math.sin(v * 12) * pk2; break; }
         case 'rally': // 높이 뛰어올라 칼을 하늘로 치켜들고 외쳐요
           T.rx = -3.15 * pk + base[0] * (1 - pk); T.lx = -2.6 * pk; T.lz = -0.8 * pk; T.hx = -0.7 * pk; T.bx = 0.4 * cr - 0.3 * pk; T.jy = hop(0.2, 0.6, 1.5); T.sq = 0.45 * cr - 0.25 * go * (1 - seg(v, 0.45, 0.55)) + land(0.6, 0.45); T.lg = -0.6 * pk + 0.8 * seg(v, 0.6, 0.7) * hold; break;
         default: T.rx = -2.8 * hold;
