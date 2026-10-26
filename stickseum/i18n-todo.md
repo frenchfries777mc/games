@@ -151,3 +151,5 @@ patchnotes.json | v424 items[0] | 조건이 없는 항목은 클랜원 화면에
 patchnotes.json | v425 title | 랜덤 조합 정리 | build 425 | 2026-10-26
 patchnotes.json | v425 items[0] | 랜덤 조합 시작 때 뽑힌 조합 안내 | build 425 | 2026-10-26
 patchnotes.json | v425 items[1] | 랜덤 조합은 어느 캐릭터의 마스터리에도 포함되지 않음 | build 425 | 2026-10-26
+patchnotes.json | v426 title | 인형술사 반사 복구 | build 426 | 2026-10-26
+patchnotes.json | v426 items[0] | 인형술사 바느질 실이 이어진 동안 받는 피해의 50%를 상대에게 반사(실 하나당 최대 30) | build 426 | 2026-10-26

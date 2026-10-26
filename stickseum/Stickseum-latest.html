@@ -3453,6 +3453,10 @@ function renderShop(){
 }
 function markHit(target, attackerId, t, dmg){
   dmg=skillMitigate(target, dmg, t);   // armour / barrier skills give part of the damage back (hp is restored right here, before anyone checks for death)
+  if(dmg>0 && attackerId && attackerId!==target.id && !markHit._rf && sewActive(target, t/1000)){      // 바느질: while his thread holds, half of what the puppeteer takes goes to the one on the thread (at most SEW_REFLECT_MAX in all per thread)
+    const v=players[target.sewTo], room=SEW_REFLECT_MAX-(target.sewRef||0), r=Math.min(dmg*0.5, room);
+    if(v && v.alive && r>0){ target.sewRef=(target.sewRef||0)+r; markHit._rf=true; try{ v.hp-=r; markHit(v, target.id, t, r); pushFx('hit', v.x, v.y-PLAYER_H/2, t, {color:'#ff9ecb', v:Math.round(r)}); if(v.hp<=0 && v.alive) handleDeath(v, target, t, target.name); } finally { markHit._rf=false; } }
+  }
   if(practiceMode && dmg>0 && attackerId===myId && target.id!==myId) pracDpsHits.push({t:t, d:dmg});     // the practice DPS meter
   if(dmg>0 && gameMode==='raid' && !target.isBoss && !target.isMinion) target.raidTaken=(target.raidTaken||0)+dmg;
   if(dmg>0 && gameMode==='raid' && target.isBoss && attackerId && players[attackerId] && !players[attackerId].isMinion) players[attackerId].raidDmg=(players[attackerId].raidDmg||0)+dmg;
@@ -5174,7 +5178,7 @@ function shuffle(arr){ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.
 /* ===== the version of this file =====
    Players with different versions CAN meet and play together: the automatic matchmaking uses the same room names for every version (online-<mode>-<map>-<slot>), and nobody is refused because of a different build.
    The build is only sent along with the join message and the lobby (for information); the corner of the screen shows it. */
-const GAME_BUILD='build 2026-10-18-v425';
+const GAME_BUILD='build 2026-10-18-v426';
 const GAME_VERSION='0.8', GAME_VERSION_NAME='황금을 찾아서';   // 게임 버전 이름: versions.json의 title과 같게 (빌드마다 바꾸지 않음)
 const WEEKLY_EVENTS=[
   {id:'lowg',    name:'저중력 난투', desc:'몸이 둥실둥실, 중력이 약해진 난투', rules:{grav:0.6}},
@@ -11667,6 +11671,7 @@ function skillActiveBuff(p, tSec){
 const PUP_SEC=5, PUP_RANGE=700;
 const SEW_PULL_NAME='바늘 빼기';      // half of what the puppeteer takes, but at most 30 in all per thread
 const PUP_BLAST_SELF=60, PUP_BLAST_NEAR=30, PUP_BLAST_R=220;     // when the 5 seconds are over the puppet blows itself up: 60 to it, 30 to every enemy of the puppeteer around it
+const SEW_REFLECT_MAX=30;     // 바느질: half of the damage the puppeteer takes while the thread holds goes to the one on it, 30 at most per thread
 const SEW_MAX_SEC=1e9, SEW_SLOW_MULT=0.75, SEW_DMG=30;             // 바느질 (the needle with a thread) ties the one it hits until the pull (no time limit now): 25% slower until 바늘 빼기 (30 damage) cuts the thread
 let puppetOK=false;                    // true only while the tick itself runs a controlled player's dash / shot
 function startPuppet(m, v, tSec, tMs){      // the thread of the puppeteer m has hit v: v is his puppet for PUP_SEC seconds
@@ -14220,7 +14225,7 @@ function hostTickCore(dt,t){
             const pow=players[b.owner], tS2=t/1000;
             if(pow && pow.alive && !puppetVictim(pow,tS2)){
               if(pow.sewTo && players[pow.sewTo]) players[pow.sewTo].sewBy=null;
-              pow.sewTo=p.id; pow.sewUntil=tS2+SEW_MAX_SEC; pow.sewAt=tS2; pow.lastSkill=-9999; p.sewBy=pow.id; p.sewSlowed=true;      // the skill is ready at once (바늘 빼기)
+              pow.sewTo=p.id; pow.sewRef=0; pow.sewUntil=tS2+SEW_MAX_SEC; pow.sewAt=tS2; pow.lastSkill=-9999; p.sewBy=pow.id; p.sewSlowed=true;      // the skill is ready at once (바늘 빼기)
               pushFx('slow', p.x, p.y-70, t, {});
             }
             pushFx('hit', nx, ny, t, {color:'#ff9ecb', ang:Math.atan2(b.vy,b.vx), v:0, el:dmgTypeOf(b.wid)});
