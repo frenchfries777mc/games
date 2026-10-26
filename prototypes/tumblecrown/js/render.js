@@ -560,6 +560,17 @@ export class View {
     this.details(s, T);
     // 보스 방 바닥 문양
     { const ring = mesh(geo('bring', () => new THREE.TorusGeometry(6, 0.08, 4, 48)), M(T.ring, { e: T.ring, ei: 2 }), cw(MAP.boss[0]), 0.12, cw(MAP.boss[1]) + 3, s); ring.rotation.x = Math.PI / 2; ring.castShadow = false; }
+    // 투기장 꾸밈: 가장자리에 횃불 받침, 한가운데 왕관 문양 (불빛은 네 모서리만 켜요)
+    if (CH.pvp) {
+      const [ox, oy, aw, ah] = MAP.areas[0].r[0], X0 = cw(ox) + 2.4, X1 = cw(ox + aw - 1) - 2.4, Z0 = cw(oy) + 2.4, Z1 = cw(oy + ah - 1) - 2.4, brk = (x, z, lit) => { cyl(0.55, 0.4, 1.3, 8, M(0x4a4658, { m: 0.5 }), x, 0.65, z, s); cyl(0.7, 0.55, 0.3, 8, M(0x6a6276), x, 1.4, z, s); this.flame(s, x, 1.9, z, 0.9, lit); };
+      for (let k = 0; k <= 5; k++) { const x = X0 + (X1 - X0) * k / 5; brk(x, Z0, false); brk(x, Z1, false); }
+      for (let k = 1; k <= 4; k++) { const z = Z0 + (Z1 - Z0) * k / 5; brk(X0, z, false); brk(X1, z, false); }
+      for (const [x, z] of [[X0, Z0], [X1, Z0], [X0, Z1], [X1, Z1]]) { const L = new THREE.PointLight(0xff9a48, 60, 30, 1.5); L.position.set(x, 3, z); s.add(L); this.flick.push({ L, b: 60, ph: R() * 9 }); }
+      const cx = cw(ox + (aw >> 1)), cz = cw(oy + (ah >> 1)), gm = M(0xffd36b, { e: 0xffb020, ei: 1.2 });
+      for (const r of [7.5, 5.2]) { const rg = mesh(geo('emb' + r, () => new THREE.TorusGeometry(r, 0.12, 4, 56)), gm, cx, 0.13, cz, s); rg.rotation.x = Math.PI / 2; rg.castShadow = false; }
+      for (let k = 0; k < 8; k++) { const q = k / 8 * 6.283; const sp = box(0.3, 0.06, 2.4, gm, cx + Math.cos(q) * 6.35, 0.13, cz + Math.sin(q) * 6.35, s); sp.rotation.y = -q; sp.castShadow = false; }
+      const cg = this.crownMesh(s, cx, 0.5, cz, 1.3); cg.scale.y = 0.35; cg.position.y = 0.3;
+    }
     // 모닥불
     this.fires = MAP.fires.map(([fx, fy]) => {
       const x = cw(fx), z = cw(fy); for (let i = 0; i < 8; i++) { const a = i / 8 * 6.283; mesh(geo('dod', () => new THREE.DodecahedronGeometry(0.35)), M(0x5a5462), x + Math.cos(a) * 1.1, 0.15, z + Math.sin(a) * 1.1, s); }
