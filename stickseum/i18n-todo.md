@@ -168,3 +168,5 @@ patchnotes.json | v430 title | 클랜장 위임 | build 430 | 2026-10-26
 patchnotes.json | v430 items[0] | 클랜장이 클랜원에게 클랜장을 넘기는 위임 버튼 | build 430 | 2026-10-26
 patchnotes.json | v431 title | 로비 빌드 표시 | build 431 | 2026-10-26
 patchnotes.json | v431 items[0] | 메인 화면 제목 아래 버전 옆에 빌드 번호 표시 | build 431 | 2026-10-26
+patchnotes.json | v432 title | 모든 경기를 서버가 방장으로, 연승 보너스 | build 432 | 2026-10-27
+patchnotes.json | v432 items[0] | 모든 온라인 경기를 서버가 방장으로 진행 서버가 바쁘면 예전처럼 내가 방장으로 진행 연승 표시(불꽃 n연승)를 방 목록과 캐릭터 공개 화면에 추가 연승 보너스 마스터리 포인트 추가(1연승 +1, 3연승 +2, 5연승 +3, 7연승 +4, 10연승 이상 +5) 승리 마스터리 포인트 4에서 2로 변경 | build 432 | 2026-10-27
