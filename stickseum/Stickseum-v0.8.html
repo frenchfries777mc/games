@@ -8793,13 +8793,18 @@ async function renderClanMy(pane){
   }
   R.appendChild(clanInfoRow('⭐','클랜 점수', String(myClan.score==null?1000:myClan.score)+' (클랜 대항전으로 오르고 내려가요)'));
   R.appendChild(clanInfoRow('🏆','클랜전 승리', String(myClan.wins||0)+'회'));
-  if(clanReqOk){      // 가입 조건: the leader sets them, everybody sees them
-    const rq=clanReqOf(myClan), saveReq=async(lv,ms,rk)=>{ if(rk===undefined) rk=rq.rk; const r=await clanSetReq(lv,ms,rk); clanReqEdit=null; if(r&&r.error) fail(r,'저장하지 못했어요 (서버에 supabase-clan-requirements.sql / supabase-clan-requirements-rank.sql을 적용했는지 확인해 주세요)'); else { myClan.req_level=lv; myClan.req_master=ms; myClan.req_rank=rk; } rerender(); };
-    if(isOwner && clanReqEdit==='lv') R.appendChild(clanEditRow('🎯','가입 조건 · 최소 레벨 (0이면 없음)', String(rq.lv), 3, v=>saveReq(Math.max(0,Math.min(999,parseInt(v,10)||0)), rq.ms), ()=>{ clanReqEdit=null; rerender(); }));
-    else { const b1=clanRowBtn('🎯','가입 조건 · 최소 레벨', rq.lv>0?('Lv.'+rq.lv+' 이상'):(isOwner?'없음 · 눌러서 정하기':'없음'), isOwner?'':'pointer-events:none;'); if(isOwner) b1.onclick=()=>{ clanReqEdit='lv'; rerender(); }; if(isOwner||rq.lv>0) R.appendChild(b1); }
-    { const b3=clanRowBtn('🎖️','가입 조건 · 마스터리 계급', rq.rk>0?('캐릭터 하나라도 '+CLAN_RANK_NAMES[rq.rk]+' 이상'):(isOwner?'없음 · 눌러서 바꾸기':'없음'), isOwner?'':'pointer-events:none;'); if(isOwner) b3.onclick=()=>saveReq(rq.lv, rq.ms, (rq.rk+1)%CLAN_RANK_NAMES.length); if(isOwner||rq.rk>0) R.appendChild(b3); }
-    if(isOwner && clanReqEdit==='ms') R.appendChild(clanEditRow('🏅','가입 조건 · 마스터 캐릭터 수 (0이면 없음)', String(rq.ms), 2, v=>saveReq(rq.lv, Math.max(0,Math.min(40,parseInt(v,10)||0))), ()=>{ clanReqEdit=null; rerender(); }));
-    else { const b2=clanRowBtn('🏅','가입 조건 · 마스터 캐릭터', rq.ms>0?(rq.ms+'개 이상 (숙련 Lv.'+MASTERY_STAR_LV+' 이상)'):(isOwner?'없음 · 눌러서 정하기':'없음'), isOwner?'':'pointer-events:none;'); if(isOwner) b2.onclick=()=>{ clanReqEdit='ms'; rerender(); }; if(isOwner||rq.ms>0) R.appendChild(b2); }
+  if(clanReqOk){      // 가입 조건: ONE row (everybody sees the summary); the leader opens it for the three detail rows
+    const rq=clanReqOf(myClan), saveReq=async(lv,ms,rk)=>{ if(rk===undefined) rk=rq.rk; const r=await clanSetReq(lv,ms,rk); if(clanReqEdit==='lv'||clanReqEdit==='ms') clanReqEdit='open'; if(r&&r.error) fail(r,'저장하지 못했어요 (서버에 supabase-clan-requirements.sql / supabase-clan-requirements-rank.sql을 적용했는지 확인해 주세요)'); else { myClan.req_level=lv; myClan.req_master=ms; myClan.req_rank=rk; } rerender(); };
+    const parts=[]; if(rq.lv>0) parts.push('Lv.'+rq.lv+' 이상'); if(rq.rk>0) parts.push('마스터리 '+CLAN_RANK_NAMES[rq.rk]+' 이상'); if(rq.ms>0) parts.push('마스터 캐릭터 '+rq.ms+'개');
+    const open=isOwner && clanReqEdit;
+    { const bq=clanRowBtn('🎯','가입 조건', parts.length?parts.join(' · '):(isOwner?'없음 · 눌러서 정하기':'없음'), isOwner?'':'pointer-events:none;'); if(isOwner) bq.onclick=()=>{ clanReqEdit=clanReqEdit?null:'open'; rerender(); }; R.appendChild(bq); }
+    if(open){
+      if(clanReqEdit==='lv') R.appendChild(clanEditRow('🎯','최소 레벨 (0이면 없음)', String(rq.lv), 3, v=>saveReq(Math.max(0,Math.min(999,parseInt(v,10)||0)), rq.ms), ()=>{ clanReqEdit='open'; rerender(); }));
+      else { const b1=clanRowBtn('🎯','└ 최소 레벨', rq.lv>0?('Lv.'+rq.lv+' 이상'):'없음 · 눌러서 정하기'); b1.onclick=()=>{ clanReqEdit='lv'; rerender(); }; R.appendChild(b1); }
+      { const b3=clanRowBtn('🎖️','└ 마스터리 계급', rq.rk>0?('캐릭터 하나라도 '+CLAN_RANK_NAMES[rq.rk]+' 이상'):'없음 · 눌러서 바꾸기'); b3.onclick=()=>saveReq(rq.lv, rq.ms, (rq.rk+1)%CLAN_RANK_NAMES.length); R.appendChild(b3); }
+      if(clanReqEdit==='ms') R.appendChild(clanEditRow('🏅','마스터 캐릭터 수 (0이면 없음)', String(rq.ms), 2, v=>saveReq(rq.lv, Math.max(0,Math.min(40,parseInt(v,10)||0))), ()=>{ clanReqEdit='open'; rerender(); }));
+      else { const b2=clanRowBtn('🏅','└ 마스터 캐릭터', rq.ms>0?(rq.ms+'개 이상 (숙련 Lv.'+MASTERY_STAR_LV+' 이상)'):'없음 · 눌러서 정하기'); b2.onclick=()=>{ clanReqEdit='ms'; rerender(); }; R.appendChild(b2); }
+    }
   }
   const wb=clanRowBtn('⚔','클랜 경기','클랜원끼리 1대1 듀얼 (봇 없음)'); wb.onclick=clanDuelStart; R.appendChild(wb); clanDuelBtnText(wb, clanWaitCount); clanWaitPoll().then(n=>{ if(wb.isConnected) clanDuelBtnText(wb,n); });
   const vb=clanRowBtn('🏦','클랜 창고','창고 '+(myClan.treasury||0)+' · 내 토큰 '+myTok+(clanVaultOpen?'':' · 눌러서 열기')); vb.onclick=()=>{ clanVaultOpen=!clanVaultOpen; rerender(); }; R.appendChild(vb);
