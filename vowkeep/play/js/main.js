@@ -980,7 +980,7 @@ function frame(now) {
   if (FPS_CAP && now - lastF < 1000 / FPS_CAP - 2) return; lastF = now;
   const raw = now - lastT; lastT = now; const dt = Math.min(0.05, raw / 1000);
   // 방장 컴퓨터가 느리면(화면 간격이 길게 이어지면) 스스로 가벼운 모드로 바꿔요: 전송 줄이기, 봇 판단 줄이기, 가벼운 화질 (규칙은 그대로)
-  if (S.G && S.net === 'host' && S.scr === '' && !S.lite) { S.fAvg = (S.fAvg || 16) * 0.95 + Math.min(raw, 100) * 0.05; if (S.fAvg > 38) { S.slowN = (S.slowN | 0) + 1; if (S.slowN > 180) { S.lite = true; S.G.lite = true; try { view.setLow(true); } catch (e) { } toast('컴퓨터가 느려서 가벼운 모드로 바꿨어요. 친구 화면은 그대로예요.', 3600); } } else S.slowN = 0; }
+  if (S.G && S.net === 'host' && S.scr === '' && !S.lite) { S.fAvg = (S.fAvg || 16) * 0.95 + Math.min(raw, 100) * 0.05; if (S.fAvg > 38) { S.slowN = (S.slowN | 0) + 1; if (S.slowN > 180) { S.lite = true; S.G.lite = true; try { view.setLow(true); } catch (e) { } toast(T('컴퓨터가 느려서 가벼운 모드로 바꿨어요. 친구 화면은 그대로예요.'), 3600); } } else S.slowN = 0; }
  const t = (now - S.t0) / 1000;
   musicTick(dt, now); talkTick(dt, !!S.snap && S.scr === '' && (S.snap.ph === 'play' || S.snap.ph === 'bossIntro'));
   if (S.snap && (S.G || S.net === 'guest') && S.scr !== 'sLobby' && S.scr !== 'sRoom') {
