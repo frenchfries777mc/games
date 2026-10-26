@@ -116,3 +116,6 @@ Stickseum-v0.8.html | shop tier hint | (깃발 뺏기는 처치 2점, 어시스�
 patchnotes.json | v412 title | 마스터리 포인트 기준 조정 | build 412 | 2026-10-26
 patchnotes.json | v412 items[0] | 계급 필요 포인트를 기존의 1.75배로 깔끔하게 정리 (브론즈 90, 실버 260, 골드 530, 플래티넘 880, 다이아 1750, 옵시디언 3050, 마스터 4800, 그랜드 마스터 7000) | build 412 | 2026-10-26
 patchnotes.json | v412 items[1] | 깃발 뺏기 마스터리 포인트 조정 (처치 2점, 어시스트 1점, 승리 3점) | build 412 | 2026-10-26
+Stickseum-v0.8.html | shop tier hint | (봇이 8명 이상이고 부활이 있는 모드는 처치 2점, 어시스트 1점, 승리 3점) | build 413 | 2026-10-26
+patchnotes.json | v413 title | 마스터리 포인트 점수 조건 | build 413 | 2026-10-26
+patchnotes.json | v413 items[0] | 봇 8명 이상에 부활이 있는 모드는 처치 2점, 어시스트 1점, 승리 3점 (깃발 뺏기 등) | build 413 | 2026-10-26
