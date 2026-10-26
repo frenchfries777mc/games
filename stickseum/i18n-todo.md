@@ -138,3 +138,6 @@ patchnotes.json | v418 items[0] | 듀얼처럼 캐릭터를 바꾸는 경기는 
 patchnotes.json | v418 items[1] | 경기 끝 결과에 캐릭터별 마스터리 포인트 표시 | build 418 | 2026-10-26
 patchnotes.json | v419 title | 로비 빌드 표시 수정 | build 419 | 2026-10-26
 patchnotes.json | v419 items[0] | 로비 가장자리 빌드 번호와 저작권 표시가 보이지 않던 문제 수정 | build 419 | 2026-10-26
+patchnotes.json | v420 title | 클랜 가입 조건 | build 420 | 2026-10-26
+patchnotes.json | v420 items[0] | 클랜 만들기 화면에 가입 조건(최소 레벨, 마스터리 계급) 추가 | build 420 | 2026-10-26
+patchnotes.json | v420 items[1] | 클랜장은 만든 뒤에도 마스터리 계급 조건을 바꿀 수 있음 | build 420 | 2026-10-26
