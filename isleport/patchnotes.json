@@ -1,6 +1,58 @@
 {
  "notes": [
   {
+   "date": "2026-10-26",
+   "build": "v0.2 build 63",
+   "title": "화면 흔들림 줄이기",
+   "items": [
+    "걸을 때 화면이 따라오며 떨리던 현상 고침",
+    "작물, 배, 가게, 주민, 섬 물건이 위아래로 깜박이던 움직임 제거",
+    "물빛 반짝임, 깃발, 선택 테두리의 깜박임을 느리고 약하게"
+   ],
+   "tr": {
+    "en": {
+     "title": "Calmer screen",
+     "items": [
+      "Fixed the screen trembling while walking",
+      "Removed the up-and-down flicker on crops, ships, shops, villagers and island items",
+      "Slower and softer water sparkle, flags and selection outline"
+     ]
+    },
+    "ja": {
+     "title": "Calmer screen",
+     "items": [
+      "Fixed the screen trembling while walking",
+      "Removed the up-and-down flicker on crops, ships, shops, villagers and island items",
+      "Slower and softer water sparkle, flags and selection outline"
+     ]
+    },
+    "es": {
+     "title": "Calmer screen",
+     "items": [
+      "Fixed the screen trembling while walking",
+      "Removed the up-and-down flicker on crops, ships, shops, villagers and island items",
+      "Slower and softer water sparkle, flags and selection outline"
+     ]
+    },
+    "fr": {
+     "title": "Calmer screen",
+     "items": [
+      "Fixed the screen trembling while walking",
+      "Removed the up-and-down flicker on crops, ships, shops, villagers and island items",
+      "Slower and softer water sparkle, flags and selection outline"
+     ]
+    },
+    "de": {
+     "title": "Calmer screen",
+     "items": [
+      "Fixed the screen trembling while walking",
+      "Removed the up-and-down flicker on crops, ships, shops, villagers and island items",
+      "Slower and softer water sparkle, flags and selection outline"
+     ]
+    }
+   }
+  },
+  {
    "date": "2026-10-25",
    "build": "v0.2 build 62",
    "title": "방장 컴퓨터 부담 줄이기",
