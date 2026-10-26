@@ -146,3 +146,5 @@ patchnotes.json | v422 items[0] | 실험적 모드 추가(랜덤 조합 배틀�
 patchnotes.json | v422 items[1] | 로비 빌드 표시 위치와 크기 조정 | build 422 | 2026-10-26
 patchnotes.json | v423 title | 거대 점령전 조정 | build 423 | 2026-10-26
 patchnotes.json | v423 items[0] | 거대 점령전에서 순간이동 사용 불가 | build 423 | 2026-10-26
+patchnotes.json | v424 title | 클랜 가입 조건 표시 | build 424 | 2026-10-26
+patchnotes.json | v424 items[0] | 조건이 없는 항목은 클랜원 화면에서 숨김 | build 424 | 2026-10-26
