@@ -5174,7 +5174,7 @@ function shuffle(arr){ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.
 /* ===== the version of this file =====
    Players with different versions CAN meet and play together: the automatic matchmaking uses the same room names for every version (online-<mode>-<map>-<slot>), and nobody is refused because of a different build.
    The build is only sent along with the join message and the lobby (for information); the corner of the screen shows it. */
-const GAME_BUILD='build 2026-10-18-v424';
+const GAME_BUILD='build 2026-10-18-v425';
 const GAME_VERSION='0.8', GAME_VERSION_NAME='황금을 찾아서';   // 게임 버전 이름: versions.json의 title과 같게 (빌드마다 바꾸지 않음)
 const WEEKLY_EVENTS=[
   {id:'lowg',    name:'저중력 난투', desc:'몸이 둥실둥실, 중력이 약해진 난투', rules:{grav:0.6}},
@@ -10266,7 +10266,7 @@ function showMatchEndOverlay(resultText, winnerIds, forcedPick){
   if(me){
     saveData.totalDamage=(saveData.totalDamage||0)+Math.round(me.totalDamageDealt||0);
     const wid=me.weapon;
-    if(wid){ saveData.charKills=saveData.charKills||{}; saveData.charPts=saveData.charPts||{}; const won=!!(winnerIds && winnerIds.indexOf(myId)!==-1);
+    if(wid && !me.kit){ saveData.charKills=saveData.charKills||{}; saveData.charPts=saveData.charPts||{}; const won=!!(winnerIds && winnerIds.indexOf(myId)!==-1);
       const bigm=Object.values(players).filter(q=>q && !q.isMinion && !q.isBoss).length>=TIER_PT_BIG_PLAYERS && !!MODES[gameMode] && !MODES[gameMode].elim, kpt=(gameMode==='duel')?TIER_PT_DUEL_KILL:(brLike(gameMode)?TIER_PT_BR_KILL:(bigm?TIER_PT_BIG_KILL:TIER_PT_KILL));
       const used=usedCharsOfMatch(me), as=Math.max(0,matchAssists||0); lastTierGain=[];
       for(const uw of used){ const kb=charKillsFor(uw), kk=(used.length>1)?(myCharKb[uw]||0):(me.kills||0), aa=(uw===wid)?as:0; saveData.charKills[uw]=(saveData.charKills[uw]||0)+kk;
@@ -10278,7 +10278,7 @@ function showMatchEndOverlay(resultText, winnerIds, forcedPick){
   try{ if(currentMode==='online' && !practiceMode && winnerIds && winnerIds.indexOf(myId)!==-1 && Object.values(players).filter(q=>q && !q.isBot && !q.isMinion && !q.isBoss).length>=2) clanReportWin(); }catch(e){}
   try{ recordMatchSummary(pendingMatchSummary); }catch(e){} pendingMatchSummary=null;
   lastMastery=null;
-  try{ lastMastery=applyWeaponMastery(me, !!(winnerIds && winnerIds.indexOf(myId)!==-1)); }catch(e){ console.error('[mastery]', e); }
+  try{ if(!(me&&me.kit)) lastMastery=applyWeaponMastery(me, !!(winnerIds && winnerIds.indexOf(myId)!==-1)); }catch(e){ console.error('[mastery]', e); }
   if(gameMode==='raid' && raidAwards && raidAwards[myId]){ const g=raidAwards[myId]*15; addGold(g,'레이드 역할 보너스'); }
   persistSave();
   { const won=!!(winnerIds && winnerIds.indexOf(myId)!==-1); lastMatchXp={kills:Math.max(0,lastKnownKills||0), finish:FINISH_XP, win:won?WIN_XP:0}; addXP(FINISH_XP+(won?WIN_XP:0)); }       // (finishing a match: 5 xp; winning it: 18 more)
@@ -11231,6 +11231,7 @@ function finalizeGameplayStart(mte){
     document.getElementById('teleportWrap').style.display = (MODES[gameMode]||{}).noTeleport ? 'none' : '';
     const myWeapon = players[myId] ? WEAPONS[players[myId].weapon] : null;
     if(myWeapon) setWeaponLabel(players[myId].weapon);
+    { const mk=players[myId]&&players[myId].kit; if(mk){ const nmK=x=>(WEAPON_PERSONA_NAME[x]||(WEAPONS[x]&&WEAPONS[x].name)||x); try{ showKillBannerText('🎲 이번 조합 · 외형 '+nmK(mk.lk)+' · 공격 '+nmK(players[myId].weapon)+' · 스킬 '+nmK(mk.sk)+' · 궁극기 '+nmK(mk.ul)); }catch(e){} } }      // 랜덤 조합: the match opens with the combination (it is no character)
     if(gameMode==='duel'){
       duelScores={};
       for(const id in players) duelScores[id]=0;
