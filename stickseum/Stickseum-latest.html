@@ -1352,8 +1352,8 @@ const WEAPONS = {
             desc:'데미지 12 · 쿨타임 0.4초 · 사거리 65 · 빠른 발톱 공격, 적중할 때마다 체력 5 흡수'},
   gambler: {id:'gambler', name:'도박사',   emoji:'🎲', kind:'gun', dmg:20, cd:1.0, bulletSpeed:1100, shape:'chip', hitR:10,
             desc:'데미지 20 · 쿨타임 1.0초 · 장거리 · 큰 칩을 곧게 던짐, 맞힐 때마다 칩 +1 (최대 6) · 칩이 많을수록 스킬·궁극기가 강해짐'},
-  wizard:  {id:'wizard',  name:'마법사',   emoji:'🧙', kind:'gun',      dmg:16, cd:0.6,  bulletSpeed:750, shape:'fireball', pierce:true, pierceHits:1, life:0.95,
-            desc:'데미지 16 · 쿨타임 0.6초 · 사거리 짧음 · 발판을 통과하고, 플레이어 한 명을 관통한 뒤 두 번째로 맞힌 상대에게서 멈추는 화염 마법'},
+  wizard:  {id:'wizard',  name:'마법사',   emoji:'🧙', kind:'gun',      dmg:16, cd:0.7,  bulletSpeed:750, shape:'fireball', pierce:true, pierceHits:1, life:0.95,
+            desc:'데미지 16 · 쿨타임 0.7초 · 사거리 짧음 · 발판을 통과하고, 플레이어 한 명을 관통한 뒤 두 번째로 맞힌 상대에게서 멈추는 화염 마법'},
   magiccard:{id:'magiccard',name:'마술 카드',emoji:'🃏', kind:'cards',    dmg:10,  cd:0.9,  bulletSpeed:820, shape:'card', hitR:26, comboBonus:5, freeVolleys:3,
             desc:'트럼프 카드 3장이 넓게 퍼져 날아감 · 장당 데미지 10 · 쿨타임 0.9초 · 맞은 상대는 이동속도가 조금 느려짐 · 3장이 모두 맞으면 추가 5 데미지 + 0.5초 기절'},
   flamethrower:{id:'flamethrower',name:'화염방사기',emoji:'🔥', kind:'flame', dmg:0, cd:0, range:FLAME_RANGE, shape:'flamethrower',
@@ -5088,7 +5088,7 @@ function shuffle(arr){ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.
 /* ===== the version of this file =====
    Players with different versions CAN meet and play together: the automatic matchmaking uses the same room names for every version (online-<mode>-<map>-<slot>), and nobody is refused because of a different build.
    The build is only sent along with the join message and the lobby (for information); the corner of the screen shows it. */
-const GAME_BUILD='build 2026-10-18-v402';
+const GAME_BUILD='build 2026-10-18-v403';
 const GAME_VERSION='0.8', GAME_VERSION_NAME='황금을 찾아서';   // 게임 버전 이름: versions.json의 title과 같게 (빌드마다 바꾸지 않음)
 const WEEKLY_EVENTS=[
   {id:'lowg',    name:'저중력 난투', desc:'몸이 둥실둥실, 중력이 약해진 난투', rules:{grav:0.6}},
