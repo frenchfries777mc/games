@@ -19,3 +19,5 @@ patchnotes.json | v397 items[1] | 사냥꾼 스킬을 회수 돌풍으로 교체
 patchnotes.json | v397 items[2] | 칸 독 두꺼비를 조준한 곳으로 던지게 변경, 미리보기와 착지 지점 반영 | build 397 | 2026-10-26
 patchnotes.json | v397 items[3] | 특수요원 연막탄을 조준해서 던지는 방식으로 변경 (착지 지점에 2.5초 동안 연기, 안에서는 이동 속도 감소와 시야 차단) | build 397 | 2026-10-26
 patchnotes.json | v397 items[4] | 제임스 궁극기가 플레이어만 관통하고 발판에서 멈추도록 수정 | build 397 | 2026-10-26
+patchnotes.json | v398 title | 학살자 스킬 교체 | build 398 | 2026-10-26
+patchnotes.json | v398 items[0] | 학살자 스킬을 화염 돌진으로 교체 (바라보는 방향으로 돌진, 지나는 적에게 20 피해와 화상, 지나온 자리에 3초 동안 불길) | build 398 | 2026-10-26
