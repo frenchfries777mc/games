@@ -98,3 +98,6 @@ patchnotes.json | v407 items[5] | 밸런스 표 갱신 (마법사 재측정) | b
 patchnotes.json | v408 title | 궁수 일반 공격 데미지 종류 | build 408 | 2026-10-26
 patchnotes.json | v408 items[0] | 궁수 일반 공격이 불 데미지로 표시되던 문제 수정 | build 408 | 2026-10-26
 patchnotes.json | v408 items[1] | 궁수 일반 공격은 일반 데미지로 표시 | build 408 | 2026-10-26
+patchnotes.json | v409 title | 마스터리 더 어렵게 | build 409 | 2026-10-26
+patchnotes.json | v409 items[0] | 캐릭터 마스터리 경험치 획득량 감소 (처치 6 → 4, 도움 3 → 2, 판 완료 3 → 2, 승리 6 → 4) | build 409 | 2026-10-26
+patchnotes.json | v409 items[1] | 이미 달성한 마스터리 레벨은 유지 | build 409 | 2026-10-26
