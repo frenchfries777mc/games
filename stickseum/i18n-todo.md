@@ -95,3 +95,6 @@ patchnotes.json | v407 items[2] | 기존 궁수·권총 2000sC 스킨을 위 두
 patchnotes.json | v407 items[3] | 리플레이에서도 스킨 탄환 표시 | build 407 | 2026-10-26
 patchnotes.json | v407 items[4] | 마법사 데미지 16 → 15, 사거리 증가 | build 407 | 2026-10-26
 patchnotes.json | v407 items[5] | 밸런스 표 갱신 (마법사 재측정) | build 407 | 2026-10-26
+patchnotes.json | v408 title | 궁수 일반 공격 데미지 종류 | build 408 | 2026-10-26
+patchnotes.json | v408 items[0] | 궁수 일반 공격이 불 데미지로 표시되던 문제 수정 | build 408 | 2026-10-26
+patchnotes.json | v408 items[1] | 궁수 일반 공격은 일반 데미지로 표시 | build 408 | 2026-10-26
