@@ -1309,7 +1309,7 @@ const PLAYER_W = 26, PLAYER_H = 58;
 const BULLET_R = 5, BULLET_LIFE = 1.2, PORTAL_BOUNCE_DMG = 1.3;
 
 /* ================= WEAPONS (13) — damage/cooldown balanced by real-world weapon character ================= */
-const FLAME_RANGE=400, FLAME_HALF_ANGLE=0.32, FLAME_DIRECT_DPS=34;
+const FLAME_RANGE=400, FLAME_HALF_ANGLE=0.32, FLAME_DIRECT_DPS=31;
 const VAC_SKILL_COST=3, VAC_SKILL_R=330, VAC_SKILL_PULL=800, VAC_SKILL_STUN=1.0;
 const VACUUM_RANGE=480, VACUUM_HALF_ANGLE=0.34, VACUUM_MAX_STACKS=8, VACUUM_PULL_FORCE=90;
 const FLAME_MAX_HOLD=8, FLAME_OVERHEAT_COOLDOWN=2;
@@ -1338,11 +1338,11 @@ const WEAPONS = {
             desc:'데미지 43 · 쿨타임 없음 · 사거리 105 · 클릭한 채 마우스를 아래로 내렸다가 다시 올리면(스윙) 그때 맞은 상대에게 타격'},
   boomerang:{id:'boomerang',name:'부메랑', emoji:'🪃', kind:'boomerang',dmg:20, cd:0,  bulletSpeed:700, shape:'boomerang',
             desc:'데미지 20(돌아올 때도 20) · 쿨타임 없음 · 더 멀리 날아가는 부메랑 · 던진 부메랑이 돌아와 나에게 닿고 0.25초 뒤에 다시 던질 수 있음 · 사람은 관통하고, 발판·바닥·벽에 닿으면 즉시 귀환'},
-  shuriken:{id:'shuriken',name:'표창',     emoji:'⭐', kind:'gun',      dmg:13, cd:0.48, bulletSpeed:1050, shape:'star',
-            desc:'데미지 13 · 쿨타임 0.48초 · 가볍고 빠르게 연속으로 던지는 투척 무기'},
-  shotgun: {id:'shotgun', name:'샷건',     emoji:'💥', kind:'shotgun',  dmg:13, pellets:5, cd:1.1, bulletSpeed:850, shape:'pellet',
+  shuriken:{id:'shuriken',name:'표창',     emoji:'⭐', kind:'gun',      dmg:14, cd:0.48, bulletSpeed:1050, shape:'star',
+            desc:'데미지 14 · 쿨타임 0.48초 · 가볍고 빠르게 연속으로 던지는 투척 무기'},
+  shotgun: {id:'shotgun', name:'샷건',     emoji:'💥', kind:'shotgun',  dmg:13, pellets:5, cd:1.2, bulletSpeed:850, shape:'pellet',
             dmgFalloff:{min:9, maxDist:700},
-            desc:'근거리 펠릿당 최대 13(5발 다 맞으면 65), 멀어질수록 최소 9까지 감소 · 쿨타임 1.1초 · 넓게 퍼지는 산탄'},
+            desc:'근거리 펠릿당 최대 13(5발 다 맞으면 65), 멀어질수록 최소 9까지 감소 · 쿨타임 1.2초 · 넓게 퍼지는 산탄'},
   rifle:   {id:'rifle',   name:'돌격소총', emoji:'🔫', kind:'gun',      dmg:9,  cd:1.2,  bulletSpeed:1000, shape:'bullet', burst:3, burstDelay:0.07,
             desc:'데미지 9(3연발) · 쿨타임 1.2초 · 클릭 한 번에 총알 3발을 빠르게 연사하는 소총'},
   gloves:  {id:'gloves',  name:'권투글러브',emoji:'🥊', kind:'melee',   dmg:28, cd:0.25, range:70, shape:'fist',
@@ -1357,10 +1357,10 @@ const WEAPONS = {
             desc:'데미지 12 · 쿨타임 0.4초 · 사거리 65 · 빠른 발톱 공격, 적중할 때마다 체력 5 흡수'},
   gambler: {id:'gambler', name:'도박사',   emoji:'🎲', kind:'gun', dmg:20, cd:1.0, bulletSpeed:1100, shape:'chip', hitR:10,
             desc:'데미지 20 · 쿨타임 1.0초 · 장거리 · 큰 칩을 곧게 던짐, 맞힐 때마다 칩 +1 (최대 6) · 칩이 많을수록 스킬·궁극기가 강해짐'},
-  wizard:  {id:'wizard',  name:'마법사',   emoji:'🧙', kind:'gun',      dmg:15, cd:0.7,  bulletSpeed:750, shape:'fireball', pierce:true, pierceHits:1, life:1.1,
-            desc:'데미지 15 · 쿨타임 0.7초 · 사거리 보통 · 발판을 통과하고, 플레이어 한 명을 관통한 뒤 두 번째로 맞힌 상대에게서 멈추는 화염 마법'},
-  magiccard:{id:'magiccard',name:'마술 카드',emoji:'🃏', kind:'cards',    dmg:10,  cd:0.9,  bulletSpeed:820, shape:'card', hitR:26, comboBonus:5, freeVolleys:3,
-            desc:'트럼프 카드 3장이 넓게 퍼져 날아감 · 장당 데미지 10 · 쿨타임 0.9초 · 맞은 상대는 이동속도가 조금 느려짐 · 3장이 모두 맞으면 추가 5 데미지 + 0.5초 기절'},
+  wizard:  {id:'wizard',  name:'마법사',   emoji:'🧙', kind:'gun',      dmg:15, cd:0.7,  bulletSpeed:750, shape:'fireball', pierce:true, pierceHits:1, platPierce:1, life:1.4,
+            desc:'데미지 15 · 쿨타임 0.7초 · 사거리 김 · 발판을 한 번만 통과하고, 플레이어 한 명을 관통한 뒤 두 번째로 맞힌 상대에게서 멈추는 화염 마법'},
+  magiccard:{id:'magiccard',name:'마술 카드',emoji:'🃏', kind:'cards',    dmg:10,  cd:0.9,  bulletSpeed:820, shape:'card', hitR:26, comboBonus:4, freeVolleys:3,
+            desc:'트럼프 카드 3장이 넓게 퍼져 날아감 · 장당 데미지 10 · 쿨타임 0.9초 · 맞은 상대는 이동속도가 조금 느려짐 · 3장이 모두 맞으면 추가 4 데미지 + 0.5초 기절'},
   flamethrower:{id:'flamethrower',name:'화염방사기',emoji:'🔥', kind:'flame', dmg:0, cd:0, range:FLAME_RANGE, shape:'flamethrower',
             desc:'중거리 화염방사 · 쏜 시간이 합쳐서 8초가 되면 2초간 과열(끊었다 다시 쏴도 이어서 셈) · 닿으면 초당 '+FLAME_DIRECT_DPS+' 직접 피해 · 발판에 막힘'},
   portalgun:{id:'portalgun',name:'포탈건',emoji:'🌀', kind:'gun', dmg:15, cd:0.55, bulletSpeed:700, shape:'portalbullet', bounces:3,
@@ -5178,7 +5178,7 @@ function shuffle(arr){ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.
 /* ===== the version of this file =====
    Players with different versions CAN meet and play together: the automatic matchmaking uses the same room names for every version (online-<mode>-<map>-<slot>), and nobody is refused because of a different build.
    The build is only sent along with the join message and the lobby (for information); the corner of the screen shows it. */
-const GAME_BUILD='build 2026-10-18-v428';
+const GAME_BUILD='build 2026-10-18-v429';
 const GAME_VERSION='0.8', GAME_VERSION_NAME='황금을 찾아서';   // 게임 버전 이름: versions.json의 title과 같게 (빌드마다 바꾸지 않음)
 const WEEKLY_EVENTS=[
   {id:'lowg',    name:'저중력 난투', desc:'몸이 둥실둥실, 중력이 약해진 난투', rules:{grav:0.6}},
@@ -7792,7 +7792,7 @@ function renderPublicProfileHtml(prof, rel){        // rel: {friend, outgoing, i
     html+=ppAchievementsHtml(st.ach);
     const top=SELECTABLE_WEAPONS.map(w=>({w, k:(st.ck&&st.ck[w])||0, m:masteryLevelFor((st.wx&&st.wx[w])||0)})).filter(o=>o.k>0||o.m>1).sort((a,b)=>b.k-a.k||b.m-a.m).slice(0,5);
     html+='<div style="font-size:12px; color:var(--text-dim); font-weight:700; margin:12px 0 6px;">많이 쓴 캐릭터</div>';
-    html+= top.length ? top.map(o=>row(WEAPONS[o.w].emoji+' '+(WEAPON_PERSONA_NAME[o.w]||WEAPONS[o.w].name)+charTierHtml(o.k), o.k+'킬 · 숙련 Lv.'+o.m)).join('') : '<div class="hint">아직 기록이 없어요.</div>';
+    html+= top.length ? top.map(o=>row(WEAPONS[o.w].emoji+' '+(WEAPON_PERSONA_NAME[o.w]||WEAPONS[o.w].name)+charTierHtml(o.k*TIER_PT_MULT), o.k+'킬 · 숙련 Lv.'+o.m)).join('') : '<div class="hint">아직 기록이 없어요.</div>';
     const modeRows=Object.keys(st.modes||{}).sort((a,b)=>st.modes[b]-st.modes[a]);
     if(modeRows.length){ html+='<div style="font-size:12px; color:var(--text-dim); font-weight:700; margin:12px 0 6px;">모드별 플레이한 경기</div>'+modeRows.map(m=>row(m==='daily'?'📅 일일 모드':((MODES[m]&&MODES[m].name)||m), st.modes[m]+'경기')).join(''); }
   }
@@ -11360,7 +11360,7 @@ function spawnBullet(p, angle, w, extra){
   const ax=Math.cos(angle), ay=Math.sin(angle);
   const sx=p.x+ax*(PLAYER_W/2+14), sy=(p.y-40)+ay*(PLAYER_W/2+14);
   bullets.push(Object.assign({x:sx, y:sy, spawnX:sx, spawnY:sy, vx:ax*w.bulletSpeed, vy:ay*w.bulletSpeed,
-    owner:p.id, ownerName:p.name, life:w.life||BULLET_LIFE, color:CONCEPT_COLOR[conceptOfP(p)]||p.color, sk:(p.cos&&p.cos.skin&&p.cos.skin[p.weapon])||undefined, dmg:w.dmg*(p.focusOn?1.35:1), wid:w.id, arcs:!!w.arcs, dmgFalloff:w.dmgFalloff, hitR:w.hitR, pierce:!!w.pierce, pierceHits:w.pierceHits||0, bouncesLeft:w.bounces||0, poison:w.poison}, extra||{}));
+    owner:p.id, ownerName:p.name, life:w.life||BULLET_LIFE, color:CONCEPT_COLOR[conceptOfP(p)]||p.color, sk:(p.cos&&p.cos.skin&&p.cos.skin[p.weapon])||undefined, dmg:w.dmg*(p.focusOn?1.35:1), wid:w.id, arcs:!!w.arcs, dmgFalloff:w.dmgFalloff, hitR:w.hitR, pierce:!!w.pierce, pierceHits:w.pierceHits||0, platPierce:w.platPierce, bouncesLeft:w.bounces||0, poison:w.poison}, extra||{}));
 }
 function registerCardHit(b, target, targetId, t){
   const tS=t/1000;
@@ -14189,6 +14189,11 @@ function hostTickCore(dt,t){
     const nx=b.x+b.vx*dt, ny=b.y+b.vy*dt;
     let hit=false, hitPlatform=false, hitPl=null, hitWho=null;
     if(nx<0||nx>MAP.arenaW||ny>MAP.arenaH||(ny<0 && !b.passPlatforms)) hit=true;
+    if(!hit && b.pierce && b.platPierce!==undefined){      // 마법사: the fireball goes through at most platPierce platforms (one), the next one stops it
+      let inside=null; for(const pl of MAP.platforms){ if(nx>=pl.x-BULLET_R && nx<=pl.x+pl.w+BULLET_R && ny>=pl.y-BULLET_R && ny<=pl.y+pl.h+BULLET_R){ inside=pl; break; } }
+      if(!inside) b.curPlat=null;
+      else if(b.curPlat!==inside){ if((b.platPassed||0)>=b.platPierce){ hit=true; hitPlatform=true; hitPl=inside; } else { b.platPassed=(b.platPassed||0)+1; b.curPlat=inside; } }
+    }
     if(!hit && !b.pierce){
       if(b.passPlatforms){ // ultimate missiles fall straight through platforms and only stop at the floor
         if(ny>=groundY()){ hit=true; hitPlatform=true; }
