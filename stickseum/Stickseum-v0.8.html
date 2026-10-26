@@ -3258,20 +3258,28 @@ function luxSprite(kind, col, col2, big){
   if(luxSpriteCache.size>200) luxSpriteCache.clear();
   luxSpriteCache.set(key,sp); return sp;
 }
+/* 오로라 색 (그랜드 마스터 스킨): 초록 → 청록 → 파랑 → 보라 → 분홍으로 천천히 흐르는 색. i 가 다르면 같은 순간에도 다른 색이라 여러 겹이 오묘하게 어우러져요 */
+function auroraHex(t, i){
+  const k=0.5+0.5*(Math.sin(t*0.9+i*1.1)*0.62+Math.sin(t*0.37+i*1.9)*0.38), h=(140+k*185)%360/360, l=0.62+0.1*Math.sin(t*1.7+i*2.3), sa=0.92;
+  const a=sa*Math.min(l,1-l), f=n=>{ const kk=(n+h*12)%12; return l-a*Math.max(-1,Math.min(kk-3,9-kk,1)); };
+  return '#'+[f(0),f(8),f(4)].map(v=>Math.round(Math.max(0,Math.min(1,v))*255).toString(16).padStart(2,'0')).join('');
+}
 function drawSkinLux(c, lux, tint, now, seed, layer){
   if(!lux) return;
-  const seedNum=Math.floor((seed||0)*37)%1000, t=(now||0)/1000+(seed||0)*0.37, col=tint||'#ffffff', col2=(lux>=2)?shiftHex(col,45):col, big=lux>=2, q=fxQuality;
+  const seedNum=Math.floor((seed||0)*37)%1000, t=(now||0)/1000+(seed||0)*0.37, col=(lux>=4)?auroraHex(((now||0)/1000+(seed||0)*0.37)*0.6,0):(tint||'#ffffff'), col2=(lux>=4)?auroraHex(((now||0)/1000+(seed||0)*0.37)*0.6,3):((lux>=2)?shiftHex(tint||'#ffffff',45):(tint||'#ffffff')), big=lux>=2, q=fxQuality;
+  const scol=(lux>=4)?auroraHex(Math.floor(((now||0)/1000+(seed||0)*0.37)*2)/2*0.6,0):col, scol2=(lux>=4)?auroraHex(Math.floor(((now||0)/1000+(seed||0)*0.37)*2)/2*0.6,3):col2;      // (the little cached pictures only change twice a second)
   const fr=(v)=>v-Math.floor(v);
   c.save(); c.lineCap='round'; c.lineJoin='round'; c.globalCompositeOperation='lighter';
   const cross=(x,y,s)=>{ c.fillRect(x-s,y-0.6,2*s,1.2); c.fillRect(x-0.6,y-s*1.5,1.2,3*s); };        // a little twinkle: two thin bars (cheaper than a stroked path)
   const diamond=(x,y,s,fill,rot)=>{ const cs=Math.cos(rot||0), sn=Math.sin(rot||0), px=[0,s,0,-s], py=[-s*1.4,0,s*1.4,0]; c.fillStyle=fill; c.beginPath(); for(let i=0;i<4;i++){ const X=x+px[i]*cs-py[i]*sn, Y=y+px[i]*sn+py[i]*cs; if(i) c.lineTo(X,Y); else c.moveTo(X,Y); } c.closePath(); c.fill(); };
   if(layer==='back'){
     // the aura around the whole body (an upright oval that breathes): a copy of the little picture
-    { const pulse=1+0.08*Math.sin(t*3), sp=luxSprite('aura',col,col2,big);
+    if(lux>=4 && q>=1){ for(let k=0;k<5;k++){ const bx=(k-2)*13, hgt=118+16*Math.sin(t*1.3+k), g=c.createLinearGradient(0,-hgt-10,0,0); g.addColorStop(0,hexA(auroraHex(t,k),0)); g.addColorStop(0.5,hexA(auroraHex(t,k+1),0.5)); g.addColorStop(1,hexA(auroraHex(t,k+2),0.12)); c.fillStyle=g; c.beginPath(); c.moveTo(bx-8,0); for(let s2=0;s2<=10;s2++) c.lineTo(bx-8+Math.sin(t*2.1+s2*0.6+k*1.5)*(3+s2*0.9), -s2*hgt/10); for(let s2=10;s2>=0;s2--) c.lineTo(bx+8+Math.sin(t*2.1+s2*0.6+k*1.5+0.8)*(3+s2*0.9), -s2*hgt/10); c.closePath(); c.fill(); } }       // 오로라 커튼: 몸 뒤에서 물결치는 빛의 띠 다섯 개
+    { const pulse=1+0.08*Math.sin(t*3), sp=luxSprite('aura',scol,scol2,big);
       if(sp){ c.save(); c.translate(0,-30); c.scale(pulse,pulse); c.drawImage(sp.cv,-sp.W/2,-sp.H/2); c.restore(); }
       else { const rad=(big?64:52)*pulse; c.save(); c.translate(0,-30); c.scale(0.8,1.25); const g=c.createRadialGradient(0,0,2,0,0,rad); g.addColorStop(0,hexA(col,big?0.5:0.4)); g.addColorStop(0.55,hexA(col2,big?0.22:0.16)); g.addColorStop(1,hexA(col,0)); c.fillStyle=g; c.beginPath(); c.arc(0,0,rad,0,7); c.fill(); c.restore(); } }
     // the sunburst behind (legendary only): the same
-    if(big && q>=2){ const sp=luxSprite('rays',col,col2,big);
+    if(big && q>=2){ const sp=luxSprite('rays',scol,scol2,big);
       if(sp){ c.save(); c.translate(0,-32); c.rotate(t*0.4); c.drawImage(sp.cv,-sp.W/2,-sp.H/2); c.restore(); }
       else { c.save(); c.translate(0,-32); const cA=hexA(col,0.17), cB=hexA(col2,0.17); for(let k=0;k<8;k++){ const a=t*0.4+k*Math.PI/4, w=0.12+0.03*Math.sin(t*2+k), R=70+8*Math.sin(t*2.4+k*1.7); c.fillStyle=(k%2)?cA:cB; c.beginPath(); c.moveTo(0,0); c.lineTo(Math.cos(a-w)*R,Math.sin(a-w)*R); c.lineTo(Math.cos(a+w)*R,Math.sin(a+w)*R); c.closePath(); c.fill(); } c.restore(); } }
     // the rings on the ground
@@ -5179,7 +5187,7 @@ function shuffle(arr){ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.
 /* ===== the version of this file =====
    Players with different versions CAN meet and play together: the automatic matchmaking uses the same room names for every version (online-<mode>-<map>-<slot>), and nobody is refused because of a different build.
    The build is only sent along with the join message and the lobby (for information); the corner of the screen shows it. */
-const GAME_BUILD='build 2026-10-18-v432';
+const GAME_BUILD='build 2026-10-18-v433';
 const GAME_VERSION='0.8', GAME_VERSION_NAME='황금을 찾아서';   // 게임 버전 이름: versions.json의 title과 같게 (빌드마다 바꾸지 않음)
 const WEEKLY_EVENTS=[
   {id:'lowg',    name:'저중력 난투', desc:'몸이 둥실둥실, 중력이 약해진 난투', rules:{grav:0.6}},
@@ -10638,7 +10646,7 @@ function scanSequential(p, mapIds, idx, slot, freeSlots, held){
     if(!onlineMatchActive) return;
     const chosen = freeSlots[0] || {mapId: mapIds[Math.floor(Math.random()*mapIds.length)], slot:3};
     const hostSelf=()=>{ setOnlineProgress(1, MAP_TEMPLATES[chosen.mapId].name+' 방을 새로 만듭니다...'); startHostPeer(roomIdFor(chosen.mapId, chosen.slot), chosen.mapId, 'online', null); };
-    if(onlineClan || partySeatsNeeded()>1){ hostSelf(); return; }
+    if(onlineClan || partySeatsNeeded()>1 || idleOnlineOthers()===0){ hostSelf(); return; }       // (the server only hosts matches where another person can show up: when nobody else is in the game it is a match against bots and is hosted here as before (owner 10-26))
     setOnlineProgress(1, '서버에 방을 부탁하는 중...');
     askServerRoom(chosen, roomId=>{
       if(!onlineMatchActive) return;
@@ -12671,7 +12679,7 @@ function idleOnlineOthers(){          // people who have the game open (logged i
     return n;
   }catch(e){ return 0; }
 }
-function botFillWaitMs(){ return (humanPlayers().length<=1 && !partyActive() && idleOnlineOthers()===0) ? BOT_FILL_SOLO_MS : BOT_FILL_MS; }
+function botFillWaitMs(){ if(DED_HOST) return BOT_FILL_MS; return (humanPlayers().length<=1 && !partyActive() && idleOnlineOthers()===0) ? BOT_FILL_SOLO_MS : BOT_FILL_MS; }
 function botFillTick(){
   if(!isHost || started || !MAP || currentMode!=='online' || onlineRanked || onlineClan){ botFillAt=null; botFilling=false; return; }   // (a ranked or clan room waits for a person, never for bots)
   if(!botSupported(gameMode) || humanPlayers().length===0){ botFillAt=null; botFilling=false; return; }
@@ -17161,7 +17169,7 @@ function drawBulletSkinFx(b){
 // the 4000 sC skins (lux 3) and the 그랜드 마스터 skins (lux 4) get a whole show on every attack: layered glow, a theme of their own and orbiting stars (lux 4 in rainbow colours)
 const LUX_THEME={flame:['#ff7a1a','#ffe27a'], frost:['#9fe8ff','#ffffff'], electric:['#7fd0ff','#ffffff'], void:['#b388ff','#2a1450'], halo:['#ffe27a','#ffffff'], crown:['#ffd34d','#fff6c8'], sparkle:['#ffffff','#ffd9f2']};
 function luxFx(b, fx, swing, now, sp){
-  const gm=fx.lux>=4, th=LUX_THEME[fx.theme]||[fx.tint,'#ffffff'], hue=(i)=>'hsl('+Math.round((now*220+i*47)%360)+',100%,68%)';
+  const gm=fx.lux>=4, th=LUX_THEME[fx.theme]||[fx.tint,'#ffffff'], hue=(i)=>auroraHex(now*0.9,i);
   const c1=gm?hue(0):th[0], c2=th[1], sc=gm?2:1.5, n=gm?8:5;
   const cross=(x,y,r,col,a)=>{ ctx.strokeStyle=col; ctx.globalAlpha=a; ctx.lineWidth=1.6; ctx.beginPath(); ctx.moveTo(x-r,y); ctx.lineTo(x+r,y); ctx.moveTo(x,y-r); ctx.lineTo(x,y+r); ctx.stroke(); ctx.globalAlpha=1; };
   const theme=(x,y,i,r,a)=>{ const col=gm?hue(i):(i%2?c2:c1);
@@ -17173,14 +17181,16 @@ function luxFx(b, fx, swing, now, sp){
       default: ctx.fillStyle=col; ctx.globalAlpha=a; ctx.beginPath(); ctx.arc(x,y,r,0,7); ctx.fill(); ctx.globalAlpha=1; } };
   if(swing){
     const a=b.swingAngle, ax=Math.cos(a), ay=Math.sin(a), cx=b.x-ax*30, cy=b.y-ay*30, k=b.life0?clamp(b.life/b.life0,0,1):1;
+    if(gm){ for(let r=0;r<3;r++){ ctx.strokeStyle=hexA(hue(r*2+1),0.5*k); ctx.lineWidth=3-r*0.7; ctx.beginPath(); for(let s2=0;s2<=24;s2++){ const q2=a-1.25+s2*(2.5/24), rr=74+r*7+Math.sin(now*9+s2*0.5+r*2)*6; const x=cx+Math.cos(q2)*rr, y=cy+Math.sin(q2)*rr; if(s2) ctx.lineTo(x,y); else ctx.moveTo(x,y); } ctx.stroke(); } }       // 오로라 휘두르기: 바깥에 물결치는 색 띠
     for(let j=0;j<(gm?4:2);j++){ ctx.strokeStyle=gm?hue(j*2):(j?c2:c1); ctx.globalAlpha=(0.7-j*0.12)*k; ctx.lineWidth=7-j*1.4; ctx.beginPath(); ctx.arc(cx,cy,56+j*9,a-1.15,a+1.15); ctx.stroke(); }
     ctx.globalAlpha=1;
     for(let i=0;i<n*2;i++){ const q=a-1.15+i*(2.3/(n*2-1))+(1-k)*0.4, rr=62+Math.sin(i*2.3+now*12)*10+(1-k)*14; theme(cx+Math.cos(q)*rr, cy+Math.sin(q)*rr, i, 2.6, 0.9*k); }
   } else {
     const ux=b.vx/sp, uy=b.vy/sp, R=13*sc*(b.ult?1.4:1);
-    const rg=ctx.createRadialGradient(b.x,b.y,0,b.x,b.y,R*1.6); rg.addColorStop(0,hexA('#ffffff',0.55)); rg.addColorStop(0.35,hexA(gm?'#ffd9ff':th[0],0.5)); rg.addColorStop(1,hexA(gm?'#9fa8ff':th[0],0)); ctx.fillStyle=rg; ctx.beginPath(); ctx.arc(b.x,b.y,R*1.6,0,7); ctx.fill();
+    const rg=ctx.createRadialGradient(b.x,b.y,0,b.x,b.y,R*1.6); rg.addColorStop(0,hexA('#ffffff',0.55)); rg.addColorStop(0.35,hexA(gm?auroraHex(now*0.9,1):th[0],0.5)); rg.addColorStop(1,hexA(gm?auroraHex(now*0.9,4):th[0],0)); ctx.fillStyle=rg; ctx.beginPath(); ctx.arc(b.x,b.y,R*1.6,0,7); ctx.fill();
     for(let i=0;i<n;i++){ const d=8+i*(40/n)*(gm?1.3:1), j=Math.sin(now*30+i*2.1)*(4+i*0.7); theme(b.x-ux*d-uy*j, b.y-uy*d+ux*j, i, 3.2-i*0.2, 0.85-i*0.07); }
     for(let i=0;i<(gm?5:3);i++){ const q=now*9+i*6.283/(gm?5:3), rr=R*0.95; cross(b.x+Math.cos(q)*rr, b.y+Math.sin(q)*rr, 3.2, gm?hue(i):c2, 0.95); }
+    if(gm){ for(let r=0;r<3;r++){ ctx.strokeStyle=hexA(auroraHex(now*0.9,r*2+1),0.6); ctx.lineWidth=3.2-r*0.8; ctx.beginPath(); for(let s2=0;s2<=14;s2++){ const d=s2*5, w=Math.sin(now*14-s2*0.7+r*2)*(3+s2*0.5), x=b.x-ux*d-uy*w, y=b.y-uy*d+ux*w; if(s2) ctx.lineTo(x,y); else ctx.moveTo(x,y); } ctx.stroke(); } }       // 오로라 리본: 탄환 뒤로 물결치며 색이 흐르는 띠
     if(gm){ ctx.strokeStyle=hue(3); ctx.globalAlpha=0.5; ctx.lineWidth=2; ctx.beginPath(); ctx.arc(b.x,b.y,R*1.2+Math.sin(now*14)*2,0,7); ctx.stroke(); ctx.globalAlpha=1; }
   }
 }
