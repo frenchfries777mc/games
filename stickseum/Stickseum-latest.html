@@ -1352,8 +1352,8 @@ const WEAPONS = {
             desc:'데미지 12 · 쿨타임 0.4초 · 사거리 65 · 빠른 발톱 공격, 적중할 때마다 체력 5 흡수'},
   gambler: {id:'gambler', name:'도박사',   emoji:'🎲', kind:'gun', dmg:20, cd:1.0, bulletSpeed:1100, shape:'chip', hitR:10,
             desc:'데미지 20 · 쿨타임 1.0초 · 장거리 · 큰 칩을 곧게 던짐, 맞힐 때마다 칩 +1 (최대 6) · 칩이 많을수록 스킬·궁극기가 강해짐'},
-  wizard:  {id:'wizard',  name:'마법사',   emoji:'🧙', kind:'gun',      dmg:16, cd:0.7,  bulletSpeed:750, shape:'fireball', pierce:true, pierceHits:1, life:0.95,
-            desc:'데미지 16 · 쿨타임 0.7초 · 사거리 짧음 · 발판을 통과하고, 플레이어 한 명을 관통한 뒤 두 번째로 맞힌 상대에게서 멈추는 화염 마법'},
+  wizard:  {id:'wizard',  name:'마법사',   emoji:'🧙', kind:'gun',      dmg:15, cd:0.7,  bulletSpeed:750, shape:'fireball', pierce:true, pierceHits:1, life:1.1,
+            desc:'데미지 15 · 쿨타임 0.7초 · 사거리 보통 · 발판을 통과하고, 플레이어 한 명을 관통한 뒤 두 번째로 맞힌 상대에게서 멈추는 화염 마법'},
   magiccard:{id:'magiccard',name:'마술 카드',emoji:'🃏', kind:'cards',    dmg:10,  cd:0.9,  bulletSpeed:820, shape:'card', hitR:26, comboBonus:5, freeVolleys:3,
             desc:'트럼프 카드 3장이 넓게 퍼져 날아감 · 장당 데미지 10 · 쿨타임 0.9초 · 맞은 상대는 이동속도가 조금 느려짐 · 3장이 모두 맞으면 추가 5 데미지 + 0.5초 기절'},
   flamethrower:{id:'flamethrower',name:'화염방사기',emoji:'🔥', kind:'flame', dmg:0, cd:0, range:FLAME_RANGE, shape:'flamethrower',
@@ -2727,6 +2727,8 @@ Object.assign(COSMETICS.skin_sword_p, {name:'황금의 기사', concept:'gold'})
 Object.assign(COSMETICS.skin_kurus_p, {name:'꿈의 쿠루스', tint:'#9fe8ff', fx:'sparkle', concept:'dream'});
 Object.assign(COSMETICS.skin_magiccard_p, {name:'우노 마술사', tint:'#e8252b', fx:'sparkle', concept:'uno'});
 Object.assign(COSMETICS.skin_bat_new, {name:'감자튀김 선수', tint:'#ffd34d', fx:'sparkle', concept:'fry'});
+Object.assign(COSMETICS.skin_bow_new, {name:'큐피트', tint:'#ff6fae', fx:'sparkle', concept:'cupid'});
+Object.assign(COSMETICS.skin_pistol_new, {name:'바나나 제임스', price:1500, tint:'#ffe14d', fx:'sparkle', concept:'banana'});
 /* ===== the character's own color in a match: plain colors are free, the shiny ones are bought (cat 'bcol', equipped as saveData.equipped.bcol, sent as cos.col) ===== */
 [['red','빨강','#ff4d4d'],['mint','민트','#3fe0c5'],['yellow','노랑','#f5c94c'],['blue','파랑','#7c9eff'],['pink','분홍','#ff8fd9'],['lime','연두','#8dff7c'],
  ['orange','주황','#ff9d4d'],['purple','보라','#b98cff'],['sky','하늘','#4dd9ff'],['rose','장미','#ff6b9d'],['emerald','에메랄드','#6bffb3'],['white','하양','#eef1f6']]
@@ -2924,8 +2926,12 @@ function drawWeaponPersona(c,wid,hx,hy,r,shy,tint,concept){
       c.fillStyle='#20242c'; c.beginPath(); c.arc(hx+r+1,hy+2,1.8,0,7); c.fill();
       break;
     case 'bow': // 궁수: 초록 후드
-      c.fillStyle=tint||'#2f6b3a';
+      c.fillStyle=(concept==='cupid')?'#ffd0e4':(tint||'#2f6b3a');
       c.beginPath(); c.moveTo(hx-r-1,hy+1); c.quadraticCurveTo(hx,hy-r*2.4,hx+r+1,hy+1); c.quadraticCurveTo(hx,hy-r*0.3,hx-r-1,hy+1); c.fill();
+      if(concept==='cupid'){      // 큐피트: heart-shaped eyes
+        c.fillStyle='#ffffff'; c.beginPath(); c.arc(hx,hy+1,r*0.92,0,7); c.fill();
+        c.fillStyle='#ff2e7e'; drawCardHeart(c,hx-3.4,hy+1.6,2.5); drawCardHeart(c,hx+3.4,hy+1.6,2.5);
+      }
       break;
     case 'sword': // 기사: 중세 투구
       c.fillStyle=tint||'#c7ccd6';
@@ -5103,7 +5109,7 @@ function shuffle(arr){ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.
 /* ===== the version of this file =====
    Players with different versions CAN meet and play together: the automatic matchmaking uses the same room names for every version (online-<mode>-<map>-<slot>), and nobody is refused because of a different build.
    The build is only sent along with the join message and the lobby (for information); the corner of the screen shows it. */
-const GAME_BUILD='build 2026-10-18-v406';
+const GAME_BUILD='build 2026-10-18-v407';
 const GAME_VERSION='0.8', GAME_VERSION_NAME='황금을 찾아서';   // 게임 버전 이름: versions.json의 title과 같게 (빌드마다 바꾸지 않음)
 const WEEKLY_EVENTS=[
   {id:'lowg',    name:'저중력 난투', desc:'몸이 둥실둥실, 중력이 약해진 난투', rules:{grav:0.6}},
@@ -11177,7 +11183,7 @@ function spawnBullet(p, angle, w, extra){
   const ax=Math.cos(angle), ay=Math.sin(angle);
   const sx=p.x+ax*(PLAYER_W/2+14), sy=(p.y-40)+ay*(PLAYER_W/2+14);
   bullets.push(Object.assign({x:sx, y:sy, spawnX:sx, spawnY:sy, vx:ax*w.bulletSpeed, vy:ay*w.bulletSpeed,
-    owner:p.id, ownerName:p.name, life:w.life||BULLET_LIFE, color:(conceptOfP(p)==='gold'||conceptOfP(p)==='fry')?'#ffd34d':p.color, sk:(p.cos&&p.cos.skin&&p.cos.skin[p.weapon])||undefined, dmg:w.dmg*(p.focusOn?1.35:1), wid:w.id, arcs:!!w.arcs, dmgFalloff:w.dmgFalloff, hitR:w.hitR, pierce:!!w.pierce, pierceHits:w.pierceHits||0, bouncesLeft:w.bounces||0, poison:w.poison}, extra||{}));
+    owner:p.id, ownerName:p.name, life:w.life||BULLET_LIFE, color:CONCEPT_COLOR[conceptOfP(p)]||p.color, sk:(p.cos&&p.cos.skin&&p.cos.skin[p.weapon])||undefined, dmg:w.dmg*(p.focusOn?1.35:1), wid:w.id, arcs:!!w.arcs, dmgFalloff:w.dmgFalloff, hitR:w.hitR, pierce:!!w.pierce, pierceHits:w.pierceHits||0, bouncesLeft:w.bounces||0, poison:w.poison}, extra||{}));
 }
 function registerCardHit(b, target, targetId, t){
   const tS=t/1000;
@@ -12204,7 +12210,7 @@ function meleeAttack(p, angle, w, tMs){
   if(homerun && hitAny) p.ultPending=null;
   const ax=Math.cos(angle), ay=Math.sin(angle);
   const swingLife=Math.min(0.28, Math.max(0.12, w.cd));
-  bullets.push({x:p.x+ax*30, y:(p.y-30)+ay*30, vx:0, vy:0, life:swingLife, life0:swingLife, color:(conceptOfP(p)==='gold'||conceptOfP(p)==='fry')?'#ffd34d':p.color, sk:(p.cos&&p.cos.skin&&p.cos.skin[p.weapon])||undefined, dmgless:true, wid:w.id, swingAngle:angle});
+  bullets.push({x:p.x+ax*30, y:(p.y-30)+ay*30, vx:0, vy:0, life:swingLife, life0:swingLife, color:CONCEPT_COLOR[conceptOfP(p)]||p.color, sk:(p.cos&&p.cos.skin&&p.cos.skin[p.weapon])||undefined, dmgless:true, wid:w.id, swingAngle:angle});
 }
 function absorbIntoShield(target, dmg){
   if(!target.flameShield || dmg<=0) return dmg;
@@ -15185,7 +15191,7 @@ function recordReplayScene(t){
   }
   for(const b of bullets){
     let rid=replayRid.get(b);
-    if(!rid){ rid=++replayRidSeq; replayRid.set(b,rid); replayDefs[rid]={owner:b.owner, wid:b.wid, color:b.color, dmgless:b.dmgless, fire:b.fire, ult:b.ult, sx:(b.sx!==undefined?b.sx:b.spawnX), sy:(b.sy!==undefined?b.sy:b.spawnY), swingAngle:b.swingAngle, life0:b.life0}; }
+    if(!rid){ rid=++replayRidSeq; replayRid.set(b,rid); replayDefs[rid]={owner:b.owner, wid:b.wid, color:b.color, dmgless:b.dmgless, fire:b.fire, ult:b.ult, sx:(b.sx!==undefined?b.sx:b.spawnX), sy:(b.sy!==undefined?b.sy:b.spawnY), swingAngle:b.swingAngle, life0:b.life0, sk:b.sk}; }
     fr.b.push([rid, b.x, b.y, b.vx||0, b.vy||0, (b.life===undefined?null:b.life)]);
   }
   for(const wl of walls) fr.w.push([wl.x, wl.y, wl.w, wl.h, wl.owner||null, wl.isShield?1:0, wl.dmgAbsorbed||0, (wl.until!==undefined)?wl.until-tS:99]);
@@ -15212,7 +15218,7 @@ function packKillScene(ref){
       for(const id of idSet){ const a=f.p[id]; if(a) o.p.push([id, r1(a[0]), r1(a[1]), Math.round(a[2]), r2(a[3]), Math.round(a[4]), a[5], a[6], a[7], r2(a[8]), r1(a[9]), r1(a[10]), r1(a[11]), r1(a[12])]); }
       for(const b of f.b){
         const d=replayDefs[b[0]]; if(!d || !idSet.has(d.owner)) continue;
-        if(!defsOut[b[0]]) defsOut[b[0]]=[d.wid, d.color, (d.dmgless?1:0)|(d.fire?2:0)|(d.ult?4:0), d.sx===undefined?null:r1(d.sx), d.sy===undefined?null:r1(d.sy), d.swingAngle===undefined?null:r2(d.swingAngle), d.life0===undefined?null:r2(d.life0)];
+        if(!defsOut[b[0]]) defsOut[b[0]]=[d.wid, d.color, (d.dmgless?1:0)|(d.fire?2:0)|(d.ult?4:0), d.sx===undefined?null:r1(d.sx), d.sy===undefined?null:r1(d.sy), d.swingAngle===undefined?null:r2(d.swingAngle), d.life0===undefined?null:r2(d.life0), d.sk||null];
         o.b.push([b[0], r1(b[1]), r1(b[2]), Math.round(b[3]), Math.round(b[4]), b[5]===null?null:r2(b[5])]);
       }
       for(const w of f.w) if(idSet.has(w[4])) o.w.push([r1(w[0]), r1(w[1]), r1(w[2]), r1(w[3]), w[5], r1(w[6]), r2(w[7])]);
@@ -15268,7 +15274,7 @@ function packOthers(ref, idSet, withStuff, maxPlayers){
     if(withStuff){
       o.b=[]; o.w=[]; o.c=[]; o.pp=[];
       for(const b of f.b){ const d=replayDefs[b[0]]; if(!d || idSet.has(d.owner) || !nearStuff(f,b[1],b[2])) continue;
-        if(!out.defs[b[0]]) out.defs[b[0]]=[d.wid, d.color, (d.dmgless?1:0)|(d.fire?2:0)|(d.ult?4:0), d.sx===undefined?null:r1(d.sx), d.sy===undefined?null:r1(d.sy), d.swingAngle===undefined?null:r2(d.swingAngle), d.life0===undefined?null:r2(d.life0)];
+        if(!out.defs[b[0]]) out.defs[b[0]]=[d.wid, d.color, (d.dmgless?1:0)|(d.fire?2:0)|(d.ult?4:0), d.sx===undefined?null:r1(d.sx), d.sy===undefined?null:r1(d.sy), d.swingAngle===undefined?null:r2(d.swingAngle), d.life0===undefined?null:r2(d.life0), d.sk||null];
         o.b.push([b[0], r1(b[1]), r1(b[2]), Math.round(b[3]), Math.round(b[4]), b[5]===null?null:r2(b[5])]); }
       for(const w of f.w) if(!idSet.has(w[4]) && nearStuff(f,w[0],w[1])) o.w.push([r1(w[0]), r1(w[1]), r1(w[2]), r1(w[3]), w[5], r1(w[6]), r2(w[7])]);
       for(const z of f.c) if(!idSet.has(z[3]) && nearStuff(f,z[0],z[1])) o.c.push([r1(z[0]), r1(z[1]), r1(z[2]), r2(z[4])]);
@@ -15308,7 +15314,7 @@ function sceneAddStuff(out, A, B, f, dtS, defs){      // bullets, walls, circles
   for(const ba of (A.b||[])){
     const d=defs[ba[0]]; if(!d) continue;
     const bb=Bb.find(q=>q[0]===ba[0]);
-    out.bullets.push({wid:d[0], color:d[1], dmgless:!!(d[2]&1), fire:!!(d[2]&2), ult:!!(d[2]&4), sx:d[3], sy:d[4], spawnX:d[3], spawnY:d[4], swingAngle:(d[5]===null?undefined:d[5]), life0:(d[6]===null?undefined:d[6]),
+    out.bullets.push({wid:d[0], color:d[1], dmgless:!!(d[2]&1), fire:!!(d[2]&2), ult:!!(d[2]&4), sx:d[3], sy:d[4], spawnX:d[3], spawnY:d[4], swingAngle:(d[5]===null?undefined:d[5]), life0:(d[6]===null?undefined:d[6]), sk:d[7]||undefined,
       x:bb?ba[1]+(bb[1]-ba[1])*f:ba[1], y:bb?ba[2]+(bb[2]-ba[2])*f:ba[2], vx:ba[3], vy:ba[4], life:(ba[5]===null?undefined:(bb&&bb[5]!==null?ba[5]+(bb[5]-ba[5])*f:ba[5]))});
   }
   for(const w of (A.w||[])) out.walls.push({x:w[0], y:w[1], w:w[2], h:w[3], isShield:!!w[4], dmgAbsorbed:w[5], rem:w[6]-dtS});
@@ -15736,7 +15742,7 @@ function drawHeldWeapon(c, weaponId, ax, ay, hx, hy, swingProg, concept){
     c.save();
     c.translate(hx, hy);
     c.scale(facing, 1);
-    c.strokeStyle='#c9a463'; c.lineWidth=3;
+    c.strokeStyle=(concept==='cupid')?'#ff7ab8':'#c9a463'; c.lineWidth=3;
     c.beginPath(); c.arc(0,0,13,-1.15,1.15); c.stroke();
     c.strokeStyle='#e8e2d0'; c.lineWidth=1;
     c.beginPath(); c.moveTo(13*Math.cos(-1.15),13*Math.sin(-1.15)); c.lineTo(13*Math.cos(1.15),13*Math.sin(1.15)); c.stroke();
@@ -15910,6 +15916,12 @@ function drawHeldWeapon(c, weaponId, ax, ay, hx, hy, swingProg, concept){
       c.fillStyle='#ff4d2e'; c.beginPath(); c.arc(26,0,3.4,0,7); c.fill();
       break;
     default: {
+      if(concept==='banana' && weaponId==='pistol'){      // 권총 대신 바나나
+        c.lineCap='round'; c.strokeStyle='#e0b800'; c.lineWidth=7.5; c.beginPath(); c.moveTo(3,3); c.quadraticCurveTo(14,-8,26,2); c.stroke();
+        c.strokeStyle='#ffe14d'; c.lineWidth=5.5; c.beginPath(); c.moveTo(3,3); c.quadraticCurveTo(14,-8,26,2); c.stroke();
+        c.fillStyle='#5a3b12'; c.beginPath(); c.arc(27,2.4,2,0,7); c.fill(); c.beginPath(); c.arc(2,3.4,1.6,0,7); c.fill();
+        break;
+      }
       const len = weaponId==='rifle' ? 26 : weaponId==='smg' ? 18 : 16;
       c.strokeStyle='#cfd3dc'; c.lineWidth = weaponId==='rifle'?4:3;
       c.beginPath(); c.moveTo(0,0); c.lineTo(len,0); c.stroke();
@@ -16751,6 +16763,7 @@ function drawParticles(){
   ctx.restore();
 }
 const MELEE_DRAW_RANGE={spear:160, blade:85, club:82, dagger:40, fist:45, saber:100, pitchfork:105, hook:55, katana:90};   // the reach the swing graphics were drawn for
+const CONCEPT_COLOR={gold:'#ffd34d', fry:'#ffd34d', cupid:'#ff6fae', banana:'#ffe14d'};
 function conceptOfSkin(sid){ const c=sid&&COSMETICS[sid]; return (c&&c.concept)||''; }
 function conceptOfP(p){ return (p&&p.cos&&p.cos.skin)?conceptOfSkin(p.cos.skin[p.weapon]):''; }
 const DREAM_STOPS=['#7ff3e8','#9fd4ff','#c9b6ff','#ff9ad9','#ffd9f2'];      // the colour of the 꿈 photo: turquoise, sky, lavender, pink, a pale blush
@@ -16829,11 +16842,38 @@ function drawDreamFlask(b){
   ctx.restore();
 }
 // concept skins replace what a shot or a swing looks like; returns true when the whole drawing was done here
+// 큐피트: a pink arrow with a heart head that leaves a stream of little hearts popping out behind it
+function drawCupidArrow(b){
+  drawTrail(b);
+  const sc=b.ult?1.5:1, now=performance.now();
+  if(Math.random()<0.6){ const sz=RND(12,20); addP({x:b.x+RND(-5,5),y:b.y+RND(-5,5),vx:RND(-40,40),vy:RND(-90,-20),life:RND(.5,.95),size:sz,color:Math.random()<.5?'#ff6fae':'#ffb3d6',outline:'#c2185b',shape:'text',add:false,text:Math.random()<.2?'💗':'♥',drag:1.1}); }
+  ctx.save(); ctx.translate(b.x,b.y); ctx.rotate(Math.atan2(b.vy||0,b.vx||0)); ctx.scale(sc,sc);
+  ctx.strokeStyle='#e9a3c0'; ctx.lineWidth=2; ctx.lineCap='round'; ctx.beginPath(); ctx.moveTo(-12,0); ctx.lineTo(6,0); ctx.stroke();
+  ctx.fillStyle='#ff4f9a'; ctx.save(); ctx.translate(9,0); ctx.rotate(Math.PI/2*-1+Math.PI); ctx.restore();
+  ctx.save(); ctx.translate(9,0); ctx.rotate(-Math.PI/2); drawCardHeart(ctx,0,0,4.6); ctx.restore();
+  ctx.fillStyle='#ffd0e4'; for(const sd of [-1,1]){ ctx.beginPath(); ctx.moveTo(-12,0); ctx.lineTo(-17,sd*4); ctx.lineTo(-9,sd*0.6); ctx.closePath(); ctx.fill(); }
+  ctx.restore();
+}
+// 바나나 제임스: the bullet is a banana that tumbles through the air, shedding chunks of pulp
+function drawBananaShot(b){
+  drawTrail(b);
+  const sc=b.ult?2.2:1.15, t=performance.now();
+  if(Math.random()<0.7) addP({x:b.x+RND(-4,4),y:b.y+RND(-4,4),vx:RND(-50,50)-(b.vx||0)*0.05,vy:RND(-30,60),life:RND(.4,.8),size:RND(2.5,5.5)*(b.ult?1.6:1),color:Math.random()<.5?'#fff3b0':'#ffe27a',shape:Math.random()<.4?'ring':'dot',grav:300,drag:0.8});
+  ctx.save(); ctx.translate(b.x,b.y); ctx.rotate(Math.atan2(b.vy||0,b.vx||0)+t*0.012*0); ctx.scale(sc,sc);
+  ctx.lineCap='round'; ctx.lineJoin='round';
+  ctx.strokeStyle='#e0b800'; ctx.lineWidth=8; ctx.beginPath(); ctx.moveTo(-9,3); ctx.quadraticCurveTo(0,-7,10,2); ctx.stroke();
+  ctx.strokeStyle='#ffe14d'; ctx.lineWidth=6; ctx.beginPath(); ctx.moveTo(-9,3); ctx.quadraticCurveTo(0,-7,10,2); ctx.stroke();
+  ctx.strokeStyle='#fff6b8'; ctx.lineWidth=1.6; ctx.beginPath(); ctx.moveTo(-6,0); ctx.quadraticCurveTo(0,-7,6,-1); ctx.stroke();
+  ctx.fillStyle='#5a3b12'; ctx.beginPath(); ctx.arc(11,2.4,2,0,7); ctx.fill(); ctx.beginPath(); ctx.arc(-10,3.4,1.6,0,7); ctx.fill();
+  ctx.restore();
+}
 function drawConceptProjectile(b,cp){
   const swing=b.swingAngle!==undefined, shot=!swing && !b.dmgless && b.vx!==undefined;
   if(cp==='dragon' && shot && b.wid==='wizard'){ drawDragonShot(b); return true; }
   if(cp==='uno' && shot && b.wid==='magiccard'){ drawTrail(b); drawUnoCard(b); return true; }
   if(cp==='dream' && shot && b.wid==='kurus'){ drawDreamFlask(b); return true; }
+  if(cp==='cupid' && shot && b.wid==='bow'){ drawCupidArrow(b); return true; }
+  if(cp==='banana' && shot && b.wid==='pistol'){ drawBananaShot(b); return true; }
   if(swing && cp==='gold'){ for(let i=0;i<3;i++){ const a=b.swingAngle+RND(-0.9,0.9), r=RND(30,80); addP({x:b.x-Math.cos(b.swingAngle)*30+Math.cos(a)*r,y:b.y-Math.sin(b.swingAngle)*30+Math.sin(a)*r,vx:RND(-60,60),vy:RND(-120,-20),life:RND(.4,.8),size:RND(1.8,3.6),color:i%2?'#ffd34d':'#fff3b0',grav:80,drag:1.2}); } }
   if(swing && cp==='fry'){ for(let i=0;i<3;i++){ const a=b.swingAngle+RND(-0.8,0.8), r=RND(30,80); addP({x:b.x-Math.cos(b.swingAngle)*30+Math.cos(a)*r,y:b.y-Math.sin(b.swingAngle)*30+Math.sin(a)*r,vx:Math.cos(a)*RND(60,200),vy:Math.sin(a)*RND(60,200)-60,life:RND(.4,.8),size:RND(3,5),color:i%2?'#ffd34d':'#ffe98a',shape:'square',rot:RND(0,6),vr:RND(-9,9),grav:500,drag:0.6}); } }
   return false;
