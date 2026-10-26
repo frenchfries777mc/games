@@ -7,7 +7,93 @@
    "items": [
     "로비 가장자리에 빌드 번호와 저작권 표시",
     "캐릭터 정보 창에 마스터리 포인트 진행도 막대 표시"
-   ]
+   ],
+   "tr": {
+     "en": {
+       "title": "Lobby info display",
+       "items": [
+         "Build number and copyright shown at the lobby edge",
+         "Mastery point progress bar shown in the character info window"
+       ]
+     },
+     "es": {
+       "title": "Información en el lobby",
+       "items": [
+         "Número de versión y copyright en el borde del lobby",
+         "Barra de progreso de puntos de maestría en la ventana de información del personaje"
+       ]
+     },
+     "fr": {
+       "title": "Affichage d'infos dans le lobby",
+       "items": [
+         "Numéro de build et copyright affichés sur le bord du lobby",
+         "Barre de progression des points de maîtrise dans la fenêtre d'infos du personnage"
+       ]
+     },
+     "de": {
+       "title": "Lobby-Infoanzeige",
+       "items": [
+         "Build-Nummer und Copyright am Lobby-Rand angezeigt",
+         "Fortschrittsbalken für Meisterschaftspunkte im Charakter-Infofenster angezeigt"
+       ]
+     },
+     "ja": {
+       "title": "ロビー情報の表示",
+       "items": [
+         "ロビーの端にビルド番号と著作権を表示",
+         "キャラクター情報ウィンドウにマスタリーポイントの進行バーを表示"
+       ]
+     },
+     "zh": {
+       "title": "大厅信息显示",
+       "items": [
+         "大厅边缘显示版本号和版权信息",
+         "角色信息窗口显示熟练点数进度条"
+       ]
+     },
+     "pt": {
+       "title": "Exibição de informações do lobby",
+       "items": [
+         "Número da build e direitos autorais exibidos na borda do lobby",
+         "Barra de progresso de pontos de maestria na janela de informações do personagem"
+       ]
+     },
+     "ru": {
+       "title": "Информация в лобби",
+       "items": [
+         "По краю лобби показываются номер сборки и copyright",
+         "В окне информации о персонаже показана полоса прогресса очков мастерства"
+       ]
+     },
+     "tr": {
+       "title": "Lobi bilgi gösterimi",
+       "items": [
+         "Lobinin kenarında derleme numarası ve telif hakkı gösterilir",
+         "Karakter bilgi penceresinde ustalık puanı ilerleme çubuğu gösterilir"
+       ]
+     },
+     "it": {
+       "title": "Informazioni nella lobby",
+       "items": [
+         "Numero di build e copyright mostrati sul bordo della lobby",
+         "Barra di avanzamento dei punti maestria nella finestra informazioni del personaggio"
+       ]
+     },
+     "pl": {
+       "title": "Informacje w lobby",
+       "items": [
+         "Na krawędzi lobby widoczny numer builda i prawa autorskie",
+         "Pasek postępu punktów mistrzostwa w oknie informacji o postaci"
+       ]
+     },
+     "ar": {
+       "title": "عرض معلومات الردهة",
+       "items": [
+         "عرض رقم الإصدار وحقوق النشر على حافة الردهة",
+         "شريط تقدم نقاط الإتقان في نافذة معلومات الشخصية"
+       ]
+     }
+   }
   },
   {
    "date": "2026-10-26",
@@ -15,7 +101,81 @@
    "title": "마스터리 계급 엠블럼과 진행 막대",
    "items": [
     "경기 결과창에 현재 마스터리 계급 엠블럼과 다음 계급까지의 진행 막대 표시"
-   ]
+   ],
+   "tr": {
+     "en": {
+       "title": "Mastery rank emblem and progress bar",
+       "items": [
+         "The match result screen shows your current mastery rank emblem and a progress bar to the next rank"
+       ]
+     },
+     "es": {
+       "title": "Emblema de rango de maestría y barra de progreso",
+       "items": [
+         "La pantalla de resultados muestra el emblema del rango de maestría actual y una barra de progreso hasta el siguiente rango"
+       ]
+     },
+     "fr": {
+       "title": "Emblème de rang de maîtrise et barre de progression",
+       "items": [
+         "L'écran de résultats affiche l'emblème du rang de maîtrise actuel et une barre de progression vers le rang suivant"
+       ]
+     },
+     "de": {
+       "title": "Rang-Emblem für Meisterschaft und Fortschrittsbalken",
+       "items": [
+         "Der Ergebnisbildschirm zeigt das Emblem des aktuellen Meisterrangs und einen Fortschrittsbalken bis zum nächsten Rang"
+       ]
+     },
+     "ja": {
+       "title": "マスタリーランクのエンブレムと進行バー",
+       "items": [
+         "試合結果画面に現在のマスタリーランクのエンブレムと、次のランクまでの進行バーを表示"
+       ]
+     },
+     "zh": {
+       "title": "熟练段位徽章与进度条",
+       "items": [
+         "对局结果界面显示当前熟练段位徽章以及距离下一段位的进度条"
+       ]
+     },
+     "pt": {
+       "title": "Emblema de patente de maestria e barra de progresso",
+       "items": [
+         "A tela de resultados mostra o emblema da patente de maestria atual e uma barra de progresso até a próxima"
+       ]
+     },
+     "ru": {
+       "title": "Эмблема ранга мастерства и полоса прогресса",
+       "items": [
+         "В окне результатов показаны эмблема текущего ранга мастерства и полоса прогресса до следующего ранга"
+       ]
+     },
+     "tr": {
+       "title": "Ustalık rütbe amblemi ve ilerleme çubuğu",
+       "items": [
+         "Maç sonucu ekranında mevcut ustalık rütbe amblemi ve bir sonraki rütbeye kadar ilerleme çubuğu gösterilir"
+       ]
+     },
+     "it": {
+       "title": "Emblema del grado di maestria e barra di avanzamento",
+       "items": [
+         "La schermata dei risultati mostra l'emblema del grado di maestria attuale e una barra di avanzamento verso il grado successivo"
+       ]
+     },
+     "pl": {
+       "title": "Emblemat rangi mistrzostwa i pasek postępu",
+       "items": [
+         "Ekran wyników pokazuje emblemat obecnej rangi mistrzostwa i pasek postępu do następnej rangi"
+       ]
+     },
+     "ar": {
+       "title": "شعار رتبة الإتقان وشريط التقدم",
+       "items": [
+         "تعرض شاشة النتائج شعار رتبة الإتقان الحالية وشريط تقدم حتى الرتبة التالية"
+       ]
+     }
+   }
   },
   {
    "date": "2026-10-26",
@@ -24,7 +184,93 @@
    "items": [
     "경기가 끝나면 얻은 마스터리 포인트와 현재 계급, 다음 계급까지 남은 점수 표시",
     "계급 중간 단계 점수를 10 단위로 정리"
-   ]
+   ],
+   "tr": {
+     "en": {
+       "title": "Mastery points shown after a match",
+       "items": [
+         "When a match ends, shows the mastery points earned, your current rank, and the points left to the next rank",
+         "Rank intermediate-step points rounded to multiples of 10"
+       ]
+     },
+     "es": {
+       "title": "Puntos de maestría tras la partida",
+       "items": [
+         "Al terminar la partida se muestran los puntos de maestría ganados, el rango actual y los puntos que faltan para el siguiente",
+         "Puntos de los pasos intermedios de rango ajustados a múltiplos de 10"
+       ]
+     },
+     "fr": {
+       "title": "Points de maîtrise affichés après la partie",
+       "items": [
+         "À la fin de la partie, affiche les points de maîtrise gagnés, le rang actuel et les points restants jusqu'au rang suivant",
+         "Points des paliers intermédiaires de rang arrondis à 10"
+       ]
+     },
+     "de": {
+       "title": "Meisterschaftspunkte nach dem Spiel anzeigen",
+       "items": [
+         "Nach dem Spiel werden die erhaltenen Meisterschaftspunkte, der aktuelle Rang und die Punkte bis zum nächsten Rang angezeigt",
+         "Punkte der Zwischenstufen der Ränge auf 10er-Schritte gebracht"
+       ]
+     },
+     "ja": {
+       "title": "試合後にマスタリーポイントを表示",
+       "items": [
+         "試合が終わると、獲得したマスタリーポイント、現在のランク、次のランクまでの残りポイントを表示",
+         "ランクの中間段階のポイントを10単位に整理"
+       ]
+     },
+     "zh": {
+       "title": "对局结束后显示熟练点数",
+       "items": [
+         "对局结束时显示获得的熟练点数、当前段位以及距离下一段位还需的点数",
+         "段位中间阶段的点数整理为10的倍数"
+       ]
+     },
+     "pt": {
+       "title": "Pontos de maestria exibidos após a partida",
+       "items": [
+         "Ao fim da partida, mostra os pontos de maestria ganhos, a patente atual e os pontos restantes até a próxima",
+         "Pontos das etapas intermediárias das patentes organizados em múltiplos de 10"
+       ]
+     },
+     "ru": {
+       "title": "Очки мастерства показываются после матча",
+       "items": [
+         "По окончании матча показываются полученные очки мастерства, текущий ранг и очки до следующего ранга",
+         "Очки промежуточных ступеней рангов приведены к кратным 10"
+       ]
+     },
+     "tr": {
+       "title": "Maç sonrasında ustalık puanı gösterimi",
+       "items": [
+         "Maç bitince kazanılan ustalık puanı, mevcut rütbe ve bir sonraki rütbeye kalan puan gösterilir",
+         "Rütbe ara basamak puanları 10'un katlarına düzenlendi"
+       ]
+     },
+     "it": {
+       "title": "Punti maestria mostrati dopo la partita",
+       "items": [
+         "A fine partita mostra i punti maestria guadagnati, il grado attuale e i punti mancanti al grado successivo",
+         "Punti dei gradi intermedi riordinati a multipli di 10"
+       ]
+     },
+     "pl": {
+       "title": "Punkty mistrzostwa pokazywane po meczu",
+       "items": [
+         "Po zakończeniu meczu pokazuje zdobyte punkty mistrzostwa, obecną rangę i punkty brakujące do następnej rangi",
+         "Punkty pośrednich stopni rang uporządkowane do wielokrotności 10"
+       ]
+     },
+     "ar": {
+       "title": "عرض نقاط الإتقان بعد المباراة",
+       "items": [
+         "عند انتهاء المباراة يُعرض عدد نقاط الإتقان المكتسبة والرتبة الحالية والنقاط المتبقية للرتبة التالية",
+         "تنظيم نقاط المراحل الوسطى للرتب إلى مضاعفات العشرة"
+       ]
+     }
+   }
   },
   {
    "date": "2026-10-26",
@@ -33,7 +279,93 @@
    "items": [
     "듀얼 처치 8점, 배틀로얄 처치 5점",
     "6명 이상 부활 모드 처치 2점, 어시스트 1점, 승리 3점"
-   ]
+   ],
+   "tr": {
+     "en": {
+       "title": "Mastery point scoring adjusted",
+       "items": [
+         "Duel takedown 8 points, Battle Royale takedown 5 points",
+         "In modes with respawns and 6+ players: takedown 2, assist 1, victory 3"
+       ]
+     },
+     "es": {
+       "title": "Ajuste de la puntuación de puntos de maestría",
+       "items": [
+         "Bajas en duelo 8 puntos, bajas en Battle Royale 5 puntos",
+         "En modos con reaparición y 6 o más jugadores: bajas 2, asistencia 1, victoria 3"
+       ]
+     },
+     "fr": {
+       "title": "Ajustement du score des points de maîtrise",
+       "items": [
+         "Élimination en duel 8 points, élimination en Battle Royale 5 points",
+         "Dans les modes avec réapparitions et 6 joueurs ou plus : élimination 2, assistance 1, victoire 3"
+       ]
+     },
+     "de": {
+       "title": "Wertung der Meisterschaftspunkte angepasst",
+       "items": [
+         "Abschuss im Duell 8 Punkte, Abschuss in Battle Royale 5 Punkte",
+         "In Modi mit Wiederbelebung und 6 oder mehr Spielern: Abschuss 2, Assist 1, Sieg 3"
+       ]
+     },
+     "ja": {
+       "title": "マスタリーポイントの点数を調整",
+       "items": [
+         "デュエルの撃破8点、バトルロイヤルの撃破5点",
+         "6人以上で復活があるモードは撃破2点、アシスト1点、勝利3点"
+       ]
+     },
+     "zh": {
+       "title": "调整熟练点数分值",
+       "items": [
+         "决斗击破8点，大逃杀击破5点",
+         "6人以上且可复活的模式：击破2点，助攻1点，胜利3点"
+       ]
+     },
+     "pt": {
+       "title": "Ajuste da pontuação dos pontos de maestria",
+       "items": [
+         "Abate em duelo 8 pontos, abate no Battle Royale 5 pontos",
+         "Em modos com reaparecimento e 6 ou mais jogadores: abate 2, assistência 1, vitória 3"
+       ]
+     },
+     "ru": {
+       "title": "Изменено начисление очков мастерства",
+       "items": [
+         "Убийство в дуэли — 8 очков, убийство в Battle Royale — 5 очков",
+         "В режимах с возрождением и 6+ игроками: убийство 2, помощь 1, победа 3"
+       ]
+     },
+     "tr": {
+       "title": "Ustalık puanı değerleri ayarlandı",
+       "items": [
+         "Düello öldürme 8 puan, Battle Royale öldürme 5 puan",
+         "6 veya daha fazla oyunculu ve yeniden doğuşlu modlarda: öldürme 2, asist 1, galibiyet 3"
+       ]
+     },
+     "it": {
+       "title": "Punteggio dei punti maestria regolato",
+       "items": [
+         "Uccisione in duello 8 punti, uccisione in Battle Royale 5 punti",
+         "Nelle modalità con rinascite e 6 o più giocatori: uccisione 2, assist 1, vittoria 3"
+       ]
+     },
+     "pl": {
+       "title": "Dostosowano punktację punktów mistrzostwa",
+       "items": [
+         "Zabójstwo w pojedynku 8 punktów, zabójstwo w Battle Royale 5 punktów",
+         "W trybach z odrodzeniami i 6 lub więcej graczami: zabójstwo 2, asysta 1, zwycięstwo 3"
+       ]
+     },
+     "ar": {
+       "title": "تعديل تسجيل نقاط الإتقان",
+       "items": [
+         "قتل في المبارزة 8 نقاط، وقتل في Battle Royale 5 نقاط",
+         "في الأوضاع التي فيها إعادة ظهور و6 لاعبين أو أكثر: قتل 2، مساعدة 1، فوز 3"
+       ]
+     }
+   }
   },
   {
    "date": "2026-10-26",
@@ -41,7 +373,81 @@
    "title": "마스터리 포인트 점수 조건",
    "items": [
     "봇 8명 이상에 부활이 있는 모드는 처치 2점, 어시스트 1점, 승리 3점 (깃발 뺏기 등)"
-   ]
+   ],
+   "tr": {
+     "en": {
+       "title": "Mastery point conditions",
+       "items": [
+         "In modes with 8+ bots and respawns: takedown 2, assist 1, victory 3 (e.g. Capture the Flag)"
+       ]
+     },
+     "es": {
+       "title": "Condiciones de puntos de maestría",
+       "items": [
+         "En modos con 8 o más bots y reaparición: bajas 2, asistencia 1, victoria 3 (p. ej., Captura la bandera)"
+       ]
+     },
+     "fr": {
+       "title": "Conditions des points de maîtrise",
+       "items": [
+         "Dans les modes avec 8 bots ou plus et des réapparitions : élimination 2, assistance 1, victoire 3 (ex. Capture du drapeau)"
+       ]
+     },
+     "de": {
+       "title": "Bedingungen für Meisterschaftspunkte",
+       "items": [
+         "In Modi mit 8 oder mehr Bots und Wiederbelebung: Abschuss 2, Assist 1, Sieg 3 (z. B. Capture the Flag)"
+       ]
+     },
+     "ja": {
+       "title": "マスタリーポイントの獲得条件",
+       "items": [
+         "ボット8体以上で復活があるモードは撃破2点、アシスト1点、勝利3点（旗取りなど）"
+       ]
+     },
+     "zh": {
+       "title": "熟练点数获得条件",
+       "items": [
+         "有8名以上机器人且可复活的模式：击破2点，助攻1点，胜利3点（如夺旗等）"
+       ]
+     },
+     "pt": {
+       "title": "Condições dos pontos de maestria",
+       "items": [
+         "Em modos com 8 ou mais bots e reaparecimento: abate 2, assistência 1, vitória 3 (ex.: Capture the Flag)"
+       ]
+     },
+     "ru": {
+       "title": "Условия получения очков мастерства",
+       "items": [
+         "В режимах с 8+ ботами и возрождением: убийство 2, помощь 1, победа 3 (например, «Захват флага»)"
+       ]
+     },
+     "tr": {
+       "title": "Ustalık puanı koşulları",
+       "items": [
+         "8 veya daha fazla botlu ve yeniden doğuşlu modlarda: öldürme 2, asist 1, galibiyet 3 (ör. Capture the Flag)"
+       ]
+     },
+     "it": {
+       "title": "Condizioni dei punti maestria",
+       "items": [
+         "Nelle modalità con 8 o più bot e rinascite: uccisione 2, assist 1, vittoria 3 (es. Capture the Flag)"
+       ]
+     },
+     "pl": {
+       "title": "Warunki punktów mistrzostwa",
+       "items": [
+         "W trybach z 8 lub więcej botami i odrodzeniami: zabójstwo 2, asysta 1, zwycięstwo 3 (np. Capture the Flag)"
+       ]
+     },
+     "ar": {
+       "title": "شروط نقاط الإتقان",
+       "items": [
+         "في الأوضاع التي فيها 8 بوتات أو أكثر وإعادة ظهور: قتل 2، مساعدة 1، فوز 3 (مثل Capture the Flag)"
+       ]
+     }
+   }
   },
   {
    "date": "2026-10-26",
@@ -50,7 +456,93 @@
    "items": [
     "계급 필요 포인트를 기존의 1.75배로 깔끔하게 정리 (브론즈 90, 실버 260, 골드 530, 플래티넘 880, 다이아 1750, 옵시디언 3050, 마스터 4800, 그랜드 마스터 7000)",
     "깃발 뺏기 마스터리 포인트 조정 (처치 2점, 어시스트 1점, 승리 3점)"
-   ]
+   ],
+   "tr": {
+     "en": {
+       "title": "Mastery point thresholds adjusted",
+       "items": [
+         "Rank point requirements set to 1.75x the previous values (Bronze 90, Silver 260, Gold 530, Platinum 880, Diamond 1750, Obsidian 3050, Master 4800, Grandmaster 7000)",
+         "Capture the Flag mastery points adjusted (takedown 2, assist 1, victory 3)"
+       ]
+     },
+     "es": {
+       "title": "Ajuste de los umbrales de puntos de maestría",
+       "items": [
+         "Puntos necesarios por rango ajustados a 1,75 veces los anteriores (Bronce 90, Plata 260, Oro 530, Platino 880, Diamante 1750, Obsidiana 3050, Maestro 4800, Gran maestro 7000)",
+         "Puntos de maestría de Captura la bandera ajustados (bajas 2, asistencia 1, victoria 3)"
+       ]
+     },
+     "fr": {
+       "title": "Ajustement des seuils de points de maîtrise",
+       "items": [
+         "Points requis par rang ajustés à 1,75 fois les anciennes valeurs (Bronze 90, Argent 260, Or 530, Platine 880, Diamant 1750, Obsidienne 3050, Maître 4800, Grand Maître 7000)",
+         "Points de maîtrise de Capture du drapeau ajustés (élimination 2, assistance 1, victoire 3)"
+       ]
+     },
+     "de": {
+       "title": "Meisterschaftspunkte-Schwellen angepasst",
+       "items": [
+         "Benötigte Punkte pro Rang auf das 1,75-Fache der bisherigen Werte angepasst (Bronze 90, Silber 260, Gold 530, Platin 880, Diamant 1750, Obsidian 3050, Meister 4800, Großmeister 7000)",
+         "Meisterschaftspunkte bei Capture the Flag angepasst (Abschuss 2, Assist 1, Sieg 3)"
+       ]
+     },
+     "ja": {
+       "title": "マスタリーポイントの基準を調整",
+       "items": [
+         "ランクに必要なポイントを従来の1.75倍に整理（ブロンズ 90、シルバー 260、ゴールド 530、プラチナ 880、ダイヤ 1750、オブシディアン 3050、マスター 4800、グランドマスター 7000）",
+         "旗取りのマスタリーポイントを調整（撃破2点、アシスト1点、勝利3点）"
+       ]
+     },
+     "zh": {
+       "title": "调整熟练点数标准",
+       "items": [
+         "段位所需点数调整为原来的1.75倍（青铜 90、白银 260、黄金 530、铂金 880、钻石 1750、黑曜石 3050、大师 4800、宗师 7000）",
+         "夺旗的熟练点数调整（击破2点，助攻1点，胜利3点）"
+       ]
+     },
+     "pt": {
+       "title": "Ajuste dos limites de pontos de maestria",
+       "items": [
+         "Pontos necessários por patente ajustados para 1,75 vez os valores anteriores (Bronze 90, Prata 260, Ouro 530, Platina 880, Diamante 1750, Obsidiana 3050, Mestre 4800, Grão-Mestre 7000)",
+         "Pontos de maestria de Capture the Flag ajustados (abate 2, assistência 1, vitória 3)"
+       ]
+     },
+     "ru": {
+       "title": "Изменены пороги очков мастерства",
+       "items": [
+         "Очки для рангов приведены к 1,75× прежних значений (Бронза 90, Серебро 260, Золото 530, Платина 880, Алмаз 1750, Обсидиан 3050, Мастер 4800, Грандмастер 7000)",
+         "Очки мастерства в «Захват флага» изменены (убийство 2, помощь 1, победа 3)"
+       ]
+     },
+     "tr": {
+       "title": "Ustalık puanı eşikleri ayarlandı",
+       "items": [
+         "Rütbe için gereken puanlar öncekinin 1,75 katına ayarlandı (Bronz 90, Gümüş 260, Altın 530, Platin 880, Elmas 1750, Obsidyen 3050, Usta 4800, Büyük Usta 7000)",
+         "Capture the Flag ustalık puanları ayarlandı (öldürme 2, asist 1, galibiyet 3)"
+       ]
+     },
+     "it": {
+       "title": "Soglie dei punti maestria regolate",
+       "items": [
+         "Punti richiesti per grado portati a 1,75 volte i valori precedenti (Bronzo 90, Argento 260, Oro 530, Platino 880, Diamante 1750, Ossidiana 3050, Maestro 4800, Gran maestro 7000)",
+         "Punti maestria di Capture the Flag regolati (uccisione 2, assist 1, vittoria 3)"
+       ]
+     },
+     "pl": {
+       "title": "Dostosowano progi punktów mistrzostwa",
+       "items": [
+         "Wymagane punkty dla rang ustawiono na 1,75-krotność poprzednich wartości (Brąz 90, Srebro 260, Złoto 530, Platyna 880, Diament 1750, Obsydian 3050, Mistrz 4800, Arcymistrz 7000)",
+         "Punkty mistrzostwa w Capture the Flag zmienione (zabójstwo 2, asysta 1, zwycięstwo 3)"
+       ]
+     },
+     "ar": {
+       "title": "تعديل حدود نقاط الإتقان",
+       "items": [
+         "نقاط الرتب المطلوبة مضبوطة على 1.75 ضعف القيم السابقة (برونزي 90، فضي 260، ذهبي 530، بلاتيني 880، ماسي 1750، سبج 3050، سيد 4800، أستاذ كبير 7000)",
+         "تعديل نقاط الإتقان في Capture the Flag (قتل 2، مساعدة 1، فوز 3)"
+       ]
+     }
+   }
   },
   {
    "date": "2026-10-26",
@@ -177,7 +669,105 @@
     "마법사 기본 데미지 2 감소 (18 → 16)",
     "폭발광 궁극기가 자신에게 피해를 주지 않도록 변경",
     "스킨마다 탄환과 휘두르기에 서로 다른 색 광채와 효과 추가"
-   ]
+   ],
+   "tr": {
+     "en": {
+       "title": "Skin attack effects",
+       "items": [
+         "Wizard base damage reduced by 2 (18 → 16)",
+         "Explosion Maniac ultimate no longer damages yourself",
+         "Each skin now has different colored glow and effects on its bullets and swings"
+       ]
+     },
+     "es": {
+       "title": "Efectos de ataque de los aspectos",
+       "items": [
+         "Daño base del Mago reducido en 2 (18 → 16)",
+         "La ultimate de Destello explosivo ya no te daña a ti mismo",
+         "Cada aspecto tiene brillo y efectos de distinto color en sus balas y golpes"
+       ]
+     },
+     "fr": {
+       "title": "Effets d'attaque des skins",
+       "items": [
+         "Dégâts de base du Magicien réduits de 2 (18 → 16)",
+         "L'ultime Éclat explosif ne vous blesse plus",
+         "Chaque skin a désormais un éclat et des effets de couleurs différentes sur ses balles et ses coups"
+       ]
+     },
+     "de": {
+       "title": "Skin-Angriffseffekte",
+       "items": [
+         "Grundschaden des Magiers um 2 verringert (18 → 16)",
+         "Explosionswahn-Ultimate verletzt dich nicht mehr selbst",
+         "Jeder Skin erhält unterschiedlich farbigen Glanz und Effekte auf Geschossen und Schwüngen"
+       ]
+     },
+     "ja": {
+       "title": "スキンの攻撃エフェクト",
+       "items": [
+         "魔法使いの基本ダメージを2減少（18 → 16）",
+         "爆発光の奥義が自分にダメージを与えないように変更",
+         "スキンごとに弾と振りに異なる色の光とエフェクトを追加"
+       ]
+     },
+     "zh": {
+       "title": "皮肤攻击效果",
+       "items": [
+         "法师基础伤害减少2（18 → 16）",
+         "爆炸狂终极技能不再伤害自己",
+         "每个皮肤的子弹和挥击新增不同颜色的光晕和效果"
+       ]
+     },
+     "pt": {
+       "title": "Efeitos de ataque das skins",
+       "items": [
+         "Dano base do Mago reduzido em 2 (18 → 16)",
+         "A ultimate do Maníaco por Explosões não causa mais dano a você mesmo",
+         "Cada skin ganhou brilho e efeitos de cores diferentes nas balas e nos golpes"
+       ]
+     },
+     "ru": {
+       "title": "Эффекты атаки облика",
+       "items": [
+         "Базовый урон Мага снижен на 2 (18 → 16)",
+         "Ультимейт Подрывника больше не наносит урон самому игроку",
+         "У каждого облика свой цвет свечения и эффекты на пулях и ударах"
+       ]
+     },
+     "tr": {
+       "title": "Kostüm saldırı efektleri",
+       "items": [
+         "Büyücünün temel hasarı 2 azaltıldı (18 → 16)",
+         "Patlama Manyağı'nın ultisi artık kendine zarar vermez",
+         "Her kostümün mermi ve vuruşlarına farklı renkte ışıltı ve efektler eklendi"
+       ]
+     },
+     "it": {
+       "title": "Effetti d'attacco delle skin",
+       "items": [
+         "Danno base del Mago ridotto di 2 (18 → 16)",
+         "L'ultimate del Maniaco delle esplosioni non danneggia più te stesso",
+         "Ogni skin ha bagliori ed effetti di colore diverso su proiettili e fendenti"
+       ]
+     },
+     "pl": {
+       "title": "Efekty ataku skórek",
+       "items": [
+         "Obrażenia podstawowe Maga zmniejszone o 2 (18 → 16)",
+         "Ultimate Maniaka wybuchów nie rani już ciebie",
+         "Każda skórka ma inną barwę poświaty i efekty na pociskach i ciosach"
+       ]
+     },
+     "ar": {
+       "title": "تأثيرات هجوم السكن",
+       "items": [
+         "تقليل الضرر الأساسي للساحر بمقدار 2 (18 → 16)",
+         "ضربة مهووس الانفجارات لم تعد تلحق الضرر بك",
+         "لكل سكن توهج وتأثيرات بألوان مختلفة على الرصاصات والضربات"
+       ]
+     }
+   }
   },
   {
    "date": "2026-10-26",
@@ -187,7 +777,105 @@
     "피사로 스킬을 정복자의 질주로 교체 (체력 20 즉시 회복, 3초 동안 이동 속도 50% 증가)",
     "승리 포즈 코사크 댄스 추가",
     "밸런스 표 갱신 (모든 캐릭터 조합을 모든 맵에서 한 번씩 측정)"
-   ]
+   ],
+   "tr": {
+     "en": {
+       "title": "Pizarro skill change and Cossack Dance",
+       "items": [
+         "Pizarro skill changed to Conqueror’s Rush (instantly heals 20 HP, +50% move speed for 3s)",
+         "Cossack Dance added as a victory pose",
+         "Balance table updated (every character pairing measured once on every map)"
+       ]
+     },
+     "es": {
+       "title": "Cambio de habilidad de Pizarro y baile cosaco",
+       "items": [
+         "La habilidad de Pizarro pasa a ser Carrera del conquistador (recupera 20 de vida al instante, +50 % de velocidad de movimiento durante 3 s)",
+         "Añadido el baile cosaco como pose de victoria",
+         "Tabla de equilibrio actualizada (cada combinación de personajes medida una vez en cada mapa)"
+       ]
+     },
+     "fr": {
+       "title": "Compétence de Pizarro modifiée et danse cosaque",
+       "items": [
+         "La compétence de Pizarro devient Course du conquérant (récupère 20 PV instantanément, +50 % de vitesse de déplacement pendant 3 s)",
+         "Ajout de la danse cosaque comme pose de victoire",
+         "Tableau d'équilibrage mis à jour (chaque combinaison de personnages mesurée une fois sur chaque carte)"
+       ]
+     },
+     "de": {
+       "title": "Pizarro-Fähigkeit geändert und Kosakentanz",
+       "items": [
+         "Pizarro-Fähigkeit durch Eroberersturm ersetzt (sofort 20 Lebenspunkte geheilt, 3 s lang +50 % Bewegungstempo)",
+         "Kosakentanz als Siegerpose hinzugefügt",
+         "Balance-Tabelle aktualisiert (jede Charakterkombination auf jeder Karte einmal gemessen)"
+       ]
+     },
+     "ja": {
+       "title": "ピサロのスキル変更、コサックダンス",
+       "items": [
+         "ピサロのスキルを征服者の疾走に変更（体力を20即座に回復、3秒間移動速度50%上昇）",
+         "勝利ポーズにコサックダンスを追加",
+         "バランス表を更新（すべてのキャラクターの組み合わせを全マップで1回ずつ計測）"
+       ]
+     },
+     "zh": {
+       "title": "皮萨罗技能更换，哥萨克舞",
+       "items": [
+         "皮萨罗技能改为征服者冲锋（立即恢复20点生命，3秒内移动速度提高50%）",
+         "新增胜利姿势：哥萨克舞",
+         "更新平衡表（所有角色组合在每张地图上各测量一次）"
+       ]
+     },
+     "pt": {
+       "title": "Habilidade do Pizarro trocada e Dança cossaca",
+       "items": [
+         "A habilidade do Pizarro foi trocada por Corrida do Conquistador (recupera 20 de vida na hora, +50% de velocidade de movimento por 3 s)",
+         "Adicionada a Dança cossaca como pose de vitória",
+         "Tabela de equilíbrio atualizada (cada combinação de personagens medida uma vez em cada mapa)"
+       ]
+     },
+     "ru": {
+       "title": "Навык Пизарро и казачий танец",
+       "items": [
+         "Навык Пизарро заменён на Рывок завоевателя (мгновенно восстанавливает 20 здоровья, +50% к скорости передвижения на 3 с)",
+         "Добавлен казачий танец как поза победы",
+         "Обновлена таблица баланса (каждая комбинация персонажей измерена один раз на каждой карте)"
+       ]
+     },
+     "tr": {
+       "title": "Pizarro yeteneği değişti ve Kazak Dansı",
+       "items": [
+         "Pizarro yeteneği Fatihin Koşusu'na çevrildi (anında 20 can yeniler, 3 sn boyunca hareket hızı %50 artar)",
+         "Zafer pozu olarak Kazak Dansı eklendi",
+         "Denge tablosu güncellendi (her karakter kombinasyonu her haritada bir kez ölçüldü)"
+       ]
+     },
+     "it": {
+       "title": "Abilità di Pizarro cambiata e danza cosacca",
+       "items": [
+         "La abilità di Pizarro diventa Corsa del conquistatore (recupera subito 20 PV, +50% di velocità di movimento per 3 s)",
+         "Aggiunta la danza cosacca come posa della vittoria",
+         "Tabella di bilanciamento aggiornata (ogni combinazione di personaggi misurata una volta su ogni mappa)"
+       ]
+     },
+     "pl": {
+       "title": "Zmiana umiejętności Pizarra i taniec kozaka",
+       "items": [
+         "Umiejętność Pizarra zmieniona na Bieg zdobywcy (natychmiast przywraca 20 zdrowia, +50% szybkości ruchu przez 3 s)",
+         "Dodano taniec kozaka jako pozę zwycięstwa",
+         "Zaktualizowano tabelę balansu (każda kombinacja postaci zmierzona raz na każdej mapie)"
+       ]
+     },
+     "ar": {
+       "title": "تغيير مهارة بيزارو ورقصة القوزاق",
+       "items": [
+         "تغيير مهارة بيزارو إلى اندفاع الفاتح (يستعيد 20 صحة فورا، و+50% سرعة حركة لمدة 3 ث)",
+         "إضافة رقصة القوزاق كوضعية للنصر",
+         "تحديث جدول التوازن (قياس كل تركيبة شخصيات مرة واحدة في كل خريطة)"
+       ]
+     }
+   }
   },
   {
    "date": "2026-10-26",
@@ -195,7 +883,81 @@
    "title": "학살자 스킬 교체",
    "items": [
     "학살자 스킬을 화염 돌진으로 교체 (바라보는 방향으로 돌진, 지나는 적에게 20 피해와 화상, 지나온 자리에 3초 동안 불길)"
-   ]
+   ],
+   "tr": {
+     "en": {
+       "title": "Slayer skill replaced",
+       "items": [
+         "Slayer skill changed to Flame Rush (rushes in the facing direction, 20 damage and burn to enemies passed, 3s of fire along the path)"
+       ]
+     },
+     "es": {
+       "title": "Cambio de la habilidad del Masacrador",
+       "items": [
+         "La habilidad del Masacrador pasa a ser Embestida de llamas (embiste en la dirección que miras, 20 de daño y quemaduras a los enemigos que atraviesa, 3 s de fuego en el camino)"
+       ]
+     },
+     "fr": {
+       "title": "Compétence du Massacreur remplacée",
+       "items": [
+         "La compétence du Massacreur devient Ruée enflammée (ruée dans la direction du regard, 20 dégâts et brûlure aux ennemis croisés, 3 s de flammes sur le trajet)"
+       ]
+     },
+     "de": {
+       "title": "Schlächter-Fähigkeit ersetzt",
+       "items": [
+         "Schlächter-Fähigkeit durch Flammenstoß ersetzt (Sturm in Blickrichtung, 20 Schaden und Verbrennung für passierte Gegner, 3 s Feuer auf der Strecke)"
+       ]
+     },
+     "ja": {
+       "title": "殺戮者のスキル変更",
+       "items": [
+         "殺戮者のスキルを火炎突進に変更（向いている方向へ突進、通過した敵に20ダメージと火傷、通った跡に3秒間の炎）"
+       ]
+     },
+     "zh": {
+       "title": "屠杀者技能更换",
+       "items": [
+         "屠杀者技能改为火焰突进（朝面向方向冲刺，对经过的敌人造成20点伤害并着火，经过处留下3秒火焰）"
+       ]
+     },
+     "pt": {
+       "title": "Habilidade do Massacrador trocada",
+       "items": [
+         "A habilidade do Massacrador foi trocada por Investida Flamejante (avança na direção que você olha, 20 de dano e queimadura nos inimigos que atravessa, 3 s de fogo no trajeto)"
+       ]
+     },
+     "ru": {
+       "title": "Навык Истребителя заменён",
+       "items": [
+         "Навык Истребителя заменён на Огненный рывок (рывок в направлении взгляда, 20 урона и горение врагам на пути, 3 с огня по следу)"
+       ]
+     },
+     "tr": {
+       "title": "Katliamcı yeteneği değiştirildi",
+       "items": [
+         "Katliamcı yeteneği Alev Hücumu'na çevrildi (baktığı yöne atılır, geçtiği düşmanlara 20 hasar ve yanma, geçilen yerde 3 sn alev)"
+       ]
+     },
+     "it": {
+       "title": "Abilità dell'Ammazzatore sostituita",
+       "items": [
+         "L'abilità dell'Ammazzatore diventa Carica di fuoco (scatta nella direzione in cui guardi, 20 danni e ustioni ai nemici attraversati, 3 s di fuoco lungo il percorso)"
+       ]
+     },
+     "pl": {
+       "title": "Zmieniono umiejętność Pogromcy",
+       "items": [
+         "Umiejętność Pogromcy zmieniona na Ognistą szarżę (szarża w kierunku wzroku, 20 obrażeń i podpalenie wrogom na drodze, 3 s ognia na trasie)"
+       ]
+     },
+     "ar": {
+       "title": "استبدال مهارة القاتل المحترف",
+       "items": [
+         "تغيير مهارة القاتل المحترف إلى اندفاع اللهب (اندفاع في اتجاه النظر، 20 ضررا واحتراقا للأعداء الذين تمر بهم، و3 ث من النيران على المسار)"
+       ]
+     }
+   }
   },
   {
    "date": "2026-10-26",
@@ -207,7 +969,129 @@
     "칸 독 두꺼비를 조준한 곳으로 던지게 변경, 미리보기와 착지 지점 반영",
     "특수요원 연막탄을 조준해서 던지는 방식으로 변경 (착지 지점에 2.5초 동안 연기, 안에서는 이동 속도 감소와 시야 차단)",
     "제임스 궁극기가 플레이어만 관통하고 발판에서 멈추도록 수정"
-   ]
+   ],
+   "tr": {
+     "en": {
+       "title": "Skill visual effects and aimed throws",
+       "items": [
+         "Slayer skill changed to a firebomb (4s of fire where it lands, enemies inside get burned)",
+         "Hunter skill changed to Recall Gust (pulls nearby enemies and deals 8 damage, instantly recalls the thrown boomerang)",
+         "Kan's poison toad is now thrown to the aimed spot, with preview and landing point shown",
+         "Special Agent's smoke bomb changed to an aimed throw (2.5s of smoke at the landing spot; inside it, move speed drops and vision is blocked)",
+         "James's ultimate now passes only through players and stops at platforms"
+       ]
+     },
+     "es": {
+       "title": "Efectos visuales de habilidades y lanzamientos con puntería",
+       "items": [
+         "La habilidad del Masacrador pasa a ser una bomba incendiaria (4 s de fuego donde cae; los enemigos dentro sufren quemaduras)",
+         "La habilidad del Cazador pasa a ser Ráfaga de retorno (atrae a los enemigos cercanos y causa 8 de daño, recupera al instante el bumerán lanzado)",
+         "El sapo venenoso de Kan ahora se lanza al punto al que apuntas, con vista previa y punto de caída",
+         "La bomba de humo del Agente especial pasa a lanzarse con puntería (2,5 s de humo en el punto de caída; dentro, baja la velocidad de movimiento y se bloquea la visión)",
+         "La ultimate de James ahora solo atraviesa jugadores y se detiene en las plataformas"
+       ]
+     },
+     "fr": {
+       "title": "Effets visuels des compétences et lancers visés",
+       "items": [
+         "La compétence du Massacreur devient un cocktail incendiaire (4 s de flammes à l'endroit de l'impact ; les ennemis à l'intérieur brûlent)",
+         "La compétence du Chasseur devient Rafale de rappel (attire les ennemis proches et inflige 8 dégâts, rappelle instantanément le boomerang lancé)",
+         "Le crapaud venimeux de Kan est désormais lancé vers le point visé, avec aperçu et point d'atterrissage",
+         "La bombe fumigène de l'Agent spécial devient un lancer visé (2,5 s de fumée au point d'atterrissage ; à l'intérieur, la vitesse de déplacement baisse et la vue est bloquée)",
+         "L'ultime de James traverse désormais uniquement les joueurs et s'arrête sur les plateformes"
+       ]
+     },
+     "de": {
+       "title": "Fähigkeiten-Effekte und gezielte Würfe",
+       "items": [
+         "Schlächter-Fähigkeit durch Brandbombe ersetzt (4 s Feuer am Aufprallort, Gegner darin werden entzündet)",
+         "Jäger-Fähigkeit durch Rückholsturm ersetzt (zieht nahe Gegner heran und verursacht 8 Schaden, ruft den Bumerang sofort zurück)",
+         "Kans Giftkröte wird nun zur Zielposition geworfen, mit Vorschau und Landepunkt",
+         "Rauchbombe des Spezialagenten wird zum gezielten Wurf (2,5 s Rauch am Landepunkt; darin sinkt die Bewegungsgeschwindigkeit und die Sicht ist blockiert)",
+         "James' Ultimate durchdringt jetzt nur Spieler und stoppt an Plattformen"
+       ]
+     },
+     "ja": {
+       "title": "スキルの視覚効果と照準投擲",
+       "items": [
+         "殺戮者のスキルを火炎瓶に変更（投げた場所に4秒間炎の海、中の敵は火傷）",
+         "ハンターのスキルを回収の突風に変更（周囲の敵を引き寄せて8ダメージ、投げたブーメランを即座に回収）",
+         "カンの毒ガエルを照準した場所に投げるように変更、プレビューと着地点を反映",
+         "特殊エージェントの煙幕弾を照準して投げる方式に変更（着地点に2.5秒間煙、中では移動速度低下と視界遮断）",
+         "ジェームズの奥義がプレイヤーのみ貫通し、プラットフォームで止まるように修正"
+       ]
+     },
+     "zh": {
+       "title": "技能视觉效果与瞄准投掷",
+       "items": [
+         "屠杀者技能改为燃烧瓶（投掷处4秒火海，范围内的敌人会着火）",
+         "猎人技能改为回收旋风（拉近周围敌人并造成8点伤害，立即回收掷出的回旋镖）",
+         "Kan 的毒蟾蜍改为投掷到瞄准处，并显示预览和落点",
+         "特工的烟雾弹改为瞄准投掷（落点处2.5秒烟雾，内部移动速度下降且视野受阻）",
+         "James 终极技能现在只穿透玩家，并在平台处停止"
+       ]
+     },
+     "pt": {
+       "title": "Efeitos visuais de habilidades e arremesso mirado",
+       "items": [
+         "A habilidade do Massacrador foi trocada por uma bomba incendiária (4 s de fogo onde cai; inimigos dentro sofrem queimadura)",
+         "A habilidade do Caçador foi trocada por Rajada de retorno (puxa inimigos próximos e causa 8 de dano; recolhe na hora o bumerangue arremessado)",
+         "O sapo venenoso do Kan agora é arremessado no ponto mirado, com prévia e ponto de queda",
+         "A bomba de fumaça do Agente Especial passou a ser arremessada com mira (2,5 s de fumaça no ponto de queda; dentro, a velocidade de movimento cai e a visão é bloqueada)",
+         "A ultimate do James agora atravessa apenas jogadores e para nas plataformas"
+       ]
+     },
+     "ru": {
+       "title": "Визуальные эффекты навыков и прицельные броски",
+       "items": [
+         "Навык Истребителя заменён на зажигательную бомбу (4 с огня в месте падения, враги внутри получают горение)",
+         "Навык Охотника заменён на Порыв возврата (притягивает ближайших врагов и наносит 8 урона, мгновенно возвращает брошенный бумеранг)",
+         "Ядовитая жаба Кана теперь бросается в точку прицела, показываются предпросмотр и точка приземления",
+         "Дымовая шашка Спецагента теперь бросается прицельно (2,5 с дыма в точке приземления; внутри снижается скорость передвижения и закрывается обзор)",
+         "Ультимейт James теперь пробивает только игроков и останавливается на платформах"
+       ]
+     },
+     "tr": {
+       "title": "Yetenek görsel efektleri ve nişanlı fırlatma",
+       "items": [
+         "Katliamcı yeteneği yanıcı bombaya çevrildi (düştüğü yerde 4 sn ateş, içindeki düşmanlar yanar)",
+         "Avcı yeteneği Geri Çağırma Rüzgârı'na çevrildi (yakındaki düşmanları çeker ve 8 hasar verir, fırlatılan bumerangı anında geri getirir)",
+         "Kan'ın zehirli kurbağası artık nişan alınan noktaya atılır, önizleme ve düşme noktası gösterilir",
+         "Özel Ajan'ın duman bombası nişanlı atışa çevrildi (iniş noktasında 2,5 sn duman; içeride hareket hızı düşer ve görüş kapanır)",
+         "James'in ultisi artık yalnızca oyuncuların içinden geçer ve platformlarda durur"
+       ]
+     },
+     "it": {
+       "title": "Effetti visivi delle abilità e lanci mirati",
+       "items": [
+         "L'abilità dell'Ammazzatore diventa una bomba incendiaria (4 s di fuoco dove cade, i nemici dentro subiscono ustioni)",
+         "L'abilità del Cacciatore diventa Raffica di richiamo (attira i nemici vicini e infligge 8 danni, richiama subito il boomerang lanciato)",
+         "Il rospo velenoso di Kan ora viene lanciato nel punto mirato, con anteprima e punto di atterraggio",
+         "La bomba fumogena dell'Agente speciale diventa un lancio mirato (2,5 s di fumo nel punto di caduta; dentro, la velocità di movimento cala e la visuale è bloccata)",
+         "L'ultimate di James ora attraversa solo i giocatori e si ferma sulle piattaforme"
+       ]
+     },
+     "pl": {
+       "title": "Efekty wizualne umiejętności i celowane rzuty",
+       "items": [
+         "Umiejętność Pogromcy zmieniona na butelkę zapalającą (4 s ognia w miejscu upadku, wrogowie w środku płoną)",
+         "Umiejętność Łowcy zmieniona na Podmuch powrotu (ściąga pobliskich wrogów i zadaje 8 obrażeń, natychmiast przywołuje rzucony bumerang)",
+         "Trująca ropucha Kana jest teraz rzucana w miejsce celowania, z podglądem i punktem lądowania",
+         "Granat dymny Agenta specjalnego zmieniono na rzut celowany (2,5 s dymu w miejscu upadku; wewnątrz spada prędkość ruchu i zasłonięty jest widok)",
+         "Ultimate Jamesa przebija teraz tylko graczy i zatrzymuje się na platformach"
+       ]
+     },
+     "ar": {
+       "title": "المؤثرات البصرية للمهارات والرمي بالتصويب",
+       "items": [
+         "تغيير مهارة القاتل المحترف إلى قنبلة مشتعلة (4 ث من النيران حيث تسقط، والأعداء بداخلها يحترقون)",
+         "تغيير مهارة الصياد إلى عاصفة الاستدعاء (تسحب الأعداء القريبين وتلحق 8 ضرر، وتستدعي البومرانغ المرمي فورا)",
+         "تُرمى ضفدعة كان السامة الآن إلى النقطة المصوبة، مع معاينة ونقطة الهبوط",
+         "تحولت قنبلة دخان العميل الخاص إلى رمية موجهة (2.5 ث من الدخان في نقطة الهبوط؛ داخلها تنخفض سرعة الحركة ويُحجب البصر)",
+         "الضربة القاضية لجيمس تخترق اللاعبين فقط وتتوقف عند المنصات الآن"
+       ]
+     }
+   }
   },
   {
    "date": "2026-10-26",
@@ -223,7 +1107,177 @@
     "차원여행자 봇이 포탈을 오가며 제자리에서 맴도는 문제 수정",
     "제임스 궁극기 탄환 관통",
     "암살자 데미지 38 → 41"
-   ]
+   ],
+   "tr": {
+     "en": {
+       "title": "Mage and Dimension Traveler reworked",
+       "items": [
+         "Mage fireball damage 14 → 18, passes through one target and stops at the second",
+         "Mage ultimate Magic Circle strengthened (lasts 10s, Attack +30%, 12 Heal per second, 9 damage per second to enemies)",
+         "Dimension Traveler portals can now be used by allies too",
+         "Dimension Traveler portal exits deal damage and a light knockback to nearby enemies",
+         "Dimension Traveler skill blows up portals (after 0.5s of smoke, big damage and big knockback)",
+         "Dimension Traveler basic attack damage 15 → 13",
+         "Fixed Dimension Traveler bots circling in place while going back and forth between portals",
+         "James's ultimate bullet pierces through",
+         "Assassin damage 38 → 41"
+       ]
+     },
+     "es": {
+       "title": "Rediseño del Mago y del Viajero dimensional",
+       "items": [
+         "Daño de la bola de fuego del Mago 14 → 18; atraviesa a un objetivo y se detiene en el segundo",
+         "Círculo mágico, ultimate del Mago, reforzado (dura 10 s, ataque +30 %, 12 de curación por segundo, 9 de daño por segundo a los enemigos)",
+         "Los portales del Viajero dimensional ahora también pueden usarlos los aliados",
+         "La salida de los portales del Viajero dimensional daña y empuja ligeramente a los enemigos cercanos",
+         "La habilidad del Viajero dimensional hace explotar los portales (tras 0,5 s de humo, gran daño y gran retroceso)",
+         "Daño del ataque básico del Viajero dimensional 15 → 13",
+         "Corregido que los bots del Viajero dimensional dieran vueltas en el sitio al ir y venir entre portales",
+         "La bala de la ultimate de James atraviesa a los enemigos",
+         "Daño del Asesino 38 → 41"
+       ]
+     },
+     "fr": {
+       "title": "Refonte du Magicien et du Voyageur dimensionnel",
+       "items": [
+         "Dégâts de la boule de feu du Magicien 14 → 18, traverse une cible puis s'arrête sur la deuxième",
+         "Cercle magique, ultime du Magicien, renforcé (dure 10 s, attaque +30 %, 12 soins par seconde, 9 dégâts par seconde aux ennemis)",
+         "Les portails du Voyageur dimensionnel peuvent désormais aussi être utilisés par les alliés",
+         "La sortie des portails du Voyageur dimensionnel inflige des dégâts et un léger recul aux ennemis proches",
+         "La compétence du Voyageur dimensionnel fait exploser les portails (après 0,5 s de fumée, gros dégâts et gros recul)",
+         "Dégâts de l'attaque de base du Voyageur dimensionnel 15 → 13",
+         "Correction des bots Voyageur dimensionnel qui tournaient sur place en allant et venant entre les portails",
+         "La balle de l'ultime de James traverse les cibles",
+         "Dégâts de l'Assassin 38 → 41"
+       ]
+     },
+     "de": {
+       "title": "Magier und Dimensionsreisender überarbeitet",
+       "items": [
+         "Feuerball-Schaden des Magiers 14 → 18, durchdringt ein Ziel und stoppt beim zweiten",
+         "Magier-Ultimate Magiekreis verstärkt (hält 10 s, Angriff +30 %, 12 Heilung pro Sekunde, 9 Schaden pro Sekunde an Gegnern)",
+         "Portale des Dimensionsreisenden können jetzt auch von Verbündeten genutzt werden",
+         "Der Ausgang der Portale des Dimensionsreisenden verursacht Schaden und einen leichten Rückstoß bei nahen Gegnern",
+         "Die Fähigkeit des Dimensionsreisenden sprengt Portale (nach 0,5 s Rauch, großer Schaden und starker Rückstoß)",
+         "Schaden des Basisangriffs des Dimensionsreisenden 15 → 13",
+         "Behoben: Bots mit Dimensionsreisender drehten sich auf der Stelle, während sie zwischen Portalen hin- und herliefen",
+         "James' Ultimate-Kugel durchdringt Ziele",
+         "Schaden des Assassinen 38 → 41"
+       ]
+     },
+     "ja": {
+       "title": "魔法使い・次元旅行者の改編",
+       "items": [
+         "魔法使いの火球ダメージ 14 → 18、1体を貫通した後、2体目の対象で止まる",
+         "魔法使いの奥義・魔法陣を強化（10秒維持、攻撃力+30%、毎秒12回復、敵に毎秒9ダメージ）",
+         "次元旅行者のポータルを味方も利用できるように",
+         "次元旅行者のポータルの出口付近の敵にダメージと弱いノックバック",
+         "次元旅行者のスキルでポータルを爆破（煙の0.5秒後に大ダメージと大きなノックバック）",
+         "次元旅行者の通常攻撃ダメージ 15 → 13",
+         "次元旅行者のボットがポータルを行き来しながらその場をぐるぐる回る問題を修正",
+         "ジェームズの奥義の弾が貫通するように",
+         "暗殺者のダメージ 38 → 41"
+       ]
+     },
+     "zh": {
+       "title": "法师·次元旅行者改版",
+       "items": [
+         "法师火球伤害 14 → 18，穿透一名目标后在第二个目标处停止",
+         "法师终极技能魔法阵强化（持续10秒，攻击力+30%，每秒恢复12点，每秒对敌人造成9点伤害）",
+         "次元旅行者的传送门现在队友也能使用",
+         "次元旅行者传送门出口附近的敌人受到伤害并轻微击退",
+         "次元旅行者技能引爆传送门（0.5秒烟雾后造成大量伤害和大幅击退）",
+         "次元旅行者普通攻击伤害 15 → 13",
+         "修复次元旅行者机器人在传送门之间来回时原地打转的问题",
+         "James 终极技能的子弹可以穿透",
+         "刺客伤害 38 → 41"
+       ]
+     },
+     "pt": {
+       "title": "Reformulação do Mago e do Viajante Dimensional",
+       "items": [
+         "Dano da bola de fogo do Mago 14 → 18, atravessa um alvo e para no segundo",
+         "Círculo mágico, ultimate do Mago, reforçado (dura 10 s, ataque +30%, 12 de cura por segundo, 9 de dano por segundo nos inimigos)",
+         "Os portais do Viajante Dimensional agora também podem ser usados por aliados",
+         "A saída dos portais do Viajante Dimensional causa dano e leve recuo nos inimigos próximos",
+         "A habilidade do Viajante Dimensional explode portais (após 0,5 s de fumaça, grande dano e grande recuo)",
+         "Dano do ataque básico do Viajante Dimensional 15 → 13",
+         "Corrigido o problema de bots do Viajante Dimensional girando no lugar ao ir e vir entre portais",
+         "A bala da ultimate do James atravessa alvos",
+         "Dano do Assassino 38 → 41"
+       ]
+     },
+     "ru": {
+       "title": "Переработка Мага и Странника измерений",
+       "items": [
+         "Урон огненного шара Мага 14 → 18, пробивает одну цель и останавливается на второй",
+         "Усилен магический круг — ультимейт Мага (длится 10 с, атака +30%, 12 лечения в секунду, 9 урона в секунду врагам)",
+         "Порталами Странника измерений теперь могут пользоваться и союзники",
+         "Выход из портала Странника измерений наносит урон и слабый отброс ближайшим врагам",
+         "Навык Странника измерений взрывает порталы (через 0,5 с дыма — большой урон и сильный отброс)",
+         "Урон базовой атаки Странника измерений 15 → 13",
+         "Исправлено: боты Странника измерений кружили на месте, перемещаясь между порталами",
+         "Пуля ультимейта James теперь пробивает цели",
+         "Урон Убийцы 38 → 41"
+       ]
+     },
+     "tr": {
+       "title": "Mage ve Boyut Gezgini yenilendi",
+       "items": [
+         "Büyücü ateş topu hasarı 14 → 18, bir hedefi deler ve ikincide durur",
+         "Büyücünün ultisi Büyü Çemberi güçlendirildi (10 sn sürer, saldırı +%30, saniyede 12 iyileşme, düşmanlara saniyede 9 hasar)",
+         "Boyut Gezgini'nin portalları artık müttefikler tarafından da kullanılabilir",
+         "Boyut Gezgini portalının çıkışındaki yakın düşmanlara hasar ve hafif geri itme verir",
+         "Boyut Gezgini'nin yeteneği portalları patlatır (0,5 sn duman sonrası büyük hasar ve büyük geri itme)",
+         "Boyut Gezgini normal saldırı hasarı 15 → 13",
+         "Boyut Gezgini botlarının portallar arasında gidip gelirken yerinde dönme sorunu düzeltildi",
+         "James'in ultisinin mermisi hedefleri deler",
+         "Suikastçı hasarı 38 → 41"
+       ]
+     },
+     "it": {
+       "title": "Rielaborazione del Mago e del Viaggiatore dimensionale",
+       "items": [
+         "Danno della palla di fuoco del Mago 14 → 18, attraversa un bersaglio e si ferma al secondo",
+         "Cerchio magico, ultimate del Mago, potenziato (dura 10 s, attacco +30%, 12 cura al secondo, 9 danni al secondo ai nemici)",
+         "I portali del Viaggiatore dimensionale ora possono essere usati anche dagli alleati",
+         "L'uscita dei portali del Viaggiatore dimensionale infligge danni e un lieve contraccolpo ai nemici vicini",
+         "L'abilità del Viaggiatore dimensionale fa esplodere i portali (dopo 0,5 s di fumo, grandi danni e forte contraccolpo)",
+         "Danno dell'attacco base del Viaggiatore dimensionale 15 → 13",
+         "Corretto il problema dei bot Viaggiatore dimensionale che giravano sul posto avanti e indietro tra i portali",
+         "Il proiettile dell'ultimate di James attraversa i bersagli",
+         "Danno dell'Assassino 38 → 41"
+       ]
+     },
+     "pl": {
+       "title": "Przeróbka Maga i Podróżnika międzywymiarowego",
+       "items": [
+         "Obrażenia kuli ognia Maga 14 → 18, przebija jeden cel i zatrzymuje się na drugim",
+         "Wzmocniono krąg magiczny, ultimate Maga (trwa 10 s, atak +30%, 12 leczenia na sekundę, 9 obrażeń na sekundę wrogom)",
+         "Portalami Podróżnika międzywymiarowego mogą teraz korzystać także sojusznicy",
+         "Wyjście z portali Podróżnika międzywymiarowego zadaje obrażenia i lekki odrzut pobliskim wrogom",
+         "Umiejętność Podróżnika międzywymiarowego detonuje portale (po 0,5 s dymu duże obrażenia i duży odrzut)",
+         "Obrażenia podstawowego ataku Podróżnika międzywymiarowego 15 → 13",
+         "Naprawiono problem, w którym boty Podróżnika międzywymiarowego kręciły się w miejscu, chodząc między portalami",
+         "Pocisk ultimate Jamesa przebija cele",
+         "Obrażenia Zabójcy 38 → 41"
+       ]
+     },
+     "ar": {
+       "title": "إعادة تصميم الساحر ومسافر الأبعاد",
+       "items": [
+         "ضرر كرة نار الساحر من 14 إلى 18، تخترق هدفا واحدا وتتوقف عند الثاني",
+         "تعزيز دائرة السحر، الضربة القاضية للساحر (تستمر 10 ث، هجوم +30%، شفاء 12 في الثانية، 9 ضرر في الثانية للأعداء)",
+         "يمكن للحلفاء أيضا استخدام بوابات مسافر الأبعاد",
+         "مخرج بوابات مسافر الأبعاد يلحق الضرر ودفعة خفيفة بالأعداء القريبين",
+         "مهارة مسافر الأبعاد تفجر البوابات (بعد 0.5 ث من الدخان، ضرر كبير ودفعة قوية)",
+         "ضرر الهجوم الأساسي لمسافر الأبعاد 15 → 13",
+         "إصلاح مشكلة دوران بوتات مسافر الأبعاد في المكان أثناء التنقل بين البوابات",
+         "رصاصة الضربة القاضية لجيمس تخترق الأهداف",
+         "ضرر القاتل 38 → 41"
+       ]
+     }
+   }
   },
   {
    "date": "2026-10-25",
@@ -232,7 +1286,93 @@
    "items": [
     "경기 끝 화면에 우리 편(왼쪽)과 상대 편(오른쪽)이 함께 나옴",
     "이긴 쪽은 승리 포즈, 진 쪽은 패배 모션 (무승부는 둘 다 패배 모션)"
-   ]
+   ],
+   "tr": {
+     "en": {
+       "title": "Show both sides' characters on the match-end screen",
+       "items": [
+         "The match-end screen shows your team (left) and the opposing team (right) together",
+         "The winning side strikes a Victory pose, the losing side plays a defeat motion (on a draw, both play the defeat motion)"
+       ]
+     },
+     "es": {
+       "title": "Mostrar personajes de ambos bandos en la pantalla final",
+       "items": [
+         "En la pantalla final aparecen juntos tu equipo (izquierda) y el equipo rival (derecha)",
+         "El bando ganador hace la pose de victoria y el perdedor el movimiento de derrota (en empate, ambos hacen el de derrota)"
+       ]
+     },
+     "fr": {
+       "title": "Affichage des personnages des deux camps sur l'écran de fin",
+       "items": [
+         "L'écran de fin affiche ensemble ton équipe (à gauche) et l'équipe adverse (à droite)",
+         "Le camp gagnant prend la pose de victoire, le perdant fait le mouvement de défaite (en cas d'égalité, les deux font le mouvement de défaite)"
+       ]
+     },
+     "de": {
+       "title": "Charaktere beider Seiten auf dem Endbildschirm anzeigen",
+       "items": [
+         "Auf dem Endbildschirm erscheinen dein Team (links) und das gegnerische Team (rechts) gemeinsam",
+         "Die Siegerseite nimmt die Siegerpose ein, die Verliererseite zeigt die Niederlagenbewegung (bei Unentschieden beide Niederlage)"
+       ]
+     },
+     "ja": {
+       "title": "試合終了画面に両チームのキャラクターを表示",
+       "items": [
+         "試合終了画面に味方チーム（左）と相手チーム（右）が一緒に表示される",
+         "勝ったチームは勝利ポーズ、負けたチームは敗北モーション（引き分けは両方が敗北モーション）"
+       ]
+     },
+     "zh": {
+       "title": "比赛结束画面显示双方角色",
+       "items": [
+         "比赛结束画面会同时显示我方（左）和对方（右）",
+         "获胜方做胜利姿势，失败方做失败动作（平局双方都做失败动作）"
+       ]
+     },
+     "pt": {
+       "title": "Mostrar personagens dos dois lados na tela final",
+       "items": [
+         "A tela final mostra juntos a sua equipe (esquerda) e a equipe adversária (direita)",
+         "O lado vencedor faz a pose de vitória e o perdedor o movimento de derrota (em empate, os dois fazem o de derrota)"
+       ]
+     },
+     "ru": {
+       "title": "На экране конца матча показаны персонажи обеих команд",
+       "items": [
+         "На экране конца матча вместе показаны ваша команда (слева) и команда соперника (справа)",
+         "Победившая сторона принимает позу победы, проигравшая — движение поражения (при ничьей обе делают движение поражения)"
+       ]
+     },
+     "tr": {
+       "title": "Maç sonu ekranında iki tarafın karakterleri gösterilir",
+       "items": [
+         "Maç sonu ekranında kendi takımın (solda) ve rakip takım (sağda) birlikte görünür",
+         "Kazanan taraf zafer pozu verir, kaybeden taraf yenilgi hareketi yapar (berabere kalırsa ikisi de yenilgi hareketi yapar)"
+       ]
+     },
+     "it": {
+       "title": "Mostra i personaggi di entrambe le squadre nella schermata finale",
+       "items": [
+         "Nella schermata finale compaiono insieme la tua squadra (a sinistra) e quella avversaria (a destra)",
+         "La squadra vincitrice assume la posa della vittoria, quella sconfitta il movimento di sconfitta (in pareggio entrambe fanno il movimento di sconfitta)"
+       ]
+     },
+     "pl": {
+       "title": "Postacie obu stron na ekranie końca meczu",
+       "items": [
+         "Na ekranie końca meczu razem widać twoją drużynę (po lewej) i drużynę przeciwną (po prawej)",
+         "Zwycięska strona przyjmuje pozę zwycięstwa, przegrana wykonuje ruch porażki (przy remisie obie strony wykonują ruch porażki)"
+       ]
+     },
+     "ar": {
+       "title": "عرض شخصيات الفريقين على شاشة نهاية المباراة",
+       "items": [
+         "تظهر على شاشة نهاية المباراة فرقتك (يسارا) والفريق المنافس (يمينا) معا",
+         "الفريق الفائز يتخذ وضعية النصر، والخاسر يؤدي حركة الهزيمة (في حالة التعادل يؤدي الطرفان حركة الهزيمة)"
+       ]
+     }
+   }
   },
   {
    "date": "2026-10-25",
@@ -240,7 +1380,81 @@
    "title": "무승부 곡",
    "items": [
     "무승부로 끝날 때 나오는 엉뚱한 짧은 곡 추가"
-   ]
+   ],
+   "tr": {
+     "en": {
+       "title": "Draw jingle",
+       "items": [
+         "Added a silly short tune that plays when a match ends in a draw"
+       ]
+     },
+     "es": {
+       "title": "Melodía de empate",
+       "items": [
+         "Añadida una canción corta y graciosa que suena cuando la partida acaba en empate"
+       ]
+     },
+     "fr": {
+       "title": "Air de match nul",
+       "items": [
+         "Ajout d'un court air loufoque joué quand la partie se termine par une égalité"
+       ]
+     },
+     "de": {
+       "title": "Unentschieden-Melodie",
+       "items": [
+         "Neue, kuriose kurze Melodie, die bei einem Unentschieden erklingt"
+       ]
+     },
+     "ja": {
+       "title": "引き分けの曲",
+       "items": [
+         "引き分けで終わったときに流れる、ちょっと変な短い曲を追加"
+       ]
+     },
+     "zh": {
+       "title": "平局音乐",
+       "items": [
+         "新增平局时播放的一段古怪短曲"
+       ]
+     },
+     "pt": {
+       "title": "Música de empate",
+       "items": [
+         "Adicionada uma música curta e engraçada que toca quando a partida termina empatada"
+       ]
+     },
+     "ru": {
+       "title": "Мелодия ничьей",
+       "items": [
+         "Добавлена забавная короткая мелодия, которая играет при ничьей"
+       ]
+     },
+     "tr": {
+       "title": "Beraberlik müziği",
+       "items": [
+         "Maç berabere bittiğinde çalan tuhaf kısa bir müzik eklendi"
+       ]
+     },
+     "it": {
+       "title": "Brano del pareggio",
+       "items": [
+         "Aggiunto un breve brano bizzarro che suona quando la partita finisce in pareggio"
+       ]
+     },
+     "pl": {
+       "title": "Melodia remisu",
+       "items": [
+         "Dodano krótką, dziwną melodię, która gra przy remisie"
+       ]
+     },
+     "ar": {
+       "title": "لحن التعادل",
+       "items": [
+         "أضيفت مقطوعة قصيرة غريبة تعزف عند انتهاء المباراة بالتعادل"
+       ]
+     }
+   }
   },
   {
    "date": "2026-10-25",
