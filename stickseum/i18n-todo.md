@@ -61,3 +61,6 @@ Stickseum-v0.8.html | WEAPONS.wizard.desc | 데미지 16 · 쿨타임 0.7초 · 
 patchnotes.json | v403 title | 마법사 쿨타임 | build 403 | 2026-10-26
 patchnotes.json | v403 items[0] | 마법사 공격 쿨타임 증가 (0.6초 → 0.7초) | build 403 | 2026-10-26
 patchnotes.json | v403 items[1] | 밸런스 표 갱신 (마법사 재측정) | build 403 | 2026-10-26
+patchnotes.json | v404 title | 고급 스킨 공격 효과 | build 404 | 2026-10-26
+patchnotes.json | v404 items[0] | 4000sC 스킨과 그랜드 마스터 스킨의 탄환과 휘두르기 효과 대폭 강화 (스킨 테마별 효과와 회전하는 별, 그랜드 마스터는 무지개 색) | build 404 | 2026-10-26
+patchnotes.json | v404 items[1] | 밸런스 표 그래프 세로축을 데이터 범위에 맞게 조정 | build 404 | 2026-10-26
