@@ -3519,7 +3519,7 @@ const MODES = {
   turf:     {id:'turf', name:'색칠 전쟁', desc:'두 팀으로 나뉘어요 · 발판을 밟으면 그 칸이 우리 팀 색으로 칠해져요 · 칠한 칸이 많을수록 점수가 빨리 올라가고, 먼저 150점이거나 4분 뒤 점수가 높은 팀이 승리', teams:true, teamSize:'half', extra:2, elim:false, respawnTime:4, special:true},
   bounty:   {id:'bounty', name:'현상금 사냥', desc:'킬하면 1점 · 점수 선두(3점 이상)에게는 현상금이 붙어요(빨간 표시) · 현상금 대상을 잡으면 4점 · 먼저 20점이거나 5분 뒤 점수가 높은 사람이 승리', teams:false, extra:0, elim:false, respawnTime:4, special:true},
   xkit:     {id:'xkit', name:'랜덤 조합 배틀로얄', desc:'🧪 실험적 모드 · 캐릭터를 고르지 않고 바로 시작해요 · 외형, 일반공격, 스킬, 궁극기가 각각 원래 캐릭터들 중에서 따로 랜덤으로 뽑혀요 · 부활 없이 최후의 1인이 승리', teams:false, extra:0, elim:true, autoWeapon:true, randomKit:true, exp:true},
-  bigcq:    {id:'bigcq', name:'거대 점령전', desc:'🧪 실험적 모드 · 24~32명이 두 팀으로 나뉘는 대규모 난투 · 아주 가로로 긴 맵 양 끝에서 시작하고 부활은 15초 · 왼쪽·중앙·오른쪽 깃발에 한 팀만 15초 서 있으면 그 팀 깃발이 돼요 · 세 깃발을 모두 차지한 팀이 승리 (12분이 지나면 깃발이 더 많은 팀) · 팀원끼리 캐릭터가 겹쳐도 돼요', teams:true, teamSize:'half', extra:0, elim:false, respawnTime:15, special:true, exp:true, fixedMapId:'giant_cq', minPlayers:24, fillTo:24, allowDup:true},
+  bigcq:    {id:'bigcq', noTeleport:true, name:'거대 점령전', desc:'🧪 실험적 모드 · 24~32명이 두 팀으로 나뉘는 대규모 난투 · 아주 가로로 긴 맵 양 끝에서 시작하고 부활은 15초 · 순간이동 사용 불가 · 왼쪽·중앙·오른쪽 깃발에 한 팀만 15초 서 있으면 그 팀 깃발이 돼요 · 세 깃발을 모두 차지한 팀이 승리 (12분이 지나면 깃발이 더 많은 팀) · 팀원끼리 캐릭터가 겹쳐도 돼요', teams:true, teamSize:'half', extra:0, elim:false, respawnTime:15, special:true, exp:true, fixedMapId:'giant_cq', minPlayers:24, fillTo:24, allowDup:true},
   lowg:     {id:'lowg', name:'저중력 난투', desc:'중력이 약하고 넉백이 강한 난투 · 높이 날아오르고 멀리 튕겨나가요 · 4분 동안 킬이 가장 많은 사람이 승리', teams:false, extra:0, elim:false, respawnTime:3, rules:{grav:0.6, kb:2}, special:true}
 };
 const MODE_ORDER = ['ffa','br','duo','team','duel','conquest'];
@@ -5174,7 +5174,7 @@ function shuffle(arr){ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.
 /* ===== the version of this file =====
    Players with different versions CAN meet and play together: the automatic matchmaking uses the same room names for every version (online-<mode>-<map>-<slot>), and nobody is refused because of a different build.
    The build is only sent along with the join message and the lobby (for information); the corner of the screen shows it. */
-const GAME_BUILD='build 2026-10-18-v422';
+const GAME_BUILD='build 2026-10-18-v423';
 const GAME_VERSION='0.8', GAME_VERSION_NAME='황금을 찾아서';   // 게임 버전 이름: versions.json의 title과 같게 (빌드마다 바꾸지 않음)
 const WEEKLY_EVENTS=[
   {id:'lowg',    name:'저중력 난투', desc:'몸이 둥실둥실, 중력이 약해진 난투', rules:{grav:0.6}},
