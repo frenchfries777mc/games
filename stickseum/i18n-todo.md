@@ -123,3 +123,7 @@ Stickseum-v0.8.html | shop tier hint | (듀얼 처치 8점, 배틀로얄 처치 
 patchnotes.json | v414 title | 마스터리 포인트 점수 조정 | build 414 | 2026-10-26
 patchnotes.json | v414 items[0] | 듀얼 처치 8점, 배틀로얄 처치 5점 | build 414 | 2026-10-26
 patchnotes.json | v414 items[1] | 6명 이상 부활 모드 처치 2점, 어시스트 1점, 승리 3점 | build 414 | 2026-10-26
+Stickseum-v0.8.html | match-end mastery points line | 마스터리 포인트 +N (처치 · 어시스트 · 완주 · 승리) · 계급 · N점 · 다음 계급까지 N점 · 최고 계급 | build 415 | 2026-10-26
+patchnotes.json | v415 title | 경기 후 마스터리 포인트 표시 | build 415 | 2026-10-26
+patchnotes.json | v415 items[0] | 경기가 끝나면 얻은 마스터리 포인트와 현재 계급, 다음 계급까지 남은 점수 표시 | build 415 | 2026-10-26
+patchnotes.json | v415 items[1] | 계급 중간 단계 점수를 10 단위로 정리 | build 415 | 2026-10-26
