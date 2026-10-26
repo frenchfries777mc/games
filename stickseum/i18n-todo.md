@@ -148,3 +148,6 @@ patchnotes.json | v423 title | 거대 점령전 조정 | build 423 | 2026-10-26
 patchnotes.json | v423 items[0] | 거대 점령전에서 순간이동 사용 불가 | build 423 | 2026-10-26
 patchnotes.json | v424 title | 클랜 가입 조건 표시 | build 424 | 2026-10-26
 patchnotes.json | v424 items[0] | 조건이 없는 항목은 클랜원 화면에서 숨김 | build 424 | 2026-10-26
+patchnotes.json | v425 title | 랜덤 조합 정리 | build 425 | 2026-10-26
+patchnotes.json | v425 items[0] | 랜덤 조합 시작 때 뽑힌 조합 안내 | build 425 | 2026-10-26
+patchnotes.json | v425 items[1] | 랜덤 조합은 어느 캐릭터의 마스터리에도 포함되지 않음 | build 425 | 2026-10-26
