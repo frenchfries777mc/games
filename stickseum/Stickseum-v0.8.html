@@ -5178,7 +5178,7 @@ function shuffle(arr){ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.
 /* ===== the version of this file =====
    Players with different versions CAN meet and play together: the automatic matchmaking uses the same room names for every version (online-<mode>-<map>-<slot>), and nobody is refused because of a different build.
    The build is only sent along with the join message and the lobby (for information); the corner of the screen shows it. */
-const GAME_BUILD='build 2026-10-18-v429';
+const GAME_BUILD='build 2026-10-18-v430';
 const GAME_VERSION='0.8', GAME_VERSION_NAME='황금을 찾아서';   // 게임 버전 이름: versions.json의 title과 같게 (빌드마다 바꾸지 않음)
 const WEEKLY_EVENTS=[
   {id:'lowg',    name:'저중력 난투', desc:'몸이 둥실둥실, 중력이 약해진 난투', rules:{grav:0.6}},
@@ -8776,6 +8776,17 @@ async function renderClanMy(pane){
         clanNotice(nm+' 님을 추방했어요'); renderClanMy(pane);
       };
       row.appendChild(kb);
+    }
+    if(canKick){      // 클랜장 위임: hands the clan over to this member (RPC clan_transfer, see supabase-clan-transfer.sql)
+      const tb=document.createElement('span'); tb.textContent='👑 위임'; tb.setAttribute('role','button');
+      tb.style.cssText='margin-left:auto; padding:6px 12px; border-radius:8px; border:1px solid #ffd34d; color:#ffd34d; font-weight:800; font-size:13px; flex:0 0 auto;';
+      tb.onclick=async(e)=>{ e.stopPropagation();
+        if(!(await uiConfirm(nm+' 님에게 클랜장을 넘길까요? 나는 일반 클랜원이 돼요.'))) return;
+        const r=await sb.rpc('clan_transfer',{p_user:m.user_id});
+        if(r&&r.error){ clanNotice('클랜장을 넘기지 못했어요 (서버에 supabase-clan-transfer.sql을 적용했는지 확인해 주세요)'); return; }
+        myClan.role='member'; myClan.owner=m.user_id; clanNotice(nm+' 님이 새 클랜장이 됐어요'); renderClanMy(pane);
+      };
+      const kb0=row.querySelector('span[role=button]'); if(kb0){ kb0.style.marginLeft='8px'; row.insertBefore(tb, kb0); } else row.appendChild(tb);
     }
     L.appendChild(row);
   });

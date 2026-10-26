@@ -164,3 +164,5 @@ patchnotes.json | v429 items[2] | 표창 피해 13에서 14로 증가 | build 42
 patchnotes.json | v429 items[3] | 샷건 쿨타임 1.1초에서 1.2초로 증가 | build 429 | 2026-10-26
 patchnotes.json | v429 items[4] | 마법사 발판 통과 1번으로 제한과 사거리 증가 | build 429 | 2026-10-26
 patchnotes.json | v429 items[5] | 프로필 많이 쓴 캐릭터 계급 표시 오류 수정 | build 429 | 2026-10-26
+patchnotes.json | v430 title | 클랜장 위임 | build 430 | 2026-10-26
+patchnotes.json | v430 items[0] | 클랜장이 클랜원에게 클랜장을 넘기는 위임 버튼 | build 430 | 2026-10-26
