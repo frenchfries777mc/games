@@ -5178,7 +5178,7 @@ function shuffle(arr){ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.
 /* ===== the version of this file =====
    Players with different versions CAN meet and play together: the automatic matchmaking uses the same room names for every version (online-<mode>-<map>-<slot>), and nobody is refused because of a different build.
    The build is only sent along with the join message and the lobby (for information); the corner of the screen shows it. */
-const GAME_BUILD='build 2026-10-18-v426';
+const GAME_BUILD='build 2026-10-18-v427';
 const GAME_VERSION='0.8', GAME_VERSION_NAME='황금을 찾아서';   // 게임 버전 이름: versions.json의 title과 같게 (빌드마다 바꾸지 않음)
 const WEEKLY_EVENTS=[
   {id:'lowg',    name:'저중력 난투', desc:'몸이 둥실둥실, 중력이 약해진 난투', rules:{grav:0.6}},
@@ -12986,10 +12986,11 @@ let BOT_MELEE_STICK=true, BOT_MELEE_DASH=true;
 // BOT_RETREAT_HOLD_SEC, and the side-to-side shuffle is shorter and less frequent.
 let BOT_CALM=true;
 const BOT_RETREAT_MAX_SEC=1.2, BOT_RETREAT_HOLD_SEC=1.8, BOT_STRAFE_PX=60, BOT_STRAFE_MIN_SEC=2.8, BOT_STRAFE_SPAN_SEC=2.4;
+const BOT_ARC_LEAD=0.45, BOT_ARC_ERR=2.6;
 function botAimAngle(p, T, ai){
   const w=WEAPONS[p.weapon]||WEAPONS.pistol, ox=p.x, oy=p.y-40;
   let tx=T.x, ty=T.y-29;
-  if(w.bulletSpeed){ const tt=Math.hypot(tx-ox,ty-oy)/w.bulletSpeed; tx+=(T.vx||0)*tt*botDiffOf(p).lead; } // lead a moving target (a weaker bot leads it less)
+  if(w.bulletSpeed){ const tt=Math.hypot(tx-ox,ty-oy)/w.bulletSpeed; tx+=(T.vx||0)*tt*botDiffOf(p).lead*(w.arcs?BOT_ARC_LEAD:1); } // lead a moving target (a weaker bot leads it less)
   const dx=tx-ox, dy=ty-oy;
   let ang=Math.atan2(dy,dx);
   if(w.arcs && w.bulletSpeed){ // lobbed weapons: pick the low ballistic arc so the shot comes down on the target
@@ -12998,7 +12999,7 @@ function botAimAngle(p, T, ai){
     let th = X<1 ? Math.PI/2 : (disc>=0 ? Math.atan((v*v-Math.sqrt(disc))/(g*X)) : Math.PI/4);
     ang = dx>=0 ? -th : Math.PI+th;
   }
-  return ang+ai.aimErr;
+  return ang+ai.aimErr*(w.arcs?BOT_ARC_ERR:1);      // lobbed shots (bow, grenade, bazooka ...) are hard to place on a moving target: the bots lead them less and miss by more
 }
 function botPickTarget(p, ai){
   let best=null, bd=1e9;
