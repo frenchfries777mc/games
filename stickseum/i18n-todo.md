@@ -157,3 +157,10 @@ patchnotes.json | v427 title | 봇 포물선 조준 조정 | build 427 | 2026-10
 patchnotes.json | v427 items[0] | 봇이 활·수류탄·바주카 같은 포물선 무기를 덜 정확하게 조준 | build 427 | 2026-10-26
 patchnotes.json | v428 title | 방 매칭 순서 변경 | build 428 | 2026-10-26
 patchnotes.json | v428 items[0] | 방 매칭이 모든 방을 먼저 확인한 뒤 레벨이 가장 비슷한 사람의 방으로 들어가도록 변경 | build 428 | 2026-10-26
+patchnotes.json | v429 title | 밸런스 조정과 마법사 변경 | build 429 | 2026-10-26
+patchnotes.json | v429 items[0] | 화염방사기 초당 피해 34에서 31로 감소 | build 429 | 2026-10-26
+patchnotes.json | v429 items[1] | 마술 카드 연속 적중 보너스 5에서 4로 감소 | build 429 | 2026-10-26
+patchnotes.json | v429 items[2] | 표창 피해 13에서 14로 증가 | build 429 | 2026-10-26
+patchnotes.json | v429 items[3] | 샷건 쿨타임 1.1초에서 1.2초로 증가 | build 429 | 2026-10-26
+patchnotes.json | v429 items[4] | 마법사 발판 통과 1번으로 제한과 사거리 증가 | build 429 | 2026-10-26
+patchnotes.json | v429 items[5] | 프로필 많이 쓴 캐릭터 계급 표시 오류 수정 | build 429 | 2026-10-26
