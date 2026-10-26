@@ -112,3 +112,18 @@ Stickseum-v0.8.html | CHAR_RANKS intermediate names | 브론즈 II · 브론즈 
 patchnotes.json | v411 title | 마스터리 포인트 난이도 | build 411 | 2026-10-26
 patchnotes.json | v411 items[0] | 마스터리 포인트 계급 해금 난이도 기존의 1.75배로 조정 | build 411 | 2026-10-26
 patchnotes.json | v411 items[1] | 계급 사이에 II, III 단계 추가 (브론즈부터 마스터까지) | build 411 | 2026-10-26
+Stickseum-v0.8.html | shop tier hint | (깃발 뺏기는 처치 2점, 어시스트 1점, 승리 3점) | build 412 | 2026-10-26
+patchnotes.json | v412 title | 마스터리 포인트 기준 조정 | build 412 | 2026-10-26
+patchnotes.json | v412 items[0] | 계급 필요 포인트를 기존의 1.75배로 깔끔하게 정리 (브론즈 90, 실버 260, 골드 530, 플래티넘 880, 다이아 1750, 옵시디언 3050, 마스터 4800, 그랜드 마스터 7000) | build 412 | 2026-10-26
+patchnotes.json | v412 items[1] | 깃발 뺏기 마스터리 포인트 조정 (처치 2점, 어시스트 1점, 승리 3점) | build 412 | 2026-10-26
+Stickseum-v0.8.html | shop tier hint | (봇이 8명 이상이고 부활이 있는 모드는 처치 2점, 어시스트 1점, 승리 3점) | build 413 | 2026-10-26
+patchnotes.json | v413 title | 마스터리 포인트 점수 조건 | build 413 | 2026-10-26
+patchnotes.json | v413 items[0] | 봇 8명 이상에 부활이 있는 모드는 처치 2점, 어시스트 1점, 승리 3점 (깃발 뺏기 등) | build 413 | 2026-10-26
+Stickseum-v0.8.html | shop tier hint | (듀얼 처치 8점, 배틀로얄 처치 5점, 6명 이상 부활 모드 처치 2점·승리 3점) | build 414 | 2026-10-26
+patchnotes.json | v414 title | 마스터리 포인트 점수 조정 | build 414 | 2026-10-26
+patchnotes.json | v414 items[0] | 듀얼 처치 8점, 배틀로얄 처치 5점 | build 414 | 2026-10-26
+patchnotes.json | v414 items[1] | 6명 이상 부활 모드 처치 2점, 어시스트 1점, 승리 3점 | build 414 | 2026-10-26
+Stickseum-v0.8.html | match-end mastery points line | 마스터리 포인트 +N (처치 · 어시스트 · 완주 · 승리) · 계급 · N점 · 다음 계급까지 N점 · 최고 계급 | build 415 | 2026-10-26
+patchnotes.json | v415 title | 경기 후 마스터리 포인트 표시 | build 415 | 2026-10-26
+patchnotes.json | v415 items[0] | 경기가 끝나면 얻은 마스터리 포인트와 현재 계급, 다음 계급까지 남은 점수 표시 | build 415 | 2026-10-26
+patchnotes.json | v415 items[1] | 계급 중간 단계 점수를 10 단위로 정리 | build 415 | 2026-10-26

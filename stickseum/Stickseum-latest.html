@@ -2849,6 +2849,7 @@ function claimDaily(now, rand){
 }
 let shopCat='skin';
 let shopMaxGridHeight=0;
+let lastTierGain=null;     // the 마스터리 포인트 the finished match gave (shown on the match-end screen)
 let lastTierUps=[];     // toasts for the tier(s) the finished match took a character to, and the skins that came with them
 function codexTierHtml(wid, kc){       // under the numbers of the codex: how far to the next tier, and the two skins that belong to this character's tiers
   const idx=CHAR_RANKS.findIndex(r=>r.name===charRankFor(kc).name), nx=CHAR_RANKS[idx+1];
@@ -2864,7 +2865,7 @@ function tierUpsFor(wid, before, after){
   return out;
 }
 function tierMinKills(name){ const r=CHAR_RANKS.find(x=>x.name===name); return r?r.min:Infinity; }
-function charKillsFor(ch){ const pt=saveData.charPts&&saveData.charPts[ch]; if(pt!==undefined) return pt; return Math.round(((saveData.charKills&&saveData.charKills[ch])||0)*TIER_PT_MULT); }      // (the character's 마스터리 포인트; before points existed, old kills count the same as before: x8.75)
+function charKillsFor(ch){ const pt=saveData.charPts&&saveData.charPts[ch]; if(pt!==undefined) return pt; return Math.round(((saveData.charKills&&saveData.charKills[ch])||0)*TIER_PT_MULT); }      // (the character's 마스터리 포인트; before points existed, old kills count the same as before: x10)
 function tierSkinUnlocked(id){ const it=COSMETICS[id]; return !!(it && it.tier && charKillsFor(it.char)>=tierMinKills(it.tier)); }
 function cosOwned(id){ const it=COSMETICS[id]; if(!it) return false; return !!it.free || !!(saveData.owned && saveData.owned[id]) || (!!it.tier && tierSkinUnlocked(id)) || (!!it.mast && masteryInfo(it.mast.wid).lv>=it.mast.lv); }
 function ownedCosCount(){ let n=Object.keys(saveData.owned||{}).length; for(const id in COSMETICS){ const it=COSMETICS[id]; if(it.tier && !(saveData.owned&&saveData.owned[id]) && tierSkinUnlocked(id)) n++; } return n; }
@@ -3373,7 +3374,7 @@ function renderShop(){
   const grid=document.getElementById('shopGrid'); grid.style.minHeight=''; grid.innerHTML='';
   if(shopCat==='box'){ renderBoxTab(grid); return; }
   if(shopCat==='emo'){ const note=document.createElement('div'); note.className='hint'; note.style.cssText='grid-column:1/-1; margin-bottom:2px;'; note.textContent='이모트 휠('+codeToLabel(keyBindings.emote)+' 키)에는 가진 이모트 중 '+EMOTE_WHEEL_N+'개까지 넣을 수 있어요 · 지금 '+emoteWheelList().length+' / '+EMOTE_WHEEL_N; grid.appendChild(note); }
-  if(shopCat==='tier'){ const note=document.createElement('div'); note.className='hint'; note.style.cssText='grid-column:1/-1; margin-bottom:2px;'; note.textContent='캐릭터마다 2개: '+TIER_SKIN_TIERS.map(n=>n+' ('+tierMinKills(n)+'점)').join(' · ')+' 계급에 오르면 그 캐릭터의 전용 스킨이 해금돼요. 마스터리 포인트는 그 캐릭터로 처치 3점, 어시스트 1점, 승리 4점, 한 판 1점이 쌓여요. 구매는 불가능해요.'; grid.appendChild(note); }
+  if(shopCat==='tier'){ const note=document.createElement('div'); note.className='hint'; note.style.cssText='grid-column:1/-1; margin-bottom:2px;'; note.textContent='캐릭터마다 2개: '+TIER_SKIN_TIERS.map(n=>n+' ('+tierMinKills(n)+'점)').join(' · ')+' 계급에 오르면 그 캐릭터의 전용 스킨이 해금돼요. 마스터리 포인트는 그 캐릭터로 처치 3점, 어시스트 1점, 승리 4점, 한 판 1점이 쌓여요 (듀얼 처치 8점, 배틀로얄 처치 5점, 6명 이상 부활 모드 처치 2점·승리 3점). 구매는 불가능해요.'; grid.appendChild(note); }
   for(const id in COSMETICS){
     const it=COSMETICS[id]; if(!shopItemInTab(it, shopCat)) continue;
     const box=document.createElement('div'); box.className='shopItem'+(it.lux?' lux'+it.lux:'');
@@ -5109,7 +5110,7 @@ function shuffle(arr){ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.
 /* ===== the version of this file =====
    Players with different versions CAN meet and play together: the automatic matchmaking uses the same room names for every version (online-<mode>-<map>-<slot>), and nobody is refused because of a different build.
    The build is only sent along with the join message and the lobby (for information); the corner of the screen shows it. */
-const GAME_BUILD='build 2026-10-18-v411';
+const GAME_BUILD='build 2026-10-18-v415';
 const GAME_VERSION='0.8', GAME_VERSION_NAME='황금을 찾아서';   // 게임 버전 이름: versions.json의 title과 같게 (빌드마다 바꾸지 않음)
 const WEEKLY_EVENTS=[
   {id:'lowg',    name:'저중력 난투', desc:'몸이 둥실둥실, 중력이 약해진 난투', rules:{grav:0.6}},
@@ -10145,7 +10146,7 @@ function showMatchEndOverlay(resultText, winnerIds, forcedPick){
   matchEnded=true; lastWinnerIds=winnerIds||[];
   elimState=null; document.getElementById('elimOverlay').style.display='none'; document.getElementById('elimExitBtn').style.display='none';
   lastMatchVerdict=matchVerdict(resultText, winnerIds);
-  lastMastery=null; lastTierUps=[];
+  lastMastery=null; lastTierUps=[]; lastTierGain=null;
   if(noRewards()){ lastMatchXp={kills:0, finish:0, win:0}; recordRecentPlayers(); try{ recordMatchSummary(pendingMatchSummary); }catch(e){} pendingMatchSummary=null; }
   else {
   saveData.totalMatches=(saveData.totalMatches||0)+1;
@@ -10156,7 +10157,7 @@ function showMatchEndOverlay(resultText, winnerIds, forcedPick){
   if(me){
     saveData.totalDamage=(saveData.totalDamage||0)+Math.round(me.totalDamageDealt||0);
     const wid=me.weapon;
-    if(wid){ saveData.charKills=saveData.charKills||{}; saveData.charPts=saveData.charPts||{}; const kb=charKillsFor(wid), won=!!(winnerIds && winnerIds.indexOf(myId)!==-1); saveData.charKills[wid]=(saveData.charKills[wid]||0)+(me.kills||0); saveData.charPts[wid]=kb+(me.kills||0)*TIER_PT_KILL+Math.max(0,matchAssists||0)*TIER_PT_ASSIST+(won?TIER_PT_WIN:0)+TIER_PT_MATCH; lastTierUps=tierUpsFor(wid, kb, saveData.charPts[wid]); }
+    if(wid){ saveData.charKills=saveData.charKills||{}; saveData.charPts=saveData.charPts||{}; const kb=charKillsFor(wid), won=!!(winnerIds && winnerIds.indexOf(myId)!==-1); saveData.charKills[wid]=(saveData.charKills[wid]||0)+(me.kills||0); const bigm=Object.values(players).filter(q=>q && !q.isMinion && !q.isBoss).length>=TIER_PT_BIG_PLAYERS && !!MODES[gameMode] && !MODES[gameMode].elim, kpt=(gameMode==='duel')?TIER_PT_DUEL_KILL:(brLike(gameMode)?TIER_PT_BR_KILL:(bigm?TIER_PT_BIG_KILL:TIER_PT_KILL)); saveData.charPts[wid]=kb+(me.kills||0)*kpt+Math.max(0,matchAssists||0)*TIER_PT_ASSIST+(won?(bigm?TIER_PT_BIG_WIN:TIER_PT_WIN):0)+TIER_PT_MATCH; lastTierUps=tierUpsFor(wid, kb, saveData.charPts[wid]); lastTierGain={wid, gained:saveData.charPts[wid]-kb, k:me.kills||0, kp:kpt, a:Math.max(0,matchAssists||0), won, wp:(won?(bigm?TIER_PT_BIG_WIN:TIER_PT_WIN):0), total:saveData.charPts[wid]}; }
   }
   recordRecentPlayers(); recordMatchStats(!!(winnerIds && winnerIds.indexOf(myId)!==-1));
   try{ if(currentMode==='online' && !practiceMode && winnerIds && winnerIds.indexOf(myId)!==-1 && Object.values(players).filter(q=>q && !q.isBot && !q.isMinion && !q.isBoss).length>=2) clanReportWin(); }catch(e){}
@@ -10394,8 +10395,9 @@ function finishMatchEndOverlay(resultText){
       const lm=lastMastery, mi=masteryInfo(lm.wid), nm=WEAPON_PERSONA_NAME[lm.wid]||lm.wid;
       let line1='🎖️ '+nm+' 숙련도 <b style="color:#ffd34d">+'+lm.gained+'</b> <span style="color:#9aa0a6">(처치 '+lm.kills+'×'+MASTERY_KILL_XP+(lm.assists>0?' + 어시스트 '+lm.assists+'×'+MASTERY_ASSIST_XP:'')+' + 완주 '+MASTERY_MATCH_XP+(lm.won?' + 승리 '+MASTERY_WIN_XP:'')+')</span>';
       let line2 = lm.newLv>lm.oldLv ? ('<b style="color:#7ef0a8">Lv.'+lm.oldLv+' → Lv.'+lm.newLv+' 레벨 업!</b> +'+lm.gold+' sC') : ('Lv.'+mi.lv+(mi.next===null?' (최고 레벨)':' · 다음 레벨까지 '+(mi.next-mi.xp)+' XP'));
-      mEl.innerHTML=line1+'<br>'+line2+''; mEl.style.display='block';
+      mEl.innerHTML=line1+'<br>'+line2+''+tierGainHtml(); mEl.style.display='block';
     }
+    else if(lastTierGain){ mEl.innerHTML=tierGainHtml().replace(/^<br>/,''); mEl.style.display='block'; }
     else mEl.style.display='none';
   }
   const wasShown=(el.style.display==='flex');
@@ -10725,26 +10727,32 @@ function beginGame(){
 /* ---- client UI ---- */
 const CHAR_RANKS=[
   {min:0,   name:'입문',    color:'#8890a4'},
-  {min:10,  name:'브론즈',  color:'#c47a3d'},
-  {min:30,  name:'실버',    color:'#c7ccd6'},
-  {min:60,  name:'골드',  color:'#ffd34d'},
-  {min:100, name:'플래티넘',color:'#4dd9ff'},
-  {min:200, name:'다이아',  color:'#7bf3ff'},
-  {min:350, name:'옵시디언',color:'#9a85ff'},
-  {min:550, name:'마스터',  color:'#ff5fd2'},
-  {min:800, name:'그랜드 마스터', color:'#ff5252'}
+  {min:90,  name:'브론즈',  color:'#c47a3d'},
+  {min:260,  name:'실버',    color:'#c7ccd6'},
+  {min:530,  name:'골드',  color:'#ffd34d'},
+  {min:880, name:'플래티넘',color:'#4dd9ff'},
+  {min:1750, name:'다이아',  color:'#7bf3ff'},
+  {min:3050, name:'옵시디언',color:'#9a85ff'},
+  {min:4800, name:'마스터',  color:'#ff5fd2'},
+  {min:7000, name:'그랜드 마스터', color:'#ff5252'}
 ];
-/* 계급(다이아, 마스터 ...) are earned with 마스터리 포인트 per character: kill 3, assist 1, win 4, match played 1 (owner 10-26). The thresholds above were kills; a typical match (3 kills, 1 assist, a win) is about 15 points, so x8.75 (5 x 1.75) makes every rank 1.75 times harder than before */
-const TIER_PT_KILL=3, TIER_PT_ASSIST=1, TIER_PT_WIN=4, TIER_PT_MATCH=1, TIER_PT_MULT=8.75;
+/* 계급(다이아, 마스터 ...) are earned with 마스터리 포인트 per character: kill 3, assist 1, win 4, match played 1 (owner 10-26). The thresholds above were kills; a typical match (3 kills, 1 assist, a win) is about 15 points, the new thresholds (owner 10-26: 1.75x the old kills, rounded: 90 / 260 / 530 / 880 / 1750 / 3050 / 4800 / 7000) are about 1.75 times harder than before */
+const TIER_PT_KILL=3, TIER_PT_ASSIST=1, TIER_PT_WIN=4, TIER_PT_MATCH=1, TIER_PT_MULT=10, TIER_PT_BIG_KILL=2, TIER_PT_BIG_WIN=3, TIER_PT_BIG_PLAYERS=6, TIER_PT_DUEL_KILL=8, TIER_PT_BR_KILL=5;      // (a match with 6 or more players and respawns has many kills (깃발 뺏기 about 21): kill 2, win 3 instead of 3 / 4; a duel kill is worth 8, a battle royale kill 5 (owner 10-26). TIER_PT_MULT is only how old kills are carried over: x10 keeps every rank already reached)
 { const base=CHAR_RANKS.slice(); CHAR_RANKS.length=0;      // two in-between steps (II, III) inside every rank from 브론즈 up, so a level-up comes often even though the points are 1.75x harder (owner 10-26); the skin ranks (다이아, 그랜드 마스터) keep their own names
-  base.forEach((r,i)=>{ CHAR_RANKS.push({min:Math.ceil(r.min*TIER_PT_MULT), name:r.name, color:r.color}); const nx=base[i+1];
-    if(nx && i>0) for(let k=1;k<=2;k++) CHAR_RANKS.push({min:Math.ceil((r.min+(nx.min-r.min)*k/3)*TIER_PT_MULT), name:r.name+' '+(k===1?'II':'III'), color:r.color}); }); }
+  base.forEach((r,i)=>{ CHAR_RANKS.push({min:r.min, name:r.name, color:r.color}); const nx=base[i+1];
+    if(nx && i>0) for(let k=1;k<=2;k++) CHAR_RANKS.push({min:Math.round((r.min+(nx.min-r.min)*k/3)/10)*10, name:r.name+' '+(k===1?'II':'III'), color:r.color}); }); }
 // the tier of a character (by its total kills) as a small coloured tag, to put after the character's name
 function tierLvTagHtml(kills, lv){ const r=charRankFor(kills||0); return '<span class="tagRow"><span class="tierTag" style="color:'+r.color+'">'+r.name+'</span><span class="lvTag'+(lv>=MASTERY_STAR_LV?' max':'')+'">Lv.'+lv+'</span></span>'; }
 function charTierTagHtml(wid){ if(!SELECTABLE_WEAPONS.includes(wid)) return ''; return tierLvTagHtml(charKillsFor(wid), masteryInfo(wid).lv); }
 function myWeaponStats(wid){ return {ck:Math.max(0,Math.floor(charKillsFor(wid))), ml:masteryInfo(wid).lv}; }     // what the others see next to my character in the reveal
 function cleanStat(v, max){ v=Math.floor(+v); return (isFinite(v) && v>0) ? Math.min(v, max) : 0; }
 function charNameWithTierHtml(wid){ return escapeHtmlText(WEAPON_PERSONA_NAME[wid]||(WEAPONS[wid]&&WEAPONS[wid].name)||wid)+charTierTagHtml(wid); }
+function tierGainHtml(){      // "마스터리 포인트 +N (처치 3×3 + ...)" and where that leaves the character
+  const g=lastTierGain; if(!g) return '';
+  const nm=WEAPON_PERSONA_NAME[g.wid]||g.wid, rk=charRankFor(g.total), idx=CHAR_RANKS.findIndex(r=>r.name===rk.name), nx=CHAR_RANKS[idx+1];
+  const parts=[]; if(g.k>0) parts.push('처치 '+g.k+'×'+g.kp); if(g.a>0) parts.push('어시스트 '+g.a+'×'+TIER_PT_ASSIST); parts.push('완주 '+TIER_PT_MATCH); if(g.won) parts.push('승리 '+g.wp);
+  return '<br>🏅 '+nm+' 마스터리 포인트 <b style="color:#ffd34d">+'+g.gained+'</b> <span style="color:#9aa0a6">('+parts.join(' + ')+')</span><br><span style="color:'+rk.color+'; font-weight:700;">'+rk.name+'</span> · '+g.total+'점'+(nx?' · 다음 '+nx.name+'까지 '+(nx.min-g.total)+'점':' · 최고 계급');
+}
 function charRankFor(kills){
   let cur=CHAR_RANKS[0];
   for(const r of CHAR_RANKS) if(kills>=r.min) cur=r;
