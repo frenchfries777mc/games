@@ -87,6 +87,7 @@ function syncProxies(G, dt) {
     const e = p.px; if (!e) continue;
     e.x = p.x; e.z = p.z; e.a = p.a; e.hp = alive(p) ? 1 : 0;
     if (e.slow > 0) { p.slow = Math.max(p.slow || 0, e.slow); p.slowM = e.slowM || 0.5; e.slow = 0; }
+    if (e.stun > 0) { p.stun = Math.max(p.stun || 0, e.stun); e.stun = 0; }
     if (e.mark > 0) e.mark = Math.max(0, e.mark - dt);
   }
 }
@@ -300,7 +301,7 @@ function comboFx(G, C, A, B) {
   ev(G, 'combo', { c: C.id, name: C.name, x, z, a: A.id, b: B.id });
   if (!A.bot || !B.bot) { for (const o of [A, B]) if (!o.bot) { ev(G, 'ach', { id: 'combo', pid: o.id }); ev(G, 'combo1', { c: C.id, pid: o.id }); } }
 }
-const ANIMOF = { leap: 'whirl', bloodlust: 'taunt', flurry: 'dash', blink: 'dash', scatter: 'dash', fan: 'pierce', bonestorm: 'whirl' };
+const ANIMOF = { shieldbash: 'block', frost: 'curse', leap: 'whirl', bloodlust: 'taunt', flurry: 'dash', blink: 'dash', scatter: 'dash', fan: 'pierce', bonestorm: 'whirl' };
 const friends = (G, p) => G.pvp ? [p] : G.players;   // 대전에서는 내 편이 나뿐이에요
 function useSkill(G, p, si, inp) {
   const R = ROLES[p.role], S = R.skills[si], key = 's' + si;
@@ -324,8 +325,8 @@ function useSkill(G, p, si, inp) {
       if (best) { best.mark = 6; ev(G, 'mark', { id: best.id, x: best.x, z: best.z }); }
       break;
     }
-    case 'heal': for (const q of friends(G, p)) if (alive(q) && dist(p, q) < 6) ev(G, 'heal', { id: q.id, x: q.x, z: q.z, v: healP(G, q, 35) }); rolePuz(G, p, 'basins', 6); break;
-    case 'ward': for (const q of friends(G, p)) if (alive(q) && dist(p, q) < 7.5) { q.shield = 25; q.shieldT = 5; ev(G, 'ward', { id: q.id }); } break;
+    case 'heal': for (const q of friends(G, p)) if (alive(q) && dist(p, q) < 6) ev(G, 'heal', { id: q.id, x: q.x, z: q.z, v: healP(G, q, 18) }); rolePuz(G, p, 'basins', 6); break;
+    case 'ward': for (const q of friends(G, p)) if (alive(q) && dist(p, q) < 7.5) { q.shield = 30; q.shieldT = 5; ev(G, 'ward', { id: q.id }); } break;
     case 'raise': {
       // 1초 동안 빛을 모은 뒤 가까이 쓰러진 동료가 일어나요 (그 사이 사제가 쓰러지면 없던 일)
       const n = G.players.filter(q => q.down && !q.dead && dist(p, q) < 6).length;
@@ -343,6 +344,17 @@ function useSkill(G, p, si, inp) {
     case 'quake': { // 땅을 내려쳐 둘레 모두가 피해를 받고 느려져요
       ev(G, 'heavy', { id: p.id, x: p.x, z: p.z, a: p.a });
       for (const e of G.enemies) if (e.hp > 0 && e.pid !== p.id && dist(p, e) < 4.4 + e.r) { hurtEnemy(G, e, 45, p, {}); if (e.hp > 0) { e.slow = 2; e.slowM = 0.5; } }
+      break;
+    }
+    case 'shieldbash': { // 방패로 앞을 세게 밀어쳐 맞은 상대를 잠깐 기절시켜요
+      ev(G, 'swing', { id: p.id, x: p.x, z: p.z, a: p.a, r: 3.0, role: p.role });
+      for (const e of G.enemies) if (e.hp > 0 && e.pid !== p.id && dist(p, e) < 3.0 + e.r && angDiff(p.a, angTo(p, e)) < 1.0) { hurtEnemy(G, e, 28, p, {}); e.stun = 1.1; }
+      break;
+    }
+    case 'frost': { // 조준한 곳에 서리를 터뜨려 둘레 상대를 느리게 해요
+      const q = aimPoint(p, inp, 12);
+      ev(G, 'skill', { id: p.id, s: 'frostfx', x: q.x, z: q.z, a: p.a });
+      for (const e of G.enemies) if (e.hp > 0 && e.pid !== p.id && Math.hypot(e.x - q.x, e.z - q.z) < 3.4 + e.r) { hurtEnemy(G, e, 22, p, {}); e.slow = 3; e.slowM = 0.5; }
       break;
     }
     case 'leap': { // 앞으로 크게 뛰어올라 내려앉으며 둘레에 피해
@@ -502,11 +514,12 @@ function resetEnemy(e) {
 
 // 자기 표적은 자기 공격에 맞지 않게, 내 차례 동안만 꺼 둬요
 function stepPlayer(G, p, inp, dt) {
+  if (p.stun > 0) { p.stun -= dt; inp = {}; }   // 기절하면 잠깐 아무것도 못 해요
   if (p.px) p.px.hp = 0;
   stepPlayer0(G, p, inp, dt);
   if (G.pvp && alive(p) && G.phase === 'play') {
     p.noHit = (p.noHit || 0) + dt;
-    if (p.noHit > 4 && p.hp < p.maxhp) p.hp = Math.min(p.maxhp, p.hp + p.maxhp * 0.03 * dt);   // 맞지 않고 4초가 지나면 체력이 저절로 차올라요
+    if (p.noHit > 4 && p.hp < p.maxhp) p.hp = Math.min(p.maxhp, p.hp + p.maxhp * 0.02 * dt);   // 맞지 않고 4초가 지나면 체력이 저절로 차올라요
     if (p.leech > 0) p.leech = Math.max(0, p.leech - dt);
     if (p.stormT > 0) { p.stormT -= dt; p.stormTick -= dt; if (p.stormTick <= 0) { p.stormTick = 0.35; ev(G, 'swing', { id: p.id, x: p.x, z: p.z, a: p.a, r: 3.2, role: p.role }); for (const e of G.enemies) if (e.hp > 0 && e.pid !== p.id && dist(p, e) < 3.2 + e.r) hurtEnemy(G, e, 13, p, {}); } }
   }
@@ -1344,43 +1357,75 @@ function botThink(G, p, dt) {
 }
 
 // 대전 봇: 가까운 상대에게 다가가 싸우고, 틈틈이 기술을 써요
+// 대전 봇: 날아오는 화살 피하기, 체력이 낮으면 물러나 회복, 움직이는 상대를 앞질러 조준, 상황에 맞춰 기술 쓰기
+function safeDir(G, p, a) {
+  for (const da of [0, 0.6, -0.6, 1.2, -1.2, 1.9, -1.9]) { const b = a + da; if (!isWall(p.x + Math.cos(b) * 1.8, p.z + Math.sin(b) * 1.8)) return b; }
+  return a;
+}
 function botPvp(G, p, dt) {
   const inp = {}, R = ROLES[p.role], ai = p.ai; ai.t -= dt; ai.cmbT = 1;
   if (G.phase !== 'play') return inp;
+  const foes = G.players.filter(q => q !== p && alive(q)); if (!foes.length) return inp;
   let tgt = null, bs = 1e9;
-  for (const q of G.players) { if (q === p || !alive(q)) continue; const d = dist(p, q) + q.hp * 0.04; if (d < bs) { bs = d; tgt = q; } }
-  if (!tgt) return inp;
-  const dz = inDanger(G, p);
-  if (dz != null) { inp.mx = Math.cos(dz); inp.mz = Math.sin(dz); if (p.rollCd <= 0 && G.rng() < 0.4) inp.roll = true; return inp; }
+  for (const q of foes) { const s = dist(p, q) + (q.hp / q.maxhp) * 7 - (q === ai.tg ? 3 : 0); if (s < bs) { bs = s; tgt = q; } }
+  ai.tg = tgt;
   const d = dist(p, tgt), ta = angTo(p, tgt), ranged = R.atk.kind !== 'melee', clear = lineClear(p.x, p.z, tgt.x, tgt.z);
-  inp.aim = ta; inp.ax = tgt.x; inp.az = tgt.z;
-  if (ai.t <= 0) { ai.t = 0.5 + G.rng() * 0.5; ai.sd = G.rng() < 0.5 ? 1 : -1; ai.hold = G.rng() < 0.25; }
+  const near = foes.filter(q => dist(p, q) < 6).length, low = p.hp < p.maxhp * 0.22, nearest = foes.reduce((m, q) => dist(p, q) < dist(p, m) ? q : m, foes[0]);
+  // 앞질러 조준: 상대가 움직이는 방향으로 조금 앞을 겨눠요
+  const sp = R.atk.speed || 20, lt = Math.min(0.6, d / sp), px = tgt.x + (tgt.vx || 0) * lt * 0.9, pz = tgt.z + (tgt.vz || 0) * lt * 0.9;
+  inp.aim = Math.atan2(pz - p.z, px - p.x); inp.ax = px; inp.az = pz;
+  // 1) 바닥 경고 피하기
+  const dz = inDanger(G, p);
+  if (dz != null) { const a = safeDir(G, p, dz); inp.mx = Math.cos(a); inp.mz = Math.sin(a); if (p.rollCd <= 0 && G.rng() < 0.5) inp.roll = true; return inp; }
+  // 2) 날아오는 화살·구슬 피하기
+  for (const pr of G.projs) {
+    if (pr.own === p.id || pr.vx == null) continue;
+    if (ai.pj !== pr.id) { ai.pj = pr.id; ai.pjOk = G.rng() < 0.55; }   // 날아오는 걸 알아채는 건 열에 여섯 번쯤이에요
+    if (!ai.pjOk) continue;
+    const rx = p.x - pr.x, rz = p.z - pr.z, v2 = pr.vx * pr.vx + pr.vz * pr.vz; if (v2 < 1) continue;
+    const t = (rx * pr.vx + rz * pr.vz) / v2; if (t < 0 || t > 0.55) continue;
+    const cx = rx - pr.vx * t, cz = rz - pr.vz * t, cd = Math.hypot(cx, cz);
+    if (cd < 1.5) {
+      const a = Math.atan2(pr.vz, pr.vx) + (cx * pr.vz - cz * pr.vx > 0 ? -1 : 1) * Math.PI / 2;
+      inp.mx = Math.cos(a); inp.mz = Math.sin(a); if (p.rollCd <= 0 && t < 0.3 && G.rng() < 0.7) inp.roll = true; break;
+    }
+  }
+  if (ai.t <= 0) { ai.t = 0.4 + G.rng() * 0.5; ai.sd = G.rng() < 0.5 ? 1 : -1; ai.hold = G.rng() < 0.15; }
   const want = ranged ? 8 : (R.atk.range + 0.7) * 0.8;
-  if (d > want + 1.5 || !clear) moveTo(G, p, inp, tgt.x, tgt.z, 0.6);
-  else if (ranged && d < want - 2) { inp.mx = -Math.cos(ta); inp.mz = -Math.sin(ta); }
-  else if (!ai.hold) { inp.mx = -Math.sin(ta) * ai.sd * 0.7 + Math.cos(ta) * 0.25; inp.mz = Math.cos(ta) * ai.sd * 0.7 + Math.sin(ta) * 0.25; }
-  if (clear && d < (ranged ? 14 : R.atk.range + 0.9)) inp.atk = true;
+  if (inp.mx == null) {
+    if (low && d < 12) { const a = safeDir(G, p, Math.atan2(p.z - nearest.z, p.x - nearest.x)); inp.mx = Math.cos(a); inp.mz = Math.sin(a); if (d < 3 && p.rollCd <= 0 && G.rng() < 0.05) inp.roll = true; }   // 체력이 낮으면 물러나요 (맞지 않고 4초가 지나면 저절로 차올라요)
+    else if (d > want + 1.5 || !clear) moveTo(G, p, inp, tgt.x, tgt.z, 0.6);
+    else if (ranged && d < want - 3.5 && d > 2.2) { const a = safeDir(G, p, ta + Math.PI); inp.mx = Math.cos(a); inp.mz = Math.sin(a); }
+    else if (!ai.hold) { inp.mx = -Math.sin(ta) * ai.sd * 0.8 + Math.cos(ta) * 0.2; inp.mz = Math.cos(ta) * ai.sd * 0.8 + Math.sin(ta) * 0.2; }
+    // 멀리서 구르며 파고들기
+    if (!ranged && d > 7 && p.rollCd <= 0 && G.rng() < 0.02) inp.roll = true;
+  }
+  if (clear && d < (ranged ? 14 : R.atk.range + 0.9) && !(low && d > 4)) inp.atk = true;
   R.skills.forEach((S, i) => {
-    if (p.cd['s' + i] > 0 || !clear && S.id !== 'heal') return;
-    let go = false; const r = G.rng();
+    if (p.cd['s' + i] > 0 || (!clear && S.id !== 'heal' && S.id !== 'ward')) return;
+    let go = false; const r = G.rng(), hpf = p.hp / p.maxhp;
     switch (S.id) {
-      case 'block': go = d < 4 && r < 0.03; break;
-      case 'dash': go = d > 3 && d < 8 && r < 0.05; break;
-      case 'taunt': case 'rally': go = d < 11 && r < 0.025; break;
-      case 'pierce': go = d < 15 && r < 0.08; break;
-      case 'rain': case 'potion': go = d < 11 && r < 0.05; break;
-      case 'mark': go = d < 15 && r < 0.05; break;
-      case 'heal': go = p.hp < p.maxhp * 0.6 && r < 0.05; break;
-      case 'ward': go = d < 10 && r < 0.03; break;
-      case 'smite': case 'curse': go = d < 11 && r < 0.05; break;
-      case 'whirl': case 'bonestorm': go = d < 3.2 && r < 0.08; break;
-      case 'leap': go = d > 3 && d < 9 && r < 0.05; break;
-      case 'bloodlust': go = d < 6 && r < 0.03; break;
-      case 'flurry': go = d < 3 && r < 0.08; break;
-      case 'blink': go = d < 12 && r < 0.04; break;
-      case 'scatter': go = d < 3 && r < 0.05; break;
-      case 'fan': go = d < 12 && r < 0.06; break;
-      case 'quake': go = d < 4.2 && r < 0.08; break;
+      case 'block': go = d < 4 && r < 0.12; break;
+      case 'shieldbash': go = d < 2.8 && r < 0.3; break;
+      case 'dash': go = d > 4 && d < 8 && r < 0.15; break;
+      case 'taunt': go = d < 6 && hpf < 0.7 && r < 0.1; break;
+      case 'rally': go = d < 11 && r < 0.1; break;
+      case 'pierce': go = d < 16 && r < 0.25; break;
+      case 'rain': case 'potion': go = d < 12 && r < 0.14; break;
+      case 'mark': go = d < 15 && r < 0.2; break;
+      case 'heal': go = hpf < 0.6 && r < 0.3; break;
+      case 'ward': go = d < 10 && hpf < 0.9 && r < 0.12; break;
+      case 'smite': case 'curse': go = d < 12 && r < 0.16; break;
+      case 'frost': go = d < 12 && r < 0.15; break;
+      case 'whirl': go = d < 3.2 && r < 0.25; break;
+      case 'bonestorm': go = d < 3.2 && r < 0.2; break;
+      case 'leap': go = d > 3.5 && d < 9 && r < 0.15; break;
+      case 'bloodlust': go = d < 5 && hpf < 0.9 && r < 0.1; break;
+      case 'flurry': go = d < 3 && r < 0.25; break;
+      case 'blink': go = d > 4 && d < 12 && r < 0.12; break;
+      case 'scatter': go = d < 3 && hpf < 0.5 && r < 0.3; break;
+      case 'fan': go = d < 12 && r < 0.2; break;
+      case 'quake': go = d < 4.2 && r < 0.25; break;
     }
     if (go) { inp[i === 0 ? 'q' : i === 1 ? 'e' : 'r'] = true; }
   });
