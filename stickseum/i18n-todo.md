@@ -83,3 +83,5 @@ patchnotes.json | v405 items[7] | 쿠루스 스킬을 어둠 확산으로 교체
 patchnotes.json | v405 items[8] | 차원여행자 일반 공격 데미지 13 → 15 | build 405 | 2026-10-26
 patchnotes.json | v405 items[9] | 스킨 머리 위 효과가 사라지던 문제 수정 | build 405 | 2026-10-26
 patchnotes.json | v405 items[10] | 밸런스 표 갱신 (쿠루스, 차원여행자 재측정) | build 405 | 2026-10-26
+patchnotes.json | v406 title | 청룡 그림 개선 | build 406 | 2026-10-26
+patchnotes.json | v406 items[0] | 청룡의 마법사 청룡을 비늘, 갈기, 뿔, 발톱, 수염이 있는 모습으로 새로 그림 | build 406 | 2026-10-26
