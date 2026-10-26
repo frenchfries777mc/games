@@ -1351,8 +1351,8 @@ const WEAPONS = {
             desc:'데미지 12 · 쿨타임 0.4초 · 사거리 65 · 빠른 발톱 공격, 적중할 때마다 체력 5 흡수'},
   gambler: {id:'gambler', name:'도박사',   emoji:'🎲', kind:'gun', dmg:16, cd:1.0, bulletSpeed:1100, shape:'chip',
             desc:'데미지 16 · 쿨타임 1.0초 · 장거리 · 칩을 곧게 던짐, 맞힐 때마다 칩 +1 (최대 6) · 칩이 많을수록 스킬·궁극기가 강해짐'},
-  wizard:  {id:'wizard',  name:'마법사',   emoji:'🧙', kind:'gun',      dmg:18, cd:0.6,  bulletSpeed:750, shape:'fireball', pierce:true, pierceHits:1,
-            desc:'데미지 18 · 쿨타임 0.6초 · 발판을 통과하고, 플레이어 한 명을 관통한 뒤 두 번째로 맞힌 상대에게서 멈추는 화염 마법'},
+  wizard:  {id:'wizard',  name:'마법사',   emoji:'🧙', kind:'gun',      dmg:16, cd:0.6,  bulletSpeed:750, shape:'fireball', pierce:true, pierceHits:1,
+            desc:'데미지 16 · 쿨타임 0.6초 · 발판을 통과하고, 플레이어 한 명을 관통한 뒤 두 번째로 맞힌 상대에게서 멈추는 화염 마법'},
   magiccard:{id:'magiccard',name:'마술 카드',emoji:'🃏', kind:'cards',    dmg:10,  cd:0.9,  bulletSpeed:820, shape:'card', hitR:26, comboBonus:5, freeVolleys:3,
             desc:'트럼프 카드 3장이 넓게 퍼져 날아감 · 장당 데미지 10 · 쿨타임 0.9초 · 맞은 상대는 이동속도가 조금 느려짐 · 3장이 모두 맞으면 추가 5 데미지 + 0.5초 기절'},
   flamethrower:{id:'flamethrower',name:'화염방사기',emoji:'🔥', kind:'flame', dmg:0, cd:0, range:FLAME_RANGE, shape:'flamethrower',
@@ -5087,7 +5087,7 @@ function shuffle(arr){ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.
 /* ===== the version of this file =====
    Players with different versions CAN meet and play together: the automatic matchmaking uses the same room names for every version (online-<mode>-<map>-<slot>), and nobody is refused because of a different build.
    The build is only sent along with the join message and the lobby (for information); the corner of the screen shows it. */
-const GAME_BUILD='build 2026-10-18-v399';
+const GAME_BUILD='build 2026-10-18-v400';
 const GAME_VERSION='0.8', GAME_VERSION_NAME='황금을 찾아서';   // 게임 버전 이름: versions.json의 title과 같게 (빌드마다 바꾸지 않음)
 const WEEKLY_EVENTS=[
   {id:'lowg',    name:'저중력 난투', desc:'몸이 둥실둥실, 중력이 약해진 난투', rules:{grav:0.6}},
@@ -11161,7 +11161,7 @@ function spawnBullet(p, angle, w, extra){
   const ax=Math.cos(angle), ay=Math.sin(angle);
   const sx=p.x+ax*(PLAYER_W/2+14), sy=(p.y-40)+ay*(PLAYER_W/2+14);
   bullets.push(Object.assign({x:sx, y:sy, spawnX:sx, spawnY:sy, vx:ax*w.bulletSpeed, vy:ay*w.bulletSpeed,
-    owner:p.id, ownerName:p.name, life:w.life||BULLET_LIFE, color:p.color, dmg:w.dmg*(p.focusOn?1.35:1), wid:w.id, arcs:!!w.arcs, dmgFalloff:w.dmgFalloff, hitR:w.hitR, pierce:!!w.pierce, pierceHits:w.pierceHits||0, bouncesLeft:w.bounces||0, poison:w.poison}, extra||{}));
+    owner:p.id, ownerName:p.name, life:w.life||BULLET_LIFE, color:p.color, sk:(p.cos&&p.cos.skin&&p.cos.skin[p.weapon])||undefined, dmg:w.dmg*(p.focusOn?1.35:1), wid:w.id, arcs:!!w.arcs, dmgFalloff:w.dmgFalloff, hitR:w.hitR, pierce:!!w.pierce, pierceHits:w.pierceHits||0, bouncesLeft:w.bounces||0, poison:w.poison}, extra||{}));
 }
 function registerCardHit(b, target, targetId, t){
   const tS=t/1000;
@@ -11348,7 +11348,7 @@ const ULT_IMPL = {
     hostTimers.push({ta:fxActor, at:tSec+0.2, fn:blast}, {at:tSec+0.4, fn:blast});
   },
   gloves(p,tSec){ p.rushUntil=tSec+4; },
-  grenade(p,tSec,tMs,ax,ay){ const w=WEAPONS.grenade, a0=aimAngleOf(p,ax,ay); for(let i=0;i<5;i++){ const w2=Object.assign({}, w, {dmg:35, bulletSpeed:420+Math.random()*260}); spawnBullet(p, a0+(i-2)*0.17, w2, {splash:85, big:true, ult:true}); } },
+  grenade(p,tSec,tMs,ax,ay){ const w=WEAPONS.grenade, a0=aimAngleOf(p,ax,ay); for(let i=0;i<5;i++){ const w2=Object.assign({}, w, {dmg:35, bulletSpeed:420+Math.random()*260}); spawnBullet(p, a0+(i-2)*0.17, w2, {splash:85, big:true, ult:true, noSelf:true}); } },
   flamethrower(p,tSec,tMs,ax,ay){
     const dir=Math.cos(aimAngleOf(p,ax,ay))>=0?1:-1;
     const cx=clamp(p.x+dir*50, 20, MAP.arenaW-20);
@@ -12194,7 +12194,7 @@ function meleeAttack(p, angle, w, tMs){
   if(homerun && hitAny) p.ultPending=null;
   const ax=Math.cos(angle), ay=Math.sin(angle);
   const swingLife=Math.min(0.28, Math.max(0.12, w.cd));
-  bullets.push({x:p.x+ax*30, y:(p.y-30)+ay*30, vx:0, vy:0, life:swingLife, life0:swingLife, color:p.color, dmgless:true, wid:w.id, swingAngle:angle});
+  bullets.push({x:p.x+ax*30, y:(p.y-30)+ay*30, vx:0, vy:0, life:swingLife, life0:swingLife, color:p.color, sk:(p.cos&&p.cos.skin&&p.cos.skin[p.weapon])||undefined, dmgless:true, wid:w.id, swingAngle:angle});
 }
 function absorbIntoShield(target, dmg){
   if(!target.flameShield || dmg<=0) return dmg;
@@ -14126,7 +14126,7 @@ function hostTickCore(dt,t){
       survival: (gameMode==='survival') ? {zombies:survivalZombies.map(z=>({x:Math.round(z.x*10)/10,y:Math.round(z.y*10)/10,f:z.face,g:z.grounded?1:0,w:(t/1000<z.awakeAt)?1:0,s:Math.round(Math.abs(z.vx||0))})), hazards:survivalHazards.map(hz=>Object.assign({}, hz, hz.warnUntil!==undefined ? {warnRemain: hz.warnUntil - t/1000, warnUntil:undefined} : {}, hz.until!==undefined ? {untilRemain: hz.until - t/1000, until:undefined} : {}, hz.goAt!==undefined ? {goRemain: hz.goAt - t/1000, goAt:undefined} : {}))} : undefined,
       gd: (gameMode==='gold' && gdm) ? {n:gdm.pile.n, ps:gdm.pts, cl:gdm.carts.map(c=>c.lumps), dr:gdm.drops.map(d=>[Math.round(d.x),Math.round(d.y),d.n]), rm:Math.max(0,Math.round((gdm.endsAt-Date.now())/1000)), rf:Math.max(0,Math.ceil((gdm.refillAt||0)-t/1000))} : undefined,
       ctf: (gameMode==='ctf' && ctf) ? {f:ctf.flags.map(f=>({s:(f.state==='home'?0:(f.state==='carried'?1:2)), x:Math.round(f.x), y:Math.round(f.y), c:f.carrierId||null, r:(f.state==='dropped'?Math.round(Math.max(0,f.returnAt-t/1000)*10)/10:0)})), sc:ctf.scores, rm:Math.max(0,Math.round((ctf.endsAt-Date.now())/1000)), ot:!!ctf.overtime, tg:ctf.target} : undefined,
-      bullets:bullets.map(b=>({lob:b.lob,x:b.x,y:b.y,color:b.color,wid:b.wid,vx:b.vx,vy:b.vy,dmgless:b.dmgless,swingAngle:b.swingAngle,splash:b.splash,life:b.life,life0:b.life0,sx:b.spawnX,sy:b.spawnY,ult:b.ult,fire:b.fire,reach:b.reach})),
+      bullets:bullets.map(b=>({lob:b.lob,x:b.x,y:b.y,color:b.color,sk:b.sk,wid:b.wid,vx:b.vx,vy:b.vy,dmgless:b.dmgless,swingAngle:b.swingAngle,splash:b.splash,life:b.life,life0:b.life0,sx:b.spawnX,sy:b.spawnY,ult:b.ult,fire:b.fire,reach:b.reach})),
       walls:walls.map(w=>({x:w.x,y:w.y,w:w.w,h:w.h,owner:w.owner,rem:w.until-t/1000})),
       magicCircles:magicCircles.map(z=>({x:z.x,y:z.y,r:z.r,owner:z.owner,team:z.team,rem:z.until-t/1000})),
       fieldZones:fieldZones.map(z=>({kind:z.kind,x:Math.round(z.x),y:Math.round(z.y),r:z.r,owner:z.owner,dur:z.dur,rem:z.until-t/1000})),
@@ -16696,7 +16696,44 @@ function drawParticles(){
   ctx.restore();
 }
 const MELEE_DRAW_RANGE={spear:160, blade:85, club:82, dagger:40, fist:45, saber:100, pitchfork:105, hook:55, katana:90};   // the reach the swing graphics were drawn for
-function drawProjectile(b){
+const skinFxCache={};
+function skinFxOf(sid){
+  let r=skinFxCache[sid]; if(r) return r;
+  const c=COSMETICS[sid]||{}, t=c.tint||'#ffffff', n=parseInt(t.slice(1),16)||0;
+  const mix=(v)=>Math.round(v+(255-v)*0.5);      // dark tints (흑기사 etc.) would vanish on a lighter glow, so lift them
+  const col='#'+[mix((n>>16)&255),mix((n>>8)&255),mix(n&255)].map(v=>v.toString(16).padStart(2,'0')).join('');
+  let h=0; for(let i=0;i<sid.length;i++) h=(h*31+sid.charCodeAt(i))|0;
+  const styles=['spark','ring','ember','star','ribbon'];
+  r=skinFxCache[sid]={col, style:c.fx==='halo'?'ring':(c.fx==='crown'?'star':styles[Math.abs(h)%styles.length])};
+  return r;
+}
+function drawSkinFx(b){
+  if(!b.sk || b.lob) return;
+  const fx=skinFxOf(b.sk), col=fx.col, now=performance.now()*0.001;
+  const swing=b.swingAngle!==undefined, sp=Math.hypot(b.vx||0,b.vy||0);
+  if(!swing && (b.dmgless || sp<50)) return;
+  ctx.save(); ctx.globalCompositeOperation='lighter'; ctx.lineCap='round';
+  if(swing){
+    const a=b.swingAngle, ax=Math.cos(a), ay=Math.sin(a), cx=b.x-ax*30, cy=b.y-ay*30;
+    const k=b.life0?clamp(b.life/b.life0,0,1):1, R=64;
+    ctx.strokeStyle=hexA(col,0.75*k); ctx.lineWidth=3+3*k; ctx.beginPath(); ctx.arc(cx,cy,R,a-0.85,a+0.85); ctx.stroke();
+    if(fx.style==='ring'){ ctx.lineWidth=1.5; ctx.strokeStyle=hexA(col,0.5*k); ctx.beginPath(); ctx.arc(cx,cy,R+8,a-0.7,a+0.7); ctx.stroke(); }
+    for(let i=0;i<6;i++){ const q=a-0.85+i*0.34+(1-k)*0.5, rr=R+(fx.style==='ember'?-i*2:Math.sin(i*2+now*9)*5);
+      const x=cx+Math.cos(q)*rr, y=cy+Math.sin(q)*rr-(fx.style==='ember'?(1-k)*14:0);
+      ctx.fillStyle=hexA(col,0.8*k); ctx.beginPath(); if(fx.style==='star'){ ctx.save(); ctx.translate(x,y); ctx.rotate(q+now*6); ctx.fillRect(-4,-1,8,2); ctx.fillRect(-1,-4,2,8); ctx.restore(); } else ctx.arc(x,y,fx.style==='spark'?2:2.6,0,7); ctx.fill(); }
+  } else {
+    const ux=b.vx/sp, uy=b.vy/sp, L=clamp(sp*0.06,14,56), sc=b.ult?1.5:1;
+    const rg=ctx.createRadialGradient(b.x,b.y,0,b.x,b.y,13*sc); rg.addColorStop(0,hexA(col,0.55)); rg.addColorStop(1,hexA(col,0));
+    ctx.fillStyle=rg; ctx.beginPath(); ctx.arc(b.x,b.y,13*sc,0,7); ctx.fill();
+    if(fx.style==='ring'){ for(let i=0;i<2;i++){ const q=now*14+i*Math.PI; ctx.fillStyle=hexA(col,0.9); ctx.beginPath(); ctx.arc(b.x+Math.cos(q)*8*sc,b.y+Math.sin(q)*8*sc,2.2,0,7); ctx.fill(); } }
+    else if(fx.style==='star'){ ctx.save(); ctx.translate(b.x,b.y); ctx.rotate(now*10); ctx.fillStyle=hexA(col,0.9); ctx.fillRect(-7*sc,-1.2,14*sc,2.4); ctx.fillRect(-1.2,-7*sc,2.4,14*sc); ctx.restore(); }
+    else if(fx.style==='ribbon'){ ctx.strokeStyle=hexA(col,0.7); ctx.lineWidth=2.5; ctx.beginPath(); for(let i=0;i<=8;i++){ const d=i/8*L*1.4, w=Math.sin(i*1.3-now*25)*4*(i/8); const x=b.x-ux*d-uy*w, y=b.y-uy*d+ux*w; i?ctx.lineTo(x,y):ctx.moveTo(x,y); } ctx.stroke(); }
+    else { for(let i=1;i<=4;i++){ const d=i*L/4, j=Math.sin(now*40+i*5)*3; const x=b.x-ux*d-uy*j, y=b.y-uy*d+ux*j-(fx.style==='ember'?i*1.5:0); ctx.fillStyle=hexA(col,0.85-i*0.15); ctx.beginPath(); ctx.arc(x,y,(fx.style==='ember'?3.2:2)-i*0.3,0,7); ctx.fill(); } }
+  }
+  ctx.restore();
+}
+function drawProjectile(b){ drawProjectileBase(b); drawSkinFx(b); }
+function drawProjectileBase(b){
   drawTrail(b);
   const w = WEAPONS[b.wid];
   let shape = w ? w.shape : (b.wid==='rifle_missile' ? 'rocket' : (b.wid==='pirate_ball' ? 'cannonball' : 'bullet'));
