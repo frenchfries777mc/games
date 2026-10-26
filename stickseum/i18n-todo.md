@@ -136,3 +136,5 @@ patchnotes.json | v417 items[1] | 캐릭터 정보 창에 마스터리 포인트
 patchnotes.json | v418 title | 마스터리 포인트 다중 캐릭터 | build 418 | 2026-10-26
 patchnotes.json | v418 items[0] | 듀얼처럼 캐릭터를 바꾸는 경기는 쓴 캐릭터 모두에 마스터리 포인트 적립 | build 418 | 2026-10-26
 patchnotes.json | v418 items[1] | 경기 끝 결과에 캐릭터별 마스터리 포인트 표시 | build 418 | 2026-10-26
+patchnotes.json | v419 title | 로비 빌드 표시 수정 | build 419 | 2026-10-26
+patchnotes.json | v419 items[0] | 로비 가장자리 빌드 번호와 저작권 표시가 보이지 않던 문제 수정 | build 419 | 2026-10-26
