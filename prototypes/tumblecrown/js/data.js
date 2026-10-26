@@ -3,12 +3,12 @@
 
 import { T } from './tr.js';
 
-export const VERSION = 'v0.1', BUILD = 21;
+export const VERSION = 'v0.1', BUILD = 22;
 
 export const ROLES = {
   knight: {
     name: T('기사'), color: '#3f6fd0', hp: 340, speed: 6.0,
-    atk: { kind: 'melee', range: 2.5, arc: 1.9, dmg: 18, cd: 0.45 },
+    atk: { kind: 'melee', range: 2.5, arc: 1.9, dmg: 23, cd: 0.45 },
     skills: [
       { id: 'block', name: T('막기'), key: 'Q', cd: 5, desc: T('1.2초 동안 방패를 들어 앞에서 오는 피해를 70% 줄여요.') },
       { id: 'dash', name: T('돌진'), key: 'E', cd: 6, desc: T('앞으로 돌진하며 부딪힌 상대에게 30 피해를 줘요.') },
@@ -18,11 +18,11 @@ export const ROLES = {
     role: T('튼튼하게 버티며 공격·공격·강타로 몰아붙여요.')
   },
   priest: {
-    name: T('사제'), color: '#e8e4ef', hp: 135, speed: 6.0,
-    atk: { kind: 'orb', dmg: 10, cd: 0.5, speed: 16 },
+    name: T('사제'), color: '#e8e4ef', hp: 125, speed: 6.0,
+    atk: { kind: 'orb', dmg: 8, cd: 0.5, speed: 16 },
     skills: [
       { id: 'heal', name: T('치유'), key: 'Q', cd: 9, desc: T('내 체력을 18 회복해요.') },
-      { id: 'ward', name: T('보호막'), key: 'E', cd: 14, desc: T('5초 동안 피해 30을 막는 보호막을 씌워요.') },
+      { id: 'ward', name: T('보호막'), key: 'E', cd: 14, desc: T('5초 동안 피해 24를 막는 보호막을 씌워요.') },
       { id: 'smite', name: T('천벌'), key: 'R', cd: 12, desc: T('조준한 곳에 빛기둥을 세워요. 잠시 뒤 안에 있는 상대가 큰 피해를 받아요.') }
     ],
     st: [2, 3, 4, 2], atkTxt: T('빛 구슬 (세 번째는 꿰뚫는 큰 빛)'),
@@ -52,7 +52,7 @@ export const ROLES = {
   },
   mamluk: {
     name: T('맘루크'), color: '#d0443a', hp: 410, speed: 7.2,
-    atk: { kind: 'melee', range: 2.2, arc: 1.8, dmg: 12, cd: 0.3 },
+    atk: { kind: 'melee', range: 2.2, arc: 1.8, dmg: 18, cd: 0.3 },
     skills: [
       { id: 'flurry', name: T('연속 베기'), key: 'Q', cd: 4, desc: T('앞으로 파고들며 다섯 번 번갈아 베어 9씩 피해를 줘요.') },
       { id: 'whirl', name: T('회전 베기'), key: 'E', cd: 8, desc: T('제자리에서 두 바퀴 돌며 둘레 모두를 세 번 베어 12씩 피해를 줘요.') },
@@ -63,7 +63,7 @@ export const ROLES = {
   },
   witch: {
     name: T('마녀'), color: '#a56ad8', hp: 160, speed: 6.2,
-    atk: { kind: 'orb', dmg: 10, cd: 0.45, speed: 16 },
+    atk: { kind: 'orb', dmg: 9, cd: 0.45, speed: 16 },
     skills: [
       { id: 'potion', name: T('독 물약'), key: 'Q', cd: 7, desc: T('조준한 곳에 물약을 던져 터진 자리 둘레 상대에게 30 피해를 주고 불태워요.') },
       { id: 'curse', name: T('저주'), key: 'E', cd: 10, desc: T('조준한 곳에 저주를 터뜨려 잠시 뒤 40 피해를 주고 3초 동안 느리게 해요.') },
@@ -74,7 +74,7 @@ export const ROLES = {
   },
   skeleton: {
     name: T('스켈레톤'), color: '#cfc8b0', hp: 450, speed: 7.0,
-    atk: { kind: 'melee', range: 2.0, arc: 2.0, dmg: 17, cd: 0.32 },
+    atk: { kind: 'melee', range: 2.0, arc: 2.0, dmg: 24, cd: 0.32 },
     skills: [
       { id: 'scatter', name: T('뼈 흩어지기'), key: 'Q', cd: 6, desc: T('뒤로 빠지며 몸이 흩어져 뼛조각 여덟 개가 사방으로 튀어요. 하나에 12 피해.') },
       { id: 'fan', name: T('뼈 창 다섯 갈래'), key: 'E', cd: 6, desc: T('뼈 창 다섯 대를 부채꼴로 던져요. 하나에 15 피해.') },
