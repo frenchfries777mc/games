@@ -951,8 +951,8 @@ function showWin() {
   S.resultShown = true; bigMsg('', '', 0); const h = awardHonor() || 0, sn = S.snap, mine = myP(), w = sn.pl.find(p => p.id === sn.win);
   if (mine && mine.pc === 1) { unlock('win'); SAVE.wins = SAVE.wins || {}; SAVE.wins[mine.role] = 1; save(); if (ROLE_IDS.every(r => SAVE.wins[r])) unlock('winall'); }
   if (mine && mine.kl >= 3) unlock('kill3');
-  const me = w && w.id === S.me, nm = w ? (me ? T('나') : w.bot ? ROLES[w.role].name : w.name) : '';
-  $('winBox').innerHTML = w ? `<div class="wk">${T('마지막 한 명')}</div><div class="wt">${me ? T('우승!') : T('{0} 우승!', esc(nm))}</div><img class="wp" alt="" src="${view.portrait(w.role)}"><div class="wn" style="color:${pcol(w)}">${ROLES[w.role].name}</div><div class="ws">${T('쓰러뜨림 {0}', w.kl)} · ${T('버틴 시간')} ${fmtT(w.sv)}</div>` : `<div class="wt">${T('무승부')}</div>`;
+  const me = w && w.id === S.me, nm = w ? w.name : '';
+  $('winBox').innerHTML = w ? `<div class="wk">${T('마지막 한 명')}</div><div class="wt">${T('{0} 우승!', esc(nm))}</div><img class="wp" alt="" src="${view.portrait(w.role)}"><div class="wn" style="color:${pcol(w)}">${ROLES[w.role].name}</div><div class="ws">${T('쓰러뜨림 {0}', w.kl)} · ${T('버틴 시간')} ${fmtT(w.sv)}</div>` : `<div class="wt">${T('무승부')}</div>`;
   $('winBox').classList.toggle('me', !!me);
   $('winNext').onclick = () => { SFX.play('click'); showResult(); };
   $('winBack').onclick = () => { SFX.play('click'); endToLobby(''); };
@@ -962,7 +962,7 @@ function showResult() {
   S.resultShown = true; bigMsg('', '', 0); const h = awardHonor() || 0, sn = S.snap, mine = myP();
   const rows = sn.pl.slice().sort((a, b) => (a.pc || 99) - (b.pc || 99)).map(p => `<tr${p.id === S.me ? ' style="background:#2a2014"' : ''}><td>${p.pc || '-'}</td><td style="color:${ROLES[p.role].color}">${ROLES[p.role].name}</td><td>${esc(p.id === S.me ? T('나') : p.bot ? T('봇') : p.name)}</td><td>${p.kl}</td><td>${fmtT(p.sv)}</td></tr>`).join('');
   const w = sn.pl.find(p => p.id === sn.win);
-  $('result').innerHTML = `<div class="big">${w ? T('{0} 우승', ROLES[w.role].name) : T('무승부')}</div><table><tr><th>${T('순위')}</th><th>${T('직업')}</th><th>${T('이름')}</th><th>${T('쓰러뜨림')}</th><th>${T('버틴 시간')}</th></tr>${rows}</table><p>${T('받은 명예 {0}', '<b style="color:#ffd36b">' + h + '</b>')} · ${T('지금 명예 {0}', SAVE.honor)}</p><div class="row"><button class="btn gold" id="resBack">${T('로비로')}</button></div>`;
+  $('result').innerHTML = `<div class="big">${w ? T('{0} 우승', w.name) : T('무승부')}</div><table><tr><th>${T('순위')}</th><th>${T('직업')}</th><th>${T('이름')}</th><th>${T('쓰러뜨림')}</th><th>${T('버틴 시간')}</th></tr>${rows}</table><p>${T('받은 명예 {0}', '<b style="color:#ffd36b">' + h + '</b>')} · ${T('지금 명예 {0}', SAVE.honor)}</p><div class="row"><button class="btn gold" id="resBack">${T('로비로')}</button></div>`;
   $('resBack').onclick = () => endToLobby('');
   setHud(false); show('sResult');
 }
