@@ -374,8 +374,8 @@ export class View {
     for (let i = 0; i < 5; i++) { const a = i / 5 * 6.283, c = cone(0.22 * k, 0.9 * k, 4, gm, Math.cos(a) * 0.82 * k, 0.65 * k, Math.sin(a) * 0.82 * k, g); sph(0.14 * k, 6, 5, M(0xe0504a, { e: 0xff3020, ei: 2, uniq: true }), Math.cos(a) * 0.82 * k, 1.18 * k, Math.sin(a) * 0.82 * k, g); }
     return g;
   }
-  buildLobby() {
-    this.mode = 'lobby'; this.introHeroes = null; this.lobbyHeroes = null; this.pool = null; this.trapM = null; this.pv = null; const s = this.newScene(0x2a1e44, 0x3a2a5a); s.fog.near = 40; s.fog.far = 90; this.flick = []; this.lights(s, 1.1);
+  buildLobby(brawl) {
+    this.mode = 'lobby'; this.brawl = null; this.introHeroes = null; this.lobbyHeroes = null; this.pool = null; this.trapM = null; this.pv = null; const s = this.newScene(0x2a1e44, 0x3a2a5a); s.fog.near = 40; s.fog.far = 90; this.flick = []; this.lights(s, 1.1);
     // 돌바닥 투기장 (둥근 단 두 겹) 과 바깥 어둠
     const st = [0x6a6078, 0x756a84, 0x5e546c, 0x7e7490];
     instBoxes(s, (add) => { for (let x = -22; x <= 22; x += 1.5) for (let z = -16; z <= 20; z += 1.5) { const d = Math.hypot(x, z - 3); const h = d < 12 ? 0.5 : 0.22; add(x, h / 2 - 0.3, z, 1.46, h, 1.46, st[R() * 4 | 0]); } });
@@ -388,12 +388,40 @@ export class View {
     sph(2.4, 12, 10, M(0xffe8c8, { e: 0xffc890, ei: 2 }), 22, 20, -34, s);
     // 둘러선 싸움꾼들: 직업마다 다른 색 고리
     const cols = [0xd9483b, 0x3b78d9, 0x48a84a, 0xe0b52e, 0x8a52c8, 0xe57a2a], who = ['knight', 'witch', 'viking', 'archer', 'mamluk', 'skeleton'];
-    this.lobbyHeroes = who.map((r, i) => {
+    if (brawl) {
+      // 인트로: 세 쌍이 서로 번갈아 치고받아요 (기사 대 바이킹, 맘루크 대 스켈레톤, 사냥꾼 대 마녀)
+      const duels = [['knight', 'viking', -7.5, 0.5, 0.35, 0xd9483b, 0x3b78d9, 0], ['mamluk', 'skeleton', 7.5, 0.5, -0.35, 0x48a84a, 0xe0b52e, 0], ['archer', 'witch', 0, 8.5, 0, 0x8a52c8, 0xe57a2a, 1]];
+      this.lobbyHeroes = []; this.brawl = duels.map(([ra, rb, cx, cz, rot, ca, cb, rg]) => {
+        const half = rg ? 3.6 : 1.9, ux = Math.cos(rot), uz = Math.sin(rot), mk = (r, x, z, c) => { const h = makeHero(r, this.cos); h.position.set(x, 0.5, z); s.add(h); const ring = ringMesh(s, c); this.lobbyHeroes.push(h); return { m: h, ring, bx: x, bz: z, last: 0 }; };
+        const A = mk(ra, cx - ux * half, cz - uz * half, ca), B = mk(rb, cx + ux * half, cz + uz * half, cb);
+        return { A, B, ranged: !!rg, reach: rg ? 0 : 1.5 };
+      });
+    } else this.lobbyHeroes = who.map((r, i) => {
       const a = i / 6 * 6.283 + 0.5, x = Math.cos(a) * 6.2, z = 3 + Math.sin(a) * 4.6, h = makeHero(r, this.cos); h.position.set(x, 0.5, z); h.rotation.y = Math.atan2(-x, -(z - 3)); s.add(h);
       const rg = ringMesh(s, cols[i]); rg.position.set(x, 0.62, z); return h;
     });
     this.resize();
     this.cam.position.set(0, 15, 34); this.cam.lookAt(0, 2.2, 3);
+  }
+  tickBrawl(t) {
+    const T = 2.4;
+    this.brawl.forEach((P, bi) => {
+      const ph = (t * 1.0 + bi * 0.8) % T;
+      for (const side of [0, 1]) {
+        const H = side ? P.B : P.A, O = side ? P.A : P.B, mine = (ph - (side ? 1.2 : 0) + T) % T, theirs = (ph - (side ? 0 : 1.2) + T) % T;
+        let dx = O.bx - H.bx, dz = O.bz - H.bz; const L = Math.hypot(dx, dz) || 1; dx /= L; dz /= L;
+        const lunge = mine < 0.55 ? Math.sin(mine / 0.55 * Math.PI) : 0, rec = theirs > 0.26 && theirs < 0.8 ? Math.sin((theirs - 0.26) / 0.54 * Math.PI) : 0;
+        H.m.position.set(H.bx + dx * (lunge * P.reach - rec * 0.7), 0.5 + lunge * 0.25, H.bz + dz * (lunge * P.reach - rec * 0.7));
+        H.m.rotation.y = Math.atan2(dx, dz); H.ring.position.set(H.m.position.x, 0.62, H.m.position.z);
+        const u = H.m.userData; u.armR.rotation.x = -2.3 + lunge * 3.1; u.armL.rotation.x = -0.4 - lunge * 0.8; u.body.rotation.x = -lunge * 0.3 + rec * 0.35;
+        if (H.last < 0.28 && mine >= 0.28 && mine < 0.6) {   // 때리는 순간
+          const ox = O.m.position.x, oz = O.m.position.z;
+          if (P.ranged) this.streak(H.m.position.x, H.m.position.z, Math.atan2(dz, dx), L - 1, side ? 0xe57a2a : 0x8a52c8, 0.25, 0.5);
+          this.burst(ox, 1.7, oz, 0xff5a4a, 10, 6, 0.4, 0.11); this.burst(ox, 1.7, oz, 0xfff0d0, 4, 5, 0.25, 0.08); this.shock(ox, oz, 2.6, 0xffd36b, 0.3); this.flash(ox, oz, 0xffd08a, 90);
+        }
+        H.last = mine;
+      }
+    });
   }
   /* ----- 직업 고르기: 받침돌 위 영웅 (왼쪽엔 목록, 오른쪽엔 능력 카드가 얹혀요) ----- */
   buildPedestal() {
@@ -1132,7 +1160,8 @@ export class View {
     for (const d of this.drips || []) { d.t += dt; const u = d.t / d.T; if (u >= 1) { d.t = 0; this.ring(d.x, d.z, 1.1, 0x9ad0ff, 0.7); } d.m.position.y = u < 0.55 ? 8 : 8 - Math.pow((u - 0.55) / 0.45, 2) * 8; d.m.visible = u > 0.4; }
     if (this.crownG) { this.crownG.rotation.y += dt * 0.9; this.crownG.position.y = (this.mode === 'ped' ? 6.2 : 6.4) + Math.sin(t * 1.6) * 0.25; }
     if (this.pv) { this.pv.g.rotation.y = 0.45 + Math.sin(t * 0.7) * 0.5; const u = this.pv.g.userData; if (u.body) u.body.position.y = Math.sin(t * 1.6) * 0.04; }
-    if (this.lobbyHeroes) this.lobbyHeroes.forEach((h, i) => { h.userData.body.position.y = Math.sin(t * 1.5 + i) * 0.03; h.userData.head.rotation.y = Math.sin(t * 0.6 + i * 2) * 0.3; });
+    if (this.brawl) this.tickBrawl(t);
+    else if (this.lobbyHeroes) this.lobbyHeroes.forEach((h, i) => { h.userData.body.position.y = Math.sin(t * 1.5 + i) * 0.03; h.userData.head.rotation.y = Math.sin(t * 0.6 + i * 2) * 0.3; });
     if (this.fxL && this.fxLI > 0) { this.fxLI = Math.max(0, this.fxLI - dt * this.fxLI * 5 - dt * 10); this.fxL.intensity = this.fxLI; }
     for (const f of this.fx) { f.t += dt; f.up(f, dt); }
     this.fx = this.fx.filter(f => { if (f.t >= f.T) { this.scene.remove(f.m); return false; } return true; });
