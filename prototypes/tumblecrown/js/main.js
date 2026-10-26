@@ -54,8 +54,8 @@ view.lobbyFlags = SAVE.flags; view.cos = SAVE.cos.on; view.setLow(!!SAVE.set.opt
 // 처음 인트로: 글자 두 장면(Made by / With). 건너뛸 수 없어요 (끝까지 재생). 뒤에는 로비 장면이 깔려 있어요
 let INTRO = !(qs.get('test') && /^(localhost|127\.0\.0\.1)$/.test(location.hostname));
 window.__introSongDone = INTRO ? 0 : 1;
-view.buildLobby();
-if (INTRO) setTimeout(() => { INTRO = false; window.__introSongDone = 1; document.documentElement.classList.add('tcReady'); $('tcIntro').classList.add('out'); setTimeout(() => $('tcIntro').remove(), 900); }, 6200);
+view.buildLobby(INTRO);   // 인트로 동안은 세 쌍이 서로 싸우는 장면
+if (INTRO) setTimeout(() => { view.buildLobby(false); INTRO = false; window.__introSongDone = 1; document.documentElement.classList.add('tcReady'); $('tcIntro').classList.add('out'); setTimeout(() => $('tcIntro').remove(), 900); }, 6200);
 else { document.documentElement.classList.add('tcReady'); $('tcIntro').remove(); }
 addEventListener('resize', () => { view.resize(); sizeOv(); });
 const ov = $('ov'), oc = ov.getContext('2d');
@@ -456,7 +456,6 @@ addEventListener('keydown', e => {
   if (e.target && e.target.tagName === 'INPUT') return;
   const k = keyOf(e); K[k] = true; SFX.unlock();
   if (!inGame()) return;
-  if (S.snap && S.snap.ph === 'won' && (k === ' ' || k === 'enter') && S.wonT > 1) { S.wonT = Math.max(S.wonT, 9); return; }
   if (S.scr === 'sIntro') { if (k === ' ' || k === 'enter' || k === 'escape') { once.skip = 1; e.preventDefault(); } return; }
   if (k === 'q' || k === 'ㅂ') once.q = 1; if (k === 'e' || k === 'ㄷ') once.e = 1; if (k === 'r' || k === 'ㄱ') once.r = 1; if (k === ' ') { once.roll = 1; e.preventDefault(); }
   if (k === '1' || k === '2' || k === '3') pickBlessIdx(+k - 1);
@@ -525,7 +524,6 @@ function localMove(p, inp, dt) {
   if (!liftOk(ox, oz, L.x, L.z)) { L.x = ox; L.z = oz; }
 }
 
-$('gl').addEventListener('touchstart', () => { if (S.snap && S.snap.ph === 'won' && S.wonT > 1) S.wonT = Math.max(S.wonT, 9); }, { passive: true });
 $('introSkip').addEventListener('click', () => { SFX.unlock(); SFX.play('click'); once.skip = 1; });
 /* ---------- 축복 고르기 ---------- */
 function paintBless() {
@@ -948,12 +946,20 @@ function showDeepResult() {
   $('resBack').onclick = () => endToLobby('');
   setHud(false); show('sResult');
 }
+// 우승 화면: 이긴 사람이 크게 나와요. '순위 보기'를 누르면 전체 순위표로 가요
+function showWin() {
+  S.resultShown = true; bigMsg('', '', 0); const h = awardHonor() || 0, sn = S.snap, mine = myP(), w = sn.pl.find(p => p.id === sn.win);
+  if (mine && mine.pc === 1) { unlock('win'); SAVE.wins = SAVE.wins || {}; SAVE.wins[mine.role] = 1; save(); if (ROLE_IDS.every(r => SAVE.wins[r])) unlock('winall'); }
+  if (mine && mine.kl >= 3) unlock('kill3');
+  const me = w && w.id === S.me, nm = w ? (me ? T('나') : w.bot ? ROLES[w.role].name : w.name) : '';
+  $('winBox').innerHTML = w ? `<div class="wk">${T('마지막 한 명')}</div><div class="wt">${me ? T('우승!') : T('{0} 우승!', esc(nm))}</div><img class="wp" alt="" src="${view.portrait(w.role)}"><div class="wn" style="color:${pcol(w)}">${ROLES[w.role].name}</div><div class="ws">${T('쓰러뜨림 {0}', w.kl)} · ${T('버틴 시간')} ${fmtT(w.sv)}</div>` : `<div class="wt">${T('무승부')}</div>`;
+  $('winBox').classList.toggle('me', !!me);
+  $('winNext').onclick = () => { SFX.play('click'); showResult(); };
+  $('winBack').onclick = () => { SFX.play('click'); endToLobby(''); };
+  setHud(false); show('sWin'); if (w) { view.burst(w.x, 1.5, w.z, 0xffd36b, 30, 8, 0.8, 0.14); }
+}
 function showResult() {
   S.resultShown = true; bigMsg('', '', 0); const h = awardHonor() || 0, sn = S.snap, mine = myP();
-  if (mine) {
-    if (mine.pc === 1) { unlock('win'); SAVE.wins = SAVE.wins || {}; SAVE.wins[mine.role] = 1; save(); if (ROLE_IDS.every(r => SAVE.wins[r])) unlock('winall'); }
-    if (mine.kl >= 3) unlock('kill3');
-  }
   const rows = sn.pl.slice().sort((a, b) => (a.pc || 99) - (b.pc || 99)).map(p => `<tr${p.id === S.me ? ' style="background:#2a2014"' : ''}><td>${p.pc || '-'}</td><td style="color:${ROLES[p.role].color}">${ROLES[p.role].name}</td><td>${esc(p.id === S.me ? T('나') : p.bot ? T('봇') : p.name)}</td><td>${p.kl}</td><td>${fmtT(p.sv)}</td></tr>`).join('');
   const w = sn.pl.find(p => p.id === sn.win);
   $('result').innerHTML = `<div class="big">${w ? T('{0} 우승', ROLES[w.role].name) : T('무승부')}</div><table><tr><th>${T('순위')}</th><th>${T('직업')}</th><th>${T('이름')}</th><th>${T('쓰러뜨림')}</th><th>${T('버틴 시간')}</th></tr>${rows}</table><p>${T('받은 명예 {0}', '<b style="color:#ffd36b">' + h + '</b>')} · ${T('지금 명예 {0}', SAVE.honor)}</p><div class="row"><button class="btn gold" id="resBack">${T('로비로')}</button></div>`;
@@ -1020,7 +1026,7 @@ function frame(now) {
       for (const e of S.evq) onEvent(e); S.evq.length = 0;
       specTick(me); view.sync(S.snap, S.me, dt, t, !!S.G); paintHud(); paintBless();
       if (ph === 'over') { S.overT += dt; if (S.overT > 3.6 && !S.resultShown) showDeepResult(); }
-      if (ph === 'won') { S.wonT += dt; if (S.wonT > 0.3 && S.wonT < 5) { const w = S.snap.pl.find(p => p.id === S.snap.win); bigMsg(w ? T('{0} 우승!', w.id === S.me ? T('나') : w.bot ? ROLES[w.role].name : w.name) : T('무승부'), TOUCH ? T('화면을 누르면 건너뛰어요') : T('Space 키로 건너뛰어요'), 0); } if (S.wonT >= 5 && !S.resultShown) afterOutro(); }
+      if (ph === 'won') { S.wonT += dt; if (S.wonT >= 1.6 && !S.resultShown) showWin(); }
     }
     S.evq.length = 0;
   }
