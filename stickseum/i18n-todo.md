@@ -130,3 +130,6 @@ patchnotes.json | v415 items[1] | 계급 중간 단계 점수를 10 단위로 �
 Stickseum-v0.8.html | match-end mastery rank block | 마스터리 포인트 +N · 계급 이름 · N점 · 다음 계급까지 N점 · 최고 계급 | build 416 | 2026-10-26
 patchnotes.json | v416 title | 마스터리 계급 엠블럼과 진행 막대 | build 416 | 2026-10-26
 patchnotes.json | v416 items[0] | 경기 결과창에 현재 마스터리 계급 엠블럼과 다음 계급까지의 진행 막대 표시 | build 416 | 2026-10-26
+patchnotes.json | v417 title | 로비 정보 표시 | build 417 | 2026-10-26
+patchnotes.json | v417 items[0] | 로비 가장자리에 빌드 번호와 저작권 표시 | build 417 | 2026-10-26
+patchnotes.json | v417 items[1] | 캐릭터 정보 창에 마스터리 포인트 진행도 막대 표시 | build 417 | 2026-10-26
