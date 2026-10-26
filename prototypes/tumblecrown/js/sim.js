@@ -199,7 +199,7 @@ function killEnemy(G, e) {
 }
 
 /* ---------- 플레이어 행동 ---------- */
-function cdMul(p, which, G) { return which === 'atk' ? (hasB(p, 'hands') ? 0.85 : 1) : (hasB(p, 'focus') ? 0.85 : 1) * ((G && G.CH.curse && G.CH.curse.cd) || 1); }
+function cdMul(p, which, G) { return which === 'atk' ? (hasB(p, 'hands') ? 0.85 : 1) * (p && p.leech > 0 ? 0.7 : 1) : (hasB(p, 'focus') ? 0.85 : 1) * ((G && G.CH.curse && G.CH.curse.cd) || 1); }
 function aimPoint(p, inp, range) {
   if (inp.ax != null) { const d = Math.hypot(inp.ax - p.x, inp.az - p.z); if (d <= range) return { x: inp.ax, z: inp.az }; }
   return { x: p.x + Math.cos(p.a) * range, z: p.z + Math.sin(p.a) * range };
@@ -341,12 +341,14 @@ function useSkill(G, p, si, inp) {
       for (const e of G.enemies) if (e.hp > 0 && e.pid !== p.id && dist(p, e) < 3.4 + e.r) hurtEnemy(G, e, 34, p, {});
       break;
     }
-    case 'quake': { // 땅을 내려쳐 둘레 모두가 피해를 받고 느려져요
-      ev(G, 'heavy', { id: p.id, x: p.x, z: p.z, a: p.a });
-      for (const e of G.enemies) if (e.hp > 0 && e.pid !== p.id && dist(p, e) < 4.4 + e.r) { hurtEnemy(G, e, 45, p, {}); if (e.hp > 0) { e.slow = 2; e.slowM = 0.5; } }
+    case 'quake': { // 앞으로 길게 땅을 갈라요: 갈라진 길 위 모두가 피해를 받고 느려져요
+      ev(G, 'skill', { id: p.id, s: 'quakeline', x: p.x, z: p.z, a: p.a });
+      const L = 11, ex = p.x + Math.cos(p.a) * L, ez = p.z + Math.sin(p.a) * L;
+      for (const e of G.enemies) if (e.hp > 0 && e.pid !== p.id && segDist(p.x, p.z, ex, ez, e.x, e.z) < 1.9 + e.r) { hurtEnemy(G, e, 42, p, {}); if (e.hp > 0) { e.slow = 2.5; e.slowM = 0.5; } }
       break;
     }
-    case 'shieldbash': { // 방패로 앞을 세게 밀어쳐 맞은 상대를 잠깐 기절시켜요
+    case 'shieldbash': { // 방패를 앞세워 파고들며 세게 쳐서 맞은 상대를 잠깐 기절시켜요
+      p.x += Math.cos(p.a) * 2.6; p.z += Math.sin(p.a) * 2.6; collide(G, p, 0.6); ev(G, 'skill', { id: p.id, s: 'bashfx', x: p.x, z: p.z, a: p.a });
       ev(G, 'swing', { id: p.id, x: p.x, z: p.z, a: p.a, r: 3.0, role: p.role });
       for (const e of G.enemies) if (e.hp > 0 && e.pid !== p.id && dist(p, e) < 3.0 + e.r && angDiff(p.a, angTo(p, e)) < 1.0) { hurtEnemy(G, e, 28, p, {}); e.stun = 1.1; }
       break;
@@ -354,19 +356,19 @@ function useSkill(G, p, si, inp) {
     case 'frost': { // 조준한 곳에 서리를 터뜨려 둘레 상대를 느리게 해요
       const q = aimPoint(p, inp, 12);
       ev(G, 'skill', { id: p.id, s: 'frostfx', x: q.x, z: q.z, a: p.a });
-      for (const e of G.enemies) if (e.hp > 0 && e.pid !== p.id && Math.hypot(e.x - q.x, e.z - q.z) < 3.4 + e.r) { hurtEnemy(G, e, 22, p, {}); e.slow = 3; e.slowM = 0.5; }
+      for (const e of G.enemies) if (e.hp > 0 && e.pid !== p.id && Math.hypot(e.x - q.x, e.z - q.z) < 3.4 + e.r) { hurtEnemy(G, e, 22, p, {}); if (e.hp > 0) { e.slow = 3; e.slowM = 0.5; e.stun = Math.max(e.stun || 0, 0.6); } }
       break;
     }
     case 'leap': { // 앞으로 크게 뛰어올라 내려앉으며 둘레에 피해
       p.x += Math.cos(p.a) * 7; p.z += Math.sin(p.a) * 7; collide(G, p, 0.6); p.inv = 0.4;
-      ev(G, 'skill', { id: p.id, s: 'quake', x: p.x, z: p.z, a: p.a });
+      ev(G, 'skill', { id: p.id, s: 'leapland', x: p.x, z: p.z, a: p.a });
       for (const e of G.enemies) if (e.hp > 0 && e.pid !== p.id && dist(p, e) < 3.2 + e.r) hurtEnemy(G, e, 36, p, {});
       break;
     }
-    case 'bloodlust': p.leech = 5; ev(G, 'rally', { id: p.id }); break;   // 5초 동안 준 피해의 일부를 체력으로 되찾아요
-    case 'flurry': { // 앞쪽에 세 번 연달아 찔러요
-      ev(G, 'swing', { id: p.id, x: p.x, z: p.z, a: p.a, r: 3.0, role: p.role });
-      for (let k = 0; k < 3; k++) for (const e of G.enemies) if (e.hp > 0 && e.pid !== p.id && dist(p, e) < 3.0 + e.r && angDiff(p.a, angTo(p, e)) < 1.0) hurtEnemy(G, e, 11, p, {});
+    case 'bloodlust': p.leech = 5; ev(G, 'skill', { id: p.id, s: 'bloodfx', x: p.x, z: p.z, a: p.a }); break;   // 5초 동안 준 피해의 일부를 체력으로 되찾아요
+    case 'flurry': { // 앞으로 파고들며 다섯 번 빠르게 찔러요
+      p.x += Math.cos(p.a) * 2.2; p.z += Math.sin(p.a) * 2.2; collide(G, p, 0.6); ev(G, 'skill', { id: p.id, s: 'flurryfx', x: p.x, z: p.z, a: p.a });
+      for (let k = 0; k < 5; k++) for (const e of G.enemies) if (e.hp > 0 && e.pid !== p.id && dist(p, e) < 3.0 + e.r && angDiff(p.a, angTo(p, e)) < 0.9) hurtEnemy(G, e, 9, p, {});
       break;
     }
     case 'blink': { // 가장 가까운 상대 뒤로 순간이동해 베요
@@ -374,19 +376,19 @@ function useSkill(G, p, si, inp) {
       for (const e of G.enemies) if (e.hp > 0 && e.pid !== p.id && dist(p, e) < bd) { bd = dist(p, e); best = e; }
       if (!best) { p.cd[key] = 2; break; }
       const a = angTo(p, best); p.x = best.x + Math.cos(a) * 1.7; p.z = best.z + Math.sin(a) * 1.7; collide(G, p, 0.6); p.a = angTo(p, best); p.inv = 0.4;
-      hurtEnemy(G, best, 34, p, {}); break;
+      ev(G, 'skill', { id: p.id, s: 'blinkend', x: p.x, z: p.z, a: p.a }); hurtEnemy(G, best, 34, p, {}); break;
     }
-    case 'scatter': { // 뼈가 흩어지며 뒤로 빠지고, 있던 자리에 뼛조각이 터져요
+    case 'scatter': { // 몸이 뼈로 흩어지며 뒤로 빠지고, 뼛조각 여덟 개가 사방으로 튀어요
       const ox = p.x, oz = p.z; p.x -= Math.cos(p.a) * 6; p.z -= Math.sin(p.a) * 6; collide(G, p, 0.6); p.inv = 0.5;
-      for (const e of G.enemies) if (e.hp > 0 && e.pid !== p.id && Math.hypot(e.x - ox, e.z - oz) < 2.8 + e.r) hurtEnemy(G, e, 26, p, {});
-      ev(G, 'skill', { id: p.id, s: 'quake', x: ox, z: oz, a: p.a });
+      for (let k = 0; k < 8; k++) { const a = k / 8 * 6.283 + p.a; G.projs.push({ id: G.uid++, k: 'arrow', own: p.id, x: ox + Math.cos(a) * 0.8, z: oz + Math.sin(a) * 0.8, vx: Math.cos(a) * 20, vz: Math.sin(a) * 20, dmg: 12, life: 0.45, hit: [], team: 0 }); }
+      ev(G, 'skill', { id: p.id, s: 'scatterfx', x: ox, z: oz, a: p.a });
       break;
     }
-    case 'fan': for (const da of [-0.3, 0, 0.3]) G.projs.push({ id: G.uid++, k: 'pierce', own: p.id, x: p.x, z: p.z, vx: Math.cos(p.a + da) * 28, vz: Math.sin(p.a + da) * 28, dmg: 22, life: 0.9, pierce: true, hit: [], team: 0 }); break;
+    case 'fan': for (let k = -2; k <= 2; k++) G.projs.push({ id: G.uid++, k: 'arrow', own: p.id, x: p.x, z: p.z, vx: Math.cos(p.a + k * 0.26) * 28, vz: Math.sin(p.a + k * 0.26) * 28, dmg: 15, life: 0.85, hit: [], team: 0 }); break;
     case 'bonestorm': p.stormT = 1.4; p.stormTick = 0; break;   // 1.4초 동안 몸을 돌리며 둘레를 계속 쳐요
     case 'smite': case 'curse': { // 조준한 곳에 표시가 생기고, 잠시 뒤 터져요 (모두에게 보여서 피할 수 있어요)
       const sm = S.id === 'smite', q = aimPoint(p, inp, 12);
-      G.zones.push({ id: G.uid++, k: 'tcircle', x: q.x, z: q.z, r: sm ? 3.2 : 2.6, t: sm ? 1.0 : 0.9, T: sm ? 1.0 : 0.9, dmg: sm ? 42 : 40, fx: S.id, own: p.id });
+      G.zones.push({ id: G.uid++, k: 'tcircle', x: q.x, z: q.z, r: sm ? 3.2 : 2.6, t: sm ? 1.0 : 0.9, T: sm ? 1.0 : 0.9, dmg: sm ? 42 : 40, fx: S.id, own: p.id, chill: sm ? 0 : 3 });
       break;
     }
   }
@@ -521,7 +523,7 @@ function stepPlayer(G, p, inp, dt) {
     p.noHit = (p.noHit || 0) + dt;
     if (p.noHit > 4 && p.hp < p.maxhp) p.hp = Math.min(p.maxhp, p.hp + p.maxhp * 0.02 * dt);   // 맞지 않고 4초가 지나면 체력이 저절로 차올라요
     if (p.leech > 0) p.leech = Math.max(0, p.leech - dt);
-    if (p.stormT > 0) { p.stormT -= dt; p.stormTick -= dt; if (p.stormTick <= 0) { p.stormTick = 0.35; ev(G, 'swing', { id: p.id, x: p.x, z: p.z, a: p.a, r: 3.2, role: p.role }); for (const e of G.enemies) if (e.hp > 0 && e.pid !== p.id && dist(p, e) < 3.2 + e.r) hurtEnemy(G, e, 13, p, {}); } }
+    if (p.stormT > 0) { p.stormT -= dt; p.stormTick -= dt; if (p.stormTick <= 0) { p.stormTick = 0.35; ev(G, 'skill', { id: p.id, s: 'stormfx', x: p.x, z: p.z, a: p.a }); for (const e of G.enemies) if (e.hp > 0 && e.pid !== p.id && dist(p, e) < 3.2 + e.r) hurtEnemy(G, e, 13, p, {}); } }
   }
   if (p.px) p.px.hp = alive(p) ? 1 : 0;
 }
@@ -1370,7 +1372,7 @@ function botPvp(G, p, dt) {
   for (const q of foes) { const s = dist(p, q) + (q.hp / q.maxhp) * 7 - (q === ai.tg ? 3 : 0); if (s < bs) { bs = s; tgt = q; } }
   ai.tg = tgt;
   const d = dist(p, tgt), ta = angTo(p, tgt), ranged = R.atk.kind !== 'melee', clear = lineClear(p.x, p.z, tgt.x, tgt.z);
-  const near = foes.filter(q => dist(p, q) < 6).length, low = p.hp < p.maxhp * 0.22, nearest = foes.reduce((m, q) => dist(p, q) < dist(p, m) ? q : m, foes[0]);
+  const near = foes.filter(q => dist(p, q) < 6).length, low = p.hp < p.maxhp * 0.22 && tgt.hp / tgt.maxhp > p.hp / p.maxhp * 1.4, nearest = foes.reduce((m, q) => dist(p, q) < dist(p, m) ? q : m, foes[0]);
   // 앞질러 조준: 상대가 움직이는 방향으로 조금 앞을 겨눠요
   const sp = R.atk.speed || 20, lt = Math.min(0.6, d / sp), px = tgt.x + (tgt.vx || 0) * lt * 0.9, pz = tgt.z + (tgt.vz || 0) * lt * 0.9;
   inp.aim = Math.atan2(pz - p.z, px - p.x); inp.ax = px; inp.az = pz;
@@ -1380,7 +1382,7 @@ function botPvp(G, p, dt) {
   // 2) 날아오는 화살·구슬 피하기
   for (const pr of G.projs) {
     if (pr.own === p.id || pr.vx == null) continue;
-    if (ai.pj !== pr.id) { ai.pj = pr.id; ai.pjOk = G.rng() < 0.55; }   // 날아오는 걸 알아채는 건 열에 여섯 번쯤이에요
+    if (ai.pj !== pr.id) { ai.pj = pr.id; ai.pjOk = G.rng() < (ranged || d > 4 ? 0.4 : 0.15); }   // 날아오는 걸 알아채는 건 열에 여섯 번쯤이에요
     if (!ai.pjOk) continue;
     const rx = p.x - pr.x, rz = p.z - pr.z, v2 = pr.vx * pr.vx + pr.vz * pr.vz; if (v2 < 1) continue;
     const t = (rx * pr.vx + rz * pr.vz) / v2; if (t < 0 || t > 0.55) continue;
