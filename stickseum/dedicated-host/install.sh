@@ -33,7 +33,7 @@ echo "== 5/6 심판 계정 정하기 =="
 echo "랭크 결과를 서버에 알리는 전용 계정이에요. 평소 쓰는 계정이 아닌 새 이름을 정하세요. 처음 실행 때 자동으로 만들어져요."
 read -r -p "심판 계정 아이디 (영문/숫자/밑줄 3~16자, 예: ffhost): " FFU
 read -r -s -p "심판 계정 비밀번호 (6자 이상, 화면에 안 보여요): " FFP; echo
-printf 'FF_USER=%s\nFF_PASS=%s\nFF_WAITING=3\nFF_MAX=10\n' "$FFU" "$FFP" | sudo tee /etc/ff-host.env >/dev/null
+printf 'FF_USER=%s\nFF_PASS=%s\nFF_WAITING=1\nFF_MAX=4\n' "$FFU" "$FFP" | sudo tee /etc/ff-host.env >/dev/null
 sudo chmod 600 /etc/ff-host.env
 
 echo "== 6/6 자동 실행 등록 =="
