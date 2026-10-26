@@ -166,3 +166,5 @@ patchnotes.json | v429 items[4] | 마법사 발판 통과 1번으로 제한과 �
 patchnotes.json | v429 items[5] | 프로필 많이 쓴 캐릭터 계급 표시 오류 수정 | build 429 | 2026-10-26
 patchnotes.json | v430 title | 클랜장 위임 | build 430 | 2026-10-26
 patchnotes.json | v430 items[0] | 클랜장이 클랜원에게 클랜장을 넘기는 위임 버튼 | build 430 | 2026-10-26
+patchnotes.json | v431 title | 로비 빌드 표시 | build 431 | 2026-10-26
+patchnotes.json | v431 items[0] | 메인 화면 제목 아래 버전 옆에 빌드 번호 표시 | build 431 | 2026-10-26
