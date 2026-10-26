@@ -5178,7 +5178,7 @@ function shuffle(arr){ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.
 /* ===== the version of this file =====
    Players with different versions CAN meet and play together: the automatic matchmaking uses the same room names for every version (online-<mode>-<map>-<slot>), and nobody is refused because of a different build.
    The build is only sent along with the join message and the lobby (for information); the corner of the screen shows it. */
-const GAME_BUILD='build 2026-10-18-v427';
+const GAME_BUILD='build 2026-10-18-v428';
 const GAME_VERSION='0.8', GAME_VERSION_NAME='황금을 찾아서';   // 게임 버전 이름: versions.json의 title과 같게 (빌드마다 바꾸지 않음)
 const WEEKLY_EVENTS=[
   {id:'lowg',    name:'저중력 난투', desc:'몸이 둥실둥실, 중력이 약해진 난투', rules:{grav:0.6}},
@@ -10599,10 +10599,20 @@ function cancelOnlineMatchmaking(){
   connecting=false;
 }
 const SCAN_BATCH=6;          // rooms asked at the same time; every room of the list is still asked, and the first one of the list that answers "joined" wins
-function scanSequential(p, mapIds, idx, slot, freeSlots){
-  if(!onlineMatchActive){ try{ p.destroy(); }catch(e){} return; }
+/* 방 매칭: 1) every room of the list is asked first (nothing is decided on the way), 2) when two or more rooms hold people, the one with the person whose level is closest to mine is joined (a tie goes to the room that comes first in the list). `held` is the best room so far: its connection stays open (and its lobby list is kept up to date) until the scan is over, every other room is left again at once. */
+function roomLevelGap(initialLobby, myId0, myLv){
+  let best=Infinity; for(const pl of (initialLobby&&initialLobby.list)||[]){ if(!pl || pl.isBot || pl.id===myId0) continue; best=Math.min(best, Math.abs((+pl.level||1)-myLv)); }
+  return best;
+}
+function scanSequential(p, mapIds, idx, slot, freeSlots, held){
+  if(!onlineMatchActive){ try{ p.destroy(); }catch(e){} if(held&&held.conn){ try{ held.conn.close(); }catch(e){} } return; }
   if(idx >= mapIds.length){
-    if(slot < 2){ scanSequential(p, mapIds, 0, slot+1, freeSlots); return; }
+    if(slot < 2){ scanSequential(p, mapIds, 0, slot+1, freeSlots, held); return; }
+    if(held){
+      setOnlineProgress(1, MAP_TEMPLATES[held.mapId].name+' 방에 참가합니다...');
+      finalizeAsOnlineClient(p, held.conn, held.mapId, held.initialLobby);
+      return;
+    }
     try{ p.destroy(); }catch(e){}
     onlineMatchPeer=null;
     if(!onlineMatchActive) return;
@@ -10616,17 +10626,17 @@ function scanSequential(p, mapIds, idx, slot, freeSlots){
   { const total=mapIds.length*2, at=(slot-1)*mapIds.length+idx+batch.length; setOnlineProgress(at/total, '방 확인 중...', Math.min(total, at+SCAN_BATCH)/total - 0.005); }       // two passes over all the maps (slot 1, then slot 2): the bar runs from 0 to 100% over both; while rooms are being asked it may creep on towards the next check
   const settle=()=>{
     if(!onlineMatchActive){ try{ p.destroy(); }catch(e){} for(const r of results){ if(r && r.conn){ try{ r.conn.close(); }catch(e){} } } return; }
-    let win=-1;
+    const myLv=levelFromXp(saveData.xp||0);
     for(let i=0;i<results.length;i++){
       const r=results[i];
-      if(r.status==='joined'){ if(win<0) win=i; else { try{ r.conn.close(); }catch(e){} } }      // (a second room that also took us in: leave it again)
+      if(r.status==='joined'){
+        r.mapId=batch[i]; r.gap=roomLevelGap(r.initialLobby, p.id, myLv);
+        if(!held || r.gap<held.gap){ if(held){ try{ held.conn.close(); }catch(e){} } held=r; r.conn.on('data', d=>{ if(d && d.t==='lobby') r.initialLobby=d; }); }       // (the best room so far; its lobby list is kept fresh while the scan goes on)
+        else { try{ r.conn.close(); }catch(e){} }                                                                       // (a room that is not closer in level: leave it again)
+      }
       else if(r.status==='nonexistent') freeSlots.push({mapId:batch[i], slot});
     }
-    if(win>=0){
-      const mapId=batch[win];
-      setOnlineProgress(1, MAP_TEMPLATES[mapId].name+' 방에 참가합니다...');
-      finalizeAsOnlineClient(p, results[win].conn, mapId, results[win].initialLobby);
-    } else scanSequential(p, mapIds, idx+batch.length, slot, freeSlots);
+    scanSequential(p, mapIds, idx+batch.length, slot, freeSlots, held);
   };
   batch.forEach((mapId,bi)=>{
     attemptJoinCandidate(p, roomIdFor(mapId, slot), 5000, result=>{ results[bi]=result; if(--left===0) settle(); }, partySeatsNeeded());
@@ -10659,7 +10669,7 @@ function onlineMatchmake(){
   onlineMatchPeer=p;
   keepPeerAlive(p, ()=>{ if(onlineMatchActive){ try{p.destroy();}catch(e){} onlineMatchActive=false; showErrorAndReturnToMenu('매칭 실패: 네트워크 연결이 끊어졌어요'); } });
   let scanStarted=false;
-  p.on('open', ()=>{ if(!onlineMatchActive){ try{p.destroy();}catch(e){} return; } if(scanStarted) return; scanStarted=true; scanSequential(p, mapIds, 0, 1, []); });
+  p.on('open', ()=>{ if(!onlineMatchActive){ try{p.destroy();}catch(e){} return; } if(scanStarted) return; scanStarted=true; scanSequential(p, mapIds, 0, 1, [], null); });
   p.on('error', err=>{
     if(err && err.type==='disconnected') return;
     if(!String(err.type).includes('unavailable')){

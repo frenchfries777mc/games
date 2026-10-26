@@ -155,3 +155,5 @@ patchnotes.json | v426 title | 인형술사 반사 복구 | build 426 | 2026-10-
 patchnotes.json | v426 items[0] | 인형술사 바느질 실이 이어진 동안 받는 피해의 50%를 상대에게 반사(실 하나당 최대 30) | build 426 | 2026-10-26
 patchnotes.json | v427 title | 봇 포물선 조준 조정 | build 427 | 2026-10-26
 patchnotes.json | v427 items[0] | 봇이 활·수류탄·바주카 같은 포물선 무기를 덜 정확하게 조준 | build 427 | 2026-10-26
+patchnotes.json | v428 title | 방 매칭 순서 변경 | build 428 | 2026-10-26
+patchnotes.json | v428 items[0] | 방 매칭이 모든 방을 먼저 확인한 뒤 레벨이 가장 비슷한 사람의 방으로 들어가도록 변경 | build 428 | 2026-10-26
