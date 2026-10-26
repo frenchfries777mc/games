@@ -885,7 +885,7 @@ sting();})();</script>
 
 <canvas id="game"></canvas>
 
-  <div id="lobbyFoot" style="display:none; position:fixed; left:0; right:0; bottom:16px; z-index:5; text-align:center; font-size:12px; opacity:.8; pointer-events:none; color:#cfd6e4; text-shadow:0 1px 2px #000;"><span id="lobbyBuild"></span> · <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.ko" target="_blank" rel="noopener" style="color:inherit; pointer-events:auto;">© 2026 Frenchfries777 · CC BY-NC-ND 4.0</a></div>
+  <div id="lobbyFoot" style="display:none; position:fixed; left:0; right:0; bottom:16px; z-index:60; text-align:center; font-size:12px; opacity:.8; pointer-events:none; color:#cfd6e4; text-shadow:0 1px 2px #000;"><span id="lobbyBuild"></span> · <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.ko" target="_blank" rel="noopener" style="color:inherit; pointer-events:auto;">© 2026 Frenchfries777 · CC BY-NC-ND 4.0</a></div>
 <div id="hud">
   <div id="topBar"><span id="hudMapName">맵</span><span id="hudConnWrap"> · 접속 <b id="hudCount">1</b>/<b id="hudMax">?</b></span> <span id="buildTag" style="opacity:0.65; font-size:11px;">build 2026-10-14-v210</span></div>
 
@@ -971,7 +971,7 @@ sting();})();</script>
   </div>
   <div class="brand" id="brandDisplay">
     <h1>STICK<span>SEUM</span><span class="splash" id="splashText"></span></h1>
-    <div class="ver">v0.8</div>
+    <div class="ver" id="brandVer">v0.8</div>
   </div>
   <div class="card menu-floating" id="menuScreen">
     <button class="menu-float-btn" id="goOnlineBtn">온라인 플레이</button>
@@ -1457,7 +1457,7 @@ const ULTS = {
 
 /* ================= GOLD & COSMETICS ================= */
 const SAVE_KEY='arenaClashSave_v1';
-window.addEventListener('DOMContentLoaded', ()=>{ const t=document.getElementById('buildTag'); if(t && typeof GAME_BUILD!=='undefined') t.textContent='v'+GAME_VERSION+' '+GAME_VERSION_NAME+' · '+GAME_BUILD.replace(/^build \S*-v(\d+)$/,'build $1'); const lb=document.getElementById('lobbyBuild'); if(lb && typeof GAME_BUILD!=='undefined') lb.textContent='v'+GAME_VERSION+' '+GAME_VERSION_NAME+' · '+GAME_BUILD.replace(/^build \S*-v(\d+)$/,'build $1'); });
+window.addEventListener('DOMContentLoaded', ()=>{ const t=document.getElementById('buildTag'); if(t && typeof GAME_BUILD!=='undefined') t.textContent='v'+GAME_VERSION+' '+GAME_VERSION_NAME+' · '+GAME_BUILD.replace(/^build \S*-v(\d+)$/,'build $1'); const bv=document.getElementById('brandVer'); if(bv && typeof GAME_BUILD!=='undefined') bv.textContent='v'+GAME_VERSION+' · '+GAME_BUILD.replace(/^build \S*-v(\d+)$/,'build $1'); const lb=document.getElementById('lobbyBuild'); if(lb && typeof GAME_BUILD!=='undefined') lb.textContent='v'+GAME_VERSION+' '+GAME_VERSION_NAME+' · '+GAME_BUILD.replace(/^build \S*-v(\d+)$/,'build $1'); });
 const KILL_GOLD=5, ASSIST_GOLD=3, ASSIST_WINDOW=10;
 /* the purple currency: a kill gives SOUL_PER_KILL of them (an assist, a match end or practice give none); they are spent on random boxes only.
    To rename it change the name / icon / colour right here - every text, the shop and the kill feed read it from this one place. */
@@ -5178,7 +5178,7 @@ function shuffle(arr){ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.
 /* ===== the version of this file =====
    Players with different versions CAN meet and play together: the automatic matchmaking uses the same room names for every version (online-<mode>-<map>-<slot>), and nobody is refused because of a different build.
    The build is only sent along with the join message and the lobby (for information); the corner of the screen shows it. */
-const GAME_BUILD='build 2026-10-18-v430';
+const GAME_BUILD='build 2026-10-18-v431';
 const GAME_VERSION='0.8', GAME_VERSION_NAME='황금을 찾아서';   // 게임 버전 이름: versions.json의 title과 같게 (빌드마다 바꾸지 않음)
 const WEEKLY_EVENTS=[
   {id:'lowg',    name:'저중력 난투', desc:'몸이 둥실둥실, 중력이 약해진 난투', rules:{grav:0.6}},
