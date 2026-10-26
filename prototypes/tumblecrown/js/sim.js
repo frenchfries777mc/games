@@ -1400,7 +1400,12 @@ function botPvp(G, p, dt) {
     // 멀리서 구르며 파고들기
     if (!ranged && d > 7 && p.rollCd <= 0 && G.rng() < 0.02) inp.roll = true;
   }
-  if (clear && d < (ranged ? 14 : R.atk.range + 0.9) && !(low && d > 4)) inp.atk = true;
+  if (clear && d < (ranged ? 14 : R.atk.range + 0.9) && !(low && d > 4)) {
+    if (p.role === 'archer') {   // 사냥꾼은 쉬지 않고 쏘지 않고, 잠깐 겨눴다가 한 번 쏘고 숨을 골라요
+      ai.fireT = (ai.fireT || 0) - dt; if (ai.fireT <= -1.1) ai.fireT = 0.35 + G.rng() * 0.3;
+      if (ai.fireT > 0 && d < 12) inp.atk = true;
+    } else inp.atk = true;
+  }
   R.skills.forEach((S, i) => {
     if (p.cd['s' + i] > 0 || (!clear && S.id !== 'heal' && S.id !== 'ward')) return;
     let go = false; const r = G.rng(), hpf = p.hp / p.maxhp;
