@@ -141,3 +141,6 @@ patchnotes.json | v419 items[0] | 로비 가장자리 빌드 번호와 저작권
 patchnotes.json | v420 title | 클랜 가입 조건 | build 420 | 2026-10-26
 patchnotes.json | v420 items[0] | 클랜 만들기 화면에 가입 조건(최소 레벨, 마스터리 계급) 추가 | build 420 | 2026-10-26
 patchnotes.json | v420 items[1] | 클랜장은 만든 뒤에도 마스터리 계급 조건을 바꿀 수 있음 | build 420 | 2026-10-26
+patchnotes.json | v422 title | 실험적 모드 | build 422 | 2026-10-26
+patchnotes.json | v422 items[0] | 실험적 모드 추가(랜덤 조합 배틀로얄, 거대 점령전)와 경기 후 좋아요/나빠요 평가 | build 422 | 2026-10-26
+patchnotes.json | v422 items[1] | 로비 빌드 표시 위치와 크기 조정 | build 422 | 2026-10-26
