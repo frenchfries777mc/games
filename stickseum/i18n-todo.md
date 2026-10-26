@@ -48,3 +48,12 @@ patchnotes.json | v401 title | 도박사 앞뒤 효과 | build 401 | 2026-10-26
 patchnotes.json | v401 items[0] | 마법사 사거리 감소 (탄환 지속 1.2초 → 0.95초) | build 401 | 2026-10-26
 patchnotes.json | v401 items[1] | 도박사 스킬 결과 표시 강화 (앞면 초록 고리와 앞면 글자, 뒷면 빨간 고리와 뒷면 글자, 대상 타격 효과) | build 401 | 2026-10-26
 patchnotes.json | v401 items[2] | 밸런스 표 갱신 (마법사 승률 재측정) | build 401 | 2026-10-26
+Stickseum-v0.8.html | WEAPONS.gambler.desc | 데미지 20 · 쿨타임 1.0초 · 장거리 · 큰 칩을 곧게 던짐, 맞힐 때마다 칩 +1 (최대 6) · 칩이 많을수록 스킬·궁극기가 강해짐 | build 402 | 2026-10-26
+Stickseum-v0.8.html | SKILLS.vacuum | 블랙홀 흡입 | build 402 | 2026-10-26
+Stickseum-v0.8.html | SKILLS.vacuum.desc | 스택 3개를 소모해 주변 적을 강하게 빨아들이고 1초 기절 (스택이 2개 이하면 사용 불가) | build 402 | 2026-10-26
+patchnotes.json | v402 title | 청소부 블랙홀 흡입 | build 402 | 2026-10-26
+patchnotes.json | v402 items[0] | 청소부 스킬을 블랙홀 흡입으로 교체 (스택 3 소모, 스택 2 이하면 사용 불가, 적을 강하게 빨아들이고 1초 기절) | build 402 | 2026-10-26
+patchnotes.json | v402 items[1] | 청소부 공격 이펙트 강화 (흡입 범위와 빨려 들어오는 줄기 표시) | build 402 | 2026-10-26
+patchnotes.json | v402 items[2] | 해적 포탑 강화 (공격 간격 1.2초 → 0.8초, 탄 크기 증가, 이동 예측 보정) | build 402 | 2026-10-26
+patchnotes.json | v402 items[3] | 도박사 기본 데미지 4 증가 (16 → 20), 칩 크기 증가 | build 402 | 2026-10-26
+patchnotes.json | v402 items[4] | 밸런스 표 갱신 (도박사, 청소부, 해적 재측정) | build 402 | 2026-10-26

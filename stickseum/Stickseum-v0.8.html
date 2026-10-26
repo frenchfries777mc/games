@@ -1305,6 +1305,7 @@ const BULLET_R = 5, BULLET_LIFE = 1.2, PORTAL_BOUNCE_DMG = 1.3;
 
 /* ================= WEAPONS (13) — damage/cooldown balanced by real-world weapon character ================= */
 const FLAME_RANGE=400, FLAME_HALF_ANGLE=0.32, FLAME_DIRECT_DPS=34;
+const VAC_SKILL_COST=3, VAC_SKILL_R=330, VAC_SKILL_PULL=800, VAC_SKILL_STUN=1.0;
 const VACUUM_RANGE=480, VACUUM_HALF_ANGLE=0.34, VACUUM_MAX_STACKS=8, VACUUM_PULL_FORCE=90;
 const FLAME_MAX_HOLD=8, FLAME_OVERHEAT_COOLDOWN=2;
 const FLAME_SHIELD_MAXHP=60, FLAME_SHIELD_DURATION=8;
@@ -1349,8 +1350,8 @@ const WEAPONS = {
             desc:'데미지 41 · 쿨타임 0.4초 · 사거리 65 · 대쉬 쿨타임이 0.5초로 줄어드는 기동형 단검'},
   dracula: {id:'dracula', name:'드라큘라', emoji:'🧛', kind:'melee',    dmg:12, cd:0.4, range:65, shape:'claw', lifesteal:true, lifestealFlat:5,
             desc:'데미지 12 · 쿨타임 0.4초 · 사거리 65 · 빠른 발톱 공격, 적중할 때마다 체력 5 흡수'},
-  gambler: {id:'gambler', name:'도박사',   emoji:'🎲', kind:'gun', dmg:16, cd:1.0, bulletSpeed:1100, shape:'chip',
-            desc:'데미지 16 · 쿨타임 1.0초 · 장거리 · 칩을 곧게 던짐, 맞힐 때마다 칩 +1 (최대 6) · 칩이 많을수록 스킬·궁극기가 강해짐'},
+  gambler: {id:'gambler', name:'도박사',   emoji:'🎲', kind:'gun', dmg:20, cd:1.0, bulletSpeed:1100, shape:'chip', hitR:10,
+            desc:'데미지 20 · 쿨타임 1.0초 · 장거리 · 큰 칩을 곧게 던짐, 맞힐 때마다 칩 +1 (최대 6) · 칩이 많을수록 스킬·궁극기가 강해짐'},
   wizard:  {id:'wizard',  name:'마법사',   emoji:'🧙', kind:'gun',      dmg:16, cd:0.6,  bulletSpeed:750, shape:'fireball', pierce:true, pierceHits:1, life:0.95,
             desc:'데미지 16 · 쿨타임 0.6초 · 사거리 짧음 · 발판을 통과하고, 플레이어 한 명을 관통한 뒤 두 번째로 맞힌 상대에게서 멈추는 화염 마법'},
   magiccard:{id:'magiccard',name:'마술 카드',emoji:'🃏', kind:'cards',    dmg:10,  cd:0.9,  bulletSpeed:820, shape:'card', hitR:26, comboBonus:5, freeVolleys:3,
@@ -1412,7 +1413,7 @@ const DARK_POOL_W=150, DARK_POOL_MAX=10, DARK_POOL_HEAL=3, DARK_POOL_DPS=0, DARK
 const DARK_SWORD_RANGE=120, DARK_SWORD_DMG=10, DARK_SWORD_STUN=1.0, DARK_SWORD_KB=4.5;
 const DARK_ARM_SEC=1, DARK_SUB_SPEED=350, DARK_HOP_REACH=30, DARK_EMERGE_R=150, DARK_EMERGE_STUN=1.0, DARK_ESCAPE_NAME='어둠 탈출';
 let darkPools=[], darkPoolSeq=0, darkView=[];
-const PIRATE_FLY_SPEED=950, PIRATE_FLY_DMG=36, PIRATE_BALL_DMG=20, PIRATE_TURRET_SEC=10, PIRATE_TURRET_GAP=1.2, PIRATE_TURRET_RANGE=950, PIRATE_BALL_SPEED=820;
+const PIRATE_FLY_SPEED=950, PIRATE_FLY_DMG=36, PIRATE_BALL_DMG=20, PIRATE_TURRET_SEC=10, PIRATE_TURRET_GAP=0.8, PIRATE_TURRET_RANGE=950, PIRATE_BALL_SPEED=820;
 function pirateFlyVel(p, ax, ay){      // launch velocity of the cannon ride: toward the aim, but always at least ~29 degrees upward so it really is an arc
   let a=(ax===undefined||ay===undefined) ? (p.angle||0) : Math.atan2(ay-(p.y-40), ax-p.x);
   const right=Math.cos(a)>=0; if(-Math.sin(a)<Math.sin(0.5)) a=right?-0.5:Math.PI+0.5;
@@ -3551,7 +3552,7 @@ function turretTick(dt,t){
     for(const o of enemiesOf(ow)){ if(!o.alive || o.x===undefined || (o.invis && o.id)) continue; const d=Math.hypot(o.x-z.x,(o.y-30)-(z.y-34)); if(d<bd && d<=PIRATE_TURRET_RANGE){ bd=d; tg=o; } }
     if(!tg) continue;
     const ox=z.x, oy=z.y-34, tt=bd/PIRATE_BALL_SPEED;
-    const tx=tg.x+(tg.vx||0)*tt*0.7, ty=tg.y-30;
+    const tx=tg.x+(tg.vx||0)*tt*1.15, ty=tg.y-30;
     const dx=tx-ox, dy=ty-oy, v=PIRATE_BALL_SPEED, g=PROJECTILE_GRAVITY, X=Math.abs(dx), Y=-dy;
     const disc=v*v*v*v-g*(g*X*X+2*Y*v*v);
     let th = X<1 ? Math.PI/2 : (disc>=0 ? Math.atan((v*v-Math.sqrt(disc))/(g*X)) : Math.PI/4);   // the low ballistic arc (or 45 degrees when out of reach)
@@ -3560,7 +3561,7 @@ function turretTick(dt,t){
     if(tSec<z.next) continue;
     z.next=tSec+PIRATE_TURRET_GAP;
     bullets.push({x:ox+Math.cos(ang)*34, y:oy+Math.sin(ang)*34, spawnX:ox, spawnY:oy, vx:Math.cos(ang)*v, vy:Math.sin(ang)*v, owner:ow.id, ownerName:ow.name, life:BULLET_LIFE, color:ow.color,
-      dmg:PIRATE_BALL_DMG*(ow.isZombie?ZOMBIE_DMG_MULT:1)*(ow.wizBuff?WIZ_DMG_MULT:1), wid:'pirate_ball', arcs:true, hitR:14, pierce:false, bouncesLeft:0});
+      dmg:PIRATE_BALL_DMG*(ow.isZombie?ZOMBIE_DMG_MULT:1)*(ow.wizBuff?WIZ_DMG_MULT:1), wid:'pirate_ball', arcs:true, hitR:22, pierce:false, bouncesLeft:0});
     pushFx('sfx', z.x, z.y-30, t, {name:'bazooka'}); pushFx('spark', z.x+Math.cos(ang)*34, oy+Math.sin(ang)*34, t, {ang, color:'#ffb347'});
   }
 }
@@ -5087,7 +5088,7 @@ function shuffle(arr){ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.
 /* ===== the version of this file =====
    Players with different versions CAN meet and play together: the automatic matchmaking uses the same room names for every version (online-<mode>-<map>-<slot>), and nobody is refused because of a different build.
    The build is only sent along with the join message and the lobby (for information); the corner of the screen shows it. */
-const GAME_BUILD='build 2026-10-18-v401';
+const GAME_BUILD='build 2026-10-18-v402';
 const GAME_VERSION='0.8', GAME_VERSION_NAME='황금을 찾아서';   // 게임 버전 이름: versions.json의 title과 같게 (빌드마다 바꾸지 않음)
 const WEEKLY_EVENTS=[
   {id:'lowg',    name:'저중력 난투', desc:'몸이 둥실둥실, 중력이 약해진 난투', rules:{grav:0.6}},
@@ -11447,7 +11448,7 @@ const SKILLS={
   magiccard:{name:'카드 일렬 발사', kind:'hit', desc:'조준 방향으로 카드 4장을 일렬로 연달아 발사 (장당 10 피해)'},
   flamethrower:{name:'화염 돌진',kind:'move', desc:'바라보는 방향으로 순식간에 돌진 · 지나가는 길의 적에게 20 피해와 화상 · 지나온 자리는 3초 동안 불길이 남아 적을 태움'},
   portalgun:{name:'시간 되감기', kind:'move', desc:'약 2초 전 위치로 돌아가고 그동안 잃은 체력의 절반 회복 · 포탈이 있을 때는 대신 내 포탈 둘을 폭파(연기 0.5초 뒤 50 피해와 큰 넉백)'},
-  vacuum:   {name:'흡인',        kind:'hit',  desc:'주변 적을 끌어당기고 스택 +1'},
+  vacuum:   {name:'블랙홀 흡입',  kind:'hit',  desc:'스택 3개를 소모해 주변 적을 강하게 빨아들이고 1초 기절 (스택이 2개 이하면 사용 불가)'},
   pirate:   {name:'대포 비행',   kind:'move', desc:'대포를 타고 조준 방향으로 포물선을 그리며 날아감 · 부딪힌 상대에게 36 피해'},
   samurai:  {name:'거합',       kind:'move', desc:'조준 방향으로 순식간에 베고 지나가며(최대 430) 경로 위의 적에게 30 피해'},
   horemheb:{name:'쇠스랑 투척', kind:'hit',  desc:'쇠스랑을 빙글빙글 돌려 던져 맞은 상대에게 32 피해'},
@@ -11788,7 +11789,12 @@ const SKILL_IMPL={
       pushFx('darkhit', best.x, ty, tMs, {dir});
     }
     return true; },
-  vacuum(p,tSec,tMs){ const n=skillPulse(p,tMs,{r:260, pull:520}); if(n>0){ pushFx('skillring', p.x, p.y-30, tMs, {color:'#8fd3ff', r:260}); p.vacuumStacks=Math.min(VACUUM_MAX_STACKS,(p.vacuumStacks||0)+1); } return n>0; }
+  vacuum(p,tSec,tMs){      // 블랙홀 흡입: costs 3 stacks (not usable below that), drags every enemy in range hard against the cleaner and stuns it for 1 s
+    if((p.vacuumStacks||0)<VAC_SKILL_COST) return false;
+    const n=skillPulse(p,tMs,{r:VAC_SKILL_R, pull:VAC_SKILL_PULL}); if(n<=0) return false;
+    p.vacuumStacks-=VAC_SKILL_COST;
+    for(const id in players){ const t=players[id]; if(!t.alive || id===p.id || t.x===undefined || isAlly(p,t) || t.swordCharge || t.darkSub) continue; if(Math.hypot(t.x-p.x,(t.y-PLAYER_H/2)-(p.y-PLAYER_H/2))<=VAC_SKILL_R) stunPlayer(t, VAC_SKILL_STUN, tMs); }
+    pushFx('vacvortex', p.x, p.y-30, tMs, {r:VAC_SKILL_R}); return true; }
 };
 function trySkill(p, tMs, aimX, aimY){
   if(duelPick) return;                       // (between duel rounds, while the weapons are being picked again, nobody can act)
@@ -11970,7 +11976,7 @@ function abilityPreviewOps(action, p, mx, my){
       case 'shotgun': ops.push(selfRing(140)); break;
       case 'wizard': ops.push(selfRing(WIZ_SHOCK_R)); break;
       case 'grenade': ops.push(selfRing(110)); break;
-      case 'vacuum': ops.push(selfRing(260)); break;
+      case 'vacuum': ops.push(selfRing(VAC_SKILL_R)); break;
       default: ops.push(selfRing(40));       // pistol, bat, boomerang, rifle, bazooka, gambler, wizard: buffs on the caster
     }
     return ops;
@@ -12224,10 +12230,7 @@ function explodeAt(x,y,b,tMs){
 }
 function fireVacuum(p, angle, w, tMs){
   const originX=p.x, originY=p.y-40;
-  for(let i=0;i<8;i++){      // the suction itself: bright streaks racing in toward the nozzle across the whole cone
-    const r=w.range*(0.3+0.7*Math.random()), aa=angle+(Math.random()-0.5)*2*VACUUM_HALF_ANGLE;
-    pushFx('spark', originX+Math.cos(aa)*r, originY+Math.sin(aa)*r, tMs, {ang:aa+Math.PI, color:i%2?'#8fd3ff':'#ffffff'});
-  }
+  pushFx('vaccone', originX, originY, tMs, {ang:angle, range:w.range});      // the suction itself: a visible cone with streaks racing in toward the nozzle
   pushFx('skillring', originX+Math.cos(angle)*40, originY+Math.sin(angle)*40, tMs, {color:'#8fd3ff', r:34});
   for(const id in players){
     const target=players[id];
@@ -12870,7 +12873,7 @@ function botWantsSkill(p, target, d, tSec){
     case 'magiccard': return d<560 && Math.abs(target.y-p.y)<110;         // the line of cards: straight at the enemy
     case 'flamethrower': return d>130 && d<380 && Math.abs(target.y-p.y)<100;      // the rush: straight at an enemy on the same level
     case 'portalgun': { if(p.portalPair){ const pr=p.portalPair; return enemiesOf(p).some(o=>Math.hypot(o.x-pr.a.x,o.y-pr.a.y)<PORTAL_BLAST_R-30 || Math.hypot(o.x-pr.b.x,o.y-pr.b.y)<PORTAL_BLAST_R-30); } const old=p.hist && p.hist.find(h=>tSec-h.t<=2.2 && tSec-h.t>=1.6); return !!old && old.hp-p.hp>=60; }
-    case 'vacuum': return d>110 && d<260;
+    case 'vacuum': return (p.vacuumStacks||0)>=VAC_SKILL_COST && d>110 && d<VAC_SKILL_R-30;
     case 'kan': return d>140 && d<560 && Math.abs(target.y-p.y)<160;                // the toad: thrown toward an enemy at a medium distance
     case 'kurus': return d<DARK_SWORD_RANGE+10 && Math.abs(target.y-p.y)<60;     // the dark sword only reaches up close
   }
@@ -16285,6 +16288,18 @@ function spawnFx(e){
       burst(x,y,16,{a0:-3.14,a1:0,s0:80,s1:260,l0:.5,l1:.9,z0:2,z1:4,colors:hd?['#7dffa3','#ffe27a','#ffffff']:['#ff5a6a','#ffe27a','#ffffff'],grav:200,drag:1.2});
       if(!hd && e.tx!==undefined){ const ang=Math.atan2(e.ty-y,e.tx-x); burst(e.tx,e.ty,18,{a0:ang-0.7,a1:ang+0.7,s0:120,s1:380,l0:.3,l1:.6,z0:2,z1:4,colors:['#ff5a6a','#ffffff'],drag:1.5}); addP({x:e.tx,y:e.ty,life:.45,color:'#ff5a6a',shape:'ring',r0:8,r1:60,lw:5}); }
       break; }
+    case 'vaccone': {
+      const a0=e.ang||0, R=e.range||VACUUM_RANGE, nx=x+Math.cos(a0)*26, ny=y+Math.sin(a0)*26;
+      for(let i=0;i<26;i++){ const r=R*(0.25+0.75*Math.random()), aa=a0+(Math.random()-0.5)*2*VACUUM_HALF_ANGLE, px=x+Math.cos(aa)*r, py=y+Math.sin(aa)*r, life=0.28+Math.random()*0.12, sp=Math.hypot(nx-px,ny-py)/life;
+        addP({x:px,y:py,vx:(nx-px)/Math.hypot(nx-px,ny-py)*sp,vy:(ny-py)/Math.hypot(nx-px,ny-py)*sp,life:life,size:3+Math.random()*3,color:i%3?'#8fd3ff':'#ffffff',shape:'streak'}); }
+      for(let k=0;k<3;k++) addP({x:x+Math.cos(a0)*(40+k*R*0.28),y:y+Math.sin(a0)*(40+k*R*0.28),life:.3,color:'#8fd3ff',shape:'ring',r0:46-k*10,r1:8,lw:3});
+      break; }
+    case 'vacvortex': {
+      const R=e.r||VAC_SKILL_R;
+      addP({x:x,y:y,life:.5,color:'#8fd3ff',shape:'ring',r0:R,r1:20,lw:8}); addP({x:x,y:y,life:.4,color:'#ffffff',shape:'ring',r0:R*0.7,r1:10,lw:4}); addP({x:x,y:y,life:.7,color:'#1a1030',shape:'ring',r0:30,r1:60,lw:12});
+      for(let i=0;i<30;i++){ const aa=Math.random()*6.283, r=R*(0.4+0.6*Math.random()), px=x+Math.cos(aa)*r, py=y+Math.sin(aa)*r, life=0.35+Math.random()*0.2;
+        addP({x:px,y:py,vx:-Math.cos(aa)*r/life,vy:-Math.sin(aa)*r/life,life:life,size:3+Math.random()*3,color:i%2?'#8fd3ff':'#d9c4ff',shape:'streak'}); }
+      break; }
     case 'heal': {
       burst(x,y+10,14,{a0:-2.3,a1:-0.85,s0:50,s1:200,l0:.6,l1:1.0,z0:2,z1:4,colors:['#5fff8a','#ffffff'],grav:-60,drag:1.4});
       addP({x:x,y:y-6,vx:0,vy:-70,drag:1.2,life:1.0,size:16,color:'#7dffa3',outline:'#1c7a3a',shape:'text',add:false,text:'+'+(e.v||0)});
@@ -16910,7 +16925,7 @@ function drawProjectileBase(b){
       break;
     }
     case 'chip': {
-      ctx.rotate(performance.now()/60);
+      ctx.rotate(performance.now()/60); ctx.scale(b.ult?1.9:1.7,b.ult?1.9:1.7);
       ctx.fillStyle='#d62839'; ctx.strokeStyle='#fff'; ctx.lineWidth=1.6; ctx.beginPath(); ctx.arc(0,0,8,0,7); ctx.fill(); ctx.stroke();
       ctx.lineWidth=2; ctx.setLineDash([3,3.2]); ctx.beginPath(); ctx.arc(0,0,5,0,7); ctx.stroke(); ctx.setLineDash([]);
       break;
