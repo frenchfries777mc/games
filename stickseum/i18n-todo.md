@@ -21,3 +21,20 @@ patchnotes.json | v397 items[3] | 특수요원 연막탄을 조준해서 던지�
 patchnotes.json | v397 items[4] | 제임스 궁극기가 플레이어만 관통하고 발판에서 멈추도록 수정 | build 397 | 2026-10-26
 patchnotes.json | v398 title | 학살자 스킬 교체 | build 398 | 2026-10-26
 patchnotes.json | v398 items[0] | 학살자 스킬을 화염 돌진으로 교체 (바라보는 방향으로 돌진, 지나는 적에게 20 피해와 화상, 지나온 자리에 3초 동안 불길) | build 398 | 2026-10-26
+Stickseum-v0.8.html | WEAPONS.wizard.desc | 데미지 18 · 쿨타임 0.6초 · 발판을 통과하고, 플레이어 한 명을 관통한 뒤 두 번째로 맞힌 상대에게서 멈추는 화염 마법 | build 396 | 2026-10-26
+Stickseum-v0.8.html | ULTS.wizard.desc | 자신의 위치에 거대한 마법진 소환(10초): 나와 아군은 공격력 30% 증가 + 초당 12 회복, 안에 들어온 적은 초당 9 피해 | build 396 | 2026-10-26
+Stickseum-v0.8.html | ULTS.pistol.desc | 다음 발사 때 데미지 66의 크고 빠른 탄환 1발 (플레이어는 관통, 발판에서는 멈춤) | build 397 | 2026-10-26
+Stickseum-v0.8.html | WEAPONS.dagger.desc | 데미지 41 · 쿨타임 0.4초 · 사거리 65 · 대쉬 쿨타임이 0.5초로 줄어드는 기동형 단검 | build 396 | 2026-10-26
+Stickseum-v0.8.html | WEAPONS.portalgun.desc | 데미지 13 · 쿨타임 0.55초 · 바닥이나 발판에 닿으면 최대 3번까지 튕기는 탄환 · 튕길 때마다 데미지 30% 증가 | build 396 | 2026-10-26
+Stickseum-v0.8.html | ULTS.portalgun.desc | 현재 위치와 조준한 위치에 보라색 포탈 한 쌍을 생성 · 둘 중 하나에 닿으면 반대쪽으로 순간이동 (아군도 사용 가능, 나올 때 근처 적에게 12 피해와 약한 넉백, 새로 생성하면 기존 포탈은 사라짐) | build 396 | 2026-10-26
+Stickseum-v0.8.html | SKILLS.portalgun.desc | 약 2초 전 위치로 돌아가고 그동안 잃은 체력의 절반 회복 · 포탈이 있을 때는 대신 내 포탈 둘을 폭파(연기 0.5초 뒤 50 피해와 큰 넉백) | build 396 | 2026-10-26
+Stickseum-v0.8.html | SKILLS.kan.desc | 조준한 곳으로 독 두꺼비를 던짐 (닿는 만큼, 최대 약 800) · 포물선으로 날아가 바닥에 닿으면 그 바닥이 독 바닥이 됨 (15초, 최대 2개, 나에게만 보임) · 적이 밟으면 독 바닥이 나타나고 3초 뒤 사라짐 · 밟은 적은 3초 동안 0.5초마다 5 피해 | build 397 | 2026-10-26
+Stickseum-v0.8.html | SKILLS.smg.desc | 조준한 곳으로 연막탄을 던짐 · 떨어진 자리에 2.5초 동안 짙은 연기 · 안에 있는 사람은 이동 속도가 절반으로 느려지고 시야가 가려짐 | build 397 | 2026-10-26
+Stickseum-v0.8.html | SKILLS.boomerang | 회수 돌풍 / 주변 적을 8 피해와 함께 내 쪽으로 끌어당기고, 던진 부메랑을 즉시 불러들임 | build 397 | 2026-10-26
+Stickseum-v0.8.html | SKILLS.flamethrower | 화염 돌진 / 바라보는 방향으로 순식간에 돌진 · 지나가는 길의 적에게 20 피해와 화상 · 지나온 자리는 3초 동안 불길이 남아 적을 태움 | build 398 | 2026-10-26
+Stickseum-v0.8.html | SKILLS.pizarro | 정복자의 질주 / 체력 20 즉시 회복 + 3초 동안 이동 속도 50% 증가 | build 399 | 2026-10-26
+Stickseum-v0.8.html | WIN_POSES.pose_cossack | 코사크 댄스 | build 399 | 2026-10-26
+patchnotes.json | v399 title | 피사로 스킬 교체, 코사크 댄스 | build 399 | 2026-10-26
+patchnotes.json | v399 items[0] | 피사로 스킬을 정복자의 질주로 교체 (체력 20 즉시 회복, 3초 동안 이동 속도 50% 증가) | build 399 | 2026-10-26
+patchnotes.json | v399 items[1] | 승리 포즈 코사크 댄스 추가 | build 399 | 2026-10-26
+patchnotes.json | v399 items[2] | 밸런스 표 갱신 (모든 캐릭터 조합을 모든 맵에서 한 번씩 측정) | build 399 | 2026-10-26
