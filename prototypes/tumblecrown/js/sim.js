@@ -301,7 +301,7 @@ function comboFx(G, C, A, B) {
   ev(G, 'combo', { c: C.id, name: C.name, x, z, a: A.id, b: B.id });
   if (!A.bot || !B.bot) { for (const o of [A, B]) if (!o.bot) { ev(G, 'ach', { id: 'combo', pid: o.id }); ev(G, 'combo1', { c: C.id, pid: o.id }); } }
 }
-const ANIMOF = { shieldbash: 'block', frost: 'curse', leap: 'whirl', bloodlust: 'taunt', flurry: 'dash', blink: 'dash', scatter: 'dash', fan: 'pierce', bonestorm: 'whirl' };
+const ANIMOF = { shieldbash: 'block', frost: 'curse', leap: 'leap', bloodlust: 'taunt', flurry: 'flurry', blink: 'shadow', scatter: 'scatter', fan: 'pierce', bonestorm: 'storm' };
 const friends = (G, p) => G.pvp ? [p] : G.players;   // 대전에서는 내 편이 나뿐이에요
 function useSkill(G, p, si, inp) {
   const R = ROLES[p.role], S = R.skills[si], key = 's' + si;
@@ -336,11 +336,7 @@ function useSkill(G, p, si, inp) {
     case 'potion': { const q = aimPoint(p, inp, 9); G.projs.push({ id: G.uid++, k: 'potion', own: p.id, x: p.x, z: p.z, tx: q.x, tz: q.z, sx: p.x, sz: p.z, t: 0, T: 0.55, team: 0 }); break; }
     case 'trap': G.zones.push({ id: G.uid++, k: 'ptrap', x: p.x, z: p.z, r: 1.4, t: 20, own: p.id }); break;
     case 'rally': for (const q of friends(G, p)) if (alive(q) && dist(p, q) < 9) { q.rally = 7; ev(G, 'rally', { id: q.id }); } break;
-    case 'whirl': { // 제자리에서 한 바퀴 돌며 둘레 모두를 베요
-      ev(G, 'swing', { id: p.id, x: p.x, z: p.z, a: p.a, r: 3.4, role: p.role }); ev(G, 'big', { id: p.id, role: p.role, x: p.x, z: p.z, a: p.a });
-      for (const e of G.enemies) if (e.hp > 0 && e.pid !== p.id && dist(p, e) < 3.4 + e.r) hurtEnemy(G, e, 34, p, {});
-      break;
-    }
+    case 'whirl': p.mh = { t: 0.8, tick: 0, gap: 0.27, dmg: 12, r: 3.4, fx: 'stormfx' }; p.animT = 1.0; break;   // 제자리에서 두 바퀴 돌며 둘레 모두를 세 번 베요
     case 'quake': { // 앞으로 길게 땅을 갈라요: 갈라진 길 위 모두가 피해를 받고 느려져요
       ev(G, 'skill', { id: p.id, s: 'quakeline', x: p.x, z: p.z, a: p.a });
       const L = 11, ex = p.x + Math.cos(p.a) * L, ez = p.z + Math.sin(p.a) * L;
@@ -366,10 +362,9 @@ function useSkill(G, p, si, inp) {
       break;
     }
     case 'bloodlust': p.leech = 5; ev(G, 'skill', { id: p.id, s: 'bloodfx', x: p.x, z: p.z, a: p.a }); break;   // 5초 동안 준 피해의 일부를 체력으로 되찾아요
-    case 'flurry': { // 앞으로 파고들며 다섯 번 빠르게 찔러요
+    case 'flurry': { // 앞으로 파고들며 다섯 번 번갈아 베요
       p.x += Math.cos(p.a) * 2.2; p.z += Math.sin(p.a) * 2.2; collide(G, p, 0.6); ev(G, 'skill', { id: p.id, s: 'flurryfx', x: p.x, z: p.z, a: p.a });
-      for (let k = 0; k < 5; k++) for (const e of G.enemies) if (e.hp > 0 && e.pid !== p.id && dist(p, e) < 3.0 + e.r && angDiff(p.a, angTo(p, e)) < 0.9) hurtEnemy(G, e, 9, p, {});
-      break;
+      p.mh = { t: 0.5, tick: 0.05, gap: 0.1, dmg: 9, r: 3.0, arc: 0.9, fx: 'stabfx' }; p.animT = 0.7; break;
     }
     case 'blink': { // 가장 가까운 상대 뒤로 순간이동해 베요
       let best = null, bd = 13;
@@ -385,7 +380,7 @@ function useSkill(G, p, si, inp) {
       break;
     }
     case 'fan': for (let k = -2; k <= 2; k++) G.projs.push({ id: G.uid++, k: 'arrow', own: p.id, x: p.x, z: p.z, vx: Math.cos(p.a + k * 0.26) * 28, vz: Math.sin(p.a + k * 0.26) * 28, dmg: 15, life: 0.85, hit: [], team: 0 }); break;
-    case 'bonestorm': p.stormT = 1.4; p.stormTick = 0; break;   // 1.4초 동안 몸을 돌리며 둘레를 계속 쳐요
+    case 'bonestorm': p.mh = { t: 1.4, tick: 0, gap: 0.35, dmg: 13, r: 3.2, fx: 'stormfx' }; p.animT = 1.5; break;   // 1.4초 동안 몸을 돌리며 둘레를 계속 쳐요
     case 'smite': case 'curse': { // 조준한 곳에 표시가 생기고, 잠시 뒤 터져요 (모두에게 보여서 피할 수 있어요)
       const sm = S.id === 'smite', q = aimPoint(p, inp, 12);
       G.zones.push({ id: G.uid++, k: 'tcircle', x: q.x, z: q.z, r: sm ? 3.2 : 2.6, t: sm ? 1.0 : 0.9, T: sm ? 1.0 : 0.9, dmg: sm ? 42 : 40, fx: S.id, own: p.id, chill: sm ? 0 : 3 });
@@ -523,7 +518,11 @@ function stepPlayer(G, p, inp, dt) {
     p.noHit = (p.noHit || 0) + dt;
     if (p.noHit > 4 && p.hp < p.maxhp) p.hp = Math.min(p.maxhp, p.hp + p.maxhp * 0.02 * dt);   // 맞지 않고 4초가 지나면 체력이 저절로 차올라요
     if (p.leech > 0) p.leech = Math.max(0, p.leech - dt);
-    if (p.stormT > 0) { p.stormT -= dt; p.stormTick -= dt; if (p.stormTick <= 0) { p.stormTick = 0.35; ev(G, 'skill', { id: p.id, s: 'stormfx', x: p.x, z: p.z, a: p.a }); for (const e of G.enemies) if (e.hp > 0 && e.pid !== p.id && dist(p, e) < 3.2 + e.r) hurtEnemy(G, e, 13, p, {}); } }
+    if (p.mh) { // 여러 번 이어서 치는 기술: 틱마다 둘레(또는 앞쪽)를 쳐요
+      const m = p.mh; m.t -= dt; m.tick -= dt;
+      if (m.tick <= 0) { m.tick = m.gap; ev(G, 'skill', { id: p.id, s: m.fx, x: p.x, z: p.z, a: p.a, n: m.n = (m.n || 0) + 1 }); for (const e of G.enemies) if (e.hp > 0 && e.pid !== p.id && dist(p, e) < m.r + e.r && (!m.arc || angDiff(p.a, angTo(p, e)) < m.arc)) hurtEnemy(G, e, m.dmg, p, {}); }
+      if (m.t <= 0) p.mh = null;
+    }
   }
   if (p.px) p.px.hp = alive(p) ? 1 : 0;
 }
