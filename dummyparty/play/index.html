@@ -534,6 +534,18 @@
     "카트 위에서 드리프트하는 마네킹, 오늘의 장보기는 목숨 걸고 합니다.": ["A mannequin drifting on a cart. Today's grocery run is life or death.", "Un maniquí derrapando en un carrito. Hoy las compras son a vida o muerte.", "Un mannequin qui dérape en caddie. Les courses du jour se font au péril de sa vie.", "Eine Puppe driftet im Wagen. Der Einkauf heute ist lebensgefährlich.", "カートでドリフトするマネキン。今日の買い物は命がけです。"],
     "물건이 쏟아졌습니다! 계산대 직원이 한숨을 쉽니다.": ["Goods everywhere! The cashier sighs.", "¡Compras por todas partes! La cajera suspira.", "Des courses partout ! La caissière soupire.", "Ware überall! Die Kassiererin seufzt.", "荷物が散らばりました！レジの店員がため息をつきます。"],
     "벽에 박았습니다. 카트는 괜찮습니다. 마네킹도 괜찮아 보입니다.": ["Hit the wall. The cart's fine. The mannequin looks fine too.", "Choque contra la pared. El carrito está bien. El maniquí también parece estar bien.", "Collision avec le mur. Le caddie va bien. Le mannequin aussi, apparemment.", "Gegen die Wand. Dem Wagen geht's gut. Der Puppe scheinbar auch.", "壁にぶつかりました。カートは無事です。マネキンも無事そうです。"],
+    /* 빌드 70 추가분 */
+    "친구 초대": ["Invite friends", "Invitar amigos", "Inviter des amis", "Freunde einladen", "友達を招待"],
+    "초대를 받으면 허브 알림으로 가고, 누르면 이 방으로 들어와요. 30분 안에 안 들어오면 저절로 없어져요.": ["Invites arrive as hub notifications and take them into this room. They expire after 30 minutes.", "Las invitaciones llegan como notificación del hub y los llevan a esta sala. Caducan a los 30 minutos.", "Les invitations arrivent en notification du hub et mènent à ce salon. Elles expirent après 30 minutes.", "Einladungen kommen als Hub-Benachrichtigung und führen in diesen Raum. Sie laufen nach 30 Minuten ab.", "招待はハブの通知で届き、押すとこのルームに入れます。30分で自動的に消えます。"],
+    "초대": ["Invite", "Invitar", "Inviter", "Einladen", "招待"],
+    "못 취소했어요": ["Couldn't cancel", "No se pudo cancelar", "Échec de l'annulation", "Abbruch fehlgeschlagen", "取り消せませんでした"],
+    "못 보냈어요": ["Couldn't send", "No se pudo enviar", "Échec de l'envoi", "Senden fehlgeschlagen", "送れませんでした"],
+    "아직 친구가 없어요.": ["No friends yet.", "Aún no tienes amigos.", "Pas encore d'amis.", "Noch keine Freunde.", "まだ友達がいません。"],
+    "접속 안 함": ["Offline", "Desconectado", "Hors ligne", "Offline", "オフライン"],
+    "지금 접속 중인 다른 플레이어가 없어요.": ["No other players are online right now.", "No hay otros jugadores conectados ahora.", "Aucun autre joueur en ligne.", "Gerade sind keine anderen Spieler online.", "今オンラインの他のプレイヤーはいません。"],
+    "접속 중인 플레이어 목록을 못 불러왔어요.": ["Couldn't load the online players.", "No se pudo cargar la lista de jugadores.", "Impossible de charger les joueurs en ligne.", "Online-Spieler konnten nicht geladen werden.", "オンラインプレイヤーを読み込めませんでした。"],
+    "취소됐거나 30분이 지나 만료된 초대예요.": ["This invite was cancelled or expired after 30 minutes.", "Esta invitación se canceló o caducó a los 30 minutos.", "Cette invitation a été annulée ou a expiré après 30 minutes.", "Diese Einladung wurde abgebrochen oder ist nach 30 Minuten abgelaufen.", "この招待は取り消されたか、30分で期限切れです。"],
+    "불러오는 중이에요...": ["Loading...", "Cargando...", "Chargement...", "Wird geladen...", "読み込み中..."],
     /* 빌드 69 추가분 */
     "컴퓨터가 느린 것 같아 그림을 가볍게 바꿨어요.": ["Your computer seems slow, so graphics were lightened.", "Tu equipo parece lento, así que se aligeraron los gráficos.", "Ton ordinateur semble lent, les graphismes ont été allégés.", "Dein Computer wirkt langsam, daher wurde die Grafik vereinfacht.", "パソコンが重そうなので、描画を軽くしました。"],
     /* 빌드 68 추가분 */
@@ -1283,6 +1295,9 @@
     "구매하지 못했어요. 잠시 뒤에 다시 해 주세요.": ["Purchase failed. Please try again in a moment.", "No se pudo comprar. Inténtalo de nuevo en un momento.", "Achat impossible. Réessaie dans un instant.", "Kauf fehlgeschlagen. Versuch es gleich nochmal.", "購入できませんでした。少ししてからもう一度お願いします。"]
   };
   var R = [
+    [/^초대함 · (\d+)분 남음$/, ['Invited · $1 min left', 'Invitado · quedan $1 min', 'Invité · $1 min restantes', 'Eingeladen · noch $1 Min.', '招待済み · 残り$1分']],
+    [/^친구 \((\d+)\)$/, ['Friends ($1)', 'Amigos ($1)', 'Amis ($1)', 'Freunde ($1)', '友達 ($1)']],
+    [/^지금 접속 중인 플레이어 \((\d+)\)$/, ['Players online now ($1)', 'Jugadores conectados ahora ($1)', 'Joueurs en ligne ($1)', 'Spieler jetzt online ($1)', '今オンラインのプレイヤー ($1)']],
     [/라운드 1등 (\d+)번이면 그냥 열려요 \(지금 (\d+)번\)/g, ["Unlocks free with $1 round wins (now $2)", "Se desbloquea gratis con $1 rondas ganadas (ahora $2)", "Gratuit après $1 manches gagnées (actuellement $2)", "Gratis ab $1 Rundensiegen (jetzt $2)", "ラウンド1位$1回で無料解放（いま$2回）"]],
     [/^(\d+) \/ (\d+) 판 결과$/, ['Round $1/$2 results', 'Resultados de la ronda $1/$2', 'Résultats de la manche $1/$2', 'Ergebnis Runde $1/$2', '第$1/$2戦の結果']],
     [/^(.+) 우승!$/, ['$1 is the champion!', '¡$1 es el campeón!', '$1 remporte la partie !', '$1 ist Champion!', '$1の優勝！']],
@@ -1523,7 +1538,7 @@ i.ti{font-style:normal;font-size:.72em;font-weight:900;background:#ffd23f;color:
 #btnA{right:max(22px,env(safe-area-inset-right));bottom:max(26px,env(safe-area-inset-bottom))}
 #btnB{right:calc(max(22px,env(safe-area-inset-right)) + 96px);bottom:max(18px,env(safe-area-inset-bottom));width:70px;height:70px;background:rgba(120,190,255,.75)}
 .dlg{display:none;position:fixed;inset:0;z-index:60;background:rgba(30,18,8,.62);align-items:center;justify-content:center;padding:16px}.dlg.on{display:flex}.dlgBox{background:#fff8ec;border-radius:18px;padding:20px 22px;max-width:360px;width:100%;box-shadow:0 6px 0 #d9b98a;text-align:center}.dlgBox p{margin:0 0 16px;font-weight:800;font-size:17px;color:#3a2410;line-height:1.45}.dlgBtns{display:flex;gap:10px;justify-content:center}
-.rulesBox{max-width:520px}#rulesSearch,#pracSearch{width:100%;box-sizing:border-box;border:2px solid #cdbca4;border-radius:10px;padding:8px 10px;font-size:15px;font-family:inherit;margin:2px 0 4px;background:#fff;color:#3a2410}#rulesHint{min-height:16px;font-size:12px;font-weight:700;color:#b5532f;margin:2px 2px 0}.pracInfo{margin:0 0 6px;font-size:13px;font-weight:700;color:#7a5a38}.rulesBox h3{margin:0 0 8px;color:#3a2410}#rulesGrid,#pracGrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px;max-height:50vh;overflow:auto;margin:10px 0}.ruleItem{border:0;border-radius:10px;padding:9px 6px;font-weight:800;font-size:14px;background:#e6dccb;color:#8a7b66;cursor:pointer;font-family:inherit}.ruleItem.pi,.ruleItem.on{background:#fff;color:#3a2410;box-shadow:0 2px 0 #cdbca4}.ruleItem.on::before{content:'✔ '}#rulesRow{display:flex;align-items:center;justify-content:center;gap:10px;margin:0 0 8px;font-weight:800;color:#3a2410}#rulesRow .pb{padding:6px 14px;font-size:18px}#rnN{min-width:22px;text-align:center;font-size:18px}#rulesBtn{width:100%;margin:0 0 8px;font-size:14px;padding:8px 10px}#rulesInfo{margin:0;font-size:13px;font-weight:700;color:#3a2410;text-align:center}
+.rulesBox{max-width:520px}#rulesSearch,#pracSearch{width:100%;box-sizing:border-box;border:2px solid #cdbca4;border-radius:10px;padding:8px 10px;font-size:15px;font-family:inherit;margin:2px 0 4px;background:#fff;color:#3a2410}#rulesHint{min-height:16px;font-size:12px;font-weight:700;color:#b5532f;margin:2px 2px 0}#invList{max-height:50vh;overflow:auto;text-align:left;margin:8px 0}#invList h4{margin:10px 2px 4px;font-size:13px;color:#7a5a38}#invList .r{display:flex;align-items:center;gap:8px;background:#fff;border-radius:10px;padding:6px 8px;margin-bottom:5px}#invList .r b{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:#3a2410;font-size:14px}#invList .r small{color:#8a7b66;font-size:12px;white-space:nowrap}#invList .r .pb{padding:5px 12px;font-size:13px}#invList .note{font-size:13px;color:#8a7b66;margin:4px 2px}.pracInfo{margin:0 0 6px;font-size:13px;font-weight:700;color:#7a5a38}.rulesBox h3{margin:0 0 8px;color:#3a2410}#rulesGrid,#pracGrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px;max-height:50vh;overflow:auto;margin:10px 0}.ruleItem{border:0;border-radius:10px;padding:9px 6px;font-weight:800;font-size:14px;background:#e6dccb;color:#8a7b66;cursor:pointer;font-family:inherit}.ruleItem.pi,.ruleItem.on{background:#fff;color:#3a2410;box-shadow:0 2px 0 #cdbca4}.ruleItem.on::before{content:'✔ '}#rulesRow{display:flex;align-items:center;justify-content:center;gap:10px;margin:0 0 8px;font-weight:800;color:#3a2410}#rulesRow .pb{padding:6px 14px;font-size:18px}#rnN{min-width:22px;text-align:center;font-size:18px}#rulesBtn{width:100%;margin:0 0 8px;font-size:14px;padding:8px 10px}#rulesInfo{margin:0;font-size:13px;font-weight:700;color:#3a2410;text-align:center}
 @media (max-height:460px) and (min-aspect-ratio:1/1){
 .logo{font-size:34px}.tag{margin:4px 0 2px;font-size:13px}#heroCv{width:150px;height:86px;margin:0 auto}#sHome{padding:8px 12px}.panel{padding:12px}.or{margin:8px 0 6px}.foot{margin-top:6px}
 .lobSide{padding:6px;gap:6px}#lobCodeBox{padding:6px}#lobCode{font-size:20px;letter-spacing:3px}#lobList{gap:3px}#lobList li{padding:2px 6px}#lobList li canvas.mini{width:22px;height:28px}
@@ -1627,7 +1642,9 @@ body.playing #emoBar{display:flex}
    <div class="row"><input id="codeIn" maxlength="5" placeholder="방 코드" autocomplete="off"><button class="pb dark" id="joinBtn" style="flex:0 0 auto">들어가기</button></div>
    <div class="msg" id="homeMsg"></div>
   </aside>
-  <template id="patchnotes"><details class="notes" open><summary>패치노트 · v0.1 (b70)</summary>
+  <template id="patchnotes"><details class="notes" open><summary>패치노트 · v0.1 (b71)</summary>
+   <b>2026-10-26 · v0.1 · b71 · 친구 초대</b>
+   <ul><li>비공개 방 대기실에 "친구 초대" 버튼이 생겼어요. 친구와 지금 접속 중인 플레이어에게 허브 알림으로 초대를 보내고, 받은 사람이 누르면 바로 이 방으로 들어와요</li><li>보낸 초대는 "취소"할 수 있고, 30분이 지나거나 방이 닫히면 저절로 없어져요. 취소됐거나 만료된 초대로는 들어가지 않아요</li></ul>
    <b>2026-10-25 · v0.1 · b70 · 화면 배경음악</b>
    <ul><li>첫 화면, 대기실, 결과 화면에서 새 배경음악이 나와요</li></ul>
    <b>2026-10-25 · v0.1 · b69 · 방장 컴퓨터 부담 줄이기</b>
@@ -1766,7 +1783,7 @@ body.playing #emoBar{display:flex}
    <ul><li>무너지는 발판 칸 수 대폭 증가 (19×10)와 용암 동굴 맵</li><li>10개 맵 전부 새로 그림 (관중석, 야자수 섬, 링, 정원 미로, 서커스, 우노 테이블 등)</li><li>글자 대신 아이콘·말풍선·이펙트로 표현 (무기, 아이템, 카드 효과, 시작 안내)</li><li>타격·폭발·물보라 효과와 화면 흔들림 추가</li></ul>
    <b>2026-10-19 · v0.1 · b1 · 첫 시험판</b>
    <ul><li>마네킹 미니게임 10개 추가 (장애물 달리기, 섬 밀치기, 싸우기, 병맛 미로, 체스 대난투, 폭탄 돌리기, 병맛 우노, 쇼윈도 얼음땡, 무너지는 발판, 컨베이어 서바이벌)</li><li>방 코드로 최대 8명 멀티플레이, 빈자리는 봇으로 채우기</li><li>판마다 10개 중 5개를 무작위로 골라 점수를 합산</li><li>PC 키보드와 휴대폰 터치 조작 지원</li></ul></details></template>
-  <p class="foot">2~8명 · 판마다 36개 미니게임 중 7개 · v0.1 b70 · <a href="../">← Dummy Party 사이트로</a></p>
+  <p class="foot">2~8명 · 판마다 36개 미니게임 중 7개 · v0.1 b71 · <a href="../">← Dummy Party 사이트로</a></p>
   <p class="foot"><span class="ff-copy">© 2026 Frenchfries777 · <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.ko" target="_blank" rel="noopener">CC BY-NC-ND 4.0</a></span></p>
  </div>
 </section>
@@ -1782,7 +1799,7 @@ body.playing #emoBar{display:flex}
    </div>
   </div>
   <aside class="lobSide">
-   <div id="lobCodeBox"><small id="lobCodeLab">방 코드</small><div id="lobCode"></div><button class="pb" id="copyBtn" style="margin-top:6px;font-size:13px;padding:7px 12px">초대 링크 복사</button><button class="pb" id="pubTog" type="button" style="margin-top:6px;font-size:13px;padding:7px 12px"></button></div>
+   <div id="lobCodeBox"><small id="lobCodeLab">방 코드</small><div id="lobCode"></div><button class="pb" id="copyBtn" style="margin-top:6px;font-size:13px;padding:7px 12px">초대 링크 복사</button><button class="pb" id="invBtn" type="button" style="margin-top:6px;font-size:13px;padding:7px 12px;display:none">친구 초대</button><button class="pb" id="pubTog" type="button" style="margin-top:6px;font-size:13px;padding:7px 12px"></button></div>
    <ul id="lobList"></ul>
    <div class="lobSet" id="lobHost">
     <div id="botRow" style="display:none"><span>봇</span><button class="pb" id="botMinus" type="button">−</button><b id="botN"></b><button class="pb" id="botPlus" type="button">+</button></div>
@@ -1813,6 +1830,7 @@ body.playing #emoBar{display:flex}
 </div></div>
 <div class="dlg" id="rulesModal"><div class="dlgBox rulesBox"><h3>미니게임 고르기</h3><input id="rulesSearch" type="search" placeholder="미니게임 검색" autocomplete="off"><div id="rulesHint"></div><div id="rulesGrid"></div><div class="dlgBtns"><button class="pb" id="rulesAll" type="button">모두 켜기</button><button class="pb" id="rulesNone" type="button">모두 끄기</button><button class="pb gold" id="rulesClose" type="button">닫기</button></div></div></div>
 <div class="dlg" id="pracModal"><div class="dlgBox rulesBox"><h3>연습장</h3><p class="pracInfo">하나를 골라 혼자 3번 해 봐요. 봇이 한 명 같이 하고, 점수 · 코인 · 업적 · 랭킹에는 들어가지 않아요.</p><input id="pracSearch" type="search" placeholder="미니게임 검색" autocomplete="off"><div id="pracGrid" class="ruleGrid"></div><div class="dlgBtns"><button class="pb dark" id="pracClose" type="button">닫기</button></div></div></div>
+<div class="dlg" id="invModal"><div class="dlgBox rulesBox"><h3>친구 초대</h3><p class="pracInfo">초대를 받으면 허브 알림으로 가고, 누르면 이 방으로 들어와요. 30분 안에 안 들어오면 저절로 없어져요.</p><div id="invList"></div><div class="dlgBtns"><button class="pb dark" id="invClose" type="button">닫기</button></div></div></div>
 <div class="dlg" id="dlg"><div class="dlgBox"><p id="dlgMsg"></p><div class="dlgBtns"><button class="pb" id="dlgNo" type="button">취소</button><button class="pb gold" id="dlgOk" type="button">확인</button></div></div></div>
 <div id="toast"></div>
 <script>
@@ -7415,7 +7433,7 @@ function peerOpts() {
 }
 function newCode() { var s = ''; for (var i = 0; i < 5; i++) s += CODE_CH[Math.floor(Math.random() * CODE_CH.length)]; return s; }
 function hubRoom(on) { try { if (window.FFAuth && FFAuth.setRoom) FFAuth.setRoom(on && G.code ? { game: 'dummyparty', code: G.code, path: 'dummyparty/play/index.html' } : null); } catch (e) { } }
-function destroyPeer() { G._hr = null; hubRoom(false); if (G.role === 'host' && typeof pubClose === 'function') pubClose(); if (G.peer) { try { G.peer.destroy(); } catch (e) { } } G.peer = null; G.conn = null; G.conns = {}; }
+function destroyPeer() { G._hr = null; hubRoom(false); if (window.cancelInvites) cancelInvites(); if (G.role === 'host' && typeof pubClose === 'function') pubClose(); if (G.peer) { try { G.peer.destroy(); } catch (e) { } } G.peer = null; G.conn = null; G.conns = {}; }
 function homeMsg(t, info) { var m = $('homeMsg'); m.textContent = t || ''; m.className = 'msg' + (info ? ' info' : ''); }
 function busy(on) { ['hostBtn', 'joinBtn', 'soloBtn'].forEach(function (id) { $(id).disabled = on; }); }
 
@@ -7671,6 +7689,7 @@ function renderLobby() {
   $('lobCode').textContent = G.code || '혼자 하기';
   $('lobCodeBox').style.display = G.code ? '' : 'none';
   $('lobCodeLab').textContent = G.pub ? '공개방 · 방 코드' : '비공개방 · 방 코드';
+  $('invBtn').style.display = host && !G.pub && walClient() ? '' : 'none';
   $('pubTog').style.display = host ? '' : 'none'; $('pubTog').textContent = G.pub ? '비공개방으로 바꾸기' : '공개방으로 바꾸기';
   if (host) pubSync(false);
   var ps = host ? G.players : (G.meta ? G.meta.players : []);
@@ -8657,6 +8676,52 @@ function dpAsk(msg, okLabel, onOk) {
   $('pracSearch').oninput = function () { var q = this.value.trim().toLowerCase(), bs = $('pracGrid').children; for (var i = 0; i < bs.length; i++) bs[i].style.display = !q || bs[i].dataset.k.indexOf(q) >= 0 ? '' : 'none'; };
   $('pracClose').onclick = function () { $('pracModal').classList.remove('on'); };
   $('pracModal').onclick = function (e) { if (e.target === this) this.classList.remove('on'); };
+  // 친구 초대 (비공개 방): 친구와 지금 접속 중인 사람에게 허브 알림으로 초대를 보내요. 보낸 초대는 취소할 수 있고, 방을 닫으면 모두 취소돼요
+  var INV_T = 30 * 60 * 1000, invSent = {}, GNAME = { stickseum: 'Stickseum', crownenvoy: 'Crown Envoy', beaconfall: 'Beaconfall', isleport: 'Isleport', dummyparty: 'Dummy Party', vowkeep: 'Vowkeep', hub: 'Hub' };
+  function invLive(id) { var v = invSent[id]; if (!v || v.code !== G.code || Date.now() - v.at >= INV_T) return null; return v; }
+  window.cancelInvites = function () {
+    var sb = walClient(); for (var id in invSent) { var v = invLive(id); if (sb && v && v.id != null) try { sb.rpc('ff_uninvite', { p_id: v.id }).then(function () { }, function () { }); } catch (e) { } }
+    invSent = {};
+  };
+  async function openInvite() {
+    var sb = walClient(), me = window.FFAuth && FFAuth.user(); if (!sb || !me || G.role !== 'host') return;
+    var L = $('invList'); $('invModal').classList.add('on'); L.innerHTML = '<p class="note">불러오는 중이에요...</p>';
+    var blocked = function (id) { try { return FFAuth.isBlocked(id); } catch (e) { return false; } };
+    var fr = ((FFAuth.friends && FFAuth.friends()) || []).filter(function (f) { return f.status === 'accepted' && !blocked(f.otherId); });
+    var onF = {}, others = [], otherErr = false;
+    try { var r1 = await sb.rpc('ff_online_friends'); ((r1 && r1.data) || []).forEach(function (x) { onF[x.user_id] = x.place; }); } catch (e) { }
+    try { var r2 = await sb.rpc('ff_online_players', { p_limit: 40 }); if (r2.error) otherErr = true; others = ((r2 && r2.data) || []).filter(function (x) { return x.user_id !== me.id && !blocked(x.user_id) && !fr.some(function (f) { return f.otherId === x.user_id; }); }); } catch (e) { otherErr = true; }
+    fr.sort(function (a, b) { return ((onF[b.otherId] ? 1 : 0) - (onF[a.otherId] ? 1 : 0)) || a.name.localeCompare(b.name, 'ko'); });
+    L.innerHTML = '';
+    function head(t) { var h = document.createElement('h4'); h.textContent = t; L.appendChild(h); }
+    function row(id, name, tag) {
+      var d = document.createElement('div'); d.className = 'r'; d.innerHTML = '<b></b><small></small><button class="pb gold" type="button">초대</button>';
+      d.querySelector('b').textContent = name; var bt = d.querySelector('button'), sm = d.querySelector('small');
+      function paint() {
+        clearTimeout(bt._t); var v = invLive(id); bt.disabled = false; bt.textContent = v ? '취소' : '초대'; bt.className = 'pb' + (v ? '' : ' gold');
+        sm.textContent = v ? '초대함 · ' + Math.max(1, Math.ceil((v.at + INV_T - Date.now()) / 60000)) + '분 남음' : tag;
+        if (v) bt._t = setTimeout(function () { if (d.isConnected) paint(); }, Math.min(30000, v.at + INV_T - Date.now() + 50));
+      }
+      bt.onclick = async function () {
+        SFX.play('pop'); bt.disabled = true; var v = invLive(id);
+        if (v) { var ok0 = false; try { var rc = await sb.rpc('ff_uninvite', { p_id: v.id }); ok0 = !(rc && rc.error); } catch (e) { } if (ok0) { delete invSent[id]; paint(); } else { bt.textContent = '못 취소했어요'; setTimeout(paint, 2000); } return; }
+        var ok = false, nid = null;
+        try { var rs = await sb.rpc('ff_invite', { p_to: id, p_game: 'dummyparty', p_code: G.code, p_path: 'dummyparty/play/index.html' }); ok = !(rs && rs.error); nid = ok ? rs.data : null; } catch (e) { }
+        if (ok) { invSent[id] = { id: nid, at: Date.now(), code: G.code }; paint(); } else { bt.textContent = '못 보냈어요'; setTimeout(paint, 2000); }
+      };
+      paint(); L.appendChild(d);
+    }
+    head('친구 (' + fr.length + ')');
+    if (!fr.length) L.insertAdjacentHTML('beforeend', '<p class="note">아직 친구가 없어요.</p>');
+    fr.forEach(function (f) { row(f.otherId, f.name, onF[f.otherId] ? '🟢 ' + (GNAME[onF[f.otherId]] || onF[f.otherId]) : '접속 안 함'); });
+    head('지금 접속 중인 플레이어 (' + others.length + ')');
+    if (otherErr) L.insertAdjacentHTML('beforeend', '<p class="note">접속 중인 플레이어 목록을 못 불러왔어요.</p>');
+    else if (!others.length) L.insertAdjacentHTML('beforeend', '<p class="note">지금 접속 중인 다른 플레이어가 없어요.</p>');
+    others.forEach(function (x) { row(x.user_id, x.name || '???', '🟢 ' + (GNAME[x.place] || x.place || '')); });
+  }
+  $('invBtn').onclick = openInvite;
+  $('invClose').onclick = function () { $('invModal').classList.remove('on'); };
+  $('invModal').onclick = function (e) { if (e.target === this) this.classList.remove('on'); };
   $('shopBtn').onclick = function () { SHOP.i = null; $('shopModal').classList.add('on'); renderHome(); };
   $('achBtn').onclick = function () { renderAch(); $('achModal').classList.add('on'); };
   $('achClose').onclick = function () { $('achModal').classList.remove('on'); };
@@ -8806,7 +8871,10 @@ function dpAsk(msg, okLabel, onOk) {
   function autoJoin() {
     var c = (qs.get('join') || '').toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 5);
     if (window.INTRO_ON || autoDone || c.length !== 5 || G.role || !$('nameIn').value.trim()) return;
-    autoDone = true; $('codeIn').value = c; $('joinBtn').click();
+    autoDone = true; $('codeIn').value = c;
+    // 초대가 취소됐거나 30분이 지났으면 들어가지 않아요 (확인할 수 없으면 그냥 들어가요)
+    var sb = walClient(); if (!sb) { $('joinBtn').click(); return; }
+    try { sb.rpc('ff_invite_live', { p_code: c }).then(function (r) { if (r && !r.error && r.data === false) homeMsg('취소됐거나 30분이 지나 만료된 초대예요.'); else $('joinBtn').click(); }, function () { $('joinBtn').click(); }); } catch (e) { $('joinBtn').click(); }
   }
   setTimeout(autoJoin, 3000);
   // Frenchfries777 계정이 있으면 그 닉네임을 이름으로 써요
