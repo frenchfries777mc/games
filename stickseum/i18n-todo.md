@@ -112,3 +112,7 @@ Stickseum-v0.8.html | CHAR_RANKS intermediate names | 브론즈 II · 브론즈 
 patchnotes.json | v411 title | 마스터리 포인트 난이도 | build 411 | 2026-10-26
 patchnotes.json | v411 items[0] | 마스터리 포인트 계급 해금 난이도 기존의 1.75배로 조정 | build 411 | 2026-10-26
 patchnotes.json | v411 items[1] | 계급 사이에 II, III 단계 추가 (브론즈부터 마스터까지) | build 411 | 2026-10-26
+Stickseum-v0.8.html | shop tier hint | (깃발 뺏기는 처치 2점, 어시스트 1점, 승리 3점) | build 412 | 2026-10-26
+patchnotes.json | v412 title | 마스터리 포인트 기준 조정 | build 412 | 2026-10-26
+patchnotes.json | v412 items[0] | 계급 필요 포인트를 기존의 1.75배로 깔끔하게 정리 (브론즈 90, 실버 260, 골드 530, 플래티넘 880, 다이아 1750, 옵시디언 3050, 마스터 4800, 그랜드 마스터 7000) | build 412 | 2026-10-26
+patchnotes.json | v412 items[1] | 깃발 뺏기 마스터리 포인트 조정 (처치 2점, 어시스트 1점, 승리 3점) | build 412 | 2026-10-26
