@@ -38,3 +38,8 @@ patchnotes.json | v399 title | 피사로 스킬 교체, 코사크 댄스 | build
 patchnotes.json | v399 items[0] | 피사로 스킬을 정복자의 질주로 교체 (체력 20 즉시 회복, 3초 동안 이동 속도 50% 증가) | build 399 | 2026-10-26
 patchnotes.json | v399 items[1] | 승리 포즈 코사크 댄스 추가 | build 399 | 2026-10-26
 patchnotes.json | v399 items[2] | 밸런스 표 갱신 (모든 캐릭터 조합을 모든 맵에서 한 번씩 측정) | build 399 | 2026-10-26
+Stickseum-v0.8.html | WEAPONS.wizard.desc | 데미지 16 · 쿨타임 0.6초 · 발판을 통과하고, 플레이어 한 명을 관통한 뒤 두 번째로 맞힌 상대에게서 멈추는 화염 마법 | build 400 | 2026-10-26
+patchnotes.json | v400 title | 스킨 공격 효과 | build 400 | 2026-10-26
+patchnotes.json | v400 items[0] | 마법사 기본 데미지 2 감소 (18 → 16) | build 400 | 2026-10-26
+patchnotes.json | v400 items[1] | 폭발광 궁극기가 자신에게 피해를 주지 않도록 변경 | build 400 | 2026-10-26
+patchnotes.json | v400 items[2] | 스킨마다 탄환과 휘두르기에 서로 다른 색 광채와 효과 추가 | build 400 | 2026-10-26
