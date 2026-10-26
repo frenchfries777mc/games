@@ -326,7 +326,7 @@ function useSkill(G, p, si, inp) {
       break;
     }
     case 'heal': for (const q of friends(G, p)) if (alive(q) && dist(p, q) < 6) ev(G, 'heal', { id: q.id, x: q.x, z: q.z, v: healP(G, q, 18) }); rolePuz(G, p, 'basins', 6); break;
-    case 'ward': for (const q of friends(G, p)) if (alive(q) && dist(p, q) < 7.5) { q.shield = 30; q.shieldT = 5; ev(G, 'ward', { id: q.id }); } break;
+    case 'ward': for (const q of friends(G, p)) if (alive(q) && dist(p, q) < 7.5) { q.shield = 24; q.shieldT = 5; ev(G, 'ward', { id: q.id }); } break;
     case 'raise': {
       // 1초 동안 빛을 모은 뒤 가까이 쓰러진 동료가 일어나요 (그 사이 사제가 쓰러지면 없던 일)
       const n = G.players.filter(q => q.down && !q.dead && dist(p, q) < 6).length;
@@ -1235,7 +1235,7 @@ function stepZones(G, dt) {
     for (const p of G.players) {
       if (!alive(p) || p.id === z.own) continue;
       const inside = z.k === 'tline' ? segDist(z.x, z.z, z.x + Math.cos(z.a) * z.len, z.z + Math.sin(z.a) * z.len, p.x, p.z) < z.w / 2 + 0.4 : Math.hypot(p.x - z.x, p.z - z.z) < z.r;
-      if (inside && hurtPlayer(G, p, z.dmg, src) > 0 && z.chill) p.chill = Math.max(p.chill || 0, z.chill);
+      if (inside && hurtPlayer(G, p, z.dmg * (z.own ? 0.7 : 1), src) > 0 && z.chill) p.chill = Math.max(p.chill || 0, z.chill);
     }
     ev(G, 'zfx', { f: z.fx, x: z.x, z: z.z, a: z.a, len: z.len, r: z.r });
   }
@@ -1411,7 +1411,7 @@ function botPvp(G, p, dt) {
     if (p.cd['s' + i] > 0 || (!clear && S.id !== 'heal' && S.id !== 'ward')) return;
     let go = false; const r = G.rng(), hpf = p.hp / p.maxhp;
     switch (S.id) {
-      case 'block': go = d < 4 && r < 0.12; break;
+      case 'block': go = d < 4 && hpf < 0.8 && r < 0.03; break;
       case 'shieldbash': go = d < 2.8 && r < 0.3; break;
       case 'dash': go = d > 4 && d < 8 && r < 0.15; break;
       case 'taunt': go = d < 6 && hpf < 0.7 && r < 0.1; break;
