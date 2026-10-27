@@ -668,7 +668,6 @@ var onlT=null, PLACE={hub:'허브'}, SITES=window.FF_SITES||[], SITE_IDS=SITES.m
 function placeName(g){ if(GAMES[g]) return GAMES[g].name; for(var i=0;i<SITES.length;i++) if(SITES[i].id===g) return SITES[i].name; return g==='hub'?'Hub':g; }
 async function online(){
   var b=$('#onlineBar'); if(!b||!sb) return;
-  if(me&&document.visibilityState==='visible'){ try{ await sb.rpc('ff_hub_ping'); }catch(e){} }
   var r=await sb.rpc('ff_online'); if(r.error){ b.innerHTML=''; return; }
   var c={}; (r.data||[]).forEach(function(x){ c[x.place]=x.people; });
   var html='<span class="on-dot"></span><b>'+esc(F('지금 {0}명 접속 중',c.all||0))+'</b>';
@@ -678,8 +677,10 @@ async function online(){
       html+='<span class="on-f"><span>친구</span> '+rows.slice(0,8).map(function(x){ var pn=placeName(x.place); return '<a class="who on-p" data-uid="'+esc(x.user_id)+'" data-notr title="'+esc(pn)+'">'+'<img class="on-i" src="https://frenchfries777mc.github.io/games/avatars/'+encodeURIComponent(/^[a-z0-9_-]{2,30}$/.test(AV[x.user_id]||'')?AV[x.user_id]:'account')+(/^(stk|ce|bf|ip|dp|vk)_/.test(AV[x.user_id]||'')?'.png':'.svg')+'" alt="" width="20" height="20" onerror="this.style.display=\'none\'">'+esc(names[x.user_id]||'???')+'<small>'+esc(pn)+'</small></a>'; }).join('')+(rows.length>8?'<span>+'+(rows.length-8)+'</span>':'')+'</span>'; } }
   b.innerHTML=html;
 }
-function onlineLoop(){ clearInterval(onlT); online(); onlT=setInterval(function(){ if(document.visibilityState==='visible') online(); },20000); }
-document.addEventListener('visibilitychange',function(){ if(document.visibilityState==='visible') online(); });
+var hubPT=null;
+function hubPing(){ if(me&&sb){ try{ sb.rpc('ff_hub_ping').then(function(){},function(){}); }catch(e){} } }      // 다른 탭에 가 있어도 접속으로 쳐요 (옛 코드는 화면이 보일 때만 보냈어요)
+function onlineLoop(){ clearInterval(onlT); clearInterval(hubPT); hubPing(); online(); onlT=setInterval(function(){ if(document.visibilityState==='visible'){ hubPing(); online(); } },20000); hubPT=setInterval(function(){ if(document.visibilityState!=='visible') hubPing(); },50000); }
+document.addEventListener('visibilitychange',function(){ if(document.visibilityState==='visible'){ hubPing(); online(); } });
 /* 허브를 닫으면 바로 접속 표시에서 빠져요 (ff_leave) */
 window.addEventListener('pagehide',function(){ try{ var t=JSON.parse(localStorage.getItem('sb-kebsbuvuutilitwlvxzv-auth-token')||'null'); if(t&&t.access_token) fetch('https://kebsbuvuutilitwlvxzv.supabase.co/rest/v1/rpc/ff_leave',{method:'POST',headers:{'apikey':'sb_publishable_4Egu0zm3p6cxWGvP_-GlIw_mlCpO1Nf','Authorization':'Bearer '+t.access_token,'Content-Type':'application/json'},body:'{}',keepalive:true}).catch(function(){}); }catch(e){} });
 
