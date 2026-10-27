@@ -1364,7 +1364,7 @@ function safeDir(G, p, a) {
   return a;
 }
 function botPvp(G, p, dt) {
-  const inp = {}, R = ROLES[p.role], ai = p.ai; ai.t -= dt; ai.cmbT = 1;
+  const inp = {}, R = ROLES[p.role], ai = p.ai; ai.t -= dt; ai.cmbT = 1; ai.rush = (ai.rush || 0) - dt;
   if (G.phase !== 'play') return inp;
   const foes = G.players.filter(q => q !== p && alive(q)); if (!foes.length) return inp;
   let tgt = null, bs = 1e9;
@@ -1382,7 +1382,7 @@ function botPvp(G, p, dt) {
   for (const pr of G.projs) {
     if (pr.own === p.id || pr.vx == null) continue;
     if (ai.pj !== pr.id) { ai.pj = pr.id; ai.pjOk = G.rng() < (ranged || d > 4 ? 0.4 : 0.15); }   // 날아오는 걸 알아채는 건 열에 여섯 번쯤이에요
-    if (!ai.pjOk) continue;
+    if (!ai.pjOk || ai.rush > 0) continue;   // 몰아칠 때는 날아오는 것도 무시하고 파고들어요
     const rx = p.x - pr.x, rz = p.z - pr.z, v2 = pr.vx * pr.vx + pr.vz * pr.vz; if (v2 < 1) continue;
     const t = (rx * pr.vx + rz * pr.vz) / v2; if (t < 0 || t > 0.55) continue;
     const cx = rx - pr.vx * t, cz = rz - pr.vz * t, cd = Math.hypot(cx, cz);
@@ -1391,12 +1391,13 @@ function botPvp(G, p, dt) {
       inp.mx = Math.cos(a); inp.mz = Math.sin(a); if (p.rollCd <= 0 && t < 0.3 && G.rng() < 0.7) inp.roll = true; break;
     }
   }
-  if (ai.t <= 0) { ai.t = 0.4 + G.rng() * 0.5; ai.sd = G.rng() < 0.5 ? 1 : -1; ai.hold = G.rng() < 0.15; }
-  const want = ranged ? 8 : (R.atk.range + 0.7) * 0.8;
+  if (ai.t <= 0) { ai.t = 0.4 + G.rng() * 0.5; ai.sd = G.rng() < 0.5 ? 1 : -1; ai.hold = G.rng() < 0.15; if (!(ai.rush > 0) && G.rng() < 0.45) ai.rush = 2.5 + G.rng() * 2; }
+  const want = ranged ? 6.5 : (R.atk.range + 0.7) * 0.8;
   if (inp.mx == null) {
     if (low && d < 12) { const a = safeDir(G, p, Math.atan2(p.z - nearest.z, p.x - nearest.x)); inp.mx = Math.cos(a); inp.mz = Math.sin(a); if (d < 3 && p.rollCd <= 0 && G.rng() < 0.05) inp.roll = true; }   // 체력이 낮으면 물러나요 (맞지 않고 4초가 지나면 저절로 차올라요)
+    else if (ai.rush > 0 && d > (ranged ? 4 : 1.6)) moveTo(G, p, inp, tgt.x, tgt.z, ranged ? 3.5 : 1.2);
     else if (d > want + 1.5 || !clear) moveTo(G, p, inp, tgt.x, tgt.z, 0.6);
-    else if (ranged && d < want - 3.5 && d > 2.2) { const a = safeDir(G, p, ta + Math.PI); inp.mx = Math.cos(a); inp.mz = Math.sin(a); }
+    else if (ranged && d < 3.2 && d > 1.5) { const a = safeDir(G, p, ta + Math.PI); inp.mx = Math.cos(a); inp.mz = Math.sin(a); }
     else if (!ai.hold) { inp.mx = -Math.sin(ta) * ai.sd * 0.8 + Math.cos(ta) * 0.2; inp.mz = Math.cos(ta) * ai.sd * 0.8 + Math.sin(ta) * 0.2; }
     // 멀리서 구르며 파고들기
     if (!ranged && d > 7 && p.rollCd <= 0 && G.rng() < 0.02) inp.roll = true;

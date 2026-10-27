@@ -3,7 +3,7 @@
 
 import { T } from './tr.js';
 
-export const VERSION = 'v0.1', BUILD = 24;
+export const VERSION = 'v0.1', BUILD = 25;
 
 export const ROLES = {
   knight: {
@@ -18,8 +18,8 @@ export const ROLES = {
     role: T('튼튼하게 버티며 공격·공격·강타로 몰아붙여요.')
   },
   priest: {
-    name: T('사제'), color: '#e8e4ef', hp: 125, speed: 6.0,
-    atk: { kind: 'orb', dmg: 8, cd: 0.5, speed: 16 },
+    name: T('사제'), color: '#e8e4ef', hp: 150, speed: 6.0,
+    atk: { kind: 'orb', dmg: 10, cd: 0.5, speed: 16 },
     skills: [
       { id: 'heal', name: T('치유'), key: 'Q', cd: 9, desc: T('내 체력을 18 회복해요.') },
       { id: 'ward', name: T('보호막'), key: 'E', cd: 14, desc: T('5초 동안 피해 24를 막는 보호막을 씌워요.') },
@@ -29,8 +29,8 @@ export const ROLES = {
     role: T('빛 구슬로 따라붙고, 세 번째 공격은 큰 빛을 꿰뚫어 쏴요.')
   },
   archer: {
-    name: T('사냥꾼'), color: '#5a9a4e', hp: 190, speed: 6.4,
-    atk: { kind: 'arrow', dmg: 9, cd: 0.36, speed: 26 },
+    name: T('사냥꾼'), color: '#5a9a4e', hp: 205, speed: 6.4,
+    atk: { kind: 'arrow', dmg: 11, cd: 0.36, speed: 26 },
     skills: [
       { id: 'pierce', name: T('관통 화살'), key: 'Q', cd: 5, desc: T('상대를 꿰뚫고 날아가는 강한 화살이에요. 45 피해.') },
       { id: 'rain', name: T('화살비'), key: 'E', cd: 9, desc: T('조준한 곳에 1.5초 동안 화살비를 내려요.') },
@@ -41,7 +41,7 @@ export const ROLES = {
   },
   viking: {
     name: T('바이킹'), color: '#c8873a', hp: 290, speed: 5.6,
-    atk: { kind: 'melee', range: 2.6, arc: 2.0, dmg: 20, cd: 0.55 },
+    atk: { kind: 'melee', range: 2.6, arc: 2.0, dmg: 18, cd: 0.55 },
     skills: [
       { id: 'leap', name: T('도약 강타'), key: 'Q', cd: 6, desc: T('앞으로 크게 뛰어올라 내려앉으며 둘레 상대에게 36 피해를 줘요.') },
       { id: 'bloodlust', name: T('피의 갈증'), key: 'E', cd: 12, desc: T('5초 동안 공격이 30% 빨라지고, 준 피해의 일부를 체력으로 되찾아요.') },
@@ -51,7 +51,7 @@ export const ROLES = {
     role: T('느리지만 도끼 한 방이 무거운 가장 튼튼한 전사예요.')
   },
   mamluk: {
-    name: T('맘루크'), color: '#d0443a', hp: 410, speed: 7.2,
+    name: T('맘루크'), color: '#d0443a', hp: 370, speed: 7.2,
     atk: { kind: 'melee', range: 2.2, arc: 1.8, dmg: 18, cd: 0.3 },
     skills: [
       { id: 'flurry', name: T('연속 베기'), key: 'Q', cd: 4, desc: T('앞으로 파고들며 다섯 번 번갈아 베어 9씩 피해를 줘요.') },
@@ -62,8 +62,8 @@ export const ROLES = {
     role: T('굽은 칼로 빠르게 베고 파고드는 날랜 전사예요.')
   },
   witch: {
-    name: T('마녀'), color: '#a56ad8', hp: 160, speed: 6.2,
-    atk: { kind: 'orb', dmg: 9, cd: 0.45, speed: 16 },
+    name: T('마녀'), color: '#a56ad8', hp: 170, speed: 6.2,
+    atk: { kind: 'orb', dmg: 11, cd: 0.45, speed: 16 },
     skills: [
       { id: 'potion', name: T('독 물약'), key: 'Q', cd: 7, desc: T('조준한 곳에 물약을 던져 터진 자리 둘레 상대에게 30 피해를 주고 불태워요.') },
       { id: 'curse', name: T('저주'), key: 'E', cd: 10, desc: T('조준한 곳에 저주를 터뜨려 잠시 뒤 40 피해를 주고 3초 동안 느리게 해요.') },
@@ -73,8 +73,8 @@ export const ROLES = {
     role: T('마법 구슬과 저주로 멀리서 괴롭혀요.')
   },
   skeleton: {
-    name: T('스켈레톤'), color: '#cfc8b0', hp: 450, speed: 7.0,
-    atk: { kind: 'melee', range: 2.0, arc: 2.0, dmg: 24, cd: 0.32 },
+    name: T('스켈레톤'), color: '#cfc8b0', hp: 400, speed: 7.0,
+    atk: { kind: 'melee', range: 2.0, arc: 2.0, dmg: 19, cd: 0.32 },
     skills: [
       { id: 'scatter', name: T('뼈 흩어지기'), key: 'Q', cd: 6, desc: T('뒤로 빠지며 몸이 흩어져 뼛조각 여덟 개가 사방으로 튀어요. 하나에 12 피해.') },
       { id: 'fan', name: T('뼈 창 다섯 갈래'), key: 'E', cd: 6, desc: T('뼈 창 다섯 대를 부채꼴로 던져요. 하나에 15 피해.') },
