@@ -194,3 +194,5 @@ patchnotes.json | v443 title | 오로라 스킬 커튼 효과, 하이퍼 배틀�
 patchnotes.json | v443 items[0] | 그랜드 마스터 스킬과 궁극기에 오로라 커튼 연출 추가 하이퍼 배틀로얄 부메랑 재투척 시간 2배 | build 443 | 2026-10-27
 patchnotes.json | v444 title | 하이퍼 배틀로얄 공격 속도 2배 | build 444 | 2026-10-27
 patchnotes.json | v444 items[0] | 하이퍼 배틀로얄 공격 간격을 절반으로 수정 (공격 속도 2배) | build 444 | 2026-10-27
+patchnotes.json | v445 title | 입냄새 학살자 스킨, 랭크전 같은 계정 제한 | build 445 | 2026-10-27
+patchnotes.json | v445 items[0] | 학살자 4000 sC 스킨 입냄새 학살자 추가 (무기 없음, 몸 주변 냄새 입자, 입에서 나가는 공격, 방패와 스킬 냄새색) 랭크전에서 같은 계정끼리 같은 방에 들어올 수 없게 변경 | build 445 | 2026-10-27
