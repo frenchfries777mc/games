@@ -3259,6 +3259,39 @@ function luxSprite(kind, col, col2, big){
   luxSpriteCache.set(key,sp); return sp;
 }
 /* 오로라 색 (그랜드 마스터 스킨): 초록 → 청록 → 파랑 → 보라 → 분홍으로 천천히 흐르는 색. i 가 다르면 같은 순간에도 다른 색이라 여러 겹이 오묘하게 어우러져요 */
+/* 그랜드 마스터 스킨의 오로라 쇼 (4000 sC 스킨보다 훨씬 화려하게): 몸 뒤에 넓게 물결치는 오로라 커튼 일곱 장과 큰 후광, 별가루, 땅에서 퍼지는 오로라 물결 · 몸 앞에는 몸을 감싸고 도는 빛줄기 세 가닥, 꼬리를 끄는 구슬 여섯 개, 솟아오르는 반짝임, 머리 위 삼중 고리 */
+function drawAuroraShow(c, t, layer, q){
+  const A=(i,a)=>hexA(auroraHex(t*0.9,i),a), fr=v=>v-Math.floor(v);
+  c.save(); c.lineCap='round'; c.lineJoin='round'; c.globalCompositeOperation='lighter';
+  const cross=(x,y,s2)=>{ c.fillRect(x-s2,y-0.6,2*s2,1.2); c.fillRect(x-0.6,y-s2*1.5,1.2,3*s2); };
+  if(layer==='back'){
+    { const g=c.createRadialGradient(0,-40,4,0,-40,130); g.addColorStop(0,A(0,0.5)); g.addColorStop(0.45,A(2,0.25)); g.addColorStop(1,A(4,0)); c.fillStyle=g; c.save(); c.translate(0,-40); c.scale(0.9,1.3); c.translate(0,40); c.beginPath(); c.arc(0,-40,130,0,7); c.fill(); c.restore(); }
+    const nr=q>=1?7:4;
+    for(let k=0;k<nr;k++){                                       // the curtains: tall wavy bands that change colour from the foot to the top
+      const bx=(k-(nr-1)/2)*26+Math.sin(t*0.9+k)*6, hgt=190+34*Math.sin(t*1.1+k*1.4), wd=15+5*Math.sin(t*1.7+k*2.1), g=c.createLinearGradient(0,-hgt,0,6);
+      g.addColorStop(0,A(k,0)); g.addColorStop(0.35,A(k+1,0.42)); g.addColorStop(0.7,A(k+3,0.6)); g.addColorStop(1,A(k+5,0.12));
+      c.fillStyle=g; c.beginPath(); c.moveTo(bx-wd,4);
+      for(let s2=0;s2<=14;s2++){ const y=4-s2*hgt/14, f=s2/14; c.lineTo(bx-wd+Math.sin(t*2.3+s2*0.55+k*1.7)*(4+f*15), y); }
+      for(let s2=14;s2>=0;s2--){ const y=4-s2*hgt/14, f=s2/14; c.lineTo(bx+wd+Math.sin(t*2.3+s2*0.55+k*1.7+0.9)*(4+f*15), y); }
+      c.closePath(); c.fill();
+    }
+    if(q>=1){ for(let i=0;i<26;i++){ const ph=fr(t*(0.18+0.22*fr(i*0.618))+i*0.37), x=Math.sin(i*12.9898)*95, y=-6-ph*190; c.fillStyle=A(i,(1-ph)*(0.5+0.5*Math.abs(Math.sin(t*5+i)))); cross(x,y,1.4+1.6*(1-ph)); } }       // star dust drifting up
+    for(let k=0;k<3;k++){ const ph=fr(t*0.5+k/3); c.strokeStyle=A(k*2,(1-ph)*0.8); c.lineWidth=4*(1-ph)+1; c.beginPath(); c.ellipse(0,1,18+110*ph,5+28*ph,0,0,7); c.stroke(); }          // ripples over the ground
+    c.setLineDash([9,6]); c.lineDashOffset=-t*40; c.strokeStyle=A(1,0.95); c.lineWidth=2.4; c.beginPath(); c.ellipse(0,1,36,9,0,0,7); c.stroke(); c.setLineDash([]);
+  } else {
+    if(q>=1){ for(let k=0;k<3;k++){                              // three strands of light that spiral round the body
+      c.strokeStyle=A(k*2,0.6); c.lineWidth=2; c.beginPath();
+      for(let s2=0;s2<=36;s2++){ const f=s2/36, a=t*2.6+k*2.094+f*9, y=-2-f*88, r=15+8*Math.sin(f*6+t*1.5); const x=Math.cos(a)*r; if(Math.sin(a)<-0.2){ continue; } if(s2===0||Math.sin(a-0.25)<-0.2) c.moveTo(x,y); else c.lineTo(x,y); }
+      c.stroke(); } }
+    for(let k=0;k<6;k++){                                        // orbs with a long glowing tail
+      for(let j=0;j<12;j++){ const a=t*(2.1+0.25*k)+k*1.047-j*0.1, f=1-j/12, rx=44+8*Math.sin(t+k), ry=11+3*k;
+        if(Math.sin(a)<=0) continue; c.fillStyle=(j===0)?hexA('#ffffff',0.95):A(k+j*0.3,f*0.85); const rr=(j===0?4:3.4*f+0.6); c.beginPath(); c.arc(Math.cos(a)*rx, -14-k*11+Math.sin(a)*ry, rr, 0, 7); c.fill(); } }
+    for(let i=0;i<(q>=1?18:8);i++){ const ph=fr(t*0.9+i*0.173), a=i*2.399+t*0.4, d=8+60*ph; c.fillStyle=A(i,(1-ph)*0.9); cross(Math.cos(a)*d, -30+Math.sin(a)*d*0.9-ph*30, 2.4*(1-ph)+0.8); }
+    for(let k=0;k<3;k++){ c.strokeStyle=A(k*2+1,0.85-k*0.2); c.lineWidth=2.4-k*0.6; c.beginPath(); c.ellipse(0,-72-k*5,16+k*6,4.6+k*1.5,0,0,7); c.stroke(); }
+    const fp=fr(t*0.55+0.2); c.strokeStyle=hexA('#ffffff',(1-fp)*0.5); c.lineWidth=3.5*(1-fp)+0.6; c.beginPath(); c.ellipse(0,-34,14+80*fp,20+105*fp,0,0,7); c.stroke();
+  }
+  c.restore();
+}
 function auroraHex(t, i){
   const k=0.5+0.5*(Math.sin(t*0.9+i*1.1)*0.62+Math.sin(t*0.37+i*1.9)*0.38), h=(140+k*185)%360/360, l=0.62+0.1*Math.sin(t*1.7+i*2.3), sa=0.92;
   const a=sa*Math.min(l,1-l), f=n=>{ const kk=(n+h*12)%12; return l-a*Math.max(-1,Math.min(kk-3,9-kk,1)); };
@@ -3266,6 +3299,7 @@ function auroraHex(t, i){
 }
 function drawSkinLux(c, lux, tint, now, seed, layer){
   if(!lux) return;
+  if(lux>=4){ drawAuroraShow(c, (now||0)/1000+(seed||0)*0.37, layer, fxQuality); return; }
   const seedNum=Math.floor((seed||0)*37)%1000, t=(now||0)/1000+(seed||0)*0.37, col=(lux>=4)?auroraHex(((now||0)/1000+(seed||0)*0.37)*0.6,0):(tint||'#ffffff'), col2=(lux>=4)?auroraHex(((now||0)/1000+(seed||0)*0.37)*0.6,3):((lux>=2)?shiftHex(tint||'#ffffff',45):(tint||'#ffffff')), big=lux>=2, q=fxQuality;
   const scol=(lux>=4)?auroraHex(Math.floor(((now||0)/1000+(seed||0)*0.37)*2)/2*0.6,0):col, scol2=(lux>=4)?auroraHex(Math.floor(((now||0)/1000+(seed||0)*0.37)*2)/2*0.6,3):col2;      // (the little cached pictures only change twice a second)
   const fr=(v)=>v-Math.floor(v);
@@ -3327,6 +3361,21 @@ function drawSkinLux(c, lux, tint, now, seed, layer){
   }
   c.restore();
 }
+/* 스킨마다 다른 움직임 (2000 sC 이상 스킨과 그랜드 마스터 스킨): 캐릭터 선택 창의 큰 그림과 상점 미리보기에서 몸이 테마에 맞게 움직여요
+   flame 불꽃: 달아오른 듯 통통 튀며 떨어요 · frost 서리: 천천히 숨 쉬듯 · electric 전기: 지직거리며 흔들 · void 공허: 공중에 떠올라 흔들 · halo/crown: 위로 솟았다 내려와요 · sparkle/glow: 좌우로 살랑 · 오로라: 천천히 떠다니며 기울어요 */
+function skinIsSpecial(sid){ const it=sid && COSMETICS[sid]; return !!(it && it.cat==='skin' && ((it.price||0)>=2000 || (it.lux||0)>=3)); }
+function skinMotion(sid, t){
+  const it=COSMETICS[sid]||{}, th=(it.lux>=4)?'aurora':(it.fx||'');
+  switch(th){
+    case 'flame': return {dx:Math.sin(t*23)*0.7, dy:-Math.abs(Math.sin(t*3.2))*3.5, rot:Math.sin(t*7)*0.035};
+    case 'frost': return {dx:0, dy:Math.sin(t*1.5)*1.6, rot:Math.sin(t*0.8)*0.012};
+    case 'electric': { const k=Math.floor(t*16), r1=Math.sin(k*91.7)*0.5+0.5, r2=Math.sin(k*47.3)*0.5+0.5; return {dx:(r1-0.5)*3, dy:-(r2>0.7?3:0), rot:(r2-0.5)*0.06}; }
+    case 'void': return {dx:Math.sin(t*0.9)*2, dy:-7-Math.sin(t*1.8)*4, rot:Math.sin(t*1.1)*0.05};
+    case 'halo': case 'crown': return {dx:0, dy:-Math.abs(Math.sin(t*1.2))*6, rot:Math.sin(t*1.2)*0.03};
+    case 'aurora': return {dx:Math.sin(t*0.7)*2, dy:-5+Math.sin(t*1.4)*4, rot:Math.sin(t*0.9)*0.05};
+    default: return {dx:Math.sin(t*2)*1.6, dy:Math.sin(t*4)*0.8, rot:Math.sin(t*2)*0.07};
+  }
+}
 function drawItemPreview(cv,id,nowMs){
   const it=COSMETICS[id], big=!!(it.cat==='skin' && it.lux); cv.width=big?112:80; cv.height=big?112:80;      // a tier skin gets a larger picture: the show reaches far beyond the figure
   const c=cv.getContext('2d'); c.lineCap='round'; c.lineJoin='round';
@@ -3334,6 +3383,7 @@ function drawItemPreview(cv,id,nowMs){
   const nowT=(nowMs===undefined)?700:nowMs;
   c.strokeStyle='#cfd3dc'; c.fillStyle='#cfd3dc'; c.lineWidth=4;
   if(it.cat==='skin'){
+    const mo=skinIsSpecial(id)?skinMotion(id,nowT/1000):null; c.save(); if(mo){ c.translate(40+mo.dx,79+mo.dy); c.rotate(mo.rot); c.translate(-40,-79); }
     if(it.lux){ c.save(); c.translate(40,79); c.scale(0.55,0.55); drawSkinLux(c,it.lux,it.tint,nowT,id.length,'back'); c.restore(); c.strokeStyle='#cfd3dc'; c.fillStyle='#cfd3dc'; c.lineWidth=4; }   // (the show behind the little figure)
     c.beginPath(); c.arc(40,50,10,0,7); c.fill();
     c.beginPath(); c.moveTo(40,60); c.lineTo(40,78); c.stroke();
@@ -3341,6 +3391,7 @@ function drawItemPreview(cv,id,nowMs){
     drawWeaponPersona(c,it.char,40,50,10,60,it.tint,it.concept);
     if(it.fx) drawSkinFx(c,(it.lux>=4?'sparkle':it.fx),(it.lux>=4?auroraHex(nowT/1000*0.9,1):it.tint),40,50,it.lux?13:10,nowT);
     if(it.lux){ c.save(); c.translate(40,79); c.scale(0.55,0.55); drawSkinLux(c,it.lux,it.tint,nowT,id.length,'front'); c.restore(); }   // (and in front of it)
+    c.restore();
   } else if(it.cat==='bcol'){
     const col=bodyShineColor(id, nowT, 0);
     c.strokeStyle=col; c.fillStyle=col; c.lineWidth=5; if(it.shine){ c.shadowColor=col; c.shadowBlur=10; }
@@ -3410,7 +3461,7 @@ function renderShop(){
       box.appendChild(cv); }
     else if(it.cat==='emo'){ cv=document.createElement('div'); cv.style.cssText='width:80px; height:64px; margin:0 auto 4px; border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:38px; background:#1a1d26;'; cv.textContent=it.em; box.appendChild(cv); }
     else { cv=document.createElement('canvas'); box.appendChild(cv); drawItemPreview(cv,id); }
-    if(it.lux || it.shine || it.cat==='pose') shopAnimList.push({cv,id});            // its little figure moves (the show is a function of the time)
+    if(it.lux || it.shine || it.cat==='pose' || skinIsSpecial(id)) shopAnimList.push({cv,id});            // its little figure moves (the show is a function of the time)
     if(it.cat==='skin'){ const cn=document.createElement('div'); cn.className='wk'; cn.style.display='block'; cn.textContent=(WEAPON_PERSONA_NAME[it.char]||it.char); box.appendChild(cn); }
     const nm=document.createElement('div'); nm.className='nm'; nm.textContent=cosDisplayName(it); if(it.cat==='pbg'||it.cat==='pfr') nm.setAttribute('data-notr',''); box.appendChild(nm);
     const owned=cosOwned(id), unlockedTier=!!(it.tier && owned);
@@ -5221,7 +5272,7 @@ function shuffle(arr){ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.
 /* ===== the version of this file =====
    Players with different versions CAN meet and play together: the automatic matchmaking uses the same room names for every version (online-<mode>-<map>-<slot>), and nobody is refused because of a different build.
    The build is only sent along with the join message and the lobby (for information); the corner of the screen shows it. */
-const GAME_BUILD='build 2026-10-18-v435';
+const GAME_BUILD='build 2026-10-18-v436';
 const GAME_VERSION='0.8', GAME_VERSION_NAME='황금을 찾아서';   // 게임 버전 이름: versions.json의 title과 같게 (빌드마다 바꾸지 않음)
 const WEEKLY_EVENTS=[
   {id:'lowg',    name:'저중력 난투', desc:'몸이 둥실둥실, 중력이 약해진 난투', rules:{grav:0.6}},
@@ -11161,13 +11212,17 @@ function drawWeaponPortrait(wid){
   let col=(players[myId] && players[myId].color) || '#3fe0c5';
   const _ec=getEquippedCos(), _shn=(_ec.col&&COSMETICS[_ec.col]&&COSMETICS[_ec.col].shine)?_ec.col:null;
   clearTimeout(drawWeaponPortrait._t);
-  if(_shn){ col=bodyShineColor(_shn, performance.now(), 0); drawWeaponPortrait._t=setTimeout(()=>{ const cv=document.getElementById('weaponPortraitCanvas'); if(cv && cv.getClientRects().length) drawWeaponPortrait(wid); }, 50); }   // (a shiny color keeps moving in the pick window)
+  const _sk0=(getEquippedCos().skin||{})[wid], _spec=skinIsSpecial(_sk0);                      // a special skin: the big picture moves in its own way (see skinMotion)
+  if(_shn){ col=bodyShineColor(_shn, performance.now(), 0); }
+  if(_shn || _spec){ drawWeaponPortrait._t=setTimeout(()=>{ const cv=document.getElementById('weaponPortraitCanvas'); if(cv && cv.getClientRects().length) drawWeaponPortrait(wid); }, 50); }   // (a shiny color keeps moving in the pick window)
   c.save();
   c.translate(canvas.width/2, canvas.height*0.7);
   if(_shn) c.shadowColor=col, c.shadowBlur=12;
   c.scale(1.8,1.8);
   const HIP=-22, SH=-42, HEADCY=-52, HEADR=9;
-  const _sk=(getEquippedCos().skin||{})[wid], _tint=(_sk&&COSMETICS[_sk])?COSMETICS[_sk].tint:undefined;
+  const _sk=(getEquippedCos().skin||{})[wid], _tint=(_sk&&COSMETICS[_sk])?COSMETICS[_sk].tint:undefined, _now=performance.now(), _lux=_spec?(COSMETICS[_sk].lux||0):0;
+  if(_lux>=3){ c.save(); drawSkinLux(c,_lux,_tint,_now,7,'back'); c.restore(); }          // (the show behind the figure stands still on the ground)
+  if(_spec){ const mo=skinMotion(_sk,_now/1000); c.translate(mo.dx,mo.dy); c.rotate(mo.rot); }
   if(wid==='dracula') drawDraculaCape(c,-1,3,SH,_tint);
   c.strokeStyle=col; c.fillStyle=col; c.lineWidth=5; c.lineCap='round'; c.lineJoin='round';
   c.beginPath(); c.moveTo(0,HIP); c.lineTo(-7,0); c.stroke();
@@ -11178,8 +11233,10 @@ function drawWeaponPortrait(wid){
   const ax=0.9, ay=0.28;
   c.beginPath(); c.moveTo(0,SH+6); c.lineTo(ax*24, SH+6+ay*24); c.stroke();
   drawHeldWeapon(c, wid, ax, ay, ax*24, SH+6+ay*24, 0, conceptOfSkin(_sk));
+  if(_spec && COSMETICS[_sk].fx) drawSkinFx(c,(_lux>=4?'sparkle':COSMETICS[_sk].fx),(_lux>=4?auroraHex(_now/1000*0.9,1):_tint),0,HEADCY,HEADR*1.3,_now);
   if(_shn){ c.shadowBlur=0; c.save(); c.translate(0,0); drawShineGlints(c, performance.now(), 0); c.restore(); }
   c.restore();
+  if(_lux>=3){ c.save(); c.translate(canvas.width/2, canvas.height*0.7); c.scale(1.8,1.8); drawSkinLux(c,_lux,_tint,_now,7,'front'); c.restore(); }
 }
 function drawCharIcon(cv, wid){          // a small picture of the character itself (head gear and weapon): used where a character without a skin used to show only its emoji. It is drawn in the very same frame, size and colour as a skin's picture (drawItemPreview), so a card with a skin and a card without one look alike
   cv.width=112; cv.height=112; const c=cv.getContext('2d'); c.clearRect(0,0,112,112);
@@ -17554,7 +17611,7 @@ function drawStickman(p){
     return;
   }
   let bodyCol=((hitFlashUntil[p.id]||0)>performance.now())?'#ffffff':(p.isBoss?'#a32626':(p.isMinion?p.color:(p.isZombie?ZOMBIE_COLOR:p.color)));
-  if(skinTint && p.alive!==false && bodyCol===p.color && skinId && (COSMETICS[skinId].lux||COSMETICS[skinId].isNew)){ bodyCol=mixHex(p.color, skinTint, 0.5+0.5*Math.sin(luxNow/1100+luxSeed)); }   // a rare skin: the lines slowly drift between the player's color and the skin's
+  if(skinTint && p.alive!==false && bodyCol===p.color && skinId && (COSMETICS[skinId].lux||COSMETICS[skinId].isNew)){ bodyCol=(luxLv>=4)?skinTint:mixHex(p.color, skinTint, 0.5+0.5*Math.sin(luxNow/1100+luxSeed)); }   // a rare skin: the lines slowly drift between the player's color and the skin's
   const shineId=(p.alive!==false && bodyCol===p.color && p.cos && p.cos.col && COSMETICS[p.cos.col] && COSMETICS[p.cos.col].shine) ? p.cos.col : null;
   if(shineId) bodyCol=bodyShineColor(shineId, luxNow, luxSeed);
   if(playerCountForGlow()<=12 && p.alive!==false){ ctx.shadowColor=bodyCol; ctx.shadowBlur=shineId?14:9; }                  // neon glow
