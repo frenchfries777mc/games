@@ -3594,7 +3594,7 @@ const MODES = {
   bigcq:    {id:'bigcq', noTeleport:true, name:'거대 점령전', desc:'🧪 실험적 모드 · 24~32명이 두 팀으로 나뉘는 대규모 난투 · 아주 가로로 긴 맵 양 끝에서 시작하고 부활은 15초 · 순간이동 사용 불가 · 왼쪽·중앙·오른쪽 깃발에 사람이 더 많은 팀이 15초 서 있으면 그 팀 깃발이 돼요 (이미 차지한 깃발도 다시 뺏을 수 있어요) · 세 깃발을 모두 차지한 팀이 승리 (12분이 지나면 깃발이 더 많은 팀) · 팀원끼리 캐릭터가 겹쳐도 돼요', teams:true, teamSize:'half', extra:0, elim:false, respawnTime:15, special:true, exp:true, fixedMapId:'giant_cq', minPlayers:24, fillTo:32, allowDup:true},
   redlight: {id:'redlight', name:'무궁화 꽃이 피었습니다', desc:'🧪 실험적 모드 · 배틀로얄에 신호등이 더해져요 · 초록불에는 마음껏 움직이고, 빨간불에 움직이면 100 피해를 입어요(빨간불이 켜지고 0.45초는 봐줘요) · 시간이 지날수록 초록불이 짧아져요 · 최후의 1인이 승리', teams:false, extra:0, elim:true, special:true, exp:true},
   crownhold:{id:'crownhold', name:'왕관 잡기', desc:'🧪 실험적 모드 · 왕관을 가진 사람을 쓰러뜨리면 왕관을 빼앗아요 · 왕관을 들고 있는 동안 1초에 1점씩 쌓여요 · 먼저 60점을 쌓은 사람이 승리 (8분이 지나면 점수가 높은 사람이 승리)', teams:false, extra:0, elim:false, respawnTime:4, special:true, exp:true},
-  hyperbr:  {id:'hyperbr', name:'하이퍼 배틀로얄', desc:'🧪 실험적 모드 · 배틀로얄 규칙에 체력 7배, 공격 속도 절반, 대쉬 무한, 궁극기 쿨타임 1/5배 · 최후의 1인이 승리', teams:false, extra:0, elim:true, exp:true},
+  hyperbr:  {id:'hyperbr', name:'하이퍼 배틀로얄', desc:'🧪 실험적 모드 · 배틀로얄 규칙에 체력 7배, 공격 간격 절반(두 배 빠른 공격), 대쉬 무한, 궁극기 쿨타임 1/5배 · 최후의 1인이 승리', teams:false, extra:0, elim:true, exp:true},
   lowg:     {id:'lowg', name:'저중력 난투', desc:'중력이 약하고 넉백이 강한 난투 · 높이 날아오르고 멀리 튕겨나가요 · 4분 동안 킬이 가장 많은 사람이 승리', teams:false, extra:0, elim:false, respawnTime:3, rules:{grav:0.6, kb:2}, special:true}
 };
 const MODE_ORDER = ['ffa','br','duo','team','duel','conquest'];
@@ -5329,7 +5329,7 @@ function shuffle(arr){ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.
 /* ===== the version of this file =====
    Players with different versions CAN meet and play together: the automatic matchmaking uses the same room names for every version (online-<mode>-<map>-<slot>), and nobody is refused because of a different build.
    The build is only sent along with the join message and the lobby (for information); the corner of the screen shows it. */
-const GAME_BUILD='build 2026-10-18-v443';
+const GAME_BUILD='build 2026-10-18-v444';
 const GAME_VERSION='0.8', GAME_VERSION_NAME='황금을 찾아서';   // 게임 버전 이름: versions.json의 title과 같게 (빌드마다 바꾸지 않음)
 const WEEKLY_EVENTS=[
   {id:'lowg',    name:'저중력 난투', desc:'몸이 둥실둥실, 중력이 약해진 난투', rules:{grav:0.6}},
@@ -12694,7 +12694,7 @@ function tryFire0(p, angle, tMs){
   }
   const free = (w.kind==='cards' && p.freeVolleys>0 && p.freeUntil>tSec); // combo reward: 3 volleys that ignore the cooldown
   const rush = (w.id==='gloves' && p.rushUntil>tSec); // ultimate: triple attack speed
-  const cdEff = (free ? 0.15 : (rush ? w.cd/3-0.002 : (w.id==='pizarro' ? PZ_ATK_CD[pzStacks(p)] : w.cd))) * (p.isZombie?ZOMBIE_CD_MULT:1) * (gameMode==='hyperbr'?2:1) * (w.id==='pizarro'?1:pzCdMult(p)) * (skillHasBuff(p,'rapid',tSec)?0.5:1) * ((w.id==='kan' && p.kanWingsUntil>tSec)?KAN_ULT_CD_MULT:1);   // pistol skill: double fire rate
+  const cdEff = (free ? 0.15 : (rush ? w.cd/3-0.002 : (w.id==='pizarro' ? PZ_ATK_CD[pzStacks(p)] : w.cd))) * (p.isZombie?ZOMBIE_CD_MULT:1) * (gameMode==='hyperbr'?0.5:1) * (w.id==='pizarro'?1:pzCdMult(p)) * (skillHasBuff(p,'rapid',tSec)?0.5:1) * ((w.id==='kan' && p.kanWingsUntil>tSec)?KAN_ULT_CD_MULT:1);   // pistol skill: double fire rate
   if(tSec - p.lastShot < cdEff) return;
   if(free) p.freeVolleys--;
   p.lastShot = tSec;
@@ -14370,7 +14370,7 @@ function hostTickCore(dt,t){
         if(owner && owner.alive){
           const ocy=owner.y-PLAYER_H/2;
           if(dist(nx,ny,owner.x,ocy) <= PLAYER_H/2+BULLET_R){
-            if(!b.free){ owner.boomerangOut=false; owner.boomerangReadyAt=t/1000+0.25*(gameMode==='hyperbr'?2:1); }
+            if(!b.free){ owner.boomerangOut=false; owner.boomerangReadyAt=t/1000+0.25*(gameMode==='hyperbr'?0.5:1); }
             bullets.splice(i,1);
             continue;
           }
