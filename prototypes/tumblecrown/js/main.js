@@ -2,7 +2,7 @@
 // 화면 흐름, 조작, 멀티(친구 초대, PeerJS), 저장
 import { View } from './render.js';
 import { createGame, step, snapshot, chooseBless, carryOver, INTRO_T, HV_DELAY } from './sim.js';
-import { ROLES, ROLE_IDS, COLORS, BOT_NAMES, MAX_PLAYERS, BLESSINGS, CHAPTERS, CH, FOES, MAP, ACHIEVEMENTS, TALK, GEAR_TIERS, GEAR_COST, COSMETICS, MIDB, WEEKLY, weekInfo, VERSION, BUILD, roleLevel, LORE, COMBOS, CURSES, DEEP, DEEP_I, TALK_X, ROLE_PUZ, flagShown } from './data.js';
+import { ARENA_THEMES, ROLES, ROLE_IDS, COLORS, BOT_NAMES, MAX_PLAYERS, BLESSINGS, CHAPTERS, CH, FOES, MAP, ACHIEVEMENTS, TALK, GEAR_TIERS, GEAR_COST, COSMETICS, MIDB, WEEKLY, weekInfo, VERSION, BUILD, roleLevel, LORE, COMBOS, CURSES, DEEP, DEEP_I, TALK_X, ROLE_PUZ, flagShown } from './data.js';
 import { collide as mapCollide, areaAt, floorCell, MW, MH, CS, cw, useChapter, chapterIndex, SOPEN, openSecret, resetSecrets, hiddenCell, GOPEN, openGate, PDOWN, dropPillar, LIFTH, liftOk, CUT } from './map.js';
 import * as SFX from './sfx.js';
 import * as MUS from './music.js';
@@ -230,7 +230,7 @@ function paintRoom() {
   const all = roster();
   $('slots').innerHTML = all.map(s => '<div class="slot' + (s.uid === UID ? ' me' : '') + '"><i style="background:' + hex(COLORS[s.col].c) + '"></i><b>' + esc(s.name) + '</b><small>' + ROLES[s.role].name + (s.bot ? ' · ' + T('봇') : '') + '</small></div>').join('') +
     '<span class="cnt">' + all.length + '/' + MAX_PLAYERS + '</span>';
-  $('botN').textContent = S.botN; $('botRow').style.display = host ? '' : 'none';
+  $('botN').textContent = S.botN; $('botRow').style.display = host ? '' : 'none'; $('mapRow').style.display = host ? '' : 'none'; $('mapBtn').textContent = S.themeI ? ARENA_THEMES[S.themeI - 1].name : T('무작위');
   $('startBtn').style.display = host ? '' : 'none';
   $('roomMsg').textContent = host ? (all.length < 2 ? T('봇을 넣거나 친구를 초대해 주세요.') : '') : T('방장이 시작하기를 기다리는 중...');
   view.setPreview(mine.role, COLORS[mine.col].c);
@@ -244,7 +244,8 @@ function roster() {
   for (let i = 0; i < nb; i++) { const col = COLORS.findIndex((c, k) => !used.has(k)); used.add(col); out.push({ bot: true, name: BOT_NAMES[i], role: br[i % br.length], col }); }
   return out;
 }
-S.botN = SAVE.bots == null ? 3 : SAVE.bots | 0; S.botRoles = null;
+S.botN = SAVE.bots == null ? 3 : SAVE.bots | 0; S.botRoles = null; S.themeI = SAVE.theme | 0;
+$('mapBtn').onclick = () => { SFX.play('click'); S.themeI = (S.themeI + 1) % (ARENA_THEMES.length + 1); SAVE.theme = S.themeI; save(); paintRoom(); };
 $('botMinus').onclick = () => { SFX.play('click'); S.botN = Math.max(0, S.botN - 1); SAVE.bots = S.botN; save(); paintRoom(); hostLobby(); };
 $('botPlus').onclick = () => { SFX.play('click'); S.botN = Math.min(MAX_PLAYERS - S.slots.length, S.botN + 1); SAVE.bots = S.botN; save(); paintRoom(); hostLobby(); };
 function pick() {
@@ -356,7 +357,7 @@ function hostMsg(c, d) {
       if (!p || (!p.bot && p.uid !== uid)) { c.send({ t: 'deny', why: '방이 가득 찼어요 (최대 7명).' }); setTimeout(() => c.close(), 300); return; }
       p.bot = false; p.uid = uid; p.name = name; p.wasHuman = true; S.G.humans = S.G.players.filter(q => !q.bot).length;
       S.conns[uid] = c; c._pid = p.id;
-      c.send({ t: 'welcome', uid, start: true, pid: p.id, ch: S.G.ch, dp: S.G.deep, wk: S.G.weekly }); toast(T('{0}님이 {1} 자리에 들어왔어요.', name, ROLES[p.role].name));
+      c.send({ t: 'welcome', uid, start: true, pid: p.id, ch: S.G.ch, dp: S.G.deep, wk: S.G.weekly, th: CH.theme }); toast(T('{0}님이 {1} 자리에 들어왔어요.', name, ROLES[p.role].name));
       return;
     }
     let sl = S.slots.find(s => s.uid === uid);
@@ -395,10 +396,10 @@ function startGuest(code) {
 }
 function guestMsg(d) {
   if (!d || typeof d !== 'object') return;
-  if (d.t === 'welcome') { homeMsg(''); if (d.start) { S.me = d.pid; useDeep(d.dp); { const fw = useWk(d.wk); useChapter(d.ch | 0, !!d.dp || fw); } startClient(); } else { openRoom(); } }
+  if (d.t === 'welcome') { homeMsg(''); if (d.start) { S.me = d.pid; useDeep(d.dp); { const fw = useWk(d.wk); useChapter(d.ch | 0, !!d.dp || fw); if (d.th) CH.theme = d.th; } startClient(); } else { openRoom(); } }
   else if (d.t === 'lobby') { S.slots = d.slots; S.botN = d.bots | 0; S.botRoles = d.br || null; if (S.scr === 'sRoom') paintRoom(); }
   else if (d.t === 'deny') { homeMsg(T(d.why || '들어갈 수 없어요.')); leaveNet(); }
-  else if (d.t === 'start') { if (S.snap && S.snap.won) clearChapter(); S.me = d.pid; useDeep(d.dp); { const fw = useWk(d.wk); useChapter(d.ch | 0, !!d.dp || fw); } startClient(); }
+  else if (d.t === 'start') { if (S.snap && S.snap.won) clearChapter(); S.me = d.pid; useDeep(d.dp); { const fw = useWk(d.wk); useChapter(d.ch | 0, !!d.dp || fw); if (d.th) CH.theme = d.th; } startClient(); }
   else if (d.t === 's') {
     if (d.S && d.S.c != null && (d.S.c !== chapterIndex() || (d.S.dp && d.S.dp.floor !== DEEP.floor) || !!d.S.wk !== WEEKLY.on)) { useDeep(d.S.dp); useWk(d.S.wk); useChapter(d.S.c, true); S.built = false; }
     S.snap = d.S; if (d.ev) for (const e of d.ev) S.evq.push(e);
@@ -420,12 +421,13 @@ function beginGame(prevG) {
   S.lastSl = sl;
   if (S.chSel === DEEP_I && !prevG) { DEEP.floor = 1; DEEP.seed = (Math.random() * 1e6) | 0; DEEP.curses = []; }
   { const wk = !!S.wk && !prevG && S.chSel !== DEEP_I, was = WEEKLY.on; WEEKLY.on = wk; if (wk) { const w = weekInfo(); WEEKLY.id = w.id; WEEKLY.curses = w.curses; S.chSel = w.ch; } if (wk || was) useChapter(S.chSel, true); }
+  if (!prevG) CH.theme = S.themeI ? ARENA_THEMES[S.themeI - 1].id : ARENA_THEMES[Math.random() * ARENA_THEMES.length | 0].id;
   S.G = createGame(sl, (Math.random() * 4e9) >>> 0, S.chSel);
   S.G.lite = !!S.lite; 
   S.G.players.forEach((p, i) => { p.uid = sl[i].uid; });
   if (prevG) carryOver(S.G, prevG);
   S.me = sl.find(s => s.uid === UID).id;
-  if (!solo) { for (const uid in S.conns) { const p = S.G.players.find(q => q.uid === uid); if (p) { S.conns[uid]._pid = p.id; S.conns[uid].send({ t: 'start', pid: p.id, ch: S.G.ch, dp: S.G.deep, wk: S.G.weekly }); } } }
+  if (!solo) { for (const uid in S.conns) { const p = S.G.players.find(q => q.uid === uid); if (p) { S.conns[uid]._pid = p.id; S.conns[uid].send({ t: 'start', pid: p.id, ch: S.G.ch, dp: S.G.deep, wk: S.G.weekly, th: CH.theme }); } } }
   if (S.G.humans > 1) unlock('friends');
   startClient();
 }
@@ -440,7 +442,7 @@ function endToLobby(msg) {
   if (S.lite) { S.lite = false; S.slowN = 0; try { view.setLow(!!SAVE.set.opt); } catch (e) { } }
   awardHonor(); S.wk = false; if (WEEKLY.on) { WEEKLY.on = false; useChapter(chapterIndex(), true); }
   leaveNet(); S.G = null; S.snap = null; setHud(false); $('bless').classList.remove('on');
-  view.buildLobby(); show('sLobby'); paintWho(); if (msg) homeMsg(msg);
+  CH.theme = 'dungeon'; view.buildLobby(); show('sLobby'); paintWho(); if (msg) homeMsg(msg);
 }
 $('exitBtn').onclick = () => {
   const b = $('exitBtn');
@@ -1071,7 +1073,7 @@ requestAnimationFrame(frame);
 // 시험용: ?test=1 로 바로 혼자 원정을 시작해요 (화면 확인용). &skip=1 이야기 건너뛰기, &room=구역 번호
 // 내 컴퓨터에서 열었을 때만 돼요 (배포된 주소에서는 잠긴 장이 열리지 않게)
 const DEV = /^(localhost|127\.0\.0\.1)$/.test(location.hostname);
-if (DEV) window.__T = { S, menu, beginGame, startHost, startGuest, view };
+if (DEV) window.__T = { S, menu, beginGame, startHost, startGuest, view, CH };
 if (DEV && qs.get('test')) {
   const r = qs.get('role') || 'knight'; SAVE.role = r;
   S.net = 'solo'; S.slots = [meSlot()]; newBots(); S.botN = +(qs.get('bots') || 5);
