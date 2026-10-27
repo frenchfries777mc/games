@@ -387,7 +387,7 @@ window.bfIntro=function(){if(run)return;run=1;t0=Date.now();el.classList.add('ru
     <button class="btn" data-act="skins"><span class="arrow">▶</span>스킨 상점<span class="en">SKIN SHOP</span></button>
     <button class="btn" data-act="stats"><span class="arrow">▶</span>통계<span class="en">STATS</span></button>
     <button class="btn" data-act="settings"><span class="arrow">▶</span>설정<span class="en">SETTINGS</span></button>
-    <p class="foot">v0.4<br>build 114</p>
+    <p class="foot">v0.4<br>build 115</p>
   </nav>
 </div>
 
@@ -10505,6 +10505,21 @@ async function rankCheck(){
   try{const r=await window.bfSb.rpc(SURV.fn,SURV.args(days));if(r&&r.error)throw r.error;settings.rankDays=days;saveSettings();}catch(e){}
   rankBusy=false;
 }
+/* 탭이 가려져도 자동 장치·컨베이어·작물이 계속 돌아요 (브라우저가 화면 그리기를 멈추는 동안 방장 쪽 계산만 이어서 해요) */
+let bgLast=0;
+function bgSim(){
+  const now=performance.now();
+  if(!document.hidden||typeof world==='undefined'||!world||!base||isGuest()||(mode!=='play'&&!(isHost()&&net.conns.length))){bgLast=now;return;}
+  let el=Math.min(120,(now-bgLast)/1000);bgLast=now;
+  for(;el>0.001;el-=0.25){
+    const dt=Math.min(0.25,el);
+    world.clock+=dt;oreT-=dt;if(oreT<=0){oreT=45;trySpawnOre();}
+    for(const d of drops)d.age+=dt;
+    updateConveyors(dt);updatePorts(dt);updateCrafters(dt);updateSignals(dt);
+    growSaplings(dt*(wetNow()?1.5:1));growCrops(dt*(wetNow()?2:1));updateFellers(dt);updateMiners(dt);updateFurnaces(dt);updatePend(dt);
+  }
+}
+setInterval(bgSim,500);
 function updateSim(dt){
   world.clock+=dt;
   updateFire(dt);
@@ -10614,7 +10629,7 @@ function updateObjs(dt){
     const p=parts[i];p.life-=dt;if(p.life<=0){parts.splice(i,1);continue;}
     p.vy+=140*dt;p.x+=p.vx*dt;p.y+=p.vy*dt;
   }
-  if(!isGuest()&&drops.length>300){const rm=drops.splice(0,drops.length-300);if(isHost())for(const d of rm)bcastAll({t:'dropgone',id:d.id});}
+  if(!isGuest()&&drops.length>800){const rm=drops.splice(0,drops.length-800);if(isHost())for(const d of rm)bcastAll({t:'dropgone',id:d.id});}
   updateSim(dt);
 }
 const whiteOf=sp=>{const c=document.createElement('canvas');c.width=sp.c.width;c.height=sp.c.height;const g=c.getContext('2d');g.drawImage(sp.c,0,0);g.globalCompositeOperation='source-in';g.fillStyle='#ffffff';g.fillRect(0,0,c.width,c.height);return c;};
