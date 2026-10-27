@@ -19,7 +19,9 @@ function which(){
 var game=which();
 window.FFPresence={game:game};
 if(!game||!window.fetch) return;
-function token(){ try{ var s=JSON.parse(localStorage.getItem(SKEY)||'null'); if(s&&s.access_token&&(!s.expires_at||s.expires_at*1000>Date.now())) return s.access_token; }catch(e){} return null; }
+function okTok(raw){ try{ var s=JSON.parse(raw||'null'); if(s&&s.access_token&&(!s.expires_at||s.expires_at*1000>Date.now())) return s; }catch(e){} return null; }
+/* 공용 로그인(localStorage)이 만료됐거나 비어 있어도, 이 탭의 게임이 따로 들고 있는 로그인(sessionStorage 의 sb-... 키, 예: Isleport)이 살아 있으면 그걸 써요 */
+function token(){ var best=okTok(localStorage.getItem(SKEY)); try{ for(var i=0;i<sessionStorage.length;i++){ var k=sessionStorage.key(i); if(/^sb-/.test(k)){ var t=okTok(sessionStorage.getItem(k)); if(t&&(!best||(t.expires_at||0)>(best.expires_at||0))) best=t; } } }catch(e){} return best?best.access_token:null; }
 var last=0;
 function ping(){
   var t=token(); if(!t||Date.now()-last<50000) return; last=Date.now();
