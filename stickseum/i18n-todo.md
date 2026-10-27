@@ -212,3 +212,5 @@ patchnotes.json | v452 title | 폭풍 해적선 맵 고정 | build 452 | 2026-10
 patchnotes.json | v452 items[0] | 폭풍 해적선 맵의 갑판이 좌우로 움직이지 않도록 고정 | build 452 | 2026-10-27
 patchnotes.json | v453 title | 스킨 아바타 그림 선택 | build 453 | 2026-10-27
 patchnotes.json | v453 items[0] | 프로필 아바타 선택의 착용품을 글자 대신 외형 그림으로 표시 현재 착용품 이름을 착용품 제목 옆에 표시 | build 453 | 2026-10-27
+patchnotes.json | v454 title | MVP 투표 팀 합계 | build 454 | 2026-10-27
+patchnotes.json | v454 items[0] | MVP 투표 화면에 우리 팀 합계 처치·사망 수 표시 | build 454 | 2026-10-27
