@@ -206,3 +206,5 @@ patchnotes.json | v449 title | 듀얼 킬러 없는 사망 점수 수정 | build
 patchnotes.json | v449 items[0] | 듀얼에서 킬러 없이 상대가 쓰러져도 남은 사람이 점수를 얻도록 수정 | build 449 | 2026-10-27
 patchnotes.json | v450 title | 보안관 모자 위치 수정 | build 450 | 2026-10-27
 patchnotes.json | v450 items[0] | 보안관 모자를 위로 올려 머리가 튀어나오지 않게 수정 | build 450 | 2026-10-27
+patchnotes.json | v451 title | 거대 점령전 맵 확대 | build 451 | 2026-10-27
+patchnotes.json | v451 items[0] | 거대 점령전 맵 가로 길이 2배 확대 거대 점령전 좌우 깃발 위치를 양 팀 스폰에서 더 멀게 조정 | build 451 | 2026-10-27
