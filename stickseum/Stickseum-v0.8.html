@@ -1289,7 +1289,7 @@ function cleanRules(r){ const o={}; for(const k in RULE_DEFAULT){ const v=r&&+r[
 function rulesAreCustom(r){ r=r||roomRules; for(const k in RULE_DEFAULT) if(r[k]!==RULE_DEFAULT[k]) return true; return false; }
 let roomOpts={balance:false, vote:false}, selectedOpts={balance:false, vote:false};      // private-room extras: automatic team balance, map vote
 function cleanOpts(o){ return {balance:!!(o&&o.balance), vote:!!(o&&o.vote)}; }
-function ruleHp(){ return Math.round(MAX_HP*roomRules.hp*(gameMode==='zombie'?2:1)); }   // zombie game: humans get double health
+function ruleHp(){ return Math.round(MAX_HP*roomRules.hp*(gameMode==='zombie'?2:1)*(gameMode==='hyperbr'?7:1)); }   // zombie game: humans get double health
 const MOVE_SPEED = 250, JUMP_VELOCITY = -680;
 const DASH_FORCE = 700, DASH_CD = 1.5;
 const PZ_MAX=3, PZ_DMG=[25,31,37,43], PZ_ATK_CD=[0.6,0.5,0.4,0.3], PZ_DASH_CD=[3,1.5,0.7,0.4], PZ_CD_STEP=0.12, PZ_ULT_HEAL=30, PZ_ULT_HEAL_MAX=50, PZ_MAX_SPEED=1.25;       // 피사로 has four stages (the start, then one per ultimate): damage, attack cooldown and dash cooldown come from these tables; the skill and ultimate cooldowns are 12% shorter per stage; the last stage also runs at 125% speed       // (+5 damage per stack; at the 4th stack: a 0.5 s dash and 125% speed)
@@ -1302,7 +1302,7 @@ function skW(p){ return (p && p.kit && p.kit.sk) || (p && p.weapon); }
 function ulW(p){ return (p && p.kit && p.kit.ul) || (p && p.weapon); }
 function pzStacks(p){ return (p && p.weapon==='pizarro' && p.pzStacks) ? Math.min(PZ_MAX, p.pzStacks) : 0; }
 function pzCdMult(p){ return 1-PZ_CD_STEP*pzStacks(p); }
-function dashCdOf(p){ if(gameMode==='dashbr') return 0; if(p && p.queenUntil && performance.now()/1000<p.queenUntil) return 0; if(p && p.weapon==='pizarro') return PZ_DASH_CD[pzStacks(p)]; const w=WEAPONS[p && p.weapon], base=(w && w.dashCd!==undefined) ? w.dashCd : DASH_CD; return base*((p && p.isZombie) ? ZOMBIE_DASH_CD_MULT : 1)*pzCdMult(p); }   // how long a player waits between dashes (a zombie: half of it)
+function dashCdOf(p){ if(gameMode==='dashbr' || gameMode==='hyperbr') return 0; if(p && p.queenUntil && performance.now()/1000<p.queenUntil) return 0; if(p && p.weapon==='pizarro') return PZ_DASH_CD[pzStacks(p)]; const w=WEAPONS[p && p.weapon], base=(w && w.dashCd!==undefined) ? w.dashCd : DASH_CD; return base*((p && p.isZombie) ? ZOMBIE_DASH_CD_MULT : 1)*pzCdMult(p); }   // how long a player waits between dashes (a zombie: half of it)
 const TELEPORT_CHANNEL_SEC = 1.2;   // how long the teleporter stands still before it arrives
 let TELEPORT_CD = 10;   // (a `let` only so the practice mode can shorten it)
 const PROJECTILE_GRAVITY = 700;
@@ -3531,6 +3531,9 @@ const MODES = {
   bounty:   {id:'bounty', name:'현상금 사냥', desc:'킬하면 1점 · 점수 선두(3점 이상)에게는 현상금이 붙어요(빨간 표시) · 현상금 대상을 잡으면 4점 · 먼저 20점이거나 5분 뒤 점수가 높은 사람이 승리', teams:false, extra:0, elim:false, respawnTime:4, special:true},
   xkit:     {id:'xkit', name:'랜덤 조합 배틀로얄', desc:'🧪 실험적 모드 · 캐릭터를 고르지 않고 바로 시작해요 · 외형, 일반공격, 스킬, 궁극기가 각각 원래 캐릭터들 중에서 따로 랜덤으로 뽑혀요 · 부활 없이 최후의 1인이 승리', teams:false, extra:0, elim:true, autoWeapon:true, randomKit:true, exp:true},
   bigcq:    {id:'bigcq', noTeleport:true, name:'거대 점령전', desc:'🧪 실험적 모드 · 24~32명이 두 팀으로 나뉘는 대규모 난투 · 아주 가로로 긴 맵 양 끝에서 시작하고 부활은 15초 · 순간이동 사용 불가 · 왼쪽·중앙·오른쪽 깃발에 사람이 더 많은 팀이 15초 서 있으면 그 팀 깃발이 돼요 (이미 차지한 깃발도 다시 뺏을 수 있어요) · 세 깃발을 모두 차지한 팀이 승리 (12분이 지나면 깃발이 더 많은 팀) · 팀원끼리 캐릭터가 겹쳐도 돼요', teams:true, teamSize:'half', extra:0, elim:false, respawnTime:15, special:true, exp:true, fixedMapId:'giant_cq', minPlayers:24, fillTo:32, allowDup:true},
+  redlight: {id:'redlight', name:'무궁화 꽃이 피었습니다', desc:'🧪 실험적 모드 · 배틀로얄에 신호등이 더해져요 · 초록불에는 마음껏 움직이고, 빨간불에 움직이면 100 피해를 입어요(빨간불이 켜지고 0.45초는 봐줘요) · 시간이 지날수록 초록불이 짧아져요 · 최후의 1인이 승리', teams:false, extra:0, elim:true, special:true, exp:true},
+  crownhold:{id:'crownhold', name:'왕관 잡기', desc:'🧪 실험적 모드 · 왕관을 가진 사람을 쓰러뜨리면 왕관을 빼앗아요 · 왕관을 들고 있는 동안 1초에 1점씩 쌓여요 · 먼저 60점을 쌓은 사람이 승리 (8분이 지나면 점수가 높은 사람이 승리)', teams:false, extra:0, elim:false, respawnTime:4, special:true, exp:true},
+  hyperbr:  {id:'hyperbr', name:'하이퍼 배틀로얄', desc:'🧪 실험적 모드 · 배틀로얄 규칙에 체력 7배, 공격 속도 절반, 대쉬 무한, 궁극기 쿨타임 1/5배 · 최후의 1인이 승리', teams:false, extra:0, elim:true, exp:true},
   lowg:     {id:'lowg', name:'저중력 난투', desc:'중력이 약하고 넉백이 강한 난투 · 높이 날아오르고 멀리 튕겨나가요 · 4분 동안 킬이 가장 많은 사람이 승리', teams:false, extra:0, elim:false, respawnTime:3, rules:{grav:0.6, kb:2}, special:true}
 };
 const MODE_ORDER = ['ffa','br','duo','team','duel','conquest'];
@@ -3707,11 +3710,11 @@ const SPECIAL_ITEMS=[
   {id:'dashbr',  icon:'💨', name:'무한 대쉬 배틀로얄', mapId:'canyon_volcano', weapons:['arrow','bullet'], desc:'대쉬 쿨타임 0초, 최후의 1인이 승리'}
 ];
 const DAILY_EXCLUDE={oneshot:1};      // (the one-hit mode is not in the daily rotation: balance, a short grind for xp)
-function brLike(m){ return m==='br' || m==='duo' || m==='dashbr' || m==='xkit'; }
+function brLike(m){ return m==='br' || m==='duo' || m==='dashbr' || m==='xkit' || m==='redlight' || m==='hyperbr'; }
 const SPECIAL_IDS=SPECIAL_ITEMS.map(i=>i.id);
 function dailyMatchCount(sd){ const mm=(sd&&sd.modeMatches)||{}; let n=0; for(const id of SPECIAL_IDS) n+=(mm[id]||0); return n; }
-const XM_END={bigcq:720,vip:300,koth:360,relay:360,freeze:240,rush:240,roulette:300,oneshot:240,turf:240,bounty:300,lowg:240};
-const XM_TARGET={koth:60,oneshot:100,turf:150,bounty:20,relay:10};
+const XM_END={redlight:900,crownhold:480,bigcq:720,vip:300,koth:360,relay:360,freeze:240,rush:240,roulette:300,oneshot:240,turf:240,bounty:300,lowg:240};
+const XM_TARGET={crownhold:60,koth:60,oneshot:100,turf:150,bounty:20,relay:10};
 const BCQ_CAP_SEC=15, BCQ_ZONE_HW=170, BCQ_ZONE_UP=230;       // 거대 점령전: 15 s alone on a flag; the zone is 340 wide and reaches 230 up
 const XM_SWAP_SEC=12, XM_ZONE_SEC=20, XM_RUSH_MAX=18;
 let xm=null, xmV=null;        // xm: the host's own state of a special mode; xmV: the small view of it that rides in every snapshot (everybody draws and reads the HUD from this)
@@ -3759,6 +3762,10 @@ function xmStart(){
   } else if(id==='roulette'){ xm.nextSwap=now+XM_SWAP_SEC*1000;
   } else if(id==='turf'){ xm.segs=turfSegs(MAP); xm.own=xm.segs.map(()=>-1); xm.scF=[0,0];
   } else if(id==='bounty'){ xm.sc={}; xm.tgt=null;
+  } else if(id==='redlight'){
+    xm.light={phase:'g', until:now+(5+Math.random()*3)*1000, n:1}; xm.t0=now; xm.last={};
+  } else if(id==='crownhold'){
+    const pl=xmPickZone(null); xm.crown={holder:null, x:pl.x, y:pl.y-30}; xm.scF={};
   } else if(id==='bigcq'){ xm.fl=((MAP.bigcq&&MAP.bigcq.flags)||[]).map(()=>({o:-1, cap:-1, prog:0}));
   }
   xmV=buildXmView(performance.now());
@@ -3791,6 +3798,8 @@ function xmTimeUp(){
     else { const w=a>b?0:1; xmWin('팀 '+(w+1)+' 승리! ('+a+' : '+b+')', xmTeamMembers(w).map(p=>p.id)); }
   }
   else if(id==='bounty') xmTopBy(p=>xm.sc[p.id]||0, '점수');
+  else if(id==='crownhold') xmTopBy(p=>Math.floor(xm.scF[p.id]||0), '점수');
+  else if(id==='redlight'){ const al=xmPlayers().filter(q=>q.alive); if(al.length===1) xmWin(al[0].name+' 우승!', [al[0].id]); else xmWin('무승부! (시간 종료)', al.map(q=>q.id)); }
   else if(id==='bigcq'){
     const a=xm.fl.filter(f=>f.o===0).length, b=xm.fl.filter(f=>f.o===1).length;
     if(a===b) xmWin('무승부! 깃발 수가 같아요 ('+a+' : '+b+')', []);
@@ -3845,6 +3854,23 @@ function xmTick(dt,t){
     const n=xm.segs.length||1;
     for(const tm of [0,1]){ const c=xm.own.filter(o=>o===tm).length; xm.scF[tm]+=(c/n)*1.5*dt; }
     for(const tm of [0,1]) if(xm.scF[tm]>=XM_TARGET.turf){ xmWin('팀 '+(tm+1)+' 승리! ('+Math.floor(xm.scF[0])+' : '+Math.floor(xm.scF[1])+')', xmTeamMembers(tm).map(p=>p.id)); break; }
+  } else if(id==='redlight'){
+    const L=xm.light, el=(now-xm.t0)/1000;
+    if(now>=L.until){
+      if(L.phase==='g'){ L.phase='r'; L.until=now+2600; L.at=now; L.n++; }
+      else { L.phase='g'; L.until=now+Math.max(2500, 7500-el*25)+Math.random()*1500; }
+    }
+    for(const p of P){ if(!p.alive || p.x===undefined) continue;
+      const lp=xm.last[p.id]; xm.last[p.id]={x:p.x,y:p.y};
+      if(L.phase!=='r' || now-L.at<450 || !lp || dt<=0) continue;
+      const sp=Math.hypot(p.x-lp.x, p.y-lp.y)/dt;
+      if(sp>45 && !(p.redHitAt>now-900)){ p.redHitAt=now; const dealt=absorbIntoShield(p, 100); p.hp-=dealt; pushFx('hit', p.x, p.y-PLAYER_H/2, t, {color:'#ff3b3b', ang:-Math.PI/2, v:Math.round(dealt)}); if(p.hp<=0) handleDeath(p, null, t, '빨간불'); }
+    }
+  } else if(id==='crownhold'){
+    const C=xm.crown;
+    if(C.holder && (!players[C.holder] || !players[C.holder].alive)){ const h=players[C.holder]; if(h && h.x!==undefined){ C.x=h.x; C.y=h.y-30; } C.holder=null; }
+    if(!C.holder){ for(const p of P){ if(p.alive && p.x!==undefined && Math.hypot(p.x-C.x,(p.y-30)-C.y)<46){ C.holder=p.id; pushFx('skillring', p.x, p.y-30, t, {color:'#ffd34d', r:90}); break; } } }
+    if(C.holder){ const k=C.holder; xm.scF[k]=(xm.scF[k]||0)+dt; const hp=players[k]; if(hp){ C.x=hp.x; C.y=hp.y-30; } if(xm.scF[k]>=XM_TARGET.crownhold && hp){ xmWin(hp.name+' 우승! ('+XM_TARGET.crownhold+'점 달성)', [k]); } }
   } else if(id==='bigcq'){
     const FL=(MAP.bigcq&&MAP.bigcq.flags)||[];
     for(let i=0;i<FL.length;i++){
@@ -3879,6 +3905,9 @@ function xmOnDeath(p,killer,t){        // true: handled here (no respawn / match
     const n=xm.sc[p.id]||0;
     if(n>0){ const drop=Math.ceil(n/2); xm.sc[p.id]=n-drop;
       for(let i=0;i<Math.min(drop,12);i++) xm.coins.push({x:clamp(p.x+(Math.random()-0.5)*140,30,MAP.arenaW-30), y:p.y-30-Math.random()*50}); }
+  } else if(id==='crownhold'){
+    const C=xm.crown;
+    if(C.holder===p.id){ if(real){ C.holder=killer.id; C.x=killer.x; C.y=killer.y-30; pushFx('skillring', killer.x, killer.y-30, t, {color:'#ffd34d', r:110}); } else { C.holder=null; C.x=p.x; C.y=p.y-30; } }
   } else if(id==='oneshot'){
     if(real && (killer.kills||0)>=XM_TARGET.oneshot){ xmWin(killer.name+' 우승! ('+killer.kills+'킬)', [killer.id]); return true; }
   } else if(id==='bounty'){
@@ -3904,6 +3933,8 @@ function buildXmView(t){
     case 'oneshot': v.tg=XM_TARGET.oneshot; break;
     case 'turf': v.o=xm.own.map(o=>o<0?'-':String(o)).join(''); v.sc=[Math.floor(xm.scF[0]),Math.floor(xm.scF[1])]; v.tg=XM_TARGET.turf; break;
     case 'bounty': v.sc=xm.sc; v.b=xm.tgt; v.tg=XM_TARGET.bounty; break;
+    case 'redlight': v.l=xm.light.phase; v.lr=Math.max(0,Math.ceil((xm.light.until-Date.now())/1000)); v.al=xmPlayers().filter(q=>q.alive).length; break;
+    case 'crownhold': { const C=xm.crown; v.h=C.holder; v.cx=Math.round(C.x); v.cy=Math.round(C.y); v.tg=XM_TARGET.crownhold; v.sc={}; for(const k in xm.scF) v.sc[k]=Math.floor(xm.scF[k]); break; }
     case 'bigcq': v.f=xm.fl.map(f=>[f.o, f.cap, Math.round(f.prog/BCQ_CAP_SEC*100)]); break;
   }
   return v;
@@ -3918,6 +3949,7 @@ function xmBotGoal(p,target,d){
     case 'freeze': { if(near) return null; let b=null, bd=1e9; for(const k in xm.fz){ const q=players[k]; if(!q || q.team!==p.team) continue; const f=xm.fz[k], dd=Math.hypot(f.x-p.x,f.y-p.y); if(dd<bd){ bd=dd; b=f; } } return b?{x:b.x,y:b.y}:null; }
     case 'vip': { if(near) return null; const ek=players[xm.kings[1-p.team]]; return (ek && ek.alive && p.id!==xm.kings[p.team]) ? {x:ek.x,y:ek.y} : null; }
     case 'bounty': { const b=players[xm.tgt]; return (!near && b && b.alive && b.id!==p.id) ? {x:b.x,y:b.y} : null; }
+    case 'crownhold': { const C=xm.crown; if(C.holder===p.id) return null; if(!C.holder) return {x:C.x, y:C.y+30}; const h=players[C.holder]; return (!near && h && h.alive) ? {x:h.x,y:h.y} : null; }
     case 'bigcq': { if(near || !MAP.bigcq) return null; const FL=MAP.bigcq.flags, cand=[]; for(let i=0;i<FL.length;i++){ const f=xm.fl[i]; if(f.o!==p.team || (f.cap>=0 && f.cap!==p.team && f.prog>0)) cand.push(i); }
       const sl=p.teamSlot||0; if(!cand.length) return {x:FL[1].x, y:FL[1].y}; const k=cand[sl%cand.length]; return {x:FL[k].x+((sl%5)-2)*40, y:FL[k].y}; }
   }
@@ -3926,7 +3958,7 @@ function xmBotGoal(p,target,d){
 function xmClock(v){ const s=v.tr||0, mm=Math.floor(s/60), ss=s%60; return mm+':'+(ss<10?'0':'')+ss; }
 function updateXmHud(me){
   const el=document.getElementById('xmLabel'); if(!el) return;
-  if(!xmV){ if(el.style.display!=='none') el.style.display='none'; return; }
+  if(!xmV){ if(el.style.display!=='none') el.style.display='none'; const ov0=document.getElementById('xmLightOv'); if(ov0) ov0.style.boxShadow='none'; return; }
   const v=xmV, nm=id=>players[id]?escapeHtmlText(players[id].name):'?', myId2=me?me.id:null;
   const top=map=>{ let bid=null, b=-1; for(const k in map){ if(players[k] && map[k]>b){ b=map[k]; bid=k; } } return bid?(nm(bid)+' '+b):'-'; };
   let h='';
@@ -3945,10 +3977,13 @@ function updateXmHud(me){
     case 'turf': { const cnt=(ch)=>(v.o.split(ch).length-1);
       h='<span style="color:'+TEAM_COLORS[0]+'">팀 1: '+v.sc[0]+' ('+cnt('0')+'칸)</span> <span style="color:var(--text-dim)">(목표 '+v.tg+')</span> <span style="color:'+TEAM_COLORS[1]+'">팀 2: '+v.sc[1]+' ('+cnt('1')+'칸)</span>'; break; }
     case 'bounty': h='🎯 현상금: '+(v.b?nm(v.b)+' (+3점)':'아직 없음')+' · 내 점수 '+((v.sc&&v.sc[myId2])||0)+'/'+v.tg; break;
+    case 'redlight': { const red=v.l==='r'; h=red?'<b style="color:#ff5a5a; font-size:1.25em;">🔴 멈춰! 움직이면 100 피해</b>':'<b style="color:#5dff9a; font-size:1.1em;">🟢 무궁화 꽃이 피었습니다… 움직여요</b>'; h+='<span style="color:var(--text-dim)"> · 남은 사람 '+v.al+'명</span>'; break; }
+    case 'crownhold': { const my=(v.sc&&v.sc[myId2])||0; h='👑 내 점수 '+my+'/'+v.tg+' · 선두 '+top(v.sc||{})+'<div style="font-size:11px; color:var(--text-dim); text-align:center; margin-top:2px;">'+(v.h?(v.h===myId2?'내가 왕관을 들고 있어요! 지켜요':nm(v.h)+'님이 왕관을 들고 있어요 · 쓰러뜨리면 빼앗아요'):'왕관이 바닥에 있어요 · 먼저 주우세요')+'</div>'; break; }
     case 'lowg': h='🪐 저중력 난투 · 내 킬 '+(me?me.kills||0:0); break;
     case 'bigcq': { const nmF=['왼쪽','중앙','오른쪽']; h='🚩 '+(v.f||[]).map((f,i)=>{ const col=f[0]>=0?TEAM_COLORS[f[0]]:'#8890a4'; const cp=(f[1]>=0 && f[2]>0)?' <span style="color:'+TEAM_COLORS[f[1]]+'">▶'+f[2]+'%</span>':''; return '<span style="color:'+col+'">'+nmF[i]+(f[0]>=0?' 팀'+(f[0]+1):' 중립')+'</span>'+cp; }).join(' · '); break; }
   }
   h+='<span style="color:var(--text-dim)"> · '+xmClock(v)+'</span>';
+  { let ov=document.getElementById('xmLightOv'); if(!ov){ ov=document.createElement('div'); ov.id='xmLightOv'; ov.style.cssText='position:fixed; inset:0; z-index:19; pointer-events:none; box-shadow:inset 0 0 0 10px rgba(255,60,60,.0), inset 0 0 120px rgba(255,40,40,.0); transition:box-shadow .15s;'; document.body.appendChild(ov); } const red=(v.m==='redlight' && v.l==='r'); ov.style.boxShadow=red?'inset 0 0 0 10px rgba(255,60,60,.85), inset 0 0 140px rgba(255,40,40,.55)':'inset 0 0 0 10px rgba(255,60,60,0), inset 0 0 120px rgba(255,40,40,0)'; }
   if(el.style.display==='none') el.style.display='block';
   if(el._last!==h){ el.innerHTML=h; el._last=h; }
 }
@@ -4009,6 +4044,7 @@ function drawXmOver(){
     ctx.save(); ctx.fillStyle=col; ctx.strokeStyle='#7a5a00'; ctx.lineWidth=2;
     ctx.beginPath(); ctx.moveTo(x-14,y+10); ctx.lineTo(x-14,y-4); ctx.lineTo(x-7,y+3); ctx.lineTo(x,y-8); ctx.lineTo(x+7,y+3); ctx.lineTo(x+14,y-4); ctx.lineTo(x+14,y+10); ctx.closePath(); ctx.fill(); ctx.stroke(); ctx.restore(); };
   if(v.m==='vip' && v.k) for(const k of v.k) crown(players[k], '#ffd34d');
+  if(v.m==='crownhold'){ if(v.h) crown(players[v.h], '#ffd34d'); else if(v.cx!==undefined){ const b=Math.sin(performance.now()/260)*5; ctx.save(); ctx.globalAlpha=0.35+0.15*Math.sin(performance.now()/200); ctx.fillStyle='#ffd34d'; ctx.beginPath(); ctx.arc(v.cx,v.cy+b,40,0,7); ctx.fill(); ctx.restore(); const o=players[myId]; crown({alive:true,x:v.cx,y:v.cy+b+112}, '#ffd34d'); } }
   if(v.m==='bounty' && v.b){ const p=players[v.b]; if(p && p.alive && p.x!==undefined){ ctx.save(); ctx.strokeStyle='#ff4d4d'; ctx.lineWidth=3; const r=34+Math.sin(performance.now()/150)*3; ctx.beginPath(); ctx.arc(p.x,p.y-45,r,0,7); ctx.moveTo(p.x-r-8,p.y-45); ctx.lineTo(p.x+r+8,p.y-45); ctx.moveTo(p.x,p.y-45-r-8); ctx.lineTo(p.x,p.y-45+r+8); ctx.stroke(); ctx.restore(); crown(p,'#ff6b6b'); } }
 }
 function drawMapDecorations(){
@@ -5185,7 +5221,7 @@ function shuffle(arr){ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.
 /* ===== the version of this file =====
    Players with different versions CAN meet and play together: the automatic matchmaking uses the same room names for every version (online-<mode>-<map>-<slot>), and nobody is refused because of a different build.
    The build is only sent along with the join message and the lobby (for information); the corner of the screen shows it. */
-const GAME_BUILD='build 2026-10-18-v434';
+const GAME_BUILD='build 2026-10-18-v435';
 const GAME_VERSION='0.8', GAME_VERSION_NAME='황금을 찾아서';   // 게임 버전 이름: versions.json의 title과 같게 (빌드마다 바꾸지 않음)
 const WEEKLY_EVENTS=[
   {id:'lowg',    name:'저중력 난투', desc:'몸이 둥실둥실, 중력이 약해진 난투', rules:{grav:0.6}},
@@ -5480,7 +5516,7 @@ function tryDash(p, input, tMs, dirOverride){
   const w = WEAPONS[p.weapon];
   const cd = dashCdOf(p);
   if(tSec - (p.lastDash===undefined?-9999:p.lastDash) < cd) return;
-  if(gameMode==='dashbr' && p.isBot && tSec-(p.lastDash===undefined?-9999:p.lastDash)<0.8) return;   // endless-dash mode: bots do not dash faster than about once per second
+  if((gameMode==='dashbr' || gameMode==='hyperbr') && p.isBot && tSec-(p.lastDash===undefined?-9999:p.lastDash)<0.8) return;   // endless-dash mode: bots do not dash faster than about once per second
   p.lastDash = tSec;
   let dirSign;
   if(dirOverride===-1 || dirOverride===1) dirSign=dirOverride;      // a dash with an aim (the click side, or the held direction): that way
@@ -5488,7 +5524,7 @@ function tryDash(p, input, tMs, dirOverride){
   else if(input.right) dirSign=1;
   else dirSign = (Math.cos(p.angle||0) >= 0) ? 1 : -1;
   p.kbX = dirSign*DASH_FORCE;
-  if(gameMode!=='dashbr' || !(p._dashFxAt>tMs-220)){ p._dashFxAt=tMs; pushFx('dash', p.x, p.y-30, tMs, {dir:dirSign, color:p.color, lite:gameMode==='dashbr'}); }   // (the endless-dash mode would otherwise bury the screen in dust)
+  if((gameMode!=='dashbr' && gameMode!=='hyperbr') || !(p._dashFxAt>tMs-220)){ p._dashFxAt=tMs; pushFx('dash', p.x, p.y-30, tMs, {dir:dirSign, color:p.color, lite:(gameMode==='dashbr'||gameMode==='hyperbr')}); }   // (the endless-dash mode would otherwise bury the screen in dust)
 }
 function tryTeleportChannel(p, x, y, tMs){
   if(puppetVictim(p, tMs/1000) || puppetMaster(p, tMs/1000)) return;
@@ -6589,7 +6625,7 @@ function dailyModeItem(){
   try{ localStorage.setItem('stickseumDailyMode', JSON.stringify({key, id:it.id})); }catch(e){}
   return it;
 }
-const EXP_MODES=[{id:'xkit', icon:'🎲'}, {id:'bigcq', icon:'🏴'}];       // 실험적 모드: not released yet, the player votes 좋아요/나빠요 on the result screen
+const EXP_MODES=[{id:'xkit', icon:'🎲'}, {id:'bigcq', icon:'🏴'}, {id:'redlight', icon:'🚦'}, {id:'crownhold', icon:'👑'}, {id:'hyperbr', icon:'💥'}];       // 실험적 모드: not released yet, the player votes 좋아요/나빠요 on the result screen
 function expVotes(){ try{ return JSON.parse(localStorage.getItem('stickseumExpVotes')||'{}')||{}; }catch(e){ return {}; } }
 function buildExpList(){
   const body=document.getElementById('modeListBody'); if(!body) return;
@@ -11689,7 +11725,7 @@ const BOOMERANG_BACK_MULT=1.0;   // the returning boomerang's damage (was half o
 const BOOMERANG_OUT_SEC=0.5;      // how long a boomerang flies out before it turns back (was 0.35: about 245 away, now about 350)
 let SKILL_CD=5;
 function skillCdOf(p){ return SKILL_CD*pzCdMult(p); }
-function ultCdOf(p){ return ULT_CD*pzCdMult(p); }
+function ultCdOf(p){ return ULT_CD*pzCdMult(p)*(gameMode==='hyperbr'?0.2:1); }
 const PRACTICE_SKILL_CD=2;
 const SKILLS={
   pizarro:  {name:'정복자의 질주', kind:'buff', desc:'체력 20 즉시 회복 + 3초 동안 이동 속도 50% 증가'},
@@ -12533,7 +12569,7 @@ function tryFire(p, angle, tMs){
   }
   const free = (w.kind==='cards' && p.freeVolleys>0 && p.freeUntil>tSec); // combo reward: 3 volleys that ignore the cooldown
   const rush = (w.id==='gloves' && p.rushUntil>tSec); // ultimate: triple attack speed
-  const cdEff = (free ? 0.15 : (rush ? w.cd/3-0.002 : (w.id==='pizarro' ? PZ_ATK_CD[pzStacks(p)] : w.cd))) * (p.isZombie?ZOMBIE_CD_MULT:1) * (w.id==='pizarro'?1:pzCdMult(p)) * (skillHasBuff(p,'rapid',tSec)?0.5:1) * ((w.id==='kan' && p.kanWingsUntil>tSec)?KAN_ULT_CD_MULT:1);   // pistol skill: double fire rate
+  const cdEff = (free ? 0.15 : (rush ? w.cd/3-0.002 : (w.id==='pizarro' ? PZ_ATK_CD[pzStacks(p)] : w.cd))) * (p.isZombie?ZOMBIE_CD_MULT:1) * (gameMode==='hyperbr'?2:1) * (w.id==='pizarro'?1:pzCdMult(p)) * (skillHasBuff(p,'rapid',tSec)?0.5:1) * ((w.id==='kan' && p.kanWingsUntil>tSec)?KAN_ULT_CD_MULT:1);   // pistol skill: double fire rate
   if(tSec - p.lastShot < cdEff) return;
   if(free) p.freeVolleys--;
   p.lastShot = tSec;
@@ -12624,7 +12660,7 @@ const BOT_PERSONALITIES=['coward','taunter','sniper','revenge','collector','riva
 const PERSONALITY_WEAPONS={sniper:['bow','rifle','pistol','bazooka','wizard'], taunter:['sword','gloves','dagger','lightsaber','horemheb','bat','dracula']};
 // modes the bots know how to play. (hide & seek is not here: a bot seeker/hider needs its own logic, so those rooms keep waiting for people)
 // hot potato, parkour, survival and the flag mode each have their own brain below (botBrain*); the rest use the generic fighter
-const BOT_MODES={xkit:1,bigcq:1,ffa:1,br:1,dashbr:1,duo:1,team:1,duel:1,conquest:1,zombie:1,hotpotato:1,parkour:1,survival:1,ctf:1,gold:1,raid:1,tournament:1,vip:1,koth:1,relay:1,freeze:1,rush:1,roulette:1,oneshot:1,turf:1,bounty:1,lowg:1};
+const BOT_MODES={redlight:1,crownhold:1,hyperbr:1,xkit:1,bigcq:1,ffa:1,br:1,dashbr:1,duo:1,team:1,duel:1,conquest:1,zombie:1,hotpotato:1,parkour:1,survival:1,ctf:1,gold:1,raid:1,tournament:1,vip:1,koth:1,relay:1,freeze:1,rush:1,roulette:1,oneshot:1,turf:1,bounty:1,lowg:1};
 let botSeq=0, lastHumanJoinAt=0, botFillAt=null, botFilling=false, botNextAt=0; // botFillAt: when the first bot will join (announced to everyone); botFilling: bots are walking in; botNextAt: when the next one does
 function botSupported(modeId){ return !!BOT_MODES[modeId]; }
 function humanPlayers(){ return Object.values(players).filter(p=>!p.isBot); }
@@ -13541,7 +13577,7 @@ function botMoveStep(p, ai, inp, t){
   if(cmd.jump && t>=ai.jumpOkAt){ inp.jump=true; ai.jumpOkAt=t+450; if(cmd.plan) ai.plan={pl:cmd.plan, until:Date.now()+2200, dir:cmd.dir}; if(cmd.dashDelay!==undefined) ai.dashAt=t+cmd.dashDelay*1000; }
   else if(cmd.plan && cmd.planned && !cmd.jump) ai.plan={pl:cmd.plan, until:Date.now()+2200, dir:cmd.dir};   // walking off an edge toward a lower platform: keep going the same way while falling
   else if(ai.hopAt!==undefined && ai.hopAt!==null){ if(p.grounded && botHeadroomClear(p) && t>=ai.jumpOkAt){ inp.jump=true; ai.jumpOkAt=t+450; } ai.hopAt=null; }
-  if(gameMode==='dashbr' && (inp.left||inp.right) && t/1000-(p.lastDash===undefined?-9999:p.lastDash)>=(ai.dbGap||0)){ inp.dash=true; ai.dbGap=0.9+Math.random()*0.9; }   // infinite-dash battle royale: bots keep dashing whenever they move (the lava guard below can still cancel it)
+  if((gameMode==='dashbr' || gameMode==='hyperbr') && (inp.left||inp.right) && t/1000-(p.lastDash===undefined?-9999:p.lastDash)>=(ai.dbGap||0)){ inp.dash=true; ai.dbGap=0.9+Math.random()*0.9; }   // infinite-dash battle royale: bots keep dashing whenever they move (the lava guard below can still cancel it)
   botLavaGuard(p, inp, t);
   botMineGuard(p, inp, t);
 }
@@ -13661,6 +13697,10 @@ function botsThink(dt, t){
     if(p.isDummy){ botDummyThink(p, t, dt); continue; }
     if(grace){ const i=p.input; i.left=i.right=i.shoot=i.jump=i.dash=i.down=false; continue; }
     botThink(p, t, dt);
+    if(xm && xm.id==='redlight' && xm.light.phase==='r'){          // 무궁화 꽃이 피었습니다: a bot notices the red light after a short reaction time (some are too slow) and stops
+      const a=p.ai, L=xm.light; if(a.rlN!==L.n){ a.rlN=L.n; a.rlAt=L.at+150+Math.random()*520; }
+      if(Date.now()>=a.rlAt){ const i=p.input; i.left=i.right=i.jump=i.dash=i.down=false; }
+    }
   }
 }
 
