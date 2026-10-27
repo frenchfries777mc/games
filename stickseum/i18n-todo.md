@@ -218,3 +218,7 @@ patchnotes.json | v455 title | 무너지는 다리 맵 완전 삭제 | build 455
 patchnotes.json | v455 items[0] | 무너지는 다리 맵 완전 삭제 (연습 모드·맵 목록에서도 사라짐) | build 455 | 2026-10-27
 patchnotes.json | v456 title | 하이퍼 배틀로얄 체력 5배 | build 456 | 2026-10-27
 patchnotes.json | v456 items[0] | 하이퍼 배틀로얄 체력 배율 7배에서 5배로 하향 | build 456 | 2026-10-27
+patchnotes.json | v457 title | 시즌 패스 개편 | build 457 | 2026-10-27
+patchnotes.json | v457 items[0] | 시즌 패스 진행도 초기화 (10월 시즌 처음부터) | build 457 | 2026-10-27
+patchnotes.json | v457 items[1] | 시즌 패스 창을 넓히고 보상을 가로로 배치, 마우스 드래그·터치로 넘겨 보기 | build 457 | 2026-10-27
+patchnotes.json | v457 items[2] | 창을 열면 마지막으로 받은 보상이 가운데에 오도록 변경 | build 457 | 2026-10-27
