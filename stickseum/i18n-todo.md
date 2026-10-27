@@ -230,3 +230,11 @@ patchnotes.json | v458 items[3] | 인트로 제목과 버전 표기 변경 | bui
 patchnotes.json | v458 items[4] | 밸런스 표에 새 캐릭터 3명 포함 | build 458 | 2026-10-27
 patchnotes.json | v459 title | 로비 제목 아래 빌드 숫자 제거 | build 459 | 2026-10-27
 patchnotes.json | v459 items[0] | 로비 제목 아래 버전 표시에서 빌드 숫자 제거 | build 459 | 2026-10-27
+patchnotes.json | v460 title | 근위병 체력 90과 우주 캐릭터 모습 수정 | build 460 | 2026-10-27
+patchnotes.json | v460 items[0] | 크레온 근위병 체력 180에서 90으로 하향 | build 460 | 2026-10-27
+patchnotes.json | v460 items[1] | 크레온 눈 4개로 보이던 문제 수정 | build 460 | 2026-10-27
+patchnotes.json | v460 items[2] | 크레온·펠·티오니스·근위병 모습을 인트로 그림과 같게 변경 | build 460 | 2026-10-27
+patchnotes.json | v460 items[3] | 근위병이 소환자의 색 효과를 따르도록 변경 | build 460 | 2026-10-27
+patchnotes.json | v460 items[4] | 1대1 점수줄에 근위병이 나오던 문제 수정 | build 460 | 2026-10-27
+patchnotes.json | v460 items[5] | 티오니스가 변장한 캐릭터가 마스터리에 들어가던 문제 수정 | build 460 | 2026-10-27
+patchnotes.json | v460 items[6] | 플레이어 목록의 팀 표시 제거 | build 460 | 2026-10-27
