@@ -188,3 +188,5 @@ patchnotes.json | v440 title | 오로라 스킨 기본 이펙트 대폭 감소 |
 patchnotes.json | v440 items[0] | 오로라 스킨 캐릭터 기본 이펙트 대폭 감소 (커튼, 나선, 고리, 별, 구슬) | build 440 | 2026-10-27
 patchnotes.json | v441 title | 그랜드 마스터 스킬 흰색·회색 효과도 오로라 색 | build 441 | 2026-10-27
 patchnotes.json | v441 items[0] | 그랜드 마스터 스킬과 궁극기의 흰색, 회색 효과(검, 섬광, 연기)도 오로라 색 적용 | build 441 | 2026-10-27
+patchnotes.json | v442 title | 방 매칭 중 버튼 숨김 | build 442 | 2026-10-27
+patchnotes.json | v442 items[0] | 방 매칭 중 프로필 버튼과 피드백 버튼 숨김 | build 442 | 2026-10-27

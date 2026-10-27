@@ -144,6 +144,7 @@ if(document.readyState==='loading') document.addEventListener('DOMContentLoaded'
     width:38px; height:38px; border-radius:9px; cursor:pointer;
     background:rgba(12,14,19,.88); border:1px solid var(--line); overflow:hidden;}
   #profileBadge.show{display:flex;}
+  body.matching #profileBadge, body.matching #feedbackBadge{display:none !important;}      /* while a room is being searched for */
   #profileBadge canvas{width:100%; height:100%;}
   #shopSoulTag{display:inline-flex; align-items:center; gap:4px; padding:3px 10px; margin-left:8px; border-radius:999px; font-size:13px; font-weight:800; color:#d9b3ff; background:rgba(184,107,255,.14); border:1px solid rgba(184,107,255,.55);}
   #shopGoldTag{display:inline-flex; align-items:center; gap:4px; padding:3px 10px; margin-left:10px;
@@ -5328,7 +5329,7 @@ function shuffle(arr){ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.
 /* ===== the version of this file =====
    Players with different versions CAN meet and play together: the automatic matchmaking uses the same room names for every version (online-<mode>-<map>-<slot>), and nobody is refused because of a different build.
    The build is only sent along with the join message and the lobby (for information); the corner of the screen shows it. */
-const GAME_BUILD='build 2026-10-18-v441';
+const GAME_BUILD='build 2026-10-18-v442';
 const GAME_VERSION='0.8', GAME_VERSION_NAME='황금을 찾아서';   // 게임 버전 이름: versions.json의 title과 같게 (빌드마다 바꾸지 않음)
 const WEEKLY_EVENTS=[
   {id:'lowg',    name:'저중력 난투', desc:'몸이 둥실둥실, 중력이 약해진 난투', rules:{grav:0.6}},
@@ -6472,7 +6473,7 @@ function renderOnlineProgress(){
   const pct=onlineProg.shown;
   onlineStatus.textContent=(onlineProg.label?onlineProg.label+' ':'')+pct+'%';
   const bar=document.getElementById('onlineBar'), fill=document.getElementById('onlineBarFill');
-  if(bar){ bar.style.display='block'; if(fill) fill.style.width=onlineProg.pos+'%'; }   // the bar moves by fractions (every frame), the number by whole percents
+  if(bar){ bar.style.display='block'; if(fill) fill.style.width=onlineProg.pos+'%'; document.body.classList.add('matching'); }   // the bar moves by fractions (every frame), the number by whole percents
 }
 function tickOnlineProgress(now){                      // one animation frame: the position is a smooth decimal that glides, never jumps (testable: pass the time)
   const o=onlineProg; now=(now===undefined)?performance.now():now;
@@ -6515,7 +6516,7 @@ function setOnlineProgress(frac, label, ceilFrac){        // frac: where the sea
 function clearOnlineProgress(){
   const o=onlineProg; o.timer=null;
   o.target=0; o.ceil=0; o.shown=0; o.pos=0; o.label=''; o.done=false;
-  const bar=document.getElementById('onlineBar'), fill=document.getElementById('onlineBarFill'); if(bar) bar.style.display='none'; if(fill) fill.style.width='0%';
+  const bar=document.getElementById('onlineBar'), fill=document.getElementById('onlineBarFill'); if(bar) bar.style.display='none'; if(fill) fill.style.width='0%'; document.body.classList.remove('matching');
 }
 const joinBtn=document.getElementById('joinBtn');
 const privateStatus=document.getElementById('privateStatus');
