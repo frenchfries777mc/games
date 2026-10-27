@@ -5345,7 +5345,7 @@ function shuffle(arr){ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.
 /* ===== the version of this file =====
    Players with different versions CAN meet and play together: the automatic matchmaking uses the same room names for every version (online-<mode>-<map>-<slot>), and nobody is refused because of a different build.
    The build is only sent along with the join message and the lobby (for information); the corner of the screen shows it. */
-const GAME_BUILD='build 2026-10-18-v453';
+const GAME_BUILD='build 2026-10-18-v454';
 const GAME_VERSION='0.8', GAME_VERSION_NAME='황금을 찾아서';   // 게임 버전 이름: versions.json의 title과 같게 (빌드마다 바꾸지 않음)
 const WEEKLY_EVENTS=[
   {id:'lowg',    name:'저중력 난투', desc:'몸이 둥실둥실, 중력이 약해진 난투', rules:{grav:0.6}},
@@ -10056,6 +10056,7 @@ function showMvpVote(cands, ms){
   const o=ensureMvpBox(); o.style.display='block'; o.innerHTML=''; mvpMyPick=null; mvpLockExit(true);
   const h=document.createElement('div'); h.style.cssText='font-weight:900; font-size:26px; color:#ffd34d; margin-bottom:4px;'; h.textContent='🏅 MVP 투표'; o.appendChild(h);
   const s=document.createElement('div'); s.style.cssText='font-size:15px; color:#c9ced8; margin-bottom:16px;'; s.textContent='가장 활약한 사람을 골라 주세요 (뽑히면 +'+MVP_XP+' XP)'; o.appendChild(s);
+  { const td=cands.reduce((a,c)=>a+(c.d||0),0), tk=cands.reduce((a,c)=>a+(c.k||0),0); const t2=document.createElement('div'); t2.style.cssText='font-size:14px; color:#9aa3b5; margin:-8px 0 14px;'; t2.textContent='우리 팀 합계 · 처치 '+tk+' · 사망 '+td; o.appendChild(t2); }
   const row=document.createElement('div'); row.style.cssText='display:flex; gap:10px; flex-wrap:nowrap; justify-content:center; align-items:stretch; overflow-x:auto; padding-bottom:4px;'; o.appendChild(row);
   o.style.width='min(96vw,'+Math.max(560, cands.length*134+60)+'px)';
   let any=false;
