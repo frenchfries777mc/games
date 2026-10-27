@@ -222,3 +222,9 @@ patchnotes.json | v457 title | 시즌 패스 개편 | build 457 | 2026-10-27
 patchnotes.json | v457 items[0] | 시즌 패스 진행도 초기화 (10월 시즌 처음부터) | build 457 | 2026-10-27
 patchnotes.json | v457 items[1] | 시즌 패스 창을 넓히고 보상을 가로로 배치, 마우스 드래그·터치로 넘겨 보기 | build 457 | 2026-10-27
 patchnotes.json | v457 items[2] | 창을 열면 마지막으로 받은 보상이 가운데에 오도록 변경 | build 457 | 2026-10-27
+patchnotes.json | v458 title | 0.9 은하 제국의 황혼 | build 458 | 2026-10-27
+patchnotes.json | v458 items[0] | 0.9 업데이트「은하 제국의 황혼」 시작 | build 458 | 2026-10-27
+patchnotes.json | v458 items[1] | 새 캐릭터 크레온 1세·펠·티오니스 추가 | build 458 | 2026-10-27
+patchnotes.json | v458 items[2] | 새 인트로 그림 적용, 로비 배경으로도 사용 | build 458 | 2026-10-27
+patchnotes.json | v458 items[3] | 인트로 제목과 버전 표기 변경 | build 458 | 2026-10-27
+patchnotes.json | v458 items[4] | 밸런스 표에 새 캐릭터 3명 포함 | build 458 | 2026-10-27
