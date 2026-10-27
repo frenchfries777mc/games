@@ -214,3 +214,7 @@ patchnotes.json | v453 title | 스킨 아바타 그림 선택 | build 453 | 2026
 patchnotes.json | v453 items[0] | 프로필 아바타 선택의 착용품을 글자 대신 외형 그림으로 표시 현재 착용품 이름을 착용품 제목 옆에 표시 | build 453 | 2026-10-27
 patchnotes.json | v454 title | MVP 투표 팀 합계 | build 454 | 2026-10-27
 patchnotes.json | v454 items[0] | MVP 투표 화면에 우리 팀 합계 처치·사망 수 표시 | build 454 | 2026-10-27
+patchnotes.json | v455 title | 무너지는 다리 맵 완전 삭제 | build 455 | 2026-10-27
+patchnotes.json | v455 items[0] | 무너지는 다리 맵 완전 삭제 (연습 모드·맵 목록에서도 사라짐) | build 455 | 2026-10-27
+patchnotes.json | v456 title | 하이퍼 배틀로얄 체력 5배 | build 456 | 2026-10-27
+patchnotes.json | v456 items[0] | 하이퍼 배틀로얄 체력 배율 7배에서 5배로 하향 | build 456 | 2026-10-27

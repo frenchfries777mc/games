@@ -1290,7 +1290,7 @@ function cleanRules(r){ const o={}; for(const k in RULE_DEFAULT){ const v=r&&+r[
 function rulesAreCustom(r){ r=r||roomRules; for(const k in RULE_DEFAULT) if(r[k]!==RULE_DEFAULT[k]) return true; return false; }
 let roomOpts={balance:false, vote:false}, selectedOpts={balance:false, vote:false};      // private-room extras: automatic team balance, map vote
 function cleanOpts(o){ return {balance:!!(o&&o.balance), vote:!!(o&&o.vote)}; }
-function ruleHp(){ return Math.round(MAX_HP*roomRules.hp*(gameMode==='zombie'?2:1)*(gameMode==='hyperbr'?7:1)); }   // zombie game: humans get double health
+function ruleHp(){ return Math.round(MAX_HP*roomRules.hp*(gameMode==='zombie'?2:1)*(gameMode==='hyperbr'?5:1)); }   // zombie game: humans get double health
 const MOVE_SPEED = 250, JUMP_VELOCITY = -680;
 const DASH_FORCE = 700, DASH_CD = 1.5;
 const PZ_MAX=3, PZ_DMG=[25,31,37,43], PZ_ATK_CD=[0.6,0.5,0.4,0.3], PZ_DASH_CD=[3,1.5,0.7,0.4], PZ_CD_STEP=0.12, PZ_ULT_HEAL=30, PZ_ULT_HEAL_MAX=50, PZ_MAX_SPEED=1.25;       // 피사로 has four stages (the start, then one per ultimate): damage, attack cooldown and dash cooldown come from these tables; the skill and ultimate cooldowns are 12% shorter per stage; the last stage also runs at 125% speed       // (+5 damage per stack; at the 4th stack: a 0.5 s dash and 125% speed)
@@ -3603,7 +3603,7 @@ const MODES = {
   bigcq:    {id:'bigcq', noTeleport:true, name:'거대 점령전', desc:'🧪 실험적 모드 · 24~32명이 두 팀으로 나뉘는 대규모 난투 · 아주 가로로 긴 맵 양 끝에서 시작하고 부활은 15초 · 순간이동 사용 불가 · 왼쪽·중앙·오른쪽 깃발에 사람이 더 많은 팀이 15초 서 있으면 그 팀 깃발이 돼요 (이미 차지한 깃발도 다시 뺏을 수 있어요) · 세 깃발을 모두 차지한 팀이 승리 (12분이 지나면 깃발이 더 많은 팀) · 팀원끼리 캐릭터가 겹쳐도 돼요', teams:true, teamSize:'half', extra:0, elim:false, respawnTime:15, special:true, exp:true, fixedMapId:'giant_cq', minPlayers:24, fillTo:32, allowDup:true},
   redlight: {id:'redlight', name:'무궁화 꽃이 피었습니다', desc:'🧪 실험적 모드 · 배틀로얄에 신호등이 더해져요 · 초록불에는 마음껏 움직이고, 빨간불에 움직이면 100 피해를 입어요(빨간불이 켜지고 0.45초는 봐줘요) · 시간이 지날수록 초록불이 짧아져요 · 최후의 1인이 승리', teams:false, extra:0, elim:true, special:true, exp:true},
   crownhold:{id:'crownhold', name:'왕관 잡기', desc:'🧪 실험적 모드 · 왕관을 가진 사람을 쓰러뜨리면 왕관을 빼앗아요 · 왕관을 들고 있는 동안 1초에 1점씩 쌓여요 · 먼저 60점을 쌓은 사람이 승리 (8분이 지나면 점수가 높은 사람이 승리)', teams:false, extra:0, elim:false, respawnTime:4, special:true, exp:true},
-  hyperbr:  {id:'hyperbr', name:'하이퍼 배틀로얄', desc:'🧪 실험적 모드 · 배틀로얄 규칙에 체력 7배, 공격 간격 절반(두 배 빠른 공격), 대쉬 무한, 궁극기 쿨타임 1/5배 · 최후의 1인이 승리', teams:false, extra:0, elim:true, exp:true},
+  hyperbr:  {id:'hyperbr', name:'하이퍼 배틀로얄', desc:'🧪 실험적 모드 · 배틀로얄 규칙에 체력 5배, 공격 간격 절반(두 배 빠른 공격), 대쉬 무한, 궁극기 쿨타임 1/5배 · 최후의 1인이 승리', teams:false, extra:0, elim:true, exp:true},
   lowg:     {id:'lowg', name:'저중력 난투', desc:'중력이 약하고 넉백이 강한 난투 · 높이 날아오르고 멀리 튕겨나가요 · 4분 동안 킬이 가장 많은 사람이 승리', teams:false, extra:0, elim:false, respawnTime:3, rules:{grav:0.6, kb:2}, special:true}
 };
 const MODE_ORDER = ['ffa','br','duo','team','duel','conquest'];
@@ -4696,13 +4696,6 @@ MAP_TEMPLATES['dungeon'] = {
 // ---- 무너지는 다리: a river runs under a 10-plank bridge; the planks break and come back one after another (the rhythm is a fixed function of the clock, so every screen agrees) ----
 const BRIDGE_X0=700, BRIDGE_PLANKS=10, BRIDGE_W=100, BRIDGE_Y=760, BRIDGE_CYCLE=10, BRIDGE_WARN_FROM=5.5, BRIDGE_GONE_FROM=6.5, BRIDGE_BACK=9, BRIDGE_RIVER={x:1200,r:500};
 function bridgePlankState(i,ts){ const c=(ts+i*3.7)%BRIDGE_CYCLE; return c<BRIDGE_WARN_FROM?0:(c<BRIDGE_GONE_FROM?1:(c<BRIDGE_BACK?2:0)); }
-MAP_TEMPLATES['collapsebridge'] = {
-  id:'collapsebridge', name:THEMES.collapsebridge.name, maxPlayers:8, arenaW:2400, arenaH:1000, theme:THEMES.collapsebridge, hazard:'bridge',
-  platforms:[{x:0,y:900,w:2400,h:100},{x:0,y:760,w:700,h:140},{x:1700,y:760,w:700,h:140}].concat(mirrorPl(2400,[{x:100,y:640,w:220,h:24},{x:420,y:520,w:200,h:24}])).concat([{x:1050,y:640,w:300,h:24},{x:1120,y:520,w:160,h:24}]),      // (every step up is at most 130: one jump is 144 high)
-  planks:Array.from({length:BRIDGE_PLANKS},(_,i)=>({x:BRIDGE_X0+i*BRIDGE_W, y:BRIDGE_Y, w:BRIDGE_W, h:24, pk:i})),
-  spawns:[{x:120,y:750},{x:300,y:750},{x:480,y:750},{x:1920,y:750},{x:2100,y:750},{x:2280,y:750},{x:210,y:630},{x:2190,y:630}]
-};
-MAP_TEMPLATES['collapsebridge'].platforms=MAP_TEMPLATES['collapsebridge'].platforms.concat(MAP_TEMPLATES['collapsebridge'].planks);
 // ---- 화산 지대: two pools in the floor go from crust to glow to lava and back ----
 const LAVA_POOLS=[{x:600,w:300},{x:1500,w:300}], LAVA_CYCLE=12, LAVA_WARN_FROM=5, LAVA_ON_FROM=7;
 MAP_TEMPLATES['lavaland'] = {
@@ -5345,7 +5338,7 @@ function shuffle(arr){ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.
 /* ===== the version of this file =====
    Players with different versions CAN meet and play together: the automatic matchmaking uses the same room names for every version (online-<mode>-<map>-<slot>), and nobody is refused because of a different build.
    The build is only sent along with the join message and the lobby (for information); the corner of the screen shows it. */
-const GAME_BUILD='build 2026-10-18-v454';
+const GAME_BUILD='build 2026-10-18-v456';
 const GAME_VERSION='0.8', GAME_VERSION_NAME='황금을 찾아서';   // 게임 버전 이름: versions.json의 title과 같게 (빌드마다 바꾸지 않음)
 const WEEKLY_EVENTS=[
   {id:'lowg',    name:'저중력 난투', desc:'몸이 둥실둥실, 중력이 약해진 난투', rules:{grav:0.6}},
