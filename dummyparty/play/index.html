@@ -1661,7 +1661,9 @@ body.playing #emoBar{display:flex}
    <div class="row"><input id="codeIn" maxlength="5" placeholder="방 코드" autocomplete="off"><button class="pb dark" id="joinBtn" style="flex:0 0 auto">들어가기</button></div>
    <div class="msg" id="homeMsg"></div>
   </aside>
-  <template id="patchnotes"><details class="notes" open><summary>패치노트 · v0.1 (b77)</summary>
+  <template id="patchnotes"><details class="notes" open><summary>패치노트 · v0.1 (b78)</summary>
+   <b>2026-10-27 · v0.1 · b78 · 칭호 정리</b>
+   <ul><li>상점 칭호에서 "팔 하나 없는 애"를 뺐어요</li></ul>
    <b>2026-10-27 · v0.1 · b77 · 봇 이름</b>
    <ul><li>봇 이름이 방귀쟁이, 홀쭉이, 바보1, 멍청이, 10급 공무원, 교무실 단골, 벌점부자, 말썽이, 김개똥 중에서 랜덤으로 정해져요</li></ul>
    <b>2026-10-26 · v0.1 · b76 · 나가기로 창 닫기와 바나나</b>
@@ -1814,7 +1816,7 @@ body.playing #emoBar{display:flex}
    <ul><li>무너지는 발판 칸 수 대폭 증가 (19×10)와 용암 동굴 맵</li><li>10개 맵 전부 새로 그림 (관중석, 야자수 섬, 링, 정원 미로, 서커스, 우노 테이블 등)</li><li>글자 대신 아이콘·말풍선·이펙트로 표현 (무기, 아이템, 카드 효과, 시작 안내)</li><li>타격·폭발·물보라 효과와 화면 흔들림 추가</li></ul>
    <b>2026-10-19 · v0.1 · b1 · 첫 시험판</b>
    <ul><li>마네킹 미니게임 10개 추가 (장애물 달리기, 섬 밀치기, 싸우기, 병맛 미로, 체스 대난투, 폭탄 돌리기, 병맛 우노, 쇼윈도 얼음땡, 무너지는 발판, 컨베이어 서바이벌)</li><li>방 코드로 최대 8명 멀티플레이, 빈자리는 봇으로 채우기</li><li>판마다 10개 중 5개를 무작위로 골라 점수를 합산</li><li>PC 키보드와 휴대폰 터치 조작 지원</li></ul></details></template>
-  <p class="foot">2~8명 · 판마다 36개 미니게임 중 7개 · v0.1 b77 · <a href="../">← Dummy Party 사이트로</a></p>
+  <p class="foot">2~8명 · 판마다 36개 미니게임 중 7개 · v0.1 b78 · <a href="../">← Dummy Party 사이트로</a></p>
   <p class="foot"><span class="ff-copy">© 2026 Frenchfries777 · <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.ko" target="_blank" rel="noopener">CC BY-NC-ND 4.0</a></span></p>
  </div>
 </section>
@@ -7199,7 +7201,7 @@ function funPhase(m, ph) {
 var WAL = { bal: 0, today: 0, own: {}, ready: false, busy: false };
 var DP_PRICE = { f1: 60, f2: 30, f3: 30, d1: 80, d2: 100, d3: 130, d4: 180, d5: 160, d6: 220 };
 // 칭호 (상점 "칭호" 탭): 이름 옆에 작게 붙는 병맛 한마디. 가격은 supabase-dp-v02.sql 의 dp_price 와 같아야 해요
-var TITLES = ['칭호 없음', '아무개', '방귀쟁이', '뿡뿡이', '12중 스파이', '대통령', '전직 마네킹', '무릎에 스프링', '팔 하나 없는 애', '라면 3분 장인', '숨은 마네킹', '쇼윈도의 전설', '우승 예약석'];
+var TITLES = ['칭호 없음', '아무개', '방귀쟁이', '뿡뿡이', '12중 스파이', '대통령', '전직 마네킹', '무릎에 스프링', '', '라면 3분 장인', '숨은 마네킹', '쇼윈도의 전설', '우승 예약석'];
 var TITLE_PRICE = [0, 20, 30, 40, 60, 150, 50, 70, 80, 100, 120, 90, 200];
 var TITLE_COUNT = TITLES.length;
 TITLE_PRICE.forEach(function (n, i) { if (n > 0) DP_PRICE['t' + i] = n; });
@@ -7663,7 +7665,7 @@ function glOpen(i) { return myStats().rwins >= GL_NEED[i] || ownsItem('g' + i); 
 function faceOpen(i) { return i === 0 || ownsItem('f' + i); }
 function danceOpen(i) { return i === 0 || ownsItem('d' + i); }
 function titleOpen(i) { return i === 0 || ownsItem('t' + i); }
-function nameH(p) { return (p && p.t > 0 && p.t < TITLE_COUNT ? '<i class="ti">' + esc(TITLES[p.t]) + '</i>' : '') + esc(p.name); }
+function nameH(p) { return (p && p.t > 0 && p.t < TITLE_COUNT && TITLES[p.t] ? '<i class="ti">' + esc(TITLES[p.t]) + '</i>' : '') + esc(p.name); }
 function myDeco() { var h = decoOk(lsGet('dummyparty.hat'), HAT_COUNT), g = decoOk(lsGet('dummyparty.gl'), GL_COUNT), f = decoOk(lsGet('dummyparty.face'), FACE_COUNT), d = decoOk(lsGet('dummyparty.dance'), DANCE_COUNT); if (!hatOpen(h)) h = 0; if (!glOpen(g)) g = 0; if (!faceOpen(f)) f = 0; if (!danceOpen(d)) d = 0; var t = decoOk(lsGet('dummyparty.title'), TITLE_COUNT); if (!titleOpen(t)) t = 0; return { h: h, g: g, f: f, d: d, t: t }; }
 function syncDeco(m) {
   DECO = {}; BOOSTC = {}; DANCE = {};
@@ -8866,9 +8868,10 @@ function dpAsk(msg, okLabel, onOk) {
     tabs.innerHTML = '';
     CATS.forEach(function (c) { var b = document.createElement('button'); b.type = 'button'; b.textContent = c[1]; if (c[0] === SHOP.k) b.className = 'on'; b.onclick = function () { SHOP.k = c[0]; SHOP.i = null; if (c[0] === 'd') { PREVD.i = d.d; PREVD.until = performance.now() + 7000; } fillDeco(); }; tabs.appendChild(b); });
     if (SHOP.i == null || SHOP.i >= cat[2]) SHOP.i = cur;
+    if (SHOP.k === 't' && !TITLES[SHOP.i]) SHOP.i = 0;
     function open(i) { return SHOP.k === 'f' ? faceOpen(i) : SHOP.k === 'd' ? danceOpen(i) : SHOP.k === 't' ? titleOpen(i) : (st.rwins >= cat[3][i] || ownsItem(SHOP.k + i)); }
     var grid = $('shopGrid'); grid.innerHTML = '';
-    for (var i = 0; i < cat[2]; i++) (function (i) {
+    for (var i = 0; i < cat[2]; i++) if (SHOP.k !== 't' || TITLES[i]) (function (i) {
       var key = SHOP.k + i, o = open(i), b = document.createElement('button'); b.type = 'button'; b.className = 'dk' + (i === SHOP.i ? ' sel' : '') + (i === cur ? ' on' : '') + (o ? '' : ' lk');
       if (SHOP.k === 't') { b.className += ' tt'; b.innerHTML = '<span>' + esc(TITLES[i]) + (o ? '' : '<small>' + (DP_PRICE[key] || 0) + 'dC</small>') + '</span>'; }
       else b.appendChild(thumb(SHOP.k, i, o, DP_PRICE[key] || 0));
