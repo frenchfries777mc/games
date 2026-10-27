@@ -1016,7 +1016,7 @@ sting();})();</script>
     <div style="font-size:12px; color:var(--text-dim); margin:6px 0 10px;">상성은 봇끼리 모든 조합으로 겨룬 시뮬레이션 기준이에요 (사람이 하면 다를 수 있어요).</div>
     <div id="codexBody"></div>
   </div>
-  <div class="card" id="missionScreen" style="width:min(520px,94vw); max-height:86vh; overflow-y:auto;">
+  <div class="card" id="missionScreen" style="width:min(1040px,96vw); max-height:86vh; overflow-y:auto;">
     <button class="backlink" id="missionBackBtn" style="position:absolute; top:14px; right:14px; margin:0;">&larr; 뒤로가기</button>
     <h2 style="margin:0;">📋 미션 · 시즌 패스</h2>
     <div id="missionBody"></div>
@@ -1317,6 +1317,8 @@ const VAC_SKILL_COST=3, VAC_SKILL_R=330, VAC_SKILL_PULL=800, VAC_SKILL_STUN=1.0;
 const VACUUM_RANGE=480, VACUUM_HALF_ANGLE=0.34, VACUUM_MAX_STACKS=8, VACUUM_PULL_FORCE=90;
 const FLAME_MAX_HOLD=8, FLAME_OVERHEAT_COOLDOWN=2;
 const FLAME_SHIELD_MAXHP=60, FLAME_SHIELD_DURATION=8;
+const SPACE_ON=(()=>{ try{ return /[?&]space=1/.test(location.search) || localStorage.getItem('ff_space')==='1'; }catch(e){ return false; } })();      // 0.9 space update: hidden until the owner says so
+const SPACE_IDS=['cleon','pel','tionis'], INTERNAL_WEAPONS=['none','guard','syringe'];
 const WEAPONS = {
   pistol:  {id:'pistol',  name:'권총',     emoji:'🔫', kind:'gun',      dmg:17, cd:0.85, bulletSpeed:950, shape:'bullet',
             desc:'데미지 17 · 연사속도 0.85초 · 준수한 위력과 안정적인 명중률의 표준형 권총'},
@@ -1376,9 +1378,17 @@ const WEAPONS = {
             desc:'데미지 36 · 쿨타임 0.65초 · 사거리 95 · 한 번 베면 묵직하게 들어가는 카타나'},
   kurus:{id:'kurus',name:'어둠의 물약',emoji:'🧪', kind:'potion', dmg:12, cd:0.5, bulletSpeed:720, shape:'potion', arcs:true, hitR:9, life:3,
             desc:'데미지 12 · 쿨타임 0.5초 · 포물선을 그리며 날아가는 어둠의 물약 · 떨어진 자리(바닥·발판, 옆면에 맞으면 흘러내린 자리)에 캐릭터 5명 너비의 어둠이 생김 (닿은 어둠은 하나로 이어지고 어둠 탈출 전까지 사라지지 않음) · 내 어둠 위에서는 초당 체력 3 회복, 이동속도 30% 증가 · 상대는 내 어둠 위에서 이동속도 30% 감소, 주변이 잘 안 보임'},
+  cleon:{id:'cleon',name:'황제의 홀',emoji:'👑', kind:'gun', dmg:10, cd:0.8, bulletSpeed:760, shape:'cleonorb', hitR:11, life:1.5,
+            desc:'데미지 10 · 쿨타임 0.8초 · 홀에서 나가는 분홍 마법탄 (장거리) · 근위병이 살아 있는 동안 근위병 1명마다 데미지 10% 증가'},
+  pel:{id:'pel',name:'조종 드론',emoji:'🛸', kind:'gun', dmg:6, cd:0.6, bulletSpeed:1000, shape:'dronebolt', hitR:8, life:1.3,
+            desc:'데미지 6 · 쿨타임 0.6초 · 곁을 도는 드론이 한 대당 한 발씩 쏨 (장거리) · 드론은 시작 2대'},
+  tionis:{id:'tionis',name:'연극 가면',emoji:'🎭', kind:'gun', dmg:13, cd:0.6, bulletSpeed:850, shape:'mask', hitR:14, life:0.9,
+            desc:'데미지 13 · 쿨타임 0.6초 · 웃는 얼굴과 우는 얼굴의 연극 가면이 회전하며 날아감 (중장거리)'},
+  syringe:{id:'syringe',name:'주사기',emoji:'💉', kind:'none', dmg:20, cd:999999, bulletSpeed:900, shape:'syringe', hitR:10, life:0.6, desc:'티오니스의 채혈 주사기 (스킬 전용)'},
+  guard:{id:'guard',name:'에너지 창',emoji:'🔱', kind:'melee', dmg:15, cd:0.75, range:130, shape:'spear', thrust:true, kbMult:1.2, desc:'근위병의 창 (소환 전용)'},
   none: {id:'none', name:'맨손', emoji:'', kind:'none', dmg:0, cd:999999, shape:'none', desc:'무기 없음'}
 };
-const SELECTABLE_WEAPONS = Object.keys(WEAPONS).filter(w=>w!=='none'); // 'none' is an internal stub assigned automatically in no-weapon modes (hot potato, hide-and-seek, etc.) - it must never appear as something a player can pick
+const SELECTABLE_WEAPONS = Object.keys(WEAPONS).filter(w=>!INTERNAL_WEAPONS.includes(w) && (SPACE_ON || !SPACE_IDS.includes(w))); // 'none' is an internal stub assigned automatically in no-weapon modes (hot potato, hide-and-seek, etc.) - it must never appear as something a player can pick
 const MAX_HP = 300, RESPAWN_TIME = 5;
 // Resting heal (there is NO natural regeneration): a player who has stayed on the same spot for REST_SEC seconds heals REST_AMOUNT hp every
 // REST_INTERVAL seconds, until he moves again (then he has to stand still for REST_SEC again). Standing still is all that counts: he may keep shooting.
@@ -1428,6 +1438,9 @@ function pirateFlyVel(p, ax, ay){      // launch velocity of the cannon ride: to
   return {vx:Math.cos(a)*PIRATE_FLY_SPEED, vy:Math.sin(a)*PIRATE_FLY_SPEED};
 }
 const ULTS = {
+  cleon:{name:'제국 함대 포격', desc:'조준한 곳 주변 넓은 범위에 분홍 표시가 생기고 1.5초 뒤 제국 함선 5척의 위성 포격 빔이 차례로 떨어져 빔마다 15 피해 (발판 통과, 나는 피해 없음)'},
+  pel:{name:'드론 자폭', desc:'3초 동안 드론의 공격력이 50% 증가하고, 그 뒤 모든 드론이 2초 동안 가까운 상대를 추격해 맞거나 2초가 지나면 자폭 (드론 1대당 10 피해) · 자폭한 드론은 스킬로 다시 늘림'},
+  tionis:{name:'분신 연극', desc:'4초 동안 분신이 나타나 공격하고 (내 공격력의 절반) 분신은 공격을 받지 않음 · 그동안 나는 투명해지고 피해를 받거나 분신이 사라지고 1초 뒤에 풀림'},
   pizarro:  {name:'정복자의 기세', desc:'체력 30 회복(최종 단계에서 쓰면 50) + 공격력 25→31→37→43, 공격 쿨타임 0.6→0.5→0.4→0.3초, 대쉬 쿨타임 3→1.5→0.7→0.4초로 단계가 오르고 스킬·궁극기 쿨타임도 단계마다 12% 단축됨 (최대 3번 중첩 = 4단계, 4단계엔 이동속도 125%, 죽으면 초기화)'},
   puppeteer:{name:'꼭두각시 조종', desc:'조준한 방향으로 실을 날려 맞힌 상대를 5초간 조종 (맞히지 못하면 조종 못 함) · 조종하는 동안 내 이동·점프·조준·일반 공격 입력대로 움직이고 내 시야도 상대 시점이 됨, 상대는 스킬과 궁극기를 쓸 수 없음 · 조종하는 동안 내 몸은 움직이지 못하고 받는 데미지 50% 감소 · 조종이 끝나면 조종당한 상대가 자폭해 본인은 60, 주변(220) 적에게는 30 피해'},
   kan:      {name:'케찰코아틀의 날개', desc:'5초 동안 날개를 펴고 날아올라 (점프 키를 누르면 위로, 떼면 천천히 내려옴) 독침을 한 번에 3발씩, 더 빠르게 발사'},
@@ -1606,9 +1619,9 @@ const SFX_DEFS={
 // which kind of cast sound each weapon's ultimate makes: power = self buff / transformation, shield = field / wall / magic, blast = offensive barrage
 const ULT_SFX={puppeteer:'ult_power', pizarro:'ult_power', kan:'ult_blast', pistol:'ult_power', bat:'ult_power', shuriken:'ult_power', dagger:'ult_power', dracula:'ult_power', gloves:'ult_power', bazooka:'ult_power',
   smg:'ult_shield', magiccard:'ult_shield', gambler:'ult_shield', wizard:'ult_shield', flamethrower:'ult_shield', portalgun:'ult_shield',
-  rifle:'ult_blast', sword:'ult_blast', lightsaber:'ult_blast', horemheb:'ult_blast', bow:'ult_blast', boomerang:'ult_blast', shotgun:'ult_blast', grenade:'ult_blast', vacuum:'ult_blast', pirate:'ult_blast', samurai:'ult_blast', kurus:'ult_power'};
+  rifle:'ult_blast', sword:'ult_blast', lightsaber:'ult_blast', horemheb:'ult_blast', bow:'ult_blast', boomerang:'ult_blast', shotgun:'ult_blast', grenade:'ult_blast', vacuum:'ult_blast', pirate:'ult_blast', samurai:'ult_blast', kurus:'ult_power', cleon:'ult_blast', pel:'ult_power', tionis:'ult_power'};
 const WEAPON_SFX={puppeteer:'shuriken', pizarro:'sword', kan:'bow', pistol:'pistol', rifle:'rifle', smg:'smg', bow:'bow', wizard:'wizard', sword:'sword', horemheb:'sword', lightsaber:'portal', vacuum:'vacuum', portalgun:'portal',
-  magiccard:'magiccard', bat:'bat', boomerang:'boomerang', shuriken:'shuriken', shotgun:'shotgun', gloves:'gloves', grenade:'grenade', bazooka:'bazooka', dagger:'dagger', dracula:'dracula', pirate:'pirate', samurai:'samurai', kurus:'grenade', gambler:'shuriken'}; // weapons that sound off in tryFire (dice and flame are hooked where they actually happen)
+  magiccard:'magiccard', bat:'bat', boomerang:'boomerang', shuriken:'shuriken', shotgun:'shotgun', gloves:'gloves', grenade:'grenade', bazooka:'bazooka', dagger:'dagger', dracula:'dracula', pirate:'pirate', samurai:'samurai', kurus:'grenade', gambler:'shuriken', cleon:'wizard', pel:'smg', tionis:'shuriken'}; // weapons that sound off in tryFire (dice and flame are hooked where they actually happen)
 const FLAME_SFX_INTERVAL=0.97; // fire clip is ~1.1s long with 0.12s faded ends -> re-trigger slightly early so consecutive chunks crossfade
 const SFX_MAX_VOICES=16;       // hard cap on simultaneous sounds so a 32-player brawl can't pile up into noise
 let sfxCtx=null, sfxMaster=null, sfxBuffers={}, sfxLoading=false, sfxActive=0, sfxLastPlay={};
@@ -2369,7 +2382,7 @@ function drawTitleTag(ctx, p, HEADCY){
 }
 // ---- dates and a small seeded random (so every device makes the same missions for the same day) ----
 function weekKeyOf(d){ d=d||new Date(); const t=new Date(d.getFullYear(), d.getMonth(), d.getDate()); t.setDate(t.getDate()-((t.getDay()+6)%7)); return todayKey(t); }       // the Monday of this week
-function seasonKeyOf(d){ d=d||new Date(); return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0'); }                                                              // a season is one calendar month
+function seasonKeyOf(d){ d=d||new Date(); return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-r'; }                                                              // a season is one calendar month
 function seededRand(str){ let h=2166136261; for(let i=0;i<str.length;i++){ h^=str.charCodeAt(i); h=Math.imul(h,16777619); } return ()=>{ h+=0x6D2B79F5; let t=h; t=Math.imul(t^(t>>>15),t|1); t^=t+Math.imul(t^(t>>>7),t|61); return ((t^(t>>>14))>>>0)/4294967296; }; }
 function msToNextMonth(now){ now=now||new Date(); return new Date(now.getFullYear(), now.getMonth()+1, 1)-now; }
 // ---- missions ----
@@ -2503,7 +2516,7 @@ let lastSeasonGain=0, lastSeasonTierShown=-1;
 function ensureMissionBadge(){
   let b=document.getElementById('missionBadge'); if(b) return b;
   b=document.createElement('button'); b.id='missionBadge'; b.title='미션 · 시즌 패스'; b.innerHTML='📋<span class="dot"></span>';
-  b.onclick=()=>{ showScreen('missionScreen'); renderMissionScreen(); };
+  b.onclick=()=>{ showScreen('missionScreen'); renderMissionScreen(true); };
   (document.getElementById('lobby')||document.body).appendChild(b); return b;
 }
 function ensureClanBadge(){
@@ -2518,8 +2531,9 @@ function refreshMissionBadge(){
   b.classList.toggle('ready', (missionsClaimable()+seasonClaimable())>0);
 }
 function barHtml(frac, color){ return '<div style="height:8px; background:#232733; border-radius:6px; overflow:hidden;"><div style="height:100%; width:'+Math.round(clamp(frac,0,1)*100)+'%; background:'+(color||'#3fe0c5')+';"></div></div>'; }
-function renderMissionScreen(){
+function renderMissionScreen(center){
   const body=document.getElementById('missionBody'); if(!body) return;
+  const oldTrack=body.querySelector('.seasonTrack'), keepLeft=oldTrack?oldTrack.scrollLeft:0;
   const ms=ensureMissions(), s=ensureSeason(), tier=seasonTier();
   body.innerHTML='';
   const sec=(txt)=>{ const d=document.createElement('div'); d.style.cssText='font-size:12px; color:var(--text-dim); font-weight:700; margin:16px 0 6px;'; d.textContent=txt; body.appendChild(d); return d; };
@@ -2543,7 +2557,7 @@ function renderMissionScreen(){
   const wkMs=(function(){ const n=new Date(), d=(8-((n.getDay()+6)%7+1)); return new Date(n.getFullYear(), n.getMonth(), n.getDate()+d)-n; })(), wd=Math.floor(wkMs/86400000), wh=Math.floor((wkMs%86400000)/3600000);
   msBox('weekly','🗓️ 주간 미션 ('+(wd>=1?wd+'일 남음':wh+'시간 남음')+')');
   const mo=msToNextMonth(), md=Math.floor(mo/86400000);
-  sec('🎫 시즌 패스 · '+s.key+' 시즌 ('+md+'일 남음)');
+  sec('🎫 시즌 패스 · '+s.key.replace('-r','')+' 시즌 ('+md+'일 남음)');
   const head=document.createElement('div'); head.style.cssText='padding:10px; border:1px solid var(--line); border-radius:10px; background:var(--panel-2); margin-bottom:8px;';
   const into=s.xp-seasonXpForTier(tier), need=seasonTierCost(tier+1);
   head.innerHTML='<div style="font-weight:800; font-size:15px; margin-bottom:6px;">'+tier+' / '+SEASON_TIERS+' 단계 · 시즌 XP '+s.xp+'</div>'+barHtml(tier>=SEASON_TIERS?1:into/need,'#c17bff')+'<div style="font-size:11px; color:var(--text-dim); margin-top:5px;">경기 완료 +20 · 승리 +20 · 킬 +5 · 미션 보상 · 단계마다 '+SEASON_TIER_XP+' XP (31단계부터 '+SEASON_LATE_XP+' XP)</div>';
@@ -2553,17 +2567,36 @@ function renderMissionScreen(){
   if(!claimN){ allBtn.className='btn-secondary btn-full'; allBtn.disabled=true; allBtn.style.marginBottom='8px'; }
   allBtn.onclick=(ev)=>{ const rc=ev.currentTarget.getBoundingClientRect(); let n=0; for(let i=1;i<=tier;i++) if(claimSeasonTier(i)) n++; if(n) claimSparkle(rc.left+rc.width/2, rc.top, n+'개 보상 획득!', true); renderMissionScreen(); };
   body.appendChild(allBtn);
+  const track=document.createElement('div'); track.className='seasonTrack';
+  track.style.cssText='display:flex; gap:8px; overflow-x:auto; padding:6px 2px 12px; cursor:grab; user-select:none; -webkit-overflow-scrolling:touch; scrollbar-width:thin;';
+  let lastClaimed=0; for(let i=1;i<=SEASON_TIERS;i++) if(s.claimed[i]) lastClaimed=i;
+  const focusTier=lastClaimed||Math.max(1,tier);
+  let focusEl=null;
   for(let i=1;i<=SEASON_TIERS;i++){
     const r=SEASON_REWARDS[i-1], got=!!s.claimed[i], ok=i<=tier;
-    const row=document.createElement('div'); row.style.cssText='display:flex; align-items:center; gap:10px; padding:7px 10px; margin-bottom:5px; border:1px solid '+(ok&&!got?'#c17bff':'var(--line)')+'; border-radius:10px; background:var(--panel-2); opacity:'+(ok?1:0.6)+';';
-    const n=document.createElement('div'); n.style.cssText='width:26px; font-weight:800; color:#c17bff; flex:none;'; n.textContent=i;
-    const l=document.createElement('div'); l.style.cssText='flex:1; font-size:13px;'; l.textContent=seasonRewardLabel(r);
-    const b=document.createElement('button'); b.style.cssText='padding:5px 11px; flex:none;';
+    const card=document.createElement('div'); card.style.cssText='flex:none; width:128px; display:flex; flex-direction:column; align-items:center; gap:8px; padding:10px 8px; border:1px solid '+(ok&&!got?'#c17bff':'var(--line)')+'; border-radius:10px; background:var(--panel-2); opacity:'+(ok?1:0.6)+';';
+    const n=document.createElement('div'); n.style.cssText='font-weight:800; color:#c17bff; font-size:15px;'; n.textContent=i+'단계';
+    const l=document.createElement('div'); l.style.cssText='flex:1; font-size:13px; text-align:center; line-height:1.4; min-height:54px; display:flex; align-items:center; justify-content:center; word-break:keep-all;'; l.textContent=seasonRewardLabel(r);
+    const b=document.createElement('button'); b.style.cssText='padding:5px 11px; width:100%;';
     if(got){ b.textContent='받음'; b.className='off'; b.disabled=true; }
     else if(ok){ b.textContent='받기'; b.onclick=(ev)=>{ const rc=ev.currentTarget.getBoundingClientRect(), lab=seasonRewardLabel(SEASON_REWARDS[i-1]); if(claimSeasonTier(i)){ claimSparkle(rc.left+rc.width/2, rc.top, lab, SEASON_REWARDS[i-1].kind==='cos'||SEASON_REWARDS[i-1].kind==='title'); renderMissionScreen(); } }; }
     else { b.textContent='🔒'; b.className='off'; b.disabled=true; }
-    row.appendChild(n); row.appendChild(l); row.appendChild(b); body.appendChild(row);
+    card.appendChild(n); card.appendChild(l); card.appendChild(b); track.appendChild(card);
+    if(i===focusTier) focusEl=card;
   }
+  { // drag to scroll with the mouse (touch scrolls by itself)
+    let moved=false;
+    track.addEventListener('mousedown', e=>{
+      const sx=e.clientX, sl=track.scrollLeft; moved=false; track.style.cursor='grabbing';
+      const mv=ev=>{ const dx=ev.clientX-sx; if(Math.abs(dx)>5) moved=true; if(moved) track.scrollLeft=sl-dx; };
+      const up=()=>{ track.style.cursor='grab'; window.removeEventListener('mousemove',mv); window.removeEventListener('mouseup',up); };
+      window.addEventListener('mousemove',mv); window.addEventListener('mouseup',up);
+    });
+    track.addEventListener('click', e=>{ if(moved){ e.stopPropagation(); e.preventDefault(); moved=false; } }, true);
+  }
+  body.appendChild(track);
+  if(center && focusEl) track.scrollLeft=focusEl.offsetLeft-(track.clientWidth-focusEl.offsetWidth)/2;      // (opened: the last reward you took sits in the middle)
+  else track.scrollLeft=keepLeft;
 }
 document.getElementById('missionBackBtn').onclick=()=>showScreen('menuScreen');
 /* ===== profile card: a picture of your profile to look at and save ===== */
@@ -2928,6 +2961,7 @@ function nameColorFor(id){
 function clanBadgeHtml(emb,col,size){ size=size||16; if(!emb) return ''; const c=(typeof clanSafeColor==='function')?clanSafeColor(col):'#3fe0c5', e=(typeof clanSafeEmblem==='function')?clanSafeEmblem(emb):'🏰'; return '<span style="display:inline-flex; align-items:center; justify-content:center; width:'+size+'px; height:'+size+'px; border-radius:50%; background:'+c+'33; border:1.5px solid '+c+'; font-size:'+Math.round(size*0.6)+'px; margin-right:4px; vertical-align:middle;">'+e+'</span>'; }
 function nameWithStyleHtml(name, nameCosId, emb, col, tag, cname){ return clanBadgeHtml(emb,col,16)+(tag?'<span style="color:#fff; margin-right:3px;">['+escapeHtmlText(tag)+']</span>':'')+(cname?'<span style="color:#fff; margin-right:6px; font-weight:700;">'+escapeHtmlText(cname)+'</span>':'')+'<span '+(nameCosId==='name_rainbow'?'class="nmRainbow" style="font-weight:700;"':'style="color:'+nameColorFor(nameCosId)+'; font-weight:700;"')+'>'+escapeHtmlText(name)+'</span>'; }
 const WEAPON_PERSONA_NAME = {
+  cleon:'크레온 1세', pel:'펠', tionis:'티오니스',
   puppeteer:'인형술사', pizarro:'피사로', kan:'칸', horemheb:'호렘헵', lightsaber:'자다이', pistol:'제임스', smg:'특수요원', bow:'로빈 후드', sword:'기사', bat:'야구선수', boomerang:'사냥꾼',
   shuriken:'닌자', shotgun:'보안관', rifle:'군인', gloves:'복서', grenade:'폭발광',
   bazooka:'중화기병', dagger:'암살자', magiccard:'마술사', dracula:'드라큘라', gambler:'도박사', wizard:'마법사', flamethrower:'학살자', portalgun:'차원여행자', vacuum:'청소부', pirate:'해적', samurai:'사무라이', kurus:'쿠루스'
@@ -2935,6 +2969,7 @@ const WEAPON_PERSONA_NAME = {
 function drawWeaponPersona(c,wid,hx,hy,r,shy,tint,concept){
   c.save();
   switch(wid){
+    case 'cleon': case 'guard': case 'pel': case 'tionis': drawSpacePersona(c,wid,hx,hy,r,shy,tint); break;
     case 'pistol': // 제임스: 선글라스 + 넥타이
       c.fillStyle='#1a1a1a';
       c.beginPath(); c.ellipse(hx-3.3,hy-1,3.2,2.1,0,0,7); c.fill();
@@ -3529,6 +3564,7 @@ function renderShop(){
   shopAnimStart();
 }
 function markHit(target, attackerId, t, dmg){
+  if(dmg>0 && target.tioUlt && !target.tioUlt.broken){ target.tioUlt.broken=true; target.invisUntil=0; }       // 티오니스's cloak breaks when he is hurt
   dmg=skillMitigate(target, dmg, t);   // armour / barrier skills give part of the damage back (hp is restored right here, before anyone checks for death)
   if(dmg>0 && attackerId && attackerId!==target.id && !markHit._rf && sewActive(target, t/1000)){      // 바느질: while his thread holds, half of what the puppeteer takes goes to the one on the thread (at most SEW_REFLECT_MAX in all per thread)
     const v=players[target.sewTo], room=SEW_REFLECT_MAX-(target.sewRef||0), r=Math.min(dmg*0.5, room);
@@ -3621,7 +3657,7 @@ const SURVIVAL_DISASTER_NAMES = {lightning:'번개', tsunami:'해일', volcano:'
 const SURVIVAL_WAVE_WARN_SEC = 2.2;
 const SURVIVAL_ZOMBIE_COUNT = 4, SURVIVAL_ZOMBIE_SPEED_MULT = 1.12, SURVIVAL_ZOMBIE_HIT_R = 44, SURVIVAL_ZOMBIE_HIT_DY = 70, SURVIVAL_ZOMBIE_HIT_COOLDOWN = 1.0, SURVIVAL_ZOMBIE_WAKE_SEC = 1.3;
 const SURVIVAL_HIT_COOLDOWN = 0.6; // per-player, per-hazard-type minimum gap between hits so one overlapping effect can't multi-tick someone in a single frame
-function maxHpFor(p){ if(p && p.isBoss) return p.bossMaxHp||3000; if(p && p.isMinion) return 150; if(gameMode==='oneshot') return 1; return (p && p.isZombie) ? ZOMBIE_MAX_HP : (gameMode==='survival' ? SURVIVAL_HP : ruleHp()); }
+function maxHpFor(p){ if(p && p.isBoss) return p.bossMaxHp||3000; if(p && p.isGuard) return GUARD_HP; if(p && p.isClone) return ruleHp(); if(p && p.isMinion) return 150; if(gameMode==='oneshot') return 1; return (p && p.isZombie) ? ZOMBIE_MAX_HP : (gameMode==='survival' ? SURVIVAL_HP : ruleHp()); }
 function effectiveMaxPlayers(mapId, modeId){
   const base = MAP_TEMPLATES[mapId].maxPlayers;
   const mode = MODES[modeId] || MODES.ffa;
@@ -3695,7 +3731,7 @@ function cannonFlyTick(p,t){
   const cf=p.cannonFly; if(!cf) return; const tSec=t/1000;
   if(!p.alive || tSec>=cf.until || (p.grounded && tSec-cf.t0>0.12)){ p.cannonFly=null; return; }
   for(const o of enemiesOf(p)){
-    if(!o.alive || o.x===undefined || o.swordCharge || o.darkSub) continue;
+    if(!o.alive || o.x===undefined || o.swordCharge || o.darkSub || o.isClone) continue;
     if(Math.abs(o.x-p.x)<=50 && Math.abs(o.y-p.y)<=70){
       skillDamage(p, o, PIRATE_FLY_DMG, t, {kb:420, up:300});
       pushFx('explosion', o.x, o.y-30, t, {});
@@ -5338,7 +5374,7 @@ function shuffle(arr){ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.
 /* ===== the version of this file =====
    Players with different versions CAN meet and play together: the automatic matchmaking uses the same room names for every version (online-<mode>-<map>-<slot>), and nobody is refused because of a different build.
    The build is only sent along with the join message and the lobby (for information); the corner of the screen shows it. */
-const GAME_BUILD='build 2026-10-18-v456';
+const GAME_BUILD='build 2026-10-18-v457';
 const GAME_VERSION='0.8', GAME_VERSION_NAME='황금을 찾아서';   // 게임 버전 이름: versions.json의 title과 같게 (빌드마다 바꾸지 않음)
 const WEEKLY_EVENTS=[
   {id:'lowg',    name:'저중력 난투', desc:'몸이 둥실둥실, 중력이 약해진 난투', rules:{grav:0.6}},
@@ -6097,7 +6133,7 @@ function tnResetFighter(p){
   const clock=performance.now()/1000;
   const sp=spawnPoint(); p.x=sp.x; p.y=sp.y; p.vx=0; p.vy=0; p.kbX=0; p.spin=0; p.spinAngle=0; p.hp=ruleHp(); p.alive=true; p.respawnAt=0;
   p.lastDash=clock; p.lastTeleport=clock; p.lastUlt=clock; p.lastSkill=clock; p.skillUses=0; p.ultUses=0; p.ultMulti=0; p.lastShot=0;
-  p.cardDmg=0; p.queenUntil=0; p.puppetUntil=0; p.puppetTarget=null; p.puppetBy=null; p.buffs={}; p.barrier=null; p.buff=null; p.hasted=false; p.focusOn=false; p.ultPending=null; p.rushUntil=0; p.invisUntil=0; p.burn=null; p.poison=null; p.toadPois=null; p.kanWingsUntil=0; p.batUntil=0; p.batting=false; p.slowUntil=0; p.slowed=false; p.stunUntil=0; p.stunned=false;
+  spaceReset(p); p.cardDmg=0; p.queenUntil=0; p.puppetUntil=0; p.puppetTarget=null; p.puppetBy=null; p.buffs={}; p.barrier=null; p.buff=null; p.hasted=false; p.focusOn=false; p.ultPending=null; p.rushUntil=0; p.invisUntil=0; p.burn=null; p.poison=null; p.toadPois=null; p.kanWingsUntil=0; p.batUntil=0; p.batting=false; p.slowUntil=0; p.slowed=false; p.stunUntil=0; p.stunned=false;
   p.flameHeldSince=null; p.flameUsed=0; p.flameOverheatUntil=0; p.flaming=false; p.portalPair=null; p.portalCooldownUntil=0; p.vacuumStacks=0; p.chips=0; p.freeVolleys=0; p.teleportChannel=null; p.dmgBy={}; p.darkSub=null; p.darkArmUntil=0; p.darkLand=null;  p.pzStacks=0; p.pzMarkUntil=0;
   pushFx('respawn', p.x, p.y-30, performance.now(), {color:p.color, ta:p.id});
 }
@@ -7276,7 +7312,7 @@ function addPracticeOpponent(kind, level){
 function practiceSetWeapon(wid){
   const me=players[myId]; if(!practiceMode || !me || !SELECTABLE_WEAPONS.includes(wid)) return;
   me.weapon=wid; me.pick=wid; me.weaponChosen=true;
-  me.lastShot=-9999; me.lastUlt=-9999; me.lastSkill=-9999; me.buffs={}; me.barrier=null; me.hist=[]; me.stunUntil=0; me.stunned=false; me.cardSlowUntil=0; me.cardSlowed=false; swordEnd(me); me.ultPending=null; me.rushUntil=0; me.invisUntil=0; me.burn=null; me.batUntil=0; me.batting=false; me.batDamageDealt=0;
+  me.lastShot=-9999; me.lastUlt=-9999; me.lastSkill=-9999; me.buffs={}; me.barrier=null; me.hist=[]; me.stunUntil=0; me.stunned=false; me.cardSlowUntil=0; me.cardSlowed=false; swordEnd(me); spaceReset(me); me.ultPending=null; me.rushUntil=0; me.invisUntil=0; me.burn=null; me.batUntil=0; me.batting=false; me.batDamageDealt=0;
   me.boomerangOut=false; me.boomerangReadyAt=0; me.flaming=false; me.pzStacks=0; me.pzMarkUntil=0; me.flameHeldSince=null; me.flameUsed=0; me.flameOverheatUntil=0; me.portalPair=null; me.vacuumStacks=0; me.darkSub=null; me.darkArmUntil=0; me.chips=0; me.freeVolleys=0; me.teleportChannel=null; me.gambleDouble=false;
   if(me.flameShield){ const wi=walls.indexOf(me.flameShield); if(wi!==-1) walls.splice(wi,1); me.flameShield=null; }
   bullets=bullets.filter(b=>b.owner!==myId);
@@ -10371,7 +10407,7 @@ function onClientData(data, mode, code){
     bullets=data.bullets;
     walls=data.walls||[];
     { const nowMs=performance.now(); fieldZones=(data.fieldZones||[]).map(z=>Object.assign(z,{t0:nowMs})); }
-    magicCircles=data.magicCircles||[]; poisonZones=data.poisonZones||[]; turrets=data.turrets||[]; hzDraw=data.hz||null; syncBridgePlatforms(); if(data.dark!==undefined){ const nowS=performance.now()/1000; darkView=(data.dark||[]).map(z=>Object.assign(z, {t0:nowS-(z.age||0)})); }
+    magicCircles=data.magicCircles||[]; poisonZones=data.poisonZones||[]; turrets=data.turrets||[]; droneBombs=data.dbombs||[]; hzDraw=data.hz||null; syncBridgePlatforms(); if(data.dark!==undefined){ const nowS=performance.now()/1000; darkView=(data.dark||[]).map(z=>Object.assign(z, {t0:nowS-(z.age||0)})); }
     if(data.cq && cq){ cq.scores=data.cq.s; cq.holder=data.cq.h; cq.contested=data.cq.c; }
     xmV=data.xm||null; if(!isHost) brzV=data.bz||null;
     raidView=data.raid||null; tnView=data.tn||null; if(data.bk && rpView) tnBk=data.bk;
@@ -11459,7 +11495,7 @@ function finalizeGameplayStart(mte){
   try{
     matchEnded=false; try{ rpRecStart(); }catch(e){}
     myCharKb={}; myCharUsed=[]; myTrackW=null; myTrackK=0; expVoted=null;
-    xm=null; xmV=null; brz=null; brzV=null; particles=[]; fxSeen={}; prevGround={}; prevHp={}; hitFlashUntil={}; screenShake=0; walls=[]; hostTimers=[]; magicCircles=[]; fieldZones=[]; poisonZones=[]; turrets=[]; darkPools=[]; darkView=[]; lastKnownKills=0; matchAssists=0;
+    xm=null; xmV=null; brz=null; brzV=null; particles=[]; fxSeen={}; prevGround={}; prevHp={}; hitFlashUntil={}; screenShake=0; walls=[]; hostTimers=[]; magicCircles=[]; fieldZones=[]; poisonZones=[]; turrets=[]; droneBombs=[]; fleetShows=[]; darkPools=[]; darkView=[]; lastKnownKills=0; matchAssists=0;
     matchKillLog=[]; killcamActive=false; killcamOverride=null; killcamSnapshot=null; killcamReplay=null; killcamReplayStartAt=0; replayBuffer={}; replayFrames=[]; replayFxLog=[]; replayDefs={};
     hitStopUntil=0; staggers={}; setTimeout(()=>{ try{ entranceShow(); }catch(e){ console.error('[entrance]', e); } }, 450);
     if(gameMode==='parkour') initParkourItems(); // runs for host and every client alike, so everyone's item-icon rendering starts from the same "all available" state
@@ -11591,7 +11627,7 @@ function spawnBullet(p, angle, w, extra){
   const ax=Math.cos(angle), ay=Math.sin(angle);
   const sx=p.x+ax*(PLAYER_W/2+14), sy=(p.y-40)+ay*(PLAYER_W/2+14);
   bullets.push(Object.assign({x:sx, y:sy, spawnX:sx, spawnY:sy, vx:ax*w.bulletSpeed, vy:ay*w.bulletSpeed,
-    owner:p.id, ownerName:p.name, life:w.life||BULLET_LIFE, color:CONCEPT_COLOR[conceptOfP(p)]||p.color, sk:(p.cos&&p.cos.skin&&p.cos.skin[p.weapon])||undefined, dmg:w.dmg*(p.focusOn?1.35:1), wid:w.id, arcs:!!w.arcs, dmgFalloff:w.dmgFalloff, hitR:w.hitR, pierce:!!w.pierce, pierceHits:w.pierceHits||0, platPierce:w.platPierce, bouncesLeft:w.bounces||0, poison:w.poison}, extra||{}));
+    owner:p.id, ownerName:p.name, life:w.life||BULLET_LIFE, color:CONCEPT_COLOR[conceptOfP(p)]||p.color, sk:(p.cos&&p.cos.skin&&p.cos.skin[p.weapon])||undefined, dmg:w.dmg*(p.focusOn?1.35:1)*(p.isClone?TIO_CLONE_MULT:1), wid:w.id, arcs:!!w.arcs, dmgFalloff:w.dmgFalloff, hitR:w.hitR, pierce:!!w.pierce, pierceHits:w.pierceHits||0, platPierce:w.platPierce, bouncesLeft:w.bounces||0, poison:w.poison}, extra||{}));
 }
 function registerCardHit(b, target, targetId, t){
   const tS=t/1000;
@@ -11668,6 +11704,9 @@ function rifleBarrageXs(ax){                // three missiles around the point
 function magiccardTarget(p, ax, ay){ return hasAim(ax,ay) ? pickTarget(p, ax, ay) : nearestEnemyOf(p); }
 const ARM_FIRE_ULTS={pistol:1, bazooka:1, shuriken:1};   // ultimates that arm the next shot: a click while holding the key also fires that shot at the click
 const ULT_IMPL = {
+  cleon(p,tSec,tMs,ax,ay){ cleonFleet(p,tSec,tMs,ax,ay); },
+  pel(p,tSec,tMs){ if(pelN(p)<=0) return false; p.pelUlt={boostEnd:tSec+PEL_BOOST_SEC, chaseAt:tSec+PEL_BOOST_SEC, endAt:tSec+PEL_BOOST_SEC+PEL_CHASE_SEC, launched:false}; },
+  tionis(p,tSec,tMs){ return tioClone(p,tSec,tMs); },
   puppeteer(p,tSec,tMs){ spawnBullet(p, p.angle||0, {id:'puppeteer', bulletSpeed:1500, life:0.67, dmg:0, hitR:26}, {pthread:true, ult:true}); },
   kan(p,tSec,tMs){ p.kanWingsUntil=tSec+KAN_ULT_SEC; p.vy=-800; p.grounded=false; pushFx('skillring', p.x, p.y-40, tMs, {color:'#35d08a', r:90}); },
   pizarro(p,tSec,tMs){ const _heal=((p.pzStacks||0)>=PZ_MAX)?PZ_ULT_HEAL_MAX:PZ_ULT_HEAL; p.pzStacks=Math.min(PZ_MAX,(p.pzStacks||0)+1); { const before=p.hp; p.hp=Math.min(maxHpFor(p), p.hp+_heal); if(p.hp>before) pushFx('heal', p.x, p.y-70, tMs, {v:Math.round(p.hp-before)}); } pushFx('spark', p.x, p.y-60, tMs, {ang:-Math.PI/2, color:'#ffd34d'}); pushFx('skill', p.x, p.y-70, tMs, {color:'#ffd34d', name:'기세 '+p.pzStacks+'/'+PZ_MAX}); },
@@ -11728,7 +11767,7 @@ const ULT_IMPL = {
   horemheb(p,tSec,tMs,ax){         // the sandstorm: a gust far in front of him (1725 long, 360 high): 36 damage, a strong push (about 300 px), a 2 second stun, and 70% less speed for 3.5 s
     const dir=skillAimDir(p, ax), x0=p.x, x1=p.x+dir*SANDSTORM_LEN, cy=p.y-PLAYER_H/2;
     for(const id in players){
-      const t=players[id]; if(!t.alive || id===p.id || t.x===undefined || isAlly(p,t) || t.swordCharge || t.darkSub) continue;
+      const t=players[id]; if(!t.alive || id===p.id || t.x===undefined || isAlly(p,t) || t.swordCharge || t.darkSub || t.isClone) continue;
       if((t.x-x0)*dir<-10 || (t.x-x1)*dir>0) continue;                       // (a little behind his back counts, a little beyond the end does not)
       if(Math.abs((t.y-PLAYER_H/2)-cy)>SANDSTORM_H/2) continue;
       skillDamage(p, t, SANDSTORM_DMG, tMs, {kb:SANDSTORM_KB, up:150, stun:SANDSTORM_STUN});
@@ -11822,6 +11861,7 @@ function tryUltimate(p, tMs, aimX, aimY, viaClick){ const o=curAur; curAur=auraK
 function tryUltimate0(p, tMs, aimX, aimY, viaClick){
   if(duelPick) return;                       // (between duel rounds, while the weapons are being picked again, nobody can act)
   if(!p || !p.alive || !MAP || matchEnded) return;
+  if(p.isClone) return;
   if(puppetVictim(p, tMs/1000)) return;                            // a puppet cannot use its ultimate
   if(p.darkSub){ darkEmerge(p, tMs, true); return; }              // 쿠루스 inside his darkness: the ultimate is now 어둠 탈출 (always ready)
   if(isStunned(p, tMs/1000)) return;
@@ -11853,10 +11893,272 @@ const BAT_ULT_HASTE_SEC=2.5, BAT_ULT_SPEED_MULT=2;
 const BOOMERANG_BACK_MULT=1.0;   // the returning boomerang's damage (was half of the throw)
 const BOOMERANG_OUT_SEC=0.5;      // how long a boomerang flies out before it turns back (was 0.35: about 245 away, now about 350)
 let SKILL_CD=5;
-function skillCdOf(p){ return SKILL_CD*pzCdMult(p); }
+/* ================= 우주 업데이트 (0.9 시험): 크레온 1세 / 펠 / 티오니스 =================
+   크레온 1세: 홀에서 나가는 마법탄 · 스킬 근위병 4명 (봇처럼 움직이는 소환수) · 궁극기 함대 포격
+   펠: 일반 공격은 곁을 도는 드론이 쏨 · 스킬 드론 증설 (최대 6) · 궁극기 드론 강화 뒤 자폭 추격
+   티오니스: 가면 투척 · 스킬 채혈 -> 변신 (맞힌 상대로 5초 변장) · 궁극기 분신 연극 */
+const CLEON_SKILL_CD=12.5, GUARD_HP=180, GUARD_SEC=9, GUARD_N=4, GUARD_ESCORT_R=350, CLEON_GUARD_BONUS=0.1;
+const CLEON_ULT_WARN=1.5, CLEON_BEAM_N=5, CLEON_BEAM_DMG=15, CLEON_BEAM_HALF=62, CLEON_BEAM_GAP=190, CLEON_BEAM_STEP=0.22, CLEON_BEAM_RANGE=600;
+const PEL_START=2, PEL_MAX=6, PEL_BOOST=1.5, PEL_BOOST_SEC=3, PEL_CHASE_SEC=2, PEL_BOMB_DMG=10, PEL_BOMB_R=80, PEL_BOMB_SPEED=560;
+const TIO_BLOOD_DMG=20, TIO_BLOOD_R=150, TIO_DISG_SEC=5, TIO_CLONE_SEC=4, TIO_CLONE_MULT=0.5, TIO_INVIS_TAIL=1;
+let droneBombs=[], droneBombSeq=0, fleetShows=[], droneKick={};
+function spaceEnemy(o, t){ return o && t && t.alive && t.id!==o.id && t.x!==undefined && !isAlly(o,t) && !t.swordCharge && !t.darkSub && !t.isClone; }
+function spaceHit(target, owner, dmg, tMs, color){
+  const d=absorbIntoShield(target, dmg); target.hp-=d; markHit(target, owner.id, tMs, d);
+  pushFx('hit', target.x, target.y-PLAYER_H/2, tMs, {color:color||owner.color, ang:-1.57, v:Math.round(d)});
+  if(target.hp<=0 && target.alive) handleDeath(target, owner, tMs, owner.name);
+}
+/* ---- 크레온 1세: 근위병 ---- */
+function guardsOf(p){ const a=[]; for(const id in players){ const q=players[id]; if(q.isGuard && q.ownerId===p.id && q.alive) a.push(q); } return a; }
+function removeSummons(ownerId, only){ for(const id of Object.keys(players)){ const q=players[id]; if(q.ownerId===ownerId && ((q.isGuard && only!=='clone') || (q.isClone && only!=='guard'))) delete players[id]; } }
+function spawnGuards(p, tSec, tMs){
+  removeSummons(p.id, 'guard');
+  for(let i=0;i<GUARD_N;i++){
+    const m=addBot({force:true, quiet:true, level:'normal'}); if(!m) continue;
+    const side=(i%2)?1:-1;
+    m.name=p.name+'의 근위병'; m.color=p.color; m.team=p.team; m.cos={}; m.isMinion=true; m.isGuard=true; m.ownerId=p.id; m.gMode=(i<2)?'charge':'escort'; m.gSide=side;
+    m.weapon='guard'; m.pick='guard'; m.weaponChosen=true; m.hp=GUARD_HP; m.until=tSec+GUARD_SEC; m.ai.personality=null; m.ai.grudge=null; m.ai.rivalId=null;
+    m.lastShot=0; m.lastDash=tSec; m.lastUlt=tSec; m.lastSkill=tSec; m.lastTeleport=tSec;
+    m.x=clamp(p.x+side*(34+(i>>1)*26), 20, MAP.arenaW-20); m.y=p.y; m.vx=0; m.vy=0; m.alive=true; m.grounded=false; m.respawnAt=Infinity;
+    pushFx('respawn', m.x, m.y-30, tMs, {color:'#ff7ac8'});
+  }
+}
+function guardEscortThink(p, t, dt){       // true = handled here (nothing to fight near the emperor): stand beside him; false = the normal fighter brain runs
+  const ow=players[p.ownerId]; if(!ow || !ow.alive || p.x===undefined) return false;
+  for(const o of enemiesOf(p)){ if(o.invis) continue; if(Math.hypot(o.x-ow.x,o.y-ow.y)<GUARD_ESCORT_R || Math.hypot(o.x-p.x,o.y-p.y)<230) return false; }
+  const inp=p.input; inp.shoot=false; inp.jump=false; inp.dash=false; inp.down=false;
+  if(Math.hypot(ow.x-p.x, ow.y-p.y)>650){ p.x=ow.x+p.gSide*50; p.y=ow.y; p.vx=0; p.vy=0; }
+  const gx=ow.x+p.gSide*62, dx=gx-p.x;
+  inp.left=dx<-14; inp.right=dx>14;
+  if(ow.y<p.y-70 && Math.abs(dx)<140 && p.grounded) inp.jump=true;
+  if(p.ai){ p.ai.tgt=null; p.ai.angSm=null; }
+  inp.angle=(ow.x>=p.x)?0:Math.PI;
+  return true;
+}
+/* ---- 펠: 드론 ---- */
+function pelN(p){ return p.drones===undefined ? PEL_START : p.drones; }
+function pelBoostOn(p, tSec){ return !!(p.pelUlt && tSec<p.pelUlt.boostEnd); }
+function pelDroneOff(i, n, s){ const a=s*1.5+i*(6.2832/Math.max(1,n)); return {dx:Math.cos(a)*(46+(n>3?8:0)), dy:-78+Math.sin(a)*13+Math.sin(s*3.1+i*1.7)*4}; }
+function pelVolley(p, ang, tSec, tMs){
+  const n=pelN(p); if(n<=0) return;
+  const w=WEAPONS.pel, boost=pelBoostOn(p,tSec)?PEL_BOOST:1, w2=Object.assign({}, w, {dmg:w.dmg*boost});
+  for(let i=0;i<n;i++){
+    const fire=()=>{
+      if(!p.alive || i>=pelN(p)) return;
+      const o=pelDroneOff(i, pelN(p), performance.now()/1000), x=p.x+o.dx, y=p.y+o.dy, base=(p.angle!==undefined&&i>0)?p.angle:ang, a=Math.atan2((p.y-40)+Math.sin(base)*520-y, p.x+Math.cos(base)*520-x);      // every drone aims at the same spot in front of the pilot
+      spawnBullet(p, a, w2, {x:x, y:y, spawnX:x, spawnY:y});
+      pushFx('dronefire', x, y, performance.now(), {ang:a, v:i, k:p.id});
+    };
+    if(i===0) fire(); else hostTimers.push({au:curAur, ta:fxActor, at:tSec+i*0.07, fn:fire});
+  }
+}
+function pelUltTick(p, tSec, tMs){
+  const u=p.pelUlt;
+  if(!p.alive){ p.pelUlt=null; droneBombs=droneBombs.filter(b=>b.owner!==p.id); return; }
+  if(!u.launched && tSec>=u.chaseAt){
+    u.launched=true; const n=pelN(p), s=tSec;
+    for(let i=0;i<n;i++){ const o=pelDroneOff(i,n,s); droneBombs.push({id:++droneBombSeq, owner:p.id, x:p.x+o.dx, y:p.y+o.dy, vx:Math.cos(i*2.1)*180, vy:-120, until:u.endAt}); }
+    p.drones=0; pushFx('skillring', p.x, p.y-60, tMs, {color:'#ff5a5a', r:70});
+  }
+  if(u.launched && tSec>=u.endAt+0.2) p.pelUlt=null;
+}
+function droneBombTick(dt, t){
+  const tSec=t/1000, keep=[];
+  for(const b of droneBombs){
+    const ow=players[b.owner]; if(!ow || !ow.alive){ continue; }
+    let tg=null, bd=1e9;
+    for(const o of Object.values(players)){ if(!spaceEnemy(ow,o)) continue; const d=Math.hypot(o.x-b.x,(o.y-30)-b.y); if(d<bd){ bd=d; tg=o; } }
+    if(tg){ const dx=tg.x-b.x, dy=(tg.y-30)-b.y, L=Math.max(1,Math.hypot(dx,dy)), k=Math.min(1,dt*6); b.vx+=(dx/L*PEL_BOMB_SPEED-b.vx)*k; b.vy+=(dy/L*PEL_BOMB_SPEED-b.vy)*k; }
+    else { b.vx*=0.96; b.vy+=(-60-b.vy)*Math.min(1,dt*2); }
+    b.x+=b.vx*dt; b.y+=b.vy*dt;
+    if(tg && bd<=34 || tSec>=b.until){
+      for(const o of Object.values(players)){ if(spaceEnemy(ow,o) && Math.hypot(o.x-b.x,(o.y-30)-b.y)<=PEL_BOMB_R) spaceHit(o, ow, PEL_BOMB_DMG, t, '#ff7a5a'); }
+      pushFx('explosion', b.x, b.y, t, {});
+      continue;
+    }
+    keep.push(b);
+  }
+  droneBombs=keep;
+}
+/* ---- 크레온 1세: 제국 함대 포격 ---- */
+function cleonFleet(p, tSec, tMs, ax, ay){
+  const W=MAP.arenaW, face=(Math.cos(p.angle||0)>=0)?1:-1;
+  const cx=clamp(hasAim(ax,ay)?ax:p.x+face*300, p.x-CLEON_BEAM_RANGE, p.x+CLEON_BEAM_RANGE), skyY=Math.max(-100, p.y-520);
+  pushFx('cfleet', cx, skyY, tMs, {r:CLEON_BEAM_GAP});
+  for(let i=0;i<CLEON_BEAM_N;i++){
+    const bx=clamp(cx+(i-(CLEON_BEAM_N-1)/2)*CLEON_BEAM_GAP, 80, W-80), gy=surfaceBelow(bx, p.y-60);
+    pushFx('cwarn', bx, gy-6, tMs, {r:64, v:CLEON_ULT_WARN+i*CLEON_BEAM_STEP});
+    hostTimers.push({au:curAur, ta:fxActor, at:tSec+CLEON_ULT_WARN+i*CLEON_BEAM_STEP, fn:(tt)=>{
+      if(matchEnded) return;
+      pushFx('cbeam', bx, skyY+30, tt, {y2:MAP.arenaH, v:gy});
+      for(const o of Object.values(players)){ if(spaceEnemy(p,o) && Math.abs(o.x-bx)<=CLEON_BEAM_HALF && o.y>=skyY) spaceHit(o, p, CLEON_BEAM_DMG, tt, '#ff7ac8'); }
+    }});
+  }
+}
+/* ---- 티오니스: 채혈 / 변신 / 분신 ---- */
+function tioBlood(p, tSec, tMs, ax, ay){        // 채혈: a syringe thrown at medium range; the one it hits turns the next skill into 변신
+  spawnBullet(p, aimAngleOf(p,ax,ay), WEAPONS.syringe, {tioBlood:true});
+  pushFx('skillring', p.x, p.y-40, tMs, {color:'#b00020', r:50});
+}
+function tioBloodHit(b, victim){
+  const ow=players[b.owner]; if(!ow || !ow.alive || (ow.tioStage||'blood')!=='blood' || ow.disg || victim.isMinion) return;
+  ow.tioFor={weapon:victim.weapon, kit:victim.kit||null, cos:victim.cos, name:victim.name, color:victim.color};
+  ow.tioStage='morph'; ow.lastSkill=-9999;
+}
+function tioMorph(p, tSec, tMs){
+  const f=p.tioFor; if(!f){ p.tioStage='blood'; return false; }
+  p.tioSaved={weapon:p.weapon, kit:p.kit||null, cos:p.cos, color:p.color, lastUlt:p.lastUlt};
+  p.weapon=f.weapon; p.kit=f.kit; p.cos=f.cos; p.color=f.color; p.ultPending=null;
+  p.disg=true; p.tioUntil=tSec+TIO_DISG_SEC; p.tioStage='disg'; p._skillReset=true;
+  pushFx('smokeveil', p.x, p.y-30, tMs, {});
+}
+function tioRestore(p, tSec){
+  const s=p.tioSaved;
+  if(s){ p.weapon=s.weapon; p.kit=s.kit; p.cos=s.cos; p.color=s.color; if(s.lastUlt!==undefined) p.lastUlt=s.lastUlt; }
+  p.tioSaved=null; p.disg=false; p.tioFor=null; p.tioStage='blood'; p.ultPending=null; p.buff=null; p.lastSkill=-9999;
+  if(p.swordCharge) try{ swordEnd(p); }catch(e){}
+  if(p.alive) pushFx('smokeveil', p.x, p.y-30, performance.now(), {});
+}
+function tioClone(p, tSec, tMs){
+  removeSummons(p.id, 'clone');
+  const m=addBot({force:true, quiet:true, level:'hard'}); if(!m) return false;
+  m.name=p.name; m.color=p.color; m.cos=p.cos; m.team=p.team; m.isMinion=true; m.isClone=true; m.ownerId=p.id; m.weapon='tionis'; m.pick='tionis'; m.weaponChosen=true;
+  m.until=tSec+TIO_CLONE_SEC; m.hp=ruleHp(); m.ai.personality=null; m.ai.grudge=null; m.ai.rivalId=null;
+  m.lastShot=0; m.lastDash=tSec; m.lastUlt=tSec; m.lastSkill=tSec; m.lastTeleport=tSec;
+  m.x=p.x; m.y=p.y; m.vx=0; m.vy=0; m.alive=true; m.grounded=false; m.respawnAt=Infinity;
+  p.tioUlt={cloneId:m.id, broken:false, goneAt:0}; p.invisUntil=tSec+TIO_CLONE_SEC+5;
+  pushFx('smokeveil', p.x, p.y-30, tMs, {});
+}
+function tioUltTick(p, tSec){
+  const u=p.tioUlt, alive=!!(players[u.cloneId] && players[u.cloneId].alive);
+  if(!u.broken && alive) p.invisUntil=tSec+5;
+  else if(!u.broken && !u.goneAt){ u.goneAt=tSec; p.invisUntil=tSec+TIO_INVIS_TAIL; }
+  if((u.goneAt && tSec>=u.goneAt+TIO_INVIS_TAIL) || (u.broken && !alive)) p.tioUlt=null;
+}
+function spaceReset(p){
+  if(p.disg) tioRestore(p, performance.now()/1000);
+  p.drones=undefined; p.pelUlt=null; p.tioStage='blood'; p.tioFor=null; p.tioUlt=null; p.tioSaved=null; p.disg=false;
+  if(p.id){ removeSummons(p.id); droneBombs=droneBombs.filter(b=>b.owner!==p.id); }
+}
+function spaceTick(dt, t){
+  const tSec=t/1000;
+  for(const id of Object.keys(players)){
+    const q=players[id];
+    if(q.isGuard || q.isClone){
+      const ow=players[q.ownerId];
+      if(!ow || !ow.alive || tSec>=q.until || matchEnded){ pushFx('death', q.x, q.y-PLAYER_H/2, t, {color:q.isClone?q.color:'#ff7ac8'}); delete players[id]; }
+      else if(q.isClone) q.hp=maxHpFor(q);
+      continue;
+    }
+    if(q.disg && (tSec>=q.tioUntil || !q.alive)) tioRestore(q, tSec);
+    if(q.tioUlt) tioUltTick(q, tSec);
+    if(q.pelUlt) pelUltTick(q, tSec, t);
+  }
+  if(droneBombs.length) droneBombTick(dt, t);
+}
+function nameShownFor(p){ const me=players[myId]; return (p.dgn && p.id!==myId && !(me && isAlly(me,p))) ? p.dgn : p.name; }
+/* ---- drawing ---- */
+function drawDroneShape(c, x, y, s, hot, red){
+  const tm=performance.now();
+  c.save(); c.translate(x,y); c.scale(s,s);
+  c.strokeStyle='#cfd8e3'; c.lineWidth=2.2; c.lineCap='butt';
+  c.beginPath(); c.moveTo(-11,-3); c.lineTo(-4,0); c.moveTo(11,-3); c.lineTo(4,0); c.stroke();
+  const sp=Math.abs(Math.sin(tm*0.06)); c.fillStyle='rgba(185,232,255,0.6)';
+  for(const sx of [-11,11]){ c.beginPath(); c.ellipse(sx,-5,2+5*sp,1.3,0,0,7); c.fill(); }
+  c.fillStyle='#f4f8fc'; c.strokeStyle='#8c9bb0'; c.lineWidth=1.2;
+  c.beginPath(); c.moveTo(-6,0); c.lineTo(-3,-4); c.lineTo(3,-4); c.lineTo(6,0); c.lineTo(3,3.5); c.lineTo(-3,3.5); c.closePath(); c.fill(); c.stroke();
+  c.fillStyle=red?'#ff4d4d':(hot?'#ffffff':'#3fb8ff'); c.beginPath(); c.arc(0,-0.3,1.8,0,7); c.fill();
+  if(hot){ c.globalCompositeOperation='lighter'; const g=c.createRadialGradient(0,0,0,0,0,9); g.addColorStop(0,'rgba(180,235,255,0.9)'); g.addColorStop(1,'rgba(180,235,255,0)'); c.fillStyle=g; c.beginPath(); c.arc(0,0,9,0,7); c.fill(); }
+  c.restore();
+}
+function drawPelDrones(c, p){        // (in the player's own coordinates)
+  const n=Math.max(0, p.drones===undefined?PEL_START:p.drones), s=performance.now()/1000, now=performance.now(), boost=!!p.pelBoost;
+  for(let i=0;i<n;i++){
+    const o=pelDroneOff(i,n,s), kk=droneKick[p.id+'_'+i]; let dx=o.dx, dy=o.dy, hot=false;
+    if(kk && now-kk.t<180){ const f=1-(now-kk.t)/180; dx-=Math.cos(kk.a)*9*f; dy-=Math.sin(kk.a)*9*f; hot=f>0.5; }
+    drawDroneShape(c, dx, dy, 1, hot||boost, boost);
+  }
+}
+function drawDroneBombs(){
+  for(const b of droneBombs){ ctx.save(); ctx.globalCompositeOperation='lighter'; ctx.fillStyle='rgba(255,90,70,0.35)'; ctx.beginPath(); ctx.arc(b.x,b.y,15+3*Math.sin(performance.now()/60),0,7); ctx.fill(); ctx.restore(); drawDroneShape(ctx, b.x, b.y, 1.3, true, true); }
+}
+function drawFleet(){
+  const now=performance.now();
+  fleetShows=fleetShows.filter(f=>now-f.t0<2900);
+  for(const f of fleetShows){
+    const age=(now-f.t0)/1000, al=age<0.4?age/0.4:(age>2.5?(2.9-age)/0.4:1), n=CLEON_BEAM_N;
+    for(let i=0;i<n;i++){
+      const sx=f.x+(i-(n-1)/2)*f.gap, sy=f.y-40*(1-Math.min(1,age/0.5));
+      ctx.save(); ctx.translate(sx,sy); ctx.globalAlpha=Math.max(0,al);
+      ctx.fillStyle='#1b1630'; ctx.strokeStyle='#8b6bd6'; ctx.lineWidth=2;
+      ctx.beginPath(); ctx.moveTo(-72,-12); ctx.lineTo(72,-12); ctx.lineTo(44,12); ctx.lineTo(12,30); ctx.lineTo(-12,30); ctx.lineTo(-44,12); ctx.closePath(); ctx.fill(); ctx.stroke();
+      ctx.strokeStyle='#ffd34d'; ctx.lineWidth=2; ctx.beginPath(); ctx.moveTo(-62,-5); ctx.lineTo(62,-5); ctx.stroke();
+      ctx.fillStyle='#ff7ac8'; for(let k=-3;k<=3;k++){ ctx.beginPath(); ctx.arc(k*16,5,1.8,0,7); ctx.fill(); }
+      ctx.globalCompositeOperation='lighter';
+      const ch=Math.max(0,Math.min(1,(age-0.3)/1.2)), r=6+22*ch, g=ctx.createRadialGradient(0,30,0,0,30,r); g.addColorStop(0,'rgba(255,230,250,0.95)'); g.addColorStop(0.4,'rgba(255,95,184,0.7)'); g.addColorStop(1,'rgba(255,95,184,0)');
+      ctx.fillStyle=g; ctx.beginPath(); ctx.arc(0,30,r,0,7); ctx.fill();
+      for(const ex of [-60,60]){ const e=ctx.createRadialGradient(ex,-12,0,ex,-12,14); e.addColorStop(0,'rgba(255,180,230,0.8)'); e.addColorStop(1,'rgba(255,180,230,0)'); ctx.fillStyle=e; ctx.beginPath(); ctx.arc(ex,-12,14,0,7); ctx.fill(); }
+      ctx.restore();
+    }
+  }
+}
+function drawSpaceHeld(c, wid, ax, ay, hx, hy){
+  const ang=Math.atan2(ay,ax); c.save(); c.translate(hx,hy); c.rotate(ang); c.lineCap='round';
+  if(wid==='cleon'){
+    c.strokeStyle='#e8b932'; c.lineWidth=3.2; c.beginPath(); c.moveTo(-4,0); c.lineTo(32,0); c.stroke();
+    c.strokeStyle='#ffd34d'; c.lineWidth=2; c.beginPath(); c.moveTo(28,-5); c.lineTo(34,0); c.lineTo(28,5); c.stroke();
+    c.fillStyle='#ff4fb0'; c.strokeStyle='#ffd34d'; c.lineWidth=1.2; c.beginPath(); c.arc(37,0,5,0,7); c.fill(); c.stroke();
+    c.globalCompositeOperation='lighter'; const g=c.createRadialGradient(37,0,0,37,0,12); g.addColorStop(0,'rgba(255,120,200,0.7)'); g.addColorStop(1,'rgba(255,120,200,0)'); c.fillStyle=g; c.beginPath(); c.arc(37,0,12,0,7); c.fill();
+  } else if(wid==='pel'){
+    c.fillStyle='#2b3140'; c.strokeStyle='#8c9bb0'; c.lineWidth=1.2; c.beginPath(); c.rect(2,-4.5,15,9); c.fill(); c.stroke();
+    c.strokeStyle='#cfd8e3'; c.lineWidth=1.4; c.beginPath(); c.moveTo(14,-4.5); c.lineTo(20,-12); c.stroke();
+    c.fillStyle='#3fb8ff'; c.beginPath(); c.arc(7,0,1.8,0,7); c.fill(); c.fillStyle='#ff5a5a'; c.beginPath(); c.arc(12,0,1.4,0,7); c.fill();
+  } else if(wid==='tionis'){
+    c.rotate(-ang); const mx=Math.cos(ang)*14, my=Math.sin(ang)*14; c.translate(mx,my);
+    c.fillStyle='#f4f4f4'; c.beginPath(); c.arc(0,0,6,Math.PI/2,Math.PI*1.5); c.fill(); c.fillStyle='#16161c'; c.beginPath(); c.arc(0,0,6,-Math.PI/2,Math.PI/2); c.fill();
+  } else if(wid==='guard'){
+    c.strokeStyle='#20232b'; c.lineWidth=3.4; c.beginPath(); c.moveTo(-8,0); c.lineTo(46,0); c.stroke();
+    c.strokeStyle='#ff7ac8'; c.lineWidth=1.4; c.beginPath(); c.moveTo(-4,0); c.lineTo(44,0); c.stroke();
+    c.globalCompositeOperation='lighter'; const fl=1+0.15*Math.sin(performance.now()/45);
+    c.fillStyle='rgba(255,100,190,0.9)'; c.beginPath(); c.moveTo(44,-4*fl); c.lineTo(66*fl,0); c.lineTo(44,4*fl); c.closePath(); c.fill();
+    const g=c.createRadialGradient(54,0,0,54,0,16); g.addColorStop(0,'rgba(255,200,240,0.7)'); g.addColorStop(1,'rgba(255,100,190,0)'); c.fillStyle=g; c.beginPath(); c.arc(54,0,16,0,7); c.fill();
+  }
+  c.restore();
+}
+const SPACE_HELD={cleon:1, pel:1, tionis:1, guard:1};
+function drawSpacePersona(c, wid, hx, hy, r, shy, tint){
+  switch(wid){
+    case 'cleon': {
+      c.fillStyle='#5b2a86'; c.beginPath(); c.moveTo(hx-r-3,shy+1); c.lineTo(hx-r-9,shy+30); c.lineTo(hx-4,shy+22); c.lineTo(hx,shy+3); c.closePath(); c.fill();
+      c.beginPath(); c.moveTo(hx+r+3,shy+1); c.lineTo(hx+r+9,shy+30); c.lineTo(hx+4,shy+22); c.lineTo(hx,shy+3); c.closePath(); c.fill();
+      c.strokeStyle='#ff7ac8'; c.lineWidth=1.3; c.beginPath(); c.moveTo(hx-5,hy-1.4); c.lineTo(hx-1.4,hy-1.4); c.moveTo(hx+1.4,hy-1.4); c.lineTo(hx+5,hy-1.4); c.moveTo(hx-5,hy+1.4); c.lineTo(hx-1.4,hy+1.4); c.moveTo(hx+1.4,hy+1.4); c.lineTo(hx+5,hy+1.4); c.stroke();
+      c.fillStyle='#ffd34d'; c.strokeStyle='#a87a00'; c.lineWidth=0.9; c.beginPath(); c.moveTo(hx-r+0.5,hy-r*0.55); c.lineTo(hx-r+0.5,hy-r*1.5); c.lineTo(hx-r*0.5,hy-r*1.0); c.lineTo(hx,hy-r*1.75); c.lineTo(hx+r*0.5,hy-r*1.0); c.lineTo(hx+r-0.5,hy-r*1.5); c.lineTo(hx+r-0.5,hy-r*0.55); c.closePath(); c.fill(); c.stroke();
+      c.fillStyle='#ff4fb0'; c.beginPath(); c.arc(hx,hy-r*1.05,1.3,0,7); c.fill(); break; }
+    case 'guard': {
+      c.fillStyle='#8a3fd1'; c.beginPath(); c.moveTo(hx-r-2,shy+1); c.lineTo(hx-r-8,shy+20); c.lineTo(hx-3,shy+14); c.closePath(); c.fill(); c.beginPath(); c.moveTo(hx+r+2,shy+1); c.lineTo(hx+r+8,shy+20); c.lineTo(hx+3,shy+14); c.closePath(); c.fill();
+      c.fillStyle='#c9d2dc'; c.strokeStyle='#6d7683'; c.lineWidth=1; c.beginPath(); c.arc(hx,hy-1,r+1.2,Math.PI*0.95,Math.PI*2.05); c.lineTo(hx+r+1,hy+2); c.lineTo(hx-r-1,hy+2); c.closePath(); c.fill(); c.stroke();
+      c.fillStyle='#8a3fd1'; c.beginPath(); c.moveTo(hx-1.5,hy-r-1); c.quadraticCurveTo(hx-5,hy-r-12,hx-11,hy-r-6); c.quadraticCurveTo(hx-5,hy-r-5,hx+1.5,hy-r-1); c.fill();
+      c.strokeStyle='#ff7ac8'; c.lineWidth=1.6; c.beginPath(); c.moveTo(hx-r+1,hy+0.5); c.lineTo(hx+r-1,hy+0.5); c.stroke(); break; }
+    case 'pel': {
+      c.fillStyle='#ffffff'; c.beginPath(); c.moveTo(hx-r*0.7,hy+r*0.4); c.lineTo(hx,hy+r*1.9); c.lineTo(hx+r*0.7,hy+r*0.4); c.closePath(); c.fill();
+      c.fillStyle='rgba(120,215,255,0.92)'; c.strokeStyle='#2e7fa6'; c.lineWidth=0.9; c.beginPath(); c.rect(hx-r-0.5,hy-3.2,2*r+1,5.4); c.fill(); c.stroke();
+      c.strokeStyle='#e8b24a'; c.lineWidth=2; c.beginPath(); c.moveTo(hx-r*0.9,shy+1); c.lineTo(hx+r*0.9,shy+1); c.stroke(); break; }
+    case 'tionis': {
+      c.fillStyle='#6d7480'; c.beginPath(); c.arc(hx,hy,r+1.8,Math.PI*0.85,Math.PI*2.15); c.lineTo(hx+r+3,shy+6); c.lineTo(hx-r-3,shy+6); c.closePath(); c.fill();
+      c.fillStyle='#f4f4f4'; c.beginPath(); c.arc(hx,hy+0.5,r*0.9,Math.PI/2,Math.PI*1.5); c.fill(); c.fillStyle='#16161c'; c.beginPath(); c.arc(hx,hy+0.5,r*0.9,-Math.PI/2,Math.PI/2); c.fill();
+      c.strokeStyle='#16161c'; c.lineWidth=1; c.beginPath(); c.arc(hx-3.4,hy+1.5,2.6,0.2,Math.PI-0.2); c.stroke();
+      c.strokeStyle='#f4f4f4'; c.beginPath(); c.arc(hx+3.4,hy+4.2,2.6,Math.PI+0.2,Math.PI*2-0.2); c.stroke();
+      c.fillStyle='#16161c'; c.beginPath(); c.arc(hx-3.4,hy-1.8,0.9,0,7); c.fill(); c.fillStyle='#f4f4f4'; c.beginPath(); c.arc(hx+3.4,hy-1.8,0.9,0,7); c.fill();
+      c.fillStyle='#ff8a1f'; c.fillRect(hx-r-5, shy+3, 4, 6); break; }
+  }
+}
+function skillCdOf(p){ return (skW(p)==='cleon'?CLEON_SKILL_CD:SKILL_CD)*pzCdMult(p); }
 function ultCdOf(p){ return ULT_CD*pzCdMult(p)*(gameMode==='hyperbr'?0.2:1); }
 const PRACTICE_SKILL_CD=2;
 const SKILLS={
+  cleon:{name:'근위병 소환', kind:'buff', desc:'창을 든 근위병 4명을 9초 동안 소환 (체력 180, 쿨타임 12.5초) · 2명은 가장 가까운 상대에게 돌진해 15 피해, 2명은 내 좌우를 지키다 상대가 가까워지면 달려가 공격'},
+  pel:{name:'드론 증설', kind:'buff', desc:'드론을 한 대 늘림 (최대 6대)'},
+  tionis:{name:'채혈', kind:'hit', desc:'주사기를 던져(중거리) 맞힌 상대에게 20 피해 · 맞히면 다음 스킬이 변신으로 바뀌어 바로 쓸 수 있음 · 변신은 맞힌 상대로 5초 동안 변장 (이름·외형·공격·스킬·궁극기가 상대의 것, 체력바는 초록색)'},
   pizarro:  {name:'정복자의 질주', kind:'buff', desc:'체력 20 즉시 회복 + 3초 동안 이동 속도 50% 증가'},
   puppeteer:{name:'바느질', kind:'hit', desc:'실이 달린 바늘을 조준한 방향으로 발사 · 맞은 상대와 실이 이어지고 이동속도 25% 감소 · 맞히면 쿨타임 없이 바로 바늘 빼기를 쓸 수 있음 (바늘 빼기를 쓰기 전까지 실이 계속 이어짐) · 바늘 빼기: 실을 당겨 상대에게 30 피해를 주고 실이 끊김, 쿨타임은 바늘 빼기를 쓴 뒤부터 돌아요 (못 맞히면 바로 쿨타임)'},
   kan:      {name:'독두꺼비 함정', kind:'hit', desc:'조준한 곳으로 독 두꺼비를 던짐 (닿는 만큼, 최대 약 800) · 포물선으로 날아가 바닥에 닿으면 그 바닥이 독 바닥이 됨 (15초, 최대 2개, 나에게만 보임) · 적이 밟으면 독 바닥이 나타나고 3초 뒤 사라짐 · 밟은 적은 3초 동안 0.5초마다 5 피해'},
@@ -12029,7 +12331,7 @@ function skillDamage(p, t, dmg, tMs, o){   // one hit with the usual bookkeeping
 function skillPulse(p, tMs, o){   // everything hostile within o.r: damage / knockback / pull / slow / burn
   const tSec=tMs/1000, cx=(o.cx!==undefined?o.cx:p.x), cy=(o.cy!==undefined?o.cy:p.y-PLAYER_H/2); let n=0, total=0;
   for(const id in players){
-    const t=players[id]; if(!t.alive || id===p.id || t.x===undefined || isAlly(p,t) || t.swordCharge || t.darkSub) continue;
+    const t=players[id]; if(!t.alive || id===p.id || t.x===undefined || isAlly(p,t) || t.swordCharge || t.darkSub || t.isClone) continue;
     const ty=t.y-PLAYER_H/2; if(Math.hypot(t.x-cx, ty-cy)>o.r) continue;
     n++; const dir=(t.x>=cx)?1:-1;
     if(o.pull && !t.isZombie){ t.kbX=-dir*o.pull; t.grounded=false; }
@@ -12056,7 +12358,7 @@ function bladeSpinTick(p, tMs){
   const cx=p.x, cy=p.y-40; if(!p.bladeHit) p.bladeHit={};
   const touched=[];
   for(const id in players){
-    const t=players[id]; if(!t.alive || id===p.id || t.x===undefined || isAlly(p,t) || p.bladeHit[id] || t.swordCharge || t.darkSub) continue;   // (another charging knight is untouchable too: two charges pass through each other)
+    const t=players[id]; if(!t.alive || id===p.id || t.x===undefined || isAlly(p,t) || p.bladeHit[id] || t.swordCharge || t.darkSub || t.isClone) continue;   // (another charging knight is untouchable too: two charges pass through each other)
     const bx=clamp(cx, t.x-PLAYER_W/2, t.x+PLAYER_W/2), by=clamp(cy, t.y-PLAYER_H, t.y);       // the closest point of the target's body to the knight
     const dd=Math.hypot(bx-cx, by-cy); if(dd<=SWORD_SPIN_RADIUS) touched.push({t, dd});
   }
@@ -12074,7 +12376,7 @@ function bladeSpinTick(p, tMs){
 function skillHitFront(p, tMs, dirX, o){   // the nearest enemy in a box in front of the caster
   let best=null, bd=1e9;
   for(const id in players){
-    const t=players[id]; if(!t.alive || id===p.id || t.x===undefined || isAlly(p,t) || t.swordCharge || t.darkSub) continue;
+    const t=players[id]; if(!t.alive || id===p.id || t.x===undefined || isAlly(p,t) || t.swordCharge || t.darkSub || t.isClone) continue;
     const dx=(t.x-p.x)*dirX; if(dx<-20 || dx>o.range || Math.abs(t.y-p.y)>(o.h||80)) continue;
     if(dx<bd){ bd=dx; best=t; }
   }
@@ -12083,6 +12385,9 @@ function skillHitFront(p, tMs, dirX, o){   // the nearest enemy in a box in fron
 }
 const PZ_CROSS_HALF=[90,100,110,125], PZ_CROSS_DMG=[20,22,25,28], PZ_CROSS_STUN=[1,1,1,1], PZ_CROSS_HEAL=20, PZ_CROSS_DUR=0.7, PZ_MARK_SEC=3, PZ_MARK_DMG=5;   // 피사로's skill: the cross from the sky, bigger / harder / longer stun with every stage of his ultimate; whoever it hits is marked for 3 s and the next thrust on them hurts 5 more
 const SKILL_IMPL={
+  cleon(p,tSec,tMs){ spawnGuards(p,tSec,tMs); pushFx('skillring', p.x, p.y-40, tMs, {color:'#ff7ac8', r:90}); },
+  pel(p,tSec,tMs){ const n=pelN(p); if(n>=PEL_MAX) return false; p.drones=n+1; pushFx('skillring', p.x, p.y-70, tMs, {color:'#7fd8ff', r:60}); },
+  tionis(p,tSec,tMs,ax,ay){ return (p.tioStage==='morph') ? tioMorph(p,tSec,tMs) : tioBlood(p,tSec,tMs,ax,ay); },
   puppeteer(p,tSec,tMs,ax,ay){
     if(sewActive(p,tSec)){            // 바늘 빼기: the needle comes out - 30 damage, the thread snaps (the cooldown starts now)
       const tg=players[p.sewTo]; p.sewTo=null; tg.sewBy=null; tg.sewSlowed=false;
@@ -12156,7 +12461,7 @@ const SKILL_IMPL={
     const dir=skillAimDir(p,ax), x0=p.x, y0=p.y, best=skillMoveSpot(p, x0+dir*FIRE_DASH_LEN, y0), x1=best.x;
     const lo=Math.min(x0,x1)-35, hi=Math.max(x0,x1)+35, tS=tMs/1000;
     for(const o of enemiesOf(p)){
-      if(o.swordCharge || o.darkSub || o.x<lo || o.x>hi || Math.abs(o.y-y0)>90) continue;
+      if(o.swordCharge || o.darkSub || o.isClone || o.x<lo || o.x>hi || Math.abs(o.y-y0)>90) continue;
       skillDamage(p, o, FIRE_DASH_DMG, tMs, {kb:180, up:150}); if(o.hp>0) o.burn={until:tS+2.5, dps:8, owner:p.id, ownerName:p.name};
     }
     const n=Math.max(2, Math.round(Math.abs(x1-x0)/70));
@@ -12202,7 +12507,7 @@ const SKILL_IMPL={
   samurai(p,tSec,tMs,ax){        // iai: a flash along the aim direction, cutting everyone on the way
     const dir=skillAimDir(p,ax), x0=p.x, y0=p.y, best=skillMoveSpot(p, x0+dir*430, y0);
     const x1=best.x, lo=Math.min(x0,x1)-30, hi=Math.max(x0,x1)+30;
-    for(const o of enemiesOf(p)){ if(o.swordCharge || o.darkSub || o.x<lo || o.x>hi || Math.abs(o.y-y0)>85) continue; skillDamage(p, o, 30, tMs, {kb:160, up:160}); }
+    for(const o of enemiesOf(p)){ if(o.swordCharge || o.darkSub || o.isClone || o.x<lo || o.x>hi || Math.abs(o.y-y0)>85) continue; skillDamage(p, o, 30, tMs, {kb:160, up:160}); }
     pushFx('blink', x0, y0-30, tMs, {color:'#eef2f8'}); p.x=x1; p.y=best.y; p.vx=0; p.vy=0; p.kbX=0; pushFx('blink', p.x, p.y-30, tMs, {color:'#eef2f8'});
     pushFx('spark', (x0+x1)/2, y0-34, tMs, {ang:dir>0?0:Math.PI, color:'#ffffff'});
     pushFx('iai', x0, y0-34, tMs, {x2:x1, y2:best.y-34});
@@ -12221,7 +12526,7 @@ const SKILL_IMPL={
     if((p.vacuumStacks||0)<VAC_SKILL_COST) return false;
     const n=skillPulse(p,tMs,{r:VAC_SKILL_R, pull:VAC_SKILL_PULL}); if(n<=0) return false;
     p.vacuumStacks-=VAC_SKILL_COST;
-    for(const id in players){ const t=players[id]; if(!t.alive || id===p.id || t.x===undefined || isAlly(p,t) || t.swordCharge || t.darkSub) continue; if(Math.hypot(t.x-p.x,(t.y-PLAYER_H/2)-(p.y-PLAYER_H/2))<=VAC_SKILL_R) stunPlayer(t, VAC_SKILL_STUN, tMs); }
+    for(const id in players){ const t=players[id]; if(!t.alive || id===p.id || t.x===undefined || isAlly(p,t) || t.swordCharge || t.darkSub || t.isClone) continue; if(Math.hypot(t.x-p.x,(t.y-PLAYER_H/2)-(p.y-PLAYER_H/2))<=VAC_SKILL_R) stunPlayer(t, VAC_SKILL_STUN, tMs); }
     pushFx('vacvortex', p.x, p.y-30, tMs, {r:VAC_SKILL_R}); return true; }
 };
 function trySkill(p, tMs, aimX, aimY){ const o=curAur; curAur=auraKind(p); try{ return trySkill0(p, tMs, aimX, aimY); } finally{ curAur=o; } }
@@ -12236,14 +12541,16 @@ function trySkill0(p, tMs, aimX, aimY){
   const tSec=tMs/1000;
   if(skW(p)==='sword' && p.swordCharge){ swordEnd(p); return; }                                      // the knight's skill key again = stop charging
   if(tSec-(p.lastSkill===undefined?-9999:p.lastSkill) < skillCdOf(p)) return;
-  const impl=SKILL_IMPL[skW(p)]; if(!impl) return;
+  if(p.isClone) return;
+  const skBefore=skW(p); const impl=SKILL_IMPL[skBefore]; if(!impl) return;
+  const tioName=(skBefore==='tionis' && p.tioStage==='morph')?'변신':null;
   const pullNeedle=(skW(p)==='puppeteer' && sewActive(p,tSec));
   if(impl(p,tSec,tMs,aimX,aimY)===false) return;                                   // nothing to use it on: the cooldown is not spent
-  p.lastSkill=tSec;
+  p.lastSkill=tSec; if(p._skillReset){ p.lastSkill=-9999; p._skillReset=false; }
   p.skillUses=(p.skillUses||0)+1;
   if(isGmSkin(p)) pushFx('aurora', p.x, p.y-34, tMs, {big:0}); else if(auraKind(p)===2) pushFx('smellburst', p.x, p.y-34, tMs, {big:0});
-  const sd=SKILLS[skW(p)];
-  pushFx('skill', p.x, p.y-40, tMs, {color:p.color, name:pullNeedle?SEW_PULL_NAME:sd.name});
+  const sd=SKILLS[skBefore];
+  pushFx('skill', p.x, p.y-40, tMs, {color:p.color, name:pullNeedle?SEW_PULL_NAME:(tioName||sd.name)});
   pushFx('sfx', p.x, p.y-40, tMs, {name:SKILL_SFX[sd.kind]});
 }
 /* ================= ABILITY PREVIEW (the mint-coloured aim while an ability key is held) =================
@@ -12280,7 +12587,7 @@ function fieldZoneTick(dt, t){      // inside a cloud everybody moves at half sp
   if(!fieldZones.length) return;
   const tS=t/1000; fieldZones=fieldZones.filter(z=>z.until>tS); if(!fieldZones.length) return;
   for(const id in players){
-    const p=players[id]; if(!p.alive || p.x===undefined || p.swordCharge || p.darkSub) continue;
+    const p=players[id]; if(!p.alive || p.x===undefined || p.swordCharge || p.darkSub || p.isClone) continue;
     const cy=p.y-PLAYER_H/2;
     for(const z of fieldZones){
       if(Math.hypot(p.x-z.x, cy-z.y)>z.r) continue;
@@ -12444,14 +12751,15 @@ function drawAbilityPreview(){
 }
 function puppetSide(a){ if(a && a.puppetBy && a.puppetUntil>(curTickSec||0)){ const m=players[a.puppetBy]; if(m && m.puppetTarget===a.id) return m; } return a; }   // a puppet fights on the side of the one who pulls his strings
 let curTickSec=0;
-function isAlly(a,b){ if(a && b && a.id!==b.id && (a.puppetBy||b.puppetBy)){ const a2=puppetSide(a), b2=puppetSide(b); if(a2!==a || b2!==b){ if(a2.id===b2.id) return !((a2===b && b2===b) || (b2===a && a2===a)); a=a2; b=b2; } }      // (a puppet and the one pulling his strings are NOT allies: the puppet can hurt him)
+function isAlly(a,b){ if(a && b && a.id!==b.id && (a.ownerId||b.ownerId) && (a.ownerId||a.id)===(b.ownerId||b.id)) return true;       // a summon and its master (and the master's other summons) are allies
+  if(a && b && a.id!==b.id && (a.puppetBy||b.puppetBy)){ const a2=puppetSide(a), b2=puppetSide(b); if(a2!==a || b2!==b){ if(a2.id===b2.id) return !((a2===b && b2===b) || (b2===a && a2===a)); a=a2; b=b2; } }      // (a puppet and the one pulling his strings are NOT allies: the puppet can hurt him)
   if(tn && gameMode==='tournament'){ if(!a || !b || a.id===b.id) return false; return tn.partner[a.id]!==b.id; }      // (tournament: everybody except my own opponent is untouchable)
   return !!a && !!b && a.id!==b.id && a.team!==null && a.team!==undefined && a.team===b.team; }
 const GAMBLE_SLOW_SEC = 3;
 function nearestEnemyOf(p){
   let target=null, bd=1e9;
   for(const o of Object.values(players)){
-    if(!o.alive || o.id===p.id || o.x===undefined || isAlly(p,o) || o.swordCharge || o.darkSub) continue;
+    if(!o.alive || o.id===p.id || o.x===undefined || isAlly(p,o) || o.swordCharge || o.darkSub || o.isClone) continue;
     const d=Math.hypot(o.x-p.x, o.y-p.y);
     if(d<bd){ bd=d; target=o; }
   }
@@ -12572,7 +12880,7 @@ function processFlamethrower(p, tMs, dt){
   const reach=flameReach(p.x, p.y-40, angle);
   for(const id in players){
     const target=players[id];
-    if(!target.alive || id===p.id || isAlly(p,target) || target.x===undefined || target.swordCharge || target.darkSub) continue;
+    if(!target.alive || id===p.id || isAlly(p,target) || target.x===undefined || target.swordCharge || target.darkSub || target.isClone) continue;
     const dx=target.x-p.x, dy=(target.y-PLAYER_H/2)-(p.y-40);
     const d=Math.hypot(dx,dy);
     if(d>FLAME_RANGE) continue;
@@ -12602,7 +12910,7 @@ function meleeAttack(p, angle, w, tMs){
   if(w.deflectSec){ p.deflectUntil=tMs/1000+w.deflectSec; p.deflectGot=false; }      // the lightsaber: for a moment after the swing everything shot at its owner is knocked back at the shooter
   for(const id in players){
     const target=players[id];
-    if(!target.alive || id===p.id || isAlly(p,target) || target.swordCharge || target.darkSub) continue;
+    if(!target.alive || id===p.id || isAlly(p,target) || target.swordCharge || target.darkSub || target.isClone) continue;
     const cy=target.y-PLAYER_H/2;
     let inReach=dist(p.x,p.y-PLAYER_H/2, target.x, cy) <= reachR;
     if(inReach && w.thrust){ const rx=target.x-p.x, ry=cy-(p.y-PLAYER_H/2), ca=Math.cos(angle), sa=Math.sin(angle), along=rx*ca+ry*sa, perp=Math.abs(rx*sa-ry*ca); inReach = along>-14 && perp<=40 && !botLineBlocked(p.x, p.y-PLAYER_H/2, target.x, cy); }      // the spear: a straight thrust in front (a platform between the two stops it)
@@ -12644,7 +12952,7 @@ function absorbIntoShield(target, dmg){
 function explodeAt(x,y,b,tMs){
   for(const id in players){
     const target=players[id];
-    if(!target.alive || isAlly(players[b.owner],target) || target.swordCharge || target.darkSub) continue; // allies are never hurt by blasts (self-damage still applies); a charging knight is untouchable
+    if(!target.alive || isAlly(players[b.owner],target) || target.swordCharge || target.darkSub || target.isClone) continue; // allies are never hurt by blasts (self-damage still applies); a charging knight is untouchable
     if(b.noSelf && id===b.owner) continue; // ultimate missiles never hurt their caster
     const cy=target.y-PLAYER_H/2;
     if(dist(x,y,target.x,cy) <= b.splash){
@@ -12666,7 +12974,7 @@ function fireVacuum(p, angle, w, tMs){
   pushFx('skillring', originX+Math.cos(angle)*40, originY+Math.sin(angle)*40, tMs, {color:'#8fd3ff', r:34});
   for(const id in players){
     const target=players[id];
-    if(!target.alive || id===p.id || isAlly(p,target) || target.swordCharge || target.darkSub) continue;
+    if(!target.alive || id===p.id || isAlly(p,target) || target.swordCharge || target.darkSub || target.isClone) continue;
     const cy=target.y-PLAYER_H/2;
     const dx=target.x-originX, dy=cy-originY;
     const d=Math.hypot(dx,dy);
@@ -12715,6 +13023,8 @@ function tryFire0(p, angle, tMs){
   p.lastShot = tSec;
   recordReplayEvent(p.id, 'attack', {weapon:p.weapon, angle:useAngle}); // every successful fire path (melee, guns, cards, explosives...) passes through this one line exactly once
   if(WEAPON_SFX[p.weapon]) pushFx('sfx', p.x, p.y-40, tMs, {name:WEAPON_SFX[p.weapon]}); // sent as a normal synced effect so every player's game plays the sound, not just the host's
+  if(w.id==='pel'){ pelVolley(p, useAngle, tSec, tMs); return; }
+  if(w.id==='cleon'){ spawnBullet(p, useAngle, Object.assign({}, w, {dmg:w.dmg*(1+CLEON_GUARD_BONUS*guardsOf(p).length)})); return; }
   if(w.kind==='melee'){ meleeAttack(p, useAngle, w, tMs); return; }
   if(w.kind==='vacuum'){ fireVacuum(p, useAngle, w, tMs); return; }
   if(w.kind==='gamble'){ rollDice(p, tMs); return; }
@@ -13309,7 +13619,10 @@ function botWantsSkill(p, target, d, tSec){
     case 'portalgun': { if(p.portalPair){ const pr=p.portalPair; return enemiesOf(p).some(o=>Math.hypot(o.x-pr.a.x,o.y-pr.a.y)<PORTAL_BLAST_R-30 || Math.hypot(o.x-pr.b.x,o.y-pr.b.y)<PORTAL_BLAST_R-30); } const old=p.hist && p.hist.find(h=>tSec-h.t<=2.2 && tSec-h.t>=1.6); return !!old && old.hp-p.hp>=60; }
     case 'vacuum': return (p.vacuumStacks||0)>=VAC_SKILL_COST && d>110 && d<VAC_SKILL_R-30;
     case 'kan': return d>140 && d<560 && Math.abs(target.y-p.y)<160;                // the toad: thrown toward an enemy at a medium distance
-    case 'kurus': return !darkPoolUnder(p, true) && d<420;     // worth spreading when he is not already standing in his own darkness and a fight is close
+    case 'kurus': return !darkPoolUnder(p, true) && d<420;
+    case 'cleon': return d<800;
+    case 'pel': return pelN(p)<PEL_MAX && d<900;
+    case 'tionis': return p.tioStage==='morph' || (d<560 && Math.abs(target.y-p.y)<180);     // worth spreading when he is not already standing in his own darkness and a fight is close
   }
   return false;
 }
@@ -13597,6 +13910,7 @@ function botTeleportStep(p, ai, target, d, lowHp, tSec, t, dif, goalX, goalY, cq
   tryTeleportChannel(p, dest.x, dest.y, t); ai.teleAt=tSec+2;
 }
 function botThink(p, t, dt){
+  if(p.isGuard && p.gMode==='escort' && guardEscortThink(p, t, dt)) return;
   if(puppetVictim(p, t/1000)) return;                               // a controlled bot just follows its master's strings
 
   const ai=p.ai, inp=p.input;
@@ -13815,6 +14129,8 @@ function portalBotWorth(p, from, to){       // a bot only steps into a portal wh
   return bestTo<Infinity && bestTo+150<best;
 }
 function botUltSensible(p, target){
+  if(ulW(p)==='pel') return pelN(p)>=2 && Math.hypot(target.x-p.x,target.y-p.y)<720;
+  if(ulW(p)==='tionis') return Math.hypot(target.x-p.x,target.y-p.y)<650;
   if(ulW(p)==='portalgun') return Math.hypot(target.x-p.x,target.y-p.y)>380;      // the exit lands beside the enemy: pointless when it is already close
   if(ulW(p)==='kurus'){ const d=Math.hypot(target.x-p.x,target.y-p.y); return !!darkPoolUnder(p, true) && (p.hp<maxHpFor(p)*0.55 || botIncomingShot(p, 220) || d<260); }   // only where it can sink right away
   if(ulW(p)==='pizarro') return (p.pzStacks||0)<PZ_MAX;       // the stacking buff: worth casting until it is full
@@ -13949,7 +14265,7 @@ function darkEmerge(p, tMs, viaUlt){
     let wsum=0; for(const z of escPools){ const r=darkPoolRect(z); if(r) pushFx('darksplash', (r.x0+r.x1)/2, r.y, tMs, {}); wsum+=z.rr-z.rl; }
     dmg=Math.min(DARK_ESCAPE_MAX, Math.round(wsum*DARK_ESCAPE_PER_PX));           // as much damage as the darkness he spread (max 90), then that darkness is gone: only the stretch he is in plus his darkness above / below it counts
     darkPools=darkPools.filter(z=>escPools.indexOf(z)<0); }
-  for(const o of enemiesOf(p)){ if(o.swordCharge || o.darkSub || !tnSameMatch(p.id, o.id)) continue; if(Math.hypot(o.x-p.x, (o.y-PLAYER_H/2)-(p.y-PLAYER_H/2))<=DARK_EMERGE_R){ if(dmg>0) skillDamage(p, o, dmg, tMs, {}); if(o.alive && o.hp>0) stunPlayer(o, DARK_EMERGE_STUN, tMs); } }
+  for(const o of enemiesOf(p)){ if(o.swordCharge || o.darkSub || o.isClone || !tnSameMatch(p.id, o.id)) continue; if(Math.hypot(o.x-p.x, (o.y-PLAYER_H/2)-(p.y-PLAYER_H/2))<=DARK_EMERGE_R){ if(dmg>0) skillDamage(p, o, dmg, tMs, {}); if(o.alive && o.hp>0) stunPlayer(o, DARK_EMERGE_STUN, tMs); } }
 }
 function darkSubSpan(p){            // the stretch of his own darkness he can glide along: the puddles on his platform that touch the one he is in
   const own=darkPools.filter(z=>z.owner===p.id && z.pi===(p.darkSub&&p.darkSub.pi));
@@ -14109,7 +14425,7 @@ function brzTick(dt,t){
   if(!live){ brz.t0=now; brz.nextSup=now+6000; brzV=null; return; }
   const el=(now-brz.t0)/1000, [l,r]=brzBounds(el);
   brzV={l, r, w:Math.max(0,Math.ceil(BRZ_DELAY_S-el)), c:[]};
-  const alive=Object.values(players).filter(p=>p.alive && !p.isBoss && !p.isMinion);
+  const alive=Object.values(players).filter(p=>!p.isMinion && p.alive && !p.isBoss && !p.isMinion);
   // supply crates
   brz.crates=brz.crates.filter(c=>now<c.until && c.x>=l-10 && c.x<=r+10);
   if(now>=brz.nextSup){
@@ -14211,6 +14527,7 @@ function hostTickCore(dt,t){
   wizardZoneTick(dt,t); poisonZoneTick(dt,t); fieldZoneTick(dt,t);
   if(darkPools.length || hasDarkPlayers()) darkPoolTick(dt,t);
   if(turrets.length) turretTick(dt,t);
+  spaceTick(dt,t);
   fxActor=null; mapHazardTick(dt,t);
   { const ts=t/1000;
     for(let i=hostTimers.length-1;i>=0;i--){ if(ts>=hostTimers[i].at){ const tm=hostTimers.splice(i,1)[0]; if(!matchEnded) tnRun(tm.ta, ()=>{ const o=curAur; curAur=tm.au||0; try{ tm.fn(t); } finally{ curAur=o; } }); } }
@@ -14368,7 +14685,7 @@ function hostTickCore(dt,t){
         b.hitOnce = b.hitOnce||{};
         for(const id in players){
           const p=players[id];
-          if(!p.alive || id===b.owner || isAlly(players[b.owner],p) || b.hitOnce[id] || p.swordCharge || p.darkSub) continue;
+          if(!p.alive || id===b.owner || isAlly(players[b.owner],p) || b.hitOnce[id] || p.swordCharge || p.darkSub || p.isClone) continue;
           const cy=p.y-PLAYER_H/2;
           if(dist(nx,ny,p.x,cy) <= PLAYER_H/2+BULLET_R){
             const dmg=computeFalloffDamage(b); p.hp-=dmg; markHit(p, b.owner, t, dmg); applyHitKnockback(p,b.vx,b.vy,dmg); pushFx('hit', nx, ny, t, {color:b.color, ang:Math.atan2(b.vy,b.vx), v:Math.round(dmg), el:dmgTypeOf(b.wid)});
@@ -14394,7 +14711,7 @@ function hostTickCore(dt,t){
         }
         for(const id in players){
           const p=players[id];
-          if(!p.alive || id===b.owner || isAlly(players[b.owner],p) || p.swordCharge || p.darkSub) continue;   // (a charging knight is untouchable: bullets fly through it)
+          if(!p.alive || id===b.owner || isAlly(players[b.owner],p) || p.swordCharge || p.darkSub || p.isClone) continue;   // (a charging knight is untouchable: bullets fly through it)
           const cy=p.y-PLAYER_H/2;
           if(dist(nx,ny,p.x,cy) <= PLAYER_H/2+BULLET_R){
             if(!b.returnHit) b.returnHit={};
@@ -14478,7 +14795,7 @@ function hostTickCore(dt,t){
     if(!hit){
       for(const id in players){
         const p=players[id];
-        if(!p.alive || id===b.owner || isAlly(players[b.owner],p) || p.swordCharge || p.darkSub) continue;   // (a charging knight is untouchable: bullets fly through it)
+        if(!p.alive || id===b.owner || isAlly(players[b.owner],p) || p.swordCharge || p.darkSub || p.isClone) continue;   // (a charging knight is untouchable: bullets fly through it)
         if(b.pierce || b.passPlayers){ b.hitSet=b.hitSet||{}; if(b.hitSet[id]) continue; }
         const cy=p.y-PLAYER_H/2;
         if(dist(nx,ny,p.x,cy) <= PLAYER_H/2+(b.hitR||BULLET_R)){
@@ -14514,6 +14831,7 @@ function hostTickCore(dt,t){
             p.hp-=dmg; markHit(p, b.owner, t, dmg); applyHitKnockback(p, b.vx, b.vy, dmg); pushFx('hit', nx, ny, t, {color:b.color, ang:Math.atan2(b.vy,b.vx), v:Math.round(dmg), el:dmgTypeOf(b.wid)});
             if(b.burn && p.hp>0) p.burn={until:t/1000+b.burn.dur, dps:b.burn.dps, owner:b.owner, ownerName:b.ownerName};
             if(b.poison && p.hp>0) applyPoison(p, b.owner, b.ownerName, b.poison, t);
+            if(b.tioBlood) tioBloodHit(b, p);
             const killed = p.hp<=0;
             if(killed) handleDeath(p, players[b.owner], t, b.ownerName);
             else if(b.volley!==undefined) registerCardHit(b, p, id, t);
@@ -14559,7 +14877,7 @@ function hostTickCore(dt,t){
         fireCdRemain: snapR(p.fireCdRemain||0,20),
         ultCdRemain: p.darkSub ? 0 : snapR(Math.max(0, ultCdOf(p) - (t/1000-(p.lastUlt===undefined?-9999:p.lastUlt))),20), darkSub:p.darkSub?1:0, darkArm:(p.darkArmUntil>t/1000)?1:0,
         skillCdRemain: snapR(Math.max(0, skillCdOf(p) - (t/1000-(p.lastSkill===undefined?-9999:p.lastSkill))),20), buff:p.buff||null, skillUses:p.skillUses||0, ultUses:p.ultUses||0, ultMulti:p.ultMulti||0,
-        pz:p.pzStacks||0, pm:(p.pzMarkUntil>t/1000)?1:0, ultOn:!!p.ultOn, invis:!!p.invis, burning:!!p.burning, poisoned:!!p.poisoned, kw:(p.kanWingsUntil>t/1000)?1:0, gc:p.gc||0, gp:Math.round(Math.min(1,(p.goldStay||0)/GOLD_PICK_STAY)*20)/20, pp:puppetMaster(p,t/1000)?p.puppetTarget:null, sw:p.sw||null, sewSlowed:!!p.sewSlowed, slowed:!!p.slowed, stunned:!!p.stunned, cardSlowed:!!p.cardSlowed, bladeSpin:!!p.bladeSpin, swordCharging:!!p.swordCharge, cannonFlying:!!p.cannonFly, chips:p.chips||0, cannonAng:p.cannonFly?Math.round(Math.atan2(p.vy||0,p.cannonFly.vx)*100)/100:0, totalDamageDealt:p.totalDamageDealt||0, channeling:!!p.teleportChannel, flaming:!!p.flaming, portalPair:p.portalPair||null, batting:!!p.batting, vacuumStacks:p.vacuumStacks||0, isZombie:!!p.isZombie, parkourItem:!!p.parkourItem, hsHiding:!!p.hsHiding, hsDisguiseW:p.hsDisguiseW, hsDisguiseH:p.hsDisguiseH, isSeeker:!!p.isSeeker,
+        pz:p.pzStacks||0, pm:(p.pzMarkUntil>t/1000)?1:0, ultOn:!!p.ultOn, invis:!!p.invis, isGuard:p.isGuard?1:0, isClone:p.isClone?1:0, ownerId:p.ownerId||'', dgn:(p.disg&&p.tioFor)?p.tioFor.name:'', tioStage:p.tioStage||'', drones:(p.weapon==='pel')?pelN(p):0, pelBoost:pelBoostOn(p,t/1000)?1:0, burning:!!p.burning, poisoned:!!p.poisoned, kw:(p.kanWingsUntil>t/1000)?1:0, gc:p.gc||0, gp:Math.round(Math.min(1,(p.goldStay||0)/GOLD_PICK_STAY)*20)/20, pp:puppetMaster(p,t/1000)?p.puppetTarget:null, sw:p.sw||null, sewSlowed:!!p.sewSlowed, slowed:!!p.slowed, stunned:!!p.stunned, cardSlowed:!!p.cardSlowed, bladeSpin:!!p.bladeSpin, swordCharging:!!p.swordCharge, cannonFlying:!!p.cannonFly, chips:p.chips||0, cannonAng:p.cannonFly?Math.round(Math.atan2(p.vy||0,p.cannonFly.vx)*100)/100:0, totalDamageDealt:p.totalDamageDealt||0, channeling:!!p.teleportChannel, flaming:!!p.flaming, portalPair:p.portalPair||null, batting:!!p.batting, vacuumStacks:p.vacuumStacks||0, isZombie:!!p.isZombie, parkourItem:!!p.parkourItem, hsHiding:!!p.hsHiding, hsDisguiseW:p.hsDisguiseW, hsDisguiseH:p.hsDisguiseH, isSeeker:!!p.isSeeker,
         isHost:p.isHost,clan:p.clan||'',joinOrder:p.joinOrder,weapon:p.weapon,kit:p.kit||null,team:p.team,spinAngle:p.spinAngle,cos:p.cos,isBoss:p.isBoss?1:0,isMinion:p.isMinion?1:0,bt:p.bt,bossMaxHp:p.bossMaxHp,emIdx:p.emIdx,emRem:(p.emUntil?Math.max(0,Math.round((p.emUntil-t/1000)*20)/20):0)})),
       cq: (gameMode==='conquest' && cq) ? {s:cq.scores, h:cq.holder, c:cq.contested} : undefined,
       xm: (xm && xmV) ? xmV : undefined,
@@ -14581,6 +14899,7 @@ function hostTickCore(dt,t){
       fieldZones:fieldZones.map(z=>({kind:z.kind,x:Math.round(z.x),y:Math.round(z.y),r:z.r,owner:z.owner,dur:z.dur,rem:z.until-t/1000})),
       poisonZones:poisonZones.map(z=>({mine:z.mine?1:0,x:z.x,y:z.y,r:z.r,owner:z.owner,team:z.team,rem:z.until-t/1000,rv:(z.revealAt!==undefined)?1:0})),
       hz:hzDraw,
+      dbombs:droneBombs.map(b=>({x:Math.round(b.x),y:Math.round(b.y),owner:b.owner})),
       turrets:turrets.map(z=>({x:Math.round(z.x),y:Math.round(z.y),a:Math.round(z.ang*100)/100,owner:z.owner,team:z.team,rem:z.until-t/1000})),
       dark:darkSnap(t),
       effects:effects.filter(e=>!e._sent).map(e=>{ e._sent=1; return e; }).map(e=>({x:e.x,y:e.y,type:e.type,born:e.born,id:e.id,color:e.color,ang:e.ang,v:e.v,dir:e.dir,face:e.face,doubled:e.doubled,name:e.name,k:e.k,x2:e.x2,y2:e.y2,r:e.r,w:e.w,ta:e.ta}))
@@ -14634,6 +14953,8 @@ function broadcastKillEvent(victim, killerName, killerX, killerY, killerColor, t
   attachKillScene(killerId||null, victim.id, t);
 }
 function handleDeath(p, killer, t, killerNameFallback){
+  if(p.isGuard || p.isClone){ p.alive=false; p.hp=0; pushFx('death', p.x, p.y-PLAYER_H/2, t, {color:p.isClone?p.color:'#ff7ac8'}); delete players[p.id]; return; }      // a summon just disappears
+  if(killer && (killer.isGuard || killer.isClone) && players[killer.ownerId]) killer=players[killer.ownerId];      // the kill is the master's
   if(killer && killer.id!==p.id && killer.puppetBy){ const mk=puppetSide(killer); if(mk && mk.id!==killer.id && mk.id!==p.id) killer=mk; }      // a kill made by a puppet counts as the puppeteer's kill (kill count, gold, feed, achievements)
   p.pzStacks=0; p.pzMarkUntil=0;                                   // 피사로 loses the stacks of his ultimate when he dies
   p.alive=false; p.deaths++; p.hp=0;
@@ -14654,7 +14975,7 @@ function handleDeath(p, killer, t, killerNameFallback){
   attachKillScene(killer?killer.id:null, p.id, t);
   pushFx('death', p.x, p.y-PLAYER_H/2, t, {color:p.color});
   if(killer && killer.id!==p.id && killer.cos && killer.cos.kfx) pushFx('kfx', (MAP?clamp(p.x,40,MAP.arenaW-40):p.x), (MAP?clamp(p.y-PLAYER_H/2,50,MAP.arenaH-60):p.y-PLAYER_H/2), t, {k:killer.cos.kfx, vc:p.color});
-  p.cardDmg=0; p.queenUntil=0; p.puppetUntil=0; p.puppetTarget=null; p.puppetBy=null; p.buffs={}; p.barrier=null; p.buff=null; p.hasted=false; p.focusOn=false;
+  spaceReset(p); p.cardDmg=0; p.queenUntil=0; p.puppetUntil=0; p.puppetTarget=null; p.puppetBy=null; p.buffs={}; p.barrier=null; p.buff=null; p.hasted=false; p.focusOn=false;
   p.ultPending=null; p.rushUntil=0; p.invisUntil=0; p.burn=null; p.poison=null; p.toadPois=null; p.kanWingsUntil=0; p.batUntil=0; p.batting=false; p.batDamageDealt=0; p.slowUntil=0; p.slowed=false; p.sandSlowUntil=0; p.sandSlowed=false; p.gambleDouble=false; p.teleportChannel=null; p.stunUntil=0; p.stunned=false; p.cardSlowUntil=0; p.cardSlowed=false; swordEnd(p);
   p.flameHeldSince=null; p.flameUsed=0; p.flameOverheatUntil=0; p.flaming=false; p.flameFxTimer=0;
   p.portalPair=null; p.portalCooldownUntil=0;
@@ -14797,7 +15118,7 @@ function endSurvivalDisaster(){
   survivalRound++;
   survivalCurrentDisaster=null; survivalZombies=[]; survivalHazards=[];
   if(survivalRound>=SURVIVAL_TOTAL_ROUNDS){
-    const survivors=Object.values(players).filter(p=>p.alive);
+    const survivors=Object.values(players).filter(p=>!p.isMinion && p.alive);
     if(survivors.length>0) announceMatchEnd('생존자 승리! 5번의 재해를 모두 버텨냈습니다', survivors.map(p=>p.id));
     else announceMatchEnd('전원 탈락...', []);
     return;
@@ -14806,7 +15127,7 @@ function endSurvivalDisaster(){
 }
 function checkSurvivalEarlyEnd(t){
   if(matchEnded || gameMode!=='survival') return;
-  if(Object.values(players).filter(p=>p.alive).length===0) announceMatchEnd('전원 탈락...', []);
+  if(Object.values(players).filter(p=>!p.isMinion && p.alive).length===0) announceMatchEnd('전원 탈락...', []);
 }
 function survivalHitPlayer(p, t, tag){
   if(!p.alive || gameMode!=='survival') return;
@@ -14836,7 +15157,7 @@ function spawnSurvivalStrike(kind, opts){
   let x;
   if(o.x!==undefined) x=clamp(o.x, 40, MAP.arenaW-40);
   else {
-    const alive=Object.values(players).filter(p=>p.alive && p.x!==undefined);
+    const alive=Object.values(players).filter(p=>!p.isMinion && p.alive && p.x!==undefined);
     const aimed=0.3+0.1*survivalLevel();                                      // more and more strikes are aimed at where somebody stands right now
     if(alive.length && Math.random()<aimed){ const v=alive[Math.floor(Math.random()*alive.length)]; x=clamp(v.x+(Math.random()-0.5)*90, margin, MAP.arenaW-margin); }
     else x=margin+Math.random()*(MAP.arenaW-2*margin);
@@ -15231,7 +15552,7 @@ function bombSoundTick(){
 setInterval(bombSoundTick, 60);
 function startHotpotatoRound(){
   if(matchEnded) return;
-  const alive=Object.values(players).filter(p=>p.alive);
+  const alive=Object.values(players).filter(p=>!p.isMinion && p.alive);
   if(alive.length===0) return;
   bombHolderId = alive[Math.floor(Math.random()*alive.length)].id;
   bombTimerEndsAt = Date.now()+HOTPOTATO_DURATION*1000;
@@ -15265,9 +15586,9 @@ function explodeBombHolder(t){
     holder.alive=false; holder.respawnAt=Infinity;
     pushFx('bombexplode', holder.x, holder.y-40, t, {});
   }
-  const aliveCount=Object.values(players).filter(p=>p.alive).length;
+  const aliveCount=Object.values(players).filter(p=>!p.isMinion && p.alive).length;
   if(aliveCount<=hotpotatoOriginalCount/2){
-    const survivors=Object.values(players).filter(p=>p.alive);
+    const survivors=Object.values(players).filter(p=>!p.isMinion && p.alive);
     announceMatchEnd('생존자 승리! ('+survivors.map(p=>p.name).join(', ')+')', survivors.map(p=>p.id));
   } else {
     broadcastAll({t:'hotpotatoRound', bombHolderId:null, bombTimerEndsAt:0});
@@ -15279,13 +15600,13 @@ function checkEliminationWinCondition(t){
   const mode = MODES[gameMode];
   if(mode.teams){
     const aliveTeams=new Set();
-    for(const id in players){ if(players[id].alive) aliveTeams.add(players[id].team); }
+    for(const id in players){ if(players[id].alive && !players[id].isMinion) aliveTeams.add(players[id].team); }
     if(aliveTeams.size<=1){
       const winTeam = aliveTeams.size===1 ? [...aliveTeams][0] : null;
-      announceMatchEnd(winTeam!==null ? ('팀 '+(winTeam+1)+' 승리!') : '무승부', winTeam!==null ? Object.values(players).filter(p=>p.team===winTeam).map(p=>p.id) : []);
+      announceMatchEnd(winTeam!==null ? ('팀 '+(winTeam+1)+' 승리!') : '무승부', winTeam!==null ? Object.values(players).filter(p=>!p.isMinion && p.team===winTeam).map(p=>p.id) : []);
     }
   } else {
-    const aliveList=Object.values(players).filter(p=>p.alive);
+    const aliveList=Object.values(players).filter(p=>!p.isMinion && p.alive);
     if(aliveList.length<=1){
       announceMatchEnd(aliveList.length===1 ? (aliveList[0].name+' 우승!') : '무승부', aliveList.length===1 ? [aliveList[0].id] : []);
     }
@@ -15371,7 +15692,7 @@ function finishDuelRepick(){
     const p=players[id]; map[id]=p.weapon;
     if(gameMode!=='tournament'){ p.duelUsed=(p.duelUsed||[]); if(p.weapon && !p.duelUsed.includes(p.weapon)) p.duelUsed.push(p.weapon); }
     p.lastDash=clock; p.lastTeleport=clock; p.lastUlt=clock; p.lastSkill=clock; p.skillUses=0; p.ultUses=0; p.ultMulti=0; p.lastShot=0;
-    p.cardDmg=0; p.queenUntil=0; p.puppetUntil=0; p.puppetTarget=null; p.puppetBy=null; p.buffs={}; p.barrier=null; p.buff=null; p.hasted=false; p.focusOn=false; p.ultPending=null; p.rushUntil=0; p.invisUntil=0; p.burn=null; p.poison=null; p.toadPois=null; p.kanWingsUntil=0; p.batUntil=0; p.batting=false; p.slowUntil=0; p.slowed=false;
+    spaceReset(p); p.cardDmg=0; p.queenUntil=0; p.puppetUntil=0; p.puppetTarget=null; p.puppetBy=null; p.buffs={}; p.barrier=null; p.buff=null; p.hasted=false; p.focusOn=false; p.ultPending=null; p.rushUntil=0; p.invisUntil=0; p.burn=null; p.poison=null; p.toadPois=null; p.kanWingsUntil=0; p.batUntil=0; p.batting=false; p.slowUntil=0; p.slowed=false;
     p.flameHeldSince=null; p.flameUsed=0; p.flameOverheatUntil=0; p.flaming=false; p.portalPair=null; p.portalCooldownUntil=0; p.vacuumStacks=0; p.pzStacks=0; p.pzMarkUntil=0; p.chips=0; p.freeVolleys=0; p.darkSub=null; p.darkArmUntil=0; p.darkLand=null;
   }
   }catch(e){ recordDiagError('duel-finish', e); console.error('[duel] re-pick finish:', e); }
@@ -15932,7 +16253,7 @@ function fireAbility(action, wx, wy, viaClick){
 function autoAimEnemy(me){
   let best=null, bd=1e9;
   for(const o of Object.values(players)){
-    if(!o.alive || o.id===me.id || o.x===undefined || isAlly(me,o) || o.invis || o.swordCharge || o.darkSub) continue;          // (not a team-mate, not a dead one, not an invisible assassin, not a charging - untouchable - knight)
+    if(!o.alive || o.id===me.id || o.x===undefined || isAlly(me,o) || o.invis || o.swordCharge || o.darkSub || o.isClone) continue;          // (not a team-mate, not a dead one, not an invisible assassin, not a charging - untouchable - knight)
     const d=Math.hypot(o.x-me.x, o.y-me.y); if(d<bd){ bd=d; best=o; }
   }
   return best;
@@ -16170,6 +16491,7 @@ function drawCardHeart(c, cx, cy, s){
   c.fill();
 }
 function drawHeldWeapon(c, weaponId, ax, ay, hx, hy, swingProg, concept){
+  if(SPACE_HELD[weaponId]){ drawSpaceHeld(c, weaponId, ax, ay, hx, hy); return; }
   if(concept==='breath' && weaponId==='flamethrower') return;      // 입냄새 학살자: nothing in the hands
   const w = WEAPONS[weaponId] || WEAPONS.pistol;
   if(w.shape==='arrow'){
@@ -16409,6 +16731,9 @@ function dmgText(x,y,v,col,el){
   addP({x:x+RND(-8,8),y:y-18,vx:RND(-22,22),vy:-95,drag:1.3,life:0.85,size:12+Math.min(13,v/3),color:(el&&DMG_TYPE_COLORS[el])||'#ffffff',outline:el?(el==='poison'?'#b8ffcc':'#000'):(col||'#000'),shape:'text',add:false,text:String(Math.round(v)), dmgSum:v, x0:x, y0:y, el:el});
 }
 const ULT_THEMES={
+  cleon:{c:['#ff5fb8','#ffd34d','#7a3cff'],k:'wave',f:'255,200,235'},
+  pel:{c:['#bfefff','#ffffff','#57c7ff'],k:'bolt',f:'200,240,255'},
+  tionis:{c:['#ff9d2e','#3fa0ff','#ffffff'],k:'wave',f:'255,225,190'},
   pizarro:{c:['#ffd34d','#ffffff','#c9a463'],k:'wave',f:'255,230,170'},
   puppeteer:{c:['#ff9ecb','#ffffff','#b388ff'],k:'wave',f:'255,210,235'},
   kan:{c:['#35d08a','#f2c230','#e0334a'],k:'wave',f:'190,255,210'},   // colours (3) + an extra flavour per character for the ultimate burst; f = the tint of the screen flash
@@ -16511,6 +16836,13 @@ function spawnFx0(e){
       bu(x,y-30,90,{a0:0,a1:6.28,s0:100,s1:640,l0:.9,l1:2,z0:3,z1:7,colors:['#ffd23f','#ff3d6e','#35e0ff','#b45cff','#ff8a2b','#5dff9a'],grav:120,drag:1.2});
       addP({x:x,y:y-100,vy:-22,drag:1.4,life:1.1,color:'#ffd23f',shape:'ktext',text:'納刀',size:70});
       if(FQ>0.3) samFlash(0.55*FQ,'255,230,170'); shakeFrom(x,y,16*FQ,1100); break; }
+    case 'dronefire': droneKick[e.k+'_'+e.v]={t:performance.now(), a:e.ang||0}; addP({x:x,y:y,life:.12,color:'#bfefff',shape:'flash',size:26}); break;
+    case 'cfleet': fleetShows.push({x:e.x, y:e.y, gap:e.r||CLEON_BEAM_GAP, t0:performance.now()}); addP({x:x,y:y+400,life:.6,color:'#7a3cff',shape:'flash',size:520}); break;
+    case 'cwarn': { const R=e.r||64, L=e.v||1.5; addP({x:x,y:y,life:L,color:'#ff5fb8',shape:'ring',r0:R*1.7,r1:R*0.6,lw:4}); addP({x:x,y:y,life:L,color:'#ffd34d',shape:'ring',r0:R,r1:R,lw:2}); break; }
+    case 'cbeam': { const y2=e.y2||y+900, gy=e.v||y2-40;
+      addP({x:x,y:y,x2:x,y2:y2,life:.5,color:'#ff5fb8',shape:'slash',size:58}); addP({x:x,y:y,x2:x,y2:y2,life:.42,color:'#ffe9a8',shape:'slash',size:28}); addP({x:x,y:y,x2:x,y2:y2,life:.3,color:'#ffffff',shape:'slash',size:11});
+      addP({x:x,y:gy,life:.4,color:'#ffffff',shape:'flash',size:200}); addP({x:x,y:gy,life:.5,color:'#ff7ac8',shape:'ring',r0:10,r1:150,lw:7});
+      bu(x,gy,24,{a0:-3.1,a1:-0.05,s0:120,s1:560,l0:.4,l1:.9,z0:2,z1:5,colors:['#ff7ac8','#ffd34d','#ffffff'],grav:300,drag:1.3,shape:'streak'}); shakeFrom(x,gy,5*FQ,900); break; }
     case 'ultfx': {                                                        // every character's ultimate: a themed burst on top of the ability itself
       const T=ULT_THEMES[e.w]||ULT_THEMES._, c=T.c;
       for(let r=0;r<(fxQuality>=2?2:1);r++) addP({x:x,y:y,life:.45+r*0.15,color:c[r%3],shape:'ring',r0:10,r1:170+r*70,lw:7-r*2});
@@ -17457,6 +17789,19 @@ function drawProjectileBase(b){
       ctx.strokeStyle='#e8eef8'; ctx.lineWidth=1.8; ctx.beginPath(); ctx.moveTo(-9,0); ctx.lineTo(9,0); ctx.stroke();
       ctx.strokeStyle='#ff9ecb'; ctx.lineWidth=1.2; ctx.beginPath(); ctx.moveTo(-9,0); ctx.quadraticCurveTo(-14,-3,-18,0); ctx.stroke();
       break;
+    case 'cleonorb': {
+      ctx.globalCompositeOperation='lighter'; const g=ctx.createRadialGradient(0,0,0,0,0,13); g.addColorStop(0,'rgba(255,255,255,0.95)'); g.addColorStop(0.35,'rgba(255,95,184,0.8)'); g.addColorStop(1,'rgba(255,95,184,0)'); ctx.fillStyle=g; ctx.beginPath(); ctx.arc(0,0,13,0,7); ctx.fill();
+      ctx.fillStyle='#ffd34d'; ctx.beginPath(); ctx.arc(-9,0,2.2,0,7); ctx.fill(); break; }
+    case 'dronebolt':
+      ctx.lineCap='round'; ctx.strokeStyle='rgba(87,199,255,0.8)'; ctx.lineWidth=4; ctx.beginPath(); ctx.moveTo(-9,0); ctx.lineTo(8,0); ctx.stroke(); ctx.strokeStyle='#ffffff'; ctx.lineWidth=1.8; ctx.beginPath(); ctx.moveTo(-7,0); ctx.lineTo(8,0); ctx.stroke(); break;
+    case 'syringe':
+      ctx.lineCap='round'; ctx.strokeStyle='#cfd8e3'; ctx.lineWidth=1.4; ctx.beginPath(); ctx.moveTo(6,0); ctx.lineTo(15,0); ctx.stroke();
+      ctx.fillStyle='rgba(235,245,255,0.95)'; ctx.strokeStyle='#8c9bb0'; ctx.lineWidth=1; ctx.beginPath(); ctx.rect(-8,-3,14,6); ctx.fill(); ctx.stroke();
+      ctx.fillStyle='#d60f2c'; ctx.fillRect(-6,-2,9,4); ctx.strokeStyle='#8c9bb0'; ctx.beginPath(); ctx.moveTo(-8,-5); ctx.lineTo(-8,5); ctx.moveTo(-12,0); ctx.lineTo(-8,0); ctx.stroke(); break;
+    case 'mask': {
+      ctx.rotate(-ang+performance.now()*0.022);
+      ctx.fillStyle='#f4f4f4'; ctx.beginPath(); ctx.arc(0,0,9,Math.PI/2,Math.PI*1.5); ctx.fill(); ctx.fillStyle='#16161c'; ctx.beginPath(); ctx.arc(0,0,9,-Math.PI/2,Math.PI/2); ctx.fill();
+      ctx.strokeStyle='#16161c'; ctx.lineWidth=1.2; ctx.beginPath(); ctx.arc(-4,1.5,3.2,0.2,Math.PI-0.2); ctx.stroke(); ctx.strokeStyle='#f4f4f4'; ctx.beginPath(); ctx.arc(4,5.5,3.2,Math.PI+0.2,Math.PI*2-0.2); ctx.stroke(); break; }
     case 'arrow':
       ctx.strokeStyle='#8a6a3f'; ctx.lineWidth=2;
       ctx.beginPath(); ctx.moveTo(-10,0); ctx.lineTo(6,0); ctx.stroke();
@@ -17729,7 +18074,7 @@ function drawStickman(p){
     if(p.stunned && p.alive) drawStunStars(ctx, HEADCY);
     ctx.restore();
     ctx.font='600 13px Rajdhani'; ctx.textAlign='center'; ctx.fillStyle=nameColorFor(p.cos&&p.cos.name);
-    AURA=false; ctx.fillText((p.clan?'['+p.clan+'] ':'')+p.name, p.x, p.y+HEADCY-38); drawTitleTag(ctx, p, HEADCY); drawEmote(ctx, p, HEADCY);
+    AURA=false; ctx.fillText((p.clan?'['+p.clan+'] ':'')+nameShownFor(p), p.x, p.y+HEADCY-38); drawTitleTag(ctx, p, HEADCY); drawEmote(ctx, p, HEADCY);
     drawOverheadExtras(p, HEADCY);
     return;
   }
@@ -17771,11 +18116,12 @@ function drawStickman(p){
     swingProg = (p.id===myId) ? localBatFlash : 0; // only the local player has live cursor data to animate from
   }
   drawHeldWeapon(ctx, p.weapon, ax, ay, ax*24, SH+6+ay*24, swingProg, conceptOfSkin(skinId));
+  if(p.weapon==='pel' && p.alive!==false) drawPelDrones(ctx, p);
   ctx.globalAlpha=1;
   if(p.stunned && p.alive) drawStunStars(ctx, HEADCY);
   ctx.restore();
   ctx.font='600 13px Rajdhani'; ctx.textAlign='center'; ctx.fillStyle=nameColorFor(p.cos&&p.cos.name);
-  AURA=false; ctx.fillText((p.clan?'['+p.clan+'] ':'')+p.name, p.x, p.y+HEADCY-38); drawTitleTag(ctx, p, HEADCY); drawEmote(ctx, p, HEADCY);
+  AURA=false; ctx.fillText((p.clan?'['+p.clan+'] ':'')+nameShownFor(p), p.x, p.y+HEADCY-38); drawTitleTag(ctx, p, HEADCY); drawEmote(ctx, p, HEADCY);
   drawOverheadExtras(p, HEADCY);
 }
 function drawStunStars(ctx, HEADCY){   // three little stars circling over the head (drawn in the player's own coordinates)
@@ -17828,6 +18174,7 @@ function drawOverheadExtras(p, HEADCY){
   let hpMark=cb?2:0;                                                // (colour-blind mode: also a shape - diamond = enemy, dot = team-mate)
   if(p.id===myId){ hpColor=cb?'#F0E442':'#4da6ff'; hpMark=0; } // me = blue
   else if(isAlly(players[myId], p)){ hpColor=cb?'#56B4E9':'#4ddb7a'; hpMark=cb?1:0; } // ally = green
+  if(p.dgn && p.alive && p.id!==myId){ hpColor=cb?'#56B4E9':'#4ddb7a'; hpMark=cb?1:0; }       // a disguised 티오니스: a green bar for everybody
   ctx.fillStyle = p.alive ? hpColor : '#555';
   ctx.fillRect(p.x-20, p.y+HEADCY-16, 40*clamp((p.hp||0)/maxHpFor(p),0,1), 5);
   if(hpMark && p.alive){ const mx=p.x-26, my=p.y+HEADCY-13.5; ctx.fillStyle=hpColor; ctx.beginPath(); if(hpMark===1) ctx.arc(mx,my,3,0,7); else { ctx.moveTo(mx,my-4); ctx.lineTo(mx+4,my); ctx.lineTo(mx,my+4); ctx.lineTo(mx-4,my); ctx.closePath(); } ctx.fill(); }
@@ -18065,6 +18412,8 @@ function render(fxDt){
   safeDraw(()=>drawPoisonZones());
   safeDraw(()=>drawDarkPools(kcScene?[]:(isHost?darkPoolsView(performance.now()):darkView)));
   safeDraw(()=>drawTurrets(kcScene?[]:null));
+  safeDraw(()=>drawDroneBombs());
+  safeDraw(()=>drawFleet());
   safeDraw(()=>drawMapHazards());
   safeDraw(()=>drawPortals(kcScene?kcScene.portals:null));
   for(const b of (kcScene?kcScene.bullets:bullets)){ if(!kcScene && tnVisSet && !tnVisSet.has(b.owner)) continue; safeDraw(()=>{ drawMuzzle(b); drawProjectile(b); emitProjectileFx(b,dtN); }); }
@@ -18171,7 +18520,7 @@ function render(fxDt){
       if(hasSkill){
         const sRemain = isHost ? Math.max(0, skillCdOf(me)-(performance.now()/1000-(me.lastSkill===undefined?-9999:me.lastSkill))) : (me.skillCdRemain||0);
         document.getElementById('skillFill').style.width=(clamp(1-sRemain/skillCdOf(me),0,1)*100)+'%';
-        const sdName=(skW(me)==='puppeteer' && me.sw) ? SEW_PULL_NAME : sd.name;
+        const sdName=(skW(me)==='puppeteer' && me.sw) ? SEW_PULL_NAME : ((skW(me)==='tionis' && me.tioStage==='morph') ? '변신' : sd.name);
         document.getElementById('skillLabel').textContent = sRemain>0.05 ? ('스킬 '+sdName+' '+sRemain.toFixed(1)) : ('스킬 ('+codeToLabel(keyBindings.skill)+') '+sdName);
         sw.classList.toggle('ready', sRemain<=0.05);
       }
