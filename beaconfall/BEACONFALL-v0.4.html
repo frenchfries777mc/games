@@ -387,7 +387,7 @@ window.bfIntro=function(){if(run)return;run=1;t0=Date.now();el.classList.add('ru
     <button class="btn" data-act="skins"><span class="arrow">▶</span>스킨 상점<span class="en">SKIN SHOP</span></button>
     <button class="btn" data-act="stats"><span class="arrow">▶</span>통계<span class="en">STATS</span></button>
     <button class="btn" data-act="settings"><span class="arrow">▶</span>설정<span class="en">SETTINGS</span></button>
-    <p class="foot">v0.4<br>build 115</p>
+    <p class="foot">v0.4<br>build 116</p>
   </nav>
 </div>
 
@@ -3934,7 +3934,7 @@ function updateFurnaces(dt){   // 호스트(혼자 할 때 포함): 모든 용�
     const ore=b.fi,ing=ore&&SMELT_ORE[ore.id];
     if(ing&&(!b.fo||(b.fo.id===ing&&b.fo.n<maxStack(ing)))){
       b.fp=(b.fp||0)+dt;b.hot=time+0.3;
-      if(Math.random()<dt*10)parts.push({x:b.x-2+Math.random()*4,y:b.y-12,vx:(Math.random()-0.5)*14,vy:-14-Math.random()*16,life:0.5,c:Math.random()<0.5?'#ff9a2e':'#ffe27a'});
+      if(Math.random()<dt*10&&onScr(b.x,b.y))parts.push({x:b.x-2+Math.random()*4,y:b.y-12,vx:(Math.random()-0.5)*14,vy:-14-Math.random()*16,life:0.5,c:Math.random()<0.5?'#ff9a2e':'#ffe27a'});
       if(b.fp>=3){
         b.fp=0;ore.n--;if(ore.n<=0)b.fi=null;
         b.fo=b.fo?{id:ing,n:b.fo.n+1}:{id:ing,n:1};
@@ -5146,6 +5146,7 @@ function minerTarget(b){
   }
   return cand.length?cand[(Math.random()*cand.length)|0]:null;   // 주변 바위를 골고루 캐요
 }
+const onScr=(x,y)=>!document.hidden&&x>cam.x-24&&x<cam.x+VW+24&&y>cam.y-24&&y<cam.y+VH+24;   // 눈에 안 보이는 장치는 계산만 하고 효과는 그리지 않아요
 function updateMiners(dt){
   for(const b of world.structs){
     if(b.id!=='miner')continue;
@@ -5154,7 +5155,7 @@ function updateMiners(dt){
     if(b.tg==null){b.pf=-1;continue;}
     const B=world.boulders,need=ORE_NEED[B.t[b.tg]]*MAT_SPEED[b.mat||'log'];
     b.pg+=dt;b.pf=Math.min(1,b.pg/need);
-    if(Math.random()<dt*8)parts.push({x:B.x[b.tg],y:B.y[b.tg]-4,vx:(Math.random()-0.5)*30,vy:-12-Math.random()*14,life:0.3,c:'#b4b6c4'});
+    if(Math.random()<dt*8&&onScr(B.x[b.tg],B.y[b.tg]))parts.push({x:B.x[b.tg],y:B.y[b.tg]-4,vx:(Math.random()-0.5)*30,vy:-12-Math.random()*14,life:0.3,c:'#b4b6c4'});
     if(b.pg>=need){const k=b.tg;b.tg=null;b.pg=0;b.pf=-1;mineBoulderAuth(k,false,true,adjacentBelt(b));b.ru=(b.ru|0)+1;gaugeEvent(b);}   // 캐진 바위는 3초 뒤 다시 생겨요 (옆에 컨베이어가 있으면 벨트로)
   }
 }
@@ -5207,7 +5208,7 @@ function updateFellers(dt){
     if(!b.tg){b.pf=-1;continue;}
     const need=3*MAT_SPEED[b.mat||'log'];
     b.pg+=dt;b.pf=Math.min(1,b.pg/need);
-    if(Math.random()<dt*8)parts.push({x:b.x-6,y:b.y-9,vx:(Math.random()-0.5)*30,vy:-12-Math.random()*14,life:0.3,c:'#b57d3f'});
+    if(Math.random()<dt*8&&onScr(b.x,b.y))parts.push({x:b.x-6,y:b.y-9,vx:(Math.random()-0.5)*30,vy:-12-Math.random()*14,life:0.3,c:'#b57d3f'});
     if(b.pg>=need){
       const t=b.tg;b.tg=null;b.pg=0;b.pf=-1;
       const belt=adjacentBelt(b);
@@ -5256,7 +5257,7 @@ function applyMined(key,ds,already){
   if(!already){if(world.brem[k])return;world.brem[k]=1;}
   for(const o of (ds||[]))drops.push({id:o.id,item:o.item||'stone',sx:o.sx,sy:o.sy,tx:o.tx,ty:o.ty,age:0,v:o.v|0});
   const B=world.boulders;
-  for(let j=0;j<12;j++)parts.push({x:B.x[k],y:B.y[k]-3,vx:(Math.random()-0.5)*60,vy:-15-Math.random()*35,life:0.5+Math.random()*0.3,c:isVolcRock(k)?(j%2?'#3a2c30':'#6e5a5c'):(j%2?'#9a9cab':'#c3c5cf')});
+  if(onScr(B.x[k],B.y[k]))for(let j=0;j<12;j++)parts.push({x:B.x[k],y:B.y[k]-3,vx:(Math.random()-0.5)*60,vy:-15-Math.random()*35,life:0.5+Math.random()*0.3,c:isVolcRock(k)?(j%2?'#3a2c30':'#6e5a5c'):(j%2?'#9a9cab':'#c3c5cf')});
 }
 function mineBoulderAuth(k,noDrop,respawn,belt){
   const B=world.boulders,x=B.x[k],y=B.y[k],key=y*W+x,ds=[];
