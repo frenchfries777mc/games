@@ -31,7 +31,7 @@ async function paint(){
   var u=FFAuth.user&&FFAuth.user();
   if(u){ var f=await sb.rpc('ff_online_friends'), rows=((f&&!f.error&&f.data)||[]).filter(function(x){ return !(FFAuth.isBlocked&&FFAuth.isBlocked(x.user_id)); });
     if(rows.length){ await loadNames(rows.map(function(x){ return x.user_id; })); await loadAv(rows.slice(0,8).map(function(x){ return x.user_id; }));
-      html+='<span class="on-f"><span>'+esc(L()[1])+'</span> '+rows.slice(0,8).map(function(x){ return '<span class="on-p">'+'<img class="on-i" src="https://frenchfries777mc.github.io/games/avatars/'+encodeURIComponent(/^[a-z0-9_-]{2,30}$/.test(AV[x.user_id]||'')?AV[x.user_id]:'account')+(/^(stk|ce|bf)_/.test(AV[x.user_id]||'')?'.png':'.svg')+'" alt="" width="20" height="20" onerror="this.style.display=\'none\'">'+esc(names[x.user_id]||'???')+'<small>'+esc(gname(x.place))+'</small></span>'; }).join('')+(rows.length>8?'<span>+'+(rows.length-8)+'</span>':'')+'</span>'; } }
+      html+='<span class="on-f"><span>'+esc(L()[1])+'</span> '+rows.slice(0,8).map(function(x){ return '<span class="on-p">'+'<img class="on-i" src="https://frenchfries777mc.github.io/games/avatars/'+encodeURIComponent(/^[a-z0-9_-]{2,30}$/.test(AV[x.user_id]||'')?AV[x.user_id]:'account')+(/^(stk|ce|bf|ip|dp|vk)_/.test(AV[x.user_id]||'')?'.png':'.svg')+'" alt="" width="20" height="20" onerror="this.style.display=\'none\'">'+esc(names[x.user_id]||'???')+'<small>'+esc(gname(x.place))+'</small></span>'; }).join('')+(rows.length>8?'<span>+'+(rows.length-8)+'</span>':'')+'</span>'; } }
   bar.innerHTML=html;
 }
 function start(){ sb=FFAuth.client&&FFAuth.client(); if(!sb) return; paint(); setInterval(function(){ if(document.visibilityState==='visible') paint(); },20000);
