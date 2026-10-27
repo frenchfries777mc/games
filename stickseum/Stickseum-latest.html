@@ -4593,10 +4593,10 @@ MAP_TEMPLATES['lifttower'] = {
   spawns:[{x:100,y:1390},{x:350,y:1390},{x:650,y:1390},{x:950,y:1390},{x:1200,y:1390},{x:640,y:1260},{x:390,y:1130},{x:910,y:1130}]
 };
 
-/* ================= 새 맵 2종 (8인): 폭풍 해적선(배가 좌우로 흔들림 + 파도) · 파이프 공장(컨베이어 + 증기 분출구) ================= */
+/* ================= 새 맵 2종 (8인): 폭풍 해적선(파도) · 파이프 공장(컨베이어 + 증기 분출구) ================= */
 const STORM_WAVE_EVERY=16, STORM_WAVE_SEC=3.3, STORM_WAVE_SPEED=800, VENT_CYCLE=4.6, VENT_WARN=1.1, VENT_FIRE=1.2, VENT_W=46, VENT_H=330, CONVEYOR_SPEED=130;
 {
-  const sway=(list)=>list.map(p=>p.y>=900 ? p : Object.assign({}, p, {move:{axis:'x', base:p.x, amp:70, period:9, phase:0}}));      // every deck piece swings together: the ship rolls (the sea floor does not)
+  const sway=(list)=>list;      // the deck no longer rolls: every platform stays where it is (owner: moving platforms made it hard to drop between them)
   MAP_TEMPLATES['stormship'] = {
     id:'stormship', name:THEMES.stormship.name, maxPlayers:8, arenaW:2600, arenaH:1000, theme:THEMES.stormship, hazard:'stormship',
     platforms:sway([{x:0,y:900,w:2600,h:100},{x:1100,y:770,w:400,h:24},{x:1150,y:640,w:300,h:24},{x:1200,y:510,w:200,h:24},{x:1150,y:380,w:300,h:24}].concat(mirrorPl(2600,[
@@ -5345,7 +5345,7 @@ function shuffle(arr){ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.
 /* ===== the version of this file =====
    Players with different versions CAN meet and play together: the automatic matchmaking uses the same room names for every version (online-<mode>-<map>-<slot>), and nobody is refused because of a different build.
    The build is only sent along with the join message and the lobby (for information); the corner of the screen shows it. */
-const GAME_BUILD='build 2026-10-18-v451';
+const GAME_BUILD='build 2026-10-18-v452';
 const GAME_VERSION='0.8', GAME_VERSION_NAME='황금을 찾아서';   // 게임 버전 이름: versions.json의 title과 같게 (빌드마다 바꾸지 않음)
 const WEEKLY_EVENTS=[
   {id:'lowg',    name:'저중력 난투', desc:'몸이 둥실둥실, 중력이 약해진 난투', rules:{grav:0.6}},
@@ -9304,7 +9304,7 @@ function buildMapOrder(){
 }
 const shapeLabel={canyon:'4인 맵',grid:'8인 맵',steampunk:'6인 맵',skyport:'8인 맵',colosseum:'8인 맵',lifttower:'8인 맵',stormship:'8인 맵',pipefactory:'8인 맵',mine:'8인 맵',icelake:'8인 맵',dungeon:'8인 맵',swamp:'8인 맵',waterfall:'8인 맵',collapsebridge:'8인 맵',lavaland:'8인 맵',ruins:'8인 맵',parkour1:'파쿠르',parkour2:'파쿠르',parkour3:'파쿠르',parkour4:'파쿠르'};
 const mapSelectBtn=document.getElementById('mapSelectBtn');
-const MAP_GIMMICKS={collapsebridge:['🌉 무너지는 다리 판자','🌊 강물 (25 피해)'], lavaland:['🌋 용암 웅덩이 (30 피해)'], ruins:['🧱 기둥과 벽 엄폐물'], waterfall:['🌊 폭포 물살 (공중에서 위로 떠오름)','💧 얕은 물 (이동속도 20% 감소)'], swamp:['🟣 중앙 늪 (이동속도 33% 감소 · 시야 제한)'], stormship:['🌊 흔들리는 갑판','🌊 파도'], pipefactory:['➡️ 컨베이어','💨 증기 분출'], mine:['🛒 광차 (50 피해)','🔦 정전'], icelake:['🧊 미끄러운 얼음','💧 얼음 깨짐'], dungeon:['🚪 철창 문 개폐'], steampunk:['⚙️ 움직이는 발판'], skyport:['↔️ 움직이는 발판'], lifttower:['↔️ 움직이는 발판'], colosseum:['🏟️ 계단식 구조']};
+const MAP_GIMMICKS={collapsebridge:['🌉 무너지는 다리 판자','🌊 강물 (25 피해)'], lavaland:['🌋 용암 웅덩이 (30 피해)'], ruins:['🧱 기둥과 벽 엄폐물'], waterfall:['🌊 폭포 물살 (공중에서 위로 떠오름)','💧 얕은 물 (이동속도 20% 감소)'], swamp:['🟣 중앙 늪 (이동속도 33% 감소 · 시야 제한)'], stormship:['🌊 파도'], pipefactory:['➡️ 컨베이어','💨 증기 분출'], mine:['🛒 광차 (50 피해)','🔦 정전'], icelake:['🧊 미끄러운 얼음','💧 얼음 깨짐'], dungeon:['🚪 철창 문 개폐'], steampunk:['⚙️ 움직이는 발판'], skyport:['↔️ 움직이는 발판'], lifttower:['↔️ 움직이는 발판'], colosseum:['🏟️ 계단식 구조']};
 function mapGimmickTags(id){
   const t=MAP_TEMPLATES[id]; if(!t) return [];
   if(MAP_GIMMICKS[id]) return MAP_GIMMICKS[id];
