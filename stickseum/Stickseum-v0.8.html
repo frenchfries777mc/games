@@ -1469,7 +1469,7 @@ let matchAssists=0;                   // ... and counts for the weapon xp at the
 let gold=0;
 let lastKnownKills=0;
 let saveData={owned:{}, equipped:{name:null, skin:{}}, xp:0, totalKills:0, totalMatches:0,
-  totalWins:0, winStreak:0, totalDamage:0, totalAssists:0, modeMatches:{}, charKills:{}, charPts:{}, playerName:null,
+  totalWins:0, winStreak:0, maxStreak:0, totalDamage:0, totalAssists:0, modeMatches:{}, charKills:{}, charPts:{}, playerName:null,
   avatar:{bg:'#274d3a', color:'#3fe0c5', accessory:null}, achievements:{}, weaponXp:{},
   boxes:0, boxesOpened:0, dailyLast:'', dailyCount:0, souls:0, pxEarned:0, pxSpent:0, missions:null, season:null};       // random boxes in the bag, how many were opened, the date (YYYY-MM-DD) of the last daily reward and how many were taken
 /* ---- levels: no upper limit; from a "knee" on, EVERY level costs the same XP ----
@@ -1498,7 +1498,7 @@ function loadSave(){
       migrateXpCurve(s);
       gold=Math.max(0,+s.gold||0); saveData.owned=s.owned||{}; saveData.equipped=Object.assign({name:null, skin:{}}, s.equipped||{}); if(!saveData.equipped.skin||typeof saveData.equipped.skin!=='object') saveData.equipped.skin={};
       saveData.xp=Math.max(0,+s.xp||0); saveData.totalKills=Math.max(0,+s.totalKills||0); saveData.totalMatches=Math.max(0,+s.totalMatches||0);
-      saveData.totalWins=Math.max(0,+s.totalWins||0); saveData.winStreak=Math.max(0,+s.winStreak||0); saveData.totalDamage=Math.max(0,+s.totalDamage||0); saveData.totalAssists=Math.max(0,+s.totalAssists||0);
+      saveData.totalWins=Math.max(0,+s.totalWins||0); saveData.winStreak=Math.max(0,+s.winStreak||0); saveData.maxStreak=Math.max(saveData.winStreak,0,+s.maxStreak||0); saveData.totalDamage=Math.max(0,+s.totalDamage||0); saveData.totalAssists=Math.max(0,+s.totalAssists||0);
       saveData.modeMatches=(s.modeMatches&&typeof s.modeMatches==='object')?s.modeMatches:{};
       saveData.charKills=(s.charKills&&typeof s.charKills==='object')?s.charKills:{}; saveData.charPts=(s.charPts&&typeof s.charPts==='object')?s.charPts:{};
       saveData.avatar=Object.assign({bg:'#274d3a', color:'#3fe0c5', accessory:null}, s.avatar||{});
@@ -1518,7 +1518,7 @@ function persistSave(){
   try{
     localStorage.setItem(SAVE_KEY, JSON.stringify({
       gold, owned:saveData.owned, equipped:saveData.equipped, xp:saveData.xp, xc:PLAYER_FLAT, totalKills:saveData.totalKills, totalMatches:saveData.totalMatches,
-      totalWins:saveData.totalWins, winStreak:saveData.winStreak||0, totalDamage:saveData.totalDamage, totalAssists:saveData.totalAssists,
+      totalWins:saveData.totalWins, winStreak:saveData.winStreak||0, maxStreak:Math.max(saveData.maxStreak||0,saveData.winStreak||0), totalDamage:saveData.totalDamage, totalAssists:saveData.totalAssists,
       modeMatches:saveData.modeMatches, charKills:saveData.charKills, charPts:saveData.charPts, avatar:saveData.avatar, playerName:saveData.playerName, nameDirty:!!saveData.nameDirty,
       achievements:saveData.achievements, weaponXp:saveData.weaponXp,
       boxes:saveData.boxes, boxesOpened:saveData.boxesOpened, dailyLast:saveData.dailyLast, dailyCount:saveData.dailyCount, souls:saveData.souls, pxEarned:saveData.pxEarned, pxSpent:saveData.pxSpent, missions:saveData.missions, season:saveData.season
@@ -3283,7 +3283,7 @@ function drawAuroraShow(c, t, layer, q){
       for(let s2=14;s2>=0;s2--){ const y=4-s2*hgt/14, f=s2/14; c.lineTo(bx+wd+Math.sin(t*2.3+s2*0.55+k*1.7+0.9)*(4+f*15), y); }
       c.closePath(); c.fill();
     }
-    if(q>=1){ for(let i=0;i<26;i++){ const ph=fr(t*(0.18+0.22*fr(i*0.618))+i*0.37), x=Math.sin(i*12.9898)*95, y=-6-ph*190; c.fillStyle=A(i,(1-ph)*(0.5+0.5*Math.abs(Math.sin(t*5+i)))); cross(x,y,1.4+1.6*(1-ph)); } }       // star dust drifting up
+    if(q>=1){ for(let i=0;i<10;i++){ const ph=fr(t*(0.18+0.22*fr(i*0.618))+i*0.37), x=Math.sin(i*12.9898)*95, y=-6-ph*190; c.fillStyle=A(i,(1-ph)*(0.5+0.5*Math.abs(Math.sin(t*5+i)))); cross(x,y,1.4+1.6*(1-ph)); } }       // star dust drifting up
     for(let k=0;k<3;k++){ const ph=fr(t*0.5+k/3); c.strokeStyle=A(k*2,(1-ph)*0.8); c.lineWidth=4*(1-ph)+1; c.beginPath(); c.ellipse(0,1,18+110*ph,5+28*ph,0,0,7); c.stroke(); }          // ripples over the ground
     c.setLineDash([9,6]); c.lineDashOffset=-t*40; c.strokeStyle=A(1,0.95); c.lineWidth=2.4; c.beginPath(); c.ellipse(0,1,36,9,0,0,7); c.stroke(); c.setLineDash([]);
   } else {
@@ -3291,10 +3291,10 @@ function drawAuroraShow(c, t, layer, q){
       c.strokeStyle=A(k*2,0.6); c.lineWidth=2; c.beginPath();
       for(let s2=0;s2<=36;s2++){ const f=s2/36, a=t*2.6+k*2.094+f*9, y=-2-f*88, r=15+8*Math.sin(f*6+t*1.5); const x=Math.cos(a)*r; if(Math.sin(a)<-0.2){ continue; } if(s2===0||Math.sin(a-0.25)<-0.2) c.moveTo(x,y); else c.lineTo(x,y); }
       c.stroke(); } }
-    for(let k=0;k<6;k++){                                        // orbs with a long glowing tail
-      for(let j=0;j<12;j++){ const a=t*(2.1+0.25*k)+k*1.047-j*0.1, f=1-j/12, rx=44+8*Math.sin(t+k), ry=11+3*k;
+    for(let k=0;k<4;k++){                                        // orbs with a long glowing tail
+      for(let j=0;j<8;j++){ const a=t*(2.1+0.25*k)+k*1.047-j*0.15, f=1-j/8, rx=44+8*Math.sin(t+k), ry=11+3*k;
         if(Math.sin(a)<=0) continue; c.fillStyle=(j===0)?hexA('#ffffff',0.95):A(k+j*0.3,f*0.85); const rr=(j===0?4:3.4*f+0.6); c.beginPath(); c.arc(Math.cos(a)*rx, -14-k*11+Math.sin(a)*ry, rr, 0, 7); c.fill(); } }
-    for(let i=0;i<(q>=1?18:8);i++){ const ph=fr(t*0.9+i*0.173), a=i*2.399+t*0.4, d=8+60*ph; c.fillStyle=A(i,(1-ph)*0.9); cross(Math.cos(a)*d, -30+Math.sin(a)*d*0.9-ph*30, 2.4*(1-ph)+0.8); }
+    for(let i=0;i<(q>=1?6:3);i++){ const ph=fr(t*0.9+i*0.173), a=i*2.399+t*0.4, d=8+60*ph; c.fillStyle=A(i,(1-ph)*0.9); cross(Math.cos(a)*d, -30+Math.sin(a)*d*0.9-ph*30, 2.4*(1-ph)+0.8); }
     for(let k=0;k<3;k++){ c.strokeStyle=A(k*2+1,0.85-k*0.2); c.lineWidth=2.4-k*0.6; c.beginPath(); c.ellipse(0,-72-k*5,16+k*6,4.6+k*1.5,0,0,7); c.stroke(); }
     const fp=fr(t*0.55+0.2); c.strokeStyle=hexA('#ffffff',(1-fp)*0.5); c.lineWidth=3.5*(1-fp)+0.6; c.beginPath(); c.ellipse(0,-34,14+80*fp,20+105*fp,0,0,7); c.stroke();
   }
@@ -5313,7 +5313,7 @@ function shuffle(arr){ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.
 /* ===== the version of this file =====
    Players with different versions CAN meet and play together: the automatic matchmaking uses the same room names for every version (online-<mode>-<map>-<slot>), and nobody is refused because of a different build.
    The build is only sent along with the join message and the lobby (for information); the corner of the screen shows it. */
-const GAME_BUILD='build 2026-10-18-v437';
+const GAME_BUILD='build 2026-10-18-v438';
 const GAME_VERSION='0.8', GAME_VERSION_NAME='황금을 찾아서';   // 게임 버전 이름: versions.json의 title과 같게 (빌드마다 바꾸지 않음)
 const WEEKLY_EVENTS=[
   {id:'lowg',    name:'저중력 난투', desc:'몸이 둥실둥실, 중력이 약해진 난투', rules:{grav:0.6}},
@@ -7560,7 +7560,7 @@ function switchLocalAccount(to){
     localStorage.setItem(ACCT_STASH+last, JSON.stringify(out));
     for(const k of acctLsKeys()){ localStorage.removeItem(k); if(incoming && typeof incoming[k]==='string') localStorage.setItem(k, incoming[k]); }
     localStorage.setItem(LAST_USER_KEY, to);
-    gold=0; Object.assign(saveData, {owned:{}, equipped:{name:null, skin:{}}, xp:0, totalKills:0, totalMatches:0, totalWins:0, winStreak:0, totalDamage:0, totalAssists:0, modeMatches:{}, charKills:{}, charPts:{}, playerName:null, nameDirty:false,
+    gold=0; Object.assign(saveData, {owned:{}, equipped:{name:null, skin:{}}, xp:0, totalKills:0, totalMatches:0, totalWins:0, winStreak:0, maxStreak:0, totalDamage:0, totalAssists:0, modeMatches:{}, charKills:{}, charPts:{}, playerName:null, nameDirty:false,
       avatar:{bg:'#274d3a', color:'#3fe0c5', accessory:null}, achievements:{}, weaponXp:{}, boxes:0, boxesOpened:0, dailyLast:'', dailyCount:0, souls:0, pxEarned:0, pxSpent:0, missions:null, season:null});
     loadSave(); if(saveData.playerName){ myName=saveData.playerName; myNameSet=true; }
     try{ updateGoldUI(); }catch(e){}
@@ -7620,7 +7620,7 @@ function clanSyncMyName(id){            // my row in the clan list keeps the nic
    - the NICKNAME of the account is the one in the save (the account wins over what this browser had); the public profile is made to say the same (so an old copy that overwrote it is repaired);
    - while playing: the save goes up a little after changes (at most once in 30 s) and when the tab is left, but never before the first sync has finished (an empty browser cannot overwrite the account);
    - no connection / too big / refused: the game goes on as before (progress only in this browser) and the account window says so. */
-const SAVE_FIELDS=['gold','xp','owned','equipped','totalKills','totalMatches','totalWins','winStreak','totalDamage','totalAssists','modeMatches','charKills','charPts','avatar','playerName','achievements','weaponXp','boxes','boxesOpened','dailyLast','dailyCount','souls','pxEarned','pxSpent','missions','season'];
+const SAVE_FIELDS=['gold','xp','owned','equipped','totalKills','totalMatches','totalWins','winStreak','maxStreak','totalDamage','totalAssists','modeMatches','charKills','charPts','avatar','playerName','achievements','weaponXp','boxes','boxesOpened','dailyLast','dailyCount','souls','pxEarned','pxSpent','missions','season'];
 const CLOUD_META_KEY='stickseumSave', CLOUD_MAX_CHARS=3600, CLOUD_MIN_GAP_MS=30000, CLOUD_DEBOUNCE_MS=20000;
 let cloudSaveState='off', cloudSaveReady=false, cloudSaveTimer=null, cloudSaveLastJson='', cloudSaveLastAt=0, cloudSaveNote='', cloudSaveBackoffUntil=0, sbUserMeta={};
 function cloudSavePayload(){ const o={v:1}; for(const k of SAVE_FIELDS) o[k]=(k==='gold') ? gold : saveData[k]; o.xc=PLAYER_FLAT; o.at=Date.now(); return JSON.parse(JSON.stringify(o)); }
@@ -7631,7 +7631,7 @@ function mergeSaves(local, cloud){
   const m=JSON.parse(JSON.stringify(base));
   m.owned=Object.assign({}, other.owned||{}, base.owned||{});
   m.achievements=Object.assign({}, other.achievements||{}, base.achievements||{});
-  for(const k of ['xp','totalKills','totalMatches','totalWins','winStreak','totalDamage','totalAssists','boxesOpened','dailyCount','pxEarned','pxSpent']) m[k]=Math.max(+base[k]||0, +other[k]||0);
+  for(const k of ['xp','totalKills','totalMatches','totalWins','winStreak','maxStreak','totalDamage','totalAssists','boxesOpened','dailyCount','pxEarned','pxSpent']) m[k]=Math.max(+base[k]||0, +other[k]||0);
   for(const k of ['weaponXp','charKills','charPts','modeMatches']){ m[k]=Object.assign({}, base[k]||{}); for(const w in (other[k]||{})) m[k][w]=Math.max(+m[k][w]||0, +other[k][w]||0); }
   m.dailyLast=((base.dailyLast||'')>(other.dailyLast||'')) ? (base.dailyLast||'') : (other.dailyLast||'');
   if(!(m.playerName && String(m.playerName).trim())) m.playerName=other.playerName||null;
@@ -7655,7 +7655,7 @@ function mergeSeasonState(a, b){
 function applyCloudSave(s){
   gold=Math.max(0,+s.gold||0);
   saveData.owned=s.owned||{}; saveData.equipped=Object.assign({name:null, skin:{}}, s.equipped||{}); if(!saveData.equipped.skin||typeof saveData.equipped.skin!=='object') saveData.equipped.skin={};
-  for(const k of ['xp','totalKills','totalMatches','totalWins','winStreak','totalDamage','totalAssists','boxes','boxesOpened','dailyCount','souls','pxEarned','pxSpent']) saveData[k]=Math.max(0,+s[k]||0);
+  for(const k of ['xp','totalKills','totalMatches','totalWins','winStreak','maxStreak','totalDamage','totalAssists','boxes','boxesOpened','dailyCount','souls','pxEarned','pxSpent']) saveData[k]=Math.max(0,+s[k]||0);
   saveData.modeMatches=(s.modeMatches&&typeof s.modeMatches==='object')?s.modeMatches:{}; saveData.charKills=(s.charKills&&typeof s.charKills==='object')?s.charKills:{}; saveData.charPts=(s.charPts&&typeof s.charPts==='object')?s.charPts:{};
   saveData.avatar=Object.assign({bg:'#274d3a', color:'#3fe0c5', accessory:null}, s.avatar||{});
   if(!saveData.nameDirty && typeof s.playerName==='string' && s.playerName.trim()){ saveData.playerName=s.playerName.trim().slice(0,15); myName=saveData.playerName; myNameSet=true; }     // the account's nickname wins
@@ -9152,6 +9152,7 @@ function renderProfile(){
     '<div id="profXpBarOuter"><div id="profXpBarInner" style="width:'+(frac*100)+'%;"></div></div>'+
     '<div style="text-align:center; color:var(--text-dim); font-size:12px; margin-top:-10px; margin-bottom:14px;">'+(xp-curFloor)+' / '+span+' XP · 다음 레벨까지</div>'+
     '<div class="profRow"><span class="k">누적 승리</span><span class="v">'+(saveData.totalWins||0)+'</span></div>'+
+    '<div class="profRow"><span class="k">최대 연승</span><span class="v">'+Math.max(saveData.maxStreak||0, saveData.winStreak||0)+'연승</span></div>'+
     '<div class="profRow"><span class="k">누적 피해량</span><span class="v">'+(saveData.totalDamage||0)+'</span></div>'+
     '<div class="profRow"><span class="k">누적 처치</span><span class="v">'+(saveData.totalKills||0)+'</span></div>'+
     '<div class="profRow"><span class="k">누적 어시스트</span><span class="v">'+(saveData.totalAssists||0)+'</span></div>'+
@@ -10419,7 +10420,7 @@ function showMatchEndOverlay(resultText, winnerIds, forcedPick){
   saveData.modeMatches=saveData.modeMatches||{};
   saveData.modeMatches[gameMode]=(saveData.modeMatches[gameMode]||0)+1;
   const wonNow=!!(winnerIds && winnerIds.indexOf(myId)!==-1);
-  if(wonNow) saveData.winStreak=(saveData.winStreak||0)+1; else if(winnerIds && winnerIds.length) saveData.winStreak=0;          // (a draw keeps the streak)
+  if(wonNow) saveData.winStreak=(saveData.winStreak||0)+1; else if(winnerIds && winnerIds.length) saveData.winStreak=0; saveData.maxStreak=Math.max(saveData.maxStreak||0, saveData.winStreak||0);          // (a draw keeps the streak)
   const streakPts=wonNow ? streakBonusFor(saveData.winStreak) : 0;
   if(winnerIds && winnerIds.indexOf(myId)!==-1){ saveData.totalWins=(saveData.totalWins||0)+1; if(gameMode==='tournament' && !practiceMode){ saveData.tnWins=(saveData.tnWins||0)+1; tnTitleCheck(); } }
   const me=players[myId];
@@ -16407,7 +16408,7 @@ function spawnFx0(e){
     case 'sfx': playSfx(e.name, x, y); break;
     case 'aurora': {                                                   // 그랜드 마스터 skin: every skill / ultimate leaves a burst of aurora colours
       const nowS=performance.now()/1000, A=[0,1,2,3,4].map(i=>auroraHex(nowS*0.9,i)), big=!!e.big;
-      bu(x,y,big?46:22,{a0:0,a1:6.28,s0:120,s1:big?720:460,l0:.5,l1:1.1,z0:2,z1:4.4,colors:A.concat(['#ffffff']),grav:-60,drag:1.5,shape:'streak'});
+      bu(x,y,big?80:44,{a0:0,a1:6.28,s0:120,s1:big?760:520,l0:.5,l1:1.1,z0:2,z1:4.4,colors:A.concat(['#ffffff']),grav:-60,drag:1.5,shape:'streak'});
       for(let r=0;r<(big?3:2);r++) addP({x:x,y:y,life:.55+r*.15,color:A[r*2%5],shape:'ring',r0:8,r1:(big?150:90)+r*30,lw:6-r});
       break; }
     case 'spark': {
@@ -17355,6 +17356,7 @@ function luxFx(b, fx, swing, now, sp){
 function drawProjectile(b){
   AURA=gmOwner(b.owner) || !!(b.sk && COSMETICS[b.sk] && COSMETICS[b.sk].lux>=4);
   const cp=b.sk?conceptOfSkin(b.sk):'';
+  if(AURA && Math.random()<0.6){ const nS=performance.now()/1000, ua=Math.atan2(b.vy||0,b.vx||0)+Math.PI+RND(-0.6,0.6), us=RND(30,160); AURA_SPAWN=true; addP({x:b.x+RND(-4,4),y:b.y+RND(-4,4),vx:Math.cos(ua)*us,vy:Math.sin(ua)*us,life:RND(.3,.6),size:RND(1.6,3.4),color:auroraHex(nS*0.9,Math.floor(RND(0,5))),shape:Math.random()<0.5?'streak':'dot',drag:2}); AURA_SPAWN=false; }
   if(cp && drawConceptProjectile(b,cp)) return;
   drawProjectileBase(b); drawBulletSkinFx(b);
 }
