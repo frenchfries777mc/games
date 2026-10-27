@@ -2737,6 +2737,7 @@ Object.assign(COSMETICS.skin_kurus_p, {name:'꿈의 쿠루스', tint:'#9fe8ff', 
 Object.assign(COSMETICS.skin_magiccard_p, {name:'우노 마술사', tint:'#e8252b', fx:'sparkle', concept:'uno'});
 Object.assign(COSMETICS.skin_bat_new, {name:'감자튀김 선수', tint:'#ffd34d', fx:'sparkle', concept:'fry'});
 Object.assign(COSMETICS.skin_bow_new, {name:'큐피트', tint:'#ff6fae', fx:'sparkle', concept:'cupid'});
+COSMETICS.skin_flamethrower_br={cat:'skin', char:'flamethrower', name:'입냄새 학살자', price:4000, tint:'#9fb52a', fx:'sparkle', concept:'breath', premium:true};      // 4000 sC: no weapon, a stink cloud round the body, the attack is breath from the mouth, shield / skills in the same sickly green
 Object.assign(COSMETICS.skin_pistol_new, {name:'바나나 제임스', price:1500, tint:'#ffe14d', fx:'sparkle', concept:'banana'});
 /* ===== the character's own color in a match: plain colors are free, the shiny ones are bought (cat 'bcol', equipped as saveData.equipped.bcol, sent as cos.col) ===== */
 [['red','빨강','#ff4d4d'],['mint','민트','#3fe0c5'],['yellow','노랑','#f5c94c'],['blue','파랑','#7c9eff'],['pink','분홍','#ff8fd9'],['lime','연두','#8dff7c'],
@@ -5231,7 +5232,7 @@ function ensurePlayerDefaults(p){
 let volleys={}, volleySeq=0;
 let walls=[], hostTimers=[], wallSeq=0, lastMouseX=0, lastMouseY=0;
 let particles=[], fxSeen={}, screenShake=0, lastFxMs=0, prevGround={}, prevHp={}, hitFlashUntil={};
-function pushFx(type,x,y,tMs,extra){ const e=Object.assign({x:x,y:y,type:type,born:tMs/1000,id:++effectIdSeq},extra||{}); if(curAur && e.au===undefined) e.au=1; if(fxActor && e.ta===undefined && gameMode==='tournament') e.ta=fxActor; effects.push(e); if(isHost && type!=='sfx') replayFxLog.push({t:tMs, e}); }   // (the host also keeps every visual effect for the killcam)
+function pushFx(type,x,y,tMs,extra){ const e=Object.assign({x:x,y:y,type:type,born:tMs/1000,id:++effectIdSeq},extra||{}); if(curAur && e.au===undefined) e.au=curAur; if(fxActor && e.ta===undefined && gameMode==='tournament') e.ta=fxActor; effects.push(e); if(isHost && type!=='sfx') replayFxLog.push({t:tMs, e}); }   // (the host also keeps every visual effect for the killcam)
 let safeSendFailCount={}; // per-connection count of failed sends, shown on the host's own diagnostic line - a send that silently fails forever for one connection would otherwise be completely invisible on both ends
 function safeSend(conn, data){
   try{ if(conn) conn.send(data); }
@@ -5280,18 +5281,22 @@ const canvas=document.getElementById('game');
 let ctx=canvas.getContext('2d');       // (a `let` only so that drawFigureOn can draw a figure onto a small card canvas for a moment)
 /* 오로라 색 변환 (그랜드 마스터 스킨): AURA 가 켜진 동안 그리는 색은 모두 오로라 색으로 바뀌어요 (흰색과 회색은 그대로).
    스킬과 궁극기의 효과(입자, 벽, 어둠, 포탑, 마법진, 탄환...)를 하나하나 고치지 않고, 그 효과를 쓴 사람이 그랜드 마스터 스킨이면 그리는 동안만 켜요. */
-let AURA=false, AURA_SPAWN=false, curAur=false;
+let AURA=false, AURA_SPAWN=false, curAur=false;      // AURA / AURA_SPAWN / curAur: 0 = off, 1 = aurora (그랜드 마스터), 2 = 입냄새 (the breath skin)
 const _auraCache=new Map();
 function auraMapColor(v){
   if(typeof v!=='string') return v;
-  const tb=Math.floor(performance.now()/260), key=v+'|'+tb; let r=_auraCache.get(key); if(r!==undefined) return r;
-  let R,G,B,A=1, m;
+  const tb=Math.floor(performance.now()/260), key=v+'|'+tb+'|'+AURA; let r=_auraCache.get(key); if(r!==undefined) return r;
+  let R,G,B,A=1, m; const kind=AURA;
   if((m=/^#([0-9a-f]{3,8})$/i.exec(v))){ let h=m[1]; if(h.length===3||h.length===4) h=h.split('').map(c=>c+c).join(''); R=parseInt(h.slice(0,2),16); G=parseInt(h.slice(2,4),16); B=parseInt(h.slice(4,6),16); if(h.length===8) A=parseInt(h.slice(6,8),16)/255; }
   else if((m=/^rgba?\(\s*([\d.]+)[,\s]+([\d.]+)[,\s]+([\d.]+)(?:[,\s/]+([\d.]+%?))?\s*\)$/i.exec(v))){ R=+m[1]; G=+m[2]; B=+m[3]; if(m[4]!==undefined) A=m[4].endsWith('%')?parseFloat(m[4])/100:+m[4]; }
   else r=v;
   if(r===undefined){
     const mx=Math.max(R,G,B)/255, mn=Math.min(R,G,B)/255, l=(mx+mn)/2, d=mx-mn;
-    if(l<0.05) r=v;
+    if(kind===2){       // 입냄새: every colour becomes a sickly yellow-green (dark stays dark, light stays light)
+      const sat=d<0.12?0.5:0.62, ah=62+(((R*3+G*5+B)%97)/97)*46;
+      r='hsla('+ah.toFixed(0)+','+Math.round(sat*100)+'%,'+Math.round(Math.max(0.2,Math.min(0.72,l*0.85+0.08))*100)+'%,'+A.toFixed(3)+')';
+    }
+    else if(l<0.05) r=v;
     else if(d<0.12 || l>0.94){       // white / light grey: a pale aurora tint (so blades, streaks and flashes read as aurora as well)
       const ah=140+(((R+G+B)/765*0.6+performance.now()/2600)%1)*185;
       r='hsla('+ah.toFixed(0)+','+(l>0.6?'90%':'55%')+','+Math.round(Math.max(0.42,Math.min(0.86,l))*100)+'%,'+A.toFixed(3)+')';
@@ -5313,7 +5318,7 @@ function auraMapColor(v){
   for(const k of ['createLinearGradient','createRadialGradient']){ const f=proto[k]; if(!f) continue;
     ctx[k]=function(){ const g=f.apply(this, arguments); if(AURA){ const ac=g.addColorStop.bind(g); g.addColorStop=(o,c)=>ac(o,auraMapColor(c)); } return g; }; }
 }catch(e){} })();
-function gmOwner(id){ const o=id!==undefined && players[id]; return !!(o && typeof isGmSkin==='function' && isGmSkin(o)); }
+function gmOwner(id){ const o=id!==undefined && players[id]; return (o && typeof auraKind==='function') ? auraKind(o) : 0; }
 
 const HUD_BAR_H=68;
 function resize(){ canvas.width=innerWidth; canvas.height=Math.max(200, innerHeight-HUD_BAR_H); }
@@ -5329,7 +5334,7 @@ function shuffle(arr){ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.
 /* ===== the version of this file =====
    Players with different versions CAN meet and play together: the automatic matchmaking uses the same room names for every version (online-<mode>-<map>-<slot>), and nobody is refused because of a different build.
    The build is only sent along with the join message and the lobby (for information); the corner of the screen shows it. */
-const GAME_BUILD='build 2026-10-18-v444';
+const GAME_BUILD='build 2026-10-18-v445';
 const GAME_VERSION='0.8', GAME_VERSION_NAME='황금을 찾아서';   // 게임 버전 이름: versions.json의 title과 같게 (빌드마다 바꾸지 않음)
 const WEEKLY_EVENTS=[
   {id:'lowg',    name:'저중력 난투', desc:'몸이 둥실둥실, 중력이 약해진 난투', rules:{grav:0.6}},
@@ -9912,6 +9917,7 @@ function onHostData(conn, data){
     let tookBotSeat=false;
     if(Object.keys(players).length >= capacity){ if(players[peerId] || !removeOneBot()){ safeSend(conn, {t:'full'}); return; } tookBotSeat=true; } // a room full of bots still has room for a person
     if(players[peerId]) return;
+    if(onlineRanked && currentMode==='online' && typeof data.sbId==='string' && data.sbId && Object.values(players).some(o=>!o.isBot && o.sbId===data.sbId)){ safeSend(conn, {t:'sameAcc'}); return; }      // ranked: the same account cannot play against itself (two tabs / two devices)
     if(onlineClan && currentMode==='online'){       // a clan duel room: only members of that clan come in
       const cid=(typeof data.clanId==='string')?data.clanId.slice(0,40):'';
       if(cid!==String(onlineClan)){ safeSend(conn, {t:'clanNo', msg:'이 방은 같은 클랜원만 들어올 수 있어요'}); return; }
@@ -10304,6 +10310,7 @@ function onClientData(data, mode, code){
     return;
   }
   if(data.t==='full'){ showErrorAndReturnToMenu('방이 가득 찼습니다.'); }
+  if(data.t==='sameAcc'){ showErrorAndReturnToMenu('같은 계정끼리는 랭크전을 할 수 없어요.'); }
   else if(data.t==='started'){ showErrorAndReturnToMenu('이미 시작된 방입니다.'); }
   else if(data.t==='closed'){ if(!(data.mig && migLost())) showErrorAndReturnToMenu(hostClosedMsg()); }
   else if(data.t==='migOrder'){ if(Array.isArray(data.ids)) migOrderIds=data.ids.filter(x=>typeof x==='string'); }
@@ -10742,7 +10749,7 @@ function attemptJoinCandidate(p, roomId, timeoutMs, cb, seats){
   conn.on('open', ()=>{ conn.send((seats||1)>1 ? {t:'probe'} : joinMsg()); });          // a party leader first asks whether the whole party fits
   conn.on('data', data=>{
     if(data.t==='probeReply'){ if(!data.started && (+data.max||0)-(+data.count||0)>=seats) conn.send(joinMsg()); else { try{conn.close();}catch(e){} finish({status:'full'}); } return; }
-    if(data.t==='full'){ try{conn.close();}catch(e){} finish({status:'full'}); }
+    if(data.t==='full' || data.t==='sameAcc'){ try{conn.close();}catch(e){} finish({status:'full'}); }
     else if(data.t==='started'){ try{conn.close();}catch(e){} finish({status:'started'}); }
     else if(data.t==='lobby'){ finish({status:'joined', conn, initialLobby:data}); }
   });
@@ -11805,7 +11812,7 @@ const ULT_IMPL = {
     pushFx('portalopen', bx, by-30, tMs, {});
   }
 };
-function tryUltimate(p, tMs, aimX, aimY, viaClick){ const o=curAur; curAur=isGmSkin(p); try{ return tryUltimate0(p, tMs, aimX, aimY, viaClick); } finally{ curAur=o; } }
+function tryUltimate(p, tMs, aimX, aimY, viaClick){ const o=curAur; curAur=auraKind(p); try{ return tryUltimate0(p, tMs, aimX, aimY, viaClick); } finally{ curAur=o; } }
 function tryUltimate0(p, tMs, aimX, aimY, viaClick){
   if(duelPick) return;                       // (between duel rounds, while the weapons are being picked again, nobody can act)
   if(!p || !p.alive || !MAP || matchEnded) return;
@@ -11818,7 +11825,7 @@ function tryUltimate0(p, tMs, aimX, aimY, viaClick){
   if(impl(p,tSec,tMs,aimX,aimY)===false) return; // e.g. sword with no target: cooldown is not spent
   p.lastUlt=tSec;
   p.ultUses=(p.ultUses||0)+1;                    // (counted per match: the "character" achievements)
-  if(isGmSkin(p)) pushFx('aurora', p.x, p.y-34, tMs, {big:1});
+  if(isGmSkin(p)) pushFx('aurora', p.x, p.y-34, tMs, {big:1}); else if(auraKind(p)===2) pushFx('smellburst', p.x, p.y-34, tMs, {big:1});
   if(viaClick && ARM_FIRE_ULTS[ulW(p)] && hasAim(aimX,aimY)) hostTimers.push({au:curAur, ta:fxActor, at:tSec+0.05, fn:(tt)=>{ if(p.alive && p.ultPending) tryFire(p, aimAngleOf(p,aimX,aimY), tt); }});   // (one tick later, so the armed shot is the one that flies)
   recordReplayEvent(p.id, 'ult', {weapon:ulW(p)});
   pushFx('ult', p.x, p.y-40, tMs, {color:p.color, name:(ULTS[ulW(p)]||{}).name||''});
@@ -12211,7 +12218,7 @@ const SKILL_IMPL={
     for(const id in players){ const t=players[id]; if(!t.alive || id===p.id || t.x===undefined || isAlly(p,t) || t.swordCharge || t.darkSub) continue; if(Math.hypot(t.x-p.x,(t.y-PLAYER_H/2)-(p.y-PLAYER_H/2))<=VAC_SKILL_R) stunPlayer(t, VAC_SKILL_STUN, tMs); }
     pushFx('vacvortex', p.x, p.y-30, tMs, {r:VAC_SKILL_R}); return true; }
 };
-function trySkill(p, tMs, aimX, aimY){ const o=curAur; curAur=isGmSkin(p); try{ return trySkill0(p, tMs, aimX, aimY); } finally{ curAur=o; } }
+function trySkill(p, tMs, aimX, aimY){ const o=curAur; curAur=auraKind(p); try{ return trySkill0(p, tMs, aimX, aimY); } finally{ curAur=o; } }
 function trySkill0(p, tMs, aimX, aimY){
   if(duelPick) return;                       // (between duel rounds, while the weapons are being picked again, nobody can act)
   if(!p || !p.alive || !MAP || matchEnded) return;
@@ -12228,7 +12235,7 @@ function trySkill0(p, tMs, aimX, aimY){
   if(impl(p,tSec,tMs,aimX,aimY)===false) return;                                   // nothing to use it on: the cooldown is not spent
   p.lastSkill=tSec;
   p.skillUses=(p.skillUses||0)+1;
-  if(isGmSkin(p)) pushFx('aurora', p.x, p.y-34, tMs, {big:0});
+  if(isGmSkin(p)) pushFx('aurora', p.x, p.y-34, tMs, {big:0}); else if(auraKind(p)===2) pushFx('smellburst', p.x, p.y-34, tMs, {big:0});
   const sd=SKILLS[skW(p)];
   pushFx('skill', p.x, p.y-40, tMs, {color:p.color, name:pullNeedle?SEW_PULL_NAME:sd.name});
   pushFx('sfx', p.x, p.y-40, tMs, {name:SKILL_SFX[sd.kind]});
@@ -12283,6 +12290,7 @@ function drawFieldZones(){
   const now=performance.now();
   for(const z of fieldZones){
     const rem=fzRem(z); if(rem<=0 || !inView(z.x,z.y,z.r+80)) continue;
+    AURA=gmOwner(z.owner);
     const total=z.dur||((z.kind==='smoke')?SMOKE_SEC:FIRE_SEC), age=Math.max(0,total-rem), grow=Math.min(1,age/0.3), fade=Math.min(1,rem/0.5);
     ctx.save();
     if(z.kind==='smoke'){
@@ -12305,6 +12313,7 @@ function drawFieldZones(){
     }
     ctx.restore();
   }
+  AURA=false;
 }
 let smokeA=0, smokeCv=null;
 function drawSmokeVeil(cam, dt){      // standing inside a smoke cloud: everything is grey except a small circle around me
@@ -12572,7 +12581,7 @@ function processFlamethrower(p, tMs, dt){
     if(target.hp<=0) handleDeath(target, p, tMs, p.name);
   }
   p.flameFxTimer=(p.flameFxTimer||0)+dt;
-  if(p.flameFxTimer>=0.025){ p.flameFxTimer=0; pushFx('flamepuff', p.x+ax*20, (p.y-40)+ay*20, tMs, {ang:angle, len:Math.max(0,Math.round(reach-20))}); }
+  if(p.flameFxTimer>=0.025){ p.flameFxTimer=0; if(conceptOfP(p)==='breath') pushFx('flamepuff', p.x+ax*10, (p.y-52)+ay*10, tMs, {ang:angle, len:Math.max(0,Math.round(reach-10)), br:1}); else pushFx('flamepuff', p.x+ax*20, (p.y-40)+ay*20, tMs, {ang:angle, len:Math.max(0,Math.round(reach-20))}); }
 }
 function meleeAttack(p, angle, w, tMs){
   const homerun = (w.id==='bat' && p.ultPending==='bat');
@@ -12672,7 +12681,7 @@ function fireVacuum(p, angle, w, tMs){
     if(target.hp<=0){ handleDeath(target, p, tMs, p.name); continue; }
   }
 }
-function tryFire(p, angle, tMs){ const o=curAur; curAur=isGmSkin(p); try{ return tryFire0(p, angle, tMs); } finally{ curAur=o; } }
+function tryFire(p, angle, tMs){ const o=curAur; curAur=auraKind(p); try{ return tryFire0(p, angle, tMs); } finally{ curAur=o; } }
 function tryFire0(p, angle, tMs){
   if(puppetMaster(p, tMs/1000) || (puppetVictim(p, tMs/1000) && !puppetOK)) return;   // same for shots
   if(duelPick) return;                       // (between duel rounds, while the weapons are being picked again, nobody can act)
@@ -14198,7 +14207,7 @@ function hostTickCore(dt,t){
   if(turrets.length) turretTick(dt,t);
   fxActor=null; mapHazardTick(dt,t);
   { const ts=t/1000;
-    for(let i=hostTimers.length-1;i>=0;i--){ if(ts>=hostTimers[i].at){ const tm=hostTimers.splice(i,1)[0]; if(!matchEnded) tnRun(tm.ta, ()=>{ const o=curAur; curAur=!!tm.au; try{ tm.fn(t); } finally{ curAur=o; } }); } }
+    for(let i=hostTimers.length-1;i>=0;i--){ if(ts>=hostTimers[i].at){ const tm=hostTimers.splice(i,1)[0]; if(!matchEnded) tnRun(tm.ta, ()=>{ const o=curAur; curAur=tm.au||0; try{ tm.fn(t); } finally{ curAur=o; } }); } }
     if(walls.length){
       walls = walls.filter(w=>{
         if(w.until>ts) return true;
@@ -14312,7 +14321,7 @@ function hostTickCore(dt,t){
     if(p.input && p.input.dash && !p.teleportChannel) tryDash(p, p.input, t);
     if(p.input && p.input.shoot && p.weapon!=='bat' && p.weapon!=='flamethrower') tryFire(p, p.angle, t);
     puppetOK=false;
-    if(p.weapon==='flamethrower') processFlamethrower(p, t, dt);
+    if(p.weapon==='flamethrower'){ const o=curAur; curAur=auraKind(p); try{ processFlamethrower(p, t, dt); } finally{ curAur=o; } }
     else { p.flameHeldSince=null; p.flaming=false; p.flameFxTimer=0; }
     if(p.input){ if(p.input.left) p.lastMoveDir=-1; else if(p.input.right) p.lastMoveDir=1; }
     if(p.flameShield){
@@ -16154,6 +16163,7 @@ function drawCardHeart(c, cx, cy, s){
   c.fill();
 }
 function drawHeldWeapon(c, weaponId, ax, ay, hx, hy, swingProg, concept){
+  if(concept==='breath' && weaponId==='flamethrower') return;      // 입냄새 학살자: nothing in the hands
   const w = WEAPONS[weaponId] || WEAPONS.pistol;
   if(w.shape==='arrow'){
     // bow: always held upright (not rotated to follow aim), but mirrors left/right so it doesn't look backwards
@@ -16421,8 +16431,9 @@ function drawSamScreen(){          // screen-space: the dim of the ultimate (wit
   const fa=samScreen.flashA*Math.max(0,1-(now-samScreen.flashAt)/260);
   if(fa>0.01){ ctx.save(); ctx.setTransform(1,0,0,1,0,0); ctx.fillStyle='rgba('+samScreen.flashCol+','+fa+')'; ctx.fillRect(0,0,W,H); ctx.restore(); }
 }
+function auraKind(p){ const sk=p && p.cos && p.cos.skin && p.cos.skin[p.weapon], it=sk && COSMETICS[sk]; if(!it) return 0; if(it.lux>=4) return 1; return it.concept==='breath' ? 2 : 0; }
 function isGmSkin(p){ const sk=p && p.cos && p.cos.skin && p.cos.skin[p.weapon]; return !!(sk && COSMETICS[sk] && COSMETICS[sk].lux>=4); }       // 그랜드 마스터 skin on the character in use
-function spawnFx(e){ AURA_SPAWN=!!e.au; try{ return spawnFx0(e); }finally{ AURA_SPAWN=false; } }
+function spawnFx(e){ AURA_SPAWN=e.au||0; try{ return spawnFx0(e); }finally{ AURA_SPAWN=false; } }
 function spawnFx0(e){
   const x=e.x, y=e.y, col=e.color||'#ffd34d';
   const FQ=fxQuality>=2?1:(fxQuality===1?0.55:0.2), RN=fxQuality>=2?3:(fxQuality===1?2:1), BL=fxQuality>=2?12:(fxQuality===1?8:4);   // the big ultimate effects scale down with the graphics setting
@@ -16435,6 +16446,11 @@ function spawnFx0(e){
       for(let r=0;r<(big?3:2);r++) addP({x:x,y:y,life:.55+r*.15,color:A[r*2%5],shape:'ring',r0:8,r1:(big?150:90)+r*30,lw:6-r});
       for(let k=0;k<(big?7:4);k++){ const cx=(k/(big?6:3)-0.5)*(big?190:110); addP({x:x+cx,y:y+34,life:RND(1.0,1.5),size:RND(10,17),r1:RND(big?210:140,big?300:200),color:A[k%5],shape:'curtain',rot:RND(0,6.28)}); }      // the aurora curtain: tall ribbons of light that rise and sway
       addP({x:x,y:y-60,life:.9,color:A[1],shape:'flash',size:big?260:150,add:true});
+      break; }
+    case 'smellburst': {
+      const big=!!e.big;
+      burst(x,y,big?30:16,{a0:0,a1:6.28,s0:40,s1:big?260:170,l0:.7,l1:1.4,z0:7,z1:big?18:13,colors:['#7d9a1e','#a8b82a','#5f7d2a','#c9c24a'],grav:-40,drag:1.3,shape:'smoke',add:false});
+      for(let r=0;r<2;r++) addP({x:x,y:y,life:.6+r*.2,color:'#a8b82a',shape:'ring',r0:8,r1:(big?130:80)+r*30,lw:5-r});
       break; }
     case 'spark': {
       const back=(e.ang||0)+Math.PI;
@@ -17146,7 +17162,7 @@ function drawParticles(){
     ctx.globalCompositeOperation = pass===0 ? 'source-over' : 'lighter';
     for(const q of particles){
       if((pass===1)!==q.add) continue;
-      AURA=!!q.au;
+      AURA=q.au||0;
       if(viewBox && !inView(q.x,q.y,150) && !(q.x2!==undefined && inView(q.x2,q.y2,150))) continue;       // off the screen: still ages and moves (above), is not drawn
       const t=1-q.life/q.max, a=1-t;
       switch(q.shape){
@@ -17386,9 +17402,9 @@ function luxFx(b, fx, swing, now, sp){
   }
 }
 function drawProjectile(b){
-  AURA=gmOwner(b.owner) || !!(b.sk && COSMETICS[b.sk] && COSMETICS[b.sk].lux>=4);
+  AURA=gmOwner(b.owner) || ((b.sk && COSMETICS[b.sk] && COSMETICS[b.sk].lux>=4)?1:0);
   const cp=b.sk?conceptOfSkin(b.sk):'';
-  if(AURA && Math.random()<0.6){ const nS=performance.now()/1000, ua=Math.atan2(b.vy||0,b.vx||0)+Math.PI+RND(-0.6,0.6), us=RND(30,160); AURA_SPAWN=true; addP({x:b.x+RND(-4,4),y:b.y+RND(-4,4),vx:Math.cos(ua)*us,vy:Math.sin(ua)*us,life:RND(.3,.6),size:RND(1.6,3.4),color:auroraHex(nS*0.9,Math.floor(RND(0,5))),shape:Math.random()<0.5?'streak':'dot',drag:2}); AURA_SPAWN=false; }
+  if(AURA===1 && Math.random()<0.6){ const nS=performance.now()/1000, ua=Math.atan2(b.vy||0,b.vx||0)+Math.PI+RND(-0.6,0.6), us=RND(30,160); AURA_SPAWN=1; addP({x:b.x+RND(-4,4),y:b.y+RND(-4,4),vx:Math.cos(ua)*us,vy:Math.sin(ua)*us,life:RND(.3,.6),size:RND(1.6,3.4),color:auroraHex(nS*0.9,Math.floor(RND(0,5))),shape:Math.random()<0.5?'streak':'dot',drag:2}); AURA_SPAWN=false; }
   if(cp && drawConceptProjectile(b,cp)) return;
   drawProjectileBase(b); drawBulletSkinFx(b);
 }
@@ -17657,11 +17673,12 @@ function drawStickman(p){
   const skinId = p.cos && p.cos.skin && p.cos.skin[p.weapon];
   const skinTint = (skinId && COSMETICS[skinId]) ? ((COSMETICS[skinId].lux>=4) ? auroraHex(performance.now()/1000*0.9+((p.id||'').length*0.7),0) : COSMETICS[skinId].tint) : null;      // (a 그랜드 마스터 skin: the colour flows through the aurora)
   if(lkW(p)==='dracula' && !p.batting){ drawDraculaCape(ctx,(Math.cos(p.angle||0)>=0)?-1:1, Math.sin(performance.now()/160)*2+Math.min(8,Math.abs(p.vx||0)/40), -42, skinTint); }
-  else if(p.weapon==='flamethrower'){ drawOxygenTank(ctx, -42); }
+  else if(p.weapon==='flamethrower'){ if(conceptOfSkin(skinId)!=='breath') drawOxygenTank(ctx, -42); }
   else if(p.cos && p.cos.cape){ drawCape(ctx,p.cos.cape,(Math.cos(p.angle||0)>=0)?-1:1, Math.sin(performance.now()/160)*2+Math.min(8,Math.abs(p.vx||0)/40), -42); }
   const luxLv=(skinId && COSMETICS[skinId] && COSMETICS[skinId].lux) || 0, luxNow=performance.now(), luxSeed=((p.id||'').length*7+((p.id||'x').charCodeAt(0)||0))%97;
-  AURA=(luxLv>=4 && p.alive!==false);          // (the figure, its weapon and its skill effects are drawn in aurora colours; the name below is not)
+  AURA=(p.alive!==false) ? auraKind(p) : 0;          // (the figure, its weapon and its skill effects are drawn in aurora colours; the name below is not)
   if(luxLv && p.alive!==false) drawSkinLux(ctx, luxLv, skinTint, luxNow, luxSeed, 'back');
+  if(AURA===2 && Math.random()<0.55){ AURA_SPAWN=0; addP({x:p.x+RND(-22,22),y:p.y+RND(-70,-8),vx:RND(-14,14),vy:RND(-34,-12),life:RND(.7,1.3),size:RND(5,10),color:['#7d9a1e','#a8b82a','#5f7d2a','#c9c24a'][Math.floor(Math.random()*4)],shape:'smoke',add:false,drag:1}); }      // the stink cloud: sickly green puffs drift up around the body
   if(p.kw && p.alive!==false) drawKanWings(ctx, luxNow);
   if(p.pp && players[p.pp] && p.alive!==false){ const q=players[p.pp], dx=(q.x-p.x), dy=(q.y-p.y); ctx.save(); ctx.strokeStyle='#ffd0e6'; ctx.lineWidth=1.6; ctx.globalAlpha=0.9; ctx.setLineDash([6,4]); ctx.lineDashOffset=-performance.now()/40; ctx.beginPath(); ctx.moveTo(0,-34); ctx.quadraticCurveTo(dx/2, Math.min(-34,dy-60)-24, dx, dy-60); ctx.stroke(); ctx.restore(); }   // 인형술사: the strings to his puppet
   if(p.sw && players[p.sw] && p.alive!==false){ const q=players[p.sw], dx=(q.x-p.x), dy=(q.y-p.y); ctx.save(); const cy2=Math.min(-34,dy-60)+Math.sin(performance.now()/160)*6; ctx.lineCap='round'; for(const [lw,col,al] of [[9,'#ffffff',0.25],[3.5,'#ffffff',1]]){ ctx.strokeStyle=col; ctx.lineWidth=lw; ctx.globalAlpha=al; ctx.beginPath(); ctx.moveTo(0,-34); ctx.quadraticCurveTo(dx/2, cy2, dx, dy-60); ctx.stroke(); } ctx.restore(); }   // 바느질: a white thread to the one it holds (it used to sit behind the comment above and was never drawn)
