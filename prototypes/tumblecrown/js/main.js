@@ -894,7 +894,7 @@ function hpBar(x, y, p, me) {
 function drawOverlay(dt) {
   oc.clearRect(0, 0, innerWidth, innerHeight);
   const sn = S.snap; if (!sn || S.scr === 'sIntro') return;
-  if (sn.w) mini.draw(sn);
+  // 미니맵은 보여주지 않아요
   oc.textAlign = 'center'; oc.textBaseline = 'middle';
   // 적 체력
   for (const e of sn.en) {
