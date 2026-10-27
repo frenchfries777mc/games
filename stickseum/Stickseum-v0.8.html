@@ -987,8 +987,8 @@ sting();})();</script>
     <div id="profileBody"></div>
     <div id="statsBox"></div>
     <button class="btn-secondary" id="goRecordBtn" style="width:100%; margin-top:12px;">🎬 기록 · 하이라이트</button>
-    <button class="btn-secondary" id="goCodexBtn" style="width:100%; margin-top:8px;">📖 캐릭터 도감</button>
-    <button class="btn-secondary" id="goMstatBtn" style="width:100%; margin-top:8px;">📈 경기 통계 (사람·봇 전체)</button>
+    <button class="btn-secondary" id="goCodexBtn" style="display:none;">📖 캐릭터 도감</button>
+    <button class="btn-secondary" id="goMstatBtn" style="display:none;">📈 경기 통계 (사람·봇 전체)</button>
     <div style="font-size:12px; color:var(--text-dim); font-weight:700; margin:14px 0 6px;">소셜</div>
     <div id="socialBox"></div>
   </div>
@@ -1293,6 +1293,7 @@ function ruleHp(){ return Math.round(MAX_HP*roomRules.hp*(gameMode==='zombie'?2:
 const MOVE_SPEED = 250, JUMP_VELOCITY = -680;
 const DASH_FORCE = 700, DASH_CD = 1.5;
 const PZ_MAX=3, PZ_DMG=[25,31,37,43], PZ_ATK_CD=[0.6,0.5,0.4,0.3], PZ_DASH_CD=[3,1.5,0.7,0.4], PZ_CD_STEP=0.12, PZ_ULT_HEAL=30, PZ_ULT_HEAL_MAX=50, PZ_MAX_SPEED=1.25;       // 피사로 has four stages (the start, then one per ultimate): damage, attack cooldown and dash cooldown come from these tables; the skill and ultimate cooldowns are 12% shorter per stage; the last stage also runs at 125% speed       // (+5 damage per stack; at the 4th stack: a 0.5 s dash and 125% speed)
+const MINE_R=26, MINE_SEC=25, MINE_MAX=2, MINE_DMG=20, MINE_STUN=0.8;
 const KAN_POISON_DPS=2, KAN_POISON_SEC=3, KAN_POISON_MAX=4, KAN_TRAP_SEC=15, KAN_TRAP_R=75, KAN_TRAP_MAX=2, KAN_TOAD_SEC=3, KAN_TOAD_TICK=0.5, KAN_TOAD_DMG=5, KAN_TOAD_SPEED=760, KAN_ULT_SEC=5, KAN_ULT_CD_MULT=0.6;      // 칸: every dart adds a poison stack (2 damage a second each, up to 4, the 3 s timer restarts); the frog trap poisons and slows; the wings fly for 5 s and shoot three darts at once
 let poisonZones=[];
 function applyPoison(p, ownerId, ownerName, stacks, tMs){ if(!p || !p.alive) return; const tS=tMs/1000, cur=(p.poison && p.poison.until>tS)?p.poison.stacks:0; p.poison={until:tS+KAN_POISON_SEC, stacks:Math.min(KAN_POISON_MAX,cur+(stacks||1)), owner:ownerId, ownerName:ownerName}; }
@@ -3705,6 +3706,16 @@ function poisonZoneTick(dt,t){       // 칸's poison floors: hidden from the ene
   poisonZones = poisonZones.filter(z=>z.until>tSec);
   for(const z of poisonZones){
     const ow=players[z.owner]; if(!ow) continue;
+    if(z.mine){
+      for(const e of enemiesOf(ow)){
+        if(!e.alive || !tnSameMatch(e.id, z.owner)) continue;
+        if(Math.abs(e.x-z.x)>z.r || e.y>z.y+14 || e.y<z.y-80) continue;
+        z.until=0; pushFx('explosion', z.x, z.y-10, t, {});
+        skillDamage(ow, e, MINE_DMG, t, {stun:MINE_STUN, kb:120, up:260, cx:z.x});
+        break;
+      }
+      continue;
+    }
     for(const e of enemiesOf(ow)){
       if(!tnSameMatch(e.id, z.owner)) continue;
       if(Math.abs(e.x-z.x)>z.r || e.y>z.y+14 || e.y<z.y-80) continue;
@@ -5313,7 +5324,7 @@ function shuffle(arr){ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.
 /* ===== the version of this file =====
    Players with different versions CAN meet and play together: the automatic matchmaking uses the same room names for every version (online-<mode>-<map>-<slot>), and nobody is refused because of a different build.
    The build is only sent along with the join message and the lobby (for information); the corner of the screen shows it. */
-const GAME_BUILD='build 2026-10-18-v438';
+const GAME_BUILD='build 2026-10-18-v439';
 const GAME_VERSION='0.8', GAME_VERSION_NAME='황금을 찾아서';   // 게임 버전 이름: versions.json의 title과 같게 (빌드마다 바꾸지 않음)
 const WEEKLY_EVENTS=[
   {id:'lowg',    name:'저중력 난투', desc:'몸이 둥실둥실, 중력이 약해진 난투', rules:{grav:0.6}},
@@ -11839,7 +11850,7 @@ const SKILLS={
   boomerang:{name:'회수 돌풍',  kind:'hit',  desc:'주변 적을 8 피해와 함께 내 쪽으로 끌어당기고, 던진 부메랑을 즉시 불러들임'},
   shuriken: {name:'그림자 이동', kind:'move', desc:'조준 방향으로 짧게 순간이동하고 1초 은신'},
   shotgun:  {name:'충격파',      kind:'hit',  desc:'주변 적에게 14 피해 + 강하게 밀쳐냄'},
-  rifle:    {name:'집중 사격',   kind:'buff', desc:'2초 동안 총알 피해 +35%'},
+  rifle:    {name:'지뢰 설치',   kind:'hit',  desc:'바닥에 지뢰 2개를 설치 (최대 2개, 25초) · 밟은 적은 20 피해와 0.8초 기절 · 지뢰는 우리 팀에게만 보임'},
   gloves:   {name:'어퍼컷',      kind:'hit',  desc:'가까운 적에게 26 피해를 주고 공중으로 띄움'},
   grenade:  {name:'폭발 점프',   kind:'move', desc:'폭발로 높이 뛰어오르며 주변에 12 피해'},
   bazooka:  {name:'철갑 자세',   kind:'buff', desc:'1.5초 동안 받는 피해 50% 감소'},
@@ -12092,7 +12103,14 @@ const SKILL_IMPL={
     if(moved<24){ p.x=x0; p.y=y0; return false; }
     p.invisUntil=tSec+1.0; pushFx('blink', x0, y0-30, tMs, {color:p.color}); return true; },
   shotgun(p,tSec,tMs){ const n=skillPulse(p,tMs,{r:140, dmg:14, kb:520, up:120}); if(n>0) pushFx('skillring', p.x, p.y-30, tMs, {color:'#ffb347', r:140}); return n>0; },
-  rifle(p,tSec){ skillSetBuff(p,'focus',2.0,tSec); return true; },
+  rifle(p,tSec,tMs){          // 지뢰 설치: two mines on the floor beside the soldier; an enemy that steps on one takes damage and is stunned, then the mine is gone (only the soldier's team sees them)
+    if(!p.grounded) return false;
+    const mine=poisonZones.filter(z=>z.owner===p.id && z.mine);
+    for(let i=0;i<2;i++){ if(mine.length>=MINE_MAX){ poisonZones.splice(poisonZones.indexOf(mine.shift()),1); } }
+    for(const dx of [-34,34]) poisonZones.push({id:++wallSeq, owner:p.id, team:p.team, x:p.x+dx, y:p.y, r:MINE_R, until:tSec+MINE_SEC, hitIds:{}, revealAt:undefined, mine:1});
+    pushFx('skillring', p.x, p.y-6, tMs, {color:'#8dff5a', r:60});
+    return true;
+  },
   gloves(p,tSec,tMs,ax){ return !!skillHitFront(p,tMs,skillAimDir(p,ax),{range:110, h:90, dmg:26, kb:140, up:620}); },
   grenade(p,tSec,tMs){ p.vy=-820; p.grounded=false; pushFx('explosion', p.x, p.y-10, tMs, {}); skillPulse(p,tMs,{r:110, dmg:12, kb:380, up:260}); return true; },
   bazooka(p,tSec){ skillSetBuff(p,'guard',1.5,tSec); return true; },
@@ -14541,7 +14559,7 @@ function hostTickCore(dt,t){
       walls:walls.map(w=>({x:w.x,y:w.y,w:w.w,h:w.h,owner:w.owner,rem:w.until-t/1000})),
       magicCircles:magicCircles.map(z=>({x:z.x,y:z.y,r:z.r,owner:z.owner,team:z.team,rem:z.until-t/1000})),
       fieldZones:fieldZones.map(z=>({kind:z.kind,x:Math.round(z.x),y:Math.round(z.y),r:z.r,owner:z.owner,dur:z.dur,rem:z.until-t/1000})),
-      poisonZones:poisonZones.map(z=>({x:z.x,y:z.y,r:z.r,owner:z.owner,team:z.team,rem:z.until-t/1000,rv:(z.revealAt!==undefined)?1:0})),
+      poisonZones:poisonZones.map(z=>({mine:z.mine?1:0,x:z.x,y:z.y,r:z.r,owner:z.owner,team:z.team,rem:z.until-t/1000,rv:(z.revealAt!==undefined)?1:0})),
       hz:hzDraw,
       turrets:turrets.map(z=>({x:Math.round(z.x),y:Math.round(z.y),a:Math.round(z.ang*100)/100,owner:z.owner,team:z.team,rem:z.until-t/1000})),
       dark:darkSnap(t),
@@ -17041,6 +17059,12 @@ function drawPoisonZones(){
   for(const z of poisonZones){
     if(!tnOwnerShown(z.owner)) continue;
     AURA=gmOwner(z.owner);
+    if(z.mine){       // 지뢰: only the soldier and the soldier's team see it
+      const me=players[myId], ow=players[z.owner]; if(!(z.owner===myId || (me && ow && me.team!==null && me.team!==undefined && me.team===ow.team))) continue;
+      const blink=0.5+0.5*Math.sin(now/180+z.x);
+      ctx.save(); ctx.fillStyle='#2e3a2a'; ctx.beginPath(); ctx.ellipse(z.x,z.y-3,12,5,0,0,7); ctx.fill(); ctx.strokeStyle='#59704a'; ctx.lineWidth=1.5; ctx.stroke();
+      ctx.fillStyle='rgba(255,70,50,'+(0.4+0.6*blink)+')'; ctx.beginPath(); ctx.arc(z.x,z.y-6,2.4,0,7); ctx.fill(); ctx.restore(); continue;
+    }
     const shown=(z.revealAt!==undefined) || z.rv || z.owner===myId;      // the poison floor: only 칸 sees it until somebody steps on it
     if(!shown) continue;
     let rem=z.rem; if(rem===undefined) rem=z.until-performance.now()/1000;
