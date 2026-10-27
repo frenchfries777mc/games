@@ -228,3 +228,5 @@ patchnotes.json | v458 items[1] | 새 캐릭터 크레온 1세·펠·티오니�
 patchnotes.json | v458 items[2] | 새 인트로 그림 적용, 로비 배경으로도 사용 | build 458 | 2026-10-27
 patchnotes.json | v458 items[3] | 인트로 제목과 버전 표기 변경 | build 458 | 2026-10-27
 patchnotes.json | v458 items[4] | 밸런스 표에 새 캐릭터 3명 포함 | build 458 | 2026-10-27
+patchnotes.json | v459 title | 로비 제목 아래 빌드 숫자 제거 | build 459 | 2026-10-27
+patchnotes.json | v459 items[0] | 로비 제목 아래 버전 표시에서 빌드 숫자 제거 | build 459 | 2026-10-27
