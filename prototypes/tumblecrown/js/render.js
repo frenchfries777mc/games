@@ -347,7 +347,7 @@ export class View {
   newScene(bg, fog) {
     if (this.scene) this.scene.traverse(o => { if (o.isLight && o.shadow && o.shadow.map) o.shadow.map.dispose(); });
     const s = new THREE.Scene(); s.background = new THREE.Color(bg); s.fog = new THREE.Fog(fog, 45, 90);
-    this.scene = s; this.lobbyMap = false; this.crownG = null; this.ents.clear(); this.fx = []; this.nums = [];
+    this.scene = s; this.cdrop = null; this.lobbyMap = false; this.crownG = null; this.ents.clear(); this.fx = []; this.nums = [];
     // 기술 번쩍임용 빛 하나 (빛 개수가 바뀌면 셰이더를 다시 만들어서 미리 넣어 둬요)
     this.fxL = new THREE.PointLight(0xffffff, 0, 16, 1.6); this.fxL.position.set(0, -50, 0); s.add(this.fxL); this.fxLI = 0;
     this.comp = new EffectComposer(this.r); this.pp = new RenderPixelatedPass(this.P, s, this.cam, { normalEdgeStrength: 0.2, depthEdgeStrength: 0.4 });
@@ -1163,6 +1163,7 @@ export class View {
       }
     }
     for (const d of this.drips || []) { d.t += dt; const u = d.t / d.T; if (u >= 1) { d.t = 0; this.ring(d.x, d.z, 1.1, 0x9ad0ff, 0.7); } d.m.position.y = u < 0.55 ? 8 : 8 - Math.pow((u - 0.55) / 0.45, 2) * 8; d.m.visible = u > 0.4; }
+    if (this.cdrop) { const C = this.cdrop, E = this.ents.get('p' + C.id); C.t += dt; if (E) { const u = Math.min(1, C.t / 1.4), e = 1 - Math.pow(1 - u, 3), bob = u >= 1 ? Math.sin(t * 3) * 0.1 : 0; C.g.position.set(E.x, 10 - 6.6 * e + bob, E.z); C.g.rotation.y += dt * (u >= 1 ? 1.4 : 7); if (u >= 1 && !C.hit) { C.hit = 1; this.shock(E.x, E.z, 6, 0xffe08a, 0.6); this.burst(E.x, 3.4, E.z, 0xffe08a, 30, 8, 0.9, 0.14); this.flash(E.x, E.z, 0xffe08a, 200); this.shake = Math.max(this.shake, 0.9); } } }
     if (this.crownG) { this.crownG.rotation.y += dt * 0.9; this.crownG.position.y = (this.mode === 'ped' ? 6.2 : 6.4) + Math.sin(t * 1.6) * 0.25; }
     if (this.pv) { this.pv.g.rotation.y = 0.45 + Math.sin(t * 0.7) * 0.5; const u = this.pv.g.userData; if (u.body) u.body.position.y = Math.sin(t * 1.6) * 0.04; }
     if (this.brawl) this.tickBrawl(t);
@@ -1216,6 +1217,8 @@ export class View {
     }
   }
   // 보스 등장: 화면이 보스 쪽으로 다가갔다가 돌아와요
+  crownDrop(id) { const E = this.ents.get('p' + id); if (!E) return; const g = this.crownMesh(this.scene, E.x, 10, E.z, 0.55); this.cdrop = { g, id, t: 0 }; }
+  pose(id, a) { const E = this.ents.get('p' + id); if (E) { E.ak = a; E.aT = 0; E.kh = null; } }
   focusOn(x, z, T = 2.6) { this.focus = { x, z, t: 0, T }; }
   arc(x, z, a, r, col) {
     const m = mesh(geo('arc' + r, () => new THREE.TorusGeometry(r * 0.8, 0.12, 3, 20, Math.PI * 0.75)), M(col, { e: col, ei: 3, op: 0.9, uniq: true }), x, 1.6, z, this.scene, false);
