@@ -52,7 +52,7 @@ async function openRoom(spec){
       const l=await page.evaluate(([u,p])=>window.__ffd.login(u,p), [USER,PASS]); if(l!=='ok'){ await close('다시 로그인 실패'); return null; }
     }
     if(!key){ await close('열 수 있는 방이 없음'); return null; }
-    return {page, close, get key(){ return key; }};
+    return {page, close, ranked:!spec || !!spec.ranked, get key(){ return key; }};
   }catch(e){ log('방 열기 오류', String(e&&e.message||e).slice(0,200)); await close('오류'); return null; }
 }
 
@@ -76,7 +76,13 @@ async function watch(h){
 /* 모든 온라인 경기를 서버가 여는 길: 'ff-dispatch' 라는 이름으로 기다리다가 {t:'want'} 가 오면 그 방을 열어 방 이름을 돌려줘요.
    (이미 열려 있으면 그 방을 그대로 알려 줘요. 자리가 없거나 서버가 바쁘면 null → 부탁한 사람이 직접 방장이 돼요.) */
 const pending=new Map();       // 방 이름 → 열고 있는 중인 약속
-function busyNow(){ return live.length+pending.size>=MAXR || os.loadavg()[0]>BUSY_LOAD || os.freemem()<130*1048576; }
+function busyNow(ranked){ return live.length+pending.size>=(ranked?MAXR:Math.max(1,MAXR-1)) || os.loadavg()[0]>BUSY_LOAD*(ranked?1.3:1) || os.freemem()<(ranked?90:130)*1048576; }      // (랭크전 우선: 한 자리는 랭크전 몫으로 비워 두고, 랭크전은 더 바빠도 받아요)
+async function makeRoomForRanked(){             // 꽉 찼으면 아직 시작 안 한 일반 방 하나를 닫고 랭크전에 자리를 줘요 (사람이 가장 적은 방부터)
+  let best=null, bestN=1e9;
+  for(const h of live){ if(h.ranked || h.started) continue; let n=0; try{ n=(await h.page.evaluate(()=>window.__ffd.status())).humans||0; }catch(e){} if(n<bestN){ best=h; bestN=n; } }
+  if(best){ await best.close('랭크전에 자리를 양보'); const i=live.indexOf(best); if(i>=0) live.splice(i,1); return true; }
+  return false;
+}
 async function want(d, dpage){
   const mode=String(d.mode||'ffa'), mapId=String(d.mapId||''), slot=+d.slot||1, evt=!!d.evt, ranked=!!d.ranked&&mode==='duel';
   if(!mapId || !/^[a-z0-9_-]+$/i.test(mode+mapId)) return null;
@@ -84,7 +90,7 @@ async function want(d, dpage){
   if(pending.has(roomId)) return pending.get(roomId);
   const ex=live.find(h=>h.key===roomId);
   if(ex) return ex.started ? null : roomId;
-  if(busyNow()){ log('서버가 바빠서 거절', roomId, 'rooms', live.length, 'load', os.loadavg()[0].toFixed(2)); return null; }
+  if(busyNow(ranked) && !(ranked && live.length+pending.size>=MAXR && await makeRoomForRanked() && !busyNow(true))){ log('서버가 바빠서 거절', roomId, 'rooms', live.length, 'load', os.loadavg()[0].toFixed(2)); return null; }
   const pr=(async()=>{
     const h=await openRoom({mapId, slot, mode, evt, ranked, roomId});
     if(!h) return null;
