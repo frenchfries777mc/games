@@ -181,6 +181,25 @@ body.touch #exitBtn{top:auto;bottom:auto}
 @media (max-width:1100px){#party{gap:6px;flex-wrap:nowrap;max-width:none}.pf,body.touch .pf{width:118px;padding:4px 7px;border-width:2px}.pf .n,body.touch .pf .n{font-size:12px}.pf .n span{font-size:10px}.pf .hp{height:7px;margin-top:4px}.pf .st{font-size:10px;height:12px;margin-top:1px}}
 @media (max-aspect-ratio:1/1){#party{top:62px;bottom:auto;left:10px;flex-direction:column;gap:4px}.pf,body.touch .pf{width:104px;padding:3px 6px}.pf .st{display:none}}
 #introSkip{position:fixed;right:22px;bottom:22px;background:none;border:2px solid #6a6276;color:#d8d0e4;font:inherit;font-size:15px;padding:8px 16px;cursor:pointer}#introSkip:hover{border-color:#ffd36b;color:#ffd36b}#introSkip.on{border-color:#ffd36b;color:#ffd36b}
+/* 휴대폰: 대사·알림·버튼이 화면 가운데를 가리지 않게 가장자리로 모아요 */
+@media (max-height:520px) and (min-aspect-ratio:1/1){
+body.touch #roomTag{font-size:11px;padding:3px 8px;top:6px;left:8px;max-width:calc(100vw - 150px);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+body.touch #exitBtn{top:6px;right:8px;padding:4px 8px;font-size:12px}
+body.touch #talk{top:50px;width:min(470px,calc(100vw - 340px));padding:10px 12px 8px 14px}
+body.touch #talk p{font-size:12px;line-height:1.45;min-height:18px}
+body.touch #talk .face{width:38px;height:38px;top:-30px;left:-8px}body.touch #talk .who{left:34px;font-size:12px;top:-11px;line-height:18px}
+body.touch #prompt.up{bottom:78px}body.touch #toast{top:50px}body.touch #bossBar{top:34px;width:min(340px,50vw)}
+}
+@media (max-aspect-ratio:1/1) and (max-width:520px){
+#roomTag{font-size:11px;padding:3px 8px;top:6px;left:8px;max-width:calc(100vw - 96px);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#exitBtn{top:6px!important;right:8px;padding:4px 8px;font-size:12px}
+body.touch #talk,#talk{top:58px;bottom:auto;left:114px;right:8px;width:auto;transform:none;padding:10px 10px 8px 12px}
+#talk p{font-size:12px;line-height:1.45;min-height:18px}
+#talk .face{width:38px;height:38px;top:-30px;left:-6px}#talk .who{left:36px;font-size:12px;top:-11px;line-height:18px}
+#party{top:58px}#toast{top:auto;bottom:250px}#bossBar{top:44px}
+body.touch #prompt.up,#prompt.up{bottom:262px}
+#tbtns{transform:scale(.82);transform-origin:right bottom}
+}
 </style>
 </head>
 <body>
