@@ -184,3 +184,5 @@ patchnotes.json | v438 title | 최대 연승 표시, 오로라 이펙트 조정 
 patchnotes.json | v438 items[0] | 프로필에 최대 연승 표시 추가 오로라 스킨 캐릭터 이펙트 입자 감소 오로라 스킨 일반 공격 입자 추가 오로라 스킨 스킬 입자 증가 | build 438 | 2026-10-27
 patchnotes.json | v439 title | 군인 스킬 지뢰 설치, 프로필 버튼 정리 | build 439 | 2026-10-27
 patchnotes.json | v439 items[0] | 군인 스킬 집중 사격을 지뢰 설치로 변경 프로필의 캐릭터 도감, 경기 통계 버튼 제거 | build 439 | 2026-10-27
+patchnotes.json | v440 title | 오로라 스킨 기본 이펙트 대폭 감소 | build 440 | 2026-10-27
+patchnotes.json | v440 items[0] | 오로라 스킨 캐릭터 기본 이펙트 대폭 감소 (커튼, 나선, 고리, 별, 구슬) | build 440 | 2026-10-27
