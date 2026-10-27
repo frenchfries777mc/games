@@ -192,3 +192,5 @@ patchnotes.json | v442 title | 방 매칭 중 버튼 숨김 | build 442 | 2026-1
 patchnotes.json | v442 items[0] | 방 매칭 중 프로필 버튼과 피드백 버튼 숨김 | build 442 | 2026-10-27
 patchnotes.json | v443 title | 오로라 스킬 커튼 효과, 하이퍼 배틀로얄 부메랑 속도 | build 443 | 2026-10-27
 patchnotes.json | v443 items[0] | 그랜드 마스터 스킬과 궁극기에 오로라 커튼 연출 추가 하이퍼 배틀로얄 부메랑 재투척 시간 2배 | build 443 | 2026-10-27
+patchnotes.json | v444 title | 하이퍼 배틀로얄 공격 속도 2배 | build 444 | 2026-10-27
+patchnotes.json | v444 items[0] | 하이퍼 배틀로얄 공격 간격을 절반으로 수정 (공격 속도 2배) | build 444 | 2026-10-27
