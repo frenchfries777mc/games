@@ -5172,15 +5172,18 @@ const CTF_MAP_CONFIGS=[
    half:[[120,100,160],[440,100,180],[740,180,180],[1060,100,220],[1400,190,200],[1720,100,200],[2040,200,200]], center:[[110,380]]}
 ];
 for(const cfg of CTF_MAP_CONFIGS) MAP_TEMPLATES[cfg.id]=buildCtfMap(cfg);
-/* 거대 점령전 map: 7200 wide; the two teams start at the two ends, three flags (left, centre, right) on the ground between them, every one with a few platforms around it */
+/* 거대 점령전 map: 14400 wide (2x); the two teams start at the two ends, three flags (left, centre, right) on the ground far from both spawns, every one with a few platforms around it */
 MAP_TEMPLATES['giant_cq']=(function(){
-  const W=7200, Hh=1500, G=Hh-100, plats=[{x:0, y:G, w:W, h:100}];
-  const half=[[150,110,200],[430,210,200],[720,320,220],[560,95,150],[1000,110,200],[1280,220,220],[1520,110,200],[1700,260,260],[2000,110,200],[2250,210,240],[2500,330,220],[2760,110,200],[3000,220,200],[1900,430,200],[3240,340,200]];
+  const W=14400, Hh=1500, G=Hh-100, FLAG_X=4000, plats=[{x:0, y:G, w:W, h:100}];
+  const base=[[150,110,200],[430,210,200],[720,320,220],[560,95,150],[1000,110,200],[1280,220,220],[1520,110,200],[1700,260,260],[2000,110,200],[2250,210,240],[2500,330,220],[2760,110,200],[3000,220,200],[1900,430,200],[3240,340,200]];
+  const A=base.filter(q=>q[0]<1000), B=base.filter(q=>q[0]>=1000 && q[0]<1700), C=base.filter(q=>q[0]>=1700);
+  const half=[], put=(list,sh)=>{ for(const [x,up,w] of list){ const nx=x+sh; if(nx+w>W/2-420) continue; if(half.some(h=>Math.abs(h[1]-up)<70 && nx<h[0]+h[2]+40 && nx+w+40>h[0])) continue; half.push([nx,up,w]); } };
+  put(A,0); for(const sh of [0,700,1400,2100]) put(B,sh); put(C,FLAG_X-1800); for(const sh of [4600,5300]) put(B,sh);
   for(const [x,up,w] of half){ plats.push({x, y:G-up, w, h:24}); plats.push({x:W-x-w, y:G-up, w, h:24}); }
   for(const [up,w] of [[110,640],[260,360],[420,200]]) plats.push({x:W/2-w/2, y:G-up, w, h:24});
   const sp0=[40,100,160,220,280,340,400,460].map(x=>({x, y:G-12})), sp1=sp0.map(sp=>({x:W-sp.x, y:sp.y}));
   return {id:'giant_cq', name:'거대 점령전 평원', maxPlayers:32, arenaW:W, arenaH:Hh, privateOnly:true, isGiant:true, theme:THEMES.grassland, platforms:plats,
-    bigcq:{flags:[{x:1800, y:G}, {x:W/2, y:G}, {x:W-1800, y:G}]}, teamSpawns:[sp0, sp1], spawns:sp0.concat(sp1)};
+    bigcq:{flags:[{x:FLAG_X, y:G}, {x:W/2, y:G}, {x:W-FLAG_X, y:G}]}, teamSpawns:[sp0, sp1], spawns:sp0.concat(sp1)};
 })();
 MAP_TEMPLATES['mega_arena'] = {
   id:'mega_arena', name:THEMES.mega.name, maxPlayers:32, arenaW:3000, arenaH:1200, privateOnly:true,
@@ -5342,7 +5345,7 @@ function shuffle(arr){ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.
 /* ===== the version of this file =====
    Players with different versions CAN meet and play together: the automatic matchmaking uses the same room names for every version (online-<mode>-<map>-<slot>), and nobody is refused because of a different build.
    The build is only sent along with the join message and the lobby (for information); the corner of the screen shows it. */
-const GAME_BUILD='build 2026-10-18-v450';
+const GAME_BUILD='build 2026-10-18-v451';
 const GAME_VERSION='0.8', GAME_VERSION_NAME='황금을 찾아서';   // 게임 버전 이름: versions.json의 title과 같게 (빌드마다 바꾸지 않음)
 const WEEKLY_EVENTS=[
   {id:'lowg',    name:'저중력 난투', desc:'몸이 둥실둥실, 중력이 약해진 난투', rules:{grav:0.6}},
