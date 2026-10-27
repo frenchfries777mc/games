@@ -3,6 +3,127 @@
   {
    "date": "2026-10-27",
    "build": "",
+   "title": "접속 기록 보강",
+   "items": [
+    "로그인 전 손님과 Educations·Tools·라운지 등 모든 페이지가 접속 인원에 잡혀요",
+    "접속 신호를 45초마다 보내고 접속으로 보는 시간을 150초로 늘려, 잠깐 느려져도 친구가 빠지지 않아요",
+    "Tumblecrown과 Isleport(탭마다 따로 로그인)도 접속 신호를 보내요",
+    "Stickseum 방 서버 계정은 접속 인원에서 빠져요"
+   ],
+   "tr": {
+    "en": {
+     "title": "Sturdier online records",
+     "items": [
+      "Guests (not logged in) and every page, including Educations, Tools and the lounge, now count as online",
+      "Presence signals go out every 45s and the online window is 150s, so a friend no longer drops out on a brief lag",
+      "Tumblecrown and Isleport (separate login per tab) send presence too",
+      "The Stickseum room-server account is no longer counted as a player"
+     ]
+    },
+    "es": {
+     "title": "Sturdier online records",
+     "items": [
+      "Guests (not logged in) and every page, including Educations, Tools and the lounge, now count as online",
+      "Presence signals go out every 45s and the online window is 150s, so a friend no longer drops out on a brief lag",
+      "Tumblecrown and Isleport (separate login per tab) send presence too",
+      "The Stickseum room-server account is no longer counted as a player"
+     ]
+    },
+    "fr": {
+     "title": "Sturdier online records",
+     "items": [
+      "Guests (not logged in) and every page, including Educations, Tools and the lounge, now count as online",
+      "Presence signals go out every 45s and the online window is 150s, so a friend no longer drops out on a brief lag",
+      "Tumblecrown and Isleport (separate login per tab) send presence too",
+      "The Stickseum room-server account is no longer counted as a player"
+     ]
+    },
+    "de": {
+     "title": "Sturdier online records",
+     "items": [
+      "Guests (not logged in) and every page, including Educations, Tools and the lounge, now count as online",
+      "Presence signals go out every 45s and the online window is 150s, so a friend no longer drops out on a brief lag",
+      "Tumblecrown and Isleport (separate login per tab) send presence too",
+      "The Stickseum room-server account is no longer counted as a player"
+     ]
+    },
+    "ja": {
+     "title": "Sturdier online records",
+     "items": [
+      "Guests (not logged in) and every page, including Educations, Tools and the lounge, now count as online",
+      "Presence signals go out every 45s and the online window is 150s, so a friend no longer drops out on a brief lag",
+      "Tumblecrown and Isleport (separate login per tab) send presence too",
+      "The Stickseum room-server account is no longer counted as a player"
+     ]
+    },
+    "zh": {
+     "title": "Sturdier online records",
+     "items": [
+      "Guests (not logged in) and every page, including Educations, Tools and the lounge, now count as online",
+      "Presence signals go out every 45s and the online window is 150s, so a friend no longer drops out on a brief lag",
+      "Tumblecrown and Isleport (separate login per tab) send presence too",
+      "The Stickseum room-server account is no longer counted as a player"
+     ]
+    },
+    "pt": {
+     "title": "Sturdier online records",
+     "items": [
+      "Guests (not logged in) and every page, including Educations, Tools and the lounge, now count as online",
+      "Presence signals go out every 45s and the online window is 150s, so a friend no longer drops out on a brief lag",
+      "Tumblecrown and Isleport (separate login per tab) send presence too",
+      "The Stickseum room-server account is no longer counted as a player"
+     ]
+    },
+    "ru": {
+     "title": "Sturdier online records",
+     "items": [
+      "Guests (not logged in) and every page, including Educations, Tools and the lounge, now count as online",
+      "Presence signals go out every 45s and the online window is 150s, so a friend no longer drops out on a brief lag",
+      "Tumblecrown and Isleport (separate login per tab) send presence too",
+      "The Stickseum room-server account is no longer counted as a player"
+     ]
+    },
+    "tr": {
+     "title": "Sturdier online records",
+     "items": [
+      "Guests (not logged in) and every page, including Educations, Tools and the lounge, now count as online",
+      "Presence signals go out every 45s and the online window is 150s, so a friend no longer drops out on a brief lag",
+      "Tumblecrown and Isleport (separate login per tab) send presence too",
+      "The Stickseum room-server account is no longer counted as a player"
+     ]
+    },
+    "it": {
+     "title": "Sturdier online records",
+     "items": [
+      "Guests (not logged in) and every page, including Educations, Tools and the lounge, now count as online",
+      "Presence signals go out every 45s and the online window is 150s, so a friend no longer drops out on a brief lag",
+      "Tumblecrown and Isleport (separate login per tab) send presence too",
+      "The Stickseum room-server account is no longer counted as a player"
+     ]
+    },
+    "pl": {
+     "title": "Sturdier online records",
+     "items": [
+      "Guests (not logged in) and every page, including Educations, Tools and the lounge, now count as online",
+      "Presence signals go out every 45s and the online window is 150s, so a friend no longer drops out on a brief lag",
+      "Tumblecrown and Isleport (separate login per tab) send presence too",
+      "The Stickseum room-server account is no longer counted as a player"
+     ]
+    },
+    "ar": {
+     "title": "Sturdier online records",
+     "items": [
+      "Guests (not logged in) and every page, including Educations, Tools and the lounge, now count as online",
+      "Presence signals go out every 45s and the online window is 150s, so a friend no longer drops out on a brief lag",
+      "Tumblecrown and Isleport (separate login per tab) send presence too",
+      "The Stickseum room-server account is no longer counted as a player"
+     ]
+    }
+   }
+  },
+  {
+   "date": "2026-10-27",
+   "build": "",
    "title": "접속 인원 집계 보완",
    "items": [
     "허브나 게임을 다른 탭에 두고 있는 사람과 Isleport를 하는 사람도 접속 인원에 잡혀요"
