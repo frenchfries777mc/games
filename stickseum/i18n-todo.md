@@ -186,3 +186,5 @@ patchnotes.json | v439 title | 군인 스킬 지뢰 설치, 프로필 버튼 정
 patchnotes.json | v439 items[0] | 군인 스킬 집중 사격을 지뢰 설치로 변경 프로필의 캐릭터 도감, 경기 통계 버튼 제거 | build 439 | 2026-10-27
 patchnotes.json | v440 title | 오로라 스킨 기본 이펙트 대폭 감소 | build 440 | 2026-10-27
 patchnotes.json | v440 items[0] | 오로라 스킨 캐릭터 기본 이펙트 대폭 감소 (커튼, 나선, 고리, 별, 구슬) | build 440 | 2026-10-27
+patchnotes.json | v441 title | 그랜드 마스터 스킬 흰색·회색 효과도 오로라 색 | build 441 | 2026-10-27
+patchnotes.json | v441 items[0] | 그랜드 마스터 스킬과 궁극기의 흰색, 회색 효과(검, 섬광, 연기)도 오로라 색 적용 | build 441 | 2026-10-27
