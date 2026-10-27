@@ -5345,7 +5345,7 @@ function shuffle(arr){ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.
 /* ===== the version of this file =====
    Players with different versions CAN meet and play together: the automatic matchmaking uses the same room names for every version (online-<mode>-<map>-<slot>), and nobody is refused because of a different build.
    The build is only sent along with the join message and the lobby (for information); the corner of the screen shows it. */
-const GAME_BUILD='build 2026-10-18-v452';
+const GAME_BUILD='build 2026-10-18-v453';
 const GAME_VERSION='0.8', GAME_VERSION_NAME='황금을 찾아서';   // 게임 버전 이름: versions.json의 title과 같게 (빌드마다 바꾸지 않음)
 const WEEKLY_EVENTS=[
   {id:'lowg',    name:'저중력 난투', desc:'몸이 둥실둥실, 중력이 약해진 난투', rules:{grav:0.6}},
@@ -9238,22 +9238,23 @@ function renderAvatarEditor(){
   const colorRow=document.createElement('div');
   for(const c of COLORS) colorRow.appendChild(swatch(c, av.color===c, ()=>{ av.color=c; persistSave(); renderProfile(); }));
   box.appendChild(colorRow);
-  const accLbl=document.createElement('div'); accLbl.style.cssText='font-size:12px; color:var(--text-dim); font-weight:700; margin:8px 0 2px;'; accLbl.textContent='착용품';
+  const accLbl=document.createElement('div'); accLbl.style.cssText='font-size:12px; color:var(--text-dim); font-weight:700; margin:8px 0 2px;'; accLbl.textContent='착용품'+((av.accessory&&!av.ext&&COSMETICS[av.accessory]) ? ' · '+(WEAPON_PERSONA_NAME[COSMETICS[av.accessory].char]||COSMETICS[av.accessory].char)+' - '+COSMETICS[av.accessory].name : '');
   box.appendChild(accLbl);
   const accRow=document.createElement('div'); accRow.style.cssText='display:flex; flex-wrap:wrap; gap:6px;';
-  const noneChip=document.createElement('div');
-  noneChip.textContent='없음';
-  noneChip.style.cssText='padding:6px 10px; border-radius:8px; cursor:pointer; font-size:12px; background:var(--panel-2); border:1px solid '+(!av.accessory&&!av.ext?'#ffd34d':'var(--line)')+';';
-  noneChip.onclick=()=>{ av.accessory=null; av.ext=null; persistSave(); renderProfile(); };
-  accRow.appendChild(noneChip);
+  const pic=(sid, label)=>{          /* one picture per skin: the avatar as it will look, drawn by the same code as the profile badge */
+    const on=(sid===null) ? (!av.accessory&&!av.ext) : (av.accessory===sid&&!av.ext);
+    const cv=document.createElement('canvas'); cv.width=cv.height=60; cv.title=label; cv.setAttribute('aria-label', label);
+    cv.style.cssText='width:52px; height:52px; border-radius:10px; cursor:pointer; border:2px solid '+(on?'#ffd34d':'var(--line)')+'; box-sizing:border-box;';
+    try{ drawAvatarPreview(cv, {bg:av.bg, color:av.color, accessory:sid, ext:null}); }catch(e){}
+    cv.onclick=()=>{ av.accessory=sid; av.ext=null; persistSave(); renderProfile(); };
+    return cv;
+  };
+  accRow.style.cssText='display:flex; flex-wrap:wrap; gap:6px; max-height:340px; overflow-y:auto;';
+  accRow.appendChild(pic(null, '없음'));
   for(const sid in COSMETICS){
     const it=COSMETICS[sid];
     if(it.cat!=='skin' || !cosOwned(sid)) continue;
-    const chip=document.createElement('div');
-    chip.textContent=(WEAPON_PERSONA_NAME[it.char]||it.char)+' - '+it.name;
-    chip.style.cssText='padding:6px 10px; border-radius:8px; cursor:pointer; font-size:12px; background:var(--panel-2); border:1px solid '+(av.accessory===sid&&!av.ext?'#ffd34d':'var(--line)')+';';
-    chip.onclick=()=>{ av.accessory=sid; av.ext=null; persistSave(); renderProfile(); };
-    accRow.appendChild(chip);
+    accRow.appendChild(pic(sid, (WEAPON_PERSONA_NAME[it.char]||it.char)+' - '+it.name));
   }
   box.appendChild(accRow);
   renderExtCharPicker(box, av);
