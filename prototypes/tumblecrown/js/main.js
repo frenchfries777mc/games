@@ -77,6 +77,11 @@ function setHud(on) { $('hud').classList.toggle('on', on); $('touch').classList.
 function homeMsg(t) { $('homeMsg').textContent = t || ''; }
 function toast(t, ms = 2200) { const el = $('toast'); el.textContent = t; el.style.display = 'block'; clearTimeout(toast._t); toast._t = setTimeout(() => el.style.display = 'none', ms); }
 // 보스 등장 때 위아래 검은 띠, 보스가 쓰러질 때 하얀 번쩍임
+function killFeed(txt, mine) {
+  const box = $('killFeed'), d = document.createElement('div'); d.className = 'kf' + (mine ? ' me' : ''); d.textContent = txt; box.prepend(d);
+  while (box.children.length > 4) box.lastChild.remove();
+  setTimeout(() => d.classList.add('out'), 4200); setTimeout(() => d.remove(), 4800);
+}
 function letterbox(ms) { document.body.classList.add('lbox'); clearTimeout(letterbox._t); letterbox._t = setTimeout(() => document.body.classList.remove('lbox'), ms); }
 function redFlash(a) { const f = $('wflash'); f.style.transition = 'none'; f.style.background = '#ff3a2a'; f.style.opacity = a; requestAnimationFrame(() => { f.style.transition = 'opacity .35s'; f.style.opacity = 0; setTimeout(() => { f.style.background = ''; }, 400); }); }
 function flashScreen() { const f = $('wflash'); f.style.transition = 'none'; f.style.opacity = 0.85; requestAnimationFrame(() => { f.style.transition = 'opacity 1.1s'; f.style.opacity = 0; }); }
@@ -416,7 +421,7 @@ function beginGame(prevG) {
   if (S.chSel === DEEP_I && !prevG) { DEEP.floor = 1; DEEP.seed = (Math.random() * 1e6) | 0; DEEP.curses = []; }
   { const wk = !!S.wk && !prevG && S.chSel !== DEEP_I, was = WEEKLY.on; WEEKLY.on = wk; if (wk) { const w = weekInfo(); WEEKLY.id = w.id; WEEKLY.curses = w.curses; S.chSel = w.ch; } if (wk || was) useChapter(S.chSel, true); }
   S.G = createGame(sl, (Math.random() * 4e9) >>> 0, S.chSel);
-  S.G.lite = !!S.lite; if (!prevG) S.G.phaseT = 99;   // 카운트다운 없이 바로 시작
+  S.G.lite = !!S.lite; 
   S.G.players.forEach((p, i) => { p.uid = sl[i].uid; });
   if (prevG) carryOver(S.G, prevG);
   S.me = sl.find(s => s.uid === UID).id;
@@ -632,7 +637,8 @@ function onEvent(e) {
     case 'ko': { // 탈락: 몸이 조각나 흩어져요
       view.shatter(e.x, e.z, [0xd8d0bc, 0x6a6470, 0x5a5040, 0x8a8a96], 30, true); view.burst(e.x, 1.2, e.z, 0xffe8b0, 16, 7, 0.6, 0.12); view.shock(e.x, e.z, 5, 0xffe08a, 0.5); view.flash(e.x, e.z, 0xffd08a, 140); view.shake = Math.max(view.shake, 0.6); SFX.play('kill');
       const by = S.snap && S.snap.pl.find(q => q.id === e.by), who = S.snap && S.snap.pl.find(q => q.id === e.id), nm = q => q ? (q.id === S.me ? T('나') : q.bot ? ROLES[q.role].name : q.name) : '';
-      if (who) toast(by ? T('{0}가 {1}를 쓰러뜨렸어요', nm(by), nm(who)) : T('{0}가 쓰러졌어요', nm(who)), 2600);
+      view.column(e.x, e.z, 0xffe8b0, 1.0); view.rise(e.x, e.z, 0xffe8b0, 22, 1.6, 1.4, 6); view.ring(e.x, e.z, 3.4, 0xffe8b0, 0.7);
+      if (who) killFeed(by ? T('{0} → {1}', nm(by), nm(who)) : T('{0} 탈락', nm(who)), by && by.id === S.me);
       if (e.id === me) bigMsg(T('탈락했어요'), T('끝까지 지켜봐요'), 2600); break; }
     case 'down': SFX.play('down'); if (e.id === me) { S.everDown = true; bigMsg(T('쓰러졌어요'), T('동료가 일으켜 줄 때까지 버텨요'), 2200); } break;
     case 'revive': view.column(e.x, e.z, 0xfff0b0); SFX.play('revive'); if (e.id === me) bigMsg(T('다시 일어났어요'), '', 1400); break;
@@ -743,8 +749,8 @@ function syncScene() {
   if (sn.ph !== S.lastPh) {
     const prev = S.lastPh; S.lastPh = sn.ph;
     if (sn.ph === 'intro') { show('sIntro'); setHud(false); }
-    else if (prev === 'intro' || prev === '') { show(''); setHud(true); S.area = -2; }
-    if (sn.ph === 'won') { S.wonT = 0; bigMsg('', '', 0); }
+    else if (prev === 'intro' || prev === '') { show(''); setHud(true); S.area = -2; S.introHero = null; view.camId = null; $('introCard').classList.remove('on'); }
+    if (sn.ph === 'won') { S.wonT = 0; bigMsg('', '', 0); const w = sn.pl.find(q => q.id === sn.win); S.winId = w ? w.id : null; S.winPoseT = 0; if (w) { view.focusOn(w.x, w.z, 4); view.crownDrop(w.id); view.pose(w.id, 'rally'); view.flash(w.x, w.z, 0xffe08a, 160); SFX.play('won'); } } else if (sn.ph !== 'won') S.winId = null;
   }
   // 비밀 방: 열린 것은 지도와 화면에서도 열어요 (게스트는 여기서 길도 열어요)
   if (sn.w.sc) sn.w.sc.forEach((o, k) => { if (!o) return; if (!SOPEN[k]) { openSecret(k); mini.dirty = true; } if (!view.secOn[k]) view.openSecret(k, sn.w.lr); });
@@ -765,8 +771,22 @@ function syncScene() {
 function paintIntro() {
   const IT = CH.introT || INTRO_T, t = S.snap.pt, n = Math.max(1, Math.ceil(IT - t));
   if (n !== S.introIdx) { S.introIdx = n; const el = $('introLine'); el.classList.remove('on'); setTimeout(() => { el.textContent = n > 3 ? T('준비!') : String(n); el.classList.add('on'); }, 50); }
-  $('introBar').firstElementChild.style.width = Math.min(100, t / IT * 100) + '%';
+  // 영웅 소개: 한 명씩 카메라가 다가가 이름과 직업을 보여 주고 포즈를 잡아요
+  const pl = S.snap.pl, k = Math.min(pl.length - 1, Math.floor(t / (IT / pl.length))), who = pl[k];
+  if (who && S.introHero !== who.id) {
+    S.introHero = who.id; view.camId = who.id; view.focusOn(who.x, who.z, 0.9);
+    const card = $('introCard'); card.firstElementChild.textContent = who.name; card.lastElementChild.textContent = ROLES[who.role].name; card.classList.remove('on'); setTimeout(() => card.classList.add('on'), 30);
+    view.pose(who.id, 'rally'); view.shock(who.x, who.z, 5, pcol(who) ? 0xffe08a : 0xffe08a, 0.5); view.flash(who.x, who.z, 0xffe08a, 90); SFX.play('parry');
+  }
   $('introSkip').classList.remove('on'); $('introSkip').style.display = 'none';
+}
+function finalCheck(sn) {
+  const al = sn.pl.filter(p => !p.dd && !p.dn), n = al.length;
+  if (sn.ph === 'play' && n === 2 && S.lastAlive > 2 && sn.pl.length > 2) {
+    const a = al[0], b = al[1], nm = q => q.id === S.me ? T('나') : q.name;
+    letterbox(2800); bigMsg(T('결승전'), T('{0} 대 {1}', nm(a), nm(b)), 2800); view.focusOn((a.x + b.x) / 2, (a.z + b.z) / 2, 2.8); view.shock((a.x + b.x) / 2, (a.z + b.z) / 2, 7, 0xffe08a, 0.7); view.flash((a.x + b.x) / 2, (a.z + b.z) / 2, 0xffe08a, 140); SFX.play('roar');
+  }
+  S.lastAlive = n;
 }
 function paintHud() {
   const sn = S.snap, me = myP();
@@ -1034,12 +1054,12 @@ function frame(now) {
     }
     syncScene();
     const ph = S.snap.ph;
-    if (ph === 'intro') paintIntro();
+    if (ph === 'intro') { paintIntro(); view.sync(S.snap, S.me, dt, t, !!S.G); }
     else {
       for (const e of S.evq) onEvent(e); S.evq.length = 0;
-      specTick(me); view.sync(S.snap, S.me, dt, t, !!S.G); paintHud(); paintBless();
+      specTick(me); if (ph === 'won' && S.winId) view.camId = S.winId; view.sync(S.snap, S.me, dt, t, !!S.G); paintHud(); finalCheck(S.snap); paintBless();
       if (ph === 'over') { S.overT += dt; if (S.overT > 3.6 && !S.resultShown) showDeepResult(); }
-      if (ph === 'won') { S.wonT += dt; if (S.wonT >= 1.6 && !S.resultShown) showWin(); }
+      if (ph === 'won') { S.wonT += dt; S.winPoseT = (S.winPoseT || 0) + dt; if (S.winPoseT > 1.2 && S.winId) { S.winPoseT = 0; view.pose(S.winId, 'rally'); const w = S.snap.pl.find(q => q.id === S.winId); if (w) view.burst(w.x, 2.5, w.z, 0xffe08a, 16, 6, 0.8, 0.14); } if (S.wonT >= 1.6 && !S.resultShown) showWin(); }
     }
     S.evq.length = 0;
   }
