@@ -3019,8 +3019,8 @@ function drawWeaponPersona(c,wid,hx,hy,r,shy,tint,concept){
       break;
     case 'shotgun': // 보안관: 카우보이 모자
       c.fillStyle=tint||'#6b4423';
-      c.beginPath(); c.ellipse(hx,hy-1,r+6,2.6,0,0,7); c.fill();
-      c.beginPath(); c.moveTo(hx-r*0.7,hy-1); c.quadraticCurveTo(hx,hy-r*2.6,hx+r*0.7,hy-1); c.closePath(); c.fill();
+      c.beginPath(); c.ellipse(hx,hy-r*0.62,r+6,2.6,0,0,7); c.fill();      // (the brim sits well above the middle of the head, so the top of the head no longer sticks out over the hat)
+      c.beginPath(); c.moveTo(hx-r*0.78,hy-r*0.62); c.quadraticCurveTo(hx,hy-r*2.9,hx+r*0.78,hy-r*0.62); c.closePath(); c.fill();
       break;
     case 'rifle': // 군인: 방탄모
       c.fillStyle=tint||'#4b5a3a';
@@ -5342,7 +5342,7 @@ function shuffle(arr){ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.
 /* ===== the version of this file =====
    Players with different versions CAN meet and play together: the automatic matchmaking uses the same room names for every version (online-<mode>-<map>-<slot>), and nobody is refused because of a different build.
    The build is only sent along with the join message and the lobby (for information); the corner of the screen shows it. */
-const GAME_BUILD='build 2026-10-18-v449';
+const GAME_BUILD='build 2026-10-18-v450';
 const GAME_VERSION='0.8', GAME_VERSION_NAME='황금을 찾아서';   // 게임 버전 이름: versions.json의 title과 같게 (빌드마다 바꾸지 않음)
 const WEEKLY_EVENTS=[
   {id:'lowg',    name:'저중력 난투', desc:'몸이 둥실둥실, 중력이 약해진 난투', rules:{grav:0.6}},

@@ -204,3 +204,5 @@ patchnotes.json | v448 title | 입냄새 학살자 냄새 연출, 학살자 공�
 patchnotes.json | v448 items[0] | 입냄새 학살자 공격을 입김 구름과 물결 냄새 줄기, 이모지로 변경 학살자 일반 공격 입자 범위 확대 | build 448 | 2026-10-27
 patchnotes.json | v449 title | 듀얼 킬러 없는 사망 점수 수정 | build 449 | 2026-10-27
 patchnotes.json | v449 items[0] | 듀얼에서 킬러 없이 상대가 쓰러져도 남은 사람이 점수를 얻도록 수정 | build 449 | 2026-10-27
+patchnotes.json | v450 title | 보안관 모자 위치 수정 | build 450 | 2026-10-27
+patchnotes.json | v450 items[0] | 보안관 모자를 위로 올려 머리가 튀어나오지 않게 수정 | build 450 | 2026-10-27
