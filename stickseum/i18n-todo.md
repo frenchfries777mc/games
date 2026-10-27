@@ -190,3 +190,5 @@ patchnotes.json | v441 title | 그랜드 마스터 스킬 흰색·회색 효과�
 patchnotes.json | v441 items[0] | 그랜드 마스터 스킬과 궁극기의 흰색, 회색 효과(검, 섬광, 연기)도 오로라 색 적용 | build 441 | 2026-10-27
 patchnotes.json | v442 title | 방 매칭 중 버튼 숨김 | build 442 | 2026-10-27
 patchnotes.json | v442 items[0] | 방 매칭 중 프로필 버튼과 피드백 버튼 숨김 | build 442 | 2026-10-27
+patchnotes.json | v443 title | 오로라 스킬 커튼 효과, 하이퍼 배틀로얄 부메랑 속도 | build 443 | 2026-10-27
+patchnotes.json | v443 items[0] | 그랜드 마스터 스킬과 궁극기에 오로라 커튼 연출 추가 하이퍼 배틀로얄 부메랑 재투척 시간 2배 | build 443 | 2026-10-27

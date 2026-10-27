@@ -5329,7 +5329,7 @@ function shuffle(arr){ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.
 /* ===== the version of this file =====
    Players with different versions CAN meet and play together: the automatic matchmaking uses the same room names for every version (online-<mode>-<map>-<slot>), and nobody is refused because of a different build.
    The build is only sent along with the join message and the lobby (for information); the corner of the screen shows it. */
-const GAME_BUILD='build 2026-10-18-v442';
+const GAME_BUILD='build 2026-10-18-v443';
 const GAME_VERSION='0.8', GAME_VERSION_NAME='황금을 찾아서';   // 게임 버전 이름: versions.json의 title과 같게 (빌드마다 바꾸지 않음)
 const WEEKLY_EVENTS=[
   {id:'lowg',    name:'저중력 난투', desc:'몸이 둥실둥실, 중력이 약해진 난투', rules:{grav:0.6}},
@@ -14370,7 +14370,7 @@ function hostTickCore(dt,t){
         if(owner && owner.alive){
           const ocy=owner.y-PLAYER_H/2;
           if(dist(nx,ny,owner.x,ocy) <= PLAYER_H/2+BULLET_R){
-            if(!b.free){ owner.boomerangOut=false; owner.boomerangReadyAt=t/1000+0.25; }
+            if(!b.free){ owner.boomerangOut=false; owner.boomerangReadyAt=t/1000+0.25*(gameMode==='hyperbr'?2:1); }
             bullets.splice(i,1);
             continue;
           }
@@ -16433,6 +16433,8 @@ function spawnFx0(e){
       const nowS=performance.now()/1000, A=[0,1,2,3,4].map(i=>auroraHex(nowS*0.9,i)), big=!!e.big;
       bu(x,y,big?80:44,{a0:0,a1:6.28,s0:120,s1:big?760:520,l0:.5,l1:1.1,z0:2,z1:4.4,colors:A.concat(['#ffffff']),grav:-60,drag:1.5,shape:'streak'});
       for(let r=0;r<(big?3:2);r++) addP({x:x,y:y,life:.55+r*.15,color:A[r*2%5],shape:'ring',r0:8,r1:(big?150:90)+r*30,lw:6-r});
+      for(let k=0;k<(big?7:4);k++){ const cx=(k/(big?6:3)-0.5)*(big?190:110); addP({x:x+cx,y:y+34,life:RND(1.0,1.5),size:RND(10,17),r1:RND(big?210:140,big?300:200),color:A[k%5],shape:'curtain',rot:RND(0,6.28)}); }      // the aurora curtain: tall ribbons of light that rise and sway
+      addP({x:x,y:y-60,life:.9,color:A[1],shape:'flash',size:big?260:150,add:true});
       break; }
     case 'spark': {
       const back=(e.ang||0)+Math.PI;
@@ -17173,6 +17175,7 @@ function drawParticles(){
         case 'fire': ctx.globalAlpha=Math.min(1,a*1.3); ctx.fillStyle=q.color; ctx.beginPath(); ctx.arc(q.x,q.y,q.size*(1-0.75*t),0,7); ctx.fill(); break;
         case 'streak': ctx.globalAlpha=a; ctx.strokeStyle=q.color; ctx.lineWidth=q.size*(1-0.4*t); ctx.beginPath(); ctx.moveTo(q.x,q.y); ctx.lineTo(q.x-q.vx*0.045,q.y-q.vy*0.045); ctx.stroke(); break;
         case 'ring': { const r=q.r0+(q.r1-q.r0)*(1-Math.pow(1-t,2)); ctx.globalAlpha=a; ctx.strokeStyle=q.color; ctx.lineWidth=Math.max(0.5,q.lw*(1-t)); ctx.beginPath(); ctx.arc(q.x,q.y,Math.max(0.5,r),0,7); ctx.stroke(); break; }
+        case 'curtain': { const h=q.r1*(0.35+0.65*Math.min(1,t*2.5)), w=q.size, g=ctx.createLinearGradient(0,q.y,0,q.y-h); g.addColorStop(0,hexA(q.color,0.55*a)); g.addColorStop(0.5,hexA(q.color,0.3*a)); g.addColorStop(1,hexA(q.color,0)); ctx.globalAlpha=1; ctx.fillStyle=g; ctx.beginPath(); ctx.moveTo(q.x-w,q.y); for(let i=0;i<=10;i++){ const f=i/10; ctx.lineTo(q.x-w+Math.sin(performance.now()/260+i*0.6+q.rot)*(4+f*10), q.y-h*f); } for(let i=10;i>=0;i--){ const f=i/10; ctx.lineTo(q.x+w+Math.sin(performance.now()/260+i*0.6+q.rot+0.8)*(4+f*10), q.y-h*f); } ctx.closePath(); ctx.fill(); break; }
         case 'flash': { const r=q.size*(0.5+0.7*t); const g=ctx.createRadialGradient(q.x,q.y,0,q.x,q.y,r); g.addColorStop(0,hexA(q.color,a)); g.addColorStop(1,hexA(q.color,0)); ctx.globalAlpha=1; ctx.fillStyle=g; ctx.beginPath(); ctx.arc(q.x,q.y,r,0,7); ctx.fill(); break; }
         case 'smoke': ctx.globalAlpha=0.5*a; ctx.fillStyle=q.color; ctx.beginPath(); ctx.arc(q.x,q.y,q.size*(1+1.3*t),0,7); ctx.fill(); break;
         case 'square': case 'card': ctx.save(); ctx.translate(q.x,q.y); ctx.rotate(q.rot); ctx.globalAlpha=Math.min(1,a*1.6); ctx.fillStyle=q.color;
