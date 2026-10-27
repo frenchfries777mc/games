@@ -534,6 +534,16 @@
     "카트 위에서 드리프트하는 마네킹, 오늘의 장보기는 목숨 걸고 합니다.": ["A mannequin drifting on a cart. Today's grocery run is life or death.", "Un maniquí derrapando en un carrito. Hoy las compras son a vida o muerte.", "Un mannequin qui dérape en caddie. Les courses du jour se font au péril de sa vie.", "Eine Puppe driftet im Wagen. Der Einkauf heute ist lebensgefährlich.", "カートでドリフトするマネキン。今日の買い物は命がけです。"],
     "물건이 쏟아졌습니다! 계산대 직원이 한숨을 쉽니다.": ["Goods everywhere! The cashier sighs.", "¡Compras por todas partes! La cajera suspira.", "Des courses partout ! La caissière soupire.", "Ware überall! Die Kassiererin seufzt.", "荷物が散らばりました！レジの店員がため息をつきます。"],
     "벽에 박았습니다. 카트는 괜찮습니다. 마네킹도 괜찮아 보입니다.": ["Hit the wall. The cart's fine. The mannequin looks fine too.", "Choque contra la pared. El carrito está bien. El maniquí también parece estar bien.", "Collision avec le mur. Le caddie va bien. Le mannequin aussi, apparemment.", "Gegen die Wand. Dem Wagen geht's gut. Der Puppe scheinbar auch.", "壁にぶつかりました。カートは無事です。マネキンも無事そうです。"],
+    /* 빌드 77 추가분 */
+    '방귀쟁이': ['Farty', 'Pedorrete', 'Pétomane', 'Pupser', 'おならマン'],
+    '홀쭉이': ['Skinny', 'Flaquito', 'Maigrichon', 'Dünnerchen', 'ひょろひょろ'],
+    '바보1': ['Dummy 1', 'Tonto 1', 'Idiot 1', 'Dummkopf 1', 'バカ1'],
+    '멍청이': ['Dimwit', 'Melón', 'Imbécile', 'Dummerjan', 'まぬけ'],
+    '10급 공무원': ['Grade-10 Clerk', 'Funcionario de nivel 10', 'Fonctionnaire de rang 10', 'Beamter Stufe 10', '10級公務員'],
+    '교무실 단골': ['Staff Room Regular', 'Habitual de la sala de profes', 'Habitué de la salle des profs', 'Stammgast im Lehrerzimmer', '職員室の常連'],
+    '벌점부자': ['Demerit Tycoon', 'Rico en castigos', 'Roi des retenues', 'Strafpunkte-Millionär', '罰点長者'],
+    '말썽이': ['Troublemaker', 'Problemático', 'Fauteur de troubles', 'Störenfried', 'いたずらっ子'],
+    '김개똥': ['Kim Gaeddong', 'Kim Gaeddong', 'Kim Gaeddong', 'Kim Gaeddong', 'キム・ゲトン'],
     /* 빌드 72 추가분 */
     "방 목록": ["Room list", "Lista de salas", "Liste des salons", "Raumliste", "ルーム一覧"],
     "공개방 제목 (비워도 돼요)": ["Public room title (optional)", "Título de la sala pública (opcional)", "Titre du salon public (facultatif)", "Titel des öffentlichen Raums (optional)", "公開ルームのタイトル（空でもOK）"],
@@ -1651,7 +1661,9 @@ body.playing #emoBar{display:flex}
    <div class="row"><input id="codeIn" maxlength="5" placeholder="방 코드" autocomplete="off"><button class="pb dark" id="joinBtn" style="flex:0 0 auto">들어가기</button></div>
    <div class="msg" id="homeMsg"></div>
   </aside>
-  <template id="patchnotes"><details class="notes" open><summary>패치노트 · v0.1 (b76)</summary>
+  <template id="patchnotes"><details class="notes" open><summary>패치노트 · v0.1 (b77)</summary>
+   <b>2026-10-27 · v0.1 · b77 · 봇 이름</b>
+   <ul><li>봇 이름이 방귀쟁이, 홀쭉이, 바보1, 멍청이, 10급 공무원, 교무실 단골, 벌점부자, 말썽이, 김개똥 중에서 랜덤으로 정해져요</li></ul>
    <b>2026-10-26 · v0.1 · b76 · 나가기로 창 닫기와 바나나</b>
    <ul><li>대기실에서 "나가기"를 누르면 방을 정리한 뒤 이 게임 창이 닫혀요 (브라우저가 닫지 못하게 하는 창이면 첫 화면으로 돌아가요)</li><li>달리기 경기(허들)에서 바나나는 이제 맞는 사람 앞쪽 훨씬 멀리에 떨어져서, 달려가면서 미리 보고 점프로 피할 수 있어요</li></ul>
    <b>2026-10-26 · v0.1 · b75 · 자동 인트로 음악</b>
@@ -1802,7 +1814,7 @@ body.playing #emoBar{display:flex}
    <ul><li>무너지는 발판 칸 수 대폭 증가 (19×10)와 용암 동굴 맵</li><li>10개 맵 전부 새로 그림 (관중석, 야자수 섬, 링, 정원 미로, 서커스, 우노 테이블 등)</li><li>글자 대신 아이콘·말풍선·이펙트로 표현 (무기, 아이템, 카드 효과, 시작 안내)</li><li>타격·폭발·물보라 효과와 화면 흔들림 추가</li></ul>
    <b>2026-10-19 · v0.1 · b1 · 첫 시험판</b>
    <ul><li>마네킹 미니게임 10개 추가 (장애물 달리기, 섬 밀치기, 싸우기, 병맛 미로, 체스 대난투, 폭탄 돌리기, 병맛 우노, 쇼윈도 얼음땡, 무너지는 발판, 컨베이어 서바이벌)</li><li>방 코드로 최대 8명 멀티플레이, 빈자리는 봇으로 채우기</li><li>판마다 10개 중 5개를 무작위로 골라 점수를 합산</li><li>PC 키보드와 휴대폰 터치 조작 지원</li></ul></details></template>
-  <p class="foot">2~8명 · 판마다 36개 미니게임 중 7개 · v0.1 b76 · <a href="../">← Dummy Party 사이트로</a></p>
+  <p class="foot">2~8명 · 판마다 36개 미니게임 중 7개 · v0.1 b77 · <a href="../">← Dummy Party 사이트로</a></p>
   <p class="foot"><span class="ff-copy">© 2026 Frenchfries777 · <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.ko" target="_blank" rel="noopener">CC BY-NC-ND 4.0</a></span></p>
  </div>
 </section>
@@ -7445,7 +7457,7 @@ var BGD = (function () {
 var PREFIX = 'ff-dummyparty-', CODE_CH = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789', MAXP = 8, ROUNDS = 7;
 var PTS = [5, 3, 2, 1];
 var T_INTRO = 6, T_COUNT = 3, T_END = 4.0, T_RESULT = 6;
-var BOT_NAMES = ['멍때리는 마네킹', '쇼윈도 출신', '팔 하나 없는 애', '반짝이 머리', '흐물이', '삐걱이', '하얀 콩', '백화점 탈주범', '자세 장인', '석고상 친구', '무표정', '대머리 신사'];
+var BOT_NAMES = ['방귀쟁이', '홀쭉이', '바보1', '멍청이', '10급 공무원', '교무실 단골', '벌점부자', '말썽이', '김개똥'];
 var qs = new URLSearchParams(location.search);
 
 var G = {
@@ -7709,7 +7721,8 @@ function trimBots(fill) {
   while (bots.length > want) { var b = bots.pop(); G.players.splice(G.players.indexOf(b), 1); }
   var used = G.players.map(function (p) { return p.name; });
   while (bots.length < want) {
-    var nm = BOT_NAMES.filter(function (n) { return used.indexOf(n) < 0; })[0] || ('봇 ' + (bots.length + 1));
+    var pool = BOT_NAMES.filter(function (n) { return used.indexOf(n) < 0; });
+    var nm = pool.length ? pool[Math.floor(Math.random() * pool.length)] : ('봇 ' + (bots.length + 1));
     used.push(nm);
     var nb = { id: 'b' + bots.length + '_' + Math.floor(Math.random() * 1e4), name: nm, color: freeColor(), bot: true, online: true, score: 0, wins: 0, h: Math.floor(Math.random() * HAT_COUNT), g: Math.floor(Math.random() * GL_COUNT) };
     G.players.push(nb); bots.push(nb);
