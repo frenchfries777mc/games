@@ -3040,7 +3040,15 @@ function drawWeaponPersona(c,wid,hx,hy,r,shy,tint,concept){
       c.beginPath(); c.moveTo(hx-r-6,hy-1); c.lineTo(hx,hy-r*2.1); c.lineTo(hx+r+6,hy-1); c.closePath(); c.fill();
       c.strokeStyle='#8a6a3f'; c.lineWidth=1; c.stroke();
       break;
-    case 'magiccard': drawHat(c,'hat_tophat',hx,hy,r,tint); break;
+    case 'magiccard':
+      if(concept==='uno'){      // 우노 마술사: a black top hat with a yellow card band and a fan of four Uno cards poking out (not the red christmas silk hat)
+        drawHat(c,'hat_tophat',hx,hy,r,'#17181f');
+        const fan=[['#e8252b',-0.62],['#ffd21f',-0.2],['#2ba84a',0.2],['#2b6fe8',0.62]];
+        for(const [col,an] of fan){ c.save(); c.translate(hx,hy-r*2.35); c.rotate(an); c.fillStyle='#fff'; c.fillRect(-3.4,-9.4,6.8,10.4); c.fillStyle=col; c.fillRect(-2.6,-8.6,5.2,8.8); c.restore(); }
+        c.fillStyle='#ffd21f'; c.fillRect(hx-r*0.9,hy-r*1.28,r*1.8,2.6);
+        c.fillStyle='#e8252b'; c.fillRect(hx-1.6,hy-r*1.28,3.2,2.6);
+        break; }
+      drawHat(c,'hat_tophat',hx,hy,r,tint); break;
     case 'dracula': // 드라큘라: 송곳니
       c.fillStyle='#ffffff';
       c.beginPath(); c.moveTo(hx-2.4,hy+r*0.5); c.lineTo(hx-1.1,hy+r*0.5+3.6); c.lineTo(hx-3.5,hy+r*0.5); c.closePath(); c.fill();
@@ -5211,7 +5219,7 @@ function ensurePlayerDefaults(p){
 let volleys={}, volleySeq=0;
 let walls=[], hostTimers=[], wallSeq=0, lastMouseX=0, lastMouseY=0;
 let particles=[], fxSeen={}, screenShake=0, lastFxMs=0, prevGround={}, prevHp={}, hitFlashUntil={};
-function pushFx(type,x,y,tMs,extra){ const e=Object.assign({x:x,y:y,type:type,born:tMs/1000,id:++effectIdSeq},extra||{}); if(fxActor && e.ta===undefined && gameMode==='tournament') e.ta=fxActor; effects.push(e); if(isHost && type!=='sfx') replayFxLog.push({t:tMs, e}); }   // (the host also keeps every visual effect for the killcam)
+function pushFx(type,x,y,tMs,extra){ const e=Object.assign({x:x,y:y,type:type,born:tMs/1000,id:++effectIdSeq},extra||{}); if(curAur && e.au===undefined) e.au=1; if(fxActor && e.ta===undefined && gameMode==='tournament') e.ta=fxActor; effects.push(e); if(isHost && type!=='sfx') replayFxLog.push({t:tMs, e}); }   // (the host also keeps every visual effect for the killcam)
 let safeSendFailCount={}; // per-connection count of failed sends, shown on the host's own diagnostic line - a send that silently fails forever for one connection would otherwise be completely invisible on both ends
 function safeSend(conn, data){
   try{ if(conn) conn.send(data); }
@@ -5258,6 +5266,39 @@ let killFeedEl=document.getElementById('killFeed');
 
 const canvas=document.getElementById('game');
 let ctx=canvas.getContext('2d');       // (a `let` only so that drawFigureOn can draw a figure onto a small card canvas for a moment)
+/* 오로라 색 변환 (그랜드 마스터 스킨): AURA 가 켜진 동안 그리는 색은 모두 오로라 색으로 바뀌어요 (흰색과 회색은 그대로).
+   스킬과 궁극기의 효과(입자, 벽, 어둠, 포탑, 마법진, 탄환...)를 하나하나 고치지 않고, 그 효과를 쓴 사람이 그랜드 마스터 스킨이면 그리는 동안만 켜요. */
+let AURA=false, AURA_SPAWN=false, curAur=false;
+const _auraCache=new Map();
+function auraMapColor(v){
+  if(typeof v!=='string') return v;
+  const tb=Math.floor(performance.now()/260), key=v+'|'+tb; let r=_auraCache.get(key); if(r!==undefined) return r;
+  let R,G,B,A=1, m;
+  if((m=/^#([0-9a-f]{3,8})$/i.exec(v))){ let h=m[1]; if(h.length===3||h.length===4) h=h.split('').map(c=>c+c).join(''); R=parseInt(h.slice(0,2),16); G=parseInt(h.slice(2,4),16); B=parseInt(h.slice(4,6),16); if(h.length===8) A=parseInt(h.slice(6,8),16)/255; }
+  else if((m=/^rgba?\(\s*([\d.]+)[,\s]+([\d.]+)[,\s]+([\d.]+)(?:[,\s/]+([\d.]+%?))?\s*\)$/i.exec(v))){ R=+m[1]; G=+m[2]; B=+m[3]; if(m[4]!==undefined) A=m[4].endsWith('%')?parseFloat(m[4])/100:+m[4]; }
+  else r=v;
+  if(r===undefined){
+    const mx=Math.max(R,G,B)/255, mn=Math.min(R,G,B)/255, l=(mx+mn)/2, d=mx-mn;
+    if(d<0.12 || l>0.94 || l<0.05) r=v;
+    else {
+      const sat=d/(1-Math.abs(2*l-1)); let h=0; const rr=R/255, gg=G/255, bb=B/255;
+      if(mx===rr) h=((gg-bb)/d)%6; else if(mx===gg) h=(bb-rr)/d+2; else h=(rr-gg)/d+4; h=((h*60)+360)%360;
+      const ah=140+(((h/360)*1.9+performance.now()/3200)%1)*185;                 // the old hue picks a place on the aurora band (green - teal - blue - violet - pink), and the band slowly flows
+      r='hsla('+ah.toFixed(0)+','+Math.round(Math.max(0.78,sat)*100)+'%,'+Math.round(Math.max(0.5,Math.min(0.74,l))*100)+'%,'+A.toFixed(3)+')';
+    }
+  }
+  if(_auraCache.size>3000) _auraCache.clear();
+  _auraCache.set(key,r); return r;
+}
+(function(){ try{
+  const proto=CanvasRenderingContext2D.prototype;
+  for(const k of ['fillStyle','strokeStyle','shadowColor']){ const d=Object.getOwnPropertyDescriptor(proto,k); if(!d||!d.set) continue;
+    Object.defineProperty(ctx,k,{configurable:true, enumerable:true, get(){ return d.get.call(this); }, set(v){ d.set.call(this, AURA?auraMapColor(v):v); }}); }
+  for(const k of ['createLinearGradient','createRadialGradient']){ const f=proto[k]; if(!f) continue;
+    ctx[k]=function(){ const g=f.apply(this, arguments); if(AURA){ const ac=g.addColorStop.bind(g); g.addColorStop=(o,c)=>ac(o,auraMapColor(c)); } return g; }; }
+}catch(e){} })();
+function gmOwner(id){ const o=id!==undefined && players[id]; return !!(o && typeof isGmSkin==='function' && isGmSkin(o)); }
+
 const HUD_BAR_H=68;
 function resize(){ canvas.width=innerWidth; canvas.height=Math.max(200, innerHeight-HUD_BAR_H); }
 window.addEventListener('resize', resize); resize();
@@ -5272,7 +5313,7 @@ function shuffle(arr){ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.
 /* ===== the version of this file =====
    Players with different versions CAN meet and play together: the automatic matchmaking uses the same room names for every version (online-<mode>-<map>-<slot>), and nobody is refused because of a different build.
    The build is only sent along with the join message and the lobby (for information); the corner of the screen shows it. */
-const GAME_BUILD='build 2026-10-18-v436';
+const GAME_BUILD='build 2026-10-18-v437';
 const GAME_VERSION='0.8', GAME_VERSION_NAME='황금을 찾아서';   // 게임 버전 이름: versions.json의 title과 같게 (빌드마다 바꾸지 않음)
 const WEEKLY_EVENTS=[
   {id:'lowg',    name:'저중력 난투', desc:'몸이 둥실둥실, 중력이 약해진 난투', rules:{grav:0.6}},
@@ -10859,7 +10900,7 @@ function makeWeaponOffers(){ // random-weapon mode: 3 random weapons per player,
   }
 }
 /* ---- 캐릭터 금지: before the pick, each side (the two players of a duel, or the leader of each of the two teams) bans one character the other side cannot choose ---- */
-const BAN_MS=20000;
+const BAN_MS=15000;
 function banSideKey(p){ return (p.team===null||p.team===undefined) ? p.id : 't'+p.team; }
 function banEligible(){       // duel (also the ranked one) and team battle, normal pick only
   if(weaponMode==='random' || !(gameMode==='duel' || gameMode==='team')) return false;
@@ -11609,7 +11650,7 @@ const ULT_IMPL = {
     pushFx('blink', p.x, p.y-30, tMs, {color:'#c17bff'});
     p.x=tg.x; p.y=tg.y; p.vx=0; p.vy=0; p.kbX=0;
     pushFx('blink', p.x, p.y-30, tMs, {color:'#c17bff'});
-    hostTimers.push({ta:fxActor, at:tSec+1, fn:(tt)=>{
+    hostTimers.push({au:curAur, ta:fxActor, at:tSec+1, fn:(tt)=>{
       if(!p.alive) return;
       p.x=origX; p.y=origY; p.vx=0; p.vy=0; p.kbX=0;
       pushFx('blink', p.x, p.y-30, tt, {color:'#c17bff'});
@@ -11646,11 +11687,11 @@ const ULT_IMPL = {
     p.samUltUntil=tSec+0.25+(list.length+1)*0.22;                                    // untouchable until he is back home
     pushFx('samult', p.x, p.y-34, tMs, {});
     for(const tg of list){ k++;
-      hostTimers.push({ta:fxActor, at:tSec+0.05+k*0.22, fn:(tt)=>{ if(!p.alive || !tg.alive) return; const side=(tg.x>=p.x)?-1:1;
+      hostTimers.push({au:curAur, ta:fxActor, at:tSec+0.05+k*0.22, fn:(tt)=>{ if(!p.alive || !tg.alive) return; const side=(tg.x>=p.x)?-1:1;
         for(const sx of [side,-side]){ const x=tg.x+sx*44; if(skillSpotFree(x,tg.y)){ pushFx('blink', p.x, p.y-30, tt, {color:'#eef2f8'}); p.x=x; p.y=tg.y; p.vx=p.vy=p.kbX=0; p.angle=(x<tg.x)?0:Math.PI; break; } }
         skillDamage(p, tg, 25, tt, {kb:120, up:120}); pushFx('spark', tg.x, tg.y-34, tt, {ang:Math.random()*6.28, color:'#ffffff'}); pushFx('samcut', tg.x, tg.y-34, tt, {ang:Math.random()*3.14}); } });
     }
-    hostTimers.push({ta:fxActor, at:tSec+0.1+(list.length+1)*0.22, fn:(tt)=>{ if(!p.alive) return; if(skillSpotFree(home.x,home.y)){ pushFx('blink', p.x, p.y-30, tt, {color:'#eef2f8'}); pushFx('iai', p.x, p.y-34, tt, {x2:home.x, y2:home.y-34}); pushFx('samfin', home.x, home.y, tt, {}); p.x=home.x; p.y=home.y; p.vx=p.vy=p.kbX=0; } }});
+    hostTimers.push({au:curAur, ta:fxActor, at:tSec+0.1+(list.length+1)*0.22, fn:(tt)=>{ if(!p.alive) return; if(skillSpotFree(home.x,home.y)){ pushFx('blink', p.x, p.y-30, tt, {color:'#eef2f8'}); pushFx('iai', p.x, p.y-34, tt, {x2:home.x, y2:home.y-34}); pushFx('samfin', home.x, home.y, tt, {}); p.x=home.x; p.y=home.y; p.vx=p.vy=p.kbX=0; } }});
     return true; },
   pirate(p,tSec,tMs){ turrets=turrets.filter(z=>z.owner!==p.id); turrets.push({owner:p.id, team:p.team, x:p.x, y:p.y, until:tSec+PIRATE_TURRET_SEC, next:tSec+0.7, ang:(Math.cos(p.angle||0)>=0)?-0.6:Math.PI+0.6}); pushFx('skillring', p.x, p.y-24, tMs, {color:'#ffb347', r:60}); pushFx('sfx', p.x, p.y-30, tMs, {name:'explosion'}); },
   wizard(p,tSec,tMs,ax,ay){ const sp=wizardCircleSpot(p, ax, ay); magicCircles.push({owner:p.id, team:p.team, x:sp.x, y:sp.y, r:WIZ_CIRCLE_R, until:tSec+WIZ_CIRCLE_SEC}); pushFx('magiccircle', sp.x, sp.y, tMs, {}); },
@@ -11671,7 +11712,7 @@ const ULT_IMPL = {
     pushFx('forcelightning', hx, hy, tMs, {tx:headX, ty:headY, dur:0.55, color:'#9fb4ff'});
     skillDamage(p, tg, 15, tMs, {});
     const goal={x:tg.x, y:tg.y};
-    hostTimers.push({ta:fxActor, at:tSec+0.3, fn:(tt)=>{
+    hostTimers.push({au:curAur, ta:fxActor, at:tSec+0.3, fn:(tt)=>{
       if(!p.alive) return;
       const gx=tg.alive?tg.x:goal.x, gy=tg.alive?tg.y:goal.y;
       const side=(p.x<gx)?-1:1; let nx=gx+side*54, ny=gy;                 // on the side the caster came from, beside the enemy
@@ -11684,7 +11725,7 @@ const ULT_IMPL = {
     const spot=swordFallSpot(p, ax, ay); if(!spot) return false;
     const sx=spot.x, iy=spot.y, dur=0.7;
     pushFx('swordfall', sx, iy, tMs, {dur:dur, gold:conceptOfP(p)==='gold'?1:0});
-    hostTimers.push({ta:fxActor, at:tSec+dur, fn:(tt)=>{
+    hostTimers.push({au:curAur, ta:fxActor, at:tSec+dur, fn:(tt)=>{
       let slain=0;
       for(const o of enemiesOf(p)){
         if(Math.abs(o.x-sx)<=SKY_SWORD_HALF && o.y>=iy-340 && o.y<=iy+60){
@@ -11704,7 +11745,7 @@ const ULT_IMPL = {
     const w=WEAPONS.shotgun, aim0=aimAngleOf(p,ax,ay);
     const blast=()=>{ if(!p.alive) return; const a=aim0; for(let i=0;i<w.pellets;i++) spawnBullet(p, a+(Math.random()-0.5)*0.65, w, {ult:true}); };
     blast();
-    hostTimers.push({ta:fxActor, at:tSec+0.2, fn:blast}, {at:tSec+0.4, fn:blast});
+    hostTimers.push({au:curAur, ta:fxActor, at:tSec+0.2, fn:blast}, {at:tSec+0.4, fn:blast});
   },
   gloves(p,tSec){ p.rushUntil=tSec+4; },
   grenade(p,tSec,tMs,ax,ay){ const w=WEAPONS.grenade, a0=aimAngleOf(p,ax,ay); for(let i=0;i<5;i++){ const w2=Object.assign({}, w, {dmg:35, bulletSpeed:420+Math.random()*260}); spawnBullet(p, a0+(i-2)*0.17, w2, {splash:85, big:true, ult:true, noSelf:true}); } },
@@ -11747,7 +11788,8 @@ const ULT_IMPL = {
     pushFx('portalopen', bx, by-30, tMs, {});
   }
 };
-function tryUltimate(p, tMs, aimX, aimY, viaClick){
+function tryUltimate(p, tMs, aimX, aimY, viaClick){ const o=curAur; curAur=isGmSkin(p); try{ return tryUltimate0(p, tMs, aimX, aimY, viaClick); } finally{ curAur=o; } }
+function tryUltimate0(p, tMs, aimX, aimY, viaClick){
   if(duelPick) return;                       // (between duel rounds, while the weapons are being picked again, nobody can act)
   if(!p || !p.alive || !MAP || matchEnded) return;
   if(puppetVictim(p, tMs/1000)) return;                            // a puppet cannot use its ultimate
@@ -11760,7 +11802,7 @@ function tryUltimate(p, tMs, aimX, aimY, viaClick){
   p.lastUlt=tSec;
   p.ultUses=(p.ultUses||0)+1;                    // (counted per match: the "character" achievements)
   if(isGmSkin(p)) pushFx('aurora', p.x, p.y-34, tMs, {big:1});
-  if(viaClick && ARM_FIRE_ULTS[ulW(p)] && hasAim(aimX,aimY)) hostTimers.push({ta:fxActor, at:tSec+0.05, fn:(tt)=>{ if(p.alive && p.ultPending) tryFire(p, aimAngleOf(p,aimX,aimY), tt); }});   // (one tick later, so the armed shot is the one that flies)
+  if(viaClick && ARM_FIRE_ULTS[ulW(p)] && hasAim(aimX,aimY)) hostTimers.push({au:curAur, ta:fxActor, at:tSec+0.05, fn:(tt)=>{ if(p.alive && p.ultPending) tryFire(p, aimAngleOf(p,aimX,aimY), tt); }});   // (one tick later, so the armed shot is the one that flies)
   recordReplayEvent(p.id, 'ult', {weapon:ulW(p)});
   pushFx('ult', p.x, p.y-40, tMs, {color:p.color, name:(ULTS[ulW(p)]||{}).name||''});
   { const uw=ulW(p); if(uw!=='samurai' && uw!=='sword' && uw!=='bazooka' && uw!=='grenade' && uw!=='kurus') pushFx('ultfx', p.x, p.y-34, tMs, {w:uw}); }
@@ -12071,7 +12113,7 @@ const SKILL_IMPL={
   magiccard(p,tSec,tMs,ax,ay){   // five cards one behind the other along the aim (no spread, no combo)
     const a=(ax===undefined||ay===undefined) ? (p.angle||0) : Math.atan2(ay-(p.y-40), ax-p.x);
     const w2=Object.assign({}, WEAPONS.magiccard, {dmg:CARD_LINE_DMG, bulletSpeed:980});
-    for(let k=0;k<CARD_LINE_N;k++) hostTimers.push({ta:fxActor, at:tSec+k*0.07, fn:()=>{ if(p.alive){ spawnBullet(p, a, w2, {cardLine:true}); pushFx('sfx', p.x, p.y-40, performance.now(), {name:'magiccard'}); } }});
+    for(let k=0;k<CARD_LINE_N;k++) hostTimers.push({au:curAur, ta:fxActor, at:tSec+k*0.07, fn:()=>{ if(p.alive){ spawnBullet(p, a, w2, {cardLine:true}); pushFx('sfx', p.x, p.y-40, performance.now(), {name:'magiccard'}); } }});
     return true; },
   flamethrower(p,tSec,tMs,ax){      // 화염 돌진: a rush along the aim direction - everyone on the way takes 20 damage and burns, and the floor behind stays on fire for 3 s
     const dir=skillAimDir(p,ax), x0=p.x, y0=p.y, best=skillMoveSpot(p, x0+dir*FIRE_DASH_LEN, y0), x1=best.x;
@@ -12090,7 +12132,7 @@ const SKILL_IMPL={
       if(p.portalBlastPair===p.portalPair) return false;
       const pr=p.portalPair; p.portalBlastPair=pr;
       pushFx('portalsmoke', pr.a.x, pr.a.y-30, tMs, {}); pushFx('portalsmoke', pr.b.x, pr.b.y-30, tMs, {});
-      hostTimers.push({ta:fxActor, at:tSec+PORTAL_BLAST_DELAY, fn:(tt)=>{
+      hostTimers.push({au:curAur, ta:fxActor, at:tSec+PORTAL_BLAST_DELAY, fn:(tt)=>{
         p.portalBlastPair=null;
         if(p.portalPair!==pr) return;
         for(const q of [pr.a, pr.b]){
@@ -12145,7 +12187,8 @@ const SKILL_IMPL={
     for(const id in players){ const t=players[id]; if(!t.alive || id===p.id || t.x===undefined || isAlly(p,t) || t.swordCharge || t.darkSub) continue; if(Math.hypot(t.x-p.x,(t.y-PLAYER_H/2)-(p.y-PLAYER_H/2))<=VAC_SKILL_R) stunPlayer(t, VAC_SKILL_STUN, tMs); }
     pushFx('vacvortex', p.x, p.y-30, tMs, {r:VAC_SKILL_R}); return true; }
 };
-function trySkill(p, tMs, aimX, aimY){
+function trySkill(p, tMs, aimX, aimY){ const o=curAur; curAur=isGmSkin(p); try{ return trySkill0(p, tMs, aimX, aimY); } finally{ curAur=o; } }
+function trySkill0(p, tMs, aimX, aimY){
   if(duelPick) return;                       // (between duel rounds, while the weapons are being picked again, nobody can act)
   if(!p || !p.alive || !MAP || matchEnded) return;
   if(isStunned(p, tMs/1000)) return;
@@ -12605,7 +12648,8 @@ function fireVacuum(p, angle, w, tMs){
     if(target.hp<=0){ handleDeath(target, p, tMs, p.name); continue; }
   }
 }
-function tryFire(p, angle, tMs){
+function tryFire(p, angle, tMs){ const o=curAur; curAur=isGmSkin(p); try{ return tryFire0(p, angle, tMs); } finally{ curAur=o; } }
+function tryFire0(p, angle, tMs){
   if(puppetMaster(p, tMs/1000) || (puppetVictim(p, tMs/1000) && !puppetOK)) return;   // same for shots
   if(duelPick) return;                       // (between duel rounds, while the weapons are being picked again, nobody can act)
   if(!p || !p.alive) return;
@@ -12668,7 +12712,7 @@ function tryFire(p, angle, tMs){
     spawnBullet(p, useAngle+spreadOf(), w);
     for(let i=1;i<w.burst;i++){
       const delay=i*(w.burstDelay||0.07);
-      hostTimers.push({ta:fxActor, at:tSec+delay, fn:()=>{ if(p.alive) spawnBullet(p, p.angle+spreadOf(), w); }});
+      hostTimers.push({au:curAur, ta:fxActor, at:tSec+delay, fn:()=>{ if(p.alive) spawnBullet(p, p.angle+spreadOf(), w); }});
     }
     return;
   }
@@ -12705,7 +12749,7 @@ const BOT_NAMES_BY_LANG={
 };
 BOT_NAMES_BY_LANG.gk=BOT_NAMES_BY_LANG.ko;   // 번역기 한국어 keeps the Korean names
 const BOT_PREFIX_BY_LANG={ko:'봇 ', ja:'ボット ', zh:'机器人', ru:'Бот ', nw:'', gk:'로봇 '};
-function botLang(){ try{ const l=window.__lang&&window.__lang(); return BOT_NAMES_BY_LANG[l]?l:'en'; }catch(e){ return 'ko'; } }
+function botLang(){ if(typeof DED_HOST!=='undefined' && DED_HOST) return 'ko'; try{ const l=window.__lang&&window.__lang(); return BOT_NAMES_BY_LANG[l]?l:'en'; }catch(e){ return 'ko'; } }
 const BOT_NAMES=BOT_NAMES_BY_LANG.ko;       // (the names of the bots; one name is never used twice in a room - when more bots are needed than there are names, a number is added: 봇 제현2)
 // 제현 is a bot with a character of its own by NAME (brilliant, whatever the room's bot level is).
 // The PERSONALITIES are not names: every other bot gets one (or none) when it joins and nothing on the screen tells which. They only change how it fights:
@@ -13944,6 +13988,7 @@ function drawDarkPools(list){
   const now=performance.now();
   for(const z of list){
     if(!tnOwnerShown(z.owner)) continue;
+    AURA=gmOwner(z.owner);
     const w=z.x1-z.x0; if(w<2 || !inView((z.x0+z.x1)/2, z.y, w)) continue;
     const ag=(z.t0!==undefined) ? performance.now()/1000-z.t0 : z.age, fade=1, grow=clamp((ag===undefined?1:ag)/0.25, 0.25, 1);
     const cx=(z.x0+z.x1)/2, hw=w/2*grow;
@@ -14129,7 +14174,7 @@ function hostTickCore(dt,t){
   if(turrets.length) turretTick(dt,t);
   fxActor=null; mapHazardTick(dt,t);
   { const ts=t/1000;
-    for(let i=hostTimers.length-1;i>=0;i--){ if(ts>=hostTimers[i].at){ const tm=hostTimers.splice(i,1)[0]; if(!matchEnded) tnRun(tm.ta, ()=>tm.fn(t)); } }
+    for(let i=hostTimers.length-1;i>=0;i--){ if(ts>=hostTimers[i].at){ const tm=hostTimers.splice(i,1)[0]; if(!matchEnded) tnRun(tm.ta, ()=>{ const o=curAur; curAur=!!tm.au; try{ tm.fn(t); } finally{ curAur=o; } }); } }
     if(walls.length){
       walls = walls.filter(w=>{
         if(w.until>ts) return true;
@@ -15187,7 +15232,7 @@ function explodeBombHolder(t){
     announceMatchEnd('생존자 승리! ('+survivors.map(p=>p.name).join(', ')+')', survivors.map(p=>p.id));
   } else {
     broadcastAll({t:'hotpotatoRound', bombHolderId:null, bombTimerEndsAt:0});
-    hostTimers.push({ta:fxActor, at:t/1000+HOTPOTATO_ROUND_GAP, fn:()=>{ if(!matchEnded) startHotpotatoRound(); }});
+    hostTimers.push({au:curAur, ta:fxActor, at:t/1000+HOTPOTATO_ROUND_GAP, fn:()=>{ if(!matchEnded) startHotpotatoRound(); }});
   }
 }
 function checkEliminationWinCondition(t){
@@ -16295,7 +16340,7 @@ const RND=(a,b)=>a+Math.random()*(b-a);
 function addP(o){
   if(tnVisSet && gameMode==='tournament' && o.x!==undefined && !tnFxNear(o)) return;      // tournament: nothing of the other fights is ever drawn
   if(particles.length>(fxQuality>=2?600:(fxQuality===1?450:300))) particles.splice(0,150);
-  particles.push(Object.assign({x:0,y:0,vx:0,vy:0,grav:0,drag:0,size:3,shape:'dot',add:true,rot:0,vr:0,color:'#fff'}, o, {max:o.life}));
+  particles.push(Object.assign({x:0,y:0,vx:0,vy:0,grav:0,drag:0,size:3,shape:'dot',add:true,rot:0,vr:0,color:'#fff'}, o, {max:o.life, au:AURA_SPAWN}));
 }
 function burst(x,y,n,o){
   for(let i=0;i<n;i++){
@@ -16353,7 +16398,8 @@ function drawSamScreen(){          // screen-space: the dim of the ultimate (wit
   if(fa>0.01){ ctx.save(); ctx.setTransform(1,0,0,1,0,0); ctx.fillStyle='rgba('+samScreen.flashCol+','+fa+')'; ctx.fillRect(0,0,W,H); ctx.restore(); }
 }
 function isGmSkin(p){ const sk=p && p.cos && p.cos.skin && p.cos.skin[p.weapon]; return !!(sk && COSMETICS[sk] && COSMETICS[sk].lux>=4); }       // 그랜드 마스터 skin on the character in use
-function spawnFx(e){
+function spawnFx(e){ AURA_SPAWN=!!e.au; try{ return spawnFx0(e); }finally{ AURA_SPAWN=false; } }
+function spawnFx0(e){
   const x=e.x, y=e.y, col=e.color||'#ffd34d';
   const FQ=fxQuality>=2?1:(fxQuality===1?0.55:0.2), RN=fxQuality>=2?3:(fxQuality===1?2:1), BL=fxQuality>=2?12:(fxQuality===1?8:4);   // the big ultimate effects scale down with the graphics setting
   const bu=(bx,by,n,o)=>burst(bx,by,Math.max(2,Math.round(n*FQ)),o);
@@ -16929,6 +16975,7 @@ function drawWalls(list){
   const now=performance.now();
   for(const wl of (list||walls)){
     if(!list && !tnOwnerShown(wl.owner)) continue;
+    AURA=gmOwner(wl.owner);
     const fade=Math.min(1,(wl.rem===undefined?1:wl.rem)/0.6);
     ctx.save(); ctx.globalAlpha=0.9*fade;
     if(wl.isShield){
@@ -16975,6 +17022,7 @@ function drawPortals(list){
 function drawTurrets(list){
   for(const z of (list||turrets)){
     if(!list && !tnOwnerShown(z.owner)) continue;
+    AURA=gmOwner(z.owner);
     const fade=Math.min(1,(z.rem===undefined?1:z.rem)/0.5), ang=(z.a!==undefined?z.a:z.ang)||0;
     ctx.save(); ctx.globalAlpha=fade; ctx.translate(z.x, z.y);
     ctx.fillStyle='#6b4423'; ctx.strokeStyle='#2c1a0a'; ctx.lineWidth=2;                      // carriage
@@ -16991,6 +17039,7 @@ function drawPoisonZones(){
   const now=performance.now();
   for(const z of poisonZones){
     if(!tnOwnerShown(z.owner)) continue;
+    AURA=gmOwner(z.owner);
     const shown=(z.revealAt!==undefined) || z.rv || z.owner===myId;      // the poison floor: only 칸 sees it until somebody steps on it
     if(!shown) continue;
     let rem=z.rem; if(rem===undefined) rem=z.until-performance.now()/1000;
@@ -17018,6 +17067,7 @@ function drawMagicCircles(list){
   const now=performance.now();
   for(const z of (list||magicCircles)){
     if(!list && !tnOwnerShown(z.owner)) continue;
+    AURA=gmOwner(z.owner);
     const fade=Math.min(1,(z.rem===undefined?1:z.rem)/0.6);
     ctx.save(); ctx.globalAlpha=0.85*fade;
     ctx.globalCompositeOperation='lighter';
@@ -17064,6 +17114,7 @@ function drawParticles(){
     ctx.globalCompositeOperation = pass===0 ? 'source-over' : 'lighter';
     for(const q of particles){
       if((pass===1)!==q.add) continue;
+      AURA=!!q.au;
       if(viewBox && !inView(q.x,q.y,150) && !(q.x2!==undefined && inView(q.x2,q.y2,150))) continue;       // off the screen: still ages and moves (above), is not drawn
       const t=1-q.life/q.max, a=1-t;
       switch(q.shape){
@@ -17117,6 +17168,7 @@ function drawParticles(){
     }
   }
   ctx.restore();
+  AURA=false;
 }
 const MELEE_DRAW_RANGE={spear:160, blade:85, club:82, dagger:40, fist:45, saber:100, pitchfork:105, hook:55, katana:90};   // the reach the swing graphics were drawn for
 const CONCEPT_COLOR={gold:'#ffd34d', fry:'#ffd34d', cupid:'#ff6fae', banana:'#ffe14d'};
@@ -17301,6 +17353,7 @@ function luxFx(b, fx, swing, now, sp){
   }
 }
 function drawProjectile(b){
+  AURA=gmOwner(b.owner) || !!(b.sk && COSMETICS[b.sk] && COSMETICS[b.sk].lux>=4);
   const cp=b.sk?conceptOfSkin(b.sk):'';
   if(cp && drawConceptProjectile(b,cp)) return;
   drawProjectileBase(b); drawBulletSkinFx(b);
@@ -17496,7 +17549,7 @@ function drawProjectileBase(b){
   ctx.restore();
 }
 function drawFigure(p){ const sa=staggerAngle(p); if(sa){ ctx.save(); ctx.translate(p.x,p.y); ctx.rotate(sa); ctx.translate(-p.x-sa*10,-p.y); drawFigure0(p); ctx.restore(); return; } drawFigure0(p); }
-function drawFigure0(p){ if(p.isBoss){ ctx.save(); ctx.translate(p.x,p.y); ctx.scale(RAID_BOSS_SCALE,RAID_BOSS_SCALE); ctx.translate(-p.x,-p.y); drawBoss(p); ctx.restore(); } else drawStickman(p); }
+function drawFigure0(p){ if(p.isBoss){ ctx.save(); ctx.translate(p.x,p.y); ctx.scale(RAID_BOSS_SCALE,RAID_BOSS_SCALE); ctx.translate(-p.x,-p.y); drawBoss(p); ctx.restore(); } else { drawStickman(p); AURA=false; } }
 function drawBoss(p){
   const now=performance.now(), flash=((hitFlashUntil[p.id]||0)>now), en=!!((raidView||(isHost&&buildRaidView()))&&(raidView||buildRaidView()).en);
   const ang=p.angle||0, face=Math.cos(ang)>=0?1:-1, ph=animPhases[p.id]||0, moving=Math.abs(p.vx||0)>10, bob=moving?Math.sin(ph*1.2)*2.5:Math.sin(now/420)*1.5;
@@ -17573,6 +17626,7 @@ function drawStickman(p){
   else if(p.weapon==='flamethrower'){ drawOxygenTank(ctx, -42); }
   else if(p.cos && p.cos.cape){ drawCape(ctx,p.cos.cape,(Math.cos(p.angle||0)>=0)?-1:1, Math.sin(performance.now()/160)*2+Math.min(8,Math.abs(p.vx||0)/40), -42); }
   const luxLv=(skinId && COSMETICS[skinId] && COSMETICS[skinId].lux) || 0, luxNow=performance.now(), luxSeed=((p.id||'').length*7+((p.id||'x').charCodeAt(0)||0))%97;
+  AURA=(luxLv>=4 && p.alive!==false);          // (the figure, its weapon and its skill effects are drawn in aurora colours; the name below is not)
   if(luxLv && p.alive!==false) drawSkinLux(ctx, luxLv, skinTint, luxNow, luxSeed, 'back');
   if(p.kw && p.alive!==false) drawKanWings(ctx, luxNow);
   if(p.pp && players[p.pp] && p.alive!==false){ const q=players[p.pp], dx=(q.x-p.x), dy=(q.y-p.y); ctx.save(); ctx.strokeStyle='#ffd0e6'; ctx.lineWidth=1.6; ctx.globalAlpha=0.9; ctx.setLineDash([6,4]); ctx.lineDashOffset=-performance.now()/40; ctx.beginPath(); ctx.moveTo(0,-34); ctx.quadraticCurveTo(dx/2, Math.min(-34,dy-60)-24, dx, dy-60); ctx.stroke(); ctx.restore(); }   // 인형술사: the strings to his puppet
@@ -17606,7 +17660,7 @@ function drawStickman(p){
     if(p.stunned && p.alive) drawStunStars(ctx, HEADCY);
     ctx.restore();
     ctx.font='600 13px Rajdhani'; ctx.textAlign='center'; ctx.fillStyle=nameColorFor(p.cos&&p.cos.name);
-    ctx.fillText((p.clan?'['+p.clan+'] ':'')+p.name, p.x, p.y+HEADCY-38); drawTitleTag(ctx, p, HEADCY); drawEmote(ctx, p, HEADCY);
+    AURA=false; ctx.fillText((p.clan?'['+p.clan+'] ':'')+p.name, p.x, p.y+HEADCY-38); drawTitleTag(ctx, p, HEADCY); drawEmote(ctx, p, HEADCY);
     drawOverheadExtras(p, HEADCY);
     return;
   }
@@ -17652,7 +17706,7 @@ function drawStickman(p){
   if(p.stunned && p.alive) drawStunStars(ctx, HEADCY);
   ctx.restore();
   ctx.font='600 13px Rajdhani'; ctx.textAlign='center'; ctx.fillStyle=nameColorFor(p.cos&&p.cos.name);
-  ctx.fillText((p.clan?'['+p.clan+'] ':'')+p.name, p.x, p.y+HEADCY-38); drawTitleTag(ctx, p, HEADCY); drawEmote(ctx, p, HEADCY);
+  AURA=false; ctx.fillText((p.clan?'['+p.clan+'] ':'')+p.name, p.x, p.y+HEADCY-38); drawTitleTag(ctx, p, HEADCY); drawEmote(ctx, p, HEADCY);
   drawOverheadExtras(p, HEADCY);
 }
 function drawStunStars(ctx, HEADCY){   // three little stars circling over the head (drawn in the player's own coordinates)
