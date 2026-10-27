@@ -3,7 +3,7 @@
 
 import { T } from './tr.js';
 
-export const VERSION = 'v0.1', BUILD = 25;
+export const VERSION = 'v0.1', BUILD = 26;
 
 export const ROLES = {
   knight: {
@@ -340,6 +340,8 @@ export const CHAPTERS = [{
   id: 1, pvp: 1, title: T('투기장'), place: T('투기장'), diff: 1, introT: 3.5,
     boss: {}, theme: 'dungeon', map: arenaMap()
 }];
+// 투기장 분위기: 판마다 고르거나 무작위 (바닥·벽·하늘 색이 달라져요)
+export const ARENA_THEMES = [{ id: 'dungeon', name: T('지하 투기장') }, { id: 'forest', name: T('숲') }, { id: 'frost', name: T('얼음 성') }, { id: 'temple', name: T('불의 사원') }, { id: 'abyss', name: T('심연') }];
 // 게임 중 대사: 장마다 구역에 처음 들어가면(숫자는 구역 순서), boss는 보스가 나타날 때
 // 기사는 하오체, 궁수는 반말, 사제는 존댓말, 종자는 밝은 해요체로 말해요
 export const TALK = [
