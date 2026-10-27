@@ -200,3 +200,5 @@ patchnotes.json | v446 title | 스킨 투사체 입자 정리 | build 446 | 2026
 patchnotes.json | v446 items[0] | 4000 sC 스킨과 그랜드 마스터 스킨의 투사체에 붙던 휘두르기식 입자 제거 | build 446 | 2026-10-27
 patchnotes.json | v447 title | 스킨 검색, 시즌 패스 스킨 맨 아래 | build 447 | 2026-10-27
 patchnotes.json | v447 items[0] | 상점 스킨 검색 기능 추가 시즌 패스 스킨을 스킨 목록 맨 아래로 이동 경기 화면 위쪽 줄의 빌드 표시 제거 | build 447 | 2026-10-27
+patchnotes.json | v448 title | 입냄새 학살자 냄새 연출, 학살자 공격 범위 표현 | build 448 | 2026-10-27
+patchnotes.json | v448 items[0] | 입냄새 학살자 공격을 입김 구름과 물결 냄새 줄기, 이모지로 변경 학살자 일반 공격 입자 범위 확대 | build 448 | 2026-10-27
