@@ -210,3 +210,5 @@ patchnotes.json | v451 title | 거대 점령전 맵 확대 | build 451 | 2026-10
 patchnotes.json | v451 items[0] | 거대 점령전 맵 가로 길이 2배 확대 거대 점령전 좌우 깃발 위치를 양 팀 스폰에서 더 멀게 조정 | build 451 | 2026-10-27
 patchnotes.json | v452 title | 폭풍 해적선 맵 고정 | build 452 | 2026-10-27
 patchnotes.json | v452 items[0] | 폭풍 해적선 맵의 갑판이 좌우로 움직이지 않도록 고정 | build 452 | 2026-10-27
+patchnotes.json | v453 title | 스킨 아바타 그림 선택 | build 453 | 2026-10-27
+patchnotes.json | v453 items[0] | 프로필 아바타 선택의 착용품을 글자 대신 외형 그림으로 표시 현재 착용품 이름을 착용품 제목 옆에 표시 | build 453 | 2026-10-27
