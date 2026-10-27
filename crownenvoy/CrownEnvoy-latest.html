@@ -323,7 +323,7 @@ input[type=checkbox]{accent-color:var(--gold)}
 @media (min-width:861px){
 #lobbyRight.wide #lobbyRoom .rscroll{display:grid;grid-template-columns:minmax(250px,310px) 1fr;grid-template-rows:auto auto auto 1fr;column-gap:24px;align-content:start}
 #lobbyRight.wide #lobbyRoom .plaque{grid-column:1;grid-row:1}#lobbyRight.wide #lobbyRoom .seats{grid-column:1;grid-row:2;margin-top:6px}#lobbyRight.wide #lobbyRoom #roomCount{grid-column:1;grid-row:3}
-#lobbyRight.wide #lobbyRoom .modeseg{grid-column:2;grid-row:1;margin-top:0}#lobbyRight.wide #lobbyRoom #tplBox{grid-column:2;grid-row:2 / span 2}#lobbyRight.wide #lobbyRoom #lenBox{grid-column:2;grid-row:4;align-self:start}
+#lobbyRight.wide #lobbyRoom .modeseg{grid-column:2;grid-row:1;margin-top:0}#lobbyRight.wide #lobbyRoom #tplBox{grid-column:2;grid-row:2 / span 2}#lobbyRight.wide #lobbyRoom #lenBox{grid-column:2;grid-row:4;align-self:start}#lobbyRight.wide #lobbyRoom #secBox{grid-column:2;grid-row:5;align-self:start}
 }
 @media (max-width:860px){#lobbyRight.wide{width:min(560px,calc(100vw - 24px))}#lobbyRight.wide #tplBox{display:block}#lobbyRight.wide #tplBox .tpls{max-height:230px;overflow:auto}}
 
@@ -453,7 +453,7 @@ try{if(sessionStorage.getItem('ce_noIntro')){sessionStorage.removeItem('ce_noInt
 sting();})();</script>
 <div id="app">
  <div id="lobby" class="screen">
-  <canvas id="lobbyBg"></canvas><canvas id="lobbyWar"></canvas><div id="cpTag">© 2026 Frenchfries777 · <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.ko" target="_blank" rel="noopener">CC BY-NC-ND 4.0</a></div><div id="verTag">v0.5 · build 112</div>
+  <canvas id="lobbyBg"></canvas><canvas id="lobbyWar"></canvas><div id="cpTag">© 2026 Frenchfries777 · <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.ko" target="_blank" rel="noopener">CC BY-NC-ND 4.0</a></div><div id="verTag">v0.5 · build 113</div>
   <header class="brand"><h1>Crown Envoy</h1><div class="sub"><i></i>DIPLOMACY · WAR · EMPIRE<i></i></div></header>
   <div id="lobbyRight">
    <div id="lobbyHome" class="modes">
@@ -510,6 +510,7 @@ sting();})();</script>
      <div id="mapBox"><div class="maps" id="mapList"></div><p class="mapdesc" id="mapDesc"></p></div>
      <div id="tplBox" class="hidden"><div class="tplbar" id="tplBar"><input type="search" id="tplQ" placeholder="이름·연도·나라로 찾기" autocomplete="off" aria-label="시나리오 검색"><div class="tplcats" id="tplCats"><button data-cat="all">전체</button><button data-cat="base">기본</button><button data-cat="mine">내가 만든 것</button><button data-cat="got">받은 것</button></div><select id="tplSort" aria-label="정렬"><option value="era">연대순</option><option value="name">이름순</option><option value="nat">나라 많은 순</option><option value="star">별 높은 순</option><option value="plays">많이 한 순</option></select><span class="muted-d" id="tplCnt"></span><div class="tplcats" id="tplTags" style="flex:1 1 100%"></div></div><div class="tpls" id="tplList"></div><p class="mapdesc" id="tplDesc"></p><div id="tplInfo" class="tplinfo"></div></div>
      <div id="lenBox" class="lenbox"><span class="muted-d">게임 길이</span><div class="seg" id="lenSeg"></div></div>
+     <div id="secBox" class="lenbox"><span class="muted-d">턴 시간</span><div class="seg" id="secSeg"></div></div>
     </div>
     <div class="lobby-actions"><button class="btn" id="btnLeave">← 나가기</button><button class="btn primary" id="btnStart">게임 시작</button></div>
     <p class="rules" id="lobbyWait"></p>
@@ -1373,6 +1374,7 @@ function breachCheck(pid,victim){
   const i=G.dips.findIndex(d=>d.from===pid&&d.to===victim);if(i>=0){G.dips.splice(i,1);log(`${pname(pid)}의 외교관이 ${pname(victim)}에 억류되었다.`,'warn');}
   const ts=G.treaties.filter(t=>(t.a===pid&&t.b===victim)||(t.a===victim&&t.b===pid));
   if(ts.length){const al=ts.some(t=>t.type==='alliance');G.treaties=G.treaties.filter(t=>!ts.includes(t));const p=G.players[pid];p.trust=clamp(p.trust-(al?60:40),0,100);p.stab=clamp(p.stab-(al?20:12),0,100);dipOnBreach(pid,victim,al);
+    {const H=G.hl=G.hl||{};if(!H.t||al||!H.t.al)H.t={r:G.round,d:ymOf(G.round),al,fn:snm(pid),vn:snm(victim)};}
     log(al?`동맹 파기! ${pname(pid)}이(가) 동맹국 ${pname(victim)}을(를) 공격했다. (신뢰도 -60)`:`배신! ${pname(pid)}이(가) ${pname(victim)}과(와)의 조약을 깨고 선전포고했다. (신뢰도 -40)`,'warn');}
 }
 function place(pid,n,prefer,from,mix){
@@ -1395,6 +1397,7 @@ function bigBattle(rec,r,T,a,holder){if(Math.max(r.aStart,r.dStart)<BIGB)return;
   const an=snm(a.pid),dn=holder.pid!=null?snm(holder.pid):'중립 세력',wn=win?an:dn,loss=Math.max(0,r.aStart-r.aSurv)+Math.max(0,r.dStart-r.dSurv);
   const body=`${an}의 ${fmt(r.aStart)}명과 ${dn}의 ${fmt(r.dStart)}명이 ${t}에서 맞붙었다. 싸움은 ${wn}의 승리로 끝났고, 양쪽을 합쳐 ${fmt(loss)}명이 쓰러졌다.${win&&!T.sea?` ${t}${jIga(t)} ${an}의 손에 넘어갔다.`:''}`;
   log(`${nm}: ${an} ${fmt(r.aStart)}명 vs ${dn} ${fmt(r.dStart)}명, ${wn} 승리 (사상 ${fmt(loss)}명)`,'war');
+  {const H=G.hl=G.hl||{};if(!H.b||loss>H.b.loss)H.b={r:G.round,d:ymOf(G.round),nm,an,dn,wn,loss};}
   (G.pendNews=G.pendNews||[]).push({head:nm,body,scene:T.sea?'naval':'battle',ca:G.players[a.pid].color,cb:holder.pid!=null?G.players[holder.pid].color:'#6a6a70'});}
 function resolveRound(){
   pendApply();/* 징집한 병사는 공격과 이동보다 먼저 도착한다 */
@@ -2020,6 +2023,7 @@ function independenceTick(){let n=0;G.terr.forEach(T=>{if(n>=2||T.sea||T.owner==
 /* ---- 중재: 제3국이 싸우는 두 나라를 화해시킨다 ---- */
 function medPairs(pid){const out=[];const p=G.players[pid];if(!p||!p.alive||p.landless||p.neu)return out;const L=G.players.filter(q=>q.alive&&q.id!==pid&&!q.landless&&!q.neu&&!isHostile(pid,q.id)&&hasChannel(pid,q.id));for(let i=0;i<L.length;i++)for(let j=i+1;j<L.length;j++)if(isHostile(L[i].id,L[j].id))out.push([L[i].id,L[j].id]);return out.slice(0,10);}
 function settle(){
+  {const H=G.hl=G.hl||{};const L=G.players.filter(p=>p.alive).sort((a,b)=>b.vp-a.vp)[0];if(L){if(H.ld!=null&&H.ld!==L.id&&G.round>=5&&G.players[H.ld])H.c={r:G.round,d:ymOf(G.round),fn:snm(H.ld),tn:snm(L.id)};H.ld=L.id;}}
   plagueTick();coupTick();independenceTick();
   for(const p of G.players){if(!p.alive)continue;
     const inc=income(p.id),up=upkeep(p.id);p.gold+=inc-up;p.tradeSum=(p.tradeSum||0)+tradeIncome(p.id);
@@ -2416,13 +2420,13 @@ function finish(reason,winIds){if(G.cont)return;
   let ps=G.players.slice().sort((a,b)=>(b.alive-a.alive)||(perf(b)-perf(a))||(totalTroops(b.id)-totalTroops(a.id)));
   if(winIds&&winIds.length){ps=winIds.map(i=>G.players[i]).sort((a,b)=>perf(b)-perf(a)).concat(ps.filter(x=>!winIds.includes(x.id)));}
   if(reason==='objectives'&&G.objWin!=null){const w=G.players[G.objWin];ps=[w].concat(ps.filter(x=>x.id!==w.id));}
-  G.over={winner:ps[0].id,winners:winIds&&winIds.length?winIds.slice():reason==='alliance'?G.players.filter(p=>p.alive).map(p=>p.id):[ps[0].id],reason:reason||'rounds',ranking:ps.map(p=>({id:p.id,kingdom:p.kingdom,vp:p.vp,perf:Math.round(perf(p)*100),alive:p.alive,obj:(p.obj||[]).map(o=>({text:o.text,vp:o.vp,done:!!o.done}))})),round:G.round,date:ymOf(G.round)};G.phase='over';G.phaseEnd=0;
+  G.over={winner:ps[0].id,winners:winIds&&winIds.length?winIds.slice():reason==='alliance'?G.players.filter(p=>p.alive).map(p=>p.id):[ps[0].id],reason:reason||'rounds',ranking:ps.map(p=>({id:p.id,kingdom:p.kingdom,vp:p.vp,perf:Math.round(perf(p)*100),alive:p.alive,obj:(p.obj||[]).map(o=>({text:o.text,vp:o.vp,done:!!o.done}))})),round:G.round,date:ymOf(G.round),hl:G.hl?{b:G.hl.b,t:G.hl.t,c:G.hl.c}:null};G.phase='over';G.phaseEnd=0;
   log(reason==='dominion'?`${ps[0].kingdom}이(가) 영토의 절반을 장악해 단독 승리를 거뒀다! (승점 보너스)`:reason==='coalition'?`동맹이 영토의 60%를 장악해 함께 승리했다!`:reason==='conquest'?`${ps[0].kingdom}이(가) 모든 왕국을 정복했다!`:reason==='alliance'?`살아남은 모든 왕국이 동맹을 맺어 함께 승리했다!`:reason==='objectives'?(G.winWhy||`${ps[0].kingdom}이(가) 모든 목표를 이루며 결정적 승리를 거뒀다!`):reason==='time'?`정해진 기간이 끝났다! ${ps[0].kingdom}이(가) 가장 높은 점수로 승리했다.`:`${ps[0].kingdom}이(가) 패권을 차지했다!`,'sys');
 }
 
 /* ================= 단계 진행 ================= */
 function startPhase(ph){
-  G.phase=ph;G.phaseEnd=Date.now()+(CFG.dur[ph]||0)*1000;G.players.forEach(p=>{p.ready=!p.alive;});
+  G.phase=ph;G.phaseEnd=Date.now()+((ph==='plan'&&G.sec!=null)?(G.sec||86400):(CFG.dur[ph]||0))*1000;G.players.forEach(p=>{p.ready=!p.alive;});
   if(ph==='plan'){pendApply();rsInit();indInit();try{tcOpen();}catch(e){console.error('tcOpen',e);}G.draft={};G.orders={};G.terr.forEach(t=>{t.drafted=0;});G.players.forEach(p=>{if(p.alive&&!p.isBot)applyPolicies(p.id);});}
   if(ph==='plan'&&typeof Host!=='undefined'&&Host.snap)Host.snap();
   botsAct(ph);
@@ -3597,7 +3601,7 @@ function objGeneric(p,out){const have=t=>out.some(o=>o.t===t);const start=owned(
   if(out.length<3&&!have('holdCap')&&!p.landless)out.push(objMake(p,{t:'holdCap',text:'수도를 끝까지 지켜라',vp:8}));
   if(out.length<3){if(p.landless){out.push(objMake(p,{t:'wins',n:5,text:'전투에서 5번 이겨라',vp:10}));}else{const n=Math.max(1000,Math.round(totalTroops(p.id)*1.5/1000)*1000);out.push(objMake(p,{t:'army',n,text:`병력 ${n.toLocaleString()}명 이상을 갖춰라`,vp:6}));}}
   if(out.length<3){out.push(objMake(p,{t:'wins',n:6,text:'전투에서 6번 이겨라',vp:8}));}}
-function objInit(plan){G.objOn=true;G.endRound=(plan&&plan.len!=null)?plan.len:defLen(plan&&plan.tpl);G.objWin=null;
+function objInit(plan){G.sec=(plan&&plan.sec!=null)?plan.sec:null;G.objOn=true;G.endRound=(plan&&plan.len!=null)?plan.len:defLen(plan&&plan.tpl);G.objWin=null;
   G.terr.forEach(T=>{T.o0=T.owner;});G.players.forEach(p=>{p.cap0=p.cap;});
   const spec=OBJ_SPEC[TK(G.tplId)]||{};
   G.players.forEach(p=>{if(!p.neu&&!p.landless){p.persona=p.fixPers||pickPersona(p);p.aggr=+(p.aggr*(PERSONA[p.persona].aggr)).toFixed(3);}});
@@ -3905,7 +3909,7 @@ const Host={seats:[],started:false,timer:null,mapId:0,snaps:[],
   snap(){try{this.snaps.push(JSON.stringify(G));if(this.snaps.length>4)this.snaps.shift();}catch(e){}},
   continueGame(){if(Net.mode!=='solo'||!G||!G.over||/^trial_/.test(G.tplId||''))return false;G.over=null;G.cont=true;G.endRound=null;G.dom=null;startPhase('plan');hClear(this.timer);this.timer=hEvery(()=>this.tick(),400);this.pushViews(true);return true;},
   canUndo(){return !!G&&!G.over&&G.phase==='plan'&&this.seats.filter(s=>s.kind==='human').length===1&&this.snaps.length>=2;},
-  init(name){this.specs=[];this.lastCaps=null;this.seats=[{kind:'human',name,local:true},{kind:'empty'},{kind:'empty'}];this.started=false;this.mapId=0;this.tplId=null;this.len=null;this.pub=false;this.listed=false;this.title='';this.cd=null;clearInterval(this.ltimer);clearInterval(this.rtimer);},
+  init(name){this.specs=[];this.lastCaps=null;this.seats=[{kind:'human',name,local:true},{kind:'empty'},{kind:'empty'}];this.started=false;this.mapId=0;this.tplId=null;this.len=null;this.sec=null;this.pub=false;this.listed=false;this.title='';this.cd=null;clearInterval(this.ltimer);clearInterval(this.rtimer);},
   /* 공개 방: 방 참여하기 목록에 실을 정보 (방 코드·이름·템플릿·지도·자리) */
   roomMeta(){const tp=this.tplId?TEMPLATES.find(t=>t.id===this.tplId):null,S=this.seats||[];return {v:1,code:Net.code,title:this.title||'',host:(S[0]&&S[0].name)||'',map:tp?(tp.map||0):(this.mapId||0),tpl:tp?tp.id:null,tplName:tp?String(tp.name||'').slice(0,40):'',year:tp?(tp.custom?(tp.year||''):(tp.label||tp.year||'')):'',custom:!!(tp&&tp.custom),h:S.filter(x=>x.kind==='human').length,b:S.filter(x=>x.kind==='bot').length,open:S.filter(x=>x.kind==='empty').length,len:this.len,st:this.started?1:0,r:this.started&&typeof G!=='undefined'&&G?G.round||0:0,specs:(this.specs||[]).length};},
   roomPub(){if(!this.listed||Net.mode!=='host')return;RoomList.publish(this.roomMeta());if(this.started&&!this.rtimer)this.rtimer=setInterval(()=>{if(G&&G.over){clearInterval(this.rtimer);RoomList.unpublish();return;}RoomList.publish(this.roomMeta());},15000);},
@@ -3920,7 +3924,7 @@ const Host={seats:[],started:false,timer:null,mapId:0,snaps:[],
   sendTo(i,msg){const s=this.seats[i];if(!s||s.kind!=='human')return;
     if(s.local){const c=JSON.parse(JSON.stringify(msg));setTimeout(()=>Client.onMsg(c),0);}else if(s.conn&&s.conn.open){try{s.conn.send(msg);}catch(e){}}},
   customTpl(id){const t=id&&TEMPLATES.find(x=>x.id===id);return t&&t.custom?t:null;},
-  lobbyMsg(you,back){return {back:!!back,t:'lobby',code:Net.code,you,seats:this.seats.map(x=>({kind:x.kind,name:x.name||'',away:!!x.away,persona:x.persona||null})),solo:Net.mode==='solo',mode:Net.mode==='solo'?'solo':(this.pub?'online':this.listed?'public':'private'),title:this.title||'',count:this.cd?Math.max(0,Math.ceil((this.cd-Date.now())/1000)):null,map:this.mapId,tpl:this.tplId,len:this.len==null?null:this.len,specs:(this.specs||[]).length,tplData:this.customTpl(this.tplId)||undefined};},
+  lobbyMsg(you,back){return {back:!!back,t:'lobby',code:Net.code,you,seats:this.seats.map(x=>({kind:x.kind,name:x.name||'',away:!!x.away,persona:x.persona||null})),solo:Net.mode==='solo',mode:Net.mode==='solo'?'solo':(this.pub?'online':this.listed?'public':'private'),title:this.title||'',count:this.cd?Math.max(0,Math.ceil((this.cd-Date.now())/1000)):null,map:this.mapId,tpl:this.tplId,len:this.len==null?null:this.len,sec:this.sec==null?null:this.sec,specs:(this.specs||[]).length,tplData:this.customTpl(this.tplId)||undefined};},
   sendSpec(sp,msg){if(sp&&sp.conn&&sp.conn.open){try{sp.conn.send(msg);}catch(e){}}},
   lobbyPush(back){this.roomPub();if(this.started&&!back)return;this.seats.forEach((s,i)=>this.sendTo(i,this.lobbyMsg(i,back)));(this.specs||[]).forEach(sp=>this.sendSpec(sp,{...this.lobbyMsg(-1,back),spec:true}));},
   /* 관전자: 자리 없이 들어와 전체 시점을 본다 */
@@ -3959,6 +3963,7 @@ const Host={seats:[],started:false,timer:null,mapId:0,snaps:[],
       if(msg.t==='addbot'&&i===0){let k=this.seats.findIndex(s=>s.kind==='empty');if(k<0&&!this.pub&&this.seats.length<MAX_SEATS){this.seats.push({kind:'empty'});k=this.seats.length-1;}if(k>0){const per=SEAT_PERS.includes(msg.persona)?msg.persona:null;if(per&&this.seats.some(x=>x.kind==='bot'&&x.persona===per)){this.lobbyPush();return;}this.seats[k]=mkBot(this.seats,k,per);}this.lobbyPush();}
       else if(msg.t==='rembot'&&i===0){if(this.seats[msg.seat]&&this.seats[msg.seat].kind==='bot'){if(msg.seat>=3)this.seats.splice(msg.seat,1);else this.seats[msg.seat]={kind:'empty'};}this.lobbyPush();}
       else if(msg.t==='map'&&i===0){if(MAPS[msg.id]){this.mapId=msg.id;this.tplId=null;}this.lobbyPush();}
+      else if(msg.t==='sec'&&i===0){this.sec=(msg.v==null)?null:[0,30,50,90,150].includes(+msg.v)?+msg.v:null;this.lobbyPush();}
       else if(msg.t==='len'&&i===0){this.len=(msg.v==null)?null:Math.max(0,Math.min(400,Math.floor(+msg.v)||0));this.lobbyPush();}
       else if(msg.t==='tpl'&&i===0){if(!msg.id)this.tplId=null;else if(TEMPLATES.some(t=>t.id===msg.id)){this.tplId=msg.id;this.mapId=0;}this.lobbyPush();}
       else if(msg.t==='leave'){}
@@ -3995,7 +4000,7 @@ const Host={seats:[],started:false,timer:null,mapId:0,snaps:[],
     D.picks[pid]=k;D.idx++;this.draftStep();},
   finishDraft(){const D=this.D;const defs=this.seats.map(s=>({name:s.name,isBot:s.kind==='bot',persona:s.persona}));let plan;
     if(D.tpl){plan=tplPlan(this.tplObj(),D.picks);}else plan=completePlan(D.picks);
-    if(this.len!=null)plan.len=this.len;
+    if(this.len!=null)plan.len=this.len;if(this.sec!=null)plan.sec=this.sec;
     this.D=null;newGame(defs,plan);this.lastCaps=plan.caps;
     this.seats.forEach((s,i)=>this.sendTo(i,{t:'plan',caps:plan.caps}));(this.specs||[]).forEach(sp=>this.sendSpec(sp,{t:'plan',caps:plan.caps}));startPhase('plan');this.pushViews(true);},
   tick(){
@@ -5645,7 +5650,7 @@ const UI={
   },
   renderKinds(m,host){
     const tpl=!!m.tpl;$('#kindSeg').querySelectorAll('button').forEach(b=>{b.classList.toggle('on',(b.dataset.kind==='tpl')===tpl);b.disabled=!host;b.onclick=()=>{if(!host)return;if(b.dataset.kind==='tpl')Net.send({t:'tpl',id:m.tpl||TEMPLATES[TEMPLATES.length-3].id});else Net.send({t:'map',id:m.map||0});};});
-    $('#mapBox').classList.toggle('hidden',tpl);$('#tplBox').classList.toggle('hidden',!tpl);const rt=document.getElementById('lobbyRight');if(rt)rt.classList.toggle('wide',!!tpl);UI.renderLen(m,host,tpl);
+    $('#mapBox').classList.toggle('hidden',tpl);$('#tplBox').classList.toggle('hidden',!tpl);const rt=document.getElementById('lobbyRight');if(rt)rt.classList.toggle('wide',!!tpl);UI.renderLen(m,host,tpl);UI.renderSec(m,host);
     const tyr=t=>t.custom?(t.year?(t.year<0?(-t.year)+' BC':String(t.year)):'내 시나리오'):(t.label||t.year);
     UI.tplBarInit(m,host);const tq=UI.tq,plays=UI.tplPlays();const kindOf=t=>!t.custom?'base':((t.src||t.paid||t.trial)?'got':'mine');const yr=t=>(t.custom&&!t.year)?9999:(t.year||0);
     const qs=tq.q.trim().toLowerCase();let L=TEMPLATES.filter(t=>(tq.cat==='all'||kindOf(t)===tq.cat)&&(!tq.tag||UI.tagsOf(t).includes(tq.tag))&&(!qs||(t.name+' '+(t.desc||'')+' '+tyr(t)+' '+(t.year||'')+' '+t.nations.map(n=>n.name).join(' ')+' '+UI.tagsOf(t).map(UI.tagLabel).join(' ')).toLowerCase().includes(qs)));
@@ -5811,7 +5816,7 @@ const UI={
   nextEvent(){if(!C.evQ||!C.evQ.length)return;C.evQ.shift();UI.renderEvent();},
   showOver(){const v=C.view;if(!v.over||!$('#over').classList.contains('hidden'))return;const w=v.players[v.over.winner];const conq=v.over.reason==='conquest';const alli=v.over.reason==='alliance'||v.over.reason==='coalition';const domw=v.over.reason==='dominion';const tmo=v.over.reason==='time',objw=v.over.reason==='objectives';const wins=v.over.winners||[v.over.winner];try{if(v.me!=null&&!C.spec)Music.jingle(wins.includes(v.me));}catch(_){}
     $('#over').innerHTML=`<div class="overcard"><h2>${objw?(v.over.winner===v.me?'결정적 승리!':esc(w.kingdom)+'의 결정적 승리'):tmo?(v.over.winner===v.me?'가장 높은 성과로 승리했습니다':esc(w.kingdom)+'의 승리'):alli?(wins.includes(v.me)?'동맹이 함께 승리했습니다':'동맹의 승리'):domw?(v.over.winner===v.me?'단독 승리! 영토의 절반을 장악했습니다':esc(w.kingdom)+'의 단독 승리'):conq?(v.over.winner===v.me?'천하를 통일했습니다':esc(w.kingdom)+'의 천하통일'):(v.over.winner===v.me?'승리했습니다':esc(w.kingdom)+'의 승리')}</h2><div class="muted" style="margin-bottom:12px">${objw?'모든 목표를 이루며 전쟁의 승부가 났습니다.':tmo?'정해진 기간이 끝났어요. 나라 크기 대비 성과로 순위를 매겼어요.':alli?(v.over.reason==='coalition'?'동맹이 전체 영토의 60%를 3턴 동안 지켜 함께 승리했습니다.':'살아남은 모든 왕국이 서로 동맹을 맺어 전쟁이 끝났습니다.'):domw?'혼자서 영토의 절반을 3턴 동안 지켜 승리했습니다. 승점 보너스를 받았습니다.':conq?'모든 왕국을 정복해 전쟁이 끝났습니다.':'방장이 승점으로 승부를 가려 게임을 끝냈습니다.'}</div>
-      <div class="rkList">${v.over.ranking.map((r,i)=>`<div class="rk"><span>${i+1}위</span><span class="nat">${fl(v.players[r.id])}${esc(r.kingdom)}${r.alive?'':' (멸망)'}${r.obj&&r.obj.length?` <span class="muted sm">🎯 ${r.obj.filter(x=>x.done).length}/${r.obj.length}</span>`:''}</span><b>${r.perf!=null?r.perf+'%':''} <span class="muted sm" style="font-weight:400">${fmt(r.vp)}점</span></b></div>`).join('')}${(()=>{const mine=v.over.ranking.find(r=>r.id===v.me);return mine&&mine.obj&&mine.obj.length?`<div class="card" style="margin-top:10px"><b>나의 목표</b>${mine.obj.map(x=>`<div class="sm" style="margin-top:4px">${x.done?'✅':'⬜'} ${esc(x.text)} <span class="muted">(+${fmt(x.vp)}점)</span></div>`).join('')}</div>`:'';})()}
+      <div class="rkList">${v.over.ranking.map((r,i)=>`<div class="rk"><span>${i+1}위</span><span class="nat">${fl(v.players[r.id])}${esc(r.kingdom)}${r.alive?'':' (멸망)'}${r.obj&&r.obj.length?` <span class="muted sm">🎯 ${r.obj.filter(x=>x.done).length}/${r.obj.length}</span>`:''}</span><b>${r.perf!=null?r.perf+'%':''} <span class="muted sm" style="font-weight:400">${fmt(r.vp)}점</span></b></div>`).join('')}${(()=>{const h=v.over.hl;if(!h||!(h.b||h.t||h.c))return '';const dt=x=>x.d?`${x.d.y}년 ${x.d.m}월`:`${x.r}턴`;return `<div class="card" style="margin-top:10px"><b>하이라이트</b>${h.b?`<div class="sm" style="margin-top:4px">⚔️ 가장 큰 전투 · ${esc(h.b.nm)} (${dt(h.b)}) — ${esc(h.b.an)} 대 ${esc(h.b.dn)}, ${esc(h.b.wn)} 승리, 사상 ${fmt(h.b.loss)}명</div>`:''}${h.t?`<div class="sm" style="margin-top:4px">🗡 가장 큰 배신 · ${esc(h.t.fn)} → ${esc(h.t.vn)} (${h.t.al?'동맹 파기':'조약 파기'}, ${dt(h.t)})</div>`:''}${h.c?`<div class="sm" style="margin-top:4px">🔄 역전의 순간 · 선두가 ${esc(h.c.fn)}에서 ${esc(h.c.tn)}(으)로 바뀜 (${dt(h.c)})</div>`:''}</div>`;})()}${(()=>{const mine=v.over.ranking.find(r=>r.id===v.me);return mine&&mine.obj&&mine.obj.length?`<div class="card" style="margin-top:10px"><b>나의 목표</b>${mine.obj.map(x=>`<div class="sm" style="margin-top:4px">${x.done?'✅':'⬜'} ${esc(x.text)} <span class="muted">(+${fmt(x.vp)}점)</span></div>`).join('')}</div>`:'';})()}
       </div>      <div class="row" style="margin-top:14px;flex:none;gap:8px;flex-wrap:wrap"><button class="btn wide" id="overTl" style="flex:1 1 30%">🎬 타임랩스</button><button class="btn wide" id="overSum" style="flex:1 1 30%">판 요약</button><button class="btn wide" id="overWl" style="flex:1 1 30%">전쟁 기록</button>${(Net.mode==='solo'&&v.players[v.me]&&v.players[v.me].alive&&!/^trial_/.test(v.tpl||''))?'<button class="btn wide" id="overCont" style="flex:1 1 45%">▶ 계속하기</button>':''}<button class="btn primary wide" id="overHome" style="flex:1 1 45%">나가기</button></div></div>`;$('#over').classList.remove('hidden');try{if(v.over.winner===v.me)fxConfetti([w.color,'#f3c64f','#ffffff','#e8484f']);}catch(e){}Net.clearSession();$('#overWl').onclick=()=>UI.openWarlog();$('#overSum').onclick=()=>UI.openSummary();$('#overTl').onclick=()=>{C.sumTab='map';C.sumAuto=true;UI.openSummary();};$('#overHome').onclick=()=>window.ceReload();const oc=$('#overCont');if(oc)oc.onclick=()=>{if(Host.continueGame()){$('#over').classList.add('hidden');}};},
   async playReport(v){
     C.animating=true;const FX=UI.fxMode();Battle.skipAll=FX==='off';const rep=v.report,pv=C.view||v;const players=pv.players;MapView.arrows=rep.attacks;MapView.moves=rep.moves||[];
@@ -5847,7 +5852,7 @@ const UI={
       $('#score').innerHTML=seats.map(p=>`<div title="${esc(p.kingdom)}" class="pc ${p.id===v.me?'me':''} ${p.alive?'':'dead'}">${fl(p)}<span class="k" style="display:inline">${esc(p.kingdom.length>9?p.kingdom.slice(0,8)+'…':p.kingdom)}</span><b>${p.vp}</b></div>`).join('')+`<div class="pc" title="선두: ${esc(lead.kingdom)}"><span class="k" style="display:inline">AI ${rest.filter(p=>p.alive).length}개국 · 선두</span>${fl(lead)}<b>${lead.vp}</b></div>`;return;}
     $('#score').innerHTML=v.players.map(p=>`<div title="${esc(p.kingdom)}" class="pc ${p.id===v.me?'me':''} ${p.alive?'':'dead'}">${fl(p)}<span class="k">${esc(p.kingdom)}</span><b>${p.vp}</b>${p.ready&&v.phase==='plan'&&!p.isBot?'<span title="계획 확정">✓</span>':''}</div>`).join('');},
   tickTimer(){const v=C.view;if(!v||!C.started)return;const t=$('#timer');if(v.phase==='over'){t.textContent='종료';return;}
-    if(v.phase==='draft'){const s=Math.max(0,Math.ceil((C.endAt-Date.now())/1000));t.textContent=s+'초';t.classList.toggle('low',s<=8);return;}const s=Math.max(0,Math.ceil((C.endAt-Date.now())/1000));t.textContent=v.phase==='report'?'결산':`${Math.floor(s/60)}:${String(s%60).padStart(2,'0')}`;t.classList.toggle('low',s<=10&&v.phase==='plan'&&!C.animating);},
+    if(v.phase==='draft'){const s=Math.max(0,Math.ceil((C.endAt-Date.now())/1000));t.textContent=s+'초';t.classList.toggle('low',s<=8);return;}const s=Math.max(0,Math.ceil((C.endAt-Date.now())/1000));t.textContent=v.phase==='report'?'결산':s>3600?'∞':`${Math.floor(s/60)}:${String(s%60).padStart(2,'0')}`;t.classList.toggle('low',s<=10&&v.phase==='plan'&&!C.animating);},
   renderTabs(){const v=C.view;if(v.draft){$('#tabs').innerHTML='';$('#tabs').classList.add('hidden');return;}$('#tabs').classList.remove('hidden');const incoming=v.props.filter(x=>x.to===v.me).length;const unread=Object.values(C.unreadBy).reduce((a,b)=>a+b,0);
     const tabs=v.spec?[['map','지도·정보']]:[['map','지도·명령'],['dip','외교',incoming+unread],['pol','정치',(mePl()&&mePl().pol&&(mePl().pol.pub<30))?'!':0],['trade','무역'],['tech','기술'],['obj','목표',(mePl().obj||[]).filter(x=>x.done).length||0]];if(v.spec&&C.tab==='dip')C.tab='map';
     $('#tabs').innerHTML=tabs.map(([k,n,b])=>`<button data-tab="${k}" class="${C.tab===k?'on':''}">${n}${b?`<span class="badge">${b}</span>`:''}</button>`).join('');},
@@ -6134,6 +6139,9 @@ const UI={
     for(const t of v.terr){if(t.owner!==v.me||TDEF[t.id].kind==='sea')continue;for(const n of GEO.adj[t.id]){const N=v.terr[n];if(!N||N.owner==null||N.owner===v.me||!v.players[N.owner]||!v.players[N.owner].hostile)continue;if(N.troops!=null&&t.troops!=null&&N.troops>t.troops*0.7&&N.troops>=CFG.minAttack*3)return UI.autoStop('적군이 국경에 모여 있어요');}}
     const round=v.round;setTimeout(()=>{if(!C.auto||!C.view||C.view.round!==round||C.view.phase!=='plan'||C.animating)return;if(C.evQ&&C.evQ.length)return;const m=mePl();if(m.ready)return;if(!C.autoInf)C.auto--;UI.renderAction();if(C.auto===0)UI.toast('건너뛰기를 마쳤어요.');UI.onReady();},700);},
   /* 로비: 게임 길이 선택(기본은 시나리오에 맞춘 턴 수) */
+  renderSec(m,host){const box=document.getElementById('secSeg');if(!box)return;const cur=m.sec==null?'default':String(m.sec);
+    box.innerHTML=[['default','기본 50초'],['30','30초'],['90','90초'],['150','150초'],['0','무제한']].map(([k,l])=>`<button data-sec="${k}" class="${cur===k?'on':''}" ${host?'':'disabled'}>${l}</button>`).join('');
+    box.querySelectorAll('button[data-sec]').forEach(b=>b.onclick=()=>Net.send({t:'sec',v:b.dataset.sec==='default'?null:+b.dataset.sec}));},
   renderLen(m,host,tpl){const box=document.getElementById('lenSeg');if(!box)return;const def=(typeof defLen==='function')?defLen(tpl?m.tpl:null):60;const cur=m.len==null?'default':String(m.len);
     const opts=[['default',`기본 ${def}턴`],['36','짧게 36턴'],['72','보통 72턴'],['120','길게 120턴'],['0','끝까지(무제한)']];
     box.innerHTML=opts.map(([k,l])=>`<button data-len="${k}" class="${cur===k?'on':''}" ${host?'':'disabled'}>${l}</button>`).join('');
