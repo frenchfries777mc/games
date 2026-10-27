@@ -1,0 +1,1726 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<!-- Emberhollow · © 2026 Frenchfries777 · CC BY-NC-ND 4.0 (출처 표시 필수, 비영리, 변경 금지) · https://creativecommons.org/licenses/by-nc-nd/4.0/deed.ko -->
+<meta charset="UTF-8">
+<meta name="copyright" content="© 2026 Frenchfries777. CC BY-NC-ND 4.0 (https://creativecommons.org/licenses/by-nc-nd/4.0/)">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+<meta name="theme-color" content="#1a120e">
+<title>Emberhollow · 잿불골의 비밀</title>
+<meta name="description" content="폐허가 된 유럽 마을을 걸으며 퍼즐을 풀고, 마을이 하룻밤 새 불탄 까닭을 밝혀내는 추리 퍼즐 게임.">
+<link rel="icon" href="logo.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@600;900&family=Noto+Sans+KR:wght@400;500;700&family=Cinzel:wght@700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#160f0c;--panel:#2a1d16;--panel2:#352519;--line:#5c4130;--text:#f1e2c6;--dim:#bba486;--ember:#ff9a4a;--gold:#f2c46b;--bad:#e5675a;--good:#8fcf7a;}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;height:100%;background:var(--bg);color:var(--text);font-family:'Noto Sans KR',system-ui,sans-serif;overflow:hidden;user-select:none;-webkit-user-select:none;touch-action:none}
+canvas#game{position:fixed;inset:0;width:100%;height:100%;display:block;image-rendering:pixelated;image-rendering:crisp-edges}
+button{font:inherit;color:inherit;cursor:pointer}
+.hide{display:none!important}
+.btn{background:linear-gradient(#4a3222,#352417);border:2px solid #7a573b;border-radius:10px;padding:10px 16px;color:var(--text);font-weight:700;box-shadow:0 3px 0 #1d130d;transition:transform .08s,border-color .15s}
+.btn:hover{border-color:var(--ember)}.btn:active{transform:translateY(2px);box-shadow:0 1px 0 #1d130d}
+.btn.main{background:linear-gradient(#c8682f,#9c4a1f);border-color:#ffb06a;color:#fff6e6}
+.btn.small{padding:6px 10px;font-size:14px}
+.btn:disabled{opacity:.45;cursor:default}
+/* title */
+#title{position:fixed;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;background:radial-gradient(ellipse at 50% 40%,rgba(40,20,10,.25),rgba(10,6,4,.78));z-index:20;padding:16px}
+#title h1{margin:0;font-family:'Cinzel',serif;font-size:clamp(38px,8vw,84px);letter-spacing:.06em;color:#ffcf8a;text-shadow:0 0 18px rgba(255,120,40,.65),0 4px 0 #4a2210;line-height:1}
+#title .sub{font-family:'Noto Serif KR',serif;font-weight:900;font-size:clamp(20px,4vw,34px);color:#f6e2bf;text-shadow:0 2px 0 #3b1e0e;margin-top:-4px}
+#title .tag{color:var(--dim);font-size:14px;text-align:center;max-width:520px}
+#title .menu{display:flex;flex-direction:column;gap:10px;width:min(320px,90vw);margin-top:10px}
+#title .row{display:flex;gap:8px}
+#title .row .btn{flex:1}
+#title .top{position:fixed;top:12px;right:14px;display:flex;gap:10px;align-items:center;z-index:21}
+#title .back{position:fixed;top:14px;left:14px;color:var(--dim);font-size:14px;text-decoration:none;z-index:21}
+#title .back:hover{color:var(--ember)}
+[data-ff-account] button,[data-ff-account] a{font-size:14px}
+/* hud */
+#hud{position:fixed;inset:0;pointer-events:none;z-index:5}
+#clock{position:absolute;top:10px;left:10px;background:rgba(26,17,12,.82);border:2px solid var(--line);border-radius:10px;padding:6px 12px;font-weight:700;font-size:15px;display:flex;gap:8px;align-items:center}
+#clock i{font-style:normal;font-size:18px}
+#where{position:absolute;top:50px;left:10px;font-size:13px;color:var(--dim);background:rgba(26,17,12,.6);padding:3px 9px;border-radius:8px}
+#mapbox{position:absolute;top:10px;right:10px;background:rgba(26,17,12,.82);border:2px solid var(--line);border-radius:10px;padding:4px}
+#mini{display:block;width:150px;height:113px;image-rendering:pixelated}
+#hudBtns{position:absolute;top:136px;right:10px;display:flex;gap:6px;pointer-events:auto}
+#prompt{position:absolute;left:50%;bottom:48px;transform:translateX(-50%);background:rgba(26,17,12,.9);border:2px solid var(--ember);border-radius:10px;padding:6px 14px;font-weight:700;font-size:15px;white-space:nowrap}
+#prompt b{color:var(--ember);margin-right:6px}
+#toast{position:absolute;left:50%;top:14px;transform:translateX(-50%);background:rgba(40,26,16,.95);border:2px solid var(--gold);border-radius:12px;padding:8px 16px;font-weight:700;max-width:80vw;text-align:center;transition:opacity .3s;opacity:0}
+#toast.on{opacity:1}
+#copy{position:fixed;left:0;right:0;bottom:2px;text-align:center;font-size:11px;color:rgba(241,226,198,.55);z-index:30;pointer-events:none}
+#copy a{color:inherit;pointer-events:auto}
+/* touch */
+#touch{position:fixed;inset:0;z-index:6;pointer-events:none}
+#joy{position:absolute;left:24px;bottom:40px;width:130px;height:130px;border-radius:50%;background:rgba(255,230,190,.08);border:2px solid rgba(255,230,190,.25);pointer-events:auto}
+#joyK{position:absolute;left:50%;top:50%;width:56px;height:56px;margin:-28px 0 0 -28px;border-radius:50%;background:rgba(255,190,120,.35);border:2px solid rgba(255,210,160,.6)}
+#actBtn{position:absolute;right:26px;bottom:52px;width:88px;height:88px;border-radius:50%;background:rgba(200,104,47,.55);border:3px solid rgba(255,190,120,.8);font-weight:900;font-size:17px;pointer-events:auto;color:#fff4e0}
+#bookBtn{position:absolute;right:124px;bottom:44px;width:60px;height:60px;border-radius:50%;background:rgba(60,40,28,.75);border:2px solid rgba(255,210,160,.5);font-size:24px;pointer-events:auto}
+/* dialog */
+#bubble{position:fixed;z-index:12;max-width:min(440px,86vw);background:#f6ead2;color:#2b1c12;border:3px solid #3b2618;border-radius:14px;padding:10px 14px 12px;font-size:16px;line-height:1.55;box-shadow:0 6px 0 rgba(0,0,0,.35)}
+#bubble .who{font-weight:900;color:#9c4a1f;font-size:14px;margin-bottom:2px}
+#bubble:after{content:'';position:absolute;left:var(--tail,50%);bottom:-12px;margin-left:-10px;border:10px solid transparent;border-top-color:#3b2618;border-bottom:0}
+#bubble.up:after{bottom:auto;top:-12px;border-top:0;border-bottom:10px solid #3b2618}
+#choices{position:fixed;z-index:13;left:50%;transform:translateX(-50%);bottom:56px;display:flex;flex-direction:column;gap:6px;width:min(460px,92vw)}
+#choices button{text-align:left;background:rgba(36,24,17,.95);border:2px solid #6d4d34;border-radius:10px;padding:9px 12px;font-size:15px;color:var(--text)}
+#choices button.sel,#choices button:hover{border-color:var(--ember);background:rgba(70,40,22,.97)}
+#choices button small{color:var(--dim);margin-right:8px}
+/* modal */
+#modalWrap{position:fixed;inset:0;z-index:40;background:rgba(8,5,3,.62);display:flex;align-items:center;justify-content:center;padding:12px}
+.modal{background:var(--panel);border:3px solid var(--line);border-radius:16px;width:min(560px,96vw);max-height:92vh;overflow:auto;padding:18px;box-shadow:0 10px 0 rgba(0,0,0,.35);position:relative}
+.modal.wide{width:min(860px,96vw)}
+.modal h2{margin:0 0 10px;font-family:'Noto Serif KR',serif;font-size:22px;color:var(--gold)}
+.modal p{margin:6px 0;line-height:1.6}
+.modal .x{position:absolute;top:10px;right:12px;background:none;border:0;font-size:22px;color:var(--dim)}
+.modal .acts{display:flex;gap:8px;justify-content:flex-end;margin-top:14px;flex-wrap:wrap}
+.modal .dim{color:var(--dim);font-size:14px}
+.shake{animation:shake .35s}
+@keyframes shake{20%{transform:translateX(-8px)}40%{transform:translateX(8px)}60%{transform:translateX(-5px)}80%{transform:translateX(5px)}}
+/* settings */
+.set{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 0;border-bottom:1px solid #3d2a1e}
+.set input[type=range]{width:180px;accent-color:var(--ember)}
+.tog{width:56px;height:30px;border-radius:15px;background:#4a3a30;border:2px solid #6d5040;position:relative}
+.tog:after{content:'';position:absolute;top:3px;left:3px;width:20px;height:20px;border-radius:50%;background:#bba486;transition:left .15s}
+.tog.on{background:#9c4a1f;border-color:var(--ember)}.tog.on:after{left:29px;background:#fff1dc}
+/* lock */
+.lock{display:flex;gap:10px;justify-content:center;margin:14px 0}
+.dial{display:flex;flex-direction:column;align-items:center;gap:6px}
+.dial button{width:66px;height:74px;border-radius:12px;border:3px solid #241710;box-shadow:inset 0 -6px 0 rgba(0,0,0,.25)}
+.dial span{font-size:13px;color:var(--dim)}
+/* letter */
+.scraps{display:flex;flex-direction:column;gap:8px;margin:10px 0}
+.scrap{display:flex;gap:10px;align-items:center;background:#e9dcc0;color:#3a2716;border-radius:6px;padding:10px 12px;font-family:'Noto Serif KR',serif;font-size:15px;line-height:1.5;clip-path:polygon(0 6%,3% 0,40% 4%,70% 0,100% 5%,98% 50%,100% 94%,60% 100%,30% 96%,0 100%,2% 50%);cursor:pointer;border:0;text-align:left}
+.scrap.pick{outline:3px solid var(--ember);background:#fff1cf}
+.scrap .num{font-family:'Cinzel',serif;font-size:13px;color:#8b5a35;border:1px dashed #8b5a35;border-radius:4px;padding:0 5px;margin-left:auto;transform:rotate(-8deg)}
+.scrap .ord{font-weight:900;color:#9c4a1f;min-width:18px}
+/* safe */
+.wheels{display:flex;gap:10px;justify-content:center;margin:16px 0}
+.wheel{display:flex;flex-direction:column;align-items:center;gap:4px}
+.wheel b{font-family:'Cinzel',serif;font-size:34px;width:56px;height:64px;display:grid;place-items:center;background:#1c130d;border:3px solid #8a6a40;border-radius:10px;color:var(--gold)}
+/* bells */
+.bellrow{display:flex;gap:14px;justify-content:center;align-items:flex-end;margin:16px 0}
+.bellrow button{background:none;border:0;display:flex;flex-direction:column;align-items:center;gap:6px;color:var(--text)}
+.bellrow svg{filter:drop-shadow(0 4px 0 rgba(0,0,0,.4));transition:transform .1s}
+.bellrow button.ring svg{transform:rotate(-14deg)}
+.dots{display:flex;gap:6px;justify-content:center;min-height:18px}
+.dots i{width:14px;height:14px;border-radius:50%;background:#4a3528;border:2px solid #7a5a40}
+.dots i.on{background:var(--gold)}
+/* notebook */
+.book{display:grid;grid-template-columns:180px 1fr;gap:14px;min-height:340px}
+.tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px}
+.tabs button{background:#3a281c;border:2px solid #5c4130;border-radius:9px;padding:6px 12px;font-weight:700;color:var(--dim)}
+.tabs button.on{color:var(--text);border-color:var(--ember);background:#4a3020}
+.names{display:flex;flex-direction:column;gap:5px}
+.names button{text-align:left;background:#2f2118;border:2px solid #4a3426;border-radius:9px;padding:7px 10px;color:var(--text)}
+.names button.on{border-color:var(--gold);background:#43301f}
+.names button small{display:block;color:var(--dim);font-size:12px}
+.entries{display:flex;flex-direction:column;gap:9px}
+.entry{background:#efe1c4;color:#33231a;border-radius:8px;padding:10px 12px;line-height:1.6;font-size:15px}
+.entry b{display:block;color:#8b3f17;font-size:13px;margin-bottom:2px}
+.entry.new{box-shadow:0 0 0 3px var(--ember)}
+.goals li{margin:6px 0;line-height:1.5}.goals li.done{color:var(--dim);text-decoration:line-through}
+.items{display:flex;gap:8px;flex-wrap:wrap}.items span{background:#3a281c;border:2px solid #5c4130;border-radius:8px;padding:6px 10px}
+.q{margin:12px 0}.q b{display:block;margin-bottom:6px;color:var(--gold)}
+.q label{display:flex;gap:8px;align-items:flex-start;padding:7px 9px;border-radius:8px;background:#2f2118;margin:4px 0;border:2px solid transparent;cursor:pointer}
+.q label:hover{border-color:#6d4d34}
+.q input{accent-color:var(--ember);margin-top:4px}
+.rec{display:grid;grid-template-columns:1fr auto;gap:2px 10px;padding:9px 0;border-bottom:1px solid #3d2a1e}
+.rec small{color:var(--dim)}
+.pn h3{margin:14px 0 4px;color:var(--gold);font-size:16px}.pn ul{margin:0;padding-left:20px;line-height:1.7}
+#tapStart{position:fixed;inset:0;z-index:60;display:flex;align-items:center;justify-content:center;background:rgba(10,6,4,.55);font-size:22px;font-weight:900;color:#ffe2b8;text-shadow:0 2px 0 #000}
+#fade{position:fixed;inset:0;background:#000;opacity:0;pointer-events:none;z-index:50;transition:opacity .6s}
+@media (max-width:640px){
+ #mini{width:112px;height:84px}
+ #hudBtns{top:104px}
+ .book{grid-template-columns:1fr}
+ .names{flex-direction:row;flex-wrap:wrap}
+ .names button{flex:1 1 30%}
+ #prompt{bottom:auto;top:62px;font-size:14px}
+ #choices{bottom:200px}
+ .dial button{width:58px;height:64px}
+ #toast{top:150px;font-size:14px;max-width:88vw}
+}
+</style>
+</head>
+<body>
+<canvas id="game"></canvas>
+<div id="hud" class="hide">
+  <div id="clock"><i id="sunIcon">☀</i><span id="clockTxt"></span></div>
+  <div id="where"></div>
+  <div id="mapbox"><canvas id="mini" width="128" height="96"></canvas></div>
+  <div id="hudBtns"><button class="btn small" id="hbBook" title="수첩 (Tab)">📖 수첩</button><button class="btn small" id="hbMenu" title="메뉴 (Esc)">☰</button></div>
+  <div id="prompt" class="hide"></div>
+  <div id="toast"></div>
+</div>
+<div id="touch" class="hide"><div id="joy"><div id="joyK"></div></div><button id="bookBtn" aria-label="수첩">📖</button><button id="actBtn">살펴보기</button></div>
+<div id="bubble" class="hide"><div class="who"></div><div class="txt"></div></div>
+<div id="choices" class="hide"></div>
+<div id="title">
+  <a class="back" href="../">‹ 사이트로 돌아가기</a>
+  <div class="top"><span data-ff-account></span></div>
+  <h1>EMBERHOLLOW</h1>
+  <div class="sub">잿불골의 비밀</div>
+  <div class="tag">하룻밤 새 잿더미가 된 마을. 무너진 거리를 걸으며 퍼즐을 풀고, 그날 밤 무슨 일이 있었는지 밝혀내세요.</div>
+  <div class="menu">
+    <button class="btn main hide" id="tContinue">이어 하기</button>
+    <button class="btn main" id="tNew">새 사건 시작</button>
+    <button class="btn" id="tSeed">시드 입력</button>
+    <div class="row"><button class="btn" id="tSettings">설정</button><button class="btn" id="tRecords">지난 기록</button></div>
+    <button class="btn" id="tNotes">패치노트</button>
+  </div>
+</div>
+<div id="modalWrap" class="hide"></div>
+<div id="tapStart" class="hide">화면을 누르면 시작해요</div>
+<div id="fade"></div>
+<div id="copy"><span class="ff-copy">© 2026 Frenchfries777 · <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.ko" target="_blank" rel="noopener">CC BY-NC-ND 4.0</a></span></div>
+<script src="https://frenchfries777mc.github.io/games/ff-auth.js"></script>
+<script>
+/* Emberhollow core: map, puzzles, solvers (no DOM; the self-check runs this in Node too) */
+var EHCore = (function () {
+  'use strict';
+  var W = 64, H = 48;
+  var T = { GRASS: 0, DIRT: 1, COBBLE: 2, WALL: 3, WWALL: 4, WOOD: 5, STONE: 6, CFLOOR: 7, WATER: 8, WALK: 9, TREE: 10, RUBBLE: 11, FURN: 12, STAIRS: 13, GRAVE: 14, BURNT: 15, FOUNT: 17, CWALL: 18 };
+  var SOLID = {}; [3, 4, 8, 10, 11, 12, 14, 17, 18].forEach(function (t) { SOLID[t] = 1; });
+
+  function rng(seed) { var a = seed >>> 0; return function () { a = (a + 0x6D2B79F5) >>> 0; var t = a; t = Math.imul(t ^ (t >>> 15), t | 1); t ^= t + Math.imul(t ^ (t >>> 7), t | 61); return ((t ^ (t >>> 14)) >>> 0) / 4294967296; }; }
+  function hashStr(s) { var h = 2166136261; s = String(s); for (var i = 0; i < s.length; i++) { h ^= s.charCodeAt(i); h = Math.imul(h, 16777619); } return h >>> 0; }
+  function shuffle(a, r) { for (var i = a.length - 1; i > 0; i--) { var j = Math.floor(r() * (i + 1)); var t = a[i]; a[i] = a[j]; a[j] = t; } return a; }
+
+  // cellar mirrors (tile) and sewer lever posts (tile); see the puzzles below
+  var MIRRORS = [[46, 9], [46, 11], [49, 11], [52, 11], [52, 4]];
+  var BEAM_SRC = [42, 9], BEAM_DIR = 1, SENSOR = [58, 4];
+  var LEVERS = [[60, 18], [60, 24], [60, 29], [60, 34]];
+  // flooded walkway sections between the lever posts (A, B, C, D)
+  var SECTIONS = [[57, 21, 60, 22], [57, 26, 60, 27], [57, 31, 60, 32], [57, 36, 60, 37]];
+  // church statues: star plates, and the part of the nave the statues can be pushed in
+  var PLATES = [[24, 7], [39, 9], [31, 11]];
+  var STATUE_ZONE = [24, 6, 39, 13];
+  // clock tower shadow
+  var TOWER = [25.5, 28.2];
+
+  /* ---------- map (same for every seed) ---------- */
+  function buildMap() {
+    var m = new Uint8Array(W * H), under = new Uint8Array(W * H);
+    function set(x, y, t) { if (x >= 0 && y >= 0 && x < W && y < H) m[y * W + x] = t; }
+    function get(x, y) { return (x < 0 || y < 0 || x >= W || y >= H) ? T.TREE : m[y * W + x]; }
+    function rect(x0, y0, x1, y1, t) { for (var y = y0; y <= y1; y++) for (var x = x0; x <= x1; x++) set(x, y, t); }
+    function box(x0, y0, x1, y1, wall, floor) { rect(x0, y0, x1, y1, wall); rect(x0 + 1, y0 + 1, x1 - 1, y1 - 1, floor); }
+    function put(x, y, t) { under[y * W + x] = get(x, y); set(x, y, t); }
+
+    rect(0, 0, W - 1, H - 1, T.GRASS);
+    rect(0, 0, W - 1, 0, T.TREE); rect(0, H - 1, W - 1, H - 1, T.TREE); rect(0, 0, 0, H - 1, T.TREE); rect(W - 1, 0, W - 1, H - 1, T.TREE);
+    // town wall + watchtowers
+    rect(1, 1, 62, 1, T.WALL); rect(1, 46, 62, 46, T.WALL); rect(1, 1, 1, 46, T.WALL); rect(62, 1, 62, 46, T.WALL);
+    rect(1, 1, 3, 3, T.WALL); rect(60, 1, 62, 3, T.WALL); rect(1, 43, 3, 46, T.WALL); rect(60, 43, 62, 46, T.WALL);
+    // burned fields
+    rect(3, 35, 20, 44, T.BURNT); rect(36, 42, 59, 45, T.BURNT); rect(44, 41, 59, 41, T.BURNT);
+    // roads
+    rect(30, 16, 33, 45, T.COBBLE);
+    rect(22, 18, 41, 30, T.COBBLE);
+    rect(3, 24, 21, 25, T.DIRT);
+    rect(11, 20, 12, 23, T.DIRT);
+    rect(30, 46, 33, 46, T.RUBBLE); // collapsed south gate
+    // guard post
+    box(22, 38, 28, 44, T.WALL, T.STONE); set(28, 41, T.STONE);
+    put(23, 39, T.FURN); put(26, 39, T.FURN); put(23, 43, T.FURN);
+    put(35, 41, T.FURN); // campfire
+    // plaza
+    rect(36, 21, 38, 23, T.FOUNT);
+    rect(24, 27, 26, 29, T.WALL); // clock tower
+    put(29, 18, T.FURN); put(41, 22, T.FURN); put(34, 30, T.FURN); put(22, 22, T.FURN); // flag poles
+    put(38, 28, T.FURN); put(39, 28, T.FURN); put(23, 20, T.FURN); put(24, 20, T.FURN); // stalls
+    put(40, 19, T.RUBBLE); put(22, 30, T.RUBBLE);
+    // houses
+    box(3, 27, 10, 33, T.WWALL, T.WOOD); set(6, 27, T.WOOD); set(10, 30, T.RUBBLE); set(3, 32, T.RUBBLE);
+    put(8, 31, T.FURN); put(4, 28, T.FURN); put(4, 29, T.FURN);
+    box(12, 27, 20, 33, T.WWALL, T.WOOD); set(15, 27, T.WOOD); set(20, 32, T.RUBBLE);
+    put(13, 32, T.FURN); put(17, 30, T.FURN); put(19, 28, T.FURN); put(19, 29, T.FURN);
+    box(4, 9, 18, 19, T.WWALL, T.WOOD); // mayor's house, door (11,19) is a gate
+    set(11, 19, T.WOOD);
+    put(6, 10, T.FURN); put(14, 10, T.FURN); put(15, 10, T.FURN); put(17, 14, T.FURN); put(17, 15, T.FURN); put(5, 17, T.RUBBLE);
+    // graveyard
+    [[5, 4], [8, 4], [11, 4], [14, 4], [5, 6], [8, 6], [11, 6], [16, 6], [18, 4]].forEach(function (p) { put(p[0], p[1], T.GRAVE); });
+    // church
+    box(23, 3, 40, 15, T.WALL, T.STONE);
+    set(31, 15, T.STONE); set(32, 15, T.STONE); // door (gate)
+    put(25, 4, T.FURN); put(26, 4, T.FURN); put(27, 4, T.FURN); // bell frame
+    put(31, 5, T.FURN); put(32, 5, T.FURN); // altar
+    [8, 10, 12].forEach(function (y) { rect(25, y, 29, y, T.FURN); rect(34, y, 38, y, T.FURN); });
+    put(38, 13, T.RUBBLE); put(24, 13, T.RUBBLE);
+    // cellar (sunken, under the church)
+    box(41, 2, 59, 14, T.CWALL, T.CFLOOR);
+    rect(48, 3, 48, 13, T.CWALL); set(48, 10, T.CFLOOR); set(48, 11, T.CFLOOR);
+    set(40, 6, T.STAIRS); set(41, 6, T.STAIRS); // hidden passage (gate on 40,6)
+    put(45, 3, T.FURN); put(42, 9, T.FURN); put(50, 3, T.FURN); put(58, 4, T.FURN); put(43, 12, T.FURN);
+    MIRRORS.forEach(function (p) { put(p[0], p[1], T.FURN); });
+    put(51, 7, T.RUBBLE); put(55, 5, T.RUBBLE); put(44, 8, T.RUBBLE);
+    set(57, 14, T.CFLOOR); set(58, 14, T.CFLOOR);
+    // sewer
+    box(43, 15, 61, 40, T.CWALL, T.WALK);
+    rect(47, 16, 56, 35, T.WATER); rect(47, 19, 56, 19, T.WALK);
+    set(57, 15, T.WALK); set(58, 15, T.WALK);
+    rect(44, 33, 46, 35, T.CWALL);
+    LEVERS.forEach(function (p) { put(p[0], p[1], T.FURN); });
+    put(51, 39, T.FURN); put(47, 38, T.FURN); put(56, 38, T.FURN); put(44, 20, T.FURN);
+    set(43, 38, T.WALK); // grate (gate)
+    // dead trees (fixed layout)
+    var r = rng(777);
+    for (var i = 0; i < 900; i++) {
+      var x = 2 + Math.floor(r() * 60), y = 2 + Math.floor(r() * 44), ok = true;
+      for (var dy = -1; dy <= 1 && ok; dy++) for (var dx = -1; dx <= 1; dx++) { var t = get(x + dx, y + dy); if (t !== T.GRASS && t !== T.BURNT) { ok = false; break; } }
+      if (ok && !(x >= 40 && x <= 43 && y >= 14 && y <= 41) && r() < 0.16) put(x, y, T.TREE);
+    }
+    return { tiles: m, under: under };
+  }
+
+
+  /* things that block the way until a puzzle opens them */
+  var GATES = {
+    mayorDoor: { tiles: [[11, 19]], name: '촌장 집 문' },
+    churchDoor: { tiles: [[31, 15], [32, 15]], name: '교회 정문' },
+    hiddenWall: { tiles: [[40, 6]], name: '교회 동쪽 벽' },
+    cryptGate: { tiles: [[42, 6]], name: '지하실 철문' },
+    gas: { rect: [53, 10, 58, 13], name: '초록 가스' },
+    secA: { rect: SECTIONS[0], name: '물에 잠긴 길' },
+    secB: { rect: SECTIONS[1], name: '물에 잠긴 길' },
+    secC: { rect: SECTIONS[2], name: '물에 잠긴 길' },
+    secD: { rect: SECTIONS[3], name: '물에 잠긴 길' },
+    grate: { tiles: [[43, 38]], name: '쇠창살 덮개' }
+  };
+  function gateTiles(id) {
+    var g = GATES[id], out = [];
+    if (g.tiles) out = g.tiles.slice();
+    if (g.rect) { var rc = g.rect; for (var y = rc[1]; y <= rc[3]; y++) for (var x = rc[0]; x <= rc[2]; x++) out.push([x, y]); }
+    return out;
+  }
+  var UNDERGROUND = [[41, 2, 59, 14], [43, 15, 61, 40]];
+  function isUnder(x, y) { for (var i = 0; i < UNDERGROUND.length; i++) { var u = UNDERGROUND[i]; if (x >= u[0] && x < u[2] + 1 && y >= u[1] && y < u[3] + 1) return true; } return false; }
+
+  // interactable objects (the tile they sit on; the player stands next to it)
+  var OBJECTS = [
+    { id: 'log', x: 26, y: 39, kind: 'desk', name: '경비 일지', key: 1 },
+    { id: 'locker', x: 23, y: 39, kind: 'locker', name: '경비 보관함', key: 1 },
+    { id: 'bed', x: 23, y: 43, kind: 'bed', name: '낡은 침대', key: 1 },
+    { id: 'fire', x: 35, y: 41, kind: 'fire', name: '모닥불' },
+    { id: 'flag0', x: 29, y: 18, kind: 'flag', side: 0, name: '북쪽 깃발' },
+    { id: 'flag1', x: 41, y: 22, kind: 'flag', side: 1, name: '동쪽 깃발' },
+    { id: 'flag2', x: 34, y: 30, kind: 'flag', side: 2, name: '남쪽 깃발' },
+    { id: 'flag3', x: 22, y: 22, kind: 'flag', side: 3, name: '서쪽 깃발' },
+    { id: 'clock', x: 25, y: 29, kind: 'clock', name: '시계탑', key: 1 },
+    { id: 'stallA', x: 23, y: 20, w: 2, kind: 'stall', name: '불탄 노점' },
+    { id: 'stallB', x: 38, y: 28, w: 2, kind: 'stall', name: '불탄 노점' },
+    { id: 'diary', x: 8, y: 31, kind: 'book', name: '미나의 일기', key: 1 },
+    { id: 'minaBed', x: 4, y: 28, h: 2, kind: 'bed', name: '작은 침대', key: 1 },
+    { id: 'grenNote', x: 13, y: 32, kind: 'note', name: '그렌의 메모', key: 1 },
+    { id: 'forge', x: 19, y: 28, h: 2, kind: 'forge', name: '대장간 화로', key: 1 },
+    { id: 'anvil', x: 17, y: 30, kind: 'anvil', name: '모루' },
+    { id: 'safe', x: 6, y: 10, kind: 'safe', name: '촌장의 금고', key: 1 },
+    { id: 'mayorDesk', x: 14, y: 10, w: 2, kind: 'desk', name: '촌장의 책상', key: 1 },
+    { id: 'grave', x: 16, y: 6, kind: 'grave', name: '하스의 묘비' },
+    { id: 'bells', x: 25, y: 4, w: 3, kind: 'bells', name: '교회 종', key: 1 },
+    { id: 'altar', x: 31, y: 5, w: 2, kind: 'altar', name: '제단' },
+    { id: 'confession', x: 41, y: 5, kind: 'letter', name: '벽 틈의 편지', key: 1, need: 'bells' },
+    { id: 'plaque', x: 45, y: 3, kind: 'plaque', name: '환기 장치 안내판', key: 1 },
+    { id: 'beam', x: 42, y: 9, kind: 'ore', name: '등불석 받침대', key: 1 },
+    { id: 'ore', x: 43, y: 12, kind: 'orePile', name: '푸른 돌 더미', key: 1 },
+    { id: 'picks', x: 50, y: 3, kind: 'picks', name: '곡괭이 더미', key: 1 },
+    { id: 'sensor', x: 58, y: 4, kind: 'sensor', name: '수정 날개' },
+    { id: 'mirror0', x: 46, y: 9, kind: 'mirror', m: 0, name: '거울' },
+    { id: 'mirror1', x: 46, y: 11, kind: 'mirror', m: 1, name: '거울' },
+    { id: 'mirror2', x: 49, y: 11, kind: 'mirror', m: 2, name: '거울' },
+    { id: 'mirror3', x: 52, y: 11, kind: 'mirror', m: 3, name: '거울' },
+    { id: 'mirror4', x: 52, y: 4, kind: 'mirror', m: 4, name: '거울' },
+    { id: 'sewerSign', x: 44, y: 20, kind: 'plaque', name: '하수도 표지판', key: 1 },
+    { id: 'lever0', x: 60, y: 18, kind: 'lever', l: 0, name: '첫째 수문 레버' },
+    { id: 'lever1', x: 60, y: 24, kind: 'lever', l: 1, name: '둘째 수문 레버' },
+    { id: 'lever2', x: 60, y: 29, kind: 'lever', l: 2, name: '셋째 수문 레버' },
+    { id: 'lever3', x: 60, y: 34, kind: 'lever', l: 3, name: '넷째 수문 레버' },
+    { id: 'crack', x: 51, y: 39, kind: 'crack', name: '무너진 벽', key: 1 },
+    { id: 'burnt', x: 47, y: 38, kind: 'burntLantern', name: '타 버린 등불', key: 1 },
+    { id: 'ledger', x: 56, y: 38, kind: 'book', name: '촌장의 장부', key: 1 }
+  ];
+
+  var COLORS = [{ n: '빨강', c: '#c8463a' }, { n: '파랑', c: '#3f6fb5' }, { n: '초록', c: '#4f9a4a' }, { n: '노랑', c: '#e2c043' }, { n: '하양', c: '#ece6da' }];
+  var BELLS = ['큰 종', '가운데 종', '작은 종'];
+  var ANIMALS = ['곰', '여우', '참새'];
+  var SIDES = ['북', '동', '남', '서'];
+  var LOCK_ORDER = [1, 2, 3, 0]; // "해 뜨는 쪽부터 해를 따라": 동, 남, 서, 북
+  var QUESTIONS = [
+    { q: '지하에 굴을 판 사람은 누구일까요?', o: ['촌장 오르반과 엘리아스 신부', '대장장이 그렌 혼자', '경비대장 하스', '떠돌이 도적단'] },
+    { q: '그들은 무엇을 찾으려 했을까요?', o: ['교회 지하의 등불석 광맥', '종탑을 고칠 돌', '숨겨 둔 금화', '잠든 용의 둥지'] },
+    { q: '마을은 왜 하룻밤 새 불탔을까요?', o: ['굴에서 샌 가스가 하수도에 찼고, 떨어진 축제 등불이 불을 붙였다', '대장간 화로가 넘어졌다', '교회 종탑에 벼락이 떨어졌다', '용의 저주'] }
+  ];
+  // torn letter: the right order reads naturally; each scrap has a digit in its corner
+  var SCRAPS = [
+    { where: 'minaBed', text: '엘리아스 신부님께. 옛 광산 기록을 다시 읽어 보았소.' },
+    { where: 'forge', text: '교회 지하 깊은 곳에 등불석 광맥이 있다고 적혀 있었소.' },
+    { where: 'bed', text: '그 돌을 캐면 가난한 잿불골을 살릴 수 있을 것이오. 그러니 마을 사람들에겐 비밀로 해 주시오.' },
+    { where: 'mayorDesk', text: '교회 열쇠는 내 금고에 넣어 두겠소. — 촌장 오르반' }
+  ];
+
+  /* ---------- clock tower shadow ---------- */
+  // h: hour (float). The sun goes east → south → west, so the shadow goes west → north → east.
+  function shadowTip(h) {
+    var f = (h - 6) / 12 * Math.PI, len = 2.6 + 5.4 * Math.abs(Math.cos(f));
+    return [TOWER[0] - Math.cos(f) * len, TOWER[1] - Math.sin(f) * len];
+  }
+
+  /* ---------- cellar mirrors ---------- */
+  // state 0 '/', 1 '\', 2 folded (light passes straight). dir 0 N 1 E 2 S 3 W
+  var DIRS = [[0, -1], [1, 0], [0, 1], [-1, 0]];
+  function reflect(state, d) { if (state === 2) return d; if (state === 0) return [1, 0, 3, 2][d]; return [3, 2, 1, 0][d]; }
+  function traceBeam(map, states) {
+    var x = BEAM_SRC[0], y = BEAM_SRC[1], d = BEAM_DIR, path = [[x, y]], guard = 0;
+    while (guard++ < 200) {
+      x += DIRS[d][0]; y += DIRS[d][1];
+      path.push([x, y]);
+      if (x === SENSOR[0] && y === SENSOR[1]) return { hit: true, path: path };
+      var mi = -1; for (var i = 0; i < MIRRORS.length; i++) if (MIRRORS[i][0] === x && MIRRORS[i][1] === y) mi = i;
+      if (mi >= 0) { d = reflect(states[mi], d); continue; }
+      if (x < 0 || y < 0 || x >= W || y >= H || SOLID[map.tiles[y * W + x]]) return { hit: false, path: path };
+    }
+    return { hit: false, path: path };
+  }
+  function mirrorSolutions(map) { var n = 0, first = null; for (var c = 0; c < 243; c++) { var st = [], v = c; for (var i = 0; i < 5; i++) { st.push(v % 3); v = (v / 3) | 0; } if (traceBeam(map, st).hit) { n++; if (!first) first = st; } } return { count: n, first: first }; }
+
+  /* ---------- sewer water levels ---------- */
+  // lever i (standing in region i) flips the water in the sections of masks[i]. Regions 0..3, section i lies between region i and i+1.
+  function sewerNext(masks, m, r) {
+    var n = masks.length, out = [];
+    if (r < n) out.push([m ^ masks[r], r, r]);
+    if (r < n && !(m >> r & 1)) out.push([m, r + 1, null]);
+    if (r > 0 && !(m >> (r - 1) & 1)) out.push([m, r - 1, null]);
+    return out;
+  }
+  function sewerSolve(masks, start, fromRegion) { // fewest lever pulls from region 0 (or fromRegion) to the far end
+    var n = masks.length, r0 = fromRegion || 0, key = function (m, r) { return m * 8 + r; }, dist = {}, prev = {}, q = [[start, r0]];
+    dist[key(start, r0)] = 0;
+    while (q.length) {
+      var c = q.shift(), m = c[0], r = c[1], d = dist[key(m, r)];
+      if (r === n) { var pulls = [], k = key(m, r); while (prev[k]) { if (prev[k][1] !== null) pulls.unshift(prev[k][1]); k = prev[k][0]; } return { pulls: d, seq: pulls }; }
+      sewerNext(masks, m, r).forEach(function (x) {
+        var nk = key(x[0], x[1]), nd = d + (x[2] === null ? 0 : 1);
+        if (dist[nk] === undefined || nd < dist[nk]) { dist[nk] = nd; prev[nk] = [key(m, r), x[2]]; if (x[2] === null) q.unshift([x[0], x[1]]); else q.push([x[0], x[1]]); }
+      });
+    }
+    return null;
+  }
+  function sewerNoDeadEnd(masks, start) { // every state you can walk into can still reach the end
+    var seen = {}, q = [[start, 0]], all = []; seen[start * 8] = 1;
+    while (q.length) { var c = q.shift(); all.push(c); sewerNext(masks, c[0], c[1]).forEach(function (x) { if (!seen[x[0] * 8 + x[1]]) { seen[x[0] * 8 + x[1]] = 1; q.push([x[0], x[1]]); } }); }
+    return all.every(function (s) { return sewerSolve(masks, s[0], s[1]) !== null; });
+  }
+  function sewerGreedy(masks, m) { // the obvious play: at each post pull until the way ahead is dry, never go back
+    for (var r = 0; r < masks.length; r++) { if (m >> r & 1) m ^= masks[r]; if (m >> r & 1) return false; }
+    return true;
+  }
+  function makeSewer(r) {
+    for (;;) {
+      var masks = [0, 1, 2, 3].map(function () { return 1 + Math.floor(r() * 15); });
+      if (new Set(masks).size < 4) continue;
+      var start = 1 + Math.floor(r() * 15);
+      var s = sewerSolve(masks, start);
+      if (!s || s.pulls < 3 || sewerGreedy(masks, start) || !sewerNoDeadEnd(masks, start)) continue;
+      return { masks: masks, start: start, best: s.pulls, seq: s.seq };
+    }
+  }
+
+  /* ---------- church statues (push puzzle) ---------- */
+  function statueFloor(map) { // cells a statue may stand on (inside the zone, plain floor)
+    var z = STATUE_ZONE, f = {};
+    for (var y = z[1]; y <= z[3]; y++) for (var x = z[0]; x <= z[2]; x++) if (map.tiles[y * W + x] === T.STONE) f[x + ',' + y] = 1;
+    return f;
+  }
+  function churchFloor(map) { var f = {}; for (var y = 4; y <= 14; y++) for (var x = 24; x <= 39; x++) if (map.tiles[y * W + x] === T.STONE) f[x + ',' + y] = 1; return f; }
+  function playerReach(cf, boxes, px, py) {
+    var occ = {}; boxes.forEach(function (b) { occ[b[0] + ',' + b[1]] = 1; });
+    var seen = {}, q = [[px, py]], minK = null; seen[px + ',' + py] = 1;
+    while (q.length) { var c = q.shift(), k = c[0] + ',' + c[1]; if (minK === null || c[1] * 100 + c[0] < minK) minK = c[1] * 100 + c[0];
+      for (var d = 0; d < 4; d++) { var nx = c[0] + DIRS[d][0], ny = c[1] + DIRS[d][1], nk = nx + ',' + ny; if (!seen[nk] && cf[nk] && !occ[nk]) { seen[nk] = 1; q.push([nx, ny]); } } }
+    return { seen: seen, key: minK };
+  }
+  function makeStatues(r, map) {
+    var sf = statueFloor(map), cf = churchFloor(map);
+    for (var tries = 0; tries < 400; tries++) {
+      var boxes = PLATES.map(function (p) { return p.slice(); }), px = 31, py = 13, pulls = [];
+      for (var step = 0; step < 48; step++) {
+        var pr = playerReach(cf, boxes, px, py), opts = [];
+        boxes.forEach(function (b, bi) { for (var d = 0; d < 4; d++) {
+          var sx = b[0] + DIRS[d][0], sy = b[1] + DIRS[d][1], tx = sx + DIRS[d][0], ty = sy + DIRS[d][1];
+          if (pr.seen[sx + ',' + sy] && sf[sx + ',' + sy] && cf[tx + ',' + ty] && !boxes.some(function (o) { return o[0] === tx && o[1] === ty; })) opts.push([bi, d]);
+        } });
+        if (!opts.length) break;
+        var o = opts[Math.floor(r() * opts.length)], bb = boxes[o[0]];
+        bb[0] += DIRS[o[1]][0]; bb[1] += DIRS[o[1]][1]; px = bb[0] + DIRS[o[1]][0]; py = bb[1] + DIRS[o[1]][1]; pulls.push(o);
+      }
+      var onPlate = boxes.filter(function (b) { return PLATES.some(function (p) { return p[0] === b[0] && p[1] === b[1]; }); }).length;
+      if (onPlate > 0) continue;
+      var far = boxes.reduce(function (a, b) { var m = 99; PLATES.forEach(function (p) { m = Math.min(m, Math.abs(p[0] - b[0]) + Math.abs(p[1] - b[1])); }); return a + m; }, 0);
+      if (far < 10) continue; // fewest pushes is at least this sum
+      if (boxes.some(function (b) { return b[1] >= 13 && b[0] >= 30 && b[0] <= 33; })) continue; // keep the door lane clear at the start
+      if (!playerReach(cf, boxes, 31, 14).seen[px + ',' + py]) continue;
+      return { boxes: boxes, pulls: pulls };
+    }
+    throw new Error('statues');
+  }
+  // exact solver: fewest pushes (BFS). Returns { pushes, moves: [[statueIndex, dir], ...] } or null.
+  function solveStatues(map, start, limit) {
+    var sf = statueFloor(map), cf = churchFloor(map), cells = [], idx = {};
+    Object.keys(cf).forEach(function (k) { idx[k] = cells.length; cells.push(k.split(',').map(Number)); });
+    var n = cells.length, nb = [], canBox = new Uint8Array(n);
+    cells.forEach(function (c, i) { canBox[i] = sf[c[0] + ',' + c[1]] ? 1 : 0; nb.push([0, 1, 2, 3].map(function (d) { var k = (c[0] + DIRS[d][0]) + ',' + (c[1] + DIRS[d][1]); return idx[k] === undefined ? -1 : idx[k]; })); });
+    var goal = PLATES.map(function (p) { return idx[p[0] + ',' + p[1]]; }).sort(function (a, b) { return a - b; }).join(',');
+    var occ = new Int32Array(n).fill(-1), mark = new Int32Array(n), stamp = 0, stack = new Int32Array(n);
+    function reachMin(boxes, p) { stamp++; var top = 0, mn = p; stack[top++] = p; mark[p] = stamp; while (top) { var c = stack[--top]; if (c < mn) mn = c; for (var d = 0; d < 4; d++) { var t = nb[c][d]; if (t >= 0 && mark[t] !== stamp && occ[t] < 0) { mark[t] = stamp; stack[top++] = t; } } } return mn; }
+    var b0 = start.map(function (b) { return idx[b[0] + ',' + b[1]]; }), p0 = idx['31,14'];
+    function setOcc(bx, v) { for (var i = 0; i < bx.length; i++) occ[bx[i]] = v ? i : -1; }
+    function key(bx, pm) { var s2 = bx.slice().sort(function (a, b) { return a - b; }); return s2.join(',') + '|' + pm; }
+    setOcc(b0, 1); var k0 = key(b0, reachMin(b0, p0)); setOcc(b0, 0);
+    var seen = new Map(); seen.set(k0, null);
+    var q = [[b0, p0, k0]], h = 0;
+    while (h < q.length) {
+      var cur = q[h++], bx = cur[0];
+      if (bx.slice().sort(function (a, b) { return a - b; }).join(',') === goal) {
+        var moves = [], k = cur[2]; while (seen.get(k)) { var pr = seen.get(k); moves.unshift(pr[1]); k = pr[0]; } return { pushes: moves.length, moves: moves };
+      }
+      setOcc(bx, 1); reachMin(bx, cur[1]); var reach = mark.slice(), st = stamp;
+      for (var i = 0; i < bx.length; i++) for (var d = 0; d < 4; d++) {
+        var from = nb[bx[i]][(d + 2) % 4], to = nb[bx[i]][d];
+        if (from < 0 || to < 0 || reach[from] !== st || occ[to] >= 0 || !canBox[to]) continue;
+        var nbx = bx.slice(); nbx[i] = to;
+        setOcc(bx, 0); setOcc(nbx, 1); var nk = key(nbx, reachMin(nbx, bx[i])); setOcc(nbx, 0); setOcc(bx, 1);
+        if (!seen.has(nk)) { seen.set(nk, [cur[2], [i, d]]); q.push([nbx, bx[i], nk]); }
+      }
+      setOcc(bx, 0);
+      if (limit && q.length > limit) return null;
+    }
+    return null;
+  }
+
+  function josa(word, a, b) { var c = word.charCodeAt(word.length - 1); if (c < 0xAC00 || c > 0xD7A3) return word + b; return word + (((c - 0xAC00) % 28) ? a : b); }
+  var COUNT = ['', '한', '두', '세', '네', '다섯'];
+
+  function makePuzzles(seed) {
+    var r = rng(hashStr('emberhollow|' + seed));
+    var flags; do { flags = [0, 1, 2, 3].map(function () { return Math.floor(r() * 5); }); } while (new Set(flags).size < 3);
+    var hour = 13 + Math.floor(r() * 5);
+    var animals = shuffle([0, 1, 2], r); // animals[bell] = animal carved on that bell
+    var bells; do { bells = [0, 1, 2, 3, 4, 5].map(function () { return Math.floor(r() * 3); }); } while (new Set(bells).size < 3 || bells[0] === bells[1] && bells[1] === bells[2]);
+    // rhyme: runs of the same bell become "곰이 두 번"
+    var runs = [], i = 0; while (i < bells.length) { var j = i; while (j < bells.length && bells[j] === bells[i]) j++; runs.push([bells[i], j - i]); i = j; }
+    var rhyme = runs.map(function (rn, k) { var a = ANIMALS[animals[rn[0]]]; var head = k === 0 ? '' : (k === runs.length - 1 ? '마지막엔 ' : '그다음 '); return head + josa(a, '이', '가') + ' ' + COUNT[rn[1]] + ' 번 울고'; }).join(', ').replace(/울고$/, '울면 문이 열린대.');
+    var digits; do { digits = [0, 1, 2, 3].map(function () { return Math.floor(r() * 10); }); } while (new Set(digits).size < 3);
+    var scrapOrder = shuffle([0, 1, 2, 3], r); while (scrapOrder.join('') === '0123') scrapOrder = shuffle(scrapOrder, r);
+    var mirrors; do { mirrors = [0, 1, 2, 3, 4].map(function () { return Math.floor(r() * 3); }); } while (mirrors[0] === 1 && mirrors[1] === 1);
+    var sewer = makeSewer(r);
+    var statues = makeStatues(r, MAP0 || (MAP0 = buildMap()));
+    var lockStart; do { lockStart = [0, 1, 2, 3].map(function () { return Math.floor(r() * 5); }); } while (LOCK_ORDER.map(function (sd) { return flags[sd]; }).join() === lockStart.join());
+    var order = QUESTIONS.map(function () { return shuffle([0, 1, 2, 3], r); });
+    return { seed: String(seed), flags: flags, hour: hour, animals: animals, bells: bells, rhyme: rhyme, digits: digits, scrapOrder: scrapOrder, mirrors: mirrors, sewer: sewer, statues: statues, lockStart: lockStart, order: order };
+  }
+  function lockCode(P) { return LOCK_ORDER.map(function (side) { return P.flags[side]; }); }
+
+  var MAP0 = null;
+  /* ---------- reachability: can every step be reached, in order, and not earlier? ---------- */
+  function reach(map, open) {
+    var blocked = {}; Object.keys(GATES).forEach(function (g) { if (!open[g]) gateTiles(g).forEach(function (p) { blocked[p[0] + ',' + p[1]] = 1; }); });
+    var seen = new Uint8Array(W * H), q = [[31, 40]]; seen[40 * W + 31] = 1;
+    while (q.length) {
+      var c = q.shift();
+      for (var k = 0; k < 4; k++) {
+        var nx = c[0] + DIRS[k][0], ny = c[1] + DIRS[k][1];
+        if (nx < 0 || ny < 0 || nx >= W || ny >= H || seen[ny * W + nx]) continue;
+        if (SOLID[map.tiles[ny * W + nx]] || blocked[nx + ',' + ny]) continue;
+        seen[ny * W + nx] = 1; q.push([nx, ny]);
+      }
+    }
+    return seen;
+  }
+  function objTiles(o) { var out = []; for (var dy = 0; dy < (o.h || 1); dy++) for (var dx = 0; dx < (o.w || 1); dx++) out.push([o.x + dx, o.y + dy]); return out; }
+  function canTouchObj(seen, o) { return objTiles(o).some(function (p) { return canTouch(seen, p[0], p[1]); }); }
+  function canTouch(seen, x, y) { for (var k = 0; k < 4; k++) { var nx = x + DIRS[k][0], ny = y + DIRS[k][1]; if (nx >= 0 && ny >= 0 && nx < W && ny < H && seen[ny * W + nx]) return true; } return false; }
+  var G0 = ['mayorDoor'], G1 = G0.concat('churchDoor'), G2 = G1.concat('hiddenWall'), G3 = G2.concat('cryptGate'), G4 = G3.concat('gas'), G5 = G4.concat(['secA', 'secB', 'secC', 'secD']);
+  var STEPS = [
+    { name: '경비 초소와 광장, 집', gates: [], touch: ['log', 'locker', 'bed', 'fire', 'flag0', 'flag1', 'flag2', 'flag3', 'clock', 'diary', 'minaBed', 'grenNote', 'forge', 'grave'], gateTouch: ['mayorDoor', 'churchDoor'] },
+    { name: '촌장 집', gates: G0, touch: ['safe', 'mayorDesk'] },
+    { name: '교회', gates: G1, touch: ['bells', 'altar'], gateTouch: ['hiddenWall'] },
+    { name: '숨은 계단', gates: G2, touch: ['confession'], gateTouch: ['cryptGate'] },
+    { name: '지하실', gates: G3, touch: ['plaque', 'beam', 'ore', 'picks', 'mirror0', 'mirror1', 'mirror2', 'mirror3', 'mirror4'], gateTouch: ['gas'] },
+    { name: '하수도', gates: G4, touch: ['lever0', 'sewerSign'], gateTouch: ['secA'] },
+    { name: '하수도 끝', gates: G5, touch: ['lever1', 'lever2', 'lever3', 'crack', 'burnt', 'ledger'], gateTouch: ['grate'] }
+  ];
+  function objById(id) { for (var i = 0; i < OBJECTS.length; i++) if (OBJECTS[i].id === id) return OBJECTS[i]; return null; }
+
+  function checkSeed(seed, map) {
+    map = map || buildMap();
+    var P = makePuzzles(seed), out = { seed: String(seed), ok: true, notes: [] };
+    function fail(m) { out.ok = false; out.notes.push(m); }
+    // 1 flag lock: the answer is the colour of the flags read east, south, west, north
+    out.lock = lockCode(P).map(function (c) { return COLORS[c].n; }).join('-');
+    if (lockCode(P).join() === P.lockStart.join()) fail('자물쇠가 처음부터 맞음');
+    // 2 shadow: the spot under the shadow tip at the stopped hour must be open plaza floor
+    var tip = shadowTip(P.hour + 0.5), tx = Math.floor(tip[0]), ty = Math.floor(tip[1]);
+    out.dig = P.hour + '시 (' + tx + ',' + ty + ')';
+    if (map.tiles[ty * W + tx] !== T.COBBLE) fail('그림자 끝이 광장 바닥이 아님');
+    // 3 letter: four scraps, each reachable, digits give the code
+    out.code = P.digits.join('');
+    // 4 bells: the rhyme decodes back to the bell order
+    var dec = []; P.rhyme.split(', ').forEach(function (part) { ANIMALS.forEach(function (a, ai) { if (part.indexOf(a) >= 0) { var n = COUNT.indexOf(part.split(' 번')[0].split(' ').pop()); for (var k = 0; k < n; k++) dec.push(P.animals.indexOf(ai)); } }); });
+    if (dec.join() !== P.bells.join()) fail('동요를 종 순서로 못 바꿈'); out.bells = P.bells.map(function (b) { return BELLS[b]; }).join('-');
+    // 4b statues (push puzzle): BFS from the start positions
+    var sv = solveStatues(map, P.statues.boxes); out.statuePushes = sv ? sv.pushes : -1; if (!sv) fail('조각상 퍼즐 못 풂'); else if (sv.pushes < 10) fail('조각상 퍼즐이 너무 쉬움');
+    // 5 mirrors
+    var ms = mirrorSolutions(map); if (!ms.count) fail('거울 정답 없음'); if (traceBeam(map, P.mirrors).hit) fail('빛이 처음부터 닿음'); out.mirrorAnswers = ms.count;
+    // 6 sewer
+    var sw = sewerSolve(P.sewer.masks, P.sewer.start); if (!sw) fail('수문 못 풂'); else out.sewerPulls = sw.pulls;
+    if (!sewerNoDeadEnd(P.sewer.masks, P.sewer.start)) fail('수문에서 막다른 상태');
+    // reachability, step by step
+    for (var s = 0; s < STEPS.length; s++) {
+      var open = {}; STEPS[s].gates.forEach(function (g) { open[g] = 1; });
+      var seen = reach(map, open);
+      STEPS[s].touch.forEach(function (id) { var o = objById(id); if (!canTouchObj(seen, o)) fail(STEPS[s].name + ': ' + o.name + '에 못 감'); });
+      (STEPS[s].gateTouch || []).forEach(function (g) { if (!gateTiles(g).some(function (p) { return canTouch(seen, p[0], p[1]); })) fail(STEPS[s].name + ': ' + GATES[g].name + '에 못 감'); });
+      if (s === 0 && !seen[ty * W + tx]) fail('그림자 끝 자리에 못 감');
+      for (var s2 = s + 1; s2 < STEPS.length; s2++) STEPS[s2].touch.forEach(function (id) {
+        var o = objById(id); if (canTouchObj(seen, o)) fail(STEPS[s].name + ' 단계에 벌써 ' + o.name + '에 닿음');
+      });
+    }
+    SCRAPS.forEach(function (sc) { if (!objById(sc.where)) fail('편지 조각 자리 없음'); });
+    return out;
+  }
+
+  return { W: W, H: H, T: T, SOLID: SOLID, GATES: GATES, gateTiles: gateTiles, OBJECTS: OBJECTS, objById: objById, COLORS: COLORS, BELLS: BELLS, ANIMALS: ANIMALS, SIDES: SIDES, LOCK_ORDER: LOCK_ORDER,
+    QUESTIONS: QUESTIONS, SCRAPS: SCRAPS, PLATES: PLATES, STATUE_ZONE: STATUE_ZONE, solveStatues: solveStatues, objTiles: objTiles, statueFloor: statueFloor, STEPS: STEPS, MIRRORS: MIRRORS, BEAM_SRC: BEAM_SRC, SENSOR: SENSOR, LEVERS: LEVERS, SECTIONS: SECTIONS, TOWER: TOWER,
+    UNDERGROUND: UNDERGROUND, isUnder: isUnder, rng: rng, hashStr: hashStr, buildMap: buildMap, makePuzzles: makePuzzles, lockCode: lockCode, shadowTip: shadowTip,
+    traceBeam: traceBeam, mirrorSolutions: mirrorSolutions, sewerSolve: sewerSolve, checkSeed: checkSeed, reach: reach, DIRS: DIRS, josa: josa };
+})();
+if (typeof module !== 'undefined') module.exports = EHCore;
+</script>
+<script>
+(function () {
+'use strict';
+var C = EHCore, W = C.W, H = C.H, T = C.T, TS = 16;
+var $ = function (id) { return document.getElementById(id); };
+var BUILD = 1, VERSION = '0.1';
+var LS = { save: 'emberhollow-save-v1', rec: 'emberhollow-records-v1', set: 'emberhollow-settings-v1' };
+var TEST = /[?&]test=1/.test(location.search);
+function lsGet(k, d) { try { var v = localStorage.getItem(k); return v ? JSON.parse(v) : d; } catch (e) { return d; } }
+function lsSet(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); return true; } catch (e) { return false; } }
+function lsDel(k) { try { localStorage.removeItem(k); } catch (e) { } }
+function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
+function clamp(v, a, b) { return v < a ? a : v > b ? b : v; }
+function nh(x, y, k) { var h = Math.imul(x * 374761393 + y * 668265263 + (k || 0) * 2147483647, 1274126177) >>> 0; h = Math.imul(h ^ (h >>> 13), 1103515245) >>> 0; return ((h ^ (h >>> 16)) >>> 0) / 4294967296; }
+
+var PATCH = [
+  { date: '2026-10-27', build: 'b1', title: '첫 공개', items: ['폐허 마을 탐험과 퍼즐 일곱 가지', '시계탑 그림자, 거울 빛, 조각상 밀기, 하수도 수위 퍼즐', '수첩의 이름별 기록과 원인 밝히기', '시드로 같은 퍼즐 공유', 'Frenchfries777 계정 로그인'] }
+];
+
+/* ---------------- settings, audio ---------------- */
+var SET = Object.assign({ music: true, musicVol: 0.6, sfx: true, sfxVol: 0.7 }, lsGet(LS.set, {}));
+function saveSet() { lsSet(LS.set, SET); applyVol(); }
+var A = { ctx: null, bgm: null, mg: null, sfxGain: null, missing: false, routed: false };
+function initBgm() {
+  try { A.bgm = new Audio('bgm.mp3'); A.bgm.loop = true; A.bgm.preload = 'auto'; A.bgm.addEventListener('error', function () { A.missing = true; $('tapStart').classList.add('hide'); }); } catch (e) { A.missing = true; }
+}
+function ensureCtx() {
+  try {
+    if (!A.ctx) { A.ctx = new (window.AudioContext || window.webkitAudioContext)(); A.sfxGain = A.ctx.createGain(); A.sfxGain.connect(A.ctx.destination); }
+    if (A.ctx.state === 'suspended') A.ctx.resume();
+    if (!A.routed && A.bgm && /^http/.test(location.protocol)) { var src = A.ctx.createMediaElementSource(A.bgm); A.mg = A.ctx.createGain(); src.connect(A.mg); A.mg.connect(A.ctx.destination); A.routed = true; }
+  } catch (e) { }
+  applyVol();
+}
+function applyVol() {
+  var mv = SET.music ? SET.musicVol : 0;
+  if (A.bgm) { if (A.routed && A.mg) { A.bgm.volume = 1; A.mg.gain.value = mv; } else A.bgm.volume = mv; }
+  if (A.sfxGain) A.sfxGain.gain.value = SET.sfx ? SET.sfxVol : 0;
+  if (A.bgm && !SET.music) A.bgm.pause(); else if (A.bgm && SET.music && A.started) playBgm();
+}
+function playBgm() {
+  if (!A.bgm || A.missing || !SET.music) return;
+  try { var p = A.bgm.play(); A.started = true; if (p && p.catch) p.catch(function (e) { if (e && e.name === 'NotAllowedError') $('tapStart').classList.remove('hide'); }); } catch (e) { }
+}
+function firstGesture() { ensureCtx(); playBgm(); $('tapStart').classList.add('hide'); }
+function tone(f, dur, type, vol, when, slide) {
+  if (!A.ctx || !SET.sfx) return;
+  try {
+    var t = A.ctx.currentTime + (when || 0), o = A.ctx.createOscillator(), g = A.ctx.createGain();
+    o.type = type || 'sine'; o.frequency.setValueAtTime(f, t); if (slide) o.frequency.exponentialRampToValueAtTime(f * slide, t + dur);
+    g.gain.setValueAtTime(vol || 0.2, t); g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+    o.connect(g); g.connect(A.sfxGain); o.start(t); o.stop(t + dur + 0.05);
+  } catch (e) { }
+}
+var SFX = {
+  talk: function () { tone(480 + Math.random() * 90, 0.045, 'square', 0.04); },
+  ui: function () { tone(720, 0.06, 'triangle', 0.1); },
+  clue: function () { tone(660, 0.15, 'sine', 0.18); tone(990, 0.3, 'sine', 0.14, 0.1); },
+  bad: function () { tone(170, 0.25, 'sawtooth', 0.1, 0, 0.7); },
+  ok: function () { [523, 659, 784, 1046].forEach(function (f, i) { tone(f, 0.35, 'triangle', 0.16, i * 0.09); }); },
+  bell: function (i) { var f = [174, 262, 392][i]; tone(f, 2.2, 'sine', 0.32); tone(f * 2.76, 1.2, 'sine', 0.07); tone(f * 5.4, 0.7, 'sine', 0.035); },
+  dig: function () { tone(140, 0.1, 'square', 0.08, 0, 0.5); tone(110, 0.1, 'square', 0.08, 0.14, 0.5); },
+  push: function () { tone(70, 0.25, 'sawtooth', 0.09, 0, 0.8); },
+  lever: function () { tone(240, 0.07, 'square', 0.09); tone(90, 0.6, 'sine', 0.16, 0.07, 0.6); tone(300, 0.5, 'sine', 0.05, 0.2, 0.5); },
+  mirror: function () { tone(1100, 0.07, 'triangle', 0.08); },
+  door: function () { tone(110, 0.3, 'sawtooth', 0.07, 0, 1.4); }
+};
+
+/* ---------------- world ---------------- */
+var MAP = C.buildMap();
+var OBJ = C.OBJECTS;
+var S = null, P = null; // state, puzzles
+var cv = $('game'), ctx = cv.getContext('2d');
+var base = document.createElement('canvas'); base.width = W * TS; base.height = H * TS;
+var mini = $('mini'), mctx = mini.getContext('2d'), miniBase = document.createElement('canvas'); miniBase.width = W * 2; miniBase.height = H * 2;
+function tile(x, y) { return (x < 0 || y < 0 || x >= W || y >= H) ? T.TREE : MAP.tiles[y * W + x]; }
+function isWallish(t) { return t === T.WALL || t === T.WWALL || t === T.CWALL; }
+
+var ROOFS = [[3, 27, 10, 29], [12, 31, 20, 33], [4, 9, 11, 12], [22, 42, 28, 44]];
+var REGIONS = [
+  ['지하실', 41, 2, 59, 14], ['하수도', 43, 15, 61, 40], ['교회', 23, 3, 40, 15], ['촌장 집', 4, 9, 18, 19], ['미나네 집', 3, 27, 10, 33], ['대장간', 12, 27, 20, 33],
+  ['경비 초소', 22, 37, 37, 45], ['마을 광장', 22, 18, 41, 30], ['묘지', 3, 2, 20, 8], ['불탄 들판', 3, 34, 20, 45], ['마을 길', 0, 0, 63, 47]
+];
+function regionAt(x, y) { for (var i = 0; i < REGIONS.length; i++) { var r = REGIONS[i]; if (x >= r[1] && x < r[3] + 1 && y >= r[2] && y < r[4] + 1) return r[0]; } return ''; }
+function inRect(x, y, r) { return x >= r[0] && x < r[2] + 1 && y >= r[1] && y < r[3] + 1; }
+
+/* ---------- base map painting (European village ruins) ---------- */
+function px(g, c, x, y, w, h) { g.fillStyle = c; g.fillRect(x, y, w || 1, h || 1); }
+function speck(g, x0, y0, cols, n, k) { for (var i = 0; i < n; i++) { var r1 = nh(x0, y0, k * 31 + i), r2 = nh(y0, x0, k * 17 + i * 3), r3 = nh(x0 + i, y0 - i, k); px(g, cols[Math.floor(r3 * cols.length)], x0 * TS + Math.floor(r1 * 16), y0 * TS + Math.floor(r2 * 16)); } }
+function groundOf(x, y) { var t = tile(x, y); if (t === T.FURN || t === T.TREE || t === T.RUBBLE || t === T.GRAVE) return MAP.under[y * W + x] || T.GRASS; return t; }
+function paintGround(g, x, y, t) {
+  var X = x * TS, Y = y * TS;
+  switch (t) {
+    case T.GRASS: px(g, '#7a7444', X, Y, 16, 16); speck(g, x, y, ['#6c6739', '#857f4c', '#8f8752', '#6a5f3a'], 14, 1); if (nh(x, y, 9) < 0.12) { px(g, '#b8a060', X + 5, Y + 7, 2, 1); px(g, '#c6a8a0', X + 10, Y + 11); } break;
+    case T.BURNT: px(g, '#3e332b', X, Y, 16, 16); speck(g, x, y, ['#4f433a', '#2f2621', '#5a4c42'], 16, 2); if (nh(x, y, 4) < 0.18) px(g, '#9a4a22', X + Math.floor(nh(x, y, 5) * 14), Y + Math.floor(nh(x, y, 6) * 14)); break;
+    case T.DIRT: px(g, '#93714c', X, Y, 16, 16); speck(g, x, y, ['#83633f', '#a3815a', '#7a5c3c'], 12, 3); break;
+    case T.COBBLE: // rounded cobblestones in staggered rows
+      px(g, '#4f4842', X, Y, 16, 16);
+      for (var r = 0; r < 3; r++) { var off = ((y * 3 + r) % 2) ? 3 : 0; for (var c = -1; c < 3; c++) {
+        var sx = X + c * 6 + off, sy = Y + r * 5 + (r === 2 ? 1 : 0), sw = 5, shh = 4, sh = nh(x * 4 + c, y * 3 + r, 7);
+        var col = sh < 0.3 ? '#857c72' : sh < 0.65 ? '#7a7168' : sh < 0.9 ? '#91877c' : '#6e665e';
+        var a0 = Math.max(sx, X), a1 = Math.min(sx + sw, X + 16); if (a1 <= a0) continue;
+        px(g, col, a0, sy + 1, a1 - a0, shh - 1); if (a1 - a0 > 2) px(g, col, a0 + 1, sy, a1 - a0 - 2, 1);
+        if (a1 - a0 > 2) px(g, '#a39888', a0 + 1, sy, a1 - a0 - 2, 1); px(g, 'rgba(0,0,0,.18)', a0, sy + shh - 1, a1 - a0, 1);
+      } }
+      if (nh(x, y, 8) < 0.1) px(g, '#2e2722', X + 3, Y + 6, 7, 1);
+      if (nh(x, y, 9) < 0.08) px(g, '#5d7a44', X + 10, Y + 10, 2, 1);
+      break;
+    case T.STONE:
+      px(g, '#6f675f', X, Y, 16, 16); px(g, '#7d746b', X + 1, Y + 1, 7, 7); px(g, '#786f66', X + 9, Y + 1, 6, 7); px(g, '#7a7168', X + 1, Y + 9, 10, 6); px(g, '#827970', X + 12, Y + 9, 3, 6);
+      if (nh(x, y, 3) < 0.15) px(g, '#544c45', X + 4, Y + 3, 1, 6);
+      break;
+    case T.WOOD:
+      for (var i = 0; i < 4; i++) { px(g, i % 2 ? '#7f5536' : '#8b5e3c', X, Y + i * 4, 16, 4); px(g, '#5e3d26', X, Y + i * 4 + 3, 16, 1); px(g, '#5e3d26', X + ((x * 7 + i * 5) % 16), Y + i * 4, 1, 3); }
+      if (nh(x, y, 2) < 0.3) px(g, 'rgba(20,12,8,.45)', X + Math.floor(nh(x, y, 3) * 8), Y + Math.floor(nh(x, y, 4) * 8), 7, 5);
+      break;
+    case T.CFLOOR: px(g, '#3f3a43', X, Y, 16, 16); px(g, '#48434c', X + 1, Y + 1, 6, 6); px(g, '#45404a', X + 9, Y + 1, 6, 6); px(g, '#4a454e', X + 1, Y + 9, 14, 6); break;
+    case T.WALK: px(g, '#4c4852', X, Y, 16, 16); for (var b = 0; b < 4; b++) { px(g, '#57525c', X + ((b % 2) ? 4 : 0), Y + b * 4, 7, 3); px(g, '#57525c', X + ((b % 2) ? 12 : 8), Y + b * 4, 7, 3); } break;
+    case T.WATER: px(g, '#26414a', X, Y, 16, 16); px(g, '#2f4f58', X + 2, Y + 4, 6, 1); px(g, '#2f4f58', X + 9, Y + 11, 5, 1); break;
+    case T.STAIRS: px(g, '#2a2630', X, Y, 16, 16); for (var s = 0; s < 4; s++) { px(g, '#5d5764', X, Y + s * 4, 16 - s * 2, 3); } break;
+    case T.FOUNT: px(g, '#5e5650', X, Y, 16, 16); break;
+    default: px(g, '#7a7444', X, Y, 16, 16);
+  }
+}
+function paintWall(g, x, y, t) {
+  var X = x * TS, Y = y * TS, below = tile(x, y + 1), face = !isWallish(below) && y < H - 1;
+  if (t === T.WALL) {
+    px(g, '#8f8170', X, Y, 16, 16);
+    for (var r = 0; r < 4; r++) { var off = (y + r) % 2 ? 5 : 0; for (var c = -1; c < 3; c++) { var sx = X + c * 9 + off; var a = Math.max(sx, X), b = Math.min(sx + 8, X + 16); if (b > a) { px(g, nh(x * 3 + c, y * 4 + r, 5) < 0.5 ? '#a19280' : '#988a78', a, Y + r * 4, b - a, 3); } } }
+    if ((y === 1 || y === 46) && x % 2 === 0) { px(g, '#b3a48f', X + 2, Y + 1, 5, 4); px(g, '#b3a48f', X + 10, Y + 1, 5, 4); }
+    if (face) { px(g, '#5d5145', X, Y + 10, 16, 6); for (var k = 0; k < 3; k++) px(g, '#4b4137', X + k * 6 + (y % 2) * 3, Y + 10, 1, 6); px(g, '#4b4137', X, Y + 13, 16, 1); }
+    if (nh(x, y, 11) < 0.12) { px(g, '#4f6a3a', X + 2, Y + 2, 3, 3); px(g, '#5d7a44', X + 4, Y + 4, 2, 4); } // ivy
+    if (nh(x, y, 12) < 0.1) px(g, '#2c241e', X + 6, Y + 5, 4, 3); // soot
+  } else if (t === T.WWALL) { // half-timbered plaster
+    px(g, '#d3c19c', X, Y, 16, 16); px(g, '#4a2f1d', X, Y, 16, 2); px(g, '#4a2f1d', X, Y, 2, 16);
+    if (nh(x, y, 6) < 0.5) { for (var d = 0; d < 14; d++) px(g, '#4a2f1d', X + 2 + d, Y + 2 + d, 1, 1); } else px(g, '#4a2f1d', X + 8, Y + 2, 2, 14);
+    if (nh(x, y, 7) < 0.35) px(g, 'rgba(30,18,10,.55)', X + 3, Y + 6, 9, 7); // scorch
+    if (face) { px(g, '#a48f6c', X, Y + 11, 16, 5); px(g, '#4a2f1d', X, Y + 11, 16, 1); px(g, '#4a2f1d', X + 7, Y + 11, 2, 5); }
+  } else if (t === T.CWALL) {
+    px(g, '#4a4552', X, Y, 16, 16); for (var r2 = 0; r2 < 4; r2++) px(g, '#544e5c', X + ((y + r2) % 2) * 4, Y + r2 * 4, 11, 3);
+    if (face) { px(g, '#2a2630', X, Y + 10, 16, 6); px(g, '#211e26', X, Y + 13, 16, 1); }
+  }
+}
+function paintTree(g, x, y) {
+  var X = x * TS, Y = y * TS;
+  if (nh(x, y, 21) < 0.35) { // cypress, dark and tall
+    px(g, 'rgba(0,0,0,.25)', X + 3, Y + 12, 10, 3);
+    px(g, '#2f3b25', X + 5, Y - 10, 6, 24); px(g, '#3a482c', X + 4, Y - 4, 8, 14); px(g, '#46553a', X + 6, Y - 8, 2, 16); px(g, '#4a3526', X + 7, Y + 12, 2, 3);
+  } else { // dead oak
+    px(g, 'rgba(0,0,0,.25)', X + 2, Y + 12, 12, 3);
+    px(g, '#3f2e22', X + 6, Y + 2, 4, 12); px(g, '#4e3a2a', X + 7, Y + 2, 1, 12);
+    px(g, '#3f2e22', X + 2, Y - 2, 5, 2); px(g, '#3f2e22', X + 9, Y - 4, 5, 2); px(g, '#3f2e22', X + 1, Y - 5, 2, 4); px(g, '#3f2e22', X + 13, Y - 8, 2, 5); px(g, '#3f2e22', X + 6, Y - 7, 2, 9);
+  }
+}
+function paintRubble(g, x, y) {
+  var X = x * TS, Y = y * TS;
+  px(g, 'rgba(0,0,0,.25)', X + 1, Y + 11, 14, 4);
+  px(g, '#7d7268', X + 1, Y + 6, 7, 7); px(g, '#968a7e', X + 1, Y + 6, 7, 2); px(g, '#6b6158', X + 8, Y + 8, 6, 6); px(g, '#857a6f', X + 8, Y + 8, 6, 2); px(g, '#8f8478', X + 4, Y + 2, 6, 5);
+  px(g, '#2e2018', X, Y + 12, 14, 2); // charred beam
+}
+function paintFurnBase(g, x, y) { // furniture that is not an interactable object
+  var X = x * TS, Y = y * TS, reg = regionAt(x, y);
+  if (reg === '교회') { px(g, '#4e3423', X, Y + 4, 16, 8); px(g, '#634330', X, Y + 4, 16, 2); px(g, '#3a2619', X + 1, Y + 12, 2, 3); px(g, '#3a2619', X + 13, Y + 12, 2, 3); if (nh(x, y, 2) < 0.3) px(g, '#22160f', X + 4, Y + 5, 6, 4); }
+  else if (reg === '촌장 집') { px(g, '#5a3a24', X + 1, Y, 14, 15); for (var i = 0; i < 3; i++) { px(g, '#3d2717', X + 1, Y + 4 + i * 4, 14, 1); px(g, ['#8a3a2a', '#3a5a7a', '#6a6a3a'][i], X + 3 + i * 3, Y + 1 + i * 4, 2, 3); } }
+  else { px(g, '#6b4a30', X + 2, Y + 3, 12, 11); px(g, '#80583a', X + 2, Y + 3, 12, 2); px(g, '#4e341f', X + 7, Y + 3, 1, 11); }
+}
+function paintFountain(g) {
+  var X = 36 * TS, Y = 21 * TS;
+  px(g, 'rgba(0,0,0,.25)', X + 2, Y + 40, 46, 6);
+  px(g, '#8d8378', X + 2, Y + 4, 44, 40); px(g, '#a39888', X + 2, Y + 4, 44, 3); px(g, '#6b625a', X + 5, Y + 8, 38, 33); px(g, '#4f4842', X + 7, Y + 10, 34, 29);
+  px(g, '#3e4a48', X + 9, Y + 26, 14, 10); // dry puddle
+  px(g, '#9a9084', X + 19, Y + 14, 10, 14); px(g, '#b0a596', X + 20, Y + 10, 8, 6); px(g, '#7d7369', X + 22, Y + 6, 4, 5); // broken statue
+  px(g, '#6a5f55', X + 31, Y + 30, 6, 4); px(g, '#6a5f55', X + 12, Y + 14, 4, 3);
+}
+function paintTower(g) { // clock tower, top-down: slate roof with a clock face on the south side
+  var X = 24 * TS, Y = 27 * TS;
+  px(g, 'rgba(0,0,0,.3)', X + 2, Y + 44, 46, 5);
+  px(g, '#7c6f62', X, Y + 8, 48, 40); for (var r = 0; r < 10; r++) px(g, r % 2 ? '#8a7c6d' : '#837568', X, Y + 8 + r * 4, 48, 3);
+  px(g, '#3c4652', X + 2, Y, 44, 24); for (var i = 0; i < 6; i++) px(g, '#4a5664', X + 2 + i * 4, Y + i * 2, 44 - i * 8, 2); px(g, '#2a2f37', X + 22, Y, 4, 12);
+  px(g, '#e9dcc0', X + 15, Y + 27, 18, 18); px(g, '#5a4632', X + 15, Y + 27, 18, 1); px(g, '#5a4632', X + 15, Y + 44, 18, 1); px(g, '#5a4632', X + 15, Y + 27, 1, 18); px(g, '#5a4632', X + 32, Y + 27, 1, 18);
+  for (var h = 0; h < 12; h++) { var a = h / 12 * Math.PI * 2; px(g, '#3b2a1c', Math.round(X + 24 + Math.sin(a) * 7), Math.round(Y + 36 - Math.cos(a) * 7)); }
+}
+function paintChurchDetails(g) {
+  var glass = ['#c84a3a', '#3f6fb5', '#e2c043', '#4f9a4a', '#9a5ab5'];
+  for (var i = 0; i < 40; i++) { var x = 24 + Math.floor(nh(i, 1, 40) * 16), y = 4 + Math.floor(nh(i, 2, 40) * 11); if (tile(x, y) !== T.STONE) continue; px(g, glass[i % 5], x * TS + Math.floor(nh(i, 3, 40) * 14), y * TS + Math.floor(nh(i, 4, 40) * 14), 2, 1); }
+  [[25, 7, 38, 7], [24, 11, 30, 13]].forEach(function (b) { g.strokeStyle = 'rgba(38,25,16,.75)'; g.lineWidth = 3; g.beginPath(); g.moveTo(b[0] * TS, b[1] * TS); g.lineTo(b[2] * TS, b[3] * TS); g.stroke(); });
+  // red carpet down the aisle
+  px(g, 'rgba(120,30,25,.55)', 31 * TS + 2, 6 * TS, 28, 9 * TS);
+}
+function bakeBase() {
+  var g = base.getContext('2d'); g.imageSmoothingEnabled = false;
+  for (var y = 0; y < H; y++) for (var x = 0; x < W; x++) paintGround(g, x, y, groundOf(x, y));
+  for (y = 0; y < H; y++) for (x = 0; x < W; x++) { var t = tile(x, y); if (isWallish(t)) paintWall(g, x, y, t); }
+  paintChurchDetails(g);
+  for (y = 0; y < H; y++) for (x = 0; x < W; x++) {
+    var t2 = tile(x, y);
+    if (t2 === T.RUBBLE) paintRubble(g, x, y);
+    else if (t2 === T.GRAVE) { var X = x * TS, Y = y * TS; px(g, 'rgba(0,0,0,.25)', X + 3, Y + 12, 10, 3); px(g, '#8f8a82', X + 4, Y + 3, 8, 11); px(g, '#a8a39a', X + 4, Y + 3, 8, 2); px(g, '#6e6a63', X + 7, Y + 6, 2, 5); px(g, '#6e6a63', X + 5, Y + 7, 6, 1); }
+    else if (t2 === T.FURN && !objAt(x, y) && !isMirrorOrLever(x, y)) paintFurnBase(g, x, y);
+  }
+  paintFountain(g); paintTower(g);
+  for (y = 0; y < H; y++) for (x = 0; x < W; x++) if (tile(x, y) === T.TREE) paintTree(g, x, y);
+  // minimap
+  var m = miniBase.getContext('2d');
+  for (y = 0; y < H; y++) for (x = 0; x < W; x++) {
+    var tt = tile(x, y), col = '#6f6a3e';
+    if (tt === T.COBBLE) col = '#8a8178'; else if (tt === T.DIRT) col = '#93714c'; else if (tt === T.WALL) col = '#b0a08a'; else if (tt === T.WWALL) col = '#c9b48c';
+    else if (tt === T.WOOD) col = '#7f5536'; else if (tt === T.STONE) col = '#6f675f'; else if (tt === T.CFLOOR || tt === T.WALK || tt === T.STAIRS) col = '#3a3640'; else if (tt === T.CWALL) col = '#22202a';
+    else if (tt === T.WATER) col = '#1f3940'; else if (tt === T.TREE) col = '#3b3324'; else if (tt === T.BURNT) col = '#3a302a'; else if (tt === T.FOUNT) col = '#9a9084'; else if (tt === T.FURN) col = '#5a4a3a';
+    m.fillStyle = col; m.fillRect(x * 2, y * 2, 2, 2);
+  }
+}
+function objAt(x, y) { for (var i = 0; i < OBJ.length; i++) { var o = OBJ[i]; if (x >= o.x && x < o.x + (o.w || 1) && y >= o.y && y < o.y + (o.h || 1)) return o; } return null; }
+function isMirrorOrLever(x, y) { return C.MIRRORS.some(function (m) { return m[0] === x && m[1] === y; }) || C.LEVERS.some(function (m) { return m[0] === x && m[1] === y; }); }
+
+/* ---------------- game state ---------------- */
+function newState(seed) {
+  P = C.makePuzzles(seed);
+  return {
+    v: 1, seed: String(seed), t: 15 * 60, px: 31.5, py: 41.2, dir: 0, items: {}, flags: {}, seen: {}, notes: [], newNotes: {},
+    statues: P.statues.boxes.map(function (b) { return b.slice(); }), mirrors: P.mirrors.slice(), water: P.sewer.start, levers: [0, 0, 0, 0],
+    lock: P.lockStart.slice(), wheels: [0, 0, 0, 0], scrapOrder: P.scrapOrder.slice(), bellsDone: false, playMs: 0, wrong: 0, started: Date.now(), talked: {}
+  };
+}
+function gateOpen(id) {
+  if (id === 'secA' || id === 'secB' || id === 'secC' || id === 'secD') return !(S.water >> 'ABCD'.indexOf(id[3]) & 1);
+  return !!S.flags[id];
+}
+var gateCache = null;
+function rebuildGateCache() {
+  gateCache = {};
+  Object.keys(C.GATES).forEach(function (g) { if (!gateOpen(g)) C.gateTiles(g).forEach(function (p) { gateCache[p[0] + ',' + p[1]] = g; }); });
+}
+function statueAt(x, y) { for (var i = 0; i < S.statues.length; i++) if (S.statues[i][0] === x && S.statues[i][1] === y) return i; return -1; }
+function blocked(x, y) { return !!C.SOLID[tile(x, y)] || !!gateCache[x + ',' + y] || statueAt(x, y) >= 0; }
+function hour() { return (S.t % 1440) / 60; }
+function day() { return Math.floor(S.t / 1440) + 1; }
+
+/* ---------------- notes ---------------- */
+var WHO = ['하스', '보른', '라나', '미나', '그렌', '오르반', '엘리아스', '장소와 물건'];
+var WHO_SUB = { '하스': '경비대장, 그날 숨짐', '보른': '살아남은 경비병', '라나': '떠돌이 고물상', '미나': '대장장이 그렌의 딸', '그렌': '대장장이', '오르반': '촌장', '엘리아스': '교회 신부', '장소와 물건': '살펴본 것들' };
+function animalOf(bell) { return C.ANIMALS[P.animals[bell]]; }
+var NOTES = {
+  log: { who: '하스', title: '경비 일지', text: function () { return '축제 사흘 전: 밤마다 교회 쪽에서 땅 파는 소리가 난다는 신고가 세 건. 신부님은 종탑 보수라고 하셨다.\n축제 날 오후: 하수도 맨홀에서 썩은 달걀 냄새가 난다는 신고. 축제가 끝나면 확인할 것.\n메모: 보관함 암호는 광장 깃발 색이다. 해 뜨는 쪽 깃발부터, 해가 하늘을 도는 길을 따라 읽는다.'; } },
+  logBorn: { who: '보른', title: '일지 마지막 장', text: function () { return '불이 꺼진 뒤, 촌장 집 열쇠를 시계탑 그림자 끝에 묻었다. 시계가 멈춘 바로 그 시각의 그림자다. 아무도 그 집을 함부로 뒤지지 못하게. (삽은 보관함에)'; } },
+  flags: { who: '장소와 물건', title: '광장 깃발', text: function () { return [0, 1, 2, 3].map(function (s) { return C.SIDES[s] + '쪽 깃발: ' + (S.seen['flag' + s] ? C.COLORS[P.flags[s]].n : '아직 못 봄'); }).join('\n'); } },
+  clock: { who: '장소와 물건', title: '멈춘 시계탑', text: function () { return '시계 바늘이 ' + P.hour + '시에 멈춰 있어요. 그날 마을 시계는 이 시각에 멈췄대요.'; } },
+  grave: { who: '하스', title: '하스의 묘비', text: function () { return '경비대장 하스, 마을 사람들을 남문으로 대피시키고 이곳에 잠들다.'; } },
+  diary: { who: '미나', title: '미나의 일기', text: function () { return '10월 2일. 아빠가 요즘 밤마다 곡괭이를 들고 교회에 간다. 촌장님도 같이 간다.\n10월 4일. 신부님이 종 앞에서 이상한 노래를 흥얼거렸다. 몰래 외워 뒀다!\n「' + P.rhyme + '」\n10월 5일. 내일은 등불 축제! 그런데 길에서 썩은 달걀 냄새가 나서 싫다.'; } },
+  grenNote: { who: '그렌', title: '대장간 메모', text: function () { return '교회 주문: 곡괭이 열 자루, 쇠지렛대 네 자루. 신부님은 종탑 보수용이라는데, 종탑 고치는 데 곡괭이가 왜 필요하지?\n촌장 양반은 중요한 번호를 편지 귀퉁이에 몰래 적어 두는 버릇이 있지.'; } },
+  forge: { who: '장소와 물건', title: '대장간 화로', text: function () { return '화로는 차갑게 식어 있고, 대장간은 다른 집보다 덜 탔어요. 불은 여기서 시작되지 않은 것 같아요.'; } },
+  letter: { who: '오르반', title: '찢어진 편지 (맞춘 것)', text: function () { return C.SCRAPS.map(function (s) { return s.text; }).join(' ') + '\n귀퉁이 숫자를 순서대로 읽으면 ' + P.digits.join(' ') + '.'; } },
+  safe: { who: '장소와 물건', title: '촌장의 금고', text: function () { return '편지 귀퉁이 숫자로 금고가 열렸어요. 안에 교회 열쇠가 있었어요.'; } },
+  bells: { who: '장소와 물건', title: '교회 종', text: function () { return '큰 종에는 ' + animalOf(0) + ', 가운데 종에는 ' + animalOf(1) + ', 작은 종에는 ' + animalOf(2) + '가 새겨져 있어요.'; } },
+  altar: { who: '엘리아스', title: '제단의 글귀', text: function () { return '성인들이 별 위에 서면 종 줄이 내려오리라.'; } },
+  confession: { who: '엘리아스', title: '고해 편지', text: function () { return '주여, 용서하소서. 촌장과 함께 판 굴이 하수도 쪽 벽을 뚫고 말았습니다. 그 뒤로 지하에서 고약한 냄새가 올라옵니다. 촌장은 축제가 끝나면 막자고 합니다. 축제는 내일입니다.'; } },
+  plaque: { who: '장소와 물건', title: '환기 장치 안내판', text: function () { return '등불석 빛이 수정 날개에 닿으면 날개가 돌아 지하 공기를 밖으로 뽑아낸다. 거울은 손으로 돌려 맞출 것.'; } },
+  beam: { who: '장소와 물건', title: '등불석 받침대', text: function () { return '푸른 돌이 스스로 빛을 내요. 불꽃 없이 빛나는 돌이에요.'; } },
+  ore: { who: '장소와 물건', title: '푸른 돌 더미', text: function () { return '굴에서 캐낸 푸른 돌이 잔뜩 쌓여 있어요. 누군가 오랫동안 몰래 캤어요.'; } },
+  picks: { who: '그렌', title: '곡괭이 더미', text: function () { return '곡괭이 열 자루. 손잡이에 그렌 대장간 표시가 찍혀 있어요.'; } },
+  gas: { who: '장소와 물건', title: '초록 가스', text: function () { return '초록빛 가스가 굴을 막고 있어요. 숨을 쉴 수 없고, 등불 불꽃을 가까이 대면 큰일 날 것 같아요.'; } },
+  sewerSign: { who: '장소와 물건', title: '하수도 표지판', text: function () { return '수문 레버 하나가 여러 구역의 물을 한꺼번에 바꾼다. 지나온 길이 다시 잠겨도 놀라지 말 것.'; } },
+  crack: { who: '장소와 물건', title: '무너진 벽', text: function () { return '굴과 하수도 사이 벽이 무너져 있어요. 그 너머 깊은 동굴에서 아직도 매캐한 냄새가 새어 나와요. 벽 둘레가 새까맣게 그을렸어요.'; } },
+  burnt: { who: '장소와 물건', title: '타 버린 등불', text: function () { return '맨홀 아래로 떨어진 축제 등불이에요. 둘레의 돌이 녹아내릴 만큼 탔어요. 불은 여기서 가스에 옮겨붙었어요.'; } },
+  ledger: { who: '오르반', title: '촌장의 장부', text: function () { return '마지막 줄: 축제 등불 300개 주문. 하수도 맨홀 위 거리마다 빠짐없이 걸 것.'; } },
+  born1: { who: '보른', title: '그날 있었던 일', text: function () { return '30년 전 등불 축제 날, 땅 밑에서 불길이 치솟아 하룻밤 새 마을이 잿더미가 됐대요. 사람들은 용의 저주라고 했대요.'; } },
+  born2: { who: '보른', title: '보른이 본 것', text: function () { return '그날 남문 망루에서 보니, 불기둥이 하수도 맨홀마다 솟았대요. 불이 땅 밑을 타고 번지는 것 같았대요.'; } },
+  born3: { who: '보른', title: '하스 대장', text: function () { return '하스 대장은 사람들을 남문으로 대피시키다 돌아가셨대요. 뭐든 일지에 꼼꼼히 적는 분이었고, 마지막 장은 보른이 적었대요.'; } },
+  born4: { who: '보른', title: '축제 등불', text: function () { return '그날은 하수도 맨홀 위까지 거리마다 등불을 걸었대요. 바람이 불어 몇 개가 떨어졌던 게 기억난대요.'; } },
+  lana1: { who: '라나', title: '라나', text: function () { return '떠돌이 고물상이래요. 다들 저주받은 땅이라며 안 오지만, 덕분에 주울 게 많대요.'; } },
+  lana2: { who: '라나', title: '대장간 소문', text: function () { return '대장간 화로가 넘어져서 불이 났다는 소문이 있대요. 그런데 대장간은 오히려 덜 탔대요.'; } },
+  lana3: { who: '라나', title: '등불석', text: function () { return '푸른 돌은 등불석이래요. 불 없이 밤새 빛나는 돌이고, 한 덩이면 집 한 채 값이래요. 옛날 이 근처에서 났다는 전설이 있었대요.'; } }
+};
+function addNote(id, quiet) {
+  if (S.notes.indexOf(id) >= 0) { if (id === 'flags') S.newNotes[id] = 1; return false; }
+  S.notes.push(id); S.newNotes[id] = 1;
+  if (!quiet) { toast('📖 수첩에 적었어요: ' + NOTES[id].who + ' · ' + NOTES[id].title); SFX.clue(); }
+  saveSoon(); return true;
+}
+function finalReady() { return ['crack', 'burnt', 'ledger'].every(function (k) { return S.notes.indexOf(k) >= 0; }); }
+
+/* ---------------- goals / hints ---------------- */
+function goals() {
+  var F = S.flags, I = S.items, sc = scrapCount();
+  return [
+    { t: '경비 초소 책상의 일지 읽기', d: S.notes.indexOf('log') >= 0, h: '경비 초소 안 책상 위 일지부터 읽어 봐요.' },
+    { t: '광장 깃발 색으로 경비 보관함 열기', d: !!F.locker, h: '일지대로 광장 네 깃발의 색을 보고, 해 뜨는 쪽(동쪽)부터 해가 도는 방향으로 맞춰 봐요.' },
+    { t: '모닥불에 등불 켜기', d: !!I.lit, h: '보관함에서 꺼낸 등불을 초소 옆 모닥불에 켜 두면 어두운 곳에 들어갈 수 있어요.' },
+    { t: '시계탑 그림자 끝에서 촌장 집 열쇠 파내기', d: !!I.rustyKey, h: '시계탑이 멈춘 시각에 맞춰 광장에 가서, 시계탑 그림자 끝을 삽으로 파 봐요. 모닥불에서 쉬면 시간을 넘길 수 있어요.' },
+    { t: '촌장 집 문 열기', d: !!F.mayorDoor, h: '녹슨 열쇠로 서쪽 촌장 집 문을 열어요.' },
+    { t: '찢어진 편지 조각 네 장 모으기 (' + sc + '/4)', d: sc >= 4, h: '편지 조각은 집 안 여기저기에 흩어져 있어요. 침대, 화로 옆, 책상을 살펴봐요.' },
+    { t: '편지를 맞춰 금고 열기', d: !!F.safe, h: '수첩의 물건 칸에서 편지 조각을 맞추고, 귀퉁이 숫자로 촌장 금고를 열어요.' },
+    { t: '교회 문 열기', d: !!F.churchDoor, h: '교회 열쇠로 북쪽 교회 정문을 열어요.' },
+    { t: '조각상 셋을 별 문양 위로 밀기', d: !!F.statues, h: '교회 바닥의 별 문양 세 곳에 조각상을 하나씩 밀어 올려요. 막히면 제단에서 처음 자리로 되돌릴 수 있어요.' },
+    { t: '미나의 노래대로 종 치기', d: !!F.bells, h: '미나의 일기 속 노래의 동물을 종에 새겨진 동물로 바꿔서 쳐 봐요.' },
+    { t: '어두운 지하실로 내려가기', d: !!F.cryptGate, h: '숨은 계단 아래 철문은 켜진 등불이 있어야 들어갈 수 있어요.' },
+    { t: '거울로 빛을 보내 가스 빼기', d: !!F.gas, h: '지하실 거울을 돌려 등불석 빛을 수정 날개까지 보내요. 거울은 /, \\, 접힘 세 가지로 돌아가요.' },
+    { t: '수문 레버로 하수도 끝까지 가기', d: finalReady() || !!F.reachedEnd, h: '레버는 앞뿐 아니라 먼 구역의 물도 바꿔요. 지나온 길이 잠겨도 괜찮아요. 순서를 바꿔 당겨 봐요.' },
+    { t: '하수도 끝의 단서 세 가지 살펴보기', d: finalReady(), h: '하수도 맨 아래 무너진 벽, 타 버린 등불, 장부를 살펴봐요.' },
+    { t: '수첩에서 마을이 불탄 원인 밝히기', d: !!F.solved, h: '수첩의 원인 밝히기 칸에서 세 질문에 답해요.' }
+  ];
+}
+function hintText() { var g = goals(); for (var i = 0; i < g.length; i++) if (!g[i].d) return g[i].h; return '이제 다 밝혀냈어요.'; }
+function scrapCount() { var n = 0; for (var i = 0; i < 4; i++) if (S.items['scrap' + i]) n++; return n; }
+
+/* ---------------- input ---------------- */
+var keys = {}, joy = { x: 0, y: 0, id: null }, auto = null; // auto: test autopilot path
+var isTouch = ('ontouchstart' in window) || navigator.maxTouchPoints > 0;
+window.addEventListener('keydown', function (e) {
+  if (e.target && e.target.tagName === 'INPUT') return;
+  firstGesture();
+  var k = e.key;
+  if (k === 'Tab') { e.preventDefault(); if (mode === 'play') openBook(); else if (bookOpen) closeModal(); return; }
+  if (DLG) { dialogKey(e); return; }
+  if (modalOpen) { if (k === 'Escape') closeModal(); return; }
+  if (mode !== 'play') return;
+  keys[k.toLowerCase()] = true;
+  if (k === 'e' || k === 'E' || k === 'ㄷ' || k === 'Enter' || k === ' ') { e.preventDefault(); interact(); }
+  if (k === 'Escape') openMenu();
+  if (k.indexOf('Arrow') === 0) e.preventDefault();
+});
+window.addEventListener('keyup', function (e) { keys[e.key.toLowerCase()] = false; });
+window.addEventListener('blur', function () { keys = {}; });
+window.addEventListener('pointerdown', firstGesture, { capture: true });
+$('tapStart').addEventListener('pointerdown', function () { firstGesture(); });
+(function setupJoy() {
+  var j = $('joy'), k = $('joyK');
+  function upd(e) { var r = j.getBoundingClientRect(), cx = r.left + r.width / 2, cy = r.top + r.height / 2, dx = e.clientX - cx, dy = e.clientY - cy, m = Math.hypot(dx, dy), max = r.width / 2 - 10; if (m > max) { dx *= max / m; dy *= max / m; } joy.x = dx / max; joy.y = dy / max; k.style.transform = 'translate(' + dx + 'px,' + dy + 'px)'; }
+  j.addEventListener('pointerdown', function (e) { joy.id = e.pointerId; j.setPointerCapture(e.pointerId); upd(e); });
+  j.addEventListener('pointermove', function (e) { if (e.pointerId === joy.id) upd(e); });
+  function end(e) { if (e.pointerId === joy.id) { joy.id = null; joy.x = joy.y = 0; k.style.transform = ''; } }
+  j.addEventListener('pointerup', end); j.addEventListener('pointercancel', end);
+  $('actBtn').addEventListener('pointerdown', function (e) { e.preventDefault(); if (DLG) dialogChoose(DLG.sel); else if (mode === 'play') interact(); });
+  $('bookBtn').addEventListener('click', function () { if (mode === 'play') openBook(); });
+})();
+$('hbBook').addEventListener('click', function () { if (mode === 'play' && !DLG) openBook(); });
+$('hbMenu').addEventListener('click', function () { if (mode === 'play' && !DLG) openMenu(); });
+function inputVec() {
+  if (auto) return auto.vec || { x: 0, y: 0 };
+  var x = 0, y = 0;
+  if (keys.a || keys.arrowleft || keys['ㅁ']) x -= 1; if (keys.d || keys.arrowright || keys['ㅇ']) x += 1;
+  if (keys.w || keys.arrowup || keys['ㅈ']) y -= 1; if (keys.s || keys.arrowdown || keys['ㄴ']) y += 1;
+  if (joy.id !== null && Math.hypot(joy.x, joy.y) > 0.2) { x = joy.x; y = joy.y; }
+  var m = Math.hypot(x, y); if (m > 1) { x /= m; y /= m; }
+  return { x: x, y: y };
+}
+
+/* ---------------- movement ---------------- */
+var R = 0.28, pushT = 0, walkAnim = 0, stepT = 0;
+function solidAt(x, y) { return blocked(Math.floor(x), Math.floor(y)); }
+function canStand(x, y) { return !solidAt(x - R, y - R * 0.6) && !solidAt(x + R, y - R * 0.6) && !solidAt(x - R, y + R * 0.6) && !solidAt(x + R, y + R * 0.6); }
+function updatePlayer(dt) {
+  var v = inputVec(), sp = 4.6 * dt, moving = Math.hypot(v.x, v.y) > 0.05;
+  if (moving) {
+    if (Math.abs(v.x) > Math.abs(v.y)) S.dir = v.x > 0 ? 1 : 3; else S.dir = v.y > 0 ? 2 : 0;
+    var nx = S.px + v.x * sp, ny = S.py + v.y * sp, movedX = false, movedY = false;
+    if (canStand(nx, S.py)) { S.px = nx; movedX = true; }
+    if (canStand(S.px, ny)) { S.py = ny; movedY = true; }
+    walkAnim += dt * 9;
+    // pushing a statue: keep walking into it for a moment
+    var dx = S.dir === 1 ? 1 : S.dir === 3 ? -1 : 0, dy = S.dir === 2 ? 1 : S.dir === 0 ? -1 : 0;
+    var fx = Math.floor(S.px + dx * (R + 0.12)), fy = Math.floor(S.py + dy * (R * 0.6 + 0.12)), si = statueAt(fx, fy);
+    if (si >= 0 && !S.flags.statues && ((dx && !movedX) || (dy && !movedY))) { pushT += dt; if (pushT > 0.22) { pushT = 0; pushStatue(si, dx, dy); } } else pushT = 0;
+  } else { walkAnim = 0; pushT = 0; }
+  // never stand inside water (a lever can flood the tile under you)
+  if (!canStand(S.px, S.py)) unstick();
+}
+function unstick() {
+  for (var r = 0.5; r < 6; r += 0.5) for (var a = 0; a < 16; a++) { var x = S.px + Math.cos(a / 16 * 6.283) * r, y = S.py + Math.sin(a / 16 * 6.283) * r; if (canStand(x, y)) { S.px = x; S.py = y; return; } }
+}
+function pushStatue(i, dx, dy) {
+  var s = S.statues[i], tx = s[0] + dx, ty = s[1] + dy, zone = C.statueFloor(MAP);
+  if (!zone[tx + ',' + ty] || blocked(tx, ty) || statueAt(tx, ty) >= 0) { SFX.bad(); toast('더 밀리지 않아요'); return; }
+  s[0] = tx; s[1] = ty; SFX.push(); statueAnim[i] = { dx: dx, dy: dy, t: 0.18 };
+  S.moves = (S.moves || 0) + 1;
+  var on = S.statues.filter(function (b) { return C.PLATES.some(function (p) { return p[0] === b[0] && p[1] === b[1]; }); }).length;
+  if (on === 3) { S.flags.statues = true; setTimeout(function () { SFX.ok(); toast('조각상 셋이 별 위에 섰어요. 천장에서 종 줄이 내려왔어요!'); }, 250); }
+  saveSoon();
+}
+var statueAnim = {};
+
+/* ---------------- NPCs ---------------- */
+var NPCS = [
+  { id: 'born', name: '보른', look: { skin: '#e6c09a', hair: '#e8e2d6', coat: '#6f747c', pants: '#45474e', beard: '#e8e2d6', trim: '#9a8a5a' }, sched: function (h) { return h >= 6 && h < 18 ? [35.5, 25.6] : [33.6, 40.6]; } },
+  { id: 'lana', name: '라나', look: { skin: '#f0c8a0', hair: '#7a4a2a', coat: '#4f6b3c', pants: '#3a3428', hood: '#5d7a44', trim: '#c9a35a' }, sched: function (h) { return h >= 7 && h < 19 ? [37.5, 30.5] : [36.6, 40.4]; } }
+];
+NPCS.forEach(function (n) { n.x = 0; n.y = 0; n.path = null; n.dir = 2; n.anim = 0; });
+function npcPlace() { NPCS.forEach(function (n) { var p = n.sched(hour()); n.x = p[0]; n.y = p[1]; n.path = null; n.goal = p; }); }
+function bfsPath(sx, sy, tx, ty) {
+  var W2 = W, start = sy * W2 + sx, goal = ty * W2 + tx, prev = new Int32Array(W * H).fill(-1), q = [start]; prev[start] = start;
+  while (q.length) { var c = q.shift(); if (c === goal) break; var x = c % W2, y = (c / W2) | 0;
+    for (var k = 0; k < 4; k++) { var nx = x + C.DIRS[k][0], ny = y + C.DIRS[k][1], ni = ny * W2 + nx; if (nx < 0 || ny < 0 || nx >= W || ny >= H || prev[ni] >= 0 || (blocked(nx, ny) && ni !== goal)) continue; prev[ni] = c; q.push(ni); } }
+  if (prev[goal] < 0) return null;
+  var path = [], c2 = goal; while (c2 !== start) { path.unshift([c2 % W2 + 0.5, ((c2 / W2) | 0) + 0.5]); c2 = prev[c2]; }
+  return path;
+}
+function updateNPCs(dt) {
+  var h = hour();
+  NPCS.forEach(function (n) {
+    var g = n.sched(h);
+    if (!n.goal || n.goal[0] !== g[0] || n.goal[1] !== g[1]) { n.goal = g; n.path = bfsPath(Math.floor(n.x), Math.floor(n.y), Math.floor(g[0]), Math.floor(g[1])); if (n.path) n.path.push(g); }
+    if (DLG && DLG.npc === n) { n.anim = 0; return; }
+    if (n.path && n.path.length) {
+      var p = n.path[0], dx = p[0] - n.x, dy = p[1] - n.y, d = Math.hypot(dx, dy), sp = 2.6 * dt;
+      if (d <= sp) { n.x = p[0]; n.y = p[1]; n.path.shift(); } else { n.x += dx / d * sp; n.y += dy / d * sp; }
+      n.dir = Math.abs(dx) > Math.abs(dy) ? (dx > 0 ? 1 : 3) : (dy > 0 ? 2 : 0); n.anim += dt * 8;
+    } else { n.anim = 0; n.dir = 2; }
+  });
+}
+
+/* ---------------- interaction ---------------- */
+function visibleObj(o) { if (o.need && !S.flags[o.need]) return false; return true; }
+function nearestTarget() {
+  var best = null, bd = 9, fx = [0, 1, 0, -1][S.dir], fy = [-1, 0, 1, 0][S.dir];
+  function consider(kind, ref, cx, cy, lim) {
+    var dx = cx - S.px, dy = cy - S.py, d = Math.hypot(dx, dy); if (d > lim) return;
+    var sc = d - 0.45 * ((dx * fx + dy * fy) / (d || 1)); if (sc < bd) { bd = sc; best = { kind: kind, ref: ref, x: cx, y: cy }; }
+  }
+  NPCS.forEach(function (n) { consider('npc', n, n.x, n.y - 0.3, 1.6); });
+  OBJ.forEach(function (o) { if (!visibleObj(o)) return; C.objTiles(o).forEach(function (p) { consider('obj', o, p[0] + 0.5, p[1] + 0.5, 1.45); }); });
+  Object.keys(C.GATES).forEach(function (g) { if (gateOpen(g) && g !== 'grate') return; if (g === 'grate' && S.flags.grate) return; C.gateTiles(g).forEach(function (p) { consider('gate', g, p[0] + 0.5, p[1] + 0.5, 1.45); }); });
+  S.statues.forEach(function (s, i) { if (!S.flags.statues) consider('statue', i, s[0] + 0.5, s[1] + 0.5, 1.3); });
+  if (!best && S.items.shovel && regionAt(S.px, S.py) === '마을 광장' && tile(Math.floor(S.px), Math.floor(S.py)) === T.COBBLE && !S.items.rustyKey) best = { kind: 'dig', x: S.px, y: S.py };
+  return best;
+}
+function targetLabel(t) {
+  if (!t) return '';
+  if (t.kind === 'npc') return '대화: ' + t.ref.name;
+  if (t.kind === 'dig') return '삽으로 땅 파기';
+  if (t.kind === 'statue') return '조각상 (걸어서 밀기)';
+  if (t.kind === 'gate') return '살펴보기: ' + C.GATES[t.ref].name;
+  var o = t.ref;
+  if (o.kind === 'mirror') return '거울 돌리기';
+  if (o.kind === 'lever') return '레버 당기기';
+  return '살펴보기: ' + o.name;
+}
+function interact() {
+  if (DLG || modalOpen || mode !== 'play') return;
+  var t = nearestTarget(); if (!t) return;
+  if (t.kind === 'npc') return talk(t.ref);
+  if (t.kind === 'dig') return dig();
+  if (t.kind === 'statue') return say(null, [S.statues[t.ref][0] + 0.5, S.statues[t.ref][1]], '돌로 된 성인 조각상이에요. 몸으로 밀면 한 칸씩 움직일 것 같아요.');
+  if (t.kind === 'gate') return useGate(t.ref);
+  useObj(t.ref);
+}
+function seeObj(o) { if (!S.seen[o.id]) { S.seen[o.id] = 1; saveSoon(); } }
+
+function useObj(o) {
+  seeObj(o);
+  var at = [o.x + (o.w || 1) / 2, o.y + 0.2], F = S.flags, I = S.items;
+  switch (o.id) {
+    case 'log': addNote('log'); addNote('logBorn', true); return say('경비 일지', at, '하스 대장의 경비 일지예요. 마지막 장에는 다른 사람의 글씨가 있어요. 수첩에 옮겨 적었어요.', [{ t: '수첩 보기', fn: function () { openBook('하스'); } }, { t: '닫기' }]);
+    case 'locker':
+      if (F.locker) return say('경비 보관함', at, '비어 있는 보관함이에요.');
+      return say('경비 보관함', at, '색 다이얼 네 개가 달린 보관함이에요. 다이얼 아래에 1, 2, 3, 4라고 적혀 있어요.', [{ t: '다이얼 맞추기', fn: openLock }, { t: '그만두기' }]);
+    case 'bed': return takeScrap(2, at, '낡은 침대');
+    case 'minaBed': return takeScrap(0, at, '작은 침대');
+    case 'forge': addNote('forge'); return takeScrap(1, at, '대장간 화로');
+    case 'mayorDesk': return takeScrap(3, at, '촌장의 책상');
+    case 'fire': return fireMenu(at);
+    case 'flag0': case 'flag1': case 'flag2': case 'flag3':
+      addNote('flags', S.notes.indexOf('flags') >= 0);
+      return say(o.name, [o.x + 0.5, o.y - 0.6], C.SIDES[o.side] + '쪽 깃대에 ' + C.COLORS[P.flags[o.side]].n + ' 깃발이 반쯤 타다 남아 펄럭여요.');
+    case 'clock': addNote('clock'); return say('시계탑', at, '시계 바늘이 ' + P.hour + '시 정각에 멈춰 있어요. 그날부터 한 번도 움직이지 않았대요.');
+    case 'stallA': case 'stallB': return say('불탄 노점', at, '축제 장식이 그을린 채 걸려 있어요. 등불 모양 종이 장식이에요.');
+    case 'diary': addNote('diary'); return say('미나의 일기', at, '아이 글씨로 쓴 일기예요. 노래 한 구절이 적혀 있어요.\n「' + P.rhyme + '」', [{ t: '수첩 보기', fn: function () { openBook('미나'); } }, { t: '닫기' }]);
+    case 'grenNote': addNote('grenNote'); return say('그렌의 메모', at, '대장장이 그렌의 메모예요. 교회에서 곡괭이를 잔뜩 주문했대요.');
+    case 'anvil': return say('모루', at, '차갑게 식은 모루예요. 망치 자국이 가득해요.');
+    case 'grave': addNote('grave'); return say('하스의 묘비', at, '경비대장 하스, 마을 사람들을 남문으로 대피시키고 이곳에 잠들다.');
+    case 'safe':
+      if (F.safe) return say('촌장의 금고', at, '열린 금고예요. 이제 비어 있어요.');
+      return say('촌장의 금고', at, '가족 그림 뒤에 숫자 바퀴 네 개짜리 금고가 숨어 있어요.', [{ t: '숫자 맞추기', fn: openSafe }, scrapCount() >= 4 && !F.letter ? { t: '편지 조각 맞춰 보기', fn: openLetter } : null, { t: '그만두기' }].filter(Boolean));
+    case 'bells':
+      addNote('bells');
+      if (!F.statues) return say('교회 종', at, '종마다 동물이 새겨져 있어요. 큰 종엔 ' + animalOf(0) + ', 가운데 종엔 ' + animalOf(1) + ', 작은 종엔 ' + animalOf(2) + '. 그런데 종 줄이 천장 높이 감겨 있어 닿지 않아요.');
+      if (F.bells) return say('교회 종', at, '종이 조용히 흔들리고 있어요.');
+      return say('교회 종', at, '종 줄이 내려와 있어요. 큰 종엔 ' + animalOf(0) + ', 가운데 종엔 ' + animalOf(1) + ', 작은 종엔 ' + animalOf(2) + '가 새겨져 있어요.', [{ t: '종 치기', fn: openBells }, { t: '그만두기' }]);
+    case 'altar':
+      addNote('altar');
+      if (F.statues) return say('제단', at, '성인들이 별 위에 서면 종 줄이 내려오리라. 이미 그렇게 됐어요.');
+      return say('제단', at, '제단에 글귀가 새겨져 있어요: "성인들이 별 위에 서면 종 줄이 내려오리라."', [{ t: '조각상을 처음 자리로 되돌리기', fn: function () { say('제단', at, '정말 조각상 셋을 처음 자리로 되돌릴까요?', [{ t: '네, 되돌려요', fn: resetStatues }, { t: '아니요' }]); } }, { t: '닫기' }]);
+    case 'confession': addNote('confession'); return say('벽 틈의 편지', at, '벽이 열리면서 숨어 있던 편지가 보여요. 엘리아스 신부의 고해예요.', [{ t: '수첩 보기', fn: function () { openBook('엘리아스'); } }, { t: '닫기' }]);
+    case 'plaque': addNote('plaque'); return say(o.name, at, NOTES.plaque.text());
+    case 'sewerSign': addNote('sewerSign'); return say(o.name, at, NOTES.sewerSign.text());
+    case 'beam': addNote('beam'); return say(o.name, at, NOTES.beam.text());
+    case 'ore': addNote('ore'); return say(o.name, at, NOTES.ore.text());
+    case 'picks': addNote('picks'); return say(o.name, at, NOTES.picks.text());
+    case 'sensor': return say(o.name, at, F.gas ? '수정 날개가 빛을 받아 힘차게 돌고 있어요.' : '빛을 받으면 돌아가는 수정 날개예요. 지금은 멈춰 있어요.');
+    case 'crack': case 'burnt': case 'ledger':
+      addNote(o.id); S.flags.reachedEnd = true;
+      var txt = NOTES[o.id].text();
+      if (finalReady() && !S.flags.finalToast) { S.flags.finalToast = true; return say(o.name, at, txt, [{ t: '수첩에서 원인 밝히기', fn: function () { openBook('__final'); } }, { t: '닫기' }]); }
+      return say(o.name, at, txt);
+  }
+  if (o.kind === 'mirror') return turnMirror(o.m);
+  if (o.kind === 'lever') return pullLever(o.l);
+}
+function takeScrap(i, at, name) {
+  if (S.items['scrap' + i]) return say(name, at, '더 찾을 건 없어요.');
+  S.items['scrap' + i] = 1; SFX.clue(); saveSoon();
+  var n = scrapCount();
+  say(name, at, '불에 그을린 편지 조각을 찾았어요! (' + n + '/4)\n"' + C.SCRAPS[i].text + '"', n >= 4 ? [{ t: '조각 맞춰 보기', fn: openLetter }, { t: '나중에' }] : null);
+}
+function useGate(g) {
+  var F = S.flags, I = S.items, p = C.gateTiles(g)[0], at = [p[0] + 0.5, p[1] + 0.2];
+  if (g === 'mayorDoor') {
+    if (I.rustyKey) { openGate('mayorDoor'); return say('촌장 집 문', at, '녹슨 열쇠가 끼익 소리를 내며 돌아갔어요. 문이 열렸어요!'); }
+    return say('촌장 집 문', at, '튼튼한 자물쇠로 잠겨 있어요. 이 집만 멀쩡하게 잠겨 있네요.');
+  }
+  if (g === 'churchDoor') {
+    if (I.churchKey) { openGate('churchDoor'); return say('교회 정문', at, '교회 열쇠로 사슬 자물쇠를 풀었어요. 무거운 문이 열렸어요.'); }
+    return say('교회 정문', at, '굵은 사슬과 자물쇠로 묶여 있어요. 교회 열쇠가 필요해요.');
+  }
+  if (g === 'hiddenWall') return say('교회 동쪽 벽', at, '벽돌 틈으로 찬 바람이 새어 들어와요. 벽 너머에 빈 공간이 있는 것 같아요.');
+  if (g === 'cryptGate') {
+    if (I.lit) { openGate('cryptGate'); return say('지하실 철문', at, '등불을 들어 어둠을 밝히고 녹슨 철문을 밀었어요. 지하로 이어지는 방이 보여요.'); }
+    if (I.lantern) return say('지하실 철문', at, '철문 너머는 칠흑같이 어두워요. 등불에 불을 붙여 와야 해요. 경비 초소 옆 모닥불이 생각나요.');
+    return say('지하실 철문', at, '철문 너머는 칠흑같이 어두워요. 빛 없이 들어가면 길을 잃을 거예요.');
+  }
+  if (g === 'gas') { addNote('gas'); return say('초록 가스', at, NOTES.gas.text()); }
+  if (g.indexOf('sec') === 0) return say('물에 잠긴 길', at, '하수도 물이 길을 덮고 있어요. 수문 레버로 물을 빼야 지나갈 수 있어요.');
+  if (g === 'grate') {
+    if (S.px > 43.4) { S.flags.grate = true; rebuildGateCache(); SFX.door(); saveSoon(); return say('쇠창살 덮개', at, '안쪽 걸쇠를 풀었어요. 사다리로 바로 마을로 나갈 수 있어요.'); }
+    return say('쇠창살 덮개', at, '하수도로 내려가는 쇠창살이에요. 아래쪽에서 걸쇠로 잠겨 있어요.');
+  }
+}
+function openGate(g) { S.flags[g] = true; rebuildGateCache(); SFX.door(); saveSoon(); }
+function dig() {
+  var tip = C.shadowTip(P.hour + 0.5), h = hour(), d = Math.hypot(S.px - tip[0], S.py - tip[1]);
+  SFX.dig();
+  if (Math.floor(h) === P.hour && d < 1.6) {
+    S.items.rustyKey = 1; saveSoon(); SFX.ok();
+    return say(null, [S.px, S.py - 0.6], '그림자 끝 돌바닥 아래에서 녹슨 열쇠가 나왔어요! 손잡이에 "촌장 집"이라고 새겨져 있어요.');
+  }
+  var sun = h >= 6 && h < 18;
+  return say(null, [S.px, S.py - 0.6], sun ? '돌바닥 아래엔 흙뿐이에요. 여기가 아닌가 봐요.' : '어두워서 그림자가 보이지 않아요. 해가 떠 있을 때 파 봐야겠어요.');
+}
+function fireMenu(at) {
+  var I = S.items, ch = [];
+  if (I.lantern && !I.lit) ch.push({ t: '등불에 불 붙이기', fn: function () { I.lit = 1; SFX.ok(); saveSoon(); say('모닥불', at, '등불에 불이 붙었어요. 이제 어두운 곳에서도 앞이 보여요.'); } });
+  ch.push({ t: '한 시간 쉬기', fn: function () { rest(S.t + 60); } });
+  var h = hour();
+  ch.push({ t: h >= 6 && h < 18 ? '해 질 녘(18시)까지 쉬기' : '아침(6시)까지 쉬기', fn: function () { var d0 = Math.floor(S.t / 1440) * 1440; rest(h >= 6 && h < 18 ? d0 + 18 * 60 : (h >= 18 ? d0 + 1440 + 360 : d0 + 360)); } });
+  ch.push({ t: '그만두기' });
+  say('모닥불', at, '누군가 계속 지펴 둔 모닥불이에요. 쉬어 가면 시간이 흘러가요.', ch);
+}
+function rest(t) {
+  var f = $('fade'); f.style.opacity = 1; mode = 'rest';
+  setTimeout(function () { S.t = t; npcPlace(); f.style.opacity = 0; mode = 'play'; saveSoon(); toast(day() + '일째 ' + timeStr()); }, 650);
+}
+function resetStatues() { S.statues = P.statues.boxes.map(function (b) { return b.slice(); }); SFX.push(); toast('조각상들이 처음 자리로 돌아갔어요'); if (statueAt(Math.floor(S.px), Math.floor(S.py)) >= 0) unstick(); saveSoon(); }
+function turnMirror(m) {
+  if (S.flags.gas) return say('거울', [C.MIRRORS[m][0] + 0.5, C.MIRRORS[m][1]], '빛이 수정 날개에 닿아 있어요. 거울은 이제 그대로 두어요.');
+  S.mirrors[m] = (S.mirrors[m] + 1) % 3; SFX.mirror(); saveSoon();
+  toast(['거울: / 방향', '거울: \\ 방향', '거울: 접힘 (빛이 그대로 지나가요)'][S.mirrors[m]]);
+  if (C.traceBeam(MAP, S.mirrors).hit) { S.flags.gas = true; rebuildGateCache(); setTimeout(function () { SFX.ok(); toast('빛이 수정 날개에 닿았어요! 날개가 돌며 가스가 빠져나가요.'); }, 300); }
+}
+function pullLever(l) {
+  var m = P.sewer.masks[l]; S.water ^= m; S.levers[l] ^= 1; S.pulls = (S.pulls || 0) + 1; SFX.lever(); rebuildGateCache(); saveSoon();
+  var names = []; for (var i = 0; i < 4; i++) if (m >> i & 1) names.push('ABCD'[i]); waterAnim = 1;
+  toast('철컥! 어디선가 물소리가 들려요');
+}
+var waterAnim = 0;
+
+/* ---------------- talk ---------------- */
+function talk(n) {
+  S.talked[n.id] = 1;
+  var ch = [];
+  if (n.id === 'born') {
+    ch.push({ t: '이 마을에 무슨 일이 있었나요?', fn: function () { addNote('born1'); say('보른', n, '30년 전 등불 축제 날이었지. 해가 지기도 전에 땅 밑에서 불길이 치솟더니, 하룻밤 새 마을이 잿더미가 됐어. 다들 용의 저주라더군.', null, n); } });
+    ch.push({ t: '그날 무엇을 봤나요?', fn: function () { addNote('born2'); say('보른', n, '난 남문 망루에 있었네. 불기둥이 하수도 맨홀마다 솟구치더군. 불이 땅 밑을 타고 번지는 것 같았어.', null, n); } });
+    ch.push({ t: '하스 대장은 어떤 분이었나요?', fn: function () { addNote('born3'); say('보른', n, '사람들을 남문으로 대피시키다 돌아가셨지. 뭐든 일지에 꼼꼼히 적는 분이었어. 그 일지 마지막 장은… 내가 적었네.', null, n); } });
+    if (S.notes.indexOf('ledger') >= 0) ch.push({ t: '축제 등불 300개를 아시나요?', fn: function () { addNote('born4'); say('보른', n, '그래, 그날은 하수도 맨홀 위까지 거리마다 등불을 걸었지. 바람이 세서 몇 개가 떨어졌던 게 기억나는군…', null, n); } });
+    ch.push({ t: '이제 뭘 하면 좋을까요?', fn: function () { say('보른', n, hintText(), null, n); } });
+    ch.push({ t: '잘 있어요' });
+    return say('보른', n, S.talked.bornHi ? '또 왔군, 탐정 양반.' : (S.talked.bornHi = 1, '이런 폐허에 손님이라니. 난 보른, 이 마을의 마지막 경비병일세. 그날 무슨 일이 있었는지 밝혀 준다면 좋겠군.'), ch, n);
+  }
+  ch.push({ t: '여기서 뭐 해요?', fn: function () { addNote('lana1'); say('라나', n, '난 떠돌이 고물상이야. 다들 저주받은 땅이라고 안 오지만, 덕분에 주울 게 많지!', null, n); } });
+  ch.push({ t: '마을이 왜 불탔을까요?', fn: function () { addNote('lana2'); say('라나', n, '대장간 화로가 넘어져서 불이 났다는 소문이 있어. 근데 이상하지? 대장간은 오히려 덜 탔거든.', null, n); } });
+  if (S.notes.indexOf('beam') >= 0 || S.notes.indexOf('ore') >= 0) ch.push({ t: '푸른빛 나는 돌을 봤어요', fn: function () { addNote('lana3'); say('라나', n, '푸른 돌? 그거 등불석이야! 불 없이 밤새 빛나는 돌. 한 덩이면 집 한 채 값이지. 옛날 이 근처에서 났다는 전설이 있었어.', null, n); } });
+  ch.push({ t: '어디부터 볼까요?', fn: function () { say('라나', n, hintText(), null, n); } });
+  ch.push({ t: '잘 있어요' });
+  say('라나', n, S.talked.lanaHi ? '또 만났네! 뭐 좀 찾았어?' : (S.talked.lanaHi = 1, '어머, 사람이다! 난 라나야. 이 폐허를 뒤지는 중이지.'), ch, n);
+}
+
+/* ---------------- dialog ---------------- */
+var DLG = null;
+function say(who, at, text, choices, npc) {
+  if (at && at.name !== undefined && at.sched) { npc = at; at = null; }
+  DLG = { who: who, at: at, npc: npc || null, text: text, choices: (choices && choices.length ? choices : [{ t: '닫기' }]), sel: 0 };
+  var b = $('bubble'); b.querySelector('.who').textContent = who || '탐정';
+  b.querySelector('.txt').innerHTML = esc(text).replace(/\n/g, '<br>');
+  b.classList.remove('hide');
+  var cbox = $('choices'); cbox.innerHTML = '';
+  DLG.choices.forEach(function (c, i) { var bt = document.createElement('button'); bt.innerHTML = '<small>' + (i + 1) + '</small>' + esc(c.t); bt.onclick = function () { dialogChoose(i); }; cbox.appendChild(bt); });
+  cbox.classList.remove('hide'); markSel(); SFX.talk(); placeBubble();
+  $('actBtn').textContent = '고르기';
+}
+function markSel() { var bs = $('choices').children; for (var i = 0; i < bs.length; i++) bs[i].classList.toggle('sel', i === DLG.sel); }
+function dialogChoose(i) {
+  if (!DLG) return; var c = DLG.choices[i]; if (!c) return;
+  closeDialog(); SFX.ui();
+  if (c.fn) c.fn();
+}
+function closeDialog() { DLG = null; $('bubble').classList.add('hide'); $('choices').classList.add('hide'); $('actBtn').textContent = '살펴보기'; }
+function dialogKey(e) {
+  var k = e.key;
+  if (k === 'ArrowDown' || k === 's' || k === 'S') { DLG.sel = (DLG.sel + 1) % DLG.choices.length; markSel(); e.preventDefault(); }
+  else if (k === 'ArrowUp' || k === 'w' || k === 'W') { DLG.sel = (DLG.sel + DLG.choices.length - 1) % DLG.choices.length; markSel(); e.preventDefault(); }
+  else if (k === 'e' || k === 'E' || k === 'Enter' || k === ' ' || k === 'ㄷ') { e.preventDefault(); dialogChoose(DLG.sel); }
+  else if (k === 'Escape') closeDialog();
+  else if (/^[1-9]$/.test(k)) dialogChoose(+k - 1);
+}
+function placeBubble() {
+  if (!DLG) return;
+  var b = $('bubble'), wx, wy;
+  if (DLG.npc) { wx = DLG.npc.x; wy = DLG.npc.y - 1.3; } else if (DLG.at) { wx = DLG.at[0]; wy = DLG.at[1] - 0.6; } else { wx = S.px; wy = S.py - 1.4; }
+  var s = worldToScreen(wx, wy), bw = b.offsetWidth, bh = b.offsetHeight, vw = innerWidth, vh = innerHeight;
+  var cTop = $('choices').getBoundingClientRect().top;
+  var left = clamp(s.x - bw / 2, 8, vw - bw - 8), top = s.y - bh - 14, up = false;
+  if (top < 8) { top = s.y + 70; up = true; }
+  if (top + bh > cTop - 8) top = Math.max(8, cTop - bh - 12);
+  b.style.left = left + 'px'; b.style.top = top + 'px'; b.classList.toggle('up', up);
+  b.style.setProperty('--tail', clamp(s.x - left, 16, bw - 16) + 'px');
+}
+
+/* ---------------- modals ---------------- */
+var modalOpen = false, bookOpen = false;
+function openModal(html, wide) {
+  var w = $('modalWrap'); w.innerHTML = '<div class="modal' + (wide ? ' wide' : '') + '"><button class="x" data-close aria-label="닫기">✕</button>' + html + '</div>';
+  w.classList.remove('hide'); modalOpen = true;
+  w.querySelectorAll('[data-close]').forEach(function (b) { b.onclick = closeModal; });
+  return w.firstChild;
+}
+function closeModal() { $('modalWrap').classList.add('hide'); $('modalWrap').innerHTML = ''; modalOpen = false; bookOpen = false; SFX.ui(); }
+$('modalWrap').addEventListener('pointerdown', function (e) { if (e.target === this && mode === 'play') closeModal(); });
+
+function openLock() {
+  var m = openModal('<h2>경비 보관함</h2><p class="dim">다이얼을 누르면 색이 바뀌어요. 일지에 적힌 순서대로 광장 깃발 색을 맞춰요.</p><div class="lock"></div><div class="acts"><button class="btn main" id="lkTry">열기</button></div>');
+  var box = m.querySelector('.lock');
+  function draw() { box.innerHTML = ''; S.lock.forEach(function (c, i) { var d = document.createElement('div'); d.className = 'dial'; d.innerHTML = '<button style="background:' + C.COLORS[c].c + '" aria-label="' + C.COLORS[c].n + '"></button><span>' + (i + 1) + ' · ' + C.COLORS[c].n + '</span>'; d.firstChild.onclick = function () { S.lock[i] = (S.lock[i] + 1) % 5; SFX.ui(); draw(); }; box.appendChild(d); }); }
+  draw();
+  m.querySelector('#lkTry').onclick = function () {
+    if (S.lock.join() === C.lockCode(P).join()) {
+      S.flags.locker = true; S.items.lantern = 1; S.items.shovel = 1; saveSoon(); closeModal(); SFX.ok();
+      say('경비 보관함', [23.5, 39.2], '딸깍! 보관함이 열렸어요. 안에 등불과 작은 삽이 있어요. 등불엔 아직 불이 없어요.');
+    } else { SFX.bad(); m.classList.remove('shake'); void m.offsetWidth; m.classList.add('shake'); }
+  };
+}
+function openLetter() {
+  var picked = -1;
+  var m = openModal('<h2>찢어진 편지</h2><p class="dim">조각 두 장을 차례로 누르면 자리가 바뀌어요. 문장이 자연스럽게 이어지도록 맞춰요.</p><div class="scraps"></div><div class="acts"><button class="btn" data-close>닫기</button></div>');
+  var box = m.querySelector('.scraps');
+  function draw() {
+    box.innerHTML = '';
+    S.scrapOrder.forEach(function (si, pos) {
+      var b = document.createElement('button'); b.className = 'scrap' + (picked === pos ? ' pick' : '');
+      b.innerHTML = '<span class="ord">' + (pos + 1) + '</span><span>' + esc(C.SCRAPS[si].text) + '</span><span class="num">' + P.digits[si] + '</span>';
+      b.onclick = function () {
+        if (S.flags.letter) return;
+        if (picked < 0) { picked = pos; SFX.ui(); }
+        else { var t = S.scrapOrder[picked]; S.scrapOrder[picked] = S.scrapOrder[pos]; S.scrapOrder[pos] = t; picked = -1; SFX.ui(); saveSoon(); check(); }
+        draw();
+      };
+      box.appendChild(b);
+    });
+  }
+  function check() {
+    if (S.scrapOrder.join('') === '0123') {
+      S.flags.letter = true; addNote('letter'); SFX.ok();
+      var p = document.createElement('p'); p.innerHTML = '<b style="color:var(--gold)">편지가 이어졌어요!</b> 귀퉁이 숫자를 위에서부터 읽으면 <b>' + P.digits.join(' ') + '</b>.'; m.insertBefore(p, m.querySelector('.acts'));
+    }
+  }
+  draw(); if (S.flags.letter) { check(); }
+}
+function openSafe() {
+  var m = openModal('<h2>촌장의 금고</h2><p class="dim">숫자 바퀴 위아래를 눌러 네 자리를 맞춰요.</p><div class="wheels"></div><div class="acts"><button class="btn main" id="sfTry">돌려 열기</button></div>');
+  var box = m.querySelector('.wheels');
+  function draw() { box.innerHTML = ''; S.wheels.forEach(function (v, i) { var d = document.createElement('div'); d.className = 'wheel'; d.innerHTML = '<button class="btn small">▲</button><b>' + v + '</b><button class="btn small">▼</button>'; d.children[0].onclick = function () { S.wheels[i] = (v + 1) % 10; SFX.ui(); draw(); }; d.children[2].onclick = function () { S.wheels[i] = (v + 9) % 10; SFX.ui(); draw(); }; box.appendChild(d); }); }
+  draw();
+  m.querySelector('#sfTry').onclick = function () {
+    if (S.wheels.join('') === P.digits.join('')) { S.flags.safe = true; S.items.churchKey = 1; addNote('safe', true); saveSoon(); closeModal(); SFX.ok(); say('촌장의 금고', [6.5, 10.2], '철컥, 금고가 열렸어요! 안에 커다란 교회 열쇠가 들어 있어요.'); }
+    else { SFX.bad(); m.classList.remove('shake'); void m.offsetWidth; m.classList.add('shake'); }
+  };
+}
+function bellSvg(sz) { var w = 34 + sz * 14; return '<svg width="' + w + '" height="' + (w + 10) + '" viewBox="0 0 40 50"><rect x="18" y="0" width="4" height="8" fill="#5a3a22"/><path d="M8 40 Q8 10 20 8 Q32 10 32 40 Z" fill="#c9a24a" stroke="#6d5320" stroke-width="2"/><rect x="5" y="38" width="30" height="5" rx="2" fill="#a8842f"/><circle cx="20" cy="46" r="3" fill="#6d5320"/></svg>'; }
+function openBells() {
+  var seq = [];
+  var m = openModal('<h2>교회 종</h2><p class="dim">종을 차례로 쳐요. 여섯 번 치면 소리가 맞는지 알 수 있어요.</p><div class="bellrow"></div><div class="dots"></div><div class="acts"><button class="btn" data-close>그만두기</button></div>');
+  var row = m.querySelector('.bellrow'), dots = m.querySelector('.dots');
+  [0, 1, 2].forEach(function (b) { var bt = document.createElement('button'); bt.innerHTML = bellSvg(2 - b) + '<span>' + C.BELLS[b] + '</span>'; bt.onclick = function () { ring(b, bt); }; row.appendChild(bt); });
+  function drawDots() { dots.innerHTML = ''; for (var i = 0; i < 6; i++) { var d = document.createElement('i'); if (i < seq.length) d.className = 'on'; dots.appendChild(d); } }
+  function ring(b, bt) {
+    SFX.bell(b); bt.classList.add('ring'); setTimeout(function () { bt.classList.remove('ring'); }, 180);
+    seq.push(b); drawDots();
+    if (seq.length === 6) {
+      if (seq.join() === P.bells.join()) { S.flags.bells = true; S.flags.hiddenWall = true; rebuildGateCache(); saveSoon(); setTimeout(function () { closeModal(); SFX.ok(); say(null, [S.px, S.py - 1], '마지막 종소리가 울리자, 교회 동쪽 벽이 우르릉 소리를 내며 옆으로 밀려났어요! 아래로 내려가는 계단이 보여요.'); }, 700); }
+      else { setTimeout(function () { SFX.bad(); seq = []; drawDots(); m.classList.remove('shake'); void m.offsetWidth; m.classList.add('shake'); }, 500); }
+    }
+  }
+  drawDots();
+}
+
+/* ---------------- notebook ---------------- */
+var bookTab = 'names', bookWho = null;
+function openBook(focus) {
+  if (DLG) closeDialog();
+  if (focus === '__final') { bookTab = 'final'; } else if (focus) { bookTab = 'names'; bookWho = focus; }
+  var m = openModal('<h2>📖 탐정 수첩</h2><div class="tabs"><button data-t="names">이름별 기록</button><button data-t="goals">할 일</button><button data-t="items">가진 물건</button><button data-t="final">원인 밝히기</button></div><div class="bookBody"></div>', true);
+  bookOpen = true;
+  m.querySelectorAll('.tabs button').forEach(function (b) { b.onclick = function () { bookTab = b.dataset.t; SFX.ui(); renderBook(m); }; });
+  renderBook(m);
+}
+function renderBook(m) {
+  m.querySelectorAll('.tabs button').forEach(function (b) { b.classList.toggle('on', b.dataset.t === bookTab); });
+  var body = m.querySelector('.bookBody'), html = '';
+  if (bookTab === 'names') {
+    var groups = {}; S.notes.forEach(function (id) { var w = NOTES[id].who; (groups[w] = groups[w] || []).push(id); });
+    var have = WHO.filter(function (w) { return groups[w]; });
+    if (!have.length) { body.innerHTML = '<p class="dim">아직 적은 게 없어요. 마을을 살펴보고 사람들과 이야기해 봐요.</p>'; return; }
+    if (!bookWho || !groups[bookWho]) bookWho = have[0];
+    html = '<div class="book"><div class="names">' + have.map(function (w) { var nw = groups[w].some(function (id) { return S.newNotes[id]; }); return '<button data-w="' + w + '" class="' + (w === bookWho ? 'on' : '') + '">' + w + (nw ? ' <span style="color:var(--ember)">●</span>' : '') + '<small>' + WHO_SUB[w] + ' · ' + groups[w].length + '</small></button>'; }).join('') + '</div><div class="entries">' +
+      groups[bookWho].map(function (id) { return '<div class="entry' + (S.newNotes[id] ? ' new' : '') + '"><b>' + esc(NOTES[id].title) + '</b>' + esc(NOTES[id].text()).replace(/\n/g, '<br>') + '</div>'; }).join('') + '</div></div>';
+    body.innerHTML = html;
+    groups[bookWho].forEach(function (id) { delete S.newNotes[id]; });
+    body.querySelectorAll('.names button').forEach(function (b) { b.onclick = function () { bookWho = b.dataset.w; SFX.ui(); renderBook(m); }; });
+    return;
+  }
+  if (bookTab === 'goals') {
+    var g = goals(), firstOpen = g.findIndex(function (x) { return !x.d; });
+    body.innerHTML = '<ol class="goals">' + g.map(function (x, i) { if (!x.d && i > firstOpen + 1) return ''; return '<li class="' + (x.d ? 'done' : '') + '">' + esc(x.t) + '</li>'; }).join('') + '</ol>' + (firstOpen >= 0 ? '<p class="dim">💡 ' + esc(g[firstOpen].h) + '</p>' : '');
+    return;
+  }
+  if (bookTab === 'items') {
+    var I = S.items, list = [];
+    if (I.lantern) list.push(I.lit ? '🏮 켜진 등불' : '🏮 등불 (불 없음)'); if (I.shovel) list.push('⛏ 작은 삽'); if (I.rustyKey) list.push('🗝 녹슨 열쇠 (촌장 집)'); if (I.churchKey) list.push('🔑 교회 열쇠');
+    var sc = scrapCount(); if (sc) list.push('📜 편지 조각 ' + sc + '/4');
+    body.innerHTML = (list.length ? '<div class="items">' + list.map(function (s) { return '<span>' + s + '</span>'; }).join('') + '</div>' : '<p class="dim">아직 가진 물건이 없어요.</p>') +
+      (sc >= 4 ? '<div class="acts" style="justify-content:flex-start"><button class="btn" id="bkLetter">편지 조각 맞춰 보기</button></div>' : '') +
+      '<p class="dim" style="margin-top:14px">지금 시각: ' + day() + '일째 ' + timeStr() + ' · 시드 ' + esc(S.seed) + '</p>';
+    var bl = body.querySelector('#bkLetter'); if (bl) bl.onclick = openLetter;
+    return;
+  }
+  if (bookTab === 'final') {
+    if (S.flags.solved) { body.innerHTML = '<p>이미 밝혀냈어요. 잿불골의 비밀은 풀렸어요.</p>'; return; }
+    if (!finalReady()) { body.innerHTML = '<p class="dim">아직 단서가 모자라요. 하수도 맨 끝까지 가서 마지막 단서들을 살펴보면 열려요.</p>'; return; }
+    html = '<p class="dim">모은 기록을 떠올리며 답을 골라요.</p>' + C.QUESTIONS.map(function (q, qi) { return '<div class="q"><b>' + (qi + 1) + '. ' + esc(q.q) + '</b>' + P.order[qi].map(function (oi) { return '<label><input type="radio" name="q' + qi + '" value="' + oi + '"><span>' + esc(q.o[oi]) + '</span></label>'; }).join('') + '</div>'; }).join('') + '<div class="acts"><button class="btn main" id="fnGo">이게 진실이에요</button></div><p class="dim" id="fnMsg"></p>';
+    body.innerHTML = html;
+    body.querySelector('#fnGo').onclick = function () {
+      var ans = C.QUESTIONS.map(function (q, qi) { var r = body.querySelector('input[name=q' + qi + ']:checked'); return r ? +r.value : -1; });
+      if (ans.indexOf(-1) >= 0) { body.querySelector('#fnMsg').textContent = '세 질문에 모두 답해 주세요.'; return; }
+      var right = ans.filter(function (a) { return a === 0; }).length;
+      if (right === 3) { S.flags.solved = true; closeModal(); ending(); }
+      else { S.wrong++; saveSoon(); SFX.bad(); body.querySelector('#fnMsg').textContent = '세 개 중 ' + right + '개가 기록과 맞아요. 수첩을 다시 읽어 봐요.'; }
+    };
+  }
+}
+
+/* ---------------- menu, settings, records, patch notes ---------------- */
+function openMenu() {
+  var m = openModal('<h2>메뉴</h2><p class="dim">시드 <b>' + esc(S.seed) + '</b> · ' + day() + '일째 ' + timeStr() + '</p><div class="menu" style="display:flex;flex-direction:column;gap:8px;margin-top:10px"><button class="btn main" data-close>계속하기</button><button class="btn" id="mSet">설정</button><button class="btn" id="mHelp">조작법</button>' + (regionAt(S.px, S.py) === '교회' && !S.flags.statues ? '<button class="btn" id="mStat">조각상 처음 자리로</button>' : '') + '<button class="btn" id="mTitle">처음 화면으로 (저장돼요)</button></div>');
+  m.querySelector('#mSet').onclick = function () { openSettings(); };
+  m.querySelector('#mHelp').onclick = function () { openModal('<h2>조작법</h2><p>컴퓨터: WASD 또는 방향키로 이동, E로 대화와 살펴보기, Tab으로 수첩, Esc로 메뉴.</p><p>폰: 왼쪽 조이스틱으로 이동, 오른쪽 버튼으로 살펴보기, 📖 버튼으로 수첩.</p><p>조각상은 그쪽으로 계속 걸어가면 한 칸씩 밀려요. 실제 12분이 마을의 하루예요.</p><div class="acts"><button class="btn main" data-close>알겠어요</button></div>'); };
+  var ms = m.querySelector('#mStat'); if (ms) ms.onclick = function () { closeModal(); resetStatues(); };
+  m.querySelector('#mTitle').onclick = function () { saveNow(); closeModal(); toTitle(); };
+}
+function openSettings() {
+  var m = openModal('<h2>설정</h2>' +
+    '<div class="set"><span>음악 켜기</span><button class="tog" id="sMus"></button></div>' +
+    '<div class="set"><span>음악 크기</span><input type="range" id="sMusV" min="0" max="1" step="0.05"></div>' +
+    '<div class="set"><span>효과음 켜기</span><button class="tog" id="sSfx"></button></div>' +
+    '<div class="set"><span>효과음 크기</span><input type="range" id="sSfxV" min="0" max="1" step="0.05"></div>' +
+    '<p class="dim">배경음악은 이 폴더의 bgm.mp3를 반복해서 틀어요.</p><div class="acts"><button class="btn main" data-close>닫기</button></div>');
+  function sync() { m.querySelector('#sMus').classList.toggle('on', SET.music); m.querySelector('#sSfx').classList.toggle('on', SET.sfx); m.querySelector('#sMusV').value = SET.musicVol; m.querySelector('#sSfxV').value = SET.sfxVol; }
+  m.querySelector('#sMus').onclick = function () { SET.music = !SET.music; saveSet(); if (SET.music) { ensureCtx(); playBgm(); } sync(); };
+  m.querySelector('#sSfx').onclick = function () { SET.sfx = !SET.sfx; saveSet(); SFX.ui(); sync(); };
+  m.querySelector('#sMusV').oninput = function () { SET.musicVol = +this.value; saveSet(); };
+  m.querySelector('#sSfxV').oninput = function () { SET.sfxVol = +this.value; saveSet(); };
+  m.querySelector('#sSfxV').onchange = function () { SFX.clue(); };
+  sync();
+}
+function fmtMs(ms) { var s = Math.round(ms / 1000), m = Math.floor(s / 60); return m + '분 ' + (s % 60) + '초'; }
+function openRecords() {
+  var rs = lsGet(LS.rec, []);
+  openModal('<h2>지난 기록</h2>' + (rs.length ? rs.map(function (r) { return '<div class="rec"><span>🔥 ' + esc(r.date) + ' · 시드 <b>' + esc(r.seed) + '</b>' + (r.nick ? ' · ' + esc(r.nick) : '') + '</span><span>' + fmtMs(r.playMs) + '</span><small>게임 속 ' + r.days + '일 · 틀린 답 ' + r.wrong + '번</small><small></small></div>'; }).join('') : '<p class="dim">아직 기록이 없어요. 첫 사건을 해결해 보세요.</p>') + '<div class="acts"><button class="btn main" data-close>닫기</button></div>');
+}
+function openPatch() {
+  openModal('<h2>패치노트</h2><div class="pn">' + PATCH.map(function (p) { return '<h3>' + p.date + ' · ' + p.build + ' · ' + esc(p.title) + '</h3><ul>' + p.items.map(function (i) { return '<li>' + esc(i) + '</li>'; }).join('') + '</ul>'; }).join('') + '</div><div class="acts"><button class="btn main" data-close>닫기</button></div>');
+}
+function nickname() { try { if (window.FFAuth && FFAuth.user()) return String(FFAuth.nickname() || '').slice(0, 15); } catch (e) { } return ''; }
+
+/* ---------------- ending ---------------- */
+function ending() {
+  SFX.ok(); var nick = nickname();
+  var rec = { date: new Date().toISOString().slice(0, 10), seed: S.seed, playMs: Math.round(S.playMs), days: day(), wrong: S.wrong, nick: nick };
+  var rs = lsGet(LS.rec, []); rs.unshift(rec); lsSet(LS.rec, rs.slice(0, 30)); lsDel(LS.save);
+  mode = 'end';
+  var m = openModal('<h2>🔥 잿불골의 비밀</h2><p>30년 전, 촌장 오르반과 엘리아스 신부는 가난한 마을을 살리려고 교회 지하에서 몰래 등불석을 캤어요.</p><p>굴은 하수도 옆 동굴의 가스 주머니를 뚫었고, 가스는 하수도를 따라 마을 밑으로 퍼졌어요.</p><p>축제 날 거리마다 걸린 등불 하나가 맨홀 아래로 떨어지자, 불길이 하수도를 타고 마을 곳곳에서 한꺼번에 솟구쳤어요. 잿불골은 그렇게 하룻밤 새 폐허가 됐어요.</p><p style="color:var(--gold)">보른: "…용의 저주가 아니었군. 고맙네, ' + (nick ? esc(nick) + ' ' : '') + '탐정. 이제 대장님께 진실을 전할 수 있겠어."</p><p class="dim">걸린 시간 ' + fmtMs(rec.playMs) + ' · 게임 속 ' + rec.days + '일째 · 틀린 답 ' + rec.wrong + '번 · 시드 ' + esc(S.seed) + '</p><div class="acts"><button class="btn" id="enSame">같은 시드로 다시</button><button class="btn main" id="enTitle">처음 화면으로</button></div>');
+  m.querySelector('.x').remove();
+  m.querySelector('#enTitle').onclick = function () { closeModal(); toTitle(); };
+  m.querySelector('#enSame').onclick = function () { var sd = S.seed; closeModal(); startGame(sd); };
+}
+
+/* ---------------- save ---------------- */
+var saveTimer = 0;
+function saveSoon() { saveTimer = 0.4; }
+function saveNow() { if (S && mode !== 'end' && !S.flags.solved) lsSet(LS.save, S); saveTimer = 0; }
+
+/* ---------------- render ---------------- */
+var cw = 0, ch = 0, Z = 3, camX = 0, camY = 0, DPR = 1;
+var shade = document.createElement('canvas'), sctx = shade.getContext('2d');
+function resize() {
+  DPR = Math.min(window.devicePixelRatio || 1, 2.5); cw = Math.floor(innerWidth * DPR); ch = Math.floor(innerHeight * DPR);
+  cv.width = cw; cv.height = ch; shade.width = Math.ceil(cw / 4); shade.height = Math.ceil(ch / 4);
+  Z = Math.max(2, Math.round(Math.min(cw / (16 * 22), ch / (16 * 13))));
+}
+window.addEventListener('resize', resize);
+function worldToScreen(x, y) { return { x: ((x * TS - camX) * Z + cw / 2) / DPR, y: ((y * TS - camY) * Z + ch / 2) / DPR }; }
+function timeStr() { var m = Math.floor(S.t % 1440), h = Math.floor(m / 60), mi = m % 60, ap = h < 12 ? '오전' : '오후', hh = h % 12 === 0 ? 12 : h % 12; return ap + ' ' + hh + ':' + (mi < 10 ? '0' : '') + mi; }
+function darkness(h) { // 0 bright … 1 black
+  if (h >= 8 && h < 16) return 0; if (h >= 16 && h < 19) return (h - 16) / 3 * 0.22; if (h >= 19 && h < 21) return 0.22 + (h - 19) / 2 * 0.43;
+  if (h >= 21 || h < 5) return 0.65; if (h >= 5 && h < 6) return 0.65 - (h - 5) * 0.15; return 0.5 * (1 - (h - 6) / 2);
+}
+function tint(h) { // warm dusk tint
+  if (h >= 15 && h < 20) { var k = 1 - Math.abs(h - 18) / 3; return 'rgba(255,120,40,' + (0.05 + k * 0.17).toFixed(3) + ')'; }
+  if (h >= 5.5 && h < 8) return 'rgba(255,150,170,0.08)';
+  if (h >= 8 && h < 15) return 'rgba(255,200,120,0.05)';
+  return 'rgba(60,70,160,0.10)';
+}
+function drawChar(g, x, y, L, dir, anim, isDet) {
+  x = Math.round(x * TS); y = Math.round(y * TS);
+  var st = Math.floor(anim) % 2, P2 = function (c, dx, dy, w, h) { g.fillStyle = c; g.fillRect(x + dx, y + dy, w, h); };
+  P2('rgba(0,0,0,.3)', -5, -1, 10, 3);
+  P2(L.pants, -3, -5 + (anim && st ? -1 : 0), 2, 4); P2(L.pants, 1, -5 + (anim && !st ? -1 : 0), 2, 4);
+  P2('#2a1d14', -3, -2 + (anim && st ? -1 : 0), 2, 1); P2('#2a1d14', 1, -2 + (anim && !st ? -1 : 0), 2, 1);
+  P2(L.coat, -4, -11, 8, 7); P2(L.trim || L.coat, -4, -6, 8, 1);
+  if (isDet) { P2(L.coat, -5, -6, 10, 2); P2('#c8463a', -3, -11, 6, 1); }
+  var arm = anim ? (st ? 1 : -1) : 0; P2(L.coat, -5, -10 + arm, 1, 4); P2(L.coat, 4, -10 - arm, 1, 4); P2(L.skin, -5, -6 + arm, 1, 1); P2(L.skin, 4, -6 - arm, 1, 1);
+  P2(L.skin, -3, -16, 6, 5);
+  if (L.hood) { P2(L.hood, -4, -17, 8, 3); P2(L.hood, -4, -15, 1, 5); P2(L.hood, 3, -15, 1, 5); }
+  else P2(L.hair, -3, -17, 6, 2);
+  if (L.beard) P2(L.beard, -3, -12, 6, 2);
+  if (isDet) { P2('#3b2a1c', -5, -16, 10, 1); P2('#4b3424', -3, -19, 6, 3); P2('#2b1d13', -3, -17, 6, 1); }
+  if (dir === 2) { P2('#1a120c', -2, -14, 1, 1); P2('#1a120c', 1, -14, 1, 1); }
+  else if (dir === 1) P2('#1a120c', 2, -14, 1, 1); else if (dir === 3) P2('#1a120c', -3, -14, 1, 1);
+  else { P2(L.hood || L.hair, -3, -16, 6, 4); if (isDet) P2('#4b3424', -3, -18, 6, 2); }
+}
+var DET = { skin: '#f0c8a0', hair: '#4a2e1c', coat: '#7a5230', pants: '#3a3030', trim: '#5e3e22' };
+function drawObj(g, o, now) {
+  var X = o.x * TS, Y = o.y * TS, F = S.flags, P2 = function (c, x, y, w, h) { g.fillStyle = c; g.fillRect(X + x, Y + y, w, h); };
+  if (o.need && !F[o.need]) return;
+  switch (o.kind) {
+    case 'desk': P2('rgba(0,0,0,.25)', 1, 12, (o.w || 1) * 16 - 2, 3); P2('#6a4730', 1, 4, (o.w || 1) * 16 - 2, 9); P2('#80583a', 1, 4, (o.w || 1) * 16 - 2, 2); P2('#3d2a1c', 2, 13, 2, 2); P2('#3d2a1c', (o.w || 1) * 16 - 4, 13, 2, 2); P2('#e8dcc0', 4, 5, 8, 5); P2('#7a2a20', 5, 5, 3, 5); break;
+    case 'locker': P2('rgba(0,0,0,.3)', 2, 13, 13, 3); P2('#5b6066', 2, 0, 12, 15); P2('#6f757c', 2, 0, 12, 2); if (F.locker) { P2('#1c1d20', 3, 2, 10, 12); P2('#6f757c', 12, 2, 4, 12); } else { P2('#43474c', 7, 2, 1, 12); P2('#c8a24a', 9, 6, 2, 2); [0, 1, 2, 3].forEach(function (i) { P2(C.COLORS[S.lock[i]].c, 3 + i * 2.5, 10, 2, 2); }); } break;
+    case 'bed': P2('#5a3a24', 1, 1, 14, (o.h || 1) * 16 - 2); P2('#8d8a80', 2, 4, 12, (o.h || 1) * 16 - 7); P2('#d8d0c0', 3, 2, 10, 4); P2('rgba(20,10,5,.5)', 5, 9, 6, 4); break;
+    case 'fire': P2('#6d6258', 1, 9, 14, 5); P2('#4a3020', 3, 8, 10, 3); var fl = Math.sin(now / 90) * 1.5; P2('#ff7a2a', 5, 2 + fl, 6, 7); P2('#ffc24a', 6, 4 + fl, 4, 5); P2('#fff0a0', 7, 6, 2, 3); break;
+    case 'flag': P2('#4a3a2c', 7, -14, 2, 30); P2('rgba(0,0,0,.25)', 4, 13, 8, 3); var wv = Math.sin(now / 300 + o.side) > 0 ? 1 : 0; P2(C.COLORS[P.flags[o.side]].c, 9, -14 + wv, 9, 6); P2(C.COLORS[P.flags[o.side]].c, 9, -8 + wv, 6, 2); P2('rgba(0,0,0,.35)', 15, -14 + wv, 3, 3); break;
+    case 'stall': P2('#5b3b25', 1, 6, 30, 9); P2('#7a5236', 1, 6, 30, 2); for (var i = 0; i < 6; i++) P2(i % 2 ? '#a8392c' : '#d9c7a4', 1 + i * 5, -2, 5, 7); P2('rgba(30,15,8,.6)', 12, -2, 12, 7); break;
+    case 'book': if (o.id === 'ledger') { P2('#5a3a24', 2, 6, 12, 9); P2('#3a2a50', 4, 3, 8, 6); P2('#c9a35a', 4, 3, 8, 1); } else { P2('#6a4730', 1, 5, 14, 9); P2('#80583a', 1, 5, 14, 2); P2('#b0453a', 4, 4, 8, 6); P2('#f0e0c0', 5, 5, 1, 4); } break;
+    case 'note': P2('#6a4730', 1, 5, 14, 9); P2('#80583a', 1, 5, 14, 2); P2('#efe3c8', 4, 3, 9, 7); P2('#7a6a50', 5, 5, 6, 1); P2('#7a6a50', 5, 7, 5, 1); break;
+    case 'forge': P2('#7a3a2a', 0, 0, 16, 31); P2('#8a4a34', 0, 0, 16, 3); P2('#2a1c16', 3, 8, 10, 12); P2('#4a2a20', 4, 15, 8, 4); P2('#5a5a5a', 5, 17, 2, 1); break;
+    case 'anvil': P2('#2f3236', 2, 6, 12, 5); P2('#44484e', 2, 6, 12, 1); P2('#2f3236', 6, 11, 4, 4); break;
+    case 'safe': P2('#c9a24a', 0, -10, 16, 12); P2('#6b5a3a', 2, -8, 12, 8); P2('#e0b090', 4, -6, 2, 2); P2('#e0b090', 8, -7, 2, 2); P2('#e0b090', 11, -5, 2, 2); P2('#3a3f46', 1, 3, 14, 12); P2('#4d535b', 1, 3, 14, 2); if (F.safe) P2('#101114', 3, 5, 10, 9); else { P2('#c9a24a', 6, 7, 4, 4); P2('#2a2e33', 7, 8, 2, 2); } break;
+    case 'bells': P2('#4a3020', 0, -6, 48, 3); P2('#4a3020', 0, -6, 3, 20); P2('#4a3020', 45, -6, 3, 20);
+      [[3, 14], [19, 11], [33, 8]].forEach(function (b, i) { var sw = F.bells ? Math.sin(now / 200 + i) * 1 : 0; P2('#a8842f', b[0] + sw, -3, b[1], b[1]); P2('#d9b45a', b[0] + 1 + sw, -3, b[1] - 3, 2); P2('#6d5320', b[0] + b[1] / 2 - 1 + sw, b[1] - 3, 2, 3); if (F.statues) P2('#c9b48a', b[0] + b[1] / 2, b[1], 1, 14 - i * 2); });
+      break;
+    case 'altar': P2('#5a3a24', 0, 4, 32, 10); P2('#e9dfcc', 0, 2, 32, 6); P2('#c9a24a', 14, 0, 4, 3); P2('#f2e6c8', 3, -4, 2, 6); P2('#f2e6c8', 27, -4, 2, 6); P2('#ffc24a', 3, -6, 2, 2); break;
+    case 'letter': P2('#e8dcc0', 4, 8, 9, 6); P2('#7a6a50', 5, 10, 6, 1); break;
+    case 'plaque': P2('#6b6a5e', 2, 2, 12, 9); P2('#8a8a7a', 3, 3, 10, 1); P2('#3a3a32', 4, 5, 8, 1); P2('#3a3a32', 4, 7, 6, 1); break;
+    case 'ore': P2('#3a3440', 3, 8, 10, 7); P2('#58c8ff', 5, 2, 6, 7); P2('#c8f0ff', 6, 3, 2, 3); break;
+    case 'orePile': P2('#3a5a7a', 2, 7, 6, 6); P2('#4a8ab8', 7, 5, 6, 7); P2('#7ad0ff', 9, 6, 2, 2); P2('#3a6a9a', 4, 11, 9, 4); break;
+    case 'picks': P2('#6a4a30', 2, 4, 2, 11); P2('#6a4a30', 7, 3, 2, 12); P2('#6a4a30', 12, 5, 2, 10); P2('#7a7f86', 0, 3, 6, 2); P2('#7a7f86', 5, 2, 6, 2); P2('#7a7f86', 10, 4, 6, 2); break;
+    case 'sensor': P2('#3a3440', 3, 10, 10, 5); var a = F.gas ? now / 80 : 0; for (var k = 0; k < 3; k++) { var ang = a + k * 2.09; g.fillStyle = '#9fe8ff'; g.fillRect(X + 8 + Math.cos(ang) * 4 - 1, Y + 6 + Math.sin(ang) * 4 - 1, 3, 3); } P2('#e0fbff', 7, 5, 2, 2); break;
+    case 'mirror': P2('rgba(0,0,0,.3)', 2, 12, 12, 3); P2('#4a3a2a', 6, 10, 4, 5); var stt = S.mirrors[o.m]; g.fillStyle = '#d8e4ec';
+      if (stt === 0) for (var q = 0; q < 12; q++) g.fillRect(X + 2 + q, Y + 13 - q, 2, 2); else if (stt === 1) for (q = 0; q < 12; q++) g.fillRect(X + 2 + q, Y + 1 + q, 2, 2); else { g.fillRect(X + 7, Y + 2, 2, 10); }
+      P2('#8a6a40', 7, 6, 2, 2); break;
+    case 'lever': P2('#4a4e56', 4, 8, 8, 7); P2('#5c616a', 4, 8, 8, 2); var up = S.levers[o.l]; P2('#2a2a2a', 7, up ? 0 : 6, 2, up ? 9 : 6); P2('#c84a3a', 6, up ? -1 : 9, 4, 3); break;
+    case 'crack': P2('#0d0b0f', 1, 2, 14, 12); P2('#1b1820', 3, 4, 10, 9); g.fillStyle = 'rgba(120,255,140,' + (0.25 + 0.15 * Math.sin(now / 400)) + ')'; g.fillRect(X + 4, Y + 6, 8, 5); P2('#2a2420', 0, 0, 16, 2); break;
+    case 'burntLantern': P2('#2a1d17', 2, 8, 12, 7); P2('#5a2a1a', 4, 5, 8, 6); P2('#8a3a20', 5, 6, 2, 2); P2('#1a1410', 7, 2, 2, 4); break;
+    case 'grave': P2('rgba(0,0,0,.25)', 2, 12, 12, 3); P2('#a9a49b', 3, 1, 10, 13); P2('#c3beb4', 3, 1, 10, 2); P2('#6e6a63', 7, 3, 2, 8); P2('#6e6a63', 5, 5, 6, 2); P2('#c8463a', 2, 13, 2, 2); P2('#e2c043', 12, 13, 2, 2); break;
+  }
+}
+function drawGate(g, id, now) {
+  var open = gateOpen(id);
+  if (id === 'grate') { var X = 43 * TS, Y = 38 * TS; if (S.flags.grate) { g.fillStyle = '#6a4a30'; g.fillRect(X + 2, Y, 2, 16); g.fillRect(X + 12, Y, 2, 16); for (var r = 0; r < 4; r++) g.fillRect(X + 2, Y + 2 + r * 4, 12, 1); } else { g.fillStyle = '#3a3c40'; g.fillRect(X, Y, 16, 16); g.fillStyle = '#6a6e75'; for (var i = 0; i < 4; i++) { g.fillRect(X + 1 + i * 4, Y, 2, 16); g.fillRect(X, Y + 1 + i * 4, 16, 2); } } return; }
+  if (open && id.indexOf('sec') !== 0) {
+    if (id === 'hiddenWall') { g.fillStyle = '#1e1a22'; g.fillRect(40 * TS, 6 * TS, 16, 16); for (var s = 0; s < 4; s++) { g.fillStyle = '#4d4854'; g.fillRect(40 * TS + s * 3, 6 * TS + 1 + s * 4, 16 - s * 3, 3); } }
+    if (id === 'mayorDoor') { g.fillStyle = '#20140c'; g.fillRect(11 * TS + 2, 19 * TS, 12, 12); g.fillStyle = '#6a4228'; g.fillRect(11 * TS + 1, 19 * TS + 1, 3, 13); }
+    if (id === 'churchDoor') { g.fillStyle = '#5a3a22'; g.fillRect(31 * TS - 2, 15 * TS + 2, 4, 13); g.fillRect(33 * TS - 2, 15 * TS + 2, 4, 13); }
+    return;
+  }
+  var tiles = C.gateTiles(id);
+  if (id === 'gas') { tiles.forEach(function (p, i) { var a = 0.45 + 0.12 * Math.sin(now / 500 + i); g.fillStyle = 'rgba(110,190,70,' + a.toFixed(2) + ')'; g.fillRect(p[0] * TS, p[1] * TS, 16, 16); g.fillStyle = 'rgba(170,230,110,.35)'; g.fillRect(p[0] * TS + ((now / 60 + i * 5) % 12), p[1] * TS + 4 + (i % 3) * 3, 5, 4); }); return; }
+  if (id.indexOf('sec') === 0) {
+    var lvl = open ? 0 : 1;
+    tiles.forEach(function (p, i) { if (lvl) { g.fillStyle = '#284a55'; g.fillRect(p[0] * TS, p[1] * TS, 16, 16); g.fillStyle = 'rgba(140,200,220,.35)'; g.fillRect(p[0] * TS + ((now / 90 + i * 7) % 14), p[1] * TS + 3 + (i % 2) * 7, 4, 1); } else { g.fillStyle = 'rgba(70,110,130,.25)'; g.fillRect(p[0] * TS, p[1] * TS, 16, 16); } });
+    return;
+  }
+  tiles.forEach(function (p) {
+    var X = p[0] * TS, Y = p[1] * TS;
+    if (id === 'mayorDoor') { g.fillStyle = '#5e3a22'; g.fillRect(X + 1, Y, 14, 16); g.fillStyle = '#4a2c18'; g.fillRect(X + 7, Y, 1, 16); g.fillStyle = '#9a9aa0'; g.fillRect(X + 10, Y + 7, 3, 4); }
+    else if (id === 'churchDoor') { g.fillStyle = '#5a3a22'; g.fillRect(X, Y, 16, 16); g.fillStyle = '#3e2716'; g.fillRect(X + (p[0] === 31 ? 15 : 0), Y, 1, 16); g.fillStyle = '#8a8e96'; for (var c = 0; c < 4; c++) g.fillRect(X + c * 4, Y + 7 + (c % 2), 3, 2); }
+    else if (id === 'hiddenWall') { paintWall(g, p[0], p[1], T.WALL); g.fillStyle = 'rgba(0,0,0,.35)'; g.fillRect(X + 7, Y + 2, 1, 9); }
+    else if (id === 'cryptGate') { g.fillStyle = '#2a2730'; g.fillRect(X, Y, 16, 16); g.fillStyle = '#7a7a82'; for (var b = 0; b < 4; b++) g.fillRect(X + 1 + b * 4, Y, 2, 16); g.fillRect(X, Y + 3, 16, 2); }
+  });
+}
+function drawShadow(g, h) {
+  if (h < 6 || h >= 18) return;
+  var tip = C.shadowTip(h), bx = C.TOWER[0], by = C.TOWER[1], dx = tip[0] - bx, dy = tip[1] - by, d = Math.hypot(dx, dy), nx = -dy / d, ny = dx / d;
+  var a = 0.32 * Math.min(1, (h - 6) / 1, (18 - h) / 1);
+  g.fillStyle = 'rgba(25,15,30,' + a.toFixed(3) + ')';
+  g.beginPath(); g.moveTo((bx + nx * 1.4) * TS, (by + ny * 1.4) * TS); g.lineTo((tip[0] + nx * 0.55) * TS, (tip[1] + ny * 0.55) * TS); g.lineTo((tip[0] + dx / d * 0.5) * TS, (tip[1] + dy / d * 0.5) * TS); g.lineTo((tip[0] - nx * 0.55) * TS, (tip[1] - ny * 0.55) * TS); g.lineTo((bx - nx * 1.4) * TS, (by - ny * 1.4) * TS); g.closePath(); g.fill();
+}
+function drawBeam(g, now) {
+  if (!S.flags.cryptGate) return null;
+  var tr = C.traceBeam(MAP, S.mirrors), pts = tr.path;
+  g.save(); g.strokeStyle = tr.hit ? 'rgba(180,240,255,.95)' : 'rgba(120,210,255,.75)'; g.lineWidth = 2 + Math.sin(now / 120) * 0.4; g.shadowColor = '#7ad8ff'; g.shadowBlur = 6;
+  g.beginPath(); g.moveTo((pts[0][0] + 0.5) * TS, (pts[0][1] + 0.5) * TS);
+  var last = pts[pts.length - 1];
+  for (var i = 1; i < pts.length; i++) { var p = pts[i]; if (i === pts.length - 1 && !tr.hit) { var pr = pts[i - 1]; g.lineTo((pr[0] + 0.5 + (p[0] - pr[0]) * 0.5) * TS, (pr[1] + 0.5 + (p[1] - pr[1]) * 0.5) * TS); } else g.lineTo((p[0] + 0.5) * TS, (p[1] + 0.5) * TS); }
+  g.stroke(); g.restore();
+  return pts;
+}
+function drawPlates(g, now) {
+  C.PLATES.forEach(function (p) {
+    var X = p[0] * TS, Y = p[1] * TS, on = statueAt(p[0], p[1]) >= 0;
+    g.fillStyle = on ? 'rgba(255,210,110,.85)' : 'rgba(230,200,140,.55)';
+    for (var k = 0; k < 5; k++) { var a = -Math.PI / 2 + k * Math.PI * 2 / 5; g.fillRect(X + 7 + Math.cos(a) * 5, Y + 7 + Math.sin(a) * 5, 2, 2); var b = a + Math.PI / 5; g.fillRect(X + 7 + Math.cos(b) * 2.5, Y + 7 + Math.sin(b) * 2.5, 2, 2); }
+    g.fillRect(X + 7, Y + 7, 2, 2);
+  });
+}
+function drawStatue(g, i, now) {
+  var s = S.statues[i], an = statueAnim[i], ox = 0, oy = 0;
+  if (an && an.t > 0) { ox = -an.dx * an.t / 0.18 * 16; oy = -an.dy * an.t / 0.18 * 16; }
+  var X = s[0] * TS + ox, Y = s[1] * TS + oy, on = C.PLATES.some(function (p) { return p[0] === s[0] && p[1] === s[1]; });
+  g.fillStyle = 'rgba(0,0,0,.3)'; g.fillRect(X + 2, Y + 12, 12, 4);
+  g.fillStyle = '#6f6a62'; g.fillRect(X + 2, Y + 9, 12, 6);
+  g.fillStyle = '#9e978c'; g.fillRect(X + 4, Y - 3, 8, 13); g.fillStyle = '#b4ada2'; g.fillRect(X + 4, Y - 3, 8, 2);
+  g.fillStyle = '#aaa398'; g.fillRect(X + 5, Y - 9, 6, 6); g.fillStyle = '#8a847a'; g.fillRect(X + 3, Y + 1, 2, 5); g.fillRect(X + 11, Y + 1, 2, 5);
+  g.fillStyle = on ? '#ffd88a' : '#c9b48a'; g.fillRect(X + 4, Y - 11, 8, 1); g.fillRect(X + 3, Y - 10, 1, 1); g.fillRect(X + 12, Y - 10, 1, 1);
+}
+function drawRoofs(g) {
+  ROOFS.forEach(function (r, ri) {
+    var inside = inRect(S.px, S.py, [r[0], r[1], r[2], r[3] + 1]);
+    g.globalAlpha = inside ? 0.18 : 1;
+    for (var y = r[1]; y <= r[3]; y++) for (var x = r[0]; x <= r[2]; x++) {
+      if (nh(x, y, 50 + ri) < 0.22) continue; // holes
+      var X = x * TS, Y = y * TS;
+      g.fillStyle = '#8e3f2a'; g.fillRect(X, Y, 16, 16);
+      for (var k = 0; k < 4; k++) { g.fillStyle = k % 2 ? '#a24b31' : '#9a4630'; g.fillRect(X + ((y + k) % 2) * 4, Y + k * 4, 16, 3); g.fillStyle = '#6e2f1f'; g.fillRect(X, Y + k * 4 + 3, 16, 1); }
+      if (nh(x, y, 60) < 0.3) { g.fillStyle = 'rgba(20,10,6,.55)'; g.fillRect(X + 2, Y + 3, 10, 8); }
+    }
+    g.globalAlpha = 1;
+  });
+}
+function drawLanterns(g, now) { // burnt festival lantern strings over the streets
+  [[22.2, 18.2, 41.6, 18.2], [29.6, 30.6, 29.6, 37.5], [3.2, 23.6, 21.6, 23.6]].forEach(function (L, li) {
+    var n = Math.round(Math.hypot(L[2] - L[0], L[3] - L[1]) / 1.6);
+    g.strokeStyle = 'rgba(30,20,14,.7)'; g.lineWidth = 1; g.beginPath();
+    for (var i = 0; i <= n; i++) { var t = i / n, x = (L[0] + (L[2] - L[0]) * t) * TS, y = (L[1] + (L[3] - L[1]) * t) * TS + Math.sin(t * Math.PI) * 6 - 12; if (i) g.lineTo(x, y); else g.moveTo(x, y); }
+    g.stroke();
+    for (i = 1; i < n; i++) { var t2 = i / n; if (nh(i, li, 70) < 0.3) continue; var x2 = (L[0] + (L[2] - L[0]) * t2) * TS, y2 = (L[1] + (L[3] - L[1]) * t2) * TS + Math.sin(t2 * Math.PI) * 6 - 12; g.fillStyle = nh(i, li, 71) < 0.5 ? '#6a2418' : '#4a2a1a'; g.fillRect(x2 - 2, y2, 5, 5); g.fillStyle = '#2a1810'; g.fillRect(x2 - 2, y2 + 5, 5, 1); }
+  });
+}
+var embers = [];
+function render(now, dt) {
+  var h = hour();
+  var tx = S.px * TS, ty = S.py * TS - 8, vw = cw / Z, vh = ch / Z;
+  camX += (tx - camX) * Math.min(1, dt * 8); camY += (ty - camY) * Math.min(1, dt * 8);
+  camX = clamp(camX, vw / 2, W * TS - vw / 2); camY = clamp(camY, vh / 2, H * TS - vh / 2);
+  if (vw > W * TS) camX = W * TS / 2; if (vh > H * TS) camY = H * TS / 2;
+  ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.fillStyle = '#0b0806'; ctx.fillRect(0, 0, cw, ch);
+  var ox = Math.round(cw / 2 - camX * Z), oy = Math.round(ch / 2 - camY * Z);
+  ctx.setTransform(Z, 0, 0, Z, ox, oy); ctx.imageSmoothingEnabled = false;
+  ctx.drawImage(base, 0, 0);
+  drawShadow(ctx, h);
+  Object.keys(C.GATES).forEach(function (g) { drawGate(ctx, g, now); });
+  drawPlates(ctx, now);
+  // clock hands
+  var cx0 = 25 * TS, cy0 = 27 * TS + 36, ha = (P.hour % 12) / 12 * Math.PI * 2; ctx.fillStyle = '#2a1c12';
+  for (var k = 0; k < 5; k++) ctx.fillRect(Math.round(cx0 + Math.sin(ha) * k) , Math.round(cy0 - Math.cos(ha) * k), 1, 1);
+  for (k = 0; k < 7; k++) ctx.fillRect(cx0, cy0 - k, 1, 1);
+  // sortable: objects, statues, characters
+  var list = [];
+  OBJ.forEach(function (o) { list.push({ y: o.y + (o.h || 1) - 0.01, f: function () { drawObj(ctx, o, now); } }); });
+  S.statues.forEach(function (s, i) { list.push({ y: s[1] + 0.9, f: function () { drawStatue(ctx, i, now); } }); });
+  NPCS.forEach(function (n) { list.push({ y: n.y, f: function () { drawChar(ctx, n.x, n.y, n.look, n.dir, n.anim, false); } }); });
+  list.push({ y: S.py, f: function () { drawChar(ctx, S.px, S.py, DET, S.dir, walkAnim, true); if (S.items.lantern) { var lx = Math.round(S.px * TS) + (S.dir === 3 ? -7 : 5), ly = Math.round(S.py * TS) - 7; ctx.fillStyle = '#3a2a1a'; ctx.fillRect(lx, ly, 3, 4); ctx.fillStyle = S.items.lit ? '#ffcf5a' : '#6a5a40'; ctx.fillRect(lx, ly + 1, 3, 2); } } });
+  list.sort(function (a, b) { return a.y - b.y; }).forEach(function (e) { e.f(); });
+  var beam = drawBeam(ctx, now);
+  drawRoofs(ctx); drawLanterns(ctx, now);
+  // interaction marker
+  if (mode === 'play' && !DLG && !modalOpen && curTarget) { var mx = curTarget.x * TS, my = (curTarget.kind === 'npc' ? curTarget.y - 1.2 : curTarget.y - 0.9) * TS + Math.sin(now / 180) * 1.5; ctx.fillStyle = '#ffb35a'; ctx.fillRect(mx - 3, my - 7, 7, 7); ctx.fillStyle = '#2a1608'; ctx.fillRect(mx - 1, my - 6, 3, 1); ctx.fillRect(mx - 1, my - 4, 3, 1); ctx.fillRect(mx - 1, my - 2, 3, 1); ctx.fillRect(mx - 1, my - 6, 1, 5); }
+  // sparkle on clues not yet looked at
+  OBJ.forEach(function (o) { if (!o.key || S.seen[o.id] || (o.need && !S.flags[o.need])) return; var p = (now / 600 + o.x) % 3; if (p < 0.5) { ctx.fillStyle = 'rgba(255,240,190,.9)'; var sx = o.x * TS + 12, sy = o.y * TS - 2; ctx.fillRect(sx, sy - 2, 1, 5); ctx.fillRect(sx - 2, sy, 5, 1); } });
+  // embers
+  if (embers.length < 30 && Math.random() < dt * 8) embers.push({ x: camX + (Math.random() - 0.5) * vw, y: camY + vh / 2, vx: (Math.random() - 0.5) * 6, vy: -8 - Math.random() * 10, life: 4 + Math.random() * 3 });
+  embers = embers.filter(function (e) { e.x += e.vx * dt; e.y += e.vy * dt; e.life -= dt; return e.life > 0; });
+  ctx.fillStyle = 'rgba(255,150,60,.8)'; embers.forEach(function (e) { if (C.isUnder(e.x / TS, e.y / TS)) return; ctx.fillRect(Math.round(e.x), Math.round(e.y), 1, 1); });
+  // lighting
+  ctx.setTransform(1, 0, 0, 1, 0, 0);
+  ctx.fillStyle = tint(h); ctx.fillRect(0, 0, cw, ch);
+  var dk = darkness(h), q = 4;
+  sctx.globalCompositeOperation = 'source-over'; sctx.clearRect(0, 0, shade.width, shade.height);
+  sctx.fillStyle = 'rgba(8,8,26,' + dk.toFixed(3) + ')'; sctx.fillRect(0, 0, shade.width, shade.height);
+  C.UNDERGROUND.forEach(function (u) { var a = worldToShade(u[0], u[1]), b = worldToShade(u[2] + 1, u[3] + 1); sctx.clearRect(a.x, a.y, b.x - a.x, b.y - a.y); sctx.fillStyle = 'rgba(4,3,10,.93)'; sctx.fillRect(a.x, a.y, b.x - a.x, b.y - a.y); });
+  sctx.globalCompositeOperation = 'destination-out';
+  var lights = [[35.5, 41.5, 4.6 + Math.sin(now / 120) * 0.2]];
+  if (S.items.lit) lights.push([S.px, S.py - 0.4, 4.4]); else lights.push([S.px, S.py - 0.4, 1.6]);
+  if (S.flags.cryptGate || C.isUnder(S.px, S.py)) { lights.push([42.5, 9.5, 2.4]); lights.push([43.5, 12.5, 1.6]); }
+  if (beam) for (var bi = 1; bi < beam.length; bi += 2) lights.push([beam[bi][0] + 0.5, beam[bi][1] + 0.5, 1.3]);
+  lights.push([51.5, 39.5, 1.8]);
+  if (S.flags.gas) lights.push([58.5, 4.5, 2]);
+  lights.forEach(function (L) { var c = worldToShade(L[0], L[1]), r = L[2] * TS * Z / q; var gr = sctx.createRadialGradient(c.x, c.y, 0, c.x, c.y, r); gr.addColorStop(0, 'rgba(0,0,0,1)'); gr.addColorStop(0.55, 'rgba(0,0,0,.75)'); gr.addColorStop(1, 'rgba(0,0,0,0)'); sctx.fillStyle = gr; sctx.beginPath(); sctx.arc(c.x, c.y, r, 0, 6.283); sctx.fill(); });
+  ctx.imageSmoothingEnabled = true; ctx.drawImage(shade, 0, 0, shade.width * q, shade.height * q);
+  function worldToShade(x, y) { return { x: ((x * TS - camX) * Z + cw / 2) / q, y: ((y * TS - camY) * Z + ch / 2) / q }; }
+}
+function renderMini(now) {
+  mctx.clearRect(0, 0, 128, 96); mctx.drawImage(miniBase, 0, 0);
+  NPCS.forEach(function (n) { mctx.fillStyle = '#9fd0ff'; mctx.fillRect(Math.floor(n.x) * 2, Math.floor(n.y) * 2, 2, 2); });
+  if (Math.floor(now / 400) % 2 === 0 || true) { mctx.fillStyle = '#ff8a3a'; mctx.fillRect(Math.floor(S.px) * 2 - 1, Math.floor(S.py) * 2 - 1, 4, 4); }
+}
+
+/* ---------------- loop ---------------- */
+var mode = 'title', last = 0, curTarget = null, hudT = 0;
+function loop(now) {
+  requestAnimationFrame(loop);
+  var dt = Math.min(0.05, (now - last) / 1000 || 0); last = now;
+  if (mode === 'title') { titleRender(now, dt); return; }
+  if (!S) return;
+  var paused = !!DLG || modalOpen || mode !== 'play';
+  if (!paused) {
+    var scale = (TEST && window.__ehTimeScale) || 1;
+    S.t += dt * 2 * scale; S.playMs += dt * 1000;
+    updatePlayer(dt); updateNPCs(dt);
+    if (auto) autoStep(dt);
+  }
+  Object.keys(statueAnim).forEach(function (k) { statueAnim[k].t -= dt; if (statueAnim[k].t <= 0) delete statueAnim[k]; });
+  curTarget = paused ? null : nearestTarget();
+  render(now, dt);
+  hudT -= dt; if (hudT <= 0) { hudT = 0.2; updateHud(now); }
+  if (DLG) placeBubble();
+  if (saveTimer > 0) { saveTimer -= dt; if (saveTimer <= 0) saveNow(); }
+  if (!paused && Math.floor(S.playMs / 5000) !== Math.floor((S.playMs - dt * 1000) / 5000)) saveNow();
+}
+function updateHud(now) {
+  var h = hour();
+  $('clockTxt').textContent = day() + '일째 · ' + timeStr();
+  $('sunIcon').textContent = h >= 6 && h < 18 ? '☀' : '☾';
+  $('where').textContent = regionAt(S.px, S.py);
+  renderMini(now);
+  var p = $('prompt');
+  if (curTarget && !isTouch) { p.innerHTML = '<b>E</b>' + esc(targetLabel(curTarget)); p.classList.remove('hide'); }
+  else if (curTarget && isTouch) { p.innerHTML = esc(targetLabel(curTarget)); p.classList.remove('hide'); }
+  else p.classList.add('hide');
+}
+var toastT = null;
+function toast(msg) { var t = $('toast'); t.textContent = msg; t.classList.add('on'); clearTimeout(toastT); toastT = setTimeout(function () { t.classList.remove('on'); }, 2600); }
+
+/* ---------------- title ---------------- */
+var titleCam = 0;
+function titleRender(now, dt) {
+  if (!S) { S = newState('TITLE'); S.t = 17.6 * 60; rebuildGateCache(); npcPlace(); }
+  titleCam += dt * 0.6;
+  S.px = 30 + Math.sin(titleCam / 9) * 10; S.py = 26 + Math.cos(titleCam / 13) * 6;
+  var keepItems = S.items; S.items = {}; render(now, dt); S.items = keepItems;
+}
+function toTitle() {
+  mode = 'title'; S = null; closeDialog(); auto = null;
+  $('hud').classList.add('hide'); $('touch').classList.add('hide'); $('title').classList.remove('hide');
+  $('tContinue').classList.toggle('hide', !lsGet(LS.save, null));
+}
+function startGame(seed, saved) {
+  if (saved) { S = saved; P = C.makePuzzles(S.seed); }
+  else { S = newState(seed); lsDel(LS.save); }
+  rebuildGateCache(); npcPlace();
+  camX = S.px * TS; camY = S.py * TS;
+  $('title').classList.add('hide'); $('hud').classList.remove('hide'); if (isTouch) $('touch').classList.remove('hide');
+  mode = 'play'; saveNow();
+  if (!saved) setTimeout(function () { say('탐정', null, '30년 전 하룻밤 새 잿더미가 된 마을, 잿불골. 사람들은 용의 저주라고 하지만… 정말 그럴까? 경비 초소부터 살펴보자.', [{ t: '시작하기' }]); }, 400);
+  else toast('이어서 해요 · ' + day() + '일째 ' + timeStr());
+}
+function randomSeed() { var s = ''; var a = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'; for (var i = 0; i < 6; i++) s += a[Math.floor(Math.random() * a.length)]; return s; }
+function askNew(seed) {
+  if (lsGet(LS.save, null)) {
+    var m = openModal('<h2>새 사건 시작</h2><p>이어 하던 판이 있어요. 새로 시작하면 그 판은 사라져요.</p><div class="acts"><button class="btn" data-close>취소</button><button class="btn main" id="nwGo">새로 시작</button></div>');
+    m.querySelector('#nwGo').onclick = function () { closeModal(); startGame(seed); };
+  } else startGame(seed);
+}
+$('tNew').onclick = function () { SFX.ui(); askNew(randomSeed()); };
+$('tContinue').onclick = function () { var sv = lsGet(LS.save, null); if (sv) startGame(null, sv); };
+$('tSeed').onclick = function () {
+  var m = openModal('<h2>시드 입력</h2><p class="dim">친구와 같은 시드를 넣으면 깃발 색, 멈춘 시각, 종 노래, 거울, 조각상, 수문까지 똑같은 퍼즐이 나와요.</p><input id="seedIn" maxlength="16" style="width:100%;font-size:20px;padding:10px;border-radius:10px;border:2px solid var(--line);background:#1c130d;color:var(--text);text-transform:uppercase" placeholder="예: EMBER7"><div class="acts"><button class="btn" data-close>취소</button><button class="btn main" id="seedGo">이 시드로 시작</button></div>');
+  var inp = m.querySelector('#seedIn'); setTimeout(function () { inp.focus(); }, 50);
+  function go() { var v = inp.value.trim().toUpperCase(); if (!v) { inp.classList.remove('shake'); void inp.offsetWidth; inp.classList.add('shake'); return; } closeModal(); askNew(v); }
+  m.querySelector('#seedGo').onclick = go; inp.onkeydown = function (e) { if (e.key === 'Enter') go(); };
+};
+$('tSettings').onclick = openSettings; $('tRecords').onclick = openRecords; $('tNotes').onclick = openPatch;
+
+/* ---------------- test autopilot (only with ?test=1) ---------------- */
+function autoStep(dt) {
+  var a = auto; if (a.hold) return; if (!a.path || !a.path.length) { a.vec = { x: 0, y: 0 }; if (a.done) { var d = a.done; auto = null; d(); } return; }
+  var p = a.path[0], dx = p[0] - S.px, dy = p[1] - S.py, d2 = Math.hypot(dx, dy);
+  a.stuck = (a.stuck || 0) + dt;
+  if (d2 < 0.12) { a.path.shift(); a.stuck = 0; return; }
+  if (a.stuck > 3) { a.fail = 'stuck at ' + S.px.toFixed(2) + ',' + S.py.toFixed(2); a.path = []; return; }
+  a.vec = { x: dx / d2, y: dy / d2 };
+}
+if (TEST) window.EH = {
+  get S() { return S; }, get P() { return P; }, C: C, MAP: MAP, get mode() { return mode; }, get dlg() { return DLG; }, get modal() { return modalOpen; },
+  start: function (seed) { startGame(seed); }, interact: interact, target: function () { var t = nearestTarget(); return t && { kind: t.kind, id: t.ref && (t.ref.id || t.ref), label: targetLabel(t) }; },
+  walkTo: function (x, y) { return new Promise(function (res) { var path = bfsPath(Math.floor(S.px), Math.floor(S.py), x, y); if (!path) return res('no path'); path.push([x + 0.5, y + 0.5]); auto = { path: path, vec: { x: 0, y: 0 } }; auto.done = function () { res('ok'); }; var chk = setInterval(function () { if (auto && auto.fail) { var f = auto.fail; auto = null; clearInterval(chk); res(f); } if (!auto) clearInterval(chk); }, 50); }); },
+  hold: function (vx, vy, ms) { return new Promise(function (res) { auto = { hold: true, vec: { x: vx, y: vy } }; var st = performance.now(); (function tick() { if (performance.now() - st > ms) { auto = null; return res(); } auto && (auto.vec = { x: vx, y: vy }); requestAnimationFrame(tick); })(); }); },
+  setTime: function (h) { S.t = Math.floor(S.t / 1440) * 1440 + h * 60; npcPlace(); }, timeScale: function (k) { window.__ehTimeScale = k; },
+  npcs: NPCS, hour: hour, choose: dialogChoose, closeModal: closeModal, openBook: openBook
+};
+// the autopilot drives updatePlayer through inputVec; make bfs avoid nothing extra
+
+/* ---------------- boot ---------------- */
+bakeBase(); resize(); initBgm();
+toTitle();
+requestAnimationFrame(loop);
+playBgm();
+if (window.FFAuth) { try { FFAuth.ready.then(function () { }); } catch (e) { } }
+})();
+</script>
+</body>
+</html>
