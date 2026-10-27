@@ -2049,7 +2049,7 @@ function masteryCount(){ let n=0; for(const w of SELECTABLE_WEAPONS) if(masteryI
 function applyWeaponMastery(me, won, assists){
   if(!me || !me.weapon || !SELECTABLE_WEAPONS.includes(me.weapon)) return null;
   if((MODES[gameMode]||{}).noWeapon) return null;
-  const wid=me.weapon; saveData.weaponXp=saveData.weaponXp||{};
+  const wid=trueW(me); saveData.weaponXp=saveData.weaponXp||{};
   const before=saveData.weaponXp[wid]||0;
   const as=(assists===undefined) ? Math.max(0,Math.floor(matchAssists)||0) : Math.max(0,Math.floor(+assists)||0);     // (the assists of the match that has just ended, unless a number is handed in)
   const gained=(me.kills||0)*MASTERY_KILL_XP + as*MASTERY_ASSIST_XP + MASTERY_MATCH_XP + (won?MASTERY_WIN_XP:0);
@@ -2961,15 +2961,16 @@ let shopCat='skin', shopQuery='';
 function shopApplyFilter(){ const q=(shopQuery||'').trim().toLowerCase(), g=document.getElementById('shopGrid'); if(!g) return; for(const b of g.querySelectorAll('.shopItem')) b.style.display=(!q || (b.dataset.q||'').indexOf(q)!==-1)?'':'none'; }
 let shopMaxGridHeight=0;
 let myCharKb={}, myCharUsed=[], myTrackW=null, myTrackK=0;      // the characters I played in this match (a duel changes it every round) and the kills each one got
+function trueW(p){ return (p && p.tioStage==='disg') ? 'tionis' : (p&&p.weapon); }       // a disguised 티오니스 still counts as 티오니스 (마스터리, 캐릭터 XP, 통계)
 function trackMyChar(me){
-  if(!me || !me.weapon || !SELECTABLE_WEAPONS.includes(me.weapon) || me.weapon===myTrackW) return;
+  if(!me || !me.weapon || me.tioStage==='disg' || !SELECTABLE_WEAPONS.includes(me.weapon) || me.weapon===myTrackW) return;
   const k=me.kills||0; if(myTrackW) myCharKb[myTrackW]=(myCharKb[myTrackW]||0)+Math.max(0,k-myTrackK);
   myTrackK=k; myTrackW=me.weapon; if(!myCharUsed.includes(me.weapon)) myCharUsed.push(me.weapon);
 }
 function usedCharsOfMatch(me){      // every character that earns 마스터리 포인트 from this match: all the ones I picked (modes that hand out random characters count only the last one)
   trackMyChar(me);
   if(myTrackW) myCharKb[myTrackW]=(myCharKb[myTrackW]||0)+Math.max(0,(me.kills||0)-myTrackK), myTrackK=me.kills||0;
-  const md=MODES[gameMode]||{}; if(md.autoWeapon || !myCharUsed.length) return [me.weapon];
+  const md=MODES[gameMode]||{}; if(md.autoWeapon || !myCharUsed.length) return [trueW(me)];
   return myCharUsed.slice();
 }
 let lastTierGain=null;     // the 마스터리 포인트 the finished match gave (shown on the match-end screen)
@@ -5441,7 +5442,7 @@ function shuffle(arr){ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.
 /* ===== the version of this file =====
    Players with different versions CAN meet and play together: the automatic matchmaking uses the same room names for every version (online-<mode>-<map>-<slot>), and nobody is refused because of a different build.
    The build is only sent along with the join message and the lobby (for information); the corner of the screen shows it. */
-const GAME_BUILD='build 2026-10-18-v459';
+const GAME_BUILD='build 2026-10-18-v460';
 const GAME_VERSION='0.9', GAME_VERSION_NAME='은하 제국의 황혼';   // 게임 버전 이름: versions.json의 title과 같게 (빌드마다 바꾸지 않음)
 const WEEKLY_EVENTS=[
   {id:'lowg',    name:'저중력 난투', desc:'몸이 둥실둥실, 중력이 약해진 난투', rules:{grav:0.6}},
@@ -6919,7 +6920,7 @@ let pendingMatchSummary=null;
 function buildMatchSummary(wIds){            // (host) one row per fighter that took part: people and bots, no practice dummies
   const rows=[];
   for(const id in players){ const p=players[id]; if(!p || p.isDummy || p.isBoss || p.isMinion || p.isZombie && false) continue;
-    const wid=p.weapon||'none';          // (the modes without characters - hot potato, hide & seek, survival, parkour - are counted too, under 'none')
+    const wid=trueW(p)||'none';          // (the modes without characters - hot potato, hide & seek, survival, parkour - are counted too, under 'none')
     rows.push({id, n:String(p.name||'?').slice(0,16), w:wid, b:p.isBot?1:0, t:(p.team===undefined?null:p.team), win:(wIds&&wIds.indexOf(id)!==-1)?1:0, k:p.kills||0, d:p.deaths||0, a:p.assistN||0, dm:Math.round(p.totalDamageDealt||0)}); }
   return rows;
 }
@@ -9611,7 +9612,7 @@ function enterRoomScreen(mode, mapId, code){
 function updatePlayerListUI(){
   playerListEl.innerHTML='';
   const list=Object.values(players).sort((a,b)=>a.joinOrder-b.joinOrder);
-  const teamTag = p => (p.team!==null && p.team!==undefined) ? ' [팀'+(p.team+1)+']' : '';
+  const teamTag = p => '';      // (no team label next to names in the player list: owner 10-27)
   const friendIds=new Set(friendsCache.map(f=>f.otherId));
   for(const p of list){
     const li=document.createElement('li');
@@ -10521,7 +10522,7 @@ function updateDuelScoreUI(){
   const el=document.getElementById('duelScoreLabel');
   if(!el || gameMode!=='duel') return;
   const ids=Object.keys(players);
-  const parts=ids.map(id=>(players[id]?players[id].name:'?')+' '+(duelScores[id]||0));
+  const parts=ids.filter(id=>!(players[id] && (players[id].isMinion||players[id].isGuard||players[id].isClone))).map(id=>(players[id]?players[id].name:'?')+' '+(duelScores[id]||0));
   el.textContent=parts.join(' : ');
 }
 async function clanMemberReport(won){
@@ -10560,7 +10561,7 @@ function showMatchEndOverlay(resultText, winnerIds, forcedPick){
   const me=players[myId];
   if(me){
     saveData.totalDamage=(saveData.totalDamage||0)+Math.round(me.totalDamageDealt||0);
-    const wid=me.weapon;
+    const wid=trueW(me);
     if(wid && !me.kit){ saveData.charKills=saveData.charKills||{}; saveData.charPts=saveData.charPts||{}; const won=!!(winnerIds && winnerIds.indexOf(myId)!==-1);
       const bigm=Object.values(players).filter(q=>q && !q.isMinion && !q.isBoss).length>=TIER_PT_BIG_PLAYERS && !!MODES[gameMode] && !MODES[gameMode].elim, kpt=(gameMode==='duel')?TIER_PT_DUEL_KILL:(brLike(gameMode)?TIER_PT_BR_KILL:(bigm?TIER_PT_BIG_KILL:TIER_PT_KILL));
       const used=usedCharsOfMatch(me), as=Math.max(0,matchAssists||0); lastTierGain=[];
@@ -11966,7 +11967,7 @@ let SKILL_CD=5;
    크레온 1세: 홀에서 나가는 마법탄 · 스킬 근위병 4명 (봇처럼 움직이는 소환수) · 궁극기 함대 포격
    펠: 일반 공격은 곁을 도는 드론이 쏨 · 스킬 드론 증설 (최대 6) · 궁극기 드론 강화 뒤 자폭 추격
    티오니스: 가면 투척 · 스킬 채혈 -> 변신 (맞힌 상대로 5초 변장) · 궁극기 분신 연극 */
-const CLEON_SKILL_CD=12.5, GUARD_HP=180, GUARD_SEC=9, GUARD_N=4, GUARD_ESCORT_R=350, CLEON_GUARD_BONUS=0.1;
+const CLEON_SKILL_CD=12.5, GUARD_HP=90, GUARD_SEC=9, GUARD_N=4, GUARD_ESCORT_R=350, CLEON_GUARD_BONUS=0.1;
 const CLEON_ULT_WARN=1.5, CLEON_BEAM_N=5, CLEON_BEAM_DMG=15, CLEON_BEAM_HALF=62, CLEON_BEAM_GAP=190, CLEON_BEAM_STEP=0.22, CLEON_BEAM_RANGE=600;
 const PEL_START=2, PEL_MAX=6, PEL_BOOST=1.5, PEL_BOOST_SEC=3, PEL_CHASE_SEC=2, PEL_BOMB_DMG=10, PEL_BOMB_R=80, PEL_BOMB_SPEED=560;
 const TIO_BLOOD_DMG=20, TIO_BLOOD_R=150, TIO_DISG_SEC=5, TIO_CLONE_SEC=4, TIO_CLONE_MULT=0.5, TIO_INVIS_TAIL=1;
@@ -11985,7 +11986,7 @@ function spawnGuards(p, tSec, tMs){
   for(let i=0;i<GUARD_N;i++){
     const m=addBot({force:true, quiet:true, level:'normal'}); if(!m) continue;
     const side=(i%2)?1:-1;
-    m.name=p.name+'의 근위병'; m.color=p.color; m.team=p.team; m.cos={}; m.isMinion=true; m.isGuard=true; m.ownerId=p.id; m.gMode=(i<2)?'charge':'escort'; m.gSide=side;
+    m.name=p.name+'의 근위병'; m.color=p.color; m.team=p.team; m.cos=(p.cos&&p.cos.col)?{col:p.cos.col}:{}; m.isMinion=true; m.isGuard=true; m.ownerId=p.id; m.gMode=(i<2)?'charge':'escort'; m.gSide=side;
     m.weapon='guard'; m.pick='guard'; m.weaponChosen=true; m.hp=GUARD_HP; m.until=tSec+GUARD_SEC; m.ai.personality=null; m.ai.grudge=null; m.ai.rivalId=null;
     m.lastShot=0; m.lastDash=tSec; m.lastUlt=tSec; m.lastSkill=tSec; m.lastTeleport=tSec;
     m.x=clamp(p.x+side*(34+(i>>1)*26), 20, MAP.arenaW-20); m.y=p.y; m.vx=0; m.vy=0; m.alive=true; m.grounded=false; m.respawnAt=Infinity;
@@ -12179,9 +12180,9 @@ function drawSpaceHeld(c, wid, ax, ay, hx, hy){
     c.fillStyle='#ff4fb0'; c.strokeStyle='#ffd34d'; c.lineWidth=1.2; c.beginPath(); c.arc(37,0,5,0,7); c.fill(); c.stroke();
     c.globalCompositeOperation='lighter'; const g=c.createRadialGradient(37,0,0,37,0,12); g.addColorStop(0,'rgba(255,120,200,0.7)'); g.addColorStop(1,'rgba(255,120,200,0)'); c.fillStyle=g; c.beginPath(); c.arc(37,0,12,0,7); c.fill();
   } else if(wid==='pel'){
-    c.fillStyle='#2b3140'; c.strokeStyle='#8c9bb0'; c.lineWidth=1.2; c.beginPath(); c.rect(2,-4.5,15,9); c.fill(); c.stroke();
+    c.fillStyle='#2b3140'; c.strokeStyle='#ff8a1f'; c.lineWidth=1.8; c.beginPath(); c.rect(2,-4.5,15,9); c.fill(); c.stroke();
     c.strokeStyle='#cfd8e3'; c.lineWidth=1.4; c.beginPath(); c.moveTo(14,-4.5); c.lineTo(20,-12); c.stroke();
-    c.fillStyle='#3fb8ff'; c.beginPath(); c.arc(7,0,1.8,0,7); c.fill(); c.fillStyle='#ff5a5a'; c.beginPath(); c.arc(12,0,1.4,0,7); c.fill();
+    c.fillStyle='#ffc83a'; c.beginPath(); c.arc(7,0,1.8,0,7); c.fill(); c.fillStyle='#ff5a5a'; c.beginPath(); c.arc(12,0,1.4,0,7); c.fill();
   } else if(wid==='tionis'){
     c.rotate(-ang); const mx=Math.cos(ang)*14, my=Math.sin(ang)*14; c.translate(mx,my);
     c.fillStyle='#f4f4f4'; c.beginPath(); c.arc(0,0,6,Math.PI/2,Math.PI*1.5); c.fill(); c.fillStyle='#16161c'; c.beginPath(); c.arc(0,0,6,-Math.PI/2,Math.PI/2); c.fill();
@@ -12195,37 +12196,50 @@ function drawSpaceHeld(c, wid, ax, ay, hx, hy){
   c.restore();
 }
 const SPACE_HELD={cleon:1, pel:1, tionis:1, guard:1};
-function drawSpacePersona(c, wid, hx, hy, r, shy, tint){
+function drawSpacePersona(c, wid, hx, hy, r, shy, tint){       // the looks follow the 0.9 intro picture
+  const face=(rr,col)=>{ c.fillStyle=col; c.beginPath(); c.arc(hx,hy,rr,0,7); c.fill(); };
   switch(wid){
     case 'cleon': {
-      c.fillStyle='#5b2a86'; c.beginPath(); c.moveTo(hx-r-3,shy+1); c.lineTo(hx-r-9,shy+30); c.lineTo(hx-4,shy+22); c.lineTo(hx,shy+3); c.closePath(); c.fill();
-      c.beginPath(); c.moveTo(hx+r+3,shy+1); c.lineTo(hx+r+9,shy+30); c.lineTo(hx+4,shy+22); c.lineTo(hx,shy+3); c.closePath(); c.fill();
-      c.strokeStyle='#ff7ac8'; c.lineWidth=1.3; c.beginPath(); c.moveTo(hx-5,hy-1.4); c.lineTo(hx-1.4,hy-1.4); c.moveTo(hx+1.4,hy-1.4); c.lineTo(hx+5,hy-1.4); c.moveTo(hx-5,hy+1.4); c.lineTo(hx-1.4,hy+1.4); c.moveTo(hx+1.4,hy+1.4); c.lineTo(hx+5,hy+1.4); c.stroke();
-      c.fillStyle='#ffd34d'; c.strokeStyle='#a87a00'; c.lineWidth=0.9; c.beginPath(); c.moveTo(hx-r+0.5,hy-r*0.55); c.lineTo(hx-r+0.5,hy-r*1.5); c.lineTo(hx-r*0.5,hy-r*1.0); c.lineTo(hx,hy-r*1.75); c.lineTo(hx+r*0.5,hy-r*1.0); c.lineTo(hx+r-0.5,hy-r*1.5); c.lineTo(hx+r-0.5,hy-r*0.55); c.closePath(); c.fill(); c.stroke();
-      c.fillStyle='#ff4fb0'; c.beginPath(); c.arc(hx,hy-r*1.05,1.3,0,7); c.fill(); break; }
+      c.fillStyle='#5b2a86'; c.beginPath(); c.moveTo(hx-4,shy-0.5); c.lineTo(hx-16,shy+25); c.lineTo(hx+16,shy+25); c.lineTo(hx+4,shy-0.5); c.closePath(); c.fill();        // the cape spreads behind
+      c.fillStyle='#7c3ad0'; c.fillRect(hx-4.6,shy-0.5,9.2,17.5);                                                                                                         // the tunic
+      c.fillStyle='#ffd34d'; c.fillRect(hx-0.9,shy-0.5,1.8,17.5); c.fillRect(hx-4.6,shy+15.2,9.2,1.8);
+      face(r-1.9,'#16121f');
+      c.strokeStyle='#ff5ac8'; c.lineWidth=1.7; c.lineCap='round'; c.beginPath(); c.moveTo(hx-5.4,hy+0.2); c.lineTo(hx-1.8,hy+0.2); c.moveTo(hx+1.8,hy+0.2); c.lineTo(hx+5.4,hy+0.2); c.stroke();
+      c.fillStyle='#ffd34d'; c.strokeStyle='#a87a00'; c.lineWidth=0.9; c.beginPath(); c.moveTo(hx-r+0.5,hy-r*0.6); c.lineTo(hx-r+0.5,hy-r*1.6); c.lineTo(hx-r*0.5,hy-r*1.1); c.lineTo(hx,hy-r*1.95); c.lineTo(hx+r*0.5,hy-r*1.1); c.lineTo(hx+r-0.5,hy-r*1.6); c.lineTo(hx+r-0.5,hy-r*0.6); c.closePath(); c.fill(); c.stroke();
+      c.fillStyle='#ff4fb0'; c.beginPath(); c.arc(hx,hy-r*1.1,1.4,0,7); c.fill(); break; }
     case 'guard': {
-      c.fillStyle='#8a3fd1'; c.beginPath(); c.moveTo(hx-r-2,shy+1); c.lineTo(hx-r-8,shy+20); c.lineTo(hx-3,shy+14); c.closePath(); c.fill(); c.beginPath(); c.moveTo(hx+r+2,shy+1); c.lineTo(hx+r+8,shy+20); c.lineTo(hx+3,shy+14); c.closePath(); c.fill();
-      c.fillStyle='#c9d2dc'; c.strokeStyle='#6d7683'; c.lineWidth=1; c.beginPath(); c.arc(hx,hy-1,r+1.2,Math.PI*0.95,Math.PI*2.05); c.lineTo(hx+r+1,hy+2); c.lineTo(hx-r-1,hy+2); c.closePath(); c.fill(); c.stroke();
-      c.fillStyle='#8a3fd1'; c.beginPath(); c.moveTo(hx-1.5,hy-r-1); c.quadraticCurveTo(hx-5,hy-r-12,hx-11,hy-r-6); c.quadraticCurveTo(hx-5,hy-r-5,hx+1.5,hy-r-1); c.fill();
-      c.strokeStyle='#ff7ac8'; c.lineWidth=1.6; c.beginPath(); c.moveTo(hx-r+1,hy+0.5); c.lineTo(hx+r-1,hy+0.5); c.stroke(); break; }
+      c.fillStyle='#aab3c4'; c.strokeStyle='#6d7683'; c.lineWidth=0.9; c.beginPath(); c.rect(hx-5.2,shy+0.5,10.4,16); c.fill(); c.stroke();                                // the armour
+      c.fillStyle='#8a3fd1'; c.fillRect(hx-5.8,shy+9,11.6,3);
+      c.fillStyle='#8a3fd1'; c.beginPath(); c.moveTo(hx-r-2,shy+1); c.lineTo(hx-r-7,shy+14); c.lineTo(hx-3,shy+9); c.closePath(); c.fill(); c.beginPath(); c.moveTo(hx+r+2,shy+1); c.lineTo(hx+r+7,shy+14); c.lineTo(hx+3,shy+9); c.closePath(); c.fill();
+      face(r-1.7,'#16121f');
+      c.strokeStyle='#ff5ac8'; c.lineWidth=1.7; c.lineCap='round'; c.beginPath(); c.moveTo(hx-3.2,hy+1.6); c.lineTo(hx+3.2,hy+1.6); c.stroke();
+      c.fillStyle='#c9d2dc'; c.strokeStyle='#6d7683'; c.lineWidth=1; c.beginPath(); c.arc(hx,hy-0.5,r+1.2,Math.PI*0.97,Math.PI*2.03); c.lineTo(hx+r+0.4,hy+3.2); c.lineTo(hx+r-2,hy+3.2); c.lineTo(hx+r-2,hy-1.4); c.lineTo(hx-r+2,hy-1.4); c.lineTo(hx-r+2,hy+3.2); c.lineTo(hx-r-0.4,hy+3.2); c.closePath(); c.fill(); c.stroke();
+      c.fillStyle='#8a3fd1'; c.beginPath(); c.moveTo(hx-1.5,hy-r-1); c.quadraticCurveTo(hx-5,hy-r-12,hx-11,hy-r-6); c.quadraticCurveTo(hx-5,hy-r-5,hx+1.5,hy-r-1); c.fill(); break; }
     case 'pel': {
-      c.fillStyle='#ffffff'; c.beginPath(); c.moveTo(hx-r*0.7,hy+r*0.4); c.lineTo(hx,hy+r*1.9); c.lineTo(hx+r*0.7,hy+r*0.4); c.closePath(); c.fill();
-      c.fillStyle='rgba(120,215,255,0.92)'; c.strokeStyle='#2e7fa6'; c.lineWidth=0.9; c.beginPath(); c.rect(hx-r-0.5,hy-3.2,2*r+1,5.4); c.fill(); c.stroke();
-      c.strokeStyle='#e8b24a'; c.lineWidth=2; c.beginPath(); c.moveTo(hx-r*0.9,shy+1); c.lineTo(hx+r*0.9,shy+1); c.stroke(); break; }
+      c.fillStyle='#6b4423'; c.fillRect(hx-5.4,shy+1,10.8,16); c.fillStyle='#ff8a1f'; c.fillRect(hx-0.8,shy+1,1.6,16);                                                   // the vest
+      c.fillStyle='#ffffff'; c.strokeStyle='#9aa6b8'; c.lineWidth=0.9; c.beginPath(); c.moveTo(hx-r*0.75,hy+r*0.35); c.lineTo(hx,hy+r*2.5); c.lineTo(hx+r*0.75,hy+r*0.35); c.closePath(); c.fill(); c.stroke();       // the long white beard
+      c.fillStyle='#f5f7fa'; c.beginPath(); c.arc(hx,hy,r+0.9,0,7); c.fill(); c.stroke();                                                                                    // the helmet
+      c.fillStyle='#14161c'; c.beginPath(); c.rect(hx-r+1.2,hy-3.6,2*r-2.4,6.4); c.fill();
+      c.fillStyle='#ffc83a'; c.fillRect(hx-r+1.2,hy-3.6,2*r-2.4,1.7);
+      c.strokeStyle='#ff8a1f'; c.lineWidth=2.1; c.lineCap='butt'; c.beginPath(); c.arc(hx,hy,r+0.9,Math.PI*1.12,Math.PI*1.88); c.stroke(); break; }
     case 'tionis': {
-      c.fillStyle='#6d7480'; c.beginPath(); c.arc(hx,hy,r+1.8,Math.PI*0.85,Math.PI*2.15); c.lineTo(hx+r+3,shy+6); c.lineTo(hx-r-3,shy+6); c.closePath(); c.fill();
-      c.fillStyle='#f4f4f4'; c.beginPath(); c.arc(hx,hy+0.5,r*0.9,Math.PI/2,Math.PI*1.5); c.fill(); c.fillStyle='#16161c'; c.beginPath(); c.arc(hx,hy+0.5,r*0.9,-Math.PI/2,Math.PI/2); c.fill();
-      c.strokeStyle='#16161c'; c.lineWidth=1; c.beginPath(); c.arc(hx-3.4,hy+1.5,2.6,0.2,Math.PI-0.2); c.stroke();
-      c.strokeStyle='#f4f4f4'; c.beginPath(); c.arc(hx+3.4,hy+4.2,2.6,Math.PI+0.2,Math.PI*2-0.2); c.stroke();
-      c.fillStyle='#16161c'; c.beginPath(); c.arc(hx-3.4,hy-1.8,0.9,0,7); c.fill(); c.fillStyle='#f4f4f4'; c.beginPath(); c.arc(hx+3.4,hy-1.8,0.9,0,7); c.fill();
-      c.fillStyle='#ff8a1f'; c.fillRect(hx-r-5, shy+3, 4, 6); break; }
+      c.fillStyle='#2f7de1'; c.fillRect(hx-5.4,shy+1.5,3.6,16); c.fillStyle='#ff8a1f'; c.fillRect(hx-1.8,shy+1.5,3.6,16); c.fillStyle='#2f7de1'; c.fillRect(hx+1.8,shy+1.5,3.6,16);      // the striped vest
+      c.fillStyle='#ffd34d'; for(const dy of [5,10,15]){ c.beginPath(); c.arc(hx,shy+dy,0.9,0,7); c.fill(); }
+      c.fillStyle='#ffffff'; c.strokeStyle='#8b93a3'; c.lineWidth=0.8; c.beginPath(); c.moveTo(hx-7,shy-1); for(let i=-3;i<=3;i++) c.lineTo(hx+i*2.3, shy+((i&1)?3.2:0.2)); c.lineTo(hx+7,shy-1); c.closePath(); c.fill(); c.stroke();     // the ruff
+      c.fillStyle='#f4f4f4'; c.beginPath(); c.arc(hx,hy,r-1.1,Math.PI/2,Math.PI*1.5); c.fill(); c.fillStyle='#16161c'; c.beginPath(); c.arc(hx,hy,r-1.1,-Math.PI/2,Math.PI/2); c.fill();
+      c.strokeStyle='#16161c'; c.lineWidth=1; c.beginPath(); c.arc(hx-3.4,hy+1.7,2.4,0.2,Math.PI-0.2); c.stroke();
+      c.strokeStyle='#f4f4f4'; c.beginPath(); c.arc(hx+3.4,hy+4.2,2.4,Math.PI+0.2,Math.PI*2-0.2); c.stroke();
+      c.fillStyle='#16161c'; c.beginPath(); c.arc(hx-3.4,hy-1.6,0.9,0,7); c.fill(); c.fillStyle='#f4f4f4'; c.beginPath(); c.arc(hx+3.4,hy-1.6,0.9,0,7); c.fill();
+      c.fillStyle='#2f7de1'; c.beginPath(); c.moveTo(hx-r*0.9,hy-r*0.45); c.quadraticCurveTo(hx-r*1.2,hy-r*1.7,hx-r*2.0,hy-r*2.0); c.quadraticCurveTo(hx-r*0.7,hy-r*1.5,hx,hy-r*0.95); c.closePath(); c.fill();     // the jester hat
+      c.fillStyle='#ff8a1f'; c.beginPath(); c.moveTo(hx+r*0.9,hy-r*0.45); c.quadraticCurveTo(hx+r*1.2,hy-r*1.7,hx+r*2.0,hy-r*2.0); c.quadraticCurveTo(hx+r*0.7,hy-r*1.5,hx,hy-r*0.95); c.closePath(); c.fill();
+      c.fillStyle='#ffd34d'; for(const q of [[-2.0,-2.0],[2.0,-2.0],[0,-1.0]]){ c.beginPath(); c.arc(hx+q[0]*r,hy+q[1]*r,1.9,0,7); c.fill(); } break; }
   }
 }
 function skillCdOf(p){ return (skW(p)==='cleon'?CLEON_SKILL_CD:SKILL_CD)*pzCdMult(p); }
 function ultCdOf(p){ return ULT_CD*pzCdMult(p)*(gameMode==='hyperbr'?0.2:1); }
 const PRACTICE_SKILL_CD=2;
 const SKILLS={
-  cleon:{name:'근위병 소환', kind:'buff', desc:'창을 든 근위병 4명을 9초 동안 소환 (체력 180, 쿨타임 12.5초) · 2명은 가장 가까운 상대에게 돌진해 15 피해, 2명은 내 좌우를 지키다 상대가 가까워지면 달려가 공격'},
+  cleon:{name:'근위병 소환', kind:'buff', desc:'창을 든 근위병 4명을 9초 동안 소환 (체력 90, 쿨타임 12.5초) · 2명은 가장 가까운 상대에게 돌진해 15 피해, 2명은 내 좌우를 지키다 상대가 가까워지면 달려가 공격'},
   pel:{name:'드론 증설', kind:'buff', desc:'드론을 한 대 늘림 (최대 6대)'},
   tionis:{name:'채혈', kind:'hit', desc:'주사기를 던져(중거리) 맞힌 상대에게 20 피해 · 맞히면 다음 스킬이 변신으로 바뀌어 바로 쓸 수 있음 · 변신은 맞힌 상대로 5초 동안 변장 (이름·외형·공격·스킬·궁극기가 상대의 것, 체력바는 초록색)'},
   pizarro:  {name:'정복자의 질주', kind:'buff', desc:'체력 20 즉시 회복 + 3초 동안 이동 속도 50% 증가'},
