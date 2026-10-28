@@ -959,6 +959,7 @@ async function gameSection(el, sb, uid, d, o, T, own){
   try{ var r=await hook(gx, {sb:sb, uid:uid, own:own, data:d, lang:lang(o), esc:esc, game:g});
     if(typeof r==='string') gx.insertAdjacentHTML('beforeend', r); else if(r&&r.nodeType) gx.appendChild(r); }catch(e){}
 }
+function inGame(o){ if(o&&o.noDeco!=null) return !!o.noDeco; if(window.FF_INGAME) return true; return /\/(Stickseum|CrownEnvoy|BEACONFALL|IslandTrade)-[^\/]*\.html/i.test(location.pathname); }
 async function open(sb, uid, o){
   var T=L[lang(o)], el=modal(T), cv=el.querySelector('canvas'), msg=el.querySelector('.m');
   el.querySelector('.s').textContent=T.save; el.querySelector('.c').textContent=T.close; var dcb=el.querySelector('.dc'); dcb.textContent=T.deco; dcb.style.display='none'; el.querySelector('.D').className='D'; el.querySelector('.D').innerHTML=''; el.querySelector('.k').textContent=T.link; el.querySelector('.k').style.display='none';
@@ -969,7 +970,8 @@ async function open(sb, uid, o){
   var own=false;
   try{ var s=await sb.auth.getSession(), me=s&&s.data&&s.data.session&&s.data.session.user;
     if(me&&me.id===uid){ own=true; var h=await syncHub(sb, uid, d); if(h){ d.ids=d.ids||{}; d.ids.hub={}; h.forEach(function(k){ d.ids.hub[k]=1; }); rateCache=null; }
-      if(editOk){ dcb.style.display=''; dcb.onclick=function(){ var P=el.querySelector('.D'); if(P.classList.toggle('on')) decoPanel(el, sb, uid, d, cv, o); }; }
+      if(inGame(o)){ }
+      else if(editOk){ dcb.style.display=''; dcb.onclick=function(){ var P=el.querySelector('.D'); if(P.classList.toggle('on')) decoPanel(el, sb, uid, d, cv, o); }; }
       else { var hn=el.querySelector('.hn'); hn.innerHTML=esc(T.hubOnly)+'<a href="'+HUBSITE+'">'+esc(T.hubGo)+'</a>'; hn.style.display='block'; } } }catch(e){}
   gameSection(el, sb, uid, d, o, T, own);
   acb.style.display=''; acb.onclick=async function(){ var w=achWin(T), box=w.querySelector('.L'); box.innerHTML='<div class="n">'+esc(T.loading)+'</div>'; box.scrollTop=0; w.classList.add('on');
