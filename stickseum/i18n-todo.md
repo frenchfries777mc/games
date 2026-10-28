@@ -324,3 +324,5 @@ patchnotes.json | v484 title | 은하 제국의 황혼 | build 484 | 2026-10-28
 patchnotes.json | v484 items[0] | 오로라 스킨을 입으면 배경 하늘에도 오로라가 흐름 | build 484 | 2026-10-28
 patchnotes.json | v485 title | 은하 제국의 황혼 | build 485 | 2026-10-28
 patchnotes.json | v485 items[0] | 프로필 카드에서 사진과 이름을 바꿀 수 있음 (허브와 같은 프로필 창) | build 485 | 2026-10-28
+patchnotes.json | v486 title | 은하 제국의 황혼 | build 486 | 2026-10-28
+patchnotes.json | v486 items[0] | 캐릭터별 마스터리 점수를 허브 랭킹에 올리도록 변경 | build 486 | 2026-10-28

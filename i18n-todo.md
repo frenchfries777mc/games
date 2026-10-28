@@ -315,3 +315,8 @@
 - patchnotes.json | 프로필 어디서든 바꾸기 | 제목과 항목 2개 (tr 없음)
 - patchnotes.json | 프로필 어디서든 바꾸기 items[2] | 꾸미기의 프로필 사진 목록에 undefined가 가득 보이던 오류를 고쳤어요
 - patchnotes.json | 프로필 어디서든 바꾸기 items[3] | 위쪽 계정 버튼 옆 동그란 사진에 내가 고른 프로필 사진이 나오고, 사진을 바꾸면 바로 바뀌어요 (고르지 않았으면 게임 캐릭터)
+
+## Stickseum 랭킹 둘로 나누기 (2026-10-28)
+- patchnotes.json | 랭킹의 Stickseum을 둘로 나눴어요 | 제목 1개, 항목 2개 (tr 없음)
+- hub.js | 랭크 레이팅 · 캐릭터 마스터리 · 닉네임 · 캐릭터 · 마스터리 점수 · 아직 마스터리 기록이 없어요
+- stickseum/ranking.html | 🎖️ 캐릭터 마스터리 · 닉네임 · 캐릭터 · 마스터리 점수
