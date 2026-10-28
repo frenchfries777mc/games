@@ -5462,7 +5462,7 @@ function shuffle(arr){ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.
 /* ===== the version of this file =====
    Different BUILDS of one version meet and play together (room names online-v<ver>-<mode>-<map>-<slot>); different VERSIONS (the 0.x part) never do - the host refuses them (verNo) and the dispatcher answers busy.
    The build is only sent along with the join message and the lobby (for information); the corner of the screen shows it. */
-const GAME_BUILD='build 2026-10-18-v474';
+const GAME_BUILD='build 2026-10-18-v475';
 const GAME_VERSION='0.9', GAME_VERSION_NAME='은하 제국의 황혼';   // 게임 버전 이름: versions.json의 title과 같게 (빌드마다 바꾸지 않음)
 /* version (the 0.x part) vs build: different BUILDS of one version meet and play together, different VERSIONS never do (rooms, quick match, ranked, friend invites, dispatcher).
    Builds before 470 do not send a version, so it is read from the build number (0.9 started at build 458). */
@@ -11236,7 +11236,7 @@ const CHAR_RANKS=[
 const STREAK_BONUS=[[10,5],[7,4],[5,3],[3,2],[1,1]];
 function streakBonusFor(n){ for(const [a,b] of STREAK_BONUS) if(n>=a) return b; return 0; }       // (연승 보너스, owner 10-26: 1연승 +1, 3연승 +2, 5연승 +3, 7연승 +4, 10연승 이상 +5)
 function streakTagHtml(n){ n=Math.floor(+n||0); return n>=2 ? ' <span class="streakTag">🔥'+n+'연승</span>' : ''; }
-const TIER_PT_KILL=3, TIER_PT_ASSIST=1, TIER_PT_WIN=2, TIER_PT_MATCH=1, TIER_PT_MULT=10, TIER_PT_BIG_KILL=2, TIER_PT_BIG_WIN=2, TIER_PT_BIG_PLAYERS=6, TIER_PT_DUEL_KILL=8, TIER_PT_BR_KILL=5;      // (a match with 6 or more players and respawns has many kills (깃발 뺏기 about 21): kill 2 instead of 3; a duel kill is worth 8, a battle royale kill 5 (owner 10-26). TIER_PT_MULT is only how old kills are carried over: x10 keeps every rank already reached)
+const TIER_PT_KILL=3, TIER_PT_ASSIST=1, TIER_PT_WIN=3, TIER_PT_MATCH=1, TIER_PT_MULT=10, TIER_PT_BIG_KILL=2, TIER_PT_BIG_WIN=3, TIER_PT_BIG_PLAYERS=6, TIER_PT_DUEL_KILL=8, TIER_PT_BR_KILL=5;      // (a match with 6 or more players and respawns has many kills (깃발 뺏기 about 21): kill 2 instead of 3; a duel kill is worth 8, a battle royale kill 5 (owner 10-26). TIER_PT_MULT is only how old kills are carried over: x10 keeps every rank already reached)
 { const base=CHAR_RANKS.slice(); CHAR_RANKS.length=0;      // two in-between steps (II, III) inside every rank from 브론즈 up, so a level-up comes often even though the points are 1.75x harder (owner 10-26); the skin ranks (다이아, 그랜드 마스터) keep their own names
   base.forEach((r,i)=>{ CHAR_RANKS.push({min:r.min, name:r.name, color:r.color}); const nx=base[i+1];
     if(nx && i>0) for(let k=1;k<=2;k++) CHAR_RANKS.push({min:Math.round((r.min+(nx.min-r.min)*k/3)/10)*10, name:r.name+' '+(k===1?'II':'III'), color:r.color}); }); }
