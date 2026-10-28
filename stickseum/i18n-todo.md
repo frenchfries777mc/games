@@ -314,3 +314,5 @@ patchnotes.json | v480 items[0] | 그랜드 마스터 I~X 단계 추가 (I 9000�
 - 듀얼: 내가 금지한 캐릭터는 나도 못 고름 (UI 문구 변경 없음)
 patchnotes.json | v481 title | 은하 제국의 황혼 | build 481 | 2026-10-28
 patchnotes.json | v481 items[0] | 듀얼에서 내가 금지한 캐릭터는 나도 선택 불가 | build 481 | 2026-10-28
+patchnotes.json | v482 title | 은하 제국의 황혼 | build 482 | 2026-10-28
+patchnotes.json | v482 items[0] | 공격 소리 0.75배로 줄임 | build 482 | 2026-10-28
