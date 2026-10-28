@@ -294,3 +294,5 @@ patchnotes.json | v473 title | 은하 제국의 황혼 | build 473 | 2026-10-28
 patchnotes.json | v473 items[0] | 온라인 모드 목록에 제국 수호전 추가 | build 473 | 2026-10-28
 patchnotes.json | v474 title | 은하 제국의 황혼 | build 474 | 2026-10-28
 patchnotes.json | v474 items[0] | 제국 수호전의 은하의 심장 아래에 강철 발판 추가 (관통 공격이 통과하지 못해요) | build 474 | 2026-10-28
+patchnotes.json | v475 title | 은하 제국의 황혼 | build 475 | 2026-10-28
+patchnotes.json | v475 items[0] | 마스터리 승리 점수 +3점으로 상향 | build 475 | 2026-10-28
