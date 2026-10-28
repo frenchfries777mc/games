@@ -455,7 +455,7 @@ try{if(sessionStorage.getItem('ce_noIntro')){sessionStorage.removeItem('ce_noInt
 sting();})();</script>
 <div id="app">
  <div id="lobby" class="screen">
-  <canvas id="lobbyBg"></canvas><canvas id="lobbyWar"></canvas><div id="cpTag">© 2026 Frenchfries777 · <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.ko" target="_blank" rel="noopener">CC BY-NC-ND 4.0</a></div><div id="verTag">v0.5 · build 118</div>
+  <canvas id="lobbyBg"></canvas><canvas id="lobbyWar"></canvas><div id="cpTag">© 2026 Frenchfries777 · <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.ko" target="_blank" rel="noopener">CC BY-NC-ND 4.0</a></div><div id="verTag">v0.5 · build 119</div>
   <header class="brand"><h1>Crown Envoy</h1><div class="sub"><i></i>DIPLOMACY · WAR · EMPIRE<i></i></div></header>
   <div id="lobbyRight">
    <div id="lobbyHome" class="modes">
@@ -7302,6 +7302,7 @@ function gameKey(v){return (v.players||[]).map(p=>p.kingdom).join('|');}
 function onView(v){
   if(!v||v.spec||v.draft||v.me==null||!v.players)return;const me=v.players[v.me];if(!me)return;
   const k=gameKey(v);if(k!==G1.key||v.round<(G1.lastRound||0)){G1={key:k,minT:Infinity,rounds:{},over:false,mode:G1.mode,tpl:G1.tpl,humans:0,lastRound:0};}
+  if(!G1.began&&!v.over){G1.began=true;try{window.CECoin&&CECoin.begin&&CECoin.begin();}catch(e){}}
   if(G1.paid==null)G1.paid=Math.floor((v.round||0)/15);
   if(me.alive&&!v.over){const n=Math.floor((v.round||0)/15);while(G1.paid<n){G1.paid++;try{window.CECoin&&CECoin.play();}catch(e){}}}
   G1.lastRound=v.round;G1.humans=Math.max(G1.humans,v.players.filter(p=>!p.isBot).length);
@@ -7361,6 +7362,9 @@ function paint(){const bar=$('#authBar');let b=$('#ccBtn');
 K.set=n=>{if(typeof n==='number'){K.bal=n;K.ready=true;paint();}};
 async function refresh(){try{const d=row(await rpc('ce_wallet_get'));K.bal=d.balance;K.today=d.today;K.ready=true;paint();return true;}catch(e){return false;}}
 K.refresh=refresh;
+const ceBuild=()=>{const m=/build (\d+)/.exec((document.getElementById('verTag')||{}).textContent||'');return m?+m[1]:0;};
+/* 판이 시작되면 서버에 알린다. 서버는 이 기록이 있어야, 그리고 충분히 지난 뒤에야 점수·코인·도전과제 보상을 줘서 옛 버전이나 직접 호출로 진행도를 올리는 걸 막는다 */
+K.begin=async function(){if(!me())return;try{await rpc('ce_game_begin',{p_build:ceBuild(),p_turns:0});}catch(e){}};
 K.play=async function(){if(!me())return;try{const d=row(await rpc('ce_coin_play'));K.bal=d.balance;K.today=d.today;K.ready=true;paint();if(d.got>0)toast(`👑 +${d.got}cC (오늘 게임으로 ${d.today}/100)`);}catch(e){}};
 K.ach=async function(ids){if(!me()||!window.CEAch)return;const items=ids.map(id=>({id,n:CEAch.coin(id)}));
   try{const d=row(await rpc('ce_coin_ach',{p_items:items}));K.bal=d.balance;K.ready=true;paint();if(d.got>0)toast(`👑 도전과제 보상 +${d.got}cC`);}catch(e){}};
@@ -7448,8 +7452,13 @@ function pointsFor(v){const o=v.over,rk=o.ranking||[];const i=rk.findIndex(r=>r.
   const dn=(r.obj||[]).filter(x=>x.done).length;return {pts:(won?50:0)+(r.alive?10:0)+Math.max(0,20-4*i)+dn*5,won};}
 async function addScore(v){const u=window.CEAuth&&CEAuth.user();if(!u)return;const res=pointsFor(v);if(!res)return;
   const key='ce_rk_'+(v.tpl||'')+'|'+v.players.map(p=>p.kingdom).join(',')+'|'+v.me;try{if(sessionStorage.getItem(key))return;sessionStorage.setItem(key,'1');}catch(e){}
-  try{const sb=await CEAuth.sb();const r=await sb.rpc('ff_add_score',{p_game:GAME,p_points:res.pts,p_win:!!res.won});if(r&&r.error)throw r.error;try{UI.toast(`🏅 랭킹 점수 +${res.pts}`,'ok');}catch(e){}}catch(e){}
-  try{const sb=await CEAuth.sb();await sb.rpc('ce_add_season',{p_season:seasonKey(0),p_points:res.pts,p_win:!!res.won,p_conq:tot.conq,p_bw:tot.bw,p_peace:tot.peace});}catch(e){}}
+  /* 서버가 판 시작 기록과 걸린 시간·하루 한도를 확인해 점수를 더해 준다 (supabase-ce-guard.sql). 아직 이 SQL을 안 돌렸으면 예전 방식으로 올린다 */
+  try{const sb=await CEAuth.sb();const r=await sb.rpc('ce_game_finish',{p_points:res.pts,p_win:!!res.won,p_conq:tot.conq,p_bw:tot.bw,p_peace:tot.peace});
+    if(r&&r.error){if(r.error.code==='PGRST202'||/could not find the function|does not exist/i.test(r.error.message||'')){
+        try{const q=await sb.rpc('ff_add_score',{p_game:GAME,p_points:res.pts,p_win:!!res.won});if(q&&q.error)throw q.error;try{UI.toast(`🏅 랭킹 점수 +${res.pts}`,'ok');}catch(e){}}catch(e){}
+        try{await sb.rpc('ce_add_season',{p_season:seasonKey(0),p_points:res.pts,p_win:!!res.won,p_conq:tot.conq,p_bw:tot.bw,p_peace:tot.peace});}catch(e){}}
+      else if(/too fast|no game|daily/i.test(r.error.message||''))try{UI.toast('이번 판은 랭킹 점수가 오르지 않았어요.','bad');}catch(e){}
+    }else{const g=typeof r.data==='number'?r.data:res.pts;try{UI.toast(g>0?`🏅 랭킹 점수 +${g}`:'오늘 얻을 수 있는 랭킹 점수를 다 채웠어요.','ok');}catch(e){}}}catch(e){}}
 function overExtra(){const v=typeof C!=='undefined'&&C.view;if(!v||!v.over||v.spec||v.me==null)return;const card=$('#over .overcard');if(!card||$('#ovStars'))return;
   let h='';if(v.tpl){const n=starsFor(v);if(n!=null){const k=TKs(v.tpl),best=Math.max(n,stars[k]||0);const nb=n>(stars[k]||0);stars[k]=best;saveStars();if(nb)syncStars(true);
     h+=`<div class="st">${'★'.repeat(n)}<i>${'★'.repeat(3-n)}</i></div><div class="sm">시나리오 도전 ${n}/3${nb?' · 새 최고 기록!':` · 최고 기록 ${starStr(best)}`}</div><div class="sm muted">★ 끝까지 살아남기 · ★★ 목표 절반 이상 달성 · ★★★ 모든 목표 달성 또는 승리</div>`;}}
