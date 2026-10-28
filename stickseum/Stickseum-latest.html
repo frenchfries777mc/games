@@ -4779,7 +4779,7 @@ MAP_TEMPLATES['mine'] = {
 /* 우주 함대: the bridge of an imperial ship (8 players, plain platforms, no floor trick). 제국 수호전 starts here: the 은하의 심장 crystal floats on the top middle platform. */
 MAP_TEMPLATES['spacefleet'] = {
   id:'spacefleet', name:THEMES.fleet.name, maxPlayers:8, arenaW:2600, arenaH:1000, theme:THEMES.fleet,
-  platforms:[{x:0,y:900,w:2600,h:100},{x:1100,y:770,w:400,h:24},{x:1150,y:640,w:300,h:24},{x:1200,y:510,w:200,h:24},{x:1150,y:380,w:300,h:24}].concat(mirrorPl(2600,[
+  platforms:[{x:0,y:900,w:2600,h:100},{x:1100,y:770,w:400,h:24},{x:1150,y:640,w:300,h:24},{x:1200,y:510,w:200,h:24},{x:1150,y:380,w:300,h:24,steel:true}].concat(mirrorPl(2600,[
     {x:150,y:770,w:220,h:24},{x:520,y:770,w:180,h:24},{x:330,y:640,w:200,h:24},{x:800,y:640,w:180,h:24},{x:120,y:510,w:180,h:24},{x:560,y:510,w:200,h:24},{x:340,y:380,w:220,h:24}
   ])),
   spawns:[{x:250,y:890},{x:600,y:890},{x:950,y:890},{x:1650,y:890},{x:2000,y:890},{x:2350,y:890},{x:280,y:760},{x:2320,y:760}],
@@ -5462,7 +5462,7 @@ function shuffle(arr){ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.
 /* ===== the version of this file =====
    Different BUILDS of one version meet and play together (room names online-v<ver>-<mode>-<map>-<slot>); different VERSIONS (the 0.x part) never do - the host refuses them (verNo) and the dispatcher answers busy.
    The build is only sent along with the join message and the lobby (for information); the corner of the screen shows it. */
-const GAME_BUILD='build 2026-10-18-v473';
+const GAME_BUILD='build 2026-10-18-v474';
 const GAME_VERSION='0.9', GAME_VERSION_NAME='은하 제국의 황혼';   // 게임 버전 이름: versions.json의 title과 같게 (빌드마다 바꾸지 않음)
 /* version (the 0.x part) vs build: different BUILDS of one version meet and play together, different VERSIONS never do (rooms, quick match, ranked, friend invites, dispatcher).
    Builds before 470 do not send a version, so it is read from the build number (0.9 started at build 458). */
@@ -14880,7 +14880,7 @@ function hostTickCore(dt,t){
     if(!hit && b.pierce && b.platPierce!==undefined){      // 마법사: the fireball goes through at most platPierce platforms (one), the next one stops it
       let inside=null; for(const pl of MAP.platforms){ if(nx>=pl.x-BULLET_R && nx<=pl.x+pl.w+BULLET_R && ny>=pl.y-BULLET_R && ny<=pl.y+pl.h+BULLET_R){ inside=pl; break; } }
       if(!inside) b.curPlat=null;
-      else if(b.curPlat!==inside){ if((b.platPassed||0)>=b.platPierce){ hit=true; hitPlatform=true; hitPl=inside; } else { b.platPassed=(b.platPassed||0)+1; b.curPlat=inside; } }
+      else if(b.curPlat!==inside){ if(inside.steel || (b.platPassed||0)>=b.platPierce){ hit=true; hitPlatform=true; hitPl=inside; } else { b.platPassed=(b.platPassed||0)+1; b.curPlat=inside; } }
     }
     if(!hit && !b.pierce){
       if(b.passPlatforms){ // ultimate missiles fall straight through platforms and only stop at the floor
@@ -18409,6 +18409,13 @@ function drawGridCached(cam){
   if(!gridPat){ const t=document.createElement('canvas'); t.width=t.height=100; const c=t.getContext('2d'); c.fillStyle='rgba(255,255,255,0.05)'; c.fillRect(0,0,1,100); c.fillRect(0,0,100,1); gridPat=ctx.createPattern(t,'repeat'); }
   ctx.fillStyle=gridPat; ctx.fillRect(cam.x,cam.y,canvas.width,canvas.height);
 }
+function drawSteelPlat(c,pl){          // 강철 발판: silver with a dark-grey edge; the wizard's piercing fireball cannot go through it
+  c.fillStyle='#c3c9d1'; c.fillRect(pl.x,pl.y,pl.w,pl.h);
+  c.fillStyle='#e6eaef'; c.fillRect(pl.x,pl.y,pl.w,5);
+  c.fillStyle='#9aa1ab'; c.fillRect(pl.x,pl.y+pl.h-5,pl.w,5);
+  c.fillStyle='#6b717a'; for(let x=pl.x+14;x<pl.x+pl.w-6;x+=34){ c.beginPath(); c.arc(x,pl.y+pl.h/2,2.6,0,7); c.fill(); }
+  c.strokeStyle='#3d4249'; c.lineWidth=4; c.strokeRect(pl.x,pl.y,pl.w,pl.h);
+}
 function platIsStatic(pl){ return !pl.move && !pl.isGoal && !pl.restStop && pl.pk===undefined && pl.g===undefined; }
 function drawStaticPlatforms(th){
   const W=MAP.arenaW|0, H=MAP.arenaH|0;
@@ -18419,6 +18426,7 @@ function drawStaticPlatforms(th){
     platCv.width=W; platCv.height=H;
     const c=platCv.getContext('2d');
     for(const pl of src){ if(!platIsStatic(pl)) continue;
+      if(pl.steel){ drawSteelPlat(c,pl); continue; }
       c.fillStyle = pl.h>40 ? th.ground : th.plat; c.fillRect(pl.x,pl.y,pl.w,pl.h);
       c.fillStyle=th.stripe; c.globalAlpha=0.7; c.fillRect(pl.x,pl.y,pl.w,4); c.globalAlpha=1;
       c.strokeStyle=th.platEdge; c.lineWidth=2; c.strokeRect(pl.x,pl.y,pl.w,pl.h); }
@@ -18475,6 +18483,7 @@ function render(fxDt){
         ctx.restore();
         continue;
       }
+      if(pl.steel){ drawSteelPlat(ctx,pl); continue; }
       ctx.fillStyle = pl.h>40 ? th.ground : th.plat;
       ctx.fillRect(pl.x,pl.y,pl.w,pl.h);
       ctx.fillStyle=th.stripe; ctx.globalAlpha=0.7; ctx.fillRect(pl.x,pl.y,pl.w,4); ctx.globalAlpha=1;
