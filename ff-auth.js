@@ -218,7 +218,7 @@ var CSS='.ffa-btn{display:inline-flex;align-items:center;gap:6px;background:line
  '.ffa-hub:hover{border-color:var(--fry,#ffc93c);color:var(--fry,#ffc93c)}.ffa-hub+.ffa-wrap{margin-left:8px}'+
  '@media(max-width:620px){.ffa-hub{position:fixed;left:12px;bottom:12px;z-index:2147481000;margin:0;padding:9px 14px;border-radius:999px;box-shadow:0 6px 18px rgba(0,0,0,.45)}.ffa-hub+.ffa-wrap{margin-left:16px}}'+
  '.ffa-chip{display:inline-flex;align-items:center;gap:7px;background:#10131b;color:#eef0f5;border:1px solid #2b3245;border-radius:9px;padding:6px 11px;font:inherit;font-size:14px;font-weight:700;cursor:pointer;width:124px;max-width:124px;box-sizing:border-box}'+
- '.ffa-ic{width:20px;height:20px;flex:none;vertical-align:middle;object-fit:contain}'+'.ffa-av{border-radius:50%}'+
+ '.ffa-ic{width:20px;height:20px;flex:none;vertical-align:middle;object-fit:contain}'+'.ffa-av{border-radius:50%;background:#274d3a}'+
  '.ffa-chip span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.ffa-chip:hover{border-color:var(--fry,#ffc93c)}'+
  '.ffa-menu{position:absolute;right:0;top:calc(100% + 6px);background:#10131b;border:1px solid #2b3245;border-radius:10px;padding:6px;min-width:170px;z-index:2147482000;box-shadow:0 12px 30px rgba(0,0,0,.45);display:none}'+
  '.ffa-menu button{display:block;width:100%;text-align:left;background:none;border:0;color:#eef0f5;font:inherit;font-size:14px;padding:9px 10px;border-radius:7px;cursor:pointer}.ffa-menu button:hover{background:#1b2030}'+
@@ -283,7 +283,7 @@ function fill(){ var el=modal(); el.querySelector('h3').textContent=mode==='in'?
 function openLogin(m){ mode=m==='up'?'up':'in'; fill(); var el=modal(); el.style.display='flex'; setTimeout(function(){ try{ el.querySelector('input').focus(); }catch(e){} },30); }
 function close(){ var el=document.getElementById('ffaModal'); if(el) el.style.display='none'; }
 
-function profileLib(){ return loadScript(BASE+'ff-profile.js?v=20261028d', function(){ return !!window.FFProfile; }); }
+function profileLib(){ return loadScript(BASE+'ff-profile.js?v=20261028e', function(){ return !!window.FFProfile; }); }
 async function openProfile(uid, o){ if(!sb) return; if(!uid&&!user) return openLogin(); if(await profileLib()) window.FFProfile.open(sb, uid||user.id, o); }
 
 /* 게임 사이트(허브가 아닌 페이지)에는 계정 버튼 옆에 '← 허브' 버튼을 붙여요. 빼고 싶으면 자리에 data-ff-nohub */
@@ -294,10 +294,14 @@ function siteOf(u){ try{ var x=new URL(u, location.href); if(x.origin!==location
 function backSite(){ var own=siteOf(location.href)||'games', from=siteOf(document.referrer); return from||own; }
 function hubLink(s){ if(onHub||s.hasAttribute('data-ff-nohub')) return ''; var k=backSite(); return '<a class="ffa-hub" href="'+esc('https://frenchfries777mc.github.io/'+k+'/')+'" title="'+esc(T.hubT)+'" aria-label="'+esc(T.hubT)+'">\u2190<span class="t">'+esc(T.hub)+'</span></a>'; }
 /* 계정 버튼 옆 사진: 허브에서 고른 프로필 사진(ff_avatar), 없으면 기본 "내 계정" 아이콘 */
-var avPick=null, avFor=null;
-function avSrc(){ return avPick&&/^[a-z0-9_-]{1,30}$/i.test(avPick)?BASE+'avatars/'+avPick+(/^(stk|ce|bf|ip|dp|vk)_/.test(avPick)?'.png':'.svg'):BASE+'hubicons/account.svg'; }
-function loadAv(){ if(!sb||!user||avFor===user.id) return; var id=user.id; avFor=id; avPick=null;
-  Promise.resolve(sb.from('ff_avatar').select('pick').eq('user_id',id).limit(1)).then(function(r){ var p=r&&!r.error&&r.data&&r.data[0]&&r.data[0].pick||null; if(p&&p!==avPick){ avPick=p; paint(); } },function(){}); }
+var avPick=null, avFor=null, avGame=null;
+function avSrc(){ return avPick&&/^[a-z0-9_-]{1,30}$/i.test(avPick)?BASE+'avatars/'+avPick+(/^(stk|ce|bf|ip|dp|vk)_/.test(avPick)?'.png':'.svg'):(avGame||BASE+'hubicons/account.svg'); }
+/* no profile photo picked: show the game character, as the profile card does */
+function loadAvGame(){ if(avPick||avGame||!sb||!user) return; var id=user.id; profileLib().then(function(ok){ if(!ok||!window.FFProfile.avatarDataUrl||avPick||!user||user.id!==id) return; window.FFProfile.avatarDataUrl(sb,id).then(function(u){ if(u&&!avPick&&user&&user.id===id){ avGame=u; paint(); } }); }); }
+function loadAv(){ if(!sb||!user||avFor===user.id) return; var id=user.id; avFor=id; avPick=null; avGame=null;
+  Promise.resolve(sb.from('ff_avatar').select('pick').eq('user_id',id).limit(1)).then(function(r){ var p=r&&!r.error&&r.data&&r.data[0]&&r.data[0].pick||null; if(p){ avPick=p; paint(); } else loadAvGame(); },function(){ loadAvGame(); }); }
+/* the profile card tells the account button the moment a photo is picked */
+window.addEventListener('ff-avatar',function(e){ if(!user) return; avPick=(e&&e.detail&&e.detail.pick)||null; avGame=null; paint(); if(!avPick) loadAvGame(); });
 function paint(){
   css(); loadAv(); var slots=document.querySelectorAll('[data-ff-account]');
   for(var i=0;i<slots.length;i++){
