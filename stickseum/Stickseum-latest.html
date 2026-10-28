@@ -5462,7 +5462,7 @@ function shuffle(arr){ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.
 /* ===== the version of this file =====
    Different BUILDS of one version meet and play together (room names online-v<ver>-<mode>-<map>-<slot>); different VERSIONS (the 0.x part) never do - the host refuses them (verNo) and the dispatcher answers busy.
    The build is only sent along with the join message and the lobby (for information); the corner of the screen shows it. */
-const GAME_BUILD='build 2026-10-18-v472';
+const GAME_BUILD='build 2026-10-18-v473';
 const GAME_VERSION='0.9', GAME_VERSION_NAME='은하 제국의 황혼';   // 게임 버전 이름: versions.json의 title과 같게 (빌드마다 바꾸지 않음)
 /* version (the 0.x part) vs build: different BUILDS of one version meet and play together, different VERSIONS never do (rooms, quick match, ranked, friend invites, dispatcher).
    Builds before 470 do not send a version, so it is read from the build number (0.9 started at build 458). */
@@ -6862,7 +6862,8 @@ const MODE_LIST=[
   {id:'gold', icon:'⛏️', desc:'중앙의 금을 우리 팀 광차로 실어 날라요'},
   {id:'ctf', icon:'🚩', desc:'상대 깃발을 가져와 득점해요'},
   {id:'raid', icon:'🐲', desc:'모두 한 팀이 되어 거대한 보스를 쓰러뜨려요'},
-  {id:'tournament', icon:'🏆', desc:'16명이 1대1로 겨루는 토너먼트, 끝까지 살아남으면 우승'}
+  {id:'tournament', icon:'🏆', desc:'16명이 1대1로 겨루는 토너먼트, 끝까지 살아남으면 우승'},
+  {id:'crystal', icon:'💎', desc:'반란군이 은하의 심장을 부수면 승리, 제국팀은 5분 지켜요'}
 ];
 function dailyModeItem(){
   // one mode per calendar day (the person's local date): picked once, saved, and read back - never re-rolled while entering the game again
