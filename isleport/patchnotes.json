@@ -2,6 +2,52 @@
  "notes": [
   {
    "date": "2026-10-28",
+   "build": "v0.2 build 68",
+   "title": "옛 빌드가 뜨는 문제 고치기",
+   "items": [
+    "사이트의 바로 플레이가 빌드 번호가 붙은 주소로 열림",
+    "옛 빌드가 캐시에서 뜨면 최신 빌드를 확인해 자동으로 한 번 다시 불러옴"
+   ],
+   "tr": {
+    "en": {
+     "title": "Fix old build showing up",
+     "items": [
+      "Play on the site now opens a build-numbered address",
+      "If an old build loads from cache, the latest build is checked and reloaded once"
+     ]
+    },
+    "ja": {
+     "title": "Fix old build showing up",
+     "items": [
+      "Play on the site now opens a build-numbered address",
+      "If an old build loads from cache, the latest build is checked and reloaded once"
+     ]
+    },
+    "es": {
+     "title": "Fix old build showing up",
+     "items": [
+      "Play on the site now opens a build-numbered address",
+      "If an old build loads from cache, the latest build is checked and reloaded once"
+     ]
+    },
+    "fr": {
+     "title": "Fix old build showing up",
+     "items": [
+      "Play on the site now opens a build-numbered address",
+      "If an old build loads from cache, the latest build is checked and reloaded once"
+     ]
+    },
+    "de": {
+     "title": "Fix old build showing up",
+     "items": [
+      "Play on the site now opens a build-numbered address",
+      "If an old build loads from cache, the latest build is checked and reloaded once"
+     ]
+    }
+   }
+  },
+  {
+   "date": "2026-10-28",
    "build": "v0.2 build 67",
    "title": "옛 버전 기록 막기",
    "items": [
