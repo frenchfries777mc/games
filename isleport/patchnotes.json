@@ -2,6 +2,52 @@
  "notes": [
   {
    "date": "2026-10-28",
+   "build": "v0.2 build 67",
+   "title": "옛 버전 기록 막기",
+   "items": [
+    "재산 순위에 보내는 값에 빌드 번호 함께 전송",
+    "새 버전이 나온 뒤 옛 버전 창은 순위와 업적을 올리지 않고 새로고침 안내"
+   ],
+   "tr": {
+    "en": {
+     "title": "Old build guard",
+     "items": [
+      "Wealth ranking updates now include the build number",
+      "After a new version, an old window stops updating ranking and goals and asks for a refresh"
+     ]
+    },
+    "ja": {
+     "title": "Old build guard",
+     "items": [
+      "Wealth ranking updates now include the build number",
+      "After a new version, an old window stops updating ranking and goals and asks for a refresh"
+     ]
+    },
+    "es": {
+     "title": "Old build guard",
+     "items": [
+      "Wealth ranking updates now include the build number",
+      "After a new version, an old window stops updating ranking and goals and asks for a refresh"
+     ]
+    },
+    "fr": {
+     "title": "Old build guard",
+     "items": [
+      "Wealth ranking updates now include the build number",
+      "After a new version, an old window stops updating ranking and goals and asks for a refresh"
+     ]
+    },
+    "de": {
+     "title": "Old build guard",
+     "items": [
+      "Wealth ranking updates now include the build number",
+      "After a new version, an old window stops updating ranking and goals and asks for a refresh"
+     ]
+    }
+   }
+  },
+  {
+   "date": "2026-10-28",
    "build": "v0.2 build 66",
    "title": "확대 제스처 막기",
    "items": [
