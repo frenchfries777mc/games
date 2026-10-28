@@ -306,3 +306,5 @@ patchnotes.json | v477 items[1] | MVP 마스터리 포인트 +5 | build 477 | 20
 patchnotes.json | v478 title | 은하 제국의 황혼 | build 478 | 2026-10-28
 patchnotes.json | v478 items[0] | 배틀로얄 보급 상자 안내 문구 삭제 | build 478 | 2026-10-28
 patchnotes.json | v478 items[1] | 전투 곡 소리 키움 | build 478 | 2026-10-28
+patchnotes.json | v479 title | 은하 제국의 황혼 | build 479 | 2026-10-28
+patchnotes.json | v479 items[0] | 전투 곡 소리 조정 (1.5배) | build 479 | 2026-10-28
