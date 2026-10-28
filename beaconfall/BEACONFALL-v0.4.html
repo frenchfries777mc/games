@@ -393,7 +393,7 @@ window.bfIntro=function(){if(run)return;run=1;t0=Date.now();el.classList.add('ru
     <button class="btn" data-act="skins"><span class="arrow">▶</span>스킨 상점<span class="en">SKIN SHOP</span></button>
     <button class="btn" data-act="stats"><span class="arrow">▶</span>통계<span class="en">STATS</span></button>
     <button class="btn" data-act="settings"><span class="arrow">▶</span>설정<span class="en">SETTINGS</span></button>
-    <p class="foot">v0.4<br>build 120</p>
+    <p class="foot">v0.4<br>build 121</p>
   </nav>
 </div>
 
@@ -1239,6 +1239,7 @@ function draw(){
   {const tr=world.trader;if(tr){const sp=shipPos(tr);list.push({y:sp.y,k:6,o:sp});if(tr.phase==='docked')list.push({y:tr.my,k:7,o:tr});}}
   {const ss=shipState();if(ss)list.push({y:ss.y,k:9,o:ss});}
   {const pe=world.pilE;if(pe)list.push({y:pe.y,k:14,o:pe});}
+  for(const T of (world.trains||[])){const ps=trainPos(T);if(ps.x>x0-14&&ps.x<x1+14&&ps.y>y0-14&&ps.y<y1+20)list.push({y:ps.y,k:15,o:ps});}
   for(const e of (world.cargo||[])){const u=Math.max(0,Math.min(1,1-e.rem/e.tot)),cp=cargoPose(e,u),x=cp.x,y=cp.y;if(x>cam.x-40&&x<cam.x+VW+40&&y>cam.y-40&&y<cam.y+VH+40){const ang=cp.ang;list.push({y,k:12,o:{x,y,e,ang}});
     if(e.pir){const w=e.rem/e.tot;if(w<0.66&&w>0.34){const off=w>0.5?14+(w-0.5)/0.16*90:14+(0.5-w)/0.16*90,px=x-Math.sin(ang)*off,py=y+Math.cos(ang)*off*0.6+4;list.push({y:py,k:13,o:{x:px,y:py,f:Math.cos(ang)>=0?1:-1}});}}}}
   for(const n of (world.vnpcs||[]))if(n.y>=y0&&n.y<=y1+20&&n.x>=x0-12&&n.x<=x1+12)list.push({y:n.y,k:10,o:n});
@@ -1246,7 +1247,7 @@ function draw(){
   list.sort((a,b)=>a.y-b.y);
   drawCastShadows(g,tvis,list);
   let li=0;
-  const flush=ly=>{while(li<list.length&&list[li].y<=ly){const it=list[li++];if(it.k===0)drawStruct(g,it.o);else if(it.k===1)drawPlayer(g);else if(it.k===2)drawRemote(g,it.o);else if(it.k===4)drawBoulder(g,it.o);else if(it.k===9)drawSpaceship(g,it.o);else if(it.k===14)drawPilot(g,it.o);else if(it.k===8)drawAnimal(g,it.o);else if(it.k===6)drawShip(g,it.o);else if(it.k===7)drawMerchant(g,it.o);else if(it.k===10)drawVNpc(g,it.o);else if(it.k===11)drawVfolk(g,it.o);else if(it.k===12)drawCargoShip(g,it.o);else if(it.k===13)drawPirateShip(g,it.o);else drawMonster(g,it.o);}};
+  const flush=ly=>{while(li<list.length&&list[li].y<=ly){const it=list[li++];if(it.k===0)drawStruct(g,it.o);else if(it.k===1)drawPlayer(g);else if(it.k===2)drawRemote(g,it.o);else if(it.k===4)drawBoulder(g,it.o);else if(it.k===9)drawSpaceship(g,it.o);else if(it.k===14)drawPilot(g,it.o);else if(it.k===15)drawTrain(g,it.o.x,it.o.y,it.o.dx,it.o.dy);else if(it.k===8)drawAnimal(g,it.o);else if(it.k===6)drawShip(g,it.o);else if(it.k===7)drawMerchant(g,it.o);else if(it.k===10)drawVNpc(g,it.o);else if(it.k===11)drawVfolk(g,it.o);else if(it.k===12)drawCargoShip(g,it.o);else if(it.k===13)drawPirateShip(g,it.o);else drawMonster(g,it.o);}};
   for(let ti=0;ti<tvis.length;ti++){
     const k=tvis[ti],y=T.y[k];
     flush(y);
@@ -10641,6 +10642,7 @@ function updateSim(dt){
   updateMarket();
   if(mode==='play')updateVfolk(frameDt||0.016);
   updateMonsters(dt);
+  updateTrains(dt);
   for(const r of remotes.values()){
     const k=Math.min(1,dt*12);r.x+=(r.tx-r.x)*k;r.y+=(r.ty-r.y)*k;
     if(r.m)r.walk+=dt;else r.walk=0;
@@ -11848,13 +11850,35 @@ const railAt=(gx,gy)=>{const q=world.fgrid.get(gy*GW+gx);return !!q&&q.id==='rai
 const TRAIN_KEYS=[[['KeyW','ArrowUp'],0,-1],[['KeyS','ArrowDown'],0,1],[['KeyA','ArrowLeft'],-1,0],[['KeyD','ArrowRight'],1,0]];
 function trainPick(T){
   const opts=[[T.dx,T.dy],[T.dy,-T.dx],[-T.dy,T.dx]].filter(d=>railAt(T.gx+d[0],T.gy+d[1]));
-  for(const [ks,kx,ky] of TRAIN_KEYS){if(ks.some(k=>keys.has(k))){const o=opts.find(d=>d[0]===kx&&d[1]===ky);if(o)return o;}}
+  if(!T.auto)for(const [ks,kx,ky] of TRAIN_KEYS){if(ks.some(k=>keys.has(k))){const o=opts.find(d=>d[0]===kx&&d[1]===ky);if(o)return o;}}
   if(opts.length)return opts[0];
   if(railAt(T.gx-T.dx,T.gy-T.dy))return [-T.dx,-T.dy];
   return null;
 }
-function trainStep(dt){
-  const T=P.train;let rem=T.spd*dt;
+const trainPos=T=>({x:T.gx*GRID+8+T.dx*T.p*GRID,y:T.gy*GRID+7+T.dy*T.p*GRID,dx:T.dx,dy:T.dy});
+/* 선로 옆 제어장치: 이어진 선로 어디든 제어장치가 붙어 있으면, 켜져 있을 때만 기차가 달려요 */
+function trainCtl(T){
+  if(T.ctT>time-0.5)return T.ct;
+  T.ctT=time;
+  const seen=new Set([T.gy*GW+T.gx]),q=[[T.gx,T.gy]],cs=[];
+  if(!railAt(T.gx,T.gy)){T.ct=null;return null;}
+  for(let i=0;i<q.length&&i<4000;i++){
+    const [x,y]=q[i];
+    for(const [dx,dy] of NB4){
+      const nx=x+dx,ny=y+dy,k=ny*GW+nx,c=sgAt(nx,ny);
+      if(c&&c.id==='controller'&&!cs.includes(c))cs.push(c);
+      if(!seen.has(k)&&railAt(nx,ny)){seen.add(k);q.push([nx,ny]);}
+    }
+  }
+  T.ct=cs.length?cs:null;return T.ct;
+}
+function trainGo(T){
+  const c=trainCtl(T);
+  if(!c)return !!T.rider;   // 제어장치가 없으면 탄 기차만 달리고, 내려 둔 기차는 서 있어요
+  return c.every(x=>!x.of);
+}
+function trainAdvance(T,dt){
+  let rem=T.spd*dt;
   for(let guard=0;guard<8&&(rem>0||T.stop);guard++){
     if(!railAt(T.gx+T.dx,T.gy+T.dy)){
       if(T.p>0){T.gx+=T.dx;T.gy+=T.dy;T.dx=-T.dx;T.dy=-T.dy;T.p=1-T.p;}
@@ -11867,20 +11891,31 @@ function trainStep(dt){
     const d=trainPick(T);if(!d){T.stop=true;rem=0;break;}
     T.dx=d[0];T.dy=d[1];
   }
-  P.x=T.gx*GRID+8+T.dx*T.p*GRID;P.y=T.gy*GRID+7+T.dy*T.p*GRID;
+}
+function trainStep(dt){
+  const T=P.train;
+  T.rider=true;
+  if(trainGo(T))trainAdvance(T,dt);
+  const ps=trainPos(T);P.x=ps.x;P.y=ps.y;
   if(T.dx)P.f=T.dx;
   P.moving=false;ensureObjs(Math.round(P.x),Math.round(P.y));
+}
+function updateTrains(dt){
+  const L=world.trains;if(!L||!L.length)return;
+  for(const T of L)if(trainGo(T))trainAdvance(T,dt);
 }
 function toggleTrain(){
   if(P.train){trainOff();return;}
   if(P.sailing||P.dead||P.sleeping||crafting||P.air)return;
+  {const L=world.trains||[];let bi=-1,bd=30;L.forEach((T,i)=>{const ps=trainPos(T),d=Math.hypot(ps.x-P.x,ps.y-P.y);if(d<bd){bd=d;bi=i;}});
+    if(bi>=0){const T=L.splice(bi,1)[0];T.rider=true;T.auto=false;P.train=T;P.mount=false;P.hold=false;P.kx=P.ky=0;trainStep(0);toast('기차에 탔어요');return;}}
   const c=cellOf(P.x,P.y);let best=null,bd=1e9;
   for(let oy=-1;oy<=1;oy++)for(let ox=-1;ox<=1;ox++){
     if(!railAt(c.gx+ox,c.gy+oy))continue;
     const d=Math.hypot((c.gx+ox)*GRID+8-P.x,(c.gy+oy)*GRID+8-P.y);if(d<bd){bd=d;best=[c.gx+ox,c.gy+oy];}
   }
   if(!best){toast('선로 위나 바로 옆에서 사용해 주세요');return;}
-  const T={gx:best[0],gy:best[1],dx:P.f>0?1:-1,dy:0,p:0,spd:96,stop:false};
+  const T={gx:best[0],gy:best[1],dx:P.f>0?1:-1,dy:0,p:0,spd:96,stop:false,rider:true};
   if(!railAt(T.gx+T.dx,T.gy+T.dy)){const d=trainPick(T);if(d){T.dx=d[0];T.dy=d[1];}else T.stop=true;}
   P.train=T;P.mount=false;P.hold=false;P.kx=P.ky=0;
   trainStep(0);
@@ -11888,7 +11923,9 @@ function toggleTrain(){
 }
 function trainOff(){
   if(!P.train)return;
-  P.train=null;P.y+=1;
+  const T=P.train;P.train=null;T.rider=false;T.auto=true;T.ctT=0;
+  (world.trains=world.trains||[]).push(T);   // 내려도 선로 위에 남고, 옆의 제어장치를 켜면 혼자 달려요
+  P.y+=1;
   toast('기차에서 내렸어요');
 }
 const drawPlayer=g=>{
