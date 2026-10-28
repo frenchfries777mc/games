@@ -5458,7 +5458,7 @@ function shuffle(arr){ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.
 /* ===== the version of this file =====
    Different BUILDS of one version meet and play together (room names online-v<ver>-<mode>-<map>-<slot>); different VERSIONS (the 0.x part) never do - the host refuses them (verNo) and the dispatcher answers busy.
    The build is only sent along with the join message and the lobby (for information); the corner of the screen shows it. */
-const GAME_BUILD='build 2026-10-18-v482';
+const GAME_BUILD='build 2026-10-18-v483';
 const GAME_VERSION='0.9', GAME_VERSION_NAME='은하 제국의 황혼';   // 게임 버전 이름: versions.json의 title과 같게 (빌드마다 바꾸지 않음)
 /* version (the 0.x part) vs build: different BUILDS of one version meet and play together, different VERSIONS never do (rooms, quick match, ranked, friend invites, dispatcher).
    Builds before 470 do not send a version, so it is read from the build number (0.9 started at build 458). */
@@ -10787,8 +10787,8 @@ function winPoseStart(){
   const run=++winFxRun, c=cv.getContext('2d'), W=cv.width, H=cv.height;
   const conf=[]; if(won) for(let i=0;i<110;i++) conf.push({x:Math.random()*W, y:-Math.random()*H, vy:40+Math.random()*70, vx:(Math.random()-.5)*30, r:Math.random()*6, vr:(Math.random()-.5)*8, w:5+Math.random()*5, h:3+Math.random()*4, col:['#ff5d73','#ffd34d','#3fe0c5','#c17bff','#7bf3ff','#ffffff'][i%6]});
   const figs=[];
-  const place=(list, x0, x1)=>{ const n=list.length, sc=n>=3?1.15:(n===2?1.5:1.9); list.forEach((f,i)=>{ const q=f.p, wid=q.weapon, sk=q.cos&&q.cos.skin&&q.cos.skin[wid];
-    figs.push({q, win:f.win, x:x0+(x1-x0)*(n===1?0.5:(i+0.5)/n), sc, wid, tint:(sk&&COSMETICS[sk])?COSMETICS[sk].tint:undefined, pose:poseOfPlayer(q)}); }); };
+  const place=(list, x0, x1)=>{ const n=list.length, sc=n>=3?1.15:(n===2?1.5:1.9); list.forEach((f,i)=>{ const q=f.p, wid=q.weapon, qc=(q.id===myId)?getEquippedCos():q.cos, sk=qc&&qc.skin&&qc.skin[wid];      // (me: the skin I wear now, not the one the room saw when I joined)
+    figs.push({q, win:f.win, x:x0+(x1-x0)*(n===1?0.5:(i+0.5)/n), sc, wid, tint:(sk&&COSMETICS[sk])?COSMETICS[sk].tint:undefined, pose:poseOfPlayer({cos:qc})}); }); };
   place(sides.left, 10, W/2-10); place(sides.right, W/2+10, W-10);
   let last=performance.now();
   (function frame(now){
@@ -17190,13 +17190,13 @@ function spawnFx0(e){
       break; }
     case 'explosion': {
       playSfx('explosion', x, y); // grenade / bazooka / missile splash and the bat home run
-      addP({x:x,y:y,life:.24,color:'#fff6c8',shape:'flash',size:140});
-      addP({x:x,y:y,life:.55,color:'#ffb347',shape:'ring',r0:10,r1:200,lw:10});
-      addP({x:x,y:y,life:.85,color:'#ff6b2c',shape:'ring',r0:6,r1:260,lw:5});
-      burst(x,y,20,{a0:0,a1:6.28,s0:40,s1:300,l0:.4,l1:.8,z0:8,z1:18,colors:['#ff5a1f','#ff9b2e','#ffd34d','#ff3d00'],drag:3.2,shape:'fire'});
-      burst(x,y,36,{a0:0,a1:6.28,s0:200,s1:780,l0:.45,l1:1.0,z0:2,z1:4.2,colors:['#ffe08a','#ffb347','#ffffff'],grav:520,drag:1.1,shape:'streak'});
-      burst(x,y,10,{a0:0,a1:6.28,s0:120,s1:540,l0:.8,l1:1.3,z0:3,z1:6,colors:['#3b3025','#5a4a3a'],grav:900,drag:.3,shape:'square',add:false});
-      burst(x,y-6,14,{a0:-2.4,a1:-0.7,s0:30,s1:150,l0:1.0,l1:1.5,z0:12,z1:24,colors:['#6b6b70','#4a4a50'],grav:-40,drag:1.4,shape:'smoke',add:false});
+      addP({x:x,y:y,life:.24,color:'#fff6c8',shape:'flash',size:105});
+      addP({x:x,y:y,life:.55,color:'#ffb347',shape:'ring',r0:10,r1:150,lw:8});
+      addP({x:x,y:y,life:.85,color:'#ff6b2c',shape:'ring',r0:5,r1:195,lw:4});
+      burst(x,y,20,{a0:0,a1:6.28,s0:30,s1:225,l0:.4,l1:.8,z0:6,z1:14,colors:['#ff5a1f','#ff9b2e','#ffd34d','#ff3d00'],drag:3.2,shape:'fire'});
+      burst(x,y,36,{a0:0,a1:6.28,s0:150,s1:585,l0:.45,l1:1.0,z0:2,z1:4.2,colors:['#ffe08a','#ffb347','#ffffff'],grav:520,drag:1.1,shape:'streak'});
+      burst(x,y,10,{a0:0,a1:6.28,s0:90,s1:405,l0:.8,l1:1.3,z0:3,z1:6,colors:['#3b3025','#5a4a3a'],grav:900,drag:.3,shape:'square',add:false});
+      burst(x,y-6,14,{a0:-2.4,a1:-0.7,s0:22,s1:112,l0:1.0,l1:1.5,z0:9,z1:18,colors:['#6b6b70','#4a4a50'],grav:-40,drag:1.4,shape:'smoke',add:false});
       shakeFrom(x,y,16,800);
       break; }
     case 'combo': {
