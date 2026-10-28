@@ -299,3 +299,7 @@ patchnotes.json | v475 items[0] | 마스터리 승리 점수 +3점으로 상향 
 Stickseum-v0.9.html | 다른 빌드 안내 | {이름}님은 다른 빌드예요 ({상대 빌드} / 내 빌드 {내 빌드}) - 채팅·스킨이 다르게 보일 수 있어요 | build 476 | 2026-10-28
 patchnotes.json | v476 title | 은하 제국의 황혼 | build 476 | 2026-10-28
 patchnotes.json | v476 items[0] | 빌드 번호를 b476처럼 b로 통일해서 표시 (버전은 v0.9) | build 476 | 2026-10-28
+- 금고 약탈 모드: 모드 이름·설명, HUD '🔐 우리 금고 / 상대 금고', 승리 문구 '상대 금고를 부쉈어요', MVP '마스터리 +5' (한국어만)
+patchnotes.json | v477 title | 은하 제국의 황혼 | build 477 | 2026-10-28
+patchnotes.json | v477 items[0] | 제국 수호전을 금고 약탈 모드로 교체 (양쪽 기지 금고 4500, 먼저 부수면 승리) | build 477 | 2026-10-28
+patchnotes.json | v477 items[1] | MVP 마스터리 포인트 +5 | build 477 | 2026-10-28
