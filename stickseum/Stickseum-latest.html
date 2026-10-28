@@ -5460,10 +5460,16 @@ function rectsOverlap(a,b){ return a.l < b.x+b.w && a.r > b.x && a.t < b.y+b.h &
 function getBox(p){ return {l:p.x-PLAYER_W/2, r:p.x+PLAYER_W/2, t:p.y-PLAYER_H, b:p.y}; }
 function shuffle(arr){ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [arr[i],arr[j]]=[arr[j],arr[i]]; } return arr; }
 /* ===== the version of this file =====
-   Players with different versions CAN meet and play together: the automatic matchmaking uses the same room names for every version (online-<mode>-<map>-<slot>), and nobody is refused because of a different build.
+   Different BUILDS of one version meet and play together (room names online-v<ver>-<mode>-<map>-<slot>); different VERSIONS (the 0.x part) never do - the host refuses them (verNo) and the dispatcher answers busy.
    The build is only sent along with the join message and the lobby (for information); the corner of the screen shows it. */
-const GAME_BUILD='build 2026-10-18-v470';
+const GAME_BUILD='build 2026-10-18-v471';
 const GAME_VERSION='0.9', GAME_VERSION_NAME='은하 제국의 황혼';   // 게임 버전 이름: versions.json의 title과 같게 (빌드마다 바꾸지 않음)
+/* version (the 0.x part) vs build: different BUILDS of one version meet and play together, different VERSIONS never do (rooms, quick match, ranked, friend invites, dispatcher).
+   Builds before 470 do not send a version, so it is read from the build number (0.9 started at build 458). */
+function buildNum(b){ const m=/-v(\d+)$/.exec(String(b||'')); return m?+m[1]:0; }
+function verOf(d){ if(d && typeof d.ver==='string' && d.ver) return d.ver; const n=buildNum(d&&d.build); return n>=458 ? '0.9' : (n>0 ? '0.8' : '?'); }
+const VER_TAG=GAME_VERSION.replace(/\D/g,'');          // (in room names: 0.9 -> '09')
+function verNoteText(other){ return '버전이 달라요 (내 '+GAME_VERSION+' / 방 '+(other||'?')+') - 같은 버전끼리만 함께할 수 있어요'; }
 const WEEKLY_EVENTS=[
   {id:'lowg',    name:'저중력 난투', desc:'몸이 둥실둥실, 중력이 약해진 난투', rules:{grav:0.6}},
   {id:'tank',    name:'탱크 파티',   desc:'체력은 3배, 넉백은 절반', rules:{hp:3, kb:0.5}},
@@ -5476,7 +5482,7 @@ function eventWeek(){ return Math.floor((Date.now()/86400000+3)/7); }          /
 function currentEvent(){ return WEEKLY_EVENTS[eventWeek()%WEEKLY_EVENTS.length]; }
 let onlineClan='';          // the clan duel queue (a clan id): its rooms are only for that clan's members, 1 against 1, never any bots
 let onlineEvent=false, onlineRanked=false;          // onlineRanked: the ranked duel queue (its rooms are only for ranked players and never get bots)
-function roomIdFor(mapId,slot,modeId){ return 'online-'+(modeId||gameMode)+(onlineEvent?'-evt'+eventWeek():'')+(onlineRanked?'-rk':'')+(onlineClan?'-cl'+String(onlineClan).replace(/[^A-Za-z0-9]/g,'').slice(0,40):'')+'-'+mapId+'-'+slot; }
+function roomIdFor(mapId,slot,modeId){ return 'online-v'+VER_TAG+'-'+(modeId||gameMode)+(onlineEvent?'-evt'+eventWeek():'')+(onlineRanked?'-rk':'')+(onlineClan?'-cl'+String(onlineClan).replace(/[^A-Za-z0-9]/g,'').slice(0,40):'')+'-'+mapId+'-'+slot; }
 
 function renderMapPreview(mapId, canvas){
   if(!canvas) return;
@@ -7839,6 +7845,10 @@ async function cloudSaveSync(username, sameAccountAsLast){
   if(!sb || !sbUser){ cloudSaveState='off'; return; }
   try{
     const cloud=await unpackSave(sbUserMeta && sbUserMeta[CLOUD_META_KEY]), local=cloudSavePayload(); migrateXpCurve(cloud); migrateRankScale(cloud);
+    const cmeta=sbUserMeta && sbUserMeta[CLOUD_META_KEY];
+    if(cloud && sbUserMeta && sbUserMeta.stickseumGv===GAME_VERSION && !(cmeta && cmeta.gv===GAME_VERSION)){          // this account was already on this version, but the saved record was last written by an OLDER version: its progress is not taken (no easy levelling on old versions)
+      cloudSaveState='ok'; cloudSaveReady=true; cloudSaveNote='옛 버전에서 올라온 기록은 반영하지 않았어요'; if(!saveIsFresh()) await cloudSaveUpload(true); return;
+    }
     if(!cloud){ cloudSaveState='ok'; cloudSaveReady=true; if(!saveIsFresh()){ await cloudSaveUpload(true); } return; }                    // the account has no save yet: this browser's one becomes it
     if(saveIsFresh()){ applyCloudSave(cloud); cloudSaveNote='계정에 저장된 진행 상황을 불러왔어요'; }                                     // an empty browser takes over the account's progress
     else if(!sameAccountAsLast && (localStorage.getItem(LAST_USER_KEY)||'') && (localStorage.getItem(LAST_USER_KEY)||'')!==username){   // another account had played in this browser: keep its record safe, take this account's one
@@ -7854,11 +7864,11 @@ async function cloudSaveUpload(force){
   const payload=cloudSavePayload(), key=JSON.stringify(Object.assign({}, payload, {at:0}));
   if(!force && key===cloudSaveLastJson) return true;
   try{
-    const packed=await packSave(payload); packed.at=Date.now();
+    const packed=await packSave(payload); packed.at=Date.now(); packed.gv=GAME_VERSION;
     if(packed.d.length>CLOUD_MAX_CHARS){ cloudSaveState='toolarge'; return false; }                                     // (it would make the login token too big)
-    const r=await sb.auth.updateUser({ data:{ [CLOUD_META_KEY]: packed } });
+    const r=await sb.auth.updateUser({ data:{ [CLOUD_META_KEY]: packed, stickseumGv: GAME_VERSION } });
     if(r && r.error){ if(r.error.status===429 || /rate limit/i.test(r.error.message||'')) cloudSaveBackoffUntil=Date.now()+5*60*1000; cloudSaveState='error'; return false; }
-    sbUserMeta=Object.assign({}, sbUserMeta, {[CLOUD_META_KEY]:packed});
+    sbUserMeta=Object.assign({}, sbUserMeta, {[CLOUD_META_KEY]:packed, stickseumGv:GAME_VERSION});
     cloudSaveLastJson=key; cloudSaveLastAt=Date.now(); cloudSaveState='ok'; return true;
   }catch(e){ cloudSaveState='error'; return false; }
 }
@@ -8032,7 +8042,7 @@ function buildPublicStats(){
   const ck={}, wx={}; for(const w of SELECTABLE_WEAPONS){ const k=Math.floor(charKillsFor(w)/TIER_PT_MULT), x=(saveData.weaponXp&&saveData.weaponXp[w])||0; if(k>0) ck[w]=k; if(x>0) wx[w]=x; }
   const modes={}; for(const m in (saveData.modeMatches||{})) if(saveData.modeMatches[m]>0 && SPECIAL_IDS.indexOf(m)===-1) modes[m]=saveData.modeMatches[m]; { const dn=dailyMatchCount(saveData); if(dn>0) modes.daily=dn; }
   return {v:1, xp:saveData.xp||0, wins:saveData.totalWins||0, kills:saveData.totalKills||0, damage:Math.round(saveData.totalDamage||0), assists:saveData.totalAssists||0, matches:saveData.totalMatches||0,
-    avatar:saveData.avatar||null, pbg:myProfileDeco().pbg, pfr:myProfileDeco().pfr, ach:Object.keys(saveData.achievements||{}), owned:ownedCosCount(), modes, ck, wx, clan:(myClan?{t:myClan.tag, n:myClan.name, e:myClan.emblem, c:myClan.color}:null), nm:getEquippedCos().name||null, at:Date.now()};
+    avatar:saveData.avatar||null, pbg:myProfileDeco().pbg, pfr:myProfileDeco().pfr, ach:Object.keys(saveData.achievements||{}), owned:ownedCosCount(), modes, ck, wx, clan:(myClan?{t:myClan.tag, n:myClan.name, e:myClan.emblem, c:myClan.color}:null), nm:getEquippedCos().name||null, gv:GAME_VERSION, b:buildNum(GAME_BUILD), at:Date.now()};
 }
 let sbStatsOk=true, sbStatsTimer=null, sbStatsLastJson='';
 async function sbUploadStats(){
@@ -9792,7 +9802,7 @@ if(DED_HOST){
     open(mapId, slot, modeId, evt, ranked){ modeId=modeId||'duel'; ranked=(modeId==='duel' && ranked!==false); dedState.err=''; onlineRanked=ranked; onlineEvent=!!evt; onlineClan=''; selectedOnlineMode=modeId; gameMode=modeId; currentMode='online'; startHostPeer(roomIdFor(mapId, slot, modeId), mapId, 'online', null, null, modeId); },
     roomName(mapId, slot, modeId, evt, ranked){ const a=[onlineRanked,onlineEvent,onlineClan,gameMode]; onlineRanked=!!ranked; onlineEvent=!!evt; onlineClan=''; const r=roomIdFor(mapId, slot, modeId); onlineRanked=a[0]; onlineEvent=a[1]; onlineClan=a[2]; return r; },
     dispatch(cb){ const dp=new Peer('ff-dispatch', Object.assign({debug:0}, PEERJS_ICE_CONFIG)); dp.on('error', e=>{ dedState.dispErr=String(e&&e.type||e); }); dp.on('open', ()=>{ dedState.dispOpen=true; }); dp.on('disconnected', ()=>{ dedState.dispOpen=false; try{ dp.reconnect(); }catch(e){} });
-      dp.on('connection', c=>{ c.on('data', async d=>{ if(!d || d.t!=='want') return; let r=null; try{ r=await window.__ffdWant(d); }catch(e){} try{ c.send(r ? {t:'ready', roomId:r} : {t:'busy'}); }catch(e){} setTimeout(()=>{ try{c.close();}catch(e){} }, 3000); }); }); },
+      dp.on('connection', c=>{ c.on('data', async d=>{ if(!d || d.t!=='want') return; let r=null; if(verOf(d)!==GAME_VERSION){ try{ c.send({t:'busy'}); }catch(e){} setTimeout(()=>{ try{c.close();}catch(e){} }, 1000); return; } try{ r=await window.__ffdWant(d); }catch(e){} try{ c.send(r ? {t:'ready', roomId:r} : {t:'busy'}); }catch(e){} setTimeout(()=>{ try{c.close();}catch(e){} }, 3000); }); }); },
     dispState(){ return {open:!!dedState.dispOpen, err:dedState.dispErr||''}; },
     status(){ return {live:!!hostRoomLive, humans:Object.keys(players).length, started:!!started, ended:!!matchEnded, err:dedState.err, mapId:currentMapId||'', id:myId||'', user:sbUser?sbUser.username:''}; },
     maps(){ return onlineMapPoolFor('duel'); },
@@ -10027,6 +10037,7 @@ function onHostData(conn, data){
     else safeSend(conn, {t:'rejoinNo'});
     return;
   }
+  if((data.t==='join' || data.t==='spectate' || data.t==='probe') && verOf(data)!==GAME_VERSION){ safeSend(conn, {t:'verNo', ver:GAME_VERSION}); setTimeout(()=>{ try{conn.close();}catch(e){} }, 400); return; }        // another VERSION (not just another build): never in my room
   if(data.t==='join' && data.build!==GAME_BUILD){ try{ pushSystemLine((String(data.name||'플레이어').slice(0,15))+'님은 다른 버전이에요 ('+(data.build?data.build.replace('build ',''):'오래된 버전')+' / 내 버전 '+GAME_BUILD.replace('build ','')+') - 채팅·스킨이 다르게 보일 수 있어요'); }catch(e){} }
   if(data.t==='probe'){
     safeSend(conn, {t:'probeReply', count:Object.keys(players).length, max:effectiveMaxPlayers(currentMapId,gameMode), started:started});
@@ -10114,7 +10125,7 @@ setInterval(()=>{
 function broadcastLobby(){
   const list=Object.values(players).map(p=>({id:p.id,name:p.name,color:p.color,team:p.team,joinOrder:p.joinOrder,isHost:p.isHost,sbId:p.sbId||null,sbUsername:p.sbUsername||null,level:p.level||1,streak:p.streak||0,isBot:!!p.isBot,nm:(p.cos&&p.cos.name)||null,clan:p.clan||'',ce:p.ce||'',cc:p.cc||'',cn:p.cn||''}));
   botFillShowAt=botFillAt;
-  const msg={t:'lobby', build:GAME_BUILD, list, cmap:(MAP&&MAP.custom)?MAP.cspec:undefined, mapId:currentMapId, gameMode, weaponMode, rules:roomRules, opts:roomOpts, started, countdownEndsAt, botFillAt:botFillAt===null?null:botFillAt};
+  const msg={t:'lobby', ver:GAME_VERSION, build:GAME_BUILD, list, cmap:(MAP&&MAP.custom)?MAP.cspec:undefined, mapId:currentMapId, gameMode, weaponMode, rules:roomRules, opts:roomOpts, started, countdownEndsAt, botFillAt:botFillAt===null?null:botFillAt};
   broadcastAll(msg);
 }
 function evaluateAutoStart(){
@@ -10408,8 +10419,8 @@ function becomeClient(idString, mode, mapId, code, spec){
     hostConn=conn;
     conn.on('open', ()=>{
       if(joined) return; joined=true;
-      if(spec){ spectatorMode=true; conn.send({t:'spectate', build:GAME_BUILD, name:myName}); return; }
-      conn.send({t:'join', build:GAME_BUILD, name:myName, cos:getEquippedCos(), sbId:(sbUser?sbUser.id:null), sbUsername:(sbUser?sbUser.username:null), clan:clanMyTag(), clanId:clanMyId(), ce:(myClan?myClan.emblem:''), cc:(myClan?myClan.color:''), cn:(myClan?myClan.name:''), level:levelFromXp(saveData.xp||0), streak:saveData.winStreak||0, party:partyJoinTag()});
+      if(spec){ spectatorMode=true; conn.send({t:'spectate', ver:GAME_VERSION, build:GAME_BUILD, name:myName}); return; }
+      conn.send({t:'join', ver:GAME_VERSION, build:GAME_BUILD, name:myName, cos:getEquippedCos(), sbId:(sbUser?sbUser.id:null), sbUsername:(sbUser?sbUser.username:null), clan:clanMyTag(), clanId:clanMyId(), ce:(myClan?myClan.emblem:''), cc:(myClan?myClan.color:''), cn:(myClan?myClan.name:''), level:levelFromXp(saveData.xp||0), streak:saveData.winStreak||0, party:partyJoinTag()});
       if(mode==='online' && mapId){ enterRoomScreen(mode, mapId, code); resetFlowState(); partyAnnounceRoom(idString, mapId); }
       // for private-by-code: room screen shown once lobby (with mapId) arrives
     });
@@ -10421,6 +10432,8 @@ function becomeClient(idString, mode, mapId, code, spec){
 }
 function onClientData(data, mode, code){
   if(data && data.cmap) cmRegister(data.cmap, true);          // a room on a hand-made map sends the map itself
+  if(data.t==='verNo'){ showErrorAndReturnToMenu(verNoteText(data.ver)); return; }
+  if(data.t==='lobby' && verOf(data)!==GAME_VERSION){ showErrorAndReturnToMenu(verNoteText(verOf(data))); return; }
   if(data.t==='clanNo'){ showErrorAndReturnToMenu(data.msg||'들어갈 수 없어요'); return; }
   if(data.t==='specNo'){ showErrorAndReturnToMenu(data.msg||'관전할 수 없어요'); return; }
   if(data.t==='specInit'){
@@ -10870,11 +10883,11 @@ function attemptJoinCandidate(p, roomId, timeoutMs, cb, seats){
   p.on('error', onErr);
   const timer=setTimeout(()=>{ try{ if(conn) conn.close(); }catch(e){} finish({status:'timeout'}); }, timeoutMs);
   try{ conn=p.connect(roomId, {reliable:true}); }catch(e){ finish({status:'error'}); return; }
-  const joinMsg=()=>({t:'join', build:GAME_BUILD, name:myName, cos:getEquippedCos(), sbId:(sbUser?sbUser.id:null), sbUsername:(sbUser?sbUser.username:null), clan:clanMyTag(), clanId:clanMyId(), ce:(myClan?myClan.emblem:''), cc:(myClan?myClan.color:''), cn:(myClan?myClan.name:''), level:levelFromXp(saveData.xp||0), streak:saveData.winStreak||0, party:partyJoinTag()});
-  conn.on('open', ()=>{ conn.send((seats||1)>1 ? {t:'probe'} : joinMsg()); });          // a party leader first asks whether the whole party fits
+  const joinMsg=()=>({t:'join', ver:GAME_VERSION, build:GAME_BUILD, name:myName, cos:getEquippedCos(), sbId:(sbUser?sbUser.id:null), sbUsername:(sbUser?sbUser.username:null), clan:clanMyTag(), clanId:clanMyId(), ce:(myClan?myClan.emblem:''), cc:(myClan?myClan.color:''), cn:(myClan?myClan.name:''), level:levelFromXp(saveData.xp||0), streak:saveData.winStreak||0, party:partyJoinTag()});
+  conn.on('open', ()=>{ conn.send((seats||1)>1 ? {t:'probe', ver:GAME_VERSION, build:GAME_BUILD} : joinMsg()); });          // a party leader first asks whether the whole party fits
   conn.on('data', data=>{
     if(data.t==='probeReply'){ if(!data.started && (+data.max||0)-(+data.count||0)>=seats) conn.send(joinMsg()); else { try{conn.close();}catch(e){} finish({status:'full'}); } return; }
-    if(data.t==='full' || data.t==='sameAcc'){ try{conn.close();}catch(e){} finish({status:'full'}); }
+    if(data.t==='full' || data.t==='sameAcc' || data.t==='verNo'){ try{conn.close();}catch(e){} finish({status:'full'}); }
     else if(data.t==='started'){ try{conn.close();}catch(e){} finish({status:'started'}); }
     else if(data.t==='lobby'){ finish({status:'joined', conn, initialLobby:data}); }
   });
@@ -10977,7 +10990,7 @@ function askServerRoom(chosen, cb){
     dp.on('error', ()=>finish(null));
     dp.on('open', ()=>{
       const c=dp.connect('ff-dispatch', {reliable:true});
-      c.on('open', ()=>c.send({t:'want', build:GAME_BUILD, mode:gameMode, mapId:chosen.mapId, slot:chosen.slot, evt:!!onlineEvent, ranked:!!onlineRanked}));
+      c.on('open', ()=>c.send({t:'want', ver:GAME_VERSION, build:GAME_BUILD, mode:gameMode, mapId:chosen.mapId, slot:chosen.slot, evt:!!onlineEvent, ranked:!!onlineRanked}));
       c.on('data', d=>{ if(d && d.t==='ready' && d.roomId) finish(d.roomId); else finish(null); });
       c.on('error', ()=>finish(null)); c.on('close', ()=>finish(null));
     });
