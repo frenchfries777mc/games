@@ -277,3 +277,6 @@ Stickseum-v0.9.html | 제국 수호전 표시 | 은하의 심장 · 파괴됨 ·
 patchnotes.json | v469 title | 제국 수호전 모드와 우주 함대 맵 추가 | build 469 | 2026-10-28
 patchnotes.json | v469 items[0] | 새 모드 제국 수호전 추가 제국팀이 은하의 심장 수정을 5분 지키면 승리 반란군이 수정을 부수면 승리 | build 469 | 2026-10-28
 patchnotes.json | v469 items[1] | 새 맵 우주 함대 추가 8인 맵 창밖으로 우주가 보이는 함교 | build 469 | 2026-10-28
+patchnotes.json | v470 title | 은하 제국의 황혼 | build 470 | 2026-10-28
+patchnotes.json | v470 items[0] | 로비 로고 더 크게·위쪽으로 | build 470 | 2026-10-28
+patchnotes.json | v470 items[1] | 인트로 버전 제목 크고 화려하게 (금빛 반짝임) | build 470 | 2026-10-28
