@@ -319,3 +319,5 @@ patchnotes.json | v482 items[0] | 공격 소리 0.75배로 줄임 | build 482 | 
 patchnotes.json | v483 title | 은하 제국의 황혼 | build 483 | 2026-10-28
 patchnotes.json | v483 items[0] | 폭발 효과 크기 0.75배 | build 483 | 2026-10-28
 patchnotes.json | v483 items[1] | 승리 모션에 지금 입은 스킨이 나오도록 수정 | build 483 | 2026-10-28
+patchnotes.json | v484 title | 은하 제국의 황혼 | build 484 | 2026-10-28
+patchnotes.json | v484 items[0] | 프로필 카드에서 사진과 이름을 바꿀 수 있음 (허브와 같은 프로필 창) | build 484 | 2026-10-28
