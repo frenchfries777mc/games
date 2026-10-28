@@ -2,6 +2,86 @@
  "notes": [
   {
    "date": "2026-10-28",
+   "build": "v0.2 build 66",
+   "title": "확대 제스처 막기",
+   "items": [
+    "아이폰에서 두 번 터치와 두 손가락 확대 제스처 차단"
+   ],
+   "tr": {
+    "en": {
+     "title": "No zoom gestures",
+     "items": [
+      "Blocked double-tap and pinch zoom gestures on iPhone"
+     ]
+    },
+    "ja": {
+     "title": "No zoom gestures",
+     "items": [
+      "Blocked double-tap and pinch zoom gestures on iPhone"
+     ]
+    },
+    "es": {
+     "title": "No zoom gestures",
+     "items": [
+      "Blocked double-tap and pinch zoom gestures on iPhone"
+     ]
+    },
+    "fr": {
+     "title": "No zoom gestures",
+     "items": [
+      "Blocked double-tap and pinch zoom gestures on iPhone"
+     ]
+    },
+    "de": {
+     "title": "No zoom gestures",
+     "items": [
+      "Blocked double-tap and pinch zoom gestures on iPhone"
+     ]
+    }
+   }
+  },
+  {
+   "date": "2026-10-28",
+   "build": "v0.2 build 65",
+   "title": "두 번 터치 확대 막기",
+   "items": [
+    "게임 화면을 두 번 터치해도 확대되지 않아요"
+   ],
+   "tr": {
+    "en": {
+     "title": "No double-tap zoom",
+     "items": [
+      "Double-tapping the game no longer zooms in"
+     ]
+    },
+    "ja": {
+     "title": "No double-tap zoom",
+     "items": [
+      "Double-tapping the game no longer zooms in"
+     ]
+    },
+    "es": {
+     "title": "No double-tap zoom",
+     "items": [
+      "Double-tapping the game no longer zooms in"
+     ]
+    },
+    "fr": {
+     "title": "No double-tap zoom",
+     "items": [
+      "Double-tapping the game no longer zooms in"
+     ]
+    },
+    "de": {
+     "title": "No double-tap zoom",
+     "items": [
+      "Double-tapping the game no longer zooms in"
+     ]
+    }
+   }
+  },
+  {
+   "date": "2026-10-28",
    "build": "v0.2 build 64",
    "title": "공용 프로필 창",
    "items": [

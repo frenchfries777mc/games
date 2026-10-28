@@ -4,12 +4,13 @@
 <head><style id="ffTap">html,body{touch-action:manipulation}</style>
 <meta charset="utf-8">
 <script src="https://frenchfries777mc.github.io/games/ff-lang.js"></script>
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <title>Isleport</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Gugi&family=Press+Start+2P&display=swap" rel="stylesheet">
 <style>
+html,body{touch-action:manipulation}
 :root{--ink:#1d1109;--text:#f6efd8;--muted:#d3bf94;--gold:#f2c75a;--gold-d:#8a5a14;--btn:#f3e4b0;--btn-d:#cdb87c;--btn-ink:#2a1f0c;--hot:#d7f19a;--field:#24160b;--line:#8a6238;--bad:#f08a6a;--good:#a8e08a;
  --px:'Press Start 2P',monospace;--ko:'Gugi','Malgun Gothic','Apple SD Gothic Neo','Hiragino Sans',sans-serif;color-scheme:dark}
 *{box-sizing:border-box}
@@ -478,7 +479,7 @@ const TUT=[
  [P('다 자라면 ▼ 표시의 밭을 눌러 수확해요','When it is grown, tap the field with the ▼ to harvest'),s=>s.stats.harvest>=1],
  [P('마을 장터에서 수확한 것을 팔아요','Sell your harvest at the town market'),s=>(s.stats.shop||0)>=1],
  [P('항구에서 배에 짐을 싣고 보내요','Load a ship at the harbor and send it off'),s=>s.stats.sailed>=1]];
-const OUTMAX=12,BUILD=64;
+const OUTMAX=12,BUILD=66;
 const hasB=(s,b)=>s.slots.some(x=>x&&x.b===b);
 const rankOf=e=>{let r=0;RANKS.forEach((x,i)=>{if(e>=x[0])r=i;});return r;};
 /* 업적: id, 이름, 설명, 조건 */
@@ -600,6 +601,12 @@ A('nw1m',P('백만장자','Millionaire'),P('재산 1,000,000 모으기','Reach a
 const CROPK=Object.keys(CROPS),SPEC=['goldbarley','pomegranate','saffron','cloudcotton','seaweed','dragonfruit'],CROPK17=CROPK.filter(c=>!SPEC.includes(c));
 const ACHN={};ACH.forEach(a=>ACHN[a.id]=a);
 const NOTES=[
+ {date:'2026-10-28',build:'v0.2 build 66',title:P('확대 제스처 막기','No zoom gestures'),items:[
+  P('아이폰에서 두 번 터치와 두 손가락 확대 제스처 차단','Blocked double-tap and pinch zoom gestures on iPhone')
+ ]},
+ {date:'2026-10-28',build:'v0.2 build 65',title:P('두 번 터치 확대 막기','No double-tap zoom'),items:[
+  P('게임 화면을 두 번 터치해도 확대되지 않아요','Double-tapping the game no longer zooms in')
+ ]},
  {date:'2026-10-28',build:'v0.2 build 64',title:P('공용 프로필 창','Shared profile window'),items:[
   P('계정 창에서 허브와 같은 프로필 카드 열기','Open the same profile card as the hub from the account window'),
   P('프로필 카드 아래에 Isleport 통계 표시','Isleport stats under the profile card'),
@@ -32474,6 +32481,7 @@ document.addEventListener('pointerdown',()=>{if(S){auCtx();if(AU.mus)musicStart(
 try{if(window.FFProfile)FFProfile.gameStats('isleport',function(box,ctx){if(!ctx.own)return '';const v=S||(loadSave()||{}).S;if(!v||!v.stats)return '';const st=v.stats,row=(k,x)=>'<div class="gr"><span>'+ctx.esc(k)+'</span><b>'+ctx.esc(String(x))+'</b></div>';
   let h=row(T('계급','Rank'),tx(RANKS[rankOf(st.earned||0)][1]))+row(T('번 돈','Earned'),fmt(st.earned||0))+row(T('가진 돈','Gold'),fmt(v.money||0))+row(T('가장 큰 판매','Best sale'),fmt(st.best||0))+row(T('수확','Harvested'),T('{0}개','{0}',st.harvest||0))+row(T('항해','Voyages'),T('{0}번','{0}',st.sailed||0)) +row(T('배','Ships'),(v.ships||[]).length);
   return h;});}catch(e){}
+document.addEventListener('gesturestart',e=>e.preventDefault());
 initLang();fit();initAuth();applyStatic();showTitle();
 try{const q=new URLSearchParams(location.search),jc=(q.get('join')||q.get('room')||'').trim().toUpperCase();if(/^[A-Z0-9]{4}$/.test(jc)){startSingle(true);startMP(false,jc);}}catch(e){}
 requestAnimationFrame(loop);

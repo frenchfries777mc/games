@@ -243,3 +243,5 @@ patchnotes.json | v461 items[0] | 프로필 창이 허브·다른 게임과 같�
 patchnotes.json | v461 items[1] | Stickseum 통계(레벨·승률·처치·어시스트·숙련도 등)는 공용 프로필 창 아래에 표시 | build 461 | 2026-10-28
 patchnotes.json | v461 items[2] | 이름과 아바타 변경은 허브에서만 가능 | build 461 | 2026-10-28
 patchnotes.json | v461 items[3] | 오로라 스킨 효과가 많을 때 렉이 줄도록 그리기 최적화 | build 461 | 2026-10-28
+patchnotes.json | v462 title | 더블터치 확대 막기 | build 462 | 2026-10-28
+patchnotes.json | v462 items[0] | 게임과 사이트 페이지에서 화면을 두 번 눌러도 확대되지 않음 | build 462 | 2026-10-28
