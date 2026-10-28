@@ -267,3 +267,5 @@ patchnotes.json | v466 items[3] | 팀전에서 변장한 티오니스가 변장 
 Stickseum-v0.9.html | 중화기병 스킬 | 3연발 - 조준 방향으로 로켓을 연속 3발 발사 (발당 피해 34) | build 467 | 2026-10-28
 patchnotes.json | v467 title | 중화기병 스킬 변경 | build 467 | 2026-10-28
 patchnotes.json | v467 items[0] | 중화기병 스킬을 철갑 자세에서 3연발로 변경 조준 방향으로 로켓을 연속 3발 발사 발당 피해 34 | build 467 | 2026-10-28
+patchnotes.json | v468 title | 로비 제목 로고 교체 | build 468 | 2026-10-28
+patchnotes.json | v468 items[0] | 로비 제목을 새 STICKSEUM 로고로 교체 | build 468 | 2026-10-28
