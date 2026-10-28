@@ -265,3 +265,6 @@
 
 ## Crown Envoy b115 (2026-10-28)
 - 신성로마제국 제후국 동맹 수정 (patchnotes.json 항목 2개)
+
+## Crown Envoy b116 (2026-10-28)
+- 경계선 굽이침 다듬기 (patchnotes.json 항목 1개)
