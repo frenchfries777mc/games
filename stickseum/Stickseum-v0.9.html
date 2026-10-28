@@ -1873,6 +1873,7 @@ function persistOtherSettings(){ try{ localStorage.setItem('arenaClashSettings',
    game file stays small); if they can't be loaded from here (e.g. the file was downloaded and opened on its own) they are
    fetched from the site, and if that fails too the game simply stays without music. Web Audio is used (not <audio>) so the
    loop has no gap and the volume can fade on iPad, where an <audio> element's volume can't be changed. */
+const BGM_GAIN={battle:1.7};      // the battle song is mastered quieter than the rest
 const BGM_FILES={lobby:'music-lobby.mp3', battle:'music-battle-jump.mp3', boss:'music-boss.mp3'}, BGM_ALT='https://frenchfries777mc.github.io/games/stickseum/';
 const BGM_LOOP={lobby:41.739, battle:51.2, boss:41.143};            // loop length in seconds (whole bars, so the end joins the start)
 let bgmCtx=null, bgmBufs={}, bgmLoading={}, bgmCur=null, bgmGain=null;
@@ -1894,12 +1895,12 @@ function bgmLoad(k){
 function bgmUpdate(){
   if(!bgmCtx) return;
   const want=bgmWanted(), now=bgmCtx.currentTime;
-  if(bgmCur && bgmCur.kind===want){ bgmCur.g.gain.setTargetAtTime(otherSettings.bgmVol, now, 0.1); return; }
+  if(bgmCur && bgmCur.kind===want){ bgmCur.g.gain.setTargetAtTime(otherSettings.bgmVol*(BGM_GAIN[want]||1), now, 0.1); return; }
   if(bgmCur){ const old=bgmCur; old.g.gain.cancelScheduledValues(now); old.g.gain.setValueAtTime(old.g.gain.value, now); old.g.gain.linearRampToValueAtTime(0, now+1.5); try{ old.src.stop(now+1.6); }catch(e){} bgmCur=null; }
   if(!want) return;
   const buf=bgmBufs[want]; if(!buf){ bgmLoad(want); return; }
   const src=bgmCtx.createBufferSource(); src.buffer=buf; src.loop=true; src.loopStart=0; src.loopEnd=Math.min(buf.duration, BGM_LOOP[want]||buf.duration);
-  const g=bgmCtx.createGain(); g.gain.setValueAtTime(0, now); g.gain.linearRampToValueAtTime(otherSettings.bgmVol, now+1.5);
+  const g=bgmCtx.createGain(); g.gain.setValueAtTime(0, now); g.gain.linearRampToValueAtTime(otherSettings.bgmVol*(BGM_GAIN[want]||1), now+1.5);
   src.connect(g); g.connect(bgmCtx.destination); src.start(now+0.02);
   bgmCur={kind:want, src, g};
 }
@@ -4772,7 +4773,7 @@ MAP_TEMPLATES['mine'] = {
   ]),
   spawns:[{x:250,y:890},{x:600,y:890},{x:950,y:890},{x:1650,y:890},{x:2000,y:890},{x:2350,y:890},{x:280,y:760},{x:2320,y:760}]
 };
-/* 우주 함대: the bridge of an imperial ship (8 players, plain platforms, no floor trick).. */
+/* 우주 함대: the bridge of an imperial ship (8 players, plain platforms, no floor trick). */
 MAP_TEMPLATES['spacefleet'] = {
   id:'spacefleet', name:THEMES.fleet.name, maxPlayers:8, arenaW:2600, arenaH:1000, theme:THEMES.fleet,
   platforms:[{x:0,y:900,w:2600,h:100},{x:1100,y:770,w:400,h:24},{x:1150,y:640,w:300,h:24},{x:1200,y:510,w:200,h:24},{x:1150,y:380,w:300,h:24}].concat(mirrorPl(2600,[
@@ -5457,7 +5458,7 @@ function shuffle(arr){ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.
 /* ===== the version of this file =====
    Different BUILDS of one version meet and play together (room names online-v<ver>-<mode>-<map>-<slot>); different VERSIONS (the 0.x part) never do - the host refuses them (verNo) and the dispatcher answers busy.
    The build is only sent along with the join message and the lobby (for information); the corner of the screen shows it. */
-const GAME_BUILD='build 2026-10-18-v477';
+const GAME_BUILD='build 2026-10-18-v478';
 const GAME_VERSION='0.9', GAME_VERSION_NAME='은하 제국의 황혼';   // 게임 버전 이름: versions.json의 title과 같게 (빌드마다 바꾸지 않음)
 /* version (the 0.x part) vs build: different BUILDS of one version meet and play together, different VERSIONS never do (rooms, quick match, ranked, friend invites, dispatcher).
    Builds before 470 do not send a version, so it is read from the build number (0.9 started at build 458). */
@@ -10529,7 +10530,7 @@ function onClientData(data, mode, code){
     for(const id in effectLocalTimes) if(!stillPresent[id]) delete effectLocalTimes[id];
     for(const id in players) if(!((spectatorMode||rpView) && id===myId) && !data.players.find(sp=>sp.id===id)) delete players[id];
   }
-  else if(data.t==='brzNotice'){ try{ pushSystemLine(BRZ_NOTICE[data.k]||''); }catch(e){} }
+  else if(data.t==='brzNotice'){ /* old hosts only: no line shown */ }
   else if(data.t==='kill'){ onKillEvent(data); }
   else if(data.t==='chat'){ onChatRelayed(data); }
   else if(data.t==='hotpotatoRound'){ const prevBomb=bombHolderId; bombHolderId=data.bombHolderId; bombTimerEndsAt=data.bombTimerEndsAt; if(prevBomb && bombHolderId && prevBomb!==bombHolderId) playBombPass(); bombTickAt=0; }
@@ -14591,11 +14592,8 @@ function brzTick(dt,t){
   }
   for(const c of brz.crates) brzV.c.push([c.x,c.y,c.k]);
 }
-const BRZ_NOTICE=['\u2764\ufe0f 보급: 체력 회복','\u26a1 보급: 궁극기 충전','\u2728 보급: 스킬 충전'];
 function sendBrzNotice(p,k){
-  const txt=BRZ_NOTICE[k]||'';
-  if(p.id===myId){ try{ pushSystemLine(txt); }catch(e){} }
-  else if(conns[p.id]) safeSend(conns[p.id], {t:'brzNotice', k});
+  /* no chat line any more: the crate shows its own icon and the effect is obvious */
 }
 function drawBrzWorld(){
   const v=brzV; if(!v || !MAP) return;
