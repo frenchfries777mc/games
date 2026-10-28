@@ -3745,6 +3745,7 @@ const MODES = {
   raid: {id:'raid', name:'보스 레이드', desc:'8인 이상 맵에서만 가능 · 4명 고정 · 모두가 한 팀이 되어 거대한 보스 한 마리를 쓰러뜨리는 협동 모드 · 보스는 인원에 맞춰 체력이 늘어나고, 주기적으로 바닥을 내려쳐요(빨간 원이 번쩍이면 점프!) · 팀 목숨이 정해져 있고 쓰러지면 6초 뒤 부활 · 3분 안에 보스를 잡으면 성공', teams:true, teamSize:'half', soloTeam:true, extra:0, fixedPlayers:4, elim:false, ownMapRules:true, mapFilterMinPlayers:8, respawnTime:6},
   tournament: {id:'tournament', name:'토너먼트', desc:'16명이 1대1 3판 2선승제로 겨루는 단판 토너먼트(16강 → 8강 → 4강 → 결승) · 같은 라운드 경기는 동시에 진행되고 내 경기만 보여요 · 라운드마다 캐릭터를 새로 골라요 · 끝난 사람은 다른 경기를 관전 · 결승은 경기장이 점점 좁아져요', teams:false, fixedPlayers:16, elim:true, ownMapRules:true, mapFilterMinPlayers:8, tnMode:true},
   vip:      {id:'vip', name:'왕 지키기', desc:'두 팀으로 나뉘고 팀마다 왕이 한 명(머리 위 왕관) · 상대 팀의 왕을 먼저 쓰러뜨리면 승리 · 왕이 아닌 사람은 5초 뒤 부활 · 5분이 지나면 왕의 남은 체력이 많은 팀이 승리', teams:true, teamSize:'half', extra:2, elim:false, respawnTime:5, special:true},
+  crystal:  {id:'crystal', fixedMapId:'spacefleet', ownMapRules:true, name:'제국 수호전', desc:'제국팀(수비)과 반란군팀(공격)으로 나뉘어요 · 우주 함대 맵 가운데 위의 「은하의 심장」 수정을 반란군이 부수면 승리, 제국팀이 5분 동안 지키면 승리 · 수정은 3초마다 가까운 반란군을 밀쳐내요(피해 없음) · 부활은 제국 8초, 반란군 12초', teams:true, teamSize:'half', extra:0, elim:false, respawnTime:8, special:true},
   koth:     {id:'koth', name:'언덕의 왕', desc:'모두가 각자 싸우는 모드 · 맵 위의 거점을 혼자 차지하면 초당 1점(둘 이상이면 점수 정지) · 거점은 20초마다 다른 발판으로 옮겨가요 · 먼저 60점을 채우면 승리, 6분이 지나면 점수가 높은 사람이 승리', teams:false, extra:0, elim:false, respawnTime:4, special:true},
   relay:    {id:'relay', name:'무기 릴레이', desc:'모두가 같은 순서의 캐릭터 10개를 받아요 · 킬을 하면 다음 캐릭터로 바뀌고, 10번째 캐릭터까지 킬을 달성하면 승리 · 6분이 지나면 가장 앞선 사람이 승리', teams:false, extra:0, elim:false, respawnTime:3, autoWeapon:true, special:true},
   freeze:   {id:'freeze', name:'얼음땡', desc:'두 팀으로 나뉘어요 · 죽으면 그 자리에서 얼어붙고, 얼어붙은 아군에게 1.4초 동안 닿아 있으면 체력 60%로 풀려나요 · 상대 팀을 모두 얼리면 승리, 4분이 지나면 얼어붙은 사람이 적은 팀이 승리', teams:true, teamSize:'half', extra:2, elim:false, special:true},
@@ -3765,6 +3766,14 @@ const ZOMBIE_SPEED_MULT = 1.05, ZOMBIE_MAX_HP = 400, ZOMBIE_DMG_MULT = 1.2, ZOMB
 // ...and the other zombie advantages: a dash that is ready twice as fast, a faster resting heal (starts after 1.5 s instead of 3 s, and +10 hp instead of +5 every half second), and NO knockback at all
 const ZOMBIE_DASH_CD_MULT = 1, ZOMBIE_REST_SEC = 3, ZOMBIE_REST_AMOUNT = 5;
 const HOTPOTATO_DURATION = 20, HOTPOTATO_PASS_RANGE = 90, HOTPOTATO_PASS_HALF_ANGLE = 0.5, HOTPOTATO_ROUND_GAP = 3;
+const CRYSTAL_HP=1200, CRYSTAL_WAVE_SEC=3, CRYSTAL_WAVE_R=400;       // 제국 수호전: the crystal's life, and its push every 3 s on the rebels within 400
+function spawnCrystal(){
+  const m=addBot({force:true, quiet:true, level:'normal'}); if(!m) return null;
+  const cp=MAP.crystalPos||{x:MAP.arenaW/2, y:MAP.arenaH*0.4};
+  m.name='은하의 심장'; m.team=0; m.isMinion=true; m.isCrystal=true; m.weapon='none'; m.pick='none'; m.weaponChosen=true; m.color='#8b6cff'; m.cos={};
+  m.hp=CRYSTAL_HP; m.x=cp.x; m.y=cp.y; m.vx=0; m.vy=0; m.alive=true; m.grounded=true; m.respawnAt=Infinity; m.ai.personality=null; m.ai.grudge=null; m.ai.rivalId=null;
+  return m;
+}
 const BAZ_VOLLEY_DMG=34;     // 중화기병's skill: damage of each of the three rockets
 const MOVING_PLAT_LAND_LENIENCY = 46; // extra horizontal forgiveness when landing on a moving platform - must comfortably exceed the largest amplitude a moving parkour platform ever oscillates by (currently up to 35px), so a jump timed for its validated base position always lands even at the far end of its swing, with real margin to spare
 const PARKOUR_ITEM_PICKUP_R = 40, PARKOUR_ITEM_RESPAWN_SEC = 9, PARKOUR_PUSH_RANGE = 95, PARKOUR_PUSH_HALF_ANGLE = 0.55, PARKOUR_PUSH_FORCE = 620;
@@ -3774,7 +3783,7 @@ const SURVIVAL_DISASTER_NAMES = {lightning:'번개', tsunami:'해일', volcano:'
 const SURVIVAL_WAVE_WARN_SEC = 2.2;
 const SURVIVAL_ZOMBIE_COUNT = 4, SURVIVAL_ZOMBIE_SPEED_MULT = 1.12, SURVIVAL_ZOMBIE_HIT_R = 44, SURVIVAL_ZOMBIE_HIT_DY = 70, SURVIVAL_ZOMBIE_HIT_COOLDOWN = 1.0, SURVIVAL_ZOMBIE_WAKE_SEC = 1.3;
 const SURVIVAL_HIT_COOLDOWN = 0.6; // per-player, per-hazard-type minimum gap between hits so one overlapping effect can't multi-tick someone in a single frame
-function maxHpFor(p){ if(p && p.isBoss) return p.bossMaxHp||3000; if(p && p.isGuard) return GUARD_HP; if(p && p.isClone) return ruleHp(); if(p && p.isMinion) return 150; if(gameMode==='oneshot') return 1; return (p && p.isZombie) ? ZOMBIE_MAX_HP : (gameMode==='survival' ? SURVIVAL_HP : ruleHp()); }
+function maxHpFor(p){ if(p && p.isCrystal) return CRYSTAL_HP; if(p && p.isBoss) return p.bossMaxHp||3000; if(p && p.isGuard) return GUARD_HP; if(p && p.isClone) return ruleHp(); if(p && p.isMinion) return 150; if(gameMode==='oneshot') return 1; return (p && p.isZombie) ? ZOMBIE_MAX_HP : (gameMode==='survival' ? SURVIVAL_HP : ruleHp()); }
 function effectiveMaxPlayers(mapId, modeId){
   const base = MAP_TEMPLATES[mapId].maxPlayers;
   const mode = MODES[modeId] || MODES.ffa;
@@ -3930,6 +3939,7 @@ function conquestTick(dt){
 }
 /* ================= 특별 모드 10종: 왕 지키기 · 언덕의 왕 · 무기 릴레이 · 얼음땡 · 보물 약탈 · 무기 룰렛 · 한 방 승부 · 색칠 전쟁 · 현상금 사냥 · 저중력 난투 ================= */
 const SPECIAL_ITEMS=[
+  {id:'crystal',icon:'💎', name:'제국 수호전', mapId:'spacefleet',      weapons:['blade','arrow'],  desc:'반란군이 은하의 심장을 부수면 승리, 제국팀은 5분 지켜요'},
   {id:'vip',     icon:'👑', name:'왕 지키기',   mapId:'colosseum',         weapons:['blade','arrow'],  desc:'팀마다 왕이 한 명, 상대 왕을 먼저 쓰러뜨려요'},
   {id:'koth',    icon:'⛰️', name:'언덕의 왕',   mapId:'canyon_desert',     weapons:['bullet','club'],  desc:'움직이는 거점을 혼자 차지하면 점수를 얻어요'},
   {id:'relay',   icon:'🔁', name:'무기 릴레이', mapId:'grid_programming',  weapons:['pellet','blade'], desc:'킬할 때마다 캐릭터가 바뀌고, 끝까지 가면 승리'},
@@ -3946,7 +3956,7 @@ const DAILY_EXCLUDE={oneshot:1};      // (the one-hit mode is not in the daily r
 function brLike(m){ return m==='br' || m==='duo' || m==='dashbr' || m==='xkit' || m==='redlight' || m==='hyperbr'; }
 const SPECIAL_IDS=SPECIAL_ITEMS.map(i=>i.id);
 function dailyMatchCount(sd){ const mm=(sd&&sd.modeMatches)||{}; let n=0; for(const id of SPECIAL_IDS) n+=(mm[id]||0); return n; }
-const XM_END={redlight:900,crownhold:480,vip:300,koth:360,relay:360,freeze:240,rush:240,roulette:300,oneshot:240,turf:240,bounty:300,lowg:240};
+const XM_END={crystal:300,redlight:900,crownhold:480,vip:300,koth:360,relay:360,freeze:240,rush:240,roulette:300,oneshot:240,turf:240,bounty:300,lowg:240};
 const XM_TARGET={crownhold:60,koth:60,oneshot:100,turf:150,bounty:20,relay:10};
 const XM_SWAP_SEC=12, XM_ZONE_SEC=20, XM_RUSH_MAX=18;
 let xm=null, xmV=null;        // xm: the host's own state of a special mode; xmV: the small view of it that rides in every snapshot (everybody draws and reads the HUD from this)
@@ -3996,6 +4006,8 @@ function xmStart(){
   } else if(id==='bounty'){ xm.sc={}; xm.tgt=null;
   } else if(id==='redlight'){
     xm.light={phase:'g', until:now+(5+Math.random()*3)*1000, n:1}; xm.t0=now; xm.last={};
+  } else if(id==='crystal'){
+    const c=spawnCrystal(); xm.crystalId=c?c.id:null; xm.waveAt=now+CRYSTAL_WAVE_SEC*1000;
   } else if(id==='crownhold'){
     const pl=xmPickZone(null); xm.crown={holder:null, x:pl.x, y:pl.y-30}; xm.scF={};
   }
@@ -4030,6 +4042,7 @@ function xmTimeUp(){
   }
   else if(id==='bounty') xmTopBy(p=>xm.sc[p.id]||0, '점수');
   else if(id==='crownhold') xmTopBy(p=>Math.floor(xm.scF[p.id]||0), '점수');
+  else if(id==='crystal') xmWin('제국팀 승리! 은하의 심장을 지켜냈어요', xmTeamMembers(0).map(p=>p.id));
   else if(id==='redlight'){ const al=xmPlayers().filter(q=>q.alive); if(al.length===1) xmWin(al[0].name+' 우승!', [al[0].id]); else xmWin('무승부! (시간 종료)', al.map(q=>q.id)); }
   else endFFAMatchByKills();       // roulette / oneshot / lowg: the most kills
 }
@@ -4040,6 +4053,14 @@ function xmTick(dt,t){
   const P=xmPlayers();
   if(id==='vip'){
     for(const tm of [0,1]){ if(!players[xm.kings[tm]]){ const mem=xmTeamMembers(tm); xm.kings[tm]=mem.length?mem[0].id:null; } }
+  } else if(id==='crystal'){
+    const c=players[xm.crystalId], cp=MAP.crystalPos;
+    if(c && c.alive && cp){
+      c.x=cp.x; c.y=cp.y; c.vx=0; c.vy=0; c.kbX=0; c.grounded=true;      // the crystal hangs in the air and cannot be pushed
+      if(now>=xm.waveAt){ xm.waveAt=now+CRYSTAL_WAVE_SEC*1000; const cy=c.y-PLAYER_H/2; let hit=0;
+        for(const o of P){ if(!o.alive || o.team!==1 || o.x===undefined || o.swordCharge || o.darkSub) continue; if(Math.hypot(o.x-c.x,(o.y-PLAYER_H/2)-cy)>CRYSTAL_WAVE_R) continue; o.kbX=((o.x>=c.x)?1:-1)*560; o.vy=-380; o.grounded=false; hit++; }
+        pushFx('skillring', c.x, cy, t, {color:'#8b6cff', r:CRYSTAL_WAVE_R}); }
+    }
   } else if(id==='koth'){
     if(now>=xm.zoneAt){ xm.zone=xmPickZone(xm.zone); xm.zoneAt=now+XM_ZONE_SEC*1000; pushFx('skillring', xm.zone.x, xm.zone.y-30, t, {color:'#ffd34d', r:170}); }
     const z=xm.zone, on=[];
@@ -4112,6 +4133,8 @@ function xmOnDeath(p,killer,t){        // true: handled here (no respawn / match
       if(xm.ri[k]>=XM_TARGET.relay){ xmWin(killer.name+' 우승! 모든 무기로 킬을 달성했어요', [k]); return true; }
       xmSetWeapon(killer, xm.seq[xm.ri[k]], t);
     }
+  } else if(id==='crystal'){
+    p.respawnAt=t/1000+(p.team===0?8:12); return true;
   } else if(id==='freeze'){
     xm.fz[p.id]={x:p.x,y:p.y,p:0}; p.respawnAt=Infinity; return true;
   } else if(id==='rush'){
@@ -4138,6 +4161,7 @@ function buildXmView(t){
   const v={m:xm.id, tr:xm.endsAt?Math.max(0,Math.ceil((xm.endsAt-Date.now())/1000)):0};
   switch(xm.id){
     case 'vip': v.k=xm.kings; break;
+    case 'crystal': v.c=xm.crystalId; break;
     case 'koth': { v.z=xm.zone; v.h=xm.holder; v.tg=XM_TARGET.koth; v.zr=Math.max(0,Math.ceil((xm.zoneAt-Date.now())/1000)); v.sc={}; for(const k in xm.scF) v.sc[k]=Math.floor(xm.scF[k]); break; }
     case 'relay': v.sq=xm.seq; v.ri=xm.ri; break;
     case 'freeze': v.fz=Object.keys(xm.fz).map(k=>({i:k,x:Math.round(xm.fz[k].x),y:Math.round(xm.fz[k].y),p:Math.round(xm.fz[k].p*100)/100})); break;
@@ -4155,6 +4179,7 @@ function xmBotGoal(p,target,d){
   if(!xm) return null;
   const near=target && d<260;
   switch(xm.id){
+    case 'crystal': { const c=players[xm.crystalId]; if(!c || !c.alive || near) return null; return (p.team===1) ? {x:c.x, y:c.y} : {x:c.x+(((p.teamSlot||0)%5)-2)*70, y:c.y}; }
     case 'koth': return near ? null : {x:xm.zone.x, y:xm.zone.y};
     case 'rush': { let b=null, bd=1e9; for(const c of xm.coins){ const dd=Math.hypot(c.x-p.x,c.y-p.y); if(dd<bd){ bd=dd; b=c; } } return (b && !near) ? {x:b.x,y:b.y+26} : null; }
     case 'turf': { if(near) return null; let b=null, bd=1e9; for(let i=0;i<xm.segs.length;i++){ if(xm.own[i]===p.team) continue; const s=xm.segs[i], dd=Math.hypot(s.x+s.w/2-p.x,s.y-p.y); if(dd<bd){ bd=dd; b=s; } } return b?{x:b.x+b.w/2,y:b.y}:null; }
@@ -4173,6 +4198,8 @@ function updateXmHud(me){
   const top=map=>{ let bid=null, b=-1; for(const k in map){ if(players[k] && map[k]>b){ b=map[k]; bid=k; } } return bid?(nm(bid)+' '+b):'-'; };
   let h='';
   switch(v.m){
+    case 'crystal': { const cr=players[v.c], mt=(me&&me.team!==null&&me.team!==undefined)?me.team:0;
+      h='💎 은하의 심장 '+(cr&&cr.alive?Math.round(cr.hp/CRYSTAL_HP*100)+'%':'파괴됨')+' · '+(mt===0?'<b style="color:#8b6cff">제국팀</b> 수정을 지켜요':'<b style="color:#ff7a7a">반란군</b> 수정을 부숴요'); break; }
     case 'vip': { const mt=(me&&me.team!==null&&me.team!==undefined)?me.team:0, mk=players[v.k[mt]], ek=players[v.k[1-mt]], pc=q=>q&&q.alive?Math.round(q.hp/maxHpFor(q)*100)+'%':'쓰러짐';
       h='👑 우리 왕 '+pc(mk)+' · 상대 왕 '+pc(ek)+(myId2===v.k[mt]?' <b style="color:#ffd34d">— 당신이 왕이에요!</b>':''); break; }
     case 'koth': { const my=(v.sc&&v.sc[myId2])||0, st=v.h==='c'?'교전 중 (점수 정지)':(v.h?(v.h===myId2?'내가 차지 중!':nm(v.h)+' 차지 중'):'거점 비어 있음');
@@ -4608,6 +4635,7 @@ const THEMES = {
   desert:     {name:'사막',     bgA:'#5c4a2e', bgB:'#2b2013', ground:'#a9834a', plat:'#c9a463', platEdge:'#8a6a3f', stripe:'#ffd54f'},
   pyramid:    {name:'피라미드', bgA:'#4a3352', bgB:'#20141f', ground:'#8a7550', plat:'#d8c9a3', platEdge:'#a58d5e', stripe:'#e0b03e'},
   space:      {name:'우주',     bgA:'#0a0e2a', bgB:'#02030a', ground:'#20243a', plat:'#232946', platEdge:'#3d4470', stripe:'#7b61ff'},
+  fleet:      {name:'우주 함대', bgA:'#0b1226', bgB:'#03050d', ground:'#2a3148', plat:'#3a4565', platEdge:'#1a2036', stripe:'#4de3ff'},
   palace:     {name:'궁전',     bgA:'#301b4d', bgB:'#140b23', ground:'#6b5738', plat:'#e8e2d0', platEdge:'#a8925f', stripe:'#d4af37'},
   cyber:      {name:'사이버',   bgA:'#100014', bgB:'#050007', ground:'#0d0f16', plat:'#12141c', platEdge:'#00ffab', stripe:'#ff2bd6'},
   sky:        {name:'하늘',     bgA:'#8ecbff', bgB:'#eaf6ff', ground:'#c9dcea', plat:'#dbe9f4', platEdge:'#9fc4e0', stripe:'#4fa8ff'},
@@ -4744,6 +4772,15 @@ MAP_TEMPLATES['mine'] = {
     {x:1100,y:640,w:400,h:24},{x:1150,y:510,w:300,h:24},{x:1100,y:380,w:400,h:24}
   ]),
   spawns:[{x:250,y:890},{x:600,y:890},{x:950,y:890},{x:1650,y:890},{x:2000,y:890},{x:2350,y:890},{x:280,y:760},{x:2320,y:760}]
+};
+/* 우주 함대: the bridge of an imperial ship (8 players, plain platforms, no floor trick). 제국 수호전 starts here: the 은하의 심장 crystal floats on the top middle platform. */
+MAP_TEMPLATES['spacefleet'] = {
+  id:'spacefleet', name:THEMES.fleet.name, maxPlayers:8, arenaW:2600, arenaH:1000, theme:THEMES.fleet,
+  platforms:[{x:0,y:900,w:2600,h:100},{x:1100,y:770,w:400,h:24},{x:1150,y:640,w:300,h:24},{x:1200,y:510,w:200,h:24},{x:1150,y:380,w:300,h:24}].concat(mirrorPl(2600,[
+    {x:150,y:770,w:220,h:24},{x:520,y:770,w:180,h:24},{x:330,y:640,w:200,h:24},{x:800,y:640,w:180,h:24},{x:120,y:510,w:180,h:24},{x:560,y:510,w:200,h:24},{x:340,y:380,w:220,h:24}
+  ])),
+  spawns:[{x:250,y:890},{x:600,y:890},{x:950,y:890},{x:1650,y:890},{x:2000,y:890},{x:2350,y:890},{x:280,y:760},{x:2320,y:760}],
+  crystalPos:{x:1300,y:380}, crystalSpawns:[[{x:1180,y:890},{x:1300,y:890},{x:1420,y:890}], [{x:150,y:890},{x:2450,y:890}]]
 };
 MAP_TEMPLATES['icelake'] = {
   id:'icelake', name:THEMES.icelake.name, maxPlayers:8, arenaW:2400, arenaH:1000, theme:THEMES.icelake, hazard:'icelake',
@@ -5422,7 +5459,7 @@ function shuffle(arr){ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.
 /* ===== the version of this file =====
    Players with different versions CAN meet and play together: the automatic matchmaking uses the same room names for every version (online-<mode>-<map>-<slot>), and nobody is refused because of a different build.
    The build is only sent along with the join message and the lobby (for information); the corner of the screen shows it. */
-const GAME_BUILD='build 2026-10-18-v468';
+const GAME_BUILD='build 2026-10-18-v469';
 const GAME_VERSION='0.9', GAME_VERSION_NAME='은하 제국의 황혼';   // 게임 버전 이름: versions.json의 title과 같게 (빌드마다 바꾸지 않음)
 const WEEKLY_EVENTS=[
   {id:'lowg',    name:'저중력 난투', desc:'몸이 둥실둥실, 중력이 약해진 난투', rules:{grav:0.6}},
@@ -5532,10 +5569,11 @@ function buildTeamSpawnSlots(){
   if(!mode || !mode.teams || !MAP || !MAP.spawns || !MAP.spawns.length) return;
   const byTeam={};
   for(const id in players){ const p=players[id]; if(p.team===null || p.team===undefined) continue; (byTeam[p.team]=byTeam[p.team]||[]).push(p); }
-  if(MAP.teamSpawns){                       // a map with a base per team (the flag maps): everybody starts and respawns in their own base
+  const TSP=(gameMode==='crystal' && MAP.crystalSpawns) ? MAP.crystalSpawns : MAP.teamSpawns;
+  if(TSP){                       // a map with a base per team (the flag maps, and 제국 수호전): everybody starts and respawns in their own base
     teamSpawnSlots={};
     for(const tmKey of Object.keys(byTeam)){
-      const tm=Number(tmKey), spots=MAP.teamSpawns[tm] || MAP.teamSpawns[tm%MAP.teamSpawns.length];
+      const tm=Number(tmKey), spots=TSP[tm] || TSP[tm%TSP.length];
       const members=byTeam[tm].slice().sort((a,b)=>(a.joinOrder||0)-(b.joinOrder||0));
       teamSpawnSlots[tm]=members.map((m,i)=>{ const s=spots[i%spots.length], k=Math.floor(i/spots.length); m.teamSlot=i; return {x:clamp(s.x+k*26, PLAYER_W/2+4, MAP.arenaW-PLAYER_W/2-4), y:s.y}; });
     }
@@ -9377,9 +9415,9 @@ let mapOrder=[], mapCarouselIdx=0;
 function buildMapOrder(){
   mapOrder=[];
   for(const shapeId in SHAPE_THEMES) for(const themeKey of SHAPE_THEMES[shapeId]) mapOrder.push(shapeId+'_'+themeKey);
-  mapOrder.push('steampunk'); mapOrder.push('skyport'); mapOrder.push('colosseum'); mapOrder.push('lifttower'); mapOrder.push('stormship'); mapOrder.push('pipefactory'); mapOrder.push('mine'); mapOrder.push('icelake'); mapOrder.push('dungeon'); mapOrder.push('swamp'); mapOrder.push('waterfall'); mapOrder.push('lavaland'); mapOrder.push('ruins');
+  mapOrder.push('steampunk'); mapOrder.push('skyport'); mapOrder.push('colosseum'); mapOrder.push('lifttower'); mapOrder.push('stormship'); mapOrder.push('pipefactory'); mapOrder.push('mine'); mapOrder.push('icelake'); mapOrder.push('dungeon'); mapOrder.push('swamp'); mapOrder.push('waterfall'); mapOrder.push('lavaland'); mapOrder.push('ruins'); mapOrder.push('spacefleet');
 }
-const shapeLabel={canyon:'4인 맵',grid:'8인 맵',steampunk:'6인 맵',skyport:'8인 맵',colosseum:'8인 맵',lifttower:'8인 맵',stormship:'8인 맵',pipefactory:'8인 맵',mine:'8인 맵',icelake:'8인 맵',dungeon:'8인 맵',swamp:'8인 맵',waterfall:'8인 맵',collapsebridge:'8인 맵',lavaland:'8인 맵',ruins:'8인 맵',parkour1:'파쿠르',parkour2:'파쿠르',parkour3:'파쿠르',parkour4:'파쿠르'};
+const shapeLabel={canyon:'4인 맵',grid:'8인 맵',steampunk:'6인 맵',skyport:'8인 맵',colosseum:'8인 맵',lifttower:'8인 맵',stormship:'8인 맵',pipefactory:'8인 맵',mine:'8인 맵',icelake:'8인 맵',dungeon:'8인 맵',swamp:'8인 맵',waterfall:'8인 맵',collapsebridge:'8인 맵',lavaland:'8인 맵',ruins:'8인 맵',spacefleet:'8인 맵',parkour1:'파쿠르',parkour2:'파쿠르',parkour3:'파쿠르',parkour4:'파쿠르'};
 const mapSelectBtn=document.getElementById('mapSelectBtn');
 const MAP_GIMMICKS={collapsebridge:['🌉 무너지는 다리 판자','🌊 강물 (25 피해)'], lavaland:['🌋 용암 웅덩이 (30 피해)'], ruins:['🧱 기둥과 벽 엄폐물'], waterfall:['🌊 폭포 물살 (공중에서 위로 떠오름)','💧 얕은 물 (이동속도 20% 감소)'], swamp:['🟣 중앙 늪 (이동속도 33% 감소 · 시야 제한)'], stormship:['🌊 파도'], pipefactory:['➡️ 컨베이어','💨 증기 분출'], mine:['🛒 광차 (50 피해)','🔦 정전'], icelake:['🧊 미끄러운 얼음','💧 얼음 깨짐'], dungeon:['🚪 철창 문 개폐'], steampunk:['⚙️ 움직이는 발판'], skyport:['↔️ 움직이는 발판'], lifttower:['↔️ 움직이는 발판'], colosseum:['🏟️ 계단식 구조']};
 function mapGimmickTags(id){
@@ -13190,7 +13228,7 @@ const BOT_PERSONALITIES=['coward','taunter','sniper','revenge','collector','riva
 const PERSONALITY_WEAPONS={sniper:['bow','rifle','pistol','bazooka','wizard'], taunter:['sword','gloves','dagger','lightsaber','horemheb','bat','dracula']};
 // modes the bots know how to play. (hide & seek is not here: a bot seeker/hider needs its own logic, so those rooms keep waiting for people)
 // hot potato, parkour, survival and the flag mode each have their own brain below (botBrain*); the rest use the generic fighter
-const BOT_MODES={redlight:1,crownhold:1,hyperbr:1,xkit:1,ffa:1,br:1,dashbr:1,duo:1,team:1,duel:1,conquest:1,zombie:1,hotpotato:1,parkour:1,survival:1,ctf:1,gold:1,raid:1,tournament:1,vip:1,koth:1,relay:1,freeze:1,rush:1,roulette:1,oneshot:1,turf:1,bounty:1,lowg:1};
+const BOT_MODES={crystal:1,redlight:1,crownhold:1,hyperbr:1,xkit:1,ffa:1,br:1,dashbr:1,duo:1,team:1,duel:1,conquest:1,zombie:1,hotpotato:1,parkour:1,survival:1,ctf:1,gold:1,raid:1,tournament:1,vip:1,koth:1,relay:1,freeze:1,rush:1,roulette:1,oneshot:1,turf:1,bounty:1,lowg:1};
 let botSeq=0, lastHumanJoinAt=0, botFillAt=null, botFilling=false, botNextAt=0; // botFillAt: when the first bot will join (announced to everyone); botFilling: bots are walking in; botNextAt: when the next one does
 function botSupported(modeId){ return !!BOT_MODES[modeId]; }
 function humanPlayers(){ return Object.values(players).filter(p=>!p.isBot); }
@@ -13990,6 +14028,7 @@ function botTeleportStep(p, ai, target, d, lowHp, tSec, t, dif, goalX, goalY, cq
   tryTeleportChannel(p, dest.x, dest.y, t); ai.teleAt=tSec+2;
 }
 function botThink(p, t, dt){
+  if(p.isCrystal){ const i=p.input; i.left=i.right=i.jump=i.shoot=i.dash=i.down=false; return; }      // the crystal only hangs there
   if(p.isGuard && p.gMode==='escort' && guardEscortThink(p, t, dt)) return;
   if(puppetVictim(p, t/1000)) return;                               // a controlled bot just follows its master's strings
 
@@ -14244,7 +14283,7 @@ function botsThink(dt, t){
 // zombies...) without each of them having to report in, while healing of any kind (lifesteal, skills, circles) simply raises the baseline.
 function restTick(p, t){
   const tS=t/1000, max=maxHpFor(p);
-  if(matchEnded || NO_REGEN_MODES[gameMode] || p.isBoss || !p.alive || p.hp<=0 || p.x===undefined){ p.restX=undefined; p.restSince=undefined; p.restNextAt=undefined; p.resting=false; return; }
+  if(matchEnded || NO_REGEN_MODES[gameMode] || p.isBoss || p.isCrystal || !p.alive || p.hp<=0 || p.x===undefined){ p.restX=undefined; p.restSince=undefined; p.restNextAt=undefined; p.resting=false; return; }
   if(p.restX===undefined || Math.hypot(p.x-p.restX, p.y-p.restY)>REST_MOVE_PX){      // it moved (walked, jumped, dashed, was knocked away): the 3 seconds start over
     p.restX=p.x; p.restY=p.y; p.restSince=tS; p.restNextAt=undefined; p.resting=false; return;
   }
@@ -14938,7 +14977,7 @@ function hostTickCore(dt,t){
         fireCdRemain: snapR(p.fireCdRemain||0,20),
         ultCdRemain: p.darkSub ? 0 : snapR(Math.max(0, ultCdOf(p) - (t/1000-(p.lastUlt===undefined?-9999:p.lastUlt))),20), darkSub:p.darkSub?1:0, darkArm:(p.darkArmUntil>t/1000)?1:0,
         skillCdRemain: snapR(Math.max(0, skillCdOf(p) - (t/1000-(p.lastSkill===undefined?-9999:p.lastSkill))),20), buff:p.buff||null, skillUses:p.skillUses||0, ultUses:p.ultUses||0, ultMulti:p.ultMulti||0,
-        pz:p.pzStacks||0, pm:(p.pzMarkUntil>t/1000)?1:0, ultOn:!!p.ultOn, invis:!!p.invis, isGuard:p.isGuard?1:0, isClone:p.isClone?1:0, ownerId:p.ownerId||'', dgn:(p.disg&&p.tioFor)?p.tioFor.name:'', dgc:(p.disg&&p.tioFor)?(p.tioFor.clan||''):'', tioStage:p.tioStage||'', drones:(p.weapon==='pel')?pelN(p):0, pelBoost:pelBoostOn(p,t/1000)?1:0, burning:!!p.burning, poisoned:!!p.poisoned, kw:(p.kanWingsUntil>t/1000)?1:0, gc:p.gc||0, gp:Math.round(Math.min(1,(p.goldStay||0)/GOLD_PICK_STAY)*20)/20, pp:puppetMaster(p,t/1000)?p.puppetTarget:null, sw:p.sw||null, sewSlowed:!!p.sewSlowed, slowed:!!p.slowed, stunned:!!p.stunned, cardSlowed:!!p.cardSlowed, bladeSpin:!!p.bladeSpin, swordCharging:!!p.swordCharge, cannonFlying:!!p.cannonFly, chips:p.chips||0, cannonAng:p.cannonFly?Math.round(Math.atan2(p.vy||0,p.cannonFly.vx)*100)/100:0, totalDamageDealt:p.totalDamageDealt||0, channeling:!!p.teleportChannel, flaming:!!p.flaming, portalPair:p.portalPair||null, batting:!!p.batting, vacuumStacks:p.vacuumStacks||0, isZombie:!!p.isZombie, parkourItem:!!p.parkourItem,
+        pz:p.pzStacks||0, pm:(p.pzMarkUntil>t/1000)?1:0, ultOn:!!p.ultOn, invis:!!p.invis, isGuard:p.isGuard?1:0, isCrystal:p.isCrystal?1:0, isClone:p.isClone?1:0, ownerId:p.ownerId||'', dgn:(p.disg&&p.tioFor)?p.tioFor.name:'', dgc:(p.disg&&p.tioFor)?(p.tioFor.clan||''):'', tioStage:p.tioStage||'', drones:(p.weapon==='pel')?pelN(p):0, pelBoost:pelBoostOn(p,t/1000)?1:0, burning:!!p.burning, poisoned:!!p.poisoned, kw:(p.kanWingsUntil>t/1000)?1:0, gc:p.gc||0, gp:Math.round(Math.min(1,(p.goldStay||0)/GOLD_PICK_STAY)*20)/20, pp:puppetMaster(p,t/1000)?p.puppetTarget:null, sw:p.sw||null, sewSlowed:!!p.sewSlowed, slowed:!!p.slowed, stunned:!!p.stunned, cardSlowed:!!p.cardSlowed, bladeSpin:!!p.bladeSpin, swordCharging:!!p.swordCharge, cannonFlying:!!p.cannonFly, chips:p.chips||0, cannonAng:p.cannonFly?Math.round(Math.atan2(p.vy||0,p.cannonFly.vx)*100)/100:0, totalDamageDealt:p.totalDamageDealt||0, channeling:!!p.teleportChannel, flaming:!!p.flaming, portalPair:p.portalPair||null, batting:!!p.batting, vacuumStacks:p.vacuumStacks||0, isZombie:!!p.isZombie, parkourItem:!!p.parkourItem,
         isHost:p.isHost,clan:p.clan||'',joinOrder:p.joinOrder,weapon:p.weapon,kit:p.kit||null,team:p.team,spinAngle:p.spinAngle,cos:p.cos,isBoss:p.isBoss?1:0,isMinion:p.isMinion?1:0,bt:p.bt,bossMaxHp:p.bossMaxHp,emIdx:p.emIdx,emRem:(p.emUntil?Math.max(0,Math.round((p.emUntil-t/1000)*20)/20):0)})),
       cq: (gameMode==='conquest' && cq) ? {s:cq.scores, h:cq.holder, c:cq.contested} : undefined,
       xm: (xm && xmV) ? xmV : undefined,
@@ -15014,6 +15053,7 @@ function broadcastKillEvent(victim, killerName, killerX, killerY, killerColor, t
   attachKillScene(killerId||null, victim.id, t);
 }
 function handleDeath(p, killer, t, killerNameFallback){
+  if(p.isCrystal){ p.alive=false; p.hp=0; pushFx('explosion', p.x, p.y-PLAYER_H/2, t, {}); if(!matchEnded && xm && xm.id==='crystal') xmWin('반란군 승리! 은하의 심장이 파괴됐어요', xmTeamMembers(1).map(q=>q.id)); return; }
   if(p.isGuard || p.isClone){ p.alive=false; p.hp=0; pushFx('death', p.x, p.y-PLAYER_H/2, t, {color:p.isClone?p.color:'#ff7ac8'}); delete players[p.id]; return; }      // a summon just disappears
   if(killer && (killer.isGuard || killer.isClone) && players[killer.ownerId]) killer=players[killer.ownerId];      // the kill is the master's
   if(killer && killer.id!==p.id && killer.puppetBy){ const mk=puppetSide(killer); if(mk && mk.id!==killer.id && mk.id!==p.id) killer=mk; }      // a kill made by a puppet counts as the puppeteer's kill (kill count, gold, feed, achievements)
@@ -18013,7 +18053,65 @@ function drawPizarroPlume(c, hx, hy, r, n){
   const len=10+n*5, sway=Math.sin(performance.now()/260)*1.5;
   for(let k=0;k<Math.min(3,n);k++){ c.strokeStyle=['#d9322b','#ffd34d','#ff7a3a'][k]; c.lineWidth=3.2-k*0.6; c.lineCap='round'; c.beginPath(); c.moveTo(hx,hy-r*1.6); c.quadraticCurveTo(hx-len*0.4,hy-r*1.6-len*0.8+k*2,hx-len*0.9+sway-k*2,hy-r*1.6-len*0.3+k*3); c.stroke(); }
 }
+/* 우주 함대 background: a big bridge window on the open space (planet, nebula, passing ships) with instrument panels on the walls (radar, wave graph, blinking lamps, route map) */
+const FLEET_STARS=(()=>{ const a=[]; let h=7; for(let i=0;i<150;i++){ h=(h*1103515245+12345)&0x7fffffff; const x=h%2000; h=(h*1103515245+12345)&0x7fffffff; const y=h%520; h=(h*1103515245+12345)&0x7fffffff; a.push({x:300+x, y:90+y, r:0.6+(h%3)*0.5, k:(h%97)/10}); } return a; })();
+function drawFleetBg(cam){
+  const t=performance.now()/1000, vx0=cam.x-20, vx1=cam.x+canvas.width+20;
+  ctx.save();
+  // the window
+  const wx=300, wy=70, ww=2000, wh=580;
+  const sg=ctx.createLinearGradient(0,wy,0,wy+wh); sg.addColorStop(0,'#070b1c'); sg.addColorStop(1,'#14123a'); ctx.fillStyle=sg; ctx.fillRect(wx,wy,ww,wh);
+  const nb=ctx.createRadialGradient(900,330,10,900,330,320); nb.addColorStop(0,'rgba(150,90,255,0.35)'); nb.addColorStop(1,'rgba(150,90,255,0)'); ctx.fillStyle=nb; ctx.fillRect(wx,wy,ww,wh);
+  const nb2=ctx.createRadialGradient(1500,200,10,1500,200,260); nb2.addColorStop(0,'rgba(60,200,255,0.22)'); nb2.addColorStop(1,'rgba(60,200,255,0)'); ctx.fillStyle=nb2; ctx.fillRect(wx,wy,ww,wh);
+  for(const st of FLEET_STARS){ if(st.x<vx0 || st.x>vx1) continue; ctx.globalAlpha=0.5+0.5*Math.sin(t*1.3+st.k); ctx.fillStyle='#fff'; ctx.fillRect(st.x, st.y, st.r*1.6, st.r*1.6); }
+  ctx.globalAlpha=1;
+  // planet with a ring
+  const px=1880, py=330, pr=130, pg=ctx.createRadialGradient(px-40,py-40,10,px,py,pr); pg.addColorStop(0,'#ffb07a'); pg.addColorStop(1,'#7a2a4a'); ctx.fillStyle=pg; ctx.beginPath(); ctx.arc(px,py,pr,0,7); ctx.fill();
+  ctx.strokeStyle='rgba(255,210,160,0.55)'; ctx.lineWidth=7; ctx.beginPath(); ctx.ellipse(px,py,pr*1.55,pr*0.32,-0.35,0,7); ctx.stroke();
+  // other ships passing by (slow silhouettes)
+  for(let i=0;i<2;i++){ const sx=wx+((t*(14+i*9)+i*900)%(ww+400))-200, sy=210+i*210+Math.sin(t*0.4+i)*6; ctx.fillStyle='rgba(20,26,48,0.92)'; ctx.beginPath(); ctx.moveTo(sx-60,sy); ctx.lineTo(sx+10,sy-12); ctx.lineTo(sx+70,sy-4); ctx.lineTo(sx+90,sy+2); ctx.lineTo(sx+10,sy+14); ctx.closePath(); ctx.fill(); ctx.fillStyle='rgba(255,170,90,0.9)'; ctx.fillRect(sx-62,sy-2,4,4); }
+  // frame and bars of the window
+  ctx.strokeStyle='#1b2442'; ctx.lineWidth=22; ctx.strokeRect(wx,wy,ww,wh);
+  ctx.strokeStyle='#33406e'; ctx.lineWidth=4; ctx.strokeRect(wx+11,wy+11,ww-22,wh-22);
+  ctx.fillStyle='#1b2442'; for(const bx of [800,1300,1800]) ctx.fillRect(bx-9,wy,18,wh);
+  // wall panels
+  const panel=(x,y,w,h)=>{ ctx.fillStyle='#10182e'; ctx.fillRect(x,y,w,h); ctx.strokeStyle='#2c3a68'; ctx.lineWidth=3; ctx.strokeRect(x,y,w,h); };
+  for(const side of [0,1]){
+    const bx=side?2350:30;
+    if(bx+230<vx0 || bx>vx1) continue;
+    panel(bx,90,230,150); panel(bx,260,230,150); panel(bx,430,230,150);
+    // radar
+    const rx=bx+115, ry=165; ctx.strokeStyle='rgba(77,227,255,0.8)'; ctx.lineWidth=2; for(const rr of [20,40,58]){ ctx.beginPath(); ctx.arc(rx,ry,rr,0,7); ctx.stroke(); }
+    const ang=t*1.6+side; ctx.beginPath(); ctx.moveTo(rx,ry); ctx.lineTo(rx+Math.cos(ang)*58, ry+Math.sin(ang)*58); ctx.stroke();
+    ctx.fillStyle='#ff6a6a'; ctx.fillRect(rx+22,ry-18,5,5); ctx.fillRect(rx-30,ry+14,5,5);
+    // wave graph
+    ctx.strokeStyle='#5dff9a'; ctx.lineWidth=2; ctx.beginPath(); for(let k=0;k<=46;k++){ const x=bx+16+k*4, y=335+Math.sin(k*0.5+t*3+side)*14*Math.sin(k*0.11+t); if(k===0) ctx.moveTo(x,y); else ctx.lineTo(x,y); } ctx.stroke();
+    // route map
+    ctx.strokeStyle='rgba(255,210,77,0.8)'; ctx.lineWidth=2; ctx.beginPath(); ctx.moveTo(bx+24,550); ctx.lineTo(bx+80,500); ctx.lineTo(bx+130,535); ctx.lineTo(bx+200,455); ctx.stroke();
+    ctx.fillStyle='#ffd34d'; for(const [dx,dy] of [[24,550],[80,500],[130,535],[200,455]]){ ctx.beginPath(); ctx.arc(bx+dx,by0(dy),4,0,7); ctx.fill(); }
+    // blinking lamps
+    const cols=['#ff4d4d','#ffd34d','#5dff9a','#4de3ff']; for(let k=0;k<8;k++){ ctx.globalAlpha=0.35+0.65*Math.max(0,Math.sin(t*(1.2+k*0.3)+k+side)); ctx.fillStyle=cols[k%4]; ctx.beginPath(); ctx.arc(bx+18+k*28, 600, 5, 0, 7); ctx.fill(); }
+    ctx.globalAlpha=1;
+  }
+  ctx.restore();
+}
+function by0(y){ return y; }
+function drawCrystal(p){
+  if(p.alive===false) return;
+  const t=performance.now()/1000, cy=p.y-PLAYER_H/2, R=PLAYER_H/2+16, pulse=1+Math.sin(t*2.4)*0.04;
+  ctx.save(); ctx.translate(p.x,cy);
+  const g=ctx.createRadialGradient(0,0,6,0,0,R*2.6); g.addColorStop(0,'rgba(140,110,255,0.55)'); g.addColorStop(1,'rgba(140,110,255,0)'); ctx.fillStyle=g; ctx.beginPath(); ctx.arc(0,0,R*2.6,0,7); ctx.fill();
+  ctx.scale(pulse,pulse); ctx.rotate(Math.sin(t*0.7)*0.08);
+  ctx.beginPath(); ctx.moveTo(0,-R*1.35); ctx.lineTo(R*0.85,0); ctx.lineTo(0,R*1.35); ctx.lineTo(-R*0.85,0); ctx.closePath();
+  const gg=ctx.createLinearGradient(-R,-R,R,R); gg.addColorStop(0,'#d9ccff'); gg.addColorStop(.5,'#8b6cff'); gg.addColorStop(1,'#4a2fbf'); ctx.fillStyle=gg; ctx.fill(); ctx.strokeStyle='#f2ecff'; ctx.lineWidth=2.5; ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(0,-R*1.35); ctx.lineTo(0,R*1.35); ctx.moveTo(-R*0.85,0); ctx.lineTo(R*0.85,0); ctx.strokeStyle='rgba(255,255,255,.35)'; ctx.lineWidth=1.5; ctx.stroke();
+  ctx.restore();
+  const w=96, hp=Math.max(0,Math.min(1,p.hp/CRYSTAL_HP)), top=cy-R*1.35-24;
+  ctx.fillStyle='rgba(0,0,0,.55)'; ctx.fillRect(p.x-w/2-1, top, w+2, 9); ctx.fillStyle=hp>0.3?'#8b6cff':'#ff4d6a'; ctx.fillRect(p.x-w/2, top+1, w*hp, 7);
+  ctx.font='700 12px Rajdhani'; ctx.textAlign='center'; ctx.fillStyle='#e9e4ff'; ctx.fillText('은하의 심장', p.x, top-6);
+}
 function drawStickman(p){
+  if(p.isCrystal){ drawCrystal(p); return; }
   if(p.darkSub && p.alive!==false){ drawDarkSubmerged(p); return; }
   if(p.invis){ const me0=players[myId]; if(!(me0 && (p.id===myId || isAlly(me0,p)))) return; } // invisible to enemies
   ctx.save();
@@ -18340,6 +18438,7 @@ function render(fxDt){
   }
   ctx.translate(-cam.x+shk[0],-cam.y+shk[1]);
   viewBox = (killcamActive || killcamOverride) ? null : {x0:cam.x-60, y0:cam.y-60, x1:cam.x+canvas.width+60, y1:cam.y+canvas.height+60};      // (60 px extra for the screen shake)
+  if(MAP.id==='spacefleet') safeDraw(()=>drawFleetBg(cam));
   safeDraw(()=>drawGridCached(cam));
   if(MAP.decorations && MAP.decoType) safeDraw(drawMapDecorations);
   // the core platform-drawing loop - this is what EVERY mode and map depends on to show anything at all,
