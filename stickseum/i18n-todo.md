@@ -290,3 +290,5 @@ patchnotes.json | v472 title | 은하 제국의 황혼 | build 472 | 2026-10-28
 patchnotes.json | v472 items[0] | 사이트의 바로 플레이가 항상 최신 빌드를 열어요 | build 472 | 2026-10-28
 patchnotes.json | v472 items[1] | 옛 빌드가 캐시에 남아 있으면 자동으로 새 빌드로 다시 불러와요 | build 472 | 2026-10-28
 patchnotes.json | v472 items[2] | 사이트로 돌아가기도 새 파일로 열어요 | build 472 | 2026-10-28
+patchnotes.json | v473 title | 은하 제국의 황혼 | build 473 | 2026-10-28
+patchnotes.json | v473 items[0] | 온라인 모드 목록에 제국 수호전 추가 | build 473 | 2026-10-28
