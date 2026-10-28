@@ -296,3 +296,6 @@ patchnotes.json | v474 title | 은하 제국의 황혼 | build 474 | 2026-10-28
 patchnotes.json | v474 items[0] | 제국 수호전의 은하의 심장 아래에 강철 발판 추가 (관통 공격이 통과하지 못해요) | build 474 | 2026-10-28
 patchnotes.json | v475 title | 은하 제국의 황혼 | build 475 | 2026-10-28
 patchnotes.json | v475 items[0] | 마스터리 승리 점수 +3점으로 상향 | build 475 | 2026-10-28
+Stickseum-v0.9.html | 다른 빌드 안내 | {이름}님은 다른 빌드예요 ({상대 빌드} / 내 빌드 {내 빌드}) - 채팅·스킨이 다르게 보일 수 있어요 | build 476 | 2026-10-28
+patchnotes.json | v476 title | 은하 제국의 황혼 | build 476 | 2026-10-28
+patchnotes.json | v476 items[0] | 빌드 번호를 b476처럼 b로 통일해서 표시 (버전은 v0.9) | build 476 | 2026-10-28
