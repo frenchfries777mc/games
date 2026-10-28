@@ -9314,7 +9314,7 @@ function renderProfile(){
   body.innerHTML=
     '<div style="'+profHeaderStyle(myProfileDeco().pbg)+'">'+
     '<div style="text-align:center; margin-bottom:6px;"><canvas id="avatarBigCanvas" class="'+avatarFrameCls(myProfileDeco().pfr)+'" width="84" height="84" style="border-radius:14px; cursor:pointer; '+avatarFrameStyle(myProfileDeco().pfr)+'"></canvas>'+
-    '<div style="font-size:11px; color:var(--text-dim); margin-top:4px;">사진과 이름은 아래 프로필 카드에서 바꿀 수 있어요</div></div>'+
+    '<div style="font-size:11px; color:var(--text-dim); margin-top:4px;">프로필과 이름은 허브에서만 바꿀 수 있어요</div></div>'+
     '<div style="text-align:center; margin-bottom:10px; display:flex; align-items:center; justify-content:center; gap:8px;">'+
       '<span id="profNameDisplay" style="font-weight:800; font-size:16px;">'+nameWithStyleHtml((typeof myName!=='undefined'&&myName)?myName:'플레이어', getEquippedCos().name, myClan?myClan.emblem:'', myClan?myClan.color:'', myClan?myClan.tag:'')+'</span>'+
       '</div></div>'+
@@ -18396,6 +18396,19 @@ function entranceShow(){
 }
 // ---- picture caches: the sky, the grid and the platforms that never move are drawn once and then just copied every frame ----
 let skyCv=null, skyKey='', gridPat=null, platCv=null, platSrc=null, platLen=-1, platThemeId='', platOk=false;
+function drawAuroraSky(){      // 오로라 스킨을 입은 사람의 화면: 하늘에 흐르는 오로라 띠 (배경, owner 10-28)
+  const me=players[myId]; if(!me || !isGmSkin(me)) return;
+  const w=canvas.width, h=canvas.height, t=performance.now()/1000;
+  ctx.save(); ctx.globalCompositeOperation='lighter';
+  for(let i=0;i<4;i++){
+    const base=h*(0.16+i*0.13), amp=h*0.05+i*6, g=ctx.createLinearGradient(0,base-h*0.18,0,base+h*0.16);
+    g.addColorStop(0,hexA(auroraHex(t*0.5,i*1.7),0)); g.addColorStop(0.5,hexA(auroraHex(t*0.5,i*1.7),0.4)); g.addColorStop(1,hexA(auroraHex(t*0.5,i*1.7+1),0));
+    ctx.fillStyle=g; ctx.beginPath(); ctx.moveTo(0,0);
+    for(let x=0;x<=w;x+=Math.max(16,w/60)) ctx.lineTo(x, base+Math.sin(x/(w*0.16)+t*0.55+i*1.9)*amp+Math.sin(x/(w*0.07)-t*0.8+i)*amp*0.4);
+    ctx.lineTo(w,0); ctx.closePath(); ctx.save(); ctx.translate(0,h*0.18); ctx.fill(); ctx.restore();
+  }
+  ctx.restore();
+}
 function drawSkyCached(th){
   const w=canvas.width, h=canvas.height, k=w+'x'+h+th.bgA+th.bgB;
   if(!skyCv || skyKey!==k){
@@ -18446,6 +18459,7 @@ function render(fxDt){
   const th = MAP.theme;
   const cam=getCamera();
   drawSkyCached(th);
+  safeDraw(drawAuroraSky);
   const shk=updateShake();
   ctx.save();
   if(killcamActive && killcamOverride){
