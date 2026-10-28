@@ -3763,6 +3763,7 @@ const ZOMBIE_SPEED_MULT = 1.05, ZOMBIE_MAX_HP = 400, ZOMBIE_DMG_MULT = 1.2, ZOMB
 // ...and the other zombie advantages: a dash that is ready twice as fast, a faster resting heal (starts after 1.5 s instead of 3 s, and +10 hp instead of +5 every half second), and NO knockback at all
 const ZOMBIE_DASH_CD_MULT = 1, ZOMBIE_REST_SEC = 3, ZOMBIE_REST_AMOUNT = 5;
 const HOTPOTATO_DURATION = 20, HOTPOTATO_PASS_RANGE = 90, HOTPOTATO_PASS_HALF_ANGLE = 0.5, HOTPOTATO_ROUND_GAP = 3;
+const BAZ_VOLLEY_DMG=34;     // 중화기병's skill: damage of each of the three rockets
 const MOVING_PLAT_LAND_LENIENCY = 46; // extra horizontal forgiveness when landing on a moving platform - must comfortably exceed the largest amplitude a moving parkour platform ever oscillates by (currently up to 35px), so a jump timed for its validated base position always lands even at the far end of its swing, with real margin to spare
 const PARKOUR_ITEM_PICKUP_R = 40, PARKOUR_ITEM_RESPAWN_SEC = 9, PARKOUR_PUSH_RANGE = 95, PARKOUR_PUSH_HALF_ANGLE = 0.55, PARKOUR_PUSH_FORCE = 620;
 const SURVIVAL_WAIT_SEC = 9, SURVIVAL_DISASTER_SEC = 12, SURVIVAL_TOTAL_ROUNDS = 5, SURVIVAL_HP = 1, SURVIVAL_DMG = 1;   // one hit and you are out (every disaster also gets harder each round)
@@ -5419,7 +5420,7 @@ function shuffle(arr){ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.
 /* ===== the version of this file =====
    Players with different versions CAN meet and play together: the automatic matchmaking uses the same room names for every version (online-<mode>-<map>-<slot>), and nobody is refused because of a different build.
    The build is only sent along with the join message and the lobby (for information); the corner of the screen shows it. */
-const GAME_BUILD='build 2026-10-18-v466';
+const GAME_BUILD='build 2026-10-18-v467';
 const GAME_VERSION='0.9', GAME_VERSION_NAME='은하 제국의 황혼';   // 게임 버전 이름: versions.json의 title과 같게 (빌드마다 바꾸지 않음)
 const WEEKLY_EVENTS=[
   {id:'lowg',    name:'저중력 난투', desc:'몸이 둥실둥실, 중력이 약해진 난투', rules:{grav:0.6}},
@@ -12247,7 +12248,7 @@ const SKILLS={
   rifle:    {name:'지뢰 설치',   kind:'hit',  desc:'바닥에 지뢰 2개를 설치 (최대 2개, 25초) · 밟은 적은 20 피해와 0.8초 기절 · 지뢰는 우리 팀에게만 보임'},
   gloves:   {name:'어퍼컷',      kind:'hit',  desc:'가까운 적에게 26 피해를 주고 공중으로 띄움'},
   grenade:  {name:'폭발 점프',   kind:'move', desc:'폭발로 높이 뛰어오르며 주변에 12 피해'},
-  bazooka:  {name:'철갑 자세',   kind:'buff', desc:'1.5초 동안 받는 피해 50% 감소'},
+  bazooka:  {name:'3연발',       kind:'hit', desc:'조준 방향으로 로켓을 연속 3발 발사 (발당 피해 34)'},
   dagger:   {name:'암습',        kind:'move', desc:'가까운 적의 뒤로 순간이동, 다음 공격 즉시 가능'},
   dracula:  {name:'피의 안식',   kind:'buff', desc:'1초 동안 움직일 수 없는 대신 0.1초마다 체력 5 회복 (총 50)'},
   gambler:  {name:'동전 던지기', kind:'buff', desc:'앞면(확률 50% + 칩당 7%): 체력 25 회복 + 칩 1개당 3 추가 / 뒷면: 가까운 적에게 18 피해 + 칩 1개당 4 추가 (칩은 소모되지 않음)'},
@@ -12510,7 +12511,10 @@ const SKILL_IMPL={
   },
   gloves(p,tSec,tMs,ax){ return !!skillHitFront(p,tMs,skillAimDir(p,ax),{range:110, h:90, dmg:26, kb:140, up:620}); },
   grenade(p,tSec,tMs){ p.vy=-820; p.grounded=false; pushFx('explosion', p.x, p.y-10, tMs, {}); skillPulse(p,tMs,{r:110, dmg:12, kb:380, up:260}); return true; },
-  bazooka(p,tSec){ skillSetBuff(p,'guard',1.5,tSec); return true; },
+  bazooka(p,tSec,tMs,ax,ay){      // 3연발: three rockets one after the other along the aim
+    const a=aimAngleOf(p,ax,ay), w=WEAPONS.bazooka, w2=Object.assign({}, w, {dmg:BAZ_VOLLEY_DMG});
+    for(let k=0;k<3;k++) hostTimers.push({au:curAur, ta:fxActor, at:tSec+k*0.3, fn:()=>{ if(p.alive){ spawnBullet(p, a, w2, {splash:w.splash, big:true}); pushFx('sfx', p.x, p.y-40, performance.now(), {name:'bazooka'}); } }});
+    return true; },
   dagger(p,tSec,tMs){
     const t=nearestEnemyOf(p); if(!t || Math.hypot(t.x-p.x,t.y-p.y)>330) return false;
     const side=(t.x>=p.x)?1:-1, spots=[{x:t.x+side*46,y:t.y},{x:t.x-side*46,y:t.y}];
