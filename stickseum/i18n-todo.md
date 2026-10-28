@@ -280,3 +280,9 @@ patchnotes.json | v469 items[1] | 새 맵 우주 함대 추가 8인 맵 창밖�
 patchnotes.json | v470 title | 은하 제국의 황혼 | build 470 | 2026-10-28
 patchnotes.json | v470 items[0] | 로비 로고 더 크게·위쪽으로 | build 470 | 2026-10-28
 patchnotes.json | v470 items[1] | 인트로 버전 제목 크고 화려하게 (금빛 반짝임) | build 470 | 2026-10-28
+Stickseum-v0.9.html | 버전 불일치 메시지 | 버전이 달라요 (내 {내버전} / 방 {방버전}) - 같은 버전끼리만 함께할 수 있어요 | build 471 | 2026-10-28
+Stickseum-v0.9.html | 옛 버전 기록 미반영 알림 | 옛 버전에서 올라온 기록은 반영하지 않았어요 | build 471 | 2026-10-28
+patchnotes.json | v471 title | 은하 제국의 황혼 | build 471 | 2026-10-28
+patchnotes.json | v471 items[0] | 버전(0.x)이 다르면 같은 방·빠른 대전·랭크·초대 불가 (빌드만 달라도 가능) | build 471 | 2026-10-28
+patchnotes.json | v471 items[1] | 옛 버전에서 올린 진행 기록은 계정에 반영 안 함 | build 471 | 2026-10-28
+patchnotes.json | v471 items[2] | 서버 통계에 버전·빌드 표시 | build 471 | 2026-10-28
