@@ -20,7 +20,14 @@ function which(){
   if(/\/prototypes\/tumblecrown\//i.test(p)) return 'tumblecrown';
   return null;
 }
-var game=which(), place=game||'hub';
+/* 게임이 아닌 사이트(Educations, Tools)는 '사이트'로 따로 세요 (허브 인원과 섞이지 않아요) */
+function siteOf(){
+  var p=decodeURIComponent(location.pathname||'');
+  if(/^\/(games\/)?educations(\/|$)/i.test(p)||/\/educations\//i.test(p)) return 'educations';
+  if(/\/tools(\/|$)/i.test(p)) return 'tools';
+  return null;
+}
+var game=which(), site=game?null:siteOf(), place=game||site||'hub';
 window.FFPresence={game:game};
 if(!window.fetch) return;
 /* 방 서버(ff-host)의 화면 없는 브라우저는 사람이 아니라서 접속 신호를 보내지 않아요 (주소의 dedicated=1, 자동화 브라우저 표시) */
@@ -39,13 +46,14 @@ function gid(){ var g=null; try{ g=localStorage.getItem('ff_gid'); }catch(e){}
     try{ localStorage.setItem('ff_gid',g); }catch(e){} }
   return g; }
 function rpc(name,body,tok,keep){ return fetch(URL_+'/rest/v1/rpc/'+name,{method:'POST',keepalive:!!keep,headers:{'apikey':KEY,'Authorization':'Bearer '+(tok||KEY),'Content-Type':'application/json'},body:JSON.stringify(body||{})}).catch(function(){}); }
-var last=0, wasGuest=false, busy=false;
+var last=0, wasGuest=false, busy=false, noSite=false;
 function ping(force){
   if(busy||(!force&&Date.now()-last<40000)) return; busy=true;
   freshToken().then(function(t){
     last=Date.now();
     if(t){ wasGuest=false;
       if(game) return rpc('ff_ping',{p_game:game},t);
+      if(site&&!noSite) return rpc('ff_site_ping',{p_site:site},t).then(function(r){ if(r&&r.status===404){ noSite=true; return rpc('ff_hub_ping',{},t); } });   /* supabase-presence-v5.sql 전이면 옛 방식(허브로 합산) */
       return rpc('ff_hub_ping',{},t); }
     wasGuest=true; return rpc('ff_guest_ping',{p_gid:gid(),p_place:place});
   }).then(function(){ busy=false; },function(){ busy=false; });
