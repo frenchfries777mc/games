@@ -1873,7 +1873,7 @@ function persistOtherSettings(){ try{ localStorage.setItem('arenaClashSettings',
    game file stays small); if they can't be loaded from here (e.g. the file was downloaded and opened on its own) they are
    fetched from the site, and if that fails too the game simply stays without music. Web Audio is used (not <audio>) so the
    loop has no gap and the volume can fade on iPad, where an <audio> element's volume can't be changed. */
-const BGM_FILES={lobby:'music-lobby.mp3', battle:'music-battle.mp3', boss:'music-boss.mp3'}, BGM_ALT='https://frenchfries777mc.github.io/games/stickseum/';
+const BGM_FILES={lobby:'music-lobby.mp3', battle:'music-battle-jump.mp3', boss:'music-boss.mp3'}, BGM_ALT='https://frenchfries777mc.github.io/games/stickseum/';
 const BGM_LOOP={lobby:41.739, battle:51.2, boss:41.143};            // loop length in seconds (whole bars, so the end joins the start)
 let bgmCtx=null, bgmBufs={}, bgmLoading={}, bgmCur=null, bgmGain=null;
 function bgmWanted(){
@@ -5462,7 +5462,7 @@ function shuffle(arr){ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.
 /* ===== the version of this file =====
    Different BUILDS of one version meet and play together (room names online-v<ver>-<mode>-<map>-<slot>); different VERSIONS (the 0.x part) never do - the host refuses them (verNo) and the dispatcher answers busy.
    The build is only sent along with the join message and the lobby (for information); the corner of the screen shows it. */
-const GAME_BUILD='build 2026-10-18-v474';
+const GAME_BUILD='build 2026-10-18-v475';
 const GAME_VERSION='0.9', GAME_VERSION_NAME='은하 제국의 황혼';   // 게임 버전 이름: versions.json의 title과 같게 (빌드마다 바꾸지 않음)
 /* version (the 0.x part) vs build: different BUILDS of one version meet and play together, different VERSIONS never do (rooms, quick match, ranked, friend invites, dispatcher).
    Builds before 470 do not send a version, so it is read from the build number (0.9 started at build 458). */
