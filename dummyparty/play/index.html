@@ -534,6 +534,8 @@
     "카트 위에서 드리프트하는 마네킹, 오늘의 장보기는 목숨 걸고 합니다.": ["A mannequin drifting on a cart. Today's grocery run is life or death.", "Un maniquí derrapando en un carrito. Hoy las compras son a vida o muerte.", "Un mannequin qui dérape en caddie. Les courses du jour se font au péril de sa vie.", "Eine Puppe driftet im Wagen. Der Einkauf heute ist lebensgefährlich.", "カートでドリフトするマネキン。今日の買い物は命がけです。"],
     "물건이 쏟아졌습니다! 계산대 직원이 한숨을 쉽니다.": ["Goods everywhere! The cashier sighs.", "¡Compras por todas partes! La cajera suspira.", "Des courses partout ! La caissière soupire.", "Ware überall! Die Kassiererin seufzt.", "荷物が散らばりました！レジの店員がため息をつきます。"],
     "벽에 박았습니다. 카트는 괜찮습니다. 마네킹도 괜찮아 보입니다.": ["Hit the wall. The cart's fine. The mannequin looks fine too.", "Choque contra la pared. El carrito está bien. El maniquí también parece estar bien.", "Collision avec le mur. Le caddie va bien. Le mannequin aussi, apparemment.", "Gegen die Wand. Dem Wagen geht's gut. Der Puppe scheinbar auch.", "壁にぶつかりました。カートは無事です。マネキンも無事そうです。"],
+    /* 빌드 79 추가분 */
+    "내 프로필 카드": ["My profile card", "Mi tarjeta de perfil", "Ma carte de profil", "Meine Profilkarte", "マイプロフィールカード"],
     /* 빌드 77 추가분 */
     '방귀쟁이': ['Farty', 'Pedorrete', 'Pétomane', 'Pupser', 'おならマン'],
     '홀쭉이': ['Skinny', 'Flaquito', 'Maigrichon', 'Dünnerchen', 'ひょろひょろ'],
@@ -1653,6 +1655,7 @@ body.playing #emoBar{display:flex}
    <div class="seg" id="pubSeg"><button type="button" data-p="1">공개방</button><button type="button" data-p="0" class="on">비공개방</button></div>
    <button class="pb" id="soloBtn">혼자 하기</button>
    <button class="pb dark" id="pracBtn">연습장</button>
+   <button class="pb dark" id="profBtn" style="display:none">내 프로필 카드</button>
    <button class="pb dark" id="shopBtn">상점</button>
    <button class="pb dark" id="achBtn">업적</button>
    <input id="titleIn" maxlength="20" placeholder="공개방 제목 (비워도 돼요)" autocomplete="off" style="display:none">
@@ -1661,7 +1664,9 @@ body.playing #emoBar{display:flex}
    <div class="row"><input id="codeIn" maxlength="5" placeholder="방 코드" autocomplete="off"><button class="pb dark" id="joinBtn" style="flex:0 0 auto">들어가기</button></div>
    <div class="msg" id="homeMsg"></div>
   </aside>
-  <template id="patchnotes"><details class="notes" open><summary>패치노트 · v0.1 (b78)</summary>
+  <template id="patchnotes"><details class="notes" open><summary>패치노트 · v0.1 (b79)</summary>
+   <b>2026-10-28 · v0.1 · b79 · 공용 프로필 카드</b>
+   <ul><li>첫 화면에 "내 프로필 카드" 버튼이 생겼어요. 허브·다른 게임과 똑같은 프로필 카드가 열리고, 그 아래에 Dummy Party 업적과 판 수·우승 통계가 붙어요</li><li>프로필과 이름은 허브에서만 바꿀 수 있어요 (게임 안에서는 바꾸는 곳이 없어요)</li></ul>
    <b>2026-10-27 · v0.1 · b78 · 칭호 정리</b>
    <ul><li>상점 칭호에서 "팔 하나 없는 애"를 뺐어요</li></ul>
    <b>2026-10-27 · v0.1 · b77 · 봇 이름</b>
@@ -1816,7 +1821,7 @@ body.playing #emoBar{display:flex}
    <ul><li>무너지는 발판 칸 수 대폭 증가 (19×10)와 용암 동굴 맵</li><li>10개 맵 전부 새로 그림 (관중석, 야자수 섬, 링, 정원 미로, 서커스, 우노 테이블 등)</li><li>글자 대신 아이콘·말풍선·이펙트로 표현 (무기, 아이템, 카드 효과, 시작 안내)</li><li>타격·폭발·물보라 효과와 화면 흔들림 추가</li></ul>
    <b>2026-10-19 · v0.1 · b1 · 첫 시험판</b>
    <ul><li>마네킹 미니게임 10개 추가 (장애물 달리기, 섬 밀치기, 싸우기, 병맛 미로, 체스 대난투, 폭탄 돌리기, 병맛 우노, 쇼윈도 얼음땡, 무너지는 발판, 컨베이어 서바이벌)</li><li>방 코드로 최대 8명 멀티플레이, 빈자리는 봇으로 채우기</li><li>판마다 10개 중 5개를 무작위로 골라 점수를 합산</li><li>PC 키보드와 휴대폰 터치 조작 지원</li></ul></details></template>
-  <p class="foot">2~8명 · 판마다 36개 미니게임 중 7개 · v0.1 b78 · <a href="../">← Dummy Party 사이트로</a></p>
+  <p class="foot">2~8명 · 판마다 36개 미니게임 중 7개 · v0.1 b79 · <a href="../">← Dummy Party 사이트로</a></p>
   <p class="foot"><span class="ff-copy">© 2026 Frenchfries777 · <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.ko" target="_blank" rel="noopener">CC BY-NC-ND 4.0</a></span></p>
  </div>
 </section>
@@ -7305,10 +7310,36 @@ var ffProfWait = [];
 function ffProf(cb) {
   if (window.FFProfile) return cb();
   ffProfWait.push(cb); if (ffProfWait.length > 1) return;
-  var sc = document.createElement('script'); sc.src = 'https://frenchfries777mc.github.io/games/ff-profile.js?v=20261024b';
+  var sc = document.createElement('script'); sc.src = 'https://frenchfries777mc.github.io/games/ff-profile.js?v=20261028a';
   sc.onload = function () { var q = ffProfWait; ffProfWait = []; if (window.FFProfile) q.forEach(function (f) { try { f(); } catch (e) { } }); };
   sc.onerror = function () { ffProfWait = []; };
   document.head.appendChild(sc);
+}
+// 프로필 카드 아래에 붙는 Dummy Party 통계 (카드 자체는 허브·다른 게임과 같은 공용 창)
+var STX = {
+  ko: ['업적', '플레이 횟수', '{0}회', '치른 판', '우승한 판', '라운드 우승'],
+  en: ['Achievements', 'Times played', '{0}', 'Matches played', 'Matches won', 'Rounds won'],
+  es: ['Logros', 'Partidas jugadas', '{0}', 'Partidas completas', 'Partidas ganadas', 'Rondas ganadas'],
+  fr: ['Succès', 'Parties jouées', '{0}', 'Matchs joués', 'Matchs gagnés', 'Manches gagnées'],
+  de: ['Erfolge', 'Spielanzahl', '{0}', 'Gespielte Matches', 'Gewonnene Matches', 'Gewonnene Runden'],
+  ja: ['実績', 'プレイ回数', '{0}回', 'プレイしたマッチ', '勝利したマッチ', 'ラウンド勝利']
+};
+var statsHooked = false;
+function ffProfStats() {
+  if (statsHooked || !window.FFProfile || !FFProfile.gameStats) return; statsHooked = true;
+  FFProfile.gameStats('dummyparty', function (box, ctx) {
+    var T = STX[ctx.lang] || STX.en, d = ctx.data || {}, A = d.ach && d.ach.dummyparty, have = ctx.own ? achDone().length : (A ? A[0] || 0 : 0), total = A ? A[1] || ACH.length : ACH.length;
+    if (ctx.own) have = Math.max(have, A ? A[0] || 0 : 0);
+    var row = function (k, v) { return '<div class="gr"><span>' + ctx.esc(k) + '</span><b>' + ctx.esc(String(v)) + '</b></div>'; };
+    var h = row(T[0], have + ' / ' + total), plays = d.played && d.played.dummyparty;
+    if (plays) h += row(T[1], T[2].replace('{0}', plays));
+    if (ctx.own) { var st = myStats(); h += row(T[3], st.matches) + row(T[4], st.wins) + row(T[5], st.rwins); }
+    return h;
+  });
+}
+function openProfile() {
+  var sb = walClient(), me = window.FFAuth && FFAuth.user(); if (!sb || !me) { try { FFAuth.openLogin(); } catch (e) { } return; }
+  ffProf(function () { ffProfStats(); try { FFProfile.open(sb, me.id, { game: 'dummyparty' }); } catch (e) { } });
 }
 var achMarked = false;
 function achSync() {
@@ -7317,6 +7348,7 @@ function achSync() {
     var sb = walClient(); if (!sb) return;
     ffProf(function () {
       try {
+        ffProfStats();
         if (!achMarked && FFProfile.markPlayed) { achMarked = true; FFProfile.markPlayed(sb, 'dummyparty'); }   // 허브 계정에 "Dummy Party를 해 봤어요" 남기기
         var ids = achDone(); if (FFProfile.setAchievements) FFProfile.setAchievements(sb, 'dummyparty', ids.length, ACH.length, ids);
       } catch (e) { }
@@ -8794,6 +8826,7 @@ function dpAsk(msg, okLabel, onOk) {
   addEventListener('keydown', function (e) { if (e.key === 'Escape') { $('shopModal').classList.remove('on'); $('achModal').classList.remove('on'); } });
   $('botMinus').onclick = function () { if (G.role === 'solo') { G.bots = clamp(G.bots - 1, 1, MAXP - 1); trimBots(); renderLobby(); } };
   $('botPlus').onclick = function () { if (G.role === 'solo') { G.bots = clamp(G.bots + 1, 1, MAXP - 1); trimBots(); renderLobby(); } };
+  $('profBtn').onclick = openProfile;
   $('loginBtn').onclick = function () { try { FFAuth.openLogin(); } catch (e) { } };
   $('offBtn').onclick = function () { OFFLINE = true; homeMsg(''); useNickRefresh(); };
   $('hostBtn').onclick = function () { if (!loggedIn()) { needLogin(); return; } var n = needName(); if (n) startHost(n); };
@@ -8946,7 +8979,7 @@ function dpAsk(msg, okLabel, onOk) {
   (function () {
     function useNick() {
       try { var u = window.FFAuth && FFAuth.user(), n = u && FFAuth.nickname(); if (n) { $('nameIn').value = cleanName(n); lsSet('dummyparty.name', cleanName(n)); }
-        $('acctLine').textContent = n ? n + ' 님 (Frenchfries777 계정)' : (OFFLINE ? '오프라인 · 혼자 하기만 할 수 있어요' : 'dC와 꾸미기는 로그인해야 저장돼요'); $('loginBtn').style.display = n ? 'none' : ''; $('offBtn').style.display = (n || OFFLINE) ? 'none' : ''; } catch (e) { }
+        $('acctLine').textContent = n ? n + ' 님 (Frenchfries777 계정)' : (OFFLINE ? '오프라인 · 혼자 하기만 할 수 있어요' : 'dC와 꾸미기는 로그인해야 저장돼요'); $('loginBtn').style.display = n ? 'none' : ''; $('profBtn').style.display = n ? '' : 'none'; $('offBtn').style.display = (n || OFFLINE) ? 'none' : ''; } catch (e) { }
     }
     window.useNickRefresh = useNick;
     function hook() { if (!window.FFAuth) return false; FFAuth.ready.then(function () { useNick(); walletRefresh(); autoJoin(); }); FFAuth.onChange(function () { useNick(); walletRefresh(); }); return true; }
