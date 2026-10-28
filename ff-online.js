@@ -27,7 +27,7 @@ async function paint(){
   var r=await sb.rpc('ff_online'); if(r.error){ bar.innerHTML=''; return; }
   var c={}; (r.data||[]).forEach(function(x){ c[x.place]=x.people; });
   var html='<span class="on-dot"></span><b>'+esc(L()[0].replace('{0}',c.all||0))+'</b>';
-  ['hub'].concat((window.FF_REG||[]).map(function(e){ return e.id; }).filter(function(id){ return id!=='hub'; })).forEach(function(g){ if(c[g]) html+='<span class="on-c"><span>'+esc(gname(g))+'</span> <b>'+c[g]+'</b></span>'; });
+  ['hub'].concat((window.FF_REG||[]).map(function(e){ return e.id; }).filter(function(id){ return id!=='hub'; })).concat((window.FF_SITES||[]).map(function(e){ return e.id; })).forEach(function(g){ if(c[g]) html+='<span class="on-c"><span>'+esc(gname(g))+'</span> <b>'+c[g]+'</b></span>'; });
   var u=FFAuth.user&&FFAuth.user();
   if(u){ var f=await sb.rpc('ff_online_friends'), rows=((f&&!f.error&&f.data)||[]).filter(function(x){ return !(FFAuth.isBlocked&&FFAuth.isBlocked(x.user_id)); });
     if(rows.length){ await loadNames(rows.map(function(x){ return x.user_id; })); await loadAv(rows.slice(0,8).map(function(x){ return x.user_id; }));
