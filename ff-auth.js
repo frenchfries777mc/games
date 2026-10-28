@@ -283,7 +283,7 @@ function fill(){ var el=modal(); el.querySelector('h3').textContent=mode==='in'?
 function openLogin(m){ mode=m==='up'?'up':'in'; fill(); var el=modal(); el.style.display='flex'; setTimeout(function(){ try{ el.querySelector('input').focus(); }catch(e){} },30); }
 function close(){ var el=document.getElementById('ffaModal'); if(el) el.style.display='none'; }
 
-function profileLib(){ return loadScript(BASE+'ff-profile.js?v=20261028a', function(){ return !!window.FFProfile; }); }
+function profileLib(){ return loadScript(BASE+'ff-profile.js?v=20261028b', function(){ return !!window.FFProfile; }); }
 async function openProfile(uid, o){ if(!sb) return; if(!uid&&!user) return openLogin(); if(await profileLib()) window.FFProfile.open(sb, uid||user.id, o); }
 
 /* 게임 사이트(허브가 아닌 페이지)에는 계정 버튼 옆에 '← 허브' 버튼을 붙여요. 빼고 싶으면 자리에 data-ff-nohub */
@@ -564,8 +564,8 @@ async function searchUsers(q){
 async function request(id){ await expireReq(true); var r=await sb.from('friendships').insert({requester_id:user.id, addressee_id:id}); await loadFriends(); return r; }
 async function respond(rowId, ok){ var r=ok?await sb.from('friendships').update({status:'accepted'}).eq('id',rowId):await sb.from('friendships').delete().eq('id',rowId); await loadFriends(); return r; }
 async function removeRow(rowId){ var r=await sb.from('friendships').delete().eq('id',rowId); await loadFriends(); return r; }
-/* 프로필(사진·소개·이름)은 허브에서만 바꿔요. 게임·Educations·Tools 에서는 보기만 되고 허브 링크만 보여 줘요. */
-var editOk=/\/hub\//.test(location.pathname||''), HOT={ko:{note:'프로필과 이름은 허브에서만 바꿀 수 있어요.',go:'허브에서 바꾸기'},en:{note:'Your profile and name can only be changed on the hub.',go:'Change on the hub'}};
+/* 프로필(사진·소개·이름)은 허브 계정 하나를 기준으로 Games·Educations·Tools·허브 어디서든 바꿀 수 있어요. */
+var editOk=true, HOT={ko:{note:'프로필과 이름은 허브에서만 바꿀 수 있어요.',go:'허브에서 바꾸기'},en:{note:'Your profile and name can only be changed on the hub.',go:'Change on the hub'}};
 function HO(){ return HOT[lang()]||HOT.en; }
 function hubNote(){ var H=HO(); return '<p>'+esc(H.note)+'</p><a class="ffa-btn" href="'+HUBSITE+'" style="text-decoration:none">'+esc(H.go)+'</a>'; }
 async function setNick(n){ if(!editOk) return {error:true, hub:true}; n=String(n||'').trim().slice(0,15); if(!n) return {error:true}; var r=await sb.from('profiles').update({display_name:n}).eq('id',user.id); if(r&&r.error) return {error:true}; prof=Object.assign({},prof||{},{display_name:n}); paint(); nickEmit(); return {ok:true}; }
