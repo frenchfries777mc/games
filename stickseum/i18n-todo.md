@@ -264,3 +264,6 @@ patchnotes.json | v466 items[0] | 캐릭터 선택창을 한 줄 5개 목록으�
 patchnotes.json | v466 items[1] | 캐릭터 즐겨찾기 추가 즐겨찾기한 캐릭터는 선택창 맨 위에 표시 | build 466 | 2026-10-28
 patchnotes.json | v466 items[2] | 치장품 상점 모든 탭에 검색창 추가 | build 466 | 2026-10-28
 patchnotes.json | v466 items[3] | 팀전에서 변장한 티오니스가 변장 대상의 클랜 태그를 달고 처치 알림에도 변장한 이름으로 나오도록 수정 | build 466 | 2026-10-28
+Stickseum-v0.9.html | 중화기병 스킬 | 3연발 - 조준 방향으로 로켓을 연속 3발 발사 (발당 피해 34) | build 467 | 2026-10-28
+patchnotes.json | v467 title | 중화기병 스킬 변경 | build 467 | 2026-10-28
+patchnotes.json | v467 items[0] | 중화기병 스킬을 철갑 자세에서 3연발로 변경 조준 방향으로 로켓을 연속 3발 발사 발당 피해 34 | build 467 | 2026-10-28
