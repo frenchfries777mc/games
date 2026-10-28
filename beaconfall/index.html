@@ -162,7 +162,7 @@ function pick(){let s=null;try{s=localStorage.getItem(KEY);}catch(e){}
  for(const x of (navigator.languages&&navigator.languages.length?navigator.languages:[navigator.language||'ko'])){const b=String(x).toLowerCase().split('-')[0];if(I.L.includes(b))return b;}
  return 'en';}
 let LANG=pick(),DATA=FALLBACK,NDATA=NOTES_FALLBACK;
-let LATEST_FILE=FALLBACK.latestFile;
+let LATEST_FILE=FALLBACK.latestFile,LATEST_Q='';
 const t=(k,v)=>{const e=I.D[k];let s=(e&&(e[LANG]||e.en||e.ko))||'';if(v)for(const q in v)s=s.split('{'+q+'}').join(v[q]);return s;};
 window.FFT={T:s=>{const m={'빌드 번호나 내용으로 검색':'pn_ph','{0}개 찾음':'pn_hit','찾는 패치노트가 없어요.':'pn_none'}[s];return m?t(m):s;}};
 const nm=ko=>{const e=I.NM[ko];return (e&&e[LANG])||ko;};
@@ -170,7 +170,7 @@ const tv=(ver,f,ko)=>{const e=I.V[ver];return (e&&e[f]&&(e[f][LANG]||e[f].en||e[
 /* 친구 방 바로 참가: 방 주소를 넣으면 게임이 열리면서 그 방에 참가해요 */
 {const ja=document.getElementById('joinAddr'),jb=document.getElementById('joinBtn');
  ja.addEventListener('input',()=>{ja.value=ja.value.replace(/[^a-zA-Z0-9_-]/g,'').slice(0,24);});
- jb.addEventListener('click',e=>{const v=ja.value;if(!/^[a-zA-Z0-9_-]{3,24}$/.test(v)){e.preventDefault();ja.focus();return;}jb.href=LATEST_FILE+'?join='+encodeURIComponent(v);});}
+ jb.addEventListener('click',e=>{const v=ja.value;if(!/^[a-zA-Z0-9_-]{3,24}$/.test(v)){e.preventDefault();ja.focus();return;}jb.href=LATEST_FILE+'?join='+encodeURIComponent(v)+(LATEST_Q?'&'+LATEST_Q:'');});}
 /* 배경 */
 const SHOTS=['camp','village','ice','volcano','desert','jungle','stone','mangrove','mesa','forest'];
 const bg=document.getElementById('bg');
@@ -195,11 +195,11 @@ function render(d){
  DATA=d;const list=Array.isArray(d.versions)?d.versions:[];
  if(!list.length){document.getElementById('latestBox').innerHTML='<div class="err">'+t('v_none')+'</div>';return;}
  const latest=list.find(v=>v.latest)||list[0],rest=list.filter(v=>v!==latest);
- document.getElementById('playBtn').href=d.latestFile||latest.file;LATEST_FILE=d.latestFile||latest.file;
+ LATEST_FILE=d.latestFile||latest.file;LATEST_Q=latest.build?'b='+String(latest.build).replace(/\D/g,''):'';document.getElementById('playBtn').href=LATEST_FILE+(LATEST_Q?'?'+LATEST_Q:'');
  const dl=document.getElementById('dlBtn');dl.href=latest.file;dl.setAttribute('download',latest.file.split('/').pop());
  document.getElementById('heroMeta').textContent=t('meta',{v:latest.version,d:latest.date,s:mb(latest.size)||'—'});
  document.getElementById('footVer').textContent=t('foot_v',{v:latest.version,d:d.updated||latest.date});
- const row=(v,tag)=>'<div><div class="vrow"><span class="vcol"><span class="pb on">'+(tag?t('v_latest')+' ':'')+'v'+esc(v.version)+'</span>'+(v.build?'<small class="vb">build '+esc(v.build)+'</small>':'')+'</span><span>'+esc(v.date)+(v.size?' · '+mb(v.size):'')+'</span><a class="pb" href="'+esc(v.file)+'">'+t('b_play')+'</a><a class="pb" href="'+esc(v.file)+'" download="'+esc(v.file.split('/').pop())+'">'+t('b_dl')+'</a></div><p class="vtxt"><b>'+esc(tv(v.version,'title',v.title))+'</b> — '+esc(tv(v.version,'summary',v.summary))+'</p></div>';
+ const row=(v,tag)=>'<div><div class="vrow"><span class="vcol"><span class="pb on">'+(tag?t('v_latest')+' ':'')+'v'+esc(v.version)+'</span>'+(v.build?'<small class="vb">build '+esc(v.build)+'</small>':'')+'</span><span>'+esc(v.date)+(v.size?' · '+mb(v.size):'')+'</span><a class="pb" href="'+esc(v.file)+(v.build?'?b='+esc(v.build):'')+'">'+t('b_play')+'</a><a class="pb" href="'+esc(v.file)+'" download="'+esc(v.file.split('/').pop())+'">'+t('b_dl')+'</a></div><p class="vtxt"><b>'+esc(tv(v.version,'title',v.title))+'</b> — '+esc(tv(v.version,'summary',v.summary))+'</p></div>';
  document.getElementById('latestBox').innerHTML=row(latest,true);
  document.getElementById('historyBox').innerHTML=rest.map(v=>row(v,false)).join('')||'<span style="text-shadow:2px 2px 0 #000">—</span>';
 }

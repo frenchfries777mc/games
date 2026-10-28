@@ -188,7 +188,7 @@ function menu(go) {
   else if (go === 'roles') { paintRoles(); show('sRoles'); }
   else if (go === 'achs') { paintAchs(); show('sAchs'); }
   else if (go === 'settings') { paintSettings(); show('sSettings'); }
-  else if (go === 'site') { try { window.close(); } catch (e) { } setTimeout(() => { if (!window.closed) location.href = '../'; }, 300); }
+  else if (go === 'site') { try { window.close(); } catch (e) { } setTimeout(() => { if (!window.closed) location.href = '../?r=' + Date.now(); }, 300); }
 }
 
 // 겉모습 꾸미기: 한 번 사면 계속 쓰고, 마음대로 바꿔 껴요 (능력치 변화 없음)
