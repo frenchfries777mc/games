@@ -1311,6 +1311,7 @@
     "구매하지 못했어요. 잠시 뒤에 다시 해 주세요.": ["Purchase failed. Please try again in a moment.", "No se pudo comprar. Inténtalo de nuevo en un momento.", "Achat impossible. Réessaie dans un instant.", "Kauf fehlgeschlagen. Versuch es gleich nochmal.", "購入できませんでした。少ししてからもう一度お願いします。"]
   };
   var R = [
+    [/^게임 버전이 달라요\. 이 방은 v([\d.]+)이라서 v([\d.]+)로는 같이 할 수 없어요\.$/, ['Game versions differ. This room is v$1, so you cannot play together on v$2.', 'Las versiones del juego son distintas. Esta sala es v$1, así que no se puede jugar junto con v$2.', 'Les versions du jeu sont différentes. Ce salon est en v$1, impossible de jouer ensemble avec la v$2.', 'Die Spielversionen unterscheiden sich. Dieser Raum ist v$1, mit v$2 kann man nicht zusammen spielen.', 'ゲームのバージョンが違います。この部屋は v$1 なので、v$2 では一緒に遊べません。']],
     [/^미니게임 (\d+)종 · (\d+)판$/, ['$1 minigames · $2 rounds', '$1 minijuegos · $2 rondas', '$1 mini-jeux · $2 manches', '$1 Minispiele · $2 Runden', 'ミニゲーム$1種 · $2戦']],
     [/^초대함 · (\d+)분 남음$/, ['Invited · $1 min left', 'Invitado · quedan $1 min', 'Invité · $1 min restantes', 'Eingeladen · noch $1 Min.', '招待済み · 残り$1分']],
     [/^친구 \((\d+)\)$/, ['Friends ($1)', 'Amigos ($1)', 'Amis ($1)', 'Freunde ($1)', '友達 ($1)']],
@@ -1665,7 +1666,9 @@ body.playing #emoBar{display:flex}
    <div class="row"><input id="codeIn" maxlength="5" placeholder="방 코드" autocomplete="off"><button class="pb dark" id="joinBtn" style="flex:0 0 auto">들어가기</button></div>
    <div class="msg" id="homeMsg"></div>
   </aside>
-  <template id="patchnotes"><details class="notes" open><summary>패치노트 · v0.1 (b81)</summary>
+  <template id="patchnotes"><details class="notes" open><summary>패치노트 · v0.1 (b82)</summary>
+   <b>2026-10-28 · v0.1 · b82 · 버전 매칭과 보상 보호</b>
+   <ul><li>게임 버전(v0.x)이 다르면 같은 방에 못 들어와요. 빌드가 달라도 괜찮아요. 버전이 다른 방은 방 목록에도 안 나오고, 코드나 초대로 들어가려 하면 "게임 버전이 달라요" 창이 떠요</li><li>너무 옛 빌드로는 dC가 올라가지 않도록 서버가 막아요 (이미 가진 dC와 스킨은 그대로예요)</li></ul>
    <b>2026-10-28 · v0.1 · b81 · 연타 탭 수정</b>
    <ul><li>더블터치 확대를 막는 방식을 바꿔서, 연타 미니게임에서 빠르게 누르는 탭이 씹히지 않아요</li></ul>
    <b>2026-10-28 · v0.1 · b80 · 더블터치 확대 막기</b>
@@ -1826,7 +1829,7 @@ body.playing #emoBar{display:flex}
    <ul><li>무너지는 발판 칸 수 대폭 증가 (19×10)와 용암 동굴 맵</li><li>10개 맵 전부 새로 그림 (관중석, 야자수 섬, 링, 정원 미로, 서커스, 우노 테이블 등)</li><li>글자 대신 아이콘·말풍선·이펙트로 표현 (무기, 아이템, 카드 효과, 시작 안내)</li><li>타격·폭발·물보라 효과와 화면 흔들림 추가</li></ul>
    <b>2026-10-19 · v0.1 · b1 · 첫 시험판</b>
    <ul><li>마네킹 미니게임 10개 추가 (장애물 달리기, 섬 밀치기, 싸우기, 병맛 미로, 체스 대난투, 폭탄 돌리기, 병맛 우노, 쇼윈도 얼음땡, 무너지는 발판, 컨베이어 서바이벌)</li><li>방 코드로 최대 8명 멀티플레이, 빈자리는 봇으로 채우기</li><li>판마다 10개 중 5개를 무작위로 골라 점수를 합산</li><li>PC 키보드와 휴대폰 터치 조작 지원</li></ul></details></template>
-  <p class="foot">2~8명 · 판마다 36개 미니게임 중 7개 · v0.1 b81 · <a href="../">← Dummy Party 사이트로</a></p>
+  <p class="foot">2~8명 · 판마다 36개 미니게임 중 7개 · v0.1 b82 · <a href="../">← Dummy Party 사이트로</a></p>
   <p class="foot"><span class="ff-copy">© 2026 Frenchfries777 · <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.ko" target="_blank" rel="noopener">CC BY-NC-ND 4.0</a></span></p>
  </div>
 </section>
@@ -7237,7 +7240,10 @@ async function walletRefresh() {
 async function walletPlay(rank, n) {
   var sb = walClient(); if (!sb || !WAL.ready) return;
   try {
-    var d = walRow(await sb.rpc('dp_coin_play', { p_rank: rank, p_n: n }));
+    var r = await sb.rpc('dp_coin_play3', { p_rank: rank, p_n: n, p_build: DP_BUILD, p_ver: DP_VER });
+    // supabase-dp-v03.sql 을 실행하기 전에는 예전 함수로 받아요
+    if (r && r.error && /could not find|does not exist|PGRST202|42883/i.test((r.error.code || '') + ' ' + (r.error.message || ''))) r = await sb.rpc('dp_coin_play', { p_rank: rank, p_n: n });
+    var d = r && !r.error ? walRow(r) : null;
     if (d) { WAL.bal = d.balance | 0; WAL.today = d.today | 0; achCoin(); if (d.got > 0) setTimeout(function () { toast('+' + d.got + ' dC를 받았어요!'); }, 2400); }
   } catch (e) { }
   if (window.renderHome) renderHome();
@@ -7496,6 +7502,9 @@ var BGD = (function () {
 var PREFIX = 'ff-dummyparty-', CODE_CH = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789', MAXP = 8, ROUNDS = 7;
 var PTS = [5, 3, 2, 1];
 var T_INTRO = 6, T_COUNT = 3, T_END = 4.0, T_RESULT = 6;
+// 게임 버전(0.x)과 빌드. 버전이 다르면 같은 방에 못 들어와요 (빌드가 달라도 괜찮아요). dp_config 의 min_build 보다 낮은 빌드는 dC를 못 받아요
+var DP_VER = '0.1', DP_BUILD = 82;
+function dpNotice(msg) { dpAsk(msg, '확인', function () { }); }
 var BOT_NAMES = ['방귀쟁이', '홀쭉이', '바보1', '멍청이', '10급 공무원', '교무실 단골', '벌점부자', '말썽이', '김개똥'];
 var qs = new URLSearchParams(location.search);
 
@@ -7550,7 +7559,7 @@ function startGuest(name, code) {
   var tm = setTimeout(function () { if (G.peer === p && G.phase === 'idle') { homeMsg('연결 시간이 초과됐어요. 코드를 확인하고 다시 해 보세요.'); busy(false); destroyPeer(); } }, 15000);
   p.on('open', function () {
     var c = p.connect(PREFIX + code, { reliable: true }); G.conn = c;
-    c.on('open', function () { G.lastRx = performance.now(); c.send({ t: 'hello', name: name, h: myDeco().h, g: myDeco().g, f: myDeco().f, d: myDeco().d, ti: myDeco().t }); });
+    c.on('open', function () { G.lastRx = performance.now(); c.send({ t: 'hello', ver: DP_VER, name: name, h: myDeco().h, g: myDeco().g, f: myDeco().f, d: myDeco().d, ti: myDeco().t }); });
     c.on('data', function (d) { clearTimeout(tm); guestMsg(d); });
     c.on('close', function () { if (G.conn === c && G.role === 'guest' && G.phase !== 'idle') migStart(); });
   });
@@ -7565,6 +7574,9 @@ function startSolo(name, prac) { destroyPeer(); G.practice = prac || null; G.rol
 
 function hostMsg(conn, d) {
   if (!d || typeof d !== 'object') return;
+  if (d.t === 'hello' || d.t === 'rejoin') {
+    if ((d.ver || '0.1') !== DP_VER) { conn.send({ t: 'deny', ver: DP_VER, why: '게임 버전이 달라요. 이 방은 v' + DP_VER + '이라서 v' + (d.ver || '0.1') + '로는 같이 할 수 없어요.' }); setTimeout(function () { conn.close(); }, 300); return; }
+  }
   if (d.t === 'hello') {
     if (G.phase !== 'lobby') { conn.send({ t: 'deny', why: '이미 게임이 진행 중이에요. 다음 판에 들어와 주세요.' }); setTimeout(function () { conn.close(); }, 300); return; }
     var humans = G.players.filter(function (p) { return !p.bot; });
@@ -7573,7 +7585,7 @@ function hostMsg(conn, d) {
     var pl = { id: id, name: cleanName(d.name), color: freeColor(), bot: false, online: true, score: 0, wins: 0, h: decoOk(d.h, HAT_COUNT), g: decoOk(d.g, GL_COUNT), f: decoOk(d.f, FACE_COUNT), d: decoOk(d.d, DANCE_COUNT), t: decoOk(d.ti, TITLE_COUNT) };
     G.players.push(pl); conn._pid = id; G.conns[id] = conn;
     trimBots();
-    conn.send({ t: 'welcome', id: id });
+    conn.send({ t: 'welcome', id: id, ver: DP_VER });
     sendMeta(); renderLobby(); SFX.play('pop');
     return;
   }
@@ -7581,7 +7593,7 @@ function hostMsg(conn, d) {
     var rp = getP(d.id);
     if (!rp || rp.id === G.me || G.conns[rp.id] || !rp.lost) { conn.send({ t: 'deny', why: '방장이 나가서 이어갈 수 없어요.' }); setTimeout(function () { conn.close(); }, 300); return; }
     rp.bot = false; rp.lost = false; rp.name = rp.rn || rp.name; conn._pid = rp.id; G.conns[rp.id] = conn;
-    conn.send({ t: 'welcome', id: rp.id }); sendMeta(); renderLobby(); return;
+    conn.send({ t: 'welcome', id: rp.id, ver: DP_VER }); sendMeta(); renderLobby(); return;
   }
   var pid = conn._pid; if (!pid) return;
   if (d.t === 'e') { doEmote(pid, d.e | 0); return; }
@@ -7673,9 +7685,11 @@ setInterval(function () { if (G.role === 'host' && G.phase !== 'idle') for (var 
 setInterval(function () { if (G.role === 'guest' && G.phase !== 'idle' && !G.mig && G.lastRx && performance.now() - G.lastRx > 9000) migStart(); }, 1000);
 function guestMsg(d) {
   if (!d || typeof d !== 'object') return;
-  if (d.t === 'deny') { var why = d.why; if (G.phase !== 'idle') goHome(); else { busy(false); destroyPeer(); G.role = null; } homeMsg(why); return; }
+  if (d.t === 'deny') { var why = d.why; if (G.phase !== 'idle') goHome(); else { busy(false); destroyPeer(); G.role = null; } if (d.ver) dpNotice(why); else homeMsg(why); return; }
   G.lastRx = performance.now();
-  if (d.t === 'welcome') { G.me = d.id; busy(false); homeMsg(''); if (G.mig) { G.mig = null; toast('방장이 바뀌었어요.'); } return; }
+  if (d.t === 'welcome') {
+    if ((d.ver || '0.1') !== DP_VER) { var hv = d.ver || '0.1'; if (G.phase !== 'idle') goHome(); else { busy(false); destroyPeer(); G.role = null; } dpNotice('게임 버전이 달라요. 이 방은 v' + hv + '이라서 v' + DP_VER + '로는 같이 할 수 없어요.'); return; }
+    G.me = d.id; busy(false); homeMsg(''); if (G.mig) { G.mig = null; toast('방장이 바뀌었어요.'); } return; }
   if (d.t === 'hb') return;
   if (d.t === 'ls') { lobGuestSnap(d.d); return; }
   if (d.t === 'm') { applyMeta(d.m); return; }
@@ -8446,7 +8460,7 @@ function lobDraw() {
 
 /* ===== 공개방 / 비공개방: 공개방은 방 목록에 올라가고, 비공개방은 코드로만 들어와요 =====
    서버에는 방 코드·방장 이름·인원만 올려요 (supabase-dp-rooms.sql). 연결은 그대로 PeerJS 방 코드예요. */
-var PUB = { v2: true, title: '', code: null, warned: 0, key: '', list: null, err: '', t: 0 };
+var PUB = { v3: true, v2: true, title: '', code: null, warned: 0, key: '', list: null, err: '', t: 0 };
 function pubClient() { try { return window.FFAuth && FFAuth.user() ? FFAuth.client() : null; } catch (e) { return null; } }
 function pubFail() { PUB.err = 'x'; if (!PUB.warned) { PUB.warned = 1; try { toast('공개방 목록 등록에 실패했어요. 코드로는 들어올 수 있어요.'); } catch (e) { } } }
 function pubSync(force) {
@@ -8456,9 +8470,14 @@ function pubSync(force) {
   if (!force && key === PUB.key && performance.now() - PUB.t < 8000) return;
   PUB.key = key; PUB.t = performance.now(); PUB.code = G.code;
   var old = function () { try { c.rpc('dp_room_publish', { p_code: G.code, p_host: String(G.name || '').slice(0, 20), p_players: humans, p_max: MAXP, p_open: open }).then(function (r) { if (r && r.error) pubFail(); else PUB.warned = 0; }, pubFail); } catch (e) { pubFail(); } };
-  if (!PUB.v2) { old(); return; }
-  // 제목, 미니게임 종류 수, 판 수도 같이 올려요 (supabase-dp-rooms-v2.sql 을 실행하기 전에는 예전 방식으로 올려요)
-  try { c.rpc('dp_room_publish2', { p_code: G.code, p_host: String(G.name || '').slice(0, 20), p_title: PUB.title, p_players: humans, p_max: MAXP, p_open: open, p_games: rulesPool().length, p_rounds: Math.min(RULES.n, rulesPool().length) }).then(function (r) { if (r && r.error) { PUB.v2 = false; old(); } else PUB.warned = 0; }, function () { PUB.v2 = false; old(); }); } catch (e) { PUB.v2 = false; old(); }
+  var v2 = function () {
+    if (!PUB.v2) { old(); return; }
+    // 제목, 미니게임 종류 수, 판 수도 같이 올려요 (supabase-dp-rooms-v2.sql 을 실행하기 전에는 예전 방식으로 올려요)
+    try { c.rpc('dp_room_publish2', { p_code: G.code, p_host: String(G.name || '').slice(0, 20), p_title: PUB.title, p_players: humans, p_max: MAXP, p_open: open, p_games: rulesPool().length, p_rounds: Math.min(RULES.n, rulesPool().length) }).then(function (r) { if (r && r.error) { PUB.v2 = false; old(); } else PUB.warned = 0; }, function () { PUB.v2 = false; old(); }); } catch (e) { PUB.v2 = false; old(); }
+  };
+  // 게임 버전(0.x)도 같이 올려서, 같은 버전의 방만 목록에 나와요 (supabase-dp-v03.sql 을 실행하기 전에는 v2 방식으로 올려요)
+  if (!PUB.v3) { v2(); return; }
+  try { c.rpc('dp_room_publish3', { p_code: G.code, p_host: String(G.name || '').slice(0, 20), p_title: PUB.title, p_players: humans, p_max: MAXP, p_open: open, p_games: rulesPool().length, p_rounds: Math.min(RULES.n, rulesPool().length), p_ver: DP_VER }).then(function (r) { if (r && r.error) { PUB.v3 = false; v2(); } else PUB.warned = 0; }, function () { PUB.v3 = false; v2(); }); } catch (e) { PUB.v3 = false; v2(); }
 }
 function pubClose() {
   var code = PUB.code; PUB.code = null; PUB.key = ''; if (!code) return;
@@ -8480,8 +8499,12 @@ function roomsLoad() {
       if (r && r.error) { PUB.err = 'x'; PUB.list = null; } else { PUB.err = ''; PUB.list = (r && r.data) || []; }
       roomsRender();
     }, fail = function () { PUB.err = 'x'; PUB.list = null; roomsRender(); }, old = function () { c.rpc('dp_room_list').then(done, fail); };
-    if (!PUB.v2) { old(); return; }
-    c.rpc('dp_room_list2').then(function (r) { if (r && r.error) { PUB.v2 = false; old(); } else done(r); }, function () { PUB.v2 = false; old(); });
+    var v2 = function () {
+      if (!PUB.v2) { old(); return; }
+      c.rpc('dp_room_list2').then(function (r) { if (r && r.error) { PUB.v2 = false; old(); } else done(r); }, function () { PUB.v2 = false; old(); });
+    };
+    if (!PUB.v3) { v2(); return; }
+    c.rpc('dp_room_list3', { p_ver: DP_VER }).then(function (r) { if (r && r.error) { PUB.v3 = false; v2(); } else done(r); }, function () { PUB.v3 = false; v2(); });
   } catch (e) { PUB.err = 'x'; roomsRender(); }
 }
 function roomsRender() {
