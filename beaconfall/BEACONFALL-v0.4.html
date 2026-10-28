@@ -392,7 +392,7 @@ window.bfIntro=function(){if(run)return;run=1;t0=Date.now();el.classList.add('ru
     <button class="btn" data-act="skins"><span class="arrow">▶</span>스킨 상점<span class="en">SKIN SHOP</span></button>
     <button class="btn" data-act="stats"><span class="arrow">▶</span>통계<span class="en">STATS</span></button>
     <button class="btn" data-act="settings"><span class="arrow">▶</span>설정<span class="en">SETTINGS</span></button>
-    <p class="foot">v0.4<br>build 118</p>
+    <p class="foot">v0.4<br>build 119</p>
   </nav>
 </div>
 
@@ -2577,7 +2577,6 @@ function openJournal(){
   const rec=[['유적 방문',`${seen} / ${lm.length}`],['지하 던전 최고 층',(J.c.dun|0)?`${J.c.dun}층`:'-'],['해저 유적',rt?`${rf} / ${rt}`:'-'],['하늘 보물',`${J.c.sky|0}개`],['유령선 격퇴',`${J.c.ghost|0}번`],['덫 사냥 포획',`${J.c.trap|0}마리`],['발견한 물약',`${ALCH.filter(r=>A[r.id]).length} / ${ALCH.length}`],['낚시 도감',`${fd} / ${FISH.length}`]];
   const draw=()=>{
     return `<h2>탐험 일지<small>${got} / ${isl.length} 섬</small></h2>
-    <div class="achrow" style="display:flex;gap:6px;align-items:center"><span>내 이름</span><input data-pname maxlength="15" value="${esc(myName())}" style="flex:1"><button class="btn sm ghost" data-pset="1">변경</button></div>
     <div class="achcat">섬 도장 · 처음 발견한 사람 이름이 남아요</div>
     <div class="achrow" style="display:flex;flex-wrap:wrap;gap:6px">${isl.map(([o,i])=>world.disc[i]?`<span style="border:2px solid #5ec86e;padding:2px 6px;font-size:12px">★ ${esc(islName(o))}${(world.discBy||{})['i'+i]?` <small style="opacity:.7">· ${esc(world.discBy['i'+i])}</small>`:''}</span>`:`<span style="border:2px dashed #7a8090;padding:2px 6px;font-size:12px;opacity:.55">? ? ?</span>`).join('')}</div>
     <div class="achcat">기록</div>
@@ -2590,7 +2589,6 @@ function openJournal(){
     const bind=()=>{
       const box=m.querySelector('.modal'),rd=()=>{const sc=box.scrollTop;box.innerHTML=draw();box.scrollTop=sc;bind();};
       box.querySelector('[data-close]').onclick=closeModal;
-      const ps=box.querySelector('[data-pset]');if(ps)ps.onclick=()=>{const v=box.querySelector('[data-pname]').value.trim().slice(0,15);if(v){settings.pname=v;saveSettings();try{if(window.FFAuth&&FFAuth.user()&&FFAuth.setNick)FFAuth.setNick(v);}catch(e){}}rd();};
       box.querySelectorAll('[data-ms]').forEach(x=>x.onclick=()=>{
         const need=+x.dataset.ms,ms=JR_MS.find(q=>(q[0]||isl.length)===need);if(!ms||got<need||J.m[need])return;
         J.m[need]=1;saveSettings();for(const [id,c] of ms[1])giveReward(id,c);rd();
@@ -9363,6 +9361,15 @@ function openStats(){
   html+=`<div class="actions">${mode==='play'&&world?'<button class="btn sm" data-card>월드 카드</button>':''}<button class="btn sm ghost" data-close>닫기</button></div>`;
   openModal(html,m=>{m.querySelector('[data-close]').onclick=closeModal;const cd=m.querySelector('[data-card]');if(cd)cd.onclick=openCard;},'ach');
 }
+/* 공용 프로필 카드 아래에 Beaconfall 통계를 붙여요 (이름·프로필은 허브에서만 바꿔요) */
+(function regBfStats(n){
+  if(window.FFProfile&&FFProfile.gameStats){
+    FFProfile.gameStats('beaconfall',function(){
+      const o=stObj();
+      return ST_ROWS.map(([k,label,ty])=>`<div class="gr"><span>${label}</span><b>${stFmt(o[k],ty)}</b></div>`).join('');
+    });
+  }else if(n<40)setTimeout(()=>regBfStats(n+1),500);
+})(0);
 /* ===== 사진 모드 · 월드 카드 — 화면 그림을 이미지로 저장하거나 공유해요 (버튼만, 새 조작키 없음) ===== */
 const BF_FONT="'Gugi','Malgun Gothic','Apple SD Gothic Neo',sans-serif";
 function shotCanvas(){
