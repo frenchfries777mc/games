@@ -283,7 +283,7 @@ function fill(){ var el=modal(); el.querySelector('h3').textContent=mode==='in'?
 function openLogin(m){ mode=m==='up'?'up':'in'; fill(); var el=modal(); el.style.display='flex'; setTimeout(function(){ try{ el.querySelector('input').focus(); }catch(e){} },30); }
 function close(){ var el=document.getElementById('ffaModal'); if(el) el.style.display='none'; }
 
-function profileLib(){ return loadScript(BASE+'ff-profile.js?v=20261028e', function(){ return !!window.FFProfile; }); }
+function profileLib(){ return loadScript(BASE+'ff-profile.js?v=20261028f', function(){ return !!window.FFProfile; }); }
 async function openProfile(uid, o){ if(!sb) return; if(!uid&&!user) return openLogin(); if(await profileLib()) window.FFProfile.open(sb, uid||user.id, o); }
 
 /* 게임 사이트(허브가 아닌 페이지)에는 계정 버튼 옆에 '← 허브' 버튼을 붙여요. 빼고 싶으면 자리에 data-ff-nohub */
@@ -569,7 +569,7 @@ async function request(id){ await expireReq(true); var r=await sb.from('friendsh
 async function respond(rowId, ok){ var r=ok?await sb.from('friendships').update({status:'accepted'}).eq('id',rowId):await sb.from('friendships').delete().eq('id',rowId); await loadFriends(); return r; }
 async function removeRow(rowId){ var r=await sb.from('friendships').delete().eq('id',rowId); await loadFriends(); return r; }
 /* 프로필(사진·소개·이름)은 허브 계정 하나를 기준으로 Games·Educations·Tools·허브 어디서든 바꿀 수 있어요. */
-var editOk=true, HOT={ko:{note:'프로필과 이름은 허브에서만 바꿀 수 있어요.',go:'허브에서 바꾸기'},en:{note:'Your profile and name can only be changed on the hub.',go:'Change on the hub'}};
+var editOk=true, HOT={ko:{note:'프로필과 이름은 허브에서만 바꿀 수 있어요.',go:'허브에서 바꾸기'},en:{note:'Your profile and name can only be changed on the hub.',go:'Change on the hub'},es:{note:"El perfil y el nombre solo se pueden cambiar en el inicio.",go:"Cambiar en el inicio"},fr:{note:"Le profil et le pseudo ne peuvent être modifiés que sur l’accueil.",go:"Modifier sur l’accueil"},de:{note:"Profil und Name können nur auf der Startseite geändert werden.",go:"Auf der Startseite ändern"},ja:{note:"プロフィールと名前はハブでのみ変更できます。",go:"ハブで変更"},zh:{note:"个人资料和名字只能在主页修改。",go:"去主页修改"},pt:{note:"O perfil e o nome só podem ser alterados no início.",go:"Alterar no início"},ru:{note:"Профиль и имя можно менять только в хабе.",go:"Изменить в хабе"},tr:{note:"Profil ve ad yalnızca merkezden değiştirilebilir.",go:"Merkezden değiştir"},it:{note:"Profilo e nome si possono cambiare solo nell’hub.",go:"Cambia nell’hub"},pl:{note:"Profil i nazwę można zmienić tylko na hubie.",go:"Zmień na hubie"},ar:{note:"لا يمكن تغيير الملف الشخصي والاسم إلا من المركز.",go:"التغيير من المركز"},nw:{note:"Profile and name: only hub can change. Elsewhere unchangeable.",go:"Change on hub"},gk:{note:"프로필 그리고 이름 오직 허브 안에서 바꾸다 수 있다!",go:"허브 안에서 바꾸다!"}};
 function HO(){ return HOT[lang()]||HOT.en; }
 function hubNote(){ var H=HO(); return '<p>'+esc(H.note)+'</p><a class="ffa-btn" href="'+HUBSITE+'" style="text-decoration:none">'+esc(H.go)+'</a>'; }
 async function setNick(n){ if(!editOk) return {error:true, hub:true}; n=String(n||'').trim().slice(0,15); if(!n) return {error:true}; var r=await sb.from('profiles').update({display_name:n}).eq('id',user.id); if(r&&r.error) return {error:true}; prof=Object.assign({},prof||{},{display_name:n}); paint(); nickEmit(); return {ok:true}; }
