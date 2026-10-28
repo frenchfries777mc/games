@@ -1,15 +1,16 @@
 <!DOCTYPE html>
 <!-- Isleport © 2026 Frenchfries777 · CC BY-NC-ND 4.0 · https://creativecommons.org/licenses/by-nc-nd/4.0/deed.ko -->
 <html lang="ko">
-<head>
+<head><style id="ffTap">html,body{touch-action:manipulation}</style>
 <meta charset="utf-8">
 <script src="https://frenchfries777mc.github.io/games/ff-lang.js"></script>
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <title>Isleport</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Gugi&family=Press+Start+2P&display=swap" rel="stylesheet">
 <style>
+html,body{touch-action:manipulation}
 :root{--ink:#1d1109;--text:#f6efd8;--muted:#d3bf94;--gold:#f2c75a;--gold-d:#8a5a14;--btn:#f3e4b0;--btn-d:#cdb87c;--btn-ink:#2a1f0c;--hot:#d7f19a;--field:#24160b;--line:#8a6238;--bad:#f08a6a;--good:#a8e08a;
  --px:'Press Start 2P',monospace;--ko:'Gugi','Malgun Gothic','Apple SD Gothic Neo','Hiragino Sans',sans-serif;color-scheme:dark}
 *{box-sizing:border-box}
@@ -478,7 +479,7 @@ const TUT=[
  [P('다 자라면 ▼ 표시의 밭을 눌러 수확해요','When it is grown, tap the field with the ▼ to harvest'),s=>s.stats.harvest>=1],
  [P('마을 장터에서 수확한 것을 팔아요','Sell your harvest at the town market'),s=>(s.stats.shop||0)>=1],
  [P('항구에서 배에 짐을 싣고 보내요','Load a ship at the harbor and send it off'),s=>s.stats.sailed>=1]];
-const OUTMAX=12,BUILD=63;
+const OUTMAX=12,BUILD=66;
 const hasB=(s,b)=>s.slots.some(x=>x&&x.b===b);
 const rankOf=e=>{let r=0;RANKS.forEach((x,i)=>{if(e>=x[0])r=i;});return r;};
 /* 업적: id, 이름, 설명, 조건 */
@@ -600,6 +601,17 @@ A('nw1m',P('백만장자','Millionaire'),P('재산 1,000,000 모으기','Reach a
 const CROPK=Object.keys(CROPS),SPEC=['goldbarley','pomegranate','saffron','cloudcotton','seaweed','dragonfruit'],CROPK17=CROPK.filter(c=>!SPEC.includes(c));
 const ACHN={};ACH.forEach(a=>ACHN[a.id]=a);
 const NOTES=[
+ {date:'2026-10-28',build:'v0.2 build 66',title:P('확대 제스처 막기','No zoom gestures'),items:[
+  P('아이폰에서 두 번 터치와 두 손가락 확대 제스처 차단','Blocked double-tap and pinch zoom gestures on iPhone')
+ ]},
+ {date:'2026-10-28',build:'v0.2 build 65',title:P('두 번 터치 확대 막기','No double-tap zoom'),items:[
+  P('게임 화면을 두 번 터치해도 확대되지 않아요','Double-tapping the game no longer zooms in')
+ ]},
+ {date:'2026-10-28',build:'v0.2 build 64',title:P('공용 프로필 창','Shared profile window'),items:[
+  P('계정 창에서 허브와 같은 프로필 카드 열기','Open the same profile card as the hub from the account window'),
+  P('프로필 카드 아래에 Isleport 통계 표시','Isleport stats under the profile card'),
+  P('이름과 프로필 변경은 허브에서만 가능','Name and profile can be changed on the hub only')
+ ]},
  {date:'2026-10-26',build:'v0.2 build 63',title:P('화면 흔들림 줄이기','Calmer screen'),items:[
   P('걸을 때 화면이 따라오며 떨리던 현상 고침','Fixed the screen trembling while walking'),
   P('작물, 배, 가게, 주민, 섬 물건이 위아래로 깜박이던 움직임 제거','Removed the up-and-down flicker on crops, ships, shops, villagers and island items'),
@@ -32076,7 +32088,7 @@ MODS.market=()=>{const own=GOODS.filter(q=>inv(q.id)>0);let h=`<h2>${T('장터',
   h+=`<div class="btns" style="margin:6px 0"><button class="pb sm gold" data-act="shopall">${T('전부 팔기','Sell everything')} ${fmt(own.reduce((a,q)=>a+shopPrice(q.id)*inv(q.id),0))}</button></div>`;
   own.forEach(q=>{const ph=procHint(q.id);h+=`<div class="row" style="padding:2px 0"><span>${gi(q.id,16)} ${GN(q.id)} <small class="muted">${inv(q.id)} · ${shopPrice(q.id)}${UG()}</small>${ph?`<br><small class="good">${T('가공하면 {0} (약 {1}배)','Process: {0} (about x{1})',ph.txt,ph.x)}</small>`:''}</span><span><button class="pb sm dark" data-act="shopsell:${q.id}:1">1</button><button class="pb sm dark" data-act="shopsell:${q.id}:10">10</button><button class="pb sm" data-act="shopsell:${q.id}:all">${T('전부','All')}</button></span></div>`;});return h;};
 ACT.shopsell=a=>{const [g,n]=a.split(':');shopSell(g,n==='all'?9999:+n);renderModal();updateHud();};ACT.shopall=()=>{GOODS.forEach(q=>{if(inv(q.id)>0)shopSell(q.id,9999,1);});sfx('coin');renderModal();updateHud();};
-MODS.login=()=>{if(UID)return `<h2>${T('Frenchfries777 계정','Frenchfries777 account')}</h2><div class="muted">${T('로그인 중: {0}','Logged in as {0}',esc(UNAME||''))}<br>${T('업적이 프로필 카드에 올라가요. 계정 만들기와 비밀번호 바꾸기는 허브 사이트에서 해요.','Your goals show on your profile card. Create accounts and change passwords on the hub site.')}</div><div class="btns" style="margin-top:10px"><button class="pb dark" data-act="dologout">${T('로그아웃','Log out')}</button></div>`;
+MODS.login=()=>{if(UID)return `<h2>${T('Frenchfries777 계정','Frenchfries777 account')}</h2><div class="muted">${T('로그인 중: {0}','Logged in as {0}',esc(UNAME||''))}<br>${T('업적이 프로필 카드에 올라가요. 계정 만들기와 비밀번호 바꾸기는 허브 사이트에서 해요.','Your goals show on your profile card. Create accounts and change passwords on the hub site.')}</div><div class="btns" style="margin-top:10px"><button class="pb gold" data-act="myprof">${T('프로필 보기','View profile')}</button><button class="pb dark" data-act="dologout">${T('로그아웃','Log out')}</button></div>`;
   return `<h2>${T('Frenchfries777 계정','Frenchfries777 account')}</h2><div class="muted">${T('아이디와 비밀번호로 로그인하면 닉네임이 쓰이고 업적이 프로필 카드에 올라가요. 계정은 허브 사이트에서 만들어요.','Log in with your ID and password to use your nickname and show goals on your profile card. Create accounts on the hub site.')}</div>
    <label class="muted">${T('아이디','ID')}</label><input id="lgId" type="text" maxlength="30" autocomplete="username" autocapitalize="none"><label class="muted">${T('비밀번호','Password')}</label><input id="lgPw" type="password" maxlength="60" autocomplete="current-password"><div class="btns" style="margin-top:10px"><button class="pb gold" data-act="dologin">${T('로그인','Log in')}</button></div><div class="muted" id="lgMsg" style="margin-top:6px"></div>`;};
 const EMAIL_DOM='@frenchfries777.com',EMAIL_DOM2='@arenaclash.local'; // 새 주소 우선, 옛 주소는 안전망
@@ -32086,6 +32098,7 @@ ACT.dologin=async()=>{const u=($('lgId')||{}).value||'',p=($('lgPw')||{}).value|
     let r=await sb.auth.signInWithPassword({email:emailFor(u),password:p});if(r.error&&/invalid/i.test((r.error.code||'')+' '+(r.error.message||'')))r=await sb.auth.signInWithPassword({email:emailFor(u,EMAIL_DOM2),password:p});if(r.error||!r.data||!r.data.user){if(m)m.textContent=T('아이디나 비밀번호가 맞지 않아요','Wrong ID or password');return;}
     try{sessionStorage.removeItem('it.guest');}catch(e){}if(S){save();if(MP.on)mpLeave();S=null;}UID=r.data.user.id;const q=await sb.from('profiles').select('display_name,username').eq('id',UID).maybeSingle();UNAME=q.data&&(q.data.display_name||q.data.username)||u;
     closeModal();toast(T('<b>{0}</b>님, 어서 와요','Welcome, <b>{0}</b>',esc(UNAME)));applyStatic();showTitle();markOnce();}catch(e){if(m)m.textContent=T('로그인하지 못했어요','Login failed');}};
+ACT.myprof=()=>{if(!sb||!UID||!window.FFProfile)return;closeModal();try{FFProfile.open(sb,UID,{game:'isleport',gameName:'Isleport'});}catch(e){}};
 ACT.dologout=async()=>{if(S){save();if(MP.on)mpLeave();S=null;}try{if(sb)await sb.auth.signOut({scope:'local'});}catch(e){}try{sessionStorage.setItem('it.guest','1');sessionStorage.removeItem(TABK);}catch(e){}UID=null;UNAME=null;closeModal();applyStatic();showTitle();toast(T('로그아웃했어요','Logged out'));};
 document.addEventListener('keydown',e=>{if(e.key==='Enter'&&e.target&&(e.target.id==='lgPw'||e.target.id==='lgId'))ACT.dologin();});
 MODS.ltinv=()=>{const q=MP.ltIn;if(!q)return `<div class="muted">${T('신청이 끝났어요','The request is over')}</div>`;return `<h2>${T('실시간 거래 신청','Live trade request')}</h2><div class="muted"><b>${esc(q.name)}</b>${T('이(가) 지금 바로 거래하자고 해요. 서로 올린 물건과 금화를 보면서 정할 수 있어요.',' wants to trade right now. You can see each other’s offer and agree.')}</div><div class="btns" style="margin-top:10px"><button class="pb gold" data-act="ltyes">${T('수락','Accept')}</button><button class="pb dark" data-act="ltno">${T('거절','Decline')}</button></div>`;};
@@ -32465,6 +32478,10 @@ function loop(now){const dt=Math.min(1,(now-last)/1000);last=now;
   if(S&&!LOCKLOST){movePlayer(dt);updateJoy();updateCam(dt);tickAcc+=dt;tick(dt);updateHud();if(now-lastSide>400&&!POPOPEN){lastSide=now;renderSide(false);renderChat();}if(now-lastSave>4000){lastSave=now;save();}if(now>lastWealth&&UID&&VIEW!=='visit'&&!VIS.on){lastWealth=now+15000;pushWealth();}}
   requestAnimationFrame(loop);}
 document.addEventListener('pointerdown',()=>{if(S){auCtx();if(AU.mus)musicStart();}},{once:false});
+try{if(window.FFProfile)FFProfile.gameStats('isleport',function(box,ctx){if(!ctx.own)return '';const v=S||(loadSave()||{}).S;if(!v||!v.stats)return '';const st=v.stats,row=(k,x)=>'<div class="gr"><span>'+ctx.esc(k)+'</span><b>'+ctx.esc(String(x))+'</b></div>';
+  let h=row(T('계급','Rank'),tx(RANKS[rankOf(st.earned||0)][1]))+row(T('번 돈','Earned'),fmt(st.earned||0))+row(T('가진 돈','Gold'),fmt(v.money||0))+row(T('가장 큰 판매','Best sale'),fmt(st.best||0))+row(T('수확','Harvested'),T('{0}개','{0}',st.harvest||0))+row(T('항해','Voyages'),T('{0}번','{0}',st.sailed||0)) +row(T('배','Ships'),(v.ships||[]).length);
+  return h;});}catch(e){}
+document.addEventListener('gesturestart',e=>e.preventDefault());
 initLang();fit();initAuth();applyStatic();showTitle();
 try{const q=new URLSearchParams(location.search),jc=(q.get('join')||q.get('room')||'').trim().toUpperCase();if(/^[A-Z0-9]{4}$/.test(jc)){startSingle(true);startMP(false,jc);}}catch(e){}
 requestAnimationFrame(loop);

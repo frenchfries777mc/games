@@ -1,18 +1,18 @@
 <!DOCTYPE html>
 <!-- Tumblecrown · © 2026 Frenchfries777 · CC BY-NC-ND 4.0 (출처 표시 필수, 비영리, 변경 금지) · https://creativecommons.org/licenses/by-nc-nd/4.0/deed.ko -->
 <html lang="ko">
-<head>
+<head><style id="ffTap">html,body{touch-action:manipulation}</style>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <title>Tumblecrown</title>
-<script>(function(){var B=27;try{fetch('build.json?t='+Date.now(),{cache:'no-store'}).then(function(r){return r.json()}).then(function(d){if(d&&d.build>B&&sessionStorage.getItem('tcReload')!=String(d.build)){sessionStorage.setItem('tcReload',String(d.build));var u=new URL(location.href);u.searchParams.set('b',d.build);location.replace(u.toString());}}).catch(function(){});}catch(e){}})();</script>
+<script>(function(){var B=29;try{fetch('build.json?t='+Date.now(),{cache:'no-store'}).then(function(r){return r.json()}).then(function(d){if(d&&d.build>B&&sessionStorage.getItem('tcReload')!=String(d.build)){sessionStorage.setItem('tcReload',String(d.build));var u=new URL(location.href);u.searchParams.set('b',d.build);location.replace(u.toString());}}).catch(function(){});}catch(e){}})();</script>
 <meta name="description" content="던전 방에서 일곱 직업이 마지막 한 명을 가리는 배틀로얄">
 <meta name="robots" content="noindex">
 <link rel="icon" href="logo.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Lilita+One&display=swap" rel="stylesheet">
 <!-- 새 빌드마다 아래 ?v= 숫자를 BUILD와 같게 올려요 (브라우저가 옛 파일을 쓰지 않게) -->
-<script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/","./js/data.js":"./js/data.js?v=27","./js/main.js":"./js/main.js?v=27","./js/map.js":"./js/map.js?v=27","./js/music.js":"./js/music.js?v=27","./js/render.js":"./js/render.js?v=27","./js/sfx.js":"./js/sfx.js?v=27","./js/sim.js":"./js/sim.js?v=27","./js/tr.js":"./js/tr.js?v=27"}}</script>
+<script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/","./js/data.js":"./js/data.js?v=29","./js/main.js":"./js/main.js?v=29","./js/map.js":"./js/map.js?v=29","./js/music.js":"./js/music.js?v=29","./js/render.js":"./js/render.js?v=29","./js/sfx.js":"./js/sfx.js?v=29","./js/sim.js":"./js/sim.js?v=29","./js/tr.js":"./js/tr.js?v=29"}}</script>
 <script src="../../ff-presence.js" async></script>
 <script src="https://cdn.jsdelivr.net/npm/peerjs@1.5.4/dist/peerjs.min.js"></script>
 <script src="https://frenchfries777mc.github.io/games/ff-lang.js"></script>
@@ -23,7 +23,7 @@
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 @font-face{font-family:Galmuri;src:url(../../isleport/Galmuri11.woff2) format('woff2');font-weight:400;font-display:swap}
 @font-face{font-family:Galmuri;src:url(../../isleport/Galmuri11-Bold.woff2) format('woff2');font-weight:700;font-display:swap}
-html,body{margin:0;height:100%;background:var(--bg);color:var(--ink);font-family:Galmuri,system-ui,-apple-system,"Apple SD Gothic Neo","Noto Sans KR","Malgun Gothic",sans-serif;overflow:hidden;user-select:none;-webkit-user-select:none;touch-action:none}
+html,body{touch-action:manipulation;margin:0;height:100%;background:var(--bg);color:var(--ink);font-family:Galmuri,system-ui,-apple-system,"Apple SD Gothic Neo","Noto Sans KR","Malgun Gothic",sans-serif;overflow:hidden;user-select:none;-webkit-user-select:none;touch-action:none}
 ::-webkit-scrollbar{width:8px;height:8px}::-webkit-scrollbar-track{background:#150f1a}::-webkit-scrollbar-thumb{background:#4a4054;border-radius:4px}
 *{scrollbar-color:#4a4054 #150f1a}
 canvas#gl{position:fixed;left:0;top:0;display:block;image-rendering:pixelated}
@@ -218,6 +218,7 @@ body.touch #exitBtn{top:auto;bottom:auto}
 @media (max-aspect-ratio:1/1){#party{top:62px;bottom:auto;left:10px;flex-direction:column;gap:4px}.pf,body.touch .pf{width:104px;padding:3px 6px}.pf .st{display:none}}
 #introSkip{position:fixed;right:22px;bottom:22px;background:none;border:2px solid #6a6276;color:#d8d0e4;font:inherit;font-size:15px;padding:8px 16px;cursor:pointer}#introSkip:hover{border-color:#ffd36b;color:#ffd36b}#introSkip.on{border-color:#ffd36b;color:#ffd36b}
 </style>
+<script>/* 핀치 확대 막기 (iOS는 viewport 설정을 무시해요, 더블터치는 touch-action으로 막아요) */(function(){['gesturestart','gesturechange','gestureend'].forEach(function(k){document.addEventListener(k,function(e){e.preventDefault();});});})();</script>
 </head>
 <body>
 <canvas id="gl"></canvas>
@@ -307,6 +308,6 @@ body.touch #exitBtn{top:auto;bottom:auto}
 <div id="touch"><div id="joy"><div id="joyBase"><div id="joyKnob"></div></div></div>
   <div id="tbtns"><button id="tA"><span>공격</span></button><button id="tQ"><i class="cd"></i><span>Q</span></button><button id="tE"><i class="cd"></i><span>E</span></button><button id="tR"><i class="cd"></i><span>R</span></button><button id="tRoll"><i class="cd"></i><span>구르기</span></button><button id="tF"><span>F</span></button></div>
 </div>
-<script type="module" src="js/main.js?v=27"></script>
+<script type="module" src="js/main.js?v=29"></script>
 </body>
 </html>

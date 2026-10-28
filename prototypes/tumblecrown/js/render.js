@@ -1034,7 +1034,7 @@ export class View {
       if (!E) { const m = makeHero(p.role, p.cos); s.add(m); E = { m, x: p.x, z: p.z, a: p.a, ph: 0 }; this.ents.set(key, E); E.ring = ringMesh(s, p.col || ROLES[p.role].color); E.ward = sph(1.3, 12, 10, M(0x9af0e0, { e: 0x6ad0c0, ei: 0.5, op: 0.08, uniq: true }), 0, 1.5, 0, m); E.ward.castShadow = false; }
       const k = exact || p.id === me ? 1 : Math.min(1, dt * 12);
       E.x += (p.x - E.x) * k; E.z += (p.z - E.z) * k; E.a = lerpA(E.a, p.a, Math.min(1, dt * 18));
-      animHero(E, p, dt, t); E.hy = hy(E, exact ? 1 : dt); E.m.position.y += E.hy; E.ring.position.set(E.x, 0.12 + E.hy, E.z); E.ring.visible = !p.dd;
+      animHero(E, p, dt, t, this); E.hy = hy(E, exact ? 1 : dt); E.m.position.y += E.hy; E.ring.position.set(E.x, 0.12 + E.hy, E.z); E.ring.visible = !p.dd;
       E.ward.visible = p.sh > 0; E.m.visible = !p.dd;
     }
     // 적
@@ -1418,12 +1418,16 @@ function floorGuard(m, u) {
   if (FB.isEmpty()) return; const d = m.position.y - FB.min.y - 0.02; if (d > 0) u.body.position.y += d;
 }
 function kApply(T, P, f) { if (f <= 0) return; for (const q in P) T[q] = T[q] * (1 - f) + P[q] * f; }
-function animHero(E, p, dt, t) {
+function animHero(E, p, dt, t, view) {
   const m = E.m, u = m.userData, role = FAM[p.role] || p.role; m.position.set(E.x, 0, E.z); m.rotation.y = Math.PI / 2 - E.a;
   E.ph += dt * (p.mv ? 11 : 0); E.sw = (E.sw || 0) + ((p.mv ? Math.sin(E.ph) * 0.95 : 0) - (E.sw || 0)) * Math.min(1, dt * 14); const sw = E.sw;
   // 걷기 세기 (멈추면 부드럽게 0으로)
   E.wk = (E.wk || 0) + ((p.mv ? 1 : 0) - (E.wk || 0)) * Math.min(1, dt * 10); const wk = E.wk, sn = Math.sin(E.ph);
   u.legL.rotation.x = sw; u.legR.rotation.x = -sw;
+  // 발이 땅에 닿을 때마다 작은 먼지가 일어요 (뛸 때만)
+  const sg = sn >= 0 ? 1 : -1; if (p.mv && !p.dn && !p.ro && E.sg && sg !== E.sg && view) view.burst(E.x - Math.cos(E.a) * 0.3, 0.1, E.z - Math.sin(E.a) * 0.3, 0xb8aa94, 2, 1.8, 0.35, 0.1); E.sg = sg;
+  // 맞으면 몸이 뒤로 휘청하고 머리가 젖혀졌다가 돌아와요
+  if (E.lhp != null && p.hp < E.lhp - 0.5 && !p.dn) E.fl = Math.min(0.32, (E.fl || 0) + 0.26); E.lhp = p.hp; if (E.fl > 0) E.fl = Math.max(0, E.fl - dt);
   // 동작 시작: 동작 번호가 바뀌면 처음부터
   // 앞 동작이 아직 남아 있으면 그 자세에서 이어서 시작해요 (blT 동안 천천히 따라가요)
   if (p.aN !== E.aN) { E.aN = p.aN; if (E.aN != null && p.ak) { if (E.ak || E.kh) E.blT = 0.1; E.ak = p.ak; E.aT = 0; E.kc = (p.ac | 0) % 2; E.kh = null; } }
@@ -1444,6 +1448,7 @@ function animHero(E, p, dt, t) {
     if (E.idle > 0.8 && (E.lkT = (E.lkT || 0) - dt) <= 0) { const r = Math.random(); E.lkT = 1.2 + Math.random() * 1.8; E.lk = r < 0.25 ? 0 : (r < 0.62 ? -1 : 1) * (0.8 + Math.random() * 0.5); E.lkU = Math.random() < 0.3 ? -0.25 : Math.random() * 0.15; }
     const lk = E.idle > 0.8 ? (E.lk || 0) : 0; E.lkS = (E.lkS || 0) + (lk - (E.lkS || 0)) * Math.min(1, dt * 5);
     T.hy = E.lkS; T.bry = E.lkS * 0.45; T.hz = -E.lkS * 0.12; T.hx = E.idle > 0.8 ? (E.lkU || 0) : 0; T.sq = Math.sin(t * 2.2 + E.ph) * 0.025; T.lz = -Math.abs(E.lkS) * 0.1; T.rz = Math.abs(E.lkS) * 0.08;
+    const sy = Math.sin(t * 1.7 + E.ph); T.rx += sy * 0.05; T.lx -= sy * 0.05; T.brz += Math.sin(t * 1.1 + E.ph) * 0.03;
   } else E.idle = 0;
   if (role === 'archer') { T.rx = -1.5; T.rz = -0.25; T.lx = -1.55; T.lz = 0.12; T.rpz = -0.3; T.pull = 0.35; }
   // 궁수 모아 쏘기: 시위를 끝까지 당기며 몸을 뒤로 젖히고, 오래 모을수록 웅크려요
@@ -1532,14 +1537,15 @@ function animHero(E, p, dt, t) {
     for (const k of ['rz', 'lz', 'bx', 'by', 'bz', 'bry', 'hx']) T[k] *= X;
     T.rx = base[0] + (T.rx - base[0]) * A; T.lx = base[1] + (T.lx - base[1]) * A; T.jy *= big ? 1.35 : ex ? 2.5 : 1.9; T.sq = clampN(T.sq * (ex ? 1.8 : 1.5), -0.55, 0.75); T.lg *= ex ? 1.6 : 1.3;
   }
+  if (E.fl > 0 && !p.dn) { const f = Math.sin(Math.min(1, E.fl / 0.32) * Math.PI) * (E.ak ? 0.5 : 1); T.bx -= 0.4 * f; T.hx -= 0.45 * f; T.sq += 0.12 * f; T.bz -= 0.25 * f; T.rx -= 0.5 * f; T.lx -= 0.5 * f; T.rz += 0.4 * f; T.lz -= 0.4 * f; }
   if (p.bk && E.ak !== 'block') { T.lx = -1.6; }
-  const k = Math.min(1, dt * (E.blT > 0 ? 14 : 30)), L = (o, kk, v2) => { E[kk] = E[kk] == null ? v2 : E[kk] + (v2 - E[kk]) * k; return E[kk]; };
+  const k0 = dt * (E.blT > 0 ? 14 : 34), L = (o, kk, v2) => { const r = kk === 'hx' || kk === 'hy' || kk === 'hz' ? 0.45 : kk === 'bx' || kk === 'bry' || kk === 'brz' || kk === 'bz' ? 0.8 : kk === 'jy' || kk === 'sq' ? 1.3 : 1; E[kk] = E[kk] == null ? v2 : E[kk] + (v2 - E[kk]) * (1 - Math.exp(-k0 * r)); return E[kk]; };  // 머리는 몸보다 늦게, 몸은 팔보다 늦게 따라와요
   u.armR.rotation.order = 'XZY'; u.armR.rotation.set(L(0, 'ar', T.rx), L(0, 'ary', T.ry), L(0, 'arz', T.rz)); u.armL.rotation.set(L(0, 'al', T.lx), 0, L(0, 'alz', T.lz));
   u.armR.position.z = L(0, 'rpz', T.rpz); u.head.rotation.set(L(0, 'hx', T.hx), L(0, 'hy', T.hy), L(0, 'hz', T.hz));
   if (u.bowS) setPull(u.bowS, L(0, 'pl', T.pull), p.cg >= 2 ? 3 : p.cg >= 0.8 ? 2 : 1);
   const bob = Math.abs(sn) * 0.16 * wk;
   u.body.rotation.set(L(0, 'bx', T.bx), L(0, 'bry', T.bry) + T.spin, L(0, 'brz', T.brz)); u.body.position.set(0, bob + L(0, 'by', T.by), L(0, 'bz', T.bz));
-  m.position.y = L(0, 'jy', T.jy); const sq = L(0, 'sq', T.sq); u.body.scale.set(1 + sq * 0.5, 1 - sq * 0.6, 1 + sq * 0.5);
+  m.position.y = L(0, 'jy', T.jy); if (E.jyP > 0.6 && m.position.y < 0.25 && view) { view.burst(E.x, 0.1, E.z, 0xb8aa94, 7, 3.2, 0.45, 0.14); } E.jyP = m.position.y; const sq = L(0, 'sq', T.sq); u.body.scale.set(1 + sq * 0.5, 1 - sq * 0.6, 1 + sq * 0.5);
   const lg = L(0, 'lg', T.lg); if (E.ak) { u.legL.rotation.x = sw - lg * 0.6; u.legR.rotation.x = -sw + lg * 0.6; }
   // 구르기: 몸 가운데를 축으로 앞으로 한 바퀴 (발끝 축으로 돌면 머리가 바닥에 파묻혀요). 다리와 팔은 웅크려요
   if (p.ro && p.role === 'squire') { // 종자: 발부터 미끄러져 들어가며 다리 걸기
@@ -1550,7 +1556,12 @@ function animHero(E, p, dt, t) {
     u.legL.rotation.x = u.legR.rotation.x = -1.9 * tk; u.armL.rotation.x = u.armR.rotation.x = -1.4 * tk; u.armL.rotation.z = 0.35 * tk; u.armR.rotation.z = -0.35 * tk; u.head.rotation.x = 0.5 * tk;
     u.body.scale.set(1, 1 - 0.22 * tk, 1);
   } else E.rollQ = 0;
-  if (p.dn) { u.body.rotation.set(-Math.PI / 2 + 0.2, 0, 0); u.body.position.set(0, 0.4, -1); }
+  if (p.dn) { // 비틀거리다 뒤로 넘어지며 한 번 튕기고, 팔다리가 늘어져요
+    const q = E.dnT = Math.min(1, (E.dnT || 0) + dt / 0.55), f = ease(q), bn = q > 0.7 ? Math.sin((q - 0.7) / 0.3 * Math.PI) * 0.1 : 0;
+    u.body.rotation.set((-Math.PI / 2 + 0.2) * f - 0.25 * Math.sin(Math.min(1, q * 2) * Math.PI) + bn, 0, Math.sin(q * 9) * 0.12 * (1 - q)); u.body.position.set(0, 0.4 * f + bn * 1.5, -1 * f);
+    u.armL.rotation.set(-0.6 * (1 - f) + 0.2 * f, 0, -0.9 * f); u.armR.rotation.set(-0.6 * (1 - f) + 0.2 * f, 0, 0.9 * f); u.head.rotation.set(0.5 * f, 0, 0.2 * f); u.legL.rotation.x = u.legR.rotation.x = 0.3 * f; u.legL.rotation.z = 0.25 * f; u.legR.rotation.z = -0.25 * f;
+    if (q >= 1 && !E.dnD && view) { E.dnD = 1; view.burst(E.x, 0.2, E.z, 0xb8aa94, 10, 4, 0.5, 0.16); }
+  } else { E.dnT = 0; E.dnD = 0; if (u.legL.rotation.z) u.legL.rotation.z = u.legR.rotation.z = 0; }
   floorGuard(m, u);
   if (u.light) u.light.intensity = (p.dn ? 3 : 15);
 }

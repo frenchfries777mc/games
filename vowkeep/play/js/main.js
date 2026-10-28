@@ -121,13 +121,32 @@ function paintWho() {
   const lv = roleLevel(SAVE.xp[SAVE.role] || 0);
   $('who').innerHTML = '';
   const s = document.createElement('span'); s.className = 'tx'; s.textContent = (loggedIn() ? myName() : T('로그인 안 함')) + ' · ' + ROLES[SAVE.role].name + ' Lv ' + lv + ' · ' + T('vC {0}', SAVE.honor); $('who').appendChild(s);
+  if (loggedIn()) { const pb = document.createElement('button'); pb.textContent = T('프로필'); pb.onclick = openProfile; $('who').appendChild(pb); }
   if (!loggedIn() && window.FFAuth) { const b = document.createElement('button'); b.textContent = T('로그인'); b.onclick = () => { try { FFAuth.openLogin(); } catch (e) { } }; $('who').appendChild(b); }
 }
 // 계정 연동: 플레이 기록과 업적을 Frenchfries777 계정 프로필로 보내요
 let ffMarked = '', ffAchT = 0;
 function ffProfile() {
   if (window.FFProfile) return Promise.resolve(true);
-  return new Promise(res => { const s = document.createElement('script'); s.src = 'https://frenchfries777mc.github.io/games/ff-profile.js?v=20261024b'; s.onload = () => res(!!window.FFProfile); s.onerror = () => res(false); document.head.appendChild(s); });
+  return new Promise(res => { const s = document.createElement('script'); s.src = 'https://frenchfries777mc.github.io/games/ff-profile.js?v=20261028'; s.onload = () => { regStats(); res(!!window.FFProfile); }; s.onerror = () => res(false); document.head.appendChild(s); });
+}
+// 공용 프로필 창: 이름·프로필 변경은 허브에서만, 여기서는 Vowkeep 통계만 아래에 붙여요
+async function openProfile() {
+  try { const sb = FFAuth.client(), u = FFAuth.user(); if (sb && u && await ffProfile()) FFProfile.open(sb, u.id); } catch (e) { }
+}
+function regStats() {
+  if (!window.FFProfile || regStats.done) return; regStats.done = true;
+  FFProfile.gameStats('vowkeep', function (box, ctx) {
+    const row = (a, b) => '<div class="gr"><span>' + ctx.esc(a) + '</span><b>' + ctx.esc(String(b)) + '</b></div>';
+    let h = '';
+    ROLE_IDS.forEach(r => { const cl = SAVE.clears[r] | 0; h += row(ROLES[r].name, 'Lv ' + roleLevel(SAVE.xp[r] || 0) + (cl ? ' · ' + T('{0}장까지 완료', cl) : '')); });
+    h += row(T('가장 먼 장'), (SAVE.chMax | 0) + 1);
+    h += row(T('vC'), SAVE.honor);
+    h += row(T('도전과제'), ACHIEVEMENTS.filter(a => SAVE.ach[a.id]).length + ' / ' + ACHIEVEMENTS.length);
+    const wk = SAVE.wkRec || {}, n = Object.keys(wk).filter(k => wk[k] && wk[k].best).length;
+    if (n) h += row(T('주간 원정 완주'), T('{0}회', n));
+    return h;
+  });
 }
 // 허브 코인 → vC: 허브에서 바꾼 코인을 로그인할 때 한 번씩 받아 와요 (1코인 = 20vC)
 async function claimVC() {
