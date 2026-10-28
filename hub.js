@@ -400,7 +400,31 @@ async function ranking(){
 }
 
 /* 게임마다 순위 기준이 달라요: Stickseum = 이번 시즌(한국 달력 월) 랭크 점수(ranked_ratings), Isleport = 재산(ff_wealth, supabase-ff-wealth.sql), Beaconfall = 최장 생존 일수(ff_survival, supabase-ff-survival.sql) */
+/* Stickseum 랭킹은 둘로 나눠 보여 줘요: 왼쪽 = 이번 시즌 랭크 레이팅(ranked_ratings), 오른쪽 = 캐릭터 마스터리 점수(profiles.stats.cp, 없으면 ck*10; stickseum/chars.json 에 캐릭터 이름) */
+var rkChars=null;
+async function rankingStk(box){
+  var season=new Date(Date.now()+9*36e5).toISOString().slice(0,7), n=function(v){ try{ return Number(v).toLocaleString(); }catch(e){ return v; } };
+  var res=await Promise.all([
+    sb.from('ranked_ratings').select('user_id,rating').eq('season',season).order('rating',{ascending:false}).order('wins',{ascending:false}).limit(20),
+    sb.from('profiles').select('id,ck:stats->ck,cp:stats->cp').not('stats->ck','is',null).limit(3000),
+    rkChars?Promise.resolve(rkChars):fetch('https://frenchfries777mc.github.io/games/stickseum/chars.json').then(function(r){ return r.json(); }).catch(function(){ return {}; })]);
+  if(rkGame!=='stickseum') return;
+  var L=res[0], M=res[1]; rkChars=res[2]||{};
+  if(L.error){ box.innerHTML='<div class="cm-e">'+esc(errText(L.error))+'</div>'; return; }
+  var lrows=L.data||[], mrows=[];
+  ((M&&!M.error&&M.data)||[]).forEach(function(x){ var ck=x.ck||{}, cp=x.cp||{}, ids={}; Object.keys(ck).forEach(function(w){ ids[w]=1; }); Object.keys(cp).forEach(function(w){ ids[w]=1; });
+    Object.keys(ids).forEach(function(w){ var pt=cp[w]!=null?+cp[w]:(+ck[w]||0)*10; if(pt>0) mrows.push({user_id:x.id,w:w,pts:pt}); }); });
+  mrows.sort(function(a,b){ return b.pts-a.pts; }); mrows=mrows.slice(0,20);
+  await loadNames(lrows.map(function(x){ return x.user_id; }).concat(mrows.map(function(x){ return x.user_id; })));
+  if(rkGame!=='stickseum') return;
+  var medal=function(i){ return i<3?['🥇','🥈','🥉'][i]:i+1; }, mine=function(x){ return me&&x.user_id===me.id?' me':''; };
+  var lh='<table class="rkt"><tr><th></th><th>닉네임</th><th>점수</th></tr>'+(lrows.length?lrows.map(function(x,i){ return '<tr class="'+(i<3?'t'+(i+1):'')+mine(x)+'"><td>'+medal(i)+'</td><td>'+who(x.user_id)+'</td><td class="pt" data-notr>'+n(x.rating)+'</td></tr>'; }).join(''):'<tr><td colspan="3" class="cm-e">이번 시즌 랭크전 기록이 아직 없어요.</td></tr>')+'</table><div class="rk-n">'+esc(F('{0} 시즌 · 매달 새로 시작해요',season))+'</div>';
+  var rh='<table class="rkt"><tr><th></th><th>닉네임 · 캐릭터</th><th>마스터리 점수</th></tr>'+(mrows.length?mrows.map(function(x,i){ var c=rkChars[x.w]; return '<tr class="'+(i<3?'t'+(i+1):'')+mine(x)+'"><td>'+medal(i)+'</td><td>'+who(x.user_id)+' <span data-notr>'+esc(c?c[1]+' '+c[0]:x.w)+'</span></td><td class="pt" data-notr>'+n(x.pts)+'</td></tr>'; }).join(''):'<tr><td colspan="3" class="cm-e">아직 마스터리 기록이 없어요.</td></tr>')+'</table>';
+  box.innerHTML='<style>.rk-two{display:grid;grid-template-columns:1fr 1fr;gap:18px}.rk-two h4{margin:0 0 6px;font-size:14px}.rk-two .rkt td:nth-child(2){max-width:none;white-space:normal}@media(max-width:760px){.rk-two{grid-template-columns:1fr}}</style><div class="rk-two"><div><h4>랭크 레이팅</h4>'+lh+'</div><div><h4>캐릭터 마스터리</h4>'+rh+'</div></div>';
+}
+
 async function rankingBy(g,box){
+  if(g==='stickseum') return rankingStk(box);
   var st=g==='stickseum', bf=g==='beaconfall', tb=st?'ranked_ratings':bf?'ff_survival':'ff_wealth', col=st?'rating':bf?'days':'wealth', season=new Date(Date.now()+9*36e5).toISOString().slice(0,7);
   var q=sb.from(tb).select(st?'user_id,rating,wins,losses':'user_id,'+col);
   if(st) q=q.eq('season',season).order('rating',{ascending:false}).order('wins',{ascending:false}); else q=q.order(col,{ascending:false});
