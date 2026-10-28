@@ -1555,7 +1555,7 @@ const ULTS = {
 
 /* ================= GOLD & COSMETICS ================= */
 const SAVE_KEY='arenaClashSave_v1';
-window.addEventListener('DOMContentLoaded', ()=>{ const t=document.getElementById('buildTag'); if(t && typeof GAME_BUILD!=='undefined') t.textContent='v'+GAME_VERSION+' '+GAME_VERSION_NAME; /* the in-match top bar: no build number */ const bv=document.getElementById('brandVer'); if(bv && typeof GAME_BUILD!=='undefined') bv.textContent='v'+GAME_VERSION; const lb=document.getElementById('lobbyBuild'); if(lb && typeof GAME_BUILD!=='undefined') lb.textContent='v'+GAME_VERSION+' '+GAME_VERSION_NAME+' · '+GAME_BUILD.replace(/^build \S*-v(\d+)$/,'build $1'); });
+window.addEventListener('DOMContentLoaded', ()=>{ const t=document.getElementById('buildTag'); if(t && typeof GAME_BUILD!=='undefined') t.textContent='v'+GAME_VERSION+' '+GAME_VERSION_NAME; /* the in-match top bar: no build number */ const bv=document.getElementById('brandVer'); if(bv && typeof GAME_BUILD!=='undefined') bv.textContent='v'+GAME_VERSION; const lb=document.getElementById('lobbyBuild'); if(lb && typeof GAME_BUILD!=='undefined') lb.textContent='v'+GAME_VERSION+' '+GAME_VERSION_NAME+' · '+GAME_BUILD.replace(/^build \S*-v(\d+)$/,'b$1'); });
 const KILL_GOLD=5, ASSIST_GOLD=3, ASSIST_WINDOW=10;
 /* the purple currency: a kill gives SOUL_PER_KILL of them (an assist, a match end or practice give none); they are spent on random boxes only.
    To rename it change the name / icon / colour right here - every text, the shop and the kill feed read it from this one place. */
@@ -5462,14 +5462,15 @@ function shuffle(arr){ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.
 /* ===== the version of this file =====
    Different BUILDS of one version meet and play together (room names online-v<ver>-<mode>-<map>-<slot>); different VERSIONS (the 0.x part) never do - the host refuses them (verNo) and the dispatcher answers busy.
    The build is only sent along with the join message and the lobby (for information); the corner of the screen shows it. */
-const GAME_BUILD='build 2026-10-18-v475';
+const GAME_BUILD='build 2026-10-18-v476';
 const GAME_VERSION='0.9', GAME_VERSION_NAME='은하 제국의 황혼';   // 게임 버전 이름: versions.json의 title과 같게 (빌드마다 바꾸지 않음)
 /* version (the 0.x part) vs build: different BUILDS of one version meet and play together, different VERSIONS never do (rooms, quick match, ranked, friend invites, dispatcher).
    Builds before 470 do not send a version, so it is read from the build number (0.9 started at build 458). */
 function buildNum(b){ const m=/-v(\d+)$/.exec(String(b||'')); return m?+m[1]:0; }
+function bLabel(b){ const n=buildNum(b); return n ? 'b'+n : '오래된 버전'; }          // a build is always shown as b123 (a version as v0.9)
 function verOf(d){ if(d && typeof d.ver==='string' && d.ver) return d.ver; const n=buildNum(d&&d.build); return n>=458 ? '0.9' : (n>0 ? '0.8' : '?'); }
 const VER_TAG=GAME_VERSION.replace(/\D/g,'');          // (in room names: 0.9 -> '09')
-function verNoteText(other){ return '버전이 달라요 (내 '+GAME_VERSION+' / 방 '+(other||'?')+') - 같은 버전끼리만 함께할 수 있어요'; }
+function verNoteText(other){ return '버전이 달라요 (내 v'+GAME_VERSION+' / 방 v'+(other||'?')+') - 같은 버전끼리만 함께할 수 있어요'; }
 const WEEKLY_EVENTS=[
   {id:'lowg',    name:'저중력 난투', desc:'몸이 둥실둥실, 중력이 약해진 난투', rules:{grav:0.6}},
   {id:'tank',    name:'탱크 파티',   desc:'체력은 3배, 넉백은 절반', rules:{hp:3, kb:0.5}},
@@ -10039,7 +10040,7 @@ function onHostData(conn, data){
     return;
   }
   if((data.t==='join' || data.t==='spectate' || data.t==='probe') && verOf(data)!==GAME_VERSION){ safeSend(conn, {t:'verNo', ver:GAME_VERSION}); setTimeout(()=>{ try{conn.close();}catch(e){} }, 400); return; }        // another VERSION (not just another build): never in my room
-  if(data.t==='join' && data.build!==GAME_BUILD){ try{ pushSystemLine((String(data.name||'플레이어').slice(0,15))+'님은 다른 버전이에요 ('+(data.build?data.build.replace('build ',''):'오래된 버전')+' / 내 버전 '+GAME_BUILD.replace('build ','')+') - 채팅·스킨이 다르게 보일 수 있어요'); }catch(e){} }
+  if(data.t==='join' && data.build!==GAME_BUILD){ try{ pushSystemLine((String(data.name||'플레이어').slice(0,15))+'님은 다른 빌드예요 ('+bLabel(data.build)+' / 내 빌드 '+bLabel(GAME_BUILD)+') - 채팅·스킨이 다르게 보일 수 있어요'); }catch(e){} }
   if(data.t==='probe'){
     safeSend(conn, {t:'probeReply', count:Object.keys(players).length, max:effectiveMaxPlayers(currentMapId,gameMode), started:started});
     return;
@@ -10472,7 +10473,7 @@ function onClientData(data, mode, code){
     if(data.rules) roomRules=cleanRules(data.rules);
     if(data.opts) roomOpts=cleanOpts(data.opts);
     if(data.mapId && MAP && data.mapId!==currentMapId && MAP_TEMPLATES[data.mapId]){ MAP=MAP_TEMPLATES[data.mapId]; currentMapId=data.mapId; refreshRoomLabel(); try{ renderMapPreview(data.mapId, document.getElementById('mapPreviewCanvas')); }catch(e){} }
-    if(!window.__versionNoted){ window.__versionNoted=true; if(data.build!==GAME_BUILD && currentMode!=='online'){ try{ pushSystemLine('방장 파일은 다른 버전이에요 ('+(data.build?data.build.replace('build ',''):'오래된 버전')+' / 내 버전 '+GAME_BUILD.replace('build ','')+') - 채팅·스킨이 다르게 보일 수 있어요'); }catch(e){} } }
+    if(!window.__versionNoted){ window.__versionNoted=true; if(data.build!==GAME_BUILD && currentMode!=='online'){ try{ pushSystemLine('방장 파일은 다른 빌드예요 ('+bLabel(data.build)+' / 내 빌드 '+bLabel(GAME_BUILD)+') - 채팅·스킨이 다르게 보일 수 있어요'); }catch(e){} } }
     if(!MAP){ MAP=MAP_TEMPLATES[data.mapId]; currentMapId=data.mapId; gameMode=data.gameMode||'ffa'; weaponMode=data.weaponMode||'normal'; enterRoomScreen(mode, data.mapId, code); resetFlowState(); }
     players={};
     for(const pl of data.list) players[pl.id]=ensurePlayerDefaults(pl);
