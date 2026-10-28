@@ -325,3 +325,5 @@ patchnotes.json | v484 items[0] | 오로라 스킨을 입으면 배경 하늘에
 - 프로필 화면: 공유 카드 아래에 통계, '프로필 꾸미기' 버튼 이름 (한국어만)
 patchnotes.json | v487 title | 은하 제국의 황혼 | build 487 | 2026-10-29
 patchnotes.json | v487 items[0] | 프로필 화면을 공유 프로필 카드로 통일 (스틱세움 통계는 카드 아래) | build 487 | 2026-10-29
+patchnotes.json | v488 title | 은하 제국의 황혼 | build 488 | 2026-10-29
+patchnotes.json | v488 items[0] | 프로필 화면의 꾸미기 버튼 삭제 | build 488 | 2026-10-29
