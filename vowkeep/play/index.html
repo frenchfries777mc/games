@@ -282,10 +282,10 @@ body.touch #prompt.up,#prompt.up{bottom:262px}
 <div id="touch"><div id="joy"><div id="joyBase"><div id="joyKnob"></div></div></div>
   <div id="tbtns"><button id="tA"><span>공격</span></button><button id="tQ"><i class="cd"></i><span>Q</span></button><button id="tE"><i class="cd"></i><span>E</span></button><button id="tR"><i class="cd"></i><span>R</span></button><button id="tRoll"><i class="cd"></i><span>구르기</span></button><button id="tF"><span>F</span></button></div>
 </div>
-<style>html,body,*{touch-action:manipulation}</style>
+<style>html,body,*{touch-action:manipulation}#ffpModal .dc{display:none!important}</style>
 <script>["gesturestart","gesturechange","gestureend"].forEach(function(e){document.addEventListener(e,function(x){x.preventDefault()})});</script>
 <script>/* 옛 빌드가 캐시에서 뜨면: 사이트에 더 새 빌드가 있을 때 그 빌드 번호를 주소에 넣어 한 번만 다시 불러와요 (새 주소는 캐시에서 나오지 않아요) */
 (function(){try{var m=document.querySelector('script[src*="js/main.js"]').src.match(/v=(\d+)/),cur=m?+m[1]:0;fetch('../versions.json?t='+Date.now(),{cache:'no-store'}).then(function(r){return r.json()}).then(function(j){var v=(j.versions||[]).find(function(x){return x.version==='0.2'}),n=v?+String(v.build||'').replace(/\D/g,''):0,u=new URL(location.href);if(n>cur&&u.searchParams.get('b')!==String(n)){u.searchParams.set('b',n);location.replace(u.toString())}}).catch(function(){})}catch(e){}})();</script>
-<script type="module" src="js/main.js?v=59"></script>
+<script type="module" src="js/main.js?v=60"></script>
 </body>
 </html>
