@@ -455,7 +455,7 @@ try{if(sessionStorage.getItem('ce_noIntro')){sessionStorage.removeItem('ce_noInt
 sting();})();</script>
 <div id="app">
  <div id="lobby" class="screen">
-  <canvas id="lobbyBg"></canvas><canvas id="lobbyWar"></canvas><div id="cpTag">© 2026 Frenchfries777 · <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.ko" target="_blank" rel="noopener">CC BY-NC-ND 4.0</a></div><div id="verTag">v0.5 · build 119</div>
+  <canvas id="lobbyBg"></canvas><canvas id="lobbyWar"></canvas><div id="cpTag">© 2026 Frenchfries777 · <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.ko" target="_blank" rel="noopener">CC BY-NC-ND 4.0</a></div><div id="verTag">v0.5 · build 120</div>
   <header class="brand"><h1>Crown Envoy</h1><div class="sub"><i></i>DIPLOMACY · WAR · EMPIRE<i></i></div></header>
   <div id="lobbyRight">
    <div id="lobbyHome" class="modes">
@@ -4082,6 +4082,16 @@ const ffRoom=code=>{try{if(window.FFAuth&&FFAuth.setRoom)FFAuth.setRoom(code?{ga
    방장이 창을 닫으면 presence가 저절로 사라져 목록에서도 빠진다. */
 /* 버전(0.x)이 다르면 같이 할 수 없다: 빌드 번호는 달라도 된다. 파일을 새 버전으로 복사할 때 이 값도 함께 바꾼다 */
 const CE_VER='0.5';
+/* 옛 빌드가 캐시에서 떴으면 최신 빌드를 확인해 한 번만 새 주소로 다시 불러온다 (게임을 시작하기 전에만) */
+(function(){try{const own=(()=>{const m=/build (\d+)/.exec((document.getElementById('verTag')||{}).textContent||'');return m?+m[1]:0;})();if(!own||location.protocol==='file:')return;
+  const base=location.pathname.split('/').pop()||'';
+  fetch('versions.json?t='+Date.now(),{cache:'no-store'}).then(r=>r.ok?r.json():Promise.reject()).then(d=>{
+    if(base!==d.latestFile&&base!=='CrownEnvoy-latest.html')return;const L=(d.versions||[]).find(v=>v.latest)||(d.versions||[])[0];if(!L)return;
+    const lb=+String(L.build||'').replace(/\D/g,'');if(!(lb>own))return;
+    let tried=null;try{tried=sessionStorage.getItem('ce_fresh');}catch(_){}if(tried===String(lb))return;
+    try{if(typeof C!=='undefined'&&(C.started||(Net&&Net.mode)))return;}catch(_){}
+    try{sessionStorage.setItem('ce_fresh',String(lb));}catch(_){}
+    const u=new URL(location.href);u.searchParams.set('b',String(lb));location.replace(u.toString());}).catch(()=>{});}catch(_){}})();
 function verMismatch(other){try{if(Net.peer)Net.peer.destroy();}catch(_){}try{Net.clearSession();}catch(_){}try{UI.show('home');}catch(_){}
   UI.info('<b>버전이 달라요</b><br>같은 버전끼리만 같이 할 수 있어요.<br>내 버전 v'+CE_VER+' · 상대 버전 '+(other?'v'+esc(other):'v0.4 이하')+'<br>빌드 번호가 달라도 버전만 같으면 돼요.');}
 const RoomList={ch:null,_p:null,cb:null,ok:false,_last:null,
@@ -5609,7 +5619,7 @@ const UI={
     h+=`<div class="sm muted" style="margin-top:8px">최근 변화</div>`;const lg=M.log.map(e=>({r:e.r,d:Math.round(e.d),why:e.why})).filter(e=>e.d).sort((a,b)=>a.r-b.r);h+=lg.length?lg.map(e=>row((e.r?'지난 턴':'이번 턴')+' · '+e.why,sg(e.d),col(e.d))).join(''):`<div class="sm muted">변화 없음</div>`;
     if(me.rs&&me.rs.rev>0)h+=`<div class="sm" style="margin-top:8px;color:var(--bad)">자원이 바닥나 반란 확률 +${me.rs.rev}%</div>`;UI.info(h);},
   /* 나가기: 새 창으로 열린 게임은 스크립트로 닫을 수 있다. 막히면 기본 팝업 대신 자체 창으로 안내한다 */
-  closeWin(){try{window.close();}catch(_){}setTimeout(()=>{UI.ask('브라우저가 이 창을 닫지 못했어요. 탭을 직접 닫거나 사이트로 이동해 주세요.',()=>{location.href='https://frenchfries777mc.github.io/games/';},{yes:'사이트로 이동',no:'그대로 있기'});},400);},
+  closeWin(){try{window.close();}catch(_){}setTimeout(()=>{UI.ask('브라우저가 이 창을 닫지 못했어요. 탭을 직접 닫거나 사이트로 이동해 주세요.',()=>{location.href='https://frenchfries777mc.github.io/games/?r='+Date.now();},{yes:'사이트로 이동',no:'그대로 있기'});},400);},
   closeAsk(yes){const box=$('#askbox');if(box)box.className='hidden';const f=UI._askYes;UI._askYes=null;if(UI.stk[UI.stk.length-1]==='ask')UI.stk.pop();if(yes&&f)setTimeout(f,0);},
   /* ----- 뒤로 가기: 버튼·Esc·브라우저 뒤로 가기가 모두 같은 길을 탄다 ----- */
   /* 화면(층)을 쌓아 두고, 브라우저 히스토리에는 '함정 항목'을 하나만 둔다.
