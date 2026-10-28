@@ -1567,6 +1567,17 @@ function xpForLevel(lv){ lv=Math.max(1,Math.floor(lv||1)); if(lv<=PLAYER_KNEE) r
 function levelFromXp(xp){ xp=Math.max(0,+xp||0); const kx=xpForLevel(PLAYER_KNEE); if(xp<kx) return Math.floor(Math.sqrt(xp/50))+1; return PLAYER_KNEE+Math.floor((xp-kx)/PLAYER_FLAT); }
 /* the per-level cost went 950 -> 1000: a save without xc=1000 keeps its level and the progress inside it (xp is rescaled once), so nobody drops or jumps a level */
 function migrateXpCurve(s){ if(!s || typeof s!=='object' || s.xc===PLAYER_FLAT) return s; const kx=50*(PLAYER_KNEE-1)*(PLAYER_KNEE-1), x=Math.max(0,+s.xp||0); if(x>=kx){ const d=x-kx, lv=Math.floor(d/950), fr=(d-lv*950)/950; s.xp=Math.round(kx+(lv+fr)*PLAYER_FLAT); } s.xc=PLAYER_FLAT; return s; }
+/* 계급 scale of 2026-10-28: 옵시디언 was removed, 크리스탈 (3050) and 아메시스트 (4800) were added, 마스터 now needs 7000 and 그랜드 마스터 9000.
+   Nobody loses a rank: every character's points are lifted ONCE (marker rk=2, like xc above) to where the same rank starts now.
+   Old 옵시디언 (3050-4799) -> 크리스탈 III (4220) or, from the middle on, 아메시스트 I (4800); old 마스터 -> 마스터 (7000); old 그랜드 마스터 -> 그랜드 마스터 (9000). Lower ranks keep their points. */
+const RANK_SCALE_VER=2;
+function rankScaleUp(p){ if(p>=7000) return Math.max(p,9000); if(p>=4800) return Math.max(p,7000); if(p>=3050) return p<3925 ? Math.max(p,4220) : Math.max(p,4800); return p; }
+function migrateRankScale(s){
+  if(!s || typeof s!=='object' || s.rk===RANK_SCALE_VER) return s;
+  const pts=(s.charPts&&typeof s.charPts==='object')?s.charPts:{}, ck=(s.charKills&&typeof s.charKills==='object')?s.charKills:{};
+  for(const w of new Set(Object.keys(pts).concat(Object.keys(ck)))){ const p0=(pts[w]!==undefined)?+pts[w]||0:Math.round((+ck[w]||0)*10), p1=rankScaleUp(p0); if(pts[w]!==undefined || p1!==p0) pts[w]=p1; }
+  s.charPts=pts; s.rk=RANK_SCALE_VER; return s;
+}
 function addXP(n){
   if(n<=0) return;
   saveData.xp=(saveData.xp||0)+n;
@@ -1578,7 +1589,7 @@ function loadSave(){
   try{
     const s=JSON.parse(localStorage.getItem(SAVE_KEY)||'null');
     if(s){
-      migrateXpCurve(s);
+      migrateXpCurve(s); migrateRankScale(s);
       gold=Math.max(0,+s.gold||0); saveData.owned=s.owned||{}; saveData.equipped=Object.assign({name:null, skin:{}}, s.equipped||{}); if(!saveData.equipped.skin||typeof saveData.equipped.skin!=='object') saveData.equipped.skin={};
       saveData.xp=Math.max(0,+s.xp||0); saveData.totalKills=Math.max(0,+s.totalKills||0); saveData.totalMatches=Math.max(0,+s.totalMatches||0);
       saveData.totalWins=Math.max(0,+s.totalWins||0); saveData.winStreak=Math.max(0,+s.winStreak||0); saveData.maxStreak=Math.max(saveData.winStreak,0,+s.maxStreak||0); saveData.totalDamage=Math.max(0,+s.totalDamage||0); saveData.totalAssists=Math.max(0,+s.totalAssists||0);
@@ -1600,7 +1611,7 @@ function persistSave(){
   try{ sbScheduleCloudSave(); }catch(e){}       // (and keeps the progress in the account - see cloudSaveUpload)
   try{
     localStorage.setItem(SAVE_KEY, JSON.stringify({
-      gold, owned:saveData.owned, equipped:saveData.equipped, xp:saveData.xp, xc:PLAYER_FLAT, totalKills:saveData.totalKills, totalMatches:saveData.totalMatches,
+      gold, owned:saveData.owned, equipped:saveData.equipped, xp:saveData.xp, xc:PLAYER_FLAT, rk:RANK_SCALE_VER, totalKills:saveData.totalKills, totalMatches:saveData.totalMatches,
       totalWins:saveData.totalWins, winStreak:saveData.winStreak||0, maxStreak:Math.max(saveData.maxStreak||0,saveData.winStreak||0), totalDamage:saveData.totalDamage, totalAssists:saveData.totalAssists,
       modeMatches:saveData.modeMatches, charKills:saveData.charKills, charPts:saveData.charPts, avatar:saveData.avatar, playerName:saveData.playerName, nameDirty:!!saveData.nameDirty,
       achievements:saveData.achievements, weaponXp:saveData.weaponXp,
@@ -5471,7 +5482,7 @@ function shuffle(arr){ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.
 /* ===== the version of this file =====
    Players with different versions CAN meet and play together: the automatic matchmaking uses the same room names for every version (online-<mode>-<map>-<slot>), and nobody is refused because of a different build.
    The build is only sent along with the join message and the lobby (for information); the corner of the screen shows it. */
-const GAME_BUILD='build 2026-10-18-v463';
+const GAME_BUILD='build 2026-10-18-v464';
 const GAME_VERSION='0.9', GAME_VERSION_NAME='은하 제국의 황혼';   // 게임 버전 이름: versions.json의 title과 같게 (빌드마다 바꾸지 않음)
 const WEEKLY_EVENTS=[
   {id:'lowg',    name:'저중력 난투', desc:'몸이 둥실둥실, 중력이 약해진 난투', rules:{grav:0.6}},
@@ -7783,10 +7794,10 @@ function clanSyncMyName(id){            // my row in the clan list keeps the nic
 const SAVE_FIELDS=['gold','xp','owned','equipped','totalKills','totalMatches','totalWins','winStreak','maxStreak','totalDamage','totalAssists','modeMatches','charKills','charPts','avatar','playerName','achievements','weaponXp','boxes','boxesOpened','dailyLast','dailyCount','souls','pxEarned','pxSpent','missions','season'];
 const CLOUD_META_KEY='stickseumSave', CLOUD_MAX_CHARS=3600, CLOUD_MIN_GAP_MS=30000, CLOUD_DEBOUNCE_MS=20000;
 let cloudSaveState='off', cloudSaveReady=false, cloudSaveTimer=null, cloudSaveLastJson='', cloudSaveLastAt=0, cloudSaveNote='', cloudSaveBackoffUntil=0, sbUserMeta={};
-function cloudSavePayload(){ const o={v:1}; for(const k of SAVE_FIELDS) o[k]=(k==='gold') ? gold : saveData[k]; o.xc=PLAYER_FLAT; o.at=Date.now(); return JSON.parse(JSON.stringify(o)); }
+function cloudSavePayload(){ const o={v:1}; for(const k of SAVE_FIELDS) o[k]=(k==='gold') ? gold : saveData[k]; o.xc=PLAYER_FLAT; o.rk=RANK_SCALE_VER; o.at=Date.now(); return JSON.parse(JSON.stringify(o)); }
 function cloudScore(s){ return (+s.xp||0) + (+s.totalMatches||0)*3 + Object.keys(s.owned||{}).length*10 + Object.keys(s.achievements||{}).length*10; }
 function mergeSaves(local, cloud){
-  migrateXpCurve(local); migrateXpCurve(cloud);
+  migrateXpCurve(local); migrateXpCurve(cloud); migrateRankScale(local); migrateRankScale(cloud);
   const base = cloudScore(cloud) > cloudScore(local) ? cloud : local, other = base===cloud ? local : cloud;     // the one that has gone further is the base
   const m=JSON.parse(JSON.stringify(base));
   m.owned=Object.assign({}, other.owned||{}, base.owned||{});
@@ -7846,7 +7857,7 @@ async function cloudSaveSync(username, sameAccountAsLast){
   cloudSaveReady=false; cloudSaveNote='';
   if(!sb || !sbUser){ cloudSaveState='off'; return; }
   try{
-    const cloud=await unpackSave(sbUserMeta && sbUserMeta[CLOUD_META_KEY]), local=cloudSavePayload(); migrateXpCurve(cloud);
+    const cloud=await unpackSave(sbUserMeta && sbUserMeta[CLOUD_META_KEY]), local=cloudSavePayload(); migrateXpCurve(cloud); migrateRankScale(cloud);
     if(!cloud){ cloudSaveState='ok'; cloudSaveReady=true; if(!saveIsFresh()){ await cloudSaveUpload(true); } return; }                    // the account has no save yet: this browser's one becomes it
     if(saveIsFresh()){ applyCloudSave(cloud); cloudSaveNote='계정에 저장된 진행 상황을 불러왔어요'; }                                     // an empty browser takes over the account's progress
     else if(!sameAccountAsLast && (localStorage.getItem(LAST_USER_KEY)||'') && (localStorage.getItem(LAST_USER_KEY)||'')!==username){   // another account had played in this browser: keep its record safe, take this account's one
@@ -8966,7 +8977,7 @@ function openClanHub(tab){ if(sbUser) nickSyncWithProfile(sbUser.id); clanTab=ta
 let clanReqOk=true, clanReqEdit=null;          // clanReqOk turns false when the table has no such columns yet (the SQL was not run): the clan screen then works as before
 const CLAN_REQ_COLS=',req_level,req_master', CLAN_RANK_COL=',req_rank';
 let clanRankOk=true;          // false when the clans table has no req_rank column yet (supabase-clan-requirements-rank.sql was not run)
-const CLAN_RANK_NAMES=['없음','브론즈','실버','골드','플래티넘','다이아','옵시디언','마스터','그랜드 마스터'];       // req_rank 1..8: some character of the player must have this 마스터리 계급 (or higher)
+const CLAN_RANK_NAMES=['없음','브론즈','실버','골드','플래티넘','다이아','크리스탈','아메시스트','마스터'];       // req_rank 1..8: some character of the player must have this 마스터리 계급 (or higher)
 function clanRankMin(i){ const r=CHAR_RANKS.find(x=>x.name===CLAN_RANK_NAMES[i]); return r?r.min:0; }
 function clanBestRank(){ let b=0; for(const w of SELECTABLE_WEAPONS){ const k=charKillsFor(w); for(let i=CLAN_RANK_NAMES.length-1;i>b;i--) if(k>=clanRankMin(i)){ b=i; break; } } return b; }
 async function clanQ(build){
@@ -11234,11 +11245,12 @@ const CHAR_RANKS=[
   {min:530,  name:'골드',  color:'#ffd34d'},
   {min:880, name:'플래티넘',color:'#4dd9ff'},
   {min:1750, name:'다이아',  color:'#7bf3ff'},
-  {min:3050, name:'옵시디언',color:'#9a85ff'},
-  {min:4800, name:'마스터',  color:'#ff5fd2'},
-  {min:7000, name:'그랜드 마스터', color:'#ff5252'}
+  {min:3050, name:'크리스탈',color:'#74a9ff'},
+  {min:4800, name:'아메시스트',color:'#b36bff'},
+  {min:7000, name:'마스터',  color:'#ff5fd2'},
+  {min:9000, name:'그랜드 마스터', color:'#ff5252'}
 ];
-/* 계급(다이아, 마스터 ...) are earned with 마스터리 포인트 per character: kill 3, assist 1, win 4, match played 1 (owner 10-26). The thresholds above were kills; a typical match (3 kills, 1 assist, a win) is about 15 points, the new thresholds (owner 10-26: 1.75x the old kills, rounded: 90 / 260 / 530 / 880 / 1750 / 3050 / 4800 / 7000) are about 1.75 times harder than before */
+/* 계급(다이아, 마스터 ...) are earned with 마스터리 포인트 per character: kill 3, assist 1, win 4, match played 1 (owner 10-26). The thresholds above were kills; a typical match (3 kills, 1 assist, a win) is about 15 points, the new thresholds (owner 10-26: 1.75x the old kills, rounded: 90 / 260 / 530 / 880 / 1750 / 3050 / 4800 / 7000; owner 10-28: 옵시디언 is gone, 크리스탈 3050 and 아메시스트 4800 take its place, 마스터 moved up to 7000 and 그랜드 마스터 to 9000, see migrateRankScale) are about 1.75 times harder than before */
 const STREAK_BONUS=[[10,5],[7,4],[5,3],[3,2],[1,1]];
 function streakBonusFor(n){ for(const [a,b] of STREAK_BONUS) if(n>=a) return b; return 0; }       // (연승 보너스, owner 10-26: 1연승 +1, 3연승 +2, 5연승 +3, 7연승 +4, 10연승 이상 +5)
 function streakTagHtml(n){ n=Math.floor(+n||0); return n>=2 ? ' <span class="streakTag">🔥'+n+'연승</span>' : ''; }
