@@ -2,6 +2,46 @@
  "notes": [
   {
    "date": "2026-10-28",
+   "build": "v0.2 build 69",
+   "title": "프로필 창 정리",
+   "items": [
+    "게임 안 프로필 창에서 꾸미기 버튼 삭제"
+   ],
+   "tr": {
+    "en": {
+     "title": "Profile window cleanup",
+     "items": [
+      "Removed the customize button from the in-game profile window"
+     ]
+    },
+    "ja": {
+     "title": "Profile window cleanup",
+     "items": [
+      "Removed the customize button from the in-game profile window"
+     ]
+    },
+    "es": {
+     "title": "Profile window cleanup",
+     "items": [
+      "Removed the customize button from the in-game profile window"
+     ]
+    },
+    "fr": {
+     "title": "Profile window cleanup",
+     "items": [
+      "Removed the customize button from the in-game profile window"
+     ]
+    },
+    "de": {
+     "title": "Profile window cleanup",
+     "items": [
+      "Removed the customize button from the in-game profile window"
+     ]
+    }
+   }
+  },
+  {
+   "date": "2026-10-28",
    "build": "v0.2 build 68",
    "title": "옛 빌드가 뜨는 문제 고치기",
    "items": [
