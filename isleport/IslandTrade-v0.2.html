@@ -479,7 +479,7 @@ const TUT=[
  [P('다 자라면 ▼ 표시의 밭을 눌러 수확해요','When it is grown, tap the field with the ▼ to harvest'),s=>s.stats.harvest>=1],
  [P('마을 장터에서 수확한 것을 팔아요','Sell your harvest at the town market'),s=>(s.stats.shop||0)>=1],
  [P('항구에서 배에 짐을 싣고 보내요','Load a ship at the harbor and send it off'),s=>s.stats.sailed>=1]];
-const OUTMAX=12,BUILD=67;
+const OUTMAX=12,BUILD=68;
 const hasB=(s,b)=>s.slots.some(x=>x&&x.b===b);
 const rankOf=e=>{let r=0;RANKS.forEach((x,i)=>{if(e>=x[0])r=i;});return r;};
 /* 업적: id, 이름, 설명, 조건 */
@@ -601,6 +601,10 @@ A('nw1m',P('백만장자','Millionaire'),P('재산 1,000,000 모으기','Reach a
 const CROPK=Object.keys(CROPS),SPEC=['goldbarley','pomegranate','saffron','cloudcotton','seaweed','dragonfruit'],CROPK17=CROPK.filter(c=>!SPEC.includes(c));
 const ACHN={};ACH.forEach(a=>ACHN[a.id]=a);
 const NOTES=[
+ {date:'2026-10-28',build:'v0.2 build 68',title:P('옛 빌드가 뜨는 문제 고치기','Fix old build showing up'),items:[
+  P('사이트의 바로 플레이가 빌드 번호가 붙은 주소로 열림','Play on the site now opens a build-numbered address'),
+  P('옛 빌드가 캐시에서 뜨면 최신 빌드를 확인해 자동으로 한 번 다시 불러옴','If an old build loads from cache, the latest build is checked and reloaded once')
+ ]},
  {date:'2026-10-28',build:'v0.2 build 67',title:P('옛 버전 기록 막기','Old build guard'),items:[
   P('재산 순위에 보내는 값에 빌드 번호 함께 전송','Wealth ranking updates now include the build number'),
   P('새 버전이 나온 뒤 옛 버전 창은 순위와 업적을 올리지 않고 새로고침 안내','After a new version, an old window stops updating ranking and goals and asks for a refresh')
@@ -32489,6 +32493,7 @@ try{if(window.FFProfile)FFProfile.gameStats('isleport',function(box,ctx){if(!ctx
   let h=row(T('계급','Rank'),tx(RANKS[rankOf(st.earned||0)][1]))+row(T('번 돈','Earned'),fmt(st.earned||0))+row(T('가진 돈','Gold'),fmt(v.money||0))+row(T('가장 큰 판매','Best sale'),fmt(st.best||0))+row(T('수확','Harvested'),T('{0}개','{0}',st.harvest||0))+row(T('항해','Voyages'),T('{0}번','{0}',st.sailed||0)) +row(T('배','Ships'),(v.ships||[]).length);
   return h;});}catch(e){}
 document.addEventListener('gesturestart',e=>e.preventDefault());
+try{fetch('versions.json?t='+Date.now(),{cache:'no-store'}).then(r=>r.ok?r.json():null).then(v=>{const e=v&&(v.versions||[]).find(x=>x.latest),n=e?+String(e.build||'').replace(/\D/g,''):0,u=new URL(location.href);if(n>BUILD&&u.searchParams.get('b')!==String(n)){u.searchParams.set('b',n);location.replace(u.toString());}}).catch(()=>{});}catch(e){}
 try{fetch('versions.json',{cache:'no-store'}).then(r=>r.ok?r.json():null).then(v=>{if(v&&+v.minBuild>BUILD){STALE=true;if(S&&!MP.on)openModal('stale');else window.__staleNote=1;}}).catch(()=>{});}catch(e){}
 initLang();fit();initAuth();applyStatic();showTitle();
 try{const q=new URLSearchParams(location.search),jc=(q.get('join')||q.get('room')||'').trim().toUpperCase();if(/^[A-Z0-9]{4}$/.test(jc)){startSingle(true);startMP(false,jc);}}catch(e){}
