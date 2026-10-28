@@ -393,7 +393,7 @@ window.bfIntro=function(){if(run)return;run=1;t0=Date.now();el.classList.add('ru
     <button class="btn" data-act="skins"><span class="arrow">▶</span>스킨 상점<span class="en">SKIN SHOP</span></button>
     <button class="btn" data-act="stats"><span class="arrow">▶</span>통계<span class="en">STATS</span></button>
     <button class="btn" data-act="settings"><span class="arrow">▶</span>설정<span class="en">SETTINGS</span></button>
-    <p class="foot">v0.4<br>build 122</p>
+    <p class="foot">v0.4<br>build 123</p>
   </nav>
 </div>
 
@@ -1754,6 +1754,7 @@ ITEMS.torch={name:'횃불',place:'torch',icon(g){g.fillStyle='#5a3a1e';g.fillRec
 ITEMS.brick={name:'벽돌',place:'brickfloor',icon(g){g.fillStyle='#5a2a18';g.fillRect(1,3,10,7);g.fillStyle='#b8552e';g.fillRect(2,4,4,2);g.fillRect(7,4,3,2);g.fillRect(2,7,2,2);g.fillRect(5,7,4,2);g.fillStyle='#d98050';g.fillRect(2,4,4,1);g.fillRect(5,7,4,1);}};
 ITEMS.rail={name:'선로',place:'rail',icon(g){g.fillStyle='#6b4a2b';for(const x of [1,5,9])g.fillRect(x,2,2,8);g.fillStyle='#c9d0dc';g.fillRect(0,3,12,1);g.fillRect(0,8,12,1);g.fillStyle='#5b6270';g.fillRect(0,4,12,1);g.fillRect(0,9,12,1);}};
 ITEMS.train={name:'기차',icon(g){g.fillStyle='#14161c';g.fillRect(0,2,12,8);g.fillStyle='#b5333a';g.fillRect(1,3,5,6);g.fillStyle='#bfe6ff';g.fillRect(2,4,3,2);g.fillStyle='#3d4a5c';g.fillRect(6,5,5,4);g.fillStyle='#2a2f3a';g.fillRect(8,1,2,3);g.fillStyle='#ffe27a';g.fillRect(10,6,1,1);g.fillStyle='#c9d0dc';g.fillRect(1,10,2,1);g.fillRect(5,10,2,1);g.fillRect(9,10,2,1);}};
+ITEMS.railflag={name:'선로 깃발',place:'railflag',icon(g){g.fillStyle='#3d2412';g.fillRect(3,1,2,11);g.fillStyle='#8a5a2b';g.fillRect(4,1,1,11);g.fillStyle='#14161c';g.fillRect(5,1,6,5);g.fillStyle='#2f7a4a';g.fillRect(5,2,5,3);g.fillStyle='#8be0a8';g.fillRect(5,2,5,1);g.fillStyle='#f2c75a';g.fillRect(7,3,2,1);g.fillStyle='#c9d0dc';g.fillRect(1,11,8,1);}};
 ITEMS.conveyor={name:'컨베이어 벨트',place:'conveyor',icon(g){g.fillStyle='#14161c';g.fillRect(1,3,10,6);g.fillStyle='#3a3d4a';g.fillRect(1,4,10,4);g.fillStyle='#ffd24a';for(const x of [2,5,8]){g.fillRect(x,4,1,1);g.fillRect(x+1,5,1,2);g.fillRect(x,7,1,1);}}};
 ITEMS.paper={name:'종이',icon(g){g.fillStyle='#8a7a5a';g.fillRect(2,1,8,10);g.fillStyle='#f4ecd6';g.fillRect(3,2,6,8);g.fillStyle='#c9bb98';g.fillRect(4,4,4,1);g.fillRect(4,6,4,1);g.fillRect(4,8,3,1);}};
 ITEMS.soulwisp={name:'혼불 등',max:1,icon(g){
@@ -1993,6 +1994,7 @@ for(const tool of ['pickaxe','axe','sword','dagger','hoe'])for(const mat of MATS
 for(const [mat,out] of [['log','rwood'],['iron','riron'],['copper','rcopper'],['gold','rgold']])
   RECIPES.push({grp:'작업대 · 강화 재료',bench:true,pat:Array(7).fill({id:MI(mat),n:1}),out:[{id:out,n:1}]});
 RECIPES.unshift({grp:'작업대 · 강화 재료',bench:true,name:'강화석재',note:'돌 7개 · 설치하는 건축 재료예요 (도구는 못 만들어요)',pat:Array(7).fill({id:'stone',n:1}),out:[{id:'rstone',n:1}]});
+RECIPES.push({grp:'신호',bench:true,name:'선로 깃발',note:'선로 옆에 놓고 그 옆에 측정기를 붙이면 기차가 지나갈 때마다 신호를 보내요',pat:[{id:'stick',n:1},{id:'paper',n:1},{id:'gear',n:1}],out:[{id:'railflag',n:1}]});
 RECIPES.push({grp:'건축',bench:true,name:'깃발',note:'막대기 1 · 종이 1 · 섬에 꽂고 이름을 지어요',pat:[{id:'stick',n:1},{id:'paper',n:1}],out:[{id:'flag',n:1}]});
 RECIPES.push({grp:'건축',bench:true,name:'대형 기둥',note:'석재벽돌 6개 → 하늘로 솟은 큰 돌기둥 1개',pat:[{id:'sbrick',n:3},{id:'sbrick',n:3}],out:[{id:'gpil',n:1}]});
 RECIPES.push({grp:'건축',bench:true,name:'아치문',note:'석재벽돌 9개 → 지나다닐 수 있는 아치 1개',pat:[{id:'sbrick',n:3},{id:'sbrick',n:3},{id:'sbrick',n:3}],out:[{id:'arch',n:1}]});
@@ -4313,6 +4315,7 @@ const STRUCT={
   sorter:{layer:'c',block:false,item:'sorter',n:1,need:0.8},
   brickfloor:{layer:'f',block:false,item:'brick',n:1,need:0.8},
   rail:{layer:'f',block:false,item:'rail',n:1,need:0.5},
+  railflag:{layer:'o',block:true,item:'railflag',n:1,need:1.2},
   torch:{layer:'o',block:false,item:'torch',n:1,need:0.3},
   anvil:{layer:'o',block:true,item:'anvil',n:1,need:3},
   armorbench:{layer:'o',block:true,item:'armorbench',n:1,need:2.5},
@@ -4771,6 +4774,7 @@ function drawStruct(g,b){
   if(b.id==='chair'){drawChair(g,b);return;}
   if(b.id==='shelf'){drawShelf(g,b);return;}
   if(b.id==='clock'){drawClock(g,b);return;}
+  if(b.id==='railflag'){drawRailFlag(g,b);return;}
   if(b.id==='tele'){drawTele(g,b);return;}
   if(b.id==='port'){drawPort(g,b);return;}
   if(b.id==='guard'){drawGuard(g,b);return;}
@@ -7440,7 +7444,7 @@ const sgAt=(gx,gy)=>world.sgrid.get(gy*GW+gx);
 const tagColor=t=>{if(!t)return '#6a6f80';let h=0;for(const c of t)h=(h*31+c.charCodeAt(0))%360;return 'hsl('+h+',70%,62%)';};
 function adj(gx,gy,pred){const out=[];for(const [dx,dy] of NB4){const b=sgAt(gx+dx,gy+dy);if(b&&pred(b))out.push(b);}return out;}
 function gaugeMachine(g){
-  for(const [dx,dy] of NB4){const o=sgAt(g.gx+dx,g.gy+dy);if(o&&(o.id==='chest'||o.id==='miner'||o.id==='feller'||o.id==='crafter'||o.id==='clock'))return o;}
+  for(const [dx,dy] of NB4){const o=sgAt(g.gx+dx,g.gy+dy);if(o&&(o.id==='chest'||o.id==='miner'||o.id==='feller'||o.id==='crafter'||o.id==='clock'||o.id==='railflag'))return o;}
   {const l=beltsNear(g.gx,g.gy);if(l.length)return l[0].b;}
   return null;
 }
@@ -7849,6 +7853,15 @@ function drawFence(g,b){
   if(N){g.fillStyle='#3d2412';g.fillRect(cx+7,cy+0,2,6);g.fillStyle='#8a5a2b';g.fillRect(cx+7,cy+0,1,6);}
   g.fillStyle='#3d2412';g.fillRect(cx+6,cy+2,4,13);g.fillStyle='#6b4423';g.fillRect(cx+7,cy+3,2,11);g.fillStyle='#8a5a2b';g.fillRect(cx+7,cy+3,1,11);g.fillStyle='#c9904f';g.fillRect(cx+6,cy+2,4,1);
 }
+function drawRailFlag(g,b){
+  const cx=b.gx*GRID,cy=b.gy*GRID,fx=b.fxT>time,w=Math.round(Math.sin(time*4+b.gx)*1);
+  g.fillStyle='rgba(8,24,12,0.3)';g.fillRect(cx+3,cy+GRID,9,1);
+  g.fillStyle='#3d2412';g.fillRect(cx+4,cy+1,2,14);g.fillStyle='#8a5a2b';g.fillRect(cx+5,cy+1,1,14);
+  g.fillStyle='#14161c';g.fillRect(cx+6,cy+1,8,6+w);
+  g.fillStyle=fx?'#ffe27a':'#2f7a4a';g.fillRect(cx+7,cy+2,6,4+w);
+  g.fillStyle=fx?'#ffffff':'#8be0a8';g.fillRect(cx+7,cy+2,6,1);
+  g.fillStyle='#14161c';g.fillRect(cx+3,cy+13,6,2);g.fillStyle='#c9d0dc';g.fillRect(cx+4,cy+13,4,1);
+}
 function drawClock(g,b){
   const cx=b.gx*GRID,cy=b.gy*GRID,m=MATCOL.brass,hr=hourNow(),fx=b.fxT>time;
   g.fillStyle='rgba(8,24,12,0.3)';g.fillRect(cx+1,cy+GRID,GRID-1,1);
@@ -8214,7 +8227,7 @@ function openSignalUI(b){
   }else if(b.id==='gauge'&&gaugeMachine(b)&&gaugeMachine(b).id==='crafter'){
     openModal(`<h2>측정기<small>GAUGE</small></h2><div class="row col"><label>자동제작장치가 아이템을 하나 만들 때마다 신호를 보내요</label></div><div class="actions"><button class="btn sm ghost" data-close>닫기</button></div>`,m=>{m.querySelector('[data-close]').onclick=closeModal;},'signal');
   }else if(b.id==='gauge'){
-    const m0=gaugeMachine(b),what=!m0?'옆에 상자·채광기·벌목기·컨베이어 벨트·자동제작장치·시계를 붙여 주세요':m0.id==='clock'?'몇 초마다 신호를 보낼까요':m0.id==='crafter'?'아이템을 몇 개 만들 때마다 신호를 보내요 (1 = 만들 때마다)':m0.id==='chest'?'아이템이 몇 개 차 있을 때 신호를 보내요':(m0.id==='conveyor'||m0.id==='sorter')?'아이템이 몇 번 지나갈 때마다 신호를 보내요':'아이템을 몇 개 캘 때마다 신호를 보내요';
+    const m0=gaugeMachine(b),what=!m0?'옆에 상자·채광기·벌목기·컨베이어 벨트·자동제작장치·시계·선로 깃발을 붙여 주세요':m0.id==='railflag'?'기차가 몇 번 지나갈 때마다 신호를 보내요 (1 = 지날 때마다)':m0.id==='clock'?'몇 초마다 신호를 보낼까요':m0.id==='crafter'?'아이템을 몇 개 만들 때마다 신호를 보내요 (1 = 만들 때마다)':m0.id==='chest'?'아이템이 몇 개 차 있을 때 신호를 보내요':(m0.id==='conveyor'||m0.id==='sorter')?'아이템이 몇 번 지나갈 때마다 신호를 보내요':'아이템을 몇 개 캘 때마다 신호를 보내요';
     openModal(`<h2>측정기<small>GAUGE</small></h2>
       <div class="row col"><label for="sgth">${what}</label><input class="field num" id="sgth" inputmode="numeric" maxlength="4" value="${b.th||10}" autocomplete="off"></div>
       <div class="actions"><button class="btn sm ghost" data-close>닫기</button><button class="btn sm" id="sgsave">저장</button></div>`,m=>{
@@ -11877,6 +11890,9 @@ function trainGo(T){
   if(!c)return !!T.rider;   // 제어장치가 없으면 탄 기차만 달리고, 내려 둔 기차는 서 있어요
   return c.every(x=>!x.of);
 }
+function trainArrive(T){   // 새 칸에 들어서면 옆의 선로 깃발이 신호를 보내요
+  for(const [dx,dy] of NB4){const f=sgAt(T.gx+dx,T.gy+dy);if(f&&f.id==='railflag'){f.fxT=time+0.5;try{gaugeEvent(f);}catch(e){}}}
+}
 function trainAdvance(T,dt){
   let rem=T.spd*dt;
   for(let guard=0;guard<8&&(rem>0||T.stop);guard++){
@@ -11887,7 +11903,7 @@ function trainAdvance(T,dt){
     T.stop=false;
     const need=(1-T.p)*GRID;
     if(rem<need){T.p+=rem/GRID;rem=0;break;}
-    rem-=need;T.gx+=T.dx;T.gy+=T.dy;T.p=0;
+    rem-=need;T.gx+=T.dx;T.gy+=T.dy;T.p=0;trainArrive(T);
     const d=trainPick(T);if(!d){T.stop=true;rem=0;break;}
     T.dx=d[0];T.dy=d[1];
   }
