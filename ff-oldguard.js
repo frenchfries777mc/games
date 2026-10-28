@@ -19,11 +19,28 @@ function wrap(c){
 function hook(lib){ if(!lib||!lib.createClient||lib.__ffo) return; lib.__ffo=1; var cc=lib.createClient; lib.createClient=function(){ return wrap(cc.apply(this,arguments)); }; }
 if(window.supabase) hook(window.supabase);
 else { try{ var v; Object.defineProperty(window,'supabase',{configurable:true,enumerable:true,get:function(){ return v; },set:function(x){ v=x; hook(x); }}); }catch(e){} }
+/* 안내 띠 문구 (언어별). 고르는 법은 ff-profile.js 와 같아요: 게임이 정한 언어(arenaClashLang) → 브라우저 언어 → 영어 */
+var BANNER={ko:"이전 버전이라 업적·랭킹·코인·진행도 기록이 계정에 저장되지 않아요. 최신 버전에서 이어서 해 주세요.",
+ en:"This is an older version, so achievements, rankings, coins and progress are not saved to your account. Please keep playing in the latest version.",
+ es:"Esta es una versión anterior, así que los logros, las clasificaciones, las monedas y el progreso no se guardan en tu cuenta. Sigue jugando en la última versión.",
+ fr:"Ceci est une ancienne version : les succès, classements, pièces et progrès ne sont pas enregistrés sur ton compte. Continue dans la dernière version.",
+ de:"Dies ist eine ältere Version, daher werden Erfolge, Ranglisten, Münzen und Fortschritt nicht auf deinem Konto gespeichert. Bitte in der neuesten Version weiterspielen.",
+ ja:"旧バージョンのため、実績・ランキング・コイン・進行度はアカウントに保存されません。最新バージョンで続けてください。",
+ zh:"这是旧版本，成就、排名、金币和进度不会保存到账号。请在最新版本中继续。",
+ pt:"Esta é uma versão antiga, por isso conquistas, rankings, moedas e progresso não são salvos na sua conta. Continue na versão mais recente.",
+ ru:"Это старая версия, поэтому достижения, рейтинги, монеты и прогресс не сохраняются в вашем аккаунте. Продолжайте в последней версии.",
+ tr:"Bu eski bir sürüm; başarımlar, sıralamalar, jetonlar ve ilerleme hesabınıza kaydedilmiyor. Lütfen en son sürümde devam edin.",
+ it:"Questa è una versione precedente, quindi obiettivi, classifiche, monete e progressi non vengono salvati sul tuo account. Continua nell’ultima versione.",
+ pl:"To starsza wersja, więc osiągnięcia, rankingi, monety i postęp nie są zapisywane na koncie. Graj dalej w najnowszej wersji.",
+ ar:"هذه نسخة قديمة، لذلك لا تُحفظ الإنجازات والترتيب والعملات والتقدم في حسابك. يُرجى المتابعة في أحدث نسخة.",
+ nw:"Old version: plusdoings, rankings, coins and progress not truekept to your account. Continue in latest version.",
+ gk:"이전 버전 이다 업적들·랭킹·코인·진행 기록 계정 에 구하다 아니다! 최신 버전 안 에서 이어서 놀다 해 주세요."};
+function bannerLang(){ var c=[]; try{ var s=localStorage.getItem('arenaClashLang'); if(s) c.push(s); }catch(e){} try{ c=c.concat(navigator.languages||[navigator.language||'']); }catch(e){} for(var i=0;i<c.length;i++){ var b=String(c[i]||'').toLowerCase().split('-')[0]; if(BANNER[b]) return b; } return 'en'; }
 function note(){
   if(!document.body||document.getElementById('ffOldVer')) return;
   var d=document.createElement('div'); d.id='ffOldVer';
   d.style.cssText='position:fixed;left:50%;bottom:calc(10px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);z-index:99999;max-width:92vw;padding:8px 12px;border-radius:10px;background:rgba(20,22,28,.92);color:#f2e7c0;font:12px/1.4 sans-serif;text-align:center;pointer-events:none';
-  d.textContent='이전 버전이라 업적·랭킹·코인·진행도 기록이 계정에 저장되지 않아요. 최신 버전에서 이어서 해 주세요.';
+  d.textContent=BANNER[bannerLang()]||BANNER.en;
   document.body.appendChild(d);
 }
 if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',note); else note();
