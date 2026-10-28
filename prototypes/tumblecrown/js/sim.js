@@ -102,7 +102,7 @@ function hurtProxy(G, e, dmg, p, o) {
   return r;
 }
 // 체력이 다하면 탈락해요: 일으켜 주는 사람도, 다시 일어나는 일도 없어요
-function koPlayer(G, p, src) {
+export function koPlayer(G, p, src) {
   p.hp = 0; p.dead = true; p.down = false; p.respT = 1e9; p.roll = 0; p.hvT = p.pbT = 0; p.block = p.taunt = 0; p.burn = 0;
   p.place = G.players.filter(alive).length + 1; p.survT = G.t - (G.t0 || 0);
   const k = src && src.id && src.id !== p.id ? G.players.find(q => q.id === src.id) : null; if (k) k.kills++;
