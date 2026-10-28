@@ -2042,7 +2042,7 @@ document.getElementById('settingsBackBtn').onclick=()=>showScreen('menuScreen');
 document.getElementById('settingsToSiteBtn').onclick=async ()=>{      // 나가기: the game is opened in its own window by the site, so it closes that window
   try{ window.close(); }catch(e){}
   await new Promise(r=>setTimeout(r,250));
-  if(!window.closed && await uiConfirm('이 창은 직접 닫을 수 없어요. 사이트로 돌아갈까요?')) location.href='https://frenchfries777mc.github.io/games/';       // (opened by typing the address: the browser refuses to close it)
+  if(!window.closed && await uiConfirm('이 창은 직접 닫을 수 없어요. 사이트로 돌아갈까요?')) location.href='https://frenchfries777mc.github.io/games/?r='+Date.now();       // (opened by typing the address: the browser refuses to close it)
 };
 document.getElementById('keybindResetBtn').onclick=()=>{ keyBindings=defaultKeyBindings(); persistKeyBindings(); renderKeybinds(); updateControlsHint(); };
 // ===== Weapon mastery =====
@@ -5462,7 +5462,7 @@ function shuffle(arr){ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.
 /* ===== the version of this file =====
    Different BUILDS of one version meet and play together (room names online-v<ver>-<mode>-<map>-<slot>); different VERSIONS (the 0.x part) never do - the host refuses them (verNo) and the dispatcher answers busy.
    The build is only sent along with the join message and the lobby (for information); the corner of the screen shows it. */
-const GAME_BUILD='build 2026-10-18-v471';
+const GAME_BUILD='build 2026-10-18-v472';
 const GAME_VERSION='0.9', GAME_VERSION_NAME='은하 제국의 황혼';   // 게임 버전 이름: versions.json의 title과 같게 (빌드마다 바꾸지 않음)
 /* version (the 0.x part) vs build: different BUILDS of one version meet and play together, different VERSIONS never do (rooms, quick match, ranked, friend invites, dispatcher).
    Builds before 470 do not send a version, so it is read from the build number (0.9 started at build 458). */
@@ -18764,6 +18764,8 @@ function renderAuthGateForm(){
 initAuthGate();
 
 { const ph=document.getElementById('pracHead'); if(ph) ph.addEventListener('click',()=>document.getElementById('practicePanel').classList.toggle('min')); }
+/* a stale cached page: if the site already has a newer build of this version, reload once with that build in the address (a new address is never served from the browser cache) */
+if(!DED_HOST){ try{ fetch('versions.json?t='+Date.now(), {cache:'no-store'}).then(r=>r.json()).then(j=>{ const v=(j.versions||[]).find(x=>x.version===GAME_VERSION), n=v?+String(v.build||'').replace(/\D/g,''):0, u=new URL(location.href); if(n>buildNum(GAME_BUILD) && u.searchParams.get('b')!==String(n)){ u.searchParams.set('b', n); location.replace(u.toString()); } }).catch(()=>{}); }catch(e){} }
 })();
 </script>
 <script src="https://frenchfries777mc.github.io/games/ff-profile.js"></script>
