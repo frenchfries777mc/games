@@ -311,3 +311,6 @@ patchnotes.json | v479 items[0] | 전투 곡 소리 조정 (1.5배) | build 479 
 - 그랜드 마스터 I~X 계급 이름 (한국어만)
 patchnotes.json | v480 title | 은하 제국의 황혼 | build 480 | 2026-10-28
 patchnotes.json | v480 items[0] | 그랜드 마스터 I~X 단계 추가 (I 9000점, 이후 1000점마다 한 단계) | build 480 | 2026-10-28
+- 듀얼: 내가 금지한 캐릭터는 나도 못 고름 (UI 문구 변경 없음)
+patchnotes.json | v481 title | 은하 제국의 황혼 | build 481 | 2026-10-28
+patchnotes.json | v481 items[0] | 듀얼에서 내가 금지한 캐릭터는 나도 선택 불가 | build 481 | 2026-10-28
