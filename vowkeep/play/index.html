@@ -282,6 +282,8 @@ body.touch #prompt.up,#prompt.up{bottom:262px}
 <div id="touch"><div id="joy"><div id="joyBase"><div id="joyKnob"></div></div></div>
   <div id="tbtns"><button id="tA"><span>공격</span></button><button id="tQ"><i class="cd"></i><span>Q</span></button><button id="tE"><i class="cd"></i><span>E</span></button><button id="tR"><i class="cd"></i><span>R</span></button><button id="tRoll"><i class="cd"></i><span>구르기</span></button><button id="tF"><span>F</span></button></div>
 </div>
-<script type="module" src="js/main.js?v=54"></script>
+<style>html,body,*{touch-action:manipulation}</style>
+<script>["gesturestart","gesturechange","gestureend"].forEach(function(e){document.addEventListener(e,function(x){x.preventDefault()})});var lt=0;document.addEventListener("touchend",function(x){var n=Date.now();if(n-lt<350&&!/^(INPUT|TEXTAREA)$/.test((x.target||{}).tagName))x.preventDefault();lt=n},{passive:false})</script>
+<script type="module" src="js/main.js?v=56"></script>
 </body>
 </html>
