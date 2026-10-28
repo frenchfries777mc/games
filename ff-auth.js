@@ -283,7 +283,7 @@ function fill(){ var el=modal(); el.querySelector('h3').textContent=mode==='in'?
 function openLogin(m){ mode=m==='up'?'up':'in'; fill(); var el=modal(); el.style.display='flex'; setTimeout(function(){ try{ el.querySelector('input').focus(); }catch(e){} },30); }
 function close(){ var el=document.getElementById('ffaModal'); if(el) el.style.display='none'; }
 
-function profileLib(){ return loadScript(BASE+'ff-profile.js?v=20261027b', function(){ return !!window.FFProfile; }); }
+function profileLib(){ return loadScript(BASE+'ff-profile.js?v=20261028a', function(){ return !!window.FFProfile; }); }
 async function openProfile(uid, o){ if(!sb) return; if(!uid&&!user) return openLogin(); if(await profileLib()) window.FFProfile.open(sb, uid||user.id, o); }
 
 /* 게임 사이트(허브가 아닌 페이지)에는 계정 버튼 옆에 '← 허브' 버튼을 붙여요. 빼고 싶으면 자리에 data-ff-nohub */
@@ -425,7 +425,7 @@ function openAcct(host){
    '#ffaAcct .pv{font-family:ui-monospace,monospace;background:#08090d;border:1px solid #2b3245;border-radius:9px;padding:10px 12px;margin-bottom:8px;word-break:break-all;font-size:15px}'+
    '#ffaAcct label.k{display:flex;gap:8px;align-items:center;font-size:13.5px;margin:10px 0 4px}</style>'+
    '<div class="b"><button type="button" class="x" aria-label="'+esc(T.close)+'">×</button><h3>'+esc(A.title)+'</h3>'+
-   '<h4>'+esc(A.nick.replace(/\s*\(.*$/,''))+'</h4><input type="text" id="aNick" maxlength="15" placeholder="'+esc(A.nick)+'"><button type="button" class="ffa-btn" id="aNickGo">'+esc(A.save)+'</button><div class="m" id="aNickM"></div>'+
+   '<h4>'+esc(A.nick.replace(/\s*\(.*$/,''))+'</h4>'+(editOk?'<input type="text" id="aNick" maxlength="15" placeholder="'+esc(A.nick)+'"><button type="button" class="ffa-btn" id="aNickGo">'+esc(A.save)+'</button><div class="m" id="aNickM"></div>':hubNote())+
    '<h4>'+esc(A.id.replace(/\s*\(.*$/,''))+'</h4><input type="text" id="aId" maxlength="16" autocapitalize="off" spellcheck="false" placeholder="'+esc(A.id)+'"><p>'+esc(A.idNote)+'</p><button type="button" class="ffa-btn" id="aIdGo">'+esc(A.save)+'</button><div class="m" id="aIdM"></div>'+
    '<h4>'+esc(A.pwT)+'</h4><div id="aPwBox"></div>'+
    '<div class="pwr"><input type="password" id="aNew" autocomplete="new-password" placeholder="'+esc(A.newPw)+'"><button type="button" class="eye" aria-label="'+esc(A.show)+'">👁</button></div><button type="button" class="ffa-btn" id="aPwGo">'+esc(A.chg)+'</button><div class="m" id="aPwM"></div>'+
@@ -433,7 +433,7 @@ function openAcct(host){
   (host||document.body).appendChild(el);
   var $=function(i){ return el.querySelector('#'+i); }, curId=(prof&&prof.username)||String(user.email||'').split('@')[0];
   function say(i,t,ok){ var m=$(i); m.textContent=t; m.className='m'+(ok?' ok':''); }
-  $('aNick').value=(prof&&prof.display_name)||''; $('aId').value=curId; $('aKeep').checked=pwOn();
+  if($('aNick')) $('aNick').value=(prof&&prof.display_name)||''; $('aId').value=curId; $('aKeep').checked=pwOn();
   if(!host) el.addEventListener('click',function(e){ if(e.target===el) closeAcct(); }); el.querySelector('.x').onclick=closeAcct;
   el.querySelector('.eye').onclick=function(){ var i=$('aNew'); i.type=i.type==='password'?'text':'password'; };
   function pwBox(){ var o=pwGet(), b=$('aPwBox'), shown=false;
@@ -448,7 +448,7 @@ function openAcct(host){
   pwBox(); devPanel(el,say);
   if(!isIdAcct(user)){ var pb=$('aPwBox'); pb.innerHTML='<p>'+esc(OA().pwSoc)+'</p>'; ['aNew','aPwGo','aPwM','aKeep'].forEach(function(i){ var x=$(i); x=i==='aNew'?x.parentNode:(i==='aKeep'?x.parentNode:x); x.style.display='none'; var nx=x.nextElementSibling; if(i==='aKeep'&&nx) nx.style.display='none'; }); }
   $('aKeep').onchange=function(){ try{ localStorage.setItem('arenaClashPwOpt',this.checked?'1':'0'); }catch(e){} if(!this.checked){ pwClear(); pwBox(); } };
-  $('aNickGo').onclick=async function(){ var n=$('aNick').value.trim().slice(0,15); if(!n) return say('aNickM',A.badNick);
+  if($('aNickGo')) $('aNickGo').onclick=async function(){ var n=$('aNick').value.trim().slice(0,15); if(!n) return say('aNickM',A.badNick);
     if(n===((prof&&prof.display_name)||'')) return say('aNickM',A.same,true);
     var r=await setNick(n); say('aNickM',r&&r.ok?A.saved:A.err,r&&r.ok); };
   $('aIdGo').onclick=async function(){ var id=$('aId').value.trim(), m='aIdM';
@@ -564,7 +564,11 @@ async function searchUsers(q){
 async function request(id){ await expireReq(true); var r=await sb.from('friendships').insert({requester_id:user.id, addressee_id:id}); await loadFriends(); return r; }
 async function respond(rowId, ok){ var r=ok?await sb.from('friendships').update({status:'accepted'}).eq('id',rowId):await sb.from('friendships').delete().eq('id',rowId); await loadFriends(); return r; }
 async function removeRow(rowId){ var r=await sb.from('friendships').delete().eq('id',rowId); await loadFriends(); return r; }
-async function setNick(n){ n=String(n||'').trim().slice(0,15); if(!n) return {error:true}; var r=await sb.from('profiles').update({display_name:n}).eq('id',user.id); if(r&&r.error) return {error:true}; prof=Object.assign({},prof||{},{display_name:n}); paint(); nickEmit(); return {ok:true}; }
+/* 프로필(사진·소개·이름)은 허브에서만 바꿔요. 게임·Educations·Tools 에서는 보기만 되고 허브 링크만 보여 줘요. */
+var editOk=/\/hub\//.test(location.pathname||''), HOT={ko:{note:'프로필과 이름은 허브에서만 바꿀 수 있어요.',go:'허브에서 바꾸기'},en:{note:'Your profile and name can only be changed on the hub.',go:'Change on the hub'}};
+function HO(){ return HOT[lang()]||HOT.en; }
+function hubNote(){ var H=HO(); return '<p>'+esc(H.note)+'</p><a class="ffa-btn" href="'+HUBSITE+'" style="text-decoration:none">'+esc(H.go)+'</a>'; }
+async function setNick(n){ if(!editOk) return {error:true, hub:true}; n=String(n||'').trim().slice(0,15); if(!n) return {error:true}; var r=await sb.from('profiles').update({display_name:n}).eq('id',user.id); if(r&&r.error) return {error:true}; prof=Object.assign({},prof||{},{display_name:n}); paint(); nickEmit(); return {ok:true}; }
 
 var FCSS='.ffa-badge{display:inline-block;min-width:18px;height:18px;line-height:18px;border-radius:9px;background:#ff5a4f;color:#fff;font-size:11px;font-weight:800;text-align:center;padding:0 5px;margin-left:6px;box-sizing:border-box}'+
  '#ffaFriends{position:fixed;inset:0;z-index:2147482400;background:rgba(5,6,10,.72);display:none;align-items:center;justify-content:center;padding:16px;font-family:system-ui,-apple-system,"Noto Sans KR",sans-serif}'+
@@ -612,8 +616,9 @@ function fpaint(){
   if(!user){ el.style.display='none'; return; }
   var nk=el.querySelector('.nkBox'); nk.innerHTML='';
   if(!(prof&&prof.display_name&&String(prof.display_name).trim())){
-    nk.innerHTML='<div class="n">'+esc(F.needNick)+'</div><div class="nk"><input maxlength="15" placeholder="'+esc(F.nickPh)+'"><button type="button">'+esc(F.save)+'</button></div>';
-    var inp=nk.querySelector('input'); act(nk.querySelector('button'), function(){ return setNick(inp.value); });
+    if(!editOk){ nk.innerHTML='<div class="n">'+esc(F.needNick)+'</div>'+hubNote(); }
+    else{ nk.innerHTML='<div class="n">'+esc(F.needNick)+'</div><div class="nk"><input maxlength="15" placeholder="'+esc(F.nickPh)+'"><button type="button">'+esc(F.save)+'</button></div>';
+    var inp=nk.querySelector('input'); act(nk.querySelector('button'), function(){ return setNick(inp.value); }); }
   }
   var res=el.querySelector('.res'); res.innerHTML='';
   if(fres==='short'){ res.innerHTML='<div class="e">'+esc(F.short)+'</div>'; }
@@ -920,6 +925,7 @@ setInterval(function(){ if(document.visibilityState!=='hidden') pollCheck(); }, 
 document.addEventListener('visibilitychange', function(){ if(document.visibilityState==='visible') pollCheck(); });
 
 window.FFAuth={ ready:ready, pollCheck:pollCheck, client:function(){ return sb; }, user:function(){ return user; }, profile:function(){ return prof; }, nickname:nick,
+  canEditProfile:function(){ return editOk; }, hubUrl:HUBSITE,
   onChange:function(f){ if(typeof f==='function') subs.push(f); }, onNick:function(f){ if(typeof f!=='function') return; nickSubs.push(f); ready.then(function(){ if(user){ try{ f(nick(), user, prof); }catch(e){} } }); }, setNick:setNick, refreshNick:function(){ return nickRefresh(true); }, openLogin:openLogin, openProfile:openProfile, openFriends:openFriends, friends:function(){ return friends.slice(); }, signOut:signOut, refresh:paint, syncHub:syncHub,
   openDM:openDM, setRoom:setRoom, openReport:openReport, openAcct:openAcct, notePrefs:{get:npGet,set:npSet}, userKey:userKey, lang:lang, loadDevs:loadDevs, devRole:devRole, devBadge:devBadge, block:block, isBlocked:isBlocked, blocked:function(){ return Object.assign({},blocks); } };
 })();
