@@ -455,7 +455,7 @@ try{if(sessionStorage.getItem('ce_noIntro')){sessionStorage.removeItem('ce_noInt
 sting();})();</script>
 <div id="app">
  <div id="lobby" class="screen">
-  <canvas id="lobbyBg"></canvas><canvas id="lobbyWar"></canvas><div id="cpTag">© 2026 Frenchfries777 · <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.ko" target="_blank" rel="noopener">CC BY-NC-ND 4.0</a></div><div id="verTag">v0.5 · build 117</div>
+  <canvas id="lobbyBg"></canvas><canvas id="lobbyWar"></canvas><div id="cpTag">© 2026 Frenchfries777 · <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.ko" target="_blank" rel="noopener">CC BY-NC-ND 4.0</a></div><div id="verTag">v0.5 · build 118</div>
   <header class="brand"><h1>Crown Envoy</h1><div class="sub"><i></i>DIPLOMACY · WAR · EMPIRE<i></i></div></header>
   <div id="lobbyRight">
    <div id="lobbyHome" class="modes">
@@ -3934,7 +3934,7 @@ const Host={seats:[],started:false,timer:null,mapId:0,snaps:[],
   sendTo(i,msg){const s=this.seats[i];if(!s||s.kind!=='human')return;
     if(s.local){const c=JSON.parse(JSON.stringify(msg));setTimeout(()=>Client.onMsg(c),0);}else if(s.conn&&s.conn.open){try{s.conn.send(msg);}catch(e){}}},
   customTpl(id){const t=id&&TEMPLATES.find(x=>x.id===id);return t&&t.custom?t:null;},
-  lobbyMsg(you,back){return {back:!!back,t:'lobby',code:Net.code,you,seats:this.seats.map(x=>({kind:x.kind,name:x.name||'',away:!!x.away,persona:x.persona||null})),solo:Net.mode==='solo',mode:Net.mode==='solo'?'solo':(this.pub?'online':this.listed?'public':'private'),title:this.title||'',count:this.cd?Math.max(0,Math.ceil((this.cd-Date.now())/1000)):null,map:this.mapId,tpl:this.tplId,len:this.len==null?null:this.len,sec:this.sec==null?null:this.sec,specs:(this.specs||[]).length,tplData:this.customTpl(this.tplId)||undefined};},
+  lobbyMsg(you,back){return {ver:CE_VER,back:!!back,t:'lobby',code:Net.code,you,seats:this.seats.map(x=>({kind:x.kind,name:x.name||'',away:!!x.away,persona:x.persona||null})),solo:Net.mode==='solo',mode:Net.mode==='solo'?'solo':(this.pub?'online':this.listed?'public':'private'),title:this.title||'',count:this.cd?Math.max(0,Math.ceil((this.cd-Date.now())/1000)):null,map:this.mapId,tpl:this.tplId,len:this.len==null?null:this.len,sec:this.sec==null?null:this.sec,specs:(this.specs||[]).length,tplData:this.customTpl(this.tplId)||undefined};},
   sendSpec(sp,msg){if(sp&&sp.conn&&sp.conn.open){try{sp.conn.send(msg);}catch(e){}}},
   lobbyPush(back){this.roomPub();if(this.started&&!back)return;this.seats.forEach((s,i)=>this.sendTo(i,this.lobbyMsg(i,back)));(this.specs||[]).forEach(sp=>this.sendSpec(sp,{...this.lobbyMsg(-1,back),spec:true}));},
   /* 관전자: 자리 없이 들어와 전체 시점을 본다 */
@@ -4080,9 +4080,13 @@ const Reco={on:false,n:0,timer:null,MAX:40,
 const ffRoom=code=>{try{if(window.FFAuth&&FFAuth.setRoom)FFAuth.setRoom(code?{game:'crownenvoy',code,path:'crownenvoy/CrownEnvoy-latest.html'}:null);}catch(e){}};
 /* 공개 방 목록: Supabase 실시간 presence('ce-rooms')에 방장이 방 정보를 싣고, 참가자는 목록만 읽는다 (DB 테이블 없음).
    방장이 창을 닫으면 presence가 저절로 사라져 목록에서도 빠진다. */
+/* 버전(0.x)이 다르면 같이 할 수 없다: 빌드 번호는 달라도 된다. 파일을 새 버전으로 복사할 때 이 값도 함께 바꾼다 */
+const CE_VER='0.5';
+function verMismatch(other){try{if(Net.peer)Net.peer.destroy();}catch(_){}try{Net.clearSession();}catch(_){}try{UI.show('home');}catch(_){}
+  UI.info('<b>버전이 달라요</b><br>같은 버전끼리만 같이 할 수 있어요.<br>내 버전 v'+CE_VER+' · 상대 버전 '+(other?'v'+esc(other):'v0.4 이하')+'<br>빌드 번호가 달라도 버전만 같으면 돼요.');}
 const RoomList={ch:null,_p:null,cb:null,ok:false,_last:null,
   chan(){if(this.ch)return Promise.resolve(this.ch);if(this._p)return this._p;
-    this._p=(async()=>{if(!window.CEAuth||!CEAuth.sb)throw new Error('no sb');const sb=await CEAuth.sb();const ch=sb.channel('ce-rooms',{config:{presence:{key:'r'+Math.random().toString(36).slice(2,10)}}});
+    this._p=(async()=>{if(!window.CEAuth||!CEAuth.sb)throw new Error('no sb');const sb=await CEAuth.sb();const ch=sb.channel('ce-rooms-'+CE_VER,{config:{presence:{key:'r'+Math.random().toString(36).slice(2,10)}}});
       ch.on('presence',{event:'sync'},()=>this.sync());
       await new Promise((res,rej)=>{const to=setTimeout(()=>rej(new Error('timeout')),9000);ch.subscribe(st=>{if(st==='SUBSCRIBED'){clearTimeout(to);res();}else if(st==='CHANNEL_ERROR'||st==='TIMED_OUT'||st==='CLOSED'){clearTimeout(to);rej(new Error(st));}});});
       this.ch=ch;this.ok=true;return ch;})();
@@ -4098,6 +4102,7 @@ const genToken=()=>Math.random().toString(36).slice(2,10)+Math.random().toString
 function hostSetup(peer){
   peer.on('connection',conn=>{
     conn.on('data',m=>{
+      if(m.t==='join'&&m.ver!==CE_VER){try{conn.send({t:'vermismatch',ver:CE_VER});}catch(_){}setTimeout(()=>{try{conn.close();}catch(_){}},400);return;}
       if(m.t==='join'){if(m.spec){Host.addSpec(conn,String(m.name||'관전자').slice(0,12));return;}
         if(Host.started){conn.send({t:'full'});return;}const k=Host.seats.findIndex(s=>s.kind==='empty');if(k<0){conn.send({t:'full'});return;}
         const tok=genToken();Host.seats[k]={kind:'human',name:String(m.name||'손님').slice(0,15),conn,token:tok};conn._seat=k;conn.send({t:'token',token:tok,host:Net.peer?Net.peer.id:null});Host.lobbyPush();}
@@ -4134,10 +4139,10 @@ function netOnline(name){
     const my={settled:false};cur=my;const id='crownenvoy-pub-'+slot;slot++;UI.setFind(`사람이 있는 방을 찾는 중… (${slot}/${PUB_SLOTS})`);
     const conn=peer.connect(id,{reliable:true,serialization:'json'});
     my.to=setTimeout(()=>{if(my.settled)return;my.settled=true;try{conn.close();}catch(_){}next();},4000);
-    conn.on('open',()=>conn.send({t:'join',name}));
+    conn.on('open',()=>conn.send({t:'join',name,ver:CE_VER}));
     conn.on('data',m=>{
       if(!my.settled){
-        if(m.t==='full'){my.settled=true;clearTimeout(my.to);try{conn.close();}catch(_){}next();return;}
+        if(m.t==='full'||m.t==='vermismatch'||(m.t==='lobby'&&m.ver!==CE_VER)){my.settled=true;clearTimeout(my.to);try{conn.close();}catch(_){}next();return;}
         if(m.t==='lobby'){my.settled=true;done=true;clearTimeout(my.to);Net.hostConn=conn;UI.showLobby();}}
       if(done&&Net.hostConn===conn)Client.onMsg(m);});
     conn.on('close',()=>{if(!my.settled){my.settled=true;clearTimeout(my.to);next();}else if(Net.hostConn===conn)Reco.start();});
@@ -4150,7 +4155,7 @@ function netJoin(code,name,spec){
   Net.mode='client';Net.pub=false;Net.code=code;C.spec=!!spec;C.specGuest=!!spec;const peer=new Peer();Net.peer=peer;
   peer.on('error',e=>UI.toast(e.type==='peer-unavailable'?'방을 찾을 수 없습니다. 코드를 확인하세요.':'연결 오류: '+e.type,'bad'));
   peer.on('open',()=>{const conn=peer.connect('crownenvoy-'+code,{reliable:true,serialization:'json'});Net.hostConn=conn;
-    conn.on('open',()=>{conn.send({t:'join',name,spec:!!spec});if(!spec)ffRoom(code);});conn.on('data',m=>Client.onMsg(m));
+    conn.on('open',()=>{conn.send({t:'join',name,spec:!!spec,ver:CE_VER});if(!spec)ffRoom(code);});conn.on('data',m=>Client.onMsg(m));
     conn.on('close',()=>{if(Net.hostConn===conn)Reco.start();});});
 }
 function netSolo(name){try{localStorage.removeItem('ce_kname');const ki=document.getElementById('kLobby');if(ki)ki.value='';}catch(e){}Net.mode='solo';Net.pub=false;Host.init(name);Host.seats[1]=mkBot(Host.seats,1);Host.seats[2]=mkBot(Host.seats,2);Net.code='';UI.showLobby();Host.lobbyPush();}
@@ -5474,7 +5479,7 @@ const Ed={
 const PHASE_LABEL={plan:'계획',report:'결산',over:'종료'};
 const PERSONA_DESC={'팽창주의':'기회만 오면 먼저 칼을 뽑고 영토를 넓혀요','방어중심':'수도와 국경을 단단히 지키며 웬만하면 먼저 치지 않아요','외교중심':'동맹을 맺고 힘이 확실히 앞설 때만 싸워요','무역중심':'무역 계약과 상선, 건물로 돈을 불리고 장사가 되는 상대와 친해져요','정치중심':'여론과 파벌, 정치 제도를 다지며 나라 안을 단단히 해요','총력전중심':'금화를 모두 병력에 쏟고 국채까지 발행해 여러 나라와 싸워요','균형형':'상황을 보고 팽창·무역·정치·방어·총력전·외교 중 알맞은 방식을 골라 균형 있게 움직여요','해양형':'바다를 건너 상륙하는 데 능해요','복수형':'자기를 친 나라를 끝까지 잊지 않아요','기회주의형':'약해진 이웃을 노려요'};
 const C={view:null,me:0,sel:null,tab:'map',orders:[],pend:null,chats:{},unreadBy:{},endAt:0,reportPlayed:-1,animating:false,queued:null,phaseKey:'',acc:{pol:true,gen:false,rival:false},fx:'mine',auto:0,lastBattleMe:-9,started:false,mapInit:false};
-const Client={onMsg(m){switch(m.t){
+const Client={onMsg(m){if(m.t==='vermismatch'){verMismatch(m.ver);return;}if(m.t==='lobby'&&Net.mode==='client'&&m.ver!==CE_VER){verMismatch(m.ver);return;}switch(m.t){
   case 'token':{if(Net.mode==='client'){Net.saveSession({token:m.token,hostId:m.host||(Net.peer&&Net.peer.id)||Net.hostId,name:UI.myName(),spec:!!m.spec});}break;}
   case 'norejoin':UI.toast('이 방으로는 다시 들어갈 수 없어요.','bad');break;
   case 'summary':UI.onSummary(m.data);break;
