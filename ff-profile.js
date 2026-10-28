@@ -891,7 +891,7 @@ function decoPanel(el, sb, uid, d, cv, o){
     if(x&&x.kind==='ach'&&!hub[x.ach]){ var ca=await catalog('hub'), aa=(ca||[]).filter(function(q){ return q.id===x.ach; })[0]; A.buy=null; A.msg=avt(lg,'locked').replace('{0}',aa&&aa.n?(aa.n[lg]||aa.n.en||aa.n.ko):x.ach); decoPanel(el, sb, uid, d, cv, o); return; }
     A.buy=null; await avPick(id); }; });
   async function avPick(id){ var A=d.av, r; try{ r=await sb.rpc('ff_avatar_set',{p_id:id}); }catch(e){ r={error:e}; }
-    if(r&&r.error){ A.msg=avt(lg,'fail'); } else { A.pick=id; d.avpick=id; A.msg=avt(lg,'picked'); }
+    if(r&&r.error){ A.msg=avt(lg,'fail'); } else { A.pick=id; d.avpick=id; A.msg=avt(lg,'picked'); try{ window.dispatchEvent(new CustomEvent('ff-avatar',{detail:{pick:id||null}})); }catch(e){} }
     decoPanel(el, sb, uid, d, cv, o); await draw(cv, d, o); }
   var avy=P.querySelector('[data-avy]'), avn=P.querySelector('[data-avn]');
   if(avn) avn.onclick=function(){ d.av.buy=null; decoPanel(el, sb, uid, d, cv, o); };
@@ -982,5 +982,7 @@ async function open(sb, uid, o){
     var manual=function(){ var i=document.createElement('input'); i.value=u; i.readOnly=true; i.style.cssText='margin-left:8px;max-width:100%;padding:6px 8px;border-radius:8px;border:1px solid #333;background:#10131b;color:#eef0f5;font:inherit'; lk.parentNode.insertBefore(i,lk.nextSibling); i.focus(); i.select(); };
     try{ navigator.clipboard.writeText(u).then(done,manual); }catch(e){ manual(); } };
 }
-window.FFProfile={open:open, gameStats:function(game, fn){ if(typeof fn==='function') GS[game]=fn; }, canEdit:function(){ return editOk; }, hubUrl:HUBSITE, markPlayed:markPlayed, setAchievements:setAchievements, draw:draw, fetchData:fetchData, games:GAMES, characters:EXT_CHARS, catalog:catalog, syncHub:syncHub, deco:DECO, titles:TITLES, avatars:AVATARS, avatarUrl:avatarUrl};
+/* the account button's small round photo when no profile photo is picked: the game character, drawn like on the card */
+async function avatarDataUrl(sb, uid){ try{ var p=await sb.from('profiles').select('stats').eq('id',uid).single(), av=(p&&!p.error&&p.data&&p.data.stats&&p.data.stats.avatar)||{}, im=av.ext?await loadImg(ext(av.ext)):null, a=document.createElement('canvas'); a.width=a.height=96; drawAvatar(a, av, im); return a.toDataURL('image/png'); }catch(e){ return null; } }
+window.FFProfile={avatarDataUrl:avatarDataUrl, open:open, gameStats:function(game, fn){ if(typeof fn==='function') GS[game]=fn; }, canEdit:function(){ return editOk; }, hubUrl:HUBSITE, markPlayed:markPlayed, setAchievements:setAchievements, draw:draw, fetchData:fetchData, games:GAMES, characters:EXT_CHARS, catalog:catalog, syncHub:syncHub, deco:DECO, titles:TITLES, avatars:AVATARS, avatarUrl:avatarUrl};
 })();
