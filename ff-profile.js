@@ -32,6 +32,8 @@ var L={
 /* new strings are Korean + English for now; every other language shows the English until the translation pass */
 (function(){ ['hubOnly','hubGo','gstat','gAch','gPlays','gTimes'].forEach(function(k){ Object.keys(L).forEach(function(l){ if(L[l][k]==null) L[l][k]=L.en[k]; }); }); })();
 var HUBSITE='https://frenchfries777mc.github.io/hub/', editOk=true, GS={};
+/* in a game page (not a site page) the card has no decorate button: that is only on games / educations / tools / hub */
+try{ if(/\/(BEACONFALL|CrownEnvoy|Stickseum|IslandTrade)-[^\/]*\.html$|\/dummyparty\/play\/|\/vowkeep\/(play|v0\.1)\/|\/prototypes\//i.test(location.pathname||'')) editOk=false; }catch(e){}
 function lang(o){ var c=[]; if(o&&o.lang) c.push(o.lang); try{ var s=localStorage.getItem('arenaClashLang'); if(s) c.push(s); }catch(e){} try{ c=c.concat(navigator.languages||[navigator.language||'']); }catch(e){} for(var i=0;i<c.length;i++){ var b=String(c[i]||'').toLowerCase().split('-')[0]; if(L[b]) return b; } return 'en'; }
 function fmt(s,a){ return String(s).replace('{0}',a); }
 function ext(id){ var m=/^([a-z_]+):(\d+)$/.exec(id||''); if(!m) return null; for(var i=0;i<EXT_CHARS.length;i++) if(EXT_CHARS[i].id===m[1]){ var v=EXT_CHARS[i].v[+m[2]]; return v?v[1]:null; } return null; }
@@ -959,6 +961,7 @@ async function gameSection(el, sb, uid, d, o, T, own){
   try{ var r=await hook(gx, {sb:sb, uid:uid, own:own, data:d, lang:lang(o), esc:esc, game:g});
     if(typeof r==='string') gx.insertAdjacentHTML('beforeend', r); else if(r&&r.nodeType) gx.appendChild(r); }catch(e){}
 }
+function inGame(o){ if(o&&o.noDeco!=null) return !!o.noDeco; if(window.FF_INGAME) return true; return /\/(Stickseum|CrownEnvoy|BEACONFALL|IslandTrade)-[^\/]*\.html/i.test(location.pathname); }
 async function open(sb, uid, o){
   var T=L[lang(o)], el=modal(T), cv=el.querySelector('canvas'), msg=el.querySelector('.m');
   el.querySelector('.s').textContent=T.save; el.querySelector('.c').textContent=T.close; var dcb=el.querySelector('.dc'); dcb.textContent=T.deco; dcb.style.display='none'; el.querySelector('.D').className='D'; el.querySelector('.D').innerHTML=''; el.querySelector('.k').textContent=T.link; el.querySelector('.k').style.display='none';
@@ -969,7 +972,8 @@ async function open(sb, uid, o){
   var own=false;
   try{ var s=await sb.auth.getSession(), me=s&&s.data&&s.data.session&&s.data.session.user;
     if(me&&me.id===uid){ own=true; var h=await syncHub(sb, uid, d); if(h){ d.ids=d.ids||{}; d.ids.hub={}; h.forEach(function(k){ d.ids.hub[k]=1; }); rateCache=null; }
-      if(editOk){ dcb.style.display=''; dcb.onclick=function(){ var P=el.querySelector('.D'); if(P.classList.toggle('on')) decoPanel(el, sb, uid, d, cv, o); }; }
+      if(inGame(o)){ }
+      else if(editOk){ dcb.style.display=''; dcb.onclick=function(){ var P=el.querySelector('.D'); if(P.classList.toggle('on')) decoPanel(el, sb, uid, d, cv, o); }; }
       else { var hn=el.querySelector('.hn'); hn.innerHTML=esc(T.hubOnly)+'<a href="'+HUBSITE+'">'+esc(T.hubGo)+'</a>'; hn.style.display='block'; } } }catch(e){}
   gameSection(el, sb, uid, d, o, T, own);
   acb.style.display=''; acb.onclick=async function(){ var w=achWin(T), box=w.querySelector('.L'); box.innerHTML='<div class="n">'+esc(T.loading)+'</div>'; box.scrollTop=0; w.classList.add('on');

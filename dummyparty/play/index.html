@@ -1397,6 +1397,7 @@
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html,body{margin:0;height:100%;background:var(--bg);color:var(--ink);font-family:'Pretendard','Noto Sans KR','Apple SD Gothic Neo','Malgun Gothic',sans-serif;overscroll-behavior:none}
 *{touch-action:manipulation}
+#ffpModal .dc{display:none!important}
 body.playing{overflow:hidden;touch-action:none;-webkit-user-select:none;user-select:none}
 .screen{display:none;min-height:100%}
 .screen.on{display:block}
@@ -1635,6 +1636,7 @@ body.playing #emoBar{display:flex}
 #emoBar canvas{width:100%;height:100%;display:block}
 @media(max-height:480px){#emoBar{bottom:3px;gap:4px}#emoBar button{width:30px;height:30px;opacity:.55}}
 </style>
+<script>window.FF_INGAME=true</script>
 <script src="https://frenchfries777mc.github.io/games/ff-auth.js"></script>
 </head>
 <body class="onhome">
@@ -1666,7 +1668,9 @@ body.playing #emoBar{display:flex}
    <div class="row"><input id="codeIn" maxlength="5" placeholder="방 코드" autocomplete="off"><button class="pb dark" id="joinBtn" style="flex:0 0 auto">들어가기</button></div>
    <div class="msg" id="homeMsg"></div>
   </aside>
-  <template id="patchnotes"><details class="notes" open><summary>패치노트 · v0.1 (b82)</summary>
+  <template id="patchnotes"><details class="notes" open><summary>패치노트 · v0.1 (b83)</summary>
+   <b>2026-10-28 · v0.1 · b83 · 프로필 카드 정리</b>
+   <ul><li>게임 안 프로필 카드에서 "꾸미기" 버튼을 없앴어요</li></ul>
    <b>2026-10-28 · v0.1 · b82 · 버전 매칭과 보상 보호</b>
    <ul><li>게임 버전(v0.x)이 다르면 같은 방에 못 들어와요. 빌드가 달라도 괜찮아요. 버전이 다른 방은 방 목록에도 안 나오고, 코드나 초대로 들어가려 하면 "게임 버전이 달라요" 창이 떠요</li><li>너무 옛 빌드로는 dC가 올라가지 않도록 서버가 막아요 (이미 가진 dC와 스킨은 그대로예요)</li></ul>
    <b>2026-10-28 · v0.1 · b81 · 연타 탭 수정</b>
@@ -1829,7 +1833,7 @@ body.playing #emoBar{display:flex}
    <ul><li>무너지는 발판 칸 수 대폭 증가 (19×10)와 용암 동굴 맵</li><li>10개 맵 전부 새로 그림 (관중석, 야자수 섬, 링, 정원 미로, 서커스, 우노 테이블 등)</li><li>글자 대신 아이콘·말풍선·이펙트로 표현 (무기, 아이템, 카드 효과, 시작 안내)</li><li>타격·폭발·물보라 효과와 화면 흔들림 추가</li></ul>
    <b>2026-10-19 · v0.1 · b1 · 첫 시험판</b>
    <ul><li>마네킹 미니게임 10개 추가 (장애물 달리기, 섬 밀치기, 싸우기, 병맛 미로, 체스 대난투, 폭탄 돌리기, 병맛 우노, 쇼윈도 얼음땡, 무너지는 발판, 컨베이어 서바이벌)</li><li>방 코드로 최대 8명 멀티플레이, 빈자리는 봇으로 채우기</li><li>판마다 10개 중 5개를 무작위로 골라 점수를 합산</li><li>PC 키보드와 휴대폰 터치 조작 지원</li></ul></details></template>
-  <p class="foot">2~8명 · 판마다 36개 미니게임 중 7개 · v0.1 b82 · <a href="../">← Dummy Party 사이트로</a></p>
+  <p class="foot">2~8명 · 판마다 36개 미니게임 중 7개 · v0.1 b83 · <a href="../">← Dummy Party 사이트로</a></p>
   <p class="foot"><span class="ff-copy">© 2026 Frenchfries777 · <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.ko" target="_blank" rel="noopener">CC BY-NC-ND 4.0</a></span></p>
  </div>
 </section>
@@ -7503,7 +7507,7 @@ var PREFIX = 'ff-dummyparty-', CODE_CH = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789', MAX
 var PTS = [5, 3, 2, 1];
 var T_INTRO = 6, T_COUNT = 3, T_END = 4.0, T_RESULT = 6;
 // 게임 버전(0.x)과 빌드. 버전이 다르면 같은 방에 못 들어와요 (빌드가 달라도 괜찮아요). dp_config 의 min_build 보다 낮은 빌드는 dC를 못 받아요
-var DP_VER = '0.1', DP_BUILD = 82;
+var DP_VER = '0.1', DP_BUILD = 83;
 function dpNotice(msg) { dpAsk(msg, '확인', function () { }); }
 var BOT_NAMES = ['방귀쟁이', '홀쭉이', '바보1', '멍청이', '10급 공무원', '교무실 단골', '벌점부자', '말썽이', '김개똥'];
 var qs = new URLSearchParams(location.search);
