@@ -110,7 +110,7 @@ let tab = 'ranked', season = seasons[0], myId = null;
 document.getElementById('tiers').innerHTML = TIERS.map(t => '<span><b style="color:' + safeColor(t.color) + '">' + esc(t.name) + '</b> ' + t.min + '+</span>').join('');
 function tabs(){
   const el = document.getElementById('tabs'); el.innerHTML = '';
-  [['ranked', '🏆 랭크전'], ['clan', '🏰 클랜']].forEach(([k, label]) => { const b = document.createElement('button'); b.className = 'chip' + (tab === k ? ' on' : ''); b.textContent = label; b.onclick = () => { tab = k; tabs(); load(); }; el.appendChild(b); });
+  [['ranked', '🏆 랭크전'], ['mastery', '🎖️ 캐릭터 마스터리'], ['clan', '🏰 클랜']].forEach(([k, label]) => { const b = document.createElement('button'); b.className = 'chip' + (tab === k ? ' on' : ''); b.textContent = label; b.onclick = () => { tab = k; tabs(); load(); }; el.appendChild(b); });
   if (tab === 'ranked'){
     const s = document.createElement('select'); s.className = 'chip'; s.setAttribute('aria-label', '시즌');
     seasons.forEach((k, i) => { const o = document.createElement('option'); o.value = k; o.textContent = SI18N.F('{0}년 {1}월 시즌', k.slice(0, 4), +k.slice(5)) + (i === 0 ? SI18N.T(' (진행 중)') : ''); if (k === season) o.selected = true; s.appendChild(o); });
@@ -132,6 +132,13 @@ async function load(){
       if (ids.length){ try { const pr = await sb.from('profiles').select('id,username,display_name').in('id', ids); const nk = {}; ((pr && pr.data) || []).forEach(o => { const n = (typeof o.display_name === 'string' ? o.display_name.trim() : '') || o.username; if (n) nk[o.id] = n; }); rows.forEach(x => { if (nk[x.user_id]) x.name = nk[x.user_id]; }); } catch (e) {} }
       if (my !== seq) return;
       ranked(rows);
+    } else if (tab === 'mastery'){
+      const [m, cj] = await Promise.all([sb.from('profiles').select('id,display_name,username,ck:stats->ck,cp:stats->cp').not('stats->ck', 'is', null).limit(3000), fetch('chars.json').then(r => r.json()).catch(() => ({}))]);
+      if (my !== seq) return; if (m.error) throw m.error;
+      const rows = [];
+      (m.data || []).forEach(x => { const ck = x.ck || {}, cp = x.cp || {}, ws = new Set(Object.keys(ck).concat(Object.keys(cp))); ws.forEach(w => { const pt = cp[w] != null ? +cp[w] : (+ck[w] || 0) * 10; if (pt > 0) rows.push({user_id: x.id, name: ((typeof x.display_name === 'string' ? x.display_name.trim() : '') || x.username || ''), w, pts: pt}); }); });
+      rows.sort((a, b) => b.pts - a.pts);
+      masteryList(rows.slice(0, 50), cj);
     } else {
       const r = await sb.from('clans').select('id,name,tag,wins,score,emblem,color,clan_members(count)').order('score', {ascending: false}).limit(50);
       if (my !== seq) return; if (r.error) throw r.error;
@@ -152,6 +159,12 @@ function ranked(rows){
     h += '<div class="row' + (myId && x.user_id === myId ? ' me' : '') + '"><span class="rk">' + rk[i] + '</span><span class="nm">' + (x.name ? '<span data-notr>' + esc(x.name) + '</span>' : esc(SI18N.T('이름 없음'))) + (myId && x.user_id === myId ? '<small>나</small>' : '') + '</span>'
       + '<span class="tier" style="color:' + safeColor(t.color) + '">' + esc(t.name) + '</span><span class="num">' + x.rating + '</span><span class="dim c4">' + SI18N.F('{0}승 {1}패 · {2}%', w, l, pct) + '</span></div>';
   });
+  out(h + '</div>');
+}
+function masteryList(rows, cj){
+  if (!rows.length){ out('<div class="panel empty">아직 마스터리 기록이 없어요.</div>'); return; }
+  const rk = ranksBy(rows, 'pts'); let h = '<div class="panel list"><div class="row hd" style="grid-template-columns:40px 1fr 80px"><span class="rk">#</span><span>닉네임 · 캐릭터</span><span class="num">마스터리 점수</span></div>';
+  rows.forEach((x, i) => { const c = cj[x.w]; h += '<div class="row' + (myId && x.user_id === myId ? ' me' : '') + '" style="grid-template-columns:40px 1fr 80px"><span class="rk">' + rk[i] + '</span><span class="nm"><span data-notr>' + esc(x.name || '???') + '</span> <span data-notr class="muted">' + esc(c ? c[1] + ' ' + c[0] : x.w) + '</span></span><span class="num">' + x.pts.toLocaleString() + '</span></div>'; });
   out(h + '</div>');
 }
 // clans with a developer (ff_devs) go above the others with the same score
