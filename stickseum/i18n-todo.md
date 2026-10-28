@@ -238,3 +238,8 @@ patchnotes.json | v460 items[3] | 근위병이 소환자의 색 효과를 따르
 patchnotes.json | v460 items[4] | 1대1 점수줄에 근위병이 나오던 문제 수정 | build 460 | 2026-10-27
 patchnotes.json | v460 items[5] | 티오니스가 변장한 캐릭터가 마스터리에 들어가던 문제 수정 | build 460 | 2026-10-27
 patchnotes.json | v460 items[6] | 플레이어 목록의 팀 표시 제거 | build 460 | 2026-10-27
+patchnotes.json | v461 title | 프로필 창 통일과 오로라 스킨 최적화 | build 461 | 2026-10-28
+patchnotes.json | v461 items[0] | 프로필 창이 허브·다른 게임과 같은 공용 창으로 바뀜 | build 461 | 2026-10-28
+patchnotes.json | v461 items[1] | Stickseum 통계(레벨·승률·처치·어시스트·숙련도 등)는 공용 프로필 창 아래에 표시 | build 461 | 2026-10-28
+patchnotes.json | v461 items[2] | 이름과 아바타 변경은 허브에서만 가능 | build 461 | 2026-10-28
+patchnotes.json | v461 items[3] | 오로라 스킨 효과가 많을 때 렉이 줄도록 그리기 최적화 | build 461 | 2026-10-28
