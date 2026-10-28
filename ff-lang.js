@@ -40,6 +40,8 @@ function sync(){
 }
 var now=sync(); if(SCR[now]) now='en';
 if(now&&now!=='en'&&auOn()){ try{ localStorage.removeItem(AU); }catch(x){} }      // a game picked another language: Aurebesh/Galactic is off
+/* 더블터치(더블탭)로 화면이 확대되지 않게: 모든 페이지 공통. 확대·축소는 두 손가락으로만 가능해요. */
+try{ if(!document.getElementById('ffTap')){ var tp=document.createElement('style'); tp.id='ffTap'; tp.textContent='html,body{touch-action:manipulation}'; (document.head||document.documentElement).appendChild(tp); } }catch(e){}
 /* 모든 페이지에서 접속 신호(+게임 화면이면 "지금 하는 게임")를 보내는 ff-presence.js 도 불러요 */
 try{ var me=document.currentScript, base=(me&&me.src)?me.src.replace(/[^\/]*$/,''):'https://frenchfries777mc.github.io/games/';
   if(!window.FFPresence){ var ps=document.createElement('script'); ps.src=base+'ff-presence.js?v=20261028a'; ps.async=true; (document.head||document.documentElement).appendChild(ps); } }catch(e){}
