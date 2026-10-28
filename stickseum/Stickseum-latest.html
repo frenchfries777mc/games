@@ -392,9 +392,16 @@ if(document.readyState==='loading') document.addEventListener('DOMContentLoaded'
   .weaponSlot .wIcon{ font-size:34px; line-height:1.1; }
   .weaponSlot .wName{ font-weight:700; font-size:15px; margin-top:4px; }
   .weaponSlot .wDesc{ font-size:11px; color:var(--text-dim); margin-top:6px; line-height:1.5; min-height:2.5em; }
-  #weaponPickLayout{ display:flex; gap:12px; margin:10px 0; align-items:flex-start; }
+  #weaponPickLayout{ display:block; margin:10px 0; }
   .cmTool.sel{ outline:2px solid var(--accent,#ffd34d); }
-  #weaponGrid{ display:flex; flex-direction:column; gap:6px; flex:0 0 92px; max-height:420px; overflow-y:auto; overflow-x:hidden; padding-right:2px; }
+  #weaponGrid{ display:grid; grid-template-columns:repeat(5,minmax(0,1fr)); gap:8px; max-height:min(540px,calc(100vh - 250px)); overflow-y:auto; overflow-x:hidden; padding:2px; }
+  #weaponScreen.wDetail #weaponGrid, #weaponScreen.wDetail #weaponSearch{ display:none !important; }
+  #weaponScreen:not(.wDetail) #weaponPortraitWrap{ display:none; }
+  #weaponBackListBtn{ display:none; margin-top:6px; background:var(--panel); color:var(--text); border:1px solid var(--line); cursor:pointer; padding:9px 10px; font-weight:700; }
+  #weaponScreen.wDetail #weaponBackListBtn{ display:block; }
+  #weaponFavBtn{ margin:0 auto 8px; background:var(--panel); color:#ffd34d; border:1px solid var(--line); border-radius:999px; padding:4px 14px; font-weight:700; cursor:pointer; }
+  .wpnCard .wfav{ position:absolute; top:2px; right:4px; font-size:15px; line-height:1; color:#8a90a0; cursor:pointer; padding:2px; z-index:1; }
+  .wpnCard .wfav.on{ color:#ffd34d; text-shadow:0 0 6px rgba(255,211,77,.6); }
   *::-webkit-scrollbar:horizontal{ display:none; height:0; }          /* no bar along the bottom of any list: a sideways scroll still works by touch and wheel */
   .wpnCard{ position:relative; background:var(--panel-2); border:2px solid var(--line); border-radius:10px; padding:7px 4px; text-align:center; cursor:pointer;
     transition:border-color .12s ease, transform .1s ease, opacity .12s ease; user-select:none; }
@@ -779,7 +786,7 @@ h1,h2{ text-shadow:0 0 10px rgba(63,224,197,.55), 0 0 26px rgba(63,224,197,.25);
   input[type=text], input[type=password]{ padding:6px 9px; font-size:12.5px; }
   #weaponScreen{ width:min(760px, 94vw) !important; }
   #weaponPickLayout{ gap:8px; margin:6px 0; }
-  #weaponGrid{ flex:0 0 70px; max-height:calc(100vh - 150px); gap:4px; }
+  #weaponGrid{ max-height:calc(100vh - 150px); gap:4px; }
   .wpnCard{ padding:4px 2px; border-radius:8px; } .wpnCard .wi{ font-size:16px; } .wpnCard .wn{ font-size:9.5px; }
   .wpnCard .wi canvas{ width:58px !important; height:58px !important; margin:-10px auto -10px !important; }
   #weaponDetail{ min-height:0 !important; padding:6px 10px !important; } #weaponSearch{ width:min(200px,60%) !important; }
@@ -1327,10 +1334,12 @@ sting();})();</script>
         <div id="weaponPortraitName">캐릭터를 골라보세요</div>
         <canvas id="weaponPortraitCanvas" width="200" height="230"></canvas>
         <div id="weaponCharStats" style="display:none;"></div>
+        <button id="weaponFavBtn" type="button" style="display:none;">☆ 즐겨찾기</button>
         <div id="weaponDetail"></div>
+        <button class="btn-primary btn-full" id="weaponLockBtn" style="margin-top:12px;" disabled>선택 확정</button>
+        <button class="btn-full" id="weaponBackListBtn" type="button">&larr; 캐릭터 목록으로 돌아가기</button>
       </div>
     </div>
-    <button class="btn-primary btn-full" id="weaponLockBtn" style="margin-top:12px;" disabled>선택 확정</button>
     <div id="weaponChosenCount" class="hint" style="font-weight:700; color:var(--text); margin-top:8px; text-align:center;"></div>
     <div id="weaponRevealBox" style="display:none;"></div>
   </div>
@@ -3600,14 +3609,14 @@ function renderShop(){
   const tabs=document.getElementById('shopTabs'); tabs.innerHTML='';
   for(const [cat,label] of SHOP_CATS){
     const b=document.createElement('button'); b.className='shopTab'+(cat===shopCat?' on':''); b.textContent=label;
-    b.onclick=()=>{ shopCat=cat; renderShop(); }; tabs.appendChild(b);
+    b.onclick=()=>{ if(shopCat!==cat) shopQuery=''; shopCat=cat; renderShop(); }; tabs.appendChild(b);
   }
   const grid=document.getElementById('shopGrid'); grid.style.minHeight=''; grid.innerHTML='';
   if(shopCat==='box'){ renderBoxTab(grid); return; }
   if(shopCat==='emo'){ const note=document.createElement('div'); note.className='hint'; note.style.cssText='grid-column:1/-1; margin-bottom:2px;'; note.textContent='이모트 휠('+codeToLabel(keyBindings.emote)+' 키)에는 가진 이모트 중 '+EMOTE_WHEEL_N+'개까지 넣을 수 있어요 · 지금 '+emoteWheelList().length+' / '+EMOTE_WHEEL_N; grid.appendChild(note); }
   if(shopCat==='tier'){ const note=document.createElement('div'); note.className='hint'; note.style.cssText='grid-column:1/-1; margin-bottom:2px;'; note.textContent='캐릭터마다 2개: '+TIER_SKIN_TIERS.map(n=>n+' ('+tierMinKills(n)+'점)').join(' · ')+' 계급에 오르면 그 캐릭터의 전용 스킨이 해금돼요. 마스터리 포인트는 그 캐릭터로 처치 3점, 어시스트 1점, 승리 4점, 한 판 1점이 쌓여요 (듀얼 처치 8점, 배틀로얄 처치 5점, 6명 이상 부활 모드 처치 2점·승리 3점). 구매는 불가능해요.'; grid.appendChild(note); }
-  if(shopCat==='skin' || shopCat==='tier'){      // skin search: a box above the items; it hides the items that do not match (no re-draw, so typing keeps its place)
-    const sb0=document.createElement('input'); sb0.type='text'; sb0.id='shopSearch'; sb0.placeholder='🔍 스킨 검색 (스킨 이름, 캐릭터 이름)'; sb0.value=shopQuery; sb0.autocomplete='off'; sb0.style.cssText='grid-column:1/-1; width:100%; box-sizing:border-box; margin-bottom:4px;';
+  {      // search (every tab of the shop): a box above the items; it hides the items that do not match (no re-draw, so typing keeps its place)
+    const sb0=document.createElement('input'); sb0.type='text'; sb0.id='shopSearch'; sb0.placeholder=(shopCat==='skin'||shopCat==='tier')?'🔍 검색 (스킨 이름, 캐릭터 이름)':'🔍 검색 (치장품 이름)'; sb0.value=shopQuery; sb0.autocomplete='off'; sb0.style.cssText='grid-column:1/-1; width:100%; box-sizing:border-box; margin-bottom:4px;';
     sb0.oninput=()=>{ shopQuery=sb0.value; shopApplyFilter(); }; grid.appendChild(sb0);
   }
   const shopIds=Object.keys(COSMETICS); if(shopCat==='skin') shopIds.sort((a,b)=>(COSMETICS[a].seasonOnly?1:0)-(COSMETICS[b].seasonOnly?1:0));      // 시즌 패스 skins sit at the very bottom
@@ -5410,7 +5419,7 @@ function shuffle(arr){ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.
 /* ===== the version of this file =====
    Players with different versions CAN meet and play together: the automatic matchmaking uses the same room names for every version (online-<mode>-<map>-<slot>), and nobody is refused because of a different build.
    The build is only sent along with the join message and the lobby (for information); the corner of the screen shows it. */
-const GAME_BUILD='build 2026-10-18-v465';
+const GAME_BUILD='build 2026-10-18-v466';
 const GAME_VERSION='0.9', GAME_VERSION_NAME='은하 제국의 황혼';   // 게임 버전 이름: versions.json의 title과 같게 (빌드마다 바꾸지 않음)
 const WEEKLY_EVENTS=[
   {id:'lowg',    name:'저중력 난투', desc:'몸이 둥실둥실, 중력이 약해진 난투', rules:{grav:0.6}},
@@ -7717,7 +7726,7 @@ function clanSyncMyName(id){            // my row in the clan list keeps the nic
    - the NICKNAME of the account is the one in the save (the account wins over what this browser had); the public profile is made to say the same (so an old copy that overwrote it is repaired);
    - while playing: the save goes up a little after changes (at most once in 30 s) and when the tab is left, but never before the first sync has finished (an empty browser cannot overwrite the account);
    - no connection / too big / refused: the game goes on as before (progress only in this browser) and the account window says so. */
-const SAVE_FIELDS=['gold','xp','owned','equipped','totalKills','totalMatches','totalWins','winStreak','maxStreak','totalDamage','totalAssists','modeMatches','charKills','charPts','avatar','playerName','achievements','weaponXp','boxes','boxesOpened','dailyLast','dailyCount','souls','pxEarned','pxSpent','missions','season'];
+const SAVE_FIELDS=['gold','xp','owned','equipped','totalKills','totalMatches','totalWins','winStreak','maxStreak','totalDamage','totalAssists','modeMatches','charKills','charPts','avatar','playerName','achievements','weaponXp','boxes','boxesOpened','dailyLast','dailyCount','souls','pxEarned','pxSpent','missions','season','favChars'];
 const CLOUD_META_KEY='stickseumSave', CLOUD_MAX_CHARS=3600, CLOUD_MIN_GAP_MS=30000, CLOUD_DEBOUNCE_MS=20000;
 let cloudSaveState='off', cloudSaveReady=false, cloudSaveTimer=null, cloudSaveLastJson='', cloudSaveLastAt=0, cloudSaveNote='', cloudSaveBackoffUntil=0, sbUserMeta={};
 function cloudSavePayload(){ const o={v:1}; for(const k of SAVE_FIELDS) o[k]=(k==='gold') ? gold : saveData[k]; o.xc=PLAYER_FLAT; o.rk=RANK_SCALE_VER; o.at=Date.now(); return JSON.parse(JSON.stringify(o)); }
@@ -7732,6 +7741,7 @@ function mergeSaves(local, cloud){
   for(const k of ['weaponXp','charKills','charPts','modeMatches']){ m[k]=Object.assign({}, base[k]||{}); for(const w in (other[k]||{})) m[k][w]=Math.max(+m[k][w]||0, +other[k][w]||0); }
   m.dailyLast=((base.dailyLast||'')>(other.dailyLast||'')) ? (base.dailyLast||'') : (other.dailyLast||'');
   if(!(m.playerName && String(m.playerName).trim())) m.playerName=other.playerName||null;
+  if(!Array.isArray(m.favChars) && Array.isArray(other.favChars)) m.favChars=other.favChars;
   m.missions=mergeMissionState(local.missions, cloud.missions); m.season=mergeSeasonState(local.season, cloud.season);
   const eq=m.equipped||{}; if(eq.name && !m.owned[eq.name]) eq.name=null; if(eq.skin) for(const w in eq.skin){ if(eq.skin[w] && !m.owned[eq.skin[w]] && !(COSMETICS[eq.skin[w]]&&COSMETICS[eq.skin[w]].tier)) eq.skin[w]=null; }
   return m;
@@ -7759,6 +7769,7 @@ function applyCloudSave(s){
   saveData.achievements=(s.achievements&&typeof s.achievements==='object')?s.achievements:{}; saveData.weaponXp=(s.weaponXp&&typeof s.weaponXp==='object')?s.weaponXp:{};
   saveData.dailyLast=(typeof s.dailyLast==='string' && /^\d{4}-\d{2}-\d{2}$/.test(s.dailyLast)) ? s.dailyLast : '';
   saveData.missions=(s.missions&&typeof s.missions==='object')?s.missions:null; saveData.season=(s.season&&typeof s.season==='object')?s.season:null;
+  if(Array.isArray(s.favChars)) saveData.favChars=s.favChars.filter(w=>typeof w==='string').slice(0,60);
   persistSave(); updateGoldUI();
 }
 // ---- the save is gzip-compressed and written as text (the user data travels inside the login token, so it must stay small) ----
@@ -11204,6 +11215,23 @@ function charRankFor(kills){
   for(const r of CHAR_RANKS) if(kills>=r.min) cur=r;
   return cur;
 }
+function favChars(){ return Array.isArray(saveData.favChars)?saveData.favChars:[]; }
+function isFavChar(w){ return favChars().includes(w); }
+function weaponOrder(list){ const f=favChars(); return list.filter(w=>f.includes(w)).concat(list.filter(w=>!f.includes(w))); }       // the favourites first, each group in its usual order
+function weaponShowDetail(on){ const sc=document.getElementById('weaponScreen'); if(sc) sc.classList.toggle('wDetail', !!on); }       // the window is either the list of characters or the page of the chosen one
+function weaponFavReorder(){
+  const grid=document.getElementById('weaponGrid'); if(!grid) return;
+  const by={}; grid.querySelectorAll('.wpnCard').forEach(c=>{ by[c.dataset.wid]=c; });
+  weaponOrder(Object.keys(by)).forEach(w=>grid.appendChild(by[w]));
+}
+function toggleFavChar(w){
+  const l=favChars().slice(), i=l.indexOf(w); if(i>=0) l.splice(i,1); else l.push(w);
+  saveData.favChars=l; persistSave(); weaponFavReorder(); renderWeaponUI();
+}
+function addWeaponFavStar(el, wid){
+  const st=document.createElement('div'); st.className='wfav'; st.title='즐겨찾기'; el.appendChild(st);
+  st.onclick=e=>{ e.stopPropagation(); toggleFavChar(wid); };
+}
 let characterBrowseMode=false;
 function enterCharacterBrowse(){
   characterBrowseMode=true;
@@ -11223,16 +11251,19 @@ function enterCharacterBrowse(){
   if(weaponCountdownTimer){ clearInterval(weaponCountdownTimer); weaponCountdownTimer=null; }
   { const si=document.getElementById('weaponSearch'); if(si){ si.value=''; si.oninput=weaponSearchApply; setTimeout(weaponSearchApply,0); } }
   const grid=document.getElementById('weaponGrid'); grid.innerHTML='';
-  for(const wid of SELECTABLE_WEAPONS){
+  weaponShowDetail(false);
+  for(const wid of weaponOrder(SELECTABLE_WEAPONS)){
     const w=WEAPONS[wid];
     const el=document.createElement('div'); el.className='wpnCard'; el.dataset.wid=wid;
     el.innerHTML='<div class="wi"></div><div class="wn"></div><div class="wk"></div><div class="wt"></div><div class="wm"></div>';
     el.querySelector('.wi').textContent=w.emoji; el.querySelector('.wn').innerHTML=charNameWithTierHtml(wid);
-    el.onclick=()=>{ weaponUI.selected=wid; renderWeaponUI(); };
+    addWeaponFavStar(el, wid);
+    el.onclick=()=>{ weaponUI.selected=wid; weaponShowDetail(true); renderWeaponUI(); };
     grid.appendChild(el);
   }
   renderWeaponUI();
 }
+document.getElementById('weaponBackListBtn').onclick=()=>weaponShowDetail(false);
 document.getElementById('weaponBrowseBackBtn').onclick=()=>{
   characterBrowseMode=false;
   document.getElementById('weaponBrowseBackBtn').style.display='none';
@@ -11268,11 +11299,13 @@ function enterWeaponPhase(deadline, wmode, offer, banEnds){
   document.getElementById('weaponRevealBox').style.display='none';
   for(const id of ['weaponGrid','weaponDetail','weaponTeamBox','weaponLockBtn','weaponChosenCount']) document.getElementById(id).style.display='';
   const grid=document.getElementById('weaponGrid'); grid.innerHTML='';
-  for(const wid of (weaponUI.offer || SELECTABLE_WEAPONS)){
+  weaponShowDetail(false);
+  for(const wid of weaponOrder(weaponUI.offer || SELECTABLE_WEAPONS)){
     const w=WEAPONS[wid];
     const el=document.createElement('div'); el.className='wpnCard'; el.dataset.wid=wid;
     el.innerHTML='<div class="wi"></div><div class="wn"></div><div class="wk"></div><div class="wt"></div><div class="wm"></div>';
     el.querySelector('.wi').textContent=w.emoji; el.querySelector('.wn').innerHTML=charNameWithTierHtml(wid); el.querySelector('.wk').textContent=KIND_LABEL[w.kind]||'';
+    addWeaponFavStar(el, wid);
     el.onclick=()=>pickWeapon(wid);
     grid.appendChild(el);
   }
@@ -11300,14 +11333,14 @@ function enterWeaponPhase(deadline, wmode, offer, banEnds){
 function weaponBanMode(){ const st=weaponUI.state; return weaponUI.mode==='pick' && !!(st && st.ban ? st.ban.on : weaponUI.banEnds>Date.now()); }
 function pickWeapon(wid){
   if(weaponUI.mode!=='pick' || weaponUI.locked) return;
-  if(weaponBanMode()){ const sb=weaponUI.state&&weaponUI.state.ban; if(!sb || !sb.can || sb.mine || (sb.tm||[]).includes(wid)) return; weaponUI.banSel=wid; renderWeaponUI(); return; }
+  if(weaponBanMode()){ const sb=weaponUI.state&&weaponUI.state.ban; if(!sb || !sb.can || sb.mine || (sb.tm||[]).includes(wid)) return; weaponUI.banSel=wid; weaponShowDetail(true); renderWeaponUI(); return; }
   if(weaponUI.offer && !weaponUI.offer.includes(wid)) return;
   if(weaponUI.hiddenUntil && performance.now()<weaponUI.hiddenUntil) return; // random cards are still 'rolling'
   const st=weaponUI.state;
   if(st && st.dup && st.picks.some(p=>p.id!==myId && p.pick===wid)) return; // a teammate already has it
   if(st && st.banned && st.banned.includes(wid)) return;                       // duel: used in an earlier round
   if(st && st.ob && st.ob.includes(wid)) return;                                // banned by the other side
-  weaponUI.selected=wid;
+  weaponUI.selected=wid; weaponShowDetail(true);
   renderWeaponUI();
   if(isHost) hostWeaponPick(myId, wid);
   else if(hostConn && hostConn.open){ const ws=myWeaponStats(wid); hostConn.send({t:'weaponPick', id:wid, ck:ws.ck, ml:ws.ml}); }
@@ -11389,6 +11422,8 @@ function weaponSearchApply(){          // the search box over the character list
 }
 function renderWeaponUI(){
   const st=weaponUI.state, bm=weaponBanMode(), sel=bm?weaponUI.banSel:weaponUI.selected;
+  if(weaponUI._bmPrev && !bm) weaponShowDetail(false);       // the ban stage is over: back to the list for the real pick
+  weaponUI._bmPrev=bm;
   { const tEl=document.getElementById('weaponTitle'), sb=st&&st.ban;
     if(bm) tEl.textContent = (sb&&sb.can) ? '🚫 상대가 쓰지 못할 캐릭터를 하나 고르세요' : '🚫 상대에게 금지할 캐릭터를 정하는 중이에요';
     else if(weaponUI.titleBase) tEl.textContent = (st&&st.ob&&st.ob.length&&weaponUI.titleBase==='무기를 선택하세요') ? '무기를 선택하세요 (회색은 상대가 금지한 캐릭터)' : weaponUI.titleBase; }
@@ -11399,6 +11434,7 @@ function renderWeaponUI(){
   if(rolling) setTimeout(renderWeaponUI, Math.max(30, weaponUI.hiddenUntil-performance.now()+20));
   document.querySelectorAll('#weaponGrid .wpnCard').forEach(el=>{
     const wid=el.dataset.wid;
+    { const fv=el.querySelector('.wfav'); if(fv){ const on=isFavChar(wid); fv.textContent=on?'★':'☆'; fv.classList.toggle('on',on); } }
     if(rolling){ el.querySelector('.wi').textContent='❓'; el.querySelector('.wn').textContent='???'; el.querySelector('.wk').textContent=''; el.querySelector('.wt').textContent=''; const wmR=el.querySelector('.wm'); if(wmR) wmR.textContent=''; return; }
     { const wm=el.querySelector('.wm'); if(wm){ wm.textContent=masteryBadgeText(wid); wm.classList.toggle('max', masteryInfo(wid).lv>=MASTERY_STAR_LV); } } // shown in both the codex and the live pick screen so the level can help choose
     setWeaponIcon(el, wid); el.querySelector('.wn').innerHTML=charNameWithTierHtml(wid); el.querySelector('.wk').textContent=KIND_LABEL[WEAPONS[wid].kind]||'';
@@ -11467,6 +11503,7 @@ function renderWeaponUI(){
     drawWeaponPortrait(null);
     det.textContent = bm ? ('왼쪽에서 금지할 캐릭터를 누른 뒤 "금지 확정"을 누르세요. 상대는 그 캐릭터를 고를 수 없어요.'+((st&&st.ban&&st.ban.opp)?' · 상대 쪽은 금지를 정했어요':' · 상대 쪽은 정하는 중이에요')) : weaponUI.offer ? '제시된 3개 캐릭터 중에서 하나를 눌러 선택하세요.' : '왼쪽에서 캐릭터를 눌러 선택하세요. 팀 모드에서는 팀원이 고른 캐릭터를 같이 고를 수 없어요.';
   }
+  { const fb=document.getElementById('weaponFavBtn'); if(fb){ const ok=!rolling2 && sel && WEAPONS[sel]; fb.style.display=ok?'':'none'; if(ok){ fb.textContent=isFavChar(sel)?'★ 즐겨찾기 해제':'☆ 즐겨찾기'; fb.onclick=()=>toggleFavChar(sel); } } }
   const btn=document.getElementById('weaponLockBtn');
   if(bm){ const sb=st&&st.ban; btn.disabled = !sb || !sb.can || !!sb.mine || !weaponUI.banSel; btn.textContent = (sb&&sb.mine) ? ('금지함: '+(WEAPONS[sb.mine]?WEAPONS[sb.mine].emoji:'')) : '금지 확정'; }
   else { btn.disabled = !sel || weaponUI.locked; btn.textContent = weaponUI.locked ? '확정됨' : '선택 확정'; }
@@ -11476,6 +11513,7 @@ function showWeaponReveal(list, endsAt){
   weaponUI.mode='reveal'; weaponUI.revealEnd=endsAt;
   showScreen('weaponScreen');
   document.getElementById('weaponTitle').textContent='모든 플레이어의 무기';
+  weaponShowDetail(false);
   document.getElementById('weaponTimerText').textContent='';
   for(const id of ['weaponGrid','weaponDetail','weaponTeamBox','weaponLockBtn','weaponChosenCount']) document.getElementById(id).style.display='none';
   const box=document.getElementById('weaponRevealBox'); box.style.display=''; box.innerHTML='';
@@ -12024,7 +12062,7 @@ function tioBlood(p, tSec, tMs, ax, ay){        // 채혈: a syringe thrown at m
 }
 function tioBloodHit(b, victim){
   const ow=players[b.owner]; if(!ow || !ow.alive || (ow.tioStage||'blood')!=='blood' || ow.disg || victim.isMinion) return;
-  ow.tioFor={weapon:victim.weapon, kit:victim.kit||null, cos:victim.cos, name:victim.name, color:victim.color};
+  ow.tioFor={weapon:victim.weapon, kit:victim.kit||null, cos:victim.cos, name:victim.name, color:victim.color, vid:victim.id, vteam:(victim.team===undefined?null:victim.team), clan:victim.clan||''};
   ow.tioStage='morph'; ow.lastSkill=-9999;
 }
 function tioMorph(p, tSec, tMs){
@@ -12078,6 +12116,7 @@ function spaceTick(dt, t){
   }
   if(droneBombs.length) droneBombTick(dt, t);
 }
+function clanNameFor(p){ const me=players[myId], hid=p.dgn && p.id!==myId && !(me && isAlly(me,p)), c=hid?p.dgc:p.clan; return (c?'['+c+'] ':'')+nameShownFor(p); }       // a disguised 티오니스 wears the clan tag of the one he copied, too
 function nameShownFor(p){ const me=players[myId]; return (p.dgn && p.id!==myId && !(me && isAlly(me,p))) ? p.dgn : p.name; }
 /* ---- drawing ---- */
 function drawDroneShape(c, x, y, s, hot, red){
@@ -14893,7 +14932,7 @@ function hostTickCore(dt,t){
         fireCdRemain: snapR(p.fireCdRemain||0,20),
         ultCdRemain: p.darkSub ? 0 : snapR(Math.max(0, ultCdOf(p) - (t/1000-(p.lastUlt===undefined?-9999:p.lastUlt))),20), darkSub:p.darkSub?1:0, darkArm:(p.darkArmUntil>t/1000)?1:0,
         skillCdRemain: snapR(Math.max(0, skillCdOf(p) - (t/1000-(p.lastSkill===undefined?-9999:p.lastSkill))),20), buff:p.buff||null, skillUses:p.skillUses||0, ultUses:p.ultUses||0, ultMulti:p.ultMulti||0,
-        pz:p.pzStacks||0, pm:(p.pzMarkUntil>t/1000)?1:0, ultOn:!!p.ultOn, invis:!!p.invis, isGuard:p.isGuard?1:0, isClone:p.isClone?1:0, ownerId:p.ownerId||'', dgn:(p.disg&&p.tioFor)?p.tioFor.name:'', tioStage:p.tioStage||'', drones:(p.weapon==='pel')?pelN(p):0, pelBoost:pelBoostOn(p,t/1000)?1:0, burning:!!p.burning, poisoned:!!p.poisoned, kw:(p.kanWingsUntil>t/1000)?1:0, gc:p.gc||0, gp:Math.round(Math.min(1,(p.goldStay||0)/GOLD_PICK_STAY)*20)/20, pp:puppetMaster(p,t/1000)?p.puppetTarget:null, sw:p.sw||null, sewSlowed:!!p.sewSlowed, slowed:!!p.slowed, stunned:!!p.stunned, cardSlowed:!!p.cardSlowed, bladeSpin:!!p.bladeSpin, swordCharging:!!p.swordCharge, cannonFlying:!!p.cannonFly, chips:p.chips||0, cannonAng:p.cannonFly?Math.round(Math.atan2(p.vy||0,p.cannonFly.vx)*100)/100:0, totalDamageDealt:p.totalDamageDealt||0, channeling:!!p.teleportChannel, flaming:!!p.flaming, portalPair:p.portalPair||null, batting:!!p.batting, vacuumStacks:p.vacuumStacks||0, isZombie:!!p.isZombie, parkourItem:!!p.parkourItem,
+        pz:p.pzStacks||0, pm:(p.pzMarkUntil>t/1000)?1:0, ultOn:!!p.ultOn, invis:!!p.invis, isGuard:p.isGuard?1:0, isClone:p.isClone?1:0, ownerId:p.ownerId||'', dgn:(p.disg&&p.tioFor)?p.tioFor.name:'', dgc:(p.disg&&p.tioFor)?(p.tioFor.clan||''):'', tioStage:p.tioStage||'', drones:(p.weapon==='pel')?pelN(p):0, pelBoost:pelBoostOn(p,t/1000)?1:0, burning:!!p.burning, poisoned:!!p.poisoned, kw:(p.kanWingsUntil>t/1000)?1:0, gc:p.gc||0, gp:Math.round(Math.min(1,(p.goldStay||0)/GOLD_PICK_STAY)*20)/20, pp:puppetMaster(p,t/1000)?p.puppetTarget:null, sw:p.sw||null, sewSlowed:!!p.sewSlowed, slowed:!!p.slowed, stunned:!!p.stunned, cardSlowed:!!p.cardSlowed, bladeSpin:!!p.bladeSpin, swordCharging:!!p.swordCharge, cannonFlying:!!p.cannonFly, chips:p.chips||0, cannonAng:p.cannonFly?Math.round(Math.atan2(p.vy||0,p.cannonFly.vx)*100)/100:0, totalDamageDealt:p.totalDamageDealt||0, channeling:!!p.teleportChannel, flaming:!!p.flaming, portalPair:p.portalPair||null, batting:!!p.batting, vacuumStacks:p.vacuumStacks||0, isZombie:!!p.isZombie, parkourItem:!!p.parkourItem,
         isHost:p.isHost,clan:p.clan||'',joinOrder:p.joinOrder,weapon:p.weapon,kit:p.kit||null,team:p.team,spinAngle:p.spinAngle,cos:p.cos,isBoss:p.isBoss?1:0,isMinion:p.isMinion?1:0,bt:p.bt,bossMaxHp:p.bossMaxHp,emIdx:p.emIdx,emRem:(p.emUntil?Math.max(0,Math.round((p.emUntil-t/1000)*20)/20):0)})),
       cq: (gameMode==='conquest' && cq) ? {s:cq.scores, h:cq.holder, c:cq.contested} : undefined,
       xm: (xm && xmV) ? xmV : undefined,
@@ -14979,7 +15018,7 @@ function handleDeath(p, killer, t, killerNameFallback){
   if(killer) killer.kills++;
   if(p.ai && killer && killer.id!==p.id) p.ai.grudge=killer.id;                       // (only the avenger uses it)
   if(killer && killer.ai && killer.ai.grudge===p.id) killer.ai.grudge=null;         // revenge taken
-  const killerName = killer ? killer.name : (killerNameFallback || '지형');
+  const killerName = killer ? ((killer.disg && killer.tioFor) ? killer.tioFor.name : killer.name) : (killerNameFallback || '지형');       // a disguised 티오니스 shows up in the kill feed under the name he copied
   const msg = killerName+' ▸ '+p.name;
   const killPayload={t:'kill', msg, killerName, victimName:p.name, hasKiller:!!killer,
     x:killer?killer.x:p.x, y:killer?killer.y:p.y, color:killer?killer.color:p.color,
@@ -18018,7 +18057,7 @@ function drawStickman(p){
     if(p.stunned && p.alive) drawStunStars(ctx, HEADCY);
     ctx.restore();
     ctx.font='600 13px Rajdhani'; ctx.textAlign='center'; ctx.fillStyle=nameColorFor(p.cos&&p.cos.name);
-    AURA=false; ctx.fillText((p.clan?'['+p.clan+'] ':'')+nameShownFor(p), p.x, p.y+HEADCY-38); drawTitleTag(ctx, p, HEADCY); drawEmote(ctx, p, HEADCY);
+    AURA=false; ctx.fillText(clanNameFor(p), p.x, p.y+HEADCY-38); drawTitleTag(ctx, p, HEADCY); drawEmote(ctx, p, HEADCY);
     drawOverheadExtras(p, HEADCY);
     return;
   }
@@ -18065,7 +18104,7 @@ function drawStickman(p){
   if(p.stunned && p.alive) drawStunStars(ctx, HEADCY);
   ctx.restore();
   ctx.font='600 13px Rajdhani'; ctx.textAlign='center'; ctx.fillStyle=nameColorFor(p.cos&&p.cos.name);
-  AURA=false; ctx.fillText((p.clan?'['+p.clan+'] ':'')+nameShownFor(p), p.x, p.y+HEADCY-38); drawTitleTag(ctx, p, HEADCY); drawEmote(ctx, p, HEADCY);
+  AURA=false; ctx.fillText(clanNameFor(p), p.x, p.y+HEADCY-38); drawTitleTag(ctx, p, HEADCY); drawEmote(ctx, p, HEADCY);
   drawOverheadExtras(p, HEADCY);
 }
 function drawStunStars(ctx, HEADCY){   // three little stars circling over the head (drawn in the player's own coordinates)
