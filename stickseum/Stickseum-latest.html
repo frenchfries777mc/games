@@ -789,6 +789,7 @@ h1,h2{ text-shadow:0 0 10px rgba(63,224,197,.55), 0 0 26px rgba(63,224,197,.25);
   #weaponDetail{ font-size:11px; } #weaponSearch{ padding:4px 10px !important; font-size:12px; margin:2px auto 4px !important; }
   #weaponLockBtn{ margin-top:6px !important; } #weaponChosenCount{ margin-top:4px !important; font-size:11px; }
 }
+  html,body{ touch-action:manipulation; }      /* no zoom by double tap, on the phone's menu screens too */
 </style>
 </head>
 <body>
@@ -5470,7 +5471,7 @@ function shuffle(arr){ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.
 /* ===== the version of this file =====
    Players with different versions CAN meet and play together: the automatic matchmaking uses the same room names for every version (online-<mode>-<map>-<slot>), and nobody is refused because of a different build.
    The build is only sent along with the join message and the lobby (for information); the corner of the screen shows it. */
-const GAME_BUILD='build 2026-10-18-v461';
+const GAME_BUILD='build 2026-10-18-v462';
 const GAME_VERSION='0.9', GAME_VERSION_NAME='은하 제국의 황혼';   // 게임 버전 이름: versions.json의 title과 같게 (빌드마다 바꾸지 않음)
 const WEEKLY_EVENTS=[
   {id:'lowg',    name:'저중력 난투', desc:'몸이 둥실둥실, 중력이 약해진 난투', rules:{grav:0.6}},
