@@ -23,6 +23,8 @@ function which(){
 var game=which(), place=game||'hub';
 window.FFPresence={game:game};
 if(!window.fetch) return;
+/* 방 서버(ff-host)의 화면 없는 브라우저는 사람이 아니라서 접속 신호를 보내지 않아요 (주소의 dedicated=1, 자동화 브라우저 표시) */
+if(/[?&]dedicated=1(&|$)/.test(location.search||'')||navigator.webdriver) return;
 function okTok(raw){ try{ var s=JSON.parse(raw||'null'); if(s&&s.access_token&&(!s.expires_at||s.expires_at*1000>Date.now()+5000)) return s; }catch(e){} return null; }
 /* 공용 로그인(localStorage)이 만료됐거나 비어 있어도, 이 탭의 게임이 따로 들고 있는 로그인(sessionStorage 의 sb-... 키, 예: Isleport)이 살아 있으면 그걸 써요 */
 function token(){ var best=null; try{ best=okTok(localStorage.getItem(SKEY)); }catch(e){} try{ for(var i=0;i<sessionStorage.length;i++){ var k=sessionStorage.key(i); if(/^sb-/.test(k)){ var t=okTok(sessionStorage.getItem(k)); if(t&&(!best||(t.expires_at||0)>(best.expires_at||0))) best=t; } } }catch(e){} return best?best.access_token:null; }
