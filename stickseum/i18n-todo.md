@@ -316,3 +316,6 @@ patchnotes.json | v481 title | 은하 제국의 황혼 | build 481 | 2026-10-28
 patchnotes.json | v481 items[0] | 듀얼에서 내가 금지한 캐릭터는 나도 선택 불가 | build 481 | 2026-10-28
 patchnotes.json | v482 title | 은하 제국의 황혼 | build 482 | 2026-10-28
 patchnotes.json | v482 items[0] | 공격 소리 0.75배로 줄임 | build 482 | 2026-10-28
+patchnotes.json | v483 title | 은하 제국의 황혼 | build 483 | 2026-10-28
+patchnotes.json | v483 items[0] | 폭발 효과 크기 0.75배 | build 483 | 2026-10-28
+patchnotes.json | v483 items[1] | 승리 모션에 지금 입은 스킨이 나오도록 수정 | build 483 | 2026-10-28
