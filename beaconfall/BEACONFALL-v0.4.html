@@ -393,7 +393,7 @@ window.bfIntro=function(){if(run)return;run=1;t0=Date.now();el.classList.add('ru
     <button class="btn" data-act="skins"><span class="arrow">▶</span>스킨 상점<span class="en">SKIN SHOP</span></button>
     <button class="btn" data-act="stats"><span class="arrow">▶</span>통계<span class="en">STATS</span></button>
     <button class="btn" data-act="settings"><span class="arrow">▶</span>설정<span class="en">SETTINGS</span></button>
-    <p class="foot">v0.4<br>build 125</p>
+    <p class="foot">v0.4<br>build 126</p>
   </nav>
 </div>
 
@@ -11731,7 +11731,7 @@ function exitWindow(){
     openModal(`<h2>나가기<small>EXIT</small></h2><p class="hint">이 창은 직접 닫을 수 없어요. 탭을 닫거나 사이트로 이동해 주세요.</p>
       <div class="actions"><button class="btn sm" data-gosite>사이트로 이동</button><button class="btn sm ghost" data-close>닫기</button></div>`,m=>{
       m.querySelector('[data-close]').onclick=closeModal;
-      m.querySelector('[data-gosite]').onclick=()=>{location.href='https://frenchfries777mc.github.io/games/';};
+      m.querySelector('[data-gosite]').onclick=()=>{location.href='https://frenchfries777mc.github.io/games/?r='+Date.now();};
     },'single');
   },350);
 }
@@ -12135,6 +12135,8 @@ function showSettings(){
 
 /* ---------- 멀티: PeerJS (주소 = 방 이름) ---------- */
 const GAME_VER='0.4';   // 버전(0.x)이 다르면 방 주소 자체가 달라서 서로 보이지도 못 들어가요 (빌드는 달라도 돼요)
+/* 캐시에 남은 옛 페이지: 사이트에 이 버전의 더 새로운 빌드가 있으면, 그 빌드 번호를 주소에 붙여 한 번만 다시 불러와요 (새 주소는 브라우저 캐시에서 나오지 않아요) */
+try{ fetch('versions.json?t='+Date.now(),{cache:'no-store'}).then(r=>r.json()).then(j=>{ const f=document.querySelector('.foot'), m=f&&/build\s*(\d+)/.exec(f.textContent), me=m?+m[1]:0, v=(j.versions||[]).find(x=>x.version===GAME_VER), n=v?+String(v.build||'').replace(/\D/g,''):0, u=new URL(location.href); if(me&&n>me&&u.searchParams.get('b')!==String(n)){ u.searchParams.set('b',n); location.replace(u.toString()); } }).catch(()=>{}); }catch(e){}
 const PREFIX='stranded'+GAME_VER.replace('.','')+'-', PEER_SRC='https://cdnjs.cloudflare.com/ajax/libs/peerjs/1.5.2/peerjs.min.js';
 const net={peer:null,role:null,addr:'',wname:'',conns:[],count:1,msg:'',busy:false,id:'',chain:Promise.resolve(),tPos:0,tPlayers:0,tMons:0,tClock:0};
 const addrOk=a=>/^[a-z0-9][a-z0-9_-]{2,23}$/i.test(a);
