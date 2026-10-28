@@ -245,3 +245,6 @@ patchnotes.json | v461 items[2] | 이름과 아바타 변경은 허브에서만 
 patchnotes.json | v461 items[3] | 오로라 스킨 효과가 많을 때 렉이 줄도록 그리기 최적화 | build 461 | 2026-10-28
 patchnotes.json | v462 title | 더블터치 확대 막기 | build 462 | 2026-10-28
 patchnotes.json | v462 items[0] | 게임과 사이트 페이지에서 화면을 두 번 눌러도 확대되지 않음 | build 462 | 2026-10-28
+patchnotes.json | v463 title | 온라인 인원 숫자를 허브와 통일 | build 463 | 2026-10-28
+patchnotes.json | v463 items[0] | 메인 화면 위쪽 온라인 N명이 허브와 같은 서버 집계 숫자로 표시됨 | build 463 | 2026-10-28
+patchnotes.json | v463 items[1] | 숫자는 메인 화면이 보일 때 20초마다 갱신 | build 463 | 2026-10-28
