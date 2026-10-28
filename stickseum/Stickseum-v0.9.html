@@ -2802,7 +2802,7 @@ function spawnKillEffect(e, x, y, addP, burst, shakeFrom){
    * "신상" skins are bought in the shop like the others (2000 G), with a little effect around the head.
    * tier skins cannot be bought: each character has two, which unlock for good when YOU reach that tier with that character (by its total kills):
      TIER_SKIN_TIERS[0] gives the first one, TIER_SKIN_TIERS[1] the second. */
-const NEW_SKIN_PRICE=2000, TIER_SKIN_TIERS=['다이아','그랜드 마스터'];
+const NEW_SKIN_PRICE=2000, TIER_SKIN_TIERS=['다이아','그랜드 마스터 I'];
 const NEW_SKINS=[
   ['pistol','네온 스파이 타이','#00e5ff','glow'],
   ['smg','홀로그램 고글','#b388ff','glow'],
@@ -5458,7 +5458,7 @@ function shuffle(arr){ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.
 /* ===== the version of this file =====
    Different BUILDS of one version meet and play together (room names online-v<ver>-<mode>-<map>-<slot>); different VERSIONS (the 0.x part) never do - the host refuses them (verNo) and the dispatcher answers busy.
    The build is only sent along with the join message and the lobby (for information); the corner of the screen shows it. */
-const GAME_BUILD='build 2026-10-18-v479';
+const GAME_BUILD='build 2026-10-18-v480';
 const GAME_VERSION='0.9', GAME_VERSION_NAME='은하 제국의 황혼';   // 게임 버전 이름: versions.json의 title과 같게 (빌드마다 바꾸지 않음)
 /* version (the 0.x part) vs build: different BUILDS of one version meet and play together, different VERSIONS never do (rooms, quick match, ranked, friend invites, dispatcher).
    Builds before 470 do not send a version, so it is read from the build number (0.9 started at build 458). */
@@ -11239,6 +11239,8 @@ const TIER_PT_MVP=5, TIER_PT_KILL=3, TIER_PT_ASSIST=1, TIER_PT_WIN=3, TIER_PT_MA
 { const base=CHAR_RANKS.slice(); CHAR_RANKS.length=0;      // two in-between steps (II, III) inside every rank from 브론즈 up, so a level-up comes often even though the points are 1.75x harder (owner 10-26); the skin ranks (다이아, 그랜드 마스터) keep their own names
   base.forEach((r,i)=>{ CHAR_RANKS.push({min:r.min, name:r.name, color:r.color}); const nx=base[i+1];
     if(nx && i>0) for(let k=1;k<=2;k++) CHAR_RANKS.push({min:Math.round((r.min+(nx.min-r.min)*k/3)/10)*10, name:r.name+' '+(k===1?'II':'III'), color:r.color}); }); }
+{ const gi=CHAR_RANKS.findIndex(r=>r.name==='그랜드 마스터'), g=CHAR_RANKS[gi], RM=['I','II','III','IV','V','VI','VII','VIII','IX','X'];      // 그랜드 마스터 I ~ X (owner 10-28): the top has no next rank to divide into, so every step is 1000 points
+  CHAR_RANKS.splice(gi,1,...RM.map((n,k)=>({min:g.min+k*1000, name:'그랜드 마스터 '+n, color:g.color}))); }
 // the tier of a character (by its total kills) as a small coloured tag, to put after the character's name
 function tierLvTagHtml(kills, lv){ const r=charRankFor(kills||0); return '<span class="tagRow"><span class="tierTag" style="color:'+r.color+'">'+r.name+'</span><span class="lvTag'+(lv>=MASTERY_STAR_LV?' max':'')+'">Lv.'+lv+'</span></span>'; }
 function charTierTagHtml(wid){ if(!SELECTABLE_WEAPONS.includes(wid)) return ''; return tierLvTagHtml(charKillsFor(wid), masteryInfo(wid).lv); }
@@ -11246,8 +11248,8 @@ function myWeaponStats(wid){ return {ck:Math.max(0,Math.floor(charKillsFor(wid))
 function cleanStat(v, max){ v=Math.floor(+v); return (isFinite(v) && v>0) ? Math.min(v, max) : 0; }
 function charNameWithTierHtml(wid){ return escapeHtmlText(WEAPON_PERSONA_NAME[wid]||(WEAPONS[wid]&&WEAPONS[wid].name)||wid)+charTierTagHtml(wid); }
 function rankEmblemSvg(rk, size){      // the badge of a 계급: a shield in the rank colour, a star with more points the higher the rank, and three pips for the II / III steps
-  const base=rk.name.replace(/ (II|III)$/,''), sub=/ III$/.test(rk.name)?2:(/ II$/.test(rk.name)?1:0);
-  let bi=0; for(const r of CHAR_RANKS){ const bn=r.name.replace(/ (II|III)$/,''); if(bn===base) break; if(r.name===bn) bi++; }
+  const gm=/^그랜드 마스터 /.test(rk.name), base=gm?'그랜드 마스터':rk.name.replace(/ (II|III)$/,''), sub=gm?Math.min(2,CHAR_RANKS.indexOf(rk)-CHAR_RANKS.findIndex(r=>r.name==='그랜드 마스터 I')):(/ III$/.test(rk.name)?2:(/ II$/.test(rk.name)?1:0));
+  let bi=0; for(const r of CHAR_RANKS){ if(r.name.indexOf('그랜드 마스터')===0) break; const bn=r.name.replace(/ (II|III)$/,''); if(bn===base) break; if(r.name===bn) bi++; }
   const n=bi+3, pts=[]; for(let k=0;k<n*2;k++){ const a=-Math.PI/2+k*Math.PI/n, rr=(k%2?7:16); pts.push((32+Math.cos(a)*rr*0.92).toFixed(1)+','+(28+Math.sin(a)*rr*0.92).toFixed(1)); }
   const col=rk.color, gid='rg'+Math.floor(Math.random()*1e6);
   let pips=''; for(let k=0;k<3;k++) pips+='<circle cx="'+(25+k*7)+'" cy="50" r="2.2" fill="'+(bi>0&&k<=sub?col:'#2b2f3a')+'"/>';
