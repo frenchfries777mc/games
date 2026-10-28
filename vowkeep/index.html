@@ -114,7 +114,7 @@ html{scrollbar-color:var(--line) var(--bg)}
 }
 </style>
 <style>html,body,*{touch-action:manipulation}</style>
-<script>["gesturestart","gesturechange","gestureend"].forEach(function(e){document.addEventListener(e,function(x){x.preventDefault()})});var lt=0;document.addEventListener("touchend",function(x){var n=Date.now();if(n-lt<350&&!/^(INPUT|TEXTAREA)$/.test((x.target||{}).tagName))x.preventDefault();lt=n},{passive:false})</script>
+<script>["gesturestart","gesturechange","gestureend"].forEach(function(e){document.addEventListener(e,function(x){x.preventDefault()})});</script>
 </head>
 <body>
 <div class="top" id="topbar"><div class="wrap">
