@@ -3,6 +3,88 @@
   {
    "date": "2026-10-28",
    "build": "",
+   "title": "옛 버전 기록 차단",
+   "items": [
+    "Stickseum과 Crown Envoy의 옛 고정 버전은 업적·랭킹·코인·진행도가 계정에 저장되지 않아요(플레이는 그대로 돼요. 최신 버전에서 이어서 해 주세요)"
+   ],
+   "tr": {
+    "en": {
+     "title": "Old versions no longer save",
+     "items": [
+      "Old pinned versions of Stickseum and Crown Envoy no longer save achievements, rankings, coins or progress to your account (play continues; use the latest version to keep progress)"
+     ]
+    },
+    "es": {
+     "title": "Old versions no longer save",
+     "items": [
+      "Old pinned versions of Stickseum and Crown Envoy no longer save achievements, rankings, coins or progress to your account (play continues; use the latest version to keep progress)"
+     ]
+    },
+    "fr": {
+     "title": "Old versions no longer save",
+     "items": [
+      "Old pinned versions of Stickseum and Crown Envoy no longer save achievements, rankings, coins or progress to your account (play continues; use the latest version to keep progress)"
+     ]
+    },
+    "de": {
+     "title": "Old versions no longer save",
+     "items": [
+      "Old pinned versions of Stickseum and Crown Envoy no longer save achievements, rankings, coins or progress to your account (play continues; use the latest version to keep progress)"
+     ]
+    },
+    "ja": {
+     "title": "Old versions no longer save",
+     "items": [
+      "Old pinned versions of Stickseum and Crown Envoy no longer save achievements, rankings, coins or progress to your account (play continues; use the latest version to keep progress)"
+     ]
+    },
+    "zh": {
+     "title": "Old versions no longer save",
+     "items": [
+      "Old pinned versions of Stickseum and Crown Envoy no longer save achievements, rankings, coins or progress to your account (play continues; use the latest version to keep progress)"
+     ]
+    },
+    "pt": {
+     "title": "Old versions no longer save",
+     "items": [
+      "Old pinned versions of Stickseum and Crown Envoy no longer save achievements, rankings, coins or progress to your account (play continues; use the latest version to keep progress)"
+     ]
+    },
+    "ru": {
+     "title": "Old versions no longer save",
+     "items": [
+      "Old pinned versions of Stickseum and Crown Envoy no longer save achievements, rankings, coins or progress to your account (play continues; use the latest version to keep progress)"
+     ]
+    },
+    "tr": {
+     "title": "Old versions no longer save",
+     "items": [
+      "Old pinned versions of Stickseum and Crown Envoy no longer save achievements, rankings, coins or progress to your account (play continues; use the latest version to keep progress)"
+     ]
+    },
+    "it": {
+     "title": "Old versions no longer save",
+     "items": [
+      "Old pinned versions of Stickseum and Crown Envoy no longer save achievements, rankings, coins or progress to your account (play continues; use the latest version to keep progress)"
+     ]
+    },
+    "pl": {
+     "title": "Old versions no longer save",
+     "items": [
+      "Old pinned versions of Stickseum and Crown Envoy no longer save achievements, rankings, coins or progress to your account (play continues; use the latest version to keep progress)"
+     ]
+    },
+    "ar": {
+     "title": "Old versions no longer save",
+     "items": [
+      "Old pinned versions of Stickseum and Crown Envoy no longer save achievements, rankings, coins or progress to your account (play continues; use the latest version to keep progress)"
+     ]
+    }
+   }
+  },
+  {
+   "date": "2026-10-28",
+   "build": "",
    "title": "접속자 수 정확도",
    "items": [
     "방 서버가 접속자 수에 사람처럼 들어가던 문제를 고쳤어요"
