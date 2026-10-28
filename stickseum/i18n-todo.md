@@ -248,3 +248,9 @@ patchnotes.json | v462 items[0] | 게임과 사이트 페이지에서 화면을 
 patchnotes.json | v463 title | 온라인 인원 숫자를 허브와 통일 | build 463 | 2026-10-28
 patchnotes.json | v463 items[0] | 메인 화면 위쪽 온라인 N명이 허브와 같은 서버 집계 숫자로 표시됨 | build 463 | 2026-10-28
 patchnotes.json | v463 items[1] | 숫자는 메인 화면이 보일 때 20초마다 갱신 | build 463 | 2026-10-28
+Stickseum-v0.9.html | 계급 이름 | 크리스탈 | build 464 | 2026-10-28
+Stickseum-v0.9.html | 계급 이름 | 아메시스트 | build 464 | 2026-10-28
+patchnotes.json | v464 title | 마스터리 계급 개편 | build 464 | 2026-10-28
+patchnotes.json | v464 items[0] | 마스터리 계급에서 옵시디언을 없애고 크리스탈(3050점)과 아메시스트(4800점)를 추가 | build 464 | 2026-10-28
+patchnotes.json | v464 items[1] | 마스터는 7000점, 그랜드 마스터는 9000점이 필요하게 올림 | build 464 | 2026-10-28
+patchnotes.json | v464 items[2] | 이미 얻은 계급은 유지: 옵시디언이었던 캐릭터는 크리스탈 III 또는 아메시스트 I, 마스터와 그랜드 마스터는 그대로 인정 | build 464 | 2026-10-28
