@@ -308,3 +308,6 @@ patchnotes.json | v478 items[0] | 배틀로얄 보급 상자 안내 문구 삭�
 patchnotes.json | v478 items[1] | 전투 곡 소리 키움 | build 478 | 2026-10-28
 patchnotes.json | v479 title | 은하 제국의 황혼 | build 479 | 2026-10-28
 patchnotes.json | v479 items[0] | 전투 곡 소리 조정 (1.5배) | build 479 | 2026-10-28
+- 그랜드 마스터 I~X 계급 이름 (한국어만)
+patchnotes.json | v480 title | 은하 제국의 황혼 | build 480 | 2026-10-28
+patchnotes.json | v480 items[0] | 그랜드 마스터 I~X 단계 추가 (I 9000점, 이후 1000점마다 한 단계) | build 480 | 2026-10-28
