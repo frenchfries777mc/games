@@ -303,3 +303,6 @@ patchnotes.json | v476 items[0] | 빌드 번호를 b476처럼 b로 통일해서 
 patchnotes.json | v477 title | 은하 제국의 황혼 | build 477 | 2026-10-28
 patchnotes.json | v477 items[0] | 제국 수호전을 금고 약탈 모드로 교체 (양쪽 기지 금고 4500, 먼저 부수면 승리) | build 477 | 2026-10-28
 patchnotes.json | v477 items[1] | MVP 마스터리 포인트 +5 | build 477 | 2026-10-28
+patchnotes.json | v478 title | 은하 제국의 황혼 | build 478 | 2026-10-28
+patchnotes.json | v478 items[0] | 배틀로얄 보급 상자 안내 문구 삭제 | build 478 | 2026-10-28
+patchnotes.json | v478 items[1] | 전투 곡 소리 키움 | build 478 | 2026-10-28
