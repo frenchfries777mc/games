@@ -3,6 +3,88 @@
   {
    "date": "2026-10-28",
    "build": "",
+   "title": "더블터치 확대 방지",
+   "items": [
+    "모든 게임과 사이트에서 화면을 두 번 눌러도 확대되지 않아요(두 손가락 확대는 그대로예요)"
+   ],
+   "tr": {
+    "en": {
+     "title": "No zoom on double tap",
+     "items": [
+      "Double-tapping no longer zooms the screen on any game or site (pinching with two fingers still works)"
+     ]
+    },
+    "es": {
+     "title": "No zoom on double tap",
+     "items": [
+      "Double-tapping no longer zooms the screen on any game or site (pinching with two fingers still works)"
+     ]
+    },
+    "fr": {
+     "title": "No zoom on double tap",
+     "items": [
+      "Double-tapping no longer zooms the screen on any game or site (pinching with two fingers still works)"
+     ]
+    },
+    "de": {
+     "title": "No zoom on double tap",
+     "items": [
+      "Double-tapping no longer zooms the screen on any game or site (pinching with two fingers still works)"
+     ]
+    },
+    "ja": {
+     "title": "No zoom on double tap",
+     "items": [
+      "Double-tapping no longer zooms the screen on any game or site (pinching with two fingers still works)"
+     ]
+    },
+    "zh": {
+     "title": "No zoom on double tap",
+     "items": [
+      "Double-tapping no longer zooms the screen on any game or site (pinching with two fingers still works)"
+     ]
+    },
+    "pt": {
+     "title": "No zoom on double tap",
+     "items": [
+      "Double-tapping no longer zooms the screen on any game or site (pinching with two fingers still works)"
+     ]
+    },
+    "ru": {
+     "title": "No zoom on double tap",
+     "items": [
+      "Double-tapping no longer zooms the screen on any game or site (pinching with two fingers still works)"
+     ]
+    },
+    "tr": {
+     "title": "No zoom on double tap",
+     "items": [
+      "Double-tapping no longer zooms the screen on any game or site (pinching with two fingers still works)"
+     ]
+    },
+    "it": {
+     "title": "No zoom on double tap",
+     "items": [
+      "Double-tapping no longer zooms the screen on any game or site (pinching with two fingers still works)"
+     ]
+    },
+    "pl": {
+     "title": "No zoom on double tap",
+     "items": [
+      "Double-tapping no longer zooms the screen on any game or site (pinching with two fingers still works)"
+     ]
+    },
+    "ar": {
+     "title": "No zoom on double tap",
+     "items": [
+      "Double-tapping no longer zooms the screen on any game or site (pinching with two fingers still works)"
+     ]
+    }
+   }
+  },
+  {
+   "date": "2026-10-28",
+   "build": "",
    "title": "프로필 창 통일",
    "items": [
     "모든 게임과 사이트에서 프로필 창이 같고, 게임에서 열면 그 게임의 통계가 아래에 붙어요",
