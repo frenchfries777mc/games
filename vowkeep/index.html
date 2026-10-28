@@ -5,7 +5,7 @@
 <meta charset="UTF-8">
 <script src="https://frenchfries777mc.github.io/games/ff-lang.js"></script>
 <script src="../ff-pnsearch.js"></script>
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <title>Vowkeep</title>
 <meta name="description" content="">
 <meta property="og:title" content="Vowkeep"><meta property="og:image" content="title-bg.jpg"><meta name="theme-color" content="#0e0b14">
@@ -113,6 +113,8 @@ html{scrollbar-color:var(--line) var(--bg)}
  .nav{display:none}
 }
 </style>
+<style>html,body,*{touch-action:manipulation}</style>
+<script>["gesturestart","gesturechange","gestureend"].forEach(function(e){document.addEventListener(e,function(x){x.preventDefault()})});</script>
 </head>
 <body>
 <div class="top" id="topbar"><div class="wrap">

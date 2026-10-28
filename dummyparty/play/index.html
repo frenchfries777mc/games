@@ -1395,6 +1395,7 @@
 :root{--bg:#2a2118;--bg2:#3a2c1e;--panel:#fffaf2;--ink:#2b2117;--mu:#7d6b58;--line:#e6d6bf;--gold:#f2b84b;--gold2:#c98a1c;--accent:#ff7a59}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html,body{margin:0;height:100%;background:var(--bg);color:var(--ink);font-family:'Pretendard','Noto Sans KR','Apple SD Gothic Neo','Malgun Gothic',sans-serif;overscroll-behavior:none}
+*{touch-action:manipulation}
 body.playing{overflow:hidden;touch-action:none;-webkit-user-select:none;user-select:none}
 .screen{display:none;min-height:100%}
 .screen.on{display:block}
@@ -1664,7 +1665,11 @@ body.playing #emoBar{display:flex}
    <div class="row"><input id="codeIn" maxlength="5" placeholder="방 코드" autocomplete="off"><button class="pb dark" id="joinBtn" style="flex:0 0 auto">들어가기</button></div>
    <div class="msg" id="homeMsg"></div>
   </aside>
-  <template id="patchnotes"><details class="notes" open><summary>패치노트 · v0.1 (b79)</summary>
+  <template id="patchnotes"><details class="notes" open><summary>패치노트 · v0.1 (b81)</summary>
+   <b>2026-10-28 · v0.1 · b81 · 연타 탭 수정</b>
+   <ul><li>더블터치 확대를 막는 방식을 바꿔서, 연타 미니게임에서 빠르게 누르는 탭이 씹히지 않아요</li></ul>
+   <b>2026-10-28 · v0.1 · b80 · 더블터치 확대 막기</b>
+   <ul><li>화면을 빠르게 두 번 눌러도 확대되지 않아요 (아이폰·아이패드 포함)</li></ul>
    <b>2026-10-28 · v0.1 · b79 · 공용 프로필 카드</b>
    <ul><li>첫 화면에 "내 프로필 카드" 버튼이 생겼어요. 허브·다른 게임과 똑같은 프로필 카드가 열리고, 그 아래에 Dummy Party 업적과 판 수·우승 통계가 붙어요</li><li>프로필과 이름은 허브에서만 바꿀 수 있어요 (게임 안에서는 바꾸는 곳이 없어요)</li></ul>
    <b>2026-10-27 · v0.1 · b78 · 칭호 정리</b>
@@ -1821,7 +1826,7 @@ body.playing #emoBar{display:flex}
    <ul><li>무너지는 발판 칸 수 대폭 증가 (19×10)와 용암 동굴 맵</li><li>10개 맵 전부 새로 그림 (관중석, 야자수 섬, 링, 정원 미로, 서커스, 우노 테이블 등)</li><li>글자 대신 아이콘·말풍선·이펙트로 표현 (무기, 아이템, 카드 효과, 시작 안내)</li><li>타격·폭발·물보라 효과와 화면 흔들림 추가</li></ul>
    <b>2026-10-19 · v0.1 · b1 · 첫 시험판</b>
    <ul><li>마네킹 미니게임 10개 추가 (장애물 달리기, 섬 밀치기, 싸우기, 병맛 미로, 체스 대난투, 폭탄 돌리기, 병맛 우노, 쇼윈도 얼음땡, 무너지는 발판, 컨베이어 서바이벌)</li><li>방 코드로 최대 8명 멀티플레이, 빈자리는 봇으로 채우기</li><li>판마다 10개 중 5개를 무작위로 골라 점수를 합산</li><li>PC 키보드와 휴대폰 터치 조작 지원</li></ul></details></template>
-  <p class="foot">2~8명 · 판마다 36개 미니게임 중 7개 · v0.1 b79 · <a href="../">← Dummy Party 사이트로</a></p>
+  <p class="foot">2~8명 · 판마다 36개 미니게임 중 7개 · v0.1 b81 · <a href="../">← Dummy Party 사이트로</a></p>
   <p class="foot"><span class="ff-copy">© 2026 Frenchfries777 · <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.ko" target="_blank" rel="noopener">CC BY-NC-ND 4.0</a></span></p>
  </div>
 </section>
@@ -8826,6 +8831,8 @@ function dpAsk(msg, okLabel, onOk) {
   addEventListener('keydown', function (e) { if (e.key === 'Escape') { $('shopModal').classList.remove('on'); $('achModal').classList.remove('on'); } });
   $('botMinus').onclick = function () { if (G.role === 'solo') { G.bots = clamp(G.bots - 1, 1, MAXP - 1); trimBots(); renderLobby(); } };
   $('botPlus').onclick = function () { if (G.role === 'solo') { G.bots = clamp(G.bots + 1, 1, MAXP - 1); trimBots(); renderLobby(); } };
+  // 더블터치·핀치로 화면이 확대되지 않게 (iOS는 viewport 설정을 무시해서 직접 막아요)
+  ['gesturestart', 'gesturechange', 'gestureend'].forEach(function (t) { document.addEventListener(t, function (e) { e.preventDefault(); }, { passive: false }); });
   $('profBtn').onclick = openProfile;
   $('loginBtn').onclick = function () { try { FFAuth.openLogin(); } catch (e) { } };
   $('offBtn').onclick = function () { OFFLINE = true; homeMsg(''); useNickRefresh(); };
