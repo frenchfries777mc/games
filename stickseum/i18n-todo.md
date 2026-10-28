@@ -254,3 +254,6 @@ patchnotes.json | v464 title | 마스터리 계급 개편 | build 464 | 2026-10-
 patchnotes.json | v464 items[0] | 마스터리 계급에서 옵시디언을 없애고 크리스탈(3050점)과 아메시스트(4800점)를 추가 | build 464 | 2026-10-28
 patchnotes.json | v464 items[1] | 마스터는 7000점, 그랜드 마스터는 9000점이 필요하게 올림 | build 464 | 2026-10-28
 patchnotes.json | v464 items[2] | 이미 얻은 계급은 유지: 옵시디언이었던 캐릭터는 크리스탈 III 또는 아메시스트 I, 마스터와 그랜드 마스터는 그대로 인정 | build 464 | 2026-10-28
+patchnotes.json | v465 title | 숨바꼭질·대형 맵 삭제, 팀 캐릭터 중복 허용 | build 465 | 2026-10-28
+patchnotes.json | v465 items[0] | 숨바꼭질 모드와 32인 대형 맵(메가 아레나, 거대 점령전 평원)과 거대 점령전 실험 모드 삭제 | build 465 | 2026-10-28
+patchnotes.json | v465 items[1] | 같은 팀에서 같은 캐릭터를 함께 고를 수 있도록 변경 | build 465 | 2026-10-28
