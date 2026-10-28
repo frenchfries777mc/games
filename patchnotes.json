@@ -1,6 +1,101 @@
 {
  "notes": [
   {
+   "date": "2026-10-28",
+   "build": "",
+   "title": "프로필 창 통일",
+   "items": [
+    "모든 게임과 사이트에서 프로필 창이 같고, 게임에서 열면 그 게임의 통계가 아래에 붙어요",
+    "프로필(사진·소개)과 이름은 허브에서만 바꿀 수 있어요. 다른 곳에서는 허브로 가는 링크만 보여요"
+   ],
+   "tr": {
+    "en": {
+     "title": "One profile window everywhere",
+     "items": [
+      "The profile window is the same on every game and site, with that game's stats under it",
+      "Profile (picture, intro) and name can only be changed on the hub; elsewhere you just see a link to it"
+     ]
+    },
+    "es": {
+     "title": "One profile window everywhere",
+     "items": [
+      "The profile window is the same on every game and site, with that game's stats under it",
+      "Profile (picture, intro) and name can only be changed on the hub; elsewhere you just see a link to it"
+     ]
+    },
+    "fr": {
+     "title": "One profile window everywhere",
+     "items": [
+      "The profile window is the same on every game and site, with that game's stats under it",
+      "Profile (picture, intro) and name can only be changed on the hub; elsewhere you just see a link to it"
+     ]
+    },
+    "de": {
+     "title": "One profile window everywhere",
+     "items": [
+      "The profile window is the same on every game and site, with that game's stats under it",
+      "Profile (picture, intro) and name can only be changed on the hub; elsewhere you just see a link to it"
+     ]
+    },
+    "ja": {
+     "title": "One profile window everywhere",
+     "items": [
+      "The profile window is the same on every game and site, with that game's stats under it",
+      "Profile (picture, intro) and name can only be changed on the hub; elsewhere you just see a link to it"
+     ]
+    },
+    "zh": {
+     "title": "One profile window everywhere",
+     "items": [
+      "The profile window is the same on every game and site, with that game's stats under it",
+      "Profile (picture, intro) and name can only be changed on the hub; elsewhere you just see a link to it"
+     ]
+    },
+    "pt": {
+     "title": "One profile window everywhere",
+     "items": [
+      "The profile window is the same on every game and site, with that game's stats under it",
+      "Profile (picture, intro) and name can only be changed on the hub; elsewhere you just see a link to it"
+     ]
+    },
+    "ru": {
+     "title": "One profile window everywhere",
+     "items": [
+      "The profile window is the same on every game and site, with that game's stats under it",
+      "Profile (picture, intro) and name can only be changed on the hub; elsewhere you just see a link to it"
+     ]
+    },
+    "tr": {
+     "title": "One profile window everywhere",
+     "items": [
+      "The profile window is the same on every game and site, with that game's stats under it",
+      "Profile (picture, intro) and name can only be changed on the hub; elsewhere you just see a link to it"
+     ]
+    },
+    "it": {
+     "title": "One profile window everywhere",
+     "items": [
+      "The profile window is the same on every game and site, with that game's stats under it",
+      "Profile (picture, intro) and name can only be changed on the hub; elsewhere you just see a link to it"
+     ]
+    },
+    "pl": {
+     "title": "One profile window everywhere",
+     "items": [
+      "The profile window is the same on every game and site, with that game's stats under it",
+      "Profile (picture, intro) and name can only be changed on the hub; elsewhere you just see a link to it"
+     ]
+    },
+    "ar": {
+     "title": "One profile window everywhere",
+     "items": [
+      "The profile window is the same on every game and site, with that game's stats under it",
+      "Profile (picture, intro) and name can only be changed on the hub; elsewhere you just see a link to it"
+     ]
+    }
+   }
+  },
+  {
    "date": "2026-10-27",
    "build": "",
    "title": "접속 기록 보강",
