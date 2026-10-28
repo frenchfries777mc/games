@@ -32,6 +32,8 @@ var L={
 /* new strings are Korean + English for now; every other language shows the English until the translation pass */
 (function(){ ['hubOnly','hubGo','gstat','gAch','gPlays','gTimes'].forEach(function(k){ Object.keys(L).forEach(function(l){ if(L[l][k]==null) L[l][k]=L.en[k]; }); }); })();
 var HUBSITE='https://frenchfries777mc.github.io/hub/', editOk=true, GS={};
+/* in a game page (not a site page) the card has no decorate button: that is only on games / educations / tools / hub */
+try{ if(/\/(BEACONFALL|CrownEnvoy|Stickseum|IslandTrade)-[^\/]*\.html$|\/dummyparty\/play\/|\/vowkeep\/(play|v0\.1)\/|\/prototypes\//i.test(location.pathname||'')) editOk=false; }catch(e){}
 function lang(o){ var c=[]; if(o&&o.lang) c.push(o.lang); try{ var s=localStorage.getItem('arenaClashLang'); if(s) c.push(s); }catch(e){} try{ c=c.concat(navigator.languages||[navigator.language||'']); }catch(e){} for(var i=0;i<c.length;i++){ var b=String(c[i]||'').toLowerCase().split('-')[0]; if(L[b]) return b; } return 'en'; }
 function fmt(s,a){ return String(s).replace('{0}',a); }
 function ext(id){ var m=/^([a-z_]+):(\d+)$/.exec(id||''); if(!m) return null; for(var i=0;i<EXT_CHARS.length;i++) if(EXT_CHARS[i].id===m[1]){ var v=EXT_CHARS[i].v[+m[2]]; return v?v[1]:null; } return null; }
