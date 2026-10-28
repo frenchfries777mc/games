@@ -37,8 +37,25 @@ function fmt(s,a){ return String(s).replace('{0}',a); }
 function ext(id){ var m=/^([a-z_]+):(\d+)$/.exec(id||''); if(!m) return null; for(var i=0;i<EXT_CHARS.length;i++) if(EXT_CHARS[i].id===m[1]){ var v=EXT_CHARS[i].v[+m[2]]; return v?v[1]:null; } return null; }
 function loadImg(src){ return new Promise(function(res){ if(!src) return res(null); var im=new Image(); im.onload=function(){ res(im); }; im.onerror=function(){ res(null); }; im.src=src; }); }
 
+/* 옛(고정) 버전 페이지는 서버에 기록(업적·생존일수·코인·플레이 횟수)을 올리지 못해요 — 쉬운 옛 규칙으로 진행도를 올리는 꼼수를 막아요.
+   페이지는 그대로 열리고 즐길 수 있어요. 게임마다 옛 버전 주소를 OLDVER 에 한 줄씩 적어요 (현재 버전 파일은 넣지 마세요). */
+var OLDVER=[/\/beaconfall\/BEACONFALL-v0\.[0-3]\.html/i];
+var oldPage=false; try{ oldPage=OLDVER.some(function(r){ return r.test(location.pathname||''); }); }catch(e){}
+function guardRpc(sb){
+  if(!oldPage||!sb||!sb.rpc||sb.__ffg) return; sb.__ffg=1; var r0=sb.rpc.bind(sb);
+  sb.rpc=function(n,a){ if(/^ff_(set|sync|mark|coin|ach|rank|survival)/i.test(String(n))) return Promise.resolve({data:null,error:{message:'old-version'}}); return r0(n,a); };
+}
+function oldNotice(){
+  if(!oldPage||!document.body||document.getElementById('ffOldVer')) return;
+  var d=document.createElement('div'); d.id='ffOldVer';
+  d.style.cssText='position:fixed;left:50%;bottom:calc(10px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);z-index:99999;max-width:92vw;padding:8px 12px;border-radius:10px;background:rgba(20,22,28,.92);color:#f2e7c0;font:12px/1.4 sans-serif;text-align:center;pointer-events:none';
+  d.textContent='이전 버전이라 업적·랭킹·코인 기록이 서버에 저장되지 않아요. 최신 버전에서 이어서 해 주세요.';
+  document.body.appendChild(d);
+}
+if(oldPage){ try{ guardRpc(window.bfSb); }catch(e){} var gi=0, gt=setInterval(function(){ try{ guardRpc(window.bfSb); oldNotice(); }catch(e){} if(++gi>40) clearInterval(gt); },250); }
 /* a game reports how many of its achievements are done (needs supabase-ff-achievements.sql); the card shows it for every game */
 function setAchievements(sb, game, done, total, ids){
+  if(oldPage) return Promise.resolve();
   if(!Array.isArray(ids)) ids=localIds(game);
   var set=function(){ return sb.rpc('ff_set_achievements',{p_game:game, p_done:Math.max(0,done|0), p_total:Math.max(0,total|0)}).then(function(){},function(){}); };
   try{ if(!sb||!sb.rpc) return Promise.resolve();
@@ -52,7 +69,7 @@ function localIds(game){
   try{ /* global settings */ if(game==='beaconfall'&&typeof settings!=='undefined'&&settings&&settings.ach&&typeof settings.ach==='object') return Object.keys(settings.ach).filter(function(k){ return settings.ach[k]; }); }catch(e){}
   return null;
 }
-function markPlayed(sb, game){ try{ if(sb&&sb.rpc) return sb.rpc('ff_mark_played',{p_game:game}).then(function(){},function(){}); }catch(e){} return Promise.resolve(); }
+function markPlayed(sb, game){ if(oldPage) return Promise.resolve(); try{ if(sb&&sb.rpc) return sb.rpc('ff_mark_played',{p_game:game}).then(function(){},function(){}); }catch(e){} return Promise.resolve(); }
 
 async function fetchData(sb, uid){
   var p=await sb.from('profiles').select('id,username,display_name,stats').eq('id',uid).single();
