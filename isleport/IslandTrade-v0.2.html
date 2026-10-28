@@ -479,7 +479,7 @@ const TUT=[
  [P('다 자라면 ▼ 표시의 밭을 눌러 수확해요','When it is grown, tap the field with the ▼ to harvest'),s=>s.stats.harvest>=1],
  [P('마을 장터에서 수확한 것을 팔아요','Sell your harvest at the town market'),s=>(s.stats.shop||0)>=1],
  [P('항구에서 배에 짐을 싣고 보내요','Load a ship at the harbor and send it off'),s=>s.stats.sailed>=1]];
-const OUTMAX=12,BUILD=66;
+const OUTMAX=12,BUILD=67;
 const hasB=(s,b)=>s.slots.some(x=>x&&x.b===b);
 const rankOf=e=>{let r=0;RANKS.forEach((x,i)=>{if(e>=x[0])r=i;});return r;};
 /* 업적: id, 이름, 설명, 조건 */
@@ -601,6 +601,10 @@ A('nw1m',P('백만장자','Millionaire'),P('재산 1,000,000 모으기','Reach a
 const CROPK=Object.keys(CROPS),SPEC=['goldbarley','pomegranate','saffron','cloudcotton','seaweed','dragonfruit'],CROPK17=CROPK.filter(c=>!SPEC.includes(c));
 const ACHN={};ACH.forEach(a=>ACHN[a.id]=a);
 const NOTES=[
+ {date:'2026-10-28',build:'v0.2 build 67',title:P('옛 버전 기록 막기','Old build guard'),items:[
+  P('재산 순위에 보내는 값에 빌드 번호 함께 전송','Wealth ranking updates now include the build number'),
+  P('새 버전이 나온 뒤 옛 버전 창은 순위와 업적을 올리지 않고 새로고침 안내','After a new version, an old window stops updating ranking and goals and asks for a refresh')
+ ]},
  {date:'2026-10-28',build:'v0.2 build 66',title:P('확대 제스처 막기','No zoom gestures'),items:[
   P('아이폰에서 두 번 터치와 두 손가락 확대 제스처 차단','Blocked double-tap and pinch zoom gestures on iPhone')
  ]},
@@ -30399,8 +30403,9 @@ async function initAuth(){try{if(!window.supabase)return;
   const {data}=await sb.auth.getSession();const u=data&&data.session&&data.session.user;if(!u)return;if(S){save();if(MP.on)mpLeave();S=null;}UID=u.id;
   const q=await sb.from('profiles').select('display_name,username').eq('id',UID).maybeSingle();UNAME=q.data&&(q.data.display_name||q.data.username)||null;
   applyStatic();showTitle();}catch(e){}}
-function syncAch(){try{if(window.FFProfile&&FFProfile.setAchievements&&sb&&UID)FFProfile.setAchievements(sb,'isleport',Object.keys(S.ach).length,ACH.length,Object.keys(S.ach));}catch(e){}}
-let marked=false;function markOnce(){try{if(!marked&&window.FFProfile&&sb&&UID){marked=true;FFProfile.markPlayed(sb,'isleport');}}catch(e){}}
+let STALE=false;
+function syncAch(){try{if(STALE)return;if(window.FFProfile&&FFProfile.setAchievements&&sb&&UID)FFProfile.setAchievements(sb,'isleport',Object.keys(S.ach).length,ACH.length,Object.keys(S.ach));}catch(e){}}
+let marked=false;function markOnce(){try{if(STALE)return;if(!marked&&window.FFProfile&&sb&&UID){marked=true;FFProfile.markPlayed(sb,'isleport');}}catch(e){}}
 const rid=()=>Math.random().toString(36).slice(2,8);
 /* 사이트·다른 게임에서 닉네임을 바꾸면 돌아왔을 때 바로 반영해요 */
 async function refreshUname(){try{if(!sb||!UID)return;const q=await sb.from('profiles').select('display_name,username').eq('id',UID).maybeSingle();const n=q.data&&(q.data.display_name||q.data.username)||null;if(n&&n!==UNAME){UNAME=n;applyStatic();}}catch(e){}}
@@ -32119,6 +32124,8 @@ ACT.ltg=a=>{const [k,v]=a.split(':');const g=Object.assign({},LT.my.g);g[k]=Math
 ACT.ltrdy=()=>ltReady();ACT.ltun=()=>ltUnready();ACT.ltcx=()=>ltCancel();
 MODS.chat=()=>`<h2>${T('채팅','Chat')}</h2><div id="chatLog" style="height:150px;overflow-y:auto;font-size:12px;background:#120a04;border:1px solid #4a2e14;border-radius:4px;padding:5px;margin-bottom:6px"></div><div class="row"><input id="chatIn" type="text" maxlength="80" placeholder="${T('말하기','Say something')}"><button class="pb sm" data-act="chatSend">${T('보내기','Send')}</button></div><div class="btns">${[P('안녕하세요!','Hello!'),P('좋아요!','Nice!'),P('거래해요','Let us trade'),P('도와주세요','Help me'),P('고마워요','Thanks')].map(q=>`<button class="pb sm dark" data-act="chatQ:${esc(q[0])}">${tx(q)}</button>`).join('')}</div>`;
 MODS.lobby=()=>`<h2>${T('로비로 돌아갈까요?','Back to the lobby?')}</h2><div class="muted">${MP.on?T('지금 방에서 나가요. 내 섬은 저장돼요.','You will leave this room. Your island is saved.'):T('지금까지 한 것은 저장돼요. 로비에서 이어하기로 다시 시작할 수 있어요.','Your progress is saved. Pick Continue in the lobby to come back.')}</div><div class="btns" style="margin-top:12px"><button class="pb gold" data-act="menu">${T('로비로 돌아가기','Back to lobby')}</button></div>`;
+MODS.stale=()=>`<h2>${T('새 버전이 나왔어요','A new version is out')}</h2><div class="muted">${T('이 창은 옛 버전이라 재산 순위와 업적이 올라가지 않아요. 새로고침하면 새 버전으로 이어서 할 수 있어요. 저장은 그대로예요.','This window runs an old version, so the wealth ranking and goals will not update. Refresh to continue with the new version. Your save is kept.')}</div><div class="btns" style="margin-top:12px"><button class="pb gold" data-act="stalego">${T('새로고침','Refresh')}</button><button class="pb dark" data-act="mclose">${T('나중에','Later')}</button></div>`;
+ACT.stalego=()=>{try{save();}catch(e){}location.reload();};
 MODS.menu=()=>{const it=[['wh',P('창고','Warehouse')],['fleet',P('배','Ships')],['contracts',P('계약','Contracts')],['proj',P('공공 공사','Projects')]];
   if(MP.on)it.push(['mp',P('상회 순위','Ranking')],['auction',P('경매장','Auction house')],['chat',P('채팅','Chat')]);
   it.push(['tech',P('연구','Research')],['bank',P('은행','Bank')],['codex',P('도감','Codex')],['stats',P('통계','Stats')],['ach',P('업적','Goals')],['settings',P('설정','Settings')],['help',P('하는 법','How to play')]);
@@ -32466,7 +32473,7 @@ setInterval(()=>{if(!S||LOCKLOST)return;if(lockTaken()){LOCKLOST=true;openModal(
 window.addEventListener('pagehide',()=>{const l=lockRead();if(l&&l.id===TAB)try{localStorage.removeItem('islandtrade.lock');}catch(e){}});
 function startSingle(cont){if(lockTaken()){openModal('dup',{pend:cont});return;}lockWrite();const sv=cont?loadSave():null;
   if(sv){S=sv.S;DEM=sv.DEM;EV=sv.EV||[];PROJ=sv.PROJ||freshProj();CO=sv.CO||freshCO();}else{S=fresh();S.so=startOff();DEM=newDem();EV=[];PROJ=freshProj();CO=freshCO();}
-  if(MP.on)mpLeave();HEL.on=false;VIS.on=false;VIS.S=null;LT.on=false;LT.out=null;MP.ltIn=null;MP.guests={};MP.seenG={};MP.seenV={};VIEW='land';$('title').hidden=true;$('modal').hidden=true;applyStatic();markOnce();setView('land');fit();placePlayer();updateHud();syncAch();save();auCtx();musicStart();
+  if(MP.on)mpLeave();HEL.on=false;VIS.on=false;VIS.S=null;LT.on=false;LT.out=null;MP.ltIn=null;MP.guests={};MP.seenG={};MP.seenV={};VIEW='land';$('title').hidden=true;$('modal').hidden=true;applyStatic();markOnce();setView('land');fit();placePlayer();updateHud();syncAch();save();auCtx();musicStart();if(STALE)setTimeout(()=>{if(S&&!MP.on&&!MOD)openModal('stale');},900);
   if(!sv){S.tut=0;const [px,py]=plotXY(FORDER[0]);PL.x=px+PS[0]/2;PL.y=py+PS[1]+16;PL.goal=null;PL.near=null;updateCam(0,true);}
   else if(S.savedAt){const mins=Math.floor((Date.now()-S.savedAt)/60000);if(mins>=2)setTimeout(()=>toast(T('{0}분 만에 돌아왔어요! 그동안 배와 공방이 일했어요','Welcome back after {0} min! Ships and workshops kept working',mins)),600);}}
 window.addEventListener('resize',()=>fit());
@@ -32482,13 +32489,14 @@ try{if(window.FFProfile)FFProfile.gameStats('isleport',function(box,ctx){if(!ctx
   let h=row(T('계급','Rank'),tx(RANKS[rankOf(st.earned||0)][1]))+row(T('번 돈','Earned'),fmt(st.earned||0))+row(T('가진 돈','Gold'),fmt(v.money||0))+row(T('가장 큰 판매','Best sale'),fmt(st.best||0))+row(T('수확','Harvested'),T('{0}개','{0}',st.harvest||0))+row(T('항해','Voyages'),T('{0}번','{0}',st.sailed||0)) +row(T('배','Ships'),(v.ships||[]).length);
   return h;});}catch(e){}
 document.addEventListener('gesturestart',e=>e.preventDefault());
+try{fetch('versions.json',{cache:'no-store'}).then(r=>r.ok?r.json():null).then(v=>{if(v&&+v.minBuild>BUILD){STALE=true;if(S&&!MP.on)openModal('stale');else window.__staleNote=1;}}).catch(()=>{});}catch(e){}
 initLang();fit();initAuth();applyStatic();showTitle();
 try{const q=new URLSearchParams(location.search),jc=(q.get('join')||q.get('room')||'').trim().toUpperCase();if(/^[A-Z0-9]{4}$/.test(jc)){startSingle(true);startMP(false,jc);}}catch(e){}
 requestAnimationFrame(loop);
 window.__it={bldLoad,bldTake,outN,get UID(){return UID;},set UID(v){UID=v;},SAVEK,capOf,upWh,setAutoAll,harvest,plant,SAIL,openModal,SECRET,addMap,crewCands,crewHire,crewTick,crewV,stockAdd,storeTick,storeCollect,storeSetMult,coGen,coDonate,coApply,secretBuy,secretPrice,helmBottles,get CO(){return CO;},set CO(v){CO=v;},codexTier,plotXY,decoSpot,DECO,placeDeco,PL,ISLE,OX,OY,HOME,get MOD(){return typeof MOD!=="undefined"?MOD:null;},HEL,startHelm,endHelm,helmAct,isUnl,unlockItem,buySeed,tx,NOTES,VIS,LT,startVisit,leaveVisit,ltRequest,ltAnswer,ltSet,ltReady,ltUnready,ltCancel,mpLeave,mySnap,hireWorker,get S(){return S;},set S(v){S=v;},set OFF(v){OFF=v;},get OFF(){return OFF;},get DEM(){return DEM;},get PROJ(){return PROJ;},MP,migrate,tick,startSingle,startMP,setView,dispatch,harvestAll,plant,buildB,buildPen,buyShip,quote,GOODS,PORTS,ACH,BLD,CROPS,ANIM,TECHS,QUESTS,PROJECTS,netWorth,openDispatch,offerTo,answerOffer,raid,onMsg,research,donate,listAuction,bidAuction,sendChat,genContract,genVisitor,sellVisitor,rankOf,harvest,collectPen,upB,upPen,buyPlot,sellPlot,buyPenSlot,buySlot,borrow,repay,get LANG(){return LANG;},setLang,T,EN,save,loadSave,get VIEW(){return VIEW;},PL,KEYS,JOY,interactNear,objs,openModal,get MOD(){return MOD;},ACT,dispatchRaw:dispatch,GI,hist:HIST,season,weather,SHIPS};
 
 /* 허브 재산 랭킹: 로그인했을 때만 15초마다 내 재산을 올려요. 실패해도 게임은 그대로 돌아가요 */
-async function pushWealth(){try{if(typeof sb==='undefined'||!sb||!sb.rpc||!S)return;const r=await sb.rpc('ff_set_wealth',{p_wealth:Math.max(0,Math.round(netWorth()))});if(r&&r.error)lastWealth=performance.now()+180000;}catch(e){lastWealth=performance.now()+180000;}}
+async function pushWealth(){try{if(STALE||typeof sb==='undefined'||!sb||!sb.rpc||!S)return;let r=await sb.rpc('ff_set_wealth',{p_wealth:Math.max(0,Math.round(netWorth())),p_build:BUILD});if(r&&r.error&&/ff_set_wealth|PGRST202|42883/.test((r.error.code||'')+(r.error.message||''))){r=await sb.rpc('ff_set_wealth',{p_wealth:Math.max(0,Math.round(netWorth()))});}if(r&&r.error)lastWealth=performance.now()+180000;}catch(e){lastWealth=performance.now()+180000;}}
 
 </script>
 </body>
