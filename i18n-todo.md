@@ -308,3 +308,6 @@
 
 ## Tools·Educations 접속 표시 (2026-10-28)
 - 패치노트 문구 추가: Tools·Educations 접속 표시
+
+## 프로필 어디서든 바꾸기 (2026-10-28)
+- patchnotes.json | 프로필 어디서든 바꾸기 | 제목과 항목 2개 (tr 없음)

@@ -5458,7 +5458,7 @@ function shuffle(arr){ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.
 /* ===== the version of this file =====
    Different BUILDS of one version meet and play together (room names online-v<ver>-<mode>-<map>-<slot>); different VERSIONS (the 0.x part) never do - the host refuses them (verNo) and the dispatcher answers busy.
    The build is only sent along with the join message and the lobby (for information); the corner of the screen shows it. */
-const GAME_BUILD='build 2026-10-18-v483';
+const GAME_BUILD='build 2026-10-18-v484';
 const GAME_VERSION='0.9', GAME_VERSION_NAME='은하 제국의 황혼';   // 게임 버전 이름: versions.json의 title과 같게 (빌드마다 바꾸지 않음)
 /* version (the 0.x part) vs build: different BUILDS of one version meet and play together, different VERSIONS never do (rooms, quick match, ranked, friend invites, dispatcher).
    Builds before 470 do not send a version, so it is read from the build number (0.9 started at build 458). */
@@ -9314,7 +9314,7 @@ function renderProfile(){
   body.innerHTML=
     '<div style="'+profHeaderStyle(myProfileDeco().pbg)+'">'+
     '<div style="text-align:center; margin-bottom:6px;"><canvas id="avatarBigCanvas" class="'+avatarFrameCls(myProfileDeco().pfr)+'" width="84" height="84" style="border-radius:14px; cursor:pointer; '+avatarFrameStyle(myProfileDeco().pfr)+'"></canvas>'+
-    '<div style="font-size:11px; color:var(--text-dim); margin-top:4px;">프로필과 이름은 허브에서만 바꿀 수 있어요</div></div>'+
+    '<div style="font-size:11px; color:var(--text-dim); margin-top:4px;">사진과 이름은 아래 프로필 카드에서 바꿀 수 있어요</div></div>'+
     '<div style="text-align:center; margin-bottom:10px; display:flex; align-items:center; justify-content:center; gap:8px;">'+
       '<span id="profNameDisplay" style="font-weight:800; font-size:16px;">'+nameWithStyleHtml((typeof myName!=='undefined'&&myName)?myName:'플레이어', getEquippedCos().name, myClan?myClan.emblem:'', myClan?myClan.color:'', myClan?myClan.tag:'')+'</span>'+
       '</div></div>'+
