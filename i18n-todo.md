@@ -268,3 +268,6 @@
 
 ## Crown Envoy b116 (2026-10-28)
 - 경계선 굽이침 다듬기 (patchnotes.json 항목 1개)
+
+## Crown Envoy b117 (2026-10-28)
+- 동맹 이름과 지도 보기 (patchnotes.json 항목 4개; 게임 UI 새 문구: 지도 보기/도시/나라/동맹/동맹 이름/저장 등 한국어만)
