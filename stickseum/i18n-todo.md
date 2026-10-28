@@ -257,3 +257,10 @@ patchnotes.json | v464 items[2] | 이미 얻은 계급은 유지: 옵시디언�
 patchnotes.json | v465 title | 숨바꼭질·대형 맵 삭제, 팀 캐릭터 중복 허용 | build 465 | 2026-10-28
 patchnotes.json | v465 items[0] | 숨바꼭질 모드와 32인 대형 맵(메가 아레나, 거대 점령전 평원)과 거대 점령전 실험 모드 삭제 | build 465 | 2026-10-28
 patchnotes.json | v465 items[1] | 같은 팀에서 같은 캐릭터를 함께 고를 수 있도록 변경 | build 465 | 2026-10-28
+Stickseum-v0.9.html | 상점 검색창 | 🔍 검색 (스킨 이름, 캐릭터 이름) · 🔍 검색 (치장품 이름) | build 466 | 2026-10-28
+Stickseum-v0.9.html | 캐릭터 선택창 | ☆ 즐겨찾기 · ★ 즐겨찾기 해제 · ← 캐릭터 목록으로 돌아가기 | build 466 | 2026-10-28
+patchnotes.json | v466 title | 캐릭터 선택창 개편, 즐겨찾기, 치장품 검색 | build 466 | 2026-10-28
+patchnotes.json | v466 items[0] | 캐릭터 선택창을 한 줄 5개 목록으로 바꾸고 캐릭터를 누르면 창 전체가 설명 화면으로 바뀌도록 개편 설명 화면에 선택 확정과 캐릭터 목록으로 돌아가기 버튼 추가 | build 466 | 2026-10-28
+patchnotes.json | v466 items[1] | 캐릭터 즐겨찾기 추가 즐겨찾기한 캐릭터는 선택창 맨 위에 표시 | build 466 | 2026-10-28
+patchnotes.json | v466 items[2] | 치장품 상점 모든 탭에 검색창 추가 | build 466 | 2026-10-28
+patchnotes.json | v466 items[3] | 팀전에서 변장한 티오니스가 변장 대상의 클랜 태그를 달고 처치 알림에도 변장한 이름으로 나오도록 수정 | build 466 | 2026-10-28
