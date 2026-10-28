@@ -7,7 +7,93 @@
    "items": [
     "왼쪽은 랭크 레이팅(닉네임 - 점수), 오른쪽은 캐릭터 마스터리(닉네임 캐릭터 - 마스터리 점수)예요",
     "Stickseum 사이트 랭킹에도 캐릭터 마스터리 탭을 넣었어요"
-   ]
+   ],
+   "tr": {
+    "en": {
+     "title": "Stickseum ranking split in two",
+     "items": [
+      "Left: rank rating (nickname - score); right: character mastery (nickname character - mastery score)",
+      "The Stickseum site ranking also got a character mastery tab"
+     ]
+    },
+    "es": {
+     "title": "El ranking de Stickseum se divide en dos",
+     "items": [
+      "A la izquierda, la clasificación por rango (apodo - puntos); a la derecha, la maestría de personaje (apodo personaje - puntos de maestría)",
+      "El ranking de la web de Stickseum también tiene una pestaña de maestría de personaje"
+     ]
+    },
+    "fr": {
+     "title": "Le classement de Stickseum est séparé en deux",
+     "items": [
+      "À gauche, la cote de rang (pseudo - score) ; à droite, la maîtrise des personnages (pseudo personnage - score de maîtrise)",
+      "Le classement du site Stickseum a aussi un onglet maîtrise des personnages"
+     ]
+    },
+    "de": {
+     "title": "Stickseum-Rangliste in zwei geteilt",
+     "items": [
+      "Links die Rangwertung (Spitzname - Punkte), rechts die Charakter-Meisterschaft (Spitzname Charakter - Meisterschaftspunkte)",
+      "Auch die Rangliste auf der Stickseum-Seite hat jetzt einen Reiter für Charakter-Meisterschaft"
+     ]
+    },
+    "ja": {
+     "title": "Stickseumのランキングを2つに分けました",
+     "items": [
+      "左はランクレート（ニックネーム - 点数）、右はキャラクターマスタリー（ニックネーム キャラクター - マスタリー点数）です",
+      "Stickseumサイトのランキングにもキャラクターマスタリーのタブを入れました"
+     ]
+    },
+    "zh": {
+     "title": "Stickseum 排行榜分成两部分",
+     "items": [
+      "左边是段位分（昵称 - 分数），右边是角色熟练度（昵称 角色 - 熟练度分数）",
+      "Stickseum 网站的排行榜也加入了角色熟练度标签"
+     ]
+    },
+    "pt": {
+     "title": "Ranking do Stickseum dividido em dois",
+     "items": [
+      "À esquerda, a classificação ranqueada (apelido - pontos); à direita, a maestria de personagem (apelido personagem - pontos de maestria)",
+      "O ranking do site do Stickseum também ganhou uma aba de maestria de personagem"
+     ]
+    },
+    "ru": {
+     "title": "Рейтинг Stickseum разделён на два",
+     "items": [
+      "Слева — рейтинг ранговых игр (ник — очки), справа — мастерство персонажей (ник персонаж — очки мастерства)",
+      "В рейтинге на сайте Stickseum тоже появилась вкладка «Мастерство персонажей»"
+     ]
+    },
+    "tr": {
+     "title": "Stickseum sıralaması ikiye ayrıldı",
+     "items": [
+      "Solda derece puanı (takma ad - puan), sağda karakter ustalığı (takma ad karakter - ustalık puanı)",
+      "Stickseum sitesinin sıralamasına da karakter ustalığı sekmesi eklendi"
+     ]
+    },
+    "it": {
+     "title": "Classifica di Stickseum divisa in due",
+     "items": [
+      "A sinistra il punteggio di rango (nome - punti), a destra la maestria dei personaggi (nome personaggio - punti maestria)",
+      "Anche la classifica sul sito di Stickseum ha ora una scheda per la maestria dei personaggi"
+     ]
+    },
+    "pl": {
+     "title": "Ranking Stickseum podzielony na dwa",
+     "items": [
+      "Po lewej ranking rangowy (nick - punkty), po prawej biegłość postaci (nick postać - punkty biegłości)",
+      "Ranking na stronie Stickseum też ma teraz zakładkę biegłości postaci"
+     ]
+    },
+    "ar": {
+     "title": "تم تقسيم ترتيب Stickseum إلى قسمين",
+     "items": [
+      "على اليسار تقييم الرتبة (الاسم المستعار - النقاط)، وعلى اليمين إتقان الشخصيات (الاسم المستعار الشخصية - نقاط الإتقان)",
+      "أضفنا أيضًا تبويب إتقان الشخصيات إلى ترتيب موقع Stickseum"
+     ]
+    }
+   }
   },
   {
    "date": "2026-10-28",
@@ -18,7 +104,117 @@
     "네 사이트의 프로필 카드가 같은 모습이에요",
     "꾸미기의 프로필 사진 목록에 undefined가 가득 보이던 오류를 고쳤어요",
     "위쪽 계정 버튼 옆 동그란 사진에 내가 고른 프로필 사진이 나오고, 사진을 바꾸면 바로 바뀌어요 (고르지 않았으면 게임 캐릭터)"
-   ]
+   ],
+   "tr": {
+    "en": {
+     "title": "Change your profile from anywhere",
+     "items": [
+      "One hub account lets you change your profile picture and name from Games, Educations, Tools and the hub",
+      "The profile card looks the same on all four sites",
+      "Fixed an error where the profile picture list under Customize was full of \"undefined\"",
+      "The round picture next to the account button at the top shows the profile picture you chose, and changing it updates right away (if none chosen, your game character)"
+     ]
+    },
+    "es": {
+     "title": "Cambia tu perfil desde cualquier sitio",
+     "items": [
+      "Con una sola cuenta del inicio puedes cambiar la foto de perfil y el nombre desde Games, Educations, Tools e inicio",
+      "La tarjeta de perfil es igual en los cuatro sitios",
+      "Se corrigió un error que llenaba la lista de fotos de perfil de Personalizar con «undefined»",
+      "La foto redonda junto al botón de cuenta de arriba muestra la foto de perfil que elegiste, y al cambiarla se actualiza al momento (si no elegiste ninguna, aparece el personaje del juego)"
+     ]
+    },
+    "fr": {
+     "title": "Modifie ton profil depuis partout",
+     "items": [
+      "Avec un seul compte de l’accueil, tu peux changer ta photo de profil et ton pseudo depuis Games, Educations, Tools et l’accueil",
+      "La carte de profil est identique sur les quatre sites",
+      "Correction d’une erreur qui affichait « undefined » partout dans la liste des photos de profil de Personnaliser",
+      "Le rond à côté du bouton de compte en haut affiche la photo de profil choisie, et se met à jour aussitôt quand tu la changes (sinon, le personnage du jeu)"
+     ]
+    },
+    "de": {
+     "title": "Profil von überall ändern",
+     "items": [
+      "Mit einem Konto der Startseite kannst du Profilbild und Namen überall ändern: in Games, Educations, Tools und auf der Startseite",
+      "Die Profilkarte sieht auf allen vier Seiten gleich aus",
+      "Fehler behoben, durch den in der Profilbild-Liste unter Gestalten überall „undefined“ stand",
+      "Das runde Bild neben dem Kontoknopf oben zeigt dein gewähltes Profilbild, und beim Wechseln ändert es sich sofort (ohne Auswahl: der Spielcharakter)"
+     ]
+    },
+    "ja": {
+     "title": "どこからでもプロフィールを変更",
+     "items": [
+      "ハブのアカウント1つで、Games・Educations・Tools・ハブのどこからでもプロフィール写真と名前を変えられます",
+      "4つのサイトでプロフィールカードの見た目が同じになりました",
+      "カスタマイズのプロフィール写真一覧に undefined が並んでしまうエラーを直しました",
+      "上部のアカウントボタン横の丸い写真には、選んだプロフィール写真が表示され、写真を変えるとすぐ反映されます（選んでいなければゲームのキャラクター）"
+     ]
+    },
+    "zh": {
+     "title": "随时随地修改个人资料",
+     "items": [
+      "一个主页账号即可在 Games、Educations、Tools 和主页的任何位置修改头像和名字",
+      "四个网站的个人资料卡外观相同",
+      "修复了“装饰”里的头像列表满屏显示 undefined 的错误",
+      "顶部账号按钮旁的圆形图片会显示你选的头像，更换后立即生效（未选择则显示游戏角色）"
+     ]
+    },
+    "pt": {
+     "title": "Mude seu perfil de qualquer lugar",
+     "items": [
+      "Com uma só conta do início, você muda a foto e o nome em Games, Educations, Tools e no início",
+      "O cartão de perfil é igual nos quatro sites",
+      "Corrigido o erro que enchia a lista de fotos de perfil em Personalizar com “undefined”",
+      "A foto redonda ao lado do botão da conta, no topo, mostra a foto de perfil que você escolheu, e ela muda na hora ao trocar (se não escolheu nenhuma, aparece o personagem do jogo)"
+     ]
+    },
+    "ru": {
+     "title": "Меняйте профиль откуда угодно",
+     "items": [
+      "Одним аккаунтом хаба можно менять фото профиля и имя в Games, Educations, Tools и на хабе",
+      "Карточка профиля одинакова на всех четырёх сайтах",
+      "Исправлена ошибка, из-за которой в списке фото профиля в «Оформлении» везде был «undefined»",
+      "Круглое фото рядом с кнопкой аккаунта вверху показывает выбранное фото профиля, и при смене оно сразу обновляется (если не выбрано, показывается персонаж игры)"
+     ]
+    },
+    "tr": {
+     "title": "Profilini her yerden değiştir",
+     "items": [
+      "Tek bir merkez hesabıyla Games, Educations, Tools ve merkezin her yerinden profil resmini ve adını değiştirebilirsin",
+      "Dört sitedeki profil kartı aynı görünüyor",
+      "Özelleştir içindeki profil resmi listesinde her yerde \"undefined\" görünen hata düzeltildi",
+      "Üstteki hesap düğmesinin yanındaki yuvarlak resim, seçtiğin profil resmini gösterir; resmi değiştirince hemen güncellenir (seçilmemişse oyun karakteri)"
+     ]
+    },
+    "it": {
+     "title": "Cambia il profilo da qualsiasi punto",
+     "items": [
+      "Con un solo account dell’hub puoi cambiare foto profilo e nome da Games, Educations, Tools e dall’hub",
+      "La scheda profilo è uguale su tutti e quattro i siti",
+      "Corretto l’errore che riempiva di «undefined» l’elenco delle foto profilo in Personalizza",
+      "La foto tonda accanto al pulsante account in alto mostra la foto profilo scelta e cambia subito quando la modifichi (se non ne hai scelta una, appare il personaggio del gioco)"
+     ]
+    },
+    "pl": {
+     "title": "Zmieniaj profil z dowolnego miejsca",
+     "items": [
+      "Jednym kontem huba zmienisz zdjęcie profilowe i nazwę w Games, Educations, Tools i na hubie",
+      "Karta profilu wygląda tak samo na wszystkich czterech stronach",
+      "Naprawiono błąd, przez który lista zdjęć profilowych w Dostosuj była pełna „undefined”",
+      "Okrągłe zdjęcie obok przycisku konta u góry pokazuje wybrane zdjęcie profilowe i zmienia się od razu po zmianie (jeśli nic nie wybrano, pokazuje się postać z gry)"
+     ]
+    },
+    "ar": {
+     "title": "غيّر ملفك الشخصي من أي مكان",
+     "items": [
+      "بحساب واحد في المركز يمكنك تغيير صورة الملف الشخصي والاسم من Games وEducations وTools والمركز",
+      "بطاقة الملف الشخصي متشابهة في المواقع الأربعة",
+      "أُصلح خطأ كان يملأ قائمة صور الملف الشخصي في «تخصيص» بكلمة undefined",
+      "الصورة الدائرية بجانب زر الحساب في الأعلى تعرض صورة الملف الشخصي التي اخترتها، وتتغير فورًا عند تغييرها (إن لم تختر شيئًا فتظهر شخصية اللعبة)"
+     ]
+    }
+   }
   },
   {
    "date": "2026-10-28",
@@ -35,69 +231,69 @@
      ]
     },
     "es": {
-     "title": "Tools and Educations online",
+     "title": "Tools y Educations en línea",
      "items": [
-      "People on Tools and Educations now show up separately in the online count (Tools 1, Educations 1) and in the friends list"
+      "Las personas en Tools y Educations ya no se mezclan con el inicio: aparecen aparte en el número de conectados y en la lista de amigos, como «Tools 1» y «Educations 1»"
      ]
     },
     "fr": {
-     "title": "Tools and Educations online",
+     "title": "Tools et Educations en ligne",
      "items": [
-      "People on Tools and Educations now show up separately in the online count (Tools 1, Educations 1) and in the friends list"
+      "Les personnes sur Tools et Educations ne sont plus mélangées à l’accueil : elles apparaissent à part dans le nombre de connectés et la liste d’amis, comme « Tools 1 » et « Educations 1 »"
      ]
     },
     "de": {
-     "title": "Tools and Educations online",
+     "title": "Tools und Educations online",
      "items": [
-      "People on Tools and Educations now show up separately in the online count (Tools 1, Educations 1) and in the friends list"
+      "Personen in Tools und Educations werden nicht mehr mit der Startseite vermischt, sondern getrennt als „Tools 1“ und „Educations 1“ in der Online-Anzahl und in der Freundesliste angezeigt"
      ]
     },
     "ja": {
-     "title": "Tools and Educations online",
+     "title": "ToolsとEducationsのオンライン表示",
      "items": [
-      "People on Tools and Educations now show up separately in the online count (Tools 1, Educations 1) and in the friends list"
+      "Tools と Educations にいる人はハブと混ざらず、「Tools 1」「Educations 1」のように接続人数とフレンド一覧に別々に表示されます"
      ]
     },
     "zh": {
-     "title": "Tools and Educations online",
+     "title": "Tools 和 Educations 在线显示",
      "items": [
-      "People on Tools and Educations now show up separately in the online count (Tools 1, Educations 1) and in the friends list"
+      "Tools 和 Educations 中的人不再混在主页里，而是在在线人数和好友列表中分别显示为“Tools 1”“Educations 1”"
      ]
     },
     "pt": {
-     "title": "Tools and Educations online",
+     "title": "Tools e Educations online",
      "items": [
-      "People on Tools and Educations now show up separately in the online count (Tools 1, Educations 1) and in the friends list"
+      "Quem está em Tools e Educations não aparece mais misturado ao início: agora aparece separado na contagem de online e na lista de amigos, como “Tools 1” e “Educations 1”"
      ]
     },
     "ru": {
-     "title": "Tools and Educations online",
+     "title": "Онлайн в Tools и Educations",
      "items": [
-      "People on Tools and Educations now show up separately in the online count (Tools 1, Educations 1) and in the friends list"
+      "Игроки в Tools и Educations больше не смешиваются с хабом: в счётчике онлайн и в списке друзей они отображаются отдельно, как «Tools 1» и «Educations 1»"
      ]
     },
     "tr": {
-     "title": "Tools and Educations online",
+     "title": "Tools ve Educations çevrimiçi",
      "items": [
-      "People on Tools and Educations now show up separately in the online count (Tools 1, Educations 1) and in the friends list"
+      "Tools ve Educations’taki kişiler artık merkeze karışmıyor; çevrimiçi sayısında ve arkadaş listesinde \"Tools 1\", \"Educations 1\" gibi ayrı görünüyor"
      ]
     },
     "it": {
-     "title": "Tools and Educations online",
+     "title": "Tools ed Educations online",
      "items": [
-      "People on Tools and Educations now show up separately in the online count (Tools 1, Educations 1) and in the friends list"
+      "Le persone su Tools ed Educations non si mescolano più con l’hub: nel conteggio dei connessi e nella lista amici appaiono a parte, come «Tools 1» ed «Educations 1»"
      ]
     },
     "pl": {
-     "title": "Tools and Educations online",
+     "title": "Tools i Educations online",
      "items": [
-      "People on Tools and Educations now show up separately in the online count (Tools 1, Educations 1) and in the friends list"
+      "Osoby z Tools i Educations nie są już mieszane z hubem: w liczbie online i na liście znajomych pokazują się osobno, jako „Tools 1” i „Educations 1”"
      ]
     },
     "ar": {
-     "title": "Tools and Educations online",
+     "title": "Tools وEducations متصلان",
      "items": [
-      "People on Tools and Educations now show up separately in the online count (Tools 1, Educations 1) and in the friends list"
+      "لم يعد الأشخاص في Tools وEducations يُخلطون مع المركز، بل يظهرون منفصلين في عدد المتصلين وقائمة الأصدقاء، مثل «Tools 1» و«Educations 1»"
      ]
     }
    }
@@ -117,69 +313,69 @@
      ]
     },
     "es": {
-     "title": "Old versions no longer save",
+     "title": "Las versiones antiguas ya no guardan",
      "items": [
-      "Old pinned versions of Stickseum and Crown Envoy no longer save achievements, rankings, coins or progress to your account (play continues; use the latest version to keep progress)"
+      "Las versiones antiguas fijadas de Stickseum y Crown Envoy ya no guardan logros, clasificaciones, monedas ni progreso en tu cuenta (se puede seguir jugando; usa la última versión para conservar el progreso)"
      ]
     },
     "fr": {
-     "title": "Old versions no longer save",
+     "title": "Les anciennes versions ne sauvegardent plus",
      "items": [
-      "Old pinned versions of Stickseum and Crown Envoy no longer save achievements, rankings, coins or progress to your account (play continues; use the latest version to keep progress)"
+      "Les anciennes versions figées de Stickseum et Crown Envoy n’enregistrent plus les succès, classements, pièces ni la progression sur ton compte (on peut toujours jouer ; utilise la dernière version pour garder ta progression)"
      ]
     },
     "de": {
-     "title": "Old versions no longer save",
+     "title": "Alte Versionen speichern nicht mehr",
      "items": [
-      "Old pinned versions of Stickseum and Crown Envoy no longer save achievements, rankings, coins or progress to your account (play continues; use the latest version to keep progress)"
+      "Die alten, festgehaltenen Versionen von Stickseum und Crown Envoy speichern keine Erfolge, Ranglisten, Münzen oder Fortschritte mehr auf deinem Konto (spielen geht weiter; für den Fortschritt bitte die neueste Version nutzen)"
      ]
     },
     "ja": {
-     "title": "Old versions no longer save",
+     "title": "古いバージョンは記録されなくなりました",
      "items": [
-      "Old pinned versions of Stickseum and Crown Envoy no longer save achievements, rankings, coins or progress to your account (play continues; use the latest version to keep progress)"
+      "Stickseum と Crown Envoy の古い固定バージョンでは、実績・ランキング・コイン・進行度がアカウントに保存されなくなりました（プレイはそのままできます。続けるには最新バージョンを使ってください）"
      ]
     },
     "zh": {
-     "title": "Old versions no longer save",
+     "title": "旧版本不再保存记录",
      "items": [
-      "Old pinned versions of Stickseum and Crown Envoy no longer save achievements, rankings, coins or progress to your account (play continues; use the latest version to keep progress)"
+      "Stickseum 和 Crown Envoy 的旧固定版本不会再把成就、排名、金币和进度保存到账号（仍可游玩；想保留进度请使用最新版本）"
      ]
     },
     "pt": {
-     "title": "Old versions no longer save",
+     "title": "Versões antigas não salvam mais",
      "items": [
-      "Old pinned versions of Stickseum and Crown Envoy no longer save achievements, rankings, coins or progress to your account (play continues; use the latest version to keep progress)"
+      "As versões antigas fixadas de Stickseum e Crown Envoy não salvam mais conquistas, rankings, moedas ou progresso na sua conta (dá para continuar jogando; use a versão mais recente para manter o progresso)"
      ]
     },
     "ru": {
-     "title": "Old versions no longer save",
+     "title": "Старые версии больше не сохраняют прогресс",
      "items": [
-      "Old pinned versions of Stickseum and Crown Envoy no longer save achievements, rankings, coins or progress to your account (play continues; use the latest version to keep progress)"
+      "Старые зафиксированные версии Stickseum и Crown Envoy больше не сохраняют достижения, рейтинги, монеты и прогресс в аккаунте (играть можно; чтобы прогресс сохранялся, используйте последнюю версию)"
      ]
     },
     "tr": {
-     "title": "Old versions no longer save",
+     "title": "Eski sürümler artık kaydetmiyor",
      "items": [
-      "Old pinned versions of Stickseum and Crown Envoy no longer save achievements, rankings, coins or progress to your account (play continues; use the latest version to keep progress)"
+      "Stickseum ve Crown Envoy’un eski sabit sürümleri başarımları, sıralamaları, jetonları ve ilerlemeyi artık hesabına kaydetmiyor (oynamaya devam edebilirsin; ilerlemeni korumak için en son sürümü kullan)"
      ]
     },
     "it": {
-     "title": "Old versions no longer save",
+     "title": "Le vecchie versioni non salvano più",
      "items": [
-      "Old pinned versions of Stickseum and Crown Envoy no longer save achievements, rankings, coins or progress to your account (play continues; use the latest version to keep progress)"
+      "Le vecchie versioni fisse di Stickseum e Crown Envoy non salvano più obiettivi, classifiche, monete o progressi sul tuo account (si può continuare a giocare; usa l’ultima versione per conservare i progressi)"
      ]
     },
     "pl": {
-     "title": "Old versions no longer save",
+     "title": "Stare wersje nie zapisują już postępów",
      "items": [
-      "Old pinned versions of Stickseum and Crown Envoy no longer save achievements, rankings, coins or progress to your account (play continues; use the latest version to keep progress)"
+      "Stare przypięte wersje Stickseum i Crown Envoy nie zapisują już osiągnięć, rankingów, monet ani postępu na koncie (można dalej grać; aby zachować postęp, użyj najnowszej wersji)"
      ]
     },
     "ar": {
-     "title": "Old versions no longer save",
+     "title": "النسخ القديمة لم تعد تحفظ",
      "items": [
-      "Old pinned versions of Stickseum and Crown Envoy no longer save achievements, rankings, coins or progress to your account (play continues; use the latest version to keep progress)"
+      "لم تعد النسخ القديمة الثابتة من Stickseum وCrown Envoy تحفظ الإنجازات والترتيب والعملات والتقدم في حسابك (يمكنك متابعة اللعب؛ استخدم أحدث نسخة للحفاظ على تقدمك)"
      ]
     }
    }
@@ -199,69 +395,69 @@
      ]
     },
     "es": {
-     "title": "Online count accuracy",
+     "title": "Precisión del número de conectados",
      "items": [
-      "The room server (the headless browser that hosts ranked rooms) is no longer counted as a player in the online count"
+      "El servidor de salas (el navegador sin pantalla que aloja las salas clasificatorias) ya no se cuenta como jugador en el número de conectados"
      ]
     },
     "fr": {
-     "title": "Online count accuracy",
+     "title": "Précision du nombre de connectés",
      "items": [
-      "The room server (the headless browser that hosts ranked rooms) is no longer counted as a player in the online count"
+      "Le serveur des salles (le navigateur sans interface qui héberge les salles classées) n’est plus compté comme joueur dans le nombre de connectés"
      ]
     },
     "de": {
-     "title": "Online count accuracy",
+     "title": "Genauigkeit der Online-Anzahl",
      "items": [
-      "The room server (the headless browser that hosts ranked rooms) is no longer counted as a player in the online count"
+      "Der Raumserver (der unsichtbare Browser, der die Ranglisten-Räume hostet) wird in der Online-Anzahl nicht mehr als Spieler gezählt"
      ]
     },
     "ja": {
-     "title": "Online count accuracy",
+     "title": "接続人数の正確さ",
      "items": [
-      "The room server (the headless browser that hosts ranked rooms) is no longer counted as a player in the online count"
+      "部屋サーバー（ランク戦の部屋を動かすヘッドレスブラウザ）が接続人数にプレイヤーとして数えられなくなりました"
      ]
     },
     "zh": {
-     "title": "Online count accuracy",
+     "title": "在线人数更准确",
      "items": [
-      "The room server (the headless browser that hosts ranked rooms) is no longer counted as a player in the online count"
+      "房间服务器（运行排位房间的无界面浏览器）不再被计入在线人数"
      ]
     },
     "pt": {
-     "title": "Online count accuracy",
+     "title": "Precisão da contagem de online",
      "items": [
-      "The room server (the headless browser that hosts ranked rooms) is no longer counted as a player in the online count"
+      "O servidor de salas (o navegador sem tela que hospeda as salas ranqueadas) não é mais contado como jogador na contagem de online"
      ]
     },
     "ru": {
-     "title": "Online count accuracy",
+     "title": "Точность счётчика онлайн",
      "items": [
-      "The room server (the headless browser that hosts ranked rooms) is no longer counted as a player in the online count"
+      "Сервер комнат (безголовый браузер, на котором работают комнаты ранговых игр) больше не учитывается как игрок в счётчике онлайн"
      ]
     },
     "tr": {
-     "title": "Online count accuracy",
+     "title": "Çevrimiçi sayısının doğruluğu",
      "items": [
-      "The room server (the headless browser that hosts ranked rooms) is no longer counted as a player in the online count"
+      "Oda sunucusu (dereceli odaları barındıran, ekransız tarayıcı) artık çevrimiçi sayısında oyuncu olarak sayılmıyor"
      ]
     },
     "it": {
-     "title": "Online count accuracy",
+     "title": "Precisione del conteggio online",
      "items": [
-      "The room server (the headless browser that hosts ranked rooms) is no longer counted as a player in the online count"
+      "Il server delle stanze (il browser senza schermo che ospita le stanze classificate) non viene più conteggiato come giocatore nel numero di connessi"
      ]
     },
     "pl": {
-     "title": "Online count accuracy",
+     "title": "Dokładność liczby online",
      "items": [
-      "The room server (the headless browser that hosts ranked rooms) is no longer counted as a player in the online count"
+      "Serwer pokoi (przeglądarka bez okna, która obsługuje pokoje rankingowe) nie jest już liczony jako gracz w liczbie online"
      ]
     },
     "ar": {
-     "title": "Online count accuracy",
+     "title": "دقة عدد المتصلين",
      "items": [
-      "The room server (the headless browser that hosts ranked rooms) is no longer counted as a player in the online count"
+      "لم يعد خادم الغرف (المتصفح بلا واجهة الذي يستضيف الغرف المصنفة) يُحسب لاعبًا ضمن عدد المتصلين"
      ]
     }
    }
@@ -281,69 +477,69 @@
      ]
     },
     "es": {
-     "title": "No zoom on double tap",
+     "title": "Sin zoom al tocar dos veces",
      "items": [
-      "Double-tapping no longer zooms the screen on any game or site (pinching with two fingers still works)"
+      "Tocar dos veces ya no amplía la pantalla en ningún juego ni sitio (pellizcar con dos dedos sigue funcionando)"
      ]
     },
     "fr": {
-     "title": "No zoom on double tap",
+     "title": "Pas de zoom au double toucher",
      "items": [
-      "Double-tapping no longer zooms the screen on any game or site (pinching with two fingers still works)"
+      "Taper deux fois ne zoome plus l’écran sur aucun jeu ni site (le pincement à deux doigts fonctionne toujours)"
      ]
     },
     "de": {
-     "title": "No zoom on double tap",
+     "title": "Kein Zoom bei Doppeltippen",
      "items": [
-      "Double-tapping no longer zooms the screen on any game or site (pinching with two fingers still works)"
+      "Doppeltippen zoomt auf keinem Spiel und keiner Seite mehr den Bildschirm (Zoomen mit zwei Fingern funktioniert weiterhin)"
      ]
     },
     "ja": {
-     "title": "No zoom on double tap",
+     "title": "ダブルタップで拡大しない",
      "items": [
-      "Double-tapping no longer zooms the screen on any game or site (pinching with two fingers still works)"
+      "すべてのゲームとサイトで、画面を2回タップしても拡大されなくなりました（2本指による拡大・縮小はそのまま使えます）"
      ]
     },
     "zh": {
-     "title": "No zoom on double tap",
+     "title": "双击不再放大",
      "items": [
-      "Double-tapping no longer zooms the screen on any game or site (pinching with two fingers still works)"
+      "所有游戏和网站上双击屏幕都不会再放大（双指缩放仍然可用）"
      ]
     },
     "pt": {
-     "title": "No zoom on double tap",
+     "title": "Sem zoom ao tocar duas vezes",
      "items": [
-      "Double-tapping no longer zooms the screen on any game or site (pinching with two fingers still works)"
+      "Tocar duas vezes não amplia mais a tela em nenhum jogo ou site (o zoom com dois dedos continua funcionando)"
      ]
     },
     "ru": {
-     "title": "No zoom on double tap",
+     "title": "Двойное касание не увеличивает экран",
      "items": [
-      "Double-tapping no longer zooms the screen on any game or site (pinching with two fingers still works)"
+      "Двойное касание больше не увеличивает экран ни в одной игре и на одном сайте (масштабирование двумя пальцами работает как прежде)"
      ]
     },
     "tr": {
-     "title": "No zoom on double tap",
+     "title": "Çift dokunmada yakınlaştırma yok",
      "items": [
-      "Double-tapping no longer zooms the screen on any game or site (pinching with two fingers still works)"
+      "Hiçbir oyunda ve sitede ekrana iki kez dokunmak artık ekranı yakınlaştırmıyor (iki parmakla yakınlaştırma aynen çalışıyor)"
      ]
     },
     "it": {
-     "title": "No zoom on double tap",
+     "title": "Nessun zoom con il doppio tocco",
      "items": [
-      "Double-tapping no longer zooms the screen on any game or site (pinching with two fingers still works)"
+      "Toccare due volte non ingrandisce più lo schermo in nessun gioco o sito (il pizzico con due dita funziona ancora)"
      ]
     },
     "pl": {
-     "title": "No zoom on double tap",
+     "title": "Brak powiększania przy dwukrotnym dotknięciu",
      "items": [
-      "Double-tapping no longer zooms the screen on any game or site (pinching with two fingers still works)"
+      "Dwukrotne dotknięcie nie powiększa już ekranu w żadnej grze ani na żadnej stronie (powiększanie dwoma palcami nadal działa)"
      ]
     },
     "ar": {
-     "title": "No zoom on double tap",
+     "title": "لا تكبير عند النقر المزدوج",
      "items": [
-      "Double-tapping no longer zooms the screen on any game or site (pinching with two fingers still works)"
+      "لم يعد النقر مرتين يكبّر الشاشة في أي لعبة أو موقع (التكبير بإصبعين ما زال يعمل)"
      ]
     }
    }
@@ -365,80 +561,80 @@
      ]
     },
     "es": {
-     "title": "One profile window everywhere",
+     "title": "Una sola ventana de perfil",
      "items": [
-      "The profile window is the same on every game and site, with that game's stats under it",
-      "Profile (picture, intro) and name can only be changed on the hub; elsewhere you just see a link to it"
+      "La ventana de perfil es igual en todos los juegos y sitios, y al abrirla desde un juego aparecen debajo las estadísticas de ese juego",
+      "El perfil (foto, presentación) y el nombre solo se pueden cambiar en el inicio; en otros sitios solo verás un enlace al inicio"
      ]
     },
     "fr": {
-     "title": "One profile window everywhere",
+     "title": "Une seule fenêtre de profil partout",
      "items": [
-      "The profile window is the same on every game and site, with that game's stats under it",
-      "Profile (picture, intro) and name can only be changed on the hub; elsewhere you just see a link to it"
+      "La fenêtre de profil est la même dans tous les jeux et sites, avec les stats du jeu affichées dessous",
+      "Le profil (photo, présentation) et le pseudo ne peuvent être modifiés que sur l’accueil ; ailleurs, tu ne vois qu’un lien vers l’accueil"
      ]
     },
     "de": {
-     "title": "One profile window everywhere",
+     "title": "Ein Profilfenster überall",
      "items": [
-      "The profile window is the same on every game and site, with that game's stats under it",
-      "Profile (picture, intro) and name can only be changed on the hub; elsewhere you just see a link to it"
+      "Das Profilfenster ist in allen Spielen und auf allen Seiten gleich, und im Spiel werden darunter die Statistiken dieses Spiels angezeigt",
+      "Profil (Bild, Vorstellung) und Name können nur auf der Startseite geändert werden; woanders siehst du nur einen Link dorthin"
      ]
     },
     "ja": {
-     "title": "One profile window everywhere",
+     "title": "プロフィール画面を統一",
      "items": [
-      "The profile window is the same on every game and site, with that game's stats under it",
-      "Profile (picture, intro) and name can only be changed on the hub; elsewhere you just see a link to it"
+      "すべてのゲームとサイトでプロフィール画面が同じになり、ゲームから開くとそのゲームの統計が下に表示されます",
+      "プロフィール（写真・自己紹介）と名前はハブでのみ変更できます。ほかの場所ではハブへのリンクだけが表示されます"
      ]
     },
     "zh": {
-     "title": "One profile window everywhere",
+     "title": "各处统一的个人资料窗口",
      "items": [
-      "The profile window is the same on every game and site, with that game's stats under it",
-      "Profile (picture, intro) and name can only be changed on the hub; elsewhere you just see a link to it"
+      "所有游戏和网站的个人资料窗口都一样；在游戏中打开时，下方会显示该游戏的统计",
+      "个人资料（头像、简介）和名字只能在主页修改，其他地方只显示通往主页的链接"
      ]
     },
     "pt": {
-     "title": "One profile window everywhere",
+     "title": "Uma janela de perfil em todo lugar",
      "items": [
-      "The profile window is the same on every game and site, with that game's stats under it",
-      "Profile (picture, intro) and name can only be changed on the hub; elsewhere you just see a link to it"
+      "A janela de perfil é a mesma em todos os jogos e sites, com as estatísticas do jogo logo abaixo",
+      "O perfil (foto, apresentação) e o nome só podem ser alterados no início; em outros lugares aparece apenas um link para o início"
      ]
     },
     "ru": {
-     "title": "One profile window everywhere",
+     "title": "Единое окно профиля",
      "items": [
-      "The profile window is the same on every game and site, with that game's stats under it",
-      "Profile (picture, intro) and name can only be changed on the hub; elsewhere you just see a link to it"
+      "Окно профиля одинаково во всех играх и на всех сайтах; если открыто из игры, внизу показывается статистика этой игры",
+      "Профиль (фото, описание) и имя можно менять только в хабе; в других местах есть только ссылка на хаб"
      ]
     },
     "tr": {
-     "title": "One profile window everywhere",
+     "title": "Her yerde tek profil penceresi",
      "items": [
-      "The profile window is the same on every game and site, with that game's stats under it",
-      "Profile (picture, intro) and name can only be changed on the hub; elsewhere you just see a link to it"
+      "Profil penceresi tüm oyunlarda ve sitelerde aynı; bir oyundan açıldığında altında o oyunun istatistikleri görünür",
+      "Profil (resim, tanıtım) ve ad yalnızca merkezden değiştirilebilir; başka yerlerde sadece merkeze giden bir bağlantı görürsün"
      ]
     },
     "it": {
-     "title": "One profile window everywhere",
+     "title": "Una sola finestra profilo ovunque",
      "items": [
-      "The profile window is the same on every game and site, with that game's stats under it",
-      "Profile (picture, intro) and name can only be changed on the hub; elsewhere you just see a link to it"
+      "La finestra del profilo è uguale in tutti i giochi e i siti, e aprendola da un gioco compaiono sotto le statistiche di quel gioco",
+      "Profilo (foto, presentazione) e nome si possono cambiare solo nell’hub; altrove vedi solo un link all’hub"
      ]
     },
     "pl": {
-     "title": "One profile window everywhere",
+     "title": "Jedno okno profilu wszędzie",
      "items": [
-      "The profile window is the same on every game and site, with that game's stats under it",
-      "Profile (picture, intro) and name can only be changed on the hub; elsewhere you just see a link to it"
+      "Okno profilu jest takie samo we wszystkich grach i na wszystkich stronach, a po otwarciu z gry pod spodem pojawiają się statystyki tej gry",
+      "Profil (zdjęcie, opis) i nazwę można zmienić tylko na hubie; w innych miejscach widać tylko link do huba"
      ]
     },
     "ar": {
-     "title": "One profile window everywhere",
+     "title": "نافذة ملف شخصي واحدة في كل مكان",
      "items": [
-      "The profile window is the same on every game and site, with that game's stats under it",
-      "Profile (picture, intro) and name can only be changed on the hub; elsewhere you just see a link to it"
+      "نافذة الملف الشخصي واحدة في كل الألعاب والمواقع، وعند فتحها من لعبة تظهر أسفلها إحصاءات تلك اللعبة",
+      "لا يمكن تغيير الملف الشخصي (الصورة والتعريف) والاسم إلا من المركز؛ وفي الأماكن الأخرى ترى رابطًا يوصلك إلى المركز فقط"
      ]
     }
    }
