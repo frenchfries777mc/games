@@ -286,3 +286,7 @@ patchnotes.json | v471 title | 은하 제국의 황혼 | build 471 | 2026-10-28
 patchnotes.json | v471 items[0] | 버전(0.x)이 다르면 같은 방·빠른 대전·랭크·초대 불가 (빌드만 달라도 가능) | build 471 | 2026-10-28
 patchnotes.json | v471 items[1] | 옛 버전에서 올린 진행 기록은 계정에 반영 안 함 | build 471 | 2026-10-28
 patchnotes.json | v471 items[2] | 서버 통계에 버전·빌드 표시 | build 471 | 2026-10-28
+patchnotes.json | v472 title | 은하 제국의 황혼 | build 472 | 2026-10-28
+patchnotes.json | v472 items[0] | 사이트의 바로 플레이가 항상 최신 빌드를 열어요 | build 472 | 2026-10-28
+patchnotes.json | v472 items[1] | 옛 빌드가 캐시에 남아 있으면 자동으로 새 빌드로 다시 불러와요 | build 472 | 2026-10-28
+patchnotes.json | v472 items[2] | 사이트로 돌아가기도 새 파일로 열어요 | build 472 | 2026-10-28
