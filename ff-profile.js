@@ -877,7 +877,7 @@ function decoPanel(el, sb, uid, d, cv, o){
       else if(x.kind==='ach'){ if(!hub[x.ach]){ lock=true; tag='🔒'; } }
       h+='<button type="button" class="av'+(A.pick===x.id?' on':'')+(lock?' lk':'')+'" data-av="'+x.id+'" title="'+esc(nm)+'"><img src="'+avatarUrl(x.id)+'" alt="" width="52" height="52"><span>'+esc(nm)+'</span>'+(tag?'<em data-notr>'+esc(tag)+'</em>':'')+'</button>'; }
     function cellG(x){ var nm=x.n[lg]||x.n.en||x.n.ko; return '<button type="button" class="av g'+(/^(bf|ip|vk)$/.test(x.grp)?' px':'')+(A.pick===x.id?' on':'')+'" data-av="'+x.id+'" title="'+esc(nm)+'"><img src="'+avatarUrl(x.id)+'" alt="" width="52" height="52" loading="lazy"></button>'; }
-    AVATARS.forEach(function(x){ if(!x.grp) h+=cell(x); });
+    AVATARS.forEach(function(x){ if(!x.grp) cell(x); });
     h+='</div>';
     AVG.forEach(function(g){ var list=AVATARS.filter(function(x){ return x.grp===g.g; }), op=A.open&&A.open[g.g]||list.some(function(x){ return x.id===A.pick; });
       h+='<details class="avg" data-g="'+g.g+'"'+(op?' open':'')+'><summary>'+g.icon+' '+esc(g.name)+' <small data-notr>'+list.length+'</small></summary><div class="avs">'+list.map(cellG).join('')+'</div></details>'; });
