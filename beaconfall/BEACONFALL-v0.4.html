@@ -393,7 +393,7 @@ window.bfIntro=function(){if(run)return;run=1;t0=Date.now();el.classList.add('ru
     <button class="btn" data-act="skins"><span class="arrow">▶</span>스킨 상점<span class="en">SKIN SHOP</span></button>
     <button class="btn" data-act="stats"><span class="arrow">▶</span>통계<span class="en">STATS</span></button>
     <button class="btn" data-act="settings"><span class="arrow">▶</span>설정<span class="en">SETTINGS</span></button>
-    <p class="foot">v0.4<br>build 124</p>
+    <p class="foot">v0.4<br>build 125</p>
   </nav>
 </div>
 
@@ -12134,12 +12134,13 @@ function showSettings(){
 }
 
 /* ---------- 멀티: PeerJS (주소 = 방 이름) ---------- */
-const PREFIX='stranded-', PEER_SRC='https://cdnjs.cloudflare.com/ajax/libs/peerjs/1.5.2/peerjs.min.js';
+const GAME_VER='0.4';   // 버전(0.x)이 다르면 방 주소 자체가 달라서 서로 보이지도 못 들어가요 (빌드는 달라도 돼요)
+const PREFIX='stranded'+GAME_VER.replace('.','')+'-', PEER_SRC='https://cdnjs.cloudflare.com/ajax/libs/peerjs/1.5.2/peerjs.min.js';
 const net={peer:null,role:null,addr:'',wname:'',conns:[],count:1,msg:'',busy:false,id:'',chain:Promise.resolve(),tPos:0,tPlayers:0,tMons:0,tClock:0};
 const addrOk=a=>/^[a-z0-9][a-z0-9_-]{2,23}$/i.test(a);
 function netErr(e){
   const t=e&&e.type;
-  return ({'unavailable-id':'이미 사용 중인 주소예요. 다른 주소를 써 주세요.','peer-unavailable':'그 주소로 열린 방을 찾지 못했어요.',
+  return ({'unavailable-id':'이미 사용 중인 주소예요. 다른 주소를 써 주세요.','peer-unavailable':'그 주소로 열린 방을 찾지 못했어요. 방장이 다른 버전으로 연 방은 보이지 않아요.',
     'network':'연결 서버에 닿지 못했어요.','server-error':'연결 서버에 닿지 못했어요.','socket-error':'연결 서버에 닿지 못했어요.',
     'socket-closed':'연결 서버와의 연결이 끊겼어요.','timeout':'연결 서버가 응답하지 않아요.'})[t]
     ||(e&&e.message==='lib'?'연결 라이브러리를 불러오지 못했어요.':'연결에 실패했어요.');
@@ -12452,6 +12453,7 @@ function applyState(d){
 async function guestHandle(d){
   if(!d||typeof d!=='object')return;
   if(d.t==='world'){
+    if(d.ver!==GAME_VER){netLeave('방장과 게임 버전이 달라요 (이 게임은 '+GAME_VER+'). 같은 버전끼리만 함께 할 수 있어요.');return;}
     if(/^\d{1,10}$/.test(String(d.seed))){net.wname=String(d.name||'').slice(0,16);WOPT.keep=!!d.keep;WOPT.hard=false;WOPT.dmg=WOPT.hp=1;netRefresh();await loadWorld(String(d.seed),net.wname,null);}
   }else if(!world){return;}
   else if(d.t==='state'){
@@ -12597,7 +12599,7 @@ async function hostRoom(addr,wid){
       c.on('open',()=>{
         if(!world||world.id!==w.id){try{c.close();}catch(e){}return;}
         net.conns.push(c);
-        try{c.send({t:'world',name:w.name,seed:w.seed,keep:WOPT.keep?1:0});}catch(e){}
+        try{c.send({t:'world',name:w.name,seed:w.seed,keep:WOPT.keep?1:0,ver:GAME_VER});}catch(e){}
         sendSnapshot(c);
         bcast();
       });
