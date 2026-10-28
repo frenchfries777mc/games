@@ -308,3 +308,6 @@
 
 ## Tools·Educations 접속 표시 (2026-10-28)
 - 패치노트 문구 추가: Tools·Educations 접속 표시
+
+## 로비 제목 로고 (Crown Envoy b121, 2026-10-28)
+- 패치노트 문구 추가: 로비 제목 로고 (로비 제목을 새 Crown Envoy 로고로 바꿨어요)
