@@ -392,7 +392,7 @@ window.bfIntro=function(){if(run)return;run=1;t0=Date.now();el.classList.add('ru
     <button class="btn" data-act="skins"><span class="arrow">▶</span>스킨 상점<span class="en">SKIN SHOP</span></button>
     <button class="btn" data-act="stats"><span class="arrow">▶</span>통계<span class="en">STATS</span></button>
     <button class="btn" data-act="settings"><span class="arrow">▶</span>설정<span class="en">SETTINGS</span></button>
-    <p class="foot">v0.4<br>build 117</p>
+    <p class="foot">v0.4<br>build 118</p>
   </nav>
 </div>
 
@@ -9658,7 +9658,7 @@ const sbMonName=k=>SB_MON[k]||(MTYPES[k].boss?'[보스] ':'')+MTYPES[k].name;
 function sbFly(on){
   if(!SANDBOX||mode!=='play')return;
   SBX.fly=on===undefined?!SBX.fly:!!on;
-  toast(SBX.fly?'비행을 켰어요 (H로 켜고 끌 수 있어요)':'비행을 껐어요');
+  toast(SBX.fly?'비행을 켰어요':'비행을 껐어요');
 }
 function sbSetHour(h){
   const base=Math.floor(world.clock/DAY_SEC)*DAY_SEC;let c=base+((h-6+24)%24)/24*DAY_SEC;
@@ -9719,7 +9719,7 @@ function toggleSandbox(){
   const ids=Object.keys(ITEMS).filter(id=>!ITEMS[id].hidden&&id!=='ruin');
   const fo=sbFillOpts(),mo=sbMonList();
   openModal(`<h2>샌드박스<small>SANDBOX</small></h2>
-    <div class="sbrow"><b>비행 (H)</b><button class="btn sm" id="sbfly"></button><button class="btn sm" id="sbfsp"></button></div>
+    <div class="sbrow"><b>비행</b><button class="btn sm" id="sbfly"></button><button class="btn sm" id="sbfsp"></button></div>
     <div class="sbrow"><b>시간 · 날씨</b><button class="btn sm" data-sbh="6">새벽</button><button class="btn sm" data-sbh="12">낮</button><button class="btn sm" data-sbh="18">저녁</button><button class="btn sm" data-sbh="23">밤</button><button class="btn sm" id="sbtm"></button></div>
     <div class="sbrow"><button class="btn sm" data-sbw="clear">맑음</button><button class="btn sm" data-sbw="rain">비</button><button class="btn sm" data-sbw="storm">폭풍</button></div>
     <div class="sbrow"><b>몬스터</b><select class="field" id="sbmon">${mo.map(k=>`<option value="${k}">${esc(sbMonName(k))}</option>`).join('')}</select><button class="btn sm" id="sbsum">소환</button><button class="btn sm ghost" id="sbkill">모두 제거</button></div>
@@ -11939,7 +11939,6 @@ addEventListener('keydown',e=>{
   else if(e.code==='KeyF'&&!e.repeat&&P.sailing){const rf=nearReef();if(rf)reefDive(rf);else landBoat();}
   else if(e.code==='KeyF'&&P.air){e.preventDefault();}
   else if(e.code==='KeyB'){if(!e.repeat)toggleSandbox();e.preventDefault();}
-  else if(e.code==='KeyH'&&SANDBOX){if(!e.repeat)sbFly();e.preventDefault();}
   else if(e.code==='KeyN'){if(!e.repeat)toast('배경음악 '+(BGM.toggle()?'켜짐':'꺼짐'));e.preventDefault();}
   else if(e.code==='KeyJ'){if(!e.repeat)toggleAch();e.preventDefault();}
   else if(e.code==='KeyR'&&!e.repeat&&!crafting&&!e.ctrlKey&&!e.metaKey){doRoll();e.preventDefault();}
