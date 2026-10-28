@@ -3,6 +3,88 @@
   {
    "date": "2026-10-28",
    "build": "",
+   "title": "접속자 수 정확도",
+   "items": [
+    "방 서버가 접속자 수에 사람처럼 들어가던 문제를 고쳤어요"
+   ],
+   "tr": {
+    "en": {
+     "title": "Online count accuracy",
+     "items": [
+      "The room server (the headless browser that hosts ranked rooms) is no longer counted as a player in the online count"
+     ]
+    },
+    "es": {
+     "title": "Online count accuracy",
+     "items": [
+      "The room server (the headless browser that hosts ranked rooms) is no longer counted as a player in the online count"
+     ]
+    },
+    "fr": {
+     "title": "Online count accuracy",
+     "items": [
+      "The room server (the headless browser that hosts ranked rooms) is no longer counted as a player in the online count"
+     ]
+    },
+    "de": {
+     "title": "Online count accuracy",
+     "items": [
+      "The room server (the headless browser that hosts ranked rooms) is no longer counted as a player in the online count"
+     ]
+    },
+    "ja": {
+     "title": "Online count accuracy",
+     "items": [
+      "The room server (the headless browser that hosts ranked rooms) is no longer counted as a player in the online count"
+     ]
+    },
+    "zh": {
+     "title": "Online count accuracy",
+     "items": [
+      "The room server (the headless browser that hosts ranked rooms) is no longer counted as a player in the online count"
+     ]
+    },
+    "pt": {
+     "title": "Online count accuracy",
+     "items": [
+      "The room server (the headless browser that hosts ranked rooms) is no longer counted as a player in the online count"
+     ]
+    },
+    "ru": {
+     "title": "Online count accuracy",
+     "items": [
+      "The room server (the headless browser that hosts ranked rooms) is no longer counted as a player in the online count"
+     ]
+    },
+    "tr": {
+     "title": "Online count accuracy",
+     "items": [
+      "The room server (the headless browser that hosts ranked rooms) is no longer counted as a player in the online count"
+     ]
+    },
+    "it": {
+     "title": "Online count accuracy",
+     "items": [
+      "The room server (the headless browser that hosts ranked rooms) is no longer counted as a player in the online count"
+     ]
+    },
+    "pl": {
+     "title": "Online count accuracy",
+     "items": [
+      "The room server (the headless browser that hosts ranked rooms) is no longer counted as a player in the online count"
+     ]
+    },
+    "ar": {
+     "title": "Online count accuracy",
+     "items": [
+      "The room server (the headless browser that hosts ranked rooms) is no longer counted as a player in the online count"
+     ]
+    }
+   }
+  },
+  {
+   "date": "2026-10-28",
+   "build": "",
    "title": "더블터치 확대 방지",
    "items": [
     "모든 게임과 사이트에서 화면을 두 번 눌러도 확대되지 않아요(두 손가락 확대는 그대로예요)"
