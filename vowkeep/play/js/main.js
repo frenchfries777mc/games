@@ -313,15 +313,16 @@ function cancelInvites() {
   for (const id in S.sent) { const v = sentLive(id); if (sb && v && v.id != null) try { sb.rpc('ff_uninvite', { p_id: v.id }).then(() => { }, () => { }); } catch (e) { } }
   S.sent = {};
 }
-async function openInvite() {
-  if (needLogin()) return;
+async function openInvite(quiet) {
+  if (!quiet && needLogin()) return;
   const sb = window.FFAuth && FFAuth.client && FFAuth.client(), me = FFAuth.user(); if (!sb || !me) return;
-  const L = $('invList'); $('inv').classList.add('on'); L.innerHTML = '<p class="note">' + T('불러오는 중이에요...') + '</p>';
+  const L = $('invList'); $('inv').classList.add('on'); if (!quiet) L.innerHTML = '<p class="note">' + T('불러오는 중이에요...') + '</p>';
   const blocked = id => { try { return FFAuth.isBlocked(id); } catch (e) { return false; } };
   const fr = (FFAuth.friends() || []).filter(f => f.status === 'accepted' && !blocked(f.otherId));
-  let onF = {}, others = [], otherErr = false;
-  try { const r = await sb.rpc('ff_online_friends'); ((r && r.data) || []).forEach(x => { onF[x.user_id] = x.place; }); } catch (e) { }
+  let onF = {}, others = [], otherErr = false, friErr = false;
+  try { const r = await sb.rpc('ff_online_friends'); if (r && r.error) friErr = true; ((r && r.data) || []).forEach(x => { onF[x.user_id] = x.place; }); } catch (e) { friErr = true; }
   try { const r = await sb.rpc('ff_online_players', { p_limit: 40 }); if (r.error) otherErr = true; others = ((r && r.data) || []).filter(x => x.user_id !== me.id && !blocked(x.user_id) && !fr.some(f => f.otherId === x.user_id)); } catch (e) { otherErr = true; }
+  if (quiet && !$('inv').classList.contains('on')) return;
   fr.sort((a, b) => ((onF[b.otherId] ? 1 : 0) - (onF[a.otherId] ? 1 : 0)) || a.name.localeCompare(b.name, 'ko'));
   L.innerHTML = '';
   const head = t => { const h = document.createElement('h4'); h.textContent = t; L.appendChild(h); };
@@ -350,14 +351,17 @@ async function openInvite() {
     L.appendChild(d);
   };
   head(T('친구 ({0})', fr.length));
+  if (friErr) L.insertAdjacentHTML('beforeend', '<p class="note">' + T('접속 중인 친구를 못 불러왔어요. 잠시 뒤 다시 열어 주세요.') + '</p>');
   if (!fr.length) L.insertAdjacentHTML('beforeend', '<p class="note">' + T('아직 친구가 없어요.') + '</p>');
   fr.forEach(f => row(f.otherId, f.name, onF[f.otherId] ? '🟢 ' + (GN[onF[f.otherId]] || onF[f.otherId]) : T('접속 안 함'), !!onF[f.otherId]));
   head(T('지금 접속 중인 플레이어 ({0})', others.length));
   if (otherErr) L.insertAdjacentHTML('beforeend', '<p class="note">' + T('접속 중인 플레이어 목록은 곧 열려요.') + '</p>');
   else if (!others.length) L.insertAdjacentHTML('beforeend', '<p class="note">' + T('지금 접속 중인 다른 플레이어가 없어요.') + '</p>');
   others.forEach(x => row(x.user_id, x.name || '???', '🟢 ' + (GN[x.place] || x.place || ''), true));
+  // 열려 있는 동안 10초마다 다시 불러와서 허브 첫 화면의 접속 표시와 같은 값을 따라가요
+  clearTimeout(S.invT); S.invT = setTimeout(() => { if ($('inv').classList.contains('on')) openInvite(true); }, 10000);
 }
-$('invX').onclick = () => $('inv').classList.remove('on');
+$('invX').onclick = () => { $('inv').classList.remove('on'); clearTimeout(S.invT); };
 $('inv').addEventListener('click', e => { if (e.target === $('inv')) $('inv').classList.remove('on'); });
 $('startBtn').onclick = () => { SFX.unlock(); SFX.play('click'); if (S.net === 'guest') return; beginGame(); };
 
