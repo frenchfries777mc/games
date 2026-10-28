@@ -389,11 +389,12 @@ function matchJoin(n, gen) {
   p.on('open', () => {
     if (S.mg !== gen || S.peer !== p) return;
     const c = p.connect(PREFIX + 'q' + n, { reliable: true, serialization: 'json' });
-    c.on('open', () => { c.send({ t: 'hello', uid: UID, name: myName(), role: SAVE.role, col: SAVE.col | 0, cos: SAVE.cos.on }); });
+    c.on('open', () => { c.send({ t: 'hello', ver: VERSION, uid: UID, name: myName(), role: SAVE.role, col: SAVE.col | 0, cos: SAVE.cos.on }); });
     c.on('data', d => {
       if (S.mg !== gen) return;
       if (done) { guestMsg(d); return; }
       if (d && d.t === 'deny') { try { c.close(); } catch (e) { } next(); return; }
+      if (d && d.t === 'welcome' && d.ver && d.ver !== VERSION) { try { c.close(); } catch (e) { } next(); return; }
       if (d && d.t === 'welcome') { done = true; clearTimeout(tm); S.net = 'guest'; S.conn = c; S.pub = true; c.on('close', () => { if (S.conn !== c) return; const wasGame = inGame(); endToLobby(wasGame ? T('방장이 나가서 대전이 끝났어요.') : T('방이 닫혔어요.')); }); }
       guestMsg(d);
     });
@@ -406,6 +407,7 @@ function hostLobby() { if (S.net === 'host') bcast(lobbyMeta()); }
 function hostMsg(c, d) {
   if (!d || typeof d !== 'object') return;
   if (d.t === 'hello') {
+    if (d.ver && d.ver !== VERSION) { c.send({ t: 'deny', ver: VERSION, why: '버전이 달라요.' }); setTimeout(() => c.close(), 300); return; }
     const uid = String(d.uid || '').slice(0, 20), name = String(d.name || T('기사')).slice(0, 15);
     c._uid = uid; c._name = name; c._xp = d.xp || {}; c._gear = d.gear || {}; c._cos = d.cos || null;
     if (S.G) { // 진행 중: 내 자리로 돌아오거나, 봇 자리를 맡아요
@@ -413,7 +415,7 @@ function hostMsg(c, d) {
       if (!p) { c.send({ t: 'deny', why: '이미 시작한 방이에요.' }); setTimeout(() => c.close(), 300); return; }
       p.bot = false; p.uid = uid; p.name = name; p.wasHuman = true; S.G.humans = S.G.players.filter(q => !q.bot).length;
       S.conns[uid] = c; c._pid = p.id;
-      c.send({ t: 'welcome', uid, start: true, pid: p.id, ch: S.G.ch, dp: S.G.deep, wk: S.G.weekly, th: CH.theme }); toast(T('{0}님이 {1} 자리에 들어왔어요.', name, ROLES[p.role].name));
+      c.send({ t: 'welcome', ver: VERSION, uid, start: true, pid: p.id, ch: S.G.ch, dp: S.G.deep, wk: S.G.weekly, th: CH.theme }); toast(T('{0}님이 {1} 자리에 들어왔어요.', name, ROLES[p.role].name));
       return;
     }
     let sl = S.slots.find(s => s.uid === uid);
@@ -424,7 +426,7 @@ function hostMsg(c, d) {
     }
     S.conns[uid] = c;
     checkFull();
-    c.send({ t: 'welcome', uid }); hostLobby(); if (S.scr === 'sRoom') paintRoom(); SFX.play('click');
+    c.send({ t: 'welcome', ver: VERSION, uid }); hostLobby(); if (S.scr === 'sRoom') paintRoom(); SFX.play('click');
     return;
   }
   const uid = c._uid; if (!uid) return;
@@ -445,7 +447,7 @@ function startGuest(code) {
   const tm = setTimeout(() => { if (S.peer === p && S.scr !== 'sRoom' && !inGame()) { homeMsg(T('연결 시간이 초과됐어요. 초대를 다시 받아 주세요.')); leaveNet(); } }, 15000);
   p.on('open', () => {
     const c = p.connect(PREFIX + code, { reliable: true, serialization: 'json' }); S.conn = c;
-    c.on('open', () => { c.send({ t: 'hello', uid: UID, name: myName(), role: SAVE.role, col: SAVE.col | 0, cos: SAVE.cos.on }); });
+    c.on('open', () => { c.send({ t: 'hello', ver: VERSION, uid: UID, name: myName(), role: SAVE.role, col: SAVE.col | 0, cos: SAVE.cos.on }); });
     c.on('data', d => { clearTimeout(tm); guestMsg(d); });
     c.on('close', () => { if (S.conn !== c) return; const wasGame = inGame(); endToLobby(wasGame ? T('방장이 나가서 대전이 끝났어요.') : T('방이 닫혔어요.')); });
   });
@@ -453,9 +455,10 @@ function startGuest(code) {
 }
 function guestMsg(d) {
   if (!d || typeof d !== 'object') return;
+  if (d.t === 'welcome' && d.ver && d.ver !== VERSION) { homeMsg(T('버전이 달라요. 이 방은 {0} 버전이에요.', d.ver)); leaveNet(); return; }
   if (d.t === 'welcome') { homeMsg(''); if (d.start) { S.me = d.pid; useDeep(d.dp); { const fw = useWk(d.wk); useChapter(d.ch | 0, !!d.dp || fw); if (d.th) CH.theme = d.th; } startClient(); } else { openRoom(); } }
   else if (d.t === 'lobby') { S.slots = d.slots; S.ph = d.ph; S.cap = d.cap || PUB_CAP; S.pub = !!d.pub; S.pickT = d.pt; if (S.scr === 'sRoom') paintRoom(); }
-  else if (d.t === 'deny') { homeMsg(T(d.why || '들어갈 수 없어요.')); leaveNet(); }
+  else if (d.t === 'deny') { homeMsg(d.ver ? T('버전이 달라요. 이 방은 {0} 버전이에요.', d.ver) : T(d.why || '들어갈 수 없어요.')); leaveNet(); }
   else if (d.t === 'start') { if (S.snap && S.snap.won) clearChapter(); S.me = d.pid; useDeep(d.dp); { const fw = useWk(d.wk); useChapter(d.ch | 0, !!d.dp || fw); if (d.th) CH.theme = d.th; } startClient(); }
   else if (d.t === 's') {
     if (d.S && d.S.c != null && (d.S.c !== chapterIndex() || (d.S.dp && d.S.dp.floor !== DEEP.floor) || !!d.S.wk !== WEEKLY.on)) { useDeep(d.S.dp); useWk(d.S.wk); useChapter(d.S.c, true); S.built = false; }
