@@ -9,14 +9,14 @@ import * as MUS from './music.js';
 
 const $ = id => document.getElementById(id);
 const qs = new URLSearchParams(location.search);
-const PREFIX = 'ff-vowkeep-', CODE_CH = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789', SNAP_HZ = 20;
+const PREFIX = 'ff-vowkeep01-', CODE_CH = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789', SNAP_HZ = 20;
 const TOUCH = matchMedia('(pointer: coarse)').matches || 'ontouchstart' in window;
 if (TOUCH) document.body.classList.add('touch');
 
 /* ---------- 저장 ---------- */
 function lsGet(k, d) { try { const v = localStorage.getItem(k); return v ? JSON.parse(v) : d; } catch (e) { return d; } }
 function lsSet(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) { } }
-const SAVE = Object.assign({ honor: 0, xp: {}, gear: {}, ach: {}, clears: {}, role: 'knight', set: { vol: 70, px: 3, bloom: 1, shake: 1 } }, lsGet('vowkeep.save', {}));
+const SAVE = Object.assign({ honor: 0, xp: {}, gear: {}, ach: {}, clears: {}, role: 'knight', set: { vol: 70, px: 3, bloom: 1, shake: 1 } }, lsGet('vowkeep.v01.save', {}));
 SAVE.set = Object.assign({ vol: 70, px: 3, bloom: 1, shake: 1, opt: matchMedia('(pointer: coarse)').matches ? 1 : 0 }, SAVE.set || {});
 // 최적화: 허브 설정의 공용 값(ff_perf)이 있으면 그걸 따르고, 여기서 바꾸면 공용 값도 같이 바꿔요
 let FPS_CAP = 0;
@@ -34,7 +34,7 @@ if (SAVE.chMax == null) SAVE.chMax = Object.keys(SAVE.clears || {}).length ? 1 :
 SAVE.lore = SAVE.lore || {}; SAVE.flags = SAVE.flags || {}; SAVE.puz = SAVE.puz | 0; SAVE.combos = SAVE.combos || {}; SAVE.deepBest = SAVE.deepBest | 0;
 // 다음에 이어서 할 장 (모든 장을 깼으면 1장부터 새 원정)
 const chOpen = () => (SAVE.chMax | 0) >= CHAPTERS.length ? 0 : SAVE.chMax | 0;
-function save() { lsSet('vowkeep.save', SAVE); }
+function save() { lsSet('vowkeep.v01.save', SAVE); }
 let UID = lsGet('vowkeep.uid', null); if (!UID) { UID = 'u' + Math.random().toString(36).slice(2, 10); lsSet('vowkeep.uid', UID); }
 const gearOf = r => Object.assign({ weapon: 0, armor: 0 }, SAVE.gear[r] || {});
 
@@ -131,7 +131,7 @@ function ffSync() {
       const sb = window.FFAuth && FFAuth.client && FFAuth.client(), u = window.FFAuth && FFAuth.user(); if (!sb || !u || !(await ffProfile())) return;
       if (ffMarked !== u.id) { ffMarked = u.id; FFProfile.markPlayed(sb, 'vowkeep'); }
       const ids = ACHIEVEMENTS.filter(a => SAVE.ach[a.id]).map(a => a.id);
-      if (FFProfile.setAchievements) FFProfile.setAchievements(sb, 'vowkeep', ids.length, ACHIEVEMENTS.length, ids);
+      if (false) FFProfile.setAchievements(sb, 'vowkeep', ids.length, ACHIEVEMENTS.length, ids);
     } catch (e) { }
   }, 1500);
 }
