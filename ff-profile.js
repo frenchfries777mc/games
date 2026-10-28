@@ -156,8 +156,8 @@ EXT_CHARS.forEach(function(x){ x.v.forEach(function(v,i){ var nm=x.n+' · '+v[0]
 })();
 function avatarUrl(id){ return BASE+'avatars/'+id+(/^(stk|ce|bf|ip|dp|vk)_/.test(id)?'.png':'.svg'); }
 var AVS={
- ko:{ttl:'프로필 사진',game:'게임 캐릭터',gameT:'Stickseum 캐릭터 그림을 써요',coins:'보유',buy:'구매',cancel:'취소',ask:'{0} 사진을 {1} hC에 살까요?',bought:'샀어요. 이제 쓸 수 있어요.',picked:'바꿨어요.',poor:'허브 코인이 모자라요.',locked:'업적을 달성하면 열려요: {0}',off:'프로필 사진은 아직 준비 중이에요.',fail:'저장하지 못했어요. 잠시 뒤에 다시 해 주세요.',free:'기본',own:'구매함'},
- en:{ttl:'Profile photo',game:'Game character',gameT:'Use your Stickseum character picture',coins:'You have',buy:'Buy',cancel:'Cancel',ask:'Buy the {0} photo for {1} hC?',bought:'Bought. You can use it now.',picked:'Changed.',poor:'Not enough Hub Coin.',locked:'Unlocks with this achievement: {0}',off:'Profile photos are not ready yet.',fail:'Could not save. Please try again later.',free:'Free',own:'Owned'}
+ ko:{t2need:'그 캐릭터의 그랜드 마스터를 달성하면 쓸 수 있어요',ttl:'프로필 사진',game:'게임 캐릭터',gameT:'Stickseum 캐릭터 그림을 써요',coins:'보유',buy:'구매',cancel:'취소',ask:'{0} 사진을 {1} hC에 살까요?',bought:'샀어요. 이제 쓸 수 있어요.',picked:'바꿨어요.',poor:'허브 코인이 모자라요.',locked:'업적을 달성하면 열려요: {0}',off:'프로필 사진은 아직 준비 중이에요.',fail:'저장하지 못했어요. 잠시 뒤에 다시 해 주세요.',free:'기본',own:'구매함'},
+ en:{t2need:'Reach Grand Master with that character to use this photo',ttl:'Profile photo',game:'Game character',gameT:'Use your Stickseum character picture',coins:'You have',buy:'Buy',cancel:'Cancel',ask:'Buy the {0} photo for {1} hC?',bought:'Bought. You can use it now.',picked:'Changed.',poor:'Not enough Hub Coin.',locked:'Unlocks with this achievement: {0}',off:'Profile photos are not ready yet.',fail:'Could not save. Please try again later.',free:'Free',own:'Owned'}
 };
 /* 프로필 사진 창의 다른 언어 (AVS와 사진 이름) */
 (function(){
@@ -405,6 +405,7 @@ AVATARS.forEach(function(x){
  x.n.nw=t[0]; x.n.gk=t[0];
 });
 })();
+function t2lock(id, st){ var m=/^stk_(.+)_t2$/.exec(id||''); if(!m) return false; st=st||{}; var c=m[1], pt=st.cp&&st.cp[c]!=null?st.cp[c]:((st.ck&&st.ck[c])||0)*10; return pt<9000; }
 function avt(lg,k){ return (AVS[lg]&&AVS[lg][k])||AVS.en[k]||AVS.ko[k]||''; }
 function titleOf(id){ for(var i=0;i<TITLES.length;i++) if(TITLES[i].id===id) return TITLES[i]; return null; }
 function decoOf(kind, id){ var a=DECO[kind]; for(var i=0;i<a.length;i++) if(a[i].id===id) return a[i]; return a[0]; }
@@ -759,7 +760,7 @@ async function draw(cv, d, o){
   // avatar with its frame
   var AS=138, AX=W/2-AS/2, AY=HY+22, a=document.createElement('canvas'); a.width=a.height=168;
   var im=av.ext?await loadImg(ext(av.ext)):null; drawAvatar(a, av, im);
-  var hp=d.avpick&&avatarOf(d.avpick); if(hp){ var hi=await loadImg(avatarUrl(hp.id)); if(hi){ var ac=a.getContext('2d'); ac.clearRect(0,0,168,168); if(hp.grp){ ac.fillStyle=av.bg||'#274d3a'; ac.fillRect(0,0,168,168); ac.imageSmoothingEnabled=!/^(bf|ip|vk)$/.test(hp.grp); } ac.drawImage(hi,0,0,168,168); ac.imageSmoothingEnabled=true; } }          // a profile photo replaces the game character picture
+  var hp=d.avpick&&avatarOf(d.avpick); if(hp&&t2lock(hp.id,st)) hp=null; if(hp){ var hi=await loadImg(avatarUrl(hp.id)); if(hi){ var ac=a.getContext('2d'); ac.clearRect(0,0,168,168); if(hp.grp){ ac.fillStyle=av.bg||'#274d3a'; ac.fillRect(0,0,168,168); ac.imageSmoothingEnabled=!/^(bf|ip|vk)$/.test(hp.grp); } ac.drawImage(hi,0,0,168,168); ac.imageSmoothingEnabled=true; } }          // a profile photo replaces the game character picture
   var fr=st.pfr&&STK.pfr[st.pfr], gl=fr&&glowOf(fr.shadow);
   c.save(); if(gl){ c.shadowColor=gl.color; c.shadowBlur=gl.blur*1.6; } c.fillStyle='#000'; rrect(c,AX,AY,AS,AS,20); c.fill(); c.restore();
   c.save(); rrect(c,AX,AY,AS,AS,20); c.clip(); c.drawImage(a,AX,AY,AS,AS); c.restore();
@@ -878,7 +879,7 @@ function decoPanel(el, sb, uid, d, cv, o){
       if(x.kind==='coin'){ if(A.own[x.id]) tag=avt(lg,'own'); else { lock=true; tag=x.price+' hC'; } }
       else if(x.kind==='ach'){ if(!hub[x.ach]){ lock=true; tag='🔒'; } }
       h+='<button type="button" class="av'+(A.pick===x.id?' on':'')+(lock?' lk':'')+'" data-av="'+x.id+'" title="'+esc(nm)+'"><img src="'+avatarUrl(x.id)+'" alt="" width="52" height="52"><span>'+esc(nm)+'</span>'+(tag?'<em data-notr>'+esc(tag)+'</em>':'')+'</button>'; }
-    function cellG(x){ var nm=x.n[lg]||x.n.en||x.n.ko; return '<button type="button" class="av g'+(/^(bf|ip|vk)$/.test(x.grp)?' px':'')+(A.pick===x.id?' on':'')+'" data-av="'+x.id+'" title="'+esc(nm)+'"><img src="'+avatarUrl(x.id)+'" alt="" width="52" height="52" loading="lazy"></button>'; }
+    function cellG(x){ var nm=x.n[lg]||x.n.en||x.n.ko, lk=t2lock(x.id,(d.profile&&d.profile.stats)||{}); return '<button type="button" class="av g'+(lk?' lk':'')+(/^(bf|ip|vk)$/.test(x.grp)?' px':'')+(A.pick===x.id?' on':'')+'" data-av="'+x.id+'" title="'+esc(nm)+'"><img src="'+avatarUrl(x.id)+'" alt="" width="52" height="52" loading="lazy"></button>'; }
     AVATARS.forEach(function(x){ if(!x.grp) cell(x); });
     h+='</div>';
     AVG.forEach(function(g){ var list=AVATARS.filter(function(x){ return x.grp===g.g; }), op=A.open&&A.open[g.g]||list.some(function(x){ return x.id===A.pick; });
@@ -890,6 +891,7 @@ function decoPanel(el, sb, uid, d, cv, o){
   [].forEach.call(P.querySelectorAll('details.avg'),function(dt){ dt.addEventListener('toggle',function(){ var A=d.av; if(A){ (A.open=A.open||{})[dt.getAttribute('data-g')]=dt.open; } }); });
   [].forEach.call(P.querySelectorAll('[data-av]'),function(b){ b.onclick=async function(){ var A=d.av, id=b.getAttribute('data-av')||null, x=id&&avatarOf(id); if(!A||A.off) return; if(id===A.pick) return; A.msg='';
     if(x&&x.kind==='coin'&&!A.own[x.id]){ if(A.coins!=null&&A.coins<x.price){ A.buy=null; A.msg=avt(lg,'poor'); } else A.buy=x.id; decoPanel(el, sb, uid, d, cv, o); return; }
+    if(x&&t2lock(x.id,(d.profile&&d.profile.stats)||{})){ A.buy=null; A.msg=avt(lg,'t2need'); decoPanel(el, sb, uid, d, cv, o); return; }
     if(x&&x.kind==='ach'&&!hub[x.ach]){ var ca=await catalog('hub'), aa=(ca||[]).filter(function(q){ return q.id===x.ach; })[0]; A.buy=null; A.msg=avt(lg,'locked').replace('{0}',aa&&aa.n?(aa.n[lg]||aa.n.en||aa.n.ko):x.ach); decoPanel(el, sb, uid, d, cv, o); return; }
     A.buy=null; await avPick(id); }; });
   async function avPick(id){ var A=d.av, r; try{ r=await sb.rpc('ff_avatar_set',{p_id:id}); }catch(e){ r={error:e}; }
@@ -988,5 +990,5 @@ async function open(sb, uid, o){
 }
 /* the account button's small round photo when no profile photo is picked: the game character, drawn like on the card */
 async function avatarDataUrl(sb, uid){ try{ var p=await sb.from('profiles').select('stats').eq('id',uid).single(), av=(p&&!p.error&&p.data&&p.data.stats&&p.data.stats.avatar)||{}, im=av.ext?await loadImg(ext(av.ext)):null, a=document.createElement('canvas'); a.width=a.height=96; drawAvatar(a, av, im); return a.toDataURL('image/png'); }catch(e){ return null; } }
-window.FFProfile={avatarDataUrl:avatarDataUrl, open:open, gameStats:function(game, fn){ if(typeof fn==='function') GS[game]=fn; }, canEdit:function(){ return editOk; }, hubUrl:HUBSITE, markPlayed:markPlayed, setAchievements:setAchievements, draw:draw, fetchData:fetchData, games:GAMES, characters:EXT_CHARS, catalog:catalog, syncHub:syncHub, deco:DECO, titles:TITLES, avatars:AVATARS, avatarUrl:avatarUrl};
+window.FFProfile={t2lock:t2lock, avatarDataUrl:avatarDataUrl, open:open, gameStats:function(game, fn){ if(typeof fn==='function') GS[game]=fn; }, canEdit:function(){ return editOk; }, hubUrl:HUBSITE, markPlayed:markPlayed, setAchievements:setAchievements, draw:draw, fetchData:fetchData, games:GAMES, characters:EXT_CHARS, catalog:catalog, syncHub:syncHub, deco:DECO, titles:TITLES, avatars:AVATARS, avatarUrl:avatarUrl};
 })();

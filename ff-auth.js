@@ -283,7 +283,7 @@ function fill(){ var el=modal(); el.querySelector('h3').textContent=mode==='in'?
 function openLogin(m){ mode=m==='up'?'up':'in'; fill(); var el=modal(); el.style.display='flex'; setTimeout(function(){ try{ el.querySelector('input').focus(); }catch(e){} },30); }
 function close(){ var el=document.getElementById('ffaModal'); if(el) el.style.display='none'; }
 
-function profileLib(){ return loadScript(BASE+'ff-profile.js?v=20261028g', function(){ return !!window.FFProfile; }); }
+function profileLib(){ return loadScript(BASE+'ff-profile.js?v=20261028h', function(){ return !!window.FFProfile; }); }
 async function openProfile(uid, o){ if(!sb) return; if(!uid&&!user) return openLogin(); if(await profileLib()) window.FFProfile.open(sb, uid||user.id, o); }
 
 /* 게임 사이트(허브가 아닌 페이지)에는 계정 버튼 옆에 '← 허브' 버튼을 붙여요. 빼고 싶으면 자리에 data-ff-nohub */
@@ -299,7 +299,7 @@ function avSrc(){ return avPick&&/^[a-z0-9_-]{1,30}$/i.test(avPick)?BASE+'avatar
 /* no profile photo picked: show the game character, as the profile card does */
 function loadAvGame(){ if(avPick||avGame||!sb||!user) return; var id=user.id; profileLib().then(function(ok){ if(!ok||!window.FFProfile.avatarDataUrl||avPick||!user||user.id!==id) return; window.FFProfile.avatarDataUrl(sb,id).then(function(u){ if(u&&!avPick&&user&&user.id===id){ avGame=u; paint(); } }); }); }
 function loadAv(){ if(!sb||!user||avFor===user.id) return; var id=user.id; avFor=id; avPick=null; avGame=null;
-  Promise.resolve(sb.from('ff_avatar').select('pick').eq('user_id',id).limit(1)).then(function(r){ var p=r&&!r.error&&r.data&&r.data[0]&&r.data[0].pick||null; if(p){ avPick=p; paint(); } else loadAvGame(); },function(){ loadAvGame(); }); }
+  Promise.resolve(sb.from('ff_avatar').select('pick').eq('user_id',id).limit(1)).then(function(r){ var p=r&&!r.error&&r.data&&r.data[0]&&r.data[0].pick||null; if(p&&/^stk_.+_t2$/.test(p)){ Promise.resolve(sb.from('profiles').select('stats').eq('id',id).single()).then(function(q){ var st=q&&q.data&&q.data.stats||{}, c=p.slice(4,-3), pt=st.cp&&st.cp[c]!=null?st.cp[c]:((st.ck&&st.ck[c])||0)*10; if(user&&user.id===id){ if(pt>=9000){ avPick=p; paint(); } else loadAvGame(); } },function(){ loadAvGame(); }); } else if(p){ avPick=p; paint(); } else loadAvGame(); },function(){ loadAvGame(); }); }
 /* the profile card tells the account button the moment a photo is picked */
 window.addEventListener('ff-avatar',function(e){ if(!user) return; avPick=(e&&e.detail&&e.detail.pick)||null; avGame=null; paint(); if(!avPick) loadAvGame(); });
 function paint(){
