@@ -41,12 +41,17 @@ function homeMsg(t) { $('homeMsg').textContent = t || ''; }
 /* ---------- 화면 ---------- */
 let scr = 'sLobby';
 function show(id) { document.querySelectorAll('.scr').forEach(s => s.classList.toggle('on', s.id === id)); scr = id; $('hud').classList.toggle('on', id === 'game'); }
-document.querySelectorAll('[data-back]').forEach(b => b.addEventListener('click', () => { if (scr === 'sRoom') leaveNet(); show('sLobby'); paintWho(); }));
+document.querySelectorAll('[data-back]').forEach(b => b.addEventListener('click', () => { if (scr === 'sRoom' || scr === 'sMap') leaveNet(); show('sLobby'); paintWho(); }));
 document.querySelectorAll('#menu .btn').forEach(b => b.addEventListener('click', () => menu(b.dataset.go)));
+function pickMap(cb) {
+  $('mapPick').innerHTML = MAP_IDS.map(id => '<button class="mapc" data-m="' + id + '"><b>' + MAPS[id].name + '</b><small>' + MAPS[id].desc + '</small></button>').join('');
+  $('mapPick').querySelectorAll('button').forEach(b => b.onclick = () => { SFX.unlock(); cb(b.dataset.m); });
+  show('sMap');
+}
 function menu(go) {
   SFX.unlock();
   homeMsg('');
-  if (go === 'solo') { leaveNet(); N.mode = 'solo'; N.players = [{ id: UID, name: myName(), col: COLORS[SAVE.col % COLORS.length] }]; beginGame(); }
+  if (go === 'solo') { leaveNet(); N.mode = 'solo'; N.players = [{ id: UID, name: myName(), col: COLORS[SAVE.col % COLORS.length] }]; pickMap(id => { N.pick = id; beginGame(); }); }
   else if (go === 'match') { if (needLogin()) return; startMatch(); }
   else if (go === 'host') { if (needLogin()) return; startHost(); }
   else if (go === 'help') { $('wl').innerHTML = WEP_IDS.map(k => { const w = WEAPONS[k]; return '<div><b>' + w.name + '</b><small>' + ({ melee: '가까이 휘둘러요', shot: '멀리 쏴요', spray: '뿌리는 동안 뒤로 밀려요', rocket: '터지면 주변이 다 날아가요' })[w.kind] + ' · ' + w.uses + '번</small></div>'; }).join(''); show('sHelp'); }
@@ -170,7 +175,7 @@ let G = null, myId = UID, cam = { x: 0, y: 0 }, view = { x: 0, y: 0 }, baked = n
 const keys = {}, mouse = { x: 0, y: 0, down: false }, pend = { jp: false, swap: false };
 function beginGame() {
   clearTimeout(N.autoT); if (N.mode !== 'solo' && N.mode !== 'host') return;
-  const map = MAP_IDS[(Math.random() * MAP_IDS.length) | 0], pl = N.players.map(p => ({ id: p.id, name: p.name, col: p.col, bot: false }));
+  const map = N.mode === 'solo' && N.pick ? N.pick : MAP_IDS[(Math.random() * MAP_IDS.length) | 0], pl = N.players.map(p => ({ id: p.id, name: p.name, col: p.col, bot: false }));
   const names = ['토끼', '여우', '고양이', '펭귄', '곰'];
   while (pl.length < MAXP) { const c = COLORS.find(c => !pl.some(p => p.col === c)); pl.push({ id: 'bot' + pl.length, name: '봇 ' + names[pl.length], col: c, bot: true }); }
   bcast({ t: 'start', map, pl }); playGame(map, pl);
@@ -183,6 +188,7 @@ function playGame(map, pl) {
   show('game'); BGM.play('pixel-sprint'); loop.on = true; requestAnimationFrame(loop);
 }
 $('resBack').onclick = () => { loop.on = false; endToLobby(); };
+$('exitBtn').onclick = () => { loop.on = false; RP = null; $('res').classList.remove('on'); endToLobby(); };
 
 document.addEventListener('pointerdown', () => { SFX.unlock(); if (scr !== 'game' && !document.getElementById('intro')) BGM.play('top-of-the-leaderboard'); });
 window.GCIntroDone = () => { if (scr !== 'game') BGM.play('top-of-the-leaderboard'); };
