@@ -128,7 +128,7 @@ function paintWho() {
 let ffMarked = '', ffAchT = 0;
 function ffProfile() {
   if (window.FFProfile) return Promise.resolve(true);
-  return new Promise(res => { const s = document.createElement('script'); s.src = 'https://frenchfries777mc.github.io/games/ff-profile.js?v=20261028'; s.onload = () => { regStats(); res(!!window.FFProfile); }; s.onerror = () => res(false); document.head.appendChild(s); });
+  return new Promise(res => { const s = document.createElement('script'); s.src = 'https://frenchfries777mc.github.io/games/ff-profile.js?v=20261029'; s.onload = () => { regStats(); res(!!window.FFProfile); }; s.onerror = () => res(false); document.head.appendChild(s); });
 }
 // 공용 프로필 창: 이름·프로필 변경은 허브에서만, 여기서는 Vowkeep 통계만 아래에 붙여요
 async function openProfile() {
@@ -254,7 +254,7 @@ function weeklyDone() {
 function showWeeklyResult(h) {
   S.resultShown = true; const R = weeklyDone(), cn = R.W.curses.map(c => CURSES.find(x => x.id === c).name).join(', ');
   $('result').innerHTML = `<div class="big">${T('주간 원정 완료')}</div><p class="note">${CH.title}</p><p class="note">${T('이번 주 저주: {0}', cn)}</p><p>${T('걸린 시간 {0}', '<b style="color:#ffd36b">' + fmtT(R.t) + '</b>')}${R.rec ? ' · ' + T('새 최고 기록') : ''} · ${T('내 최고 {0}', fmtT(R.best))}</p><p>${T('받은 vC {0}', '<b style="color:#ffd36b">' + (h + (R.first ? 300 : 0)) + '</b>')}${R.first ? ' ' + T('(첫 완주 보너스 300 포함)') : ''} · ${T('지금 vC {0}', SAVE.honor)}</p><div class="row"><button class="btn gold" id="resBack">${T('로비로')}</button></div>`;
-  $('resBack').onclick = () => endToLobby('');
+  $('resBack').onclick = backDone;
   setHud(false); show('sResult');
 }
 function paintChapters() {
@@ -479,6 +479,11 @@ function startClient() {
   unlock('first');
   setHud(false); show('sIntro'); $('introCh').textContent = CH.title; $('introLine').classList.remove('on'); S.introIdx = -1;
   hubRoom(S.net === 'host');
+}
+// 한 판을 끝까지 마치고 결과 화면에서 로비로 돌아온 순간 한 번만 허브 퀘스트에 알려요 (중간에 나가면 세지 않아요)
+function backDone() {
+  endToLobby('');
+  (async () => { try { const sb = window.FFAuth && FFAuth.client && FFAuth.client(); if (sb && loggedIn() && await ffProfile() && FFProfile.matchDone) FFProfile.matchDone(sb, 'vowkeep'); } catch (e) { } })();
 }
 function endToLobby(msg) {
   if (S.lite) { S.lite = false; S.slowN = 0; try { view.setLow(!!SAVE.set.opt); } catch (e) { } }
@@ -970,7 +975,7 @@ function showDeepResult() {
   S.resultShown = true; const h = awardHonor() || 0, f = S.snap.dp ? S.snap.dp.floor : DEEP.floor; deepRecord(f);
   const cs = (S.snap.dp ? S.snap.dp.curses : DEEP.curses).map(c => CURSES.find(x => x.id === c).name);
   $('result').innerHTML = `<div class="big">${T('끝없는 심연 {0}층', f)}</div><p class="note">${T('{0}층에서 모두 쓰러졌어요. {1}층까지 지나왔어요.', f, f - 1)}</p><p class="note">${T('쌓인 저주: {0}', cs.length ? cs.join(', ') : T('없음'))}</p><p>${T('받은 vC {0}', '<b style="color:#ffd36b">' + h + '</b>')} · ${T('최고 기록 {0}층', '<b style="color:#ffd36b">' + SAVE.deepBest)}</b></p><div class="row"><button class="btn gold" id="resBack">${T('로비로')}</button></div>`;
-  $('resBack').onclick = () => endToLobby('');
+  $('resBack').onclick = backDone;
   setHud(false); show('sResult');
 }
 function showResult() {
@@ -979,7 +984,7 @@ function showResult() {
   const next = ci + 1 < CHAPTERS.length ? `<p class="note">${T('{0}이 열렸어요.', CHAPTERS[ci + 1].title)}</p>` : '<p class="note">' + T('모든 장을 깼어요. 서약을 끝까지 지켰어요.') + '</p>';
   const rows = S.snap.pl.map(p => `<tr><td style="color:${ROLES[p.role].color}">${ROLES[p.role].name}</td><td>${esc(p.id === S.me ? T('나') : p.bot ? T('봇') : p.name)}</td><td>${(p.b || []).map(b => (BLESSINGS.find(x => x.id === b) || {}).name).join(', ') || '-'}</td></tr>`).join('');
   $('result').innerHTML = `<div class="big">${T('{0} 완료', CH.title)}</div><p class="note">${CH.outro.join(' ')}</p><table>${rows}</table><p>${T('받은 vC {0}', '<b style="color:#ffd36b">' + h + '</b>')} · ${T('지금 vC {0}', SAVE.honor)}</p>${next}<div class="row"><button class="btn gold" id="resBack">${T('로비로')}</button></div>`;
-  $('resBack').onclick = () => endToLobby('');
+  $('resBack').onclick = backDone;
   setHud(false); show('sResult');
 }
 
