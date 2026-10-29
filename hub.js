@@ -380,7 +380,7 @@ async function feed(){
 }
 
 /* ===================== 랭킹: 게임별 점수 순위 (ff_rank) ===================== */
-var rkGame='crownenvoy';
+var rkGame='stickseum';
 async function ranking(){
   var box=$('#rankList'); if(!box||!sb) return; var g=rkGame;
   if(g==='stickseum'||g==='isleport'||g==='beaconfall') return rankingBy(g,box);
