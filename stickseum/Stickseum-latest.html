@@ -1406,7 +1406,7 @@ const WEAPONS = {
             desc:'데미지 17 · 연사속도 0.85초 · 준수한 위력과 안정적인 명중률의 표준형 권총'},
   smg:     {id:'smg',     name:'기관총',   emoji:'🔫', kind:'gun',      dmg:6, cd:2.2, bulletSpeed:900, shape:'bullet', spread:0.06, burst:10, burstDelay:0.04,
             desc:'데미지 6 · 클릭 한 번에 10발 연사 · 쿨타임 2.2초 · 탄이 약간씩 퍼지는 일제사격'},
-  bow:     {id:'bow',     name:'활',       emoji:'🏹', kind:'gun',      dmg:30, cd:1.5,  bulletSpeed:1100, shape:'arrow', arcs:true,
+  bow:     {id:'bow',     name:'활',       emoji:'🏹', kind:'gun',      dmg:35, cd:1.5,  bulletSpeed:1100, shape:'arrow', arcs:true,
             desc:'데미지 30 · 재장전 1.5초 · 중력의 영향을 받아 포물선을 그리는 강력한 원거리 무기'},
   lightsaber:{id:'lightsaber', name:'광선검', emoji:'⚡', kind:'melee', dmg:26, cd:1.1, range:100, shape:'saber', kbMult:2.2, deflectSec:0.25,
             desc:'데미지 26 · 쿨타임 1.1초 · 사거리 100 · 광선검을 휘둘러 맞은 상대를 크게 날려보냄 · 휘두른 순간부터 0.25초 동안 날아오는 투사체를 쏜 사람에게 튕겨내고, 단거리 공격도 막아내고, 막아내면 쿨타임 없이 한 번 더 휘두를 수 있음 (공격받기 0.25초 전에 눌러야 함)'},
@@ -1423,20 +1423,20 @@ const WEAPONS = {
             desc:'데미지 32 · 쿨타임 0.5초 · 사거리 100 · 빠르고 날카로운 근접 베기'},
   bat:     {id:'bat',     name:'방망이',   emoji:'🏏', kind:'melee',    dmg:43, cd:0,  range:105, shape:'club',
             desc:'데미지 43 · 쿨타임 없음 · 사거리 105 · 클릭한 채 마우스를 아래로 내렸다가 다시 올리면(스윙) 그때 맞은 상대에게 타격'},
-  boomerang:{id:'boomerang',name:'부메랑', emoji:'🪃', kind:'boomerang',dmg:20, cd:0,  bulletSpeed:700, shape:'boomerang',
+  boomerang:{id:'boomerang',name:'부메랑', emoji:'🪃', kind:'boomerang',dmg:24, cd:0,  bulletSpeed:700, shape:'boomerang',
             desc:'데미지 20(돌아올 때도 20) · 쿨타임 없음 · 더 멀리 날아가는 부메랑 · 던진 부메랑이 돌아와 나에게 닿고 0.25초 뒤에 다시 던질 수 있음 · 사람은 관통하고, 발판·바닥·벽에 닿으면 즉시 귀환'},
   shuriken:{id:'shuriken',name:'표창',     emoji:'⭐', kind:'gun',      dmg:14, cd:0.48, bulletSpeed:1050, shape:'star',
             desc:'데미지 14 · 쿨타임 0.48초 · 가볍고 빠르게 연속으로 던지는 투척 무기'},
-  shotgun: {id:'shotgun', name:'샷건',     emoji:'💥', kind:'shotgun',  dmg:13, pellets:5, cd:1.2, bulletSpeed:850, shape:'pellet',
+  shotgun: {id:'shotgun', name:'샷건',     emoji:'💥', kind:'shotgun',  dmg:15, pellets:5, cd:1.2, bulletSpeed:850, shape:'pellet',
             dmgFalloff:{min:9, maxDist:700},
             desc:'근거리 펠릿당 최대 13(5발 다 맞으면 65), 멀어질수록 최소 9까지 감소 · 쿨타임 1.2초 · 넓게 퍼지는 산탄'},
   rifle:   {id:'rifle',   name:'돌격소총', emoji:'🔫', kind:'gun',      dmg:9,  cd:1.2,  bulletSpeed:1000, shape:'bullet', burst:3, burstDelay:0.07,
             desc:'데미지 9(3연발) · 쿨타임 1.2초 · 클릭 한 번에 총알 3발을 빠르게 연사하는 소총'},
-  gloves:  {id:'gloves',  name:'권투글러브',emoji:'🥊', kind:'melee',   dmg:28, cd:0.25, range:70, shape:'fist',
+  gloves:  {id:'gloves',  name:'권투글러브',emoji:'🥊', kind:'melee',   dmg:25, cd:0.25, range:70, shape:'fist',
             desc:'데미지 28 · 쿨타임 0.25초 · 사거리 70 · 매우 빠르게 연타하는 잽'},
-  grenade: {id:'grenade', name:'수류탄',   emoji:'💣', kind:'explosive',dmg:52, cd:2.0,  bulletSpeed:600, splash:145, shape:'bomb', arcs:true,
+  grenade: {id:'grenade', name:'수류탄',   emoji:'💣', kind:'explosive',dmg:56, cd:2.0,  bulletSpeed:600, splash:145, shape:'bomb', arcs:true,
             desc:'데미지 52 · 폭발반경 145 · 쿨타임 2.0초 · 중력에 의해 포물선으로 떨어지며 범위 안 전원에게 피해(자신 포함)'},
-  bazooka: {id:'bazooka', name:'바주카포', emoji:'🚀', kind:'explosive',dmg:68, cd:2.8,  bulletSpeed:750, splash:150, shape:'rocket', arcs:true,
+  bazooka: {id:'bazooka', name:'바주카포', emoji:'🚀', kind:'explosive',dmg:60, cd:2.8,  bulletSpeed:750, splash:150, shape:'rocket', arcs:true,
             desc:'데미지 68 · 폭발반경 150 · 쿨타임 2.8초 · 중력의 영향을 받는 포물선 궤도, 최고 위력이지만 느린 재장전'},
   dagger:  {id:'dagger',  name:'단검',     emoji:'🔪', kind:'melee',    dmg:41, cd:0.4,  range:65, shape:'dagger', dashCd:0.5,
             desc:'데미지 41 · 쿨타임 0.4초 · 사거리 65 · 대쉬 쿨타임이 0.5초로 줄어드는 기동형 단검'},
@@ -1444,7 +1444,7 @@ const WEAPONS = {
             desc:'데미지 12 · 쿨타임 0.4초 · 사거리 65 · 빠른 발톱 공격, 적중할 때마다 체력 5 흡수'},
   gambler: {id:'gambler', name:'도박사',   emoji:'🎲', kind:'gun', dmg:20, cd:1.0, bulletSpeed:1100, shape:'chip', hitR:10,
             desc:'데미지 20 · 쿨타임 1.0초 · 장거리 · 큰 칩을 곧게 던짐, 맞힐 때마다 칩 +1 (최대 6) · 칩이 많을수록 스킬·궁극기가 강해짐'},
-  wizard:  {id:'wizard',  name:'마법사',   emoji:'🧙', kind:'gun',      dmg:15, cd:0.7,  bulletSpeed:750, shape:'fireball', pierce:true, pierceHits:1, platPierce:1, life:1.4,
+  wizard:  {id:'wizard',  name:'마법사',   emoji:'🧙', kind:'gun',      dmg:14, cd:0.7,  bulletSpeed:750, shape:'fireball', pierce:true, pierceHits:1, platPierce:1, life:1.4,
             desc:'데미지 15 · 쿨타임 0.7초 · 사거리 김 · 발판을 한 번만 통과하고, 플레이어 한 명을 관통한 뒤 두 번째로 맞힌 상대에게서 멈추는 화염 마법'},
   magiccard:{id:'magiccard',name:'마술 카드',emoji:'🃏', kind:'cards',    dmg:10,  cd:0.9,  bulletSpeed:820, shape:'card', hitR:26, comboBonus:4, freeVolleys:3,
             desc:'트럼프 카드 3장이 넓게 퍼져 날아감 · 장당 데미지 10 · 쿨타임 0.9초 · 맞은 상대는 이동속도가 조금 느려짐 · 3장이 모두 맞으면 추가 4 데미지 + 0.5초 기절'},
@@ -5477,7 +5477,7 @@ function shuffle(arr){ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.
 /* ===== the version of this file =====
    Different BUILDS of one version meet and play together (room names online-v<ver>-<mode>-<map>-<slot>); different VERSIONS (the 0.x part) never do - the host refuses them (verNo) and the dispatcher answers busy.
    The build is only sent along with the join message and the lobby (for information); the corner of the screen shows it. */
-const GAME_BUILD='build 2026-10-18-v519';
+const GAME_BUILD='build 2026-10-18-v520';
 const GAME_VERSION='0.9', GAME_VERSION_NAME='은하 제국의 황혼';   // 게임 버전 이름: versions.json의 title과 같게 (빌드마다 바꾸지 않음)
 /* version (the 0.x part) vs build: different BUILDS of one version meet and play together, different VERSIONS never do (rooms, quick match, ranked, friend invites, dispatcher).
    Builds before 470 do not send a version, so it is read from the build number (0.9 started at build 458). */
