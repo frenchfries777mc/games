@@ -43,5 +43,26 @@ function note(){
   d.textContent=BANNER[bannerLang()]||BANNER.en;
   document.body.appendChild(d);
 }
+/* 사이트(http/https)에서 연 옛 버전은 플레이할 수 없어요: 화면을 덮고 다운로드 버튼만 보여 줘요. 내려받은 파일(file://)은 그대로 열려요. */
+var BLOCKED={ko:{t:"이전 버전은 사이트에서 플레이할 수 없어요",b:"다운로드",s:"이 버전은 파일로 내려받아서만 할 수 있어요. 최신 버전은 사이트에서 바로 플레이할 수 있어요."},
+ en:{t:"Older versions can't be played on the site",b:"Download",s:"This version can only be played as a downloaded file. The latest version can be played right on the site."},
+ es:{t:"Las versiones anteriores no se pueden jugar en el sitio",b:"Descargar",s:"Esta versión solo se puede jugar como archivo descargado. La última versión se juega directamente en el sitio."},
+ fr:{t:"Les anciennes versions ne se jouent pas sur le site",b:"Télécharger",s:"Cette version ne se joue qu'en fichier téléchargé. La dernière version se joue directement sur le site."},
+ de:{t:"Ältere Versionen sind auf der Seite nicht spielbar",b:"Herunterladen",s:"Diese Version ist nur als heruntergeladene Datei spielbar. Die neueste Version läuft direkt auf der Seite."},
+ ja:{t:"旧バージョンはサイトではプレイできません",b:"ダウンロード",s:"このバージョンはダウンロードしたファイルでのみ遊べます。最新バージョンはサイトでそのまま遊べます。"}};
+function blockPlay(){
+  if(!/^https?:$/.test(location.protocol)||document.getElementById('ffOldBlock')) return;
+  if(!document.body){ document.addEventListener('DOMContentLoaded',blockPlay); return; }
+  var T=BLOCKED[bannerLang()]||BLOCKED.en, f=decodeURIComponent((location.pathname||'').split('/').pop()||'game.html');
+  var d=document.createElement('div'); d.id='ffOldBlock';
+  d.style.cssText='position:fixed;inset:0;z-index:2147483647;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;padding:24px;background:#0d0f14;color:#f2e7c0;font:16px/1.6 sans-serif;text-align:center';
+  var h=document.createElement('div'); h.style.cssText='font-size:22px;font-weight:800'; h.textContent=T.t;
+  var p=document.createElement('div'); p.style.cssText='max-width:30em;opacity:.85'; p.textContent=T.s;
+  var a=document.createElement('a'); a.href=f; a.setAttribute('download',f); a.textContent='⬇ '+T.b; a.style.cssText='padding:12px 26px;border-radius:12px;background:#d4af4f;color:#2a1c0a;font-weight:800;text-decoration:none';
+  d.appendChild(h); d.appendChild(p); d.appendChild(a); document.body.appendChild(d);
+  document.documentElement.style.overflow='hidden';
+  try{ var q=document.querySelectorAll('audio,video'); for(var i=0;i<q.length;i++){ q[i].pause(); q[i].muted=true; } }catch(e){}
+}
 if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',note); else note();
+blockPlay();
 })();
