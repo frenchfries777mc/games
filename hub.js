@@ -582,7 +582,7 @@ function paintCoin(){
   b.querySelector('.cb-go').onclick=openCoin; b.querySelector('.cb-cal').onclick=function(){ openCal(); };
 }
 var coinTab='ex', coinGame='';
-var QN={play:'게임 한 판 하기',proto:'프로토타입 한 판 하기',post:'게시물 하나 남기기',trio:'세 종류의 게임 한 판씩 하기',vote:'투표 참여하기',wiki:'위키 둘러보기'}, QH={play:'Beaconfall·Isleport는 5분 플레이',trio:'Beaconfall·Isleport는 5분 플레이'};
+var QN={play:'게임 한 판 하기',proto:'프로토타입 한 판 하기',post:'게시물 하나 남기기',trio:'세 종류의 게임 한 판씩 하기',vote:'투표 참여하기',wiki:'위키 둘러보기'}, QH={play:'Beaconfall/Isleport 5분 플레이',trio:'Beaconfall/Isleport 5분 플레이'};
 async function questBox(el){
   var Q=el.querySelector('.cx-q'); if(!Q||!sb) return;
   var r=await sb.rpc('ff_quest_status');
