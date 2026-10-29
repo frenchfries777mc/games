@@ -3,7 +3,7 @@
 
 import { T } from './tr.js';
 
-export const VERSION = 'v0.1', BUILD = 32;
+export const VERSION = 'v0.1', BUILD = 33;
 
 export const ROLES = {
   knight: {
@@ -125,8 +125,8 @@ export const COLORS = [
   { id: 'purple', name: T('보라'), c: 0x8a52c8 },
   { id: 'orange', name: T('주황'), c: 0xe57a2a }
 ];
-export const BOT_NAMES = ['데굴이', '휘청이', '꽈당이', '비틀이', '아슬이', '쿵쾅이'];
-export const MAX_PLAYERS = 6;
+export const BOT_NAMES = ['데굴이', '휘청이', '꽈당이', '비틀이', '아슬이', '쿵쾅이', '덜렁이', '허둥이', '깜빡이', '뒤뚱이'];
+export const MAX_PLAYERS = 10;
 export const ROLE_IDS = ['knight', 'priest', 'archer', 'viking', 'mamluk', 'witch', 'skeleton', 'warden', 'assassin', 'crossbow'];
 
 export const ENEMIES = {
@@ -359,18 +359,51 @@ function grow(ci, rooms, [p1, dk, p2]) {
 
 // 장: 이야기, 지도, 보스, 색
 // 투기장: 보우킵 보스 방을 크게 키운 한 방 (적도 이야기도 없이 마지막 한 명이 남을 때까지)
+// 5대5 깃발 점령전 지도: 아주 넓은 벌판에 돌담과 기둥이 흩어져 있어요 (180도 돌려도 똑같아서 두 팀이 공평해요)
+export const TEAM_N = 5, FLAG_T = 7, FLAG_R = 6.5, RESP_T = 15, SPAWN_INV = 2, TEAM_HP = 1.5;
+export const TEAMS = [{ name: T('푸른 군단'), c: 0x4a8cff }, { name: T('붉은 군단'), c: 0xff5a4a }];
 function arenaMap() {
-  const m = genMap(777, [{ name: T('투기장'), line: T('마지막 한 명이 남을 때까지 싸워요. 체력이 다하면 탈락해요.'), boss: 1 }], { noSecret: 1, noMimic: 1, st: { cols: 1 } });
-  const AW = 38, AH = 32, ox = 6, oy = 6, cx = ox + AW / 2, cy = oy + AH / 2;
+  const m = genMap(777, [{ name: T('전장'), line: T('깃발 일곱 개를 모두 차지한 팀이 이겨요.'), boss: 1 }], { noSecret: 1, noMimic: 1, st: { cols: 1 } });
+  const AW = 112, AH = 72, ox = 6, oy = 6;
   m.w = AW + ox * 2; m.h = AH + oy * 2;
-  m.floors = [[ox, oy, AW, AH]]; m.areas[0].r = [[ox, oy, AW, AH]];
-  m.pillars = [[0.24, 0.26], [0.76, 0.26], [0.24, 0.74], [0.76, 0.74], [0.5, 0.5]].map(([u, v]) => [ox + Math.round(AW * u), oy + Math.round(AH * v)]);
-  m.boss = [cx, oy + Math.round(AH * 0.35)]; m.bossTrig = [0, 0, 0, 0]; m.start = [cx, oy + AH - 4]; m.route = [[cx, cy]];
+  m.areas[0].r = [[ox, oy, AW, AH]];
+  // 깃발 일곱 개: 0,1 = 푸른 팀 쪽(왼쪽 아래), 2,3 = 붉은 팀 쪽(오른쪽 위), 4,5,6 = 가운데
+  const sp = [[11, AH - 11], [AW - 12, 10]], fl = [[13, AH - 36, 0], [38, AH - 13, 0], [AW - 14, 35, 1], [AW - 39, 12, 1], [AW / 2, AH / 2, -1], [AW / 2 - 24, AH / 2 - 13, -1], [AW - 1 - (AW / 2 - 24), AH - 1 - (AH / 2 - 13), -1]];
+  const mk = (i, j) => [i, j];
+  // 돌담 목록 (한쪽 반만 정하고 180도 돌려 반대쪽도 만들어요)
+  const rng = (() => { let a = 20261030; return () => { a = (a * 1664525 + 1013904223) >>> 0; return a / 4294967296; }; })();
+  const keep = [...sp.map(([x, y]) => [x, y, 13]), ...fl.map(([x, y]) => [x, y, 8])];
+  const hit = (x, y, w, h, list) => list.some(([a, b, c, d]) => x < a + c + 3 && x + w + 3 > a && y < b + d + 3 && y + h + 3 > b);
+  const walls = [];
+  const near = (x, y, w, h) => keep.some(([kx, ky, kr]) => kx > x - kr && kx < x + w + kr && ky > y - kr && ky < y + h + kr);
+  const inside = (x, y, w, h) => x >= 5 && y >= 5 && x + w <= AW - 5 && y + h <= AH - 5;
+  for (let t = 0; t < 600 && walls.length < 34; t++) {
+    const horiz = rng() < 0.5, L = 6 + Math.floor(rng() * 11), W = 2, w = horiz ? L : W, h = horiz ? W : L, x = 5 + Math.floor(rng() * (AW - 10 - w)), y = 5 + Math.floor(rng() * (AH - 10 - h));
+    if (!inside(x, y, w, h) || near(x, y, w, h)) continue;
+    const mir = [AW - x - w, AH - y - h, w, h];
+    if (hit(x, y, w, h, walls) || hit(mir[0], mir[1], w, h, walls) || hit(x, y, w, h, [mir])) continue;
+    walls.push([x, y, w, h], mir);
+  }
+  // 칸마다 바닥(1)/벽(0)을 정하고, 같은 줄의 바닥을 이어 붙여 직사각형으로 바꿔요
+  const g = new Uint8Array(AW * AH).fill(1);
+  for (const [x, y, w, h] of walls) for (let j = y; j < y + h; j++) for (let i = x; i < x + w; i++) g[j * AW + i] = 0;
+  const floors = [];
+  for (let j = 0; j < AH; j++) { let i = 0; while (i < AW) { if (!g[j * AW + i]) { i++; continue; } let k = i; while (k < AW && g[j * AW + k]) k++; const last = floors[floors.length - 1]; const up = floors.find(f => f[1] + f[3] === j + oy && f[0] === i + ox && f[2] === k - i); if (up) up[3]++; else floors.push([i + ox, j + oy, k - i, 1]); i = k; } }
+  m.floors = floors;
+  // 기둥: 깃발 둘레에 몇 개, 벌판에 몇 개 (이것도 돌려서 쌍으로)
+  const pil = [];
+  for (const [x, y] of [[AW / 2, AH / 2]]) for (const [dx, dy] of [[-5, -5], [5, 5], [-5, 5], [5, -5]]) pil.push([x + dx, y + dy]);
+  for (const [x, y] of [fl[0], fl[1], fl[5]]) for (const [dx, dy] of [[-5, 0], [5, 0], [0, -5]]) { pil.push([x + dx, y + dy], [AW - 1 - (x + dx), AH - 1 - (y + dy)]); }
+  const wallAt = (x, y) => walls.some(([a, b, c, d]) => x >= a - 2 && x < a + c + 2 && y >= b - 2 && y < b + d + 2);
+  m.pillars = pil.filter(([x, y]) => !wallAt(Math.round(x), Math.round(y))).map(([x, y]) => [ox + Math.round(x), oy + Math.round(y)]);
+  m.tspawn = sp.map(([x, y]) => [ox + x, oy + y]);
+  m.tflags = fl.map(([x, y, o]) => [ox + Math.round(x), oy + Math.round(y), o]);
+  m.boss = [ox + (AW >> 1), oy + (AH >> 1)]; m.bossTrig = [0, 0, 0, 0]; m.start = m.tspawn[0]; m.route = [m.boss];
   m.spawns = []; m.traps = []; m.fires = []; m.altars = []; m.chests = []; m.secrets = []; m.puzzles = []; m.darks = []; m.pits = []; m.lifts = []; m.fork = null; m.niches = {}; m.mimic = -1;
   return m;
 }
 export const CHAPTERS = [{
-  id: 1, pvp: 1, title: T('투기장'), place: T('투기장'), diff: 1, introT: 3.5,
+  id: 1, pvp: 1, title: T('전장'), place: T('전장'), diff: 1, introT: 3.5,
     boss: {}, theme: 'dungeon', map: arenaMap()
 }];
 // 투기장 분위기: 판마다 고르거나 무작위 (바닥·벽·하늘 색이 달라져요)
