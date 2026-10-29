@@ -3701,6 +3701,7 @@ function markHit(target, attackerId, t, dmg){
   if(!target.dmgBy) target.dmgBy={};
   target.dmgBy[attackerId]=t/1000;
   if(dmg>0 && players[attackerId]) players[attackerId].totalDamageDealt=(players[attackerId].totalDamageDealt||0)+dmg;
+  if(dmg>0 && target.isVault && players[attackerId]) players[attackerId].vaultDmg=(players[attackerId].vaultDmg||0)+dmg;      // (shown on the MVP card of 금고 약탈)
 }
 /* xp for reaching a goal (bringing the flag home ...): player xp and xp for the character; a guest is told by message ({t:'xp'}) */
 function grantObjectiveXp(pxp, wxp, wid, label){
@@ -3749,7 +3750,7 @@ const MODES = {
   raid: {id:'raid', name:'보스 레이드', desc:'8인 이상 맵에서만 가능 · 4명 고정 · 모두가 한 팀이 되어 거대한 보스 한 마리를 쓰러뜨리는 협동 모드 · 보스는 인원에 맞춰 체력이 늘어나고, 주기적으로 바닥을 내려쳐요(빨간 원이 번쩍이면 점프!) · 팀 목숨이 정해져 있고 쓰러지면 6초 뒤 부활 · 3분 안에 보스를 잡으면 성공', teams:true, teamSize:'half', soloTeam:true, extra:0, fixedPlayers:4, elim:false, ownMapRules:true, mapFilterMinPlayers:8, respawnTime:6},
   tournament: {id:'tournament', name:'토너먼트', desc:'16명이 1대1 3판 2선승제로 겨루는 단판 토너먼트(16강 → 8강 → 4강 → 결승) · 같은 라운드 경기는 동시에 진행되고 내 경기만 보여요 · 라운드마다 캐릭터를 새로 골라요 · 끝난 사람은 다른 경기를 관전 · 결승은 경기장이 점점 좁아져요', teams:false, fixedPlayers:16, elim:true, ownMapRules:true, mapFilterMinPlayers:8, tnMode:true},
   vip:      {id:'vip', name:'왕 지키기', desc:'두 팀으로 나뉘고 팀마다 왕이 한 명(머리 위 왕관) · 상대 팀의 왕을 먼저 쓰러뜨리면 승리 · 왕이 아닌 사람은 5초 뒤 부활 · 5분이 지나면 왕의 남은 체력이 많은 팀이 승리', teams:true, teamSize:'half', extra:2, elim:false, respawnTime:5, special:true},
-  vault:    {id:'vault', name:'금고 약탈', desc:'전용 대형 맵 9종 중 선택 · 두 팀이 각자 기지의 금고를 지켜요 · 상대 금고를 먼저 부수는 팀이 승리 · 금고 체력은 4500 · 8분 안에 끝나지 않으면 남은 금고 체력이 더 많은 팀 승리, 같으면 무승부 · 처치당하면 8초 후 우리 기지에서 부활 · 최소 4명(비공개 방에서는 봇 추가 가능)', teams:true, teamSize:'half', extra:0, elim:false, ownMapRules:true, isCtfMode:true, minPlayers:4, respawnTime:8, special:true},
+  vault:    {id:'vault', name:'금고 약탈', desc:'전용 대형 맵 9종 중 선택 · 두 팀이 각자 기지의 금고를 지켜요 · 상대 금고를 먼저 부수는 팀이 승리 · 금고 체력은 3000 · 8분 안에 끝나지 않으면 남은 금고 체력이 더 많은 팀 승리, 같으면 무승부 · 처치당하면 8초 후 우리 기지에서 부활 · 최소 4명(비공개 방에서는 봇 추가 가능)', teams:true, teamSize:'half', extra:0, elim:false, ownMapRules:true, isCtfMode:true, minPlayers:4, respawnTime:8, special:true},
   koth:     {id:'koth', name:'언덕의 왕', desc:'모두가 각자 싸우는 모드 · 맵 위의 거점을 혼자 차지하면 초당 1점(둘 이상이면 점수 정지) · 거점은 20초마다 다른 발판으로 옮겨가요 · 먼저 60점을 채우면 승리, 6분이 지나면 점수가 높은 사람이 승리', teams:false, extra:0, elim:false, respawnTime:4, special:true},
   relay:    {id:'relay', name:'무기 릴레이', desc:'모두가 같은 순서의 캐릭터 10개를 받아요 · 킬을 하면 다음 캐릭터로 바뀌고, 10번째 캐릭터까지 킬을 달성하면 승리 · 6분이 지나면 가장 앞선 사람이 승리', teams:false, extra:0, elim:false, respawnTime:3, autoWeapon:true, special:true},
   freeze:   {id:'freeze', name:'얼음땡', desc:'두 팀으로 나뉘어요 · 죽으면 그 자리에서 얼어붙고, 얼어붙은 아군에게 1.4초 동안 닿아 있으면 체력 60%로 풀려나요 · 상대 팀을 모두 얼리면 승리, 4분이 지나면 얼어붙은 사람이 적은 팀이 승리', teams:true, teamSize:'half', extra:2, elim:false, special:true},
@@ -3770,7 +3771,7 @@ const ZOMBIE_SPEED_MULT = 1.05, ZOMBIE_MAX_HP = 400, ZOMBIE_DMG_MULT = 1.2, ZOMB
 // ...and the other zombie advantages: a dash that is ready twice as fast, a faster resting heal (starts after 1.5 s instead of 3 s, and +10 hp instead of +5 every half second), and NO knockback at all
 const ZOMBIE_DASH_CD_MULT = 1, ZOMBIE_REST_SEC = 3, ZOMBIE_REST_AMOUNT = 5;
 const HOTPOTATO_DURATION = 20, HOTPOTATO_PASS_RANGE = 90, HOTPOTATO_PASS_HALF_ANGLE = 0.5, HOTPOTATO_ROUND_GAP = 3;
-const VAULT_HP=4500;       // 금고 약탈: each vault's life (owner: somewhere between 3000 and 6000)
+const VAULT_HP=3000;       // 금고 약탈: each vault's life (owner: somewhere between 3000 and 6000)
 function vaultMax(){ return VAULT_HP; }
 function spawnVault(team, hpMax){
   const m=addBot({force:true, quiet:true, level:'normal'}); if(!m) return null;
@@ -3994,7 +3995,7 @@ function xmStart(){
   const now=Date.now(), id=gameMode;
   xm={id, endsAt:now+XM_END[id]*1000};
   const P=xmPlayers();
-  for(const p of P){ p.alive=true; p.respawnAt=0; p.hp=maxHpFor(p); }
+  for(const p of P){ p.alive=true; p.respawnAt=0; p.hp=maxHpFor(p); p.vaultDmg=0; }
   if(id==='vip'){
     xm.kings=[null,null];
     for(const tm of [0,1]){ const mem=xmTeamMembers(tm).sort((a,b)=>(a.joinOrder||0)-(b.joinOrder||0)); xm.kings[tm]=mem.length?mem[0].id:null; }
@@ -4179,7 +4180,7 @@ function xmBotGoal(p,target,d){
   if(!xm) return null;
   const near=target && d<260;
   switch(xm.id){
-    case 'vault': { const ev=players[(xm.vaults||[])[1-p.team]], ov=players[(xm.vaults||[])[p.team]]; if(near) return null; if((p.teamSlot||0)%3===2 && ov && ov.alive) return {x:ov.x+(((p.teamSlot||0)%5)-2)*70, y:ov.y}; return (ev && ev.alive) ? {x:ev.x, y:ev.y} : null; }      // two of three bots attack the enemy vault, the third stays home
+    case 'vault': { const ev=players[(xm.vaults||[])[1-p.team]], ov=players[(xm.vaults||[])[p.team]]; if(target && d<(target.isVault?320:200)) return null; if((p.teamSlot||0)%3===2 && ov && ov.alive) return {x:ov.x+(((p.teamSlot||0)%5)-2)*70, y:ov.y}; return (ev && ev.alive) ? {x:ev.x, y:ev.y} : null; }      // two of three bots attack the enemy vault, the third stays home
     case 'koth': return near ? null : {x:xm.zone.x, y:xm.zone.y};
     case 'rush': { let b=null, bd=1e9; for(const c of xm.coins){ const dd=Math.hypot(c.x-p.x,c.y-p.y); if(dd<bd){ bd=dd; b=c; } } return (b && !near) ? {x:b.x,y:b.y+26} : null; }
     case 'turf': { if(near) return null; let b=null, bd=1e9; for(let i=0;i<xm.segs.length;i++){ if(xm.own[i]===p.team) continue; const s=xm.segs[i], dd=Math.hypot(s.x+s.w/2-p.x,s.y-p.y); if(dd<bd){ bd=dd; b=s; } } return b?{x:b.x+b.w/2,y:b.y}:null; }
@@ -5468,7 +5469,7 @@ function shuffle(arr){ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.
 /* ===== the version of this file =====
    Different BUILDS of one version meet and play together (room names online-v<ver>-<mode>-<map>-<slot>); different VERSIONS (the 0.x part) never do - the host refuses them (verNo) and the dispatcher answers busy.
    The build is only sent along with the join message and the lobby (for information); the corner of the screen shows it. */
-const GAME_BUILD='build 2026-10-18-v492';
+const GAME_BUILD='build 2026-10-18-v493';
 const GAME_VERSION='0.9', GAME_VERSION_NAME='은하 제국의 황혼';   // 게임 버전 이름: versions.json의 title과 같게 (빌드마다 바꾸지 않음)
 /* version (the 0.x part) vs build: different BUILDS of one version meet and play together, different VERSIONS never do (rooms, quick match, ranked, friend invites, dispatcher).
    Builds before 470 do not send a version, so it is read from the build number (0.9 started at build 458). */
@@ -6085,9 +6086,9 @@ window.addEventListener('keydown', e=>{
 /* ================= BOSS RAID + TOURNAMENT ================= */
 const RAID_DURATION=180, RAID_BOSS_BASE_HP=1700, RAID_BOSS_HP_PER=1000, RAID_SLAM_R=190, RAID_SLAM_DMG=25, RAID_SLAM_WARN=1.4, RAID_BOSS_SCALE=1.5, RAID_RESPAWN=6;
 const RAID_TYPES=[
-  {id:'fire',    name:'🔥 화염 거인', hp:1.0,  spd:0.55, kinds:['slam','meteor','leap'],        body:'#3b2430', plate:'#6b3a4a', glow:'#ffb347', aura:'255,150,50'},
-  {id:'ice',     name:'❄️ 얼음 골렘', hp:1.1,  spd:0.45, kinds:['slam','meteor','leap'],        body:'#1f3a52', plate:'#5aa0c8', glow:'#9ff3ff', aura:'120,200,255', slow:true},
-  {id:'thunder', name:'⚡ 번개 마왕', hp:0.9,  spd:0.7,  kinds:['bolt','bolt','leap','slam'],   body:'#2c2540', plate:'#7a5cc8', glow:'#ffe94d', aura:'255,230,80'}
+  {id:'fire',    name:'🔥 화염 거인', hp:1.0,  spd:0.55, kinds:['slam','meteor','leap','wave','wave'],        body:'#3b2430', plate:'#6b3a4a', glow:'#ffb347', aura:'255,150,50'},
+  {id:'ice',     name:'❄️ 얼음 골렘', hp:1.1,  spd:0.45, kinds:['slam','spikes','spikes','blizzard','leap'],        body:'#1f3a52', plate:'#5aa0c8', glow:'#9ff3ff', aura:'120,200,255', slow:true},
+  {id:'thunder', name:'⚡ 번개 마왕', hp:0.9,  spd:0.7,  kinds:['bolt','chain','blink','storm','slam'],   body:'#2c2540', plate:'#7a5cc8', glow:'#ffe94d', aura:'255,230,80'}
 ];
 const RAID_PHASE_HP=[0.7,0.5,0.3];
 const RAID_MINIONS=[{name:'🔥 화염의 검사', color:'#e8742c'}, {name:'❄️ 얼음의 검사', color:'#6cc8ee'}, {name:'⚡ 번개의 검사', color:'#e8cf2a'}];   // the summoned fighters follow their boss (and are not zombie green)
@@ -6158,7 +6159,7 @@ function raidRingAt(x,y,r,dmg,warn,t,o){ raid.hits.push(Object.assign({x,y,r,dmg
 function raidPhaseUp(b,t){
   raid.phase++;
   if(raid.phase===1){ ctfMsg('⚔ 보스 1페이즈! 검사들이 나타났어요', true); raidSummon(2); }
-  else if(raid.phase===2){ ctfMsg('⚔ 보스 2페이즈! 바닥 광선이 열렸어요 (점프로 피하세요)', true); raidSummon(2); }
+  else if(raid.phase===2){ ctfMsg(RAID_TYPES[raid.type].id==='fire' ? '⚔ 보스 2페이즈! 바닥 광선이 열렸어요 (점프로 피하세요)' : '⚔ 보스 2페이즈! 보스가 더 강한 기술을 써요', true); raidSummon(2); }
   else { raid.enraged=true; ctfMsg('🔥 보스 3페이즈! 보스가 분노했어요', true); raidSummon(3); }
   pushFx('explosion', b.x, b.y-40, t, {});
 }
@@ -6173,7 +6174,7 @@ function raidTick(t){
     else if(ts>=raid.nextShot && foes0.length){ raid.shotsLeft=W.rounds; raid.nextRound=ts; raid.nextShot=ts+W.every*(raid.enraged?0.7:1)+W.rounds*W.gap; } }
   if(ts>=raid.nextSlam){
     const foes=Object.values(players).filter(p=>!p.isBoss && !p.isMinion && p.alive && p.x!==undefined);
-    const kinds=T.kinds.slice(); if(raid.phase>=2) kinds.push('laser');
+    const kinds=T.kinds.slice(); if(raid.phase>=2) kinds.push(T.id==='fire'?'laser':(T.id==='ice'?'blizzard':'storm'));      // (every boss has its own moves; from phase 2 it adds its signature one)
     const k=foes.length?kinds[Math.floor(Math.random()*kinds.length)]:'slam', slow=T.slow?{slow:true}:null;
     if(k==='slam') raidRingAt(b.x, b.y, RAID_SLAM_R, RAID_SLAM_DMG, RAID_SLAM_WARN, t, slow);
     else if(k==='meteor'){
@@ -6183,6 +6184,23 @@ function raidTick(t){
     else if(k==='bolt'){
       const sh=foes.slice().sort(()=>Math.random()-0.5).slice(0, raid.enraged?4:3);
       for(const f of sh){ raidRingAt(f.x, f.y, 45, 26, 1.1, t, {line:true}); pushFx('slamwarn', f.x, f.y-150, t, {v:45}); pushFx('slamwarn', f.x, f.y-300, t, {v:45}); }
+    } else if(k==='wave'){      // 화염 거인: a wall of fire marches toward a player, ring after ring
+      const f=foes[Math.floor(Math.random()*foes.length)], dir=(f&&f.x<b.x)?-1:1, n=raid.enraged?10:8;
+      for(let i=0;i<n;i++) raidRingAt(b.x+dir*(110*(i+1)), b.y, 75, 20, 0.9+i*0.16, t, null);
+    } else if(k==='spikes'){      // 얼음 골렘: ice spikes burst in a line from the boss to a player (they slow)
+      const f=foes[Math.floor(Math.random()*foes.length)], n=raid.enraged?8:6;
+      for(let i=1;i<=n;i++){ const u=i/n; raidRingAt(b.x+(f.x-b.x)*u, f.y, 70, 22, 0.8+i*0.17, t, {slow:true}); }
+    } else if(k==='blizzard'){      // 얼음 골렘: every player gets a freezing ring at once
+      for(const f of foes) raidRingAt(f.x, f.y, 150, 16, 1.7, t, {slow:true});
+    } else if(k==='chain'){      // 번개 마왕: bolts jump from player to player, twice around
+      const sh=foes.slice().sort(()=>Math.random()-0.5);
+      for(let r=0;r<2;r++) for(let i=0;i<sh.length;i++) raidRingAt(sh[i].x, sh[i].y, 45, 24, 0.9+(r*sh.length+i)*0.32, t, {line:true});
+    } else if(k==='blink'){      // 번개 마왕: blinks to one player, then another, striking each time
+      const a=foes[Math.floor(Math.random()*foes.length)], c=foes[Math.floor(Math.random()*foes.length)];
+      raidRingAt(a.x, a.y, 150, 30, 1.0, t, {tp:true}); raidRingAt(c.x, c.y, 150, 30, 1.9, t, {tp:true});
+    } else if(k==='storm'){      // 번개 마왕: bolts rain across the whole arena
+      const W=(MAP&&MAP.arenaW)||2000, n=raid.enraged?12:9;
+      for(let i=0;i<n;i++) raidRingAt(80+Math.random()*(W-160), b.y, 45, 20, 1.1+i*0.13, t, {line:true});
     } else if(k==='laser'){
       const W=(MAP&&MAP.arenaW)||2000;
       for(let x=100;x<W-60;x+=170){ pushFx('slamwarn', x, b.y, t, {v:80}); }
@@ -9714,7 +9732,7 @@ function updateCountdownUI(){
   const el=document.getElementById('countdownMsg');
   if(!el) return;
   if(started || countdownEndsAt===null){ el.style.display='none'; return; }
-  const secs=Math.max(0, Math.ceil((countdownEndsAt-Date.now())/1000));
+  const rawLeft=(countdownEndsAt-Date.now())/1000; let secs=Math.max(1, Math.ceil(rawLeft)); if(rawLeft<=3.6) secs=Math.min(secs,3);      // (the last seconds read 3, 2, 1: never 29 -> 2 -> 1 -> 0)
   el.style.display='block';
   const capacity = currentMapId ? effectiveMaxPlayers(currentMapId, gameMode) : null;
   const isFull = capacity!==null && Object.keys(players).length>=capacity;
@@ -10161,7 +10179,7 @@ function evaluateAutoStart(){
   if(remaining<=0){
     // room just became full: give the last joiner a moment to actually see the room/map before it starts
     // (when bots were the ones who filled the room this also shortens an "almost full" countdown that was already running)
-    const startAt=Date.now()+3000;
+    const startAt=Date.now()+3500;
     if(countdownEndsAt===null || (hasBots() && countdownEndsAt>startAt)){ countdownEndsAt=startAt; broadcastLobby(); updateCountdownUI(); }
     return;
   }
@@ -10204,9 +10222,9 @@ function showMvpVote(cands, ms){
   let any=false;
   for(const c of cands){ const me=(c.id===myId); if(!me) any=true;
     const w=WEAPONS[c.w], wn=w?(w.emoji+' '+w.name):'-';
-    const b=document.createElement('button'); b.className='btn-secondary'; b.style.cssText='display:flex; flex-direction:column; align-items:center; gap:8px; padding:12px 10px 14px; flex:1 1 0; min-width:110px; max-width:160px; min-height:400px; border-radius:14px; text-align:center;';
+    const b=document.createElement('button'); b.className='btn-secondary'; b.style.cssText='display:flex; flex-direction:column; align-items:center; gap:8px; padding:12px 10px 14px; flex:1 1 0; min-width:110px; max-width:160px; min-height:430px; border-radius:14px; text-align:center;';
     const st=(l,v,col)=>'<div style="display:flex; justify-content:space-between; width:100%; font-size:14px; font-weight:600;"><span style="color:#9aa3b5;">'+l+'</span><b style="color:'+col+';">'+v+'</b></div>';
-    b.innerHTML='<canvas width="170" height="240" style="width:100%; max-width:130px; aspect-ratio:170/240; flex:none;"></canvas><div style="font-size:18px; font-weight:800; word-break:break-all;"></div><div style="font-size:15px; color:#c9ced8; padding-bottom:8px; border-bottom:1px solid #2a3350; width:100%;"></div><div style="display:flex; flex-direction:column; gap:6px; width:100%; margin-top:2px;">'+st('처치',c.k||0,'#ffd34d')+st('어시스트',c.a||0,'#3fe0c5')+st('사망',c.d||0,'#ff7a7a')+st('피해량',c.dm||0,'#fff')+'</div>';
+    b.innerHTML='<canvas width="170" height="240" style="width:100%; max-width:130px; aspect-ratio:170/240; flex:none;"></canvas><div style="font-size:18px; font-weight:800; word-break:break-all;"></div><div style="font-size:15px; color:#c9ced8; padding-bottom:8px; border-bottom:1px solid #2a3350; width:100%;"></div><div style="display:flex; flex-direction:column; gap:6px; width:100%; margin-top:2px;">'+st('처치',c.k||0,'#ffd34d')+st('어시스트',c.a||0,'#3fe0c5')+st('사망',c.d||0,'#ff7a7a')+st('피해량',c.dm||0,'#fff')+(c.o?st(c.o[0],c.o[1],'#ff9f43'):'')+'</div>';
     b.children[1].textContent=c.name; b.children[2].textContent=wn; try{ drawFigureOn(b.children[0], c); }catch(e){}
     if(me){ b.disabled=true; b.style.opacity='.45'; b.style.filter='grayscale(1)'; b.style.cursor='not-allowed'; b.title='자기 자신에게는 투표할 수 없어요'; row.appendChild(b); continue; }       // (your own card is shown for the numbers, but grey and not clickable)
     b.onclick=()=>{ mvpMyPick=c.id; [...row.children].forEach(x=>{ x.style.outline='none'; x.style.background=''; }); b.style.outline='3px solid var(--accent)'; b.style.background='rgba(63,224,197,.18)'; if(isHost) hostMvpCast(myId,c.id); else if(hostConn) safeSend(hostConn,{t:'mvpCast', id:c.id}); };
@@ -10227,7 +10245,11 @@ function showMvpResult(id, name, paid){
   clearTimeout(showMvpResult._t); showMvpResult._t=setTimeout(hideMvpBox, 3600);
 }
 const MVP_DELAY_MS=1800;      // the victory screen comes first; the vote window opens a moment later
-function mvpCand(p){ return {id:p.id, name:p.name, w:p.weapon||null, k:p.kills||0, d:p.deaths||0, a:p.assistN||0, dm:Math.round(p.totalDamageDealt||0)}; }
+function mvpCand(p){
+  const c={id:p.id, name:p.name, w:p.weapon||null, k:p.kills||0, d:p.deaths||0, a:p.assistN||0, dm:Math.round(p.totalDamageDealt||0)};
+  if(gameMode==='ctf') c.o=['가져온 깃발', p.flagCaps||0]; else if(gameMode==='gold') c.o=['쟁탈한 황금', p.goldBanked||0]; else if(gameMode==='vault') c.o=['금고 피해', Math.round(p.vaultDmg||0)];      // the objective of the mode (shown on the card, and the bots take it into account)
+  return c;
+}
 function startMvpVote(wIds){
   // only the team modes have an MVP, and only the members of the WINNING team take part (they are the candidates and the only voters)
   const mode=MODES[gameMode]||{};
@@ -10242,7 +10264,7 @@ function startMvpVote(wIds){
     cands=part.map(mvpCand); botVoters=part.filter(p=>p.isBot).map(bot=>({id:bot.id, others:part.filter(p=>p.id!==bot.id)}));
   } else cands=humans.map(mvpCand);
   if(cands.some(c=>c.id===myId)) mvpLockExit(true);
-  const sc=p=>(p.totalDamageDealt||0)+(p.kills||0)*20;
+  const sc=p=>(p.totalDamageDealt||0)+(p.kills||0)*20+(p.flagCaps||0)*600+(p.goldBanked||0)*120+(p.vaultDmg||0)*0.5;      // (the mode's objective counts for the bots too)
   setTimeout(()=>{
     if(!matchEnded || mvpVote) return;
     mvpVote={cands, votes:{}, timer:setTimeout(finishMvpVote, MVP_VOTE_MS)};
@@ -10819,9 +10841,9 @@ function winPoseStart(){
     c.save(); c.strokeStyle='rgba(255,255,255,.18)'; c.lineWidth=2; c.setLineDash([6,6]); c.beginPath(); c.moveTo(W/2,28); c.lineTo(W/2,H-14); c.stroke(); c.restore();      // (the line between the two sides)
     for(const q of conf){ q.y+=q.vy*dt; q.x+=q.vx*dt; q.r+=q.vr*dt; if(q.y>H+10){ q.y=-10; q.x=Math.random()*W; } c.save(); c.translate(q.x,q.y); c.rotate(q.r); c.fillStyle=q.col; c.fillRect(-q.w/2,-q.h/2,q.w,q.h*Math.abs(Math.cos(q.r*2))+1); c.restore(); }
     for(const f of figs){
-      const wp=f.q, col=wp.color||'#3fe0c5';
+      const wp=f.q, wcos=(wp.id===myId)?getEquippedCos():wp.cos, col=((wp.id===myId)?(cosBaseColor(wcos)||wp.color):wp.color)||'#3fe0c5';      // (me: the colour and shine I wear now, not the ones the room started with)
       c.save(); c.translate(f.x, H-30); c.scale(f.sc,f.sc);
-      const shn=(wp.cos&&wp.cos.col&&COSMETICS[wp.cos.col]&&COSMETICS[wp.cos.col].shine)?wp.cos.col:null, cc=shn?bodyShineColor(shn, now, 0):col;      // a rainbow / silver / gold body keeps shining while it cheers
+      const shn=(wcos&&wcos.col&&COSMETICS[wcos.col]&&COSMETICS[wcos.col].shine)?wcos.col:null, cc=shn?bodyShineColor(shn, now, 0):col;      // a rainbow / silver / gold body keeps shining while it cheers
       c.shadowColor=cc; c.shadowBlur=shn?14:10; c.strokeStyle=cc; c.fillStyle=cc; c.lineWidth=5; c.lineCap='round'; c.lineJoin='round';
       if(f.win) drawWinPose(c, f.pose, t, f.wid, f.tint); else drawLosePose(c, t, f.wid, f.tint);                  // the winner's own pose (만세 when none is equipped), the loser slumps
       if(shn){ c.shadowBlur=0; drawShineGlints(c, now, 0); }
@@ -11226,11 +11248,11 @@ function beginGame(){
     if(gameMode==='ctf'){
       // a fresh match must start everyone alive and fully healed (a player who died near the end of a PREVIOUS match in the same room would otherwise
       // carry that stale dead state in); the team slots have already put everybody in their own base
-      for(const id in players){ const p=players[id]; p.hp=ruleHp(); p.alive=true; p.respawnAt=0; p.vx=0; p.vy=0; p.ctfCarrying=false; }
+      for(const id in players){ const p=players[id]; p.hp=ruleHp(); p.alive=true; p.respawnAt=0; p.vx=0; p.vy=0; p.ctfCarrying=false; p.flagCaps=0; }
       startCtfMatch();
     }
     if(gameMode==='gold'){
-      for(const id in players){ const p=players[id]; p.hp=ruleHp(); p.alive=true; p.respawnAt=0; p.vx=0; p.vy=0; p.ctfCarrying=false; p.gc=0; }
+      for(const id in players){ const p=players[id]; p.hp=ruleHp(); p.alive=true; p.respawnAt=0; p.vx=0; p.vy=0; p.ctfCarrying=false; p.gc=0; p.goldBanked=0; }
       startGoldMatch();
     }
     if(gameMode==='tournament') startTournament();
@@ -13329,7 +13351,7 @@ function botFillTick(){
     if(botFillAt!==null){ botFillAt=null; broadcastLobby(); }
     botFilling=false;
     const floor=Math.max(2, (MODES[gameMode]||{}).minPlayers||0);
-    if(count<cap && count>=floor && hasBots() && (countdownEndsAt===null || countdownEndsAt-Date.now()>3000)){ countdownEndsAt=Date.now()+3000; broadcastLobby(); updateCountdownUI(); }   // enough players in a big room: start without waiting for the rest of the seats (also shortens the 30 s "almost full" countdown that bots can trigger on the way: 10 of 12 seats)
+    if(count<cap && count>=floor && hasBots() && (countdownEndsAt===null || countdownEndsAt-Date.now()>3500)){ countdownEndsAt=Date.now()+3500; broadcastLobby(); updateCountdownUI(); }   // enough players in a big room: start without waiting for the rest of the seats (also shortens the 30 s "almost full" countdown that bots can trigger on the way: 10 of 12 seats)
     return;
   }
   const now=Date.now();
@@ -13719,6 +13741,25 @@ function botAimAngle(p, T, ai){
   }
   return ang+ai.aimErr*(w.arcs?BOT_ARC_ERR:1);      // lobbed shots (bow, grenade, bazooka ...) are hard to place on a moving target: the bots lead them less and miss by more
 }
+// The big flag / gold / vault maps have a high road (stairs up and a long run along the top) next to the ground. The platform graph always found the ground cheaper, so the bots
+// never used the high road. Now a bot on a long trip picks a lane: with 'up' it chains from high platform to high platform toward its goal and only comes down near the end.
+function botLaneGoal(p, ai, gx, gy, t, fighting){
+  if(!MAP || !MAP.isCtf || fighting) { ai.wp=null; return null; }
+  const dx=gx-p.x, dir=Math.sign(dx)||1, G=MAP.arenaH-100;
+  if(ai.laneT===undefined || t>=ai.laneT){ ai.laneT=t+25000+Math.random()*20000; ai.lane=(Math.random()<0.8)?'up':'ground'; ai.wp=null; }
+  if(ai.lane!=='up' || Math.abs(dx)<900){ ai.wp=null; return null; }
+  if(ai.wp && (t<ai.wp.until) && !(Math.abs(p.x-ai.wp.x)<70 && Math.abs(p.y-ai.wp.y)<50)) return ai.wp;
+  let best=null, bs=-1e9, cur=botStandingPlat(p);
+  for(const pl of MAP.platforms){
+    const up=G-pl.y; if(up<150 || pl.w<120) continue;
+    const cx=pl.x+pl.w/2, ahead=(cx-p.x)*dir; if(ahead<150 || ahead>1500 || (cx-gx)*dir>0) continue;
+    const sc=up*1.0+ahead*0.25-(pl===cur?1000:0);
+    if(sc>bs){ bs=sc; best=pl; }
+  }
+  if(!best) return null;
+  ai.wp={x:best.x+best.w/2, y:best.y, until:t+14000};
+  return ai.wp;
+}
 function botPickTarget(p, ai){
   let best=null, bd=1e9;
   for(const id in players){
@@ -13728,6 +13769,7 @@ function botPickTarget(p, ai){
     if(o.invis && d>160) continue;        // a cloaked player can only be noticed up close
     if(o.darkSub) continue;               // nobody can see (or hit) 쿠루스 inside his darkness
     if(o.id===ai.tgt) d*=0.5;             // stay on the current target instead of flickering between two
+    if(o.isVault && xm && xm.id==='vault') d*=1.0;      // 금고 약탈: the vault is a real objective, a bot near it shoots it unless a player is much closer
     if(ai.personality==='revenge' && ai.grudge===o.id && !(ai.pstuck && ai.pstuck.until>(ai.nowMs||0)/1000)) d*=0.2;   // the avenger wants the one who killed it (unless it is giving up for a while: see botPersonalityStep)
     else if(ai.personality==='rival'){ if(ai.rivalId===o.id) d*=0.25; else if(!o.isBot) d*=0.6; }   // the rival wants its human (somebody right on top of it still gets attention)
     if(d<bd){ bd=d; best=o; }
@@ -14137,6 +14179,7 @@ function botThink(p, t, dt){
     let cqGoal=false;
     if(gameMode==='conquest' && !mb && !(rs && rs.mode==='hold')){ const cg=botConquestGoal(p, ai, target, d, lowHp, botBand(p)); if(cg){ goalX=cg.x; goalY=cg.y; cqGoal=true; } }   // conquest: the point comes first
     if(xm && !mb && !(rs && rs.mode==='hold')){ const xg=xmBotGoal(p, target, d); if(xg){ goalX=xg.x; goalY=xg.y; } }
+    if(MAP && MAP.isCtf && !(rs && rs.mode==='hold') && !(rs && rs.mode==='go') && !navBusy){ const lg=botLaneGoal(p, ai, goalX, goalY, t, !!(target && d<300)); if(lg){ goalX=lg.x; goalY=lg.y; } }
     if(ai.personality && !mb && !(rs && rs.mode==='hold')){ const ps=botPersonalityStep(p, ai, target, d, {t, tSec, navBusy, inp, lowHp, shoot, w}); if(ps){ if(ps.goalX!==undefined && !cqGoal){ goalX=ps.goalX; goalY=ps.goalY; } if(ps.shoot!==undefined) shoot=ps.shoot; } }      // (in conquest a personality never talks a bot out of going to the point: the snipers used to stand on the ground shooting up at whoever held it)
     if(rs && rs.mode==='go'){ goalX=rs.goalX; goalY=rs.goalY; }                     // on its way to the resting place
     if(brz && !mb){ const bg=brzBotGoal(p, target, d, !!(rs && rs.mode==='hold')); if(bg){ goalX=bg.x; goalY=bg.y; } }      // battle royale / duo: the zone and the supply crates
@@ -15465,7 +15508,7 @@ function tickCtf(t, dt){
     p.ctfCarrying=!!carrying;
     const own=ctf.flags[p.team];
     if(carrying && Math.abs(p.x-own.homeX)<=CTF_CAPTURE_R && Math.abs(p.y-own.homeY)<=PLAYER_H+16){
-      ctf.scores[p.team]++; ctfSendHome(carrying); p.ctfCarrying=false;
+      ctf.scores[p.team]++; ctfSendHome(carrying); p.ctfCarrying=false; p.flagCaps=(p.flagCaps||0)+1;
       awardObjectiveXp(id, CTF_CAPTURE_XP, CTF_CAPTURE_XP, '깃발 득점', p.weapon);       // (before the match can end on this very point)
       ctfMsg(p.name+'님이 깃발을 가져왔어요! '+teamLabelCtf(p.team)+' 득점 (블루 '+ctf.scores[0]+' : '+ctf.scores[1]+' 레드)', true);
       pushFx('ult', p.x, p.y-40, t, {color:TEAM_COLORS[p.team], name:'득점!'});
@@ -15529,7 +15572,7 @@ function tickGold(t, dt){
     } else p.goldStay=0;
     const cart=gdm.carts[p.team];
     if(p.gc>0 && cart && goldNear(p, cart.x, cart.y, GOLD_CART_R)){
-      const n=p.gc; p.gc=0; cart.lumps+=n; gdm.pts[p.team]+=n*GOLD_PTS;
+      const n=p.gc; p.gc=0; cart.lumps+=n; gdm.pts[p.team]+=n*GOLD_PTS; p.goldBanked=(p.goldBanked||0)+n;
       awardObjectiveXp(id, GOLD_XP_PER_LUMP*n, GOLD_XP_PER_LUMP*n, '금 운반', p.weapon);
       ctfMsg(p.name+'님이 금 '+n+'개를 실었어요! '+teamLabelCtf(p.team)+' +'+(n*GOLD_PTS)+' (블루 '+gdm.pts[0]+' : '+gdm.pts[1]+' 레드)', true);
       pushFx('ult', p.x, p.y-40, t, {color:TEAM_COLORS[p.team], name:'+'+(n*GOLD_PTS)});
