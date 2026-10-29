@@ -349,3 +349,5 @@ patchnotes.json | v493 items[2] | 깃발 뺏기·황금 쟁탈·금고 약탈 MV
 patchnotes.json | v493 items[3] | 승리 모션에서 지금 쓰는 색과 빛을 반영 | build 493 | 2026-10-29
 patchnotes.json | v493 items[4] | 보스 종류마다 다른 공격 패턴 추가 (화염 거인 불길 행진, 얼음 골렘 얼음 가시·눈보라, 번개 마왕 연쇄 번개·순간이동·번개 폭풍) | build 493 | 2026-10-29
 patchnotes.json | v493 items[5] | 시작 카운트다운이 3, 2, 1로 표시 | build 493 | 2026-10-29
+patchnotes.json | v494 title | 은하 제국의 황혼 | build 494 | 2026-10-29
+patchnotes.json | v494 items[0] | 프로필 카드에 통계와 대표 캐릭터 모습, 마스터리 레벨·레벨·이름 표시 | build 494 | 2026-10-29
