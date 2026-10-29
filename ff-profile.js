@@ -156,8 +156,8 @@ EXT_CHARS.forEach(function(x){ x.v.forEach(function(v,i){ var nm=x.n+' · '+v[0]
 })();
 function avatarUrl(id){ return BASE+'avatars/'+id+(/^(stk|ce|bf|ip|dp|vk)_/.test(id)?'.png':'.svg'); }
 var AVS={
- ko:{t2need:'그 캐릭터의 그랜드 마스터를 달성하면 쓸 수 있어요',ttl:'프로필 사진',game:'게임 캐릭터',gameT:'Stickseum 캐릭터 그림을 써요',coins:'보유',buy:'구매',cancel:'취소',ask:'{0} 사진을 {1} hC에 살까요?',bought:'샀어요. 이제 쓸 수 있어요.',picked:'바꿨어요.',poor:'허브 코인이 모자라요.',locked:'업적을 달성하면 열려요: {0}',off:'프로필 사진은 아직 준비 중이에요.',fail:'저장하지 못했어요. 잠시 뒤에 다시 해 주세요.',free:'기본',own:'구매함'},
- en:{t2need:'Reach Grand Master with that character to use this photo',ttl:'Profile photo',game:'Game character',gameT:'Use your Stickseum character picture',coins:'You have',buy:'Buy',cancel:'Cancel',ask:'Buy the {0} photo for {1} hC?',bought:'Bought. You can use it now.',picked:'Changed.',poor:'Not enough Hub Coin.',locked:'Unlocks with this achievement: {0}',off:'Profile photos are not ready yet.',fail:'Could not save. Please try again later.',free:'Free',own:'Owned'}
+ ko:{t2need:'가지고 있거나 해금한 스킨만 프로필 사진으로 쓸 수 있어요 (Stickseum을 한 번 열면 내 스킨이 반영돼요)',ttl:'프로필 사진',game:'게임 캐릭터',gameT:'Stickseum 캐릭터 그림을 써요',coins:'보유',buy:'구매',cancel:'취소',ask:'{0} 사진을 {1} hC에 살까요?',bought:'샀어요. 이제 쓸 수 있어요.',picked:'바꿨어요.',poor:'허브 코인이 모자라요.',locked:'업적을 달성하면 열려요: {0}',off:'프로필 사진은 아직 준비 중이에요.',fail:'저장하지 못했어요. 잠시 뒤에 다시 해 주세요.',free:'기본',own:'구매함'},
+ en:{t2need:'Only skins you own or have unlocked can be used as a profile photo (open Stickseum once to sync your skins)',ttl:'Profile photo',game:'Game character',gameT:'Use your Stickseum character picture',coins:'You have',buy:'Buy',cancel:'Cancel',ask:'Buy the {0} photo for {1} hC?',bought:'Bought. You can use it now.',picked:'Changed.',poor:'Not enough Hub Coin.',locked:'Unlocks with this achievement: {0}',off:'Profile photos are not ready yet.',fail:'Could not save. Please try again later.',free:'Free',own:'Owned'}
 };
 /* 프로필 사진 창의 다른 언어 (AVS와 사진 이름) */
 (function(){
@@ -405,7 +405,7 @@ AVATARS.forEach(function(x){
  x.n.nw=t[0]; x.n.gk=t[0];
 });
 })();
-function t2lock(id, st){ var m=/^stk_(.+)_t2$/.exec(id||''); if(!m) return false; st=st||{}; var c=m[1], pt=st.cp&&st.cp[c]!=null?st.cp[c]:((st.ck&&st.ck[c])||0)*10; return pt<9000; }
+function t2lock(id, st){ var m=/^stk_(.+)$/.exec(id||''); if(!m) return false; var sk=st&&st.sk; return !(sk&&sk.indexOf(m[1])>=0); }
 function avt(lg,k){ return (AVS[lg]&&AVS[lg][k])||AVS.en[k]||AVS.ko[k]||''; }
 function titleOf(id){ for(var i=0;i<TITLES.length;i++) if(TITLES[i].id===id) return TITLES[i]; return null; }
 function decoOf(kind, id){ var a=DECO[kind]; for(var i=0;i<a.length;i++) if(a[i].id===id) return a[i]; return a[0]; }
