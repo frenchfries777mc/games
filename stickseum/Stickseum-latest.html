@@ -1375,7 +1375,7 @@ function cleanOpts(o){ return {balance:!!(o&&o.balance), vote:!!(o&&o.vote)}; }
 function ruleHp(){ return Math.round(MAX_HP*roomRules.hp*(gameMode==='zombie'?2:1)*(gameMode==='hyperbr'?5:1)); }   // zombie game: humans get double health
 const MOVE_SPEED = 250, JUMP_VELOCITY = -680;
 const DASH_FORCE = 700, DASH_CD = 1.5;
-const PZ_MAX=3, PZ_DMG=[25,31,37,43], PZ_ATK_CD=[0.6,0.5,0.4,0.3], PZ_DASH_CD=[3,1.5,0.7,0.4], PZ_CD_STEP=0.12, PZ_ULT_HEAL=30, PZ_ULT_HEAL_MAX=50, PZ_MAX_SPEED=1.25;       // 피사로 has four stages (the start, then one per ultimate): damage, attack cooldown and dash cooldown come from these tables; the skill and ultimate cooldowns are 12% shorter per stage; the last stage also runs at 125% speed       // (+5 damage per stack; at the 4th stack: a 0.5 s dash and 125% speed)
+const PZ_MAX=3, PZ_DMG=[22,29,36,44], PZ_ATK_CD=[0.6,0.5,0.4,0.3], PZ_DASH_CD=[3,1.5,0.7,0.4], PZ_CD_STEP=0.12, PZ_ULT_HEAL=30, PZ_ULT_HEAL_MAX=50, PZ_MAX_SPEED=1.25;       // 피사로 has four stages (the start, then one per ultimate): damage, attack cooldown and dash cooldown come from these tables; the skill and ultimate cooldowns are 12% shorter per stage; the last stage also runs at 125% speed       // (+5 damage per stack; at the 4th stack: a 0.5 s dash and 125% speed)
 const MINE_R=26, MINE_SEC=25, MINE_MAX=2, MINE_DMG=20, MINE_STUN=0.8;
 const KAN_POISON_DPS=2, KAN_POISON_SEC=3, KAN_POISON_MAX=4, KAN_TRAP_SEC=15, KAN_TRAP_R=75, KAN_TRAP_MAX=2, KAN_TOAD_SEC=3, KAN_TOAD_TICK=0.5, KAN_TOAD_DMG=5, KAN_TOAD_SPEED=760, KAN_ULT_SEC=5, KAN_ULT_CD_MULT=0.6;      // 칸: every dart adds a poison stack (2 damage a second each, up to 4, the 3 s timer restarts); the frog trap poisons and slows; the wings fly for 5 s and shoot three darts at once
 let poisonZones=[];
@@ -1498,9 +1498,10 @@ function stunPlayer(t, sec, tMs){
   pushFx('stun', t.x, t.y-PLAYER_H-8, tMs, {});
 }
 const NO_REGEN_MODES={survival:1, oneshot:1};
-let ULT_CD = 20;   // (a `let` only so the practice mode can shorten it)
+let ULT_CD = 30;   // (a `let` only so the practice mode can shorten it)
 let practiceMode=false;   // the offline practice mode: no rewards of any kind, endless, no match end
 function noRewards(){ return practiceMode || currentMode==='private'; }   // practice and private rooms earn nothing: no gold, souls, player/season/character xp, missions, achievements or stats (owner, v227: fairness)
+const PZ_ULT_CD=20, ULT_HIT_CUT=0.5;      // every character's ultimate takes 30 s (피사로 20 s); each hit that lands on an enemy takes 0.5 s off it (owner 10-29)
 const PRACTICE_ULT_CD=3, PRACTICE_TELEPORT_CD=2, PRACTICE_RESPAWN_SEC=2, PRACTICE_MAX_OPPONENTS=8;
 const BAT_DMG_MULT = 1.6, BAT_SPEED_MULT = 1.7, BAT_FORM_SEC = 7, BAT_TEAM_HEAL_SHARE = 0.5, BAT_VERT_SPEED = 260;   // (260px/s up with jump, the same down with S)
 const WIZ_CIRCLE_R = 330, WIZ_CIRCLE_SEC = 10, WIZ_HEAL_PER_SEC = 12, WIZ_ENEMY_DPS = 9, WIZ_SPEED_MULT = 1.4, WIZ_DMG_MULT = 1.3, WIZ_CD_MULT = 0.7;
@@ -1523,7 +1524,7 @@ const ULTS = {
   cleon:{name:'제국 함대 포격', desc:'조준한 곳 주변 넓은 범위에 분홍 표시가 생기고 1.5초 뒤 제국 함선 5척의 위성 포격 빔이 차례로 떨어져 빔마다 15 피해 (발판 통과, 나는 피해 없음)'},
   pel:{name:'드론 자폭', desc:'3초 동안 드론의 공격력이 50% 증가하고, 그 뒤 모든 드론이 2초 동안 가까운 상대를 추격해 맞거나 2초가 지나면 자폭 (드론 1대당 10 피해) · 자폭한 드론은 스킬로 다시 늘림'},
   tionis:{name:'분신 연극', desc:'4초 동안 분신이 나타나 공격하고 (내 공격력의 절반) 분신은 공격을 받지 않음 · 그동안 나는 투명해지고 피해를 받거나 분신이 사라지고 1초 뒤에 풀림'},
-  pizarro:  {name:'정복자의 기세', desc:'체력 30 회복(최종 단계에서 쓰면 50) + 공격력 25→31→37→43, 공격 쿨타임 0.6→0.5→0.4→0.3초, 대쉬 쿨타임 3→1.5→0.7→0.4초로 단계가 오르고 스킬·궁극기 쿨타임도 단계마다 12% 단축됨 (최대 3번 중첩 = 4단계, 4단계엔 이동속도 125%, 죽으면 초기화)'},
+  pizarro:  {name:'정복자의 기세', desc:'체력 30 회복(최종 단계에서 쓰면 50) + 공격력 22→29→36→44, 공격 쿨타임 0.6→0.5→0.4→0.3초, 대쉬 쿨타임 3→1.5→0.7→0.4초로 단계가 오르고 스킬·궁극기 쿨타임도 단계마다 12% 단축됨 (최대 3번 중첩 = 4단계, 4단계엔 이동속도 125%, 죽으면 초기화)'},
   puppeteer:{name:'꼭두각시 조종', desc:'조준한 방향으로 실을 날려 맞힌 상대를 5초간 조종 (맞히지 못하면 조종 못 함) · 조종하는 동안 내 이동·점프·조준·일반 공격 입력대로 움직이고 내 시야도 상대 시점이 됨, 상대는 스킬과 궁극기를 쓸 수 없음 · 조종하는 동안 내 몸은 움직이지 못하고 받는 데미지 50% 감소 · 조종이 끝나면 조종당한 상대가 자폭해 본인은 60, 주변(220) 적에게는 30 피해'},
   kan:      {name:'케찰코아틀의 날개', desc:'5초 동안 날개를 펴고 날아올라 (점프 키를 누르면 위로, 떼면 천천히 내려옴) 독침을 한 번에 3발씩, 더 빠르게 발사'},
   pistol:   {name:'강화탄',       desc:'다음 발사 때 데미지 66의 크고 빠른 탄환 1발 (플레이어는 관통, 발판에서는 멈춤)'},
@@ -3699,6 +3700,7 @@ function markHit(target, attackerId, t, dmg){
   if(dmg>0 && gameMode==='raid' && target.isBoss && attackerId && players[attackerId] && !players[attackerId].isMinion) players[attackerId].raidDmg=(players[attackerId].raidDmg||0)+dmg;
   if(dmg>0) recordReplayEvent(target.id, 'hit', {dmg}); // record even self/environmental damage (attackerId null) so the killcam can show it was actually hurting, not just moving
   if(!attackerId || attackerId===target.id) return;
+  { const at=players[attackerId]; if(dmg>0 && at && at.lastUlt!==undefined && !isAlly(at,target)) at.lastUlt-=ULT_HIT_CUT; }      // every hit on an enemy takes 0.5 s off the ultimate's cooldown
   if(!target.dmgBy) target.dmgBy={};
   target.dmgBy[attackerId]=t/1000;
   if(dmg>0 && players[attackerId]) players[attackerId].totalDamageDealt=(players[attackerId].totalDamageDealt||0)+dmg;
@@ -5470,7 +5472,7 @@ function shuffle(arr){ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.
 /* ===== the version of this file =====
    Different BUILDS of one version meet and play together (room names online-v<ver>-<mode>-<map>-<slot>); different VERSIONS (the 0.x part) never do - the host refuses them (verNo) and the dispatcher answers busy.
    The build is only sent along with the join message and the lobby (for information); the corner of the screen shows it. */
-const GAME_BUILD='build 2026-10-18-v498';
+const GAME_BUILD='build 2026-10-18-v499';
 const GAME_VERSION='0.9', GAME_VERSION_NAME='은하 제국의 황혼';   // 게임 버전 이름: versions.json의 title과 같게 (빌드마다 바꾸지 않음)
 /* version (the 0.x part) vs build: different BUILDS of one version meet and play together, different VERSIONS never do (rooms, quick match, ranked, friend invites, dispatcher).
    Builds before 470 do not send a version, so it is read from the build number (0.9 started at build 458). */
@@ -7486,7 +7488,7 @@ function exitPractice(){
   tutorialEnd();
   document.getElementById('practicePanel').style.display='none';
   clearInterval(pracDpsTimer); pracDpsTimer=null;
-  practiceMode=false; ULT_CD=20; TELEPORT_CD=10; SKILL_CD=5;      // back to the real cooldowns
+  practiceMode=false; ULT_CD=30; TELEPORT_CD=10; SKILL_CD=5;      // back to the real cooldowns
   stopResultSound();
   document.getElementById('matchEndOverlay').style.display='none'; mvpShown=null; try{ hideMvpBox(); }catch(e){}
   document.getElementById('hud').style.display='none';
@@ -12327,7 +12329,7 @@ function drawSpacePersona(c, wid, hx, hy, r, shy, tint){       // the looks foll
   }
 }
 function skillCdOf(p){ return (skW(p)==='cleon'?CLEON_SKILL_CD:SKILL_CD)*pzCdMult(p); }
-function ultCdOf(p){ return ULT_CD*pzCdMult(p)*(gameMode==='hyperbr'?0.2:1); }
+function ultCdOf(p){ return Math.min(ULT_CD, (p && p.weapon==='pizarro') ? PZ_ULT_CD : ULT_CD)*pzCdMult(p)*(gameMode==='hyperbr'?0.2:1); }
 const PRACTICE_SKILL_CD=2;
 const SKILLS={
   cleon:{name:'근위병 소환', kind:'buff', desc:'창을 든 근위병 4명을 9초 동안 소환 (체력 90, 쿨타임 12.5초) · 2명은 가장 가까운 상대에게 돌진해 15 피해, 2명은 내 좌우를 지키다 상대가 가까워지면 달려가 공격'},
@@ -18323,10 +18325,10 @@ function drawOverheadExtras(p, HEADCY){
     ctx.beginPath(); ctx.arc(p.x-24, p.y+HEADCY-21, 4, 0, 7); ctx.fill();
   }
   const skRemain = isHost ? Math.max(0, skillCdOf(p)-(performance.now()/1000-(p.lastSkill===undefined?-9999:p.lastSkill))) : p.skillCdRemain;
-  const abilities=[['#3fe0c5', p.dashCdRemain], ['#c17bff', p.teleportCdRemain], ['#ffd34d', p.ultCdRemain], ['#7ef0a8', SKILLS[skW(p)] ? skRemain : 99]];
-  const dotY=p.y+HEADCY-25, dotSpacing=11, startX=p.x-dotSpacing*1.5;
-  for(let i=0;i<4;i++){
-    if(i===3 && !SKILLS[skW(p)]) break;
+  const abilities=[['#3fe0c5', p.dashCdRemain], ['#c17bff', p.teleportCdRemain], ['#7ef0a8', SKILLS[skW(p)] ? skRemain : 99]];      // (no dot for the ultimate any more: owner 10-29)
+  const dotY=p.y+HEADCY-25, dotSpacing=11, startX=p.x-dotSpacing*1;
+  for(let i=0;i<3;i++){
+    if(i===2 && !SKILLS[skW(p)]) break;
     const ready = abilities[i][1]===undefined || abilities[i][1]<=0.05;
     ctx.beginPath(); ctx.arc(startX+i*dotSpacing, dotY, 3, 0, 7);
     ctx.fillStyle = ready ? abilities[i][0] : 'rgba(255,255,255,.18)';
