@@ -842,7 +842,7 @@ function paintIntro() {
   const IT = CH.introT || INTRO_T, t = S.snap.pt, n = Math.max(1, Math.ceil(IT - t));
   if (n !== S.introIdx) { S.introIdx = n; const el = $('introLine'); el.classList.remove('on'); setTimeout(() => { el.textContent = n > 3 ? T('준비!') : String(n); el.classList.add('on'); }, 50); }
   // 영웅 소개: 한 명씩 카메라가 다가가 이름과 직업을 보여 주고 포즈를 잡아요
-  const pl = S.snap.pl, k = Math.min(pl.length - 1, Math.floor(t / (IT / pl.length))), who = pl[k];
+  const pl = S.snap.pl.filter(q => q.tm === myTm()), k = Math.min(pl.length - 1, Math.floor(t / (IT / pl.length))), who = pl[k];   // 시작 전에는 우리 편만 소개해요
   if (who && S.introHero !== who.id) {
     S.introHero = who.id; view.camId = who.id; view.focusOn(who.x, who.z, 0.9);
     const card = $('introCard'); card.firstElementChild.textContent = who.name; card.lastElementChild.textContent = ROLES[who.role].name; card.classList.remove('on'); setTimeout(() => card.classList.add('on'), 30);
@@ -977,6 +977,7 @@ function teamHud(sn) {
     oc.fillStyle = own < 0 ? '#6a6676' : hex(TEAMS[own].c); oc.beginPath(); oc.arc(x, y, 9, 0, 7); oc.fill();
     if (cap >= 0 && pr > 0) { oc.strokeStyle = hex(TEAMS[cap].c); oc.lineWidth = 4; oc.beginPath(); oc.arc(x, y, 13, -Math.PI / 2, -Math.PI / 2 + Math.PI * 2 * pr / FLAG_T); oc.stroke(); }
   });
+  const me0 = sn.pl.find(q => q.id === S.me); if (me0 && me0.fz && !me0.dd) { oc.font = 'bold 14px Galmuri, system-ui'; oc.lineWidth = 4; oc.strokeStyle = '#140f18'; const tx = T('깃발의 가호 · 치유 · 공격 +20%'); oc.strokeText(tx, innerWidth / 2, y + 26); oc.fillStyle = '#9af0a8'; oc.fillText(tx, innerWidth / 2, y + 26); }
   const sc = Math.min(innerWidth < 700 ? 1.1 : 1.6, (innerWidth < 700 ? 130 : 190) / MW), w = MW * sc, h = MH * sc, mx = innerWidth - w - 14, my = innerWidth < 700 ? 100 : 64;
   if (mini.dirty) mini.paint();
   oc.globalAlpha = 0.8; oc.fillStyle = 'rgba(10,8,14,.75)'; oc.fillRect(mx - 4, my - 4, w + 8, h + 8); oc.drawImage(mini.c, mx, my, w, h); oc.globalAlpha = 1;
