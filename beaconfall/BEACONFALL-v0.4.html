@@ -393,7 +393,7 @@ window.bfIntro=function(){if(run)return;run=1;t0=Date.now();el.classList.add('ru
     <button class="btn" data-act="skins"><span class="arrow">▶</span>스킨 상점<span class="en">SKIN SHOP</span></button>
     <button class="btn" data-act="stats"><span class="arrow">▶</span>통계<span class="en">STATS</span></button>
     <button class="btn" data-act="settings"><span class="arrow">▶</span>설정<span class="en">SETTINGS</span></button>
-    <p class="foot">v0.4<br>build 131</p>
+    <p class="foot">v0.4<br>build 132</p>
   </nav>
 </div>
 
@@ -9370,7 +9370,7 @@ const ST_ROWS=[
   ['tree','벤 나무','n'],['rock','캔 바위','n'],['craft','만든 아이템','n'],['place','설치한 블록','n'],
   ['kill','쓰러뜨린 몬스터','n'],['boss','쓰러뜨린 보스','n'],['fish','낚은 물고기','n'],['death','쓰러진 횟수','n']
 ];
-let stLX=null,stLY=0,stSaveT=0;
+let stLX=null,stLY=0,stSaveT=0,sessPlay=0,sessDone=false;
 const stObj=()=>(settings.st=settings.st&&typeof settings.st==='object'?settings.st:{});
 function stAdd(k,n){const o=stObj();o[k]=(+o[k]||0)+(n===undefined?1:n);
   if((k==='tree'||k==='kill')&&typeof world!=='undefined'&&world){const w=(settings.wst=settings.wst&&typeof settings.wst==='object'?settings.wst:{}),wk=invKey();if(wk){const c=w[wk]=w[wk]||{};c[k]=(+c[k]||0)+(n===undefined?1:n);}}}   // 엔딩 대사용: 월드별 집계
@@ -9378,6 +9378,7 @@ function stTick(dt){
   if(mode!=='play'||!world||typeof P==='undefined'||!P){stLX=null;return;}
   const o=stObj();
   if(!P.sleeping)o.play=(+o.play||0)+dt;
+  if(!P.sleeping&&!sessDone){sessPlay+=dt;if(sessPlay>=300){sessDone=true;try{if(window.FFProfile&&FFProfile.matchDone&&window.bfSb&&window.bfUid)FFProfile.matchDone(window.bfSb,'beaconfall');}catch(e){}}}   // 허브 퀘스트 '한 판 하기': 이 접속에서 5분 이상 플레이하면 한 번
   if(stLX!==null&&!P.dead){
     const d=Math.hypot(P.x-stLX,P.y-stLY);
     if(d>0&&d<GRID*3)o[P.sailing?'sail':'walk']=(+o[P.sailing?'sail':'walk']||0)+d;   // 순간이동(부활·이동)은 빼요
