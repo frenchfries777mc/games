@@ -223,7 +223,7 @@ function paintRoom() {
   $('sRoom').classList.toggle('waiting', wait);
   $('roomTitle').textContent = S.net === 'solo' ? T('봇과 연습') : S.pub ? T('온라인 대전') : host ? T('친구와 대결 · 방장') : T('친구와 대결');
   $('inviteBtn').style.display = S.net === 'host' && !S.pub && wait ? '' : 'none';
-  $('clsList').innerHTML = ROLE_IDS.map((id, k) => '<button data-c="' + id + '"' + (mine.role === id ? ' class="on"' : '') + '><i>' + (k + 1) + '</i><b>' + ROLES[id].name + '</b></button>').join('');
+  $('clsList').innerHTML = ROLE_IDS.map((id, k) => '<button data-c="' + id + '"' + (mine.role === id ? ' class="on"' : '') + '><i>' + (k + 1) % 10 + '</i><b>' + ROLES[id].name + '</b></button>').join('');
   $('clsList').querySelectorAll('button').forEach(el => el.onclick = () => { SFX.play('click'); SAVE.role = el.dataset.c; save(); pick(); });
   $('clsInfo').innerHTML = '<h2>' + c.name + '</h2><p>' + c.role + '</p>' + BARS.map((n, k) => '<div class="bar"><span>' + n + '</span><u>' + '<i class="on"></i>'.repeat(c.st[k]) + '<i></i>'.repeat(5 - c.st[k]) + '</u></div>').join('') +
     '<h4>' + T('기본 공격') + '</h4><p>' + c.atkTxt + '</p>' + c.skills.map(s => '<h4>' + s.key + ' · ' + s.name + '</h4><p>' + s.desc + '</p>').join('');
@@ -241,7 +241,7 @@ function paintRoom() {
   $('roomMsg').textContent = !online ? (all.length < 2 ? T('봇을 넣어 주세요.') : '') : wait ? (S.pub ? T('다른 플레이어를 기다리는 중이에요.') : T('친구를 초대해 주세요.')) : T('직업을 골라 주세요 · {0}초 뒤 시작', Math.max(0, Math.ceil(S.pickT))); 
   view.setPreview(wait ? null : mine.role, COLORS[mine.col].c);
 }
-addEventListener('keydown', e => { if (S.scr !== 'sRoom' || (S.net !== 'solo' && S.ph !== 'pick')) return; const n = +e.key; if (n >= 1 && n <= ROLE_IDS.length) { SAVE.role = ROLE_IDS[n - 1]; save(); pick(); } });
+addEventListener('keydown', e => { if (S.scr !== 'sRoom' || (S.net !== 'solo' && S.ph !== 'pick')) return; const n = e.key === '0' ? 10 : +e.key; if (n >= 1 && n <= ROLE_IDS.length) { SAVE.role = ROLE_IDS[n - 1]; save(); pick(); } });
 // 사람 + 봇 목록 (봇은 남은 색과 직업을 받아요)
 function roster() {
   const out = S.slots.map(s => Object.assign({}, s)), used = new Set();
@@ -589,7 +589,7 @@ function localMove(p, inp, dt) {
   const fl = S.snap.w.fl && S.snap.w.fl[2] === p.id;
   if (inp.roll && !fl && L.rollCd <= 0 && !(L.roll > 0)) { L.roll = 0.35; L.rollCd = 1.2 * ((p.b || []).indexOf('roll') >= 0 ? 0.6 : 1); const ra = ml > 0.1 ? Math.atan2(mz, mx) : p.a; L.rdx = Math.cos(ra); L.rdz = Math.sin(ra); }
   if (L.roll > 0) { L.roll -= dt; L.x += L.rdx * 15 * dt; L.z += L.rdz * 15 * dt; }
-  else { const sp = R.speed * ((p.b || []).indexOf('feet') >= 0 ? 1.12 : 1) * (p.ra ? 1.3 : 1) * (p.bk ? 0.8 : 1) * (fl ? 0.7 : 1) * (p.cl ? 0.6 : 1) * (p.em ? 0.75 : 1); L.x += mx * sp * dt; L.z += mz * sp * dt; }
+  else { const sp = R.speed * ((p.b || []).indexOf('feet') >= 0 ? 1.12 : 1) * (p.ra ? 1.3 : 1) * (p.bk ? 0.8 : 1) * (fl ? 0.7 : 1) * (p.cl ? 0.6 : 1) * (p.em ? 0.75 : 1) * (p.stl ? 1.25 : 1) * (p.sp ? 0.25 : 1) * (p.bs ? 0.6 : 1); L.x += mx * sp * dt; L.z += mz * sp * dt; }
   mapCollide(L, 0.6);
   if (!liftOk(ox, oz, L.x, L.z)) { L.x = ox; L.z = oz; }
 }
@@ -648,6 +648,16 @@ function skillFx(e) {
     case 'frostfx': view.shock(e.x, e.z, 7, 0x9ad8ff, 0.55); view.ring(e.x, e.z, 3.4, 0xc8ecff, 0.7); view.rune(e.x, e.z, 3.4, 0x9ad8ff, 1.2, 2); for (let i = 0; i < 7; i++) { const a = i / 7 * 6.283, r = 1 + (i % 2) * 1.5; view.column(e.x + Math.cos(a) * r, e.z + Math.sin(a) * r, 0xc8ecff, 0.7); } view.burst(e.x, 0.8, e.z, 0xc8ecff, 28, 8, 0.7, 0.14); view.rise(e.x, e.z, 0x9ad8ff, 18, 3, 1, 5); view.flash(e.x, e.z, 0x9ad8ff, 140); if (mine) view.shake = Math.max(view.shake, 0.5); SFX.play('clang'); break;
     case 'quake': view.shock(e.x, e.z, 8, 0xffb060, 0.6); view.ring(e.x, e.z, 4.4, 0xffb060, 0.6); view.burst(e.x, 0.4, e.z, 0xbcae94, 26, 9, 0.7, 0.18); view.flash(e.x, e.z, 0xffb060, 120); if (mine) view.shake = Math.max(view.shake, 1.0); break;
     case 'smite': case 'curse': view.rune(e.x + c * 2, e.z + s * 2, 1.4, e.s === 'smite' ? 0xfff0b0 : 0xb06aff, 0.6, 3); view.rise(e.x, e.z, e.s === 'smite' ? 0xfff0b0 : 0xb06aff, 8, 1, 0.6, 6); break;
+    case 'wallfx': view.shock(e.x, e.z, 5, 0xc8b890, 0.45); view.burst(e.x, 0.3, e.z, 0xbcae94, 28, 8, 0.7, 0.18); view.rise(e.x, e.z, 0xe0d0a0, 12, 2.4, 0.9, 6); view.flash(e.x, e.z, 0xffe08a, 100); if (mine) view.shake = Math.max(view.shake, 0.7); SFX.play('slam'); break;
+    case 'vowfx': view.ring(e.x, e.z, 2.6, 0xffe08a, 0.9); view.rune(e.x, e.z, 2.2, 0xffd36b, 1.0, 3); view.column(e.x, e.z, 0xffe08a, 0.8); view.rise(e.x, e.z, 0xffe08a, 14, 2, 1.0, 6); SFX.play('clear'); break;
+    case 'bastfx': view.shock(e.x, e.z, 8, 0xc8d8f0, 0.6); view.ring(e.x, e.z, 4.5, 0xc8d8f0, 0.8); view.rune(e.x, e.z, 3.2, 0xffe08a, 1.2, -3); view.burst(e.x, 1.2, e.z, 0xe8e0c8, 24, 8, 0.6, 0.14); view.flash(e.x, e.z, 0xc8d8f0, 130); if (mine) view.shake = Math.max(view.shake, 0.8); SFX.play('clang'); break;
+    case 'vanishfx': view.burst(e.x, 1.2, e.z, 0x6a8a98, 30, 5, 0.9, 0.2); view.ring(e.x, e.z, 2.2, 0x6a8a98, 0.6); view.rise(e.x, e.z, 0x4a6a78, 16, 2, 1.0, 5); SFX.play('parry'); break;
+    case 'unvanish': view.burst(e.x, 1.2, e.z, 0x6a8a98, 12, 4, 0.5, 0.14); break;
+    case 'venomfx': view.rune(e.x, e.z, 1.8, 0x7ae070, 0.8, 4); view.rise(e.x, e.z, 0x7ae070, 14, 1.6, 0.9, 6); view.burst(e.x, 1.4, e.z, 0x7ae070, 12, 4, 0.5, 0.12); break;
+    case 'execfx': view.column(e.x, e.z, 0xff4a5a, 0.6); view.burst(e.x, 1.2, e.z, 0xff4a5a, e.n ? 34 : 20, 8, 0.5, 0.14); view.shock(e.x, e.z, e.n ? 6 : 3.4, 0xff4a5a, 0.45); view.arc(e.x, e.z, e.a, 3.0, 0xffd0d0); view.flash(e.x, e.z, 0xff4a5a, e.n ? 170 : 110); if (e.n) { num(e.x, e.z, T('처형!'), '#ff6a6a', 1.5, 4.2); if (mine) view.shake = Math.max(view.shake, 0.9); } SFX.play('swing'); break;
+    case 'backfx': view.streak(e.x, e.z, e.a + Math.PI, 6, 0xe8d8b0, 0.3, 0.9); view.burst(e.x, 0.4, e.z, 0xbcae94, 12, 5, 0.5, 0.14); SFX.play('roll'); break;
+    case 'snipecharge': view.ring(e.x, e.z, 1.6, 0xff6a4a, 1.1); view.rise(e.x, e.z, 0xff6a4a, 10, 1.4, 1.1, 5); SFX.play('clang'); break;
+    case 'snipefx': view.streak(e.x, e.z, e.a, 40, 0xffd0a0, 0.35, 1.2); view.flash(e.x + c * 2, e.z + s * 2, 0xffd0a0, 140); view.burst(e.x + c * 1.5, 1.4, e.z + s * 1.5, 0xffd0a0, 14, 9, 0.35, 0.1); if (mine) view.shake = Math.max(view.shake, 0.8); SFX.play('arrow'); break;
     case 'rally': view.shock(e.x, e.z, 9, 0xffd36b, 0.6); view.rune(e.x, e.z, 3, 0xffb040, 1.2, -3); view.flash(e.x, e.z, 0xffb040, 120); if (mine) view.shake = Math.max(view.shake, 0.9); SFX.play('roar'); break;
   }
 }
@@ -656,6 +666,8 @@ function onEvent(e) {
   const me = S.me;
   switch (e.k) {
     case 'swing': view.arc(e.x, e.z, e.a, e.r, COL[e.role] || 0xffffff); SFX.play('swing'); break;
+    case 'wallhit': view.burst(e.x, 1.4, e.z, 0xd8cca8, 8, 5, 0.3, 0.1); SFX.play('clang'); break;
+    case 'vowhit': view.streak(e.tx, e.tz, Math.atan2(e.z - e.tz, e.x - e.tx), Math.hypot(e.x - e.tx, e.z - e.tz), 0xffe08a, 0.25, 0.4); break;
     case 'shoot': SFX.play(e.pk === 'orb' ? 'orb' : 'arrow'); break;
     case 'charge': view.ring(e.x, e.z, e.n === 3 ? 2.4 : 1.6, e.n === 3 ? 0xffd36b : 0x9af0a8, 0.4); view.burst(e.x, 1.8, e.z, e.n === 3 ? 0xffd36b : 0x9af0a8, e.n === 3 ? 12 : 6, 3, 0.4, 0.1); if (e.id === S.me) SFX.play(e.n === 3 ? 'clear' : 'clang'); break;
     case 'raising': view.column(e.x, e.z, 0xfff0b0, 1.1); view.ring(e.x, e.z, 6, 0xfff0b0, 1.0); break;
@@ -1044,7 +1056,7 @@ function showDeepResult() {
 // 우승 화면: 이긴 사람이 크게 나와요. '순위 보기'를 누르면 전체 순위표로 가요
 function showWin() {
   S.resultShown = true; bigMsg('', '', 0); const h = awardHonor() || 0, sn = S.snap, mine = myP(), w = sn.pl.find(p => p.id === sn.win);
-  if (mine && mine.pc === 1) { unlock('win'); SAVE.wins = SAVE.wins || {}; SAVE.wins[mine.role] = 1; save(); if (ROLE_IDS.every(r => SAVE.wins[r])) unlock('winall'); }
+  if (mine && mine.pc === 1) { unlock('win'); SAVE.wins = SAVE.wins || {}; SAVE.wins[mine.role] = 1; save(); if (ROLE_IDS.slice(0, 7).every(r => SAVE.wins[r])) unlock('winall'); }
   if (mine && mine.kl >= 3) unlock('kill3');
   const me = w && w.id === S.me, nm = w ? w.name : '';
   $('winBox').innerHTML = w ? `<div class="wk">${T('마지막 한 명')}</div><div class="wt">${T('{0} 우승!', esc(nm))}</div><img class="wp" alt="" src="${view.portrait(w.role)}"><div class="wn" style="color:${pcol(w)}">${ROLES[w.role].name}</div><div class="ws">${T('쓰러뜨림 {0}', w.kl)} · ${T('버틴 시간')} ${fmtT(w.sv)}</div>` : `<div class="wt">${T('무승부')}</div>`;
