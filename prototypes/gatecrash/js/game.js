@@ -135,7 +135,7 @@ function newRacer(o, W) {
   const s = W.starts[o.slot % W.starts.length];
   const r = Object.assign(newBody(s.x, s.y), { id: o.id, name: o.name, col: o.col, bot: !!o.bot, slot: o.slot, own: !!o.own,
     face: 1, aim: 0, hp: MAX_HP, wep: null, cd: 0, inv: 0, swing: 0, flash: 0, fin: false, finT: 0, anim: 0, node: -1, prog: 1, ko: 0,
-    ai: o.bot ? { plan: null, stuck: 0, best: Infinity, wait: 0, noise: 0.15 + Math.random() * 0.25, aimT: 0, react: 0.2 + Math.random() * 0.3, err: 0.1 + Math.random() * 0.18 } : null,
+    ai: o.bot ? { plan: null, stuck: 0, best: Infinity, wait: 0, noise: 0.15 + Math.random() * 0.25, aimT: 0, react: 0.2 + Math.random() * 0.3, err: 0.03 + Math.random() * 0.07 } : null,
     tx: s.x, ty: s.y });
   return r;
 }
@@ -164,7 +164,7 @@ function botInput(G, r, dt) {
     if (n >= 0 && (!ai.plan || ai.plan.from !== n || ai.plan.done)) {
       let best = null, bc = Infinity;
       for (const e of W.edges[n] || []) { const c = e.t + W.dist[e.to] + Math.random() * ai.noise * 0.3; if (c < bc) { bc = c; best = e; } }
-      ai.plan = best ? { from: n, e: best, done: false, launched: false, shift: Math.random() < ai.err ? (Math.random() < .5 ? -1 : 1) * (6 + Math.random() * 12) : 0 } : null;
+      ai.plan = best ? { from: n, e: best, done: false, launched: false, shift: Math.random() < ai.err ? (Math.random() < .5 ? -1 : 1) * (5 + Math.random() * 8) : 0 } : null;
       if (ai.plan && Math.random() < ai.err * .45) ai.wait = .3 + Math.random() * .7;     // 잠깐 망설여요
       if (ai.plan && ai.plan.shift && Math.random() < .35 && W.edges[n].length > 1) ai.plan.e = W.edges[n][(Math.random() * W.edges[n].length) | 0];   // 엉뚱한 길로 가 봐요
     }
