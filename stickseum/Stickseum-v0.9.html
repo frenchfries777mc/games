@@ -3024,10 +3024,10 @@ function usedCharsOfMatch(me){      // every character that earns 마스터리 �
 }
 let lastTierGain=null;     // the 마스터리 포인트 the finished match gave (shown on the match-end screen)
 let lastTierUps=[];     // toasts for the tier(s) the finished match took a character to, and the skins that came with them
+function rankNameHtml(n){ return String(n).replace(/ ([IVX]+)$/,' <span style="font-family:Georgia,\'Times New Roman\',serif; letter-spacing:.12em;">$1</span>'); }      // the numeral of 그랜드 마스터 II etc. in a serif face so that I, II look like numerals and not like two bars
 function codexTierHtml(wid, kc){       // under the numbers of the codex: how far to the next tier, and the two skins that belong to this character's tiers
   const idx=CHAR_RANKS.findIndex(r=>r.name===charRankFor(kc).name), nx=CHAR_RANKS[idx+1];
-  const cr=CHAR_RANKS[idx];
-  let s='<div style="margin-top:8px; display:flex; align-items:center; gap:10px; font-size:12px; color:var(--text-dim);">'+rankEmblemSvg(cr,44)+'<div><div style="font-weight:800; font-size:14px; color:'+cr.color+';">'+cr.name+'</div>'+(nx ? '다음 계급 <b style="color:'+nx.color+'">'+nx.name+'</b>까지 '+(nx.min-kc)+'점' : '<b style="color:#ffd34d">최고 계급 달성!</b>')+'</div></div>';
+  let s='';
   const skins=Object.keys(COSMETICS).filter(id=>COSMETICS[id].char===wid && COSMETICS[id].tier);
   if(skins.length) s+='<div style="margin-top:6px; font-size:12px;">'+skins.map(id=>{ const it=COSMETICS[id], rk=CHAR_RANKS.find(r=>r.name===it.tier), ok=cosOwned(id); return '<div style="opacity:'+(ok?1:0.6)+'">'+(ok?'✨':'🔒')+' <span style="color:'+(rk?rk.color:'#fff')+'">'+it.tier+'</span> 전용 스킨 · '+it.name+(ok?'':' ('+(tierMinKills(it.tier)-kc)+'점 남음)')+'</div>'; }).join('')+'</div>';
   return s;
@@ -5470,7 +5470,7 @@ function shuffle(arr){ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.
 /* ===== the version of this file =====
    Different BUILDS of one version meet and play together (room names online-v<ver>-<mode>-<map>-<slot>); different VERSIONS (the 0.x part) never do - the host refuses them (verNo) and the dispatcher answers busy.
    The build is only sent along with the join message and the lobby (for information); the corner of the screen shows it. */
-const GAME_BUILD='build 2026-10-18-v497';
+const GAME_BUILD='build 2026-10-18-v498';
 const GAME_VERSION='0.9', GAME_VERSION_NAME='은하 제국의 황혼';   // 게임 버전 이름: versions.json의 title과 같게 (빌드마다 바꾸지 않음)
 /* version (the 0.x part) vs build: different BUILDS of one version meet and play together, different VERSIONS never do (rooms, quick match, ranked, friend invites, dispatcher).
    Builds before 470 do not send a version, so it is read from the build number (0.9 started at build 458). */
@@ -11597,7 +11597,7 @@ function renderWeaponUI(){
       const kc=charKillsFor(sel);
       const rank=charRankFor(kc);
       statsEl.style.display='block';
-      statsEl.innerHTML='마스터리 포인트 '+kc+' · <span style="color:'+rank.color+';">'+rank.name+'</span>'+
+      statsEl.innerHTML='<div style="margin-bottom:6px;">'+rankEmblemSvg(rank,56)+'</div>마스터리 포인트 '+kc+' · <span style="color:'+rank.color+';">'+rankNameHtml(rank.name)+'</span>'+
         (()=>{ const ri=CHAR_RANKS.findIndex(r=>r.name===rank.name), nx=CHAR_RANKS[ri+1], cur=CHAR_RANKS[ri]?CHAR_RANKS[ri].min:0, fr=nx?Math.max(0,Math.min(1,(kc-cur)/(nx.min-cur))):1;
           return '<div style="margin-top:6px; font-size:13px;">'+(nx?((kc-cur)+' / '+(nx.min-cur)+' 점 · 다음 계급까지 '+(nx.min-kc)):'최고 계급')+'</div>'+
         '<div style="height:6px; margin:5px auto 0; max-width:240px; background:#232733; border-radius:4px; overflow:hidden;"><div style="height:100%; width:'+Math.round(fr*100)+'%; background:'+(nx?nx.color:rank.color)+';"></div></div>'; })()+codexTierHtml(sel, kc)+'';
