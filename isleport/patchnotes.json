@@ -1,6 +1,76 @@
 {
  "notes": [
   {
+   "date": "2026-10-29",
+   "build": "v0.2 build 70",
+   "title": "다른 섬 개척",
+   "items": [
+    "상륙한 섬마다 개척 밭 6칸과 개척 시설 4칸이 생김",
+    "개척 밭은 한 칸에 400금화로 일궈 씨앗을 심으면 섬을 떠나 있는 동안에도 자람",
+    "밭 위를 걸으면 다 익은 작물을 자동으로 수확",
+    "시설 4종 추가: 채집 오두막, 관개 우물, 방목장, 장터 가판",
+    "채집 오두막은 섬 특산물, 방목장은 양모, 장터 가판은 금화를 모아 둠",
+    "관개 우물을 지으면 그 섬 밭의 작물이 30% 빨리 자람"
+   ],
+   "tr": {
+    "en": {
+     "title": "Settling other isles",
+     "items": [
+      "Every isle you land on now has 6 frontier fields and 4 frontier facility slots",
+      "Till a frontier field for 400 g and plant seeds; it keeps growing while you are away",
+      "Walk over a ripe field to harvest it automatically",
+      "4 facilities: gatherer hut, irrigation well, grazing yard, market stall",
+      "The hut gathers island goods, the yard wool, the stall coins",
+      "An irrigation well makes crops on that isle grow 30% faster"
+     ]
+    },
+    "ja": {
+     "title": "Settling other isles",
+     "items": [
+      "Every isle you land on now has 6 frontier fields and 4 frontier facility slots",
+      "Till a frontier field for 400 g and plant seeds; it keeps growing while you are away",
+      "Walk over a ripe field to harvest it automatically",
+      "4 facilities: gatherer hut, irrigation well, grazing yard, market stall",
+      "The hut gathers island goods, the yard wool, the stall coins",
+      "An irrigation well makes crops on that isle grow 30% faster"
+     ]
+    },
+    "es": {
+     "title": "Settling other isles",
+     "items": [
+      "Every isle you land on now has 6 frontier fields and 4 frontier facility slots",
+      "Till a frontier field for 400 g and plant seeds; it keeps growing while you are away",
+      "Walk over a ripe field to harvest it automatically",
+      "4 facilities: gatherer hut, irrigation well, grazing yard, market stall",
+      "The hut gathers island goods, the yard wool, the stall coins",
+      "An irrigation well makes crops on that isle grow 30% faster"
+     ]
+    },
+    "fr": {
+     "title": "Settling other isles",
+     "items": [
+      "Every isle you land on now has 6 frontier fields and 4 frontier facility slots",
+      "Till a frontier field for 400 g and plant seeds; it keeps growing while you are away",
+      "Walk over a ripe field to harvest it automatically",
+      "4 facilities: gatherer hut, irrigation well, grazing yard, market stall",
+      "The hut gathers island goods, the yard wool, the stall coins",
+      "An irrigation well makes crops on that isle grow 30% faster"
+     ]
+    },
+    "de": {
+     "title": "Settling other isles",
+     "items": [
+      "Every isle you land on now has 6 frontier fields and 4 frontier facility slots",
+      "Till a frontier field for 400 g and plant seeds; it keeps growing while you are away",
+      "Walk over a ripe field to harvest it automatically",
+      "4 facilities: gatherer hut, irrigation well, grazing yard, market stall",
+      "The hut gathers island goods, the yard wool, the stall coins",
+      "An irrigation well makes crops on that isle grow 30% faster"
+     ]
+    }
+   }
+  },
+  {
    "date": "2026-10-28",
    "build": "v0.2 build 69",
    "title": "프로필 창 정리",
