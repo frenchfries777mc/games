@@ -359,3 +359,7 @@ patchnotes.json | v497 items[3] | 봇이 긴 맵(깃발 뺏기·금고 약탈)�
 patchnotes.json | v497 items[4] | 시즌 패스 보상 카드 아이콘 위에 크게, 글자 아래 | build 497 | 2026-10-29
 patchnotes.json | v497 items[5] | 클랜 정보의 클랜원 온라인 승리 줄 삭제 | build 497 | 2026-10-29
 patchnotes.json | v497 items[6] | 펠 공격력 6 → 12, 크레온 1세 공격력 10 → 14 | build 497 | 2026-10-29
+patchnotes.json | v499 items[0] | 궁극기 쿨타임 모두 30초로 통일, 상대를 맞히면 0.5초씩 줄어듦 (피사로는 20초 그대로) | build 499 | 2026-10-29
+patchnotes.json | v499 items[1] | 머리 위 궁극기 쿨타임 점 삭제 | build 499 | 2026-10-29
+patchnotes.json | v499 items[2] | 피사로 공격력 1단계 25 → 22, 단계별 증가 +6 → +7, +7, +8 (22→29→36→44) | build 499 | 2026-10-29
+Stickseum-v0.9.html | ULTS.pizarro.desc | 공격력 22→29→36→44 (숫자만 바뀜) | build 499 | 2026-10-29
