@@ -3,7 +3,7 @@
 
 import { T } from './tr.js';
 
-export const VERSION = 'v0.1', BUILD = 35;
+export const VERSION = 'v0.1', BUILD = 36;
 
 export const ROLES = {
   knight: {
@@ -370,7 +370,7 @@ const ARENAS = [
     fl: [[10, 40], [36, 60]], mid: [[56, 36], [40, 12]], pil: [[22, 14], [38, 30], [8, 28], [50, 18]] },
   { name: '중앙 요새', line: '가운데 요새의 깃발 셋을 차지하는 쪽이 유리해요. 문은 네 곳이에요.', theme: 'abyss',
     walls: [[36, 24, 16, 3], [36, 24, 3, 9], [14, 26, 10, 3], [20, 10, 3, 9], [44, 10, 10, 3]],
-    fl: [[10, 40], [36, 60]], mid: [[56, 36], [44, 36]], pil: [[48, 30], [28, 32], [10, 20], [32, 16]] },
+    fl: [[10, 40], [36, 60]], mid: [[56, 36], [26, 38]], pil: [[48, 30], [28, 32], [10, 20], [32, 16]] },
   { name: '십자 광장', line: '네 덩어리 사이로 십자 길이 나 있어요. 길목을 막으면 이겨요.', theme: 'temple',
     walls: [[26, 10, 22, 12], [8, 24, 8, 3], [44, 27, 3, 5], [34, 30, 3, 6]],
     fl: [[12, 36], [56, 62]], mid: [[56, 36], [20, 36]], pil: [[56, 26], [20, 30], [40, 24], [8, 8]] },
@@ -380,9 +380,12 @@ const ARENAS = [
 ];
 function arenaMap(def) {
   const m = genMap(777, [{ name: T('전장'), line: T(def.line), boss: 1 }], { noSecret: 1, noMimic: 1, st: { cols: 1 } });
-  const AW = 112, AH = 72, ox = 6, oy = 6;
+  // 아래 도면은 112×72칸 기준이고, 가로세로 1.43배로 키워서 깃발 사이를 멀리 벌려요 (담 두께는 그대로)
+  const AW = 160, AH = 104, ox = 6, oy = 6, SX = AW / 112, SY = AH / 72;
   m.w = AW + ox * 2; m.h = AH + oy * 2;
   m.areas[0].r = [[ox, oy, AW, AH]];
+  const sc = ([x, y]) => [Math.round(x * SX), Math.round(y * SY)], wallSc = ([x, y, w, h]) => { const [a, b] = sc([x, y]); return [a, b, w > 4 ? Math.round(w * SX) : w, h > 4 ? Math.round(h * SY) : h]; };
+  def = Object.assign({}, def, { walls: def.walls.map(wallSc), fl: def.fl.map(sc), mid: def.mid.map(sc), pil: def.pil.map(sc) });
   const mr = ([x, y]) => [AW - 1 - x, AH - 1 - y], sp = [[11, AH - 11], [AW - 12, 10]];
   const fl = [...def.fl.map(([x, y]) => [x, y, 0]), ...def.fl.map(p => [...mr(p), 1]), [...def.mid[0], -1], [...def.mid[1], -1], [...mr(def.mid[1]), -1]];
   // 왼쪽 위 사분면만 적어 두면 좌우·위아래로 뒤집어 네 쪽 모두 똑같이 만들어요
