@@ -71,6 +71,9 @@ function localIds(game){
   try{ /* global settings */ if(game==='beaconfall'&&typeof settings!=='undefined'&&settings&&settings.ach&&typeof settings.ach==='object') return Object.keys(settings.ach).filter(function(k){ return settings.ach[k]; }); }catch(e){}
   return null;
 }
+/* 한 판을 끝까지 마치고 로비로 돌아왔을 때 한 번: FFProfile.matchDone(sb, 'stickseum') — 허브 일일 퀘스트의 '한 판 하기'는 이 신호로만 집계해요 (게임에 들어간 것만으로는 세지 않아요) */
+var lastDone={};
+function matchDone(sb, game){ if(oldPage) return Promise.resolve(); var t=Date.now(); if(lastDone[game]&&t-lastDone[game]<20000) return Promise.resolve(); lastDone[game]=t; try{ if(sb&&sb.rpc) return sb.rpc('ff_match_done',{p_game:game}).then(function(){},function(){}); }catch(e){} return Promise.resolve(); }
 function markPlayed(sb, game){ if(oldPage) return Promise.resolve(); try{ if(sb&&sb.rpc) return sb.rpc('ff_mark_played',{p_game:game}).then(function(){},function(){}); }catch(e){} return Promise.resolve(); }
 
 async function fetchData(sb, uid){
@@ -1054,5 +1057,5 @@ async function open(sb, uid, o){
 }
 /* the account button's small round photo when no profile photo is picked: the game character, drawn like on the card */
 async function avatarDataUrl(sb, uid){ try{ var p=await sb.from('profiles').select('stats').eq('id',uid).single(), av=(p&&!p.error&&p.data&&p.data.stats&&p.data.stats.avatar)||{}, im=av.ext?await loadImg(ext(av.ext)):null, a=document.createElement('canvas'); a.width=a.height=96; drawAvatar(a, av, im); return a.toDataURL('image/png'); }catch(e){ return null; } }
-window.FFProfile={t2lock:t2lock, avatarDataUrl:avatarDataUrl, open:open, gameStats:function(game, fn){ if(typeof fn==='function') GS[game]=fn; }, canEdit:function(){ return editOk; }, hubUrl:HUBSITE, markPlayed:markPlayed, setAchievements:setAchievements, draw:draw, fetchData:fetchData, games:GAMES, characters:EXT_CHARS, catalog:catalog, syncHub:syncHub, deco:DECO, titles:TITLES, avatars:AVATARS, avatarUrl:avatarUrl};
+window.FFProfile={matchDone:matchDone, t2lock:t2lock, avatarDataUrl:avatarDataUrl, open:open, gameStats:function(game, fn){ if(typeof fn==='function') GS[game]=fn; }, canEdit:function(){ return editOk; }, hubUrl:HUBSITE, markPlayed:markPlayed, setAchievements:setAchievements, draw:draw, fetchData:fetchData, games:GAMES, characters:EXT_CHARS, catalog:catalog, syncHub:syncHub, deco:DECO, titles:TITLES, avatars:AVATARS, avatarUrl:avatarUrl};
 })();
