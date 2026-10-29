@@ -1670,7 +1670,9 @@ body.playing #emoBar{display:flex}
    <div class="row"><input id="codeIn" maxlength="5" placeholder="방 코드" autocomplete="off"><button class="pb dark" id="joinBtn" style="flex:0 0 auto">들어가기</button></div>
    <div class="msg" id="homeMsg"></div>
   </aside>
-  <template id="patchnotes"><details class="notes" open><summary>패치노트 · v0.1 (b84)</summary>
+  <template id="patchnotes"><details class="notes" open><summary>패치노트 · v0.1 (b85)</summary>
+   <b>2026-10-30 · v0.1 · b85 · 허브 퀘스트 연결</b>
+   <ul><li>허브 일일 퀘스트의 "한 판 하기"가 방에 들어갔을 때가 아니라, 한 판을 끝까지 마치고 대기실로 돌아왔을 때 한 번 세져요</li></ul>
    <b>2026-10-29 · v0.1 · b84 · 프로필 카드에 내 캐릭터</b>
    <ul><li>프로필 카드의 캐릭터 자리에 내가 꾸민 Dummy Party 캐릭터(모자·안경·얼굴)가 나와요. 칭호를 달았다면 이름 아래에 같이 나와요</li></ul>
    <b>2026-10-28 · v0.1 · b83 · 프로필 카드 정리</b>
@@ -1837,7 +1839,7 @@ body.playing #emoBar{display:flex}
    <ul><li>무너지는 발판 칸 수 대폭 증가 (19×10)와 용암 동굴 맵</li><li>10개 맵 전부 새로 그림 (관중석, 야자수 섬, 링, 정원 미로, 서커스, 우노 테이블 등)</li><li>글자 대신 아이콘·말풍선·이펙트로 표현 (무기, 아이템, 카드 효과, 시작 안내)</li><li>타격·폭발·물보라 효과와 화면 흔들림 추가</li></ul>
    <b>2026-10-19 · v0.1 · b1 · 첫 시험판</b>
    <ul><li>마네킹 미니게임 10개 추가 (장애물 달리기, 섬 밀치기, 싸우기, 병맛 미로, 체스 대난투, 폭탄 돌리기, 병맛 우노, 쇼윈도 얼음땡, 무너지는 발판, 컨베이어 서바이벌)</li><li>방 코드로 최대 8명 멀티플레이, 빈자리는 봇으로 채우기</li><li>판마다 10개 중 5개를 무작위로 골라 점수를 합산</li><li>PC 키보드와 휴대폰 터치 조작 지원</li></ul></details></template>
-  <p class="foot">2~8명 · 판마다 36개 미니게임 중 7개 · v0.1 b84 · <a href="../">← Dummy Party 사이트로</a></p>
+  <p class="foot">2~8명 · 판마다 36개 미니게임 중 7개 · v0.1 b85 · <a href="../">← Dummy Party 사이트로</a></p>
   <p class="foot"><span class="ff-copy">© 2026 Frenchfries777 · <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.ko" target="_blank" rel="noopener">CC BY-NC-ND 4.0</a></span></p>
  </div>
 </section>
@@ -7329,7 +7331,7 @@ var ffProfWait = [];
 function ffProf(cb) {
   if (window.FFProfile) return cb();
   ffProfWait.push(cb); if (ffProfWait.length > 1) return;
-  var sc = document.createElement('script'); sc.src = 'https://frenchfries777mc.github.io/games/ff-profile.js?v=20261028a';
+  var sc = document.createElement('script'); sc.src = 'https://frenchfries777mc.github.io/games/ff-profile.js?v=20261030a';
   sc.onload = function () { var q = ffProfWait; ffProfWait = []; if (window.FFProfile) q.forEach(function (f) { try { f(); } catch (e) { } }); };
   sc.onerror = function () { ffProfWait = []; };
   document.head.appendChild(sc);
@@ -7364,6 +7366,12 @@ function myFigure(me) {
   var tr = function (t) { return (window.DP_T && window.DP_LANG && DP_LANG !== 'ko') ? DP_T(t) : t; };
   var nm = ''; try { nm = FFAuth.nickname() || ''; } catch (e) { }
   return { img: cv, label: tr('내 캐릭터'), name: nm, sub: d.t > 0 && TITLES[d.t] ? tr(TITLES[d.t]) : '' };
+}
+// 한 판을 끝까지 마치고 로비로 돌아왔을 때 한 번 (허브 일일 퀘스트 '한 판 하기'는 이 신호로만 세요)
+function matchDoneSignal() {
+  if (!G._doneArm) return; G._doneArm = 0;
+  var sb = walClient(); if (!sb) return;
+  ffProf(function () { try { if (FFProfile.matchDone) FFProfile.matchDone(sb, 'dummyparty'); } catch (e) { } });
 }
 function openProfile() {
   var sb = walClient(), me = window.FFAuth && FFAuth.user(); if (!sb || !me) { try { FFAuth.openLogin(); } catch (e) { } return; }
@@ -7520,7 +7528,7 @@ var PREFIX = 'ff-dummyparty-', CODE_CH = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789', MAX
 var PTS = [5, 3, 2, 1];
 var T_INTRO = 6, T_COUNT = 3, T_END = 4.0, T_RESULT = 6;
 // 게임 버전(0.x)과 빌드. 버전이 다르면 같은 방에 못 들어와요 (빌드가 달라도 괜찮아요). dp_config 의 min_build 보다 낮은 빌드는 dC를 못 받아요
-var DP_VER = '0.1', DP_BUILD = 84;
+var DP_VER = '0.1', DP_BUILD = 85;
 function dpNotice(msg) { dpAsk(msg, '확인', function () { }); }
 var BOT_NAMES = ['방귀쟁이', '홀쭉이', '바보1', '멍청이', '10급 공무원', '교무실 단골', '벌점부자', '말썽이', '김개똥'];
 var qs = new URLSearchParams(location.search);
@@ -7763,6 +7771,7 @@ function noteMatchEnd(m) {
   var me = G.me, st = myStats(), mp = null, top = -1;
   m.players.forEach(function (p) { if (p.id === me) mp = p; if (p.score > top) top = p.score; });
   if (!mp) return;
+  G._doneArm = 1;   // 허브 퀘스트: 이 판을 끝까지 마쳤어요. 로비로 돌아오면 한 번 알려요
   var before = st.rwins; st.matches++; st.rwins += mp.wins; if (mp.score === top && top > 0) st.wins++;
   lsSet('dummyparty.stats', JSON.stringify(st));
   var got = []; HAT_NEED.forEach(function (n, i) { if (n > before && n <= st.rwins) got.push('모자'); }); GL_NEED.forEach(function (n, i) { if (n > before && n <= st.rwins) got.push('안경'); });
@@ -7973,6 +7982,8 @@ function onPhase(prev) {
   var m = G.meta || metaObj(); var def = DP.MG[m.mg];
   var ov = $('ov'), ph = m.phase;
   if (ph !== 'final') { G._noted = 0; G._finKey = null; }
+  if (ph === 'lobby' && G._doneArm) matchDoneSignal();
+  if (ph === 'count' || ph === 'play') G._doneArm = 0;   // 로비로 돌아오지 않고 바로 다음 판을 시작하면 세지 않아요
   var pk = ph + ':' + m.round + ':' + m.mg; if (G.pk !== pk) { G.pk = pk; funPhase(m, ph); }
   document.body.classList.toggle('playing', ph === 'play' || ph === 'count');
     if (def) { $('btnA').textContent = def.keys && def.keys.a || 'A'; $('btnB').textContent = def.keys && def.keys.b || 'B'; $('btnB').style.display = def.keys && def.keys.b ? '' : 'none'; }
@@ -8017,7 +8028,7 @@ function onPhase(prev) {
       awardsHtml(m) + '<div class="iv" id="ivBox"></div><ol class="rl sm">' + ps.slice(3).map(function (p, i) { return '<li><b class="rk">' + (i + 4) + '</b><span style="color:' + COLORS[p.color] + '">' + nameH(p) + '</span><strong>' + p.score + '점</strong></li>'; }).join('') + '</ol>' +
       '<div class="fbtn"><button class="pb" id="photoBtn" type="button">📷 기념사진</button>' + (host ? '<button class="pb gold" id="againBtn">한 번 더</button><button class="pb" id="toLobbyBtn">로비로</button>' : '<p class="wait">방장이 다음 경기를 고르는 중이에요.</p>') + '<button class="pb dark" id="quitBtn2">나가기</button></div></div>';
     paintMinis(ov); ivRender(m);
-    if (host) { $('againBtn').onclick = function () { startMatch(); }; $('toLobbyBtn').onclick = function () { G.phase = 'lobby'; lobReset(); G.st = null; G.mgId = null; sendMeta(); show('sLobby'); trimBots(); renderLobby(); ov.className = 'ov'; }; }
+    if (host) { $('againBtn').onclick = function () { startMatch(); }; $('toLobbyBtn').onclick = function () { matchDoneSignal(); G.phase = 'lobby'; lobReset(); G.st = null; G.mgId = null; sendMeta(); show('sLobby'); trimBots(); renderLobby(); ov.className = 'ov'; }; }
     $('quitBtn2').onclick = goHome; $('photoBtn').onclick = function () { dpPhoto(G.meta || m); };
   }
 }
@@ -8193,7 +8204,7 @@ function show(id) { document.querySelectorAll('.screen').forEach(function (s) { 
 var toastT;
 function toast(t) { var el = $('toast'); el.textContent = t; el.classList.add('on'); clearTimeout(toastT); toastT = setTimeout(function () { el.classList.remove('on'); }, 2600); }
 function exitHub() { destroyPeer(); location.href = 'https://frenchfries777mc.github.io/games/dummyparty/'; }
-function goHome() { G.practice = null; destroyPeer(); G.role = null; G.phase = 'idle'; G.st = null; G.meta = null; G.snapCur = G.snapPrev = null; busy(false); show('sHome'); }
+function goHome() { G.practice = null; G._doneArm = 0; destroyPeer(); G.role = null; G.phase = 'idle'; G.st = null; G.meta = null; G.snapCur = G.snapPrev = null; busy(false); show('sHome'); }
 
 /* ===== 대기실 놀이터: 기다리는 동안 마네킹을 움직이고 이모트를 보내고 소품을 던져요 =====
    방장이 모두의 위치를 계산해서 15번/초 보내고, 참가자는 입력만 보내요. */
