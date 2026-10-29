@@ -74,7 +74,10 @@ function localIds(game){
 /* 한 판을 끝까지 마치고 로비로 돌아왔을 때 한 번: FFProfile.matchDone(sb, 'stickseum') — 허브 일일 퀘스트의 '한 판 하기'는 이 신호로만 집계해요 (게임에 들어간 것만으로는 세지 않아요) */
 var lastDone={};
 function matchDone(sb, game){ if(oldPage) return Promise.resolve(); var t=Date.now(); if(lastDone[game]&&t-lastDone[game]<20000) return Promise.resolve(); lastDone[game]=t; try{ if(sb&&sb.rpc) return sb.rpc('ff_match_done',{p_game:game}).then(function(){},function(){}); }catch(e){} return Promise.resolve(); }
-function markPlayed(sb, game){ if(oldPage) return Promise.resolve(); try{ if(sb&&sb.rpc) return sb.rpc('ff_mark_played',{p_game:game}).then(function(){},function(){}); }catch(e){} return Promise.resolve(); }
+/* 판이 없는 게임(Isleport, Beaconfall)은 화면을 보며 5분 이상 플레이하면 matchDone 으로 쳐요 (markPlayed 를 부른 쪽에서 자동으로 시작) */
+var longTimers={};
+function longPlay(sb, game){ if(longTimers[game]) return; var sec=0; longTimers[game]=setInterval(function(){ if(document.visibilityState==='hidden') return; if(++sec>=300){ clearInterval(longTimers[game]); matchDone(sb, game); } },1000); }
+function markPlayed(sb, game){ if(oldPage) return Promise.resolve(); if(game==='isleport'||game==='beaconfall'||game==='islandtrade') longPlay(sb, game==='islandtrade'?'isleport':game); try{ if(sb&&sb.rpc) return sb.rpc('ff_mark_played',{p_game:game}).then(function(){},function(){}); }catch(e){} return Promise.resolve(); }
 
 async function fetchData(sb, uid){
   var p=await sb.from('profiles').select('id,username,display_name,stats').eq('id',uid).single();
