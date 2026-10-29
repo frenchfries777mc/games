@@ -351,3 +351,11 @@ patchnotes.json | v493 items[4] | 보스 종류마다 다른 공격 패턴 추�
 patchnotes.json | v493 items[5] | 시작 카운트다운이 3, 2, 1로 표시 | build 493 | 2026-10-29
 patchnotes.json | v494 title | 은하 제국의 황혼 | build 494 | 2026-10-29
 patchnotes.json | v494 items[0] | 프로필 카드에 통계와 대표 캐릭터 모습, 마스터리 레벨·레벨·이름 표시 | build 494 | 2026-10-29
+patchnotes.json | v497 title | 은하 제국의 황혼 | build 497 | 2026-10-29
+patchnotes.json | v497 items[0] | 승리 모션에 지금 쓰는 스킨 모습 반영 | build 497 | 2026-10-29
+patchnotes.json | v497 items[1] | 투사체에서 휘두르기 궤적·파티클 삭제 | build 497 | 2026-10-29
+patchnotes.json | v497 items[2] | 황금 쟁탈 금 든 느려짐은 땅에 있을 때만, 봇 운반 개선 | build 497 | 2026-10-29
+patchnotes.json | v497 items[3] | 봇이 긴 맵(깃발 뺏기·금고 약탈)에서 위쪽 길 이용 | build 497 | 2026-10-29
+patchnotes.json | v497 items[4] | 시즌 패스 보상 카드 아이콘 위에 크게, 글자 아래 | build 497 | 2026-10-29
+patchnotes.json | v497 items[5] | 클랜 정보의 클랜원 온라인 승리 줄 삭제 | build 497 | 2026-10-29
+patchnotes.json | v497 items[6] | 펠 공격력 6 → 12, 크레온 1세 공격력 10 → 14 | build 497 | 2026-10-29
