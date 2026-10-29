@@ -52,6 +52,7 @@ function menu(go) {
   if (go === 'solo') { leaveNet(); N.mode = 'solo'; N.players = [{ id: UID, name: myName(), col: COLORS[SAVE.col % COLORS.length] }]; pickMap(id => { N.pick = id; beginGame(); }); }
   else if (go === 'match') { if (needLogin()) return; startMatch(); }
   else if (go === 'host') { if (needLogin()) return; startHost(); }
+  else if (go === 'join') { if (needLogin()) return; $('joinMsg').textContent = ''; $('joinCode').value = ''; show('sJoin'); setTimeout(() => $('joinCode').focus(), 50); }
   else if (go === 'help') { $('wl').innerHTML = WEP_IDS.map(k => { const w = WEAPONS[k]; return '<div><b>' + w.name + '</b><small>' + ({ melee: '가까이 휘둘러요', shot: '멀리 쏴요', spray: '뿌리는 동안 뒤로 밀려요', rocket: '터지면 주변이 다 날아가요' })[w.kind] + ' · ' + w.uses + '번</small></div>'; }).join(''); show('sHelp'); }
   else if (go === 'notes') { loadNotes(); show('sNotes'); }
   else if (go === 'site') location.href = '../../';
@@ -85,7 +86,7 @@ function openRoom() {
   show('sRoom');
   const host = N.mode === 'solo' || N.mode === 'host';
   $('roomTitle').textContent = N.mode === 'solo' ? '봇과 연습' : N.pub ? '온라인 대전' : '친구와 대결';
-  $('roomSub').textContent = N.mode === 'host' && N.code ? (N.pub ? '곧 시작해요. 빈자리는 봇이 채워요' : '방 코드 ' + N.code + ' · 친구가 주소 끝에 ?join=' + N.code + ' 로 들어와요') : '';
+  $('roomSub').textContent = N.mode === 'host' && N.code ? (N.pub ? '방장이 시작을 누르면 빈자리를 봇이 채워 시작해요' : '방 코드 ' + N.code + ' · 친구는 로비의 "코드로 입장"에 이 코드를 입력해요') : '';
   $('startBtn').style.display = host ? '' : 'none'; 
   paintSlots();
 }
@@ -131,6 +132,12 @@ function startGuest(code) {
     c.on('data', d => guestMsg(d, fail, () => { done = true; })); c.on('close', () => { if (!done || N.mode === 'guest') { if (N.G) { endToLobby('방장과 연결이 끊겼어요.'); } else fail('방과 연결이 끊겼어요.'); } });
   });
 }
+function doJoin() {
+  const c = $('joinCode').value.toUpperCase().replace(/[^A-Z0-9]/g, '');
+  if (c.length !== 5) { $('joinMsg').textContent = '방 코드는 5글자예요.'; return; }
+  startGuest(c);
+}
+$('joinBtn').onclick = doJoin; $('joinCode').addEventListener('keydown', e => { e.stopPropagation(); if (e.key === 'Enter') doJoin(); });
 function endToLobby(msg) {
   BGM.play('top-of-the-leaderboard'); leaveNet(); show('sLobby'); paintWho(); homeMsg(msg || ''); }
 function guestMsg(d, fail, ok) {
@@ -164,7 +171,7 @@ function openQuick(gen, k) {
   try { N.peer && N.peer.destroy(); } catch (e) { }
   N.mode = 'host'; N.pub = true; N.code = 'q' + k; N.players = [{ id: UID, name: myName(), col: COLORS[SAVE.col % COLORS.length] }]; N.conns = []; N.host = null;
   const p = new Peer(PREFIX + 'q' + k, peerOpts()); N.peer = p; hostHandlers(p);
-  p.on('open', () => { if (N.gen !== gen) return; homeMsg(''); openRoom(); let s = 14; const tick = () => { if (N.gen !== gen || N.G) return; $('roomMsg').textContent = s + '초 뒤 시작해요'; if (s-- <= 0) beginGame(); else N.autoT = setTimeout(tick, 1000); }; tick(); });
+  p.on('open', () => { if (N.gen !== gen) return; homeMsg(''); openRoom(); });
   p.on('error', e => { if (N.gen !== gen) return; if (e.type === 'unavailable-id') openQuick(gen, k + 1); else { leaveNet(); show('sLobby'); homeMsg('연결하지 못했어요.'); } });
 }
 
