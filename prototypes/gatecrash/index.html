@@ -5,7 +5,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <title>Gatecrash</title>
-<script>(function(){var B=5;try{fetch('build.json?t='+Date.now(),{cache:'no-store'}).then(function(r){return r.json()}).then(function(d){if(d&&d.build>B&&sessionStorage.getItem('gcReload')!=String(d.build)){sessionStorage.setItem('gcReload',String(d.build));var u=new URL(location.href);u.searchParams.set('b',d.build);location.replace(u.toString());}}).catch(function(){});}catch(e){}})();</script>
+<script>(function(){var B=6;try{fetch('build.json?t='+Date.now(),{cache:'no-store'}).then(function(r){return r.json()}).then(function(d){if(d&&d.build>B&&sessionStorage.getItem('gcReload')!=String(d.build)){sessionStorage.setItem('gcReload',String(d.build));var u=new URL(location.href);u.searchParams.set('b',d.build);location.replace(u.toString());}}).catch(function(){});}catch(e){}})();</script>
 <meta name="description" content="건물과 공항을 달려 먼저 도착하는 옆면 픽셀 레이스 액션">
 <meta name="robots" content="noindex">
 <link rel="icon" href="logo.svg" type="image/svg+xml">
@@ -22,7 +22,8 @@
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html,body{margin:0;height:100%;background:var(--bg);color:var(--ink);font-family:Galmuri,system-ui,-apple-system,"Apple SD Gothic Neo","Noto Sans KR","Malgun Gothic",sans-serif;overflow:hidden;user-select:none;-webkit-user-select:none;touch-action:none}
 ::-webkit-scrollbar{width:8px}::-webkit-scrollbar-track{background:#101830}::-webkit-scrollbar-thumb{background:#33446b;border-radius:4px}*{scrollbar-color:#33446b #101830}
-canvas#gl{position:fixed;inset:0;width:100vw;height:100vh;display:block;image-rendering:pixelated}
+#intro{position:fixed;inset:0;width:100vw;height:100vh;z-index:99999;background:#0c1220;image-rendering:pixelated}
+canvas#gl{cursor:crosshair;position:fixed;inset:0;width:100vw;height:100vh;display:block;image-rendering:pixelated}
 .scr{position:fixed;inset:0;z-index:5;display:none}.scr.on{display:block}
 button{font:inherit;color:inherit;cursor:pointer}
 .btn{background:#1b2a4d;border:2px solid var(--line);border-radius:8px;padding:9px 18px;font-weight:700}
@@ -65,6 +66,7 @@ button{font:inherit;color:inherit;cursor:pointer}
 </head>
 <body>
 <canvas id="gl"></canvas>
+<canvas id="intro"></canvas>
 
 <section class="scr on" id="sLobby">
   <canvas id="bgv"></canvas>
@@ -107,10 +109,11 @@ button{font:inherit;color:inherit;cursor:pointer}
   <div id="res"><div class="box"><h2 id="resT"></h2><ol id="resL"></ol><div class="row"><button class="btn" id="resBack">나가기</button></div></div></div></div>
 <div id="modal"><div class="box"><div id="modalT"></div><div class="row" style="justify-content:center"><button class="btn" id="modalOk">확인</button></div></div></div>
 
-<script src="js/data.js?v=5"></script>
-<script src="js/game.js?v=5"></script>
-<script src="js/view.js?v=5"></script>
-<script src="js/sfx.js?v=5"></script>
-<script src="js/main.js?v=5"></script>
+<script src="js/data.js?v=6"></script>
+<script src="js/game.js?v=6"></script>
+<script src="js/view.js?v=6"></script>
+<script src="js/sfx.js?v=6"></script>
+<script src="js/main.js?v=6"></script>
+<script src="js/intro.js?v=6"></script>
 </body>
 </html>
