@@ -5,7 +5,7 @@ import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
 import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
 import { OutputPass } from 'three/addons/postprocessing/OutputPass.js';
 import { RenderPixelatedPass } from 'three/addons/postprocessing/RenderPixelatedPass.js';
-import { ROLES, MAP, CH, FOES, COSMETICS } from './data.js';
+import { ROLES, MAP, CH, FOES, COSMETICS, TEAMS, FLAG_R, FLAG_T } from './data.js';
 import { CS, MW, MH, GRID, WATER, PILLARS, cw, chapterIndex, SEC, SOPEN, GATE, CUT, HGT, LEDGE_H, hAt, pillarAt } from './map.js';
 // 화면에서 '바닥'은 비밀 방(SEC)을 뺀 곳이에요. 비밀 방은 따로 그려 두고 벽이 무너질 때 보여요. 창살문(GATE) 자리는 닫혀 있어도 바닥으로 그려요
 const floorCell = (i, j) => i >= 0 && j >= 0 && i < MW && j < MH && (GRID[j * MW + i] === 1 || GATE[j * MW + i] > 0) && !SEC[j * MW + i] && CUT[j * MW + i] !== 4 && CUT[j * MW + i] !== 1;
@@ -563,16 +563,15 @@ export class View {
     this.details(s, T);
     // 보스 방 바닥 문양
     { const ring = mesh(geo('bring', () => new THREE.TorusGeometry(6, 0.08, 4, 48)), M(T.ring, { e: T.ring, ei: 2 }), cw(MAP.boss[0]), 0.12, cw(MAP.boss[1]) + 3, s); ring.rotation.x = Math.PI / 2; ring.castShadow = false; }
-    // 투기장 꾸밈: 가장자리에 횃불 받침, 한가운데 왕관 문양 (불빛은 네 모서리만 켜요)
-    if (CH.pvp) {
-      const [ox, oy, aw, ah] = MAP.areas[0].r[0], X0 = cw(ox) + 2.4, X1 = cw(ox + aw - 1) - 2.4, Z0 = cw(oy) + 2.4, Z1 = cw(oy + ah - 1) - 2.4, brk = (x, z, lit) => { cyl(0.55, 0.4, 1.3, 8, M(0x4a4658, { m: 0.5 }), x, 0.65, z, s); cyl(0.7, 0.55, 0.3, 8, M(0x6a6276), x, 1.4, z, s); this.flame(s, x, 1.9, z, 0.9, lit); };
-      for (let k = 0; k <= 5; k++) { const x = X0 + (X1 - X0) * k / 5; brk(x, Z0, false); brk(x, Z1, false); }
-      for (let k = 1; k <= 4; k++) { const z = Z0 + (Z1 - Z0) * k / 5; brk(X0, z, false); brk(X1, z, false); }
-      for (const [x, z] of [[X0, Z0], [X1, Z0], [X0, Z1], [X1, Z1]]) { const L = new THREE.PointLight(0xff9a48, 60, 30, 1.5); L.position.set(x, 3, z); s.add(L); this.flick.push({ L, b: 60, ph: R() * 9 }); }
-      const cx = cw(ox + (aw >> 1)), cz = cw(oy + (ah >> 1)), gm = M(0xffd36b, { e: 0xffb020, ei: 1.2 });
-      for (const r of [7.5, 5.2]) { const rg = mesh(geo('emb' + r, () => new THREE.TorusGeometry(r, 0.12, 4, 56)), gm, cx, 0.13, cz, s); rg.rotation.x = Math.PI / 2; rg.castShadow = false; }
-      for (let k = 0; k < 8; k++) { const q = k / 8 * 6.283; const sp = box(0.3, 0.06, 2.4, gm, cx + Math.cos(q) * 6.35, 0.13, cz + Math.sin(q) * 6.35, s); sp.rotation.y = -q; sp.castShadow = false; }
-      const cg = this.crownMesh(s, cx, 0.5, cz, 1.3); cg.scale.y = 0.35; cg.position.y = 0.3;
+    // 깃발 일곱 개: 기둥과 천, 바닥에 점령 범위 고리 (주인에 따라 색이 바뀌고, 점령 중이면 안쪽이 차올라요)
+    this.flagM = [];
+    if (CH.pvp) for (const [fx, fy] of MAP.tflags) {
+      const x = cw(fx), z = cw(fy), g = new THREE.Group(); g.position.set(x, 0, z); s.add(g);
+      cyl(0.14, 0.18, 6.6, 8, M(0x6a5a4a), 0, 3.3, 0, g); box(0.5, 0.5, 0.5, gold(), 0, 6.75, 0, g);
+      const cm = M(0x8a8696, { e: 0x8a8696, ei: 0.5, uniq: true }), cloth = box(2.6, 1.7, 0.08, cm, 1.4, 5.6, 0, g);
+      const rm = M(0x8a8696, { e: 0x8a8696, ei: 1.2, op: 0.55, uniq: true }), ring = mesh(geo('fring', () => new THREE.RingGeometry(FLAG_R - 0.3, FLAG_R, 64)), rm, x, 0.13, z, s, false); ring.rotation.x = -Math.PI / 2; ring.castShadow = false;
+      const pm = M(0xffffff, { e: 0xffffff, ei: 1.4, op: 0.4, uniq: true }), prog = mesh(geo('fprog', () => new THREE.CircleGeometry(1, 48)), pm, x, 0.11, z, s, false); prog.rotation.x = -Math.PI / 2; prog.castShadow = false; prog.visible = false;
+      this.flagM.push({ cm, rm, pm, cloth, prog });
     }
     // 모닥불
     this.fires = MAP.fires.map(([fx, fy]) => {
@@ -1038,8 +1037,13 @@ export class View {
       const k = exact || p.id === me ? 1 : Math.min(1, dt * 12);
       E.x += (p.x - E.x) * k; E.z += (p.z - E.z) * k; E.a = lerpA(E.a, p.a, Math.min(1, dt * 18));
       animHero(E, p, dt, t, this); E.hy = hy(E, exact ? 1 : dt); E.m.position.y += E.hy; E.ring.position.set(E.x, 0.12 + E.hy, E.z); E.ring.visible = !p.dd;
-      E.ward.visible = p.sh > 0; const mp = S.pl.find(q => q.id === me), hid = p.stl && p.id !== me && mp && Math.hypot(mp.x - p.x, mp.z - p.z) > 2.8; E.m.visible = !p.dd && !hid; if (hid) E.ring.visible = false;
+      E.ward.visible = p.sh > 0; const mp = S.pl.find(q => q.id === me), hid = p.stl && p.id !== me && mp && p.tm !== mp.tm && Math.hypot(mp.x - p.x, mp.z - p.z) > 2.8; E.m.visible = !p.dd && !hid; if (hid) E.ring.visible = false;
     }
+    if (S.tf && this.flagM) S.tf.forEach((f, i) => {
+      const F = this.flagM[i]; if (!F) return; const c = f[0] < 0 ? 0x8a8696 : TEAMS[f[0]].c, pc = f[1] >= 0 ? TEAMS[f[1]].c : c;
+      F.cm.color.setHex(c); F.cm.emissive.setHex(c); F.rm.color.setHex(c); F.rm.emissive.setHex(c); F.pm.color.setHex(pc); F.pm.emissive.setHex(pc);
+      F.prog.visible = f[2] > 0; F.prog.scale.setScalar(Math.max(0.01, f[2] / FLAG_T) * FLAG_R); F.cloth.rotation.y = Math.sin(t * 2.2 + i) * 0.18;
+    });
     // 적
     for (const e of S.en) {
       const key = 'e' + e.id; seen.add(key); let E = this.ents.get(key);
