@@ -815,7 +815,7 @@ async function draw(cv, d, o){
     var T0=st.tp[0], sy0=all?HY+HH+50:HY+HH+34;
     c.textAlign='center'; c.fillStyle='rgba(255,255,255,.6)'; c.font='700 13px system-ui, sans-serif'; c.fillText(SL.main,W/2,sy0);
     c.fillStyle='rgba(0,0,0,.28)'; rrect(c,W/2-70,sy0+10,140,150,16); c.fill();
-    drawCharFig(c, T0[0], W/2, sy0+104, 2.1, av.color);
+    drawCharFig(c, T0[0], W/2, sy0+104, 2.1, av.color, T0[5]);       // (the skin the owner wears)
     c.font='900 20px system-ui, sans-serif'; c.fillStyle='#fff'; c.fillText(String(T0[1]||T0[0]),W/2,sy0+186);
     c.font='800 15px system-ui, sans-serif'; c.fillStyle='rgba(255,255,255,.85)'; c.fillText(SL.clv+(T0[4]||1),W/2,sy0+210);      // the character level takes the old place of the player level
     if(DET){
