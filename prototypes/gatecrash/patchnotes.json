@@ -2,6 +2,15 @@
  "notes": [
   {
    "date": "2026-10-29",
+   "build": "b10",
+   "title": "인트로",
+   "items": [
+    "인트로 곡이 클릭 없이 자동으로 나오게 했어요 (브라우저가 막으면 화면을 누르면 시작해요)",
+    "인트로 문구를 다른 게임과 같게 Made by Frenchfries777, With Claude AI로 바꿨어요"
+   ]
+  },
+  {
+   "date": "2026-10-29",
    "build": "b9",
    "title": "창밖 풍경",
    "items": [
