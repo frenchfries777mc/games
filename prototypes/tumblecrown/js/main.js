@@ -494,9 +494,11 @@ function startClient() {
 }
 function endToLobby(msg) {
   if (S.lite) { S.lite = false; S.slowN = 0; try { view.setLow(!!SAVE.set.opt); } catch (e) { } }
+  const fin = !!(S.snap && S.snap.ph === 'won' && S.resultShown);   // 한 판을 끝까지 마친 경우만 허브 퀘스트에 알려요
+  if (fin) ffProfile().then(ok => { try { const sb = window.FFAuth && FFAuth.client && FFAuth.client(); if (ok && sb && FFProfile.matchDone) FFProfile.matchDone(sb, 'tumblecrown'); } catch (e) { } });
   awardHonor(); S.wk = false; if (WEEKLY.on) { WEEKLY.on = false; useChapter(chapterIndex(), true); }
   leaveNet(); S.G = null; S.snap = null; setHud(false); $('bless').classList.remove('on');
-  CH.theme = 'dungeon'; view.buildLobby(); show('sLobby'); paintWho(); if (msg) homeMsg(msg);
+  { const th = CH.theme; CH.theme = 'dungeon'; view.buildLobby(); CH.theme = th; } show('sLobby'); paintWho(); if (msg) homeMsg(msg);
 }
 $('exitBtn').onclick = () => {
   const b = $('exitBtn');
@@ -565,7 +567,7 @@ function gatherInput(p) {
     const g = view.groundAt(mouse.x, mouse.y); inp.aim = Math.atan2(g.z - pos.z, g.x - pos.x); inp.ax = g.x; inp.az = g.z;
     inp.atk = mouse.down; inp.f = keyDown('f', 'ㄹ');
   }
-  inp.q = once.q; inp.e = once.e; inp.r = once.r; inp.roll = once.roll; if (once.skip) S.voted = true; inp.skip = once.skip; once.q = once.e = once.r = once.roll = once.skip = 0;
+  inp.rsp = S.rspSel | 0; inp.q = once.q; inp.e = once.e; inp.r = once.r; inp.roll = once.roll; if (once.skip) S.voted = true; inp.skip = once.skip; once.q = once.e = once.r = once.roll = once.skip = 0;
   return inp;
 }
 
@@ -812,7 +814,11 @@ function specTick(me) {
   if (tgt) el.textContent = T('관전 중 · {0}', tgt.bot ? ROLES[tgt.role].name : tgt.name) + (TOUCH ? ' · ' + T('화면을 누르면 다음 사람') : ' · ← → ' + T('로 바꾸기'));
 }
 addEventListener('keydown', e => { if (!S.snap || S.scr !== '' || !view.camId) return; const k = e.key; if (k === 'ArrowRight' || k === 'd' || k === 'D') specCycle(1); else if (k === 'ArrowLeft' || k === 'a' || k === 'A') specCycle(-1); });
-$('gl').addEventListener('pointerdown', () => { if (view.camId) specCycle(1); });
+$('gl').addEventListener('pointerdown', e => {
+  // 쓰러졌을 때 뜨는 지도에서 깃발(또는 진지)을 누르면 거기서 다시 일어나요
+  if (S.rspHit && S.rspHit.length) { const h = S.rspHit.find(q => Math.hypot(q.x - e.clientX, q.y - e.clientY) < q.r + 8); if (h) { S.rspSel = h.v; SFX.play('click'); return; } }
+  if (view.camId) specCycle(1);
+});
 function syncScene() {
   const sn = S.snap;
   if (!S.built) { view.buildMap(); S.built = true; S.local = null; mini.reset(); }
@@ -990,6 +996,28 @@ function teamHud(sn) {
     if (p.id === S.me) { oc.strokeStyle = '#fff'; oc.lineWidth = 1.5; oc.stroke(); }
   }
 }
+// 쓰러지면 큰 지도가 떠요: 우리 팀이 차지한 깃발과 진지가 밝게 보이고, 누르면 15초가 지난 뒤 거기서 다시 일어나요
+function respawnPanel(sn) {
+  const me = sn.pl.find(q => q.id === S.me); if (!me || !me.dd || sn.ph !== 'play') { if (me && !me.dd) S.rspSel = 0; return; }
+  const mt = me.tm, pw = Math.min(innerWidth * 0.78, innerHeight * 0.8 * MW / MH), ph = pw * MH / MW, x0 = (innerWidth - pw) / 2, y0 = Math.max(70, (innerHeight - ph) / 2 - 10), sc = pw / (MW * CS), P = (wx, wz) => [x0 + wx * sc, y0 + wz * sc];
+  if (mini.dirty) mini.paint();
+  oc.fillStyle = 'rgba(8,6,12,.82)'; oc.fillRect(x0 - 10, y0 - 40, pw + 20, ph + 56);
+  oc.imageSmoothingEnabled = false; oc.globalAlpha = 0.9; oc.drawImage(mini.c, x0, y0, pw, ph); oc.globalAlpha = 1;
+  oc.font = 'bold 16px Galmuri, system-ui'; oc.textAlign = 'center'; oc.lineWidth = 4; oc.strokeStyle = '#140f18';
+  const tx = T('{0}초 뒤 되살아나요 · 다시 일어날 곳을 눌러요', Math.max(0, Math.ceil(me.rs))); oc.strokeText(tx, innerWidth / 2, y0 - 18); oc.fillStyle = '#ffe08a'; oc.fillText(tx, innerWidth / 2, y0 - 18);
+  const pulse = 0.5 + 0.5 * Math.sin(performance.now() / 260), tc = hex(TEAMS[mt].c), pick = S.rspSel | 0;
+  const sp = MAP.tspawn[mt], [sx, sy] = P(cw(sp[0]), cw(sp[1]));
+  S.rspHit.push({ x: sx, y: sy, r: 16, v: -1 });
+  oc.fillStyle = tc; oc.globalAlpha = pick <= 0 ? 1 : 0.55; oc.fillRect(sx - 9, sy - 9, 18, 18); oc.globalAlpha = 1; oc.strokeStyle = pick <= 0 ? '#fff' : '#140f18'; oc.lineWidth = 2.5; oc.strokeRect(sx - 9, sy - 9, 18, 18);
+  oc.fillStyle = '#fff'; oc.font = 'bold 12px Galmuri, system-ui'; oc.fillText(T('진지'), sx, sy + 24);
+  sn.tf.forEach((f, i) => {
+    const fl = MAP.tflags[i], [a, b] = P(cw(fl[0]), cw(fl[1])), mine = f[0] === mt;
+    if (mine) { S.rspHit.push({ x: a, y: b, r: 15, v: i + 1 }); oc.fillStyle = 'rgba(' + (mt ? '255,90,74' : '74,140,255') + ',' + (0.18 + pulse * 0.25) + ')'; oc.beginPath(); oc.arc(a, b, 22 + pulse * 4, 0, 7); oc.fill(); }
+    oc.fillStyle = mine ? tc : f[0] < 0 ? '#5a5666' : hex(TEAMS[f[0]].c); oc.globalAlpha = mine ? 1 : 0.4; oc.beginPath(); oc.arc(a, b, 11, 0, 7); oc.fill(); oc.globalAlpha = 1;
+    oc.strokeStyle = pick === i + 1 ? '#fff' : '#140f18'; oc.lineWidth = pick === i + 1 ? 4 : 2; oc.beginPath(); oc.arc(a, b, 11, 0, 7); oc.stroke();
+  });
+  for (const p of sn.pl) if (!p.dd && p.tm === mt) { const [a, b] = P(p.x, p.z); oc.fillStyle = '#fff'; oc.beginPath(); oc.arc(a, b, 3, 0, 7); oc.fill(); }
+}
 // 머리 위 체력 막대: 나는 초록, 같은 편은 파랑, 상대는 빨강 (보호막은 하늘색으로 덧입혀요)
 function hpBar(x, y, p, me, ally) {
   const w = me ? 60 : 52, f = Math.max(0, Math.min(1, p.hp / p.mx));
@@ -1000,7 +1028,8 @@ function hpBar(x, y, p, me, ally) {
 function drawOverlay(dt) {
   oc.clearRect(0, 0, innerWidth, innerHeight);
   const sn = S.snap; if (!sn || S.scr === 'sIntro') return;
-  if (sn.tf && S.scr === '' && sn.ph !== 'won') teamHud(sn);
+  S.rspHit = [];
+  if (sn.tf && S.scr === '' && sn.ph !== 'won') { teamHud(sn); respawnPanel(sn); }
   oc.textAlign = 'center'; oc.textBaseline = 'middle';
   // 적 체력
   for (const e of sn.en) {
@@ -1071,7 +1100,7 @@ function showWin() {
   if (won) { unlock('win'); SAVE.wins = SAVE.wins || {}; SAVE.wins[mine.role] = 1; save(); if (ROLE_IDS.slice(0, 7).every(r => SAVE.wins[r])) unlock('winall'); }
   if (mine && mine.kl >= 3) unlock('kill3');
   const mem = sn.pl.filter(p => p.tm === wt);
-  $('winBox').innerHTML = `<div class="wk">${won ? T('우리 팀이 이겼어요') : T('상대 팀이 이겼어요')}</div><div class="wt" style="color:${hex(TEAMS[wt].c)}">${T('{0} 승리!', TEAMS[wt].name)}</div><div class="ws">${T('깃발 일곱 개를 모두 차지했어요')}</div><div class="wn">${mem.map(p => `<img alt="" width="48" src="${view.portrait(p.role)}">`).join('')}</div>`;
+  $('winBox').innerHTML = `<div class="wk">${TEAMS[wt].name}</div><div class="wt" style="color:${won ? '#ffd36b' : '#ff6a5a'}">${won ? T('승리!') : T('패배')}</div><div class="ws">${T('깃발 일곱 개를 모두 차지했어요')}</div><div class="wn">${mem.map(p => `<img alt="" width="48" src="${view.portrait(p.role)}">`).join('')}</div>`;
   $('winBox').classList.toggle('me', !!won);
   $('winNext').onclick = () => { SFX.play('click'); showResult(); };
   $('winBack').onclick = () => { SFX.play('click'); endToLobby(''); };
@@ -1079,10 +1108,10 @@ function showWin() {
   if (mine) { const E = view.ents.get('p' + sn.win); if (E) view.burst(E.x, 1.5, E.z, 0xffd36b, 30, 8, 0.8, 0.14); }
 }
 function showResult() {
-  S.resultShown = true; bigMsg('', '', 0); const h = awardHonor() || S.lastH || 0, sn = S.snap, wt = sn.wtm;
+  S.resultShown = true; bigMsg('', '', 0); const h = awardHonor() || S.lastH || 0, sn = S.snap, wt = sn.wtm, mine0 = myP();
   const row = p => `<tr${p.id === S.me ? ' style="background:#2a2014"' : ''}><td style="color:${ROLES[p.role].color}">${ROLES[p.role].name}</td><td>${esc(p.id === S.me ? T('나') : p.bot ? T('봇') : p.name)}</td><td>${p.kl}</td><td>${p.dth}</td></tr>`;
   const tab = t => `<h3 style="color:${hex(TEAMS[t].c)}">${TEAMS[t].name}${t === wt ? ' · ' + T('승리') : ''}</h3><table><tr><th>${T('직업')}</th><th>${T('이름')}</th><th>${T('쓰러뜨림')}</th><th>${T('쓰러짐')}</th></tr>${sn.pl.filter(p => p.tm === t).map(row).join('')}</table>`;
-  $('result').innerHTML = `<div class="big">${T('{0} 승리', TEAMS[wt].name)}</div>${tab(0)}${tab(1)}<p>${T('받은 명예 {0}', '<b style="color:#ffd36b">' + h + '</b>')} · ${T('지금 명예 {0}', SAVE.honor)}</p><div class="row"><button class="btn gold" id="resBack">${T('로비로')}</button></div>`;
+  $('result').innerHTML = `<div class="big">${mine0 && mine0.tm === wt ? T('승리') : T('패배')}</div>${tab(0)}${tab(1)}<p>${T('받은 명예 {0}', '<b style="color:#ffd36b">' + h + '</b>')} · ${T('지금 명예 {0}', SAVE.honor)}</p><div class="row"><button class="btn gold" id="resBack">${T('로비로')}</button></div>`;
   $('resBack').onclick = () => endToLobby('');
   setHud(false); show('sResult');
 }
@@ -1136,7 +1165,7 @@ function frame(now) {
       if (!S.local || S.local.ri !== S.snap.ri) S.local = { x: me.x, z: me.z, ri: S.snap.ri, roll: 0, rollCd: 0 };
       localMove(me, inp, dt);
       S.sendAcc += dt; const o = S.pend || (S.pend = {}); o.q = o.q || inp.q; o.e = o.e || inp.e; o.r = o.r || inp.r; o.roll = o.roll || inp.roll; o.skip = o.skip || inp.skip;
-      if (S.sendAcc >= 1 / 30) { S.sendAcc = 0; send({ t: 'i', px: +S.local.x.toFixed(2), pz: +S.local.z.toFixed(2), aim: inp.aim, ax: inp.ax, az: inp.az, atk: !!inp.atk, f: !!inp.f, q: o.q, e: o.e, r: o.r, roll: o.roll, skip: o.skip }); S.pend = {}; }
+      if (S.sendAcc >= 1 / 30) { S.sendAcc = 0; send({ t: 'i', rsp: inp.rsp, px: +S.local.x.toFixed(2), pz: +S.local.z.toFixed(2), aim: inp.aim, ax: inp.ax, az: inp.az, atk: !!inp.atk, f: !!inp.f, q: o.q, e: o.e, r: o.r, roll: o.roll, skip: o.skip }); S.pend = {}; }
       me.x = S.local.x; me.z = S.local.z; if (S.local.roll > 0) me.ro = 1; if (inp.aim != null) me.a = inp.aim;
     }
     syncScene();
