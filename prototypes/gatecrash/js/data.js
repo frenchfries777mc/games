@@ -1,7 +1,7 @@
 /* Gatecrash · © 2026 Frenchfries777 · CC BY-NC-ND 4.0
    데이터: 상수, 무기, 맵 */
 'use strict';
-const VERSION = '0.1', BUILD = 1;
+const VERSION = '0.1', BUILD = 3;
 const TS = 16;                                   // 타일 한 칸 (px)
 const PH = { RUN: 120, ACC: 1500, AIR: 1000, G: 1500, JUMP: 410, CUT: 150, MAXF: 560, W: 10, H: 22, COY: 0.08, BUF: 0.12, BELT: 70 };
 const MAX_HP = 100, RACERS = 4;
@@ -105,8 +105,81 @@ function mapAirport() {
   return b;
 }
 
+/* 층 구조 건물 만들기: floors = 아래 층부터 [{ theme, objs: [[종류, x, 너비, 높이], ...], belt: 0|1|-1 }], roof = 옥상 가구 */
+function floorsMap(F, roof, decor) {
+  const n = F.length, H = 6 * n + 6, b = Builder(64, H), S = k => H - 1 - 6 * k;
+  for (let k = 0; k <= n; k++) b.fill(0, S(k), 63, S(k), '#');
+  b.fill(0, S(n), 0, H - 1, '#'); b.fill(63, S(n), 63, H - 1, '#');
+  F.forEach((f, i) => {
+    const slab = S(i + 1), bottom = S(i) - 1, right = i % 2 === 0;
+    b.room(1, slab + 1, 62, bottom, f.theme);
+    if (f.belt) b.fill(12, S(i), 50, S(i), f.belt > 0 ? '>' : '<');
+  });
+  F.forEach((f, i) => {
+    const slab = S(i + 1), bottom = S(i) - 1, right = i % 2 === 0;
+    if (right) { b.fill(54, slab, 59, slab, '.'); b.fill(57, slab + 4, 59, slab + 4, '='); b.fill(54, slab + 2, 56, slab + 2, '='); b.deco('stairwell', 54, slab + 5, 6, 6); }
+    else { b.fill(4, slab, 9, slab, '.'); b.fill(4, slab + 4, 6, slab + 4, '='); b.fill(7, slab + 2, 9, slab + 2, '='); b.deco('stairwell', 4, slab + 5, 6, 6); }
+    for (const o of f.objs) { if (o[0][0] === '~') b.deco(o[0].slice(1), o[1], bottom, o[2], o[3]); else b.obj(o[0], o[1], bottom, o[2], o[3]); }
+    [14, 31, 48].forEach(x => b.spawn(x, bottom));
+  });
+  b.deco('door', 1, S(0) - 1, 2, 4);
+  const rb = S(n) - 1;
+  for (const o of roof) { if (o[0][0] === '~') b.deco(o[0].slice(1), o[1], rb, o[2], o[3]); else b.obj(o[0], o[1], rb, o[2], o[3]); }
+  const arriveRight = (n - 1) % 2 === 0;
+  b.spawn(arriveRight ? 45 : 18, rb);
+  if (arriveRight) { b.deco('helipad', 1, rb, 9, 1); b.finish = { x0: 1, y0: rb - 4, x1: 8, y1: rb }; } else { b.deco('helipad', 54, rb, 9, 1); b.finish = { x0: 55, y0: rb - 4, x1: 62, y1: rb }; }
+  for (let i = 0; i < RACERS; i++) b.starts.push({ x: (2 + i) * TS + 3, y: (H - 1) * TS - PH.H });
+  return b;
+}
+const ob = (t, x, w, h) => [t, x, w, h];
+function mapSubway() {
+  return floorsMap([
+    { theme: 'subwayB', objs: [ob('bench', 12, 3, 1), ob('trash', 18, 1, 1), ob('turnstile', 22, 1, 2), ob('turnstile', 25, 1, 2), ob('luggage', 31, 2, 1), ob('bench', 37, 3, 1), ob('pillar', 44, 2, 3), ob('boxes', 49, 2, 1), ['~train', 12, 40, 3]] },
+    { theme: 'subway', objs: [ob('ticket', 14, 3, 2), ob('plant', 21, 1, 1), ob('kiosk', 26, 3, 2), ob('luggage', 33, 2, 1), ob('bench', 38, 3, 1), ob('ticket', 44, 3, 2)] },
+    { theme: 'subwayS', objs: [ob('cart', 13, 2, 1), ob('barrier', 19, 1, 1), ob('news', 24, 2, 2), ob('bench', 31, 3, 1), ob('barrier', 38, 1, 1), ob('plant', 44, 1, 2), ob('boxes', 48, 2, 1)] }
+  ], [ob('ac', 15, 3, 2), ob('vent', 24, 1, 1), ob('tank', 31, 3, 2), ob('ac', 40, 2, 2)]);
+}
+function mapMall() {
+  return floorsMap([
+    { theme: 'mall', objs: [ob('fountain', 14, 5, 1), ob('plant', 22, 1, 2), ob('bench', 26, 3, 1), ob('cart', 33, 2, 1), ob('kiosk', 39, 3, 2), ob('plant', 46, 1, 1)] },
+    { theme: 'mallF', objs: [ob('mannequin', 14, 1, 3), ob('rackc', 19, 3, 2), ob('mannequin', 26, 1, 3), ob('rackc', 31, 4, 2), ob('boxes', 39, 2, 1), ob('rackc', 44, 3, 2)] },
+    { theme: 'mall', objs: [ob('shoes', 13, 4, 1), ob('bench', 21, 3, 1), ob('shoes', 27, 4, 2), ob('cart', 35, 2, 1), ob('mannequin', 41, 1, 3), ob('plant', 47, 1, 1)] },
+    { theme: 'food', objs: [ob('table', 14, 3, 1), ob('table', 21, 3, 1), ob('foodbar', 28, 5, 2), ob('table', 36, 3, 1), ob('trash', 43, 1, 1), ob('table', 47, 3, 1)] },
+    { theme: 'mallF', objs: [ob('rackc', 14, 3, 2), ob('boxes', 21, 2, 2), ob('rackc', 27, 4, 2), ob('mannequin', 35, 1, 3), ob('rackc', 40, 3, 2), ob('boxes', 47, 2, 1)] }
+  ], [ob('ac', 14, 3, 2), ob('tank', 22, 3, 2), ob('vent', 30, 1, 1), ob('ac', 36, 2, 2), ob('vent', 44, 1, 1)]);
+}
+function mapHospital() {
+  return floorsMap([
+    { theme: 'hospital', objs: [ob('reception', 12, 5, 2), ob('chair', 20, 3, 1), ob('plant', 25, 1, 2), ob('wheelchair', 30, 2, 1), ob('chair', 36, 3, 1), ob('vending', 42, 2, 2), ob('plant', 48, 1, 1)] },
+    { theme: 'ward', objs: [ob('bed', 13, 4, 1), ob('drip', 19, 1, 2), ob('bed', 24, 4, 1), ob('cabinet', 31, 2, 2), ob('bed', 36, 4, 1), ob('drip', 42, 1, 2), ob('wheelchair', 46, 2, 1)] },
+    { theme: 'lab', objs: [ob('labtable', 14, 5, 2), ob('scanner', 23, 4, 3), ob('cart', 31, 2, 1), ob('labtable', 36, 4, 2), ob('boxes', 43, 2, 1), ob('cabinet', 47, 2, 2)] },
+    { theme: 'ward', objs: [ob('bed', 14, 4, 1), ob('cart', 21, 2, 1), ob('bed', 26, 4, 1), ob('drip', 33, 1, 2), ob('wheelchair', 37, 2, 1), ob('bed', 42, 4, 1)] }
+  ], [ob('ac', 14, 3, 2), ob('tank', 22, 3, 2), ob('vent', 31, 1, 1), ob('ac', 38, 2, 2), ob('vent', 46, 1, 1)]);
+}
+function mapSchool() {
+  return floorsMap([
+    { theme: 'hall', objs: [ob('locker', 12, 4, 2), ob('bench', 19, 3, 1), ob('trophy', 25, 2, 2), ob('locker', 31, 4, 2), ob('bin', 38, 1, 1), ob('bench', 41, 3, 1), ob('plant', 47, 1, 1)] },
+    { theme: 'class', objs: [ob('sdesk', 13, 2, 1), ob('sdesk', 17, 2, 1), ob('teacher', 24, 4, 2), ob('sdesk', 31, 2, 1), ob('sdesk', 35, 2, 1), ob('sdesk', 39, 2, 1), ob('bin', 46, 1, 1)] },
+    { theme: 'music', objs: [ob('piano', 13, 4, 2), ob('stool', 19, 1, 1), ob('drums', 24, 3, 2), ob('chair', 30, 2, 1), ob('piano', 35, 4, 2), ob('boxes', 42, 2, 1), ob('chair', 47, 2, 1)] },
+    { theme: 'gym', objs: [ob('mat', 13, 4, 1), ob('hoop', 20, 1, 3), ob('horse', 26, 3, 2), ob('ball', 33, 1, 1), ob('mat', 37, 4, 1), ob('horse', 44, 3, 2)] }
+  ], [ob('ac', 15, 3, 2), ob('tank', 24, 3, 2), ob('vent', 33, 1, 1), ob('ac', 40, 2, 2)]);
+}
+function mapFactory() {
+  return floorsMap([
+    { theme: 'factory', belt: 1, objs: [ob('crate', 14, 2, 2), ob('barrel', 20, 1, 1), ob('crate', 26, 2, 1), ob('machine', 32, 4, 3), ob('crate', 40, 2, 2), ob('barrel', 46, 1, 1)] },
+    { theme: 'factoryB', belt: -1, objs: [ob('machine', 13, 3, 2), ob('barrel', 20, 1, 1), ob('crate', 25, 2, 2), ob('barrel', 31, 1, 1), ob('machine', 36, 4, 3), ob('crate', 44, 2, 1)] },
+    { theme: 'factory', belt: 1, objs: [ob('crate', 15, 2, 1), ob('machine', 21, 3, 2), ob('barrel', 28, 1, 2), ob('crate', 33, 3, 2), ob('barrel', 40, 1, 1), ob('machine', 44, 3, 2)] },
+    { theme: 'factoryB', belt: -1, objs: [ob('barrel', 14, 1, 1), ob('machine', 19, 4, 3), ob('crate', 28, 2, 1), ob('barrel', 33, 1, 2), ob('crate', 38, 2, 2), ob('machine', 44, 3, 2)] }
+  ], [ob('tank', 15, 3, 2), ob('vent', 24, 1, 1), ob('tank', 30, 3, 2), ob('ac', 40, 2, 2)]);
+}
+
 const MAPS = {
   office:  { name: '오피스 빌딩', desc: '층마다 책상과 가구를 넘어 옥상 헬기장까지', make: mapOffice, sky: ['#7fb6e8', '#c9e4f5'] },
-  airport: { name: '공항',       desc: '체크인, 보안 검색, 무빙워크를 지나 비행기 문까지', make: mapAirport, sky: ['#f2a65a', '#ffd9a0'] }
+  airport: { name: '공항',       desc: '체크인, 보안 검색, 무빙워크를 지나 비행기 문까지', make: mapAirport, sky: ['#f2a65a', '#ffd9a0'] },
+  subway:  { name: '지하철역',   desc: '승강장에서 개찰구를 지나 출구 옥상까지', make: mapSubway, sky: ['#5a6a9a', '#a0b0d8'] },
+  mall:    { name: '백화점',     desc: '다섯 층 매장과 푸드코트를 가로질러 옥상까지', make: mapMall, sky: ['#f08aa8', '#ffd6e0'] },
+  hospital:{ name: '병원',       desc: '로비, 병동, 검사실의 침대와 휠체어를 넘어 옥상까지', make: mapHospital, sky: ['#7fd0c8', '#d8f5f0'] },
+  school:  { name: '학교',       desc: '복도, 교실, 음악실, 체육관을 올라 옥상까지', make: mapSchool, sky: ['#7fb6e8', '#e8f3ff'] },
+  factory: { name: '공장',       desc: '반대로 움직이는 컨베이어 벨트를 넘어 옥상까지', make: mapFactory, sky: ['#8a7a6a', '#d0b898'] }
 };
 const MAP_IDS = Object.keys(MAPS);
