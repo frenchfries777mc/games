@@ -5477,7 +5477,7 @@ function shuffle(arr){ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.
 /* ===== the version of this file =====
    Different BUILDS of one version meet and play together (room names online-v<ver>-<mode>-<map>-<slot>); different VERSIONS (the 0.x part) never do - the host refuses them (verNo) and the dispatcher answers busy.
    The build is only sent along with the join message and the lobby (for information); the corner of the screen shows it. */
-const GAME_BUILD='build 2026-10-18-v518';
+const GAME_BUILD='build 2026-10-18-v519';
 const GAME_VERSION='0.9', GAME_VERSION_NAME='은하 제국의 황혼';   // 게임 버전 이름: versions.json의 title과 같게 (빌드마다 바꾸지 않음)
 /* version (the 0.x part) vs build: different BUILDS of one version meet and play together, different VERSIONS never do (rooms, quick match, ranked, friend invites, dispatcher).
    Builds before 470 do not send a version, so it is read from the build number (0.9 started at build 458). */
@@ -14406,6 +14406,7 @@ function botsThink(dt, t){
 function restTick(p, t){
   const tS=t/1000, max=maxHpFor(p);
   if(matchEnded || NO_REGEN_MODES[gameMode] || p.isBoss || p.isVault || !p.alive || p.hp<=0 || p.x===undefined){ p.restX=undefined; p.restSince=undefined; p.restNextAt=undefined; p.resting=false; return; }
+  if(p.calmRest && p.restX!==undefined && p.restSince!==undefined){ p.restX=p.x; p.restY=p.y; if(tS-p.restSince<REST_SEC) p.restSince=tS-REST_SEC; }      // 10 s calm while moving: counts as standing still
   if(p.restX===undefined || Math.hypot(p.x-p.restX, p.y-p.restY)>REST_MOVE_PX){      // it moved (walked, jumped, dashed, was knocked away): the 3 seconds start over
     p.restX=p.x; p.restY=p.y; p.restSince=tS; p.restNextAt=undefined; p.resting=false; return;
   }
@@ -14733,7 +14734,8 @@ function brzHud(){
   el.style.display='block';
 }
 function snapR(v,k){ return (typeof v==='number' && isFinite(v)) ? Math.round(v*k)/k : v; }      // snapshot numbers: a few decimals are enough on the other side, and long floats made every snapshot much bigger
-/* 휴식 회복 (owner 10-29, every character): 5 s without taking damage while standing still, or 10 s without taking damage whether moving or not, then both start a regen of CALM_HEAL hp every CALM_TICK_SEC (owner 10-29: 5 hp per 0.8 s) that lasts until damage (or, if it began from standing still, until moving). */
+/* 휴식 회복 (owner 10-29, every character): 5 s without taking damage while standing still, or 10 s without taking damage whether moving or not, heals CALM_HEAL hp.
+   Both clocks start at the last damage (or the last heal): one stretch of calm never heals twice, so standing 5 s and then 5 s more gives nothing extra. */
 const HOOK_SPEED_ARROW=1500, HOOK_LIFE=0.8, HOOK_PULL_SPEED=1900, HOOK_MAX_SEC=1.4, HOOK_HIT_DMG=20, HOOK_HIT_KB=800, HOOK_HIT_UP=260, HOOK_HIT_STUN=0.8;      // 로빈 후드's skill 갈고리 화살: arrow speed, flight time, how fast it pulls, the longest pull, and what the one pulled to does to the one it hit
 function hookLand(b, nx, ny, pl, t, who){      // the hook arrow stopped: stuck under a platform = the owner gets pulled to it; stuck in somebody = pulled to him; anything else = a miss
   const o=players[b.owner]; if(!o || !o.alive) return;
@@ -14886,28 +14888,25 @@ function tickPassives(dt, t){
     else if(k==='kan'){ let n=0; for(const q in players){ const o=players[q]; if(o.alive && o.poison && o.poison.until>tS && o.poison.owner===p.id && o.poison.stacks>=KAN_POISON_MAX){ n=1; break; } } pvEdge(p, k, n>0, t); }
   }
 }
-const CALM_STILL_SEC=5, CALM_MOVE_SEC=10, CALM_HEAL=5, CALM_TICK_SEC=0.8, CALM_STILL_PX=14;
+const CALM_STILL_SEC=5, CALM_MOVE_SEC=10, CALM_HEAL=10, CALM_STILL_PX=14;
 function tickCalmHeal(t){
   const tS=t/1000;
   for(const id in players){
     const p=players[id];
     if(!p || !p.alive || p.x===undefined || p.isMinion || p.isBoss || p.isGuard || p.isVault || p.isClone || p.isDummy || p.isSpectator){ if(p) p.calmAt=undefined; continue; }
     if(p.calmAt===undefined){ p.calmAt=tS; p.stillAt=tS; p.calmX=p.x; p.calmY=p.y; p.calmHp=p.hp; continue; }
-    if(p.hp<p.calmHp-0.01){ p.calmAt=tS; p.stillAt=tS; p.calmRegen=0; }       // any loss of hp (from anything) starts both clocks over and ends the regen
-    p.calmGain=false;
-    const moved=Math.hypot(p.x-p.calmX, p.y-p.calmY)>CALM_STILL_PX;
-    if(moved){ p.stillAt=tS; p.calmX=p.x; p.calmY=p.y; if(p.calmRegen===1) p.calmRegen=0; }      // moved: the standing-still clock starts over (and a regen that began from standing still ends)
-    const max=maxHpFor(p);
-    if(p.hp>=max){ p.calmAt=tS; p.stillAt=tS; p.calmRegen=0; p.calmHp=p.hp; continue; }          // nothing to heal: the clocks wait until something hurts
-    if(!p.calmRegen){
-      const still=tS-Math.max(p.calmAt,p.stillAt)>=CALM_STILL_SEC, calm=tS-p.calmAt>=CALM_MOVE_SEC;
-      if(still || calm){ p.calmRegen=still?1:2; p.calmTickAt=tS-CALM_TICK_SEC; }      // both kinds of rest start the same regen: CALM_HEAL hp every CALM_TICK_SEC
-    }
-    if(p.calmRegen && tS-p.calmTickAt>=CALM_TICK_SEC){
-      p.calmTickAt=tS; const before=p.hp; p.hp=Math.min(max, p.hp+CALM_HEAL*pvHealMul(p)); p.calmGain=true;
-      if(p.hp>before) pushFx('heal', p.x, p.y-70, t, {v:Math.round(p.hp-before)});
-    }
+    if(p.hp<p.calmHp-0.01){ p.calmAt=tS; p.stillAt=tS; p.calmRest=false; }       // any loss of hp (from anything) starts both clocks over
     p.calmHp=p.hp;
+    if(Math.hypot(p.x-p.calmX, p.y-p.calmY)>CALM_STILL_PX){ p.stillAt=tS; p.calmX=p.x; p.calmY=p.y; }      // moved: the standing-still clock starts over
+    const max=maxHpFor(p);
+    if(p.hp>=max){ p.calmAt=tS; p.stillAt=tS; continue; }          // nothing to heal: the clocks wait until something hurts
+    const still=tS-Math.max(p.calmAt,p.stillAt)>=CALM_STILL_SEC, calm=tS-p.calmAt>=CALM_MOVE_SEC;
+    if(calm && !still && !p.calmRest){ p.calmRest=true; }      // 10 s without damage while moving: from now on the same resting regen as standing still (restTick) runs until the next hit
+    if(still){
+      const before=p.hp; p.hp=Math.min(max, p.hp+CALM_HEAL*pvHealMul(p)); p.calmAt=tS; p.stillAt=tS;
+      if(p.hp>before) pushFx('heal', p.x, p.y-70, t, {v:Math.round(p.hp-before)});
+      p.calmHp=p.hp;
+    }
   }
 }
 function hostTick(dt,t){ try{ return hostTickCore(dt,t); } finally { puppetOK=false; puppetOut(); } }
