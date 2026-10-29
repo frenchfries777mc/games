@@ -373,18 +373,20 @@ function showResult() {
   $('resT').textContent = me === 0 ? '1등!' : (me + 1) + '등'; $('resL').innerHTML = list.map(r => '<li style="color:' + r.col + '">' + esc(r.name) + '</li>').join('');
   $('res').classList.add('on');
 }
-// 로비 배경 (움직이는 픽셀 도시)
+// 로비 배경: 인트로와 같은 공항 레이스 장면
 (function () {
-  const c = $('bgv'), x = c.getContext('2d'); let T = 0;
-  function f() {
-    if (scr === 'sLobby') {
-      const w = c.clientWidth >> 1, h = c.clientHeight >> 1; if (c.width !== w) { c.width = w; c.height = h; } T += .016; x.imageSmoothingEnabled = false; x.clearRect(0, 0, w, h);
-      for (let i = 0; i < 9; i++) { const bw = 38 + (i * 13) % 30, bh = 60 + (i * 47) % 90, bx = (i * 61 - T * 4) % (w + 80) - 40; x.fillStyle = '#1a2b52'; x.fillRect(bx, h - bh - 24, bw, bh); for (let k = 0; k < 8; k++) { x.fillStyle = (k + i) % 3 ? '#ffd36b66' : '#0004'; x.fillRect(bx + 5 + (k % 3) * 11, h - bh - 18 + ((k / 3) | 0) * 14, 6, 8); } }
-      x.fillStyle = '#0e1630'; x.fillRect(0, h - 24, w, 24);
-      const rx = (T * 40) % (w + 40) - 20; x.fillStyle = '#e8483b'; x.fillRect(rx, h - 40, 6, 12); x.fillStyle = '#3b8de8'; x.fillRect(rx - 30, h - 40, 6, 12);
+  const c = $('bgv'), x = c.getContext('2d'); let T = 0, last = 0;
+  function f(now) {
+    if (scr === 'sLobby' && !document.getElementById('intro')) {
+      const dpr = Math.min(2, devicePixelRatio || 1), w = Math.round(c.clientWidth * dpr), h = Math.round(c.clientHeight * dpr);
+      if (c.width !== w || c.height !== h) { c.width = w; c.height = h; }
+      T += Math.min(.05, (now - last) / 1000 || .016);
+      const sc = h / VH; x.setTransform(sc, 0, 0, sc, 0, 0); x.imageSmoothingEnabled = false;
+      GCScene(x, w / sc, T % 6, T * 150);
+      x.fillStyle = 'rgba(8,12,28,.32)'; x.fillRect(0, 0, w / sc + 2, VH + 2);
     }
-    requestAnimationFrame(f);
-  } f();
+    last = now; requestAnimationFrame(f);
+  } requestAnimationFrame(f);
 })();
 // 초대 링크
 FFAuthJoin();
