@@ -368,3 +368,4 @@ patchnotes.json | v500 items[1] | 프로필 카드 대표 캐릭터에 입은 �
 patchnotes.json | v500 items[2] | 프로필 카드에 캐릭터 레벨, 마스터리 로고·포인트·진행 막대 표시 | build 500 | 2026-10-29
 patchnotes.json | v500 items[3] | 프로필 카드의 플레이한 게임 줄 삭제 | build 500 | 2026-10-29
 ff-profile.js | STKL.ko clv/mpt/pts/next/top | 캐릭터 Lv. / 마스터리 포인트 / 점 / 다음 계급까지 / 최고 계급 (en 추가됨) | build 500 | 2026-10-29
+patchnotes.json | v501 items[0] | 티오니스가 변장한 대상의 팀원(대상 본인 제외)은 변장을 알아보지 못함 | build 501 | 2026-10-29
