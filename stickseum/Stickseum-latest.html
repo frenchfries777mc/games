@@ -5470,7 +5470,7 @@ function shuffle(arr){ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.
 /* ===== the version of this file =====
    Different BUILDS of one version meet and play together (room names online-v<ver>-<mode>-<map>-<slot>); different VERSIONS (the 0.x part) never do - the host refuses them (verNo) and the dispatcher answers busy.
    The build is only sent along with the join message and the lobby (for information); the corner of the screen shows it. */
-const GAME_BUILD='build 2026-10-18-v512';
+const GAME_BUILD='build 2026-10-18-v513';
 const GAME_VERSION='0.9', GAME_VERSION_NAME='은하 제국의 황혼';   // 게임 버전 이름: versions.json의 title과 같게 (빌드마다 바꾸지 않음)
 /* version (the 0.x part) vs build: different BUILDS of one version meet and play together, different VERSIONS never do (rooms, quick match, ranked, friend invites, dispatcher).
    Builds before 470 do not send a version, so it is read from the build number (0.9 started at build 458). */
@@ -12359,7 +12359,7 @@ const SKILLS={
   wizard:   {name:'충격파',      kind:'hit',  desc:'주변 상대를 아주 크게 밀쳐내는 충격파 (10 피해)'},
   magiccard:{name:'카드 일렬 발사', kind:'hit', desc:'조준 방향으로 카드 4장을 일렬로 연달아 발사 (장당 10 피해)'},
   flamethrower:{name:'화염 돌진',kind:'move', desc:'바라보는 방향으로 순식간에 돌진 · 지나가는 길의 적에게 20 피해와 화상 · 지나온 자리는 3초 동안 불길이 남아 적을 태움'},
-  portalgun:{name:'시간 되감기', kind:'move', desc:'약 2초 전 위치로 돌아가고 그동안 잃은 체력의 절반 회복 · 포탈이 있을 때는 대신 내 포탈 둘을 폭파(연기 0.5초 뒤 50 피해와 큰 넉백)'},
+  portalgun:{name:'포탈 파괴', kind:'move', desc:'내 포탈 둘이 있을 때만 사용 · 포탈에서 연기가 나고 0.5초 뒤 두 포탈이 폭발해 각각 50 피해와 큰 넉백 (포탈이 없으면 사용 불가)'},
   vacuum:   {name:'블랙홀 흡입',  kind:'hit',  desc:'스택 3개를 소모해 주변 적을 강하게 빨아들이고 1초 기절 (스택이 2개 이하면 사용 불가)'},
   pirate:   {name:'대포 비행',   kind:'move', desc:'대포를 타고 조준 방향으로 포물선을 그리며 날아감 · 부딪힌 상대에게 36 피해'},
   samurai:  {name:'거합',       kind:'move', desc:'조준 방향으로 순식간에 베고 지나가며(최대 430) 경로 위의 적에게 30 피해'},
@@ -12665,14 +12665,6 @@ const SKILL_IMPL={
         }
         p.portalPair=null; p.portalCooldownUntil=0;
       }});
-      return true;
-    }
-    if(!p.hist) return false;
-    for(let i=p.hist.length-1;i>=0;i--){
-      const h=p.hist[i]; if(tSec-h.t<1.6) continue;
-      if(!skillSpotFree(h.x,h.y)) continue;
-      const lost=Math.max(0, h.hp-p.hp); pushFx('blink', p.x, p.y-30, tMs, {color:'#a855f7'});
-      p.x=h.x; p.y=h.y; p.vx=p.vy=p.kbX=0; if(lost>0){ p.hp=Math.min(maxHpFor(p), p.hp+lost*0.5); pushFx('heal', p.x, p.y-70, tMs, {v:Math.round(lost*0.5)}); }
       return true;
     }
     return false; },
@@ -14827,10 +14819,7 @@ function hostTickCore(dt,t){
       p.rooted=!!p.restUntilD; } else if(p.rooted) p.rooted=false;
     { const tS2=t/1000; p.stunned=isStunned(p,tS2); p.cardSlowed=!!(p.cardSlowUntil && tS2<p.cardSlowUntil); p.bladeSpin=!!(p.bladeSpinUntil && tS2<p.bladeSpinUntil); }
     { const tS=t/1000; p.hasted=skillHasBuff(p,'haste',tS); p.batRun=!!(p.batRunUntil && tS<p.batRunUntil); p.focusOn=skillHasBuff(p,'focus',tS); p.buff=skillActiveBuff(p,tS);
-      if(skW(p)==='portalgun' && p.alive){                       // the portal gun's skill rewinds time: remember where it was and how healthy
-        if(!p.hist) p.hist=[];
-        if(!p.histAt || tS-p.histAt>=0.1){ p.histAt=tS; p.hist.push({x:p.x,y:p.y,hp:p.hp,t:tS}); while(p.hist.length && p.hist[0].t<tS-2.8) p.hist.shift(); }
-      } else if(p.hist && p.hist.length) p.hist=[]; }
+      p.hist=null; }
     if(p.teleportChannel){
       if(t/1000 >= p.teleportChannel.until){
         const dest=p.teleportChannel;
