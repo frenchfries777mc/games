@@ -5470,7 +5470,7 @@ function shuffle(arr){ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.
 /* ===== the version of this file =====
    Different BUILDS of one version meet and play together (room names online-v<ver>-<mode>-<map>-<slot>); different VERSIONS (the 0.x part) never do - the host refuses them (verNo) and the dispatcher answers busy.
    The build is only sent along with the join message and the lobby (for information); the corner of the screen shows it. */
-const GAME_BUILD='build 2026-10-18-v507';
+const GAME_BUILD='build 2026-10-18-v508';
 const GAME_VERSION='0.9', GAME_VERSION_NAME='은하 제국의 황혼';   // 게임 버전 이름: versions.json의 title과 같게 (빌드마다 바꾸지 않음)
 /* version (the 0.x part) vs build: different BUILDS of one version meet and play together, different VERSIONS never do (rooms, quick match, ranked, friend invites, dispatcher).
    Builds before 470 do not send a version, so it is read from the build number (0.9 started at build 458). */
@@ -12343,7 +12343,7 @@ const SKILLS={
   kan:      {name:'독두꺼비 함정', kind:'hit', desc:'조준한 곳으로 독 두꺼비를 던짐 (닿는 만큼, 최대 약 800) · 포물선으로 날아가 바닥에 닿으면 그 바닥이 독 바닥이 됨 (15초, 최대 2개, 나에게만 보임) · 적이 밟으면 독 바닥이 나타나고 3초 뒤 사라짐 · 밟은 적은 3초 동안 0.5초마다 5 피해'},
   pistol:   {name:'속사',        kind:'buff', desc:'1.8초 동안 연사 속도 2배'},
   smg:      {name:'연막탄',      kind:'hit',  desc:'조준한 곳으로 연막탄을 던짐 · 떨어진 자리에 2.5초 동안 짙은 연기 · 안에 있는 사람은 이동 속도가 절반으로 느려지고 시야가 가려짐'},
-  bow:      {name:'백스텝',      kind:'move', desc:'뒤로 도약하며 활 재장전이 즉시 끝남'},
+  bow:      {name:'갈고리 화살', kind:'move', desc:'조준한 방향으로 갈고리 화살을 쏨 · 발판의 아랫면에 맞으면 화살이 박히고 줄이 이어져 그 화살 자리까지 빠르게 끌려감 (도착하면 줄과 화살이 사라짐) · 상대에게 맞으면 화살이 그 상대에게 박혀 그 상대에게 끌려간 뒤 20 피해와 함께 밀치고 0.8초 기절시킴 · 그 밖의 곳에 맞거나 빗나가면 쿨타임이 1.5초로 줄어듦'},
   sword:    {name:'돌진 베기',   kind:'move', desc:'앞으로 최대 3초 동안 돌진하며(돌진하는 동안 피해를 받지 않음) 칼을 빙글빙글 휘둘러, 닿는 적에게 45 피해를 주고 그 자리에서 멈춤 (스킬키를 다시 누르면 취소)'},
   bat:      {name:'반사 스윙',   kind:'buff', desc:'0.7초 동안 주변 투사체를 되받아침'},
   boomerang:{name:'회수 돌풍',  kind:'hit',  desc:'주변 적을 8 피해와 함께 내 쪽으로 끌어당기고, 던진 부메랑을 즉시 불러들임'},
@@ -12590,7 +12590,7 @@ const SKILL_IMPL={
   },
   pistol(p,tSec){ skillSetBuff(p,'rapid',1.8,tSec); return true; },
   smg(p,tSec,tMs,ax,ay){ spawnBullet(p, lobAngle(p,ax,ay), {id:'smoke', bulletSpeed:KAN_TOAD_SPEED, life:3, dmg:0, hitR:10}, {lob:'smoke', arcs:true, color:'#b8c0cc'}); return true; },
-  bow(p,tSec,tMs,ax){ const d=skillAimDir(p,ax); p.kbX=-d*560; p.vy=-430; p.grounded=false; p.lastShot=-9999; return true; },
+  bow(p,tSec,tMs,ax,ay){ if(p.hook) return false; spawnBullet(p, (hasAim(ax,ay)?aimAngleOf(p,ax,ay):(p.angle||0)), Object.assign({}, WEAPONS.bow, {bulletSpeed:HOOK_SPEED_ARROW, life:HOOK_LIFE, dmg:0, arcs:false, hitR:6}), {hook:true}); return true; },      // 갈고리 화살: it only sticks to the underside of a platform
   sword(p,tSec,tMs,ax){ const d=skillAimDir(p,ax); p.swordCharge={dir:d, until:tSec+SWORD_CHARGE_SEC, lastX:p.x, lastT:tSec, blockedFor:0}; p.chargeDir=d; p.kbX=0; p.bladeSpinUntil=p.swordCharge.until; p.bladeSpin=true; p.bladeHit={}; pushFx('skillring', p.x, p.y-40, tMs, {color:'#dfe6f0', r:SWORD_SPIN_RADIUS}); return true; },   // charge toward the side of the cursor; the sword spins on its own and hurts what it touches (bladeSpinTick)   // lunge in the direction of the cursor's side; the sword then spins on its own and hurts whatever it touches (bladeSpinTick)
   bat(p,tSec){ skillSetBuff(p,'reflect',0.7,tSec); return true; },
   boomerang(p,tSec,tMs){     // 회수 돌풍: a whirlwind drags the enemies around me in (8 damage) and calls every boomerang I threw straight back
@@ -12878,7 +12878,7 @@ function abilityPreviewOps(action, p, mx, my){
   if(action==='skill'){
     switch(w){
       case 'sword': ops.push(arrowX(skillAimDir(p,mx), 620)); break;
-      case 'bow': ops.push(arrowX(-skillAimDir(p,mx), 170)); break;
+      case 'bow': ops.push(ray(ang, 700)); break;
       case 'gloves': { const d=skillAimDir(p,mx); ops.push({t:'rect', x:d>0?p.x:p.x-110, y:p.y-90, w:110, h:90}); break; }
       case 'lightsaber': { const d=skillAimDir(p,mx); ops.push({t:'rect', x:d>0?p.x:p.x-120, y:p.y-90, w:120, h:90}); break; }
       case 'kurus': ops.push({t:'rect', x:p.x-DARK_POOL_W*DARK_SKILL_MULT/2, y:p.y-8, w:DARK_POOL_W*DARK_SKILL_MULT, h:12}); break;
@@ -13797,7 +13797,7 @@ function botWantsSkill(p, target, d, tSec){
   switch(skW(p)){
     case 'pistol': case 'rifle': return d<600;                        // damage buffs: in a gunfight
     case 'smg': return d>150 && d<520 && Math.abs(target.y-p.y)<200;        // the smoke grenade: thrown at the enemy from a medium distance
-    case 'bow': return d<280 || (hurt && d<420);
+    case 'bow': return false;                                         // (the hook arrow is an aimed movement skill: bots do not use it)
     case 'sword': return d<900 && Math.abs(target.y-p.y)<110 && !p.swordCharge;   // a 3 second charge: worth it from a long way off (same level), and never while already charging
     case 'lightsaber': return d<115;                                  // the thrust only reaches up close
     case 'pizarro': return hpFrac<0.7 && d<260;                                    // the rest: when hurt and the fight is close
@@ -14697,6 +14697,41 @@ function brzHud(){
 function snapR(v,k){ return (typeof v==='number' && isFinite(v)) ? Math.round(v*k)/k : v; }      // snapshot numbers: a few decimals are enough on the other side, and long floats made every snapshot much bigger
 /* 휴식 회복 (owner 10-29, every character): 5 s without taking damage while standing still, or 10 s without taking damage whether moving or not, heals CALM_HEAL hp.
    Both clocks start at the last damage (or the last heal): one stretch of calm never heals twice, so standing 5 s and then 5 s more gives nothing extra. */
+const HOOK_SPEED_ARROW=1500, HOOK_LIFE=0.8, HOOK_PULL_SPEED=1900, HOOK_MISS_CD=1.5, HOOK_MAX_SEC=1.4, HOOK_HIT_DMG=20, HOOK_HIT_KB=800, HOOK_HIT_UP=260, HOOK_HIT_STUN=0.8;      // 로빈 후드's skill 갈고리 화살: arrow speed, flight time, how fast it pulls, the cooldown left after a miss, the longest pull, and what the one pulled to does to the one it hit
+function hookLand(b, nx, ny, pl, t, who){      // the hook arrow stopped: stuck under a platform = the owner gets pulled to it; stuck in somebody = pulled to him; anything else = a miss
+  const o=players[b.owner]; if(!o || !o.alive) return;
+  if(who && who.alive){
+    o.hook={tid:who.id, x:who.x, y:who.y-40, born:t/1000, lastD:1e9, lastGain:t/1000};
+    pushFx('spark', who.x, who.y-40, t, {color:'#ffd34d', ang:Math.PI/2});
+  } else if(pl && b.vy<0 && b.y>=pl.y+pl.h-2){
+    const hx=clamp(nx, pl.x+8, pl.x+pl.w-8), hy=pl.y+pl.h;
+    o.hook={x:hx, y:hy, born:t/1000, lastD:1e9, lastGain:t/1000};
+    pushFx('spark', hx, hy, t, {color:'#ffd34d', ang:Math.PI/2});
+  } else { o.lastSkill=t/1000-(skillCdOf(o)-HOOK_MISS_CD); }
+}
+function tickHook(dt, t){
+  const tS=t/1000;
+  for(const id in players){
+    const p=players[id]; if(!p.hook) continue;
+    if(!p.alive || isStunned(p,tS) || tS-p.hook.born>HOOK_MAX_SEC || p.teleportChannel || p.darkSub){ p.hook=null; continue; }
+    const tg=p.hook.tid?players[p.hook.tid]:null;
+    if(p.hook.tid){
+      if(!tg || !tg.alive || tg.x===undefined){ p.hook=null; continue; }
+      p.hook.x=tg.x; p.hook.y=tg.y-40;                                                 // the arrow sits in him and goes wherever he goes
+      if(Math.abs(tg.x-p.x)<=PLAYER_W+14 && Math.abs(tg.y-p.y)<=PLAYER_H){             // arrived: shove, stun and hurt him
+        p.hook=null; p.vx=0; p.vy=0; p.kbX=0;
+        skillDamage(p, tg, HOOK_HIT_DMG, t, {kb:HOOK_HIT_KB, up:HOOK_HIT_UP, stun:HOOK_HIT_STUN});
+        pushFx('skillring', tg.x, tg.y-40, t, {color:'#ffd34d', r:70});
+        continue;
+      }
+    }
+    const tx=tg?tg.x:p.hook.x, ty=tg?tg.y:p.hook.y+PLAYER_H, dx=tx-p.x, dy=ty-p.y, d=Math.hypot(dx,dy);
+    if(!tg && d<=24){ p.x=tx; p.y=ty; p.vx=0; p.vy=0; p.kbX=0; p.hook=null; continue; }
+    if(d<p.hook.lastD-1){ p.hook.lastD=d; p.hook.lastGain=tS; } else if(tS-p.hook.lastGain>0.25 && !tg){ p.hook=null; continue; }       // something is in the way: let go
+    const step=Math.min(d, HOOK_PULL_SPEED*dt);
+    p.x+=dx/d*step; p.y+=dy/d*step; p.vx=0; p.vy=0; p.kbX=0; p.grounded=false;
+  }
+}
 const CALM_STILL_SEC=5, CALM_MOVE_SEC=10, CALM_HEAL=10, CALM_STILL_PX=14;
 function tickCalmHeal(t){
   const tS=t/1000;
@@ -14720,7 +14755,7 @@ function tickCalmHeal(t){
 function hostTick(dt,t){ try{ return hostTickCore(dt,t); } finally { puppetOK=false; puppetOut(); } }
 function hostTickCore(dt,t){
   fxActor=null;
-  if(!matchEnded){ try{ tickCalmHeal(t); }catch(e){ recordDiagError('tickCalmHeal', e); } }
+  if(!matchEnded){ try{ tickCalmHeal(t); }catch(e){ recordDiagError('tickCalmHeal', e); } try{ tickHook(dt, t); }catch(e){ recordDiagError('tickHook', e); } }
   if(gameMode==='ffa' && matchTimerEndsAt!==null && Date.now()>=matchTimerEndsAt && !matchEnded){ endFFAMatchByKills(); }
   if(gameMode==='zombie' && matchTimerEndsAt!==null && Date.now()>=matchTimerEndsAt && !matchEnded){ endZombieMatchByTimer(); }
   if(gameMode==='raid' && matchTimerEndsAt!==null && Date.now()>=matchTimerEndsAt && !matchEnded){ raidTimeUp(); }
@@ -15008,6 +15043,7 @@ function hostTickCore(dt,t){
         if(b.pierce || b.passPlayers){ b.hitSet=b.hitSet||{}; if(b.hitSet[id]) continue; }
         const cy=p.y-PLAYER_H/2;
         if(dist(nx,ny,p.x,cy) <= PLAYER_H/2+(b.hitR||BULLET_R)){
+          if(b.hook){ hit=true; hitWho=p; break; }      // 갈고리 화살 hits somebody: it sticks in him (hookLand)
           if(b.toad || b.lob) continue;      // the toad / smoke grenade / molotov fly over people, they only stop on the floor
           if(b.pthread && b.sew){      // 바느질: the needle ties the one it hits (until 바늘 빼기, at most SEW_MAX_SEC)
             const pow=players[b.owner], tS2=t/1000;
@@ -15057,6 +15093,8 @@ function hostTickCore(dt,t){
       }
     }
     if(!hit && b.lob && b.life-dt<=0) hit=true;
+    if(!hit && b.hook && b.life-dt<=0) hit=true;
+    if(hit && b.hook) hookLand(b, nx, ny, hitPl, t, hitWho);
     if(hit && b.toad) kanToadLand(b, nx, ny, hitPl, t);
     if(hit && b.lob) lobLand(b, nx, ny, hitPl, t);
     if(hit && b.wid==='kurus') darkPotionLand(b, nx, ny, hitPl, hitWho, hitPlatform, t);
@@ -15082,7 +15120,7 @@ function hostTickCore(dt,t){
         fireCdRemain: snapR(p.fireCdRemain||0,20),
         ultCdRemain: p.darkSub ? 0 : snapR(Math.max(0, ultCdOf(p) - (t/1000-(p.lastUlt===undefined?-9999:p.lastUlt))),20), darkSub:p.darkSub?1:0, darkArm:(p.darkArmUntil>t/1000)?1:0,
         skillCdRemain: snapR(Math.max(0, skillCdOf(p) - (t/1000-(p.lastSkill===undefined?-9999:p.lastSkill))),20), buff:p.buff||null, skillUses:p.skillUses||0, ultUses:p.ultUses||0, ultMulti:p.ultMulti||0,
-        pz:p.pzStacks||0, pm:(p.pzMarkUntil>t/1000)?1:0, ultOn:!!p.ultOn, invis:!!p.invis, isGuard:p.isGuard?1:0, isVault:p.isVault?1:0, isClone:p.isClone?1:0, ownerId:p.ownerId||'', dgn:(p.disg&&p.tioFor)?p.tioFor.name:'', dgv:(p.disg&&p.tioFor)?(p.tioFor.vid||''):'', dgt:(p.disg&&p.tioFor&&p.tioFor.vteam!==undefined)?p.tioFor.vteam:null, dgc:(p.disg&&p.tioFor)?(p.tioFor.clan||''):'', tioStage:p.tioStage||'', drones:(p.weapon==='pel')?pelN(p):0, pelBoost:pelBoostOn(p,t/1000)?1:0, burning:!!p.burning, poisoned:!!p.poisoned, kw:(p.kanWingsUntil>t/1000)?1:0, gc:p.gc||0, gp:Math.round(Math.min(1,(p.goldStay||0)/GOLD_PICK_STAY)*20)/20, pp:puppetMaster(p,t/1000)?p.puppetTarget:null, sw:p.sw||null, sewSlowed:!!p.sewSlowed, slowed:!!p.slowed, stunned:!!p.stunned, cardSlowed:!!p.cardSlowed, bladeSpin:!!p.bladeSpin, swordCharging:!!p.swordCharge, cannonFlying:!!p.cannonFly, chips:p.chips||0, cannonAng:p.cannonFly?Math.round(Math.atan2(p.vy||0,p.cannonFly.vx)*100)/100:0, totalDamageDealt:p.totalDamageDealt||0, channeling:!!p.teleportChannel, flaming:!!p.flaming, portalPair:p.portalPair||null, batting:!!p.batting, vacuumStacks:p.vacuumStacks||0, isZombie:!!p.isZombie, parkourItem:!!p.parkourItem,
+        pz:p.pzStacks||0, pm:(p.pzMarkUntil>t/1000)?1:0, ultOn:!!p.ultOn, invis:!!p.invis, isGuard:p.isGuard?1:0, isVault:p.isVault?1:0, isClone:p.isClone?1:0, ownerId:p.ownerId||'', hk:p.hook?[Math.round(p.hook.x),Math.round(p.hook.y)]:null, dgn:(p.disg&&p.tioFor)?p.tioFor.name:'', dgv:(p.disg&&p.tioFor)?(p.tioFor.vid||''):'', dgt:(p.disg&&p.tioFor&&p.tioFor.vteam!==undefined)?p.tioFor.vteam:null, dgc:(p.disg&&p.tioFor)?(p.tioFor.clan||''):'', tioStage:p.tioStage||'', drones:(p.weapon==='pel')?pelN(p):0, pelBoost:pelBoostOn(p,t/1000)?1:0, burning:!!p.burning, poisoned:!!p.poisoned, kw:(p.kanWingsUntil>t/1000)?1:0, gc:p.gc||0, gp:Math.round(Math.min(1,(p.goldStay||0)/GOLD_PICK_STAY)*20)/20, pp:puppetMaster(p,t/1000)?p.puppetTarget:null, sw:p.sw||null, sewSlowed:!!p.sewSlowed, slowed:!!p.slowed, stunned:!!p.stunned, cardSlowed:!!p.cardSlowed, bladeSpin:!!p.bladeSpin, swordCharging:!!p.swordCharge, cannonFlying:!!p.cannonFly, chips:p.chips||0, cannonAng:p.cannonFly?Math.round(Math.atan2(p.vy||0,p.cannonFly.vx)*100)/100:0, totalDamageDealt:p.totalDamageDealt||0, channeling:!!p.teleportChannel, flaming:!!p.flaming, portalPair:p.portalPair||null, batting:!!p.batting, vacuumStacks:p.vacuumStacks||0, isZombie:!!p.isZombie, parkourItem:!!p.parkourItem,
         isHost:p.isHost,clan:p.clan||'',joinOrder:p.joinOrder,weapon:p.weapon,kit:p.kit||null,team:p.team,spinAngle:p.spinAngle,cos:p.cos,isBoss:p.isBoss?1:0,isMinion:p.isMinion?1:0,bt:p.bt,bossMaxHp:p.bossMaxHp,emIdx:p.emIdx,emRem:(p.emUntil?Math.max(0,Math.round((p.emUntil-t/1000)*20)/20):0)})),
       cq: (gameMode==='conquest' && cq) ? {s:cq.scores, h:cq.holder, c:cq.contested} : undefined,
       xm: (xm && xmV) ? xmV : undefined,
@@ -18237,6 +18275,8 @@ function drawStickman(p){
   if(p.kw && p.alive!==false) drawKanWings(ctx, luxNow);
   if(p.pp && players[p.pp] && p.alive!==false){ const q=players[p.pp], dx=(q.x-p.x), dy=(q.y-p.y); ctx.save(); ctx.strokeStyle='#ffd0e6'; ctx.lineWidth=1.6; ctx.globalAlpha=0.9; ctx.setLineDash([6,4]); ctx.lineDashOffset=-performance.now()/40; ctx.beginPath(); ctx.moveTo(0,-34); ctx.quadraticCurveTo(dx/2, Math.min(-34,dy-60)-24, dx, dy-60); ctx.stroke(); ctx.restore(); }   // 인형술사: the strings to his puppet
   if(p.sw && players[p.sw] && p.alive!==false){ const q=players[p.sw], dx=(q.x-p.x), dy=(q.y-p.y); ctx.save(); const cy2=Math.min(-34,dy-60)+Math.sin(performance.now()/160)*6; ctx.lineCap='round'; for(const [lw,col,al] of [[9,'#ffffff',0.25],[3.5,'#ffffff',1]]){ ctx.strokeStyle=col; ctx.lineWidth=lw; ctx.globalAlpha=al; ctx.beginPath(); ctx.moveTo(0,-34); ctx.quadraticCurveTo(dx/2, cy2, dx, dy-60); ctx.stroke(); } ctx.restore(); }   // 바느질: a white thread to the one it holds (it used to sit behind the comment above and was never drawn)
+  if(p.hk && p.alive!==false){ const ex=p.hk[0]-p.x, ey=p.hk[1]-p.y; ctx.save(); ctx.strokeStyle='#d9b77a'; ctx.lineWidth=2.4; ctx.beginPath(); ctx.moveTo(0,-40); ctx.lineTo(ex,ey); ctx.stroke();      // 갈고리 화살: the rope and the arrow stuck under the platform
+    ctx.translate(ex,ey); ctx.rotate(-Math.PI/2); ctx.strokeStyle='#8a5f2b'; ctx.lineWidth=3; ctx.beginPath(); ctx.moveTo(-18,0); ctx.lineTo(6,0); ctx.stroke(); ctx.fillStyle='#e6e6e6'; ctx.beginPath(); ctx.moveTo(14,0); ctx.lineTo(4,-5); ctx.lineTo(4,5); ctx.closePath(); ctx.fill(); ctx.restore(); }
   if(p.pm && p.alive!==false) drawPizarroMark(ctx, luxNow);
   if(p.weapon==='pizarro' && p.alive!==false) drawPizarroAura(ctx, p, luxNow);      // 기세: a golden glow that grows with every stack, flames at the feet at the 4th, gold marks over the head      // a tier skin: the aura, the sunburst and the rings behind the body
   if(p.invis) ctx.globalAlpha=0.35;
