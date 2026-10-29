@@ -16,7 +16,7 @@ function makeWorld(mapId) {
   return W;
 }
 function tileAt(W, tx, ty) { if (tx < 0 || tx >= W.w) return '#'; if (ty < 0) return '.'; if (ty >= W.h) return '#'; return W.g[ty][tx]; }
-function isSolid(c) { return c === '#' || c === 'x' || c === '>' || c === '<'; }
+function isSolid(c) { return c === '#' || c === 'x' || c === '>' || c === '<' || c === 'I'; }
 function canStand(c) { return isSolid(c) || c === '='; }
 
 /* ---------- 물리 ---------- */
@@ -52,6 +52,8 @@ function moveY(W, b, dy) {
   }
   b.y = ny;
 }
+function iceUnder(W, b) { return b.ground && tileAt(W, Math.floor((b.x + PH.W / 2) / TS), Math.floor((b.y + PH.H) / TS)) === 'I'; }
+function inLift(W, b) { return tileAt(W, Math.floor((b.x + PH.W / 2) / TS), Math.floor((b.y + PH.H / 2) / TS)) === 'U'; }
 function beltUnder(W, b) {
   if (!b.ground) return 0;
   const ty = Math.floor((b.y + PH.H) / TS), c = tileAt(W, Math.floor((b.x + PH.W / 2) / TS), ty);
@@ -62,13 +64,13 @@ function stepBody(W, b, inp, dt) {
   let dir = inp.d | 0;
   if (b.stun > 0) { b.stun -= dt; dir = 0; }
   if (b.stun > 0) b.vx -= b.vx * Math.min(1, dt * (b.ground ? 5 : 0.8));
-  else b.vx = approach(b.vx, dir * PH.RUN, (b.ground ? PH.ACC : PH.AIR) * dt);
+  else b.vx = approach(b.vx, dir * PH.RUN, (b.ground ? (iceUnder(W, b) ? PH.ICE : PH.ACC) : PH.AIR) * dt);
   if (inp.jp) b.buf = PH.BUF; else b.buf = Math.max(0, b.buf - dt);
   if (b.ground) { b.coy = PH.COY; b.jumped = false; } else b.coy = Math.max(0, b.coy - dt);
   let jumpedNow = false;
   if (b.buf > 0 && b.coy > 0 && b.stun <= 0) { b.vy = -PH.JUMP; b.buf = 0; b.coy = 0; b.jumped = true; jumpedNow = true; }
   if (!inp.j && b.jumped && b.vy < -PH.CUT) b.vy = -PH.CUT;
-  b.vy = Math.min(PH.MAXF, b.vy + PH.G * dt);
+  if (inLift(W, b)) b.vy = approach(b.vy, -PH.LIFT, 5000 * dt); else b.vy = Math.min(PH.MAXF, b.vy + PH.G * dt);
   const belt = beltUnder(W, b);
   moveX(W, b, (b.vx + belt * PH.BELT) * dt);
   moveY(W, b, b.vy * dt);
@@ -165,6 +167,12 @@ function botInput(G, r, dt) {
   const cur = progressOf(W, r);
   if (cur < ai.best - 0.05) { ai.best = cur; ai.stuck = 0; } else ai.stuck += dt;
   if (ai.stuck > 2.5) { ai.stuck = 0; ai.best = Infinity; ai.plan = null; return { d: Math.random() < 0.5 ? -1 : 1, jp: true, j: true }; }
+  if (inLift(W, r) && r.stun <= 0) {
+    // 엘리베이터 안: 꼭대기 가까이 오면 방 안쪽으로 걸어 나와요
+    const tx = Math.floor((r.x + PH.W / 2) / TS), ty = Math.floor((r.y + PH.H / 2) / TS);
+    ai.plan = null; ai.stuck = 0; ai.best = Infinity;
+    return { d: tileAt(W, tx, ty - 2) !== 'U' ? (r.x < W.pw / 2 ? 1 : -1) : 0, jp: false, j: true };
+  }
   if (r.ground && r.stun <= 0) {
     const n = nodeOfFeet(W, r.x, r.y);
     if (n >= 0 && (!ai.plan || ai.plan.from !== n || ai.plan.done)) {
