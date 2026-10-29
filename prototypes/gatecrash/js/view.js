@@ -143,8 +143,10 @@ function drawRacer(x, r, t, me) {
   R(x, '#e8c39a', dead ? 2 : 12, dead ? 8 : 9, 3, 3);                                                              // 팔
   x.restore();
   if (r.wep) {
-    const w = WEAPONS[r.wep.k], a = r.swing > 0 ? r.aim : (f > 0 ? 0 : Math.PI), sw = r.swing > 0 ? (1 - r.swing / 0.18) : 0;
-    x.save(); x.translate(r.x + 5, r.y + 10); x.rotate(w.kind === 'melee' && r.swing > 0 ? a + (sw - 0.5) * 2.2 * f : r.swing > 0 ? a : (f > 0 ? 0.15 : Math.PI - 0.15));
+    const w = WEAPONS[r.wep.k], sw = r.swing > 0 ? (1 - r.swing / 0.18) : 0;
+    let a = (Math.cos(r.aim) * f >= 0) ? r.aim : (f > 0 ? 0 : Math.PI);      // 몸이 보는 쪽과 조준이 어긋나면 몸 방향
+    if (w.kind === 'melee' && r.swing > 0) a += (sw - 0.5) * 2.2 * f;
+    x.save(); x.translate(r.x + 5, r.y + 10); x.rotate(a); if (Math.cos(a) < 0) x.scale(1, -1);
     drawWep(x, r.wep.k); x.restore();
   }
 }
