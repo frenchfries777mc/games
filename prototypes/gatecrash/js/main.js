@@ -192,7 +192,11 @@ function playGame(map, pl) {
   $('hint').style.visibility = ''; $('hint').textContent = 'A D 이동 · W/Space 점프 · 클릭 무기 · F 바꾸기';
   show('game'); BGM.play('pixel-sprint'); loop.on = true; requestAnimationFrame(loop);
 }
-$('resBack').onclick = () => { loop.on = false; endToLobby(); };
+/* 한 판을 끝까지 마치고(결과 화면에서) 로비로 돌아올 때만 한 번 허브 퀘스트에 알려요 */
+async function ffMatchDone() {
+  try { const sb = window.FFAuth && FFAuth.client && FFAuth.client(), u = window.FFAuth && FFAuth.user(); if (!sb || !u || !(await ffProfile())) return; FFProfile.matchDone(sb, 'gatecrash'); } catch (e) { }
+}
+$('resBack').onclick = () => { loop.on = false; ffMatchDone(); endToLobby(); };
 $('exitBtn').onclick = () => { loop.on = false; RP = null; $('res').classList.remove('on'); endToLobby(); };
 
 document.addEventListener('pointerdown', () => { SFX.unlock(); if (scr !== 'game' && !document.getElementById('intro')) BGM.play('top-of-the-leaderboard'); });
