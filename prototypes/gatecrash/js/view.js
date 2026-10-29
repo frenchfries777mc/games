@@ -9,7 +9,22 @@ const THEMES = {
   server: { wall: '#2c3a52', trim: '#1d2740', floor: '#46526a', top: '#65718a' },
   terminal: { wall: '#e8ecf2', trim: '#bcc6d6', floor: '#8a93a5', top: '#a6afc0', glass: true },
   gates:  { wall: '#dfe6ef', trim: '#b4c0d2', floor: '#78839a', top: '#98a3ba', glass: true },
-  bridge: { wall: '#bcc6d6', trim: '#8f9db4', floor: '#6b778e', top: '#8b97ae' }
+  bridge: { wall: '#bcc6d6', trim: '#8f9db4', floor: '#6b778e', top: '#8b97ae' },
+  subwayB: { wall: '#3a4a5a', trim: '#2a3846', floor: '#5a6572', top: '#e8c040', wain: '#2a3a4c' },
+  subway: { wall: '#d6dde2', trim: '#aab6be', floor: '#6a7480', top: '#8a94a0', wain: '#4a8a9a' },
+  subwayS: { wall: '#c8d0d8', trim: '#9aa6b2', floor: '#707a86', top: '#909aa6', wain: '#7a8a9a', glass: true },
+  mall: { wall: '#f4e6ea', trim: '#d6b8c2', floor: '#8a7480', top: '#b09aa6', wain: '#e8c4d0', glass: true },
+  mallF: { wall: '#ece0f4', trim: '#c4b0d6', floor: '#7a6a8a', top: '#9c8cb0', wain: '#d8c4e8' },
+  food: { wall: '#f6e2c0', trim: '#d6b078', floor: '#8a6a48', top: '#aa8a66', wain: '#e8a85a' },
+  hospital: { wall: '#eef6f6', trim: '#bcd4d6', floor: '#7a9a9c', top: '#9cbcbe', wain: '#cfe8e8', glass: true },
+  ward: { wall: '#e4eef6', trim: '#b4c6d8', floor: '#7a8ea4', top: '#9aaec4', wain: '#bcd2e6' },
+  lab: { wall: '#dcecf0', trim: '#a8c6cc', floor: '#6c8c94', top: '#8cacb4', wain: '#9cc4cc' },
+  hall: { wall: '#f0e2b8', trim: '#c8b078', floor: '#8a7a56', top: '#aa9a74', wain: '#b8a060' },
+  class: { wall: '#e6efe0', trim: '#b0c4a4', floor: '#7a8a6e', top: '#9aaa8e', wain: '#c8a672' },
+  music: { wall: '#e8dcf0', trim: '#b8a4cc', floor: '#7e6c92', top: '#9e8cb2', wain: '#8a6aa6' },
+  gym: { wall: '#f2d8b8', trim: '#d0a468', floor: '#a47a3e', top: '#c49a5e', wain: '#d4864a' },
+  factory: { wall: '#9aa0a8', trim: '#6e757e', floor: '#555c66', top: '#7a828c', wain: '#7a6a3a' },
+  factoryB: { wall: '#8e8a84', trim: '#66625c', floor: '#52504c', top: '#76726c', wain: '#8a4a2a' }
 };
 const OBJC = {
   counter: ['#8a5a30', '#c48a50'], plant: ['#2f8a4a', '#6fcf86'], sofa: ['#a8473f', '#d9776d'], gate: ['#566, #aab'], bench: ['#7a5a3a', '#b08a5a'], boxes: ['#b88a50', '#e0b878'],
@@ -17,7 +32,11 @@ const OBJC = {
   trash: ['#4a5a4a', '#8a9a8a'], table: ['#8a6a48', '#d0aa78'], vending: ['#c0392b', '#ff8a7a'], foodbar: ['#8a8a96', '#d0d0dc'],
   rack: ['#222a38', '#4a8aff'], meeting: ['#5a4a3a', '#a08868'], ac: ['#8a929e', '#c8d0dc'], vent: ['#7a828e', '#b4bcc8'], tank: ['#6a7a8a', '#a8bccc'],
   luggage: ['#a8433a', '#e0786a'], barrier: ['#c9a227', '#ffe070'], checkin: ['#3a5a8a', '#7aa8e0'], xray: ['#3a3f4a', '#8a92a2'], bins: ['#5a6a7a', '#a0b0c0'],
-  cart: ['#6a7480', '#b0bac6'], shelf: ['#7a6a5a', '#c8b098'], seats: ['#3a4a7a', '#7a8ec8'], gatedesk: ['#4a6a4a', '#8ac08a'], cone: ['#e8662a', '#ffb070']
+  cart: ['#6a7480', '#b0bac6'], turnstile: ['#6a7480', '#e8c040'], pillar: ['#8a94a0', '#c4ccd6'], ticket: ['#3a6a8a', '#8ac4e8'], kiosk: ['#c0852a', '#ffd070'], news: ['#a8483a', '#f0a090'],
+  fountain: ['#4a8ac8', '#a8e0ff'], mannequin: ['#d8d0c8', '#f4eee8'], rackc: ['#b0488a', '#f09ad0'], shoes: ['#6a4a8a', '#c8a0e8'], reception: ['#3a8a8a', '#8adcdc'], wheelchair: ['#5a6a7a', '#a8b8c8'],
+  bed: ['#e8eef4', '#8ac0e8'], drip: ['#aab4be', '#e0f0ff'], labtable: ['#6a8a96', '#d0e8f0'], scanner: ['#c8d4dc', '#8ab8d8'], locker: ['#4a6a9a', '#8aa8d8'], trophy: ['#c8a028', '#ffe070'], sdesk: ['#9a7a4a', '#d8b878'],
+  teacher: ['#5a7a4a', '#9aca7a'], piano: ['#1a1a22', '#f0f0f0'], stool: ['#8a5a3a', '#c8885a'], drums: ['#b83a3a', '#f0c860'], mat: ['#3a8a5a', '#7adca0'], hoop: ['#e8662a', '#ffffff'], horse: ['#8a5a30', '#c0885a'], ball: ['#e8662a', '#ffa860'], bin: ['#5a6a5a', '#9aaa9a'],
+  crate: ['#9a6a30', '#d0a060'], barrel: ['#3a5a8a', '#7aa0d8'], machine: ['#5a6068', '#e8b030'], shelf: ['#7a6a5a', '#c8b098'], seats: ['#3a4a7a', '#7a8ec8'], gatedesk: ['#4a6a4a', '#8ac08a'], cone: ['#e8662a', '#ffb070']
 };
 function mkCanvas(w, h) { const c = document.createElement('canvas'); c.width = w; c.height = h; const x = c.getContext('2d'); x.imageSmoothingEnabled = false; return [c, x]; }
 const R = (x, c, a, b, w, h) => { x.fillStyle = c; x.fillRect(a | 0, b | 0, w | 0, h | 0); };
@@ -29,7 +48,7 @@ function bakeWorld(W) {
     const T = THEMES[rm.theme], X = rm.x0 * TS, Y = rm.y0 * TS, w = (rm.x1 - rm.x0 + 1) * TS, h = (rm.y1 - rm.y0 + 1) * TS;
     R(x, T.wall, X, Y, w, h);
     // 벽 아래쪽 띠와 바닥 가까운 무늬
-    const wain = { lobby: '#c2b8a0', office: '#b4c0d2', cafe: '#a8793a', server: '#222c42', terminal: '#d2d9e4', gates: '#c6d0de', bridge: '#9fabc2' }[rm.theme];
+    const wain = T.wain || { lobby: '#c2b8a0', office: '#b4c0d2', cafe: '#a8793a', server: '#222c42', terminal: '#d2d9e4', gates: '#c6d0de', bridge: '#9fabc2' }[rm.theme];
     R(x, wain, X, Y + h - 30, w, 30); R(x, 'rgba(0,0,0,.12)', X, Y + h - 30, w, 2);
     if (rm.theme === 'cafe') for (let a = X; a < X + w; a += 16) for (let b2 = 0; b2 < 2; b2++) R(x, (a / 16 + b2) % 2 ? 'rgba(255,255,255,.16)' : 'rgba(0,0,0,.1)', a, Y + h - 30 + b2 * 16, 16, 16);
     if (rm.theme === 'lobby' || rm.theme === 'terminal') for (let a = X; a < X + w; a += 64) R(x, 'rgba(255,255,255,.2)', a + 2, Y + h - 28, 28, 26);
@@ -88,6 +107,16 @@ function drawObj(x, W, o) {
     case 'checkin': R(x, col[0], X, Y, w, h); R(x, col[1], X, Y, w, 4); R(x, '#10182a', X + 6, Y + 10, w - 12, 10); R(x, '#fff', X + 8, Y + 12, 14, 2); break;
     case 'vending': R(x, col[0], X, Y, w, h); R(x, '#fff3', X + 3, Y + 4, w - 12, h - 10); for (let i = 0; i < 3; i++) R(x, col[1], X + 5, Y + 7 + i * 7, w - 16, 3); break;
     case 'table': case 'desk': case 'bench': case 'meeting': case 'counter': case 'foodbar': R(x, col[1], X, Y, w, 5); R(x, col[0], X + 2, Y + 5, 3, h - 5); R(x, col[0], X + w - 5, Y + 5, 3, h - 5); if (h > 20) R(x, col[0], X, Y + 5, w, h - 5); break;
+    case 'train': R(x, '#d0d6de', X, Y, w, h); R(x, '#2a6ac8', X, Y + h - 10, w, 6); for (let i = 0; i < 6; i++) { R(x, '#10182a', X + 8 + i * 60, Y + 6, 42, 18); R(x, '#8ac0f0', X + 10 + i * 60, Y + 8, 38, 14); } break;
+    case 'bed': R(x, '#8a949e', X, Y + h - 4, w, 4); R(x, col[0], X + 2, Y + 3, w - 4, h - 7); R(x, col[1], X + w - 22, Y + 3, 20, h - 7); R(x, '#fff', X + 4, Y + 1, 14, 5); break;
+    case 'piano': R(x, col[0], X, Y, w, h); R(x, col[1], X + 3, Y + 5, w - 6, 6); for (let i = 0; i < w - 6; i += 4) R(x, '#111', X + 5 + i, Y + 5, 1, 4); break;
+    case 'hoop': R(x, '#aaa', X + 6, Y, 3, h); R(x, '#fff', X, Y, 16, 12); R(x, col[0], X + 4, Y + 6, 10, 2); break;
+    case 'machine': R(x, col[0], X, Y, w, h); R(x, col[1], X + 3, Y + 3, w - 6, 5); for (let i = 0; i < 3; i++) R(x, '#222', X + 4 + i * 12, Y + 12, 8, 8); R(x, '#ff5a3a', X + w - 8, Y + 4, 3, 3); break;
+    case 'fountain': R(x, col[0], X, Y + h - 8, w, 8); R(x, col[1], X + 3, Y + h - 6, w - 6, 3); R(x, col[1], X + w / 2 - 2, Y, 4, h - 8); break;
+    case 'mannequin': R(x, col[1], X + 4, Y, 8, 8); R(x, col[0], X + 3, Y + 9, 10, 20); R(x, '#444', X + 6, Y + 29, 4, h - 29); break;
+    case 'locker': for (let i = 0; i < o.w; i++) { R(x, col[0], X + i * TS + 1, Y, 14, h); R(x, col[1], X + i * TS + 3, Y + 3, 10, 3); R(x, '#222', X + i * TS + 11, Y + h / 2, 2, 4); } break;
+    case 'crate': R(x, col[0], X, Y, w, h); R(x, col[1], X + 2, Y + 2, w - 4, 3); R(x, 'rgba(0,0,0,.25)', X + w / 2 - 1, Y, 2, h); break;
+    case 'drip': R(x, '#9aa4ae', X + 6, Y, 2, h); R(x, col[1], X + 3, Y + 2, 8, 10); break;
     case 'seats': for (let i = 0; i < o.w; i++) { R(x, col[0], X + i * TS + 1, Y + 4, 14, 12); R(x, col[1], X + i * TS + 1, Y, 14, 6); } break;
     case 'sofa': R(x, col[0], X, Y + 4, w, h - 4); R(x, col[1], X + 2, Y, w - 4, 7); break;
     case 'luggage': R(x, col[0], X + 1, Y + 2, w - 2, h - 2); R(x, col[1], X + 3, Y + 4, w - 6, 2); R(x, '#222', X + w / 2 - 2, Y - 2, 4, 3); break;
