@@ -211,6 +211,22 @@ gl.addEventListener('mousemove', e => { mouse.x = e.clientX; mouse.y = e.clientY
 gl.addEventListener('mousedown', e => { mouse.x = e.clientX; mouse.y = e.clientY; mouse.down = true; });
 addEventListener('mouseup', () => { mouse.down = false; });
 gl.addEventListener('contextmenu', e => e.preventDefault());
+/* 모바일: 화면을 누르면 그쪽으로 조준해 쏘고, 버튼으로 이동·점프·교체해요 */
+const TOUCH = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0) || (matchMedia && matchMedia('(pointer:coarse)').matches);
+if (TOUCH) {
+  document.body.classList.add('touch');
+  let aimId = null;
+  gl.addEventListener('pointerdown', e => { if (e.pointerType === 'mouse') return; e.preventDefault(); aimId = e.pointerId; mouse.x = e.clientX; mouse.y = e.clientY; mouse.down = true; });
+  gl.addEventListener('pointermove', e => { if (e.pointerId === aimId) { mouse.x = e.clientX; mouse.y = e.clientY; } });
+  const upA = e => { if (e.pointerId === aimId) { aimId = null; mouse.down = false; } };
+  gl.addEventListener('pointerup', upA); gl.addEventListener('pointercancel', upA);
+  const hold = (id, on, off) => { const b = $(id); b.addEventListener('pointerdown', e => { e.preventDefault(); SFX.unlock(); try { b.setPointerCapture(e.pointerId); } catch (_) { } b.classList.add('on'); on(); });
+    const up = e => { b.classList.remove('on'); off && off(); }; b.addEventListener('pointerup', up); b.addEventListener('pointercancel', up); b.addEventListener('lostpointercapture', up); b.addEventListener('contextmenu', e => e.preventDefault()); };
+  hold('tL', () => { keys.a = true; }, () => { keys.a = false; });
+  hold('tR', () => { keys.d = true; }, () => { keys.d = false; });
+  hold('tJ', () => { keys.j = true; pend.jp = true; }, () => { keys.j = false; });
+  hold('tF', () => { pend.swap = true; });
+}
 
 function myInput() {
   const sc = gl.clientHeight / VH, me = G.racers.find(r => r.id === UID), meG = me;
