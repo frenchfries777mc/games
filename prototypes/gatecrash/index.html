@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<!-- Gatecrash · © 2026 Frenchfries777 · CC BY-NC-ND 4.0 (출처 표시 필수, 비영리, 변경 금지) · https://creativecommons.org/licenses/by-nc-nd/4.0/deed.ko -->
+<html lang="ko">
+<head><style id="ffTap">html,body{touch-action:manipulation}</style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<title>Gatecrash</title>
+<script>(function(){var B=1;try{fetch('build.json?t='+Date.now(),{cache:'no-store'}).then(function(r){return r.json()}).then(function(d){if(d&&d.build>B&&sessionStorage.getItem('gcReload')!=String(d.build)){sessionStorage.setItem('gcReload',String(d.build));var u=new URL(location.href);u.searchParams.set('b',d.build);location.replace(u.toString());}}).catch(function(){});}catch(e){}})();</script>
+<meta name="description" content="건물과 공항을 달려 먼저 도착하는 옆면 픽셀 레이스 액션">
+<meta name="robots" content="noindex">
+<link rel="icon" href="logo.svg" type="image/svg+xml">
+<script src="../../ff-presence.js" async></script>
+<script src="https://cdn.jsdelivr.net/npm/peerjs@1.5.4/dist/peerjs.min.js"></script>
+<script src="https://frenchfries777mc.github.io/games/ff-lang.js"></script>
+<script>window.FF_INGAME=true</script>
+<script src="https://frenchfries777mc.github.io/games/ff-auth.js?v=20261028h"></script>
+<script src="../../ff-pnsearch.js"></script>
+<style>
+:root{--ink:#e9f0ff;--acc:#ffb347;--dim:#8fa0c0;--bg:#0c1220;--panel:rgba(16,24,44,.9);--line:#33446b;color-scheme:dark}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;height:100%;background:var(--bg);color:var(--ink);font-family:system-ui,-apple-system,"Apple SD Gothic Neo","Noto Sans KR","Malgun Gothic",sans-serif;overflow:hidden;user-select:none;-webkit-user-select:none;touch-action:none}
+::-webkit-scrollbar{width:8px}::-webkit-scrollbar-track{background:#101830}::-webkit-scrollbar-thumb{background:#33446b;border-radius:4px}*{scrollbar-color:#33446b #101830}
+canvas#gl{position:fixed;inset:0;width:100vw;height:100vh;display:block;image-rendering:pixelated}
+.scr{position:fixed;inset:0;z-index:5;display:none}.scr.on{display:block}
+button{font:inherit;color:inherit;cursor:pointer}
+.btn{background:#1b2a4d;border:2px solid var(--line);border-radius:8px;padding:9px 18px;font-weight:700}
+.btn:hover{border-color:var(--acc);color:var(--acc)}.btn.go{background:#c9792a;border-color:#ffd9a0;color:#fff}.btn.go:hover{color:#fff;filter:brightness(1.1)}
+.btn:disabled{opacity:.45;cursor:default}
+#sLobby{background:linear-gradient(180deg,#0c1220 0%,#16264a 70%,#233a66 100%)}
+#bgv{position:absolute;inset:0;width:100%;height:100%;image-rendering:pixelated}
+#sLobby .title{position:absolute;left:0;right:0;top:9vh;text-align:center;pointer-events:none}
+#sLobby h1{margin:0;font:900 clamp(48px,9vw,110px)/1 "Courier New",monospace;letter-spacing:.06em;color:#ffcf7a;text-shadow:0 5px 0 #8a4310,0 10px 0 #2a1408}
+#sLobby p{margin:12px 0 0;font-size:clamp(14px,1.7vw,20px);color:#cfe0ff}
+#menu{position:absolute;right:5vw;top:50%;transform:translateY(-50%);display:flex;flex-direction:column;gap:10px;width:min(260px,70vw)}
+#menu .btn{text-align:left;padding:12px 18px;font-size:17px}
+@media (max-aspect-ratio:1/1){#menu{right:auto;left:50%;transform:translateX(-50%);top:auto;bottom:6vh}}
+#who{position:absolute;right:18px;top:14px;font-weight:700;color:var(--acc);font-size:15px;z-index:2}
+#who button{background:none;border:0;text-decoration:underline;padding:0 0 0 8px}
+#homeMsg{position:absolute;left:0;right:0;bottom:46px;text-align:center;color:#ffd9a0;min-height:20px}
+#ver{position:absolute;left:18px;bottom:12px;font-size:12px;color:rgba(255,255,255,.55)}
+.ff-copy{position:absolute;right:14px;bottom:12px;font-size:12px;color:rgba(255,255,255,.55)}.ff-copy a{color:inherit}
+.panel{position:absolute;inset:6vh 6vw;background:var(--panel);border:2px solid var(--line);border-radius:12px;padding:22px 26px;overflow:auto}
+.panel h2{margin:0 0 14px}.back{position:absolute;left:18px;top:14px;z-index:3}
+.note{color:var(--dim);font-size:13px}
+#slots{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:10px;margin:14px 0}
+.slot{background:#14203d;border:2px solid var(--line);border-radius:8px;padding:10px 12px;display:flex;gap:10px;align-items:center}
+.slot i{width:16px;height:16px;border-radius:3px;flex:none}.slot.empty{opacity:.45}
+.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin:10px 0}
+.maps{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px}
+.mapc{background:#14203d;border:2px solid var(--line);border-radius:8px;padding:10px;text-align:left}.mapc.on{border-color:var(--acc)}
+.mapc b{display:block;margin-bottom:4px}.mapc small{color:var(--dim)}
+.wl{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:10px;margin-top:10px}.wl div{background:#14203d;border-radius:8px;padding:10px}.wl small{display:block;color:var(--dim);margin-top:4px}
+.notes h3{margin:16px 0 4px;color:var(--acc)}.notes ul{margin:0;padding-left:20px}
+#hud{position:fixed;inset:0;z-index:4;pointer-events:none;display:none}#hud.on{display:block}
+#big{position:absolute;left:0;right:0;top:28vh;text-align:center;font:900 clamp(48px,11vw,130px)/1 "Courier New",monospace;color:#fff;text-shadow:0 5px 0 #8a4310,0 0 20px #000a}
+#hint{position:absolute;left:0;right:0;bottom:12px;text-align:center;font-size:13px;color:#dbe6ff;text-shadow:0 1px 3px #000}
+#res{position:absolute;inset:0;display:none;align-items:center;justify-content:center;pointer-events:auto;background:rgba(5,8,18,.6)}
+#res.on{display:flex}#res .box{background:var(--panel);border:2px solid var(--line);border-radius:12px;padding:22px 30px;min-width:min(380px,90vw)}
+#res ol{padding-left:22px;margin:8px 0 16px}
+#modal{position:fixed;inset:0;z-index:50;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,.55)}#modal.on{display:flex}
+#modal .box{background:var(--panel);border:2px solid var(--line);border-radius:12px;padding:20px 26px;max-width:90vw;text-align:center}
+</style>
+</head>
+<body>
+<canvas id="gl"></canvas>
+
+<section class="scr on" id="sLobby">
+  <canvas id="bgv"></canvas>
+  <div id="who"></div>
+  <div class="title"><h1>GATECRASH</h1><p>건물과 공항을 달려 먼저 도착해요 · 옆면 픽셀 레이스</p></div>
+  <nav id="menu">
+    <button class="btn go" data-go="match">온라인 대전</button>
+    <button class="btn" data-go="host">친구와 대결</button>
+    <button class="btn" data-go="solo">봇과 연습</button>
+    <button class="btn" data-go="help">무기·조작</button>
+    <button class="btn" data-go="notes">패치노트</button>
+    <button class="btn" data-go="site">사이트로 돌아가기</button>
+  </nav>
+  <div id="homeMsg"></div>
+  <div id="ver"></div>
+  <span class="ff-copy">© 2026 Frenchfries777 · <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.ko" target="_blank" rel="noopener">CC BY-NC-ND 4.0</a></span>
+</section>
+
+<section class="scr" id="sRoom">
+  <button class="btn back" data-back>← 나가기</button>
+  <div class="panel" style="top:9vh">
+    <h2 id="roomTitle">대결 준비</h2>
+    <div class="note" id="roomSub"></div>
+    <div id="slots"></div>
+    <div class="row" id="mapRow"><span class="note">맵</span><div class="maps" id="maps" style="flex:1"></div></div>
+    <div class="row"><button class="btn go" id="startBtn">시작</button><span class="note" id="roomMsg"></span></div>
+  </div>
+</section>
+
+<section class="scr" id="sHelp"><button class="btn back" data-back>← 뒤로</button><div class="panel" style="top:9vh">
+  <h2>조작</h2>
+  <div class="note"><b>A / D</b> 이동 · <b>W 또는 Space</b> 점프(오래 누르면 높이 점프) · <b>마우스 클릭</b> 무기 사용(그 방향으로) · <b>F</b> 바닥 무기와 바꾸기</div>
+  <h2 style="margin-top:20px">무기</h2><div class="wl" id="wl"></div>
+  <p class="note">무기가 없으면 바닥 무기에 닿기만 해도 주워요. 맞으면 날아가고(넉백) 잠깐 움직이지 못해요. 체력이 0이 되면 처음 위치에서 다시 시작해요.</p>
+</div></section>
+
+<section class="scr" id="sNotes"><button class="btn back" data-back>← 뒤로</button><div class="panel notes" style="top:9vh"><h2>패치노트</h2><div id="notesBox"></div></div></section>
+
+<div id="hud"><div id="big"></div><div id="hint"></div>
+  <div id="res"><div class="box"><h2 id="resT"></h2><ol id="resL"></ol><div class="row"><button class="btn go" id="resAgain">다시 하기</button><button class="btn" id="resBack">나가기</button></div></div></div></div>
+<div id="modal"><div class="box"><div id="modalT"></div><div class="row" style="justify-content:center"><button class="btn" id="modalOk">확인</button></div></div></div>
+
+<script src="js/data.js?v=1"></script>
+<script src="js/game.js?v=1"></script>
+<script src="js/view.js?v=1"></script>
+<script src="js/main.js?v=1"></script>
+</body>
+</html>

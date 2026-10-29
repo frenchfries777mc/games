@@ -18,6 +18,7 @@ function which(){
   if(/\/(prototypes\/dummyparty|dummyparty\/play)\//i.test(p)) return 'dummyparty';
   if(/\/(prototypes\/vowkeep|vowkeep\/play)\//i.test(p)) return 'vowkeep';
   if(/\/prototypes\/tumblecrown\//i.test(p)) return 'tumblecrown';
+  if(/\/prototypes\/gatecrash\//i.test(p)) return 'gatecrash';
   return null;
 }
 /* 게임이 아닌 사이트(Educations, Tools)는 '사이트'로 따로 세요 (허브 인원과 섞이지 않아요) */
