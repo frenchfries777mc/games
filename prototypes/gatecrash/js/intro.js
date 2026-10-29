@@ -3,7 +3,7 @@
 'use strict';
 (function () {
   const cv = document.getElementById('intro'); if (!cv) return;
-  const x = cv.getContext('2d'), DUR = 8.8, HIT = 3.2, FAKE = { id: 'airport' };
+  const x = cv.getContext('2d'), DUR = 6.0, HIT = 2.4, FAKE = { id: 'airport' };
   let t0 = 0, done = false, snd = null;
   const cols = ['#e8483b', '#3b8de8', '#3fbf5a', '#f2b632'];
   const R = [0, 1, 2, 3].map(i => ({ id: 'i' + i, slot: i, col: cols[i], x: 0, y: 0, vx: 0, face: 1, ground: true, anim: 0, inv: 0, stun: 0, flash: 0, wep: null, swing: 0, aim: 0, name: '', hp: 100 }));
@@ -14,7 +14,7 @@
     try { snd = new Audio('intro.mp3?v=' + BUILD); snd.preload = 'auto'; snd.play().catch(() => { }); } catch (e) { }
   }
   // 소리는 브라우저가 첫 화면 터치/키 입력 뒤에야 허용해요: 그때 곡을 처음부터 다시 맞춰 틀어요
-  function unlock() { if (done || !snd) return; const el = (performance.now() - t0) / 1000; if (snd.paused) { try { snd.currentTime = Math.min(el, 8.5); snd.play().catch(() => { }); } catch (e) { } } }
+  function unlock() { if (done || !snd) return; const el = (performance.now() - t0) / 1000; if (snd.paused) { try { snd.currentTime = Math.min(el, 5); snd.play().catch(() => { }); } catch (e) { } } }
   addEventListener('pointerdown', unlock); addEventListener('keydown', unlock);
   function ez(k) { k = Math.max(0, Math.min(1, k)); return k * k * (3 - 2 * k); }
   function frame(now) {
@@ -42,8 +42,8 @@
       r.stun = 0; r.flash = 0; r.wep = null; r.swing = 0; r.inv = 0;
     });
     // 3초대에서 서로 부딪치는 연출: 파랑이 방망이로 빨강을 날려 버려요
-    if (t > 1.6 && t < 3.2) { const a = R[1], b = R[0]; a.wep = { k: 'bat', u: 1 }; const s = (t - 1.6) / 1.6; a.swing = (s > .55 && s < .7) ? .1 : 0; a.aim = 0; if (s > .6) { b.x -= 14 * (s - .6) * 2; b.y -= 10 * Math.sin((s - .6) * 8); b.stun = .1; b.flash = (s < .75) ? .1 : 0; b.ground = false; } if (s > .6 && !fxs.hit) { fxs.hit = 1; fxs.push({ t: 'hit', x: b.x + 5, y: b.y + 8, age: 0, life: .35, s: 1 }); } }
-    if (t > 2.4 && t < 3.2) { R[2].wep = { k: 'bazooka', u: 1 }; R[2].aim = 0; }
+    if (t > 1.0 && t < HIT) { const a = R[1], b = R[0]; a.wep = { k: 'bat', u: 1 }; const s = (t - 1.0) / 1.4; a.swing = (s > .55 && s < .7) ? .1 : 0; a.aim = 0; if (s > .6) { b.x -= 14 * (s - .6) * 2; b.y -= 10 * Math.sin((s - .6) * 8); b.stun = .1; b.flash = (s < .75) ? .1 : 0; b.ground = false; } if (s > .6 && !fxs.hit) { fxs.hit = 1; fxs.push({ t: 'hit', x: b.x + 5, y: b.y + 8, age: 0, life: .35, s: 1 }); } }
+    if (t > 1.6 && t < HIT) { R[2].wep = { k: 'bazooka', u: 1 }; R[2].aim = 0; }
     if (t > HIT && !fxs.boom) { fxs.boom = 1; fxs.push({ t: 'boom', x: R[3].x + 70, y: floorY, age: 0, life: .5 }); }
     for (const r of R) drawRacer(x, r, t, false);
     for (const f of fxs) f.age += 1 / 60; drawFx(x, fxs.filter(f => f.age < f.life));
@@ -59,7 +59,7 @@
       const k = Math.min(1, (t - HIT) / .35), sl = 1 + (1 - ez(k)) * .9, a = Math.min(1, (t - HIT) / .15);
       x.save(); x.translate(w / 2, h * .4); x.scale(sl, sl); x.globalAlpha = a; x.font = '700 ' + big + 'px Galmuri, monospace';
       x.fillStyle = '#2a1408'; x.fillText('GATECRASH', 0, big * .12); x.fillStyle = '#8a4310'; x.fillText('GATECRASH', 0, big * .06); x.fillStyle = '#ffcf7a'; x.fillText('GATECRASH', 0, 0); x.restore();
-      if (t > HIT + .9) { x.globalAlpha = ez((t - HIT - .9) / .6); x.fillStyle = '#fff'; x.font = '700 ' + Math.round(big * .2) + 'px Galmuri, sans-serif'; x.fillText('건물과 공항을 달려 먼저 도착해요', w / 2, h * .4 + big * .5); x.globalAlpha = 1; }
+      if (t > HIT + .6) { x.globalAlpha = ez((t - HIT - .6) / .5); x.fillStyle = '#fff'; x.font = '700 ' + Math.round(big * .2) + 'px Galmuri, sans-serif'; x.fillText('건물과 공항을 달려 먼저 도착해요', w / 2, h * .4 + big * .5); x.globalAlpha = 1; }
     }
     const fade = t > DUR - .6 ? ez((t - (DUR - .6)) / .6) : 0, fi = ez(1 - t / .5);
     x.fillStyle = 'rgba(8,12,24,' + Math.max(fade, fi) + ')'; x.fillRect(0, 0, w, h);
