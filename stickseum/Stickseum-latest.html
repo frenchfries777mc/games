@@ -1498,10 +1498,9 @@ function stunPlayer(t, sec, tMs){
   pushFx('stun', t.x, t.y-PLAYER_H-8, tMs, {});
 }
 const NO_REGEN_MODES={survival:1, oneshot:1};
-let ULT_CD = 30;   // (a `let` only so the practice mode can shorten it)
+let ULT_CD = 20;   // (a `let` only so the practice mode can shorten it)
 let practiceMode=false;   // the offline practice mode: no rewards of any kind, endless, no match end
 function noRewards(){ return practiceMode || currentMode==='private'; }   // practice and private rooms earn nothing: no gold, souls, player/season/character xp, missions, achievements or stats (owner, v227: fairness)
-const PZ_ULT_CD=20, ULT_HIT_CUT=0.5;      // every character's ultimate takes 30 s (피사로 20 s); each hit that lands on an enemy takes 0.5 s off it (owner 10-29)
 const PRACTICE_ULT_CD=3, PRACTICE_TELEPORT_CD=2, PRACTICE_RESPAWN_SEC=2, PRACTICE_MAX_OPPONENTS=8;
 const BAT_DMG_MULT = 1.6, BAT_SPEED_MULT = 1.7, BAT_FORM_SEC = 7, BAT_TEAM_HEAL_SHARE = 0.5, BAT_VERT_SPEED = 260;   // (260px/s up with jump, the same down with S)
 const WIZ_CIRCLE_R = 330, WIZ_CIRCLE_SEC = 10, WIZ_HEAL_PER_SEC = 12, WIZ_ENEMY_DPS = 9, WIZ_SPEED_MULT = 1.4, WIZ_DMG_MULT = 1.3, WIZ_CD_MULT = 0.7;
@@ -3700,7 +3699,6 @@ function markHit(target, attackerId, t, dmg){
   if(dmg>0 && gameMode==='raid' && target.isBoss && attackerId && players[attackerId] && !players[attackerId].isMinion) players[attackerId].raidDmg=(players[attackerId].raidDmg||0)+dmg;
   if(dmg>0) recordReplayEvent(target.id, 'hit', {dmg}); // record even self/environmental damage (attackerId null) so the killcam can show it was actually hurting, not just moving
   if(!attackerId || attackerId===target.id) return;
-  { const at=players[attackerId]; if(dmg>0 && at && at.lastUlt!==undefined && !isAlly(at,target)) at.lastUlt-=ULT_HIT_CUT; }      // every hit on an enemy takes 0.5 s off the ultimate's cooldown
   if(!target.dmgBy) target.dmgBy={};
   target.dmgBy[attackerId]=t/1000;
   if(dmg>0 && players[attackerId]) players[attackerId].totalDamageDealt=(players[attackerId].totalDamageDealt||0)+dmg;
@@ -5472,7 +5470,7 @@ function shuffle(arr){ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.
 /* ===== the version of this file =====
    Different BUILDS of one version meet and play together (room names online-v<ver>-<mode>-<map>-<slot>); different VERSIONS (the 0.x part) never do - the host refuses them (verNo) and the dispatcher answers busy.
    The build is only sent along with the join message and the lobby (for information); the corner of the screen shows it. */
-const GAME_BUILD='build 2026-10-18-v506';
+const GAME_BUILD='build 2026-10-18-v507';
 const GAME_VERSION='0.9', GAME_VERSION_NAME='은하 제국의 황혼';   // 게임 버전 이름: versions.json의 title과 같게 (빌드마다 바꾸지 않음)
 /* version (the 0.x part) vs build: different BUILDS of one version meet and play together, different VERSIONS never do (rooms, quick match, ranked, friend invites, dispatcher).
    Builds before 470 do not send a version, so it is read from the build number (0.9 started at build 458). */
@@ -7488,7 +7486,7 @@ function exitPractice(){
   tutorialEnd();
   document.getElementById('practicePanel').style.display='none';
   clearInterval(pracDpsTimer); pracDpsTimer=null;
-  practiceMode=false; ULT_CD=30; TELEPORT_CD=10; SKILL_CD=5;      // back to the real cooldowns
+  practiceMode=false; ULT_CD=20; TELEPORT_CD=10; SKILL_CD=5;      // back to the real cooldowns
   stopResultSound();
   document.getElementById('matchEndOverlay').style.display='none'; mvpShown=null; try{ hideMvpBox(); }catch(e){}
   document.getElementById('hud').style.display='none';
@@ -12334,7 +12332,7 @@ function drawSpacePersona(c, wid, hx, hy, r, shy, tint){       // the looks foll
   }
 }
 function skillCdOf(p){ return (skW(p)==='cleon'?CLEON_SKILL_CD:SKILL_CD)*pzCdMult(p); }
-function ultCdOf(p){ return Math.min(ULT_CD, (p && p.weapon==='pizarro') ? PZ_ULT_CD : ULT_CD)*pzCdMult(p)*(gameMode==='hyperbr'?0.2:1); }
+function ultCdOf(p){ return ULT_CD*pzCdMult(p)*(gameMode==='hyperbr'?0.2:1); }
 const PRACTICE_SKILL_CD=2;
 const SKILLS={
   cleon:{name:'근위병 소환', kind:'buff', desc:'창을 든 근위병 4명을 9초 동안 소환 (체력 90, 쿨타임 12.5초) · 2명은 가장 가까운 상대에게 돌진해 15 피해, 2명은 내 좌우를 지키다 상대가 가까워지면 달려가 공격'},

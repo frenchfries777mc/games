@@ -375,3 +375,4 @@ patchnotes.json | v504 items[0] | 킬 로그에서 변장한 티오니스도 진
 patchnotes.json | v505 title | 은하 제국의 황혼 | build 505 | 2026-10-29
 patchnotes.json | v505 items[0] | 밸런스 표를 봇 전 맵 재측정으로 갱신 (궁극기 쿨타임·피사로 조정 반영) | build 505 | 2026-10-29
 patchnotes.json | v506 items[0] | 5초 동안 피해를 안 받고 가만히 서 있거나 10초 동안 피해를 안 받으면 체력 10 회복 (같은 휴식으로 중복 회복 없음) | build 506 | 2026-10-29
+patchnotes.json | v507 items[0] | 궁극기 쿨타임을 다시 20초로 되돌리고 적중 시 줄어드는 효과 삭제 | build 507 | 2026-10-29
