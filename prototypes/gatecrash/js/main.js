@@ -135,7 +135,8 @@ function startGuest(code) {
     c.on('data', d => guestMsg(d, fail, () => { done = true; })); c.on('close', () => { if (!done || N.mode === 'guest') { if (N.G) { endToLobby('방장과 연결이 끊겼어요.'); } else fail('방과 연결이 끊겼어요.'); } });
   });
 }
-function endToLobby(msg) { leaveNet(); show('sLobby'); paintWho(); homeMsg(msg || ''); }
+function endToLobby(msg) {
+  BGM.stop(); leaveNet(); show('sLobby'); paintWho(); homeMsg(msg || ''); }
 function guestMsg(d, fail, ok) {
   if (!d) return;
   if (d.t === 'no') fail(d.why);
@@ -183,10 +184,11 @@ function beginGame() {
 }
 function playGame(map, pl) {
   N.G = G = newGame(map, pl.map((p, i) => ({ id: p.id, name: p.name, col: p.col, bot: p.bot, own: p.id === UID })));
+  if (BGM.el) BGM.start();
   baked = bakeWorld(G.W); fx = []; N.inputs = {}; last = performance.now(); acc = 0; $('res').classList.remove('on');
   const me = G.racers.find(r => r.id === UID); cam.x = me ? me.x : 0; cam.y = me ? me.y : 0; snapT = 0;
   $('hint').textContent = 'A D 이동 · W/Space 점프 · 클릭 무기 · F 바꾸기';
-  show('game'); loop.on = true; requestAnimationFrame(loop);
+  show('game'); BGM.start(); loop.on = true; requestAnimationFrame(loop);
 }
 $('resBack').onclick = () => { loop.on = false; endToLobby(); };
 $('resAgain').onclick = () => { if (N.mode === 'solo' || N.mode === 'host') { loop.on = false; if (N.mode === 'host') { bcast({ t: 'room', players: N.players, map: N.map }); } N.G = null; beginGame(); } else $('resAgain').textContent = '방장이 다시 시작해요'; };
@@ -316,7 +318,7 @@ function showResult() {
   const list = G.rank.map(id => G.racers.find(r => r.id === id)).filter(Boolean);
   for (const r of G.racers.slice().sort((a, b) => a.prog - b.prog)) if (!list.includes(r)) list.push(r);
   const me = list.findIndex(r => r.id === UID);
-  if (me === 0) SFX.win();
+  BGM.duck(.35); if (me === 0) SFX.win();
   $('resT').textContent = me === 0 ? '1등!' : (me + 1) + '등'; $('resL').innerHTML = list.map(r => '<li style="color:' + r.col + '">' + esc(r.name) + '</li>').join('');
   $('resAgain').textContent = '다시 하기'; $('res').classList.add('on');
 }
