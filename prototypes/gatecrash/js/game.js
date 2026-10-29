@@ -135,7 +135,7 @@ function newRacer(o, W) {
   const s = W.starts[o.slot % W.starts.length];
   const r = Object.assign(newBody(s.x, s.y), { id: o.id, name: o.name, col: o.col, bot: !!o.bot, slot: o.slot, own: !!o.own,
     face: 1, aim: 0, hp: MAX_HP, wep: null, cd: 0, inv: 0, swing: 0, flash: 0, fin: false, finT: 0, anim: 0, node: -1, prog: 1, ko: 0,
-    ai: o.bot ? { plan: null, stuck: 0, best: Infinity, wait: 0, noise: 0.15 + Math.random() * 0.25, aimT: 0, react: 0.2 + Math.random() * 0.3 } : null,
+    ai: o.bot ? { plan: null, stuck: 0, best: Infinity, wait: 0, noise: 0.15 + Math.random() * 0.25, aimT: 0, react: 0.2 + Math.random() * 0.3, err: 0.1 + Math.random() * 0.18 } : null,
     tx: s.x, ty: s.y });
   return r;
 }
@@ -164,14 +164,16 @@ function botInput(G, r, dt) {
     if (n >= 0 && (!ai.plan || ai.plan.from !== n || ai.plan.done)) {
       let best = null, bc = Infinity;
       for (const e of W.edges[n] || []) { const c = e.t + W.dist[e.to] + Math.random() * ai.noise * 0.3; if (c < bc) { bc = c; best = e; } }
-      ai.plan = best ? { from: n, e: best, done: false, launched: false } : null;
+      ai.plan = best ? { from: n, e: best, done: false, launched: false, shift: Math.random() < ai.err ? (Math.random() < .5 ? -1 : 1) * (6 + Math.random() * 12) : 0 } : null;
+      if (ai.plan && Math.random() < ai.err * .45) ai.wait = .3 + Math.random() * .7;     // 잠깐 망설여요
+      if (ai.plan && ai.plan.shift && Math.random() < .35 && W.edges[n].length > 1) ai.plan.e = W.edges[n][(Math.random() * W.edges[n].length) | 0];   // 엉뚱한 길로 가 봐요
     }
     const p = ai.plan;
     if (p && !p.launched) {
       const e = p.e, tx = p.from % W.w;
       if (e.walk) { inp.d = e.walk; }
       else {
-        const lx = tx * TS + e.act.off * (TS - PH.W);
+        const lx = tx * TS + e.act.off * (TS - PH.W) + p.shift;
         const dx = lx - r.x;
         if (Math.abs(dx) > 2.5) inp.d = Math.sign(dx) * (Math.abs(dx) < 10 && Math.abs(r.vx) > 60 ? 0 : 1);
         else if (Math.abs(r.vx) > 45 && e.act.d !== Math.sign(r.vx)) inp.d = 0;
@@ -208,7 +210,7 @@ function clearLine(W, x0, y0, x1, y1) {
 
 /* ---------- 경기 ---------- */
 function newGame(mapId, players) {
-  const W = makeWorld(mapId), G = { W, phase: 'count', t: 3.99, clock: 0, racers: [], items: [], shots: [], fx: [], ev: [], rank: [], seq: 1 };
+  const W = makeWorld(mapId), G = { W, phase: 'count', t: 8, clock: 0, racers: [], items: [], shots: [], fx: [], ev: [], rank: [], seq: 1 };
   players.forEach((p, i) => G.racers.push(newRacer(Object.assign({ slot: i }, p), W)));
   W.spawns.forEach((s, i) => G.items.push({ id: i, x: s.x, y: s.y, k: WEP_IDS[(i * 7 + 3) % WEP_IDS.length], on: true, t: 0 }));
   return G;
