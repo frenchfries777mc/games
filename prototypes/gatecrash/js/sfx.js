@@ -48,3 +48,23 @@ function GCSfx(e) {
   else if (e.t === 'fin') SFX.fin();
   else if (e.t === 'fire') { if (e.k === 'bazooka') SFX.rocket(); else if (e.k === 'pistol') SFX.pistol(); }
 }
+
+/* 배경음악: Pixel Sprint (파일 자체를 -20 LUFS로 맞춰 두었어요. iPad는 audio.volume을 무시해서 Web Audio 게인으로 조절해요) */
+const BGM = {
+  el: null, g: null,
+  start() {
+    const a = actx(); if (!a) return;
+    if (!this.el) {
+      const el = new Audio('pixel-sprint.mp3?v=' + BUILD); el.loop = true; el.preload = 'auto'; this.el = el;
+      try { const src = a.createMediaElementSource(el); this.g = a.createGain(); this.g.gain.value = 0; src.connect(this.g); this.g.connect(master); } catch (e) { this.g = null; el.volume = 0.5; }
+    }
+    try { this.el.play().catch(() => { }); } catch (e) { }
+    if (this.g) { const t = a.currentTime; this.g.gain.cancelScheduledValues(t); this.g.gain.setValueAtTime(this.g.gain.value, t); this.g.gain.linearRampToValueAtTime(1.0, t + 1.2); }
+  },
+  duck(v) { if (this.g) { const t = ac.currentTime; this.g.gain.cancelScheduledValues(t); this.g.gain.setValueAtTime(this.g.gain.value, t); this.g.gain.linearRampToValueAtTime(v, t + .4); } },
+  stop() {
+    if (!this.el) return;
+    if (this.g) { const t = ac.currentTime; this.g.gain.cancelScheduledValues(t); this.g.gain.setValueAtTime(this.g.gain.value, t); this.g.gain.linearRampToValueAtTime(0, t + .6); const el = this.el; setTimeout(() => { if (this.g && this.g.gain.value < .05) el.pause(); }, 800); }
+    else this.el.pause();
+  }
+};
