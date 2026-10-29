@@ -87,7 +87,11 @@ function pvpSpawn(G) {
 }
 function respawnP(G, p) {
   p.dead = false; p.down = false; p.hp = p.maxhp; p.inv = D.SPAWN_INV; p.shield = 0; p.burn = 0; p.stl = 0; p.slow = 0; p.stun = 0; p.noHit = 0; p.mh = null; p.vow = null; p.bast = 0;
-  teamPos(G, p); ev(G, 'respawn', { id: p.id, x: p.x, z: p.z });
+  teamPos(G, p);
+  // 우리 팀 깃발을 골랐고 아직 우리 것이면 그 둘레에서 일어나요
+  const f = p.rspF != null ? G.fl[p.rspF] : null; p.rspF = null;
+  if (f && f.own === p.team) { const a = p.tIdx / D.TEAM_N * TAU; p.x = f.x + Math.cos(a) * 3.2; p.z = f.z + Math.sin(a) * 3.2; mapCollide(p, 0.6); }
+  ev(G, 'respawn', { id: p.id, x: p.x, z: p.z });
 }
 // 표적을 플레이어에게 맞춰요: 쓰러진 사람의 표적은 꺼지고, 표적이 받은 둔화·표시를 플레이어에게 옮겨요
 function syncProxies(G, dt) {
@@ -604,7 +608,7 @@ function stepPlayer0(G, p, inp, dt) {
   if (p.raiseT > 0) { p.raiseT -= dt; if (p.down || p.dead) p.raiseT = 0; else if (p.raiseT <= 0) { p.raiseT = 0; for (const q of G.players) if (q.down && !q.dead && dist(p, q) < 6) revive(G, q, 0.25, p); } }
   if (p.shieldT > 0) { p.shieldT -= dt; if (p.shieldT <= 0) p.shield = 0; }
   if (p.dead) {
-    if (G.pvp) { if (G.phase === 'play' && !p.gone) { p.respT -= dt; if (p.respT <= 0) respawnP(G, p); } return; }
+    if (G.pvp) { if (inp && inp.rsp) p.rspF = inp.rsp > 0 ? inp.rsp - 1 : null; if (G.phase === 'play' && !p.gone) { p.respT -= dt; if (p.respT <= 0) respawnP(G, p); } return; }
     // 완전히 쓰러지면 12초 뒤 마지막 모닥불에서 다시 일어나요
     p.respT -= dt;
     if (p.respT <= 0 && G.phase !== 'wipe' && G.players.some(alive)) { p.dead = false; p.down = false; p.hp = Math.round(p.maxhp * 0.5); p.inv = 2; p.x = G.cp.x; p.z = G.cp.z; mapCollide(p, 0.6); ev(G, 'respawn', { id: p.id, x: p.x, z: p.z }); }
@@ -1460,7 +1464,9 @@ function botPvp(G, p, dt) {
   let tgt = null, bs = 1e9;
   for (const q of foes) { const s = dist(p, q) + (q.hp / q.maxhp) * 7 - (q === ai.tg ? 3 : 0); if (s < bs) { bs = s; tgt = q; } }
   ai.tg = tgt;
-  if (!tgt || dist(p, tgt) > 20) return botFlag(G, p, dt);   // 가까운 상대가 없으면 깃발로 가요
+  // 가까운 상대가 없으면 깃발로 가요: 깃발이 목표인 봇은 13칸 안의 상대만 상대하고, 깃발 위에서는 조금 더 멀리까지 지켜요
+  const mf = ai.fi != null ? G.fl[ai.fi] : null, onF = mf && Math.hypot(mf.x - p.x, mf.z - p.z) < D.FLAG_R * 1.6;
+  if (!tgt || dist(p, tgt) > (onF ? 20 : 13)) return botFlag(G, p, dt);
   if (tgt.stl > 0 && dist(p, tgt) > 4) {   // 숨은 상대는 어림짐작으로 찾아요
     if (!(ai.offT > 0)) { ai.offT = 1; ai.ox = (G.rng() - 0.5) * 10; ai.oz = (G.rng() - 0.5) * 10; } ai.offT -= dt; const q = {}; moveTo(G, p, q, tgt.x + ai.ox, tgt.z + ai.oz, 1.5); return q;
   }
