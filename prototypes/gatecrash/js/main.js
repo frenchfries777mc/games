@@ -129,7 +129,7 @@ function startGuest(code) {
   });
 }
 function endToLobby(msg) {
-  BGM.stop(); leaveNet(); show('sLobby'); paintWho(); homeMsg(msg || ''); }
+  BGM.play('top-of-the-leaderboard'); leaveNet(); show('sLobby'); paintWho(); homeMsg(msg || ''); }
 function guestMsg(d, fail, ok) {
   if (!d) return;
   if (d.t === 'no') fail(d.why);
@@ -177,14 +177,14 @@ function beginGame() {
 }
 function playGame(map, pl) {
   N.G = G = newGame(map, pl.map((p, i) => ({ id: p.id, name: p.name, col: p.col, bot: p.bot, own: p.id === UID })));
-  if (BGM.el) BGM.start();
-  baked = bakeWorld(G.W); fx = []; REC.length = 0; RP = null; recT = 0; N.inputs = {}; last = performance.now(); acc = 0; $('res').classList.remove('on');
+    baked = bakeWorld(G.W); fx = []; REC.length = 0; RP = null; recT = 0; N.inputs = {}; last = performance.now(); acc = 0; $('res').classList.remove('on');
   const me = G.racers.find(r => r.id === UID); cam.x = me ? me.x : 0; cam.y = me ? me.y : 0; snapT = 0;
   $('hint').style.visibility = ''; $('hint').textContent = 'A D 이동 · W/Space 점프 · 클릭 무기 · F 바꾸기';
-  show('game'); BGM.start(); loop.on = true; requestAnimationFrame(loop);
+  show('game'); BGM.play('pixel-sprint'); loop.on = true; requestAnimationFrame(loop);
 }
 $('resBack').onclick = () => { loop.on = false; endToLobby(); };
 
+document.addEventListener('pointerdown', () => { SFX.unlock(); if (scr !== 'game' && !BGM.cur) BGM.play('top-of-the-leaderboard'); });
 addEventListener('keydown', e => {
   if (scr !== 'game') return; const k = e.key.toLowerCase();
   if (e.repeat) { if (['a', 'd', 'w', ' ', 'f'].includes(k)) e.preventDefault(); return; }

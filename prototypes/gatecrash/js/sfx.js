@@ -22,12 +22,12 @@ const SFX = {
   jump() { tone(260, 520, .12, 'square', .08); },
   land() { noise(.06, .08, 900, 200); },
   swing() { noise(.14, .12, 3000, 500); },
-  hitm() { noise(.12, .25, 1800, 120); tone(150, 50, .14, 'sawtooth', .18); },
+  hitm() { noise(.12, .18, 1800, 120); tone(150, 50, .14, 'sawtooth', .12); },
   hit() { noise(.1, .2, 1500, 150); tone(180, 60, .1, 'square', .12); },
   pistol() { noise(.08, .2, 4000, 400); tone(700, 120, .09, 'square', .1); },
   spray() { noise(.1, .1, 5000, 2000); },
   rocket() { noise(.35, .2, 1500, 300); tone(160, 60, .3, 'sawtooth', .1); },
-  boom() { noise(.7, .5, 1200, 60); tone(120, 30, .6, 'sawtooth', .3); },
+  boom() { noise(.7, .32, 1200, 60); tone(120, 30, .6, 'sawtooth', .18); },
   pick() { tone(520, 780, .08, 'square', .09); tone(780, 1040, .1, 'square', .09, .07); },
   brk() { noise(.15, .15, 2500, 300); tone(300, 80, .15, 'square', .1); },
   ko() { tone(440, 90, .45, 'sawtooth', .16); noise(.3, .15, 2000, 200); },
@@ -49,22 +49,27 @@ function GCSfx(e) {
   else if (e.t === 'fire') { if (e.k === 'bazooka') SFX.rocket(); else if (e.k === 'pistol') SFX.pistol(); }
 }
 
-/* 배경음악: Pixel Sprint (파일 자체를 -20 LUFS로 맞춰 두었어요. iPad는 audio.volume을 무시해서 Web Audio 게인으로 조절해요) */
+/* 배경음악: 로비 = Top of the Leaderboard, 경기 = Pixel Sprint (두 파일 모두 -20 LUFS 근처로 맞춰 두었어요. iPad는 audio.volume을 무시해서 Web Audio 게인으로 조절해요) */
 const BGM = {
-  el: null, g: null,
-  start() {
-    const a = actx(); if (!a) return;
-    if (!this.el) {
-      const el = new Audio('pixel-sprint.mp3?v=' + BUILD); el.loop = true; el.preload = 'auto'; this.el = el;
-      try { const src = a.createMediaElementSource(el); this.g = a.createGain(); this.g.gain.value = 0; src.connect(this.g); this.g.connect(master); } catch (e) { this.g = null; el.volume = 0.5; }
+  tr: {}, cur: '',
+  get(name) {
+    const a = actx(); if (!a) return null;
+    if (!this.tr[name]) {
+      const el = new Audio(name + '.mp3?v=' + BUILD); el.loop = true; el.preload = 'auto'; const o = { el, g: null };
+      try { const src = a.createMediaElementSource(el); o.g = a.createGain(); o.g.gain.value = 0; src.connect(o.g); o.g.connect(master); } catch (e) { el.volume = 0.5; }
+      this.tr[name] = o;
     }
-    try { this.el.play().catch(() => { }); } catch (e) { }
-    if (this.g) { const t = a.currentTime; this.g.gain.cancelScheduledValues(t); this.g.gain.setValueAtTime(this.g.gain.value, t); this.g.gain.linearRampToValueAtTime(1.0, t + 1.2); }
+    return this.tr[name];
   },
-  duck(v) { if (this.g) { const t = ac.currentTime; this.g.gain.cancelScheduledValues(t); this.g.gain.setValueAtTime(this.g.gain.value, t); this.g.gain.linearRampToValueAtTime(v, t + .4); } },
+  ramp(o, v, s) { if (!o.g) return; const t = ac.currentTime; o.g.gain.cancelScheduledValues(t); o.g.gain.setValueAtTime(o.g.gain.value, t); o.g.gain.linearRampToValueAtTime(v, t + s); },
+  play(name) {
+    if (this.cur === name) { const o = this.tr[name]; if (o) { try { o.el.play().catch(() => { }); } catch (e) { } this.ramp(o, 1, .8); } return; }
+    this.stop(); const o = this.get(name); if (!o) return; this.cur = name; o.el.currentTime = 0;
+    try { o.el.play().catch(() => { }); } catch (e) { } if (o.g) this.ramp(o, 1, 1.2);
+  },
+  duck(v) { const o = this.tr[this.cur]; if (o) this.ramp(o, v, .4); },
   stop() {
-    if (!this.el) return;
-    if (this.g) { const t = ac.currentTime; this.g.gain.cancelScheduledValues(t); this.g.gain.setValueAtTime(this.g.gain.value, t); this.g.gain.linearRampToValueAtTime(0, t + .6); const el = this.el; setTimeout(() => { if (this.g && this.g.gain.value < .05) el.pause(); }, 800); }
-    else this.el.pause();
+    const o = this.tr[this.cur]; this.cur = ''; if (!o) return;
+    if (o.g) { this.ramp(o, 0, .6); setTimeout(() => { if (o.g.gain.value < .05) o.el.pause(); }, 800); } else o.el.pause();
   }
 };

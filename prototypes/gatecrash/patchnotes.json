@@ -2,6 +2,15 @@
  "notes": [
   {
    "date": "2026-10-29",
+   "build": "b5",
+   "title": "로비 음악",
+   "items": [
+    "로비 음악 Top of the Leaderboard 추가 (경기 중에는 Pixel Sprint)",
+    "두 곡과 효과음의 소리 크기를 맞췄어요"
+   ]
+  },
+  {
+   "date": "2026-10-29",
    "build": "b4",
    "title": "맵 소개와 리플레이",
    "items": [
