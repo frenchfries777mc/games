@@ -5470,7 +5470,7 @@ function shuffle(arr){ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.
 /* ===== the version of this file =====
    Different BUILDS of one version meet and play together (room names online-v<ver>-<mode>-<map>-<slot>); different VERSIONS (the 0.x part) never do - the host refuses them (verNo) and the dispatcher answers busy.
    The build is only sent along with the join message and the lobby (for information); the corner of the screen shows it. */
-const GAME_BUILD='build 2026-10-18-v510';
+const GAME_BUILD='build 2026-10-18-v511';
 const GAME_VERSION='0.9', GAME_VERSION_NAME='은하 제국의 황혼';   // 게임 버전 이름: versions.json의 title과 같게 (빌드마다 바꾸지 않음)
 /* version (the 0.x part) vs build: different BUILDS of one version meet and play together, different VERSIONS never do (rooms, quick match, ranked, friend invites, dispatcher).
    Builds before 470 do not send a version, so it is read from the build number (0.9 started at build 458). */
@@ -14177,6 +14177,11 @@ function botThink(p, t, dt){
       if(p.weapon==='lightsaber' && !mb && tSec>=(ai.deflectAt||0) && botIncomingShot(p, 150) && Math.random()<0.2+0.7*ai.skill){      // a shot is about to arrive: swing now so the 0.25 s window is open when it does
     let sh=null, sd=1e9; for(const b of bullets){ if(b.dmgless || b.owner===p.id) continue; const ow=players[b.owner]; if(ow && isAlly(p,ow)) continue; const dd=Math.hypot(b.x-p.x, b.y-(p.y-40)); if(dd<sd){ sd=dd; sh=b; } }
     if(sh){ const a=Math.atan2(sh.y-(p.y-40), sh.x-p.x); p.input.angle=a; tryFire(p, a, t); ai.deflectAt=tSec+0.9; }
+  }
+  if(!mb && skW(p)==='bow' && !p.hook && d<420 && p.hp/maxHpFor(p)<0.55 && tSec-(p.lastSkill===undefined?-9999:p.lastSkill)>=skillCdOf(p) && tSec>=(ai.skillAt||0)){      // hurt and an enemy close: the hook arrow goes up into a platform above and pulls the bot away
+    let up=null, ux=0;
+    for(const pl of MAP.platforms){ const by=pl.y+pl.h; if(by>p.y-PLAYER_H-30 || by<p.y-520) continue; const hx=clamp(p.x, pl.x+10, pl.x+pl.w-10); if(Math.abs(hx-p.x)>260) continue; if(!up || by>up.y+up.h){ up=pl; ux=hx; } }
+    if(up){ p.input.angle=Math.atan2(up.y+up.h+2-(p.y-40), ux-p.x); trySkill(p, t, ux, up.y+up.h+2); ai.skillAt=tSec+1.2; }
   }
   if(!mb && SKILLS[skW(p)] && tSec-(p.lastSkill===undefined?-9999:p.lastSkill)>=skillCdOf(p) && tSec>=(ai.skillAt||0) && Math.random()<dif.useSkill && botWantsSkill(p, target, d, tSec)){ trySkill(p, t, target.x, target.y-30); ai.skillAt=tSec+1.2; }   // the character skill, used when it makes sense for that character
       if(d<=band.max && p.grounded && Math.random()<0.035) ai.hopAt=t;                                       // an occasional hop makes a bot harder to hit
