@@ -393,7 +393,7 @@ window.bfIntro=function(){if(run)return;run=1;t0=Date.now();el.classList.add('ru
     <button class="btn" data-act="skins"><span class="arrow">▶</span>스킨 상점<span class="en">SKIN SHOP</span></button>
     <button class="btn" data-act="stats"><span class="arrow">▶</span>통계<span class="en">STATS</span></button>
     <button class="btn" data-act="settings"><span class="arrow">▶</span>설정<span class="en">SETTINGS</span></button>
-    <p class="foot">v0.4<br>build 129</p>
+    <p class="foot">v0.4<br>build 130</p>
   </nav>
 </div>
 
@@ -12822,7 +12822,10 @@ const URL_='https://kebsbuvuutilitwlvxzv.supabase.co',KEY='sb_publishable_4Egu0z
 const $g=id=>document.getElementById(id);
 const gate=$g('authgate'),msg=$g('authmsg'),bl=$g('alogin'),bs=$g('asign'),me=$g('authme'),prof=$g('authprof');
 function profShow(){try{prof.classList.toggle('show',!!(window.bfUid&&window.FFProfile));}catch(e){}}
-prof.onclick=()=>{try{if(window.FFProfile&&sb&&window.bfUid)FFProfile.open(sb,window.bfUid);}catch(e){}};
+prof.onclick=()=>{try{if(window.FFProfile&&sb&&window.bfUid){
+    /* the card shows the player where Stickseum shows its character */
+    let fig=null;try{const fc=document.createElement('canvas');fc.width=12;fc.height=16;drawPerson(fc.getContext('2d'),6,14,1,false,0,false,0,0,myLook());const dy=(stObj().day|0);fig={img:fc,label:'플레이어',name:myName(),sub:dy?'가장 오래 살아남은 날 '+dy+'일':'',pixel:true};}catch(e){}
+    FFProfile.open(sb,window.bfUid,fig?{fig}:undefined);}}catch(e){}};
 let marked=false;
 window.bfAchPush=(done,total,ids)=>{try{if(window.FFProfile&&FFProfile.setAchievements&&sb&&window.bfUid)FFProfile.setAchievements(sb,'beaconfall',done,total,ids);}catch(e){}};
 function markOnce(){try{if(!marked&&window.FFProfile&&sb&&window.bfUid){marked=true;FFProfile.markPlayed(sb,'beaconfall');}}catch(e){}}
