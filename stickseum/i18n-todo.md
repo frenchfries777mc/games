@@ -382,3 +382,4 @@ patchnotes.json | v510 items[0] | 갈고리 화살이 빗나가도 쿨타임이 
 patchnotes.json | v511 items[0] | 봇이 다쳐서 도망칠 때 위쪽 발판에 갈고리 화살을 쏴서 빠져나감 | build 511 | 2026-10-29
 patchnotes.json | v512 title | 은하 제국의 황혼 | build 512 | 2026-10-29
 patchnotes.json | v512 items[0] | 밸런스 표를 봇만으로 전 맵 재측정해 갱신 (궁극기 쿨타임 20초 반영) | build 512 | 2026-10-29
+patchnotes.json | v513 items[0] | 차원여행자 스킬을 원래대로 포탈 파괴로 되돌림 (시간 되감기 삭제) | build 513 | 2026-10-29
