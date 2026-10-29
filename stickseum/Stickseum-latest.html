@@ -5472,7 +5472,7 @@ function shuffle(arr){ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.
 /* ===== the version of this file =====
    Different BUILDS of one version meet and play together (room names online-v<ver>-<mode>-<map>-<slot>); different VERSIONS (the 0.x part) never do - the host refuses them (verNo) and the dispatcher answers busy.
    The build is only sent along with the join message and the lobby (for information); the corner of the screen shows it. */
-const GAME_BUILD='build 2026-10-18-v500';
+const GAME_BUILD='build 2026-10-18-v501';
 const GAME_VERSION='0.9', GAME_VERSION_NAME='은하 제국의 황혼';   // 게임 버전 이름: versions.json의 title과 같게 (빌드마다 바꾸지 않음)
 /* version (the 0.x part) vs build: different BUILDS of one version meet and play together, different VERSIONS never do (rooms, quick match, ranked, friend invites, dispatcher).
    Builds before 470 do not send a version, so it is read from the build number (0.9 started at build 458). */
@@ -12219,8 +12219,14 @@ function spaceTick(dt, t){
   }
   if(droneBombs.length) droneBombTick(dt, t);
 }
-function clanNameFor(p){ const me=players[myId], hid=p.dgn && p.id!==myId && !(me && isAlly(me,p)), c=hid?p.dgc:p.clan; return (c?'['+c+'] ':'')+nameShownFor(p); }       // a disguised 티오니스 wears the clan tag of the one he copied, too
-function nameShownFor(p){ const me=players[myId]; return (p.dgn && p.id!==myId && !(me && isAlly(me,p))) ? p.dgn : p.name; }
+function disguiseSeen(p){       // true = the viewer takes a disguised 티오니스 for the one he copied: everyone but his own allies, and the copied player's team (not the copied player himself) cannot tell either (owner 10-29)
+  const me=players[myId]; if(!p.dgn || p.id===myId) return false; if(!me) return true;
+  if(p.dgv && me.id===p.dgv) return false;
+  if(p.dgt!==null && p.dgt!==undefined && me.team===p.dgt) return true;
+  return !isAlly(me,p);
+}
+function clanNameFor(p){ const me=players[myId], hid=disguiseSeen(p), c=hid?p.dgc:p.clan; return (c?'['+c+'] ':'')+nameShownFor(p); }       // a disguised 티오니스 wears the clan tag of the one he copied, too
+function nameShownFor(p){ return disguiseSeen(p) ? p.dgn : p.name; }
 /* ---- drawing ---- */
 function drawDroneShape(c, x, y, s, hot, red){
   const tm=performance.now();
@@ -15056,7 +15062,7 @@ function hostTickCore(dt,t){
         fireCdRemain: snapR(p.fireCdRemain||0,20),
         ultCdRemain: p.darkSub ? 0 : snapR(Math.max(0, ultCdOf(p) - (t/1000-(p.lastUlt===undefined?-9999:p.lastUlt))),20), darkSub:p.darkSub?1:0, darkArm:(p.darkArmUntil>t/1000)?1:0,
         skillCdRemain: snapR(Math.max(0, skillCdOf(p) - (t/1000-(p.lastSkill===undefined?-9999:p.lastSkill))),20), buff:p.buff||null, skillUses:p.skillUses||0, ultUses:p.ultUses||0, ultMulti:p.ultMulti||0,
-        pz:p.pzStacks||0, pm:(p.pzMarkUntil>t/1000)?1:0, ultOn:!!p.ultOn, invis:!!p.invis, isGuard:p.isGuard?1:0, isVault:p.isVault?1:0, isClone:p.isClone?1:0, ownerId:p.ownerId||'', dgn:(p.disg&&p.tioFor)?p.tioFor.name:'', dgc:(p.disg&&p.tioFor)?(p.tioFor.clan||''):'', tioStage:p.tioStage||'', drones:(p.weapon==='pel')?pelN(p):0, pelBoost:pelBoostOn(p,t/1000)?1:0, burning:!!p.burning, poisoned:!!p.poisoned, kw:(p.kanWingsUntil>t/1000)?1:0, gc:p.gc||0, gp:Math.round(Math.min(1,(p.goldStay||0)/GOLD_PICK_STAY)*20)/20, pp:puppetMaster(p,t/1000)?p.puppetTarget:null, sw:p.sw||null, sewSlowed:!!p.sewSlowed, slowed:!!p.slowed, stunned:!!p.stunned, cardSlowed:!!p.cardSlowed, bladeSpin:!!p.bladeSpin, swordCharging:!!p.swordCharge, cannonFlying:!!p.cannonFly, chips:p.chips||0, cannonAng:p.cannonFly?Math.round(Math.atan2(p.vy||0,p.cannonFly.vx)*100)/100:0, totalDamageDealt:p.totalDamageDealt||0, channeling:!!p.teleportChannel, flaming:!!p.flaming, portalPair:p.portalPair||null, batting:!!p.batting, vacuumStacks:p.vacuumStacks||0, isZombie:!!p.isZombie, parkourItem:!!p.parkourItem,
+        pz:p.pzStacks||0, pm:(p.pzMarkUntil>t/1000)?1:0, ultOn:!!p.ultOn, invis:!!p.invis, isGuard:p.isGuard?1:0, isVault:p.isVault?1:0, isClone:p.isClone?1:0, ownerId:p.ownerId||'', dgn:(p.disg&&p.tioFor)?p.tioFor.name:'', dgv:(p.disg&&p.tioFor)?(p.tioFor.vid||''):'', dgt:(p.disg&&p.tioFor&&p.tioFor.vteam!==undefined)?p.tioFor.vteam:null, dgc:(p.disg&&p.tioFor)?(p.tioFor.clan||''):'', tioStage:p.tioStage||'', drones:(p.weapon==='pel')?pelN(p):0, pelBoost:pelBoostOn(p,t/1000)?1:0, burning:!!p.burning, poisoned:!!p.poisoned, kw:(p.kanWingsUntil>t/1000)?1:0, gc:p.gc||0, gp:Math.round(Math.min(1,(p.goldStay||0)/GOLD_PICK_STAY)*20)/20, pp:puppetMaster(p,t/1000)?p.puppetTarget:null, sw:p.sw||null, sewSlowed:!!p.sewSlowed, slowed:!!p.slowed, stunned:!!p.stunned, cardSlowed:!!p.cardSlowed, bladeSpin:!!p.bladeSpin, swordCharging:!!p.swordCharge, cannonFlying:!!p.cannonFly, chips:p.chips||0, cannonAng:p.cannonFly?Math.round(Math.atan2(p.vy||0,p.cannonFly.vx)*100)/100:0, totalDamageDealt:p.totalDamageDealt||0, channeling:!!p.teleportChannel, flaming:!!p.flaming, portalPair:p.portalPair||null, batting:!!p.batting, vacuumStacks:p.vacuumStacks||0, isZombie:!!p.isZombie, parkourItem:!!p.parkourItem,
         isHost:p.isHost,clan:p.clan||'',joinOrder:p.joinOrder,weapon:p.weapon,kit:p.kit||null,team:p.team,spinAngle:p.spinAngle,cos:p.cos,isBoss:p.isBoss?1:0,isMinion:p.isMinion?1:0,bt:p.bt,bossMaxHp:p.bossMaxHp,emIdx:p.emIdx,emRem:(p.emUntil?Math.max(0,Math.round((p.emUntil-t/1000)*20)/20):0)})),
       cq: (gameMode==='conquest' && cq) ? {s:cq.scores, h:cq.holder, c:cq.contested} : undefined,
       xm: (xm && xmV) ? xmV : undefined,
@@ -18321,7 +18327,7 @@ function drawOverheadExtras(p, HEADCY){
     ctx.restore();
   }
   if(p.team!==null && p.team!==undefined){
-    ctx.fillStyle = TEAM_COLORS[p.team % TEAM_COLORS.length];
+    ctx.fillStyle = TEAM_COLORS[((disguiseSeen(p) && p.dgt!==null && p.dgt!==undefined) ? p.dgt : p.team) % TEAM_COLORS.length];      // the team dot of a disguise is the copied player's
     ctx.beginPath(); ctx.arc(p.x-24, p.y+HEADCY-21, 4, 0, 7); ctx.fill();
   }
   const skRemain = isHost ? Math.max(0, skillCdOf(p)-(performance.now()/1000-(p.lastSkill===undefined?-9999:p.lastSkill))) : p.skillCdRemain;
