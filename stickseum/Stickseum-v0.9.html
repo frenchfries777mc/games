@@ -3016,10 +3016,10 @@ function trackMyChar(me){
   const k=me.kills||0; if(myTrackW) myCharKb[myTrackW]=(myCharKb[myTrackW]||0)+Math.max(0,k-myTrackK);
   myTrackK=k; myTrackW=me.weapon; if(!myCharUsed.includes(me.weapon)) myCharUsed.push(me.weapon);
 }
-function usedCharsOfMatch(me){      // every character that earns 마스터리 포인트 from this match: all the ones I picked (modes that hand out random characters count only the last one)
+function usedCharsOfMatch(me){      // every character that earns 마스터리 포인트 from this match: all the ones I played (in relay / roulette every character I was handed counts, 10-29)
   trackMyChar(me);
   if(myTrackW) myCharKb[myTrackW]=(myCharKb[myTrackW]||0)+Math.max(0,(me.kills||0)-myTrackK), myTrackK=me.kills||0;
-  const md=MODES[gameMode]||{}; if(md.autoWeapon || !myCharUsed.length) return [trueW(me)];
+  if(!myCharUsed.length) return [trueW(me)];
   return myCharUsed.slice();
 }
 let lastTierGain=null;     // the 마스터리 포인트 the finished match gave (shown on the match-end screen)
@@ -5468,7 +5468,7 @@ function shuffle(arr){ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.
 /* ===== the version of this file =====
    Different BUILDS of one version meet and play together (room names online-v<ver>-<mode>-<map>-<slot>); different VERSIONS (the 0.x part) never do - the host refuses them (verNo) and the dispatcher answers busy.
    The build is only sent along with the join message and the lobby (for information); the corner of the screen shows it. */
-const GAME_BUILD='build 2026-10-18-v490';
+const GAME_BUILD='build 2026-10-18-v491';
 const GAME_VERSION='0.9', GAME_VERSION_NAME='은하 제국의 황혼';   // 게임 버전 이름: versions.json의 title과 같게 (빌드마다 바꾸지 않음)
 /* version (the 0.x part) vs build: different BUILDS of one version meet and play together, different VERSIONS never do (rooms, quick match, ranked, friend invites, dispatcher).
    Builds before 470 do not send a version, so it is read from the build number (0.9 started at build 458). */
@@ -10612,7 +10612,8 @@ function showMatchEndOverlay(resultText, winnerIds, forcedPick){
       const bigm=Object.values(players).filter(q=>q && !q.isMinion && !q.isBoss).length>=TIER_PT_BIG_PLAYERS && !!MODES[gameMode] && !MODES[gameMode].elim, kpt=(gameMode==='duel')?TIER_PT_DUEL_KILL:(brLike(gameMode)?TIER_PT_BR_KILL:(bigm?TIER_PT_BIG_KILL:TIER_PT_KILL));
       const used=usedCharsOfMatch(me), as=Math.max(0,matchAssists||0); lastTierGain=[];
       for(const uw of used){ const kb=charKillsFor(uw), kk=(used.length>1)?(myCharKb[uw]||0):(me.kills||0), aa=(uw===wid)?as:0; saveData.charKills[uw]=(saveData.charKills[uw]||0)+kk;
-        saveData.charPts[uw]=kb+kk*kpt+aa*TIER_PT_ASSIST+(won?(bigm?TIER_PT_BIG_WIN:TIER_PT_WIN)+streakPts:0)+TIER_PT_MATCH;
+        const sh=((MODES[gameMode]||{}).autoWeapon && used.length>1)?1/used.length:1;      // relay / roulette: the win and match points are shared by the characters I was handed, not paid in full to each
+        saveData.charPts[uw]=kb+kk*kpt+aa*TIER_PT_ASSIST+Math.round(((won?(bigm?TIER_PT_BIG_WIN:TIER_PT_WIN)+streakPts:0)+TIER_PT_MATCH)*sh);
         lastTierUps=lastTierUps.concat(tierUpsFor(uw, kb, saveData.charPts[uw]));
         lastTierGain.push({wid:uw, gained:saveData.charPts[uw]-kb, k:kk, kp:kpt, a:aa, won, wp:(won?(bigm?TIER_PT_BIG_WIN:TIER_PT_WIN):0), sp:(won?streakPts:0), st:saveData.winStreak||0, total:saveData.charPts[uw]}); } }
   }

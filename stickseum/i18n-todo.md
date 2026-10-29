@@ -338,3 +338,5 @@ patchnotes.json | v490 items[2] | 마법사 궁극기는 항상 발 밑에 생�
 patchnotes.json | v490 items[3] | 크레온 근위병 외형을 인트로와 같게 | build 490 | 2026-10-29
 patchnotes.json | v490 items[4] | 클랜 이름·태그·소개·공지는 확인 없이 쓴 대로 적용 | build 490 | 2026-10-29
 patchnotes.json | v490 items[5] | 이전 버전은 다운로드만 | build 490 | 2026-10-29
+patchnotes.json | v491 title | 은하 제국의 황혼 | build 491 | 2026-10-29
+patchnotes.json | v491 items[0] | 무기가 계속 바뀌는 모드(무기 릴레이·무기 룰렛)에서 받은 모든 캐릭터에 마스터리 포인트 적립 | build 491 | 2026-10-29
