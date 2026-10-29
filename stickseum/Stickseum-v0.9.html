@@ -3746,7 +3746,7 @@ const MODES = {
   hotpotato: {id:'hotpotato', name:'폭탄 돌리기', desc:'무기·궁극기·순간이동 없이 대쉬만 가능한 맨손 스틱맨으로 바로 시작 · 한 명이 폭탄을 들고 시작, 20초 후 터짐 · 가까운 사람을 클릭하면 폭탄을 넘길 수 있음 · 터지면 들고 있던 사람 탈락, 생존자가 처음 인원의 절반 넘게 남아있으면 3초 뒤 다음 라운드 · 절반 이하가 된 상태에서 터지면 그때 생존자들이 승리', teams:false, extra:0, elim:true, ownMapRules:true, noWeapon:true, minPlayers:4},
   survival: {id:'survival', name:'서바이벌', desc:'8인 이상 맵에서만 가능 · 최소 6명 · 무기선택·순간이동·캐릭터 없음(대쉬는 있음) · 체력 1: 재해에 한 번이라도 맞으면 탈락 · 9초 대기 후 번개·해일·화산·산성비·홍수·운석·폭탄·좀비 중 하나가 랜덤으로 12초간 발생, 버티면 사라지고 다시 9초 대기 · 라운드가 갈수록 재해가 더 자주·더 넓게·더 빠르게 몰아침 · 총 5번의 재해에서 살아남으면 승리, 먼저 죽으면 관전하거나 나갈 수 있음', teams:false, extra:0, elim:true, ownMapRules:true, noWeapon:true, noTeleport:true, minPlayers:6, mapFilterMinPlayers:8}, // noTeleport made explicit here (previously implied only indirectly through noWeapon) to match the mode's own description, which promises no teleport
   ctf: {id:'ctf', name:'깃발 뺏기', desc:'전용 대형 맵 9종 중 선택 · 두 팀이 상대 기지의 깃발을 가져와 우리 기지에 가져오면 1점(우리 깃발이 밖에 있어도 득점) · 깃발을 든 사람은 순간이동을 못 씀 · 든 사람이 죽으면 깃발이 그 자리에 떨어져 있고 우리 팀이 닿아야 기지로 돌아감 · 먼저 3점 또는 8분 안에 더 많이 득점한 팀 승리, 동점이면 무승부 · 처치당하면 5초 후 우리 기지에서 부활 · 최소 4명(비공개 방에서는 봇 추가 가능)', teams:true, teamSize:'half', extra:0, elim:false, ownMapRules:true, isCtfMode:true, minPlayers:4, respawnTime:5},
-  gold: {id:'gold', name:'황금 쟁탈', desc:'전용 대형 맵 9종 중 선택 · 두 팀 대항 3분 · 맵 중앙의 금 덩이 더미에서 금을 집어(한 번에 최대 3개, 들수록 조금 느려짐) 우리 팀 광차에 실으면 1개당 10점 · 광차에 닿으면 자동으로 실려요 · 금을 든 사람이 쓰러지면 그 자리에 금이 떨어져 누구나 주울 수 있어요 · 더미가 비면 15초마다 6개씩 새로 쌓여요 · 3분 뒤 점수가 높은 팀 승리, 동점이면 무승부 · 쓰러지면 5초 후 우리 기지에서 부활 · 최소 4명(비공개 방에서는 봇 추가 가능)', teams:true, teamSize:'half', extra:0, elim:false, ownMapRules:true, isCtfMode:true, minPlayers:4, respawnTime:5},
+  gold: {id:'gold', name:'황금 쟁탈', desc:'전용 대형 맵 9종 중 선택 · 두 팀 대항 3분 · 맵 중앙에 3초마다 하나씩 나오는 금 덩이에 닿아 금을 집어(한 번에 최대 3개, 들수록 조금 느려짐) 우리 팀 광차에 실으면 1개당 10점 · 광차에 닿으면 자동으로 실려요 · 금을 든 사람이 쓰러지면 그 자리에 금이 떨어져 누구나 주울 수 있어요 · 3분 뒤 점수가 높은 팀 승리, 동점이면 무승부 · 쓰러지면 5초 후 우리 기지에서 부활 · 최소 4명(비공개 방에서는 봇 추가 가능)', teams:true, teamSize:'half', extra:0, elim:false, ownMapRules:true, isCtfMode:true, minPlayers:4, respawnTime:5},
   raid: {id:'raid', name:'보스 레이드', desc:'8인 이상 맵에서만 가능 · 4명 고정 · 모두가 한 팀이 되어 거대한 보스 한 마리를 쓰러뜨리는 협동 모드 · 보스는 인원에 맞춰 체력이 늘어나고, 주기적으로 바닥을 내려쳐요(빨간 원이 번쩍이면 점프!) · 팀 목숨이 정해져 있고 쓰러지면 6초 뒤 부활 · 3분 안에 보스를 잡으면 성공', teams:true, teamSize:'half', soloTeam:true, extra:0, fixedPlayers:4, elim:false, ownMapRules:true, mapFilterMinPlayers:8, respawnTime:6},
   tournament: {id:'tournament', name:'토너먼트', desc:'16명이 1대1 3판 2선승제로 겨루는 단판 토너먼트(16강 → 8강 → 4강 → 결승) · 같은 라운드 경기는 동시에 진행되고 내 경기만 보여요 · 라운드마다 캐릭터를 새로 골라요 · 끝난 사람은 다른 경기를 관전 · 결승은 경기장이 점점 좁아져요', teams:false, fixedPlayers:16, elim:true, ownMapRules:true, mapFilterMinPlayers:8, tnMode:true},
   vip:      {id:'vip', name:'왕 지키기', desc:'두 팀으로 나뉘고 팀마다 왕이 한 명(머리 위 왕관) · 상대 팀의 왕을 먼저 쓰러뜨리면 승리 · 왕이 아닌 사람은 5초 뒤 부활 · 5분이 지나면 왕의 남은 체력이 많은 팀이 승리', teams:true, teamSize:'half', extra:2, elim:false, respawnTime:5, special:true},
@@ -5469,7 +5469,7 @@ function shuffle(arr){ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.
 /* ===== the version of this file =====
    Different BUILDS of one version meet and play together (room names online-v<ver>-<mode>-<map>-<slot>); different VERSIONS (the 0.x part) never do - the host refuses them (verNo) and the dispatcher answers busy.
    The build is only sent along with the join message and the lobby (for information); the corner of the screen shows it. */
-const GAME_BUILD='build 2026-10-18-v494';
+const GAME_BUILD='build 2026-10-18-v495';
 const GAME_VERSION='0.9', GAME_VERSION_NAME='은하 제국의 황혼';   // 게임 버전 이름: versions.json의 title과 같게 (빌드마다 바꾸지 않음)
 /* version (the 0.x part) vs build: different BUILDS of one version meet and play together, different VERSIONS never do (rooms, quick match, ranked, friend invites, dispatcher).
    Builds before 470 do not send a version, so it is read from the build number (0.9 started at build 458). */
@@ -15530,7 +15530,7 @@ function applyCtfSnapshot(d){
    Two teams on the flag maps. The pile in the middle holds GOLD_PILE lumps; a player takes one lump at a time (up to GOLD_MAX_CARRY, 10% slower per lump), and
    touching the own cart loads everything carried (GOLD_PTS points per lump, loaded gold is safe). A carrier who dies drops the lumps where he fell; anybody can pick
    them up. When the pile is empty it grows GOLD_REFILL_N lumps every GOLD_REFILL_SEC seconds. The better score after GOLD_DURATION seconds wins (a tie is a draw). */
-const GOLD_DURATION=180, GOLD_MAX_CARRY=3, GOLD_PILE=40, GOLD_REFILL_SEC=15, GOLD_REFILL_N=6, GOLD_PTS=10, GOLD_SLOW=0.1, GOLD_PILE_R=110, GOLD_CART_R=72, GOLD_DROP_R=48, GOLD_PICK_GAP=0.35, GOLD_PICK_STAY=0.8, GOLD_XP_PER_LUMP=2;
+const GOLD_DURATION=180, GOLD_MAX_CARRY=3, GOLD_PILE=0, GOLD_REFILL_SEC=3, GOLD_REFILL_N=1, GOLD_PTS=10, GOLD_SLOW=0.1, GOLD_PILE_R=110, GOLD_CART_R=72, GOLD_DROP_R=48, GOLD_PICK_GAP=0.35, GOLD_PICK_STAY=0.8, GOLD_XP_PER_LUMP=2;
 let gdm=null, goldEndsLocal=0;          // gdm: {pile:{x,y,n}, carts:[{x,y,lumps}], pts:[a,b], drops:[{x,y,n}], endsAt, refillAt}
 function startGoldMatch(){
   if(!MAP || !MAP.ctf) return;
@@ -15554,7 +15554,11 @@ function goldNear(p, x, y, r){ return Math.abs(p.x-x)<=r && Math.abs(p.y-y)<=PLA
 function tickGold(t, dt){
   if(gameMode!=='gold' || !gdm || matchEnded) return;
   const tSec=t/1000;
-  gdm.pile.n=GOLD_PILE;      // (never runs out)
+  if(!gdm.refillAt) gdm.refillAt=tSec+GOLD_REFILL_SEC;
+  while(tSec>=gdm.refillAt){            // the pile starts empty: one lump appears near it every GOLD_REFILL_SEC seconds, anybody who touches it takes it
+    gdm.drops.push({x:gdm.pile.x+(Math.random()*2-1)*GOLD_PILE_R*0.8, y:gdm.pile.y, n:GOLD_REFILL_N}); gdm.refillAt+=GOLD_REFILL_SEC;
+    pushFx('spark', gdm.pile.x, gdm.pile.y-30, t, {color:'#ffd34d', ang:-Math.PI/2});
+  }
   for(const id in players){
     const p=players[id];
     if(!p.alive && (p.gc||0)>0){                                         // a carrier who fell drops what he carried
@@ -15567,10 +15571,6 @@ function tickGold(t, dt){
       const d=gdm.drops[i]; if(!goldNear(p,d.x,d.y,GOLD_DROP_R)) continue;
       const take=Math.min(d.n, GOLD_MAX_CARRY-p.gc); p.gc+=take; d.n-=take; if(d.n<=0) gdm.drops.splice(i,1);
     }
-    if(p.gc<GOLD_MAX_CARRY && goldNear(p, gdm.pile.x, gdm.pile.y, GOLD_PILE_R)){      // the pile never runs out: one lump for every GOLD_PICK_STAY seconds spent standing at it
-      p.goldStay=(p.goldStay||0)+dt;
-      if(p.goldStay>=GOLD_PICK_STAY){ p.goldStay=0; p.gc++; pushFx('spark', gdm.pile.x, gdm.pile.y-30, t, {color:'#ffd34d', ang:-Math.PI/2}); }
-    } else p.goldStay=0;
     const cart=gdm.carts[p.team];
     if(p.gc>0 && cart && goldNear(p, cart.x, cart.y, GOLD_CART_R)){
       const n=p.gc; p.gc=0; cart.lumps+=n; gdm.pts[p.team]+=n*GOLD_PTS; p.goldBanked=(p.goldBanked||0)+n;
@@ -15634,10 +15634,9 @@ function botBrainGold(p, ai, t, inp){
   const foes=Object.values(players).filter(o=>o.alive && o.x!==undefined && o.team!==p.team && o.team!==null && o.team!==undefined);
   for(const o of foes){ if(Math.hypot(o.x-p.x, o.y-p.y)<BOT_CTF_FIGHT_R && carry<GOLD_MAX_CARRY) return null; }     // an enemy right next to me: fight it
   let near=null, nd=1e9; for(const d of gdm.drops){ const dd=Math.hypot(d.x-p.x, d.y-p.y); if(dd<nd){ nd=dd; near=d; } }
-  const supply=gdm.pile.n>0 || near;
+  const supply=!!near;
   if(carry>=ai.goldFull || (carry>0 && !supply)){ ai.goldFull=0; return {goalX:cart.x, goalY:cart.y}; }
   if(near && nd<900) return {goalX:near.x, goalY:near.y};
-  if(gdm.pile.n>0) return {goalX:gdm.pile.x+(Math.random()-0.5)*0, goalY:gdm.pile.y};
   if(carry>0) return {goalX:cart.x, goalY:cart.y};
   return {goalX:gdm.pile.x, goalY:gdm.pile.y};                      // wait at the pile for the next lumps
 }
@@ -18752,7 +18751,7 @@ function render(fxDt){
     }
     if(gameMode==='gold' && gdm){
       const remain=Math.max(0, Math.ceil((goldEndsLocal-Date.now())/1000)), mm=Math.floor(remain/60), ss=remain%60, carry=(me&&me.gc)||0;
-      let st = carry>0 ? '⛏ 금 '+carry+'개 운반 중 - 우리 광차로 가세요!' : '중앙 금 더미 위에 0.8초 서 있으면 금이 하나씩 쌓여요 → 우리 광차로 가져가세요 (최대 '+GOLD_MAX_CARRY+'개)';
+      let st = carry>0 ? '⛏ 금 '+carry+'개 운반 중 - 우리 광차로 가세요!' : '중앙에 3초마다 나오는 금 덩이에 닿으면 바로 집어요 → 우리 광차로 가져가세요 (최대 '+GOLD_MAX_CARRY+'개)';
       document.getElementById('ctfLabel').innerHTML = '<span style="color:'+TEAM_COLORS[0]+'">블루 '+gdm.pts[0]+'</span> : <span style="color:'+TEAM_COLORS[1]+'">'+gdm.pts[1]+' 레드</span>  ·  '+mm+':'+(ss<10?'0':'')+ss+'<br><span style="font-size:12px;font-weight:600;opacity:.9">'+st+'</span>';
     }
     try{ renderModeHud(); }catch(e){}
