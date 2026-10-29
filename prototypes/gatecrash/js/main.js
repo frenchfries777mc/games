@@ -166,7 +166,7 @@ function openQuick(gen, k) {
 }
 
 /* ---------- 경기 ---------- */
-let G = null, myId = UID, cam = { x: 0, y: 0 }, baked = null, t0 = 0, fx = [], acc = 0, last = 0, sendT = 0, snapT = 0;
+let G = null, myId = UID, cam = { x: 0, y: 0 }, view = { x: 0, y: 0 }, baked = null, t0 = 0, fx = [], acc = 0, last = 0, sendT = 0, snapT = 0;
 const keys = {}, mouse = { x: 0, y: 0, down: false }, pend = { jp: false, swap: false };
 function beginGame() {
   clearTimeout(N.autoT); if (N.mode !== 'solo' && N.mode !== 'host') return;
@@ -184,7 +184,8 @@ function playGame(map, pl) {
 }
 $('resBack').onclick = () => { loop.on = false; endToLobby(); };
 
-document.addEventListener('pointerdown', () => { SFX.unlock(); if (scr !== 'game' && !BGM.cur) BGM.play('top-of-the-leaderboard'); });
+document.addEventListener('pointerdown', () => { SFX.unlock(); if (scr !== 'game' && !document.getElementById('intro')) BGM.play('top-of-the-leaderboard'); });
+window.GCIntroDone = () => { if (scr !== 'game') BGM.play('top-of-the-leaderboard'); };
 addEventListener('keydown', e => {
   if (scr !== 'game') return; const k = e.key.toLowerCase();
   if (e.repeat) { if (['a', 'd', 'w', ' ', 'f'].includes(k)) e.preventDefault(); return; }
@@ -202,7 +203,7 @@ gl.addEventListener('contextmenu', e => e.preventDefault());
 
 function myInput() {
   const sc = gl.clientHeight / VH, me = G.racers.find(r => r.id === UID), meG = me;
-  const wx = cam.x + mouse.x / sc - gl.clientWidth / sc / 2, wy = cam.y + mouse.y / sc - VH / 2;
+  const wx = view.x + mouse.x / sc, wy = view.y + mouse.y / sc;
   const aim = me ? Math.atan2(wy - (me.y + 8), wx - (me.x + 5)) : 0;
   const inp = { d: (keys.d ? 1 : 0) - (keys.a ? 1 : 0), jp: pend.jp || (!!keys.j && !!meG && meG.ground), j: !!keys.j, atk: mouse.down, aim, swap: pend.swap };
   return inp;
@@ -217,7 +218,7 @@ function applySnap(d) {
   G.phase = d.ph; G.t = d.tt; G.clock = d.ck; G.rank = d.rk;
   for (const a of d.r) {
     const r = G.racers.find(r => r.id === a[0]); if (!r) continue;
-    if (r.id === UID) { const dx = a[1] - r.x, dy = a[2] - r.y; if (Math.hypot(dx, dy) > 40) { r.x = a[1]; r.y = a[2]; } else { r.x += dx * .12; r.y += dy * .12; } }
+    if (r.id === UID) { a[8] = r.aim; a[7] = r.face; const dx = a[1] - r.x, dy = a[2] - r.y; if (Math.hypot(dx, dy) > 40) { r.x = a[1]; r.y = a[2]; } else { r.x += dx * .12; r.y += dy * .12; } }
     else { r.tx = a[1]; r.ty = a[2]; if (Math.hypot(a[1] - r.x, a[2] - r.y) > 60) { r.x = a[1]; r.y = a[2]; } }
     if (r.id !== UID || G.phase !== 'race') { r.vx = a[3]; r.vy = a[4]; } r.hp = a[5]; r.wep = a[6] ? { k: a[6], u: 1 } : null; r.face = a[7]; r.aim = a[8]; r.swing = a[9] ? .1 : 0; r.fin = !!a[10]; r.inv = a[11] ? 1 : 0; r.flash = a[12] ? .1 : 0; r.stun = a[13] ? .1 : 0; r.ground = !!a[14]; r.ko = a[15]; r.prog = +a[16];
   }
@@ -242,6 +243,7 @@ function loop(now) {
     if (N.conns.length) { snapT += dt; if (snapT >= SNAP) { snapT = 0; bcast(snapshot()); G.ev.length = 0; } }
   } else {
     const me = G.racers.find(r => r.id === UID);
+    if (me && me.wep) { me.aim = inp.aim; me.face = Math.cos(inp.aim) >= 0 ? 1 : -1; }
     sendT += dt; if (sendT > 1 / 30) { sendT = 0; send(N.host, { t: 'i', i: inp }); pend.jp = false; pend.swap = false; }
     // 내 캐릭터는 바로 움직여요 (서버 위치로 조금씩 맞춰요)
     while (acc >= 1 / 60) { acc -= 1 / 60; if (me && G.phase === 'race' && !me.fin && me.stun <= 0) { const own = Object.assign({}, inp, { jp: inp.jp || pend.jp }); if (stepBody(G.W, me, own, 1 / 60)) { addFx({ t: 'jump', x: me.x + 5, y: me.y + 22, id: UID, local: 1 }); } } }
@@ -296,12 +298,14 @@ function render(t, G, op) {
   } else if (op.replay) { cam.x += (tx - cam.x) * .1; cam.y += (ty - cam.y) * .1; }
   else { cam.x += (tx - cam.x) * .12; cam.y += (ty - cam.y) * .12; }
   const cx = Math.max(0, Math.min(G.W.pw - vw, cam.x)), cy = Math.max(0, Math.min(G.W.ph - VH, cam.y));
+  if (!op.replay) { view.x = Math.round(cx); view.y = Math.round(cy); }
   x.setTransform(sc, 0, 0, sc, 0, 0); x.fillStyle = '#0c1220'; x.fillRect(0, 0, vw + 2, VH + 2);
   drawBackdrop(x, G.W, t, cx, cy, vw);
   x.translate(-Math.round(cx), -Math.round(cy)); x.drawImage(baked, 0, 0);
   drawItems(x, G, t);
   for (const r of G.racers) if (r !== me) drawRacer(x, r, t, false);
   drawRacer(x, me, t, true);
+  if (!op.replay && me.wep && G.phase === 'race' && !me.fin) { x.fillStyle = 'rgba(255,255,255,.7)'; for (let d = 14; d < 70; d += 8) x.fillRect(me.x + 5 + Math.cos(me.aim) * d, me.y + 10 + Math.sin(me.aim) * d, 2, 2); }
   drawShots(x, G); drawFx(x, op.replay ? [] : fx);
   drawShade(x, G.W, cx, cy, vw);
   x.setTransform(1, 0, 0, 1, 0, 0); x.textAlign = 'center'; x.textBaseline = 'alphabetic';

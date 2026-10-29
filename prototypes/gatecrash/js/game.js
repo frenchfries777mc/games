@@ -272,6 +272,7 @@ function stepGame(G, dt, inputs) {
     if (r.fin || G.phase === 'end') { stepBody(G.W, r, { d: 0 }, dt); continue; }
     if (G.phase === 'count') { stepBody(G.W, r, { d: 0 }, dt); continue; }
     if (inp.d) r.face = inp.d;
+    if (!r.bot && r.wep && inp.aim !== undefined) { r.aim = inp.aim; r.face = Math.cos(inp.aim) >= 0 ? 1 : -1; }      // 마우스로 직접 조준
     if (stepBody(G.W, r, inp, dt)) G.ev.push({ t: 'jump', x: r.x + 5, y: r.y + 22, id: r.id });
     r.anim += Math.abs(r.vx) * dt;
     if (r.y > G.W.ph + 40) respawn(G.W, r);
