@@ -5,7 +5,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <title>Gatecrash</title>
-<script>(function(){var B=10;try{fetch('build.json?t='+Date.now(),{cache:'no-store'}).then(function(r){return r.json()}).then(function(d){if(d&&d.build>B&&sessionStorage.getItem('gcReload')!=String(d.build)){sessionStorage.setItem('gcReload',String(d.build));var u=new URL(location.href);u.searchParams.set('b',d.build);location.replace(u.toString());}}).catch(function(){});}catch(e){}})();</script>
+<script>(function(){var B=11;try{fetch('build.json?t='+Date.now(),{cache:'no-store'}).then(function(r){return r.json()}).then(function(d){if(d&&d.build>B&&sessionStorage.getItem('gcReload')!=String(d.build)){sessionStorage.setItem('gcReload',String(d.build));var u=new URL(location.href);u.searchParams.set('b',d.build);location.replace(u.toString());}}).catch(function(){});}catch(e){}})();</script>
 <meta name="description" content="건물과 공항을 달려 먼저 도착하는 옆면 픽셀 레이스 액션">
 <meta name="robots" content="noindex">
 <link rel="icon" href="logo.svg" type="image/svg+xml">
@@ -75,6 +75,7 @@ button{font:inherit;color:inherit;cursor:pointer}
   <nav id="menu">
     <button class="btn go" data-go="match">온라인 대전</button>
     <button class="btn" data-go="host">친구와 대결</button>
+    <button class="btn" data-go="join">코드로 입장</button>
     <button class="btn" data-go="solo">봇과 연습</button>
     <button class="btn" data-go="help">무기·조작</button>
     <button class="btn" data-go="notes">패치노트</button>
@@ -96,6 +97,10 @@ button{font:inherit;color:inherit;cursor:pointer}
   </div>
 </section>
 
+<section class="scr" id="sJoin"><button class="btn back" data-back>← 뒤로</button><div class="panel" style="top:9vh"><h2>코드로 입장</h2><div class="note">친구에게 받은 방 코드 5글자를 입력해요</div>
+  <div class="row"><input id="joinCode" maxlength="5" autocomplete="off" spellcheck="false" placeholder="방 코드" style="width:150px;padding:10px 12px;font:700 22px Galmuri,monospace;letter-spacing:.2em;text-transform:uppercase;text-align:center;background:#0c1428;color:#fff;border:2px solid var(--line);border-radius:8px"><button class="btn go" id="joinBtn">입장</button></div>
+  <div class="note" id="joinMsg"></div></div></section>
+
 <section class="scr" id="sMap"><button class="btn back" data-back>← 뒤로</button><div class="panel" style="top:9vh"><h2>맵 고르기</h2><div class="maps" id="mapPick"></div></div></section>
 
 <section class="scr" id="sHelp"><button class="btn back" data-back>← 뒤로</button><div class="panel" style="top:9vh">
@@ -111,11 +116,11 @@ button{font:inherit;color:inherit;cursor:pointer}
   <div id="res"><div class="box"><h2 id="resT"></h2><ol id="resL"></ol><div class="row"><button class="btn" id="resBack">나가기</button></div></div></div></div>
 <div id="modal"><div class="box"><div id="modalT"></div><div class="row" style="justify-content:center"><button class="btn" id="modalOk">확인</button></div></div></div>
 
-<script src="js/data.js?v=10"></script>
-<script src="js/game.js?v=10"></script>
-<script src="js/view.js?v=10"></script>
-<script src="js/sfx.js?v=10"></script>
-<script src="js/main.js?v=10"></script>
-<script src="js/intro.js?v=10"></script>
+<script src="js/data.js?v=11"></script>
+<script src="js/game.js?v=11"></script>
+<script src="js/view.js?v=11"></script>
+<script src="js/sfx.js?v=11"></script>
+<script src="js/main.js?v=11"></script>
+<script src="js/intro.js?v=11"></script>
 </body>
 </html>
