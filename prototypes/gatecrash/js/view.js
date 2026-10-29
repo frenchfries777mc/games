@@ -80,6 +80,7 @@ function bakeWorld(W) {
     const X = tx * TS, Y = ty * TS;
     if (c2 === '#') { R(x, T.floor, X, Y, TS, TS); if (tileAt(W, tx, ty - 1) !== '#') R(x, T.top, X, Y, TS, 3); if ((tx + ty) % 2) R(x, 'rgba(0,0,0,.08)', X, Y + 3, TS, TS - 3); }
     else if (c2 === '=') { R(x, '#6b4a2a', X, Y, TS, 4); R(x, '#c89a5a', X, Y, TS, 2); }
+    else if (c2 === 'I') { R(x, '#9ad4ee', X, Y, TS, TS); R(x, '#d8f4ff', X, Y, TS, 3); R(x, 'rgba(255,255,255,.7)', X + 3 + (tx * 5 % 7), Y + 6, 5, 1); R(x, 'rgba(255,255,255,.5)', X + 8, Y + 10, 4, 1); }
     else if (c2 === '>' || c2 === '<') { R(x, '#3a3f4a', X, Y, TS, TS); R(x, '#f2b632', X, Y, TS, 2); for (let k = 0; k < TS; k += 8) R(x, '#222', X + k + 3, Y + 5, 2, 8); }
   }
   for (const o of W.objs) if (o.solid) {
@@ -97,6 +98,7 @@ function drawObj(x, W, o) {
   const X = o.x * TS, Y = o.y * TS, w = o.w * TS, h = o.h * TS, col = OBJC[o.t] || ['#777', '#aaa'];
   switch (o.t) {
     case 'door': R(x, '#4a3a2a', X, Y, w, h); R(x, '#7a5a3a', X + 3, Y + 3, w - 6, h - 3); R(x, '#ffd36b', X + w - 8, Y + h / 2, 3, 3); break;
+    case 'liftshaft': R(x, 'rgba(20,30,50,.55)', X, Y, w, h); R(x, 'rgba(140,220,255,.22)', X + 2, Y, w - 4, h); R(x, '#2a3a52', X, Y, 3, h); R(x, '#2a3a52', X + w - 3, Y, 3, h); for (let i = 0; i < h / 20; i++) { const yy = Y + h - 12 - i * 20, cx = X + w / 2; R(x, 'rgba(180,240,255,.8)', cx - 1, yy, 2, 6); R(x, 'rgba(180,240,255,.8)', cx - 3, yy + 2, 2, 2); R(x, 'rgba(180,240,255,.8)', cx + 1, yy + 2, 2, 2); } R(x, '#f2b632', X, Y + h - 3, w, 3); break;
     case 'stairwell': R(x, 'rgba(40,50,70,.28)', X, Y, w, h); for (let i = 0; i < 4; i++) R(x, 'rgba(255,255,255,.25)', X + 4, Y + 8 + i * 22, w - 8, 2); break;
     case 'whiteboard': R(x, '#aaa', X, Y, w, h); R(x, '#f4f6fa', X + 2, Y + 2, w - 4, h - 4); R(x, '#4a8ad0', X + 8, Y + 8, w / 2, 3); R(x, '#d04a4a', X + 8, Y + 16, w / 3, 3); break;
     case 'board': R(x, '#10182a', X, Y, w, h); for (let i = 0; i < 5; i++) { R(x, '#ffcf7a', X + 6, Y + 5 + i * 5, 26, 2); R(x, '#8fd0ff', X + 40, Y + 5 + i * 5, 30, 2); R(x, i === 2 ? '#ff6a5a' : '#6fe08a', X + w - 30, Y + 5 + i * 5, 20, 2); } break;
