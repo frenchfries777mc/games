@@ -3690,6 +3690,10 @@ function renderShop(){
 function markHit(target, attackerId, t, dmg){
   if(dmg>0 && target.tioUlt && !target.tioUlt.broken){ target.tioUlt.broken=true; target.invisUntil=0; }       // 티오니스's cloak breaks when he is hurt
   dmg=skillMitigate(target, dmg, t);   // armour / barrier skills give part of the damage back (hp is restored right here, before anyone checks for death)
+  if(dmg>0 && attackerId && attackerId!==target.id){      // passives: extra damage of the attacker, the hits the target has taken
+    const att=players[attackerId]; if(att){ const ex=pvDealtExtra(att, target, dmg, t/1000); if(ex>0) target.hp-=ex; }
+    pvOnTaken(target, t);
+  }
   if(dmg>0 && attackerId && attackerId!==target.id && !markHit._rf && sewActive(target, t/1000)){      // 바느질: while his thread holds, half of what the puppeteer takes goes to the one on the thread (at most SEW_REFLECT_MAX in all per thread)
     const v=players[target.sewTo], room=SEW_REFLECT_MAX-(target.sewRef||0), r=Math.min(dmg*0.5, room);
     if(v && v.alive && r>0){ target.sewRef=(target.sewRef||0)+r; markHit._rf=true; try{ v.hp-=r; markHit(v, target.id, t, r); pushFx('hit', v.x, v.y-PLAYER_H/2, t, {color:'#ff9ecb', v:Math.round(r)}); if(v.hp<=0 && v.alive) handleDeath(v, target, t, target.name); } finally { markHit._rf=false; } }
@@ -3867,6 +3871,7 @@ function cannonFlyTick(p,t){
     if(!o.alive || o.x===undefined || o.swordCharge || o.darkSub || o.isClone) continue;
     if(Math.abs(o.x-p.x)<=50 && Math.abs(o.y-p.y)<=70){
       skillDamage(p, o, PIRATE_FLY_DMG, t, {kb:420, up:300});
+      p.lastSkill=(p.lastSkill===undefined?-9999:p.lastSkill)-3; pvPop(p, 'pirate', t);      // 해적: a hit with the cannon ride takes 3 s off the skill cooldown
       pushFx('explosion', o.x, o.y-30, t, {});
       p.cannonFly=null; p.vy=-260; p.kbX=((p.x>=o.x)?1:-1)*160; return;
     }
@@ -3891,6 +3896,7 @@ function poisonZoneTick(dt,t){       // 칸's poison floors: hidden from the ene
         if(Math.abs(e.x-z.x)>z.r || e.y>z.y+14 || e.y<z.y-80) continue;
         z.until=0; pushFx('explosion', z.x, z.y-10, t, {});
         skillDamage(ow, e, MINE_DMG, t, {stun:MINE_STUN, kb:120, up:260, cx:z.x});
+        e.pvSlowUntil=Math.max(e.pvSlowUntil||0, tSec+3); e.pvSlowMult=0.9; pushFx('slow', e.x, e.y-70, t, {}); pvPop(ow, 'rifle', t);      // 군인: whoever stepped on a mine is 10% slower for 3 s
         break;
       }
       continue;
@@ -5470,7 +5476,7 @@ function shuffle(arr){ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.
 /* ===== the version of this file =====
    Different BUILDS of one version meet and play together (room names online-v<ver>-<mode>-<map>-<slot>); different VERSIONS (the 0.x part) never do - the host refuses them (verNo) and the dispatcher answers busy.
    The build is only sent along with the join message and the lobby (for information); the corner of the screen shows it. */
-const GAME_BUILD='build 2026-10-18-v513';
+const GAME_BUILD='build 2026-10-18-v514';
 const GAME_VERSION='0.9', GAME_VERSION_NAME='은하 제국의 황혼';   // 게임 버전 이름: versions.json의 title과 같게 (빌드마다 바꾸지 않음)
 /* version (the 0.x part) vs build: different BUILDS of one version meet and play together, different VERSIONS never do (rooms, quick match, ranked, friend invites, dispatcher).
    Builds before 470 do not send a version, so it is read from the build number (0.9 started at build 458). */
@@ -5682,6 +5688,7 @@ function stepPhysics(p, input, dt){
   if(p.cardSlowed) spd*=CARD_SLOW_MULT;   // hit by a magic card
   if(p.isZombie) spd*=ZOMBIE_SPEED_MULT; // zombies move faster than humans
   if(pzStacks(p)>=PZ_MAX) spd*=PZ_MAX_SPEED;   // 피사로 at the 4th stack
+  spd*=pvSpeed(p, curTickSec);              // the passives that change the speed
   if(p.speedMult) spd*=p.speedMult;      // (the survival disaster zombies)
   if(p.gc>0) spd*=Math.max(0.5, 1-GOLD_SLOW*p.gc);   // 황금 쟁탈: every lump slows a little
   if(p.ctfCarrying) spd*=CTF_CARRIER_SPEED;   // carrying the flag: a bit slower
@@ -11791,7 +11798,7 @@ function spawnBullet(p, angle, w, extra){
   const ax=Math.cos(angle), ay=Math.sin(angle);
   const sx=p.x+ax*(PLAYER_W/2+14), sy=(p.y-40)+ay*(PLAYER_W/2+14);
   bullets.push(Object.assign({x:sx, y:sy, spawnX:sx, spawnY:sy, vx:ax*w.bulletSpeed, vy:ay*w.bulletSpeed,
-    owner:p.id, ownerName:p.name, life:w.life||BULLET_LIFE, color:CONCEPT_COLOR[conceptOfP(p)]||p.color, sk:(p.cos&&p.cos.skin&&p.cos.skin[p.weapon])||undefined, dmg:w.dmg*(p.focusOn?1.35:1)*(p.isClone?TIO_CLONE_MULT:1), wid:w.id, arcs:!!w.arcs, dmgFalloff:w.dmgFalloff, hitR:w.hitR, pierce:!!w.pierce, pierceHits:w.pierceHits||0, platPierce:w.platPierce, bouncesLeft:w.bounces||0, poison:w.poison}, extra||{}));
+    owner:p.id, ownerName:p.name, life:w.life||BULLET_LIFE, color:CONCEPT_COLOR[conceptOfP(p)]||p.color, sk:(p.cos&&p.cos.skin&&p.cos.skin[p.weapon])||undefined, dmg:w.dmg*(p.focusOn?1.35:1)*(p.isClone?TIO_CLONE_MULT:1)*((pvAtkOf(p,curTickSec)||{}).mult||1), kbm:(pvAtkOf(p,curTickSec)||{}).kb, wid:w.id, arcs:!!w.arcs, dmgFalloff:w.dmgFalloff, hitR:w.hitR, pierce:!!w.pierce, pierceHits:w.pierceHits||0, platPierce:w.platPierce, bouncesLeft:w.bounces||0, poison:w.poison}, extra||{}));
 }
 function registerCardHit(b, target, targetId, t){
   const tS=t/1000;
@@ -11870,7 +11877,7 @@ const ULT_IMPL = {
   tionis(p,tSec,tMs){ return tioClone(p,tSec,tMs); },
   puppeteer(p,tSec,tMs){ spawnBullet(p, p.angle||0, {id:'puppeteer', bulletSpeed:1500, life:0.67, dmg:0, hitR:26}, {pthread:true, ult:true}); },
   kan(p,tSec,tMs){ p.kanWingsUntil=tSec+KAN_ULT_SEC; p.vy=-800; p.grounded=false; pushFx('skillring', p.x, p.y-40, tMs, {color:'#35d08a', r:90}); },
-  pizarro(p,tSec,tMs){ const _heal=((p.pzStacks||0)>=PZ_MAX)?PZ_ULT_HEAL_MAX:PZ_ULT_HEAL; p.pzStacks=Math.min(PZ_MAX,(p.pzStacks||0)+1); { const before=p.hp; p.hp=Math.min(maxHpFor(p), p.hp+_heal); if(p.hp>before) pushFx('heal', p.x, p.y-70, tMs, {v:Math.round(p.hp-before)}); } pushFx('spark', p.x, p.y-60, tMs, {ang:-Math.PI/2, color:'#ffd34d'}); pushFx('skill', p.x, p.y-70, tMs, {color:'#ffd34d', name:'기세 '+p.pzStacks+'/'+PZ_MAX}); },
+  pizarro(p,tSec,tMs){ const _heal=((p.pzStacks||0)>=PZ_MAX)?PZ_ULT_HEAL_MAX:PZ_ULT_HEAL; p.pzStacks=Math.min(PZ_MAX,(p.pzStacks||0)+1); { const before=p.hp; p.hp=Math.min(maxHpFor(p), p.hp+_heal*pvHealMul(p)); if(p.hp>before) pushFx('heal', p.x, p.y-70, tMs, {v:Math.round(p.hp-before)}); } pushFx('spark', p.x, p.y-60, tMs, {ang:-Math.PI/2, color:'#ffd34d'}); pushFx('skill', p.x, p.y-70, tMs, {color:'#ffd34d', name:'기세 '+p.pzStacks+'/'+PZ_MAX}); },
   pistol(p){ p.ultPending='pistol'; },
   magiccard(p,tSec,tMs,ax,ay){
     const tg=magiccardTarget(p, ax, ay); if(!tg) return false;
@@ -11932,7 +11939,7 @@ const ULT_IMPL = {
       if((t.x-x0)*dir<-10 || (t.x-x1)*dir>0) continue;                       // (a little behind his back counts, a little beyond the end does not)
       if(Math.abs((t.y-PLAYER_H/2)-cy)>SANDSTORM_H/2) continue;
       skillDamage(p, t, SANDSTORM_DMG, tMs, {kb:SANDSTORM_KB, up:150, stun:SANDSTORM_STUN});
-      t.sandSlowUntil=tSec+SANDSTORM_SLOW_SEC; pushFx('slow', t.x, t.y-70, tMs, {});
+      t.sandSlowUntil=tSec+SANDSTORM_SLOW_SEC; pushFx('slow', t.x, t.y-70, tMs, {}); t.pvSandUntil=tSec+3; t.pvSandBy=p.id; pvPop(p, 'horemheb', tMs);
     }
     pushFx('sandstorm', p.x, p.y-40, tMs, {dir, len:SANDSTORM_LEN, h:SANDSTORM_H});
   },
@@ -12165,6 +12172,7 @@ function tioBloodHit(b, victim){
   const ow=players[b.owner]; if(!ow || !ow.alive || (ow.tioStage||'blood')!=='blood' || ow.disg || victim.isMinion) return;
   ow.tioFor={weapon:victim.weapon, kit:victim.kit||null, cos:victim.cos, name:victim.name, color:victim.color, vid:victim.id, vteam:(victim.team===undefined?null:victim.team), clan:victim.clan||''};
   ow.tioStage='morph'; ow.lastSkill=-9999;
+  { const hv=10; ow.hp=Math.min(maxHpFor(ow), ow.hp+hv); pushFx('heal', ow.x, ow.y-70, performance.now(), {v:hv}); pvPop(ow, 'tionis', performance.now()); }      // 피의 연극: half of the syringe's 20 comes back as health
 }
 function tioMorph(p, tSec, tMs){
   const f=p.tioFor; if(!f){ p.tioStage='blood'; return false; }
@@ -12417,8 +12425,9 @@ function puppetBlast(m, v, tMs){      // the end of the control: the puppet blow
   const R=PUP_BLAST_R;
   pushFx('explosion', v.x, v.y-PLAYER_H/2, tMs, {}); pushFx('skillring', v.x, v.y-40, tMs, {color:'#ff9ecb', r:R});
   const near=enemiesOf(m).filter(o=>o.id!==v.id && !o.swordCharge && Math.hypot(o.x-v.x, o.y-v.y)<=R);
-  skillDamage(m, v, PUP_BLAST_SELF, tMs, {});
-  for(const o of near) if(o.alive) skillDamage(m, o, PUP_BLAST_NEAR, tMs, {});
+  skillDamage(m, v, PUP_BLAST_SELF+10, tMs, {});      // 마지막 연극: the self-destruct hurts 10 more
+  for(const o of near) if(o.alive) skillDamage(m, o, PUP_BLAST_NEAR+10, tMs, {});
+  pvPop(m, 'puppeteer', tMs);
 }
 function puppetVictim(p, tSec){ return !!(p && p.puppetBy && p.puppetUntil>tSec); }
 function puppetMaster(p, tSec){ return !!(p && p.puppetTarget && p.puppetUntil>tSec); }
@@ -12445,6 +12454,7 @@ function skillMitigate(target, dmg, tMs){
   if(target.samUltUntil && target.samUltUntil>tMs/1000){ target.hp=Math.min(maxHpFor(target), target.hp+dmg); return 0; }   // the samurai's ultimate: untouchable while it runs
   if(target.darkSub){ target.hp=Math.min(maxHpFor(target), target.hp+dmg); return 0; }                                         // 쿠루스 inside his darkness: nothing reaches him
   const tSec=tMs/1000; let left=dmg;
+  { const c=pvTakenCut(target, tSec); if(c>0){ const back=left*c; target.hp=Math.min(maxHpFor(target), target.hp+back); left-=back; } }     // passives: 크레온's guards, 복서's toughness
   if(puppetMaster(target,tSec)){ const back=left*0.5; target.hp=Math.min(maxHpFor(target), target.hp+back); left-=back; }   // 인형술사: half the damage while he pulls the strings
   if(skillHasBuff(target,'rest',tSec)){ const back=left*PZ_REST_CUT; target.hp=Math.min(maxHpFor(target), target.hp+back); left-=back; }       // 정복자의 휴식: 20% of every hit is given back
   if(skillHasBuff(target,'guard',tSec)){ const back=left*0.5; target.hp=Math.min(maxHpFor(target), target.hp+back); left-=back; }
@@ -12456,7 +12466,7 @@ function skillMitigate(target, dmg, tMs){
 }
 function skillReflectors(tMs){ const tS=tMs/1000, out=[]; for(const id in players){ const p=players[id]; if(p.alive && (skillHasBuff(p,'reflect',tS) || (p.deflectUntil>tS))) out.push(p); } return out; }
 // a successful lightsaber deflect (shot or close-range hit): the next swing needs no cooldown, once per swing
-function saberDeflectWon(r){ if(r.deflectGot) return; r.deflectGot=true; r.lastShot=-9999; }
+function saberDeflectWon(r){ if(r.deflectGot) return; r.deflectGot=true; r.lastShot=-9999; if(r.weapon==='lightsaber'){ r.pvNext={mult:1.2, kb:1}; pvPop(r, 'lightsaber', performance.now()); } }      // 자다이: a deflected attack makes the next one 20% stronger
 function skillTryReflect(b, reflectors, tMs){
   if(b.dmgless) return;
   for(const r of reflectors){
@@ -12532,7 +12542,7 @@ function bladeSpinTick(p, tMs){
     const dtp=Math.max(0, tS-(ch.lastT||tS)); ch.lastT=tS;
     const moved=Math.abs(p.x-ch.lastX); ch.lastX=p.x;
     if(dtp>0 && moved<SWORD_CHARGE_SPEED*dtp*0.25) ch.blockedFor=(ch.blockedFor||0)+dtp; else ch.blockedFor=0;
-    if(tS>=ch.until || ch.blockedFor>0.15){ swordEnd(p); return; }
+    if(tS>=ch.until || ch.blockedFor>0.15){ if(!Object.keys(p.bladeHit||{}).length){ pvHalveSkillCd(p, tS); pvPop(p, 'sword', tMs); } swordEnd(p); return; }      // 기사: the charge went all the way without hitting anybody -> half of the cooldown is gone
   }
   const cx=p.x, cy=p.y-40; if(!p.bladeHit) p.bladeHit={};
   const touched=[];
@@ -12583,7 +12593,7 @@ const SKILL_IMPL={
     return true;
   },
   pizarro(p,tSec,tMs){          // 정복자의 질주: 20 hp back at once and 50% more speed for 3 s (a way to heal and to get away early in a fight)
-    const before=p.hp; p.hp=Math.min(maxHpFor(p), p.hp+PZ_RUN_HEAL); if(p.hp>before) pushFx('heal', p.x, p.y-70, tMs, {v:Math.round(p.hp-before)});
+    const before=p.hp; p.hp=Math.min(maxHpFor(p), p.hp+PZ_RUN_HEAL*pvHealMul(p)); if(p.hp>before) pushFx('heal', p.x, p.y-70, tMs, {v:Math.round(p.hp-before)});
     skillSetBuff(p,'haste',PZ_RUN_SEC,tSec);
     pushFx('skillring', p.x, p.y-30, tMs, {color:'#ffd34d', r:70});
     return true;
@@ -12614,15 +12624,15 @@ const SKILL_IMPL={
     return true;
   },
   gloves(p,tSec,tMs,ax){ return !!skillHitFront(p,tMs,skillAimDir(p,ax),{range:110, h:90, dmg:26, kb:140, up:620}); },
-  grenade(p,tSec,tMs){ p.vy=-820; p.grounded=false; pushFx('explosion', p.x, p.y-10, tMs, {}); skillPulse(p,tMs,{r:110, dmg:12, kb:380, up:260}); return true; },
+  grenade(p,tSec,tMs){ p.vy=-820; p.grounded=false; pushFx('explosion', p.x, p.y-10, tMs, {}); const n=skillPulse(p,tMs,{r:110, dmg:12, kb:380, up:260}); if(n>0){ p.pvLand=tSec; p.pvLandMin=tSec+0.3; } return true; },      // 폭발광: if the jump hurt somebody, the landing shoves and stuns (tickPassives)
   bazooka(p,tSec,tMs,ax,ay){      // 3연발: three rockets one after the other along the aim
     const a=aimAngleOf(p,ax,ay), w=WEAPONS.bazooka, w2=Object.assign({}, w, {dmg:BAZ_VOLLEY_DMG});
-    for(let k=0;k<3;k++) hostTimers.push({au:curAur, ta:fxActor, at:tSec+k*0.3, fn:()=>{ if(p.alive){ spawnBullet(p, a, w2, {splash:w.splash, big:true}); pushFx('sfx', p.x, p.y-40, performance.now(), {name:'bazooka'}); } }});
+    const rid=++pvBurstSeq; for(let k=0;k<3;k++) hostTimers.push({au:curAur, ta:fxActor, at:tSec+k*0.3, fn:()=>{ if(p.alive){ spawnBullet(p, a, w2, {splash:w.splash, big:true, pvRock:rid}); pushFx('sfx', p.x, p.y-40, performance.now(), {name:'bazooka'}); } }});
     return true; },
   dagger(p,tSec,tMs){
     const t=nearestEnemyOf(p); if(!t || Math.hypot(t.x-p.x,t.y-p.y)>330) return false;
     const side=(t.x>=p.x)?1:-1, spots=[{x:t.x+side*46,y:t.y},{x:t.x-side*46,y:t.y}];
-    for(const s of spots) if(skillSpotFree(s.x,s.y)){ pushFx('blink', p.x, p.y-30, tMs, {color:p.color}); p.x=s.x; p.y=s.y; p.vx=0; p.vy=0; p.kbX=0; p.lastShot=-9999; p.angle=(s.x<t.x)?0:Math.PI; return true; }
+    for(const s of spots) if(skillSpotFree(s.x,s.y)){ pushFx('blink', p.x, p.y-30, tMs, {color:p.color}); p.x=s.x; p.y=s.y; p.vx=0; p.vy=0; p.kbX=0; p.lastShot=-9999; p.angle=(s.x<t.x)?0:Math.PI; p.pvAmbUntil=tSec+3; return true; }
     return false; },
   dracula(p,tSec,tMs){ p.restUntilD=tSec+DRAC_REST_SEC; p.restNextD=tSec+DRAC_REST_STEP; p.vx=0; p.kbX=0; pushFx('skillring', p.x, p.y-30, tMs, {color:'#b01030', r:52}); return true; },
   gambler(p,tSec,tMs){
@@ -12630,14 +12640,15 @@ const SKILL_IMPL={
     if(heads){ const hv=25+3*ch; p.hp=Math.min(maxHpFor(p), p.hp+hv); pushFx('coinflip', p.x, p.y-80, tMs, {heads:true}); pushFx('heal', p.x, p.y-70, tMs, {v:hv}); }
     else { pushFx('coinflip', p.x, p.y-80, tMs, {heads:false, tx:t.x, ty:t.y-PLAYER_H/2}); skillDamage(p, t, 18+4*ch, tMs, {kb:160}); }
     return true; },
-  wizard(p,tSec,tMs){   // a shockwave around the wizard: 10 damage and a very big push
-    skillPulse(p,tMs,{r:WIZ_SHOCK_R, dmg:WIZ_SHOCK_DMG, kb:WIZ_SHOCK_KB, up:WIZ_SHOCK_UP});
+  wizard(p,tSec,tMs){   // a shockwave around the wizard: 10 damage and a very big push (twice as big inside his own magic circle: the passive)
+    const inC=magicCircles.some(z=>z.owner===p.id && z.until>tSec && Math.hypot(z.x-p.x, z.y-p.y)<=z.r+10);
+    skillPulse(p,tMs,{r:WIZ_SHOCK_R, dmg:WIZ_SHOCK_DMG, kb:WIZ_SHOCK_KB*(inC?2:1), up:WIZ_SHOCK_UP});
     pushFx('skillring', p.x, p.y-30, tMs, {color:'#c17bff', r:WIZ_SHOCK_R}); pushFx('sfx', p.x, p.y-40, tMs, {name:'ult_shield'});
     return true; },
   magiccard(p,tSec,tMs,ax,ay){   // five cards one behind the other along the aim (no spread, no combo)
     const a=(ax===undefined||ay===undefined) ? (p.angle||0) : Math.atan2(ay-(p.y-40), ax-p.x);
     const w2=Object.assign({}, WEAPONS.magiccard, {dmg:CARD_LINE_DMG, bulletSpeed:980});
-    for(let k=0;k<CARD_LINE_N;k++) hostTimers.push({au:curAur, ta:fxActor, at:tSec+k*0.07, fn:()=>{ if(p.alive){ spawnBullet(p, a, w2, {cardLine:true}); pushFx('sfx', p.x, p.y-40, performance.now(), {name:'magiccard'}); } }});
+    const lid=++pvBurstSeq; for(let k=0;k<CARD_LINE_N;k++) hostTimers.push({au:curAur, ta:fxActor, at:tSec+k*0.07, fn:()=>{ if(p.alive){ spawnBullet(p, a, w2, {cardLine:true, lid:lid}); pushFx('sfx', p.x, p.y-40, performance.now(), {name:'magiccard'}); } }});
     return true; },
   flamethrower(p,tSec,tMs,ax){      // 화염 돌진: a rush along the aim direction - everyone on the way takes 20 damage and burns, and the floor behind stays on fire for 3 s
     const dir=skillAimDir(p,ax), x0=p.x, y0=p.y, best=skillMoveSpot(p, x0+dir*FIRE_DASH_LEN, y0), x1=best.x;
@@ -12681,7 +12692,9 @@ const SKILL_IMPL={
   samurai(p,tSec,tMs,ax){        // iai: a flash along the aim direction, cutting everyone on the way
     const dir=skillAimDir(p,ax), x0=p.x, y0=p.y, best=skillMoveSpot(p, x0+dir*430, y0);
     const x1=best.x, lo=Math.min(x0,x1)-30, hi=Math.max(x0,x1)+30;
-    for(const o of enemiesOf(p)){ if(o.swordCharge || o.darkSub || o.isClone || o.x<lo || o.x>hi || Math.abs(o.y-y0)>85) continue; skillDamage(p, o, 30, tMs, {kb:160, up:160}); }
+    let cut=0;
+    for(const o of enemiesOf(p)){ if(o.swordCharge || o.darkSub || o.isClone || o.x<lo || o.x>hi || Math.abs(o.y-y0)>85) continue; skillDamage(p, o, 30, tMs, {kb:160, up:160}); cut++; }
+    if(cut>=2){ hostTimers.push({au:curAur, ta:fxActor, at:tSec+0.02, fn:(tt)=>{ pvHalveSkillCd(p, tt/1000); pvPop(p, 'samurai', tt); }}); }      // 사무라이: two or more cut at once -> half of the cooldown is gone
     pushFx('blink', x0, y0-30, tMs, {color:'#eef2f8'}); p.x=x1; p.y=best.y; p.vx=0; p.vy=0; p.kbX=0; pushFx('blink', p.x, p.y-30, tMs, {color:'#eef2f8'});
     pushFx('spark', (x0+x1)/2, y0-34, tMs, {ang:dir>0?0:Math.PI, color:'#ffffff'});
     pushFx('iai', x0, y0-34, tMs, {x2:x1, y2:best.y-34});
@@ -12767,7 +12780,7 @@ function fieldZoneTick(dt, t){      // inside a cloud everybody moves at half sp
       if(Math.hypot(p.x-z.x, cy-z.y)>z.r) continue;
       if(z.kind==='smoke'){ p.slowUntil=Math.max(p.slowUntil||0, tS+0.3); continue; }
       const ow=players[z.owner]; if(id===z.owner || (ow && isAlly(ow,p)) || !tnSameMatch(z.owner,id)) continue;
-      p.burn={until:tS+1.5, dps:FIRE_DPS, owner:z.owner, ownerName:z.ownerName||(ow&&ow.name)};
+      p.burn={until:tS+(z.burnSec||1.5), dps:(z.dps||FIRE_DPS), owner:z.owner, ownerName:z.ownerName||(ow&&ow.name)};
     }
   }
 }
@@ -12978,7 +12991,7 @@ function rollDice(p, tMs){
     case 1: { // 가장 가까운 적에게 피해 (약)
       const target=nearestEnemyOf(p);
       if(target){
-        const dmg=25*mult*(p.isZombie?ZOMBIE_DMG_MULT:1); const cy=target.y-PLAYER_H/2;
+        const dmg=25*mult*(p.isZombie?ZOMBIE_DMG_MULT:1)*((p.chips||0)>=3?1.1:1); const cy=target.y-PLAYER_H/2;
         target.hp-=dmg; markHit(target, p.id, tMs, dmg);
         pushFx('hit', target.x, cy, tMs, {color:p.color, ang:Math.atan2(cy-(p.y-PLAYER_H/2), target.x-p.x), v:dmg, el:dmgTypeOf(p.weapon)});
         if(target.hp<=0) handleDeath(target, p, tMs, p.name);
@@ -12993,7 +13006,7 @@ function rollDice(p, tMs){
     case 3: { // 가장 가까운 적에게 피해 (강)
       const target=nearestEnemyOf(p);
       if(target){
-        const dmg=38*mult*(p.isZombie?ZOMBIE_DMG_MULT:1); const cy=target.y-PLAYER_H/2;
+        const dmg=38*mult*(p.isZombie?ZOMBIE_DMG_MULT:1)*((p.chips||0)>=3?1.1:1); const cy=target.y-PLAYER_H/2;
         target.hp-=dmg; markHit(target, p.id, tMs, dmg);
         pushFx('hit', target.x, cy, tMs, {color:p.color, ang:Math.atan2(cy-(p.y-PLAYER_H/2), target.x-p.x), v:dmg, el:dmgTypeOf(p.weapon)});
         if(target.hp<=0) handleDeath(target, p, tMs, p.name);
@@ -13077,6 +13090,7 @@ function meleeAttack(p, angle, w, tMs){
   let dmg = (w.id==='pizarro' ? PZ_DMG[pzStacks(p)] : w.dmg) * (batBoost ? BAT_DMG_MULT : 1);
   if(p.wizBuff) dmg*=WIZ_DMG_MULT;
   if(p.isZombie) dmg*=ZOMBIE_DMG_MULT;
+  const pva=pvAtkOf(p, tMs/1000); if(pva) dmg*=pva.mult;
   let hitAny=false;
   const lunge = (w.id==='pizarro' && p.lastDash!==undefined && tMs/1000-p.lastDash<=PZ_LUNGE_WIN && p.pzLungeDash!==p.lastDash);     // 돌격 찌르기: the first thrust right after a dash
   const reachR = w.range;
@@ -13098,7 +13112,7 @@ function meleeAttack(p, angle, w, tMs){
       const dealt = absorbIntoShield(target, dmgT);
       target.hp -= dealt; markHit(target, p.id, tMs, dealt);
       pushFx('hit', target.x, cy, tMs, {color:p.color, ang:Math.atan2(cy-(p.y-PLAYER_H/2), target.x-p.x), v:dmgT, el:dmgTypeOf(p.weapon)});
-      applyHitKnockback(target, target.x-p.x, cy-(p.y-PLAYER_H/2), dmgT, homerun?7.5:(w.kbMult? w.kbMult*(lunge?PZ_LUNGE_KB:1) : undefined));
+      applyHitKnockback(target, target.x-p.x, cy-(p.y-PLAYER_H/2), dmgT, (homerun?7.5:(w.kbMult? w.kbMult*(lunge?PZ_LUNGE_KB:1) : undefined)) * ((pva && pva.kb>1) ? pva.kb : 1) || undefined);
       if(lunge && target.hp>0) stunPlayer(target, PZ_LUNGE_STUN, tMs);
       hitAny=true;
       if(w.lifesteal){
@@ -13112,6 +13126,7 @@ function meleeAttack(p, angle, w, tMs){
     }
   }
   if(homerun && hitAny) p.ultPending=null;
+  try{ pvMeleeEnd(p, hitAny, tMs); }catch(e){ recordDiagError('pvMeleeEnd', e); }
   const ax=Math.cos(angle), ay=Math.sin(angle);
   const swingLife=Math.min(0.28, Math.max(0.12, w.cd));
   bullets.push({x:p.x+ax*30, y:(p.y-30)+ay*30, vx:0, vy:0, life:swingLife, life0:swingLife, color:CONCEPT_COLOR[conceptOfP(p)]||p.color, sk:(p.cos&&p.cos.skin&&p.cos.skin[p.weapon])||undefined, dmgless:true, wid:w.id, swingAngle:angle});
@@ -13124,6 +13139,7 @@ function absorbIntoShield(target, dmg){
   return dmg-absorbed;
 }
 function explodeAt(x,y,b,tMs){
+  let pvHurt=false;
   for(const id in players){
     const target=players[id];
     if(!target.alive || isAlly(players[b.owner],target) || target.swordCharge || target.darkSub || target.isClone) continue; // allies are never hurt by blasts (self-damage still applies); a charging knight is untouchable
@@ -13138,7 +13154,23 @@ function explodeAt(x,y,b,tMs){
       target.hp -= blastDmg; markHit(target, b.owner, tMs, blastDmg);
       pushFx('dmg', target.x, cy-16, tMs, {v:blastDmg, color:'#ffb347', el:dmgTypeOf(b.wid)});
       applyHitKnockback(target, target.x-x, cy-y, b.dmg, 1.8);
+      if(id!==b.owner) pvHurt=true;
       if(target.hp<=0) handleDeath(target, players[b.owner], tMs, b.ownerName);
+    }
+  }
+  if(b.pvRock) pvRockLand(b, x, y, pvHurt, tMs);
+}
+function pvRockLand(b, x, y, hurt, tMs){      // 중화기병: all three rockets of the volley hit somebody -> the three spots burn for 3 s (3 damage a second for 3 s to whoever touches the fire)
+  const ow=players[b.owner]; if(!ow || ow.weapon!=='bazooka') return;
+  if(!ow.pvRocks) ow.pvRocks={};
+  const r=ow.pvRocks[b.pvRock]||(ow.pvRocks[b.pvRock]={n:0, hits:0, spots:[]});
+  r.n++; if(hurt) r.hits++; r.spots.push({x:x, y:y});
+  if(r.n>=3){
+    delete ow.pvRocks[b.pvRock];
+    if(r.hits>=3){
+      const tS=tMs/1000;
+      for(const sp of r.spots){ fieldZones.push({kind:'fire', owner:ow.id, team:ow.team, ownerName:ow.name, x:sp.x, y:sp.y, r:75, dur:3, until:tS+3, dps:3, burnSec:3}); pushFx('skillring', sp.x, sp.y, tMs, {color:'#ff7a2a', r:75}); }
+      pvPop(ow, 'bazooka', tMs);
     }
   }
 }
@@ -13191,10 +13223,11 @@ function tryFire0(p, angle, tMs){
   }
   const free = (w.kind==='cards' && p.freeVolleys>0 && p.freeUntil>tSec); // combo reward: 3 volleys that ignore the cooldown
   const rush = (w.id==='gloves' && p.rushUntil>tSec); // ultimate: triple attack speed
-  const cdEff = (free ? 0.15 : (rush ? w.cd/3-0.002 : (w.id==='pizarro' ? PZ_ATK_CD[pzStacks(p)] : w.cd))) * (p.isZombie?ZOMBIE_CD_MULT:1) * (gameMode==='hyperbr'?0.5:1) * (w.id==='pizarro'?1:pzCdMult(p)) * (skillHasBuff(p,'rapid',tSec)?0.5:1) * ((w.id==='kan' && p.kanWingsUntil>tSec)?KAN_ULT_CD_MULT:1);   // pistol skill: double fire rate
+  const cdEff = (free ? 0.15 : (rush ? w.cd/3-0.002 : (w.id==='pizarro' ? PZ_ATK_CD[pzStacks(p)] : w.cd))) * (p.isZombie?ZOMBIE_CD_MULT:1) * (gameMode==='hyperbr'?0.5:1) * (w.id==='pizarro'?1:pzCdMult(p)) * (skillHasBuff(p,'rapid',tSec)?0.5:1) * ((w.id==='pel' && pelN(p)>=PEL_MAX)?(1/1.2):1) * ((w.id==='kan' && p.kanWingsUntil>tSec)?KAN_ULT_CD_MULT:1);   // pistol skill: double fire rate
   if(tSec - p.lastShot < cdEff) return;
   if(free) p.freeVolleys--;
   p.lastShot = tSec;
+  pvAttackStart(p, tSec);
   recordReplayEvent(p.id, 'attack', {weapon:p.weapon, angle:useAngle}); // every successful fire path (melee, guns, cards, explosives...) passes through this one line exactly once
   if(WEAPON_SFX[p.weapon]) pushFx('sfx', p.x, p.y-40, tMs, {name:WEAPON_SFX[p.weapon]}); // sent as a normal synced effect so every player's game plays the sound, not just the host's
   if(w.id==='pel'){ pelVolley(p, useAngle, tSec, tMs); return; }
@@ -13202,7 +13235,7 @@ function tryFire0(p, angle, tMs){
   if(w.kind==='melee'){ meleeAttack(p, useAngle, w, tMs); return; }
   if(w.kind==='vacuum'){ fireVacuum(p, useAngle, w, tMs); return; }
   if(w.kind==='gamble'){ rollDice(p, tMs); return; }
-  if(w.kind==='shotgun'){ for(let i=0;i<w.pellets;i++){ spawnBullet(p, useAngle+(Math.random()-0.5)*0.65, w); } return; }
+  if(w.kind==='shotgun'){ const pvx={pvB:++pvBurstSeq, pvN:w.pellets}; for(let i=0;i<w.pellets;i++){ spawnBullet(p, useAngle+(Math.random()-0.5)*0.65, w, pvx); } return; }
   if(w.kind==='cards'){
     const vid=++volleySeq;
     for(const k in volleys) if(tSec-volleys[k].born>4) delete volleys[k];
@@ -13232,14 +13265,16 @@ function tryFire0(p, angle, tMs){
   if(p.cardDmg && w.id==='gambler'){ const cd=p.cardDmg; p.cardDmg=0; spawnBullet(p, useAngle, Object.assign({}, w, {dmg:cd}), {big:true}); return; }   // the cards of the ultimate: this chip hits for the sum
   if(w.burst){
     const spreadOf=()=> w.spread ? (Math.random()-0.5)*2*w.spread : 0;
-    spawnBullet(p, useAngle+spreadOf(), w);
+    const pvx={pvB:++pvBurstSeq, pvN:w.burst};
+    spawnBullet(p, useAngle+spreadOf(), w, pvx);
     for(let i=1;i<w.burst;i++){
       const delay=i*(w.burstDelay||0.07);
-      hostTimers.push({au:curAur, ta:fxActor, at:tSec+delay, fn:()=>{ if(p.alive) spawnBullet(p, p.angle+spreadOf(), w); }});
+      hostTimers.push({au:curAur, ta:fxActor, at:tSec+delay, fn:()=>{ if(p.alive) spawnBullet(p, p.angle+spreadOf(), w, pvx); }});
     }
     return;
   }
   if(w.id==='kan' && p.kanWingsUntil>tSec){ for(const off of [-0.14,0,0.14]) spawnBullet(p, useAngle+off, w); return; }      // 칸's wings: three darts at once
+  if(w.id==='pistol'){ p.pvShots=(p.pvShots||0)+1; if(p.pvShots%6===0){ spawnBullet(p, useAngle + (w.spread ? (Math.random()-0.5)*2*w.spread : 0), Object.assign({}, w, {dmg:w.dmg*1.25, hitR:(w.hitR||BULLET_R)*1.25}), {color:'#ff2d2d', big:true}); return; } }      // 제임스: every 6th shot is red, 1.25x damage and size
   spawnBullet(p, useAngle + (w.spread ? (Math.random()-0.5)*2*w.spread : 0), w);
 }
 /* ================= AI BOTS (online rooms) =================
@@ -14461,6 +14496,7 @@ function darkEmerge(p, tMs, viaUlt){
   p.darkSub=null; p.darkArmUntil=0; p.lastUlt=tSec;                            // out again: the ultimate waits for its cooldown
   p.vy=-330; p.grounded=false;
   pushFx('darkrise', p.x, p.y, tMs, {});
+  if(viaUlt){ pvBoostSpeed(p, 1.5, 3, tMs); pvPop(p, 'kurus', tMs); }      // 쿠루스: after 어둠 탈출, 3 s of 1.5x speed
   let dmg=0;
   if(viaUlt){ pushFx('ult', p.x, p.y-40, tMs, {color:p.color, name:DARK_ESCAPE_NAME}); pushFx('sfx', p.x, p.y-40, tMs, {name:'ult_power'});
     let wsum=0; for(const z of escPools){ const r=darkPoolRect(z); if(r) pushFx('darksplash', (r.x0+r.x1)/2, r.y, tMs, {}); wsum+=z.rr-z.rl; }
@@ -14729,6 +14765,123 @@ function tickHook(dt, t){
     p.x+=dx/d*step; p.y+=dy/d*step; p.vx=0; p.vy=0; p.kbX=0; p.grounded=false;
   }
 }
+/* ================= PASSIVES (패시브) =================
+   Every character has one passive (list: /stickseum/passives-plan.md). The name of a passive pops up above the head when it fires (pvPop); the ones
+   that are a state (a condition that stays true) only pop up the moment the condition becomes true and again after it was false in between (pvEdge).
+   q = never shows a name (마법사, 차원여행자, 제임스, 보안관). Bots, humans and clones all go through the same code (it is host-side). */
+const PASSIVES={
+  pizarro:{n:'정복자의 각성',c:'#ffd34d'}, sword:{n:'숨 고르기',c:'#9ad0ff'}, pistol:{n:'붉은 탄환',q:1}, wizard:{n:'마법진의 파동',q:1},
+  magiccard:{n:'카드 폭풍',c:'#ff7ad9'}, kurus:{n:'어둠 속의 질주',c:'#b98cff'}, smg:{n:'제압 사격',c:'#ffb84d'}, lightsaber:{n:'포스 반격',c:'#7fe3ff'},
+  kan:{n:'독기',c:'#6be08a'}, boomerang:{n:'귀환 일격',c:'#ffd34d'}, vacuum:{n:'먼지 가속',c:'#8fd3ff'}, pirate:{n:'대포 약탈',c:'#ffb84d'},
+  cleon:{n:'근위대의 가호',c:'#ffd34d'}, pel:{n:'드론 군단',c:'#7fe3ff'}, horemheb:{n:'모래바람 사냥',c:'#e0b060'}, puppeteer:{n:'마지막 연극',c:'#ff9ecb'},
+  bat:{n:'역전 홈런',c:'#ffd34d'}, shuriken:{n:'그림자 연계',c:'#c0c0ff'}, shotgun:{n:'명사수의 위협',q:1}, gloves:{n:'맷집 폭발',c:'#ff6a4d'},
+  grenade:{n:'폭발의 여진',c:'#ff8a3d'}, bazooka:{n:'화염 포화',c:'#ff7a2a'}, rifle:{n:'지뢰 족쇄',c:'#9bd37f'}, dracula:{n:'피의 만찬',c:'#ff4d6a'},
+  gambler:{n:'승부사의 감',c:'#ffe27a'}, flamethrower:{n:'불길 질주',c:'#ff8a3d'}, portalgun:{n:'',q:1}, dagger:{n:'그림자 일격',c:'#c0c0ff'},
+  samurai:{n:'일섬 연참',c:'#ff5a6a'}, tionis:{n:'피의 연극',c:'#ff4d6a'}
+};
+function pvPop(p, key, tMs){ const d=PASSIVES[key]; if(!d || d.q || !p || !p.alive || p.isClone) return; const tS=tMs/1000; if(!p.pvAt) p.pvAt={}; if(p.pvAt[key]>tS-1.0) return; p.pvAt[key]=tS; pushFx('passive', p.x, p.y-96, tMs, {name:d.n, color:d.c}); }
+function pvEdge(p, key, on, tMs){ if(!p.pvOn) p.pvOn={}; if(on && !p.pvOn[key]) pvPop(p, key, tMs); p.pvOn[key]=!!on; }
+function pvHealMul(p){ return (p && p.weapon==='pizarro' && pzStacks(p)>=PZ_MAX) ? 2 : 1; }     // 피사로 at the 4th stage: every heal he gets counts double
+function pvSpeed(p, tS){        // every passive that changes the walking speed, in one place (stepPhysics asks)
+  let m=1; const k=p.weapon;
+  if(p.pvSpdUntil>tS) m*=(p.pvSpdMult||1);
+  if(k==='vacuum') m*=1+0.05*(p.vacuumStacks||0);
+  if(k==='flamethrower' && p.pvOnFire) m*=1.3;
+  if(p.pvSlowUntil>tS) m*=(p.pvSlowMult||1);
+  if(p.poison && p.poison.until>tS && p.poison.stacks>=KAN_POISON_MAX){ const ko=players[p.poison.owner]; if(ko && ko.weapon==='kan') m*=0.8; }     // 칸: a victim with 4 poison stacks is slower
+  return m;
+}
+function pvTakenCut(p, tS){      // the share of every hit that is given back (guards for 크레온, the stacking toughness of 복서)
+  let c=0;
+  if(p.weapon==='cleon' && guardsOf(p).length>0) c+=0.15;
+  if(p.weapon==='gloves' && p.pvToughN) c+=0.01*p.pvToughN;
+  return Math.min(c, 0.5);
+}
+let pvBurstSeq=0;
+function pvBoostSpeed(p, mult, sec, tMs){ p.pvSpdMult=mult; p.pvSpdUntil=tMs/1000+sec; }
+function pvHalveSkillCd(p, tSec){ const cd=skillCdOf(p); p.lastSkill=Math.max(p.lastSkill===undefined?-9999:p.lastSkill, tSec-cd/2); }     // what is left of the skill cooldown is at most half of it
+function pvReset(p){ p.pvNext=null; p.pvAtk=null; p.pvToughN=0; p.pvBurstUntil=0; p.pvSpdUntil=0; p.pvSlowUntil=0; p.pvLand=0; p.pvAmbUntil=0; p.pvBatN=0; p.pvSandUntil=0; p.pvOn={}; }
+function pvAttackStart(p, tSec){      // a normal attack starts: a buff that waits for "the next attack" is spent on it
+  const nb=p.pvNext; p.pvNext=null; p.pvAtk=nb ? {mult:nb.mult||1, kb:nb.kb||1, t:tSec} : null;
+}
+function pvAtkOf(p, tSec){ const a=p.pvAtk; return (a && Math.abs(tSec-a.t)<0.45) ? a : null; }
+function pvDealtExtra(att, target, dmg, tS){      // extra damage in every hit of a passive (on top of the hit itself)
+  let m=0;
+  if(att.weapon==='horemheb' && target.pvSandUntil>tS && target.pvSandBy===att.id) m+=0.5;         // 호렘헵: a target the sandstorm hit takes 1.5x for 3 s
+  if(att.pvBurstUntil>tS) m+=0.5;                                                                  // 복서: 1.5x attack damage while the toughness has burst
+  return dmg*m;
+}
+function pvOnTaken(target, tMs){      // 복서: every hit taken makes the next ones weaker; at 10% it bursts
+  if(target.weapon!=='gloves' || !target.alive) return;
+  target.pvToughN=(target.pvToughN||0)+1;
+  if(target.pvToughN>=10){ target.pvToughN=0; target.pvBurstUntil=tMs/1000+2.5; pvBoostSpeed(target, 2, 2.5, tMs); pvPop(target, 'gloves', tMs); pushFx('skillring', target.x, target.y-30, tMs, {color:'#ff6a4d', r:80}); }
+}
+function pvMeleeEnd(p, hitAny, tMs){
+  const tS=tMs/1000;
+  if(p.weapon==='bat'){
+    if(hitAny){ p.pvBatN=(p.pvBatN||0)+1; if(p.pvBatN>=4){ p.pvBatN=0; p.pvNext={mult:1.25, kb:3}; pvPop(p, 'bat', tMs); } } else p.pvBatN=0;      // 야구선수: 4 hits in a row, the next swing is huge
+  }
+  if(p.weapon==='dagger' && hitAny && p.pvAmbUntil>tS){ p.pvAmbUntil=0; p.invisUntil=tS+1.0; pvPop(p, 'dagger', tMs); pushFx('smokeveil', p.x, p.y-30, tMs, {}); }      // 암살자: the first strike after the ambush hides him for a second
+}
+function pvKill(killer, victim, tMs){
+  if(!killer || killer.id===victim.id) return;
+  if(killer.weapon==='dracula' && killer.alive){ const max=maxHpFor(killer), before=killer.hp; killer.hp=Math.min(max, killer.hp+25*pvHealMul(killer)); pushFx('heal', killer.x, killer.y-70, tMs, {v:Math.round(killer.hp-before)}); pvPop(killer, 'dracula', tMs); }      // 드라큘라: a kill heals 25
+}
+function pvBulletHit(b, target, tMs){
+  const ow=players[b.owner]; if(!ow || ow.id===target.id) return;
+  const tS=tMs/1000;
+  if(b.cardLine && ow.weapon==='magiccard'){      // 마술사: every card of the skill hit one enemy -> stun
+    if(!ow.pvLine || ow.pvLine.id!==b.lid) ow.pvLine={id:b.lid, hits:{}};
+    ow.pvLine.hits[target.id]=(ow.pvLine.hits[target.id]||0)+1;
+    if(ow.pvLine.hits[target.id]===CARD_LINE_N && target.alive){ stunPlayer(target, 1.0, tMs); pvPop(ow, 'magiccard', tMs); }
+  }
+  if(b.pvB){      // a burst / a shotgun blast: how many of its bullets landed
+    if(!ow.pvBursts) ow.pvBursts={};
+    const r=ow.pvBursts[b.pvB]||(ow.pvBursts[b.pvB]={n:0, per:{}}); r.n++; r.per[target.id]=(r.per[target.id]||0)+1;
+    if(ow.weapon==='smg' && r.n===b.pvN){      // 특수요원: all of the burst landed -> shove the ones around and run faster
+      for(const o of enemiesOf(ow)){ if(o.alive && !o.swordCharge && !o.darkSub && !o.isClone && Math.hypot(o.x-ow.x, o.y-ow.y)<=170 && !o.isZombie){ o.kbX=((o.x>=ow.x)?1:-1)*520; o.vy=-160; o.grounded=false; } }
+      pushFx('skillring', ow.x, ow.y-30, tMs, {color:'#ffb84d', r:170}); pvBoostSpeed(ow, 1.75, 3, tMs); pvPop(ow, 'smg', tMs);
+    }
+    if(ow.weapon==='shotgun' && r.per[target.id]===b.pvN){ target.pvSlowUntil=Math.max(target.pvSlowUntil||0, tS+3); target.pvSlowMult=Math.min(target.pvSlowUntil>tS ? (target.pvSlowMult||1) : 1, 0.8); pushFx('slow', target.x, target.y-70, tMs, {}); pvPop(ow, 'shotgun', tMs); }     // 보안관: every pellet hit him -> slower
+    if(r.n>=b.pvN) delete ow.pvBursts[b.pvB];
+  }
+  if(b.wid==='shuriken' && ow.weapon==='shuriken' && ow.lastDash!==undefined && tS-ow.lastDash<=1.5 && ow.pvDashRew!==ow.lastDash){      // 닌자: a shuriken that lands right after a dash gives 0.3 s of the dash cooldown back
+    ow.pvDashRew=ow.lastDash; ow.lastDash-=0.3; pvPop(ow, 'shuriken', tMs);
+  }
+  if(b.boomerang && b.turned && ow.weapon==='boomerang'){      // 사냥꾼: a boomerang that hits on its way back does 1.5x
+    const ex=b.dmg*0.5; target.hp-=ex; markHit(target, ow.id, tMs, ex); pvPop(ow, 'boomerang', tMs);
+  }
+}
+function pvIconOf(p, tS){
+  if(p.pvNext) return p.weapon==='bat' ? '⚾' : '⚡';
+  if(p.weapon==='gloves'){ if(p.pvBurstUntil>tS) return '💢'; if(p.pvToughN) return '🛡'+p.pvToughN+'%'; return ''; }
+  if(p.pvSpdUntil>tS && (p.weapon==='kurus' || p.weapon==='smg')) return '💨';
+  return '';
+}
+function tickPassives(dt, t){
+  const tS=t/1000;
+  for(const id in players){
+    const p=players[id]; if(!p || !p.alive || p.x===undefined || p.isMinion || p.isBoss || p.isGuard || p.isVault || p.isClone || p.isDummy || p.isSpectator) continue;
+    const k=p.weapon;
+    if(k==='pizarro') pvEdge(p, k, pzStacks(p)>=PZ_MAX, t);
+    else if(k==='vacuum') pvEdge(p, k, (p.vacuumStacks||0)>=1, t);
+    else if(k==='cleon') pvEdge(p, k, guardsOf(p).length>0, t);
+    else if(k==='pel') pvEdge(p, k, pelN(p)>=PEL_MAX, t);
+    else if(k==='gambler') pvEdge(p, k, (p.chips||0)>=3, t);
+    else if(k==='flamethrower'){
+      let on=false; for(const z of fieldZones){ if(z.kind==='fire' && z.owner===p.id && z.until>tS && Math.hypot(z.x-p.x, z.y-(p.y-20))<=z.r+10){ on=true; break; } }
+      p.pvOnFire=on; pvEdge(p, k, on, t);
+      if(on && p.hp<maxHpFor(p)) p.hp=Math.min(maxHpFor(p), p.hp+3*dt);
+    }
+    else if(k==='grenade' && p.pvLand){      // 폭발광: landed after an explosion jump that hurt somebody -> shove and stun the ones near
+      if(tS>p.pvLand+3){ p.pvLand=0; }
+      else if(tS>p.pvLandMin && p.grounded){
+        p.pvLand=0; skillPulse(p, t, {r:170, kb:520, up:260, stun:0.8}); pushFx('explosion', p.x, p.y-10, t, {}); pushFx('skillring', p.x, p.y-20, t, {color:'#ff8a3d', r:170}); pvPop(p, k, t);
+      }
+    }
+    else if(k==='kan'){ let n=0; for(const q in players){ const o=players[q]; if(o.alive && o.poison && o.poison.until>tS && o.poison.owner===p.id && o.poison.stacks>=KAN_POISON_MAX){ n=1; break; } } pvEdge(p, k, n>0, t); }
+  }
+}
 const CALM_STILL_SEC=5, CALM_MOVE_SEC=10, CALM_HEAL=10, CALM_STILL_PX=14;
 function tickCalmHeal(t){
   const tS=t/1000;
@@ -14743,7 +14896,7 @@ function tickCalmHeal(t){
     if(p.hp>=max){ p.calmAt=tS; p.stillAt=tS; continue; }          // nothing to heal: the clocks wait until something hurts
     const still=tS-Math.max(p.calmAt,p.stillAt)>=CALM_STILL_SEC, calm=tS-p.calmAt>=CALM_MOVE_SEC;
     if(still || calm){
-      const before=p.hp; p.hp=Math.min(max, p.hp+CALM_HEAL); p.calmAt=tS; p.stillAt=tS;
+      const before=p.hp; p.hp=Math.min(max, p.hp+CALM_HEAL*pvHealMul(p)); p.calmAt=tS; p.stillAt=tS;
       if(p.hp>before) pushFx('heal', p.x, p.y-70, t, {v:Math.round(p.hp-before)});
       p.calmHp=p.hp;
     }
@@ -14752,7 +14905,7 @@ function tickCalmHeal(t){
 function hostTick(dt,t){ try{ return hostTickCore(dt,t); } finally { puppetOK=false; puppetOut(); } }
 function hostTickCore(dt,t){
   fxActor=null;
-  if(!matchEnded){ try{ tickCalmHeal(t); }catch(e){ recordDiagError('tickCalmHeal', e); } try{ tickHook(dt, t); }catch(e){ recordDiagError('tickHook', e); } }
+  if(!matchEnded){ try{ tickCalmHeal(t); }catch(e){ recordDiagError('tickCalmHeal', e); } try{ tickHook(dt, t); }catch(e){ recordDiagError('tickHook', e); } try{ tickPassives(dt, t); }catch(e){ recordDiagError('tickPassives', e); } }
   if(gameMode==='ffa' && matchTimerEndsAt!==null && Date.now()>=matchTimerEndsAt && !matchEnded){ endFFAMatchByKills(); }
   if(gameMode==='zombie' && matchTimerEndsAt!==null && Date.now()>=matchTimerEndsAt && !matchEnded){ endZombieMatchByTimer(); }
   if(gameMode==='raid' && matchTimerEndsAt!==null && Date.now()>=matchTimerEndsAt && !matchEnded){ raidTimeUp(); }
@@ -15066,10 +15219,11 @@ function hostTickCore(dt,t){
               if(p.flameShield.dmgAbsorbed>=FLAME_SHIELD_MAXHP){ const wi=walls.indexOf(p.flameShield); if(wi!==-1) walls.splice(wi,1); p.flameShield=null; }
             }
             if(b.wid==='gambler'){ const gow=players[b.owner]; if(gow) gow.chips=Math.min(6,(gow.chips||0)+1); }
-            p.hp-=dmg; markHit(p, b.owner, t, dmg); applyHitKnockback(p, b.vx, b.vy, dmg); pushFx('hit', nx, ny, t, {color:b.color, ang:Math.atan2(b.vy,b.vx), v:Math.round(dmg), el:dmgTypeOf(b.wid)});
+            p.hp-=dmg; markHit(p, b.owner, t, dmg); applyHitKnockback(p, b.vx, b.vy, dmg, b.kbm); pushFx('hit', nx, ny, t, {color:b.color, ang:Math.atan2(b.vy,b.vx), v:Math.round(dmg), el:dmgTypeOf(b.wid)});
             if(b.burn && p.hp>0) p.burn={until:t/1000+b.burn.dur, dps:b.burn.dps, owner:b.owner, ownerName:b.ownerName};
             if(b.poison && p.hp>0) applyPoison(p, b.owner, b.ownerName, b.poison, t);
             if(b.tioBlood) tioBloodHit(b, p);
+            try{ pvBulletHit(b, p, t); }catch(e){ recordDiagError('pvBulletHit', e); }
             const killed = p.hp<=0;
             if(killed) handleDeath(p, players[b.owner], t, b.ownerName);
             else if(b.volley!==undefined) registerCardHit(b, p, id, t);
@@ -15117,7 +15271,7 @@ function hostTickCore(dt,t){
         fireCdRemain: snapR(p.fireCdRemain||0,20),
         ultCdRemain: p.darkSub ? 0 : snapR(Math.max(0, ultCdOf(p) - (t/1000-(p.lastUlt===undefined?-9999:p.lastUlt))),20), darkSub:p.darkSub?1:0, darkArm:(p.darkArmUntil>t/1000)?1:0,
         skillCdRemain: snapR(Math.max(0, skillCdOf(p) - (t/1000-(p.lastSkill===undefined?-9999:p.lastSkill))),20), buff:p.buff||null, skillUses:p.skillUses||0, ultUses:p.ultUses||0, ultMulti:p.ultMulti||0,
-        pz:p.pzStacks||0, pm:(p.pzMarkUntil>t/1000)?1:0, ultOn:!!p.ultOn, invis:!!p.invis, isGuard:p.isGuard?1:0, isVault:p.isVault?1:0, isClone:p.isClone?1:0, ownerId:p.ownerId||'', hk:p.hook?[Math.round(p.hook.x),Math.round(p.hook.y)]:null, dgn:(p.disg&&p.tioFor)?p.tioFor.name:'', dgv:(p.disg&&p.tioFor)?(p.tioFor.vid||''):'', dgt:(p.disg&&p.tioFor&&p.tioFor.vteam!==undefined)?p.tioFor.vteam:null, dgc:(p.disg&&p.tioFor)?(p.tioFor.clan||''):'', tioStage:p.tioStage||'', drones:(p.weapon==='pel')?pelN(p):0, pelBoost:pelBoostOn(p,t/1000)?1:0, burning:!!p.burning, poisoned:!!p.poisoned, kw:(p.kanWingsUntil>t/1000)?1:0, gc:p.gc||0, gp:Math.round(Math.min(1,(p.goldStay||0)/GOLD_PICK_STAY)*20)/20, pp:puppetMaster(p,t/1000)?p.puppetTarget:null, sw:p.sw||null, sewSlowed:!!p.sewSlowed, slowed:!!p.slowed, stunned:!!p.stunned, cardSlowed:!!p.cardSlowed, bladeSpin:!!p.bladeSpin, swordCharging:!!p.swordCharge, cannonFlying:!!p.cannonFly, chips:p.chips||0, cannonAng:p.cannonFly?Math.round(Math.atan2(p.vy||0,p.cannonFly.vx)*100)/100:0, totalDamageDealt:p.totalDamageDealt||0, channeling:!!p.teleportChannel, flaming:!!p.flaming, portalPair:p.portalPair||null, batting:!!p.batting, vacuumStacks:p.vacuumStacks||0, isZombie:!!p.isZombie, parkourItem:!!p.parkourItem,
+        pz:p.pzStacks||0, pm:(p.pzMarkUntil>t/1000)?1:0, ultOn:!!p.ultOn, invis:!!p.invis, isGuard:p.isGuard?1:0, isVault:p.isVault?1:0, isClone:p.isClone?1:0, ownerId:p.ownerId||'', hk:p.hook?[Math.round(p.hook.x),Math.round(p.hook.y)]:null, pvi:pvIconOf(p,t/1000)||undefined, dgn:(p.disg&&p.tioFor)?p.tioFor.name:'', dgv:(p.disg&&p.tioFor)?(p.tioFor.vid||''):'', dgt:(p.disg&&p.tioFor&&p.tioFor.vteam!==undefined)?p.tioFor.vteam:null, dgc:(p.disg&&p.tioFor)?(p.tioFor.clan||''):'', tioStage:p.tioStage||'', drones:(p.weapon==='pel')?pelN(p):0, pelBoost:pelBoostOn(p,t/1000)?1:0, burning:!!p.burning, poisoned:!!p.poisoned, kw:(p.kanWingsUntil>t/1000)?1:0, gc:p.gc||0, gp:Math.round(Math.min(1,(p.goldStay||0)/GOLD_PICK_STAY)*20)/20, pp:puppetMaster(p,t/1000)?p.puppetTarget:null, sw:p.sw||null, sewSlowed:!!p.sewSlowed, slowed:!!p.slowed, stunned:!!p.stunned, cardSlowed:!!p.cardSlowed, bladeSpin:!!p.bladeSpin, swordCharging:!!p.swordCharge, cannonFlying:!!p.cannonFly, chips:p.chips||0, cannonAng:p.cannonFly?Math.round(Math.atan2(p.vy||0,p.cannonFly.vx)*100)/100:0, totalDamageDealt:p.totalDamageDealt||0, channeling:!!p.teleportChannel, flaming:!!p.flaming, portalPair:p.portalPair||null, batting:!!p.batting, vacuumStacks:p.vacuumStacks||0, isZombie:!!p.isZombie, parkourItem:!!p.parkourItem,
         isHost:p.isHost,clan:p.clan||'',joinOrder:p.joinOrder,weapon:p.weapon,kit:p.kit||null,team:p.team,spinAngle:p.spinAngle,cos:p.cos,isBoss:p.isBoss?1:0,isMinion:p.isMinion?1:0,bt:p.bt,bossMaxHp:p.bossMaxHp,emIdx:p.emIdx,emRem:(p.emUntil?Math.max(0,Math.round((p.emUntil-t/1000)*20)/20):0)})),
       cq: (gameMode==='conquest' && cq) ? {s:cq.scores, h:cq.holder, c:cq.contested} : undefined,
       xm: (xm && xmV) ? xmV : undefined,
@@ -15198,6 +15352,7 @@ function handleDeath(p, killer, t, killerNameFallback){
   if(killer && (killer.isGuard || killer.isClone) && players[killer.ownerId]) killer=players[killer.ownerId];      // the kill is the master's
   if(killer && killer.id!==p.id && killer.puppetBy){ const mk=puppetSide(killer); if(mk && mk.id!==killer.id && mk.id!==p.id) killer=mk; }      // a kill made by a puppet counts as the puppeteer's kill (kill count, gold, feed, achievements)
   p.pzStacks=0; p.pzMarkUntil=0;                                   // 피사로 loses the stacks of his ultimate when he dies
+  pvReset(p); try{ pvKill(killer, p, t); }catch(e){ recordDiagError('pvKill', e); }
   p.alive=false; p.deaths++; p.hp=0;
   if(gameMode==='zombie' && killer && killer.isZombie) p.diedToZombie=true;
   p.vx=0; p.vy=0; p.kbX=0; p.spin=0; p.spinAngle=0; // stop the corpse instead of freezing mid-knockback/mid-spin
@@ -17045,6 +17200,12 @@ function spawnFx0(e){
       if(e.name) addP({x:x,y:y-34,vx:0,vy:-45,drag:0.9,life:1.5,size:20,color:'#ffe08a',outline:'#7a5a00',shape:'text',add:false,text:e.name});
       shakeFrom(x,y,5,500);
       break; }
+    case 'passive': {       // a passive fired: its name floats up over the head with a small ring in its colour
+      const pc=e.color||'#ffd34d';
+      addP({x:x,y:y+50,life:.4,color:pc,shape:'ring',r0:8,r1:46,lw:4});
+      addP({x:x,y:y+50,life:.18,color:'#ffffff',shape:'flash',size:56});
+      if(e.name) addP({x:x,y:y,vx:0,vy:-34,drag:0.9,life:1.3,size:17,color:pc,outline:'#1b1b26',shape:'text',add:false,text:e.name});
+      break; }
     case 'warn': addP({x:x,y:y,life:e.dur||1,color:'#ff4d4d',shape:'warn'}); break;
     case 'batform':
       addP({x:x,y:y,life:.4,color:'#8b0000',shape:'ring',r0:6,r1:90,lw:6});
@@ -18274,6 +18435,7 @@ function drawStickman(p){
   if(p.sw && players[p.sw] && p.alive!==false){ const q=players[p.sw], dx=(q.x-p.x), dy=(q.y-p.y); ctx.save(); const cy2=Math.min(-34,dy-60)+Math.sin(performance.now()/160)*6; ctx.lineCap='round'; for(const [lw,col,al] of [[9,'#ffffff',0.25],[3.5,'#ffffff',1]]){ ctx.strokeStyle=col; ctx.lineWidth=lw; ctx.globalAlpha=al; ctx.beginPath(); ctx.moveTo(0,-34); ctx.quadraticCurveTo(dx/2, cy2, dx, dy-60); ctx.stroke(); } ctx.restore(); }   // 바느질: a white thread to the one it holds (it used to sit behind the comment above and was never drawn)
   if(p.hk && p.alive!==false){ const ex=p.hk[0]-p.x, ey=p.hk[1]-p.y; ctx.save(); ctx.strokeStyle='#d9b77a'; ctx.lineWidth=2.4; ctx.beginPath(); ctx.moveTo(0,-40); ctx.lineTo(ex,ey); ctx.stroke();      // 갈고리 화살: the rope and the arrow stuck under the platform
     ctx.translate(ex,ey); ctx.rotate(-Math.PI/2); ctx.strokeStyle='#8a5f2b'; ctx.lineWidth=3; ctx.beginPath(); ctx.moveTo(-18,0); ctx.lineTo(6,0); ctx.stroke(); ctx.fillStyle='#e6e6e6'; ctx.beginPath(); ctx.moveTo(14,0); ctx.lineTo(4,-5); ctx.lineTo(4,5); ctx.closePath(); ctx.fill(); ctx.restore(); }
+  if(p.pvi && p.alive!==false){ ctx.save(); ctx.font='bold 15px sans-serif'; ctx.textAlign='left'; ctx.textBaseline='middle'; ctx.lineWidth=3; ctx.strokeStyle='#1b1b26'; ctx.strokeText(p.pvi, 22, -92); ctx.fillStyle='#fff'; ctx.fillText(p.pvi, 22, -92); ctx.restore(); }      // a passive that is running: a small sign next to the head
   if(p.pm && p.alive!==false) drawPizarroMark(ctx, luxNow);
   if(p.weapon==='pizarro' && p.alive!==false) drawPizarroAura(ctx, p, luxNow);      // 기세: a golden glow that grows with every stack, flames at the feet at the 4th, gold marks over the head      // a tier skin: the aura, the sunburst and the rings behind the body
   if(p.invis) ctx.globalAlpha=0.35;
