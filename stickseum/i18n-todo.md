@@ -372,3 +372,5 @@ patchnotes.json | v501 items[0] | 티오니스가 변장한 대상의 팀원(대
 patchnotes.json | v502 items[0] | 프로필 카드를 열 때 지금 쓰는 스킨과 마스터리를 먼저 올려 바로 반영 | build 502 | 2026-10-29
 patchnotes.json | v503 items[0] | 변장한 티오니스가 변장 대상 본인을 뺀 모두에게 복사한 이름으로 보임 (채팅·점수판은 진짜 이름) | build 503 | 2026-10-29
 patchnotes.json | v504 items[0] | 킬 로그에서 변장한 티오니스도 진짜 이름으로 표시 | build 504 | 2026-10-29
+patchnotes.json | v505 title | 은하 제국의 황혼 | build 505 | 2026-10-29
+patchnotes.json | v505 items[0] | 밸런스 표를 봇 전 맵 재측정으로 갱신 (궁극기 쿨타임·피사로 조정 반영) | build 505 | 2026-10-29
