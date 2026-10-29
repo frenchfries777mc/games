@@ -233,7 +233,7 @@ function paintRoom() {
     '<span class="cnt">' + all.length + '/' + cap + '</span>';
   $('waitTxt').textContent = T('{0}/{1}명 모이는 중', all.length, cap);
   $('capRow').style.display = S.net === 'host' && !S.pub && wait ? '' : 'none'; $('capN').textContent = S.cap; $('readyBtn').style.display = pickP ? '' : 'none'; $('readyBtn').textContent = mine.rd || (S.net === 'host' && S.rdy[UID]) ? T('준비됨') : T('준비 완료');
-  $('botRow').style.display = 'none'; $('colRow').style.display = 'none'; $('mapRow').style.display = host && !S.pub ? '' : 'none'; $('mapBtn').textContent = S.themeI ? ARENA_THEMES[S.themeI - 1].name : T('무작위');
+  $('botRow').style.display = 'none'; $('colRow').style.display = 'none'; $('mapRow').style.display = 'none'; $('mapBtn').textContent = S.themeI ? ARENA_THEMES[S.themeI - 1].name : T('무작위');
   $('startBtn').style.display = !online ? '' : 'none';
   $('roomMsg').textContent = !online ? (all.length < 2 ? T('봇을 넣어 주세요.') : '') : wait ? (S.pub ? T('다른 플레이어를 기다리는 중이에요.') : T('친구를 초대해 주세요.')) : T('직업을 골라 주세요 · {0}초 뒤 시작', Math.max(0, Math.ceil(S.pickT))); 
   view.setPreview(wait ? null : mine.role, COLORS[mine.col].c);
@@ -475,7 +475,7 @@ function beginGame(prevG) {
   S.lastSl = sl;
   if (S.chSel === DEEP_I && !prevG) { DEEP.floor = 1; DEEP.seed = (Math.random() * 1e6) | 0; DEEP.curses = []; }
   { const wk = !!S.wk && !prevG && S.chSel !== DEEP_I, was = WEEKLY.on; WEEKLY.on = wk; if (wk) { const w = weekInfo(); WEEKLY.id = w.id; WEEKLY.curses = w.curses; S.chSel = w.ch; } if (wk || was) useChapter(S.chSel, true); }
-  if (!prevG) CH.theme = S.themeI && !S.pub ? ARENA_THEMES[S.themeI - 1].id : ARENA_THEMES[Math.random() * ARENA_THEMES.length | 0].id;
+  if (!prevG) S.chSel = Math.random() * CHAPTERS.length | 0;   // 지도는 판마다 무작위 (온라인은 방장이 골라 모두에게 알려요)
   S.G = createGame(sl, (Math.random() * 4e9) >>> 0, S.chSel);
   S.G.lite = !!S.lite; 
   S.G.players.forEach((p, i) => { p.uid = sl[i].uid; });
