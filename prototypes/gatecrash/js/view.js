@@ -74,6 +74,7 @@ function bakeWorld(W) {
     R(x, 'rgba(0,0,0,.06)', X, Y, w, 5);
   }
   for (const o of W.objs) if (!o.solid) drawObj(x, W, o);
+  for (const rm of W.rooms) R(x, 'rgba(30,40,70,.13)', rm.x0 * TS, rm.y0 * TS, (rm.x1 - rm.x0 + 1) * TS, (rm.y1 - rm.y0 + 1) * TS);
   for (let ty = 0; ty < W.h; ty++) for (let tx = 0; tx < W.w; tx++) {
     const c2 = W.g[ty][tx]; if (c2 === '.') continue;
     const rm = W.rooms.find(r => tx >= r.x0 && tx <= r.x1 && ty >= r.y0 - 1 && ty <= r.y1 + 1), T = THEMES[rm ? rm.theme : 'office'];
@@ -82,7 +83,11 @@ function bakeWorld(W) {
     else if (c2 === '=') { R(x, '#6b4a2a', X, Y, TS, 4); R(x, '#c89a5a', X, Y, TS, 2); }
     else if (c2 === '>' || c2 === '<') { R(x, '#3a3f4a', X, Y, TS, TS); R(x, '#f2b632', X, Y, TS, 2); for (let k = 0; k < TS; k += 8) R(x, '#222', X + k + 3, Y + 5, 2, 8); }
   }
-  for (const o of W.objs) if (o.solid) drawObj(x, W, o);
+  for (const o of W.objs) if (o.solid) {
+    drawObj(x, W, o); const X = o.x * TS, Y = o.y * TS, w = o.w * TS, h = o.h * TS;
+    R(x, 'rgba(0,0,0,.28)', X, Y + h, w, 2); R(x, 'rgba(255,255,255,.4)', X + 1, Y, w - 2, 2);
+    x.strokeStyle = 'rgba(8,12,28,.95)'; x.lineWidth = 1.5; x.strokeRect(X + .75, Y + .75, w - 1.5, h - 1.5);
+  }
   // 출발·도착
   const F = W.finish; R(x, 'rgba(255,255,255,.18)', F.x0 * TS, F.y0 * TS, (F.x1 - F.x0 + 1) * TS, (F.y1 - F.y0 + 1) * TS);
   for (let i = 0; i < (F.x1 - F.x0 + 1) * 2; i++) for (let j = 0; j < 2; j++) R(x, (i + j) % 2 ? '#111' : '#fff', F.x0 * TS + i * 8, F.y0 * TS + j * 8, 8, 8);
