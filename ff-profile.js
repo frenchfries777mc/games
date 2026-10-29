@@ -741,9 +741,16 @@ function rainbow(c,x0,x1){ var g=c.createLinearGradient(x0,0,x1,0); ['#ff5f5f','
 
 
 /* Stickseum stats on the card: the main character is drawn from the game's own persona code */
-var STKL={ko:{main:'대표 캐릭터',mast:'마스터리',plv:'플레이어 Lv.',wins:'승리',kills:'처치',ast:'어시스트',dmg:'피해량',games:'총 경기 수',rate:'승률',head:'Stickseum 통계',played:'플레이한 게임'},en:{main:'Main character',mast:'Mastery',plv:'Player Lv.',wins:'Wins',kills:'Kills',ast:'Assists',dmg:'Damage',games:'Matches',rate:'Win rate',head:'Stickseum stats',played:'Games played'}};
-function drawCharFig(c, ch, x, y, k, col){
-  var acc=STK.acc['skin_'+ch]||null, tint=acc&&acc.tint, HY=-30, HR=9, SY=HY+HR;
+var STKL={ko:{main:'대표 캐릭터',mast:'마스터리',plv:'플레이어 Lv.',clv:'캐릭터 Lv.',mpt:'마스터리 포인트',pts:'점',next:'다음 계급까지',wins:'승리',kills:'처치',ast:'어시스트',dmg:'피해량',games:'총 경기 수',rate:'승률',head:'Stickseum 통계',played:'플레이한 게임'},en:{main:'Main character',mast:'Mastery',plv:'Player Lv.',clv:'Character Lv.',mpt:'Mastery points',pts:'pts',next:'To next rank',wins:'Wins',kills:'Kills',ast:'Assists',dmg:'Damage',games:'Matches',rate:'Win rate',head:'Stickseum stats',played:'Games played'}};
+function drawShield(c, x, y, s, col){
+  c.save(); c.translate(x,y); c.scale(s,s); c.lineJoin='round';
+  c.beginPath(); c.moveTo(0,-26); c.lineTo(22,-18); c.lineTo(22,2); c.quadraticCurveTo(22,18,0,28); c.quadraticCurveTo(-22,18,-22,2); c.lineTo(-22,-18); c.closePath();
+  c.fillStyle='rgba(8,14,26,.85)'; c.fill(); c.strokeStyle=col; c.lineWidth=3.2; c.shadowColor=col; c.shadowBlur=10; c.stroke(); c.shadowBlur=0;
+  c.beginPath(); for(var i=0;i<16;i++){ var a=i*Math.PI/8-Math.PI/2, r=i%2?5:13; c.lineTo(Math.cos(a)*r,Math.sin(a)*r+2); } c.closePath(); c.fillStyle=col; c.fill();
+  c.restore();
+}
+function drawCharFig(c, ch, x, y, k, col, skin){
+  var acc=(skin&&STK.acc[skin])||STK.acc['skin_'+ch]||null, tint=acc&&acc.tint, HY=-30, HR=9, SY=HY+HR;
   c.save(); c.translate(x,y); c.scale(k,k);
   try{
     if(ch==='dracula') drawDraculaCape(c,-1,2,SY,tint);
@@ -753,12 +760,13 @@ function drawCharFig(c, ch, x, y, k, col){
     c.beginPath(); c.moveTo(-8,22); c.lineTo(0,0); c.lineTo(8,22); c.stroke();
     c.fillStyle=col||'#3fe0c5'; c.beginPath(); c.arc(0,HY,HR,0,7); c.fill();
     drawWeaponPersona(c, ch, 0, HY, HR, SY, tint);
+    if(acc&&acc.fx) drawSkinFx(c, acc.fx, tint, 0, HY, HR, 700);
   }catch(e){}
   c.restore();
 }
 async function draw(cv, d, o){
   var T=L[lang(o)], c=cv.getContext('2d'), W=cv.width=480, H=cv.height=640+Math.max(0,GAMES.length-3)*66, pr=d.profile||{}, st=pr.stats||{}, av=st.avatar||{};
-  var hasStk=!!(st.tp&&st.tp.length&&Array.isArray(st.tp[0])); if(hasStk) H=cv.height=840;
+  var hasStk=!!(st.tp&&st.tp.length&&Array.isArray(st.tp[0])); if(hasStk) H=cv.height=860;
   var SL=STKL[lang(o)]||STKL.en;
   var played={}; GAMES.forEach(function(g){ played[g.id]=d.played[g.id]||0; });
   if(!played.stickseum && ((+st.matches||0)>0 || (+st.xp||0)>0)) played.stickseum=-1;          // played before the shared record existed
