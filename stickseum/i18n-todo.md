@@ -394,3 +394,4 @@ patchnotes.json | v514 items[5] | 폭발광 폭발 점프 착지 충격 · 중�
 patchnotes.json | v514 items[6] | 차원여행자 튕길수록 피해 증가는 그대로 · 암살자 암습 뒤 첫 일격 후 은신 · 사무라이 2명 이상 베면 쿨타임 절반 · 티오니스 채혈로 체력 회복 | build 514 | 2026-10-29
 patchnotes.json | v515 items[0] | 금고 약탈: 금고 체력을 3000에서 2500으로 줄이고, 팀 시작·부활 위치를 기지 앞쪽(맵 가운데 방향)으로 당김 | build 515 | 2026-10-29
 Stickseum-v0.9.html | MODES.vault.desc | 금고 체력은 3000 -> 2500 (설명 문구) | build 515 | 2026-10-29
+patchnotes.json | v516 items[0] | 프로필 카드의 대표 캐릭터가 끼고 있는 스킨으로 그려지도록 수정 | build 516 | 2026-10-29
