@@ -383,3 +383,5 @@ patchnotes.json | v511 items[0] | 봇이 다쳐서 도망칠 때 위쪽 발판�
 patchnotes.json | v512 title | 은하 제국의 황혼 | build 512 | 2026-10-29
 patchnotes.json | v512 items[0] | 밸런스 표를 봇만으로 전 맵 재측정해 갱신 (궁극기 쿨타임 20초 반영) | build 512 | 2026-10-29
 patchnotes.json | v513 items[0] | 차원여행자 스킬을 원래대로 포탈 파괴로 되돌림 (시간 되감기 삭제) | build 513 | 2026-10-29
+patchnotes.json | v513 title | 은하 제국의 황혼 | build 513 | 2026-10-29
+patchnotes.json | v513 items[0] | 차원여행자 스킬을 포탈 파괴로 복원 (포탈에서 연기, 0.5초 뒤 폭발해 큰 피해와 넉백, 시간 되감기 삭제) | build 513 | 2026-10-29
