@@ -582,16 +582,16 @@ function paintCoin(){
   b.querySelector('.cb-go').onclick=openCoin; b.querySelector('.cb-cal').onclick=function(){ openCal(); };
 }
 var coinTab='ex', coinGame='';
-var QN={play:'게임 1판 하기',board:'게시판에 글이나 댓글 쓰기',chat:'채팅에 한마디 하기',vote:'투표 참여하기'};
+var QN={play:'게임 한 판 하기',proto:'프로토타입 한 판 하기',post:'게시물 하나 남기기',trio:'세 종류의 게임 한 판씩 하기',vote:'투표 참여하기',wiki:'위키 둘러보기'}, QH={play:'Beaconfall·Isleport는 5분 플레이',trio:'Beaconfall·Isleport는 5분 플레이'};
 async function questBox(el){
   var Q=el.querySelector('.cx-q'); if(!Q||!sb) return;
   var r=await sb.rpc('ff_quest_status');
   if(r.error){ Q.innerHTML='<div class="cm-e">'+esc(errText(r.error))+'</div>'; return; }
   var rows=r.data||[], n=rows.filter(function(x){ return x.claimed; }).length, dot=el.querySelector('.cx-dot'); if(dot) dot.hidden=!rows.some(function(x){ return x.done&&!x.claimed; });
-  Q.innerHTML='<div class="cm-note">하나 끝낼 때마다 5코인, 3개를 모두 받으면 5코인을 더 받아요. (한국 시간 기준으로 매일 바뀌어요)</div>';
+  Q.innerHTML='<div class="cm-note">하루 3개: 게임 한 판은 항상 있고 나머지 2개는 매일 바뀌어요. 한 판은 게임에 들어간 것만으로는 안 되고, 판을 끝까지 마치고 로비로 돌아와야 해요. (한국 시간 기준으로 매일 바뀌어요)</div>';
   rows.forEach(function(x){ var d=document.createElement('div'); d.className='cx-l';
-    var b=x.claimed?'<span class="cx-d up">✓ 받음</span>':(x.done?'<button type="button" class="cm-btn2">5코인 받기</button>':'<small>아직이에요</small>');
-    d.innerHTML='<span>'+(x.done?'✅ ':'⬜ ')+esc(QN[x.qid]||x.qid)+'</span>'+b;
+    var rw=x.reward||5, b=x.claimed?'<span class="cx-d up">✓ 받음</span>':(x.done?'<button type="button" class="cm-btn2" data-notr>'+rw+'C 받기</button>':'<small data-notr>+'+rw+'C</small>');
+    d.innerHTML='<span>'+(x.done?'✅ ':'⬜ ')+esc(QN[x.qid]||x.qid)+(QH[x.qid]?' <small class="cx-h">('+esc(QH[x.qid])+')</small>':'')+'</span>'+b;
     var bt=d.querySelector('button'); if(bt) bt.onclick=async function(){ bt.disabled=true; var c=await sb.rpc('ff_quest_claim',{p_qid:x.qid});
       if(c.error){ bt.disabled=false; bt.textContent='다시 눌러 주세요'; return; }
       var y=(c.data||[])[0]||{}; if(y.coins!=null){ coin.n=y.coins; paintCoin(); } if(y.got>0) coinPop(y.got); hubSync(); openCoin(); };
