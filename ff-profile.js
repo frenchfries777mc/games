@@ -766,7 +766,8 @@ function drawCharFig(c, ch, x, y, k, col, skin){
 }
 async function draw(cv, d, o){
   var T=L[lang(o)], c=cv.getContext('2d'), W=cv.width=480, H=cv.height=640+Math.max(0,GAMES.length-3)*66, pr=d.profile||{}, st=pr.stats||{}, av=st.avatar||{};
-  var hasStk=!!(st.tp&&st.tp.length&&Array.isArray(st.tp[0])), LVB=hasStk&&st.lv>0, DET=hasStk&&st.tp[0].length>8; if(hasStk) H=cv.height=900;
+  var onStk=false; try{ onStk=(o&&o.game)? o.game==='stickseum' : /\/Stickseum-[^\/]*\.html/i.test(location.pathname||''); }catch(e){}      // the character / mastery / stats card belongs to Stickseum only; the hub and the other sites show the played-games list
+  var hasStk=onStk&&!!(st.tp&&st.tp.length&&Array.isArray(st.tp[0])), LVB=hasStk&&st.lv>0, DET=hasStk&&st.tp[0].length>8; if(hasStk) H=cv.height=900;
   var SL=STKL[lang(o)]||STKL.en;
   var played={}; GAMES.forEach(function(g){ played[g.id]=d.played[g.id]||0; });
   if(!played.stickseum && ((+st.matches||0)>0 || (+st.xp||0)>0)) played.stickseum=-1;          // played before the shared record existed
