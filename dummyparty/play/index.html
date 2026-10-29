@@ -534,6 +534,8 @@
     "카트 위에서 드리프트하는 마네킹, 오늘의 장보기는 목숨 걸고 합니다.": ["A mannequin drifting on a cart. Today's grocery run is life or death.", "Un maniquí derrapando en un carrito. Hoy las compras son a vida o muerte.", "Un mannequin qui dérape en caddie. Les courses du jour se font au péril de sa vie.", "Eine Puppe driftet im Wagen. Der Einkauf heute ist lebensgefährlich.", "カートでドリフトするマネキン。今日の買い物は命がけです。"],
     "물건이 쏟아졌습니다! 계산대 직원이 한숨을 쉽니다.": ["Goods everywhere! The cashier sighs.", "¡Compras por todas partes! La cajera suspira.", "Des courses partout ! La caissière soupire.", "Ware überall! Die Kassiererin seufzt.", "荷物が散らばりました！レジの店員がため息をつきます。"],
     "벽에 박았습니다. 카트는 괜찮습니다. 마네킹도 괜찮아 보입니다.": ["Hit the wall. The cart's fine. The mannequin looks fine too.", "Choque contra la pared. El carrito está bien. El maniquí también parece estar bien.", "Collision avec le mur. Le caddie va bien. Le mannequin aussi, apparemment.", "Gegen die Wand. Dem Wagen geht's gut. Der Puppe scheinbar auch.", "壁にぶつかりました。カートは無事です。マネキンも無事そうです。"],
+    /* 빌드 84 추가분 */
+    "내 캐릭터": ["My character", "Mi personaje", "Mon personnage", "Meine Figur", "マイキャラクター"],
     /* 빌드 79 추가분 */
     "내 프로필 카드": ["My profile card", "Mi tarjeta de perfil", "Ma carte de profil", "Meine Profilkarte", "マイプロフィールカード"],
     /* 빌드 77 추가분 */
@@ -1668,7 +1670,9 @@ body.playing #emoBar{display:flex}
    <div class="row"><input id="codeIn" maxlength="5" placeholder="방 코드" autocomplete="off"><button class="pb dark" id="joinBtn" style="flex:0 0 auto">들어가기</button></div>
    <div class="msg" id="homeMsg"></div>
   </aside>
-  <template id="patchnotes"><details class="notes" open><summary>패치노트 · v0.1 (b83)</summary>
+  <template id="patchnotes"><details class="notes" open><summary>패치노트 · v0.1 (b84)</summary>
+   <b>2026-10-29 · v0.1 · b84 · 프로필 카드에 내 캐릭터</b>
+   <ul><li>프로필 카드의 캐릭터 자리에 내가 꾸민 Dummy Party 캐릭터(모자·안경·얼굴)가 나와요. 칭호를 달았다면 이름 아래에 같이 나와요</li></ul>
    <b>2026-10-28 · v0.1 · b83 · 프로필 카드 정리</b>
    <ul><li>게임 안 프로필 카드에서 "꾸미기" 버튼을 없앴어요</li></ul>
    <b>2026-10-28 · v0.1 · b82 · 버전 매칭과 보상 보호</b>
@@ -1833,7 +1837,7 @@ body.playing #emoBar{display:flex}
    <ul><li>무너지는 발판 칸 수 대폭 증가 (19×10)와 용암 동굴 맵</li><li>10개 맵 전부 새로 그림 (관중석, 야자수 섬, 링, 정원 미로, 서커스, 우노 테이블 등)</li><li>글자 대신 아이콘·말풍선·이펙트로 표현 (무기, 아이템, 카드 효과, 시작 안내)</li><li>타격·폭발·물보라 효과와 화면 흔들림 추가</li></ul>
    <b>2026-10-19 · v0.1 · b1 · 첫 시험판</b>
    <ul><li>마네킹 미니게임 10개 추가 (장애물 달리기, 섬 밀치기, 싸우기, 병맛 미로, 체스 대난투, 폭탄 돌리기, 병맛 우노, 쇼윈도 얼음땡, 무너지는 발판, 컨베이어 서바이벌)</li><li>방 코드로 최대 8명 멀티플레이, 빈자리는 봇으로 채우기</li><li>판마다 10개 중 5개를 무작위로 골라 점수를 합산</li><li>PC 키보드와 휴대폰 터치 조작 지원</li></ul></details></template>
-  <p class="foot">2~8명 · 판마다 36개 미니게임 중 7개 · v0.1 b83 · <a href="../">← Dummy Party 사이트로</a></p>
+  <p class="foot">2~8명 · 판마다 36개 미니게임 중 7개 · v0.1 b84 · <a href="../">← Dummy Party 사이트로</a></p>
   <p class="foot"><span class="ff-copy">© 2026 Frenchfries777 · <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.ko" target="_blank" rel="noopener">CC BY-NC-ND 4.0</a></span></p>
  </div>
 </section>
@@ -7352,9 +7356,18 @@ function ffProfStats() {
     return h;
   });
 }
+// 프로필 카드의 캐릭터 자리에 내 Dummy Party 캐릭터 (꾸민 모자·안경·얼굴 그대로)
+function myFigure(me) {
+  var d = myDeco(), col = COLORS[0], was = DECO[col], cv = document.createElement('canvas'); cv.width = 260; cv.height = 280;
+  DECO[col] = { h: d.h, g: d.g, f: d.f };
+  try { drawDummy(cv.getContext('2d'), 130, 262, { s: 3.2, color: col, pose: 'stand', t: 0, shadow: true }); } finally { if (was) DECO[col] = was; else delete DECO[col]; }
+  var tr = function (t) { return (window.DP_T && window.DP_LANG && DP_LANG !== 'ko') ? DP_T(t) : t; };
+  var nm = ''; try { nm = FFAuth.nickname() || ''; } catch (e) { }
+  return { img: cv, label: tr('내 캐릭터'), name: nm, sub: d.t > 0 && TITLES[d.t] ? tr(TITLES[d.t]) : '' };
+}
 function openProfile() {
   var sb = walClient(), me = window.FFAuth && FFAuth.user(); if (!sb || !me) { try { FFAuth.openLogin(); } catch (e) { } return; }
-  ffProf(function () { ffProfStats(); try { FFProfile.open(sb, me.id, { game: 'dummyparty' }); } catch (e) { } });
+  ffProf(function () { ffProfStats(); var fig = null; try { fig = myFigure(me); } catch (e) { } try { FFProfile.open(sb, me.id, { game: 'dummyparty', fig: fig }); } catch (e) { } });
 }
 var achMarked = false;
 function achSync() {
@@ -7507,7 +7520,7 @@ var PREFIX = 'ff-dummyparty-', CODE_CH = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789', MAX
 var PTS = [5, 3, 2, 1];
 var T_INTRO = 6, T_COUNT = 3, T_END = 4.0, T_RESULT = 6;
 // 게임 버전(0.x)과 빌드. 버전이 다르면 같은 방에 못 들어와요 (빌드가 달라도 괜찮아요). dp_config 의 min_build 보다 낮은 빌드는 dC를 못 받아요
-var DP_VER = '0.1', DP_BUILD = 83;
+var DP_VER = '0.1', DP_BUILD = 84;
 function dpNotice(msg) { dpAsk(msg, '확인', function () { }); }
 var BOT_NAMES = ['방귀쟁이', '홀쭉이', '바보1', '멍청이', '10급 공무원', '교무실 단골', '벌점부자', '말썽이', '김개똥'];
 var qs = new URLSearchParams(location.search);
