@@ -69,10 +69,13 @@ const HERO = {
   viking: { body: 0x7a5a3a, leg: 0x4a3a2a, arm: 0xe8b48a, helm: 1, helmC: 0x8a8f9c, horns: 1, beard: 0xd07a2a, axe: 1, fur: 1, belt: 1, wide: 1.12 },
   mamluk: { body: 0xb0302a, leg: 0xe8dcc0, arm: 0xb0302a, turban: 1, scim: 1, buckler: 1, belt: 1 },
   witch: { body: 0x4a2a6a, robe: 1, leg: 0x2a1a3a, arm: 0x4a2a6a, skinC: 0xb8d0a0, hat: 1, staff: 1, staffC: 0xc06aff },
-  skeleton: { skel: 1 }
+  skeleton: { skel: 1 },
+  warden: { body: 0x7a7468, leg: 'dm', arm: 'mt', helm: 1, sword: 1, shield: 1, cape: 0x4a4636, belt: 1, wide: 1.16 },
+  assassin: { body: 0x24343c, leg: 0x161e24, arm: 0x24343c, hood: 0x1a2830, scim: 1, belt: 1 },
+  crossbow: { body: 0x7a5a3a, leg: 0x3a3a44, arm: 0x7a5a3a, hood: 0x5a4a2e, bow: 1, quiver: 1, belt: 1 }
 };
 // 동작은 비슷한 직업의 것을 같이 써요 (마녀는 사제처럼, 바이킹·맘루크·스켈레톤은 종자처럼)
-const FAM = { witch: 'priest', viking: 'squire', mamluk: 'squire', skeleton: 'squire' };
+const FAM = { witch: 'priest', viking: 'squire', mamluk: 'squire', skeleton: 'squire', warden: 'knight', assassin: 'squire', crossbow: 'archer' };
 function matOf(v) { return v === 'dm' ? dmetal() : v === 'mt' ? metal() : M(v); }
 export const makeHero = toonify(function (role, cos) {
   const o = Object.assign({}, HERO[role]), cp = cos && COSMETICS.cape.items.find(i => i.id === cos.cape && i.col);
@@ -1035,7 +1038,7 @@ export class View {
       const k = exact || p.id === me ? 1 : Math.min(1, dt * 12);
       E.x += (p.x - E.x) * k; E.z += (p.z - E.z) * k; E.a = lerpA(E.a, p.a, Math.min(1, dt * 18));
       animHero(E, p, dt, t, this); E.hy = hy(E, exact ? 1 : dt); E.m.position.y += E.hy; E.ring.position.set(E.x, 0.12 + E.hy, E.z); E.ring.visible = !p.dd;
-      E.ward.visible = p.sh > 0; E.m.visible = !p.dd;
+      E.ward.visible = p.sh > 0; const mp = S.pl.find(q => q.id === me), hid = p.stl && p.id !== me && mp && Math.hypot(mp.x - p.x, mp.z - p.z) > 2.8; E.m.visible = !p.dd && !hid; if (hid) E.ring.visible = false;
     }
     // 적
     for (const e of S.en) {
@@ -1328,6 +1331,7 @@ function zoneMesh(z) {
   else if (z.k === 'fire') { const fz = THEME().fz; for (let i = 0; i < 4; i++) cone(0.35, 1 + Math.random(), 5, M(fz[0], { e: fz[1], ei: 3 }), (Math.random() - .5) * 1.4, 0.5, (Math.random() - .5) * 1.4, g); const f = mesh(geo('zc', () => new THREE.CircleGeometry(1, 32)), M(fz[0], { e: fz[1], ei: 0.5, op: 0.5 }), 0, 0, 0, g, false); f.rotation.x = -Math.PI / 2; f.scale.setScalar(z.r); g.traverse(o => o.castShadow = false); }
   else if (z.k === 'rain') { const r = mesh(geo('zr', () => new THREE.RingGeometry(0.94, 1, 40)), M(0xffe08a, { e: 0xffd060, ei: 1, op: 0.3 }), 0, 0.01, 0, g, false); r.rotation.x = -Math.PI / 2; r.scale.setScalar(z.r); g.userData.drops = []; for (let i = 0; i < 10; i++) { const d = box(0.06, 1, 0.06, M(0xe8e0c8, { e: 0xffe08a, ei: 1 }), (Math.random() - .5) * z.r * 1.4, 4, (Math.random() - .5) * z.r * 1.4, g); d.castShadow = false; g.userData.drops.push(d); } }
   else if (z.k === 'rock') { const f = mesh(geo('zc', () => new THREE.CircleGeometry(1, 32)), M(0xff2a2a, { e: 0xff1a1a, ei: 1.5, op: 0.25, uniq: true }), 0, 0, 0, g, false); f.rotation.x = -Math.PI / 2; f.scale.setScalar(z.r); g.userData.fill = f; const r = mesh(geo('rock', () => new THREE.DodecahedronGeometry(0.8)), M(0x6a625a), 0, 12, 0, g); r.scale.setScalar(1.5); g.userData.rock = r; }
+  else if (z.k === 'wall') { const L = z.len; const w = box(L, 2.4, 0.7, M(0x8a8478), 0, 1.2, 0, g); box(L + 0.3, 0.3, 0.9, M(0x5a554c), 0, 2.45, 0, g); for (let i = 0; i < 4; i++) box(0.5, 0.6, 0.72, M(0xb0a890, { e: 0xffe08a, ei: 0.5 }), (i - 1.5) * L / 4, 1.3, 0, g); g.rotation.y = -z.a; g.userData.wall = 1; }
   else if (z.k === 'ptrap') { box(1.2, 0.12, 1.2, dmetal(), 0, 0.05, 0, g); for (let i = 0; i < 6; i++) { const a = i / 6 * 6.28; const t = cone(0.1, 0.4, 4, metal(), Math.cos(a) * 0.5, 0.25, Math.sin(a) * 0.5, g); t.rotation.z = Math.cos(a) * 0.5; t.rotation.x = -Math.sin(a) * 0.5; } }
   // 보스 바닥 경고는 다른 효과보다 늘 위에 그려요
   if (z.k === 'tcircle' || z.k === 'tcone' || z.k === 'tline' || z.k === 'rock') g.traverse(o => { if (o.material && o !== g.userData.rock) { o.material.depthTest = false; o.renderOrder = 20; } });
@@ -1337,6 +1341,7 @@ function zoneAnim(E, z, t) {
   const f = E.m.userData.fill;
   if (f && z.T) { const u = 1 - z.t / z.T; f.material.opacity = 0.24 + u * 0.4; if (z.k === 'tcircle' || z.k === 'rock') f.scale.setScalar(z.r * (0.2 + 0.8 * u)); }
   if (z.k === 'rock') { const r = E.m.userData.rock, u = Math.max(0, z.t / z.T); r.position.y = 0.6 + 12 * u * u; r.rotation.x += 0.1; r.rotation.z += 0.07; }
+  if (z.k === 'wall') { const u = Math.min(1, (z.T - z.t) / 0.25), fo = Math.min(1, z.t / 0.6); E.m.scale.set(1, Math.max(0.01, u * fo), 1); }
   if (z.k === 'fire') { E.m.visible = !z.dl; E.m.children.forEach((c, i) => { if (c.geometry.type === 'ConeGeometry') c.scale.y = 0.8 + Math.sin(t * 4 + i) * 0.15; }); }
   if (z.k === 'rain') E.m.userData.drops.forEach((d, i) => { d.position.y = 4 - ((t * 9 + i * 0.37) % 1) * 4; });
 }
