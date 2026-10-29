@@ -741,9 +741,16 @@ function rainbow(c,x0,x1){ var g=c.createLinearGradient(x0,0,x1,0); ['#ff5f5f','
 
 
 /* Stickseum stats on the card: the main character is drawn from the game's own persona code */
-var STKL={ko:{main:'대표 캐릭터',mast:'마스터리',plv:'플레이어 Lv.',wins:'승리',kills:'처치',ast:'어시스트',dmg:'피해량',games:'총 경기 수',rate:'승률',head:'Stickseum 통계',played:'플레이한 게임'},en:{main:'Main character',mast:'Mastery',plv:'Player Lv.',wins:'Wins',kills:'Kills',ast:'Assists',dmg:'Damage',games:'Matches',rate:'Win rate',head:'Stickseum stats',played:'Games played'}};
-function drawCharFig(c, ch, x, y, k, col){
-  var acc=STK.acc['skin_'+ch]||null, tint=acc&&acc.tint, HY=-30, HR=9, SY=HY+HR;
+var STKL={ko:{main:'대표 캐릭터',mast:'마스터리',plv:'플레이어 Lv.',clv:'캐릭터 Lv.',mpt:'마스터리 포인트',pts:'점',next:'다음 계급까지',top:'최고 계급',wins:'승리',kills:'처치',ast:'어시스트',dmg:'피해량',games:'총 경기 수',rate:'승률',head:'Stickseum 통계',played:'플레이한 게임'},en:{main:'Main character',mast:'Mastery',plv:'Player Lv.',clv:'Character Lv.',mpt:'Mastery points',pts:'pts',next:'To next rank',top:'Top rank',wins:'Wins',kills:'Kills',ast:'Assists',dmg:'Damage',games:'Matches',rate:'Win rate',head:'Stickseum stats',played:'Games played'}};
+function drawShield(c, x, y, s, col){      // the mastery badge: a shield in the rank colour with a star
+  c.save(); c.translate(x,y); c.scale(s,s); c.lineJoin='round';
+  c.beginPath(); c.moveTo(0,-26); c.lineTo(22,-18); c.lineTo(22,2); c.quadraticCurveTo(22,18,0,28); c.quadraticCurveTo(-22,18,-22,2); c.lineTo(-22,-18); c.closePath();
+  c.fillStyle='rgba(8,14,26,.85)'; c.fill(); c.strokeStyle=col; c.lineWidth=3.2; c.shadowColor=col; c.shadowBlur=10; c.stroke(); c.shadowBlur=0;
+  c.beginPath(); for(var i=0;i<16;i++){ var a=i*Math.PI/8-Math.PI/2, r=i%2?5:13; c.lineTo(Math.cos(a)*r,Math.sin(a)*r+2); } c.closePath(); c.fillStyle=col; c.fill();
+  c.restore();
+}
+function drawCharFig(c, ch, x, y, k, col, skin){
+  var acc=(skin&&STK.acc[skin])||STK.acc['skin_'+ch]||null, tint=acc&&acc.tint, HY=-30, HR=9, SY=HY+HR;
   c.save(); c.translate(x,y); c.scale(k,k);
   try{
     if(ch==='dracula') drawDraculaCape(c,-1,2,SY,tint);
@@ -753,18 +760,20 @@ function drawCharFig(c, ch, x, y, k, col){
     c.beginPath(); c.moveTo(-8,22); c.lineTo(0,0); c.lineTo(8,22); c.stroke();
     c.fillStyle=col||'#3fe0c5'; c.beginPath(); c.arc(0,HY,HR,0,7); c.fill();
     drawWeaponPersona(c, ch, 0, HY, HR, SY, tint);
+    if(acc&&acc.fx) drawSkinFx(c, acc.fx, tint, 0, HY, HR, 700);
   }catch(e){}
   c.restore();
 }
 async function draw(cv, d, o){
   var T=L[lang(o)], c=cv.getContext('2d'), W=cv.width=480, H=cv.height=640+Math.max(0,GAMES.length-3)*66, pr=d.profile||{}, st=pr.stats||{}, av=st.avatar||{};
-  var hasStk=!!(st.tp&&st.tp.length&&Array.isArray(st.tp[0])); if(hasStk) H=cv.height=840;
+  var hasStk=!!(st.tp&&st.tp.length&&Array.isArray(st.tp[0])), LVB=hasStk&&st.lv>0, DET=hasStk&&st.tp[0].length>8; if(hasStk) H=cv.height=900;
   var SL=STKL[lang(o)]||STKL.en;
   var played={}; GAMES.forEach(function(g){ played[g.id]=d.played[g.id]||0; });
   if(!played.stickseum && ((+st.matches||0)>0 || (+st.xp||0)>0)) played.stickseum=-1;          // played before the shared record existed
   var all=CORE.every(function(g){ return played[g.id]; });
   var ach=Object.assign({}, d.ach||{});
   if(STK.achTotal && Array.isArray(st.ach) && st.ach.length && !(ach.stickseum&&ach.stickseum[1])) ach.stickseum=[Math.min(st.ach.length,STK.achTotal), STK.achTotal];   // Stickseum's own record, until the game reports it
+  if(hasStk) H=cv.height=70+(262+(LVB?32:0))+(all?50:34)+(DET?392:252)+126+44;      // the card grows with the mastery block and the big player level
   var DB=decoOf('bg',d.deco&&d.deco.bg), DF=decoOf('fr',d.deco&&d.deco.fr);
   var g0=c.createLinearGradient(0,0,W,H); g0.addColorStop(0,DB.c[0]); g0.addColorStop(.55,DB.c[1]); g0.addColorStop(1,DB.c[2]); c.fillStyle=g0; c.fillRect(0,0,W,H);
   if(DB.stars){ var sd=7; for(var si=0;si<70;si++){ sd=(sd*9301+49297)%233280; var sx=sd/233280*W; sd=(sd*9301+49297)%233280; var sy=sd/233280*H; c.fillStyle='rgba(255,255,255,'+(.25+(si%4)*.18)+')'; c.fillRect(sx,sy,si%7?1.5:2.5,si%7?1.5:2.5); } }
@@ -772,7 +781,7 @@ async function draw(cv, d, o){
   if(DF.crown){ c.save(); c.fillStyle=DB.c[1]; c.fillRect(W/2-26,0,52,24); c.font='26px serif'; c.textAlign='center'; c.fillText('👑',W/2,26); c.restore(); }
   c.textAlign='center'; c.fillStyle=DF.col==='rainbow'?'#ffc43d':DF.col; c.font='800 15px system-ui, sans-serif'; c.fillText('🍟  F R E N C H F R I E S 7 7 7',W/2,52);
   // header: the game's profile background
-  var HX=36, HY=70, HW=W-72, HH=262, pbg=st.pbg&&STK.pbg[st.pbg];
+  var HX=36, HY=70, HW=W-72, HH=262+(LVB?32:0), pbg=st.pbg&&STK.pbg[st.pbg];
   c.save(); rrect(c,HX,HY,HW,HH,16); c.clip(); c.translate(HX,HY);
   if(pbg) paintCss(c, pbg, HW, HH); else { c.fillStyle='rgba(255,255,255,.05)'; c.fillRect(0,0,HW,HH); }
   c.restore();
@@ -787,7 +796,8 @@ async function draw(cv, d, o){
   if(d.dev){ var DVN={owner:{ko:'총괄 개발자',en:'Lead Developer',es:'Desarrollador jefe',fr:'Développeur en chef',de:'Chefentwickler',ja:'総括開発者',zh:"总开发者",pt:"Desenvolvedor-chefe",ru:"Главный разработчик",tr:"Baş geliştirici",it:"Sviluppatore principale",pl:"Główny deweloper",ar:"المطور الرئيسي",nw:"Lead Inner party",gk:"Lead 현상액"},dev:{ko:'개발자',en:'Developer',es:'Desarrollador',fr:'Développeur',de:'Entwickler',ja:'開発者',zh:"开发者",pt:"Desenvolvedor",ru:"Разработчик",tr:"Geliştirici",it:"Sviluppatore",pl:"Deweloper",ar:"مطوّر",nw:"Inner party",gk:"현상액"}}[d.dev]; if(DVN){ var dl=(d.dev==='owner'?'👑 ':'🛠️ ')+(DVN[lang(o)]||DVN.en); c.save(); c.font='800 13px system-ui, sans-serif'; c.textAlign='left'; var dw=c.measureText(dl).width+20; rrect(c,HX+12,HY+12,dw,26,13); c.fillStyle=d.dev==='owner'?'rgba(255,196,61,.2)':'rgba(90,160,255,.2)'; c.fill(); c.lineWidth=1.5; c.strokeStyle=d.dev==='owner'?'rgba(255,196,61,.75)':'rgba(120,180,255,.7)'; c.stroke(); c.fillStyle=d.dev==='owner'?'#ffe08a':'#b5d8ff'; c.fillText(dl,HX+22,HY+30); c.restore(); } }
   // the name in the name colour (the clan is Stickseum-only, so it is not on the shared card)
   var CD=d.card||{}, TT=CD.title&&titleOf(CD.title), bio=String(CD.bio||'').trim(), lg=lang(o);
-  var name=String(pr.display_name||pr.username||T.player).slice(0,16), ny=AY+AS+(bio||TT?38:46), fs=29;
+  var name=String(pr.display_name||pr.username||T.player).slice(0,16), ny=AY+AS+(bio||TT?38:46)+(LVB?32:0), fs=29;
+  if(LVB){ c.save(); c.textAlign='center'; c.shadowColor='rgba(0,0,0,.8)'; c.shadowBlur=6; c.fillStyle='#ffd36b'; c.font='900 26px system-ui, sans-serif'; c.fillText(SL.plv+st.lv,W/2,AY+AS+32); c.restore(); }      // the player level, big, right under the avatar
   c.save(); c.shadowColor='rgba(0,0,0,.8)'; c.shadowBlur=6; c.shadowOffsetY=1; c.textAlign='left';
   c.font='900 '+fs+'px system-ui, sans-serif'; var wN=c.measureText(name).width;
   if(wN>HW-28){ fs=Math.floor(fs*(HW-28)/wN); c.font='900 '+fs+'px system-ui, sans-serif'; wN=c.measureText(name).width; }
@@ -807,15 +817,22 @@ async function draw(cv, d, o){
     c.fillStyle='rgba(0,0,0,.28)'; rrect(c,W/2-70,sy0+10,140,150,16); c.fill();
     drawCharFig(c, T0[0], W/2, sy0+104, 2.1, av.color);
     c.font='900 20px system-ui, sans-serif'; c.fillStyle='#fff'; c.fillText(String(T0[1]||T0[0]),W/2,sy0+186);
-    c.font='800 14px system-ui, sans-serif'; c.fillStyle=T0[3]||'#ffd36b'; c.fillText(SL.mast+' '+(T0[2]||'')+' Lv.'+(T0[4]||1),W/2,sy0+208);
-    if(st.lv){ c.fillStyle='rgba(255,255,255,.8)'; c.font='700 14px system-ui, sans-serif'; c.fillText(SL.plv+st.lv,W/2,sy0+230); }
+    c.font='800 15px system-ui, sans-serif'; c.fillStyle='rgba(255,255,255,.85)'; c.fillText(SL.clv+(T0[4]||1),W/2,sy0+210);      // the character level takes the old place of the player level
+    if(DET){
+      var pt=+T0[6]||0, mn=+T0[7]||0, nx=+T0[8]||0, rc=T0[3]||'#ffd36b';
+      drawShield(c,W/2,sy0+256,1.15,rc);
+      c.font='800 15px system-ui, sans-serif'; var t1=SL.mpt+' '+pt.toLocaleString('en-US')+' · ', w1=c.measureText(t1).width, w2=c.measureText(String(T0[2]||'')).width, x1=W/2-(w1+w2)/2;
+      c.textAlign='left'; c.fillStyle='#fff'; c.fillText(t1,x1,sy0+312); c.fillStyle=rc; c.fillText(String(T0[2]||''),x1+w1,sy0+312); c.textAlign='center';
+      c.font='700 13px system-ui, sans-serif'; c.fillStyle='rgba(255,255,255,.78)';
+      c.fillText(nx?((pt-mn).toLocaleString('en-US')+' / '+(nx-mn).toLocaleString('en-US')+' '+SL.pts+' · '+SL.next+' '+(nx-pt).toLocaleString('en-US')):SL.top,W/2,sy0+336);
+      var bw2=240, bx2=W/2-bw2/2, fr2=nx?Math.max(0,Math.min(1,(pt-mn)/Math.max(1,nx-mn))):1;
+      c.fillStyle='rgba(255,255,255,.12)'; rrect(c,bx2,sy0+346,bw2,7,3.5); c.fill(); if(fr2>0){ c.fillStyle=(nx&&T0[10])||rc; rrect(c,bx2,sy0+346,Math.max(7,bw2*fr2),7,3.5); c.fill(); }
+    } else { c.font='800 14px system-ui, sans-serif'; c.fillStyle=T0[3]||'#ffd36b'; c.fillText(SL.mast+' '+(T0[2]||''),W/2,sy0+232); }
     var rate=(+st.matches>0)?Math.round((+st.wins||0)/st.matches*100)+'%':'-';
-    var TS=[[SL.wins,+st.wins||0],[SL.kills,+st.kills||0],[SL.ast,+st.assists||0],[SL.dmg,+st.damage||0],[SL.games,+st.matches||0],[SL.rate,rate]], ty0=sy0+252, tw=(W-120-16)/3;
+    var TS=[[SL.wins,+st.wins||0],[SL.kills,+st.kills||0],[SL.ast,+st.assists||0],[SL.dmg,+st.damage||0],[SL.games,+st.matches||0],[SL.rate,rate]], ty0=sy0+(DET?392:252), tw=(W-120-16)/3;
     c.fillStyle='rgba(255,255,255,.6)'; c.font='700 13px system-ui, sans-serif'; c.fillText(SL.head,W/2,ty0);
     TS.forEach(function(t,i){ var tx=60+(i%3)*(tw+8), ty=ty0+10+Math.floor(i/3)*62; c.fillStyle='rgba(255,196,61,.12)'; c.fillRect(tx,ty,tw,54); c.strokeStyle='rgba(255,196,61,.4)'; c.strokeRect(tx+.5,ty+.5,tw-1,53);
       c.textAlign='center'; c.fillStyle='rgba(255,255,255,.65)'; c.font='700 12px system-ui, sans-serif'; c.fillText(t[0],tx+tw/2,ty+19); c.fillStyle='#fff'; c.font='900 19px system-ui, sans-serif'; c.fillText(typeof t[1]==='number'?t[1].toLocaleString('en-US'):t[1],tx+tw/2,ty+43); });
-    var gl2=GAMES.filter(function(g){ return played[g.id]||(ach[g.id]&&ach[g.id][0]); }).map(function(g){ return g.icon; }).join('  ');
-    if(gl2){ c.fillStyle='rgba(255,255,255,.6)'; c.font='700 13px system-ui, sans-serif'; c.fillText(SL.played+'  '+gl2,W/2,ty0+10+2*62+22); }
   } else {
   // games
     c.fillStyle='rgba(255,255,255,.6)'; c.font='700 13px system-ui, sans-serif'; c.fillText(T.games,W/2,all?HY+HH+62:HY+HH+44);
