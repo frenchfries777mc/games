@@ -774,7 +774,11 @@ async function draw(cv, d, o){
   var all=CORE.every(function(g){ return played[g.id]; });
   var ach=Object.assign({}, d.ach||{});
   if(STK.achTotal && Array.isArray(st.ach) && st.ach.length && !(ach.stickseum&&ach.stickseum[1])) ach.stickseum=[Math.min(st.ach.length,STK.achTotal), STK.achTotal];   // Stickseum's own record, until the game reports it
-  if(hasStk) H=cv.height=70+(262+(LVB?32:0))+(all?50:34)+(DET?392:252)+126+44;      // the card grows with the mastery block and the big player level
+  if(hasStk) H=cv.height=70+(262+(LVB?32:0))+(all?50:34)+(DET?392:252)+126+44;
+  var gid=gameId(o), inOther=!hasStk&&!!gid&&GAMES.some(function(g){ return g.id===gid&&g.id!=='stickseum'; });      // inside another game: that game's own card (no list of games); the hub keeps the list
+  var FG=inOther&&o&&o.fig&&o.fig.img?o.fig:null, FGI=null; if(FG){ try{ FGI=await loadImg(typeof FG.img==='string'?FG.img:FG.img.toDataURL('image/png')); }catch(e){} }
+  if(inOther) H=cv.height=70+(262)+(FGI?34+220:0)+60;
+      // the card grows with the mastery block and the big player level
   var DB=decoOf('bg',d.deco&&d.deco.bg), DF=decoOf('fr',d.deco&&d.deco.fr);
   var g0=c.createLinearGradient(0,0,W,H); g0.addColorStop(0,DB.c[0]); g0.addColorStop(.55,DB.c[1]); g0.addColorStop(1,DB.c[2]); c.fillStyle=g0; c.fillRect(0,0,W,H);
   if(DB.stars){ var sd=7; for(var si=0;si<70;si++){ sd=(sd*9301+49297)%233280; var sx=sd/233280*W; sd=(sd*9301+49297)%233280; var sy=sd/233280*H; c.fillStyle='rgba(255,255,255,'+(.25+(si%4)*.18)+')'; c.fillRect(sx,sy,si%7?1.5:2.5,si%7?1.5:2.5); } }
@@ -834,6 +838,12 @@ async function draw(cv, d, o){
     c.fillStyle='rgba(255,255,255,.6)'; c.font='700 13px system-ui, sans-serif'; c.fillText(SL.head,W/2,ty0);
     TS.forEach(function(t,i){ var tx=60+(i%3)*(tw+8), ty=ty0+10+Math.floor(i/3)*62; c.fillStyle='rgba(255,196,61,.12)'; c.fillRect(tx,ty,tw,54); c.strokeStyle='rgba(255,196,61,.4)'; c.strokeRect(tx+.5,ty+.5,tw-1,53);
       c.textAlign='center'; c.fillStyle='rgba(255,255,255,.65)'; c.font='700 12px system-ui, sans-serif'; c.fillText(t[0],tx+tw/2,ty+19); c.fillStyle='#fff'; c.font='900 19px system-ui, sans-serif'; c.fillText(typeof t[1]==='number'?t[1].toLocaleString('en-US'):t[1],tx+tw/2,ty+43); });
+  } else if(inOther){
+    if(FGI){ var fy=HY+HH+34; c.textAlign='center'; c.fillStyle='rgba(255,255,255,.6)'; c.font='700 13px system-ui, sans-serif'; c.fillText(String(FG.label||''),W/2,fy);
+      c.fillStyle='rgba(0,0,0,.28)'; rrect(c,W/2-70,fy+10,140,150,16); c.fill();
+      var fk=Math.min(130/FGI.width,140/FGI.height); c.imageSmoothingEnabled=!FG.pixel; c.drawImage(FGI,W/2-FGI.width*fk/2,fy+85-FGI.height*fk/2,FGI.width*fk,FGI.height*fk);
+      c.font='900 20px system-ui, sans-serif'; c.fillStyle='#fff'; c.fillText(String(FG.name||'').slice(0,18),W/2,fy+186);
+      if(FG.sub){ c.font='800 15px system-ui, sans-serif'; c.fillStyle='rgba(255,255,255,.85)'; c.fillText(String(FG.sub).slice(0,28),W/2,fy+210); } }
   } else {
   // games
     c.fillStyle='rgba(255,255,255,.6)'; c.font='700 13px system-ui, sans-serif'; c.fillText(T.games,W/2,all?HY+HH+62:HY+HH+44);
