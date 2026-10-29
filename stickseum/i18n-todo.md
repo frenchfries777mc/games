@@ -331,3 +331,10 @@ patchnotes.json | v489 title | 은하 제국의 황혼 | build 489 | 2026-10-29
 patchnotes.json | v489 items[0] | 프로필 사진은 가지고 있거나 해금한 스킨만 고를 수 있음 | build 489 | 2026-10-29
 patchnotes.json | v489 title | 은하 제국의 황혼 | build 489 | 2026-10-29
 patchnotes.json | v489 items[0] | 프로필 사진은 가지고 있거나 해금한 스킨만 고를 수 있음 | build 489 | 2026-10-29
+patchnotes.json | v490 title | 은하 제국의 황혼 | build 490 | 2026-10-29
+patchnotes.json | v490 items[0] | 금고 약탈 부활 8초 | build 490 | 2026-10-29
+patchnotes.json | v490 items[1] | 깃발 뺏기·황금 쟁탈·금고 약탈 새 맵 5종 (빙하 호수·폐허 성채·증기 공장·사이버 거점·피라미드 협곡) | build 490 | 2026-10-29
+patchnotes.json | v490 items[2] | 마법사 궁극기는 항상 발 밑에 생성 | build 490 | 2026-10-29
+patchnotes.json | v490 items[3] | 크레온 근위병 외형을 인트로와 같게 | build 490 | 2026-10-29
+patchnotes.json | v490 items[4] | 클랜 이름·태그·소개·공지는 확인 없이 쓴 대로 적용 | build 490 | 2026-10-29
+patchnotes.json | v490 items[5] | 이전 버전은 다운로드만 | build 490 | 2026-10-29
