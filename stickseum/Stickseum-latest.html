@@ -5468,7 +5468,7 @@ function shuffle(arr){ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.
 /* ===== the version of this file =====
    Different BUILDS of one version meet and play together (room names online-v<ver>-<mode>-<map>-<slot>); different VERSIONS (the 0.x part) never do - the host refuses them (verNo) and the dispatcher answers busy.
    The build is only sent along with the join message and the lobby (for information); the corner of the screen shows it. */
-const GAME_BUILD='build 2026-10-18-v491';
+const GAME_BUILD='build 2026-10-18-v492';
 const GAME_VERSION='0.9', GAME_VERSION_NAME='은하 제국의 황혼';   // 게임 버전 이름: versions.json의 title과 같게 (빌드마다 바꾸지 않음)
 /* version (the 0.x part) vs build: different BUILDS of one version meet and play together, different VERSIONS never do (rooms, quick match, ranked, friend invites, dispatcher).
    Builds before 470 do not send a version, so it is read from the build number (0.9 started at build 458). */
@@ -18331,7 +18331,7 @@ function drawBatForm(c, p, tint){
 function updateEnemyPanel(){
   const wrap=document.getElementById('enemyWrap');
   if(gameMode!=='duel'){ wrap.style.display='none'; document.getElementById('controls-hint').style.display=''; return; }
-  const enemy=Object.values(players).find(p=>p.id!==myId && p.x!==undefined);
+  const enemy=Object.values(players).find(p=>p.id!==myId && p.x!==undefined && !(p.isMinion||p.isGuard||p.isClone));
   if(!enemy){ wrap.style.display='none'; document.getElementById('controls-hint').style.display=''; return; }
   wrap.style.display='block';
   document.getElementById('controls-hint').style.display='none';
@@ -18737,7 +18737,7 @@ function abilityRemains(p){
   return { dash:p.dashCdRemain||0, tp:p.teleportCdRemain||0, ult:p.ultCdRemain||0 };
 }
 function renderScoreboard(){
-  const rows=Object.values(players).sort((a,b)=>(b.kills||0)-(a.kills||0));
+  const rows=Object.values(players).filter(p=>!(p.isMinion||p.isGuard||p.isClone||p.isVault)).sort((a,b)=>(b.kills||0)-(a.kills||0));      // (Cleon's guards, clones and vaults are not players: 10-29)
   const table=document.getElementById('scoreTable');
   table.innerHTML='<tr><td style="color:#8890a4">이름</td><td style="color:#8890a4">킬</td><td style="color:#8890a4">데스</td><td style="color:#8890a4">체력</td><td style="color:#8890a4">게이지</td></tr>'+
     rows.map(p=>{
