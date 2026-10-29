@@ -128,7 +128,7 @@ function paintWho() {
 let ffMarked = '', ffAchT = 0;
 function ffProfile() {
   if (window.FFProfile) return Promise.resolve(true);
-  return new Promise(res => { const s = document.createElement('script'); s.src = 'https://frenchfries777mc.github.io/games/ff-profile.js?v=20261028'; s.onload = () => { regStats(); res(!!window.FFProfile); }; s.onerror = () => res(false); document.head.appendChild(s); });
+  return new Promise(res => { const s = document.createElement('script'); s.src = 'https://frenchfries777mc.github.io/games/ff-profile.js?v=20261029'; s.onload = () => { regStats(); res(!!window.FFProfile); }; s.onerror = () => res(false); document.head.appendChild(s); });
 }
 // 공용 프로필 창: 이름·프로필 변경은 허브에서만, 여기서는 Vowkeep 통계만 아래에 붙여요
 async function openProfile() {
@@ -481,6 +481,7 @@ function startClient() {
   hubRoom(S.net === 'host');
 }
 function endToLobby(msg) {
+  if (S.matchPending) { S.matchPending = false; (async () => { try { const sb = window.FFAuth && FFAuth.client && FFAuth.client(); if (sb && loggedIn() && await ffProfile() && FFProfile.matchDone) FFProfile.matchDone(sb, 'vowkeep'); } catch (e) { } })(); }
   if (S.lite) { S.lite = false; S.slowN = 0; try { view.setLow(!!SAVE.set.opt); } catch (e) { } }
   awardHonor(); S.wk = false; if (WEEKLY.on) { WEEKLY.on = false; useChapter(chapterIndex(), true); }
   leaveNet(); S.G = null; S.snap = null; setHud(false); $('bless').classList.remove('on');
@@ -938,7 +939,7 @@ function drawOverlay(dt) {
 }
 // 장을 깼을 때: vC와 이야기 진행을 저장해요 (한 장에 한 번)
 function clearChapter() {
-  if (S.cleared) return S.lastH || 0; S.cleared = true;
+  if (S.cleared) return S.lastH || 0; S.cleared = true; S.matchPending = true; // 장(심연은 한 층)을 마쳤어요: 로비로 돌아올 때 허브 퀘스트에 한 번 알려요
   const h = S.lastH = awardHonor() || 0, me = myP(), ci = chapterIndex();
   if (CH.deep) { deepRecord(DEEP.floor + 1); return h; }
   if (S.snap && S.snap.wk) return h;
