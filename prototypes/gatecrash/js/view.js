@@ -25,16 +25,34 @@ const R = (x, c, a, b, w, h) => { x.fillStyle = c; x.fillRect(a | 0, b | 0, w | 
 /* 맵 배경을 한 장으로 미리 그려 두어요 */
 function bakeWorld(W) {
   const [c, x] = mkCanvas(W.pw, W.ph);
-  const sky = MAPS[W.id].sky, gr = x.createLinearGradient(0, 0, 0, W.ph); gr.addColorStop(0, sky[0]); gr.addColorStop(1, sky[1]); x.fillStyle = gr; x.fillRect(0, 0, W.pw, W.ph);
-  // 먼 구름·건물
-  for (let i = 0; i < 14; i++) R(x, 'rgba(255,255,255,.55)', (i * 211 + 40) % W.pw, 20 + (i * 53) % 100, 40 + (i * 17) % 40, 8);
   for (const rm of W.rooms) {
     const T = THEMES[rm.theme], X = rm.x0 * TS, Y = rm.y0 * TS, w = (rm.x1 - rm.x0 + 1) * TS, h = (rm.y1 - rm.y0 + 1) * TS;
     R(x, T.wall, X, Y, w, h);
-    for (let a = X; a < X + w; a += 48) R(x, T.trim, a, Y, 2, h);
-    R(x, T.trim, X, Y + h - 22, w, 2);
-    if (T.glass) for (let a = X + 20; a < X + w - 40; a += 96) { R(x, 'rgba(120,180,230,.55)', a, Y + 14, 56, h > 100 ? 40 : 26); R(x, 'rgba(255,255,255,.4)', a + 4, Y + 16, 8, h > 100 ? 36 : 22); }
-    else for (let a = X + 30; a < X + w - 40; a += 110) { R(x, 'rgba(120,180,230,.5)', a, Y + 12, 40, 26); R(x, T.trim, a + 19, Y + 12, 2, 26); }
+    // 벽 아래쪽 띠와 바닥 가까운 무늬
+    const wain = { lobby: '#c2b8a0', office: '#b4c0d2', cafe: '#a8793a', server: '#222c42', terminal: '#d2d9e4', gates: '#c6d0de', bridge: '#9fabc2' }[rm.theme];
+    R(x, wain, X, Y + h - 30, w, 30); R(x, 'rgba(0,0,0,.12)', X, Y + h - 30, w, 2);
+    if (rm.theme === 'cafe') for (let a = X; a < X + w; a += 16) for (let b2 = 0; b2 < 2; b2++) R(x, (a / 16 + b2) % 2 ? 'rgba(255,255,255,.16)' : 'rgba(0,0,0,.1)', a, Y + h - 30 + b2 * 16, 16, 16);
+    if (rm.theme === 'lobby' || rm.theme === 'terminal') for (let a = X; a < X + w; a += 64) R(x, 'rgba(255,255,255,.2)', a + 2, Y + h - 28, 28, 26);
+    if (rm.theme === 'server') for (let a = X + 6; a < X + w; a += 40) { R(x, '#3a7aff', a, Y + h - 14, 18, 2); R(x, '#6fe08a', a + 22, Y + h - 14, 4, 2); }
+    for (let a = X; a < X + w; a += 48) R(x, T.trim, a, Y, 2, h - 30);
+    // 창문: 바깥 도시가 보여요
+    const wh = h > 150 ? h - 80 : h > 100 ? 44 : 30, step = rm.theme === 'server' ? 160 : 96;
+    for (let a = X + 22; a < X + w - 50; a += step) {
+      if (rm.theme === 'server') { R(x, '#10182a', a, Y + 14, 60, wh); for (let k = 0; k < 6; k++) R(x, '#2a3b66', a + 4 + k * 9, Y + 18 + (k * 7) % 16, 6, 6); continue; }
+      const g2 = x.createLinearGradient(0, Y + 14, 0, Y + 14 + wh); const sk = MAPS[W.id].sky; g2.addColorStop(0, sk[0]); g2.addColorStop(1, sk[1]); x.fillStyle = g2; x.fillRect(a, Y + 14, 56, wh);
+      x.fillStyle = 'rgba(40,60,100,.55)'; for (let k = 0; k < 5; k++) { const bh = 8 + ((a + k * 37) % 17); x.fillRect(a + 2 + k * 11, Y + 14 + wh - bh, 9, bh); }
+      R(x, 'rgba(255,255,255,.35)', a + 4, Y + 16, 6, wh - 6); R(x, T.trim, a - 2, Y + 12, 60, 2); R(x, T.trim, a - 2, Y + 14 + wh, 60, 3); R(x, T.trim, a + 27, Y + 14, 2, wh);
+    }
+    // 천장 조명
+    for (let a = X + 40; a < X + w - 20; a += 120) { R(x, '#f4f0e0', a, Y, 36, 4); R(x, '#fffbe8', a + 4, Y + 4, 28, 2); }
+    // 벽 장식 (그림, 시계, 비상구)
+    for (let a = X + 70, k = 0; a < X + w - 60; a += 150, k++) {
+      if (rm.theme === 'server') continue;
+      if (k % 3 === 0) { R(x, '#5a4630', a, Y + 18, 22, 16); R(x, ['#e8a05a', '#6fb0e8', '#9ad07a'][(a / 150 | 0) % 3], a + 2, Y + 20, 18, 12); R(x, 'rgba(255,255,255,.5)', a + 3, Y + 21, 6, 2); }
+      else if (k % 3 === 1) { x.fillStyle = '#f8f8f8'; x.beginPath(); x.arc(a + 8, Y + 24, 7, 0, 7); x.fill(); R(x, '#222', a + 8, Y + 19, 1, 6); R(x, '#222', a + 8, Y + 24, 4, 1); }
+      else { R(x, '#1a8a4a', a, Y + 20, 22, 9); R(x, '#fff', a + 3, Y + 23, 16, 2); }
+    }
+    R(x, 'rgba(0,0,0,.06)', X, Y, w, 5);
   }
   for (const o of W.objs) if (!o.solid) drawObj(x, W, o);
   for (let ty = 0; ty < W.h; ty++) for (let tx = 0; tx < W.w; tx++) {
@@ -82,13 +100,14 @@ function drawObj(x, W, o) {
 function drawRacer(x, r, t, me) {
   const px = Math.round(r.x - 3), py = Math.round(r.y - 0), f = r.face, walk = Math.abs(r.vx) > 20 && r.ground, ph = walk ? Math.floor(r.anim / 7) % 2 : 0;
   if (r.inv > 0 && Math.floor(t * 14) % 2) return;
+  R(x, 'rgba(0,0,0,.22)', px + 1, r.y + PH.H - 1, 14, 2);
   x.save(); x.translate(px + 8, py);
   if (f < 0) x.scale(-1, 1); x.translate(-8, 0);
   const dead = r.stun > 0, flash = r.flash > 0;
   const body = flash ? '#fff' : r.col, dark = flash ? '#fff' : shade(r.col, -50);
-  R(x, '#e8c39a', 5, 0, 8, 7); R(x, flash ? '#fff' : '#2a2430', 5, 0, 8, 2); R(x, '#111', 10, 3, 2, 2);          // 머리
+  const hair = flash ? '#fff' : ['#2a2430', '#6a3a1a', '#d8b050', '#8a2a2a'][(r.slot | 0) % 4]; R(x, '#e8c39a', 5, 0, 8, 7); R(x, hair, 4, -1, 10, 3); R(x, hair, 4, 2, 2, 3); R(x, '#111', 10, 3, 2, 2);          // 머리
   R(x, body, 4, 7, 10, 8);                                                                                       // 몸통
-  R(x, dark, 4, 15, 10, 2);
+  R(x, dark, 4, 15, 10, 2); R(x, shade(r.col, 40), 4, 7, 10, 1); R(x, dark, 8, 8, 2, 6);
   if (!r.ground) { R(x, '#2a3350', 5, 17, 3, 4); R(x, '#2a3350', 10, 15, 3, 4); }
   else if (walk) { R(x, '#2a3350', ph ? 4 : 7, 17, 3, 5); R(x, '#2a3350', ph ? 10 : 8, 17, 3, 5); }
   else { R(x, '#2a3350', 5, 17, 3, 5); R(x, '#2a3350', 10, 17, 3, 5); }
@@ -135,4 +154,32 @@ function drawFx(x, fx) {
     else if (f.t === 'dust') R(x, 'rgba(255,255,255,' + (0.6 * (1 - k)) + ')', f.x + f.dx * k * 8, f.y - k * 6, 3, 3);
     else if (f.t === 'ko') { for (let i = 0; i < 10; i++) { const a = i * .63; R(x, i % 2 ? '#ffd36b' : '#ff6a5a', f.x + Math.cos(a) * 30 * k, f.y + Math.sin(a) * 30 * k - 8 * k, 4, 4); } }
   }
+}
+
+/* 건물 밖 풍경 (카메라보다 천천히 움직여요) */
+function drawBackdrop(x, W, t, cx, cy, vw) {
+  const sk = MAPS[W.id].sky, g = x.createLinearGradient(0, 0, 0, VH); g.addColorStop(0, sk[0]); g.addColorStop(1, sk[1]); x.fillStyle = g; x.fillRect(0, 0, vw + 2, VH + 2);
+  if (W.id === 'airport') { x.fillStyle = '#ffe8b0'; x.beginPath(); x.arc(vw * .78, 52 - cy * .02, 22, 0, 7); x.fill(); }
+  for (let i = 0; i < 7; i++) { const px = ((i * 173 - cx * .08 - t * (3 + i)) % (vw + 160) + vw + 160) % (vw + 160) - 80; R(x, 'rgba(255,255,255,.7)', px, 26 + (i * 41) % 70, 46 + (i * 13) % 30, 7); R(x, 'rgba(255,255,255,.5)', px + 10, 20 + (i * 41) % 70, 28, 6); }
+  const base = VH - cy * .3 + 40;
+  for (let layer = 0; layer < 2; layer++) {
+    const f = .12 + layer * .18, col = layer ? '#5e7aa6' : '#8da6c8';
+    for (let i = -2; i < vw / 26 + 8; i++) {
+      const wx = i * 34 + (-(cx * f) % 34), seed = Math.floor((i * 34 + cx * f) / 34), bh = 50 + ((seed * 53) % 70) + layer * 20;
+      R(x, col, wx, base - bh - layer * 20, 30, bh + 80);
+      for (let k = 0; k < 6; k++) R(x, 'rgba(255,240,190,.35)', wx + 4 + (k % 2) * 13, base - bh - layer * 20 + 6 + ((k / 2) | 0) * 12, 6, 6);
+    }
+  }
+  if (W.id === 'airport') {   // 관제탑과 비행기
+    const tx = vw * .3 - cx * .25; R(x, '#9aa8c0', tx, VH - 130 - cy * .2, 10, 90); R(x, '#6a7a98', tx - 10, VH - 150 - cy * .2, 30, 20); R(x, '#aee4ff', tx - 8, VH - 146 - cy * .2, 26, 8);
+    const px = ((t * 26) % (vw + 200)) - 100, py = 74 - cy * .05; R(x, '#fff', px, py, 36, 6); R(x, '#fff', px + 10, py - 8, 8, 8); R(x, '#4a78c8', px + 28, py - 8, 6, 8); R(x, '#cfd6e2', px + 6, py + 4, 20, 3);
+  }
+}
+/* 은은한 조명과 가장자리 어둡힘 */
+function drawShade(x, W, cx, cy, vw) {
+  x.save(); x.translate(-Math.round(cx), -Math.round(cy));
+  for (const rm of W.rooms) { const X = rm.x0 * TS, Y = rm.y0 * TS, w = (rm.x1 - rm.x0 + 1) * TS, h = (rm.y1 - rm.y0 + 1) * TS;
+    for (let a = X + 58; a < X + w - 20; a += 120) { if (a < cx - 80 || a > cx + vw + 80) continue; const g = x.createRadialGradient(a, Y + 4, 2, a, Y + 4, 70); g.addColorStop(0, 'rgba(255,248,210,.28)'); g.addColorStop(1, 'rgba(255,248,210,0)'); x.fillStyle = g; x.fillRect(a - 70, Y, 140, Math.min(h, 100)); } }
+  x.restore();
+  const g = x.createRadialGradient(vw / 2, VH / 2, VH * .45, vw / 2, VH / 2, VH * 1.05); g.addColorStop(0, 'rgba(0,0,20,0)'); g.addColorStop(1, 'rgba(0,0,20,.35)'); x.fillStyle = g; x.fillRect(0, 0, vw + 2, VH + 2);
 }

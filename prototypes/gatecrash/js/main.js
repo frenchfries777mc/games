@@ -41,12 +41,18 @@ function homeMsg(t) { $('homeMsg').textContent = t || ''; }
 /* ---------- 화면 ---------- */
 let scr = 'sLobby';
 function show(id) { document.querySelectorAll('.scr').forEach(s => s.classList.toggle('on', s.id === id)); scr = id; $('hud').classList.toggle('on', id === 'game'); }
-document.querySelectorAll('[data-back]').forEach(b => b.addEventListener('click', () => { if (scr === 'sRoom') leaveNet(); show('sLobby'); paintWho(); }));
+document.querySelectorAll('[data-back]').forEach(b => b.addEventListener('click', () => { if (scr === 'sRoom' || scr === 'sMap') leaveNet(); show('sLobby'); paintWho(); }));
 document.querySelectorAll('#menu .btn').forEach(b => b.addEventListener('click', () => menu(b.dataset.go)));
+function pickMap(cb) {
+  $('mapPick').innerHTML = MAP_IDS.map(id => '<button class="mapc" data-m="' + id + '"><b>' + MAPS[id].name + '</b><small>' + MAPS[id].desc + '</small></button>').join('');
+  $('mapPick').querySelectorAll('button').forEach(b => b.onclick = () => { SFX.unlock(); cb(b.dataset.m); });
+  show('sMap');
+}
 function menu(go) {
+  SFX.unlock();
   homeMsg('');
-  if (go === 'solo') { leaveNet(); N.mode = 'solo'; N.players = [{ id: UID, name: myName(), col: COLORS[SAVE.col % COLORS.length] }]; openRoom(); }
-  else if (go === 'match') { if (needLogin()) return; startMatch(); }
+  if (go === 'solo') { leaveNet(); N.mode = 'solo'; N.map = N.map || 'office'; N.players = [{ id: UID, name: myName(), col: COLORS[SAVE.col % COLORS.length] }]; openRoom(); }
+  else if (go === 'match') { if (needLogin()) return; pickMap(startMatch); }
   else if (go === 'host') { if (needLogin()) return; startHost(); }
   else if (go === 'help') { $('wl').innerHTML = WEP_IDS.map(k => { const w = WEAPONS[k]; return '<div><b>' + w.name + '</b><small>' + ({ melee: '가까이 휘둘러요', shot: '멀리 쏴요', spray: '뿌리는 동안 뒤로 밀려요', rocket: '터지면 주변이 다 날아가요' })[w.kind] + ' · ' + w.uses + '번</small></div>'; }).join(''); show('sHelp'); }
   else if (go === 'notes') { loadNotes(); show('sNotes'); }
@@ -82,7 +88,7 @@ function openRoom() {
   const host = N.mode === 'solo' || N.mode === 'host';
   $('roomTitle').textContent = N.mode === 'solo' ? '봇과 연습' : N.pub ? '온라인 대전' : '친구와 대결';
   $('roomSub').textContent = N.mode === 'host' && N.code ? (N.pub ? '곧 시작해요. 빈자리는 봇이 채워요' : '방 코드 ' + N.code + ' · 친구가 주소 끝에 ?join=' + N.code + ' 로 들어와요') : '';
-  $('startBtn').style.display = host ? '' : 'none'; $('mapRow').style.display = host ? '' : 'none';
+  $('startBtn').style.display = host ? '' : 'none'; $('mapRow').style.display = host && !N.pub ? '' : 'none';
   $('maps').innerHTML = MAP_IDS.map(id => '<button class="mapc ' + (N.map === id ? 'on' : '') + '" data-m="' + id + '"><b>' + MAPS[id].name + '</b><small>' + MAPS[id].desc + '</small></button>').join('');
   $('maps').querySelectorAll('button').forEach(b => b.onclick = () => { if (!host) return; N.map = b.dataset.m; openRoom(); pushRoom(); });
   paintSlots();
@@ -139,16 +145,16 @@ function guestMsg(d, fail, ok) {
   else if (d.t === 's' && N.G) applySnap(d);
 }
 /* 온라인 대전: 열려 있는 빠른 방을 찾아 들어가고, 없으면 내가 방을 열어요 */
-function startMatch() {
-  leaveNet(); const gen = N.gen; homeMsg('상대를 찾는 중이에요'); let n = 1;
+function startMatch(map) {
+  leaveNet(); const gen = N.gen; N.map = map; homeMsg('상대를 찾는 중이에요'); let n = 1;
   const tryJoin = () => {
     if (N.gen !== gen) return;
-    if (n > 3) { openQuick(gen); return; }
+    if (n > 3) { openQuick(gen, 1); return; }
     const p = new Peer(peerOpts()); N.peer = p; let ended = false;
     const next = () => { if (ended) return; ended = true; try { p.destroy(); } catch (e) { } n++; tryJoin(); };
     p.on('error', next);
     p.on('open', () => {
-      const c = p.connect(PREFIX + 'q' + n, { reliable: false }); N.host = c; N.mode = 'guest'; const to = setTimeout(next, 3500);
+      const c = p.connect(PREFIX + 'q' + N.map + n, { reliable: false }); N.host = c; N.mode = 'guest'; const to = setTimeout(next, 3500);
       c.on('open', () => { clearTimeout(to); send(c, { t: 'hello', v: VERSION, id: UID, name: myName(), col: COLORS[SAVE.col % COLORS.length] }); });
       c.on('data', d => { if (d && d.t === 'no') { clearTimeout(to); next(); } else if (d && d.t === 'welcome') { ended = true; homeMsg(''); guestMsg(d, () => { }, () => { }); } else guestMsg(d, () => { }, () => { }); });
       c.on('close', () => { if (ended) { if (N.G) endToLobby('방장과 연결이 끊겼어요.'); } else next(); });
@@ -159,8 +165,8 @@ function startMatch() {
 function openQuick(gen, k) {
   k = k || 1; if (N.gen !== gen) return; if (k > 3) { leaveNet(); show('sLobby'); homeMsg('빈 방을 만들지 못했어요. 잠시 뒤에 다시 해 봐요.'); return; }
   try { N.peer && N.peer.destroy(); } catch (e) { }
-  N.mode = 'host'; N.pub = true; N.code = 'q' + k; N.players = [{ id: UID, name: myName(), col: COLORS[SAVE.col % COLORS.length] }]; N.conns = []; N.host = null;
-  const p = new Peer(PREFIX + 'q' + k, peerOpts()); N.peer = p; hostHandlers(p);
+  N.mode = 'host'; N.pub = true; N.code = 'q' + N.map + k; N.players = [{ id: UID, name: myName(), col: COLORS[SAVE.col % COLORS.length] }]; N.conns = []; N.host = null;
+  const p = new Peer(PREFIX + 'q' + N.map + k, peerOpts()); N.peer = p; hostHandlers(p);
   p.on('open', () => { if (N.gen !== gen) return; homeMsg(''); openRoom(); let s = 14; const tick = () => { if (N.gen !== gen || N.G) return; $('roomMsg').textContent = s + '초 뒤 시작해요'; if (s-- <= 0) beginGame(); else N.autoT = setTimeout(tick, 1000); }; tick(); });
   p.on('error', e => { if (N.gen !== gen) return; if (e.type === 'unavailable-id') openQuick(gen, k + 1); else { leaveNet(); show('sLobby'); homeMsg('연결하지 못했어요.'); } });
 }
@@ -205,7 +211,7 @@ function myInput() {
   const wx = cam.x + mouse.x / sc - gl.clientWidth / sc / 2, wy = cam.y + mouse.y / sc - VH / 2;
   const aim = me ? Math.atan2(wy - (me.y + 8), wx - (me.x + 5)) : 0;
   const inp = { d: (keys.d ? 1 : 0) - (keys.a ? 1 : 0), jp: pend.jp, j: !!keys.j, atk: mouse.down, aim, swap: pend.swap };
-  pend.jp = false; pend.swap = false; return inp;
+  return inp;
 }
 function snapshot() {
   return { t: 's', ph: G.phase, tt: G.t, ck: G.clock, rk: G.rank,
@@ -213,12 +219,13 @@ function snapshot() {
     it: G.items.map(i => [i.on ? 1 : 0, i.k]), sh: G.shots.map(s => [s.k, +s.x.toFixed(0), +s.y.toFixed(0), +s.vx.toFixed(0), +s.vy.toFixed(0)]), ev: G.ev };
 }
 function applySnap(d) {
+  if (d.ph === 'count' && Math.ceil(d.tt) !== Math.ceil(G.t)) SFX.beep();
   G.phase = d.ph; G.t = d.tt; G.clock = d.ck; G.rank = d.rk;
   for (const a of d.r) {
     const r = G.racers.find(r => r.id === a[0]); if (!r) continue;
-    if (r.id === UID) { const dx = a[1] - r.x, dy = a[2] - r.y; if (Math.hypot(dx, dy) > 28) { r.x = a[1]; r.y = a[2]; } else { r.x += dx * .35; r.y += dy * .35; } }
+    if (r.id === UID) { const dx = a[1] - r.x, dy = a[2] - r.y; if (Math.hypot(dx, dy) > 40) { r.x = a[1]; r.y = a[2]; } else { r.x += dx * .12; r.y += dy * .12; } }
     else { r.tx = a[1]; r.ty = a[2]; if (Math.hypot(a[1] - r.x, a[2] - r.y) > 60) { r.x = a[1]; r.y = a[2]; } }
-    r.vx = a[3]; r.vy = a[4]; r.hp = a[5]; r.wep = a[6] ? { k: a[6], u: 1 } : null; r.face = a[7]; r.aim = a[8]; r.swing = a[9] ? .1 : 0; r.fin = !!a[10]; r.inv = a[11] ? 1 : 0; r.flash = a[12] ? .1 : 0; r.stun = a[13] ? .1 : 0; r.ground = !!a[14]; r.ko = a[15]; r.prog = +a[16];
+    if (r.id !== UID || G.phase !== 'race') { r.vx = a[3]; r.vy = a[4]; } r.hp = a[5]; r.wep = a[6] ? { k: a[6], u: 1 } : null; r.face = a[7]; r.aim = a[8]; r.swing = a[9] ? .1 : 0; r.fin = !!a[10]; r.inv = a[11] ? 1 : 0; r.flash = a[12] ? .1 : 0; r.stun = a[13] ? .1 : 0; r.ground = !!a[14]; r.ko = a[15]; r.prog = +a[16];
   }
   d.it.forEach((a, i) => { if (G.items[i]) { G.items[i].on = !!a[0]; G.items[i].k = a[1]; } });
   G.shots = d.sh.map(a => ({ k: a[0], x: a[1], y: a[2], vx: a[3], vy: a[4], t: 1 }));
@@ -229,15 +236,22 @@ function loop(now) {
   const dt = Math.min(0.05, (now - last) / 1000); last = now; acc += dt;
   const guest = N.mode === 'guest', inp = myInput();
   if (!guest) {
-    N.inputs[UID] = inp;
-    // 방 손님 입력의 눌림 신호는 한 번만 쓰고 지워요
-    while (acc >= 1 / 60) { acc -= 1 / 60; stepGame(G, 1 / 60, N.inputs); for (const k in N.inputs) { N.inputs[k].jp = false; N.inputs[k].swap = false; } }
-    if (N.conns.length) { snapT += dt; if (snapT >= SNAP) { snapT = 0; bcast(snapshot()); G.ev = G.ev.filter(() => false); } }
+    const oi = N.inputs[UID] || {};
+    N.inputs[UID] = Object.assign(oi, inp, { jp: inp.jp || oi.jp, swap: inp.swap || oi.swap });
+    let ran = false;
+    while (acc >= 1 / 60) {
+      acc -= 1 / 60; const pc = G.phase, pt = Math.ceil(G.t); stepGame(G, 1 / 60, N.inputs); ran = true;
+      for (const k in N.inputs) { N.inputs[k].jp = false; N.inputs[k].swap = false; }
+      if (G.phase === 'count' && Math.ceil(G.t) !== pt) SFX.beep();
+    }
+    if (ran) { pend.jp = false; pend.swap = false; N.inputs[UID].jp = false; N.inputs[UID].swap = false; }
+    if (N.conns.length) { snapT += dt; if (snapT >= SNAP) { snapT = 0; bcast(snapshot()); G.ev.length = 0; } }
   } else {
     const me = G.racers.find(r => r.id === UID);
-    sendT += dt; if (sendT > 1 / 30) { sendT = 0; send(N.host, { t: 'i', i: Object.assign({}, inp, { jp: inp.jp || nextJp, swap: inp.swap || nextSw }) }); nextJp = nextSw = false; } else { nextJp = nextJp || inp.jp; nextSw = nextSw || inp.swap; }
+    sendT += dt; if (sendT > 1 / 30) { sendT = 0; send(N.host, { t: 'i', i: inp }); pend.jp = false; pend.swap = false; }
+    // 내 캐릭터는 바로 움직여요 (서버 위치로 조금씩 맞춰요)
+    while (acc >= 1 / 60) { acc -= 1 / 60; if (me && G.phase === 'race' && !me.fin && me.stun <= 0) { const own = Object.assign({}, inp, { jp: inp.jp || pend.jp }); if (stepBody(G.W, me, own, 1 / 60)) { addFx({ t: 'jump', x: me.x + 5, y: me.y + 22, id: UID, local: 1 }); } } }
     for (const r of G.racers) if (r !== me && r.tx !== undefined) { r.x += (r.tx - r.x) * Math.min(1, dt * 14); r.y += (r.ty - r.y) * Math.min(1, dt * 14); }
-    if (me && me.ground) { me.x += me.vx * dt * .0; }
     acc = 0;
   }
   for (const e of G.ev) addFx(e); G.ev.length = 0;
@@ -246,13 +260,16 @@ function loop(now) {
   render(now / 1000);
   if (G.phase === 'end' && (guest ? true : G.endT > 1.8)) showResult();
 }
-let nextJp = false, nextSw = false;
 function addFx(e) {
+  if (e.t === 'jump' && N.mode !== 'guest') { /* 소리는 sfx에서 */ }
   if (e.t === 'hit') fx.push({ t: 'hit', x: e.x, y: e.y, age: 0, life: .3, s: Math.random() * 6 });
   else if (e.t === 'boom') fx.push({ t: 'boom', x: e.x, y: e.y, age: 0, life: .45 });
   else if (e.t === 'ko') fx.push({ t: 'ko', x: e.x, y: e.y, age: 0, life: .6 });
   else if (e.t === 'jump') fx.push({ t: 'dust', x: e.x, y: e.y, age: 0, life: .3, dx: -1 }, { t: 'dust', x: e.x, y: e.y, age: 0, life: .3, dx: 1 });
-  if (window.GCSfx) GCSfx(e);
+  const me = G && G.racers.find(r => r.id === UID);
+  if (e.t === 'jump' && (e.id !== UID || (N.mode === 'guest' && !e.local))) return;
+  if (me && e.x !== undefined && Math.hypot(e.x - me.x, e.y - me.y) > 450) return;
+  GCSfx(e);
 }
 function render(t) {
   const c = gl, dpr = Math.min(2, devicePixelRatio || 1), w = Math.round(c.clientWidth * dpr), h = Math.round(c.clientHeight * dpr);
@@ -263,26 +280,34 @@ function render(t) {
   cam.x += (tx - cam.x) * .12; cam.y += (ty - cam.y) * .12;
   const cx = Math.max(0, Math.min(G.W.pw - vw, cam.x)), cy = Math.max(0, Math.min(G.W.ph - VH, cam.y));
   x.setTransform(sc, 0, 0, sc, 0, 0); x.fillStyle = '#0c1220'; x.fillRect(0, 0, vw + 2, VH + 2);
+  drawBackdrop(x, G.W, t, cx, cy, vw);
   x.translate(-Math.round(cx), -Math.round(cy)); x.drawImage(baked, 0, 0);
   drawItems(x, G, t);
   for (const r of G.racers) if (r !== me) drawRacer(x, r, t, false);
   drawRacer(x, me, t, true);
   drawShots(x, G); drawFx(x, fx);
-  // 이름표·체력
-  x.font = 'bold 7px monospace'; x.textAlign = 'center';
-  for (const r of G.racers) { const X = r.x + 5, Y = r.y - 10; x.fillStyle = '#000a'; x.fillRect(X - 13, Y - 1, 26, 4); x.fillStyle = r.hp > 50 ? '#6fe08a' : r.hp > 25 ? '#ffd36b' : '#ff6a5a'; x.fillRect(X - 12, Y, 24 * Math.max(0, r.hp) / MAX_HP, 2); x.fillStyle = r === me ? '#ffd36b' : '#fff'; x.fillText(r.name, X, Y - 3); }
+  drawShade(x, G.W, cx, cy, vw);
+  x.setTransform(1, 0, 0, 1, 0, 0); x.textAlign = 'center'; x.textBaseline = 'alphabetic';
+  const S = (px, py) => [(px - Math.round(cx)) * sc, (py - Math.round(cy)) * sc], fs = Math.max(11, Math.round(sc * 4.4));
+  x.font = '700 ' + fs + 'px Galmuri, sans-serif';
+  for (const r of G.racers) {
+    const [X, Y] = S(r.x + 5, r.y - 9), bw = 26 * sc;
+    x.fillStyle = 'rgba(0,0,0,.65)'; x.fillRect(X - bw / 2 - 2, Y - 1, bw + 4, 4 * sc); x.fillStyle = r.hp > 50 ? '#6fe08a' : r.hp > 25 ? '#ffd36b' : '#ff6a5a'; x.fillRect(X - bw / 2, Y, bw * Math.max(0, r.hp) / MAX_HP, 2.4 * sc);
+    x.lineWidth = 3; x.strokeStyle = 'rgba(0,0,0,.8)'; x.strokeText(r.name, X, Y - 4); x.fillStyle = r === me ? '#ffd36b' : '#fff'; x.fillText(r.name, X, Y - 4);
+  }
   x.setTransform(sc, 0, 0, sc, 0, 0); x.textAlign = 'left';
-  // 진행 막대
-  const bw = Math.min(vw - 40, 220), bx = (vw - bw) / 2; x.fillStyle = '#000a'; x.fillRect(bx - 2, 6, bw + 4, 9); x.fillStyle = '#334'; x.fillRect(bx, 9, bw, 3);
+  const bw = Math.min(vw - 40, 220), bx = (vw - bw) / 2; x.fillStyle = 'rgba(8,12,24,.75)'; x.fillRect(bx - 3, 5, bw + 6, 11); x.fillStyle = '#334'; x.fillRect(bx, 9, bw, 3);
   for (const r of G.racers) { const p = r.fin ? 1 : 1 - Math.min(1, r.prog / G.W.maxDist); x.fillStyle = r.col; x.fillRect(bx + p * bw - 2, 7, 4, 7); }
-  // 내 무기
-  x.fillStyle = '#000a'; x.fillRect(6, 6, 74, 22); x.fillStyle = '#fff'; x.font = 'bold 8px monospace';
-  x.fillText(me.wep ? WEAPONS[me.wep.k].name : '맨손', 10, 16); x.fillStyle = '#6fe08a'; x.fillRect(10, 20, 64 * Math.max(0, me.hp) / MAX_HP, 4);
+  x.fillStyle = '#ffd36b'; x.fillRect(bx + bw + 4, 7, 2, 7);
+  x.setTransform(1, 0, 0, 1, 0, 0);
+  const pad = 8 * sc / 2.7, fs2 = Math.max(12, Math.round(sc * 5)), bw2 = 130 * sc / 2.7;
+  x.fillStyle = 'rgba(8,12,24,.75)'; x.fillRect(pad, pad, bw2 + 20, fs2 * 2.6);
+  x.textAlign = 'left'; x.font = '700 ' + fs2 + 'px Galmuri, sans-serif'; x.fillStyle = '#fff'; x.fillText(me.wep ? WEAPONS[me.wep.k].name + ' ' + me.wep.u : '맨손', pad + 8, pad + fs2 * 1.15);
+  x.fillStyle = '#222'; x.fillRect(pad + 8, pad + fs2 * 1.5, bw2, fs2 * .5); x.fillStyle = '#6fe08a'; x.fillRect(pad + 8, pad + fs2 * 1.5, bw2 * Math.max(0, me.hp) / MAX_HP, fs2 * .5);
   const near = !me.fin && G.items.find(i => i.on && Math.abs(i.x - (me.x + 5)) < 16 && Math.abs(i.y - (me.y + 11)) < 18);
-  if (near && me.wep) { x.fillStyle = '#ffd36b'; x.textAlign = 'center'; x.fillText('F: ' + WEAPONS[near.k].name + '(으)로 바꾸기', vw / 2, VH - 14); x.textAlign = 'left'; }
-  // 순위
+  if (near && me.wep) { x.textAlign = 'center'; x.fillStyle = '#ffd36b'; x.strokeStyle = '#000'; x.lineWidth = 3; const t2 = 'F: ' + WEAPONS[near.k].name + '(으)로 바꾸기'; x.strokeText(t2, w / 2, h - 40 * dpr); x.fillText(t2, w / 2, h - 40 * dpr); }
   const order = G.racers.slice().sort((a, b) => (a.fin ? G.rank.indexOf(a.id) - 99 : a.prog) - (b.fin ? G.rank.indexOf(b.id) - 99 : b.prog));
-  const pos = order.indexOf(me) + 1; x.fillStyle = '#000a'; x.fillRect(vw - 40, 6, 34, 18); x.fillStyle = '#ffd36b'; x.font = 'bold 12px monospace'; x.fillText(pos + '/' + G.racers.length, vw - 36, 19);
+  const pos = order.indexOf(me) + 1, ps = Math.round(fs2 * 1.6); x.fillStyle = 'rgba(8,12,24,.75)'; x.fillRect(w - pad - ps * 2.4, pad, ps * 2.4, ps * 1.3); x.fillStyle = '#ffd36b'; x.textAlign = 'center'; x.font = '700 ' + ps + 'px Galmuri, sans-serif'; x.fillText(pos + '/' + G.racers.length, w - pad - ps * 1.2, pad + ps * 1.05);
   const big = $('big');
   if (G.phase === 'count') big.textContent = Math.max(1, Math.ceil(G.t)); else if (G.phase === 'race' && G.clock < .8) big.textContent = 'GO!'; else big.textContent = '';
 }
@@ -291,6 +316,7 @@ function showResult() {
   const list = G.rank.map(id => G.racers.find(r => r.id === id)).filter(Boolean);
   for (const r of G.racers.slice().sort((a, b) => a.prog - b.prog)) if (!list.includes(r)) list.push(r);
   const me = list.findIndex(r => r.id === UID);
+  if (me === 0) SFX.win();
   $('resT').textContent = me === 0 ? '1등!' : (me + 1) + '등'; $('resL').innerHTML = list.map(r => '<li style="color:' + r.col + '">' + esc(r.name) + '</li>').join('');
   $('resAgain').textContent = '다시 하기'; $('res').classList.add('on');
 }

@@ -5,7 +5,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <title>Gatecrash</title>
-<script>(function(){var B=1;try{fetch('build.json?t='+Date.now(),{cache:'no-store'}).then(function(r){return r.json()}).then(function(d){if(d&&d.build>B&&sessionStorage.getItem('gcReload')!=String(d.build)){sessionStorage.setItem('gcReload',String(d.build));var u=new URL(location.href);u.searchParams.set('b',d.build);location.replace(u.toString());}}).catch(function(){});}catch(e){}})();</script>
+<script>(function(){var B=2;try{fetch('build.json?t='+Date.now(),{cache:'no-store'}).then(function(r){return r.json()}).then(function(d){if(d&&d.build>B&&sessionStorage.getItem('gcReload')!=String(d.build)){sessionStorage.setItem('gcReload',String(d.build));var u=new URL(location.href);u.searchParams.set('b',d.build);location.replace(u.toString());}}).catch(function(){});}catch(e){}})();</script>
 <meta name="description" content="건물과 공항을 달려 먼저 도착하는 옆면 픽셀 레이스 액션">
 <meta name="robots" content="noindex">
 <link rel="icon" href="logo.svg" type="image/svg+xml">
@@ -16,9 +16,11 @@
 <script src="https://frenchfries777mc.github.io/games/ff-auth.js?v=20261028h"></script>
 <script src="../../ff-pnsearch.js"></script>
 <style>
+@font-face{font-family:Galmuri;src:url(../../isleport/Galmuri11.woff2) format('woff2');font-weight:400;font-display:swap}
+@font-face{font-family:Galmuri;src:url(../../isleport/Galmuri11-Bold.woff2) format('woff2');font-weight:700;font-display:swap}
 :root{--ink:#e9f0ff;--acc:#ffb347;--dim:#8fa0c0;--bg:#0c1220;--panel:rgba(16,24,44,.9);--line:#33446b;color-scheme:dark}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-html,body{margin:0;height:100%;background:var(--bg);color:var(--ink);font-family:system-ui,-apple-system,"Apple SD Gothic Neo","Noto Sans KR","Malgun Gothic",sans-serif;overflow:hidden;user-select:none;-webkit-user-select:none;touch-action:none}
+html,body{margin:0;height:100%;background:var(--bg);color:var(--ink);font-family:Galmuri,system-ui,-apple-system,"Apple SD Gothic Neo","Noto Sans KR","Malgun Gothic",sans-serif;overflow:hidden;user-select:none;-webkit-user-select:none;touch-action:none}
 ::-webkit-scrollbar{width:8px}::-webkit-scrollbar-track{background:#101830}::-webkit-scrollbar-thumb{background:#33446b;border-radius:4px}*{scrollbar-color:#33446b #101830}
 canvas#gl{position:fixed;inset:0;width:100vw;height:100vh;display:block;image-rendering:pixelated}
 .scr{position:fixed;inset:0;z-index:5;display:none}.scr.on{display:block}
@@ -29,7 +31,7 @@ button{font:inherit;color:inherit;cursor:pointer}
 #sLobby{background:linear-gradient(180deg,#0c1220 0%,#16264a 70%,#233a66 100%)}
 #bgv{position:absolute;inset:0;width:100%;height:100%;image-rendering:pixelated}
 #sLobby .title{position:absolute;left:0;right:0;top:9vh;text-align:center;pointer-events:none}
-#sLobby h1{margin:0;font:900 clamp(48px,9vw,110px)/1 "Courier New",monospace;letter-spacing:.06em;color:#ffcf7a;text-shadow:0 5px 0 #8a4310,0 10px 0 #2a1408}
+#sLobby h1{margin:0;font:700 clamp(48px,9vw,110px)/1 Galmuri,monospace;letter-spacing:.06em;color:#ffcf7a;text-shadow:0 5px 0 #8a4310,0 10px 0 #2a1408}
 #sLobby p{margin:12px 0 0;font-size:clamp(14px,1.7vw,20px);color:#cfe0ff}
 #menu{position:absolute;right:5vw;top:50%;transform:translateY(-50%);display:flex;flex-direction:column;gap:10px;width:min(260px,70vw)}
 #menu .btn{text-align:left;padding:12px 18px;font-size:17px}
@@ -52,7 +54,7 @@ button{font:inherit;color:inherit;cursor:pointer}
 .wl{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:10px;margin-top:10px}.wl div{background:#14203d;border-radius:8px;padding:10px}.wl small{display:block;color:var(--dim);margin-top:4px}
 .notes h3{margin:16px 0 4px;color:var(--acc)}.notes ul{margin:0;padding-left:20px}
 #hud{position:fixed;inset:0;z-index:4;pointer-events:none;display:none}#hud.on{display:block}
-#big{position:absolute;left:0;right:0;top:28vh;text-align:center;font:900 clamp(48px,11vw,130px)/1 "Courier New",monospace;color:#fff;text-shadow:0 5px 0 #8a4310,0 0 20px #000a}
+#big{position:absolute;left:0;right:0;top:28vh;text-align:center;font:700 clamp(48px,11vw,130px)/1 Galmuri,monospace;color:#fff;text-shadow:0 5px 0 #8a4310,0 0 20px #000a}
 #hint{position:absolute;left:0;right:0;bottom:12px;text-align:center;font-size:13px;color:#dbe6ff;text-shadow:0 1px 3px #000}
 #res{position:absolute;inset:0;display:none;align-items:center;justify-content:center;pointer-events:auto;background:rgba(5,8,18,.6)}
 #res.on{display:flex}#res .box{background:var(--panel);border:2px solid var(--line);border-radius:12px;padding:22px 30px;min-width:min(380px,90vw)}
@@ -92,6 +94,8 @@ button{font:inherit;color:inherit;cursor:pointer}
   </div>
 </section>
 
+<section class="scr" id="sMap"><button class="btn back" data-back>← 뒤로</button><div class="panel" style="top:9vh"><h2 id="mapT">맵 고르기</h2><div class="maps" id="mapPick"></div></div></section>
+
 <section class="scr" id="sHelp"><button class="btn back" data-back>← 뒤로</button><div class="panel" style="top:9vh">
   <h2>조작</h2>
   <div class="note"><b>A / D</b> 이동 · <b>W 또는 Space</b> 점프(오래 누르면 높이 점프) · <b>마우스 클릭</b> 무기 사용(그 방향으로) · <b>F</b> 바닥 무기와 바꾸기</div>
@@ -105,9 +109,10 @@ button{font:inherit;color:inherit;cursor:pointer}
   <div id="res"><div class="box"><h2 id="resT"></h2><ol id="resL"></ol><div class="row"><button class="btn go" id="resAgain">다시 하기</button><button class="btn" id="resBack">나가기</button></div></div></div></div>
 <div id="modal"><div class="box"><div id="modalT"></div><div class="row" style="justify-content:center"><button class="btn" id="modalOk">확인</button></div></div></div>
 
-<script src="js/data.js?v=1"></script>
-<script src="js/game.js?v=1"></script>
-<script src="js/view.js?v=1"></script>
-<script src="js/main.js?v=1"></script>
+<script src="js/data.js?v=2"></script>
+<script src="js/game.js?v=2"></script>
+<script src="js/view.js?v=2"></script>
+<script src="js/sfx.js?v=2"></script>
+<script src="js/main.js?v=2"></script>
 </body>
 </html>
