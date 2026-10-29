@@ -342,3 +342,10 @@ patchnotes.json | v491 title | 은하 제국의 황혼 | build 491 | 2026-10-29
 patchnotes.json | v491 items[0] | 무기가 계속 바뀌는 모드(무기 릴레이·무기 룰렛)에서 받은 모든 캐릭터에 마스터리 포인트 적립 | build 491 | 2026-10-29
 patchnotes.json | v492 title | 은하 제국의 황혼 | build 492 | 2026-10-29
 patchnotes.json | v492 items[0] | 순위 목록(Tab)에 크레온 근위병이 플레이어로 나오던 문제 수정 | build 492 | 2026-10-29
+patchnotes.json | v493 title | 은하 제국의 황혼 | build 493 | 2026-10-29
+patchnotes.json | v493 items[0] | 금고 약탈 체력 3000으로 변경 | build 493 | 2026-10-29
+patchnotes.json | v493 items[1] | 금고 약탈 봇이 금고를 공격하고 긴 맵의 윗길을 이용하도록 개선 | build 493 | 2026-10-29
+patchnotes.json | v493 items[2] | 깃발 뺏기·황금 쟁탈·금고 약탈 MVP 투표에 가져온 깃발·쟁탈한 황금·금고 피해 표시 (봇도 참고) | build 493 | 2026-10-29
+patchnotes.json | v493 items[3] | 승리 모션에서 지금 쓰는 색과 빛을 반영 | build 493 | 2026-10-29
+patchnotes.json | v493 items[4] | 보스 종류마다 다른 공격 패턴 추가 (화염 거인 불길 행진, 얼음 골렘 얼음 가시·눈보라, 번개 마왕 연쇄 번개·순간이동·번개 폭풍) | build 493 | 2026-10-29
+patchnotes.json | v493 items[5] | 시작 카운트다운이 3, 2, 1로 표시 | build 493 | 2026-10-29
