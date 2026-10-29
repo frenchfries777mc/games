@@ -578,7 +578,7 @@ function paintCoin(){
   if(!me){ b.innerHTML='<span class="cb-i">'+hIco('coin','big')+'</span><span class="cb-t"><b>Hub Coin</b><span class="cb-s">로그인하면 매일 10 Hub Coin을 받아요</span></span><button type="button" class="cm-btn cb-go">로그인</button>'; b.querySelector('.cb-go').onclick=login; return; }
   if(coin.err){ b.innerHTML='<span class="cb-i">'+hIco('coin','big')+'</span><span class="cb-t"><b>Hub Coin</b><span class="cb-s">'+esc(coin.err)+'</span></span>'; return; }
   b.innerHTML='<span class="cb-i">'+hIco('coin','big')+'</span><span class="cb-t"><b>Hub Coin <span class="cb-n" data-notr>'+(coin.n==null?'…':coin.n)+'</span></b>'+
-    '<span class="cb-s">'+(coin.today?'<span>✓ 오늘 출석 완료</span>':'')+(coin.streak>1?' · <span>'+esc(F('{0}일 연속',coin.streak))+'</span>':'')+'</span></span><button type="button" class="cm-btn2 cb-cal">📅 달력</button><button type="button" class="cm-btn cb-go">환전하기</button>';
+    '<span class="cb-s">'+(coin.today?'<span>✓ 오늘 출석 완료</span>':'')+(coin.streak>1?' · <span>'+esc(F('{0}일 연속',coin.streak))+'</span>':'')+'</span></span><button type="button" class="cm-btn2 cb-cal">📅 달력</button><button type="button" class="cm-btn cb-go">교환하기</button>';
   b.querySelector('.cb-go').onclick=openCoin; b.querySelector('.cb-cal').onclick=function(){ openCal(); };
 }
 var coinTab='ex', coinGame='';
@@ -601,9 +601,9 @@ async function questBox(el){
 async function openCoin(){
   if(!me) return login();
   var el=$('#coinBox'); if(!el){ el=document.createElement('div'); el.id='coinBox'; el.className='hn-bg'; document.body.appendChild(el); hCoinSwap(el); el.addEventListener('click',function(e){ if(e.target===el||e.target.closest('.hn-x')) el.style.display='none'; }); }
-  el.innerHTML='<div class="hn-b"><div class="hn-h"><b>🪙 Hub Coin 환전</b><button type="button" class="hn-x" aria-label="닫기">×</button></div>'+
+  el.innerHTML='<div class="hn-b"><div class="hn-h"><b>🪙 Hub Coin 교환</b><button type="button" class="hn-x" aria-label="닫기">×</button></div>'+
     '<div class="cx-have">갖고 있는 코인 <b data-notr>'+(coin.n||0)+'</b></div>'+
-    '<div class="cx-tabs"><button type="button" data-t="ex">환전</button><button type="button" data-t="gift">🎁 선물</button><button type="button" data-t="q">📋 퀘스트<i class="cx-dot" hidden></i></button><button type="button" data-t="log">기록</button></div>'+
+    '<div class="cx-tabs"><button type="button" data-t="ex">교환</button><button type="button" data-t="gift">🎁 선물</button><button type="button" data-t="q">📋 퀘스트<i class="cx-dot" hidden></i></button><button type="button" data-t="log">기록</button></div>'+
     '<div class="cx-pane" data-p="ex"><div class="cx-games"></div><div class="cx-list"><div class="cm-e">불러오는 중…</div></div><div class="cx-wait"></div></div>'+
     '<div class="cx-pane" data-p="gift"></div>'+
     '<div class="cx-pane" data-p="q"><div class="cx-q"><div class="cm-e">불러오는 중…</div></div></div>'+
@@ -624,7 +624,7 @@ async function openCoin(){
     d.innerHTML='<div class="cx-g"><b data-notr>'+esc(G.name)+'</b><span class="cx-rt">'+esc(F('코인 1개 = {0} {1}',x.per_coin,unitName(x.unit)))+'</span></div>'+
       '<div class="cx-in"><button type="button" class="cm-btn2" data-a="-1">−</button><input type="number" inputmode="numeric" min="1" step="1" value="'+Math.min(10,Math.max(1,coin.n||1))+'"><button type="button" class="cm-btn2" data-a="1">+</button>'+
       '<button type="button" class="cm-btn2" data-v="10">10</button><button type="button" class="cm-btn2" data-v="all">전부</button></div>'+
-      '<div class="cx-go"><span class="cx-pv"></span><button class="cm-btn">환전</button></div><div class="cm-m"></div>';
+      '<div class="cx-go"><span class="cx-pv"></span><button class="cm-btn">교환</button></div><div class="cm-m"></div>';
     var inp=d.querySelector('input'), pv=d.querySelector('.cx-pv');
     function val(){ return Math.max(0,Math.floor(+inp.value||0)); }
     function show(){ pv.textContent=F('→ {0} {1}',val()*x.per_coin,unitName(x.unit)); }
@@ -643,7 +643,7 @@ async function openCoin(){
   ((w&&w.data)||[]).forEach(function(z){ sum[z.game]=(sum[z.game]||0)+z.amount; });
   W.innerHTML=Object.keys(sum).map(function(g){ var u=(rates.filter(function(x){ return x.game===g; })[0]||{}).unit||''; return '<div class="cx-pend">'+esc(F('{0} 접속하면 받을 {1}: {2}',(GAMES[g]||{name:g}).name,unitName(u),sum[g]))+'</div>'; }).join('');
   var lg=await sb.from('ff_coin_log').select('delta,reason,game,other_id,created_at').order('created_at',{ascending:false}).limit(12), LG=el.querySelector('.cx-log');
-  var rows=(lg&&lg.data)||[]; await loadNames(rows.map(function(z){ return z.other_id; }).filter(Boolean)); LG.innerHTML=rows.length?rows.map(function(z){ return '<div class="cx-l"><span>'+(z.reason==='daily'?'📅 출석':z.reason==='quest'?'📋 퀘스트':z.reason==='streak'?'🔥 7일 연속 보너스':z.reason==='gift_in'?'🎁 '+esc(F('{0}님에게 받음',names[z.other_id]||'???')):z.reason==='gift_out'?'🎁 '+esc(F('{0}님에게 보냄',names[z.other_id]||'???')):z.reason==='exchange'?'🔁 '+esc(F('{0} 환전',(GAMES[z.game]||{name:z.game}).name)):'🎁 관리자')+'</span><span class="cx-d '+(z.delta>0?'up':'dn')+'" data-notr>'+(z.delta>0?'+':'')+z.delta+'</span><small>'+esc(ago(z.created_at))+'</small></div>'; }).join(''):'<div class="cm-e">아직 기록이 없어요.</div>';
+  var rows=(lg&&lg.data)||[]; await loadNames(rows.map(function(z){ return z.other_id; }).filter(Boolean)); LG.innerHTML=rows.length?rows.map(function(z){ return '<div class="cx-l"><span>'+(z.reason==='daily'?'📅 출석':z.reason==='quest'?'📋 퀘스트':z.reason==='streak'?'🔥 7일 연속 보너스':z.reason==='gift_in'?'🎁 '+esc(F('{0}님에게 받음',names[z.other_id]||'???')):z.reason==='gift_out'?'🎁 '+esc(F('{0}님에게 보냄',names[z.other_id]||'???')):z.reason==='exchange'?'🔁 '+esc(F('{0} 교환',(GAMES[z.game]||{name:z.game}).name)):'🎁 관리자')+'</span><span class="cx-d '+(z.delta>0?'up':'dn')+'" data-notr>'+(z.delta>0?'+':'')+z.delta+'</span><small>'+esc(ago(z.created_at))+'</small></div>'; }).join(''):'<div class="cm-e">아직 기록이 없어요.</div>';
 }
 
 /* ===================== 출석 달력 (ff_coin_log 의 daily 기록, 7일 연속마다 +20) ===================== */
