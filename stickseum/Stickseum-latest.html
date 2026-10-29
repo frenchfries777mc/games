@@ -1460,10 +1460,10 @@ const WEAPONS = {
             desc:'데미지 36 · 쿨타임 0.65초 · 사거리 95 · 한 번 베면 묵직하게 들어가는 카타나'},
   kurus:{id:'kurus',name:'어둠의 물약',emoji:'🧪', kind:'potion', dmg:12, cd:0.5, bulletSpeed:720, shape:'potion', arcs:true, hitR:9, life:3,
             desc:'데미지 12 · 쿨타임 0.5초 · 포물선을 그리며 날아가는 어둠의 물약 · 떨어진 자리(바닥·발판, 옆면에 맞으면 흘러내린 자리)에 캐릭터 5명 너비의 어둠이 생김 (닿은 어둠은 하나로 이어지고 어둠 탈출 전까지 사라지지 않음) · 내 어둠 위에서는 초당 체력 3 회복, 이동속도 30% 증가 · 상대는 내 어둠 위에서 이동속도 30% 감소, 주변이 잘 안 보임'},
-  cleon:{id:'cleon',name:'황제의 홀',emoji:'👑', kind:'gun', dmg:10, cd:0.8, bulletSpeed:760, shape:'cleonorb', hitR:11, life:1.5,
-            desc:'데미지 10 · 쿨타임 0.8초 · 홀에서 나가는 분홍 마법탄 (장거리) · 근위병이 살아 있는 동안 근위병 1명마다 데미지 10% 증가'},
-  pel:{id:'pel',name:'조종 드론',emoji:'🛸', kind:'gun', dmg:6, cd:0.6, bulletSpeed:1000, shape:'dronebolt', hitR:8, life:1.3,
-            desc:'데미지 6 · 쿨타임 0.6초 · 곁을 도는 드론이 한 대당 한 발씩 쏨 (장거리) · 드론은 시작 2대'},
+  cleon:{id:'cleon',name:'황제의 홀',emoji:'👑', kind:'gun', dmg:14, cd:0.8, bulletSpeed:760, shape:'cleonorb', hitR:11, life:1.5,
+            desc:'데미지 14 · 쿨타임 0.8초 · 홀에서 나가는 분홍 마법탄 (장거리) · 근위병이 살아 있는 동안 근위병 1명마다 데미지 10% 증가'},
+  pel:{id:'pel',name:'조종 드론',emoji:'🛸', kind:'gun', dmg:12, cd:0.6, bulletSpeed:1000, shape:'dronebolt', hitR:8, life:1.3,
+            desc:'데미지 12 · 쿨타임 0.6초 · 곁을 도는 드론이 한 대당 한 발씩 쏨 (장거리) · 드론은 시작 2대'},
   tionis:{id:'tionis',name:'연극 가면',emoji:'🎭', kind:'gun', dmg:13, cd:0.6, bulletSpeed:850, shape:'mask', hitR:14, life:0.9,
             desc:'데미지 13 · 쿨타임 0.6초 · 웃는 얼굴과 우는 얼굴의 연극 가면이 회전하며 날아감 (중장거리)'},
   syringe:{id:'syringe',name:'주사기',emoji:'💉', kind:'none', dmg:20, cd:999999, bulletSpeed:900, shape:'syringe', hitR:10, life:0.6, desc:'티오니스의 채혈 주사기 (스킬 전용)'},
@@ -5470,7 +5470,7 @@ function shuffle(arr){ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.
 /* ===== the version of this file =====
    Different BUILDS of one version meet and play together (room names online-v<ver>-<mode>-<map>-<slot>); different VERSIONS (the 0.x part) never do - the host refuses them (verNo) and the dispatcher answers busy.
    The build is only sent along with the join message and the lobby (for information); the corner of the screen shows it. */
-const GAME_BUILD='build 2026-10-18-v496';
+const GAME_BUILD='build 2026-10-18-v497';
 const GAME_VERSION='0.9', GAME_VERSION_NAME='은하 제국의 황혼';   // 게임 버전 이름: versions.json의 title과 같게 (빌드마다 바꾸지 않음)
 /* version (the 0.x part) vs build: different BUILDS of one version meet and play together, different VERSIONS never do (rooms, quick match, ranked, friend invites, dispatcher).
    Builds before 470 do not send a version, so it is read from the build number (0.9 started at build 458). */
