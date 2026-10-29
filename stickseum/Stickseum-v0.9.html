@@ -5470,7 +5470,7 @@ function shuffle(arr){ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.
 /* ===== the version of this file =====
    Different BUILDS of one version meet and play together (room names online-v<ver>-<mode>-<map>-<slot>); different VERSIONS (the 0.x part) never do - the host refuses them (verNo) and the dispatcher answers busy.
    The build is only sent along with the join message and the lobby (for information); the corner of the screen shows it. */
-const GAME_BUILD='build 2026-10-18-v509';
+const GAME_BUILD='build 2026-10-18-v510';
 const GAME_VERSION='0.9', GAME_VERSION_NAME='은하 제국의 황혼';   // 게임 버전 이름: versions.json의 title과 같게 (빌드마다 바꾸지 않음)
 /* version (the 0.x part) vs build: different BUILDS of one version meet and play together, different VERSIONS never do (rooms, quick match, ranked, friend invites, dispatcher).
    Builds before 470 do not send a version, so it is read from the build number (0.9 started at build 458). */
@@ -12343,7 +12343,7 @@ const SKILLS={
   kan:      {name:'독두꺼비 함정', kind:'hit', desc:'조준한 곳으로 독 두꺼비를 던짐 (닿는 만큼, 최대 약 800) · 포물선으로 날아가 바닥에 닿으면 그 바닥이 독 바닥이 됨 (15초, 최대 2개, 나에게만 보임) · 적이 밟으면 독 바닥이 나타나고 3초 뒤 사라짐 · 밟은 적은 3초 동안 0.5초마다 5 피해'},
   pistol:   {name:'속사',        kind:'buff', desc:'1.8초 동안 연사 속도 2배'},
   smg:      {name:'연막탄',      kind:'hit',  desc:'조준한 곳으로 연막탄을 던짐 · 떨어진 자리에 2.5초 동안 짙은 연기 · 안에 있는 사람은 이동 속도가 절반으로 느려지고 시야가 가려짐'},
-  bow:      {name:'갈고리 화살', kind:'move', desc:'조준한 방향으로 갈고리 화살을 쏨 · 발판의 아랫면에 맞으면 화살이 박히고 줄이 이어져 그 화살 자리까지 빠르게 끌려감 (도착하면 줄과 화살이 사라짐) · 상대에게 맞으면 화살이 그 상대에게 박혀 그 상대에게 끌려간 뒤 20 피해와 함께 밀치고 0.8초 기절시킴 · 그 밖의 곳에 맞거나 빗나가면 쿨타임이 1.5초로 줄어듦'},
+  bow:      {name:'갈고리 화살', kind:'move', desc:'조준한 방향으로 갈고리 화살을 쏨 · 발판의 아랫면에 맞으면 화살이 박히고 줄이 이어져 그 화살 자리까지 빠르게 끌려감 (도착하면 줄과 화살이 사라짐) · 상대에게 맞으면 화살이 그 상대에게 박혀 그 상대에게 끌려간 뒤 20 피해와 함께 밀치고 0.8초 기절시킴 · 빗나가도 쿨타임은 똑같이 돌아감'},
   sword:    {name:'돌진 베기',   kind:'move', desc:'앞으로 최대 3초 동안 돌진하며(돌진하는 동안 피해를 받지 않음) 칼을 빙글빙글 휘둘러, 닿는 적에게 45 피해를 주고 그 자리에서 멈춤 (스킬키를 다시 누르면 취소)'},
   bat:      {name:'반사 스윙',   kind:'buff', desc:'0.7초 동안 주변 투사체를 되받아침'},
   boomerang:{name:'회수 돌풍',  kind:'hit',  desc:'주변 적을 8 피해와 함께 내 쪽으로 끌어당기고, 던진 부메랑을 즉시 불러들임'},
@@ -14697,7 +14697,7 @@ function brzHud(){
 function snapR(v,k){ return (typeof v==='number' && isFinite(v)) ? Math.round(v*k)/k : v; }      // snapshot numbers: a few decimals are enough on the other side, and long floats made every snapshot much bigger
 /* 휴식 회복 (owner 10-29, every character): 5 s without taking damage while standing still, or 10 s without taking damage whether moving or not, heals CALM_HEAL hp.
    Both clocks start at the last damage (or the last heal): one stretch of calm never heals twice, so standing 5 s and then 5 s more gives nothing extra. */
-const HOOK_SPEED_ARROW=1500, HOOK_LIFE=0.8, HOOK_PULL_SPEED=1900, HOOK_MISS_CD=1.5, HOOK_MAX_SEC=1.4, HOOK_HIT_DMG=20, HOOK_HIT_KB=800, HOOK_HIT_UP=260, HOOK_HIT_STUN=0.8;      // 로빈 후드's skill 갈고리 화살: arrow speed, flight time, how fast it pulls, the cooldown left after a miss, the longest pull, and what the one pulled to does to the one it hit
+const HOOK_SPEED_ARROW=1500, HOOK_LIFE=0.8, HOOK_PULL_SPEED=1900, HOOK_MAX_SEC=1.4, HOOK_HIT_DMG=20, HOOK_HIT_KB=800, HOOK_HIT_UP=260, HOOK_HIT_STUN=0.8;      // 로빈 후드's skill 갈고리 화살: arrow speed, flight time, how fast it pulls, the longest pull, and what the one pulled to does to the one it hit
 function hookLand(b, nx, ny, pl, t, who){      // the hook arrow stopped: stuck under a platform = the owner gets pulled to it; stuck in somebody = pulled to him; anything else = a miss
   const o=players[b.owner]; if(!o || !o.alive) return;
   if(who && who.alive){
@@ -14707,7 +14707,7 @@ function hookLand(b, nx, ny, pl, t, who){      // the hook arrow stopped: stuck 
     const hx=clamp(nx, pl.x+8, pl.x+pl.w-8), hy=pl.y+pl.h;
     o.hook={x:hx, y:hy, born:t/1000, lastD:1e9, lastGain:t/1000};
     pushFx('spark', hx, hy, t, {color:'#ffd34d', ang:Math.PI/2});
-  } else { o.lastSkill=t/1000-(skillCdOf(o)-HOOK_MISS_CD); }
+  }
 }
 function tickHook(dt, t){
   const tS=t/1000;
