@@ -395,3 +395,5 @@ patchnotes.json | v514 items[6] | 차원여행자 튕길수록 피해 증가는 
 patchnotes.json | v515 items[0] | 금고 약탈: 금고 체력을 3000에서 2500으로 줄이고, 팀 시작·부활 위치를 기지 앞쪽(맵 가운데 방향)으로 당김 | build 515 | 2026-10-29
 Stickseum-v0.9.html | MODES.vault.desc | 금고 체력은 3000 -> 2500 (설명 문구) | build 515 | 2026-10-29
 patchnotes.json | v516 items[0] | 프로필 카드의 대표 캐릭터가 끼고 있는 스킨으로 그려지도록 수정 | build 516 | 2026-10-29
+patchnotes.json | v517 title | 은하 제국의 황혼 | build 517 | 2026-10-29
+patchnotes.json | v517 items[0] | 밸런스 표를 봇만으로 전 맵 재측정해 갱신 (패시브와 포탈 파괴 반영) | build 517 | 2026-10-29
