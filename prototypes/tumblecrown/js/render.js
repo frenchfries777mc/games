@@ -70,7 +70,7 @@ const HERO = {
   mamluk: { body: 0xb0302a, leg: 0xe8dcc0, arm: 0xb0302a, turban: 1, scim: 1, buckler: 1, belt: 1 },
   witch: { body: 0x4a2a6a, robe: 1, leg: 0x2a1a3a, arm: 0x4a2a6a, skinC: 0xb8d0a0, hat: 1, staff: 1, staffC: 0xc06aff },
   skeleton: { skel: 1 },
-  warden: { body: 0x7a7468, leg: 'dm', arm: 'mt', helm: 1, sword: 1, shield: 1, cape: 0x4a4636, belt: 1, wide: 1.16 },
+  warden: { body: 0x6b5b3e, leg: 'dm', arm: 'mt', helm: 1, helmC: 0x4a4a52, plume: 0xc8a030, sword: 1, shield: 1, shieldC: 0x6a5030, shS: 1.45, belt: 1, wide: 1.24 },
   assassin: { body: 0x24343c, leg: 0x161e24, arm: 0x24343c, hood: 0x1a2830, scim: 1, belt: 1 },
   crossbow: { body: 0x7a5a3a, leg: 0x3a3a44, arm: 0x7a5a3a, hood: 0x5a4a2e, bow: 1, quiver: 1, belt: 1 }
 };
@@ -128,6 +128,7 @@ function makeFigure(o) {
   if (o.antler) for (const sx of [-1, 1]) { const a = new THREE.Group(); a.position.set(sx * 0.3, 0.45, 0); head.add(a); a.rotation.z = -sx * 0.5; cyl(0.05, 0.07, 0.9, 4, M(0xcfc0a0), 0, 0.45, 0, a); for (let i = 0; i < 3; i++) { const t = cyl(0.04, 0.05, 0.4, 4, M(0xcfc0a0), sx * 0.15, 0.3 + i * 0.25, 0, a); t.rotation.z = -sx * 0.9; } }
   if (o.mitre) { const mt = cone(0.4, 1.2, 4, M(0xd8d4c8), 0, 0.75, 0, head); mt.rotation.y = Math.PI / 4; box(0.08, 1, 0.5, gold(), 0, 0.7, 0, head); }
   if (o.crown) { cyl(0.48, 0.5, 0.2, 8, gold(), 0, 0.7, 0, head); for (let i = 0; i < 6; i++) { const a = i / 6 * 6.283; cone(0.08, 0.4, 4, gold(), Math.cos(a) * 0.44, 0.95, Math.sin(a) * 0.44, head); } }
+  if (o.plume) box(0.14, 0.55, 0.8, M(o.plume), 0, 0.95, -0.05, head);
   if (o.horns) for (const sx of [-1, 1]) { const hn = cone(0.1, 0.7, 5, M(0x2a2228), sx * 0.45, 0.5, 0, head); hn.rotation.z = -sx * 0.8; }
   if (o.bark) for (let i = 0; i < 5; i++) { const b = cone(0.12, 0.9, 4, M(0x4a3a26), Math.cos(i * 1.3) * 0.5, 2.4 + (i % 2) * 0.3, Math.sin(i * 1.3) * 0.4 - 0.2, body); b.rotation.set(Math.sin(i) * 0.8, 0, Math.cos(i) * 0.8); }
   const armR = new THREE.Group(); armR.position.set(0.72, 2.15, 0); body.add(armR); cap(0.17, 0.7, am, 0, -0.45, 0, armR);
@@ -136,7 +137,7 @@ function makeFigure(o) {
   // 기사: 검고 두꺼운 대검 (넓은 날, 긴 손잡이, 날 가운데 홈)
   if (o.sword === 2) { const sw = new THREE.Group(); sw.position.set(0, -0.9, 0.1); armR.add(sw); const bk = M(0xf2f4f8, { m: 0.6, r: 0.3 }); box(0.42, 2.5, 0.22, bk, 0, 1.45, 0, sw); box(0.1, 2.2, 0.23, M(0xc8d0dc, { m: 0.8, r: 0.25 }), 0, 1.35, 0, sw); cone(0.26, 0.34, 4, bk, 0, 2.86, 0, sw).rotation.y = Math.PI / 4; box(0.85, 0.16, 0.2, M(0xe2e6ee, { m: 0.7, r: 0.35 }), 0, 0.15, 0, sw); box(0.11, 0.55, 0.11, leather(), 0, -0.2, 0, sw); box(0.18, 0.14, 0.18, M(0xe2e6ee, { m: 0.7, r: 0.35 }), 0, -0.52, 0, sw); sw.rotation.x = Math.PI / 2; }
   else if (o.sword) { const sw = new THREE.Group(); sw.position.set(0, -0.9, 0.1); armR.add(sw); box(0.12, 2, 0.04, M(0xe9edf5, { m: 0.9, r: 0.2 }), 0, 1.1, 0, sw); box(0.6, 0.1, 0.14, gold(), 0, 0.1, 0, sw); box(0.08, 0.35, 0.08, leather(), 0, -0.1, 0, sw); sw.rotation.x = Math.PI / 2; }
-  if (o.shield) { const shc = o.shieldC || 0x2c4f9e; const sh = new THREE.Group(); shG = sh; sh.position.set(-0.15, -0.7, 0.45); armL.add(sh); sh.rotation.x = 0.6; box(1.1, 1.4, 0.14, M(shc), 0, 0, 0, sh); const c = cone(0.78, 0.7, 4, M(shc), 0, -0.95, 0, sh); c.rotation.set(Math.PI, Math.PI / 4, 0); box(0.18, 1.2, 0.05, gold(), 0, -0.1, 0.09, sh); box(0.8, 0.18, 0.05, gold(), 0, 0.25, 0.09, sh); }
+  if (o.shield) { const shc = o.shieldC || 0x2c4f9e; const sh = new THREE.Group(); shG = sh; sh.position.set(-0.15, -0.7, 0.45); armL.add(sh); sh.rotation.x = 0.6; box(1.1, 1.4, 0.14, M(shc), 0, 0, 0, sh); const c = cone(0.78, 0.7, 4, M(shc), 0, -0.95, 0, sh); c.rotation.set(Math.PI, Math.PI / 4, 0); box(0.18, 1.2, 0.05, gold(), 0, -0.1, 0.09, sh); box(0.8, 0.18, 0.05, gold(), 0, 0.25, 0.09, sh); if (o.shS) sh.scale.setScalar(o.shS); }
   // 활: 왼손에 쥐고, 팔을 앞으로 뻗으면 위아래로 선 활이 조준 방향으로 휘어요 (시위는 몸 쪽)
   let bowS = null;
   if (o.bow) {
