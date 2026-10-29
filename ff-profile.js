@@ -739,8 +739,27 @@ function rrect(c,x,y,w,h,r){ c.beginPath(); c.moveTo(x+r,y); c.arcTo(x+w,y,x+w,y
 function glowOf(sh){ var p=String(sh||'').split(/,(?![^(]*\))/)[0]||'', m=/(?:-?[\d.]+px\s+){2}([\d.]+)px\s+(.+)$/.exec(p.replace(/\binset\b/,'').trim()) || /0\s+0\s+([\d.]+)px\s+(.+)$/.exec(p.trim()); return m?{blur:parseFloat(m[1]), color:m[2].trim()}:null; }
 function rainbow(c,x0,x1){ var g=c.createLinearGradient(x0,0,x1,0); ['#ff5f5f','#ffb35f','#ffe85f','#6bff7a','#5fd3ff','#9b7bff','#ff6fd8'].forEach(function(col,i,a){ g.addColorStop(i/(a.length-1),col); }); return g; }
 
+
+/* Stickseum stats on the card: the main character is drawn from the game's own persona code */
+var STKL={ko:{main:'대표 캐릭터',mast:'마스터리',plv:'플레이어 Lv.',wins:'승리',kills:'처치',ast:'어시스트',dmg:'피해량',games:'총 경기 수',rate:'승률',head:'Stickseum 통계',played:'플레이한 게임'},en:{main:'Main character',mast:'Mastery',plv:'Player Lv.',wins:'Wins',kills:'Kills',ast:'Assists',dmg:'Damage',games:'Matches',rate:'Win rate',head:'Stickseum stats',played:'Games played'}};
+function drawCharFig(c, ch, x, y, k, col){
+  var acc=STK.acc['skin_'+ch]||null, tint=acc&&acc.tint, HY=-30, HR=9, SY=HY+HR;
+  c.save(); c.translate(x,y); c.scale(k,k);
+  try{
+    if(ch==='dracula') drawDraculaCape(c,-1,2,SY,tint);
+    c.strokeStyle=col||'#3fe0c5'; c.lineWidth=5; c.lineCap='round'; c.lineJoin='round';
+    c.beginPath(); c.moveTo(0,SY); c.lineTo(0,0); c.stroke();
+    c.beginPath(); c.moveTo(-10,-5); c.lineTo(0,SY+3); c.lineTo(10,-5); c.stroke();
+    c.beginPath(); c.moveTo(-8,22); c.lineTo(0,0); c.lineTo(8,22); c.stroke();
+    c.fillStyle=col||'#3fe0c5'; c.beginPath(); c.arc(0,HY,HR,0,7); c.fill();
+    drawWeaponPersona(c, ch, 0, HY, HR, SY, tint);
+  }catch(e){}
+  c.restore();
+}
 async function draw(cv, d, o){
   var T=L[lang(o)], c=cv.getContext('2d'), W=cv.width=480, H=cv.height=640+Math.max(0,GAMES.length-3)*66, pr=d.profile||{}, st=pr.stats||{}, av=st.avatar||{};
+  var hasStk=!!(st.tp&&st.tp.length&&Array.isArray(st.tp[0])); if(hasStk) H=cv.height=840;
+  var SL=STKL[lang(o)]||STKL.en;
   var played={}; GAMES.forEach(function(g){ played[g.id]=d.played[g.id]||0; });
   if(!played.stickseum && ((+st.matches||0)>0 || (+st.xp||0)>0)) played.stickseum=-1;          // played before the shared record existed
   var all=CORE.every(function(g){ return played[g.id]; });
@@ -782,17 +801,34 @@ async function draw(cv, d, o){
     c.restore(); }
   if(bio){ c.save(); c.textAlign='center'; c.fillStyle='rgba(255,255,255,.85)'; c.font='italic 500 14px system-ui, sans-serif'; var bt='“'+bio+'”'; while(c.measureText(bt).width>HW-30&&bt.length>4) bt=bt.slice(0,-2)+'”'; c.shadowColor='rgba(0,0,0,.8)'; c.shadowBlur=4; c.fillText(bt,W/2,ny+(sub?44:24)); c.restore(); }
   if(all){ c.fillStyle='#ffd36b'; c.font='800 15px system-ui, sans-serif'; c.fillText('🏅 '+T.explorer,W/2,HY+HH+30); }
+  if(hasStk){
+    var T0=st.tp[0], sy0=all?HY+HH+50:HY+HH+34;
+    c.textAlign='center'; c.fillStyle='rgba(255,255,255,.6)'; c.font='700 13px system-ui, sans-serif'; c.fillText(SL.main,W/2,sy0);
+    c.fillStyle='rgba(0,0,0,.28)'; rrect(c,W/2-70,sy0+10,140,150,16); c.fill();
+    drawCharFig(c, T0[0], W/2, sy0+104, 2.1, av.color);
+    c.font='900 20px system-ui, sans-serif'; c.fillStyle='#fff'; c.fillText(String(T0[1]||T0[0]),W/2,sy0+186);
+    c.font='800 14px system-ui, sans-serif'; c.fillStyle=T0[3]||'#ffd36b'; c.fillText(SL.mast+' '+(T0[2]||'')+' Lv.'+(T0[4]||1),W/2,sy0+208);
+    if(st.lv){ c.fillStyle='rgba(255,255,255,.8)'; c.font='700 14px system-ui, sans-serif'; c.fillText(SL.plv+st.lv,W/2,sy0+230); }
+    var rate=(+st.matches>0)?Math.round((+st.wins||0)/st.matches*100)+'%':'-';
+    var TS=[[SL.wins,+st.wins||0],[SL.kills,+st.kills||0],[SL.ast,+st.assists||0],[SL.dmg,+st.damage||0],[SL.games,+st.matches||0],[SL.rate,rate]], ty0=sy0+252, tw=(W-120-16)/3;
+    c.fillStyle='rgba(255,255,255,.6)'; c.font='700 13px system-ui, sans-serif'; c.fillText(SL.head,W/2,ty0);
+    TS.forEach(function(t,i){ var tx=60+(i%3)*(tw+8), ty=ty0+10+Math.floor(i/3)*62; c.fillStyle='rgba(255,196,61,.12)'; c.fillRect(tx,ty,tw,54); c.strokeStyle='rgba(255,196,61,.4)'; c.strokeRect(tx+.5,ty+.5,tw-1,53);
+      c.textAlign='center'; c.fillStyle='rgba(255,255,255,.65)'; c.font='700 12px system-ui, sans-serif'; c.fillText(t[0],tx+tw/2,ty+19); c.fillStyle='#fff'; c.font='900 19px system-ui, sans-serif'; c.fillText(typeof t[1]==='number'?t[1].toLocaleString('en-US'):t[1],tx+tw/2,ty+43); });
+    var gl2=GAMES.filter(function(g){ return played[g.id]||(ach[g.id]&&ach[g.id][0]); }).map(function(g){ return g.icon; }).join('  ');
+    if(gl2){ c.fillStyle='rgba(255,255,255,.6)'; c.font='700 13px system-ui, sans-serif'; c.fillText(SL.played+'  '+gl2,W/2,ty0+10+2*62+22); }
+  } else {
   // games
-  c.fillStyle='rgba(255,255,255,.6)'; c.font='700 13px system-ui, sans-serif'; c.fillText(T.games,W/2,all?HY+HH+62:HY+HH+44);
-  var gy=all?HY+HH+74:HY+HH+58;
-  GAMES.forEach(function(g,i){ var y=gy+i*66, n=played[g.id], A=ach[g.id], on=n||A; c.fillStyle=on?'rgba(255,196,61,.14)':'rgba(255,255,255,.04)'; c.fillRect(60,y,W-120,58);
-    c.strokeStyle=on?'rgba(255,196,61,.5)':'rgba(255,255,255,.1)'; c.strokeRect(60.5,y+.5,W-121,57);
-    c.textAlign='left'; c.font='22px serif'; c.fillStyle='#fff'; c.fillText(g.icon,76,y+37); c.font='800 17px system-ui, sans-serif'; c.fillStyle=on?'#fff':'rgba(255,255,255,.4)'; c.fillText(g.name+(CD.fav===g.id?'  ⭐':''),110,y+25);
-    c.font='700 12px system-ui, sans-serif'; c.fillStyle=on?'rgba(255,255,255,.7)':'rgba(255,255,255,.35)'; c.fillText((n>0?fmt(T.plays,n):(n||A?T.done:T.none)),110,y+45);
-    if(A){ var bw=110, bx=W-76-bw, frac=A[1]?A[0]/A[1]:0; c.textAlign='right'; c.font='800 13px system-ui, sans-serif'; c.fillStyle='#ffd36b'; c.fillText('🏆 '+T.ach+' '+A[0]+'/'+A[1],W-76,y+25);
-      c.fillStyle='rgba(255,255,255,.12)'; rrect(c,bx,y+36,bw,8,4); c.fill(); if(frac>0){ c.fillStyle='#ffc43d'; rrect(c,bx,y+36,Math.max(8,bw*frac),8,4); c.fill(); } }
-    else { c.textAlign='right'; c.font='700 12px system-ui, sans-serif'; c.fillStyle='rgba(255,255,255,.3)'; c.fillText('🏆 '+T.ach+' –',W-76,y+35); }
-    c.textAlign='center'; });
+    c.fillStyle='rgba(255,255,255,.6)'; c.font='700 13px system-ui, sans-serif'; c.fillText(T.games,W/2,all?HY+HH+62:HY+HH+44);
+    var gy=all?HY+HH+74:HY+HH+58;
+    GAMES.forEach(function(g,i){ var y=gy+i*66, n=played[g.id], A=ach[g.id], on=n||A; c.fillStyle=on?'rgba(255,196,61,.14)':'rgba(255,255,255,.04)'; c.fillRect(60,y,W-120,58);
+      c.strokeStyle=on?'rgba(255,196,61,.5)':'rgba(255,255,255,.1)'; c.strokeRect(60.5,y+.5,W-121,57);
+      c.textAlign='left'; c.font='22px serif'; c.fillStyle='#fff'; c.fillText(g.icon,76,y+37); c.font='800 17px system-ui, sans-serif'; c.fillStyle=on?'#fff':'rgba(255,255,255,.4)'; c.fillText(g.name+(CD.fav===g.id?'  ⭐':''),110,y+25);
+      c.font='700 12px system-ui, sans-serif'; c.fillStyle=on?'rgba(255,255,255,.7)':'rgba(255,255,255,.35)'; c.fillText((n>0?fmt(T.plays,n):(n||A?T.done:T.none)),110,y+45);
+      if(A){ var bw=110, bx=W-76-bw, frac=A[1]?A[0]/A[1]:0; c.textAlign='right'; c.font='800 13px system-ui, sans-serif'; c.fillStyle='#ffd36b'; c.fillText('🏆 '+T.ach+' '+A[0]+'/'+A[1],W-76,y+25);
+        c.fillStyle='rgba(255,255,255,.12)'; rrect(c,bx,y+36,bw,8,4); c.fill(); if(frac>0){ c.fillStyle='#ffc43d'; rrect(c,bx,y+36,Math.max(8,bw*frac),8,4); c.fill(); } }
+      else { c.textAlign='right'; c.font='700 12px system-ui, sans-serif'; c.fillStyle='rgba(255,255,255,.3)'; c.fillText('🏆 '+T.ach+' –',W-76,y+35); }
+      c.textAlign='center'; });
+  }
   c.fillStyle='rgba(255,255,255,.35)'; c.font='600 12px system-ui, sans-serif'; c.fillText(new Date().toISOString().slice(0,10),W/2,H-16);
 }
 
