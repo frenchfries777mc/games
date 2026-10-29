@@ -378,3 +378,4 @@ patchnotes.json | v506 items[0] | 5초 동안 피해를 안 받고 가만히 서
 patchnotes.json | v507 items[0] | 궁극기 쿨타임을 다시 20초로 되돌리고 적중 시 줄어드는 효과 삭제 | build 507 | 2026-10-29
 patchnotes.json | v508 items[0] | 로빈 후드 스킬을 갈고리 화살로 교체 (발판 아랫면에 박히면 끌려가고, 상대에게 박히면 끌려가 밀치고 기절·피해, 빗나가면 쿨타임 1.5초) | build 508 | 2026-10-29
 patchnotes.json | v509 items[0] | 봇도 갈고리 화살을 사용 | build 509 | 2026-10-29
+patchnotes.json | v510 items[0] | 갈고리 화살이 빗나가도 쿨타임이 똑같이 적용 | build 510 | 2026-10-29
