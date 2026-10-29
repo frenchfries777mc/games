@@ -58,9 +58,8 @@ function bakeWorld(W) {
     const wh = h > 150 ? h - 80 : h > 100 ? 44 : 30, step = rm.theme === 'server' ? 160 : 96;
     for (let a = X + 22; a < X + w - 50; a += step) {
       if (rm.theme === 'server') { R(x, '#10182a', a, Y + 14, 60, wh); for (let k = 0; k < 6; k++) R(x, '#2a3b66', a + 4 + k * 9, Y + 18 + (k * 7) % 16, 6, 6); continue; }
-      const g2 = x.createLinearGradient(0, Y + 14, 0, Y + 14 + wh); const sk = MAPS[W.id].sky; g2.addColorStop(0, sk[0]); g2.addColorStop(1, sk[1]); x.fillStyle = g2; x.fillRect(a, Y + 14, 56, wh);
-      x.fillStyle = 'rgba(40,60,100,.55)'; for (let k = 0; k < 5; k++) { const bh = 8 + ((a + k * 37) % 17); x.fillRect(a + 2 + k * 11, Y + 14 + wh - bh, 9, bh); }
-      R(x, 'rgba(255,255,255,.35)', a + 4, Y + 16, 6, wh - 6); R(x, T.trim, a - 2, Y + 12, 60, 2); R(x, T.trim, a - 2, Y + 14 + wh, 60, 3); R(x, T.trim, a + 27, Y + 14, 2, wh);
+      drawView(x, W, a, Y + 14, 56, wh, rm);
+      R(x, T.trim, a - 2, Y + 12, 60, 2); R(x, T.trim, a - 2, Y + 14 + wh, 60, 3); R(x, T.trim, a + 27, Y + 14, 2, wh);
     }
     // 천장 조명
     for (let a = X + 40; a < X + w - 20; a += 120) { R(x, '#f4f0e0', a, Y, 36, 4); R(x, '#fffbe8', a + 4, Y + 4, 28, 2); }
@@ -218,4 +217,53 @@ function drawShade(x, W, cx, cy, vw) {
     for (let a = X + 58; a < X + w - 20; a += 120) { if (a < cx - 80 || a > cx + vw + 80) continue; const g = x.createRadialGradient(a, Y + 4, 2, a, Y + 4, 70); g.addColorStop(0, 'rgba(255,248,210,.28)'); g.addColorStop(1, 'rgba(255,248,210,0)'); x.fillStyle = g; x.fillRect(a - 70, Y, 140, Math.min(h, 100)); } }
   x.restore();
   const g = x.createRadialGradient(vw / 2, VH / 2, VH * .45, vw / 2, VH / 2, VH * 1.05); g.addColorStop(0, 'rgba(0,0,20,0)'); g.addColorStop(1, 'rgba(0,0,20,.35)'); x.fillStyle = g; x.fillRect(0, 0, vw + 2, VH + 2);
+}
+
+/* ---------- 창밖 풍경: 맵마다 다르고, 창이 이어져서 하나의 파노라마처럼 보여요 ---------- */
+const hs = n => { n = Math.imul(n | 0, 2654435761) >>> 0; n = Math.imul(n ^ (n >>> 15), 2246822519) >>> 0; return ((n ^ (n >>> 13)) >>> 8) / 16777216; };
+function drawView(x, W, a, y, w, h, rm) {
+  const sk = MAPS[W.id].sky, low = rm.y0 / W.h, hy = y + h * (1.15 - 0.75 * low);     // 아래층일수록 땅이 보여요
+  x.save(); x.beginPath(); x.rect(a, y, w, h); x.clip();
+  const g = x.createLinearGradient(0, y, 0, y + h); g.addColorStop(0, sk[0]); g.addColorStop(1, sk[1]); x.fillStyle = g; x.fillRect(a, y, w, h);
+  const id = W.id, X0 = a - 40, X1 = a + w + 40;
+  // 구름
+  for (let k = Math.floor(X0 / 90); k <= X1 / 90; k++) if (hs(k * 7 + 1) > .45) R(x, 'rgba(255,255,255,.55)', k * 90 + hs(k) * 40, y + 3 + hs(k * 3) * h * .35, 26 + hs(k * 5) * 26, 5);
+  const cell = (step, seed, fn) => { for (let k = Math.floor(X0 / step) - 1; k <= X1 / step + 1; k++) fn(k * step + hs(k * 3 + seed) * step * .4, k, hs(k * 11 + seed)); };
+  if (id === 'office') {
+    cell(26, 5, (px, k, r) => { const bh = 14 + r * 28; R(x, '#8fa4c4', px, hy - bh, 20, bh + 40); });
+    cell(34, 9, (px, k, r) => { const bh = 24 + r * 46, bw = 18 + hs(k) * 14; R(x, '#5f7aa8', px, hy - bh, bw, bh + 40); R(x, '#4a6490', px, hy - bh, bw, 2); for (let q = 0; q < bh; q += 6) for (let c = 0; c < bw - 3; c += 6) if (hs(k * 97 + q * 13 + c) > .45) R(x, 'rgba(255,236,170,.7)', px + 2 + c, hy - bh + 3 + q, 3, 3); if (r > .7) { R(x, '#6a7a96', px + bw / 2, hy - bh - 9, 1, 9); R(x, '#ff5a4a', px + bw / 2 - 1, hy - bh - 10, 3, 2); } if (r < .2) { R(x, '#223', px + 2, hy - bh - 7, bw - 4, 7); R(x, '#ffcf6a', px + 4, hy - bh - 5, bw - 8, 3); } });
+    cell(110, 3, (px, k, r) => { if (r > .5) { R(x, '#223', px, y + 8 + r * 20, 2, 1); R(x, '#223', px + 3, y + 7 + r * 20, 2, 1); } });
+    R(x, '#38445c', X0, hy + 14, X1 - X0, 40); cell(48, 2, (px, k, r) => R(x, ['#e8483b', '#f2b632', '#fff', '#3b8de8'][k & 3], px, hy + 18, 9, 4));
+  } else if (id === 'airport') {
+    cell(40, 4, (px, k, r) => { if (r > .6) { R(x, '#9aa8c0', px, hy - 22 - r * 8, 3, 22 + r * 8); R(x, '#6a7a98', px - 5, hy - 30 - r * 8, 14, 8); R(x, '#aee4ff', px - 4, hy - 28 - r * 8, 12, 4); } else { R(x, '#8a96ae', px, hy - 10 - r * 8, 26, 12 + r * 8); R(x, '#6a7a98', px, hy - 10 - r * 8, 26, 2); } });
+    R(x, '#59606c', X0, hy, X1 - X0, 50); for (let px = Math.floor(X0 / 16) * 16; px < X1; px += 16) R(x, '#e8e8f0', px, hy + 14, 9, 2);
+    cell(140, 8, (px, k, r) => { const py = hy - 4 + (k % 2) * 12; R(x, '#fff', px, py - 5, 40, 6); R(x, '#fff', px + 34, py - 11, 6, 7); R(x, '#c63a3a', px + 36, py - 11, 4, 3); R(x, '#4a78c8', px + 8, py - 3, 24, 1); R(x, '#cfd6e2', px + 14, py + 1, 14, 3); for (let q = 0; q < 6; q++) R(x, '#6a98d8', px + 8 + q * 4, py - 4, 2, 1); });
+  } else if (id === 'subway') {
+    cell(60, 6, (px, k, r) => { const bh = 36 + r * 26; R(x, ['#b6785a', '#8a6a7a', '#7a8aa0', '#c0a070'][k & 3], px, hy - bh, 54, bh + 40); for (let q = 4; q < bh - 8; q += 9) for (let c = 4; c < 48; c += 11) R(x, hs(k * 31 + q + c) > .4 ? '#ffe9a0' : '#3a4a68', px + c, hy - bh + q, 6, 5); R(x, ['#e8483b', '#2a9a6a', '#f2b632'][k % 3], px + 4, hy - 8, 46, 8); });
+    R(x, '#444c58', X0, hy + 8, X1 - X0, 40); R(x, '#8a929e', X0, hy + 6, X1 - X0, 3);
+    cell(70, 2, (px, k, r) => { if (k % 2) { R(x, '#e8c040', px, hy + 14, 34, 9); R(x, '#fff', px + 3, hy + 15, 6, 4); R(x, '#fff', px + 12, hy + 15, 6, 4); R(x, '#fff', px + 21, hy + 15, 6, 4); } else { R(x, '#3b8de8', px, hy + 17, 20, 6); R(x, '#aee4ff', px + 12, hy + 15, 6, 3); } R(x, '#111', px + 4, hy + 22, 4, 2); R(x, '#111', px + 14, hy + 22, 4, 2); });
+    cell(50, 12, (px, k, r) => { R(x, '#5a6270', px, hy - 20, 2, 28); R(x, '#ffe9a0', px - 3, hy - 22, 8, 3); });
+  } else if (id === 'mall') {
+    cell(70, 7, (px, k, r) => { const bh = 30 + r * 36; R(x, ['#e8a0b8', '#c8a0e0', '#f0c8a0'][k % 3], px, hy - bh, 62, bh + 40); R(x, 'rgba(255,255,255,.4)', px, hy - bh, 62, 3); for (let q = 6; q < bh - 6; q += 10) for (let c = 5; c < 56; c += 12) R(x, '#9ad0f0', px + c, hy - bh + q, 7, 6); });
+    cell(36, 5, (px, k, r) => { R(x, '#6a4a2a', px + 4, hy - 8, 3, 12); x.fillStyle = r > .5 ? '#3a9a5a' : '#58b86e'; x.beginPath(); x.arc(px + 5.5, hy - 12, 8, 0, 7); x.fill(); });
+    R(x, '#b49aa6', X0, hy + 6, X1 - X0, 40); cell(30, 9, (px, k, r) => { R(x, ['#ff6a8a', '#ffd36b', '#6ad0ff', '#9ae06a'][k & 3], px, hy - 24 + Math.sin(k) * 2, 6, 5); R(x, '#fff8', px, hy - 30, 1, 30); });
+  } else if (id === 'hospital') {
+    R(x, '#8ec88a', X0, hy - 6, X1 - X0, 60); cell(80, 3, (px, k, r) => { x.fillStyle = r > .5 ? '#7ab87a' : '#9ad49a'; x.beginPath(); x.ellipse(px + 30, hy - 4, 44, 14 + r * 12, 0, Math.PI, 0); x.fill(); });
+    cell(150, 8, (px, k, r) => { if (k % 3 === 0) { R(x, '#f4f8fb', px, hy - 46, 48, 52); for (let q = 6; q < 40; q += 10) for (let c = 5; c < 42; c += 11) R(x, '#8ac0e0', px + c, hy - 42 + q, 6, 6); R(x, '#e8483b', px + 20, hy - 54, 8, 3); R(x, '#e8483b', px + 22, hy - 56, 4, 7); } });
+    cell(30, 5, (px, k, r) => { R(x, '#6a4a2a', px + 5, hy - 6, 3, 14); x.fillStyle = ['#2f8a4a', '#4aa85a', '#d89a3a'][k % 3]; x.beginPath(); x.arc(px + 6.5, hy - 10, 9 + r * 3, 0, 7); x.fill(); });
+    R(x, '#7ac0e8', X0 + 20, hy + 12, 50, 12); R(x, '#cfd6c8', X0, hy + 26, X1 - X0, 20);
+  } else if (id === 'school') {
+    R(x, '#78b858', X0, hy, X1 - X0, 60); R(x, 'rgba(255,255,255,.25)', X0, hy + 22, X1 - X0, 2);
+    cell(160, 4, (px, k, r) => { R(x, '#a8503a', px, hy - 36, 70, 40); R(x, '#8a3e2e', px - 3, hy - 40, 76, 5); for (let q = 6; q < 30; q += 12) for (let c = 6; c < 64; c += 14) R(x, '#bfe2f4', px + c, hy - 34 + q, 8, 7); R(x, '#6a3a22', px + 30, hy - 14, 10, 18); });
+    cell(60, 6, (px, k, r) => { if (k % 3 === 1) { R(x, '#fff', px, hy + 6, 2, 12); R(x, '#fff', px + 22, hy + 6, 2, 12); R(x, '#fff', px, hy + 6, 24, 2); R(x, 'rgba(255,255,255,.35)', px + 2, hy + 8, 20, 10); } else if (k % 3 === 2) { R(x, '#6a4a2a', px + 5, hy - 8, 3, 14); x.fillStyle = '#3a9a4a'; x.beginPath(); x.arc(px + 6.5, hy - 12, 9, 0, 7); x.fill(); } });
+    cell(220, 2, (px, k, r) => { R(x, '#ccc', px, hy - 44, 2, 48); R(x, '#e8483b', px + 2, hy - 44, 12, 7); R(x, '#fff', px + 2, hy - 41, 12, 2); });
+  } else {    // factory
+    cell(46, 5, (px, k, r) => { R(x, '#6a6460', px, hy - 14 - r * 10, 40, 30 + r * 10); for (let c = 0; c < 40; c += 10) { R(x, '#6a6460', px + c, hy - 20 - r * 10, 8, 6); } });
+    cell(90, 8, (px, k, r) => { const bh = 34 + r * 22; R(x, '#4a423c', px, hy - bh, 9, bh + 20); R(x, '#d04a2a', px, hy - bh, 9, 3); R(x, '#d04a2a', px, hy - bh + 8, 9, 3); for (let q = 0; q < 4; q++) { x.fillStyle = 'rgba(190,182,170,' + (.55 - q * .12) + ')'; x.beginPath(); x.arc(px + 4 + q * 5 + Math.sin(k) * 3, hy - bh - 4 - q * 8, 5 + q * 2.5, 0, 7); x.fill(); } });
+    cell(130, 11, (px, k, r) => { if (k % 2) { R(x, '#7a8a96', px, hy - 22, 26, 28); x.fillStyle = '#7a8a96'; x.beginPath(); x.ellipse(px + 13, hy - 22, 13, 6, 0, Math.PI, 0); x.fill(); R(x, 'rgba(255,255,255,.3)', px + 4, hy - 20, 3, 24); } });
+    R(x, '#3a3632', X0, hy + 10, X1 - X0, 40); R(x, '#d8a02a', X0, hy + 10, X1 - X0, 2); cell(56, 4, (px, k, r) => R(x, '#8a8c92', px, hy + 5, 40, 3));
+  }
+  // 유리 반사와 모서리 어둡힘
+  R(x, 'rgba(255,255,255,.12)', a, y, w, 5); const gg = x.createLinearGradient(a, y, a + w, y + h); gg.addColorStop(0, 'rgba(255,255,255,.22)'); gg.addColorStop(.35, 'rgba(255,255,255,0)'); x.fillStyle = gg; x.fillRect(a, y, w, h);
+  x.restore();
 }

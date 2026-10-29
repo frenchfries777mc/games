@@ -19,8 +19,6 @@ function paintWho() {
   const w = $('who'); w.innerHTML = '';
   const s = document.createElement('span'); s.textContent = loggedIn() ? myName() : '로그인 안 함'; w.appendChild(s);
   if (!loggedIn() && window.FFAuth) { const b = document.createElement('button'); b.textContent = '로그인'; b.onclick = () => { try { FFAuth.openLogin(); } catch (e) { } }; w.appendChild(b); }
-  const sl = document.createElement('span'); sl.setAttribute('data-ff-account', ''); sl.style.marginLeft = '10px'; w.appendChild(sl);
-  try { if (window.FFAuth && FFAuth.refresh) FFAuth.refresh(); } catch (e) { }
 }
 let ffMarked = '';
 function ffProfile() {
