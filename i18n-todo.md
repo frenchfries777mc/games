@@ -353,3 +353,10 @@ patchnotes.json | v518 items[0] | 기사 패시브 숨 고르기: 돌진이 시�
 patchnotes.json | v518 items[1] | 금고 약탈: 봇이 금고만 지키지 않고, 적이 우리 금고 근처에 있을 때만 지키도록 변경 | build 518 | 2026-10-29
 patchnotes.json | v518 items[2] | 휴식 회복 변경: 5초 가만히 있거나 10초 동안 피해를 안 받으면 0.8초마다 5씩 회복 (피해를 받으면 멈춰요) | build 518 | 2026-10-29
 patchnotes.json | v519 items[0] | 휴식 회복을 이전 방식으로 되돌리고, 10초 동안 피해를 안 받으면 가만히 서 있을 때와 같은 연속 회복이 피해를 받을 때까지 이어지도록 수정 | build 519 | 2026-10-29
+patchnotes.json | v520 items[0] | 로빈 후드 활 데미지 30 → 35 | build 520 | 2026-10-29
+patchnotes.json | v520 items[1] | 폭발광 수류탄 데미지 52 → 56 | build 520 | 2026-10-29
+patchnotes.json | v520 items[2] | 보안관 샷건 탄환 데미지 13 → 15 | build 520 | 2026-10-29
+patchnotes.json | v520 items[3] | 사냥꾼 부메랑 데미지 20 → 24 | build 520 | 2026-10-29
+patchnotes.json | v520 items[4] | 중화기병 바주카포 데미지 68 → 60 | build 520 | 2026-10-29
+patchnotes.json | v520 items[5] | 복서 글러브 데미지 28 → 25 | build 520 | 2026-10-29
+patchnotes.json | v520 items[6] | 마법사 파이어볼 데미지 15 → 14 | build 520 | 2026-10-29
