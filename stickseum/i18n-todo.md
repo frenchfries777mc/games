@@ -397,3 +397,5 @@ Stickseum-v0.9.html | MODES.vault.desc | 금고 체력은 3000 -> 2500 (설명 �
 patchnotes.json | v516 items[0] | 프로필 카드의 대표 캐릭터가 끼고 있는 스킨으로 그려지도록 수정 | build 516 | 2026-10-29
 patchnotes.json | v517 title | 은하 제국의 황혼 | build 517 | 2026-10-29
 patchnotes.json | v517 items[0] | 밸런스 표를 봇만으로 전 맵 재측정해 갱신 (패시브와 포탈 파괴 반영) | build 517 | 2026-10-29
+patchnotes.json | v521 title | 은하 제국의 황혼 | build 521 | 2026-10-29
+patchnotes.json | v521 items[0] | 밸런스 표를 봇만으로 전 맵 재측정해 갱신 (b520 수치 조정 반영) | build 521 | 2026-10-29
