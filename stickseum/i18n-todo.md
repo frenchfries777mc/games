@@ -363,3 +363,8 @@ patchnotes.json | v499 items[0] | 궁극기 쿨타임 모두 30초로 통일, �
 patchnotes.json | v499 items[1] | 머리 위 궁극기 쿨타임 점 삭제 | build 499 | 2026-10-29
 patchnotes.json | v499 items[2] | 피사로 공격력 1단계 25 → 22, 단계별 증가 +6 → +7, +7, +8 (22→29→36→44) | build 499 | 2026-10-29
 Stickseum-v0.9.html | ULTS.pizarro.desc | 공격력 22→29→36→44 (숫자만 바뀜) | build 499 | 2026-10-29
+patchnotes.json | v500 items[0] | 프로필 카드 플레이어 레벨을 아바타 아래에 크게 표시 | build 500 | 2026-10-29
+patchnotes.json | v500 items[1] | 프로필 카드 대표 캐릭터에 입은 스킨 반영 | build 500 | 2026-10-29
+patchnotes.json | v500 items[2] | 프로필 카드에 캐릭터 레벨, 마스터리 로고·포인트·진행 막대 표시 | build 500 | 2026-10-29
+patchnotes.json | v500 items[3] | 프로필 카드의 플레이한 게임 줄 삭제 | build 500 | 2026-10-29
+ff-profile.js | STKL.ko clv/mpt/pts/next/top | 캐릭터 Lv. / 마스터리 포인트 / 점 / 다음 계급까지 / 최고 계급 (en 추가됨) | build 500 | 2026-10-29
