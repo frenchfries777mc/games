@@ -340,3 +340,5 @@ patchnotes.json | v490 items[4] | 클랜 이름·태그·소개·공지는 확�
 patchnotes.json | v490 items[5] | 이전 버전은 다운로드만 | build 490 | 2026-10-29
 patchnotes.json | v491 title | 은하 제국의 황혼 | build 491 | 2026-10-29
 patchnotes.json | v491 items[0] | 무기가 계속 바뀌는 모드(무기 릴레이·무기 룰렛)에서 받은 모든 캐릭터에 마스터리 포인트 적립 | build 491 | 2026-10-29
+patchnotes.json | v492 title | 은하 제국의 황혼 | build 492 | 2026-10-29
+patchnotes.json | v492 items[0] | 순위 목록(Tab)에 크레온 근위병이 플레이어로 나오던 문제 수정 | build 492 | 2026-10-29
