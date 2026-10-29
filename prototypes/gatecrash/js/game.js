@@ -6,6 +6,12 @@
 function makeWorld(mapId) {
   const m = MAPS[mapId].make();
   const W = { id: mapId, w: m.w, h: m.h, g: m.g, objs: m.objs, spawns: m.spawns, starts: m.starts, rooms: m.rooms, finish: m.finish, pw: m.w * TS, ph: m.h * TS };
+  // 무기 자리가 가구 속이면 가까운 빈 바닥으로 옮겨요
+  for (const sp of W.spawns) {
+    const row = Math.floor(sp.y / TS), free = tx => tx > 0 && tx < W.w - 1 && !isSolid(tileAt(W, tx, row)) && !isSolid(tileAt(W, tx, row - 1)) && canStand(tileAt(W, tx, row + 1)) && tileAt(W, tx, row + 1) !== 'I';
+    const tx0 = Math.floor(sp.x / TS);
+    for (let d = 0; d < 14; d++) { const hit = [tx0 - d, tx0 + d].find(free); if (hit !== undefined) { sp.x = hit * TS + TS / 2; break; } }
+  }
   buildNav(W);
   return W;
 }
