@@ -5472,7 +5472,7 @@ function shuffle(arr){ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.
 /* ===== the version of this file =====
    Different BUILDS of one version meet and play together (room names online-v<ver>-<mode>-<map>-<slot>); different VERSIONS (the 0.x part) never do - the host refuses them (verNo) and the dispatcher answers busy.
    The build is only sent along with the join message and the lobby (for information); the corner of the screen shows it. */
-const GAME_BUILD='build 2026-10-18-v502';
+const GAME_BUILD='build 2026-10-18-v503';
 const GAME_VERSION='0.9', GAME_VERSION_NAME='은하 제국의 황혼';   // 게임 버전 이름: versions.json의 title과 같게 (빌드마다 바꾸지 않음)
 /* version (the 0.x part) vs build: different BUILDS of one version meet and play together, different VERSIONS never do (rooms, quick match, ranked, friend invites, dispatcher).
    Builds before 470 do not send a version, so it is read from the build number (0.9 started at build 458). */
@@ -12219,11 +12219,10 @@ function spaceTick(dt, t){
   }
   if(droneBombs.length) droneBombTick(dt, t);
 }
-function disguiseSeen(p){       // true = the viewer takes a disguised 티오니스 for the one he copied: everyone but his own allies, and the copied player's team (not the copied player himself) cannot tell either (owner 10-29)
-  const me=players[myId]; if(!p.dgn || p.id===myId) return false; if(!me) return true;
-  if(p.dgv && me.id===p.dgv) return false;
-  if(p.dgt!==null && p.dgt!==undefined && me.team===p.dgt) return true;
-  return !isAlly(me,p);
+function disguiseSeen(p){       // true = the viewer sees a disguised 티오니스 under the copied name / clan / team dot: everybody (his own allies too) except the copied player himself and Tionis; the scoreboard and the chat keep the real name (owner 10-29)
+  const me=players[myId]; if(!p.dgn || p.id===myId) return false;
+  if(me && p.dgv && me.id===p.dgv) return false;
+  return true;
 }
 function clanNameFor(p){ const me=players[myId], hid=disguiseSeen(p), c=hid?p.dgc:p.clan; return (c?'['+c+'] ':'')+nameShownFor(p); }       // a disguised 티오니스 wears the clan tag of the one he copied, too
 function nameShownFor(p){ return disguiseSeen(p) ? p.dgn : p.name; }
