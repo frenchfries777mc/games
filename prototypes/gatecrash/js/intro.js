@@ -4,22 +4,31 @@
 (function () {
   const cv = document.getElementById('intro'); if (!cv) return;
   const x = cv.getContext('2d'), DUR = 6.0, HIT = 2.4, FAKE = { id: 'airport' };
-  let t0 = 0, done = false, snd = null;
+  let t0 = 0, done = false, snd = null, started = false, hold = false;
+  const logo = new Image(); logo.src = 'claude.png';
   const cols = ['#e8483b', '#3b8de8', '#3fbf5a', '#f2b632'];
   const R = [0, 1, 2, 3].map(i => ({ id: 'i' + i, slot: i, col: cols[i], x: 0, y: 0, vx: 0, face: 1, ground: true, anim: 0, inv: 0, stun: 0, flash: 0, wep: null, swing: 0, aim: 0, name: '', hp: 100 }));
   const OBST = [];     // 지나가는 가구
   for (let i = 0; i < 14; i++) OBST.push({ x: 260 + i * 170 + (i * 37) % 60, t: ['crate', 'desk', 'cart', 'barrier'][i % 4], w: 2 + (i % 2), h: 1 + (i % 3 === 0 ? 1 : 0) });
   const fxs = [];
+  // 다른 게임과 같은 방식: 소리가 바로 나오면 그대로 시작하고, 브라우저가 소리를 막으면 인트로를 멈춰 두었다가 화면을 누르면 시작해요
+  function begin() { if (started) return; started = true; t0 = performance.now(); hold = false; }
   function sound() {
-    try { snd = new Audio('intro.mp3?v=' + BUILD); snd.preload = 'auto'; snd.play().catch(() => { }); } catch (e) { }
+    try {
+      snd = new Audio('intro.mp3?v=' + BUILD); snd.preload = 'auto'; const p = snd.play();
+      const blocked = e => {
+        if (!(e && e.name === 'NotAllowedError')) { begin(); return; }
+        hold = true; const evs = ['pointerdown', 'keydown', 'touchend', 'click'];
+        const go = () => { evs.forEach(ev => removeEventListener(ev, go, true)); begin(); try { snd.currentTime = 0; snd.play().catch(() => { }); } catch (e2) { } };
+        evs.forEach(ev => addEventListener(ev, go, true));
+      };
+      if (p && p.then) p.then(begin, blocked); else begin();
+    } catch (e) { begin(); }
   }
-  // 소리는 브라우저가 첫 화면 터치/키 입력 뒤에야 허용해요: 그때 곡을 처음부터 다시 맞춰 틀어요
-  function unlock() { if (done || !snd) return; const el = (performance.now() - t0) / 1000; if (snd.paused) { try { snd.currentTime = Math.min(el, 5); snd.play().catch(() => { }); } catch (e) { } } }
-  addEventListener('pointerdown', unlock); addEventListener('keydown', unlock);
   function ez(k) { k = Math.max(0, Math.min(1, k)); return k * k * (3 - 2 * k); }
   function frame(now) {
-    if (done) return; if (!t0) { t0 = now; sound(); }
-    const t = (now - t0) / 1000, dpr = Math.min(2, devicePixelRatio || 1), w = Math.round(innerWidth * dpr), h = Math.round(innerHeight * dpr);
+    if (done) return;
+    const t = started ? (performance.now() - t0) / 1000 : 0, dpr = Math.min(2, devicePixelRatio || 1), w = Math.round(innerWidth * dpr), h = Math.round(innerHeight * dpr);
     if (cv.width !== w || cv.height !== h) { cv.width = w; cv.height = h; }
     const sc = h / VH, vw = w / sc, camx = t * 150 + (t > HIT ? 0 : 0), floorY = VH - 56;
     x.setTransform(sc, 0, 0, sc, 0, 0); x.imageSmoothingEnabled = false;
@@ -53,17 +62,21 @@
     x.fillStyle = 'rgba(255,255,255,.35)'; for (let i = 0; i < 18; i++) { const sy = (i * 47) % VH, sx = ((i * 131 - t * 900) % (vw + 200) + vw + 200) % (vw + 200) - 100; if (sy < floorY) x.fillRect(sx, sy, 40 + (i % 3) * 20, 1); }
     // 글자 (화면 좌표)
     x.setTransform(1, 0, 0, 1, 0, 0); x.textAlign = 'center'; x.textBaseline = 'alphabetic';
-    const u = Math.min(1, w / 1280 + .35), big = Math.round(Math.min(w * .13, h * .24));
-    if (t < HIT - .2) { const a = ez(t / .6) * (1 - ez((t - (HIT - .6)) / .4)); x.globalAlpha = Math.max(0, a); x.fillStyle = '#cfe0ff'; x.font = '700 ' + Math.round(big * .22) + 'px Galmuri, sans-serif'; x.fillText('Frenchfries777 presents', w / 2, h * .42); x.globalAlpha = 1; }
-    if (t >= HIT) {
-      const k = Math.min(1, (t - HIT) / .35), sl = 1 + (1 - ez(k)) * .9, a = Math.min(1, (t - HIT) / .15);
-      x.save(); x.translate(w / 2, h * .4); x.scale(sl, sl); x.globalAlpha = a; x.font = '700 ' + big + 'px Galmuri, monospace';
-      x.fillStyle = '#2a1408'; x.fillText('GATECRASH', 0, big * .12); x.fillStyle = '#8a4310'; x.fillText('GATECRASH', 0, big * .06); x.fillStyle = '#ffcf7a'; x.fillText('GATECRASH', 0, 0); x.restore();
-      if (t > HIT + .6) { x.globalAlpha = ez((t - HIT - .6) / .5); x.fillStyle = '#fff'; x.font = '700 ' + Math.round(big * .2) + 'px Galmuri, sans-serif'; x.fillText('건물과 공항을 달려 먼저 도착해요', w / 2, h * .4 + big * .5); x.globalAlpha = 1; }
-    }
-    const fade = t > DUR - .6 ? ez((t - (DUR - .6)) / .6) : 0, fi = ez(1 - t / .5);
+    const sa = k => { k = Math.max(0, Math.min(1, k)); return k < .33 ? k / .33 : k < .66 ? 1 : 1 - (k - .66) / .34; };      // 다른 게임 인트로와 같은 나타남/사라짐
+    const sm = Math.round(Math.max(16, Math.min(26, w * .032 / dpr)) * dpr), bgf = Math.round(Math.max(40, Math.min(100, w * .09 / dpr)) * dpr);
+    const scene = (k, small, big, withLogo) => {
+      x.globalAlpha = sa(k); x.shadowColor = 'rgba(0,0,0,.8)'; x.shadowBlur = 24 * dpr;
+      x.font = '600 ' + sm + 'px system-ui, sans-serif'; x.fillStyle = '#cfe0f4'; try { x.letterSpacing = (sm * .2) + 'px'; } catch (e) { } x.fillText(small, w / 2, h * .34 + sm); try { x.letterSpacing = '0px'; } catch (e) { }
+      x.font = '900 ' + bgf + 'px system-ui, sans-serif'; x.fillStyle = '#fff8ea';
+      if (withLogo && logo.complete && logo.naturalWidth) { const lh = bgf * 1.15, lw = lh * logo.naturalWidth / logo.naturalHeight, tw = x.measureText(big).width, gap = bgf * .25, x0 = w / 2 - (lw + gap + tw) / 2; x.imageSmoothingEnabled = true; x.drawImage(logo, x0, h * .34 + sm + bgf * .12 - lh * .2, lw, lh); x.textAlign = 'left'; x.fillText(big, x0 + lw + gap, h * .34 + sm + bgf * 1.05); x.textAlign = 'center'; x.imageSmoothingEnabled = false; }
+      else x.fillText(big, w / 2, h * .34 + sm + bgf * 1.05);
+      x.shadowBlur = 0; x.globalAlpha = 1;
+    };
+    scene(t / 3, 'Made by', 'Frenchfries777', false); scene((t - 3) / 3, 'With', 'Claude AI', true);
+    if (hold) { x.globalAlpha = .55 + .45 * Math.sin(now / 220); x.fillStyle = '#fff8ea'; x.font = '700 ' + Math.round(Math.max(16, Math.min(22, w * .026 / dpr)) * dpr) + 'px system-ui, sans-serif'; x.fillText('화면을 누르면 시작해요', w / 2, h * .86); x.globalAlpha = 1; }
+    const fade = t > DUR - .8 ? ez((t - (DUR - .8)) / .8) : 0, fi = 0;
     x.fillStyle = 'rgba(8,12,24,' + Math.max(fade, fi) + ')'; x.fillRect(0, 0, w, h);
-    if (t >= DUR) { finish(); return; }
+    if (started && t >= DUR) { finish(); return; }
     requestAnimationFrame(frame);
   }
   function R_(a, b, c, d, col) { x.fillStyle = col; x.fillRect(a | 0, b | 0, c | 0, d | 0); }
@@ -72,6 +85,5 @@
     R_(sx, gy - h, w, h, col[0]); R_(sx + 1, gy - h + 1, w - 2, 3, col[1]); R_(sx, gy - 3, w, 3, 'rgba(0,0,0,.2)');
   }
   function finish() { done = true; cv.remove(); try { if (snd) { snd.pause(); } } catch (e) { } document.documentElement.classList.add('gcReady'); if (window.GCIntroDone) window.GCIntroDone(); }
-  document.fonts && document.fonts.load('700 20px Galmuri').finally(() => requestAnimationFrame(frame));
-  if (!document.fonts) requestAnimationFrame(frame);
+  sound(); requestAnimationFrame(frame);
 })();
