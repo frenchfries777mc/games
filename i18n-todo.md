@@ -360,3 +360,4 @@ patchnotes.json | v520 items[3] | 사냥꾼 부메랑 데미지 20 → 24 | buil
 patchnotes.json | v520 items[4] | 중화기병 바주카포 데미지 68 → 60 | build 520 | 2026-10-29
 patchnotes.json | v520 items[5] | 복서 글러브 데미지 28 → 25 | build 520 | 2026-10-29
 patchnotes.json | v520 items[6] | 마법사 파이어볼 데미지 15 → 14 | build 520 | 2026-10-29
+patchnotes.json | v522 items[0] | 프로필 카드: 대표 캐릭터·마스터리·통계는 스틱세움 안에서만 보이고, 허브와 다른 사이트는 플레이한 게임 목록으로 표시 | build 522 | 2026-10-29
