@@ -3,7 +3,7 @@
 
 import { T } from './tr.js';
 
-export const VERSION = 'v0.1', BUILD = 31;
+export const VERSION = 'v0.1', BUILD = 32;
 
 export const ROLES = {
   knight: {
@@ -82,6 +82,39 @@ export const ROLES = {
     ],
     st: [2, 5, 1, 4], atkTxt: T('뼈 몽둥이'),
     role: T('가볍고 빠른 뼈다귀예요. 몸이 약하니 파고들었다 빠져요.')
+  },
+  warden: {
+    name: T('성벽지기'), color: '#9a8f78', hp: 430, speed: 5.6,
+    atk: { kind: 'melee', range: 2.4, arc: 1.9, dmg: 24, cd: 0.5 },
+    skills: [
+      { id: 'wall', name: T('방벽 세우기'), key: 'Q', cd: 9, desc: T('앞에 돌 방벽을 4초 동안 세워요. 방벽에 닿는 화살과 구슬은 사라져요.') },
+      { id: 'vow', name: T('수호 맹세'), key: 'E', cd: 14, desc: T('가까운 아군에게 6초 동안 맹세를 걸어 그 아군이 받는 피해의 40%를 대신 맞아요. 아군이 없으면 나에게 걸어 6초 동안 받는 피해가 25% 줄어요.') },
+      { id: 'bastion', name: T('철벽'), key: 'R', cd: 16, desc: T('3초 동안 어느 쪽에서 맞아도 피해를 60% 덜 받고, 가까운 아군에게 보호막을 씌우고, 둘레 상대를 느리게 해요.') }
+    ],
+    st: [3, 1, 1, 2], atkTxt: T('무거운 방패 내려치기'),
+    role: T('길목을 막고 아군을 지켜요. 느리고 공격은 약하지만 가장 오래 버텨요.')
+  },
+  assassin: {
+    name: T('자객'), color: '#3a5a66', hp: 250, speed: 7.8,
+    atk: { kind: 'melee', range: 2.1, arc: 1.6, dmg: 22, cd: 0.3 },
+    skills: [
+      { id: 'vanish', name: T('그림자 걸음'), key: 'Q', cd: 10, desc: T('3.5초 동안 멀리 있는 상대 눈에 보이지 않고 25% 빨라져요. 숨은 채 처음 때리는 한 번은 피해가 1.8배예요.') },
+      { id: 'venom', name: T('독 단검'), key: 'E', cd: 9, desc: T('다음 공격 네 번이 상대를 불태워요.') },
+      { id: 'execute', name: T('처형'), key: 'R', cd: 11, desc: T('체력이 가장 낮은 상대 뒤로 순간이동해 베요. 상대 체력이 35% 아래면 피해가 두 배예요.') }
+    ],
+    st: [4, 5, 1, 5], atkTxt: T('짧은 칼 연속 찌르기'),
+    role: T('몰래 파고들어 약한 한 명을 끊어요. 몸이 약해 들키면 위험해요.')
+  },
+  crossbow: {
+    name: T('석궁병'), color: '#8a6a3a', hp: 190, speed: 5.8,
+    atk: { kind: 'arrow', dmg: 26, cd: 0.8, speed: 32 },
+    skills: [
+      { id: 'rootbolt', name: T('속박 볼트'), key: 'Q', cd: 8, desc: T('맞은 상대를 2.5초 동안 크게 느리게 하는 볼트를 쏴요. 18 피해.') },
+      { id: 'backstep', name: T('뒤로 물러나기'), key: 'E', cd: 8, desc: T('뒤로 크게 물러나고, 3초 동안 공격 피해가 1.5배가 돼요.') },
+      { id: 'snipe', name: T('저격'), key: 'R', cd: 14, desc: T('1.2초 동안 느리게 걸으며 조준을 모았다가, 벽을 뚫고 끝까지 날아가는 한 발을 쏴요. 110 피해.') }
+    ],
+    st: [4, 2, 5, 4], atkTxt: T('석궁 한 발 (꾹 눌러도 한 발씩)'),
+    role: T('느리게 움직이며 멀리서 한 발씩 정확히 쏘고, 저격으로 마무리해요.')
   }
 };
 export const COLORS = [
@@ -94,7 +127,7 @@ export const COLORS = [
 ];
 export const BOT_NAMES = ['데굴이', '휘청이', '꽈당이', '비틀이', '아슬이', '쿵쾅이'];
 export const MAX_PLAYERS = 6;
-export const ROLE_IDS = ['knight', 'priest', 'archer', 'viking', 'mamluk', 'witch', 'skeleton'];
+export const ROLE_IDS = ['knight', 'priest', 'archer', 'viking', 'mamluk', 'witch', 'skeleton', 'warden', 'assassin', 'crossbow'];
 
 export const ENEMIES = {
   skel: { name: T('해골 병사'), hp: 130, speed: 4.4, r: 0.6, dmg: 32, range: 1.8, windup: 0.42, cd: 0.9, honor: 1 },

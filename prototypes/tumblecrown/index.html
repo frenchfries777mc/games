@@ -5,14 +5,14 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <title>Tumblecrown</title>
-<script>(function(){var B=31;try{fetch('build.json?t='+Date.now(),{cache:'no-store'}).then(function(r){return r.json()}).then(function(d){if(d&&d.build>B&&sessionStorage.getItem('tcReload')!=String(d.build)){sessionStorage.setItem('tcReload',String(d.build));var u=new URL(location.href);u.searchParams.set('b',d.build);location.replace(u.toString());}}).catch(function(){});}catch(e){}})();</script>
-<meta name="description" content="던전 방에서 일곱 직업이 마지막 한 명을 가리는 배틀로얄">
+<script>(function(){var B=32;try{fetch('build.json?t='+Date.now(),{cache:'no-store'}).then(function(r){return r.json()}).then(function(d){if(d&&d.build>B&&sessionStorage.getItem('tcReload')!=String(d.build)){sessionStorage.setItem('tcReload',String(d.build));var u=new URL(location.href);u.searchParams.set('b',d.build);location.replace(u.toString());}}).catch(function(){});}catch(e){}})();</script>
+<meta name="description" content="던전 방에서 열 가지 직업이 마지막 한 명을 가리는 배틀로얄">
 <meta name="robots" content="noindex">
 <link rel="icon" href="logo.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Lilita+One&display=swap" rel="stylesheet">
 <!-- 새 빌드마다 아래 ?v= 숫자를 BUILD와 같게 올려요 (브라우저가 옛 파일을 쓰지 않게) -->
-<script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/","./js/data.js":"./js/data.js?v=31","./js/main.js":"./js/main.js?v=31","./js/map.js":"./js/map.js?v=31","./js/music.js":"./js/music.js?v=31","./js/render.js":"./js/render.js?v=31","./js/sfx.js":"./js/sfx.js?v=31","./js/sim.js":"./js/sim.js?v=31","./js/tr.js":"./js/tr.js?v=31"}}</script>
+<script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/","./js/data.js":"./js/data.js?v=32","./js/main.js":"./js/main.js?v=32","./js/map.js":"./js/map.js?v=32","./js/music.js":"./js/music.js?v=32","./js/render.js":"./js/render.js?v=32","./js/sfx.js":"./js/sfx.js?v=32","./js/sim.js":"./js/sim.js?v=32","./js/tr.js":"./js/tr.js?v=32"}}</script>
 <script src="../../ff-presence.js" async></script>
 <script src="https://cdn.jsdelivr.net/npm/peerjs@1.5.4/dist/peerjs.min.js"></script>
 <script src="https://frenchfries777mc.github.io/games/ff-lang.js"></script>
@@ -229,7 +229,7 @@ body.touch #exitBtn{top:auto;bottom:auto}
 <!-- 로비 -->
 <section class="scr on" id="sLobby">
   <div id="who"></div>
-  <div class="title"><h1>Tumblecrown</h1><p class="tx">던전 투기장, 마지막 한 명이 왕관 · 일곱 직업 배틀로얄</p></div>
+  <div class="title"><h1>Tumblecrown</h1><p class="tx">던전 투기장, 마지막 한 명이 왕관 · 열 가지 직업 배틀로얄</p></div>
   <nav id="menu">
     <button class="big" data-go="match">온라인 대전</button>
     <button data-go="host">친구와 대결</button>
@@ -267,7 +267,7 @@ body.touch #exitBtn{top:auto;bottom:auto}
   <p class="note">마지막 한 명이 남을 때까지 싸우는 배틀로얄이에요. 맞을수록 머리 위 체력바가 줄고, 다 닳으면 탈락해 관전해요. 맞아도 밀려나지 않고 바닥도 무너지지 않아요.</p>
   <div class="weps" id="wepInfo"></div>
   <h3>조작</h3>
-  <p class="note">PC: WASD 이동 · 마우스 조준 · 왼쪽 클릭 공격 (기사는 이어 치면 세 번째에 내려찍는 강타) · Q E R 기술 · Space 구르기 · 직업 고르기에서 숫자 1~7<br>공격이 닿기 직전에 구르면 2.5초 동안 집중(피해 +50%)이에요.<br>휴대폰: 왼쪽 엄지로 이동 · 오른쪽 버튼으로 공격(가까운 상대 자동 조준), 기술, 구르기</p>
+  <p class="note">PC: WASD 이동 · 마우스 조준 · 왼쪽 클릭 공격 (기사는 이어 치면 세 번째에 내려찍는 강타) · Q E R 기술 · Space 구르기 · 직업 고르기에서 숫자 1~9와 0<br>공격이 닿기 직전에 구르면 2.5초 동안 집중(피해 +50%)이에요.<br>휴대폰: 왼쪽 엄지로 이동 · 오른쪽 버튼으로 공격(가까운 상대 자동 조준), 기술, 구르기</p>
 </div></section>
 
 <!-- 패치노트 -->
@@ -313,6 +313,6 @@ body.touch #exitBtn{top:auto;bottom:auto}
 <div id="touch"><div id="joy"><div id="joyBase"><div id="joyKnob"></div></div></div>
   <div id="tbtns"><button id="tA"><span>공격</span></button><button id="tQ"><i class="cd"></i><span>Q</span></button><button id="tE"><i class="cd"></i><span>E</span></button><button id="tR"><i class="cd"></i><span>R</span></button><button id="tRoll"><i class="cd"></i><span>구르기</span></button><button id="tF"><span>F</span></button></div>
 </div>
-<script type="module" src="js/main.js?v=31"></script>
+<script type="module" src="js/main.js?v=32"></script>
 </body>
 </html>
