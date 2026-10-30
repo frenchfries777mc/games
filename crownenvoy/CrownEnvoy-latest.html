@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <!-- © 2026 Frenchfries777 · CC BY-NC-ND 4.0 (https://creativecommons.org/licenses/by-nc-nd/4.0/deed.ko) -->
 <html lang="ko">
-<head><style id="ffTap">html,body{touch-action:manipulation}</style>
+<head><script src="https://frenchfries777mc.github.io/games/ff-oldguard.js"></script><style id="ffTap">html,body{touch-action:manipulation}</style>
 <meta charset="UTF-8">
 <script src="https://frenchfries777mc.github.io/games/ff-lang.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
@@ -457,7 +457,7 @@ try{if(sessionStorage.getItem('ce_noIntro')){sessionStorage.removeItem('ce_noInt
 sting();})();</script>
 <div id="app">
  <div id="lobby" class="screen">
-  <canvas id="lobbyBg"></canvas><canvas id="lobbyWar"></canvas><div id="cpTag">© 2026 Frenchfries777 · <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.ko" target="_blank" rel="noopener">CC BY-NC-ND 4.0</a></div><div id="verTag">v0.5 · build 130</div>
+  <canvas id="lobbyBg"></canvas><canvas id="lobbyWar"></canvas><div id="cpTag">© 2026 Frenchfries777 · <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.ko" target="_blank" rel="noopener">CC BY-NC-ND 4.0</a></div><div id="verTag">v0.6 · build 131</div>
   <header class="brand"><h1>Crown Envoy</h1><div class="sub"><i></i>DIPLOMACY · WAR · EMPIRE<i></i></div></header>
   <div id="lobbyRight">
    <div id="lobbyHome" class="modes">
@@ -4278,7 +4278,7 @@ const ffRoom=code=>{try{if(window.FFAuth&&FFAuth.setRoom)FFAuth.setRoom(code?{ga
 /* 공개 방 목록: Supabase 실시간 presence('ce-rooms')에 방장이 방 정보를 싣고, 참가자는 목록만 읽는다 (DB 테이블 없음).
    방장이 창을 닫으면 presence가 저절로 사라져 목록에서도 빠진다. */
 /* 버전(0.x)이 다르면 같이 할 수 없다: 빌드 번호는 달라도 된다. 파일을 새 버전으로 복사할 때 이 값도 함께 바꾼다 */
-const CE_VER='0.5';
+const CE_VER='0.6';
 /* 옛 빌드가 캐시에서 떴으면 최신 빌드를 확인해 한 번만 새 주소로 다시 불러온다 (게임을 시작하기 전에만) */
 (function(){try{const own=(()=>{const m=/build (\d+)/.exec((document.getElementById('verTag')||{}).textContent||'');return m?+m[1]:0;})();if(!own||location.protocol==='file:')return;
   const base=location.pathname.split('/').pop()||'';
