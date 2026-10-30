@@ -204,6 +204,9 @@ function drawWep(x, k) {
     case 'sling': R(x, '#8a5a30', 3, -1, 8, 3); R(x, '#8a5a30', 9, -6, 2, 6); R(x, '#8a5a30', 13, -6, 2, 6); R(x, '#e8c39a', 9, -7, 6, 1); break;
     case 'hose': R(x, '#c0392b', 0, -3, 9, 8); R(x, '#222', 8, -2, 7, 4); R(x, '#4a8ad0', 14, -2, 4, 4); R(x, '#e8c040', 0, 4, 9, 2); break;
     case 'banana': R(x, '#f2d040', 2, -2, 12, 4); R(x, '#f2d040', 12, -4, 3, 3); R(x, '#c8a020', 2, 1, 12, 1); R(x, '#6a4a20', 2, -3, 2, 2); break;
+    case 'shotgun': R(x, '#5a3a20', 0, -1, 7, 4); R(x, '#2a2f3a', 6, -2, 13, 3); R(x, '#2a2f3a', 6, 1, 11, 1); break;
+    case 'bow': R(x, '#8a5a30', 6, -7, 2, 14); R(x, '#8a5a30', 8, -7, 3, 2); R(x, '#8a5a30', 8, 5, 3, 2); R(x, '#e8e4d8', 5, -6, 1, 12); R(x, '#c8c8c8', 6, -1, 10, 1); break;
+    case 'minigun': R(x, '#3a4350', 0, -3, 9, 7); R(x, '#222', 8, -3, 11, 2); R(x, '#222', 8, 0, 11, 2); R(x, '#c0392b', 2, 4, 5, 3); break;
     case 'firework': R(x, '#a8473f', -1, -3, 18, 6); R(x, '#f2b632', 2, -3, 3, 6); R(x, '#f2b632', 9, -3, 3, 6); R(x, '#ffe070', 17, -2, 3, 4); break;
   }
 }
@@ -224,6 +227,9 @@ function drawShots(x, G) {
     else if (s.k === 'hose') { R(x, 'rgba(120,200,255,.85)', s.x - 2, s.y - 2, 5, 5); }
     else if (s.k === 'bazooka') { R(x, '#444', s.x - 5, s.y - 2, 10, 4); R(x, '#ff7a2a', s.x - (s.vx > 0 ? 9 : -5), s.y - 1, 4, 2); }
     else if (s.k === 'firework') { R(x, '#e8483b', s.x - 3, s.y - 2, 7, 3); R(x, ['#ffe070', '#ff7ad0', '#7affd0'][(s.x / 6 | 0) % 3], s.x - (s.vx > 0 ? 7 : -4), s.y - 2, 3, 3); }
+    else if (s.k === 'shotgun') { R(x, '#d8d0b0', s.x - 1, s.y - 1, 3, 3); }
+    else if (s.k === 'bow') { R(x, '#c8c8c8', s.x - 4, s.y - 1, 9, 1); R(x, '#8a5a30', s.x - (s.vx > 0 ? 5 : -4), s.y - 2, 2, 3); }
+    else if (s.k === 'minigun') { R(x, '#ffb040', s.x - 2, s.y - 1, 4, 2); }
     else if (s.k === 'sling') { R(x, '#b0bac6', s.x - 1, s.y - 1, 3, 3); }
     else R(x, '#ffe070', s.x - 2, s.y - 1, 5, 3);
   }
