@@ -72,7 +72,7 @@ const HERO = {
   skeleton: { skel: 1 },
   warden: { body: 0x6b5b3e, leg: 'dm', arm: 'mt', helm: 1, helmC: 0x4a4a52, plume: 0xc8a030, sword: 1, shield: 1, shieldC: 0x6a5030, shS: 1.45, belt: 1, wide: 1.24 },
   assassin: { body: 0x24343c, leg: 0x161e24, arm: 0x24343c, hood: 0x1a2830, scim: 1, belt: 1 },
-  crossbow: { body: 0x7a5a3a, leg: 0x3a3a44, arm: 0x7a5a3a, hood: 0x5a4a2e, bow: 1, quiver: 1, belt: 1 }
+  crossbow: { body: 0x8a3a2e, leg: 0x3a3a44, arm: 'mt', helm: 1, helmC: 0x6a6f7c, cape: 0x3a1a18, plume: 0, bow: 1, belt: 1, wide: 1.08 }
 };
 // 동작은 비슷한 직업의 것을 같이 써요 (마녀는 사제처럼, 바이킹·맘루크·스켈레톤은 종자처럼)
 const FAM = { witch: 'priest', viking: 'squire', mamluk: 'squire', skeleton: 'squire', warden: 'knight', assassin: 'squire', crossbow: 'archer' };
@@ -332,7 +332,7 @@ export class View {
   }
   resize() {
     // 화면 픽셀 칸이 고르게 나오도록 캔버스를 기기 픽셀 단위로, 픽셀 크기의 배수로 맞춰요 (지글거림 방지)
-    const dpr = devicePixelRatio || 1, P = Math.max(1, Math.round(this.ps * dpr)); this.P = P;
+    const dpr = devicePixelRatio || 1, sc = Math.max(0.45, Math.min(1, Math.min(innerWidth, innerHeight) / 720)), P = Math.max(1, Math.round(this.ps * sc * dpr)); this.P = P;   // 작은 화면은 픽셀을 더 잘게
     const w = Math.ceil(innerWidth * dpr / P) * P, h = Math.ceil(innerHeight * dpr / P) * P; this.W = w; this.H = h;
     this.r.setPixelRatio(1); this.r.setSize(w, h, false);
     this.cw = w / dpr; this.ch = h / dpr; this.r.domElement.style.width = (w / dpr) + 'px'; this.r.domElement.style.height = (h / dpr) + 'px';
