@@ -2,7 +2,7 @@
 // 화면 흐름, 조작, 멀티(친구 초대, PeerJS), 저장
 import { View } from './render.js';
 import { createGame, step, snapshot, chooseBless, carryOver, koPlayer, INTRO_T, HV_DELAY } from './sim.js';
-import { TEAMS, FLAG_T, RESP_T, ARENA_THEMES, ROLES, ROLE_IDS, COLORS, BOT_NAMES, MAX_PLAYERS, BLESSINGS, CHAPTERS, CH, FOES, MAP, ACHIEVEMENTS, TALK, GEAR_TIERS, GEAR_COST, COSMETICS, MIDB, WEEKLY, weekInfo, VERSION, BUILD, roleLevel, LORE, COMBOS, CURSES, DEEP, DEEP_I, TALK_X, ROLE_PUZ, flagShown } from './data.js';
+import { PUSH_N, PUSH_T, TEAMS, FLAG_T, RESP_T, ARENA_THEMES, ROLES, ROLE_IDS, COLORS, BOT_NAMES, MAX_PLAYERS, BLESSINGS, CHAPTERS, CH, FOES, MAP, ACHIEVEMENTS, TALK, GEAR_TIERS, GEAR_COST, COSMETICS, MIDB, WEEKLY, weekInfo, VERSION, BUILD, roleLevel, LORE, COMBOS, CURSES, DEEP, DEEP_I, TALK_X, ROLE_PUZ, flagShown } from './data.js';
 import { collide as mapCollide, areaAt, floorCell, MW, MH, CS, cw, useChapter, chapterIndex, SOPEN, openSecret, resetSecrets, hiddenCell, GOPEN, openGate, PDOWN, dropPillar, LIFTH, liftOk, CUT } from './map.js';
 import * as SFX from './sfx.js';
 import * as MUS from './music.js';
@@ -259,7 +259,7 @@ function paintRoom() {
   $('capRow').style.display = S.net === 'host' && !S.pub && wait ? '' : 'none'; $('capN').textContent = S.cap; $('readyBtn').style.display = pickP ? '' : 'none'; $('readyBtn').textContent = mine.rd || (S.net === 'host' && S.rdy[UID]) ? T('준비됨') : T('준비 완료');
   $('botRow').style.display = 'none'; $('colRow').style.display = 'none'; $('mapRow').style.display = 'none'; $('mapBtn').textContent = S.themeI ? ARENA_THEMES[S.themeI - 1].name : T('무작위');
   $('startBtn').style.display = !online ? '' : 'none';
-  $('roomMsg').textContent = !online ? (all.length < 2 ? T('봇을 넣어 주세요.') : '') : wait ? (S.pub ? T('다른 플레이어를 기다리는 중이에요.') : T('친구를 초대해 주세요.')) : T('직업을 골라 주세요 · {0}초 뒤 시작', Math.max(0, Math.ceil(S.pickT))); 
+  $('roomMsg').textContent = !online ? (all.length < 2 ? T('봇을 넣어 주세요.') : '') : wait ? (S.pub ? ((S.net === 'host' ? (S.fillT > 0 ? Math.ceil(FILL_T - S.fillT) : -1) : S.ft) >= 0 ? T('{0}초 뒤 빈자리를 봇으로 채워요.', S.net === 'host' ? Math.ceil(FILL_T - S.fillT) : S.ft) : T('다른 플레이어를 기다리는 중이에요.')) : T('친구를 초대해 주세요.')) : T('직업을 골라 주세요 · {0}초 뒤 시작', Math.max(0, Math.ceil(S.pickT))); 
   view.setPreview(wait ? null : mine.role, COLORS[mine.col].c);
 }
 addEventListener('keydown', e => { if (S.scr !== 'sRoom' || (S.net !== 'solo' && S.ph !== 'pick')) return; const n = e.key === '0' ? 10 : +e.key; if (n >= 1 && n <= ROLE_IDS.length) { SAVE.role = ROLE_IDS[n - 1]; save(); pick(); } });
@@ -357,6 +357,21 @@ setInterval(() => {
   if (S.pickT <= 0 || (S.slots.every(x => S.rdy[x.uid]) && S.pickT < PICK_T - 1.5)) { beginGame(); return; }
   if (left !== S.lastLeft) { S.lastLeft = left; hostLobby(); if (S.scr === 'sRoom') paintRoom(); }
 }, 250);
+// 공개 방: 사람이 한 명이라도 있으면 15초 뒤 빈자리를 봇으로 채워 시작해요
+const FILL_T = 15;
+setInterval(() => {
+  if (S.net !== 'host' || S.G || !S.pub || S.ph !== 'wait') { S.fillT = 0; return; }
+  if (!S.slots.some(s => !s.srv && !s.bot)) { S.fillT = 0; if (S.slots.some(s => s.bot)) { S.slots = S.slots.filter(s => !s.bot); hostLobby(); if (S.scr === 'sRoom') paintRoom(); } return; }
+  S.fillT = (S.fillT || 0) + 0.25; const left = Math.max(0, Math.ceil(FILL_T - S.fillT));
+  if (S.fillT >= FILL_T) {
+    S.fillT = 0; newBots();
+    const used = new Set(S.slots.map(s => s.col));
+    for (let i = 0; S.slots.length < S.cap; i++) { let col = COLORS.findIndex((x, k) => !used.has(k)); if (col < 0) col = 0; used.add(col); S.slots.push({ uid: 'bot' + i, bot: true, name: BOT_NAMES[i % BOT_NAMES.length], role: S.botRoles[i % S.botRoles.length], col }); }
+    for (const sl of S.slots) if (sl.bot) S.rdy[sl.uid] = true;
+    checkFull(); hostLobby(); if (S.scr === 'sRoom') paintRoom(); return;
+  }
+  if (left !== S.lastFill) { S.lastFill = left; hostLobby(); if (S.scr === 'sRoom') paintRoom(); }
+}, 250);
 function checkFull() { if (S.net === 'host' && !S.G && S.ph === 'wait' && S.slots.length >= S.cap) { S.ph = 'pick'; S.pickT = PICK_T; S.rdy = {}; S.lastLeft = null; SFX.play('click'); } }
 function leaveNet() {
   S.ph = null; S.pub = false; S.rdy = {}; S.mg = (S.mg | 0) + 1;
@@ -426,7 +441,7 @@ function matchJoin(n, gen) {
   });
   p.on('error', () => { if (!done) next(); });
 }
-function lobbyMeta() { return { t: 'lobby', slots: S.slots.map(s => ({ role: s.role, uid: s.uid, name: s.name, col: s.col, rd: S.rdy && S.rdy[s.uid] ? 1 : 0 })), bots: 0, code: S.code, ch: S.chSel, wk: S.wk ? 1 : 0, ph: S.ph, cap: S.cap, pub: S.pub ? 1 : 0, pt: S.pickT }; }
+function lobbyMeta() { return { t: 'lobby', slots: S.slots.map(s => ({ bot: s.bot ? 1 : 0, role: s.role, uid: s.uid, name: s.name, col: s.col, rd: S.rdy && S.rdy[s.uid] ? 1 : 0 })), bots: 0, code: S.code, ch: S.chSel, wk: S.wk ? 1 : 0, ph: S.ph, cap: S.cap, pub: S.pub ? 1 : 0, pt: S.pickT, ft: S.pub && S.ph === 'wait' && S.fillT > 0 ? Math.max(0, Math.ceil(FILL_T - S.fillT)) : -1 }; }
 function hostLobby() { if (S.net === 'host') bcast(lobbyMeta()); }
 function hostMsg(c, d) {
   if (!d || typeof d !== 'object') return;
@@ -481,7 +496,7 @@ function guestMsg(d) {
   if (!d || typeof d !== 'object') return;
   if (d.t === 'welcome' && d.ver && d.ver !== VERSION) { homeMsg(T('버전이 달라요. 이 방은 {0} 버전이에요.', d.ver)); leaveNet(); return; }
   if (d.t === 'welcome') { homeMsg(''); if (d.start) { S.me = d.pid; useDeep(d.dp); { const fw = useWk(d.wk); useChapter(d.ch | 0, !!d.dp || fw); if (d.th) CH.theme = d.th; } startClient(); } else { openRoom(); } }
-  else if (d.t === 'lobby') { S.slots = d.slots; S.ph = d.ph; S.cap = d.cap || PUB_CAP; S.pub = !!d.pub; S.pickT = d.pt; if (S.scr === 'sRoom') paintRoom(); }
+  else if (d.t === 'lobby') { S.slots = d.slots; S.ph = d.ph; S.cap = d.cap || PUB_CAP; S.pub = !!d.pub; S.pickT = d.pt; S.ft = d.ft; if (S.scr === 'sRoom') paintRoom(); }
   else if (d.t === 'deny') { homeMsg(d.ver ? T('버전이 달라요. 이 방은 {0} 버전이에요.', d.ver) : T(d.why || '들어갈 수 없어요.')); leaveNet(); }
   else if (d.t === 'start') { if (S.snap && S.snap.won) clearChapter(); S.me = d.pid; useDeep(d.dp); { const fw = useWk(d.wk); useChapter(d.ch | 0, !!d.dp || fw); if (d.th) CH.theme = d.th; } startClient(); }
   else if (d.t === 's') {
@@ -741,7 +756,7 @@ function onEvent(e) {
       if (who) killFeed(by ? T('{0} → {1}', nm(by), nm(who)) : T('{0} 쓰러짐', nm(who)), by && by.id === S.me);
       if (by && by.id !== e.id) view.pose(by.id, 'kill');
       if (by && by.id === S.me && who) killBanner(nm(who));
-      if (e.id === me) bigMsg(T('쓰러졌어요'), T('{0}초 뒤 진지에서 다시 일어나요', RESP_T), 2600); break; }
+      if (e.id === me) bigMsg(T('쓰러졌어요'), T('{0}초 뒤 진지에서 다시 일어나요', Math.round((who && who.rs) || RESP_T)), 2600); break; }
     case 'down': SFX.play('down'); if (e.id === me) { S.everDown = true; bigMsg(T('쓰러졌어요'), T('동료가 일으켜 줄 때까지 버텨요'), 2200); } break;
     case 'revive': view.column(e.x, e.z, 0xfff0b0); SFX.play('revive'); if (e.id === me) bigMsg(T('다시 일어났어요'), '', 1400); break;
     case 'roll': if (e.id !== me) SFX.play('roll'); break;
@@ -807,8 +822,11 @@ function onEvent(e) {
     case 'bossIntro': { view.roar(); talk('boss', 3400); bigMsg(CH.boss.name, MAP.areas.find(a => a.boss).line, 3400); const b = S.snap && S.snap.en.find(q => q.k === 'boss'); if (b) { view.focusOn(b.x, b.z, 3); view.shock(b.x, b.z, 8, 0xff5a3a, 0.8); view.flash(b.x, b.z, 0xff5a3a, 200); } view.shake = Math.max(view.shake, 0.8); letterbox(3000); break; }
     case 'bvolley': SFX.play('arrow'); view.burst(e.x, 1.8, e.z, 0xffb060, 8, 4, 0.3, 0.1); break;
     case 'nova': SFX.play('orb'); { const nc = CH.boss.col || (CH.boss.ai === 'king' ? 0xff7a20 : 0x6ab0ff); view.shock(e.x, e.z, 4, nc, 0.4); view.flash(e.x, e.z, nc, 120); } break;
+    case 'throw': view.throwBomb(e.x, e.z, e.tx, e.tz, e.T); SFX.play('swing'); break;
+    case 'foot': if (S.snap && S.snap.tf && e.tm !== myTm()) view.foot(e.x, e.z, e.a); break;
     case 'zfx': { // 늦게 터지는 보스 장판: 얼음 창, 불기둥, 고드름, 불덩이
       const col = { smite: 0xfff0b0, curse: 0xb06aff, lance: 0x9ad8ff, icicle: 0xc8ecff, frostnova: 0x6ad0ff, beam: 0xff8a30, meteor: 0xb06aff, rock: 0xb8a890 }[e.f] || 0xffffff;
+      if (e.f === 'bomb') { view.burst(e.x, 1, e.z, 0xff9a40, 18, 8, 0.6, 0.15); view.burst(e.x, 1, e.z, 0xffe8b0, 8, 6, 0.4, 0.1); view.shock(e.x, e.z, e.r + 1, 0xffb060, 0.4); view.flash(e.x, e.z, 0xffa050, 120); view.shake = Math.max(view.shake, 0.35); SFX.play('slam'); break; }
       if (e.len) { for (let i = 1; i <= 5; i++) { const x = e.x + Math.cos(e.a) * e.len * i / 5, z = e.z + Math.sin(e.a) * e.len * i / 5; view.burst(x, 0.6, z, col, 6, 5, 0.5, 0.12); if (i % 2) view.column(x, z, col, 0.4); } view.flash(e.x, e.z, col, 90); SFX.play(e.f === 'beam' ? 'fire' : 'clang'); }
       else { if (e.f === 'smite' || e.f === 'curse') { view.shock(e.x, e.z, e.r + 2, col, 0.55); view.ring(e.x, e.z, e.r, col, 0.6); view.column(e.x, e.z, col, 1.0); view.rise(e.x, e.z, col, 20, e.r, 1, 7); view.shake = Math.max(view.shake, 0.7); } if (e.f === 'frostnova' || (e.f === 'rock' && e.r > 4)) view.shock(e.x, e.z, e.r || 6, col, 0.5); else view.column(e.x, e.z, col, 0.7); view.burst(e.x, 0.5, e.z, col, 14, 6, 0.6, 0.14); view.flash(e.x, e.z, col, 100); view.shake = Math.max(view.shake, 0.4); SFX.play('slam'); }
       break; }
@@ -1024,6 +1042,8 @@ function teamHud(sn) {
     oc.fillStyle = own < 0 ? '#6a6676' : hex(TEAMS[own].c); oc.beginPath(); oc.arc(x, y, 9, 0, 7); oc.fill();
     if (cap >= 0 && pr > 0) { oc.strokeStyle = hex(TEAMS[cap].c); oc.lineWidth = 4; oc.beginPath(); oc.arc(x, y, 13, -Math.PI / 2, -Math.PI / 2 + Math.PI * 2 * pr / FLAG_T); oc.stroke(); }
   });
+  { const own = [0, 0]; for (const f of sn.tf) if (f[0] >= 0) own[f[0]]++; const pt = own[0] >= PUSH_N ? 0 : own[1] >= PUSH_N ? 1 : -1;
+    if (pt >= 0) { oc.font = 'bold 13px Galmuri, system-ui'; oc.textAlign = 'center'; oc.lineWidth = 4; oc.strokeStyle = '#140f18'; const tx = pt === mt ? T('몰아붙이는 중 · 상대 부활 +{0}초', PUSH_T) : T('몰리는 중 · 우리 부활 +{0}초', PUSH_T); oc.strokeText(tx, innerWidth / 2, y + 44); oc.fillStyle = pt === mt ? '#ffd36b' : '#ff8a7a'; oc.fillText(tx, innerWidth / 2, y + 44); } }
   const me0 = sn.pl.find(q => q.id === S.me); if (me0 && me0.fz && !me0.dd) { oc.font = 'bold 14px Galmuri, system-ui'; oc.lineWidth = 4; oc.strokeStyle = '#140f18'; const tx = T('깃발의 가호 · 치유 · 공격 +20%'); oc.strokeText(tx, innerWidth / 2, y + 26); oc.fillStyle = '#9af0a8'; oc.fillText(tx, innerWidth / 2, y + 26); }
   const sc = Math.min(innerWidth < 700 ? 1.1 : 1.6, (innerWidth < 700 ? 130 : 190) / MW), w = MW * sc, h = MH * sc, mx = innerWidth - w - 14, my = innerWidth < 700 ? 100 : 64;
   if (mini.dirty) mini.paint(); if (!S.mapImg && !S.mapTry) { S.mapTry = 1; try { S.mapImg = view.captureMap(); } catch (e) { } }
