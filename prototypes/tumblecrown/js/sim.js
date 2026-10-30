@@ -1155,9 +1155,9 @@ function stepEnemy(G, e, dt) {
   if (e.st === 'home') {
     const d = Math.hypot(e.hx - e.x, e.hz - e.z);
     for (const p of G.players) if (alive(p) && dist(p, e) < WAKE_R * 0.8 && lineClear(e.x, e.z, p.x, p.z)) { e.st = 'idle'; return; }
-    if (d < 0.8) { e.st = 'sleep'; e.hp = e.maxhp; e.moving = false; return; }
+    if (d < 0.8) { e.st = 'sleep'; if (!e.mon) e.hp = e.maxhp; e.moving = false; return; }
     const a = navDir(e.x, e.z, e.hx, e.hz, G.t); if (a == null) { e.x = e.hx; e.z = e.hz; return; }
-    e.a = a; e.x += Math.cos(a) * E.speed * 1.3 * dt; e.z += Math.sin(a) * E.speed * 1.3 * dt; e.moving = true; e.hp = Math.min(e.maxhp, e.hp + e.maxhp * 0.2 * dt);
+    e.a = a; e.x += Math.cos(a) * E.speed * 1.3 * dt; e.z += Math.sin(a) * E.speed * 1.3 * dt; e.moving = true; e.hp = Math.min(e.maxhp, e.hp + e.maxhp * (e.mon ? 0.004 : 0.2) * dt);   // 중립 괴물은 아주 천천히 회복해요
     return;
   }
   if (e.life != null && (e.life -= dt) <= 0) { e.hp = 0; ev(G, 'ekill', { x: e.x, z: e.z, en: e.k, id: e.id }); return; }   // 소환된 해골은 18초 뒤 사라져요
@@ -1171,7 +1171,7 @@ function stepEnemy(G, e, dt) {
     // 덫이 터지며 불길이 번져요: 둘레 적이 불타고 조금 다쳐요
     for (const q of G.enemies) if (q !== e && q.hp > 0 && Math.hypot(q.x - z.x, q.z - z.z) < 3) { q.burn = 3; hurtEnemy(G, q, 10, ow, { spread: 1 }); } if (e.hp <= 0) return; }
   const t = pickTarget(G, e); if (!t) return;
-  if (e.mon && Math.hypot(t.x - e.hx, t.z - e.hz) > 22) { e.moving = false; e.hp = Math.min(e.maxhp, e.hp + e.maxhp * 0.1 * dt); return; }   // 중립 괴물은 자기 자리에서 너무 먼 사람은 쫓지 않아요
+  if (e.mon && Math.hypot(t.x - e.hx, t.z - e.hz) > 22) { e.moving = false; e.hp = Math.min(e.maxhp, e.hp + e.maxhp * 0.004 * dt); return; }   // 중립 괴물은 자기 자리에서 너무 먼 사람은 쫓지 않아요
   const d = dist(e, t), sees = lineClear(e.x, e.z, t.x, t.z), ta = angTo(e, t);
   if (e.st === 'wind') {
     e.wind -= dt;
@@ -1596,6 +1596,8 @@ function botFlag(G, p, dt) {
   else { ai.hl = (ai.hl || 0) - dt; if (ai.hl <= 0) { ai.hl = 1 + G.rng() * 1.5; ai.ha = G.rng() * TAU; } inp.mx = Math.cos(ai.ha) * 0.35; inp.mz = Math.sin(ai.ha) * 0.35; }
   return inp;
 }
+// 도망 조건이 맞아도 절반만 도망쳐요 (3초마다 다시 정해서 오락가락하지 않아요)
+function flee50(G, p, dt) { const ai = p.ai; ai.flT = (ai.flT || 0) - dt; if (ai.flT <= 0) { ai.flT = 3; ai.flOk = G.rng() < 0.5; } return ai.flOk; }
 function botPvp(G, p, dt) {
   const inp = {}, R = ROLES[p.role], ai = p.ai; ai.t -= dt; ai.cmbT = 1; ai.rush = (ai.rush || 0) - dt;
   if (G.phase !== 'play') return inp;
@@ -1613,7 +1615,7 @@ function botPvp(G, p, dt) {
     if (!(ai.offT > 0)) { ai.offT = 1; ai.ox = (G.rng() - 0.5) * 10; ai.oz = (G.rng() - 0.5) * 10; } ai.offT -= dt; const q = {}; moveTo(G, p, q, tgt.x + ai.ox, tgt.z + ai.oz, 1.5); return q;
   }
   const d = dist(p, tgt), ta = angTo(p, tgt), ranged = R.atk.kind !== 'melee', clear = lineClear(p.x, p.z, tgt.x, tgt.z);
-  const near = foes.filter(q => dist(p, q) < 6).length, nearest = foes.length ? foes.reduce((m, q) => dist(p, q) < dist(p, m) ? q : m, foes[0]) : tgt, low = dist(p, nearest) < 8 && nearest.hp >= p.hp * 4;   // 가까운 적 체력이 내 체력의 네 배 이상일 때만 도망쳐요
+  const near = foes.filter(q => dist(p, q) < 6).length, nearest = foes.length ? foes.reduce((m, q) => dist(p, q) < dist(p, m) ? q : m, foes[0]) : tgt, low = dist(p, nearest) < 8 && nearest.hp >= p.hp * 4 && flee50(G, p, dt);   // 가까운 적 체력이 내 체력의 네 배 이상일 때만 도망쳐요
   // 앞질러 조준: 상대가 움직이는 방향으로 조금 앞을 겨눠요
   const sp = R.atk.speed || 20, lt = Math.min(0.6, d / sp), px = tgt.x + (tgt.vx || 0) * lt * 0.9, pz = tgt.z + (tgt.vz || 0) * lt * 0.9;
   inp.aim = Math.atan2(pz - p.z, px - p.x); inp.ax = px; inp.az = pz;
