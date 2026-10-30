@@ -1344,7 +1344,7 @@ function stepZones(G, dt) {
 /* ---------- 봇 ---------- */
 function inDanger(G, p) {
   for (const z of G.zones) {
-    if ((z.k === 'tcircle' || z.k === 'rock') && z.t < 0.55 && Math.hypot(p.x - z.x, p.z - z.z) < z.r + 0.6) return Math.atan2(p.z - z.z, p.x - z.x);
+    if ((z.k === 'tcircle' || z.k === 'rock') && z.t < (z.fx === 'bomb' ? 0.2 : 0.55) && Math.hypot(p.x - z.x, p.z - z.z) < z.r + 0.6) return Math.atan2(p.z - z.z, p.x - z.x);
     if (z.k === 'tcone' && z.t < 0.5 && Math.hypot(p.x - z.x, p.z - z.z) < z.r + 0.6 && angDiff(z.a, Math.atan2(p.z - z.z, p.x - z.x)) < z.arc / 2 + 0.2) return Math.atan2(p.z - z.z, p.x - z.x);
     if (z.k === 'tline' && z.t < 0.5) { const ex = z.x + Math.cos(z.a) * z.len, ez = z.z + Math.sin(z.a) * z.len; if (segDist(z.x, z.z, ex, ez, p.x, p.z) < z.w / 2 + 0.7) return z.a + Math.PI / 2 * (((p.x - z.x) * Math.sin(z.a) - (p.z - z.z) * Math.cos(z.a)) > 0 ? -1 : 1); }
     if (z.k === 'fire' && Math.hypot(p.x - z.x, p.z - z.z) < z.r + 0.4) return Math.atan2(p.z - z.z, p.x - z.x);
