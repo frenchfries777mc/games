@@ -75,7 +75,13 @@ function show(id) {
 }
 function inGame() { return !!S.snap && S.scr !== 'sLobby' && S.scr !== 'sRoom'; }
 function setHud(on) { $('hud').classList.toggle('on', on); $('touch').classList.toggle('on', on && TOUCH); }
-function homeMsg(t) { $('homeMsg').textContent = t || ''; }
+// 같이 할 사람을 찾는 중에는 어떤 버튼도 누를 수 없어요 (찾기가 끝나거나 실패하면 풀려요, 늦어져도 25초 뒤엔 풀려요)
+function homeMsg(t) {
+  $('homeMsg').textContent = t || '';
+  const on = t === T('같이 할 사람을 찾는 중...'); $('findBlock').style.display = on ? 'block' : 'none';
+  clearTimeout(homeMsg._t); if (on) homeMsg._t = setTimeout(() => { $('findBlock').style.display = 'none'; }, 25000);
+}
+addEventListener('keydown', e => { if ($('findBlock').style.display === 'block') { e.preventDefault(); e.stopImmediatePropagation(); } }, true);
 function toast(t, ms = 2200) { const el = $('toast'); el.textContent = t; el.style.display = 'block'; clearTimeout(toast._t); toast._t = setTimeout(() => el.style.display = 'none', ms); }
 // 보스 등장 때 위아래 검은 띠, 보스가 쓰러질 때 하얀 번쩍임
 // 내가 쓰러뜨리면 화면 위쪽에 크게 알려요 (8초 안에 이어서 쓰러뜨리면 연속 처치 수가 올라가요)
