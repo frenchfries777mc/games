@@ -3,7 +3,7 @@
 
 import { T } from './tr.js';
 
-export const VERSION = 'v0.1', BUILD = 75;
+export const VERSION = 'v0.1', BUILD = 76;
 
 export const ROLES = {
   knight: {
@@ -11,7 +11,7 @@ export const ROLES = {
     atk: { kind: 'melee', range: 2.5, arc: 1.9, dmg: 21, cd: 0.45 },
     skills: [
       { id: 'block', name: T('막기'), key: 'Q', cd: 5, desc: T('1.2초 동안 방패를 들어 앞에서 오는 피해를 70% 줄여요.') },
-      { id: 'dash', name: T('돌진'), key: 'E', cd: 6, desc: T('앞으로 돌진하며 부딪힌 상대에게 30 피해를 줘요.') },
+      { id: 'dash', name: T('돌진'), key: 'E', cd: 5, desc: T('앞으로 돌진하며 부딪힌 상대에게 30 피해를 주고 1.5초 동안 느리게 해요.') },
       { id: 'shieldbash', name: T('방패 강타'), key: 'R', cd: 10, desc: T('방패를 앞세워 짧게 파고들며 28 피해를 주고 상대를 1.1초 기절시켜요.') }
     ],
     st: [3, 3, 2, 1], atkTxt: T('칼 베기 (이어 치면 세 번째에 내려찍는 강타)'),
@@ -43,7 +43,7 @@ export const ROLES = {
     name: T('바이킹'), type: T('근접 딜러'), color: '#c8873a', hp: 314, speed: 5.6,
     atk: { kind: 'melee', range: 2.6, arc: 2.0, dmg: 22, cd: 0.55 },
     skills: [
-      { id: 'leap', name: T('도약 강타'), key: 'Q', cd: 6, desc: T('앞으로 크게 뛰어올라 내려앉으며 둘레 상대에게 36 피해를 줘요.') },
+      { id: 'leap', name: T('도약 강타'), key: 'Q', cd: 5, desc: T('앞으로 크게 뛰어올라 내려앉으며 둘레 상대에게 36 피해를 주고 1.5초 동안 느리게 해요.') },
       { id: 'bloodlust', name: T('피의 갈증'), key: 'E', cd: 12, desc: T('5초 동안 공격이 30% 빨라지고, 준 피해의 일부를 체력으로 되찾아요.') },
       { id: 'quake', name: T('지진'), key: 'R', cd: 12, desc: T('앞으로 11칸 길게 땅을 갈라 그 길 위 모두에게 42 피해를 주고 느려지게 해요.') }
     ],
@@ -142,7 +142,7 @@ export const ROLES = {
     name: T('창병'), type: T('근접 딜러'), color: '#6a7a8c', hp: 378, speed: 6.0,
     atk: { kind: 'melee', range: 3.9, arc: 0.5, dmg: 47, cd: 0.6 },
     skills: [
-      { id: 'lunge', name: T('돌진 찌르기'), key: 'Q', cd: 7, desc: T('앞으로 크게 돌진하며 지나가는 상대를 꿰뚫어요. 40 피해.') },
+      { id: 'lunge', name: T('돌진 찌르기'), key: 'Q', cd: 6, desc: T('앞으로 크게 돌진하며 지나가는 상대를 꿰뚫어요. 40 피해를 주고 1.5초 동안 느리게 해요.') },
       { id: 'spearthrow', name: T('창 던지기'), key: 'E', cd: 10, desc: T('창을 멀리 던져요. 맞은 상대는 1.5초 동안 느려지고 42 피해를 받아요.') },
       { id: 'sweep', name: T('휩쓸기'), key: 'R', cd: 14, desc: T('창을 크게 휘둘러 둘레 상대에게 36 피해를 주고 밀어내며 1.5초 동안 느리게 해요.') }
     ],
