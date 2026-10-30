@@ -6,7 +6,81 @@
    "title": "은하 제국의 황혼",
    "items": [
     "밸런스 표 다시 측정 (봇끼리 41,000판)"
-   ]
+   ],
+   "tr": {
+    "en": {
+     "title": "Twilight of the Galactic Empire",
+     "items": [
+      "Balance table re-measured (41,000 bot-vs-bot matches)"
+     ]
+    },
+    "es": {
+     "title": "El crepúsculo del Imperio Galáctico",
+     "items": [
+      "Tabla de equilibrio medida de nuevo (41 000 partidas bot contra bot)"
+     ]
+    },
+    "fr": {
+     "title": "Le crépuscule de l'Empire galactique",
+     "items": [
+      "Tableau d'équilibre remesuré (41 000 parties bots contre bots)"
+     ]
+    },
+    "de": {
+     "title": "Die Dämmerung des Galaktischen Imperiums",
+     "items": [
+      "Balance-Tabelle neu gemessen (41.000 Partien Bot gegen Bot)"
+     ]
+    },
+    "ja": {
+     "title": "銀河帝国の黄昏",
+     "items": [
+      "バランス表を再測定（ボット同士の対戦41,000試合）"
+     ]
+    },
+    "zh": {
+     "title": "银河帝国的黄昏",
+     "items": [
+      "重新测量平衡表（机器人对机器人 41,000 局）"
+     ]
+    },
+    "pt": {
+     "title": "O crepúsculo do Império Galáctico",
+     "items": [
+      "Tabela de equilíbrio remedida (41.000 partidas bot contra bot)"
+     ]
+    },
+    "ru": {
+     "title": "Сумерки Галактической империи",
+     "items": [
+      "Таблица баланса заново измерена (41 000 матчей бот против бота)"
+     ]
+    },
+    "tr": {
+     "title": "Galaktik İmparatorluğun Alacakaranlığı",
+     "items": [
+      "Denge tablosu yeniden ölçüldü (41.000 bot maçı)"
+     ]
+    },
+    "it": {
+     "title": "Il crepuscolo dell'Impero Galattico",
+     "items": [
+      "Tabella dell'equilibrio ri-misurata (41.000 partite bot contro bot)"
+     ]
+    },
+    "pl": {
+     "title": "Zmierzch Imperium Galaktycznego",
+     "items": [
+      "Tabela balansu ponownie zmierzona (41 000 meczów bot kontra bot)"
+     ]
+    },
+    "ar": {
+     "title": "غسق الإمبراطورية المجرية",
+     "items": [
+      "أُعيد قياس جدول التوازن (41,000 مباراة بوت ضد بوت)"
+     ]
+    }
+   }
   },
   {
    "date": "2026-10-30",
@@ -16,7 +90,105 @@
     "피사로 일반 공격 데미지 20/29/38/47(단계별)",
     "차원여행자 일반 공격 데미지 16 → 15",
     "야구선수 일반 공격 데미지 43 → 45"
-   ]
+   ],
+   "tr": {
+    "en": {
+     "title": "Twilight of the Galactic Empire",
+     "items": [
+      "Pizarro basic attack damage 20/29/38/47 (per stage)",
+      "Dimension Traveler basic attack damage 16 → 15",
+      "Baseball Player basic attack damage 43 → 45"
+     ]
+    },
+    "es": {
+     "title": "El crepúsculo del Imperio Galáctico",
+     "items": [
+      "Daño del ataque básico de Pizarro 20/29/38/47 (por etapa)",
+      "Daño del ataque básico del Viajero dimensional 16 → 15",
+      "Daño del ataque básico del Beisbolista 43 → 45"
+     ]
+    },
+    "fr": {
+     "title": "Le crépuscule de l'Empire galactique",
+     "items": [
+      "Dégâts de l'attaque de base de Pizarro 20/29/38/47 (par palier)",
+      "Dégâts de l'attaque de base du Voyageur dimensionnel 16 → 15",
+      "Dégâts de l'attaque de base du Joueur de baseball 43 → 45"
+     ]
+    },
+    "de": {
+     "title": "Die Dämmerung des Galaktischen Imperiums",
+     "items": [
+      "Schaden des Grundangriffs von Pizarro 20/29/38/47 (je Stufe)",
+      "Schaden des Grundangriffs des Dimensionsreisenden 16 → 15",
+      "Schaden des Grundangriffs des Baseballspielers 43 → 45"
+     ]
+    },
+    "ja": {
+     "title": "銀河帝国の黄昏",
+     "items": [
+      "ピサロの通常攻撃ダメージ 20/29/38/47（段階ごと）",
+      "次元旅行者の通常攻撃ダメージ 16→15",
+      "野球選手の通常攻撃ダメージ 43→45"
+     ]
+    },
+    "zh": {
+     "title": "银河帝国的黄昏",
+     "items": [
+      "皮萨罗普攻伤害 20/29/38/47（按阶段）",
+      "异界旅者普攻伤害 16→15",
+      "棒球手普攻伤害 43→45"
+     ]
+    },
+    "pt": {
+     "title": "O crepúsculo do Império Galáctico",
+     "items": [
+      "Dano do ataque básico de Pizarro 20/29/38/47 (por estágio)",
+      "Dano do ataque básico do Viajante dimensional 16 → 15",
+      "Dano do ataque básico do Beisebolista 43 → 45"
+     ]
+    },
+    "ru": {
+     "title": "Сумерки Галактической империи",
+     "items": [
+      "Урон базовой атаки Писарро 20/29/38/47 (по стадиям)",
+      "Урон базовой атаки Путешественника по измерениям 16 → 15",
+      "Урон базовой атаки Бейсболиста 43 → 45"
+     ]
+    },
+    "tr": {
+     "title": "Galaktik İmparatorluğun Alacakaranlığı",
+     "items": [
+      "Pizarro temel saldırı hasarı 20/29/38/47 (aşamaya göre)",
+      "Boyut Gezgini'nin temel saldırı hasarı 16 → 15",
+      "Beyzbolcu'nun temel saldırı hasarı 43 → 45"
+     ]
+    },
+    "it": {
+     "title": "Il crepuscolo dell'Impero Galattico",
+     "items": [
+      "Danno dell'attacco base di Pizarro 20/29/38/47 (per stadio)",
+      "Danno dell'attacco base del Viaggiatore dimensionale 16 → 15",
+      "Danno dell'attacco base del Giocatore di baseball 43 → 45"
+     ]
+    },
+    "pl": {
+     "title": "Zmierzch Imperium Galaktycznego",
+     "items": [
+      "Obrażenia ataku podstawowego Pizarra 20/29/38/47 (zależnie od etapu)",
+      "Obrażenia ataku podstawowego Podróżnika między wymiarami 16 → 15",
+      "Obrażenia ataku podstawowego Baseballisty 43 → 45"
+     ]
+    },
+    "ar": {
+     "title": "غسق الإمبراطورية المجرية",
+     "items": [
+      "ضرر الهجوم الأساسي لبيزارو 20/29/38/47 (حسب المرحلة)",
+      "ضرر الهجوم الأساسي لمسافر الأبعاد 16 → 15",
+      "ضرر الهجوم الأساسي للاعب البيسبول 43 → 45"
+     ]
+    }
+   }
   },
   {
    "date": "2026-10-30",
@@ -24,7 +196,81 @@
    "title": "은하 제국의 황혼",
    "items": [
     "큰 맵(빙하 호수 등)에서 화면이 번지고 흰 판이 생기던 그림 깨짐 대응: 큰 맵은 발판을 미리 만든 큰 그림 없이 바로 그림, 그래픽 메모리가 사라졌다 돌아오면 그림을 다시 만듦"
-   ]
+   ],
+   "tr": {
+    "en": {
+     "title": "Twilight of the Galactic Empire",
+     "items": [
+      "Fix for graphics corruption on large maps (such as Glacier Lake) where the screen smeared and white panels appeared: large maps now draw directly without a pre-made large image, and graphics are rebuilt when graphics memory is lost and comes back"
+     ]
+    },
+    "es": {
+     "title": "El crepúsculo del Imperio Galáctico",
+     "items": [
+      "Solución de la corrupción gráfica en mapas grandes (como Lago glaciar), donde la pantalla se emborronaba y aparecían paneles blancos: los mapas grandes ahora se dibujan directamente sin una imagen grande preparada, y los gráficos se reconstruyen cuando se pierde la memoria gráfica y vuelve"
+     ]
+    },
+    "fr": {
+     "title": "Le crépuscule de l'Empire galactique",
+     "items": [
+      "Correction des défauts graphiques sur les grandes cartes (comme Lac glaciaire) où l'écran se brouillait et des panneaux blancs apparaissaient : les grandes cartes se dessinent désormais directement sans grande image préparée, et les graphismes sont recréés quand la mémoire graphique est perdue puis revient"
+     ]
+    },
+    "de": {
+     "title": "Die Dämmerung des Galaktischen Imperiums",
+     "items": [
+      "Fix für Grafikfehler auf großen Karten (z. B. Gletschersee), bei denen das Bild verschmierte und weiße Flächen auftauchten: große Karten werden jetzt direkt gezeichnet, ohne vorab erstelltes großes Bild, und die Grafik wird neu aufgebaut, wenn der Grafikspeicher verloren geht und zurückkehrt"
+     ]
+    },
+    "ja": {
+     "title": "銀河帝国の黄昏",
+     "items": [
+      "氷河湖などの大きなマップで画面がにじみ白い板が出る描画崩れに対応：大きなマップは事前に作った大きな絵を使わず直接描画し、グラフィックメモリが消えて戻った時は絵を作り直すように変更"
+     ]
+    },
+    "zh": {
+     "title": "银河帝国的黄昏",
+     "items": [
+      "针对冰河湖等大地图画面模糊并出现白色面板的画面错乱问题：大地图不再使用预先制作的大图而直接绘制，图形内存丢失后恢复时会重新生成图像"
+     ]
+    },
+    "pt": {
+     "title": "O crepúsculo do Império Galáctico",
+     "items": [
+      "Correção de corrupção gráfica em mapas grandes (como Lago glacial), em que a tela borrava e apareciam painéis brancos: mapas grandes agora são desenhados diretamente, sem imagem grande pré-pronta, e os gráficos são refeitos quando a memória gráfica se perde e volta"
+     ]
+    },
+    "ru": {
+     "title": "Сумерки Галактической империи",
+     "items": [
+      "Исправление графических сбоев на больших картах (например, Ледяное озеро), из-за которых экран смазывался и появлялись белые панели: большие карты теперь рисуются напрямую без заранее созданного большого изображения, а графика пересоздаётся, если графическая память пропала и вернулась"
+     ]
+    },
+    "tr": {
+     "title": "Galaktik İmparatorluğun Alacakaranlığı",
+     "items": [
+      "Büyük haritalarda (ör. Buzul Gölü) ekranın bulanıklaşıp beyaz panellerin çıkmasına yol açan grafik bozulmasına çözüm: büyük haritalar artık önceden hazırlanmış büyük bir görsel olmadan doğrudan çiziliyor ve grafik belleği kaybolup geri geldiğinde grafikler yeniden oluşturuluyor"
+     ]
+    },
+    "it": {
+     "title": "Il crepuscolo dell'Impero Galattico",
+     "items": [
+      "Correzione dei problemi grafici sulle mappe grandi (come Lago glaciale) in cui lo schermo sfocava e comparivano pannelli bianchi: le mappe grandi ora vengono disegnate direttamente senza un'immagine grande preparata in anticipo, e la grafica viene ricostruita quando la memoria grafica si perde e torna"
+     ]
+    },
+    "pl": {
+     "title": "Zmierzch Imperium Galaktycznego",
+     "items": [
+      "Naprawa uszkodzeń grafiki na dużych mapach (np. Lodowe jezioro), gdzie ekran się rozmazywał i pojawiały się białe panele: duże mapy są teraz rysowane bezpośrednio, bez wcześniej przygotowanego dużego obrazu, a grafika jest odbudowywana, gdy pamięć graficzna zostanie utracona i wróci"
+     ]
+    },
+    "ar": {
+     "title": "غسق الإمبراطورية المجرية",
+     "items": [
+      "معالجة تلف الرسومات على الخرائط الكبيرة (مثل بحيرة الجليد) حيث كانت الشاشة تتلطخ وتظهر ألواح بيضاء: صارت الخرائط الكبيرة ترسم مباشرة دون صورة كبيرة مُعدّة مسبقًا، وتُعاد بناء الرسومات عندما تُفقد ذاكرة الرسوميات ثم تعود"
+     ]
+    }
+   }
   },
   {
    "date": "2026-10-30",
@@ -33,7 +279,93 @@
    "items": [
     "온라인 모드 목록 위에 '○시간 ○분 뒤에 모드 목록 초기화' 표시 (한국 시간 자정 기준, 실시간으로 줄어듦)",
     "봇이 들어오기까지 남은 시간이 방장과 시계가 어긋난 참가자 화면에서 15초가 아니라 17초 등으로 보이던 문제 수정"
-   ]
+   ],
+   "tr": {
+    "en": {
+     "title": "Twilight of the Galactic Empire",
+     "items": [
+      "Above the online mode list, 'Mode list resets in ○h ○m' is shown (based on midnight Korea time, counting down live)",
+      "Fixed the time left before a bot joins showing 17 s instead of 15 s on participants' screens whose clock was out of sync with the host"
+     ]
+    },
+    "es": {
+     "title": "El crepúsculo del Imperio Galáctico",
+     "items": [
+      "Encima de la lista de modos online se muestra 'La lista de modos se reinicia en ○h ○min' (según la medianoche en Corea, con cuenta atrás en tiempo real)",
+      "Corregido: en las pantallas de los participantes cuyo reloj no coincidía con el del anfitrión, el tiempo que faltaba para que entrara un bot se veía como 17 s en lugar de 15 s"
+     ]
+    },
+    "fr": {
+     "title": "Le crépuscule de l'Empire galactique",
+     "items": [
+      "Au-dessus de la liste des modes en ligne, « La liste des modes se réinitialise dans ○h ○min » s'affiche (minuit heure de Corée, décompte en direct)",
+      "Correction : le temps restant avant l'arrivée d'un bot s'affichait 17 s au lieu de 15 s chez les participants dont l'horloge n'était pas synchronisée avec l'hôte"
+     ]
+    },
+    "de": {
+     "title": "Die Dämmerung des Galaktischen Imperiums",
+     "items": [
+      "Über der Online-Modusliste wird 'Modusliste wird in ○ Std. ○ Min. zurückgesetzt' angezeigt (Mitternacht koreanischer Zeit, läuft live herunter)",
+      "Behoben: Die verbleibende Zeit bis ein Bot beitritt wurde bei Teilnehmern mit abweichender Uhr im Vergleich zum Host als 17 s statt 15 s angezeigt"
+     ]
+    },
+    "ja": {
+     "title": "銀河帝国の黄昏",
+     "items": [
+      "オンラインモード一覧の上に「○時間○分後にモード一覧を初期化」を表示（韓国時間の深夜0時基準、リアルタイムで減少）",
+      "部屋主と時計がずれている参加者の画面で、ボットが入るまでの残り時間が15秒ではなく17秒などに見えていた問題を修正"
+     ]
+    },
+    "zh": {
+     "title": "银河帝国的黄昏",
+     "items": [
+      "在线模式列表上方显示「模式列表将在 ○小时○分后重置」（以韩国时间午夜为准，实时倒计时）",
+      "修复房主与参与者时钟不同步时，参与者屏幕上机器人加入前的剩余时间显示为 17 秒而不是 15 秒的问题"
+     ]
+    },
+    "pt": {
+     "title": "O crepúsculo do Império Galáctico",
+     "items": [
+      "Acima da lista de modos online, aparece 'A lista de modos é reiniciada em ○h ○min' (com base na meia-noite do horário da Coreia, contando em tempo real)",
+      "Corrigido: o tempo restante para um bot entrar aparecia como 17 s em vez de 15 s nas telas de participantes com relógio fora de sincronia com o anfitrião"
+     ]
+    },
+    "ru": {
+     "title": "Сумерки Галактической империи",
+     "items": [
+      "Над списком онлайн-режимов показывается «Список режимов сбросится через ○ ч ○ мин» (по полуночи по корейскому времени, отсчёт в реальном времени)",
+      "Исправлено: время до входа бота показывалось как 17 с вместо 15 с у участников, чьи часы не совпадали с часами хоста"
+     ]
+    },
+    "tr": {
+     "title": "Galaktik İmparatorluğun Alacakaranlığı",
+     "items": [
+      "Çevrimiçi mod listesinin üstünde 'Mod listesi ○ sa ○ dk sonra sıfırlanır' gösterilir (Kore saatiyle gece yarısına göre, canlı geri sayım)",
+      "Düzeltildi: oda sahibiyle saati uyuşmayan katılımcıların ekranında, bir botun katılmasına kalan süre 15 sn yerine 17 sn gibi görünüyordu"
+     ]
+    },
+    "it": {
+     "title": "Il crepuscolo dell'Impero Galattico",
+     "items": [
+      "Sopra l'elenco delle modalità online compare 'L'elenco delle modalità si azzera tra ○h ○min' (in base alla mezzanotte di Corea, con conto alla rovescia in tempo reale)",
+      "Corretto: il tempo mancante all'ingresso di un bot appariva come 17 s invece di 15 s sugli schermi dei partecipanti con l'orologio non sincronizzato con l'host"
+     ]
+    },
+    "pl": {
+     "title": "Zmierzch Imperium Galaktycznego",
+     "items": [
+      "Nad listą trybów online pokazuje się 'Lista trybów zresetuje się za ○ godz. ○ min' (według północy czasu koreańskiego, odliczanie na żywo)",
+      "Naprawiono: czas do dołączenia bota pokazywał się jako 17 s zamiast 15 s u uczestników, których zegar nie był zsynchronizowany z hostem"
+     ]
+    },
+    "ar": {
+     "title": "غسق الإمبراطورية المجرية",
+     "items": [
+      "فوق قائمة أوضاع الأونلاين يظهر 'تُعاد تهيئة قائمة الأوضاع خلال ○ س ○ د' (وفق منتصف الليل بتوقيت كوريا، والعد التنازلي مباشر)",
+      "إصلاح ظهور الوقت المتبقي قبل انضمام البوت 17 ث بدلًا من 15 ث على شاشات المشاركين الذين لا تتطابق ساعاتهم مع المضيف"
+     ]
+    }
+   }
   },
   {
    "date": "2026-10-30",
@@ -41,7 +373,81 @@
    "title": "은하 제국의 황혼",
    "items": [
     "밸런스 표를 봇만으로 전 맵 재측정해 갱신 (b545·b550 조정 반영)"
-   ]
+   ],
+   "tr": {
+    "en": {
+     "title": "Twilight of the Galactic Empire",
+     "items": [
+      "Balance table re-measured on all maps using bots only (reflects the b545 and b550 changes)"
+     ]
+    },
+    "es": {
+     "title": "El crepúsculo del Imperio Galáctico",
+     "items": [
+      "Tabla de equilibrio medida de nuevo en todos los mapas solo con bots (refleja los cambios de b545 y b550)"
+     ]
+    },
+    "fr": {
+     "title": "Le crépuscule de l'Empire galactique",
+     "items": [
+      "Tableau d'équilibre remesuré sur toutes les cartes, uniquement avec des bots (intègre les changements de b545 et b550)"
+     ]
+    },
+    "de": {
+     "title": "Die Dämmerung des Galaktischen Imperiums",
+     "items": [
+      "Balance-Tabelle auf allen Karten nur mit Bots neu gemessen (berücksichtigt die Änderungen von b545 und b550)"
+     ]
+    },
+    "ja": {
+     "title": "銀河帝国の黄昏",
+     "items": [
+      "バランス表を、ボットだけで全マップ再測定して更新（b545・b550の調整を反映）"
+     ]
+    },
+    "zh": {
+     "title": "银河帝国的黄昏",
+     "items": [
+      "仅用机器人重新测量所有地图并更新平衡表（已反映 b545 与 b550 的调整）"
+     ]
+    },
+    "pt": {
+     "title": "O crepúsculo do Império Galáctico",
+     "items": [
+      "Tabela de equilíbrio remedida em todos os mapas, usando apenas bots (reflete os ajustes de b545 e b550)"
+     ]
+    },
+    "ru": {
+     "title": "Сумерки Галактической империи",
+     "items": [
+      "Таблица баланса заново измерена на всех картах, только с ботами (учтены изменения b545 и b550)"
+     ]
+    },
+    "tr": {
+     "title": "Galaktik İmparatorluğun Alacakaranlığı",
+     "items": [
+      "Denge tablosu yalnızca botlarla tüm haritalarda yeniden ölçüldü (b545 ve b550 değişiklikleri yansıtıldı)"
+     ]
+    },
+    "it": {
+     "title": "Il crepuscolo dell'Impero Galattico",
+     "items": [
+      "Tabella dell'equilibrio ri-misurata su tutte le mappe usando solo bot (riflette le modifiche di b545 e b550)"
+     ]
+    },
+    "pl": {
+     "title": "Zmierzch Imperium Galaktycznego",
+     "items": [
+      "Tabela balansu ponownie zmierzona na wszystkich mapach, tylko z botami (uwzględnia zmiany b545 i b550)"
+     ]
+    },
+    "ar": {
+     "title": "غسق الإمبراطورية المجرية",
+     "items": [
+      "أُعيد قياس جدول التوازن على جميع الخرائط باستخدام البوتات فقط (يعكس تعديلات b545 وb550)"
+     ]
+    }
+   }
   },
   {
    "date": "2026-10-30",
@@ -51,7 +457,105 @@
     "밸런스 조정: 수류탄 폭발 점프 피해 18 → 56, 도박사 일반 공격 피해 20 → 24, 차원여행자 일반 공격 피해 15 → 16·쿨타임 0.55 → 0.5초, 마술사 일반 공격 쿨타임 0.9 → 0.75초, 학살자 화염방사 과열까지 8초 → 6초, 자다이 일반 공격 쿨타임 1.1 → 1.25초, 복서 일반 공격 피해 25 → 24·어퍼컷 피해 26 → 24",
     "군인 지뢰가 상대에게도 보이도록 변경",
     "수류탄·권투글러브·포탈건 일반 공격 설명 문구를 실제 수치로 수정"
-   ]
+   ],
+   "tr": {
+    "en": {
+     "title": "Twilight of the Galactic Empire",
+     "items": [
+      "Balance changes: grenade explosion jump damage 18 → 56, Gambler basic attack damage 20 → 24, Dimension Traveler basic attack damage 15 → 16 and cooldown 0.55 → 0.5 s, Magician basic attack cooldown 0.9 → 0.75 s, Slayer flamethrower overheat time 8 s → 6 s, Jadai basic attack cooldown 1.1 → 1.25 s, Boxer basic attack damage 25 → 24 and uppercut damage 26 → 24",
+      "Soldier's mines are now visible to opponents too",
+      "Basic attack descriptions for Grenade, Boxing Glove and Portal Gun updated to the actual numbers"
+     ]
+    },
+    "es": {
+     "title": "El crepúsculo del Imperio Galáctico",
+     "items": [
+      "Cambios de equilibrio: daño del salto de explosión de granada 18 → 56, daño del ataque básico del Apostador 20 → 24, daño del ataque básico del Viajero dimensional 15 → 16 y enfriamiento 0.55 → 0.5 s, enfriamiento del ataque básico del Mago ilusionista 0.9 → 0.75 s, tiempo de sobrecalentamiento del lanzallamas del Masacrador 8 s → 6 s, enfriamiento del ataque básico de Jedi 1.1 → 1.25 s, daño del ataque básico del Boxeador 25 → 24 y del gancho 26 → 24",
+      "Las minas del Soldado ahora también son visibles para los rivales",
+      "Descripciones del ataque básico de la granada, el guante de boxeo y la pistola de portales actualizadas con los valores reales"
+     ]
+    },
+    "fr": {
+     "title": "Le crépuscule de l'Empire galactique",
+     "items": [
+      "Ajustements d'équilibre : dégâts du saut d'explosion de grenade 18 → 56, dégâts de l'attaque de base du Joueur 20 → 24, dégâts de l'attaque de base du Voyageur dimensionnel 15 → 16 et recharge 0,55 → 0,5 s, recharge de l'attaque de base du Magicien 0,9 → 0,75 s, surchauffe du lance-flammes du Tueur 8 s → 6 s, recharge de l'attaque de base de Jadai 1,1 → 1,25 s, dégâts de l'attaque de base du Boxeur 25 → 24 et du uppercut 26 → 24",
+      "Les mines du Soldat sont maintenant visibles aussi pour les adversaires",
+      "Descriptions de l'attaque de base de la grenade, du gant de boxe et du pistolet à portails mises à jour avec les vraies valeurs"
+     ]
+    },
+    "de": {
+     "title": "Die Dämmerung des Galaktischen Imperiums",
+     "items": [
+      "Anpassungen am Gleichgewicht: Sprungschaden der Granatenexplosion 18 → 56, Schaden des Grundangriffs des Spielers 20 → 24, Schaden des Grundangriffs des Dimensionsreisenden 15 → 16 und Abklingzeit 0,55 → 0,5 s, Abklingzeit des Grundangriffs des Magiers 0,9 → 0,75 s, Überhitzungszeit des Flammenwerfers des Schlächters 8 s → 6 s, Abklingzeit des Grundangriffs von Jadai 1,1 → 1,25 s, Schaden des Grundangriffs des Boxers 25 → 24 und des Aufwärtshakens 26 → 24",
+      "Die Minen des Soldaten sind jetzt auch für Gegner sichtbar",
+      "Beschreibungen des Grundangriffs von Granate, Boxhandschuh und Portalkanone auf die tatsächlichen Werte aktualisiert"
+     ]
+    },
+    "ja": {
+     "title": "銀河帝国の黄昏",
+     "items": [
+      "バランス調整：手榴弾の爆発ジャンプダメージ 18→56、ギャンブラーの通常攻撃ダメージ 20→24、次元旅行者の通常攻撃ダメージ 15→16・クールタイム 0.55→0.5秒、マジシャンの通常攻撃クールタイム 0.9→0.75秒、殺戮者の火炎放射のオーバーヒートまで 8秒→6秒、ジャダイの通常攻撃クールタイム 1.1→1.25秒、ボクサーの通常攻撃ダメージ 25→24・アッパーカットダメージ 26→24",
+      "軍人の地雷が相手にも見えるようになりました",
+      "手榴弾・ボクシンググローブ・ポータルガンの通常攻撃の説明文を実際の数値に修正"
+     ]
+    },
+    "zh": {
+     "title": "银河帝国的黄昏",
+     "items": [
+      "平衡性调整：手雷爆炸跳跃伤害 18→56，赌徒普攻伤害 20→24，异界旅者普攻伤害 15→16、冷却 0.55→0.5秒，魔术师普攻冷却 0.9→0.75秒，屠杀者火焰喷射过热前时间 8秒→6秒，大大的普攻冷却 1.1→1.25秒，拳击手普攻伤害 25→24、上勾拳伤害 26→24",
+      "士兵的地雷现在对敌人也可见",
+      "手雷、拳击手套、传送门枪的普攻说明文字已改为实际数值"
+     ]
+    },
+    "pt": {
+     "title": "O crepúsculo do Império Galáctico",
+     "items": [
+      "Ajustes de equilíbrio: dano do salto de explosão da granada 18 → 56, dano do ataque básico do Apostador 20 → 24, dano do ataque básico do Viajante dimensional 15 → 16 e recarga 0,55 → 0,5 s, recarga do ataque básico do Mago ilusionista 0,9 → 0,75 s, tempo de superaquecimento do lança-chamas do Masacrador 8 s → 6 s, recarga do ataque básico do Jedi 1,1 → 1,25 s, dano do ataque básico do Boxeador 25 → 24 e do upper 26 → 24",
+      "As minas do Soldado agora também ficam visíveis para os adversários",
+      "Descrições do ataque básico da granada, da luva de boxe e da pistola de portal atualizadas com os números reais"
+     ]
+    },
+    "ru": {
+     "title": "Сумерки Галактической империи",
+     "items": [
+      "Изменения баланса: урон прыжка от взрыва гранаты 18 → 56, урон базовой атаки Игрока 20 → 24, урон базовой атаки Путешественника 15 → 16 и перезарядка 0,55 → 0,5 с, перезарядка базовой атаки Мага 0,9 → 0,75 с, время перегрева огнемёта Мясника 8 с → 6 с, перезарядка базовой атаки Джадая 1,1 → 1,25 с, урон базовой атаки Боксёра 25 → 24 и апперкота 26 → 24",
+      "Мины Солдата теперь видны и противникам",
+      "Описания базовых атак гранаты, боксёрской перчатки и портальной пушки обновлены под реальные значения"
+     ]
+    },
+    "tr": {
+     "title": "Galaktik İmparatorluğun Alacakaranlığı",
+     "items": [
+      "Denge değişiklikleri: bomba patlama zıplaması hasarı 18 → 56, Kumarbaz'ın temel saldırı hasarı 20 → 24, Boyut Gezgini'nin temel saldırı hasarı 15 → 16 ve bekleme süresi 0,55 → 0,5 sn, Büyücü'nün temel saldırı bekleme süresi 0,9 → 0,75 sn, Kasap'ın alev makinesinin aşırı ısınma süresi 8 sn → 6 sn, Jadai'nin temel saldırı bekleme süresi 1,1 → 1,25 sn, Boxer'ın temel saldırı hasarı 25 → 24 ve aparkat hasarı 26 → 24",
+      "Asker'in mayınları artık rakiplere de görünüyor",
+      "Bomba, boks eldiveni ve portal tabancası temel saldırı açıklamaları gerçek değerlere göre güncellendi"
+     ]
+    },
+    "it": {
+     "title": "Il crepuscolo dell'Impero Galattico",
+     "items": [
+      "Modifiche all'equilibrio: danno del salto da esplosione della granata 18 → 56, danno dell'attacco base del Bisca 20 → 24, danno dell'attacco base del Viaggiatore dimensionale 15 → 16 e recupero 0,55 → 0,5 s, recupero dell'attacco base del Mago 0,9 → 0,75 s, tempo di surriscaldamento del lanciafiamme del Macellaio 8 s → 6 s, recupero dell'attacco base di Jadai 1,1 → 1,25 s, danno dell'attacco base del Pugile 25 → 24 e del gancio 26 → 24",
+      "Le mine del Soldato ora sono visibili anche agli avversari",
+      "Descrizioni dell'attacco base di granata, guanto da boxe e pistola portale aggiornate con i valori reali"
+     ]
+    },
+    "pl": {
+     "title": "Zmierzch Imperium Galaktycznego",
+     "items": [
+      "Zmiany balansu: obrażenia skoku od wybuchu granatu 18 → 56, obrażenia ataku podstawowego Hazardzisty 20 → 24, obrażenia ataku podstawowego Podróżnika między wymiarami 15 → 16 i odnowienie 0,55 → 0,5 s, odnowienie ataku podstawowego Maga 0,9 → 0,75 s, czas przegrzania miotacza ognia Rzeźnika 8 s → 6 s, odnowienie ataku podstawowego Jadaia 1,1 → 1,25 s, obrażenia ataku podstawowego Boksera 25 → 24 i sierpowego 26 → 24",
+      "Miny Żołnierza są teraz widoczne także dla przeciwników",
+      "Opisy ataków podstawowych granatu, rękawicy bokserskiej i pistoletu portalowego zaktualizowano do rzeczywistych wartości"
+     ]
+    },
+    "ar": {
+     "title": "غسق الإمبراطورية المجرية",
+     "items": [
+      "تغييرات التوازن: ضرر قفزة انفجار القنبلة اليدوية 18 → 56، ضرر الهجوم الأساسي للاعب المقامرة 20 → 24، ضرر الهجوم الأساسي لمسافر الأبعاد 15 → 16 وفترة إعادة الشحن 0.55 → 0.5 ث، فترة إعادة شحن الهجوم الأساسي للساحر 0.9 → 0.75 ث، وقت تسخين لهب الجزار الزائد 8 ث → 6 ث، فترة إعادة شحن الهجوم الأساسي لجادانغ 1.1 → 1.25 ث، ضرر الهجوم الأساسي للملاكم 25 → 24 وضرر الضربة الصاعدة 26 → 24",
+      "أصبحت ألغام الجندي مرئية للخصوم أيضًا",
+      "تحديث أوصاف الهجوم الأساسي للقنبلة اليدوية وقفاز الملاكمة ومسدس البوابة لتطابق القيم الفعلية"
+     ]
+    }
+   }
   },
   {
    "date": "2026-10-30",
@@ -59,7 +563,81 @@
    "title": "은하 제국의 황혼",
    "items": [
     "밸런스 표를 봇만으로 전 맵 재측정해 갱신"
-   ]
+   ],
+   "tr": {
+    "en": {
+     "title": "Twilight of the Galactic Empire",
+     "items": [
+      "Balance table re-measured on all maps using bots only"
+     ]
+    },
+    "es": {
+     "title": "El crepúsculo del Imperio Galáctico",
+     "items": [
+      "Tabla de equilibrio medida de nuevo en todos los mapas usando solo bots"
+     ]
+    },
+    "fr": {
+     "title": "Le crépuscule de l'Empire galactique",
+     "items": [
+      "Tableau d'équilibre remesuré sur toutes les cartes, uniquement avec des bots"
+     ]
+    },
+    "de": {
+     "title": "Die Dämmerung des Galaktischen Imperiums",
+     "items": [
+      "Balance-Tabelle auf allen Karten nur mit Bots neu gemessen"
+     ]
+    },
+    "ja": {
+     "title": "銀河帝国の黄昏",
+     "items": [
+      "バランス表を、ボットだけで全マップ再測定して更新"
+     ]
+    },
+    "zh": {
+     "title": "银河帝国的黄昏",
+     "items": [
+      "仅用机器人重新测量所有地图并更新平衡表"
+     ]
+    },
+    "pt": {
+     "title": "O crepúsculo do Império Galáctico",
+     "items": [
+      "Tabela de equilíbrio remedida em todos os mapas, usando apenas bots"
+     ]
+    },
+    "ru": {
+     "title": "Сумерки Галактической империи",
+     "items": [
+      "Таблица баланса заново измерена на всех картах, только с ботами"
+     ]
+    },
+    "tr": {
+     "title": "Galaktik İmparatorluğun Alacakaranlığı",
+     "items": [
+      "Denge tablosu yalnızca botlarla tüm haritalarda yeniden ölçüldü"
+     ]
+    },
+    "it": {
+     "title": "Il crepuscolo dell'Impero Galattico",
+     "items": [
+      "Tabella dell'equilibrio ri-misurata su tutte le mappe usando solo bot"
+     ]
+    },
+    "pl": {
+     "title": "Zmierzch Imperium Galaktycznego",
+     "items": [
+      "Tabela balansu ponownie zmierzona na wszystkich mapach, tylko z botami"
+     ]
+    },
+    "ar": {
+     "title": "غسق الإمبراطورية المجرية",
+     "items": [
+      "أُعيد قياس جدول التوازن على جميع الخرائط باستخدام البوتات فقط"
+     ]
+    }
+   }
   },
   {
    "date": "2026-10-30",
@@ -69,7 +647,105 @@
     "오늘의 첫 승리 보너스: 오늘 목록에 있는 모드 6개와 일일 모드에서 그날 첫 승리를 하면 sC를 받음 (클래식 40, 팀 50, 특수 70, 일일 모드 60)",
     "보스 레이드에서 보스를 쓰러뜨리면 끝날 때 보스에게 마지막 일격을 넣은 장면이 나오고 '마지막 일격 · 이름' 표시",
     "에픽 상자 개수가 계정에 저장되지 않고 다른 기기에서 사라지던 문제 수정"
-   ]
+   ],
+   "tr": {
+    "en": {
+     "title": "Twilight of the Galactic Empire",
+     "items": [
+      "Today's first-win bonus: winning your first match of the day in any of today's 6 listed modes or the daily mode gives sC (Classic 40, Team 50, Special 70, daily mode 60)",
+      "In Boss Raid, when the boss falls, a final-blow scene plays showing who landed the last hit, with 'Final blow · Name' displayed",
+      "Fixed epic box count not being saved to the account and disappearing on other devices"
+     ]
+    },
+    "es": {
+     "title": "El crepúsculo del Imperio Galáctico",
+     "items": [
+      "Bonus por primera victoria del día: ganar tu primera partida del día en cualquiera de los 6 modos de hoy o en el modo diario da sC (Clásico 40, Equipos 50, Especial 70, modo diario 60)",
+      "En Incursión al jefe, cuando cae el jefe se reproduce una escena del golpe final que muestra quién dio el último golpe, con 'Golpe final · Nombre' en pantalla",
+      "Corregido: la cantidad de cajas épicas no se guardaba en la cuenta y desaparecía en otros dispositivos"
+     ]
+    },
+    "fr": {
+     "title": "Le crépuscule de l'Empire galactique",
+     "items": [
+      "Bonus de première victoire du jour : gagner la première partie du jour dans l'un des 6 modes du jour ou en mode quotidien rapporte des sC (Classique 40, Équipes 50, Spécial 70, mode quotidien 60)",
+      "Dans le Raid de boss, quand le boss tombe, une scène du coup final montre qui a porté le dernier coup, avec « Coup final · Nom » affiché",
+      "Correction : le nombre de coffres épiques n'était pas sauvegardé sur le compte et disparaissait sur les autres appareils"
+     ]
+    },
+    "de": {
+     "title": "Die Dämmerung des Galaktischen Imperiums",
+     "items": [
+      "Bonus für den ersten Sieg des Tages: Wer am Tag den ersten Sieg in einem der 6 heutigen Modi oder im Tagesmodus holt, erhält sC (Klassisch 40, Team 50, Spezial 70, Tagesmodus 60)",
+      "Im Boss-Raid spielt sich beim Fall des Bosses eine Szene des letzten Schlags ab, die zeigt, wer den letzten Treffer gesetzt hat, mit 'Letzter Schlag · Name'",
+      "Behoben: Die Anzahl epischer Kisten wurde nicht im Konto gespeichert und verschwand auf anderen Geräten"
+     ]
+    },
+    "ja": {
+     "title": "銀河帝国の黄昏",
+     "items": [
+      "今日の初勝利ボーナス：今日の一覧にある6モードとデイリーモードで、その日最初の勝利をすると sC を獲得（クラシック40、チーム50、スペシャル70、デイリーモード60）",
+      "ボスレイドでボスを倒すと、最後の一撃を入れた人を映す演出が流れ、「マジックフィニッシュ · 名前」が表示されます",
+      "エピック箱の数がアカウントに保存されず、他の端末で消えてしまう問題を修正"
+     ]
+    },
+    "zh": {
+     "title": "银河帝国的黄昏",
+     "items": [
+      "今日首胜奖励：在今日列表中的 6 种模式和每日模式中，当天首次获胜即可获得 sC（经典 40、团队 50、特殊 70、每日模式 60）",
+      "在 Boss 团本中击败 Boss 时，会播放最后一击的画面，显示是谁打出了最后一击，并标注「最后一击 · 名字」",
+      "修复史诗宝箱数量未保存到账号、在其他设备上消失的问题"
+     ]
+    },
+    "pt": {
+     "title": "O crepúsculo do Império Galáctico",
+     "items": [
+      "Bônus de primeira vitória do dia: vencer a primeira partida do dia em qualquer um dos 6 modos listados hoje ou no modo diário dá sC (Clássico 40, Equipe 50, Especial 70, modo diário 60)",
+      "No Raide do chefe, quando o chefe cai, toca uma cena do golpe final mostrando quem deu o último golpe, com 'Golpe final · Nome' exibido",
+      "Corrigido: a quantidade de caixas épicas não era salva na conta e sumia em outros dispositivos"
+     ]
+    },
+    "ru": {
+     "title": "Сумерки Галактической империи",
+     "items": [
+      "Бонус за первую победу дня: первая победа дня в любом из 6 сегодняшних режимов или в ежедневном режиме приносит sC (классический 40, командный 50, особый 70, ежедневный режим 60)",
+      "В рейде на босса, когда босс падает, проигрывается сцена последнего удара с тем, кто его нанёс, и надписью «Последний удар · Имя»",
+      "Исправлено: количество эпических ящиков не сохранялось в аккаунте и пропадало на других устройствах"
+     ]
+    },
+    "tr": {
+     "title": "Galaktik İmparatorluğun Alacakaranlığı",
+     "items": [
+      "Günün ilk galibiyet bonusu: bugünkü 6 moddan veya günlük moddan herhangi birinde günün ilk galibiyetini almak sC kazandırır (Klasik 40, Takım 50, Özel 70, günlük mod 60)",
+      "Boss Baskını'nda boss düşünce, son vuruşu kimin yaptığını gösteren bir son vuruş sahnesi oynar ve 'Son vuruş · İsim' yazısı görünür",
+      "Düzeltildi: epik kutu sayısı hesaba kaydedilmiyor ve diğer cihazlarda kayboluyordu"
+     ]
+    },
+    "it": {
+     "title": "Il crepuscolo dell'Impero Galattico",
+     "items": [
+      "Bonus per la prima vittoria del giorno: vincere la prima partita del giorno in una delle 6 modalità di oggi o nella modalità giornaliera dà sC (Classica 40, Squadre 50, Speciale 70, modalità giornaliera 60)",
+      "Nel Raid del boss, quando il boss cade, va in scena il colpo finale che mostra chi ha dato l'ultimo colpo, con 'Colpo finale · Nome' visualizzato",
+      "Corretto: il numero di casse epiche non veniva salvato sull'account e spariva sugli altri dispositivi"
+     ]
+    },
+    "pl": {
+     "title": "Zmierzch Imperium Galaktycznego",
+     "items": [
+      "Bonus za pierwsze zwycięstwo dnia: pierwsza wygrana dnia w jednym z 6 dzisiejszych trybów lub w trybie dziennym daje sC (Klasyczny 40, Drużynowy 50, Specjalny 70, tryb dzienny 60)",
+      "W wyprawie na bossa, gdy boss padnie, pokazuje się scena ostatniego ciosu z informacją, kto go zadał, i napis 'Ostatni cios · Imię'",
+      "Naprawiono: liczba epickich skrzyń nie była zapisywana na koncie i znikała na innych urządzeniach"
+     ]
+    },
+    "ar": {
+     "title": "غسق الإمبراطورية المجرية",
+     "items": [
+      "Bonus الفوز الأول لليوم: الفوز بأول مباراة لليوم في أي من أوضاع اليوم الستة أو الوضع اليومي يمنح sC (كلاسيكي 40، فرق 50، خاص 70، الوضع اليومي 60)",
+      "في غزوة الزعيم، عند سقوط الزعيم يُعرض مشهد الضربة الأخيرة يوضح من وجّه الضربة الأخيرة، مع عرض 'الضربة الأخيرة · الاسم'",
+      "إصلاح مشكلة عدم حفظ عدد صناديق الملحمة في الحساب واختفائها على الأجهزة الأخرى"
+     ]
+    }
+   }
   },
   {
    "date": "2026-10-30",
@@ -77,7 +753,81 @@
    "title": "은하 제국의 황혼",
    "items": [
     "모드 목록 버튼의 영상을 모드의 핵심 장면 중심으로 다시 촬영 (깃발 뺏기 깃발, 황금 쟁탈 금 더미, 점령전 거점, 제국 수호전 수정, 보스 레이드 보스, 언덕의 왕 거점, 왕관 지키기 왕관 등)"
-   ]
+   ],
+   "tr": {
+    "en": {
+     "title": "Twilight of the Galactic Empire",
+     "items": [
+      "Mode button videos re-recorded around each mode's key moment (Capture the Flag flag, Gold Rush gold pile, Domination point, Empire Defense crystal, Boss Raid boss, King of the Hill point, Crown Keeper crown, etc.)"
+     ]
+    },
+    "es": {
+     "title": "El crepúsculo del Imperio Galáctico",
+     "items": [
+      "Vídeos de los botones de modo grabados de nuevo centrados en el momento clave de cada modo (bandera de Captura la bandera, montón de oro de Fiebre del oro, punto de Conquista, cristal de Defensa del Imperio, jefe de la Incursión, punto de Rey de la colina, corona de Guardián de la corona, etc.)"
+     ]
+    },
+    "fr": {
+     "title": "Le crépuscule de l'Empire galactique",
+     "items": [
+      "Vidéos des boutons de mode refilmées autour du moment clé de chaque mode (drapeau de Capture the Flag, tas d'or de Ruée vers l'or, point de Domination, cristal de Défense de l'Empire, boss du Raid, point de Roi de la colline, couronne du Gardien de la couronne, etc.)"
+     ]
+    },
+    "de": {
+     "title": "Die Dämmerung des Galaktischen Imperiums",
+     "items": [
+      "Videos der Modus-Buttons neu aufgenommen, mit Fokus auf den Schlüsselmoment jedes Modus (Flagge bei Capture the Flag, Goldhaufen bei Goldrausch, Stützpunkt bei Domination, Kristall bei Imperiums-Verteidigung, Boss beim Boss-Raid, Punkt bei King of the Hill, Krone beim Kronenwächter usw.)"
+     ]
+    },
+    "ja": {
+     "title": "銀河帝国の黄昏",
+     "items": [
+      "モードボタンの映像を各モードの見せ場中心に撮り直し（フラッグ取りの旗、黄金争奪戦の金の山、占領戦の拠点、帝国防衛戦のクリスタル、ボスレイドのボス、王の丘の拠点、王冠守りの王冠 など）"
+     ]
+    },
+    "zh": {
+     "title": "银河帝国的黄昏",
+     "items": [
+      "重新拍摄模式按钮的视频，突出各模式的关键画面（夺旗的旗帜、黄金争夺的金堆、占领战的据点、帝国防守战的水晶、Boss 团本的 Boss、山丘之王的据点、王冠守卫的王冠 等）"
+     ]
+    },
+    "pt": {
+     "title": "O crepúsculo do Império Galáctico",
+     "items": [
+      "Vídeos dos botões de modo refeitos, centrados no momento principal de cada modo (bandeira de Captura a bandeira, pilha de ouro de Disputa do ouro, ponto de Dominação, cristal da Defesa do Império, chefe da Incursão, ponto de Rei da colina, coroa do Guardião da coroa etc.)"
+     ]
+    },
+    "ru": {
+     "title": "Сумерки Галактической империи",
+     "items": [
+      "Видео на кнопках режимов переснято так, чтобы в центре был ключевой момент каждого режима (флаг в «Захвате флага», куча золота в «Золотой лихорадке», точка в «Доминации», кристалл в «Обороне Империи», босс в рейде, точка в «Царе горы», корона в «Хранителе короны» и т. д.)"
+     ]
+    },
+    "tr": {
+     "title": "Galaktik İmparatorluğun Alacakaranlığı",
+     "items": [
+      "Videolar modların ana anına göre yeniden çekildi (Bayrak Kapmaca'da bayrak, Altın Kapışması'nda altın yığını, Bölge Kontrolü'nde nokta, İmparatorluk Savunması'nda kristal, Boss Baskını'nda boss, Tepe Kralı'nda nokta, Taç Koruyucusu'nda taç vb.)"
+     ]
+    },
+    "it": {
+     "title": "Il crepuscolo dell'Impero Galattico",
+     "items": [
+      "Video dei pulsanti delle modalità registrati di nuovo sul momento chiave di ogni modalità (bandiera di Cattura la bandiera, mucchio d'oro di Corsa all'oro, punto di Dominio, cristallo di Difesa dell'Impero, boss del Raid, punto di Re della collina, corona di Custode della corona ecc.)"
+     ]
+    },
+    "pl": {
+     "title": "Zmierzch Imperium Galaktycznego",
+     "items": [
+      "Nagrania przycisków trybów nagrano ponownie, z naciskiem na kluczowy moment każdego trybu (flaga w Capture the Flag, sterta złota w Walce o złoto, punkt w Dominacji, kryształ w Obronie Imperium, boss w wyprawie, punkt w Królu wzgórza, korona w Strażniku korony itd.)"
+     ]
+    },
+    "ar": {
+     "title": "غسق الإمبراطورية المجرية",
+     "items": [
+      "أُعيد تصوير فيديوهات أزرار الأوضاع لتتمحور حول اللحظة الأساسية لكل وضع (راية السيطرة على العلم، كومة الذهب في صراع الذهب، نقطة السيطرة، بلورة دفاع الإمبراطورية، زعيم غزوة الزعيم، نقطة ملك التل، تاج حارس التاج، وغيرها)"
+     ]
+    }
+   }
   },
   {
    "date": "2026-10-30",
@@ -86,7 +836,93 @@
    "items": [
     "온라인 모드 목록에서 모드 버튼에 마우스를 올리면 그 모드의 저장된 플레이 영상이 재생됨 (랭크전·일일 모드·실험적 모드 포함)",
     "일일 모드 12종과 실험적 모드 4종(랜덤 조합 배틀로얄·무궁화 꽃이 피었습니다·왕관 지키기·하이퍼 배틀로얄)의 사진과 영상을 새로 촬영해 넣음, 실험적 모드 목록 버튼에도 배경 사진 적용"
-   ]
+   ],
+   "tr": {
+    "en": {
+     "title": "Twilight of the Galactic Empire",
+     "items": [
+      "Hovering the mouse over a mode button in the online mode list plays that mode's saved gameplay video (includes Ranked, daily and experimental modes)",
+      "Photos and videos re-shot and added for 12 daily modes and 4 experimental modes (Random-Mix Battle Royale, Red Light Green Light, Crown Keeper, Hyper Battle Royale); experimental mode list buttons also get a background photo"
+     ]
+    },
+    "es": {
+     "title": "El crepúsculo del Imperio Galáctico",
+     "items": [
+      "Al pasar el ratón sobre un botón de modo en la lista de modos online se reproduce el vídeo de juego guardado de ese modo (incluye clasificatoria, modos diarios y experimentales)",
+      "Fotos y vídeos nuevos para 12 modos diarios y 4 experimentales (Battle Royale de combinación aleatoria, Luz roja luz verde, Guardián de la corona, Battle Royale híper); los botones de la lista de experimentales también tienen foto de fondo"
+     ]
+    },
+    "fr": {
+     "title": "Le crépuscule de l'Empire galactique",
+     "items": [
+      "Passer la souris sur un bouton de mode dans la liste des modes en ligne lance la vidéo de jeu enregistrée de ce mode (inclut classé, modes quotidiens et expérimentaux)",
+      "Photos et vidéos refaites pour 12 modes quotidiens et 4 modes expérimentaux (Battle Royale en mélange aléatoire, Feu rouge feu vert, Gardien de la couronne, Battle Royale Hyper) ; les boutons de la liste des modes expérimentaux ont aussi une photo de fond"
+     ]
+    },
+    "de": {
+     "title": "Die Dämmerung des Galaktischen Imperiums",
+     "items": [
+      "Wenn du mit der Maus über einen Modus-Button in der Online-Modusliste fährst, wird das gespeicherte Spielvideo dieses Modus abgespielt (inklusive Rangliste, Tagesmodi und Experimentalmodi)",
+      "Fotos und Videos für 12 Tagesmodi und 4 Experimentalmodi neu aufgenommen (Zufallsmix-Battle-Royale, Rotes Licht Grünes Licht, Kronenwächter, Hyper-Battle-Royale); die Buttons der Experimentalmodi haben ebenfalls ein Hintergrundfoto"
+     ]
+    },
+    "ja": {
+     "title": "銀河帝国の黄昏",
+     "items": [
+      "オンラインモード一覧のボタンにマウスを乗せると、そのモードの保存済みプレイ映像が再生されます（ランク戦・デイリーモード・実験的モードを含む）",
+      "日替わりモード12種と実験的モード4種（ランダム組合せのバトルロイヤル、だるまさんがころんだ、王冠守り、ハイパーバトルロイヤル）の写真と映像を撮り直して追加。実験的モード一覧のボタンにも背景写真を適用"
+     ]
+    },
+    "zh": {
+     "title": "银河帝国的黄昏",
+     "items": [
+      "在线模式列表中把鼠标移到模式按钮上，会播放该模式保存的对局视频（包括排位、每日模式和实验性模式）",
+      "为 12 种每日模式和 4 种实验性模式（随机组合大逃杀、红灯绿灯、王冠守卫、超级大逃杀）重新拍摄并加入照片和视频；实验性模式列表按钮也加上背景照片"
+     ]
+    },
+    "pt": {
+     "title": "O crepúsculo do Império Galáctico",
+     "items": [
+      "Ao passar o mouse sobre um botão de modo na lista de modos online, toca o vídeo de jogo salvo daquele modo (inclui ranqueada, modos diários e experimentais)",
+      "Fotografias e vídeos novos para 12 modos diários e 4 experimentais (Battle Royale de combinação aleatória, Sinal vermelho, Guardião da coroa, Battle Royale hiper); os botões da lista de experimentais também recebem foto de fundo"
+     ]
+    },
+    "ru": {
+     "title": "Сумерки Галактической империи",
+     "items": [
+      "Наведите курсор на кнопку режима в списке онлайн-режимов, и проиграется сохранённое видео этого режима (включая рейтинговый, ежедневные и экспериментальные режимы)",
+      "Фото и видео заново сняты и добавлены для 12 ежедневных и 4 экспериментальных режимов (Батл Рояль со случайной комбинацией, Красный свет зелёный свет, Хранитель короны, Гипер Батл Рояль); кнопки экспериментальных режимов тоже получили фоновое фото"
+     ]
+    },
+    "tr": {
+     "title": "Galaktik İmparatorluğun Alacakaranlığı",
+     "items": [
+      "Çevrimiçi mod listesinde bir mod düğmesinin üzerine fareyle gelince o modun kayıtlı oyun videosu oynatılır (dereceli, günlük ve deneysel modlar dahil)",
+      "Yeni fotoğraf ve videolar 12 günlük mod ve 4 deneysel mod için çekilip eklendi (Rastgele Karışık Battle Royale, Kırmızı Işık Yeşil Işık, Taç Koruyucusu, Hiper Battle Royale); deneysel mod listesi düğmelerine de arka plan fotoğrafı eklendi"
+     ]
+    },
+    "it": {
+     "title": "Il crepuscolo dell'Impero Galattico",
+     "items": [
+      "Najechanie myszką na przycisk trybu na liście trybów online odtwarza zapisany film z rozgrywki tego trybu (w tym rankingowy, dzienne i eksperymentalne)",
+      "Foto e video nuovi per 12 modalità giornaliere e 4 sperimentali (Battle Royale a combinazione casuale, Un due tre stella, Custode della corona, Battle Royale Iper); anche i pulsanti della lista sperimentali hanno una foto di sfondo"
+     ]
+    },
+    "pl": {
+     "title": "Zmierzch Imperium Galaktycznego",
+     "items": [
+      "Passare il mouse su un pulsante di modalità nell'elenco delle modalità online riproduce il video di gioco salvato di quella modalità (incluse classificata, giornaliere e sperimentali)",
+      "Nowe zdjęcia i filmy dla 12 trybów dziennych i 4 eksperymentalnych (Battle Royale z losową mieszanką, Czerwone światło zielone światło, Strażnik korony, Hyper Battle Royale); przyciski listy trybów eksperymentalnych też mają tło w postaci zdjęcia"
+     ]
+    },
+    "ar": {
+     "title": "غسق الإمبراطورية المجرية",
+     "items": [
+      "Najechanie kursorem na przycisk trybu na liście trybów online odtwarza zapisane nagranie rozgrywki tego trybu (w tym rankingowy, dzienne i eksperymentalne)",
+      "صُوّرت صور وفيديوهات جديدة لـ 12 وضعًا يوميًا و4 أوضاع تجريبية (Battle Royale بخليط عشوائي، الضوء الأحمر الضوء الأخضر، حارس التاج، Battle Royale الفائق)، وصارت أزرار قائمة الأوضاع التجريبية تحمل صورة خلفية"
+     ]
+    }
+   }
   },
   {
    "date": "2026-10-30",
@@ -96,7 +932,105 @@
     "밸런스 조정 — 너프: 자다이 찌르기 기절 1→0.7초, 학살자 화염 방패 8→6초, 군인 지뢰 기절 0.8→0.5초, 복서 연타 러시 4→3초, 기사 일반 공격 쿨타임 0.5→0.55초, 중화기병 3연발 발당 34→30, 티오니스 분신 4→3초, 호렘헵 모래바람 기절 2→1.5초, 사냥꾼 부메랑 피해 24→21, 마술사 탈출 마법 연속 발사 3→2번",
     "밸런스 조정 — 버프: 차원여행자 포탈 파괴 50→65, 도박사 앞면 칩당 +7→+9%, 폭발광 폭발 점프 12→18, 드라큘라 박쥐 변신 7→8초, 야구선수 홈런 이동속도 2.5→3.5초, 로빈 후드 일반 공격 쿨타임 1.5→1.35초, 크레온 1세 근위병 쿨타임 12.5→10.5초, 보안관 충격파 14→18, 제임스 속사 1.8→2.2초, 쿠루스 어둠 탈출 최대 90→110, 암살자 은신 4→4.5초, 피사로 질주 3→3.5초, 특수요원 방벽 3.5→4초",
     "랜덤 상자와 에픽 상자의 아이콘을 새 로고로 교체 (상자 목록·열기 화면·보상 표시·시즌 패스)"
-   ]
+   ],
+   "tr": {
+    "en": {
+     "title": "Twilight of the Galactic Empire",
+     "items": [
+      "Balance changes, nerfs: Jadai's thrust stun 1 → 0.7 s, Slayer's flame shield 8 → 6 s, Soldier's mine stun 0.8 → 0.5 s, Boxer's rush 4 → 3 s, Knight's basic attack cooldown 0.5 → 0.55 s, Heavy Gunner's 3-round burst 34 → 30 per round, Thionis's clone 4 → 3 s, Horemheb's sandstorm stun 2 → 1.5 s, Hunter's boomerang damage 24 → 21, Magician's escape spell consecutive shots 3 → 2",
+      "Balance changes, buffs: Dimension Traveler portal destruction 50 → 65, Gambler's front-face chip +7 → +9% per chip, Explosion Maniac blast jump 12 → 18, Dracula bat form 7 → 8 s, Baseball Player home run move speed 2.5 → 3.5 s, Robin Hood basic attack cooldown 1.5 → 1.35 s, Creon I guard cooldown 12.5 → 10.5 s, Sheriff shockwave 14 → 18, James rapid fire 1.8 → 2.2 s, Kurus Escape from Darkness max 90 → 110, Assassin stealth 4 → 4.5 s, Pizarro dash 3 → 3.5 s, Special Agent barrier 3.5 → 4 s",
+      "Random box and epic box icons replaced with the new logo (box list, opening screen, reward display, season pass)"
+     ]
+    },
+    "es": {
+     "title": "El crepúsculo del Imperio Galáctico",
+     "items": [
+      "Cambios de equilibrio, debilitaciones: aturdimiento de la estocada de Jedi 1 → 0.7 s, escudo de llamas del Masacrador 8 → 6 s, aturdimiento de la mina del Soldado 0.8 → 0.5 s, embestida del Boxeador 4 → 3 s, enfriamiento del ataque básico del Caballero 0.5 → 0.55 s, ráfaga de 3 del Artillero pesado 34 → 30 por disparo, clon de Tionis 4 → 3 s, aturdimiento de la tormenta de arena de Horemheb 2 → 1.5 s, daño del bumerán del Cazador 24 → 21, disparos seguidos del hechizo de escape del Mago ilusionista 3 → 2",
+      "Cambios de equilibrio, mejoras: destrucción del portal del Viajero dimensional 50 → 65, Apostador +7 → +9 % por ficha de cara, salto de explosión del Destello explosivo 12 → 18, forma de murciélago de Drácula 7 → 8 s, velocidad de movimiento del Beisbolista tras jonrón 2.5 → 3.5 s, enfriamiento del ataque básico de Robin Hood 1.5 → 1.35 s, enfriamiento del guardia de Creonte I 12.5 → 10.5 s, onda de choque del Sheriff 14 → 18, disparo rápido de James 1.8 → 2.2 s, Escape de la oscuridad de Kurus máx. 90 → 110, sigilo del Asesino 4 → 4.5 s, carrera de Pizarro 3 → 3.5 s, barrera del Agente especial 3.5 → 4 s",
+      "Iconos de la caja aleatoria y de la caja épica cambiados por el nuevo logo (lista de cajas, pantalla de apertura, muestra de recompensas, pase de temporada)"
+     ]
+    },
+    "fr": {
+     "title": "Le crépuscule de l'Empire galactique",
+     "items": [
+      "Ajustements d'équilibre, nerfs : étourdissement de l'estoc de Jadai 1 → 0,7 s, bouclier de flammes du Tueur 8 → 6 s, étourdissement de la mine du Soldat 0,8 → 0,5 s, ruée du Boxeur 4 → 3 s, recharge d'attaque de base du Chevalier 0,5 → 0,55 s, rafale de 3 de l'Artilleur lourd 34 → 30 par tir, clone de Thionis 4 → 3 s, étourdissement de la tempête de sable d'Horemheb 2 → 1,5 s, dégâts du boomerang du Chasseur 24 → 21, tirs successifs du sort d'évasion du Magicien 3 → 2",
+      "Ajustements d'équilibre, bonus : destruction du portail du Voyageur dimensionnel 50 → 65, Joueur +7 → +9 % par jeton face visible, saut d'explosion du Maniaque 12 → 18, forme chauve-souris de Dracula 7 → 8 s, vitesse de déplacement du Joueur de baseball après homerun 2,5 → 3,5 s, recharge de l'attaque de base de Robin des Bois 1,5 → 1,35 s, recharge du garde de Créon Ier 12,5 → 10,5 s, onde de choc du Shérif 14 → 18, tir rapide de James 1,8 → 2,2 s, Fuite des ténèbres de Kurus max 90 → 110, furtivité de l'Assassin 4 → 4,5 s, sprint de Pizarro 3 → 3,5 s, barrière de l'Agent spécial 3,5 → 4 s",
+      "Icônes du coffre aléatoire et du coffre épique remplacées par le nouveau logo (liste des coffres, écran d'ouverture, affichage des récompenses, pass de saison)"
+     ]
+    },
+    "de": {
+     "title": "Die Dämmerung des Galaktischen Imperiums",
+     "items": [
+      "Anpassungen am Gleichgewicht, Abschwächungen: Betäubung des Stoßangriffs von Jadai 1 → 0,7 s, Flammenschild des Schlächters 8 → 6 s, Betäubung der Mine des Soldaten 0,8 → 0,5 s, Ansturm des Boxers 4 → 3 s, Abklingzeit des Grundangriffs des Ritters 0,5 → 0,55 s, 3er-Salve des Schwerbewaffneten 34 → 30 pro Schuss, Thionis' Klon 4 → 3 s, Betäubung des Sandsturms von Horemheb 2 → 1,5 s, Schaden des Bumerangs des Jägers 24 → 21, aufeinanderfolgende Schüsse des Fluchtzaubers des Magiers 3 → 2",
+      "Anpassungen am Gleichgewicht, Verstärkungen: Zerstörung des Portals des Dimensionsreisenden 50 → 65, Spieler +7 → +9 % pro Chip auf der Vorderseite, Sprungexplosion des Explosionsmaniacs 12 → 18, Fledermausform von Dracula 7 → 8 s, Bewegungstempo des Baseballspielers nach Homerun 2,5 → 3,5 s, Abklingzeit des Grundangriffs von Robin Hood 1,5 → 1,35 s, Abklingzeit der Wache von Creon I 12,5 → 10,5 s, Schockwelle des Sheriffs 14 → 18, Schnellfeuer von James 1,8 → 2,2 s, Kurus' Flucht aus der Dunkelheit max. 90 → 110, Tarnung des Attentäters 4 → 4,5 s, Sprint von Pizarro 3 → 3,5 s, Barriere des Spezialagenten 3,5 → 4 s",
+      "Symbole der Zufallskiste und der epischen Kiste durch das neue Logo ersetzt (Kistenliste, Öffnungsbildschirm, Belohnungsanzeige, Season-Pass)"
+     ]
+    },
+    "ja": {
+     "title": "銀河帝国の黄昏",
+     "items": [
+      "バランス調整・弱体化：ジャダイの突きの気絶 1→0.7秒、殺戮者の炎の盾 8→6秒、軍人の地雷の気絶 0.8→0.5秒、ボクサーの連打ラッシュ 4→3秒、騎士の通常攻撃のクールタイム 0.5→0.55秒、重火器兵の3連発 1発あたり34→30、ティオニスの分身 4→3秒、ホルエムヘブの砂嵐の気絶 2→1.5秒、ハンターのブーメランのダメージ 24→21、マジシャンの脱出魔法の連続発射 3→2回",
+      "バランス調整・強化：次元旅行者のポータル破壊 50→65、ギャンブラーの表面チップ +7→+9%（チップ1枚ごと）、爆発光の爆発ジャンプ 12→18、ドラキュラのコウモリ変身 7→8秒、野球選手のホームラン後の移動速度 2.5→3.5秒、ロビンフッドの通常攻撃のクールタイム 1.5→1.35秒、クレオン1世の近衛兵のクールタイム 12.5→10.5秒、保安官の衝撃波 14→18、ジェームズの速射 1.8→2.2秒、クルスの闇からの脱出 最大90→110、暗殺者の隠密 4→4.5秒、ピサロのダッシュ 3→3.5秒、特殊エージェントのバリア 3.5→4秒",
+      "ランダムボックスとエピック箱のアイコンを新しいロゴに変更（箱一覧・開封画面・報酬表示・シーズンパス）"
+     ]
+    },
+    "zh": {
+     "title": "银河帝国的黄昏",
+     "items": [
+      "平衡性调整——削弱：Jadai 突刺眩晕 1→0.7秒，屠杀者火焰护盾 8→6秒，士兵地雷眩晕 0.8→0.5秒，拳击手连击冲撞 4→3秒，骑士普攻冷却 0.5→0.55秒，重火力兵三连发每发 34→30，提奥尼斯分身 4→3秒，Horemheb 沙暴眩晕 2→1.5秒，猎人回旋镖伤害 24→21，魔术师脱离魔法连续发射 3→2次",
+      "平衡性调整——增强：异界旅者传送门破坏 50→65，赌徒正面筹码每个 +7→+9%，爆炸狂爆炸跳跃 12→18，德古拉蝙蝠变身 7→8秒，棒球手本垒打后移速 2.5→3.5秒，罗宾汉普攻冷却 1.5→1.35秒，克里翁一世近卫兵冷却 12.5→10.5秒，警长冲击波 14→18，James 速射 1.8→2.2秒，Kurus 暗影逃脱最大值 90→110，刺客隐身 4→4.5秒，Pizarro 冲刺 3→3.5秒，特工屏障 3.5→4秒",
+      "随机箱和史诗宝箱的图标换成新徽标（宝箱列表、开启界面、奖励显示、赛季通行证）"
+     ]
+    },
+    "pt": {
+     "title": "O crepúsculo do Império Galáctico",
+     "items": [
+      "Ajustes de equilíbrio — nerfs: atordoamento da estocada do Jedi 1 → 0,7 s, escudo de chamas do Masacrador 8 → 6 s, atordoamento da mina do Soldado 0,8 → 0,5 s, investida do Boxeador 4 → 3 s, recarga do ataque básico do Cavaleiro 0,5 → 0,55 s, rajada de 3 do Artilheiro pesado 34 → 30 por disparo, clone de Tionis 4 → 3 s, atordoamento da tempestade de areia de Horemheb 2 → 1,5 s, dano do bumerangue do Caçador 24 → 21, disparos seguidos da magia de fuga do Mago ilusionista 3 → 2",
+      "Ajustes de equilíbrio — buffs: destruição do portal do Viajante dimensional 50 → 65, Apostador +7 → +9 % por ficha de frente, salto de explosão do Destello explosivo 12 → 18, forma de morcego do Drácula 7 → 8 s, velocidade após home run do Beisebolista 2,5 → 3,5 s, recarga do ataque básico do Robin Hood 1,5 → 1,35 s, recarga do guarda de Creon I 12,5 → 10,5 s, onda de choque do Sheriff 14 → 18, disparo rápido do James 1,8 → 2,2 s, Fuga das trevas do Kurus máx. 90 → 110, furtividade do Assassino 4 → 4,5 s, investida do Pizarro 3 → 3,5 s, barreira do Agente especial 3,5 → 4 s",
+      "Ícones da caixa aleatória e da caixa épica trocados pelo novo logo (lista de caixas, tela de abertura, exibição de recompensas, passe de temporada)"
+     ]
+    },
+    "ru": {
+     "title": "Сумерки Галактической империи",
+     "items": [
+      "Изменения баланса, ослабления: оглушение выпада Джадая 1 → 0,7 с, огненный щит Мясника 8 → 6 с, оглушение мины Солдата 0,8 → 0,5 с, рывок Боксёра 4 → 3 с, перезарядка базовой атаки Рыцаря 0,5 → 0,55 с, тройная очередь Тяжёлого стрелка 34 → 30 за выстрел, клон Тиониса 4 → 3 с, оглушение песчаной бури Хоремхеба 2 → 1,5 с, урон бумеранга Охотника 24 → 21, последовательные выстрелы заклинания побега Мага 3 → 2",
+      "Изменения баланса, усиления: разрушение портала Путешественника по измерениям 50 → 65, Игрок +7 → +9% за фишку лицевой стороной, прыжок взрыва Безумца 12 → 18, форма летучей мыши у Дракулы 7 → 8 с, скорость передвижения Бейсболиста после хоум-рана 2,5 → 3,5 с, перезарядка базовой атаки Робин Гуда 1,5 → 1,35 с, перезарядка стража Креона I 12,5 → 10,5 с, ударная волна Шерифа 14 → 18, скорострельность Джеймса 1,8 → 2,2 с, Побег из тьмы у Куруса макс. 90 → 110, невидимость Убийцы 4 → 4,5 с, рывок Писарро 3 → 3,5 с, барьер Спецагента 3,5 → 4 с",
+      "Иконки случайного ящика и эпического ящика заменены новым логотипом (список ящиков, экран открытия, показ наград, сезонный пропуск)"
+     ]
+    },
+    "tr": {
+     "title": "Galaktik İmparatorluğun Alacakaranlığı",
+     "items": [
+      "Denge değişiklikleri, zayıflatmalar: Jadai'nin hamlesinin sersemletmesi 1 → 0,7 sn, Kasap'ın alev kalkanı 8 → 6 sn, Asker'in mayınının sersemletmesi 0,8 → 0,5 sn, Boxer'ın hücum saldırısı 4 → 3 sn, Şövalye'nin temel saldırı bekleme süresi 0,5 → 0,55 sn, Ağır Silahlı'nın 3'lü atışı mermi başına 34 → 30, Thionis'in klonu 4 → 3 sn, Horemheb'in kum fırtınası sersemletmesi 2 → 1,5 sn, Avcı'nın bumerang hasarı 24 → 21, Büyücü'nün kaçış büyüsündeki art arda atış 3 → 2",
+      "Denge değişiklikleri, güçlendirmeler: Boyut Gezgini portalının yıkılması 50 → 65, Kumarbaz'ın ön yüz çipi çip başına +7 → +9%, Patlama Manyağı'nın patlama zıplaması 12 → 18, Dracula'nın yarasa formu 7 → 8 sn, Beyzbolcu'nun sahadan sonra hareket hızı 2,5 → 3,5 sn, Robin Hood'un temel saldırı bekleme süresi 1,5 → 1,35 sn, Creon I'in muhafızının bekleme süresi 12,5 → 10,5 sn, Şerif'in şok dalgası 14 → 18, James'in hızlı ateşi 1,8 → 2,2 sn, Kurus'un Karanlıktan Kaçış'ı en fazla 90 → 110, Suikastçı'nın gizlenmesi 4 → 4,5 sn, Pizarro'nun atılması 3 → 3,5 sn, Özel Ajan'ın bariyeri 3,5 → 4 sn",
+      "Rastgele kutu ve epik kutu simgeleri yeni logoyla değiştirildi (kutu listesi, açılış ekranı, ödül gösterimi, sezon passı)"
+     ]
+    },
+    "it": {
+     "title": "Il crepuscolo dell'Impero Galattico",
+     "items": [
+      "Modifiche all'equilibrio, indebolimenti: stordimento della stoccata di Jadai 1 → 0,7 s, scudo di fiamme del Macellaio 8 → 6 s, stordimento della mina del Soldato 0,8 → 0,5 s, carica del Pugile 4 → 3 s, recupero dell'attacco base del Cavaliere 0,5 → 0,55 s, raffica di 3 dell'Artigliere pesante 34 → 30 per colpo, clone di Thionis 4 → 3 s, stordimento della tempesta di sabbia di Horemheb 2 → 1,5 s, danno del boomerang del Cacciatore 24 → 21, colpi consecutivi dell'incantesimo di fuga del Mago 3 → 2",
+      "Modifiche all'equilibrio, potenziamenti: distruzione del portale del Viaggiatore dimensionale 50 → 65, Bisca +7 → +9% per gettone a faccia in su, salto dell'esplosione del Maniaco dell'esplosione 12 → 18, forma di pipistrello di Dracula 7 → 8 s, velocità di movimento del Giocatore di baseball dopo il fuoricampo 2,5 → 3,5 s, recupero dell'attacco base di Robin Hood 1,5 → 1,35 s, recupero della guardia di Creonte I 12,5 → 10,5 s, onda d'urto dello Sceriffo 14 → 18, fuoco rapido di James 1,8 → 2,2 s, Fuga dall'oscurità di Kurus max 90 → 110, furtività dell'Assassino 4 → 4,5 s, scatto di Pizarro 3 → 3,5 s, barriera dell'Agente speciale 3,5 → 4 s",
+      "Icone della cassa casuale e della cassa epica sostituite con il nuovo logo (elenco casse, schermata di apertura, visualizzazione ricompense, pass stagionale)"
+     ]
+    },
+    "pl": {
+     "title": "Zmierzch Imperium Galaktycznego",
+     "items": [
+      "Zmiany balansu, osłabienia: ogłuszenie pchnięcia Jadaia 1 → 0,7 s, tarcza ognia Rzeźnika 8 → 6 s, ogłuszenie miny Żołnierza 0,8 → 0,5 s, szarża Boksera 4 → 3 s, czas odnowienia ataku podstawowego Rycerza 0,5 → 0,55 s, seria 3 pocisków Ciężkiego strzelca 34 → 30 za pocisk, klon Thionisa 4 → 3 s, ogłuszenie burzy piaskowej Horemheba 2 → 1,5 s, obrażenia bumerangu Łowcy 24 → 21, kolejne strzały zaklęcia ucieczki Maga 3 → 2",
+      "Zmiany balansu, wzmocnienia: zniszczenie portalu Podróżnika między wymiarami 50 → 65, Hazardzista +7 → +9% za żeton awersem, skok wybuchowy Maniaka wybuchów 12 → 18, forma nietoperza Draculi 7 → 8 s, prędkość ruchu Baseballisty po home runie 2,5 → 3,5 s, odnowienie ataku podstawowego Robin Hooda 1,5 → 1,35 s, odnowienie strażnika Kreona I 12,5 → 10,5 s, fala uderzeniowa Szeryfa 14 → 18, szybki ogień Jamesa 1,8 → 2,2 s, Ucieczka z ciemności Kurusa maks. 90 → 110, ukrycie Zabójcy 4 → 4,5 s, szarża Pizarra 3 → 3,5 s, bariera Agenta specjalnego 3,5 → 4 s",
+      "Ikony losowej skrzyni i epickiej skrzyni zastąpiono nowym logo (lista skrzyń, ekran otwierania, wyświetlanie nagród, karnet sezonowy)"
+     ]
+    },
+    "ar": {
+     "title": "غسق الإمبراطورية المجرية",
+     "items": [
+      "تغييرات التوازن، إضعاف: تأثير الدوار لطعنة جادانغ 1 → 0.7 ث، درع اللهب للجزار 8 → 6 ث، تأثير الدوار لألغام الجندي 0.8 → 0.5 ث، اندفاع الملاكم 4 → 3 ث، فترة إعادة شحن الهجوم الأساسي للفارس 0.5 → 0.55 ث، الرشقة الثلاثية للمدفعي الثقيل 34 → 30 لكل طلقة، نسخة ثيونيس 4 → 3 ث، دوار عاصفة الرمال لحورمحب 2 → 1.5 ث، ضرر البومرانغ للصياد 24 → 21، الطلقات المتتالية لتعويذة الهروب للساحر 3 → 2",
+      "تغييرات التوازن، تعزيزات: تدمير بوابة مسافر الأبعاد 50 → 65، لاعب المقامرة +7 → +9% لكل شريحة على الوجه، قفزة انفجار مهووس الانفجارات 12 → 18، شكل الخفاش لدراكيولا 7 → 8 ث، سرعة حركة لاعب البيسبول بعد الضربة القوية 2.5 → 3.5 ث، فترة إعادة شحن الهجوم الأساسي لروبن هود 1.5 → 1.35 ث، فترة إعادة شحن حارس كريون الأول 12.5 → 10.5 ث، موجة الصدمة للشريف 14 → 18، إطلاق جيمس السريع 1.8 → 2.2 ث، الهروب من الظلام لكورس بحد أقصى 90 → 110، تخفي القاتل 4 → 4.5 ث، اندفاع بيزارو 3 → 3.5 ث، حاجز العميل الخاص 3.5 → 4 ث",
+      "استبدال أيقونات الصندوق العشوائي والصندوق الملحمي بالشعار الجديد (قائمة الصناديق، شاشة الفتح، عرض المكافآت، تمييز الموسم)"
+     ]
+    }
+   }
   },
   {
    "date": "2026-10-30",
@@ -105,7 +1039,93 @@
    "items": [
     "제국 수호전을 더 쉽게 조정: 수정 체력 4000, 수정이 받는 피해 25%, 반란군 수와 강해지는 속도를 줄이고 웨이브 사이 쉬는 시간을 늘림",
     "제국 수호전은 연승을 올리지도 끊지도 않음 (연승 보너스도 없음)"
-   ]
+   ],
+   "tr": {
+    "en": {
+     "title": "Twilight of the Galactic Empire",
+     "items": [
+      "Empire Defense made easier: crystal HP 4000, the crystal takes 25% damage; fewer rebels and slower rise in strength; longer rest between waves",
+      "Empire Defense neither raises nor breaks win streaks (no streak bonus either)"
+     ]
+    },
+    "es": {
+     "title": "El crepúsculo del Imperio Galáctico",
+     "items": [
+      "Defensa del Imperio más fácil: vida del cristal 4000, el cristal recibe un 25 % de daño; menos rebeldes que se fortalecen más despacio; más descanso entre oleadas",
+      "La Defensa del Imperio no sube ni corta las rachas de victorias (tampoco hay bonus de racha)"
+     ]
+    },
+    "fr": {
+     "title": "Le crépuscule de l'Empire galactique",
+     "items": [
+      "Défense de l'Empire rendue plus facile : PV du cristal 4000, le cristal ne subit que 25 % des dégâts ; moins de rebelles et montée en puissance plus lente ; pause plus longue entre les vagues",
+      "La Défense de l'Empire ne fait ni monter ni couper les séries de victoires (pas de bonus de série non plus)"
+     ]
+    },
+    "de": {
+     "title": "Die Dämmerung des Galaktischen Imperiums",
+     "items": [
+      "Imperiums-Verteidigung leichter gemacht: Kristall-LP 4000, der Kristall erleidet 25 % Schaden; weniger Rebellen und langsamere Steigerung; längere Pause zwischen den Wellen",
+      "Imperiums-Verteidigung erhöht oder beendet keine Siegesserien (auch kein Serienbonus)"
+     ]
+    },
+    "ja": {
+     "title": "銀河帝国の黄昏",
+     "items": [
+      "帝国防衛戦を易しく調整：クリスタルの体力4000、クリスタルが受けるダメージ25%、反乱軍の数と強化速度を減らし、ウェーブ間の休憩を長く",
+      "帝国防衛戦は連勝を伸ばしも止めもしない（連勝ボーナスもなし）"
+     ]
+    },
+    "zh": {
+     "title": "银河帝国的黄昏",
+     "items": [
+      "调整帝国防守战使其更容易：水晶血量 4000，水晶受到伤害 25%，减少叛军数量和变强速度，增加波次间的休息时间",
+      "帝国防守战不会增加也不会中断连胜（也没有连胜奖励）"
+     ]
+    },
+    "pt": {
+     "title": "O crepúsculo do Império Galáctico",
+     "items": [
+      "Defesa do Império mais fácil: vida do cristal 4000, o cristal recebe 25% do dano; menos rebeldes e eles ficam mais fortes mais devagar; mais descanso entre ondas",
+      "A Defesa do Império não aumenta nem quebra sequências de vitórias (também não há bônus de sequência)"
+     ]
+    },
+    "ru": {
+     "title": "Сумерки Галактической империи",
+     "items": [
+      "Оборона Империи стала проще: здоровье кристалла 4000, кристалл получает 25% урона; меньше повстанцев и медленнее их рост; больше отдыха между волнами",
+      "«Оборона Империи» не увеличивает и не обрывает серии побед (бонуса за серию тоже нет)"
+     ]
+    },
+    "tr": {
+     "title": "Galaktik İmparatorluğun Alacakaranlığı",
+     "items": [
+      "İmparatorluk Savunması kolaylaştırıldı: kristal canı 4000, kristal hasarın %25'ini alır; daha az asi ve daha yavaş güçlenme; dalgalar arasında daha uzun mola",
+      "İmparatorluk Savunması galibiyet serisini ne artırır ne de keser (seri bonusu da yok)"
+     ]
+    },
+    "it": {
+     "title": "Il crepuscolo dell'Impero Galattico",
+     "items": [
+      "Difesa dell'Impero resa più facile: PV del cristallo 4000, il cristallo subisce il 25% dei danni; meno ribelli e crescita di forza più lenta; pausa più lunga tra le ondate",
+      "La Difesa dell'Impero non aumenta né interrompe le serie di vittorie (nessun bonus serie)"
+     ]
+    },
+    "pl": {
+     "title": "Zmierzch Imperium Galaktycznego",
+     "items": [
+      "Obrona Imperium ułatwiona: punkty życia kryształu 4000, kryształ otrzymuje 25% obrażeń; mniej rebeliantów i wolniejszy wzrost siły; dłuższa przerwa między falami",
+      "Obrona Imperium nie podnosi ani nie przerywa serii zwycięstw (brak bonusu za serię)"
+     ]
+    },
+    "ar": {
+     "title": "غسق الإمبراطورية المجرية",
+     "items": [
+      "تسهيل دفاع الإمبراطورية: طاقة البلورة 4000، وتتلقى البلورة 25% من الضرر؛ عدد أقل من المتمردين وازدياد أبطأ في القوة؛ استراحة أطول بين الموجات",
+      "دفاع الإمبراطورية لا يرفع سلسلة الانتصارات ولا يقطعها (ولا توجد مكافأة للسلسلة)"
+     ]
+    }
+   }
   },
   {
    "date": "2026-10-30",
@@ -113,7 +1133,81 @@
    "title": "은하 제국의 황혼",
    "items": [
     "온라인 모드 목록 버튼을 더 크게 하고 위의 분류 글자를 없앰, 버튼 배경에 각 모드의 실제 게임 화면 사진을 넣음, 친구 초대는 목록 아래로 이동"
-   ]
+   ],
+   "tr": {
+    "en": {
+     "title": "Twilight of the Galactic Empire",
+     "items": [
+      "Online mode buttons made bigger and the category labels above them removed; each button has a real screenshot of its mode as background; friend invite moved below the list"
+     ]
+    },
+    "es": {
+     "title": "El crepúsculo del Imperio Galáctico",
+     "items": [
+      "Botones de modos online más grandes, sin las etiquetas de categoría de arriba; cada botón tiene una captura real del modo de fondo; la invitación a amigos pasa debajo de la lista"
+     ]
+    },
+    "fr": {
+     "title": "Le crépuscule de l'Empire galactique",
+     "items": [
+      "Boutons des modes en ligne agrandis, sans les étiquettes de catégorie au-dessus ; chaque bouton a une vraie capture du mode en fond ; l'invitation d'amis est déplacée sous la liste"
+     ]
+    },
+    "de": {
+     "title": "Die Dämmerung des Galaktischen Imperiums",
+     "items": [
+      "Online-Modus-Buttons größer, die Kategoriebeschriftungen darüber entfernt; jeder Button zeigt einen echten Screenshot seines Modus als Hintergrund; Freundeseinladung unter die Liste verschoben"
+     ]
+    },
+    "ja": {
+     "title": "銀河帝国の黄昏",
+     "items": [
+      "オンラインモードのボタンを大きくし、上の分類文字を削除。各ボタンの背景に実際のゲーム画面の写真を入れ、フレンド招待はリストの下へ移動"
+     ]
+    },
+    "zh": {
+     "title": "银河帝国的黄昏",
+     "items": [
+      "在线模式按钮放大并去掉上方的分类文字，按钮背景放入各模式的实际游戏画面，好友邀请移到列表下方"
+     ]
+    },
+    "pt": {
+     "title": "O crepúsculo do Império Galáctico",
+     "items": [
+      "Botões dos modos online maiores e sem as letras de categoria acima; o fundo de cada botão mostra uma captura real do modo; convite de amigos movido para baixo da lista"
+     ]
+    },
+    "ru": {
+     "title": "Сумерки Галактической империи",
+     "items": [
+      "Кнопки онлайн-режимов стали крупнее, надписи категорий убраны; в фоне каждой кнопки — реальный скриншот режима; приглашение друзей перенесено под список"
+     ]
+    },
+    "tr": {
+     "title": "Galaktik İmparatorluğun Alacakaranlığı",
+     "items": [
+      "Çevrimiçi mod düğmeleri büyütüldü, üstteki kategori yazıları kaldırıldı; her düğmenin arka planında modun gerçek ekran görüntüsü var; arkadaş daveti listenin altına taşındı"
+     ]
+    },
+    "it": {
+     "title": "Il crepuscolo dell'Impero Galattico",
+     "items": [
+      "Pulsanti delle modalità online più grandi, senza le etichette di categoria sopra; ogni pulsante ha come sfondo una schermata reale della modalità; l'invito amici spostato sotto la lista"
+     ]
+    },
+    "pl": {
+     "title": "Zmierzch Imperium Galaktycznego",
+     "items": [
+      "Przyciski trybów online są większe, bez etykiet kategorii nad nimi; tło każdego przycisku to prawdziwy zrzut ekranu trybu; zaproszenie znajomych przeniesione pod listę"
+     ]
+    },
+    "ar": {
+     "title": "غسق الإمبراطورية المجرية",
+     "items": [
+      "أزرار أوضاع الأونلاين صارت أكبر وأُزيلت عناوين التصنيف فوقها؛ خلفية كل زر لقطة حقيقية من الوضع، ونُقلت دعوة الأصدقاء أسفل القائمة"
+     ]
+    }
+   }
   },
   {
    "date": "2026-10-30",
@@ -121,7 +1215,81 @@
    "title": "은하 제국의 황혼",
    "items": [
     "배틀로얄 계열(배틀로얄·듀오·무한 대쉬·하이퍼) 승리 마스터리 포인트 3 → 8"
-   ]
+   ],
+   "tr": {
+    "en": {
+     "title": "Twilight of the Galactic Empire",
+     "items": [
+      "Win mastery points for the Battle Royale family (Battle Royale, Duo, Endless Dash, Hyper) raised 3 → 8"
+     ]
+    },
+    "es": {
+     "title": "El crepúsculo del Imperio Galáctico",
+     "items": [
+      "Puntos de maestría por victoria en la familia Battle Royale (Battle Royale, Dúo, Carrera infinita, Híper): 3 → 8"
+     ]
+    },
+    "fr": {
+     "title": "Le crépuscule de l'Empire galactique",
+     "items": [
+      "Points de maîtrise par victoire dans la famille Battle Royale (Battle Royale, Duo, Sprint infini, Hyper) : 3 → 8"
+     ]
+    },
+    "de": {
+     "title": "Die Dämmerung des Galaktischen Imperiums",
+     "items": [
+      "Siegespunkte für Meisterschaft in der Battle-Royale-Familie (Battle Royale, Duo, Endloser Sprint, Hyper): 3 → 8"
+     ]
+    },
+    "ja": {
+     "title": "銀河帝国の黄昏",
+     "items": [
+      "バトルロイヤル系（バトルロイヤル・デュオ・無限ダッシュ・ハイパー）の勝利マスタリーポイント 3 → 8"
+     ]
+    },
+    "zh": {
+     "title": "银河帝国的黄昏",
+     "items": [
+      "大逃杀系列（大逃杀、双人、无限冲刺、超级）胜利熟练点数 3 → 8"
+     ]
+    },
+    "pt": {
+     "title": "O crepúsculo do Império Galáctico",
+     "items": [
+      "Pontos de maestria por vitória na família Battle Royale (Battle Royale, Dupla, Corrida infinita, Hiper): 3 → 8"
+     ]
+    },
+    "ru": {
+     "title": "Сумерки Галактической империи",
+     "items": [
+      "Очки мастерства за победу в режимах «Батл Рояль» (Батл Рояль, Дуо, Бесконечный рывок, Гипер): 3 → 8"
+     ]
+    },
+    "tr": {
+     "title": "Galaktik İmparatorluğun Alacakaranlığı",
+     "items": [
+      "Battle Royale ailesi (Battle Royale, Düo, Sonsuz Atılma, Hiper) galibiyet ustalık puanı 3 → 8"
+     ]
+    },
+    "it": {
+     "title": "Il crepuscolo dell'Impero Galattico",
+     "items": [
+      "Punti maestria per vittoria nella famiglia Battle Royale (Battle Royale, Duo, Scatto infinito, Iper): 3 → 8"
+     ]
+    },
+    "pl": {
+     "title": "Zmierzch Imperium Galaktycznego",
+     "items": [
+      "Punkty biegłości za wygraną w rodzinie Battle Royale (Battle Royale, Duo, Nieskończony sprint, Hyper): 3 → 8"
+     ]
+    },
+    "ar": {
+     "title": "غسق الإمبراطورية المجرية",
+     "items": [
+      "نقاط الإتقان للفوز في أوضاع Battle Royale (Battle Royale، الثنائي، الاندفاع اللامحدود، Hyper): 3 → 8"
+     ]
+    }
+   }
   },
   {
    "date": "2026-10-30",
@@ -131,7 +1299,105 @@
     "새 모드 제국 수호전: 4명이 맵 한가운데 수정을 지키며 웨이브마다 몰려오는 반란군을 막아요 (수정이 부서지면 끝, 몇 웨이브 동안 버텼는지 표시)",
     "시즌 패스 14·29·44·59단계 보상에 에픽 상자 추가",
     "온라인 모드 목록을 세로로 긴 버튼으로 바꾸고, 날마다 오늘의 모드가 바뀜 (클래식 3종, 팀 2종, 특수 1종, 랭크전, 일일 모드)"
-   ]
+   ],
+   "tr": {
+    "en": {
+     "title": "Twilight of the Galactic Empire",
+     "items": [
+      "New mode Empire Defense: 4 players guard the crystal in the map center and hold off the rebels that rush in each wave (ends when the crystal shatters; shows how many waves you survived)",
+      "Epic box added to season pass rewards at levels 14, 29, 44 and 59",
+      "Online mode list changed to tall vertical buttons; today's modes change every day (3 classic, 2 team, 1 special, ranked and daily mode)"
+     ]
+    },
+    "es": {
+     "title": "El crepúsculo del Imperio Galáctico",
+     "items": [
+      "Nuevo modo Defensa del Imperio: 4 jugadores protegen el cristal del centro del mapa y frenan a los rebeldes que llegan en cada oleada (termina cuando el cristal se rompe; muestra cuántas oleadas aguantaste)",
+      "Caja épica añadida a las recompensas del pase de temporada en los niveles 14, 29, 44 y 59",
+      "La lista de modos online ahora usa botones verticales y altos; los modos de hoy cambian cada día (3 clásicos, 2 por equipos, 1 especial, clasificatoria y modo diario)"
+     ]
+    },
+    "fr": {
+     "title": "Le crépuscule de l'Empire galactique",
+     "items": [
+      "Nouveau mode Défense de l'Empire : 4 joueurs protègent le cristal au centre de la carte et repoussent les rebelles qui arrivent à chaque vague (fin quand le cristal se brise ; affiche le nombre de vagues tenues)",
+      "Coffre épique ajouté aux récompenses du pass de saison aux niveaux 14, 29, 44 et 59",
+      "La liste des modes en ligne devient des boutons verticaux et hauts ; les modes du jour changent chaque jour (3 classiques, 2 par équipes, 1 spécial, classé et mode quotidien)"
+     ]
+    },
+    "de": {
+     "title": "Die Dämmerung des Galaktischen Imperiums",
+     "items": [
+      "Neuer Modus Imperiums-Verteidigung: 4 Spieler schützen den Kristall in der Kartenmitte und halten die Rebellen auf, die in jeder Welle anstürmen (endet, wenn der Kristall zerbricht; zeigt, wie viele Wellen überstanden wurden)",
+      "Epische Kiste zu den Season-Pass-Belohnungen auf den Stufen 14, 29, 44 und 59 hinzugefügt",
+      "Online-Modusliste mit hohen, senkrechten Buttons; die Modi des Tages wechseln täglich (3 klassische, 2 Team, 1 speziell, Ranglisten- und Tagesmodus)"
+     ]
+    },
+    "ja": {
+     "title": "銀河帝国の黄昏",
+     "items": [
+      "新モード「帝国防衛戦」：4人がマップ中央のクリスタルを守り、ウェーブごとに押し寄せる反乱軍を食い止める（クリスタルが砕けると終了、耐えたウェーブ数を表示）",
+      "シーズンパスの14・29・44・59段階の報酬にエピック箱を追加",
+      "オンラインモード一覧を縦長のボタンに変更し、毎日今日のモードが変わるように（クラシック3種、チーム2種、スペシャル1種、ランク戦、デイリーモード）"
+     ]
+    },
+    "zh": {
+     "title": "银河帝国的黄昏",
+     "items": [
+      "新模式「帝国防守战」：4 人守护地图中央的水晶，抵挡每波涌来的叛军（水晶碎裂即结束，并显示坚持的波数）",
+      "赛季通行证第 14、29、44、59 级奖励新增史诗宝箱",
+      "在线模式列表改为竖长按钮，每天的今日模式会变化（经典 3 种、团队 2 种、特殊 1 种、排位和每日模式）"
+     ]
+    },
+    "pt": {
+     "title": "O crepúsculo do Império Galáctico",
+     "items": [
+      "Novo modo Defesa do Império: 4 jogadores protegem o cristal no centro do mapa e contêm os rebeldes que chegam a cada onda (termina quando o cristal se quebra; mostra quantas ondas você sobreviveu)",
+      "Caixa épica adicionada às recompensas do passe de temporada nos níveis 14, 29, 44 e 59",
+      "Lista de modos online em botões altos e verticais; os modos de hoje mudam todo dia (3 clássicos, 2 por equipe, 1 especial, ranqueada e modo diário)"
+     ]
+    },
+    "ru": {
+     "title": "Сумерки Галактической империи",
+     "items": [
+      "Новый режим «Оборона Империи»: 4 игрока защищают кристалл в центре карты и отбивают повстанцев, атакующих каждой волной (заканчивается, когда кристалл разрушен; показывает, сколько волн вы выдержали)",
+      "Эпический ящик добавлен в награды сезонного пропуска на уровнях 14, 29, 44 и 59",
+      "Список онлайн-режимов теперь из длинных вертикальных кнопок; режимы дня меняются каждый день (3 классических, 2 командных, 1 особый, рейтинговый и ежедневный режим)"
+     ]
+    },
+    "tr": {
+     "title": "Galaktik İmparatorluğun Alacakaranlığı",
+     "items": [
+      "Yeni mod İmparatorluk Savunması: 4 oyuncu harita ortasındaki kristali korur ve her dalgada gelen asileri püskürtür (kristal kırılınca biter; kaç dalga dayanıldığını gösterir)",
+      "Sezon passı 14, 29, 44 ve 59. seviye ödüllerine epik kutu eklendi",
+      "Çevrimiçi mod listesi dikey uzun düğmelere dönüştü; günün modları her gün değişiyor (3 klasik, 2 takım, 1 özel, dereceli ve günlük mod)"
+     ]
+    },
+    "it": {
+     "title": "Il crepuscolo dell'Impero Galattico",
+     "items": [
+      "Nuova modalità Difesa dell'Impero: 4 giocatori proteggono il cristallo al centro della mappa e respingono i ribelli che arrivano a ogni ondata (finisce quando il cristallo va in frantumi; mostra quante ondate hai retto)",
+      "Cassa epica aggiunta alle ricompense del pass stagionale ai livelli 14, 29, 44 e 59",
+      "Lista delle modalità online in pulsanti alti e verticali; le modalità del giorno cambiano ogni giorno (3 classiche, 2 a squadre, 1 speciale, classificata e modalità giornaliera)"
+     ]
+    },
+    "pl": {
+     "title": "Zmierzch Imperium Galaktycznego",
+     "items": [
+      "Nowy tryb Obrona Imperium: 4 graczy broni kryształu na środku mapy i powstrzymuje rebeliantów nadciągających w każdej fali (kończy się, gdy kryształ pęknie; pokazuje, ile fal przetrwano)",
+      "Epicka skrzynia dodana do nagród karnetu sezonowego na poziomach 14, 29, 44 i 59",
+      "Lista trybów online w wysokich, pionowych przyciskach; tryby dnia zmieniają się codziennie (3 klasyczne, 2 drużynowe, 1 specjalny, rankingowy i dzienny)"
+     ]
+    },
+    "ar": {
+     "title": "غسق الإمبراطورية المجرية",
+     "items": [
+      "وضع جديد «دفاع الإمبراطورية»: 4 لاعبين يحمون البلورة في وسط الخريطة ويصدّون المتمردين الذين يندفعون في كل موجة (ينتهي عند تحطم البلورة؛ ويعرض عدد الموجات التي صمدتَ أمامها)",
+      "إضافة صندوق ملحمي إلى مكافآت تمييز الموسم في المستويات 14 و29 و44 و59",
+      "قائمة أوضاع الأونلاين صارت أزرارًا طويلة عمودية، وأوضاع اليوم تتغير كل يوم (3 كلاسيكية، 2 جماعية، 1 خاص، تصنيفي، ووضع يومي)"
+     ]
+    }
+   }
   },
   {
    "date": "2026-10-30",
@@ -139,7 +1405,81 @@
    "title": "은하 제국의 황혼",
    "items": [
     "에픽 상자를 사자마자 열지 않고 일반 상자처럼 보관해 두었다가 열기·모두 열기로 열도록 변경"
-   ]
+   ],
+   "tr": {
+    "en": {
+     "title": "Twilight of the Galactic Empire",
+     "items": [
+      "Epic boxes are no longer opened as soon as they are bought; they are kept like normal boxes and opened with Open or Open All"
+     ]
+    },
+    "es": {
+     "title": "El crepúsculo del Imperio Galáctico",
+     "items": [
+      "Las cajas épicas ya no se abren al comprarlas: se guardan como las normales y se abren con Abrir o Abrir todo"
+     ]
+    },
+    "fr": {
+     "title": "Le crépuscule de l'Empire galactique",
+     "items": [
+      "Les coffres épiques ne s'ouvrent plus dès l'achat : ils sont gardés comme les coffres normaux et s'ouvrent avec Ouvrir ou Tout ouvrir"
+     ]
+    },
+    "de": {
+     "title": "Die Dämmerung des Galaktischen Imperiums",
+     "items": [
+      "Epische Kisten öffnen sich nach dem Kauf nicht mehr sofort; sie werden wie normale Kisten aufbewahrt und mit Öffnen oder Alle öffnen geöffnet"
+     ]
+    },
+    "ja": {
+     "title": "銀河帝国の黄昏",
+     "items": [
+      "エピック箱は買った直後に開けず、通常の箱と同じように保管し「開く」「すべて開く」で開くように変更"
+     ]
+    },
+    "zh": {
+     "title": "银河帝国的黄昏",
+     "items": [
+      "史诗宝箱购买后不再立即开启，而是像普通宝箱一样保存，通过「开启」「全部开启」来打开"
+     ]
+    },
+    "pt": {
+     "title": "O crepúsculo do Império Galáctico",
+     "items": [
+      "As caixas épicas não abrem mais assim que compradas; ficam guardadas como as normais e são abertas com Abrir ou Abrir tudo"
+     ]
+    },
+    "ru": {
+     "title": "Сумерки Галактической империи",
+     "items": [
+      "Эпические ящики больше не открываются сразу после покупки: они хранятся, как обычные, и открываются кнопками «Открыть» и «Открыть все»"
+     ]
+    },
+    "tr": {
+     "title": "Galaktik İmparatorluğun Alacakaranlığı",
+     "items": [
+      "Epik kutular satın alınır alınmaz açılmıyor; normal kutular gibi saklanıp Aç ve Hepsini aç ile açılıyor"
+     ]
+    },
+    "it": {
+     "title": "Il crepuscolo dell'Impero Galattico",
+     "items": [
+      "Le casse epiche non si aprono più appena acquistate: vengono conservate come quelle normali e si aprono con Apri o Apri tutte"
+     ]
+    },
+    "pl": {
+     "title": "Zmierzch Imperium Galaktycznego",
+     "items": [
+      "Epickie skrzynie nie otwierają się już od razu po zakupie: są przechowywane jak zwykłe i otwiera się je przyciskiem Otwórz lub Otwórz wszystkie"
+     ]
+    },
+    "ar": {
+     "title": "غسق الإمبراطورية المجرية",
+     "items": [
+      "لم تعد صناديق الملحمة تُفتح فور شرائها؛ بل تُحفظ مثل الصناديق العادية وتُفتح بزر «فتح» أو «فتح الكل»"
+     ]
+    }
+   }
   },
   {
    "date": "2026-10-30",
@@ -147,7 +1487,81 @@
    "title": "은하 제국의 황혼",
    "items": [
     "리플레이에서 내 체력바가 빨간색(적 색)으로 보이던 것을 내 색(파랑)으로 수정"
-   ]
+   ],
+   "tr": {
+    "en": {
+     "title": "Twilight of the Galactic Empire",
+     "items": [
+      "In replays, my health bar showed red (enemy color); it now shows my color (blue)"
+     ]
+    },
+    "es": {
+     "title": "El crepúsculo del Imperio Galáctico",
+     "items": [
+      "En las repeticiones, mi barra de vida se veía roja (color enemigo); ahora usa mi color (azul)"
+     ]
+    },
+    "fr": {
+     "title": "Le crépuscule de l'Empire galactique",
+     "items": [
+      "Dans les replays, ma barre de vie apparaissait en rouge (couleur ennemie) ; elle est maintenant à ma couleur (bleu)"
+     ]
+    },
+    "de": {
+     "title": "Die Dämmerung des Galaktischen Imperiums",
+     "items": [
+      "In Replays wurde meine Lebensleiste rot (Feindfarbe) angezeigt; jetzt in meiner Farbe (blau)"
+     ]
+    },
+    "ja": {
+     "title": "銀河帝国の黄昏",
+     "items": [
+      "リプレイで自分の体力バーが赤（敵の色）で表示されていたのを、自分の色（青）に修正"
+     ]
+    },
+    "zh": {
+     "title": "银河帝国的黄昏",
+     "items": [
+      "回放中我的血条原为红色（敌方颜色），现改为我的颜色（蓝色）"
+     ]
+    },
+    "pt": {
+     "title": "O crepúsculo do Império Galáctico",
+     "items": [
+      "Nas repetições, minha barra de vida aparecia vermelha (cor inimiga); agora usa minha cor (azul)"
+     ]
+    },
+    "ru": {
+     "title": "Сумерки Галактической империи",
+     "items": [
+      "В повторах полоска здоровья была красной (цвет врага); теперь она моего цвета (синего)"
+     ]
+    },
+    "tr": {
+     "title": "Galaktik İmparatorluğun Alacakaranlığı",
+     "items": [
+      "Tekrarlarda can barım kırmızı (düşman rengi) görünüyordu; artık benim rengim (mavi)"
+     ]
+    },
+    "it": {
+     "title": "Il crepuscolo dell'Impero Galattico",
+     "items": [
+      "Nei replay la mia barra della vita appariva rossa (colore nemico); ora è del mio colore (blu)"
+     ]
+    },
+    "pl": {
+     "title": "Zmierzch Imperium Galaktycznego",
+     "items": [
+      "W powtórkach mój pasek zdrowia był czerwony (kolor wroga); teraz ma mój kolor (niebieski)"
+     ]
+    },
+    "ar": {
+     "title": "غسق الإمبراطورية المجرية",
+     "items": [
+      "في الإعادات كان شريط صحتي يظهر أحمر (لون العدو)؛ والآن بلوني (الأزرق)"
+     ]
+    }
+   }
   },
   {
    "date": "2026-10-30",
@@ -155,7 +1569,81 @@
    "title": "은하 제국의 황혼",
    "items": [
     "듀얼 마스터리 포인트 조정: 처치 7 → 5 (승리는 10 그대로)"
-   ]
+   ],
+   "tr": {
+    "en": {
+     "title": "Twilight of the Galactic Empire",
+     "items": [
+      "Duel mastery points adjusted: kills 7 → 5 (wins stay at 10)"
+     ]
+    },
+    "es": {
+     "title": "El crepúsculo del Imperio Galáctico",
+     "items": [
+      "Ajuste de puntos de maestría en duelo: eliminaciones 7 → 5 (las victorias siguen en 10)"
+     ]
+    },
+    "fr": {
+     "title": "Le crépuscule de l'Empire galactique",
+     "items": [
+      "Ajustement des points de maîtrise en duel : éliminations 7 → 5 (victoires inchangées à 10)"
+     ]
+    },
+    "de": {
+     "title": "Die Dämmerung des Galaktischen Imperiums",
+     "items": [
+      "Duell-Meisterschaftspunkte angepasst: Abschüsse 7 → 5 (Siege bleiben bei 10)"
+     ]
+    },
+    "ja": {
+     "title": "銀河帝国の黄昏",
+     "items": [
+      "デュエルのマスタリーポイント調整：撃破 7 → 5（勝利は10のまま）"
+     ]
+    },
+    "zh": {
+     "title": "银河帝国的黄昏",
+     "items": [
+      "决斗熟练点数调整：击杀 7 → 5（胜利仍为 10）"
+     ]
+    },
+    "pt": {
+     "title": "O crepúsculo do Império Galáctico",
+     "items": [
+      "Ajuste de pontos de maestria em duelo: abates 7 → 5 (vitórias continuam em 10)"
+     ]
+    },
+    "ru": {
+     "title": "Сумерки Галактической империи",
+     "items": [
+      "Изменены очки мастерства в дуэлях: убийства 7 → 5 (победы остаются 10)"
+     ]
+    },
+    "tr": {
+     "title": "Galaktik İmparatorluğun Alacakaranlığı",
+     "items": [
+      "Düello ustalık puanı ayarlandı: öldürme 7 → 5 (galibiyet 10 olarak kalır)"
+     ]
+    },
+    "it": {
+     "title": "Il crepuscolo dell'Impero Galattico",
+     "items": [
+      "Punti maestria duello regolati: eliminazioni 7 → 5 (vittorie invariate a 10)"
+     ]
+    },
+    "pl": {
+     "title": "Zmierzch Imperium Galaktycznego",
+     "items": [
+      "Dostosowano punkty biegłości w pojedynkach: zabójstwa 7 → 5 (wygrane bez zmian: 10)"
+     ]
+    },
+    "ar": {
+     "title": "غسق الإمبراطورية المجرية",
+     "items": [
+      "تعديل نقاط الإتقان في المبارزة: القتلى 7 → 5 (الانتصارات تبقى 10)"
+     ]
+    }
+   }
   },
   {
    "date": "2026-10-30",
@@ -163,7 +1651,81 @@
    "title": "은하 제국의 황혼",
    "items": [
     "듀얼 마스터리 포인트 조정: 처치 10 → 7 (승리는 10 그대로)"
-   ]
+   ],
+   "tr": {
+    "en": {
+     "title": "Twilight of the Galactic Empire",
+     "items": [
+      "Duel mastery points adjusted: kills 10 → 7 (wins stay at 10)"
+     ]
+    },
+    "es": {
+     "title": "El crepúsculo del Imperio Galáctico",
+     "items": [
+      "Ajuste de puntos de maestría en duelo: eliminaciones 10 → 7 (las victorias siguen en 10)"
+     ]
+    },
+    "fr": {
+     "title": "Le crépuscule de l'Empire galactique",
+     "items": [
+      "Ajustement des points de maîtrise en duel : éliminations 10 → 7 (victoires inchangées à 10)"
+     ]
+    },
+    "de": {
+     "title": "Die Dämmerung des Galaktischen Imperiums",
+     "items": [
+      "Duell-Meisterschaftspunkte angepasst: Abschüsse 10 → 7 (Siege bleiben bei 10)"
+     ]
+    },
+    "ja": {
+     "title": "銀河帝国の黄昏",
+     "items": [
+      "デュエルのマスタリーポイント調整：撃破 10 → 7（勝利は10のまま）"
+     ]
+    },
+    "zh": {
+     "title": "银河帝国的黄昏",
+     "items": [
+      "决斗熟练点数调整：击杀 10 → 7（胜利仍为 10）"
+     ]
+    },
+    "pt": {
+     "title": "O crepúsculo do Império Galáctico",
+     "items": [
+      "Ajuste de pontos de maestria em duelo: abates 10 → 7 (vitórias continuam em 10)"
+     ]
+    },
+    "ru": {
+     "title": "Сумерки Галактической империи",
+     "items": [
+      "Изменены очки мастерства в дуэлях: убийства 10 → 7 (победы остаются 10)"
+     ]
+    },
+    "tr": {
+     "title": "Galaktik İmparatorluğun Alacakaranlığı",
+     "items": [
+      "Düello ustalık puanı ayarlandı: öldürme 10 → 7 (galibiyet 10 olarak kalır)"
+     ]
+    },
+    "it": {
+     "title": "Il crepuscolo dell'Impero Galattico",
+     "items": [
+      "Punti maestria duello regolati: eliminazioni 10 → 7 (vittorie invariate a 10)"
+     ]
+    },
+    "pl": {
+     "title": "Zmierzch Imperium Galaktycznego",
+     "items": [
+      "Dostosowano punkty biegłości w pojedynkach: zabójstwa 10 → 7 (wygrane bez zmian: 10)"
+     ]
+    },
+    "ar": {
+     "title": "غسق الإمبراطورية المجرية",
+     "items": [
+      "تعديل نقاط الإتقان في المبارزة: القتلى 10 → 7 (الانتصارات تبقى 10)"
+     ]
+    }
+   }
   },
   {
    "date": "2026-10-30",
@@ -172,7 +1734,93 @@
    "items": [
     "듀얼 마스터리 포인트 증가: 처치 8 → 10, 승리 3 → 10",
     "MVP로 뽑히면 얻는 마스터리 포인트 5 → 8"
-   ]
+   ],
+   "tr": {
+    "en": {
+     "title": "Twilight of the Galactic Empire",
+     "items": [
+      "Duel mastery points increased: kills 8 → 10, wins 3 → 10",
+      "Mastery points for being picked as MVP: 5 → 8"
+     ]
+    },
+    "es": {
+     "title": "El crepúsculo del Imperio Galáctico",
+     "items": [
+      "Aumento de puntos de maestría en duelo: eliminaciones 8 → 10, victorias 3 → 10",
+      "Puntos de maestría por ser elegido MVP: 5 → 8"
+     ]
+    },
+    "fr": {
+     "title": "Le crépuscule de l'Empire galactique",
+     "items": [
+      "Hausse des points de maîtrise en duel : éliminations 8 → 10, victoires 3 → 10",
+      "Points de maîtrise pour être élu MVP : 5 → 8"
+     ]
+    },
+    "de": {
+     "title": "Die Dämmerung des Galaktischen Imperiums",
+     "items": [
+      "Duell-Meisterschaftspunkte erhöht: Abschüsse 8 → 10, Siege 3 → 10",
+      "Meisterschaftspunkte bei MVP-Wahl: 5 → 8"
+     ]
+    },
+    "ja": {
+     "title": "銀河帝国の黄昏",
+     "items": [
+      "デュエルのマスタリーポイント増加：撃破 8 → 10、勝利 3 → 10",
+      "MVPに選ばれた時のマスタリーポイント 5 → 8"
+     ]
+    },
+    "zh": {
+     "title": "银河帝国的黄昏",
+     "items": [
+      "决斗熟练点数提高：击杀 8 → 10，胜利 3 → 10",
+      "当选 MVP 获得的熟练点数 5 → 8"
+     ]
+    },
+    "pt": {
+     "title": "O crepúsculo do Império Galáctico",
+     "items": [
+      "Pontos de maestria em duelo aumentados: abates 8 → 10, vitórias 3 → 10",
+      "Pontos de maestria ao ser eleito MVP: 5 → 8"
+     ]
+    },
+    "ru": {
+     "title": "Сумерки Галактической империи",
+     "items": [
+      "Увеличены очки мастерства в дуэлях: убийства 8 → 10, победы 3 → 10",
+      "Очки мастерства за звание MVP: 5 → 8"
+     ]
+    },
+    "tr": {
+     "title": "Galaktik İmparatorluğun Alacakaranlığı",
+     "items": [
+      "Düello ustalık puanı artırıldı: öldürme 8 → 10, galibiyet 3 → 10",
+      "MVP seçilince kazanılan ustalık puanı 5 → 8"
+     ]
+    },
+    "it": {
+     "title": "Il crepuscolo dell'Impero Galattico",
+     "items": [
+      "Punti maestria duello aumentati: eliminazioni 8 → 10, vittorie 3 → 10",
+      "Punti maestria se eletto MVP: 5 → 8"
+     ]
+    },
+    "pl": {
+     "title": "Zmierzch Imperium Galaktycznego",
+     "items": [
+      "Zwiększono punkty biegłości w pojedynkach: zabójstwa 8 → 10, wygrane 3 → 10",
+      "Punkty biegłości za wybór na MVP: 5 → 8"
+     ]
+    },
+    "ar": {
+     "title": "غسق الإمبراطورية المجرية",
+     "items": [
+      "زيادة نقاط الإتقان في المبارزة: القتلى 8 → 10، الانتصارات 3 → 10",
+      "نقاط الإتقان عند اختيارك كأفضل لاعب (MVP): 5 → 8"
+     ]
+    }
+   }
   },
   {
    "date": "2026-10-30",
@@ -180,7 +1828,81 @@
    "title": "은하 제국의 황혼",
    "items": [
     "마술사 패시브 카드 폭풍: 발동하면 마술사 위치에 분홍 링이 뜨고 머리 옆에 카드 아이콘이 따라다니도록 개선"
-   ]
+   ],
+   "tr": {
+    "en": {
+     "title": "Twilight of the Galactic Empire",
+     "items": [
+      "Magician passive Card Storm improved: when triggered, a pink ring appears at the magician's position and a card icon follows beside the head"
+     ]
+    },
+    "es": {
+     "title": "El crepúsculo del Imperio Galáctico",
+     "items": [
+      "Mejora de la pasiva del mago Tormenta de cartas: al activarse aparece un anillo rosa en la posición del mago y un icono de carta lo sigue junto a la cabeza"
+     ]
+    },
+    "fr": {
+     "title": "Le crépuscule de l'Empire galactique",
+     "items": [
+      "Passif du magicien Tempête de cartes amélioré : à son déclenchement, un anneau rose apparaît à la position du magicien et une icône de carte le suit à côté de la tête"
+     ]
+    },
+    "de": {
+     "title": "Die Dämmerung des Galaktischen Imperiums",
+     "items": [
+      "Magier-Passiv Kartensturm verbessert: Bei Auslösung erscheint ein rosa Ring an der Position des Magiers und ein Kartensymbol schwebt neben dem Kopf"
+     ]
+    },
+    "ja": {
+     "title": "銀河帝国の黄昏",
+     "items": [
+      "マジシャンのパッシブ「カードストーム」を改善：発動時にマジシャンの位置にピンクのリングが出て、頭の横にカードアイコンが付いてくる"
+     ]
+    },
+    "zh": {
+     "title": "银河帝国的黄昏",
+     "items": [
+      "改进魔术师被动「卡牌风暴」：触发时魔术师位置出现粉色圆环，头旁会跟随一个卡牌图标"
+     ]
+    },
+    "pt": {
+     "title": "O crepúsculo do Império Galáctico",
+     "items": [
+      "Passiva do mágico Tempestade de cartas melhorada: ao ativar, aparece um anel rosa na posição do mágico e um ícone de carta acompanha ao lado da cabeça"
+     ]
+    },
+    "ru": {
+     "title": "Сумерки Галактической империи",
+     "items": [
+      "Улучшена пассивка мага «Карточный шторм»: при срабатывании под магом появляется розовое кольцо, а рядом с головой следует иконка карты"
+     ]
+    },
+    "tr": {
+     "title": "Galaktik İmparatorluğun Alacakaranlığı",
+     "items": [
+      "Büyücü pasifi Kart Fırtınası iyileştirildi: tetiklendiğinde büyücünün konumunda pembe bir halka belirir ve başının yanında bir kart simgesi takip eder"
+     ]
+    },
+    "it": {
+     "title": "Il crepuscolo dell'Impero Galattico",
+     "items": [
+      "Migliorata la passiva del mago Tempesta di carte: quando si attiva compare un anello rosa sulla posizione del mago e un'icona di carta lo segue accanto alla testa"
+     ]
+    },
+    "pl": {
+     "title": "Zmierzch Imperium Galaktycznego",
+     "items": [
+      "Ulepszono pasywkę maga Burza kart: po aktywacji w miejscu maga pojawia się różowy pierścień, a obok głowy podąża ikona karty"
+     ]
+    },
+    "ar": {
+     "title": "غسق الإمبراطورية المجرية",
+     "items": [
+      "تحسين المهارة السلبية للساحر 'عاصفة البطاقات': عند التفعيل تظهر حلقة وردية عند موقع الساحر ويتبعه رمز بطاقة بجوار رأسه"
+     ]
+    }
+   }
   },
   {
    "date": "2026-10-30",
@@ -188,7 +1910,81 @@
    "title": "은하 제국의 황혼",
    "items": [
     "마술사 스킬: 카드 5장을 일렬로 발사 (장당 피해 8로 총 40 그대로), 5장이 모두 맞아야 나오는 패시브 카드 폭풍 수정"
-   ]
+   ],
+   "tr": {
+    "en": {
+     "title": "Twilight of the Galactic Empire",
+     "items": [
+      "Magician skill: fires 5 cards in a line (8 damage each, still 40 total); passive Card Storm triggers when all 5 cards hit"
+     ]
+    },
+    "es": {
+     "title": "El crepúsculo del Imperio Galáctico",
+     "items": [
+      "Habilidad del mago: lanza 5 cartas en línea (8 de daño cada una, 40 en total sin cambios); pasiva Tormenta de cartas, que se activa cuando las 5 aciertan"
+     ]
+    },
+    "fr": {
+     "title": "Le crépuscule de l'Empire galactique",
+     "items": [
+      "Compétence du magicien : lance 5 cartes en ligne (8 dégâts chacune, toujours 40 au total) ; passif Tempête de cartes, déclenché quand les 5 touchent"
+     ]
+    },
+    "de": {
+     "title": "Die Dämmerung des Galaktischen Imperiums",
+     "items": [
+      "Magier-Fähigkeit: schießt 5 Karten in einer Reihe (je 8 Schaden, insgesamt weiterhin 40); Passiv 'Kartensturm', der auslöst, wenn alle 5 treffen"
+     ]
+    },
+    "ja": {
+     "title": "銀河帝国の黄昏",
+     "items": [
+      "マジシャンのスキル：カード5枚を一直線に発射（1枚8ダメージ、合計40のまま）。5枚すべて命中で発動するパッシブ「カードストーム」"
+     ]
+    },
+    "zh": {
+     "title": "银河帝国的黄昏",
+     "items": [
+      "魔术师技能：一线发射 5 张卡牌（每张 8 伤害，总计仍为 40）；被动「卡牌风暴」在 5 张全部命中时触发"
+     ]
+    },
+    "pt": {
+     "title": "O crepúsculo do Império Galáctico",
+     "items": [
+      "Habilidade do mágico: dispara 5 cartas em linha (8 de dano cada, total 40 mantido); passiva Tempestade de cartas, ativada quando as 5 acertam"
+     ]
+    },
+    "ru": {
+     "title": "Сумерки Галактической империи",
+     "items": [
+      "Навык мага: выпускает 5 карт в линию (8 урона каждая, всего по-прежнему 40); пассивка «Карточный шторм» срабатывает, когда попадают все 5"
+     ]
+    },
+    "tr": {
+     "title": "Galaktik İmparatorluğun Alacakaranlığı",
+     "items": [
+      "Büyücü yeteneği: 5 kartı sıra halinde fırlatır (kart başına 8 hasar, toplam yine 40); 5 kartın hepsi isabet ederse devreye giren pasif 'Kart Fırtınası'"
+     ]
+    },
+    "it": {
+     "title": "Il crepuscolo dell'Impero Galattico",
+     "items": [
+      "Abilità del mago: lancia 5 carte in fila (8 danni ciascuna, totale 40 invariato); passiva Tempesta di carte, che si attiva quando tutte e 5 colpiscono"
+     ]
+    },
+    "pl": {
+     "title": "Zmierzch Imperium Galaktycznego",
+     "items": [
+      "Umiejętność maga: wystrzeliwuje 5 kart w linii (8 obrażeń każda, łącznie wciąż 40); pasywka Burza kart, aktywowana, gdy wszystkie 5 trafią"
+     ]
+    },
+    "ar": {
+     "title": "غسق الإمبراطورية المجرية",
+     "items": [
+      "مهارة الساحر: يطلق 5 بطاقات في خط (8 ضرر لكل بطاقة، والمجموع 40 كما هو)؛ المهارة السلبية 'عاصفة البطاقات' تعمل عند إصابة البطاقات الخمس"
+     ]
+    }
+   }
   },
   {
    "date": "2026-10-30",
@@ -196,7 +1992,81 @@
    "title": "은하 제국의 황혼",
    "items": [
     "클랜 보스 레이드 (클랜원끼리 보스를 잡고 빈자리는 봇이 채움, 성공하면 클랜 창고 +20과 클랜 경험치)"
-   ]
+   ],
+   "tr": {
+    "en": {
+     "title": "Twilight of the Galactic Empire",
+     "items": [
+      "Clan boss raid (clan members take down a boss together; empty spots are filled by bots; on success, clan vault +20 and clan XP)"
+     ]
+    },
+    "es": {
+     "title": "El crepúsculo del Imperio Galáctico",
+     "items": [
+      "Incursión al jefe del clan (los miembros derrotan a un jefe juntos; los huecos los ocupan bots; si se supera: bóveda del clan +20 y XP del clan)"
+     ]
+    },
+    "fr": {
+     "title": "Le crépuscule de l'Empire galactique",
+     "items": [
+      "Raid de boss de clan (les membres abattent un boss ensemble ; les places vides sont prises par des bots ; en cas de réussite : coffre du clan +20 et XP du clan)"
+     ]
+    },
+    "de": {
+     "title": "Die Dämmerung des Galaktischen Imperiums",
+     "items": [
+      "Clan-Boss-Raid (Clanmitglieder besiegen gemeinsam einen Boss; freie Plätze füllen Bots; bei Erfolg: Clan-Tresor +20 und Clan-EP)"
+     ]
+    },
+    "ja": {
+     "title": "銀河帝国の黄昏",
+     "items": [
+      "クランボスレイド（クランメンバーでボスを倒し、空きはボットが埋める。成功でクラン倉庫 +20とクラン経験値）"
+     ]
+    },
+    "zh": {
+     "title": "银河帝国的黄昏",
+     "items": [
+      "战队 Boss 团本（成员合力击败 Boss，空位由机器人补上；成功则战队仓库 +20 和战队经验）"
+     ]
+    },
+    "pt": {
+     "title": "O crepúsculo do Império Galáctico",
+     "items": [
+      "Raide do chefe do clã (membros derrubam um chefe juntos; vagas são preenchidas por bots; se vencer: cofre do clã +20 e XP do clã)"
+     ]
+    },
+    "ru": {
+     "title": "Сумерки Галактической империи",
+     "items": [
+      "Рейд на босса клана (участники побеждают босса вместе; пустые места занимают боты; при успехе: хранилище клана +20 и опыт клана)"
+     ]
+    },
+    "tr": {
+     "title": "Galaktik İmparatorluğun Alacakaranlığı",
+     "items": [
+      "Klan boss baskını (klan üyeleri bossu birlikte indirir; boş yerleri botlar doldurur; başarılırsa klan kasası +20 ve klan XP'si)"
+     ]
+    },
+    "it": {
+     "title": "Il crepuscolo dell'Impero Galattico",
+     "items": [
+      "Raid del boss di clan (i membri abbattono insieme un boss; i posti vuoti sono riempiti dai bot; in caso di successo: cassaforte del clan +20 e XP del clan)"
+     ]
+    },
+    "pl": {
+     "title": "Zmierzch Imperium Galaktycznego",
+     "items": [
+      "Wyprawa na bossa klanu (członkowie pokonują bossa razem; wolne miejsca zajmują boty; po sukcesie: skarbiec klanu +20 i PD klanu)"
+     ]
+    },
+    "ar": {
+     "title": "غسق الإمبراطورية المجرية",
+     "items": [
+      "غزوة زعيم العشيرة (يُسقط أعضاء العشيرة الزعيم معًا؛ يملأ البوتات الأماكن الفارغة؛ عند النجاح: خزنة العشيرة +20 وخبرة العشيرة)"
+     ]
+    }
+   }
   },
   {
    "date": "2026-10-30",
@@ -204,7 +2074,81 @@
    "title": "은하 제국의 황혼",
    "items": [
     "클랜 대항전 (클랜장·부리더가 다른 클랜에 신청, 48시간 동안 클랜원끼리 1대1, 이기면 클랜 점수 +30)"
-   ]
+   ],
+   "tr": {
+    "en": {
+     "title": "Twilight of the Galactic Empire",
+     "items": [
+      "Clan war (the leader or co-leaders challenge another clan; 1v1 between members for 48 hours; a win gives +30 clan score)"
+     ]
+    },
+    "es": {
+     "title": "El crepúsculo del Imperio Galáctico",
+     "items": [
+      "Guerra de clanes (el líder o los subjefes desafían a otro clan; 1contra1 entre miembros durante 48 h; ganar da +30 de puntuación de clan)"
+     ]
+    },
+    "fr": {
+     "title": "Le crépuscule de l'Empire galactique",
+     "items": [
+      "Guerre de clans (le chef ou les co-chefs défient un autre clan ; 1v1 entre membres pendant 48 h ; une victoire rapporte +30 de score de clan)"
+     ]
+    },
+    "de": {
+     "title": "Die Dämmerung des Galaktischen Imperiums",
+     "items": [
+      "Clan-Krieg (Anführer oder Vize-Anführer fordern einen anderen Clan heraus; 1-gegen-1 unter Mitgliedern für 48 Std.; ein Sieg bringt +30 Clanpunkte)"
+     ]
+    },
+    "ja": {
+     "title": "銀河帝国の黄昏",
+     "items": [
+      "クラン対抗戦（リーダー・副リーダーが他クランに申請、48時間はクランメンバー同士の1対1、勝利でクラン点数 +30）"
+     ]
+    },
+    "zh": {
+     "title": "银河帝国的黄昏",
+     "items": [
+      "战队对决（队长或副会长向其他战队发起挑战，48小时内成员间1对1，获胜则战队分数 +30）"
+     ]
+    },
+    "pt": {
+     "title": "O crepúsculo do Império Galáctico",
+     "items": [
+      "Guerra de clãs (o líder ou vice-líderes desafiam outro clã; 1x1 entre membros por 48 h; vencer dá +30 de pontuação de clã)"
+     ]
+    },
+    "ru": {
+     "title": "Сумерки Галактической империи",
+     "items": [
+      "Клановая война (лидер или заместители вызывают другой клан; 1 на 1 между участниками в течение 48 ч; победа даёт +30 очков клана)"
+     ]
+    },
+    "tr": {
+     "title": "Galaktik İmparatorluğun Alacakaranlığı",
+     "items": [
+      "Klan savaşı (lider veya yardımcı liderler başka bir klana meydan okur; 48 saat boyunca üyeler arası 1'e 1; galibiyet +30 klan puanı)"
+     ]
+    },
+    "it": {
+     "title": "Il crepuscolo dell'Impero Galattico",
+     "items": [
+      "Guerra di clan (il capo o i vice capi sfidano un altro clan; 1contro1 tra membri per 48 h; una vittoria dà +30 punteggio clan)"
+     ]
+    },
+    "pl": {
+     "title": "Zmierzch Imperium Galaktycznego",
+     "items": [
+      "Wojna klanów (lider lub zastępcy wyzywają inny klan; 1 na 1 między członkami przez 48 h; wygrana daje +30 wyniku klanu)"
+     ]
+    },
+    "ar": {
+     "title": "غسق الإمبراطورية المجرية",
+     "items": [
+      "حرب العشائر (يتحدى القائد أو النواب عشيرة أخرى؛ مبارزة 1 ضد 1 بين الأعضاء لمدة 48 ساعة؛ الفوز يمنح +30 نقطة للعشيرة)"
+     ]
+    }
+   }
   },
   {
    "date": "2026-10-30",
@@ -215,7 +2159,117 @@
     "클랜원 기여도 순위",
     "부리더 (추방과 공지, 클랜장이 최대 3명 임명)",
     "클랜장이 엠블럼과 색을 언제든 바꿈"
-   ]
+   ],
+   "tr": {
+    "en": {
+     "title": "Twilight of the Galactic Empire",
+     "items": [
+      "Clan level (XP from matches and donations; member cap +2 per level)",
+      "Clan member contribution ranking",
+      "Co-leaders (can kick members and post notices; the leader appoints up to 3)",
+      "The clan leader can change the emblem and color at any time"
+     ]
+    },
+    "es": {
+     "title": "El crepúsculo del Imperio Galáctico",
+     "items": [
+      "Nivel del clan (XP por partidas y donaciones; límite de miembros +2 por nivel)",
+      "Ranking de aportación de los miembros del clan",
+      "Subjefes (pueden expulsar miembros y publicar avisos; el líder nombra hasta 3)",
+      "El líder del clan puede cambiar el emblema y el color en cualquier momento"
+     ]
+    },
+    "fr": {
+     "title": "Le crépuscule de l'Empire galactique",
+     "items": [
+      "Niveau de clan (XP par parties et dons ; limite de membres +2 par niveau)",
+      "Classement de contribution des membres du clan",
+      "Co-chefs (peuvent exclure des membres et publier des annonces ; le chef en nomme jusqu'à 3)",
+      "Le chef du clan peut changer l'emblème et la couleur à tout moment"
+     ]
+    },
+    "de": {
+     "title": "Die Dämmerung des Galaktischen Imperiums",
+     "items": [
+      "Clan-Level (EP durch Spiele und Spenden; Mitgliederlimit +2 pro Stufe)",
+      "Beitragsrangliste der Clanmitglieder",
+      "Vize-Anführer (können Mitglieder entfernen und Ankündigungen machen; der Anführer ernennt bis zu 3)",
+      "Der Clan-Anführer kann Emblem und Farbe jederzeit ändern"
+     ]
+    },
+    "ja": {
+     "title": "銀河帝国の黄昏",
+     "items": [
+      "クランレベル（試合と寄付で経験値、レベルごとに人数上限 +2人）",
+      "クランメンバーの貢献度ランキング",
+      "副リーダー（メンバーの追放と告知が可能。リーダーが最大3人任命）",
+      "クランリーダーはエンブレムと色をいつでも変更可能"
+     ]
+    },
+    "zh": {
+     "title": "银河帝国的黄昏",
+     "items": [
+      "战队等级（通过比赛和捐献获得经验，每级人数上限 +2）",
+      "战队成员贡献排名",
+      "副会长（可踢人和发公告，队长最多任命 3 人）",
+      "队长可随时更换徽章和颜色"
+     ]
+    },
+    "pt": {
+     "title": "O crepúsculo do Império Galáctico",
+     "items": [
+      "Nível do clã (XP com partidas e doações; limite de membros +2 por nível)",
+      "Ranking de contribuição dos membros do clã",
+      "Vice-líderes (podem expulsar membros e publicar avisos; o líder nomeia até 3)",
+      "O líder do clã pode mudar o emblema e a cor a qualquer momento"
+     ]
+    },
+    "ru": {
+     "title": "Сумерки Галактической империи",
+     "items": [
+      "Уровень клана (опыт за матчи и пожертвования; лимит участников +2 за уровень)",
+      "Рейтинг вклада участников клана",
+      "Заместители (могут исключать участников и писать объявления; лидер назначает до 3)",
+      "Лидер клана может менять эмблему и цвет в любое время"
+     ]
+    },
+    "tr": {
+     "title": "Galaktik İmparatorluğun Alacakaranlığı",
+     "items": [
+      "Klan seviyesi (maç ve bağışlarla XP; seviye başına üye sınırı +2)",
+      "Klan üyeleri katkı sıralaması",
+      "Yardımcı liderler (üye atabilir ve duyuru yapabilir; lider en fazla 3 kişi atar)",
+      "Klan lideri amblem ve rengi istediği zaman değiştirebilir"
+     ]
+    },
+    "it": {
+     "title": "Il crepuscolo dell'Impero Galattico",
+     "items": [
+      "Livello del clan (XP da partite e donazioni; limite membri +2 per livello)",
+      "Classifica di contributo dei membri del clan",
+      "Vice capi (possono espellere membri e pubblicare avvisi; il capo ne nomina fino a 3)",
+      "Il capo del clan può cambiare stemma e colore in qualsiasi momento"
+     ]
+    },
+    "pl": {
+     "title": "Zmierzch Imperium Galaktycznego",
+     "items": [
+      "Poziom klanu (PD z meczów i wpłat; limit członków +2 na poziom)",
+      "Ranking wkładu członków klanu",
+      "Zastępcy (mogą usuwać członków i pisać ogłoszenia; lider mianuje do 3)",
+      "Lider klanu może w każdej chwili zmienić emblemat i kolor"
+     ]
+    },
+    "ar": {
+     "title": "غسق الإمبراطورية المجرية",
+     "items": [
+      "مستوى العشيرة (خبرة من المباريات والتبرعات؛ +2 للحد الأقصى للأعضاء لكل مستوى)",
+      "ترتيب مساهمة أعضاء العشيرة",
+      "النواب (يمكنهم طرد الأعضاء ونشر الإعلانات؛ والقائد يعيّن 3 كحد أقصى)",
+      "يمكن لقائد العشيرة تغيير الشعار واللون في أي وقت"
+     ]
+    }
+   }
   },
   {
    "date": "2026-10-30",
@@ -224,7 +2278,93 @@
    "items": [
     "클랜 정보의 클랜전 승리 줄 삭제, 일반 온라인 승리를 클랜 승리로 세던 것 삭제",
     "황금 쟁탈 금 든 느려짐은 땅에 있을 때만"
-   ]
+   ],
+   "tr": {
+    "en": {
+     "title": "Twilight of the Galactic Empire",
+     "items": [
+      "Removed the clan-war win line from clan info, and stopped counting normal online wins as clan wins",
+      "Gold Rush: the slow from carrying gold applies only while on the ground"
+     ]
+    },
+    "es": {
+     "title": "El crepúsculo del Imperio Galáctico",
+     "items": [
+      "Eliminada la línea de victorias de guerra de clanes de la info del clan, y las victorias online normales ya no cuentan como victorias de clan",
+      "Fiebre del oro: la lentitud por llevar oro solo se aplica mientras estás en el suelo"
+     ]
+    },
+    "fr": {
+     "title": "Le crépuscule de l'Empire galactique",
+     "items": [
+      "Suppression de la ligne des victoires de guerre de clans dans les infos du clan, et les victoires en ligne normales ne sont plus comptées comme victoires de clan",
+      "Ruée vers l'or : le ralentissement dû à l'or ne s'applique qu'au sol"
+     ]
+    },
+    "de": {
+     "title": "Die Dämmerung des Galaktischen Imperiums",
+     "items": [
+      "Zeile mit Clan-Kriegssiegen aus den Clan-Infos entfernt; normale Online-Siege zählen nicht mehr als Clan-Siege",
+      "Goldrausch: Die Verlangsamung durch Gold gilt nur, wenn du am Boden bist"
+     ]
+    },
+    "ja": {
+     "title": "銀河帝国の黄昏",
+     "items": [
+      "クラン情報のクラン戦勝利の行を削除し、通常のオンライン勝利をクラン勝利として数える処理を削除",
+      "ゴールドラッシュ：金を持っている時の減速は地面にいる時だけ"
+     ]
+    },
+    "zh": {
+     "title": "银河帝国的黄昏",
+     "items": [
+      "删除战队信息中的战队战胜利行，并取消把普通线上胜利计为战队胜利的统计",
+      "黄金争夺：持金减速只在落地时生效"
+     ]
+    },
+    "pt": {
+     "title": "O crepúsculo do Império Galáctico",
+     "items": [
+      "Removida a linha de vitórias de guerra de clãs nas informações do clã, e vitórias online normais não contam mais como vitórias de clã",
+      "Fiebre do ouro: a lentidão ao carregar ouro só vale quando você está no chão"
+     ]
+    },
+    "ru": {
+     "title": "Сумерки Галактической империи",
+     "items": [
+      "Убрана строка побед в клановых войнах из информации о клане; обычные онлайн-победы больше не засчитываются как победы клана",
+      "Золотая лихорадка: замедление от золота действует только на земле"
+     ]
+    },
+    "tr": {
+     "title": "Galaktik İmparatorluğun Alacakaranlığı",
+     "items": [
+      "Klan bilgisindeki klan savaşı galibiyet satırı kaldırıldı; normal çevrimiçi galibiyetler artık klan galibiyeti sayılmıyor",
+      "Altın Kapışması: altın taşımanın yavaşlatması yalnızca yerdeyken geçerli"
+     ]
+    },
+    "it": {
+     "title": "Il crepuscolo dell'Impero Galattico",
+     "items": [
+      "Rimossa la riga delle vittorie in guerra di clan dalle info del clan; le normali vittorie online non vengono più contate come vittorie di clan",
+      "Corsa all'oro: il rallentamento con l'oro vale solo quando sei a terra"
+     ]
+    },
+    "pl": {
+     "title": "Zmierzch Imperium Galaktycznego",
+     "items": [
+      "Usunięto wiersz zwycięstw w wojnach klanów z informacji o klanie; zwykłe zwycięstwa online nie są już liczone jako zwycięstwa klanu",
+      "Gorączka złota: spowolnienie od niesienia złota działa tylko na ziemi"
+     ]
+    },
+    "ar": {
+     "title": "غسق الإمبراطورية المجرية",
+     "items": [
+      "حذف سطر انتصارات حروب العشائر من معلومات العشيرة، وإيقاف احتساب الانتصارات الأونلاين العادية كانتصارات للعشيرة",
+      "حمى الذهب: التباطؤ بحمل الذهب يسري فقط عندما تكون على الأرض"
+     ]
+    }
+   }
   },
   {
    "date": "2026-10-30",
@@ -232,7 +2372,81 @@
    "title": "은하 제국의 황혼",
    "items": [
     "크레온 1세 근위병이 인트로처럼 은색 투구·검은 얼굴·갑옷으로 보이도록 수정 (게임 안에서 얼굴과 갑옷이 빠져 있었어요)"
-   ]
+   ],
+   "tr": {
+    "en": {
+     "title": "Twilight of the Galactic Empire",
+     "items": [
+      "Creon I's guard now looks like the intro, with silver helmet, black face and armor (the face and armor were missing in the game)"
+     ]
+    },
+    "es": {
+     "title": "El crepúsculo del Imperio Galáctico",
+     "items": [
+      "El guardia de Creonte I ahora se ve como en la introducción: yelmo plateado, cara negra y armadura (en el juego faltaban la cara y la armadura)"
+     ]
+    },
+    "fr": {
+     "title": "Le crépuscule de l'Empire galactique",
+     "items": [
+      "Le garde de Créon Ier ressemble désormais à celui de l'intro : heaume argenté, visage noir et armure (le visage et l'armure manquaient en jeu)"
+     ]
+    },
+    "de": {
+     "title": "Die Dämmerung des Galaktischen Imperiums",
+     "items": [
+      "Creon I.s Wache sieht jetzt wie im Intro aus: silberner Helm, schwarzes Gesicht und Rüstung (im Spiel fehlten Gesicht und Rüstung)"
+     ]
+    },
+    "ja": {
+     "title": "銀河帝国の黄昏",
+     "items": [
+      "クレオン1世の近衛兵をイントロと同じ銀の兜・黒い顔・鎧の姿に修正（ゲーム内では顔と鎧が抜けていました）"
+     ]
+    },
+    "zh": {
+     "title": "银河帝国的黄昏",
+     "items": [
+      "克里翁一世的近卫兵改为与开场动画一致的银色头盔、黑色面孔和盔甲（游戏中原本缺少面孔和盔甲）"
+     ]
+    },
+    "pt": {
+     "title": "O crepúsculo do Império Galáctico",
+     "items": [
+      "O guarda de Creon I agora aparece como na introdução: elmo prateado, rosto preto e armadura (no jogo, faltavam o rosto e a armadura)"
+     ]
+    },
+    "ru": {
+     "title": "Сумерки Галактической империи",
+     "items": [
+      "Страж Креона I теперь выглядит как во вступлении: серебряный шлем, чёрное лицо и доспехи (в игре лицо и доспехи отсутствовали)"
+     ]
+    },
+    "tr": {
+     "title": "Galaktik İmparatorluğun Alacakaranlığı",
+     "items": [
+      "Kreon I'in muhafızı artık girişteki gibi: gümüş miğfer, siyah yüz ve zırh (oyunda yüz ve zırh eksikti)"
+     ]
+    },
+    "it": {
+     "title": "Il crepuscolo dell'Impero Galattico",
+     "items": [
+      "La guardia di Creonte I ora appare come nell'intro: elmo argento, volto nero e armatura (in gioco mancavano volto e armatura)"
+     ]
+    },
+    "pl": {
+     "title": "Zmierzch Imperium Galaktycznego",
+     "items": [
+      "Strażnik Kreona I wygląda teraz jak we wstępie: srebrny hełm, czarna twarz i zbroja (w grze brakowało twarzy i zbroi)"
+     ]
+    },
+    "ar": {
+     "title": "غسق الإمبراطورية المجرية",
+     "items": [
+      "حارس كريون الأول يظهر الآن كما في المقدمة: خوذة فضية ووجه أسود ودرع (كان الوجه والدرع مفقودين في اللعبة)"
+     ]
+    }
+   }
   },
   {
    "date": "2026-10-30",
@@ -240,7 +2454,81 @@
    "title": "은하 제국의 황혼",
    "items": [
     "캐릭터 도감(게임 안과 사이트)에 패시브 이름과 발동 조건 추가"
-   ]
+   ],
+   "tr": {
+    "en": {
+     "title": "Twilight of the Galactic Empire",
+     "items": [
+      "Passive names and trigger conditions added to the character codex (in-game and on the website)"
+     ]
+    },
+    "es": {
+     "title": "El crepúsculo del Imperio Galáctico",
+     "items": [
+      "Nombres de pasivas y condiciones de activación añadidos al códice de personajes (en el juego y en la web)"
+     ]
+    },
+    "fr": {
+     "title": "Le crépuscule de l'Empire galactique",
+     "items": [
+      "Noms des passifs et conditions de déclenchement ajoutés au codex des personnages (en jeu et sur le site)"
+     ]
+    },
+    "de": {
+     "title": "Die Dämmerung des Galaktischen Imperiums",
+     "items": [
+      "Passiv-Namen und Auslösebedingungen zum Charakter-Kodex hinzugefügt (im Spiel und auf der Website)"
+     ]
+    },
+    "ja": {
+     "title": "銀河帝国の黄昏",
+     "items": [
+      "キャラ図鑑（ゲーム内とサイト）にパッシブの名前と発動条件を追加"
+     ]
+    },
+    "zh": {
+     "title": "银河帝国的黄昏",
+     "items": [
+      "角色图鉴（游戏内和网站）新增被动名称和触发条件"
+     ]
+    },
+    "pt": {
+     "title": "O crepúsculo do Império Galáctico",
+     "items": [
+      "Nomes e condições de ativação das passivas adicionados ao catálogo de personagens (no jogo e no site)"
+     ]
+    },
+    "ru": {
+     "title": "Сумерки Галактической империи",
+     "items": [
+      "В энциклопедию персонажей (в игре и на сайте) добавлены названия пассивных умений и условия активации"
+     ]
+    },
+    "tr": {
+     "title": "Galaktik İmparatorluğun Alacakaranlığı",
+     "items": [
+      "Karakter ansiklopedisine (oyun içi ve sitede) pasif adları ve tetiklenme koşulları eklendi"
+     ]
+    },
+    "it": {
+     "title": "Il crepuscolo dell'Impero Galattico",
+     "items": [
+      "Aggiunti nomi e condizioni di attivazione delle passive nel codice dei personaggi (in gioco e sul sito)"
+     ]
+    },
+    "pl": {
+     "title": "Zmierzch Imperium Galaktycznego",
+     "items": [
+      "Do katalogu postaci (w grze i na stronie) dodano nazwy pasywek i warunki ich aktywacji"
+     ]
+    },
+    "ar": {
+     "title": "غسق الإمبراطورية المجرية",
+     "items": [
+      "إضافة أسماء المهارات السلبية وشروط تفعيلها إلى موسوعة الشخصيات (داخل اللعبة وفي الموقع)"
+     ]
+    }
+   }
   },
   {
    "date": "2026-10-30",
@@ -249,7 +2537,93 @@
    "items": [
     "영혼석으로 사는 스킨 6종 추가 (유령 기사 투구, 영혼 수집가 중절모, 영혼 마법사 후드, 영혼 군주의 망토, 영혼 사냥 두건, 영혼 늪의 두건) · 각 영혼석 60개",
     "에픽 상자 추가: 영혼석 30개, 사자마자 바로 열리고 큰 선물만 나옴 (스킨 확률 약 18%)"
-   ]
+   ],
+   "tr": {
+    "en": {
+     "title": "Twilight of the Galactic Empire",
+     "items": [
+      "6 new skins bought with Soulstones (Ghost Knight Helm, Soul Collector Top Hat, Soul Mage Hood, Soul Lord's Cloak, Soul Hunter Hood, Soul Swamp Hood) · 60 Soulstones each",
+      "Epic box added: 30 Soulstones, opens right away and only gives big gifts (about 18% chance of a skin)"
+     ]
+    },
+    "es": {
+     "title": "El crepúsculo del Imperio Galáctico",
+     "items": [
+      "6 skins nuevos que se compran con piedras del alma (Yelmo del caballero fantasma, Sombrero de copa del coleccionista de almas, Capucha del mago de almas, Capa del señor de las almas, Capucha del cazador de almas, Capucha del pantano de almas) · 60 piedras del alma cada uno",
+      "Caja épica nueva: 30 piedras del alma; se abre al instante y solo da regalos grandes (aprox. 18 % de probabilidad de skin)"
+     ]
+    },
+    "fr": {
+     "title": "Le crépuscule de l'Empire galactique",
+     "items": [
+      "6 nouveaux skins achetés avec des pierres d'âme (Heaume du chevalier fantôme, Haut-de-forme du collectionneur d'âmes, Capuche du mage des âmes, Cape du seigneur des âmes, Capuche du chasseur d'âmes, Capuche du marais des âmes) · 60 pierres d'âme chacun",
+      "Coffre épique ajouté : 30 pierres d'âme, s'ouvre aussitôt et ne donne que de gros cadeaux (environ 18 % de chances d'obtenir un skin)"
+     ]
+    },
+    "de": {
+     "title": "Die Dämmerung des Galaktischen Imperiums",
+     "items": [
+      "6 neue Skins, gekauft mit Seelensteinen (Helm des Geisterritters, Zylinder des Seelensammlers, Kapuze des Seelenmagiers, Umhang des Seelenherrschers, Kapuze des Seelenjägers, Kapuze des Seelensumpfs) · je 60 Seelensteine",
+      "Epische Kiste hinzugefügt: 30 Seelensteine, öffnet sich sofort und enthält nur große Geschenke (ca. 18 % Chance auf einen Skin)"
+     ]
+    },
+    "ja": {
+     "title": "銀河帝国の黄昏",
+     "items": [
+      "魂石で買える新スキン6種（ゴーストナイトの兜、魂収集家のシルクハット、魂魔術師のフード、魂の君主のマント、魂狩りの頭巾、魂の沼の頭巾）· 各60魂石",
+      "エピック箱を追加：魂石30個、すぐに開き大きな贈り物のみ（スキンの確率は約18%）"
+     ]
+    },
+    "zh": {
+     "title": "银河帝国的黄昏",
+     "items": [
+      "新增 6 款可用灵魂石购买的皮肤（幽灵骑士头盔、灵魂收藏家礼帽、灵魂法师兜帽、灵魂君主披风、灵魂猎人头巾、灵魂沼泽头巾）· 各 60 灵魂石",
+      "新增史诗宝箱：30 个灵魂石，购买后立即开启，只出大奖励（皮肤概率约 18%）"
+     ]
+    },
+    "pt": {
+     "title": "O crepúsculo do Império Galáctico",
+     "items": [
+      "6 skins novos comprados com pedras de alma (Elmo do cavaleiro fantasma, Cartola do colecionador de almas, Capuz do mago das almas, Manto do senhor das almas, Capuz do caçador de almas, Capuz do pântano das almas) · 60 pedras de alma cada",
+      "Caixa épica adicionada: 30 pedras de alma, abre na hora e só dá presentes grandes (cerca de 18% de chance de skin)"
+     ]
+    },
+    "ru": {
+     "title": "Сумерки Галактической империи",
+     "items": [
+      "6 новых скинов за камни душ (Шлем призрачного рыцаря, Цилиндр коллекционера душ, Капюшон мага душ, Плащ владыки душ, Капюшон охотника за душами, Капюшон болота душ) · по 60 камней душ",
+      "Добавлен эпический ящик: 30 камней душ, открывается сразу и содержит только крупные подарки (шанс скина около 18%)"
+     ]
+    },
+    "tr": {
+     "title": "Galaktik İmparatorluğun Alacakaranlığı",
+     "items": [
+      "Ruh taşlarıyla alınan 6 yeni skin (Hayalet Şövalye Miğferi, Ruh Koleksiyoncusu Silindiri, Ruh Büyücüsü Kapüşonu, Ruh Lordu Pelerini, Ruh Avcısı Kapüşonu, Ruh Bataklığı Kapüşonu) · her biri 60 ruh taşı",
+      "Epik kutu eklendi: 30 ruh taşı, hemen açılır ve yalnızca büyük hediyeler çıkarır (skin şansı yaklaşık %18)"
+     ]
+    },
+    "it": {
+     "title": "Il crepuscolo dell'Impero Galattico",
+     "items": [
+      "6 nuove skin acquistabili con pietre anima (Elmo del cavaliere fantasma, Cilindro del collezionista di anime, Cappuccio del mago delle anime, Mantello del signore delle anime, Cappuccio del cacciatore di anime, Cappuccio della palude delle anime) · 60 pietre anima ciascuna",
+      "Aggiunta la cassa epica: 30 pietre anima, si apre subito e dà solo grandi regali (circa 18% di probabilità di skin)"
+     ]
+    },
+    "pl": {
+     "title": "Zmierzch Imperium Galaktycznego",
+     "items": [
+      "6 nowych skórek kupowanych kamieniami dusz (Hełm upiornego rycerza, Cylinder zbieracza dusz, Kaptur mistrza dusz, Peleryna władcy dusz, Kaptur łowcy dusz, Kaptur bagna dusz) · po 60 kamieni dusz",
+      "Dodano epicką skrzynię: 30 kamieni dusz, otwiera się od razu i daje tylko duże nagrody (ok. 18% szansy na skórkę)"
+     ]
+    },
+    "ar": {
+     "title": "غسق الإمبراطورية المجرية",
+     "items": [
+      "6 سكينات جديدة تُشترى بأحجار الأرواح (خوذة الفارس الشبح، قبعة جامع الأرواح، قلنسوة ساحر الأرواح، عباءة سيد الأرواح، قلنسوة صياد الأرواح، قلنسوة مستنقع الأرواح) · 60 حجر روح لكل منها",
+      "إضافة صندوق ملحمي: 30 حجر روح، يُفتح فورًا ولا يعطي إلا هدايا كبيرة (احتمال سكين نحو 18%)"
+     ]
+    }
+   }
   },
   {
    "date": "2026-10-30",
@@ -257,7 +2631,81 @@
    "title": "은하 제국의 황혼",
    "items": [
     "시즌 패스: 보상 로고를 크게, 보상 이름은 이모티콘 없이 로고 아래에 표시"
-   ]
+   ],
+   "tr": {
+    "en": {
+     "title": "Twilight of the Galactic Empire",
+     "items": [
+      "Season pass: reward logos are bigger, and reward names appear under the logo without emoji"
+     ]
+    },
+    "es": {
+     "title": "El crepúsculo del Imperio Galáctico",
+     "items": [
+      "Pase de temporada: logos de recompensa más grandes; los nombres aparecen bajo el logo, sin emoticonos"
+     ]
+    },
+    "fr": {
+     "title": "Le crépuscule de l'Empire galactique",
+     "items": [
+      "Pass de saison : logos de récompense plus grands ; les noms s'affichent sous le logo, sans emoji"
+     ]
+    },
+    "de": {
+     "title": "Die Dämmerung des Galaktischen Imperiums",
+     "items": [
+      "Season-Pass: Belohnungslogos größer, Belohnungsnamen ohne Emoji unter dem Logo"
+     ]
+    },
+    "ja": {
+     "title": "銀河帝国の黄昏",
+     "items": [
+      "シーズンパス：報酬のロゴを大きく、報酬名は絵文字なしでロゴの下に表示"
+     ]
+    },
+    "zh": {
+     "title": "银河帝国的黄昏",
+     "items": [
+      "赛季通行证：奖励徽标放大，奖励名称不带表情，显示在徽标下方"
+     ]
+    },
+    "pt": {
+     "title": "O crepúsculo do Império Galáctico",
+     "items": [
+      "Passe de temporada: logos das recompensas maiores; os nomes aparecem sob o logo, sem emoji"
+     ]
+    },
+    "ru": {
+     "title": "Сумерки Галактической империи",
+     "items": [
+      "Сезонный пропуск: логотипы наград крупнее, названия без эмодзи выводятся под логотипом"
+     ]
+    },
+    "tr": {
+     "title": "Galaktik İmparatorluğun Alacakaranlığı",
+     "items": [
+      "Sezon passı: ödül logoları büyütüldü, ödül adları emoji olmadan logonun altında gösteriliyor"
+     ]
+    },
+    "it": {
+     "title": "Il crepuscolo dell'Impero Galattico",
+     "items": [
+      "Pass stagionale: loghi delle ricompense più grandi, nomi senza emoji sotto il logo"
+     ]
+    },
+    "pl": {
+     "title": "Zmierzch Imperium Galaktycznego",
+     "items": [
+      "Karnet sezonowy: logo nagród większe, nazwy pod logo bez emoji"
+     ]
+    },
+    "ar": {
+     "title": "غسق الإمبراطورية المجرية",
+     "items": [
+      "تمييز الموسم: شعارات المكافآت أكبر، وتظهر أسماء المكافآت أسفل الشعار دون رموز تعبيرية"
+     ]
+    }
+   }
   },
   {
    "date": "2026-10-29",
@@ -265,7 +2713,81 @@
    "title": "은하 제국의 황혼",
    "items": [
     "허브 일일 퀘스트 '한 판 하기': 한 판을 끝까지 마치고 메인으로 돌아올 때 집계"
-   ]
+   ],
+   "tr": {
+    "en": {
+     "title": "Twilight of the Galactic Empire",
+     "items": [
+      "Hub daily quest 'Play a match': counted when you finish a match and return to the main menu"
+     ]
+    },
+    "es": {
+     "title": "El crepúsculo del Imperio Galáctico",
+     "items": [
+      "Misión diaria del hub 'Juega una partida': se cuenta al terminar una partida y volver al menú principal"
+     ]
+    },
+    "fr": {
+     "title": "Le crépuscule de l'Empire galactique",
+     "items": [
+      "Quête quotidienne du hub « Jouer une partie » : comptée quand on termine une partie et revient au menu principal"
+     ]
+    },
+    "de": {
+     "title": "Die Dämmerung des Galaktischen Imperiums",
+     "items": [
+      "Hub-Tagesquest 'Ein Spiel spielen': wird gezählt, wenn du ein Spiel beendest und ins Hauptmenü zurückkehrst"
+     ]
+    },
+    "ja": {
+     "title": "銀河帝国の黄昏",
+     "items": [
+      "ハブのデイリークエスト「1試合プレイ」：試合を最後まで終えてメインに戻ったときに集計"
+     ]
+    },
+    "zh": {
+     "title": "银河帝国的黄昏",
+     "items": [
+      "大厅每日任务「打一局」：完整打完一局并返回主界面时计数"
+     ]
+    },
+    "pt": {
+     "title": "O crepúsculo do Império Galáctico",
+     "items": [
+      "Missão diária do hub 'Jogue uma partida': contada ao terminar uma partida e voltar ao menu principal"
+     ]
+    },
+    "ru": {
+     "title": "Сумерки Галактической империи",
+     "items": [
+      "Ежедневное задание хаба «Сыграть матч»: засчитывается, когда вы доигрываете матч и возвращаетесь в главное меню"
+     ]
+    },
+    "tr": {
+     "title": "Galaktik İmparatorluğun Alacakaranlığı",
+     "items": [
+      "Hub günlük görevi 'Bir maç oyna': maçı bitirip ana menüye dönünce sayılır"
+     ]
+    },
+    "it": {
+     "title": "Il crepuscolo dell'Impero Galattico",
+     "items": [
+      "Missione giornaliera dell'hub 'Gioca una partita': conteggiata quando finisci una partita e torni al menu principale"
+     ]
+    },
+    "pl": {
+     "title": "Zmierzch Imperium Galaktycznego",
+     "items": [
+      "Dzienna misja w hubie 'Zagraj jeden mecz': liczona, gdy dokończysz mecz i wrócisz do menu głównego"
+     ]
+    },
+    "ar": {
+     "title": "غسق الإمبراطورية المجرية",
+     "items": [
+      "مهمة الصالة اليومية 'العب مباراة': تُحسب عند إنهاء المباراة والعودة إلى القائمة الرئيسية"
+     ]
+    }
+   }
   },
   {
    "date": "2026-10-29",
