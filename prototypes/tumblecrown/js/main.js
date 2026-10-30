@@ -825,7 +825,7 @@ function syncScene() {
   if (sn.ph !== S.lastPh) {
     const prev = S.lastPh; S.lastPh = sn.ph;
     if (sn.ph === 'intro') { show('sIntro'); setHud(false); }
-    else if (prev === 'intro' || prev === '') { show(''); setHud(true); S.area = -2; S.introHero = null; view.camId = null; $('introCard').classList.remove('on'); }
+    else if (prev === 'intro' || prev === '') { view.battleOff(); show(''); setHud(true); S.area = -2; S.introHero = null; view.camId = null; $('introCard').classList.remove('on'); }
     if (sn.ph === 'won') { S.wonT = 0; bigMsg('', '', 0); const w = sn.pl.find(q => q.id === sn.win); S.winId = w ? w.id : null; S.winPoseT = 0; if (w) { view.focusOn(w.x, w.z, 4); view.crownDrop(w.id); view.pose(w.id, 'rally'); view.flash(w.x, w.z, 0xffe08a, 160); SFX.play('won'); } } else if (sn.ph !== 'won') S.winId = null;
   }
   // 비밀 방: 열린 것은 지도와 화면에서도 열어요 (게스트는 여기서 길도 열어요)
@@ -852,7 +852,7 @@ function paintIntro() {
   if (who && S.introHero !== who.id) {
     S.introHero = who.id; view.camId = who.id; view.focusOn(who.x, who.z, 0.9);
     const card = $('introCard'); card.firstElementChild.textContent = who.name; card.lastElementChild.textContent = ROLES[who.role].name; card.classList.remove('on'); setTimeout(() => card.classList.add('on'), 30);
-    view.pose(who.id, 'rally'); view.shock(who.x, who.z, 5, pcol(who) ? 0xffe08a : 0xffe08a, 0.5); view.flash(who.x, who.z, 0xffe08a, 90); SFX.play('parry');
+    view.battleOn(who.x, who.z); view.pose(who.id, 'rally'); view.shock(who.x, who.z, 5, pcol(who) ? 0xffe08a : 0xffe08a, 0.5); view.flash(who.x, who.z, 0xffe08a, 90); SFX.play('parry');
   }
   $('introSkip').classList.remove('on'); $('introSkip').style.display = 'none';
 }
@@ -952,7 +952,7 @@ function cutPrompt(sn, pos) {
 const WATERC = (i, j) => MAP.water.some(([x, y, w, h]) => i >= x && i < x + w && j >= y && j < y + h);
 const mini = {
   c: document.createElement('canvas'), seen: new Uint8Array(MW * MH), dirty: true,
-  reset() { this.seen.fill(CH.pvp ? 1 : 0); this.c.width = MW * 3; this.c.height = MH * 3; this.dirty = true; },
+  reset() { S.mapImg = null; S.mapTry = 0; this.seen.fill(CH.pvp ? 1 : 0); this.c.width = MW * 3; this.c.height = MH * 3; this.dirty = true; },
   reveal(x, z) {
     const ci = Math.floor(x / CS), cj = Math.floor(z / CS), R = 9;
     for (let j = cj - R; j <= cj + R; j++) for (let i = ci - R; i <= ci + R; i++) { if (i < 0 || j < 0 || i >= MW || j >= MH || (i - ci) ** 2 + (j - cj) ** 2 > R * R) continue; const k = j * MW + i; if (!this.seen[k]) { this.seen[k] = 1; this.dirty = true; } }
@@ -996,8 +996,8 @@ function teamHud(sn) {
   });
   const me0 = sn.pl.find(q => q.id === S.me); if (me0 && me0.fz && !me0.dd) { oc.font = 'bold 14px Galmuri, system-ui'; oc.lineWidth = 4; oc.strokeStyle = '#140f18'; const tx = T('깃발의 가호 · 치유 · 공격 +20%'); oc.strokeText(tx, innerWidth / 2, y + 26); oc.fillStyle = '#9af0a8'; oc.fillText(tx, innerWidth / 2, y + 26); }
   const sc = Math.min(innerWidth < 700 ? 1.1 : 1.6, (innerWidth < 700 ? 130 : 190) / MW), w = MW * sc, h = MH * sc, mx = innerWidth - w - 14, my = innerWidth < 700 ? 100 : 64;
-  if (mini.dirty) mini.paint();
-  oc.globalAlpha = 0.8; oc.fillStyle = 'rgba(10,8,14,.75)'; oc.fillRect(mx - 4, my - 4, w + 8, h + 8); oc.drawImage(mini.c, mx, my, w, h); oc.globalAlpha = 1;
+  if (mini.dirty) mini.paint(); if (!S.mapImg && !S.mapTry) { S.mapTry = 1; try { S.mapImg = view.captureMap(); } catch (e) { } }
+  oc.fillStyle = 'rgba(10,8,14,.85)'; oc.fillRect(mx - 4, my - 4, w + 8, h + 8); oc.imageSmoothingEnabled = !!S.mapImg; oc.globalAlpha = S.mapImg ? 0.95 : 0.8; oc.drawImage(S.mapImg || mini.c, mx, my, w, h); oc.globalAlpha = 1; oc.strokeStyle = '#c8b480'; oc.lineWidth = 2; oc.strokeRect(mx - 4, my - 4, w + 8, h + 8);
   const P = (wx, wz) => [mx + wx / CS * sc, my + wz / CS * sc], mate = sn.pl.filter(q => q.tm === mt && !q.dd);
   sn.tf.forEach((f, i) => { const fl = MAP.tflags[i], [a, b] = P(cw(fl[0]), cw(fl[1])); oc.fillStyle = f[0] < 0 ? '#9a96a6' : hex(TEAMS[f[0]].c); oc.fillRect(a - 3.5, b - 3.5, 7, 7); oc.strokeStyle = '#140f18'; oc.lineWidth = 1.5; oc.strokeRect(a - 3.5, b - 3.5, 7, 7); });
   for (const p of sn.pl) {
@@ -1017,7 +1017,8 @@ function respawnPanel(sn) {
   const mt = me.tm, pw = Math.min(innerWidth * 0.78, innerHeight * 0.8 * MW / MH), ph = pw * MH / MW, x0 = (innerWidth - pw) / 2, y0 = Math.max(70, (innerHeight - ph) / 2 - 10), sc = pw / (MW * CS), P = (wx, wz) => [x0 + wx * sc, y0 + wz * sc];
   if (mini.dirty) mini.paint();
   oc.fillStyle = 'rgba(8,6,12,.82)'; oc.fillRect(x0 - 10, y0 - 40, pw + 20, ph + 56);
-  oc.imageSmoothingEnabled = false; oc.globalAlpha = 0.9; oc.drawImage(mini.c, x0, y0, pw, ph); oc.globalAlpha = 1;
+  if (!S.mapImg && !S.mapTry) { S.mapTry = 1; try { S.mapImg = view.captureMap(); } catch (e) { } }
+  oc.imageSmoothingEnabled = !!S.mapImg; oc.drawImage(S.mapImg || mini.c, x0, y0, pw, ph); oc.strokeStyle = '#c8b480'; oc.lineWidth = 3; oc.strokeRect(x0 - 2, y0 - 2, pw + 4, ph + 4);
   oc.font = 'bold 16px Galmuri, system-ui'; oc.textAlign = 'center'; oc.lineWidth = 4; oc.strokeStyle = '#140f18';
   const tx = T('{0}초 뒤 되살아나요 · 다시 일어날 곳을 눌러요', Math.max(0, Math.ceil(me.rs))); oc.strokeText(tx, innerWidth / 2, y0 - 18); oc.fillStyle = '#ffe08a'; oc.fillText(tx, innerWidth / 2, y0 - 18);
   const pulse = 0.5 + 0.5 * Math.sin(performance.now() / 260), tc = hex(TEAMS[mt].c), pick = S.rspSel | 0;
