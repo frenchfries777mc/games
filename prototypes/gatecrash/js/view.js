@@ -203,6 +203,7 @@ function drawWep(x, k) {
     case 'mop': R(x, '#c89a5a', 2, -1, 20, 2); R(x, '#e8e4d8', 20, -4, 7, 8); R(x, '#bdb8a8', 20, 2, 7, 2); break;
     case 'sling': R(x, '#8a5a30', 3, -1, 8, 3); R(x, '#8a5a30', 9, -6, 2, 6); R(x, '#8a5a30', 13, -6, 2, 6); R(x, '#e8c39a', 9, -7, 6, 1); break;
     case 'hose': R(x, '#c0392b', 0, -3, 9, 8); R(x, '#222', 8, -2, 7, 4); R(x, '#4a8ad0', 14, -2, 4, 4); R(x, '#e8c040', 0, 4, 9, 2); break;
+    case 'banana': R(x, '#f2d040', 2, -2, 12, 4); R(x, '#f2d040', 12, -4, 3, 3); R(x, '#c8a020', 2, 1, 12, 1); R(x, '#6a4a20', 2, -3, 2, 2); break;
     case 'firework': R(x, '#a8473f', -1, -3, 18, 6); R(x, '#f2b632', 2, -3, 3, 6); R(x, '#f2b632', 9, -3, 3, 6); R(x, '#ffe070', 17, -2, 3, 4); break;
   }
 }
@@ -333,5 +334,30 @@ function drawView(x, W, a, y, w, h, rm) {
   }
   // 유리 반사와 모서리 어둡힘
   R(x, 'rgba(255,255,255,.12)', a, y, w, 5); const gg = x.createLinearGradient(a, y, a + w, y + h); gg.addColorStop(0, 'rgba(255,255,255,.22)'); gg.addColorStop(.35, 'rgba(255,255,255,0)'); x.fillStyle = gg; x.fillRect(a, y, w, h);
+  x.restore();
+}
+
+/* ---------- 바나나, 물청소, 점검, 이모티콘 ---------- */
+function drawTraps(x, list) { for (const t of list) { const X = Math.round(t.x), Y = Math.round(t.y); R(x, 'rgba(0,0,0,.25)', X - 5, Y - 1, 10, 2); R(x, '#f2d040', X - 5, Y - 4, 10, 3); R(x, '#f2d040', X - 3, Y - 6, 3, 2); R(x, '#c8a020', X - 5, Y - 2, 10, 1); R(x, '#6a4a20', X + 4, Y - 5, 2, 2); } }
+function drawWet(x, W, cx, cy, vw) {
+  const t0 = Math.max(0, Math.floor(cx / TS) - 1), t1 = Math.min(W.w - 1, Math.ceil((cx + vw) / TS) + 1), y0 = Math.max(1, Math.floor(cy / TS)), y1 = Math.min(W.h - 1, Math.ceil((cy + VH) / TS));
+  x.fillStyle = 'rgba(150,215,255,.45)';
+  for (let ty = y0; ty <= y1; ty++) for (let tx = t0; tx <= t1; tx++) { const c = W.g[ty][tx]; if ((c === '#' || c === '>' || c === '<' || c === 'I') && !isSolid(W.g[ty - 1][tx])) x.fillRect(tx * TS, ty * TS, TS, 3); }
+}
+function drawLiftOff(x, o) {
+  const X = o.x * TS, Y = o.y * TS, w = o.w * TS, h = o.h * TS; R(x, 'rgba(10,14,24,.6)', X, Y, w, h);
+  for (let i = 0; i < h; i += 12) R(x, i % 24 ? 'rgba(232,72,59,.8)' : 'rgba(255,230,120,.8)', X + 2, Y + i, w - 4, 5);
+}
+const EMO_NAMES = ['', '웃음', '화남', '울음', '하트'];
+const EMO_PIX = [null,
+  ['..yyyyy..', '.yyyyyyy.', 'yyKyyyKyy', 'yyyyyyyyy', 'yKyyyyyKy', 'yyKKKKKyy', '.yyyyyyy.', '..yyyyy..'],
+  ['..rrrrr..', '.rrrrrrr.', 'rKKrrrKKr', 'rrKrrrKrr', 'rrrrrrrrr', 'rrKKKKKrr', 'rKrrrrrKr', '..rrrrr..'],
+  ['..bbbbb..', '.bbbbbbb.', 'bbKbbbKbb', 'bbbbbbbbb', 'bbbbbbbbb', 'bbKKKKKbb', 'bKbbbbbKb', '..bbbbb..'],
+  ['.rr...rr.', 'rrrr.rrrr', 'rrrrrrrrr', 'rrrrrrrrr', '.rrrrrrr.', '..rrrrr..', '...rrr...', '....r....']];
+function drawEmoPix(x, id) { const p = EMO_PIX[id]; if (!p) return; const C = { y: '#ffd36b', r: '#ff5a4a', b: '#6ab8ff', K: '#222' }; x.imageSmoothingEnabled = false; for (let j = 0; j < p.length; j++) for (let i = 0; i < 9; i++) { const c = p[j][i]; if (c !== '.') { x.fillStyle = C[c]; x.fillRect(i + 1, j + 1, 1, 1); } } }
+function drawEmo(x, id, px, py) {
+  R(x, 'rgba(0,0,0,.5)', px - 9, py - 8, 19, 17); R(x, '#fff', px - 8, py - 9, 17, 16); R(x, '#fff', px - 1, py + 6, 3, 3);
+  x.save(); x.translate(px - 7, py - 8); const p = EMO_PIX[id], C = { y: '#ffd36b', r: '#ff5a4a', b: '#6ab8ff', K: '#222' };
+  if (p) for (let j = 0; j < p.length; j++) for (let i = 0; i < 9; i++) { const c = p[j][i]; if (c !== '.') { x.fillStyle = C[c]; x.fillRect(i * 1.5 + 0.5, j * 1.5 + 1, 1.6, 1.6); } }
   x.restore();
 }

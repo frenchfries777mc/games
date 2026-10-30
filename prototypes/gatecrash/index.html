@@ -5,7 +5,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <title>Gatecrash</title>
-<script>(function(){var B=17;try{fetch('build.json?t='+Date.now(),{cache:'no-store'}).then(function(r){return r.json()}).then(function(d){if(d&&d.build>B&&sessionStorage.getItem('gcReload')!=String(d.build)){sessionStorage.setItem('gcReload',String(d.build));var u=new URL(location.href);u.searchParams.set('b',d.build);location.replace(u.toString());}}).catch(function(){});}catch(e){}})();</script>
+<script>(function(){var B=18;try{fetch('build.json?t='+Date.now(),{cache:'no-store'}).then(function(r){return r.json()}).then(function(d){if(d&&d.build>B&&sessionStorage.getItem('gcReload')!=String(d.build)){sessionStorage.setItem('gcReload',String(d.build));var u=new URL(location.href);u.searchParams.set('b',d.build);location.replace(u.toString());}}).catch(function(){});}catch(e){}})();</script>
 <meta name="description" content="건물과 공항을 달려 먼저 도착하는 옆면 픽셀 레이스 액션">
 <meta name="robots" content="noindex">
 <link rel="icon" href="logo.svg" type="image/svg+xml">
@@ -61,7 +61,9 @@ button{font:inherit;color:inherit;cursor:pointer}
 #hud{position:fixed;inset:0;z-index:4;pointer-events:none;display:none}#hud.on{display:block}
 #big{position:absolute;left:0;right:0;top:28vh;text-align:center;font:700 clamp(48px,11vw,130px)/1 Galmuri,monospace;color:#fff;text-shadow:0 5px 0 #8a4310,0 0 20px #000a}
 #hint{position:absolute;left:0;right:0;bottom:12px;text-align:center;font-size:13px;color:#dbe6ff;text-shadow:0 1px 3px #000}
-#gl{touch-action:none}#tc{display:none}
+#gl{touch-action:none}#evb{position:absolute;left:0;right:0;top:52px;text-align:center;font:700 15px Galmuri,monospace;color:#cfe8ff;text-shadow:0 2px 4px #000}#evb.now{color:#ffd36b}
+#emo{position:absolute;left:10px;top:118px;display:flex;gap:6px;pointer-events:auto}.eb{pointer-events:auto;touch-action:none;width:36px;height:36px;padding:3px;border-radius:50%;background:rgba(20,32,61,.6);border:2px solid rgba(255,255,255,.4)}.eb:active{background:rgba(201,121,42,.8)}.eb canvas{width:100%;height:100%;image-rendering:pixelated}
+#tc{display:none}
 body.touch #tc{display:block}body.touch #hint{display:none}
 .tb{position:absolute;pointer-events:auto;touch-action:none;-webkit-user-select:none;user-select:none;width:76px;height:76px;border-radius:50%;background:rgba(20,32,61,.55);border:2px solid rgba(255,255,255,.45);color:#fff;font:700 22px Galmuri,monospace;padding:0}
 .tb:active,.tb.on{background:rgba(201,121,42,.8)}
@@ -130,18 +132,18 @@ body.touch #tc{display:block}body.touch #hint{display:none}
 
 <section class="scr" id="sNotes"><button class="btn back" data-back>← 뒤로</button><div class="panel notes" style="top:9vh"><h2>패치노트</h2><div id="notesBox"></div></div></section>
 
-<div id="hud"><div id="big"></div>
+<div id="hud"><div id="big"></div><div id="evb"></div><div id="emo"></div>
   <div id="tc"><button id="tL" class="tb">◀</button><button id="tR" class="tb">▶</button><button id="tF" class="tb sm">교체</button><button id="tJ" class="tb jmp">점프</button></div>
   <div id="rot">화면을 가로로 돌려 주세요</div><div id="hint"></div><button class="btn" id="exitBtn" style="position:absolute;left:10px;top:70px;pointer-events:auto;padding:6px 14px;font-size:14px">나가기</button>
   <div id="res"><div class="box"><h2 id="resT"></h2><ol id="resL"></ol><div class="row"><button class="btn" id="resBack">나가기</button></div></div></div></div>
 <div id="modal"><div class="box"><div id="modalT"></div><div class="row" style="justify-content:center"><button class="btn" id="modalOk">확인</button></div></div></div>
 
-<script src="js/data.js?v=17"></script>
-<script src="js/game.js?v=17"></script>
-<script src="js/view.js?v=17"></script>
-<script src="js/sfx.js?v=17"></script>
-<script src="js/scene.js?v=17"></script>
-<script src="js/main.js?v=17"></script>
-<script src="js/intro.js?v=17"></script>
+<script src="js/data.js?v=18"></script>
+<script src="js/game.js?v=18"></script>
+<script src="js/view.js?v=18"></script>
+<script src="js/sfx.js?v=18"></script>
+<script src="js/scene.js?v=18"></script>
+<script src="js/main.js?v=18"></script>
+<script src="js/intro.js?v=18"></script>
 </body>
 </html>
