@@ -3,7 +3,7 @@
 
 import { T } from './tr.js';
 
-export const VERSION = 'v0.1', BUILD = 66;
+export const VERSION = 'v0.1', BUILD = 67;
 
 export const ROLES = {
   knight: {
@@ -148,6 +148,17 @@ export const ROLES = {
     ],
     st: [3, 3, 3, 3], atkTxt: T('앞으로 길게 찌르기'),
     role: T('긴 창으로 멀리서 찌르고, 다가오는 상대를 돌진과 휩쓸기로 밀어내요.')
+  },
+  court: {
+    name: T('궁정 마법사'), type: T('유틸리티'), color: '#7a4ab8', hp: 165, speed: 6.0,
+    atk: { kind: 'orb', dmg: 10, cd: 0.55, speed: 17 },
+    skills: [
+      { id: 'courtswap', name: T('소환 교환'), key: 'Q', cd: 12, desc: T('가까운 아군과 자리를 맞바꿔요. 위험한 아군을 빼내거나 먼저 깃발로 가요.') },
+      { id: 'runetrap', name: T('룬 족쇄'), key: 'E', cd: 14, desc: T('바닥에 룬 원을 3초 동안 놓아요. 안의 상대는 느려지고, 룬 표식이 붙은 상대는 가운데로 끌려와요.') },
+      { id: 'courtshift', name: T('궁정 전환'), key: 'R', cd: 22, desc: T('룬 표식이 붙은 상대와 자리를 맞바꾸고 1초 동안 멈추게 해요.') }
+    ],
+    st: [1, 2, 5, 3], atkTxt: T('룬 구슬'),
+    role: T('룬 구슬로 상대에게 표식을 남겨요. 자리를 맞바꿔 아군을 구하고 상대를 우리 쪽으로 끌어와요.')
   }
 };
 export const COLORS = [
@@ -160,7 +171,7 @@ export const COLORS = [
 ];
 export const BOT_NAMES = ['데굴이', '휘청이', '꽈당이', '비틀이', '아슬이', '쿵쾅이', '덜렁이', '허둥이', '깜빡이', '뒤뚱이'];
 export const MAX_PLAYERS = 10;
-export const ROLE_IDS = ['knight', 'priest', 'archer', 'viking', 'mamluk', 'witch', 'skeleton', 'warden', 'assassin', 'crossbow', 'bomber', 'bard', 'spearman'];
+export const ROLE_IDS = ['knight', 'priest', 'archer', 'viking', 'mamluk', 'witch', 'skeleton', 'warden', 'assassin', 'crossbow', 'bomber', 'bard', 'spearman', 'court'];
 
 export const ENEMIES = {
   skel: { name: T('해골 병사'), hp: 130, speed: 4.4, r: 0.6, dmg: 32, range: 1.8, windup: 0.42, cd: 0.9, honor: 1 },

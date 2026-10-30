@@ -627,7 +627,7 @@ function nearestFoe(p, maxd) { let best = null, bd = maxd;
 /* 누르고 있으면 민트색으로 어디로 나갈지 보여 주고, 떼면 나가요 (Stickseum 방식). 원거리 기본 공격과 조준 기술 */
 const BASEP = { orb: { k: 'line', len: 14, w: 0.9 }, arrow: { k: 'line', len: 26, w: 0.8 }, xbolt: { k: 'line', len: 32, w: 0.8 }, bomb: { k: 'circle', range: 13, r: 2.4 } };
 const SKP = {
-  smite: { k: 'circle', range: 12, r: 3.2 }, curse: { k: 'circle', range: 12, r: 2.6 }, potion: { k: 'circle', range: 12, r: 3 }, frost: { k: 'circle', range: 12, r: 3.2 }, rain: { k: 'circle', range: 12, r: 4 }, mark: { k: 'circle', range: 14, r: 1.6 },
+  smite: { k: 'circle', range: 12, r: 3.2 }, curse: { k: 'circle', range: 12, r: 2.6 }, potion: { k: 'circle', range: 12, r: 3 }, frost: { k: 'circle', range: 12, r: 3.2 }, rain: { k: 'circle', range: 12, r: 4 }, runetrap: { k: 'circle', range: 12, r: 4.5 }, courtswap: { k: 'self', r: 18 }, courtshift: { k: 'self', r: 22 }, mark: { k: 'circle', range: 14, r: 1.6 },
   bigbomb: { k: 'circle', range: 12, r: 4 }, sticky: { k: 'circle', range: 11, r: 4.5 }, barrage: { k: 'line', len: 12, w: 3.5 },
   pierce: { k: 'line', len: 26, w: 0.9 }, rootbolt: { k: 'line', len: 25, w: 0.9 }, lunge: { k: 'line', len: 7, w: 1.6 }, spearthrow: { k: 'line', len: 27, w: 1.1 }, sweep: { k: 'self', r: 3.9 }, lullaby: { k: 'self', r: 7 }, march: { k: 'self', r: 9 }, chorus: { k: 'self', r: 8 }, snipe: { k: 'line', len: 40, w: 1 }, fan: { k: 'line', len: 13, w: 5 },
   quake: { k: 'line', len: 11, w: 2.4 }, dash: { k: 'line', len: 7, w: 1.6 }, shieldbash: { k: 'line', len: 4, w: 1.8 }, flurry: { k: 'line', len: 5, w: 1.6 }, leap: { k: 'line', len: 8, w: 2 }, backstep: { k: 'line', len: 6, w: 1.4, rev: 1 }, wall: { k: 'wall' },
@@ -766,7 +766,7 @@ function skillFx(e) {
 }
 const COL = { knight: 0xcfe0ff, viking: 0xffb060, mamluk: 0xffd0a0, skeleton: 0xe8e0c8 };
 // 직업마다 다르게 쓰러져요: 무거운 직업은 땅이 울리고, 마법 직업은 영혼이 떠오르고, 날랜 직업은 연기로 사라져요
-const DEATHFX = { knight: ['heavy', 0xc8d0dc], warden: ['heavy', 0x9a8f78], viking: ['heavy', 0xe0803a], spearman: ['heavy', 0x9ab0c8], priest: ['soul', 0xfff0b0], witch: ['soul', 0xb06aff], bard: ['soul', 0xff7aa0], assassin: ['smoke', 0x6a8a96], mamluk: ['smoke', 0xe0a050], archer: ['arrows', 0x8ac860], crossbow: ['arrows', 0xc8a060], bomber: ['boom', 0xff7a3a], skeleton: ['bones', 0xe8e0c8] };
+const DEATHFX = { knight: ['heavy', 0xc8d0dc], warden: ['heavy', 0x9a8f78], viking: ['heavy', 0xe0803a], spearman: ['heavy', 0x9ab0c8], priest: ['soul', 0xfff0b0], witch: ['soul', 0xb06aff], bard: ['soul', 0xff7aa0], court: ['soul', 0x9a6ad8], assassin: ['smoke', 0x6a8a96], mamluk: ['smoke', 0xe0a050], archer: ['arrows', 0x8ac860], crossbow: ['arrows', 0xc8a060], bomber: ['boom', 0xff7a3a], skeleton: ['bones', 0xe8e0c8] };
 function deathFx(role, x, z) {
   const d = DEATHFX[role]; if (!d) return; const [k, c] = d;
   if (k === 'heavy') { view.shock(x, z, 4.4, c, 0.5); view.burst(x, 0.4, z, c, 14, 6, 0.4, 0.12); view.shake = Math.max(view.shake, 0.8); SFX.play('clang'); }
