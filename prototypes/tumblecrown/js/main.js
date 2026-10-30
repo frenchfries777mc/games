@@ -638,7 +638,7 @@ const SELFP = { k: 'self', r: 1.5 };
 const relBasic = role => !TOUCH && role !== 'archer' && !!ROLES[role];
 // 기사는 두 번 베면 다음 한 번이 강타예요 (0.65초 안에 이어 눌러야 해요). 그때는 내 둘레에 내려찍는 범위로 미리보기가 바뀌어요
 function heavyNext(p) { const now = S.snap ? S.snap.t * 1000 : 0; if (p.aN !== S.kcN) { S.kcN = p.aN; if (p.ak === 'atk') { S.kcC = p.ac; S.kcT = now; } else if (p.ak === 'hv') S.kcC = -1; } return p.role === 'knight' && S.kcC === 1 && now - S.kcT < 650; }
-function basicSpec(role, p) { const A = ROLES[role].atk; if (p && heavyNext(p)) return { k: 'self', r: 3.2 }; return A.kind === 'melee' ? { k: 'fan', range: A.range + 0.3, arc: A.arc } : BASEP[A.kind] || null; }
+function basicSpec(role, p) { const A = ROLES[role].atk; if (p && heavyNext(p)) return { k: 'self', r: 3.2 }; return A.kind === 'melee' ? (A.w ? { k: 'line', off: 0, len: A.range, w: A.w * 2 } : { k: 'fan', range: A.range + 0.3, arc: A.arc }) : BASEP[A.kind] || null; }
 function skillSpec(role, key) { const R = ROLES[role]; const s = R && R.skills['qer'.indexOf(key)]; return s ? SKP[s.id] || SELFP : null; }
 function aimedSkill(key) { const m = inGame() && S.scr === '' && !TOUCH ? myP() : null; return !!(m && !m.dn && !m.dd && skillSpec(m.role, key)); }
 function aimTick(p, pos, inp) {
