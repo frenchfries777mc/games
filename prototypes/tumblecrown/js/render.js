@@ -76,12 +76,17 @@ const HERO = {
   assassin: { body: 0x24343c, leg: 0x161e24, arm: 0x24343c, hood: 0x1a2830, scim: 1, belt: 1 },
   bomber: { body: 0x7a4a32, leg: 0x3a3030, arm: 0x7a4a32, goggles: 1, bombs: 1, bhand: 1, sack: 1, belt: 1, cap: 0x5a3a28, wide: 1.1 },
   bard: { body: 0xb04a6a, leg: 0x4a3a50, arm: 0xb04a6a, cap: 0x3a6a8a, lute: 1, belt: 1, cape: 0x6a3a8a },
+<<<<<<< HEAD
   court: { body: 0xb02828, robe: 1, leg: 0x6a4a2a, arm: 0xb02828, inner: 0x7a5232, beard: 0xd8d2c4, redhat: 1, staff: 1, wand: 1, staffC: 0xff2a2a, lightC: 0xff4040, belt: 1, beltC: 0xe0b030 },
+=======
+  necro: { body: 0x2a2634, robe: 1, leg: 0x1c1826, arm: 0x2a2634, hood: 0x3a2a5a, eye: 0x6aff8a, staff: 1, staffC: 0x6aff8a, belt: 1, cape: 0x7a3aa8 },
+  court: { body: 0x5a3a9a, robe: 1, leg: 0x2a1e44, arm: 0x5a3a9a, rune: 1, staff: 1, staffC: 0xb88aff, belt: 1, cape: 0x3a2470 },
+>>>>>>> 908d211 (WIP necro: R skill, model, green fx)
   spearman: { body: 0x5a6a7a, leg: 0x3a3a44, arm: 0x5a6a7a, helm: 1, helmC: 0x8a8f9c, plume: 0xb83a3a, spear: 1, belt: 1 },
   crossbow: { body: 0x6b4a2e, leg: 0x2e2a34, arm: 0x6b4a2e, kettle: 1, scarf: 0xb8442e, xh: 1, bolts: 1, strap: 1, belt: 1, wide: 1.1 }
 };
 // 동작은 비슷한 직업의 것을 같이 써요 (마녀는 사제처럼, 바이킹·맘루크·스켈레톤은 종자처럼)
-const FAM = { witch: 'priest', viking: 'squire', mamluk: 'squire', skeleton: 'squire', warden: 'knight', assassin: 'squire', crossbow: 'archer', bomber: 'squire', bard: 'priest', court: 'priest', spearman: 'squire' };
+const FAM = { witch: 'priest', viking: 'squire', mamluk: 'squire', skeleton: 'squire', warden: 'knight', assassin: 'squire', crossbow: 'archer', bomber: 'squire', bard: 'priest', court: 'priest', necro: 'priest', spearman: 'squire' };
 function matOf(v) { return v === 'dm' ? dmetal() : v === 'mt' ? metal() : M(v); }
 export const makeHero = toonify(function (role, cos) {
   const o = Object.assign({}, HERO[role]), cp = cos && COSMETICS.cape.items.find(i => i.id === cos.cape && i.col);
@@ -1492,6 +1497,10 @@ function projMesh(k) {
     box(1.4, 0.07, 0.07, M(0x8a5a2a), 0, 0, 0, g); const h = cone(0.1, 0.3, 4, M(c, { e: c, ei: k === 'arrow' ? 0.3 : 2 }), 0.8, 0, 0, g); h.rotation.z = -Math.PI / 2;
     box(0.3, 0.02, 0.2, M(0xe8e0c8), -0.6, 0, 0, g); if (k === 'pierce') box(1.8, 0.04, 0.04, M(0xffe08a, { e: 0xffd060, ei: 2 }), -0.6, 0, 0, g);
   } else if (k === 'orb') { sph(0.28, 8, 6, M(0xd8fff0, { e: 0x9af0d0, ei: 4 }), 0, 0, 0, g); }
+  else if (k === 'nbolt') {   // 네트로멘서 투사체: 폭 넓은 초록 초승달과 알맹이 (옆으로 넓게 퍼져 날아가요)
+    const gm = M(0x6aff8a, { e: 0x3ad060, ei: 4 }); const cr = mesh(geo('ncres', () => new THREE.TorusGeometry(0.9, 0.12, 4, 12, 2.4)), gm, 0, 0, 0, g); cr.rotation.set(Math.PI / 2, 0, Math.PI / 2 - 1.2); cr.position.x = 0.15;
+    sph(0.26, 8, 6, M(0xd8ffe0, { e: 0x9aff9a, ei: 5 }), 0, 0, 0, g); for (let i = -1; i <= 1; i += 2) sph(0.14, 6, 5, gm, -0.3, 0, i * 0.7, g);
+  }
   else if (k === 'xbolt') { box(1.0, 0.09, 0.09, M(0x4a3020), 0, 0, 0, g); const h = cone(0.11, 0.32, 4, metal(), 0.62, 0, 0, g); h.rotation.z = -Math.PI / 2; box(0.18, 0.02, 0.2, M(0xc8c0a8), -0.45, 0, 0, g); }
   else if (k === 'spear') { box(2.2, 0.08, 0.08, M(0x5a3a22), 0, 0, 0, g); const h = cone(0.14, 0.5, 4, M(0xffb060, { e: 0xff7a20, ei: 2 }), 1.3, 0, 0, g); h.rotation.z = -Math.PI / 2; }
   else if (k === 'vorb') { sph(0.34, 8, 6, M(0xd8b0ff, { e: 0x8a3ae0, ei: 4 }), 0, 0, 0, g); }

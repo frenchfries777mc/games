@@ -717,6 +717,11 @@ function skillFx(e) {
   if (mine && ['block', 'pierce', 'ward', 'trap', 'rain', 'heal'].includes(e.s)) view.shake = Math.max(view.shake, 0.35);
   switch (e.s) {
     case 'block': view.dome(e.x + c * 0.6, e.z + s * 0.6, 1.9, 0xffe08a, 1.2); view.burst(e.x + c, 1.6, e.z + s, 0xffe08a, 10, 5, 0.35, 0.1); view.flash(e.x, e.z, 0xffe08a, 70); SFX.play('clang'); break;
+    case 'necrofx': {   // 네트로멘서 R: 초록 죽음의 파동이 넓은 원으로 퍼져요
+      const col = 0x6aff8a; view.shock(e.x, e.z, e.r + 1, col, 0.7); view.ring(e.x, e.z, e.r, col, 1.0); view.ring(e.x, e.z, e.r * 0.55, 0xb8ffc8, 0.8); view.column(e.x, e.z, col, 1.0); view.rise(e.x, e.z, 0xb8ffc8, 28, e.r * 0.8, 1, 6); view.burst(e.x, 0.8, e.z, col, 26, 7, 0.7, 0.14); view.flash(e.x, e.z, col, 140);
+      if (e.id === S.me) view.shake = Math.max(view.shake, 0.7); SFX.play('slam'); break; }
+    case 'summonfx': {   // 네트로멘서 소환: 땅이 갈라지며 초록 불꽃과 뼛조각이 솟아요
+      const col = 0x6aff8a; view.ring(e.x, e.z, 1.8, col, 0.8); view.column(e.x, e.z, col, 0.8); view.rise(e.x, e.z, 0xb8ffc8, 14, 1.2, 0.9, 5); view.burst(e.x, 0.3, e.z, 0xd8d0bc, 8, 4, 0.6, 0.12); view.flash(e.x, e.z, col, 80); SFX.play('spawn'); break; }
     case 'swapfx': {   // 자리 바꿈: 두 자리에서 보랏빛이 번쩍이고 서로를 잇는 줄이 그어져요 (n 1 = 궁정 전환, 더 크게)
       const col = 0xb070ff, a2 = Math.atan2(e.tz - e.z, e.tx - e.x), dd = Math.hypot(e.tx - e.x, e.tz - e.z), big = e.n === 1;
       for (const [x, z] of [[e.x, e.z], [e.tx, e.tz]]) { view.column(x, z, col, big ? 1.1 : 0.8); view.ring(x, z, big ? 4 : 2.6, col, 0.6); view.rise(x, z, 0xe0c8ff, big ? 20 : 12, 1.4, 0.8, 6); view.flash(x, z, col, big ? 130 : 90); }

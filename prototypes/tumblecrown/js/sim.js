@@ -470,6 +470,12 @@ function useSkill(G, p, si, inp) {
       for (const e of G.enemies) if (e.hp > 0 && foeOf(G, p.id, e) && Math.hypot(e.x - q.x, e.z - q.z) < 3.4 + e.r) { hurtEnemy(G, e, 22, p, {}); if (e.hp > 0) { e.slow = 3; e.slowM = 0.5; e.stun = Math.max(e.stun || 0, 0.6); } }
       break;
     }
+    case 'necrodoom': { // 네트로멘서 R: 넓은 원 안의 상대를 1초 기절시키고 피해를 주고, 3초 동안 이동속도를 반으로 줄여요
+      const q = aimPoint(p, inp, 10);
+      ev(G, 'skill', { id: p.id, s: 'necrofx', x: q.x, z: q.z, a: p.a, r: 6.5 });
+      for (const e of G.enemies) if (e.hp > 0 && foeOf(G, p.id, e) && Math.hypot(e.x - q.x, e.z - q.z) < 6.5 + e.r) { hurtEnemy(G, e, 36, p, {}); if (e.hp > 0) { e.slow = 3; e.slowM = 0.5; e.stun = Math.max(e.stun || 0, 1); } }
+      break;
+    }
     case 'leap': { // 앞으로 크게 뛰어올라 내려앉으며 둘레에 피해
       p.x += Math.cos(p.a) * 7; p.z += Math.sin(p.a) * 7; collide(G, p, 0.6); p.inv = 0.4;
       ev(G, 'skill', { id: p.id, s: 'leapland', x: p.x, z: p.z, a: p.a });
@@ -1661,6 +1667,7 @@ function botPvp(G, p, dt) {
       case 'ward': go = d < 10 && hpf < 0.9 && r < 0.12; break;
       case 'smite': case 'curse': go = d < 12 && r < 0.16; break;
       case 'frost': go = d < 12 && r < 0.15; break;
+      case 'necrodoom': go = d < 10 && r < 0.14; break;
       case 'whirl': go = d < 3.2 && r < 0.25; break;
       case 'bonestorm': go = d < 3.2 && r < 0.2; break;
       case 'leap': go = d > 3.5 && d < 9 && r < 0.15; break;
