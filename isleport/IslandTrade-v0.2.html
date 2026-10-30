@@ -489,7 +489,7 @@ const TUT=[
  [P('다 자라면 ▼ 표시의 밭을 눌러 수확해요','When it is grown, tap the field with the ▼ to harvest'),s=>s.stats.harvest>=1],
  [P('마을 장터에서 수확한 것을 팔아요','Sell your harvest at the town market'),s=>(s.stats.shop||0)>=1],
  [P('항구에서 배에 짐을 싣고 보내요','Load a ship at the harbor and send it off'),s=>s.stats.sailed>=1]];
-const OUTMAX=12,BUILD=72;
+const OUTMAX=12,BUILD=73;
 const hasB=(s,b)=>s.slots.some(x=>x&&x.b===b);
 const rankOf=e=>{let r=0;RANKS.forEach((x,i)=>{if(e>=x[0])r=i;});return r;};
 /* 업적: id, 이름, 설명, 조건 */
@@ -611,6 +611,12 @@ A('nw1m',P('백만장자','Millionaire'),P('재산 1,000,000 모으기','Reach a
 const CROPK=Object.keys(CROPS),SPEC=['goldbarley','pomegranate','saffron','cloudcotton','seaweed','dragonfruit'],CROPK17=CROPK.filter(c=>!SPEC.includes(c));
 const ACHN={};ACH.forEach(a=>ACHN[a.id]=a);
 const NOTES=[
+ {date:'2026-10-30',build:'v0.2 build 73',title:P('주민 심부름','Islander errands'),items:[
+  P('섬 주민에게 말을 걸면 다른 섬 주민에게 편지나 소포를 전해 달라는 부탁을 받을 수 있음','Talk to an islander to be asked to carry a letter or parcel to a villager on another port'),
+  P('한 번에 최대 3건까지 맡을 수 있고, 전해 주면 금화 보상을 받음','You can carry up to 3 at a time and get gold when you deliver'),
+  P('주민을 누르면 받은 심부름과 전할 곳이 보임','Talking to anyone shows your errands and where to deliver'),
+  P('같은 주민의 부탁은 5분 뒤에 다시 받을 수 있음','The same villager asks again after 5 minutes')
+ ]},
  {date:'2026-10-30',build:'v0.2 build 72',title:P('개척지 가공소와 마차','Frontier workshops and carts'),items:[
   P('개척 시설 자리가 4칸에서 6칸으로 늘어남','Frontier facility slots grew from 4 to 6'),
   P('개척 방앗간과 개척 양조장 추가: 재료를 넣어 두면 섬에서 밀가루와 와인을 만듦','Added a frontier mill and winery: load ingredients and they make flour and wine on the isle'),
@@ -30430,7 +30436,7 @@ function evText(e){const s=Math.max(0,Math.round((e.until-NOW())/1000)),P=tx(POR
 const SAVEB='islandtrade.save.v2';const SAVEK=()=>UID?SAVEB+'.u.'+UID:SAVEB;
 function save(){if(!S||LOCKLOST)return;S.savedAt=Date.now();const b=MP.on&&MP.bak;try{localStorage.setItem(SAVEK(),JSON.stringify({S,DEM:b?b.DEM:DEM,EV:b?b.EV:EV,PROJ:b?b.PROJ:PROJ,CO:b?b.CO:CO}));}catch(e){}}
 function loadSave(){try{const t=JSON.parse(localStorage.getItem(SAVEK()));if(t&&t.S&&t.S.v===2){migrate(t.S);if(t.DEM)t.DEM.forEach(r=>{while(r.length<GOODS.length)r.push(1);});return t;}}catch(e){}return null;}
-function migrate(s){ensureBank(s);if(!s.deco)s.deco=[];if(!s.crew){s.crew=[];s.cwAcc=0;s.cwOK=true;}if(!s.store)s.store={stock:{},mult:1.2,till:0,rep:0,acc:0,fx:0};if(!s.found){s.maps=0;s.found=[];}if(!s.unl){s.unl={legacy:1};s.landed={};}if(!s.op)s.op={};s.ships.forEach(q=>{if(q.st==='helm')q.st='dock';});if(!s.seeds)s.seeds={wheat:4};s.slots=s.slots||[];s.stats=s.stats||{};if(s.wk==null){s.wk=0;s.wkAcc=0;s.lastCrop='wheat';}if(s.slots.length<16)while(s.slots.length<16)s.slots.push(null);const ss=s.stats;ss.visits=ss.visits||0;ss.guests=ss.guests||0;ss.live=ss.live||0;if(s.own)return;const old=s.plots,pu=s.pu||8;s.plots=Array(48).fill(null);s.own=Array(48).fill(0);for(let i=0;i<24;i++){const j=FORDER[i];if(i<pu){s.own[j]=1;s.plots[j]=old[i]||null;}}s.pu=ownedN2(s);s.pens=s.pens.concat(Array(12).fill(null)).slice(0,12);s.peu=Math.max(4,s.peu||4);}
+function migrate(s){ensureBank(s);if(!s.deco)s.deco=[];if(!s.crew){s.crew=[];s.cwAcc=0;s.cwOK=true;}if(!s.store)s.store={stock:{},mult:1.2,till:0,rep:0,acc:0,fx:0};if(!s.found){s.maps=0;s.found=[];}if(!s.unl){s.unl={legacy:1};s.landed={};}if(!s.op)s.op={};if(!s.er)s.er={act:[],cd:{},done:0};s.ships.forEach(q=>{if(q.st==='helm')q.st='dock';});if(!s.seeds)s.seeds={wheat:4};s.slots=s.slots||[];s.stats=s.stats||{};if(s.wk==null){s.wk=0;s.wkAcc=0;s.lastCrop='wheat';}if(s.slots.length<16)while(s.slots.length<16)s.slots.push(null);const ss=s.stats;ss.visits=ss.visits||0;ss.guests=ss.guests||0;ss.live=ss.live||0;if(s.own)return;const old=s.plots,pu=s.pu||8;s.plots=Array(48).fill(null);s.own=Array(48).fill(0);for(let i=0;i<24;i++){const j=FORDER[i];if(i<pu){s.own[j]=1;s.plots[j]=old[i]||null;}}s.pu=ownedN2(s);s.pens=s.pens.concat(Array(12).fill(null)).slice(0,12);s.peu=Math.max(4,s.peu||4);}
 const ownedN2=s=>s.own.slice(0,48).reduce((a,b)=>a+b,0);
 let sb=null,UID=null,UNAME=null;
 const TABK='sb-islandtrade-tab',SHK='sb-kebsbuvuutilitwlvxzv-auth-token';
@@ -30528,6 +30534,16 @@ function opTick(){const t=NOW();if(t-opLast<4000)return;opLast=t;if(!S||!S.op)re
   Object.keys(S.op).forEach(k=>{const O=S.op[k];if(!O||!O.b.some(q=>q&&q.t==='cart'))return;
     O.f.forEach((p,i)=>{if(ripe(p)){const g=p.g,per=CROPS[g].per;if(opHarvest(+k,i,true,true)&&!per&&O.f[i]===null&&seedN(g)>0)opPlant(+k,i,g);}});
     O.b.forEach((q,i)=>{if(q&&q.t!=='cart'&&opN(q)>0)opCollect(+k,i,true);});});}
+
+/* ---- 주민 심부름 ---- */
+const ERITEM=[P('편지','letter'),P('소포','parcel'),P('약초 꾸러미','bundle of herbs'),P('수선한 도구','repaired tool'),P('달콤한 간식','sweet snack')];
+const erTo=e=>({name:NPCNM[(e.to*4+e.tj)%NPCNM.length],role:NPCRL[ISLNPC[e.to][e.tj]].n});
+function erOffer(k,j){S.er=S.er||{act:[],cd:{},done:0};if(S.er.act.length>=3||NOW()<(S.er.cd[k+':'+j]||0))return null;
+  const rk=rankOf(S.stats.earned),cs=[];for(let q=0;q<6;q++)if(q!==k&&ISLNPC[q]&&ISLNPC[q].length&&rk>=PORTS[q].rank)cs.push(q);if(!cs.length)return null;
+  const to=cs[Math.floor(Math.random()*cs.length)],tj=Math.floor(Math.random()*ISLNPC[to].length);
+  return {from:k,fj:j,to,tj,it:Math.floor(Math.random()*ERITEM.length),rw:Math.round((180+rk*120)*(.8+Math.random()*.5)/10)*10};}
+function erAccept(off){if(!off||S.er.act.length>=3)return false;S.er.act.push(off);S.er.cd[off.from+':'+off.fj]=NOW()+300000;sfx('coin');toast(T('심부름을 맡았어요','You took the errand'));return true;}
+function erDeliver(idx){const e=S.er.act[idx];if(!e)return false;S.er.act.splice(idx,1);S.money+=e.rw;S.stats.earned+=e.rw;S.er.done=(S.er.done||0)+1;sfx('ach');toast(T('심부름 완료! 보상 {0}','Errand done! Reward {0}',fmt(e.rw)+UG()));return true;}
 
 /* ================= 멀티플레이 ================= */
 const MP={on:false,host:false,code:'',me:'',hostId:'',players:{},T:null,cool:0,offers:{},inbox:[],slot:0,name:'',auc:[],chat:[],chatT:0,unread:0};
@@ -32200,6 +32216,16 @@ ACT.ltg=a=>{const [k,v]=a.split(':');const g=Object.assign({},LT.my.g);g[k]=Math
 ACT.ltrdy=()=>ltReady();ACT.ltun=()=>ltUnready();ACT.ltcx=()=>ltCancel();
 MODS.chat=()=>`<h2>${T('채팅','Chat')}</h2><div id="chatLog" style="height:150px;overflow-y:auto;font-size:12px;background:#120a04;border:1px solid #4a2e14;border-radius:4px;padding:5px;margin-bottom:6px"></div><div class="row"><input id="chatIn" type="text" maxlength="80" placeholder="${T('말하기','Say something')}"><button class="pb sm" data-act="chatSend">${T('보내기','Send')}</button></div><div class="btns">${[P('안녕하세요!','Hello!'),P('좋아요!','Nice!'),P('거래해요','Let us trade'),P('도와주세요','Help me'),P('고마워요','Thanks')].map(q=>`<button class="pb sm dark" data-act="chatQ:${esc(q[0])}">${tx(q)}</button>`).join('')}</div>`;
 MODS.lobby=()=>`<h2>${T('로비로 돌아갈까요?','Back to the lobby?')}</h2><div class="muted">${MP.on?T('지금 방에서 나가요. 내 섬은 저장돼요.','You will leave this room. Your island is saved.'):T('지금까지 한 것은 저장돼요. 로비에서 이어하기로 다시 시작할 수 있어요.','Your progress is saved. Pick Continue in the lobby to come back.')}</div><div class="btns" style="margin-top:12px"><button class="pb gold" data-act="menu">${T('로비로 돌아가기','Back to lobby')}</button></div>`;
+MODS.errand=m=>{const o=m.wk,R0=NPCRL[o.role],er=S.er=S.er||{act:[],cd:{},done:0};
+  if(m.off===undefined)m.off=erOffer(ISL.k,o.j);
+  const here=er.act.map((e,i)=>({e,i})).filter(x=>x.e.to===ISL.k&&(x.e.tj===o.j||!ISL.walkers.some(w=>w.j===x.e.tj)));
+  let h=`<h2>${tx(o.nm)} <small>${tx(R0.n)}</small></h2><div class="muted">${m.line||''}</div>`;
+  here.forEach(x=>{h+=`<div class="card"><div class="grow">${T('{0}을(를) 전해 줘요','Deliver the {0}',tx(ERITEM[x.e.it]))}<div class="muted">${T('보상 {0}','Reward {0}',fmt(x.e.rw)+UG())}</div></div><button class="pb sm gold" data-act="erdeliver:${x.i}">${T('전해 주기','Deliver')}</button></div>`;});
+  if(m.off){const t=erTo(m.off);h+=`<div class="card"><div class="grow">${T('{0}을(를) {1}({2})에게 전해 줄래요?','Could you take this {0} to {1} ({2})?',tx(ERITEM[m.off.it]),tx(t.name)+' · '+tx(t.role),islName(m.off.to))}<div class="muted">${T('보상 {0}','Reward {0}',fmt(m.off.rw)+UG())}</div></div><button class="pb sm gold" data-act="eraccept">${T('맡기','Accept')}</button></div>`;}
+  if(er.act.length){h+=`<h5>${T('받은 심부름 {0}/3','Errands {0}/3',er.act.length)}</h5>`+er.act.map(e=>{const t=erTo(e);return `<div class="muted">${tx(ERITEM[e.it])} → ${tx(t.name)} (${tx(t.role)}), ${islName(e.to)} · ${fmt(e.rw)}${UG()}</div>`;}).join('');}
+  return h;};
+ACT.eraccept=()=>{if(MOD&&erAccept(MOD.off))MOD.off=null;updateHud();renderModal();};
+ACT.erdeliver=a=>{erDeliver(+a);updateHud();renderModal();};
 MODS.opplot=m=>{const O=opOf(m.ik),p=O.f[m.i],h=`<h2>${T('개척 밭','Frontier field')} ${m.i+1}</h2>`;
   if(p===0)return h+`<div class="muted">${T('이 섬의 땅을 일궈 밭으로 만들어요. 한 번 만들면 계속 써요.','Till the soil here into a field. It is yours for good.')}</div><div class="btns" style="margin-top:8px"><button class="pb gold" data-act="optill:${m.i}" ${S.money<OPF_COST?'disabled':''}>${T('밭 만들기 {0}','Till for {0}',fmt(OPF_COST)+UG())}</button></div>`;
   const cs=Object.keys(CROPS).filter(g=>GI[g]&&seedN(g)>0&&isUnl(g)),w=opWell(m.ik);
@@ -32373,14 +32399,15 @@ const NPCRL={
 const ISLNPC=[['farmer','miller','child','merchant'],['farmer','child','merchant','guard'],['monk','farmer','bard','guard'],['shepherd','merchant','child','bard'],['fisher','fisher','smith','child'],['merchant','merchant','bard','guard'],['fisher','child','bard'],['woodcutter','scholar','child'],['monk','scholar','guard'],['smith','miner','guard','miner'],['shepherd','child','guard','merchant'],['woodcutter','child','woodcutter','merchant'],['guard','smith','merchant','scholar'],['guard','scholar','miner']];
 function mkWalkers(k){const th=ISLES[k],rnd=islRng(th.seed+99),out=[];
   (ISLNPC[k]||[]).forEach((r,j)=>{const R0=NPCRL[r];let x=0,y=0,ok=false;for(let t=0;t<300&&!ok;t++){x=IW*.2+rnd()*IW*.6;y=IH*.2+rnd()*IH*.6;ok=ISL.mask[Math.round(y)*IW+Math.round(x)]>=2&&islWalk(x,y)&&islQ(th,x,y)<.7;}
-    if(!ok)return;out.push({k:'npcw',npc:1,role:r,nm:NPCNM[(k*4+j)%NPCNM.length],px:x,py:y,hx:x,hy:y,tx:x,ty:y,pause:rnd()*3,dir:1,mv:0,walk:0,x:x-4,y:y-12,w:8,h:12,r:14,li:Math.floor(rnd()*3),c:R0.c,t:R0.t,hat:R0.hat});});return out;}
+    if(!ok)return;out.push({k:'npcw',npc:1,role:r,nm:NPCNM[(k*4+j)%NPCNM.length],j:j,px:x,py:y,hx:x,hy:y,tx:x,ty:y,pause:rnd()*3,dir:1,mv:0,walk:0,x:x-4,y:y-12,w:8,h:12,r:14,li:Math.floor(rnd()*3),c:R0.c,t:R0.t,hat:R0.hat});});return out;}
 function npcTick(dt){(ISL.walkers||[]).forEach(o=>{
   if(o.pause>0){o.pause-=dt;o.mv=0;if(o.pause<=0){const a=Math.random()*6.283,r=10+Math.random()*40;o.tx=o.hx+Math.cos(a)*r;o.ty=o.hy+Math.sin(a)*r*.7;}}
   else{const dx=o.tx-o.px,dy=o.ty-o.py,d=Math.hypot(dx,dy);if(d<1.5||Math.hypot(ISL.x-o.px,ISL.y-o.py)<14){o.pause=1.5+Math.random()*4;o.mv=0;}
     else{const sp=17,nx=o.px+dx/d*sp*dt,ny=o.py+dy/d*sp*dt;if(islWalk(nx,o.py)&&islWalk(o.px,ny)&&islWalk(nx,ny)){o.px=nx;o.py=ny;o.mv=1;o.walk+=dt;o.dir=dx>0?1:-1;}else{o.pause=.8;o.mv=0;}}}
   o.x=o.px-4;o.y=o.py-12;});}
-function npcTalk(o){const R0=NPCRL[o.role],th=ISL.th,nm=th.prov!=null?tx(PROVS[th.prov].n):ISL.k<6?tx(PORTS[ISL.k].n):tx(secretOf(th.secret).n),ln=R0.ln[o.li%R0.ln.length];o.li++;o.pause=4;o.mv=0;o.dir=ISL.x<o.px?-1:1;
-  toast('<b>'+tx(o.nm)+'</b> <small>'+tx(R0.n)+'</small><br>'+tx(ln).replace(/\{0\}/g,nm));sfx('click');}
+function islName(k){const th=ISLES[k];return th.prov!=null?tx(PROVS[th.prov].n):k<6?tx(PORTS[k].n):tx(secretOf(th.secret).n);}
+function npcTalk(o){const R0=NPCRL[o.role],ln=R0.ln[o.li%R0.ln.length];o.li++;o.pause=6;o.mv=0;o.dir=ISL.x<o.px?-1:1;
+  openModal('errand',{wk:o,line:tx(ln).replace(/\{0\}/g,islName(ISL.k))});sfx('click');}
 function drawNpc(o){const x=Math.round(o.px),y=Math.round(o.py),s=o.mv?Math.floor(o.walk*9)%2:0,h=o.hat;
   R(x-3,y-1,7,2,'rgba(0,0,0,.28)');R(x-2,y-4+s,2,4-s,'#3a2412');R(x+1,y-4+(1-s),2,4-(1-s),'#3a2412');
   R(x-3,y-9,6,5,o.c);R(x-3,y-9,6,1,o.t);R(x-4,y-8+s,1,3,'#f0c8a0');R(x+3,y-8+(1-s),1,3,'#f0c8a0');
