@@ -8,6 +8,8 @@ export let CS = 2, MW = 0, MH = 0, WX = 0, WZ = 0; // 지도 전체 크기 (m)
 export const cw = c => (c + 0.5) * CS;
 
 // GRID: 0 = 벽, 1 = 바닥
+export const DSTATE = { open: 0 };   // 사막 신전 문 (0 닫힘, 1 열림)
+export function setDoors(v) { v = v ? 1 : 0; DSTATE.open = v; FIELDS.clear(); for (const [x, y, w, h] of (MAP.doors || [])) for (let j = y; j < y + h; j++) for (let i = x; i < x + w; i++) if (i >= 0 && j >= 0 && i < MW && j < MH) GRID[j * MW + i] = v; }
 export let GRID = new Uint8Array(0), WATER = new Uint8Array(0), PILLARS = [];
 // 비밀 방: SEC 칸 값 = 비밀 방 번호 + 1 (방 안), -(번호 + 1) (금 간 벽 통로). SOPEN = 열렸는지
 export let SEC = new Int8Array(0); export const SOPEN = [];
@@ -43,7 +45,7 @@ export function useChapter(i, force) {
 }
 // 새 원정마다 비밀 방을 다시 막아요
 export function resetSecrets() {
-  SOPEN.length = 0; FIELDS.clear();
+  SOPEN.length = 0; FIELDS.clear(); setDoors(0);
   MAP.secrets.forEach(q => { const [x, y, w, h] = q.pass; for (let j = y; j < y + h; j++) for (let i = x; i < x + w; i++) GRID[j * MW + i] = 0; });
   GOPEN.length = 0; MAP.puzzles.forEach(q => gateSet(q, 0));
   PDOWN.length = 0; MAP.pits.forEach(q => { bridgeSet(q, 0); const [x, y, w, h] = q.bridge; for (let j = y; j < y + h; j++) for (let i = x; i < x + w; i++) HGT[j * MW + i] = 0; }); LIFTH.length = 0; MAP.lifts.forEach((q, k) => { LIFTH[k] = 0; });

@@ -6,7 +6,7 @@ import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js'
 import { OutputPass } from 'three/addons/postprocessing/OutputPass.js';
 import { RenderPixelatedPass } from 'three/addons/postprocessing/RenderPixelatedPass.js';
 import { ROLES, MAP, CH, FOES, COSMETICS, TEAMS, FLAG_R, FLAG_T } from './data.js';
-import { CS, MW, MH, GRID, WATER, PILLARS, cw, chapterIndex, SEC, SOPEN, GATE, CUT, HGT, LEDGE_H, hAt, pillarAt } from './map.js';
+import { DSTATE, CS, MW, MH, GRID, WATER, PILLARS, cw, chapterIndex, SEC, SOPEN, GATE, CUT, HGT, LEDGE_H, hAt, pillarAt } from './map.js';
 // 화면에서 '바닥'은 비밀 방(SEC)을 뺀 곳이에요. 비밀 방은 따로 그려 두고 벽이 무너질 때 보여요. 창살문(GATE) 자리는 닫혀 있어도 바닥으로 그려요
 const floorCell = (i, j) => i >= 0 && j >= 0 && i < MW && j < MH && (GRID[j * MW + i] === 1 || GATE[j * MW + i] > 0) && !SEC[j * MW + i] && CUT[j * MW + i] !== 4 && CUT[j * MW + i] !== 1;
 // 낭떠러지·절벽·승강기 칸 (벽을 세우지 않아요)
@@ -56,6 +56,7 @@ const THEMES = {
   abyss: { bg: 0x040208, fog: 0x0c0614, amb: 0x4a3a6a, hemi: 0x9a80c8, floor: [0x3a3444, 0x423a4c, 0x4a4254, 0x36303e, 0x463e50], bfloor: [0x2e2440, 0x362a48, 0x3e3050, 0x2a203a, 0x3a2c4c], wet: [0x3a2a5a, 0x423064, 0x36264e, 0x4a366a], wall: [0x36303e, 0x3e3646, 0x463e50, 0x302a38], bwall: [0x2e2240, 0x362848, 0x3e2e52, 0x2a1e3a], top: 0x1e1828, moss: 0x5a3a8a, mossP: 0.08, torch: 0xc08aff, water: 0x5a3a9a, ring: 0xb06aff, fz: [0x5a1aa0, 0xb06aff], ember: [0xd0a0ff, 0xa06ae0], banner: 0x3a1a5a },
   tower: { bg: 0x0a0505, fog: 0x160a08, amb: 0x6a4a4a, hemi: 0xc89a8a, floor: [0x4a4040, 0x524646, 0x5a4c4a, 0x463c3c, 0x54484a], bfloor: [0x4a3030, 0x523434, 0x5a3a36, 0x462c2c, 0x503432], wet: [0x3a3440, 0x403848, 0x36303c, 0x443c4c], wall: [0x4a3a36, 0x52423c, 0x5a4842, 0x443430], bwall: [0x5a2a22, 0x622e26, 0x6a3428, 0x52261e], top: 0x2e2220, moss: 0x5a4a2a, mossP: 0.04, torch: 0xff7a30, water: 0x6a3a2a, ring: 0xc04a10, fz: [0xa03a10, 0xff6a20], ember: [0xffa040, 0xff6a20], banner: 0x3a3a3a },
   harbor: { bg: 0x04080e, fog: 0x0c1a26, amb: 0x5a7088, hemi: 0xa0c0d8, floor: [0x5a4c3a, 0x625440, 0x6a5c46, 0x564834, 0x60523e], bfloor: [0x4a3e30, 0x524636, 0x5a4c3a, 0x463a2c, 0x50443a], wet: [0x24506a, 0x2a5a76, 0x204862, 0x2e6280], wall: [0x4a3a2c, 0x54442f, 0x5c4a36, 0x42342a], bwall: [0x3a2c20, 0x443426, 0x4c3a2c, 0x34281e], top: 0x2a2018, moss: 0x3a5a4a, mossP: 0.05, torch: 0xffb050, water: 0x2a6a8a, ring: 0x4aa0c8, fz: [0x2a6a8a, 0x60c0e0], ember: [0xffc060, 0xff9030], banner: 0x203a52 },
+  desert: { bg: 0x120c06, fog: 0x2a1c0e, amb: 0x8a7050, hemi: 0xf0d8a0, floor: [0x9a7e50, 0xa28656, 0xaa8e5e, 0x967a4c, 0xa48858], bfloor: [0x8a6e44, 0x92764a, 0x9a7e52, 0x866a40, 0x947a4e], wet: [0x6a7a5a, 0x74846a, 0x607050, 0x7a8a70], wall: [0x8a6a3e, 0x947446, 0x9c7c4e, 0x846438], bwall: [0x7a5a34, 0x84623a, 0x8c6a42, 0x74542e], top: 0x5a4428, moss: 0x7a8a3a, mossP: 0.02, torch: 0xffb050, water: 0x4a8a8a, ring: 0xe8b040, fz: [0xa06a20, 0xffc060], ember: [0xf0d090, 0xe0b868], banner: 0x8a5a1a },
   sewer: { bg: 0x030806, fog: 0x0a1a14, amb: 0x4a6a58, hemi: 0x88b098, floor: [0x3a443c, 0x424c42, 0x4a544a, 0x363e36, 0x444e44], bfloor: [0x2e382e, 0x364036, 0x3e483e, 0x2a342a, 0x364236], wet: [0x2a5a40, 0x306648, 0x264e38, 0x347050], wall: [0x2e3a32, 0x36423a, 0x3e4a42, 0x28322c], bwall: [0x26342a, 0x2e3c32, 0x36443a, 0x222e24], top: 0x1a2a20, moss: 0x4a7a3a, mossP: 0.12, torch: 0x9aff7a, water: 0x2a6a44, ring: 0x58c878, fz: [0x2a6a44, 0x70e090], ember: [0xa0ff80, 0x60d060], banner: 0x1e3a2a },
 };
 // 장마다 다른 기사단 깃발 색 (1장부터 8장까지)
@@ -669,10 +670,12 @@ export class View {
       const em = M(0xffffff, { e: 0xffffff, ei: 2, op: 0.7, uniq: true }), edge = mesh(geo('fedge', () => new THREE.RingGeometry(0.88, 1, 64)), em, x, 0.15, z, s, false); edge.rotation.x = -Math.PI / 2; edge.castShadow = false; edge.visible = false;
       this.flagM.push({ cm, rm, pm, cloth, prog, bm, beam, em, edge });
     }
+    // 사막 신전 문: 닫히면 돌문이 올라와 길을 막고, 열리면 땅속으로 내려가요
+    this.doorM = (MAP.doors || []).map(([x, y, w, h]) => { const sx = w * CS, sz = h * CS, m = box(sx, 3.4, sz, M(0xa88a54, { m: 0.2 }), (x + w / 2) * CS, 1.7, (y + h / 2) * CS, s); m.castShadow = true; return m; });
     // 팀 대전 장식: 바닥에 흩어진 돌·상자·풀, 진지와 깃발 곁의 횃불, 진지 기둥 깃발
     if (CH.pvp) {
       const bad = (x, z) => MAP.tflags.some(([a, b]) => Math.hypot(cw(a) - x, cw(b) - z) < 7.5) || MAP.tspawn.some(([a, b]) => Math.hypot(cw(a) - x, cw(b) - z) < 9), forest = CH.theme === 'forest';
-      const col = { dungeon: [0x5a5560, 0x6a5238], abyss: [0x4a3a5c, 0x5a4a78], temple: [0x7a6a50, 0x8a6a3a], forest: [0x3a4a2c, 0x5a4228], frost: [0x9ab4cc, 0x6a8aa8], deep: [0x1e3a4c, 0x2a5a6a] }[CH.theme] || [0x5a5560, 0x6a5238];
+      const col = { dungeon: [0x5a5560, 0x6a5238], abyss: [0x4a3a5c, 0x5a4a78], temple: [0x7a6a50, 0x8a6a3a], desert: [0xa88a54, 0x8a6a3a], forest: [0x3a4a2c, 0x5a4228], frost: [0x9ab4cc, 0x6a8aa8], deep: [0x1e3a4c, 0x2a5a6a] }[CH.theme] || [0x5a5560, 0x6a5238];
       instBoxes(s, add => { let n = 0; for (let t = 0; t < 4000 && n < 260; t++) {
         const i = 2 + (R() * (MW - 4) | 0), j = 2 + (R() * (MH - 4) | 0); if (!floorCell(i, j) || !floorCell(i + 1, j) || !floorCell(i - 1, j) || !floorCell(i, j + 1) || !floorCell(i, j - 1)) continue;
         const x = cw(i), z = cw(j); if (bad(x, z)) continue; n++; const k = R();
@@ -1276,6 +1279,7 @@ export class View {
     });
   }
   tick(dt, t) {
+    for (const m of this.doorM || []) { const ty = DSTATE.open ? -1.9 : 1.7; m.position.y += (ty - m.position.y) * Math.min(1, dt * 4); m.visible = m.position.y > -1.8; }
     for (const f of this.flick || []) f.L.intensity = f.b * (0.9 + Math.sin(t * 2.2 + f.ph) * 0.04 + Math.sin(t * 3.7 + f.ph * 2) * 0.02);
     if (this.fireG) { this.fireG.children.forEach((c, i) => { c.scale.y = 0.85 + Math.sin(t * 4 + i * 1.7) * 0.12; }); }
     // 금 간 벽: 가끔 부스러기가 떨어져요

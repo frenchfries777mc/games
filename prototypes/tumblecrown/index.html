@@ -12,7 +12,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
 <!-- 새 빌드마다 아래 ?v= 숫자를 BUILD와 같게 올려요 (브라우저가 옛 파일을 쓰지 않게) -->
-<script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/","./js/data.js":"./js/data.js?v=94","./js/main.js":"./js/main.js?v=94","./js/map.js":"./js/map.js?v=94","./js/music.js":"./js/music.js?v=94","./js/render.js":"./js/render.js?v=94","./js/sfx.js":"./js/sfx.js?v=94","./js/sim.js":"./js/sim.js?v=94","./js/tr.js":"./js/tr.js?v=94"}}</script>
+<script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/","./js/data.js":"./js/data.js?v=95","./js/main.js":"./js/main.js?v=95","./js/map.js":"./js/map.js?v=95","./js/music.js":"./js/music.js?v=95","./js/render.js":"./js/render.js?v=95","./js/sfx.js":"./js/sfx.js?v=95","./js/sim.js":"./js/sim.js?v=95","./js/tr.js":"./js/tr.js?v=95"}}</script>
 <script src="../../ff-presence.js" async></script>
 <script src="https://cdn.jsdelivr.net/npm/peerjs@1.5.4/dist/peerjs.min.js"></script>
 <script src="https://frenchfries777mc.github.io/games/ff-lang.js"></script>
@@ -28,6 +28,9 @@ html,body{touch-action:manipulation;margin:0;height:100%;background:var(--bg);co
 ::-webkit-scrollbar{width:8px;height:8px}::-webkit-scrollbar-track{background:#150f1a}::-webkit-scrollbar-thumb{background:#4a4054;border-radius:4px}
 *{scrollbar-color:#4a4054 #150f1a}
 canvas#gl{position:fixed;left:0;top:0;display:block;image-rendering:pixelated}
+#storm{position:fixed;inset:0;pointer-events:none;z-index:2;opacity:0;transition:opacity 1.2s;background:radial-gradient(ellipse at 50% 55%,rgba(222,182,112,0) 10%,rgba(214,170,98,.55) 34%,rgba(196,148,78,.92) 70%),repeating-linear-gradient(105deg,rgba(255,236,190,0) 0,rgba(255,236,190,.16) 6px,rgba(255,236,190,0) 14px);background-size:100% 100%,240px 240px;animation:stormMove .9s linear infinite}
+#storm.on{opacity:1}
+@keyframes stormMove{from{background-position:0 0,0 0}to{background-position:0 0,-240px 90px}}
 canvas#ov{position:fixed;inset:0;width:100vw;height:100vh;pointer-events:none;z-index:2}
 .scr{position:fixed;inset:0;z-index:5;display:none}
 .scr.on{display:block}
@@ -232,7 +235,7 @@ body.touch #exitBtn{top:auto;bottom:auto}
 <body>
 <canvas id="gl"></canvas>
 <div id="tcIntro"><video id="tcVid" muted loop playsinline autoplay preload="auto" disablepictureinpicture><source src="intro-battle.mp4" type="video/mp4"></video><div class="sc s1"><div class="sm">Made by</div><div class="bg">Frenchfries777</div></div><div class="sc s2"><div class="sm">With</div><div class="bg"><img alt="" src="claude.png">Claude AI</div></div></div>
-<canvas id="ov"></canvas>
+<canvas id="ov"></canvas><div id="storm"></div>
 
 <!-- 로비 -->
 <section class="scr on" id="sLobby">
@@ -333,7 +336,7 @@ body.touch #exitBtn{top:auto;bottom:auto}
 <div id="touch"><div id="joy"><div id="joyBase"><div id="joyKnob"></div></div></div>
   <div id="tbtns"><button id="tA"><span>공격</span></button><button id="tQ"><i class="cd"></i><span>Q</span></button><button id="tE"><i class="cd"></i><span>E</span></button><button id="tR"><i class="cd"></i><span>R</span></button><button id="tRoll"><i class="cd"></i><span>구르기</span></button><button id="tF"><span>귀환</span></button></div>
 </div>
-<script type="module" src="js/main.js?v=94"></script>
+<script type="module" src="js/main.js?v=95"></script>
 <div id="findBlock" style="position:fixed;inset:0;z-index:60;display:none;cursor:wait"></div>
 </body>
 </html>
