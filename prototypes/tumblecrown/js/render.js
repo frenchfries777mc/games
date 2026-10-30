@@ -72,10 +72,11 @@ const HERO = {
   skeleton: { skel: 1 },
   warden: { body: 0x6b5b3e, leg: 'dm', arm: 'mt', helm: 1, helmC: 0x4a4a52, plume: 0xc8a030, sword: 1, shield: 1, shieldC: 0x6a5030, shS: 1.45, belt: 1, wide: 1.24 },
   assassin: { body: 0x24343c, leg: 0x161e24, arm: 0x24343c, hood: 0x1a2830, scim: 1, belt: 1 },
+  bomber: { body: 0x7a4a32, leg: 0x3a3030, arm: 0x7a4a32, goggles: 1, bombs: 1, bhand: 1, sack: 1, belt: 1, cap: 0x5a3a28, wide: 1.1 },
   crossbow: { body: 0x6b4a2e, leg: 0x2e2a34, arm: 0x6b4a2e, kettle: 1, scarf: 0xb8442e, xh: 1, bolts: 1, strap: 1, belt: 1, wide: 1.1 }
 };
 // 동작은 비슷한 직업의 것을 같이 써요 (마녀는 사제처럼, 바이킹·맘루크·스켈레톤은 종자처럼)
-const FAM = { witch: 'priest', viking: 'squire', mamluk: 'squire', skeleton: 'squire', warden: 'knight', assassin: 'squire', crossbow: 'archer' };
+const FAM = { witch: 'priest', viking: 'squire', mamluk: 'squire', skeleton: 'squire', warden: 'knight', assassin: 'squire', crossbow: 'archer', bomber: 'squire' };
 function matOf(v) { return v === 'dm' ? dmetal() : v === 'mt' ? metal() : M(v); }
 export const makeHero = toonify(function (role, cos) {
   const o = Object.assign({}, HERO[role]), cp = cos && COSMETICS.cape.items.find(i => i.id === cos.cape && i.col);
@@ -187,6 +188,9 @@ function makeFigure(o) {
   if (o.axe) { const ax = new THREE.Group(); ax.position.set(0, -0.9, 0.15); armR.add(ax); ax.rotation.x = Math.PI / 2; cyl(0.08, 0.08, 2.4, 6, M(0x5a3a22), 0, 0.9, 0, ax); const hd = new THREE.Group(); hd.position.set(0.32, 1.9, 0); ax.add(hd); box(0.62, 0.9, 0.12, M(0xb8bfcc, { m: 0.8, r: 0.3 }), 0, 0, 0, hd); cyl(0.45, 0.45, 0.13, 10, M(0xd8dde8, { m: 0.8, r: 0.3 }), 0.28, 0, 0, hd).rotation.x = Math.PI / 2; }
   if (o.scim) { const sc = new THREE.Group(); sc.position.set(0, -0.9, 0.1); armR.add(sc); sc.rotation.x = Math.PI / 2; box(0.1, 0.4, 0.1, gold(), 0, 0, 0, sc); box(0.5, 0.08, 0.14, gold(), 0, 0.22, 0, sc); const bl = mesh(geo('scim', () => new THREE.TorusGeometry(1.4, 0.07, 3, 10, 1.2)), M(0xe9edf5, { m: 0.9, r: 0.2 }), -1.4, 0.25, 0, sc); bl.scale.set(1, 1, 1.8); }
   if (o.buckler) { const bk = cyl(0.5, 0.5, 0.12, 10, M(0xc8a040, { m: 0.7, r: 0.35 }), -0.1, -0.75, 0.3, armL); bk.rotation.x = Math.PI / 2 - 0.4; sph(0.12, 6, 5, gold(), -0.1, -0.75, 0.38, armL); }
+  if (o.goggles) { box(0.62, 0.2, 0.1, M(0x2a2a30), 0, 0.12, 0.42, head); for (const sx of [-1, 1]) { const l = cyl(0.13, 0.13, 0.12, 8, M(0x9ad8ff, { e: 0x4a9ad0, ei: 1.2 }), sx * 0.17, 0.12, 0.46, head); l.rotation.x = Math.PI / 2; } }
+  if (o.bombs) for (let i = 0; i < 3; i++) { sph(0.22, 8, 6, M(0x2a2a30, { m: 0.5 }), -0.5 + i * 0.5, 1.15, 0.52, body); cyl(0.04, 0.04, 0.14, 4, M(0xe8e0c8), -0.5 + i * 0.5, 1.4, 0.52, body); }
+  if (o.bhand) { const bh = new THREE.Group(); bh.position.set(0, -0.95, 0.15); armR.add(bh); sph(0.3, 8, 6, M(0x2a2a30, { m: 0.5 }), 0, 0, 0, bh); cyl(0.05, 0.05, 0.2, 4, M(0xe8e0c8), 0, 0.3, 0, bh); cone(0.1, 0.22, 5, M(0xffa040, { e: 0xff7a20, ei: 3 }), 0, 0.5, 0, bh); }
   if (o.sack) sph(0.55, 8, 6, M(0xb89a6a), -0.1, 1.9, -0.7, body).scale.set(1, 1.1, 0.8);
   if (o.quiver) { const q = cyl(0.2, 0.2, 1.1, 6, leather(), 0.3, 2.1, -0.55, body); q.rotation.x = 0.3; for (let i = 0; i < 3; i++) box(0.04, 0.4, 0.04, M(0xe8e0c8), 0.25 + i * 0.06, 2.75, -0.7, body); }
   // 보스 전용 꾸밈 (장마다 다른 모습)
@@ -1324,6 +1328,17 @@ export class View {
   // 보스 등장: 화면이 보스 쪽으로 다가갔다가 돌아와요
   crownDrop(id) { const E = this.ents.get('p' + id); if (!E) return; const g = this.crownMesh(this.scene, E.x, 10, E.z, 0.55); this.cdrop = { g, id, t: 0 }; }
   pose(id, a) { const E = this.ents.get('p' + id); if (E) { E.ak = a; E.aT = 0; E.kh = null; } }
+  // 던진 폭탄: 손에서 떠올라 포물선으로 날아가요 (불붙은 심지가 반짝여요)
+  throwBomb(x, z, tx, tz, T) {
+    const m = new THREE.Group(); this.scene.add(m); sph(0.34, 8, 6, M(0x2a2a30, { m: 0.5 }), 0, 0, 0, m); cone(0.1, 0.24, 5, M(0xffa040, { e: 0xff7a20, ei: 4 }), 0, 0.42, 0, m); m.position.set(x, 2, z);
+    this.fx.push({ m, t: 0, T, up: (f, dt) => { const k = Math.min(1, f.t / T); m.position.set(x + (tx - x) * k, 2 * (1 - k) + 0.3 + Math.sin(k * Math.PI) * (2.5 + Math.hypot(tx - x, tz - z) * 0.18), z + (tz - z) * k); m.rotation.x += dt * 9; } });
+  }
+  // 숨은 자객의 발자국: 1.2초 동안 남았다 사라져요
+  foot(x, z, a) {
+    this.footS = -(this.footS || 1); const px = -Math.sin(a) * 0.28 * this.footS, pz = Math.cos(a) * 0.28 * this.footS;
+    const m = mesh(geo('foot', () => new THREE.PlaneGeometry(0.32, 0.5)), M(0xcfe8ff, { e: 0x6ab0e8, ei: 1.2, op: 0.7, uniq: true }), x + px, 0.14, z + pz, this.scene, false); m.rotation.set(-Math.PI / 2, 0, -a - Math.PI / 2); m.castShadow = false;
+    this.fx.push({ m, t: 0, T: 1.2, up: f => { m.material.opacity = 0.7 * (1 - f.t / f.T); } });
+  }
   focusOn(x, z, T = 2.6) { this.focus = { x, z, t: 0, T }; }
   arc(x, z, a, r, col) {
     const m = mesh(geo('arc' + r, () => new THREE.TorusGeometry(r * 0.8, 0.12, 3, 20, Math.PI * 0.75)), M(col, { e: col, ei: 3, op: 0.9, uniq: true }), x, 1.6, z, this.scene, false);

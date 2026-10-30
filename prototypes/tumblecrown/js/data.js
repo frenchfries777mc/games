@@ -3,7 +3,7 @@
 
 import { T } from './tr.js';
 
-export const VERSION = 'v0.1', BUILD = 40;
+export const VERSION = 'v0.1', BUILD = 41;
 
 export const ROLES = {
   knight: {
@@ -105,6 +105,17 @@ export const ROLES = {
     st: [4, 5, 1, 5], atkTxt: T('짧은 칼 연속 찌르기'),
     role: T('몰래 파고들어 약한 한 명을 끊어요. 몸이 약해 들키면 위험해요.')
   },
+  bomber: {
+    name: T('폭파병'), color: '#c8643a', hp: 260, speed: 6.3,
+    atk: { kind: 'bomb', dmg: 30, cd: 1.3, speed: 0, range: 13, r: 2.4 },
+    skills: [
+      { id: 'bigbomb', name: T('큰 폭탄'), key: 'Q', cd: 8, desc: T('조준한 곳에 큰 폭탄을 던져요. 1.1초 뒤 넓게 터져 60 피해를 줘요.') },
+      { id: 'sticky', name: T('끈끈이 폭탄'), key: 'E', cd: 11, desc: T('터진 자리에 있던 상대를 3초 동안 크게 느리게 만들어요. 15 피해.') },
+      { id: 'barrage', name: T('폭격'), key: 'R', cd: 18, desc: T('앞쪽으로 줄지어 폭탄 다섯 발을 떨어뜨려요. 한 발마다 38 피해.') }
+    ],
+    st: [4, 2, 3, 4], atkTxt: T('포물선으로 폭탄을 던져요 (닿은 자리에서 0.75초 뒤 터져요)'),
+    role: T('벽 너머 깃발 위를 폭탄으로 때려 점령을 방해해요. 터지기 전에 움직이는 상대에겐 잘 안 맞아요.')
+  },
   crossbow: {
     name: T('석궁병'), color: '#8a6a3a', hp: 190, speed: 5.8,
     atk: { kind: 'xbolt', dmg: 26, cd: 0.8, speed: 32 },
@@ -127,7 +138,7 @@ export const COLORS = [
 ];
 export const BOT_NAMES = ['데굴이', '휘청이', '꽈당이', '비틀이', '아슬이', '쿵쾅이', '덜렁이', '허둥이', '깜빡이', '뒤뚱이'];
 export const MAX_PLAYERS = 10;
-export const ROLE_IDS = ['knight', 'priest', 'archer', 'viking', 'mamluk', 'witch', 'skeleton', 'warden', 'assassin', 'crossbow'];
+export const ROLE_IDS = ['knight', 'priest', 'archer', 'viking', 'mamluk', 'witch', 'skeleton', 'warden', 'assassin', 'crossbow', 'bomber'];
 
 export const ENEMIES = {
   skel: { name: T('해골 병사'), hp: 130, speed: 4.4, r: 0.6, dmg: 32, range: 1.8, windup: 0.42, cd: 0.9, honor: 1 },
@@ -360,6 +371,7 @@ function grow(ci, rooms, [p1, dk, p2]) {
 // 장: 이야기, 지도, 보스, 색
 // 투기장: 보우킵 보스 방을 크게 키운 한 방 (적도 이야기도 없이 마지막 한 명이 남을 때까지)
 // 5대5 깃발 점령전 지도: 아주 넓은 벌판에 돌담과 기둥이 흩어져 있어요 (180도 돌려도 똑같아서 두 팀이 공평해요)
+export const PUSH_N = 5, PUSH_T = 5;   // 깃발을 이만큼 가진 팀이 몰아붙이면 상대 부활이 이만큼(초) 늘어요
 export const TEAM_N = 5, FLAG_T = 7, FLAG_R = 6.5, RESP_T = 15, SPAWN_INV = 2, TEAM_HP = 1.5;
 export const TEAMS = [{ name: T('푸른 군단'), c: 0x4a8cff }, { name: T('붉은 군단'), c: 0xff5a4a }];
 // 전략이 있는 지도 네 개 (모두 180도 돌려도 똑같아서 공평해요). 담은 [x,y,너비,높이] 칸 단위로 한쪽 반만 적고 반대쪽은 돌려서 만들어요.
