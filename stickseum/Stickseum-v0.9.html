@@ -5523,7 +5523,7 @@ function shuffle(arr){ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.
 /* ===== the version of this file =====
    Different BUILDS of one version meet and play together (room names online-v<ver>-<mode>-<map>-<slot>); different VERSIONS (the 0.x part) never do - the host refuses them (verNo) and the dispatcher answers busy.
    The build is only sent along with the join message and the lobby (for information); the corner of the screen shows it. */
-const GAME_BUILD='build 2026-10-18-v532';
+const GAME_BUILD='build 2026-10-18-v533';
 const GAME_VERSION='0.9', GAME_VERSION_NAME='은하 제국의 황혼';   // 게임 버전 이름: versions.json의 title과 같게 (빌드마다 바꾸지 않음)
 /* version (the 0.x part) vs build: different BUILDS of one version meet and play together, different VERSIONS never do (rooms, quick match, ranked, friend invites, dispatcher).
    Builds before 470 do not send a version, so it is read from the build number (0.9 started at build 458). */
@@ -6898,12 +6898,12 @@ function pickOnlineModeAndMatch(mid, evt, ranked, clan){
   if(partyBlocks((ranked||clan)?'ranked':(evt?'event':mid))) return;          // (in a party: only the leader, only the party modes)
   onlineEvent=!!evt; onlineRanked=!!ranked; onlineClan=clan?String(clan):''; selectedOnlineMode=mid;
   onlineWar=(clan && clanWarPending && String(clan)===clanWarPending.key) ? clanWarPending : null; clanWarPending=null;
-  document.getElementById('onlineModeTitle').textContent='온라인 플레이 · '+(clan?(onlineWar?'⚔ 클랜 대항전 (듀얼)':'⚔ 클랜 경기 (듀얼)'):ranked?'🏅 랭크전 (듀얼)':(evt?('주간 이벤트 · '+currentEvent().name):MODES[mid].name));
+  document.getElementById('onlineModeTitle').textContent='온라인 플레이 · '+(clan?(mid==='raid'?'🐲 클랜 보스 레이드':(onlineWar?'⚔ 클랜 대항전 (듀얼)':'⚔ 클랜 경기 (듀얼)')):ranked?'🏅 랭크전 (듀얼)':(evt?('주간 이벤트 · '+currentEvent().name):MODES[mid].name));
   showScreen('onlineScreen');
   if(connecting) return; connecting=true;
   partyLeaderStart(mid);
   setOnlineProgress(0,clan?'같은 클랜의 상대를 찾는 중...':'매칭 상대를 찾는 중...');
-  if(clan) clanWaitSet(true);
+  if(clan && mid!=='raid') clanWaitSet(true);
   onlineMatchmake();
 }
 let myNameSet=false, pendingDestination=null;
@@ -8978,7 +8978,7 @@ function clanBroadcastInit(){          // a live line to the whole clan (Supabas
 function clanDuelToast(p){ if(!p || !p.a || !p.b) return; try{ showAchievementToast({icon:'⚔', name:escapeHtmlText(String(p.a).slice(0,15))+' vs '+escapeHtmlText(String(p.b).slice(0,15)), reward:0}, '클랜 경기 매칭!'); }catch(e){} }
 function clanDuelAnnounce(){          // (host, when the clan duel starts) tells the rest of the clan who is playing
   try{
-    if(!onlineClan || !clanBcCh) return;
+    if(!onlineClan || !clanBcCh || gameMode!=='duel') return;
     const names=Object.values(players).filter(q=>q && !q.isBot).map(q=>q.name); if(names.length<2) return;
     clanBcCh.send({type:'broadcast', event:'duel', payload:{a:names[0], b:names[1]}});
   }catch(e){}
@@ -9281,6 +9281,7 @@ async function renderClanMy(pane){
       }
     }
   }
+  { const rb2=clanRowBtn('🐲','클랜 보스 레이드','클랜원끼리 거대한 보스를 잡아요 (빈자리는 봇) · 성공하면 창고 +20, 클랜 경험치 +60'); rb2.onclick=clanRaidStart; R.appendChild(rb2); }
   const vb=clanRowBtn('🏦','클랜 창고','창고 '+(myClan.treasury||0)+' · 내 토큰 '+myTok+(clanVaultOpen?'':' · 눌러서 열기')); vb.onclick=()=>{ clanVaultOpen=!clanVaultOpen; rerender(); }; R.appendChild(vb);
   if(clanVaultOpen){
     const vp=document.createElement('div'); vp.style.cssText='display:flex; flex-direction:column; gap:8px;'; R.appendChild(vp);
@@ -9779,7 +9780,7 @@ function showErrorAndReturnToMenu(msg){
 /* ================= ROOM SCREEN ================= */
 function refreshRoomLabel(){
   const el=document.getElementById('roomModeLabel'); if(!el || !MAP) return;
-  const _pre=onlineClan ? (onlineWar?'⚔ 클랜 대항전 · ':'⚔ 클랜 경기 · ') : (currentMode==='online' ? '🌐 온라인 매칭됨 · ' : '🔒 비공개 방 (보상 없음) · ');
+  const _pre=onlineClan ? (gameMode==='raid'?'🐲 클랜 보스 레이드 · ':(onlineWar?'⚔ 클랜 대항전 · ':'⚔ 클랜 경기 · ')) : (currentMode==='online' ? '🌐 온라인 매칭됨 · ' : '🔒 비공개 방 (보상 없음) · ');
   el.textContent = _pre + MAP.name + ' · ' + (MODES[gameMode]||MODES.ffa).name + (weaponMode==='random' ? ' · 랜덤 무기' : '') + (rulesAreCustom() ? ' · ⚙️ 커스텀 규칙' : '') + (roomOpts.vote ? ' · 🗳️ 맵 투표' : '') + (roomOpts.balance ? ' · ⚖️ 팀 자동 밸런스' : '');
 }
 function stkRoomSync(code){ try{ if(window.FFAuth && FFAuth.setRoom) FFAuth.setRoom(code ? {game:'stickseum', code:code, path:'stickseum/Stickseum-latest.html'} : null); }catch(e){} }      // tells the hub which room I am in, so a friend can be invited into it
@@ -10719,6 +10720,14 @@ function updateDuelScoreUI(){
 async function clanWarReport(warId){       // 클랜 대항전: the winner of a war duel adds 1 point to the clan (RPC clan_war_report, see supabase-stickseum-clan-v2.sql)
   try{ if(!sb||!sbUser||!myClan) return; const r=await sb.rpc('clan_war_report',{p_war:warId}); if(r && !r.error && r.data) pushSystemLine('🏴 클랜 대항전 +1점'); }catch(e){}
 }
+function clanRaidStart(){
+  if(!myClan){ uiAlert('클랜에 가입해야 해요'); return; }
+  if(connecting || peer) return;
+  pickOnlineModeAndMatch('raid', false, false, clanMyId());
+}
+async function clanRaidReport(){       // 클랜 보스 레이드 성공: every clan member of the room claims the reward (RPC clan_raid_reward: clan vault +20, clan xp +60, contribution +30; once per 10 minutes)
+  try{ if(!sb||!sbUser||!myClan) return; const r=await sb.rpc('clan_raid_reward'); if(r && !r.error && r.data) pushSystemLine('🐲 클랜 보스 레이드 성공! 클랜 창고 +20'); }catch(e){}
+}
 function clanWarStart(w){
   if(!myClan){ uiAlert('클랜에 가입해야 해요'); return; }
   if(connecting || peer) return;
@@ -10748,6 +10757,8 @@ function showMatchEndOverlay(resultText, winnerIds, forcedPick){
   if(DED_HOST){ matchEnded=true; lastWinnerIds=winnerIds||[]; return; }          // (the dedicated host plays nothing: no rewards, no screen)
   try{ const hum=Object.values(players).filter(q=>q && !q.isBot && !q.isMinion && !q.isBoss && !q.isSpectator);
     if(onlineClan && currentMode==='online' && gameMode==='duel' && !practiceMode && !highlightViewing && myClan && String(onlineClan)===clanMyId() && hum.length===2 && hum.every(q=>q.clan===clanMyTag()) && winnerIds && winnerIds.length) clanMemberReport(winnerIds.indexOf(myId)!==-1); }catch(e){}
+  try{ const hum=Object.values(players).filter(q=>q && !q.isBot && !q.isMinion && !q.isBoss && !q.isSpectator);
+    if(onlineClan && gameMode==='raid' && currentMode==='online' && !practiceMode && !highlightViewing && myClan && String(onlineClan)===clanMyId() && hum.length>=2 && hum.every(q=>q.clanId===clanMyId()) && winnerIds && winnerIds.indexOf(myId)!==-1) clanRaidReport(); }catch(e){}
   try{ const hum=Object.values(players).filter(q=>q && !q.isBot && !q.isMinion && !q.isBoss && !q.isSpectator);
     if(onlineWar && onlineClan && currentMode==='online' && gameMode==='duel' && !practiceMode && !highlightViewing && myClan && hum.length===2 && hum[0].clanId && hum[1].clanId && hum[0].clanId!==hum[1].clanId && winnerIds && winnerIds.indexOf(myId)!==-1) clanWarReport(onlineWar.id); }catch(e){}
   try{ const hum=Object.values(players).filter(q=>q && !q.isBot && !q.isMinion && !q.isBoss && !q.isSpectator);
@@ -11516,6 +11527,7 @@ document.getElementById('weaponBrowseBackBtn').onclick=()=>{
   showScreen('profileScreen'); renderProfile();
 };
 function clanVsIntro(){
+  if(gameMode!=='duel') return;
   const cr = (onlineClan && myClan) ? (onlineWar ? {i:0, t:[clanMyTag(), cleanClanTag(onlineWar.otherTag)]} : {i:1, t:[clanMyTag()]}) : null; if(!cr || !cr.t || !cr.t[0]) return;
   const info=tag=>{ const q=Object.values(players).find(x=>x && x.clan===tag); return {tag, emblem:q&&q.ce, color:q&&q.cc, name:q&&q.cn}; };
   const A=info(cr.t[0]), B=cr.i?info(cr.t[0]):info(cr.t[1]); if(!B.tag) return;
@@ -13512,7 +13524,7 @@ function idleOnlineOthers(){          // people who have the game open (logged i
 }
 function botFillWaitMs(){ if(DED_HOST) return BOT_FILL_MS; return (humanPlayers().length<=1 && !partyActive() && idleOnlineOthers()===0) ? BOT_FILL_SOLO_MS : BOT_FILL_MS; }
 function botFillTick(){
-  if(!isHost || started || !MAP || currentMode!=='online' || onlineRanked || onlineClan){ botFillAt=null; botFilling=false; return; }   // (a ranked or clan room waits for a person, never for bots)
+  if(!isHost || started || !MAP || currentMode!=='online' || onlineRanked || (onlineClan && gameMode!=='raid')){ botFillAt=null; botFilling=false; return; }   // (a ranked or clan room waits for a person, never for bots; only the clan boss raid is filled up with bots)
   if(!botSupported(gameMode) || humanPlayers().length===0){ botFillAt=null; botFilling=false; return; }
   const cap=effectiveMaxPlayers(currentMapId, gameMode), fillTo=(MODES[gameMode]||{}).fillTo, target=fillTo?Math.min(cap,fillTo):botFillTargetFor(cap), count=Object.keys(players).length;
   if(count>=target){
