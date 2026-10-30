@@ -1502,6 +1502,19 @@ function safeDir(G, p, a) {
   return a;
 }
 // 봇이 갈 깃발 고르기: 가깝고, 내 것이 아니고, 같은 팀이 덜 몰린 깃발 (내 깃발은 뺏기는 중일 때만 지켜요)
+function botHunters(G) {
+  const h = G.hunt || (G.hunt = { t: -9, m: [null, null], ids: [] });
+  if (h.t > G.t - 1) return h; h.t = G.t; h.m = [null, null]; h.ids = [];
+  const ms = G.enemies.filter(e => e.mon && e.hp > 0); if (!ms.length) return h;
+  for (const tm of [0, 1]) {
+    const bs = G.players.filter(q => q.team === tm && q.ai && alive(q)); let best = null, bd = 1e9;
+    for (const m of ms) for (const q of bs) { const d = dist(q, m); if (d < bd) { bd = d; best = m; } }
+    if (!best || bd > 420) continue;
+    for (const q of bs.sort((x, y) => dist(x, best) - dist(y, best)).slice(0, 2)) h.ids.push(q.id);
+    h.m[tm] = best;
+  }
+  return h;
+}
 function botFlag(G, p, dt) {
   const inp = {}, ai = p.ai; ai.fT = (ai.fT || 0) - dt;
   if (ai.fT <= 0 || ai.fi == null) {
@@ -1512,6 +1525,7 @@ function botFlag(G, p, dt) {
       // 혼자 흩어지지 않고 같은 편이 많은 깃발로 같이 가요 (같은 편은 사람·봇 모두 세요). 상대가 더 많이 지키는 깃발은 피해요
       let al = 0, en = 0; for (const q of G.players) { if (q === p || !alive(q) || Math.hypot(q.x - f.x, q.z - f.z) > D.FLAG_R * 3) continue; if (q.team === p.team) al++; else en++; }
       if (f.own !== p.team) sc -= Math.min(al, 3) * 14; if (en > al + 1) sc += (en - al - 1) * 30;
+      if (i >= G.fl.length - 3) sc *= 0.65;   // 가운데 깃발 셋을 먼저 노려요
       if (sc < bs) { bs = sc; bi = i; }
     });
     ai.fi = bi;
@@ -1528,14 +1542,17 @@ function botPvp(G, p, dt) {
   let tgt = null, bs = 1e9;
   for (const q of foes) { const s = dist(p, q) + (q.hp / q.maxhp) * 7 - (q === ai.tg ? 3 : 0); if (s < bs) { bs = s; tgt = q; } }
   ai.tg = tgt;
+  // 괴물: 팀마다 괴물에 가장 가까운 봇 둘이 먼저 잡으러 가요 (가까운 상대 플레이어가 있으면 그쪽이 먼저예요)
+  const hk = botHunters(G); if (hk.m[p.team] && hk.ids.includes(p.id) && (!tgt || dist(p, tgt) > 9)) tgt = hk.m[p.team];
   // 가까운 상대가 없으면 깃발로 가요: 깃발이 목표인 봇은 13칸 안의 상대만 상대하고, 깃발 위에서는 조금 더 멀리까지 지켜요
   const mf = ai.fi != null ? G.fl[ai.fi] : null, onF = mf && Math.hypot(mf.x - p.x, mf.z - p.z) < D.FLAG_R * 1.6;
+  if (tgt && tgt.mon && dist(p, tgt) > 9) { const q = {}; moveTo(G, p, q, tgt.x, tgt.z, 1); if (dist(p, tgt) > 25 && p.rollCd <= 0 && G.rng() < 0.01) q.roll = true; return q; }
   if (!tgt || dist(p, tgt) > (onF ? 20 : 13)) return botFlag(G, p, dt);
   if (tgt.stl > 0 && dist(p, tgt) > 4) {   // 숨은 상대는 어림짐작으로 찾아요
     if (!(ai.offT > 0)) { ai.offT = 1; ai.ox = (G.rng() - 0.5) * 10; ai.oz = (G.rng() - 0.5) * 10; } ai.offT -= dt; const q = {}; moveTo(G, p, q, tgt.x + ai.ox, tgt.z + ai.oz, 1.5); return q;
   }
   const d = dist(p, tgt), ta = angTo(p, tgt), ranged = R.atk.kind !== 'melee', clear = lineClear(p.x, p.z, tgt.x, tgt.z);
-  const near = foes.filter(q => dist(p, q) < 6).length, nearest = foes.reduce((m, q) => dist(p, q) < dist(p, m) ? q : m, foes[0]), low = dist(p, nearest) < 8 && nearest.hp >= p.hp * 4;   // 가까운 적 체력이 내 체력의 네 배 이상일 때만 도망쳐요
+  const near = foes.filter(q => dist(p, q) < 6).length, nearest = foes.length ? foes.reduce((m, q) => dist(p, q) < dist(p, m) ? q : m, foes[0]) : tgt, low = dist(p, nearest) < 8 && nearest.hp >= p.hp * 4;   // 가까운 적 체력이 내 체력의 네 배 이상일 때만 도망쳐요
   // 앞질러 조준: 상대가 움직이는 방향으로 조금 앞을 겨눠요
   const sp = R.atk.speed || 20, lt = Math.min(0.6, d / sp), px = tgt.x + (tgt.vx || 0) * lt * 0.9, pz = tgt.z + (tgt.vz || 0) * lt * 0.9;
   inp.aim = Math.atan2(pz - p.z, px - p.x); inp.ax = px; inp.az = pz;
