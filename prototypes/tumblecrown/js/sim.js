@@ -428,7 +428,7 @@ function useSkill(G, p, si, inp) {
     case 'dash': {
       const ox = p.x, oz = p.z, L = 9;
       p.x += Math.cos(p.a) * L; p.z += Math.sin(p.a) * L; collide(G, p, 0.6); p.inv = 0.3;
-      for (const e of G.enemies) { if (e.hp <= 0) continue; if (segDist(ox, oz, p.x, p.z, e.x, e.z) < 1.3 + e.r) hurtEnemy(G, e, 30, p, { kb: 8, kbA: p.a }); }
+      for (const e of G.enemies) { if (e.hp <= 0) continue; if (segDist(ox, oz, p.x, p.z, e.x, e.z) < 1.3 + e.r) { hurtEnemy(G, e, 30, p, { kb: 8, kbA: p.a }); if (e.hp > 0) { e.slow = Math.max(e.slow || 0, 1.5); e.slowM = 0.6; } } }   // 맞은 상대는 1.5초 느려져요 (도망치는 상대를 따라잡기 쉬워요)
       break;
     }
     case 'taunt': p.taunt = 4; for (const e of G.enemies) if (dist(p, e) < 10) { e.tgt = p.id; e.tauntT = 4; } break;
@@ -477,9 +477,9 @@ function useSkill(G, p, si, inp) {
       break;
     }
     case 'leap': { // 앞으로 크게 뛰어올라 내려앉으며 둘레에 피해
-      p.x += Math.cos(p.a) * 7; p.z += Math.sin(p.a) * 7; collide(G, p, 0.6); p.inv = 0.4;
+      p.x += Math.cos(p.a) * 8; p.z += Math.sin(p.a) * 8; collide(G, p, 0.6); p.inv = 0.4;
       ev(G, 'skill', { id: p.id, s: 'leapland', x: p.x, z: p.z, a: p.a });
-      for (const e of G.enemies) if (e.hp > 0 && foeOf(G, p.id, e) && dist(p, e) < 3.2 + e.r) hurtEnemy(G, e, 36, p, {});
+      for (const e of G.enemies) if (e.hp > 0 && foeOf(G, p.id, e) && dist(p, e) < 3.4 + e.r) { hurtEnemy(G, e, 36, p, {}); if (e.hp > 0) { e.slow = Math.max(e.slow || 0, 1.5); e.slowM = 0.6; } }
       break;
     }
     case 'bloodlust': p.leech = 5; ev(G, 'skill', { id: p.id, s: 'bloodfx', x: p.x, z: p.z, a: p.a }); break;   // 5초 동안 준 피해의 일부를 체력으로 되찾아요
@@ -551,7 +551,7 @@ function useSkill(G, p, si, inp) {
     case 'chorus': for (const q of friends(G, p)) if (alive(q) && dist(p, q) < 8) { ev(G, 'heal', { id: q.id, x: q.x, z: q.z, v: healP(G, q, 30) }); q.shield = 18; q.shieldT = 4; ev(G, 'ward', { id: q.id }); } break;
     case 'lunge': { const ox = p.x, oz = p.z; p.x += Math.cos(p.a) * 5.5; p.z += Math.sin(p.a) * 5.5; collide(G, p, 0.6); p.inv = 0.25;
       ev(G, 'skill', { id: p.id, s: 'backfx', x: ox, z: oz, a: p.a });
-      for (const e of G.enemies) if (e.hp > 0 && foeOf(G, p.id, e) && segDist(ox, oz, p.x + Math.cos(p.a) * 1.8, p.z + Math.sin(p.a) * 1.8, e.x, e.z) < 1.5 + e.r) hurtEnemy(G, e, 40, p, { kb: 3, kbA: p.a }); break; }
+      for (const e of G.enemies) if (e.hp > 0 && foeOf(G, p.id, e) && segDist(ox, oz, p.x + Math.cos(p.a) * 1.8, p.z + Math.sin(p.a) * 1.8, e.x, e.z) < 1.5 + e.r) { hurtEnemy(G, e, 40, p, { kb: 3, kbA: p.a }); if (e.hp > 0) { e.slow = Math.max(e.slow || 0, 1.5); e.slowM = 0.6; } } break; }
     case 'spearthrow': G.projs.push({ id: G.uid++, k: 'spear', own: p.id, x: p.x + Math.cos(p.a) * 0.8, z: p.z + Math.sin(p.a) * 0.8, vx: Math.cos(p.a) * 30, vz: Math.sin(p.a) * 30, dmg: 42, life: 0.9, hit: [], team: 0, slow: 1.5 }); break;
     case 'sweep': for (const e of G.enemies) if (e.hp > 0 && foeOf(G, p.id, e) && dist(p, e) < 3.9 + e.r) { hurtEnemy(G, e, 36, p, { kb: 6, kbA: angTo(p, e) }); if (e.hp > 0) { e.slow = 1.5; e.slowM = 0.5; } } ev(G, 'swing', { id: p.id, x: p.x, z: p.z, a: p.a, r: 3.9, role: p.role, n: 1 }); break;
     case 'rootbolt': G.projs.push({ id: G.uid++, k: 'bolt', own: p.id, x: p.x + Math.cos(p.a) * 0.8, z: p.z + Math.sin(p.a) * 0.8, vx: Math.cos(p.a) * 28, vz: Math.sin(p.a) * 28, dmg: 18, life: 0.9, hit: [], team: 0, slow: 2.5 }); break;
