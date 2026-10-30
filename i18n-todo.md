@@ -485,3 +485,4 @@ patchnotes.json | v535 items[0] | 마술사 패시브 카드 폭풍: 발동하�
 patchnotes.json | v536 items[0] | 듀얼 마스터리 포인트 증가: 처치 8 → 10, 승리 3 → 10 | build 536 | 2026-10-30
 patchnotes.json | v536 items[1] | MVP로 뽑히면 얻는 마스터리 포인트 5 → 8 | build 536 | 2026-10-30
 patchnotes.json | v537 items[0] | 듀얼 마스터리 포인트 조정: 처치 10 → 7 (승리는 10 그대로) | build 537 | 2026-10-30
+patchnotes.json | v538 items[0] | 듀얼 마스터리 포인트 조정: 처치 7 → 5 (승리는 10 그대로) | build 538 | 2026-10-30
