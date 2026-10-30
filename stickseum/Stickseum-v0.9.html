@@ -2937,6 +2937,19 @@ const BOX_REWARDS=[
   {kind:'soul', amount:5, w:13}, {kind:'soul', amount:10, w:9}, {kind:'soul', amount:15, w:7},
   {kind:'skin', w:10}          // the skin: 10% (the other nine gifts share the remaining 90%)
 ];
+/* 에픽 상자 (owner 10-30): 30 souls, opened at once (no bag). Only big gifts: 150~400 gold, 100/200 pick xp, 150 character xp, 200 player xp, a few souls, and 18% a skin that costs 401~800 gold or a soul skin. */
+const BOX_EPIC_PRICE=30, SOUL_SKIN_PRICE=60;
+const EPIC_REWARDS=[
+  {kind:'gold', amount:150, w:20}, {kind:'gold', amount:250, w:14}, {kind:'gold', amount:400, w:8},
+  {kind:'pickxp', amount:100, w:14}, {kind:'pickxp', amount:200, w:8},
+  {kind:'charxp', amount:150, w:12}, {kind:'playerxp', amount:200, w:10},
+  {kind:'soul', amount:20, w:6}, {kind:'soul', amount:30, w:4}, {kind:'soul', amount:45, w:2},
+  {kind:'epicskin', w:22}
+];
+for(const [ch,nm,tint,fx] of [['sword','유령 기사 투구','#b86bff','glow'], ['pistol','영혼 수집가 중절모','#c9a0ff','void'], ['wizard','영혼 마법사 후드','#9a5cff','sparkle'],
+  ['dracula','영혼 군주의 망토','#7a2cff','void'], ['bow','영혼 사냥 두건','#d6b3ff','frost'], ['kurus','영혼 늪의 두건','#e0c4ff','halo']])
+  COSMETICS['skin_'+ch+'_soul']={cat:'skin', char:ch, name:nm, price:0, soul:SOUL_SKIN_PRICE, tint, fx};      // bought with souls (the purple currency), not gold
+function epicSkinCandidates(){ return Object.keys(COSMETICS).filter(id=>{ const it=COSMETICS[id]; return it.cat==='skin' && !it.tier && !it.seasonOnly && !cosOwned(id) && ((it.price>BOX_SKIN_MAX_PRICE && it.price<=800) || it.soul); }); }
 const DAILY_REWARDS=[ {kind:'gold', amount:DAILY_GOLD, w:30}, {kind:'charxp', amount:DAILY_XP, w:25}, {kind:'playerxp', amount:DAILY_XP*2, w:25}, {kind:'box', amount:1, w:20},
   {kind:'pickxp', amount:25, w:10}, {kind:'pickxp', amount:50, w:6}, {kind:'pickxp', amount:100, w:3} ];
 function pickWeighted(list, rand){ let tot=0; for(const r of list) tot+=r.w; let x=(rand||Math.random)()*tot; for(const r of list){ x-=r.w; if(x<0) return r; } return list[list.length-1]; }
@@ -2991,6 +3004,12 @@ function giveReward(r, rand){                // hands the gift over and tells wh
   }
   if(r.kind==='soul'){ saveData.souls=Math.min(999999,(saveData.souls||0)+r.amount); persistSave(); updateSoulUI(); return {kind:'soul', icon:SOUL.icon, title:'+'+r.amount+' '+SOUL.name, detail:'상자를 사는 데 쓸 수 있어요'}; }
   if(r.kind==='box'){ saveData.boxes=Math.min(9999,(saveData.boxes||0)+(r.amount||1)); persistSave(); return {kind:'box', icon:'🎁', title:'랜덤 상자 ×'+(r.amount||1), detail:'치장품 상점의 🎁 상자 탭에서 열 수 있어요'}; }
+  if(r.kind==='epicskin'){
+    const c=epicSkinCandidates();
+    if(!c.length){ const res=giveReward({kind:'gold', amount:300}, rand); res.detail='(받을 수 있는 스킨이 이제 없어서 sC로 바뀌었어요)'; res.fallback=true; return res; }
+    const id=c[Math.floor(rand()*c.length)], it=COSMETICS[id]; saveData.owned[id]=true; persistSave();
+    return {kind:'skin', id, icon:'🎨', title:'스킨 획득: '+it.name, detail:(WEAPON_PERSONA_NAME[it.char]||it.char)+' · 치장품 상점에서 장착할 수 있어요'};
+  }
   if(r.kind==='skin'){
     const c=boxSkinCandidates();
     if(!c.length){ const res=giveReward({kind:'gold', amount:50}, rand); res.detail='(받을 수 있는 스킨이 이제 없어서 sC로 바뀌었어요)'; res.fallback=true; return res; }
@@ -3000,6 +3019,7 @@ function giveReward(r, rand){                // hands the gift over and tells wh
   return null;
 }
 function buyBox(){ if((saveData.souls||0)<BOX_PRICE) return false; saveData.souls-=BOX_PRICE; saveData.boxes=Math.min(9999,(saveData.boxes||0)+1); persistSave(); updateGoldUI(); return true; }
+function openEpicBox(rand){ if((saveData.souls||0)<BOX_EPIC_PRICE) return null; saveData.souls-=BOX_EPIC_PRICE; saveData.boxesOpened=(saveData.boxesOpened||0)+1; const res=giveReward(pickWeighted(EPIC_REWARDS, rand), rand); persistSave(); updateGoldUI(); updateSoulUI(); return res; }
 function openBox(rand){ if((saveData.boxes||0)<=0) return null; saveData.boxes--; saveData.boxesOpened=(saveData.boxesOpened||0)+1; const res=giveReward(pickWeighted(BOX_REWARDS, rand), rand); persistSave(); updateGoldUI(); return res; }
 // ----- the daily reward -----
 function todayKey(d){ d=d||new Date(); return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'); }       // the date on this device, e.g. "2026-10-07"
@@ -3608,7 +3628,7 @@ function shopAnimLoop(ts){
   requestAnimationFrame(shopAnimLoop);
 }
 function shopAnimStart(){ if(shopAnimOn || !shopAnimList.length || typeof requestAnimationFrame!=='function') return; shopAnimOn=true; requestAnimationFrame(shopAnimLoop); }
-function boxRewardLabel(r){ return r.kind==='soul' ? SOUL.icon+' '+SOUL.name+' '+r.amount+'개' : r.kind==='gold' ? r.amount+' sC' : r.kind==='charxp' ? '랜덤 캐릭터 XP '+r.amount : r.kind==='pickxp' ? '선택 XP '+r.amount : r.kind==='playerxp' ? '플레이어 XP '+r.amount : r.kind==='skin' ? '스킨 1개 ('+BOX_SKIN_MAX_PRICE+'G 이하)' : '랜덤 상자'; }
+function boxRewardLabel(r){ return r.kind==='epicskin' ? '스킨 1개 (401~800G 또는 영혼석 스킨)' : r.kind==='soul' ? SOUL.icon+' '+SOUL.name+' '+r.amount+'개' : r.kind==='gold' ? r.amount+' sC' : r.kind==='charxp' ? '랜덤 캐릭터 XP '+r.amount : r.kind==='pickxp' ? '선택 XP '+r.amount : r.kind==='playerxp' ? '플레이어 XP '+r.amount : r.kind==='skin' ? '스킨 1개 ('+BOX_SKIN_MAX_PRICE+'G 이하)' : '랜덤 상자'; }
 function renderBoxTab(grid){
   const card=document.createElement('div'); card.className='boxCard';
   const n=saveData.boxes||0, left=boxSkinCandidates().length;
@@ -3617,6 +3637,13 @@ function renderBoxTab(grid){
     '<ul>'+BOX_REWARDS.map(r=>'<li><b>'+boxRewardLabel(r)+'</b> · '+rewardChancePct(BOX_REWARDS,r)+'%</li>').join('')+'</ul>'+
     '<div class="bBtns"><button id="boxBuyBtn" class="buy" style="background:linear-gradient(135deg,#b86bff,#8a4dff); color:#fff;">구매 ('+SOUL.icon+' '+BOX_PRICE+')</button><button id="boxOpenBtn" class="alt">열기 ('+n+')</button><button id="boxOpenAllBtn" class="alt">모두 열기 ('+n+')</button></div></div>';
   grid.appendChild(card);
+  const ec=document.createElement('div'); ec.className='boxCard'; ec.style.marginTop='12px'; ec.style.borderColor='#ffb02e';
+  ec.innerHTML='<div class="bIcon">💎</div><div class="bMain"><div class="bName" style="color:#ffd34d;">에픽 상자</div>'+
+    '<div class="bSub"><span style="color:'+SOUL.color+'; font-weight:800;">'+SOUL.icon+' '+BOX_EPIC_PRICE+' '+SOUL.name+'</span> · 사자마자 바로 열려요 · 큰 선물만 나와요</div>'+
+    '<ul>'+EPIC_REWARDS.map(r=>'<li><b>'+boxRewardLabel(r)+'</b> · '+rewardChancePct(EPIC_REWARDS,r)+'%</li>').join('')+'</ul>'+
+    '<div class="bBtns"><button id="epicBuyBtn" class="buy" style="background:linear-gradient(135deg,#ffb02e,#ff7a2e); color:#1a1030;">구매하고 열기 ('+SOUL.icon+' '+BOX_EPIC_PRICE+')</button></div></div>';
+  grid.appendChild(ec);
+  const eb=document.getElementById('epicBuyBtn'); if(eb){ eb.disabled=(saveData.souls||0)<BOX_EPIC_PRICE; eb.onclick=()=>{ playEpicBoxOpening(); }; }
   const buy=document.getElementById('boxBuyBtn'), open=document.getElementById('boxOpenBtn');
   if(buy){ buy.disabled=(saveData.souls||0)<BOX_PRICE; buy.onclick=()=>{ if(buyBox()) renderShop(); }; }
   if(open){ open.disabled=n<=0; open.onclick=()=>{ if((saveData.boxes||0)>0) playBoxOpening(); }; }
@@ -3657,7 +3684,7 @@ function renderShop(){
       pr.innerHTML='<span style="color:'+(rk?rk.color:'#fff')+'; font-weight:800;">'+it.tier+' 전용</span>'+(owned?'<br>해금됨':'<br>'+Math.min(kc,need)+' / '+need+'점'); }
     else if(it.mast) pr.innerHTML=owned?'<span style="color:#7ef0a8; font-weight:800;">마스터리 해금</span>':'<span style="color:#ffd34d; font-weight:800;">마스터리 Lv.'+it.mast.lv+'</span><br>'+Math.min(masteryInfo(it.mast.wid).lv,it.mast.lv)+' / '+it.mast.lv;
     else if(it.free) pr.textContent='무료';
-    else pr.textContent=owned?'보유 중':(it.seasonOnly?'시즌 패스 보상':(it.price+' sC'));
+    else pr.textContent=owned?'보유 중':(it.seasonOnly?'시즌 패스 보상':(it.soul?(SOUL.icon+' '+it.soul+' '+SOUL.name):(it.price+' sC')));
     box.appendChild(pr);
     const btn=document.createElement('button');
     if(it.cat==='emo'){
@@ -3679,6 +3706,14 @@ function renderShop(){
       };
     } else if(it.tier || it.seasonOnly || it.mast){
       btn.textContent='🔒 잠김'; btn.className='off'; btn.disabled=true;
+    } else if(it.soul){
+      const can=(saveData.souls||0)>=it.soul;
+      btn.textContent='구매'; if(!can) btn.className='off';
+      btn.onclick=()=>{
+        if((saveData.souls||0)<it.soul) return; saveData.souls-=it.soul; saveData.owned[id]=true;
+        saveData.equipped.skin=saveData.equipped.skin||{}; saveData.equipped.skin[it.char]=id;
+        persistSave(); updateGoldUI(); updateSoulUI(); renderShop();
+      };
     } else {
       const can=gold>=it.price;
       btn.textContent='구매'; if(!can) btn.className='off';
@@ -5488,7 +5523,7 @@ function shuffle(arr){ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.
 /* ===== the version of this file =====
    Different BUILDS of one version meet and play together (room names online-v<ver>-<mode>-<map>-<slot>); different VERSIONS (the 0.x part) never do - the host refuses them (verNo) and the dispatcher answers busy.
    The build is only sent along with the join message and the lobby (for information); the corner of the screen shows it. */
-const GAME_BUILD='build 2026-10-18-v526';
+const GAME_BUILD='build 2026-10-18-v527';
 const GAME_VERSION='0.9', GAME_VERSION_NAME='은하 제국의 황혼';   // 게임 버전 이름: versions.json의 title과 같게 (빌드마다 바꾸지 않음)
 /* version (the 0.x part) vs build: different BUILDS of one version meet and play together, different VERSIONS never do (rooms, quick match, ranked, friend invites, dispatcher).
    Builds before 470 do not send a version, so it is read from the build number (0.9 started at build 458). */
@@ -6571,6 +6606,12 @@ function playBoxOpening(){
   if((saveData.boxes||0)<=0) return false;
   showRewardWindow('🎁 랜덤 상자', '🎁', '', []);
   shakeThen('랜덤 상자를 열었어요!', ()=>openBox(), ()=>playBoxOpening());
+  return true;
+}
+function playEpicBoxOpening(){
+  if((saveData.souls||0)<BOX_EPIC_PRICE) return false;
+  showRewardWindow('💎 에픽 상자', '💎', '', []);
+  shakeThen('에픽 상자를 열었어요!', ()=>openEpicBox(), null);
   return true;
 }
 function openAllBoxes(){        // 모두 열기: every box at once, one shake, the gifts added up on one card
