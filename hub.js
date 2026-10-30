@@ -208,11 +208,15 @@ async function listPosts(){
   var p=$('.cm-p[data-p=board]'), L=p&&p.querySelector('.cm-list'); if(!L||!sb) return;
   var r, more=false, rows, hot=null;
   if(bFilter==='hot'){
-    var pr=await sb.rpc('ff_popular',{p_limit:20}); if(pr.error){ L.innerHTML='<div class="cm-e">'+esc(errText(pr.error))+'</div>'; p.querySelector('.cm-more').style.display='none'; return; }
-    hot=(pr.data||[]).map(function(x){ return x.post_id; });
-    r=hot.length?await sel('ff_posts',PCOLS,function(q){ return q.in('id',hot); }):{data:[]};
-    if(r.error){ L.innerHTML='<div class="cm-e">'+esc(errText(r.error))+'</div>'; return; }
-    rows=(r.data||[]).sort(function(a,b){ return hot.indexOf(a.id)-hot.indexOf(b.id); });
+    /* 인기 = 좋아요 + 댓글 수 (최근 글 120개 중에서 계산) */
+    r=await sel('ff_posts',PCOLS,function(q){ return q.order('created_at',{ascending:false}).limit(120); });
+    if(r.error){ L.innerHTML='<div class="cm-e">'+esc(errText(r.error))+'</div>'; p.querySelector('.cm-more').style.display='none'; return; }
+    var all=(r.data||[]), ids=all.map(function(x){ return x.id; }), sc={};
+    if(ids.length){
+      var lr=await sb.from('ff_likes').select('post_id').in('post_id',ids).limit(5000), cr=await sb.from('ff_comments').select('post_id').in('post_id',ids).limit(5000);
+      ((lr&&lr.data)||[]).concat((cr&&cr.data)||[]).forEach(function(x){ sc[x.post_id]=(sc[x.post_id]||0)+1; });
+    }
+    rows=all.filter(function(x){ return sc[x.id]; }).sort(function(a,b){ return sc[b.id]-sc[a.id]||Date.parse(b.created_at)-Date.parse(a.created_at); }).slice(0,20);
     if(bQuery){ var lq=bQuery.toLowerCase(); rows=rows.filter(function(x){ return (x.title+' '+(x.body||'')).toLowerCase().indexOf(lq)>=0; }); }
   } else {
     r=await sel('ff_posts',PCOLS,function(q){ q=q.order('created_at',{ascending:false}).range(0,bLimit); q=bFilter!=='all'?q.eq('game',bFilter):q; var w=qWord(bQuery); return w?q.or('title.ilike.*'+w+'*,body.ilike.*'+w+'*'):q; }); if(r.error){ L.innerHTML='<div class="cm-e">'+esc(errText(r.error))+'</div>'; return; }
