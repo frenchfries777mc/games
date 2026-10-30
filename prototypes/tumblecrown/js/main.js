@@ -1,7 +1,7 @@
 // Tumblecrown · © 2026 Frenchfries777 · CC BY-NC-ND 4.0
 // 화면 흐름, 조작, 멀티(친구 초대, PeerJS), 저장
 import { View } from './render.js';
-import { createGame, step, snapshot, chooseBless, carryOver, koPlayer, INTRO_T, HV_DELAY, wallClamp } from './sim.js';
+import { createGame, step, snapshot, chooseBless, carryOver, koPlayer, INTRO_T, HV_DELAY, wallClamp, setupRange } from './sim.js';
 import { PUSH_N, PUSH_T, TEAMS, FLAG_T, RESP_T, ARENA_THEMES, ROLES, ROLE_IDS, COLORS, BOT_NAMES, MAX_PLAYERS, BLESSINGS, CHAPTERS, CH, FOES, MAP, ACHIEVEMENTS, TALK, GEAR_TIERS, GEAR_COST, COSMETICS, MIDB, WEEKLY, weekInfo, VERSION, BUILD, roleLevel, LORE, COMBOS, CURSES, DEEP, DEEP_I, TALK_X, ROLE_PUZ, flagShown } from './data.js';
 import { collide as mapCollide, areaAt, floorCell, MW, MH, CS, cw, useChapter, chapterIndex, SOPEN, openSecret, resetSecrets, hiddenCell, GOPEN, openGate, PDOWN, dropPillar, LIFTH, liftOk, CUT } from './map.js';
 import * as SFX from './sfx.js';
@@ -171,6 +171,7 @@ document.querySelectorAll('[data-back]').forEach(b => b.addEventListener('click'
 function menu(go) {
   homeMsg('');
   if (go === 'solo') { leaveNet(); S.net = 'solo'; S.slots = [meSlot()]; newBots(); openRoom(); }
+  if (go === 'range') { leaveNet(); S.net = 'solo'; S.range = true; S.slots = [meSlot()]; newBots(); openRoom(); }
   else if (go === 'match') { if (needLogin()) return; startMatch(); }
   else if (go === 'host') { if (needLogin()) return; startHost(); }
   else if (go === 'ward') { S.wardTab = S.wardTab || 'skin'; S.wardSel = null; paintWard(); show('sWard'); view.cos = SAVE.cos.on; view.setPreview(SAVE.role, COLORS[SAVE.col | 0].c); }
@@ -266,7 +267,7 @@ function paintRoom() {
   const host = S.net !== 'guest', mine = S.slots.find(s => s.uid === UID) || meSlot(), c = ROLES[mine.role] || ROLES.knight;
   const online = S.net !== 'solo', wait = online && S.ph === 'wait', pickP = online && S.ph === 'pick';
   $('sRoom').classList.toggle('waiting', wait);
-  $('roomTitle').textContent = S.net === 'solo' ? T('봇과 연습') : S.pub ? T('온라인 대전') : host ? T('친구와 대결 · 방장') : T('친구와 대결');
+  $('roomTitle').textContent = S.range ? T('연습장') : S.net === 'solo' ? T('봇과 연습') : S.pub ? T('온라인 대전') : host ? T('친구와 대결 · 방장') : T('친구와 대결');
   $('inviteBtn').style.display = S.net === 'host' && !S.pub && wait ? '' : 'none';
   $('clsList').innerHTML = ROLE_IDS.map((id, k) => '<button data-c="' + id + '"' + (mine.role === id ? ' class="on"' : '') + '><i>' + (k + 1) + '</i><b>' + ROLES[id].name + '</b></button>').join('');
   $('clsList').querySelectorAll('button').forEach(el => el.onclick = () => { SFX.play('click'); SAVE.role = el.dataset.c; save(); pick(); });
@@ -288,7 +289,7 @@ addEventListener('keydown', e => { if (S.scr !== 'sRoom' || (S.net !== 'solo' &&
 // 사람 + 봇 목록 (봇은 남은 색과 직업을 받아요)
 function roster() {
   const out = S.slots.map((s, i) => Object.assign({}, s, { team: i % 2 }));
-  const nb = S.net === 'solo' ? Math.max(0, MAX_PLAYERS - out.length) : 0, br = S.botRoles || ROLE_IDS;
+  const nb = S.net === 'solo' && !S.range ? Math.max(0, MAX_PLAYERS - out.length) : 0, br = S.botRoles || ROLE_IDS;
   for (let i = 0; i < nb; i++) out.push({ bot: true, name: BOT_NAMES[i % BOT_NAMES.length], role: br[i % br.length], col: 0, team: out.length % 2 });
   return out;
 }
@@ -361,7 +362,7 @@ async function openInvite() {
 }
 $('invX').onclick = () => $('inv').classList.remove('on');
 $('inv').addEventListener('click', e => { if (e.target === $('inv')) $('inv').classList.remove('on'); });
-$('startBtn').onclick = () => { SFX.unlock(); SFX.play('click'); if (S.net !== 'solo') return; if (roster().length < 2) return; beginGame(); };
+$('startBtn').onclick = () => { SFX.unlock(); SFX.play('click'); if (S.net !== 'solo') return; if (roster().length < 2 && !S.range) return; beginGame(); };
 
 /* ---------- 멀티: 친구 초대 (허브 초대 링크 ?join=) ---------- */
 function peerOpts() {
@@ -397,6 +398,7 @@ setInterval(() => {
 }, 250);
 function checkFull() { if (S.net === 'host' && !S.G && S.ph === 'wait' && S.slots.length >= S.cap) { S.ph = 'pick'; S.pickT = PICK_T; S.rdy = {}; S.lastLeft = null; for (const sl of S.slots) if (sl.bot) sl.rdT = 1 + Math.random() * 3; SFX.play('click'); } }
 function leaveNet() {
+  S.range = false;
   S.ph = null; S.pub = false; S.rdy = {}; S.mg = (S.mg | 0) + 1;
   hubRoom(false); cancelInvites();
   if (S.peer) { try { S.peer.destroy(); } catch (e) { } }
@@ -545,6 +547,7 @@ function beginGame(prevG) {
   { const wk = !!S.wk && !prevG && S.chSel !== DEEP_I, was = WEEKLY.on; WEEKLY.on = wk; if (wk) { const w = weekInfo(); WEEKLY.id = w.id; WEEKLY.curses = w.curses; S.chSel = w.ch; } if (wk || was) useChapter(S.chSel, true); }
   if (!prevG) S.chSel = Math.random() * CHAPTERS.length | 0;   // 지도는 판마다 무작위 (온라인은 방장이 골라 모두에게 알려요)
   S.G = createGame(sl, (Math.random() * 4e9) >>> 0, S.chSel);
+  if (S.range) { S.G.range = true; setupRange(S.G); toast(T('연습장이에요. 허수아비를 쳐 보세요. 나가기를 누르면 직업을 바꿀 수 있어요.'), 6000); }
   S.G.lite = !!S.lite; 
   S.G.players.forEach((p, i) => { p.uid = sl[i].uid; });
   if (prevG) carryOver(S.G, prevG);
@@ -1199,7 +1202,7 @@ function drawOverlay(dt) {
   oc.clearRect(0, 0, innerWidth, innerHeight);
   const sn = S.snap; if (!sn || S.scr === 'sIntro') return;
   S.rspHit = [];
-  if (sn.tf && S.scr === '' && sn.ph !== 'won') { teamHud(sn); respawnPanel(sn); }
+  if (sn.tf && !sn.rg && S.scr === '' && sn.ph !== 'won') { teamHud(sn); respawnPanel(sn); }
   oc.textAlign = 'center'; oc.textBaseline = 'middle';
   // 적 체력
   for (const e of sn.en) {
