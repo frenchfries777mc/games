@@ -3,7 +3,7 @@
 
 import { T } from './tr.js';
 
-export const VERSION = 'v0.1', BUILD = 39;
+export const VERSION = 'v0.1', BUILD = 40;
 
 export const ROLES = {
   knight: {
@@ -376,7 +376,13 @@ const ARENAS = [
     fl: [[12, 36], [56, 62]], mid: [[56, 36], [20, 36]], pil: [[56, 26], [20, 30], [40, 24], [8, 8]] },
   { name: '돌담 마을', line: '돌담이 마을처럼 이어져 있어요. 골목으로 돌아가 뒤를 쳐요.', theme: 'forest',
     walls: [[28, 4, 14, 3], [28, 4, 3, 10], [46, 14, 12, 3], [46, 14, 3, 10], [22, 24, 10, 3], [16, 30, 3, 6], [40, 28, 3, 8]],
-    fl: [[10, 40], [38, 58]], mid: [[56, 36], [34, 34]], pil: [[20, 10], [36, 20], [52, 8], [24, 34]] }
+    fl: [[10, 40], [38, 58]], mid: [[56, 36], [34, 34]], pil: [[20, 10], [36, 20], [52, 8], [24, 34]] },
+  { name: '얼음 호수', line: '가운데 얼음 호수를 빙 둘러 길이 나 있어요. 호수 가의 깃발이 승부처예요.', theme: 'frost',
+    walls: [[22, 14, 24, 3], [22, 14, 3, 14], [8, 30, 10, 3], [40, 4, 3, 8], [30, 26, 6, 6]],
+    fl: [[10, 42], [30, 62]], mid: [[56, 36], [44, 22]], pil: [[14, 12], [30, 36], [50, 10], [6, 24]] },
+  { name: '심연 다리', line: '허공 위에 놓인 좁은 다리와 돌섬을 건너 싸워요. 길목이 좁아 길목을 지키는 쪽이 유리해요.', theme: 'deep',
+    walls: [[18, 6, 16, 10], [36, 4, 3, 12], [8, 24, 16, 3], [40, 20, 14, 3], [30, 30, 3, 8], [46, 6, 8, 6]],
+    fl: [[12, 44], [30, 48]], mid: [[56, 36], [44, 30]], pil: [[30, 18], [50, 32], [8, 36], [24, 12]] }
 ];
 function arenaMap(def) {
   const m = genMap(777, [{ name: T('전장'), line: T(def.line), boss: 1 }], { noSecret: 1, noMimic: 1, st: { cols: 1 } });
@@ -405,7 +411,7 @@ function arenaMap(def) {
 }
 export const CHAPTERS = ARENAS.map((d, i) => ({ id: i + 1, pvp: 1, title: T(d.name), place: T(d.name), diff: 1, introT: 3.5, boss: {}, theme: d.theme, map: arenaMap(d) }));
 // 투기장 분위기: 판마다 고르거나 무작위 (바닥·벽·하늘 색이 달라져요)
-export const ARENA_THEMES = [{ id: 'dungeon', name: T('지하 투기장') }, { id: 'forest', name: T('숲') }, { id: 'frost', name: T('얼음 성') }, { id: 'temple', name: T('불의 사원') }, { id: 'abyss', name: T('심연') }];
+export const ARENA_THEMES = [{ id: 'dungeon', name: T('지하 투기장') }, { id: 'forest', name: T('숲') }, { id: 'frost', name: T('얼음 성') }, { id: 'temple', name: T('불의 사원') }, { id: 'abyss', name: T('심연') }, { id: 'deep', name: T('끝없는 심연') }];
 // 게임 중 대사: 장마다 구역에 처음 들어가면(숫자는 구역 순서), boss는 보스가 나타날 때
 // 기사는 하오체, 궁수는 반말, 사제는 존댓말, 종자는 밝은 해요체로 말해요
 export const TALK = [
@@ -626,8 +632,10 @@ export const GEAR_COST = [0, 120, 320];
 // 겉모습 꾸미기: 능력치는 그대로, 명예로 사서 모든 역할에 입혀요
 export const COSMETICS = {
   cape: { name: T('망토 색'), items: [{ id: '', name: T('기본'), cost: 0 }, { id: 'crimson', name: T('진홍'), cost: 60, col: 0xa02030 }, { id: 'forest', name: T('숲 녹색'), cost: 60, col: 0x2f6a3a }, { id: 'violet', name: T('보랏빛'), cost: 90, col: 0x6a3a9a }, { id: 'dawn', name: T('새벽 금빛'), cost: 160, col: 0xd4a63a }] },
-  helm: { name: T('투구 장식'), items: [{ id: '', name: T('기본'), cost: 0 }, { id: 'plume', name: T('붉은 깃털'), cost: 80 }, { id: 'horns', name: T('뼈 뿔'), cost: 100 }, { id: 'wreath', name: T('월계관'), cost: 120 }, { id: 'crown', name: T('작은 왕관'), cost: 220 }] },
-  emblem: { name: T('방패 문장'), items: [{ id: '', name: T('기본'), cost: 0 }, { id: 'cross', name: T('십자'), cost: 70 }, { id: 'star', name: T('별'), cost: 90 }, { id: 'flame', name: T('불꽃'), cost: 110 }, { id: 'moon', name: T('달'), cost: 140 }] }
+  helm: { name: T('투구 장식'), items: [{ id: '', name: T('기본'), cost: 0 }, { id: 'plume', name: T('붉은 깃털'), cost: 80 }, { id: 'horns', name: T('뼈 뿔'), cost: 100 }, { id: 'wreath', name: T('월계관'), cost: 120 }, { id: 'crown', name: T('작은 왕관'), cost: 220 }, { id: 'halo', name: T('빛 고리'), cost: 260 }, { id: 'antlers', name: T('사슴뿔'), cost: 140 }] },
+  emblem: { name: T('방패 문장'), items: [{ id: '', name: T('기본'), cost: 0 }, { id: 'cross', name: T('십자'), cost: 70 }, { id: 'star', name: T('별'), cost: 90 }, { id: 'flame', name: T('불꽃'), cost: 110 }, { id: 'moon', name: T('달'), cost: 140 }, { id: 'skull', name: T('해골'), cost: 120 }, { id: 'leaf', name: T('잎사귀'), cost: 90 }] },
+  skin: { name: T('스킨'), items: [{ id: '', name: T('기본'), cost: 0 }, { id: 'shadow', name: T('칠흑'), cost: 240, b: 0x2c2a36, l: 0x1c1a24, c: 0x6a3a9a }, { id: 'snow', name: T('눈서리'), cost: 240, b: 0xdce6f2, l: 0x8a9ab0, c: 0x6ab0e8 }, { id: 'ember', name: T('불씨'), cost: 300, b: 0xb0381a, l: 0x4a1c12, c: 0xff8a2a }, { id: 'gilded', name: T('황금빛'), cost: 420, b: 0xc8a040, l: 0x6a5420, c: 0xfff0b0 }, { id: 'mint', name: T('박하빛'), cost: 200, b: 0x4ab89a, l: 0x2a5a52, c: 0xd8fff0 }] },
+  back: { name: T('등 장식'), items: [{ id: '', name: T('없음'), cost: 0 }, { id: 'banner', name: T('등깃발'), cost: 150 }, { id: 'wings', name: T('작은 날개'), cost: 320 }, { id: 'lantern', name: T('등불'), cost: 180 }] }
 };
 export const GEAR_BONUS = { weapon: [0, 0.1, 0.22], armor: [0, 15, 35] };
 export function roleLevel(xp) { return Math.min(10, 1 + Math.floor(Math.sqrt((xp || 0) / 25))); }
