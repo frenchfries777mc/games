@@ -173,7 +173,7 @@ async function board(){
   var p=$('.cm-p[data-p=board]'); if(!p) return;
   devOpt();
   if(!p.dataset.ready){ p.dataset.ready='1';
-    p.innerHTML='<div class="cm-bar"><div class="cm-f"><button data-f="all" class="on">전체</button><button data-f="hot">🔥 인기</button><button data-f="free">자유</button>'+gBtns()+'<button data-f="devlog">🛠️ 개발자 일지</button></div><button class="cm-btn cm-new">✏️ 글쓰기</button></div>'+
+    p.innerHTML='<div class="cm-bar"><div class="cm-f"><button data-f="all" class="on">전체</button><button data-f="hot">🔥 인기</button><button data-f="free">자유</button><button data-f="mine">👤 내 글</button>'+gBtns()+'<button data-f="devlog">🛠️ 개발자 일지</button></div><button class="cm-btn cm-new">✏️ 글쓰기</button></div>'+
       '<form class="cm-q" role="search"><input type="search" maxlength="40" placeholder="🔍 제목 · 내용으로 글 찾기" autocomplete="off"></form>'+
       '<form class="cm-w" style="display:none"><select name="g">'+GOPT+'</select><input name="t" maxlength="80" placeholder="제목" required><textarea name="b" maxlength="4000" rows="6" placeholder="내용"></textarea><div class="cm-pv"></div><div class="cm-m"></div><div class="cm-acts"><label class="cm-btn2 cm-pick">🖼️ 사진<input type="file" accept="image/*" multiple hidden></label><span class="cm-sp"></span><button type="button" class="cm-btn2 cm-cancel">취소</button><button class="cm-btn">올리기</button></div></form>'+
       '<div class="cm-list"></div><button class="cm-btn2 cm-more" style="display:none">더 보기</button>';
@@ -183,6 +183,11 @@ async function board(){
     var pick=p.querySelector('.cm-pick input'); pick.onchange=function(){ addPend([].slice.call(this.files||[])); this.value=''; };
     p.querySelector('.cm-w textarea').addEventListener('paste',function(e){ var fs=filesOf(e); if(fs.length){ e.preventDefault(); addPend(fs); } });
     p.querySelector('.cm-more').onclick=function(){ bLimit+=20; listPosts(); };
+    /* 글 임시저장: 쓰던 글 제목·내용·게임을 이 기기에 남겨 두고, 닫았다가 다시 열면 이어 써요 (사진은 남지 않아요) */
+    (function(){ var w=p.querySelector('.cm-w'), K='ff.board.draft';
+      try{ var dr=JSON.parse(localStorage.getItem(K)||'null'); if(dr&&(dr.t||dr.b)){ w.t.value=dr.t||''; w.b.value=dr.b||''; if(dr.g&&w.g.querySelector('option[value="'+dr.g+'"]')) w.g.value=dr.g; w.style.display=''; w.querySelector('.cm-m').textContent='쓰던 글을 불러왔어요.'; } }catch(e){}
+      function save(){ try{ if(w.t.value||w.b.value) localStorage.setItem(K,JSON.stringify({g:w.g.value,t:w.t.value,b:w.b.value})); else localStorage.removeItem(K); }catch(e){} }
+      w.addEventListener('input',save); w.addEventListener('change',save); })();
     var qi=p.querySelector('.cm-q input'), qt=null; p.querySelector('.cm-q').onsubmit=function(e){ e.preventDefault(); clearTimeout(qt); bQuery=qi.value.trim(); bLimit=20; listPosts(); };
     qi.oninput=function(){ clearTimeout(qt); qt=setTimeout(function(){ var v=qi.value.trim(); if(v===bQuery) return; bQuery=v; bLimit=20; listPosts(); },350); };
     p.querySelector('.cm-w').onsubmit=async function(e){ e.preventDefault(); var f=this, m=f.querySelector('.cm-m'); if(!me) return login(); if(bWriting) return;
@@ -190,7 +195,7 @@ async function board(){
       var urls=[]; if(pend.length){ m.textContent='사진 올리는 중...'; try{ for(var i=0;i<pend.length;i++) urls.push(await upload(pend[i].f)); }catch(x){ bWriting=false; m.textContent=imgErr(x); return; } }
       var row={title:t, body:b, game:f.g.value}; if(urls.length) row.images=urls;
       var r=await sb.from('ff_posts').insert(row); bWriting=false;
-      if(r.error){ m.textContent=errText(r.error); return; } m.textContent=''; f.reset(); pend=[]; paintPend(); f.style.display='none'; hubSync(); listPosts(); };
+      if(r.error){ m.textContent=errText(r.error); return; } m.textContent=''; f.reset(); try{ localStorage.removeItem('ff.board.draft'); }catch(e){} pend=[]; paintPend(); f.style.display='none'; hubSync(); listPosts(); };
   }
   listPosts();
 }
@@ -218,6 +223,12 @@ async function listPosts(){
     }
     rows=all.filter(function(x){ return sc[x.id]; }).sort(function(a,b){ return sc[b.id]-sc[a.id]||Date.parse(b.created_at)-Date.parse(a.created_at); }).slice(0,20);
     if(bQuery){ var lq=bQuery.toLowerCase(); rows=rows.filter(function(x){ return (x.title+' '+(x.body||'')).toLowerCase().indexOf(lq)>=0; }); }
+  } else if(bFilter==='mine'){
+    if(!me){ L.innerHTML='<div class="cm-e">로그인하면 내가 쓴 글과 댓글 단 글을 모아 볼 수 있어요.</div>'; p.querySelector('.cm-more').style.display='none'; return; }
+    var mc=await sb.from('ff_comments').select('post_id').eq('user_id',me.id).order('created_at',{ascending:false}).limit(200), mids=[]; ((mc&&mc.data)||[]).forEach(function(x){ if(mids.indexOf(x.post_id)<0) mids.push(x.post_id); });
+    r=await sel('ff_posts',PCOLS,function(q){ q=q.order('created_at',{ascending:false}).range(0,bLimit); q=mids.length?q.or('user_id.eq.'+me.id+',id.in.('+mids.join(',')+')'):q.eq('user_id',me.id); var w=qWord(bQuery); return w?q.or('title.ilike.*'+w+'*,body.ilike.*'+w+'*'):q; });
+    if(r.error){ L.innerHTML='<div class="cm-e">'+esc(errText(r.error))+'</div>'; return; }
+    rows=r.data||[]; more=rows.length>bLimit; rows=rows.slice(0,bLimit);
   } else {
     r=await sel('ff_posts',PCOLS,function(q){ q=q.order('created_at',{ascending:false}).range(0,bLimit); q=bFilter!=='all'?q.eq('game',bFilter):q; var w=qWord(bQuery); return w?q.or('title.ilike.*'+w+'*,body.ilike.*'+w+'*'):q; }); if(r.error){ L.innerHTML='<div class="cm-e">'+esc(errText(r.error))+'</div>'; return; }
     rows=r.data||[]; more=rows.length>bLimit; rows=rows.slice(0,bLimit);
@@ -227,7 +238,7 @@ async function listPosts(){
   await loadLikes(rows.map(function(x){ return x.id; }));
   var cnt={}; if(rows.length){ var c=await sb.from('ff_comments').select('post_id').in('post_id',rows.map(function(x){ return x.id; })).limit(2000); ((c&&c.data)||[]).forEach(function(x){ cnt[x.post_id]=(cnt[x.post_id]||0)+1; }); }
   await loadNames(rows.map(function(x){ return x.user_id; }));
-  L.innerHTML=rows.length?'':'<div class="cm-e">'+(bQuery?'검색 결과가 없어요.':(bFilter==='hot'?'아직 좋아요를 받은 글이 없어요.':'아직 글이 없어요. 첫 글을 써 보세요!'))+'</div>';
+  L.innerHTML=rows.length?'':'<div class="cm-e">'+(bQuery?'검색 결과가 없어요.':(bFilter==='hot'?'아직 좋아요를 받은 글이 없어요.':bFilter==='mine'?'아직 내가 쓰거나 댓글 단 글이 없어요.':'아직 글이 없어요. 첫 글을 써 보세요!'))+'</div>';
   rows.forEach(function(x){ var d=document.createElement('div'); d.className='cm-post'+(bOpen===x.id?' open':''); d.dataset.id=x.id; d.dataset.g=x.game||'';
     d.innerHTML='<div class="cm-ph">'+gameTag(x.game)+(bSeen&&Date.parse(x.created_at)>bSeen&&!(me&&me.id===x.user_id)?'<span class="cm-new">NEW</span>':'')+'<b class="cm-t" data-notr>'+mark(x.title)+'</b>'+((x.images||[]).length?'<span class="cm-pic">📷 '+F('사진 {0}장',x.images.length)+'</span>':'')+(cnt[x.id]?'<span class="cm-c">💬 '+cnt[x.id]+'</span>':'')+(likes[x.id]?'<span class="cm-c cm-lc">👍 '+likes[x.id]+'</span>':'')+'</div>'+
       '<div class="cm-meta">'+who(x.user_id)+' · <span>'+esc(ago(x.created_at))+'</span></div>'+(((x.images||[]).filter(okImg)[0])?'<img class="cm-th" alt="" loading="lazy" src="'+esc((x.images||[]).filter(okImg)[0])+'">':'')+((x.body||'').trim()?'<div class="cm-ex">'+esc(String(x.body).replace(/\s+/g,' ').trim().slice(0,90))+'</div>':'')+'<div class="cm-body"></div>';
@@ -587,7 +598,7 @@ function paintCoin(){
     '<span class="cb-s">'+(coin.today?'<span>✓ 오늘 출석 완료</span>':'')+(coin.streak>1?' · <span>'+esc(F('{0}일 연속',coin.streak))+'</span>':'')+'</span></span><button type="button" class="cm-btn2 cb-q">📋 퀘스트</button><button type="button" class="cm-btn cb-go">교환하기</button>';
   b.querySelector('.cb-go').onclick=openCoin; b.querySelector('.cb-q').onclick=function(){ coinTab='q'; openCoin(); };
 }
-var coinTab='ex', coinGame='';
+var coinTab='ex', coinGame='', coinFrom=null;
 var QN={play:'게임 한 판 하기',proto:'프로토타입 한 판 하기',post:'게시물 하나 남기기',trio:'세 종류의 게임 한 판씩 하기',vote:'투표 참여하기',wiki:'위키 둘러보기'}, QH={play:'Beaconfall/Isleport 5분 플레이',trio:'Beaconfall/Isleport 5분 플레이'};
 async function questBox(el){
   var Q=el.querySelector('.cx-q'); if(!Q||!sb) return;
@@ -600,7 +611,7 @@ async function questBox(el){
     d.innerHTML='<span>'+(x.done?'✅ ':'⬜ ')+esc(QN[x.qid]||x.qid)+(QH[x.qid]?' <small class="cx-h">('+esc(QH[x.qid])+')</small>':'')+'</span>'+b;
     var bt=d.querySelector('button'); if(bt) bt.onclick=async function(){ bt.disabled=true; var c=await sb.rpc('ff_quest_claim',{p_qid:x.qid});
       if(c.error){ bt.disabled=false; bt.textContent='다시 눌러 주세요'; return; }
-      var y=(c.data||[])[0]||{}; if(y.coins!=null){ coin.n=y.coins; paintCoin(); } if(y.got>0) coinPop(y.got); hubSync(); openCoin(); };
+      var y=(c.data||[])[0]||{}; if(y.coins!=null){ coinFrom=coin.n||0; coin.n=y.coins; paintCoin(); } if(y.got>0) coinPop(y.got); hubSync(); openCoin(); };
     Q.appendChild(d); });
   if(n>=rows.length&&rows.length) Q.insertAdjacentHTML('beforeend','<div class="cx-ok">🎉 오늘 퀘스트를 모두 끝냈어요!</div>');
 }
@@ -620,6 +631,9 @@ async function openCoin(){
   tabs.onclick=function(e){ var b=e.target.closest('button[data-t]'); if(b) setTab(b.getAttribute('data-t')); };
   setTab(coinTab);
   el.style.display='flex'; questBox(el);
+  if(coinFrom!==null){ var hb=el.querySelector('.cx-have b'), f0=coinFrom, t1=coin.n||0, t0=Date.now(); coinFrom=null;
+    if(hb&&t1>f0){ hb.style.display='inline-block'; hb.style.transition='transform .25s'; hb.style.transform='scale(1.35)'; hb.style.color='#ffd34d';
+      (function tick(){ var k=Math.min(1,(Date.now()-t0)/800); hb.textContent=Math.round(f0+(t1-f0)*k); if(k<1) requestAnimationFrame(tick); else { hb.style.transform=''; setTimeout(function(){ hb.style.color=''; },400); } })(); } }
   var L=el.querySelector('.cx-list'), rr=await sb.from('ff_coin_rates').select('game,unit,per_coin').eq('active',true);
   if(rr.error){ L.innerHTML='<div class="cm-e">'+esc(errText(rr.error))+'</div>'; return; }
   var rates=(rr.data||[]); L.innerHTML=rates.length?'':'<div class="cm-e">아직 바꿀 수 있는 게임이 없어요.</div>';
