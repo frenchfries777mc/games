@@ -487,3 +487,4 @@ patchnotes.json | v536 items[1] | MVP로 뽑히면 얻는 마스터리 포인트
 patchnotes.json | v537 items[0] | 듀얼 마스터리 포인트 조정: 처치 10 → 7 (승리는 10 그대로) | build 537 | 2026-10-30
 patchnotes.json | v538 items[0] | 듀얼 마스터리 포인트 조정: 처치 7 → 5 (승리는 10 그대로) | build 538 | 2026-10-30
 patchnotes.json | v539 items[0] | 리플레이에서 내 체력바가 빨간색(적 색)으로 보이던 것을 내 색(파랑)으로 수정 | build 539 | 2026-10-30
+patchnotes.json | v540 items[0] | 에픽 상자를 사자마자 열지 않고 일반 상자처럼 보관해 두었다가 열기·모두 열기로 열도록 변경 | build 540 | 2026-10-30
