@@ -5523,7 +5523,7 @@ function shuffle(arr){ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.
 /* ===== the version of this file =====
    Different BUILDS of one version meet and play together (room names online-v<ver>-<mode>-<map>-<slot>); different VERSIONS (the 0.x part) never do - the host refuses them (verNo) and the dispatcher answers busy.
    The build is only sent along with the join message and the lobby (for information); the corner of the screen shows it. */
-const GAME_BUILD='build 2026-10-18-v530';
+const GAME_BUILD='build 2026-10-18-v531';
 const GAME_VERSION='0.9', GAME_VERSION_NAME='은하 제국의 황혼';   // 게임 버전 이름: versions.json의 title과 같게 (빌드마다 바꾸지 않음)
 /* version (the 0.x part) vs build: different BUILDS of one version meet and play together, different VERSIONS never do (rooms, quick match, ranked, friend invites, dispatcher).
    Builds before 470 do not send a version, so it is read from the build number (0.9 started at build 458). */
@@ -9029,6 +9029,8 @@ async function clanLoadInvites(){
 let clanTab='my', clanFindQ='', clanDraft={name:'', tag:'', emblem:'🏰', color:'#3fe0c5', intro:'', pick:false, reqLv:0, reqRank:0};
 function clanSafeColor(c){ return /^#[0-9a-f]{6}$/i.test(c||'') ? c : '#3fe0c5'; }
 const CLAN_PREMIUM=[['💎',100,'다이아'],['🌌',150,'은하'],['🔱',200,'삼지창'],['🐲',300,'용'],['☄️',300,'혜성'],['🏯',500,'성']];
+let clanStyleOpen=false;
+function clanLevelOf(xp){ return Math.min(20, 1+Math.floor(Math.sqrt(Math.max(0,+xp||0)/150))); }       // (same as the server's clan_level: more xp every level)
 let clanVaultOpen=false, clanNoticeEdit=false, clanNoticeShown=false, clanRenameEdit=null;   // clanRenameEdit: null | 'name' | 'tag' (the owner is typing a new one)
 function clanSafeEmblem(e){ return (CLAN_EMBLEMS.indexOf(e)!==-1 || CLAN_PREMIUM.some(x=>x[0]===e)) ? e : '🏰'; }
 function clanShowNotice(){ try{ if(clanNoticeShown || !myClan || !myClan.notice) return; clanNoticeShown=true; showAchievementToast({icon:'📢', name:escapeHtmlText(myClan.notice), reward:0}, '['+escapeHtmlText(myClan.tag)+'] 클랜 공지'); }catch(e){} }
@@ -9083,7 +9085,7 @@ async function clanJoin(id, btn, viaInvite){
     try{ await sbUploadStats(); }catch(e){}      // (the server checks the same numbers from the profile: bring it up to date first)
   }
   const m=await sb.from('clan_members').insert({user_id:sbUser.id, clan_id:id, role:'member', uname:(myNameSet&&myName)?myName:sbUser.username});
-  if(m.error){ clanNotice(/requirement/i.test(m.error.message||'') ? '가입 조건을 채우지 못했어요' : '가입할 수 없어요'); if(btn) btn.disabled=false; return; }
+  if(m.error){ clanNotice(/requirement/i.test(m.error.message||'') ? '가입 조건을 채우지 못했어요' : (/full/i.test(m.error.message||'') ? '클랜 인원이 가득 찼어요' : '가입할 수 없어요')); if(btn) btn.disabled=false; return; }
   await clanLoadMine(); clanTab='my'; renderClanScreen();
 }
 async function renderClanScreen(){
@@ -9158,14 +9160,17 @@ async function renderClanMy(pane){
     clanQ(x=>sb.from('clans').select('id,name,tag,wins,score,emblem,color,intro,owner,notice,treasury,unlocks'+x).eq('id', myClan.id).maybeSingle())
   ]);
   const members=(mr&&mr.data)||[]; if(cr && cr.data) Object.assign(myClan, cr.data);
+  let cx=null; const mx={}; try{ const [xa,xb]=await Promise.all([sb.from('clans').select('xp').eq('id', myClan.id).maybeSingle(), sb.from('clan_members').select('user_id,contrib').eq('clan_id', myClan.id)]); if(xa && !xa.error && xa.data) cx=+xa.data.xp||0; if(xb && !xb.error && Array.isArray(xb.data)) xb.data.forEach(r=>{ mx[r.user_id]=+r.contrib||0; }); }catch(e){}      // (xp / contrib exist after supabase-stickseum-clan-v2.sql: without it the level and contribution rows stay hidden)
+  const hasContrib=(cx!==null);
+  if(hasContrib) members.sort((a,b)=>(mx[b.user_id]||0)-(mx[a.user_id]||0));
   pane.innerHTML='<div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(300px,1fr)); gap:14px; align-items:start;"><div id="clanLeft" style="display:flex; flex-direction:column; gap:8px;"></div><div id="clanRight" style="display:flex; flex-direction:column; gap:8px;"></div></div>';
   const L=document.getElementById('clanLeft'), R=document.getElementById('clanRight');
   const lt=document.createElement('div'); lt.style.cssText='font-weight:800; font-size:14px; text-shadow:0 2px 8px rgba(0,0,0,.9);'; lt.textContent='클랜원 · 클랜 토큰'; L.appendChild(lt);
   const pn={}; try{ const ids=members.map(m=>m.user_id).filter(Boolean); if(ids.length){ const pr=await sb.from('profiles').select('id,display_name').in('id', ids); ((pr&&pr.data)||[]).forEach(x=>{ if(x.display_name) pn[x.id]=x.display_name; }); } }catch(e){}     // the nickname people have NOW (the clan list keeps the one from when they joined)
-  const isOwner=(myClan.role==='owner');
-  members.forEach(m=>{
-    const nm=pn[m.user_id]||m.uname||'?', canKick=isOwner && m.role!=='owner' && sbUser && m.user_id!==sbUser.id;
-    const row=clanRowBtn(m.role==='owner'?'👑':'👤', nm, '클랜 토큰 '+(m.score==null?0:m.score)+' · 눌러서 프로필 보기', '');
+  const isOwner=(myClan.role==='owner'), isOfficer=(myClan.role==='officer'), canManage=isOwner||isOfficer;
+  members.forEach((m,mi)=>{
+    const nm=pn[m.user_id]||m.uname||'?', isMe=!!(sbUser && m.user_id===sbUser.id), canOwn=isOwner && m.role!=='owner' && !isMe, canKick=canManage && m.role!=='owner' && !(isOfficer && m.role==='officer') && !isMe;
+    const row=clanRowBtn(m.role==='owner'?'👑':(m.role==='officer'?'🎖️':'👤'), nm, (hasContrib?((mi+1)+'위 · 기여도 '+(mx[m.user_id]||0)+' · '):'')+'클랜 토큰 '+(m.score==null?0:m.score)+' · 눌러서 프로필 보기', '');
     row.onclick=()=>{ if(m.user_id) openPublicProfile(m.user_id); };      // the member's Stickseum profile (the same card as in the friend list)
     if(canKick){      // 클랜 추방: only the owner (RPC clan_kick, see supabase-clan-kick.sql); its own little button so it never opens the profile
       const kb=document.createElement('span'); kb.textContent='추방'; kb.setAttribute('role','button');
@@ -9178,7 +9183,7 @@ async function renderClanMy(pane){
       };
       row.appendChild(kb);
     }
-    if(canKick){      // 클랜장 위임: hands the clan over to this member (RPC clan_transfer, see supabase-clan-transfer.sql)
+    if(canOwn){      // 클랜장 위임: hands the clan over to this member (RPC clan_transfer, see supabase-clan-transfer.sql)
       const tb=document.createElement('span'); tb.textContent='👑 위임'; tb.setAttribute('role','button');
       tb.style.cssText='margin-left:auto; padding:6px 12px; border-radius:8px; border:1px solid #ffd34d; color:#ffd34d; font-weight:800; font-size:13px; flex:0 0 auto;';
       tb.onclick=async(e)=>{ e.stopPropagation();
@@ -9189,14 +9194,25 @@ async function renderClanMy(pane){
       };
       const kb0=row.querySelector('span[role=button]'); if(kb0){ kb0.style.marginLeft='8px'; row.insertBefore(tb, kb0); } else row.appendChild(tb);
     }
+    if(canOwn && hasContrib){      // 부리더: the owner names up to 3 officers (RPC clan_set_officer): they can kick plain members and write the notice
+      const isOff=(m.role==='officer'), ob=document.createElement('span'); ob.textContent=isOff?'🎖️ 해임':'🎖️ 부리더'; ob.setAttribute('role','button');
+      ob.style.cssText='padding:6px 12px; border-radius:8px; border:1px solid #7ec8ff; color:#7ec8ff; font-weight:800; font-size:13px; flex:0 0 auto;';
+      ob.onclick=async(e)=>{ e.stopPropagation();
+        const r=await sb.rpc('clan_set_officer',{p_user:m.user_id, p_on:!isOff});
+        if(r&&r.error){ clanNotice(isOff?'해임하지 못했어요':'부리더는 최대 3명이에요'); return; }
+        clanNotice(nm+(isOff?' 님을 부리더에서 해임했어요':' 님이 부리더가 됐어요')); renderClanMy(pane);
+      };
+      row.insertBefore(ob, row.querySelector('span[role=button]')||null);
+    }
+    row.querySelectorAll('span[role=button]').forEach((b,bi)=>{ b.style.marginLeft=bi?'8px':'auto'; });
     L.appendChild(row);
   });
   const myRow=members.find(m=>sbUser && m.user_id===sbUser.id), myTok=(myRow&&myRow.score)||0;
   const rerender=()=>renderClanMy(pane), fail=(r,msg)=>{ clanNotice(msg||'할 수 없어요'); };
-  if(clanNoticeEdit && isOwner){
+  if(clanNoticeEdit && canManage){
     R.appendChild(clanEditRow('📢','클랜 공지 (최대 40자, 클랜원이 접속할 때 보여요)', myClan.notice||'', 40, async v=>{ const r=await sb.rpc('clan_set_notice',{p_text:v.trim().slice(0,40)}); clanNoticeEdit=false; if(r&&r.error) fail(r,'공지를 저장하지 못했어요'); else myClan.notice=v.trim().slice(0,40); rerender(); }, ()=>{ clanNoticeEdit=false; rerender(); }));
   } else {
-    const nb=clanRowBtn('📢','클랜 공지', myClan.notice||(isOwner?'눌러서 공지를 적어요':'공지가 없어요'), isOwner?'':'pointer-events:none;'); if(isOwner) nb.onclick=()=>{ clanNoticeEdit=true; rerender(); }; R.appendChild(nb);
+    const nb=clanRowBtn('📢','클랜 공지', myClan.notice||(canManage?'눌러서 공지를 적어요':'공지가 없어요'), canManage?'':'pointer-events:none;'); if(canManage) nb.onclick=()=>{ clanNoticeEdit=true; rerender(); }; R.appendChild(nb);
   }
   const prof=clanRowBtn('', '['+myClan.tag+'] '+myClan.name, myClan.intro||'소개가 없어요', 'pointer-events:none;');
   prof.querySelector('.mrIcon').innerHTML=clanEmblemHtml(myClan,40); R.appendChild(prof);
@@ -9206,6 +9222,16 @@ async function renderClanMy(pane){
     else { const nb=clanRowBtn('✏️','클랜 이름 바꾸기', myClan.name); nb.onclick=()=>{ clanRenameEdit='name'; rerender(); }; R.appendChild(nb); }
     if(clanRenameEdit==='tag') R.appendChild(clanEditRow('🏷️','클랜 태그 바꾸기 (2~4자, 영문·숫자·한글)', myClan.tag, 4, v=>{ const tg=cleanClanTag(v); if(tg.length<2){ clanNotice('태그를 2자 이상으로 정해주세요'); return; } rename(String(myClan.name), tg); }, ()=>{ clanRenameEdit=null; rerender(); }));
     else { const tb=clanRowBtn('🏷️','클랜 태그 바꾸기', '['+myClan.tag+']'); tb.onclick=()=>{ clanRenameEdit='tag'; rerender(); }; R.appendChild(tb); }
+  }
+  if(hasContrib){ const clv=clanLevelOf(cx); R.appendChild(clanInfoRow('🏰','클랜 레벨 Lv.'+clv+(clv>=20?' (최대)':''), '경험치 '+cx+(clv>=20?'':' / '+(150*clv*clv))+' · 인원 상한 '+(20+2*(clv-1))+'명 · 경기와 기부로 올라요')); }
+  if(isOwner){      // 엠블럼·색: the owner picks them again any time (RPC clan_set_style)
+    const sb2=clanRowBtn('🎨','엠블럼·색 바꾸기', clanStyleOpen?'골라서 눌러요':'눌러서 열기'); sb2.onclick=()=>{ clanStyleOpen=!clanStyleOpen; rerender(); }; R.appendChild(sb2);
+    if(clanStyleOpen){
+      const pn2=document.createElement('div'); pn2.style.cssText='display:flex; flex-wrap:wrap; gap:8px;'; R.appendChild(pn2);
+      const setSt=async(em,co)=>{ const r=await sb.rpc('clan_set_style',{p_emblem:em||null, p_color:co||null}); if(r&&r.error){ clanNotice('바꾸지 못했어요 (서버에 supabase-stickseum-clan-v2.sql을 적용했는지 확인해 주세요)'); return; } if(em) myClan.emblem=em; if(co) myClan.color=co; rerender(); };
+      for(const e of CLAN_EMBLEMS){ const eb=document.createElement('button'); eb.className='modeRow'; eb.style.cssText='width:auto; padding:8px 12px; gap:0;'+(myClan.emblem===e?' border-color:#3fe0c5; background:#1d2a2a;':''); eb.textContent=e; eb.onclick=()=>setSt(e,null); pn2.appendChild(eb); }
+      for(const c of CLAN_COLORS){ const cb=document.createElement('button'); cb.className='modeRow'; cb.style.cssText='width:auto; padding:8px 12px; gap:0;'+(myClan.color===c?' border-color:#fff;':''); cb.innerHTML='<span style="display:inline-block; width:22px; height:22px; border-radius:50%; background:'+c+';"></span>'; cb.onclick=()=>setSt(null,c); pn2.appendChild(cb); }
+    }
   }
   R.appendChild(clanInfoRow('⭐','클랜 점수', String(myClan.score==null?1000:myClan.score)+' (클랜 대항전으로 오르고 내려가요)'));
   if(clanReqOk){      // 가입 조건: ONE row (everybody sees the summary); the leader opens it for the three detail rows
@@ -9225,7 +9251,7 @@ async function renderClanMy(pane){
   const vb=clanRowBtn('🏦','클랜 창고','창고 '+(myClan.treasury||0)+' · 내 토큰 '+myTok+(clanVaultOpen?'':' · 눌러서 열기')); vb.onclick=()=>{ clanVaultOpen=!clanVaultOpen; rerender(); }; R.appendChild(vb);
   if(clanVaultOpen){
     const vp=document.createElement('div'); vp.style.cssText='display:flex; flex-direction:column; gap:8px;'; R.appendChild(vp);
-    for(const amt of [10,50]){ const dr=clanRowBtn('🪙','토큰 '+amt+' 기부','내 클랜 토큰을 창고에 넣어요', 'padding:10px 16px;'); dr.onclick=async()=>{ if(myTok<amt){ clanNotice('내 클랜 토큰이 부족해요'); return; } const r=await sb.rpc('clan_donate',{p_amount:amt}); if(r&&r.error) clanNotice('기부하지 못했어요'); else rerender(); }; vp.appendChild(dr); }
+    for(const amt of [10,50]){ const dr=clanRowBtn('🪙','토큰 '+amt+' 기부','내 클랜 토큰을 창고에 넣어요', 'padding:10px 16px;'); dr.onclick=async()=>{ if(myTok<amt){ clanNotice('내 클랜 토큰이 부족해요'); return; } const r=await sb.rpc('clan_donate',{p_amount:amt}); if(r&&r.error) clanNotice('기부하지 못했어요'); else { try{ await sb.rpc('clan_contrib_add',{p_amount:Math.round(amt/2)}); }catch(e){} rerender(); } }; vp.appendChild(dr); }
     const have=(myClan.unlocks||'').split(',');
     for(const [e,cost,nm] of CLAN_PREMIUM){
       const un=have.indexOf(e)!==-1, cur=(myClan.emblem===e);
@@ -10657,6 +10683,9 @@ function updateDuelScoreUI(){
   const parts=ids.filter(id=>!(players[id] && (players[id].isMinion||players[id].isGuard||players[id].isClone))).map(id=>(players[id]?players[id].name:'?')+' '+(duelScores[id]||0));
   el.textContent=parts.join(' : ');
 }
+async function clanContribReport(won){       // 클랜 기여도: +1 for a played online match, +3 for a won one (RPC clan_contrib_add, see supabase-stickseum-clan-v2.sql; the server lets one count through per 15 s)
+  try{ if(!sb||!sbUser||!myClan) return; await sb.rpc('clan_contrib_add',{p_amount:won?3:1}); }catch(e){}
+}
 async function clanMemberReport(won){
   try{ if(!sb||!sbUser||!myClan) return; const r=await sb.rpc('clan_member_report',{p_won:!!won}); if(r && !r.error && r.data) pushSystemLine('🏰 클랜 토큰 '+(won?'+':'-')+'10'); }catch(e){}
 }
@@ -10676,6 +10705,8 @@ function showMatchEndOverlay(resultText, winnerIds, forcedPick){
   if(DED_HOST){ matchEnded=true; lastWinnerIds=winnerIds||[]; return; }          // (the dedicated host plays nothing: no rewards, no screen)
   try{ const hum=Object.values(players).filter(q=>q && !q.isBot && !q.isMinion && !q.isBoss && !q.isSpectator);
     if(onlineClan && currentMode==='online' && gameMode==='duel' && !practiceMode && !highlightViewing && myClan && String(onlineClan)===clanMyId() && hum.length===2 && hum.every(q=>q.clan===clanMyTag()) && winnerIds && winnerIds.length) clanMemberReport(winnerIds.indexOf(myId)!==-1); }catch(e){}
+  try{ const hum=Object.values(players).filter(q=>q && !q.isBot && !q.isMinion && !q.isBoss && !q.isSpectator);
+    if(currentMode==='online' && !practiceMode && !highlightViewing && myClan && hum.length>=2 && winnerIds) clanContribReport(winnerIds.indexOf(myId)!==-1); }catch(e){}
   try{ rpRecFinish(resultText, winnerIds); }catch(e){}
   matchEnded=true; lastWinnerIds=winnerIds||[];
   elimState=null; document.getElementById('elimOverlay').style.display='none'; document.getElementById('elimExitBtn').style.display='none';
