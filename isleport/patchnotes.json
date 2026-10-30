@@ -2,6 +2,64 @@
  "notes": [
   {
    "date": "2026-10-30",
+   "build": "v0.2 build 72",
+   "title": "개척지 가공소와 마차",
+   "items": [
+    "개척 시설 자리가 4칸에서 6칸으로 늘어남",
+    "개척 방앗간과 개척 양조장 추가: 재료를 넣어 두면 섬에서 밀가루와 와인을 만듦",
+    "마차 정거장 추가: 섬의 다 익은 작물과 모인 물건을 알아서 창고로 실어 가고 씨앗이 있으면 다시 심음",
+    "관개 우물과 마차 정거장은 섬마다 하나만 지을 수 있음"
+   ],
+   "tr": {
+    "en": {
+     "title": "Frontier workshops and carts",
+     "items": [
+      "Frontier facility slots grew from 4 to 6",
+      "Added a frontier mill and winery: load ingredients and they make flour and wine on the isle",
+      "Added a cart station: it hauls ripe crops and stored goods to your warehouse and replants if you have seeds",
+      "Only one irrigation well and one cart station per isle"
+     ]
+    },
+    "ja": {
+     "title": "Frontier workshops and carts",
+     "items": [
+      "Frontier facility slots grew from 4 to 6",
+      "Added a frontier mill and winery: load ingredients and they make flour and wine on the isle",
+      "Added a cart station: it hauls ripe crops and stored goods to your warehouse and replants if you have seeds",
+      "Only one irrigation well and one cart station per isle"
+     ]
+    },
+    "es": {
+     "title": "Frontier workshops and carts",
+     "items": [
+      "Frontier facility slots grew from 4 to 6",
+      "Added a frontier mill and winery: load ingredients and they make flour and wine on the isle",
+      "Added a cart station: it hauls ripe crops and stored goods to your warehouse and replants if you have seeds",
+      "Only one irrigation well and one cart station per isle"
+     ]
+    },
+    "fr": {
+     "title": "Frontier workshops and carts",
+     "items": [
+      "Frontier facility slots grew from 4 to 6",
+      "Added a frontier mill and winery: load ingredients and they make flour and wine on the isle",
+      "Added a cart station: it hauls ripe crops and stored goods to your warehouse and replants if you have seeds",
+      "Only one irrigation well and one cart station per isle"
+     ]
+    },
+    "de": {
+     "title": "Frontier workshops and carts",
+     "items": [
+      "Frontier facility slots grew from 4 to 6",
+      "Added a frontier mill and winery: load ingredients and they make flour and wine on the isle",
+      "Added a cart station: it hauls ripe crops and stored goods to your warehouse and replants if you have seeds",
+      "Only one irrigation well and one cart station per isle"
+     ]
+    }
+   }
+  },
+  {
+   "date": "2026-10-30",
    "build": "v0.2 build 71",
    "title": "중세 마을과 섬 주민",
    "items": [
