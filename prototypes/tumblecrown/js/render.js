@@ -1417,22 +1417,30 @@ export class View {
     if (!sp) { if (G) G.visible = false; return; }
     if (!G || G.parent !== this.scene) {
       G = this.aimG = new THREE.Group(); G.renderOrder = 50;
-      const mat = o => new THREE.MeshBasicMaterial({ color: 0x5ff0c0, transparent: true, opacity: o, depthTest: false, depthWrite: false });
+      const mat = o => new THREE.MeshBasicMaterial({ color: 0x5ff0c0, transparent: true, opacity: o, depthTest: false, depthWrite: false, side: THREE.DoubleSide });
       const ln = new THREE.Mesh(new THREE.BoxGeometry(1, 0.04, 1), mat(0.32)), ed = new THREE.Mesh(new THREE.BoxGeometry(1, 0.05, 1), mat(0.7));
       const disc = new THREE.Mesh(new THREE.CircleGeometry(1, 40), mat(0.28)), ring = new THREE.Mesh(new THREE.RingGeometry(0.92, 1, 40), mat(0.85));
-      disc.rotation.x = ring.rotation.x = -Math.PI / 2; for (const m of [ln, ed, disc, ring]) { m.renderOrder = 50; m.frustumCulled = false; G.add(m); }
-      G.userData = { ln, ed, disc, ring }; this.scene.add(G);
+      const fan = new THREE.Mesh(new THREE.CircleGeometry(1, 3), mat(0.3));
+      disc.rotation.x = ring.rotation.x = -Math.PI / 2; for (const m of [ln, ed, disc, ring, fan]) { m.renderOrder = 50; m.frustumCulled = false; G.add(m); }
+      G.userData = { ln, ed, disc, ring, fan, fanArc: 0 }; this.scene.add(G);
     }
     const U = G.userData; G.visible = true;
-    const line = sp.k === 'line', ox = Math.cos(a), oz = Math.sin(a);
-    U.ln.visible = U.ed.visible = line; U.disc.visible = U.ring.visible = !line;
+    const k = sp.k, line = k === 'line', ox = Math.cos(a), oz = Math.sin(a);
+    U.ln.visible = U.ed.visible = line || k === 'wall'; U.disc.visible = U.ring.visible = k === 'circle' || k === 'self'; U.fan.visible = k === 'fan';
     if (line) {
-      const off = sp.off || 0.6, L = sp.len, w = sp.w;
-      U.ln.position.set(px + ox * (off + L / 2), 0.14, pz + oz * (off + L / 2)); U.ln.rotation.y = -a; U.ln.scale.set(L, 1, w);
-      U.ed.position.set(px + ox * (off + L), 0.15, pz + oz * (off + L)); U.ed.rotation.y = -a; U.ed.scale.set(0.35, 1, w + 0.5);
+      const dir = sp.rev ? -1 : 1, off = sp.off || 0.6, L = sp.len, w = sp.w, ux = ox * dir, uz = oz * dir, ang = sp.rev ? a + Math.PI : a;
+      U.ln.position.set(px + ux * (off + L / 2), 0.14, pz + uz * (off + L / 2)); U.ln.rotation.y = -ang; U.ln.scale.set(L, 1, w);
+      U.ed.position.set(px + ux * (off + L), 0.15, pz + uz * (off + L)); U.ed.rotation.y = -ang; U.ed.scale.set(0.35, 1, w + 0.5);
+    } else if (k === 'wall') { // 앞 3.6칸에 길이 8짜리 방벽
+      const cx = px + ox * 3.6, cz = pz + oz * 3.6;
+      U.ln.position.set(cx, 0.14, cz); U.ln.rotation.y = -(a + Math.PI / 2); U.ln.scale.set(8, 1, 0.9); U.ed.position.set(cx, 0.15, cz); U.ed.rotation.y = -(a + Math.PI / 2); U.ed.scale.set(8, 1, 0.25);
+    } else if (k === 'fan') {
+      if (U.fanArc !== sp.arc) { U.fan.geometry.dispose(); U.fan.geometry = new THREE.CircleGeometry(1, 28, -sp.arc / 2, sp.arc); U.fanArc = sp.arc; }
+      U.fan.position.set(px, 0.14, pz); U.fan.rotation.set(-Math.PI / 2, 0, -a); U.fan.scale.setScalar(sp.range);
+    } else if (k === 'self') {
+      U.disc.position.set(px, 0.14, pz); U.ring.position.set(px, 0.15, pz); U.disc.scale.setScalar(sp.r); U.ring.scale.setScalar(sp.r);
     } else {
-      let dx = ax - px, dz = az - pz; const d = Math.hypot(dx, dz) || 1, k = Math.min(1, sp.range / d);
-      const cx = px + dx * k, cz = pz + dz * k;
+      const dx = ax - px, dz = az - pz, d = Math.hypot(dx, dz) || 1, kk = Math.min(1, sp.range / d), cx = px + dx * kk, cz = pz + dz * kk;
       U.disc.position.set(cx, 0.14, cz); U.ring.position.set(cx, 0.15, cz); U.disc.scale.setScalar(sp.r); U.ring.scale.setScalar(sp.r);
     }
   }
