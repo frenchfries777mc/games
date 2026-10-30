@@ -1,7 +1,7 @@
 // Tumblecrown · © 2026 Frenchfries777 · CC BY-NC-ND 4.0
 // 화면 흐름, 조작, 멀티(친구 초대, PeerJS), 저장
 import { View } from './render.js';
-import { createGame, step, snapshot, chooseBless, carryOver, koPlayer, INTRO_T, HV_DELAY } from './sim.js';
+import { createGame, step, snapshot, chooseBless, carryOver, koPlayer, INTRO_T, HV_DELAY, wallClamp } from './sim.js';
 import { PUSH_N, PUSH_T, TEAMS, FLAG_T, RESP_T, ARENA_THEMES, ROLES, ROLE_IDS, COLORS, BOT_NAMES, MAX_PLAYERS, BLESSINGS, CHAPTERS, CH, FOES, MAP, ACHIEVEMENTS, TALK, GEAR_TIERS, GEAR_COST, COSMETICS, MIDB, WEEKLY, weekInfo, VERSION, BUILD, roleLevel, LORE, COMBOS, CURSES, DEEP, DEEP_I, TALK_X, ROLE_PUZ, flagShown } from './data.js';
 import { collide as mapCollide, areaAt, floorCell, MW, MH, CS, cw, useChapter, chapterIndex, SOPEN, openSecret, resetSecrets, hiddenCell, GOPEN, openGate, PDOWN, dropPillar, LIFTH, liftOk, CUT } from './map.js';
 import * as SFX from './sfx.js';
@@ -605,16 +605,20 @@ const SKP = {
   smite: { k: 'circle', range: 12, r: 3.2 }, curse: { k: 'circle', range: 12, r: 2.6 }, potion: { k: 'circle', range: 12, r: 3 }, frost: { k: 'circle', range: 12, r: 3.2 }, rain: { k: 'circle', range: 12, r: 4 }, mark: { k: 'circle', range: 14, r: 1.6 },
   bigbomb: { k: 'circle', range: 12, r: 4 }, sticky: { k: 'circle', range: 11, r: 4.5 }, barrage: { k: 'line', len: 12, w: 3.5 },
   pierce: { k: 'line', len: 26, w: 0.9 }, rootbolt: { k: 'line', len: 25, w: 0.9 }, snipe: { k: 'line', len: 40, w: 1 }, fan: { k: 'line', len: 13, w: 5 },
-  quake: { k: 'line', len: 11, w: 2.4 }, dash: { k: 'line', len: 7, w: 1.6 }, shieldbash: { k: 'line', len: 4, w: 1.8 }, flurry: { k: 'line', len: 5, w: 1.6 }, leap: { k: 'line', len: 8, w: 2 }
+  quake: { k: 'line', len: 11, w: 2.4 }, dash: { k: 'line', len: 7, w: 1.6 }, shieldbash: { k: 'line', len: 4, w: 1.8 }, flurry: { k: 'line', len: 5, w: 1.6 }, leap: { k: 'line', len: 8, w: 2 }, backstep: { k: 'line', len: 6, w: 1.4, rev: 1 }, wall: { k: 'wall' },
+  whirl: { k: 'self', r: 3.4 }, bonestorm: { k: 'self', r: 3.6 }, bastion: { k: 'self', r: 4.5 }, vow: { k: 'self', r: 6 }, scatter: { k: 'self', r: 3 }, execute: { k: 'self', r: 13 }, blink: { k: 'self', r: 10 }
 };
-const relBasic = role => { const k = ROLES[role] && ROLES[role].atk.kind; return !TOUCH && role !== 'archer' && !!BASEP[k]; };
-function skillSpec(role, key) { const R = ROLES[role]; const s = R && R.skills['qer'.indexOf(key)]; return s ? SKP[s.id] : null; }
+const SELFP = { k: 'self', r: 1.5 };
+// 모든 기본 공격과 기술은 누르고 있으면 민트색으로 보이고 떼면 나가요 (궁수 모아 쏘기만 원래대로 누르고 있다가 떼요)
+const relBasic = role => !TOUCH && role !== 'archer' && !!ROLES[role];
+function basicSpec(role) { const A = ROLES[role].atk; return A.kind === 'melee' ? { k: 'fan', range: A.range + 0.3, arc: A.arc } : BASEP[A.kind] || null; }
+function skillSpec(role, key) { const R = ROLES[role]; const s = R && R.skills['qer'.indexOf(key)]; return s ? SKP[s.id] || SELFP : null; }
 function aimedSkill(key) { const m = inGame() && S.scr === '' && !TOUCH ? myP() : null; return !!(m && !m.dn && !m.dd && skillSpec(m.role, key)); }
 function aimTick(p, pos, inp) {
   let sp = null;
   if (!TOUCH && S.scr === '' && !p.dn && !p.dd) {
     if (S.aimK) sp = skillSpec(p.role, S.aimK);
-    else if (mouse.down) { const k = ROLES[p.role].atk.kind; if (BASEP[k]) sp = BASEP[k]; }
+    else if (mouse.down) sp = basicSpec(p.role);
   }
   if (S.aimK && !sp) S.aimK = null;
   view.setAim(sp, pos.x, pos.z, inp.aim == null ? p.a : inp.aim, inp.ax, inp.az);
@@ -657,6 +661,7 @@ function localMove(p, inp, dt) {
   if (L.roll > 0) { L.roll -= dt; L.x += L.rdx * 15 * dt; L.z += L.rdz * 15 * dt; }
   else { const sp = R.speed * ((p.b || []).indexOf('feet') >= 0 ? 1.12 : 1) * (p.ra ? 1.3 : 1) * (p.bk ? 0.8 : 1) * (fl ? 0.7 : 1) * (p.cl ? 0.6 : 1) * (p.em ? 0.75 : 1) * (p.stl ? 1.25 : 1) * (p.sp ? 0.25 : 1) * (p.bs ? 0.6 : 1); L.x += mx * sp * dt; L.z += mz * sp * dt; }
   mapCollide(L, 0.6);
+  { const ws = (S.snap.zn || []).filter(z => z.k === 'wall'); if (ws.length && p.tm != null) wallClamp(ws, p.tm, ox, oz, L); }
   if (!liftOk(ox, oz, L.x, L.z)) { L.x = ox; L.z = oz; }
 }
 
