@@ -1,6 +1,70 @@
 {
  "notes": [
   {
+   "date": "2026-10-30",
+   "build": "v0.2 build 71",
+   "title": "중세 마을과 섬 주민",
+   "items": [
+    "집, 시장, 항구 건물, 저택, 탑, 예배당을 중세 유럽 건물 풍으로 새로 그림",
+    "시작섬의 집과 공방도 목조 뼈대와 돌 밑단, 가파른 기와지붕으로 바뀜",
+    "방앗간과 등대는 돌로 쌓은 모습으로 바뀜",
+    "섬마다 농부, 어부, 대장장이, 수도사 같은 주민이 돌아다님",
+    "주민에게 다가가 E를 누르면 섬 이야기를 들려줌"
+   ],
+   "tr": {
+    "en": {
+     "title": "Medieval villages and islanders",
+     "items": [
+      "Houses, markets, harbor buildings, manors, towers and chapels redrawn in a medieval European style",
+      "Buildings on the home island now have timber frames, stone bases and steep tiled roofs",
+      "The mill and lighthouse are now built of stone",
+      "Every isle now has villagers such as farmers, fishers, smiths and monks walking around",
+      "Walk up and press E to hear what they say about the isle"
+     ]
+    },
+    "ja": {
+     "title": "Medieval villages and islanders",
+     "items": [
+      "Houses, markets, harbor buildings, manors, towers and chapels redrawn in a medieval European style",
+      "Buildings on the home island now have timber frames, stone bases and steep tiled roofs",
+      "The mill and lighthouse are now built of stone",
+      "Every isle now has villagers such as farmers, fishers, smiths and monks walking around",
+      "Walk up and press E to hear what they say about the isle"
+     ]
+    },
+    "es": {
+     "title": "Medieval villages and islanders",
+     "items": [
+      "Houses, markets, harbor buildings, manors, towers and chapels redrawn in a medieval European style",
+      "Buildings on the home island now have timber frames, stone bases and steep tiled roofs",
+      "The mill and lighthouse are now built of stone",
+      "Every isle now has villagers such as farmers, fishers, smiths and monks walking around",
+      "Walk up and press E to hear what they say about the isle"
+     ]
+    },
+    "fr": {
+     "title": "Medieval villages and islanders",
+     "items": [
+      "Houses, markets, harbor buildings, manors, towers and chapels redrawn in a medieval European style",
+      "Buildings on the home island now have timber frames, stone bases and steep tiled roofs",
+      "The mill and lighthouse are now built of stone",
+      "Every isle now has villagers such as farmers, fishers, smiths and monks walking around",
+      "Walk up and press E to hear what they say about the isle"
+     ]
+    },
+    "de": {
+     "title": "Medieval villages and islanders",
+     "items": [
+      "Houses, markets, harbor buildings, manors, towers and chapels redrawn in a medieval European style",
+      "Buildings on the home island now have timber frames, stone bases and steep tiled roofs",
+      "The mill and lighthouse are now built of stone",
+      "Every isle now has villagers such as farmers, fishers, smiths and monks walking around",
+      "Walk up and press E to hear what they say about the isle"
+     ]
+    }
+   }
+  },
+  {
    "date": "2026-10-29",
    "build": "v0.2 build 70",
    "title": "다른 섬 개척",
