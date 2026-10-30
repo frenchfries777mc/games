@@ -816,7 +816,7 @@ function specTick(me) {
 addEventListener('keydown', e => { if (!S.snap || S.scr !== '' || !view.camId) return; const k = e.key; if (k === 'ArrowRight' || k === 'd' || k === 'D') specCycle(1); else if (k === 'ArrowLeft' || k === 'a' || k === 'A') specCycle(-1); });
 $('gl').addEventListener('pointerdown', e => {
   // 쓰러졌을 때 뜨는 지도에서 깃발(또는 진지)을 누르면 거기서 다시 일어나요
-  if (S.rspHit && S.rspHit.length) { const h = S.rspHit.find(q => Math.hypot(q.x - e.clientX, q.y - e.clientY) < q.r + 8); if (h) { S.rspSel = h.v; SFX.play('click'); return; } }
+  if (S.rspHit && S.rspHit.length) { const h = S.rspHit.find(q => Math.hypot(q.x - e.clientX, q.y - e.clientY) < q.r + 8); if (h) { if (h.v === -9) S.rspDone = false; else { S.rspSel = h.v; S.rspDone = true; } SFX.play('click'); return; } }
   if (view.camId) specCycle(1);
 });
 function syncScene() {
@@ -959,6 +959,17 @@ const mini = {
   },
   paint() {
     const g = this.c.getContext('2d'); g.clearRect(0, 0, this.c.width, this.c.height);
+    if (CH.pvp) {   // 팀 대전 지도: 바닥 무늬, 벽 두께와 그림자, 진지 색
+      const pal = { dungeon: ['#8a8498', '#7c768a', '#3a3446'], abyss: ['#7a6a98', '#6c5c8a', '#2c2240'], temple: ['#b49a6c', '#a68c60', '#4a3a28'], forest: ['#6f8a58', '#62804c', '#2a3a20'], deep: ['#4a8a9a', '#3e7a8a', '#142a38'] }[CH.theme] || ['#8a8498', '#7c768a', '#3a3446'];
+      g.fillStyle = pal[2]; g.fillRect(0, 0, this.c.width, this.c.height);
+      for (let j = 0; j < MH; j++) for (let i = 0; i < MW; i++) {
+        if (floorCell(i, j)) { g.fillStyle = ((i >> 1) + (j >> 1)) & 1 ? pal[0] : pal[1]; g.fillRect(i * 3, j * 3, 3, 3); }
+        else { let nb = false; for (let dj = -1; dj <= 1 && !nb; dj++) for (let di = -1; di <= 1; di++) if (floorCell(i + di, j + dj)) { nb = true; break; } if (nb) { g.fillStyle = '#17121f'; g.fillRect(i * 3, j * 3, 3, 3); g.fillStyle = 'rgba(255,255,255,.18)'; g.fillRect(i * 3, j * 3, 3, 1); } }
+      }
+      MAP.tspawn.forEach(([a, b], ti) => { g.fillStyle = ti ? 'rgba(255,90,74,.28)' : 'rgba(74,140,255,.28)'; g.beginPath(); g.arc(a * 3 + 1.5, b * 3 + 1.5, 24, 0, 7); g.fill(); });
+      MAP.tflags.forEach(([a, b]) => { g.strokeStyle = 'rgba(255,255,255,.35)'; g.lineWidth = 1.5; g.beginPath(); g.arc(a * 3 + 1.5, b * 3 + 1.5, 13, 0, 7); g.stroke(); });
+      this.dirty = false; return;
+    }
     for (let j = 0; j < MH; j++) for (let i = 0; i < MW; i++) { if (!this.seen[j * MW + i] || !floorCell(i, j) || hiddenCell(i, j)) continue; g.fillStyle = WATERC(i, j) ? '#6a8ab0' : CUT[j * MW + i] === 3 ? '#c8c0d6' : CUT[j * MW + i] === 4 ? '#c8a060' : '#a49cb0'; g.fillRect(i * 3, j * 3, 3, 3); }
     this.dirty = false;
   },
@@ -998,7 +1009,11 @@ function teamHud(sn) {
 }
 // 쓰러지면 큰 지도가 떠요: 우리 팀이 차지한 깃발과 진지가 밝게 보이고, 누르면 15초가 지난 뒤 거기서 다시 일어나요
 function respawnPanel(sn) {
-  const me = sn.pl.find(q => q.id === S.me); if (!me || !me.dd || sn.ph !== 'play') { if (me && !me.dd) S.rspSel = 0; return; }
+  const me = sn.pl.find(q => q.id === S.me); if (!me || !me.dd || sn.ph !== 'play') { if (me && !me.dd) { S.rspSel = 0; S.rspDone = false; } return; }
+  if (S.rspDone) {   // 자리를 정하면 창이 닫히고 작은 안내만 남아요
+    oc.font = 'bold 15px Galmuri, system-ui'; oc.textAlign = 'center'; oc.lineWidth = 4; oc.strokeStyle = '#140f18'; const t2 = T('{0}초 뒤 되살아나요 · 다시 고르려면 여기를 눌러요', Math.max(0, Math.ceil(me.rs))), yy = innerHeight - 90;
+    oc.strokeText(t2, innerWidth / 2, yy); oc.fillStyle = '#ffe08a'; oc.fillText(t2, innerWidth / 2, yy); S.rspHit.push({ x: innerWidth / 2, y: yy, r: Math.min(190, innerWidth / 2 - 10), v: -9 }); return;
+  }
   const mt = me.tm, pw = Math.min(innerWidth * 0.78, innerHeight * 0.8 * MW / MH), ph = pw * MH / MW, x0 = (innerWidth - pw) / 2, y0 = Math.max(70, (innerHeight - ph) / 2 - 10), sc = pw / (MW * CS), P = (wx, wz) => [x0 + wx * sc, y0 + wz * sc];
   if (mini.dirty) mini.paint();
   oc.fillStyle = 'rgba(8,6,12,.82)'; oc.fillRect(x0 - 10, y0 - 40, pw + 20, ph + 56);
@@ -1046,6 +1061,7 @@ function drawOverlay(dt) {
   const tags = [];
   for (const p of sn.pl) {
     if (p.dd) continue; const E = view.ents.get('p' + p.id); if (!E) continue;
+    if (p.stl && p.id !== S.me && p.tm !== myTm() && S.snap && !sn.pl.some(q => q.id === S.me && Math.hypot(q.x - p.x, q.z - p.z) <= 2.8)) continue;   // 숨은 자객은 이름표도 숨겨요
     const s = view.project(E.x, 3.9, E.z);
     // 이름표가 겹치면 위로 비켜 올려요
     if (p.id !== S.me) { for (let k = 0; k < 4 && tags.some(t => Math.abs(t.x - s.x) < 64 && Math.abs(t.y - s.y) < 20); k++) s.y -= 20; tags.push({ x: s.x, y: s.y }); oc.font = 'bold 13px Galmuri, system-ui'; oc.lineWidth = 4; oc.strokeStyle = '#140f18'; const t = p.bot ? T('{0} 봇', ROLES[p.role].name) : p.name; oc.strokeText(t, s.x, s.y - 10); oc.fillStyle = pcol(p); oc.fillText(t, s.x, s.y - 10); hpBar(s.x, s.y, p, false, p.tm === myTm()); }
