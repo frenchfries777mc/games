@@ -3,7 +3,7 @@
 
 import { T } from './tr.js';
 
-export const VERSION = 'v0.1', BUILD = 46;
+export const VERSION = 'v0.1', BUILD = 47;
 
 export const ROLES = {
   knight: {
@@ -126,6 +126,28 @@ export const ROLES = {
     ],
     st: [4, 2, 5, 4], atkTxt: T('석궁 한 발 (꾹 눌러도 한 발씩)'),
     role: T('느리게 움직이며 멀리서 한 발씩 정확히 쏘고, 저격으로 마무리해요.')
+  },
+  bard: {
+    name: T('음유시인'), color: '#c05a7a', hp: 175, speed: 6.2,
+    atk: { kind: 'orb', dmg: 9, cd: 0.5, speed: 16 },
+    skills: [
+      { id: 'march', name: T('행진곡'), key: 'Q', cd: 12, desc: T('가까운 아군(나 포함)이 6초 동안 30% 빨라지고, 체력을 8 되찾아요.') },
+      { id: 'lullaby', name: T('자장가'), key: 'E', cd: 11, desc: T('둘레 상대가 3초 동안 크게 느려지고 12 피해를 받아요.') },
+      { id: 'chorus', name: T('합창'), key: 'R', cd: 16, desc: T('가까운 아군(나 포함)의 체력을 30 되찾아 주고 4초 동안 피해 18을 막는 보호막을 씌워요.') }
+    ],
+    st: [1, 3, 5, 3], atkTxt: T('음표 구슬'),
+    role: T('노래로 아군을 빠르게 하고 치유해요. 자장가로 다가오는 상대를 늦춰 시간을 벌어요.')
+  },
+  spearman: {
+    name: T('창병'), color: '#6a7a8c', hp: 300, speed: 6.0,
+    atk: { kind: 'melee', range: 3.9, arc: 0.5, dmg: 24, cd: 0.6 },
+    skills: [
+      { id: 'lunge', name: T('돌진 찌르기'), key: 'Q', cd: 7, desc: T('앞으로 크게 돌진하며 지나가는 상대를 꿰뚫어요. 40 피해.') },
+      { id: 'spearthrow', name: T('창 던지기'), key: 'E', cd: 10, desc: T('창을 멀리 던져요. 맞은 상대는 1.5초 동안 느려지고 42 피해를 받아요.') },
+      { id: 'sweep', name: T('휩쓸기'), key: 'R', cd: 14, desc: T('창을 크게 휘둘러 둘레 상대에게 36 피해를 주고 밀어내며 1.5초 동안 느리게 해요.') }
+    ],
+    st: [3, 3, 3, 3], atkTxt: T('앞으로 길게 찌르기'),
+    role: T('긴 창으로 멀리서 찌르고, 다가오는 상대를 돌진과 휩쓸기로 밀어내요.')
   }
 };
 export const COLORS = [
@@ -138,7 +160,7 @@ export const COLORS = [
 ];
 export const BOT_NAMES = ['데굴이', '휘청이', '꽈당이', '비틀이', '아슬이', '쿵쾅이', '덜렁이', '허둥이', '깜빡이', '뒤뚱이'];
 export const MAX_PLAYERS = 10;
-export const ROLE_IDS = ['knight', 'priest', 'archer', 'viking', 'mamluk', 'witch', 'skeleton', 'warden', 'assassin', 'crossbow', 'bomber'];
+export const ROLE_IDS = ['knight', 'priest', 'archer', 'viking', 'mamluk', 'witch', 'skeleton', 'warden', 'assassin', 'crossbow', 'bomber', 'bard', 'spearman'];
 
 export const ENEMIES = {
   skel: { name: T('해골 병사'), hp: 130, speed: 4.4, r: 0.6, dmg: 32, range: 1.8, windup: 0.42, cd: 0.9, honor: 1 },
@@ -394,7 +416,16 @@ const ARENAS = [
     fl: [[10, 42], [30, 62]], mid: [[56, 36], [44, 22]], pil: [[14, 12], [30, 36], [50, 10], [6, 24]] },
   { name: '심연 다리', line: '허공 위에 놓인 좁은 다리와 돌섬을 건너 싸워요. 길목이 좁아 길목을 지키는 쪽이 유리해요.', theme: 'deep',
     walls: [[18, 6, 16, 10], [36, 4, 3, 12], [8, 24, 16, 3], [40, 20, 14, 3], [30, 30, 3, 8], [46, 6, 8, 6]],
-    fl: [[12, 44], [30, 48]], mid: [[56, 36], [44, 30]], pil: [[30, 18], [50, 32], [8, 36], [24, 12]] }
+    fl: [[12, 44], [30, 48]], mid: [[56, 36], [44, 30]], pil: [[30, 18], [50, 32], [8, 36], [24, 12]] },
+  { name: '해적 항구', line: '부두 다리가 길게 뻗은 항구예요. 배와 창고 사이 좁은 틈을 노려 깃발을 가져와요.', theme: 'harbor',
+    walls: [[6, 8, 30, 3], [22, 8, 3, 14], [40, 16, 16, 3], [30, 28, 10, 3], [6, 26, 8, 3], [44, 4, 3, 8]],
+    fl: [[10, 42], [30, 56]], mid: [[56, 36], [30, 20]], pil: [[14, 16], [50, 8], [48, 28], [8, 36]] },
+  { name: '시계탑', line: '톱니 모양 돌벽이 겹겹이 돌아가는 탑 안이에요. 가운데 깃발로 가는 길이 서로 엇갈려요.', theme: 'tower',
+    walls: [[22, 10, 20, 3], [22, 10, 3, 14], [40, 22, 3, 14], [10, 28, 16, 3], [48, 8, 8, 3], [34, 30, 3, 6]],
+    fl: [[10, 40], [30, 56]], mid: [[56, 36], [32, 24]], pil: [[14, 14], [30, 18], [50, 20], [8, 20]] },
+  { name: '지하 수로', line: '좁은 수로와 긴 담이 얽힌 지하예요. 물길을 따라 돌아 뒤를 쳐요.', theme: 'sewer',
+    walls: [[8, 18, 22, 3], [38, 4, 3, 14], [18, 28, 20, 3], [46, 18, 3, 12], [50, 6, 6, 3]],
+    fl: [[10, 42], [30, 56]], mid: [[56, 36], [24, 12]], pil: [[22, 8], [44, 14], [8, 24], [32, 34]] }
 ];
 function arenaMap(def) {
   const m = genMap(777, [{ name: T('전장'), line: T(def.line), boss: 1 }], { noSecret: 1, noMimic: 1, st: { cols: 1 } });
@@ -423,7 +454,7 @@ function arenaMap(def) {
 }
 export const CHAPTERS = ARENAS.map((d, i) => ({ id: i + 1, pvp: 1, title: T(d.name), place: T(d.name), diff: 1, introT: 3.5, boss: {}, theme: d.theme, map: arenaMap(d) }));
 // 투기장 분위기: 판마다 고르거나 무작위 (바닥·벽·하늘 색이 달라져요)
-export const ARENA_THEMES = [{ id: 'dungeon', name: T('지하 투기장') }, { id: 'forest', name: T('숲') }, { id: 'frost', name: T('얼음 성') }, { id: 'temple', name: T('불의 사원') }, { id: 'abyss', name: T('심연') }, { id: 'deep', name: T('끝없는 심연') }];
+export const ARENA_THEMES = [{ id: 'dungeon', name: T('지하 투기장') }, { id: 'forest', name: T('숲') }, { id: 'frost', name: T('얼음 성') }, { id: 'temple', name: T('불의 사원') }, { id: 'abyss', name: T('심연') }, { id: 'deep', name: T('끝없는 심연') }, { id: 'harbor', name: T('해적 항구') }, { id: 'tower', name: T('시계탑') }, { id: 'sewer', name: T('지하 수로') }];
 // 게임 중 대사: 장마다 구역에 처음 들어가면(숫자는 구역 순서), boss는 보스가 나타날 때
 // 기사는 하오체, 궁수는 반말, 사제는 존댓말, 종자는 밝은 해요체로 말해요
 export const TALK = [
@@ -591,7 +622,7 @@ export function makeDeep(d) {
     theme: 'deep', map
   };
 }
-export const DEEP_I = 8;
+export const DEEP_I = 20;
 // 주간 원정: 이번 주(한국 시간 기준 월요일 시작) 모두 같은 장, 같은 저주 둘로 달려요. 끝까지 걸린 시간을 겨뤄요
 export const WEEKLY = { on: false, id: '', curses: [] };
 export function cursesObj(ids) { const n = c => ids.filter(x => x === c).length; return { hp: 1 + 0.2 * n('hp'), dmg: 1 + 0.15 * n('dmg'), spd: 1 + 0.1 * n('spd'), heal: Math.pow(0.75, n('heal')), cd: 1 + 0.15 * n('cd') }; }
