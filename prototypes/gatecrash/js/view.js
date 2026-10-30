@@ -161,7 +161,7 @@ function drawRacer(x, r, t, me) {
   x.save(); x.translate(px + 8, py);
   if (f < 0) x.scale(-1, 1); x.translate(-8, 0);
   const dead = r.stun > 0, flash = r.flash > 0;
-  const body = flash ? '#fff' : r.col, dark = flash ? '#fff' : shade(r.col, -50);
+  const bc = r.skin === 'gold' ? '#e8b830' : r.col, body = flash ? '#fff' : bc, dark = flash ? '#fff' : shade(bc, -50);
   const hair = flash ? '#fff' : ['#2a2430', '#6a3a1a', '#d8b050', '#8a2a2a'][(r.slot | 0) % 4]; R(x, '#e8c39a', 5, 0, 8, 7); R(x, hair, 4, -1, 10, 3); R(x, hair, 4, 2, 2, 3); R(x, '#111', 10, 3, 2, 2);          // 머리
   R(x, body, 4, 7, 10, 8);                                                                                       // 몸통
   R(x, dark, 4, 15, 10, 2); R(x, shade(r.col, 40), 4, 7, 10, 1); R(x, dark, 8, 8, 2, 6);
@@ -169,6 +169,7 @@ function drawRacer(x, r, t, me) {
   else if (walk) { R(x, '#2a3350', ph ? 4 : 7, 17, 3, 5); R(x, '#2a3350', ph ? 10 : 8, 17, 3, 5); }
   else { R(x, '#2a3350', 5, 17, 3, 5); R(x, '#2a3350', 10, 17, 3, 5); }
   R(x, '#e8c39a', dead ? 2 : 12, dead ? 8 : 9, 3, 3);                                                              // 팔
+  if (r.skin && !flash) drawSkin(x, r.skin);
   x.restore();
   if (r.wep) {
     const w = WEAPONS[r.wep.k], sw = r.swing > 0 ? (1 - r.swing / 0.18) : 0;
@@ -176,6 +177,19 @@ function drawRacer(x, r, t, me) {
     if (w.kind === 'melee' && r.swing > 0) a += (sw - 0.5) * 2.2 * f;
     x.save(); x.translate(r.x + 5, r.y + 10); x.rotate(a); if (Math.cos(a) < 0) x.scale(1, -1);
     drawWep(x, r.wep.k); x.restore();
+  }
+}
+function drawSkin(x, k) {
+  switch (k) {
+    case 'ears': R(x, '#2a2430', 4, -4, 3, 3); R(x, '#2a2430', 11, -4, 3, 3); R(x, '#f09ab8', 5, -3, 1, 1); R(x, '#f09ab8', 12, -3, 1, 1); break;
+    case 'bunny': R(x, '#f4f4f4', 5, -10, 3, 9); R(x, '#f4f4f4', 10, -10, 3, 9); R(x, '#f09ab8', 6, -8, 1, 6); R(x, '#f09ab8', 11, -8, 1, 6); break;
+    case 'shades': R(x, '#111', 5, 2, 9, 3); R(x, '#6ac0e8', 6, 3, 3, 1); R(x, '#6ac0e8', 10, 3, 3, 1); break;
+    case 'helm': R(x, '#f2b632', 3, -4, 12, 5); R(x, '#c8901a', 3, 0, 12, 1); R(x, '#fff3a0', 8, -5, 3, 1); break;
+    case 'ninja': R(x, '#1a1a22', 4, -1, 10, 3); R(x, '#e8483b', 13, 0, 4, 1); R(x, '#1a1a22', 5, 4, 8, 3); break;
+    case 'cape': R(x, '#c0302a', 1, 8, 4, 11); R(x, '#8a1a1a', 1, 8, 1, 11); R(x, '#e8c040', 4, 8, 1, 2); break;
+    case 'halo': R(x, '#fff3a0', 5, -7, 8, 1); R(x, '#fff3a0', 4, -6, 1, 1); R(x, '#fff3a0', 13, -6, 1, 1); R(x, '#fff3a0', 5, -5, 8, 1); break;
+    case 'crown': R(x, '#ffd36b', 4, -5, 10, 4); R(x, '#ffd36b', 4, -7, 2, 2); R(x, '#ffd36b', 8, -8, 2, 3); R(x, '#ffd36b', 12, -7, 2, 2); R(x, '#e8483b', 8, -4, 2, 2); break;
+    case 'gold': R(x, '#fff3a0', 4, 7, 10, 1); R(x, '#fff3a0', 8, 9, 2, 2); break;
   }
 }
 function drawWep(x, k) {
