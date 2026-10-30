@@ -5523,7 +5523,7 @@ function shuffle(arr){ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.
 /* ===== the version of this file =====
    Different BUILDS of one version meet and play together (room names online-v<ver>-<mode>-<map>-<slot>); different VERSIONS (the 0.x part) never do - the host refuses them (verNo) and the dispatcher answers busy.
    The build is only sent along with the join message and the lobby (for information); the corner of the screen shows it. */
-const GAME_BUILD='build 2026-10-18-v533';
+const GAME_BUILD='build 2026-10-18-v534';
 const GAME_VERSION='0.9', GAME_VERSION_NAME='은하 제국의 황혼';   // 게임 버전 이름: versions.json의 title과 같게 (빌드마다 바꾸지 않음)
 /* version (the 0.x part) vs build: different BUILDS of one version meet and play together, different VERSIONS never do (rooms, quick match, ranked, friend invites, dispatcher).
    Builds before 470 do not send a version, so it is read from the build number (0.9 started at build 458). */
@@ -12196,7 +12196,7 @@ function tryUltimate0(p, tMs, aimX, aimY, viaClick){
    effects list + a few snapshot fields (skillCdRemain, buff). Skills are meant to be small: a short buff, a push, a hop, a swap - never a
    kill button. The ones that need a target do not spend the cooldown when there is none in reach.                                         */
 const DRAC_REST_SEC=1.0, DRAC_REST_STEP=0.1, DRAC_REST_HEAL=5;   // Dracula's skill: standing still for a second, healing 5 every 0.1 s
-const CARD_LINE_N=4, CARD_LINE_DMG=10;   // the magic card skill
+const CARD_LINE_N=5, CARD_LINE_DMG=8;   // the magic card skill
 const PORTAL_EXIT_R=120, PORTAL_EXIT_DMG=12, PORTAL_EXIT_KB=380, PORTAL_EXIT_UP=120;      // 차원여행자: whoever steps out of a portal hurts and pushes the enemies standing beside it
 const PORTAL_BLAST_DELAY=0.5, PORTAL_BLAST_R=190, PORTAL_BLAST_DMG=50, PORTAL_BLAST_KB=1000, PORTAL_BLAST_UP=420;   // ...and the skill blows both portals up half a second after the smoke starts
 const WIZ_SHOCK_R=160, WIZ_SHOCK_DMG=10, WIZ_SHOCK_KB=1000, WIZ_SHOCK_UP=300;   // the wizard's skill: a shockwave
@@ -12508,7 +12508,7 @@ const SKILLS={
   dracula:  {name:'피의 안식',   kind:'buff', desc:'1초 동안 움직일 수 없는 대신 0.1초마다 체력 5 회복 (총 50)'},
   gambler:  {name:'동전 던지기', kind:'buff', desc:'앞면(확률 50% + 칩당 7%): 체력 25 회복 + 칩 1개당 3 추가 / 뒷면: 가까운 적에게 18 피해 + 칩 1개당 4 추가 (칩은 소모되지 않음)'},
   wizard:   {name:'충격파',      kind:'hit',  desc:'주변 상대를 아주 크게 밀쳐내는 충격파 (10 피해)'},
-  magiccard:{name:'카드 일렬 발사', kind:'hit', desc:'조준 방향으로 카드 4장을 일렬로 연달아 발사 (장당 10 피해)'},
+  magiccard:{name:'카드 일렬 발사', kind:'hit', desc:'조준 방향으로 카드 5장을 일렬로 연달아 발사 (장당 8 피해)'},
   flamethrower:{name:'화염 돌진',kind:'move', desc:'바라보는 방향으로 순식간에 돌진 · 지나가는 길의 적에게 20 피해와 화상 · 지나온 자리는 3초 동안 불길이 남아 적을 태움'},
   portalgun:{name:'포탈 파괴', kind:'move', desc:'내 포탈 둘에서 연기가 나고 0.5초 뒤 폭발해 큰 피해(50)와 큰 넉백 · 포탈이 있을 때만 사용'},
   vacuum:   {name:'블랙홀 흡입',  kind:'hit',  desc:'스택 3개를 소모해 주변 적을 강하게 빨아들이고 1초 기절 (스택이 2개 이하면 사용 불가)'},
@@ -14926,7 +14926,7 @@ const PASSIVES={
   gambler:{n:'승부사의 감',c:'#ffe27a'}, flamethrower:{n:'불길 질주',c:'#ff8a3d'}, portalgun:{n:'',q:1}, dagger:{n:'그림자 일격',c:'#c0c0ff'},
   samurai:{n:'일섬 연참',c:'#ff5a6a'}, tionis:{n:'피의 연극',c:'#ff4d6a'}
 };
-const PASSIVE_DESC={pistol:"6번째 발사마다 탄환이 붉게 변하고 피해와 크기가 1.25배", smg:"연발을 모두 맞히면 주위 상대를 밀치고 3초 동안 이동속도 1.75배", lightsaber:"공격을 튕겨내면 다음 공격 피해 +20%", horemheb:"모래바람에 맞은 상대를 3초 안에 공격하면 피해 1.5배", pizarro:"4단계가 되면 치유 효과 2배, 이동속도 1.25배", puppeteer:"실이 이어진 상대를 조종하면 자폭 피해 +10", kan:"독이 4번 쌓인 상대는 이동속도 20% 감소", sword:"돌진 베기가 아무도 못 맞히고 끝나면 스킬 쿨타임 절반", bat:"상대를 4번 연속 맞히면 다음 공격이 매우 큰 넉백과 피해 1.25배", boomerang:"돌아오는 길에 맞히면 피해 1.5배", shuriken:"대쉬 후 표창을 맞히면 대쉬 쿨타임 0.3초 감소", shotgun:"알갱이를 모두 맞히면 상대 이동속도 20% 감소 (3초)", rifle:"지뢰를 밟은 상대는 3초 동안 이동속도 10% 감소", gloves:"피격마다 받는 피해가 1%씩 줄고, 10%가 되면 초기화되며 2.5초 동안 이동속도 2배와 공격 피해 1.5배", grenade:"폭발 점프로 피해를 주면 착지 때 근처 상대를 밀치고 기절", bazooka:"스킬 로켓 3발이 모두 맞으면 그 자리에 3초 동안 화염 (닿으면 초당 3 피해)", dagger:"암습 후 첫 일격이 맞으면 1초 동안 은신", dracula:"처치하면 체력 25 회복", gambler:"칩이 3개 이상이면 공격 피해 +10%", magiccard:"스킬 카드 4장이 모두 한 상대에게 맞으면 기절", kurus:"어둠 탈출 후 3초 동안 이동속도 1.5배", wizard:"마법진 안에서는 스킬 밀쳐내는 힘 2배", vacuum:"스택 1개마다 이동속도 +5%", pirate:"대포 비행으로 맞히면 스킬 쿨타임 3초 감소", cleon:"근위병이 살아 있는 동안 받는 피해 15% 감소", pel:"드론 6대가 모두 살아 있으면 드론 공격 속도 1.2배", portalgun:"탄환이 튕길 때마다 피해 증가", flamethrower:"내가 남긴 불길 위에서는 이동속도 1.3배와 초당 체력 3 회복", samurai:"거합으로 2명 이상 베면 거합 쿨타임 절반", tionis:"채혈 주사기가 맞으면 체력 10 회복"};      // the codex lines of the passives (the name comes from PASSIVES)
+const PASSIVE_DESC={pistol:"6번째 발사마다 탄환이 붉게 변하고 피해와 크기가 1.25배", smg:"연발을 모두 맞히면 주위 상대를 밀치고 3초 동안 이동속도 1.75배", lightsaber:"공격을 튕겨내면 다음 공격 피해 +20%", horemheb:"모래바람에 맞은 상대를 3초 안에 공격하면 피해 1.5배", pizarro:"4단계가 되면 치유 효과 2배, 이동속도 1.25배", puppeteer:"실이 이어진 상대를 조종하면 자폭 피해 +10", kan:"독이 4번 쌓인 상대는 이동속도 20% 감소", sword:"돌진 베기가 아무도 못 맞히고 끝나면 스킬 쿨타임 절반", bat:"상대를 4번 연속 맞히면 다음 공격이 매우 큰 넉백과 피해 1.25배", boomerang:"돌아오는 길에 맞히면 피해 1.5배", shuriken:"대쉬 후 표창을 맞히면 대쉬 쿨타임 0.3초 감소", shotgun:"알갱이를 모두 맞히면 상대 이동속도 20% 감소 (3초)", rifle:"지뢰를 밟은 상대는 3초 동안 이동속도 10% 감소", gloves:"피격마다 받는 피해가 1%씩 줄고, 10%가 되면 초기화되며 2.5초 동안 이동속도 2배와 공격 피해 1.5배", grenade:"폭발 점프로 피해를 주면 착지 때 근처 상대를 밀치고 기절", bazooka:"스킬 로켓 3발이 모두 맞으면 그 자리에 3초 동안 화염 (닿으면 초당 3 피해)", dagger:"암습 후 첫 일격이 맞으면 1초 동안 은신", dracula:"처치하면 체력 25 회복", gambler:"칩이 3개 이상이면 공격 피해 +10%", magiccard:"스킬 카드 5장이 모두 한 상대에게 맞으면 기절", kurus:"어둠 탈출 후 3초 동안 이동속도 1.5배", wizard:"마법진 안에서는 스킬 밀쳐내는 힘 2배", vacuum:"스택 1개마다 이동속도 +5%", pirate:"대포 비행으로 맞히면 스킬 쿨타임 3초 감소", cleon:"근위병이 살아 있는 동안 받는 피해 15% 감소", pel:"드론 6대가 모두 살아 있으면 드론 공격 속도 1.2배", portalgun:"탄환이 튕길 때마다 피해 증가", flamethrower:"내가 남긴 불길 위에서는 이동속도 1.3배와 초당 체력 3 회복", samurai:"거합으로 2명 이상 베면 거합 쿨타임 절반", tionis:"채혈 주사기가 맞으면 체력 10 회복"};      // the codex lines of the passives (the name comes from PASSIVES)
 function passiveInfo(wid){ const d=PASSIVE_DESC[wid]; if(!d) return null; const p=PASSIVES[wid]||{}; return {name:p.n||({pistol:'붉은 탄환', wizard:'마법진의 파동', shotgun:'명사수의 위협', portalgun:'튕김 강화'})[wid]||'', desc:d}; }
 function pvPop(p, key, tMs){ const d=PASSIVES[key]; if(!d || d.q || !p || !p.alive || p.isClone) return; const tS=tMs/1000; if(!p.pvAt) p.pvAt={}; if(p.pvAt[key]>tS-1.0) return; p.pvAt[key]=tS; pushFx('passive', p.x, p.y-96, tMs, {name:d.n, color:d.c}); }
 function pvEdge(p, key, on, tMs){ if(!p.pvOn) p.pvOn={}; if(on && !p.pvOn[key]) pvPop(p, key, tMs); p.pvOn[key]=!!on; }
