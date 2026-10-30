@@ -826,7 +826,7 @@ function watchNotes(){
   if(noteChan){ try{ sb.removeChannel(noteChan); }catch(e){} noteChan=null; }
   if(!sb||!user) return;
   try{ noteChan=sb.channel('ffa-notes-'+user.id)
-    .on('postgres_changes',{event:'INSERT',schema:'public',table:'ff_notes',filter:'user_id=eq.'+user.id},function(pl){ loadNotes().then(function(){ var n=pl&&pl.new; if(n&&n.kind!=='friend'&&npOn(n.kind)&&npGet().toast!==false){ toast(noteText(n)); var tt=document.getElementById('ffaToast'); if(tt) tt.querySelector('button').onclick=function(){ tt.remove(); goNote(n); }; } }); })
+    .on('postgres_changes',{event:'INSERT',schema:'public',table:'ff_notes',filter:'user_id=eq.'+user.id},function(pl){ loadNotes().then(function(){ var n=pl&&pl.new; if(n&&n.kind==='dm'&&dmWith&&n.actor_id===dmWith){ seenDM(); return; } if(n&&n.kind!=='friend'&&npOn(n.kind)&&npGet().toast!==false){ toast(noteText(n)); var tt=document.getElementById('ffaToast'); if(tt) tt.querySelector('button').onclick=function(){ tt.remove(); goNote(n); }; } }); })
     .on('postgres_changes',{event:'INSERT',schema:'public',table:'ff_dm',filter:'recipient_id=eq.'+user.id},function(pl){ var m=pl&&pl.new; if(!m) return; if(dmWith===m.sender_id){ if(!dmRows.some(function(x){ return x.id===m.id; })) dmRows.push(m); paintDM(); seenDM(); } else { dmUnread[m.sender_id]=(dmUnread[m.sender_id]||0)+1; fpaint(); } })
     .subscribe(); }catch(e){}
 }
@@ -884,7 +884,10 @@ async function pullDM(){
   if(r.error){ var el=document.getElementById('ffaDM'); if(el) el.querySelector('.w').textContent=/does not exist|schema cache|PGRST20/i.test(String(r.error.message||'')+' '+r.error.code)?N.notReady:''; return; }
   if(dmWith!==o) return; dmRows=(r.data||[]).reverse(); paintDM();
 }
-async function seenDM(){ if(!dmWith) return; var o=dmWith; delete dmUnread[o]; fpaint(); try{ await sb.from('ff_dm').update({read_at:new Date().toISOString()}).eq('recipient_id',user.id).eq('sender_id',o).is('read_at',null); }catch(e){} }
+async function seenDM(){ if(!dmWith) return; var o=dmWith; delete dmUnread[o]; fpaint();
+  /* 이 사람의 대화창을 열면 🔔 알림에 쌓인 그 사람의 메시지 알림도 읽음 처리해서 숫자가 바로 사라져요 */
+  var dn=notes.filter(function(n){ return n.kind==='dm'&&n.actor_id===o&&!n.read; }); if(dn.length){ dn.forEach(function(n){ n.read=true; }); bellBadge(); try{ sb.from('ff_notes').update({read:true}).in('id',dn.map(function(n){ return n.id; })).then(function(){},function(){}); }catch(e){} }
+  try{ await sb.from('ff_dm').update({read_at:new Date().toISOString()}).eq('recipient_id',user.id).eq('sender_id',o).is('read_at',null); }catch(e){} }
 function paintDM(){
   var el=document.getElementById('ffaDM'); if(!el||!dmWith) return; var box=el.querySelector('.ms'), stick=box.scrollHeight-box.scrollTop-box.clientHeight<60||!box.dataset.once; box.innerHTML='';
   if(isBlocked(dmWith)){ box.innerHTML='<div class="e">'+esc(N.blocked)+'</div>'; return; }
