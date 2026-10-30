@@ -1,9 +1,9 @@
 /* Gatecrash · © 2026 Frenchfries777 · CC BY-NC-ND 4.0
    데이터: 상수, 무기, 맵 */
 'use strict';
-const VERSION = '0.1', BUILD = 18;
+const VERSION = '0.1', BUILD = 19;
 const TS = 16;                                   // 타일 한 칸 (px)
-const PH = { RUN: 120, ACC: 1500, AIR: 1000, G: 1500, JUMP: 410, CUT: 150, MAXF: 560, W: 10, H: 22, COY: 0.08, BUF: 0.12, BELT: 70, ICE: 180, LIFT: 200 };
+const PH = { RUN: 120, ACC: 1500, AIR: 1000, G: 1500, JUMP: 440, CUT: 300, MAXF: 560, W: 10, H: 22, COY: 0.08, BUF: 0.12, BELT: 70, ICE: 180, LIFT: 200 };
 const MAX_HP = 100, RACERS = 4;
 const COLORS = ['#e8483b', '#3b8de8', '#3fbf5a', '#f2b632', '#a65be0', '#f07ab8', '#2cc4c4', '#f0f0f0'];
 
@@ -19,6 +19,9 @@ const WEAPONS = {
   sling:   { name: '새총',       kind: 'shot',   dmg: 6,  kb: 120, up: 60,  cd: 0.17, uses: 26, speed: 540, life: 0.7, stun: 0.15, reach: 210 },
   hose:    { name: '소방 호스',   kind: 'spray',  dmg: 2,  kb: 230, up: 30,  cd: 0.08, uses: 40, speed: 300, life: 0.3, stun: 0.1, recoil: 90, reach: 90 },
   banana:  { name: '바나나 껍질', kind: 'trap',   dmg: 0,  kb: 0,   up: 0,   cd: 0.5,  uses: 3,  stun: 1.0 },
+  shotgun: { name: '산탄총',     kind: 'shot',   dmg: 7,  kb: 150, up: 80,  cd: 0.9,  uses: 8,  speed: 400, life: 0.35, stun: 0.3, reach: 130, n: 5, spread: 0.5 },
+  bow:     { name: '장난감 활',   kind: 'shot',   dmg: 17, kb: 230, up: 110, cd: 0.8,  uses: 9,  speed: 360, life: 1.1, stun: 0.4, reach: 260 },
+  minigun: { name: '장난감 기관총', kind: 'shot',  dmg: 3,  kb: 70,  up: 30,  cd: 0.07, uses: 45, speed: 480, life: 0.55, stun: 0.1, reach: 190, spread: 0.12 },
   firework:{ name: '폭죽 발사기', kind: 'rocket', dmg: 16, kb: 300, up: 200, cd: 0.7,  uses: 6,  speed: 340, life: 1.6, radius: 30, stun: 0.4, reach: 200 }
 };
 const WEP_IDS = Object.keys(WEAPONS);
@@ -57,62 +60,125 @@ function rng(seed) { let a = seed | 0; return () => { a = a + 0x6D2B79F5 | 0; le
 /* 층 구조 건물: F = 아래 층부터 [{ theme, objs, belt, conn: 'lift', g: ['ice','gap','mezz'] }]
    기믹: ice 미끄러운 바닥, gap 바닥 구멍(떨어지면 아래층), mezz 가구 위 선반, belt 컨베이어. conn 'lift' = 엘리베이터로 올라가요 */
 const FW = 172;
+/* 가구를 일정한 간격으로 늘어놓아요 (res 안쪽은 비워 둬요) */
+function placeRun(b, R, list, from, to, bottom, res, out) {
+  const pool = list.filter(o => o[0][0] !== '~'); if (!pool.length) return;
+  let x = from + (R() * 3 | 0), bag = [];
+  while (x < to) {
+    if (!bag.length) { bag = pool.slice(); for (let i = bag.length - 1; i > 0; i--) { const j = R() * (i + 1) | 0; [bag[i], bag[j]] = [bag[j], bag[i]]; } }
+    const o = bag.pop(), w = o[2], hit = res.find(r => x + w + 1 >= r[0] && x - 1 <= r[1]);
+    if (hit) { x = hit[1] + 2; continue; }
+    if (x + w > to) break;
+    b.obj(o[0], x, bottom, w, o[3]); out.push({ x, w, h: o[3] });
+    x += w + 4 + (R() * 4 | 0);
+  }
+}
+function mezzOn(b, placed, bottom, every) {
+  const c = placed.filter(o => o.h <= 2 && o.w <= 4);
+  for (let k = 0; k < c.length; k += every) { const o = c[k], row = bottom - 2; b.fill(o.x - 2, row, o.x + o.w + 1, row, '='); b.spawn(o.x + (o.w >> 1), row - 1); }
+}
+function freeSpot(b, tx, row) { return !isSolidC(b.g[row][tx]) && !isSolidC(b.g[row - 1][tx]) && b.g[row + 1][tx] === '#'; }
+function itemSpots(b, from, to, bottom, n) {
+  for (let k = 0; k < n; k++) { const t = from + (to - from) * (k + 0.5) / n | 0; for (let d = 0; d < 12; d++) { const hit = [t - d, t + d].find(q => q > from && q < to && freeSpot(b, q, bottom)); if (hit !== undefined) { b.spawn(hit, bottom); break; } } }
+}
+
+/* 층 구조 건물: F = 아래 층부터 [{ theme, objs, belt, conn: 'lift', g: ['ice','gap','mezz'] }]
+   층마다 위로 가는 길의 위치가 달라요 (왼쪽 끝, 가운데, 오른쪽 끝). 어떤 층은 길이 둘이라 골라서 갈 수 있어요.
+   기믹: ice 미끄러운 바닥, gap 바닥 구멍(떨어지면 아래층), mezz 가구 위 선반, belt 컨베이어 */
 function floorsMap(F, roof, seed) {
   const R = rng(seed), n = F.length, H = 6 * n + 6, b = Builder(FW, H), S = k => H - 1 - 6 * k;
   for (let k = 0; k <= n; k++) b.fill(0, S(k), FW - 1, S(k), '#');
   b.fill(0, S(n), 0, H - 1, '#'); b.fill(FW - 1, S(n), FW - 1, H - 1, '#');
-  const place = (list, from, to, bottom, res, out) => {
-    const pool = list.filter(o => o[0][0] !== '~'); if (!pool.length) return;
-    let x = from + (R() * 3 | 0), bag = [];
-    while (x < to) {
-      if (!bag.length) { bag = pool.slice(); for (let i = bag.length - 1; i > 0; i--) { const j = R() * (i + 1) | 0; [bag[i], bag[j]] = [bag[j], bag[i]]; } }
-      const o = bag.pop(), w = o[2], hit = res.find(r => x + w + 1 >= r[0] && x - 1 <= r[1]);
-      if (hit) { x = hit[1] + 2; continue; }
-      if (x + w > to) break;
-      b.obj(o[0], x, bottom, w, o[3]); out.push({ x, w, h: o[3] });
-      x += w + 4 + (R() * 4 | 0);
-    }
-  };
-  const free = (tx, row) => !isSolidC(b.g[row][tx]) && !isSolidC(b.g[row - 1][tx]) && b.g[row + 1][tx] === '#';
+  F.forEach((f, i) => { if (f.belt) b.fill(14, S(i), FW - 14, S(i), f.belt > 0 ? '>' : '<'); });   // 길(구멍)을 나중에 뚫어야 해서 무빙워크를 먼저 깔아요
+  // 위로 가는 길 위치: 앞 층에서 올라온 자리에서 멀리 떨어뜨려요
+  const POS = [10, FW * .28 | 0, FW * .5 | 0, FW * .72 | 0, FW - 18]; let prev = [8]; const conn = [];
   F.forEach((f, i) => {
-    const slab = S(i + 1), bottom = S(i) - 1, right = i % 2 === 0;
+    const far = (x, m) => prev.every(p => Math.abs(p - x) >= (m || 40)), cand = POS.filter(x => far(x)), x1 = cand.length ? cand[R() * cand.length | 0] : POS.slice().sort((a, c) => Math.min(...prev.map(p => Math.abs(c - p))) - Math.min(...prev.map(p => Math.abs(a - p))))[0];
+    const list = [{ x: x1, kind: f.conn === 'lift' ? 'lift' : 'stairs', mir: R() < .5 }];
+    if (R() < .45) { const c2 = POS.filter(x => far(x) && Math.abs(x - x1) >= 28); if (c2.length) list.push({ x: c2[R() * c2.length | 0], kind: f.conn === 'lift' ? 'stairs' : 'lift', mir: R() < .5 }); }
+    conn.push(list); prev = list.map(c => c.x);
+  });
+  F.forEach((f, i) => {
+    const slab = S(i + 1), bottom = S(i) - 1, res = [], g = (f.g || []).slice();
     b.room(1, slab + 1, FW - 2, bottom, f.theme);
-    if (f.belt) b.fill(14, S(i), FW - 14, S(i), f.belt > 0 ? '>' : '<');
-    const res = [], g = (f.g || []).slice();
-    // 위층으로 가는 길
-    if (f.conn === 'lift') {
-      const hx = right ? FW - 9 : 5;
-      b.fill(hx, slab, hx + 2, slab, '.');
-      for (let y = slab - 2; y <= slab + 5; y++) b.fill(hx, y, hx + 2, y, 'U');
-      b.deco('liftshaft', hx, slab + 5, 3, 8);
-    } else if (right) { b.fill(FW - 10, slab, FW - 5, slab, '.'); b.fill(FW - 7, slab + 4, FW - 5, slab + 4, '='); b.fill(FW - 10, slab + 2, FW - 8, slab + 2, '='); b.deco('stairwell', FW - 10, slab + 5, 6, 6); }
-    else { b.fill(4, slab, 9, slab, '.'); b.fill(4, slab + 4, 6, slab + 4, '='); b.fill(7, slab + 2, 9, slab + 2, '='); b.deco('stairwell', 4, slab + 5, 6, 6); }
-    // 기믹 자리
-    const GA = ['ice', 'gap', 'mezz'];
-    for (let q = 0; g.length < 3 && q < 3; q++) { const k = GA[(i + seed + q) % 3]; if (!g.includes(k)) g.push(k); }
-    const zw = (FW - 48) / g.length | 0;
-    g.forEach((k, gi) => {
-      const z0 = 20 + gi * zw, x0 = z0 + (R() * Math.max(1, zw - 18) | 0);
-      if (k === 'ice') { b.fill(x0, S(i), x0 + 11, S(i), 'I'); res.push([x0 - 1, x0 + 12]); b.deco('cone', x0 - 1, bottom, 1, 1); }
-      else if (k === 'gap' && i >= 1) { b.fill(x0, S(i), x0 + 2, S(i), '.'); res.push([x0 - 2, x0 + 5]); }
-    });
-    for (const o of f.objs) if (o[0][0] === '~') b.deco(o[0].slice(1), o[1], bottom, o[2], o[3]);
-    const placed = []; place(f.objs, 14, FW - 14, bottom, res, placed);
-    if (g.includes('mezz')) {
-      const c = placed.filter(o => o.h <= 2 && o.w <= 4);
-      for (let k = 0, step = Math.max(1, c.length >> 1); k < c.length && k < 2 * step; k += step) {
-        const o = c[k], row = bottom - 2; b.fill(o.x - 2, row, o.x + o.w + 1, row, '='); b.spawn(o.x + (o.w >> 1), row - 1);
+    const arrive = i ? conn[i - 1].map(c => c.x) : [];
+    for (const x of arrive) res.push([x - 2, x + 9]);
+    for (const c of conn[i]) {
+      const x = c.x; res.push([x - 2, x + 9]);
+      if (c.kind === 'lift') {
+        b.fill(x, slab, x + 2, slab, '=');
+        for (let y = slab - 2; y <= slab + 5; y++) b.fill(x, y, x + 2, y, 'U');
+        b.deco('liftshaft', x, slab + 5, 3, 8);
+      } else {
+        b.fill(x, slab, x + 5, slab, '=');
+        if (x < FW / 2) { b.fill(x, slab + 4, x + 2, slab + 4, '='); b.fill(x + 3, slab + 2, x + 5, slab + 2, '='); }
+        else { b.fill(x + 3, slab + 4, x + 5, slab + 4, '='); b.fill(x, slab + 2, x + 2, slab + 2, '='); }
+        b.deco('stairwell', x, slab + 5, 6, 6);
       }
     }
-    // 무기 자리: 바닥이 비어 있는 곳으로
-    [0.2, 0.42, 0.62, 0.8].forEach(t => { let tx = Math.round(FW * t); for (let d = 0; d < 12; d++) { const hit = [tx - d, tx + d].find(q => q > 12 && q < FW - 12 && free(q, bottom)); if (hit !== undefined) { b.spawn(hit, bottom); break; } } });
+    const GA = ['ice', 'gap', 'mezz'];
+    for (let q = 0; g.length < 3 && q < 3; q++) { const k = GA[(i + seed + q) % 3]; if (!g.includes(k)) g.push(k); }
+    for (const k of g) {
+      const len = k === 'ice' ? 12 : 3;
+      if (k === 'mezz' || (k === 'gap' && i < 1)) continue;
+      for (let t = 0; t < 14; t++) {
+        const x0 = 18 + (R() * (FW - 36 - len) | 0);
+        if (res.some(r => x0 + len + 2 >= r[0] && x0 - 2 <= r[1])) continue;
+        if (k === 'ice') { b.fill(x0, S(i), x0 + 11, S(i), 'I'); res.push([x0 - 1, x0 + 12]); b.deco('cone', x0 - 1, bottom, 1, 1); }
+        else { b.fill(x0, S(i), x0 + 2, S(i), '.'); res.push([x0 - 2, x0 + 5]); }
+        break;
+      }
+    }
+    for (const o of f.objs) if (o[0][0] === '~') b.deco(o[0].slice(1), o[1], bottom, o[2], o[3]);
+    const placed = []; placeRun(b, R, f.objs, 14, FW - 14, bottom, res, placed);
+    if (g.includes('mezz')) mezzOn(b, placed, bottom, Math.max(1, placed.length >> 1));
+    itemSpots(b, 12, FW - 12, bottom, 4);
   });
   b.deco('door', 1, S(0) - 1, 2, 4);
-  const rb = S(n) - 1, rp = []; place(roof, 14, FW - 14, rb, [], rp); for (const o of roof) if (o[0][0] === '~') b.deco(o[0].slice(1), o[1], rb, o[2], o[3]);
-  const arriveRight = (n - 1) % 2 === 0;
-  b.spawn(arriveRight ? FW - 24 : 24, rb); b.spawn(FW >> 1, rb);
-  if (arriveRight) { b.deco('helipad', 1, rb, 9, 1); b.finish = { x0: 1, y0: rb - 4, x1: 8, y1: rb }; } else { b.deco('helipad', FW - 10, rb, 9, 1); b.finish = { x0: FW - 9, y0: rb - 4, x1: FW - 2, y1: rb }; }
+  const rb = S(n) - 1, rp = [], last = conn[n - 1].map(c => c.x), lres = last.map(x => [x - 2, x + 9]);
+  placeRun(b, R, roof, 14, FW - 14, rb, lres, rp); for (const o of roof) if (o[0][0] === '~') b.deco(o[0].slice(1), o[1], rb, o[2], o[3]);
+  const goalLeft = Math.min(...last) > FW / 2;
+  b.spawn(goalLeft ? FW - 24 : 24, rb); b.spawn(FW >> 1, rb);
+  if (goalLeft) { b.deco('helipad', 1, rb, 9, 1); b.finish = { x0: 1, y0: rb - 4, x1: 8, y1: rb }; } else { b.deco('helipad', FW - 10, rb, 9, 1); b.finish = { x0: FW - 9, y0: rb - 4, x1: FW - 2, y1: rb }; }
   for (let i = 0; i < RACERS; i++) b.starts.push({ x: (2 + i) * TS + 3, y: (H - 1) * TS - PH.H });
+  return b;
+}
+
+/* 가로로 긴 맵: 낮은 길과 높은 길(단상)을 오르내리며 달려요
+   segs: { k:'run', lvl:0|1, len, theme, objs, g:['ice','belt','mezz'] }, { k:'up', how:'steps'|'lift' }, { k:'down' } */
+function longMap(segs, goal, seed) {
+  const R = rng(seed), H = 22;
+  let W = 16; for (const s of segs) W += s.k === 'run' ? s.len : s.k === 'up' ? (s.how === 'lift' ? 8 : 10) : 2; W += 12;
+  const b = Builder(W, H);
+  b.fill(0, 0, W - 1, 2, '#'); b.fill(0, 20, W - 1, 21, '#'); b.fill(0, 3, 0, 19, '#'); b.fill(W - 1, 3, W - 1, 19, '#');
+  b.deco('door', 1, 19, 3, 4);
+  let x = 14, lvl = 0, firstTheme = segs[0].theme;
+  b.room(1, 3, 13, 19, firstTheme);
+  segs.forEach(s => {
+    if (s.k === 'up') {
+      if (s.how === 'lift') {
+        for (let y = 10; y <= 19; y++) b.fill(x, y, x + 2, y, 'U'); b.deco('liftshaft', x, 19, 3, 10); b.fill(x + 3, 12, x + 7, 19, '#'); x += 8;
+      } else { b.fill(x, 18, x + 2, 19, '#'); b.fill(x + 3, 16, x + 5, 19, '#'); b.fill(x + 6, 14, x + 8, 19, '#'); b.fill(x + 9, 12, x + 9, 19, '#'); b.deco('stairwell', x, 19, 10, 8); x += 10; }
+      b.room(x - (s.how === 'lift' ? 8 : 10), 3, x - 1, 11, s.theme || segs[0].theme); lvl = 1; return;
+    }
+    if (s.k === 'down') { b.room(x, 3, x + 1, 19, s.theme || segs[0].theme); x += 2; lvl = 0; return; }
+    const x1 = x + s.len - 1, bottom = lvl ? 11 : 19, top = lvl ? 12 : 20, res = [];
+    if (lvl) b.fill(x, 12, x1, 19, '#');
+    b.room(x, 3, x1, bottom, s.theme);
+    const g = s.g || [];
+    if (g.includes('belt')) { const bx = x + 14 + (R() * Math.max(1, s.len - 44) | 0); b.fill(bx, top, bx + 14, top, R() < .5 ? '>' : '<'); res.push([bx - 1, bx + 15]); }
+    if (g.includes('ice')) { const ix = x + 18 + (R() * Math.max(1, s.len - 50) | 0); if (!res.some(r => ix + 14 >= r[0] && ix - 2 <= r[1])) { b.fill(ix, top, ix + 11, top, 'I'); res.push([ix - 1, ix + 12]); b.deco('cone', ix - 1, bottom, 1, 1); } }
+    for (const o of s.objs) if (o[0][0] === '~') b.deco(o[0].slice(1), x + o[1], bottom, o[2], o[3]);
+    const placed = []; placeRun(b, R, s.objs, x + 5, x1 - 4, bottom, res, placed);
+    if (g.includes('mezz')) mezzOn(b, placed, bottom, Math.max(1, placed.length >> 2));
+    itemSpots(b, x + 3, x1 - 3, bottom, Math.max(2, s.len / 22 | 0));
+    x += s.len;
+  });
+  if (lvl) b.fill(x, 12, W - 2, 19, '#');
+  b.room(x, 3, W - 2, lvl ? 11 : 19, segs[segs.length - 1].theme);
+  b.deco(goal || 'door', W - 5, lvl ? 11 : 19, 3, 4);
+  b.finish = lvl ? { x0: W - 8, y0: 9, x1: W - 2, y1: 11 } : { x0: W - 8, y0: 17, x1: W - 2, y1: 19 };
+  for (let i = 0; i < RACERS; i++) b.starts.push({ x: (2 + i) * TS + 3, y: 20 * TS - PH.H });
   return b;
 }
 function isSolidC(c) { return c === '#' || c === 'x' || c === '>' || c === '<' || c === 'I'; }
@@ -168,13 +234,6 @@ function mapAirport() {
   return b;
 }
 
-function mapSubway() {
-  return floorsMap([
-    { theme: 'subwayB', conn: 'lift', g: ['ice'], objs: [ob('bench', 0, 3, 1), ob('trash', 0, 1, 1), ob('turnstile', 0, 1, 2), ob('turnstile', 0, 1, 2), ob('luggage', 0, 2, 1), ob('pillar', 0, 2, 3), ob('boxes', 0, 2, 1), ['~train', 14, 60, 3]] },
-    { theme: 'subway', g: ['gap', 'mezz'], objs: [ob('ticket', 0, 3, 2), ob('plant', 0, 1, 1), ob('kiosk', 0, 3, 2), ob('luggage', 0, 2, 1), ob('bench', 0, 3, 1)] },
-    { theme: 'subwayS', g: ['mezz'], objs: [ob('cart', 0, 2, 1), ob('barrier', 0, 1, 1), ob('news', 0, 2, 2), ob('bench', 0, 3, 1), ob('plant', 0, 1, 2), ob('boxes', 0, 2, 1)] }
-  ], [ob('ac', 0, 3, 2), ob('vent', 0, 1, 1), ob('tank', 0, 3, 2), ob('ac', 0, 2, 2)], 23);
-}
 function mapMall() {
   return floorsMap([
     { theme: 'mall', conn: 'lift', g: ['mezz'], objs: [ob('fountain', 0, 5, 1), ob('plant', 0, 1, 2), ob('bench', 0, 3, 1), ob('cart', 0, 2, 1), ob('kiosk', 0, 3, 2)] },
@@ -225,22 +284,6 @@ function mapLibrary() {
     { theme: 'lib', conn: 'lift', g: ['mezz', 'gap'], objs: [ob('shelfb', 0, 3, 3), ob('globe', 0, 1, 2), ob('desk', 0, 3, 1), ob('lamp', 0, 1, 3), ob('shelfb', 0, 4, 3)] }
   ], [ob('ac', 0, 3, 2), ob('vent', 0, 1, 1), ob('tank', 0, 3, 2), ob('ac', 0, 2, 2)], 83);
 }
-function mapMuseum() {
-  return floorsMap([
-    { theme: 'muse', conn: 'lift', objs: [ob('statue', 0, 2, 3), ob('bench', 0, 3, 1), ob('vitrine', 0, 3, 2), ob('plant', 0, 1, 2), ob('statue', 0, 2, 3)] },
-    { theme: 'museD', g: ['gap', 'mezz'], objs: [ob('bones', 0, 6, 3), ob('rope', 0, 1, 1), ob('vitrine', 0, 3, 2), ob('rock', 0, 2, 1), ob('rope', 0, 1, 1)] },
-    { theme: 'museA', conn: 'lift', g: ['ice'], objs: [ob('easel', 0, 2, 3), ob('bench', 0, 3, 1), ob('vitrine', 0, 3, 2), ob('easel', 0, 2, 3), ob('plant', 0, 1, 1)] },
-    { theme: 'museS', g: ['mezz'], objs: [ob('rocket', 0, 2, 3), ob('moon', 0, 3, 1), ob('vitrine', 0, 3, 2), ob('globe', 0, 1, 2), ob('bench', 0, 3, 1)] }
-  ], [ob('ac', 0, 3, 2), ob('tank', 0, 3, 2), ob('vent', 0, 1, 1), ob('ac', 0, 2, 2)], 97);
-}
-function mapStadium() {
-  return floorsMap([
-    { theme: 'arena', g: ['ice'], objs: [ob('turnstile', 0, 1, 2), ob('hotdog', 0, 3, 2), ob('bench', 0, 3, 1), ob('banner', 0, 1, 3), ob('trash', 0, 1, 1)] },
-    { theme: 'lockerR', conn: 'lift', g: ['gap'], objs: [ob('locker', 0, 4, 2), ob('bench', 0, 3, 1), ob('ball', 0, 1, 1), ob('locker', 0, 3, 2), ob('boxes', 0, 2, 1)] },
-    { theme: 'press', g: ['mezz'], objs: [ob('desk', 0, 3, 1), ob('camera', 0, 2, 3), ob('desk', 0, 3, 1), ob('cooler', 0, 1, 2), ob('chair', 0, 1, 1)] },
-    { theme: 'vip', conn: 'lift', g: ['mezz', 'ice'], objs: [ob('sofa', 0, 3, 1), ob('trophy', 0, 2, 2), ob('table', 0, 3, 1), ob('plant', 0, 1, 2), ob('sofa', 0, 3, 1)] }
-  ], [ob('tank', 0, 3, 2), ob('vent', 0, 1, 1), ob('ac', 0, 2, 2), ['~antenna', 90, 1, 5]], 103);
-}
 function mapStudio() {
   return floorsMap([
     { theme: 'studio', objs: [ob('camera', 0, 2, 3), ob('spot', 0, 1, 3), ob('desk', 0, 3, 1), ob('sofa', 0, 3, 1), ob('cable', 0, 2, 1)] },
@@ -248,6 +291,40 @@ function mapStudio() {
     { theme: 'makeup', g: ['ice', 'mezz'], objs: [ob('mirror', 0, 3, 2), ob('chair', 0, 1, 1), ob('rackc', 0, 3, 2), ob('mirror', 0, 3, 2), ob('plant', 0, 1, 2)] },
     { theme: 'studio', conn: 'lift', g: ['gap'], objs: [ob('spot', 0, 1, 3), ob('cable', 0, 2, 1), ob('camera', 0, 2, 3), ob('desk', 0, 3, 1), ob('cooler', 0, 1, 2)] }
   ], [ob('ac', 0, 3, 2), ob('tank', 0, 3, 2), ob('vent', 0, 1, 1), ['~antenna', 60, 1, 5]], 113);
+}
+
+function mapSubway() {
+  return longMap([
+    { k: 'run', lvl: 0, len: 90, theme: 'subwayB', g: ['ice'], objs: [ob('bench', 0, 3, 1), ob('trash', 0, 1, 1), ob('luggage', 0, 2, 1), ob('pillar', 0, 2, 3), ob('boxes', 0, 2, 1), ob('turnstile', 0, 1, 2), ['~train', 10, 60, 3]] },
+    { k: 'up', how: 'steps', theme: 'subway' },
+    { k: 'run', lvl: 1, len: 100, theme: 'subway', g: ['belt', 'mezz'], objs: [ob('ticket', 0, 3, 2), ob('plant', 0, 1, 1), ob('kiosk', 0, 3, 2), ob('luggage', 0, 2, 1), ob('bench', 0, 3, 1), ob('news', 0, 2, 2)] },
+    { k: 'down', theme: 'subwayS' },
+    { k: 'run', lvl: 0, len: 80, theme: 'subwayS', g: ['ice', 'mezz'], objs: [ob('cart', 0, 2, 1), ob('barrier', 0, 1, 1), ob('pillar', 0, 2, 3), ob('boxes', 0, 2, 2), ob('bench', 0, 3, 1)] },
+    { k: 'up', how: 'lift', theme: 'subway' },
+    { k: 'run', lvl: 1, len: 70, theme: 'subway', g: ['belt'], objs: [ob('kiosk', 0, 3, 2), ob('plant', 0, 1, 2), ob('ticket', 0, 3, 2), ob('bench', 0, 3, 1)] }
+  ], 'stairwell', 23);
+}
+function mapMuseum() {
+  return longMap([
+    { k: 'run', lvl: 0, len: 80, theme: 'muse', objs: [ob('statue', 0, 2, 3), ob('bench', 0, 3, 1), ob('vitrine', 0, 3, 2), ob('plant', 0, 1, 2), ob('statue', 0, 2, 3)] },
+    { k: 'up', how: 'steps', theme: 'museD' },
+    { k: 'run', lvl: 1, len: 110, theme: 'museD', g: ['mezz', 'belt'], objs: [ob('bones', 0, 6, 3), ob('rope', 0, 1, 1), ob('vitrine', 0, 3, 2), ob('rock', 0, 2, 1), ob('rope', 0, 1, 1)] },
+    { k: 'down', theme: 'museA' },
+    { k: 'run', lvl: 0, len: 90, theme: 'museA', g: ['ice', 'mezz'], objs: [ob('easel', 0, 2, 3), ob('bench', 0, 3, 1), ob('vitrine', 0, 3, 2), ob('easel', 0, 2, 3), ob('plant', 0, 1, 1)] },
+    { k: 'up', how: 'lift', theme: 'museS' },
+    { k: 'run', lvl: 1, len: 80, theme: 'museS', g: ['mezz'], objs: [ob('rocket', 0, 2, 3), ob('moon', 0, 3, 1), ob('vitrine', 0, 3, 2), ob('globe', 0, 1, 2), ob('bench', 0, 3, 1)] }
+  ], 'door', 97);
+}
+function mapStadium() {
+  return longMap([
+    { k: 'run', lvl: 0, len: 90, theme: 'arena', g: ['ice'], objs: [ob('turnstile', 0, 1, 2), ob('hotdog', 0, 3, 2), ob('bench', 0, 3, 1), ob('banner', 0, 1, 3), ob('trash', 0, 1, 1)] },
+    { k: 'up', how: 'lift', theme: 'press' },
+    { k: 'run', lvl: 1, len: 110, theme: 'press', g: ['belt', 'mezz'], objs: [ob('desk', 0, 3, 1), ob('camera', 0, 2, 3), ob('cooler', 0, 1, 2), ob('chair', 0, 1, 1), ob('banner', 0, 1, 3)] },
+    { k: 'down', theme: 'lockerR' },
+    { k: 'run', lvl: 0, len: 80, theme: 'lockerR', g: ['ice', 'mezz'], objs: [ob('locker', 0, 4, 2), ob('bench', 0, 3, 1), ob('ball', 0, 1, 1), ob('locker', 0, 3, 2), ob('boxes', 0, 2, 1)] },
+    { k: 'up', how: 'steps', theme: 'vip' },
+    { k: 'run', lvl: 1, len: 70, theme: 'vip', g: ['mezz'], objs: [ob('sofa', 0, 3, 1), ob('trophy', 0, 2, 2), ob('table', 0, 3, 1), ob('plant', 0, 1, 2)] }
+  ], 'door', 103);
 }
 
 const MAPS = {
