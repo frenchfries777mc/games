@@ -76,7 +76,7 @@ const HERO = {
   assassin: { body: 0x24343c, leg: 0x161e24, arm: 0x24343c, hood: 0x1a2830, scim: 1, belt: 1 },
   bomber: { body: 0x7a4a32, leg: 0x3a3030, arm: 0x7a4a32, goggles: 1, bombs: 1, bhand: 1, sack: 1, belt: 1, cap: 0x5a3a28, wide: 1.1 },
   bard: { body: 0xb04a6a, leg: 0x4a3a50, arm: 0xb04a6a, cap: 0x3a6a8a, lute: 1, belt: 1, cape: 0x6a3a8a },
-  court: { body: 0x5a3a9a, robe: 1, leg: 0x2a1e44, arm: 0x5a3a9a, rune: 1, staff: 1, staffC: 0xb88aff, belt: 1, cape: 0x3a2470 },
+  court: { body: 0xb02828, robe: 1, leg: 0x6a4a2a, arm: 0xb02828, inner: 0x7a5232, beard: 0xd8d2c4, redhat: 1, staff: 1, wand: 1, staffC: 0xff2a2a, lightC: 0xff4040, belt: 1, beltC: 0xe0b030 },
   spearman: { body: 0x5a6a7a, leg: 0x3a3a44, arm: 0x5a6a7a, helm: 1, helmC: 0x8a8f9c, plume: 0xb83a3a, spear: 1, belt: 1 },
   crossbow: { body: 0x6b4a2e, leg: 0x2e2a34, arm: 0x6b4a2e, kettle: 1, scarf: 0xb8442e, xh: 1, bolts: 1, strap: 1, belt: 1, wide: 1.1 }
 };
@@ -123,7 +123,8 @@ function makeFigure(o) {
   box(0.5, 0.25, 0.65, M(0x2a2228), 0, -0.78, 0.1, legL); box(0.5, 0.25, 0.65, M(0x2a2228), 0, -0.78, 0.1, legR);
   cyl(0.5, o.robe ? 0.85 : 0.62, o.robe ? 1.9 : 1.3, 10, M(o.body), 0, o.robe ? 1.1 : 1.45, 0, body);
   sph(0.55, 10, 8, M(o.body), 0, 2.05, 0, body).scale.set(1, 0.7, 0.85);
-  if (o.belt) { const b = mesh(geo('belt', () => new THREE.TorusGeometry(0.58, 0.08, 5, 12)), leather(), 0, 1.2, 0, body); b.rotation.x = Math.PI / 2; }
+  if (o.inner) box(0.5, 1.3, 0.06, M(o.inner), 0, 1.05, 0.8, body);   // 로브 앞이 벌어져 속옷이 보여요
+  if (o.belt) { const b = mesh(geo('belt', () => new THREE.TorusGeometry(0.58, 0.08, 5, 12)), o.beltC ? M(o.beltC, { e: o.beltC, ei: 0.35 }) : leather(), 0, 1.2, 0, body); b.rotation.x = Math.PI / 2; if (o.beltC) box(0.2, 0.2, 0.08, M(o.beltC, { e: o.beltC, ei: 0.5 }), 0, 1.2, 0.62, body); }
   const head = new THREE.Group(); head.position.y = 2.75; body.add(head);
   if (o.helm) {
     const hm = o.helmC ? M(o.helmC, { m: 0.7, r: 0.4 }) : metal(); cyl(0.42, 0.45, 0.8, 10, hm, 0, 0, 0, head); sph(0.42, 10, 6, hm, 0, 0.4, 0, head, 1.6);
@@ -139,6 +140,10 @@ function makeFigure(o) {
   }
   if (o.beard) { const bd = cone(0.4, 0.9, 6, M(o.beard), 0, -0.55, 0.28, head); bd.rotation.x = Math.PI + 0.25; for (const sx of [-1, 1]) { const br = cone(0.1, 0.5, 4, M(o.beard), sx * 0.2, -0.9, 0.38, head); br.rotation.x = Math.PI; } }
   if (o.turban) { sph(0.5, 10, 7, M(0xf0e8d8), 0, 0.28, -0.02, head).scale.set(1, 0.75, 1); mesh(geo('tb', () => new THREE.TorusGeometry(0.45, 0.1, 5, 12)), M(0xe8dcc0), 0, 0.12, 0, head).rotation.x = Math.PI / 2; sph(0.1, 6, 5, M(0xb0302a), 0, 0.35, 0.44, head); const f = cone(0.06, 0.5, 4, M(0xb0302a), 0, 0.75, 0.3, head); f.rotation.x = 0.3; box(0.42, 0.14, 0.08, M(0x2a1a14), 0, -0.24, 0.36, head); }
+  if (o.redhat) {   // 빨간 마법사 모자: 넓은 챙과 높은 뾰족 모자, 금색 띠
+    const hc = M(0xc02828); cyl(0.8, 0.8, 0.06, 12, M(0x8a1a1a), 0, 0.3, 0, head); const hh = cone(0.46, 1.5, 8, hc, 0, 1.05, -0.06, head); hh.rotation.x = -0.2;
+    cyl(0.48, 0.48, 0.12, 10, M(0xe0b030, { e: 0xe0b030, ei: 0.3 }), 0, 0.42, 0, head);
+  }
   if (o.rune) {   // 룬 모자: 넓은 챙과 높은 뾰족 모자, 둘레에 빛나는 룬 고리와 룬 세 개
     const hc = M(0x2e1e56), rg = M(0xc8a0ff, { e: 0xb070ff, ei: 3.5 });
     cyl(0.78, 0.78, 0.06, 12, hc, 0, 0.3, 0, head); const hh = cone(0.44, 1.5, 8, hc, 0, 1.05, -0.06, head); hh.rotation.x = -0.18;
@@ -189,7 +194,7 @@ function makeFigure(o) {
   if (o.bolts) { const bc = box(0.5, 0.35, 0.3, M(0x4a3020), -0.62, 1.05, 0.1, body); bc.rotation.z = 0.3; for (let i = 0; i < 4; i++) box(0.04, 0.3, 0.04, M(0xc8c0a8), -0.74 + i * 0.1, 1.3, 0.1, body); }
   if (o.strap) { const sb2 = box(0.14, 1.9, 0.08, leather(), 0, 1.9, 0.42, body); sb2.rotation.z = 0.55; }
   if (o.scarf) { const sf = mesh(geo('scarf', () => new THREE.TorusGeometry(0.46, 0.14, 5, 10)), M(o.scarf), 0, 2.35, 0.02, body); sf.rotation.x = Math.PI / 2; box(0.28, 0.8, 0.08, M(o.scarf), 0.25, 2.0, -0.55, body); }
-  if (o.staff) { const sc = o.staffC || 0x9af0d0; const st = new THREE.Group(); st.position.set(0, -0.9, 0.1); armR.add(st); st.rotation.x = 0.7; cyl(0.07, 0.07, 3.2, 6, M(0x7a5a2a), 0, 0.5, 0, st); mesh(geo('oct', () => new THREE.OctahedronGeometry(0.32)), M(sc, { e: sc, ei: 4 }), 0, 2.3, 0, st); if (!o.noLight) { light = new THREE.PointLight(0x6af0c0, 14, 8, 1.6); light.position.set(0, 2.4, 0); st.add(light); } }
+  if (o.staff) { const sc = o.staffC || 0x9af0d0, wd = o.wand; const st = new THREE.Group(); st.position.set(0, -0.9, 0.1); armR.add(st); st.rotation.x = 0.7; cyl(0.07, 0.07, wd ? 1.9 : 3.2, 6, M(0x7a5a2a), 0, wd ? -0.15 : 0.5, 0, st); mesh(geo(wd ? 'octw' : 'oct', () => new THREE.OctahedronGeometry(wd ? 0.22 : 0.32)), M(sc, { e: sc, ei: 4 }), 0, wd ? 1.1 : 2.3, 0, st); if (!o.noLight) { light = new THREE.PointLight(o.lightC || 0x6af0c0, 14, 8, 1.6); light.position.set(0, wd ? 1.2 : 2.4, 0); st.add(light); } }
   let spG = null;
   if (o.spear) { const sp = spG = new THREE.Group(); sp.position.set(0, -0.9, 0.1); armR.add(sp); sp.rotation.x = Math.PI / 2; cyl(0.06, 0.06, 3.6, 5, M(0x5a3a22), 0, 0.8, 0, sp); cone(0.16, 0.6, 4, metal(), 0, 2.9, 0, sp); }
   if (o.great) { const gs = new THREE.Group(); gs.position.set(0, -0.9, 0.2); armR.add(gs); gs.rotation.x = Math.PI / 2; box(0.2, 2.8, 0.06, M(o.great, { m: 0.9, r: 0.3, e: o.greatE || 0, ei: 1.5 }), 0, 1.6, 0, gs); box(0.8, 0.12, 0.14, gold(), 0, 0.15, 0, gs); }
