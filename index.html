@@ -163,6 +163,13 @@ if(document.readyState==='loading') document.addEventListener('DOMContentLoaded'
   .ip .tags span{background:rgba(242,199,90,.10); color:#f3e4b0; border:1px solid rgba(242,199,90,.3);}
   .ip .desc{color:#b9c6e0;} .ip .desc li::marker{color:#f2c75a;}
   .ip .play{background:#f2c75a; color:#2a1f0c; --pb:#b88a2a;}
+  .tc{--card:#221626; background:#221626; border-color:#7a3a52;}
+  .tc:hover{border-color:#e8463c; box-shadow:0 18px 50px rgba(232,70,60,.2);}
+  .tc .badge{background:rgba(232,70,60,.95); color:#fff;}
+  .tc h2{font-weight:900; font-size:27px; letter-spacing:-.01em; color:#fff; text-shadow:0 3px 0 #8a2a3a;}
+  .tc .tags span{background:rgba(232,70,60,.12); color:#ffd0cc; border:1px solid rgba(232,70,60,.35);}
+  .tc .desc{color:#d9c0cc;} .tc .desc li::marker{color:#e8463c;}
+  .tc .play{background:#e8463c; color:#fff; --pb:#9a2a28;}
   .dp{--card:#2a1450; background:#2a1450; border-color:#5a3590;}
   .dp:hover{border-color:#f7a83b; box-shadow:0 18px 50px rgba(247,168,59,.18);}
   .dp .badge{background:rgba(247,168,59,.95); color:#2a1503;}
@@ -465,7 +472,7 @@ if(document.readyState==='loading') document.addEventListener('DOMContentLoaded'
   .hstats span{display:block; margin-top:4px; font-size:13px; color:var(--dim);}
   @media(max-width:640px){ .hstats{gap:4px; padding:14px 4px;} .hstats div{padding:2px 2px;} .hstats span{font-size:12px;} }
   /* 게임 카드: 스크롤하면 차례로 나타나고, 올리면 장면이 커지며 대표색 빛이 번져요 */
-  .game.st{--gc:255,90,95;} .game.ce{--gc:232,194,90;} .game.bf{--gc:90,200,120;} .game.ip{--gc:56,182,255;} .game.dp{--gc:247,168,59;}
+  .game.st{--gc:255,90,95;} .game.ce{--gc:232,194,90;} .game.bf{--gc:90,200,120;} .game.ip{--gc:56,182,255;} .game.dp{--gc:247,168,59;} .game.tc{--gc:232,70,80;}
   .game{--rx:0deg; --ry:0deg; --mx:50%; --my:30%;}
   .game.rv{opacity:0; transform:translateY(34px);}
   .game.rv.in{opacity:1; transform:none; transition:opacity .7s ease, transform .7s cubic-bezier(.2,.7,.2,1);}
@@ -496,6 +503,7 @@ if(document.readyState==='loading') document.addEventListener('DOMContentLoaded'
   .acct .ai img{width:78%; height:78%; display:block;}
 
   /* 게임 카드: 게임별 포인트 색 줄과 제목 밑줄, 마우스를 올리면 최근 패치 한 줄 */
+  .tc{--ac:linear-gradient(90deg,#e8463c,#4a8cff);}
   .st{--ac:linear-gradient(90deg,#ff4d5e,#3fe0c5);} .ce{--ac:linear-gradient(90deg,#d4af4f,#1f4aa5);} .bf{--ac:linear-gradient(90deg,#f2c75a,#d7f19a);} .ip{--ac:linear-gradient(90deg,#f2c75a,#4f7fc4);} .dp{--ac:linear-gradient(90deg,#f7a83b,#b86bff);}
   .game::before{content:''; position:absolute; left:0; right:0; top:0; height:4px; z-index:3; background:var(--ac);}
 
@@ -630,6 +638,24 @@ if(document.readyState==='loading') document.addEventListener('DOMContentLoaded'
         </div>
         <div class="acts">
           <a class="play" href="https://frenchfries777mc.github.io/games/vowkeep/"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M7 4.5v15a1 1 0 0 0 1.5.86l12.5-7.5a1 1 0 0 0 0-1.72L8.5 3.64A1 1 0 0 0 7 4.5z"/></svg>플레이</a>
+        </div>
+      </div>
+    </article>
+    <article class="game tc">
+      <a class="shot" href="https://frenchfries777mc.github.io/games/tumblecrown/" aria-label="Tumblecrown 플레이"><span class="badge">5대5 점령전</span><img src="tumblecrown.webp" alt="Tumblecrown 전투 장면" loading="lazy"></a>
+      <div class="body">
+        <h2 class="wl"><img class="gl" src="gamelogo/tumblecrown.svg" alt="" width="48" height="48">TUMBLECROWN</h2>
+        <div class="tags"><span>5대5 팀전</span><span>깃발 점령</span><span>직업 15개</span></div>
+        <div class="desc">
+          중세 전장에서 다섯 명씩 두 팀이 큰 지도의 깃발 일곱 개를 두고 겨루는 팀 대전 게임이에요.
+          <ul>
+            <li>기사, 궁수, 마법사, 사제, 네크로멘서 등 역할이 다른 직업을 골라 팀 짜기</li>
+            <li>깃발을 모두 차지하는 팀이 이기고, 중립 괴물을 잡으면 팀 전체가 강해져요</li>
+            <li>아홉 가지 지도에서 친구와 방 코드로 대결하거나 봇과 연습하기</li>
+          </ul>
+        </div>
+        <div class="acts">
+          <a class="play" href="https://frenchfries777mc.github.io/games/tumblecrown/"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M7 4.5v15a1 1 0 0 0 1.5.86l12.5-7.5a1 1 0 0 0 0-1.72L8.5 3.64A1 1 0 0 0 7 4.5z"/></svg>플레이</a>
         </div>
       </div>
     </article>
