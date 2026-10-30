@@ -539,3 +539,7 @@ patchnotes.json | v544 items[1] | 제국 수호전은 연승을 올리지도 끊
 - patchnotes.json | v548 items[2] | 에픽 상자 개수가 계정에 저장되지 않고 다른 기기에서 사라지던 문제 수정 | build 548 | 2026-10-30
 - Stickseum-v0.9.html | partyToast | 🎁 오늘의 첫 승리 보너스 sC +N | build 548 | 2026-10-30
 - Stickseum-v0.9.html | killcamLabel | 마지막 일격 · 이름님 | build 548 | 2026-10-30
+
+## Crown Envoy b132 (2026-10-30)
+- 패치노트 b132: 제목 "전투 연출 4가지", 항목 4개 (i18n.js 7개 언어는 한국어로 채움)
+- 게임 안 문구: 전투 말풍선 "돌격!", "와아!", "이겨라!", "쏴라!", "앞으로!"
