@@ -1481,10 +1481,16 @@ export class View {
 function instBoxes(s, fill) {
   const items = []; fill((x, y, z, w, h, d, c) => items.push([x, y, z, w, h, d, c]));
   if (!items.length) return;
-  const im = new THREE.InstancedMesh(geo('ub', () => new THREE.BoxGeometry(1, 1, 1)), new THREE.MeshStandardMaterial({ roughness: 0.9, flatShading: true }), items.length);
-  const m4 = new THREE.Matrix4(), q = new THREE.Quaternion(), col = new THREE.Color();
-  items.forEach((it, i) => { m4.compose(new THREE.Vector3(it[0], it[1], it[2]), q, new THREE.Vector3(it[3], it[4], it[5])); im.setMatrixAt(i, m4); im.setColorAt(i, col.setHex(it[6])); });
-  im.castShadow = im.receiveShadow = true; s.add(im); return im;
+  // 칸으로 나눠 따로 그려요: 화면 밖 칸은 그리지도 않고 그림자에도 넣지 않아서 큰 맵에서도 가벼워요
+  const T = 20, tiles = new Map();
+  for (const it of items) { const k = Math.floor(it[0] / T) + ',' + Math.floor(it[2] / T); let a = tiles.get(k); if (!a) tiles.set(k, a = []); a.push(it); }
+  const m4 = new THREE.Matrix4(), q = new THREE.Quaternion(), col = new THREE.Color(), bg = geo('ub', () => new THREE.BoxGeometry(1, 1, 1)), mat = new THREE.MeshStandardMaterial({ roughness: 0.9, flatShading: true }); let last;
+  for (const list of tiles.values()) {
+    const im = new THREE.InstancedMesh(bg, mat, list.length);
+    list.forEach((it, i) => { m4.compose(new THREE.Vector3(it[0], it[1], it[2]), q, new THREE.Vector3(it[3], it[4], it[5])); im.setMatrixAt(i, m4); im.setColorAt(i, col.setHex(it[6])); });
+    im.castShadow = im.receiveShadow = true; im.computeBoundingSphere(); s.add(im); last = im;
+  }
+  return last;
 }
 function ringMesh(s, color) { const m = mesh(geo('pring', () => new THREE.RingGeometry(0.85, 1.0, 24)), M(new THREE.Color(color).getHex(), { e: new THREE.Color(color).getHex(), ei: 0.8, op: 0.55 }), 0, 0.12, 0, s, false); m.rotation.x = -Math.PI / 2; return m; }
 function projMesh(k) {
