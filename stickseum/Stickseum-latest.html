@@ -5523,7 +5523,7 @@ function shuffle(arr){ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.
 /* ===== the version of this file =====
    Different BUILDS of one version meet and play together (room names online-v<ver>-<mode>-<map>-<slot>); different VERSIONS (the 0.x part) never do - the host refuses them (verNo) and the dispatcher answers busy.
    The build is only sent along with the join message and the lobby (for information); the corner of the screen shows it. */
-const GAME_BUILD='build 2026-10-18-v531';
+const GAME_BUILD='build 2026-10-18-v532';
 const GAME_VERSION='0.9', GAME_VERSION_NAME='은하 제국의 황혼';   // 게임 버전 이름: versions.json의 title과 같게 (빌드마다 바꾸지 않음)
 /* version (the 0.x part) vs build: different BUILDS of one version meet and play together, different VERSIONS never do (rooms, quick match, ranked, friend invites, dispatcher).
    Builds before 470 do not send a version, so it is read from the build number (0.9 started at build 458). */
@@ -5542,6 +5542,7 @@ const WEEKLY_EVENTS=[
 ];
 function eventWeek(){ return Math.floor((Date.now()/86400000+3)/7); }          // (a new week starts on Monday)
 function currentEvent(){ return WEEKLY_EVENTS[eventWeek()%WEEKLY_EVENTS.length]; }
+let onlineWar=null, clanWarPending=null;     // 클랜 대항전: {key, id, mine, other, otherTag} while a war duel is looked for / played (the room is the clan duel room of the war)
 let onlineClan='';          // the clan duel queue (a clan id): its rooms are only for that clan's members, 1 against 1, never any bots
 let onlineEvent=false, onlineRanked=false;          // onlineRanked: the ranked duel queue (its rooms are only for ranked players and never get bots)
 function roomIdFor(mapId,slot,modeId){ return 'online-v'+VER_TAG+'-'+(modeId||gameMode)+(onlineEvent?'-evt'+eventWeek():'')+(onlineRanked?'-rk':'')+(onlineClan?'-cl'+String(onlineClan).replace(/[^A-Za-z0-9]/g,'').slice(0,40):'')+'-'+mapId+'-'+slot; }
@@ -6896,7 +6897,8 @@ const PRIVATE_MODE_ORDER = MODE_ORDER.concat(MORE_MODES.map(it=>it.id)).concat(S
 function pickOnlineModeAndMatch(mid, evt, ranked, clan){
   if(partyBlocks((ranked||clan)?'ranked':(evt?'event':mid))) return;          // (in a party: only the leader, only the party modes)
   onlineEvent=!!evt; onlineRanked=!!ranked; onlineClan=clan?String(clan):''; selectedOnlineMode=mid;
-  document.getElementById('onlineModeTitle').textContent='온라인 플레이 · '+(clan?'⚔ 클랜 경기 (듀얼)':ranked?'🏅 랭크전 (듀얼)':(evt?('주간 이벤트 · '+currentEvent().name):MODES[mid].name));
+  onlineWar=(clan && clanWarPending && String(clan)===clanWarPending.key) ? clanWarPending : null; clanWarPending=null;
+  document.getElementById('onlineModeTitle').textContent='온라인 플레이 · '+(clan?(onlineWar?'⚔ 클랜 대항전 (듀얼)':'⚔ 클랜 경기 (듀얼)'):ranked?'🏅 랭크전 (듀얼)':(evt?('주간 이벤트 · '+currentEvent().name):MODES[mid].name));
   showScreen('onlineScreen');
   if(connecting) return; connecting=true;
   partyLeaderStart(mid);
@@ -9029,7 +9031,7 @@ async function clanLoadInvites(){
 let clanTab='my', clanFindQ='', clanDraft={name:'', tag:'', emblem:'🏰', color:'#3fe0c5', intro:'', pick:false, reqLv:0, reqRank:0};
 function clanSafeColor(c){ return /^#[0-9a-f]{6}$/i.test(c||'') ? c : '#3fe0c5'; }
 const CLAN_PREMIUM=[['💎',100,'다이아'],['🌌',150,'은하'],['🔱',200,'삼지창'],['🐲',300,'용'],['☄️',300,'혜성'],['🏯',500,'성']];
-let clanStyleOpen=false;
+let clanStyleOpen=false, clanWarListOpen=false;
 function clanLevelOf(xp){ return Math.min(20, 1+Math.floor(Math.sqrt(Math.max(0,+xp||0)/150))); }       // (same as the server's clan_level: more xp every level)
 let clanVaultOpen=false, clanNoticeEdit=false, clanNoticeShown=false, clanRenameEdit=null;   // clanRenameEdit: null | 'name' | 'tag' (the owner is typing a new one)
 function clanSafeEmblem(e){ return (CLAN_EMBLEMS.indexOf(e)!==-1 || CLAN_PREMIUM.some(x=>x[0]===e)) ? e : '🏰'; }
@@ -9248,6 +9250,37 @@ async function renderClanMy(pane){
     }
   }
   const wb=clanRowBtn('⚔','클랜 경기','클랜원끼리 1대1 듀얼 (봇 없음)'); wb.onclick=clanDuelStart; R.appendChild(wb); clanDuelBtnText(wb, clanWaitCount); clanWaitPoll().then(n=>{ if(wb.isConnected) clanDuelBtnText(wb,n); });
+  { let wr=null; try{ const r=await sb.rpc('clan_war_mine'); if(r && !r.error && Array.isArray(r.data)) wr=r.data[0]||{}; }catch(e){}      // 클랜 대항전 (RPCs clan_war_*; hidden until supabase-stickseum-clan-v2.sql is applied)
+    if(wr){
+      const wn=x=>'['+cleanClanTag(x.other_tag)+'] '+(x.other_name||'');
+      if(!wr.id){
+        const nb2=clanRowBtn('🏴','클랜 대항전', canManage?(clanWarListOpen?'도전할 클랜을 골라요':'다른 클랜에 도전해요 · 48시간 동안 클랜원끼리 1대1'):'열린 대항전이 없어요 (클랜장·부리더가 신청해요)', canManage?'':'pointer-events:none;');
+        if(canManage) nb2.onclick=()=>{ clanWarListOpen=!clanWarListOpen; rerender(); };
+        R.appendChild(nb2);
+        if(canManage && clanWarListOpen){
+          const cl=await sb.from('clans').select('id,name,tag,score').order('score',{ascending:false}).limit(30);
+          for(const c of ((cl&&cl.data)||[])){ if(String(c.id)===String(myClan.id)) continue;
+            const cr2=clanRowBtn('🛡️','['+cleanClanTag(c.tag)+'] '+c.name,'클랜 점수 '+(c.score==null?1000:c.score)+' · 눌러서 대항전 신청','padding:10px 16px;');
+            cr2.onclick=async()=>{ if(!(await uiConfirm('['+cleanClanTag(c.tag)+'] '+c.name+' 클랜에 대항전을 신청할까요?'))) return; const r=await sb.rpc('clan_war_challenge',{p_target:String(c.id)}); if(r&&r.error) clanNotice('신청하지 못했어요 (이미 대항전 중인 클랜이 있어요)'); else { clanWarListOpen=false; clanNotice('대항전을 신청했어요'); rerender(); } };
+            R.appendChild(cr2); }
+        }
+      } else if(wr.status==='pending' && wr.my_side==='a'){
+        R.appendChild(clanInfoRow('🏴','클랜 대항전 · 응답 대기', wn(wr)+' 클랜의 대답을 기다려요'));
+      } else if(wr.status==='pending'){
+        const ab=clanRowBtn('🏴','클랜 대항전 신청 받음', wn(wr)+(canManage?' · 눌러서 받기':' · 클랜장·부리더가 답해요'), canManage?'':'pointer-events:none;');
+        if(canManage){ ab.onclick=async()=>{ const r=await sb.rpc('clan_war_respond',{p_war:wr.id, p_accept:true}); if(r&&r.error) clanNotice('받지 못했어요'); else { clanNotice('대항전을 시작해요 (48시간)'); rerender(); } };
+          const rb=document.createElement('span'); rb.textContent='거절'; rb.setAttribute('role','button'); rb.style.cssText='margin-left:auto; padding:6px 12px; border-radius:8px; border:1px solid #ff6a6a; color:#ff8a8a; font-weight:800; font-size:13px; flex:0 0 auto;';
+          rb.onclick=async(e)=>{ e.stopPropagation(); await sb.rpc('clan_war_respond',{p_war:wr.id, p_accept:false}); rerender(); }; ab.appendChild(rb); }
+        R.appendChild(ab);
+      } else if(wr.status==='active'){
+        const left=Math.max(0, new Date(wr.ends_at).getTime()-Date.now()), hh=Math.floor(left/3600000), mm=Math.floor(left%3600000/60000);
+        if(left>0){ const ab=clanRowBtn('🏴','클랜 대항전 · '+wn(wr), wr.my_score+' : '+wr.other_score+' · 남은 시간 '+hh+'시간 '+mm+'분 · 눌러서 대항전 경기', ''); ab.onclick=()=>clanWarStart(wr); R.appendChild(ab); }
+        else { const ab=clanRowBtn('🏴','클랜 대항전 끝 · '+wn(wr), wr.my_score+' : '+wr.other_score+' · 눌러서 결과 정산', ''); ab.onclick=async()=>{ const r=await sb.rpc('clan_war_finish',{p_war:wr.id}); const v=r&&r.data; clanNotice(v==='win'?'대항전에서 이겼어요! 클랜 점수 +30':(v==='lose'?'대항전에서 졌어요 · 클랜 점수 -15':(v==='draw'?'대항전은 무승부예요':'정산할 수 없어요'))); rerender(); }; R.appendChild(ab); }
+      } else if(wr.status==='done'){
+        R.appendChild(clanInfoRow('🏴','클랜 대항전 끝 · '+wn(wr), '결과 '+wr.my_score+' : '+wr.other_score+(wr.my_score>wr.other_score?' · 승리':(wr.my_score<wr.other_score?' · 패배':' · 무승부'))));
+      }
+    }
+  }
   const vb=clanRowBtn('🏦','클랜 창고','창고 '+(myClan.treasury||0)+' · 내 토큰 '+myTok+(clanVaultOpen?'':' · 눌러서 열기')); vb.onclick=()=>{ clanVaultOpen=!clanVaultOpen; rerender(); }; R.appendChild(vb);
   if(clanVaultOpen){
     const vp=document.createElement('div'); vp.style.cssText='display:flex; flex-direction:column; gap:8px;'; R.appendChild(vp);
@@ -9737,7 +9770,7 @@ function showErrorAndReturnToMenu(msg){
   stkRoomSync(null);
   if(peer){ try{peer.destroy();}catch(e){} peer=null; }
   window.__versionNoted=false; chatPending=[];
-  spectatorMode=false; onlineClan=''; netLastFull=null; try{ clanWaitSet(false); }catch(e){} document.body.classList.remove('specView'); conns={}; players={}; isHost=false; hostConn=null; MAP=null; started=false; currentMode=null; currentMapId=null; countdownEndsAt=null; gameLoopStarted=false; weaponChosenLocally=false; hostRoomLive=false; if(typeof weaponCountdownTimer!=='undefined' && weaponCountdownTimer){ clearInterval(weaponCountdownTimer); weaponCountdownTimer=null; } matchEnded=false; duelScores={}; duelRoundEndsAt=null; duelPick=false; matchTimerEndsAt=null; document.getElementById('matchTimerLabel').style.display='none'; document.getElementById('duelScoreLabel').style.display='none'; cq=null; walls=[]; hostTimers=[]; magicCircles=[]; fieldZones=[]; poisonZones=[]; turrets=[]; weaponPhase=null; document.getElementById('cqLabel').style.display='none'; bombHolderId=null; bombTimerEndsAt=0; hotpotatoOriginalCount=0; survivalRound=0; survivalPhase=null; survivalPhaseEndsAt=0; survivalCurrentDisaster=null; survivalHazards=[]; survivalZombies=[]; document.getElementById('survivalLabel').style.display='none'; ctf=null; ctfEndsLocal=0; document.getElementById('ctfLabel').style.display='none'; { const mini=document.getElementById('ctfMini'); if(mini) mini.style.display='none'; }
+  spectatorMode=false; onlineClan=''; onlineWar=null; netLastFull=null; try{ clanWaitSet(false); }catch(e){} document.body.classList.remove('specView'); conns={}; players={}; isHost=false; hostConn=null; MAP=null; started=false; currentMode=null; currentMapId=null; countdownEndsAt=null; gameLoopStarted=false; weaponChosenLocally=false; hostRoomLive=false; if(typeof weaponCountdownTimer!=='undefined' && weaponCountdownTimer){ clearInterval(weaponCountdownTimer); weaponCountdownTimer=null; } matchEnded=false; duelScores={}; duelRoundEndsAt=null; duelPick=false; matchTimerEndsAt=null; document.getElementById('matchTimerLabel').style.display='none'; document.getElementById('duelScoreLabel').style.display='none'; cq=null; walls=[]; hostTimers=[]; magicCircles=[]; fieldZones=[]; poisonZones=[]; turrets=[]; weaponPhase=null; document.getElementById('cqLabel').style.display='none'; bombHolderId=null; bombTimerEndsAt=0; hotpotatoOriginalCount=0; survivalRound=0; survivalPhase=null; survivalPhaseEndsAt=0; survivalCurrentDisaster=null; survivalHazards=[]; survivalZombies=[]; document.getElementById('survivalLabel').style.display='none'; ctf=null; ctfEndsLocal=0; document.getElementById('ctfLabel').style.display='none'; { const mini=document.getElementById('ctfMini'); if(mini) mini.style.display='none'; }
   resetFlowState();
   showScreen('menuScreen');
   if(msg) uiAlert(msg);
@@ -9746,7 +9779,7 @@ function showErrorAndReturnToMenu(msg){
 /* ================= ROOM SCREEN ================= */
 function refreshRoomLabel(){
   const el=document.getElementById('roomModeLabel'); if(!el || !MAP) return;
-  const _pre=onlineClan ? '⚔ 클랜 경기 · ' : (currentMode==='online' ? '🌐 온라인 매칭됨 · ' : '🔒 비공개 방 (보상 없음) · ');
+  const _pre=onlineClan ? (onlineWar?'⚔ 클랜 대항전 · ':'⚔ 클랜 경기 · ') : (currentMode==='online' ? '🌐 온라인 매칭됨 · ' : '🔒 비공개 방 (보상 없음) · ');
   el.textContent = _pre + MAP.name + ' · ' + (MODES[gameMode]||MODES.ffa).name + (weaponMode==='random' ? ' · 랜덤 무기' : '') + (rulesAreCustom() ? ' · ⚙️ 커스텀 규칙' : '') + (roomOpts.vote ? ' · 🗳️ 맵 투표' : '') + (roomOpts.balance ? ' · ⚖️ 팀 자동 밸런스' : '');
 }
 function stkRoomSync(code){ try{ if(window.FFAuth && FFAuth.setRoom) FFAuth.setRoom(code ? {game:'stickseum', code:code, path:'stickseum/Stickseum-latest.html'} : null); }catch(e){} }      // tells the hub which room I am in, so a friend can be invited into it
@@ -10186,7 +10219,7 @@ function onHostData(conn, data){
     if(onlineRanked && currentMode==='online' && typeof data.sbId==='string' && data.sbId && Object.values(players).some(o=>!o.isBot && o.sbId===data.sbId)){ safeSend(conn, {t:'sameAcc'}); return; }      // ranked: the same account cannot play against itself (two tabs / two devices)
     if(onlineClan && currentMode==='online'){       // a clan duel room: only members of that clan come in
       const cid=(typeof data.clanId==='string')?data.clanId.slice(0,40):'';
-      if(cid!==String(onlineClan)){ safeSend(conn, {t:'clanNo', msg:'이 방은 같은 클랜원만 들어올 수 있어요'}); return; }
+      if(onlineWar ? cid!==String(onlineWar.other) : cid!==String(onlineClan)){ safeSend(conn, {t:'clanNo', msg:onlineWar?'이 방은 대항전 상대 클랜원만 들어올 수 있어요':'이 방은 같은 클랜원만 들어올 수 있어요'}); return; }
     }
     conns[peerId]=conn;
     const order=Object.keys(players).length, ptag=(currentMode==='online' && typeof data.party==='string') ? data.party.slice(0,40) : '';
@@ -10527,7 +10560,7 @@ function leaveRoom(){
   if(peer){ const op=peer; peer=null; if(handOff) setTimeout(()=>{ try{op.destroy();}catch(e){} }, 900); else { try{op.destroy();}catch(e){} } }   // (the last messages need a moment to go out)
   migState=null; migBundle=null; migOrderIds=[]; migPending=[]; try{ migBanner(false); }catch(e){}
   window.__versionNoted=false; chatPending=[];
-  spectatorMode=false; onlineClan=''; netLastFull=null; try{ clanWaitSet(false); }catch(e){} document.body.classList.remove('specView'); conns={}; players={}; isHost=false; hostConn=null; MAP=null; started=false; currentMode=null; currentMapId=null; countdownEndsAt=null; gameLoopStarted=false; weaponChosenLocally=false; hostRoomLive=false; if(typeof weaponCountdownTimer!=='undefined' && weaponCountdownTimer){ clearInterval(weaponCountdownTimer); weaponCountdownTimer=null; } matchEnded=false; duelScores={}; duelRoundEndsAt=null; duelPick=false; matchTimerEndsAt=null; document.getElementById('matchTimerLabel').style.display='none'; document.getElementById('duelScoreLabel').style.display='none'; cq=null; walls=[]; hostTimers=[]; magicCircles=[]; fieldZones=[]; poisonZones=[]; turrets=[]; weaponPhase=null; document.getElementById('cqLabel').style.display='none'; bombHolderId=null; bombTimerEndsAt=0; hotpotatoOriginalCount=0; survivalRound=0; survivalPhase=null; survivalPhaseEndsAt=0; survivalCurrentDisaster=null; survivalHazards=[]; survivalZombies=[]; document.getElementById('survivalLabel').style.display='none'; ctf=null; ctfEndsLocal=0; document.getElementById('ctfLabel').style.display='none'; { const mini=document.getElementById('ctfMini'); if(mini) mini.style.display='none'; }
+  spectatorMode=false; onlineClan=''; onlineWar=null; netLastFull=null; try{ clanWaitSet(false); }catch(e){} document.body.classList.remove('specView'); conns={}; players={}; isHost=false; hostConn=null; MAP=null; started=false; currentMode=null; currentMapId=null; countdownEndsAt=null; gameLoopStarted=false; weaponChosenLocally=false; hostRoomLive=false; if(typeof weaponCountdownTimer!=='undefined' && weaponCountdownTimer){ clearInterval(weaponCountdownTimer); weaponCountdownTimer=null; } matchEnded=false; duelScores={}; duelRoundEndsAt=null; duelPick=false; matchTimerEndsAt=null; document.getElementById('matchTimerLabel').style.display='none'; document.getElementById('duelScoreLabel').style.display='none'; cq=null; walls=[]; hostTimers=[]; magicCircles=[]; fieldZones=[]; poisonZones=[]; turrets=[]; weaponPhase=null; document.getElementById('cqLabel').style.display='none'; bombHolderId=null; bombTimerEndsAt=0; hotpotatoOriginalCount=0; survivalRound=0; survivalPhase=null; survivalPhaseEndsAt=0; survivalCurrentDisaster=null; survivalHazards=[]; survivalZombies=[]; document.getElementById('survivalLabel').style.display='none'; ctf=null; ctfEndsLocal=0; document.getElementById('ctfLabel').style.display='none'; { const mini=document.getElementById('ctfMini'); if(mini) mini.style.display='none'; }
   resetFlowState();
   showScreen('menuScreen');
   setChatVisible(false);
@@ -10683,6 +10716,16 @@ function updateDuelScoreUI(){
   const parts=ids.filter(id=>!(players[id] && (players[id].isMinion||players[id].isGuard||players[id].isClone))).map(id=>(players[id]?players[id].name:'?')+' '+(duelScores[id]||0));
   el.textContent=parts.join(' : ');
 }
+async function clanWarReport(warId){       // 클랜 대항전: the winner of a war duel adds 1 point to the clan (RPC clan_war_report, see supabase-stickseum-clan-v2.sql)
+  try{ if(!sb||!sbUser||!myClan) return; const r=await sb.rpc('clan_war_report',{p_war:warId}); if(r && !r.error && r.data) pushSystemLine('🏴 클랜 대항전 +1점'); }catch(e){}
+}
+function clanWarStart(w){
+  if(!myClan){ uiAlert('클랜에 가입해야 해요'); return; }
+  if(connecting || peer) return;
+  const key='war'+String(w.id).replace(/[^A-Za-z0-9]/g,'');
+  clanWarPending={key, id:w.id, mine:String(myClan.id), other:String(w.other_id), otherTag:w.other_tag};
+  pickOnlineModeAndMatch('duel', false, false, key);
+}
 async function clanContribReport(won){       // 클랜 기여도: +1 for a played online match, +3 for a won one (RPC clan_contrib_add, see supabase-stickseum-clan-v2.sql; the server lets one count through per 15 s)
   try{ if(!sb||!sbUser||!myClan) return; await sb.rpc('clan_contrib_add',{p_amount:won?3:1}); }catch(e){}
 }
@@ -10705,6 +10748,8 @@ function showMatchEndOverlay(resultText, winnerIds, forcedPick){
   if(DED_HOST){ matchEnded=true; lastWinnerIds=winnerIds||[]; return; }          // (the dedicated host plays nothing: no rewards, no screen)
   try{ const hum=Object.values(players).filter(q=>q && !q.isBot && !q.isMinion && !q.isBoss && !q.isSpectator);
     if(onlineClan && currentMode==='online' && gameMode==='duel' && !practiceMode && !highlightViewing && myClan && String(onlineClan)===clanMyId() && hum.length===2 && hum.every(q=>q.clan===clanMyTag()) && winnerIds && winnerIds.length) clanMemberReport(winnerIds.indexOf(myId)!==-1); }catch(e){}
+  try{ const hum=Object.values(players).filter(q=>q && !q.isBot && !q.isMinion && !q.isBoss && !q.isSpectator);
+    if(onlineWar && onlineClan && currentMode==='online' && gameMode==='duel' && !practiceMode && !highlightViewing && myClan && hum.length===2 && hum[0].clanId && hum[1].clanId && hum[0].clanId!==hum[1].clanId && winnerIds && winnerIds.indexOf(myId)!==-1) clanWarReport(onlineWar.id); }catch(e){}
   try{ const hum=Object.values(players).filter(q=>q && !q.isBot && !q.isMinion && !q.isBoss && !q.isSpectator);
     if(currentMode==='online' && !practiceMode && !highlightViewing && myClan && hum.length>=2 && winnerIds) clanContribReport(winnerIds.indexOf(myId)!==-1); }catch(e){}
   try{ rpRecFinish(resultText, winnerIds); }catch(e){}
@@ -11471,7 +11516,7 @@ document.getElementById('weaponBrowseBackBtn').onclick=()=>{
   showScreen('profileScreen'); renderProfile();
 };
 function clanVsIntro(){
-  const cr = (onlineClan && myClan) ? {i:1, t:[clanMyTag()]} : null; if(!cr || !cr.t || !cr.t[0]) return;
+  const cr = (onlineClan && myClan) ? (onlineWar ? {i:0, t:[clanMyTag(), cleanClanTag(onlineWar.otherTag)]} : {i:1, t:[clanMyTag()]}) : null; if(!cr || !cr.t || !cr.t[0]) return;
   const info=tag=>{ const q=Object.values(players).find(x=>x && x.clan===tag); return {tag, emblem:q&&q.ce, color:q&&q.cc, name:q&&q.cn}; };
   const A=info(cr.t[0]), B=cr.i?info(cr.t[0]):info(cr.t[1]); if(!B.tag) return;
   const old=document.getElementById('clanVs'); if(old) old.remove();

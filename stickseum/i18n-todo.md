@@ -46,3 +46,8 @@ patchnotes.json | v531 items[0] | 클랜 레벨 (경기와 기부로 경험치, 
 patchnotes.json | v531 items[1] | 클랜원 기여도 순위 | build 531 | 2026-10-30
 patchnotes.json | v531 items[2] | 부리더 (추방과 공지, 클랜장이 최대 3명 임명) | build 531 | 2026-10-30
 patchnotes.json | v531 items[3] | 클랜장이 엠블럼과 색을 언제든 바꿈 | build 531 | 2026-10-30
+Stickseum.html | 클랜 UI | 클랜 대항전 / 다른 클랜에 도전해요 · 48시간 동안 클랜원끼리 1대1 / 도전할 클랜을 골라요 / 열린 대항전이 없어요 (클랜장·부리더가 신청해요) | clan war | 2026-10-30
+Stickseum.html | 클랜 UI | 클랜 대항전 · 응답 대기 / 신청 받음 / 눌러서 받기 / 거절 / 남은 시간 N시간 N분 · 눌러서 대항전 경기 / 끝 · 눌러서 결과 정산 | clan war states | 2026-10-30
+Stickseum.html | 클랜 UI | 대항전에서 이겼어요! 클랜 점수 +30 / 졌어요 · 클랜 점수 -15 / 무승부예요 / 🏴 클랜 대항전 +1점 / ⚔ 클랜 대항전 (듀얼) | clan war results | 2026-10-30
+patchnotes.json | v532 title | 은하 제국의 황혼 | build 532 | 2026-10-30
+patchnotes.json | v532 items[0] | 클랜 대항전 (클랜장·부리더가 다른 클랜에 신청, 48시간 동안 클랜원끼리 1대1, 이기면 클랜 점수 +30) | build 532 | 2026-10-30
