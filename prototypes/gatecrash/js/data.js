@@ -1,7 +1,7 @@
 /* Gatecrash · © 2026 Frenchfries777 · CC BY-NC-ND 4.0
    데이터: 상수, 무기, 맵 */
 'use strict';
-const VERSION = '0.1', BUILD = 15;
+const VERSION = '0.1', BUILD = 16;
 const TS = 16;                                   // 타일 한 칸 (px)
 const PH = { RUN: 120, ACC: 1500, AIR: 1000, G: 1500, JUMP: 410, CUT: 150, MAXF: 560, W: 10, H: 22, COY: 0.08, BUF: 0.12, BELT: 70, ICE: 180, LIFT: 200 };
 const MAX_HP = 100, RACERS = 4;
@@ -13,7 +13,12 @@ const WEAPONS = {
   pan:     { name: '프라이팬',   kind: 'melee',  dmg: 14, kb: 170, up: 120, cd: 0.45, uses: 14, range: 20, stun: 0.9 },
   pistol:  { name: '고무탄 권총', kind: 'shot',   dmg: 10, kb: 190, up: 90,  cd: 0.32, uses: 10, speed: 430, life: 0.8, stun: 0.25, reach: 220 },
   ext:     { name: '소화기',     kind: 'spray',  dmg: 3,  kb: 110, up: 40,  cd: 0.12, uses: 30, speed: 260, life: 0.32, stun: 0.15, recoil: 45, reach: 80 },
-  bazooka: { name: '바주카',     kind: 'rocket', dmg: 28, kb: 380, up: 240, cd: 1.1,  uses: 3,  speed: 280, life: 2.5, radius: 44, stun: 0.5, reach: 230 }
+  bazooka: { name: '바주카',     kind: 'rocket', dmg: 28, kb: 380, up: 240, cd: 1.1,  uses: 3,  speed: 280, life: 2.5, radius: 44, stun: 0.5, reach: 230 },
+  hammer:  { name: '해머',       kind: 'melee',  dmg: 30, kb: 430, up: 210, cd: 0.95, uses: 8,  range: 22, stun: 0.6 },
+  mop:     { name: '대걸레',     kind: 'melee',  dmg: 8,  kb: 150, up: 100, cd: 0.32, uses: 18, range: 34, stun: 0.7 },
+  sling:   { name: '새총',       kind: 'shot',   dmg: 6,  kb: 120, up: 60,  cd: 0.17, uses: 26, speed: 540, life: 0.7, stun: 0.15, reach: 210 },
+  hose:    { name: '소방 호스',   kind: 'spray',  dmg: 2,  kb: 230, up: 30,  cd: 0.08, uses: 40, speed: 300, life: 0.3, stun: 0.1, recoil: 90, reach: 90 },
+  firework:{ name: '폭죽 발사기', kind: 'rocket', dmg: 16, kb: 300, up: 200, cd: 0.7,  uses: 6,  speed: 340, life: 1.6, radius: 30, stun: 0.4, reach: 200 }
 };
 const WEP_IDS = Object.keys(WEAPONS);
 
@@ -36,7 +41,7 @@ function rng(seed) { let a = seed | 0; return () => { a = a + 0x6D2B79F5 | 0; le
 
 /* 층 구조 건물: F = 아래 층부터 [{ theme, objs, belt, conn: 'lift', g: ['ice','gap','mezz'] }]
    기믹: ice 미끄러운 바닥, gap 바닥 구멍(떨어지면 아래층), mezz 가구 위 선반, belt 컨베이어. conn 'lift' = 엘리베이터로 올라가요 */
-const FW = 96;
+const FW = 172;
 function floorsMap(F, roof, seed) {
   const R = rng(seed), n = F.length, H = 6 * n + 6, b = Builder(FW, H), S = k => H - 1 - 6 * k;
   for (let k = 0; k <= n; k++) b.fill(0, S(k), FW - 1, S(k), '#');
@@ -58,7 +63,7 @@ function floorsMap(F, roof, seed) {
     const slab = S(i + 1), bottom = S(i) - 1, right = i % 2 === 0;
     b.room(1, slab + 1, FW - 2, bottom, f.theme);
     if (f.belt) b.fill(14, S(i), FW - 14, S(i), f.belt > 0 ? '>' : '<');
-    const res = [], g = f.g || [];
+    const res = [], g = (f.g || []).slice();
     // 위층으로 가는 길
     if (f.conn === 'lift') {
       const hx = right ? FW - 9 : 5;
@@ -68,8 +73,11 @@ function floorsMap(F, roof, seed) {
     } else if (right) { b.fill(FW - 10, slab, FW - 5, slab, '.'); b.fill(FW - 7, slab + 4, FW - 5, slab + 4, '='); b.fill(FW - 10, slab + 2, FW - 8, slab + 2, '='); b.deco('stairwell', FW - 10, slab + 5, 6, 6); }
     else { b.fill(4, slab, 9, slab, '.'); b.fill(4, slab + 4, 6, slab + 4, '='); b.fill(7, slab + 2, 9, slab + 2, '='); b.deco('stairwell', 4, slab + 5, 6, 6); }
     // 기믹 자리
+    const GA = ['ice', 'gap', 'mezz'];
+    for (let q = 0; g.length < 3 && q < 3; q++) { const k = GA[(i + seed + q) % 3]; if (!g.includes(k)) g.push(k); }
+    const zw = (FW - 48) / g.length | 0;
     g.forEach((k, gi) => {
-      const z0 = 20 + gi * 26, x0 = z0 + (R() * 8 | 0);
+      const z0 = 20 + gi * zw, x0 = z0 + (R() * Math.max(1, zw - 18) | 0);
       if (k === 'ice') { b.fill(x0, S(i), x0 + 11, S(i), 'I'); res.push([x0 - 1, x0 + 12]); b.deco('cone', x0 - 1, bottom, 1, 1); }
       else if (k === 'gap' && i >= 1) { b.fill(x0, S(i), x0 + 2, S(i), '.'); res.push([x0 - 2, x0 + 5]); }
     });
@@ -106,7 +114,7 @@ function mapOffice() {
 
 /* 공항: 출국장 입구 → 체크인 카운터 → 보안 검색 → 면세점(미끄러운 바닥) → 에스컬레이터 → 무빙워크 → 탑승구 → 탑승교 → 비행기 문 */
 function mapAirport() {
-  const E1 = 22, E2 = 22, A = x => x + E1, B = x => x < 100 ? x + E1 : x + E1 + E2, W = B(140);
+  const E1 = 100, E2 = 90, A = x => x + E1, B = x => x < 100 ? x + E1 : x + E1 + E2, W = B(140), R = rng(97);
   const b = Builder(W, 22);
   b.fill(0, 0, B(120), 2, '#'); b.fill(0, 20, W - 1, 21, '#'); b.fill(A(69), 12, W - 1, 19, '#'); b.fill(0, 3, 0, 19, '#');
   b.fill(B(120), 3, B(120), 8, '#'); b.fill(B(121), 8, B(133), 8, '#');
@@ -117,18 +125,27 @@ function mapAirport() {
   b.fill(21, 16, 35, 16, '='); b.deco('board', 22, 13, 12, 2);
   b.obj('barrier', 40, 19, 1, 1); b.obj('barrier', 43, 19, 1, 1);
   b.obj('xray', 47, 19, 3, 2); b.deco('detector', 51, 19, 1, 3); b.obj('bins', 53, 19, 3, 1); b.obj('plant', 57, 19, 1, 1);
-  // 면세점 구간: 미끄러운 바닥과 진열대
-  b.obj('shelf', 61, 19, 2, 2); b.obj('luggage', 66, 19, 2, 1); b.fill(70, 20, 81, 20, 'I'); b.deco('cone', 69, 19, 1, 1); b.obj('cart', 75, 19, 2, 1); b.obj('plant', 85, 19, 1, 2);
+  // 면세점 거리: 진열대, 미끄러운 바닥, 바닥 구멍은 없고 선반 위 지름길만
+  const run = (list, from, to, bottom, res, out) => { let x = from, bag = []; while (x < to) { if (!bag.length) { bag = list.slice(); for (let i = bag.length - 1; i > 0; i--) { const j = R() * (i + 1) | 0; [bag[i], bag[j]] = [bag[j], bag[i]]; } } const o = bag.pop(), hit = res.find(r => x + o[1] + 1 >= r[0] && x - 1 <= r[1]); if (hit) { x = hit[1] + 2; continue; } if (x + o[1] > to) break; b.obj(o[0], x, bottom, o[1], o[2]); out.push({ x, w: o[1], h: o[2] }); x += o[1] + 4 + (R() * 4 | 0); } };
+  const shop = [['shelf', 2, 2], ['luggage', 2, 1], ['cart', 2, 1], ['plant', 1, 2], ['barrier', 1, 1], ['bins', 3, 1], ['seats', 3, 1]];
+  const res1 = []; b.fill(78, 20, 89, 20, 'I'); res1.push([77, 90]); b.deco('cone', 76, 19, 1, 1); b.fill(128, 20, 141, 20, 'I'); res1.push([127, 142]); b.deco('cone', 126, 19, 1, 1);
+  const p1 = []; run(shop, 60, A(58), 19, res1, p1);
+  for (let k = 0, c = p1.filter(o => o.h <= 2 && o.w <= 3); k < c.length; k += 4) { const o = c[k], row = 17; b.fill(o.x - 2, row, o.x + o.w + 1, row, '='); b.spawn(o.x + (o.w >> 1), row - 1); }
   b.fill(A(60), 18, A(62), 19, '#'); b.fill(A(63), 16, A(65), 19, '#'); b.fill(A(66), 14, A(68), 19, '#');
   b.deco('escalator', A(60), 19, 10, 8);
-  b.spawn(10, 19); b.spawn(28, 15); b.spawn(44, 19); b.spawn(64, 19); b.spawn(86, 19); b.spawn(A(67), 13);
+  [10, 28, 44, 70, 100, 125, 150].forEach(x => b.spawn(x, x === 28 ? 15 : 19)); b.spawn(A(67), 13);
   // 2층 탑승구
   b.fill(A(73), 12, A(88), 12, '>'); b.obj('cart', A(79), 11, 2, 1);
   b.obj('shelf', A(92), 11, 2, 2); b.obj('shelf', A(97), 11, 2, 2);
-  b.fill(A(101), 12, A(110), 12, 'I'); b.deco('cone', A(100), 11, 1, 1); b.obj('seats', A(104), 11, 3, 1); b.obj('plant', A(112), 11, 1, 1);
+  const gate = [['seats', 3, 1], ['cart', 2, 1], ['plant', 1, 1], ['shelf', 2, 2], ['luggage', 2, 1], ['barrier', 1, 1]];
+  const res2 = []; b.fill(A(112), 12, A(123), 12, 'I'); res2.push([A(111), A(124)]); b.deco('cone', A(110), 11, 1, 1);
+  b.fill(A(140), 12, A(152), 12, '>'); res2.push([A(139), A(153)]);
+  b.fill(A(168), 12, A(180), 12, 'I'); res2.push([A(167), A(181)]);
+  const p2 = []; run(gate, A(101), A(100) + E2 - 4, 11, res2, p2);
+  for (let k = 0, c = p2.filter(o => o.h <= 2 && o.w <= 3); k < c.length; k += 3) { const o = c[k], row = 9; b.fill(o.x - 2, row, o.x + o.w + 1, row, '='); b.spawn(o.x + (o.w >> 1), row - 1); }
   b.fill(B(101), 12, B(107), 12, '>');
   b.obj('seats', B(109), 11, 3, 1); b.obj('seats', B(113), 11, 3, 1); b.obj('gatedesk', B(117), 11, 2, 1);
-  b.spawn(A(90), 11); b.spawn(A(108), 11); b.spawn(B(108), 11);
+  b.spawn(A(90), 11); b.spawn(A(108), 11); b.spawn(B(108), 11); b.spawn(A(150), 11);
   b.obj('luggage', B(125), 11, 1, 1); b.obj('cone', B(129), 11, 1, 1);
   b.deco('plane', B(133), 14, 7, 12);
   b.finish = { x0: B(134), y0: 9, x1: B(138), y1: 11 };
@@ -177,6 +194,47 @@ function mapFactory() {
   ], [ob('tank', 0, 3, 2), ob('vent', 0, 1, 1), ob('tank', 0, 3, 2), ob('ac', 0, 2, 2)], 67);
 }
 
+function mapHotel() {
+  return floorsMap([
+    { theme: 'hotelL', conn: 'lift', objs: [ob('reception', 0, 5, 2), ob('luggage', 0, 2, 1), ob('sofa', 0, 3, 1), ob('plant', 0, 1, 2), ob('trolley', 0, 3, 2), ob('pillar', 0, 2, 3)] },
+    { theme: 'hotelR', g: ['gap'], objs: [ob('bed', 0, 4, 1), ob('minibar', 0, 2, 2), ob('sofa', 0, 3, 1), ob('luggage', 0, 2, 1), ob('plant', 0, 1, 2)] },
+    { theme: 'ballroom', conn: 'lift', g: ['ice'], objs: [ob('piano', 0, 4, 2), ob('table', 0, 3, 1), ob('cake', 0, 3, 2), ob('table', 0, 3, 1), ob('plant', 0, 1, 2)] },
+    { theme: 'pool', g: ['mezz'], objs: [ob('chaise', 0, 3, 1), ob('parasol', 0, 1, 3), ob('chaise', 0, 3, 1), ob('towels', 0, 2, 1), ob('cooler', 0, 1, 2)] }
+  ], [ob('ac', 0, 3, 2), ob('tank', 0, 3, 2), ob('vent', 0, 1, 1), ['~antenna', 70, 1, 5]], 71);
+}
+function mapLibrary() {
+  return floorsMap([
+    { theme: 'lib', g: ['mezz'], objs: [ob('shelfb', 0, 3, 3), ob('desk', 0, 3, 1), ob('globe', 0, 1, 2), ob('shelfb', 0, 4, 3), ob('chair', 0, 1, 1)] },
+    { theme: 'libR', conn: 'lift', g: ['gap'], objs: [ob('desk', 0, 3, 1), ob('lamp', 0, 1, 3), ob('desk', 0, 3, 1), ob('shelfb', 0, 3, 3), ob('boxes', 0, 2, 1)] },
+    { theme: 'archive', g: ['ice'], objs: [ob('cabinet', 0, 2, 2), ob('cart', 0, 2, 1), ob('shelfb', 0, 4, 3), ob('boxes', 0, 2, 2), ob('scroll', 0, 2, 1)] },
+    { theme: 'lib', conn: 'lift', g: ['mezz', 'gap'], objs: [ob('shelfb', 0, 3, 3), ob('globe', 0, 1, 2), ob('desk', 0, 3, 1), ob('lamp', 0, 1, 3), ob('shelfb', 0, 4, 3)] }
+  ], [ob('ac', 0, 3, 2), ob('vent', 0, 1, 1), ob('tank', 0, 3, 2), ob('ac', 0, 2, 2)], 83);
+}
+function mapMuseum() {
+  return floorsMap([
+    { theme: 'muse', conn: 'lift', objs: [ob('statue', 0, 2, 3), ob('bench', 0, 3, 1), ob('vitrine', 0, 3, 2), ob('plant', 0, 1, 2), ob('statue', 0, 2, 3)] },
+    { theme: 'museD', g: ['gap', 'mezz'], objs: [ob('bones', 0, 6, 3), ob('rope', 0, 1, 1), ob('vitrine', 0, 3, 2), ob('rock', 0, 2, 1), ob('rope', 0, 1, 1)] },
+    { theme: 'museA', conn: 'lift', g: ['ice'], objs: [ob('easel', 0, 2, 3), ob('bench', 0, 3, 1), ob('vitrine', 0, 3, 2), ob('easel', 0, 2, 3), ob('plant', 0, 1, 1)] },
+    { theme: 'museS', g: ['mezz'], objs: [ob('rocket', 0, 2, 3), ob('moon', 0, 3, 1), ob('vitrine', 0, 3, 2), ob('globe', 0, 1, 2), ob('bench', 0, 3, 1)] }
+  ], [ob('ac', 0, 3, 2), ob('tank', 0, 3, 2), ob('vent', 0, 1, 1), ob('ac', 0, 2, 2)], 97);
+}
+function mapStadium() {
+  return floorsMap([
+    { theme: 'arena', g: ['ice'], objs: [ob('turnstile', 0, 1, 2), ob('hotdog', 0, 3, 2), ob('bench', 0, 3, 1), ob('banner', 0, 1, 3), ob('trash', 0, 1, 1)] },
+    { theme: 'lockerR', conn: 'lift', g: ['gap'], objs: [ob('locker', 0, 4, 2), ob('bench', 0, 3, 1), ob('ball', 0, 1, 1), ob('locker', 0, 3, 2), ob('boxes', 0, 2, 1)] },
+    { theme: 'press', g: ['mezz'], objs: [ob('desk', 0, 3, 1), ob('camera', 0, 2, 3), ob('desk', 0, 3, 1), ob('cooler', 0, 1, 2), ob('chair', 0, 1, 1)] },
+    { theme: 'vip', conn: 'lift', g: ['mezz', 'ice'], objs: [ob('sofa', 0, 3, 1), ob('trophy', 0, 2, 2), ob('table', 0, 3, 1), ob('plant', 0, 1, 2), ob('sofa', 0, 3, 1)] }
+  ], [ob('tank', 0, 3, 2), ob('vent', 0, 1, 1), ob('ac', 0, 2, 2), ['~antenna', 90, 1, 5]], 103);
+}
+function mapStudio() {
+  return floorsMap([
+    { theme: 'studio', objs: [ob('camera', 0, 2, 3), ob('spot', 0, 1, 3), ob('desk', 0, 3, 1), ob('sofa', 0, 3, 1), ob('cable', 0, 2, 1)] },
+    { theme: 'control', conn: 'lift', g: ['gap'], objs: [ob('mixer', 0, 4, 2), ob('rack', 0, 1, 2), ob('chair', 0, 1, 1), ob('mixer', 0, 3, 2), ob('boxes', 0, 2, 1)] },
+    { theme: 'makeup', g: ['ice', 'mezz'], objs: [ob('mirror', 0, 3, 2), ob('chair', 0, 1, 1), ob('rackc', 0, 3, 2), ob('mirror', 0, 3, 2), ob('plant', 0, 1, 2)] },
+    { theme: 'studio', conn: 'lift', g: ['gap'], objs: [ob('spot', 0, 1, 3), ob('cable', 0, 2, 1), ob('camera', 0, 2, 3), ob('desk', 0, 3, 1), ob('cooler', 0, 1, 2)] }
+  ], [ob('ac', 0, 3, 2), ob('tank', 0, 3, 2), ob('vent', 0, 1, 1), ['~antenna', 60, 1, 5]], 113);
+}
+
 const MAPS = {
   office:  { name: '오피스 빌딩', desc: '층마다 책상과 가구를 넘어 옥상 헬기장까지', make: mapOffice, sky: ['#7fb6e8', '#c9e4f5'] },
   airport: { name: '공항',       desc: '체크인, 보안 검색, 무빙워크를 지나 비행기 문까지', make: mapAirport, sky: ['#f2a65a', '#ffd9a0'] },
@@ -184,6 +242,11 @@ const MAPS = {
   mall:    { name: '백화점',     desc: '다섯 층 매장과 푸드코트를 가로질러 옥상까지', make: mapMall, sky: ['#f08aa8', '#ffd6e0'] },
   hospital:{ name: '병원',       desc: '로비, 병동, 검사실의 침대와 휠체어를 넘어 옥상까지', make: mapHospital, sky: ['#7fd0c8', '#d8f5f0'] },
   school:  { name: '학교',       desc: '복도, 교실, 음악실, 체육관을 올라 옥상까지', make: mapSchool, sky: ['#7fb6e8', '#e8f3ff'] },
+  hotel:   { name: '호텔',       desc: '로비, 객실, 연회장, 수영장 옥상까지', make: mapHotel, sky: ['#6aa0e0', '#f4d8b0'] },
+  library: { name: '도서관',     desc: '높은 책장과 서고를 지나 옥상 서재까지', make: mapLibrary, sky: ['#b09ad8', '#f0e0c8'] },
+  museum:  { name: '박물관',     desc: '조각상, 공룡 뼈, 우주관을 지나 옥상까지', make: mapMuseum, sky: ['#88a8c8', '#e8e0d0'] },
+  stadium: { name: '경기장',     desc: '매표소, 라커룸, 중계석을 올라 귀빈석까지', make: mapStadium, sky: ['#4a78c0', '#a8d0f0'] },
+  studio:  { name: '방송국',     desc: '스튜디오와 조정실을 지나 송신탑까지', make: mapStudio, sky: ['#3a3a6a', '#8a7ab0'] },
   factory: { name: '공장',       desc: '반대로 움직이는 컨베이어 벨트를 넘어 옥상까지', make: mapFactory, sky: ['#8a7a6a', '#d0b898'] }
 };
 const MAP_IDS = Object.keys(MAPS);

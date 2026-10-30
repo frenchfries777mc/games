@@ -24,6 +24,24 @@ const THEMES = {
   music: { wall: '#e8dcf0', trim: '#b8a4cc', floor: '#7e6c92', top: '#9e8cb2', wain: '#8a6aa6' },
   gym: { wall: '#f2d8b8', trim: '#d0a468', floor: '#a47a3e', top: '#c49a5e', wain: '#d4864a' },
   factory: { wall: '#9aa0a8', trim: '#6e757e', floor: '#555c66', top: '#7a828c', wain: '#7a6a3a' },
+  hotelL: { wall: '#f0e4cc', trim: '#c8a868', floor: '#7a5a3a', top: '#a88a5a', wain: '#8a2a3a', glass: true },
+  hotelR: { wall: '#e8d8e0', trim: '#c0a0b4', floor: '#6a5a6a', top: '#8a7a8a', wain: '#a86a8a' },
+  ballroom: { wall: '#f6ecd0', trim: '#d8b858', floor: '#a88a4a', top: '#c8aa6a', wain: '#7a2a2a', glass: true },
+  pool: { wall: '#d8f0f4', trim: '#8ac8d8', floor: '#4a8aa8', top: '#7ac0d8', wain: '#5ab0d0', glass: true },
+  lib: { wall: '#d8c4a0', trim: '#8a6a3a', floor: '#5a4028', top: '#7a5a38', wain: '#5a3a22' },
+  libR: { wall: '#cdb890', trim: '#7a5a30', floor: '#54382a', top: '#74543a', wain: '#4a3020', glass: true },
+  archive: { wall: '#b8a888', trim: '#7a6a4a', floor: '#4a4234', top: '#6a6250', wain: '#5a5040' },
+  muse: { wall: '#ece8e0', trim: '#c0b8a8', floor: '#8a8478', top: '#aaa498', wain: '#bab2a2', glass: true },
+  museD: { wall: '#d8d0b8', trim: '#a89a78', floor: '#7a7058', top: '#9a9078', wain: '#8a7a58' },
+  museA: { wall: '#f0e8f0', trim: '#c4b0c8', floor: '#8a7a8e', top: '#aa9aae', wain: '#d8c0d8' },
+  museS: { wall: '#202a48', trim: '#10182e', floor: '#3a4468', top: '#5a6488', wain: '#101830' },
+  arena: { wall: '#c8d4e4', trim: '#8a9ab4', floor: '#5a6678', top: '#7a8698', wain: '#3a5a9a' },
+  lockerR: { wall: '#9ab0c0', trim: '#6a8498', floor: '#4a5c6a', top: '#6a7c8a', wain: '#2a4a6a' },
+  press: { wall: '#2c3448', trim: '#1c2438', floor: '#44506a', top: '#64708a', wain: '#1c2a4a', glass: true },
+  vip: { wall: '#4a2a34', trim: '#2a1620', floor: '#6a4a3a', top: '#8a6a5a', wain: '#2a1018', glass: true },
+  studio: { wall: '#1e2038', trim: '#12142a', floor: '#3a3a58', top: '#5a5a78', wain: '#c0306a' },
+  control: { wall: '#2a3040', trim: '#181e2c', floor: '#444c60', top: '#646c80', wain: '#2a6a8a' },
+  makeup: { wall: '#f4dce8', trim: '#d0a8bc', floor: '#8a6a7a', top: '#aa8a9a', wain: '#e090b8' },
   factoryB: { wall: '#8e8a84', trim: '#66625c', floor: '#52504c', top: '#76726c', wain: '#8a4a2a' }
 };
 const OBJC = {
@@ -36,6 +54,10 @@ const OBJC = {
   fountain: ['#4a8ac8', '#a8e0ff'], mannequin: ['#d8d0c8', '#f4eee8'], rackc: ['#b0488a', '#f09ad0'], shoes: ['#6a4a8a', '#c8a0e8'], reception: ['#3a8a8a', '#8adcdc'], wheelchair: ['#5a6a7a', '#a8b8c8'],
   bed: ['#e8eef4', '#8ac0e8'], drip: ['#aab4be', '#e0f0ff'], labtable: ['#6a8a96', '#d0e8f0'], scanner: ['#c8d4dc', '#8ab8d8'], locker: ['#4a6a9a', '#8aa8d8'], trophy: ['#c8a028', '#ffe070'], sdesk: ['#9a7a4a', '#d8b878'],
   teacher: ['#5a7a4a', '#9aca7a'], piano: ['#1a1a22', '#f0f0f0'], stool: ['#8a5a3a', '#c8885a'], drums: ['#b83a3a', '#f0c860'], mat: ['#3a8a5a', '#7adca0'], hoop: ['#e8662a', '#ffffff'], horse: ['#8a5a30', '#c0885a'], ball: ['#e8662a', '#ffa860'], bin: ['#5a6a5a', '#9aaa9a'],
+  trolley: ['#c8a028', '#f0d870'], minibar: ['#4a4a58', '#8a8a9a'], cake: ['#f0b8c8', '#fff0f4'], chaise: ['#f0f4f8', '#6ac0e8'], parasol: ['#e8483b', '#ffd070'], towels: ['#6ac0e8', '#e8f8ff'],
+  shelfb: ['#5a3a22', '#c8a060'], globe: ['#4a8ac8', '#8ad060'], lamp: ['#e8c040', '#fff0a0'], scroll: ['#d8c898', '#f4ecd0'], statue: ['#b8b8c0', '#e8e8f0'], vitrine: ['#8ac8e0', '#d8f4ff'],
+  bones: ['#e8e0c8', '#fffaf0'], rope: ['#8a2a3a', '#e8c040'], rock: ['#7a6a58', '#a89878'], easel: ['#8a5a30', '#f0e0c0'], rocket: ['#e8e8f0', '#e8483b'], moon: ['#c0c0c8', '#f0f0f8'],
+  hotdog: ['#c0852a', '#ffd070'], banner: ['#3a5aa8', '#f0f0f0'], camera: ['#2a2f3a', '#8a92a2'], spot: ['#2a2f3a', '#fff0a0'], cable: ['#2a2a34', '#e8c040'], mixer: ['#3a4054', '#6aa8e8'], mirror: ['#8ac8e0', '#f4fbff'],
   crate: ['#9a6a30', '#d0a060'], barrel: ['#3a5a8a', '#7aa0d8'], machine: ['#5a6068', '#e8b030'], shelf: ['#7a6a5a', '#c8b098'], seats: ['#3a4a7a', '#7a8ec8'], gatedesk: ['#4a6a4a', '#8ac08a'], cone: ['#e8662a', '#ffb070']
 };
 function mkCanvas(w, h) { const c = document.createElement('canvas'); c.width = w; c.height = h; const x = c.getContext('2d'); x.imageSmoothingEnabled = false; return [c, x]; }
@@ -163,6 +185,11 @@ function drawWep(x, k) {
     case 'pistol': R(x, '#2a2f3a', 2, -2, 10, 4); R(x, '#2a2f3a', 2, 1, 4, 5); R(x, '#8a92a2', 11, -2, 3, 2); break;
     case 'ext': R(x, '#c0392b', 2, -3, 8, 8); R(x, '#222', 9, -2, 5, 2); R(x, '#eee', 2, -1, 8, 2); break;
     case 'bazooka': R(x, '#4a5a3a', -2, -3, 20, 6); R(x, '#2a3320', 16, -4, 4, 8); R(x, '#888', 4, 3, 3, 4); break;
+    case 'hammer': R(x, '#8a5a30', 2, -1, 14, 3); R(x, '#6a7480', 13, -5, 8, 11); R(x, '#b0bac6', 13, -5, 8, 2); break;
+    case 'mop': R(x, '#c89a5a', 2, -1, 20, 2); R(x, '#e8e4d8', 20, -4, 7, 8); R(x, '#bdb8a8', 20, 2, 7, 2); break;
+    case 'sling': R(x, '#8a5a30', 3, -1, 8, 3); R(x, '#8a5a30', 9, -6, 2, 6); R(x, '#8a5a30', 13, -6, 2, 6); R(x, '#e8c39a', 9, -7, 6, 1); break;
+    case 'hose': R(x, '#c0392b', 0, -3, 9, 8); R(x, '#222', 8, -2, 7, 4); R(x, '#4a8ad0', 14, -2, 4, 4); R(x, '#e8c040', 0, 4, 9, 2); break;
+    case 'firework': R(x, '#a8473f', -1, -3, 18, 6); R(x, '#f2b632', 2, -3, 3, 6); R(x, '#f2b632', 9, -3, 3, 6); R(x, '#ffe070', 17, -2, 3, 4); break;
   }
 }
 function shade(h, d) { const n = parseInt(h.slice(1), 16), c = v => Math.max(0, Math.min(255, v + d)); return '#' + [(n >> 16) & 255, (n >> 8) & 255, n & 255].map(v => c(v).toString(16).padStart(2, '0')).join(''); }
@@ -179,7 +206,10 @@ function drawItems(x, G, t) {
 function drawShots(x, G) {
   for (const s of G.shots) {
     if (s.k === 'ext') { R(x, 'rgba(255,255,255,.8)', s.x - 2, s.y - 2, 4, 4); }
+    else if (s.k === 'hose') { R(x, 'rgba(120,200,255,.85)', s.x - 2, s.y - 2, 5, 5); }
     else if (s.k === 'bazooka') { R(x, '#444', s.x - 5, s.y - 2, 10, 4); R(x, '#ff7a2a', s.x - (s.vx > 0 ? 9 : -5), s.y - 1, 4, 2); }
+    else if (s.k === 'firework') { R(x, '#e8483b', s.x - 3, s.y - 2, 7, 3); R(x, ['#ffe070', '#ff7ad0', '#7affd0'][(s.x / 6 | 0) % 3], s.x - (s.vx > 0 ? 7 : -4), s.y - 2, 3, 3); }
+    else if (s.k === 'sling') { R(x, '#b0bac6', s.x - 1, s.y - 1, 3, 3); }
     else R(x, '#ffe070', s.x - 2, s.y - 1, 5, 3);
   }
 }
@@ -259,6 +289,28 @@ function drawView(x, W, a, y, w, h, rm) {
     cell(160, 4, (px, k, r) => { R(x, '#a8503a', px, hy - 36, 70, 40); R(x, '#8a3e2e', px - 3, hy - 40, 76, 5); for (let q = 6; q < 30; q += 12) for (let c = 6; c < 64; c += 14) R(x, '#bfe2f4', px + c, hy - 34 + q, 8, 7); R(x, '#6a3a22', px + 30, hy - 14, 10, 18); });
     cell(60, 6, (px, k, r) => { if (k % 3 === 1) { R(x, '#fff', px, hy + 6, 2, 12); R(x, '#fff', px + 22, hy + 6, 2, 12); R(x, '#fff', px, hy + 6, 24, 2); R(x, 'rgba(255,255,255,.35)', px + 2, hy + 8, 20, 10); } else if (k % 3 === 2) { R(x, '#6a4a2a', px + 5, hy - 8, 3, 14); x.fillStyle = '#3a9a4a'; x.beginPath(); x.arc(px + 6.5, hy - 12, 9, 0, 7); x.fill(); } });
     cell(220, 2, (px, k, r) => { R(x, '#ccc', px, hy - 44, 2, 48); R(x, '#e8483b', px + 2, hy - 44, 12, 7); R(x, '#fff', px + 2, hy - 41, 12, 2); });
+  } else if (id === 'hotel') {
+    R(x, '#5aa8d8', X0, hy - 4, X1 - X0, 60); cell(40, 3, (px, k, r) => { R(x, 'rgba(255,255,255,.35)', px, hy + 2 + r * 8, 28, 2); });
+    cell(90, 7, (px, k, r) => { const bh = 30 + r * 40; R(x, ['#e8d8b8', '#d8b8a0', '#b8c8d8'][k % 3], px, hy - bh, 40, bh + 20); for (let q = 4; q < bh - 4; q += 8) for (let c = 4; c < 34; c += 9) R(x, '#6a8ab0', px + c, hy - bh + q, 5, 4); });
+    cell(34, 5, (px, k, r) => { R(x, '#7a5a3a', px + 4, hy - 8, 3, 10); x.fillStyle = '#3a9a5a'; x.beginPath(); x.arc(px + 5.5, hy - 12, 8, 0, 7); x.fill(); });
+    R(x, '#e8d8b0', X0, hy + 20, X1 - X0, 20);
+  } else if (id === 'library') {
+    R(x, '#6a8a5a', X0, hy - 2, X1 - X0, 60); cell(60, 4, (px, k, r) => { R(x, '#6a4a2a', px + 10, hy - 22 - r * 8, 5, 26); x.fillStyle = ['#c8683a', '#e8a83a', '#a84a2a'][k % 3]; x.beginPath(); x.arc(px + 12.5, hy - 26 - r * 8, 13, 0, 7); x.fill(); });
+    cell(170, 8, (px, k, r) => { R(x, '#8a7a68', px, hy - 40, 60, 46); R(x, '#6a5a48', px - 3, hy - 44, 66, 6); for (let c = 6; c < 56; c += 12) R(x, '#d8c88a', px + c, hy - 34, 6, 22); });
+    R(x, '#a89870', X0, hy + 16, X1 - X0, 20);
+  } else if (id === 'museum') {
+    cell(90, 5, (px, k, r) => { R(x, '#d8d4c8', px, hy - 26, 70, 32); R(x, '#b8b0a0', px - 3, hy - 32, 76, 7); for (let c = 6; c < 66; c += 12) R(x, '#e8e4d8', px + c, hy - 24, 6, 26); });
+    cell(50, 2, (px, k, r) => { R(x, '#6a4a2a', px + 5, hy - 6, 3, 12); x.fillStyle = '#4a9a5a'; x.beginPath(); x.arc(px + 6.5, hy - 10, 7, 0, 7); x.fill(); });
+    R(x, '#c8c0b0', X0, hy + 10, X1 - X0, 30); cell(32, 9, (px, k, r) => R(x, '#a8a090', px, hy + 14, 20, 2));
+  } else if (id === 'stadium') {
+    R(x, '#58a858', X0, hy, X1 - X0, 60); cell(34, 3, (px, k, r) => R(x, k % 2 ? '#4c9a4c' : '#62b462', px, hy, 34, 60));
+    cell(100, 6, (px, k, r) => { R(x, '#8a909c', px, hy - 40, 6, 44); R(x, '#fff8c0', px - 6, hy - 46, 18, 7); for (let c = 0; c < 18; c += 6) R(x, '#fff', px - 5 + c, hy - 45, 4, 5); });
+    cell(60, 9, (px, k, r) => { R(x, ['#e8483b', '#3b8de8', '#f2b632'][k % 3], px, hy - 14 - r * 6, 40, 16 + r * 6); R(x, 'rgba(255,255,255,.25)', px, hy - 14 - r * 6, 40, 2); });
+    R(x, '#f0f0f0', X0, hy + 22, X1 - X0, 2);
+  } else if (id === 'studio') {
+    cell(44, 4, (px, k, r) => { const bh = 20 + r * 50; R(x, ['#3a3a6a', '#5a3a6a', '#2a4a7a'][k % 3], px, hy - bh, 36, bh + 40); for (let q = 4; q < bh - 4; q += 7) for (let c = 4; c < 30; c += 8) if (hs(k * 13 + q * 3 + c) > .35) R(x, '#ffd36b', px + c, hy - bh + q, 4, 3); });
+    cell(160, 8, (px, k, r) => { R(x, '#c0c8d8', px + 6, hy - 60, 2, 66); R(x, '#e8483b', px + 2, hy - 60, 10, 3); R(x, '#e8483b', px + 4, hy - 40, 6, 2); R(x, '#fff', px + 6, hy - 64, 2, 4); });
+    R(x, '#22223a', X0, hy + 10, X1 - X0, 40); cell(30, 2, (px, k, r) => R(x, k % 2 ? '#e8483b' : '#ffd36b', px, hy + 14, 4, 2));
   } else {    // factory
     cell(46, 5, (px, k, r) => { R(x, '#6a6460', px, hy - 14 - r * 10, 40, 30 + r * 10); for (let c = 0; c < 40; c += 10) { R(x, '#6a6460', px + c, hy - 20 - r * 10, 8, 6); } });
     cell(90, 8, (px, k, r) => { const bh = 34 + r * 22; R(x, '#4a423c', px, hy - bh, 9, bh + 20); R(x, '#d04a2a', px, hy - bh, 9, 3); R(x, '#d04a2a', px, hy - bh + 8, 9, 3); for (let q = 0; q < 4; q++) { x.fillStyle = 'rgba(190,182,170,' + (.55 - q * .12) + ')'; x.beginPath(); x.arc(px + 4 + q * 5 + Math.sin(k) * 3, hy - bh - 4 - q * 8, 5 + q * 2.5, 0, 7); x.fill(); } });
