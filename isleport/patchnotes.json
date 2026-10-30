@@ -2,6 +2,64 @@
  "notes": [
   {
    "date": "2026-10-30",
+   "build": "v0.2 build 73",
+   "title": "주민 심부름",
+   "items": [
+    "섬 주민에게 말을 걸면 다른 섬 주민에게 편지나 소포를 전해 달라는 부탁을 받을 수 있음",
+    "한 번에 최대 3건까지 맡을 수 있고, 전해 주면 금화 보상을 받음",
+    "주민을 누르면 받은 심부름과 전할 곳이 보임",
+    "같은 주민의 부탁은 5분 뒤에 다시 받을 수 있음"
+   ],
+   "tr": {
+    "en": {
+     "title": "Islander errands",
+     "items": [
+      "Talk to an islander to be asked to carry a letter or parcel to a villager on another port",
+      "You can carry up to 3 at a time and get gold when you deliver",
+      "Talking to anyone shows your errands and where to deliver",
+      "The same villager asks again after 5 minutes"
+     ]
+    },
+    "ja": {
+     "title": "Islander errands",
+     "items": [
+      "Talk to an islander to be asked to carry a letter or parcel to a villager on another port",
+      "You can carry up to 3 at a time and get gold when you deliver",
+      "Talking to anyone shows your errands and where to deliver",
+      "The same villager asks again after 5 minutes"
+     ]
+    },
+    "es": {
+     "title": "Islander errands",
+     "items": [
+      "Talk to an islander to be asked to carry a letter or parcel to a villager on another port",
+      "You can carry up to 3 at a time and get gold when you deliver",
+      "Talking to anyone shows your errands and where to deliver",
+      "The same villager asks again after 5 minutes"
+     ]
+    },
+    "fr": {
+     "title": "Islander errands",
+     "items": [
+      "Talk to an islander to be asked to carry a letter or parcel to a villager on another port",
+      "You can carry up to 3 at a time and get gold when you deliver",
+      "Talking to anyone shows your errands and where to deliver",
+      "The same villager asks again after 5 minutes"
+     ]
+    },
+    "de": {
+     "title": "Islander errands",
+     "items": [
+      "Talk to an islander to be asked to carry a letter or parcel to a villager on another port",
+      "You can carry up to 3 at a time and get gold when you deliver",
+      "Talking to anyone shows your errands and where to deliver",
+      "The same villager asks again after 5 minutes"
+     ]
+    }
+   }
+  },
+  {
+   "date": "2026-10-30",
    "build": "v0.2 build 72",
    "title": "개척지 가공소와 마차",
    "items": [
