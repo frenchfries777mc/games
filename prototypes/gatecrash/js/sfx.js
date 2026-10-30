@@ -46,7 +46,7 @@ function GCSfx(e) {
   else if (e.t === 'break') SFX.brk();
   else if (e.t === 'go') SFX.go();
   else if (e.t === 'fin') SFX.fin();
-  else if (e.t === 'fire') { if (e.k === 'bazooka') SFX.rocket(); else if (e.k === 'pistol') SFX.pistol(); }
+  else if (e.t === 'fire') { if (e.k === 'bazooka' || e.k === 'firework') SFX.rocket(); else if (e.k === 'pistol' || e.k === 'sling') SFX.pistol(); }
 }
 
 /* 배경음악: 로비 = Top of the Leaderboard, 경기 = Pixel Sprint (두 파일 모두 -20 LUFS 근처로 맞춰 두었어요. iPad는 audio.volume을 무시해서 Web Audio 게인으로 조절해요) */
