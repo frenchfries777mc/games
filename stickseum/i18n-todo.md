@@ -36,3 +36,13 @@ Stickseum-v0.9.html | MODES.vault.desc | 금고 체력은 3000 -> 2500 (설명 �
 patchnotes.json | v530 title | 은하 제국의 황혼 | build 530 | 2026-10-30
 patchnotes.json | v530 items[0] | 클랜 정보의 클랜전 승리 줄 삭제, 일반 온라인 승리를 클랜 승리로 세던 것 삭제 | build 530 | 2026-10-30
 patchnotes.json | v530 items[1] | 황금 쟁탈 금 든 느려짐은 땅에 있을 때만 | build 530 | 2026-10-30
+Stickseum.html | 클랜 UI | 클랜 레벨 Lv.N · 경험치 a / b · 인원 상한 N명 · 경기와 기부로 올라요 | clan level row | 2026-10-30
+Stickseum.html | 클랜 UI | 엠블럼·색 바꾸기 · 눌러서 열기 · 골라서 눌러요 | clan style | 2026-10-30
+Stickseum.html | 클랜 UI | N위 · 기여도 N · 클랜 토큰 N · 눌러서 프로필 보기 | clan contribution rank | 2026-10-30
+Stickseum.html | 클랜 UI | 🎖️ 부리더 / 🎖️ 해임 / 님이 부리더가 됐어요 / 님을 부리더에서 해임했어요 / 부리더는 최대 3명이에요 | clan officer | 2026-10-30
+Stickseum.html | 클랜 UI | 클랜 인원이 가득 찼어요 | clan full | 2026-10-30
+patchnotes.json | v531 title | 은하 제국의 황혼 | build 531 | 2026-10-30
+patchnotes.json | v531 items[0] | 클랜 레벨 (경기와 기부로 경험치, 레벨마다 인원 상한 +2명) | build 531 | 2026-10-30
+patchnotes.json | v531 items[1] | 클랜원 기여도 순위 | build 531 | 2026-10-30
+patchnotes.json | v531 items[2] | 부리더 (추방과 공지, 클랜장이 최대 3명 임명) | build 531 | 2026-10-30
+patchnotes.json | v531 items[3] | 클랜장이 엠블럼과 색을 언제든 바꿈 | build 531 | 2026-10-30
