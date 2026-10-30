@@ -736,7 +736,8 @@ const COL = { knight: 0xcfe0ff, viking: 0xffb060, mamluk: 0xffd0a0, skeleton: 0x
 function onEvent(e) {
   const me = S.me;
   switch (e.k) {
-    case 'swing': view.arc(e.x, e.z, e.a, e.r, COL[e.role] || 0xffffff); SFX.play('swing'); break;
+    case 'swing': if (e.role === 'spearman' && !e.n) { const c = Math.cos(e.a), s = Math.sin(e.a); view.streak(e.x + c * 0.8, e.z + s * 0.8, e.a, 3.6, 0xe8f0ff, 0.12, 0.35); view.burst(e.x + c * 3.6, 1.2, e.z + s * 3.6, 0xe8f0ff, 5, 6, 0.2, 0.08); SFX.play('swing'); break; }
+      view.arc(e.x, e.z, e.a, e.r, COL[e.role] || 0xffffff); SFX.play('swing'); break;
     case 'wallhit': view.burst(e.x, 1.4, e.z, 0xd8cca8, 8, 5, 0.3, 0.1); SFX.play('clang'); break;
     case 'vowhit': view.streak(e.tx, e.tz, Math.atan2(e.z - e.tz, e.x - e.tx), Math.hypot(e.x - e.tx, e.z - e.tz), 0xffe08a, 0.25, 0.4); break;
     case 'shoot': SFX.play(e.pk === 'orb' ? 'orb' : 'arrow'); break;
