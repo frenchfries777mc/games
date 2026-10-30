@@ -1503,7 +1503,9 @@ function botFlag(G, p, dt) {
     G.fl.forEach((f, i) => {
       let sc = Math.hypot(f.x - p.x, f.z - p.z);
       if (f.own === p.team) sc += f.cap >= 0 && f.cap !== p.team ? -60 : 90;
-      for (const q of G.players) if (q !== p && q.team === p.team && q.bot && q.ai.fi === i) sc += 22;
+      // 혼자 흩어지지 않고 같은 편이 많은 깃발로 같이 가요 (같은 편은 사람·봇 모두 세요). 상대가 더 많이 지키는 깃발은 피해요
+      let al = 0, en = 0; for (const q of G.players) { if (q === p || !alive(q) || Math.hypot(q.x - f.x, q.z - f.z) > D.FLAG_R * 3) continue; if (q.team === p.team) al++; else en++; }
+      sc -= al * 14; if (en > al + 1) sc += (en - al - 1) * 30;
       if (sc < bs) { bs = sc; bi = i; }
     });
     ai.fi = bi;
@@ -1620,6 +1622,7 @@ const r1 = v => Math.round(v * 100) / 100;
 export function snapshot(G) {
   const near = e => e.k === 'boss' || (e.st !== 'sleep') || G.players.some(p => Math.abs(p.x - e.x) < 34 && Math.abs(p.z - e.z) < 26);
   return {
+    mn: (m => m ? [r1(m.x), r1(m.z), Math.round(m.hp / m.maxhp * 100)] : 0)(G.enemies.find(e => e.mon && e.hp > 0)),
     pv: G.pvp ? 1 : 0, win: G.winner || 0, wtm: G.winTeam != null ? G.winTeam : -1, tf: G.fl ? G.fl.map(f => [f.own, f.cap, r1(f.prog)]) : 0, mc: G.cb ? [Math.ceil(G.cb[0]), Math.ceil(G.cb[1])] : 0, t: r1(G.t), ph: G.phase, pt: r1(G.phaseT), c: G.ch, dp: G.deep, wk: G.weekly, wt: r1(G.winT || 0), msg: G.msg, won: G.won,
     sk: G.players.filter(p => !p.bot && G.skip[p.id]).length, hu: G.players.filter(p => !p.bot).length,
     pl: G.players.map(p => ({ id: p.id, tm: p.team, fz: p.inFl ? 1 : 0, dth: p.deaths | 0, role: p.role, col: p.col, cos: p.cos, name: p.name, bot: p.bot, x: r1(p.x), z: r1(p.z), a: r1(p.a), hp: Math.round(p.hp), mx: p.maxhp, dn: p.down ? 1 : 0, dd: p.dead ? 1 : 0, bl: r1(p.bleed), rs: r1(p.respT), rv: r1(p.revT), ro: p.roll > 0 ? 1 : 0, bk: p.block > 0 ? 1 : 0, sh: Math.round(p.shield), tn: p.taunt > 0 ? 1 : 0, ra: p.rally > 0 ? 1 : 0, cb: p.capB > 0 ? r1(p.capB) : 0, an: p.animT > 0 ? p.anim : '', aN: p.animN || 0, ak: p.anim, mv: p.moving ? 1 : 0, cd: [r1(p.cd.s0), r1(p.cd.s1), r1(p.cd.s2)], rc: r1(p.rollCd), b: p.bl, cb: p.comboT > 0 ? p.combo : 0, ac: p.animC || 0, fc: p.focus > 0 ? 1 : 0, tc: p.torch || 0, cg: p.chg > 0 ? r1(p.chg) : 0, cl: p.chill > 0 ? 1 : 0, em: p.emb ? 1 : 0, kl: p.kills | 0, pc: p.place | 0, sv: r1(p.survT || 0), bn: p.burn > 0 ? 1 : 0, sw: p.slow > 0 ? 1 : 0, stl: p.stl > 0 ? 1 : 0, sp: p.snipeT > 0 ? 1 : 0, bs: p.bast > 0 ? 1 : 0, vw: (p.vow && p.vow.t > 0) || p.vwSelf > 0 ? 1 : 0 })),
