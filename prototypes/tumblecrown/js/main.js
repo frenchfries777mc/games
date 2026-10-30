@@ -715,6 +715,7 @@ function gatherInput(p) {
     if (f) { inp.aim = Math.atan2(f.z - pos.z, f.x - pos.x); inp.ax = f.x; inp.az = f.z; }
     else if (Math.hypot(mx, mz) > 0.2) inp.aim = Math.atan2(mz, mx);
     if (p.role === 'squire') { const low = S.snap.pl.filter(q => !q.dn && !q.dd && q.hp < q.mx * 0.7).sort((a, b) => a.hp / a.mx - b.hp / b.mx)[0]; if (low && once.q) { inp.ax = low.x; inp.az = low.z; inp.aim = Math.atan2(low.z - pos.z, low.x - pos.x); } }
+    if (touch.jid != null && Math.hypot(mx, mz) > 0.2) { const ml = Math.hypot(mx, mz); inp.aim = Math.atan2(mz, mx); inp.ax = pos.x + mx / ml * 8; inp.az = pos.z + mz / ml * 8; }   // 조이스틱을 움직이는 동안은 가는 방향을 봐요
     const dg = touch.drag;   // 버튼을 끈 방향으로 조준해요 (조금만 움직이면 가까운 상대에게 자동 조준)
     if (dg && Math.hypot(dg.cx - dg.ox, dg.cy - dg.oy) > 14) { try { const g0 = view.groundAt(dg.ox, dg.oy), g1 = view.groundAt(dg.cx, dg.cy), ddx = g1.x - g0.x, ddz = g1.z - g0.z; inp.aim = Math.atan2(ddz, ddx); inp.ax = pos.x + ddx * 1.6; inp.az = pos.z + ddz * 1.6; } catch (e) { } }
     if (dg && dg.ended) { touch.drag = null; S.aimK = null; }
