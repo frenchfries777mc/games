@@ -601,7 +601,7 @@ if (typeof module !== 'undefined') module.exports = EHCore;
 'use strict';
 var C = EHCore, W = C.W, H = C.H, T = C.T, TS = 16;
 var $ = function (id) { return document.getElementById(id); };
-var BUILD = 3, VERSION = '0.1';
+var BUILD = 4, VERSION = '0.1';
 var LS = { save: 'emberhollow-save-v1', rec: 'emberhollow-records-v1', set: 'emberhollow-settings-v1' };
 var TEST = /[?&]test=1/.test(location.search);
 function lsGet(k, d) { try { var v = localStorage.getItem(k); return v ? JSON.parse(v) : d; } catch (e) { return d; } }
@@ -612,6 +612,7 @@ function clamp(v, a, b) { return v < a ? a : v > b ? b : v; }
 function nh(x, y, k) { var h = Math.imul(x * 374761393 + y * 668265263 + (k || 0) * 2147483647, 1274126177) >>> 0; h = Math.imul(h ^ (h >>> 13), 1103515245) >>> 0; return ((h ^ (h >>> 16)) >>> 0) / 4294967296; }
 
 var PATCH = [
+  { date: '2026-10-30', build: 'b4', title: '허브 퀘스트 연결 제거', items: ['허브 일일 퀘스트 신호 삭제'] },
   { date: '2026-10-29', build: 'b3', title: '허브 퀘스트 연결', items: ['한 판을 끝까지 마치고 처음 화면으로 돌아오면 허브 일일 퀘스트에 집계'] },
   { date: '2026-10-29', build: 'b2', title: '힌트 다듬기', items: ['보른과 라나의 힌트를 돌려 말하는 문장으로 변경', '수첩 할 일 이름에서 정답이 드러나는 표현 삭제'] },
   { date: '2026-10-27', build: 'b1', title: '첫 공개', items: ['폐허 마을 탐험과 퍼즐 일곱 가지', '시계탑 그림자, 거울 빛, 조각상 밀기, 하수도 수위 퍼즐', '수첩의 이름별 기록과 원인 밝히기', '시드로 같은 퍼즐 공유', 'Frenchfries777 계정 로그인'] }
@@ -1389,14 +1390,6 @@ function openPatch() {
 }
 function nickname() { try { if (window.FFAuth && FFAuth.user()) return String(FFAuth.nickname() || '').slice(0, 15); } catch (e) { } return ''; }
 
-/* 허브 일일 퀘스트 신호: 한 판을 끝까지 마치고 처음 화면으로 돌아온 순간에만 한 번 */
-function matchDone() {
-  function send() { try { var sb = window.FFAuth && FFAuth.client && FFAuth.client(); if (sb && window.FFProfile) FFProfile.matchDone(sb, 'emberhollow'); } catch (e) { } }
-  if (window.FFProfile) return send();
-  var sc = document.createElement('script'); sc.src = 'https://frenchfries777mc.github.io/games/ff-profile.js?v=20261028a';
-  sc.onload = send; document.head.appendChild(sc);
-}
-
 /* ---------------- ending ---------------- */
 function ending() {
   SFX.ok(); var nick = nickname();
@@ -1405,7 +1398,7 @@ function ending() {
   mode = 'end';
   var m = openModal('<h2>🔥 잿불골의 비밀</h2><p>30년 전, 촌장 오르반과 엘리아스 신부는 가난한 마을을 살리려고 교회 지하에서 몰래 등불석을 캤어요.</p><p>굴은 하수도 옆 동굴의 가스 주머니를 뚫었고, 가스는 하수도를 따라 마을 밑으로 퍼졌어요.</p><p>축제 날 거리마다 걸린 등불 하나가 맨홀 아래로 떨어지자, 불길이 하수도를 타고 마을 곳곳에서 한꺼번에 솟구쳤어요. 잿불골은 그렇게 하룻밤 새 폐허가 됐어요.</p><p style="color:var(--gold)">보른: "…용의 저주가 아니었군. 고맙네, ' + (nick ? esc(nick) + ' ' : '') + '탐정. 이제 대장님께 진실을 전할 수 있겠어."</p><p class="dim">걸린 시간 ' + fmtMs(rec.playMs) + ' · 게임 속 ' + rec.days + '일째 · 틀린 답 ' + rec.wrong + '번 · 시드 ' + esc(S.seed) + '</p><div class="acts"><button class="btn" id="enSame">같은 시드로 다시</button><button class="btn main" id="enTitle">처음 화면으로</button></div>');
   m.querySelector('.x').remove();
-  m.querySelector('#enTitle').onclick = function () { closeModal(); toTitle(); matchDone(); };
+  m.querySelector('#enTitle').onclick = function () { closeModal(); toTitle(); };
   m.querySelector('#enSame').onclick = function () { var sd = S.seed; closeModal(); startGame(sd); };
 }
 
