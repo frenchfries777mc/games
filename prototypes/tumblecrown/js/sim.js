@@ -687,7 +687,7 @@ function stepPlayer0(G, p, inp, dt) {
     else if (p.chg > 0) { p.qShot = p.chg >= CHG_T[1] ? 3 : p.chg >= CHG_T[0] ? 2 : 1; p.qT = 0.4; p.chg = 0; }
     if (p.qShot && p.cd.atk <= 0) { basicAttack(G, p, inp, p.qShot); p.qShot = 0; }
     if (p.qShot && (p.qT -= dt) <= 0) p.qShot = 0;
-  } else if (inp.atk && p.cd.atk <= 0 && p.block <= 0) basicAttack(G, p, inp);
+  } else if ((inp.atk || inp.atkR) && p.cd.atk <= 0 && p.block <= 0) basicAttack(G, p, inp);
   // 횃불을 든 동안은 기술을 못 써요 (기본 공격은 돼요)
   if (!p.torch && !fl) { if (inp.q) useSkill(G, p, 0, inp); if (inp.e) useSkill(G, p, 1, inp); if (inp.r) useSkill(G, p, 2, inp); }
   if (!inp.f) p.flNo = false;
@@ -1304,7 +1304,7 @@ function stepProjs(G, dt) {
       }
       for (const e of G.enemies) {
         if (e.hp <= 0 || e.st === 'rise' || !foeOf(G, pr.own, e) || pr.hit.indexOf(e.id) >= 0) continue;
-        if (Math.hypot(e.x - pr.x, e.z - pr.z) < e.r + 0.35) {
+        if (Math.hypot(e.x - pr.x, e.z - pr.z) < e.r + 0.8) {
           pr.hit.push(e.id); hurtEnemy(G, e, pr.dmg, own, { basic: pr.basic, aid: pr.aid, heavy: pr.heavy, pierce: pr.pierce, from: { x: pr.x - pr.vx * 0.05, z: pr.z - pr.vz * 0.05 } });
           if (pr.slow && e.hp > 0) { e.slow = pr.slow; e.slowM = 0.35; }
           if (!pr.pierce) { pr.dead = true; break; }

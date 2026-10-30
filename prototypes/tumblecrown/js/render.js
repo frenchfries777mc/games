@@ -1411,6 +1411,31 @@ export class View {
     const m = mesh(geo('dome', () => new THREE.SphereGeometry(1, 10, 6, 0, 6.3, 0, 1.6)), M(col, { e: col, ei: 1, op: 0.3, uniq: true, ds: true }), x, 0, z, this.scene, false);
     this.fx.push({ m, t: 0, T, up: (f) => { const u = f.t / f.T; m.scale.setScalar(r * (0.6 + Math.min(1, u * 4) * 0.4)); m.material.opacity = 0.3 * (1 - u); } });
   }
+  // 조준 미리보기 (민트색): 선(화살·볼트·돌진 등) 또는 원(폭탄·조준 기술)
+  setAim(sp, px, pz, a, ax, az) {
+    let G = this.aimG;
+    if (!sp) { if (G) G.visible = false; return; }
+    if (!G || G.parent !== this.scene) {
+      G = this.aimG = new THREE.Group(); G.renderOrder = 50;
+      const mat = o => new THREE.MeshBasicMaterial({ color: 0x5ff0c0, transparent: true, opacity: o, depthTest: false, depthWrite: false });
+      const ln = new THREE.Mesh(new THREE.BoxGeometry(1, 0.04, 1), mat(0.32)), ed = new THREE.Mesh(new THREE.BoxGeometry(1, 0.05, 1), mat(0.7));
+      const disc = new THREE.Mesh(new THREE.CircleGeometry(1, 40), mat(0.28)), ring = new THREE.Mesh(new THREE.RingGeometry(0.92, 1, 40), mat(0.85));
+      disc.rotation.x = ring.rotation.x = -Math.PI / 2; for (const m of [ln, ed, disc, ring]) { m.renderOrder = 50; m.frustumCulled = false; G.add(m); }
+      G.userData = { ln, ed, disc, ring }; this.scene.add(G);
+    }
+    const U = G.userData; G.visible = true;
+    const line = sp.k === 'line', ox = Math.cos(a), oz = Math.sin(a);
+    U.ln.visible = U.ed.visible = line; U.disc.visible = U.ring.visible = !line;
+    if (line) {
+      const off = sp.off || 0.6, L = sp.len, w = sp.w;
+      U.ln.position.set(px + ox * (off + L / 2), 0.14, pz + oz * (off + L / 2)); U.ln.rotation.y = -a; U.ln.scale.set(L, 1, w);
+      U.ed.position.set(px + ox * (off + L), 0.15, pz + oz * (off + L)); U.ed.rotation.y = -a; U.ed.scale.set(0.35, 1, w + 0.5);
+    } else {
+      let dx = ax - px, dz = az - pz; const d = Math.hypot(dx, dz) || 1, k = Math.min(1, sp.range / d);
+      const cx = px + dx * k, cz = pz + dz * k;
+      U.disc.position.set(cx, 0.14, cz); U.ring.position.set(cx, 0.15, cz); U.disc.scale.setScalar(sp.r); U.ring.scale.setScalar(sp.r);
+    }
+  }
   groundAt(sx, sy) { const v = new THREE.Vector3(sx / this.cw * 2 - 1, -(sy / this.ch) * 2 + 1, 0); const rc = new THREE.Raycaster(); rc.setFromCamera(v, this.cam); const t = -rc.ray.origin.y / rc.ray.direction.y; return { x: rc.ray.origin.x + rc.ray.direction.x * t, z: rc.ray.origin.z + rc.ray.direction.z * t }; }
   project(x, y, z) { const v = new THREE.Vector3(x, y, z).project(this.cam); return { x: (v.x + 1) / 2 * this.cw, y: (1 - v.y) / 2 * this.ch }; }
   entPos(key) { const E = this.ents.get(key); return E ? { x: E.x, z: E.z } : null; }
