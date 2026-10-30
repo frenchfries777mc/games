@@ -5523,7 +5523,7 @@ function shuffle(arr){ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.
 /* ===== the version of this file =====
    Different BUILDS of one version meet and play together (room names online-v<ver>-<mode>-<map>-<slot>); different VERSIONS (the 0.x part) never do - the host refuses them (verNo) and the dispatcher answers busy.
    The build is only sent along with the join message and the lobby (for information); the corner of the screen shows it. */
-const GAME_BUILD='build 2026-10-18-v527';
+const GAME_BUILD='build 2026-10-18-v528';
 const GAME_VERSION='0.9', GAME_VERSION_NAME='은하 제국의 황혼';   // 게임 버전 이름: versions.json의 title과 같게 (빌드마다 바꾸지 않음)
 /* version (the 0.x part) vs build: different BUILDS of one version meet and play together, different VERSIONS never do (rooms, quick match, ranked, friend invites, dispatcher).
    Builds before 470 do not send a version, so it is read from the build number (0.9 started at build 458). */
@@ -7399,6 +7399,7 @@ function renderCodex(){
     add('무기', (wp.desc||'').split('\n')[0]);
     if(sk) add('스킬 '+sk.name, sk.desc, '#7ef0a8');
     if(ul) add('궁극기 '+ul.name, ul.desc, '#ffd34d');
+    { const pv=passiveInfo(wid); if(pv) add('패시브 '+pv.name, pv.desc, '#ff9ad5'); }
     add('강한 상대', mu.s.length?mu.s.map(nm).join(' · '):'-', '#7ec8ff');
     add('약한 상대', mu.w.length?mu.w.map(nm).join(' · '):'-', '#ff9a9a');
     if(!mu.s.length && !mu.w.length) add('', '새 캐릭터라 상성 측정 전이에요', 'var(--text-dim)');
@@ -14838,6 +14839,8 @@ const PASSIVES={
   gambler:{n:'승부사의 감',c:'#ffe27a'}, flamethrower:{n:'불길 질주',c:'#ff8a3d'}, portalgun:{n:'',q:1}, dagger:{n:'그림자 일격',c:'#c0c0ff'},
   samurai:{n:'일섬 연참',c:'#ff5a6a'}, tionis:{n:'피의 연극',c:'#ff4d6a'}
 };
+const PASSIVE_DESC={pistol:"6번째 발사마다 탄환이 붉게 변하고 피해와 크기가 1.25배", smg:"연발을 모두 맞히면 주위 상대를 밀치고 3초 동안 이동속도 1.75배", lightsaber:"공격을 튕겨내면 다음 공격 피해 +20%", horemheb:"모래바람에 맞은 상대를 3초 안에 공격하면 피해 1.5배", pizarro:"4단계가 되면 치유 효과 2배, 이동속도 1.25배", puppeteer:"실이 이어진 상대를 조종하면 자폭 피해 +10", kan:"독이 4번 쌓인 상대는 이동속도 20% 감소", sword:"돌진 베기가 아무도 못 맞히고 끝나면 스킬 쿨타임 절반", bat:"상대를 4번 연속 맞히면 다음 공격이 매우 큰 넉백과 피해 1.25배", boomerang:"돌아오는 길에 맞히면 피해 1.5배", shuriken:"대쉬 후 표창을 맞히면 대쉬 쿨타임 0.3초 감소", shotgun:"알갱이를 모두 맞히면 상대 이동속도 20% 감소 (3초)", rifle:"지뢰를 밟은 상대는 3초 동안 이동속도 10% 감소", gloves:"피격마다 받는 피해가 1%씩 줄고, 10%가 되면 초기화되며 2.5초 동안 이동속도 2배와 공격 피해 1.5배", grenade:"폭발 점프로 피해를 주면 착지 때 근처 상대를 밀치고 기절", bazooka:"스킬 로켓 3발이 모두 맞으면 그 자리에 3초 동안 화염 (닿으면 초당 3 피해)", dagger:"암습 후 첫 일격이 맞으면 1초 동안 은신", dracula:"처치하면 체력 25 회복", gambler:"칩이 3개 이상이면 공격 피해 +10%", magiccard:"스킬 카드 4장이 모두 한 상대에게 맞으면 기절", kurus:"어둠 탈출 후 3초 동안 이동속도 1.5배", wizard:"마법진 안에서는 스킬 밀쳐내는 힘 2배", vacuum:"스택 1개마다 이동속도 +5%", pirate:"대포 비행으로 맞히면 스킬 쿨타임 3초 감소", cleon:"근위병이 살아 있는 동안 받는 피해 15% 감소", pel:"드론 6대가 모두 살아 있으면 드론 공격 속도 1.2배", portalgun:"탄환이 튕길 때마다 피해 증가", flamethrower:"내가 남긴 불길 위에서는 이동속도 1.3배와 초당 체력 3 회복", samurai:"거합으로 2명 이상 베면 거합 쿨타임 절반", tionis:"채혈 주사기가 맞으면 체력 10 회복"};      // the codex lines of the passives (the name comes from PASSIVES)
+function passiveInfo(wid){ const d=PASSIVE_DESC[wid]; if(!d) return null; const p=PASSIVES[wid]||{}; return {name:p.n||({pistol:'붉은 탄환', wizard:'마법진의 파동', shotgun:'명사수의 위협', portalgun:'튕김 강화'})[wid]||'', desc:d}; }
 function pvPop(p, key, tMs){ const d=PASSIVES[key]; if(!d || d.q || !p || !p.alive || p.isClone) return; const tS=tMs/1000; if(!p.pvAt) p.pvAt={}; if(p.pvAt[key]>tS-1.0) return; p.pvAt[key]=tS; pushFx('passive', p.x, p.y-96, tMs, {name:d.n, color:d.c}); }
 function pvEdge(p, key, on, tMs){ if(!p.pvOn) p.pvOn={}; if(on && !p.pvOn[key]) pvPop(p, key, tMs); p.pvOn[key]=!!on; }
 function pvHealMul(p){ return (p && p.weapon==='pizarro' && pzStacks(p)>=PZ_MAX) ? 2 : 1; }     // 피사로 at the 4th stage: every heal he gets counts double
