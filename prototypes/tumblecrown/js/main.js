@@ -902,8 +902,8 @@ function onEvent(e) {
     case 'respawn': view.column(e.x, e.z, 0xff9a48); if (e.id === me) bigMsg(T('진지에서 다시 일어났어요'), '', 1800); break;
     case 'flag': { const mine = e.own === myTm(), c = TEAMS[e.own].c; view.column(e.x, e.z, c, 1.4); view.ring(e.x, e.z, 6, c, 0.9); view.shock(e.x, e.z, 7, c, 0.6); view.flash(e.x, e.z, c, 120); bigMsg(mine ? T('깃발을 차지했어요!') : T('깃발을 빼앗겼어요!'), '', 1800); SFX.play(mine ? 'kill' : 'roar'); break; }
     case 'capbuff': view.rise(e.x, e.z, 0xffd36a, 12, 2.2, 0.9, 5); view.ring(e.x, e.z, 1.8, 0xffd36a, 0.5); if (e.id === me) { toast(T('점령 효과! 5초 동안 이동 속도와 공격이 20% 올라요'), 2400); SFX.play('bless'); } break;
-    case 'monster': view.column(e.x, e.z, 0xff7a3a, 1.6); view.shock(e.x, e.z, 8, 0xff7a3a, 0.6); view.flash(e.x, e.z, 0xff7a3a, 140); bigMsg(T('가운데에 괴물이 나타났어요!'), T('쓰러뜨리면 20초 동안 점령이 빨라져요'), 2600); SFX.play('roar'); break;
-    case 'monkill': { const mine = e.tm === myTm(); view.column(e.x, e.z, TEAMS[e.tm].c, 1.4); view.shock(e.x, e.z, 8, TEAMS[e.tm].c, 0.6); bigMsg(mine ? T('괴물을 쓰러뜨렸어요! 점령이 빨라져요') : T('상대가 괴물을 쓰러뜨렸어요'), '', 2400); SFX.play(mine ? 'kill' : 'warn'); break; }
+    case 'monster': view.column(e.x, e.z, 0xff7a3a, 1.6); view.shock(e.x, e.z, 8, 0xff7a3a, 0.6); view.flash(e.x, e.z, 0xff7a3a, 140); bigMsg(T('꼭짓점에 괴물이 나타났어요!'), T('쓰러뜨리면 우리 팀 공격과 점령 속도가 영구히 2% 올라요'), 2600); SFX.play('roar'); break;
+    case 'monkill': { const mine = e.tm === myTm(); view.column(e.x, e.z, TEAMS[e.tm].c, 1.4); view.shock(e.x, e.z, 8, TEAMS[e.tm].c, 0.6); bigMsg(mine ? T('괴물을 쓰러뜨렸어요! 괴물 처치 효과 lvl.{0}', e.lv) : T('상대가 괴물을 쓰러뜨렸어요 · lvl.{0}', e.lv), '', 2400); SFX.play(mine ? 'kill' : 'warn'); break; }
     case 'wipe': bigMsg(T('모두 쓰러졌어요'), T('잠시 뒤 마지막 모닥불에서 다시 시작해요'), 3000); SFX.play('wipe'); break;
     case 'restart': toast(T('깨어 있던 적은 제자리로 돌아갔어요.')); break;
     case 'won': SFX.play('won'); break;
@@ -1127,6 +1127,10 @@ function teamHud(sn) {
   });
   // 괴물 보너스: 우리 팀 점령이 빨라지는 동안 남은 시간을 깃발 아래에 보여 줘요
   if (sn.mc && sn.mc[mt] > 0) { oc.font = 'bold 13px sans-serif'; oc.textAlign = 'center'; oc.fillStyle = '#ffd36a'; oc.fillText(T('점령 1.5배 ') + sn.mc[mt] + T('초'), innerWidth / 2, y + 30); }
+  // 괴물 처치 효과 레벨 (팀마다)
+  { oc.font = 'bold 12px Galmuri, system-ui'; oc.lineWidth = 4; oc.strokeStyle = '#140f18'; const mk = sn.mk || [0, 0];
+    oc.textAlign = 'right'; oc.fillStyle = hex(TEAMS[0].c); const l0 = T('괴물 처치 효과 lvl.{0}', mk[0]); oc.strokeText(l0, x0 - 24, y + 38); oc.fillText(l0, x0 - 24, y + 38);
+    oc.textAlign = 'left'; oc.fillStyle = hex(TEAMS[1].c); const l1 = T('괴물 처치 효과 lvl.{0}', mk[1]); oc.strokeText(l1, x0 + (n - 1) * 34 + 24, y + 38); oc.fillText(l1, x0 + (n - 1) * 34 + 24, y + 38); }
   // 팀별 처치 수 (깃발 줄 양옆) 와 내 처치 수
   { const kt = [0, 0]; for (const q of sn.pl) kt[q.tm] += q.kl | 0; const me1 = sn.pl.find(q => q.id === S.me);
     oc.font = 'bold 13px Galmuri, system-ui'; oc.lineWidth = 4; oc.strokeStyle = '#140f18';
@@ -1146,7 +1150,7 @@ function teamHud(sn) {
   oc.fillStyle = 'rgba(10,8,14,.85)'; oc.fillRect(mx - 4, my - 4, w + 8, h + 8); oc.imageSmoothingEnabled = !!S.mapImg; oc.globalAlpha = S.mapImg ? 0.95 : 0.8; oc.drawImage(S.mapImg || mini.c, mx, my, w, h); oc.globalAlpha = 1; oc.strokeStyle = '#c8b480'; oc.lineWidth = 2; oc.strokeRect(mx - 4, my - 4, w + 8, h + 8);
   const P = (wx, wz) => [mx + wx / CS * sc, my + wz / CS * sc], mate = sn.pl.filter(q => q.tm === mt && !q.dd);
   sn.tf.forEach((f, i) => { const fl = MAP.tflags[i], [a, b] = P(cw(fl[0]), cw(fl[1])); oc.fillStyle = f[0] < 0 ? '#9a96a6' : hex(TEAMS[f[0]].c); oc.fillRect(a - 3.5, b - 3.5, 7, 7); oc.strokeStyle = '#140f18'; oc.lineWidth = 1.5; oc.strokeRect(a - 3.5, b - 3.5, 7, 7); if (S.fAl && S.fAl[i]) { const pu = 0.5 + 0.5 * Math.sin(performance.now() / 110); oc.strokeStyle = 'rgba(255,70,60,' + (0.5 + pu * 0.5) + ')'; oc.lineWidth = 2; oc.beginPath(); oc.arc(a, b, 7 + pu * 4, 0, 7); oc.stroke(); } });
-  if (sn.mn) { const [a, b] = P(sn.mn[0], sn.mn[1]), pu = 0.5 + 0.5 * Math.sin(performance.now() / 260); oc.fillStyle = '#ff7a3a'; oc.strokeStyle = '#140f18'; oc.lineWidth = 1.5; oc.beginPath(); oc.moveTo(a, b - 6); oc.lineTo(a + 5, b); oc.lineTo(a, b + 6); oc.lineTo(a - 5, b); oc.closePath(); oc.fill(); oc.stroke(); oc.strokeStyle = 'rgba(255,122,58,' + (0.3 + pu * 0.5) + ')'; oc.beginPath(); oc.arc(a, b, 8 + pu * 2, 0, 7); oc.stroke(); }
+  for (const mn of sn.mn || []) { const [a, b] = P(mn[0], mn[1]), pu = 0.5 + 0.5 * Math.sin(performance.now() / 260); oc.fillStyle = '#ff7a3a'; oc.strokeStyle = '#140f18'; oc.lineWidth = 1.5; oc.beginPath(); oc.moveTo(a, b - 6); oc.lineTo(a + 5, b); oc.lineTo(a, b + 6); oc.lineTo(a - 5, b); oc.closePath(); oc.fill(); oc.stroke(); oc.strokeStyle = 'rgba(255,122,58,' + (0.3 + pu * 0.5) + ')'; oc.beginPath(); oc.arc(a, b, 8 + pu * 2, 0, 7); oc.stroke(); }
   for (const p of sn.pl) {
     if (p.dd) continue; const q = p.id === S.me && S.local ? S.local : p;
     if (p.tm !== mt && !mate.some(m => Math.hypot(m.x - q.x, m.z - q.z) < 36)) continue;
