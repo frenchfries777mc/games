@@ -12,7 +12,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
 <!-- 새 빌드마다 아래 ?v= 숫자를 BUILD와 같게 올려요 (브라우저가 옛 파일을 쓰지 않게) -->
-<script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/","./js/data.js":"./js/data.js?v=86","./js/main.js":"./js/main.js?v=86","./js/map.js":"./js/map.js?v=86","./js/music.js":"./js/music.js?v=86","./js/render.js":"./js/render.js?v=86","./js/sfx.js":"./js/sfx.js?v=86","./js/sim.js":"./js/sim.js?v=86","./js/tr.js":"./js/tr.js?v=86"}}</script>
+<script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/","./js/data.js":"./js/data.js?v=87","./js/main.js":"./js/main.js?v=87","./js/map.js":"./js/map.js?v=87","./js/music.js":"./js/music.js?v=87","./js/render.js":"./js/render.js?v=87","./js/sfx.js":"./js/sfx.js?v=87","./js/sim.js":"./js/sim.js?v=87","./js/tr.js":"./js/tr.js?v=87"}}</script>
 <script src="../../ff-presence.js" async></script>
 <script src="https://cdn.jsdelivr.net/npm/peerjs@1.5.4/dist/peerjs.min.js"></script>
 <script src="https://frenchfries777mc.github.io/games/ff-lang.js"></script>
@@ -55,6 +55,9 @@ html:not(.tcReady) #sLobby{visibility:hidden}
 #menu button:hover,#menu button:focus-visible{border-color:#ffd36b;color:#ffd36b;outline:none}
 #menu button.big:hover{color:#fff}
 @media (max-aspect-ratio:1/1){#menu{bottom:40px;flex-direction:column;align-items:stretch;width:min(320px,86vw)}}
+#menu2{position:absolute;right:18px;top:46px;display:flex;gap:8px}
+#menu2 button{width:40px;height:40px;border-radius:50%;background:rgba(14,10,18,.82);border:3px solid #8a6a30;color:var(--ink);font-size:20px;line-height:1;padding:0;box-shadow:0 3px 0 #2a1e10}
+#menu2 button:hover,#menu2 button:focus-visible{border-color:#ffd36b;color:#ffd36b;outline:none}
 #who{position:absolute;right:18px;top:14px;font-weight:700;color:#d9b75a;font-size:15px}
 #who button{background:none;border:0;color:var(--ink);text-decoration:underline;padding:0 0 0 8px;font-size:14px}
 #ver{position:absolute;left:18px;bottom:12px;font-size:12px;color:rgba(255,255,255,.55)}
@@ -242,10 +245,8 @@ body.touch #exitBtn{top:auto;bottom:auto}
     <button data-go="range">연습장</button>
     <button data-go="ward">치장·스킨</button>
     <button data-go="weps">직업·조작</button>
-    <button data-go="notes">패치노트</button>
-    <button data-go="settings">설정</button>
-    <button data-go="site">사이트로 돌아가기</button>
   </nav>
+  <div id="menu2"><button data-go="notes" title="패치노트" aria-label="패치노트">≡</button><button data-go="settings" title="설정" aria-label="설정">⚙</button><button data-go="site" title="사이트로 돌아가기" aria-label="사이트로 돌아가기">⌂</button></div>
   <div id="homeMsg" class="tx"></div>
   <div id="ver" class="tx"></div>
   <span class="ff-copy tx">© 2026 Frenchfries777 · <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.ko" target="_blank" rel="noopener">CC BY-NC-ND 4.0</a></span>
@@ -298,6 +299,9 @@ body.touch #exitBtn{top:auto;bottom:auto}
     <span>빛 번짐</span><div class="seg" id="setBloom"><button data-v="1">켜기</button><button data-v="0">끄기</button></div>
     <span>화면 흔들림</span><div class="seg" id="setShake"><button data-v="1">켜기</button><button data-v="0">끄기</button></div>
     <span>최적화</span><div class="seg" id="setOpt"><button data-v="1">켜기</button><button data-v="0">끄기</button></div>
+    <span>이동 방식</span><div class="seg" id="setMv"><button data-v="wasd">WASD</button><button data-v="arrows">화살표</button><button data-v="click">우클릭 · 터치</button></div>
+    <span>기술 키</span><div class="seg" id="setKeys"></div>
+    <span></span><div class="seg"><button id="setKeyReset">기본값</button></div>
   </div>
   </div></section>
 
@@ -329,7 +333,7 @@ body.touch #exitBtn{top:auto;bottom:auto}
 <div id="touch"><div id="joy"><div id="joyBase"><div id="joyKnob"></div></div></div>
   <div id="tbtns"><button id="tA"><span>공격</span></button><button id="tQ"><i class="cd"></i><span>Q</span></button><button id="tE"><i class="cd"></i><span>E</span></button><button id="tR"><i class="cd"></i><span>R</span></button><button id="tRoll"><i class="cd"></i><span>구르기</span></button><button id="tF"><span>F</span></button></div>
 </div>
-<script type="module" src="js/main.js?v=86"></script>
+<script type="module" src="js/main.js?v=87"></script>
 <div id="findBlock" style="position:fixed;inset:0;z-index:60;display:none;cursor:wait"></div>
 </body>
 </html>
