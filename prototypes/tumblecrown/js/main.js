@@ -580,6 +580,7 @@ addEventListener('keydown', e => {
   const sk = k === 'q' || k === 'ㅂ' ? 'q' : k === 'e' || k === 'ㄷ' ? 'e' : k === 'r' || k === 'ㄱ' ? 'r' : '';
   if (sk) { if (aimedSkill(sk)) { if (!e.repeat && !S.aimK) S.aimK = sk; } else once[sk] = 1; }
   if (k === ' ') { once.roll = 1; e.preventDefault(); }
+  if (k === 'tab') e.preventDefault();
   if (k === '1' || k === '2' || k === '3') pickBlessIdx(+k - 1);
 });
 addEventListener('keyup', e => { K[keyOf(e)] = false; K[e.key.toLowerCase()] = false; const k = keyOf(e), sk = k === 'q' || k === 'ㅂ' ? 'q' : k === 'e' || k === 'ㄷ' ? 'e' : k === 'r' || k === 'ㄱ' ? 'r' : ''; if (sk && S.aimK === sk) { S.aimK = null; if (inGame()) once[sk] = 1; } });
@@ -668,7 +669,7 @@ function localMove(p, inp, dt) {
   const fl = S.snap.w.fl && S.snap.w.fl[2] === p.id;
   if (inp.roll && !fl && L.rollCd <= 0 && !(L.roll > 0)) { L.roll = 0.35; L.rollCd = 1.2 * ((p.b || []).indexOf('roll') >= 0 ? 0.6 : 1); const ra = ml > 0.1 ? Math.atan2(mz, mx) : p.a; L.rdx = Math.cos(ra); L.rdz = Math.sin(ra); }
   if (L.roll > 0) { L.roll -= dt; L.x += L.rdx * 15 * dt; L.z += L.rdz * 15 * dt; }
-  else { const sp = R.speed * ((p.b || []).indexOf('feet') >= 0 ? 1.12 : 1) * (p.ra ? 1.3 : 1) * (p.bk ? 0.8 : 1) * (fl ? 0.7 : 1) * (p.cl ? 0.6 : 1) * (p.em ? 0.75 : 1) * (p.stl ? 1.25 : 1) * (p.sp ? 0.25 : 1) * (p.bs ? 0.6 : 1); L.x += mx * sp * dt; L.z += mz * sp * dt; }
+  else { const sp = R.speed * ((p.b || []).indexOf('feet') >= 0 ? 1.12 : 1) * (p.ra ? 1.3 : 1) * (p.cb ? 1.2 : 1) * (p.bk ? 0.8 : 1) * (fl ? 0.7 : 1) * (p.cl ? 0.6 : 1) * (p.em ? 0.75 : 1) * (p.stl ? 1.25 : 1) * (p.sp ? 0.25 : 1) * (p.bs ? 0.6 : 1); L.x += mx * sp * dt; L.z += mz * sp * dt; }
   mapCollide(L, 0.6);
   { const ws = (S.snap.zn || []).filter(z => z.k === 'wall'); if (ws.length && p.tm != null) wallClamp(ws, p.tm, ox, oz, L); }
   if (!liftOk(ox, oz, L.x, L.z)) { L.x = ox; L.z = oz; }
@@ -742,6 +743,17 @@ function skillFx(e) {
   }
 }
 const COL = { knight: 0xcfe0ff, viking: 0xffb060, mamluk: 0xffd0a0, skeleton: 0xe8e0c8 };
+// 직업마다 다르게 쓰러져요: 무거운 직업은 땅이 울리고, 마법 직업은 영혼이 떠오르고, 날랜 직업은 연기로 사라져요
+const DEATHFX = { knight: ['heavy', 0xc8d0dc], warden: ['heavy', 0x9a8f78], viking: ['heavy', 0xe0803a], spearman: ['heavy', 0x9ab0c8], priest: ['soul', 0xfff0b0], witch: ['soul', 0xb06aff], bard: ['soul', 0xff7aa0], assassin: ['smoke', 0x6a8a96], mamluk: ['smoke', 0xe0a050], archer: ['arrows', 0x8ac860], crossbow: ['arrows', 0xc8a060], bomber: ['boom', 0xff7a3a], skeleton: ['bones', 0xe8e0c8] };
+function deathFx(role, x, z) {
+  const d = DEATHFX[role]; if (!d) return; const [k, c] = d;
+  if (k === 'heavy') { view.shock(x, z, 4.4, c, 0.5); view.burst(x, 0.4, z, c, 14, 6, 0.4, 0.12); view.shake = Math.max(view.shake, 0.8); SFX.play('clang'); }
+  else if (k === 'soul') { view.rise(x, z, c, 18, 3.2, 1.8, 6); view.column(x, z, c, 1.6); }
+  else if (k === 'smoke') { view.burst(x, 1.0, z, c, 26, 3, 0.9, 0.2); view.flash(x, z, c, 90); }
+  else if (k === 'arrows') { for (let i = 0; i < 6; i++) view.streak(x, z, i * 1.05, 3.4, c, 0.35, 0.3); }
+  else if (k === 'boom') { view.burst(x, 1.0, z, c, 30, 9, 0.5, 0.16); view.shock(x, z, 5.6, c, 0.45); view.flash(x, z, c, 170); view.shake = Math.max(view.shake, 0.9); SFX.play('slam'); }
+  else view.burst(x, 0.6, z, c, 22, 5, 0.8, 0.12);
+}
 function onEvent(e) {
   const me = S.me;
   switch (e.k) {
@@ -793,6 +805,7 @@ function onEvent(e) {
       view.shatter(e.x, e.z, [0xd8d0bc, 0x6a6470, 0x5a5040, 0x8a8a96], 30, true); view.burst(e.x, 1.2, e.z, 0xffe8b0, 16, 7, 0.6, 0.12); view.shock(e.x, e.z, 5, 0xffe08a, 0.5); view.flash(e.x, e.z, 0xffd08a, 140); view.shake = Math.max(view.shake, 0.6); SFX.play('kill');
       const by = S.snap && S.snap.pl.find(q => q.id === e.by), who = S.snap && S.snap.pl.find(q => q.id === e.id), nm = q => q ? (q.id === S.me ? T('나') : q.bot ? ROLES[q.role].name : q.name) : '';
       view.column(e.x, e.z, 0xffe8b0, 1.0); view.rise(e.x, e.z, 0xffe8b0, 22, 1.6, 1.4, 6); view.ring(e.x, e.z, 3.4, 0xffe8b0, 0.7);
+      if (who) deathFx(who.role, e.x, e.z);
       if (who) killFeed(by ? T('{0} → {1}', nm(by), nm(who)) : T('{0} 쓰러짐', nm(who)), by && by.id === S.me);
       if (by && by.id !== e.id) view.pose(by.id, 'kill');
       if (by && by.id === S.me && who) killBanner(nm(who));
@@ -874,6 +887,7 @@ function onEvent(e) {
     case 'blink': view.column(e.x, e.z, 0x9ad0ff, 0.5); view.rise(e.x, e.z, 0x9ad0ff, 12, 1.5, 0.7, 6); SFX.play('orb'); break;
     case 'respawn': view.column(e.x, e.z, 0xff9a48); if (e.id === me) bigMsg(T('진지에서 다시 일어났어요'), '', 1800); break;
     case 'flag': { const mine = e.own === myTm(), c = TEAMS[e.own].c; view.column(e.x, e.z, c, 1.4); view.ring(e.x, e.z, 6, c, 0.9); view.shock(e.x, e.z, 7, c, 0.6); view.flash(e.x, e.z, c, 120); bigMsg(mine ? T('깃발을 차지했어요!') : T('깃발을 빼앗겼어요!'), '', 1800); SFX.play(mine ? 'kill' : 'roar'); break; }
+    case 'capbuff': view.rise(e.x, e.z, 0xffd36a, 12, 2.2, 0.9, 5); view.ring(e.x, e.z, 1.8, 0xffd36a, 0.5); if (e.id === me) { toast(T('점령 효과! 5초 동안 이동 속도와 공격이 20% 올라요'), 2400); SFX.play('bless'); } break;
     case 'monster': view.column(e.x, e.z, 0xff7a3a, 1.6); view.shock(e.x, e.z, 8, 0xff7a3a, 0.6); view.flash(e.x, e.z, 0xff7a3a, 140); bigMsg(T('가운데에 괴물이 나타났어요!'), T('쓰러뜨리면 20초 동안 점령이 빨라져요'), 2600); SFX.play('roar'); break;
     case 'monkill': { const mine = e.tm === myTm(); view.column(e.x, e.z, TEAMS[e.tm].c, 1.4); view.shock(e.x, e.z, 8, TEAMS[e.tm].c, 0.6); bigMsg(mine ? T('괴물을 쓰러뜨렸어요! 점령이 빨라져요') : T('상대가 괴물을 쓰러뜨렸어요'), '', 2400); SFX.play(mine ? 'kill' : 'warn'); break; }
     case 'wipe': bigMsg(T('모두 쓰러졌어요'), T('잠시 뒤 마지막 모닥불에서 다시 시작해요'), 3000); SFX.play('wipe'); break;
@@ -1076,6 +1090,18 @@ const mini = {
   }
 };
 // 팀 화면: 위쪽 가운데에 깃발 일곱 개의 주인과 점령 진행, 오른쪽 위에 지도 (같은 편은 늘 보이고, 상대는 우리 편 가까이에 있을 때만 보여요)
+// Tab을 누르고 있는 동안 팀별 처치 표
+function scoreboard(sn) {
+  const w = Math.min(460, innerWidth - 24), x0 = (innerWidth - w) / 2, rh = 22, y0 = 120, rows = [0, 1].map(t => sn.pl.filter(q => q.tm === t));
+  const h = 30 + rows.reduce((a, r) => a + 26 + r.length * rh, 0) + 8;
+  oc.fillStyle = 'rgba(10,8,14,.86)'; oc.fillRect(x0, y0, w, h); oc.strokeStyle = '#c8b480'; oc.lineWidth = 2; oc.strokeRect(x0, y0, w, h);
+  oc.font = 'bold 13px Galmuri, system-ui'; let y = y0 + 22;
+  rows.forEach((r, t) => {
+    oc.textAlign = 'left'; oc.fillStyle = hex(TEAMS[t].c); oc.fillText(TEAMS[t].name, x0 + 12, y); oc.textAlign = 'right'; oc.fillStyle = '#b8b0a0'; oc.fillText(T('쓰러뜨림'), x0 + w - 70, y); oc.fillText(T('쓰러짐'), x0 + w - 12, y); y += 4;
+    for (const q of r.slice().sort((a, b) => (b.kl | 0) - (a.kl | 0))) { y += rh; oc.textAlign = 'left'; oc.fillStyle = q.id === S.me ? '#ffe08a' : ROLES[q.role].color; oc.fillText(ROLES[q.role].name + ' · ' + (q.id === S.me ? T('나') : q.bot ? T('봇') : q.name), x0 + 12, y); oc.textAlign = 'right'; oc.fillStyle = '#e8e0cc'; oc.fillText(q.kl | 0, x0 + w - 70, y); oc.fillText(q.dth | 0, x0 + w - 12, y); }
+    y += 26;
+  });
+}
 function teamHud(sn) {
   const mt = myTm(), n = sn.tf.length, x0 = innerWidth / 2 - (n - 1) * 17, y = innerWidth < 700 ? 74 : 40;
   sn.tf.forEach((f, i) => {
@@ -1093,6 +1119,8 @@ function teamHud(sn) {
     oc.textAlign = 'right'; oc.fillStyle = hex(TEAMS[0].c); const t0 = T('처치 {0}', kt[0]); oc.strokeText(t0, x0 - 24, y + 4); oc.fillText(t0, x0 - 24, y + 4);
     oc.textAlign = 'left'; oc.fillStyle = hex(TEAMS[1].c); const t1 = T('처치 {0}', kt[1]); oc.strokeText(t1, x0 + (n - 1) * 34 + 24, y + 4); oc.fillText(t1, x0 + (n - 1) * 34 + 24, y + 4);
     if (me1 && (me1.kl | 0) > 0) { oc.textAlign = 'right'; oc.fillStyle = '#ffe08a'; const t2 = T('내 처치 {0}', me1.kl | 0); oc.strokeText(t2, x0 - 24, y + 22); oc.fillText(t2, x0 - 24, y + 22); } }
+  { const mb = sn.pl.find(q => q.id === S.me); if (mb && mb.cb > 0) { oc.font = 'bold 13px Galmuri, system-ui'; oc.textAlign = 'center'; oc.lineWidth = 4; oc.strokeStyle = '#140f18'; const tx = T('점령 효과 · 이동 속도·공격 +20% · {0}초', Math.ceil(mb.cb)); oc.strokeText(tx, innerWidth / 2, y + 64); oc.fillStyle = '#ffd36a'; oc.fillText(tx, innerWidth / 2, y + 64); } }
+  if (keyDown('tab')) scoreboard(sn);
   // 점령 경보: 우리 깃발을 상대가 점령하는 중이면 깃발이 깜빡이고 알림이 떠요
   { S.fAl = S.fAl || []; let any = false; sn.tf.forEach((f, i) => { const on = f[0] === mt && f[1] >= 0 && f[1] !== mt && f[2] > 0; if (on && !S.fAl[i]) SFX.play('warn'); S.fAl[i] = on; if (on) any = true; });
     if (any) { oc.font = 'bold 15px Galmuri, system-ui'; oc.textAlign = 'center'; oc.lineWidth = 4; oc.strokeStyle = '#140f18'; const tx = T('우리 깃발을 점령당하고 있어요!'); oc.strokeText(tx, innerWidth / 2, y + 48); oc.fillStyle = Math.sin(performance.now() / 140) > 0 ? '#ff6a5a' : '#ffd0c8'; oc.fillText(tx, innerWidth / 2, y + 48); } }
@@ -1232,7 +1260,8 @@ function showResult() {
   S.resultShown = true; bigMsg('', '', 0); const h = awardHonor() || S.lastH || 0, sn = S.snap, wt = sn.wtm, mine0 = myP();
   const row = p => `<tr${p.id === S.me ? ' style="background:#2a2014"' : ''}><td style="color:${ROLES[p.role].color}">${ROLES[p.role].name}</td><td>${esc(p.id === S.me ? T('나') : p.bot ? T('봇') : p.name)}</td><td>${p.kl}</td><td>${p.dth}</td></tr>`;
   const tab = t => `<h3 style="color:${hex(TEAMS[t].c)}">${TEAMS[t].name}${t === wt ? ' · ' + T('승리') : ''}</h3><table><tr><th>${T('직업')}</th><th>${T('이름')}</th><th>${T('쓰러뜨림')}</th><th>${T('쓰러짐')}</th></tr>${sn.pl.filter(p => p.tm === t).map(row).join('')}</table>`;
-  $('result').innerHTML = `<div class="big">${mine0 && mine0.tm === wt ? T('승리') : T('패배')}</div>${tab(0)}${tab(1)}<p>${T('받은 tC {0}', '<b style="color:#ffd36b">' + h + '</b>')} · ${T('지금 tC {0}', SAVE.honor)}</p><div class="row"><button class="btn gold" id="resBack">${T('로비로')}</button></div>`;
+  const top3 = sn.pl.slice().sort((a, b) => (b.kl | 0) - (a.kl | 0)).slice(0, 3), pod = [[1, 'd8d8e0', 58], [0, 'ffd36b', 78], [2, 'c8884a', 44]].filter(([i]) => top3[i]).map(([i, c, hh]) => { const q = top3[i]; return `<div style="flex:1;text-align:center"><div style="font-size:12px;color:${ROLES[q.role].color}">${ROLES[q.role].name}</div><div style="font-size:12px;margin:2px 0 4px">${esc(q.id === S.me ? T('나') : q.bot ? T('봇') : q.name)}</div><div style="height:${hh}px;background:#${c};color:#201810;font-weight:700;line-height:${hh}px;border-radius:4px 4px 0 0">${i + 1} · ${q.kl | 0}</div></div>`; }).join('');
+  $('result').innerHTML = `<div class="big">${mine0 && mine0.tm === wt ? T('승리') : T('패배')}</div><div style="display:flex;align-items:flex-end;gap:8px;margin:8px 0 14px">${pod}</div>${tab(0)}${tab(1)}<p>${T('받은 tC {0}', '<b style="color:#ffd36b">' + h + '</b>')} · ${T('지금 tC {0}', SAVE.honor)}</p><div class="row"><button class="btn gold" id="resBack">${T('로비로')}</button></div>`;
   $('resBack').onclick = () => endToLobby('');
   setHud(false); show('sResult');
 }
@@ -1258,6 +1287,7 @@ function frame(now) {
   // 최적화를 켜면 1초에 30번만 그려요 (휴대폰 발열·배터리)
   if (FPS_CAP && now - lastF < 1000 / FPS_CAP - 2) return; lastF = now;
   const raw = now - lastT; lastT = now; const dt = Math.min(0.05, raw / 1000);
+  if (now - (S.ambN || 0) > 1000) { S.ambN = now; SFX.ambient(inGame() && S.scr === '' && S.snap && S.snap.ph === 'play' ? CH.theme : ''); }
   // 방장 컴퓨터가 느리면(화면 간격이 길게 이어지면) 스스로 가벼운 모드로 바꿔요: 전송 줄이기, 봇 판단 줄이기, 가벼운 화질 (규칙은 그대로)
   if (S.G && S.net === 'host' && S.scr === '' && !S.lite) { S.fAvg = (S.fAvg || 16) * 0.95 + Math.min(raw, 100) * 0.05; if (S.fAvg > 38) { S.slowN = (S.slowN | 0) + 1; if (S.slowN > 180) { S.lite = true; S.G.lite = true; try { view.setLow(true); } catch (e) { } toast('컴퓨터가 느려서 가벼운 모드로 바꿨어요. 친구 화면은 그대로예요.', 3600); } } else S.slowN = 0; }
  const t = (now - S.t0) / 1000;
