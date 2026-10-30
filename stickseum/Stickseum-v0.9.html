@@ -288,6 +288,11 @@ if(document.readyState==='loading') document.addEventListener('DOMContentLoaded'
   #modeListBody{ overflow-x:auto; overflow-y:hidden; display:flex; flex-direction:row; gap:12px; padding:6px 6px 12px 6px; min-height:0; align-items:stretch; }
   .modeRow{ position:relative; display:flex; flex-direction:column; align-items:center; justify-content:space-between; gap:12px; width:auto; min-width:128px; height:min(78vh,640px); padding:18px 8px 22px; border-radius:14px; text-align:center; border:1px solid var(--line); background-color:var(--panel-2); background-size:cover; background-position:center; color:var(--text); cursor:pointer; flex:1 0 128px; overflow:hidden; transition:transform .1s, border-color .15s, background .15s; }
   .modeRow:hover{ transform:translateY(-4px); border-color:#3fe0c5; background:#1d2a2a; }
+  .modeRow .mrVid, .modeRow .mrShade{ position:absolute; inset:0; width:100%; height:100%; pointer-events:none; }
+  .modeRow .mrVid{ object-fit:cover; opacity:0; transition:opacity .25s; z-index:0; }
+  .modeRow .mrVid.on{ opacity:1; }
+  .modeRow .mrShade{ background:linear-gradient(180deg, rgba(8,11,18,.25) 0%, rgba(8,11,18,.05) 40%, rgba(8,11,18,.9) 100%); z-index:0; }
+  .modeRow > .mrIcon, .modeRow > .mrText{ position:relative; z-index:1; }
   .modeRow .mrIcon{ font-size:44px; width:100%; text-align:center; flex:none; text-shadow:0 2px 10px rgba(0,0,0,.85); }
   .modeRow .mrText{ flex:none; min-width:0; width:100%; text-shadow:0 2px 8px rgba(0,0,0,.95), 0 0 3px rgba(0,0,0,.9); }
   .modeRow .mrName{ font-weight:900; font-size:21px; word-break:keep-all; color:#fff; }
@@ -5593,7 +5598,7 @@ function shuffle(arr){ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.
 /* ===== the version of this file =====
    Different BUILDS of one version meet and play together (room names online-v<ver>-<mode>-<map>-<slot>); different VERSIONS (the 0.x part) never do - the host refuses them (verNo) and the dispatcher answers busy.
    The build is only sent along with the join message and the lobby (for information); the corner of the screen shows it. */
-const GAME_BUILD='build 2026-10-18-v545';
+const GAME_BUILD='build 2026-10-18-v546';
 const GAME_VERSION='0.9', GAME_VERSION_NAME='은하 제국의 황혼';   // 게임 버전 이름: versions.json의 title과 같게 (빌드마다 바꾸지 않음)
 /* version (the 0.x part) vs build: different BUILDS of one version meet and play together, different VERSIONS never do (rooms, quick match, ranked, friend invites, dispatcher).
    Builds before 470 do not send a version, so it is read from the build number (0.9 started at build 458). */
@@ -7059,6 +7064,21 @@ function dailyModeItem(){
 }
 const EXP_MODES=[{id:'xkit', icon:'🎲'}, {id:'redlight', icon:'🚦'}, {id:'crownhold', icon:'👑'}, {id:'hyperbr', icon:'💥'}];       // 실험적 모드: not released yet, the player votes 좋아요/나빠요 on the result screen
 function expVotes(){ try{ return JSON.parse(localStorage.getItem('stickseumExpVotes')||'{}')||{}; }catch(e){ return {}; } }
+const MODE_GRAD='linear-gradient(180deg, rgba(8,11,18,.25) 0%, rgba(8,11,18,.05) 40%, rgba(8,11,18,.9) 100%)';
+function modeCardArt(row, img){          // photo as the card background; the saved video of the mode plays while the mouse is over the card (modes/<img>.mp4)
+  const v='?v='+buildNum(GAME_BUILD);
+  row.style.backgroundImage=MODE_GRAD+', url(modes/'+img+'.jpg'+v+')';
+  let vid=null, shade=null;
+  row.addEventListener('mouseenter', ()=>{
+    if(vid) return;
+    vid=document.createElement('video'); vid.className='mrVid'; vid.muted=true; vid.loop=true; vid.playsInline=true; vid.setAttribute('playsinline',''); vid.preload='auto'; vid.src='modes/'+img+'.mp4'+v;
+    shade=document.createElement('div'); shade.className='mrShade';
+    vid.addEventListener('playing', ()=>{ if(vid) vid.classList.add('on'); }); vid.addEventListener('error', ()=>{ if(vid) vid.remove(); });
+    row.insertBefore(shade,row.firstChild); row.insertBefore(vid,row.firstChild);
+    try{ const pr=vid.play(); if(pr && pr.catch) pr.catch(()=>{}); }catch(e){}
+  });
+  row.addEventListener('mouseleave', ()=>{ if(!vid) return; try{ vid.pause(); }catch(e){} vid.remove(); shade.remove(); vid=null; shade=null; });
+}
 function buildExpList(){
   const body=document.getElementById('modeListBody'); if(!body) return;
   body.innerHTML=''; const votes=expVotes();
@@ -7069,7 +7089,7 @@ function buildExpList(){
   for(const it of EXP_MODES){ const m=MODES[it.id]; if(!m) continue; const v=votes[it.id]||{up:0,down:0};
     const row=document.createElement('button'); row.className='modeRow';
     row.innerHTML='<span class="mrIcon"></span><span class="mrText"><div class="mrName"></div><div class="mrDesc"></div></span>';
-    row.querySelector('.mrIcon').textContent=it.icon; row.querySelector('.mrName').textContent='🧪 '+m.name;
+    modeCardArt(row, it.id); row.querySelector('.mrIcon').textContent=it.icon; row.querySelector('.mrName').textContent='🧪 '+m.name;
     row.querySelector('.mrDesc').textContent=m.desc.replace(/^🧪 실험적 모드 · /,'')+((v.up||v.down)?(' · 내 평가 👍 '+v.up+' · 👎 '+v.down):'');
     if(partyActive()) row.classList.add('partyOff');
     row.onclick=()=>pickOnlineModeAndMatch(it.id, false); body.appendChild(row); }
@@ -7080,8 +7100,8 @@ function buildModeList(){
   body.innerHTML='';
   const mk=(icon,name,desc,img)=>{ const row=document.createElement('button'); row.className='modeRow';
     row.innerHTML='<span class="mrIcon"></span><span class="mrText"><div class="mrName"></div><div class="mrDesc"></div></span>';
-    row.style.backgroundImage='linear-gradient(180deg, rgba(8,11,18,.25) 0%, rgba(8,11,18,.05) 40%, rgba(8,11,18,.9) 100%), url(modes/'+img+'.jpg?v=544)'; row.querySelector('.mrIcon').textContent=icon; row.querySelector('.mrName').textContent=name; row.querySelector('.mrDesc').textContent=desc; return row; };
-  { const it=MODE_LIST.find(x=>x.id==='ranked'); const rr=rankedModeRow(it); rr.style.backgroundImage='linear-gradient(180deg, rgba(8,11,18,.25) 0%, rgba(8,11,18,.05) 40%, rgba(8,11,18,.9) 100%), url(modes/ranked.jpg?v=544)'; if(partyActive()) rr.classList.add('partyOff'); body.appendChild(rr); }
+    modeCardArt(row, img); row.querySelector('.mrIcon').textContent=icon; row.querySelector('.mrName').textContent=name; row.querySelector('.mrDesc').textContent=desc; return row; };
+  { const it=MODE_LIST.find(x=>x.id==='ranked'); const rr=rankedModeRow(it); modeCardArt(rr, 'ranked'); if(partyActive()) rr.classList.add('partyOff'); body.appendChild(rr); }
   { const di=dailyModeItem(), row=mk(di.icon, '일일 모드 · '+di.name, di.desc+' · 오늘 하루 한정, 매일 바뀌어요', di.id);
     if(partyActive()) row.classList.add('partyOff'); row.onclick=()=>pickOnlineModeAndMatch(di.id, false); body.appendChild(row); }
   for(const L of dailyModeLineup()){ const it=MODE_LIST.find(x=>x.id===L.id), m=MODES[L.id]; if(!it || !m) continue;
