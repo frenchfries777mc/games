@@ -50,7 +50,7 @@ const S = {
 };
 S.chSel = chOpen();
 const view = new View($('gl'));
-view.lobbyFlags = SAVE.flags; view.cos = SAVE.cos.on; view.setLow(!!SAVE.set.opt); view.setPixel(SAVE.set.px); view.setBloom(!!SAVE.set.bloom); view.shakeOn = !!SAVE.set.shake; SFX.setVol(SAVE.set.vol / 100); MUS.setVol(SAVE.set.vol / 100);
+view.lobbyFlags = SAVE.flags; view.cos = SAVE.cos.on; view.setLow(!!SAVE.set.opt); view.setPixel(SAVE.set.px); view.setBloom(!!SAVE.set.bloom); view.shakeOn = !!SAVE.set.shake; SFX.setVol(SAVE.set.vol / 100); MUS.setVol((SAVE.set.mus != null ? SAVE.set.mus : SAVE.set.vol) / 100);
 // 처음 인트로: 글자 두 장면(Made by / With). 건너뛸 수 없어요 (끝까지 재생). 뒤에는 로비 장면이 깔려 있어요
 let INTRO = !(qs.get('test') && /^(localhost|127\.0\.0\.1)$/.test(location.hostname));
 window.__introSongDone = INTRO ? 0 : 1;
@@ -223,14 +223,22 @@ function renderNotes() {
 }
 
 function paintSettings() {
-  $('setVol').value = SAVE.set.vol;
+  $('setVol').value = SAVE.set.vol; $('setMus').value = SAVE.set.mus != null ? SAVE.set.mus : SAVE.set.vol;
+  const sl = $('setLang'); if (!sl.options.length) { for (const [k, n] of LANG_NAMES) sl.add(new Option(n, k)); sl.onchange = () => { try { if (window.FFLang) FFLang.set(sl.value); } catch (e) { } }; }
+  try { sl.value = (window.FFLang && FFLang.get()) || 'ko'; } catch (e) { }
   const seg = (id, v, f) => { const el = $(id); el.querySelectorAll('button').forEach(b => { b.classList.toggle('on', +b.dataset.v === +v); b.onclick = () => { f(+b.dataset.v); save(); paintSettings(); }; }); };
   seg('setPx', SAVE.set.px, v => { SAVE.set.px = v; view.setPixel(v); });
   seg('setBloom', SAVE.set.bloom, v => { SAVE.set.bloom = v; view.setBloom(!!v); });
   seg('setShake', SAVE.set.shake, v => { SAVE.set.shake = v; view.shakeOn = !!v; });
   seg('setOpt', SAVE.set.opt, v => { SAVE.set.opt = v; try { if (window.FFPerf) FFPerf.set({ low: !!v, fx: v ? 'low' : 'high', fps: v ? 30 : 0 }); } catch (e) { } perfApply(); });
 }
-$('setVol').oninput = e => { SAVE.set.vol = +e.target.value; SFX.setVol(SAVE.set.vol / 100); MUS.setVol(SAVE.set.vol / 100); save(); };
+$('setVol').oninput = e => { SAVE.set.vol = +e.target.value; SFX.setVol(SAVE.set.vol / 100); save(); };
+$('setMus').oninput = e => { SAVE.set.mus = +e.target.value; MUS.setVol(SAVE.set.mus / 100); save(); };
+const LANG_NAMES = [['ko', '한국어'], ['en', 'English'], ['ja', '日本語'], ['zh', '简体中文'], ['es', 'Español'], ['fr', 'Français'], ['de', 'Deutsch'], ['pt', 'Português (Brasil)'], ['ru', 'Русский'], ['tr', 'Türkçe'], ['it', 'Italiano'], ['pl', 'Polski'], ['ar', 'العربية']];
+$('setProf').onclick = async () => {
+  if (needLogin()) return;
+  try { const sb = window.FFAuth && FFAuth.client && FFAuth.client(), u = window.FFAuth && FFAuth.user(); if (!sb || !u || !(await ffProfile())) return homeMsg(T('프로필을 불러오지 못했어요.')); FFProfile.open(sb, u.id, { game: 'tumblecrown' }); } catch (e) { homeMsg(T('프로필을 불러오지 못했어요.')); }
+};
 
 /* ---------- 대기실 ---------- */
 // 대기실: 장은 고르지 않고, 저장된 이야기에서 이어서 시작해요. 친구 방은 방장의 이야기를 따라가요

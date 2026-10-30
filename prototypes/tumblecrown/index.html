@@ -12,7 +12,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
 <!-- 새 빌드마다 아래 ?v= 숫자를 BUILD와 같게 올려요 (브라우저가 옛 파일을 쓰지 않게) -->
-<script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/","./js/data.js":"./js/data.js?v=84","./js/main.js":"./js/main.js?v=84","./js/map.js":"./js/map.js?v=84","./js/music.js":"./js/music.js?v=84","./js/render.js":"./js/render.js?v=84","./js/sfx.js":"./js/sfx.js?v=84","./js/sim.js":"./js/sim.js?v=84","./js/tr.js":"./js/tr.js?v=84"}}</script>
+<script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/","./js/data.js":"./js/data.js?v=86","./js/main.js":"./js/main.js?v=86","./js/map.js":"./js/map.js?v=86","./js/music.js":"./js/music.js?v=86","./js/render.js":"./js/render.js?v=86","./js/sfx.js":"./js/sfx.js?v=86","./js/sim.js":"./js/sim.js?v=86","./js/tr.js":"./js/tr.js?v=86"}}</script>
 <script src="../../ff-presence.js" async></script>
 <script src="https://cdn.jsdelivr.net/npm/peerjs@1.5.4/dist/peerjs.min.js"></script>
 <script src="https://frenchfries777mc.github.io/games/ff-lang.js"></script>
@@ -79,6 +79,8 @@ html:not(.tcReady) #sLobby{visibility:hidden}
 .set{display:grid;grid-template-columns:140px 1fr;gap:12px 14px;align-items:center;font-size:15px}
 .seg{display:flex;gap:6px;flex-wrap:wrap}.seg button{background:#2a2230;border:2px solid var(--line);padding:6px 12px;font-size:14px}.seg button.on{border-color:var(--gold);color:var(--gold)}
 input[type=range]{width:220px;accent-color:#d9b75a}
+#sSettings .pan{max-height:92vh;overflow-y:auto}
+#setLang{background:#2a2230;color:inherit;border:2px solid var(--line);padding:6px 10px;font:inherit;font-size:14px}
 .btn.on{border-color:var(--gold);color:var(--gold)}
 .btn:disabled{opacity:.45;cursor:default}
 .note{color:var(--dim);font-size:13px;line-height:1.5}
@@ -288,6 +290,9 @@ body.touch #exitBtn{top:auto;bottom:auto}
 <section class="scr" id="sSettings"><div class="pan" style="width:min(600px,94vw)"><button class="x" data-back>×</button>
   <h2>설정</h2>
   <div class="set">
+    <span>프로필</span><div><button class="btn" id="setProf">프로필 보기</button></div>
+    <span>언어</span><div><select id="setLang"></select><div class="note" style="margin-top:4px;font-size:12px">게임 안 글은 한국어만 지원해요. 다른 언어는 번역 준비 중이에요.</div></div>
+    <span>음악 크기</span><input type="range" id="setMus" min="0" max="100">
     <span>효과음 크기</span><input type="range" id="setVol" min="0" max="100">
     <span>화질</span><div class="seg" id="setPx"><button data-v="2">선명하게</button><button data-v="3">보통</button><button data-v="4">가볍게</button></div>
     <span>빛 번짐</span><div class="seg" id="setBloom"><button data-v="1">켜기</button><button data-v="0">끄기</button></div>
@@ -324,7 +329,7 @@ body.touch #exitBtn{top:auto;bottom:auto}
 <div id="touch"><div id="joy"><div id="joyBase"><div id="joyKnob"></div></div></div>
   <div id="tbtns"><button id="tA"><span>공격</span></button><button id="tQ"><i class="cd"></i><span>Q</span></button><button id="tE"><i class="cd"></i><span>E</span></button><button id="tR"><i class="cd"></i><span>R</span></button><button id="tRoll"><i class="cd"></i><span>구르기</span></button><button id="tF"><span>F</span></button></div>
 </div>
-<script type="module" src="js/main.js?v=84"></script>
+<script type="module" src="js/main.js?v=86"></script>
 <div id="findBlock" style="position:fixed;inset:0;z-index:60;display:none;cursor:wait"></div>
 </body>
 </html>
