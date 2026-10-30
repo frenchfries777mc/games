@@ -332,8 +332,8 @@ export class View {
   }
   resize() {
     // 화면 픽셀 칸이 고르게 나오도록 캔버스를 기기 픽셀 단위로, 픽셀 크기의 배수로 맞춰요 (지글거림 방지)
-    // 작은 화면(휴대폰)에서는 픽셀 칸을 화면 크기에 맞춰 줄여요 (짧은 변 700px 아래부터)
-    const dpr = devicePixelRatio || 1, sc = Math.min(1, Math.max(0.5, Math.min(innerWidth, innerHeight) / 700)), P = Math.max(1, Math.round(this.ps * dpr * sc)); this.P = P;
+    // 작은 화면(휴대폰)에서는 픽셀 칸을 화면 크기에 맞춰 더 곱게 줄여요 (짧은 변 700px 아래부터, 520px 아래는 기기 해상도에 가깝게)
+    const dpr = devicePixelRatio || 1, sc = Math.min(1, Math.max(0.3, Math.min(innerWidth, innerHeight) / 700 * (Math.min(innerWidth, innerHeight) < 520 ? 0.6 : 1))), P = Math.max(1, Math.round(this.ps * dpr * sc)); this.P = P;
     const w = Math.ceil(innerWidth * dpr / P) * P, h = Math.ceil(innerHeight * dpr / P) * P; this.W = w; this.H = h;
     this.r.setPixelRatio(1); this.r.setSize(w, h, false);
     this.cw = w / dpr; this.ch = h / dpr; this.r.domElement.style.width = (w / dpr) + 'px'; this.r.domElement.style.height = (h / dpr) + 'px';
