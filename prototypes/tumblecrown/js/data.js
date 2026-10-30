@@ -3,7 +3,7 @@
 
 import { T } from './tr.js';
 
-export const VERSION = 'v0.1', BUILD = 49;
+export const VERSION = 'v0.1', BUILD = 50;
 
 export const ROLES = {
   knight: {
@@ -429,8 +429,8 @@ const ARENAS = [
 ];
 function arenaMap(def) {
   const m = genMap(777, [{ name: T('전장'), line: T(def.line), boss: 1 }], { noSecret: 1, noMimic: 1, st: { cols: 1 } });
-  // 아래 도면은 112×72칸 기준이고, 가로세로 1.43배로 키워서 깃발 사이를 멀리 벌려요 (담 두께는 그대로)
-  const AW = 160, AH = 104, ox = 6, oy = 6, SX = AW / 112, SY = AH / 72;
+  // 아래 도면은 112×72칸 기준이고, 가로세로 2.5배로 키워서 깃발 사이를 멀리 벌려요 (담 두께는 그대로)
+  const AW = 280, AH = 182, ox = 6, oy = 6, SX = AW / 112, SY = AH / 72;
   m.w = AW + ox * 2; m.h = AH + oy * 2;
   m.areas[0].r = [[ox, oy, AW, AH]];
   const sc = ([x, y]) => [Math.round(x * SX), Math.round(y * SY)], wallSc = ([x, y, w, h]) => { const [a, b] = sc([x, y]); return [a, b, w > 4 ? Math.round(w * SX) : w, h > 4 ? Math.round(h * SY) : h]; };
