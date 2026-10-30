@@ -613,6 +613,9 @@ const keyDown = (...ks) => ks.some(k => K[k]);
 const touch = { jx: 0, jz: 0, jid: null, atk: false, f: false };
 (function setupTouch() {
   const joy = $('joy'), base = $('joyBase'), knob = $('joyKnob'); let ox = 0, oy = 0;
+  // 지도가 떠 있을 때 왼쪽 반을 누르면 조이스틱 대신 지도를 눌러요
+  joy.addEventListener('touchstart', e => { const t = e.changedTouches[0]; if (S.rcOpen) { const h = (S.rcHit || []).find(q => Math.hypot(q.x - t.clientX, q.y - t.clientY) < q.r + 14); once.rcl = h ? h.v : -1; S.rcOpen = false; SFX.play('click'); e.preventDefault(); e.stopImmediatePropagation(); return; }
+    const r = (S.rspHit || []).find(q => Math.hypot(q.x - t.clientX, q.y - t.clientY) < q.r + 14); if (r) { if (r.v === -9) S.rspDone = false; else { S.rspSel = r.v; S.rspDone = true; } SFX.play('click'); e.preventDefault(); e.stopImmediatePropagation(); } }, { passive: false, capture: true });
   joy.addEventListener('touchstart', e => { SFX.unlock(); const t = e.changedTouches[0]; touch.jid = t.identifier; ox = t.clientX; oy = t.clientY; base.style.display = 'block'; base.style.left = (ox - 60) + 'px'; base.style.top = (oy - 60) + 'px'; knob.style.left = '33px'; knob.style.top = '33px'; e.preventDefault(); }, { passive: false });
   joy.addEventListener('touchmove', e => { for (const t of e.changedTouches) if (t.identifier === touch.jid) { let dx = t.clientX - ox, dy = t.clientY - oy; const l = Math.hypot(dx, dy), m = 50; if (l > m) { dx = dx / l * m; dy = dy / l * m; } knob.style.left = (33 + dx) + 'px'; knob.style.top = (33 + dy) + 'px'; touch.jx = dx / m; touch.jz = dy / m; } e.preventDefault(); }, { passive: false });
   const end = e => { for (const t of e.changedTouches) if (t.identifier === touch.jid) { touch.jid = null; touch.jx = touch.jz = 0; base.style.display = 'none'; } };
@@ -953,7 +956,7 @@ function specTick(me) {
 }
 addEventListener('keydown', e => { if (!S.snap || S.scr !== '' || !view.camId) return; const k = e.key; if (k === 'ArrowRight' || k === 'd' || k === 'D') specCycle(1); else if (k === 'ArrowLeft' || k === 'a' || k === 'A') specCycle(-1); });
 // 귀환 지도: 우리 팀 깃발을 누르면 3초 뒤 그곳으로, 다른 곳을 누르면 취소(쿨타임은 돌아요)
-$('gl').addEventListener('mousedown', e => { if (!S.rcOpen) return; e.stopImmediatePropagation(); e.preventDefault(); const h = (S.rcHit || []).find(q => Math.hypot(q.x - e.clientX, q.y - e.clientY) < q.r + 8); once.rcl = h ? h.v : -1; S.rcOpen = false; SFX.play('click'); }, true);
+$('gl').addEventListener('mousedown', e => { if (!S.rcOpen) return; e.stopImmediatePropagation(); e.preventDefault(); const h = (S.rcHit || []).find(q => Math.hypot(q.x - e.clientX, q.y - e.clientY) < q.r + 14); once.rcl = h ? h.v : -1; S.rcOpen = false; SFX.play('click'); }, true);
 $('gl').addEventListener('pointerdown', e => {
   // 쓰러졌을 때 뜨는 지도에서 깃발(또는 진지)을 누르면 거기서 다시 일어나요
   if (S.rspHit && S.rspHit.length) { const h = S.rspHit.find(q => Math.hypot(q.x - e.clientX, q.y - e.clientY) < q.r + 8); if (h) { if (h.v === -9) S.rspDone = false; else { S.rspSel = h.v; S.rspDone = true; } SFX.play('click'); return; } }
