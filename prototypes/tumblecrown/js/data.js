@@ -3,7 +3,7 @@
 
 import { T } from './tr.js';
 
-export const VERSION = 'v0.1', BUILD = 71;
+export const VERSION = 'v0.1', BUILD = 72;
 
 export const ROLES = {
   knight: {
@@ -162,7 +162,7 @@ export const ROLES = {
   },
   necro: {
     name: T('네크로멘서'), type: T('서포터'), color: '#8a5ac8', hp: 190, speed: 5.8,
-    atk: { kind: 'nbolt', dmg: 16, cd: 0.75, speed: 15 },
+    atk: { kind: 'melee', range: 5.2, arc: 2.7, dmg: 16, cd: 0.7 },
     skills: [
       { id: 'necroheal', name: T('생명 흡수'), key: 'Q', cd: 12, desc: T('둘레 아군(나 포함)의 체력을 22 되찾아 줘요.') },
       { id: 'necroraise', name: T('해골 소환'), key: 'E', cd: 16, desc: T('둘레에 약한 해골 네 마리를 불러요. 해골은 18초 동안 우리 편으로 싸워요.') },
