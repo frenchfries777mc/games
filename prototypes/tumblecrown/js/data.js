@@ -3,7 +3,7 @@
 
 import { T } from './tr.js';
 
-export const VERSION = 'v0.1', BUILD = 68;
+export const VERSION = 'v0.1', BUILD = 69;
 
 export const ROLES = {
   knight: {
@@ -182,7 +182,7 @@ export const COLORS = [
 ];
 export const BOT_NAMES = ['데굴이', '휘청이', '꽈당이', '비틀이', '아슬이', '쿵쾅이', '덜렁이', '허둥이', '깜빡이', '뒤뚱이'];
 export const MAX_PLAYERS = 10;
-export const ROLE_IDS = ['knight', 'priest', 'archer', 'viking', 'mamluk', 'witch', 'skeleton', 'warden', 'assassin', 'crossbow', 'bomber', 'bard', 'spearman', 'court'];   // necro는 모델이 들어오면 목록에 넣어요
+export const ROLE_IDS = ['knight', 'priest', 'archer', 'viking', 'mamluk', 'witch', 'skeleton', 'warden', 'assassin', 'crossbow', 'bomber', 'bard', 'spearman', 'court', 'necro'];
 
 export const ENEMIES = {
   skel: { name: T('해골 병사'), hp: 130, speed: 4.4, r: 0.6, dmg: 32, range: 1.8, windup: 0.42, cd: 0.9, honor: 1 },
