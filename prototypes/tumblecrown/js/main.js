@@ -397,7 +397,7 @@ function startHost(tries = 0) {
 // 서버 방장(?dedicated=1): 오라클 서버의 화면 없는 브라우저가 이 모드로 열어서 공개 방 하나를 대신 열어 둬요. 경기에서는 봇 한 자리로 서 있어요
 if (qs.get('dedicated') === '1') {
   S.srv = true;
-  window.__ffd = { open(n) { S.err = ''; startMatch(n); }, status() { return { live: S.net === 'host' && !!S.peer && !S.err, humans: S.slots.filter(s => !s.srv).length, started: !!S.G, ended: !!(S.snap && S.snap.ph === 'won'), err: S.err || '' }; } };
+  window.__ffd = { open(n) { S.err = ''; startMatch(n); }, status() { return { live: S.net === 'host' && !!S.peer && !S.err, humans: S.slots.filter(s => !s.srv && !s.bot).length, started: !!S.G, ended: !!(S.snap && S.snap.ph === 'won'), err: S.err || '' }; } };
 }
 /* 온라인 대전 (Stickseum 방식): 방 이름 ff-tumblecrown-q1, q2... 를 차례로 만들어 보고, 이미 있으면 그 방에 들어가요. 가득 차거나 이미 시작했으면 다음 방으로 가요 */
 function startMatch(n) {
