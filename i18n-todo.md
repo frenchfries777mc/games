@@ -482,3 +482,5 @@ patchnotes.json | v529 items[0] | 크레온 1세 근위병이 인트로처럼 �
 patchnotes.json | v534 items[0] | 마술사 스킬: 카드 5장을 일렬로 발사 (장당 피해 8로 총 40 그대로), 5장이 모두 맞아야 나오는 패시브 카드 폭풍 수정 | build 534 | 2026-10-30
 Stickseum-v0.9.html | SKILLS.magiccard desc 카드 5장 (장당 8 피해) | build 534 | 2026-10-30
 patchnotes.json | v535 items[0] | 마술사 패시브 카드 폭풍: 발동하면 마술사 위치에 분홍 링이 뜨고 머리 옆에 카드 아이콘이 따라다니도록 개선 | build 535 | 2026-10-30
+patchnotes.json | v536 items[0] | 듀얼 마스터리 포인트 증가: 처치 8 → 10, 승리 3 → 10 | build 536 | 2026-10-30
+patchnotes.json | v536 items[1] | MVP로 뽑히면 얻는 마스터리 포인트 5 → 8 | build 536 | 2026-10-30
