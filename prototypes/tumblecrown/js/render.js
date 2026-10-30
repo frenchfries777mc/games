@@ -574,6 +574,21 @@ export class View {
       const pm = M(0xffffff, { e: 0xffffff, ei: 1.4, op: 0.4, uniq: true }), prog = mesh(geo('fprog', () => new THREE.CircleGeometry(1, 48)), pm, x, 0.11, z, s, false); prog.rotation.x = -Math.PI / 2; prog.castShadow = false; prog.visible = false;
       this.flagM.push({ cm, rm, pm, cloth, prog });
     }
+    // 팀 대전 장식: 바닥에 흩어진 돌·상자·풀, 진지와 깃발 곁의 횃불, 진지 기둥 깃발
+    if (CH.pvp) {
+      const bad = (x, z) => MAP.tflags.some(([a, b]) => Math.hypot(cw(a) - x, cw(b) - z) < 7.5) || MAP.tspawn.some(([a, b]) => Math.hypot(cw(a) - x, cw(b) - z) < 9), forest = CH.theme === 'forest';
+      const col = { dungeon: [0x5a5560, 0x6a5238], abyss: [0x4a3a5c, 0x5a4a78], temple: [0x7a6a50, 0x8a6a3a], forest: [0x3a4a2c, 0x5a4228], deep: [0x1e3a4c, 0x2a5a6a] }[CH.theme] || [0x5a5560, 0x6a5238];
+      instBoxes(s, add => { let n = 0; for (let t = 0; t < 4000 && n < 170; t++) {
+        const i = 2 + (R() * (MW - 4) | 0), j = 2 + (R() * (MH - 4) | 0); if (!floorCell(i, j) || !floorCell(i + 1, j) || !floorCell(i - 1, j) || !floorCell(i, j + 1) || !floorCell(i, j - 1)) continue;
+        const x = cw(i), z = cw(j); if (bad(x, z)) continue; n++; const k = R();
+        if (k < 0.45) { const w = 0.5 + R() * 0.7; add(x, w * 0.3, z, w, w * 0.6, w * (0.7 + R() * 0.5), col[0]); }
+        else if (k < 0.7) { add(x, 0.45, z, 0.9, 0.9, 0.9, col[1]); if (R() < 0.4) add(x + 0.2, 1.2, z - 0.1, 0.7, 0.6, 0.7, col[1]); }
+        else if (k < 0.9) { const g = forest ? 0x3e6a34 : 0x4a4452; for (let q = 0; q < 3; q++) add(x + (R() - .5) * 0.9, 0.25, z + (R() - .5) * 0.9, 0.12, 0.5 + R() * 0.4, 0.12, g); }
+        else add(x, 0.07, z, 1.6, 0.14, 1.1, col[0]);
+      } });
+      for (const [fx, fy] of MAP.tflags) for (const o of [-1, 1]) { const x = cw(fx) + o * (FLAG_R - 0.8), z = cw(fy); cyl(0.12, 0.16, 1.6, 6, M(0x4a3a2a), x, 0.8, z, s); this.flame(s, x, 1.9, z, 0.7, false, forest ? 0xffd070 : 0xff9a48); }
+      MAP.tspawn.forEach(([a, b], ti) => { const c = TEAMS[ti].c; for (const o of [[-3, -3], [3, -3], [-3, 3], [3, 3]]) { const x = cw(a) + o[0], z = cw(b) + o[1]; cyl(0.14, 0.18, 3.2, 6, M(0x4a3a2a), x, 1.6, z, s); box(0.12, 1.1, 0.8, M(c, { e: c, ei: 0.6 }), x + 0.45, 2.5, z, s); this.flame(s, x, 3.5, z, 0.7, false, c); } });
+    }
     // 모닥불
     this.fires = MAP.fires.map(([fx, fy]) => {
       const x = cw(fx), z = cw(fy); for (let i = 0; i < 8; i++) { const a = i / 8 * 6.283; mesh(geo('dod', () => new THREE.DodecahedronGeometry(0.35)), M(0x5a5462), x + Math.cos(a) * 1.1, 0.15, z + Math.sin(a) * 1.1, s); }
