@@ -9,7 +9,7 @@
 <title>Tumble Crown</title>
 <meta name="description" content="5대5 깃발 점령 팀 대전 게임. 15가지 직업으로 깃발 다섯 개를 모두 차지하세요.">
 <meta property="og:title" content="Tumble Crown"><meta property="og:image" content="shots/battle2.jpg"><meta name="theme-color" content="#0c1018">
-<link rel="icon" href="../prototypes/tumblecrown/logo.svg">
+<link rel="icon" href="../gamelogo/tumblecrown.svg">
 <style>
 @font-face{font-family:Galmuri;src:url(../isleport/Galmuri11.woff2) format('woff2');font-weight:400;font-display:swap}
 @font-face{font-family:Galmuri;src:url(../isleport/Galmuri11-Bold.woff2) format('woff2');font-weight:700;font-display:swap}
@@ -25,7 +25,7 @@ a{color:inherit}
 .top{position:fixed;top:0;left:0;right:0;z-index:30;background:linear-gradient(180deg,rgba(6,9,14,.85),rgba(6,9,14,0));color:#f1f5fc}
 .top.solid{background:var(--panel);border-bottom:1px solid var(--line);color:var(--tx)}
 .top .wrap{display:flex;align-items:center;gap:6px;min-height:54px;flex-wrap:wrap;padding-block:6px}
-.logo{font-weight:700;font-size:20px;letter-spacing:.04em;color:var(--gold);text-decoration:none;margin-right:auto}
+.logo{display:flex;align-items:center;gap:10px;font-weight:700;font-size:20px;letter-spacing:.04em;color:var(--gold);text-decoration:none;margin-right:auto}
 .nav{display:flex;gap:2px;flex-wrap:wrap}
 .nav a{text-decoration:none;font-size:14px;font-weight:700;padding:4px 10px}
 .nav a:hover{color:var(--gold)}
@@ -77,7 +77,7 @@ footer{padding:44px 0 50px;color:var(--mu);font-size:13px;text-align:center}
 </head>
 <body>
 <div class="top" id="topbar"><div class="wrap">
- <a class="logo" href="#top">TUMBLE CROWN</a>
+ <a class="logo" href="#top"><img src="../gamelogo/tumblecrown.svg" alt="" width="34" height="34">TUMBLE CROWN</a>
  <nav class="nav"><a href="#feat">특징</a><a href="#roles">직업</a><a href="#maps">맵</a><a href="#guide">플레이 방법</a></nav>
  <span data-ff-account></span>
 </div></div>
