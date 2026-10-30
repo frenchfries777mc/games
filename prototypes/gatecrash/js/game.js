@@ -12,6 +12,7 @@ function makeWorld(mapId) {
     const tx0 = Math.floor(sp.x / TS);
     for (let d = 0; d < 14; d++) { const hit = [tx0 - d, tx0 + d].find(free); if (hit !== undefined) { sp.x = hit * TS + TS / 2; break; } }
   }
+  W.hasLift = W.g.some(row => row.includes('U')); W.hasBelt = W.g.some(row => row.includes('>') || row.includes('<'));
   buildNav(W);
   return W;
 }
@@ -52,12 +53,12 @@ function moveY(W, b, dy) {
   }
   b.y = ny;
 }
-function iceUnder(W, b) { return b.ground && tileAt(W, Math.floor((b.x + PH.W / 2) / TS), Math.floor((b.y + PH.H) / TS)) === 'I'; }
-function inLift(W, b) { return tileAt(W, Math.floor((b.x + PH.W / 2) / TS), Math.floor((b.y + PH.H / 2) / TS)) === 'U'; }
+function iceUnder(W, b) { return b.ground && (W.wet || tileAt(W, Math.floor((b.x + PH.W / 2) / TS), Math.floor((b.y + PH.H) / TS)) === 'I'); }
+function inLift(W, b) { return !W.liftOff && tileAt(W, Math.floor((b.x + PH.W / 2) / TS), Math.floor((b.y + PH.H / 2) / TS)) === 'U'; }
 function beltUnder(W, b) {
   if (!b.ground) return 0;
   const ty = Math.floor((b.y + PH.H) / TS), c = tileAt(W, Math.floor((b.x + PH.W / 2) / TS), ty);
-  return c === '>' ? 1 : c === '<' ? -1 : 0;
+  return (c === '>' ? 1 : c === '<' ? -1 : 0) * (W.flipB ? -1 : 1);
 }
 /* inp: { d: -1|0|1, jp: 이번에 누름, j: 누르고 있음 } */
 function stepBody(W, b, inp, dt) {
@@ -138,11 +139,23 @@ function inFinish(W, r) {
   return cx >= F.x0 && cx < F.x1 + 1 && cy >= F.y0 && cy < F.y1 + 1;
 }
 
+/* ---------- 맵 이벤트: 시간(G.clock)만으로 정해져서 모두에게 똑같이 일어나요 ---------- */
+function evUpdate(W, clock, phase) {
+  const kinds = ['wet']; if (W.hasLift) kinds.unshift('lift'); if (W.hasBelt) kinds.splice(1, 0, 'flip');
+  const c = phase === 'race' ? clock % 40 : -99, n = Math.floor(clock / 40), k1 = kinds[(n * 2) % kinds.length], k2 = kinds[(n * 2 + 1) % kinds.length];
+  const on1 = c >= 12 && c < 19, on2 = c >= 28 && c < 34, soon1 = c >= 9 && c < 12, soon2 = c >= 25 && c < 28;
+  const act = k => (on1 && k1 === k) || (on2 && k2 === k);
+  W.liftOff = act('lift'); W.wet = act('wet'); W.flipB = act('flip');
+  const name = { lift: '엘리베이터 점검 중', wet: '물청소 중! 바닥이 미끄러워요', flip: '컨베이어가 거꾸로 돌아요' };
+  W.evMsg = on1 ? name[k1] : on2 ? name[k2] : soon1 ? '곧 ' + name[k1] : soon2 ? '곧 ' + name[k2] : '';
+  W.evNow = on1 || on2;
+}
+
 /* ---------- 레이서 ---------- */
 function newRacer(o, W) {
   const s = W.starts[o.slot % W.starts.length];
   const r = Object.assign(newBody(s.x, s.y), { id: o.id, name: o.name, col: o.col, skin: o.skin || '', bot: !!o.bot, slot: o.slot, own: !!o.own,
-    face: 1, aim: 0, hp: MAX_HP, wep: null, cd: 0, inv: 0, swing: 0, flash: 0, fin: false, finT: 0, anim: 0, node: -1, prog: 1, ko: 0,
+    emo: 0, emoT: 0, emoCd: 0, face: 1, aim: 0, hp: MAX_HP, wep: null, cd: 0, inv: 0, swing: 0, flash: 0, fin: false, finT: 0, anim: 0, node: -1, prog: 1, ko: 0,
     ai: o.bot ? { plan: null, stuck: 0, best: Infinity, wait: 0, noise: 0.15 + Math.random() * 0.25, aimT: 0, react: 0.2 + Math.random() * 0.3, err: 0.03 + Math.random() * 0.07 } : null,
     tx: s.x, ty: s.y });
   return r;
@@ -171,7 +184,10 @@ function botInput(G, r, dt) {
     // 엘리베이터 안: 꼭대기 가까이 오면 방 안쪽으로 걸어 나와요
     const tx = Math.floor((r.x + PH.W / 2) / TS), ty = Math.floor((r.y + PH.H / 2) / TS);
     ai.plan = null; ai.stuck = 0; ai.best = Infinity;
-    return { d: tileAt(W, tx, ty - 2) !== 'U' ? (r.x < W.pw / 2 ? 1 : -1) : 0, jp: false, j: true };
+    if (tileAt(W, tx, ty - 2) !== 'U') return { d: r.x < W.pw / 2 ? 1 : -1, jp: false, j: true };
+    let a = tx, b = tx; while (tileAt(W, a - 1, ty) === 'U') a--; while (tileAt(W, b + 1, ty) === 'U') b++;
+    const mid = (a + b + 1) * TS / 2 - PH.W / 2, dx = mid - r.x;      // 승강로 가운데로 맞춰서 벽에 걸리지 않게 해요
+    return { d: Math.abs(dx) > 2 ? Math.sign(dx) : 0, jp: false, j: true };
   }
   if (r.ground && r.stun <= 0) {
     const n = nodeOfFeet(W, r.x, r.y);
@@ -206,6 +222,7 @@ function botInput(G, r, dt) {
 function botFight(G, r) {
   const ai = r.ai; if (!r.wep || r.cd > 0 || r.fin || G.phase !== 'race') return null;
   const w = WEAPONS[r.wep.k], reach = w.kind === 'melee' ? w.range + 8 : w.reach;
+  if (w.kind === 'trap') { for (const o of G.racers) if (o !== r && !o.fin && Math.abs(o.x - r.x) < 110 && Math.abs(o.y - r.y) < 30 && o.prog > r.prog && r.ground) return 0; return null; }
   let tgt = null, bd = Infinity;
   for (const o of G.racers) {
     if (o === r || o.fin || o.inv > 0) continue;
@@ -224,7 +241,7 @@ function clearLine(W, x0, y0, x1, y1) {
 
 /* ---------- 경기 ---------- */
 function newGame(mapId, players) {
-  const W = makeWorld(mapId), G = { W, phase: 'count', t: 8, clock: 0, racers: [], items: [], shots: [], fx: [], ev: [], rank: [], seq: 1 };
+  const W = makeWorld(mapId), G = { W, phase: 'count', t: 8, clock: 0, racers: [], items: [], shots: [], traps: [], fx: [], ev: [], rank: [], seq: 1 };
   players.forEach((p, i) => G.racers.push(newRacer(Object.assign({ slot: i }, p), W)));
   W.spawns.forEach((s, i) => G.items.push({ id: i, x: s.x, y: s.y, k: WEP_IDS[(i * 7 + 3) % WEP_IDS.length], on: true, t: 0 }));
   return G;
@@ -237,7 +254,7 @@ function hurt(G, v, from, w, dx, dy, mul) {
   if (v.inv > 0 || v.fin) return;
   const n = Math.hypot(dx, dy) || 1;
   v.hp -= w.dmg * (mul || 1); v.vx = dx / n * w.kb * (mul || 1); v.vy = -w.up - Math.max(0, -dy / n) * 60; v.ground = false; v.stun = Math.max(v.stun, w.stun); v.flash = 0.18;
-  G.ev.push({ t: 'hit', x: v.x + 5, y: v.y + 8 });
+  G.ev.push({ t: 'hit', x: v.x + 5, y: v.y + 8 }); if (v.bot && Math.random() < .25) { v.emo = 2; v.emoT = 2; }
   if (v.hp <= 0) { G.ev.push({ t: 'ko', x: v.x + 5, y: v.y + 8, id: v.id }); respawn(G.W, v); }
 }
 function useWeapon(G, r, ang) {
@@ -253,11 +270,27 @@ function useWeapon(G, r, ang) {
   } else if (w.kind === 'shot' || w.kind === 'rocket') {
     G.shots.push({ k: r.wep.k, x: cx + Math.cos(ang) * 8, y: cy + Math.sin(ang) * 8, vx: Math.cos(ang) * w.speed, vy: Math.sin(ang) * w.speed, t: w.life, by: r.id });
     G.ev.push({ t: 'fire', x: cx, y: cy, k: r.wep.k });
+  } else if (w.kind === 'trap') {
+    G.traps.push({ x: cx, y: r.y + PH.H - 2, by: r.id, t: 25, arm: 0.7 });
+    G.ev.push({ t: 'drop', x: cx, y: r.y + PH.H - 2 });
   } else if (w.kind === 'spray') {
     for (let i = 0; i < 2; i++) { const a = ang + (Math.random() - .5) * .35; G.shots.push({ k: r.wep.k, x: cx + Math.cos(a) * 8, y: cy + Math.sin(a) * 8, vx: Math.cos(a) * w.speed, vy: Math.sin(a) * w.speed, t: w.life, by: r.id }); }
     r.vx -= Math.cos(ang) * w.recoil; if (!r.ground) r.vy -= Math.sin(ang) * w.recoil * 0.4;
   }
   if (--r.wep.u <= 0) { r.wep = null; G.ev.push({ t: 'break', x: cx, y: cy }); }
+}
+function stepTraps(G, dt) {
+  for (const t of G.traps) {
+    t.t -= dt; t.arm -= dt;
+    for (const o of G.racers) {
+      if (t.t <= 0 || o.fin || o.inv > 0 || (o.id === t.by && t.arm > 0) || t.arm > 0 && o.id === t.by) continue;
+      if (Math.abs(o.x + PH.W / 2 - t.x) < 10 && Math.abs(o.y + PH.H - t.y) < 8) {
+        o.stun = Math.max(o.stun, WEAPONS.banana.stun); o.vx = ((o.vx >= 0 ? 1 : -1) * 280); o.vy = -230; o.ground = false; o.flash = .18; t.t = 0;
+        G.ev.push({ t: 'hit', x: o.x + 5, y: o.y + 18 });
+      }
+    }
+  }
+  G.traps = G.traps.filter(t => t.t > 0);
 }
 function stepShots(G, dt) {
   for (const s of G.shots) {
@@ -278,10 +311,11 @@ function stepShots(G, dt) {
 }
 /* 한 걸음. inputs: id -> { d, jp, j, atk, aim, swap } */
 function stepGame(G, dt, inputs) {
-  G.clock += dt;
+  G.clock += dt; evUpdate(G.W, G.clock, G.phase);
   if (G.phase === 'count') { G.t -= dt; if (G.t <= 0) { G.phase = 'race'; G.clock = 0; G.ev.push({ t: 'go' }); } }
   for (const r of G.racers) {
     const inp = r.bot ? botInput(G, r, dt) : (inputs[r.id] || { d: 0 });
+    r.emoT = Math.max(0, r.emoT - dt); r.emoCd = Math.max(0, r.emoCd - dt); if (inp.emo && !r.bot && r.emoCd <= 0) { r.emo = inp.emo; r.emoT = 2; r.emoCd = 0.8; }
     r.cd = Math.max(0, r.cd - dt); r.inv = Math.max(0, r.inv - dt); r.swing = Math.max(0, r.swing - dt); r.flash = Math.max(0, r.flash - dt);
     if (r.fin || G.phase === 'end') { stepBody(G.W, r, { d: 0 }, dt); continue; }
     if (G.phase === 'count') { stepBody(G.W, r, { d: 0 }, dt); continue; }
@@ -302,7 +336,7 @@ function stepGame(G, dt, inputs) {
       if (G.rank.length === 1) { G.phase = 'end'; G.endT = 0; }
     }
   }
-  stepShots(G, dt);
+  stepShots(G, dt); stepTraps(G, dt);
   for (const it of G.items) if (!it.on && it.t > 0 && (it.t -= dt) <= 0) { it.on = true; it.k = WEP_IDS[(Math.random() * WEP_IDS.length) | 0]; }
   for (const r of G.racers) r.prog = progressOf(G.W, r);
   if (G.phase === 'end') G.endT += dt;

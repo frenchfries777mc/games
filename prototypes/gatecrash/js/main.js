@@ -135,7 +135,7 @@ function hostHandlers(p) {
         if (N.G || N.players.length >= MAXP) { send(c, { t: 'no', why: '가득 찼거나 이미 시작했어요' }); setTimeout(() => c.close(), 300); return; }
         const pl = { id: d.id, name: String(d.name || '손님').slice(0, 15), col: pickCol(d.col), skin: SKINS[d.skin] ? d.skin : '' }; c.gid = d.id; N.players.push(pl); N.conns.push(c);
         send(c, { t: 'welcome', id: d.id, players: N.players }); pushRoom(); paintSlots();
-      } else if (d.t === 'i') { N.inputs[c.gid] = Object.assign(N.inputs[c.gid] || {}, d.i, { jp: (N.inputs[c.gid] || {}).jp || d.i.jp, swap: (N.inputs[c.gid] || {}).swap || d.i.swap }); }
+      } else if (d.t === 'i') { N.inputs[c.gid] = Object.assign(N.inputs[c.gid] || {}, d.i, { jp: (N.inputs[c.gid] || {}).jp || d.i.jp, swap: (N.inputs[c.gid] || {}).swap || d.i.swap, emo: d.i.emo || (N.inputs[c.gid] || {}).emo }); }
     });
     const drop = () => { N.conns = N.conns.filter(x => x !== c); if (!N.G) { N.players = N.players.filter(p => p.id !== c.gid); pushRoom(); if (scr === 'sRoom') paintSlots(); } else { const r = N.G.racers.find(r => r.id === c.gid); if (r) { r.bot = true; r.ai = { plan: null, stuck: 0, best: Infinity, wait: 0, noise: .3, aimT: 0, react: .35 }; } } };
     c.on('close', drop); c.on('error', drop);
@@ -205,7 +205,7 @@ function openQuick(gen, k) {
 
 /* ---------- 경기 ---------- */
 let G = null, myId = UID, cam = { x: 0, y: 0 }, view = { x: 0, y: 0 }, baked = null, t0 = 0, fx = [], acc = 0, last = 0, sendT = 0, snapT = 0;
-const keys = {}, mouse = { x: 0, y: 0, down: false }, pend = { jp: false, swap: false };
+const keys = {}, mouse = { x: 0, y: 0, down: false }, pend = { jp: false, swap: false, emo: 0 };
 function beginGame() {
   clearTimeout(N.autoT); if (N.mode !== 'solo' && N.mode !== 'host') return;
   const map = N.mode === 'solo' && N.pick ? N.pick : MAP_IDS[(Math.random() * MAP_IDS.length) | 0], pl = N.players.map(p => ({ id: p.id, name: p.name, col: p.col, skin: p.skin || '', bot: false }));
@@ -215,7 +215,7 @@ function beginGame() {
 }
 function playGame(map, pl) {
   N.G = G = newGame(map, pl.map((p, i) => ({ id: p.id, name: p.name, col: p.col, skin: SKINS[p.skin] ? p.skin : '', bot: p.bot, own: p.id === UID })));
-    baked = bakeWorld(G.W); fx = []; REC.length = 0; RP = null; recT = 0; N.inputs = {}; last = performance.now(); acc = 0; $('res').classList.remove('on'); const og = $('resGc'); if (og) og.remove();
+    baked = bakeWorld(G.W); fx = []; REC.length = 0; RP = null; recT = 0; N.inputs = {}; last = performance.now(); acc = 0; PHOTO.url = ''; PHOTO.tried = false; $('res').classList.remove('on'); const og = $('resGc'); if (og) og.remove();
   const me = G.racers.find(r => r.id === UID); cam.x = me ? me.x : 0; cam.y = me ? me.y : 0; snapT = 0;
   $('hint').style.visibility = ''; $('hint').textContent = 'A D 이동 · W/Space 점프 · 클릭 무기 · F 바꾸기';
   show('game'); BGM.play('pixel-sprint'); loop.on = true; requestAnimationFrame(loop);
@@ -260,17 +260,23 @@ if (TOUCH) {
   hold('tF', () => { pend.swap = true; });
 }
 
+/* 이모티콘 버튼 */
+(function () {
+  const box = $('emo'); if (!box) return;
+  for (let i = 1; i <= 4; i++) { const b = document.createElement('button'); b.className = 'eb'; const c = document.createElement('canvas'); c.width = 11; c.height = 11; b.appendChild(c); drawEmoPix(c.getContext('2d'), i); b.title = EMO_NAMES[i];
+    b.addEventListener('pointerdown', e => { e.preventDefault(); e.stopPropagation(); pend.emo = i; }); box.appendChild(b); }
+})();
 function myInput() {
   const sc = gl.clientHeight / VH, me = G.racers.find(r => r.id === UID), meG = me;
   const wx = view.x + mouse.x / sc, wy = view.y + mouse.y / sc;
   const aim = me ? Math.atan2(wy - (me.y + 8), wx - (me.x + 5)) : 0;
-  const inp = { d: (keys.d ? 1 : 0) - (keys.a ? 1 : 0), jp: pend.jp || (!!keys.j && !!meG && meG.ground), j: !!keys.j, atk: mouse.down, aim, swap: pend.swap };
+  const inp = { d: (keys.d ? 1 : 0) - (keys.a ? 1 : 0), jp: pend.jp || (!!keys.j && !!meG && meG.ground), j: !!keys.j, atk: mouse.down, aim, swap: pend.swap, emo: pend.emo | 0 };
   return inp;
 }
 function snapshot() {
   return { t: 's', ph: G.phase, tt: G.t, ck: G.clock, rk: G.rank,
-    r: G.racers.map(r => [r.id, +r.x.toFixed(1), +r.y.toFixed(1), +r.vx.toFixed(0), +r.vy.toFixed(0), r.hp | 0, r.wep ? r.wep.k : '', r.face, +r.aim.toFixed(2), r.swing > 0 ? 1 : 0, r.fin ? 1 : 0, r.inv > 0 ? 1 : 0, r.flash > 0 ? 1 : 0, r.stun > 0 ? 1 : 0, r.ground ? 1 : 0, r.ko, r.prog.toFixed(1)]),
-    it: G.items.map(i => [i.on ? 1 : 0, i.k]), sh: G.shots.map(s => [s.k, +s.x.toFixed(0), +s.y.toFixed(0), +s.vx.toFixed(0), +s.vy.toFixed(0)]), ev: G.ev };
+    r: G.racers.map(r => [r.id, +r.x.toFixed(1), +r.y.toFixed(1), +r.vx.toFixed(0), +r.vy.toFixed(0), r.hp | 0, r.wep ? r.wep.k : '', r.face, +r.aim.toFixed(2), r.swing > 0 ? 1 : 0, r.fin ? 1 : 0, r.inv > 0 ? 1 : 0, r.flash > 0 ? 1 : 0, r.stun > 0 ? 1 : 0, r.ground ? 1 : 0, r.ko, r.prog.toFixed(1), r.emoT > 0 ? r.emo : 0]),
+    it: G.items.map(i => [i.on ? 1 : 0, i.k]), sh: G.shots.map(s => [s.k, +s.x.toFixed(0), +s.y.toFixed(0), +s.vx.toFixed(0), +s.vy.toFixed(0)]), tr: G.traps.map(t => [Math.round(t.x), Math.round(t.y)]), ev: G.ev };
 }
 function applySnap(d) {
   if (d.ph === 'count' && d.tt <= 3 && Math.ceil(d.tt) !== Math.ceil(G.t)) SFX.beep();
@@ -279,9 +285,11 @@ function applySnap(d) {
     const r = G.racers.find(r => r.id === a[0]); if (!r) continue;
     if (r.id === UID) { a[8] = r.aim; a[7] = r.face; const dx = a[1] - r.x, dy = a[2] - r.y; if (Math.hypot(dx, dy) > 40) { r.x = a[1]; r.y = a[2]; } else { r.x += dx * .12; r.y += dy * .12; } }
     else { r.tx = a[1]; r.ty = a[2]; if (Math.hypot(a[1] - r.x, a[2] - r.y) > 60) { r.x = a[1]; r.y = a[2]; } }
-    if (r.id !== UID || G.phase !== 'race') { r.vx = a[3]; r.vy = a[4]; } r.hp = a[5]; r.wep = a[6] ? { k: a[6], u: 1 } : null; r.face = a[7]; r.aim = a[8]; r.swing = a[9] ? .1 : 0; r.fin = !!a[10]; r.inv = a[11] ? 1 : 0; r.flash = a[12] ? .1 : 0; r.stun = a[13] ? .1 : 0; r.ground = !!a[14]; r.ko = a[15]; r.prog = +a[16];
+    if (r.id !== UID || G.phase !== 'race') { r.vx = a[3]; r.vy = a[4]; } r.hp = a[5]; r.wep = a[6] ? { k: a[6], u: 1 } : null; r.face = a[7]; r.aim = a[8]; r.swing = a[9] ? .1 : 0; r.fin = !!a[10]; r.inv = a[11] ? 1 : 0; r.flash = a[12] ? .1 : 0; r.stun = a[13] ? .1 : 0; r.ground = !!a[14]; r.ko = a[15]; r.prog = +a[16]; r.emo = a[17] | 0; r.emoT = r.emo ? 1 : 0;
   }
   d.it.forEach((a, i) => { if (G.items[i]) { G.items[i].on = !!a[0]; G.items[i].k = a[1]; } });
+  G.traps = (d.tr || []).map(a => ({ x: a[0], y: a[1], t: 1 }));
+  evUpdate(G.W, G.clock, G.phase);
   G.shots = d.sh.map(a => ({ k: a[0], x: a[1], y: a[2], vx: a[3], vy: a[4], t: 1 }));
   G.ev.push(...d.ev);
 }
@@ -291,28 +299,29 @@ function loop(now) {
   const guest = N.mode === 'guest', inp = myInput();
   if (!guest) {
     const oi = N.inputs[UID] || {};
-    N.inputs[UID] = Object.assign(oi, inp, { jp: inp.jp || oi.jp, swap: inp.swap || oi.swap });
+    N.inputs[UID] = Object.assign(oi, inp, { jp: inp.jp || oi.jp, swap: inp.swap || oi.swap, emo: inp.emo || oi.emo });
     let ran = false;
     while (acc >= 1 / 60) {
       acc -= 1 / 60; const pc = G.phase, pt = Math.ceil(G.t); stepGame(G, 1 / 60, N.inputs); ran = true;
-      for (const k in N.inputs) { N.inputs[k].jp = false; N.inputs[k].swap = false; }
+      for (const k in N.inputs) { N.inputs[k].jp = false; N.inputs[k].swap = false; N.inputs[k].emo = 0; }
       if (G.phase === 'count' && G.t <= 3 && Math.ceil(G.t) !== pt) SFX.beep();
     }
-    if (ran) { pend.jp = false; pend.swap = false; N.inputs[UID].jp = false; N.inputs[UID].swap = false; }
+    if (ran) { pend.jp = false; pend.swap = false; pend.emo = 0; N.inputs[UID].jp = false; N.inputs[UID].swap = false; N.inputs[UID].emo = 0; }
     if (N.conns.length) { snapT += dt; if (snapT >= SNAP) { snapT = 0; bcast(snapshot()); G.ev.length = 0; } }
   } else {
     const me = G.racers.find(r => r.id === UID);
     if (me && me.wep) { me.aim = inp.aim; me.face = Math.cos(inp.aim) >= 0 ? 1 : -1; }
-    sendT += dt; if (sendT > 1 / 30) { sendT = 0; send(N.host, { t: 'i', i: inp }); pend.jp = false; pend.swap = false; }
+    sendT += dt; if (sendT > 1 / 30) { sendT = 0; send(N.host, { t: 'i', i: inp }); pend.jp = false; pend.swap = false; pend.emo = 0; }
     // 내 캐릭터는 바로 움직여요 (서버 위치로 조금씩 맞춰요)
     while (acc >= 1 / 60) { acc -= 1 / 60; if (me && G.phase === 'race' && !me.fin && me.stun <= 0) { const own = Object.assign({}, inp, { jp: inp.jp || pend.jp }); if (stepBody(G.W, me, own, 1 / 60)) { addFx({ t: 'jump', x: me.x + 5, y: me.y + 22, id: UID, local: 1 }); } } }
     for (const r of G.racers) if (r !== me && r.tx !== undefined) { r.x += (r.tx - r.x) * Math.min(1, dt * 14); r.y += (r.ty - r.y) * Math.min(1, dt * 14); }
-    acc = 0;
+    acc = 0; evUpdate(G.W, G.clock, G.phase);
   }
   for (const e of G.ev) addFx(e); G.ev.length = 0;
   fx = fx.filter(f => (f.age += dt) < f.life);
   if (guest && G.phase === 'end') { /* 결과는 호스트 신호로 */ }
   recFrame(dt);
+  if (G.phase === 'end' && !PHOTO.url && !PHOTO.tried) { PHOTO.tried = true; takePhoto(G); }       // 막 렌더링된 화면 = 결승선을 통과한 순간
   if (G.phase === 'end' && !RP && !$('res').classList.contains('on') && (guest || G.endT > 1.5)) startReplay();
   if (RP) { RP.t += dt; const g = replayAt(RP.t); if (!g) { RP = null; showResult(); } else render(now / 1000, g, { replay: true, focus: RP.focus }); }
   else render(now / 1000, G);
@@ -321,14 +330,14 @@ function loop(now) {
 const REC = [], REC_HZ = 20, REC_MAX = 260; let RP = null, recT = 0;
 function recFrame(dt) {
   if (G.phase !== 'race') return; recT += dt; if (recT < 1 / REC_HZ) return; recT = 0;
-  REC.push({ r: G.racers.map(r => ({ id: r.id, name: r.name, col: r.col, skin: r.skin, slot: r.slot, x: r.x, y: r.y, vx: r.vx, face: r.face, aim: r.aim, swing: r.swing > 0 ? .1 : 0, wep: r.wep ? { k: r.wep.k, u: 1 } : null, hp: r.hp, fin: r.fin, inv: r.inv > 0 ? 1 : 0, flash: r.flash > 0 ? .1 : 0, stun: r.stun > 0 ? .1 : 0, ground: r.ground, anim: r.anim, prog: 1 })), it: G.items.map(i => [i.on, i.k]), sh: G.shots.map(s => ({ k: s.k, x: s.x, y: s.y, vx: s.vx, vy: s.vy })) });
+  REC.push({ r: G.racers.map(r => ({ id: r.id, name: r.name, col: r.col, skin: r.skin, slot: r.slot, x: r.x, y: r.y, vx: r.vx, face: r.face, aim: r.aim, swing: r.swing > 0 ? .1 : 0, wep: r.wep ? { k: r.wep.k, u: 1 } : null, hp: r.hp, fin: r.fin, inv: r.inv > 0 ? 1 : 0, flash: r.flash > 0 ? .1 : 0, stun: r.stun > 0 ? .1 : 0, ground: r.ground, anim: r.anim, prog: 1 })), it: G.items.map(i => [i.on, i.k]), sh: G.shots.map(s => ({ k: s.k, x: s.x, y: s.y, vx: s.vx, vy: s.vy })), tr: G.traps.map(t => [t.x, t.y]) });
   if (REC.length > REC_MAX) REC.shift();
 }
 function startReplay() { if (REC.length < 20) return; RP = { t: 0, frames: REC.slice(), focus: G.rank[0] || UID }; }
 function replayAt(t) {
   const f = RP.frames, p = t * REC_HZ, i = Math.floor(p); if (i >= f.length - 1) return null;
   const a = f[i], b = f[i + 1], k = p - i, L = (u, v) => u + (v - u) * k;
-  return { W: G.W, phase: 'race', t: 0, clock: 99, rank: [], ev: [], shots: a.sh, items: G.items.map((it, n) => ({ id: it.id, x: it.x, y: it.y, on: a.it[n][0], k: a.it[n][1] })),
+  return { W: G.W, phase: 'race', t: 0, clock: 99, rank: [], ev: [], shots: a.sh, traps: (a.tr || []).map(q => ({ x: q[0], y: q[1] })), items: G.items.map((it, n) => ({ id: it.id, x: it.x, y: it.y, on: a.it[n][0], k: a.it[n][1] })),
     racers: a.r.map((r, n) => Object.assign({}, r, { x: L(r.x, b.r[n].x), y: L(r.y, b.r[n].y), anim: L(r.anim, b.r[n].anim) })) };
 }
 function addFx(e) {
@@ -361,10 +370,13 @@ function render(t, G, op) {
   x.setTransform(sc, 0, 0, sc, 0, 0); x.fillStyle = '#0c1220'; x.fillRect(0, 0, vw + 2, VH + 2);
   drawBackdrop(x, G.W, t, cx, cy, vw);
   x.translate(-Math.round(cx), -Math.round(cy)); x.drawImage(baked, 0, 0);
-  drawItems(x, G, t);
+  drawItems(x, G, t); drawTraps(x, G.traps || []);
+  if (G.W.wet) drawWet(x, G.W, cx, cy, vw);
+  if (G.W.liftOff) for (const o of G.W.objs) if (o.t === 'liftshaft') drawLiftOff(x, o);
   for (const r of G.racers) if (r !== me) drawRacer(x, r, t, false);
   drawRacer(x, me, t, true);
   if (!op.replay && me.wep && G.phase === 'race' && !me.fin) { x.fillStyle = 'rgba(255,255,255,.7)'; for (let d = 14; d < 70; d += 8) x.fillRect(me.x + 5 + Math.cos(me.aim) * d, me.y + 10 + Math.sin(me.aim) * d, 2, 2); }
+  for (const r of G.racers) if (r.emoT > 0 && r.emo) drawEmo(x, r.emo, r.x + 5, r.y - 30);
   drawShots(x, G); drawFx(x, op.replay ? [] : fx);
   drawShade(x, G.W, cx, cy, vw);
   x.setTransform(1, 0, 0, 1, 0, 0); x.textAlign = 'center'; x.textBaseline = 'alphabetic';
@@ -393,12 +405,25 @@ function render(t, G, op) {
   if (near && me.wep) { x.textAlign = 'center'; x.fillStyle = '#ffd36b'; x.strokeStyle = '#000'; x.lineWidth = 3; const t2 = 'F: ' + WEAPONS[near.k].name + '(으)로 바꾸기'; x.strokeText(t2, w / 2, h - 40 * dpr); x.fillText(t2, w / 2, h - 40 * dpr); }
   const order = G.racers.slice().sort((a, b) => (a.fin ? G.rank.indexOf(a.id) - 99 : a.prog) - (b.fin ? G.rank.indexOf(b.id) - 99 : b.prog));
   const pos = order.indexOf(me) + 1, ps = Math.round(fs2 * 1.6); x.fillStyle = 'rgba(8,12,24,.75)'; x.fillRect(w - pad - ps * 2.4, pad, ps * 2.4, ps * 1.3); x.fillStyle = '#ffd36b'; x.textAlign = 'center'; x.font = '700 ' + ps + 'px Galmuri, sans-serif'; x.fillText(pos + '/' + G.racers.length, w - pad - ps * 1.2, pad + ps * 1.05);
+  const evb = $('evb'); evb.textContent = G.phase === 'race' ? G.W.evMsg : ''; evb.className = G.W.evNow ? 'now' : '';
   const big = $('big');
   if (G.phase === 'count') big.textContent = G.t > 3 ? (G.t > 4 ? MAPS[G.W.id].name : '') : Math.max(1, Math.ceil(G.t)); else if (G.phase === 'race' && G.clock < .8) big.textContent = 'GO!'; else big.textContent = '';
 }
+/* 포토 피니시: 결승선을 통과한 순간의 화면을 사진으로 남겨요 */
+const PHOTO = { url: '' };
+function takePhoto(G) {
+  try {
+    const c = document.createElement('canvas'), w = Math.min(960, gl.width), h = Math.round(w * gl.height / gl.width); c.width = w; c.height = h;
+    const x = c.getContext('2d'); x.drawImage(gl, 0, 0, w, h);
+    const first = G.racers.find(r => r.id === G.rank[0]), fs = Math.round(h * .05);
+    x.fillStyle = 'rgba(8,12,24,.7)'; x.fillRect(0, h - fs * 1.9, w, fs * 1.9); x.fillStyle = '#ffd36b'; x.font = '700 ' + fs + 'px Galmuri, sans-serif'; x.textAlign = 'left'; x.fillText('GATECRASH · ' + MAPS[G.W.id].name, fs * .6, h - fs * .6);
+    x.textAlign = 'right'; x.fillStyle = '#fff'; x.fillText((first ? first.name : '') + ' 1등', w - fs * .6, h - fs * .6);
+    PHOTO.url = c.toDataURL('image/jpeg', .85);
+  } catch (e) { PHOTO.url = ''; }
+}
 function showResult() {
   if ($('res').classList.contains('on')) return;
-  const og = $('resGc'); if (og) og.remove();
+  const og = $('resGc'); if (og) og.remove(); const op = $('resPh'); if (op) op.remove();
   const list = G.rank.map(id => G.racers.find(r => r.id === id)).filter(Boolean);
   for (const r of G.racers.slice().sort((a, b) => a.prog - b.prog)) if (!list.includes(r)) list.push(r);
   const me = list.findIndex(r => r.id === UID);
@@ -407,6 +432,7 @@ function showResult() {
   let prize = 0;
   if (me >= 0 && !G.paid) { G.paid = true; prize = Math.round(GC_PRIZE[Math.min(me, GC_PRIZE.length - 1)] * (N.mode === 'solo' ? 0.5 : 1)); SAVE.gc += prize; save(); }
   if (prize) $('resL').insertAdjacentHTML('afterend', '<div class="note" id="resGc">+' + prize + ' gC (지금 ' + SAVE.gc + ' gC)</div>');
+  if (PHOTO.url) $('resL').insertAdjacentHTML('beforebegin', '<div id="resPh"><img alt="결승선 사진" src="' + PHOTO.url + '" style="max-width:100%;border-radius:6px;display:block;margin-bottom:8px"><a class="btn" download="gatecrash-finish.jpg" href="' + PHOTO.url + '" style="display:inline-block;margin-bottom:10px">사진 저장</a></div>');
   $('res').classList.add('on');
 }
 // 로비 배경: 인트로와 같은 공항 레이스 장면
