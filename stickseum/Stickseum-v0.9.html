@@ -5523,7 +5523,7 @@ function shuffle(arr){ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.
 /* ===== the version of this file =====
    Different BUILDS of one version meet and play together (room names online-v<ver>-<mode>-<map>-<slot>); different VERSIONS (the 0.x part) never do - the host refuses them (verNo) and the dispatcher answers busy.
    The build is only sent along with the join message and the lobby (for information); the corner of the screen shows it. */
-const GAME_BUILD='build 2026-10-18-v538';
+const GAME_BUILD='build 2026-10-18-v539';
 const GAME_VERSION='0.9', GAME_VERSION_NAME='은하 제국의 황혼';   // 게임 버전 이름: versions.json의 title과 같게 (빌드마다 바꾸지 않음)
 /* version (the 0.x part) vs build: different BUILDS of one version meet and play together, different VERSIONS never do (rooms, quick match, ranked, friend invites, dispatcher).
    Builds before 470 do not send a version, so it is read from the build number (0.9 started at build 458). */
@@ -7312,7 +7312,7 @@ async function rpShare(id, btn){
     let bin=''; const u8=new Uint8Array(gz); for(let k=0;k<u8.length;k+=8192) bin+=String.fromCharCode.apply(null,u8.subarray(k,k+8192));
     const b64=btoa(bin); if(b64.length>1500000){ uiAlert('리플레이가 너무 커서 공유할 수 없어요'); btn.disabled=false; btn.textContent='공유'; return; }
     const code=Array.from({length:8},()=>'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'[Math.floor(Math.random()*32)]).join('');
-    const {error}=await sb.from('replays').insert({code, owner:sbUser.id, title:(m.text||'리플레이').slice(0,60), meta:{mapId:m.mapId, mode:m.mode, names:m.names, text:m.text, n:keep.length, dur:m.dur}, data:b64});
+    const {error}=await sb.from('replays').insert({code, owner:sbUser.id, title:(m.text||'리플레이').slice(0,60), meta:{mapId:m.mapId, mode:m.mode, me:m.me, names:m.names, text:m.text, n:keep.length, dur:m.dur}, data:b64});
     if(error) throw error;
     btn.textContent='코드 '+code; try{ navigator.clipboard.writeText(code); }catch(e){}
     uiAlert('공유 코드: '+code+'\n(복사됨) 기록 화면의 "코드로 불러오기"에 입력하면 볼 수 있어요');
@@ -7326,7 +7326,7 @@ async function rpLoadShared(code){
     if(error||!data){ uiAlert('해당 코드의 리플레이가 없어요'); return; }
     const bin=atob(data.data), u8=new Uint8Array(bin.length); for(let k=0;k<bin.length;k++) u8[k]=bin.charCodeAt(k);
     const frames=JSON.parse(await rpGunzip(u8.buffer)); const m=data.meta||{};
-    rpStart({mapId:m.mapId, mode:m.mode, names:m.names||[], text:m.text||''}, frames);
+    rpStart({mapId:m.mapId, mode:m.mode, me:m.me, names:m.names||[], text:m.text||''}, frames);
   }catch(e){ uiAlert('불러오기 실패'); console.warn(e); }
 }
 
@@ -18714,9 +18714,10 @@ function drawOverheadExtras(p, HEADCY){
   const cb=otherSettings.colorBlind;
   let hpColor=cb?'#D55E00':'#ff4d4d'; // default: enemy = red
   let hpMark=cb?2:0;                                                // (colour-blind mode: also a shape - diamond = enemy, dot = team-mate)
-  if(p.id===myId){ hpColor=cb?'#F0E442':'#4da6ff'; hpMark=0; } // me = blue
-  else if(isAlly(players[myId], p)){ hpColor=cb?'#56B4E9':'#4ddb7a'; hpMark=cb?1:0; } // ally = green
-  if(p.dgn && p.alive && p.id!==myId){ hpColor=cb?'#56B4E9':'#4ddb7a'; hpMark=cb?1:0; }       // a disguised 티오니스: a green bar for everybody
+  const meId=(rpView && rpView.meta && rpView.meta.me) || myId;   // (in a replay "me" is the one who recorded it, not the viewer)
+  if(p.id===meId){ hpColor=cb?'#F0E442':'#4da6ff'; hpMark=0; } // me = blue
+  else if(isAlly(players[meId], p)){ hpColor=cb?'#56B4E9':'#4ddb7a'; hpMark=cb?1:0; } // ally = green
+  if(p.dgn && p.alive && p.id!==meId){ hpColor=cb?'#56B4E9':'#4ddb7a'; hpMark=cb?1:0; }       // a disguised 티오니스: a green bar for everybody
   ctx.fillStyle = p.alive ? hpColor : '#555';
   ctx.fillRect(p.x-20, p.y+HEADCY-16, 40*clamp((p.hp||0)/maxHpFor(p),0,1), 5);
   if(hpMark && p.alive){ const mx=p.x-26, my=p.y+HEADCY-13.5; ctx.fillStyle=hpColor; ctx.beginPath(); if(hpMark===1) ctx.arc(mx,my,3,0,7); else { ctx.moveTo(mx,my-4); ctx.lineTo(mx+4,my); ctx.lineTo(mx,my+4); ctx.lineTo(mx-4,my); ctx.closePath(); } ctx.fill(); }
