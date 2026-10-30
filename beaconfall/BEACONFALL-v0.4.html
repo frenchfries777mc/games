@@ -393,7 +393,7 @@ window.bfIntro=function(){if(run)return;run=1;t0=Date.now();el.classList.add('ru
     <button class="btn" data-act="skins"><span class="arrow">▶</span>스킨 상점<span class="en">SKIN SHOP</span></button>
     <button class="btn" data-act="stats"><span class="arrow">▶</span>통계<span class="en">STATS</span></button>
     <button class="btn" data-act="settings"><span class="arrow">▶</span>설정<span class="en">SETTINGS</span></button>
-    <p class="foot">v0.4<br>build 133</p>
+    <p class="foot">v0.4<br>build 134</p>
   </nav>
 </div>
 
@@ -3961,8 +3961,9 @@ function updateFurnaces(dt){   // 호스트(혼자 할 때 포함): 모든 용�
     if(b.id!=='furnace')continue;
     const ore=b.fi,ing=ore&&SMELT_ORE[ore.id];
     if(ing&&(!b.fo||(b.fo.id===ing&&b.fo.n<maxStack(ing)))){
-      b.fp=(b.fp||0)+dt;b.hot=time+0.3;
-      if(Math.random()<dt*10&&onScr(b.x,b.y))parts.push({x:b.x-2+Math.random()*4,y:b.y-12,vx:(Math.random()-0.5)*14,vy:-14-Math.random()*16,life:0.5,c:Math.random()<0.5?'#ff9a2e':'#ffe27a'});
+      const hs=animals.some(a=>a.tame&&!a.baby&&a.type==='salamander'&&Math.hypot(a.x-b.x,a.y-b.y)<56)?2:1;   // 길들인 불도마뱀이 곁에 있으면 두 배로 빨리 구워요
+      b.fp=(b.fp||0)+dt*hs;b.hot=time+0.3;
+      if(Math.random()<dt*10*hs&&onScr(b.x,b.y))parts.push({x:b.x-2+Math.random()*4,y:b.y-12,vx:(Math.random()-0.5)*14,vy:-14-Math.random()*16,life:0.5,c:Math.random()<0.5?'#ff9a2e':'#ffe27a'});
       if(b.fp>=3){
         b.fp=0;ore.n--;if(ore.n<=0)b.fi=null;
         b.fo=b.fo?{id:ing,n:b.fo.n+1}:{id:ing,n:1};
@@ -5084,17 +5085,17 @@ function stationNear(mode){
   return true;
 }
 function doInteract(o,code){
-  if(o.id==='bench')openCraft('bench');else if(o.id==='chest')openChest(o);else if(o.id==='trader')tradeWith();else if(o.id==='trash')openTrash(o);else if(o.id==='oven'||o.id==='campfire')openCraft('cook');else if(o.id==='furnace'){smeltRef=o;smeltLast=o.fo?o.fo.n:0;openCraft('smelt');}else if(o.id==='armorbench')openArmor();else if(o.id==='anvil')openAnvil();else if(o.id==='cow')milkCow(o.a);else if(o.id==='chicken'||o.id==='penguin')feedChicken(o.a);else if(o.id==='bone')startDig(o.q);else if(o.id==='conveyor')rotateConveyor(o);else if(o.id==='sorter'){if(code==='KeyF')rotateConveyor(o);else toggleSorterSide(o);}else if(o.id==='rsd'||o.id==='gauge'||o.id==='relay'||o.id==='tele'||o.id==='port')openSignalUI(o);else if(o.id==='bell')ringBell(o);else if(o.id==='guard')openGuardUI(o);else if(o.id==='vnpc')openShop(o.n);else if(o.id==='controller')toggleControl(o);else if(o.id==='beacon')callShip(o);else if(o.id==='ship')boardShip();else if(o.id==='crafter')openCrafterUI(o);else if(o.id==='feller')openFellerUI(o);else if(o.id==='door')toggleDoor(o);else if(o.id==='aquarium')openAquarium(o);else if(o.id==='cart')openCart();else if(o.id==='train')openTrainCargo(o.T);else if(o.id==='tradepost')openTradepost(o);else if(o.id==='alchemy')openAlchemy();else if(o.id==='runetable')openRunes();else if(o.id==='trap')openTrap(o);else if(o.id==='hammock')napStart(o);else if(o.id==='fishtrap')openFishTrap(o);else if(o.id==='hut')openHut(o);else if(o.id==='stall')openStall(o);else if(o.id==='mailbox')openMailbox(o);else if(o.id==='monument')openMonument(o);else if(o.id==='flag')openFlag(o);else if(o.id==='revive')reviveReq(o.peer);else if(o.id==='dunin')dunGo(1,'down');else if(o.id==='dunst')dunGo(o.k,o.dir);else trySleep(o);
+  if(o.id==='bench')openCraft('bench');else if(o.id==='chest')openChest(o);else if(o.id==='trader')tradeWith();else if(o.id==='trash')openTrash(o);else if(o.id==='oven'||o.id==='campfire')openCraft('cook');else if(o.id==='furnace'){smeltRef=o;smeltLast=o.fo?o.fo.n:0;openCraft('smelt');}else if(o.id==='armorbench')openArmor();else if(o.id==='anvil')openAnvil();else if(o.id==='cow')milkCow(o.a);else if(o.id==='chicken'||o.id==='penguin'||o.id==='salamander')feedChicken(o.a);else if(o.id==='bone')startDig(o.q);else if(o.id==='conveyor')rotateConveyor(o);else if(o.id==='sorter'){if(code==='KeyF')rotateConveyor(o);else toggleSorterSide(o);}else if(o.id==='rsd'||o.id==='gauge'||o.id==='relay'||o.id==='tele'||o.id==='port')openSignalUI(o);else if(o.id==='bell')ringBell(o);else if(o.id==='guard')openGuardUI(o);else if(o.id==='vnpc')openShop(o.n);else if(o.id==='controller')toggleControl(o);else if(o.id==='beacon')callShip(o);else if(o.id==='ship')boardShip();else if(o.id==='crafter')openCrafterUI(o);else if(o.id==='feller')openFellerUI(o);else if(o.id==='door')toggleDoor(o);else if(o.id==='aquarium')openAquarium(o);else if(o.id==='cart')openCart();else if(o.id==='train')openTrainCargo(o.T);else if(o.id==='mirror')showLook();else if(o.id==='tradepost')openTradepost(o);else if(o.id==='alchemy')openAlchemy();else if(o.id==='runetable')openRunes();else if(o.id==='trap')openTrap(o);else if(o.id==='hammock')napStart(o);else if(o.id==='fishtrap')openFishTrap(o);else if(o.id==='hut')openHut(o);else if(o.id==='stall')openStall(o);else if(o.id==='mailbox')openMailbox(o);else if(o.id==='monument')openMonument(o);else if(o.id==='flag')openFlag(o);else if(o.id==='revive')reviveReq(o.peer);else if(o.id==='dunin')dunGo(1,'down');else if(o.id==='dunst')dunGo(o.k,o.dir);else trySleep(o);
 }
 function nearInteract(){
   let best=null,bd=1e9;
   for(const b of world.structs){
-    if(b.id!=='hammock'&&b.id!=='fishtrap'&&b.id!=='bench'&&b.id!=='trash'&&b.id!=='chest'&&b.id!=='bed'&&b.id!=='oven'&&b.id!=='furnace'&&b.id!=='armorbench'&&b.id!=='anvil'&&b.id!=='rsd'&&b.id!=='gauge'&&b.id!=='bell'&&b.id!=='controller'&&b.id!=='beacon'&&b.id!=='crafter'&&b.id!=='relay'&&b.id!=='tele'&&b.id!=='port'&&b.id!=='guard'&&b.id!=='feller'&&b.id!=='door'&&b.id!=='aquarium'&&b.id!=='tradepost'&&b.id!=='alchemy'&&b.id!=='runetable'&&b.id!=='trap'&&b.id!=='stall'&&b.id!=='mailbox'&&b.id!=='monument'&&b.id!=='flag'&&b.id!=='hut')continue;
+    if(b.id!=='mirror'&&b.id!=='hammock'&&b.id!=='fishtrap'&&b.id!=='bench'&&b.id!=='trash'&&b.id!=='chest'&&b.id!=='bed'&&b.id!=='oven'&&b.id!=='furnace'&&b.id!=='armorbench'&&b.id!=='anvil'&&b.id!=='rsd'&&b.id!=='gauge'&&b.id!=='bell'&&b.id!=='controller'&&b.id!=='beacon'&&b.id!=='crafter'&&b.id!=='relay'&&b.id!=='tele'&&b.id!=='port'&&b.id!=='guard'&&b.id!=='feller'&&b.id!=='door'&&b.id!=='aquarium'&&b.id!=='tradepost'&&b.id!=='alchemy'&&b.id!=='runetable'&&b.id!=='trap'&&b.id!=='stall'&&b.id!=='mailbox'&&b.id!=='monument'&&b.id!=='flag'&&b.id!=='hut')continue;
     const d0=Math.hypot(P.x-b.x,P.y-(b.y-7)),d=d0-(b===P.starget&&d0<=20?100:0);if(d0<=20&&d<bd){bd=d;best=b;}   // 흰 테두리로 가리킨 시설이 먼저
   }
   if(!best)for(const b of world.cgrid.values()){const d=Math.hypot(P.x-(b.gx*CG+4),P.y-(b.gy*CG+4));if(d<=10&&d<bd){bd=d;best=b;}}
   {const q=nearBoneSpot(14);if(q&&!best){bd=0;best={id:'bone',q,x:q.x,y:q.y+7};}}
-  for(const a of animals){if(a.type!=='cow'&&a.type!=='chicken'&&a.type!=='penguin')continue;const d=Math.hypot(P.x-a.x,P.y-a.y);if(d<=20&&d<bd){bd=d;best={id:a.type,a,x:a.x,y:a.y+7};}}
+  for(const a of animals){if(a.type!=='cow'&&a.type!=='chicken'&&a.type!=='penguin'&&a.type!=='salamander')continue;const d=Math.hypot(P.x-a.x,P.y-a.y);if(d<=20&&d<bd){bd=d;best={id:a.type,a,x:a.x,y:a.y+7};}}
   {const c=world.camp,d=Math.hypot(P.x-c.x,P.y-c.y);if(d<=22&&!best){bd=d;best={id:'campfire',x:c.x,y:c.y+7};}}   // 다른 시설이 가까이 있으면 그쪽이 먼저예요
   {const e=world.esc;if(e&&e.ph==='landed'){const d=Math.hypot(P.x-e.sx,P.y-(e.sy-8));if(d<=42&&d<bd){bd=d;best={id:'ship',x:e.sx,y:e.sy};}}}
   for(const n of (world.vnpcs||[])){const d=Math.hypot(P.x-n.x,P.y-n.y);if(d<=22&&d<bd){bd=d;best={id:'vnpc',n,x:n.x,y:n.y+7};}}
@@ -6885,7 +6886,7 @@ function breedTick(){
     const x=(a.x+o.x)/2,y=(a.y+o.y)/2,T=ANIM_TYPES[a.type];
     animals.push({id:nextAid++,type:a.type,x,y,tx:x,ty:y,f:1,hp:T.hp,hurt:0,wt:0,wa:0,ws:0,flee:0,fx:0,fy:0,stun:0,kx:0,ky:0,lay:0,fed:0,mt:25,tame:1,baby:1,gt:90,hx:a.hx,hy:a.hy,love:0,bc:0});
     for(let j=0;j<10;j++)parts.push({x,y:y-6,vx:(Math.random()-0.5)*40,vy:-12-Math.random()*20,life:0.9,c:'#ff6a8a'});
-    achQ.push({h:'🐣 새끼 탄생',name:a.type==='cow'?'송아지가 태어났어요':a.type==='penguin'?'아기 펭귄이 태어났어요':'병아리가 태어났어요'});
+    achQ.push({h:'🐣 새끼 탄생',name:a.type==='cow'?'송아지가 태어났어요':a.type==='penguin'?'아기 펭귄이 태어났어요':a.type==='salamander'?'아기 불도마뱀이 태어났어요':'병아리가 태어났어요'});
     saveWorld(true);
   }
 }
@@ -6992,7 +6993,7 @@ function hitAnimal(a,dmg,far){
 }
 const isSeedId=id=>Object.values(CROPS).some(c=>c.seed===id);
 const isCropOut=id=>Object.values(CROPS).some(c=>c.out===id);
-const feedOk=(a,id)=>a.type==='cow'?isCropOut(id):a.type==='chicken'?isSeedId(id):a.type==='penguin'?FISH.some(f=>f.id===id):false;
+const feedOk=(a,id)=>a.type==='cow'?isCropOut(id):a.type==='chicken'?isSeedId(id):a.type==='penguin'?FISH.some(f=>f.id===id):a.type==='salamander'?id==='stick':false;   // 불도마뱀은 나뭇가지를 먹어요
 const HERD_MAX=24;
 function tameFeed(a){   // 방장: 먹이를 먹이면 길들이고, 먹은 둘이 가까이 있으면 새끼를 낳아요
   if(a.baby)return 'baby';
@@ -9436,6 +9437,7 @@ const ACH=[
   {id:'plant_all',cat:'생존',name:'농부',desc:'밀·감자·옥수수를 모두 심기',prog:()=>[achCount('plant'),3]},
   {id:'fish_legend',cat:'생존',name:'전설의 낚시꾼',desc:'전설 등급 물고기 낚기'},
   {id:'fish_all',cat:'생존',name:'낚시 도감',desc:'모든 물고기 낚기',prog:()=>[achCount('fish'),FISH.length]},
+  {id:'animal_all',cat:'탐험',name:'섬 동물 도감',desc:'섬마다 사는 동물 8종 모두 만나기',prog:()=>[achCount('animal'),ANIM_DEX.length]},
   {id:'day_30',cat:'생존',name:'한 달 생존',desc:'30일 동안 살아남기',prog:()=>[Math.min(30,world&&world.clock!==undefined?dayNow():0),30]},
   {id:'day_100',cat:'생존',name:'백일 생존',desc:'100일 동안 살아남기',prog:()=>[Math.min(100,world&&world.clock!==undefined?dayNow():0),100]},
   {id:'tame',cat:'생존',name:'목장 주인',desc:'동물에게 먹이를 주어 길들이기'},
@@ -9455,7 +9457,7 @@ const ACH=[
   {id:'settle_8',cat:'특별',name:'정착지 완성',desc:'주민 8명과 함께 살기',prog:()=>[Math.min(8,world&&world.structs?huRes().length:0),8]},
   {id:'all',cat:'특별',name:'모든 업적',desc:'다른 업적을 모두 달성하기 (함께 업적 제외)',prog:()=>[ACH.filter(a=>a.id!=='all'&&a.cat!=='함께'&&settings.ach[a.id]).length,ACH.filter(a=>a.id!=='all'&&a.cat!=='함께').length]}
 ];
-const ACH_BC={'isl_1':5,'boat':5,'treasure_1':5,'kill_1':5,'potion_throw':5,'sleep':5,'trade':5,'feast':5,'mail':5,'guestbook':5,'air':10,'horse':10,'dun_1':10,'reef':10,'rune':10,'repair':10,'alch_1':10,'conveyor':10,'sorter':10,'signal':10,'tame':10,'plant_all':10,'revive':10,'circuit':10,'craft_rgold':10,'cold':10,'boss_1':15,'relic_1':15,'settle_1':15,'fort':15,'autocraft':15,'reset':15,'forge_3':15,'armor_full':15,'fish_legend':15,'ghost':15,'reinf_all':15,'isl_10':20,'dun_5':20,'kill_100':20,'day_30':20,'ruins_all':20,'treasure_all':20,'settle_4':20,'contest_win':20,'forge_all':20,'alch_all':20,'vcore':20,'isl_all':25,'kill_all':25,'fish_all':25,'fort_boss':25,'boss_all':30,'settle_8':30,'beacon':30,'escape':30,'day_100':30,'relic_all':30,'void_kill':40,'all':50};   // 업적 보상 BeaCoin (5~50, 난이도 순)
+const ACH_BC={'animal_all':10,'isl_1':5,'boat':5,'treasure_1':5,'kill_1':5,'potion_throw':5,'sleep':5,'trade':5,'feast':5,'mail':5,'guestbook':5,'air':10,'horse':10,'dun_1':10,'reef':10,'rune':10,'repair':10,'alch_1':10,'conveyor':10,'sorter':10,'signal':10,'tame':10,'plant_all':10,'revive':10,'circuit':10,'craft_rgold':10,'cold':10,'boss_1':15,'relic_1':15,'settle_1':15,'fort':15,'autocraft':15,'reset':15,'forge_3':15,'armor_full':15,'fish_legend':15,'ghost':15,'reinf_all':15,'isl_10':20,'dun_5':20,'kill_100':20,'day_30':20,'ruins_all':20,'treasure_all':20,'settle_4':20,'contest_win':20,'forge_all':20,'alch_all':20,'vcore':20,'isl_all':25,'kill_all':25,'fish_all':25,'fort_boss':25,'boss_all':30,'settle_8':30,'beacon':30,'escape':30,'day_100':30,'relic_all':30,'void_kill':40,'all':50};   // 업적 보상 BeaCoin (5~50, 난이도 순)
 const achBc=id=>ACH_BC[id]||10;
 const ACH_MONS=['slime','wolf','scorpion','spirit','spider','snake','golem','croc','yeti'];
 const ACH_BOSSES=['bwolf','bscorp','bmagma','bspider','bsnake','bgolem','bcroc','byeti'];
@@ -9485,13 +9487,35 @@ const ST_ROWS=[
   ['tree','벤 나무','n'],['rock','캔 바위','n'],['craft','만든 아이템','n'],['place','설치한 블록','n'],
   ['kill','쓰러뜨린 몬스터','n'],['boss','쓰러뜨린 보스','n'],['fish','낚은 물고기','n'],['death','쓰러진 횟수','n']
 ];
-let stLX=null,stLY=0,stSaveT=0,sessPlay=0,sessDone=false;
+let stLX=null,stLY=0,stSaveT=0,sessPlay=0,sessDone=false,adT=0;
+/* 섬 동물 도감: 8종을 가까이서 보면 기록돼요 */
+const ANIM_DEX=['rabbit','deer','camel','salamander','parrot','armadillo','goat','frog'];
+const ANIM_NAME={rabbit:'토끼',deer:'사슴',camel:'낙타',salamander:'불도마뱀',parrot:'앵무새',armadillo:'아르마딜로',goat:'산양',frog:'개구리'};
+const ANIM_NOTE={rabbit:'빠르게 깡충깡충 뛰어요',deer:'겁이 많아 금방 도망가요',camel:'덩치가 커서 전리품이 푸짐해요',salamander:'불씨를 흘려요. 나뭇가지를 주면 길들일 수 있고, 화로 곁에서 더 빨리 구워 줘요',parrot:'하늘을 날아다니고 깃털을 남겨요',armadillo:'맞으면 동그랗게 몸을 말아요',goat:'바위섬을 가볍게 뛰어다녀요',frog:'물가에서 개굴개굴 울어요'};
+const adexHas=ty=>!!((settings.achc.animal||{})[ty]);
+function animalSeen(ty){
+  if(adexHas(ty))return;
+  const n=achMark('animal',ty);
+  achQ.push({h:'🐾 동물 도감',name:'도감 등록: '+ANIM_NAME[ty]});
+  if(n>=ANIM_DEX.length)achGrant('animal_all');
+}
+function openAnimalDex(){
+  const got=ANIM_DEX.filter(adexHas).length;
+  let html=`<h2>섬 동물 도감<small>${got} / ${ANIM_DEX.length}</small></h2><div class="achcat">섬마다 사는 동물을 가까이서 보면 기록돼요</div>`;
+  for(const ty of ANIM_DEX){
+    const has=adexHas(ty),T=ANIM_TYPES[ty],sp=ANIMSPR[ty][0],isl=T.bio.map(b=>BIOME_NAME[b]).join(' · '),loot=T.dr.map(([it])=>(ITEMS[it]&&ITEMS[it].name)||it).join(' · ');
+    html+=`<div class="achrow${has?' on':''}" style="display:flex;align-items:center;gap:8px"><img src="${sp.toDataURL()}" width="${sp.width*3}" height="${sp.height*3}" style="image-rendering:pixelated;${has?'':'filter:brightness(0) opacity(.45)'}"><div style="flex:1"><b>${has?ANIM_NAME[ty]:'???'}</b> <small>${esc(isl)}</small><br><small>${has?esc(ANIM_NOTE[ty])+' · 전리품: '+esc(loot):'아직 만나지 못했어요'}</small></div></div>`;
+  }
+  html+=`<div class="actions"><button class="btn sm ghost" data-close>닫기</button></div>`;
+  openModal(html,m=>{m.querySelector('[data-close]').onclick=closeModal;},'ach');
+}
 const stObj=()=>(settings.st=settings.st&&typeof settings.st==='object'?settings.st:{});
 function stAdd(k,n){const o=stObj();o[k]=(+o[k]||0)+(n===undefined?1:n);
   if((k==='tree'||k==='kill')&&typeof world!=='undefined'&&world){const w=(settings.wst=settings.wst&&typeof settings.wst==='object'?settings.wst:{}),wk=invKey();if(wk){const c=w[wk]=w[wk]||{};c[k]=(+c[k]||0)+(n===undefined?1:n);}}}   // 엔딩 대사용: 월드별 집계
 function stTick(dt){
   if(mode!=='play'||!world||typeof P==='undefined'||!P){stLX=null;return;}
   const o=stObj();
+  adT-=dt;if(adT<=0){adT=1;for(const a of animals)if(ANIM_NAME[a.type]&&!adexHas(a.type)&&Math.hypot(a.x-P.x,a.y-P.y)<70)animalSeen(a.type);}
   if(!P.sleeping)o.play=(+o.play||0)+dt;
   if(!P.sleeping&&!sessDone){sessPlay+=dt;if(sessPlay>=300){sessDone=true;try{if(window.FFProfile&&FFProfile.matchDone&&window.bfSb&&window.bfUid)FFProfile.matchDone(window.bfSb,'beaconfall');}catch(e){}}}   // 허브 퀘스트 '한 판 하기': 이 접속에서 5분 이상 플레이하면 한 번
   if(stLX!==null&&!P.dead){
@@ -9918,8 +9942,8 @@ function toggleAch(){
       html+=`<div class="achrow${on?' on':''}"><b>${on?'★ ':'☆ '}${esc(a.name)} <small data-noi18n="1" style="color:#8a5a00;font-weight:700">+${bC(achBc(a.id))}</small></b><span>${esc(a.desc)}</span>${pr&&!on?`<i>${pr[0]} / ${pr[1]}</i>`:''}</div>`;
     }
   }
-  html+=`<div class="actions"><button class="btn sm" data-fdex>낚시 도감</button><button class="btn sm" data-stats>통계</button><button class="btn sm ghost" data-close>닫기</button></div>`;
-  openModal(html,m=>{m.querySelector('[data-close]').onclick=closeModal;m.querySelector('[data-fdex]').onclick=()=>{closeModal();openFishDex();};m.querySelector('[data-stats]').onclick=()=>{closeModal();openStats();};},'ach');
+  html+=`<div class="actions"><button class="btn sm" data-fdex>낚시 도감</button><button class="btn sm" data-adex>동물 도감</button><button class="btn sm" data-stats>통계</button><button class="btn sm ghost" data-close>닫기</button></div>`;
+  openModal(html,m=>{m.querySelector('[data-close]').onclick=closeModal;m.querySelector('[data-fdex]').onclick=()=>{closeModal();openFishDex();};m.querySelector('[data-adex]').onclick=()=>{closeModal();openAnimalDex();};m.querySelector('[data-stats]').onclick=()=>{closeModal();openStats();};},'ach');
 }
 /* ===== 채팅 (멀티플레이 · T 키) ===== */
 const CHAT_MAX=80;let chatEl=null,chatIn=null,chatLastT=0,chatMp=false;const chatBub=new Map();
@@ -12079,9 +12103,33 @@ function trainStep(dt){
   if(T.dx)P.f=T.dx;
   P.moving=false;ensureObjs(Math.round(P.x),Math.round(P.y));
 }
+/* 하역: 서 있는 기차 옆에 상자가 있으면 화물이 알아서 내려가요 (컨베이어로 싣는 칸에서는 내리지 않아요) */
+function beltFeeds(gx,gy){
+  const f=(x,y,dr)=>{const b=world.cgrid.get(y*CW+x);return b&&(b.id==='conveyor'||b.id==='sorter')&&(b.dr&3)===dr;};
+  for(let k=0;k<2;k++)if(f(gx*2-1,gy*2+k,0)||f(gx*2+2,gy*2+k,2)||f(gx*2+k,gy*2-1,1)||f(gx*2+k,gy*2+2,3))return true;
+  return false;
+}
+function unloadTrain(T){
+  if(!T.it||!T.it.some(Boolean))return;
+  const c=T.p<0.5?[T.gx,T.gy]:[T.gx+T.dx,T.gy+T.dy];
+  if(beltFeeds(c[0],c[1]))return;
+  for(const [dx,dy] of NB4){
+    const ch=sgAt(c[0]+dx,c[1]+dy);
+    if(!ch||ch.id!=='chest'||ch.user)continue;
+    chestFix(ch);
+    for(let i=0;i<T.it.length;i++){
+      const q=T.it[i];if(!q)continue;
+      const left=addToArr(ch.it,q.id,q.n,q.d);
+      if(left<q.n){q.n=left;if(left<=0)T.it[i]=null;trainDirty=true;return;}
+    }
+  }
+}
 function updateTrains(dt){
   const L=world.trains;if(!L||!L.length)return;
-  for(const T of L)if(trainGo(T))trainAdvance(T,dt);
+  for(const T of L){
+    if(trainGo(T))trainAdvance(T,dt);
+    else if(!isGuest()){T.ut=(T.ut||0)-dt;if(T.ut<=0){T.ut=0.5;unloadTrain(T);}}
+  }
 }
 function toggleTrain(){
   if(P.train){trainOff();return;}
