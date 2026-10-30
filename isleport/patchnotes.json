@@ -2,6 +2,58 @@
  "notes": [
   {
    "date": "2026-10-30",
+   "build": "v0.2 build 74",
+   "title": "영주의 성",
+   "items": [
+    "시작섬 남쪽 호숫가 빈 터에 영주의 성을 짓는 자리가 생김",
+    "망루, 성벽, 본관, 정원과 깃발의 4단계로 지으며 단계마다 계급과 금화가 필요함",
+    "성이 커질수록 세금이 쌓이고, 1분에 20에서 220금화까지 최대 60분어치를 걷을 수 있음"
+   ],
+   "tr": {
+    "en": {
+     "title": "The lord's castle",
+     "items": [
+      "A castle lot opens on the empty land south of the lake on the home island",
+      "Build it in 4 stages: watchtower, wall, keep, gardens and banners, each needing rank and gold",
+      "Taxes pile up as the castle grows, from 20 to 220 gold per minute, up to 60 minutes worth"
+     ]
+    },
+    "ja": {
+     "title": "The lord's castle",
+     "items": [
+      "A castle lot opens on the empty land south of the lake on the home island",
+      "Build it in 4 stages: watchtower, wall, keep, gardens and banners, each needing rank and gold",
+      "Taxes pile up as the castle grows, from 20 to 220 gold per minute, up to 60 minutes worth"
+     ]
+    },
+    "es": {
+     "title": "The lord's castle",
+     "items": [
+      "A castle lot opens on the empty land south of the lake on the home island",
+      "Build it in 4 stages: watchtower, wall, keep, gardens and banners, each needing rank and gold",
+      "Taxes pile up as the castle grows, from 20 to 220 gold per minute, up to 60 minutes worth"
+     ]
+    },
+    "fr": {
+     "title": "The lord's castle",
+     "items": [
+      "A castle lot opens on the empty land south of the lake on the home island",
+      "Build it in 4 stages: watchtower, wall, keep, gardens and banners, each needing rank and gold",
+      "Taxes pile up as the castle grows, from 20 to 220 gold per minute, up to 60 minutes worth"
+     ]
+    },
+    "de": {
+     "title": "The lord's castle",
+     "items": [
+      "A castle lot opens on the empty land south of the lake on the home island",
+      "Build it in 4 stages: watchtower, wall, keep, gardens and banners, each needing rank and gold",
+      "Taxes pile up as the castle grows, from 20 to 220 gold per minute, up to 60 minutes worth"
+     ]
+    }
+   }
+  },
+  {
+   "date": "2026-10-30",
    "build": "v0.2 build 73",
    "title": "주민 심부름",
    "items": [
