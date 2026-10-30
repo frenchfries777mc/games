@@ -54,7 +54,11 @@ function moveY(W, b, dy) {
   b.y = ny;
 }
 function iceUnder(W, b) { return b.ground && (W.wet || tileAt(W, Math.floor((b.x + PH.W / 2) / TS), Math.floor((b.y + PH.H) / TS)) === 'I'); }
-function inLift(W, b) { return !W.liftOff && tileAt(W, Math.floor((b.x + PH.W / 2) / TS), Math.floor((b.y + PH.H / 2) / TS)) === 'U'; }
+function inLift(W, b) {
+  const cx = Math.floor((b.x + PH.W / 2) / TS);
+  if (W.liftOff || tileAt(W, cx, Math.floor((b.y + PH.H / 2) / TS)) !== 'U') return false;
+  return !(b.ground && tileAt(W, cx, Math.floor((b.y + PH.H) / TS)) === '=');      // 승강로 위 발판에 서 있으면 끌려가지 않아요
+}
 function beltUnder(W, b) {
   if (!b.ground) return 0;
   const ty = Math.floor((b.y + PH.H) / TS), c = tileAt(W, Math.floor((b.x + PH.W / 2) / TS), ty);
@@ -183,12 +187,18 @@ function botInput(G, r, dt) {
   if (inLift(W, r) && r.stun <= 0) {
     // 엘리베이터 안: 꼭대기 가까이 오면 방 안쪽으로 걸어 나와요
     const tx = Math.floor((r.x + PH.W / 2) / TS), ty = Math.floor((r.y + PH.H / 2) / TS);
-    ai.plan = null; ai.stuck = 0; ai.best = Infinity;
-    if (tileAt(W, tx, ty - 2) !== 'U') return { d: r.x < W.pw / 2 ? 1 : -1, jp: false, j: true };
+    ai.plan = null; ai.stuck = 0; ai.best = Infinity; ai.liftT = 0.4;
     let a = tx, b = tx; while (tileAt(W, a - 1, ty) === 'U') a--; while (tileAt(W, b + 1, ty) === 'U') b++;
+    if (tileAt(W, tx, ty - 2) !== 'U') {
+      // 발밑이 단단한 쪽으로 나가요 (단상 위로 올라가는 승강기도 있어요)
+      const fr = Math.floor((r.y + PH.H) / TS), okR = [0, 1, 2].some(k => isSolid(tileAt(W, b + 2, fr + k))), okL = [0, 1, 2].some(k => isSolid(tileAt(W, a - 2, fr + k)));
+      if (!ai.exitD) ai.exitD = okR !== okL ? (okR ? 1 : -1) : r.x < W.pw / 2 ? 1 : -1;
+      return { d: ai.exitD, jp: false, j: true };
+    }
     const mid = (a + b + 1) * TS / 2 - PH.W / 2, dx = mid - r.x;      // 승강로 가운데로 맞춰서 벽에 걸리지 않게 해요
     return { d: Math.abs(dx) > 2 ? Math.sign(dx) : 0, jp: false, j: true };
   }
+  if (ai.liftT > 0) { ai.liftT -= dt; if (ai.liftT <= 0) ai.exitD = 0; }
   if (r.ground && r.stun <= 0) {
     const n = nodeOfFeet(W, r.x, r.y);
     if (n >= 0 && (!ai.plan || ai.plan.from !== n || ai.plan.done)) {
@@ -268,7 +278,7 @@ function useWeapon(G, r, ang) {
       if (Math.hypot(dx, dy) < w.range + 8 && (dx * Math.cos(ang) + dy * Math.sin(ang)) > -4) hurt(G, o, r, w, Math.cos(ang) * 1 + dx / 40, dy / 40, 1);
     }
   } else if (w.kind === 'shot' || w.kind === 'rocket') {
-    G.shots.push({ k: r.wep.k, x: cx + Math.cos(ang) * 8, y: cy + Math.sin(ang) * 8, vx: Math.cos(ang) * w.speed, vy: Math.sin(ang) * w.speed, t: w.life, by: r.id });
+    for (let i = 0; i < (w.n || 1); i++) { const a = ang + (w.n ? (i / (w.n - 1) - .5) * w.spread : 0) + (w.spread && !w.n ? (Math.random() - .5) * w.spread : 0); G.shots.push({ k: r.wep.k, x: cx + Math.cos(a) * 8, y: cy + Math.sin(a) * 8, vx: Math.cos(a) * w.speed, vy: Math.sin(a) * w.speed, t: w.life, by: r.id }); }
     G.ev.push({ t: 'fire', x: cx, y: cy, k: r.wep.k });
   } else if (w.kind === 'trap') {
     G.traps.push({ x: cx, y: r.y + PH.H - 2, by: r.id, t: 25, arm: 0.7 });

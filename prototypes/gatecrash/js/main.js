@@ -430,7 +430,7 @@ function showResult() {
   BGM.duck(.35); if (me === 0) SFX.win();
   $('resT').textContent = me === 0 ? '1등!' : (me + 1) + '등'; $('resL').innerHTML = list.map(r => '<li style="color:' + r.col + '">' + esc(r.name) + '</li>').join('');
   let prize = 0;
-  if (me >= 0 && !G.paid) { G.paid = true; prize = Math.round(GC_PRIZE[Math.min(me, GC_PRIZE.length - 1)] * (N.mode === 'solo' ? 0.5 : 1)); SAVE.gc += prize; save(); }
+  if (me >= 0 && !G.paid) { G.paid = true; if (N.mode !== 'solo') { prize = GC_PRIZE[Math.min(me, GC_PRIZE.length - 1)]; SAVE.gc += prize; save(); } }
   if (prize) $('resL').insertAdjacentHTML('afterend', '<div class="note" id="resGc">+' + prize + ' gC (지금 ' + SAVE.gc + ' gC)</div>');
   if (PHOTO.url) $('resL').insertAdjacentHTML('beforebegin', '<div id="resPh"><img alt="결승선 사진" src="' + PHOTO.url + '" style="max-width:100%;border-radius:6px;display:block;margin-bottom:8px"><a class="btn" download="gatecrash-finish.jpg" href="' + PHOTO.url + '" style="display:inline-block;margin-bottom:10px">사진 저장</a></div>');
   $('res').classList.add('on');
