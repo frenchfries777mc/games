@@ -604,7 +604,7 @@ const BASEP = { orb: { k: 'line', len: 14, w: 0.9 }, arrow: { k: 'line', len: 26
 const SKP = {
   smite: { k: 'circle', range: 12, r: 3.2 }, curse: { k: 'circle', range: 12, r: 2.6 }, potion: { k: 'circle', range: 12, r: 3 }, frost: { k: 'circle', range: 12, r: 3.2 }, rain: { k: 'circle', range: 12, r: 4 }, mark: { k: 'circle', range: 14, r: 1.6 },
   bigbomb: { k: 'circle', range: 12, r: 4 }, sticky: { k: 'circle', range: 11, r: 4.5 }, barrage: { k: 'line', len: 12, w: 3.5 },
-  pierce: { k: 'line', len: 26, w: 0.9 }, rootbolt: { k: 'line', len: 25, w: 0.9 }, snipe: { k: 'line', len: 40, w: 1 }, fan: { k: 'line', len: 13, w: 5 },
+  pierce: { k: 'line', len: 26, w: 0.9 }, rootbolt: { k: 'line', len: 25, w: 0.9 }, lunge: { k: 'line', len: 7, w: 1.6 }, spearthrow: { k: 'line', len: 27, w: 1.1 }, sweep: { k: 'self', r: 3.9 }, lullaby: { k: 'self', r: 7 }, march: { k: 'self', r: 9 }, chorus: { k: 'self', r: 8 }, snipe: { k: 'line', len: 40, w: 1 }, fan: { k: 'line', len: 13, w: 5 },
   quake: { k: 'line', len: 11, w: 2.4 }, dash: { k: 'line', len: 7, w: 1.6 }, shieldbash: { k: 'line', len: 4, w: 1.8 }, flurry: { k: 'line', len: 5, w: 1.6 }, leap: { k: 'line', len: 8, w: 2 }, backstep: { k: 'line', len: 6, w: 1.4, rev: 1 }, wall: { k: 'wall' },
   whirl: { k: 'self', r: 3.4 }, bonestorm: { k: 'self', r: 3.6 }, bastion: { k: 'self', r: 4.5 }, vow: { k: 'self', r: 6 }, scatter: { k: 'self', r: 3 }, execute: { k: 'self', r: 13 }, blink: { k: 'self', r: 10 }
 };
@@ -1038,7 +1038,7 @@ const mini = {
   paint() {
     const g = this.c.getContext('2d'); g.clearRect(0, 0, this.c.width, this.c.height);
     if (CH.pvp) {   // 팀 대전 지도: 바닥 무늬, 벽 두께와 그림자, 진지 색
-      const pal = { dungeon: ['#8a8498', '#7c768a', '#3a3446'], abyss: ['#7a6a98', '#6c5c8a', '#2c2240'], temple: ['#b49a6c', '#a68c60', '#4a3a28'], forest: ['#6f8a58', '#62804c', '#2a3a20'], frost: ['#a8bccc', '#98aec0', '#2a3a4a'], deep: ['#4a8a9a', '#3e7a8a', '#142a38'] }[CH.theme] || ['#8a8498', '#7c768a', '#3a3446'];
+      const pal = { dungeon: ['#8a8498', '#7c768a', '#3a3446'], abyss: ['#7a6a98', '#6c5c8a', '#2c2240'], temple: ['#b49a6c', '#a68c60', '#4a3a28'], forest: ['#6f8a58', '#62804c', '#2a3a20'], frost: ['#a8bccc', '#98aec0', '#2a3a4a'], deep: ['#4a8a9a', '#3e7a8a', '#142a38'], harbor: ['#8a7a5a', '#7a6c50', '#1e3a52'], tower: ['#9a7a6a', '#8a6c5e', '#3a2a28'], sewer: ['#5a7a62', '#4e6c56', '#1a2e2a'] }[CH.theme] || ['#8a8498', '#7c768a', '#3a3446'];
       g.fillStyle = pal[2]; g.fillRect(0, 0, this.c.width, this.c.height);
       for (let j = 0; j < MH; j++) for (let i = 0; i < MW; i++) {
         if (floorCell(i, j)) { g.fillStyle = ((i >> 1) + (j >> 1)) & 1 ? pal[0] : pal[1]; g.fillRect(i * 3, j * 3, 3, 3); }

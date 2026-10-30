@@ -277,7 +277,7 @@ function basicAttack(G, p, inp, nShot = 1) {
   p.cd.atk = A.cd * cdMul(p, 'atk');
   // 기사 3단 베기: 공격, 공격, 강타 뒤 처음부터 (0.5초 안에 다시 치지 않으면 처음부터, 사제는 0.75초). 기사 봇도 써요
   // 사제·종자: 세 번째 공격마다 크게 휘두르는 큰 공격 (피해 1.5배). 봇은 쓰지 않아요
-  const cmb = (!p.bot || p.ai.cmbT > 0 || p.role === 'knight') && p.role !== 'archer' && p.role !== 'crossbow' && p.role !== 'assassin', aid = p.atkN = (p.atkN || 0) + 1;
+  const cmb = (!p.bot || p.ai.cmbT > 0 || p.role === 'knight') && p.role !== 'archer' && p.role !== 'crossbow' && p.role !== 'assassin' && p.role !== 'spearman' && p.role !== 'bard', aid = p.atkN = (p.atkN || 0) + 1;
   if (cmb) { p.combo = p.comboT > 0 ? ((p.combo || 0) + 1) % 3 : 0; p.comboT = p.role === 'priest' || p.role === 'witch' ? COMBO_PRIEST : COMBO_T; }
   const third = cmb && p.combo === 2, heavy = third && p.role === 'knight', big = third && !heavy, hm = big ? 1.5 : 1;
   p.anim = heavy ? 'hv' : big ? 'big' : 'atk'; p.animT = heavy ? 0.95 : big ? 0.6 : 0.32; p.animN = (p.animN || 0) + 1;
@@ -370,7 +370,7 @@ function comboFx(G, C, A, B) {
   ev(G, 'combo', { c: C.id, name: C.name, x, z, a: A.id, b: B.id });
   if (!A.bot || !B.bot) { for (const o of [A, B]) if (!o.bot) { ev(G, 'ach', { id: 'combo', pid: o.id }); ev(G, 'combo1', { c: C.id, pid: o.id }); } }
 }
-const ANIMOF = { bigbomb: 'mark', sticky: 'mark', barrage: 'scatter', wall: 'ward', vow: 'heal', bastion: 'block', vanish: 'blink', venom: 'mark', execute: 'shadow', rootbolt: 'pierce', backstep: 'dash', snipe: 'pierce', shieldbash: 'block', frost: 'curse', leap: 'leap', bloodlust: 'taunt', flurry: 'flurry', blink: 'shadow', scatter: 'scatter', fan: 'pierce', bonestorm: 'storm' };
+const ANIMOF = { bigbomb: 'mark', sticky: 'mark', barrage: 'scatter', wall: 'ward', vow: 'heal', bastion: 'block', vanish: 'blink', venom: 'mark', execute: 'shadow', rootbolt: 'pierce', backstep: 'dash', snipe: 'pierce', shieldbash: 'block', frost: 'curse', leap: 'leap', bloodlust: 'taunt', flurry: 'flurry', blink: 'shadow', scatter: 'scatter', fan: 'pierce', bonestorm: 'storm', march: 'rally', lullaby: 'ward', chorus: 'heal', lunge: 'lunge', spearthrow: 'pierce', sweep: 'whirl' };
 const friends = (G, p) => G.pvp ? G.players.filter(q => q.team === p.team) : G.players;   // 대전에서는 같은 팀이 내 편이에요
 function useSkill(G, p, si, inp) {
   const R = ROLES[p.role], S = R.skills[si], key = 's' + si;
@@ -477,6 +477,14 @@ function useSkill(G, p, si, inp) {
       const a = angTo(p, best), low = bs < 0.35; p.x = best.x + Math.cos(a) * 1.5; p.z = best.z + Math.sin(a) * 1.5; collide(G, p, 0.6); p.a = angTo(p, best); p.inv = 0.4;
       ev(G, 'skill', { id: p.id, s: 'execfx', x: p.x, z: p.z, a: p.a, n: low ? 1 : 0 }); hurtEnemy(G, best, low ? 90 : 45, p, {}); break;
     }
+    case 'march': for (const q of friends(G, p)) if (alive(q) && dist(p, q) < 9) { q.rally = 6; ev(G, 'rally', { id: q.id }); ev(G, 'heal', { id: q.id, x: q.x, z: q.z, v: healP(G, q, 8) }); } break;
+    case 'lullaby': for (const e of G.enemies) if (e.hp > 0 && foeOf(G, p.id, e) && dist(p, e) < 7 + e.r) { hurtEnemy(G, e, 12, p, {}); if (e.hp > 0) { e.slow = 3; e.slowM = 0.45; } } break;
+    case 'chorus': for (const q of friends(G, p)) if (alive(q) && dist(p, q) < 8) { ev(G, 'heal', { id: q.id, x: q.x, z: q.z, v: healP(G, q, 30) }); q.shield = 18; q.shieldT = 4; ev(G, 'ward', { id: q.id }); } break;
+    case 'lunge': { const ox = p.x, oz = p.z; p.x += Math.cos(p.a) * 5.5; p.z += Math.sin(p.a) * 5.5; collide(G, p, 0.6); p.inv = 0.25;
+      ev(G, 'skill', { id: p.id, s: 'backfx', x: ox, z: oz, a: p.a });
+      for (const e of G.enemies) if (e.hp > 0 && foeOf(G, p.id, e) && segDist(ox, oz, p.x + Math.cos(p.a) * 1.8, p.z + Math.sin(p.a) * 1.8, e.x, e.z) < 1.5 + e.r) hurtEnemy(G, e, 40, p, { kb: 3, kbA: p.a }); break; }
+    case 'spearthrow': G.projs.push({ id: G.uid++, k: 'spear', own: p.id, x: p.x + Math.cos(p.a) * 0.8, z: p.z + Math.sin(p.a) * 0.8, vx: Math.cos(p.a) * 30, vz: Math.sin(p.a) * 30, dmg: 42, life: 0.9, hit: [], team: 0, slow: 1.5 }); break;
+    case 'sweep': for (const e of G.enemies) if (e.hp > 0 && foeOf(G, p.id, e) && dist(p, e) < 3.9 + e.r) { hurtEnemy(G, e, 36, p, { kb: 6, kbA: angTo(p, e) }); if (e.hp > 0) { e.slow = 1.5; e.slowM = 0.5; } } ev(G, 'swing', { id: p.id, x: p.x, z: p.z, a: p.a, r: 3.9, role: p.role }); break;
     case 'rootbolt': G.projs.push({ id: G.uid++, k: 'bolt', own: p.id, x: p.x + Math.cos(p.a) * 0.8, z: p.z + Math.sin(p.a) * 0.8, vx: Math.cos(p.a) * 28, vz: Math.sin(p.a) * 28, dmg: 18, life: 0.9, hit: [], team: 0, slow: 2.5 }); break;
     case 'backstep': { const ox = p.x, oz = p.z; p.x -= Math.cos(p.a) * 6; p.z -= Math.sin(p.a) * 6; collide(G, p, 0.6); p.inv = 0.3; p.focus = Math.max(p.focus || 0, 3); ev(G, 'skill', { id: p.id, s: 'backfx', x: ox, z: oz, a: p.a }); break; }
     case 'snipe': p.snipeT = 1.2; ev(G, 'skill', { id: p.id, s: 'snipecharge', x: p.x, z: p.z, a: p.a }); break;
@@ -1506,33 +1514,34 @@ function botPvp(G, p, dt) {
     if (!(ai.offT > 0)) { ai.offT = 1; ai.ox = (G.rng() - 0.5) * 10; ai.oz = (G.rng() - 0.5) * 10; } ai.offT -= dt; const q = {}; moveTo(G, p, q, tgt.x + ai.ox, tgt.z + ai.oz, 1.5); return q;
   }
   const d = dist(p, tgt), ta = angTo(p, tgt), ranged = R.atk.kind !== 'melee', clear = lineClear(p.x, p.z, tgt.x, tgt.z);
-  const near = foes.filter(q => dist(p, q) < 6).length, low = p.hp < p.maxhp * 0.22 && tgt.hp / tgt.maxhp > p.hp / p.maxhp * 1.4, nearest = foes.reduce((m, q) => dist(p, q) < dist(p, m) ? q : m, foes[0]);
+  const near = foes.filter(q => dist(p, q) < 6).length, nearest = foes.reduce((m, q) => dist(p, q) < dist(p, m) ? q : m, foes[0]), low = dist(p, nearest) < 8 && nearest.hp >= p.hp * 4;   // 가까운 적 체력이 내 체력의 네 배 이상일 때만 도망쳐요
   // 앞질러 조준: 상대가 움직이는 방향으로 조금 앞을 겨눠요
   const sp = R.atk.speed || 20, lt = Math.min(0.6, d / sp), px = tgt.x + (tgt.vx || 0) * lt * 0.9, pz = tgt.z + (tgt.vz || 0) * lt * 0.9;
   inp.aim = Math.atan2(pz - p.z, px - p.x); inp.ax = px; inp.az = pz;
   // 1) 바닥 경고 피하기
   const dz = inDanger(G, p);
-  if (dz != null) { const a = safeDir(G, p, dz); inp.mx = Math.cos(a); inp.mz = Math.sin(a); if (p.rollCd <= 0 && G.rng() < 0.5) inp.roll = true; return inp; }
+  ai.dzT = (ai.dzT || 0) - dt; if (dz != null && !(ai.dzT > 0)) { ai.dzOk = G.rng() < 0.6; ai.dzT = 1.0; }   // 바닥 경고를 알아채는 건 열에 여섯 번쯤이에요
+  if (dz != null && ai.dzOk) { const a = safeDir(G, p, dz); inp.mx = Math.cos(a); inp.mz = Math.sin(a); if (p.rollCd <= 0 && G.rng() < 0.3) inp.roll = true; return inp; }
   // 2) 날아오는 화살·구슬 피하기
   for (const pr of G.projs) {
     if (pr.own === p.id || pr.vx == null) continue;
-    if (ai.pj !== pr.id) { ai.pj = pr.id; ai.pjOk = G.rng() < (ranged || d > 4 ? 0.4 : 0.15); }   // 날아오는 걸 알아채는 건 열에 여섯 번쯤이에요
+    if (ai.pj !== pr.id) { ai.pj = pr.id; ai.pjOk = G.rng() < (ranged || d > 4 ? 0.22 : 0.07); }   // 날아오는 걸 알아채는 건 열에 여섯 번쯤이에요
     if (!ai.pjOk || ai.rush > 0) continue;   // 몰아칠 때는 날아오는 것도 무시하고 파고들어요
     const rx = p.x - pr.x, rz = p.z - pr.z, v2 = pr.vx * pr.vx + pr.vz * pr.vz; if (v2 < 1) continue;
     const t = (rx * pr.vx + rz * pr.vz) / v2; if (t < 0 || t > 0.55) continue;
     const cx = rx - pr.vx * t, cz = rz - pr.vz * t, cd = Math.hypot(cx, cz);
     if (cd < 1.5) {
       const a = Math.atan2(pr.vz, pr.vx) + (cx * pr.vz - cz * pr.vx > 0 ? -1 : 1) * Math.PI / 2;
-      inp.mx = Math.cos(a); inp.mz = Math.sin(a); if (p.rollCd <= 0 && t < 0.3 && G.rng() < 0.7) inp.roll = true; break;
+      inp.mx = Math.cos(a); inp.mz = Math.sin(a); if (p.rollCd <= 0 && t < 0.3 && G.rng() < 0.4) inp.roll = true; break;
     }
   }
   if (ai.t <= 0) { ai.t = 0.4 + G.rng() * 0.5; ai.sd = G.rng() < 0.5 ? 1 : -1; ai.hold = G.rng() < 0.15; if (!(ai.rush > 0) && G.rng() < 0.45) ai.rush = 2.5 + G.rng() * 2; }
   const want = ranged ? 6.5 : (R.atk.range + 0.7) * 0.8;
   if (inp.mx == null) {
-    if (low && d < 12) { const a = safeDir(G, p, Math.atan2(p.z - nearest.z, p.x - nearest.x)); inp.mx = Math.cos(a); inp.mz = Math.sin(a); if (d < 3 && p.rollCd <= 0 && G.rng() < 0.05) inp.roll = true; }   // 체력이 낮으면 물러나요 (맞지 않고 4초가 지나면 저절로 차올라요)
+    if (low && d < 8) { const a = safeDir(G, p, Math.atan2(p.z - nearest.z, p.x - nearest.x)); inp.mx = Math.cos(a); inp.mz = Math.sin(a); if (d < 3 && p.rollCd <= 0 && G.rng() < 0.05) inp.roll = true; }   // 체력이 낮으면 물러나요 (맞지 않고 4초가 지나면 저절로 차올라요)
     else if (ai.rush > 0 && d > (ranged ? 4 : 1.6)) moveTo(G, p, inp, tgt.x, tgt.z, ranged ? 3.5 : 1.2);
     else if (d > want + 1.5 || !clear) moveTo(G, p, inp, tgt.x, tgt.z, 0.6);
-    else if (ranged && d < 3.2 && d > 1.5) { const a = safeDir(G, p, ta + Math.PI); inp.mx = Math.cos(a); inp.mz = Math.sin(a); }
+    else if (ranged && d < 2.4 && d > 1.5) { const a = safeDir(G, p, ta + Math.PI); inp.mx = Math.cos(a); inp.mz = Math.sin(a); }
     else if (!ai.hold) { inp.mx = -Math.sin(ta) * ai.sd * 0.8 + Math.cos(ta) * 0.2; inp.mz = Math.cos(ta) * ai.sd * 0.8 + Math.sin(ta) * 0.2; }
     // 멀리서 구르며 파고들기
     if (!ranged && d > 7 && p.rollCd <= 0 && G.rng() < 0.02) inp.roll = true;
@@ -1575,6 +1584,12 @@ function botPvp(G, p, dt) {
       case 'venom': go = d < 4 && r < 0.12; break;
       case 'execute': go = d < 12 && r < 0.12; break;
       case 'rootbolt': go = d < 14 && r < 0.15; break;
+      case 'march': go = d < 12 && r < 0.1; break;
+      case 'lullaby': go = d < 7 && r < 0.15; break;
+      case 'chorus': go = hpf < 0.6 && r < 0.2; break;
+      case 'lunge': go = d > 4 && d < 8 && r < 0.2; break;
+      case 'spearthrow': go = d > 4 && d < 16 && r < 0.12; break;
+      case 'sweep': go = d < 4 && r < 0.15; break;
       case 'backstep': go = d < 3 && r < 0.2; break;
       case 'snipe': go = d > 6 && d < 18 && r < 0.1; break;
       case 'bigbomb': go = d > 3 && d < 12 && r < 0.1; break;
