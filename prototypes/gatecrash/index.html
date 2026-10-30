@@ -5,7 +5,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <title>Gatecrash</title>
-<script>(function(){var B=16;try{fetch('build.json?t='+Date.now(),{cache:'no-store'}).then(function(r){return r.json()}).then(function(d){if(d&&d.build>B&&sessionStorage.getItem('gcReload')!=String(d.build)){sessionStorage.setItem('gcReload',String(d.build));var u=new URL(location.href);u.searchParams.set('b',d.build);location.replace(u.toString());}}).catch(function(){});}catch(e){}})();</script>
+<script>(function(){var B=17;try{fetch('build.json?t='+Date.now(),{cache:'no-store'}).then(function(r){return r.json()}).then(function(d){if(d&&d.build>B&&sessionStorage.getItem('gcReload')!=String(d.build)){sessionStorage.setItem('gcReload',String(d.build));var u=new URL(location.href);u.searchParams.set('b',d.build);location.replace(u.toString());}}).catch(function(){});}catch(e){}})();</script>
 <meta name="description" content="건물과 공항을 달려 먼저 도착하는 옆면 픽셀 레이스 액션">
 <meta name="robots" content="noindex">
 <link rel="icon" href="logo.svg" type="image/svg+xml">
@@ -52,6 +52,7 @@ button{font:inherit;color:inherit;cursor:pointer}
 .slot{background:#14203d;border:2px solid var(--line);border-radius:8px;padding:10px 12px;display:flex;gap:10px;align-items:center}
 .slot i{width:16px;height:16px;border-radius:3px;flex:none}.slot.empty{opacity:.45}
 .row{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin:10px 0}
+.skins{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px}.sk{background:#14203d;border:2px solid var(--line);border-radius:8px;padding:8px;text-align:center}.sk.on{border-color:var(--acc)}.sk canvas{width:96px;height:96px;image-rendering:pixelated;display:block;margin:0 auto 6px}.sk .btn{padding:5px 10px;font-size:13px;margin-top:6px}
 .maps{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px}
 .mapc{background:#14203d;border:2px solid var(--line);border-radius:8px;padding:10px;text-align:left}.mapc.on{border-color:var(--acc)}
 .mapc b{display:block;margin-bottom:4px}.mapc small{color:var(--dim)}
@@ -89,6 +90,7 @@ body.touch #tc{display:block}body.touch #hint{display:none}
     <button class="btn" data-go="host">친구와 대결</button>
     <button class="btn" data-go="join">코드로 입장</button>
     <button class="btn" data-go="solo">봇과 연습</button>
+    <button class="btn" data-go="shop">꾸미기</button>
     <button class="btn" data-go="help">무기·조작</button>
     <button class="btn" data-go="notes">패치노트</button>
     <button class="btn" data-go="site">사이트로 돌아가기</button>
@@ -113,6 +115,9 @@ body.touch #tc{display:block}body.touch #hint{display:none}
   <div class="row"><input id="joinCode" maxlength="5" autocomplete="off" spellcheck="false" placeholder="방 코드" style="width:150px;padding:10px 12px;font:700 22px Galmuri,monospace;letter-spacing:.2em;text-transform:uppercase;text-align:center;background:#0c1428;color:#fff;border:2px solid var(--line);border-radius:8px"><button class="btn go" id="joinBtn">입장</button></div>
   <div class="note" id="joinMsg"></div></div></section>
 
+<section class="scr" id="sShop"><button class="btn back" data-back>← 뒤로</button><div class="panel" style="top:9vh"><h2>꾸미기</h2><div class="note">스킨은 모양만 바뀌고 능력은 같아요. 경기를 마치면 gC를 받아요. 허브 코인은 허브에서 gC로 바꿀 수 있어요.</div>
+  <div class="row"><b id="gcNow" style="color:var(--acc);font-size:20px"></b></div><div class="skins" id="skinList"></div></div></section>
+
 <section class="scr" id="sMap"><button class="btn back" data-back>← 뒤로</button><div class="panel" style="top:9vh"><h2>맵 고르기</h2><div class="maps" id="mapPick"></div></div></section>
 
 <section class="scr" id="sHelp"><button class="btn back" data-back>← 뒤로</button><div class="panel" style="top:9vh">
@@ -131,12 +136,12 @@ body.touch #tc{display:block}body.touch #hint{display:none}
   <div id="res"><div class="box"><h2 id="resT"></h2><ol id="resL"></ol><div class="row"><button class="btn" id="resBack">나가기</button></div></div></div></div>
 <div id="modal"><div class="box"><div id="modalT"></div><div class="row" style="justify-content:center"><button class="btn" id="modalOk">확인</button></div></div></div>
 
-<script src="js/data.js?v=16"></script>
-<script src="js/game.js?v=16"></script>
-<script src="js/view.js?v=16"></script>
-<script src="js/sfx.js?v=16"></script>
-<script src="js/scene.js?v=16"></script>
-<script src="js/main.js?v=16"></script>
-<script src="js/intro.js?v=16"></script>
+<script src="js/data.js?v=17"></script>
+<script src="js/game.js?v=17"></script>
+<script src="js/view.js?v=17"></script>
+<script src="js/sfx.js?v=17"></script>
+<script src="js/scene.js?v=17"></script>
+<script src="js/main.js?v=17"></script>
+<script src="js/intro.js?v=17"></script>
 </body>
 </html>
