@@ -80,6 +80,7 @@ function teamPos(G, p) {
 }
 function pvpSpawn(G) {
   G.players.forEach(p => {
+    p.rcCd = 0; p.rcT = 0;
     teamPos(G, p);
     const e = { id: G.uid++, k: 'dummy', pid: p.id, x: p.x, z: p.z, a: 0, hp: 1, maxhp: 1, dm: 1, st: 'idle', stT: 0, cd: 0, tgt: null, root: 0, burn: 0, burnT: 0, mark: 0, stun: 0, hitT: 0, vx: 0, vz: 0, wind: 0, r: 0.7, slow: 0, slowM: 1 };
     G.enemies.push(e); p.px = e;
@@ -690,6 +691,21 @@ function resetEnemy(e) {
 
 // 자기 표적은 자기 공격에 맞지 않게, 내 차례 동안만 꺼 둬요
 function stepPlayer(G, p, inp, dt) {
+  if (G.pvp) {   // 귀환: 지도에서 깃발을 고르면 3초 멈춘 뒤 그 깃발로 가요 (취소해도 쿨타임 25초)
+    if (p.rcCd > 0) p.rcCd -= dt;
+    if (!alive(p) || G.phase !== 'play') p.rcT = 0;
+    else if (inp && inp.rcl && !(p.rcCd > 0) && !(p.rcT > 0)) {
+      p.rcCd = D.RECALL_CD; const f = inp.rcl > 0 ? G.fl[inp.rcl - 1] : null;
+      if (f && f.own === p.team) { p.rcT = D.RECALL_T; p.rcF = inp.rcl - 1; ev(G, 'recall', { id: p.id, x: p.x, z: p.z }); }
+    }
+    if (p.rcT > 0) {
+      inp = {}; p.rcT -= dt;
+      if (p.rcT <= 0) {
+        p.rcT = 0; const f = G.fl[p.rcF];
+        if (f && f.own === p.team) { const a = p.tIdx / D.TEAM_N * TAU; p.x = f.x + Math.cos(a) * 3.2; p.z = f.z + Math.sin(a) * 3.2; mapCollide(p, 0.6); p.vx = p.vz = 0; ev(G, 'recall', { id: p.id, x: p.x, z: p.z, end: 1 }); }
+      }
+    }
+  }
   if (p.stun > 0) { p.stun -= dt; inp = {}; p.snipeT = 0; }   // 기절하면 잠깐 아무것도 못 해요
   if (p.px) p.px.hp = 0;
   const wsx = p.x, wsz = p.z;
@@ -1750,7 +1766,7 @@ export function snapshot(G) {
     mn: G.enemies.filter(e => e.mon && e.hp > 0).map(m => [r1(m.x), r1(m.z), Math.round(m.hp / m.maxhp * 100)]), mk: G.mk || [0, 0],
     pv: G.pvp ? 1 : 0, win: G.winner || 0, wtm: G.winTeam != null ? G.winTeam : -1, tf: G.fl ? G.fl.map(f => [f.own, f.cap, r1(f.prog)]) : 0, rg: G.range ? 1 : 0, mc: G.cb ? [Math.ceil(G.cb[0]), Math.ceil(G.cb[1])] : 0, t: r1(G.t), ph: G.phase, pt: r1(G.phaseT), c: G.ch, dp: G.deep, wk: G.weekly, wt: r1(G.winT || 0), msg: G.msg, won: G.won,
     sk: G.players.filter(p => !p.bot && G.skip[p.id]).length, hu: G.players.filter(p => !p.bot).length,
-    pl: G.players.map(p => ({ id: p.id, tm: p.team, fz: p.inFl ? 1 : 0, dth: p.deaths | 0, role: p.role, rn: p.px && p.px.runeT > G.t ? r1(p.px.runeT - G.t) : 0, col: p.col, cos: p.cos, name: p.name, bot: p.bot, x: r1(p.x), z: r1(p.z), a: r1(p.a), hp: Math.round(p.hp), mx: p.maxhp, dn: p.down ? 1 : 0, dd: p.dead ? 1 : 0, bl: r1(p.bleed), rs: r1(p.respT), rv: r1(p.revT), ro: p.roll > 0 ? 1 : 0, bk: p.block > 0 ? 1 : 0, sh: Math.round(p.shield), tn: p.taunt > 0 ? 1 : 0, ra: p.rally > 0 ? 1 : 0, cb: p.capB > 0 ? r1(p.capB) : 0, an: p.animT > 0 ? p.anim : '', aN: p.animN || 0, ak: p.anim, mv: p.moving ? 1 : 0, cd: [r1(p.cd.s0), r1(p.cd.s1), r1(p.cd.s2)], rc: r1(p.rollCd), b: p.bl, cb: p.comboT > 0 ? p.combo : 0, ac: p.animC || 0, fc: p.focus > 0 ? 1 : 0, tc: p.torch || 0, cg: p.chg > 0 ? r1(p.chg) : 0, cl: p.chill > 0 ? 1 : 0, em: p.emb ? 1 : 0, kl: p.kills | 0, pc: p.place | 0, sv: r1(p.survT || 0), bn: p.burn > 0 ? 1 : 0, sw: p.slow > 0 ? 1 : 0, stl: p.stl > 0 ? 1 : 0, sp: p.snipeT > 0 ? 1 : 0, bs: p.bast > 0 ? 1 : 0, vw: (p.vow && p.vow.t > 0) || p.vwSelf > 0 ? 1 : 0 })),
+    pl: G.players.map(p => ({ id: p.id, tm: p.team, fz: p.inFl ? 1 : 0, dth: p.deaths | 0, role: p.role, rn: p.px && p.px.runeT > G.t ? r1(p.px.runeT - G.t) : 0, col: p.col, cos: p.cos, name: p.name, bot: p.bot, x: r1(p.x), z: r1(p.z), a: r1(p.a), hp: Math.round(p.hp), mx: p.maxhp, dn: p.down ? 1 : 0, dd: p.dead ? 1 : 0, bl: r1(p.bleed), rs: r1(p.respT), rv: r1(p.revT), ro: p.roll > 0 ? 1 : 0, bk: p.block > 0 ? 1 : 0, sh: Math.round(p.shield), tn: p.taunt > 0 ? 1 : 0, ra: p.rally > 0 ? 1 : 0, cb: p.capB > 0 ? r1(p.capB) : 0, an: p.animT > 0 ? p.anim : '', aN: p.animN || 0, ak: p.anim, mv: p.moving ? 1 : 0, cd: [r1(p.cd.s0), r1(p.cd.s1), r1(p.cd.s2)], rc: r1(p.rollCd), rct: p.rcT > 0 ? r1(p.rcT) : 0, rcc: p.rcCd > 0 ? r1(p.rcCd) : 0, b: p.bl, cb: p.comboT > 0 ? p.combo : 0, ac: p.animC || 0, fc: p.focus > 0 ? 1 : 0, tc: p.torch || 0, cg: p.chg > 0 ? r1(p.chg) : 0, cl: p.chill > 0 ? 1 : 0, em: p.emb ? 1 : 0, kl: p.kills | 0, pc: p.place | 0, sv: r1(p.survT || 0), bn: p.burn > 0 ? 1 : 0, sw: p.slow > 0 ? 1 : 0, stl: p.stl > 0 ? 1 : 0, sp: p.snipeT > 0 ? 1 : 0, bs: p.bast > 0 ? 1 : 0, vw: (p.vow && p.vow.t > 0) || p.vwSelf > 0 ? 1 : 0 })),
     en: G.enemies.filter(e => e.k !== 'dummy' && near(e)).map(e => ({ id: e.id, k: e.k, x: r1(e.x), z: r1(e.z), a: r1(e.a), hp: Math.round(e.hp), mx: e.maxhp, st: e.st, mk: e.mark > 0 ? 1 : 0, sn: e.stun > 0 ? 1 : 0, sl: e.slow > 0 ? 1 : 0, bu: e.burn > 0 ? 1 : 0, ph: e.phase || 0, mb: e.mb || 0, tm: e.tm != null ? e.tm : -1, mv: e.moving ? 1 : 0, ak: e.atk ? e.atk.k + (e.atk.go ? '!' : '') : '', ht: e.hitT > 0 ? 1 : 0 })),
     pr: G.projs.map(p => ({ id: p.id, k: p.k, x: r1(p.x), z: r1(p.z), y: r1(p.y || 0), bg: p.big ? 1 : 0, a: r1(Math.atan2(p.vz || (p.tz - p.sz) || 0, p.vx || (p.tx - p.sx) || 1)) })),
     zn: G.zones.map(z => ({ tm: z.k === 'wall' || z.k === 'rune' ? tOf(G, z.own) : -1, id: z.id, k: z.k, x: r1(z.x), z: r1(z.z), r: z.r, a: z.a, len: z.len, w: z.w, arc: z.arc, t: r1(z.t), T: z.T, dl: z.delay > 0 ? 1 : 0 })),
