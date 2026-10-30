@@ -8,7 +8,7 @@ const a=st.indexOf('const COSMETICS={'), e=st.indexOf('\n};',a);
 const shop=(st.slice(a,e).match(/cat:'skin'/g)||[]).length;
 const season=(st.match(/COSMETICS\.skin_\w+=\{cat:'skin'/g)||[]).length;
 const stickseum=shop+arr(st,'NEW_SKINS').length+season+arr(st,'TIER_SKINS').length*2;
-const bf=fs.readFileSync(path.join(root,'beaconfall/BEACONFALL-v0.4.html'),'utf8');
+const bf=fs.readFileSync(path.join(root,'beaconfall/BEACONFALL-v0.5.html'),'utf8');
 const beaconfall=arr(bf,'SKINS').length;
 const out={stickseum,beaconfall,crownenvoy:0,isleport:0,total:stickseum+beaconfall};
 fs.writeFileSync(path.join(root,'skins.json'),JSON.stringify(out)+'\n'); console.log(out,{shop,season});
