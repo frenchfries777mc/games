@@ -200,6 +200,7 @@ function paintPend(){ var v=$('.cm-p[data-p=board] .cm-pv'); if(!v) return; v.in
   pend.forEach(function(x,i){ var d=document.createElement('div'); d.className='cm-pi'; d.innerHTML='<img alt=""><button type="button" title="빼기">×</button>'; d.querySelector('img').src=x.u;
     d.querySelector('button').onclick=function(){ URL.revokeObjectURL(x.u); pend.splice(i,1); paintPend(); }; v.appendChild(d); }); }
 var PCOLS='id,user_id,game,title,body,created_at';
+var bSeen=0; try{ bSeen=+localStorage.getItem('ff.board.seen')||0; }catch(e){}
 /* search word for a PostgREST or=(...) filter: characters that would break the filter are dropped */
 function qWord(v){ return String(v||'').replace(/[,()*%\\"'.:]/g,' ').replace(/\s+/g,' ').trim().slice(0,40); }
 function mark(t){ var w=qWord(bQuery); if(!w) return esc(t); var re=new RegExp('('+w.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+')','gi'); return String(t).split(re).map(function(x,k){ return k%2?'<mark>'+esc(x)+'</mark>':esc(x); }).join(''); }
@@ -224,11 +225,12 @@ async function listPosts(){
   await loadNames(rows.map(function(x){ return x.user_id; }));
   L.innerHTML=rows.length?'':'<div class="cm-e">'+(bQuery?'검색 결과가 없어요.':(bFilter==='hot'?'아직 좋아요를 받은 글이 없어요.':'아직 글이 없어요. 첫 글을 써 보세요!'))+'</div>';
   rows.forEach(function(x){ var d=document.createElement('div'); d.className='cm-post'+(bOpen===x.id?' open':''); d.dataset.id=x.id; d.dataset.g=x.game||'';
-    d.innerHTML='<div class="cm-ph">'+gameTag(x.game)+'<b class="cm-t" data-notr>'+mark(x.title)+'</b>'+((x.images||[]).length?'<span class="cm-pic">📷 '+F('사진 {0}장',x.images.length)+'</span>':'')+(cnt[x.id]?'<span class="cm-c">💬 '+cnt[x.id]+'</span>':'')+(likes[x.id]?'<span class="cm-c cm-lc">👍 '+likes[x.id]+'</span>':'')+'</div>'+
-      '<div class="cm-meta">'+who(x.user_id)+' · <span>'+esc(ago(x.created_at))+'</span></div>'+((x.body||'').trim()?'<div class="cm-ex">'+esc(String(x.body).replace(/\s+/g,' ').trim().slice(0,90))+'</div>':'')+'<div class="cm-body"></div>';
+    d.innerHTML='<div class="cm-ph">'+gameTag(x.game)+(bSeen&&Date.parse(x.created_at)>bSeen&&!(me&&me.id===x.user_id)?'<span class="cm-new">NEW</span>':'')+'<b class="cm-t" data-notr>'+mark(x.title)+'</b>'+((x.images||[]).length?'<span class="cm-pic">📷 '+F('사진 {0}장',x.images.length)+'</span>':'')+(cnt[x.id]?'<span class="cm-c">💬 '+cnt[x.id]+'</span>':'')+(likes[x.id]?'<span class="cm-c cm-lc">👍 '+likes[x.id]+'</span>':'')+'</div>'+
+      '<div class="cm-meta">'+who(x.user_id)+' · <span>'+esc(ago(x.created_at))+'</span></div>'+(((x.images||[]).filter(okImg)[0])?'<img class="cm-th" alt="" loading="lazy" src="'+esc((x.images||[]).filter(okImg)[0])+'">':'')+((x.body||'').trim()?'<div class="cm-ex">'+esc(String(x.body).replace(/\s+/g,' ').trim().slice(0,90))+'</div>':'')+'<div class="cm-body"></div>';
     d.querySelector('.cm-ph').onclick=function(){ bOpen=bOpen===x.id?null:x.id; d.classList.toggle('open',bOpen===x.id); if(bOpen===x.id) openPost(d,x); };
     L.appendChild(d); if(bOpen===x.id){ openPost(d,x); if(bScroll){ bScroll=false; setTimeout(function(){ d.scrollIntoView({behavior:'smooth',block:'center'}); },60); } } });
   p.querySelector('.cm-more').style.display=more?'':'none';
+  try{ localStorage.setItem('ff.board.seen',String(Date.now())); }catch(e){}
 }
 /* ---- 좋아요 (supabase-ff-social.sql) ---- */
 async function loadLikes(ids){
