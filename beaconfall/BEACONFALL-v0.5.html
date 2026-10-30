@@ -393,7 +393,7 @@ window.bfIntro=function(){if(run)return;run=1;t0=Date.now();el.classList.add('ru
     <button class="btn" data-act="skins"><span class="arrow">▶</span>스킨 상점<span class="en">SKIN SHOP</span></button>
     <button class="btn" data-act="stats"><span class="arrow">▶</span>통계<span class="en">STATS</span></button>
     <button class="btn" data-act="settings"><span class="arrow">▶</span>설정<span class="en">SETTINGS</span></button>
-    <p class="foot">v0.5<br>build 136</p>
+    <p class="foot">v0.5<br>build 137</p>
   </nav>
 </div>
 
@@ -4152,7 +4152,7 @@ function saveWorld(force){
     const rem=collectRemoved(),brm=collectBrem();
     if(mode==='play')world.savedPlayer=(P.air&&P.airX!==undefined)?{x:Math.round(P.airX),y:Math.round(P.airY),f:P.f}:{x:Math.round(P.sailing&&P.landX!==undefined?P.landX:P.x),y:Math.round(P.sailing&&P.landY!==undefined?P.landY:P.y),f:P.f};
     localStorage.setItem(SAVE_KEY(world.id),JSON.stringify({
-      v:1,clock:Math.round(world.clock),removed:rem,brem:brm,ores:world.conv,trader:world.trader,lastTraderDay:world.lastTraderDay,expl:packBits(world.expl),treasureInit:!!world.treasureInit,lmChestInit:world.lmChestInit|0,pirInit:world.pirInit|0,ruinInit:world.ruinInit|0,trClean:world.trClean|0,dunFl:world.dunFl||{},dunBD:world.dunBD|0,fortBD:world.fortBD|0,skyDay:world.skyDay||{},dby:world.discBy||{},gsDay:world.gsDay|0,trains:[...(world.trains||[]),...((typeof P!=='undefined'&&P&&P.train)?[P.train]:[])].slice(0,40).map(T=>({x:T.gx,y:T.gy,dx:T.dx,dy:T.dy,p:Math.round(T.p*100)/100,run:T.run?1:0,it:(T.it||[]).map(q=>q?Object.assign({},q):null)})),herd:animals.filter(a=>a.tame).map(a=>[ANIM_IDX.indexOf(a.type),Math.round(a.hx),Math.round(a.hy),a.baby?1:0,Math.round(a.gt||0)]),disc:world.disc.map(b=>b?'1':'0').join(''),seen:world.seen.map(b=>b?'1':'0').join(''),escaped:!!world.escaped,pilot:world.pilot?1:0,vship:world.voidShip?world.voidShip.x+','+world.voidShip.y:'',voidWon:world.voidWon|0,voidBD:world.voidBD|0,intro:world.introSeen?1:0,bossDay:world.bossDay.join(','),
+      v:1,stc:world.stc||{},clock:Math.round(world.clock),removed:rem,brem:brm,ores:world.conv,trader:world.trader,lastTraderDay:world.lastTraderDay,expl:packBits(world.expl),treasureInit:!!world.treasureInit,lmChestInit:world.lmChestInit|0,pirInit:world.pirInit|0,ruinInit:world.ruinInit|0,trClean:world.trClean|0,dunFl:world.dunFl||{},dunBD:world.dunBD|0,fortBD:world.fortBD|0,skyDay:world.skyDay||{},dby:world.discBy||{},gsDay:world.gsDay|0,trains:[...(world.trains||[]),...((typeof P!=='undefined'&&P&&P.train)?[P.train]:[])].slice(0,40).map(T=>({x:T.gx,y:T.gy,dx:T.dx,dy:T.dy,p:Math.round(T.p*100)/100,run:T.run?1:0,it:(T.it||[]).map(q=>q?Object.assign({},q):null)})),herd:animals.filter(a=>a.tame).map(a=>[ANIM_IDX.indexOf(a.type),Math.round(a.hx),Math.round(a.hy),a.baby?1:0,Math.round(a.gt||0)]),disc:world.disc.map(b=>b?'1':'0').join(''),seen:world.seen.map(b=>b?'1':'0').join(''),escaped:!!world.escaped,pilot:world.pilot?1:0,vship:world.voidShip?world.voidShip.x+','+world.voidShip.y:'',voidWon:world.voidWon|0,voidBD:world.voidBD|0,intro:world.introSeen?1:0,bossDay:world.bossDay.join(','),
       beltv:2,
       structs:world.structs.filter(b=>!b.lm).map(b=>Object.assign({id:b.id,gx:b.gx,gy:b.gy},exOf(b))),
       drops:drops.map(d=>({x:Math.round(d.tx),y:Math.round(d.ty),v:d.v,item:d.item||'stick',n:d.n||1,dur:d.dur})),
@@ -4175,6 +4175,7 @@ function applySave(){
   if(!isGuest()&&Array.isArray(d.herd)){animals=animals.filter(a=>!a.tame);for(const q of d.herd){const ty=ANIM_IDX[q[0]];if(!ty||!Number.isFinite(+q[1]))continue;const T=ANIM_TYPES[ty],x=+q[1],y=+q[2];animals.push({id:nextAid++,type:ty,x,y,tx:x,ty:y,f:1,hp:T.hp,hurt:0,wt:0,wa:0,ws:0,flee:0,fx:0,fy:0,stun:0,kx:0,ky:0,lay:0,fed:0,mt:25,tame:1,baby:q[3]?1:0,gt:q[4]||0,hx:x,hy:y,love:0,bc:0});}}
   if(typeof d.disc==='string')for(let i=0;i<world.disc.length;i++)if(d.disc[i]==='1')world.disc[i]=true;
   if(typeof d.seen==='string')for(let i=0;i<world.seen.length;i++)if(d.seen[i]==='1')world.seen[i]=true;
+  world.stc=(d.stc&&typeof d.stc==='object')?{tree:Math.max(0,+d.stc.tree||0),kill:Math.max(0,+d.stc.kill||0)}:{};
   world.escaped=!!d.escaped;world.pilot=!!d.pilot;world.voidShip=null;if(typeof d.vship==='string'&&d.vship){const vs=d.vship.split(',').map(Number);if(vs.length===2&&vs.every(Number.isFinite))world.voidShip={x:vs[0],y:vs[1]};}world.voidWon=d.voidWon|0;world.voidBD=d.voidBD|0;world.introSeen=!!d.intro;
   if(typeof d.bossDay==='string')d.bossDay.split(',').forEach((v,i)=>{if(i<world.bossDay.length)world.bossDay[i]=+v||0;});
   if(d.trader&&ITEMS[d.trader.item]&&Number.isFinite(d.trader.sx)&&d.trader.day===Math.floor((6+world.clock/DAY_SEC*24)/24)+1)world.trader=d.trader;
@@ -4963,7 +4964,7 @@ function canPlaceCell(gx,gy,kind,skipCreatures){
   const x0=gx*GRID,y0=gy*GRID;
   ensureObjs(x0,y0);
   if(bioRaw(x0+8,y0+8)&128)return false;
-  for(const [dx,dy] of [[4,4],[11,4],[4,11],[11,11],[8,8]]){const xx=x0+dx,yy=y0+dy;if(hAt(xx,yy)<SEA+0.01||rvAt(xx,yy)>0)return false;}
+  for(const [dx,dy] of (kind==='rail'?[[8,8]]:[[4,4],[11,4],[4,11],[11,11],[8,8]])){const xx=x0+dx,yy=y0+dy;if(hAt(xx,yy)<SEA+0.01||rvAt(xx,yy)>0)return false;}   // 선로는 칸 가운데만 땅이면 돼요
   if(kind==='port'){let w=false;for(const [dx,dy] of [[-40,0],[40,0],[0,-40],[0,40],[-28,-28],[28,28],[-28,28],[28,-28],[-56,0],[56,0],[0,56],[0,-56]]){const xx=x0+8+dx,yy=y0+8+dy;if(hAt(xx,yy)<SEA||rvAt(xx,yy)>0){w=true;break;}}if(!w)return false;}
   if(kind==='fishtrap'){let w=false;for(const [dx,dy] of [[-20,0],[20,0],[0,-20],[0,20],[-34,0],[34,0],[0,34],[0,-34],[-24,-24],[24,24],[-24,24],[24,-24]]){const xx=x0+8+dx,yy=y0+8+dy;if(hAt(xx,yy)<SEA||rvAt(xx,yy)>0){w=true;break;}}if(!w)return false;}
   if(kind==='farm'){if(world.sgrid.has(gy*GW+gx))return false;const c=world.camp;if(c.x+4>x0&&c.x-4<x0+GRID&&c.y+3>y0&&c.y-3<y0+GRID)return false;}
@@ -4971,18 +4972,18 @@ function canPlaceCell(gx,gy,kind,skipCreatures){
   if(kind==='crop'){const fm=world.fgrid.get(gy*GW+gx);if(!fm||fm.id!=='farm')return false;}
   if(kind==='sapling'||kind==='farm')for(const [dx,dy] of [[4,4],[11,4],[4,11],[11,11],[8,8]]){const hv=hAt(x0+dx,y0+dy);if(hv<SEA+0.02||hv>0.95)return false;}
   if(def.layer==='o'){const c=world.camp;if(c.x+4>x0&&c.x-4<x0+GRID&&c.y+3>y0&&c.y-3<y0+GRID)return false;}
-  const T=world.trees,Bd=world.boulders;
+  const T=world.trees,Bd=world.boulders,rl=kind==='rail',tw=rl?0.8:2,th=rl?0.6:1.4,rs=rl?0.4:1;   // 선로는 나무·바위와 살짝 겹쳐도 놓여요
   for(let cy=gy-1;cy<=gy+1;cy++)for(let cx=gx-1;cx<=gx+1;cx++){
     if(cx<0||cy<0||cx>=tgw)continue;
     const cell=tgrid.get(cy*tgw+cx);
     if(cell)for(const k of cell){
       if(world.removed[k])continue;
-      if(T.x[k]+2>x0&&T.x[k]-2<x0+GRID&&T.y[k]+1.4>y0&&T.y[k]-1.4<y0+GRID)return false;
+      if(T.x[k]+tw>x0&&T.x[k]-tw<x0+GRID&&T.y[k]+th>y0&&T.y[k]-th<y0+GRID)return false;
     }
     const bc=bgrid.get(cy*tgw+cx);
     if(bc)for(const k of bc){
       if(world.brem[k])continue;
-      const big=Bd.t[k]>=1,hw=big?3.6:2.6,hh=big?1.9:1.6;
+      const big=Bd.t[k]>=1,hw=(big?3.6:2.6)*rs,hh=(big?1.9:1.6)*rs;
       if(Bd.x[k]+hw>x0&&Bd.x[k]-hw<x0+GRID&&Bd.y[k]+hh>y0&&Bd.y[k]-hh<y0+GRID)return false;
     }
   }
@@ -9527,12 +9528,23 @@ function openAnimalDex(){
 }
 const stObj=()=>(settings.st=settings.st&&typeof settings.st==='object'?settings.st:{});
 function stAdd(k,n){const o=stObj();o[k]=(+o[k]||0)+(n===undefined?1:n);
-  if((k==='tree'||k==='kill')&&typeof world!=='undefined'&&world){const w=(settings.wst=settings.wst&&typeof settings.wst==='object'?settings.wst:{}),wk=invKey();if(wk){const c=w[wk]=w[wk]||{};c[k]=(+c[k]||0)+(n===undefined?1:n);}}}   // 엔딩 대사용: 월드별 집계
+  if((k==='tree'||k==='kill')&&typeof world!=='undefined'&&world){const w=(settings.wst=settings.wst&&typeof settings.wst==='object'?settings.wst:{}),wk=invKey();if(wk){const c=w[wk]=w[wk]||{};c[k]=(+c[k]||0)+(n===undefined?1:n);}const sc=world.stc=world.stc||{};sc[k]=(+sc[k]||0)+(n===undefined?1:n);}}   // 엔딩 대사용: 월드별 집계
+let endAutoKey='';
+function shipAuto(){   // 착륙한 우주선에 가까이 가면 엔딩이 저절로 나와요
+  const e=world.esc;
+  if(!e||e.ph!=='landed'){endAutoKey='';return;}
+  const key=e.sx+','+e.sy+','+(e.v?1:0);
+  if(endAutoKey===key||(world.escaped&&!e.v))return;
+  if(P.dead||P.down||P.sleeping||P.air||crafting||!$('#modal').hidden||$('#ending').classList.contains('on'))return;
+  if(Math.hypot(P.x-e.sx,P.y-(e.sy-8))>42)return;
+  endAutoKey=key;boardShip();
+}
 function stTick(dt){
   if(mode!=='play'||!world||typeof P==='undefined'||!P){stLX=null;return;}
   const o=stObj();
   adT-=dt;if(adT<=0){adT=1;for(const a of animals)if(ANIM_NAME[a.type]&&!adexHas(a.type)&&Math.hypot(a.x-P.x,a.y-P.y)<70)animalSeen(a.type);}
   if(!P.sleeping)o.play=(+o.play||0)+dt;
+  shipAuto();
   if(!P.sleeping&&!sessDone){sessPlay+=dt;if(sessPlay>=300){sessDone=true;try{if(window.FFProfile&&FFProfile.matchDone&&window.bfSb&&window.bfUid)FFProfile.matchDone(window.bfSb,'beaconfall');}catch(e){}}}   // 허브 퀘스트 '한 판 하기': 이 접속에서 5분 이상 플레이하면 한 번
   if(stLX!==null&&!P.dead){
     const d=Math.hypot(P.x-stLX,P.y-stLY);
@@ -10021,6 +10033,7 @@ const CALL_T=60,LAND_T=6,STAY_T=180,LEAVE_T=6;
 function escSend(){if(isHost())bcastAll({t:'esc',e:world.esc});}
 function callShip(b){
   if(isGuest()){sendHost({t:'escc',gx:b.gx,gy:b.gy});return;}
+  if(world.escaped){if(!isGuest())toast('이미 우주선 엔딩을 봐서 신호기를 더 켤 수 없어요');return;}
   if(world.esc.ph!=='idle')return;
   world.esc={ph:'calling',t:0,gx:b.gx,gy:b.gy,sx:Math.round(b.x+66),sy:Math.round(b.y+2)};
   chimeAt(b.x,b.y);escSend();
@@ -10074,7 +10087,7 @@ const ES_PAL={dusk:['#1a1440','#3a2358','#6a3466','#a8486a','#e0704e','#f4a24a']
 const ES_ALIEN=['....aaaa....','...agggga...','..aggggggs..','..gkkggkkg..','..gkkggkkg..','..gggggggg..','...gggmgg...','..hhhhhhhh..','.hhbbhhbbhh.','.hhhhhhhhhh.','.hh.hhhh.hh.','.gg.hhhh.gg.','....hh.hh...','...ddd.ddd..'];
 const ES_ALCOL={a:'#7ad08a',g:'#4aa86a',s:'#2a6a44',k:'#0a0c16',m:'#2a6a44',h:'#46557d',b:'#9ad0ff',d:'#2a3248'};
 function esTxt(){
-  const st=(settings.wst&&settings.wst[invKey()])||{},tree=Math.max(1,(+st.tree||0)).toLocaleString(),kill=Math.max(1,(+st.kill||0)).toLocaleString();
+  const st=(settings.wst&&settings.wst[invKey()])||{},sc=world.stc||{},tree=Math.max(1,+st.tree||0,+sc.tree||0).toLocaleString(),kill=Math.max(1,+st.kill||0,+sc.kill||0).toLocaleString();   // 월드 저장에도 같이 들어 있어서 나갔다 와도 그대로예요
   const L=(w,t)=>({w,t:i18nTr(t)});
   return {
     main:[L('e','이봐, 구조당한 기분이 어때?'),L('p','고마워, 하지만 무언가 아쉬운 느낌이 드는군.'),L('e','그렇겠지, 너는 너만의 작은 왕국을 여기에 세웠으니까.'),
