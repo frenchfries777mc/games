@@ -54,7 +54,8 @@ view.lobbyFlags = SAVE.flags; view.cos = SAVE.cos.on; view.setLow(!!SAVE.set.opt
 // 처음 인트로: 글자 두 장면(Made by / With). 건너뛸 수 없어요 (끝까지 재생). 뒤에는 로비 장면이 깔려 있어요
 let INTRO = !(qs.get('test') && /^(localhost|127\.0\.0\.1)$/.test(location.hostname));
 window.__introSongDone = INTRO ? 0 : 1;
-view.buildLobby(INTRO);   // 인트로 동안은 세 쌍이 서로 싸우는 장면
+view.buildLobby(false);   // 인트로 배경은 진짜 봇 경기를 찍은 영상 (intro-battle). 영상이 안 나오면 직접 그린 싸움 장면으로 대신해요
+if (INTRO) { const tv = $('tcVid'); if (tv) { const bad = () => { if (INTRO) view.buildLobby(true); tv.remove(); }; tv.addEventListener('error', bad, true); tv.play && tv.play().catch(() => { }); } }
 if (INTRO) MUS.sting(() => setTimeout(() => { view.buildLobby(false); INTRO = false; window.__introSongDone = 1; document.documentElement.classList.add('tcReady'); $('tcIntro').classList.add('out'); setTimeout(() => $('tcIntro').remove(), 900); }, 6200), h => {
   const el = $('tcIntro'); el.classList.toggle('hold', h);
   if (h) { const t = document.createElement('div'); t.id = 'tcHold'; t.textContent = T('화면을 누르면 시작해요'); el.appendChild(t); } else { const t = $('tcHold'); if (t) t.remove(); }
@@ -471,7 +472,7 @@ function hostMsg(c, d) {
   const uid = c._uid; if (!uid) return;
   if (d.t === 'rdy' && !S.G && S.ph === 'pick') { S.rdy[uid] = !S.rdy[uid]; hostLobby(); if (S.scr === 'sRoom') paintRoom(); }
   else if (d.t === 'pick' && !S.G && S.ph === 'pick') { const sl = S.slots.find(s => s.uid === uid); if (sl) { if (ROLES[d.role]) sl.role = d.role; const col = +d.col | 0; if (COLORS[col] && !S.slots.some(s => s !== sl && s.col === col)) sl.col = col; hostLobby(); if (S.scr === 'sRoom') paintRoom(); } }
-  else if (d.t === 'i' && S.G) { const pid = c._pid; if (!pid) return; const r = S.rin[pid] || (S.rin[pid] = {}); const once = { q: r.q || d.q, e: r.e || d.e, r: r.r || d.r, roll: r.roll || d.roll, skip: r.skip || d.skip }; Object.assign(r, d, once); }
+  else if (d.t === 'i' && S.G) { const pid = c._pid; if (!pid) return; const r = S.rin[pid] || (S.rin[pid] = {}); const once = { q: r.q || d.q, e: r.e || d.e, r: r.r || d.r, roll: r.roll || d.roll, skip: r.skip || d.skip, atkR: r.atkR || d.atkR }; Object.assign(r, d, once); }
   else if (d.t === 'b' && S.G) { if (c._pid) chooseBless(S.G, c._pid, d.id); }
 }
 function dropConn(c) {
@@ -562,21 +563,23 @@ function awardHonor() {
 /* ---------- 조작 ---------- */
 // 한글 입력 상태여도 같은 자리의 글쇠로 읽어요 (e.code 기준)
 function keyOf(e) { const c = e.code || ''; if (/^Key[A-Z]$/.test(c)) return c[3].toLowerCase(); if (/^Digit[0-9]$/.test(c)) return c[5]; if (c === 'Space') return ' '; return e.key.toLowerCase(); }
-const K = {}; let mouse = { x: innerWidth / 2, y: innerHeight / 2, down: false }; const once = { q: 0, e: 0, r: 0, roll: 0, skip: 0 };
+const K = {}; let mouse = { x: innerWidth / 2, y: innerHeight / 2, down: false }; const once = { q: 0, e: 0, r: 0, roll: 0, skip: 0, atkR: 0 };
 addEventListener('keydown', e => {
   if (e.target && e.target.tagName === 'INPUT') return;
   const k = keyOf(e); K[k] = true; SFX.unlock();
   if (!inGame()) return;
   if (S.scr === 'sIntro') { if (k === ' ' || k === 'enter' || k === 'escape') { once.skip = 1; e.preventDefault(); } return; }
-  if (k === 'q' || k === 'ㅂ') once.q = 1; if (k === 'e' || k === 'ㄷ') once.e = 1; if (k === 'r' || k === 'ㄱ') once.r = 1; if (k === ' ') { once.roll = 1; e.preventDefault(); }
+  const sk = k === 'q' || k === 'ㅂ' ? 'q' : k === 'e' || k === 'ㄷ' ? 'e' : k === 'r' || k === 'ㄱ' ? 'r' : '';
+  if (sk) { if (aimedSkill(sk)) { if (!e.repeat && !S.aimK) S.aimK = sk; } else once[sk] = 1; }
+  if (k === ' ') { once.roll = 1; e.preventDefault(); }
   if (k === '1' || k === '2' || k === '3') pickBlessIdx(+k - 1);
 });
-addEventListener('keyup', e => { K[keyOf(e)] = false; K[e.key.toLowerCase()] = false; });
-addEventListener('blur', () => { for (const k in K) K[k] = false; mouse.down = false; });
+addEventListener('keyup', e => { K[keyOf(e)] = false; K[e.key.toLowerCase()] = false; const k = keyOf(e), sk = k === 'q' || k === 'ㅂ' ? 'q' : k === 'e' || k === 'ㄷ' ? 'e' : k === 'r' || k === 'ㄱ' ? 'r' : ''; if (sk && S.aimK === sk) { S.aimK = null; if (inGame()) once[sk] = 1; } });
+addEventListener('blur', () => { for (const k in K) K[k] = false; mouse.down = false; S.aimK = null; });
 $('gl').addEventListener('mousemove', e => { mouse.x = e.clientX; mouse.y = e.clientY; });
 addEventListener('mousemove', e => { mouse.x = e.clientX; mouse.y = e.clientY; });
 $('gl').addEventListener('mousedown', e => { if (e.button === 0) mouse.down = true; SFX.unlock(); });
-addEventListener('mouseup', e => { if (e.button === 0) mouse.down = false; });
+addEventListener('mouseup', e => { if (e.button === 0) { if (mouse.down && inGame() && S.scr === '') { const m = myP(); if (m && relBasic(m.role)) once.atkR = 1; } mouse.down = false; } });
 $('gl').addEventListener('contextmenu', e => e.preventDefault());
 const keyDown = (...ks) => ks.some(k => K[k]);
 // 휴대폰
@@ -595,6 +598,26 @@ const touch = { jx: 0, jz: 0, jid: null, atk: false, f: false };
 
 function nearestFoe(p, maxd) { let best = null, bd = maxd;
   if (S.snap.pv) { for (const q of S.snap.pl) { if (q.id === S.me || q.dd) continue; const d = Math.hypot(q.x - p.x, q.z - p.z); if (d < bd) { bd = d; best = q; } } return best; } for (const e of S.snap.en) { if (e.hp <= 0 || e.st === 'rise') continue; const d = Math.hypot(e.x - p.x, e.z - p.z); if (d < bd) { bd = d; best = e; } } return best; }
+/* 누르고 있으면 민트색으로 어디로 나갈지 보여 주고, 떼면 나가요 (Stickseum 방식). 원거리 기본 공격과 조준 기술 */
+const BASEP = { orb: { k: 'line', len: 14, w: 0.9 }, arrow: { k: 'line', len: 26, w: 0.8 }, xbolt: { k: 'line', len: 32, w: 0.8 }, bomb: { k: 'circle', range: 13, r: 2.4 } };
+const SKP = {
+  smite: { k: 'circle', range: 12, r: 3.2 }, curse: { k: 'circle', range: 12, r: 2.6 }, potion: { k: 'circle', range: 12, r: 3 }, frost: { k: 'circle', range: 12, r: 3.2 }, rain: { k: 'circle', range: 12, r: 4 }, mark: { k: 'circle', range: 14, r: 1.6 },
+  bigbomb: { k: 'circle', range: 12, r: 4 }, sticky: { k: 'circle', range: 11, r: 4.5 }, barrage: { k: 'line', len: 12, w: 3.5 },
+  pierce: { k: 'line', len: 26, w: 0.9 }, rootbolt: { k: 'line', len: 25, w: 0.9 }, snipe: { k: 'line', len: 40, w: 1 }, fan: { k: 'line', len: 13, w: 5 },
+  quake: { k: 'line', len: 11, w: 2.4 }, dash: { k: 'line', len: 7, w: 1.6 }, shieldbash: { k: 'line', len: 4, w: 1.8 }, flurry: { k: 'line', len: 5, w: 1.6 }, leap: { k: 'line', len: 8, w: 2 }
+};
+const relBasic = role => { const k = ROLES[role] && ROLES[role].atk.kind; return !TOUCH && role !== 'archer' && !!BASEP[k]; };
+function skillSpec(role, key) { const R = ROLES[role]; const s = R && R.skills['qer'.indexOf(key)]; return s ? SKP[s.id] : null; }
+function aimedSkill(key) { const m = inGame() && S.scr === '' && !TOUCH ? myP() : null; return !!(m && !m.dn && !m.dd && skillSpec(m.role, key)); }
+function aimTick(p, pos, inp) {
+  let sp = null;
+  if (!TOUCH && S.scr === '' && !p.dn && !p.dd) {
+    if (S.aimK) sp = skillSpec(p.role, S.aimK);
+    else if (mouse.down) { const k = ROLES[p.role].atk.kind; if (BASEP[k]) sp = BASEP[k]; }
+  }
+  if (S.aimK && !sp) S.aimK = null;
+  view.setAim(sp, pos.x, pos.z, inp.aim == null ? p.a : inp.aim, inp.ax, inp.az);
+}
 function gatherInput(p) {
   const inp = {};
   let mx = 0, mz = 0;
@@ -610,9 +633,10 @@ function gatherInput(p) {
     inp.atk = touch.atk; inp.f = touch.f;
   } else {
     const g = view.groundAt(mouse.x, mouse.y); inp.aim = Math.atan2(g.z - pos.z, g.x - pos.x); inp.ax = g.x; inp.az = g.z;
-    inp.atk = mouse.down; inp.f = keyDown('f', 'ㄹ');
+    inp.atk = relBasic(p.role) ? false : mouse.down; inp.f = keyDown('f', 'ㄹ');
   }
-  inp.rsp = S.rspSel | 0; inp.q = once.q; inp.e = once.e; inp.r = once.r; inp.roll = once.roll; if (once.skip) S.voted = true; inp.skip = once.skip; once.q = once.e = once.r = once.roll = once.skip = 0;
+  inp.rsp = S.rspSel | 0; inp.q = once.q; inp.e = once.e; inp.r = once.r; inp.roll = once.roll; if (once.skip) S.voted = true; inp.skip = once.skip; inp.atkR = once.atkR; once.q = once.e = once.r = once.roll = once.skip = once.atkR = 0;
+  aimTick(p, pos, inp);
   return inp;
 }
 
@@ -1214,13 +1238,13 @@ function frame(now) {
     if (S.G) {
       // 방장·혼자: 규칙을 직접 돌려요
       // 한 번 누르는 입력은 규칙이 실제로 돌 때까지 모아 둬요 (화면이 규칙보다 자주 그려져도 눌림이 사라지지 않게)
-      const pr = S.rin[S.me]; if (pr) for (const k of ['q', 'e', 'r', 'roll', 'skip']) inp[k] = inp[k] || pr[k];
+      const pr = S.rin[S.me]; if (pr) for (const k of ['q', 'e', 'r', 'roll', 'skip', 'atkR']) inp[k] = inp[k] || pr[k];
       S.rin[S.me] = inp;
       if (S.slowT > 0) S.slowT -= dt;
       S.acc += dt * (S.slowT > 0 ? 0.35 : 1); const h = 1 / 30;
       while (S.acc >= h) {
         S.acc -= h; S.prevPos = posMap(S.G); step(S.G, h, S.rin); S.stepped = true;
-        for (const pid in S.rin) { const r = S.rin[pid]; r.q = r.e = r.r = r.roll = r.skip = 0; }
+        for (const pid in S.rin) { const r = S.rin[pid]; r.q = r.e = r.r = r.roll = r.skip = r.atkR = 0; }
         for (const e of S.G.ev) { S.evq.push(e); if (S.net === 'host') (S.netEv || (S.netEv = [])).push(e); }
         S.G.ev.length = 0;
       }
@@ -1231,8 +1255,8 @@ function frame(now) {
       // 게스트: 내 이동은 바로, 나머지는 방장에게 보내요
       if (!S.local || S.local.ri !== S.snap.ri) S.local = { x: me.x, z: me.z, ri: S.snap.ri, roll: 0, rollCd: 0 };
       localMove(me, inp, dt);
-      S.sendAcc += dt; const o = S.pend || (S.pend = {}); o.q = o.q || inp.q; o.e = o.e || inp.e; o.r = o.r || inp.r; o.roll = o.roll || inp.roll; o.skip = o.skip || inp.skip;
-      if (S.sendAcc >= 1 / 30) { S.sendAcc = 0; send({ t: 'i', rsp: inp.rsp, px: +S.local.x.toFixed(2), pz: +S.local.z.toFixed(2), aim: inp.aim, ax: inp.ax, az: inp.az, atk: !!inp.atk, f: !!inp.f, q: o.q, e: o.e, r: o.r, roll: o.roll, skip: o.skip }); S.pend = {}; }
+      S.sendAcc += dt; const o = S.pend || (S.pend = {}); o.q = o.q || inp.q; o.e = o.e || inp.e; o.r = o.r || inp.r; o.roll = o.roll || inp.roll; o.skip = o.skip || inp.skip; o.atkR = o.atkR || inp.atkR;
+      if (S.sendAcc >= 1 / 30) { S.sendAcc = 0; send({ t: 'i', rsp: inp.rsp, px: +S.local.x.toFixed(2), pz: +S.local.z.toFixed(2), aim: inp.aim, ax: inp.ax, az: inp.az, atk: !!inp.atk, f: !!inp.f, q: o.q, e: o.e, r: o.r, roll: o.roll, skip: o.skip, atkR: o.atkR }); S.pend = {}; }
       me.x = S.local.x; me.z = S.local.z; if (S.local.roll > 0) me.ro = 1; if (inp.aim != null) me.a = inp.aim;
     }
     syncScene();
@@ -1254,7 +1278,7 @@ requestAnimationFrame(frame);
 // 시험용: ?test=1 로 바로 혼자 원정을 시작해요 (화면 확인용). &skip=1 이야기 건너뛰기, &room=구역 번호
 // 내 컴퓨터에서 열었을 때만 돼요 (배포된 주소에서는 잠긴 장이 열리지 않게)
 const DEV = /^(localhost|127\.0\.0\.1)$/.test(location.hostname);
-if (DEV) window.__T = { S, menu, beginGame, startHost, startMatch, startGuest, view, CH };
+if (DEV) window.__T = { step, relBasic, aimedSkill, mouse, once, TOUCH, S, menu, beginGame, startHost, startMatch, startGuest, view, CH };
 if (DEV && qs.get('test')) {
   const r = qs.get('role') || 'knight'; SAVE.role = r;
   S.net = 'solo'; S.slots = [meSlot()]; newBots(); S.botN = +(qs.get('bots') || 5);
