@@ -57,3 +57,5 @@ patchnotes.json | v533 title | 은하 제국의 황혼 | build 533 | 2026-10-30
 patchnotes.json | v533 items[0] | 클랜 보스 레이드 (클랜원끼리 보스를 잡고 빈자리는 봇이 채움, 성공하면 클랜 창고 +20과 클랜 경험치) | build 533 | 2026-10-30
 patchnotes.json | v549 title | 은하 제국의 황혼 | build 549 | 2026-10-30
 patchnotes.json | v549 items[0] | 밸런스 표를 봇만으로 전 맵 재측정해 갱신 | build 549 | 2026-10-30
+patchnotes.json | v551 title | 은하 제국의 황혼 | build 551 | 2026-10-30
+patchnotes.json | v551 items[0] | 밸런스 표를 봇만으로 전 맵 재측정해 갱신 (b545·b550 조정 반영) | build 551 | 2026-10-30
