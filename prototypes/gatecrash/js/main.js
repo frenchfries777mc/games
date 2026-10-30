@@ -5,6 +5,8 @@ const PREFIX = 'ff-gatecrash-', CODE_CH = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789', SN
 $('ver').textContent = 'v' + VERSION + ' · b' + BUILD;
 const SAVE = (() => { try { return JSON.parse(localStorage.getItem('gatecrash.save') || '{}'); } catch (e) { return {}; } })();
 function save() { try { localStorage.setItem('gatecrash.save', JSON.stringify(SAVE)); } catch (e) { } }
+SAVE.gc = SAVE.gc | 0; if (!SAVE.skins || !Array.isArray(SAVE.skins.own)) SAVE.skins = { own: [], on: '' };
+function skinOf() { return SKINS[SAVE.skins.on] && SAVE.skins.own.includes(SAVE.skins.on) ? SAVE.skins.on : ''; }
 if (!SAVE.uid) { SAVE.uid = Math.random().toString(36).slice(2, 10); SAVE.col = (Math.random() * COLORS.length) | 0; save(); }
 const UID = SAVE.uid;
 
@@ -28,7 +30,7 @@ function ffProfile() {
 async function ffSync() {
   try {
     const sb = window.FFAuth && FFAuth.client && FFAuth.client(), u = window.FFAuth && FFAuth.user(); if (!sb || !u || !(await ffProfile())) return;
-    if (ffMarked !== u.id) { ffMarked = u.id; FFProfile.markPlayed(sb, 'gatecrash'); }
+    if (ffMarked !== u.id) { ffMarked = u.id; FFProfile.markPlayed(sb, 'gatecrash'); claimGC(); }
   } catch (e) { }
 }
 if (window.FFAuth) { FFAuth.ready.then(() => { paintWho(); ffSync(); }); FFAuth.onChange(() => { paintWho(); ffSync(); }); }
@@ -49,13 +51,39 @@ function pickMap(cb) {
 function menu(go) {
   SFX.unlock();
   homeMsg('');
-  if (go === 'solo') { leaveNet(); N.mode = 'solo'; N.players = [{ id: UID, name: myName(), col: COLORS[SAVE.col % COLORS.length] }]; pickMap(id => { N.pick = id; beginGame(); }); }
+  if (go === 'solo') { leaveNet(); N.mode = 'solo'; N.players = [{ id: UID, name: myName(), col: COLORS[SAVE.col % COLORS.length], skin: skinOf() }]; pickMap(id => { N.pick = id; beginGame(); }); }
   else if (go === 'match') { if (needLogin()) return; startMatch(); }
+  else if (go === 'shop') { paintShop(); show('sShop'); }
   else if (go === 'host') { if (needLogin()) return; startHost(); }
   else if (go === 'join') { if (needLogin()) return; $('joinMsg').textContent = ''; $('joinCode').value = ''; show('sJoin'); setTimeout(() => $('joinCode').focus(), 50); }
   else if (go === 'help') { $('wl').innerHTML = WEP_IDS.map(k => { const w = WEAPONS[k]; return '<div><b>' + w.name + '</b><small>' + ({ melee: '가까이 휘둘러요', shot: '멀리 쏴요', spray: '뿌리는 동안 뒤로 밀려요', rocket: '터지면 주변이 다 날아가요' })[w.kind] + ' · ' + w.uses + '번</small></div>'; }).join(''); show('sHelp'); }
   else if (go === 'notes') { loadNotes(); show('sNotes'); }
   else if (go === 'site') location.href = '../../';
+}
+/* 꾸미기 */
+function paintShop() {
+  $('gcNow').textContent = '내 gC ' + SAVE.gc;
+  const ids = ['', ...Object.keys(SKINS)], box = $('skinList'); box.innerHTML = '';
+  for (const id of ids) {
+    const own = id === '' || SAVE.skins.own.includes(id), on = (SAVE.skins.on || '') === id, cost = id ? SKINS[id].cost : 0;
+    const d = document.createElement('div'); d.className = 'sk' + (on ? ' on' : '');
+    const cv = document.createElement('canvas'); cv.width = 32; cv.height = 32; const cx = cv.getContext('2d'); cx.imageSmoothingEnabled = false; cx.translate(8, 8); cx.fillStyle = 'rgba(255,255,255,.06)'; cx.fillRect(-8, -8, 32, 32);
+    drawRacer(cx, { x: 3, y: 4, vx: 0, face: 1, ground: true, anim: 0, inv: 0, stun: 0, flash: 0, wep: null, swing: 0, aim: 0, col: COLORS[SAVE.col % COLORS.length], slot: SAVE.col | 0, skin: id }, 0, false);
+    d.appendChild(cv); const nm = document.createElement('div'); nm.textContent = id ? SKINS[id].name : '기본'; d.appendChild(nm);
+    const b = document.createElement('button'); b.className = 'btn' + (own && !on ? ' go' : '');
+    if (on) { b.textContent = '입고 있어요'; b.disabled = true; }
+    else if (own) { b.textContent = '입기'; b.onclick = () => { SAVE.skins.on = id; save(); paintShop(); }; }
+    else { b.textContent = cost + ' gC'; b.disabled = SAVE.gc < cost; b.onclick = () => { if (SAVE.gc < cost) return; SAVE.gc -= cost; SAVE.skins.own.push(id); SAVE.skins.on = id; save(); SFX.unlock(); paintShop(); }; }
+    d.appendChild(b); box.appendChild(d);
+  }
+}
+/* 허브 코인 → gC: 허브에서 바꾼 코인을 로그인할 때 한 번씩 받아 와요 (1코인 = 20gC) */
+async function claimGC() {
+  try {
+    const sb = window.FFAuth && FFAuth.client && FFAuth.client(), u = window.FFAuth && FFAuth.user(); if (!sb || !u) return;
+    const r = await sb.rpc('ff_coin_claim', { p_game: 'gatecrash' }), n = r && r.data | 0; if (!n || r.error) return;
+    SAVE.gc += n; save(); homeMsg('허브 코인에서 바꾼 gC ' + n + '을 받았어요.');
+  } catch (e) { }
 }
 let NOTES = null;
 function loadNotes() { if (NOTES) return renderNotes(); fetch('patchnotes.json?v=' + BUILD).then(r => r.json()).then(d => { NOTES = d; renderNotes(); }, () => { $('notesBox').textContent = '패치노트를 불러오지 못했어요.'; }); }
@@ -105,7 +133,7 @@ function hostHandlers(p) {
       if (d.t === 'hello') {
         if (d.v !== VERSION) { send(c, { t: 'no', why: '버전이 달라요 (v' + VERSION + ')' }); setTimeout(() => c.close(), 300); return; }
         if (N.G || N.players.length >= MAXP) { send(c, { t: 'no', why: '가득 찼거나 이미 시작했어요' }); setTimeout(() => c.close(), 300); return; }
-        const pl = { id: d.id, name: String(d.name || '손님').slice(0, 15), col: pickCol(d.col) }; c.gid = d.id; N.players.push(pl); N.conns.push(c);
+        const pl = { id: d.id, name: String(d.name || '손님').slice(0, 15), col: pickCol(d.col), skin: SKINS[d.skin] ? d.skin : '' }; c.gid = d.id; N.players.push(pl); N.conns.push(c);
         send(c, { t: 'welcome', id: d.id, players: N.players }); pushRoom(); paintSlots();
       } else if (d.t === 'i') { N.inputs[c.gid] = Object.assign(N.inputs[c.gid] || {}, d.i, { jp: (N.inputs[c.gid] || {}).jp || d.i.jp, swap: (N.inputs[c.gid] || {}).swap || d.i.swap }); }
     });
@@ -116,7 +144,7 @@ function hostHandlers(p) {
 }
 N.inputs = {};
 function startHost() {
-  leaveNet(); const gen = N.gen; N.mode = 'host'; N.pub = false; N.code = rcode(); N.players = [{ id: UID, name: myName(), col: COLORS[SAVE.col % COLORS.length] }];
+  leaveNet(); const gen = N.gen; N.mode = 'host'; N.pub = false; N.code = rcode(); N.players = [{ id: UID, name: myName(), col: COLORS[SAVE.col % COLORS.length], skin: skinOf() }];
   homeMsg('방을 만드는 중이에요'); const p = new Peer(PREFIX + N.code, peerOpts()); N.peer = p; hostHandlers(p);
   p.on('open', () => { if (N.gen !== gen) return; homeMsg(''); try { FFAuth.setRoom && FFAuth.setRoom({ game: 'gatecrash', code: N.code, path: 'prototypes/gatecrash/index.html' }); } catch (e) { } openRoom(); });
   p.on('error', e => { if (N.gen !== gen) return; if (e.type === 'unavailable-id') startHost(); else { leaveNet(); show('sLobby'); homeMsg('연결하지 못했어요. 잠시 뒤에 다시 해 봐요.'); } });
@@ -128,7 +156,7 @@ function startGuest(code) {
   p.on('error', () => fail('방을 찾지 못했어요.'));
   p.on('open', () => {
     const c = p.connect(PREFIX + code, { reliable: false }); N.host = c; setTimeout(() => { if (!c.open) fail('방을 찾지 못했어요.'); }, 6000);
-    c.on('open', () => send(c, { t: 'hello', v: VERSION, id: UID, name: myName(), col: COLORS[SAVE.col % COLORS.length] }));
+    c.on('open', () => send(c, { t: 'hello', v: VERSION, id: UID, name: myName(), col: COLORS[SAVE.col % COLORS.length], skin: skinOf() }));
     c.on('data', d => guestMsg(d, fail, () => { done = true; })); c.on('close', () => { if (!done || N.mode === 'guest') { if (N.G) { endToLobby('방장과 연결이 끊겼어요.'); } else fail('방과 연결이 끊겼어요.'); } });
   });
 }
@@ -159,7 +187,7 @@ function startMatch() {
     p.on('error', next);
     p.on('open', () => {
       const c = p.connect(PREFIX + 'q' + n, { reliable: false }); N.host = c; N.mode = 'guest'; const to = setTimeout(next, 3500);
-      c.on('open', () => { clearTimeout(to); send(c, { t: 'hello', v: VERSION, id: UID, name: myName(), col: COLORS[SAVE.col % COLORS.length] }); });
+      c.on('open', () => { clearTimeout(to); send(c, { t: 'hello', v: VERSION, id: UID, name: myName(), col: COLORS[SAVE.col % COLORS.length], skin: skinOf() }); });
       c.on('data', d => { if (d && d.t === 'no') { clearTimeout(to); next(); } else if (d && d.t === 'welcome') { ended = true; homeMsg(''); guestMsg(d, () => { }, () => { }); } else guestMsg(d, () => { }, () => { }); });
       c.on('close', () => { if (ended) { if (N.G) endToLobby('방장과 연결이 끊겼어요.'); } else next(); });
     });
@@ -169,7 +197,7 @@ function startMatch() {
 function openQuick(gen, k) {
   k = k || 1; if (N.gen !== gen) return; if (k > 3) { leaveNet(); show('sLobby'); homeMsg('빈 방을 만들지 못했어요. 잠시 뒤에 다시 해 봐요.'); return; }
   try { N.peer && N.peer.destroy(); } catch (e) { }
-  N.mode = 'host'; N.pub = true; N.code = 'q' + k; N.players = [{ id: UID, name: myName(), col: COLORS[SAVE.col % COLORS.length] }]; N.conns = []; N.host = null;
+  N.mode = 'host'; N.pub = true; N.code = 'q' + k; N.players = [{ id: UID, name: myName(), col: COLORS[SAVE.col % COLORS.length], skin: skinOf() }]; N.conns = []; N.host = null;
   const p = new Peer(PREFIX + 'q' + k, peerOpts()); N.peer = p; hostHandlers(p);
   p.on('open', () => { if (N.gen !== gen) return; homeMsg(''); openRoom(); });
   p.on('error', e => { if (N.gen !== gen) return; if (e.type === 'unavailable-id') openQuick(gen, k + 1); else { leaveNet(); show('sLobby'); homeMsg('연결하지 못했어요.'); } });
@@ -180,14 +208,14 @@ let G = null, myId = UID, cam = { x: 0, y: 0 }, view = { x: 0, y: 0 }, baked = n
 const keys = {}, mouse = { x: 0, y: 0, down: false }, pend = { jp: false, swap: false };
 function beginGame() {
   clearTimeout(N.autoT); if (N.mode !== 'solo' && N.mode !== 'host') return;
-  const map = N.mode === 'solo' && N.pick ? N.pick : MAP_IDS[(Math.random() * MAP_IDS.length) | 0], pl = N.players.map(p => ({ id: p.id, name: p.name, col: p.col, bot: false }));
+  const map = N.mode === 'solo' && N.pick ? N.pick : MAP_IDS[(Math.random() * MAP_IDS.length) | 0], pl = N.players.map(p => ({ id: p.id, name: p.name, col: p.col, skin: p.skin || '', bot: false }));
   const names = ['토끼', '여우', '고양이', '펭귄', '곰'];
   while (pl.length < MAXP) { const c = COLORS.find(c => !pl.some(p => p.col === c)); pl.push({ id: 'bot' + pl.length, name: '봇 ' + names[pl.length], col: c, bot: true }); }
   bcast({ t: 'start', map, pl }); playGame(map, pl);
 }
 function playGame(map, pl) {
-  N.G = G = newGame(map, pl.map((p, i) => ({ id: p.id, name: p.name, col: p.col, bot: p.bot, own: p.id === UID })));
-    baked = bakeWorld(G.W); fx = []; REC.length = 0; RP = null; recT = 0; N.inputs = {}; last = performance.now(); acc = 0; $('res').classList.remove('on');
+  N.G = G = newGame(map, pl.map((p, i) => ({ id: p.id, name: p.name, col: p.col, skin: SKINS[p.skin] ? p.skin : '', bot: p.bot, own: p.id === UID })));
+    baked = bakeWorld(G.W); fx = []; REC.length = 0; RP = null; recT = 0; N.inputs = {}; last = performance.now(); acc = 0; $('res').classList.remove('on'); const og = $('resGc'); if (og) og.remove();
   const me = G.racers.find(r => r.id === UID); cam.x = me ? me.x : 0; cam.y = me ? me.y : 0; snapT = 0;
   $('hint').style.visibility = ''; $('hint').textContent = 'A D 이동 · W/Space 점프 · 클릭 무기 · F 바꾸기';
   show('game'); BGM.play('pixel-sprint'); loop.on = true; requestAnimationFrame(loop);
@@ -293,7 +321,7 @@ function loop(now) {
 const REC = [], REC_HZ = 20, REC_MAX = 260; let RP = null, recT = 0;
 function recFrame(dt) {
   if (G.phase !== 'race') return; recT += dt; if (recT < 1 / REC_HZ) return; recT = 0;
-  REC.push({ r: G.racers.map(r => ({ id: r.id, name: r.name, col: r.col, slot: r.slot, x: r.x, y: r.y, vx: r.vx, face: r.face, aim: r.aim, swing: r.swing > 0 ? .1 : 0, wep: r.wep ? { k: r.wep.k, u: 1 } : null, hp: r.hp, fin: r.fin, inv: r.inv > 0 ? 1 : 0, flash: r.flash > 0 ? .1 : 0, stun: r.stun > 0 ? .1 : 0, ground: r.ground, anim: r.anim, prog: 1 })), it: G.items.map(i => [i.on, i.k]), sh: G.shots.map(s => ({ k: s.k, x: s.x, y: s.y, vx: s.vx, vy: s.vy })) });
+  REC.push({ r: G.racers.map(r => ({ id: r.id, name: r.name, col: r.col, skin: r.skin, slot: r.slot, x: r.x, y: r.y, vx: r.vx, face: r.face, aim: r.aim, swing: r.swing > 0 ? .1 : 0, wep: r.wep ? { k: r.wep.k, u: 1 } : null, hp: r.hp, fin: r.fin, inv: r.inv > 0 ? 1 : 0, flash: r.flash > 0 ? .1 : 0, stun: r.stun > 0 ? .1 : 0, ground: r.ground, anim: r.anim, prog: 1 })), it: G.items.map(i => [i.on, i.k]), sh: G.shots.map(s => ({ k: s.k, x: s.x, y: s.y, vx: s.vx, vy: s.vy })) });
   if (REC.length > REC_MAX) REC.shift();
 }
 function startReplay() { if (REC.length < 20) return; RP = { t: 0, frames: REC.slice(), focus: G.rank[0] || UID }; }
@@ -370,11 +398,15 @@ function render(t, G, op) {
 }
 function showResult() {
   if ($('res').classList.contains('on')) return;
+  const og = $('resGc'); if (og) og.remove();
   const list = G.rank.map(id => G.racers.find(r => r.id === id)).filter(Boolean);
   for (const r of G.racers.slice().sort((a, b) => a.prog - b.prog)) if (!list.includes(r)) list.push(r);
   const me = list.findIndex(r => r.id === UID);
   BGM.duck(.35); if (me === 0) SFX.win();
   $('resT').textContent = me === 0 ? '1등!' : (me + 1) + '등'; $('resL').innerHTML = list.map(r => '<li style="color:' + r.col + '">' + esc(r.name) + '</li>').join('');
+  let prize = 0;
+  if (me >= 0 && !G.paid) { G.paid = true; prize = Math.round(GC_PRIZE[Math.min(me, GC_PRIZE.length - 1)] * (N.mode === 'solo' ? 0.5 : 1)); SAVE.gc += prize; save(); }
+  if (prize) $('resL').insertAdjacentHTML('afterend', '<div class="note" id="resGc">+' + prize + ' gC (지금 ' + SAVE.gc + ' gC)</div>');
   $('res').classList.add('on');
 }
 // 로비 배경: 인트로와 같은 공항 레이스 장면

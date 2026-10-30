@@ -1,7 +1,7 @@
 /* Gatecrash · © 2026 Frenchfries777 · CC BY-NC-ND 4.0
    데이터: 상수, 무기, 맵 */
 'use strict';
-const VERSION = '0.1', BUILD = 16;
+const VERSION = '0.1', BUILD = 17;
 const TS = 16;                                   // 타일 한 칸 (px)
 const PH = { RUN: 120, ACC: 1500, AIR: 1000, G: 1500, JUMP: 410, CUT: 150, MAXF: 560, W: 10, H: 22, COY: 0.08, BUF: 0.12, BELT: 70, ICE: 180, LIFT: 200 };
 const MAX_HP = 100, RACERS = 4;
@@ -21,6 +21,20 @@ const WEAPONS = {
   firework:{ name: '폭죽 발사기', kind: 'rocket', dmg: 16, kb: 300, up: 200, cd: 0.7,  uses: 6,  speed: 340, life: 1.6, radius: 30, stun: 0.4, reach: 200 }
 };
 const WEP_IDS = Object.keys(WEAPONS);
+
+/* 스킨: 능력치는 그대로, gC로 사서 입어요 */
+const SKINS = {
+  ears:   { name: '고양이 귀', cost: 300 },
+  bunny:  { name: '토끼 귀',   cost: 350 },
+  shades: { name: '선글라스',   cost: 200 },
+  helm:   { name: '안전모',     cost: 400 },
+  ninja:  { name: '닌자 복면',   cost: 500 },
+  cape:   { name: '붉은 망토',   cost: 600 },
+  halo:   { name: '천사 링',     cost: 700 },
+  crown:  { name: '왕관',       cost: 800 },
+  gold:   { name: '황금 옷',     cost: 1500 }
+};
+const GC_PRIZE = [40, 25, 15, 10];               // 1등부터 받는 gC (봇과 연습은 절반)
 
 /* ---------- 맵 만들기 도구 ----------
    칸: '.' 빈칸, '#' 벽·바닥, 'x' 가구(단단함), '=' 아래에서 뚫고 올라가는 발판, '>' '<' 무빙워크 */
