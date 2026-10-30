@@ -167,7 +167,7 @@ function menu(go) {
   if (go === 'solo') { leaveNet(); S.net = 'solo'; S.slots = [meSlot()]; newBots(); openRoom(); }
   else if (go === 'match') { if (needLogin()) return; startMatch(); }
   else if (go === 'host') { if (needLogin()) return; startHost(); }
-  else if (go === 'ward') { S.wardTab = S.wardTab || 'skin'; paintWard(); show('sWard'); view.cos = SAVE.cos.on; view.setPreview(SAVE.role, COLORS[SAVE.col | 0].c); }
+  else if (go === 'ward') { S.wardTab = S.wardTab || 'skin'; S.wardSel = null; paintWard(); show('sWard'); view.cos = SAVE.cos.on; view.setPreview(SAVE.role, COLORS[SAVE.col | 0].c); }
   else if (go === 'weps') { paintWepInfo(); show('sWeps'); }
   else if (go === 'notes') { loadNotes(); show('sNotes'); }
   else if (go === 'settings') { paintSettings(); show('sSettings'); }
@@ -180,14 +180,22 @@ function paintWard() {
   $('wardTabs').innerHTML = tabs.map(k => '<button data-k="' + k + '"' + (k === cur ? ' class="on"' : '') + '>' + COSMETICS[k].name + '</button>').join('');
   $('wardTabs').querySelectorAll('button').forEach(b => b.onclick = () => { SFX.play('click'); S.wardTab = b.dataset.k; paintWard(); });
   const on = SAVE.cos.on[cur] || '';
-  $('wardGrid').innerHTML = COSMETICS[cur].items.map(it => { const own = !it.cost || SAVE.cos.own[cur + ':' + it.id]; return '<button data-i="' + it.id + '" class="' + ((on === it.id) ? 'on ' : '') + (own ? 'own' : '') + '"><b>' + it.name + '</b><small>' + (on === it.id ? T('입는 중') : own ? T('보유') : it.cost + ' tC') + '</small></button>'; }).join('');
-  $('wardGrid').querySelectorAll('button').forEach(b => b.onclick = () => {
-    const it = COSMETICS[cur].items.find(x => x.id === b.dataset.i), key = cur + ':' + it.id;
-    if (it.cost && !SAVE.cos.own[key]) { if (SAVE.honor < it.cost) { $('wardMsg').textContent = T('tC가 모자라요'); SFX.play('click'); return; } SAVE.honor -= it.cost; SAVE.cos.own[key] = 1; $('wardMsg').textContent = T('샀어요'); }
+  // 누르면 바로 사지 않고 미리보기만 해요. 사는 것과 입고 벗는 건 아래 버튼으로 해요
+  const sel = S.wardSel && S.wardSel.tab === cur ? S.wardSel.id : null;
+  let act = $('wardAct'); if (!act) { act = document.createElement('div'); act.id = 'wardAct'; act.style.cssText = 'display:flex;gap:8px;margin-top:10px;align-items:center'; $('wardBox').appendChild(act); }
+  $('wardGrid').innerHTML = COSMETICS[cur].items.map(it => { const own = !it.cost || SAVE.cos.own[cur + ':' + it.id]; return '<button data-i="' + it.id + '" class="' + ((on === it.id) ? 'on ' : '') + (own ? 'own ' : '') + (sel === it.id ? 'sel' : '') + '"' + (sel === it.id ? ' style="outline:2px solid #5ff0c0"' : '') + '><b>' + it.name + '</b><small>' + (on === it.id ? T('입는 중') : own ? T('보유') : it.cost + ' tC') + '</small></button>'; }).join('');
+  const it0 = sel != null ? COSMETICS[cur].items.find(x => x.id === sel) : null, key0 = it0 ? cur + ':' + it0.id : '', own0 = it0 && (!it0.cost || SAVE.cos.own[key0]);
+  act.innerHTML = it0 ? (own0 ? '<button class="btn gold" id="wardDo">' + ((SAVE.cos.on[cur] || '') === it0.id ? T('벗기') : T('입기')) + '</button>' : '<button class="btn gold" id="wardDo">' + T('구매 {0} tC', it0.cost) + '</button>') : '<small>' + T('아이템을 누르면 미리 볼 수 있어요') + '</small>';
+  // 고른 아이템을 입혀 보여 줘요 (사거나 입기 전에는 저장하지 않아요)
+  view.cos = it0 ? Object.assign({}, SAVE.cos.on, it0.id ? { [cur]: it0.id } : {}) : SAVE.cos.on; if (it0 && !it0.id) { view.cos = Object.assign({}, SAVE.cos.on); delete view.cos[cur]; }
+  view.setPreview(SAVE.role, COLORS[SAVE.col | 0].c);
+  $('wardGrid').querySelectorAll('button').forEach(b => b.onclick = () => { SFX.play('click'); S.wardSel = { tab: cur, id: b.dataset.i }; $('wardMsg').textContent = ''; paintWard(); });
+  if ($('wardDo')) $('wardDo').onclick = () => {
+    if (!own0) { if (SAVE.honor < it0.cost) { $('wardMsg').textContent = T('tC가 모자라요'); SFX.play('click'); return; } SAVE.honor -= it0.cost; SAVE.cos.own[key0] = 1; $('wardMsg').textContent = T('샀어요'); }
     else $('wardMsg').textContent = '';
-    if ((SAVE.cos.on[cur] || '') === it.id) delete SAVE.cos.on[cur]; else if (it.id) SAVE.cos.on[cur] = it.id; else delete SAVE.cos.on[cur];
-    save(); SFX.play('click'); view.cos = SAVE.cos.on; view.setPreview(SAVE.role, COLORS[SAVE.col | 0].c); paintWard();
-  });
+    if ((SAVE.cos.on[cur] || '') === it0.id) delete SAVE.cos.on[cur]; else if (it0.id) SAVE.cos.on[cur] = it0.id; else delete SAVE.cos.on[cur];
+    save(); SFX.play('click'); paintWard();
+  };
 }
 function meSlot() { return S.srv ? { uid: UID, name: T('서버'), role: 'knight', col: 0, srv: 1 } : { uid: UID, name: myName(), role: SAVE.role, col: SAVE.col | 0 }; }
 function unlock(id) { if (SAVE.ach[id]) return; const a = ACHIEVEMENTS.find(x => x.id === id); if (!a) return; SAVE.ach[id] = Date.now(); save(); ffSync(); }
