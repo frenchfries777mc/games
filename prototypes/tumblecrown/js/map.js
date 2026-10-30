@@ -131,23 +131,31 @@ export function lineClear(ax, az, bx, bz) {
 }
 
 // 길찾기: 목표 칸에서 퍼져 나가는 거리 지도를 만들어 두고 재사용해요
+let QB = new Int32Array(0);
 function field(ti, tj, now) {
+  // 목표가 조금씩 움직여도 같은 지도를 쓰도록 목표 칸을 두 칸 단위로 맞춰요 (맞춘 칸이 벽이면 그대로 써요)
+  const qi = ti & ~1, qj = tj & ~1; if ((qi !== ti || qj !== tj) && floorCell(qi, qj)) { ti = qi; tj = qj; }
   const key = ti + ',' + tj; const f = FIELDS.get(key);
-  if (f && now - f.t < 0.5) return f.d;
-  // 대각선 때문에 같은 칸이 여러 번 들어올 수 있어서 큐는 늘어나는 배열로 둬요
-  const d = new Float32Array(MW * MH).fill(1e9); const q = []; let h = 0;
+  if (f) return f.d;   // 한 칸에서 퍼진 거리 지도는 지도가 바뀌지 않는 한 늘 맞아요 (바뀌면 FIELDS를 비워요)
+  const N = MW * MH, d = new Float32Array(N).fill(1e9), g = GRID;
   if (!floorCell(ti, tj)) return d;
-  d[tj * MW + ti] = 0; q.push(tj * MW + ti);
-  while (h < q.length) {
-    const c = q[h++], i = c % MW, j = (c / MW) | 0, cd = d[c];
-    for (let dj = -1; dj <= 1; dj++) for (let di = -1; di <= 1; di++) {
-      if (!di && !dj) continue; const ni = i + di, nj = j + dj; if (!floorCell(ni, nj)) continue;
-      if (di && dj && (!floorCell(i + di, j) || !floorCell(i, j + dj))) continue;
-      const nc = nj * MW + ni, nd = cd + (di && dj ? 1.414 : 1);
-      if (nd < d[nc]) { d[nc] = nd; q.push(nc); }
+  // 같은 칸이 여러 번 들어올 수 있어서 큐는 돌아가는 고리로 둬요
+  let cap = 1; while (cap < N * 2) cap <<= 1; if (QB.length !== cap) QB = new Int32Array(cap); const m = cap - 1, q = QB; let h = 0, t = 0;
+  d[tj * MW + ti] = 0; q[t++ & m] = tj * MW + ti;
+  while (h < t) {
+    const c = q[h++ & m], i = c % MW, j = (c / MW) | 0, cd = d[c];
+    for (let dj = -1; dj <= 1; dj++) {
+      const nj = j + dj; if (nj < 0 || nj >= MH) continue;
+      for (let di = -1; di <= 1; di++) {
+        if (!di && !dj) continue; const ni = i + di; if (ni < 0 || ni >= MW) continue;
+        const nc = nj * MW + ni; if (g[nc] !== 1) continue;
+        if (di && dj && (g[j * MW + ni] !== 1 || g[nj * MW + i] !== 1)) continue;
+        const nd = cd + (di && dj ? 1.414 : 1);
+        if (nd < d[nc]) { d[nc] = nd; q[t++ & m] = nc; }
+      }
     }
   }
-  if (FIELDS.size > 40) FIELDS.clear();
+  if (FIELDS.size >= 48) FIELDS.delete(FIELDS.keys().next().value);
   FIELDS.set(key, { t: now, d }); return d;
 }
 // from에서 to로 가려면 어느 방향으로 걸어야 하는지 (각도), 못 가면 null
