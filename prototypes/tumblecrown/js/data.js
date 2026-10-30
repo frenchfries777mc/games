@@ -3,7 +3,7 @@
 
 import { T } from './tr.js';
 
-export const VERSION = 'v0.1', BUILD = 58;
+export const VERSION = 'v0.1', BUILD = 59;
 
 export const ROLES = {
   knight: {
@@ -411,20 +411,24 @@ const ARENAS = [
   { name: '돌담 마을', line: '돌담이 마을처럼 이어져 있어요. 골목으로 돌아가 뒤를 쳐요.', theme: 'forest',
     walls: [[28, 4, 14, 3], [28, 4, 3, 10], [46, 14, 12, 3], [46, 14, 3, 10], [22, 24, 10, 3], [16, 30, 3, 6], [40, 28, 3, 8]],
     fl: [[10, 40], [38, 58]], mid: [[56, 36], [34, 34]], pil: [[20, 10], [36, 20], [52, 8], [24, 34]] },
-  { name: '얼음 호수', line: '가운데 얼음 호수를 빙 둘러 길이 나 있어요. 호수 가의 깃발이 승부처예요.', theme: 'frost',
-    walls: [[22, 14, 24, 3], [22, 14, 3, 14], [8, 30, 10, 3], [40, 4, 3, 8], [30, 26, 6, 6]],
-    fl: [[10, 42], [30, 62]], mid: [[56, 36], [44, 22]], pil: [[14, 12], [30, 36], [50, 10], [6, 24]] },
+  { name: '얼음 호수', line: '가운데에 커다란 얼음 호수가 얼어 있고, 가운데 섬으로 얼음 다리 네 개가 이어요. 호수를 빙 돌아도 되고 얼음 다리로 가로질러도 돼요.', theme: 'frost',
+    walls: [[8, 30, 10, 3], [44, 4, 3, 8]],
+    wallIf: (i, j, W, H) => { const dx = i + 0.5 - W / 2, dy = j + 0.5 - H / 2; return (dx / 62) ** 2 + (dy / 42) ** 2 < 1 && dx * dx + dy * dy >= 144 && !(Math.abs(dy) < 4 && Math.abs(dx) < 70) && !(Math.abs(dx) < 4 && Math.abs(dy) < 46); },
+    fl: [[10, 42], [30, 62]], mid: [[56, 36], [38, 20]], pil: [[14, 12], [30, 36], [50, 10], [6, 24]] },
   { name: '심연 다리', line: '왼쪽과 오른쪽 두 섬을 좁고 긴 중앙 다리 하나가 이어요. 다리 길목을 쥐는 쪽이 유리해요.', theme: 'deep',
     walls: [[40, 0, 16, 33], [8, 24, 16, 3], [18, 6, 10, 8], [26, 20, 3, 8], [6, 8, 3, 8]],
     fl: [[12, 44], [30, 48]], mid: [[56, 36], [34, 36]], pil: [[20, 20], [14, 30], [34, 16], [47, 35]] },
-  { name: '해적 항구', line: '부두 다리가 길게 뻗은 항구예요. 배와 창고 사이 좁은 틈을 노려 깃발을 가져와요.', theme: 'harbor',
-    walls: [[6, 8, 30, 3], [22, 8, 3, 14], [40, 16, 16, 3], [30, 28, 10, 3], [6, 26, 8, 3], [44, 4, 3, 8]],
-    fl: [[10, 42], [30, 56]], mid: [[56, 36], [30, 20]], pil: [[14, 16], [50, 8], [48, 28], [8, 36]] },
-  { name: '시계탑', line: '톱니 모양 돌벽이 겹겹이 돌아가는 탑 안이에요. 가운데 깃발로 가는 길이 서로 엇갈려요.', theme: 'tower',
-    walls: [[22, 10, 20, 3], [22, 10, 3, 14], [40, 22, 3, 14], [10, 28, 16, 3], [48, 8, 8, 3], [34, 30, 3, 6]],
+  { name: '해적 항구', line: '위와 아래에서 바다가 반달 모양으로 파고들고, 부두가 바다 한가운데로 길게 뻗어 있어요. 배와 창고 사이 좁은 틈을 노려요.', theme: 'harbor',
+    walls: [[12, 18, 22, 5], [14, 26, 8, 4], [44, 24, 6, 8]],
+    wallIf: (i, j, W, H) => { const dx = i + 0.5 - W / 2; if (Math.abs(dx) < 5) return false; const t = (dx / 54) ** 2; return t + ((j + 0.5) / 46) ** 2 < 1 || t + ((H - j - 0.5) / 46) ** 2 < 1; },
+    fl: [[10, 42], [30, 56]], mid: [[56, 36], [32, 12]], pil: [[14, 16], [50, 8], [48, 28], [8, 36]] },
+  { name: '시계탑', line: '가운데 깃발을 둥근 톱니바퀴 벽이 에워싸고, 문 네 곳만 열려 있어요. 바퀴 둘레의 톱니 돌기둥 사이로 돌아 들어가요.', theme: 'tower',
+    walls: [[10, 28, 16, 3], [48, 6, 8, 3]],
+    wallIf: (i, j, W, H) => { const dx = i + 0.5 - W / 2, dy = j + 0.5 - H / 2, r = Math.hypot(dx, dy); if (r >= 38 && r < 42 && Math.abs(dx) >= 9 && Math.abs(dy) >= 9) return true; for (let k = 0; k < 8; k++) { const a = k * Math.PI / 4; if (Math.abs(dx - 58 * Math.cos(a)) < 5 && Math.abs(dy - 58 * Math.sin(a)) < 5) return true; } return false; },
     fl: [[10, 40], [30, 56]], mid: [[56, 36], [32, 24]], pil: [[14, 14], [30, 18], [50, 20], [8, 20]] },
-  { name: '지하 수로', line: '좁은 수로와 긴 담이 얽힌 지하예요. 물길을 따라 돌아 뒤를 쳐요.', theme: 'sewer',
-    walls: [[8, 18, 22, 3], [38, 4, 3, 14], [18, 28, 20, 3], [46, 18, 3, 12], [50, 6, 6, 3]],
+  { name: '지하 수로', line: '가로로 길게 흐르는 두 물길이 지하를 세 줄 길로 나누고, 좁은 다리 여섯 곳으로만 건너요. 물길 끝을 돌아가도 돼요.', theme: 'sewer',
+    walls: [[50, 6, 6, 3]],
+    wallIf: (i, j, W, H) => { const adx = Math.abs(i + 0.5 - W / 2), ady = Math.abs(j + 0.5 - H / 2); return ady >= 30 && ady < 42 && adx < 125 && !(adx < 14 || (adx >= 70 && adx < 84) || (adx >= 118 && adx < 125)); },
     fl: [[10, 42], [30, 56]], mid: [[56, 36], [24, 12]], pil: [[22, 8], [44, 14], [8, 24], [32, 34]] }
 ];
 function arenaMap(def) {
@@ -441,6 +445,7 @@ function arenaMap(def) {
   const walls = []; for (const [x, y, w, h] of def.walls) walls.push([x, y, w, h], [AW - x - w, y, w, h], [x, AH - y - h, w, h], [AW - x - w, AH - y - h, w, h]);
   const g = new Uint8Array(AW * AH).fill(1);
   for (const [x, y, w, h] of walls) for (let j = Math.max(0, y); j < Math.min(AH, y + h); j++) for (let i = Math.max(0, x); i < Math.min(AW, x + w); i++) g[j * AW + i] = 0;
+  if (def.wallIf) for (let j = 0; j < AH; j++) for (let i = 0; i < AW; i++) if (def.wallIf(i, j, AW, AH)) g[j * AW + i] = 0;   // 모양이 둥근 지도는 칸마다 벽인지 따져요 (180도 돌려도 같아야 해요)
   const floors = [];
   for (let j = 0; j < AH; j++) { let i = 0; while (i < AW) { if (!g[j * AW + i]) { i++; continue; } let k = i; while (k < AW && g[j * AW + k]) k++; const up = floors.find(f => f[1] + f[3] === j + oy && f[0] === i + ox && f[2] === k - i); if (up) up[3]++; else floors.push([i + ox, j + oy, k - i, 1]); i = k; } }
   m.floors = floors;
