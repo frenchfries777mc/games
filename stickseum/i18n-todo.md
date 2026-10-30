@@ -63,3 +63,5 @@ patchnotes.json | v554 title | 은하 제국의 황혼 | build 554 | 2026-10-30
 patchnotes.json | v554 items[0] | 피사로 일반 공격 데미지 20/29/38/47(단계별) | build 554 | 2026-10-30
 patchnotes.json | v554 items[1] | 차원여행자 일반 공격 데미지 16 → 15 | build 554 | 2026-10-30
 patchnotes.json | v554 items[2] | 야구선수 일반 공격 데미지 43 → 45 | build 554 | 2026-10-30
+patchnotes.json | v555 title | 은하 제국의 황혼 | build 555 | 2026-10-30
+patchnotes.json | v555 items[0] | 밸런스 표 다시 측정 (봇끼리 41,000판) | build 555 | 2026-10-30
