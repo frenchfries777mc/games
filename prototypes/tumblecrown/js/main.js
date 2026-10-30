@@ -618,14 +618,16 @@ const SKP = {
 const SELFP = { k: 'self', r: 1.5 };
 // 모든 기본 공격과 기술은 누르고 있으면 민트색으로 보이고 떼면 나가요 (궁수 모아 쏘기만 원래대로 누르고 있다가 떼요)
 const relBasic = role => !TOUCH && role !== 'archer' && !!ROLES[role];
-function basicSpec(role) { const A = ROLES[role].atk; return A.kind === 'melee' ? { k: 'fan', range: A.range + 0.3, arc: A.arc } : BASEP[A.kind] || null; }
+// 기사는 두 번 베면 다음 한 번이 강타예요 (0.65초 안에 이어 눌러야 해요). 그때는 내 둘레에 내려찍는 범위로 미리보기가 바뀌어요
+function heavyNext(p) { const now = S.snap ? S.snap.t * 1000 : 0; if (p.aN !== S.kcN) { S.kcN = p.aN; if (p.ak === 'atk') { S.kcC = p.ac; S.kcT = now; } else if (p.ak === 'hv') S.kcC = -1; } return p.role === 'knight' && S.kcC === 1 && now - S.kcT < 650; }
+function basicSpec(role, p) { const A = ROLES[role].atk; if (p && heavyNext(p)) return { k: 'self', r: 3.2 }; return A.kind === 'melee' ? { k: 'fan', range: A.range + 0.3, arc: A.arc } : BASEP[A.kind] || null; }
 function skillSpec(role, key) { const R = ROLES[role]; const s = R && R.skills['qer'.indexOf(key)]; return s ? SKP[s.id] || SELFP : null; }
 function aimedSkill(key) { const m = inGame() && S.scr === '' && !TOUCH ? myP() : null; return !!(m && !m.dn && !m.dd && skillSpec(m.role, key)); }
 function aimTick(p, pos, inp) {
   let sp = null;
   if (!TOUCH && S.scr === '' && !p.dn && !p.dd) {
     if (S.aimK) sp = skillSpec(p.role, S.aimK);
-    else if (mouse.down) sp = basicSpec(p.role);
+    else if (mouse.down) sp = basicSpec(p.role, p);
   }
   if (S.aimK && !sp) S.aimK = null;
   view.setAim(sp, pos.x, pos.z, inp.aim == null ? p.a : inp.aim, inp.ax, inp.az);
@@ -1085,6 +1087,12 @@ function teamHud(sn) {
   });
   // 괴물 보너스: 우리 팀 점령이 빨라지는 동안 남은 시간을 깃발 아래에 보여 줘요
   if (sn.mc && sn.mc[mt] > 0) { oc.font = 'bold 13px sans-serif'; oc.textAlign = 'center'; oc.fillStyle = '#ffd36a'; oc.fillText(T('점령 1.5배 ') + sn.mc[mt] + T('초'), innerWidth / 2, y + 30); }
+  // 팀별 처치 수 (깃발 줄 양옆) 와 내 처치 수
+  { const kt = [0, 0]; for (const q of sn.pl) kt[q.tm] += q.kl | 0; const me1 = sn.pl.find(q => q.id === S.me);
+    oc.font = 'bold 13px Galmuri, system-ui'; oc.lineWidth = 4; oc.strokeStyle = '#140f18';
+    oc.textAlign = 'right'; oc.fillStyle = hex(TEAMS[0].c); const t0 = T('처치 {0}', kt[0]); oc.strokeText(t0, x0 - 24, y + 4); oc.fillText(t0, x0 - 24, y + 4);
+    oc.textAlign = 'left'; oc.fillStyle = hex(TEAMS[1].c); const t1 = T('처치 {0}', kt[1]); oc.strokeText(t1, x0 + (n - 1) * 34 + 24, y + 4); oc.fillText(t1, x0 + (n - 1) * 34 + 24, y + 4);
+    if (me1 && (me1.kl | 0) > 0) { oc.textAlign = 'right'; oc.fillStyle = '#ffe08a'; const t2 = T('내 처치 {0}', me1.kl | 0); oc.strokeText(t2, x0 - 24, y + 22); oc.fillText(t2, x0 - 24, y + 22); } }
   // 점령 경보: 우리 깃발을 상대가 점령하는 중이면 깃발이 깜빡이고 알림이 떠요
   { S.fAl = S.fAl || []; let any = false; sn.tf.forEach((f, i) => { const on = f[0] === mt && f[1] >= 0 && f[1] !== mt && f[2] > 0; if (on && !S.fAl[i]) SFX.play('warn'); S.fAl[i] = on; if (on) any = true; });
     if (any) { oc.font = 'bold 15px Galmuri, system-ui'; oc.textAlign = 'center'; oc.lineWidth = 4; oc.strokeStyle = '#140f18'; const tx = T('우리 깃발을 점령당하고 있어요!'); oc.strokeText(tx, innerWidth / 2, y + 48); oc.fillStyle = Math.sin(performance.now() / 140) > 0 ? '#ff6a5a' : '#ffd0c8'; oc.fillText(tx, innerWidth / 2, y + 48); } }
