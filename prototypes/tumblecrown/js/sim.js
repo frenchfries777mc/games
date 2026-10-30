@@ -2,7 +2,7 @@
 // 게임 규칙 (방장·혼자 하기에서만 돌아가요). three.js를 쓰지 않아서 node에서도 시험할 수 있어요.
 import { ROLES, ROLE_IDS, ENEMIES, BLESSINGS, CHAPTERS, FOES, MAP, GEAR_BONUS, COMBOS, DEEP, ROLE_PUZ, flagShown } from './data.js';
 import * as D from './data.js';
-import { collide as mapCollide, isWall, lineClear, navDir, areaAt, cw, useChapter, PILLARS, resetSecrets, openSecret, secretFace, openGate, dropPillar, pillarAt, LIFTH, liftOk } from './map.js';
+import { collide as mapCollide, isWall, lineClear, navDir, areaAt, cw, useChapter, PILLARS, resetSecrets, openSecret, secretFace, openGate, setDoors, DSTATE, dropPillar, pillarAt, LIFTH, liftOk } from './map.js';
 
 export const INTRO_T = 16;
 const WAKE_R = 14, LEASH_R = 30;
@@ -63,7 +63,7 @@ export function createGame(slots, seed, ch = 0) {
     G.honor[s.id] = 0;
   });
   G.tm = {}; const cnt = [0, 0]; for (const p of G.players) { G.tm[p.id] = p.team; p.tIdx = cnt[p.team]++; }
-  if (G.pvp) { G.fl = MAP.tflags.map(([x, y, o]) => ({ x: cw(x), z: cw(y), own: o, cap: -1, prog: 0 })); G.winTeam = -1; G.cb = [0, 0]; G.mk = [0, 0]; G.cTim = [50, 50]; pvpSpawn(G); return G; }
+  if (G.pvp) { G.fl = MAP.tflags.map(([x, y, o]) => ({ x: cw(x), z: cw(y), own: o, cap: -1, prog: 0 })); G.winTeam = -1; G.cb = [0, 0]; G.mk = [0, 0]; G.dr = MAP.doors && MAP.doors.length ? { t: D.DOOR_SHUT_T } : null; G.sm = G.dr ? { on: 0, t: D.STORM_CALM_T } : null; setDoors(0); G.cTim = [50, 50]; pvpSpawn(G); return G; }
   placeAt(G, G.cp);
   // 몬스터는 지도에 정해진 자리에 한 번만 나와요
   for (const [k, x, y] of MAP.spawns) spawnEnemy(G, k, cw(x), cw(y), true);
@@ -123,6 +123,7 @@ export function koPlayer(G, p, src) {
 // 깃발: 둘레 안에 더 많은 팀이 7초 동안 서 있으면 그 팀 것이 돼요 (같은 수면 아무도 못 세요, 아무도 없으면 천천히 되돌아가요)
 function flagsStep(G, dt) {
   G.fl.forEach((f, i) => {
+    if (G.dr && i === 4 && !DSTATE.open) return;   // 신전 문이 닫혀 있는 동안 가운데 깃발은 차지할 수 없어요
     let n0 = 0, n1 = 0;
     for (const p of G.players) if (alive(p) && Math.hypot(p.x - f.x, p.z - f.z) < D.FLAG_R) { if (p.team === 0) n0++; else n1++; }
     const lead = n0 > n1 ? 0 : n1 > n0 ? 1 : -1, rt = Math.min(3, 1 + 0.5 * (Math.abs(n0 - n1) - 1)) * (lead >= 0 && G.cb[lead] > 0 ? 1.5 : 1) * (lead >= 0 ? 1 + 0.02 * G.mk[lead] : 1);   // 더 많은 사람이 있을수록 빨리 차지해요 (한 명 1배, 둘 1.5배, 셋 2배, 최대 3배)
@@ -173,6 +174,10 @@ function pvpCheck(G, dt) {
   if (G.phase !== 'play') return;
   if (G.range) return;   // 연습장은 깃발도 승패도 없어요
   flagsStep(G, dt);
+  if (G.dr) {   // 사막 신전: 문은 닫혀 있다가 열리고, 모래폭풍은 잠잠하다가 불어요
+    G.dr.t -= dt; if (G.dr.t <= 0) { const o = DSTATE.open ? 0 : 1; setDoors(o); G.dr.t = o ? D.DOOR_OPEN_T : D.DOOR_SHUT_T; ev(G, 'door', { open: o }); }
+    G.sm.t -= dt; if (G.sm.t <= 0) { G.sm.on = G.sm.on ? 0 : 1; G.sm.t = G.sm.on ? D.STORM_T : D.STORM_CALM_T; ev(G, 'storm', { on: G.sm.on }); }
+  }
   // 중립 괴물: 가운데에 가끔 나타나고, 더 많이 때린 팀이 쓰러뜨리면 그 팀 점령이 20초 동안 1.5배 빨라져요
   G.cb[0] = Math.max(0, G.cb[0] - dt); G.cb[1] = Math.max(0, G.cb[1] - dt);
   for (let c = 0; c < 2; c++) if (!G.enemies.some(e => e.mon && e.cn === c && e.hp > 0) && (G.cTim[c] -= dt) <= 0) { G.cTim[c] = 60; spawnMonsters(G, c); }
@@ -1587,7 +1592,7 @@ function botPlan(G, tm) {
   c.t = G.t; c.slots = {}; c.mon = null;
   const bs = G.players.filter(q => q.team === tm && q.ai && alive(q)), n = bs.length; if (n < 2) return c;
   const cx = bs.reduce((a, q) => a + q.x, 0) / n, cz = bs.reduce((a, q) => a + q.z, 0) / n, NF = G.fl.length, foes = G.players.filter(q => q.team !== tm && alive(q));
-  const sc = G.fl.map(f => Math.hypot(f.x - cx, f.z - cz) + (f.own === tm ? (f.cap >= 0 && f.cap !== tm ? -60 : 400) : 0));
+  const sc = G.fl.map((f, i) => Math.hypot(f.x - cx, f.z - cz) + (f.own === tm ? (f.cap >= 0 && f.cap !== tm ? -60 : 400) : 0) + (G.dr && i === 4 && !DSTATE.open ? 900 : 0));
   const en = G.fl.map(f => foes.filter(q => Math.hypot(q.x - f.x, q.z - f.z) < D.FLAG_R * 2.2).length);
   const ord = G.fl.map((f, i) => i).sort((a, b) => sc[a] - sc[b]), A = ord[0], B = ord[1], ctr = i => i >= NF - 3;
   const ms = G.enemies.filter(e => e.mon && e.hp > 0); let M = null, md = 420; for (const m of ms) { const d = Math.hypot(m.x - cx, m.z - cz); if (d < md) { md = d; M = m; } }
@@ -1631,7 +1636,7 @@ function botFlag(G, p, dt) {
     ai.fT = 2 + G.rng() * 1.5; let bi = 0, bs = 1e9;
     const sl = botPlan(G, p.team).slots[p.id];
     G.fl.forEach((f, i) => {
-      let sc = Math.hypot(f.x - p.x, f.z - p.z);
+      let sc = Math.hypot(f.x - p.x, f.z - p.z) + (G.dr && i === 4 && !DSTATE.open ? 900 : 0);
       if (f.own === p.team) sc += f.cap >= 0 && f.cap !== p.team ? -60 : 400;   // 이미 우리 깃발이면 지키는 중이 아닐 때는 거의 가지 않아요 (공격하러 나가요)
       // 혼자 흩어지지 않고 같은 편이 많은 깃발로 같이 가요 (같은 편은 사람·봇 모두 세요). 상대가 더 많이 지키는 깃발은 피해요
       let al = 0, en = 0; for (const q of G.players) { if (q === p || !alive(q) || Math.hypot(q.x - f.x, q.z - f.z) > D.FLAG_R * 3) continue; if (q.team === p.team) al++; else en++; }
@@ -1765,7 +1770,7 @@ export function snapshot(G) {
   const near = e => e.k === 'boss' || (e.st !== 'sleep') || G.players.some(p => Math.abs(p.x - e.x) < 34 && Math.abs(p.z - e.z) < 26);
   return {
     mn: G.enemies.filter(e => e.mon && e.hp > 0).map(m => [r1(m.x), r1(m.z), Math.round(m.hp / m.maxhp * 100)]), mk: G.mk || [0, 0],
-    pv: G.pvp ? 1 : 0, win: G.winner || 0, wtm: G.winTeam != null ? G.winTeam : -1, tf: G.fl ? G.fl.map(f => [f.own, f.cap, r1(f.prog)]) : 0, rg: G.range ? 1 : 0, mc: G.cb ? [Math.ceil(G.cb[0]), Math.ceil(G.cb[1])] : 0, t: r1(G.t), ph: G.phase, pt: r1(G.phaseT), c: G.ch, dp: G.deep, wk: G.weekly, wt: r1(G.winT || 0), msg: G.msg, won: G.won,
+    pv: G.pvp ? 1 : 0, win: G.winner || 0, wtm: G.winTeam != null ? G.winTeam : -1, tf: G.fl ? G.fl.map(f => [f.own, f.cap, r1(f.prog)]) : 0, rg: G.range ? 1 : 0, dr: G.dr ? [DSTATE.open, r1(G.dr.t)] : 0, sm: G.sm ? [G.sm.on, r1(G.sm.t)] : 0, mc: G.cb ? [Math.ceil(G.cb[0]), Math.ceil(G.cb[1])] : 0, t: r1(G.t), ph: G.phase, pt: r1(G.phaseT), c: G.ch, dp: G.deep, wk: G.weekly, wt: r1(G.winT || 0), msg: G.msg, won: G.won,
     sk: G.players.filter(p => !p.bot && G.skip[p.id]).length, hu: G.players.filter(p => !p.bot).length,
     pl: G.players.map(p => ({ id: p.id, tm: p.team, fz: p.inFl ? 1 : 0, dth: p.deaths | 0, role: p.role, rn: p.px && p.px.runeT > G.t ? r1(p.px.runeT - G.t) : 0, col: p.col, cos: p.cos, name: p.name, bot: p.bot, x: r1(p.x), z: r1(p.z), a: r1(p.a), hp: Math.round(p.hp), mx: p.maxhp, dn: p.down ? 1 : 0, dd: p.dead ? 1 : 0, bl: r1(p.bleed), rs: r1(p.respT), rv: r1(p.revT), ro: p.roll > 0 ? 1 : 0, bk: p.block > 0 ? 1 : 0, sh: Math.round(p.shield), tn: p.taunt > 0 ? 1 : 0, ra: p.rally > 0 ? 1 : 0, cb: p.capB > 0 ? r1(p.capB) : 0, an: p.animT > 0 ? p.anim : '', aN: p.animN || 0, ak: p.anim, mv: p.moving ? 1 : 0, cd: [r1(p.cd.s0), r1(p.cd.s1), r1(p.cd.s2)], rc: r1(p.rollCd), rct: p.rcT > 0 ? r1(p.rcT) : 0, rcc: p.rcCd > 0 ? r1(p.rcCd) : 0, b: p.bl, cb: p.comboT > 0 ? p.combo : 0, ac: p.animC || 0, fc: p.focus > 0 ? 1 : 0, tc: p.torch || 0, cg: p.chg > 0 ? r1(p.chg) : 0, cl: p.chill > 0 ? 1 : 0, em: p.emb ? 1 : 0, kl: p.kills | 0, pc: p.place | 0, sv: r1(p.survT || 0), bn: p.burn > 0 ? 1 : 0, sw: p.slow > 0 ? 1 : 0, stl: p.stl > 0 ? 1 : 0, sp: p.snipeT > 0 ? 1 : 0, bs: p.bast > 0 ? 1 : 0, vw: (p.vow && p.vow.t > 0) || p.vwSelf > 0 ? 1 : 0 })),
     en: G.enemies.filter(e => e.k !== 'dummy' && near(e)).map(e => ({ id: e.id, k: e.k, x: r1(e.x), z: r1(e.z), a: r1(e.a), hp: Math.round(e.hp), mx: e.maxhp, st: e.st, mk: e.mark > 0 ? 1 : 0, sn: e.stun > 0 ? 1 : 0, sl: e.slow > 0 ? 1 : 0, bu: e.burn > 0 ? 1 : 0, ph: e.phase || 0, mb: e.mb || 0, tm: e.tm != null ? e.tm : -1, mv: e.moving ? 1 : 0, ak: e.atk ? e.atk.k + (e.atk.go ? '!' : '') : '', ht: e.hitT > 0 ? 1 : 0 })),
