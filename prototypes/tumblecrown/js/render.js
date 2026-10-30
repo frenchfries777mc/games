@@ -54,7 +54,9 @@ const THEMES = {
   // 끝없는 심연: 별이 흩어진 검푸른 허공 위에 떠 있는 청록빛 돌길
   deep: { bg: 0x010308, fog: 0x020810, amb: 0x2a4a6a, hemi: 0x6ac0d0, floor: [0x1e3440, 0x223a48, 0x1a2e3a, 0x26404e, 0x1c3240], bfloor: [0x16283a, 0x1a2e42, 0x14243a, 0x1e3448, 0x182a3e], wet: [0x1a4a5a, 0x1e5264, 0x16404e, 0x22586a], wall: [0x1a2838, 0x1e2e40, 0x223448, 0x162432], bwall: [0x142238, 0x182840, 0x1c2e48, 0x121e32], top: 0x0a1420, moss: 0x2ae0c0, mossP: 0.07, torch: 0x6af0e0, water: 0x1a6a8a, ring: 0x2ae0c0, fz: [0x1a6a8a, 0x6af0e0], ember: [0x9af8ff, 0x4ad8e0], banner: 0x0a3a4a },
   abyss: { bg: 0x040208, fog: 0x0c0614, amb: 0x4a3a6a, hemi: 0x9a80c8, floor: [0x3a3444, 0x423a4c, 0x4a4254, 0x36303e, 0x463e50], bfloor: [0x2e2440, 0x362a48, 0x3e3050, 0x2a203a, 0x3a2c4c], wet: [0x3a2a5a, 0x423064, 0x36264e, 0x4a366a], wall: [0x36303e, 0x3e3646, 0x463e50, 0x302a38], bwall: [0x2e2240, 0x362848, 0x3e2e52, 0x2a1e3a], top: 0x1e1828, moss: 0x5a3a8a, mossP: 0.08, torch: 0xc08aff, water: 0x5a3a9a, ring: 0xb06aff, fz: [0x5a1aa0, 0xb06aff], ember: [0xd0a0ff, 0xa06ae0], banner: 0x3a1a5a },
-  tower: { bg: 0x0a0505, fog: 0x160a08, amb: 0x6a4a4a, hemi: 0xc89a8a, floor: [0x4a4040, 0x524646, 0x5a4c4a, 0x463c3c, 0x54484a], bfloor: [0x4a3030, 0x523434, 0x5a3a36, 0x462c2c, 0x503432], wet: [0x3a3440, 0x403848, 0x36303c, 0x443c4c], wall: [0x4a3a36, 0x52423c, 0x5a4842, 0x443430], bwall: [0x5a2a22, 0x622e26, 0x6a3428, 0x52261e], top: 0x2e2220, moss: 0x5a4a2a, mossP: 0.04, torch: 0xff7a30, water: 0x6a3a2a, ring: 0xc04a10, fz: [0xa03a10, 0xff6a20], ember: [0xffa040, 0xff6a20], banner: 0x3a3a3a }
+  tower: { bg: 0x0a0505, fog: 0x160a08, amb: 0x6a4a4a, hemi: 0xc89a8a, floor: [0x4a4040, 0x524646, 0x5a4c4a, 0x463c3c, 0x54484a], bfloor: [0x4a3030, 0x523434, 0x5a3a36, 0x462c2c, 0x503432], wet: [0x3a3440, 0x403848, 0x36303c, 0x443c4c], wall: [0x4a3a36, 0x52423c, 0x5a4842, 0x443430], bwall: [0x5a2a22, 0x622e26, 0x6a3428, 0x52261e], top: 0x2e2220, moss: 0x5a4a2a, mossP: 0.04, torch: 0xff7a30, water: 0x6a3a2a, ring: 0xc04a10, fz: [0xa03a10, 0xff6a20], ember: [0xffa040, 0xff6a20], banner: 0x3a3a3a },
+  harbor: { bg: 0x04080e, fog: 0x0c1a26, amb: 0x5a7088, hemi: 0xa0c0d8, floor: [0x5a4c3a, 0x625440, 0x6a5c46, 0x564834, 0x60523e], bfloor: [0x4a3e30, 0x524636, 0x5a4c3a, 0x463a2c, 0x50443a], wet: [0x24506a, 0x2a5a76, 0x204862, 0x2e6280], wall: [0x4a3a2c, 0x54442f, 0x5c4a36, 0x42342a], bwall: [0x3a2c20, 0x443426, 0x4c3a2c, 0x34281e], top: 0x2a2018, moss: 0x3a5a4a, mossP: 0.05, torch: 0xffb050, water: 0x2a6a8a, ring: 0x4aa0c8, fz: [0x2a6a8a, 0x60c0e0], ember: [0xffc060, 0xff9030], banner: 0x203a52 },
+  sewer: { bg: 0x030806, fog: 0x0a1a14, amb: 0x4a6a58, hemi: 0x88b098, floor: [0x3a443c, 0x424c42, 0x4a544a, 0x363e36, 0x444e44], bfloor: [0x2e382e, 0x364036, 0x3e483e, 0x2a342a, 0x364236], wet: [0x2a5a40, 0x306648, 0x264e38, 0x347050], wall: [0x2e3a32, 0x36423a, 0x3e4a42, 0x28322c], bwall: [0x26342a, 0x2e3c32, 0x36443a, 0x222e24], top: 0x1a2a20, moss: 0x4a7a3a, mossP: 0.12, torch: 0x9aff7a, water: 0x2a6a44, ring: 0x58c878, fz: [0x2a6a44, 0x70e090], ember: [0xa0ff80, 0x60d060], banner: 0x1e3a2a },
 };
 // 장마다 다른 기사단 깃발 색 (1장부터 8장까지)
 const FLAG_COL = [0x7a1f22, 0x2e5a2a, 0x2a4a8a, 0x4a4a4a, 0x2a5a7a, 0x6a4a1a, 0x8a2a10, 0x4a1a6a];
@@ -73,10 +75,12 @@ const HERO = {
   warden: { body: 0x6b5b3e, leg: 'dm', arm: 'mt', helm: 1, helmC: 0x4a4a52, plume: 0xc8a030, sword: 1, shield: 1, shieldC: 0x6a5030, shS: 1.45, belt: 1, wide: 1.24 },
   assassin: { body: 0x24343c, leg: 0x161e24, arm: 0x24343c, hood: 0x1a2830, scim: 1, belt: 1 },
   bomber: { body: 0x7a4a32, leg: 0x3a3030, arm: 0x7a4a32, goggles: 1, bombs: 1, bhand: 1, sack: 1, belt: 1, cap: 0x5a3a28, wide: 1.1 },
+  bard: { body: 0xb04a6a, leg: 0x4a3a50, arm: 0xb04a6a, cap: 0x3a6a8a, lute: 1, belt: 1, cape: 0x6a3a8a },
+  spearman: { body: 0x5a6a7a, leg: 0x3a3a44, arm: 0x5a6a7a, helm: 1, helmC: 0x8a8f9c, plume: 0xb83a3a, spear: 1, belt: 1 },
   crossbow: { body: 0x6b4a2e, leg: 0x2e2a34, arm: 0x6b4a2e, kettle: 1, scarf: 0xb8442e, xh: 1, bolts: 1, strap: 1, belt: 1, wide: 1.1 }
 };
 // 동작은 비슷한 직업의 것을 같이 써요 (마녀는 사제처럼, 바이킹·맘루크·스켈레톤은 종자처럼)
-const FAM = { witch: 'priest', viking: 'squire', mamluk: 'squire', skeleton: 'squire', warden: 'knight', assassin: 'squire', crossbow: 'archer', bomber: 'squire' };
+const FAM = { witch: 'priest', viking: 'squire', mamluk: 'squire', skeleton: 'squire', warden: 'knight', assassin: 'squire', crossbow: 'archer', bomber: 'squire', bard: 'priest', spearman: 'squire' };
 function matOf(v) { return v === 'dm' ? dmetal() : v === 'mt' ? metal() : M(v); }
 export const makeHero = toonify(function (role, cos) {
   const o = Object.assign({}, HERO[role]), cp = cos && COSMETICS.cape.items.find(i => i.id === cos.cape && i.col);
@@ -182,6 +186,7 @@ function makeFigure(o) {
   if (o.spear) { const sp = new THREE.Group(); sp.position.set(0, -0.9, 0.1); armR.add(sp); sp.rotation.x = Math.PI / 2; cyl(0.06, 0.06, 3.6, 5, M(0x5a3a22), 0, 0.8, 0, sp); cone(0.16, 0.6, 4, metal(), 0, 2.9, 0, sp); }
   if (o.great) { const gs = new THREE.Group(); gs.position.set(0, -0.9, 0.2); armR.add(gs); gs.rotation.x = Math.PI / 2; box(0.2, 2.8, 0.06, M(o.great, { m: 0.9, r: 0.3, e: o.greatE || 0, ei: 1.5 }), 0, 1.6, 0, gs); box(0.8, 0.12, 0.14, gold(), 0, 0.15, 0, gs); }
   if (o.censer) { const c = new THREE.Group(); c.position.set(0, -1.1, 0.2); armR.add(c); cyl(0.02, 0.02, 0.8, 4, dmetal(), 0, 0.4, 0, c); sph(0.3, 6, 5, M(0x8a7a40, { m: 0.7, e: 0x3a7ad0, ei: 1 }), 0, -0.1, 0, c); }
+  if (o.lute) { const lt = new THREE.Group(); lt.position.set(-0.1, -0.85, 0.45); armL.add(lt); lt.rotation.x = 0.5; sph(0.42, 8, 6, M(0xa8683a), 0, -0.3, 0, lt).scale.set(1, 1.15, 0.55); cyl(0.07, 0.07, 1.5, 5, M(0x5a3a22), 0, 0.85, 0, lt); box(0.22, 0.34, 0.1, M(0x3a2414), 0, 1.7, 0, lt); cyl(0.1, 0.1, 0.06, 6, M(0x2a1a10), 0, -0.3, 0.2, lt).rotation.x = Math.PI / 2; }
   if (o.bell) { const bl = new THREE.Group(); bl.position.set(-0.1, -0.8, 0.5); armL.add(bl); bl.rotation.x = 0.6; cyl(0.45, 0.8, 1.3, 8, M(0x8a7a4a, { m: 0.8, r: 0.35 }), 0, 0, 0, bl); }
   if (o.xbow) { const xb = new THREE.Group(); xb.position.set(0, -0.9, 0.3); armR.add(xb); xb.rotation.x = Math.PI / 2; box(0.14, 1.1, 0.14, M(0x4a3020), 0, 0.4, 0, xb); box(1.2, 0.1, 0.1, dmetal(), 0, 0.8, 0, xb); }
   if (o.torch) { const t = new THREE.Group(); t.position.set(0, -0.9, 0.1); armR.add(t); t.rotation.x = 0.9; cyl(0.08, 0.1, 1.2, 6, leather(), 0, 0.4, 0, t); cone(0.22, 0.6, 6, M(0xffa040, { e: 0xff7a20, ei: 3 }), 0, 1.2, 0, t); if (!o.noLight) { light = new THREE.PointLight(0xff9a48, 16, 9, 1.6); light.position.set(0, 1.4, 0); t.add(light); } }
@@ -1517,7 +1522,7 @@ function setXb(X, pull, loaded) {
 const ease = u => u < 0 ? 0 : u > 1 ? 1 : u * u * (3 - 2 * u);
 const seg = (u, a, b) => ease((u - a) / (b - a));
 // 역할마다 공격·기술 동작. 몸 전체(허리 비틀기, 내딛기, 뛰어오르기)가 같이 움직여요
-const ANIM_T = { atk: 0.32, hv: 0.95, big: 0.6, skill: 0.8 }, SK_T = { kill: 0.55, whirl: 1.0, storm: 1.5, flurry: 0.7, leap: 0.9, shadow: 0.6, scatter: 0.7 };
+const ANIM_T = { atk: 0.32, hv: 0.95, big: 0.6, skill: 0.8 }, SK_T = { kill: 0.55, whirl: 1.0, storm: 1.5, flurry: 0.7, leap: 0.9, shadow: 0.6, scatter: 0.7, lunge: 0.7 };
 // 기사 베기 좌우 방향 (1이면 화면 오른쪽에서 시작)
 const KS = 1, KR = 1, KH_T = 0.5;
 // 기사 베기 자세. 1타: 오른쪽 위에서 감았다가 왼쪽 아래로 / 2타: 1타가 끝난 왼쪽 아래에서 조금 더 감았다가 오른쪽 아래로 낮게
@@ -1594,7 +1599,7 @@ function animHero(E, p, dt, t, view) {
   // 동작 시작: 동작 번호가 바뀌면 처음부터
   // 앞 동작이 아직 남아 있으면 그 자세에서 이어서 시작해요 (blT 동안 천천히 따라가요)
   if (p.aN !== E.aN) { E.aN = p.aN; if (E.aN != null && p.ak) { if (E.ak || E.kh) E.blT = 0.1; E.ak = p.ak; E.aT = 0; E.kc = (p.ac | 0) % 2; E.kh = null; } }
-  const kind = E.ak ? (E.ak === 'atk' || E.ak === 'hv' || E.ak === 'big' ? E.ak : 'skill') : '', D = kind === 'big' && role === 'priest' ? 0.9 : kind === 'skill' && SK_T[E.ak] ? SK_T[E.ak] : ANIM_T[kind] || 0.5;
+  const kind = E.ak ? (E.ak === 'atk' || E.ak === 'hv' || E.ak === 'big' ? E.ak : 'skill') : '', D = kind === 'atk' && p.role === 'spearman' ? 0.45 : kind === 'big' && role === 'priest' ? 0.9 : kind === 'skill' && SK_T[E.ak] ? SK_T[E.ak] : ANIM_T[kind] || 0.5;
   // 기사 베기가 끝나면 끝 자세를 잠깐 들고 있다가 (연타가 이어질 수 있는 동안) 천천히 돌아와요
   if (E.ak) { E.aT += dt; if (E.aT > D) { if ((role === 'knight' || CHAIN[role]) && E.ak === 'atk') E.kh = { c: E.kc, t: 0 }; E.ak = null; } }
   if (E.kh && (E.kh.t += dt) > KH_T) E.kh = null;
@@ -1642,6 +1647,9 @@ function animHero(E, p, dt, t, view) {
         T.jy = hop(0.07, L1, 3.8); T.bz = 0.3 * dn * x; T.bry = 0.5 * cr * (1 - dn) * x;
         T.sq = 0.5 * cr * (1 - up) - 0.4 * up * (1 - dn) + land(L1, 0.75); T.by = (-0.35 * cr * (1 - up) - 0.45 * dn) * x; T.lg = (0.6 * cr * (1 - up) + 0.9 * dn) * x;
         if (role === 'archer') { T.pull = 0.75 * up * (1 - dn); T.rpz = -0.4 * up * (1 - dn); }
+      } else if (p.role === 'spearman') { // 창병 찌르기: 창을 뒤로 빼며 몸을 비틀어 웅크렸다가, 한 발 크게 내딛으며 앞으로 내질러요 (뒤로 쭉 빼면 창끝이 앞을 가리켜요)
+        const pl = seg(v, 0.08, 0.3) * (1 - seg(v, 0.3, 0.4)), st = seg(v, 0.3, 0.42) * (1 - seg(v, 0.62, 1)), lv = seg(v, 0, 0.14) * (1 - seg(v, 0.74, 1));   // lv: 창을 눕혀요 (팔이 내려올수록 창끝이 앞을 가리켜요)
+        T.rx = base[0] * (1 - lv) + (-0.3 + 0.45 * pl - 0.2 * st) * lv; T.lx = base[1] * (1 - lv) + (-0.55 + 0.3 * pl - 0.35 * st) * lv; T.lz = 0.2 * st * lv; T.rz = -0.15 * pl; T.bry = 0.6 * pl - 0.55 * st; T.bx = -0.18 * pl + 0.45 * st; T.bz = -0.35 * pl + 1.1 * st; T.sq = 0.22 * pl - 0.08 * st; T.lg = 0.5 * pl + 1.0 * st; T.hx = 0.1 * st;
       } else if (role === 'knight') { // 기사 1타: (화면에서 볼 때) 오른쪽 위에서 왼쪽 아래로 비스듬히 / 2타: 왼쪽 아래에서 오른쪽 아래로 낮게 가로 베기
         // 팔을 앞으로 들고(rx) 좌우로 휘두르며(rz) 칼날을 팔 축으로 돌려(ry) 눕혀요. 허리 비틀기(bry)로 더 크게
         kApply(T, kPose(E.kc, v, base), 1);
