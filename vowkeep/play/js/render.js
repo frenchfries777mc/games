@@ -1581,6 +1581,7 @@ function animEnemy(E, e, dt, t, view) {
   if (T.rollA != null) { const c = 1.6; u.body.rotation.set(T.rollA, bry, brz); u.body.position.set(0, c - c * Math.cos(T.rollA), -c * Math.sin(T.rollA)); u.legL.rotation.x = u.legR.rotation.x = -1.9; } else if (boss) u.body.position.set(0, 0, 0);
   if (boss) {
     if (u.light) u.light.intensity = 18 + Math.sin(t * 1.5) * 2 + (e.ph === 3 ? 10 : 0) + (wind ? 8 * Math.abs(Math.sin(t * 20)) : 0);
+    if (u.kind === 'boss' && !dead) { if (e.wx && !u.wk) { u.wk = box(0.5, 0.5, 0.3, M(0xffe0a0, { e: 0xffb040, ei: 5, uniq: true }), 0, 1.9, 0.78, u.body); } if (u.wk) { u.wk.visible = !!e.wx; if (e.wx) { const s = 1 + 0.25 * Math.sin(t * 14); u.wk.scale.set(s, s, s); u.wk.rotation.z = t * 3; } } }
     if (u.crack) { const on = e.ph === 3; u.crack.visible = on; u.cape.visible = !on; const pl = 0.5 + 0.5 * Math.sin(t * 6); u.ckM.emissiveIntensity = on ? 4 + pl * 5 : 0; u.ckL.intensity = on ? 10 + pl * 14 : 0; if (on && (E.ckT = (E.ckT || 0) - dt) <= 0) { E.ckT = 0.12; const bk = -E.a + Math.PI / 2, bx2 = E.x - Math.sin(bk) * 1.3, bz2 = E.z - Math.cos(bk) * 1.3; view.burst(bx2, 4 + Math.random(), bz2, 0xff7a20, 2, 2, 0.5, 0.12); } }
     // 공격을 모으는 동안 몸에서 불똥이 튀어요
     if (wind && (E.wfT = (E.wfT || 0) - dt) <= 0) { E.wfT = 0.06; view.burst(E.x + (Math.random() - .5) * 2.4, 1 + Math.random() * 4, E.z + (Math.random() - .5) * 2.4, CH.boss.col || 0xff7a3a, 1, 2.5, 0.4, 0.12); }

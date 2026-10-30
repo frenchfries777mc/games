@@ -126,6 +126,7 @@ function hurtEnemy(G, e, dmg, p, o) {
   if (E.front && from && !o.pierce) { if (angDiff(e.a, angTo(e, from)) < 1.0) { d *= E.front; ev(G, 'clang', { x: e.x, z: e.z }); } }
   if (e.k === 'boss') {
     if (e.stun > 0) d *= 1.5;
+    if (e.wkOn > 0) { d *= 1.6; if (!(e.wkT > 0)) { e.wkT = 0.5; ev(G, 'weak', { x: e.x, z: e.z }); } }
     if (e.phase >= 3 && from && angDiff(e.a, angTo(e, from)) > 1.9) { d *= 2; ev(G, 'weak', { x: e.x, z: e.z }); }
   }
   d = Math.max(1, Math.round(d));
@@ -903,6 +904,10 @@ function eliteWind(G, e, dt) { e.wind -= dt; if (e.wind <= 0) { e.st = 'charge';
 /* ---------- 보스 ---------- */
 // 장마다 보스가 달라요. 공통: 체력 60%·30%에서 단계가 바뀌고, 자기 방 안에 있는 사람만 쫓아요
 function stepBoss(G, b, dt) {
+  // 약점: 11초마다 가슴의 핵이 3초 동안 번쩍여요 (그 사이에 맞히면 1.6배)
+  b.wkC = (b.wkC == null ? 8 : b.wkC) - dt; if (b.wkC <= 0) { b.wkC = b.wkOn > 0 ? 0.01 : 11; if (!(b.wkOn > 0)) { b.wkOn = 3; ev(G, 'wkOn', { x: b.x, z: b.z }); } }
+  if (b.wkOn > 0) { b.wkOn -= dt; if (b.wkOn <= 0) { b.wkOn = 0; b.wkC = 11; } }
+  if (b.wkT > 0) b.wkT -= dt;
   const f = b.hp / b.maxhp, B = G.EN.boss;
   // p4가 있는 보스(6~8장)는 체력 12%에서 마지막 4단계로 넘어가요
   const np = f > 0.6 ? 1 : f > 0.3 ? 2 : (B.p4 && f <= 0.12) ? 4 : 3;
@@ -1238,7 +1243,7 @@ export function snapshot(G) {
     t: r1(G.t), ph: G.phase, pt: r1(G.phaseT), c: G.ch, dp: G.deep, wk: G.weekly, wt: r1(G.winT || 0), msg: G.msg, won: G.won,
     sk: G.players.filter(p => !p.bot && G.skip[p.id]).length, hu: G.players.filter(p => !p.bot).length,
     pl: G.players.map(p => ({ id: p.id, role: p.role, cos: p.cos, name: p.name, bot: p.bot, x: r1(p.x), z: r1(p.z), a: r1(p.a), hp: Math.round(p.hp), mx: p.maxhp, dn: p.down ? 1 : 0, dd: p.dead ? 1 : 0, bl: r1(p.bleed), rs: r1(p.respT), rv: r1(p.revT), ro: p.roll > 0 ? 1 : 0, bk: p.block > 0 ? 1 : 0, sh: Math.round(p.shield), tn: p.taunt > 0 ? 1 : 0, ra: p.rally > 0 ? 1 : 0, an: p.animT > 0 ? p.anim : '', aN: p.animN || 0, ak: p.anim, mv: p.moving ? 1 : 0, cd: [r1(p.cd.s0), r1(p.cd.s1), r1(p.cd.s2)], rc: r1(p.rollCd), b: p.bl, cb: p.comboT > 0 ? p.combo : 0, ac: p.animC || 0, fc: p.focus > 0 ? 1 : 0, tc: p.torch || 0, cg: p.chg > 0 ? r1(p.chg) : 0, cl: p.chill > 0 ? 1 : 0, em: p.emb ? 1 : 0 })),
-    en: G.enemies.filter(near).map(e => ({ id: e.id, k: e.k, x: r1(e.x), z: r1(e.z), a: r1(e.a), hp: Math.round(e.hp), mx: e.maxhp, st: e.st, mk: e.mark > 0 ? 1 : 0, sn: e.stun > 0 ? 1 : 0, sl: e.slow > 0 ? 1 : 0, bu: e.burn > 0 ? 1 : 0, ph: e.phase || 0, mb: e.mb || 0, mv: e.moving ? 1 : 0, ak: e.atk ? e.atk.k + (e.atk.go ? '!' : '') : '', ht: e.hitT > 0 ? 1 : 0 })),
+    en: G.enemies.filter(near).map(e => ({ id: e.id, k: e.k, x: r1(e.x), z: r1(e.z), a: r1(e.a), hp: Math.round(e.hp), mx: e.maxhp, st: e.st, mk: e.mark > 0 ? 1 : 0, sn: e.stun > 0 ? 1 : 0, sl: e.slow > 0 ? 1 : 0, bu: e.burn > 0 ? 1 : 0, ph: e.phase || 0, wx: e.wkOn > 0 ? 1 : 0, mb: e.mb || 0, mv: e.moving ? 1 : 0, ak: e.atk ? e.atk.k + (e.atk.go ? '!' : '') : '', ht: e.hitT > 0 ? 1 : 0 })),
     pr: G.projs.map(p => ({ id: p.id, k: p.k, x: r1(p.x), z: r1(p.z), y: r1(p.y || 0), bg: p.big ? 1 : 0, a: r1(Math.atan2(p.vz || (p.tz - p.sz) || 0, p.vx || (p.tx - p.sx) || 1)) })),
     zn: G.zones.map(z => ({ id: z.id, k: z.k, x: r1(z.x), z: r1(z.z), r: z.r, a: z.a, len: z.len, w: z.w, arc: z.arc, t: r1(z.t), T: z.T, dl: z.delay > 0 ? 1 : 0 })),
     w: { fk: G.fork ? [G.fork.pick, r1(G.fork.prog[0]), r1(G.fork.prog[1])] : 0, cp: G.cpI, fi: G.fires.map(f => f.lit ? 1 : 0), al: G.altars.map(a => a.used ? 1 : 0), ap: G.altars.map(a => r1(a.prog)), ch: G.chests.map(c => c.open ? 1 : 0), cp2: G.chests.map(c => r1(c.prog)), tr: G.traps.map(t => (t.on ? 1 : 0) + (t.up ? 2 : 0)), boss: G.bossIntro ? 1 : 0, bd: G.bossDead ? 1 : 0, sc: G.secrets.map(q => q.open ? 1 : 0), lr: G.lores.map(q => q.read ? 1 : 0), pz: G.puz.map(q => ({ d: q.done ? 1 : 0, o: q.occ.join(''), l: q.lit.join(''), r: q.rot.join(''), v: q.pg.map(v => Math.min(9, Math.floor(v * 10))).join(''), c: q.ct.map(v => Math.ceil(v)).join(',') })), es: G.esc ? [r1(G.esc.t), G.esc.T] : 0, fl: G.flag ? [r1(G.flag.x), r1(G.flag.z), G.flag.by, r1(G.flag.prog), G.flag.got] : 0, pt: G.pits.map(q => q.down ? -1 : q.hits), lf: G.lifts.map(q => [r1(q.h), q.done ? 1 : 0, q.mv]), left: G.enemies.filter(e => e.hp > 0 && !e.summoned && e.k !== 'boss').length },
