@@ -717,6 +717,11 @@ function skillFx(e) {
   if (mine && ['block', 'pierce', 'ward', 'trap', 'rain', 'heal'].includes(e.s)) view.shake = Math.max(view.shake, 0.35);
   switch (e.s) {
     case 'block': view.dome(e.x + c * 0.6, e.z + s * 0.6, 1.9, 0xffe08a, 1.2); view.burst(e.x + c, 1.6, e.z + s, 0xffe08a, 10, 5, 0.35, 0.1); view.flash(e.x, e.z, 0xffe08a, 70); SFX.play('clang'); break;
+    case 'swapfx': {   // 자리 바꿈: 두 자리에서 보랏빛이 번쩍이고 서로를 잇는 줄이 그어져요 (n 1 = 궁정 전환, 더 크게)
+      const col = 0xb070ff, a2 = Math.atan2(e.tz - e.z, e.tx - e.x), dd = Math.hypot(e.tx - e.x, e.tz - e.z), big = e.n === 1;
+      for (const [x, z] of [[e.x, e.z], [e.tx, e.tz]]) { view.column(x, z, col, big ? 1.1 : 0.8); view.ring(x, z, big ? 4 : 2.6, col, 0.6); view.rise(x, z, 0xe0c8ff, big ? 20 : 12, 1.4, 0.8, 6); view.flash(x, z, col, big ? 130 : 90); }
+      view.streak(e.x, e.z, a2, dd, col, 0.35, 0.5); if (big) view.shock(e.tx, e.tz, 6, col, 0.5);
+      if (mine && big) view.shake = Math.max(view.shake, 0.6); SFX.play('orb'); break; }
     case 'dash': view.streak(e.x, e.z, e.a, 6, 0xcfe0ff, 0.4, 1.2); view.burst(e.x, 0.4, e.z, 0xbcae94, 16, 5, 0.6, 0.16); view.shock(e.x + c * 6, e.z + s * 6, 2.4, 0xcfe0ff, 0.35); view.flash(e.x + c * 4, e.z + s * 4, 0xcfe0ff, 90); if (mine) view.shake = Math.max(view.shake, 0.75); SFX.play('roll'); break;
     case 'taunt': view.shock(e.x, e.z, 10, 0xff6a4a, 0.6); view.rune(e.x, e.z, 2.6, 0xff6a4a, 1.2, 3); view.rise(e.x, e.z, 0xff6a4a, 18, 1.5, 0.9, 7); view.flash(e.x, e.z, 0xff6a4a, 120); if (mine) view.shake = Math.max(view.shake, 1.0); SFX.play('roar'); break;
     case 'pierce': view.streak(e.x, e.z, e.a, 18, 0xffe08a, 0.3, 0.35); view.burst(e.x + c, 1.6, e.z + s, 0xffe08a, 12, 6, 0.4, 0.12); view.flash(e.x, e.z, 0xffe08a, 80); break;
@@ -1192,6 +1197,12 @@ function respawnPanel(sn) {
   for (const p of sn.pl) if (!p.dd && p.tm === mt) { const [a, b] = P(p.x, p.z); oc.fillStyle = '#fff'; oc.beginPath(); oc.arc(a, b, 3, 0, 7); oc.fill(); }
 }
 // 머리 위 체력 막대: 나는 초록, 같은 편은 파랑, 상대는 빨강 (보호막은 하늘색으로 덧입혀요)
+// 룬 표식: 궁정 마법사에게 표식이 남은 사람 머리 옆에 보랏빛 마름모와 남은 초가 떠요
+function runeMark(x, y, sec) {
+  if (!(sec > 0)) return; oc.save(); oc.textAlign = 'center'; oc.font = 'bold 13px Galmuri, system-ui'; oc.lineWidth = 3; oc.strokeStyle = '#140f18';
+  const pu = 0.6 + 0.4 * Math.sin(performance.now() / 160); oc.fillStyle = 'rgba(190,130,255,' + pu + ')'; oc.beginPath(); oc.moveTo(x, y - 8); oc.lineTo(x + 7, y); oc.lineTo(x, y + 8); oc.lineTo(x - 7, y); oc.closePath(); oc.fill();
+  const tx = Math.ceil(sec) + T('초'); oc.strokeText(tx, x, y + 22); oc.fillStyle = '#e0c8ff'; oc.fillText(tx, x, y + 22); oc.restore();
+}
 function hpBar(x, y, p, me, ally) {
   const w = me ? 60 : 52, f = Math.max(0, Math.min(1, p.hp / p.mx));
   oc.fillStyle = 'rgba(20,10,14,.9)'; oc.fillRect(x - w / 2 - 2, y - 2, w + 4, 9);
@@ -1211,6 +1222,7 @@ function drawOverlay(dt) {
     const h = e.k === 'elite' ? 4.6 : 3.4, s = view.project(E.x, h, E.z), w = e.k === 'elite' ? 54 : 38;
     if (e.hp < e.mx) { oc.fillStyle = 'rgba(20,10,14,.85)'; oc.fillRect(s.x - w / 2 - 1, s.y - 1, w + 2, 6); oc.fillStyle = '#d0443a'; oc.fillRect(s.x - w / 2, s.y, w * e.hp / e.mx, 4); }
     if (e.mk) { oc.fillStyle = '#ff5a4a'; oc.font = 'bold 16px Galmuri, system-ui'; oc.fillText('▼', s.x, s.y - 12); }
+    runeMark(s.x + (w / 2 + 14), s.y + 2, e.rn);
     if (e.sl && !e.sn && !e.mk) { oc.fillStyle = '#7ac8ff'; oc.font = 'bold 12px Galmuri, system-ui'; oc.strokeStyle = '#140f18'; oc.lineWidth = 3; const ly = s.y - (e.k === 'elite' ? 28 : 11); oc.strokeText(T('둔화'), s.x, ly); oc.fillText(T('둔화'), s.x, ly); }
     if (e.sn) { oc.fillStyle = '#ffe08a'; oc.font = 'bold 14px Galmuri, system-ui'; oc.fillText('★ ★', s.x, s.y - 12); }
     if (e.k === 'elite') { oc.fillStyle = '#efe3c8'; oc.font = 'bold 13px Galmuri, system-ui'; oc.strokeStyle = '#140f18'; oc.lineWidth = 4; const nm = e.mb ? '★ ' + MIDB[chapterIndex()][e.mb - 1] : FOES[chapterIndex()].elite.name; oc.strokeText(nm, s.x, s.y - 12); oc.fillText(nm, s.x, s.y - 12); }
@@ -1222,7 +1234,7 @@ function drawOverlay(dt) {
     if (p.stl && p.id !== S.me && p.tm !== myTm() && S.snap && !sn.pl.some(q => q.id === S.me && Math.hypot(q.x - p.x, q.z - p.z) <= 2.8)) continue;   // 숨은 자객은 이름표도 숨겨요
     const s = view.project(E.x, 3.9, E.z);
     // 이름표가 겹치면 위로 비켜 올려요
-    if (p.id !== S.me) { for (let k = 0; k < 4 && tags.some(t => Math.abs(t.x - s.x) < 64 && Math.abs(t.y - s.y) < 30); k++) s.y -= 30; tags.push({ x: s.x, y: s.y }); oc.font = 'bold 13px Galmuri, system-ui'; oc.lineWidth = 4; oc.strokeStyle = '#140f18'; const t = p.bot ? T('{0} 봇', ROLES[p.role].name) : p.name; oc.strokeText(t, s.x, s.y - 10); oc.fillStyle = pcol(p); oc.fillText(t, s.x, s.y - 10); { const ty = ROLES[p.role].type; if (ty) { oc.font = 'bold 11px Galmuri, system-ui'; oc.lineWidth = 3; oc.strokeText(ty, s.x, s.y - 24); oc.fillStyle = '#e8e0cc'; oc.fillText(ty, s.x, s.y - 24); } } hpBar(s.x, s.y, p, false, p.tm === myTm()); }
+    if (p.id !== S.me) { for (let k = 0; k < 4 && tags.some(t => Math.abs(t.x - s.x) < 64 && Math.abs(t.y - s.y) < 30); k++) s.y -= 30; tags.push({ x: s.x, y: s.y }); oc.font = 'bold 13px Galmuri, system-ui'; oc.lineWidth = 4; oc.strokeStyle = '#140f18'; const t = p.bot ? T('{0} 봇', ROLES[p.role].name) : p.name; oc.strokeText(t, s.x, s.y - 10); oc.fillStyle = pcol(p); oc.fillText(t, s.x, s.y - 10); { const ty = ROLES[p.role].type; if (ty) { oc.font = 'bold 11px Galmuri, system-ui'; oc.lineWidth = 3; oc.strokeText(ty, s.x, s.y - 24); oc.fillStyle = '#e8e0cc'; oc.fillText(ty, s.x, s.y - 24); } } hpBar(s.x, s.y, p, false, p.tm === myTm()); runeMark(s.x + 58, s.y, p.rn); }
     else hpBar(s.x, s.y, p, true);
     if (p.dn) {
       const c = view.project(E.x, 1.5, E.z); oc.lineWidth = 5; oc.strokeStyle = 'rgba(20,10,14,.85)'; oc.beginPath(); oc.arc(c.x, c.y - 30, 16, 0, 7); oc.stroke();
