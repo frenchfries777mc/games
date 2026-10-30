@@ -496,7 +496,7 @@ function hostMsg(c, d) {
   const uid = c._uid; if (!uid) return;
   if (d.t === 'rdy' && !S.G && S.ph === 'pick') { S.rdy[uid] = !S.rdy[uid]; hostLobby(); if (S.scr === 'sRoom') paintRoom(); }
   else if (d.t === 'pick' && !S.G && S.ph === 'pick') { const sl = S.slots.find(s => s.uid === uid); if (sl) { if (ROLES[d.role]) sl.role = d.role; const col = +d.col | 0; if (COLORS[col] && !S.slots.some(s => s !== sl && s.col === col)) sl.col = col; hostLobby(); if (S.scr === 'sRoom') paintRoom(); } }
-  else if (d.t === 'i' && S.G) { const pid = c._pid; if (!pid) return; const r = S.rin[pid] || (S.rin[pid] = {}); const once = { q: r.q || d.q, e: r.e || d.e, r: r.r || d.r, roll: r.roll || d.roll, skip: r.skip || d.skip, atkR: r.atkR || d.atkR }; Object.assign(r, d, once); }
+  else if (d.t === 'i' && S.G) { const pid = c._pid; if (!pid) return; const r = S.rin[pid] || (S.rin[pid] = {}); const once = { q: r.q || d.q, e: r.e || d.e, r: r.r || d.r, roll: r.roll || d.roll, skip: r.skip || d.skip, atkR: r.atkR || d.atkR, rcl: r.rcl || d.rcl }; Object.assign(r, d, once); }
   else if (d.t === 'b' && S.G) { if (c._pid) chooseBless(S.G, c._pid, d.id); }
 }
 function dropConn(c) {
@@ -588,7 +588,7 @@ function awardHonor() {
 /* ---------- 조작 ---------- */
 // 한글 입력 상태여도 같은 자리의 글쇠로 읽어요 (e.code 기준)
 function keyOf(e) { const c = e.code || ''; if (/^Key[A-Z]$/.test(c)) return c[3].toLowerCase(); if (/^Digit[0-9]$/.test(c)) return c[5]; if (c === 'Space') return ' '; return e.key.toLowerCase(); }
-const K = {}; let mouse = { x: innerWidth / 2, y: innerHeight / 2, down: false }; const once = { q: 0, e: 0, r: 0, roll: 0, skip: 0, atkR: 0 };
+const K = {}; let mouse = { x: innerWidth / 2, y: innerHeight / 2, down: false }; const once = { q: 0, e: 0, r: 0, roll: 0, skip: 0, atkR: 0, rcl: 0 };
 addEventListener('keydown', e => {
   if (e.target && e.target.tagName === 'INPUT') return;
   const k = keyOf(e); K[k] = true; SFX.unlock();
@@ -597,11 +597,12 @@ addEventListener('keydown', e => {
   const sk = k === 'q' || k === 'ㅂ' ? 'q' : k === 'e' || k === 'ㄷ' ? 'e' : k === 'r' || k === 'ㄱ' ? 'r' : '';
   if (sk) { if (aimedSkill(sk)) { if (!e.repeat && !S.aimK) S.aimK = sk; } else once[sk] = 1; }
   if (k === ' ') { once.roll = 1; e.preventDefault(); }
+  if ((k === 'f' || k === 'ㄹ') && !e.repeat) recallToggle(); else if (k === 'escape' && S.rcOpen) S.rcOpen = false;
   if (k === 'tab') e.preventDefault();
   if (k === '1' || k === '2' || k === '3') pickBlessIdx(+k - 1);
 });
 addEventListener('keyup', e => { K[keyOf(e)] = false; K[e.key.toLowerCase()] = false; const k = keyOf(e), sk = k === 'q' || k === 'ㅂ' ? 'q' : k === 'e' || k === 'ㄷ' ? 'e' : k === 'r' || k === 'ㄱ' ? 'r' : ''; if (sk && S.aimK === sk) { S.aimK = null; if (inGame()) once[sk] = 1; } });
-addEventListener('blur', () => { for (const k in K) K[k] = false; mouse.down = false; S.aimK = null; });
+addEventListener('blur', () => { S.rcOpen = false; for (const k in K) K[k] = false; mouse.down = false; S.aimK = null; });
 $('gl').addEventListener('mousemove', e => { mouse.x = e.clientX; mouse.y = e.clientY; });
 addEventListener('mousemove', e => { mouse.x = e.clientX; mouse.y = e.clientY; });
 $('gl').addEventListener('mousedown', e => { if (e.button === 0) mouse.down = true; SFX.unlock(); });
@@ -617,7 +618,7 @@ const touch = { jx: 0, jz: 0, jid: null, atk: false, f: false };
   const end = e => { for (const t of e.changedTouches) if (t.identifier === touch.jid) { touch.jid = null; touch.jx = touch.jz = 0; base.style.display = 'none'; } };
   joy.addEventListener('touchend', end); joy.addEventListener('touchcancel', end);
   const hold = (id, k) => { const b = $(id); b.addEventListener('touchstart', e => { SFX.unlock(); touch[k] = true; e.preventDefault(); }, { passive: false }); b.addEventListener('touchend', e => { touch[k] = false; e.preventDefault(); }); b.addEventListener('touchcancel', () => touch[k] = false); };
-  hold('tA', 'atk'); hold('tF', 'f');
+  hold('tA', 'atk'); hold('tF', 'f'); $('tF').addEventListener('touchstart', () => recallToggle());
   const tap = (id, k) => $(id).addEventListener('touchstart', e => { once[k] = 1; e.preventDefault(); }, { passive: false });
   tap('tQ', 'q'); tap('tE', 'e'); tap('tR', 'r'); tap('tRoll', 'roll');
 })();
@@ -667,7 +668,7 @@ function gatherInput(p) {
     const g = view.groundAt(mouse.x, mouse.y); inp.aim = Math.atan2(g.z - pos.z, g.x - pos.x); inp.ax = g.x; inp.az = g.z;
     inp.atk = relBasic(p.role) ? false : mouse.down; inp.f = keyDown('f', 'ㄹ');
   }
-  inp.rsp = S.rspSel | 0; inp.q = once.q; inp.e = once.e; inp.r = once.r; inp.roll = once.roll; if (once.skip) S.voted = true; inp.skip = once.skip; inp.atkR = once.atkR; once.q = once.e = once.r = once.roll = once.skip = once.atkR = 0;
+  inp.rsp = S.rspSel | 0; inp.q = once.q; inp.e = once.e; inp.r = once.r; inp.roll = once.roll; if (once.skip) S.voted = true; inp.skip = once.skip; inp.atkR = once.atkR; inp.rcl = once.rcl; once.q = once.e = once.r = once.roll = once.skip = once.atkR = once.rcl = 0;
   aimTick(p, pos, inp);
   return inp;
 }
@@ -676,7 +677,8 @@ function gatherInput(p) {
 function localMove(p, inp, dt) {
   const L = S.local; const R = ROLES[p.role];
   if (p.dn || p.dd || S.snap.ph === 'intro' || S.snap.ph === 'wipe' || S.snap.ph === 'won') { L.x = p.x; L.z = p.z; L.roll = 0; return; }
-  if (Math.hypot(L.x - p.x, L.z - p.z) > 5) { L.x = p.x; L.z = p.z; }
+  if (p.rct > 0 || Math.hypot(L.x - p.x, L.z - p.z) > 5) { L.x = p.x; L.z = p.z; }
+  if (p.rct > 0) { L.roll = 0; return; }
   const ox = L.x, oz = L.z;
   L.rollCd = Math.max(0, (L.rollCd || 0) - dt);
   let mx = inp.mx, mz = inp.mz; const ml = Math.hypot(mx, mz); if (ml > 1) { mx /= ml; mz /= ml; }
@@ -913,6 +915,7 @@ function onEvent(e) {
       break; }
     case 'pillar': view.column(e.x, e.z, 0x6ab0ff, 0.9); view.burst(e.x, 0.5, e.z, 0x9ad0ff, 14, 6, 0.6, 0.14); view.flash(e.x, e.z, 0x6ab0ff, 80); SFX.play('slam'); break;
     case 'blink': view.column(e.x, e.z, 0x9ad0ff, 0.5); view.rise(e.x, e.z, 0x9ad0ff, 12, 1.5, 0.7, 6); SFX.play('orb'); break;
+    case 'recall': view.column(e.x, e.z, 0x9af0e0); if (e.id === me && e.end) bigMsg(T('깃발로 귀환했어요'), '', 1400); break;
     case 'respawn': view.column(e.x, e.z, 0xff9a48); if (e.id === me) bigMsg(T('진지에서 다시 일어났어요'), '', 1800); break;
     case 'flag': { const mine = e.own === myTm(), c = TEAMS[e.own].c; view.column(e.x, e.z, c, 1.4); view.ring(e.x, e.z, 6, c, 0.9); view.shock(e.x, e.z, 7, c, 0.6); view.flash(e.x, e.z, c, 120); bigMsg(mine ? T('깃발을 차지했어요!') : T('깃발을 빼앗겼어요!'), '', 1800); SFX.play(mine ? 'kill' : 'roar'); break; }
     case 'capbuff': view.rise(e.x, e.z, 0xffd36a, 12, 2.2, 0.9, 5); view.ring(e.x, e.z, 1.8, 0xffd36a, 0.5); if (e.id === me) { toast(T('점령 효과! 5초 동안 이동 속도와 공격이 20% 올라요'), 2400); SFX.play('bless'); } break;
@@ -949,6 +952,8 @@ function specTick(me) {
   if (tgt) el.textContent = T('관전 중 · {0}', tgt.bot ? ROLES[tgt.role].name : tgt.name) + (TOUCH ? ' · ' + T('화면을 누르면 다음 사람') : ' · ← → ' + T('로 바꾸기'));
 }
 addEventListener('keydown', e => { if (!S.snap || S.scr !== '' || !view.camId) return; const k = e.key; if (k === 'ArrowRight' || k === 'd' || k === 'D') specCycle(1); else if (k === 'ArrowLeft' || k === 'a' || k === 'A') specCycle(-1); });
+// 귀환 지도: 우리 팀 깃발을 누르면 3초 뒤 그곳으로, 다른 곳을 누르면 취소(쿨타임은 돌아요)
+$('gl').addEventListener('mousedown', e => { if (!S.rcOpen) return; e.stopImmediatePropagation(); e.preventDefault(); const h = (S.rcHit || []).find(q => Math.hypot(q.x - e.clientX, q.y - e.clientY) < q.r + 8); once.rcl = h ? h.v : -1; S.rcOpen = false; SFX.play('click'); }, true);
 $('gl').addEventListener('pointerdown', e => {
   // 쓰러졌을 때 뜨는 지도에서 깃발(또는 진지)을 누르면 거기서 다시 일어나요
   if (S.rspHit && S.rspHit.length) { const h = S.rspHit.find(q => Math.hypot(q.x - e.clientX, q.y - e.clientY) < q.r + 8); if (h) { if (h.v === -9) S.rspDone = false; else { S.rspSel = h.v; S.rspDone = true; } SFX.play('click'); return; } }
@@ -1178,6 +1183,35 @@ function teamHud(sn) {
     if (p.id === S.me) { oc.strokeStyle = '#fff'; oc.lineWidth = 1.5; oc.stroke(); }
   }
 }
+// 귀환(F): 살아 있을 때 큰 지도를 펴요 (쿨타임 25초)
+function recallToggle() {
+  const sn = S.snap, me = sn && sn.pl && sn.pl.find(q => q.id === S.me);
+  if (S.rcOpen) { S.rcOpen = false; return; }
+  if (!inGame() || S.scr !== '' || !sn || !sn.tf || sn.rg || sn.ph !== 'play' || !me || me.dn || me.dd || me.rct > 0 || me.rcc > 0) return;
+  S.rcOpen = true;
+}
+function recallPanel(sn) {
+  const me = sn.pl.find(q => q.id === S.me), live = me && !me.dn && !me.dd && sn.ph === 'play';
+  S.rcHit = [];
+  if (!live) { S.rcOpen = false; return; }
+  oc.font = 'bold 15px Galmuri, system-ui'; oc.textAlign = 'center'; oc.lineWidth = 4; oc.strokeStyle = '#140f18';
+  const st = me.rct > 0 ? T('귀환 중 {0}', Math.ceil(me.rct)) : me.rcc > 0 ? T('귀환 {0}', Math.ceil(me.rcc)) : '', yy = innerHeight - 118;
+  if (st && !S.rcOpen) { oc.strokeText(st, innerWidth / 2, yy); oc.fillStyle = me.rct > 0 ? '#9af0e0' : '#c8c0d0'; oc.fillText(st, innerWidth / 2, yy); }
+  if (!S.rcOpen) return;
+  const mt = me.tm, pw = Math.min(innerWidth * 0.78, innerHeight * 0.8 * MW / MH), ph = pw * MH / MW, x0 = (innerWidth - pw) / 2, y0 = Math.max(70, (innerHeight - ph) / 2 - 10), sc = pw / (MW * CS), P = (wx, wz) => [x0 + wx * sc, y0 + wz * sc];
+  if (mini.dirty) mini.paint();
+  oc.fillStyle = 'rgba(8,6,12,.82)'; oc.fillRect(x0 - 10, y0 - 40, pw + 20, ph + 56);
+  oc.imageSmoothingEnabled = !!S.mapImg; oc.drawImage(S.mapImg || mini.c, x0, y0, pw, ph); oc.strokeStyle = '#c8b480'; oc.lineWidth = 3; oc.strokeRect(x0 - 2, y0 - 2, pw + 4, ph + 4);
+  const tx = T('귀환할 우리 팀 깃발을 눌러요 · 다른 곳을 누르면 취소돼요'); oc.strokeText(tx, innerWidth / 2, y0 - 18); oc.fillStyle = '#9af0e0'; oc.fillText(tx, innerWidth / 2, y0 - 18);
+  const pulse = 0.5 + 0.5 * Math.sin(performance.now() / 260), tc = hex(TEAMS[mt].c);
+  sn.tf.forEach((f, i) => {
+    const fl = MAP.tflags[i], [a, b] = P(cw(fl[0]), cw(fl[1])), mine = f[0] === mt;
+    if (mine) { S.rcHit.push({ x: a, y: b, r: 15, v: i + 1 }); oc.fillStyle = 'rgba(' + (mt ? '255,90,74' : '74,140,255') + ',' + (0.18 + pulse * 0.25) + ')'; oc.beginPath(); oc.arc(a, b, 22 + pulse * 4, 0, 7); oc.fill(); }
+    oc.fillStyle = mine ? tc : f[0] < 0 ? '#5a5666' : hex(TEAMS[f[0]].c); oc.globalAlpha = mine ? 1 : 0.4; oc.beginPath(); oc.arc(a, b, 11, 0, 7); oc.fill(); oc.globalAlpha = 1;
+    oc.strokeStyle = '#140f18'; oc.lineWidth = 2; oc.beginPath(); oc.arc(a, b, 11, 0, 7); oc.stroke();
+  });
+  for (const p of sn.pl) if (!p.dd && p.tm === mt) { const [a, b] = P(p.x, p.z); oc.fillStyle = p.id === S.me ? '#ffe08a' : '#fff'; oc.beginPath(); oc.arc(a, b, p.id === S.me ? 4 : 3, 0, 7); oc.fill(); }
+}
 // 쓰러지면 큰 지도가 떠요: 우리 팀이 차지한 깃발과 진지가 밝게 보이고, 누르면 15초가 지난 뒤 거기서 다시 일어나요
 function respawnPanel(sn) {
   const me = sn.pl.find(q => q.id === S.me); if (!me || !me.dd || sn.ph !== 'play') { if (me && !me.dd) { S.rspSel = 0; S.rspDone = false; } return; }
@@ -1222,7 +1256,7 @@ function drawOverlay(dt) {
   oc.clearRect(0, 0, innerWidth, innerHeight);
   const sn = S.snap; if (!sn || S.scr === 'sIntro') return;
   S.rspHit = [];
-  if (sn.tf && !sn.rg && S.scr === '' && sn.ph !== 'won') { teamHud(sn); respawnPanel(sn); }
+  if (sn.tf && !sn.rg && S.scr === '' && sn.ph !== 'won') { teamHud(sn); respawnPanel(sn); recallPanel(sn); }
   oc.textAlign = 'center'; oc.textBaseline = 'middle';
   // 적 체력
   for (const e of sn.en) {
@@ -1345,13 +1379,13 @@ function frame(now) {
     if (S.G) {
       // 방장·혼자: 규칙을 직접 돌려요
       // 한 번 누르는 입력은 규칙이 실제로 돌 때까지 모아 둬요 (화면이 규칙보다 자주 그려져도 눌림이 사라지지 않게)
-      const pr = S.rin[S.me]; if (pr) for (const k of ['q', 'e', 'r', 'roll', 'skip', 'atkR']) inp[k] = inp[k] || pr[k];
+      const pr = S.rin[S.me]; if (pr) for (const k of ['q', 'e', 'r', 'roll', 'skip', 'atkR', 'rcl']) inp[k] = inp[k] || pr[k];
       S.rin[S.me] = inp;
       if (S.slowT > 0) S.slowT -= dt;
       S.acc += dt * (S.slowT > 0 ? 0.35 : 1); const h = 1 / 30;
       while (S.acc >= h) {
         S.acc -= h; S.prevPos = posMap(S.G); step(S.G, h, S.rin); S.stepped = true;
-        for (const pid in S.rin) { const r = S.rin[pid]; r.q = r.e = r.r = r.roll = r.skip = r.atkR = 0; }
+        for (const pid in S.rin) { const r = S.rin[pid]; r.q = r.e = r.r = r.roll = r.skip = r.atkR = r.rcl = 0; }
         for (const e of S.G.ev) { S.evq.push(e); if (S.net === 'host') (S.netEv || (S.netEv = [])).push(e); }
         S.G.ev.length = 0;
       }
@@ -1362,8 +1396,8 @@ function frame(now) {
       // 게스트: 내 이동은 바로, 나머지는 방장에게 보내요
       if (!S.local || S.local.ri !== S.snap.ri) S.local = { x: me.x, z: me.z, ri: S.snap.ri, roll: 0, rollCd: 0 };
       localMove(me, inp, dt);
-      S.sendAcc += dt; const o = S.pend || (S.pend = {}); o.q = o.q || inp.q; o.e = o.e || inp.e; o.r = o.r || inp.r; o.roll = o.roll || inp.roll; o.skip = o.skip || inp.skip; o.atkR = o.atkR || inp.atkR;
-      if (S.sendAcc >= 1 / 30) { S.sendAcc = 0; send({ t: 'i', rsp: inp.rsp, px: +S.local.x.toFixed(2), pz: +S.local.z.toFixed(2), aim: inp.aim, ax: inp.ax, az: inp.az, atk: !!inp.atk, f: !!inp.f, q: o.q, e: o.e, r: o.r, roll: o.roll, skip: o.skip, atkR: o.atkR }); S.pend = {}; }
+      S.sendAcc += dt; const o = S.pend || (S.pend = {}); o.q = o.q || inp.q; o.e = o.e || inp.e; o.r = o.r || inp.r; o.roll = o.roll || inp.roll; o.skip = o.skip || inp.skip; o.atkR = o.atkR || inp.atkR; o.rcl = o.rcl || inp.rcl;
+      if (S.sendAcc >= 1 / 30) { S.sendAcc = 0; send({ t: 'i', rsp: inp.rsp, px: +S.local.x.toFixed(2), pz: +S.local.z.toFixed(2), aim: inp.aim, ax: inp.ax, az: inp.az, atk: !!inp.atk, f: !!inp.f, q: o.q, e: o.e, r: o.r, roll: o.roll, skip: o.skip, atkR: o.atkR, rcl: o.rcl }); S.pend = {}; }
       me.x = S.local.x; me.z = S.local.z; if (S.local.roll > 0) me.ro = 1; if (inp.aim != null) me.a = inp.aim;
     }
     syncScene();
