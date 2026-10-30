@@ -526,7 +526,7 @@ function useSkill(G, p, si, inp) {
     case 'necroheal': for (const q of friends(G, p)) if (alive(q) && dist(p, q) < 9) { ev(G, 'heal', { id: q.id, x: q.x, z: q.z, v: healP(G, q, 22) }); ev(G, 'ward', { id: q.id }); } break;
     case 'necroraise': for (let i = 0; i < 4; i++) {   // 둘레에 약한 해골 넷 (우리 팀 편이고 18초 뒤 사라져요)
       const a = p.a + i * TAU / 4 + 0.4; let x = p.x + Math.cos(a) * 2.4, z = p.z + Math.sin(a) * 2.4; if (isWall(x, z)) { x = p.x; z = p.z; }
-      const e = spawnEnemy(G, 'skel', x, z, false); e.tm = p.team; e.own = p.id; e.hp = e.maxhp = 70; e.dm = 0.6; e.life = 18; e.stT = 0.5;
+      const e = spawnEnemy(G, 'skel', x, z, false); e.tm = p.team; e.own = p.id; e.hp = e.maxhp = 70; e.dm = 0.6; e.life = 18; e.stT = 0.5; ev(G, 'skill', { id: p.id, s: 'summonfx', x: e.x, z: e.z, a: p.a });
     } break;
     case 'courtswap': { // 가까운 아군과 자리를 맞바꿔요 (아군이 없으면 대기가 짧아요)
       let ally = null, bd = 18; for (const q of friends(G, p)) if (q !== p && alive(q) && dist(p, q) < bd) { bd = dist(p, q); ally = q; }
@@ -1394,7 +1394,7 @@ function stepProjs(G, dt) {
       }
       for (const e of G.enemies) {
         if (e.hp <= 0 || e.st === 'rise' || !foeOf(G, pr.own, e) || pr.hit.indexOf(e.id) >= 0) continue;
-        if (Math.hypot(e.x - pr.x, e.z - pr.z) < e.r + 0.8) {
+        if (Math.hypot(e.x - pr.x, e.z - pr.z) < e.r + (pr.k === 'nbolt' ? 2.2 : 0.8)) {   // 네크로멘서 초록 공격은 폭이 넓어요
           pr.hit.push(e.id); hurtEnemy(G, e, pr.dmg, own, { basic: pr.basic, aid: pr.aid, heavy: pr.heavy, pierce: pr.pierce, from: { x: pr.x - pr.vx * 0.05, z: pr.z - pr.vz * 0.05 } });
           if (pr.slow && e.hp > 0) { e.slow = pr.slow; e.slowM = 0.35; }
           if (pr.basic && own && own.role === 'court' && e.hp > 0) e.runeT = G.t + 4;   // 룬 표식 (4초)
