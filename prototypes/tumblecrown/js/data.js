@@ -3,12 +3,12 @@
 
 import { T } from './tr.js';
 
-export const VERSION = 'v0.1', BUILD = 49;
+export const VERSION = 'v0.1', BUILD = 50;
 
 export const ROLES = {
   knight: {
-    name: T('기사'), color: '#3f6fd0', hp: 340, speed: 6.0,
-    atk: { kind: 'melee', range: 2.5, arc: 1.9, dmg: 23, cd: 0.45 },
+    name: T('기사'), type: T('근접 딜러'), color: '#3f6fd0', hp: 345, speed: 6.0,
+    atk: { kind: 'melee', range: 2.5, arc: 1.9, dmg: 21, cd: 0.45 },
     skills: [
       { id: 'block', name: T('막기'), key: 'Q', cd: 5, desc: T('1.2초 동안 방패를 들어 앞에서 오는 피해를 70% 줄여요.') },
       { id: 'dash', name: T('돌진'), key: 'E', cd: 6, desc: T('앞으로 돌진하며 부딪힌 상대에게 30 피해를 줘요.') },
@@ -18,7 +18,7 @@ export const ROLES = {
     role: T('튼튼하게 버티며 공격·공격·강타로 몰아붙여요.')
   },
   priest: {
-    name: T('사제'), color: '#e8e4ef', hp: 150, speed: 6.0,
+    name: T('사제'), type: T('서포터'), color: '#e8e4ef', hp: 150, speed: 6.0,
     atk: { kind: 'orb', dmg: 10, cd: 0.5, speed: 16 },
     skills: [
       { id: 'heal', name: T('치유'), key: 'Q', cd: 9, desc: T('내 체력을 18 회복해요.') },
@@ -29,8 +29,8 @@ export const ROLES = {
     role: T('빛 구슬로 따라붙고, 세 번째 공격은 큰 빛을 꿰뚫어 쏴요.')
   },
   archer: {
-    name: T('사냥꾼'), color: '#5a9a4e', hp: 205, speed: 6.4,
-    atk: { kind: 'arrow', dmg: 11, cd: 0.36, speed: 26 },
+    name: T('사냥꾼'), type: T('원거리 딜러'), color: '#5a9a4e', hp: 205, speed: 6.4,
+    atk: { kind: 'arrow', dmg: 13, cd: 0.36, speed: 26 },
     skills: [
       { id: 'pierce', name: T('관통 화살'), key: 'Q', cd: 5, desc: T('상대를 꿰뚫고 날아가는 강한 화살이에요. 45 피해.') },
       { id: 'rain', name: T('화살비'), key: 'E', cd: 9, desc: T('조준한 곳에 1.5초 동안 화살비를 내려요.') },
@@ -40,8 +40,8 @@ export const ROLES = {
     role: T('멀리서 쏴요. 공격을 꾹 누르면 0.8초에 두 발, 2초에 세 발을 한 번에 쏴요.')
   },
   viking: {
-    name: T('바이킹'), color: '#c8873a', hp: 290, speed: 5.6,
-    atk: { kind: 'melee', range: 2.6, arc: 2.0, dmg: 18, cd: 0.55 },
+    name: T('바이킹'), type: T('근접 딜러'), color: '#c8873a', hp: 314, speed: 5.6,
+    atk: { kind: 'melee', range: 2.6, arc: 2.0, dmg: 22, cd: 0.55 },
     skills: [
       { id: 'leap', name: T('도약 강타'), key: 'Q', cd: 6, desc: T('앞으로 크게 뛰어올라 내려앉으며 둘레 상대에게 36 피해를 줘요.') },
       { id: 'bloodlust', name: T('피의 갈증'), key: 'E', cd: 12, desc: T('5초 동안 공격이 30% 빨라지고, 준 피해의 일부를 체력으로 되찾아요.') },
@@ -51,7 +51,7 @@ export const ROLES = {
     role: T('느리지만 도끼 한 방이 무거운 가장 튼튼한 전사예요.')
   },
   mamluk: {
-    name: T('맘루크'), color: '#d0443a', hp: 370, speed: 7.2,
+    name: T('맘루크'), type: T('근접 딜러'), color: '#d0443a', hp: 316, speed: 7.2,
     atk: { kind: 'melee', range: 2.2, arc: 1.8, dmg: 18, cd: 0.3 },
     skills: [
       { id: 'flurry', name: T('연속 베기'), key: 'Q', cd: 4, desc: T('앞으로 파고들며 다섯 번 번갈아 베어 9씩 피해를 줘요.') },
@@ -62,7 +62,7 @@ export const ROLES = {
     role: T('굽은 칼로 빠르게 베고 파고드는 날랜 전사예요.')
   },
   witch: {
-    name: T('마녀'), color: '#a56ad8', hp: 170, speed: 6.2,
+    name: T('마녀'), type: T('원거리 딜러'), color: '#a56ad8', hp: 163, speed: 6.2,
     atk: { kind: 'orb', dmg: 11, cd: 0.45, speed: 16 },
     skills: [
       { id: 'potion', name: T('독 물약'), key: 'Q', cd: 7, desc: T('조준한 곳에 물약을 던져 터진 자리 둘레 상대에게 30 피해를 주고 불태워요.') },
@@ -73,8 +73,8 @@ export const ROLES = {
     role: T('마법 구슬과 저주로 멀리서 괴롭혀요.')
   },
   skeleton: {
-    name: T('스켈레톤'), color: '#cfc8b0', hp: 400, speed: 7.0,
-    atk: { kind: 'melee', range: 2.0, arc: 2.0, dmg: 19, cd: 0.32 },
+    name: T('스켈레톤'), type: T('근접 딜러'), color: '#cfc8b0', hp: 292, speed: 7.0,
+    atk: { kind: 'melee', range: 2.0, arc: 2.0, dmg: 16, cd: 0.32 },
     skills: [
       { id: 'scatter', name: T('뼈 흩어지기'), key: 'Q', cd: 6, desc: T('뒤로 빠지며 몸이 흩어져 뼛조각 여덟 개가 사방으로 튀어요. 하나에 12 피해.') },
       { id: 'fan', name: T('뼈 창 다섯 갈래'), key: 'E', cd: 6, desc: T('뼈 창 다섯 대를 부채꼴로 던져요. 하나에 15 피해.') },
@@ -84,7 +84,7 @@ export const ROLES = {
     role: T('가볍고 빠른 뼈다귀예요. 몸이 약하니 파고들었다 빠져요.')
   },
   warden: {
-    name: T('성벽지기'), color: '#9a8f78', hp: 430, speed: 5.6,
+    name: T('성벽지기'), type: T('유틸리티'), color: '#9a8f78', hp: 430, speed: 5.6,
     atk: { kind: 'melee', range: 2.4, arc: 1.9, dmg: 24, cd: 0.5 },
     skills: [
       { id: 'wall', name: T('방벽 세우기'), key: 'Q', cd: 9, desc: T('앞에 돌 방벽을 4초 동안 세워요. 방벽에 닿는 화살과 구슬은 사라져요.') },
@@ -95,8 +95,8 @@ export const ROLES = {
     role: T('길목을 막고 아군을 지켜요. 느리고 공격은 약하지만 가장 오래 버텨요.')
   },
   assassin: {
-    name: T('자객'), color: '#3a5a66', hp: 250, speed: 7.8,
-    atk: { kind: 'melee', range: 2.1, arc: 1.6, dmg: 22, cd: 0.3 },
+    name: T('자객'), type: T('근접 딜러'), color: '#3a5a66', hp: 280, speed: 7.8,
+    atk: { kind: 'melee', range: 2.1, arc: 1.6, dmg: 24, cd: 0.3 },
     skills: [
       { id: 'vanish', name: T('그림자 걸음'), key: 'Q', cd: 10, desc: T('3.5초 동안 멀리 있는 상대 눈에 보이지 않고 25% 빨라져요. 숨은 채 처음 때리는 한 번은 피해가 1.8배예요.') },
       { id: 'venom', name: T('독 단검'), key: 'E', cd: 9, desc: T('다음 공격 네 번이 상대를 불태워요.') },
@@ -106,8 +106,8 @@ export const ROLES = {
     role: T('몰래 파고들어 약한 한 명을 끊어요. 몸이 약해 들키면 위험해요.')
   },
   bomber: {
-    name: T('폭파병'), color: '#c8643a', hp: 260, speed: 6.3,
-    atk: { kind: 'bomb', dmg: 30, cd: 1.3, speed: 0, range: 13, r: 2.4 },
+    name: T('폭파병'), type: T('원거리 딜러'), color: '#c8643a', hp: 290, speed: 6.3,
+    atk: { kind: 'bomb', dmg: 42, cd: 1.3, speed: 0, range: 13, r: 2.4 },
     skills: [
       { id: 'bigbomb', name: T('큰 폭탄'), key: 'Q', cd: 8, desc: T('조준한 곳에 큰 폭탄을 던져요. 1.1초 뒤 넓게 터져 60 피해를 줘요.') },
       { id: 'sticky', name: T('끈끈이 폭탄'), key: 'E', cd: 11, desc: T('터진 자리에 있던 상대를 3초 동안 크게 느리게 만들어요. 15 피해.') },
@@ -117,8 +117,8 @@ export const ROLES = {
     role: T('벽 너머 깃발 위를 폭탄으로 때려 점령을 방해해요. 터지기 전에 움직이는 상대에겐 잘 안 맞아요.')
   },
   crossbow: {
-    name: T('석궁병'), color: '#8a6a3a', hp: 190, speed: 5.8,
-    atk: { kind: 'xbolt', dmg: 26, cd: 0.8, speed: 32 },
+    name: T('석궁병'), type: T('원거리 딜러'), color: '#8a6a3a', hp: 190, speed: 5.8,
+    atk: { kind: 'xbolt', dmg: 23, cd: 0.8, speed: 32 },
     skills: [
       { id: 'rootbolt', name: T('속박 볼트'), key: 'Q', cd: 8, desc: T('맞은 상대를 2.5초 동안 크게 느리게 하는 볼트를 쏴요. 18 피해.') },
       { id: 'backstep', name: T('뒤로 물러나기'), key: 'E', cd: 8, desc: T('뒤로 크게 물러나고, 3초 동안 공격 피해가 1.5배가 돼요.') },
@@ -128,7 +128,7 @@ export const ROLES = {
     role: T('느리게 움직이며 멀리서 한 발씩 정확히 쏘고, 저격으로 마무리해요.')
   },
   bard: {
-    name: T('음유시인'), color: '#c05a7a', hp: 175, speed: 6.2,
+    name: T('음유시인'), type: T('서포터'), color: '#c05a7a', hp: 175, speed: 6.2,
     atk: { kind: 'orb', dmg: 9, cd: 0.5, speed: 16 },
     skills: [
       { id: 'march', name: T('행진곡'), key: 'Q', cd: 12, desc: T('가까운 아군(나 포함)이 6초 동안 30% 빨라지고, 체력을 8 되찾아요.') },
@@ -139,8 +139,8 @@ export const ROLES = {
     role: T('노래로 아군을 빠르게 하고 치유해요. 자장가로 다가오는 상대를 늦춰 시간을 벌어요.')
   },
   spearman: {
-    name: T('창병'), color: '#6a7a8c', hp: 300, speed: 6.0,
-    atk: { kind: 'melee', range: 3.9, arc: 0.5, dmg: 24, cd: 0.6 },
+    name: T('창병'), type: T('근접 딜러'), color: '#6a7a8c', hp: 378, speed: 6.0,
+    atk: { kind: 'melee', range: 3.9, arc: 0.5, dmg: 47, cd: 0.6 },
     skills: [
       { id: 'lunge', name: T('돌진 찌르기'), key: 'Q', cd: 7, desc: T('앞으로 크게 돌진하며 지나가는 상대를 꿰뚫어요. 40 피해.') },
       { id: 'spearthrow', name: T('창 던지기'), key: 'E', cd: 10, desc: T('창을 멀리 던져요. 맞은 상대는 1.5초 동안 느려지고 42 피해를 받아요.') },
@@ -429,8 +429,8 @@ const ARENAS = [
 ];
 function arenaMap(def) {
   const m = genMap(777, [{ name: T('전장'), line: T(def.line), boss: 1 }], { noSecret: 1, noMimic: 1, st: { cols: 1 } });
-  // 아래 도면은 112×72칸 기준이고, 가로세로 1.43배로 키워서 깃발 사이를 멀리 벌려요 (담 두께는 그대로)
-  const AW = 160, AH = 104, ox = 6, oy = 6, SX = AW / 112, SY = AH / 72;
+  // 아래 도면은 112×72칸 기준이고, 가로세로 2.5배로 키워서 깃발 사이를 멀리 벌려요 (담 두께는 그대로)
+  const AW = 280, AH = 182, ox = 6, oy = 6, SX = AW / 112, SY = AH / 72;
   m.w = AW + ox * 2; m.h = AH + oy * 2;
   m.areas[0].r = [[ox, oy, AW, AH]];
   const sc = ([x, y]) => [Math.round(x * SX), Math.round(y * SY)], wallSc = ([x, y, w, h]) => { const [a, b] = sc([x, y]); return [a, b, w > 4 ? Math.round(w * SX) : w, h > 4 ? Math.round(h * SY) : h]; };
