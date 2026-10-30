@@ -12,7 +12,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
 <!-- 새 빌드마다 아래 ?v= 숫자를 BUILD와 같게 올려요 (브라우저가 옛 파일을 쓰지 않게) -->
-<script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/","./js/data.js":"./js/data.js?v=80","./js/main.js":"./js/main.js?v=80","./js/map.js":"./js/map.js?v=80","./js/music.js":"./js/music.js?v=80","./js/render.js":"./js/render.js?v=80","./js/sfx.js":"./js/sfx.js?v=80","./js/sim.js":"./js/sim.js?v=80","./js/tr.js":"./js/tr.js?v=80"}}</script>
+<script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/","./js/data.js":"./js/data.js?v=81","./js/main.js":"./js/main.js?v=81","./js/map.js":"./js/map.js?v=81","./js/music.js":"./js/music.js?v=81","./js/render.js":"./js/render.js?v=81","./js/sfx.js":"./js/sfx.js?v=81","./js/sim.js":"./js/sim.js?v=81","./js/tr.js":"./js/tr.js?v=81"}}</script>
 <script src="../../ff-presence.js" async></script>
 <script src="https://cdn.jsdelivr.net/npm/peerjs@1.5.4/dist/peerjs.min.js"></script>
 <script src="https://frenchfries777mc.github.io/games/ff-lang.js"></script>
@@ -46,6 +46,7 @@ html:not(.tcReady) #sLobby{visibility:hidden}
 @keyframes tcSc{0%{opacity:0}33%{opacity:1}66%{opacity:1}100%{opacity:0}}
 /* 로비: 제목은 왼쪽 위, 메뉴는 아래쪽 가로 줄 */
 #sLobby .title{position:absolute;left:max(28px,5vw);top:6vh;pointer-events:none}
+#sLobby .title .tlg{display:block;width:clamp(64px,9vw,128px);height:auto;margin-bottom:8px;filter:drop-shadow(0 4px 0 rgba(0,0,0,.45))}
 #sLobby .title h1{margin:0;font-family:Galmuri,system-ui,sans-serif;font-weight:700;font-size:clamp(52px,8.5vw,120px);line-height:.95;color:#ffe08a;letter-spacing:.02em;text-shadow:0 5px 0 #7a3a10,0 9px 0 #2a1408,0 0 18px rgba(0,0,0,.6)}
 #sLobby .title p{margin:10px 0 0 4px;font-size:clamp(14px,1.6vw,20px);color:#efe3c8}
 #menu{position:absolute;left:50%;bottom:44px;transform:translateX(-50%);display:flex;gap:10px;flex-wrap:wrap;justify-content:center;width:max-content;max-width:94vw}
@@ -231,7 +232,7 @@ body.touch #exitBtn{top:auto;bottom:auto}
 <!-- 로비 -->
 <section class="scr on" id="sLobby">
   <div id="who"></div>
-  <div class="title"><h1>Tumblecrown</h1><p class="tx">5대5 깃발 점령전 · 열 가지 직업 팀전</p></div>
+  <div class="title"><img class="tlg" src="logo.svg" alt=""><h1>Tumblecrown</h1><p class="tx">5대5 깃발 점령전 · 열 가지 직업 팀전</p></div>
   <nav id="menu">
     <button class="big" data-go="match">온라인 대전</button>
     <button data-go="host">친구와 대결</button>
@@ -323,7 +324,7 @@ body.touch #exitBtn{top:auto;bottom:auto}
 <div id="touch"><div id="joy"><div id="joyBase"><div id="joyKnob"></div></div></div>
   <div id="tbtns"><button id="tA"><span>공격</span></button><button id="tQ"><i class="cd"></i><span>Q</span></button><button id="tE"><i class="cd"></i><span>E</span></button><button id="tR"><i class="cd"></i><span>R</span></button><button id="tRoll"><i class="cd"></i><span>구르기</span></button><button id="tF"><span>F</span></button></div>
 </div>
-<script type="module" src="js/main.js?v=80"></script>
+<script type="module" src="js/main.js?v=81"></script>
 <div id="findBlock" style="position:fixed;inset:0;z-index:60;display:none;cursor:wait"></div>
 </body>
 </html>
