@@ -1219,7 +1219,8 @@ sting();})();</script>
 
   <div class="card" id="modeListScreen" style="width:min(1500px,98vw); max-height:90vh; display:none; flex-direction:column; background:transparent; border:none; box-shadow:none; padding:0;">
     <button class="backlink" id="modeListBackBtn" style="position:fixed; top:16px; left:16px; z-index:5; padding:8px 14px; border-radius:0; margin:0;">&larr; 뒤로가기</button>
-    <h2 style="margin:34px 0 10px; text-shadow:0 2px 12px rgba(0,0,0,.8);">🌐 온라인 플레이</h2>
+    <h2 style="margin:34px 0 4px; text-shadow:0 2px 12px rgba(0,0,0,.8);">🌐 온라인 플레이</h2>
+    <div id="modeResetNote" style="margin:0 0 10px 2px; font-size:14px; font-weight:700; color:#ffd34d; text-shadow:0 2px 8px rgba(0,0,0,.9);"></div>
     <div id="modeListBody"></div>
     <div id="partyBar" style="margin-top:14px;"></div>
   </div>
@@ -5599,7 +5600,7 @@ function shuffle(arr){ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.
 /* ===== the version of this file =====
    Different BUILDS of one version meet and play together (room names online-v<ver>-<mode>-<map>-<slot>); different VERSIONS (the 0.x part) never do - the host refuses them (verNo) and the dispatcher answers busy.
    The build is only sent along with the join message and the lobby (for information); the corner of the screen shows it. */
-const GAME_BUILD='build 2026-10-18-v550';
+const GAME_BUILD='build 2026-10-18-v551';
 const GAME_VERSION='0.9', GAME_VERSION_NAME='은하 제국의 황혼';   // 게임 버전 이름: versions.json의 title과 같게 (빌드마다 바꾸지 않음)
 /* version (the 0.x part) vs build: different BUILDS of one version meet and play together, different VERSIONS never do (rooms, quick match, ranked, friend invites, dispatcher).
    Builds before 470 do not send a version, so it is read from the build number (0.9 started at build 458). */
@@ -7130,7 +7131,20 @@ function buildModeList(){
     if(partyActive()) row.classList.add('partyOff'); row.onclick=()=>buildExpList(); body.appendChild(row); }
   body.scrollLeft=0;
 }
-function enterOnlineTypeScreen(){ renderPartyBar(); buildModeList(); showScreen('modeListScreen'); }
+let modeResetTimer=null;
+function modeResetText(){          // the list changes at 0:00 Korean time, the same moment for everybody
+  const ms=86400000-((Date.now()+9*3600*1000)%86400000), m=Math.max(1,Math.ceil(ms/60000)), h=Math.floor(m/60), mm=m%60;
+  return '⏳ '+(h>0?h+'시간 ':'')+mm+'분 뒤에 모드 목록 초기화';
+}
+let modeResetDay='';
+function modeResetTick(){
+  const el=document.getElementById('modeResetNote'), sc=document.getElementById('modeListScreen');
+  if(!el || !sc || !sc.classList.contains('active')){ clearInterval(modeResetTimer); modeResetTimer=null; return; }
+  const t=modeResetText(); if(el.textContent!==t) el.textContent=t;
+  const dk=kstDateKey(); if(modeResetDay && dk!==modeResetDay){ try{ buildModeList(); }catch(e){} }      // (past midnight: the new list)
+  modeResetDay=dk;
+}
+function enterOnlineTypeScreen(){ renderPartyBar(); buildModeList(); showScreen('modeListScreen'); modeResetTick(); clearInterval(modeResetTimer); modeResetTimer=setInterval(modeResetTick, 20000); }
 document.getElementById('goOnlineBtn').onclick=()=>{
   if(!myNameSet){ pendingDestination='online'; showScreen('nameScreen'); return; }
   enterOnlineTypeScreen();
