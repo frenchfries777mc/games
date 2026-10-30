@@ -3,7 +3,7 @@
 
 import { T } from './tr.js';
 
-export const VERSION = 'v0.1', BUILD = 93;
+export const VERSION = 'v0.1', BUILD = 94;
 
 export const ROLES = {
   knight: {
@@ -451,7 +451,15 @@ const ARENAS = [
   { name: '지하 수로', line: '가로로 길게 흐르는 두 물길이 지하를 세 줄 길로 나누고, 좁은 다리 여섯 곳으로만 건너요. 물길 끝을 돌아가도 돼요.', theme: 'sewer',
     walls: [[50, 6, 6, 3]],
     wallIf: (i, j, W, H) => { const adx = Math.abs(i + 0.5 - W / 2), ady = Math.abs(j + 0.5 - H / 2); return ady >= 30 && ady < 42 && adx < 125 && !(adx < 14 || (adx >= 70 && adx < 84) || (adx >= 118 && adx < 125)); },
-    fl: [[10, 42], [30, 56]], mid: [[56, 36], [24, 12]], pil: [[22, 8], [44, 14], [8, 24], [32, 34]] }
+    fl: [[10, 42], [30, 56]], mid: [[56, 36], [24, 12]], pil: [[22, 8], [44, 14], [8, 24], [32, 34]] },
+  { name: '불타는 성벽', line: '양쪽 진지가 불타는 성벽으로 둘러싸여 있고, 성문은 세 곳뿐이에요. 성문 앞을 쥐는 쪽이 유리해요.', theme: 'temple',
+    walls: [[20, 6, 12, 3]],
+    wallIf: (i, j, W, H) => { const f = (x, y) => { if (x >= 52 && x < 55 && y >= H - 72) return !((y >= H - 56 && y < H - 46) || (y >= H - 30 && y < H - 20)); if (y >= H - 72 && y < H - 69 && x < 55) return !(x >= 18 && x < 30); return false; }; return f(i, j) || f(W - 1 - i, H - 1 - j); },
+    fl: [[8, 64], [26, 40]], mid: [[56, 36], [30, 18]], pil: [[14, 14], [44, 22], [34, 30]] },
+  { name: '무너진 대성당', line: '무너진 대성당의 기둥 숲 사이로 시야가 막히고, 한가운데 제단에는 문이 두 곳뿐이에요. 기둥 뒤에 숨어 다가가요.', theme: 'abyss',
+    walls: [[8, 6, 14, 3]],
+    wallIf: (i, j, W, H) => { const ax = Math.abs(i + 0.5 - W / 2), ay = Math.abs(j + 0.5 - H / 2); if (ax < 22 && ay < 14) return (ax >= 19 && !(ay < 6)) || (ay >= 11 && ax < 22); if (ax < 24 && ay < 16) return false; return ax < 66 && ay < 48 && Math.abs(ax % 20 - 10) < 2 && Math.abs(ay % 18 - 9) < 2; },
+    fl: [[8, 60], [26, 48]], mid: [[56, 36], [30, 20]], pil: [[20, 10], [40, 26]] }
 ];
 function arenaMap(def) {
   const m = genMap(777, [{ name: T('전장'), line: T(def.line), boss: 1 }], { noSecret: 1, noMimic: 1, st: { cols: 1 } });
