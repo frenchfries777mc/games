@@ -3,7 +3,7 @@
 
 import { T } from './tr.js';
 
-export const VERSION = 'v0.1', BUILD = 38;
+export const VERSION = 'v0.1', BUILD = 39;
 
 export const ROLES = {
   knight: {
@@ -107,7 +107,7 @@ export const ROLES = {
   },
   crossbow: {
     name: T('석궁병'), color: '#8a6a3a', hp: 190, speed: 5.8,
-    atk: { kind: 'arrow', dmg: 26, cd: 0.8, speed: 32 },
+    atk: { kind: 'xbolt', dmg: 26, cd: 0.8, speed: 32 },
     skills: [
       { id: 'rootbolt', name: T('속박 볼트'), key: 'Q', cd: 8, desc: T('맞은 상대를 2.5초 동안 크게 느리게 하는 볼트를 쏴요. 18 피해.') },
       { id: 'backstep', name: T('뒤로 물러나기'), key: 'E', cd: 8, desc: T('뒤로 크게 물러나고, 3초 동안 공격 피해가 1.5배가 돼요.') },
