@@ -663,7 +663,7 @@ const touch = { jx: 0, jz: 0, jid: null, atk: false, f: false };
     b.addEventListener('touchmove', mv, { passive: true });
     const end = e => {
       const d = touch.drag; if (!d || d.k !== k || ![...e.changedTouches].some(t => t.identifier === d.id)) return; mv(e); d.ended = true;
-      const p = myP(); if (p && !p.dn && !p.dd) { if (k !== 'atk') once[k] = 1; else if (relBasic(p.role)) once.atkR = 1; }
+      const p = myP(); if (p && !p.dn && !p.dd) { if (k !== 'atk') once[k] = 1; else once.atkR = 1; }
     };
     b.addEventListener('touchend', end); b.addEventListener('touchcancel', e => { if (touch.drag && touch.drag.k === k) { touch.drag = null; S.aimK = null; } });
   };
@@ -693,7 +693,7 @@ function aimTick(p, pos, inp) {
   let sp = null;
   if (S.scr === '' && !p.dn && !p.dd) {
     if (S.aimK) sp = skillSpec(p.role, S.aimK);
-    else if (TOUCH ? touch.drag && touch.drag.k === 'atk' && relBasic(p.role) : mouse.down) sp = basicSpec(p.role, p);
+    else if (TOUCH ? touch.drag && touch.drag.k === 'atk' : mouse.down) sp = basicSpec(p.role, p);
   }
   if (S.aimK && !sp) S.aimK = null;
   view.setAim(sp, pos.x, pos.z, inp.aim == null ? p.a : inp.aim, inp.ax, inp.az);
@@ -718,7 +718,7 @@ function gatherInput(p) {
     const dg = touch.drag;   // 버튼을 끈 방향으로 조준해요 (조금만 움직이면 가까운 상대에게 자동 조준)
     if (dg && Math.hypot(dg.cx - dg.ox, dg.cy - dg.oy) > 14) { try { const g0 = view.groundAt(dg.ox, dg.oy), g1 = view.groundAt(dg.cx, dg.cy), ddx = g1.x - g0.x, ddz = g1.z - g0.z; inp.aim = Math.atan2(ddz, ddx); inp.ax = pos.x + ddx * 1.6; inp.az = pos.z + ddz * 1.6; } catch (e) { } }
     if (dg && dg.ended) { touch.drag = null; S.aimK = null; }
-    inp.atk = relBasic(p.role) ? false : touch.atk; inp.f = touch.f;
+    inp.atk = false; inp.f = touch.f;
   } else {
     const g = view.groundAt(mouse.x, mouse.y); inp.aim = Math.atan2(g.z - pos.z, g.x - pos.x); inp.ax = g.x; inp.az = g.z;
     inp.atk = relBasic(p.role) ? false : mouse.down; inp.f = keyDown('f', 'ㄹ');
