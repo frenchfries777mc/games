@@ -51,3 +51,7 @@ Stickseum.html | 클랜 UI | 클랜 대항전 · 응답 대기 / 신청 받음 /
 Stickseum.html | 클랜 UI | 대항전에서 이겼어요! 클랜 점수 +30 / 졌어요 · 클랜 점수 -15 / 무승부예요 / 🏴 클랜 대항전 +1점 / ⚔ 클랜 대항전 (듀얼) | clan war results | 2026-10-30
 patchnotes.json | v532 title | 은하 제국의 황혼 | build 532 | 2026-10-30
 patchnotes.json | v532 items[0] | 클랜 대항전 (클랜장·부리더가 다른 클랜에 신청, 48시간 동안 클랜원끼리 1대1, 이기면 클랜 점수 +30) | build 532 | 2026-10-30
+Stickseum.html | 클랜 UI | 🐲 클랜 보스 레이드 · 클랜원끼리 거대한 보스를 잡아요 (빈자리는 봇) · 성공하면 창고 +20, 클랜 경험치 +60 | clan raid | 2026-10-30
+Stickseum.html | 클랜 UI | 🐲 클랜 보스 레이드 성공! 클랜 창고 +20 | clan raid result | 2026-10-30
+patchnotes.json | v533 title | 은하 제국의 황혼 | build 533 | 2026-10-30
+patchnotes.json | v533 items[0] | 클랜 보스 레이드 (클랜원끼리 보스를 잡고 빈자리는 봇이 채움, 성공하면 클랜 창고 +20과 클랜 경험치) | build 533 | 2026-10-30
