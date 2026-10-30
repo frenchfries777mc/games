@@ -5523,7 +5523,7 @@ function shuffle(arr){ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.
 /* ===== the version of this file =====
    Different BUILDS of one version meet and play together (room names online-v<ver>-<mode>-<map>-<slot>); different VERSIONS (the 0.x part) never do - the host refuses them (verNo) and the dispatcher answers busy.
    The build is only sent along with the join message and the lobby (for information); the corner of the screen shows it. */
-const GAME_BUILD='build 2026-10-18-v528';
+const GAME_BUILD='build 2026-10-18-v529';
 const GAME_VERSION='0.9', GAME_VERSION_NAME='은하 제국의 황혼';   // 게임 버전 이름: versions.json의 title과 같게 (빌드마다 바꾸지 않음)
 /* version (the 0.x part) vs build: different BUILDS of one version meet and play together, different VERSIONS never do (rooms, quick match, ranked, friend invites, dispatcher).
    Builds before 470 do not send a version, so it is read from the build number (0.9 started at build 458). */
@@ -18556,7 +18556,7 @@ function drawStickman(p){
   ctx.beginPath(); ctx.arc(0,HEADCY,HEADR,0,7); ctx.fill();
   if(shineId) drawShineGlints(ctx, luxNow, luxSeed);
   if(p.weapon==='pizarro' && p.alive!==false) drawPizarroPlume(ctx,0,HEADCY,HEADR,Math.min(PZ_MAX,p.pzStacks||0));
-  if(WEAPON_PERSONA_NAME[lkW(p)]){ drawWeaponPersona(ctx,lkW(p),0,HEADCY,HEADR,SH,skinTint,conceptOfSkin(skinId)); const sfx=(skinId && COSMETICS[skinId]) ? COSMETICS[skinId].fx : null; if(sfx && p.alive!==false) drawSkinFx(ctx,(luxLv>=4?'sparkle':sfx),skinTint,0,HEADCY,luxLv?HEADR*1.3:HEADR,luxNow); if(luxLv && p.alive!==false) drawSkinLux(ctx, luxLv, skinTint, luxNow, luxSeed, 'front'); }
+  if(WEAPON_PERSONA_NAME[lkW(p)] || lkW(p)==='guard'){ drawWeaponPersona(ctx,lkW(p),0,HEADCY,HEADR,SH,skinTint,conceptOfSkin(skinId)); const sfx=(skinId && COSMETICS[skinId]) ? COSMETICS[skinId].fx : null; if(sfx && p.alive!==false) drawSkinFx(ctx,(luxLv>=4?'sparkle':sfx),skinTint,0,HEADCY,luxLv?HEADR*1.3:HEADR,luxNow); if(luxLv && p.alive!==false) drawSkinLux(ctx, luxLv, skinTint, luxNow, luxSeed, 'front'); }
   else if(p.cos && p.cos.hat) drawHat(ctx,p.cos.hat,0,HEADCY,HEADR);
   let ang=p.angle||0;
   const whirling = !!(p.bladeSpin && p.weapon==='sword');
