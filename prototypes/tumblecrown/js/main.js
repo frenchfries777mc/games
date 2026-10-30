@@ -673,11 +673,11 @@ const touch = { jx: 0, jz: 0, jid: null, atk: false, f: false };
 function nearestFoe(p, maxd) { let best = null, bd = maxd;
   if (S.snap.pv) { for (const q of S.snap.pl) { if (q.id === S.me || q.dd) continue; const d = Math.hypot(q.x - p.x, q.z - p.z); if (d < bd) { bd = d; best = q; } } return best; } for (const e of S.snap.en) { if (e.hp <= 0 || e.st === 'rise') continue; const d = Math.hypot(e.x - p.x, e.z - p.z); if (d < bd) { bd = d; best = e; } } return best; }
 /* 누르고 있으면 민트색으로 어디로 나갈지 보여 주고, 떼면 나가요 (Stickseum 방식). 원거리 기본 공격과 조준 기술 */
-const BASEP = { orb: { k: 'line', len: 14, w: 0.9 }, arrow: { k: 'line', len: 26, w: 0.8 }, xbolt: { k: 'line', len: 32, w: 0.8 }, bomb: { k: 'circle', range: 13, r: 2.4 } };
+const BASEP = { orb: { k: 'line', len: 14, w: 0.9 }, arrow: { k: 'line', len: 26, w: 0.8 }, xbolt: { k: 'line', len: 32, w: 0.8 }, musket: { k: 'line', len: 60, w: 0.5 }, bomb: { k: 'circle', range: 13, r: 2.4 } };
 const SKP = {
   smite: { k: 'circle', range: 12, r: 3.2 }, curse: { k: 'circle', range: 12, r: 2.6 }, potion: { k: 'circle', range: 12, r: 3 }, frost: { k: 'circle', range: 12, r: 3.2 }, rain: { k: 'circle', range: 12, r: 4 }, runetrap: { k: 'circle', range: 12, r: 4.5 }, courtswap: { k: 'self', r: 18 }, necroheal: { k: 'self', r: 9 }, necrodoom: { k: 'circle', range: 10, r: 6.5 }, necroraise: { k: 'self', r: 2.4 }, courtshift: { k: 'self', r: 22 }, mark: { k: 'circle', range: 14, r: 1.6 },
   bigbomb: { k: 'circle', range: 12, r: 4 }, sticky: { k: 'circle', range: 11, r: 4.5 }, barrage: { k: 'line', len: 12, w: 3.5 },
-  pierce: { k: 'line', len: 26, w: 0.9 }, rootbolt: { k: 'line', len: 25, w: 0.9 }, lunge: { k: 'line', len: 7, w: 1.6 }, spearthrow: { k: 'line', len: 27, w: 1.1 }, sweep: { k: 'self', r: 3.9 }, lullaby: { k: 'self', r: 7 }, march: { k: 'self', r: 9 }, chorus: { k: 'self', r: 8 }, snipe: { k: 'line', len: 40, w: 1 }, fan: { k: 'line', len: 13, w: 5 },
+  pierce: { k: 'line', len: 26, w: 0.9 }, rootbolt: { k: 'line', len: 25, w: 0.9 }, rapidfire: { k: 'line', len: 46, w: 0.7 }, bigshot: { k: 'line', len: 34, w: 2 }, cover: { k: 'wall' }, lunge: { k: 'line', len: 7, w: 1.6 }, spearthrow: { k: 'line', len: 27, w: 1.1 }, sweep: { k: 'self', r: 3.9 }, lullaby: { k: 'self', r: 7 }, march: { k: 'self', r: 9 }, chorus: { k: 'self', r: 8 }, snipe: { k: 'line', len: 40, w: 1 }, fan: { k: 'line', len: 13, w: 5 },
   quake: { k: 'line', len: 11, w: 2.4 }, dash: { k: 'line', len: 10, w: 1.6 }, shieldbash: { k: 'line', len: 4, w: 1.8 }, flurry: { k: 'line', len: 5, w: 1.6 }, leap: { k: 'line', len: 9, w: 2 }, backstep: { k: 'line', len: 6, w: 1.4, rev: 1 }, wall: { k: 'wall' },
   whirl: { k: 'self', r: 3.4 }, bonestorm: { k: 'self', r: 3.6 }, bastion: { k: 'self', r: 4.5 }, vow: { k: 'self', r: 6 }, scatter: { k: 'self', r: 3 }, execute: { k: 'self', r: 13 }, blink: { k: 'self', r: 10 }
 };
@@ -746,7 +746,7 @@ function localMove(p, inp, dt) {
   if (L.roll > 0) { L.roll -= dt; L.x += L.rdx * 15 * dt; L.z += L.rdz * 15 * dt; }
   else { const sp = R.speed * ((p.b || []).indexOf('feet') >= 0 ? 1.12 : 1) * (p.ra ? 1.3 : 1) * (p.cb ? 1.2 : 1) * (p.bk ? 0.8 : 1) * (fl ? 0.7 : 1) * (p.cl ? 0.6 : 1) * (p.em ? 0.75 : 1) * (p.stl ? 1.25 : 1) * (p.sp ? 0.25 : 1) * (p.bs ? 0.6 : 1); L.x += mx * sp * dt; L.z += mz * sp * dt; }
   mapCollide(L, 0.6);
-  { const ws = (S.snap.zn || []).filter(z => z.k === 'wall'); if (ws.length && p.tm != null) wallClamp(ws, p.tm, ox, oz, L); }
+  { const ws = (S.snap.zn || []).filter(z => z.k === 'wall' || z.k === 'cover'); if (ws.length && p.tm != null) wallClamp(ws, p.tm, ox, oz, L); }
   if (!liftOk(ox, oz, L.x, L.z)) { L.x = ox; L.z = oz; }
 }
 
