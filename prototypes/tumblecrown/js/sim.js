@@ -1563,16 +1563,48 @@ function safeDir(G, p, a) {
   return a;
 }
 // 봇이 갈 깃발 고르기: 가깝고, 내 것이 아니고, 같은 팀이 덜 몰린 깃발 (내 깃발은 뺏기는 중일 때만 지켜요)
+// 팀 봇 계획: 두 깃발이 비슷한 거리면 [중앙 4 / 외각 1], 같은 종류면 [깃발 2 / 깃발 2 / 괴물 꼭짓점 1]로 나눠요. 깃발에 있는 적이 많으면 그쪽에 더 보내요
+function botPlan(G, tm) {
+  const pl = G.plan || (G.plan = [{ t: -9 }, { t: -9 }]), c = pl[tm];
+  if (c.t > G.t - 2.5) return c;
+  c.t = G.t; c.slots = {}; c.mon = null;
+  const bs = G.players.filter(q => q.team === tm && q.ai && alive(q)), n = bs.length; if (n < 2) return c;
+  const cx = bs.reduce((a, q) => a + q.x, 0) / n, cz = bs.reduce((a, q) => a + q.z, 0) / n, NF = G.fl.length, foes = G.players.filter(q => q.team !== tm && alive(q));
+  const sc = G.fl.map(f => Math.hypot(f.x - cx, f.z - cz) + (f.own === tm ? (f.cap >= 0 && f.cap !== tm ? -60 : 400) : 0));
+  const en = G.fl.map(f => foes.filter(q => Math.hypot(q.x - f.x, q.z - f.z) < D.FLAG_R * 2.2).length);
+  const ord = G.fl.map((f, i) => i).sort((a, b) => sc[a] - sc[b]), A = ord[0], B = ord[1], ctr = i => i >= NF - 3;
+  const ms = G.enemies.filter(e => e.mon && e.hp > 0); let M = null, md = 420; for (const m of ms) { const d = Math.hypot(m.x - cx, m.z - cz); if (d < md) { md = d; M = m; } }
+  const similar = sc[B] <= sc[A] * 1.35 + 25 && sc[A] < 300;
+  let cnt = { A: n, B: 0, M: 0 };
+  if (similar) {
+    if (ctr(A) !== ctr(B)) { const out = Math.max(1, Math.round(n / 5)); cnt = ctr(A) ? { A: n - out, B: out, M: 0 } : { A: out, B: n - out, M: 0 }; }
+    else { const m = M && n >= 3 ? 1 : 0, h = n - m; cnt = { A: Math.ceil(h / 2), B: Math.floor(h / 2), M: m }; }
+  } else if (en[A] > n + 1) cnt = { A: Math.ceil(n / 2), B: n - Math.ceil(n / 2), M: 0 };
+  // 깃발에 적이 많으면 이길 만큼(적+1) 보내고, 모자라는 몫은 괴물 쪽, 그다음 다른 깃발(최소 1)에서 가져와요
+  for (const [k, fi, other] of [['A', A, 'B'], ['B', B, 'A']]) {
+    const want = Math.min(n - 1, en[fi] + 1); let need = want - cnt[k];
+    if (need > 0 && cnt.M > 0) { const t = Math.min(need, cnt.M); cnt.M -= t; cnt[k] += t; need -= t; }
+    if (need > 0 && cnt[other] > 1) { const t = Math.min(need, cnt[other] - 1); cnt[other] -= t; cnt[k] += t; }
+  }
+  const left = bs.slice(), take = (tx, tz, k) => { left.sort((a, b) => Math.hypot(a.x - tx, a.z - tz) - Math.hypot(b.x - tx, b.z - tz)); return left.splice(0, k); };
+  const plan = [[cnt.A, G.fl[A].x, G.fl[A].z, A], [cnt.B, G.fl[B].x, G.fl[B].z, B], [cnt.M, M ? M.x : 0, M ? M.z : 0, -1]].filter(t => t[0] > 0).sort((a, b) => a[0] - b[0]);
+  for (const [k, tx, tz, id] of plan) for (const q of take(tx, tz, k)) c.slots[q.id] = id;
+  for (const q of left) c.slots[q.id] = A;
+  c.mon = M;
+  return c;
+}
+// 괴물 사냥꾼: 계획에서 괴물 몫을 받은 봇이에요 (계획이 없으면 가장 가까운 한 명)
 function botHunters(G) {
   const h = G.hunt || (G.hunt = { t: -9, m: [null, null], ids: [] });
   if (h.t > G.t - 1) return h; h.t = G.t; h.m = [null, null]; h.ids = [];
   const ms = G.enemies.filter(e => e.mon && e.hp > 0); if (!ms.length) return h;
   for (const tm of [0, 1]) {
-    const bs = G.players.filter(q => q.team === tm && q.ai && alive(q)); let best = null, bd = 1e9;
-    for (const m of ms) for (const q of bs) { const d = dist(q, m); if (d < bd) { bd = d; best = m; } }
-    if (!best || bd > 420) continue;
-    for (const q of bs.sort((x, y) => dist(x, best) - dist(y, best)).slice(0, 2)) h.ids.push(q.id);
-    h.m[tm] = best;
+    const pl = botPlan(G, tm), bs = G.players.filter(q => q.team === tm && q.ai && alive(q));
+    if (pl.mon) { h.m[tm] = pl.mon; for (const q of bs) if (pl.slots[q.id] === -1) h.ids.push(q.id); continue; }
+    if (bs.length >= 2) continue;   // 계획이 있는데 괴물 몫이 없으면 사냥하지 않아요
+    let best = null, bd = 420, who = null;
+    for (const m of ms) for (const q of bs) { const d = dist(q, m); if (d < bd) { bd = d; best = m; who = q; } }
+    if (best) { h.m[tm] = best; h.ids.push(who.id); }
   }
   return h;
 }
@@ -1580,6 +1612,7 @@ function botFlag(G, p, dt) {
   const inp = {}, ai = p.ai; ai.fT = (ai.fT || 0) - dt;
   if (ai.fT <= 0 || ai.fi == null) {
     ai.fT = 2 + G.rng() * 1.5; let bi = 0, bs = 1e9;
+    const sl = botPlan(G, p.team).slots[p.id];
     G.fl.forEach((f, i) => {
       let sc = Math.hypot(f.x - p.x, f.z - p.z);
       if (f.own === p.team) sc += f.cap >= 0 && f.cap !== p.team ? -60 : 400;   // 이미 우리 깃발이면 지키는 중이 아닐 때는 거의 가지 않아요 (공격하러 나가요)
@@ -1589,7 +1622,7 @@ function botFlag(G, p, dt) {
       if (i >= G.fl.length - 3) sc *= 0.65;   // 가운데 깃발 셋을 먼저 노려요
       if (sc < bs) { bs = sc; bi = i; }
     });
-    ai.fi = bi;
+    ai.fi = sl != null && sl >= 0 ? sl : bi;
   }
   const f = G.fl[ai.fi], d = Math.hypot(f.x - p.x, f.z - p.z);
   if (d > D.FLAG_R * 0.55) { moveTo(G, p, inp, f.x, f.z, 1); if (d > 25 && p.rollCd <= 0 && G.rng() < 0.01) inp.roll = true; }
