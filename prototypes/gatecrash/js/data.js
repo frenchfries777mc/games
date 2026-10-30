@@ -1,7 +1,7 @@
 /* Gatecrash · © 2026 Frenchfries777 · CC BY-NC-ND 4.0
    데이터: 상수, 무기, 맵 */
 'use strict';
-const VERSION = '0.1', BUILD = 17;
+const VERSION = '0.1', BUILD = 18;
 const TS = 16;                                   // 타일 한 칸 (px)
 const PH = { RUN: 120, ACC: 1500, AIR: 1000, G: 1500, JUMP: 410, CUT: 150, MAXF: 560, W: 10, H: 22, COY: 0.08, BUF: 0.12, BELT: 70, ICE: 180, LIFT: 200 };
 const MAX_HP = 100, RACERS = 4;
@@ -18,6 +18,7 @@ const WEAPONS = {
   mop:     { name: '대걸레',     kind: 'melee',  dmg: 8,  kb: 150, up: 100, cd: 0.32, uses: 18, range: 34, stun: 0.7 },
   sling:   { name: '새총',       kind: 'shot',   dmg: 6,  kb: 120, up: 60,  cd: 0.17, uses: 26, speed: 540, life: 0.7, stun: 0.15, reach: 210 },
   hose:    { name: '소방 호스',   kind: 'spray',  dmg: 2,  kb: 230, up: 30,  cd: 0.08, uses: 40, speed: 300, life: 0.3, stun: 0.1, recoil: 90, reach: 90 },
+  banana:  { name: '바나나 껍질', kind: 'trap',   dmg: 0,  kb: 0,   up: 0,   cd: 0.5,  uses: 3,  stun: 1.0 },
   firework:{ name: '폭죽 발사기', kind: 'rocket', dmg: 16, kb: 300, up: 200, cd: 0.7,  uses: 6,  speed: 340, life: 1.6, radius: 30, stun: 0.4, reach: 200 }
 };
 const WEP_IDS = Object.keys(WEAPONS);
