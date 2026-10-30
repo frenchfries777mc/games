@@ -1568,7 +1568,7 @@ let lastKnownKills=0;
 let saveData={owned:{}, equipped:{name:null, skin:{}}, xp:0, totalKills:0, totalMatches:0,
   totalWins:0, winStreak:0, maxStreak:0, totalDamage:0, totalAssists:0, modeMatches:{}, charKills:{}, charPts:{}, playerName:null,
   avatar:{bg:'#274d3a', color:'#3fe0c5', accessory:null}, achievements:{}, weaponXp:{},
-  boxes:0, boxesOpened:0, dailyLast:'', dailyCount:0, souls:0, pxEarned:0, pxSpent:0, missions:null, season:null};       // random boxes in the bag, how many were opened, the date (YYYY-MM-DD) of the last daily reward and how many were taken
+  boxes:0, epicBoxes:0, boxesOpened:0, dailyLast:'', dailyCount:0, souls:0, pxEarned:0, pxSpent:0, missions:null, season:null};       // random boxes in the bag, how many were opened, the date (YYYY-MM-DD) of the last daily reward and how many were taken
 /* ---- levels: no upper limit; from a "knee" on, EVERY level costs the same XP ----
    Players: the old curve (50 x (level-1)^2, growing) up to Lv.10, then XP_FLAT per level.
    Characters (weapon mastery): the old table up to Lv.10, then a gentle growth (+50 per level) until it reaches XP_FLAT at Lv.20, then XP_FLAT per level.
@@ -1614,7 +1614,7 @@ function loadSave(){
       saveData.nameDirty=!!s.nameDirty;
       saveData.achievements=(s.achievements&&typeof s.achievements==='object')?s.achievements:{};
       saveData.weaponXp=(s.weaponXp&&typeof s.weaponXp==='object')?s.weaponXp:{};
-      saveData.boxes=Math.max(0,Math.min(9999,Math.floor(+s.boxes||0))); saveData.boxesOpened=Math.max(0,Math.floor(+s.boxesOpened||0)); saveData.dailyCount=Math.max(0,Math.floor(+s.dailyCount||0)); saveData.souls=Math.max(0,Math.min(999999,Math.floor(+s.souls||0))); saveData.pxEarned=Math.max(0,Math.floor(+s.pxEarned||0)); saveData.pxSpent=Math.max(0,Math.floor(+s.pxSpent||0));
+      saveData.boxes=Math.max(0,Math.min(9999,Math.floor(+s.boxes||0))); saveData.epicBoxes=Math.max(0,Math.min(9999,Math.floor(+s.epicBoxes||0))); saveData.boxesOpened=Math.max(0,Math.floor(+s.boxesOpened||0)); saveData.dailyCount=Math.max(0,Math.floor(+s.dailyCount||0)); saveData.souls=Math.max(0,Math.min(999999,Math.floor(+s.souls||0))); saveData.pxEarned=Math.max(0,Math.floor(+s.pxEarned||0)); saveData.pxSpent=Math.max(0,Math.floor(+s.pxSpent||0));
       saveData.dailyLast=(typeof s.dailyLast==='string' && /^\d{4}-\d{2}-\d{2}$/.test(s.dailyLast)) ? s.dailyLast : '';
       saveData.missions=(s.missions&&typeof s.missions==='object')?s.missions:null; saveData.season=(s.season&&typeof s.season==='object')?s.season:null;
     }
@@ -1629,7 +1629,7 @@ function persistSave(){
       totalWins:saveData.totalWins, winStreak:saveData.winStreak||0, maxStreak:Math.max(saveData.maxStreak||0,saveData.winStreak||0), totalDamage:saveData.totalDamage, totalAssists:saveData.totalAssists,
       modeMatches:saveData.modeMatches, charKills:saveData.charKills, charPts:saveData.charPts, avatar:saveData.avatar, playerName:saveData.playerName, nameDirty:!!saveData.nameDirty,
       achievements:saveData.achievements, weaponXp:saveData.weaponXp,
-      boxes:saveData.boxes, boxesOpened:saveData.boxesOpened, dailyLast:saveData.dailyLast, dailyCount:saveData.dailyCount, souls:saveData.souls, pxEarned:saveData.pxEarned, pxSpent:saveData.pxSpent, missions:saveData.missions, season:saveData.season
+      boxes:saveData.boxes, epicBoxes:saveData.epicBoxes, boxesOpened:saveData.boxesOpened, dailyLast:saveData.dailyLast, dailyCount:saveData.dailyCount, souls:saveData.souls, pxEarned:saveData.pxEarned, pxSpent:saveData.pxSpent, missions:saveData.missions, season:saveData.season
     }));
   }catch(e){}
 }
@@ -3019,7 +3019,8 @@ function giveReward(r, rand){                // hands the gift over and tells wh
   return null;
 }
 function buyBox(){ if((saveData.souls||0)<BOX_PRICE) return false; saveData.souls-=BOX_PRICE; saveData.boxes=Math.min(9999,(saveData.boxes||0)+1); persistSave(); updateGoldUI(); return true; }
-function openEpicBox(rand){ if((saveData.souls||0)<BOX_EPIC_PRICE) return null; saveData.souls-=BOX_EPIC_PRICE; saveData.boxesOpened=(saveData.boxesOpened||0)+1; const res=giveReward(pickWeighted(EPIC_REWARDS, rand), rand); persistSave(); updateGoldUI(); updateSoulUI(); return res; }
+function buyEpicBox(){ if((saveData.souls||0)<BOX_EPIC_PRICE) return false; saveData.souls-=BOX_EPIC_PRICE; saveData.epicBoxes=Math.min(9999,(saveData.epicBoxes||0)+1); persistSave(); updateGoldUI(); updateSoulUI(); return true; }
+function openEpicBox(rand){ if((saveData.epicBoxes||0)<=0) return null; saveData.epicBoxes--; saveData.boxesOpened=(saveData.boxesOpened||0)+1; const res=giveReward(pickWeighted(EPIC_REWARDS, rand), rand); persistSave(); updateGoldUI(); return res; }
 function openBox(rand){ if((saveData.boxes||0)<=0) return null; saveData.boxes--; saveData.boxesOpened=(saveData.boxesOpened||0)+1; const res=giveReward(pickWeighted(BOX_REWARDS, rand), rand); persistSave(); updateGoldUI(); return res; }
 // ----- the daily reward -----
 function todayKey(d){ d=d||new Date(); return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'); }       // the date on this device, e.g. "2026-10-07"
@@ -3631,7 +3632,7 @@ function shopAnimStart(){ if(shopAnimOn || !shopAnimList.length || typeof reques
 function boxRewardLabel(r){ return r.kind==='epicskin' ? '스킨 1개 (401~800G 또는 영혼석 스킨)' : r.kind==='soul' ? SOUL.icon+' '+SOUL.name+' '+r.amount+'개' : r.kind==='gold' ? r.amount+' sC' : r.kind==='charxp' ? '랜덤 캐릭터 XP '+r.amount : r.kind==='pickxp' ? '선택 XP '+r.amount : r.kind==='playerxp' ? '플레이어 XP '+r.amount : r.kind==='skin' ? '스킨 1개 ('+BOX_SKIN_MAX_PRICE+'G 이하)' : '랜덤 상자'; }
 function renderBoxTab(grid){
   const card=document.createElement('div'); card.className='boxCard';
-  const n=saveData.boxes||0, left=boxSkinCandidates().length;
+  const n=saveData.boxes||0, ne=saveData.epicBoxes||0, left=boxSkinCandidates().length;
   card.innerHTML='<div class="bIcon">🎁</div><div class="bMain"><div class="bName">랜덤 상자</div>'+
     '<div class="bSub"><span style="color:'+SOUL.color+'; font-weight:800;">'+SOUL.icon+' '+BOX_PRICE+' '+SOUL.name+'</span> · 킬하면 '+SOUL.name+' +'+SOUL_PER_KILL+' · 보유 <b id="boxOwnedN">'+n+'</b>개'+(left?'':' · 받을 수 있는 스킨은 모두 가졌어요')+'</div>'+
     '<ul>'+BOX_REWARDS.map(r=>'<li><b>'+boxRewardLabel(r)+'</b> · '+rewardChancePct(BOX_REWARDS,r)+'%</li>').join('')+'</ul>'+
@@ -3639,11 +3640,13 @@ function renderBoxTab(grid){
   grid.appendChild(card);
   const ec=document.createElement('div'); ec.className='boxCard'; ec.style.marginTop='12px'; ec.style.borderColor='#ffb02e';
   ec.innerHTML='<div class="bIcon">💎</div><div class="bMain"><div class="bName" style="color:#ffd34d;">에픽 상자</div>'+
-    '<div class="bSub"><span style="color:'+SOUL.color+'; font-weight:800;">'+SOUL.icon+' '+BOX_EPIC_PRICE+' '+SOUL.name+'</span> · 사자마자 바로 열려요 · 큰 선물만 나와요</div>'+
+    '<div class="bSub"><span style="color:'+SOUL.color+'; font-weight:800;">'+SOUL.icon+' '+BOX_EPIC_PRICE+' '+SOUL.name+'</span> · 보유 <b id="epicOwnedN">'+ne+'</b>개 · 큰 선물만 나와요</div>'+
     '<ul>'+EPIC_REWARDS.map(r=>'<li><b>'+boxRewardLabel(r)+'</b> · '+rewardChancePct(EPIC_REWARDS,r)+'%</li>').join('')+'</ul>'+
-    '<div class="bBtns"><button id="epicBuyBtn" class="buy" style="background:linear-gradient(135deg,#ffb02e,#ff7a2e); color:#1a1030;">구매하고 열기 ('+SOUL.icon+' '+BOX_EPIC_PRICE+')</button></div></div>';
+    '<div class="bBtns"><button id="epicBuyBtn" class="buy" style="background:linear-gradient(135deg,#ffb02e,#ff7a2e); color:#1a1030;">구매 ('+SOUL.icon+' '+BOX_EPIC_PRICE+')</button><button id="epicOpenBtn" class="alt">열기 ('+ne+')</button><button id="epicOpenAllBtn" class="alt">모두 열기 ('+ne+')</button></div></div>';
   grid.appendChild(ec);
-  const eb=document.getElementById('epicBuyBtn'); if(eb){ eb.disabled=(saveData.souls||0)<BOX_EPIC_PRICE; eb.onclick=()=>{ playEpicBoxOpening(); }; }
+  const eb=document.getElementById('epicBuyBtn'); if(eb){ eb.disabled=(saveData.souls||0)<BOX_EPIC_PRICE; eb.onclick=()=>{ if(buyEpicBox()) renderShop(); }; }
+  const eo=document.getElementById('epicOpenBtn'); if(eo){ eo.disabled=ne<=0; eo.onclick=()=>{ playEpicBoxOpening(); }; }
+  const eoa=document.getElementById('epicOpenAllBtn'); if(eoa){ eoa.disabled=ne<2; eoa.onclick=()=>{ playAllEpicBoxesOpening(); }; }
   const buy=document.getElementById('boxBuyBtn'), open=document.getElementById('boxOpenBtn');
   if(buy){ buy.disabled=(saveData.souls||0)<BOX_PRICE; buy.onclick=()=>{ if(buyBox()) renderShop(); }; }
   if(open){ open.disabled=n<=0; open.onclick=()=>{ if((saveData.boxes||0)>0) playBoxOpening(); }; }
@@ -5523,7 +5526,7 @@ function shuffle(arr){ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.
 /* ===== the version of this file =====
    Different BUILDS of one version meet and play together (room names online-v<ver>-<mode>-<map>-<slot>); different VERSIONS (the 0.x part) never do - the host refuses them (verNo) and the dispatcher answers busy.
    The build is only sent along with the join message and the lobby (for information); the corner of the screen shows it. */
-const GAME_BUILD='build 2026-10-18-v539';
+const GAME_BUILD='build 2026-10-18-v540';
 const GAME_VERSION='0.9', GAME_VERSION_NAME='은하 제국의 황혼';   // 게임 버전 이름: versions.json의 title과 같게 (빌드마다 바꾸지 않음)
 /* version (the 0.x part) vs build: different BUILDS of one version meet and play together, different VERSIONS never do (rooms, quick match, ranked, friend invites, dispatcher).
    Builds before 470 do not send a version, so it is read from the build number (0.9 started at build 458). */
@@ -6584,23 +6587,23 @@ function showRewardWindow(head, icon, text, buttons){
   document.getElementById('rmHead').textContent=head; const ic=document.getElementById('rmIcon'); ic.textContent=icon; ic.className='rmIcon'; { const cd=ic.closest('.rmCard'); if(cd) cd.className='rmCard'; }
   document.getElementById('rmTitle').textContent=''; document.getElementById('rmText').textContent=text||''; setRewardButtons(buttons||[]);
 }
-function revealReward(res, head, again){        // the box has shaken: show what was in it
+function revealReward(res, head, again, remain){        // the box has shaken: show what was in it
   const ic=document.getElementById('rmIcon'); ic.textContent=res.icon; ic.className='rmIcon pop';
   const card=ic.closest('.rmCard'), rar=rewardRarity(res);
   if(card){ card.className='rmCard rar'+rar; }
   document.getElementById('rmHead').textContent=head; document.getElementById('rmTitle').textContent=res.title; document.getElementById('rmText').textContent=res.detail||'';
   const btns=[{text:'확인', onclick:closeRewardModal}];
-  if(again && (saveData.boxes||0)>0) btns.unshift({text:'하나 더 열기 ('+saveData.boxes+')', alt:true, onclick:again});
+  const rem=(remain||(()=>saveData.boxes||0))(); if(again && rem>0) btns.unshift({text:'하나 더 열기 ('+rem+')', alt:true, onclick:again});
   setRewardButtons(btns);
   try{ const c=iconCenter(); rewardCelebrate(c.x,c.y,rar); }catch(e){}
 }
 const REWARD_SHAKE_MS=1500;
-function shakeThen(head, getResult, again){
+function shakeThen(head, getResult, again, remain){
   const ic=document.getElementById('rmIcon'); ic.className='rmIcon'; setRewardButtons([]);
   const card=ic.closest('.rmCard'); if(card){ card.className='rmCard'; void card.offsetWidth; card.className='rmCard charging'; }
   document.getElementById('rmTitle').textContent=''; document.getElementById('rmText').textContent='두근두근...';
   try{ const c=iconCenter(); uiFx.charge(c.x,c.y,REWARD_SHAKE_MS/1000,'#ffe27a'); }catch(e){}
-  const go=()=>{ if(card) card.className='rmCard'; const res=getResult(); if(!res){ closeRewardModal(); return; } revealReward(res, head, again); };
+  const go=()=>{ if(card) card.className='rmCard'; const res=getResult(); if(!res){ closeRewardModal(); return; } revealReward(res, head, again, remain); };
   if(typeof setTimeout==='function') setTimeout(go, REWARD_SHAKE_MS); else go();
 }
 function playBoxOpening(){
@@ -6610,15 +6613,15 @@ function playBoxOpening(){
   return true;
 }
 function playEpicBoxOpening(){
-  if((saveData.souls||0)<BOX_EPIC_PRICE) return false;
+  if((saveData.epicBoxes||0)<=0) return false;
   showRewardWindow('💎 에픽 상자', '💎', '', []);
-  shakeThen('에픽 상자를 열었어요!', ()=>openEpicBox(), null);
+  shakeThen('에픽 상자를 열었어요!', ()=>openEpicBox(), ()=>playEpicBoxOpening(), ()=>saveData.epicBoxes||0);
   return true;
 }
-function openAllBoxes(){        // 모두 열기: every box at once, one shake, the gifts added up on one card
-  const n=saveData.boxes||0; if(n<=0) return null;
+function openAllBoxes(epic){        // 모두 열기: every box at once, one shake, the gifts added up on one card
+  const n=(epic?saveData.epicBoxes:saveData.boxes)||0; if(n<=0) return null;
   const sum={gold:0, soul:0, playerxp:0, pickxp:0, box:0, char:{}, skins:[]};
-  for(let i=0;i<n;i++){ const r=openBox(); if(!r) break;
+  for(let i=0;i<n;i++){ const r=epic?openEpicBox():openBox(); if(!r) break;
     if(r.kind==='gold') sum.gold+=+(r.title.match(/\d+/)||[0])[0];
     else if(r.kind==='soul') sum.soul+=+(r.title.match(/\d+/)||[0])[0];
     else if(r.kind==='playerxp') sum.playerxp+=+(r.title.match(/\d+/)||[0])[0];
@@ -6635,7 +6638,13 @@ function openAllBoxes(){        // 모두 열기: every box at once, one shake, 
   if(sum.pickxp) L.push('⭐ 선택 XP +'+sum.pickxp);
   const cx=Object.keys(sum.char); if(cx.length) L.push('🎖️ 숙련도 XP: '+cx.map(k=>k+' +'+sum.char[k]).join(', '));
   if(sum.box) L.push('🎁 랜덤 상자 +'+sum.box);
-  return {kind:sum.skins.length?'skin':'gold', icon:sum.skins.length?'🎨':'🎁', title:'랜덤 상자 '+n+'개를 열었어요', detail:L.join('\n')};
+  return {kind:sum.skins.length?'skin':'gold', icon:sum.skins.length?'🎨':'🎁', title:(epic?'에픽 상자 ':'랜덤 상자 ')+n+'개를 열었어요', detail:L.join('\n')};
+}
+function playAllEpicBoxesOpening(){
+  if((saveData.epicBoxes||0)<=0) return false;
+  showRewardWindow('💎 에픽 상자 모두 열기', '💎', '', []);
+  shakeThen('에픽 상자를 모두 열었어요!', ()=>openAllBoxes(true), null);
+  return true;
 }
 function playAllBoxesOpening(){
   if((saveData.boxes||0)<=0) return false;
@@ -7767,7 +7776,7 @@ async function sbSignIn(username, password, remember){
    and the login then wrote this browser's EMPTY nickname and EMPTY numbers over the account's public profile. So the account looked newly made.
    Now: (1) the progress is also kept in the account (in its own user data, see cloudSaveSync), and a login brings it into the browser (merging when both sides have played);
         (2) a login never writes an empty nickname or empty statistics over the account; a nickname that the account already has is taken over instead. */
-function saveIsFresh(){ return !( (saveData.xp||0)>0 || (saveData.totalMatches||0)>0 || (saveData.totalKills||0)>0 || (gold||0)>0 || Object.keys(saveData.owned||{}).length>0 || Object.keys(saveData.achievements||{}).length>0 || (saveData.boxes||0)>0 || (saveData.souls||0)>0 ); }
+function saveIsFresh(){ return !( (saveData.xp||0)>0 || (saveData.totalMatches||0)>0 || (saveData.totalKills||0)>0 || (gold||0)>0 || Object.keys(saveData.owned||{}).length>0 || Object.keys(saveData.achievements||{}).length>0 || (saveData.boxes||0)>0 || (saveData.epicBoxes||0)>0 || (saveData.souls||0)>0 ); }
 async function sbAfterLogin(id, username, userMeta){
   switchLocalAccount(username);
   const sameAccountAsLast=(localStorage.getItem(LAST_USER_KEY)||'')===username;
@@ -7808,7 +7817,7 @@ function switchLocalAccount(to){
     for(const k of acctLsKeys()){ localStorage.removeItem(k); if(incoming && typeof incoming[k]==='string') localStorage.setItem(k, incoming[k]); }
     localStorage.setItem(LAST_USER_KEY, to);
     gold=0; Object.assign(saveData, {owned:{}, equipped:{name:null, skin:{}}, xp:0, totalKills:0, totalMatches:0, totalWins:0, winStreak:0, maxStreak:0, totalDamage:0, totalAssists:0, modeMatches:{}, charKills:{}, charPts:{}, playerName:null, nameDirty:false,
-      avatar:{bg:'#274d3a', color:'#3fe0c5', accessory:null}, achievements:{}, weaponXp:{}, boxes:0, boxesOpened:0, dailyLast:'', dailyCount:0, souls:0, pxEarned:0, pxSpent:0, missions:null, season:null});
+      avatar:{bg:'#274d3a', color:'#3fe0c5', accessory:null}, achievements:{}, weaponXp:{}, boxes:0, epicBoxes:0, boxesOpened:0, dailyLast:'', dailyCount:0, souls:0, pxEarned:0, pxSpent:0, missions:null, season:null});
     loadSave(); if(saveData.playerName){ myName=saveData.playerName; myNameSet=true; }
     try{ updateGoldUI(); }catch(e){}
     return true;
