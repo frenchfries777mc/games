@@ -710,7 +710,7 @@ function stepPlayer(G, p, inp, dt) {
 }
 function stepPlayer0(G, p, inp, dt) {
   for (const k in p.cd) if (p.cd[k] > 0) p.cd[k] -= dt;
-  ['block', 'taunt', 'rally', 'inv', 'hitT', 'animT', 'rollCd', 'focus', 'pdCd', 'chill', 'slow', 'bast', 'vwSelf', 'capB', 'chase'].forEach(k => { if (p[k] > 0) p[k] = Math.max(0, p[k] - dt); });
+  ['block', 'taunt', 'rally', 'inv', 'hitT', 'animT', 'rollCd', 'focus', 'pdCd', 'chill', 'slow', 'bast', 'vwSelf', 'capB'].forEach(k => { if (p[k] > 0) p[k] = Math.max(0, p[k] - dt); });
   if (p.stl > 0 && p.moving && G.pvp) { p.fpT = (p.fpT || 0) - dt; if (p.fpT <= 0) { p.fpT = 0.3; ev(G, 'foot', { x: p.x, z: p.z, a: p.a, tm: p.team }); } }
   if (p.stl > 0) { p.stl -= dt; if (p.stl <= 0) { p.stl = 0; ev(G, 'skill', { id: p.id, s: 'unvanish', x: p.x, z: p.z, a: p.a }); } }
   if (p.vow) { p.vow.t -= dt; if (p.vow.t <= 0) p.vow = null; }
@@ -739,7 +739,7 @@ function stepPlayer0(G, p, inp, dt) {
   p.reviving = null;
   if (p.burn > 0) { p.burn -= dt; if ((p.burnT = (p.burnT || 0) - dt) <= 0) { p.burnT = 0.5; if (p.roll <= 0) hurtPlayer(G, p, 3, null); } }
   const R = ROLES[p.role];
-  let sp = R.speed * (hasB(p, 'feet') ? 1.12 : 1) * (p.rally > 0 ? 1.3 : 1) * (p.capB > 0 ? 1.2 : 1) * (p.block > 0 ? 0.8 : 1) * (hasFlag(G, p) ? 0.7 : 1) * (p.chill > 0 ? 0.6 : 1) * (p.emb ? 0.75 : 1) * (p.slow > 0 ? (p.slowM || 0.5) : 1) * (p.stl > 0 ? 1.25 : 1) * (p.snipeT > 0 ? 0.25 : 1) * (p.bast > 0 ? 0.6 : 1) * (p.chase > 0 ? 1.1 : 1);
+  let sp = R.speed * (G.pvp && !p.bot && R.atk.kind === 'melee' ? 1.06 : 1) * (hasB(p, 'feet') ? 1.12 : 1) * (p.rally > 0 ? 1.3 : 1) * (p.capB > 0 ? 1.2 : 1) * (p.block > 0 ? 0.8 : 1) * (hasFlag(G, p) ? 0.7 : 1) * (p.chill > 0 ? 0.6 : 1) * (p.emb ? 0.75 : 1) * (p.slow > 0 ? (p.slowM || 0.5) : 1) * (p.stl > 0 ? 1.25 : 1) * (p.snipeT > 0 ? 0.25 : 1) * (p.bast > 0 ? 0.6 : 1);
   const fl = hasFlag(G, p);
   if (p.snipeT > 0) { p.snipeT -= dt; if (p.snipeT <= 0) { p.snipeT = 0; const a = p.a; G.projs.push({ id: G.uid++, k: 'pierce', own: p.id, x: p.x + Math.cos(a) * 0.8, z: p.z + Math.sin(a) * 0.8, vx: Math.cos(a) * 60, vz: Math.sin(a) * 60, dmg: 110, life: 0.9, pierce: true, hit: [], team: 0, snipe: 1 }); ev(G, 'skill', { id: p.id, s: 'snipefx', x: p.x, z: p.z, a }); } }
   if (inp.aim != null && isFinite(inp.aim)) p.a = inp.aim;
@@ -1638,10 +1638,6 @@ function botPvp(G, p, dt) {
   }
   if (ai.t <= 0) { ai.t = 0.4 + G.rng() * 0.5; ai.sd = G.rng() < 0.5 ? 1 : -1; ai.hold = G.rng() < 0.15; if (!(ai.rush > 0) && G.rng() < 0.45) ai.rush = 2.5 + G.rng() * 2; }
   const want = ranged ? 6.5 : (R.atk.range + 0.7) * 0.8;
-  // 근접은 도망치는 상대를 끝까지 쫓아요: 상대가 멀어지는 중이면 잠깐 빨라지고 돌진기·구르기를 아끼지 않아요
-  const tvx = ai.lid === tgt.id && dt > 0 ? (tgt.x - ai.lx) / dt : 0, tvz = ai.lid === tgt.id && dt > 0 ? (tgt.z - ai.lz) / dt : 0; ai.lid = tgt.id; ai.lx = tgt.x; ai.lz = tgt.z;   // 상대 이동 속도는 직전 위치와 비교해서 구해요
-  const fleeing = !ranged && d > 2 && (tvx * Math.cos(ta) + tvz * Math.sin(ta)) > 2.5;
-  if (fleeing) { p.chase = 0.3; ai.rush = Math.max(ai.rush, 0.5); if (d > 4 && p.rollCd <= 0 && G.rng() < 0.08) inp.roll = true; }
   if (inp.mx == null) {
     if (low && d < 8) { const a = safeDir(G, p, Math.atan2(p.z - nearest.z, p.x - nearest.x)); inp.mx = Math.cos(a); inp.mz = Math.sin(a); if (d < 3 && p.rollCd <= 0 && G.rng() < 0.05) inp.roll = true; }   // 체력이 낮으면 물러나요 (맞지 않고 4초가 지나면 저절로 차올라요)
     else if (ai.rush > 0 && d > (ranged ? 4 : 1.6)) moveTo(G, p, inp, tgt.x, tgt.z, ranged ? 3.5 : 1.2);
@@ -1663,7 +1659,7 @@ function botPvp(G, p, dt) {
     switch (S.id) {
       case 'block': go = d < 4 && hpf < 0.8 && r < 0.03; break;
       case 'shieldbash': go = d < 2.8 && r < 0.3; break;
-      case 'dash': go = d > 4 && d < 11 && r < (fleeing ? 0.3 : 0.15); break;
+      case 'dash': go = d > 4 && d < 11 && r < 0.15; break;
       case 'taunt': go = d < 6 && hpf < 0.7 && r < 0.1; break;
       case 'rally': go = d < 11 && r < 0.1; break;
       case 'pierce': go = d < 16 && r < 0.25; break;
@@ -1676,10 +1672,10 @@ function botPvp(G, p, dt) {
       case 'necrodoom': go = d < 10 && r < 0.14; break;
       case 'whirl': go = d < 3.2 && r < 0.25; break;
       case 'bonestorm': go = d < 3.2 && r < 0.2; break;
-      case 'leap': go = d > 3.5 && d < 9 && r < (fleeing ? 0.3 : 0.15); break;
+      case 'leap': go = d > 3.5 && d < 9 && r < 0.15; break;
       case 'bloodlust': go = d < 5 && hpf < 0.9 && r < 0.1; break;
       case 'flurry': go = d < 3 && r < 0.25; break;
-      case 'blink': go = d > 4 && d < 12 && r < (fleeing ? 0.4 : 0.12); break;
+      case 'blink': go = d > 4 && d < 12 && r < 0.12; break;
       case 'scatter': go = d < 3 && hpf < 0.5 && r < 0.3; break;
       case 'fan': go = d < 12 && r < 0.2; break;
       case 'quake': go = d < 4.2 && r < 0.25; break;
@@ -1698,7 +1694,7 @@ function botPvp(G, p, dt) {
       case 'courtshift': go = d > 6 && d < 20 && r < 0.1; break;
       case 'lullaby': go = d < 7 && r < 0.15; break;
       case 'chorus': go = hpf < 0.6 && r < 0.2; break;
-      case 'lunge': go = d > 4 && d < 8 && r < (fleeing ? 0.6 : 0.2); break;
+      case 'lunge': go = d > 4 && d < 8 && r < 0.2; break;
       case 'spearthrow': go = d > 4 && d < 16 && r < 0.12; break;
       case 'sweep': go = d < 4 && r < 0.15; break;
       case 'backstep': go = d < 3 && r < 0.2; break;
