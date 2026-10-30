@@ -159,6 +159,17 @@ export const ROLES = {
     ],
     st: [1, 2, 5, 3], atkTxt: T('룬 구슬'),
     role: T('룬 구슬로 상대에게 표식을 남겨요. 자리를 맞바꿔 아군을 구하고 상대를 우리 쪽으로 끌어와요.')
+  },
+  necro: {
+    name: T('네크로멘서'), type: T('서포터'), color: '#8a5ac8', hp: 190, speed: 5.8,
+    atk: { kind: 'melee', range: 6.5, arc: 1.6, dmg: 16, cd: 0.75 },
+    skills: [
+      { id: 'necroheal', name: T('생명 흡수'), key: 'Q', cd: 12, desc: T('둘레 아군(나 포함)의 체력을 22 되찾아 줘요.') },
+      { id: 'necroraise', name: T('해골 소환'), key: 'E', cd: 16, desc: T('둘레에 약한 해골 네 마리를 불러요. 해골은 18초 동안 우리 편으로 싸워요.') },
+      { id: 'necrodoom', name: T('죽음의 영역'), key: 'R', cd: 24, desc: T('넓은 원 안의 상대를 1초 기절시키고 피해를 준 뒤 3초 동안 이동 속도를 50% 느리게 해요.') }
+    ],
+    st: [2, 3, 5, 3], atkTxt: T('넓은 초록 휘두르기'),
+    role: T('넓게 휘두르는 공격으로 멀리서 싸워요. 아군을 치유하고 해골을 불러 전선을 만들어요.')
   }
 };
 export const COLORS = [
@@ -171,7 +182,7 @@ export const COLORS = [
 ];
 export const BOT_NAMES = ['데굴이', '휘청이', '꽈당이', '비틀이', '아슬이', '쿵쾅이', '덜렁이', '허둥이', '깜빡이', '뒤뚱이'];
 export const MAX_PLAYERS = 10;
-export const ROLE_IDS = ['knight', 'priest', 'archer', 'viking', 'mamluk', 'witch', 'skeleton', 'warden', 'assassin', 'crossbow', 'bomber', 'bard', 'spearman', 'court'];
+export const ROLE_IDS = ['knight', 'priest', 'archer', 'viking', 'mamluk', 'witch', 'skeleton', 'warden', 'assassin', 'crossbow', 'bomber', 'bard', 'spearman', 'court'];   // necro는 모델이 들어오면 목록에 넣어요
 
 export const ENEMIES = {
   skel: { name: T('해골 병사'), hp: 130, speed: 4.4, r: 0.6, dmg: 32, range: 1.8, windup: 0.42, cd: 0.9, honor: 1 },

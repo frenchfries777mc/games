@@ -191,7 +191,7 @@ function placeAt(G, c) {
 
 // 팀: 상대 표적(dummy)만 적이에요
 const tOf = (G, id) => G.tm && G.tm[id] != null ? G.tm[id] : -1;
-const foeOf = (G, own, e) => !e.pid || (G.pvp ? tOf(G, e.pid) !== tOf(G, own) : e.pid !== own);
+const foeOf = (G, own, e) => e.tm != null ? tOf(G, own) !== e.tm : !e.pid || (G.pvp ? tOf(G, e.pid) !== tOf(G, own) : e.pid !== own);
 function hasB(p, id) { return p.bl.indexOf(id) >= 0; }
 // 회복: 심연의 '마른 샘' 저주가 있으면 줄어요
 function healP(G, q, v) { const n = v * ((G.CH.curse && G.CH.curse.heal) || 1); q.hp = Math.min(q.maxhp, q.hp + n); return Math.round(n); }
@@ -410,7 +410,7 @@ function comboFx(G, C, A, B) {
   ev(G, 'combo', { c: C.id, name: C.name, x, z, a: A.id, b: B.id });
   if (!A.bot || !B.bot) { for (const o of [A, B]) if (!o.bot) { ev(G, 'ach', { id: 'combo', pid: o.id }); ev(G, 'combo1', { c: C.id, pid: o.id }); } }
 }
-const ANIMOF = { courtswap: 'blink', runetrap: 'mark', courtshift: 'shadow', bigbomb: 'mark', sticky: 'mark', barrage: 'scatter', wall: 'ward', vow: 'heal', bastion: 'block', vanish: 'blink', venom: 'mark', execute: 'shadow', rootbolt: 'pierce', backstep: 'dash', snipe: 'pierce', shieldbash: 'block', frost: 'curse', leap: 'leap', bloodlust: 'taunt', flurry: 'flurry', blink: 'shadow', scatter: 'scatter', fan: 'pierce', bonestorm: 'storm', march: 'rally', lullaby: 'ward', chorus: 'heal', lunge: 'lunge', spearthrow: 'pierce', sweep: 'whirl' };
+const ANIMOF = { necroheal: 'heal', necroraise: 'rally', courtswap: 'blink', runetrap: 'mark', courtshift: 'shadow', bigbomb: 'mark', sticky: 'mark', barrage: 'scatter', wall: 'ward', vow: 'heal', bastion: 'block', vanish: 'blink', venom: 'mark', execute: 'shadow', rootbolt: 'pierce', backstep: 'dash', snipe: 'pierce', shieldbash: 'block', frost: 'curse', leap: 'leap', bloodlust: 'taunt', flurry: 'flurry', blink: 'shadow', scatter: 'scatter', fan: 'pierce', bonestorm: 'storm', march: 'rally', lullaby: 'ward', chorus: 'heal', lunge: 'lunge', spearthrow: 'pierce', sweep: 'whirl' };
 const friends = (G, p) => G.pvp ? G.players.filter(q => q.team === p.team) : G.players;   // 대전에서는 같은 팀이 내 편이에요
 function swapPos(G, a, b, inv) {
   const ax = a.x, az = a.z; a.x = b.x; a.z = b.z; b.x = ax; b.z = az;
@@ -426,7 +426,7 @@ function useSkill(G, p, si, inp) {
   switch (S.id) {
     case 'block': p.block = 1.2; rolePuz(G, p, 'oath', 1.7); break;
     case 'dash': {
-      const ox = p.x, oz = p.z, L = 6;
+      const ox = p.x, oz = p.z, L = 9;
       p.x += Math.cos(p.a) * L; p.z += Math.sin(p.a) * L; collide(G, p, 0.6); p.inv = 0.3;
       for (const e of G.enemies) { if (e.hp <= 0) continue; if (segDist(ox, oz, p.x, p.z, e.x, e.z) < 1.3 + e.r) hurtEnemy(G, e, 30, p, { kb: 8, kbA: p.a }); }
       break;
@@ -523,6 +523,11 @@ function useSkill(G, p, si, inp) {
       const a = angTo(p, best), low = bs < 0.35; p.x = best.x + Math.cos(a) * 1.5; p.z = best.z + Math.sin(a) * 1.5; collide(G, p, 0.6); p.a = angTo(p, best); p.inv = 0.4;
       ev(G, 'skill', { id: p.id, s: 'execfx', x: p.x, z: p.z, a: p.a, n: low ? 1 : 0 }); hurtEnemy(G, best, low ? 90 : 45, p, {}); break;
     }
+    case 'necroheal': for (const q of friends(G, p)) if (alive(q) && dist(p, q) < 9) { ev(G, 'heal', { id: q.id, x: q.x, z: q.z, v: healP(G, q, 22) }); ev(G, 'ward', { id: q.id }); } break;
+    case 'necroraise': for (let i = 0; i < 4; i++) {   // 둘레에 약한 해골 넷 (우리 팀 편이고 18초 뒤 사라져요)
+      const a = p.a + i * TAU / 4 + 0.4; let x = p.x + Math.cos(a) * 2.4, z = p.z + Math.sin(a) * 2.4; if (isWall(x, z)) { x = p.x; z = p.z; }
+      const e = spawnEnemy(G, 'skel', x, z, false); e.tm = p.team; e.own = p.id; e.hp = e.maxhp = 70; e.dm = 0.6; e.life = 18; e.stT = 0.5;
+    } break;
     case 'courtswap': { // 가까운 아군과 자리를 맞바꿔요 (아군이 없으면 대기가 짧아요)
       let ally = null, bd = 18; for (const q of friends(G, p)) if (q !== p && alive(q) && dist(p, q) < bd) { bd = dist(p, q); ally = q; }
       if (!ally) { p.cd[key] = 1.5; break; }
@@ -1122,7 +1127,7 @@ function botPuzzle(G, p, inp, leader) {
 function pickTarget(G, e) {
   if (e.tauntT > 0) { const t = G.players.find(p => p.id === e.tgt && alive(p)); if (t) return t; }
   let best = null, bd = 1e9;
-  for (const p of G.players) { if (!alive(p)) continue; let d = dist(e, p); if (p.taunt > 0) d -= 6; if (hasFlag(G, p)) d -= 4; if (d < bd) { bd = d; best = p; } }
+  for (const p of G.players) { if (!alive(p) || (e.tm != null && p.team === e.tm)) continue; let d = dist(e, p); if (p.taunt > 0) d -= 6; if (hasFlag(G, p)) d -= 4; if (d < bd) { bd = d; best = p; } }
   return best;
 }
 function stepEnemy(G, e, dt) {
@@ -1149,6 +1154,7 @@ function stepEnemy(G, e, dt) {
     e.a = a; e.x += Math.cos(a) * E.speed * 1.3 * dt; e.z += Math.sin(a) * E.speed * 1.3 * dt; e.moving = true; e.hp = Math.min(e.maxhp, e.hp + e.maxhp * 0.2 * dt);
     return;
   }
+  if (e.life != null && (e.life -= dt) <= 0) { e.hp = 0; ev(G, 'ekill', { x: e.x, z: e.z, en: e.k, id: e.id }); return; }   // 소환된 해골은 18초 뒤 사라져요
   if (e.k === 'boss') { stepBoss(G, e, dt); return; }
   if (!e.summoned && e.hx != null && !G.players.some(p => alive(p) && dist(p, e) < LEASH_R) && Math.hypot(e.hx - e.x, e.hz - e.z) > 4) { e.st = 'home'; e.tgt = null; return; }
   if (e.stun > 0) return;
@@ -1169,7 +1175,7 @@ function stepEnemy(G, e, dt) {
       else if (e.charging) { /* 돌진 끝 */ }
       else {
         ev(G, 'eswing', { id: e.id, x: e.x, z: e.z, a: e.a });
-        for (const p of G.players) if (alive(p) && dist(e, p) < E.range + 0.7 && angDiff(e.a, angTo(e, p)) < 1.1) hurtPlayer(G, p, E.dmg * e.dm, e);
+        for (const p of G.players) if (alive(p) && !(e.tm != null && p.team === e.tm) && dist(e, p) < E.range + 0.7 && angDiff(e.a, angTo(e, p)) < 1.1) hurtPlayer(G, p, E.dmg * e.dm, e);
       }
     }
     return;
@@ -1645,7 +1651,7 @@ function botPvp(G, p, dt) {
     switch (S.id) {
       case 'block': go = d < 4 && hpf < 0.8 && r < 0.03; break;
       case 'shieldbash': go = d < 2.8 && r < 0.3; break;
-      case 'dash': go = d > 4 && d < 8 && r < 0.15; break;
+      case 'dash': go = d > 4 && d < 11 && r < 0.15; break;
       case 'taunt': go = d < 6 && hpf < 0.7 && r < 0.1; break;
       case 'rally': go = d < 11 && r < 0.1; break;
       case 'pierce': go = d < 16 && r < 0.25; break;
@@ -1672,6 +1678,8 @@ function botPvp(G, p, dt) {
       case 'execute': go = d < 12 && r < 0.12; break;
       case 'rootbolt': go = d < 14 && r < 0.15; break;
       case 'march': go = d < 12 && r < 0.1; break;
+      case 'necroheal': go = hpf < 0.55 && r < 0.15; break;
+      case 'necroraise': go = d < 10 && r < 0.12; break;
       case 'courtswap': go = hpf < 0.5 && r < 0.12; break;
       case 'runetrap': go = d > 3 && d < 12 && r < 0.12; break;
       case 'courtshift': go = d > 6 && d < 20 && r < 0.1; break;
