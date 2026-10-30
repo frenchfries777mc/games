@@ -269,6 +269,7 @@ function hurtPlayer(G, p, dmg, src) {
 function hurtEnemy(G, e, dmg, p, o) {
   if (e.hp <= 0 || e.st === 'rise') return 0;
   if (e.k === 'dummy') return hurtProxy(G, e, dmg, p, o);
+  if (e.tm != null && p && p.team === e.tm) return 0;   // 우리 편이 불러낸 해골은 우리 편 공격에 맞지 않아요 (소환한 본인도 못 때려요)
   if (e.st === 'sleep' || e.st === 'home') wake(G, e);
   const E = G.EN[e.k];
   let d = dmg * (p ? p.dmgMul * (hasB(p, 'blade') ? 1.15 : 1) * (p.rally > 0 ? 1.3 : 1) * (p.capB > 0 ? 1.2 : 1) * mkM(G, p) * (p.focus > 0 ? 1.5 : 1) : 1);
