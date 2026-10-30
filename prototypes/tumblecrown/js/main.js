@@ -354,6 +354,8 @@ setInterval(() => {
   if (S.net !== 'host' || S.G || S.ph !== 'pick') return;
   if (S.srv) S.rdy[UID] = true;   // 서버 방장은 늘 준비 상태예요
   S.pickT -= 0.25; const left = Math.max(0, Math.ceil(S.pickT));
+  // 봇은 1~4초 랜덤으로 기다린 뒤 직업을 골라 준비해요
+  for (const sl of S.slots) if (sl.bot && !S.rdy[sl.uid] && (sl.rdT -= 0.25) <= 0) { sl.role = ROLE_IDS[Math.random() * ROLE_IDS.length | 0]; S.rdy[sl.uid] = true; hostLobby(); if (S.scr === 'sRoom') paintRoom(); }
   if (S.slots.length < S.cap) { S.ph = 'wait'; hostLobby(); if (S.scr === 'sRoom') paintRoom(); return; }
   if (S.pickT <= 0 || (S.slots.every(x => S.rdy[x.uid]) && S.pickT < PICK_T - 1.5)) { beginGame(); return; }
   if (left !== S.lastLeft) { S.lastLeft = left; hostLobby(); if (S.scr === 'sRoom') paintRoom(); }
@@ -368,12 +370,11 @@ setInterval(() => {
     S.fillT = 0; newBots();
     const used = new Set(S.slots.map(s => s.col));
     for (let i = 0; S.slots.length < S.cap; i++) { let col = COLORS.findIndex((x, k) => !used.has(k)); if (col < 0) col = 0; used.add(col); S.slots.push({ uid: 'bot' + i, bot: true, name: BOT_NAMES[i % BOT_NAMES.length], role: S.botRoles[i % S.botRoles.length], col }); }
-    for (const sl of S.slots) if (sl.bot) S.rdy[sl.uid] = true;
     checkFull(); hostLobby(); if (S.scr === 'sRoom') paintRoom(); return;
   }
   if (left !== S.lastFill) { S.lastFill = left; hostLobby(); if (S.scr === 'sRoom') paintRoom(); }
 }, 250);
-function checkFull() { if (S.net === 'host' && !S.G && S.ph === 'wait' && S.slots.length >= S.cap) { S.ph = 'pick'; S.pickT = PICK_T; S.rdy = {}; S.lastLeft = null; SFX.play('click'); } }
+function checkFull() { if (S.net === 'host' && !S.G && S.ph === 'wait' && S.slots.length >= S.cap) { S.ph = 'pick'; S.pickT = PICK_T; S.rdy = {}; S.lastLeft = null; for (const sl of S.slots) if (sl.bot) sl.rdT = 1 + Math.random() * 3; SFX.play('click'); } }
 function leaveNet() {
   S.ph = null; S.pub = false; S.rdy = {}; S.mg = (S.mg | 0) + 1;
   hubRoom(false); cancelInvites();
