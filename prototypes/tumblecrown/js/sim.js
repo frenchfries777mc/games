@@ -192,6 +192,19 @@ function wallPush(G, o, r) {
   }
 }
 
+// 적 방벽 통과 막기: 이동 경로(이전 위치→지금 위치)가 방벽을 가로지르면 방벽 앞에서 멈춰요 (돌진·도약 같은 순간이동 포함). zs: {x,z,a,len,tm} 목록
+export function wallClamp(zs, team, ox, oz, o) {
+  for (const z of zs) {
+    if (z.tm === team) continue;
+    const ca = Math.cos(z.a), sa = Math.sin(z.a), h = z.len / 2 + 0.5;
+    const nx = -sa, nz = ca, s0 = (ox - z.x) * nx + (oz - z.z) * nz, s1 = (o.x - z.x) * nx + (o.z - z.z) * nz;
+    if (s0 * s1 >= 0 && Math.abs(s1) > 0.0001) continue;
+    const t = s0 / (s0 - s1), ix = ox + (o.x - ox) * t, iz = oz + (o.z - oz) * t, along = (ix - z.x) * ca + (iz - z.z) * sa;
+    if (Math.abs(along) > h) continue;
+    const dx = o.x - ox, dz = o.z - oz, dl = Math.hypot(dx, dz) || 1;
+    o.x = ix - dx / dl * 1.0; o.z = iz - dz / dl * 1.0;
+  }
+}
 /* ---------- 피해 ---------- */
 function hurtPlayer(G, p, dmg, src) {
   if (!alive(p) || p.inv > 0) return 0;
@@ -601,7 +614,9 @@ function resetEnemy(e) {
 function stepPlayer(G, p, inp, dt) {
   if (p.stun > 0) { p.stun -= dt; inp = {}; p.snipeT = 0; }   // 기절하면 잠깐 아무것도 못 해요
   if (p.px) p.px.hp = 0;
+  const wsx = p.x, wsz = p.z;
   stepPlayer0(G, p, inp, dt);
+  if (G.pvp && p.team != null && G.zones.some(z => z.k === 'wall')) wallClamp(G.zones.filter(z => z.k === 'wall').map(z => ({ x: z.x, z: z.z, a: z.a, len: z.len, tm: tOf(G, z.own) })), p.team, wsx, wsz, p);
   if (G.pvp && alive(p) && G.phase === 'play') {
     if (p.inFl && p.hp < p.maxhp) p.hp = Math.min(p.maxhp, p.hp + p.maxhp * 0.025 * dt);
     p.noHit = (p.noHit || 0) + dt;
@@ -1582,7 +1597,7 @@ export function snapshot(G) {
     pl: G.players.map(p => ({ id: p.id, tm: p.team, fz: p.inFl ? 1 : 0, dth: p.deaths | 0, role: p.role, col: p.col, cos: p.cos, name: p.name, bot: p.bot, x: r1(p.x), z: r1(p.z), a: r1(p.a), hp: Math.round(p.hp), mx: p.maxhp, dn: p.down ? 1 : 0, dd: p.dead ? 1 : 0, bl: r1(p.bleed), rs: r1(p.respT), rv: r1(p.revT), ro: p.roll > 0 ? 1 : 0, bk: p.block > 0 ? 1 : 0, sh: Math.round(p.shield), tn: p.taunt > 0 ? 1 : 0, ra: p.rally > 0 ? 1 : 0, an: p.animT > 0 ? p.anim : '', aN: p.animN || 0, ak: p.anim, mv: p.moving ? 1 : 0, cd: [r1(p.cd.s0), r1(p.cd.s1), r1(p.cd.s2)], rc: r1(p.rollCd), b: p.bl, cb: p.comboT > 0 ? p.combo : 0, ac: p.animC || 0, fc: p.focus > 0 ? 1 : 0, tc: p.torch || 0, cg: p.chg > 0 ? r1(p.chg) : 0, cl: p.chill > 0 ? 1 : 0, em: p.emb ? 1 : 0, kl: p.kills | 0, pc: p.place | 0, sv: r1(p.survT || 0), bn: p.burn > 0 ? 1 : 0, sw: p.slow > 0 ? 1 : 0, stl: p.stl > 0 ? 1 : 0, sp: p.snipeT > 0 ? 1 : 0, bs: p.bast > 0 ? 1 : 0, vw: (p.vow && p.vow.t > 0) || p.vwSelf > 0 ? 1 : 0 })),
     en: G.enemies.filter(e => e.k !== 'dummy' && near(e)).map(e => ({ id: e.id, k: e.k, x: r1(e.x), z: r1(e.z), a: r1(e.a), hp: Math.round(e.hp), mx: e.maxhp, st: e.st, mk: e.mark > 0 ? 1 : 0, sn: e.stun > 0 ? 1 : 0, sl: e.slow > 0 ? 1 : 0, bu: e.burn > 0 ? 1 : 0, ph: e.phase || 0, mb: e.mb || 0, mv: e.moving ? 1 : 0, ak: e.atk ? e.atk.k + (e.atk.go ? '!' : '') : '', ht: e.hitT > 0 ? 1 : 0 })),
     pr: G.projs.map(p => ({ id: p.id, k: p.k, x: r1(p.x), z: r1(p.z), y: r1(p.y || 0), bg: p.big ? 1 : 0, a: r1(Math.atan2(p.vz || (p.tz - p.sz) || 0, p.vx || (p.tx - p.sx) || 1)) })),
-    zn: G.zones.map(z => ({ id: z.id, k: z.k, x: r1(z.x), z: r1(z.z), r: z.r, a: z.a, len: z.len, w: z.w, arc: z.arc, t: r1(z.t), T: z.T, dl: z.delay > 0 ? 1 : 0 })),
+    zn: G.zones.map(z => ({ tm: z.k === 'wall' ? tOf(G, z.own) : -1, id: z.id, k: z.k, x: r1(z.x), z: r1(z.z), r: z.r, a: z.a, len: z.len, w: z.w, arc: z.arc, t: r1(z.t), T: z.T, dl: z.delay > 0 ? 1 : 0 })),
     w: { fk: G.fork ? [G.fork.pick, r1(G.fork.prog[0]), r1(G.fork.prog[1])] : 0, cp: G.cpI, fi: G.fires.map(f => f.lit ? 1 : 0), al: G.altars.map(a => a.used ? 1 : 0), ap: G.altars.map(a => r1(a.prog)), ch: G.chests.map(c => c.open ? 1 : 0), cp2: G.chests.map(c => r1(c.prog)), tr: G.traps.map(t => (t.on ? 1 : 0) + (t.up ? 2 : 0)), boss: G.bossIntro ? 1 : 0, bd: G.bossDead ? 1 : 0, sc: G.secrets.map(q => q.open ? 1 : 0), lr: G.lores.map(q => q.read ? 1 : 0), pz: G.puz.map(q => ({ d: q.done ? 1 : 0, o: q.occ.join(''), l: q.lit.join(''), r: q.rot.join(''), v: q.pg.map(v => Math.min(9, Math.floor(v * 10))).join(''), c: q.ct.map(v => Math.ceil(v)).join(',') })), es: G.esc ? [r1(G.esc.t), G.esc.T] : 0, fl: G.flag ? [r1(G.flag.x), r1(G.flag.z), G.flag.by, r1(G.flag.prog), G.flag.got] : 0, pt: G.pits.map(q => q.down ? -1 : q.hits), lf: G.lifts.map(q => [r1(q.h), q.done ? 1 : 0, q.mv]), left: G.pvp ? G.players.filter(alive).length : G.enemies.filter(e => e.hp > 0 && !e.summoned && e.k !== 'boss').length },
     bless: G.bless, honor: G.honor
   };
