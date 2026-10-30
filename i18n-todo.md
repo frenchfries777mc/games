@@ -532,3 +532,10 @@ patchnotes.json | v544 items[1] | 제국 수호전은 연승을 올리지도 끊
 
 ## Stickseum b547 (2026-10-30)
 - patchnotes.json | v547 items[0] | 모드 목록 버튼의 영상을 모드의 핵심 장면 중심으로 다시 촬영 (깃발 뺏기 깃발, 황금 쟁탈 금 더미, 점령전 거점, 제국 수호전 수정, 보스 레이드 보스, 언덕의 왕 거점, 왕관 지키기 왕관 등) | build 547 | 2026-10-30
+
+## Stickseum b548 (2026-10-30)
+- patchnotes.json | v548 items[0] | 오늘의 첫 승리 보너스: 오늘 목록에 있는 모드 6개와 일일 모드에서 그날 첫 승리를 하면 sC를 받음 (클래식 40, 팀 50, 특수 70, 일일 모드 60) | build 548 | 2026-10-30
+- patchnotes.json | v548 items[1] | 보스 레이드에서 보스를 쓰러뜨리면 끝날 때 보스에게 마지막 일격을 넣은 장면이 나오고 '마지막 일격 · 이름' 표시 | build 548 | 2026-10-30
+- patchnotes.json | v548 items[2] | 에픽 상자 개수가 계정에 저장되지 않고 다른 기기에서 사라지던 문제 수정 | build 548 | 2026-10-30
+- Stickseum-v0.9.html | partyToast | 🎁 오늘의 첫 승리 보너스 sC +N | build 548 | 2026-10-30
+- Stickseum-v0.9.html | killcamLabel | 마지막 일격 · 이름님 | build 548 | 2026-10-30
