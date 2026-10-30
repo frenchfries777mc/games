@@ -1155,9 +1155,9 @@ function stepEnemy(G, e, dt) {
   if (e.st === 'home') {
     const d = Math.hypot(e.hx - e.x, e.hz - e.z);
     for (const p of G.players) if (alive(p) && dist(p, e) < WAKE_R * 0.8 && lineClear(e.x, e.z, p.x, p.z)) { e.st = 'idle'; return; }
-    if (d < 0.8) { e.st = 'sleep'; e.hp = e.maxhp; e.moving = false; return; }
+    if (d < 0.8) { e.st = 'sleep'; if (!e.mon) e.hp = e.maxhp; e.moving = false; return; }
     const a = navDir(e.x, e.z, e.hx, e.hz, G.t); if (a == null) { e.x = e.hx; e.z = e.hz; return; }
-    e.a = a; e.x += Math.cos(a) * E.speed * 1.3 * dt; e.z += Math.sin(a) * E.speed * 1.3 * dt; e.moving = true; e.hp = Math.min(e.maxhp, e.hp + e.maxhp * 0.2 * dt);
+    e.a = a; e.x += Math.cos(a) * E.speed * 1.3 * dt; e.z += Math.sin(a) * E.speed * 1.3 * dt; e.moving = true; e.hp = Math.min(e.maxhp, e.hp + e.maxhp * (e.mon ? 0.004 : 0.2) * dt);   // 중립 괴물은 아주 천천히 회복해요
     return;
   }
   if (e.life != null && (e.life -= dt) <= 0) { e.hp = 0; ev(G, 'ekill', { x: e.x, z: e.z, en: e.k, id: e.id }); return; }   // 소환된 해골은 18초 뒤 사라져요
@@ -1171,7 +1171,7 @@ function stepEnemy(G, e, dt) {
     // 덫이 터지며 불길이 번져요: 둘레 적이 불타고 조금 다쳐요
     for (const q of G.enemies) if (q !== e && q.hp > 0 && Math.hypot(q.x - z.x, q.z - z.z) < 3) { q.burn = 3; hurtEnemy(G, q, 10, ow, { spread: 1 }); } if (e.hp <= 0) return; }
   const t = pickTarget(G, e); if (!t) return;
-  if (e.mon && Math.hypot(t.x - e.hx, t.z - e.hz) > 22) { e.moving = false; e.hp = Math.min(e.maxhp, e.hp + e.maxhp * 0.1 * dt); return; }   // 중립 괴물은 자기 자리에서 너무 먼 사람은 쫓지 않아요
+  if (e.mon && Math.hypot(t.x - e.hx, t.z - e.hz) > 22) { e.moving = false; e.hp = Math.min(e.maxhp, e.hp + e.maxhp * 0.004 * dt); return; }   // 중립 괴물은 자기 자리에서 너무 먼 사람은 쫓지 않아요
   const d = dist(e, t), sees = lineClear(e.x, e.z, t.x, t.z), ta = angTo(e, t);
   if (e.st === 'wind') {
     e.wind -= dt;
