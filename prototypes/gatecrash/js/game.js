@@ -254,7 +254,7 @@ function useWeapon(G, r, ang) {
     G.shots.push({ k: r.wep.k, x: cx + Math.cos(ang) * 8, y: cy + Math.sin(ang) * 8, vx: Math.cos(ang) * w.speed, vy: Math.sin(ang) * w.speed, t: w.life, by: r.id });
     G.ev.push({ t: 'fire', x: cx, y: cy, k: r.wep.k });
   } else if (w.kind === 'spray') {
-    for (let i = 0; i < 2; i++) { const a = ang + (Math.random() - .5) * .35; G.shots.push({ k: 'ext', x: cx + Math.cos(a) * 8, y: cy + Math.sin(a) * 8, vx: Math.cos(a) * w.speed, vy: Math.sin(a) * w.speed, t: w.life, by: r.id }); }
+    for (let i = 0; i < 2; i++) { const a = ang + (Math.random() - .5) * .35; G.shots.push({ k: r.wep.k, x: cx + Math.cos(a) * 8, y: cy + Math.sin(a) * 8, vx: Math.cos(a) * w.speed, vy: Math.sin(a) * w.speed, t: w.life, by: r.id }); }
     r.vx -= Math.cos(ang) * w.recoil; if (!r.ground) r.vy -= Math.sin(ang) * w.recoil * 0.4;
   }
   if (--r.wep.u <= 0) { r.wep = null; G.ev.push({ t: 'break', x: cx, y: cy }); }
@@ -262,7 +262,7 @@ function useWeapon(G, r, ang) {
 function stepShots(G, dt) {
   for (const s of G.shots) {
     const w = WEAPONS[s.k]; s.x += s.vx * dt; s.y += s.vy * dt; s.t -= dt;
-    if (s.k === 'ext') s.vy += 120 * dt;
+    if (w.kind === 'spray') s.vy += 120 * dt;
     let boom = false;
     if (isSolid(tileAt(G.W, Math.floor(s.x / TS), Math.floor(s.y / TS)))) { s.t = 0; boom = true; }
     for (const o of G.racers) if (o.id !== s.by && s.t > 0 && !o.fin && s.x > o.x - 2 && s.x < o.x + PH.W + 2 && s.y > o.y - 2 && s.y < o.y + PH.H + 2) {
