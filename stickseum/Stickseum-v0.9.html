@@ -5600,7 +5600,7 @@ function shuffle(arr){ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.
 /* ===== the version of this file =====
    Different BUILDS of one version meet and play together (room names online-v<ver>-<mode>-<map>-<slot>); different VERSIONS (the 0.x part) never do - the host refuses them (verNo) and the dispatcher answers busy.
    The build is only sent along with the join message and the lobby (for information); the corner of the screen shows it. */
-const GAME_BUILD='build 2026-10-18-v552';
+const GAME_BUILD='build 2026-10-18-v553';
 const GAME_VERSION='0.9', GAME_VERSION_NAME='은하 제국의 황혼';   // 게임 버전 이름: versions.json의 title과 같게 (빌드마다 바꾸지 않음)
 /* version (the 0.x part) vs build: different BUILDS of one version meet and play together, different VERSIONS never do (rooms, quick match, ranked, friend invites, dispatcher).
    Builds before 470 do not send a version, so it is read from the build number (0.9 started at build 458). */
@@ -19004,6 +19004,10 @@ function entranceShow(){
 }
 // ---- picture caches: the sky, the grid and the platforms that never move are drawn once and then just copied every frame ----
 let skyCv=null, skyKey='', gridPat=null, platCv=null, platSrc=null, platLen=-1, platThemeId='', platOk=false;
+try{            // the browser took the canvas memory away (graphics memory ran out): the cached pictures are drawn again from nothing when it comes back
+  canvas.addEventListener('contextlost', e=>{ try{ e.preventDefault(); }catch(x){} skyCv=null; skyKey=''; gridPat=null; platCv=null; platSrc=null; blindCv=null; mineDarkCv=null; smokeCv=null; });
+  canvas.addEventListener('contextrestored', ()=>{ try{ ctx=canvas.getContext('2d'); }catch(x){} });
+}catch(e){}
 function drawAuroraSky(){      // 오로라 스킨을 입은 사람의 화면: 하늘에 흐르는 오로라 띠 (배경, owner 10-28)
   const me=players[myId]; if(!me || !isGmSkin(me)) return;
   const w=canvas.width, h=canvas.height, t=performance.now()/1000;
@@ -19039,7 +19043,7 @@ function drawSteelPlat(c,pl){          // 강철 발판: silver with a dark-grey
 function platIsStatic(pl){ return !pl.move && !pl.isGoal && !pl.restStop && pl.pk===undefined && pl.g===undefined; }
 function drawStaticPlatforms(th){
   const W=MAP.arenaW|0, H=MAP.arenaH|0;
-  if(!(W>0 && H>0 && W<=8192 && H<=4096 && W*H<=16e6)) return false;
+  if(!(W>0 && H>0 && W<=8192 && H<=4096 && W*H<=5e6)) return false;      // (a big cached picture of the arena on top of the other canvases ate the graphics memory of some computers: the picture then smeared and showed white boards; the very big maps draw their boards directly)
   const src=MAP.basePlats||MAP.platforms;      // (the maps whose planks / gates come and go keep their fixed part here)
   if(!platCv || platSrc!==src || platLen!==src.length || platThemeId!==th.id+'|'+MAP.id){
     if(!platCv) platCv=document.createElement('canvas');
