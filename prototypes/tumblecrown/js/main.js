@@ -178,7 +178,7 @@ function menu(go) {
   else if (go === 'weps') { paintWepInfo(); show('sWeps'); }
   else if (go === 'notes') { loadNotes(); show('sNotes'); }
   else if (go === 'settings') { paintSettings(); show('sSettings'); }
-  else if (go === 'site') location.href = '../../';
+  else if (go === 'site') { try { window.close(); } catch (e) { } setTimeout(() => { location.href = '../../'; }, 250); }   // 창이 닫히면 그대로 사라지고, 못 닫으면 사이트로 가요
 }
 // 치장·스킨: 재화는 tC. 한 번 사면 계속 쓸 수 있고, 눌러서 입고 벗어요
 function paintWard() {
