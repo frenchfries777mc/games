@@ -652,7 +652,9 @@ export class View {
       const cm = M(0x8a8696, { e: 0x8a8696, ei: 0.5, uniq: true }), cloth = box(2.6, 1.7, 0.08, cm, 1.4, 5.6, 0, g);
       const rm = M(0x8a8696, { e: 0x8a8696, ei: 1.2, op: 0.55, uniq: true }), ring = mesh(geo('fring', () => new THREE.RingGeometry(FLAG_R - 0.3, FLAG_R, 64)), rm, x, 0.13, z, s, false); ring.rotation.x = -Math.PI / 2; ring.castShadow = false;
       const pm = M(0xffffff, { e: 0xffffff, ei: 1.4, op: 0.4, uniq: true }), prog = mesh(geo('fprog', () => new THREE.CircleGeometry(1, 48)), pm, x, 0.11, z, s, false); prog.rotation.x = -Math.PI / 2; prog.castShadow = false; prog.visible = false;
-      this.flagM.push({ cm, rm, pm, cloth, prog });
+      const bm = M(0xffffff, { e: 0xffffff, ei: 1.8, op: 0.3, uniq: true }), beam = mesh(geo('fbeam', () => new THREE.CylinderGeometry(1.5, 2.2, 1, 16, 1, true)), bm, x, 0, z, s, false); beam.castShadow = false; beam.visible = false;
+      const em = M(0xffffff, { e: 0xffffff, ei: 2, op: 0.7, uniq: true }), edge = mesh(geo('fedge', () => new THREE.RingGeometry(0.88, 1, 64)), em, x, 0.15, z, s, false); edge.rotation.x = -Math.PI / 2; edge.castShadow = false; edge.visible = false;
+      this.flagM.push({ cm, rm, pm, cloth, prog, bm, beam, em, edge });
     }
     // 팀 대전 장식: 바닥에 흩어진 돌·상자·풀, 진지와 깃발 곁의 횃불, 진지 기둥 깃발
     if (CH.pvp) {
@@ -1150,6 +1152,13 @@ export class View {
       const F = this.flagM[i]; if (!F) return; const c = f[0] < 0 ? 0x8a8696 : TEAMS[f[0]].c, pc = f[1] >= 0 ? TEAMS[f[1]].c : c;
       F.cm.color.setHex(c); F.cm.emissive.setHex(c); F.rm.color.setHex(c); F.rm.emissive.setHex(c); F.pm.color.setHex(pc); F.pm.emissive.setHex(pc);
       F.prog.visible = f[2] > 0; F.prog.scale.setScalar(Math.max(0.01, f[2] / FLAG_T) * FLAG_R); F.cloth.rotation.y = Math.sin(t * 2.2 + i) * 0.18;
+      const on = f[2] > 0, fr = Math.min(1, f[2] / FLAG_T);
+      F.beam.visible = on; F.edge.visible = on;
+      if (on) {
+        F.bm.color.setHex(pc); F.bm.emissive.setHex(pc); F.em.color.setHex(pc); F.em.emissive.setHex(pc);
+        const h = 6 + fr * 12; F.beam.scale.set(1 + fr * 0.4, h, 1 + fr * 0.4); F.beam.position.y = h / 2; F.bm.opacity = 0.18 + fr * 0.2 + 0.06 * Math.sin(t * 7);
+        F.edge.scale.setScalar(FLAG_R * (1 + 0.025 * Math.sin(t * 8))); F.em.opacity = 0.45 + fr * 0.4;
+      }
     });
     // 적
     for (const e of S.en) {
