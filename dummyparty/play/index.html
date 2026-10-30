@@ -1670,7 +1670,9 @@ body.playing #emoBar{display:flex}
    <div class="row"><input id="codeIn" maxlength="5" placeholder="방 코드" autocomplete="off"><button class="pb dark" id="joinBtn" style="flex:0 0 auto">들어가기</button></div>
    <div class="msg" id="homeMsg"></div>
   </aside>
-  <template id="patchnotes"><details class="notes" open><summary>패치노트 · v0.1 (b85)</summary>
+  <template id="patchnotes"><details class="notes" open><summary>패치노트 · v0.1 (b86)</summary>
+   <b>2026-10-30 · v0.1 · b86 · 모바일 해설 글씨</b>
+   <ul><li>폰처럼 화면이 작은 기기에서 진행자(해설) 대사 글씨가 더 크게 나와요</li></ul>
    <b>2026-10-30 · v0.1 · b85 · 허브 퀘스트 연결</b>
    <ul><li>허브 일일 퀘스트의 "한 판 하기"가 방에 들어갔을 때가 아니라, 한 판을 끝까지 마치고 대기실로 돌아왔을 때 한 번 세져요</li></ul>
    <b>2026-10-29 · v0.1 · b84 · 프로필 카드에 내 캐릭터</b>
@@ -1839,7 +1841,7 @@ body.playing #emoBar{display:flex}
    <ul><li>무너지는 발판 칸 수 대폭 증가 (19×10)와 용암 동굴 맵</li><li>10개 맵 전부 새로 그림 (관중석, 야자수 섬, 링, 정원 미로, 서커스, 우노 테이블 등)</li><li>글자 대신 아이콘·말풍선·이펙트로 표현 (무기, 아이템, 카드 효과, 시작 안내)</li><li>타격·폭발·물보라 효과와 화면 흔들림 추가</li></ul>
    <b>2026-10-19 · v0.1 · b1 · 첫 시험판</b>
    <ul><li>마네킹 미니게임 10개 추가 (장애물 달리기, 섬 밀치기, 싸우기, 병맛 미로, 체스 대난투, 폭탄 돌리기, 병맛 우노, 쇼윈도 얼음땡, 무너지는 발판, 컨베이어 서바이벌)</li><li>방 코드로 최대 8명 멀티플레이, 빈자리는 봇으로 채우기</li><li>판마다 10개 중 5개를 무작위로 골라 점수를 합산</li><li>PC 키보드와 휴대폰 터치 조작 지원</li></ul></details></template>
-  <p class="foot">2~8명 · 판마다 36개 미니게임 중 7개 · v0.1 b85 · <a href="../">← Dummy Party 사이트로</a></p>
+  <p class="foot">2~8명 · 판마다 36개 미니게임 중 7개 · v0.1 b86 · <a href="../">← Dummy Party 사이트로</a></p>
   <p class="foot"><span class="ff-copy">© 2026 Frenchfries777 · <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.ko" target="_blank" rel="noopener">CC BY-NC-ND 4.0</a></span></p>
  </div>
 </section>
@@ -6876,7 +6878,10 @@ function drawCommentary(c, now) {
   var age = (now - cm.t0) / 1000, a = clamp(Math.min(age / 0.25, (cm.until - now) / 300), 0, 1);
   var shown = Math.min(cm.text.length, Math.floor(age * 28)), t = cm.text.slice(0, shown);
   c.save(); c.globalAlpha = a * 0.85; c.font = '700 16px ' + FONT; var w = Math.min(780, Math.max(260, c.measureText(cm.text).width + 90)), x = W / 2 - w / 2, y = H - 90 + (1 - a) * 12;
-  c.translate(W / 2, y + 40); c.scale(0.78, 0.78); c.translate(-W / 2, -(y + 40));   // 작게 줄여서 경기 장면을 덜 가려요
+  // 작게 줄여서 경기 장면을 덜 가려요. 다만 화면이 작은 폰에서는 글씨가 실제 화면에서 약 14px 아래로 내려가지 않게 키워요 (너무 길면 화면 폭 안으로만)
+  var ks = Math.max(0.78, Math.min(2, 14 / (16 * (CSSS || 1)))); ks = Math.min(ks, (W - 24) / w); ks = Math.max(ks, 0.5);
+  c.translate(W / 2, y + 40); c.scale(ks, ks); c.translate(-W / 2, -(y + 40));
+  if (ks > 0.78) { c.translate(0, -(ks - 0.78) * 30); }   // 커진 만큼 아래로 넘치지 않게 살짝 올려요
   c.fillStyle = 'rgba(20,14,30,.66)'; rrect(c, x, y, w, 40, 20); c.fill(); c.strokeStyle = 'rgba(255,255,255,.25)'; c.lineWidth = 2; c.stroke();
   // 해설 마네킹 (헤드셋)
   c.fillStyle = '#f4f1ec'; c.beginPath(); c.arc(x + 24, y + 22, 13, 0, 6.283); c.fill(); c.strokeStyle = '#222'; c.lineWidth = 3; c.beginPath(); c.arc(x + 24, y + 20, 15, 3.4, 6.0); c.stroke(); c.fillStyle = '#222'; c.fillRect(x + 8, y + 18, 5, 9); c.fillRect(x + 35, y + 18, 5, 9);
@@ -7528,7 +7533,7 @@ var PREFIX = 'ff-dummyparty-', CODE_CH = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789', MAX
 var PTS = [5, 3, 2, 1];
 var T_INTRO = 6, T_COUNT = 3, T_END = 4.0, T_RESULT = 6;
 // 게임 버전(0.x)과 빌드. 버전이 다르면 같은 방에 못 들어와요 (빌드가 달라도 괜찮아요). dp_config 의 min_build 보다 낮은 빌드는 dC를 못 받아요
-var DP_VER = '0.1', DP_BUILD = 85;
+var DP_VER = '0.1', DP_BUILD = 86;
 function dpNotice(msg) { dpAsk(msg, '확인', function () { }); }
 var BOT_NAMES = ['방귀쟁이', '홀쭉이', '바보1', '멍청이', '10급 공무원', '교무실 단골', '벌점부자', '말썽이', '김개똥'];
 var qs = new URLSearchParams(location.search);
