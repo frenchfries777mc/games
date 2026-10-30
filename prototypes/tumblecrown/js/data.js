@@ -3,7 +3,7 @@
 
 import { T } from './tr.js';
 
-export const VERSION = 'v0.1', BUILD = 95;
+export const VERSION = 'v0.1', BUILD = 96;
 
 export const ROLES = {
   knight: {
@@ -116,6 +116,17 @@ export const ROLES = {
     st: [4, 2, 3, 4], atkTxt: T('포물선으로 폭탄을 던져요 (닿은 자리에서 0.75초 뒤 터져요)'),
     role: T('벽 너머 깃발 위를 폭탄으로 때려 점령을 방해해요. 터지기 전에 움직이는 상대에겐 잘 안 맞아요.')
   },
+  streltsy: {
+    name: T('스트렐치'), type: T('원거리 딜러'), color: '#6a7a8a', hp: 175, speed: 5.6,
+    atk: { kind: 'musket', dmg: 52, cd: 1.7, speed: 52, life: 1.2, hr: 0.5 },
+    skills: [
+      { id: 'rapidfire', name: T('연사'), key: 'Q', cd: 9, desc: T('같은 방향으로 총알 세 발을 잇달아 쏴요. 한 발에 26 피해.') },
+      { id: 'bigshot', name: T('거대 총알'), key: 'E', cd: 11, desc: T('크고 느린 총알을 한 발 쏴요. 88 피해.') },
+      { id: 'cover', name: T('엄폐물'), key: 'R', cd: 22, desc: T('앞에 엄폐물을 5초 동안 세워요. 적은 지나갈 수 없고 적의 공격이 막혀요. 그동안 내 공격 쿨타임이 20% 줄고, 총알이 커지고, 공격 피해가 25% 늘어요.') }
+    ],
+    st: [5, 2, 5, 3], atkTxt: T('총 한 발 (가장 멀리 날아가지만 맞추기 어렵고 다시 쏘기까지 오래 걸려요)'),
+    role: T('아주 멀리서 한 발씩 강하게 쏘고, 엄폐물 뒤에서 더 세져요.')
+  },
   crossbow: {
     name: T('석궁병'), type: T('원거리 딜러'), color: '#8a6a3a', hp: 190, speed: 5.8,
     atk: { kind: 'xbolt', dmg: 23, cd: 0.8, speed: 32 },
@@ -182,7 +193,7 @@ export const COLORS = [
 ];
 export const BOT_NAMES = ['데굴이', '휘청이', '꽈당이', '비틀이', '아슬이', '쿵쾅이', '덜렁이', '허둥이', '깜빡이', '뒤뚱이'];
 export const MAX_PLAYERS = 10;
-export const ROLE_IDS = ['knight', 'priest', 'archer', 'viking', 'mamluk', 'witch', 'skeleton', 'warden', 'assassin', 'crossbow', 'bomber', 'bard', 'spearman', 'court', 'necro'];
+export const ROLE_IDS = ['knight', 'priest', 'archer', 'viking', 'mamluk', 'witch', 'skeleton', 'warden', 'assassin', 'crossbow', 'bomber', 'bard', 'spearman', 'court', 'necro', 'streltsy'];
 
 export const ENEMIES = {
   skel: { name: T('해골 병사'), hp: 130, speed: 4.4, r: 0.6, dmg: 32, range: 1.8, windup: 0.42, cd: 0.9, honor: 1 },

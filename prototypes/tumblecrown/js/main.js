@@ -675,11 +675,11 @@ const touch = { jx: 0, jz: 0, jid: null, atk: false, f: false };
 function nearestFoe(p, maxd) { let best = null, bd = maxd;
   if (S.snap.pv) { for (const q of S.snap.pl) { if (q.id === S.me || q.dd) continue; const d = Math.hypot(q.x - p.x, q.z - p.z); if (d < bd) { bd = d; best = q; } } return best; } for (const e of S.snap.en) { if (e.hp <= 0 || e.st === 'rise') continue; const d = Math.hypot(e.x - p.x, e.z - p.z); if (d < bd) { bd = d; best = e; } } return best; }
 /* 누르고 있으면 민트색으로 어디로 나갈지 보여 주고, 떼면 나가요 (Stickseum 방식). 원거리 기본 공격과 조준 기술 */
-const BASEP = { orb: { k: 'line', len: 14, w: 0.9 }, arrow: { k: 'line', len: 26, w: 0.8 }, xbolt: { k: 'line', len: 32, w: 0.8 }, bomb: { k: 'circle', range: 13, r: 2.4 } };
+const BASEP = { orb: { k: 'line', len: 14, w: 0.9 }, arrow: { k: 'line', len: 26, w: 0.8 }, xbolt: { k: 'line', len: 32, w: 0.8 }, musket: { k: 'line', len: 60, w: 0.5 }, bomb: { k: 'circle', range: 13, r: 2.4 } };
 const SKP = {
   smite: { k: 'circle', range: 12, r: 3.2 }, curse: { k: 'circle', range: 12, r: 2.6 }, potion: { k: 'circle', range: 12, r: 3 }, frost: { k: 'circle', range: 12, r: 3.2 }, rain: { k: 'circle', range: 12, r: 4 }, runetrap: { k: 'circle', range: 12, r: 4.5 }, courtswap: { k: 'self', r: 18 }, necroheal: { k: 'self', r: 9 }, necrodoom: { k: 'circle', range: 10, r: 6.5 }, necroraise: { k: 'self', r: 2.4 }, courtshift: { k: 'self', r: 22 }, mark: { k: 'circle', range: 14, r: 1.6 },
   bigbomb: { k: 'circle', range: 12, r: 4 }, sticky: { k: 'circle', range: 11, r: 4.5 }, barrage: { k: 'line', len: 12, w: 3.5 },
-  pierce: { k: 'line', len: 26, w: 0.9 }, rootbolt: { k: 'line', len: 25, w: 0.9 }, lunge: { k: 'line', len: 7, w: 1.6 }, spearthrow: { k: 'line', len: 27, w: 1.1 }, sweep: { k: 'self', r: 3.9 }, lullaby: { k: 'self', r: 7 }, march: { k: 'self', r: 9 }, chorus: { k: 'self', r: 8 }, snipe: { k: 'line', len: 40, w: 1 }, fan: { k: 'line', len: 13, w: 5 },
+  pierce: { k: 'line', len: 26, w: 0.9 }, rootbolt: { k: 'line', len: 25, w: 0.9 }, rapidfire: { k: 'line', len: 46, w: 0.7 }, bigshot: { k: 'line', len: 34, w: 2 }, cover: { k: 'wall' }, lunge: { k: 'line', len: 7, w: 1.6 }, spearthrow: { k: 'line', len: 27, w: 1.1 }, sweep: { k: 'self', r: 3.9 }, lullaby: { k: 'self', r: 7 }, march: { k: 'self', r: 9 }, chorus: { k: 'self', r: 8 }, snipe: { k: 'line', len: 40, w: 1 }, fan: { k: 'line', len: 13, w: 5 },
   quake: { k: 'line', len: 11, w: 2.4 }, dash: { k: 'line', len: 10, w: 1.6 }, shieldbash: { k: 'line', len: 4, w: 1.8 }, flurry: { k: 'line', len: 5, w: 1.6 }, leap: { k: 'line', len: 9, w: 2 }, backstep: { k: 'line', len: 6, w: 1.4, rev: 1 }, wall: { k: 'wall' },
   whirl: { k: 'self', r: 3.4 }, bonestorm: { k: 'self', r: 3.6 }, bastion: { k: 'self', r: 4.5 }, vow: { k: 'self', r: 6 }, scatter: { k: 'self', r: 3 }, execute: { k: 'self', r: 13 }, blink: { k: 'self', r: 10 }
 };
@@ -748,7 +748,7 @@ function localMove(p, inp, dt) {
   if (L.roll > 0) { L.roll -= dt; L.x += L.rdx * 15 * dt; L.z += L.rdz * 15 * dt; }
   else { const sp = R.speed * ((p.b || []).indexOf('feet') >= 0 ? 1.12 : 1) * (p.ra ? 1.3 : 1) * (p.cb ? 1.2 : 1) * (p.bk ? 0.8 : 1) * (fl ? 0.7 : 1) * (p.cl ? 0.6 : 1) * (p.em ? 0.75 : 1) * (p.stl ? 1.25 : 1) * (p.sp ? 0.25 : 1) * (p.bs ? 0.6 : 1); L.x += mx * sp * dt; L.z += mz * sp * dt; }
   mapCollide(L, 0.6);
-  { const ws = (S.snap.zn || []).filter(z => z.k === 'wall'); if (ws.length && p.tm != null) wallClamp(ws, p.tm, ox, oz, L); }
+  { const ws = (S.snap.zn || []).filter(z => z.k === 'wall' || z.k === 'cover'); if (ws.length && p.tm != null) wallClamp(ws, p.tm, ox, oz, L); }
   if (!liftOk(ox, oz, L.x, L.z)) { L.x = ox; L.z = oz; }
 }
 
@@ -777,6 +777,8 @@ function skillFx(e) {
   if (mine && ['block', 'pierce', 'ward', 'trap', 'rain', 'heal'].includes(e.s)) view.shake = Math.max(view.shake, 0.35);
   switch (e.s) {
     case 'block': view.dome(e.x + c * 0.6, e.z + s * 0.6, 1.9, 0xffe08a, 1.2); view.burst(e.x + c, 1.6, e.z + s, 0xffe08a, 10, 5, 0.35, 0.1); view.flash(e.x, e.z, 0xffe08a, 70); SFX.play('clang'); break;
+    case 'rapidfx': { const col = 0xffc060; view.burst(e.x + c * 2.2, 1.9, e.z + s * 2.2, col, 10, 6, 0.3, 0.1); view.flash(e.x + c * 2.2, e.z + s * 2.2, col, 90); for (const o of [-0.05, 0, 0.05]) view.streak(e.x, e.z, e.a + o, 40, col, 0.25, 0.3); SFX.play('slam'); break; }
+    case 'coverfx': { const col = 0xd8c090; view.burst(e.x, 0.4, e.z, 0xbcae94, 18, 5, 0.6, 0.16); view.ring(e.x, e.z, 4.5, col, 0.5); view.shock(e.x, e.z, 5, col, 0.4); if (e.id === S.me) view.shake = Math.max(view.shake, 0.5); SFX.play('clang'); break; }
     case 'necrofx': {   // 네트로멘서 R: 초록 죽음의 파동이 넓은 원으로 퍼져요
       const col = 0x6aff8a; view.shock(e.x, e.z, e.r + 1, col, 0.7); view.ring(e.x, e.z, e.r, col, 1.0); view.ring(e.x, e.z, e.r * 0.55, 0xb8ffc8, 0.8); view.column(e.x, e.z, col, 1.0); view.rise(e.x, e.z, 0xb8ffc8, 28, e.r * 0.8, 1, 6); view.burst(e.x, 0.8, e.z, col, 26, 7, 0.7, 0.14); view.flash(e.x, e.z, col, 140);
       if (e.id === S.me) view.shake = Math.max(view.shake, 0.7); SFX.play('slam'); break; }
@@ -829,7 +831,7 @@ function skillFx(e) {
     case 'rally': view.shock(e.x, e.z, 9, 0xffd36b, 0.6); view.rune(e.x, e.z, 3, 0xffb040, 1.2, -3); view.flash(e.x, e.z, 0xffb040, 120); if (mine) view.shake = Math.max(view.shake, 0.9); SFX.play('roar'); break;
   }
 }
-const COL = { necro: 0x6aff8a, knight: 0xcfe0ff, viking: 0xffb060, mamluk: 0xffd0a0, skeleton: 0xe8e0c8 };
+const COL = { streltsy: 0xffc060, necro: 0x6aff8a, knight: 0xcfe0ff, viking: 0xffb060, mamluk: 0xffd0a0, skeleton: 0xe8e0c8 };
 // 직업마다 다르게 쓰러져요: 무거운 직업은 땅이 울리고, 마법 직업은 영혼이 떠오르고, 날랜 직업은 연기로 사라져요
 const DEATHFX = { knight: ['heavy', 0xc8d0dc], warden: ['heavy', 0x9a8f78], viking: ['heavy', 0xe0803a], spearman: ['heavy', 0x9ab0c8], priest: ['soul', 0xfff0b0], witch: ['soul', 0xb06aff], bard: ['soul', 0xff7aa0], court: ['soul', 0x9a6ad8], necro: ['bones', 0x7ad07a], assassin: ['smoke', 0x6a8a96], mamluk: ['smoke', 0xe0a050], archer: ['arrows', 0x8ac860], crossbow: ['arrows', 0xc8a060], bomber: ['boom', 0xff7a3a], skeleton: ['bones', 0xe8e0c8] };
 function deathFx(role, x, z) {
@@ -849,7 +851,7 @@ function onEvent(e) {
       view.arc(e.x, e.z, e.a, e.r, COL[e.role] || 0xffffff); SFX.play('swing'); break;
     case 'wallhit': view.burst(e.x, 1.4, e.z, 0xd8cca8, 8, 5, 0.3, 0.1); SFX.play('clang'); break;
     case 'vowhit': view.streak(e.tx, e.tz, Math.atan2(e.z - e.tz, e.x - e.tx), Math.hypot(e.x - e.tx, e.z - e.tz), 0xffe08a, 0.25, 0.4); break;
-    case 'shoot': SFX.play(e.pk === 'orb' ? 'orb' : 'arrow'); break;
+    case 'shoot': if (e.pk === 'musket') { const c = Math.cos(e.a || 0), s = Math.sin(e.a || 0); view.burst(e.x + c * 3.6, 2.0, e.z + s * 3.6, 0xffc060, 8, 5, 0.25, 0.1); view.burst(e.x + c * 3.2, 2.0, e.z + s * 3.2, 0x8a8a8a, 5, 2, 0.6, 0.2); view.flash(e.x + c * 3.4, e.z + s * 3.4, 0xffc060, 70); SFX.play('slam'); } else SFX.play(e.pk === 'orb' ? 'orb' : 'arrow'); break;
     case 'charge': view.ring(e.x, e.z, e.n === 3 ? 2.4 : 1.6, e.n === 3 ? 0xffd36b : 0x9af0a8, 0.4); view.burst(e.x, 1.8, e.z, e.n === 3 ? 0xffd36b : 0x9af0a8, e.n === 3 ? 12 : 6, 3, 0.4, 0.1); if (e.id === S.me) SFX.play(e.n === 3 ? 'clear' : 'clang'); break;
     case 'raising': view.column(e.x, e.z, 0xfff0b0, 1.1); view.ring(e.x, e.z, 6, 0xfff0b0, 1.0); break;
     case 'eshoot': SFX.play('arrow'); break;
