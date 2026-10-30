@@ -5523,7 +5523,7 @@ function shuffle(arr){ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.
 /* ===== the version of this file =====
    Different BUILDS of one version meet and play together (room names online-v<ver>-<mode>-<map>-<slot>); different VERSIONS (the 0.x part) never do - the host refuses them (verNo) and the dispatcher answers busy.
    The build is only sent along with the join message and the lobby (for information); the corner of the screen shows it. */
-const GAME_BUILD='build 2026-10-18-v529';
+const GAME_BUILD='build 2026-10-18-v530';
 const GAME_VERSION='0.9', GAME_VERSION_NAME='은하 제국의 황혼';   // 게임 버전 이름: versions.json의 title과 같게 (빌드마다 바꾸지 않음)
 /* version (the 0.x part) vs build: different BUILDS of one version meet and play together, different VERSIONS never do (rooms, quick match, ranked, friend invites, dispatcher).
    Builds before 470 do not send a version, so it is read from the build number (0.9 started at build 458). */
@@ -5738,7 +5738,7 @@ function stepPhysics(p, input, dt){
   if(pzStacks(p)>=PZ_MAX) spd*=PZ_MAX_SPEED;   // 피사로 at the 4th stack
   spd*=pvSpeed(p, curTickSec);              // the passives that change the speed
   if(p.speedMult) spd*=p.speedMult;      // (the survival disaster zombies)
-  if(p.gc>0) spd*=Math.max(0.5, 1-GOLD_SLOW*p.gc);   // 황금 쟁탈: every lump slows a little
+  if(p.gc>0 && p.grounded) spd*=Math.max(0.5, 1-GOLD_SLOW*p.gc);   // 황금 쟁탈: every lump slows a little
   if(p.ctfCarrying) spd*=CTF_CARRIER_SPEED;   // carrying the flag: a bit slower
   if(batting) spd = MOVE_SPEED*BAT_SPEED_MULT;
   spd*=roomRules.spd;                       // (custom room rule)
@@ -9208,7 +9208,6 @@ async function renderClanMy(pane){
     else { const tb=clanRowBtn('🏷️','클랜 태그 바꾸기', '['+myClan.tag+']'); tb.onclick=()=>{ clanRenameEdit='tag'; rerender(); }; R.appendChild(tb); }
   }
   R.appendChild(clanInfoRow('⭐','클랜 점수', String(myClan.score==null?1000:myClan.score)+' (클랜 대항전으로 오르고 내려가요)'));
-  R.appendChild(clanInfoRow('🏆','클랜전 승리', String(myClan.wins||0)+'회'));
   if(clanReqOk){      // 가입 조건: ONE row (everybody sees the summary); the leader opens it for the three detail rows
     const rq=clanReqOf(myClan), saveReq=async(lv,ms,rk)=>{ if(rk===undefined) rk=rq.rk; const r=await clanSetReq(lv,ms,rk); if(clanReqEdit==='lv'||clanReqEdit==='ms') clanReqEdit='open'; if(r&&r.error) fail(r,'저장하지 못했어요 (서버에 supabase-clan-requirements.sql / supabase-clan-requirements-rank.sql을 적용했는지 확인해 주세요)'); else { myClan.req_level=lv; myClan.req_master=ms; myClan.req_rank=rk; } rerender(); };
     const parts=[]; if(rq.lv>0) parts.push('Lv.'+rq.lv+' 이상'); if(rq.rk>0) parts.push('마스터리 '+CLAN_RANK_NAMES[rq.rk]+' 이상'); if(rq.ms>0) parts.push('마스터 캐릭터 '+rq.ms+'개');
@@ -10705,7 +10704,7 @@ function showMatchEndOverlay(resultText, winnerIds, forcedPick){
         lastTierGain.push({wid:uw, gained:saveData.charPts[uw]-kb, k:kk, kp:kpt, a:aa, won, wp:(won?(bigm?TIER_PT_BIG_WIN:TIER_PT_WIN):0), sp:(won?streakPts:0), st:saveData.winStreak||0, total:saveData.charPts[uw]}); } }
   }
   recordRecentPlayers(); recordMatchStats(!!(winnerIds && winnerIds.indexOf(myId)!==-1));
-  try{ if(currentMode==='online' && !practiceMode && winnerIds && winnerIds.indexOf(myId)!==-1 && Object.values(players).filter(q=>q && !q.isBot && !q.isMinion && !q.isBoss).length>=2) clanReportWin(); }catch(e){}
+  
   try{ recordMatchSummary(pendingMatchSummary); }catch(e){} pendingMatchSummary=null;
   lastMastery=null;
   try{ if(!(me&&me.kit)) lastMastery=applyWeaponMastery(me, !!(winnerIds && winnerIds.indexOf(myId)!==-1)); }catch(e){ console.error('[mastery]', e); }
