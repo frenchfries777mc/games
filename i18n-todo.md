@@ -587,3 +587,5 @@ patchnotes.json | v544 items[1] | 제국 수호전은 연승을 올리지도 끊
 - 돌진 찌르기
 - 창 던지기
 - 휩쓸기
+## Tumblecrown b48
+- (새 문구 없음)
