@@ -484,7 +484,7 @@ function useSkill(G, p, si, inp) {
       ev(G, 'skill', { id: p.id, s: 'backfx', x: ox, z: oz, a: p.a });
       for (const e of G.enemies) if (e.hp > 0 && foeOf(G, p.id, e) && segDist(ox, oz, p.x + Math.cos(p.a) * 1.8, p.z + Math.sin(p.a) * 1.8, e.x, e.z) < 1.5 + e.r) hurtEnemy(G, e, 40, p, { kb: 3, kbA: p.a }); break; }
     case 'spearthrow': G.projs.push({ id: G.uid++, k: 'spear', own: p.id, x: p.x + Math.cos(p.a) * 0.8, z: p.z + Math.sin(p.a) * 0.8, vx: Math.cos(p.a) * 30, vz: Math.sin(p.a) * 30, dmg: 42, life: 0.9, hit: [], team: 0, slow: 1.5 }); break;
-    case 'sweep': for (const e of G.enemies) if (e.hp > 0 && foeOf(G, p.id, e) && dist(p, e) < 3.9 + e.r) { hurtEnemy(G, e, 36, p, { kb: 6, kbA: angTo(p, e) }); if (e.hp > 0) { e.slow = 1.5; e.slowM = 0.5; } } ev(G, 'swing', { id: p.id, x: p.x, z: p.z, a: p.a, r: 3.9, role: p.role }); break;
+    case 'sweep': for (const e of G.enemies) if (e.hp > 0 && foeOf(G, p.id, e) && dist(p, e) < 3.9 + e.r) { hurtEnemy(G, e, 36, p, { kb: 6, kbA: angTo(p, e) }); if (e.hp > 0) { e.slow = 1.5; e.slowM = 0.5; } } ev(G, 'swing', { id: p.id, x: p.x, z: p.z, a: p.a, r: 3.9, role: p.role, n: 1 }); break;
     case 'rootbolt': G.projs.push({ id: G.uid++, k: 'bolt', own: p.id, x: p.x + Math.cos(p.a) * 0.8, z: p.z + Math.sin(p.a) * 0.8, vx: Math.cos(p.a) * 28, vz: Math.sin(p.a) * 28, dmg: 18, life: 0.9, hit: [], team: 0, slow: 2.5 }); break;
     case 'backstep': { const ox = p.x, oz = p.z; p.x -= Math.cos(p.a) * 6; p.z -= Math.sin(p.a) * 6; collide(G, p, 0.6); p.inv = 0.3; p.focus = Math.max(p.focus || 0, 3); ev(G, 'skill', { id: p.id, s: 'backfx', x: ox, z: oz, a: p.a }); break; }
     case 'snipe': p.snipeT = 1.2; ev(G, 'skill', { id: p.id, s: 'snipecharge', x: p.x, z: p.z, a: p.a }); break;

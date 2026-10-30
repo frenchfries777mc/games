@@ -183,7 +183,8 @@ function makeFigure(o) {
   if (o.strap) { const sb2 = box(0.14, 1.9, 0.08, leather(), 0, 1.9, 0.42, body); sb2.rotation.z = 0.55; }
   if (o.scarf) { const sf = mesh(geo('scarf', () => new THREE.TorusGeometry(0.46, 0.14, 5, 10)), M(o.scarf), 0, 2.35, 0.02, body); sf.rotation.x = Math.PI / 2; box(0.28, 0.8, 0.08, M(o.scarf), 0.25, 2.0, -0.55, body); }
   if (o.staff) { const sc = o.staffC || 0x9af0d0; const st = new THREE.Group(); st.position.set(0, -0.9, 0.1); armR.add(st); st.rotation.x = 0.7; cyl(0.07, 0.07, 3.2, 6, M(0x7a5a2a), 0, 0.5, 0, st); mesh(geo('oct', () => new THREE.OctahedronGeometry(0.32)), M(sc, { e: sc, ei: 4 }), 0, 2.3, 0, st); if (!o.noLight) { light = new THREE.PointLight(0x6af0c0, 14, 8, 1.6); light.position.set(0, 2.4, 0); st.add(light); } }
-  if (o.spear) { const sp = new THREE.Group(); sp.position.set(0, -0.9, 0.1); armR.add(sp); sp.rotation.x = Math.PI / 2; cyl(0.06, 0.06, 3.6, 5, M(0x5a3a22), 0, 0.8, 0, sp); cone(0.16, 0.6, 4, metal(), 0, 2.9, 0, sp); }
+  let spG = null;
+  if (o.spear) { const sp = spG = new THREE.Group(); sp.position.set(0, -0.9, 0.1); armR.add(sp); sp.rotation.x = Math.PI / 2; cyl(0.06, 0.06, 3.6, 5, M(0x5a3a22), 0, 0.8, 0, sp); cone(0.16, 0.6, 4, metal(), 0, 2.9, 0, sp); }
   if (o.great) { const gs = new THREE.Group(); gs.position.set(0, -0.9, 0.2); armR.add(gs); gs.rotation.x = Math.PI / 2; box(0.2, 2.8, 0.06, M(o.great, { m: 0.9, r: 0.3, e: o.greatE || 0, ei: 1.5 }), 0, 1.6, 0, gs); box(0.8, 0.12, 0.14, gold(), 0, 0.15, 0, gs); }
   if (o.censer) { const c = new THREE.Group(); c.position.set(0, -1.1, 0.2); armR.add(c); cyl(0.02, 0.02, 0.8, 4, dmetal(), 0, 0.4, 0, c); sph(0.3, 6, 5, M(0x8a7a40, { m: 0.7, e: 0x3a7ad0, ei: 1 }), 0, -0.1, 0, c); }
   if (o.lute) { const lt = new THREE.Group(); lt.position.set(-0.1, -0.85, 0.45); armL.add(lt); lt.rotation.x = 0.5; sph(0.42, 8, 6, M(0xa8683a), 0, -0.3, 0, lt).scale.set(1, 1.15, 0.55); cyl(0.07, 0.07, 1.5, 5, M(0x5a3a22), 0, 0.85, 0, lt); box(0.22, 0.34, 0.1, M(0x3a2414), 0, 1.7, 0, lt); cyl(0.1, 0.1, 0.06, 6, M(0x2a1a10), 0, -0.3, 0.2, lt).rotation.x = Math.PI / 2; }
@@ -212,7 +213,7 @@ function makeFigure(o) {
   if (o.core) { sph(0.3, 8, 6, M(o.core, { e: o.core, ei: 5 }), 0, 1.9, 0.5, body); for (let i = 0; i < 4; i++) { const a = i / 4 * 6.283, c = cone(0.08, 0.5, 4, M(0x1a1420), Math.cos(a) * 0.38, 1.9 + Math.sin(a) * 0.38, 0.45, body); c.rotation.set(Math.PI / 2, 0, a - Math.PI / 2); } }
   if (o.spikes) for (let i = 0; i < 5; i++) { const c = cone(0.14, 0.9 + (i === 2 ? 0.4 : 0), 4, M(0x1a1420), (i - 2) * 0.32, 2.3 + Math.abs(i - 2) * -0.15, -0.6, body); c.rotation.x = -0.9; }
   if (o.scale) g.scale.setScalar(o.scale);
-  g.userData = { body, legL, legR, armL, armR, head, light, kind: 'hero', bowS, xbS, shield: shG };
+  g.userData = { body, legL, legR, armL, armR, head, light, kind: 'hero', bowS, xbS, shield: shG, spG };
   return g;
 }
 // 장마다 다른 적 모습
@@ -1625,6 +1626,7 @@ function animHero(E, p, dt, t, view) {
   const hop = (a, b, h) => { const q = (v - a) / (b - a); return q > 0 && q < 1 ? Math.sin(q * Math.PI) * h : 0; };
   // 착지 충격: 내려앉는 순간 납작해졌다가 돌아와요
   const land = (a, n) => { const q = (v - a) / 0.25; return q >= 0 && q < 1 ? (1 - q) * (1 - q) * n : 0; };
+  if (u.spG) u.spG.position.z = 0.1;
   if (E.ak) {
     const a = E.ak;
     if (a === 'big') { // 세 번째 큰 공격
@@ -1648,8 +1650,10 @@ function animHero(E, p, dt, t, view) {
         T.sq = 0.5 * cr * (1 - up) - 0.4 * up * (1 - dn) + land(L1, 0.75); T.by = (-0.35 * cr * (1 - up) - 0.45 * dn) * x; T.lg = (0.6 * cr * (1 - up) + 0.9 * dn) * x;
         if (role === 'archer') { T.pull = 0.75 * up * (1 - dn); T.rpz = -0.4 * up * (1 - dn); }
       } else if (p.role === 'spearman') { // 창병 찌르기: 창을 뒤로 빼며 몸을 비틀어 웅크렸다가, 한 발 크게 내딛으며 앞으로 내질러요 (뒤로 쭉 빼면 창끝이 앞을 가리켜요)
-        const pl = seg(v, 0.08, 0.3) * (1 - seg(v, 0.3, 0.4)), st = seg(v, 0.3, 0.42) * (1 - seg(v, 0.62, 1)), lv = seg(v, 0, 0.14) * (1 - seg(v, 0.74, 1));   // lv: 창을 눕혀요 (팔이 내려올수록 창끝이 앞을 가리켜요)
-        T.rx = base[0] * (1 - lv) + (-0.3 + 0.45 * pl - 0.2 * st) * lv; T.lx = base[1] * (1 - lv) + (-0.55 + 0.3 * pl - 0.35 * st) * lv; T.lz = 0.2 * st * lv; T.rz = -0.15 * pl; T.bry = 0.6 * pl - 0.55 * st; T.bx = -0.18 * pl + 0.45 * st; T.bz = -0.35 * pl + 1.1 * st; T.sq = 0.22 * pl - 0.08 * st; T.lg = 0.5 * pl + 1.0 * st; T.hx = 0.1 * st;
+        // 준비(0~0.3): 창을 눕혀 뒤로 빼며 몸을 낮춰요 → 찌름(0.3~0.42): 창이 앞으로 쭉 나가요 → 회수(0.62~1): 창을 당겨 자세로 돌아와요. 창끝 각도는 그대로고 창이 앞뒤로 미끄러져요
+        const lv = seg(v, 0, 0.14) * (1 - seg(v, 0.8, 1)), pl = seg(v, 0.04, 0.3) * (1 - seg(v, 0.3, 0.4)), st = seg(v, 0.3, 0.42) * (1 - seg(v, 0.6, 0.95));
+        T.rx = base[0] * (1 - lv) - 0.3 * lv; T.lx = base[1] * (1 - lv) - 0.55 * lv; T.rz = -0.1 * pl; T.bry = 0.45 * pl - 0.4 * st; T.bx = -0.12 * pl + 0.4 * st; T.bz = -0.3 * pl + 1.0 * st; T.sq = 0.2 * pl - 0.06 * st; T.lg = 0.5 * pl + 0.9 * st; T.hx = 0.08 * st;
+        if (u.spG) u.spG.position.z = 0.1 - 0.7 * pl + 1.5 * st;
       } else if (role === 'knight') { // 기사 1타: (화면에서 볼 때) 오른쪽 위에서 왼쪽 아래로 비스듬히 / 2타: 왼쪽 아래에서 오른쪽 아래로 낮게 가로 베기
         // 팔을 앞으로 들고(rx) 좌우로 휘두르며(rz) 칼날을 팔 축으로 돌려(ry) 눕혀요. 허리 비틀기(bry)로 더 크게
         kApply(T, kPose(E.kc, v, base), 1);
