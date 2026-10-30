@@ -41,7 +41,7 @@ function loadImg(src){ return new Promise(function(res){ if(!src) return res(nul
 
 /* 옛(고정) 버전 페이지는 서버에 기록(업적·생존일수·코인·플레이 횟수)을 올리지 못해요 — 쉬운 옛 규칙으로 진행도를 올리는 꼼수를 막아요.
    페이지는 그대로 열리고 즐길 수 있어요. 게임마다 옛 버전 주소를 OLDVER 에 한 줄씩 적어요 (현재 버전 파일은 넣지 마세요). */
-var OLDVER=[/\/beaconfall\/BEACONFALL-v0\.[0-3]\.html/i];
+var OLDVER=[/\/beaconfall\/BEACONFALL-v0\.[0-4]\.html/i];
 var oldPage=false; try{ oldPage=OLDVER.some(function(r){ return r.test(location.pathname||''); }); }catch(e){}
 function guardRpc(sb){
   if(!oldPage||!sb||!sb.rpc||sb.__ffg) return; sb.__ffg=1; var r0=sb.rpc.bind(sb);
