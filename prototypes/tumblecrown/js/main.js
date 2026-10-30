@@ -903,7 +903,10 @@ function onEvent(e) {
     case 'flag': { const mine = e.own === myTm(), c = TEAMS[e.own].c; view.column(e.x, e.z, c, 1.4); view.ring(e.x, e.z, 6, c, 0.9); view.shock(e.x, e.z, 7, c, 0.6); view.flash(e.x, e.z, c, 120); bigMsg(mine ? T('깃발을 차지했어요!') : T('깃발을 빼앗겼어요!'), '', 1800); SFX.play(mine ? 'kill' : 'roar'); break; }
     case 'capbuff': view.rise(e.x, e.z, 0xffd36a, 12, 2.2, 0.9, 5); view.ring(e.x, e.z, 1.8, 0xffd36a, 0.5); if (e.id === me) { toast(T('점령 효과! 5초 동안 이동 속도와 공격이 20% 올라요'), 2400); SFX.play('bless'); } break;
     case 'monster': view.column(e.x, e.z, 0xff7a3a, 1.6); view.shock(e.x, e.z, 8, 0xff7a3a, 0.6); view.flash(e.x, e.z, 0xff7a3a, 140); bigMsg(T('꼭짓점에 괴물이 나타났어요!'), T('쓰러뜨리면 우리 팀 공격과 점령 속도가 영구히 2% 올라요'), 2600); SFX.play('roar'); break;
-    case 'monkill': { const mine = e.tm === myTm(); view.column(e.x, e.z, TEAMS[e.tm].c, 1.4); view.shock(e.x, e.z, 8, TEAMS[e.tm].c, 0.6); bigMsg(mine ? T('괴물을 쓰러뜨렸어요! 괴물 처치 효과 lvl.{0}', e.lv) : T('상대가 괴물을 쓰러뜨렸어요 · lvl.{0}', e.lv), '', 2400); SFX.play(mine ? 'kill' : 'warn'); break; }
+    case 'monkill': { const mine = e.tm === myTm(); view.column(e.x, e.z, TEAMS[e.tm].c, 1.4); view.shock(e.x, e.z, 8, TEAMS[e.tm].c, 0.6); bigMsg(mine ? T('괴물을 쓰러뜨렸어요! 괴물 처치 효과 lvl.{0}', e.lv) : T('상대가 괴물을 쓰러뜨렸어요 · lvl.{0}', e.lv), T('{0}팀 공격·점령 속도 +{1}%', mine ? T('우리') : T('상대'), e.lv * 2), 2800);
+      // 레벨이 오르면 그 팀 모두의 발밑에서 빛이 솟아요 (살아 있는 팀원 모두)
+      if (S.snap) for (const q of S.snap.pl) if (q.tm === e.tm && !q.dd) { view.ring(q.x, q.z, 3.4, TEAMS[e.tm].c, 0.9); view.rise(q.x, q.z, 0xffe08a, 16, 1.6, 1, 6); view.column(q.x, q.z, TEAMS[e.tm].c, 0.7); }
+      SFX.play(mine ? 'bless' : 'warn'); if (mine) setTimeout(() => SFX.play('kill'), 220); break; }
     case 'wipe': bigMsg(T('모두 쓰러졌어요'), T('잠시 뒤 마지막 모닥불에서 다시 시작해요'), 3000); SFX.play('wipe'); break;
     case 'restart': toast(T('깨어 있던 적은 제자리로 돌아갔어요.')); break;
     case 'won': SFX.play('won'); break;
