@@ -33,3 +33,6 @@ Stickseum-v0.9.html | 다른 빌드 안내 | {이름}님은 다른 빌드예요 
 Stickseum-v0.9.html | ULTS.pizarro.desc | 공격력 22→29→36→44 (숫자만 바뀜) | build 499 | 2026-10-29
 ff-profile.js | STKL.ko clv/mpt/pts/next/top | 캐릭터 Lv. / 마스터리 포인트 / 점 / 다음 계급까지 / 최고 계급 (en 추가됨) | build 500 | 2026-10-29
 Stickseum-v0.9.html | MODES.vault.desc | 금고 체력은 3000 -> 2500 (설명 문구) | build 515 | 2026-10-29
+patchnotes.json | v530 title | 은하 제국의 황혼 | build 530 | 2026-10-30
+patchnotes.json | v530 items[0] | 클랜 정보의 클랜전 승리 줄 삭제, 일반 온라인 승리를 클랜 승리로 세던 것 삭제 | build 530 | 2026-10-30
+patchnotes.json | v530 items[1] | 황금 쟁탈 금 든 느려짐은 땅에 있을 때만 | build 530 | 2026-10-30
