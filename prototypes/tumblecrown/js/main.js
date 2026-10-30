@@ -20,7 +20,7 @@ if (TOUCH) document.body.classList.add('touch');
 function lsGet(k, d) { try { const v = localStorage.getItem(k); return v ? JSON.parse(v) : d; } catch (e) { return d; } }
 function lsSet(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) { } }
 const SAVE = Object.assign({ honor: 0, xp: {}, gear: {}, ach: {}, clears: {}, role: 'knight', cos: { own: {}, on: {} }, set: { vol: 70, px: 3, bloom: 1, shake: 1 } }, lsGet('tumblecrown.save', {}));
-SAVE.set = Object.assign({ vol: 70, px: 3, bloom: 1, shake: 1, opt: matchMedia('(pointer: coarse)').matches ? 1 : 0 }, SAVE.set || {});
+SAVE.set = Object.assign({ mv: 'wasd', keys: {}, vol: 70, px: 3, bloom: 1, shake: 1, opt: matchMedia('(pointer: coarse)').matches ? 1 : 0 }, SAVE.set || {});
 // 최적화: 허브 설정의 공용 값(ff_perf)이 있으면 그걸 따르고, 여기서 바꾸면 공용 값도 같이 바꿔요
 let FPS_CAP = 0;
 function perfApply() {
@@ -166,7 +166,7 @@ function autoJoin() { const c = (qs.get('join') || '').toUpperCase().replace(/[^
 }
 
 /* ---------- 메뉴 ---------- */
-document.querySelectorAll('#menu button').forEach(b => b.addEventListener('click', () => { SFX.unlock(); SFX.play('click'); menu(b.dataset.go); }));
+document.querySelectorAll('#menu button, #menu2 button').forEach(b => b.addEventListener('click', () => { SFX.unlock(); SFX.play('click'); menu(b.dataset.go); }));
 document.querySelectorAll('[data-back]').forEach(b => b.addEventListener('click', () => { SFX.play('click'); if (S.scr === 'sRoom') leaveNet(); show('sLobby'); paintWho(); }));
 function menu(go) {
   homeMsg('');
@@ -226,6 +226,10 @@ function paintSettings() {
   $('setVol').value = SAVE.set.vol; $('setMus').value = SAVE.set.mus != null ? SAVE.set.mus : SAVE.set.vol;
   const sl = $('setLang'); if (!sl.options.length) { for (const [k, n] of LANG_NAMES) sl.add(new Option(n, k)); sl.onchange = () => { try { if (window.FFLang) FFLang.set(sl.value); } catch (e) { } }; }
   try { sl.value = (window.FFLang && FFLang.get()) || 'ko'; } catch (e) { }
+  $('setMv').querySelectorAll('button').forEach(b => { b.classList.toggle('on', b.dataset.v === SAVE.set.mv); b.onclick = () => { SAVE.set.mv = b.dataset.v; S.ck = null; save(); paintSettings(); }; });
+  const names = { q: T('기술 1'), e: T('기술 2'), r: T('기술 3'), roll: T('구르기') }, kb = KB();
+  $('setKeys').innerHTML = ''; ['q', 'e', 'r', 'roll'].forEach(n => { const b = document.createElement('button'); b.textContent = names[n] + ' · ' + keyLabel(kb[n]); b.onclick = () => bindKey(n, b); $('setKeys').appendChild(b); });
+  $('setKeyReset').onclick = () => { SAVE.set.keys = {}; save(); paintSettings(); };
   const seg = (id, v, f) => { const el = $(id); el.querySelectorAll('button').forEach(b => { b.classList.toggle('on', +b.dataset.v === +v); b.onclick = () => { f(+b.dataset.v); save(); paintSettings(); }; }); };
   seg('setPx', SAVE.set.px, v => { SAVE.set.px = v; view.setPixel(v); });
   seg('setBloom', SAVE.set.bloom, v => { SAVE.set.bloom = v; view.setBloom(!!v); });
@@ -239,6 +243,16 @@ $('setProf').onclick = async () => {
   if (needLogin()) return;
   try { const sb = window.FFAuth && FFAuth.client && FFAuth.client(), u = window.FFAuth && FFAuth.user(); if (!sb || !u || !(await ffProfile())) return homeMsg(T('프로필을 불러오지 못했어요.')); FFProfile.open(sb, u.id, { game: 'tumblecrown' }); } catch (e) { homeMsg(T('프로필을 불러오지 못했어요.')); }
 };
+// 키 바꾸기: 버튼을 누르고 원하는 키를 눌러요 (Esc는 취소, 겹치는 키는 서로 바꿔요)
+function bindKey(n, btn) {
+  btn.textContent = T('키를 누르세요');
+  const h = e => {
+    e.preventDefault(); e.stopImmediatePropagation(); removeEventListener('keydown', h, true);
+    const k = keyOf(e); if (k !== 'escape' && k !== 'tab' && k !== 'f' && k !== 'enter') { const b = KB(), old = b[n]; for (const o in b) if (o !== n && b[o] === k) SAVE.set.keys[o] = old; SAVE.set.keys[n] = k; save(); }
+    paintSettings();
+  };
+  addEventListener('keydown', h, true);
+}
 
 /* ---------- 대기실 ---------- */
 // 대기실: 장은 고르지 않고, 저장된 이야기에서 이어서 시작해요. 친구 방은 방장의 이야기를 따라가요
@@ -595,6 +609,11 @@ function awardHonor() {
 
 /* ---------- 조작 ---------- */
 // 한글 입력 상태여도 같은 자리의 글쇠로 읽어요 (e.code 기준)
+// 기술·구르기 키 (설정에서 바꿔요)
+const KEYDEF = { q: 'q', e: 'e', r: 'r', roll: ' ' }, JAMO = { q: 'ㅂ', e: 'ㄷ', r: 'ㄱ' };
+const KB = () => Object.assign({}, KEYDEF, SAVE.set.keys || {});
+const keyLabel = k => k === ' ' ? 'Space' : k.length === 1 ? k.toUpperCase() : k.replace(/^arrow/, '');
+function skOf(k) { const b = KB(); for (const n of ['q', 'e', 'r']) if (b[n] === k || JAMO[b[n]] === k) return n; return ''; }
 function keyOf(e) { const c = e.code || ''; if (/^Key[A-Z]$/.test(c)) return c[3].toLowerCase(); if (/^Digit[0-9]$/.test(c)) return c[5]; if (c === 'Space') return ' '; return e.key.toLowerCase(); }
 const K = {}; let mouse = { x: innerWidth / 2, y: innerHeight / 2, down: false }; const once = { q: 0, e: 0, r: 0, roll: 0, skip: 0, atkR: 0, rcl: 0 };
 addEventListener('keydown', e => {
@@ -602,15 +621,15 @@ addEventListener('keydown', e => {
   const k = keyOf(e); K[k] = true; SFX.unlock();
   if (!inGame()) return;
   if (S.scr === 'sIntro') { if (k === ' ' || k === 'enter' || k === 'escape') { once.skip = 1; e.preventDefault(); } return; }
-  const sk = k === 'q' || k === 'ㅂ' ? 'q' : k === 'e' || k === 'ㄷ' ? 'e' : k === 'r' || k === 'ㄱ' ? 'r' : '';
+  const sk = skOf(k);
   if (sk) { if (aimedSkill(sk)) { if (!e.repeat && !S.aimK) S.aimK = sk; } else once[sk] = 1; }
-  if (k === ' ') { once.roll = 1; e.preventDefault(); }
+  if (k === KB().roll) { once.roll = 1; e.preventDefault(); } else if (k === ' ') e.preventDefault();
   if ((k === 'f' || k === 'ㄹ') && !e.repeat) recallToggle(); else if (k === 'escape' && S.rcOpen) S.rcOpen = false;
   if (k === 'tab') e.preventDefault();
   if (k === '1' || k === '2' || k === '3') pickBlessIdx(+k - 1);
 });
-addEventListener('keyup', e => { K[keyOf(e)] = false; K[e.key.toLowerCase()] = false; const k = keyOf(e), sk = k === 'q' || k === 'ㅂ' ? 'q' : k === 'e' || k === 'ㄷ' ? 'e' : k === 'r' || k === 'ㄱ' ? 'r' : ''; if (sk && S.aimK === sk) { S.aimK = null; if (inGame()) once[sk] = 1; } });
-addEventListener('blur', () => { S.rcOpen = false; for (const k in K) K[k] = false; mouse.down = false; S.aimK = null; });
+addEventListener('keyup', e => { K[keyOf(e)] = false; K[e.key.toLowerCase()] = false; const k = keyOf(e), sk = skOf(k); if (sk && S.aimK === sk) { S.aimK = null; if (inGame()) once[sk] = 1; } });
+addEventListener('blur', () => { S.rcOpen = false; S.ck = null; S.ckDown = false; for (const k in K) K[k] = false; mouse.down = false; S.aimK = null; });
 $('gl').addEventListener('mousemove', e => { mouse.x = e.clientX; mouse.y = e.clientY; });
 addEventListener('mousemove', e => { mouse.x = e.clientX; mouse.y = e.clientY; });
 $('gl').addEventListener('mousedown', e => { if (e.button === 0) mouse.down = true; SFX.unlock(); });
@@ -624,9 +643,10 @@ const touch = { jx: 0, jz: 0, jid: null, atk: false, f: false };
   // 지도가 떠 있을 때 왼쪽 반을 누르면 조이스틱 대신 지도를 눌러요
   joy.addEventListener('touchstart', e => { const t = e.changedTouches[0]; if (S.rcOpen) { const h = (S.rcHit || []).find(q => Math.hypot(q.x - t.clientX, q.y - t.clientY) < q.r + 14); once.rcl = h ? h.v : -1; S.rcOpen = false; SFX.play('click'); e.preventDefault(); e.stopImmediatePropagation(); return; }
     const r = (S.rspHit || []).find(q => Math.hypot(q.x - t.clientX, q.y - t.clientY) < q.r + 14); if (r) { if (r.v === -9) S.rspDone = false; else { S.rspSel = r.v; S.rspDone = true; } SFX.play('click'); e.preventDefault(); e.stopImmediatePropagation(); } }, { passive: false, capture: true });
-  joy.addEventListener('touchstart', e => { SFX.unlock(); const t = e.changedTouches[0]; touch.jid = t.identifier; ox = t.clientX; oy = t.clientY; base.style.display = 'block'; base.style.left = (ox - 60) + 'px'; base.style.top = (oy - 60) + 'px'; knob.style.left = '33px'; knob.style.top = '33px'; e.preventDefault(); }, { passive: false });
+  joy.addEventListener('touchstart', e => { SFX.unlock(); const t = e.changedTouches[0]; if (SAVE.set.mv === 'click') { if (ckOn()) { S.ckDown = true; ckSet(t.clientX, t.clientY); } e.preventDefault(); return; } touch.jid = t.identifier; ox = t.clientX; oy = t.clientY; base.style.display = 'block'; base.style.left = (ox - 60) + 'px'; base.style.top = (oy - 60) + 'px'; knob.style.left = '33px'; knob.style.top = '33px'; e.preventDefault(); }, { passive: false });
   joy.addEventListener('touchmove', e => { for (const t of e.changedTouches) if (t.identifier === touch.jid) { let dx = t.clientX - ox, dy = t.clientY - oy; const l = Math.hypot(dx, dy), m = 50; if (l > m) { dx = dx / l * m; dy = dy / l * m; } knob.style.left = (33 + dx) + 'px'; knob.style.top = (33 + dy) + 'px'; touch.jx = dx / m; touch.jz = dy / m; } e.preventDefault(); }, { passive: false });
   const end = e => { for (const t of e.changedTouches) if (t.identifier === touch.jid) { touch.jid = null; touch.jx = touch.jz = 0; base.style.display = 'none'; } };
+  joy.addEventListener('touchmove', e => { if (SAVE.set.mv === 'click' && S.ckDown && ckOn()) ckSet(e.changedTouches[0].clientX, e.changedTouches[0].clientY); }, { passive: true });
   joy.addEventListener('touchend', end); joy.addEventListener('touchcancel', end);
   const hold = (id, k) => { const b = $(id); b.addEventListener('touchstart', e => { SFX.unlock(); touch[k] = true; e.preventDefault(); }, { passive: false }); b.addEventListener('touchend', e => { touch[k] = false; e.preventDefault(); }); b.addEventListener('touchcancel', () => touch[k] = false); };
   hold('tA', 'atk'); hold('tF', 'f'); $('tF').addEventListener('touchstart', () => recallToggle());
@@ -665,8 +685,13 @@ function aimTick(p, pos, inp) {
 function gatherInput(p) {
   const inp = {};
   let mx = 0, mz = 0;
-  if (keyDown('w', 'arrowup', 'ㅈ')) mz -= 1; if (keyDown('s', 'arrowdown', 'ㄴ')) mz += 1; if (keyDown('a', 'arrowleft', 'ㅁ')) mx -= 1; if (keyDown('d', 'arrowright', 'ㅇ')) mx += 1;
-  if (touch.jid != null) { mx = touch.jx; mz = touch.jz; }
+  const mvm = SAVE.set.mv, wasd = mvm === 'wasd', arr = mvm !== 'click';
+  if (keyDown(...(wasd ? ['w', 'ㅈ'] : []), ...(arr ? ['arrowup'] : []))) mz -= 1; if (keyDown(...(wasd ? ['s', 'ㄴ'] : []), ...(arr ? ['arrowdown'] : []))) mz += 1; if (keyDown(...(wasd ? ['a', 'ㅁ'] : []), ...(arr ? ['arrowleft'] : []))) mx -= 1; if (keyDown(...(wasd ? ['d', 'ㅇ'] : []), ...(arr ? ['arrowright'] : []))) mx += 1;
+  if (mvm === 'click') {   // 누른 곳(PC는 우클릭, 모바일은 터치)으로 걸어가요
+    if (p.dn || p.dd) S.ck = null;
+    if (S.ck) { const q0 = S.local && S.net === 'guest' ? S.local : p, dx = S.ck.x - q0.x, dz = S.ck.z - q0.z, d = Math.hypot(dx, dz); if (d < 0.5 && !S.ckDown) S.ck = null; else if (d >= 0.5) { mx = dx / d; mz = dz / d; } }
+  }
+  if (touch.jid != null && mvm !== 'click') { mx = touch.jx; mz = touch.jz; }
   inp.mx = mx; inp.mz = mz;
   const pos = S.local && S.net === 'guest' ? S.local : p;
   if (TOUCH) {
@@ -963,6 +988,15 @@ function specTick(me) {
   if (tgt) el.textContent = T('관전 중 · {0}', tgt.bot ? ROLES[tgt.role].name : tgt.name) + (TOUCH ? ' · ' + T('화면을 누르면 다음 사람') : ' · ← → ' + T('로 바꾸기'));
 }
 addEventListener('keydown', e => { if (!S.snap || S.scr !== '' || !view.camId) return; const k = e.key; if (k === 'ArrowRight' || k === 'd' || k === 'D') specCycle(1); else if (k === 'ArrowLeft' || k === 'a' || k === 'A') specCycle(-1); });
+// 클릭 이동: PC는 우클릭(누른 채 끌면 따라와요), 모바일은 화면 터치
+const ckSet = (x, y) => { try { const g = view.groundAt(x, y); if (g) S.ck = { x: g.x, z: g.z }; } catch (e) { } };
+const ckOn = () => SAVE.set.mv === 'click' && inGame() && S.scr === '' && !S.rcOpen;
+$('gl').addEventListener('mousedown', e => { if (e.button === 2 && ckOn()) { S.ckDown = true; ckSet(e.clientX, e.clientY); } });
+addEventListener('mouseup', e => { if (e.button === 2) S.ckDown = false; });
+addEventListener('mousemove', e => { if (S.ckDown && ckOn()) ckSet(e.clientX, e.clientY); });
+$('gl').addEventListener('touchstart', e => { if (TOUCH && ckOn()) { S.ckDown = true; ckSet(e.changedTouches[0].clientX, e.changedTouches[0].clientY); } }, { passive: true });
+$('gl').addEventListener('touchmove', e => { if (TOUCH && S.ckDown && ckOn()) ckSet(e.changedTouches[0].clientX, e.changedTouches[0].clientY); }, { passive: true });
+addEventListener('touchend', () => { S.ckDown = false; });
 // 귀환 지도: 우리 팀 깃발을 누르면 3초 뒤 그곳으로, 다른 곳을 누르면 취소(쿨타임은 돌아요)
 $('gl').addEventListener('mousedown', e => { if (!S.rcOpen) return; e.stopImmediatePropagation(); e.preventDefault(); const h = (S.rcHit || []).find(q => Math.hypot(q.x - e.clientX, q.y - e.clientY) < q.r + 14); once.rcl = h ? h.v : -1; S.rcOpen = false; SFX.play('click'); }, true);
 $('gl').addEventListener('pointerdown', e => {
@@ -1027,7 +1061,7 @@ function paintHud() {
   // 기술 칸
   if (me) {
     const R = ROLES[me.role], sk = $('skills');
-    if (sk.dataset.role !== me.role) { sk.dataset.role = me.role; sk.innerHTML = ''; R.skills.concat([{ key: 'Space', name: T('구르기'), cd: 1.2 }]).forEach(s => { const d = document.createElement('div'); d.className = 'sk'; d.innerHTML = `<i class="cd"></i><span class="nm">${s.name}</span><small>${s.key}</small><b class="cn"></b>`; sk.appendChild(d); }); ['tQ', 'tE', 'tR'].forEach((id, i) => $(id).querySelector('span').textContent = R.skills[i].name); }
+    const kbs = JSON.stringify(KB()); if (sk.dataset.role !== me.role || sk.dataset.kb !== kbs) { sk.dataset.role = me.role; sk.dataset.kb = kbs; sk.innerHTML = ''; R.skills.concat([{ key: 'roll', name: T('구르기'), cd: 1.2 }]).forEach((s, i) => { const kk = keyLabel(KB()[['q', 'e', 'r', 'roll'][i]]); const d = document.createElement('div'); d.className = 'sk'; d.innerHTML = `<i class="cd"></i><span class="nm">${s.name}</span><small>${kk}</small><b class="cn"></b>`; sk.appendChild(d); }); ['tQ', 'tE', 'tR'].forEach((id, i) => $(id).querySelector('span').textContent = R.skills[i].name); }
     const cds = me.cd.concat([me.rc]), maxs = R.skills.map(s => s.cd).concat([1.2]);
     [...sk.children].forEach((d, i) => { const c = Math.max(0, cds[i]); d.querySelector('.cd').style.height = Math.min(100, c / maxs[i] * 100) + '%'; d.querySelector('.cn').textContent = c > 0.05 ? Math.ceil(c) : ''; d.classList.toggle('cool', c > 0.05); });
     ['tQ', 'tE', 'tR', 'tRoll'].forEach((id, i) => { const c = Math.max(0, cds[i]); $(id).querySelector('.cd').style.height = Math.min(100, c / maxs[i] * 100) + '%'; });
@@ -1430,7 +1464,7 @@ requestAnimationFrame(frame);
 // 시험용: ?test=1 로 바로 혼자 원정을 시작해요 (화면 확인용). &skip=1 이야기 건너뛰기, &room=구역 번호
 // 내 컴퓨터에서 열었을 때만 돼요 (배포된 주소에서는 잠긴 장이 열리지 않게)
 const DEV = /^(localhost|127\.0\.0\.1)$/.test(location.hostname);
-if (DEV) window.__T = { step, relBasic, aimedSkill, mouse, once, TOUCH, S, menu, beginGame, startHost, startMatch, startGuest, view, CH };
+if (DEV) window.__T = { SAVE, paintSettings, step, relBasic, aimedSkill, mouse, once, TOUCH, S, menu, beginGame, startHost, startMatch, startGuest, view, CH };
 if (DEV && qs.get('test')) {
   const r = qs.get('role') || 'knight'; SAVE.role = r;
   S.net = 'solo'; S.slots = [meSlot()]; newBots(); S.botN = +(qs.get('bots') || 5);
