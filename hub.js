@@ -578,8 +578,8 @@ function paintCoin(){
   if(!me){ b.innerHTML='<span class="cb-i">'+hIco('coin','big')+'</span><span class="cb-t"><b>Hub Coin</b><span class="cb-s">로그인하면 매일 10 Hub Coin을 받아요</span></span><button type="button" class="cm-btn cb-go">로그인</button>'; b.querySelector('.cb-go').onclick=login; return; }
   if(coin.err){ b.innerHTML='<span class="cb-i">'+hIco('coin','big')+'</span><span class="cb-t"><b>Hub Coin</b><span class="cb-s">'+esc(coin.err)+'</span></span>'; return; }
   b.innerHTML='<span class="cb-i">'+hIco('coin','big')+'</span><span class="cb-t"><b>Hub Coin <span class="cb-n" data-notr>'+(coin.n==null?'…':coin.n)+'</span></b>'+
-    '<span class="cb-s">'+(coin.today?'<span>✓ 오늘 출석 완료</span>':'')+(coin.streak>1?' · <span>'+esc(F('{0}일 연속',coin.streak))+'</span>':'')+'</span></span><button type="button" class="cm-btn2 cb-cal">📅 달력</button><button type="button" class="cm-btn cb-go">교환하기</button>';
-  b.querySelector('.cb-go').onclick=openCoin; b.querySelector('.cb-cal').onclick=function(){ openCal(); };
+    '<span class="cb-s">'+(coin.today?'<span>✓ 오늘 출석 완료</span>':'')+(coin.streak>1?' · <span>'+esc(F('{0}일 연속',coin.streak))+'</span>':'')+'</span></span><button type="button" class="cm-btn2 cb-q">📋 퀘스트</button><button type="button" class="cm-btn cb-go">교환하기</button>';
+  b.querySelector('.cb-go').onclick=openCoin; b.querySelector('.cb-q').onclick=function(){ coinTab='q'; openCoin(); };
 }
 var coinTab='ex', coinGame='';
 var QN={play:'게임 한 판 하기',proto:'프로토타입 한 판 하기',post:'게시물 하나 남기기',trio:'세 종류의 게임 한 판씩 하기',vote:'투표 참여하기',wiki:'위키 둘러보기'}, QH={play:'Beaconfall/Isleport 5분 플레이',trio:'Beaconfall/Isleport 5분 플레이'};
@@ -602,12 +602,13 @@ async function openCoin(){
   if(!me) return login();
   var el=$('#coinBox'); if(!el){ el=document.createElement('div'); el.id='coinBox'; el.className='hn-bg'; document.body.appendChild(el); hCoinSwap(el); el.addEventListener('click',function(e){ if(e.target===el||e.target.closest('.hn-x')) el.style.display='none'; }); }
   el.innerHTML='<div class="hn-b"><div class="hn-h"><b>🪙 Hub Coin 교환</b><button type="button" class="hn-x" aria-label="닫기">×</button></div>'+
-    '<div class="cx-have">갖고 있는 코인 <b data-notr>'+(coin.n||0)+'</b></div>'+
+    '<div class="cx-have">갖고 있는 코인 <b data-notr>'+(coin.n||0)+'</b><button type="button" class="cm-btn2 cx-cal" style="float:right">📅 달력</button></div>'+
     '<div class="cx-tabs"><button type="button" data-t="ex">교환</button><button type="button" data-t="gift">🎁 선물</button><button type="button" data-t="q">📋 퀘스트<i class="cx-dot" hidden></i></button><button type="button" data-t="log">기록</button></div>'+
     '<div class="cx-pane" data-p="ex"><div class="cx-games"></div><div class="cx-list"><div class="cm-e">불러오는 중…</div></div><div class="cx-wait"></div></div>'+
     '<div class="cx-pane" data-p="gift"></div>'+
     '<div class="cx-pane" data-p="q"><div class="cx-q"><div class="cm-e">불러오는 중…</div></div></div>'+
     '<div class="cx-pane" data-p="log"><div class="cx-log"></div></div></div>';
+  el.querySelector('.cx-cal').onclick=function(){ openCal(); };
   var tabs=el.querySelector('.cx-tabs');
   function setTab(t){ coinTab=t; tabs.querySelectorAll('button').forEach(function(b){ b.classList.toggle('on',b.getAttribute('data-t')===t); }); el.querySelectorAll('.cx-pane').forEach(function(pn){ pn.hidden=pn.getAttribute('data-p')!==t; }); }
   tabs.onclick=function(e){ var b=e.target.closest('button[data-t]'); if(b) setTab(b.getAttribute('data-t')); };
