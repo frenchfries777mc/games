@@ -2584,6 +2584,16 @@ function seasonRewardLabel(r){
   if(r.kind==='title') return '🏷️ 칭호: '+SEASON_TITLES[r.id].name;
   return '';
 }
+function seasonRewardParts(r){      // the big logo (the emoji) and the name under it (no emoji)
+  if(r.kind==='gold') return {ic:'💰', nm:'sC '+r.amount};
+  if(r.kind==='soul') return {ic:SOUL.icon, nm:SOUL.name+' '+r.amount};
+  if(r.kind==='box') return {ic:'🎁', nm:'랜덤 상자 ×'+r.amount};
+  if(r.kind==='playerxp') return {ic:'⭐', nm:'플레이어 XP '+r.amount};
+  if(r.kind==='charxp') return {ic:'🎖️', nm:'랜덤 캐릭터 XP '+r.amount};
+  if(r.kind==='cos'){ const c0=COSMETICS[r.id]; if(!c0) return {ic:'', nm:''}; const lab={kfx:'킬 이펙트', emo:'이모트', pose:'승리 모션', skin:'스킨'}[c0.cat]||'꾸미기'; return {ic:(c0.icon||c0.em||(c0.cat==='skin'?'🎩':'💥')), nm:lab+': '+c0.name}; }
+  if(r.kind==='title') return {ic:'🏷️', nm:'칭호: '+SEASON_TITLES[r.id].name};
+  return {ic:'', nm:''};
+}
 function claimSeasonTier(i){
   const s=ensureSeason(); if(i<1 || i>seasonTier() || s.claimed[i]) return false;
   const r=SEASON_REWARDS[i-1]; s.claimed[i]=true;
@@ -2670,7 +2680,8 @@ function renderMissionScreen(center){
     const r=SEASON_REWARDS[i-1], got=!!s.claimed[i], ok=i<=tier;
     const card=document.createElement('div'); card.style.cssText='flex:none; width:128px; display:flex; flex-direction:column; align-items:center; gap:8px; padding:10px 8px; border:1px solid '+(ok&&!got?'#c17bff':'var(--line)')+'; border-radius:10px; background:var(--panel-2); opacity:'+(ok?1:0.6)+';';
     const n=document.createElement('div'); n.style.cssText='font-weight:800; color:#c17bff; font-size:15px;'; n.textContent=i+'단계';
-    const l=document.createElement('div'); l.style.cssText='flex:1; font-size:13px; text-align:center; line-height:1.4; min-height:54px; display:flex; align-items:center; justify-content:center; word-break:keep-all;'; l.textContent=seasonRewardLabel(r);
+    const rp=seasonRewardParts(r), l=document.createElement('div'); l.style.cssText='flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:6px; min-height:96px; text-align:center; word-break:keep-all;';
+    const lic=document.createElement('div'); lic.style.cssText='font-size:44px; line-height:1;'; lic.textContent=rp.ic; const lnm=document.createElement('div'); lnm.style.cssText='font-size:13px; line-height:1.35;'; lnm.textContent=rp.nm; l.appendChild(lic); l.appendChild(lnm);
     const b=document.createElement('button'); b.style.cssText='padding:5px 11px; width:100%;';
     if(got){ b.textContent='받음'; b.className='off'; b.disabled=true; }
     else if(ok){ b.textContent='받기'; b.onclick=(ev)=>{ const rc=ev.currentTarget.getBoundingClientRect(), lab=seasonRewardLabel(SEASON_REWARDS[i-1]); if(claimSeasonTier(i)){ claimSparkle(rc.left+rc.width/2, rc.top, lab, SEASON_REWARDS[i-1].kind==='cos'||SEASON_REWARDS[i-1].kind==='title'); renderMissionScreen(); } }; }
@@ -5477,7 +5488,7 @@ function shuffle(arr){ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.
 /* ===== the version of this file =====
    Different BUILDS of one version meet and play together (room names online-v<ver>-<mode>-<map>-<slot>); different VERSIONS (the 0.x part) never do - the host refuses them (verNo) and the dispatcher answers busy.
    The build is only sent along with the join message and the lobby (for information); the corner of the screen shows it. */
-const GAME_BUILD='build 2026-10-18-v525';
+const GAME_BUILD='build 2026-10-18-v526';
 const GAME_VERSION='0.9', GAME_VERSION_NAME='은하 제국의 황혼';   // 게임 버전 이름: versions.json의 title과 같게 (빌드마다 바꾸지 않음)
 /* version (the 0.x part) vs build: different BUILDS of one version meet and play together, different VERSIONS never do (rooms, quick match, ranked, friend invites, dispatcher).
    Builds before 470 do not send a version, so it is read from the build number (0.9 started at build 458). */
