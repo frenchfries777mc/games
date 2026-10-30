@@ -1596,6 +1596,8 @@ function botFlag(G, p, dt) {
   else { ai.hl = (ai.hl || 0) - dt; if (ai.hl <= 0) { ai.hl = 1 + G.rng() * 1.5; ai.ha = G.rng() * TAU; } inp.mx = Math.cos(ai.ha) * 0.35; inp.mz = Math.sin(ai.ha) * 0.35; }
   return inp;
 }
+// 도망 조건이 맞아도 절반만 도망쳐요 (3초마다 다시 정해서 오락가락하지 않아요)
+function flee50(G, p, dt) { const ai = p.ai; ai.flT = (ai.flT || 0) - dt; if (ai.flT <= 0) { ai.flT = 3; ai.flOk = G.rng() < 0.5; } return ai.flOk; }
 function botPvp(G, p, dt) {
   const inp = {}, R = ROLES[p.role], ai = p.ai; ai.t -= dt; ai.cmbT = 1; ai.rush = (ai.rush || 0) - dt;
   if (G.phase !== 'play') return inp;
@@ -1613,7 +1615,7 @@ function botPvp(G, p, dt) {
     if (!(ai.offT > 0)) { ai.offT = 1; ai.ox = (G.rng() - 0.5) * 10; ai.oz = (G.rng() - 0.5) * 10; } ai.offT -= dt; const q = {}; moveTo(G, p, q, tgt.x + ai.ox, tgt.z + ai.oz, 1.5); return q;
   }
   const d = dist(p, tgt), ta = angTo(p, tgt), ranged = R.atk.kind !== 'melee', clear = lineClear(p.x, p.z, tgt.x, tgt.z);
-  const near = foes.filter(q => dist(p, q) < 6).length, nearest = foes.length ? foes.reduce((m, q) => dist(p, q) < dist(p, m) ? q : m, foes[0]) : tgt, low = dist(p, nearest) < 8 && nearest.hp >= p.hp * 4;   // 가까운 적 체력이 내 체력의 네 배 이상일 때만 도망쳐요
+  const near = foes.filter(q => dist(p, q) < 6).length, nearest = foes.length ? foes.reduce((m, q) => dist(p, q) < dist(p, m) ? q : m, foes[0]) : tgt, low = dist(p, nearest) < 8 && nearest.hp >= p.hp * 4 && flee50(G, p, dt);   // 가까운 적 체력이 내 체력의 네 배 이상일 때만 도망쳐요
   // 앞질러 조준: 상대가 움직이는 방향으로 조금 앞을 겨눠요
   const sp = R.atk.speed || 20, lt = Math.min(0.6, d / sp), px = tgt.x + (tgt.vx || 0) * lt * 0.9, pz = tgt.z + (tgt.vz || 0) * lt * 0.9;
   inp.aim = Math.atan2(pz - p.z, px - p.x); inp.ax = px; inp.az = pz;
