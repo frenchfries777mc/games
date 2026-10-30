@@ -80,6 +80,8 @@ function matOf(v) { return v === 'dm' ? dmetal() : v === 'mt' ? metal() : M(v); 
 export const makeHero = toonify(function (role, cos) {
   const o = Object.assign({}, HERO[role]), cp = cos && COSMETICS.cape.items.find(i => i.id === cos.cape && i.col);
   if (cp) o.cape = cp.col;
+  const sk = cos && cos.skin && COSMETICS.skin.items.find(i => i.id === cos.skin && i.b);
+  if (sk) { o.body = sk.b; if (typeof o.arm === 'number') o.arm = sk.b; if (typeof o.leg === 'number') o.leg = sk.l; if (!cp && o.cape) o.cape = sk.c; if (o.robe) o.robe = sk.b; }
   const g = o.skel ? makeSkel_('skel') : makeFigure(o); g.userData.role = role; if (cos && !o.skel) dressHero(g, cos); return g;
 });
 // 꾸밈: 투구 장식, 방패(없으면 가슴) 문장
@@ -89,12 +91,20 @@ function dressHero(g, cos) {
   else if (cos.helm === 'horns') for (const sx of [-1, 1]) { const h = cone(0.11, 0.85, 5, bone(), sx * 0.44, hy + 0.35, 0, head); h.rotation.z = -sx * 0.75; }
   else if (cos.helm === 'wreath') { const w = mesh(geo('wreath', () => new THREE.TorusGeometry(0.46, 0.055, 4, 14)), M(0x6aa04a), 0, hy + 0.2, 0, head); w.rotation.x = Math.PI / 2; for (let i = 0; i < 6; i++) { const a = i / 6 * 6.283; sph(0.07, 5, 4, gold(), Math.cos(a) * 0.46, hy + 0.2, Math.sin(a) * 0.46, head); } }
   else if (cos.helm === 'crown') { cyl(0.44, 0.46, 0.18, 8, gold(), 0, hy + 0.55, 0, head); for (let i = 0; i < 5; i++) { const a = i / 5 * 6.283; cone(0.07, 0.3, 4, gold(), Math.cos(a) * 0.42, hy + 0.78, Math.sin(a) * 0.42, head); } }
+  if (cos.helm === 'halo') { const h = mesh(geo('halo2', () => new THREE.TorusGeometry(0.5, 0.06, 5, 16)), M(0xffe890, { e: 0xffd860, ei: 3 }), 0, hy + 1.0, 0, head); h.rotation.x = Math.PI / 2; }
+  else if (cos.helm === 'antlers') for (const sx of [-1, 1]) { const a = new THREE.Group(); a.position.set(sx * 0.3, hy + 0.5, 0); head.add(a); a.rotation.z = -sx * 0.45; cyl(0.05, 0.07, 0.85, 4, M(0xcfc0a0), 0, 0.42, 0, a); for (let k = 0; k < 2; k++) { const br = cyl(0.04, 0.05, 0.4, 4, M(0xcfc0a0), sx * 0.15, 0.3 + k * 0.3, 0, a); br.rotation.z = -sx * 0.9; } }
+  if (cos.back) { const b = u.body;
+    if (cos.back === 'banner') { cyl(0.04, 0.04, 2.2, 5, M(0x5a4030), 0.45, 2.2, -0.6, b); box(0.06, 0.9, 0.6, M(0x8a2a9a, { e: 0x8a2a9a, ei: 0.4 }), 0.45, 2.9, -0.95, b); }
+    else if (cos.back === 'wings') for (const sx of [-1, 1]) for (let k = 0; k < 2; k++) { const w = mesh(geo('wing2', () => new THREE.PlaneGeometry(0.8, 1.5)), M(0xf4f0ff, { e: 0xc8d0ff, ei: 0.6, ds: true }), sx * (0.5 + k * 0.25), 2.3 - k * 0.35, -0.6, b); w.rotation.set(0.2, sx * 0.5, -sx * (0.7 + k * 0.4)); }
+    else if (cos.back === 'lantern') { cyl(0.03, 0.03, 1.8, 4, M(0x4a3a2a), 0.4, 2.3, -0.55, b); box(0.3, 0.36, 0.3, M(0xffd070, { e: 0xffb040, ei: 2.5 }), 0.4, 3.35, -0.55, b); cone(0.24, 0.2, 4, dmetal(), 0.4, 3.6, -0.55, b); } }
   if (cos.emblem) {
     const par = u.shield || u.body, z = u.shield ? 0.14 : 0.64, y = u.shield ? 0.08 : 1.7, s = u.shield ? 1 : 0.75, gm = lit(0xf0d070);
     const e = new THREE.Group(); e.position.set(0, y, z); e.scale.setScalar(s); par.add(e);
     if (cos.emblem === 'cross') { box(0.16, 0.7, 0.05, gm, 0, 0, 0, e); box(0.5, 0.16, 0.05, gm, 0, 0.1, 0, e); }
     else if (cos.emblem === 'star') for (let i = 0; i < 5; i++) { const c = cone(0.1, 0.42, 4, gm, 0, 0, 0, e); c.position.set(Math.sin(i * 1.2566) * 0.2, Math.cos(i * 1.2566) * 0.2, 0); c.rotation.z = -i * 1.2566; }
     else if (cos.emblem === 'flame') { cone(0.22, 0.7, 5, lit(0xff7a2a), 0, 0, 0, e); cone(0.12, 0.45, 5, lit(0xffd060), 0, -0.05, 0.03, e); }
+    else if (cos.emblem === 'skull') { sph(0.26, 8, 6, M(0xe8e0d0), 0, 0.08, 0, e); box(0.2, 0.12, 0.1, M(0x1a1418), 0, -0.2, 0.1, e); for (const sx of [-1, 1]) box(0.09, 0.09, 0.08, M(0x1a1418), sx * 0.1, 0.1, 0.22, e); }
+    else if (cos.emblem === 'leaf') for (let i = 0; i < 3; i++) { const l = sph(0.2, 6, 5, M(0x5aa040), 0, 0, 0, e); l.scale.set(0.5, 1.2, 0.2); l.position.set((i - 1) * 0.2, 0.05, 0); l.rotation.z = (1 - i) * 0.5; }
     else if (cos.emblem === 'moon') { const m = mesh(geo('moon', () => new THREE.TorusGeometry(0.28, 0.07, 4, 12, 4.2)), gm, 0, 0, 0, e); m.rotation.z = 1.2; }
   }
 }
@@ -140,7 +150,7 @@ function makeFigure(o) {
   else if (o.sword) { const sw = new THREE.Group(); sw.position.set(0, -0.9, 0.1); armR.add(sw); box(0.12, 2, 0.04, M(0xe9edf5, { m: 0.9, r: 0.2 }), 0, 1.1, 0, sw); box(0.6, 0.1, 0.14, gold(), 0, 0.1, 0, sw); box(0.08, 0.35, 0.08, leather(), 0, -0.1, 0, sw); sw.rotation.x = Math.PI / 2; }
   if (o.shield) { const shc = o.shieldC || 0x2c4f9e; const sh = new THREE.Group(); shG = sh; sh.position.set(-0.15, -0.7, 0.45); armL.add(sh); sh.rotation.x = 0.6; box(1.1, 1.4, 0.14, M(shc), 0, 0, 0, sh); const c = cone(0.78, 0.7, 4, M(shc), 0, -0.95, 0, sh); c.rotation.set(Math.PI, Math.PI / 4, 0); box(0.18, 1.2, 0.05, gold(), 0, -0.1, 0.09, sh); box(0.8, 0.18, 0.05, gold(), 0, 0.25, 0.09, sh); if (o.shS) sh.scale.setScalar(o.shS); }
   // 활: 왼손에 쥐고, 팔을 앞으로 뻗으면 위아래로 선 활이 조준 방향으로 휘어요 (시위는 몸 쪽)
-  let bowS = null;
+  let bowS = null, xbS = null;
   if (o.bow) {
     // 얕게 휜 활: 손잡이는 손에, 시위는 몸 쪽. 시위는 두 가닥이라 당기면 V자로 접혀요
     const bw = mesh(geo('bow2', () => { const t = new THREE.TorusGeometry(1.6, 0.06, 4, 12, 1.24); t.rotateZ(Math.PI / 2 - 0.62); return t; }), M(0x8a5a2a), 0.12, 0.65, 0, armL);
@@ -153,14 +163,16 @@ function makeFigure(o) {
     bowS = { sa, sb, ar, ex }; setPull(bowS, 0.05);
   }
   if (o.xh) {
-    // 석궁: 나무 개머리판 위에 가로로 걸린 강철 활대와 시위, 얹힌 볼트, 발걸이. 두 팔로 앞을 겨눠요
-    const xg = new THREE.Group(); xg.position.set(0, -0.9, 0.3); armL.add(xg); xg.rotation.x = Math.PI / 2;
-    box(0.16, 1.7, 0.16, M(0x5a3a22), 0, 0.3, 0, xg); box(0.2, 0.5, 0.22, M(0x4a2e1a), 0, -0.6, 0, xg);
-    box(1.9, 0.12, 0.12, M(0x7a808c, { m: 0.8, r: 0.3 }), 0, 1.0, 0, xg);
-    for (const sx of [-1, 1]) { const tip = box(0.35, 0.14, 0.12, M(0x7a808c, { m: 0.8, r: 0.3 }), sx * 1.05, 0.88, 0, xg); tip.rotation.z = sx * 0.5; }
-    const st1 = box(0.02, 0.9, 0.02, M(0xe8e0c8), -0.55, 0.62, 0, xg); st1.rotation.z = -0.82; const st2 = box(0.02, 0.9, 0.02, M(0xe8e0c8), 0.55, 0.62, 0, xg); st2.rotation.z = 0.82;
-    const bt = box(0.06, 1.0, 0.06, M(0x3a2a20), 0, 0.85, 0.12, xg); const bh = cone(0.09, 0.28, 4, metal(), 0, 1.49, 0.12, xg);
-    const stir = mesh(geo('stir', () => new THREE.TorusGeometry(0.2, 0.03, 4, 8)), dmetal(), 0, 1.35, 0, xg, false); stir.rotation.y = Math.PI / 2;
+    // 석궁: 가슴 앞에 두 손으로 들고 앞(+z)을 겨눠요. 개머리판과 가로 활대, 시위, 얹힌 볼트가 따로 움직여서 장전하고 쏘는 동작이 돼요
+    const xr = new THREE.Group(); xr.position.set(0.05, 1.95, 0.85); body.add(xr);
+    const xm = new THREE.Group(); xm.rotation.x = Math.PI / 2; xr.add(xm);
+    box(0.17, 1.7, 0.17, M(0x5a3a22), 0, 0.3, 0, xm); box(0.22, 0.55, 0.24, M(0x4a2e1a), 0, -0.6, 0, xm); box(0.12, 0.35, 0.2, dmetal(), 0, 0.2, 0.13, xm);
+    box(1.9, 0.13, 0.13, M(0x7a808c, { m: 0.8, r: 0.3 }), 0, 0.95, 0, xm);
+    const tips = [-1, 1].map(sx => { const tp = box(0.4, 0.14, 0.12, M(0x7a808c, { m: 0.8, r: 0.3 }), sx * 1.02, 0.9, 0, xm); tp.rotation.z = sx * 0.3; return tp; });
+    const stm = M(0xe8e0c8), sg = () => mesh(geo('xstr', () => new THREE.BoxGeometry(0.03, 1, 0.03)), stm, 0, 0, 0, xm, false), sa = sg(), sb = sg();
+    const bolt = new THREE.Group(); xm.add(bolt); bolt.position.set(0, 0, 0.12); box(0.07, 1.0, 0.07, M(0x3a2a20), 0, 0.5, 0, bolt); const bh2 = cone(0.1, 0.3, 4, metal(), 0, 1.12, 0, bolt); box(0.2, 0.18, 0.02, M(0xc8c0a8), 0, 0.08, 0, bolt);
+    const stir = mesh(geo('stir', () => new THREE.TorusGeometry(0.2, 0.03, 4, 8)), dmetal(), 0, 1.3, 0, xm, false); stir.rotation.y = Math.PI / 2;
+    xbS = { xr, sa, sb, bolt, tips }; setXb(xbS, 1, true);
   }
   if (o.bolts) { const bc = box(0.5, 0.35, 0.3, M(0x4a3020), -0.62, 1.05, 0.1, body); bc.rotation.z = 0.3; for (let i = 0; i < 4; i++) box(0.04, 0.3, 0.04, M(0xc8c0a8), -0.74 + i * 0.1, 1.3, 0.1, body); }
   if (o.strap) { const sb2 = box(0.14, 1.9, 0.08, leather(), 0, 1.9, 0.42, body); sb2.rotation.z = 0.55; }
@@ -191,7 +203,7 @@ function makeFigure(o) {
   if (o.core) { sph(0.3, 8, 6, M(o.core, { e: o.core, ei: 5 }), 0, 1.9, 0.5, body); for (let i = 0; i < 4; i++) { const a = i / 4 * 6.283, c = cone(0.08, 0.5, 4, M(0x1a1420), Math.cos(a) * 0.38, 1.9 + Math.sin(a) * 0.38, 0.45, body); c.rotation.set(Math.PI / 2, 0, a - Math.PI / 2); } }
   if (o.spikes) for (let i = 0; i < 5; i++) { const c = cone(0.14, 0.9 + (i === 2 ? 0.4 : 0), 4, M(0x1a1420), (i - 2) * 0.32, 2.3 + Math.abs(i - 2) * -0.15, -0.6, body); c.rotation.x = -0.9; }
   if (o.scale) g.scale.setScalar(o.scale);
-  g.userData = { body, legL, legR, armL, armR, head, light, kind: 'hero', bowS, shield: shG };
+  g.userData = { body, legL, legR, armL, armR, head, light, kind: 'hero', bowS, xbS, shield: shG };
   return g;
 }
 // 장마다 다른 적 모습
@@ -401,13 +413,9 @@ export class View {
     // 둘러선 싸움꾼들: 직업마다 다른 색 고리
     const cols = [0xd9483b, 0x3b78d9, 0x48a84a, 0xe0b52e, 0x8a52c8, 0xe57a2a], who = ['knight', 'witch', 'viking', 'archer', 'mamluk', 'skeleton'];
     if (brawl) {
-      // 인트로: 세 쌍이 서로 번갈아 치고받아요 (기사 대 바이킹, 맘루크 대 스켈레톤, 사냥꾼 대 마녀)
-      const duels = [['knight', 'viking', -7.5, 0.5, 0.35, 0xd9483b, 0x3b78d9, 0], ['mamluk', 'skeleton', 7.5, 0.5, -0.35, 0x48a84a, 0xe0b52e, 0], ['archer', 'witch', 0, 8.5, 0, 0x8a52c8, 0xe57a2a, 1]];
-      this.lobbyHeroes = []; this.brawl = duels.map(([ra, rb, cx, cz, rot, ca, cb, rg]) => {
-        const half = rg ? 3.6 : 1.9, ux = Math.cos(rot), uz = Math.sin(rot), mk = (r, x, z, c) => { const h = makeHero(r, this.cos); h.position.set(x, 0.5, z); s.add(h); const ring = ringMesh(s, c); this.lobbyHeroes.push(h); return { m: h, ring, bx: x, bz: z, last: 0 }; };
-        const A = mk(ra, LX + cx - ux * half, LZ - 3 + cz - uz * half, ca), B = mk(rb, LX + cx + ux * half, LZ - 3 + cz + uz * half, cb);
-        return { A, B, ranged: !!rg, reach: rg ? 0 : 1.5 };
-      });
+      // 사이트를 켜면 나오는 인트로: 푸른 군단과 붉은 군단이 투기장 곳곳에서 실제로 맞붙어 싸워요 (맞으면 밀려나고, 쓰러지고, 화살이 날아다녀요)
+      this.lobbyHeroes = [];
+      this.battleOn(LX, LZ - 3, [[-14, -6], [-9, 3], [-5, -5], [-12, 8], [-3, 7], [3, -6], [6, 4], [11, -4], [14, 6], [9, 9], [-1, 2.5], [16, -1], [-17, 1], [1, -9]]);
     } else this.lobbyHeroes = who.map((r, i) => {
       const a = i / 6 * 6.283 + 0.5, x = LX + Math.cos(a) * 6.2, z = LZ - 3 + Math.sin(a) * 4.6, h = makeHero(r, this.cos); h.position.set(x, 0.5, z); h.rotation.y = Math.atan2(LX - x, LZ - 3 - z); s.add(h);
       const rg = ringMesh(s, cols[i]); rg.position.set(x, 0.62, z); return h;
@@ -450,11 +458,11 @@ export class View {
   setPreview(role, col) {
     if (role == null) { if (this.mode === 'ped') this.buildLobby(); return; }
     if (this.mode !== 'ped') this.buildPedestal();
-    if (this.pv && this.pv.role === role && this.pv.col === col) return;
+    const ck = JSON.stringify(this.cos || {}); if (this.pv && this.pv.role === role && this.pv.col === col && this.pv.ck === ck) return;
     if (this.pv) { this.scene.remove(this.pv.g); this.scene.remove(this.pv.rg); }
     const g = makeHero(role, this.cos); g.scale.setScalar(1.35); g.position.set(0, 1.0, 0); g.rotation.y = 0.45; this.scene.add(g);
     const rg = ringMesh(this.scene, col); rg.scale.setScalar(1.7); rg.position.set(0, 1.08, 0);
-    this.pv = { g, rg, role, col, t0: performance.now() / 1000 };
+    this.pv = { g, rg, role, col, ck, t0: performance.now() / 1000 };
   }
 
   // 지금 지도를 위에서 내려다본 그림을 한 장 찍어요 (미니맵과 되살아날 곳 고르는 지도에 써요)
@@ -469,10 +477,10 @@ export class View {
     c.getContext('2d').putImageData(new ImageData(out, w, h), 0, 0); return c;
   }
   /* ----- 게임 시작 인트로 배경: 푸른 군단과 붉은 군단이 곳곳에서 진짜로 싸우는 장면 ----- */
-  battleOn(x, z) {
+  battleOn(x, z, sp0) {
     this.battleOff(); const s = this.scene; if (!s) return;
     const g = new THREE.Group(); g.position.set(x, 0, z); s.add(g);
-    const roles = ['knight', 'viking', 'mamluk', 'warden', 'squire', 'assassin', 'knight', 'viking'], spots = [[-6, -5], [6.5, -6], [0, -10], [-11, 0.5], [11, -1], [-3, 6.5], [5, 7], [-9, -9]], duel = [];
+    const roles = ['knight', 'viking', 'mamluk', 'warden', 'squire', 'assassin', 'archer', 'crossbow'], spots = sp0 || [[-6, -5], [6.5, -6], [0, -10], [-11, 0.5], [11, -1], [-3, 6.5], [5, 7], [-9, -9]], duel = [];
     spots.forEach(([dx, dz], i) => {
       const a = makeHero(roles[i % 8]), b = makeHero(roles[(i + 3) % 8]), ang = i * 0.9;
       for (const [h, sd, tm] of [[a, -1, 0], [b, 1, 1]]) {
@@ -483,7 +491,7 @@ export class View {
       duel.push({ a, b, ph: i * 1.7, x: dx, z: dz, ang, t: 0, a0: [a.position.x, a.position.z], b0: [b.position.x, b.position.z] });
     });
     // 날아다니는 화살과 볼트
-    const shots = []; for (let i = 0; i < 6; i++) { const m = projMesh(i % 2 ? 'xbolt' : 'arrow'); g.add(m); shots.push({ m, t: i * 0.6, dir: i % 2 ? 1 : -1, z: -12 + i * 4.5 }); }
+    const shots = []; for (let i = 0; i < 6; i++) { const m = projMesh(i % 2 ? 'xbolt' : 'arrow'); g.add(m); shots.push({ m, t: i * 0.6, dir: i % 2 ? 1 : -1, z: -16 + i * 2.6 }); }
     this.battle = { g, duel, shots, x, z, tt: 0 };
   }
   battleOff() { if (this.battle) { this.scene && this.scene.remove(this.battle.g); this.battle = null; } }
@@ -491,12 +499,16 @@ export class View {
     const B = this.battle; B.tt += dt;
     for (const d of B.duel) {
       const w = Math.sin(B.tt * 6 + d.ph), hit = Math.sin(B.tt * 6 + d.ph + 0.6) > 0.96;
+      // 몇 초마다 한쪽이 쓰러졌다가 일어나요
+      d.fT = (d.fT == null ? 3 + d.ph * 2.3 % 6 : d.fT) - dt; if (d.fT < -2.2) d.fT = 5 + (d.ph * 3.1) % 5;
+      const fall = d.fT < 0 ? Math.sin(Math.min(1, -d.fT / 2.2) * Math.PI) : 0, loser = d.ph > 4 ? d.a : d.b, ls = loser === d.a ? 1 : -1;
       for (const [h, o, sg] of [[d.a, d.a0, 1], [d.b, d.b0, -1]]) {
-        const u = h.userData, sw = Math.sin(B.tt * 6 + d.ph + (sg > 0 ? 0 : Math.PI));
-        u.armR.rotation.x = -1.3 + sw * 1.1; u.armL.rotation.x = -0.5 - sw * 0.4; u.body.rotation.x = 0.12 + Math.max(0, sw) * 0.15;
-        const lunge = Math.max(0, sw) * 0.35; h.position.x = o[0] + sg * Math.cos(d.ang) * lunge; h.position.z = o[1] + sg * Math.sin(d.ang) * lunge;
+        const u = h.userData, sw = Math.sin(B.tt * 6 + d.ph + (sg > 0 ? 0 : Math.PI)), down = h === loser ? fall : 0;
+        u.armR.rotation.x = -1.3 + sw * 1.1; u.armL.rotation.x = -0.5 - sw * 0.4; u.body.rotation.x = 0.12 + Math.max(0, sw) * 0.15 - down * 1.4;
+        const lunge = Math.max(0, sw) * 0.35 * (1 - down), push = h === loser ? -down * 0.9 : 0;
+        h.position.x = o[0] + sg * Math.cos(d.ang) * (lunge + push); h.position.z = o[1] + sg * Math.sin(d.ang) * (lunge + push); h.position.y = -down * 0.55;
       }
-      if (hit && !d.t) { d.t = 0.25; const x = B.x + d.x, z = B.z + d.z; this.burst(x, 2, z, 0xffe0a0, 9, 6, 0.4, 0.12); this.flash(x, z, 0xffd090, 60); }
+      if (hit && !d.t && fall < 0.2) { d.t = 0.25; const x = B.x + d.x, z = B.z + d.z; this.burst(x, 2, z, 0xffe0a0, 9, 6, 0.4, 0.12); this.burst(x, 1.8, z, 0xff5a4a, 6, 4, 0.35, 0.1); this.flash(x, z, 0xffd090, 60); }
       if (d.t > 0) d.t -= dt;
     }
     for (const q of B.shots) { q.t += dt; const k = (q.t % 2.6) / 2.6; q.m.position.set(-14 + k * 28, 2.6 + Math.sin(k * 6.28) * 0.6, q.z); q.m.rotation.y = 0; if (q.dir < 0) q.m.position.x = 14 - k * 28; q.m.rotation.y = q.dir < 0 ? Math.PI : 0; }
@@ -524,10 +536,9 @@ export class View {
     for (let n = 0; n < 14; n++) { const r = mesh(geo('rock', () => new THREE.DodecahedronGeometry(0.8)), M(brick[n % 4]), (R() < 0.5 ? -1 : 1) * (7.6 + R() * 1.6), 0.1, -40 + R() * 54, s); r.scale.setScalar(0.25 + R() * 0.3); r.rotation.y = R() * 3; }
     // 떠다니는 먼지
     for (let i = 0; i < 26; i++) { const e = box(0.1, 0.1, 0.1, M(0xffd090, { e: 0xffb060, ei: 3 }), 0, 0, 0, s); e.castShadow = false; this.embers.push({ m: e, t: R() * 8, x: (R() - .5) * 16, z: -30 + R() * 40, h: 1 + R() * 5, ph: R() * 9, intro: true }); }
-    // 네 영웅: 기사가 앞, 나머지가 양옆과 뒤
-    const row = [['archer', -3.3, -1.2], ['knight', -1.1, 0], ['priest', 1.1, -0.4], ['viking', 3.3, -1.4]];
-    const hl = new THREE.PointLight(0xffc890, 22, 14, 1.6); s.add(hl); this.introL = hl;
-    this.introHeroes = row.map(([r, x, z]) => { const h = makeHero(r); h.position.set(x, 0, z - 12); s.add(h); return { m: h, x, z, aL: h.userData.armL.rotation.x, aR: h.userData.armR.rotation.x }; });
+    // 사이트를 켜면 보이는 인트로: 복도에서 푸른 군단과 붉은 군단이 실제로 맞붙어 싸워요
+    const hl = new THREE.PointLight(0xffc890, 22, 14, 1.6); s.add(hl); this.introL = hl; this.introHeroes = [];
+    this.battleOn(0, 0, [[-5.5, -14], [4.5, -13], [-1, -10.5], [-6, -7.5], [5.5, -8], [0, -5.5], [-4.5, -3.5], [6, -4], [-2, -15.5], [2.5, -2]]);
     this.introT = 0; this.resize(); this.introCam();
   }
   introCam() {
@@ -636,8 +647,8 @@ export class View {
     // 팀 대전 장식: 바닥에 흩어진 돌·상자·풀, 진지와 깃발 곁의 횃불, 진지 기둥 깃발
     if (CH.pvp) {
       const bad = (x, z) => MAP.tflags.some(([a, b]) => Math.hypot(cw(a) - x, cw(b) - z) < 7.5) || MAP.tspawn.some(([a, b]) => Math.hypot(cw(a) - x, cw(b) - z) < 9), forest = CH.theme === 'forest';
-      const col = { dungeon: [0x5a5560, 0x6a5238], abyss: [0x4a3a5c, 0x5a4a78], temple: [0x7a6a50, 0x8a6a3a], forest: [0x3a4a2c, 0x5a4228], deep: [0x1e3a4c, 0x2a5a6a] }[CH.theme] || [0x5a5560, 0x6a5238];
-      instBoxes(s, add => { let n = 0; for (let t = 0; t < 4000 && n < 170; t++) {
+      const col = { dungeon: [0x5a5560, 0x6a5238], abyss: [0x4a3a5c, 0x5a4a78], temple: [0x7a6a50, 0x8a6a3a], forest: [0x3a4a2c, 0x5a4228], frost: [0x9ab4cc, 0x6a8aa8], deep: [0x1e3a4c, 0x2a5a6a] }[CH.theme] || [0x5a5560, 0x6a5238];
+      instBoxes(s, add => { let n = 0; for (let t = 0; t < 4000 && n < 260; t++) {
         const i = 2 + (R() * (MW - 4) | 0), j = 2 + (R() * (MH - 4) | 0); if (!floorCell(i, j) || !floorCell(i + 1, j) || !floorCell(i - 1, j) || !floorCell(i, j + 1) || !floorCell(i, j - 1)) continue;
         const x = cw(i), z = cw(j); if (bad(x, z)) continue; n++; const k = R();
         if (k < 0.45) { const w = 0.5 + R() * 0.7; add(x, w * 0.3, z, w, w * 0.6, w * (0.7 + R() * 0.5), col[0]); }
@@ -645,6 +656,17 @@ export class View {
         else if (k < 0.9) { const g = forest ? 0x3e6a34 : 0x4a4452; for (let q = 0; q < 3; q++) add(x + (R() - .5) * 0.9, 0.25, z + (R() - .5) * 0.9, 0.12, 0.5 + R() * 0.4, 0.12, g); }
         else add(x, 0.07, z, 1.6, 0.14, 1.1, col[0]);
       } });
+      // 지도 분위기별 장식 (뾰족한 얼음, 떠 있는 빛 수정, 심연 수정, 사원 화로, 뼈 무더기)
+      { let n = 0; for (let t = 0; t < 4000 && n < 44; t++) {
+        const i = 3 + (R() * (MW - 6) | 0), j = 3 + (R() * (MH - 6) | 0); if (!floorCell(i, j) || !floorCell(i + 1, j) || !floorCell(i - 1, j) || !floorCell(i, j + 1) || !floorCell(i, j - 1)) continue;
+        const x = cw(i), z = cw(j); if (bad(x, z)) continue; n++;
+        if (CH.theme === 'frost') { const c = cone(0.3 + R() * 0.3, 1 + R() * 1.6, 5, M(0xb8d8f0, { e: 0x4a8ac0, ei: 0.6 }), x, 0.5, z, s); c.rotation.z = (R() - .5) * 0.4; c.castShadow = false; }
+        else if (CH.theme === 'deep') { const c = mesh(geo('oct', () => new THREE.OctahedronGeometry(0.32)), M(0x6af0e0, { e: 0x2ad8d0, ei: 3 }), x, 1.4 + R() * 2, z, s); c.scale.set(0.8, 1.8, 0.8); c.castShadow = false; this.floaters.push({ m: c, y: c.position.y, ph: R() * 6, spin: 1 }); }
+        else if (CH.theme === 'abyss') { const c = cone(0.3, 1 + R() * 1.4, 4, M(0x8a5ad0, { e: 0x6a2ab0, ei: 2 }), x, 0.5, z, s); c.rotation.set((R() - .5) * 0.5, R() * 3, (R() - .5) * 0.5); c.castShadow = false; }
+        else if (CH.theme === 'temple') { if (n % 3 === 0) { cyl(0.45, 0.3, 1.2, 8, M(0x8a6a3a, { m: 0.6 }), x, 0.6, z, s); this.flame(s, x, 1.5, z, 0.8, false, 0xff9a48); } else box(0.5, 0.18, 0.5, M(0xb89a50, { e: 0x6a4a10, ei: 0.5 }), x, 0.1, z, s); }
+        else if (CH.theme === 'forest') { cyl(0.35, 0.45, 0.8, 6, M(0x5a4228), x, 0.4, z, s); sph(0.5, 6, 5, M(0x4a8a40), x, 0.9, z, s).scale.set(1, 0.7, 1); }
+        else { for (let q = 0; q < 4; q++) box(0.12, 0.1, 0.5 + R() * 0.3, M(0xe0d8c0), x + (R() - .5) * 0.8, 0.06, z + (R() - .5) * 0.8, s).rotation.y = R() * 3; sph(0.22, 6, 5, M(0xe8e0d0), x, 0.2, z, s); }
+      } }
       for (const [fx, fy] of MAP.tflags) for (const o of [-1, 1]) { const x = cw(fx) + o * (FLAG_R - 0.8), z = cw(fy); cyl(0.12, 0.16, 1.6, 6, M(0x4a3a2a), x, 0.8, z, s); this.flame(s, x, 1.9, z, 0.7, false, forest ? 0xffd070 : 0xff9a48); }
       MAP.tspawn.forEach(([a, b], ti) => { const c = TEAMS[ti].c; for (const o of [[-3, -3], [3, -3], [-3, 3], [3, 3]]) { const x = cw(a) + o[0], z = cw(b) + o[1]; cyl(0.14, 0.18, 3.2, 6, M(0x4a3a2a), x, 1.6, z, s); box(0.12, 1.1, 0.8, M(c, { e: c, ei: 0.6 }), x + 0.45, 2.5, z, s); this.flame(s, x, 3.5, z, 0.7, false, c); } });
     }
@@ -1437,10 +1459,17 @@ function setPull(B, pull, n = 1) {
   for (const [m, tz] of [[B.sa, 0.93], [B.sb, -0.93]]) { const L = Math.hypot(pull, tz); m.position.set(0.12, -0.65 + pull / 2, tz / 2); m.rotation.set(Math.atan2(-pull, -tz), 0, 0); m.scale.z = L; }
   B.ar.position.set(0.12, ny - 0.62, 0); B.ar.visible = pull > 0.18 || n > 1;
 }
+// 석궁 시위: pull 0(느슨) ~ 1(끝까지 당김). 활대 끝에서 걸쇠까지 두 가닥이 V자로 접혀요
+function setXb(X, pull, loaded) {
+  const ny = 0.92 - 0.74 * pull;
+  [[X.sa, -0.95], [X.sb, 0.95]].forEach(([m, tx]) => { const dy = ny - 0.92, L = Math.hypot(tx, dy); m.position.set(tx / 2, 0.92 + dy / 2, 0); m.rotation.set(0, 0, Math.atan2(tx, dy)); m.scale.y = L; });
+  X.tips.forEach((tp, i) => { tp.rotation.z = (i ? 1 : -1) * (0.3 - 0.3 * pull); });
+  X.bolt.position.y = ny; X.bolt.visible = !!loaded && pull > 0.5;
+}
 const ease = u => u < 0 ? 0 : u > 1 ? 1 : u * u * (3 - 2 * u);
 const seg = (u, a, b) => ease((u - a) / (b - a));
 // 역할마다 공격·기술 동작. 몸 전체(허리 비틀기, 내딛기, 뛰어오르기)가 같이 움직여요
-const ANIM_T = { atk: 0.32, hv: 0.95, big: 0.6, skill: 0.8 }, SK_T = { whirl: 1.0, storm: 1.5, flurry: 0.7, leap: 0.9, shadow: 0.6, scatter: 0.7 };
+const ANIM_T = { atk: 0.32, hv: 0.95, big: 0.6, skill: 0.8 }, SK_T = { kill: 0.55, whirl: 1.0, storm: 1.5, flurry: 0.7, leap: 0.9, shadow: 0.6, scatter: 0.7 };
 // 기사 베기 좌우 방향 (1이면 화면 오른쪽에서 시작)
 const KS = 1, KR = 1, KH_T = 0.5;
 // 기사 베기 자세. 1타: 오른쪽 위에서 감았다가 왼쪽 아래로 / 2타: 1타가 끝난 왼쪽 아래에서 조금 더 감았다가 오른쪽 아래로 낮게
@@ -1612,6 +1641,7 @@ function animHero(E, p, dt, t, view) {
           T.rz = 1.5 * pk2; T.lz = -1.5 * pk2; T.rx = -0.4 * pk2; T.lx = -0.4 * pk2; T.bx = -0.55 * pk2; T.jy = hop(0, 0.7, 1.3); T.lg = 1.0 * pk2; T.hx = -0.5 * pk2; T.sq = -0.2 * pk2; T.spin = 0.4 * Math.sin(v * 12) * pk2; break; }
         case 'rally': // 높이 뛰어올라 칼을 하늘로 치켜들고 외쳐요
           T.rx = -3.15 * pk + base[0] * (1 - pk); T.lx = -2.6 * pk; T.lz = -0.8 * pk; T.hx = -0.7 * pk; T.bx = 0.4 * cr - 0.3 * pk; T.jy = hop(0.2, 0.6, 1.5); T.sq = 0.45 * cr - 0.25 * go * (1 - seg(v, 0.45, 0.55)) + land(0.6, 0.45); T.lg = -0.6 * pk + 0.8 * seg(v, 0.6, 0.7) * hold; break;
+        case 'kill': { const kp = seg(v, 0, 0.3) * (1 - seg(v, 0.62, 1)); T.rx = -2.9 * kp + base[0] * (1 - kp); T.lx = base[1] * (1 - kp) - 0.3 * kp; T.bx = -0.22 * kp; T.hx = -0.3 * kp; T.jy = hop(0.05, 0.55, 0.8); T.sq = -0.12 * kp; T.spin = 0.5 * Math.sin(v * 9) * kp; break; }
         default: T.rx = -2.8 * hold;
       }
     }
@@ -1624,6 +1654,16 @@ function animHero(E, p, dt, t, view) {
     T.rx = base[0] + (T.rx - base[0]) * A; T.lx = base[1] + (T.lx - base[1]) * A; T.jy *= big ? 1.35 : ex ? 2.5 : 1.9; T.sq = clampN(T.sq * (ex ? 1.8 : 1.5), -0.55, 0.75); T.lg *= ex ? 1.6 : 1.3;
   }
   if (E.fl > 0 && !p.dn) { const f = Math.sin(Math.min(1, E.fl / 0.32) * Math.PI) * (E.ak ? 0.5 : 1); T.bx -= 0.4 * f; T.hx -= 0.45 * f; T.sq += 0.12 * f; T.bz -= 0.25 * f; T.rx -= 0.5 * f; T.lx -= 0.5 * f; T.rz += 0.4 * f; T.lz -= 0.4 * f; }
+  if (u.xbS) { // 석궁병: 쏘고 나면 반동 → 석궁을 내려 시위를 감아 당기고(톱니 소리처럼 끊어서) → 볼트를 얹고 → 다시 들어 겨눠요
+    const X = u.xbS; if (p.aN !== E.xN && p.ak === 'atk') { E.xN = p.aN; E.xT = 0; } else E.xT = E.xT == null ? 9 : E.xT + dt;
+    const x = E.xT, rec = Math.max(0, 1 - x / 0.14), u1 = seg(x, 0.14, 0.64), low = seg(x, 0.14, 0.26) * (1 - seg(x, 0.62, 0.8)), rld = x > 0.14 && x < 0.8;
+    T.rx = -1.1 - 0.3 * rec; T.rz = -0.3; T.rpz = 0; T.lx = -1.5 + 0.2 * low; T.lz = 0.1; T.ry = 0;
+    if (rld && x < 0.66) { T.rz = -0.3 + Math.sin(u1 * 38) * 0.2; T.rx -= 0.18 * low + Math.sin(u1 * 38 + 1) * 0.1; T.hx = 0.3 * low; T.bx = 0.12 * low; }
+    const pull = x < 0.14 ? 0 : x < 0.66 ? Math.floor(u1 * 7) / 7 : 1;
+    X.xr.rotation.x = -0.8 * low + 0.35 * rec; X.xr.position.set(0.05, 1.95 - 0.35 * low, 0.85 - 0.22 * rec + 0.1 * low);
+    setXb(X, pull, x >= 0.66 || x > 5); if (x > 5) setXb(X, 1, true);
+    if (rec > 0) { T.bx -= 0.14 * rec; T.hx -= 0.15 * rec; }
+  }
   if (p.bk && E.ak !== 'block') { T.lx = -1.6; }
   const k0 = dt * (E.blT > 0 ? 14 : 34), L = (o, kk, v2) => { const r = kk === 'hx' || kk === 'hy' || kk === 'hz' ? 0.45 : kk === 'bx' || kk === 'bry' || kk === 'brz' || kk === 'bz' ? 0.8 : kk === 'jy' || kk === 'sq' ? 1.3 : 1; E[kk] = E[kk] == null ? v2 : E[kk] + (v2 - E[kk]) * (1 - Math.exp(-k0 * r)); return E[kk]; };  // 머리는 몸보다 늦게, 몸은 팔보다 늦게 따라와요
   u.armR.rotation.order = 'XZY'; u.armR.rotation.set(L(0, 'ar', T.rx), L(0, 'ary', T.ry), L(0, 'arz', T.rz)); u.armL.rotation.set(L(0, 'al', T.lx), 0, L(0, 'alz', T.lz));

@@ -77,6 +77,12 @@ function setHud(on) { $('hud').classList.toggle('on', on); $('touch').classList.
 function homeMsg(t) { $('homeMsg').textContent = t || ''; }
 function toast(t, ms = 2200) { const el = $('toast'); el.textContent = t; el.style.display = 'block'; clearTimeout(toast._t); toast._t = setTimeout(() => el.style.display = 'none', ms); }
 // 보스 등장 때 위아래 검은 띠, 보스가 쓰러질 때 하얀 번쩍임
+// 내가 쓰러뜨리면 화면 위쪽에 크게 알려요 (8초 안에 이어서 쓰러뜨리면 연속 처치 수가 올라가요)
+function killBanner(name) {
+  const now = performance.now(); S.kN = now - (S.kT || 0) < 8000 ? (S.kN | 0) + 1 : 1; S.kT = now;
+  const el = $('killBanner'); el.innerHTML = '<b>' + T('처치!') + '</b> ' + esc(name) + (S.kN > 1 ? '<i>' + T('{0}연속 처치', S.kN) + '</i>' : '');
+  el.classList.remove('on'); void el.offsetWidth; el.classList.add('on'); clearTimeout(killBanner._t); killBanner._t = setTimeout(() => el.classList.remove('on'), 2200);
+}
 function killFeed(txt, mine) {
   const box = $('killFeed'), d = document.createElement('div'); d.className = 'kf' + (mine ? ' me' : ''); d.textContent = txt; box.prepend(d);
   while (box.children.length > 4) box.lastChild.remove();
@@ -160,12 +166,29 @@ function menu(go) {
   if (go === 'solo') { leaveNet(); S.net = 'solo'; S.slots = [meSlot()]; newBots(); openRoom(); }
   else if (go === 'match') { if (needLogin()) return; startMatch(); }
   else if (go === 'host') { if (needLogin()) return; startHost(); }
+  else if (go === 'ward') { S.wardTab = S.wardTab || 'skin'; paintWard(); show('sWard'); view.cos = SAVE.cos.on; view.setPreview(SAVE.role, COLORS[SAVE.col | 0].c); }
   else if (go === 'weps') { paintWepInfo(); show('sWeps'); }
   else if (go === 'notes') { loadNotes(); show('sNotes'); }
   else if (go === 'settings') { paintSettings(); show('sSettings'); }
   else if (go === 'site') location.href = '../../';
 }
-function meSlot() { return { uid: UID, name: myName(), role: SAVE.role, col: SAVE.col | 0 }; }
+// 치장·스킨: 재화는 tC. 한 번 사면 계속 쓸 수 있고, 눌러서 입고 벗어요
+function paintWard() {
+  const tabs = Object.keys(COSMETICS), cur = COSMETICS[S.wardTab] ? S.wardTab : tabs[0];
+  $('wardTc').textContent = SAVE.honor + ' tC';
+  $('wardTabs').innerHTML = tabs.map(k => '<button data-k="' + k + '"' + (k === cur ? ' class="on"' : '') + '>' + COSMETICS[k].name + '</button>').join('');
+  $('wardTabs').querySelectorAll('button').forEach(b => b.onclick = () => { SFX.play('click'); S.wardTab = b.dataset.k; paintWard(); });
+  const on = SAVE.cos.on[cur] || '';
+  $('wardGrid').innerHTML = COSMETICS[cur].items.map(it => { const own = !it.cost || SAVE.cos.own[cur + ':' + it.id]; return '<button data-i="' + it.id + '" class="' + ((on === it.id) ? 'on ' : '') + (own ? 'own' : '') + '"><b>' + it.name + '</b><small>' + (on === it.id ? T('입는 중') : own ? T('보유') : it.cost + ' tC') + '</small></button>'; }).join('');
+  $('wardGrid').querySelectorAll('button').forEach(b => b.onclick = () => {
+    const it = COSMETICS[cur].items.find(x => x.id === b.dataset.i), key = cur + ':' + it.id;
+    if (it.cost && !SAVE.cos.own[key]) { if (SAVE.honor < it.cost) { $('wardMsg').textContent = T('tC가 모자라요'); SFX.play('click'); return; } SAVE.honor -= it.cost; SAVE.cos.own[key] = 1; $('wardMsg').textContent = T('샀어요'); }
+    else $('wardMsg').textContent = '';
+    if ((SAVE.cos.on[cur] || '') === it.id) delete SAVE.cos.on[cur]; else if (it.id) SAVE.cos.on[cur] = it.id; else delete SAVE.cos.on[cur];
+    save(); SFX.play('click'); view.cos = SAVE.cos.on; view.setPreview(SAVE.role, COLORS[SAVE.col | 0].c); paintWard();
+  });
+}
+function meSlot() { return S.srv ? { uid: UID, name: T('서버'), role: 'knight', col: 0, srv: 1 } : { uid: UID, name: myName(), role: SAVE.role, col: SAVE.col | 0 }; }
 function unlock(id) { if (SAVE.ach[id]) return; const a = ACHIEVEMENTS.find(x => x.id === id); if (!a) return; SAVE.ach[id] = Date.now(); save(); ffSync(); }
 
 /* ---------- 직업 소개 ---------- */
@@ -207,7 +230,7 @@ function weeklyDone() {
 }
 function showWeeklyResult(h) {
   S.resultShown = true; const R = weeklyDone(), cn = R.W.curses.map(c => CURSES.find(x => x.id === c).name).join(', ');
-  $('result').innerHTML = `<div class="big">${T('주간 원정 완료')}</div><p class="note">${CH.title}</p><p class="note">${T('이번 주 저주: {0}', cn)}</p><p>${T('걸린 시간 {0}', '<b style="color:#ffd36b">' + fmtT(R.t) + '</b>')}${R.rec ? ' · ' + T('새 최고 기록') : ''} · ${T('내 최고 {0}', fmtT(R.best))}</p><p>${T('받은 명예 {0}', '<b style="color:#ffd36b">' + (h + (R.first ? 60 : 0)) + '</b>')}${R.first ? ' ' + T('(첫 완주 보너스 60 포함)') : ''} · ${T('지금 명예 {0}', SAVE.honor)}</p><div class="row"><button class="btn gold" id="resBack">${T('로비로')}</button></div>`;
+  $('result').innerHTML = `<div class="big">${T('주간 원정 완료')}</div><p class="note">${CH.title}</p><p class="note">${T('이번 주 저주: {0}', cn)}</p><p>${T('걸린 시간 {0}', '<b style="color:#ffd36b">' + fmtT(R.t) + '</b>')}${R.rec ? ' · ' + T('새 최고 기록') : ''} · ${T('내 최고 {0}', fmtT(R.best))}</p><p>${T('받은 tC {0}', '<b style="color:#ffd36b">' + (h + (R.first ? 60 : 0)) + '</b>')}${R.first ? ' ' + T('(첫 완주 보너스 60 포함)') : ''} · ${T('지금 tC {0}', SAVE.honor)}</p><div class="row"><button class="btn gold" id="resBack">${T('로비로')}</button></div>`;
   $('resBack').onclick = () => endToLobby('');
   setHud(false); show('sResult');
 }
@@ -231,7 +254,8 @@ function paintRoom() {
   $('slots').innerHTML = all.map((s, i) => (s.team = i % 2, '<div class="slot' + (s.uid === UID ? ' me' : '') + '"><i style="background:' + hex(TEAMS[s.team == null ? 0 : s.team].c) + '"></i><b>' + esc(s.name) + '</b><small>' + (pickP ? (s.rd || (S.net === 'host' && S.rdy[s.uid]) ? '✔ ' + T('준비') + ' · ' : '') : '') + (wait ? '' : ROLES[s.role].name) + (s.bot ? ' · ' + T('봇') : '') + '</small></div>')).join('') +
     (online ? Array.from({ length: Math.max(0, cap - all.length) }, () => '<div class="slot empty"><i></i><b>' + T('빈자리') + '</b></div>').join('') : '') +
     '<span class="cnt">' + all.length + '/' + cap + '</span>';
-  $('waitTxt').textContent = T('{0}/{1}명 모이는 중', all.length, cap);
+  $('waitTxt').textContent = T('{0}/{1}명 모이는 중', all.length, cap); $('waitTitle').textContent = S.pub ? T('온라인 대전') : T('친구와 대결');
+  $('waitList').innerHTML = all.map(s => '<span><i style="background:' + hex(TEAMS[s.team == null ? 0 : s.team].c) + '"></i>' + esc(s.name) + '</span>').join('') + Array.from({ length: Math.max(0, cap - all.length) }, () => '<span class="empty"><i></i>' + T('빈자리') + '</span>').join('');
   $('capRow').style.display = S.net === 'host' && !S.pub && wait ? '' : 'none'; $('capN').textContent = S.cap; $('readyBtn').style.display = pickP ? '' : 'none'; $('readyBtn').textContent = mine.rd || (S.net === 'host' && S.rdy[UID]) ? T('준비됨') : T('준비 완료');
   $('botRow').style.display = 'none'; $('colRow').style.display = 'none'; $('mapRow').style.display = 'none'; $('mapBtn').textContent = S.themeI ? ARENA_THEMES[S.themeI - 1].name : T('무작위');
   $('startBtn').style.display = !online ? '' : 'none';
@@ -327,6 +351,7 @@ function newCode() { let s = ''; for (let i = 0; i < 6; i++) s += CODE_CH[Math.f
 // 온라인: 사람이 다 모이면 직업을 고르는 시간(PICK_T초)이 열리고, 모두 준비하거나 시간이 다 되면 시작해요
 setInterval(() => {
   if (S.net !== 'host' || S.G || S.ph !== 'pick') return;
+  if (S.srv) S.rdy[UID] = true;   // 서버 방장은 늘 준비 상태예요
   S.pickT -= 0.25; const left = Math.max(0, Math.ceil(S.pickT));
   if (S.slots.length < S.cap) { S.ph = 'wait'; hostLobby(); if (S.scr === 'sRoom') paintRoom(); return; }
   if (S.pickT <= 0 || (S.slots.every(x => S.rdy[x.uid]) && S.pickT < PICK_T - 1.5)) { beginGame(); return; }
@@ -352,10 +377,15 @@ function startHost(tries = 0) {
   p.on('disconnected', () => { if (S.peer === p && !p.destroyed) setTimeout(() => { if (S.peer === p && !p.destroyed) p.reconnect(); }, 1000); });
   p.on('error', err => { if (S.peer !== p) return; if (err.type === 'unavailable-id' && tries < 5) { startHost(tries + 1); return; } if (S.scr !== 'sRoom' && !inGame()) { homeMsg(T('방을 만들지 못했어요 ({0}). 잠시 후 다시 해 보세요.', err.type)); leaveNet(); } });
 }
+// 서버 방장(?dedicated=1): 오라클 서버의 화면 없는 브라우저가 이 모드로 열어서 공개 방 하나를 대신 열어 둬요. 경기에서는 봇 한 자리로 서 있어요
+if (qs.get('dedicated') === '1') {
+  S.srv = true;
+  window.__ffd = { open(n) { S.err = ''; startMatch(n); }, status() { return { live: S.net === 'host' && !!S.peer && !S.err, humans: S.slots.filter(s => !s.srv).length, started: !!S.G, ended: !!(S.snap && S.snap.ph === 'won'), err: S.err || '' }; } };
+}
 /* 온라인 대전 (Stickseum 방식): 방 이름 ff-tumblecrown-q1, q2... 를 차례로 만들어 보고, 이미 있으면 그 방에 들어가요. 가득 차거나 이미 시작했으면 다음 방으로 가요 */
-function startMatch() {
+function startMatch(n) {
   if (!window.Peer) { homeMsg(T('연결 도구를 불러오지 못했어요. 인터넷 연결을 확인하고 새로고침해 주세요.')); return; }
-  leaveNet(); homeMsg(T('같이 할 사람을 찾는 중...')); matchTry(1, S.mg);
+  leaveNet(); homeMsg(T('같이 할 사람을 찾는 중...')); matchTry(n || 1, S.mg);
 }
 function matchGone(p) { if (p) try { p.destroy(); } catch (e) { } }
 function matchTry(n, gen) {
@@ -371,7 +401,7 @@ function matchTry(n, gen) {
   });
   p.on('error', err => {
     if (S.mg !== gen || S.peer !== p) return;
-    if (err.type === 'unavailable-id') { matchGone(p); matchJoin(n, gen); return; }
+    if (err.type === 'unavailable-id') { matchGone(p); if (S.srv) { S.err = 'taken'; leaveNet(); return; } matchJoin(n, gen); return; }
     if (S.scr !== 'sRoom' && !inGame()) { homeMsg(T('연결하지 못했어요 ({0}).', err.type)); leaveNet(); }
   });
 }
@@ -468,7 +498,7 @@ function beginGame(prevG) {
   const solo = S.net === 'solo';
   const sl = prevG ? S.lastSl : roster().map((s, i) => {
     const id = 's' + i, c = s.uid && s.uid !== UID ? S.conns[s.uid] : null;
-    return { id, uid: s.uid, role: s.role, col: TEAMS[s.team].c, team: s.team, name: s.bot ? s.name : s.uid === UID ? myName() : s.name, bot: !!s.bot, lv: 1, gear: { weapon: 0, armor: 0 }, cos: s.uid === UID ? SAVE.cos.on : c && c._cos || null };
+    return { id, uid: s.uid, role: s.role, col: TEAMS[s.team].c, team: s.team, name: s.bot ? s.name : s.uid === UID ? myName() : s.name, bot: !!s.bot || !!s.srv, lv: 1, gear: { weapon: 0, armor: 0 }, cos: s.uid === UID ? SAVE.cos.on : c && c._cos || null };
   });
   if (!prevG && !sl.some(s => s.uid === UID)) { $('roomMsg').textContent = T('내 직업을 먼저 골라 주세요.'); return; }
   if (prevG) sl.forEach((s, i) => { const q = prevG.players[i]; s.bot = q.bot; s.uid = q.uid; s.name = q.name; });
@@ -709,6 +739,8 @@ function onEvent(e) {
       const by = S.snap && S.snap.pl.find(q => q.id === e.by), who = S.snap && S.snap.pl.find(q => q.id === e.id), nm = q => q ? (q.id === S.me ? T('나') : q.bot ? ROLES[q.role].name : q.name) : '';
       view.column(e.x, e.z, 0xffe8b0, 1.0); view.rise(e.x, e.z, 0xffe8b0, 22, 1.6, 1.4, 6); view.ring(e.x, e.z, 3.4, 0xffe8b0, 0.7);
       if (who) killFeed(by ? T('{0} → {1}', nm(by), nm(who)) : T('{0} 쓰러짐', nm(who)), by && by.id === S.me);
+      if (by && by.id !== e.id) view.pose(by.id, 'kill');
+      if (by && by.id === S.me && who) killBanner(nm(who));
       if (e.id === me) bigMsg(T('쓰러졌어요'), T('{0}초 뒤 진지에서 다시 일어나요', RESP_T), 2600); break; }
     case 'down': SFX.play('down'); if (e.id === me) { S.everDown = true; bigMsg(T('쓰러졌어요'), T('동료가 일으켜 줄 때까지 버텨요'), 2200); } break;
     case 'revive': view.column(e.x, e.z, 0xfff0b0); SFX.play('revive'); if (e.id === me) bigMsg(T('다시 일어났어요'), '', 1400); break;
@@ -761,8 +793,6 @@ function onEvent(e) {
     case 'pfall': bigMsg(T('기둥이 쓰러졌어요'), T('쓰러진 기둥을 밟고 건너요'), 2600); SFX.play('slam'); view.shake = Math.max(view.shake, 0.6); view.burst(e.x, 3, e.z, 0x9a8e84, 22, 6, 0.9, 0.18); break;
     case 'lstop': SFX.play('door'); view.burst(e.x, e.up ? 3 : 0.5, e.z, 0x9a8e84, 10, 3, 0.6, 0.12); if (e.up) toast(T('승강기가 위층에 닿았어요. 다시 돌리면 내려가요.'), 2400); break;
     case 'lifted': bigMsg(T('모두 위층에 올라왔어요'), T('이제 승강기는 혼자 타도 움직여요'), 2600); SFX.play('clear'); break;
-    case 'flag': if (e.on) { const who = S.snap && S.snap.pl.find(q => q.id === e.id); if (e.id === me) bigMsg(T('기사단 깃발'), T('든 채로 장을 끝내면 로비 벽에 걸려요. 적이 깃발을 노려요'), 3200); else if (who) toast(T('{0}가 기사단 깃발을 들었어요.', ROLES[who.role].name), 2600); SFX.play('bless'); view.column(e.x, e.z, 0xffd36b, 0.6); }
-      else { toast(T('기사단 깃발이 떨어졌어요. 다시 주워 들어요.'), 2600); SFX.play('clang'); } break;
     case 'flaggot': S.flagGot = 1; break;
     case 'torch': if (e.id === me) toast(e.on ? T('횃불을 들었어요. 들고 있는 동안은 기술을 못 써요.') : T('횃불을 내려놓았어요.'), 2400); SFX.play('fire'); break;
     case 'esc': TK.q.length = 0; TK.cur = null; talk('esc'); bigMsg(T('성이 무너지기 시작해요!'), T('초록빛 출구까지 모두 달려요'), 3200); SFX.play('slam'); view.shake = Math.max(view.shake, 1.4); flashScreen(); break;
@@ -852,7 +882,7 @@ function paintIntro() {
   if (who && S.introHero !== who.id) {
     S.introHero = who.id; view.camId = who.id; view.focusOn(who.x, who.z, 0.9);
     const card = $('introCard'); card.firstElementChild.textContent = who.name; card.lastElementChild.textContent = ROLES[who.role].name; card.classList.remove('on'); setTimeout(() => card.classList.add('on'), 30);
-    view.battleOn(who.x, who.z); view.pose(who.id, 'rally'); view.shock(who.x, who.z, 5, pcol(who) ? 0xffe08a : 0xffe08a, 0.5); view.flash(who.x, who.z, 0xffe08a, 90); SFX.play('parry');
+    view.pose(who.id, 'rally'); view.shock(who.x, who.z, 5, pcol(who) ? 0xffe08a : 0xffe08a, 0.5); view.flash(who.x, who.z, 0xffe08a, 90); SFX.play('parry');
   }
   $('introSkip').classList.remove('on'); $('introSkip').style.display = 'none';
 }
@@ -960,7 +990,7 @@ const mini = {
   paint() {
     const g = this.c.getContext('2d'); g.clearRect(0, 0, this.c.width, this.c.height);
     if (CH.pvp) {   // 팀 대전 지도: 바닥 무늬, 벽 두께와 그림자, 진지 색
-      const pal = { dungeon: ['#8a8498', '#7c768a', '#3a3446'], abyss: ['#7a6a98', '#6c5c8a', '#2c2240'], temple: ['#b49a6c', '#a68c60', '#4a3a28'], forest: ['#6f8a58', '#62804c', '#2a3a20'], deep: ['#4a8a9a', '#3e7a8a', '#142a38'] }[CH.theme] || ['#8a8498', '#7c768a', '#3a3446'];
+      const pal = { dungeon: ['#8a8498', '#7c768a', '#3a3446'], abyss: ['#7a6a98', '#6c5c8a', '#2c2240'], temple: ['#b49a6c', '#a68c60', '#4a3a28'], forest: ['#6f8a58', '#62804c', '#2a3a20'], frost: ['#a8bccc', '#98aec0', '#2a3a4a'], deep: ['#4a8a9a', '#3e7a8a', '#142a38'] }[CH.theme] || ['#8a8498', '#7c768a', '#3a3446'];
       g.fillStyle = pal[2]; g.fillRect(0, 0, this.c.width, this.c.height);
       for (let j = 0; j < MH; j++) for (let i = 0; i < MW; i++) {
         if (floorCell(i, j)) { g.fillStyle = ((i >> 1) + (j >> 1)) & 1 ? pal[0] : pal[1]; g.fillRect(i * 3, j * 3, 3, 3); }
@@ -1107,7 +1137,7 @@ function afterOutro() { showResult(); }
 function showDeepResult() {
   S.resultShown = true; const h = awardHonor() || 0, f = S.snap.dp ? S.snap.dp.floor : DEEP.floor; deepRecord(f);
   const cs = (S.snap.dp ? S.snap.dp.curses : DEEP.curses).map(c => CURSES.find(x => x.id === c).name);
-  $('result').innerHTML = `<div class="big">${T('끝없는 심연 {0}층', f)}</div><p class="note">${T('{0}층에서 모두 쓰러졌어요. {1}층까지 지나왔어요.', f, f - 1)}</p><p class="note">${T('쌓인 저주: {0}', cs.length ? cs.join(', ') : T('없음'))}</p><p>${T('받은 명예 {0}', '<b style="color:#ffd36b">' + h + '</b>')} · ${T('최고 기록 {0}층', '<b style="color:#ffd36b">' + SAVE.deepBest)}</b></p><div class="row"><button class="btn gold" id="resBack">${T('로비로')}</button></div>`;
+  $('result').innerHTML = `<div class="big">${T('끝없는 심연 {0}층', f)}</div><p class="note">${T('{0}층에서 모두 쓰러졌어요. {1}층까지 지나왔어요.', f, f - 1)}</p><p class="note">${T('쌓인 저주: {0}', cs.length ? cs.join(', ') : T('없음'))}</p><p>${T('받은 tC {0}', '<b style="color:#ffd36b">' + h + '</b>')} · ${T('최고 기록 {0}층', '<b style="color:#ffd36b">' + SAVE.deepBest)}</b></p><div class="row"><button class="btn gold" id="resBack">${T('로비로')}</button></div>`;
   $('resBack').onclick = () => endToLobby('');
   setHud(false); show('sResult');
 }
@@ -1128,7 +1158,7 @@ function showResult() {
   S.resultShown = true; bigMsg('', '', 0); const h = awardHonor() || S.lastH || 0, sn = S.snap, wt = sn.wtm, mine0 = myP();
   const row = p => `<tr${p.id === S.me ? ' style="background:#2a2014"' : ''}><td style="color:${ROLES[p.role].color}">${ROLES[p.role].name}</td><td>${esc(p.id === S.me ? T('나') : p.bot ? T('봇') : p.name)}</td><td>${p.kl}</td><td>${p.dth}</td></tr>`;
   const tab = t => `<h3 style="color:${hex(TEAMS[t].c)}">${TEAMS[t].name}${t === wt ? ' · ' + T('승리') : ''}</h3><table><tr><th>${T('직업')}</th><th>${T('이름')}</th><th>${T('쓰러뜨림')}</th><th>${T('쓰러짐')}</th></tr>${sn.pl.filter(p => p.tm === t).map(row).join('')}</table>`;
-  $('result').innerHTML = `<div class="big">${mine0 && mine0.tm === wt ? T('승리') : T('패배')}</div>${tab(0)}${tab(1)}<p>${T('받은 명예 {0}', '<b style="color:#ffd36b">' + h + '</b>')} · ${T('지금 명예 {0}', SAVE.honor)}</p><div class="row"><button class="btn gold" id="resBack">${T('로비로')}</button></div>`;
+  $('result').innerHTML = `<div class="big">${mine0 && mine0.tm === wt ? T('승리') : T('패배')}</div>${tab(0)}${tab(1)}<p>${T('받은 tC {0}', '<b style="color:#ffd36b">' + h + '</b>')} · ${T('지금 tC {0}', SAVE.honor)}</p><div class="row"><button class="btn gold" id="resBack">${T('로비로')}</button></div>`;
   $('resBack').onclick = () => endToLobby('');
   setHud(false); show('sResult');
 }
