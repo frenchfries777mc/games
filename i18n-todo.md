@@ -589,3 +589,6 @@ patchnotes.json | v544 items[1] | 제국 수호전은 연승을 올리지도 끊
 - 휩쓸기
 ## Tumblecrown b48
 - (새 문구 없음)
+## Tumblecrown b51
+- 처치 {0}
+- 내 처치 {0}
