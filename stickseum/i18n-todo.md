@@ -59,3 +59,7 @@ patchnotes.json | v549 title | 은하 제국의 황혼 | build 549 | 2026-10-30
 patchnotes.json | v549 items[0] | 밸런스 표를 봇만으로 전 맵 재측정해 갱신 | build 549 | 2026-10-30
 patchnotes.json | v551 title | 은하 제국의 황혼 | build 551 | 2026-10-30
 patchnotes.json | v551 items[0] | 밸런스 표를 봇만으로 전 맵 재측정해 갱신 (b545·b550 조정 반영) | build 551 | 2026-10-30
+patchnotes.json | v554 title | 은하 제국의 황혼 | build 554 | 2026-10-30
+patchnotes.json | v554 items[0] | 피사로 일반 공격 데미지 20/29/38/47(단계별) | build 554 | 2026-10-30
+patchnotes.json | v554 items[1] | 차원여행자 일반 공격 데미지 16 → 15 | build 554 | 2026-10-30
+patchnotes.json | v554 items[2] | 야구선수 일반 공격 데미지 43 → 45 | build 554 | 2026-10-30
