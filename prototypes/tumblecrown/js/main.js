@@ -239,6 +239,13 @@ function showWeeklyResult(h) {
 // 왼쪽 직업 목록, 가운데 받침돌 위 캐릭터, 오른쪽 능력 카드, 위에 참가자 줄, 아래에 색·봇·시작
 const pcol = p => p.col ? '#' + p.col.toString(16).padStart(6, '0') : ROLES[p.role].color;
 const hex = c => '#' + c.toString(16).padStart(6, '0');
+// 봇이 직업을 고를 때: 같은 편에 이미 있는 직업은 피하고, 전체에서도 덜 나온 직업을 먼저 골라요
+function botPickRole(sl) {
+  const mine = S.slots.indexOf(sl) % 2, same = {}, all = {};
+  S.slots.forEach((o, i) => { if (o === sl || !(o.bot ? S.rdy[o.uid] : o.role)) return; all[o.role] = (all[o.role] || 0) + 1; if (i % 2 === mine) same[o.role] = (same[o.role] || 0) + 1; });
+  let best = null, bs = 1e9; for (const r of ROLE_IDS) { const sc = (same[r] || 0) * 10 + (all[r] || 0) * 3 + Math.random(); if (sc < bs) { bs = sc; best = r; } }
+  return best;
+}
 function newBots() { S.botRoles = ROLE_IDS.slice().sort(() => Math.random() - 0.5); }
 function openRoom() { S.chSel = 0; S.wk = false; if (!S.botRoles) newBots(); show('sRoom'); paintRoom(); }
 function paintRoom() {
@@ -355,7 +362,7 @@ setInterval(() => {
   if (S.srv) S.rdy[UID] = true;   // 서버 방장은 늘 준비 상태예요
   S.pickT -= 0.25; const left = Math.max(0, Math.ceil(S.pickT));
   // 봇은 1~4초 랜덤으로 기다린 뒤 직업을 골라 준비해요
-  for (const sl of S.slots) if (sl.bot && !S.rdy[sl.uid] && (sl.rdT -= 0.25) <= 0) { sl.role = ROLE_IDS[Math.random() * ROLE_IDS.length | 0]; S.rdy[sl.uid] = true; hostLobby(); if (S.scr === 'sRoom') paintRoom(); }
+  for (const sl of S.slots) if (sl.bot && !S.rdy[sl.uid] && (sl.rdT -= 0.25) <= 0) { sl.role = botPickRole(sl); S.rdy[sl.uid] = true; hostLobby(); if (S.scr === 'sRoom') paintRoom(); }
   if (S.slots.length < S.cap) { S.ph = 'wait'; hostLobby(); if (S.scr === 'sRoom') paintRoom(); return; }
   if (S.pickT <= 0 || (S.slots.every(x => S.rdy[x.uid]) && S.pickT < PICK_T - 1.5)) { beginGame(); return; }
   if (left !== S.lastLeft) { S.lastLeft = left; hostLobby(); if (S.scr === 'sRoom') paintRoom(); }
@@ -1154,7 +1161,7 @@ function drawOverlay(dt) {
     if (p.stl && p.id !== S.me && p.tm !== myTm() && S.snap && !sn.pl.some(q => q.id === S.me && Math.hypot(q.x - p.x, q.z - p.z) <= 2.8)) continue;   // 숨은 자객은 이름표도 숨겨요
     const s = view.project(E.x, 3.9, E.z);
     // 이름표가 겹치면 위로 비켜 올려요
-    if (p.id !== S.me) { for (let k = 0; k < 4 && tags.some(t => Math.abs(t.x - s.x) < 64 && Math.abs(t.y - s.y) < 20); k++) s.y -= 20; tags.push({ x: s.x, y: s.y }); oc.font = 'bold 13px Galmuri, system-ui'; oc.lineWidth = 4; oc.strokeStyle = '#140f18'; const t = p.bot ? T('{0} 봇', ROLES[p.role].name) : p.name; oc.strokeText(t, s.x, s.y - 10); oc.fillStyle = pcol(p); oc.fillText(t, s.x, s.y - 10); hpBar(s.x, s.y, p, false, p.tm === myTm()); }
+    if (p.id !== S.me) { for (let k = 0; k < 4 && tags.some(t => Math.abs(t.x - s.x) < 64 && Math.abs(t.y - s.y) < 30); k++) s.y -= 30; tags.push({ x: s.x, y: s.y }); oc.font = 'bold 13px Galmuri, system-ui'; oc.lineWidth = 4; oc.strokeStyle = '#140f18'; const t = p.bot ? T('{0} 봇', ROLES[p.role].name) : p.name; oc.strokeText(t, s.x, s.y - 10); oc.fillStyle = pcol(p); oc.fillText(t, s.x, s.y - 10); { const ty = ROLES[p.role].type; if (ty) { oc.font = 'bold 11px Galmuri, system-ui'; oc.lineWidth = 3; oc.strokeText(ty, s.x, s.y - 24); oc.fillStyle = '#e8e0cc'; oc.fillText(ty, s.x, s.y - 24); } } hpBar(s.x, s.y, p, false, p.tm === myTm()); }
     else hpBar(s.x, s.y, p, true);
     if (p.dn) {
       const c = view.project(E.x, 1.5, E.z); oc.lineWidth = 5; oc.strokeStyle = 'rgba(20,10,14,.85)'; oc.beginPath(); oc.arc(c.x, c.y - 30, 16, 0, 7); oc.stroke();
