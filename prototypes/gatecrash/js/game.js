@@ -141,7 +141,7 @@ function inFinish(W, r) {
 /* ---------- 레이서 ---------- */
 function newRacer(o, W) {
   const s = W.starts[o.slot % W.starts.length];
-  const r = Object.assign(newBody(s.x, s.y), { id: o.id, name: o.name, col: o.col, bot: !!o.bot, slot: o.slot, own: !!o.own,
+  const r = Object.assign(newBody(s.x, s.y), { id: o.id, name: o.name, col: o.col, skin: o.skin || '', bot: !!o.bot, slot: o.slot, own: !!o.own,
     face: 1, aim: 0, hp: MAX_HP, wep: null, cd: 0, inv: 0, swing: 0, flash: 0, fin: false, finT: 0, anim: 0, node: -1, prog: 1, ko: 0,
     ai: o.bot ? { plan: null, stuck: 0, best: Infinity, wait: 0, noise: 0.15 + Math.random() * 0.25, aimT: 0, react: 0.2 + Math.random() * 0.3, err: 0.03 + Math.random() * 0.07 } : null,
     tx: s.x, ty: s.y });
