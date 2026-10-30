@@ -635,6 +635,7 @@ function onEvent(e) {
     case 'big': { // 사제·종자 세 번째 큰 공격
       const col = e.role === 'priest' ? 0xfff0b0 : 0xffb060; view.shock(e.x, e.z, 3.6, col, 0.4); view.burst(e.x, 1.4, e.z, col, 18, 8, 0.45, 0.14); view.rise(e.x, e.z, col, 10, 1.2, 0.5, 7); view.flash(e.x, e.z, col, 110);
       if (e.id === me) view.shake = Math.max(view.shake, 0.6); SFX.play('clang'); break; }
+    case 'wkOn': num(e.x, e.z, T('약점이 드러났다!'), '#ffe08a', 1.1, 4.2); view.shock(e.x, e.z, 2.4, 0xffd070, 0.3); break;
     case 'weak': num(e.x, e.z, T('약점!'), '#ff9c4a', 1.4, 3.8); view.shock(e.x, e.z, 3, 0xff7a20, 0.35); view.burst(e.x, 2.4, e.z, 0xffb060, 14, 9, 0.5, 0.14); view.flash(e.x, e.z, 0xff7a20, 90); view.shake = Math.max(view.shake, 0.35); SFX.play('parry'); break;
     case 'phit': num(e.x, e.z, '-' + e.v, '#ff7a6a', 1); if (e.id === me) { view.shake = Math.max(view.shake, 0.5); SFX.play('phit'); } break;
     case 'ekill': {
