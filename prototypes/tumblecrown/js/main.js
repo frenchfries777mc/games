@@ -1136,8 +1136,10 @@ function scoreboard(sn) {
 }
 function teamHud(sn) {
   const mt = myTm(), n = sn.tf.length, x0 = innerWidth / 2 - (n - 1) * 17, y = innerWidth < 700 ? 74 : 40;
-  sn.tf.forEach((f, i) => {
-    const x = x0 + i * 34, own = f[0], cap = f[1], pr = f[2];
+  // 깃발 줄은 우리 팀 시작 지점에서 가까운 깃발부터 차례로 늘어놓아요
+  const sp = MAP.tspawn[mt] || MAP.tspawn[0], fd = i => Math.hypot(MAP.tflags[i][0] - sp[0], MAP.tflags[i][1] - sp[1]), ord = sn.tf.map((f, i) => i).sort((a, b) => fd(a) - fd(b));
+  ord.forEach((i, k) => {
+    const f = sn.tf[i], x = x0 + k * 34, own = f[0], cap = f[1], pr = f[2];
     oc.fillStyle = 'rgba(10,8,14,.78)'; oc.beginPath(); oc.arc(x, y, 14, 0, 7); oc.fill();
     oc.fillStyle = own < 0 ? '#6a6676' : hex(TEAMS[own].c); oc.beginPath(); oc.arc(x, y, 9, 0, 7); oc.fill();
     if (cap >= 0 && pr > 0) { oc.strokeStyle = hex(TEAMS[cap].c); oc.lineWidth = 4; oc.beginPath(); oc.arc(x, y, 13, -Math.PI / 2, -Math.PI / 2 + Math.PI * 2 * pr / FLAG_T); oc.stroke(); }
