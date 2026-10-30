@@ -133,11 +133,11 @@ function flagsStep(G, dt) {
     else if (f.prog > 0) { f.prog = Math.max(0, f.prog - dt); if (f.prog === 0) f.cap = -1; }
   });
 }
-// 중립 괴물: 우리 팀 진지가 아닌 나머지 두 꼭짓점에서 두 마리씩 나와요. 꼭짓점에 괴물이 남아 있으면 거기서는 다시 나오지 않아요
+// 중립 괴물: 우리 팀 진지가 아닌 나머지 두 꼭짓점에서 한 마리씩 나와요. 꼭짓점에 괴물이 남아 있으면 거기서는 다시 나오지 않아요
 function monCorners() { const a = MAP.tspawn[0], b = MAP.tspawn[1]; return [[a[0], b[1]], [b[0], a[1]]].map(([x, y]) => [(x + 0.5) * MAP.cs, (y + 0.5) * MAP.cs]); }
 function spawnMonsters(G, ci) {
   const [cx, cz] = monCorners()[ci];
-  for (let k = 0; k < 2; k++) {
+  for (let k = 0; k < 1; k++) {
     let x = cx + (k ? 2.5 : -2.5), z = cz;
     for (let r = 0; r < 14 && isWall(x, z); r++) { x = cx + (r % 2 ? r : -r) * MAP.cs * 0.7 + (k ? 2.5 : -2.5); z = cz + ((r >> 1) % 2 ? 2 : -2) * MAP.cs; }
     const e = spawnEnemy(G, 'elite', x, z, false);
