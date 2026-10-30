@@ -539,3 +539,8 @@ patchnotes.json | v544 items[1] | 제국 수호전은 연승을 올리지도 끊
 - patchnotes.json | v548 items[2] | 에픽 상자 개수가 계정에 저장되지 않고 다른 기기에서 사라지던 문제 수정 | build 548 | 2026-10-30
 - Stickseum-v0.9.html | partyToast | 🎁 오늘의 첫 승리 보너스 sC +N | build 548 | 2026-10-30
 - Stickseum-v0.9.html | killcamLabel | 마지막 일격 · 이름님 | build 548 | 2026-10-30
+
+## Stickseum b550 (2026-10-30)
+- patchnotes.json | v550 items[0] | 밸런스 조정: 수류탄 폭발 점프 피해 18 → 56, 도박사 일반 공격 피해 20 → 24, 차원여행자 일반 공격 피해 15 → 16·쿨타임 0.55 → 0.5초, 마술사 일반 공격 쿨타임 0.9 → 0.75초, 학살자 화염방사 과열까지 8초 → 6초, 자다이 일반 공격 쿨타임 1.1 → 1.25초, 복서 일반 공격 피해 25 → 24·어퍼컷 피해 26 → 24 | build 550 | 2026-10-30
+- patchnotes.json | v550 items[1] | 군인 지뢰가 상대에게도 보이도록 변경 | build 550 | 2026-10-30
+- patchnotes.json | v550 items[2] | 수류탄·권투글러브·포탈건 일반 공격 설명 문구를 실제 수치로 수정 | build 550 | 2026-10-30
