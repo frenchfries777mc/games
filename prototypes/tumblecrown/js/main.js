@@ -1225,7 +1225,8 @@ function drawOverlay(dt) {
     if (e.k === 'boss' || e.hp <= 0 || e.st === 'rise') continue;
     const E = view.ents.get('e' + e.id); if (!E) continue;
     const h = e.k === 'elite' ? 4.6 : 3.4, s = view.project(E.x, h, E.z), w = e.k === 'elite' ? 54 : 38;
-    if (e.hp < e.mx) { oc.fillStyle = 'rgba(20,10,14,.85)'; oc.fillRect(s.x - w / 2 - 1, s.y - 1, w + 2, 6); oc.fillStyle = '#d0443a'; oc.fillRect(s.x - w / 2, s.y, w * e.hp / e.mx, 4); }
+    const mn = e.tm >= 0, mine2 = mn && e.tm === myTm();
+    if (e.hp < e.mx) { oc.fillStyle = 'rgba(20,10,14,.85)'; oc.fillRect(s.x - w / 2 - 1, s.y - 1, w + 2, 6); oc.fillStyle = mn ? (mine2 ? '#6ad070' : '#d0443a') : '#d0443a'; oc.fillRect(s.x - w / 2, s.y, w * e.hp / e.mx, 4); }
     if (e.mk) { oc.fillStyle = '#ff5a4a'; oc.font = 'bold 16px Galmuri, system-ui'; oc.fillText('▼', s.x, s.y - 12); }
     runeMark(s.x + (w / 2 + 14), s.y + 2, e.rn);
     if (e.sl && !e.sn && !e.mk) { oc.fillStyle = '#7ac8ff'; oc.font = 'bold 12px Galmuri, system-ui'; oc.strokeStyle = '#140f18'; oc.lineWidth = 3; const ly = s.y - (e.k === 'elite' ? 28 : 11); oc.strokeText(T('둔화'), s.x, ly); oc.fillText(T('둔화'), s.x, ly); }
