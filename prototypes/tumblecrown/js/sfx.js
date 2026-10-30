@@ -48,3 +48,18 @@ export function play(k) {
     case 'wipe': [392, 330, 262].forEach((f, i) => tone(f, f * 0.98, 0.4, 'triangle', 0.12, i * 0.22)); break;
   }
 }
+
+// 지도마다 깔리는 배경 소리: 항구는 파도와 갈매기, 시계탑은 시계 소리, 지하 수로는 물방울
+let amb = '', ambT = 0;
+function ambStep() {
+  const r = Math.random();
+  if (amb === 'harbor') { noise(2.6, 500, 0.6, 0.07, 'lowpass', 0, 160); if (r < 0.35) { const f = 1500 + Math.random() * 500; tone(f, f * 0.7, 0.28, 'triangle', 0.035, 0.6); tone(f * 1.1, f * 0.8, 0.22, 'triangle', 0.03, 0.95); } }
+  else if (amb === 'tower') { ambT ^= 1; tone(ambT ? 520 : 400, ambT ? 480 : 360, 0.06, 'square', 0.04); }
+  else if (amb === 'sewer') { if (r < 0.7) { const f = 900 + Math.random() * 600; tone(f, f * 0.45, 0.12, 'sine', 0.06); } noise(1.2, 180, 0.7, 0.04, 'lowpass'); }
+}
+let ambId = 0;
+export function ambient(theme) {
+  const t = theme === 'harbor' || theme === 'tower' || theme === 'sewer' ? theme : '';
+  if (t === amb) return; amb = t; clearInterval(ambId); ambId = 0;
+  if (t) ambId = setInterval(ambStep, t === 'tower' ? 1000 : t === 'harbor' ? 3600 : 1700);
+}
