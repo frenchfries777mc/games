@@ -3,7 +3,7 @@
 
 import { T } from './tr.js';
 
-export const VERSION = 'v0.1', BUILD = 105;
+export const VERSION = 'v0.1', BUILD = 106;
 
 export const ROLES = {
   knight: {
@@ -470,7 +470,8 @@ const ARENAS = [
     fl: [[8, 64], [26, 40]], mid: [[56, 36], [30, 18]], pil: [[14, 14], [44, 22], [34, 30]] },
   { name: '무너진 대성당', line: '무너진 대성당의 기둥 숲 사이로 시야가 막히고, 한가운데 제단에는 문이 두 곳뿐이에요. 기둥 뒤에 숨어 다가가요.', theme: 'abyss',
     walls: [[8, 6, 14, 3]],
-    wallIf: (i, j, W, H) => { const ax = Math.abs(i + 0.5 - W / 2), ay = Math.abs(j + 0.5 - H / 2); if (ax < 22 && ay < 14) return (ax >= 19 && !(ay < 6)) || (ay >= 11 && ax < 22); if (ax < 24 && ay < 16) return false; return ax < 66 && ay < 48 && Math.abs(ax % 20 - 10) < 2 && Math.abs(ay % 18 - 9) < 2; },
+    wallIf: (i, j, W, H) => { const ax = Math.abs(i + 0.5 - W / 2), ay = Math.abs(j + 0.5 - H / 2); if (ax < 22 && ay < 14) return (ax >= 19 && !(ay < 6)) || (ay >= 11 && ax < 22); return false; },
+    colIf: (i, j, W, H) => { const ax = Math.abs(i + 0.5 - W / 2), ay = Math.abs(j + 0.5 - H / 2); if (ax < 24 && ay < 16) return false; return ax < 66 && ay < 48 && Math.abs(ax % 20 - 10.5) < 1.5 && Math.abs(ay % 18 - 9.5) < 1.5; },   // 흩어진 장애물은 벽이 아니라 둥근 기둥이에요
     fl: [[8, 60], [26, 48]], mid: [[56, 36], [30, 20]], pil: [[20, 10], [40, 26]] },
   { name: '사막 신전', line: '가운데 신전 안에 깃발이 있어요. 신전 문은 닫혀 있다가 주기적으로 열리고, 문이 열려 있을 때만 그 깃발을 차지할 수 있어요. 가끔 모래폭풍이 불어 멀리가 안 보여요.', theme: 'desert',
     walls: [[45, 28, 6, 3], [45, 28, 3, 5], [14, 12, 12, 3], [22, 5, 3, 9], [8, 25, 8, 3]],
@@ -492,6 +493,8 @@ function arenaMap(def) {
   const g = new Uint8Array(AW * AH).fill(1);
   for (const [x, y, w, h] of walls) for (let j = Math.max(0, y); j < Math.min(AH, y + h); j++) for (let i = Math.max(0, x); i < Math.min(AW, x + w); i++) g[j * AW + i] = 0;
   if (def.wallIf) for (let j = 0; j < AH; j++) for (let i = 0; i < AW; i++) if (def.wallIf(i, j, AW, AH)) g[j * AW + i] = 0;   // 모양이 둥근 지도는 칸마다 벽인지 따져요 (180도 돌려도 같아야 해요)
+  m.cols = [];   // 기둥: 칸 덩어리마다 가운데와 너비를 적어 둬요 (화면에서 벽돌 대신 둥근 기둥을 세워요)
+  if (def.colIf) { const seen = new Set(); for (let j = 0; j < AH; j++) for (let i = 0; i < AW; i++) { if (!def.colIf(i, j, AW, AH) || seen.has(j * AW + i)) continue; const st = [[i, j]], cs = []; seen.add(j * AW + i); while (st.length) { const [a, b] = st.pop(); cs.push([a, b]); g[b * AW + a] = 0; for (const [da, db] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) { const u = a + da, v = b + db; if (u >= 0 && v >= 0 && u < AW && v < AH && !seen.has(v * AW + u) && def.colIf(u, v, AW, AH)) { seen.add(v * AW + u); st.push([u, v]); } } } const xs = cs.map(c => c[0]), ys = cs.map(c => c[1]); m.cols.push([ox + (Math.min(...xs) + Math.max(...xs) + 1) / 2, oy + (Math.min(...ys) + Math.max(...ys) + 1) / 2, Math.max(Math.max(...xs) - Math.min(...xs), Math.max(...ys) - Math.min(...ys)) + 1]); } }
   const floors = [];
   for (let j = 0; j < AH; j++) { let i = 0; while (i < AW) { if (!g[j * AW + i]) { i++; continue; } let k = i; while (k < AW && g[j * AW + k]) k++; const up = floors.find(f => f[1] + f[3] === j + oy && f[0] === i + ox && f[2] === k - i); if (up) up[3]++; else floors.push([i + ox, j + oy, k - i, 1]); i = k; } }
   m.floors = floors;
