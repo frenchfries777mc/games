@@ -280,7 +280,7 @@ function hurtEnemy(G, e, dmg, p, o) {
   if (e.hp <= 0 || e.st === 'rise') return 0;
   if (e.k === 'dummy') return hurtProxy(G, e, dmg, p, o);
   if (e.tm != null && p && p.team === e.tm) return 0;   // 우리 편이 불러낸 해골은 우리 편 공격에 맞지 않아요 (소환한 본인도 못 때려요)
-  if (e.st === 'sleep' || e.st === 'home') wake(G, e);
+  if (e.st === 'sleep' || (e.st === 'home' && !e.mon)) wake(G, e);   // 돌아가는 중인 중립 괴물은 맞아도 되돌아서지 않아요
   const E = G.EN[e.k];
   let d = dmg * (p ? p.dmgMul * (hasB(p, 'blade') ? 1.15 : 1) * (p.rally > 0 ? 1.3 : 1) * (p.capB > 0 ? 1.2 : 1) * mkM(G, p) * (p.focus > 0 ? 1.5 : 1) * (p.covT > 0 ? 1.25 : 1) : 1);
   if (e.mark > 0) d *= 1.5;
@@ -302,7 +302,7 @@ function hurtEnemy(G, e, dmg, p, o) {
 }
 function killEnemy(G, e) {
   e.hp = 0; G.stats.kills++; ev(G, 'ekill', { x: e.x, z: e.z, en: e.k, id: e.id }); ev(G, 'ach', { id: 'room1' });
-  const h = G.EN[e.k].honor; for (const p of G.players) G.honor[p.id] += h;
+  const h = G.EN[e.k].honor, mw = e.mon ? (e.dmgBy[0] > e.dmgBy[1] ? 0 : e.dmgBy[1] > e.dmgBy[0] ? 1 : -1) : -2; for (const p of G.players) if (mw === -2 || p.team === mw) G.honor[p.id] += h;   // 중립 괴물의 명예는 쓰러뜨린 팀만 받아요
   if (e.mon) { const d = e.dmgBy, w = d[0] > d[1] ? 0 : d[1] > d[0] ? 1 : -1; G.cTim[e.cn | 0] = 60; if (w >= 0) { G.cb[w] = 20; G.mk[w]++; ev(G, 'monkill', { tm: w, x: e.x, z: e.z, lv: G.mk[w] }); } }
   if (e.k === 'elite') ev(G, 'ach', { id: 'elite' });
   if (e.mb) { for (const p of G.players) G.honor[p.id] += 30; if (G.fork) G.fork.done = 1; ev(G, 'chest', { x: e.x, z: e.z, h: 30 }); ev(G, 'mbkill', { x: e.x, z: e.z }); }
@@ -1190,6 +1190,7 @@ function stepEnemy(G, e, dt) {
   // 잠든 적: 사람이 보이는 곳까지 오면 깨어나요
   if (e.st === 'sleep') {
     if (e.k === 'boss') return;
+    if (e.mon) e.hp = Math.min(e.maxhp, e.hp + e.maxhp * 0.03 * dt);   // 자리에서 쉬는 중립 괴물은 금세 다시 차올라요
     for (const p of G.players) if (alive(p) && dist(p, e) < WAKE_R && lineClear(e.x, e.z, p.x, p.z)) { wake(G, e); break; }
     if (e.st === 'sleep') return;
   }
@@ -1199,14 +1200,15 @@ function stepEnemy(G, e, dt) {
   // 너무 멀리 끌려가면 제자리로 돌아가 다시 잠들어요
   if (e.st === 'home') {
     const d = Math.hypot(e.hx - e.x, e.hz - e.z);
-    for (const p of G.players) if (alive(p) && dist(p, e) < WAKE_R * 0.8 && lineClear(e.x, e.z, p.x, p.z)) { e.st = 'idle'; return; }
+    if (!e.mon) for (const p of G.players) if (alive(p) && dist(p, e) < WAKE_R * 0.8 && lineClear(e.x, e.z, p.x, p.z)) { e.st = 'idle'; return; }
     if (d < 0.8) { e.st = 'sleep'; if (!e.mon) e.hp = e.maxhp; e.moving = false; return; }
     const a = navDir(e.x, e.z, e.hx, e.hz, G.t); if (a == null) { e.x = e.hx; e.z = e.hz; return; }
-    e.a = a; e.x += Math.cos(a) * E.speed * 1.3 * dt; e.z += Math.sin(a) * E.speed * 1.3 * dt; e.moving = true; e.hp = Math.min(e.maxhp, e.hp + e.maxhp * (e.mon ? 0.004 : 0.2) * dt);   // 중립 괴물은 아주 천천히 회복해요
+    e.a = a; e.x += Math.cos(a) * E.speed * 1.3 * dt; e.z += Math.sin(a) * E.speed * 1.3 * dt; e.moving = true; e.hp = Math.min(e.maxhp, e.hp + e.maxhp * (e.mon ? 0.03 : 0.2) * dt);
     return;
   }
   if (e.life != null && (e.life -= dt) <= 0) { e.hp = 0; ev(G, 'ekill', { x: e.x, z: e.z, en: e.k, id: e.id }); return; }   // 소환된 해골은 18초 뒤 사라져요
   if (e.k === 'boss') { stepBoss(G, e, dt); return; }
+  if (e.mon && Math.hypot(e.hx - e.x, e.hz - e.z) > 26) { e.st = 'home'; e.tgt = null; return; }   // 너무 멀리 끌려 나오면 맞아도 돌아가요
   if (!e.summoned && e.hx != null && !G.players.some(p => alive(p) && dist(p, e) < LEASH_R) && Math.hypot(e.hx - e.x, e.hz - e.z) > 4) { e.st = 'home'; e.tgt = null; return; }
   if (e.stun > 0) return;
   // 소환형 중간 보스: 아홉 초마다 부하 둘을 불러요
@@ -1216,7 +1218,7 @@ function stepEnemy(G, e, dt) {
     // 덫이 터지며 불길이 번져요: 둘레 적이 불타고 조금 다쳐요
     for (const q of G.enemies) if (q !== e && q.hp > 0 && Math.hypot(q.x - z.x, q.z - z.z) < 3) { q.burn = 3; hurtEnemy(G, q, 10, ow, { spread: 1 }); } if (e.hp <= 0) return; }
   const t = pickTarget(G, e); if (!t) return;
-  if (e.mon && Math.hypot(t.x - e.hx, t.z - e.hz) > 22) { e.moving = false; e.hp = Math.min(e.maxhp, e.hp + e.maxhp * 0.004 * dt); return; }   // 중립 괴물은 자기 자리에서 너무 먼 사람은 쫓지 않아요
+  if (e.mon && Math.hypot(t.x - e.hx, t.z - e.hz) > 22) { e.st = 'home'; e.tgt = null; e.moving = false; return; }   // 가장 가까운 사람마저 너무 멀면 자기 자리로 돌아가요 (멀리서 쏘는 사람에게 가만히 맞고 있지 않아요)
   const d = dist(e, t), sees = lineClear(e.x, e.z, t.x, t.z), ta = angTo(e, t);
   if (e.st === 'wind') {
     e.wind -= dt;
