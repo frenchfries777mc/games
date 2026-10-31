@@ -587,80 +587,80 @@
      ]
     },
     "ja": {
-     "title": "Labels no longer overlap",
+     "title": "名前の重なり解消",
      "items": [
-      "Names on the town and islands now shift up or down so they never cover each other",
-      "Labels keep a minimum size on small phone screens"
+      "町と島の名札が重なると自動で上下にずれ、すべて読めるようになる",
+      "小さな画面でも名札の文字が小さくなりすぎないよう最小サイズを設定"
      ]
     },
     "es": {
-     "title": "Labels no longer overlap",
+     "title": "Nombres sin solaparse",
      "items": [
-      "Names on the town and islands now shift up or down so they never cover each other",
-      "Labels keep a minimum size on small phone screens"
+      "En pueblos e islas, las etiquetas se desplazan automáticamente arriba o abajo si se solapan, para que todas se puedan leer",
+      "Tamaño mínimo de las etiquetas, incluso en pantallas pequeñas como las de móvil"
      ]
     },
     "fr": {
-     "title": "Labels no longer overlap",
+     "title": "Noms sans chevauchement",
      "items": [
-      "Names on the town and islands now shift up or down so they never cover each other",
-      "Labels keep a minimum size on small phone screens"
+      "Dans les villages et sur les îles, les noms se décalent automatiquement vers le haut ou le bas quand ils se chevauchent, pour rester lisibles",
+      "Taille minimale des noms, même sur les petits écrans de téléphone"
      ]
     },
     "de": {
-     "title": "Labels no longer overlap",
+     "title": "Namen überlappen nicht mehr",
      "items": [
-      "Names on the town and islands now shift up or down so they never cover each other",
-      "Labels keep a minimum size on small phone screens"
+      "In Städten und auf Inseln weichen Namensschilder bei Überlappung automatisch nach oben oder unten aus, sodass alle lesbar bleiben",
+      "Mindestgröße für Namensschilder, auch auf kleinen Handybildschirmen"
      ]
     },
     "zh": {
-     "title": "Labels no longer overlap",
+     "title": "名牌不再重叠",
      "items": [
-      "Names on the town and islands now shift up or down so they never cover each other",
-      "Labels keep a minimum size on small phone screens"
+      "城镇和岛屿上的名牌重叠时会自动上下错开，全部都能看清",
+      "手机等小屏幕上也设有名牌文字的最小尺寸"
      ]
     },
     "pt": {
-     "title": "Labels no longer overlap",
+     "title": "Nomes sem sobreposição",
      "items": [
-      "Names on the town and islands now shift up or down so they never cover each other",
-      "Labels keep a minimum size on small phone screens"
+      "Nomes em vilas e ilhas se afastam automaticamente para cima ou para baixo quando se sobrepõem, ficando todos legíveis",
+      "Tamanho mínimo das etiquetas, mesmo em telas pequenas de celular"
      ]
     },
     "ru": {
-     "title": "Labels no longer overlap",
+     "title": "Подписи больше не перекрываются",
      "items": [
-      "Names on the town and islands now shift up or down so they never cover each other",
-      "Labels keep a minimum size on small phone screens"
+      "В деревнях и на островах подписи при наложении автоматически сдвигаются вверх или вниз, и все их можно прочитать",
+      "Минимальный размер подписей, даже на маленьких экранах телефонов"
      ]
     },
     "tr": {
-     "title": "Labels no longer overlap",
+     "title": "Etiketler artık çakışmıyor",
      "items": [
-      "Names on the town and islands now shift up or down so they never cover each other",
-      "Labels keep a minimum size on small phone screens"
+      "Köy ve adalarda isim etiketleri üst üste geldiğinde otomatik olarak yukarı ya da aşağı kayar, hepsi okunabilir",
+      "Küçük telefon ekranlarında bile etiket yazılarının en küçük bir boyutu vardır"
      ]
     },
     "it": {
-     "title": "Labels no longer overlap",
+     "title": "Nomi senza sovrapposizioni",
      "items": [
-      "Names on the town and islands now shift up or down so they never cover each other",
-      "Labels keep a minimum size on small phone screens"
+      "Nei villaggi e sulle isole le etichette si spostano automaticamente su o giù se si sovrappongono, così si leggono tutte",
+      "Dimensione minima delle etichette anche sugli schermi piccoli dei telefoni"
      ]
     },
     "pl": {
-     "title": "Labels no longer overlap",
+     "title": "Etykiety bez nakładania się",
      "items": [
-      "Names on the town and islands now shift up or down so they never cover each other",
-      "Labels keep a minimum size on small phone screens"
+      "Etykiety w miastach i na wyspach przesuwają się automatycznie w górę lub w dół, gdy się nakładają, więc wszystkie są czytelne",
+      "Najmniejszy rozmiar etykiet, nawet na małych ekranach telefonów"
      ]
     },
     "ar": {
-     "title": "Labels no longer overlap",
+     "title": "لا تداخل بين الأسماء",
      "items": [
-      "Names on the town and islands now shift up or down so they never cover each other",
-      "Labels keep a minimum size on small phone screens"
+      "في القرى والجزر، تتحرك الأسماء تلقائيًا لأعلى أو لأسفل عند تداخلها لتبقى جميعها مقروءة",
+      "حجم أدنى للأسماء حتى على شاشات الهواتف الصغيرة"
      ]
     }
    }
@@ -680,69 +680,69 @@
      ]
     },
     "ja": {
-     "title": "Tap a name to see a profile",
+     "title": "ニックネームを押してプロフィールを見る",
      "items": [
-      "Tap the name of a signed-in player in the room list to open their Isleport profile card"
+      "部屋の接続者リストで、アカウントで入ったプレイヤーのニックネームを押すと、そのプレイヤーの Isleport プロフィールカードが開く"
      ]
     },
     "es": {
-     "title": "Tap a name to see a profile",
+     "title": "Toca un nombre para ver el perfil",
      "items": [
-      "Tap the name of a signed-in player in the room list to open their Isleport profile card"
+      "En la lista de la sala, al tocar el nombre de un jugador con cuenta se abre su tarjeta de perfil de Isleport"
      ]
     },
     "fr": {
-     "title": "Tap a name to see a profile",
+     "title": "Touchez un pseudo pour voir le profil",
      "items": [
-      "Tap the name of a signed-in player in the room list to open their Isleport profile card"
+      "Dans la liste de la salle, toucher le pseudo d'un joueur connecté à un compte ouvre sa carte de profil Isleport"
      ]
     },
     "de": {
-     "title": "Tap a name to see a profile",
+     "title": "Auf einen Namen tippen, um das Profil zu sehen",
      "items": [
-      "Tap the name of a signed-in player in the room list to open their Isleport profile card"
+      "Ein Tipp auf den Namen eines angemeldeten Spielers in der Raumliste öffnet dessen Isleport-Profilkarte"
      ]
     },
     "zh": {
-     "title": "Tap a name to see a profile",
+     "title": "点击昵称查看资料",
      "items": [
-      "Tap the name of a signed-in player in the room list to open their Isleport profile card"
+      "在房间在线列表中点击已登录账号玩家的昵称，即可打开其 Isleport 资料卡"
      ]
     },
     "pt": {
-     "title": "Tap a name to see a profile",
+     "title": "Toque num apelido para ver o perfil",
      "items": [
-      "Tap the name of a signed-in player in the room list to open their Isleport profile card"
+      "Na lista da sala, tocar no apelido de um jogador com conta abre o cartão de perfil dele no Isleport"
      ]
     },
     "ru": {
-     "title": "Tap a name to see a profile",
+     "title": "Нажмите на имя, чтобы открыть профиль",
      "items": [
-      "Tap the name of a signed-in player in the room list to open their Isleport profile card"
+      "В списке комнаты нажатие на имя вошедшего в аккаунт игрока открывает его карточку профиля Isleport"
      ]
     },
     "tr": {
-     "title": "Tap a name to see a profile",
+     "title": "Profili görmek için takma adına dokun",
      "items": [
-      "Tap the name of a signed-in player in the room list to open their Isleport profile card"
+      "Oda listesinde hesapla giriş yapmış bir oyuncunun takma adına dokunulunca o kişinin Isleport profil kartı açılır"
      ]
     },
     "it": {
-     "title": "Tap a name to see a profile",
+     "title": "Tocca un nickname per vedere il profilo",
      "items": [
-      "Tap the name of a signed-in player in the room list to open their Isleport profile card"
+      "Nella lista della stanza, toccando il nickname di un giocatore con account si apre la sua scheda profilo di Isleport"
      ]
     },
     "pl": {
-     "title": "Tap a name to see a profile",
+     "title": "Dotknij pseudonimu, aby zobaczyć profil",
      "items": [
-      "Tap the name of a signed-in player in the room list to open their Isleport profile card"
+      "Na liście pokoju dotknięcie pseudonimu zalogowanego gracza otwiera jego kartę profilu Isleport"
      ]
     },
     "ar": {
-     "title": "Tap a name to see a profile",
+     "title": "انقر على الاسم لعرض الملف الشخصي",
      "items": [
-      "Tap the name of a signed-in player in the room list to open their Isleport profile card"
+      "عند النقر على اسم لاعب مسجَّل الدخول في قائمة الغرفة تُفتح بطاقة ملفه الشخصي في Isleport"
      ]
     }
    }
@@ -766,91 +766,91 @@
      ]
     },
     "ja": {
-     "title": "The lord's castle",
+     "title": "領主の城",
      "items": [
-      "A castle lot opens on the empty land south of the lake on the home island",
-      "Build it in 4 stages: watchtower, wall, keep, gardens and banners, each needing rank and gold",
-      "Taxes pile up as the castle grows, from 20 to 220 gold per minute, up to 60 minutes worth"
+      "始まりの島の南、湖畔の空き地に領主の城を建てる場所ができる",
+      "望楼、城壁、本丸、庭園と旗の4段階で建て、段階ごとに階級と金貨が必要",
+      "城が大きくなるほど税が溜まり、1分あたり20〜220金貨、最大60分ぶんまで集められる"
      ]
     },
     "es": {
-     "title": "The lord's castle",
+     "title": "El castillo del señor",
      "items": [
-      "A castle lot opens on the empty land south of the lake on the home island",
-      "Build it in 4 stages: watchtower, wall, keep, gardens and banners, each needing rank and gold",
-      "Taxes pile up as the castle grows, from 20 to 220 gold per minute, up to 60 minutes worth"
+      "Aparece un solar para el castillo del señor en el terreno libre junto al lago, al sur de la isla inicial",
+      "Se construye en 4 etapas (atalaya, muralla, torre principal, jardines y estandartes), cada una con rango y oro",
+      "Cuanto más grande es el castillo, más impuestos se acumulan: de 20 a 220 monedas de oro por minuto, hasta 60 minutos"
      ]
     },
     "fr": {
-     "title": "The lord's castle",
+     "title": "Le château du seigneur",
      "items": [
-      "A castle lot opens on the empty land south of the lake on the home island",
-      "Build it in 4 stages: watchtower, wall, keep, gardens and banners, each needing rank and gold",
-      "Taxes pile up as the castle grows, from 20 to 220 gold per minute, up to 60 minutes worth"
+      "Un emplacement pour le château du seigneur apparaît sur le terrain vide au bord du lac, au sud de l'île de départ",
+      "4 étapes à construire : tour de guet, rempart, donjon, jardins et bannières, chacune demandant un rang et de l'or",
+      "Plus le château grandit, plus les impôts s'accumulent : de 20 à 220 pièces d'or par minute, jusqu'à 60 minutes"
      ]
     },
     "de": {
-     "title": "The lord's castle",
+     "title": "Die Burg des Herrn",
      "items": [
-      "A castle lot opens on the empty land south of the lake on the home island",
-      "Build it in 4 stages: watchtower, wall, keep, gardens and banners, each needing rank and gold",
-      "Taxes pile up as the castle grows, from 20 to 220 gold per minute, up to 60 minutes worth"
+      "Auf dem freien Grund am Seeufer südlich der Startinsel entsteht ein Bauplatz für die Burg des Herrn",
+      "Der Bau hat 4 Stufen: Wachturm, Mauer, Hauptgebäude, Garten und Banner. Jede Stufe braucht Rang und Gold",
+      "Je größer die Burg, desto mehr Steuern sammeln sich: 20 bis 220 Gold pro Minute, bis zu 60 Minuten"
      ]
     },
     "zh": {
-     "title": "The lord's castle",
+     "title": "领主城堡",
      "items": [
-      "A castle lot opens on the empty land south of the lake on the home island",
-      "Build it in 4 stages: watchtower, wall, keep, gardens and banners, each needing rank and gold",
-      "Taxes pile up as the castle grows, from 20 to 220 gold per minute, up to 60 minutes worth"
+      "起始岛南面湖边的空地上出现了领主城堡的建造位置",
+      "分四个阶段建造：瞭望塔、城墙、主楼、花园与旗帜，每阶段都需要等级和金币",
+      "城堡越大，税收积累越多，每分钟可收 20 到 220 金币，最多可收 60 分钟的量"
      ]
     },
     "pt": {
-     "title": "The lord's castle",
+     "title": "O castelo do senhor",
      "items": [
-      "A castle lot opens on the empty land south of the lake on the home island",
-      "Build it in 4 stages: watchtower, wall, keep, gardens and banners, each needing rank and gold",
-      "Taxes pile up as the castle grows, from 20 to 220 gold per minute, up to 60 minutes worth"
+      "Surge um terreno para o castelo do senhor no espaço vazio à beira do lago, ao sul da ilha inicial",
+      "Construção em 4 etapas: torre de vigia, muralha, torre principal, jardins e bandeiras, cada uma exigindo patente e ouro",
+      "Quanto maior o castelo, mais impostos se acumulam: de 20 a 220 moedas de ouro por minuto, até 60 minutos"
      ]
     },
     "ru": {
-     "title": "The lord's castle",
+     "title": "Замок лорда",
      "items": [
-      "A castle lot opens on the empty land south of the lake on the home island",
-      "Build it in 4 stages: watchtower, wall, keep, gardens and banners, each needing rank and gold",
-      "Taxes pile up as the castle grows, from 20 to 220 gold per minute, up to 60 minutes worth"
+      "На пустом участке у озера, к югу от стартового острова, появилось место для замка лорда",
+      "Строится в 4 этапа: сторожевая башня, стены, главный замок, сады и знамёна; каждый этап требует звание и золото",
+      "Чем больше замок, тем больше накапливается налогов: от 20 до 220 золотых в минуту, до 60 минут сразу"
      ]
     },
     "tr": {
-     "title": "The lord's castle",
+     "title": "Lordun kalesi",
      "items": [
-      "A castle lot opens on the empty land south of the lake on the home island",
-      "Build it in 4 stages: watchtower, wall, keep, gardens and banners, each needing rank and gold",
-      "Taxes pile up as the castle grows, from 20 to 220 gold per minute, up to 60 minutes worth"
+      "Başlangıç adasının güneyindeki göl kıyısında, lordun kalesi için boş bir arsa açılır",
+      "4 aşamada inşa edilir: gözetleme kulesi, sur, ana bina, bahçe ve bayrak; her aşama rütbe ve altın ister",
+      "Kale büyüdükçe vergi birikir; dakikada 20 ile 220 altın arasında, en fazla 60 dakikalık toplanabilir"
      ]
     },
     "it": {
-     "title": "The lord's castle",
+     "title": "Il castello del signore",
      "items": [
-      "A castle lot opens on the empty land south of the lake on the home island",
-      "Build it in 4 stages: watchtower, wall, keep, gardens and banners, each needing rank and gold",
-      "Taxes pile up as the castle grows, from 20 to 220 gold per minute, up to 60 minutes worth"
+      "Compare un lotto per il castello del signore sul terreno vuoto sulla riva del lago, a sud dell'isola iniziale",
+      "Si costruisce in 4 fasi: torre di guardia, mura, palazzo principale, giardini e stendardi, ognuna con grado e oro richiesti",
+      "Più il castello cresce, più tasse si accumulano: da 20 a 220 monete d'oro al minuto, fino a 60 minuti"
      ]
     },
     "pl": {
-     "title": "The lord's castle",
+     "title": "Zamek pana",
      "items": [
-      "A castle lot opens on the empty land south of the lake on the home island",
-      "Build it in 4 stages: watchtower, wall, keep, gardens and banners, each needing rank and gold",
-      "Taxes pile up as the castle grows, from 20 to 220 gold per minute, up to 60 minutes worth"
+      "Na pustym terenie nad jeziorem, na południe od wyspy startowej, pojawia się miejsce na zamek pana",
+      "Budowa w 4 etapach: wieża strażnicza, mury, główny budynek, ogrody i chorągwie; każdy etap wymaga rangi i złota",
+      "Im większy zamek, tym więcej podatków się zbiera: od 20 do 220 złotych na minutę, do 60 minut"
      ]
     },
     "ar": {
-     "title": "The lord's castle",
+     "title": "قلعة اللورد",
      "items": [
-      "A castle lot opens on the empty land south of the lake on the home island",
-      "Build it in 4 stages: watchtower, wall, keep, gardens and banners, each needing rank and gold",
-      "Taxes pile up as the castle grows, from 20 to 220 gold per minute, up to 60 minutes worth"
+      "تظهر قطعة أرض فارغة لبناء قلعة اللورد على ضفة البحيرة جنوب الجزيرة الأولى",
+      "يُبنى على 4 مراحل: برج المراقبة والأسوار والقصر الرئيسي والحدائق والرايات، ولكل مرحلة رتبة وذهب مطلوبان",
+      "كلما كبرت القلعة تراكمت الضرائب: من 20 إلى 220 ذهبة في الدقيقة، لمدة تصل إلى 60 دقيقة"
      ]
     }
    }
@@ -876,102 +876,102 @@
      ]
     },
     "ja": {
-     "title": "Islander errands",
+     "title": "島民のお使い",
      "items": [
-      "Talk to an islander to be asked to carry a letter or parcel to a villager on another port",
-      "You can carry up to 3 at a time and get gold when you deliver",
-      "Talking to anyone shows your errands and where to deliver",
-      "The same villager asks again after 5 minutes"
+      "島民に話しかけると、別の島の住人に手紙や小包を届けてほしいと頼まれる",
+      "一度に最大3件まで引き受けられ、届けると金貨の報酬がもらえる",
+      "島民を押すと、受けたお使いと届け先が表示される",
+      "同じ島民からの頼みは5分後にまた受けられる"
      ]
     },
     "es": {
-     "title": "Islander errands",
+     "title": "Recados de los isleños",
      "items": [
-      "Talk to an islander to be asked to carry a letter or parcel to a villager on another port",
-      "You can carry up to 3 at a time and get gold when you deliver",
-      "Talking to anyone shows your errands and where to deliver",
-      "The same villager asks again after 5 minutes"
+      "Habla con un isleño y te pedirá llevar una carta o un paquete a alguien de otra isla",
+      "Puedes llevar hasta 3 a la vez y recibes oro al entregarlos",
+      "Al tocar a un habitante se ven tus recados y a dónde llevarlos",
+      "El mismo habitante te vuelve a pedir un recado a los 5 minutos"
      ]
     },
     "fr": {
-     "title": "Islander errands",
+     "title": "Commissions des insulaires",
      "items": [
-      "Talk to an islander to be asked to carry a letter or parcel to a villager on another port",
-      "You can carry up to 3 at a time and get gold when you deliver",
-      "Talking to anyone shows your errands and where to deliver",
-      "The same villager asks again after 5 minutes"
+      "Parlez à un insulaire : il vous demandera d'apporter une lettre ou un colis à un habitant d'une autre île",
+      "Jusqu'à 3 commissions à la fois ; les livrer rapporte de l'or",
+      "Toucher un habitant affiche vos commissions et leur destination",
+      "Le même habitant peut vous confier une nouvelle commission après 5 minutes"
      ]
     },
     "de": {
-     "title": "Islander errands",
+     "title": "Botengänge der Inselbewohner",
      "items": [
-      "Talk to an islander to be asked to carry a letter or parcel to a villager on another port",
-      "You can carry up to 3 at a time and get gold when you deliver",
-      "Talking to anyone shows your errands and where to deliver",
-      "The same villager asks again after 5 minutes"
+      "Sprich mit einem Inselbewohner, der dich bittet, einen Brief oder ein Paket zu einem Bewohner einer anderen Insel zu bringen",
+      "Bis zu 3 gleichzeitig möglich, bei Zustellung gibt es Gold",
+      "Ein Tipp auf einen Bewohner zeigt deine Aufträge und das Ziel",
+      "Derselbe Bewohner bittet nach 5 Minuten erneut"
      ]
     },
     "zh": {
-     "title": "Islander errands",
+     "title": "岛民跑腿",
      "items": [
-      "Talk to an islander to be asked to carry a letter or parcel to a villager on another port",
-      "You can carry up to 3 at a time and get gold when you deliver",
-      "Talking to anyone shows your errands and where to deliver",
-      "The same villager asks again after 5 minutes"
+      "与岛民对话，就会接到把信件或包裹送给其他岛上居民的委托",
+      "一次最多可接 3 件，送达后获得金币奖励",
+      "点击居民即可查看已接委托和送达地点",
+      "同一居民的委托 5 分钟后可再次接取"
      ]
     },
     "pt": {
-     "title": "Islander errands",
+     "title": "Recados dos ilhéus",
      "items": [
-      "Talk to an islander to be asked to carry a letter or parcel to a villager on another port",
-      "You can carry up to 3 at a time and get gold when you deliver",
-      "Talking to anyone shows your errands and where to deliver",
-      "The same villager asks again after 5 minutes"
+      "Fale com um ilhéu e ele pedirá para levar uma carta ou encomenda a um morador de outra ilha",
+      "Até 3 de cada vez, e a entrega rende ouro",
+      "Tocar num morador mostra os recados recebidos e onde entregá-los",
+      "O mesmo morador volta a pedir após 5 minutos"
      ]
     },
     "ru": {
-     "title": "Islander errands",
+     "title": "Поручения островитян",
      "items": [
-      "Talk to an islander to be asked to carry a letter or parcel to a villager on another port",
-      "You can carry up to 3 at a time and get gold when you deliver",
-      "Talking to anyone shows your errands and where to deliver",
-      "The same villager asks again after 5 minutes"
+      "Поговорите с островитянином, и он попросит передать письмо или посылку жителю другого острова",
+      "Можно взять до 3 поручений сразу, за доставку — золото",
+      "Нажмите на жителя, чтобы увидеть принятые поручения и место доставки",
+      "Тот же житель снова даст поручение через 5 минут"
      ]
     },
     "tr": {
-     "title": "Islander errands",
+     "title": "Ada sakinlerinin işleri",
      "items": [
-      "Talk to an islander to be asked to carry a letter or parcel to a villager on another port",
-      "You can carry up to 3 at a time and get gold when you deliver",
-      "Talking to anyone shows your errands and where to deliver",
-      "The same villager asks again after 5 minutes"
+      "Bir ada sakinine konuşarak başka bir adadaki birine mektup ya da paket götürmesini isteyebilirsin",
+      "Aynı anda en fazla 3 tane alabilirsin, teslim edince altın kazanırsın",
+      "Bir sakine dokununca aldığın işler ve teslim yeri görünür",
+      "Aynı sakinden 5 dakika sonra tekrar iş alabilirsin"
      ]
     },
     "it": {
-     "title": "Islander errands",
+     "title": "Commissioni degli isolani",
      "items": [
-      "Talk to an islander to be asked to carry a letter or parcel to a villager on another port",
-      "You can carry up to 3 at a time and get gold when you deliver",
-      "Talking to anyone shows your errands and where to deliver",
-      "The same villager asks again after 5 minutes"
+      "Parla con un isolano per ricevere la richiesta di portare una lettera o un pacco a un abitante di un'altra isola",
+      "Fino a 3 alla volta, e la consegna ripaga in oro",
+      "Toccando un abitante vedi le commissioni ricevute e dove consegnarle",
+      "Lo stesso abitante può chiedere di nuovo dopo 5 minuti"
      ]
     },
     "pl": {
-     "title": "Islander errands",
+     "title": "Zlecenia wyspiarzy",
      "items": [
-      "Talk to an islander to be asked to carry a letter or parcel to a villager on another port",
-      "You can carry up to 3 at a time and get gold when you deliver",
-      "Talking to anyone shows your errands and where to deliver",
-      "The same villager asks again after 5 minutes"
+      "Porozmawiaj z wyspiarzem, a poprosi cię o zaniesienie listu lub paczki mieszkańcowi innej wyspy",
+      "Można mieć naraz do 3 zleceń, a za dostarczenie dostaje się złoto",
+      "Dotknięcie mieszkańca pokazuje przyjęte zlecenia i miejsce dostawy",
+      "Ten sam mieszkaniec znów zleci zadanie po 5 minutach"
      ]
     },
     "ar": {
-     "title": "Islander errands",
+     "title": "مهام سكان الجزيرة",
      "items": [
-      "Talk to an islander to be asked to carry a letter or parcel to a villager on another port",
-      "You can carry up to 3 at a time and get gold when you deliver",
-      "Talking to anyone shows your errands and where to deliver",
-      "The same villager asks again after 5 minutes"
+      "تكلم مع أحد سكان الجزيرة ليطلب منك إيصال رسالة أو طرد إلى أحد سكان جزيرة أخرى",
+      "يمكن حمل 3 مهام كحد أقصى في وقت واحد، ويُكافأ عليها بالذهب عند التسليم",
+      "انقر على أي ساكن لتظهر لك المهام التي استلمتها ومكان تسليمها",
+      "يمكن استلام مهمة جديدة من الساكن نفسه بعد 5 دقائق"
      ]
     }
    }
@@ -997,102 +997,102 @@
      ]
     },
     "ja": {
-     "title": "Frontier workshops and carts",
+     "title": "開拓地の加工所と馬車",
      "items": [
-      "Frontier facility slots grew from 4 to 6",
-      "Added a frontier mill and winery: load ingredients and they make flour and wine on the isle",
-      "Added a cart station: it hauls ripe crops and stored goods to your warehouse and replants if you have seeds",
-      "Only one irrigation well and one cart station per isle"
+      "開拓施設の枠が4から6に増える",
+      "開拓の製粉所と醸造所を追加: 材料を入れておくと島で小麦粉とワインを作る",
+      "馬車の停留所を追加: 島で実った作物と集めた品を自動で倉庫へ運び、種があれば植え直す",
+      "灌漑井戸と馬車の停留所は、島ごとに1つだけ建てられる"
      ]
     },
     "es": {
-     "title": "Frontier workshops and carts",
+     "title": "Talleres y carros de la frontera",
      "items": [
-      "Frontier facility slots grew from 4 to 6",
-      "Added a frontier mill and winery: load ingredients and they make flour and wine on the isle",
-      "Added a cart station: it hauls ripe crops and stored goods to your warehouse and replants if you have seeds",
-      "Only one irrigation well and one cart station per isle"
+      "Los espacios de instalaciones de frontera pasan de 4 a 6",
+      "Nuevos molino y bodega de frontera: con ingredientes, producen harina y vino en la isla",
+      "Nueva parada de carros: lleva automáticamente los cultivos maduros y los objetos reunidos al almacén, y replanta si hay semillas",
+      "Solo se puede construir un pozo de riego y una parada de carros por isla"
      ]
     },
     "fr": {
-     "title": "Frontier workshops and carts",
+     "title": "Ateliers et charrettes de la frontière",
      "items": [
-      "Frontier facility slots grew from 4 to 6",
-      "Added a frontier mill and winery: load ingredients and they make flour and wine on the isle",
-      "Added a cart station: it hauls ripe crops and stored goods to your warehouse and replants if you have seeds",
-      "Only one irrigation well and one cart station per isle"
+      "Les emplacements d'installations de la frontière passent de 4 à 6",
+      "Ajout d'un moulin et d'un cellier de frontière : y déposer des ingrédients produit farine et vin sur l'île",
+      "Ajout d'une station de charrettes : elle transporte seule les cultures mûres et les objets récoltés à l'entrepôt, et replante s'il y a des graines",
+      "Un seul puits d'irrigation et une seule station de charrettes par île"
      ]
     },
     "de": {
-     "title": "Frontier workshops and carts",
+     "title": "Werkstätten und Wagen der Grenzsiedlung",
      "items": [
-      "Frontier facility slots grew from 4 to 6",
-      "Added a frontier mill and winery: load ingredients and they make flour and wine on the isle",
-      "Added a cart station: it hauls ripe crops and stored goods to your warehouse and replants if you have seeds",
-      "Only one irrigation well and one cart station per isle"
+      "Die Plätze für Grenzanlagen wachsen von 4 auf 6",
+      "Neue Grenzmühle und Grenzkelterei: Zutaten hineinlegen, und auf der Insel entstehen Mehl und Wein",
+      "Neue Wagenstation: bringt reife Ernte und gesammelte Waren automatisch ins Lager und sät neu, wenn Samen da sind",
+      "Brunnen und Wagenstation gibt es je Insel nur einmal"
      ]
     },
     "zh": {
-     "title": "Frontier workshops and carts",
+     "title": "开拓地的加工坊与马车",
      "items": [
-      "Frontier facility slots grew from 4 to 6",
-      "Added a frontier mill and winery: load ingredients and they make flour and wine on the isle",
-      "Added a cart station: it hauls ripe crops and stored goods to your warehouse and replants if you have seeds",
-      "Only one irrigation well and one cart station per isle"
+      "开拓设施的格位从 4 个增加到 6 个",
+      "新增开拓磨坊和开拓酿酒坊：放入材料后，在岛上制作面粉和葡萄酒",
+      "新增马车站：自动把成熟的作物和收集的物品运到仓库，有种子时还会重新播种",
+      "灌溉井和马车站每座岛只能建造一个"
      ]
     },
     "pt": {
-     "title": "Frontier workshops and carts",
+     "title": "Oficinas e carroças da fronteira",
      "items": [
-      "Frontier facility slots grew from 4 to 6",
-      "Added a frontier mill and winery: load ingredients and they make flour and wine on the isle",
-      "Added a cart station: it hauls ripe crops and stored goods to your warehouse and replants if you have seeds",
-      "Only one irrigation well and one cart station per isle"
+      "Os espaços de instalações da fronteira aumentam de 4 para 6",
+      "Novos moinho e vinícola da fronteira: coloque ingredientes e eles produzem farinha e vinho na ilha",
+      "Nova estação de carroças: leva sozinha as colheitas maduras e os itens guardados ao armazém, e replanta se houver sementes",
+      "Só é possível construir um poço de irrigação e uma estação de carroças por ilha"
      ]
     },
     "ru": {
-     "title": "Frontier workshops and carts",
+     "title": "Мастерские и повозки на освоенных землях",
      "items": [
-      "Frontier facility slots grew from 4 to 6",
-      "Added a frontier mill and winery: load ingredients and they make flour and wine on the isle",
-      "Added a cart station: it hauls ripe crops and stored goods to your warehouse and replants if you have seeds",
-      "Only one irrigation well and one cart station per isle"
+      "Число слотов для построек на освоенных землях увеличено с 4 до 6",
+      "Добавлены мельница и винодельня на освоенных землях: кладите ингредиенты, и на острове будут получаться мука и вино",
+      "Добавлена станция повозок: сама отвозит созревший урожай и собранные товары на склад и пересаживает, если есть семена",
+      "На каждом острове можно построить только один ирригационный колодец и одну станцию повозок"
      ]
     },
     "tr": {
-     "title": "Frontier workshops and carts",
+     "title": "Sınır yerleşiminin atölyeleri ve arabaları",
      "items": [
-      "Frontier facility slots grew from 4 to 6",
-      "Added a frontier mill and winery: load ingredients and they make flour and wine on the isle",
-      "Added a cart station: it hauls ripe crops and stored goods to your warehouse and replants if you have seeds",
-      "Only one irrigation well and one cart station per isle"
+      "Sınır tesisleri için yer 4'ten 6'ya çıktı",
+      "Sınır değirmeni ve şarap evi eklendi: malzeme koyunca adada un ve şarap üretir",
+      "Araba istasyonu eklendi: olgunlaşan ürünleri ve biriken eşyaları otomatik olarak depoya taşır, tohum varsa yeniden eker",
+      "Sulama kuyusu ve araba istasyonu her adada yalnızca birer tane yapılabilir"
      ]
     },
     "it": {
-     "title": "Frontier workshops and carts",
+     "title": "Officine e carri della frontiera",
      "items": [
-      "Frontier facility slots grew from 4 to 6",
-      "Added a frontier mill and winery: load ingredients and they make flour and wine on the isle",
-      "Added a cart station: it hauls ripe crops and stored goods to your warehouse and replants if you have seeds",
-      "Only one irrigation well and one cart station per isle"
+      "Gli spazi per le strutture di frontiera passano da 4 a 6",
+      "Aggiunti mulino e cantina di frontiera: con gli ingredienti producono farina e vino sull'isola",
+      "Nuova stazione dei carri: porta automaticamente in magazzino i raccolti maturi e gli oggetti accumulati, e ripianta se ci sono semi",
+      "Solo un pozzo di irrigazione e una stazione dei carri per isola"
      ]
     },
     "pl": {
-     "title": "Frontier workshops and carts",
+     "title": "Warsztaty i wozy na pograniczu",
      "items": [
-      "Frontier facility slots grew from 4 to 6",
-      "Added a frontier mill and winery: load ingredients and they make flour and wine on the isle",
-      "Added a cart station: it hauls ripe crops and stored goods to your warehouse and replants if you have seeds",
-      "Only one irrigation well and one cart station per isle"
+      "Miejsc na budynki pogranicza jest teraz 6 zamiast 4",
+      "Dodano młyn i winiarnię na pograniczu: wrzuć składniki, a na wyspie powstaną mąka i wino",
+      "Nowa stacja wozów: sama wozi dojrzałe plony i zebrane przedmioty do magazynu, a jeśli są nasiona, sadzi ponownie",
+      "Tylko jedną studnię nawadniającą i jedną stację wozów na wyspę"
      ]
     },
     "ar": {
-     "title": "Frontier workshops and carts",
+     "title": "ورش وعربات المستوطنات الحدودية",
      "items": [
-      "Frontier facility slots grew from 4 to 6",
-      "Added a frontier mill and winery: load ingredients and they make flour and wine on the isle",
-      "Added a cart station: it hauls ripe crops and stored goods to your warehouse and replants if you have seeds",
-      "Only one irrigation well and one cart station per isle"
+      "ارتفعت خانات منشآت الحدود من 4 إلى 6",
+      "إضافة طاحونة ومعصرة نبيذ للحدود: ضع المكونات فيها لتنتج الدقيق والنبيذ في الجزيرة",
+      "إضافة محطة عربات: تنقل المحاصيل الناضجة والأشياء المجمعة إلى المخزن تلقائيًا، وتعيد الزراعة إذا توفرت البذور",
+      "لا يمكن بناء سوى بئر ري واحدة ومحطة عربات واحدة في كل جزيرة"
      ]
     }
    }
@@ -1120,113 +1120,113 @@
      ]
     },
     "ja": {
-     "title": "Medieval villages and islanders",
+     "title": "中世の町と島民",
      "items": [
-      "Houses, markets, harbor buildings, manors, towers and chapels redrawn in a medieval European style",
-      "Buildings on the home island now have timber frames, stone bases and steep tiled roofs",
-      "The mill and lighthouse are now built of stone",
-      "Every isle now has villagers such as farmers, fishers, smiths and monks walking around",
-      "Walk up and press E to hear what they say about the isle"
+      "家、市場、港の建物、邸宅、塔、礼拝堂を中世ヨーロッパ風に描き直した",
+      "始まりの島の家と工房も、木組みの骨組み、石の土台、急勾配の瓦屋根に変わった",
+      "製粉所と灯台は石積みの姿に変わった",
+      "島ごとに農夫、漁師、鍛冶屋、修道士などの島民が歩き回る",
+      "島民に近づいてEを押すと、島の話を聞かせてくれる"
      ]
     },
     "es": {
-     "title": "Medieval villages and islanders",
+     "title": "Pueblos medievales y habitantes",
      "items": [
-      "Houses, markets, harbor buildings, manors, towers and chapels redrawn in a medieval European style",
-      "Buildings on the home island now have timber frames, stone bases and steep tiled roofs",
-      "The mill and lighthouse are now built of stone",
-      "Every isle now has villagers such as farmers, fishers, smiths and monks walking around",
-      "Walk up and press E to hear what they say about the isle"
+      "Casas, mercados, edificios portuarios, mansiones, torres y capillas, redibujados al estilo medieval europeo",
+      "Las casas y talleres de la isla inicial ahora tienen armazón de madera, base de piedra y tejados empinados",
+      "El molino y el faro ahora están construidos con piedra",
+      "En cada isla deambulan campesinos, pescadores, herreros y monjes",
+      "Acércate a un habitante y pulsa E para escuchar historias de la isla"
      ]
     },
     "fr": {
-     "title": "Medieval villages and islanders",
+     "title": "Villages médiévaux et habitants",
      "items": [
-      "Houses, markets, harbor buildings, manors, towers and chapels redrawn in a medieval European style",
-      "Buildings on the home island now have timber frames, stone bases and steep tiled roofs",
-      "The mill and lighthouse are now built of stone",
-      "Every isle now has villagers such as farmers, fishers, smiths and monks walking around",
-      "Walk up and press E to hear what they say about the isle"
+      "Maisons, marchés, bâtiments portuaires, manoirs, tours et chapelles redessinés dans le style médiéval européen",
+      "Les maisons et ateliers de l'île de départ ont maintenant une ossature en bois, un soubassement en pierre et des toits en tuiles pentus",
+      "Le moulin et le phare sont désormais en pierre",
+      "Chaque île compte désormais des paysans, pêcheurs, forgerons et moines qui se promènent",
+      "Approchez-vous d'un habitant et appuyez sur E pour entendre une histoire de l'île"
      ]
     },
     "de": {
-     "title": "Medieval villages and islanders",
+     "title": "Mittelalterliche Dörfer und Bewohner",
      "items": [
-      "Houses, markets, harbor buildings, manors, towers and chapels redrawn in a medieval European style",
-      "Buildings on the home island now have timber frames, stone bases and steep tiled roofs",
-      "The mill and lighthouse are now built of stone",
-      "Every isle now has villagers such as farmers, fishers, smiths and monks walking around",
-      "Walk up and press E to hear what they say about the isle"
+      "Häuser, Märkte, Hafengebäude, Herrenhäuser, Türme und Kapellen neu im mittelalterlich-europäischen Stil gezeichnet",
+      "Häuser und Werkstätten der Startinsel haben jetzt Fachwerk, Steinsockel und steile Ziegeldächer",
+      "Mühle und Leuchtturm sind jetzt aus Stein gemauert",
+      "Auf jeder Insel laufen Bauern, Fischer, Schmiede und Mönche umher",
+      "Geh zu einem Bewohner und drücke E, um Geschichten der Insel zu hören"
      ]
     },
     "zh": {
-     "title": "Medieval villages and islanders",
+     "title": "中世村镇与岛民",
      "items": [
-      "Houses, markets, harbor buildings, manors, towers and chapels redrawn in a medieval European style",
-      "Buildings on the home island now have timber frames, stone bases and steep tiled roofs",
-      "The mill and lighthouse are now built of stone",
-      "Every isle now has villagers such as farmers, fishers, smiths and monks walking around",
-      "Walk up and press E to hear what they say about the isle"
+      "房屋、市场、港口建筑、宅邸、塔楼和礼拜堂，重绘为中世纪欧洲风格",
+      "起始岛上的房屋和工坊也改为木结构、石砌底座与陡峭的瓦屋顶",
+      "磨坊和灯塔改为石砌外观",
+      "每座岛上都有农夫、渔夫、铁匠、修士等居民四处走动",
+      "走近居民按 E，即可听到岛上的故事"
      ]
     },
     "pt": {
-     "title": "Medieval villages and islanders",
+     "title": "Vilas medievais e moradores",
      "items": [
-      "Houses, markets, harbor buildings, manors, towers and chapels redrawn in a medieval European style",
-      "Buildings on the home island now have timber frames, stone bases and steep tiled roofs",
-      "The mill and lighthouse are now built of stone",
-      "Every isle now has villagers such as farmers, fishers, smiths and monks walking around",
-      "Walk up and press E to hear what they say about the isle"
+      "Casas, mercados, prédios do porto, mansões, torres e capelas redesenhados em estilo medieval europeu",
+      "As casas e oficinas da ilha inicial agora têm estrutura de madeira, base de pedra e telhados íngremes de telha",
+      "O moinho e o farol agora são de pedra",
+      "Em cada ilha circulam agricultores, pescadores, ferreiros e monges",
+      "Chegue perto de um morador e aperte E para ouvir histórias da ilha"
      ]
     },
     "ru": {
-     "title": "Medieval villages and islanders",
+     "title": "Средневековые деревни и жители",
      "items": [
-      "Houses, markets, harbor buildings, manors, towers and chapels redrawn in a medieval European style",
-      "Buildings on the home island now have timber frames, stone bases and steep tiled roofs",
-      "The mill and lighthouse are now built of stone",
-      "Every isle now has villagers such as farmers, fishers, smiths and monks walking around",
-      "Walk up and press E to hear what they say about the isle"
+      "Дома, рынки, портовые здания, особняки, башни и часовни перерисованы в средневековом европейском стиле",
+      "Дома и мастерские стартового острова теперь с деревянным каркасом, каменным цоколем и крутыми черепичными крышами",
+      "Мельница и маяк теперь выложены из камня",
+      "На каждом острове ходят крестьяне, рыбаки, кузнецы и монахи",
+      "Подойдите к жителю и нажмите E, чтобы услышать историю острова"
      ]
     },
     "tr": {
-     "title": "Medieval villages and islanders",
+     "title": "Ortaçağ köyleri ve sakinler",
      "items": [
-      "Houses, markets, harbor buildings, manors, towers and chapels redrawn in a medieval European style",
-      "Buildings on the home island now have timber frames, stone bases and steep tiled roofs",
-      "The mill and lighthouse are now built of stone",
-      "Every isle now has villagers such as farmers, fishers, smiths and monks walking around",
-      "Walk up and press E to hear what they say about the isle"
+      "Evler, pazarlar, liman binaları, konaklar, kuleler ve şapeller ortaçağ Avrupa tarzında yeniden çizildi",
+      "Başlangıç adasındaki evler ve atölyeler artık ahşap iskeletli, taş tabanlı ve dik kiremit çatılı",
+      "Değirmen ve deniz feneri artık taştan örülmüş görünümde",
+      "Her adada çiftçi, balıkçı, demirci ve keşiş gibi sakinler dolaşıyor",
+      "Bir sakine yaklaşıp E tuşuna basarak ada hakkında bir hikâye dinle"
      ]
     },
     "it": {
-     "title": "Medieval villages and islanders",
+     "title": "Villaggi medievali e isolani",
      "items": [
-      "Houses, markets, harbor buildings, manors, towers and chapels redrawn in a medieval European style",
-      "Buildings on the home island now have timber frames, stone bases and steep tiled roofs",
-      "The mill and lighthouse are now built of stone",
-      "Every isle now has villagers such as farmers, fishers, smiths and monks walking around",
-      "Walk up and press E to hear what they say about the isle"
+      "Case, mercati, edifici portuali, ville, torri e cappelle ridisegnati in stile medievale europeo",
+      "Case e officine dell'isola iniziale ora hanno struttura in legno, base in pietra e tetti di tegole ripidi",
+      "Il mulino e il faro ora sono in pietra",
+      "Su ogni isola si aggirano contadini, pescatori, fabbri e monaci",
+      "Avvicinati a un abitante e premi E per sentire una storia dell'isola"
      ]
     },
     "pl": {
-     "title": "Medieval villages and islanders",
+     "title": "Średniowieczne wioski i mieszkańcy",
      "items": [
-      "Houses, markets, harbor buildings, manors, towers and chapels redrawn in a medieval European style",
-      "Buildings on the home island now have timber frames, stone bases and steep tiled roofs",
-      "The mill and lighthouse are now built of stone",
-      "Every isle now has villagers such as farmers, fishers, smiths and monks walking around",
-      "Walk up and press E to hear what they say about the isle"
+      "Domy, targi, budynki portowe, dwory, wieże i kaplice narysowane na nowo w średniowiecznym stylu europejskim",
+      "Domy i warsztaty na wyspie startowej mają teraz drewniany szkielet, kamienną podmurówkę i strome dachy z dachówki",
+      "Młyn i latarnia są teraz murowane z kamienia",
+      "Na każdej wyspie chodzą rolnicy, rybacy, kowale i mnisi",
+      "Podejdź do mieszkańca i naciśnij E, by usłyszeć opowieść o wyspie"
      ]
     },
     "ar": {
-     "title": "Medieval villages and islanders",
+     "title": "قرى قروسطية وسكان",
      "items": [
-      "Houses, markets, harbor buildings, manors, towers and chapels redrawn in a medieval European style",
-      "Buildings on the home island now have timber frames, stone bases and steep tiled roofs",
-      "The mill and lighthouse are now built of stone",
-      "Every isle now has villagers such as farmers, fishers, smiths and monks walking around",
-      "Walk up and press E to hear what they say about the isle"
+      "رسم جديد للبيوت والأسواق ومباني الميناء والقصور والأبراج والكنائس بأسلوب أوروبا في القرون الوسطى",
+      "صارت بيوت الجزيرة الأولى وورشها بهياكل خشبية وقواعد حجرية وأسقف قرميدية شديدة الانحدار",
+      "صارت الطاحونة والمنارة مبنيّتين من الحجر",
+      "على كل جزيرة يتجول فلاحون وصيادون وحدادون ورهبان",
+      "اقترب من أحد السكان واضغط E لتسمع حكاية عن الجزيرة"
      ]
     }
    }
@@ -1256,124 +1256,124 @@
      ]
     },
     "ja": {
-     "title": "Settling other isles",
+     "title": "他の島の開拓",
      "items": [
-      "Every isle you land on now has 6 frontier fields and 4 frontier facility slots",
-      "Till a frontier field for 400 g and plant seeds; it keeps growing while you are away",
-      "Walk over a ripe field to harvest it automatically",
-      "4 facilities: gatherer hut, irrigation well, grazing yard, market stall",
-      "The hut gathers island goods, the yard wool, the stall coins",
-      "An irrigation well makes crops on that isle grow 30% faster"
+      "上陸した島ごとに、開拓畑6枠と開拓施設4枠ができる",
+      "開拓畑は1枠400金貨で耕して種をまくと、島を離れている間も育つ",
+      "畑の上を歩くと、実った作物を自動で収穫",
+      "施設4種を追加: 採集小屋、灌漑井戸、放牧場、市場の露店",
+      "採集小屋は島の特産品、放牧場は羊毛、市場の露店は金貨を溜める",
+      "灌漑井戸を建てると、その島の畑の作物が30%早く育つ"
      ]
     },
     "es": {
-     "title": "Settling other isles",
+     "title": "Colonizar otras islas",
      "items": [
-      "Every isle you land on now has 6 frontier fields and 4 frontier facility slots",
-      "Till a frontier field for 400 g and plant seeds; it keeps growing while you are away",
-      "Walk over a ripe field to harvest it automatically",
-      "4 facilities: gatherer hut, irrigation well, grazing yard, market stall",
-      "The hut gathers island goods, the yard wool, the stall coins",
-      "An irrigation well makes crops on that isle grow 30% faster"
+      "Cada isla en la que desembarcas tiene 6 campos de frontera y 4 instalaciones de frontera",
+      "Un campo de frontera cuesta 400 monedas de oro para labrar; al sembrar, sigue creciendo aunque estés fuera de la isla",
+      "Al caminar sobre un campo maduro se cosecha automáticamente",
+      "4 instalaciones nuevas: cabaña de recolección, pozo de riego, pastizal y puesto de mercado",
+      "La cabaña recolecta productos de la isla, el pastizal lana y el puesto de mercado acumula oro",
+      "Un pozo de riego hace que los cultivos de esa isla crezcan un 30% más rápido"
      ]
     },
     "fr": {
-     "title": "Settling other isles",
+     "title": "Coloniser d'autres îles",
      "items": [
-      "Every isle you land on now has 6 frontier fields and 4 frontier facility slots",
-      "Till a frontier field for 400 g and plant seeds; it keeps growing while you are away",
-      "Walk over a ripe field to harvest it automatically",
-      "4 facilities: gatherer hut, irrigation well, grazing yard, market stall",
-      "The hut gathers island goods, the yard wool, the stall coins",
-      "An irrigation well makes crops on that isle grow 30% faster"
+      "Chaque île où vous accostez dispose de 6 champs et de 4 installations de frontière",
+      "Un champ de frontière se défriche pour 400 pièces d'or ; une fois semé, il continue de pousser même quand vous êtes absent",
+      "Marcher sur un champ mûr le récolte automatiquement",
+      "4 installations ajoutées : cabane de cueillette, puits d'irrigation, enclos de pâture et étal de marché",
+      "La cabane récolte les produits de l'île, l'enclos la laine, l'étal accumule les pièces d'or",
+      "Un puits d'irrigation fait pousser les cultures de cette île 30 % plus vite"
      ]
     },
     "de": {
-     "title": "Settling other isles",
+     "title": "Andere Inseln besiedeln",
      "items": [
-      "Every isle you land on now has 6 frontier fields and 4 frontier facility slots",
-      "Till a frontier field for 400 g and plant seeds; it keeps growing while you are away",
-      "Walk over a ripe field to harvest it automatically",
-      "4 facilities: gatherer hut, irrigation well, grazing yard, market stall",
-      "The hut gathers island goods, the yard wool, the stall coins",
-      "An irrigation well makes crops on that isle grow 30% faster"
+      "Auf jeder betretenen Insel entstehen 6 Grenzfelder und 4 Grenzanlagen",
+      "Ein Grenzfeld kostet 400 Gold zum Umpflügen; nach der Aussaat wächst es weiter, auch wenn du die Insel verlässt",
+      "Wer über ein reifes Feld läuft, erntet es automatisch",
+      "4 neue Anlagen: Sammelhütte, Bewässerungsbrunnen, Weide und Marktstand",
+      "Die Sammelhütte sammelt Inselwaren, die Weide Wolle, der Marktstand Gold",
+      "Ein Bewässerungsbrunnen lässt die Ernte auf dieser Insel um 30 % schneller wachsen"
      ]
     },
     "zh": {
-     "title": "Settling other isles",
+     "title": "开拓其他岛屿",
      "items": [
-      "Every isle you land on now has 6 frontier fields and 4 frontier facility slots",
-      "Till a frontier field for 400 g and plant seeds; it keeps growing while you are away",
-      "Walk over a ripe field to harvest it automatically",
-      "4 facilities: gatherer hut, irrigation well, grazing yard, market stall",
-      "The hut gathers island goods, the yard wool, the stall coins",
-      "An irrigation well makes crops on that isle grow 30% faster"
+      "每座登陆的岛屿都会出现 6 块开拓田地和 4 个开拓设施",
+      "开拓田地每块 400 金币开垦，播种后即使离开岛屿也会继续生长",
+      "走过成熟的田地即可自动收获",
+      "新增 4 种设施：采集小屋、灌溉井、放牧场、集市摊位",
+      "采集小屋收集岛上特产，放牧场收集羊毛，集市摊位收集金币",
+      "建造灌溉井后，该岛田地的作物生长速度提高 30%"
      ]
     },
     "pt": {
-     "title": "Settling other isles",
+     "title": "Colonizando outras ilhas",
      "items": [
-      "Every isle you land on now has 6 frontier fields and 4 frontier facility slots",
-      "Till a frontier field for 400 g and plant seeds; it keeps growing while you are away",
-      "Walk over a ripe field to harvest it automatically",
-      "4 facilities: gatherer hut, irrigation well, grazing yard, market stall",
-      "The hut gathers island goods, the yard wool, the stall coins",
-      "An irrigation well makes crops on that isle grow 30% faster"
+      "Cada ilha em que você desembarca ganha 6 campos e 4 instalações da fronteira",
+      "Um campo da fronteira custa 400 de ouro para ser arado; plantado, continua crescendo mesmo quando você está longe da ilha",
+      "Ao andar sobre um campo maduro, a colheita é automática",
+      "4 instalações novas: cabana de coleta, poço de irrigação, pasto e barraca de mercado",
+      "A cabana guarda produtos da ilha, o pasto guarda lã e a barraca guarda ouro",
+      "Um poço de irrigação faz as colheitas da ilha crescerem 30% mais rápido"
      ]
     },
     "ru": {
-     "title": "Settling other isles",
+     "title": "Освоение других островов",
      "items": [
-      "Every isle you land on now has 6 frontier fields and 4 frontier facility slots",
-      "Till a frontier field for 400 g and plant seeds; it keeps growing while you are away",
-      "Walk over a ripe field to harvest it automatically",
-      "4 facilities: gatherer hut, irrigation well, grazing yard, market stall",
-      "The hut gathers island goods, the yard wool, the stall coins",
-      "An irrigation well makes crops on that isle grow 30% faster"
+      "На каждом острове, где вы высадились, появляются 6 полей и 4 постройки на освоенных землях",
+      "Поле на освоенных землях вспахивается за 400 золотых, и посеянный урожай растёт даже тогда, когда вы покидаете остров",
+      "Пройдя по созревшему полю, вы автоматически соберёте урожай",
+      "Добавлено 4 постройки: сборная хижина, ирригационный колодец, загон для скота и рыночный прилавок",
+      "Сборная хижина копит товары острова, загон — шерсть, а прилавок — золото",
+      "Ирригационный колодец ускоряет рост урожая на полях этого острова на 30%"
      ]
     },
     "tr": {
-     "title": "Settling other isles",
+     "title": "Diğer adaları geliştirmek",
      "items": [
-      "Every isle you land on now has 6 frontier fields and 4 frontier facility slots",
-      "Till a frontier field for 400 g and plant seeds; it keeps growing while you are away",
-      "Walk over a ripe field to harvest it automatically",
-      "4 facilities: gatherer hut, irrigation well, grazing yard, market stall",
-      "The hut gathers island goods, the yard wool, the stall coins",
-      "An irrigation well makes crops on that isle grow 30% faster"
+      "Karaya çıktığın her adada 6 sınır tarlası ve 4 sınır tesisi oluşur",
+      "Bir sınır tarlası 400 altına sürülür; ekilince sen adadan uzaktayken bile büyümeye devam eder",
+      "Olgunlaşmış tarlanın üzerinde yürüyünce ürün otomatik toplanır",
+      "4 tesis eklendi: toplayıcı kulübe, sulama kuyusu, otlak ve pazar tezgâhı",
+      "Toplayıcı kulübe ada ürünlerini, otlak yünü, pazar tezgâhı da altını biriktirir",
+      "Sulama kuyusu, o adadaki tarlaların ürünlerini %30 daha hızlı büyütür"
      ]
     },
     "it": {
-     "title": "Settling other isles",
+     "title": "Colonizzare altre isole",
      "items": [
-      "Every isle you land on now has 6 frontier fields and 4 frontier facility slots",
-      "Till a frontier field for 400 g and plant seeds; it keeps growing while you are away",
-      "Walk over a ripe field to harvest it automatically",
-      "4 facilities: gatherer hut, irrigation well, grazing yard, market stall",
-      "The hut gathers island goods, the yard wool, the stall coins",
-      "An irrigation well makes crops on that isle grow 30% faster"
+      "Ogni isola su cui sbarchi ha 6 campi e 4 strutture di frontiera",
+      "Un campo di frontiera si dissoda a 400 monete d'oro; seminato, continua a crescere anche quando sei lontano dall'isola",
+      "Camminando su un campo maturo lo raccogli automaticamente",
+      "Aggiunte 4 strutture: capanna di raccolta, pozzo di irrigazione, pascolo e bancarella del mercato",
+      "La capanna raccoglie i prodotti dell'isola, il pascolo la lana, la bancarella l'oro",
+      "Un pozzo di irrigazione fa crescere i raccolti dell'isola del 30% più in fretta"
      ]
     },
     "pl": {
-     "title": "Settling other isles",
+     "title": "Zasiedlanie innych wysp",
      "items": [
-      "Every isle you land on now has 6 frontier fields and 4 frontier facility slots",
-      "Till a frontier field for 400 g and plant seeds; it keeps growing while you are away",
-      "Walk over a ripe field to harvest it automatically",
-      "4 facilities: gatherer hut, irrigation well, grazing yard, market stall",
-      "The hut gathers island goods, the yard wool, the stall coins",
-      "An irrigation well makes crops on that isle grow 30% faster"
+      "Na każdej wyspie, na którą wylądujesz, powstaje 6 pól i 4 budynki pogranicza",
+      "Pole na pograniczu kosztuje 400 złotych do uprawy; po zasianiu rośnie nawet wtedy, gdy jesteś poza wyspą",
+      "Przejście po dojrzałym polu automatycznie zbiera plony",
+      "4 nowe budynki: chata zbieracza, studnia nawadniająca, zagroda na pastwisko i stragan targowy",
+      "Chata gromadzi produkty wyspy, zagroda wełnę, a stragan złoto",
+      "Studnia nawadniająca przyspiesza wzrost plonów na polach tej wyspy o 30%"
      ]
     },
     "ar": {
-     "title": "Settling other isles",
+     "title": "استيطان جزر أخرى",
      "items": [
-      "Every isle you land on now has 6 frontier fields and 4 frontier facility slots",
-      "Till a frontier field for 400 g and plant seeds; it keeps growing while you are away",
-      "Walk over a ripe field to harvest it automatically",
-      "4 facilities: gatherer hut, irrigation well, grazing yard, market stall",
-      "The hut gathers island goods, the yard wool, the stall coins",
-      "An irrigation well makes crops on that isle grow 30% faster"
+      "تظهر على كل جزيرة ترسو عليها 6 حقول و4 منشآت حدودية",
+      "تُحرث قطعة الحقل الحدودية بـ400 ذهبة، وتستمر في النمو بعد زراعة بذورها حتى وأنت بعيد عن الجزيرة",
+      "المشي فوق حقل ناضج يحصد محصوله تلقائيًا",
+      "4 منشآت جديدة: كوخ الجمع، وبئر الري، ومرعى، وكشك السوق",
+      "يجمع الكوخ منتجات الجزيرة، والمرعى الصوف، والكشك الذهب",
+      "تجعل بئر الري محاصيل حقول تلك الجزيرة تنمو أسرع بنسبة 30%"
      ]
     }
    }
@@ -1393,69 +1393,69 @@
      ]
     },
     "ja": {
-     "title": "Profile window cleanup",
+     "title": "プロフィール画面の整理",
      "items": [
-      "Removed the customize button from the in-game profile window"
+      "ゲーム内のプロフィール画面から「飾る」ボタンを削除"
      ]
     },
     "es": {
-     "title": "Profile window cleanup",
+     "title": "Ajustes de la ventana de perfil",
      "items": [
-      "Removed the customize button from the in-game profile window"
+      "Eliminado el botón de personalizar de la ventana de perfil dentro del juego"
      ]
     },
     "fr": {
-     "title": "Profile window cleanup",
+     "title": "Nettoyage de la fenêtre de profil",
      "items": [
-      "Removed the customize button from the in-game profile window"
+      "Bouton de personnalisation supprimé de la fenêtre de profil en jeu"
      ]
     },
     "de": {
-     "title": "Profile window cleanup",
+     "title": "Profilfenster aufgeräumt",
      "items": [
-      "Removed the customize button from the in-game profile window"
+      "Der Anpassen-Knopf im Profilfenster des Spiels wurde entfernt"
      ]
     },
     "zh": {
-     "title": "Profile window cleanup",
+     "title": "整理资料窗口",
      "items": [
-      "Removed the customize button from the in-game profile window"
+      "删除游戏内资料窗口中的“装扮”按钮"
      ]
     },
     "pt": {
-     "title": "Profile window cleanup",
+     "title": "Organização da janela de perfil",
      "items": [
-      "Removed the customize button from the in-game profile window"
+      "Botão de personalizar removido da janela de perfil no jogo"
      ]
     },
     "ru": {
-     "title": "Profile window cleanup",
+     "title": "Окно профиля: порядок",
      "items": [
-      "Removed the customize button from the in-game profile window"
+      "Убрана кнопка «Оформить» из окна профиля в игре"
      ]
     },
     "tr": {
-     "title": "Profile window cleanup",
+     "title": "Profil penceresi düzenlemesi",
      "items": [
-      "Removed the customize button from the in-game profile window"
+      "Oyun içi profil penceresindeki özelleştirme düğmesi kaldırıldı"
      ]
     },
     "it": {
-     "title": "Profile window cleanup",
+     "title": "Pulizia della finestra profilo",
      "items": [
-      "Removed the customize button from the in-game profile window"
+      "Rimosso il pulsante di personalizzazione dalla finestra profilo in gioco"
      ]
     },
     "pl": {
-     "title": "Profile window cleanup",
+     "title": "Porządki w oknie profilu",
      "items": [
-      "Removed the customize button from the in-game profile window"
+      "Usunięto przycisk personalizacji z okna profilu w grze"
      ]
     },
     "ar": {
-     "title": "Profile window cleanup",
+     "title": "تنظيم نافذة الملف الشخصي",
      "items": [
-      "Removed the customize button from the in-game profile window"
+      "أُزيل زر التخصيص من نافذة الملف الشخصي داخل اللعبة"
      ]
     }
    }
@@ -1477,80 +1477,80 @@
      ]
     },
     "ja": {
-     "title": "Fix old build showing up",
+     "title": "古いビルドが表示される問題を修正",
      "items": [
-      "Play on the site now opens a build-numbered address",
-      "If an old build loads from cache, the latest build is checked and reloaded once"
+      "サイトの「すぐプレイ」はビルド番号付きのアドレスで開く",
+      "古いビルドがキャッシュから表示された場合、最新ビルドを確認して自動で一度読み直す"
      ]
     },
     "es": {
-     "title": "Fix old build showing up",
+     "title": "Arreglado: aparecía una versión antigua",
      "items": [
-      "Play on the site now opens a build-numbered address",
-      "If an old build loads from cache, the latest build is checked and reloaded once"
+      "Jugar desde el sitio ahora abre una dirección con el número de compilación",
+      "Si una versión antigua se carga desde la caché, se comprueba la más reciente y se recarga una vez automáticamente"
      ]
     },
     "fr": {
-     "title": "Fix old build showing up",
+     "title": "Correction de l'affichage d'une ancienne version",
      "items": [
-      "Play on the site now opens a build-numbered address",
-      "If an old build loads from cache, the latest build is checked and reloaded once"
+      "Le bouton « Jouer maintenant » du site ouvre une adresse avec le numéro de build",
+      "Si une ancienne version se charge depuis le cache, la plus récente est vérifiée et rechargée une fois automatiquement"
      ]
     },
     "de": {
-     "title": "Fix old build showing up",
+     "title": "Problem mit alter Version behoben",
      "items": [
-      "Play on the site now opens a build-numbered address",
-      "If an old build loads from cache, the latest build is checked and reloaded once"
+      "„Sofort spielen“ auf der Website öffnet eine Adresse mit Build-Nummer",
+      "Lädt eine alte Version aus dem Cache, wird die neueste geprüft und einmal automatisch neu geladen"
      ]
     },
     "zh": {
-     "title": "Fix old build showing up",
+     "title": "修复旧版本显示的问题",
      "items": [
-      "Play on the site now opens a build-numbered address",
-      "If an old build loads from cache, the latest build is checked and reloaded once"
+      "网站上的“直接开玩”会打开带构建号的地址",
+      "若旧版本从缓存加载，会检查最新版本并自动重新加载一次"
      ]
     },
     "pt": {
-     "title": "Fix old build showing up",
+     "title": "Corrigido o problema de versão antiga aparecer",
      "items": [
-      "Play on the site now opens a build-numbered address",
-      "If an old build loads from cache, the latest build is checked and reloaded once"
+      "O \"jogar agora\" do site abre um endereço com o número da build",
+      "Se uma versão antiga carregar do cache, a versão mais recente é verificada e recarregada automaticamente uma vez"
      ]
     },
     "ru": {
-     "title": "Fix old build showing up",
+     "title": "Исправлено: открывалась старая версия",
      "items": [
-      "Play on the site now opens a build-numbered address",
-      "If an old build loads from cache, the latest build is checked and reloaded once"
+      "«Играть сразу» на сайте открывает адрес с номером сборки",
+      "Если старая версия загрузилась из кэша, проверяется последняя сборка и страница один раз автоматически перезагружается"
      ]
     },
     "tr": {
-     "title": "Fix old build showing up",
+     "title": "Eski sürümün açılma sorunu düzeltildi",
      "items": [
-      "Play on the site now opens a build-numbered address",
-      "If an old build loads from cache, the latest build is checked and reloaded once"
+      "Sitedeki hemen oyna bağlantısı, derleme numarası içeren bir adres açar",
+      "Eski sürüm önbellekten açılırsa en son sürüm kontrol edilir ve bir kez otomatik yeniden yüklenir"
      ]
     },
     "it": {
-     "title": "Fix old build showing up",
+     "title": "Corretto il problema della vecchia versione che appariva",
      "items": [
-      "Play on the site now opens a build-numbered address",
-      "If an old build loads from cache, the latest build is checked and reloaded once"
+      "Gioca subito sul sito apre un indirizzo con il numero di build",
+      "Se una vecchia versione si carica dalla cache, si controlla la più recente e si ricarica automaticamente una volta"
      ]
     },
     "pl": {
-     "title": "Fix old build showing up",
+     "title": "Naprawiono wyświetlanie starej wersji",
      "items": [
-      "Play on the site now opens a build-numbered address",
-      "If an old build loads from cache, the latest build is checked and reloaded once"
+      "„Graj od razu” na stronie otwiera adres z numerem wersji",
+      "Jeśli stara wersja uruchomi się z pamięci podręcznej, sprawdzana jest najnowsza i automatycznie ładowana ponownie raz"
      ]
     },
     "ar": {
-     "title": "Fix old build showing up",
+     "title": "إصلاح ظهور نسخة قديمة",
      "items": [
-      "Play on the site now opens a build-numbered address",
-      "If an old build loads from cache, the latest build is checked and reloaded once"
+      "زر \"العب الآن\" في الموقع يفتح عنوانًا يتضمن رقم البناء",
+      "إذا حُمّلت نسخة قديمة من الذاكرة المؤقتة، يُفحص أحدث إصدار ويُعاد تحميله تلقائيًا مرة واحدة"
      ]
     }
    }
@@ -1572,80 +1572,80 @@
      ]
     },
     "ja": {
-     "title": "Old build guard",
+     "title": "古いバージョンの記録を防止",
      "items": [
-      "Wealth ranking updates now include the build number",
-      "After a new version, an old window stops updating ranking and goals and asks for a refresh"
+      "資産ランキングに送る値に、ビルド番号も一緒に送信",
+      "新バージョン公開後、古いバージョンの画面はランキングや実績を更新せず、再読み込みを案内"
      ]
     },
     "es": {
-     "title": "Old build guard",
+     "title": "Bloqueo de versiones antiguas",
      "items": [
-      "Wealth ranking updates now include the build number",
-      "After a new version, an old window stops updating ranking and goals and asks for a refresh"
+      "Los datos de la clasificación de riqueza ahora incluyen el número de compilación",
+      "Tras una nueva versión, la ventana antigua no sube el ranking ni los logros y pide recargar"
      ]
     },
     "fr": {
-     "title": "Old build guard",
+     "title": "Blocage des anciennes versions",
      "items": [
-      "Wealth ranking updates now include the build number",
-      "After a new version, an old window stops updating ranking and goals and asks for a refresh"
+      "Les données envoyées au classement de fortune incluent désormais le numéro de build",
+      "Après une nouvelle version, l'ancienne fenêtre n'envoie plus classement ni succès et invite à actualiser"
      ]
     },
     "de": {
-     "title": "Old build guard",
+     "title": "Schutz vor alten Versionen",
      "items": [
-      "Wealth ranking updates now include the build number",
-      "After a new version, an old window stops updating ranking and goals and asks for a refresh"
+      "Die an die Vermögensrangliste gesendeten Daten enthalten jetzt die Build-Nummer",
+      "Nach einer neuen Version meldet das alte Fenster keine Rangliste und Erfolge mehr und bittet um Neuladen"
      ]
     },
     "zh": {
-     "title": "Old build guard",
+     "title": "阻止旧版本记录",
      "items": [
-      "Wealth ranking updates now include the build number",
-      "After a new version, an old window stops updating ranking and goals and asks for a refresh"
+      "发送到财富排行榜的数据现在会附带构建号",
+      "发布新版本后，旧版本窗口不再更新排行和成就，并提示刷新"
      ]
     },
     "pt": {
-     "title": "Old build guard",
+     "title": "Bloqueio de versões antigas",
      "items": [
-      "Wealth ranking updates now include the build number",
-      "After a new version, an old window stops updating ranking and goals and asks for a refresh"
+      "Os dados enviados ao ranking de riqueza agora incluem o número da build",
+      "Depois de uma nova versão, a janela antiga não atualiza ranking nem conquistas e pede para atualizar"
      ]
     },
     "ru": {
-     "title": "Old build guard",
+     "title": "Защита от старых версий",
      "items": [
-      "Wealth ranking updates now include the build number",
-      "After a new version, an old window stops updating ranking and goals and asks for a refresh"
+      "В данные для рейтинга богатства теперь добавлен номер сборки",
+      "После выхода новой версии старое окно не обновляет рейтинг и достижения и просит обновить страницу"
      ]
     },
     "tr": {
-     "title": "Old build guard",
+     "title": "Eski sürüm kayıtlarının engellenmesi",
      "items": [
-      "Wealth ranking updates now include the build number",
-      "After a new version, an old window stops updating ranking and goals and asks for a refresh"
+      "Servet sıralamasına gönderilen veriye derleme numarası da eklenir",
+      "Yeni sürüm çıktıktan sonra eski pencere sıralama ve başarımları güncellemez, yenilemeyi önerir"
      ]
     },
     "it": {
-     "title": "Old build guard",
+     "title": "Blocco delle vecchie versioni",
      "items": [
-      "Wealth ranking updates now include the build number",
-      "After a new version, an old window stops updating ranking and goals and asks for a refresh"
+      "I dati inviati alla classifica della ricchezza ora includono il numero di build",
+      "Dopo una nuova versione, la vecchia finestra non aggiorna classifica e obiettivi e chiede di ricaricare"
      ]
     },
     "pl": {
-     "title": "Old build guard",
+     "title": "Blokada starych wersji",
      "items": [
-      "Wealth ranking updates now include the build number",
-      "After a new version, an old window stops updating ranking and goals and asks for a refresh"
+      "Dane wysyłane do rankingu majątku zawierają teraz numer wersji",
+      "Po wydaniu nowej wersji stare okno nie aktualizuje rankingu ani osiągnięć i prosi o odświeżenie"
      ]
     },
     "ar": {
-     "title": "Old build guard",
+     "title": "منع تسجيل النتائج من النسخ القديمة",
      "items": [
-      "Wealth ranking updates now include the build number",
-      "After a new version, an old window stops updating ranking and goals and asks for a refresh"
+      "تُرسَل مع بيانات ترتيب الثروة رقم البناء أيضًا",
+      "بعد صدور نسخة جديدة، لا تحدّث النافذة القديمة الترتيب والإنجازات بل تطلب التحديث"
      ]
     }
    }
@@ -1665,69 +1665,69 @@
      ]
     },
     "ja": {
-     "title": "No zoom gestures",
+     "title": "拡大ジェスチャーを防止",
      "items": [
-      "Blocked double-tap and pinch zoom gestures on iPhone"
+      "iPhoneでのダブルタップと二本指による拡大ジェスチャーをブロック"
      ]
     },
     "es": {
-     "title": "No zoom gestures",
+     "title": "Sin gestos de zoom",
      "items": [
-      "Blocked double-tap and pinch zoom gestures on iPhone"
+      "En iPhone se bloquean el doble toque y el zoom con dos dedos"
      ]
     },
     "fr": {
-     "title": "No zoom gestures",
+     "title": "Gestes de zoom bloqués",
      "items": [
-      "Blocked double-tap and pinch zoom gestures on iPhone"
+      "Sur iPhone, blocage du double-tap et du pincement"
      ]
     },
     "de": {
-     "title": "No zoom gestures",
+     "title": "Keine Zoom-Gesten",
      "items": [
-      "Blocked double-tap and pinch zoom gestures on iPhone"
+      "Auf dem iPhone werden Doppeltippen und Zwei-Finger-Zoom blockiert"
      ]
     },
     "zh": {
-     "title": "No zoom gestures",
+     "title": "禁止缩放手势",
      "items": [
-      "Blocked double-tap and pinch zoom gestures on iPhone"
+      "iPhone 上屏蔽双击和双指缩放手势"
      ]
     },
     "pt": {
-     "title": "No zoom gestures",
+     "title": "Sem gestos de zoom",
      "items": [
-      "Blocked double-tap and pinch zoom gestures on iPhone"
+      "No iPhone, bloqueio de toque duplo e de zoom com dois dedos"
      ]
     },
     "ru": {
-     "title": "No zoom gestures",
+     "title": "Жесты масштабирования отключены",
      "items": [
-      "Blocked double-tap and pinch zoom gestures on iPhone"
+      "На iPhone заблокированы двойное касание и масштабирование двумя пальцами"
      ]
     },
     "tr": {
-     "title": "No zoom gestures",
+     "title": "Yakınlaştırma hareketleri engellendi",
      "items": [
-      "Blocked double-tap and pinch zoom gestures on iPhone"
+      "iPhone'da çift dokunma ve iki parmakla yakınlaştırma engellendi"
      ]
     },
     "it": {
-     "title": "No zoom gestures",
+     "title": "Niente gesti di zoom",
      "items": [
-      "Blocked double-tap and pinch zoom gestures on iPhone"
+      "Su iPhone bloccati doppio tocco e zoom a due dita"
      ]
     },
     "pl": {
-     "title": "No zoom gestures",
+     "title": "Brak gestów powiększania",
      "items": [
-      "Blocked double-tap and pinch zoom gestures on iPhone"
+      "Na iPhonie zablokowano dwukrotne stuknięcie i powiększanie dwoma palcami"
      ]
     },
     "ar": {
-     "title": "No zoom gestures",
+     "title": "منع إيماءات التكبير",
      "items": [
-      "Blocked double-tap and pinch zoom gestures on iPhone"
+      "حظر النقر المزدوج والتكبير بإصبعين على iPhone"
      ]
     }
    }
@@ -1747,69 +1747,69 @@
      ]
     },
     "ja": {
-     "title": "No double-tap zoom",
+     "title": "ダブルタップ拡大を防止",
      "items": [
-      "Double-tapping the game no longer zooms in"
+      "ゲーム画面をダブルタップしても拡大されなくなりました"
      ]
     },
     "es": {
-     "title": "No double-tap zoom",
+     "title": "Sin zoom al tocar dos veces",
      "items": [
-      "Double-tapping the game no longer zooms in"
+      "Tocar dos veces la pantalla del juego ya no amplía la imagen"
      ]
     },
     "fr": {
-     "title": "No double-tap zoom",
+     "title": "Pas de zoom au double-tap",
      "items": [
-      "Double-tapping the game no longer zooms in"
+      "Un double-tap sur le jeu ne zoome plus"
      ]
     },
     "de": {
-     "title": "No double-tap zoom",
+     "title": "Kein Zoom per Doppeltipp",
      "items": [
-      "Double-tapping the game no longer zooms in"
+      "Doppeltippen auf das Spiel vergrößert nicht mehr"
      ]
     },
     "zh": {
-     "title": "No double-tap zoom",
+     "title": "禁止双击放大",
      "items": [
-      "Double-tapping the game no longer zooms in"
+      "双击游戏画面不再放大"
      ]
     },
     "pt": {
-     "title": "No double-tap zoom",
+     "title": "Sem zoom com toque duplo",
      "items": [
-      "Double-tapping the game no longer zooms in"
+      "Tocar duas vezes na tela do jogo não amplia mais"
      ]
     },
     "ru": {
-     "title": "No double-tap zoom",
+     "title": "Без увеличения двойным касанием",
      "items": [
-      "Double-tapping the game no longer zooms in"
+      "Двойное касание игрового экрана больше не увеличивает изображение"
      ]
     },
     "tr": {
-     "title": "No double-tap zoom",
+     "title": "Çift dokunmayla yakınlaştırma yok",
      "items": [
-      "Double-tapping the game no longer zooms in"
+      "Oyun ekranına çift dokunmak artık yakınlaştırmaz"
      ]
     },
     "it": {
-     "title": "No double-tap zoom",
+     "title": "Niente zoom con doppio tocco",
      "items": [
-      "Double-tapping the game no longer zooms in"
+      "Toccare due volte il gioco non lo ingrandisce più"
      ]
     },
     "pl": {
-     "title": "No double-tap zoom",
+     "title": "Brak powiększania dwukrotnym stuknięciem",
      "items": [
-      "Double-tapping the game no longer zooms in"
+      "Dwukrotne stuknięcie ekranu gry już nie powiększa"
      ]
     },
     "ar": {
-     "title": "No double-tap zoom",
+     "title": "لا تكبير بالنقر المزدوج",
      "items": [
-      "Double-tapping the game no longer zooms in"
+      "لم يعد النقر المزدوج على شاشة اللعبة يكبّرها"
      ]
     }
    }
@@ -1833,91 +1833,91 @@
      ]
     },
     "ja": {
-     "title": "Shared profile window",
+     "title": "共通のプロフィール画面",
      "items": [
-      "Open the same profile card as the hub from the account window",
-      "Isleport stats under the profile card",
-      "Name and profile can be changed on the hub only"
+      "アカウント画面からハブと同じプロフィールカードを開く",
+      "プロフィールカードの下にIsleportの統計を表示",
+      "名前とプロフィールの変更はハブでのみ可能"
      ]
     },
     "es": {
-     "title": "Shared profile window",
+     "title": "Ventana de perfil compartida",
      "items": [
-      "Open the same profile card as the hub from the account window",
-      "Isleport stats under the profile card",
-      "Name and profile can be changed on the hub only"
+      "Desde la ventana de cuenta se abre la misma tarjeta de perfil que en el hub",
+      "Estadísticas de Isleport debajo de la tarjeta de perfil",
+      "Solo se puede cambiar el nombre y el perfil desde el hub"
      ]
     },
     "fr": {
-     "title": "Shared profile window",
+     "title": "Fenêtre de profil commune",
      "items": [
-      "Open the same profile card as the hub from the account window",
-      "Isleport stats under the profile card",
-      "Name and profile can be changed on the hub only"
+      "Ouvrir depuis la fenêtre du compte la même carte de profil que dans le hub",
+      "Statistiques Isleport sous la carte de profil",
+      "Le nom et le profil ne se modifient que dans le hub"
      ]
     },
     "de": {
-     "title": "Shared profile window",
+     "title": "Gemeinsames Profilfenster",
      "items": [
-      "Open the same profile card as the hub from the account window",
-      "Isleport stats under the profile card",
-      "Name and profile can be changed on the hub only"
+      "Im Kontofenster öffnet sich dieselbe Profilkarte wie im Hub",
+      "Isleport-Statistiken unter der Profilkarte",
+      "Name und Profil lassen sich nur im Hub ändern"
      ]
     },
     "zh": {
-     "title": "Shared profile window",
+     "title": "通用资料窗口",
      "items": [
-      "Open the same profile card as the hub from the account window",
-      "Isleport stats under the profile card",
-      "Name and profile can be changed on the hub only"
+      "在账号窗口中打开与大厅相同的资料卡",
+      "资料卡下方显示 Isleport 统计",
+      "名称和资料只能在大厅中修改"
      ]
     },
     "pt": {
-     "title": "Shared profile window",
+     "title": "Janela de perfil compartilhada",
      "items": [
-      "Open the same profile card as the hub from the account window",
-      "Isleport stats under the profile card",
-      "Name and profile can be changed on the hub only"
+      "Abra na janela da conta o mesmo cartão de perfil do hub",
+      "Estatísticas do Isleport abaixo do cartão de perfil",
+      "Nome e perfil só podem ser alterados no hub"
      ]
     },
     "ru": {
-     "title": "Shared profile window",
+     "title": "Общее окно профиля",
      "items": [
-      "Open the same profile card as the hub from the account window",
-      "Isleport stats under the profile card",
-      "Name and profile can be changed on the hub only"
+      "Из окна аккаунта открывается та же карточка профиля, что и в хабе",
+      "Статистика Isleport под карточкой профиля",
+      "Имя и профиль можно менять только в хабе"
      ]
     },
     "tr": {
-     "title": "Shared profile window",
+     "title": "Ortak profil penceresi",
      "items": [
-      "Open the same profile card as the hub from the account window",
-      "Isleport stats under the profile card",
-      "Name and profile can be changed on the hub only"
+      "Hesap penceresinden hub'daki ile aynı profil kartını aç",
+      "Profil kartının altında Isleport istatistikleri",
+      "Ad ve profil yalnızca hub'dan değiştirilebilir"
      ]
     },
     "it": {
-     "title": "Shared profile window",
+     "title": "Finestra profilo condivisa",
      "items": [
-      "Open the same profile card as the hub from the account window",
-      "Isleport stats under the profile card",
-      "Name and profile can be changed on the hub only"
+      "Apri dalla finestra account la stessa scheda profilo dell'hub",
+      "Statistiche di Isleport sotto la scheda profilo",
+      "Nome e profilo si cambiano solo dall'hub"
      ]
     },
     "pl": {
-     "title": "Shared profile window",
+     "title": "Wspólne okno profilu",
      "items": [
-      "Open the same profile card as the hub from the account window",
-      "Isleport stats under the profile card",
-      "Name and profile can be changed on the hub only"
+      "Otwórz z okna konta tę samą kartę profilu co w hubie",
+      "Statystyki Isleport pod kartą profilu",
+      "Nazwę i profil można zmienić tylko w hubie"
      ]
     },
     "ar": {
-     "title": "Shared profile window",
+     "title": "نافذة ملف شخصي مشتركة",
      "items": [
-      "Open the same profile card as the hub from the account window",
-      "Isleport stats under the profile card",
-      "Name and profile can be changed on the hub only"
+      "فتح بطاقة الملف الشخصي نفسها الموجودة في المركز من نافذة الحساب",
+      "إحصاءات Isleport أسفل بطاقة الملف الشخصي",
+      "لا يمكن تغيير الاسم والملف الشخصي إلا من المركز"
      ]
     }
    }
@@ -1941,91 +1941,91 @@
      ]
     },
     "ja": {
-     "title": "Calmer screen",
+     "title": "画面の揺れを軽減",
      "items": [
-      "Fixed the screen trembling while walking",
-      "Removed the up-and-down flicker on crops, ships, shops, villagers and island items",
-      "Slower and softer water sparkle, flags and selection outline"
+      "歩くときに画面がついてきて震える現象を修正",
+      "作物、船、店、島民、島の品が上下にちらついていた動きを削除",
+      "水面のきらめき、旗、選択枠の点滅を、ゆっくりと弱めに"
      ]
     },
     "es": {
-     "title": "Calmer screen",
+     "title": "Pantalla más estable",
      "items": [
-      "Fixed the screen trembling while walking",
-      "Removed the up-and-down flicker on crops, ships, shops, villagers and island items",
-      "Slower and softer water sparkle, flags and selection outline"
+      "Corregido el temblor de la pantalla al caminar",
+      "Eliminado el parpadeo arriba y abajo de cultivos, barcos, tiendas, habitantes y objetos de la isla",
+      "Destellos del agua, banderas y borde de selección más lentos y suaves"
      ]
     },
     "fr": {
-     "title": "Calmer screen",
+     "title": "Écran plus stable",
      "items": [
-      "Fixed the screen trembling while walking",
-      "Removed the up-and-down flicker on crops, ships, shops, villagers and island items",
-      "Slower and softer water sparkle, flags and selection outline"
+      "Correction du tremblement de l'écran pendant la marche",
+      "Suppression du scintillement vertical des cultures, bateaux, boutiques, habitants et objets de l'île",
+      "Scintillement de l'eau, drapeaux et contour de sélection plus lents et plus doux"
      ]
     },
     "de": {
-     "title": "Calmer screen",
+     "title": "Ruhigerer Bildschirm",
      "items": [
-      "Fixed the screen trembling while walking",
-      "Removed the up-and-down flicker on crops, ships, shops, villagers and island items",
-      "Slower and softer water sparkle, flags and selection outline"
+      "Behoben: Der Bildschirm zitterte beim Gehen",
+      "Das Auf-und-ab-Flackern von Ernte, Schiffen, Läden, Bewohnern und Inselgegenständen wurde entfernt",
+      "Wasserglitzern, Flaggen und Auswahlrahmen flackern langsamer und schwächer"
      ]
     },
     "zh": {
-     "title": "Calmer screen",
+     "title": "画面更稳定",
      "items": [
-      "Fixed the screen trembling while walking",
-      "Removed the up-and-down flicker on crops, ships, shops, villagers and island items",
-      "Slower and softer water sparkle, flags and selection outline"
+      "修复走路时画面跟随抖动的问题",
+      "去除了作物、船只、商店、居民和岛上物品上下闪烁的动作",
+      "水光闪烁、旗帜和选中边框的闪动变得更慢、更柔和"
      ]
     },
     "pt": {
-     "title": "Calmer screen",
+     "title": "Tela mais estável",
      "items": [
-      "Fixed the screen trembling while walking",
-      "Removed the up-and-down flicker on crops, ships, shops, villagers and island items",
-      "Slower and softer water sparkle, flags and selection outline"
+      "Corrigido o tremor da tela ao andar",
+      "Removido o piscar para cima e para baixo de colheitas, barcos, lojas, moradores e objetos da ilha",
+      "Brilho da água, bandeiras e contorno de seleção mais lentos e suaves"
      ]
     },
     "ru": {
-     "title": "Calmer screen",
+     "title": "Спокойнее экран",
      "items": [
-      "Fixed the screen trembling while walking",
-      "Removed the up-and-down flicker on crops, ships, shops, villagers and island items",
-      "Slower and softer water sparkle, flags and selection outline"
+      "Исправлено дрожание экрана при ходьбе",
+      "Убрано мерцание вверх-вниз у урожая, кораблей, магазинов, жителей и предметов острова",
+      "Блики воды, флаги и рамка выбора теперь мерцают медленнее и мягче"
      ]
     },
     "tr": {
-     "title": "Calmer screen",
+     "title": "Daha sakin ekran",
      "items": [
-      "Fixed the screen trembling while walking",
-      "Removed the up-and-down flicker on crops, ships, shops, villagers and island items",
-      "Slower and softer water sparkle, flags and selection outline"
+      "Yürürken ekranın titremesi düzeltildi",
+      "Ürünler, gemiler, dükkânlar, sakinler ve ada eşyalarındaki yukarı aşağı titreme kaldırıldı",
+      "Su parıltısı, bayraklar ve seçim çerçevesi daha yavaş ve daha hafif"
      ]
     },
     "it": {
-     "title": "Calmer screen",
+     "title": "Schermo più stabile",
      "items": [
-      "Fixed the screen trembling while walking",
-      "Removed the up-and-down flicker on crops, ships, shops, villagers and island items",
-      "Slower and softer water sparkle, flags and selection outline"
+      "Corretto il tremolio dello schermo durante la camminata",
+      "Eliminato lo sfarfallio su e giù di colture, navi, negozi, abitanti e oggetti dell'isola",
+      "Luccichio dell'acqua, bandiere e bordo di selezione più lenti e delicati"
      ]
     },
     "pl": {
-     "title": "Calmer screen",
+     "title": "Spokojniejszy ekran",
      "items": [
-      "Fixed the screen trembling while walking",
-      "Removed the up-and-down flicker on crops, ships, shops, villagers and island items",
-      "Slower and softer water sparkle, flags and selection outline"
+      "Naprawiono drgania ekranu podczas chodzenia",
+      "Usunięto migotanie w górę i w dół plonów, statków, sklepów, mieszkańców i przedmiotów wyspy",
+      "Migotanie wody, flagi i obramowanie zaznaczenia wolniejsze i łagodniejsze"
      ]
     },
     "ar": {
-     "title": "Calmer screen",
+     "title": "شاشة أهدأ",
      "items": [
-      "Fixed the screen trembling while walking",
-      "Removed the up-and-down flicker on crops, ships, shops, villagers and island items",
-      "Slower and softer water sparkle, flags and selection outline"
+      "إصلاح ارتجاف الشاشة أثناء المشي",
+      "إزالة الوميض صعودًا وهبوطًا عن المحاصيل والسفن والمتاجر والسكان وأغراض الجزيرة",
+      "وميض الماء والأعلام وإطار التحديد أبطأ وأخف"
      ]
     }
    }
@@ -2051,102 +2051,102 @@
      ]
     },
     "ja": {
-     "title": "Lighter load for the room host",
+     "title": "部屋ホストの負担を軽減",
      "items": [
-      "Host market updates are sent less often (even less with the low-spec option)",
-      "Position updates are skipped while nothing moves",
-      "Messages for one player are no longer relayed to everyone",
-      "Faster island generation, smaller islands with the low-spec option"
+      "部屋ホストが送る市場の情報の間隔を広げる（低スペック設定ではさらに広げる）",
+      "動きがないときは位置情報の送信を省略",
+      "他の人に送るメッセージは、受け取る人だけに届ける",
+      "島の生成時間を短縮、低スペック設定では島のサイズを小さく"
      ]
     },
     "es": {
-     "title": "Lighter load for the room host",
+     "title": "Menos carga para el anfitrión de la sala",
      "items": [
-      "Host market updates are sent less often (even less with the low-spec option)",
-      "Position updates are skipped while nothing moves",
-      "Messages for one player are no longer relayed to everyone",
-      "Faster island generation, smaller islands with the low-spec option"
+      "El anfitrión envía las novedades del mercado con menos frecuencia (aún menos con la opción de bajo rendimiento)",
+      "Se omite el envío de posición cuando nada se mueve",
+      "Los mensajes dirigidos a una persona solo llegan a esa persona",
+      "Generación de islas más rápida; con la opción de bajo rendimiento, islas más pequeñas"
      ]
     },
     "fr": {
-     "title": "Lighter load for the room host",
+     "title": "Moins de charge pour l'hôte de la salle",
      "items": [
-      "Host market updates are sent less often (even less with the low-spec option)",
-      "Position updates are skipped while nothing moves",
-      "Messages for one player are no longer relayed to everyone",
-      "Faster island generation, smaller islands with the low-spec option"
+      "L'hôte envoie les actualités du marché moins souvent (encore moins avec l'option basse config)",
+      "Les positions ne sont pas envoyées quand rien ne bouge",
+      "Les messages destinés à une personne ne sont transmis qu'à elle",
+      "Création des îles plus rapide ; avec l'option basse config, îles plus petites"
      ]
     },
     "de": {
-     "title": "Lighter load for the room host",
+     "title": "Weniger Last für den Raumhost",
      "items": [
-      "Host market updates are sent less often (even less with the low-spec option)",
-      "Position updates are skipped while nothing moves",
-      "Messages for one player are no longer relayed to everyone",
-      "Faster island generation, smaller islands with the low-spec option"
+      "Der Host sendet Marktmeldungen seltener (mit der Option für schwache Geräte noch seltener)",
+      "Positionsdaten werden nicht gesendet, solange sich nichts bewegt",
+      "Nachrichten für eine Person werden nur an diese Person weitergeleitet",
+      "Inselerstellung ist schneller, mit der Option für schwache Geräte sind die Inseln kleiner"
      ]
     },
     "zh": {
-     "title": "Lighter load for the room host",
+     "title": "减轻房主电脑负担",
      "items": [
-      "Host market updates are sent less often (even less with the low-spec option)",
-      "Position updates are skipped while nothing moves",
-      "Messages for one player are no longer relayed to everyone",
-      "Faster island generation, smaller islands with the low-spec option"
+      "房主发送的市场消息间隔拉长（低配选项下间隔更长）",
+      "没有移动时省略位置发送",
+      "发给他人的消息只转发给接收者",
+      "缩短岛屿生成时间，低配选项下岛屿尺寸更小"
      ]
     },
     "pt": {
-     "title": "Lighter load for the room host",
+     "title": "Menos carga para o anfitrião da sala",
      "items": [
-      "Host market updates are sent less often (even less with the low-spec option)",
-      "Position updates are skipped while nothing moves",
-      "Messages for one player are no longer relayed to everyone",
-      "Faster island generation, smaller islands with the low-spec option"
+      "O anfitrião envia as notícias do mercado com menos frequência (ainda menos com a opção de baixo desempenho)",
+      "O envio de posição é omitido quando nada se move",
+      "Mensagens para outra pessoa são entregues apenas a ela",
+      "Criação de ilhas mais rápida; com a opção de baixo desempenho, ilhas menores"
      ]
     },
     "ru": {
-     "title": "Lighter load for the room host",
+     "title": "Меньше нагрузки на хоста комнаты",
      "items": [
-      "Host market updates are sent less often (even less with the low-spec option)",
-      "Position updates are skipped while nothing moves",
-      "Messages for one player are no longer relayed to everyone",
-      "Faster island generation, smaller islands with the low-spec option"
+      "Хост отправляет новости рынка реже (с опцией для слабых устройств — ещё реже)",
+      "Передача позиции пропускается, когда ничего не движется",
+      "Сообщения для одного игрока передаются только ему",
+      "Острова создаются быстрее; с опцией для слабых устройств острова меньше"
      ]
     },
     "tr": {
-     "title": "Lighter load for the room host",
+     "title": "Oda sahibinin bilgisayarına daha az yük",
      "items": [
-      "Host market updates are sent less often (even less with the low-spec option)",
-      "Position updates are skipped while nothing moves",
-      "Messages for one player are no longer relayed to everyone",
-      "Faster island generation, smaller islands with the low-spec option"
+      "Oda sahibi pazar haberlerini daha seyrek gönderir (düşük donanım seçeneğinde daha da seyrek)",
+      "Hiçbir şey hareket etmediğinde konum gönderimi atlanır",
+      "Başka birine giden mesajlar yalnızca o kişiye iletilir",
+      "Ada oluşturma daha hızlı; düşük donanım seçeneğinde adalar daha küçük"
      ]
     },
     "it": {
-     "title": "Lighter load for the room host",
+     "title": "Meno carico per l'host della stanza",
      "items": [
-      "Host market updates are sent less often (even less with the low-spec option)",
-      "Position updates are skipped while nothing moves",
-      "Messages for one player are no longer relayed to everyone",
-      "Faster island generation, smaller islands with the low-spec option"
+      "L'host invia le notizie del mercato meno spesso (ancora meno con l'opzione per PC lenti)",
+      "L'invio della posizione viene saltato quando nulla si muove",
+      "I messaggi destinati a un giocatore vengono inoltrati solo a lui",
+      "Generazione delle isole più rapida; con l'opzione per PC lenti, isole più piccole"
      ]
     },
     "pl": {
-     "title": "Lighter load for the room host",
+     "title": "Mniejsze obciążenie hosta pokoju",
      "items": [
-      "Host market updates are sent less often (even less with the low-spec option)",
-      "Position updates are skipped while nothing moves",
-      "Messages for one player are no longer relayed to everyone",
-      "Faster island generation, smaller islands with the low-spec option"
+      "Host rzadziej wysyła wieści z rynku (z opcją dla słabszych komputerów jeszcze rzadziej)",
+      "Wysyłanie pozycji jest pomijane, gdy nic się nie porusza",
+      "Wiadomości dla jednego gracza są przekazywane tylko jemu",
+      "Szybsze tworzenie wysp; z opcją dla słabszych komputerów wyspy są mniejsze"
      ]
     },
     "ar": {
-     "title": "Lighter load for the room host",
+     "title": "تخفيف الحمل عن مضيف الغرفة",
      "items": [
-      "Host market updates are sent less often (even less with the low-spec option)",
-      "Position updates are skipped while nothing moves",
-      "Messages for one player are no longer relayed to everyone",
-      "Faster island generation, smaller islands with the low-spec option"
+      "يرسل المضيف أخبار السوق بفواصل أطول (وأطول مع خيار الأجهزة الضعيفة)",
+      "يُتخطى إرسال الموقع عندما لا يتحرك شيء",
+      "الرسائل الموجهة لشخص واحد تُرسل إليه وحده",
+      "إنشاء أسرع للجزر، ومع خيار الأجهزة الضعيفة تصبح الجزر أصغر"
      ]
     }
    }
@@ -2172,102 +2172,102 @@
      ]
     },
     "ja": {
-     "title": "Bigger, grander islands",
+     "title": "もっと大きく華やかな島",
      "items": [
-      "Other islands are about 30% bigger",
-      "Manors, towers, fountains, houses, stalls, lanterns, flower beds on every island",
-      "Faster walking on islands",
-      "Shady traders and the report button removed"
+      "他の島のサイズを約30%拡大",
+      "島ごとに邸宅、塔、噴水、家、露店、ランタン、花壇を追加",
+      "島内の歩く速度を上げた",
+      "怪しい商人と通報機能を削除"
      ]
     },
     "es": {
-     "title": "Bigger, grander islands",
+     "title": "Islas más grandes y espléndidas",
      "items": [
-      "Other islands are about 30% bigger",
-      "Manors, towers, fountains, houses, stalls, lanterns, flower beds on every island",
-      "Faster walking on islands",
-      "Shady traders and the report button removed"
+      "Las demás islas son un 30 % más grandes",
+      "Cada isla recibe mansiones, torres, fuentes, casas, puestos, faroles y parterres",
+      "Caminar por las islas es más rápido",
+      "Eliminados los mercaderes sospechosos y la función de denuncia"
      ]
     },
     "fr": {
-     "title": "Bigger, grander islands",
+     "title": "Des îles plus grandes et plus splendides",
      "items": [
-      "Other islands are about 30% bigger",
-      "Manors, towers, fountains, houses, stalls, lanterns, flower beds on every island",
-      "Faster walking on islands",
-      "Shady traders and the report button removed"
+      "Les autres îles sont agrandies d'environ 30 %",
+      "Chaque île reçoit des manoirs, tours, fontaines, maisons, étals, lanternes et parterres de fleurs",
+      "Déplacement plus rapide sur les îles",
+      "Marchands suspects et fonction de signalement supprimés"
      ]
     },
     "de": {
-     "title": "Bigger, grander islands",
+     "title": "Größere, prächtigere Inseln",
      "items": [
-      "Other islands are about 30% bigger",
-      "Manors, towers, fountains, houses, stalls, lanterns, flower beds on every island",
-      "Faster walking on islands",
-      "Shady traders and the report button removed"
+      "Andere Inseln sind etwa 30 % größer",
+      "Jede Insel bekommt Herrenhäuser, Türme, Brunnen, Häuser, Stände, Laternen und Blumenbeete",
+      "Schnelleres Gehen auf den Inseln",
+      "Verdächtige Händler und die Meldefunktion entfernt"
      ]
     },
     "zh": {
-     "title": "Bigger, grander islands",
+     "title": "更大、更华丽的岛屿",
      "items": [
-      "Other islands are about 30% bigger",
-      "Manors, towers, fountains, houses, stalls, lanterns, flower beds on every island",
-      "Faster walking on islands",
-      "Shady traders and the report button removed"
+      "其他岛屿约扩大 30%",
+      "每座岛屿新增宅邸、塔楼、喷泉、房屋、摊位、灯笼和花坛",
+      "岛上步行速度提高",
+      "删除可疑商人与举报功能"
      ]
     },
     "pt": {
-     "title": "Bigger, grander islands",
+     "title": "Ilhas maiores e mais suntuosas",
      "items": [
-      "Other islands are about 30% bigger",
-      "Manors, towers, fountains, houses, stalls, lanterns, flower beds on every island",
-      "Faster walking on islands",
-      "Shady traders and the report button removed"
+      "Outras ilhas cerca de 30% maiores",
+      "Cada ilha ganha mansões, torres, fontes, casas, barracas, lanternas e canteiros",
+      "Andar pelas ilhas ficou mais rápido",
+      "Mercadores suspeitos e função de denúncia removidos"
      ]
     },
     "ru": {
-     "title": "Bigger, grander islands",
+     "title": "Больше и краше острова",
      "items": [
-      "Other islands are about 30% bigger",
-      "Manors, towers, fountains, houses, stalls, lanterns, flower beds on every island",
-      "Faster walking on islands",
-      "Shady traders and the report button removed"
+      "Другие острова примерно на 30% больше",
+      "На каждом острове появились особняки, башни, фонтаны, дома, прилавки, фонари и цветники",
+      "Ускорена ходьба по островам",
+      "Удалены подозрительные торговцы и функция жалоб"
      ]
     },
     "tr": {
-     "title": "Bigger, grander islands",
+     "title": "Daha büyük, daha görkemli adalar",
      "items": [
-      "Other islands are about 30% bigger",
-      "Manors, towers, fountains, houses, stalls, lanterns, flower beds on every island",
-      "Faster walking on islands",
-      "Shady traders and the report button removed"
+      "Diğer adalar yaklaşık %30 büyüdü",
+      "Her adaya konaklar, kuleler, çeşmeler, evler, tezgâhlar, fenerler ve çiçek tarhları eklendi",
+      "Adalarda yürüme hızı artırıldı",
+      "Şüpheli tüccarlar ve şikâyet işlevi kaldırıldı"
      ]
     },
     "it": {
-     "title": "Bigger, grander islands",
+     "title": "Isole più grandi e più splendide",
      "items": [
-      "Other islands are about 30% bigger",
-      "Manors, towers, fountains, houses, stalls, lanterns, flower beds on every island",
-      "Faster walking on islands",
-      "Shady traders and the report button removed"
+      "Le altre isole sono circa il 30% più grandi",
+      "Ogni isola ha ora ville, torri, fontane, case, bancarelle, lanterne e aiuole",
+      "Camminata più veloce sulle isole",
+      "Rimossi i mercanti sospetti e la funzione di segnalazione"
      ]
     },
     "pl": {
-     "title": "Bigger, grander islands",
+     "title": "Większe i bardziej okazałe wyspy",
      "items": [
-      "Other islands are about 30% bigger",
-      "Manors, towers, fountains, houses, stalls, lanterns, flower beds on every island",
-      "Faster walking on islands",
-      "Shady traders and the report button removed"
+      "Inne wyspy są około 30% większe",
+      "Na każdej wyspie dodano dwory, wieże, fontanny, domy, stragany, latarnie i klomby",
+      "Szybsze chodzenie po wyspach",
+      "Usunięto podejrzanych kupców i funkcję zgłaszania"
      ]
     },
     "ar": {
-     "title": "Bigger, grander islands",
+     "title": "جزر أكبر وأبهى",
      "items": [
-      "Other islands are about 30% bigger",
-      "Manors, towers, fountains, houses, stalls, lanterns, flower beds on every island",
-      "Faster walking on islands",
-      "Shady traders and the report button removed"
+      "الجزر الأخرى أكبر بنحو 30%",
+      "أُضيفت على كل جزيرة قصور وأبراج ونوافير وبيوت وأكشاك وفوانيس وحدائق زهور",
+      "زيادة سرعة المشي داخل الجزر",
+      "حذف التجار المشبوهين وزر الإبلاغ"
      ]
     }
    }
