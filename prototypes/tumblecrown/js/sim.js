@@ -1762,6 +1762,13 @@ function botPvp(G, p, dt) {
   }
   // 가까운 상대가 없으면 깃발로 가요: 깃발이 목표인 봇은 13칸 안의 상대만 상대하고, 깃발 위에서는 조금 더 멀리까지 지켜요
   const mf = ai.fi != null ? G.fl[ai.fi] : null, onF = mf && Math.hypot(mf.x - p.x, mf.z - p.z) < D.FLAG_R * 1.6;
+  // 봇도 가끔 핑을 찍어요: 팀마다 40~70초에 한 번, 깃발 위에서는 "여기 오세요", 여럿에게 둘러싸이면 "조심!"
+  G.bpT = G.bpT || [0, 0];
+  if (G.bpT[p.team] <= G.t && G.rng() < 0.01) {
+    const crowd = foes.filter(q => dist(p, q) < 9).length;
+    if (crowd >= 3) { G.bpT[p.team] = G.t + 40 + G.rng() * 30; G.ev.push({ k: 'ping', id: p.id, tm: p.team, x: p.x, z: p.z, pk: 'danger' }); }
+    else if (onF && mf.own !== p.team) { G.bpT[p.team] = G.t + 40 + G.rng() * 30; G.ev.push({ k: 'ping', id: p.id, tm: p.team, x: mf.x, z: mf.z, pk: 'go' }); }
+  }
   if (tgt && tgt.mon && dist(p, tgt) > 9) { const q = {}; moveTo(G, p, q, tgt.x, tgt.z, 1); if (dist(p, tgt) > 25 && p.rollCd <= 0 && G.rng() < 0.01) q.roll = true; return q; }
   if (!tgt || dist(p, tgt) > (onF ? 20 : 13)) return botFlag(G, p, dt);
   if (tgt.stl > 0 && dist(p, tgt) > 4) {   // 숨은 상대는 어림짐작으로 찾아요
