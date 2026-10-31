@@ -188,7 +188,7 @@ var REG=[
  {id:'isleport',name:'Isleport',cls:'g3',c:'--g3',site:B+'isleport/',notes:'patchnotes.json'},
  {id:'vowkeep',name:'Vowkeep',cls:'',c:'--g4',site:B+'vowkeep/',notes:'patchnotes.json'},
  {id:'dummyparty',name:'Dummy Party',cls:'',c:'--g0',site:B+'dummyparty/',tpl:'play/'},
- {id:'gatecrash',name:'Gatecrash',cls:'',c:'--g0',site:B+'prototypes/gatecrash/',notes:'patchnotes.json'},
+ {id:'gatecrash',name:'Gatecrash',cls:'',c:'--g0',site:B+'prototypes/gatecrash/',notes:'patchnotes.json',nowiki:1},
  {id:'tumblecrown',name:'Tumblecrown',cls:'',c:'--g0',site:B+'prototypes/tumblecrown/',notes:'patchnotes.json'}
 ];
 function tplNotes(html){
