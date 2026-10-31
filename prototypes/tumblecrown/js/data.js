@@ -3,7 +3,7 @@
 
 import { T } from './tr.js';
 
-export const VERSION = 'v0.1', BUILD = 145;
+export const VERSION = 'v0.1', BUILD = 151;
 
 export const ROLES = {
   knight: {
@@ -437,7 +437,8 @@ function grow(ci, rooms, [p1, dk, p2]) {
 // 장: 이야기, 지도, 보스, 색
 // 투기장: 보우킵 보스 방을 크게 키운 한 방 (적도 이야기도 없이 마지막 한 명이 남을 때까지)
 // 5대5 깃발 점령전 지도: 아주 넓은 벌판에 돌담과 기둥이 흩어져 있어요 (180도 돌려도 똑같아서 두 팀이 공평해요)
-export const PUSH_N = 6, PUSH_T = 10;   // 깃발을 이만큼 가진 팀이 몰아붙이면 상대 부활이 이만큼(초) 늘어요
+export const PUSH_N = 6, PUSH_T = 10;
+export function pushTime(n, total) { return n >= total - 1 ? 15 : n >= total - 2 ? 10 : 0; }   // 깃발을 (전체-2)개 가진 팀이 몰아붙이면 상대 부활 +10초, (전체-1)개면 +15초 (5대5는 5·6개, 3대3은 3·4개)   // 깃발을 이만큼 가진 팀이 몰아붙이면 상대 부활이 이만큼(초) 늘어요
 export const DOOR_OPEN_T = 14, DOOR_SHUT_T = 16, STORM_CALM_T = 30, STORM_T = 12;   // 사막 신전: 문이 열려 있는 시간·닫혀 있는 시간, 모래폭풍이 잠잠한 시간·부는 시간(초)
 export const BIG_T = 600;   // 큰 괴물이 나타나는 시각(초)
 export const TEAM_N = 5, FLAG_T = 7, FLAG_R = 6.5, RESP_T = 15, SPAWN_INV = 2, TEAM_HP = 1.5, RECALL_CD = 25, RECALL_T = 3;
