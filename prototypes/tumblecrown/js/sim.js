@@ -1709,7 +1709,10 @@ export function callBots(G, tm, x, z) {
 function botFlag(G, p, dt) {
   const inp = {}, ai = p.ai; ai.fT = (ai.fT || 0) - dt;
   if (ai.callT > G.t) {   // "여기 오세요" 신호: 신호 자리로 모여요 (싸울 상대가 가까이 있으면 그쪽이 먼저예요)
-    if (Math.hypot(ai.callX - p.x, ai.callZ - p.z) > 4) moveTo(G, p, inp, ai.callX, ai.callZ, 1); return inp;
+    if (Math.hypot(ai.callX - p.x, ai.callZ - p.z) > 4) { moveTo(G, p, inp, ai.callX, ai.callZ, 1); return inp; }
+    // 도착하면 멈춰 있지 않고, 신호 자리에서 가장 가까운 (우리 것이 아닌) 깃발로 가요. 근처에 상대가 있으면 botPvp가 먼저 싸워요
+    ai.callT = 0; let bj = -1, bd = 1e9; G.fl.forEach((f, j) => { const d = Math.hypot(f.x - ai.callX, f.z - ai.callZ) + (f.own === p.team ? 400 : 0); if (d < bd) { bd = d; bj = j; } });
+    if (bj >= 0) { ai.fi = bj; ai.fT = 4; }
   }
   if (ai.fT <= 0 || ai.fi == null) {
     ai.fT = 2 + G.rng() * 1.5; let bi = 0, bs = 1e9;
