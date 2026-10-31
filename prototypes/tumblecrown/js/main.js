@@ -1416,10 +1416,11 @@ function showWin() {
   S.resultShown = true; bigMsg('', '', 0); const h = S.lastH = awardHonor() || 0, sn = S.snap, mine = myP(), wt = sn.wtm, won = mine && mine.tm === wt;
   if (won) { unlock('win'); SAVE.wins = SAVE.wins || {}; SAVE.wins[mine.role] = 1; save(); if (ROLE_IDS.slice(0, 7).every(r => SAVE.wins[r])) unlock('winall'); }
   if (mine && mine.kl >= 3) unlock('kill3');
-  const mem = sn.pl.filter(p => p.tm === wt);
-  $('winBox').innerHTML = `<div class="wk">${TEAMS[wt].name}</div><div class="wt" style="color:${won ? '#ffd36b' : '#ff6a5a'}">${won ? T('승리!') : T('패배')}</div><div class="ws">${T('깃발 일곱 개를 모두 차지했어요')}</div><div class="wn">${mem.map(p => `<img alt="" width="48" src="${view.portrait(p.role)}">`).join('')}</div>`;
+  const row = p => `<tr${p.id === S.me ? ' style="background:#2a2014"' : ''}><td style="color:${ROLES[p.role].color}">${ROLES[p.role].name}</td><td>${esc(p.id === S.me ? T('나') : p.bot ? T('봇') : p.name)}</td><td>${p.kl | 0}</td><td>${p.dth | 0}</td></tr>`;
+  const tab = t => `<div><h3 style="color:${hex(TEAMS[t].c)}">${TEAMS[t].name}${t === wt ? ' · ' + T('승리') : ''}</h3><table><tr><th>${T('직업')}</th><th>${T('이름')}</th><th>${T('쓰러뜨림')}</th><th>${T('쓰러짐')}</th></tr>${sn.pl.filter(p => p.tm === t).map(row).join('')}</table></div>`;
+  const top3 = sn.pl.slice().sort((a, b) => (b.kl | 0) - (a.kl | 0)).slice(0, 3), pod = [[1, 'd8d8e0', 46], [0, 'ffd36b', 62], [2, 'c8884a', 36]].filter(([i]) => top3[i]).map(([i, c, hh]) => { const q = top3[i]; return `<div style="flex:1;text-align:center"><div style="font-size:12px;color:${ROLES[q.role].color}">${ROLES[q.role].name}</div><div style="font-size:12px;margin:2px 0 4px">${esc(q.id === S.me ? T('나') : q.bot ? T('봇') : q.name)}</div><div style="height:${hh}px;background:#${c};color:#201810;font-weight:700;line-height:${hh}px;border-radius:4px 4px 0 0">${i + 1} · ${q.kl | 0}</div></div>`; }).join('');
+  $('winBox').innerHTML = `<div class="wt" style="color:${won ? '#ffd36b' : '#ff6a5a'}">${won ? T('승리!') : T('패배')}</div><div class="ws">${T('깃발 일곱 개를 모두 차지했어요')}</div><div class="pod">${pod}</div><div class="rk">${tab(0)}${tab(1)}</div><div class="tc">${T('받은 tC {0}', '<b style="color:#ffd36b">' + h + '</b>')} · ${T('지금 tC {0}', SAVE.honor)}</div>`;
   $('winBox').classList.toggle('me', !!won);
-  $('winNext').onclick = () => { SFX.play('click'); showResult(); };
   $('winBack').onclick = () => { SFX.play('click'); endToLobby(''); };
   setHud(false); show('sWin');
   if (mine) { const E = view.ents.get('p' + sn.win); if (E) view.burst(E.x, 1.5, E.z, 0xffd36b, 30, 8, 0.8, 0.14); }
