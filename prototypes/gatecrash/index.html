@@ -5,7 +5,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <title>Gatecrash</title>
-<script>(function(){var B=22;try{fetch('build.json?t='+Date.now(),{cache:'no-store'}).then(function(r){return r.json()}).then(function(d){if(d&&d.build>B&&sessionStorage.getItem('gcReload')!=String(d.build)){sessionStorage.setItem('gcReload',String(d.build));var u=new URL(location.href);u.searchParams.set('b',d.build);location.replace(u.toString());}}).catch(function(){});}catch(e){}})();</script>
+<script>(function(){var B=23;try{fetch('build.json?t='+Date.now(),{cache:'no-store'}).then(function(r){return r.json()}).then(function(d){if(d&&d.build>B&&sessionStorage.getItem('gcReload')!=String(d.build)){sessionStorage.setItem('gcReload',String(d.build));var u=new URL(location.href);u.searchParams.set('b',d.build);location.replace(u.toString());}}).catch(function(){});}catch(e){}})();</script>
 <meta name="description" content="건물과 공항을 달려 먼저 도착하는 옆면 픽셀 레이스 액션">
 <meta name="robots" content="noindex">
 <link rel="icon" href="logo.svg" type="image/svg+xml">
@@ -50,7 +50,7 @@ button{font:inherit;color:inherit;cursor:pointer}
 .note{color:var(--dim);font-size:13px}
 #slots{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:10px;margin:14px 0}
 .slot{background:#14203d;border:2px solid var(--line);border-radius:8px;padding:10px 12px;display:flex;gap:10px;align-items:center}
-.slot i{width:16px;height:16px;border-radius:3px;flex:none}.slot.empty{opacity:.45}
+.slot i{width:16px;height:16px;border-radius:3px;flex:none}.slot.empty{opacity:.45}.slot.pn{cursor:pointer}.slot.pn:hover b{text-decoration:underline}
 .row{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin:10px 0}
 .skins{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px}.sk{background:#14203d;border:2px solid var(--line);border-radius:8px;padding:8px;text-align:center}.sk.on{border-color:var(--acc)}.sk canvas{width:96px;height:96px;image-rendering:pixelated;display:block;margin:0 auto 6px}.sk .btn{padding:5px 10px;font-size:13px;margin-top:6px}
 .maps{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px}
@@ -139,12 +139,12 @@ body.touch #tc{display:block}body.touch #hint{display:none}
   <div id="res"><div class="box"><h2 id="resT"></h2><ol id="resL"></ol><div class="row"><button class="btn" id="resBack">나가기</button></div></div></div></div>
 <div id="modal"><div class="box"><div id="modalT"></div><div class="row" style="justify-content:center"><button class="btn" id="modalOk">확인</button></div></div></div>
 
-<script src="js/data.js?v=22"></script>
-<script src="js/game.js?v=22"></script>
-<script src="js/view.js?v=22"></script>
-<script src="js/sfx.js?v=22"></script>
-<script src="js/scene.js?v=22"></script>
-<script src="js/main.js?v=22"></script>
-<script src="js/intro.js?v=22"></script>
+<script src="js/data.js?v=23"></script>
+<script src="js/game.js?v=23"></script>
+<script src="js/view.js?v=23"></script>
+<script src="js/sfx.js?v=23"></script>
+<script src="js/scene.js?v=23"></script>
+<script src="js/main.js?v=23"></script>
+<script src="js/intro.js?v=23"></script>
 </body>
 </html>

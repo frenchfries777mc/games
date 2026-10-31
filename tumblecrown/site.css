@@ -1,0 +1,24 @@
+@font-face{font-family:Galmuri;src:url(../isleport/Galmuri11.woff2) format('woff2');font-weight:400;font-display:swap}
+@font-face{font-family:Galmuri;src:url(../isleport/Galmuri11-Bold.woff2) format('woff2');font-weight:700;font-display:swap}
+:root{--bg:#0c1018;--panel:#141b27;--panel2:#1b2433;--line:#2c3a52;--tx:#e8eef8;--mu:#9fb0c8;--gold:#f0c456;--gold2:#c49a3a}
+html[data-ff-theme=light]{--bg:#eef2f8;--panel:#fff;--panel2:#f1f5fb;--line:#cdd8ea;--tx:#17202e;--mu:#56657d;--gold:#9a6a10;--gold2:#7a5208}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;background:var(--bg)}
+body{margin:0;color:var(--tx);background:var(--bg);font-family:Galmuri,system-ui,-apple-system,"Apple SD Gothic Neo","Noto Sans KR","Malgun Gothic",sans-serif;font-size:15px;line-height:1.7}
+img{display:block}a{color:inherit}
+.wrap{max-width:1080px;margin:0 auto;padding:0 max(18px,env(safe-area-inset-left,0px))}
+.box{background:var(--panel);border:1px solid var(--line);border-radius:10px;box-shadow:0 8px 20px rgba(0,0,0,.25)}
+.top{position:sticky;top:0;z-index:30;background:var(--panel);border-bottom:1px solid var(--line)}
+.top .wrap{display:flex;align-items:center;gap:6px;min-height:54px;flex-wrap:wrap;padding-block:6px}
+.logo{display:flex;align-items:center;gap:10px;font-weight:700;font-size:20px;letter-spacing:.04em;color:var(--gold);text-decoration:none;margin-right:auto}
+.nav{display:flex;gap:2px;flex-wrap:wrap}
+.nav a{text-decoration:none;font-size:14px;font-weight:700;padding:4px 10px}
+.nav a:hover,.nav a.on{color:var(--gold)}
+h1{margin:34px 0 6px;font-size:clamp(28px,5vw,40px);color:var(--gold)}
+.sub2{margin:0 0 22px;color:var(--mu);font-size:14px}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:22px}
+.chip{font:700 14px Galmuri,system-ui,sans-serif;color:var(--tx);background:var(--panel2);border:1px solid var(--line);border-radius:99px;padding:5px 16px;cursor:pointer}
+.chip.on{background:linear-gradient(90deg,var(--gold),var(--gold2));color:#1c1405;border-color:transparent}
+.cta{margin:46px 0 0;text-align:center}
+.pb{display:inline-block;font-weight:700;font-size:16px;text-decoration:none;padding:11px 26px;background:linear-gradient(180deg,#f6d878,#d5a63e);border:1px solid #8a6a20;border-radius:8px;color:#1a1203}
+footer{padding:44px 0 50px;color:var(--mu);font-size:13px;text-align:center}
