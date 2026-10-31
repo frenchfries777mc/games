@@ -10,6 +10,26 @@ function skinOf() { return SKINS[SAVE.skins.on] && SAVE.skins.own.includes(SAVE.
 if (!SAVE.uid) { SAVE.uid = Math.random().toString(36).slice(2, 10); SAVE.col = (Math.random() * COLORS.length) | 0; save(); }
 const UID = SAVE.uid;
 
+/* ---------- 최적화: 사이트 공용 설정 FFPerf(ff_perf = {low, fx, fps})를 따라요. 공용 설정이 없으면 이 게임 안의 값을 써요.
+   켜면 화면을 1배 해상도로 그리고 초당 30번만 그려요 (게임 규칙과 속도는 그대로) ---------- */
+let OPT = false, FPSCAP = 0;
+function perfRead() {
+  let p = null; try { p = window.FFPerf ? FFPerf.get() : null; } catch (e) { }
+  if (!p) p = { low: SAVE.opt === 1 };
+  const low = !!p.low, fx = p.fx || (low ? 'low' : 'high'), fps = p.fps != null ? p.fps : (low ? 30 : 0);
+  OPT = low || fx === 'low'; FPSCAP = fps === 30 || fps === 60 ? fps : 0;
+  const b = document.querySelector('#menu [data-go="opt"]'); if (b) b.textContent = OPT ? '최적화 켬' : '최적화 끔';
+}
+perfRead();
+window.addEventListener('ffperf', perfRead);
+/* 느린 화면 안내: 최적화가 꺼져 있는데 달리는 동안 화면이 계속 느리면, 다음에 로비로 돌아왔을 때 이 기기에서 한 번만 알려 줘요 */
+let lhDone = !!SAVE.lowHint, lhPend = false, lhAvg = 16, lhN = 0;
+function lowHintTick(gap) {
+  if (lhDone || lhPend || OPT) return;
+  lhAvg = lhAvg * 0.97 + Math.min(gap, 100) * 0.03; lhN = lhAvg > 40 ? lhN + 1 : 0;
+  if (lhN > 240) lhPend = true;
+}
+
 /* ---------- 모달 (브라우저 팝업 대신) ---------- */
 function say(t) { $('modalT').textContent = t; $('modal').classList.add('on'); }
 $('modalOk').onclick = () => $('modal').classList.remove('on');
@@ -40,7 +60,7 @@ function homeMsg(t) { $('homeMsg').textContent = t || ''; }
 
 /* ---------- 화면 ---------- */
 let scr = 'sLobby';
-function show(id) { document.querySelectorAll('.scr').forEach(s => s.classList.toggle('on', s.id === id)); scr = id; $('hud').classList.toggle('on', id === 'game'); }
+function show(id) { document.querySelectorAll('.scr').forEach(s => s.classList.toggle('on', s.id === id)); scr = id; $('hud').classList.toggle('on', id === 'game'); if (id === 'sLobby' && lhPend && !lhDone) { lhDone = true; SAVE.lowHint = 1; save(); homeMsg('화면이 느렸어요. 「최적화」 버튼을 누르면 화질과 효과를 줄여 더 부드러워져요.'); } }
 document.querySelectorAll('[data-back]').forEach(b => b.addEventListener('click', () => { if (scr === 'sRoom' || scr === 'sMap') leaveNet(); show('sLobby'); paintWho(); }));
 document.querySelectorAll('#menu .btn').forEach(b => b.addEventListener('click', () => menu(b.dataset.go)));
 function pickMap(cb) {
@@ -58,6 +78,12 @@ function menu(go) {
   else if (go === 'join') { if (needLogin()) return; $('joinMsg').textContent = ''; $('joinCode').value = ''; show('sJoin'); setTimeout(() => $('joinCode').focus(), 50); }
   else if (go === 'help') { $('wl').innerHTML = WEP_IDS.map(k => { const w = WEAPONS[k]; return '<div><b>' + w.name + '</b><small>' + ({ melee: '가까이 휘둘러요', shot: '멀리 쏴요', spray: '뿌리는 동안 뒤로 밀려요', rocket: '터지면 주변이 다 날아가요' })[w.kind] + ' · ' + w.uses + '번</small></div>'; }).join(''); show('sHelp'); }
   else if (go === 'notes') { loadNotes(); show('sNotes'); }
+  else if (go === 'opt') {
+    const on = !OPT;
+    if (window.FFPerf) { try { FFPerf.set({ low: on, fx: on ? 'low' : 'high', fps: on ? 30 : 0 }); } catch (e) { } }   // 사이트 설정과 같은 값
+    else { SAVE.opt = on ? 1 : 0; save(); }
+    perfRead(); homeMsg(on ? '최적화를 켰어요. 화질과 효과를 줄여 더 부드럽게 해요.' : '최적화를 껐어요.');
+  }
   else if (go === 'site') location.href = '../../';
 }
 /* 꾸미기 */
@@ -295,7 +321,8 @@ function applySnap(d) {
 }
 function loop(now) {
   if (!loop.on || !G) return; requestAnimationFrame(loop);
-  const dt = Math.min(0.05, (now - last) / 1000); last = now; acc += dt;
+  if (FPSCAP && now - last < 1000 / FPSCAP - 3) return;      // 최적화: 프레임 제한 (게임 속도는 그대로)
+  const raw = now - last, dt = Math.min(0.05, raw / 1000); last = now; acc += dt; lowHintTick(raw);
   const guest = N.mode === 'guest', inp = myInput();
   if (!guest) {
     const oi = N.inputs[UID] || {};
@@ -353,7 +380,7 @@ function addFx(e) {
 }
 function render(t, G, op) {
   op = op || {};
-  const c = gl, dpr = Math.min(2, devicePixelRatio || 1), w = Math.round(c.clientWidth * dpr), h = Math.round(c.clientHeight * dpr);
+  const c = gl, dpr = Math.min(OPT ? 1 : 2, devicePixelRatio || 1), w = Math.round(c.clientWidth * dpr), h = Math.round(c.clientHeight * dpr);
   if (c.width !== w || c.height !== h) { c.width = w; c.height = h; }
   const x = c.getContext('2d'); x.imageSmoothingEnabled = false;
   const sc = h / VH, vw = w / sc, me = G.racers.find(r => r.id === (op.focus || UID)) || G.racers[0];
@@ -441,7 +468,7 @@ function showResult() {
   const c = $('bgv'), x = c.getContext('2d'); let T = 0, last = 0;
   function f(now) {
     if (scr === 'sLobby' && !document.getElementById('intro')) {
-      const dpr = Math.min(2, devicePixelRatio || 1), w = Math.round(c.clientWidth * dpr), h = Math.round(c.clientHeight * dpr);
+      const dpr = Math.min(OPT ? 1 : 2, devicePixelRatio || 1), w = Math.round(c.clientWidth * dpr), h = Math.round(c.clientHeight * dpr);
       if (c.width !== w || c.height !== h) { c.width = w; c.height = h; }
       T += Math.min(.05, (now - last) / 1000 || .016);
       const sc = h / VH; x.setTransform(sc, 0, 0, sc, 0, 0); x.imageSmoothingEnabled = false;
