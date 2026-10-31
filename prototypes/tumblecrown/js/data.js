@@ -801,7 +801,7 @@ export const CHAR_RANKS = (() => {
   return out;
 })();
 export function charRankFor(pts) { let cur = CHAR_RANKS[0]; for (const r of CHAR_RANKS) if ((pts || 0) >= r.min) cur = r; return cur; }
-export const MASTERY_PT = { kill: 15, win: 25, match: 5 };   // 한 판에 쓰러뜨림 15점, 승리 25점, 완주 5점 (+ 연승 보너스)
+export const MASTERY_PT = { kill: 12, win: 20, assist: 8, match: 5 };   // 한 판에 쓰러뜨림 12점, 도움 8점, 승리 20점, 완주 5점 (+ 연승 보너스)
 export const STREAK_BONUS = [[10, 20], [7, 15], [5, 10], [3, 5]];   // 3연승 5, 5연승 10, 7연승 15, 10연승 20
 export function streakBonusFor(n) { for (const [a, b] of STREAK_BONUS) if (n >= a) return b; return 0; }
 export function roleLevel(xp) { return Math.min(10, 1 + Math.floor(Math.sqrt((xp || 0) / 25))); }
