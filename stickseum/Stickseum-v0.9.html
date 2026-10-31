@@ -1313,6 +1313,7 @@ sting();})();</script>
     <div id="bigCount"><span id="pCount">1</span> / <span id="pMax">?</span></div>
     <div id="countdownMsg" style="display:none; text-align:center; font-weight:700; color:var(--accent); font-size:15px; margin-bottom:8px;"></div>
     <div id="botFillMsg" style="display:none; text-align:center; font-weight:700; color:#ffd34d; font-size:14px; margin-bottom:8px;"></div>
+    <div id="lobbyTip" style="display:none; text-align:center; color:#9fb0c8; font-size:13px; margin-bottom:8px;"></div>
     <label>참가자 목록</label>
     <ul id="playerList"></ul>
     <div class="row" style="margin-top:14px;">
@@ -5600,7 +5601,7 @@ function shuffle(arr){ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.
 /* ===== the version of this file =====
    Different BUILDS of one version meet and play together (room names online-v<ver>-<mode>-<map>-<slot>); different VERSIONS (the 0.x part) never do - the host refuses them (verNo) and the dispatcher answers busy.
    The build is only sent along with the join message and the lobby (for information); the corner of the screen shows it. */
-const GAME_BUILD='build 2026-10-18-v556';
+const GAME_BUILD='build 2026-10-18-v557';
 const GAME_VERSION='0.9', GAME_VERSION_NAME='은하 제국의 황혼';   // 게임 버전 이름: versions.json의 title과 같게 (빌드마다 바꾸지 않음)
 /* version (the 0.x part) vs build: different BUILDS of one version meet and play together, different VERSIONS never do (rooms, quick match, ranked, friend invites, dispatcher).
    Builds before 470 do not send a version, so it is read from the build number (0.9 started at build 458). */
@@ -8133,7 +8134,8 @@ function cloudSaveStatusText(){
    - only in THIS browser (localStorage), never sent anywhere except to the login itself; removed when you log out;
    - the account window shows it hidden (••••••) until you press "보기"; "변경" sets a new one (the server is told, this browser remembers it). */
 const PW_KEY='arenaClashPw', PW_OPT_KEY='arenaClashPwOpt';
-function pwOptionOn(){ try{ return localStorage.getItem(PW_OPT_KEY)!=='0'; }catch(e){ return true; } }
+function pwOptionOn(){ try{ return localStorage.getItem(PW_OPT_KEY)==='1'; }catch(e){ return false; } }      // (off unless the player turned it on)
+try{ if(localStorage.getItem(PW_OPT_KEY)===null) localStorage.removeItem(PW_KEY); }catch(e){}      // (a password kept by the old default-on setting is deleted once)
 function sbRememberPassword(username, password, wanted){
   try{ localStorage.setItem(PW_OPT_KEY, wanted?'1':'0'); }catch(e){}
   try{ if(wanted) localStorage.setItem(PW_KEY, JSON.stringify({u:String(username||'').toLowerCase(), p:String(password)})); else localStorage.removeItem(PW_KEY); }catch(e){}
@@ -9996,7 +9998,10 @@ document.getElementById('botAddBtn').onclick=privateBotAdd;
 document.getElementById('botRemoveBtn').onclick=privateBotRemove;
 document.getElementById('botLevelBtn').onclick=privateBotCycleLevel;
 let botFillShowAt=null; // when the bots will start joining (the host announces it; every player's screen counts down to it)
+const LOBBY_TIPS=['오늘의 모드 목록은 한국 시간 자정에 바뀌어요.','하루 첫 승리에는 보너스 골드가 붙어요.','군인의 지뢰는 상대에게도 보여요.','Esc를 누르면 열린 창이 닫혀요.','온라인 방에서 15초 동안 사람이 안 들어오면 봇이 빈자리를 채워요.','연속으로 처치하면 더블 킬, 트리플 킬 표시가 떠요.'];
 function updateCountdownUI(){
+  const tp=document.getElementById('lobbyTip');
+  if(tp){ if(!started){ tp.style.display='block'; tp.textContent='💡 '+LOBBY_TIPS[Math.floor(Date.now()/8000)%LOBBY_TIPS.length]; } else tp.style.display='none'; }
   const bm=document.getElementById('botFillMsg');
   if(bm){
     const left = botFillShowAt===null ? 0 : Math.ceil((botFillShowAt-Date.now())/1000);
@@ -16723,10 +16728,20 @@ function sceneFigure(st, snap, id){
     bladeSpin:!!(fl&256), channeling:!!(fl&512), flaming:!!(fl&1024), batting:!!(fl&2048), isZombie:!!(fl&4096), parkourItem:!!(fl&8192), swordCharging:!!(fl&16384), darkSub:!!(fl&32768), buff:st.buff, vacuumStacks:st.vac, spinAngle:st.spin,
     dashCdRemain:st.dash||0, teleportCdRemain:st.tp||0, ultCdRemain:st.ult||0, skillCdRemain:st.skill||0, lastSkill:now-(SKILL_CD-(st.skill||0))});
 }
+const MULTI_KILL_WINDOW=6000, MULTI_KILL_NAMES=['','','더블 킬','트리플 킬','쿼드라 킬','펜타 킬'];
+let multiKillBy={};
+function multiKillCount(name){
+  const now=Date.now(), m=multiKillBy[name];
+  const n=(m && now-m.t<=MULTI_KILL_WINDOW) ? m.n+1 : 1;
+  multiKillBy[name]={t:now, n};
+  return n;
+}
 function onKillEvent(data){
   pushKillFeed(data.msg);
   if(data.hasKiller) matchKillLog.push({killerName:data.killerName, victimName:data.victimName, x:data.x, y:data.y, color:data.color, killerSnap:data.killerSnap, victimSnap:data.victimSnap, killerReplay:data.killerReplay||[], victimReplay:data.victimReplay||[], killerEvents:data.killerEvents||[], victimEvents:data.victimEvents||[], boss:!!data.boss});
-  if(gameMode!=='duel') showKillBanner(data.killerName, data.victimName);
+  const mk=data.hasKiller ? multiKillCount(data.killerName) : 0;
+  if(mk>=2){ showKillBannerText(data.killerName+'님 '+(MULTI_KILL_NAMES[mk]||(mk+'연속 처치'))+'!'); try{ playSfx('ach'); }catch(e){} }
+  else if(gameMode!=='duel') showKillBanner(data.killerName, data.victimName);
 }
 function showKillBannerText(text){
   const el=document.getElementById('killBanner');
