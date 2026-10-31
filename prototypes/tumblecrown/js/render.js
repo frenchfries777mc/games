@@ -1641,7 +1641,7 @@ function setXb(X, pull, loaded) {
 const ease = u => u < 0 ? 0 : u > 1 ? 1 : u * u * (3 - 2 * u);
 const seg = (u, a, b) => ease((u - a) / (b - a));
 // 역할마다 공격·기술 동작. 몸 전체(허리 비틀기, 내딛기, 뛰어오르기)가 같이 움직여요
-const VK_T = { bloodlust: 1.6 };   // 바이킹은 도끼를 던져 받는 동안 기술 동작이 조금 더 길어요
+const VK_T = { bloodlust: 2.6 };   // 바이킹은 도끼를 던져 받는 동안 기술 동작이 조금 더 길어요
 const ANIM_T = { atk: 0.32, hv: 0.95, big: 0.6, skill: 0.8 }, SK_T = { kill: 0.55, whirl: 1.0, storm: 1.5, flurry: 0.7, leap: 0.9, bloodlust: 1.4, shadow: 0.6, scatter: 0.7, lunge: 0.7 };
 // 기사 베기 좌우 방향 (1이면 화면 오른쪽에서 시작)
 const KS = 1, KR = 1, KH_T = 0.5;
@@ -1788,8 +1788,8 @@ function animHero(E, p, dt, t, view) {
         case 'dash': // 칼을 뒤로 빼고 몸을 쭉 뻗어 날아가요
           T.rx = (0.6 * cr - 1.5 * go) * hold + base[0] * (1 - hold); T.bx = -0.15 * cr + 0.5 * pk; T.bz = 0.45 * pk; T.lx = 0.35 * pk + base[1] * (1 - pk); T.sq = 0.1 * cr - 0.1 * pk; T.jy = hop(0.2, 0.6, 0.15); T.lg = 0.6 * pk; T.bry = 0.25 * cr; break;
         case 'bloodlust': { // 바이킹: 도끼를 하늘 높이 던져 올리고 (몸을 젖히며 팔을 뻗어요) 떨어지는 도끼를 받아 쥐어요
-          const th = seg(v, 0.08, 0.22), ct = seg(v, 0.66, 0.74), rl = seg(v, 0.78, 0.95);
-          T.rx = (-0.5 * seg(v, 0, 0.08) - 2.5 * th + 0.2 * ct) * (1 - rl) + base[0] * rl; T.rz = 0.15 * th * (1 - rl); T.lx = -0.5 * th * (1 - rl) + base[1] * rl; T.bx = (-0.3 * th + 0.15 * ct) * (1 - rl); T.hx = -0.5 * th * (1 - rl); T.jy = hop(0.08, 0.3, 0.35); T.sq = 0.15 * seg(v, 0, 0.08) * (1 - th) + land(0.3, 0.2); break; }
+          const th = seg(v, 0.05, 0.14), ct = seg(v, 0.76, 0.84), rl = seg(v, 0.88, 1);
+          T.rx = (-0.5 * seg(v, 0, 0.05) - 2.5 * th + 0.2 * ct) * (1 - rl) + base[0] * rl; T.rz = 0.15 * th * (1 - rl); T.lx = -0.5 * th * (1 - rl) + base[1] * rl; T.bx = (-0.3 * th + 0.15 * ct) * (1 - rl); T.hx = -0.5 * th * (1 - rl); T.jy = hop(0.05, 0.2, 0.35); T.sq = 0.15 * seg(v, 0, 0.05) * (1 - th) + land(0.2, 0.2); break; }
         case 'taunt': // 웅크렸다가 뛰어올라 두 팔을 활짝 펴고 하늘을 향해 외쳐요
           T.rx = (-0.3 * cr - 2.9 * go) * hold; T.rz = 1.3 * pk; T.lx = (-0.3 * cr - 2.9 * go) * hold; T.lz = -1.3 * pk; T.hx = -0.9 * pk; T.bx = 0.4 * cr - 0.6 * pk; T.jy = hop(0.2, 0.5, 1.1); T.sq = 0.4 * cr - 0.3 * go * (1 - seg(v, 0.4, 0.5)) + land(0.5, 0.4); T.lg = 0.9 * pk; break;
         case 'pierce': { // 몸을 한껏 젖혀 끝까지 당겼다가 쏘고, 반동으로 뒤로 튕겨요
@@ -1873,13 +1873,13 @@ function animHero(E, p, dt, t, view) {
   const k0 = dt * (E.blT > 0 ? 14 : slow > 1 ? 20 : 34), L = (o, kk, v2) => { const r = kk === 'hx' || kk === 'hy' || kk === 'hz' ? 0.45 : kk === 'bx' || kk === 'bry' || kk === 'brz' || kk === 'bz' ? 0.8 : kk === 'jy' || kk === 'sq' ? 1.3 : 1; E[kk] = E[kk] == null ? v2 : E[kk] + (v2 - E[kk]) * (1 - Math.exp(-k0 * r)); return E[kk]; };  // 머리는 몸보다 늦게, 몸은 팔보다 늦게 따라와요
   u.armR.rotation.order = 'XZY'; u.armR.rotation.set(L(0, 'ar', T.rx), L(0, 'ary', T.ry), L(0, 'arz', T.rz)); u.armL.rotation.set(L(0, 'al', T.lx), 0, L(0, 'alz', T.lz));
   if (u.vAxe) {   // 바이킹 도끼 던지기: 손을 떠난 도끼가 하늘에서 한 바퀴 돌아 다시 손으로 돌아와요
-    const ax = u.vAxe, f = E.ak === 'bloodlust' ? (v - 0.22) / 0.5 : -1;
+    const ax = u.vAxe, f = E.ak === 'bloodlust' ? (v - 0.14) / 0.64 : -1;
     if (f > 0 && f < 1) {
       const g = E.m; u.armR.updateWorldMatrix(true, true); const tp = g.worldToLocal(u.vAxeM.getWorldPosition(new THREE.Vector3()));
       if (ax.parent !== g) { E.axS = ax.parent === u.armR ? g.worldToLocal(ax.getWorldPosition(new THREE.Vector3())) : (E.axS || tp.clone()); g.add(ax); }
       const e = f * f * (3 - 2 * f), hgt = 19 * Math.sin(Math.PI * Math.pow(f, 0.85));
-      ax.position.set(E.axS.x + (tp.x - E.axS.x) * e, E.axS.y + (tp.y - E.axS.y) * e + hgt, E.axS.z + (tp.z - E.axS.z) * e); ax.rotation.set(Math.PI / 2 + Math.PI * 2 * f, 0, 0); ax.scale.setScalar(2.2); E.axTr = (E.axTr || 0) - dt; if (E.axTr <= 0) { E.axTr = 0.04; const wp = ax.getWorldPosition(new THREE.Vector3()); view.burst(wp.x, wp.y, wp.z, 0xe8eef8, 3, 1.5, 0.35, 0.16); }
-    } else if (ax.parent !== u.armR) { u.armR.add(ax); ax.position.set(0, -0.9, 0.15); ax.rotation.set(Math.PI / 2, 0, 0); ax.scale.setScalar(1); }
+      ax.position.set(E.axS.x + (tp.x - E.axS.x) * e, E.axS.y + (tp.y - E.axS.y) * e + hgt, E.axS.z + (tp.z - E.axS.z) * e); ax.rotation.set(Math.PI / 2 + Math.PI * 2 * e, 0, 0); E.axTr = (E.axTr || 0) - dt; if (E.axTr <= 0) { E.axTr = 0.04; const wp = ax.getWorldPosition(new THREE.Vector3()); view.burst(wp.x, wp.y, wp.z, 0xe8eef8, 3, 1.5, 0.35, 0.16); }
+    } else if (ax.parent !== u.armR) { u.armR.add(ax); ax.position.set(0, -0.9, 0.15); ax.rotation.set(Math.PI / 2, 0, 0); }
   }
   u.armR.position.z = L(0, 'rpz', T.rpz); u.head.rotation.set(L(0, 'hx', T.hx), L(0, 'hy', T.hy), L(0, 'hz', T.hz));
   if (u.bowS) {   // 활시위 튕김: 시위를 놓는 순간 시위가 위아래로 떨리다 가라앉아요
