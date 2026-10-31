@@ -470,7 +470,11 @@ function useSkill(G, p, si, inp) {
     case 'block': p.block = 1.2; rolePuz(G, p, 'oath', 1.7); break;
     case 'dash': {
       const ox = p.x, oz = p.z, L = 9;
-      p.x += Math.cos(p.a) * L; p.z += Math.sin(p.a) * L; collide(G, p, 0.6); p.inv = 0.3;
+      for (let d = 0; d < L - 1e-6;) {   // 조금씩 나아가다 벽에 닿으면 거기서 멈춰요 (얇은 벽도 못 뚫어요)
+        const st = Math.min(0.4, L - d), px = p.x, pz = p.z; p.x += Math.cos(p.a) * st; p.z += Math.sin(p.a) * st; const qx = p.x, qz = p.z; collide(G, p, 0.6);
+        if (Math.hypot(p.x - qx, p.z - qz) > 0.02) { p.x = px; p.z = pz; break; } d += st;
+      }
+      p.inv = 0.3;
       for (const e of G.enemies) { if (e.hp <= 0) continue; if (segDist(ox, oz, p.x, p.z, e.x, e.z) < 1.3 + e.r) { hurtEnemy(G, e, 30, p, { kb: 8, kbA: p.a }); if (e.hp > 0) { e.slow = Math.max(e.slow || 0, 1.5); e.slowM = 0.6; } } }   // 맞은 상대는 1.5초 느려져요 (도망치는 상대를 따라잡기 쉬워요)
       break;
     }
