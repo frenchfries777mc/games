@@ -12,7 +12,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
 <!-- 새 빌드마다 아래 ?v= 숫자를 BUILD와 같게 올려요 (브라우저가 옛 파일을 쓰지 않게) -->
-<script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/","./js/data.js":"./js/data.js?v=140","./js/main.js":"./js/main.js?v=140","./js/map.js":"./js/map.js?v=140","./js/music.js":"./js/music.js?v=140","./js/render.js":"./js/render.js?v=140","./js/sfx.js":"./js/sfx.js?v=140","./js/sim.js":"./js/sim.js?v=140","./js/tr.js":"./js/tr.js?v=140"}}</script>
+<script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/","./js/data.js":"./js/data.js?v=141","./js/main.js":"./js/main.js?v=141","./js/map.js":"./js/map.js?v=141","./js/music.js":"./js/music.js?v=141","./js/render.js":"./js/render.js?v=141","./js/sfx.js":"./js/sfx.js?v=141","./js/sim.js":"./js/sim.js?v=141","./js/tr.js":"./js/tr.js?v=141"}}</script>
 <script src="../../ff-presence.js" async></script>
 <script src="https://cdn.jsdelivr.net/npm/peerjs@1.5.4/dist/peerjs.min.js"></script>
 <script src="https://frenchfries777mc.github.io/games/ff-lang.js"></script>
@@ -123,6 +123,7 @@ input[type=range]{width:220px;accent-color:#d9b75a}
 #sMode .mcard{display:flex;flex-direction:column;justify-content:flex-end;gap:6px;text-align:left;position:relative;width:min(27vw,290px);height:100%;border:3px solid #3a3242;background:#16101c center/cover no-repeat;color:#ffe9b0;cursor:pointer;padding:0;overflow:hidden;box-shadow:0 8px 0 #000;padding:14px}
 #sMode .mcard:hover{border-color:var(--gold);transform:translateY(-3px)}
 #sMode .mcard::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(10,8,14,0) 45%,rgba(10,8,14,.9) 100%)}
+#sMode .mcard .lg{position:relative;z-index:1;width:78%;max-width:220px;aspect-ratio:1;margin:0 auto auto;image-rendering:pixelated;filter:drop-shadow(0 6px 0 rgba(0,0,0,.6))}
 #sMode .mcard b{position:relative;z-index:1;font-size:24px}
 #sMode .mcard small{position:relative;z-index:1;font-size:13px;color:#d8d0bc;line-height:1.35}
 #clsList{position:absolute;left:16px;top:50%;transform:translateY(-50%);display:flex;flex-direction:column;gap:6px;max-height:calc(100vh - 150px);overflow-y:auto;overscroll-behavior:contain}
@@ -354,7 +355,7 @@ body.touch #exitBtn{top:auto;bottom:auto}
 <div id="touch"><div id="joy"><div id="joyBase"><div id="joyKnob"></div></div></div>
   <div id="tbtns"><button id="tA"><span>공격</span></button><button id="tQ"><i class="cd"></i><span>Q</span></button><button id="tE"><i class="cd"></i><span>E</span></button><button id="tR"><i class="cd"></i><span>R</span></button><button id="tRoll"><i class="cd"></i><span>구르기</span></button><button id="tF"><span>귀환</span></button></div>
 </div>
-<script type="module" src="js/main.js?v=140"></script>
+<script type="module" src="js/main.js?v=141"></script>
 <div id="findBlock" style="position:fixed;inset:0;z-index:60;display:none;cursor:wait"></div>
 </body>
 </html>
