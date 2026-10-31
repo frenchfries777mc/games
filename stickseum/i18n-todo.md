@@ -24,3 +24,8 @@ Stickseum-v0.8.html | match-end mastery rank block | 마스터리 포인트 +N �
 ## Stickseum v561 로딩 진행바 (2026-10-31)
 - Stickseum-latest.html (시작 파일): 'STICKSEUM' 제목, '불러오는 중 N%'
 - 패치노트 v561: 제목 "로딩 진행바", 항목 2개
+patchnotes.json | v567 title | 은하 제국의 황혼 | build 567 | 2026-10-31
+patchnotes.json | v567 items[0] | 모드마다 봇의 플레이 방식 변경 (얼음땡: 얼어붙은 아군을 녹이러 감, 왕 지키기: 절반은 상대 왕 공격·절반은 우리 왕 수비) | build 567 | 2026-10-31
+patchnotes.json | v567 items[1] | 무기 릴레이·무기 룰렛·저중력 난투: 봇이 계속 상대를 쫓음 (룰렛은 체력이 낮은 상대 우선) | build 567 | 2026-10-31
+patchnotes.json | v567 items[2] | 한 방 승부: 봇이 날아오는 탄을 점프·대쉬로 피함 | build 567 | 2026-10-31
+patchnotes.json | v567 items[3] | 무한 대쉬·하이퍼 배틀로얄: 봇이 대쉬로 상대에게 달려듦 | build 567 | 2026-10-31
