@@ -527,7 +527,7 @@ function useSkill(G, p, si, inp) {
       for (const e of G.enemies) if (e.hp > 0 && foeOf(G, p.id, e) && dist(p, e) < 3.4 + e.r) { hurtEnemy(G, e, 36, p, {}); if (e.hp > 0) { e.slow = Math.max(e.slow || 0, 1.5); e.slowM = 0.6; } }
       break;
     }
-    case 'bloodlust': p.leech = 5; ev(G, 'skill', { id: p.id, s: 'bloodfx', x: p.x, z: p.z, a: p.a }); break;   // 5초 동안 준 피해의 일부를 체력으로 되찾아요
+    case 'bloodlust': p.blT = 1.36; p.cd.atk = Math.max(p.cd.atk || 0, 1.36); ev(G, 'skill', { id: p.id, s: 'bloodfx', x: p.x, z: p.z, a: p.a }); break;   // 5초 동안 준 피해의 일부를 체력으로 되찾아요
     case 'flurry': { // 앞으로 파고들며 다섯 번 번갈아 베요
       p.x += Math.cos(p.a) * 2.2; p.z += Math.sin(p.a) * 2.2; collide(G, p, 0.6); ev(G, 'skill', { id: p.id, s: 'flurryfx', x: p.x, z: p.z, a: p.a });
       p.mh = { t: 0.5, tick: 0.05, gap: 0.1, dmg: 9, r: 3.0, arc: 0.9, fx: 'stabfx' }; p.animT = 0.7; break;
@@ -770,6 +770,7 @@ function stepPlayer(G, p, inp, dt) {
     if (p.inFl && p.hp < p.maxhp) p.hp = Math.min(p.maxhp, p.hp + p.maxhp * 0.025 * dt);
     p.noHit = (p.noHit || 0) + dt;
     if (p.noHit > 4 && p.hp < p.maxhp) p.hp = Math.min(p.maxhp, p.hp + p.maxhp * 0.02 * dt);   // 맞지 않고 4초가 지나면 체력이 저절로 차올라요
+    if (p.blT > 0) { p.blT -= dt; if (p.blT <= 0) p.leech = 5; }   // 도끼를 받는 순간부터 5초 동안 피해의 일부를 되찾아요
     if (p.leech > 0) p.leech = Math.max(0, p.leech - dt);
     if (p.mh) { // 여러 번 이어서 치는 기술: 틱마다 둘레(또는 앞쪽)를 쳐요
       const m = p.mh; m.t -= dt; m.tick -= dt;
