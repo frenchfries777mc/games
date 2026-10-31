@@ -40,3 +40,5 @@ patchnotes.json | v574 title | 은하 제국의 황혼 | build 574 | 2026-10-31
 patchnotes.json | v574 items[0] | 온라인 대전에서 30초 동안 아무것도 하지 않으면 봇이 대신 플레이 (다시 움직이면 돌려받음) | build 574 | 2026-10-31
 patchnotes.json | v575 title | 은하 제국의 황혼 | build 575 | 2026-10-31
 patchnotes.json | v575 items[0] | 신규 유저 보호 매칭 취소: 방이 하나뿐이어도 레벨 차이와 상관없이 그 방에 들어감 (원래대로 레벨이 가까운 방을 우선 선택) | build 575 | 2026-10-31
+patchnotes.json | v576 title | 은하 제국의 황혼 | build 576 | 2026-10-31
+patchnotes.json | v576 items[0] | 영혼석 로고 적용: 시즌 패스 보상, 상점의 영혼석 표시, 상자 구매·보상 화면, 보상 창의 💜를 새 로고로 교체 | build 576 | 2026-10-31
