@@ -2,6 +2,101 @@
  "notes": [
   {
    "date": "2026-10-31",
+   "build": "v0.2 build 78",
+   "title": "활동 보너스",
+   "items": [
+    "직접 플레이한 시간이 1분 쌓일 때마다 금화 보너스가 들어오고, 끊기지 않고 이어 하면 최대 5분 연속까지 보너스가 커짐",
+    "90초 넘게 손대지 않으면 연속이 끊기고, 오프라인 수입은 그대로임"
+   ],
+   "tr": {
+    "en": {
+     "title": "Activity bonus",
+     "items": [
+      "Every minute of hands-on play pays a gold bonus, growing up to a 5-minute streak if you keep going",
+      "Idling for over 90 seconds resets the streak; offline income is unchanged"
+     ]
+    },
+    "ja": {
+     "title": "Activity bonus",
+     "items": [
+      "Every minute of hands-on play pays a gold bonus, growing up to a 5-minute streak if you keep going",
+      "Idling for over 90 seconds resets the streak; offline income is unchanged"
+     ]
+    },
+    "es": {
+     "title": "Activity bonus",
+     "items": [
+      "Every minute of hands-on play pays a gold bonus, growing up to a 5-minute streak if you keep going",
+      "Idling for over 90 seconds resets the streak; offline income is unchanged"
+     ]
+    },
+    "fr": {
+     "title": "Activity bonus",
+     "items": [
+      "Every minute of hands-on play pays a gold bonus, growing up to a 5-minute streak if you keep going",
+      "Idling for over 90 seconds resets the streak; offline income is unchanged"
+     ]
+    },
+    "de": {
+     "title": "Activity bonus",
+     "items": [
+      "Every minute of hands-on play pays a gold bonus, growing up to a 5-minute streak if you keep going",
+      "Idling for over 90 seconds resets the streak; offline income is unchanged"
+     ]
+    },
+    "zh": {
+     "title": "Activity bonus",
+     "items": [
+      "Every minute of hands-on play pays a gold bonus, growing up to a 5-minute streak if you keep going",
+      "Idling for over 90 seconds resets the streak; offline income is unchanged"
+     ]
+    },
+    "pt": {
+     "title": "Activity bonus",
+     "items": [
+      "Every minute of hands-on play pays a gold bonus, growing up to a 5-minute streak if you keep going",
+      "Idling for over 90 seconds resets the streak; offline income is unchanged"
+     ]
+    },
+    "ru": {
+     "title": "Activity bonus",
+     "items": [
+      "Every minute of hands-on play pays a gold bonus, growing up to a 5-minute streak if you keep going",
+      "Idling for over 90 seconds resets the streak; offline income is unchanged"
+     ]
+    },
+    "tr": {
+     "title": "Activity bonus",
+     "items": [
+      "Every minute of hands-on play pays a gold bonus, growing up to a 5-minute streak if you keep going",
+      "Idling for over 90 seconds resets the streak; offline income is unchanged"
+     ]
+    },
+    "it": {
+     "title": "Activity bonus",
+     "items": [
+      "Every minute of hands-on play pays a gold bonus, growing up to a 5-minute streak if you keep going",
+      "Idling for over 90 seconds resets the streak; offline income is unchanged"
+     ]
+    },
+    "pl": {
+     "title": "Activity bonus",
+     "items": [
+      "Every minute of hands-on play pays a gold bonus, growing up to a 5-minute streak if you keep going",
+      "Idling for over 90 seconds resets the streak; offline income is unchanged"
+     ]
+    },
+    "ar": {
+     "title": "Activity bonus",
+     "items": [
+      "Every minute of hands-on play pays a gold bonus, growing up to a 5-minute streak if you keep going",
+      "Idling for over 90 seconds resets the streak; offline income is unchanged"
+     ]
+    }
+   }
+  },
+  {
+   "date": "2026-10-31",
    "build": "v0.2 build 77",
    "title": "첫 로딩 가볍게, 패치노트 번역 확대",
    "items": [
