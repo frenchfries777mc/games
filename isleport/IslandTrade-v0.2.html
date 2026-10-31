@@ -338,6 +338,8 @@ const OPB={
  stall:{n:P('장터 가판','Market stall'),d:P('60초에 금화 12개씩 모아 둬요 (최대 40번)','Gathers 12 g every 60 s (max 40 times)'),cost:3500,per:60,cap:40,coin:1,unit:12}};
 OPB.omill={n:P('개척 방앗간','Frontier mill'),d:P('밀 2개를 밀가루 1개로 빻아요 (14초, 최대 5번 맡기기)','Grinds 2 wheat into 1 flour (14 s, up to 5 batches)'),cost:3000,rec:[[['wheat',2]],'flour',1,14]};
 OPB.owine={n:P('개척 양조장','Frontier winery'),d:P('포도 2개를 와인 1병으로 빚어요 (30초, 최대 5번 맡기기)','Presses 2 grapes into 1 wine (30 s, up to 5 batches)'),cost:5000,rec:[[['grape',2]],'wine',1,30]};
+OPB.obake={n:P('개척 빵집','Frontier bakery'),d:P('밀가루 2개를 빵 1개로 구워요 (20초, 최대 5번 맡기기)','Bakes 2 flour into 1 bread (20 s, up to 5 batches)'),cost:4000,rec:[[['flour',2]],'bread',1,20]};
+OPB.otav={n:P('개척 선술집','Frontier tavern'),d:P('빵 2개를 손님에게 팔아 금화 220개를 벌어요 (25초, 최대 5번 맡기기)','Sells 2 bread to guests for 220 g (25 s, up to 5 batches)'),cost:6000,rec:[[['bread',2]],'$',220,25]};
 OPB.cart={uniq:1,n:P('마차 정거장','Cart station'),d:P('이 섬의 다 익은 밭과 시설에 모인 것을 4초마다 알아서 창고로 실어 가고, 씨앗이 있으면 다시 심어요','Hauls ripe fields and stored goods to your warehouse every 4 s and replants if you have seeds'),cost:6000};
 const ANIMK=['chicken','sheep','cow','fishing','pig','goat','bee'];
 /* 마을 건물: 레시피 [입력들, 출력, 개수, 초] */
@@ -490,7 +492,7 @@ const TUT=[
  [P('다 자라면 ▼ 표시의 밭을 눌러 수확해요','When it is grown, tap the field with the ▼ to harvest'),s=>s.stats.harvest>=1],
  [P('마을 장터에서 수확한 것을 팔아요','Sell your harvest at the town market'),s=>(s.stats.shop||0)>=1],
  [P('항구에서 배에 짐을 싣고 보내요','Load a ship at the harbor and send it off'),s=>s.stats.sailed>=1]];
-const OUTMAX=12,BUILD=78;
+const OUTMAX=12,BUILD=79;
 const hasB=(s,b)=>s.slots.some(x=>x&&x.b===b);
 const CASTLE_T=[
  {n:P('망루','Watchtower'),d:P('돌로 쌓은 망루를 세워요. 세금이 걷히기 시작해요','A stone watchtower. Taxes start to come in'),cost:6000,rank:1},
@@ -618,6 +620,10 @@ A('nw1m',P('백만장자','Millionaire'),P('재산 1,000,000 모으기','Reach a
 const CROPK=Object.keys(CROPS),SPEC=['goldbarley','pomegranate','saffron','cloudcotton','seaweed','dragonfruit'],CROPK17=CROPK.filter(c=>!SPEC.includes(c));
 const ACHN={};ACH.forEach(a=>ACHN[a.id]=a);
 const NOTES=[
+ {date:'2026-10-31',build:'v0.2 build 79',title:P('개척지 생산 사슬','Frontier production chain'),items:[
+  P('개척지에 빵집과 선술집이 생겨서 밀 → 밀가루 → 빵 → 금화로 이어지는 사슬을 만들 수 있음','Frontier bakery and tavern: build the chain wheat to flour to bread to gold'),
+  P('마차 정거장이 있으면 완성품을 창고로 나르고, 창고에 재료가 있으면 다음 시설에 알아서 넣어 줌','With a cart station, finished goods go to the warehouse and the next facility is loaded automatically from stock')
+ ]},
  {date:'2026-10-31',build:'v0.2 build 78',title:P('활동 보너스','Activity bonus'),items:[
   P('직접 플레이한 시간이 1분 쌓일 때마다 금화 보너스가 들어오고, 끊기지 않고 이어 하면 최대 5분 연속까지 보너스가 커짐','Every minute of hands-on play pays a gold bonus, growing up to a 5-minute streak if you keep going'),
   P('90초 넘게 손대지 않으면 연속이 끊기고, 오프라인 수입은 그대로임','Idling for over 90 seconds resets the streak; offline income is unchanged')
@@ -1546,11 +1552,12 @@ function opBuild(k,i,t){const O=opOf(k),d=OPB[t];if(!d||O.b[i]||S.money<d.cost||
 function opSync(q){const d=OPB[q.t];if(!d||!d.rec||!q.in)return;const ms=d.rec[3]*1000;while(q.in>0&&NOW()>=q.t0+ms){q.in--;q.out=(q.out||0)+d.rec[2];q.t0+=ms;}}
 function opAcc(q){const d=OPB[q.t];if(!d||!d.per)return 0;return Math.max(0,Math.min(d.cap,Math.floor((NOW()-q.t0)/(d.per*1000))));}
 function opN(q){const d=OPB[q.t];if(d&&d.rec){opSync(q);return q.out||0;}return opAcc(q);}
-function opLoad(k,i){const q=opOf(k).b[i],d=q&&OPB[q.t];if(!d||!d.rec)return 0;opSync(q);let b=0;
+function opLoad(k,i,quiet){const q=opOf(k).b[i],d=q&&OPB[q.t];if(!d||!d.rec)return 0;opSync(q);let b=0;
   while((q.in||0)<5&&(q.out||0)<20&&d.rec[0].every(([g,n])=>inv(g)>=n)){d.rec[0].forEach(([g,n])=>{S.inv[g]=inv(g)-n;});if(!q.in)q.t0=NOW();q.in=(q.in||0)+1;b++;}
-  if(b){sfx('build');toast(T('{0}번 분량을 넣었어요','Loaded {0} batches',b));}else toast(T('재료가 모자라요','Not enough ingredients'));return b;}
+  if(quiet)return b;if(b){sfx('build');toast(T('{0}번 분량을 넣었어요','Loaded {0} batches',b));}else toast(T('재료가 모자라요','Not enough ingredients'));return b;}
 function opCollect(k,i,quiet){const q=opOf(k).b[i],d=q&&OPB[q.t],n=q?opN(q):0;if(!n)return;
   if(d.coin){const v=n*d.unit;S.money+=v;S.stats.earned+=v;q.t0=NOW();if(!quiet){toast(T('장터 수입 {0}을 받았어요','Collected {0} from the stall',fmt(v)+UG()));sfx('coin');}return;}
+  if(d.rec&&d.rec[1]==='$'){S.money+=n;S.stats.earned+=n;q.out=0;if(!quiet){toast(T('손님에게서 {0}을 받았어요','Earned {0} from guests',fmt(n)+UG()));sfx('coin');}return;}
   if(d.rec){const g=d.rec[1],a=addInv(g,n);if(a<=0){if(!quiet)toast(T('창고가 가득 찼어요','Warehouse is full'));return;}q.out-=a;if(!quiet){toast(T('{0}을 받았어요','Collected {0}',GN(g)+' '+a));sfx('coin');}return;}
   const gs=d.out?[d.out]:opGoods(k),tot={};let got=0;
   for(let j=0;j<n;j++){const g=gs[(q.n||0)%gs.length];if(addInv(g,1)>0){q.n=(q.n||0)+1;got++;tot[g]=(tot[g]||0)+1;}else break;}
@@ -1560,7 +1567,8 @@ let opLast=0;
 function opTick(){const t=NOW();if(t-opLast<4000)return;opLast=t;if(!S||!S.op)return;
   Object.keys(S.op).forEach(k=>{const O=S.op[k];if(!O||!O.b.some(q=>q&&q.t==='cart'))return;
     O.f.forEach((p,i)=>{if(ripe(p)){const g=p.g,per=CROPS[g].per;if(opHarvest(+k,i,true,true)&&!per&&O.f[i]===null&&seedN(g)>0)opPlant(+k,i,g);}});
-    O.b.forEach((q,i)=>{if(q&&q.t!=='cart'&&opN(q)>0)opCollect(+k,i,true);});});}
+    O.b.forEach((q,i)=>{if(q&&q.t!=='cart'&&opN(q)>0)opCollect(+k,i,true);});
+    for(let r=0;r<2;r++)O.b.forEach((q,i)=>{if(q&&OPB[q.t]&&OPB[q.t].rec)opLoad(+k,i,true);});});}
 
 /* ---- 주민 심부름 ---- */
 const ERITEM=[P('편지','letter'),P('소포','parcel'),P('약초 꾸러미','bundle of herbs'),P('수선한 도구','repaired tool'),P('달콤한 간식','sweet snack')];
@@ -3307,7 +3315,7 @@ MODS.opplot=m=>{const O=opOf(m.ik),p=O.f[m.i],h=`<h2>${T('개척 밭','Frontier 
 MODS.opfac=m=>{const O=opOf(m.ik),q=O.b[m.i];
   if(!q)return `<h2>${T('개척 시설','Frontier facility')}</h2><div class="muted">${T('이 섬에 지을 시설을 골라요.','Pick a facility to build on this isle.')} <b>${fmt(S.money)}${UG()}</b></div>`+Object.keys(OPB).map(t=>{const d=OPB[t];return `<div class="card"><div class="grow"><b>${tx(d.n)}</b><div class="muted">${tx(d.d)}</div></div><button class="pb sm gold" data-act="opbuild:${m.i}:${t}" ${S.money<d.cost||(d.uniq&&O.b.some(x=>x&&x.t===t))?'disabled':''}>${fmt(d.cost)}${UG()}</button></div>`;}).join('');
   const d=OPB[q.t],n=opN(q);
-  if(d.rec)return `<h2>${tx(d.n)}</h2><div class="muted">${tx(d.d)}</div><div class="card"><div class="grow">${T('만드는 중 {0}번 · 완성 {1}','Queued {0} · Done {1}',q.in||0,q.out||0)}<div class="muted">${d.rec[0].map(([g,c])=>GN(g)+' '+c+' ('+inv(g)+')').join(' + ')} → ${GN(d.rec[1])} ${d.rec[2]}</div></div><button class="pb sm" data-act="opload:${m.i}" ${(q.in||0)>=5?'disabled':''}>${T('재료 넣기','Load')}</button><button class="pb sm gold" data-act="opget:${m.i}" ${n<1?'disabled':''}>${T('받기','Collect')}</button></div>`;
+  if(d.rec)return `<h2>${tx(d.n)}</h2><div class="muted">${tx(d.d)}</div><div class="card"><div class="grow">${T('만드는 중 {0}번 · 완성 {1}','Queued {0} · Done {1}',q.in||0,q.out||0)}<div class="muted">${d.rec[0].map(([g,c])=>GN(g)+' '+c+' ('+inv(g)+')').join(' + ')} → ${d.rec[1]==='$'?T('금화','gold'):GN(d.rec[1])} ${d.rec[2]}</div></div><button class="pb sm" data-act="opload:${m.i}" ${(q.in||0)>=5?'disabled':''}>${T('재료 넣기','Load')}</button><button class="pb sm gold" data-act="opget:${m.i}" ${n<1?'disabled':''}>${T('받기','Collect')}</button></div>`;
   return `<h2>${tx(d.n)}</h2><div class="muted">${tx(d.d)}</div>`+(d.per?`<div class="card"><div class="grow">${d.coin?T('모인 금화 {0}','Stored {0}',fmt(n*d.unit)+UG()):T('모인 물건 {0}/{1}','Stored {0}/{1}',n,d.cap)}${d.coin||d.out?'':`<div class="muted">${opGoods(m.ik).map(GN).join(', ')}</div>`}</div><button class="pb sm gold" data-act="opget:${m.i}" ${n<1?'disabled':''}>${T('받기','Collect')}</button></div>`:`<div class="muted" style="margin-top:6px">${T('지어 둔 것만으로 효과가 있어요','It works just by standing there')}</div>`);};
 ACT.optill=a=>{opTill(MOD.ik,+a);updateHud();renderModal();};
 ACT.opseed=a=>{const [i,g]=a.split(':');if(opPlant(MOD.ik,+i,g))closeModal();updateHud();};
@@ -3689,6 +3697,8 @@ function opDraw(t){const O=S.op&&S.op[ISL.k];ISL.objs.forEach(o=>{
     else if(q.t==='graze'){for(let j=0;j<5;j++)R(x+1+j*4,y+6,1,8,'#8a6a42');R(x+1,y+8,17,1,'#a0825a');R(x+1,y+12,17,1,'#a0825a');const sx=x+4+Math.sin(t*.7+o.i)*3;R(sx,y+9,5,3,'#f4f1ea');R(sx+4,y+9,2,2,'#3a2e28');R(sx+9,y+10,4,2,'#f4f1ea');}
     else if(q.t==='stall'){for(let j=0;j<4;j++)R(x+1+j*4,y+3,4,4,j%2?'#e0b030':'#f4efe0');R(x+1,y+7,16,8,'#c8a070');R(x+2,y+8,14,2,'#e0a030');R(x+1,y+3,1,12,'#6a4a22');R(x+16,y+3,1,12,'#6a4a22');}
     else if(q.t==='omill'){houseG(R,x+1,y+8,16,8,'#d8c8a0','#a8784a');const a=t*(q.in>0?1.6:.3);for(let j=0;j<4;j++){const aa=a+j*1.5708;R(x+9+Math.round(Math.cos(aa)*6),y+4+Math.round(Math.sin(aa)*5),1,1,'#f4efe0');}}
+    else if(q.t==='obake'){houseG(R,x+1,y+8,16,8,'#d8c8a0','#c0452f');R(x+13,y+4,3,5,'#8a7a6a');if(q.in>0)for(let j=0;j<3;j++)R(x+14+Math.round(Math.sin(t*2+j)*1),y+2-j*2,2,1,'rgba(240,240,240,'+(.7-j*.2).toFixed(2)+')');}
+    else if(q.t==='otav'){houseG(R,x+1,y+8,16,8,'#d8c8a0','#6a3a1a');R(x+14,y+7,1,4,'#4a2a12');R(x+15,y+7,3,3,'#e0b030');}
     else if(q.t==='owine'){houseG(R,x+1,y+8,16,8,'#d8c8a0','#7a3e9d');R(x+15,y+11,3,4,'#8a5a2a');}
     else if(q.t==='cart'){R(x+2,y+9,14,4,'#8a6238');R(x+2,y+9,14,1,'#c08848');R(x+4,y+13,3,3,'#3a2412');R(x+11,y+13,3,3,'#3a2412');R(x+4,y+5,10,4,'#d8b84a');R(x+13,y+3,1,8,'#6a4a22');}
     if(opN(q)>0)R(x+8,y-5+Math.round(Math.sin(t*5)),3,4,'#ffe27a'),R(x+8,y,3,1,'#ffe27a');}
