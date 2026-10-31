@@ -2,7 +2,7 @@
 // 화면 흐름, 조작, 멀티(친구 초대, PeerJS), 저장
 import { View } from './render.js';
 import { createGame, step, snapshot, chooseBless, carryOver, koPlayer, INTRO_T, HV_DELAY, wallClamp, setupRange } from './sim.js';
-import { PUSH_N, PUSH_T, TEAMS, FLAG_T, RESP_T, ARENA_THEMES, MODES, ROLES, ROLE_IDS, COLORS, BOT_NAMES, MAX_PLAYERS, BLESSINGS, CHAPTERS, CH, FOES, MAP, ACHIEVEMENTS, TALK, GEAR_TIERS, GEAR_COST, COSMETICS, MIDB, WEEKLY, weekInfo, VERSION, BUILD, roleLevel, CHAR_RANKS, charRankFor, MASTERY_PT, streakBonusFor, LORE, COMBOS, CURSES, DEEP, DEEP_I, TALK_X, ROLE_PUZ, flagShown } from './data.js';
+import { useMode, PUSH_N, PUSH_T, TEAMS, FLAG_T, RESP_T, ARENA_THEMES, MODES, ROLES, ROLE_IDS, COLORS, BOT_NAMES, MAX_PLAYERS, BLESSINGS, CHAPTERS, CH, FOES, MAP, ACHIEVEMENTS, TALK, GEAR_TIERS, GEAR_COST, COSMETICS, MIDB, WEEKLY, weekInfo, VERSION, BUILD, roleLevel, CHAR_RANKS, charRankFor, MASTERY_PT, streakBonusFor, LORE, COMBOS, CURSES, DEEP, DEEP_I, TALK_X, ROLE_PUZ, flagShown } from './data.js';
 import { collide as mapCollide, areaAt, floorCell, MW, MH, CS, cw, useChapter, chapterIndex, SOPEN, openSecret, resetSecrets, hiddenCell, GOPEN, openGate, setDoors, DSTATE, PDOWN, dropPillar, LIFTH, liftOk, CUT } from './map.js';
 import * as SFX from './sfx.js';
 import * as MUS from './music.js';
@@ -497,7 +497,7 @@ if (qs.get('dedicated') === '1') {
   window.__ffd = { open(n) { S.err = ''; startMatch(n); }, status() { return { live: S.net === 'host' && !!S.peer && !S.err, humans: S.slots.filter(s => !s.srv && !s.bot).length, started: !!S.G, ended: !!(S.snap && S.snap.ph === 'won'), err: S.err || '' }; } };
 }
 /* 온라인 대전 (Stickseum 방식): 방 이름 ff-tumblecrown-q1, q2... 를 차례로 만들어 보고, 이미 있으면 그 방에 들어가요. 가득 차거나 이미 시작했으면 다음 방으로 가요 */
-function paintModes() { $('modeCards').innerHTML = Object.keys(MODES).map(k => '<button class="mcard" data-m="' + k + '" style="background-image:url(mode-' + k + '.jpg)"><b>' + MODES[k].name + '</b><small>' + MODES[k].desc + (k === 'rank' ? '<br>' + T('내 랭킹 {0}점 · {1}', SAVE.rating | 0, charRankFor(SAVE.rating | 0).name) : '') + '</small></button>').join(''); $('modeCards').querySelectorAll('button').forEach(b => b.onclick = () => { SFX.play('click'); S.mode = b.dataset.m; startMatch(); }); }
+function paintModes() { $('modeCards').innerHTML = Object.keys(MODES).map(k => '<button class="mcard" data-m="' + k + '" style="background-image:url(mode-' + k + '.jpg)"><img class="lg" alt="" src="mode-' + k + '-logo.png"><b>' + MODES[k].name + '</b><small>' + MODES[k].desc + (k === 'rank' ? '<br>' + T('내 랭킹 {0}점 · {1}', SAVE.rating | 0, charRankFor(SAVE.rating | 0).name) : '') + '</small></button>').join(''); $('modeCards').querySelectorAll('button').forEach(b => b.onclick = () => { SFX.play('click'); S.mode = b.dataset.m; startMatch(); }); }
 function startMatch(n) {
   if (!window.Peer) { homeMsg(T('연결 도구를 불러오지 못했어요. 인터넷 연결을 확인하고 새로고침해 주세요.')); return; }
   leaveNet(); homeMsg(T('같이 할 사람을 찾는 중...')); matchTry(n || 1, S.mg);
@@ -509,7 +509,7 @@ function matchTry(n, gen) {
   const p = new Peer(PREFIX + MODES[S.mode || 'normal'].key + n, peerOpts()); S.peer = p;
   p.on('open', () => {
     if (S.mg !== gen || S.peer !== p) { matchGone(p); return; }
-    S.net = 'host'; S.pub = true; S.cap = PUB_CAP; S.ph = 'wait'; S.rdy = {}; S.code = ''; S.slots = [meSlot()]; homeMsg('');
+    S.net = 'host'; S.pub = true; S.cap = MODES[S.mode || 'normal'].cap || PUB_CAP; S.ph = 'wait'; S.rdy = {}; S.code = ''; S.slots = [meSlot()]; homeMsg('');
     p.on('connection', c => { c.on('data', d => hostMsg(c, d)); c.on('close', () => dropConn(c)); c.on('error', () => dropConn(c)); });
     p.on('disconnected', () => { if (S.peer === p && !p.destroyed) setTimeout(() => { if (S.peer === p && !p.destroyed) p.reconnect(); }, 1000); });
     openRoom();
@@ -554,7 +554,7 @@ function hostMsg(c, d) {
       if (!p) { c.send({ t: 'deny', why: '이미 시작한 방이에요.' }); setTimeout(() => c.close(), 300); return; }
       p.bot = false; p.uid = uid; p.name = name; p.wasHuman = true; S.G.humans = S.G.players.filter(q => !q.bot).length;
       S.conns[uid] = c; c._pid = p.id;
-      c.send({ t: 'welcome', ver: VERSION, uid, start: true, pid: p.id, ch: S.G.ch, dp: S.G.deep, wk: S.G.weekly, th: CH.theme }); toast(T('{0}님이 {1} 자리에 들어왔어요.', name, ROLES[p.role].name));
+      c.send({ t: 'welcome', ver: VERSION, uid, start: true, pid: p.id, ch: S.G.ch, dp: S.G.deep, wk: S.G.weekly, th: CH.theme, md: S.G.mode }); toast(T('{0}님이 {1} 자리에 들어왔어요.', name, ROLES[p.role].name));
       return;
     }
     let sl = S.slots.find(s => s.uid === uid);
@@ -597,10 +597,10 @@ function startGuest(code) {
 function guestMsg(d) {
   if (!d || typeof d !== 'object') return;
   if (d.t === 'welcome' && d.ver && d.ver !== VERSION) { homeMsg(T('버전이 달라요. 이 방은 {0} 버전이에요.', d.ver)); leaveNet(); return; }
-  if (d.t === 'welcome') { homeMsg(''); if (d.start) { S.me = d.pid; useDeep(d.dp); { const fw = useWk(d.wk); useChapter(d.ch | 0, !!d.dp || fw); if (d.th) CH.theme = d.th; } startClient(); } else { openRoom(); } }
+  if (d.t === 'welcome') { homeMsg(''); if (d.start) { S.me = d.pid; useDeep(d.dp); { const fw = useWk(d.wk); useChapter(d.ch | 0, !!d.dp || fw); if (d.md) S.mode = d.md; useMode(d.md || 'normal'); if (d.th) CH.theme = d.th; } startClient(); } else { openRoom(); } }
   else if (d.t === 'lobby') { S.slots = d.slots; S.ph = d.ph; S.cap = d.cap || PUB_CAP; S.pub = !!d.pub; S.pickT = d.pt; S.ft = d.ft; if (S.scr === 'sRoom') paintRoom(); }
   else if (d.t === 'deny') { homeMsg(d.ver ? T('버전이 달라요. 이 방은 {0} 버전이에요.', d.ver) : T(d.why || '들어갈 수 없어요.')); leaveNet(); }
-  else if (d.t === 'start') { if (S.snap && S.snap.won) clearChapter(); S.me = d.pid; useDeep(d.dp); { const fw = useWk(d.wk); useChapter(d.ch | 0, !!d.dp || fw); if (d.th) CH.theme = d.th; } startClient(); }
+  else if (d.t === 'start') { if (S.snap && S.snap.won) clearChapter(); S.me = d.pid; useDeep(d.dp); { const fw = useWk(d.wk); useChapter(d.ch | 0, !!d.dp || fw); if (d.md) S.mode = d.md; useMode(d.md || 'normal'); if (d.th) CH.theme = d.th; } startClient(); }
   else if (d.t === 's') {
     if (d.S && d.S.c != null && (d.S.c !== chapterIndex() || (d.S.dp && d.S.dp.floor !== DEEP.floor) || !!d.S.wk !== WEEKLY.on)) { useDeep(d.S.dp); useWk(d.S.wk); useChapter(d.S.c, true); S.built = false; }
     S.snap = d.S; if (d.ev) for (const e of d.ev) S.evq.push(e);
@@ -623,13 +623,13 @@ function beginGame(prevG) {
   if (S.chSel === DEEP_I && !prevG) { DEEP.floor = 1; DEEP.seed = (Math.random() * 1e6) | 0; DEEP.curses = []; }
   { const wk = !!S.wk && !prevG && S.chSel !== DEEP_I, was = WEEKLY.on; WEEKLY.on = wk; if (wk) { const w = weekInfo(); WEEKLY.id = w.id; WEEKLY.curses = w.curses; S.chSel = w.ch; } if (wk || was) useChapter(S.chSel, true); }
   if (!prevG && !(DEV_CH)) S.chSel = S.net === 'solo' && !S.range && S.mapSel >= 0 ? S.mapSel : Math.random() * CHAPTERS.length | 0;   // 지도는 판마다 무작위 (온라인은 방장이 골라 모두에게 알려요)
-  S.G = createGame(sl, (Math.random() * 4e9) >>> 0, S.chSel); S.G.mode = S.net === 'solo' ? 'normal' : S.mode || 'normal';
+  S.G = createGame(sl, (Math.random() * 4e9) >>> 0, S.chSel, S.net === 'solo' ? 'normal' : S.mode || 'normal');
   if (S.range) { S.G.range = true; setupRange(S.G); toast(T('연습장이에요. 허수아비를 쳐 보세요. 나가기를 누르면 직업을 바꿀 수 있어요.'), 6000); }
   S.G.lite = !!S.lite; 
   S.G.players.forEach((p, i) => { p.uid = sl[i].uid; });
   if (prevG) carryOver(S.G, prevG);
   S.me = sl.find(s => s.uid === UID).id;
-  if (!solo) { for (const uid in S.conns) { const p = S.G.players.find(q => q.uid === uid); if (p) { S.conns[uid]._pid = p.id; S.conns[uid].send({ t: 'start', pid: p.id, ch: S.G.ch, dp: S.G.deep, wk: S.G.weekly, th: CH.theme }); } } }
+  if (!solo) { for (const uid in S.conns) { const p = S.G.players.find(q => q.uid === uid); if (p) { S.conns[uid]._pid = p.id; S.conns[uid].send({ t: 'start', pid: p.id, ch: S.G.ch, dp: S.G.deep, wk: S.G.weekly, th: CH.theme, md: S.G.mode }); } } }
   if (S.G.humans > 1) unlock('friends');
   startClient();
 }
@@ -1051,7 +1051,7 @@ function onEvent(e) {
     case 'capbuff': view.rise(e.x, e.z, 0xffd36a, 12, 2.2, 0.9, 5); view.ring(e.x, e.z, 1.8, 0xffd36a, 0.5); if (e.id === me) { toast(T('점령 효과! 5초 동안 이동 속도와 공격이 20% 올라요'), 2400); SFX.play('bless'); } break;
     case 'door': toast(e.open ? T('신전 문이 열렸어요! 가운데 깃발을 차지할 수 있어요') : T('신전 문이 닫혔어요'), 2400); SFX.play(e.open ? 'warn' : 'slam'); view.shake = Math.max(view.shake, 0.5); break;
     case 'storm': toast(e.on ? T('모래폭풍이 불어요! 멀리가 안 보여요') : T('모래폭풍이 잦아들었어요'), 2400); break;
-    case 'monster': view.column(e.x, e.z, 0xff7a3a, 1.6); view.shock(e.x, e.z, 8, 0xff7a3a, 0.6); view.flash(e.x, e.z, 0xff7a3a, 140); bigMsg(T('꼭짓점에 괴물이 나타났어요!'), T('쓰러뜨리면 우리 팀 공격과 점령 속도가 영구히 2% 올라요'), 2600); SFX.play('roar'); break;
+    case 'monster': view.column(e.x, e.z, 0xff7a3a, 1.6); view.shock(e.x, e.z, 8, 0xff7a3a, 0.6); view.flash(e.x, e.z, 0xff7a3a, 140); if (e.big) { bigMsg(T('가운데에 큰 괴물이 나타났어요!'), T('쓰러뜨린 팀은 점령이 40초 동안 빨라지고 공격이 영구히 4% 올라요'), 3200); SFX.play('roar'); break; } bigMsg(T('꼭짓점에 괴물이 나타났어요!'), T('쓰러뜨리면 우리 팀 공격과 점령 속도가 영구히 2% 올라요'), 2600); SFX.play('roar'); break;
     case 'push': if (e.id === S.me && S.local) { S.local.kvx = (S.local.kvx || 0) + e.vx; S.local.kvz = (S.local.kvz || 0) + e.vz; } break;
     case 'monkill': { const mine = e.tm === myTm(); view.column(e.x, e.z, TEAMS[e.tm].c, 1.4); view.shock(e.x, e.z, 8, TEAMS[e.tm].c, 0.6); bigMsg(mine ? T('괴물을 쓰러뜨렸어요! 괴물 처치 효과 lvl.{0}', e.lv) : T('상대가 괴물을 쓰러뜨렸어요 · lvl.{0}', e.lv), T('{0}팀 공격·점령 속도 +{1}%', mine ? T('우리') : T('상대'), e.lv * 2), 2800);
       // 레벨이 오르면 그 팀 모두의 발밑에서 빛이 솟아요 (살아 있는 팀원 모두)
@@ -1146,7 +1146,7 @@ function paintHud() {
   if (sn.dr) { if (sn.dr[0] !== DSTATE.open) { setDoors(sn.dr[0]); mini.dirty = true; } } else if (DSTATE.open) { setDoors(0); mini.dirty = true; }
   $('storm').classList.toggle('on', !!(sn.sm && sn.sm[0]));   // 사막 신전 모래폭풍
   const mt = myTm(), nf = [0, 0]; if (sn.tf) for (const f of sn.tf) if (f[0] >= 0) nf[f[0]]++;
-  $('roomTag').textContent = (S.net && S.net !== 'solo' ? MODES[S.mode || 'normal'].name + ' · ' : '') + CH.title + ' · ' + T('우리 깃발 {0} · 상대 깃발 {1}', nf[mt], nf[1 - mt]);
+  $('roomTag').textContent = (S.net && S.net !== 'solo' ? MODES[S.mode || 'normal'].name + ' · ' : '') + CH.title + ' · ' + T('우리 깃발 {0} · 상대 깃발 {1}', nf[mt], nf[1 - mt]) + (sn.lt >= 0 ? ' · ' + T('남은 시간 {0}:{1}', Math.floor(sn.lt / 60), String(sn.lt % 60).padStart(2, '0')) : '');
   const boss = sn.w.boss && !sn.w.bd ? sn.en.find(e => e.k === 'boss') : null;
   $('bossBar').style.display = boss ? 'block' : 'none'; if (boss && $('bossName').textContent !== CH.boss.name) $('bossName').textContent = CH.boss.name;
   if (boss) { $('bossHp').style.width = Math.max(0, boss.hp / boss.mx * 100) + '%'; $('bossPh').textContent = boss.sn ? T('기절!') : ['', T('1단계'), T('2단계') + ' · ' + CH.boss.ph[0], T('3단계') + ' · ' + CH.boss.ph[1], T('마지막 단계') + ' · ' + (CH.boss.ph[2] || '')][boss.ph] || ''; }
@@ -1314,7 +1314,7 @@ function teamHud(sn) {
   // 점령 경보: 우리 깃발을 상대가 점령하는 중이면 깃발이 깜빡이고 알림이 떠요
   { S.fAl = S.fAl || []; let any = false; sn.tf.forEach((f, i) => { const on = f[0] === mt && f[1] >= 0 && f[1] !== mt && f[2] > 0; if (on && !S.fAl[i]) SFX.play('warn'); S.fAl[i] = on; if (on) any = true; });
     if (any) { oc.font = 'bold 15px Galmuri, system-ui'; oc.textAlign = 'center'; oc.lineWidth = 4; oc.strokeStyle = '#140f18'; const tx = T('우리 깃발을 점령당하고 있어요!'); oc.strokeText(tx, innerWidth / 2, y + 48 + dy); oc.fillStyle = Math.sin(performance.now() / 140) > 0 ? '#ff6a5a' : '#ffd0c8'; oc.fillText(tx, innerWidth / 2, y + 48 + dy); } }
-  { const own = [0, 0]; for (const f of sn.tf) if (f[0] >= 0) own[f[0]]++; const pt = own[0] >= PUSH_N ? 0 : own[1] >= PUSH_N ? 1 : -1;
+  { const own = [0, 0]; for (const f of sn.tf) if (f[0] >= 0) own[f[0]]++; const PN = sn.tf.length - 1, pt = own[0] >= PN ? 0 : own[1] >= PN ? 1 : -1;
     if (pt >= 0) { oc.font = 'bold 13px Galmuri, system-ui'; oc.textAlign = 'center'; oc.lineWidth = 4; oc.strokeStyle = '#140f18'; const tx = pt === mt ? T('몰아붙이는 중 · 상대 부활 +{0}초', PUSH_T) : T('몰리는 중 · 우리 부활 +{0}초', PUSH_T); oc.strokeText(tx, innerWidth / 2, y + 44 + dy); oc.fillStyle = pt === mt ? '#ffd36b' : '#ff8a7a'; oc.fillText(tx, innerWidth / 2, y + 44 + dy); } }
   const me0 = sn.pl.find(q => q.id === S.me); if (me0 && me0.fz && !me0.dd) { oc.font = 'bold 14px Galmuri, system-ui'; oc.lineWidth = 4; oc.strokeStyle = '#140f18'; const tx = T('깃발의 가호 · 치유 · 공격 +20%'); oc.strokeText(tx, innerWidth / 2, y + 26 + dy); oc.fillStyle = '#9af0a8'; oc.fillText(tx, innerWidth / 2, y + 26 + dy); }
   const sc = Math.min(innerWidth < 700 ? 1.1 : 1.6, (innerWidth < 700 ? 130 : 190) / MW), w = MW * sc, h = MH * sc, mx = innerWidth - w - 14, my = innerWidth < 700 ? 100 : 64;
