@@ -36,3 +36,5 @@ patchnotes.json | v572 items[0] | 홈의 캐릭터 수 27명 → 31명 (캐릭�
 patchnotes.json | v573 title | 은하 제국의 황혼 | build 573 | 2026-10-31
 patchnotes.json | v573 items[0] | 온라인 팀전에서 시작할 때 레벨을 보고 팀을 자동으로 나눔 (파티는 같은 팀 유지) | build 573 | 2026-10-31
 patchnotes.json | v573 items[1] | 레벨 5 이하 신규 유저는 레벨 차이가 6 넘게 나는 방에 들어가지 않고 새 방(봇으로 채움)을 만듦 | build 573 | 2026-10-31
+patchnotes.json | v574 title | 은하 제국의 황혼 | build 574 | 2026-10-31
+patchnotes.json | v574 items[0] | 온라인 대전에서 30초 동안 아무것도 하지 않으면 봇이 대신 플레이 (다시 움직이면 돌려받음) | build 574 | 2026-10-31
