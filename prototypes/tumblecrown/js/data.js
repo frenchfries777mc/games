@@ -758,4 +758,18 @@ export const COSMETICS = {
   back: { name: T('등 장식'), items: [{ id: '', name: T('없음'), cost: 0 }, { id: 'banner', name: T('등깃발'), cost: 1200 }, { id: 'wings', name: T('작은 날개'), cost: 2560 }, { id: 'lantern', name: T('등불'), cost: 1440 }] }
 };
 export const GEAR_BONUS = { weapon: [0, 0.1, 0.22], armor: [0, 15, 35] };
+// 마스터리 계급 (스틱세움과 같은 구간): 직업마다 마스터리 포인트로 올라가요. 브론즈부터는 II·III 단계가 있고, 그랜드 마스터는 I~X (1000점씩)
+export const CHAR_RANKS = (() => {
+  const base = [[0, '입문', '#8890a4'], [90, '브론즈', '#c47a3d'], [260, '실버', '#c7ccd6'], [530, '골드', '#ffd34d'], [880, '플래티넘', '#4dd9ff'], [1750, '다이아', '#7bf3ff'], [3050, '크리스탈', '#74a9ff'], [4800, '아메시스트', '#b36bff'], [7000, '마스터', '#ff5fd2'], [9000, '그랜드 마스터', '#ff5252']], out = [];
+  base.forEach(([min, nm, col], i) => {
+    if (nm === '그랜드 마스터') { ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X'].forEach((r, k) => out.push({ min: min + k * 1000, name: T(nm) + ' ' + r, color: col })); return; }
+    out.push({ min, name: T(nm), color: col }); const nx = base[i + 1];
+    if (nx && i > 0) for (let k = 1; k <= 2; k++) out.push({ min: Math.round((min + (nx[0] - min) * k / 3) / 10) * 10, name: T(nm) + ' ' + (k === 1 ? 'II' : 'III'), color: col });
+  });
+  return out;
+})();
+export function charRankFor(pts) { let cur = CHAR_RANKS[0]; for (const r of CHAR_RANKS) if ((pts || 0) >= r.min) cur = r; return cur; }
+export const MASTERY_PT = { kill: 2, win: 3, match: 1 };   // 한 판에 쓰러뜨림 2점, 승리 3점, 완주 1점 (+ 연승 보너스)
+export const STREAK_BONUS = [[10, 5], [7, 4], [5, 3], [3, 2], [1, 1]];
+export function streakBonusFor(n) { for (const [a, b] of STREAK_BONUS) if (n >= a) return b; return 0; }
 export function roleLevel(xp) { return Math.min(10, 1 + Math.floor(Math.sqrt((xp || 0) / 25))); }
