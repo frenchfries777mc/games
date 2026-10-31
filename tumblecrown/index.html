@@ -167,8 +167,8 @@ footer{padding:44px 0 50px;color:var(--mu);font-size:13px;text-align:center}
 <footer><span class="ff-copy">© 2026 Frenchfries777 · <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/" target="_blank" rel="noopener">CC BY-NC-ND 4.0</a></span></footer>
 <script>
 (function(){var box=document.getElementById('vbox');function esc(x){return String(x).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})}
-var V=[{v:'0.1',t:'일곱 깃발의 전장',d:'5대5 깃발 점령 팀 대전이 처음 열린 버전이에요.'}];
-function draw(b,date){box.innerHTML=V.map(function(x,i){return '<div class="tv box"><div class="vn"><b class="v">v'+esc(x.v)+'</b>'+(i?'':'<span class="badge">최신</span>')+'<small>'+(b?'b'+esc(b):'')+(date?' · '+esc(date):'')+'</small></div><p>'+esc(x.t)+' · '+esc(x.d)+'</p><div class="go"><a class="pb gold sm" href="../prototypes/tumblecrown/" target="_blank" rel="noopener">플레이</a></div></div>'}).join('')}
+var V=[{v:'0.2',t:'새 로비와 전투 연출',d:'왼쪽 글자 버튼 로비, 핑, 멀티킬 연출, 직업 동작 개선이 들어간 버전이에요.'},{v:'0.1',t:'일곱 깃발의 전장',d:'5대5 깃발 점령 팀 대전이 처음 열린 버전이에요.'}];
+function draw(b,date){box.innerHTML=V.map(function(x,i){return '<div class="tv box"><div class="vn"><b class="v">v'+esc(x.v)+'</b>'+(i?'':'<span class="badge">최신</span>')+'<small>'+(b?'b'+esc(b):'')+(date?' · '+esc(date):'')+'</small></div><p>'+esc(x.t)+' · '+esc(x.d)+'</p>'+(i?'':'<div class="go"><a class="pb gold sm" href="../prototypes/tumblecrown/" target="_blank" rel="noopener">플레이</a></div>')+'</div>'}).join('')}
 draw();
 Promise.all([fetch('../prototypes/tumblecrown/build.json',{cache:'no-store'}).then(function(r){return r.json()}),fetch('../prototypes/tumblecrown/patchnotes.json',{cache:'no-store'}).then(function(r){return r.json()})]).then(function(a){var n=(a[1].notes||[])[0]||{};draw(a[0].build,n.date)}).catch(function(){});
 })();
