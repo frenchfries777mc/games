@@ -80,7 +80,7 @@ function show(id) {
 }
 function inGame() { return !!S.snap && S.scr !== 'sLobby' && S.scr !== 'sRoom'; }
 const lockedFor = (f, tm) => ((f[5] | 0) >> tm) & 1;   // 순서 규칙: 이 팀이 지금은 점령할 수 없는 깃발인가 (스냅샷 깃발의 6번째 값, 비트0=팀0 · 비트1=팀1)
-function lockGlyph(oc, x, y, s, col) { oc.fillStyle = col; oc.strokeStyle = col; oc.lineWidth = Math.max(1.5, s * 0.22); oc.fillRect(x - s * 0.5, y - s * 0.1, s, s * 0.7); oc.beginPath(); oc.arc(x, y - s * 0.1, s * 0.32, Math.PI, 0); oc.stroke(); }
+function lockGlyph(oc, x, y, s, col) { oc.fillStyle = col; oc.strokeStyle = '#5a4a3a'; oc.lineWidth = Math.max(1.2, s * 0.16); oc.beginPath(); oc.moveTo(x - s * 0.35, y + s * 0.6); oc.lineTo(x - s * 0.35, y - s * 0.6); oc.stroke(); oc.fillRect(x - s * 0.35, y - s * 0.6, s * 0.95, s * 0.6); }   // 잠긴 깃발 표시: 노란 깃발 모양
 const RIMG = {};   // 캔버스(이름표·점수판)에 그릴 마스터리 계급 로고 (한 번 불러 두고 계속 써요)
 function rankIco(t) { return svgIco('rank/t' + (t | 0)); }
 function svgIco(f) { let i = RIMG[f]; if (!i) { i = RIMG[f] = new Image(); i.src = f + '.svg'; } return i.complete ? i : null; }
@@ -1409,7 +1409,7 @@ function teamHud(sn) {
     oc.fillStyle = 'rgba(10,8,14,.78)'; oc.beginPath(); oc.arc(x, y, 14, 0, 7); oc.fill();
     oc.fillStyle = own < 0 ? '#6a6676' : hex(TEAMS[own].c); oc.beginPath(); oc.arc(x, y, 9, 0, 7); oc.fill();
     if (rg) { oc.strokeStyle = hex(TEAMS[rg[1]].c); oc.lineWidth = 4; oc.beginPath(); oc.arc(x, y, 13, -Math.PI / 2, -Math.PI / 2 + Math.PI * 2 * rg[2] / FLAG_T); oc.stroke(); }
-    if (lockedFor(f, mt)) { oc.fillStyle = 'rgba(10,8,14,.62)'; oc.beginPath(); oc.arc(x, y, 9, 0, 7); oc.fill(); lockGlyph(oc, x, y + 1, 9, '#e8d28a'); }
+    if (lockedFor(f, mt)) { oc.fillStyle = 'rgba(10,8,14,.62)'; oc.beginPath(); oc.arc(x, y, 9, 0, 7); oc.fill(); lockGlyph(oc, x, y + 1, 10, '#ffd23a'); }
     if (rg && rg[0] === mt) { const pu = 0.5 + 0.5 * Math.sin(performance.now() / 110); oc.strokeStyle = 'rgba(255,70,60,' + (0.45 + pu * 0.55) + ')'; oc.lineWidth = 3; oc.beginPath(); oc.arc(x, y, 18 + pu * 3, 0, 7); oc.stroke(); }
   });
   // 잠긴 깃발에 서 있으면 먼저 점령할 깃발을 알려 줘요
@@ -1443,7 +1443,7 @@ function teamHud(sn) {
   if (mini.dirty) mini.paint(); if (!CH.pvp && !S.mapImg && !S.mapTry) { S.mapTry = 1; try { S.mapImg = view.captureMap(); } catch (e) { } }
   oc.fillStyle = 'rgba(10,8,14,.85)'; oc.fillRect(mx - 4, my - 4, w + 8, h + 8); oc.imageSmoothingEnabled = !!S.mapImg || !!CH.pvp; oc.globalAlpha = CH.pvp ? 1 : S.mapImg ? 0.95 : 0.8; oc.drawImage(S.mapImg || mini.c, mx, my, w, h); oc.globalAlpha = 1; oc.strokeStyle = '#c8b480'; oc.lineWidth = 2; oc.strokeRect(mx - 4, my - 4, w + 8, h + 8);
   const P = (wx, wz) => [mx + wx / CS * sc, my + wz / CS * sc], mate = sn.pl.filter(q => q.tm === mt && !q.dd);
-  sn.tf.forEach((f, i) => { const fl = MAP.tflags[i], [a, b] = P(cw(fl[0]), cw(fl[1])); oc.fillStyle = f[0] < 0 ? '#9a96a6' : hex(TEAMS[f[0]].c); oc.fillRect(a - 3.5, b - 3.5, 7, 7); oc.strokeStyle = '#140f18'; oc.lineWidth = 1.5; oc.strokeRect(a - 3.5, b - 3.5, 7, 7); if (lockedFor(f, mt)) { oc.fillStyle = 'rgba(10,8,14,.6)'; oc.fillRect(a - 3.5, b - 3.5, 7, 7); lockGlyph(oc, a, b + 0.5, 6, '#e8d28a'); } if (S.fAl && S.fAl[i]) { const pu = 0.5 + 0.5 * Math.sin(performance.now() / 110); oc.strokeStyle = 'rgba(255,70,60,' + (0.5 + pu * 0.5) + ')'; oc.lineWidth = 2; oc.beginPath(); oc.arc(a, b, 7 + pu * 4, 0, 7); oc.stroke(); } });
+  sn.tf.forEach((f, i) => { const fl = MAP.tflags[i], [a, b] = P(cw(fl[0]), cw(fl[1])); oc.fillStyle = f[0] < 0 ? '#9a96a6' : hex(TEAMS[f[0]].c); oc.fillRect(a - 3.5, b - 3.5, 7, 7); oc.strokeStyle = '#140f18'; oc.lineWidth = 1.5; oc.strokeRect(a - 3.5, b - 3.5, 7, 7); if (lockedFor(f, mt)) { oc.fillStyle = 'rgba(10,8,14,.6)'; oc.fillRect(a - 3.5, b - 3.5, 7, 7); lockGlyph(oc, a, b + 0.5, 6.5, '#ffd23a'); } if (S.fAl && S.fAl[i]) { const pu = 0.5 + 0.5 * Math.sin(performance.now() / 110); oc.strokeStyle = 'rgba(255,70,60,' + (0.5 + pu * 0.5) + ')'; oc.lineWidth = 2; oc.beginPath(); oc.arc(a, b, 7 + pu * 4, 0, 7); oc.stroke(); } });
   for (const pg of S.pings || []) {   // 우리 팀이 찍은 핑 (내 핑 포함): 5초 동안 깜빡여요
     const age = performance.now() - pg.t; if (age > 5000) continue; const [a, b] = P(pg.x, pg.z), pu = (age % 800) / 800, col = pg.rgb || '95,208,255';
     oc.strokeStyle = 'rgba(' + col + ',' + (1 - pu) + ')'; oc.lineWidth = 2; oc.beginPath(); oc.arc(a, b, 3 + pu * 9, 0, 7); oc.stroke(); oc.fillStyle = 'rgb(' + col + ')'; oc.strokeStyle = '#fff'; oc.lineWidth = 1.2; oc.beginPath(); oc.arc(a, b, 3.2, 0, 7); oc.fill(); oc.stroke();
