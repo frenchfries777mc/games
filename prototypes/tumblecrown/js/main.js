@@ -97,8 +97,8 @@ function killBanner(name) {
   el.classList.remove('on'); void el.offsetWidth; el.classList.add('on'); clearTimeout(killBanner._t); killBanner._t = setTimeout(() => el.classList.remove('on'), 2200);
 }
 // 더블·트리플 킬: 가운데에 크고 화려하게 (연속 수가 클수록 색과 번쩍임이 커져요)
-function multiBanner(nm, n) {
-  const el = $('multiBanner'); el.className = ''; el.dataset.n = n; el.innerHTML = '<i class="mr"></i><b>' + esc(nm) + '!</b><u></u>';
+function multiBanner(nm, n, who) {
+  const el = $('multiBanner'); el.className = ''; el.dataset.n = n; el.innerHTML = '<i class="mr"></i><b>' + (who ? '<small style="display:block;font-size:.3em;letter-spacing:.02em;margin-bottom:.15em">' + esc(who) + '</small>' : '') + esc(nm) + '!</b><u></u>';
   void el.offsetWidth; el.classList.add('on'); clearTimeout(multiBanner._t); multiBanner._t = setTimeout(() => el.classList.remove('on'), 2400);
 }
 function killFeed(txt, mine) {
@@ -1042,7 +1042,7 @@ function onEvent(e) {
     case 'multi': { const q = S.snap && S.snap.pl.find(z => z.id === e.id), nm = e.n === 2 ? T('더블 킬') : e.n === 3 ? T('트리플 킬') : T('{0}연속 킬', e.n), pe = view.ents.get('p' + e.id), n = Math.min(e.n, 5);
       const col = n === 2 ? 0xffb347 : n === 3 ? 0xff5a4a : n === 4 ? 0xff4adf : 0xb06aff;
       if (pe) { view.column(pe.x, pe.z, col, 1.2); view.ring(pe.x, pe.z, 3 + n, col, 0.8); view.shock(pe.x, pe.z, 4 + n * 2, col, 0.6); view.burst(pe.x, 1.4, pe.z, col, 14 + n * 8, 8 + n, 0.8, 0.14); view.burst(pe.x, 1.4, pe.z, 0xfff0b0, 10 + n * 4, 6, 0.6, 0.1); view.rise(pe.x, pe.z, col, 14 + n * 4, 1.8, 1.4, 7); view.flash(pe.x, pe.z, col, 160 + n * 30); if (n >= 3) { view.ring(pe.x, pe.z, 5 + n * 1.5, 0xfff0b0, 1.0); view.shatter(pe.x, pe.z, [col, 0xffe8b0], 10 + n * 4, true); } }
-      if (e.id === S.me) { multiBanner(nm, n); view.shake = Math.max(view.shake, 0.5 + n * 0.2); SFX.play('clear'); SFX.play('kill'); } else if (q) toast((q.bot ? ROLES[q.role].name : q.name) + ' · ' + nm, 1800); break; }
+      multiBanner(nm, n, e.id === S.me || !q ? '' : q.bot ? ROLES[q.role].name : q.name); view.shake = Math.max(view.shake, 0.5 + n * 0.2); SFX.play('clear'); SFX.play('kill'); break; }   // 남이 한 더블·트리플 킬도 내 것과 똑같이 화려하게 (이름만 위에 붙어요)
     case 'ko': { // 탈락: 몸이 조각나 흩어져요
       view.shatter(e.x, e.z, [0xd8d0bc, 0x6a6470, 0x5a5040, 0x8a8a96], 30, true); view.burst(e.x, 1.2, e.z, 0xffe8b0, 16, 7, 0.6, 0.12); view.shock(e.x, e.z, 5, 0xffe08a, 0.5); view.flash(e.x, e.z, 0xffd08a, 140); view.shake = Math.max(view.shake, 0.6); SFX.play('kill');
       const by = S.snap && S.snap.pl.find(q => q.id === e.by), who = S.snap && S.snap.pl.find(q => q.id === e.id), nm = q => q ? (q.id === S.me ? T('나') : q.bot ? ROLES[q.role].name : q.name) : '';
