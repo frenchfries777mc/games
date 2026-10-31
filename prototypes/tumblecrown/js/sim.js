@@ -63,7 +63,8 @@ export function createGame(slots, seed, ch = 0) {
     G.honor[s.id] = 0;
   });
   G.tm = {}; const cnt = [0, 0]; for (const p of G.players) { G.tm[p.id] = p.team; p.tIdx = cnt[p.team]++; }
-  if (G.pvp) { G.fl = MAP.tflags.map(([x, y, o]) => ({ x: cw(x), z: cw(y), own: o, cap: -1, prog: 0 })); G.winTeam = -1; G.cb = [0, 0]; G.mk = [0, 0]; G.dr = MAP.doors && MAP.doors.length ? { t: D.DOOR_SHUT_T } : null; G.sm = G.dr ? { on: 0, t: D.STORM_CALM_T } : null; setDoors(0); G.cTim = [50, 50]; pvpSpawn(G); return G; }
+  if (G.pvp) { G.fl = MAP.tflags.map(([x, y, o]) => ({ x: cw(x), z: cw(y), own: o, cap: -1, prog: 0 }));   // 시작할 때 팀마다 깃발은 진지에서 가장 가까운 하나만 가지고, 나머지는 주인 없이 시작해요
+    for (const t of [0, 1]) { const sp = MAP.tspawn[t], mine = G.fl.filter(f => f.own === t).sort((a, b) => Math.hypot(a.x - cw(sp[0]), a.z - cw(sp[1])) - Math.hypot(b.x - cw(sp[0]), b.z - cw(sp[1]))); for (const f of mine.slice(1)) f.own = -1; } G.winTeam = -1; G.cb = [0, 0]; G.mk = [0, 0]; G.dr = MAP.doors && MAP.doors.length ? { t: D.DOOR_SHUT_T } : null; G.sm = G.dr ? { on: 0, t: D.STORM_CALM_T } : null; setDoors(0); G.cTim = [50, 50]; pvpSpawn(G); return G; }
   placeAt(G, G.cp);
   // 몬스터는 지도에 정해진 자리에 한 번만 나와요
   for (const [k, x, y] of MAP.spawns) spawnEnemy(G, k, cw(x), cw(y), true);
