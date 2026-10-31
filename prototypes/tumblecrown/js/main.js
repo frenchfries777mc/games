@@ -704,7 +704,8 @@ $('gl').addEventListener('mousedown', e => {
   if (e.button !== 1) return; e.preventDefault();
   if (!inGame() || S.scr !== '' || !S.snap || S.rcOpen || !S.G && S.net !== 'guest' || (S.pingT || 0) > performance.now()) return;
   const m = myP(); if (!m || m.dd) return; S.pingT = performance.now() + 2000;
-  const g = view.groundAt(e.clientX, e.clientY), foe = S.snap.pl.find(q => q.tm !== m.tm && !q.dn && !q.dd && Math.hypot(q.x - g.x, q.z - g.z) < 3.5), pk = foe ? 'danger' : 'go', x = foe ? foe.x : g.x, z = foe ? foe.z : g.z;
+  const R = S.mmR, inMini = R && e.clientX >= R.x && e.clientX <= R.x + R.w && e.clientY >= R.y && e.clientY <= R.y + R.h;   // 미니맵 위에서 누르면 그 자리에 찍어요
+  const g = inMini ? { x: (e.clientX - R.x) / R.sc * CS, z: (e.clientY - R.y) / R.sc * CS } : view.groundAt(e.clientX, e.clientY), foe = S.snap.pl.find(q => q.tm !== m.tm && !q.dn && !q.dd && Math.hypot(q.x - g.x, q.z - g.z) < 3.5), pk = foe ? 'danger' : 'go', x = foe ? foe.x : g.x, z = foe ? foe.z : g.z;
   if (S.net === 'guest') send({ t: 'ping', x, z, pk }); else S.G.ev.push({ k: 'ping', id: m.id, tm: m.tm, x, z, pk });
 });
 const keyDown = (...ks) => ks.some(k => K[k]);
@@ -1324,6 +1325,7 @@ function teamHud(sn) {
     if (pt >= 0) { oc.font = 'bold 13px Galmuri, system-ui'; oc.textAlign = 'center'; oc.lineWidth = 4; oc.strokeStyle = '#140f18'; const tx = pt === mt ? T('몰아붙이는 중 · 상대 부활 +{0}초', PUSH_T) : T('몰리는 중 · 우리 부활 +{0}초', PUSH_T); oc.strokeText(tx, innerWidth / 2, y + 44 + dy); oc.fillStyle = pt === mt ? '#ffd36b' : '#ff8a7a'; oc.fillText(tx, innerWidth / 2, y + 44 + dy); } }
   const me0 = sn.pl.find(q => q.id === S.me); if (me0 && me0.fz && !me0.dd) { oc.font = 'bold 14px Galmuri, system-ui'; oc.lineWidth = 4; oc.strokeStyle = '#140f18'; const tx = T('깃발의 가호 · 치유 · 공격 +20%'); oc.strokeText(tx, innerWidth / 2, y + 26 + dy); oc.fillStyle = '#9af0a8'; oc.fillText(tx, innerWidth / 2, y + 26 + dy); }
   const sc = Math.min(innerWidth < 700 ? 1.1 : 1.6, (innerWidth < 700 ? 130 : 190) / MW), w = MW * sc, h = MH * sc, mx = innerWidth - w - 14, my = innerWidth < 700 ? 100 : 64;
+  S.mmR = { x: mx, y: my, w, h, sc };
   if (mini.dirty) mini.paint(); if (!CH.pvp && !S.mapImg && !S.mapTry) { S.mapTry = 1; try { S.mapImg = view.captureMap(); } catch (e) { } }
   oc.fillStyle = 'rgba(10,8,14,.85)'; oc.fillRect(mx - 4, my - 4, w + 8, h + 8); oc.imageSmoothingEnabled = !!S.mapImg || !!CH.pvp; oc.globalAlpha = CH.pvp ? 1 : S.mapImg ? 0.95 : 0.8; oc.drawImage(S.mapImg || mini.c, mx, my, w, h); oc.globalAlpha = 1; oc.strokeStyle = '#c8b480'; oc.lineWidth = 2; oc.strokeRect(mx - 4, my - 4, w + 8, h + 8);
   const P = (wx, wz) => [mx + wx / CS * sc, my + wz / CS * sc], mate = sn.pl.filter(q => q.tm === mt && !q.dd);
