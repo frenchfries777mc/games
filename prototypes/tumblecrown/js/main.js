@@ -548,6 +548,7 @@ function hostMsg(c, d) {
   }
   const uid = c._uid; if (!uid) return;
   if (d.t === 'rdy' && !S.G && S.ph === 'pick') { S.rdy[uid] = !S.rdy[uid]; hostLobby(); if (S.scr === 'sRoom') paintRoom(); }
+  else if (d.t === 'ping' && S.G) { const p = S.G.players.find(q => q.uid === uid); if (p && !p.dead && (p.pgT || 0) < S.G.t && isFinite(d.x) && isFinite(d.z)) { p.pgT = S.G.t + 2; S.G.ev.push({ k: 'ping', id: p.id, tm: p.team, x: +d.x, z: +d.z, pk: d.pk === 'danger' ? 'danger' : 'go' }); } }
   else if (d.t === 'pick' && !S.G && S.ph === 'pick') { const sl = S.slots.find(s => s.uid === uid); if (sl) { if (ROLES[d.role]) sl.role = d.role; const col = +d.col | 0; if (COLORS[col] && !S.slots.some(s => s !== sl && s.col === col)) sl.col = col; hostLobby(); if (S.scr === 'sRoom') paintRoom(); } }
   else if (d.t === 'i' && S.G) { const pid = c._pid; if (!pid) return; const r = S.rin[pid] || (S.rin[pid] = {}); const once = { q: r.q || d.q, e: r.e || d.e, r: r.r || d.r, roll: r.roll || d.roll, skip: r.skip || d.skip, atkR: r.atkR || d.atkR, rcl: r.rcl || d.rcl }; Object.assign(r, d, once); }
   else if (d.t === 'b' && S.G) { if (c._pid) chooseBless(S.G, c._pid, d.id); }
@@ -669,6 +670,14 @@ addEventListener('mousemove', e => { mouse.x = e.clientX; mouse.y = e.clientY; }
 $('gl').addEventListener('mousedown', e => { if (e.button === 0) mouse.down = true; SFX.unlock(); });
 addEventListener('mouseup', e => { if (e.button === 0) { if (mouse.down && inGame() && S.scr === '') { const m = myP(); if (m && relBasic(m.role)) once.atkR = 1; } mouse.down = false; } });
 $('gl').addEventListener('contextmenu', e => e.preventDefault());
+// 신호 찍기: 마우스 가운데 버튼. 적 가까이면 "조심", 아니면 "여기 오세요" — 우리 팀에게만 보여요
+$('gl').addEventListener('mousedown', e => {
+  if (e.button !== 1) return; e.preventDefault();
+  if (!inGame() || S.scr !== '' || !S.snap || S.rcOpen || !S.G && S.net !== 'guest' || (S.pingT || 0) > performance.now()) return;
+  const m = myP(); if (!m || m.dd) return; S.pingT = performance.now() + 2000;
+  const g = view.groundAt(e.clientX, e.clientY), foe = S.snap.pl.find(q => q.tm !== m.tm && !q.dn && !q.dd && Math.hypot(q.x - g.x, q.z - g.z) < 3.5), pk = foe ? 'danger' : 'go', x = foe ? foe.x : g.x, z = foe ? foe.z : g.z;
+  if (S.net === 'guest') send({ t: 'ping', x, z, pk }); else S.G.ev.push({ k: 'ping', id: m.id, tm: m.tm, x, z, pk });
+});
 const keyDown = (...ks) => ks.some(k => K[k]);
 // 휴대폰
 const touch = { jx: 0, jz: 0, jid: null, atk: false, f: false };
@@ -1012,6 +1021,7 @@ function onEvent(e) {
       break; }
     case 'pillar': view.column(e.x, e.z, 0x6ab0ff, 0.9); view.burst(e.x, 0.5, e.z, 0x9ad0ff, 14, 6, 0.6, 0.14); view.flash(e.x, e.z, 0x6ab0ff, 80); SFX.play('slam'); break;
     case 'blink': view.column(e.x, e.z, 0x9ad0ff, 0.5); view.rise(e.x, e.z, 0x9ad0ff, 12, 1.5, 0.7, 6); SFX.play('orb'); break;
+    case 'ping': if (e.tm === myTm()) { const dg = e.pk === 'danger', col = dg ? 0xff5a4a : 0x5fd0ff; view.ring(e.x, e.z, 2.2, col, 1.4); view.ring(e.x, e.z, 1.2, 0xffffff, 1.0); view.column(e.x, e.z, col, 1.2); num(e.x, e.z, dg ? T('조심!') : T('여기 오세요'), dg ? '#ff7a6a' : '#8ae0ff', 1.3); SFX.play('click'); } break;
     case 'recall': view.column(e.x, e.z, 0x9af0e0); if (e.id === me && e.end) bigMsg(T('깃발로 귀환했어요'), '', 1400); break;
     case 'respawn': view.column(e.x, e.z, 0xff9a48); if (e.id === me) bigMsg(T('진지에서 다시 일어났어요'), '', 1800); break;
     case 'flag': { const mine = e.own === myTm(), c = TEAMS[e.own].c; view.column(e.x, e.z, c, 1.4); view.ring(e.x, e.z, 6, c, 0.9); view.shock(e.x, e.z, 7, c, 0.6); view.flash(e.x, e.z, c, 120); bigMsg(mine ? T('깃발을 차지했어요!') : T('깃발을 빼앗겼어요!'), '', 1800); SFX.play(mine ? 'kill' : 'roar'); break; }
