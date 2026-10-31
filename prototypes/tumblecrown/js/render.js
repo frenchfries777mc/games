@@ -176,7 +176,7 @@ function makeFigure(o) {
   else if (o.sword) { const sw = new THREE.Group(); sw.position.set(0, -0.9, 0.1); armR.add(sw); box(0.12, 2, 0.04, M(0xe9edf5, { m: 0.9, r: 0.2 }), 0, 1.1, 0, sw); box(0.6, 0.1, 0.14, gold(), 0, 0.1, 0, sw); box(0.08, 0.35, 0.08, leather(), 0, -0.1, 0, sw); sw.rotation.x = Math.PI / 2; }
   if (o.shield) { const shc = o.shieldC || 0x2c4f9e; const sh = new THREE.Group(); shG = sh; sh.position.set(-0.15, -0.7, 0.45); armL.add(sh); sh.rotation.x = 0.6; box(1.1, 1.4, 0.14, M(shc), 0, 0, 0, sh); const c = cone(0.78, 0.7, 4, M(shc), 0, -0.95, 0, sh); c.rotation.set(Math.PI, Math.PI / 4, 0); box(0.18, 1.2, 0.05, gold(), 0, -0.1, 0.09, sh); box(0.8, 0.18, 0.05, gold(), 0, 0.25, 0.09, sh); if (o.shS) sh.scale.setScalar(o.shS); }
   // 활: 왼손에 쥐고, 팔을 앞으로 뻗으면 위아래로 선 활이 조준 방향으로 휘어요 (시위는 몸 쪽)
-  let bowS = null, xbS = null, gnS = null, axeG = null;
+  let bowS = null, xbS = null, gnS = null, axeG = null, stG = null;
   if (o.bow) {
     // 얕게 휜 활: 손잡이는 손에, 시위는 몸 쪽. 시위는 두 가닥이라 당기면 V자로 접혀요
     const bw = mesh(geo('bow2', () => { const t = new THREE.TorusGeometry(1.6, 0.06, 4, 12, 1.24); t.rotateZ(Math.PI / 2 - 0.62); return t; }), M(0x8a5a2a), 0.12, 0.65, 0, armL);
@@ -237,7 +237,7 @@ function makeFigure(o) {
   if (o.bolts) { const bc = box(0.5, 0.35, 0.3, M(0x4a3020), -0.62, 1.05, 0.1, body); bc.rotation.z = 0.3; for (let i = 0; i < 4; i++) box(0.04, 0.3, 0.04, M(0xc8c0a8), -0.74 + i * 0.1, 1.3, 0.1, body); }
   if (o.strap) { const sb2 = box(0.14, 1.9, 0.08, leather(), 0, 1.9, 0.42, body); sb2.rotation.z = 0.55; }
   if (o.scarf) { const sf = mesh(geo('scarf', () => new THREE.TorusGeometry(0.46, 0.14, 5, 10)), M(o.scarf), 0, 2.35, 0.02, body); sf.rotation.x = Math.PI / 2; box(0.28, 0.8, 0.08, M(o.scarf), 0.25, 2.0, -0.55, body); }
-  if (o.staff) { const sc = o.staffC || 0x9af0d0, wd = o.wand; const st = new THREE.Group(); st.position.set(0, -0.9, 0.1); armR.add(st); st.rotation.x = 0.7; cyl(0.07, 0.07, wd ? 1.9 : 3.2, 6, M(0x7a5a2a), 0, wd ? -0.15 : 0.5, 0, st); mesh(geo(wd ? 'octw' : 'oct', () => new THREE.OctahedronGeometry(wd ? 0.22 : 0.32)), M(sc, { e: sc, ei: 4 }), 0, wd ? 1.1 : 2.3, 0, st); if (!o.noLight) { light = new THREE.PointLight(o.lightC || 0x6af0c0, 14, 8, 1.6); light.position.set(0, wd ? 1.2 : 2.4, 0); st.add(light); } }
+  if (o.staff) { const sc = o.staffC || 0x9af0d0, wd = o.wand; const st = new THREE.Group(); st.position.set(0, -0.9, 0.1); armR.add(st); st.rotation.order = 'YXZ'; st.rotation.x = 0.7; stG = st; cyl(0.07, 0.07, wd ? 1.9 : 3.2, 6, M(0x7a5a2a), 0, wd ? -0.15 : 0.5, 0, st); mesh(geo(wd ? 'octw' : 'oct', () => new THREE.OctahedronGeometry(wd ? 0.22 : 0.32)), M(sc, { e: sc, ei: 4 }), 0, wd ? 1.1 : 2.3, 0, st); if (!o.noLight) { light = new THREE.PointLight(o.lightC || 0x6af0c0, 14, 8, 1.6); light.position.set(0, wd ? 1.2 : 2.4, 0); st.add(light); } }
   let spG = null;
   if (o.spear) { const sp = spG = new THREE.Group(); sp.position.set(0, -0.9, 0.1); armR.add(sp); sp.rotation.x = Math.PI / 2; cyl(0.06, 0.06, 3.6, 5, M(0x5a3a22), 0, 0.8, 0, sp); cone(0.16, 0.6, 4, metal(), 0, 2.9, 0, sp); }
   if (o.great) { const gs = new THREE.Group(); gs.position.set(0, -0.9, 0.2); armR.add(gs); gs.rotation.x = Math.PI / 2; box(0.2, 2.8, 0.06, M(o.great, { m: 0.9, r: 0.3, e: o.greatE || 0, ei: 1.5 }), 0, 1.6, 0, gs); box(0.8, 0.12, 0.14, gold(), 0, 0.15, 0, gs); }
@@ -268,7 +268,7 @@ function makeFigure(o) {
   if (o.core) { sph(0.3, 8, 6, M(o.core, { e: o.core, ei: 5 }), 0, 1.9, 0.5, body); for (let i = 0; i < 4; i++) { const a = i / 4 * 6.283, c = cone(0.08, 0.5, 4, M(0x1a1420), Math.cos(a) * 0.38, 1.9 + Math.sin(a) * 0.38, 0.45, body); c.rotation.set(Math.PI / 2, 0, a - Math.PI / 2); } }
   if (o.spikes) for (let i = 0; i < 5; i++) { const c = cone(0.14, 0.9 + (i === 2 ? 0.4 : 0), 4, M(0x1a1420), (i - 2) * 0.32, 2.3 + Math.abs(i - 2) * -0.15, -0.6, body); c.rotation.x = -0.9; }
   if (o.scale) g.scale.setScalar(o.scale);
-  g.userData = { body, legL, legR, armL, armR, head, light, kind: 'hero', bowS, xbS, gnS, axeG, shield: shG, spG };
+  g.userData = { body, legL, legR, armL, armR, head, light, kind: 'hero', bowS, xbS, gnS, axeG, stG, shield: shG, spG };
   return g;
 }
 // 장마다 다른 적 모습
@@ -1863,7 +1863,11 @@ function animHero(E, p, dt, t, view) {
   const k0 = dt * (E.blT > 0 ? 14 : 34), L = (o, kk, v2) => { const r = kk === 'hx' || kk === 'hy' || kk === 'hz' ? 0.45 : kk === 'bx' || kk === 'bry' || kk === 'brz' || kk === 'bz' ? 0.8 : kk === 'jy' || kk === 'sq' ? 1.3 : 1; E[kk] = E[kk] == null ? v2 : E[kk] + (v2 - E[kk]) * (1 - Math.exp(-k0 * r)); return E[kk]; };  // 머리는 몸보다 늦게, 몸은 팔보다 늦게 따라와요
   u.armR.rotation.order = 'XZY'; u.armR.rotation.set(L(0, 'ar', T.rx), L(0, 'ary', T.ry), L(0, 'arz', T.rz)); u.armL.rotation.set(L(0, 'al', T.lx), 0, L(0, 'alz', T.lz));
   u.armR.position.z = L(0, 'rpz', T.rpz); u.head.rotation.set(L(0, 'hx', T.hx), L(0, 'hy', T.hy), L(0, 'hz', T.hz));
-  if (u.bowS) setPull(u.bowS, L(0, 'pl', T.pull), p.cg >= 2 ? 3 : p.cg >= 0.8 ? 2 : 1);
+  if (u.bowS) {   // 활시위 튕김: 시위를 놓는 순간 시위가 위아래로 떨리다 가라앉아요
+    const pl = L(0, 'pl', T.pull); if ((E.plP || 0) > 0.3 && E.plP - pl > 0.06) E.tw = 0; E.plP = pl; E.tw = E.tw == null ? 9 : E.tw + dt;
+    setPull(u.bowS, pl + (E.tw < 0.5 ? 0.09 * Math.sin(E.tw * 75) * Math.exp(-E.tw * 9) : 0), p.cg >= 2 ? 3 : p.cg >= 0.8 ? 2 : 1);
+  }
+  if (u.stG) u.stG.rotation.y = (E.ak === 'ward' || E.ak === 'curse' || E.ak === 'quake') && v < 0.34 ? Math.PI * 4 * seg(v, 0.04, 0.32) : 0;   // 지팡이를 머리 위로 높이 들어 빙글 돌린 뒤 내리쳐요
   const bob = Math.abs(sn) * 0.16 * wk;
   u.body.rotation.set(L(0, 'bx', T.bx), L(0, 'bry', T.bry) + T.spin, L(0, 'brz', T.brz)); u.body.position.set(0, bob + L(0, 'by', T.by), L(0, 'bz', T.bz));
   m.position.y = L(0, 'jy', T.jy); if (E.jyP > 0.6 && m.position.y < 0.25 && view) { view.burst(E.x, 0.1, E.z, 0xb8aa94, 7, 3.2, 0.45, 0.14); } E.jyP = m.position.y; const sq = L(0, 'sq', T.sq); u.body.scale.set(1 + sq * 0.5, 1 - sq * 0.6, 1 + sq * 0.5);
