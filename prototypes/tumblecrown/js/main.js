@@ -1082,7 +1082,7 @@ function onEvent(e) {
     case 'respawn': view.column(e.x, e.z, 0xff9a48); if (e.id === me) bigMsg(T('진지에서 다시 일어났어요'), '', 1800); break;
     case 'flag': { const mine = e.own === myTm(), c = TEAMS[e.own].c; view.column(e.x, e.z, c, 1.4); view.ring(e.x, e.z, 6, c, 0.9); view.shock(e.x, e.z, 7, c, 0.6); view.flash(e.x, e.z, c, 120); if (mine || e.was === myTm()) { bigMsg(mine ? T('깃발을 차지했어요!') : T('깃발을 빼앗겼어요!'), '', 1800); SFX.play(mine ? 'kill' : 'roar'); } break; }   // 주인 없던 깃발을 상대가 차지한 건 빼앗긴 게 아니라서 알리지 않아요
     case 'capbuff': view.rise(e.x, e.z, 0xffd36a, 12, 2.2, 0.9, 5); view.ring(e.x, e.z, 1.8, 0xffd36a, 0.5); if (e.id === me) { toast(T('점령 효과! 5초 동안 이동 속도와 공격이 20% 올라요'), 2400); SFX.play('bless'); } break;
-    case 'door': if (e.open) toast(T('신전 문이 열렸어요! 가운데 깃발을 차지할 수 있어요'), 2400); else bigMsg(T('신전 문이 닫혔어요!'), T('가운데 깃발은 진행도가 반만 차고 문이 열려야 차지해요'), 2600); SFX.play(e.open ? 'warn' : 'slam'); view.shake = Math.max(view.shake, 0.5); break;
+    case 'door': if (e.open) toast(T('신전 문이 열렸어요!'), 2400); else bigMsg(T('신전 문이 닫혔어요!'), T('안에 있는 깃발은 닫혀도 차지할 수 있어요'), 2600); SFX.play(e.open ? 'warn' : 'slam'); view.shake = Math.max(view.shake, 0.5); break;
     case 'storm': toast(e.on ? T('모래폭풍이 불어요! 멀리가 안 보여요') : T('모래폭풍이 잦아들었어요'), 2400); break;
     case 'monster': view.column(e.x, e.z, 0xff7a3a, 1.6); view.shock(e.x, e.z, 8, 0xff7a3a, 0.6); view.flash(e.x, e.z, 0xff7a3a, 140); if (e.big) { bigMsg(T('가운데에 큰 괴물이 나타났어요!'), T('쓰러뜨린 팀은 점령이 40초 동안 빨라지고 공격이 영구히 4% 올라요'), 3200); SFX.play('roar'); break; } bigMsg(T('꼭짓점에 괴물이 나타났어요!'), T('쓰러뜨리면 우리 팀 공격과 점령 속도가 영구히 2% 올라요'), 2600); SFX.play('roar'); break;
     case 'push': if (e.id === S.me && S.local) { S.local.kvx = (S.local.kvx || 0) + e.vx; S.local.kvz = (S.local.kvz || 0) + e.vz; } break;
