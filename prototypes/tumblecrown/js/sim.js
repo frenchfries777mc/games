@@ -563,11 +563,7 @@ function useSkill(G, p, si, inp) {
     case 'sweep': for (const e of G.enemies) if (e.hp > 0 && foeOf(G, p.id, e) && dist(p, e) < 3.9 + e.r) { hurtEnemy(G, e, 36, p, { kb: 6, kbA: angTo(p, e) }); if (e.hp > 0) { e.slow = 1.5; e.slowM = 0.5; } } ev(G, 'swing', { id: p.id, x: p.x, z: p.z, a: p.a, r: 3.9, role: p.role, n: 1 }); break;
     case 'rapidfire': p.burst = { n: 3, t: 0 }; ev(G, 'skill', { id: p.id, s: 'rapidfx', x: p.x, z: p.z, a: p.a }); break;
     case 'bigshot': G.projs.push({ id: G.uid++, k: 'bigshot', own: p.id, x: p.x + Math.cos(p.a) * 0.9, z: p.z + Math.sin(p.a) * 0.9, vx: Math.cos(p.a) * 30, vz: Math.sin(p.a) * 30, dmg: 88, life: 1.15, hr: 2 * (p.covT > 0 ? 1.6 : 1), sz: 2.6, hit: [], team: 0 }); ev(G, 'shoot', { id: p.id, pk: 'bigshot', x: p.x, z: p.z }); break;
-    case 'cover': { // 앞에 엄폐물: 적은 지나가지 못하고 적의 공격이 막혀요, 5초 동안 나는 쿨타임 20% 줄고 총알이 커지고 피해 25% 늘어요
-      const wx = p.x + Math.cos(p.a) * 3.6, wz = p.z + Math.sin(p.a) * 3.6;
-      G.zones.push({ id: G.uid++, k: 'cover', x: wx, z: wz, r: 4, a: p.a + Math.PI / 2, len: 8, t: 5, T: 5, own: p.id });
-      p.covT = 5; ev(G, 'skill', { id: p.id, s: 'coverfx', x: wx, z: wz, a: p.a }); break;
-    }
+    case 'axeswing': for (const e of G.enemies) if (e.hp > 0 && foeOf(G, p.id, e) && dist(p, e) < 4.4 + e.r && angDiff(p.a, angTo(p, e)) < 1.2) hurtEnemy(G, e, 90, p, { kb: 11, kbA: angTo(p, e) }); ev(G, 'swing', { id: p.id, x: p.x, z: p.z, a: p.a, r: 4.4, role: p.role, n: 1 }); p.animT = 0.8; break;   // 부채꼴 도끼 휘두르기
     case 'rootbolt': G.projs.push({ id: G.uid++, k: 'bolt', own: p.id, x: p.x + Math.cos(p.a) * 0.8, z: p.z + Math.sin(p.a) * 0.8, vx: Math.cos(p.a) * 28, vz: Math.sin(p.a) * 28, dmg: 18, life: 0.9, hit: [], team: 0, slow: 2.5 }); break;
     case 'backstep': { const ox = p.x, oz = p.z; p.x -= Math.cos(p.a) * 6; p.z -= Math.sin(p.a) * 6; collide(G, p, 0.6); p.inv = 0.3; p.focus = Math.max(p.focus || 0, 3); ev(G, 'skill', { id: p.id, s: 'backfx', x: ox, z: oz, a: p.a }); break; }
     case 'snipe': p.snipeT = 1.2; ev(G, 'skill', { id: p.id, s: 'snipecharge', x: p.x, z: p.z, a: p.a }); break;
@@ -1755,7 +1751,7 @@ function botPvp(G, p, dt) {
       case 'rootbolt': go = d < 14 && r < 0.15; break;
       case 'rapidfire': go = d > 5 && d < 22 && r < 0.12; break;
       case 'bigshot': go = d > 6 && d < 26 && r < 0.1; break;
-      case 'cover': go = d < 16 && r < 0.08; break;
+      case 'axeswing': go = d < 4.2 && r < 0.1; break;
       case 'march': go = d < 12 && r < 0.1; break;
       case 'necroheal': go = hpf < 0.55 && r < 0.15; break;
       case 'necroraise': go = d < 10 && r < 0.12; break;
