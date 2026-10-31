@@ -1641,6 +1641,7 @@ function setXb(X, pull, loaded) {
 const ease = u => u < 0 ? 0 : u > 1 ? 1 : u * u * (3 - 2 * u);
 const seg = (u, a, b) => ease((u - a) / (b - a));
 // 역할마다 공격·기술 동작. 몸 전체(허리 비틀기, 내딛기, 뛰어오르기)가 같이 움직여요
+const VK_T = { bloodlust: 1.6 };   // 바이킹은 도끼를 던져 받는 동안 기술 동작이 조금 더 길어요
 const ANIM_T = { atk: 0.32, hv: 0.95, big: 0.6, skill: 0.8 }, SK_T = { kill: 0.55, whirl: 1.0, storm: 1.5, flurry: 0.7, leap: 0.9, bloodlust: 1.4, shadow: 0.6, scatter: 0.7, lunge: 0.7 };
 // 기사 베기 좌우 방향 (1이면 화면 오른쪽에서 시작)
 const KS = 1, KR = 1, KH_T = 0.5;
@@ -1718,7 +1719,7 @@ function animHero(E, p, dt, t, view) {
   // 동작 시작: 동작 번호가 바뀌면 처음부터
   // 앞 동작이 아직 남아 있으면 그 자세에서 이어서 시작해요 (blT 동안 천천히 따라가요)
   if (p.aN !== E.aN) { E.aN = p.aN; if (E.aN != null && p.ak) { if (E.ak || E.kh) E.blT = 0.1; E.ak = p.ak; E.aT = 0; E.kc = (p.ac | 0) % 2; E.kh = null; } }
-  const kind = E.ak ? (E.ak === 'atk' || E.ak === 'hv' || E.ak === 'big' ? E.ak : 'skill') : '', D = kind === 'atk' && p.role === 'spearman' ? 0.45 : kind === 'big' && role === 'priest' ? 0.9 : kind === 'skill' && SK_T[E.ak] ? SK_T[E.ak] : ANIM_T[kind] || 0.5;
+  const kind = E.ak ? (E.ak === 'atk' || E.ak === 'hv' || E.ak === 'big' ? E.ak : 'skill') : '', D = kind === 'atk' && p.role === 'spearman' ? 0.45 : kind === 'big' && role === 'priest' ? 0.9 : kind === 'skill' && p.role === 'viking' && VK_T[E.ak] ? VK_T[E.ak] : kind === 'skill' && SK_T[E.ak] ? SK_T[E.ak] : ANIM_T[kind] || 0.5;
   // 기사 베기가 끝나면 끝 자세를 잠깐 들고 있다가 (연타가 이어질 수 있는 동안) 천천히 돌아와요
   if (E.ak) { E.aT += dt; if (E.aT > D) { if ((role === 'knight' || CHAIN[role]) && E.ak === 'atk') E.kh = { c: E.kc, t: 0 }; E.ak = null; } }
   if (E.kh && (E.kh.t += dt) > KH_T) E.kh = null;
@@ -1875,9 +1876,9 @@ function animHero(E, p, dt, t, view) {
     if (f > 0 && f < 1) {
       const g = E.m; u.armR.updateWorldMatrix(true, true); const tp = g.worldToLocal(u.vAxeM.getWorldPosition(new THREE.Vector3()));
       if (ax.parent !== g) { E.axS = ax.parent === u.armR ? g.worldToLocal(ax.getWorldPosition(new THREE.Vector3())) : (E.axS || tp.clone()); g.add(ax); }
-      const e = f * f * (3 - 2 * f), hgt = 8 * Math.sin(Math.PI * Math.pow(f, 0.85));
-      ax.position.set(E.axS.x + (tp.x - E.axS.x) * e, E.axS.y + (tp.y - E.axS.y) * e + hgt, E.axS.z + (tp.z - E.axS.z) * e); ax.rotation.set(Math.PI / 2 + Math.PI * 2 * f, 0, 0);
-    } else if (ax.parent !== u.armR) { u.armR.add(ax); ax.position.set(0, -0.9, 0.15); ax.rotation.set(Math.PI / 2, 0, 0); }
+      const e = f * f * (3 - 2 * f), hgt = 19 * Math.sin(Math.PI * Math.pow(f, 0.85));
+      ax.position.set(E.axS.x + (tp.x - E.axS.x) * e, E.axS.y + (tp.y - E.axS.y) * e + hgt, E.axS.z + (tp.z - E.axS.z) * e); ax.rotation.set(Math.PI / 2 + Math.PI * 2 * f, 0, 0); ax.scale.setScalar(2.2); E.axTr = (E.axTr || 0) - dt; if (E.axTr <= 0) { E.axTr = 0.04; const wp = ax.getWorldPosition(new THREE.Vector3()); view.burst(wp.x, wp.y, wp.z, 0xe8eef8, 3, 1.5, 0.35, 0.16); }
+    } else if (ax.parent !== u.armR) { u.armR.add(ax); ax.position.set(0, -0.9, 0.15); ax.rotation.set(Math.PI / 2, 0, 0); ax.scale.setScalar(1); }
   }
   u.armR.position.z = L(0, 'rpz', T.rpz); u.head.rotation.set(L(0, 'hx', T.hx), L(0, 'hy', T.hy), L(0, 'hz', T.hz));
   if (u.bowS) {   // 활시위 튕김: 시위를 놓는 순간 시위가 위아래로 떨리다 가라앉아요
