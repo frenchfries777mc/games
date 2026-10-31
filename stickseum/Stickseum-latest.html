@@ -5601,7 +5601,7 @@ function shuffle(arr){ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.
 /* ===== the version of this file =====
    Different BUILDS of one version meet and play together (room names online-v<ver>-<mode>-<map>-<slot>); different VERSIONS (the 0.x part) never do - the host refuses them (verNo) and the dispatcher answers busy.
    The build is only sent along with the join message and the lobby (for information); the corner of the screen shows it. */
-const GAME_BUILD='build 2026-10-18-v557';
+const GAME_BUILD='build 2026-10-18-v558';
 const GAME_VERSION='0.9', GAME_VERSION_NAME='은하 제국의 황혼';   // 게임 버전 이름: versions.json의 title과 같게 (빌드마다 바꾸지 않음)
 /* version (the 0.x part) vs build: different BUILDS of one version meet and play together, different VERSIONS never do (rooms, quick match, ranked, friend invites, dispatcher).
    Builds before 470 do not send a version, so it is read from the build number (0.9 started at build 458). */
@@ -6429,7 +6429,8 @@ function tnBeginRound(first){
   }
   tnStartPick(R);                                                                                     // the ones still in choose a character again
 }
-function tnIntroGo(){ if(!tn) return; darkPools=[]; tn.phase='intro'; tn.introAt=Date.now()+TN_INTRO_MS; tnSendBk(true); }
+function clearPoisonZonesOf(ids){ poisonZones = ids ? poisonZones.filter(z=>!ids.includes(z.owner)) : []; }      // (soldier mines and Kan's poison floors do not outlive the round they were set in)
+function tnIntroGo(){ if(!tn) return; darkPools=[]; clearPoisonZonesOf(); tn.phase='intro'; tn.introAt=Date.now()+TN_INTRO_MS; tnSendBk(true); }
 function tnStartPick(R){
   try{
     const ids=new Set(); for(const m of R){ if(m.a) ids.add(m.a); if(m.b) ids.add(m.b); }
@@ -6445,6 +6446,7 @@ function tnStartPick(R){
 }
 function tnStartGame(m, now){
   const A=players[m.a], B=players[m.b]; if(!A || !B) return;
+  clearPoisonZonesOf([m.a, m.b]);
   tnResetFighter(A); tnResetFighter(B);
   m.ph='fight'; m.endsAt=now+TN_ROUND_SEC*1000; m.fightAt=now; tn.partner[m.a]=m.b; tn.partner[m.b]=m.a;
 }
@@ -6452,7 +6454,7 @@ function tnGameEnd(m, w, l){
   if(!tn || m.ph!=='fight') return;
   if(w===m.a) m.sa++; else m.sb++;
   const sw=(w===m.a?m.sa:m.sb), sl=(w===m.a?m.sb:m.sa), lbl=tn.curLabel+' · ';
-  delete tn.partner[m.a]; delete tn.partner[m.b];
+  delete tn.partner[m.a]; delete tn.partner[m.b]; clearPoisonZonesOf([m.a, m.b]);
   const L=players[l]; if(L){ L.alive=false; L.respawnAt=Infinity; }
   if(sw>=TN_WINS){
     m.w=w; m.ph='done'; const W=players[w]; if(W){ W.alive=false; W.respawnAt=Infinity; }
@@ -16348,7 +16350,7 @@ function broadcastDuelScore(){
   broadcastAll({t:'duelScore', scores:duelScores});
 }
 function startNewDuelRound(){
-  duelRoundEndsAt=null; darkPools=[];   // Kurus darkness belongs to the round it was spread in
+  duelRoundEndsAt=null; darkPools=[]; clearPoisonZonesOf();   // Kurus darkness belongs to the round it was spread in
   for(const id in players){
     const p=players[id];
     const sp=spawnPoint(); p.x=sp.x; p.y=sp.y; p.vx=0; p.vy=0; p.hp=ruleHp(); p.alive=true; p.respawnAt=0;
