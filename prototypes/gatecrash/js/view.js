@@ -69,6 +69,8 @@ function bakeWorld(W) {
   for (const rm of W.rooms) {
     const T = THEMES[rm.theme], X = rm.x0 * TS, Y = rm.y0 * TS, w = (rm.x1 - rm.x0 + 1) * TS, h = (rm.y1 - rm.y0 + 1) * TS;
     R(x, T.wall, X, Y, w, h);
+    const v = rm.theme === 'server' ? 0 : ((rm.y0 / 6 | 0) * 5 + rm.x0) % 4;      // 층마다 벽 모양이 달라요: 0 기본, 1 넓은 창, 2 창 없는 벽(패널), 3 촘촘한 창
+    R(x, ['rgba(0,0,0,0)', 'rgba(120,170,255,.09)', 'rgba(255,190,110,.09)', 'rgba(140,230,160,.08)'][v], X, Y, w, h);
     // 벽 아래쪽 띠와 바닥 가까운 무늬
     const wain = T.wain || { lobby: '#c2b8a0', office: '#b4c0d2', cafe: '#a8793a', server: '#222c42', terminal: '#d2d9e4', gates: '#c6d0de', bridge: '#9fabc2' }[rm.theme];
     R(x, wain, X, Y + h - 30, w, 30); R(x, 'rgba(0,0,0,.12)', X, Y + h - 30, w, 2);
@@ -77,16 +79,19 @@ function bakeWorld(W) {
     if (rm.theme === 'server') for (let a = X + 6; a < X + w; a += 40) { R(x, '#3a7aff', a, Y + h - 14, 18, 2); R(x, '#6fe08a', a + 22, Y + h - 14, 4, 2); }
     for (let a = X; a < X + w; a += 48) R(x, T.trim, a, Y, 2, h - 30);
     // 창문: 바깥 도시가 보여요
-    const wh = h > 150 ? h - 80 : h > 100 ? 44 : 30, step = rm.theme === 'server' ? 160 : 96;
-    for (let a = X + 22; a < X + w - 50; a += step) {
+    const wh = h > 150 ? h - 80 : h > 100 ? 44 : 30, step = rm.theme === 'server' ? 160 : [96, 150, 96, 72][v];
+    if (v === 2) { for (let a = X + 10; a < X + w - 20; a += 40) { R(x, 'rgba(0,0,0,.1)', a, Y + 10, 30, h - 44); R(x, 'rgba(255,255,255,.12)', a, Y + 10, 30, 2); R(x, T.trim, a + 31, Y + 10, 2, h - 44); } }
+    for (let a = X + 22 + (v === 3 ? 30 : 0); a < X + w - 50; a += step) {
+      if (v === 2) break;
       if (rm.theme === 'server') { R(x, '#10182a', a, Y + 14, 60, wh); for (let k = 0; k < 6; k++) R(x, '#2a3b66', a + 4 + k * 9, Y + 18 + (k * 7) % 16, 6, 6); continue; }
       drawView(x, W, a, Y + 14, 56, wh, rm);
       R(x, T.trim, a - 2, Y + 12, 60, 2); R(x, T.trim, a - 2, Y + 14 + wh, 60, 3); R(x, T.trim, a + 27, Y + 14, 2, wh);
     }
     // 천장 조명
-    for (let a = X + 40; a < X + w - 20; a += 120) { R(x, '#f4f0e0', a, Y, 36, 4); R(x, '#fffbe8', a + 4, Y + 4, 28, 2); }
+    if (v === 1) for (let a = X + 30; a < X + w - 20; a += 90) { R(x, '#444', a + 17, Y, 2, 8); R(x, '#f4f0e0', a + 6, Y + 8, 24, 5); R(x, '#fffbe8', a + 9, Y + 11, 18, 2); }
+    else for (let a = X + 40 + v * 20; a < X + w - 20; a += v === 3 ? 80 : 120) { R(x, '#f4f0e0', a, Y, 36, 4); R(x, '#fffbe8', a + 4, Y + 4, 28, 2); }
     // 벽 장식 (그림, 시계, 비상구)
-    for (let a = X + 70, k = 0; a < X + w - 60; a += 150, k++) {
+    for (let a = X + 70 + v * 31, k = v; a < X + w - 60; a += v === 2 ? 110 : 150, k++) {
       if (rm.theme === 'server') continue;
       if (k % 3 === 0) { R(x, '#5a4630', a, Y + 18, 22, 16); R(x, ['#e8a05a', '#6fb0e8', '#9ad07a'][(a / 150 | 0) % 3], a + 2, Y + 20, 18, 12); R(x, 'rgba(255,255,255,.5)', a + 3, Y + 21, 6, 2); }
       else if (k % 3 === 1) { x.fillStyle = '#f8f8f8'; x.beginPath(); x.arc(a + 8, Y + 24, 7, 0, 7); x.fill(); R(x, '#222', a + 8, Y + 19, 1, 6); R(x, '#222', a + 8, Y + 24, 4, 1); }
