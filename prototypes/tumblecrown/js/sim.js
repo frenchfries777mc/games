@@ -64,7 +64,8 @@ export function createGame(slots, seed, ch = 0, mode = 'normal') {
   });
   G.tm = {}; const cnt = [0, 0]; for (const p of G.players) { G.tm[p.id] = p.team; p.tIdx = cnt[p.team]++; }
   if (G.pvp) { G.fl = MAP.tflags.map(([x, y, o]) => ({ x: cw(x), z: cw(y), own: o, cap: -1, prog: 0 }));   // 시작할 때 팀마다 깃발은 진지에서 가장 가까운 하나만 가지고, 나머지는 주인 없이 시작해요
-    for (const t of [0, 1]) { const sp = MAP.tspawn[t], mine = G.fl.filter(f => f.own === t).sort((a, b) => Math.hypot(a.x - cw(sp[0]), a.z - cw(sp[1])) - Math.hypot(b.x - cw(sp[0]), b.z - cw(sp[1]))); for (const f of mine.slice(1)) f.own = -1; } G.winTeam = -1; G.cb = [0, 0]; G.mk = [0, 0]; G.dr = MAP.doors && MAP.doors.length ? { t: D.DOOR_SHUT_T } : null; G.sm = G.dr ? { on: 0, t: D.STORM_CALM_T } : null; setDoors(0); G.cTim = [50, 50]; G.gi = G.dr ? MAP.tfi.indexOf(4) : -1; pvpSpawn(G); return G; }
+    for (const t of [0, 1]) { const sp = MAP.tspawn[t], mine = G.fl.filter(f => f.own === t).sort((a, b) => Math.hypot(a.x - cw(sp[0]), a.z - cw(sp[1])) - Math.hypot(b.x - cw(sp[0]), b.z - cw(sp[1]))); for (const f of mine.slice(1)) f.own = -1; }
+    initOrder(G); G.winTeam = -1; G.cb = [0, 0]; G.mk = [0, 0]; G.dr = MAP.doors && MAP.doors.length ? { t: D.DOOR_SHUT_T } : null; G.sm = G.dr ? { on: 0, t: D.STORM_CALM_T } : null; setDoors(0); G.cTim = [50, 50]; G.gi = G.dr ? MAP.tfi.indexOf(4) : -1; pvpSpawn(G); return G; }
   placeAt(G, G.cp);
   // 몬스터는 지도에 정해진 자리에 한 번만 나와요
   for (const [k, x, y] of MAP.spawns) spawnEnemy(G, k, cw(x), cw(y), true);
@@ -131,6 +132,20 @@ export function koPlayer(G, p, src) {
   if (G.pvp && p.hitBy) { for (const [id, t] of Object.entries(p.hitBy)) { const q = G.players.find(x => x.id === id); if (q && q.team !== p.team && (!k || q.id !== k.id) && G.t - t <= 10) q.assists = (q.assists | 0) + 1; } p.hitBy = null; }   // 쓰러뜨리기 10초 안에 때린 다른 상대에게 도움 1   // 8초 안에 연속으로 쓰러뜨리면 기술 대기가 절반으로 줄어요
   G.stats.downs++; ev(G, 'ko', { id: p.id, by: k ? k.id : null, x: p.x, z: p.z });
 }
+// 순차 점령: 우리 진지 깃발은 처음부터, 중앙·측면 깃발은 우리 진지 깃발을 가진 뒤에, 상대 진영 깃발은 우리 진지와 중앙·측면 깃발을 모두 가진 뒤에 차지할 수 있어요
+// q = 우리 진지(0)에서 상대 진지(1)까지 가는 길에서 그 깃발이 놓인 위치 (두 진지를 잇는 선에 내린 그림자)
+function initOrder(G) {
+  G.home = [0, 1].map(t => G.fl.findIndex(f => f.own === t));
+  const h0 = G.fl[G.home[0]], h1 = G.fl[G.home[1]], ax = h1.x - h0.x, az = h1.z - h0.z, l2 = ax * ax + az * az || 1;
+  const p = G.fl.map(f => Math.max(0, Math.min(1, ((f.x - h0.x) * ax + (f.z - h0.z) * az) / l2)));
+  G.fq = [p, p.map(v => 1 - v)];
+}
+export function flagLocked(G, i, tm) {
+  if (!G.fl || !G.home || !G.fq || G.fl[i].own === tm || i === G.home[tm]) return false;
+  if (G.fl[G.home[tm]].own !== tm) return true;   // 우리 진지 깃발을 뺏겼으면 먼저 되찾아야 해요
+  const q = G.fq[tm]; if (q[i] <= 0.65) return false;
+  return G.fl.some((g, j) => j !== i && q[j] <= 0.65 && g.own !== tm);   // 상대 진영: 우리 진지·중앙·측면을 모두 가져야 해요
+}
 // 깃발: 둘레 안에 더 많은 팀이 7초 동안 서 있으면 그 팀 것이 돼요 (같은 수면 아무도 못 세요, 아무도 없으면 천천히 되돌아가요)
 function flagsStep(G, dt) {
   G.fl.forEach((f, i) => {
@@ -139,6 +154,7 @@ function flagsStep(G, dt) {
     let n0 = 0, n1 = 0;
     for (const p of G.players) if (alive(p) && Math.hypot(p.x - f.x, p.z - f.z) < D.FLAG_R) { if (p.team === 0) n0++; else n1++; }
     let lead = n0 > n1 ? 0 : n1 > n0 ? 1 : -1; if (f.seize > 0 && (f.seizeTm === 0 ? n0 : n1) > 0) { lead = f.seizeTm; if (f.own === lead) lead = -1; }   // 점령: 아군이 한 명이라도 있으면 수가 적어도 점령이 진행돼요
+    if (lead >= 0 && lead !== f.own && flagLocked(G, i, lead)) lead = -1;   // 순서가 안 된 깃발은 점령이 진행되지 않아요
     const rt0 = (f.seize > 0 && lead === f.seizeTm && (lead === 0 ? n0 <= n1 : n1 <= n0)) ? 1 : Math.min(3, 1 + 0.5 * (Math.abs(n0 - n1) - 1)) * (lead >= 0 && G.cb[lead] > 0 ? 1.5 : 1) * (lead >= 0 ? 1 + 0.02 * G.mk[lead] : 1);
     const rt = rt0 * (G.pvp && G.mt >= 300 && lead >= 0 && G.fl.filter(g => g.own === lead).length > G.fl.filter(g => g.own === 1 - lead).length ? 1.3 : 1);   // 5분이 지나면 깃발을 더 많이 가진 팀의 점령이 30% 빨라져요 (판이 늘어지지 않게)   // 더 많은 사람이 있을수록 빨리 차지해요 (한 명 1배, 둘 1.5배, 셋 2배, 최대 3배)
     if (lead >= 0 && lead !== f.own) {
@@ -1650,7 +1666,7 @@ function botPlan(G, tm) {
   c.t = G.t; c.slots = {}; c.mon = null;
   const bs = G.players.filter(q => q.team === tm && q.ai && alive(q)), n = bs.length; if (n < 2) return c;
   const cx = bs.reduce((a, q) => a + q.x, 0) / n, cz = bs.reduce((a, q) => a + q.z, 0) / n, NF = G.fl.length, foes = G.players.filter(q => q.team !== tm && alive(q));
-  const sc = G.fl.map((f, i) => Math.hypot(f.x - cx, f.z - cz) + (f.own === tm ? (f.cap >= 0 && f.cap !== tm ? -60 : 400) : 0) + (G.dr && i === G.gi && !DSTATE.open ? 900 : 0));
+  const sc = G.fl.map((f, i) => Math.hypot(f.x - cx, f.z - cz) + (f.own === tm ? (f.cap >= 0 && f.cap !== tm ? -60 : 400) : 0) + (G.dr && i === G.gi && !DSTATE.open ? 900 : 0) + (flagLocked(G, i, tm) ? 5000 : 0));
   const en = G.fl.map(f => foes.filter(q => Math.hypot(q.x - f.x, q.z - f.z) < D.FLAG_R * 2.2).length);
   const ord = G.fl.map((f, i) => i).sort((a, b) => sc[a] - sc[b]), A = ord[0], B = ord[1], ctr = i => i >= NF - 3;
   const ms = G.enemies.filter(e => e.mon && e.hp > 0); let M = null, md = 420; for (const m of ms) { const d = Math.hypot(m.x - cx, m.z - cz); if (d < md) { md = d; M = m; } }
@@ -1714,7 +1730,7 @@ function botFlag(G, p, dt) {
   if (ai.callT > G.t) {   // "여기 오세요" 신호: 신호 자리로 모여요 (싸울 상대가 가까이 있으면 그쪽이 먼저예요)
     if (Math.hypot(ai.callX - p.x, ai.callZ - p.z) > 4) { moveTo(G, p, inp, ai.callX, ai.callZ, 1); return inp; }
     // 도착하면 멈춰 있지 않고, 신호 자리에서 가장 가까운 (우리 것이 아닌) 깃발로 가요. 근처에 상대가 있으면 botPvp가 먼저 싸워요
-    ai.callT = 0; let bj = -1, bd = 1e9; G.fl.forEach((f, j) => { const d = Math.hypot(f.x - ai.callX, f.z - ai.callZ) + (f.own === p.team ? 400 : 0); if (d < bd) { bd = d; bj = j; } });
+    ai.callT = 0; let bj = -1, bd = 1e9; G.fl.forEach((f, j) => { const d = Math.hypot(f.x - ai.callX, f.z - ai.callZ) + (f.own === p.team ? 400 : 0) + (flagLocked(G, j, p.team) ? 5000 : 0); if (d < bd) { bd = d; bj = j; } });
     if (bj >= 0) { ai.fi = bj; ai.fT = 4; }
   }
   if (ai.fT <= 0 || ai.fi == null) {
@@ -1722,6 +1738,7 @@ function botFlag(G, p, dt) {
     const sl = botPlan(G, p.team).slots[p.id];
     G.fl.forEach((f, i) => {
       let sc = Math.hypot(f.x - p.x, f.z - p.z) + (G.dr && i === G.gi && !DSTATE.open ? 900 : 0);
+      if (flagLocked(G, i, p.team)) sc += 5000;   // 순서가 안 된 깃발은 가지 않아요
       if (f.own === p.team) sc += f.cap >= 0 && f.cap !== p.team ? -60 : 400;   // 이미 우리 깃발이면 지키는 중이 아닐 때는 거의 가지 않아요 (공격하러 나가요)
       // 혼자 흩어지지 않고 같은 편이 많은 깃발로 같이 가요 (같은 편은 사람·봇 모두 세요). 상대가 더 많이 지키는 깃발은 피해요
       let al = 0, en = 0; for (const q of G.players) { if (q === p || !alive(q) || Math.hypot(q.x - f.x, q.z - f.z) > D.FLAG_R * 3) continue; if (q.team === p.team) al++; else en++; }
@@ -1756,7 +1773,7 @@ function botPvp(G, p, dt) {
   if (hk.m[p.team] && hk.ids.includes(p.id) && (!tgt || dist(p, tgt) > 9)) {
     // 상대·중립 깃발까지가 괴물까지와 비슷하거나 더 가까우면 괴물 대신 깃발로 가요
     const mo = hk.m[p.team], dm = dist(p, mo); let df = 1e9;
-    G.fl.forEach((f, i) => { if (f.own === p.team || (G.dr && i === G.gi && !DSTATE.open)) return; const d = Math.hypot(f.x - p.x, f.z - p.z); if (d < df) df = d; });
+    G.fl.forEach((f, i) => { if (f.own === p.team || flagLocked(G, i, p.team) || (G.dr && i === G.gi && !DSTATE.open)) return; const d = Math.hypot(f.x - p.x, f.z - p.z); if (d < df) df = d; });
     if (!(df <= dm * 1.3)) tgt = mo;
   }
   // 가까운 상대가 없으면 깃발로 가요: 깃발이 목표인 봇은 13칸 안의 상대만 상대하고, 깃발 위에서는 조금 더 멀리까지 지켜요
@@ -1880,7 +1897,7 @@ export function snapshot(G) {
   const near = e => e.k === 'boss' || (e.st !== 'sleep') || G.players.some(p => Math.abs(p.x - e.x) < 34 && Math.abs(p.z - e.z) < 26);
   return {
     mn: G.enemies.filter(e => e.mon && e.hp > 0).map(m => [r1(m.x), r1(m.z), Math.round(m.hp / m.maxhp * 100)]), mk: G.mk || [0, 0],
-    pv: G.pvp ? 1 : 0, win: G.winner || 0, wtm: G.winTeam != null ? G.winTeam : -1, lt: G.limit ? Math.max(0, Math.ceil(G.limit - G.mt)) : -1, tf: G.fl ? G.fl.map(f => [f.own, f.cap, r1(f.prog), f.hold > 0 ? r1(f.hold) : 0, f.seize > 0 ? r1(f.seize) : 0]) : 0, rg: G.range ? 1 : 0, dr: G.dr ? [DSTATE.open, r1(G.dr.t)] : 0, sm: G.sm ? [G.sm.on, r1(G.sm.t)] : 0, mc: G.cb ? [Math.ceil(G.cb[0]), Math.ceil(G.cb[1])] : 0, t: r1(G.t), ph: G.phase, pt: r1(G.phaseT), c: G.ch, dp: G.deep, wk: G.weekly, wt: r1(G.winT || 0), msg: G.msg, won: G.won,
+    pv: G.pvp ? 1 : 0, win: G.winner || 0, wtm: G.winTeam != null ? G.winTeam : -1, lt: G.limit ? Math.max(0, Math.ceil(G.limit - G.mt)) : -1, tf: G.fl ? G.fl.map(f => [f.own, f.cap, r1(f.prog), f.hold > 0 ? r1(f.hold) : 0, f.seize > 0 ? r1(f.seize) : 0, (flagLocked(G, G.fl.indexOf(f), 0) ? 1 : 0) | (flagLocked(G, G.fl.indexOf(f), 1) ? 2 : 0)]) : 0, rg: G.range ? 1 : 0, dr: G.dr ? [DSTATE.open, r1(G.dr.t)] : 0, sm: G.sm ? [G.sm.on, r1(G.sm.t)] : 0, mc: G.cb ? [Math.ceil(G.cb[0]), Math.ceil(G.cb[1])] : 0, t: r1(G.t), ph: G.phase, pt: r1(G.phaseT), c: G.ch, dp: G.deep, wk: G.weekly, wt: r1(G.winT || 0), msg: G.msg, won: G.won,
     sk: G.players.filter(p => !p.bot && G.skip[p.id]).length, hu: G.players.filter(p => !p.bot).length,
     pl: G.players.map(p => ({ id: p.id, tm: p.team, fz: p.inFl ? 1 : 0, dth: p.deaths | 0, role: p.role, rn: p.px && p.px.runeT > G.t ? r1(p.px.runeT - G.t) : 0, col: p.col, cos: p.cos, name: p.name, mp: p.mp | 0, rl: p.rl | 0, bot: p.bot, x: r1(p.x), z: r1(p.z), a: r1(p.a), hp: Math.round(p.hp), mx: p.maxhp, dn: p.down ? 1 : 0, dd: p.dead ? 1 : 0, bl: r1(p.bleed), rs: r1(p.respT), rv: r1(p.revT), ro: p.roll > 0 ? 1 : 0, bk: p.block > 0 ? 1 : 0, sh: Math.round(p.shield), tn: p.taunt > 0 ? 1 : 0, ra: p.rally > 0 ? 1 : 0, mr: p.moraleT > 0 ? 1 : 0, cb: p.capB > 0 ? r1(p.capB) : 0, an: p.animT > 0 ? p.anim : '', aN: p.animN || 0, ak: p.anim, mv: p.moving ? 1 : 0, cd: [r1(p.cd.s0), r1(p.cd.s1), r1(p.cd.s2)], rc: r1(p.rollCd), cv: p.covT > 0 ? r1(p.covT) : 0, rct: p.rcT > 0 ? r1(p.rcT) : 0, rcc: p.rcCd > 0 ? r1(p.rcCd) : 0, b: p.bl, cb: p.comboT > 0 ? p.combo : 0, ac: p.animC || 0, fc: p.focus > 0 ? 1 : 0, tc: p.torch || 0, cg: p.chg > 0 ? r1(p.chg) : 0, cl: p.chill > 0 ? 1 : 0, em: p.emb ? 1 : 0, kl: p.kills | 0, as: p.assists | 0, fcp: p.fcap | 0, mkp: p.monK | 0, pc: p.place | 0, sv: r1(p.survT || 0), bn: p.burn > 0 ? 1 : 0, sw: p.slow > 0 ? 1 : 0, stl: p.stl > 0 ? 1 : 0, sp: p.snipeT > 0 ? 1 : 0, bs: p.bast > 0 ? 1 : 0, vw: (p.vow && p.vow.t > 0) || p.vwSelf > 0 ? 1 : 0 })),
     en: G.enemies.filter(e => e.k !== 'dummy' && near(e)).map(e => ({ id: e.id, k: e.k, x: r1(e.x), z: r1(e.z), a: r1(e.a), hp: Math.round(e.hp), mx: e.maxhp, st: e.st, mk: e.mark > 0 ? 1 : 0, sn: e.stun > 0 ? 1 : 0, sl: e.slow > 0 ? 1 : 0, bu: e.burn > 0 ? 1 : 0, ph: e.phase || 0, mb: e.mb || 0, bg: e.big ? 1 : 0, tm: e.tm != null ? e.tm : -1, mv: e.moving ? 1 : 0, ak: e.atk ? e.atk.k + (e.atk.go ? '!' : '') : '', ht: e.hitT > 0 ? 1 : 0 })),
