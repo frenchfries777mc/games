@@ -11,6 +11,7 @@ BEACONFALL 사이트 (정적 사이트: 서버 프로그램이 필요 없어요)
   (공략 글은 i18n.js 의 G 항목에 있어요)
   patchnotes.json       패치노트 (새 패치마다 맨 위에 항목 추가)
   BEACONFALL-v0.3.html  게임 파일 (이전 버전 파일도 함께 남겨요)
+  BEACONFALL-latest.html  시작 파일 (versions.json 의 latestFile 을 받는 동안 진행률 막대를 보여 주고, 다 받으면 게임으로 바뀌어요. "바로 플레이"가 이 파일을 열어요. 고치지 않아요. 안의 FALLBACK 이름은 새 버전을 낼 때 같이 바꿔요)
   shot-*.png, i-*.png   게임 화면(도트)과 아이템 아이콘
   Galmuri11*.woff2      도트 글꼴 (SIL OFL 1.1, OFL.txt 참고)
 
