@@ -1232,7 +1232,7 @@ export class View {
     // 적
     for (const e of S.en) {
       const key = 'e' + e.id; seen.add(key); let E = this.ents.get(key);
-      if (!E) { const m = e.k === 'boss' ? makeBossOf(CH.boss.ai) : makeFoe(e.k); if (e.mb) m.scale.multiplyScalar(1.3); s.add(m); E = { m, x: e.x, z: e.z, a: e.a, ph: R() * 6, base: m.scale.x }; this.ents.set(key, E); }
+      if (!E) { const m = e.k === 'boss' ? makeBossOf(CH.boss.ai) : makeFoe(e.k); if (e.mb) m.scale.multiplyScalar(1.3); if (e.bg) m.scale.multiplyScalar(1.8); s.add(m); E = { m, x: e.x, z: e.z, a: e.a, ph: R() * 6, base: m.scale.x }; this.ents.set(key, E); }
       const k = exact ? 1 : Math.min(1, dt * 12); E.x += (e.x - E.x) * k; E.z += (e.z - E.z) * k; E.a = lerpA(E.a, e.a, Math.min(1, dt * 14));
       if (e.tm >= 0 && !E.tmk) { E.tmk = 1; const rc = TEAMS[e.tm].c, rg = mesh(geo('minionring', () => new THREE.RingGeometry(0.75, 1.0, 20)), M(rc, { e: rc, ei: 2.5 }), 0, 0.06, 0, E.m, false); rg.rotation.x = -Math.PI / 2; }   // 소환된 아군 해골은 우리 팀 색 고리가 발밑에 떠요
       animEnemy(E, e, dt, t, this); E.hy = hy(E, exact ? 1 : dt); E.m.position.y += E.hy;
