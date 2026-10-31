@@ -140,11 +140,13 @@ function flagsStep(G, dt) {
     let n0 = 0, n1 = 0;
     for (const p of G.players) if (alive(p) && Math.hypot(p.x - f.x, p.z - f.z) < D.FLAG_R) { if (p.team === 0) n0++; else n1++; }
     let lead = n0 > n1 ? 0 : n1 > n0 ? 1 : -1; if (f.seize > 0 && (f.seizeTm === 0 ? n0 : n1) > 0) { lead = f.seizeTm; if (f.own === lead) lead = -1; }   // 점령: 아군이 한 명이라도 있으면 수가 적어도 점령이 진행돼요
-    const rt = (f.seize > 0 && lead === f.seizeTm && (lead === 0 ? n0 <= n1 : n1 <= n0)) ? 1 : Math.min(3, 1 + 0.5 * (Math.abs(n0 - n1) - 1)) * (lead >= 0 && G.cb[lead] > 0 ? 1.5 : 1) * (lead >= 0 ? 1 + 0.02 * G.mk[lead] : 1);   // 더 많은 사람이 있을수록 빨리 차지해요 (한 명 1배, 둘 1.5배, 셋 2배, 최대 3배)
+    const rt0 = (f.seize > 0 && lead === f.seizeTm && (lead === 0 ? n0 <= n1 : n1 <= n0)) ? 1 : Math.min(3, 1 + 0.5 * (Math.abs(n0 - n1) - 1)) * (lead >= 0 && G.cb[lead] > 0 ? 1.5 : 1) * (lead >= 0 ? 1 + 0.02 * G.mk[lead] : 1);
+    const rt = rt0 * (G.pvp && G.mt >= 300 && lead >= 0 && G.fl.filter(g => g.own === lead).length > G.fl.filter(g => g.own === 1 - lead).length ? 1.3 : 1);   // 5분이 지나면 깃발을 더 많이 가진 팀의 점령이 30% 빨라져요 (판이 늘어지지 않게)   // 더 많은 사람이 있을수록 빨리 차지해요 (한 명 1배, 둘 1.5배, 셋 2배, 최대 3배)
     if (lead >= 0 && lead !== f.own) {
       if (f.cap === lead || f.cap < 0) { f.cap = lead; f.prog += dt * rt; }
       else { f.prog -= dt * rt; if (f.prog <= 0) { f.prog = 0; f.cap = lead; } }
-      if (f.prog >= D.FLAG_T) { f.own = lead; f.prog = 0; f.cap = -1; ev(G, 'flag', { i, own: lead, x: f.x, z: f.z }); for (const q of G.players) if (q.team === lead && alive(q) && Math.hypot(q.x - f.x, q.z - f.z) < D.FLAG_R) { q.capB = 5; q.fcap = (q.fcap | 0) + 1; ev(G, 'capbuff', { id: q.id, x: q.x, z: q.z }); } }
+      if (f.prog >= D.FLAG_T) { f.own = lead; f.prog = 0; f.cap = -1; f.hold = 10; f.holdTm = lead; ev(G, 'flag', { i, own: lead, x: f.x, z: f.z });   // 점령하면 10초 동안 잠겨서 바로 뺏기지 않아요
+      for (const q of G.players) if (q.team === lead && alive(q) && Math.hypot(q.x - f.x, q.z - f.z) < D.FLAG_R) { q.capB = 5; q.fcap = (q.fcap | 0) + 1; ev(G, 'capbuff', { id: q.id, x: q.x, z: q.z }); } }
     } else if (lead < 0 && n0 + n1 > 0) { /* 같은 수: 그대로 */ }
     else if (f.prog > 0) { f.prog = Math.max(0, f.prog - dt); if (f.prog === 0) f.cap = -1; }
   });
