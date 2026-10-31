@@ -1218,7 +1218,7 @@ export class View {
       if (!E) { const m = makeHero(p.role, p.cos); s.add(m); E = { m, x: p.x, z: p.z, a: p.a, ph: 0 }; this.ents.set(key, E); E.ring = ringMesh(s, p.col || ROLES[p.role].color); E.ward = sph(1.3, 12, 10, M(0x9af0e0, { e: 0x6ad0c0, ei: 0.5, op: 0.08, uniq: true }), 0, 1.5, 0, m); E.ward.castShadow = false; }
       const k = exact || p.id === me ? 1 : Math.min(1, dt * 12);
       E.x += (p.x - E.x) * k; E.z += (p.z - E.z) * k; E.a = lerpA(E.a, p.a, Math.min(1, dt * 18));
-      animHero(E, p, dt, t, this); E.hy = hy(E, exact ? 1 : dt); E.m.position.y += E.hy; E.ring.position.set(E.x, 0.12 + E.hy, E.z); E.ring.visible = !p.dd;
+      animHero(E, p, dt, t, this); if (E.pkb > 0 && E.pkx != null) { const sh = E.pkb * 0.7; E.m.position.x += E.pkx * sh; E.m.position.z += E.pkz * sh; } E.hy = hy(E, exact ? 1 : dt); E.m.position.y += E.hy; E.ring.position.set(E.x, 0.12 + E.hy, E.z); E.ring.visible = !p.dd;
       E.ward.visible = p.sh > 0; const mp = S.pl.find(q => q.id === me), hid = p.stl && p.id !== me && mp && p.tm !== mp.tm && Math.hypot(mp.x - p.x, mp.z - p.z) > 2.8; E.m.visible = !p.dd && !hid; if (hid) E.ring.visible = false;
     }
     if (S.tf && this.flagM) S.tf.forEach((f, i) => {
@@ -1397,6 +1397,8 @@ export class View {
     this.fx.push({ m, t: 0, T: 0.22, up: (f) => { const u = f.t / f.T; m.material.opacity = 0.7 * (1 - u); m.scale.z = w * (1 - u); } });
   }
   // 맞은 적: 뒤로 휘청 / 휘두르기 시작 / 보스 포효
+  // 맞은 캐릭터가 때린 쪽의 반대로 움찔하며 밀려나요 (보이는 것만, 실제 위치는 그대로)
+  flinch(id, by, hv) { const E = this.ents.get('p' + id); if (!E) return; const A = by != null ? this.ents.get('p' + by) : null; let dx = A ? E.x - A.x : 0, dz = A ? E.z - A.z : 0; const d = Math.hypot(dx, dz) || 1; E.pkx = dx / d; E.pkz = dz / d; E.pkb = Math.max(E.pkb || 0, 0.55 + 0.45 * hv); }
   react(id, big) { const E = this.ents.get('e' + id); if (!E) return; E.kb = Math.max(E.kb || 0, big ? 0.45 : 0.28); if (!(E.pop > 0)) E.pop = big ? 0.14 : 0.08; if (E.base == null) E.base = E.m.scale.x; }
   trip(id, high) { const E = this.ents.get('e' + id); if (!E) return; E.tripD = E.tripT = high ? 0.9 : 0.5; E.tripH = high ? 3.2 : 1.1; }
   eAct(id) { const E = this.ents.get('e' + id); if (E) E.swT = 0.42; }
@@ -1862,6 +1864,8 @@ function animHero(E, p, dt, t, view) {
     if (u.axeG) u.axeG.rotation.x += ((ax ? Math.PI : 0) - u.axeG.rotation.x) * Math.min(1, dt * 20);
     if (ax) { T.lx = (-2.7 * wi + 1.3 * sp) * (1 - rc) - 0.35 * rc; T.lz = 0.1 + 0.5 * wi * (1 - sp); T.bry = (1.3 * wi - 2.9 * sp) * (1 - rc); T.bx = (-0.18 * wi + 0.55 * sp) * (1 - rc); T.bz = 0.7 * sp * (1 - rc); T.rx -= 0.2 * sp * (1 - rc); }
   }
+  if (kind === 'atk') { const wu = seg(v, 0, 0.22) * (1 - seg(v, 0.22, 0.45)); T.bx -= 0.2 * wu; T.hx += 0.1 * wu; T.sq += 0.05 * wu; }   // 공격 직전 몸을 살짝 뒤로 젖혔다가 내려쳐요
+  if (E.pkb > 0) { E.pkb = Math.max(0, E.pkb - dt * 3.2); T.bx -= E.pkb * 0.7; T.hx -= E.pkb * 0.9; T.sq += E.pkb * 0.3; T.rx -= E.pkb * 0.8; T.lx -= E.pkb * 0.8; }   // 맞으면 움찔
   if (p.bk && E.ak !== 'block') { T.lx = -1.6; }
   const k0 = dt * (E.blT > 0 ? 14 : 34), L = (o, kk, v2) => { const r = kk === 'hx' || kk === 'hy' || kk === 'hz' ? 0.45 : kk === 'bx' || kk === 'bry' || kk === 'brz' || kk === 'bz' ? 0.8 : kk === 'jy' || kk === 'sq' ? 1.3 : 1; E[kk] = E[kk] == null ? v2 : E[kk] + (v2 - E[kk]) * (1 - Math.exp(-k0 * r)); return E[kk]; };  // 머리는 몸보다 늦게, 몸은 팔보다 늦게 따라와요
   u.armR.rotation.order = 'XZY'; u.armR.rotation.set(L(0, 'ar', T.rx), L(0, 'ary', T.ry), L(0, 'arz', T.rz)); u.armL.rotation.set(L(0, 'al', T.lx), 0, L(0, 'alz', T.lz));
