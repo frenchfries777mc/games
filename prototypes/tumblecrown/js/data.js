@@ -767,6 +767,11 @@ export const COSMETICS = {
   skin: { name: T('스킨'), items: [{ id: '', name: T('기본'), cost: 0 }, { id: 'shadow', name: T('칠흑'), cost: 1920, b: 0x2c2a36, l: 0x1c1a24, c: 0x6a3a9a }, { id: 'snow', name: T('눈서리'), cost: 1920, b: 0xdce6f2, l: 0x8a9ab0, c: 0x6ab0e8 }, { id: 'ember', name: T('불씨'), cost: 2400, b: 0xb0381a, l: 0x4a1c12, c: 0xff8a2a }, { id: 'gilded', name: T('황금빛'), cost: 3360, b: 0xc8a040, l: 0x6a5420, c: 0xfff0b0 }, { id: 'mint', name: T('박하빛'), cost: 1600, b: 0x4ab89a, l: 0x2a5a52, c: 0xd8fff0 }] },
   back: { name: T('등 장식'), items: [{ id: '', name: T('없음'), cost: 0 }, { id: 'banner', name: T('등깃발'), cost: 1200 }, { id: 'wings', name: T('작은 날개'), cost: 2560 }, { id: 'lantern', name: T('등불'), cost: 1440 }] }
 };
+// 마스터리 스킨: 지금 고른 직업의 마스터리 점수가 기준에 닿으면 열려요 (다이아 · 마스터 · 그랜드 마스터)
+COSMETICS.skin.items.push(
+  { id: 'mr1', name: T('다이아 스킨'), cost: 0, rk: 1750, b: 0x5fc4d8, l: 0x2a6a80, c: 0xbafcff },
+  { id: 'mr2', name: T('마스터 스킨'), cost: 0, rk: 7000, b: 0xb0388e, l: 0x5a1a52, c: 0xff9ae6 },
+  { id: 'mr3', name: T('그랜드 마스터 스킨'), cost: 0, rk: 9000, b: 0xc03a3a, l: 0x4a1418, c: 0xffd36b });
 export const GEAR_BONUS = { weapon: [0, 0.1, 0.22], armor: [0, 15, 35] };
 // 마스터리 계급 (스틱세움과 같은 구간): 직업마다 마스터리 포인트로 올라가요. 브론즈부터는 II·III 단계가 있고, 그랜드 마스터는 I~X (1000점씩)
 export const CHAR_RANKS = (() => {
