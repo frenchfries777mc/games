@@ -95,6 +95,11 @@ function killBanner(name) {
   const el = $('killBanner'); el.innerHTML = '<b>' + T('처치!') + '</b> ' + esc(name) + (S.kN > 1 ? '<i>' + T('{0}연속 처치', S.kN) + ' · ' + T('기술 대기 절반') + '</i>' : '');
   el.classList.remove('on'); void el.offsetWidth; el.classList.add('on'); clearTimeout(killBanner._t); killBanner._t = setTimeout(() => el.classList.remove('on'), 2200);
 }
+// 더블·트리플 킬: 가운데에 크고 화려하게 (연속 수가 클수록 색과 번쩍임이 커져요)
+function multiBanner(nm, n) {
+  const el = $('multiBanner'); el.className = ''; el.dataset.n = n; el.innerHTML = '<i class="mr"></i><b>' + esc(nm) + '!</b><u></u>';
+  void el.offsetWidth; el.classList.add('on'); clearTimeout(multiBanner._t); multiBanner._t = setTimeout(() => el.classList.remove('on'), 2400);
+}
 function killFeed(txt, mine) {
   const box = $('killFeed'), d = document.createElement('div'); d.className = 'kf' + (mine ? ' me' : ''); d.textContent = txt; box.prepend(d);
   while (box.children.length > 4) box.lastChild.remove();
@@ -982,7 +987,10 @@ function onEvent(e) {
     case 'skill': setTimeout(() => skillFx(e), 130); break; // 예비 동작이 끝나고 터지는 순간에 맞춰요
     case 'mark': view.rune(e.x, e.z, 1.6, 0xff3a3a, 1.4, 4); view.column(e.x, e.z, 0xff3a3a, 0.6); view.flash(e.x, e.z, 0xff3a3a, 60); break;
     case 'splash': view.burst(e.x, 0.6, e.z, 0x9af0a8, 16, 6, 0.6, 0.14); view.ring(e.x, e.z, 3, 0x9af0a8, 0.5); view.rise(e.x, e.z, 0x9af0a8, 10, 2.5, 0.8, 4); view.flash(e.x, e.z, 0x9af0a8, 70); break;
-    case 'multi': { const q = S.snap && S.snap.pl.find(z => z.id === e.id), nm = e.n === 2 ? T('더블 킬') : e.n === 3 ? T('트리플 킬') : T('{0}연속 킬', e.n); if (e.id === S.me) { bigMsg(nm + '!', '', 1500); SFX.play('clear'); } else if (q) toast((q.bot ? ROLES[q.role].name : q.name) + ' · ' + nm, 1800); break; }
+    case 'multi': { const q = S.snap && S.snap.pl.find(z => z.id === e.id), nm = e.n === 2 ? T('더블 킬') : e.n === 3 ? T('트리플 킬') : T('{0}연속 킬', e.n), pe = view.ents.get('p' + e.id), n = Math.min(e.n, 5);
+      const col = n === 2 ? 0xffb347 : n === 3 ? 0xff5a4a : n === 4 ? 0xff4adf : 0xb06aff;
+      if (pe) { view.column(pe.x, pe.z, col, 1.2); view.ring(pe.x, pe.z, 3 + n, col, 0.8); view.shock(pe.x, pe.z, 4 + n * 2, col, 0.6); view.burst(pe.x, 1.4, pe.z, col, 14 + n * 8, 8 + n, 0.8, 0.14); view.burst(pe.x, 1.4, pe.z, 0xfff0b0, 10 + n * 4, 6, 0.6, 0.1); view.rise(pe.x, pe.z, col, 14 + n * 4, 1.8, 1.4, 7); view.flash(pe.x, pe.z, col, 160 + n * 30); if (n >= 3) { view.ring(pe.x, pe.z, 5 + n * 1.5, 0xfff0b0, 1.0); view.shatter(pe.x, pe.z, [col, 0xffe8b0], 10 + n * 4, true); } }
+      if (e.id === S.me) { multiBanner(nm, n); view.shake = Math.max(view.shake, 0.5 + n * 0.2); SFX.play('clear'); SFX.play('kill'); } else if (q) toast((q.bot ? ROLES[q.role].name : q.name) + ' · ' + nm, 1800); break; }
     case 'ko': { // 탈락: 몸이 조각나 흩어져요
       view.shatter(e.x, e.z, [0xd8d0bc, 0x6a6470, 0x5a5040, 0x8a8a96], 30, true); view.burst(e.x, 1.2, e.z, 0xffe8b0, 16, 7, 0.6, 0.12); view.shock(e.x, e.z, 5, 0xffe08a, 0.5); view.flash(e.x, e.z, 0xffd08a, 140); view.shake = Math.max(view.shake, 0.6); SFX.play('kill');
       const by = S.snap && S.snap.pl.find(q => q.id === e.by), who = S.snap && S.snap.pl.find(q => q.id === e.id), nm = q => q ? (q.id === S.me ? T('나') : q.bot ? ROLES[q.role].name : q.name) : '';
@@ -1648,7 +1656,7 @@ requestAnimationFrame(frame);
 // 시험용: ?test=1 로 바로 혼자 원정을 시작해요 (화면 확인용). &skip=1 이야기 건너뛰기, &room=구역 번호
 // 내 컴퓨터에서 열었을 때만 돼요 (배포된 주소에서는 잠긴 장이 열리지 않게)
 const DEV = /^(localhost|127\.0\.0\.1)$/.test(location.hostname);
-if (DEV) window.__T = { SAVE, paintSettings, step, relBasic, aimedSkill, mouse, once, TOUCH, S, menu, beginGame, startHost, startMatch, startGuest, view, CH };
+if (DEV) window.__T = { onEvent, SAVE, paintSettings, step, relBasic, aimedSkill, mouse, once, TOUCH, S, menu, beginGame, startHost, startMatch, startGuest, view, CH };
 if (DEV && qs.get('test')) {
   const r = qs.get('role') || 'knight'; SAVE.role = r;
   S.net = 'solo'; S.slots = [meSlot()]; newBots(); S.botN = +(qs.get('bots') || 5);

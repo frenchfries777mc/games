@@ -11,13 +11,13 @@
 <link rel="icon" href="logo.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
-<!-- 새 빌드마다 아래 ?v= 숫자를 BUILD와 같게 올려요 (브라우저가 옛 파일을 쓰지 않게) -->
-<script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/","./js/data.js":"./js/data.js?v=173","./js/main.js":"./js/main.js?v=173","./js/map.js":"./js/map.js?v=173","./js/music.js":"./js/music.js?v=173","./js/render.js":"./js/render.js?v=173","./js/sfx.js":"./js/sfx.js?v=173","./js/sim.js":"./js/sim.js?v=173","./js/tr.js":"./js/tr.js?v=173"}}</script>
+<!-- 새 빌드마다 아래 ?v=174 숫자를 BUILD와 같게 올려요 (브라우저가 옛 파일을 쓰지 않게) -->
+<script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/","./js/data.js":"./js/data.js?v=174173","./js/main.js":"./js/main.js?v=174173","./js/map.js":"./js/map.js?v=174173","./js/music.js":"./js/music.js?v=174173","./js/render.js":"./js/render.js?v=174173","./js/sfx.js":"./js/sfx.js?v=174173","./js/sim.js":"./js/sim.js?v=174173","./js/tr.js":"./js/tr.js?v=174173"}}</script>
 <script src="../../ff-presence.js" async></script>
 <script src="https://cdn.jsdelivr.net/npm/peerjs@1.5.4/dist/peerjs.min.js"></script>
 <script src="https://frenchfries777mc.github.io/games/ff-lang.js"></script>
 <script>window.FF_INGAME=true</script>
-<script src="https://frenchfries777mc.github.io/games/ff-auth.js?v=69261028h"></script>
+<script src="https://frenchfries777mc.github.io/games/ff-auth.js?v=17469261028h"></script>
 <script src="../../ff-pnsearch.js"></script>
 <style>
 :root{--ink:#efe3c8;--gold:#ffd36b;--dim:#a89c86;--bg:#0b0910;--panel:rgba(14,10,18,.86);--line:#6c6375;--red:#d0443a;--green:#4cc06a;color-scheme:dark}
@@ -174,6 +174,16 @@ body.touch #talk{bottom:228px}
 #bossBar{position:absolute;left:50%;top:12px;transform:translateX(-50%);width:min(440px,70vw);background:var(--panel);border:3px solid var(--line);padding:6px 14px 10px;text-align:center;display:none}
 #bossBar b{font-size:16px}#bossBar .bar{height:10px;background:#2a1418;margin-top:6px;position:relative}#bossBar .bar i{position:absolute;left:0;top:0;bottom:0;background:#b9302a;box-shadow:inset 0 3px 0 #ff6a4a}
 #bossBar .ph{font-size:12px;color:var(--dim)}
+#multiBanner{position:absolute;left:50%;top:34%;transform:translate(-50%,-50%);pointer-events:none;text-align:center;opacity:0;z-index:7;--c1:#ffd36b;--c2:#ff8a1f;--gl:255,150,40}
+#multiBanner[data-n="3"]{--c1:#ffb0a0;--c2:#ff3a2a;--gl:255,70,50}#multiBanner[data-n="4"]{--c1:#ffb8f4;--c2:#ff2ad0;--gl:255,60,220}#multiBanner[data-n="5"]{--c1:#e8d0ff;--c2:#8a3aff;--gl:170,100,255}
+#multiBanner b{display:block;font-family:Galmuri,system-ui,sans-serif;font-weight:700;font-size:clamp(44px,8vw,104px);line-height:1;letter-spacing:.04em;color:var(--c1);background:linear-gradient(180deg,#fff 0%,var(--c1) 38%,var(--c2) 100%);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;filter:drop-shadow(0 4px 0 #000) drop-shadow(0 0 18px rgba(var(--gl),.95)) drop-shadow(0 0 40px rgba(var(--gl),.7))}
+#multiBanner .mr{position:absolute;left:50%;top:50%;width:min(90vw,760px);aspect-ratio:1;margin:calc(min(90vw,760px)/-2) 0 0 calc(min(90vw,760px)/-2);border-radius:50%;background:radial-gradient(circle,rgba(var(--gl),.65) 0%,rgba(var(--gl),.22) 38%,transparent 68%);z-index:-1}
+#multiBanner u{position:absolute;left:-30%;right:-30%;top:50%;height:3px;margin-top:-1px;background:linear-gradient(90deg,transparent,rgb(var(--gl)),#fff,rgb(var(--gl)),transparent);box-shadow:0 0 16px rgb(var(--gl));text-decoration:none}
+#multiBanner.on{animation:mbIn 2.4s cubic-bezier(.2,.9,.3,1) forwards}#multiBanner.on .mr{animation:mbGlow 2.4s ease-out forwards}#multiBanner.on u{animation:mbLine 2.4s ease-out forwards}#multiBanner.on b{animation:mbShake .5s linear 1}
+@keyframes mbIn{0%{opacity:0;transform:translate(-50%,-50%) scale(2.6) rotate(-4deg)}9%{opacity:1;transform:translate(-50%,-50%) scale(.88) rotate(1deg)}16%{transform:translate(-50%,-50%) scale(1.12)}24%{transform:translate(-50%,-50%) scale(1) rotate(0)}78%{opacity:1;transform:translate(-50%,-50%) scale(1.04)}100%{opacity:0;transform:translate(-50%,-58%) scale(1.14)}}
+@keyframes mbGlow{0%{opacity:0;transform:scale(.3)}12%{opacity:1;transform:scale(1.1)}100%{opacity:0;transform:scale(1.5)}}
+@keyframes mbLine{0%{opacity:0;transform:scaleX(0)}10%{opacity:1;transform:scaleX(1)}60%{opacity:.8}100%{opacity:0;transform:scaleX(1.25)}}
+@keyframes mbShake{0%,100%{translate:0 0}20%{translate:-6px 3px}40%{translate:5px -4px}60%{translate:-4px -2px}80%{translate:3px 3px}}
 #killBanner{position:absolute;top:104px;left:50%;transform:translateX(-50%) scale(.6);opacity:0;pointer-events:none;text-align:center;font-weight:700;font-size:clamp(20px,3.4vw,34px);color:#ffe08a;text-shadow:0 3px 0 #000,0 0 14px rgba(255,120,60,.8);white-space:nowrap;z-index:6}#killBanner.on{animation:kbIn 2.2s ease-out forwards}#killBanner b{color:#ff6a4a}#killBanner i{display:block;font-style:normal;font-size:.55em;color:#fff0b0;margin-top:2px}@keyframes kbIn{0%{opacity:0;transform:translateX(-50%) scale(.5)}12%{opacity:1;transform:translateX(-50%) scale(1.15)}22%{transform:translateX(-50%) scale(1)}80%{opacity:1}100%{opacity:0;transform:translateX(-50%) scale(1)}}
 #killFeed{position:absolute;top:70px;left:14px;display:flex;flex-direction:column;gap:4px;pointer-events:none}#killFeed .kf{background:rgba(10,8,16,.7);border-left:3px solid #d9b75a;color:#fff8ea;padding:4px 10px;font-size:14px;animation:kfIn .25s;transition:opacity .6s}#killFeed .kf.me{border-left-color:#ff6a4a;color:#ffe08a}#killFeed .kf.out{opacity:0}@keyframes kfIn{from{opacity:0;transform:translateX(-12px)}}
 #party{display:none;position:absolute;left:14px;bottom:14px;gap:8px;flex-wrap:wrap;max-width:60vw}
@@ -350,7 +360,7 @@ body.touch #exitBtn{top:auto;bottom:auto}
   <div id="specTag" class="tx" style="display:none"></div>
   <div id="prompt"></div>
   <div id="party"></div>
-  <div id="killBanner"></div><div id="killFeed"></div>
+  <div id="killBanner"></div><div id="multiBanner"></div><div id="killFeed"></div>
   <div id="skills"></div>
 </div>
 <!-- 초대 창: 친구(접속과 상관없이)가 맨 위, 그 아래 지금 접속 중인 다른 플레이어 -->
@@ -359,7 +369,7 @@ body.touch #exitBtn{top:auto;bottom:auto}
 <div id="touch"><div id="joy"><div id="joyBase"><div id="joyKnob"></div></div></div>
   <div id="tbtns"><button id="tA"><span>공격</span></button><button id="tQ"><i class="cd"></i><span>Q</span></button><button id="tE"><i class="cd"></i><span>E</span></button><button id="tR"><i class="cd"></i><span>R</span></button><button id="tRoll"><i class="cd"></i><span>구르기</span></button><button id="tF"><i class="cd"></i><span>귀환</span></button></div>
 </div>
-<script type="module" src="js/main.js?v=173"></script>
+<script type="module" src="js/main.js?v=174173"></script>
 <div id="findBlock" style="position:fixed;inset:0;z-index:60;display:none;cursor:wait"></div>
 </body>
 </html>
