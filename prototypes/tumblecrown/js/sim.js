@@ -1685,6 +1685,17 @@ function botHunters(G) {
   }
   return h;
 }
+// 길 셋 지도: 두 진지를 잇는 선에서 어느 쪽에 있는지로 위(0)·가운데(1)·아래(2) 길을 나눠요
+function flagLane(G, f) {
+  const a = MAP.tspawn[0], b = MAP.tspawn[1], ax = cw(a[0]), az = cw(a[1]), dx = cw(b[0]) - ax, dz = cw(b[1]) - az, L = Math.hypot(dx, dz);
+  const c = ((f.x - ax) * dz - (f.z - az) * dx) / L;
+  return Math.abs(c) < L * 0.08 ? 1 : c > 0 ? 0 : 2;
+}
+// 같은 편 봇을 번호순으로 위·가운데·아래 길에 하나씩 돌아가며 맡겨요 (사람은 세지 않아요)
+function botLane(G, p) {
+  const bs = G.players.filter(q => q.team === p.team && q.ai).sort((x, y) => x.id - y.id);
+  return [0, 1, 2][bs.indexOf(p) % 3];
+}
 function botFlag(G, p, dt) {
   const inp = {}, ai = p.ai; ai.fT = (ai.fT || 0) - dt;
   if (ai.fT <= 0 || ai.fi == null) {
@@ -1697,9 +1708,10 @@ function botFlag(G, p, dt) {
       let al = 0, en = 0; for (const q of G.players) { if (q === p || !alive(q) || Math.hypot(q.x - f.x, q.z - f.z) > D.FLAG_R * 3) continue; if (q.team === p.team) al++; else en++; }
       if (f.own !== p.team) sc -= Math.min(al, 3) * 14; if (en > al + 1) sc += (en - al - 1) * 30;
       if (i >= G.fl.length - 3) sc *= 0.65;   // 가운데 깃발 셋을 먼저 노려요
+      if (MAP.lanes && botLane(G, p) !== flagLane(G, f)) sc += 220;   // 길이 셋인 지도: 자기 길의 깃발을 먼저 노려요
       if (sc < bs) { bs = sc; bi = i; }
     });
-    ai.fi = sl != null && sl >= 0 ? sl : bi;
+    ai.fi = sl != null && sl >= 0 && !MAP.lanes ? sl : bi;
   }
   const f = G.fl[ai.fi], d = Math.hypot(f.x - p.x, f.z - p.z);
   // 목표 깃발이 아주 멀고 근처에 상대가 없으면 목표에 가까운 우리 깃발로 귀환해요
