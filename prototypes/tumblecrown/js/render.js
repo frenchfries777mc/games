@@ -699,7 +699,8 @@ export class View {
       this.flagM.push({ cm, rm, pm, cloth, prog, bm, beam, em, edge });
     }
     // 사막 신전 문: 닫히면 돌문이 올라와 길을 막고, 열리면 땅속으로 내려가요
-    this.doorM = (MAP.doors || []).map(([x, y, w, h]) => { const sx = w * CS, sz = h * CS, m = box(sx, 3.4, sz, M(0xa88a54, { m: 0.2 }), (x + w / 2) * CS, 1.7, (y + h / 2) * CS, s); m.castShadow = true; return m; });
+    this.doorM = (MAP.doors || []).map(([x, y, w, h]) => { const sx = w * CS, sz = h * CS, m = box(sx, 3.4, sz, M(0x5a2a1e, { m: 0.2, e: 0xc83a14, ei: 0.2 }), (x + w / 2) * CS, 1.7, (y + h / 2) * CS, s); m.castShadow = true; return m; });   // 닫힌 문은 붉게 빛나는 봉인 돌문
+    this.doorG = (MAP.doors || []).map(([x, y, w, h]) => { const g = box(w * CS, 0.06, h * CS, M(0x6aff9a, { e: 0x6aff9a, ei: 0.7, op: 0.35 }), (x + w / 2) * CS, 0.07, (y + h / 2) * CS, s, false); g.visible = false; return g; });   // 열리면 길바닥이 초록으로 빛나요
     // 팀 대전 장식: 바닥에 흩어진 돌·상자·풀, 진지와 깃발 곁의 횃불, 진지 기둥 깃발
     if (CH.pvp) {
       const bad = (x, z) => MAP.tflags.some(([a, b]) => Math.hypot(cw(a) - x, cw(b) - z) < 7.5) || MAP.tspawn.some(([a, b]) => Math.hypot(cw(a) - x, cw(b) - z) < 9), forest = CH.theme === 'forest';
@@ -1308,6 +1309,7 @@ export class View {
   }
   tick(dt, t) {
     for (const m of this.doorM || []) { const ty = DSTATE.open ? -1.9 : 1.7; m.position.y += (ty - m.position.y) * Math.min(1, dt * 4); m.visible = m.position.y > -1.8; }
+    for (const g of this.doorG || []) { g.visible = !!DSTATE.open; if (g.visible) g.material.opacity = 0.3 + 0.15 * Math.sin(t * 5); }
     for (const f of this.flick || []) f.L.intensity = f.b * (0.9 + Math.sin(t * 2.2 + f.ph) * 0.04 + Math.sin(t * 3.7 + f.ph * 2) * 0.02);
     if (this.fireG) { this.fireG.children.forEach((c, i) => { c.scale.y = 0.85 + Math.sin(t * 4 + i * 1.7) * 0.12; }); }
     // 금 간 벽: 가끔 부스러기가 떨어져요
