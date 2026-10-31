@@ -130,7 +130,7 @@ function hurtEnemy(G, e, dmg, p, o) {
     if (e.phase >= 3 && from && angDiff(e.a, angTo(e, from)) > 1.9) { d *= 2; ev(G, 'weak', { x: e.x, z: e.z }); }
   }
   d = Math.max(1, Math.round(d));
-  e.hp -= d; e.hitT = 0.15; ev(G, 'ehit', { x: e.x, z: e.z, v: d, id: e.id, crit: d > dmg * 1.4, hv: o.heavy ? 1 : 0 });
+  e.hp -= d; e.hitT = 0.15; ev(G, 'ehit', { by: p ? p.id : 0, x: e.x, z: e.z, v: d, id: e.id, crit: d > dmg * 1.4, hv: o.heavy ? 1 : 0 });
   if (p && hasB(p, 'leech') && alive(p)) healP(G, p, 1);
   if ((o.burn || (p && hasB(p, 'fire') && o.basic)) && e.hp > 0) { e.burn = 3; }
   // 종자 함성 중에는 횃불 공격의 불똥이 튀어 옆의 적도 불타요
@@ -377,6 +377,8 @@ function offerBless(G) {
   }
 }
 // 다음 장으로 넘어갈 때 받은 축복을 그대로 가져가요
+// 동료에게 보내는 짧은 이모트 (1.5초에 한 번)
+export function emote(G, pid, k) { const p = G.players.find(q => q.id === pid); if (!p || !alive(p) || !(k >= 0 && k < 4) || (p.emT != null && G.t - p.emT < 1.5)) return; p.emT = G.t; ev(G, 'emote', { id: pid, n: k | 0 }); }
 export function carryOver(G, P) {
   G.players.forEach((p, i) => { const q = P.players[i]; if (!q) return; p.bl = q.bl.slice(); if (hasB(p, 'armor')) { p.maxhp += 25; p.hp = p.maxhp; } });
 }
