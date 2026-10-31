@@ -1025,9 +1025,9 @@ function specTick(me) {
 }
 addEventListener('keydown', e => { if (!S.snap || S.scr !== '' || !view.camId) return; const k = e.key; if (k === 'ArrowRight' || k === 'd' || k === 'D') specCycle(1); else if (k === 'ArrowLeft' || k === 'a' || k === 'A') specCycle(-1); });
 // 클릭 이동: PC는 우클릭(누른 채 끌면 따라와요), 모바일은 화면 터치
-const ckSet = (x, y) => { try { const g = view.groundAt(x, y); if (g) S.ck = { x: g.x, z: g.z }; } catch (e) { } };
+const ckSet = (x, y, fx) => { try { const g = view.groundAt(x, y); if (g) { S.ck = { x: g.x, z: g.z }; if (fx) view.ring(g.x, g.z, 1.4, 0x9af0e0, 0.45); } } catch (e) { } };
 const ckOn = () => SAVE.set.mv === 'click' && inGame() && S.scr === '' && !S.rcOpen;
-$('gl').addEventListener('mousedown', e => { if (e.button === 2 && ckOn()) { S.ckDown = true; ckSet(e.clientX, e.clientY); } });
+$('gl').addEventListener('mousedown', e => { if (e.button === 2 && ckOn()) { S.ckDown = true; ckSet(e.clientX, e.clientY, 1); } });
 addEventListener('mouseup', e => { if (e.button === 2) S.ckDown = false; });
 addEventListener('mousemove', e => { if (S.ckDown && ckOn()) ckSet(e.clientX, e.clientY); });
 $('gl').addEventListener('touchstart', e => { if (TOUCH && ckOn()) { S.ckDown = true; ckSet(e.changedTouches[0].clientX, e.changedTouches[0].clientY); } }, { passive: true });
