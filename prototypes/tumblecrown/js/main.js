@@ -2,7 +2,7 @@
 // 화면 흐름, 조작, 멀티(친구 초대, PeerJS), 저장
 import { View } from './render.js';
 import { createGame, step, snapshot, chooseBless, carryOver, koPlayer, INTRO_T, HV_DELAY, wallClamp, setupRange } from './sim.js';
-import { PUSH_N, PUSH_T, TEAMS, FLAG_T, RESP_T, ARENA_THEMES, ROLES, ROLE_IDS, COLORS, BOT_NAMES, MAX_PLAYERS, BLESSINGS, CHAPTERS, CH, FOES, MAP, ACHIEVEMENTS, TALK, GEAR_TIERS, GEAR_COST, COSMETICS, MIDB, WEEKLY, weekInfo, VERSION, BUILD, roleLevel, CHAR_RANKS, charRankFor, MASTERY_PT, streakBonusFor, LORE, COMBOS, CURSES, DEEP, DEEP_I, TALK_X, ROLE_PUZ, flagShown } from './data.js';
+import { PUSH_N, PUSH_T, TEAMS, FLAG_T, RESP_T, ARENA_THEMES, MODES, ROLES, ROLE_IDS, COLORS, BOT_NAMES, MAX_PLAYERS, BLESSINGS, CHAPTERS, CH, FOES, MAP, ACHIEVEMENTS, TALK, GEAR_TIERS, GEAR_COST, COSMETICS, MIDB, WEEKLY, weekInfo, VERSION, BUILD, roleLevel, CHAR_RANKS, charRankFor, MASTERY_PT, streakBonusFor, LORE, COMBOS, CURSES, DEEP, DEEP_I, TALK_X, ROLE_PUZ, flagShown } from './data.js';
 import { collide as mapCollide, areaAt, floorCell, MW, MH, CS, cw, useChapter, chapterIndex, SOPEN, openSecret, resetSecrets, hiddenCell, GOPEN, openGate, setDoors, DSTATE, PDOWN, dropPillar, LIFTH, liftOk, CUT } from './map.js';
 import * as SFX from './sfx.js';
 import * as MUS from './music.js';
@@ -20,6 +20,7 @@ if (TOUCH) document.body.classList.add('touch');
 /* ---------- 저장 ---------- */
 function lsGet(k, d) { try { const v = localStorage.getItem(k); return v ? JSON.parse(v) : d; } catch (e) { return d; } }
 function lsSet(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) { } }
+const RANK_WIN = 30, RANK_LOSS = 20;   // 팀 랭킹전: 이기면 +30점, 지면 -20점 (0점 아래로는 내려가지 않아요)
 const SAVE = Object.assign({ honor: 0, xp: {}, gear: {}, ach: {}, clears: {}, role: 'knight', cos: { own: {}, on: {} }, set: { vol: 70, px: 3, bloom: 1, shake: 1 } }, lsGet('tumblecrown.save', {}));
 SAVE.set = Object.assign({ mv: 'wasd', keys: {}, vol: 70, px: 3, bloom: 1, shake: 1, opt: matchMedia('(pointer: coarse)').matches ? 1 : 0 }, SAVE.set || {});
 // 최적화: 허브 설정의 공용 값(ff_perf)이 있으면 그걸 따르고, 여기서 바꾸면 공용 값도 같이 바꿔요
@@ -74,7 +75,7 @@ $('ver').textContent = VERSION + ' (build ' + BUILD + ')';
 function show(id) {
   document.querySelectorAll('.scr').forEach(e => e.classList.toggle('on', e.id === id));
   $('storm').classList.remove('on');
-  if (id === 'sLobby' || id === 'sWeps' || id === 'sNotes' || id === 'sSettings') view.setPreview(null);
+  if (id === 'sLobby' || id === 'sMode' || id === 'sWeps' || id === 'sNotes' || id === 'sSettings') view.setPreview(null);
   S.scr = id;
 }
 function inGame() { return !!S.snap && S.scr !== 'sLobby' && S.scr !== 'sRoom'; }
@@ -179,7 +180,7 @@ function menu(go) {
   homeMsg('');
   if (go === 'solo') { leaveNet(); S.net = 'solo'; S.slots = [meSlot()]; newBots(); openRoom(); }
   if (go === 'range') { leaveNet(); S.net = 'solo'; S.range = true; S.slots = [meSlot()]; newBots(); openRoom(); }
-  else if (go === 'match') { if (needLogin()) return; startMatch(); }
+  else if (go === 'match') { if (needLogin()) return; paintModes(); show('sMode'); }
   else if (go === 'ward') { S.wardTab = S.wardTab || 'skin'; S.wardSel = null; paintWard(); show('sWard'); view.cos = SAVE.cos.on; view.setPreview(SAVE.role, COLORS[SAVE.col | 0].c); }
   else if (go === 'weps') { leaveNet(); S.net = 'solo'; S.info = true; S.slots = [meSlot()]; openRoom(); }   // 직업·조작: 시작 버튼 없이 직업을 눌러 정보만 봐요
   else if (go === 'notes') { loadNotes(); show('sNotes'); }
@@ -313,7 +314,7 @@ function paintRoom() {
   const host = S.net !== 'guest', mine = S.slots.find(s => s.uid === UID) || meSlot(), c = ROLES[mine.role] || ROLES.knight;
   const online = S.net !== 'solo', wait = online && S.ph === 'wait', pickP = online && S.ph === 'pick';
   $('sRoom').classList.toggle('waiting', wait);
-  $('roomTitle').textContent = S.info ? T('직업·조작') : S.range ? T('연습장') : S.net === 'solo' ? T('봇과 연습') : S.pub ? T('온라인 대전') : host ? T('친구와 대결 · 방장') : T('친구와 대결');
+  $('roomTitle').textContent = S.info ? T('직업·조작') : S.range ? T('연습장') : S.net === 'solo' ? T('봇과 연습') : S.pub ? T('온라인 대전') + ' · ' + MODES[S.mode || 'normal'].name : host ? T('친구와 대결 · 방장') : T('친구와 대결');
   $('inviteBtn').style.display = S.net === 'host' && !S.pub && wait ? '' : 'none';
   $('clsList').innerHTML = ROLE_IDS.map((id, k) => '<button data-c="' + id + '"' + (mine.role === id ? ' class="on"' : '') + '><i>' + (k + 1) + '</i><b>' + ROLES[id].name + '</b><small class="lv" style="color:' + charRankFor((SAVE.pts || {})[id]).color + '">' + charRankFor((SAVE.pts || {})[id]).name + ' · Lv.' + roleLevel(SAVE.xp[id]) + '</small></button>').join('');
   $('clsList').querySelectorAll('button').forEach(el => el.onclick = () => { SFX.play('click'); SAVE.role = el.dataset.c; save(); pick(); });
@@ -473,6 +474,7 @@ if (qs.get('dedicated') === '1') {
   window.__ffd = { open(n) { S.err = ''; startMatch(n); }, status() { return { live: S.net === 'host' && !!S.peer && !S.err, humans: S.slots.filter(s => !s.srv && !s.bot).length, started: !!S.G, ended: !!(S.snap && S.snap.ph === 'won'), err: S.err || '' }; } };
 }
 /* 온라인 대전 (Stickseum 방식): 방 이름 ff-tumblecrown-q1, q2... 를 차례로 만들어 보고, 이미 있으면 그 방에 들어가요. 가득 차거나 이미 시작했으면 다음 방으로 가요 */
+function paintModes() { $('modeCards').innerHTML = Object.keys(MODES).map(k => '<button class="mcard" data-m="' + k + '" style="background-image:url(mode-' + k + '.jpg)"><b>' + MODES[k].name + '</b><small>' + MODES[k].desc + (k === 'rank' ? '<br>' + T('내 랭킹 {0}점 · {1}', SAVE.rating | 0, charRankFor(SAVE.rating | 0).name) : '') + '</small></button>').join(''); $('modeCards').querySelectorAll('button').forEach(b => b.onclick = () => { SFX.play('click'); S.mode = b.dataset.m; startMatch(); }); }
 function startMatch(n) {
   if (!window.Peer) { homeMsg(T('연결 도구를 불러오지 못했어요. 인터넷 연결을 확인하고 새로고침해 주세요.')); return; }
   leaveNet(); homeMsg(T('같이 할 사람을 찾는 중...')); matchTry(n || 1, S.mg);
@@ -481,7 +483,7 @@ function matchGone(p) { if (p) try { p.destroy(); } catch (e) { } }
 function matchTry(n, gen) {
   if (S.mg !== gen) return;
   if (n > 12) { homeMsg(T('빈 방을 찾지 못했어요. 잠시 후 다시 해 보세요.')); leaveNet(); return; }
-  const p = new Peer(PREFIX + 'q' + n, peerOpts()); S.peer = p;
+  const p = new Peer(PREFIX + MODES[S.mode || 'normal'].key + n, peerOpts()); S.peer = p;
   p.on('open', () => {
     if (S.mg !== gen || S.peer !== p) { matchGone(p); return; }
     S.net = 'host'; S.pub = true; S.cap = PUB_CAP; S.ph = 'wait'; S.rdy = {}; S.code = ''; S.slots = [meSlot()]; homeMsg('');
@@ -502,7 +504,7 @@ function matchJoin(n, gen) {
   const tm = setTimeout(next, 7000);
   p.on('open', () => {
     if (S.mg !== gen || S.peer !== p) return;
-    const c = p.connect(PREFIX + 'q' + n, { reliable: true, serialization: 'json' });
+    const c = p.connect(PREFIX + MODES[S.mode || 'normal'].key + n, { reliable: true, serialization: 'json' });
     c.on('open', () => { c.send({ t: 'hello', ver: VERSION, uid: UID, aid: myAid(), name: myName(), role: SAVE.role, col: SAVE.col | 0, cos: myCos() }); });
     c.on('data', d => {
       if (S.mg !== gen) return;
@@ -597,7 +599,7 @@ function beginGame(prevG) {
   if (S.chSel === DEEP_I && !prevG) { DEEP.floor = 1; DEEP.seed = (Math.random() * 1e6) | 0; DEEP.curses = []; }
   { const wk = !!S.wk && !prevG && S.chSel !== DEEP_I, was = WEEKLY.on; WEEKLY.on = wk; if (wk) { const w = weekInfo(); WEEKLY.id = w.id; WEEKLY.curses = w.curses; S.chSel = w.ch; } if (wk || was) useChapter(S.chSel, true); }
   if (!prevG && !(DEV_CH)) S.chSel = S.net === 'solo' && !S.range && S.mapSel >= 0 ? S.mapSel : Math.random() * CHAPTERS.length | 0;   // 지도는 판마다 무작위 (온라인은 방장이 골라 모두에게 알려요)
-  S.G = createGame(sl, (Math.random() * 4e9) >>> 0, S.chSel);
+  S.G = createGame(sl, (Math.random() * 4e9) >>> 0, S.chSel); S.G.mode = S.net === 'solo' ? 'normal' : S.mode || 'normal';
   if (S.range) { S.G.range = true; setupRange(S.G); toast(T('연습장이에요. 허수아비를 쳐 보세요. 나가기를 누르면 직업을 바꿀 수 있어요.'), 6000); }
   S.G.lite = !!S.lite; 
   S.G.players.forEach((p, i) => { p.uid = sl[i].uid; });
@@ -633,7 +635,7 @@ function awardHonor() {
   const p = myP(); if (!p) return;
   let h = Math.round((S.snap.honor[S.me] || 0) * ((p.b || []).indexOf('honor') >= 0 ? 1.25 : 1));
   const gain = S.net === 'solo' ? 0 : h;   // 봇과 연습은 tC를 못 얻어요
-  SAVE.honor += gain; const won = p.tm === S.snap.wtm; SAVE.pts = SAVE.pts || {}; SAVE.winStreak = won ? (SAVE.winStreak | 0) + 1 : 0; const kp = (p.kl | 0) * MASTERY_PT.kill, wp = won ? MASTERY_PT.win : 0, sp = won ? streakBonusFor(SAVE.winStreak) : 0, mg = kp + wp + sp + MASTERY_PT.match, mb = SAVE.pts[p.role] || 0; SAVE.pts[p.role] = mb + mg; S.lastMp = { role: p.role, gain: mg, k: p.kl | 0, won, sp, st: SAVE.winStreak, total: mb + mg, up: charRankFor(mb + mg).name !== charRankFor(mb).name }; const xg = 20 + (p.kl | 0) * 5 + (won ? 30 : 0); if (!S.range) { const st = SAVE.st = SAVE.st || {}; st.matches = (st.matches | 0) + 1; if (won) st.wins = (st.wins | 0) + 1; st.kills = (st.kills | 0) + (p.kl | 0); st.flags = (st.flags | 0) + (p.fcp | 0); st.mon = (st.mon | 0) + (p.mkp | 0); st.pl = st.pl || {}; st.pl[p.role] = (st.pl[p.role] | 0) + 1;
+  SAVE.honor += gain; const won = p.tm === S.snap.wtm; S.lastRt = null; if (S.G && S.G.mode === 'rank' && S.net !== 'solo') { const rb = SAVE.rating | 0, rg = won ? RANK_WIN : -RANK_LOSS; SAVE.rating = Math.max(0, rb + rg); S.lastRt = { gain: SAVE.rating - rb, total: SAVE.rating }; } SAVE.pts = SAVE.pts || {}; SAVE.winStreak = won ? (SAVE.winStreak | 0) + 1 : 0; const kp = (p.kl | 0) * MASTERY_PT.kill, wp = won ? MASTERY_PT.win : 0, sp = won ? streakBonusFor(SAVE.winStreak) : 0, mg = kp + wp + sp + MASTERY_PT.match, mb = SAVE.pts[p.role] || 0; SAVE.pts[p.role] = mb + mg; S.lastMp = { role: p.role, gain: mg, k: p.kl | 0, won, sp, st: SAVE.winStreak, total: mb + mg, up: charRankFor(mb + mg).name !== charRankFor(mb).name }; const xg = 20 + (p.kl | 0) * 5 + (won ? 30 : 0); if (!S.range) { const st = SAVE.st = SAVE.st || {}; st.matches = (st.matches | 0) + 1; if (won) st.wins = (st.wins | 0) + 1; st.kills = (st.kills | 0) + (p.kl | 0); st.flags = (st.flags | 0) + (p.fcp | 0); st.mon = (st.mon | 0) + (p.mkp | 0); st.pl = st.pl || {}; st.pl[p.role] = (st.pl[p.role] | 0) + 1;
     if (st.wins >= 10) unlock('wins10'); if (st.kills >= 50) unlock('kill50'); if (st.kills >= 300) unlock('kill300'); if (st.flags >= 10) unlock('flag10'); if (st.flags >= 100) unlock('flag100'); if (st.mon >= 1) unlock('mon1'); if (st.mon >= 10) unlock('mon10'); if (st.matches >= 50) unlock('match50'); if ((p.kl | 0) >= 5) unlock('kill5'); }
   S.lastXp = xg; S.lastLv = roleLevel(SAVE.xp[p.role]); SAVE.xp[p.role] = (SAVE.xp[p.role] || 0) + xg; S.lastLv = roleLevel(SAVE.xp[p.role]) > S.lastLv ? roleLevel(SAVE.xp[p.role]) : 0; if (roleLevel(SAVE.xp[p.role]) >= 10) unlock('lv10'); if (SAVE.pts[p.role] >= 530) unlock('gold'); save();   // 직업 경험치: 한 판 20 + 쓰러뜨림당 5 + 승리 30
   return gain;
@@ -1111,7 +1113,7 @@ function paintHud() {
   if (sn.dr) { if (sn.dr[0] !== DSTATE.open) { setDoors(sn.dr[0]); mini.dirty = true; } } else if (DSTATE.open) { setDoors(0); mini.dirty = true; }
   $('storm').classList.toggle('on', !!(sn.sm && sn.sm[0]));   // 사막 신전 모래폭풍
   const mt = myTm(), nf = [0, 0]; if (sn.tf) for (const f of sn.tf) if (f[0] >= 0) nf[f[0]]++;
-  $('roomTag').textContent = CH.title + ' · ' + T('우리 깃발 {0} · 상대 깃발 {1}', nf[mt], nf[1 - mt]);
+  $('roomTag').textContent = (S.net && S.net !== 'solo' ? MODES[S.mode || 'normal'].name + ' · ' : '') + CH.title + ' · ' + T('우리 깃발 {0} · 상대 깃발 {1}', nf[mt], nf[1 - mt]);
   const boss = sn.w.boss && !sn.w.bd ? sn.en.find(e => e.k === 'boss') : null;
   $('bossBar').style.display = boss ? 'block' : 'none'; if (boss && $('bossName').textContent !== CH.boss.name) $('bossName').textContent = CH.boss.name;
   if (boss) { $('bossHp').style.width = Math.max(0, boss.hp / boss.mx * 100) + '%'; $('bossPh').textContent = boss.sn ? T('기절!') : ['', T('1단계'), T('2단계') + ' · ' + CH.boss.ph[0], T('3단계') + ' · ' + CH.boss.ph[1], T('마지막 단계') + ' · ' + (CH.boss.ph[2] || '')][boss.ph] || ''; }
@@ -1451,7 +1453,7 @@ function showWin() {
   const row = p => `<tr${p.id === S.me ? ' style="background:#2a2014"' : ''}><td style="color:${ROLES[p.role].color}">${ROLES[p.role].name}</td><td>${esc(p.id === S.me ? T('나') : p.bot ? T('봇') : p.name)}</td><td>${p.kl | 0}</td><td>${p.dth | 0}</td></tr>`;
   const tab = t => `<div><h3 style="color:${hex(TEAMS[t].c)}">${tmName(t)}${t === wt ? ' · ' + T('승리') : ''}</h3><table><tr><th>${T('직업')}</th><th>${T('이름')}</th><th>${T('쓰러뜨림')}</th><th>${T('쓰러짐')}</th></tr>${sn.pl.filter(p => p.tm === t).map(row).join('')}</table></div>`;
   const top3 = sn.pl.slice().sort((a, b) => (b.kl | 0) - (a.kl | 0)).slice(0, 3), pod = [[1, 'd8d8e0', 46], [0, 'ffd36b', 62], [2, 'c8884a', 36]].filter(([i]) => top3[i]).map(([i, c, hh]) => { const q = top3[i]; return `<div style="flex:1;text-align:center"><div style="font-size:12px;color:${ROLES[q.role].color}">${ROLES[q.role].name}</div><div style="font-size:12px;margin:2px 0 4px">${esc(q.id === S.me ? T('나') : q.bot ? T('봇') : q.name)}</div><div style="height:${hh}px;background:#${c};color:#201810;font-weight:700;line-height:${hh}px;border-radius:4px 4px 0 0">${q.kl | 0} · ${q.dth | 0}</div></div>`; }).join('');
-  $('winBox').innerHTML = `<div class="wt" style="color:${won ? '#ffd36b' : '#ff6a5a'}">${won ? T('승리!') : T('패배')}</div><div class="ws">${T('깃발 일곱 개를 모두 차지했어요')}</div><div class="pod">${pod}</div><div class="rk">${tab(0)}${tab(1)}</div><div class="tc">${T('받은 tC {0}', '<b style="color:#ffd36b">' + h + '</b>')} · ${T('지금 tC {0}', SAVE.honor)} · ${T('경험치 +{0}', S.lastXp | 0)}${S.lastLv ? ' · ' + T('레벨 {0} 달성!', S.lastLv) : ''}</div>${S.lastMp ? `<div class="tc">${T('마스터리 +{0}', '<b style="color:#ffd36b">' + S.lastMp.gain + '</b>')} (${T('처치 {0}×{1}', S.lastMp.k, MASTERY_PT.kill)} + ${T('완주 {0}', MASTERY_PT.match)}${S.lastMp.won ? ' + ' + T('승리 {0}', MASTERY_PT.win) : ''}${S.lastMp.sp ? ' + 🔥' + T('{0}연승 +{1}', S.lastMp.st, S.lastMp.sp) : ''}) · <b style="color:${charRankFor(S.lastMp.total).color}">${charRankFor(S.lastMp.total).name}</b>${S.lastMp.up ? ' ' + T('계급 올랐어요!') : ''}</div>` : ''}`;
+  $('winBox').innerHTML = `<div class="wt" style="color:${won ? '#ffd36b' : '#ff6a5a'}">${won ? T('승리!') : T('패배')}</div><div class="ws">${T('깃발 일곱 개를 모두 차지했어요')}</div><div class="pod">${pod}</div><div class="rk">${tab(0)}${tab(1)}</div><div class="tc">${T('받은 tC {0}', '<b style="color:#ffd36b">' + h + '</b>')} · ${T('지금 tC {0}', SAVE.honor)} · ${T('경험치 +{0}', S.lastXp | 0)}${S.lastLv ? ' · ' + T('레벨 {0} 달성!', S.lastLv) : ''}</div>${S.lastRt ? `<div class="tc">${T('랭킹 점수 {0}', (S.lastRt.gain >= 0 ? '+' : '') + S.lastRt.gain)} · <b style="color:${charRankFor(S.lastRt.total).color}">${S.lastRt.total}${T('점')} · ${charRankFor(S.lastRt.total).name}</b></div>` : ''}${S.lastMp ? `<div class="tc">${T('마스터리 +{0}', '<b style="color:#ffd36b">' + S.lastMp.gain + '</b>')} (${T('처치 {0}×{1}', S.lastMp.k, MASTERY_PT.kill)} + ${T('완주 {0}', MASTERY_PT.match)}${S.lastMp.won ? ' + ' + T('승리 {0}', MASTERY_PT.win) : ''}${S.lastMp.sp ? ' + 🔥' + T('{0}연승 +{1}', S.lastMp.st, S.lastMp.sp) : ''}) · <b style="color:${charRankFor(S.lastMp.total).color}">${charRankFor(S.lastMp.total).name}</b>${S.lastMp.up ? ' ' + T('계급 올랐어요!') : ''}</div>` : ''}`;
   $('winBox').classList.toggle('me', !!won);
   $('winBack').onclick = () => { SFX.play('click'); endToLobby(''); };
   setHud(false); show('sWin');
