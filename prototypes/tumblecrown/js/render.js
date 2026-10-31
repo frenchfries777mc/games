@@ -1222,7 +1222,7 @@ export class View {
       for (const [B, v] of [[F.hold, f[3]], [F.seize, f[4]]]) { B.bg.visible = v > 0; if (v > 0) { B.bg.scale.setScalar(Math.min(1, (10 - v) / 0.3 + 0.01 > 1 ? 1 : Math.max(0.05, (10 - v) / 0.3))); B.cl.rotation.y = Math.sin(t * 3 + i) * 0.2; } }   // 웰링턴이 세운 황금·보라 깃발
       F.prog.visible = f[2] > 0; F.prog.scale.setScalar(Math.max(0.01, f[2] / FLAG_T) * FLAG_R); F.cloth.rotation.y = Math.sin(t * 2.2 + i) * 0.18;
       const on = f[2] > 0, fr = Math.min(1, f[2] / FLAG_T);
-      F.beam.visible = on; F.edge.visible = on;
+      F.beam.visible = on; F.edge.visible = false;   // 점령 중 바깥 테두리 원은 없앴어요 (바닥 고리만 남아요)
       if (on) {
         F.bm.color.setHex(pc); F.bm.emissive.setHex(pc); F.em.color.setHex(pc); F.em.emissive.setHex(pc);
         const h = 6 + fr * 12; F.beam.scale.set(1 + fr * 0.4, h, 1 + fr * 0.4); F.beam.position.y = h / 2; F.bm.opacity = 0.18 + fr * 0.2 + 0.06 * Math.sin(t * 7);

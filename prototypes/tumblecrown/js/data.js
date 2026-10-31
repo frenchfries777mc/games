@@ -737,7 +737,8 @@ export function setChapterData(i) {
 setChapterData(0);
 // 모드에 맞게 깃발을 정해요: 빠른 대전은 팀마다 시작 깃발 하나와 가운데 깃발만 써요 (MAP.tfi = 원래 깃발 번호)
 export function useMode(md) {
-  const t = (CH.map && CH.map.tflags) || MAP.tflags, sp = MAP.tspawn; MAP.tfi = t.map((_, i) => i); MAP.tflags = t;
+  const t = (CH.map && CH.map.tflags) || MAP.tflags, sp = MAP.tspawn0 || (MAP.tspawn0 = MAP.tspawn); MAP.tfi = t.map((_, i) => i); MAP.tflags = t;
+  if (sp && t.some(f => f[2] >= 0)) MAP.tspawn = [0, 1].map(o => { const own = t.filter(f => f[2] === o).sort((a, b) => Math.hypot(a[0] - sp[o][0], a[1] - sp[o][1]) - Math.hypot(b[0] - sp[o][0], b[1] - sp[o][1])); return own[0] ? [own[0][0], own[0][1]] : sp[o]; });   // 팀 거점은 그 팀의 시작 깃발 자리예요
   if (md !== 'quick' || !sp) return;
   const keep = new Set(); t.forEach((f, i) => { if (f[2] < 0) keep.add(i); });
   for (const o of [0, 1]) { const own = t.map((f, i) => ({ f, i })).filter(q => q.f[2] === o).sort((a, b) => Math.hypot(a.f[0] - sp[o][0], a.f[1] - sp[o][1]) - Math.hypot(b.f[0] - sp[o][0], b.f[1] - sp[o][1])); if (own[0]) keep.add(own[0].i); }
