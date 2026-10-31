@@ -460,7 +460,7 @@ try{if(sessionStorage.getItem('ce_noIntro')){sessionStorage.removeItem('ce_noInt
 sting();})();</script>
 <div id="app">
  <div id="lobby" class="screen">
-  <canvas id="lobbyBg"></canvas><canvas id="lobbyWar"></canvas><div id="cpTag">© 2026 Frenchfries777 · <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.ko" target="_blank" rel="noopener">CC BY-NC-ND 4.0</a></div><div id="verTag">v0.6 · build 138</div>
+  <canvas id="lobbyBg"></canvas><canvas id="lobbyWar"></canvas><div id="cpTag">© 2026 Frenchfries777 · <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.ko" target="_blank" rel="noopener">CC BY-NC-ND 4.0</a></div><div id="verTag">v0.6 · build 139</div>
   <header class="brand"><h1>Crown Envoy</h1><div class="sub"><i></i>DIPLOMACY · WAR · EMPIRE<i></i></div></header>
   <div id="lobbyRight">
    <div id="lobbyHome" class="modes">
@@ -1452,8 +1452,6 @@ function resolveRound(){
   for(let oi=0,ph2=false;;oi++){if(oi>=order.length){if(ph2||!deferred.length)break;ph2=true;const add=phase2();if(!add.length)break;order.push(...add);}const tid=order[oi];
     const T=G.terr[tid];const old=T.owner;
     const atts=byT[tid].map(a=>({...a,mix:mixOfU(a.u||{i:a.n,c:0,a:0}),gen:a.gid?G.gens.find(g=>g.id===a.gid):null})).sort((x,y)=>y.n*(1+GEN_K*genScale(y.n)*(y.gen?y.gen.atk:0))-x.n*(1+GEN_K*genScale(x.n)*(x.gen?x.gen.atk:0)));
-    if(siegeEra()&&T.owner!=null&&(T.fort||0)>=1&&!T.sea){const ha=atts.filter(a=>a.pid!==T.owner);const sum=ha.reduce((s,a)=>s+a.n,0);const need=Math.max(0.5,1+0.3*(T.fort||0)-0.3*(T.siege||0)-(ha.some(a=>techHas(a.pid,'art'))?0.3:0));
-      if(ha.length&&sum<need*T.troops){ha.forEach(a=>retreatSrcs(a,a.n));T.sieged=true;T.siege=(T.siege||0)+1;log(`${pname(ha[0].pid)}이(가) 요새화된 ${TDEF[tid].name}을(를) 포위했다. (${T.siege}개월째, 굶주림으로 수비군이 줄고 요새가 약해진다)`,'war');continue;}}
     let holder={pid:old,troops:T.troops,original:true,gens:old==null?[]:G.gens.filter(g=>g.status==='ok'&&g.loc===tid&&(g.owner===old||(T.gst&&T.gst[g.owner]>0&&treatyBetween(g.owner,old,'alliance'))))};
     if(old!=null&&T.gst){let gs=0;const gp=[];Object.keys(T.gst).forEach(k=>{if(T.gst[k]>0&&treatyBetween(+k,old,'alliance')){gs+=T.gst[k];gp.push(+k);}});if(gs>0){holder.troops+=gs;holder.guestSum=gs;holder.gpids=gp;}}
     const initialTroops=T.troops;T.hot=G.round;const battleRecs=[];
