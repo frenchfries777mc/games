@@ -1721,7 +1721,7 @@ function animHero(E, p, dt, t, view) {
   if (p.aN !== E.aN) { E.aN = p.aN; if (E.aN != null && p.ak) { if (E.ak || E.kh) E.blT = 0.1; E.ak = p.ak; E.aT = 0; E.kc = (p.ac | 0) % 2; E.kh = null; } }
   const kind = E.ak ? (E.ak === 'atk' || E.ak === 'hv' || E.ak === 'big' ? E.ak : 'skill') : '', D0 = kind === 'atk' && p.role === 'spearman' ? 0.45 : kind === 'big' && role === 'priest' ? 0.9 : kind === 'skill' && p.role === 'viking' && VK_T[E.ak] ? VK_T[E.ak] : kind === 'skill' && SK_T[E.ak] ? SK_T[E.ak] : ANIM_T[kind] || 0.5;
   // 기사 베기가 끝나면 끝 자세를 잠깐 들고 있다가 (연타가 이어질 수 있는 동안) 천천히 돌아와요
-  const slow = p.role === 'knight' || p.role === 'priest' || p.role === 'archer' ? 1 : 1.3, D = D0 * slow;   // 기사·사제·궁수 말고는 동작을 조금 느리고 부드럽게 해요
+  const slow = p.role === 'knight' || p.role === 'priest' || p.role === 'archer' ? 1 : 1.15, D = D0 * slow;   // 기사·사제·궁수 말고는 동작을 조금 느리고 부드럽게 해요
   if (E.ak) { E.aT += dt; if (E.aT > D) { if ((role === 'knight' || CHAIN[role]) && E.ak === 'atk') E.kh = { c: E.kc, t: 0 }; E.ak = null; } }
   if (E.kh && (E.kh.t += dt) > KH_T) E.kh = null;
   if (E.blT > 0) E.blT -= dt;
