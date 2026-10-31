@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head><style id="ffTap">html,body{touch-action:manipulation}</style>
+<meta name="copyright" content="© 2026 Frenchfries777. CC BY-NC-ND 4.0 (https://creativecommons.org/licenses/by-nc-nd/4.0/)">
+<meta charset="UTF-8">
+<script src="https://frenchfries777mc.github.io/games/ff-lang.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>직업 · Tumble Crown</title>
+<meta name="description" content="Tumble Crown의 직업 17가지: 사진, 능력치, 기술, 사용 요령">
+<meta name="theme-color" content="#0c1018">
+<link rel="icon" href="../gamelogo/tumblecrown.svg">
+<link rel="stylesheet" href="site.css">
+<style>.ml{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:22px}
+.mc{overflow:hidden}
+.mc canvas{display:block;width:100%;height:auto;background:#080b12}
+.mc .bd{padding:12px 16px 14px}
+.mc h3{margin:0;font-size:19px;color:var(--gold)}
+.mc p{margin:4px 0 0;font-size:13px;color:var(--mu)}
+.lg{display:flex;flex-wrap:wrap;gap:6px 18px;font-size:13px;color:var(--mu);margin-bottom:20px}
+.lg i{display:inline-block;width:11px;height:11px;border-radius:50%;margin-right:6px;vertical-align:-1px}
+@media(max-width:860px){.ml{grid-template-columns:1fr}}
+</style>
+<meta name="copyright" content="© 2026 Frenchfries777. CC BY-NC-ND 4.0 (https://creativecommons.org/licenses/by-nc-nd/4.0/)">
+<meta charset="UTF-8">
+<script src="https://frenchfries777mc.github.io/games/ff-lang.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>직업 · Tumble Crown</title>
+<meta name="description" content="Tumble Crown의 직업 17가지: 사진, 능력치, 기술, 사용 요령">
+<meta name="theme-color" content="#0c1018">
+<link rel="icon" href="../gamelogo/tumblecrown.svg">
+<link rel="stylesheet" href="site.css">
+<style>.rl{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:22px}
+.rc{display:grid;grid-template-columns:170px minmax(0,1fr);gap:0;overflow:hidden;border-left:5px solid var(--c)}
+.rc .ph{background:#080b12;display:flex;align-items:center;justify-content:center}
+.rc .ph img{width:100%;height:100%;object-fit:cover}
+.rc .bd{padding:14px 16px 16px;min-width:0}
+.rc h3{margin:0;font-size:20px}.rc h3 small{margin-left:8px;color:var(--mu);font-size:13px}
+.rc .hp{margin:2px 0 8px;color:var(--mu);font-size:13px}
+.st{display:grid;grid-template-columns:auto 1fr;gap:3px 10px;font-size:12.5px;color:var(--mu);margin-bottom:10px}
+.st u{display:block;height:8px;background:var(--panel2);align-self:center;border-radius:4px;overflow:hidden;text-decoration:none}
+.st u i{display:block;height:100%;background:var(--c)}
+.atk{font-size:13px;color:var(--mu);margin:0 0 8px}
+.sk{margin:0 0 6px;font-size:13px;line-height:1.5}.sk b{color:var(--gold)}.sk small{color:var(--mu)}
+.tp{margin:10px 0 0;padding:8px 12px;background:var(--panel2);border-radius:8px;font-size:12.5px;line-height:1.55;list-style:none}
+.tp li::before{content:"팁 ";color:var(--gold);font-weight:700}
+@media(max-width:860px){.rl{grid-template-columns:1fr}}
+@media(max-width:520px){.rc{grid-template-columns:1fr}.rc .ph{height:200px}}
+</style>
+</head>
+<body>
+<div class="top"><div class="wrap">
+ <a class="logo" href="./"><img src="../gamelogo/tumblecrown.svg" alt="" width="34" height="34">TUMBLE CROWN</a>
+ <nav class="nav"><a href="./">소개</a><a href="roles.html" class="on">직업</a><a href="maps.html">맵</a></nav>
+ <span data-ff-account></span>
+</div></div>
+<div class="wrap">
+<h1>맵 13곳</h1>
+<p class="sub2">맵마다 모양이 달라 깃발 싸움도 달라져요. 팀은 맞은편 구석에서 시작해요.</p>
+<div class="lg"><span><i style="background:#4a8af0"></i>파란 팀 시작 깃발</span><span><i style="background:#e05a4a"></i>붉은 팀 시작 깃발</span><span><i style="background:#f0c456"></i>주인 없는 깃발</span><span><i style="background:#fff;border:2px solid #4a8af0;box-sizing:border-box"></i>시작 자리</span></div>
+<div class="ml" id="ml"></div>
+<div class="cta"><a class="pb" href="../prototypes/tumblecrown/" target="_blank" rel="noopener">바로 플레이</a></div>
+<script type="module">
+import { CHAPTERS, MAP, setChapterData } from '../prototypes/tumblecrown/js/data.js';
+import * as M from '../prototypes/tumblecrown/js/map.js';
+const esc=s=>String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const box=document.getElementById('ml');
+CHAPTERS.forEach((c,i)=>{
+ setChapterData(i);M.useChapter(i,true);
+ const W=M.MW,H=M.MH,S=4,cv=document.createElement('canvas');cv.width=W*S;cv.height=H*S;const g=cv.getContext('2d');
+ g.fillStyle='#10151f';g.fillRect(0,0,cv.width,cv.height);
+ const img=g.createImageData(W,H);
+ for(let y=0;y<H;y++)for(let x=0;x<W;x++){const v=M.GRID[y*W+x],o=(y*W+x)*4,w=M.WATER&&M.WATER[y*W+x];
+  const col=v===1?(w?[44,84,128]:[78,92,116]):[16,21,31];img.data[o]=col[0];img.data[o+1]=col[1];img.data[o+2]=col[2];img.data[o+3]=255;}
+ const t=document.createElement('canvas');t.width=W;t.height=H;t.getContext('2d').putImageData(img,0,0);g.imageSmoothingEnabled=false;g.drawImage(t,0,0,W*S,H*S);
+ const sp=MAP.tspawn||[],fl=(MAP.tflags||[]).map(f=>f.slice());
+ [0,1].forEach(t=>{const own=fl.filter(f=>f[2]===t).sort((a,b)=>Math.hypot(a[0]-sp[t][0],a[1]-sp[t][1])-Math.hypot(b[0]-sp[t][0],b[1]-sp[t][1]));own.slice(1).forEach(f=>f[2]=-1);});
+ sp.forEach((p,k)=>{g.beginPath();g.arc(p[0]*S,p[1]*S,15,0,7);g.fillStyle='rgba(255,255,255,.9)';g.fill();g.lineWidth=5;g.strokeStyle=k?'#e05a4a':'#4a8af0';g.stroke();});
+ fl.forEach(f=>{const col=f[2]===0?'#4a8af0':f[2]===1?'#e05a4a':'#f0c456';const x=f[0]*S,y=f[1]*S;g.fillStyle='#0a0e16';g.fillRect(x-3,y-26,6,32);g.fillStyle=col;g.fillRect(x+3,y-26,22,14);g.lineWidth=3;g.strokeStyle='#0a0e16';g.strokeRect(x+3,y-26,22,14);});
+ const a=document.createElement('article');a.className='box mc';a.appendChild(cv);
+ const d=document.createElement('div');d.className='bd';d.innerHTML='<h3>'+esc(c.title)+'</h3><p>깃발 '+fl.length+'개 · 시작할 때 팀마다 1개, 나머지는 점령해야 해요</p>';a.appendChild(d);box.appendChild(a);});
+</script>
+</div>
+<footer><span class="ff-copy">© 2026 Frenchfries777 · <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/" target="_blank" rel="noopener">CC BY-NC-ND 4.0</a></span></footer>
+<script src="https://frenchfries777mc.github.io/games/ff-auth.js?v=20261028h"></script>
+</body>
+</html>
