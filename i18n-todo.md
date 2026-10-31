@@ -750,3 +750,6 @@ patchnotes.json | v544 items[1] | 제국 수호전은 연승을 올리지도 끊
 
 ## Crown Envoy b136 (2026-10-31)
 - 패치노트 b136: 제목 "적대국과의 거리를 난이도에 반영" (i18n.js 7개 언어는 한국어로 채움)
+
+## 2026-10-31 FAQ·프로필 (허브 스레드)
+- tumblecrown/index.html FAQ 답변 3개와 stickseum/index.html 휴대폰 FAQ 답변: 한국어만 2~4문장으로 늘림 (다른 언어 번역 필요)

@@ -283,7 +283,7 @@ function fill(){ var el=modal(); el.querySelector('h3').textContent=mode==='in'?
 function openLogin(m){ mode=m==='up'?'up':'in'; fill(); var el=modal(); el.style.display='flex'; setTimeout(function(){ try{ el.querySelector('input').focus(); }catch(e){} },30); }
 function close(){ var el=document.getElementById('ffaModal'); if(el) el.style.display='none'; }
 
-function profileLib(){ return loadScript(BASE+'ff-profile.js?v=20261029i', function(){ return !!window.FFProfile; }); }
+function profileLib(){ return loadScript(BASE+'ff-profile.js?v=20261031a', function(){ return !!window.FFProfile; }); }
 async function openProfile(uid, o){ if(!sb) return; if(!uid&&!user) return openLogin(); if(await profileLib()) window.FFProfile.open(sb, uid||user.id, o); }
 
 /* 게임 사이트(허브가 아닌 페이지)에는 계정 버튼 옆에 '← 허브' 버튼을 붙여요. 빼고 싶으면 자리에 data-ff-nohub */
