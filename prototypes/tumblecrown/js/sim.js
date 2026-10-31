@@ -332,7 +332,7 @@ function killEnemy(G, e) {
   const h = G.EN[e.k].honor, mw = e.mon ? (e.lastTm != null ? e.lastTm : e.dmgBy[0] > e.dmgBy[1] ? 0 : e.dmgBy[1] > e.dmgBy[0] ? 1 : -1) : -2; for (const p of G.players) if (mw === -2 || p.team === mw) G.honor[p.id] += h;   // 중립 괴물의 명예는 쓰러뜨린 팀만 받아요
   if (e.big) { const w = e.lastTm != null ? e.lastTm : -1; if (w >= 0) { G.cb[w] = 40; G.mk[w] += 2; for (const p of G.players) if (p.team === w) G.honor[p.id] += 50; ev(G, 'monkill', { tm: w, x: e.x, z: e.z, lv: G.mk[w], big: 1 }); } }
   else if (e.mon) { const kq = G.players.find(q => q.id === e.lastBy); if (kq) kq.monK = (kq.monK | 0) + 1; const d = e.dmgBy, w = e.lastTm != null ? e.lastTm : d[0] > d[1] ? 0 : d[1] > d[0] ? 1 : -1;   // 마지막으로 때려 쓰러뜨린 팀이 보상을 받아요
-    G.cTim[e.cn | 0] = 60; if (w >= 0) { G.cb[w] = 20; G.mk[w]++; ev(G, 'monkill', { tm: w, x: e.x, z: e.z, lv: G.mk[w] }); } }
+    G.cTim[e.cn | 0] = 60; if (w >= 0) { G.cb[w] = 30; G.mk[w]++; ev(G, 'monkill', { tm: w, x: e.x, z: e.z, lv: G.mk[w] }); } }
   if (e.k === 'elite') ev(G, 'ach', { id: 'elite' });
   if (e.mb) { for (const p of G.players) G.honor[p.id] += 30; if (G.fork) G.fork.done = 1; ev(G, 'chest', { x: e.x, z: e.z, h: 30 }); ev(G, 'mbkill', { x: e.x, z: e.z }); }
   if (e.k === 'mimic') { for (const p of G.players) G.honor[p.id] += 40; ev(G, 'chest', { x: e.x, z: e.z, h: 40 }); for (const p of G.players) if (!p.bot) ev(G, 'ach', { id: 'mimic', pid: p.id }); }
