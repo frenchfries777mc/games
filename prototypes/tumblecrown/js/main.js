@@ -1007,6 +1007,7 @@ function num(x, z, v, col, sc = 1, y = 3) {
 
 /* ---------- 화면 갱신 ---------- */
 // 탈락하면 관전: 아직 살아 있는 사람의 시점을 따라가요 (←/→ 또는 화면 누르기로 바꿔요)
+const tmName = t => T(t === myTm() ? '우리 팀' : '상대 팀');   // 군단 이름 대신, 나에게는 늘 내 편이 '우리 팀'이에요
 function myTm() { const m = S.snap && S.snap.pl.find(q => q.id === S.me); return m ? m.tm : 0; }
 function specList() { return S.snap ? S.snap.pl.filter(q => !q.dd && q.id !== S.me && q.tm === myTm()) : []; }
 function specCycle(d) { const L = specList(); if (!L.length) return; const i = L.findIndex(q => q.id === S.spec); S.spec = L[(i + d + L.length * 2) % L.length].id; SFX.play('click'); }
@@ -1213,7 +1214,7 @@ function scoreboard(sn) {
   oc.fillStyle = 'rgba(10,8,14,.86)'; oc.fillRect(x0, y0, w, h); oc.strokeStyle = '#c8b480'; oc.lineWidth = 2; oc.strokeRect(x0, y0, w, h);
   oc.font = 'bold 13px Galmuri, system-ui'; let y = y0 + 22;
   rows.forEach((r, t) => {
-    oc.textAlign = 'left'; oc.fillStyle = hex(TEAMS[t].c); oc.fillText(TEAMS[t].name, x0 + 12, y); oc.textAlign = 'right'; oc.fillStyle = '#b8b0a0'; oc.fillText(T('쓰러뜨림'), x0 + w - 70, y); oc.fillText(T('쓰러짐'), x0 + w - 12, y); y += 4;
+    oc.textAlign = 'left'; oc.fillStyle = hex(TEAMS[t].c); oc.fillText(tmName(t), x0 + 12, y); oc.textAlign = 'right'; oc.fillStyle = '#b8b0a0'; oc.fillText(T('쓰러뜨림'), x0 + w - 70, y); oc.fillText(T('쓰러짐'), x0 + w - 12, y); y += 4;
     for (const q of r.slice().sort((a, b) => (b.kl | 0) - (a.kl | 0))) { y += rh; oc.textAlign = 'left'; oc.fillStyle = q.id === S.me ? '#ffe08a' : ROLES[q.role].color; oc.fillText(ROLES[q.role].name + ' · ' + (q.id === S.me ? T('나') : q.bot ? T('봇') : q.name), x0 + 12, y); oc.textAlign = 'right'; oc.fillStyle = '#e8e0cc'; oc.fillText(q.kl | 0, x0 + w - 70, y); oc.fillText(q.dth | 0, x0 + w - 12, y); }
     y += 26;
   });
@@ -1417,7 +1418,7 @@ function showWin() {
   if (won) { unlock('win'); SAVE.wins = SAVE.wins || {}; SAVE.wins[mine.role] = 1; save(); if (ROLE_IDS.slice(0, 7).every(r => SAVE.wins[r])) unlock('winall'); }
   if (mine && mine.kl >= 3) unlock('kill3');
   const row = p => `<tr${p.id === S.me ? ' style="background:#2a2014"' : ''}><td style="color:${ROLES[p.role].color}">${ROLES[p.role].name}</td><td>${esc(p.id === S.me ? T('나') : p.bot ? T('봇') : p.name)}</td><td>${p.kl | 0}</td><td>${p.dth | 0}</td></tr>`;
-  const tab = t => `<div><h3 style="color:${hex(TEAMS[t].c)}">${TEAMS[t].name}${t === wt ? ' · ' + T('승리') : ''}</h3><table><tr><th>${T('직업')}</th><th>${T('이름')}</th><th>${T('쓰러뜨림')}</th><th>${T('쓰러짐')}</th></tr>${sn.pl.filter(p => p.tm === t).map(row).join('')}</table></div>`;
+  const tab = t => `<div><h3 style="color:${hex(TEAMS[t].c)}">${tmName(t)}${t === wt ? ' · ' + T('승리') : ''}</h3><table><tr><th>${T('직업')}</th><th>${T('이름')}</th><th>${T('쓰러뜨림')}</th><th>${T('쓰러짐')}</th></tr>${sn.pl.filter(p => p.tm === t).map(row).join('')}</table></div>`;
   const top3 = sn.pl.slice().sort((a, b) => (b.kl | 0) - (a.kl | 0)).slice(0, 3), pod = [[1, 'd8d8e0', 46], [0, 'ffd36b', 62], [2, 'c8884a', 36]].filter(([i]) => top3[i]).map(([i, c, hh]) => { const q = top3[i]; return `<div style="flex:1;text-align:center"><div style="font-size:12px;color:${ROLES[q.role].color}">${ROLES[q.role].name}</div><div style="font-size:12px;margin:2px 0 4px">${esc(q.id === S.me ? T('나') : q.bot ? T('봇') : q.name)}</div><div style="height:${hh}px;background:#${c};color:#201810;font-weight:700;line-height:${hh}px;border-radius:4px 4px 0 0">${i + 1} · ${q.kl | 0}</div></div>`; }).join('');
   $('winBox').innerHTML = `<div class="wt" style="color:${won ? '#ffd36b' : '#ff6a5a'}">${won ? T('승리!') : T('패배')}</div><div class="ws">${T('깃발 일곱 개를 모두 차지했어요')}</div><div class="pod">${pod}</div><div class="rk">${tab(0)}${tab(1)}</div><div class="tc">${T('받은 tC {0}', '<b style="color:#ffd36b">' + h + '</b>')} · ${T('지금 tC {0}', SAVE.honor)}</div>`;
   $('winBox').classList.toggle('me', !!won);
@@ -1428,7 +1429,7 @@ function showWin() {
 function showResult() {
   S.resultShown = true; bigMsg('', '', 0); const h = awardHonor() || S.lastH || 0, sn = S.snap, wt = sn.wtm, mine0 = myP();
   const row = p => `<tr${p.id === S.me ? ' style="background:#2a2014"' : ''}><td style="color:${ROLES[p.role].color}">${ROLES[p.role].name}</td><td>${esc(p.id === S.me ? T('나') : p.bot ? T('봇') : p.name)}</td><td>${p.kl}</td><td>${p.dth}</td></tr>`;
-  const tab = t => `<h3 style="color:${hex(TEAMS[t].c)}">${TEAMS[t].name}${t === wt ? ' · ' + T('승리') : ''}</h3><table><tr><th>${T('직업')}</th><th>${T('이름')}</th><th>${T('쓰러뜨림')}</th><th>${T('쓰러짐')}</th></tr>${sn.pl.filter(p => p.tm === t).map(row).join('')}</table>`;
+  const tab = t => `<h3 style="color:${hex(TEAMS[t].c)}">${tmName(t)}${t === wt ? ' · ' + T('승리') : ''}</h3><table><tr><th>${T('직업')}</th><th>${T('이름')}</th><th>${T('쓰러뜨림')}</th><th>${T('쓰러짐')}</th></tr>${sn.pl.filter(p => p.tm === t).map(row).join('')}</table>`;
   const top3 = sn.pl.slice().sort((a, b) => (b.kl | 0) - (a.kl | 0)).slice(0, 3), pod = [[1, 'd8d8e0', 58], [0, 'ffd36b', 78], [2, 'c8884a', 44]].filter(([i]) => top3[i]).map(([i, c, hh]) => { const q = top3[i]; return `<div style="flex:1;text-align:center"><div style="font-size:12px;color:${ROLES[q.role].color}">${ROLES[q.role].name}</div><div style="font-size:12px;margin:2px 0 4px">${esc(q.id === S.me ? T('나') : q.bot ? T('봇') : q.name)}</div><div style="height:${hh}px;background:#${c};color:#201810;font-weight:700;line-height:${hh}px;border-radius:4px 4px 0 0">${i + 1} · ${q.kl | 0}</div></div>`; }).join('');
   $('result').innerHTML = `<div class="big">${mine0 && mine0.tm === wt ? T('승리') : T('패배')}</div><div style="display:flex;align-items:flex-end;gap:8px;margin:8px 0 14px">${pod}</div>${tab(0)}${tab(1)}<p>${T('받은 tC {0}', '<b style="color:#ffd36b">' + h + '</b>')} · ${T('지금 tC {0}', SAVE.honor)}</p><div class="row"><button class="btn gold" id="resBack">${T('로비로')}</button></div>`;
   $('resBack').onclick = () => endToLobby('');
