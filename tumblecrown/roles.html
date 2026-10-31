@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head><style id="ffTap">html,body{touch-action:manipulation}</style>
+<meta name="copyright" content="© 2026 Frenchfries777. CC BY-NC-ND 4.0 (https://creativecommons.org/licenses/by-nc-nd/4.0/)">
+<meta charset="UTF-8">
+<script src="https://frenchfries777mc.github.io/games/ff-lang.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>직업 · Tumble Crown</title>
+<meta name="description" content="Tumble Crown의 직업 17가지: 사진, 능력치, 기술, 사용 요령">
+<meta name="theme-color" content="#0c1018">
+<link rel="icon" href="../gamelogo/tumblecrown.svg">
+<link rel="stylesheet" href="site.css">
+<style>.rl{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:22px}
+.rc{display:grid;grid-template-columns:190px minmax(0,1fr);gap:0;overflow:hidden;border-left:5px solid var(--c)}
+.rc .ph{background:#080b12;align-self:start;aspect-ratio:380/360}
+.rc .ph img{width:100%;height:100%;object-fit:cover}
+.rc .bd{padding:14px 16px 16px;min-width:0}
+.rc h3{margin:0;font-size:20px}.rc h3 small{margin-left:8px;color:var(--mu);font-size:13px}
+.rc .hp{margin:2px 0 8px;color:var(--mu);font-size:13px}
+.st{display:grid;grid-template-columns:auto 1fr;gap:3px 10px;font-size:12.5px;color:var(--mu);margin-bottom:10px}
+.st u{display:block;height:8px;background:var(--panel2);align-self:center;border-radius:4px;overflow:hidden;text-decoration:none}
+.st u i{display:block;height:100%;background:var(--c)}
+.atk{font-size:13px;color:var(--mu);margin:0 0 8px}
+.sk{margin:0 0 6px;font-size:13px;line-height:1.5}.sk b{color:var(--gold)}.sk small{color:var(--mu)}
+.tp{margin:10px 0 0;padding:8px 12px;background:var(--panel2);border-radius:8px;font-size:12.5px;line-height:1.55;list-style:none}
+.tp li::before{content:"팁 ";color:var(--gold);font-weight:700}
+@media(max-width:860px){.rl{grid-template-columns:1fr}}
+@media(max-width:520px){.rc{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="top"><div class="wrap">
+ <a class="logo" href="./"><img src="../gamelogo/tumblecrown.svg" alt="" width="34" height="34">TUMBLE CROWN</a>
+ <nav class="nav"><a href="./">소개</a><a href="roles.html" class="on">직업</a><a href="maps.html">맵</a></nav>
+ <span data-ff-account></span>
+</div></div>
+<div class="wrap">
+<h1>직업 17가지</h1>
+<p class="sub2">공격과 Q·E·R 기술이 직업마다 달라요. 사진은 게임 안 직업 선택 화면이에요.</p>
+<div class="chips" id="chips"></div>
+<div class="rl" id="rl"></div>
+<div class="cta"><a class="pb" href="../prototypes/tumblecrown/" target="_blank" rel="noopener">바로 플레이</a></div>
+<script type="module">
+import { ROLES, ROLE_IDS } from '../prototypes/tumblecrown/js/data.js';
+const TIPS={"knight": ["막기를 든 채로 깃발 위에 서면 앞쪽 원거리 공격을 거의 다 막아요.", "돌진으로 파고든 뒤 방패 강타로 기절시키면 팀원이 따라 들어가기 좋아요."], "priest": ["치유는 나만 회복돼요. 위험하면 보호막부터 쓰고 물러나요.", "천벌은 깃발 위나 좁은 길목에 미리 놓으면 잘 맞아요."], "archer": ["약점 표시를 붙인 상대를 팀원이 함께 때리면 빨리 쓰러뜨려요.", "화살비는 깃발 위에 올라선 상대를 쫓아낼 때 좋아요."], "viking": ["도약 강타로 뛰어들고 지진으로 마무리하면 한 번에 여럿을 상대해요.", "피의 갈증을 켠 5초 동안이 가장 강해요. 싸움이 시작될 때 써요."], "mamluk": ["순간 베기로 뒤를 잡은 뒤 회전 베기로 둘레를 쓸어요.", "빠른 대신 체력이 높지 않으니 치고 빠지는 싸움이 좋아요."], "witch": ["저주는 늦게 터지니 상대가 가는 길 앞에 놓아요.", "서리 폭발로 얼리고 독 물약으로 마무리하면 잘 도망치지 못해요."], "skeleton": ["뼈 흩어지기로 거리를 벌리면서 뼛조각으로 피해를 줘요.", "뼈 폭풍은 여럿이 엉킨 곳 한가운데서 써요."], "warden": ["방벽으로 좁은 길을 막으면 원거리 공격이 사라져요.", "수호 맹세를 아군에게 걸고 앞에 서서 피해를 나눠 맞아요."], "assassin": ["그림자 걸음으로 숨은 채 처음 때리는 한 번이 가장 아파요.", "처형은 체력이 35% 아래인 상대에게 쓰면 두 배예요."], "crossbow": ["속박 볼트로 느리게 만든 뒤 저격으로 끝내요.", "뒤로 물러나기 뒤 3초 동안은 공격이 강해져요. 싸우면서 써요."], "bomber": ["끈끈이 폭탄을 깃발 둘레에 깔아 두면 점령하러 온 상대가 느려져요.", "폭격은 앞쪽 일자 길에 쓰면 잘 맞아요."], "bard": ["행진곡으로 팀이 함께 빨라져 깃발에 먼저 닿아요.", "합창은 팀원이 모여 있을 때 써야 효과가 커요."], "spearman": ["긴 창으로 상대가 닿기 전에 먼저 찔러요.", "휩쓸기로 밀어내면 깃발 위에서 상대를 쫓아낼 수 있어요."], "court": ["소환 교환으로 위험한 팀원을 빼내거나 먼저 깃발로 가요.", "룬 족쇄의 표식이 붙은 상대에게 궁정 전환을 쓰면 확실히 끌어와요."], "necro": ["해골 소환으로 깃발 점령 때 사람 수를 늘려요.", "죽음의 영역은 넓으니 상대가 몰릴 때 써요."], "streltsy": ["연사는 같은 방향으로 세 발이라 도망치는 상대에게 잘 맞아요.", "거대 총알은 느리니 좁은 길목에서 쓰고, 가까워지면 도끼로 밀쳐 내요."], "wellington": ["견고한 수비를 쓰면 8초 동안 그 깃발은 안전해요. 점령당하기 직전에 써요.", "점령을 상대 깃발에 쓰면 그 깃발의 효과가 사라지고 아군 점령이 이어져요."]};
+const esc=s=>String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const BARS=['힘','속도','사거리','난이도'];
+const types=['전체',...new Set(ROLE_IDS.map(id=>ROLES[id].type))];let cur='전체';
+function draw(){
+ document.getElementById('chips').innerHTML=types.map(t=>'<button class="chip'+(t===cur?' on':'')+'" data-t="'+esc(t)+'">'+esc(t)+'</button>').join('');
+ document.querySelectorAll('#chips .chip').forEach(b=>b.onclick=()=>{cur=b.dataset.t;draw()});
+ document.getElementById('rl').innerHTML=ROLE_IDS.filter(id=>cur==='전체'||ROLES[id].type===cur).map(id=>{const r=ROLES[id];
+  return '<article class="box rc" style="--c:'+r.color+'"><div class="ph"><img src="shots/roles/'+id+'.jpg" alt="'+esc(r.name)+'" loading="lazy"></div><div class="bd"><h3>'+esc(r.name)+'<small>'+esc(r.type)+'</small></h3><div class="hp">체력 '+r.hp+' · 이동 속도 '+r.speed+'</div>'
+   +'<div class="st">'+BARS.map((n,i)=>'<span>'+n+'</span><u><i style="width:'+Math.min(100,(r.st[i]||0)*20)+'%"></i></u>').join('')+'</div>'
+   +'<p class="atk">공격 · '+esc(r.atkTxt)+'</p>'
+   +r.skills.map(s=>'<p class="sk"><b>'+s.key+' '+esc(s.name)+'</b> <small>'+s.cd+'초</small><br>'+esc(s.desc)+'</p>').join('')
+   +'<ul class="tp">'+(TIPS[id]||[]).map(t=>'<li>'+esc(t)+'</li>').join('')+'</ul></div></article>';}).join('');
+}
+draw();
+</script>
+</div>
+<footer><span class="ff-copy">© 2026 Frenchfries777 · <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/" target="_blank" rel="noopener">CC BY-NC-ND 4.0</a></span></footer>
+<script src="https://frenchfries777mc.github.io/games/ff-auth.js?v=20261028h"></script>
+</body>
+</html>
