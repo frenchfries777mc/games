@@ -289,7 +289,7 @@ function applySnap(d) {
   }
   d.it.forEach((a, i) => { if (G.items[i]) { G.items[i].on = !!a[0]; G.items[i].k = a[1]; } });
   G.traps = (d.tr || []).map(a => ({ x: a[0], y: a[1], t: 1 }));
-  evUpdate(G.W, G.clock, G.phase);
+  evUpdate(G.W, G.clock, G.phase); liftCap(G);
   G.shots = d.sh.map(a => ({ k: a[0], x: a[1], y: a[2], vx: a[3], vy: a[4], t: 1 }));
   G.ev.push(...d.ev);
 }
@@ -315,7 +315,7 @@ function loop(now) {
     // 내 캐릭터는 바로 움직여요 (서버 위치로 조금씩 맞춰요)
     while (acc >= 1 / 60) { acc -= 1 / 60; if (me && G.phase === 'race' && !me.fin && me.stun <= 0) { const own = Object.assign({}, inp, { jp: inp.jp || pend.jp }); if (stepBody(G.W, me, own, 1 / 60)) { addFx({ t: 'jump', x: me.x + 5, y: me.y + 22, id: UID, local: 1 }); } } }
     for (const r of G.racers) if (r !== me && r.tx !== undefined) { r.x += (r.tx - r.x) * Math.min(1, dt * 14); r.y += (r.ty - r.y) * Math.min(1, dt * 14); }
-    acc = 0; evUpdate(G.W, G.clock, G.phase);
+    acc = 0; evUpdate(G.W, G.clock, G.phase); liftCap(G);
   }
   for (const e of G.ev) addFx(e); G.ev.length = 0;
   fx = fx.filter(f => (f.age += dt) < f.life);
@@ -372,6 +372,7 @@ function render(t, G, op) {
   x.translate(-Math.round(cx), -Math.round(cy)); x.drawImage(baked, 0, 0);
   drawItems(x, G, t); drawTraps(x, G.traps || []);
   if (G.W.wet) drawWet(x, G.W, cx, cy, vw);
+  if (G.W.soonK && G.phase === 'race') drawWarn(x, G.W, t);
   if (G.W.liftOff) for (const o of G.W.objs) if (o.t === 'liftshaft') drawLiftOff(x, o);
   for (const r of G.racers) if (r !== me) drawRacer(x, r, t, false);
   drawRacer(x, me, t, true);
