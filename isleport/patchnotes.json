@@ -2,6 +2,101 @@
  "notes": [
   {
    "date": "2026-10-31",
+   "build": "v0.2 build 80",
+   "title": "성이 자라면 마을도 달라져요",
+   "items": [
+    "성이 2단계가 되면 마을 길 위에 깃발 줄이 걸리고, 3단계는 줄이 더 늘고 4단계는 깃대가 서요",
+    "성 3단계부터 빵 3개로 연회를 열 수 있고, 20분마다 금화를 받으며 연회 중에는 깃발 줄이 반짝여요"
+   ],
+   "tr": {
+    "en": {
+     "title": "The town changes as the castle grows",
+     "items": [
+      "From stage 2 bunting hangs over the town roads, more at stage 3, and flag poles at stage 4",
+      "From stage 3 you can hold a feast for 3 bread every 20 minutes for gold, and the bunting sparkles during it"
+     ]
+    },
+    "ja": {
+     "title": "The town changes as the castle grows",
+     "items": [
+      "From stage 2 bunting hangs over the town roads, more at stage 3, and flag poles at stage 4",
+      "From stage 3 you can hold a feast for 3 bread every 20 minutes for gold, and the bunting sparkles during it"
+     ]
+    },
+    "es": {
+     "title": "The town changes as the castle grows",
+     "items": [
+      "From stage 2 bunting hangs over the town roads, more at stage 3, and flag poles at stage 4",
+      "From stage 3 you can hold a feast for 3 bread every 20 minutes for gold, and the bunting sparkles during it"
+     ]
+    },
+    "fr": {
+     "title": "The town changes as the castle grows",
+     "items": [
+      "From stage 2 bunting hangs over the town roads, more at stage 3, and flag poles at stage 4",
+      "From stage 3 you can hold a feast for 3 bread every 20 minutes for gold, and the bunting sparkles during it"
+     ]
+    },
+    "de": {
+     "title": "The town changes as the castle grows",
+     "items": [
+      "From stage 2 bunting hangs over the town roads, more at stage 3, and flag poles at stage 4",
+      "From stage 3 you can hold a feast for 3 bread every 20 minutes for gold, and the bunting sparkles during it"
+     ]
+    },
+    "zh": {
+     "title": "The town changes as the castle grows",
+     "items": [
+      "From stage 2 bunting hangs over the town roads, more at stage 3, and flag poles at stage 4",
+      "From stage 3 you can hold a feast for 3 bread every 20 minutes for gold, and the bunting sparkles during it"
+     ]
+    },
+    "pt": {
+     "title": "The town changes as the castle grows",
+     "items": [
+      "From stage 2 bunting hangs over the town roads, more at stage 3, and flag poles at stage 4",
+      "From stage 3 you can hold a feast for 3 bread every 20 minutes for gold, and the bunting sparkles during it"
+     ]
+    },
+    "ru": {
+     "title": "The town changes as the castle grows",
+     "items": [
+      "From stage 2 bunting hangs over the town roads, more at stage 3, and flag poles at stage 4",
+      "From stage 3 you can hold a feast for 3 bread every 20 minutes for gold, and the bunting sparkles during it"
+     ]
+    },
+    "tr": {
+     "title": "The town changes as the castle grows",
+     "items": [
+      "From stage 2 bunting hangs over the town roads, more at stage 3, and flag poles at stage 4",
+      "From stage 3 you can hold a feast for 3 bread every 20 minutes for gold, and the bunting sparkles during it"
+     ]
+    },
+    "it": {
+     "title": "The town changes as the castle grows",
+     "items": [
+      "From stage 2 bunting hangs over the town roads, more at stage 3, and flag poles at stage 4",
+      "From stage 3 you can hold a feast for 3 bread every 20 minutes for gold, and the bunting sparkles during it"
+     ]
+    },
+    "pl": {
+     "title": "The town changes as the castle grows",
+     "items": [
+      "From stage 2 bunting hangs over the town roads, more at stage 3, and flag poles at stage 4",
+      "From stage 3 you can hold a feast for 3 bread every 20 minutes for gold, and the bunting sparkles during it"
+     ]
+    },
+    "ar": {
+     "title": "The town changes as the castle grows",
+     "items": [
+      "From stage 2 bunting hangs over the town roads, more at stage 3, and flag poles at stage 4",
+      "From stage 3 you can hold a feast for 3 bread every 20 minutes for gold, and the bunting sparkles during it"
+     ]
+    }
+   }
+  },
+  {
+   "date": "2026-10-31",
    "build": "v0.2 build 79",
    "title": "개척지 생산 사슬",
    "items": [
