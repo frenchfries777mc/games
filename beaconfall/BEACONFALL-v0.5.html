@@ -395,7 +395,7 @@ window.bfIntro=function(){if(run)return;run=1;t0=Date.now();el.classList.add('ru
     <button class="btn" data-act="skins"><span class="arrow">▶</span>스킨 상점<span class="en">SKIN SHOP</span></button>
     <button class="btn" data-act="stats"><span class="arrow">▶</span>통계<span class="en">STATS</span></button>
     <button class="btn" data-act="settings"><span class="arrow">▶</span>설정<span class="en">SETTINGS</span></button>
-    <p class="foot">v0.5<br>build 145</p>
+    <p class="foot">v0.5<br>build 146</p>
   </nav>
 </div>
 
@@ -1881,6 +1881,8 @@ ITEMS.port={name:'화물항',place:'port',icon(g){
   g.fillStyle='#3d2412';g.fillRect(2,3,1,6);g.fillRect(9,3,1,6);g.fillStyle='#5a7ab0';g.fillRect(3,1,6,3);g.fillStyle='#e8eef6';g.fillRect(4,1,2,2);
   g.fillStyle='#6b4423';g.fillRect(4,5,4,3);g.fillStyle='#b57d3f';g.fillRect(4,5,4,1);
 }};
+ITEMS.sigtower={name:'지도 신호탑',place:'sigtower',icon(g){g.fillStyle='#14161c';g.fillRect(4,0,4,12);g.fillRect(2,9,8,3);g.fillStyle='#8a8d9c';g.fillRect(5,2,2,9);g.fillRect(3,10,6,1);g.fillStyle='#c3c5cf';g.fillRect(5,2,1,8);g.fillStyle='#e0434f';g.fillRect(5,0,2,2);g.fillStyle='#9ad0ff';g.fillRect(2,3,1,1);g.fillRect(9,3,1,1);g.fillRect(1,5,1,1);g.fillRect(10,5,1,1);}};
+ITEMS.repel={name:'몬스터 퇴치기',place:'repel',icon(g){g.fillStyle='#14161c';g.fillRect(1,2,10,9);g.fillStyle=MATCOL.brass.d;g.fillRect(2,3,8,7);g.fillStyle=MATCOL.brass.m;g.fillRect(3,4,6,5);g.fillStyle='#e0434f';g.fillRect(5,5,2,2);g.fillStyle='#9ad0ff';g.fillRect(4,0,1,1);g.fillRect(7,0,1,1);g.fillRect(3,1,1,1);g.fillRect(8,1,1,1);}};
 ITEMS.guard={name:'경비초소',place:'guard',icon(g){
   g.fillStyle='#14161c';g.fillRect(1,0,10,12);g.fillStyle='#8a5a2b';g.fillRect(2,5,8,6);g.fillStyle='#c9904f';g.fillRect(2,5,8,1);
   g.fillStyle='#5a3a1e';g.fillRect(2,1,8,3);g.fillStyle='#b5523a';g.fillRect(1,0,10,2);
@@ -2140,6 +2142,8 @@ RECIPES.push({grp:'건축',bench:true,name:'석재벽돌',note:'강화석재 3�
     RECIPES.push({grp:'신호기 부품',name:'회로 결정체',note:'회로조각 · 회로장치 ×5 · 회로조각',pat:[z('circuit'),z('circuit_device'),z('circuit_device'),z('circuit_device'),z('circuit_device'),z('circuit_device'),z('circuit')],out:[{id:'circuit_crystal',n:1}]});
     RECIPES.push({grp:'신호기 부품',name:'초장거리 신호 장치',note:'강화철판 ×4 + 원격신호장치 ×3',pat:[z('riron_plate'),z('riron_plate'),z('rsd'),z('rsd'),z('rsd'),z('riron_plate'),z('riron_plate')],out:[{id:'ult_signal',n:1}]});
     RECIPES.push({grp:'신호기 부품',name:'파동음파장치',note:'강화황동판 ×6 + 종',pat:[z('brass_plate'),z('brass_plate'),z('brass_plate'),z('bell'),z('brass_plate'),z('brass_plate'),z('brass_plate')],out:[{id:'wave_device',n:1}]});
+    RECIPES.push({grp:'신호기 부품',bench:true,name:'지도 신호탑',note:'설치하면 주변 넓은 지역과 섬이 지도에 표시돼요',pat:[z('ult_signal'),z('riron_plate'),z('riron_plate')],out:[{id:'sigtower',n:1}]});
+    RECIPES.push({grp:'신호기 부품',bench:true,name:'몬스터 퇴치기',note:'설치한 곳 주변에서 몬스터가 사라져요 (보스 제외)',pat:[z('wave_device'),z('plank'),z('plank')],out:[{id:'repel',n:1}]});
     RECIPES.push({grp:'신호기 부품',name:'신호기',note:'강화금판 ×2 + 회로 결정체 ×2 · 우주선을 부르는 신호기',pat:[z('circuit_crystal'),z('rgold_plate'),z('rgold_plate'),z('circuit_crystal')],out:[{id:'beacon',n:1}]});
   }
   RECIPES.push({grp:'맨손',name:'횃불',note:'막대 + 송진',pat:[S1,{id:'resin',n:1}],out:[{id:'torch',n:2}]});
@@ -4363,6 +4367,8 @@ const STRUCT={
   oven:{layer:'o',block:true,item:'oven',n:1,need:2},
   trash:{layer:'o',block:true,item:'trash',n:1,need:1.5},
   bell:{layer:'o',block:true,item:'bell',n:1,need:1.2},
+  sigtower:{layer:'o',block:true,item:'sigtower',n:1,need:2},
+  repel:{layer:'o',block:true,item:'repel',n:1,need:2},
   fence:{layer:'o',block:true,item:'fence',n:1,need:0.8},
   clock:{layer:'o',block:true,item:'clock',n:1,need:1.5},
   tele:{layer:'o',block:false,item:'tele',n:1,need:2.5},
@@ -4776,6 +4782,8 @@ function drawStructSprite(g,kind,cx,cy,mat){
   else if(kind==='miner')drawMiner(g,{gx:cx/GRID,gy:cy/GRID,mat,pf:-1});
   else if(kind==='conveyor')drawBelt8(g,cx,cy,mat|0,false,0,null,false,false);
   else if(kind==='bell')drawBell(g,{gx:cx/GRID,gy:cy/GRID,rg:0});
+  else if(kind==='sigtower')drawSigTower(g,{gx:cx/GRID,gy:cy/GRID});
+  else if(kind==='repel')drawRepel(g,{gx:cx/GRID,gy:cy/GRID});
   else if(kind==='fence')drawFence(g,{gx:cx/GRID,gy:cy/GRID});
   else if(kind==='bwall'||kind==='bwin'||kind==='door')drawWallish(g,{id:kind,gx:cx/GRID,gy:cy/GRID});
   else if(kind==='flag')drawFlag(g,{gx:cx/GRID,gy:cy/GRID});
@@ -4845,6 +4853,8 @@ function drawStruct(g,b){
   if(b.id==='stall'){drawStall(g,b);return;}
   if(b.id==='mailbox'){drawMailbox(g,b);return;}
   if(b.id==='monument'){drawMonument(g,b);return;}
+  if(b.id==='sigtower'){drawSigTower(g,b);return;}
+  if(b.id==='repel'){drawRepel(g,b);return;}
   if(b.id==='dinoskel'){drawDinoSkel(g,b);return;}
   if(b.id==='flag'){drawFlag(g,b);return;}
   if(b.id==='station'){drawStation(g,b);return;}
@@ -7138,6 +7148,7 @@ function exploreTick(dt){
     if(dx*dx+dy*dy<0.8){world.disc[i]=true;toast(`${islName(o)} 발견!`);achIslands();discShare('i',i);}
   }
   for(const l of world.lm){if(l&&!world.seen[l.i]&&Math.hypot(P.x-l.cx,P.y-l.cy)<90){world.seen[l.i]=true;achIslands();discShare('s',l.i);}}
+  sigTowerTick();
   if(mapOn)drawMap();
 }
 function packBits(a){
@@ -8412,6 +8423,47 @@ function openSignalUI(b){
         m.querySelector('#sgsave').onclick=()=>{sendSig(b,{th:+m.querySelector('#sgth').value});closeModal();};
       },'signal');
   }
+}
+function drawSigTower(g,b){
+  const cx=b.gx*GRID,cy=b.gy*GRID,p=0.5+0.5*Math.sin(time*3);
+  g.fillStyle='rgba(8,24,12,0.3)';g.fillRect(cx+1,cy+GRID,GRID-1,1);
+  g.fillStyle='#14161c';g.fillRect(cx+5,cy-14,6,29);g.fillRect(cx+2,cy+11,12,5);
+  g.fillStyle='#8a8d9c';g.fillRect(cx+7,cy-12,2,25);g.fillRect(cx+4,cy+12,8,3);g.fillRect(cx+5,cy-2,6,1);g.fillRect(cx+6,cy-7,4,1);
+  g.fillStyle='#c3c5cf';g.fillRect(cx+7,cy-12,1,24);
+  g.fillStyle=p>0.5?'#ff6a6a':'#e0434f';g.fillRect(cx+6,cy-16,4,3);
+  g.fillStyle='rgba(154,208,255,'+(0.3+0.5*p).toFixed(2)+')';g.fillRect(cx+2,cy-10,1,1);g.fillRect(cx+13,cy-10,1,1);g.fillRect(cx,cy-12,1,1);g.fillRect(cx+15,cy-12,1,1);
+}
+function drawRepel(g,b){
+  const cx=b.gx*GRID,cy=b.gy*GRID,p=(time*0.8)%1;
+  g.fillStyle='rgba(8,24,12,0.3)';g.fillRect(cx+1,cy+GRID,GRID-1,1);
+  g.fillStyle='#14161c';g.fillRect(cx+1,cy+3,14,13);g.fillStyle='#8a5a14';g.fillRect(cx+2,cy+4,12,11);g.fillStyle='#c9944a';g.fillRect(cx+3,cy+5,10,4);g.fillStyle='#5a3a1e';g.fillRect(cx+2,cy+12,12,3);
+  g.fillStyle='#14161c';g.fillRect(cx+6,cy+7,4,4);g.fillStyle=(((time*2)|0)&1)?'#ff6a6a':'#e0434f';g.fillRect(cx+7,cy+8,2,2);
+  g.fillStyle='rgba(154,208,255,'+(0.7*(1-p)).toFixed(2)+')';const r=3+p*9;g.fillRect(cx+8-r,cy+1,2,1);g.fillRect(cx+6+r,cy+1,2,1);g.fillRect(cx+8-r-1,cy-1,1,2);g.fillRect(cx+9+r,cy-1,1,2);
+}
+let repT=0,repL=[],sigT=0;
+function repelNear(x,y){
+  if(time>repT||time<repT-5){repT=time+1;repL=(world&&world.structs)?world.structs.filter(b=>b.id==='repel'):[];}
+  for(const b of repL)if(Math.hypot(x-b.x,y-b.y)<150)return true;
+  return false;
+}
+function sigTowerTick(){
+  if(time<sigT)return;sigT=time+3;
+  const tw=world.structs.filter(b=>b.id==='sigtower');if(!tw.length)return;
+  const R=40;
+  for(const b of tw){
+    const cx=(b.x/EC)|0,cy=(b.y/EC)|0;
+    for(let dy=-R;dy<=R;dy++)for(let dx=-R;dx<=R;dx++){
+      if(dx*dx+dy*dy>R*R)continue;
+      const x=cx+dx,y=cy+dy;if(x<0||y<0||x>=EW||y>=EH)continue;
+      if(!world.expl[y*EW+x]){world.expl[y*EW+x]=1;if(world.mapFog){const f=world.mapFog.getContext('2d'),k=EC/MS;f.clearRect(x*k,y*k,k,k);}}
+    }
+    for(let i=1;i<world.islands.length;i++){
+      if(world.disc[i])continue;const o=world.islands[i];
+      if(Math.hypot(o.cx-b.x,o.cy-b.y)<R*EC*0.9){world.disc[i]=true;toast(`지도 신호탑이 ${islName(o)}을(를) 찾았어요!`);achIslands();discShare('i',i);}
+    }
+    for(const l of world.lm){if(l&&!world.seen[l.i]&&Math.hypot(l.cx-b.x,l.cy-b.y)<R*EC*0.9){world.seen[l.i]=true;achIslands();discShare('s',l.i);}}
+  }
+  if(mapOn)drawMap();
 }
 function drawBell(g,b){
   const cx=b.gx*GRID,cy=b.gy*GRID,ring=b.rg>time,amp=ring?Math.min(1,b.rg-time)*3:0,o=Math.round(Math.sin(time*22)*amp);
@@ -10794,6 +10846,7 @@ function updateMonsters(dt){
   }
   for(let i=monsters.length-1;i>=0;i--){
     const m=monsters[i],T=MT(m);m.born+=dt;m.cd-=dt;m.hurt-=dt;
+    if(!m.boss&&!m.burn&&repelNear(m.x,m.y)){m.burn=0.001;for(let j=0;j<6;j++)parts.push({x:m.x,y:m.y,vx:(Math.random()-0.5)*30,vy:-8-Math.random()*14,life:0.5,c:'#9ad0ff'});}
     if(!night&&!m.burn&&!T.persist)m.burn=0.001;
     if(m.burn){m.burn+=dt;if(m.burn>1.3)monsters.splice(i,1);continue;}
     if(m.boss&&!m.void&&!m.dun&&pl.length&&!pl.some(p=>Math.abs(p.x-m.x)<700&&Math.abs(p.y-m.y)<700)){m.cd=Math.max(m.cd,1);continue;}   // 멀리 있는 섬의 보스는 가까이 갈 때까지 잠들어 있어요 (계산을 아껴요)
