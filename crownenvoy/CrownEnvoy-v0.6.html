@@ -460,7 +460,7 @@ try{if(sessionStorage.getItem('ce_noIntro')){sessionStorage.removeItem('ce_noInt
 sting();})();</script>
 <div id="app">
  <div id="lobby" class="screen">
-  <canvas id="lobbyBg"></canvas><canvas id="lobbyWar"></canvas><div id="cpTag">© 2026 Frenchfries777 · <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.ko" target="_blank" rel="noopener">CC BY-NC-ND 4.0</a></div><div id="verTag">v0.6 · build 136</div>
+  <canvas id="lobbyBg"></canvas><canvas id="lobbyWar"></canvas><div id="cpTag">© 2026 Frenchfries777 · <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.ko" target="_blank" rel="noopener">CC BY-NC-ND 4.0</a></div><div id="verTag">v0.6 · build 137</div>
   <header class="brand"><h1>Crown Envoy</h1><div class="sub"><i></i>DIPLOMACY · WAR · EMPIRE<i></i></div></header>
   <div id="lobbyRight">
    <div id="lobbyHome" class="modes">
@@ -1251,6 +1251,7 @@ function sanitizeOrders(pid,list){
     let gid=null;const g=G.gens.find(x=>x.id===o.gid&&x.owner===pid&&x.status==='ok'&&x.loc===from);if(g&&!gUsed.has(g.id))gid=g.id;
     if(mv){if(n<CFG.minMove){if(!gid){drop.push(dn(to)+': 병력 부족');continue;}n=0;}}else if(n<CFG.minAttack){drop.push(dn(to)+': 병력 부족');continue;}
     if(gid)gUsed.add(gid);used[from]=(used[from]||0)+n;{const uu=usedU[from];uu.i+=ou.i;uu.c+=ou.c;uu.a+=ou.a;}out.push({from,to,n,gid,mv,u:ou});}
+  out.drops=drop;
   return out;
 }
 function setOrders(pid,m){if(G.phase!=='plan')return fail('계획 단계가 아닙니다.');G.orders[pid]=sanitizeOrders(pid,m.orders);
@@ -1416,7 +1417,7 @@ function resolveRound(){
   pendApply();/* 징집한 병사는 공격과 이동보다 먼저 도착한다 */
   Object.keys(G.hostile).forEach(k=>{const [x,y]=k.split('-').map(Number);if(truceLeft(x,y)>0)delete G.hostile[k];});
   const rep={round:G.round,attacks:[],moves:[],battles:[]};const plans={};const moves=[];
-  const LISTS={};for(const p of G.players){if(!p.alive)continue;LISTS[p.id]=sanitizeOrders(p.id,G.orders[p.id]);G.lastOrders[p.id]=LISTS[p.id].map(o=>({...o}));}
+  const LISTS={};for(const p of G.players){if(!p.alive)continue;LISTS[p.id]=sanitizeOrders(p.id,G.orders[p.id]);if(!p.isBot&&LISTS[p.id].drops&&LISTS[p.id].drops.length)hooks.toast(p.id,'명령이 취소됐어요: '+LISTS[p.id].drops.slice(0,4).join(' / '));G.lastOrders[p.id]=LISTS[p.id].map(o=>({...o}));}
   const JOPS=jopCheck(LISTS);
   /* 공격받는 영토에서 나가는 공격은 받는 공격이 끝난 뒤에 나간다. 그때 영토를 지켰고 병력이 공격 최소 병력 이상 남았으면 출발한다 */
   const hitAt={};Object.keys(LISTS).forEach(k=>LISTS[k].forEach(o=>{if(o.mv)return;const T=G.terr[o.to];if(T.owner!=null&&T.owner!==+k)hitAt[o.to]=true;}));
@@ -4187,7 +4188,7 @@ const Host={seats:[],started:false,timer:null,mapId:0,snaps:[],
     if(!G||G.over&&msg.t!=='chat'&&msg.t!=='sumreq')return;const p=G.players[i];if(!p)return;
     switch(msg.t){
       case 'act':{const r=act(i,msg);this.sendTo(i,{t:'res',ok:r.ok,msg:r.msg});if(['repeat','clearorders','undo'].includes(msg.a))this.sendTo(i,{t:'orders',orders:G.orders[i]||[]});this.pushViews(msg.a==='undo');break;}
-      case 'orders':{const r=setOrders(i,msg);if(!r.ok)this.sendTo(i,{t:'res',ok:false,msg:r.msg});else this.sendTo(i,{t:'orders',orders:G.orders[i]});break;}
+      case 'orders':{const r=setOrders(i,msg);if(!r.ok){this.sendTo(i,{t:'res',ok:false,msg:r.msg});this.sendTo(i,{t:'orders',orders:G.orders[i]||[],seq:msg.seq,drops:[]});}else this.sendTo(i,{t:'orders',orders:G.orders[i],seq:msg.seq,drops:(G.orders[i].drops||[]).slice(0,6)});break;}
       case 'endgame':{if(i===0&&!G.over){finish('score');this.pushViews(true);}break;}
       case 'evhold':{this.evHold=this.evHold||new Set();if(msg.v){this.evHold.add(i);if(!this.evSince)this.evSince=Date.now();}else{this.evHold.delete(i);if(!this.evHold.size)this.evSince=0;}break;}
       case 'ready':{p.ready=!!msg.v;this.pushViews();break;}
@@ -4618,7 +4619,7 @@ const MapView={cv:null,ctx:null,W:0,H:0,dpr:1,scale:1,ox:0,oy:0,hover:-1,deco:[]
     // 나라·동맹 보기: 묶음 이름을 가운데에 띄운다
     if(MAPMODE!=='city'&&!v.draft){if(!this._gl){const AC=MAPMODE==='alliance'?alClusters(v):null,G2={};v.terr.forEach(t=>{const d=TDEF[t.id];if(!d||d.kind==='sea'||t.owner==null||!pl[t.owner].alive)return;const k=AC&&AC.of[t.owner]!=null?'a'+AC.of[t.owner]:'o'+t.owner;const g=G2[k]||(G2[k]={n:0,sx:0,sy:0,t:[],nm:k[0]==='a'?AC.cl[k.slice(1)].name:String(pl[t.owner].kingdom).split('(')[0]});g.n+=d.area;g.sx+=d.x*d.area;g.sy+=d.y*d.area;g.t.push(d);});
         this._gl=Object.values(G2).map(g=>{const cx=g.sx/g.n,cy=g.sy/g.n;let b=g.t[0];g.t.forEach(d=>{if(Math.hypot(d.x-cx,d.y-cy)<Math.hypot(b.x-cx,b.y-cy))b=d;});return {nm:g.nm,x:Math.hypot(b.x-cx,b.y-cy)<12?cx:b.x,y:Math.hypot(b.x-cx,b.y-cy)<12?cy:b.y,r:Math.sqrt(g.n)};});}
-      this._gl.forEach(g=>{if(g.x<mx0-mg||g.x>mx1+mg||g.y<my0-mg||g.y>my1+mg||g.r*K<26)return;c.save();c.translate(g.x,g.y);c.scale(uz,uz);const fs=Math.max(13,Math.min(26,g.r*K/6));c.font="800 "+fs+"px system-ui,'Malgun Gothic','Apple SD Gothic Neo',sans-serif";c.textAlign='center';c.textBaseline='middle';c.lineWidth=4;c.strokeStyle='rgba(10,12,18,.85)';c.fillStyle='#fff';c.strokeText(g.nm,0,-26);c.fillText(g.nm,0,-26);c.restore();});}
+      this._gl.forEach(g=>{if(g.x<mx0-mg||g.x>mx1+mg||g.y<my0-mg||g.y>my1+mg||g.r*K<26)return;c.save();c.translate(g.x,g.y);c.scale(uz,uz);const fs=Math.max(11,Math.min(19,g.r*K/9));c.font="800 "+fs+"px system-ui,'Malgun Gothic','Apple SD Gothic Neo',sans-serif";c.textAlign='center';c.textBaseline='middle';c.lineWidth=3;c.strokeStyle='rgba(10,12,18,.85)';c.fillStyle='#fff';c.strokeText(g.nm,0,-18);c.fillText(g.nm,0,-18);c.restore();});}
     if(v.phase==='plan'&&sel!=null&&v.terr[sel]&&(v.terr[sel].owner===v.me||v.terr[sel].mygst>0)){
       const gOK=ow=>ow!=null&&ow!==v.me&&(v.treaties||[]).some(x=>(x.type==='alliance'||x.type==='passage')&&((x.a===v.me&&x.b===ow)||(x.b===v.me&&x.a===ow)));const gOKT=n=>gOK(v.terr[n].owner)||(TDEF[n].kind==='sea'&&v.terr[n].owner!=null&&v.terr[n].owner!==v.me&&v.players[v.terr[n].owner]&&!v.players[v.terr[n].owner].hostile);const adjS=adjAll(sel);
       const needDecl=ow=>ow!=null&&ow!==v.me&&v.players[ow]&&!v.players[ow].hostile;
@@ -4656,7 +4657,7 @@ MapView.fxOn=function(){try{return UI.fxMode()!=='off'&&!UI.optOn();}catch(e){re
 MapView.capFx=[];MapView.prevOwn=null;MapView.prevCap=null;MapView.prevKey='';
 function mapShake(){const w=document.querySelector('#mapwrap');if(w&&w.animate)w.animate([{transform:'translate(0,0)'},{transform:'translate(-7px,3px)'},{transform:'translate(6px,-4px)'},{transform:'translate(-4px,-2px)'},{transform:'translate(3px,3px)'},{transform:'translate(0,0)'}],{duration:520,easing:'ease-out'});try{Battle.sfx('boom');}catch(e){}}
 MapView.fx=function(c,now,vw,K,v,pl){
-  if(!this.fxOn())return;const uu=1/vw.z;
+  if(UI.fxMode()==='off')return;const heavy=this.fxOn();const uu=1/vw.z;   // 점령 깃발·번쩍임은 저사양 절약 모드에서도 보여 준다 (짧고 가벼워요)
   /* 점령 감지: 영토 주인이 바뀌면 새 주인의 색이 퍼지고 깃발이 올라간다 (수도는 화면이 흔들린다) */
   const key=MAPID+'|'+v.terr.length+'|'+(v.draft?1:0);
   if(this.prevKey!==key||!this.prevOwn||v.draft){this.prevKey=key;this.prevOwn=v.terr.map(t=>t.owner);this.prevCap=pl.map(p=>p.cap);}
@@ -4668,6 +4669,7 @@ MapView.fx=function(c,now,vw,K,v,pl){
     if(f.cap){c.save();c.strokeStyle='#ffd45e';c.globalAlpha=(1-age);c.lineWidth=4*uu;for(let r=0;r<2;r++){const a=Math.max(0,age*1.4-r*.25);if(a<=0||a>=1)continue;c.beginPath();c.arc(td.x,td.y,(10+a*130)*uu,0,6.3);c.stroke();}c.restore();}
     const grow=Math.min(1,age*4),fo=age>0.8?(1-age)*5:1;c.save();c.globalAlpha=fo;c.translate(td.x,td.y);c.scale(uu,uu);c.strokeStyle='#3a2a14';c.lineWidth=2.4;c.beginPath();c.moveTo(0,0);c.lineTo(0,-40*grow);c.stroke();
     const fh=-40*grow,wv=Math.sin(now/130)*3;c.fillStyle=f.color;c.strokeStyle='#000a';c.lineWidth=1.2;c.beginPath();c.moveTo(1,fh);c.quadraticCurveTo(13,fh-4+wv,26,fh+1);c.lineTo(26,fh+13);c.quadraticCurveTo(13,fh+9+wv,1,fh+14);c.closePath();c.fill();c.stroke();c.restore();}
+  if(!heavy)return;
   /* 초토화(불꽃·연기·그을림)와 역병(녹색 안개) */
   const mx0=(-this.ox/this.scale-vw.x)/vw.z,mx1=((this.W-this.ox)/this.scale-vw.x)/vw.z,my0=(-this.oy/this.scale-vw.y)/vw.z,my1=((this.H-this.oy)/this.scale-vw.y)/vw.z,mg=80*uu;
   v.terr.forEach(t=>{if(!(t.burn||t.plg>0||t.gv>0))return;const td=TDEF[t.id],P=this.p2[t.id];if(!td||!P||td.x<mx0-mg||td.x>mx1+mg||td.y<my0-mg||td.y>my1+mg)return;const es=Math.max(0.3,Math.min(1.05,Math.sqrt(td.area)*K/105))/K;
@@ -5731,7 +5733,7 @@ const Client={onMsg(m){if(m.t==='vermismatch'){verMismatch(m.ver);return;}if(m.t
   case 'toast':UI.toast(m.text);break;
   case 'evnow':UI.onEvNow(m.ev);break;
   case 'res':UI.toast(m.msg,m.ok?'ok':'bad');break;
-  case 'orders':C.orders=m.orders||[];if(C.view&&C.view.phase==='plan')UI.renderAll();break;
+  case 'orders':{if(m.drops&&m.drops.length)UI.toast('명령이 취소됐어요: '+m.drops.join(' / '),'bad');if(m.seq!=null){C.ordAck=Math.max(C.ordAck||0,m.seq);if(m.seq<(C.ordSeq||0))break;}else C.ordAck=C.ordSeq||0;C.orders=m.orders||[];if(C.view&&C.view.phase==='plan')UI.renderAll();break;}
   case 'full':UI.toast('방이 가득 찼거나 이미 시작되었습니다.','bad');break;}}};
 /* 국기: 템플릿 나라는 실제(단순화한) 국기, 그 밖의 나라는 나라 색으로 만든 문양 국기를 원 안에 넣는다 */
 const _fc={};
@@ -6037,7 +6039,7 @@ const UI={
     const prev=C.view;C.view=v;setEra(v.era);try{const zx=$('#zMarkX');if(zx)zx.style.display=(v.marks||[]).some(x=>x.pid===v.me)?'':'none';if(v.draft&&UI.markMode){UI.markMode=null;UI.markFrom=null;$('#zMark').classList.remove('on');$('#zMark').textContent='📍';}}catch(_){}const key=v.round+':'+v.phase;if(!v.draft&&(!prev||prev.draft)){try{const kn=localStorage.getItem('ce_kname');if(kn)send({a:'kname',name:kn});}catch(_){}}
     if(key!==C.phaseKey){C.phaseKey=key;C.pend=null;
       if(v.phase==='plan'&&v.round===1&&(!prev||prev.draft)&&MapView.big)MapView.focusMine();
-      if(v.phase==='plan'){C.orders=(v.orders||[]).slice();if(!prev||prev.round!==v.round){C.sel=null;UI.toast(`제 ${v.round}라운드 — 계획을 세우세요`);if(C.orders.length)UI.toast('방어 태세 방침으로 이동 명령이 미리 채워졌습니다.');}}}
+      if(v.phase==='plan'){const newR=!prev||prev.round!==v.round;if(newR){C.ordSeq=0;C.ordAck=0;}if(newR||(C.ordSeq||0)<=(C.ordAck||0))C.orders=(v.orders||[]).slice();if(newR){C.sel=null;UI.toast(`제 ${v.round}라운드 — 계획을 세우세요`);if(C.orders.length)UI.toast('방어 태세 방침으로 이동 명령이 미리 채워졌습니다.');}}}
     if(v.over)UI.showOver();
     UI.collectDigest(v);
     if(v.chs&&v.chs.length)UI.maybeChoice();
@@ -6389,7 +6391,7 @@ const UI={
     if(v.phase==='plan'&&C.sel!=null&&v.terr[C.sel]&&v.terr[C.sel].owner!==v.me&&!(v.terr[C.sel].mygst>0)){C.sel=null;C.pend=null;UI.renderAll();return;}
     C.sel=id;C.pend=null;C.tab='map';UI.renderAll();},
   onReady(){const v=C.view;if(!v||C.animating||v.phase!=='plan')return;const me=mePl();if(!me.ready)UI.sendOrders();Net.send({t:'ready',v:!me.ready});},
-  sendOrders(){Net.send({t:'orders',orders:C.orders});},
+  sendOrders(){C.ordSeq=(C.ordSeq||0)+1;Net.send({t:'orders',orders:C.orders,seq:C.ordSeq});},
   onPanelInput(e){const t=e.target;if(t.id==='dipQ'){C.dipQ=t.value;const el=document.getElementById('dipList');if(el&&UI._dipListFn)el.innerHTML=UI._dipListFn();return;}
     if(t.id&&t.id.startsWith('pendU_')){const ty=t.id.slice(6);C.pend.u[ty]=+t.value;C.pend.n=sumU(C.pend.u);const sp=$('#pendUN_'+ty);if(sp)sp.textContent=fmt(+t.value);$('#pendNum').textContent=fmt(C.pend.n);UI.syncAddBtn();}
     else if(t.id==='pendG'){C.pend.gid=t.value?+t.value:null;UI.syncAddBtn();}},
