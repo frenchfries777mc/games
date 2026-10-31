@@ -3,7 +3,7 @@
 
 import { T } from './tr.js';
 
-export const VERSION = 'v0.1', BUILD = 129;
+export const VERSION = 'v0.1', BUILD = 132;
 
 export const ROLES = {
   knight: {
@@ -437,7 +437,7 @@ function grow(ci, rooms, [p1, dk, p2]) {
 // 장: 이야기, 지도, 보스, 색
 // 투기장: 보우킵 보스 방을 크게 키운 한 방 (적도 이야기도 없이 마지막 한 명이 남을 때까지)
 // 5대5 깃발 점령전 지도: 아주 넓은 벌판에 돌담과 기둥이 흩어져 있어요 (180도 돌려도 똑같아서 두 팀이 공평해요)
-export const PUSH_N = 5, PUSH_T = 5;   // 깃발을 이만큼 가진 팀이 몰아붙이면 상대 부활이 이만큼(초) 늘어요
+export const PUSH_N = 6, PUSH_T = 10;   // 깃발을 이만큼 가진 팀이 몰아붙이면 상대 부활이 이만큼(초) 늘어요
 export const DOOR_OPEN_T = 14, DOOR_SHUT_T = 16, STORM_CALM_T = 30, STORM_T = 12;   // 사막 신전: 문이 열려 있는 시간·닫혀 있는 시간, 모래폭풍이 잠잠한 시간·부는 시간(초)
 export const TEAM_N = 5, FLAG_T = 7, FLAG_R = 6.5, RESP_T = 15, SPAWN_INV = 2, TEAM_HP = 1.5, RECALL_CD = 25, RECALL_T = 3;
 export const TEAMS = [{ name: T('우리 팀'), c: 0x4a8cff }, { name: T('상대 팀'), c: 0xff5a4a }];
@@ -735,11 +735,21 @@ setChapterData(0);
 
 export const ACHIEVEMENTS = [
   { id: 'first', name: T('첫 대전'), desc: T('대전을 처음 시작해요.') },
-  { id: 'win', name: T('마지막 한 명'), desc: T('마지막까지 살아남아 우승해요.') },
-  { id: 'winall', name: T('일곱 직업의 왕관'), desc: T('일곱 직업으로 모두 한 번 이상 우승해요.') },
+  { id: 'win', name: T('첫 승리'), desc: T('대전에서 처음 이겨요.') },
+  { id: 'wins10', name: T('열 번의 승리'), desc: T('대전에서 열 번 이겨요.') },
+  { id: 'winall', name: T('모든 직업의 왕관'), desc: T('모든 직업으로 한 번 이상 이겨요.') },
   { id: 'kill3', name: T('연속 탈락'), desc: T('한 판에 세 명 이상을 쓰러뜨려요.') },
-  { id: 'pdodge', name: T('종이 한 장 차이'), desc: T('공격이 닿기 직전에 굴러서 피해요.') },
-  { id: 'friends', name: T('함께하는 대전'), desc: T('친구와 같은 방에서 대전해요.') }
+  { id: 'kill5', name: T('전장의 지배자'), desc: T('한 판에 다섯 명 이상을 쓰러뜨려요.') },
+  { id: 'kill50', name: T('쉰 명 처치'), desc: T('상대를 합쳐서 쉰 명 쓰러뜨려요.') },
+  { id: 'kill300', name: T('삼백 명 처치'), desc: T('상대를 합쳐서 삼백 명 쓰러뜨려요.') },
+  { id: 'flag10', name: T('깃발 수집가'), desc: T('깃발을 열 번 점령해요.') },
+  { id: 'flag100', name: T('깃발의 주인'), desc: T('깃발을 백 번 점령해요.') },
+  { id: 'mon1', name: T('괴물 사냥 첫걸음'), desc: T('중립 괴물을 처음 쓰러뜨려요.') },
+  { id: 'mon10', name: T('괴물 사냥꾼'), desc: T('중립 괴물을 열 마리 쓰러뜨려요.') },
+  { id: 'match50', name: T('전장의 단골'), desc: T('대전을 쉰 판 마쳐요.') },
+  { id: 'lv10', name: T('직업의 달인'), desc: T('직업 하나를 최고 레벨까지 올려요.') },
+  { id: 'gold', name: T('골드 계급'), desc: T('직업 하나의 마스터리를 골드까지 올려요.') },
+  { id: 'friends', name: T('함께하는 대전'), desc: T('다른 사람과 같은 방에서 대전해요.') }
 ];
 
 // 갈림길 중간 보스 (장마다 이름이 달라요): 첫째는 돌격형, 둘째는 부하를 부르는 소환형
@@ -769,7 +779,7 @@ export const CHAR_RANKS = (() => {
   return out;
 })();
 export function charRankFor(pts) { let cur = CHAR_RANKS[0]; for (const r of CHAR_RANKS) if ((pts || 0) >= r.min) cur = r; return cur; }
-export const MASTERY_PT = { kill: 2, win: 3, match: 1 };   // 한 판에 쓰러뜨림 2점, 승리 3점, 완주 1점 (+ 연승 보너스)
-export const STREAK_BONUS = [[10, 5], [7, 4], [5, 3], [3, 2], [1, 1]];
+export const MASTERY_PT = { kill: 16, win: 24, match: 8 };   // 한 판에 쓰러뜨림 16점, 승리 24점, 완주 8점 (+ 연승 보너스) — 스틱세움 큰 판 점수의 8배
+export const STREAK_BONUS = [[10, 40], [7, 32], [5, 24], [3, 16], [1, 8]];
 export function streakBonusFor(n) { for (const [a, b] of STREAK_BONUS) if (n >= a) return b; return 0; }
 export function roleLevel(xp) { return Math.min(10, 1 + Math.floor(Math.sqrt((xp || 0) / 25))); }
