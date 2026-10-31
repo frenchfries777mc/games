@@ -5612,7 +5612,7 @@ function shuffle(arr){ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.
 /* ===== the version of this file =====
    Different BUILDS of one version meet and play together (room names online-v<ver>-<mode>-<map>-<slot>); different VERSIONS (the 0.x part) never do - the host refuses them (verNo) and the dispatcher answers busy.
    The build is only sent along with the join message and the lobby (for information); the corner of the screen shows it. */
-const GAME_BUILD='build 2026-10-31-v573';
+const GAME_BUILD='build 2026-10-31-v574';
 const GAME_VERSION='0.9', GAME_VERSION_NAME='은하 제국의 황혼';   // 게임 버전 이름: versions.json의 title과 같게 (빌드마다 바꾸지 않음)
 /* version (the 0.x part) vs build: different BUILDS of one version meet and play together, different VERSIONS never do (rooms, quick match, ranked, friend invites, dispatcher).
    Builds before 470 do not send a version, so it is read from the build number (0.9 started at build 458). */
@@ -10409,7 +10409,7 @@ function onHostData(conn, data){
     broadcastLobby(); updatePlayerListUI(); evaluateAutoStart();
     return;
   }
-  if(data.t==='input'){ const p=players[peerId]; if(p){ p.input=data.input; p.lastSeen=Date.now(); if(Array.isArray(data.chat)) for(const m of data.chat.slice(0,3)){ if(m && typeof m.text==='string') handleChatMessage(peerId, p.name, m.text, m.cid); } } return; }
+  if(data.t==='input'){ const p=players[peerId]; if(p){ if(p.afkBot){ if(afkInputActive(data.input)) afkBack(p); else { p.lastSeen=Date.now(); return; } } p.input=data.input; p.lastSeen=Date.now(); if(Array.isArray(data.chat)) for(const m of data.chat.slice(0,3)){ if(m && typeof m.text==='string') handleChatMessage(peerId, p.name, m.text, m.cid); } } return; }
   if(data.t==='shootOnce'){ const p=players[peerId]; if(p){ p.lastSeen=Date.now(); if(p.weapon!=='flamethrower') tryFire(p, data.angle, performance.now()); } return; }
   if(data.t==='passBomb'){ const p=players[peerId]; if(p){ p.lastSeen=Date.now(); tryPassBomb(p, data.angle, performance.now()); } return; }
   if(data.t==='parkourPush'){ const p=players[peerId]; if(p){ p.lastSeen=Date.now(); tryParkourPush(p, data.angle, performance.now()); } return; }
@@ -14766,6 +14766,24 @@ let BOT_START_GRACE_MS=1200;   // bots stand still for this long once the match 
 // Bots act only while a match is really being played. The game loop keeps calling hostTick for the host even before a match has
 // started (and in the next room of the same session), so without this gate the bots - which pick their weapon the instant the
 // weapon phase opens - were already fighting during the lobby and while the people were still choosing their weapon.
+// ---- 잠수: a person who has not touched anything for AFK_SEC seconds while alive in a running match is played by a bot until they move again ----
+const AFK_SEC=30;
+function afkInputActive(i){ return !!(i && (i.left||i.right||i.jump||i.shoot||i.dash||i.down)); }
+function afkBack(p){ p.afkBot=false; p.lastAct=Date.now(); p.ai=null; pushFx('skill', p.x, p.y-70, performance.now(), {color:'#9ad0ff', name:'돌아왔어요'}); }
+function afkWatch(p, t){
+  if(p.isBot || p.id===myId || p.isDummy || p.isVault || p.isBoss || p.isMinion) return;
+  const now=Date.now(), i=p.input||{};
+  const ang=(i.angle===undefined)?0:i.angle, moved=afkInputActive(i) || (p.afkAng!==undefined && Math.abs(ang-p.afkAng)>0.03);
+  p.afkAng=ang;
+  if(p.afkBot){ if(!p.alive) return; return; }
+  if(moved || !p.alive || !p.weapon || practiceMode || onlineRanked || onlineClan || currentMode!=='online' || !BOT_MODES[gameMode] || gameMode==='duel' || gameMode==='tournament'){ p.lastAct=now; return; }
+  if(p.lastAct===undefined){ p.lastAct=now; return; }
+  if(now-p.lastAct<AFK_SEC*1000) return;
+  const tmp=addBot({force:true, quiet:true}); if(!tmp) { p.lastAct=now; return; }
+  p.ai=tmp.ai; delete players[tmp.id]; p.afkBot=true; p.lastAct=now;
+  p.input={left:false,right:false,jump:false,angle:ang,shoot:false,dash:false};
+  pushFx('skill', p.x, p.y-70, performance.now(), {color:'#ffd34d', name:'자리 비움 · 봇이 대신 플레이'});
+}
 function botsThink(dt, t){
   const live = started && gameLoopStarted && !weaponPhase && !matchEnded;
   if(!live){ botLiveSince=null; return; }
@@ -14773,7 +14791,8 @@ function botsThink(dt, t){
   const grace = (t-botLiveSince) < BOT_START_GRACE_MS;
   for(const id in players){
     const p=players[id];
-    if(!p.isBot || !p.alive || !p.ai || !p.weapon) continue;
+    afkWatch(p, t);
+    if(!(p.isBot || p.afkBot) || !p.alive || !p.ai || !p.weapon) continue;
     if(p.isDummy){ botDummyThink(p, t, dt); continue; }
     if(grace){ const i=p.input; i.left=i.right=i.shoot=i.jump=i.dash=i.down=false; continue; }
     botThink(p, t, dt);
