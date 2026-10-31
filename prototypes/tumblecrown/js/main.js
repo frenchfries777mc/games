@@ -304,7 +304,7 @@ function paintRoom() {
   $('waitTxt').textContent = T('{0}/{1}명 모이는 중', all.length, cap); $('waitTitle').textContent = S.pub ? T('온라인 대전') : T('친구와 대결');
   $('waitList').innerHTML = all.map(s => '<span><i style="background:' + hex(TEAMS[s.team == null ? 0 : s.team].c) + '"></i>' + esc(s.name) + '</span>').join('') + Array.from({ length: Math.max(0, cap - all.length) }, () => '<span class="empty"><i></i>' + T('빈자리') + '</span>').join('');
   $('capRow').style.display = S.net === 'host' && !S.pub && wait ? '' : 'none'; $('capN').textContent = S.cap; $('readyBtn').style.display = pickP ? '' : 'none'; $('readyBtn').textContent = mine.rd || (S.net === 'host' && S.rdy[UID]) ? T('준비됨') : T('준비 완료');
-  $('botRow').style.display = 'none'; $('colRow').style.display = 'none'; $('mapRow').style.display = 'none'; $('mapBtn').textContent = S.themeI ? ARENA_THEMES[S.themeI - 1].name : T('무작위');
+  $('botRow').style.display = 'none'; $('colRow').style.display = 'none'; $('mapRow').style.display = S.net === 'solo' && !S.range ? '' : 'none'; $('mapBtn').textContent = S.mapSel >= 0 ? CHAPTERS[S.mapSel].title : T('무작위');
   $('startBtn').style.display = !online ? '' : 'none';
   $('roomMsg').textContent = !online ? (all.length < 2 ? T('봇을 넣어 주세요.') : '') : wait ? (S.pub ? ((S.net === 'host' ? (S.fillT > 0 ? Math.ceil(FILL_T - S.fillT) : -1) : S.ft) >= 0 ? T('{0}초 뒤 빈자리를 봇으로 채워요.', S.net === 'host' ? Math.ceil(FILL_T - S.fillT) : S.ft) : T('다른 플레이어를 기다리는 중이에요.')) : T('친구를 초대해 주세요.')) : T('직업을 골라 주세요 · {0}초 뒤 시작', Math.max(0, Math.ceil(S.pickT))); 
   view.setPreview(wait ? null : mine.role, COLORS[mine.col].c);
@@ -317,8 +317,8 @@ function roster() {
   for (let i = 0; i < nb; i++) out.push({ bot: true, name: BOT_NAMES[i % BOT_NAMES.length], role: br[i % br.length], col: 0, team: out.length % 2 });
   return out;
 }
-S.botN = 0; S.botRoles = null; S.themeI = SAVE.theme | 0;
-$('mapBtn').onclick = () => { SFX.play('click'); S.themeI = (S.themeI + 1) % (ARENA_THEMES.length + 1); SAVE.theme = S.themeI; save(); paintRoom(); };
+S.botN = 0; S.botRoles = null; S.mapSel = Math.min(CHAPTERS.length - 1, (SAVE.mapSel == null ? -1 : SAVE.mapSel | 0));
+$('mapBtn').onclick = () => { SFX.play('click'); S.mapSel = S.mapSel + 1 >= CHAPTERS.length ? -1 : S.mapSel + 1; SAVE.mapSel = S.mapSel; save(); paintRoom(); };
 function pick() {
   if (S.net !== 'solo' && S.ph !== 'pick') return;
   if (S.net === 'guest') { send({ t: 'pick', role: SAVE.role, col: SAVE.col | 0 }); const m = S.slots.find(s => s.uid === UID); if (m) { m.role = SAVE.role; m.col = SAVE.col | 0; } paintRoom(); return; }
@@ -569,7 +569,7 @@ function beginGame(prevG) {
   S.lastSl = sl;
   if (S.chSel === DEEP_I && !prevG) { DEEP.floor = 1; DEEP.seed = (Math.random() * 1e6) | 0; DEEP.curses = []; }
   { const wk = !!S.wk && !prevG && S.chSel !== DEEP_I, was = WEEKLY.on; WEEKLY.on = wk; if (wk) { const w = weekInfo(); WEEKLY.id = w.id; WEEKLY.curses = w.curses; S.chSel = w.ch; } if (wk || was) useChapter(S.chSel, true); }
-  if (!prevG && !(DEV_CH)) S.chSel = Math.random() * CHAPTERS.length | 0;   // 지도는 판마다 무작위 (온라인은 방장이 골라 모두에게 알려요)
+  if (!prevG && !(DEV_CH)) S.chSel = S.net === 'solo' && !S.range && S.mapSel >= 0 ? S.mapSel : Math.random() * CHAPTERS.length | 0;   // 지도는 판마다 무작위 (온라인은 방장이 골라 모두에게 알려요)
   S.G = createGame(sl, (Math.random() * 4e9) >>> 0, S.chSel);
   if (S.range) { S.G.range = true; setupRange(S.G); toast(T('연습장이에요. 허수아비를 쳐 보세요. 나가기를 누르면 직업을 바꿀 수 있어요.'), 6000); }
   S.G.lite = !!S.lite; 
