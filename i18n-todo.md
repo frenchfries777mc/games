@@ -8,6 +8,7 @@
 위키 한국어 본문은 /mnt/project-files/frenchfries777-hub/wiki-src/all.ko.json 에 있고, 바뀐 내용은 batchNN-notes.md 에 있다. batch32까지의 번역은 wiki/tr 에 들어갔다(2026-10-20 번역 묶음).
 
 ## 허브 패치노트
+- 허브 패치노트 2026-10-31 "위키 정리" (Korean only): 위 제목과 항목 세 줄. 위키 문서 crownenvoy/templates(지도 사진, 3개 템플릿 추가, b135 값), tumblecrown/getting-started·classes·maps-rules 전부 다시 써서 번역 필요, 코드 표현을 고친 위키 문서(beaconfall·dummyparty·vowkeep·isleport·tools·account·stickseum 일부)도 번역이 오래됐다 | 2026-10-31
 - Dummy Party build 6 (2026-10-20): Korean only. 새 문구는 prototypes/dummyparty/index.html 안에 있어요: 패치노트 build 6 블록, 해설위원 대사 전부(소스 fun.js의 CMT, 지금은 한국어일 때만 보여요), 캔버스 글자 '리플레이', '시상식', '바보상'.
 
 ## Crown Envoy (b69)
