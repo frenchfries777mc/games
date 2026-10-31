@@ -489,7 +489,7 @@ const TUT=[
  [P('다 자라면 ▼ 표시의 밭을 눌러 수확해요','When it is grown, tap the field with the ▼ to harvest'),s=>s.stats.harvest>=1],
  [P('마을 장터에서 수확한 것을 팔아요','Sell your harvest at the town market'),s=>(s.stats.shop||0)>=1],
  [P('항구에서 배에 짐을 싣고 보내요','Load a ship at the harbor and send it off'),s=>s.stats.sailed>=1]];
-const OUTMAX=12,BUILD=75;
+const OUTMAX=12,BUILD=76;
 const hasB=(s,b)=>s.slots.some(x=>x&&x.b===b);
 const CASTLE_T=[
  {n:P('망루','Watchtower'),d:P('돌로 쌓은 망루를 세워요. 세금이 걷히기 시작해요','A stone watchtower. Taxes start to come in'),cost:6000,rank:1},
@@ -617,6 +617,10 @@ A('nw1m',P('백만장자','Millionaire'),P('재산 1,000,000 모으기','Reach a
 const CROPK=Object.keys(CROPS),SPEC=['goldbarley','pomegranate','saffron','cloudcotton','seaweed','dragonfruit'],CROPK17=CROPK.filter(c=>!SPEC.includes(c));
 const ACHN={};ACH.forEach(a=>ACHN[a.id]=a);
 const NOTES=[
+ {date:'2026-10-31',build:'v0.2 build 76',title:P('글자 겹침 정리','Labels no longer overlap'),items:[
+  P('마을과 섬에서 이름표가 서로 겹치면 위아래로 자동으로 비켜 서서 모두 읽을 수 있음','Names on the town and islands now shift up or down so they never cover each other'),
+  P('폰처럼 화면이 작을 때도 이름표 글자가 너무 작아지지 않도록 최소 크기를 둠','Labels keep a minimum size on small phone screens')
+ ]},
  {date:'2026-10-31',build:'v0.2 build 75',title:P('닉네임을 눌러 프로필 보기','Tap a name to see a profile'),items:[
   P('방 접속자 목록에서 계정으로 들어온 사람의 닉네임을 누르면 그 사람의 Isleport 프로필 카드가 열림','Tap the name of a signed-in player in the room list to open their Isleport profile card')
  ]},
@@ -31470,7 +31474,7 @@ function presentVisit(){cx.textBaseline='middle';cx.textAlign='center';const fnt
   for(let i=0;i<16;i++){const p=V.slots[i];if(i<V.su&&p){const [x,y]=slotXY(i);label(tx(BLD[p.b].n),sx(x+37),sy(y+51));}}
   const o=VIS.owner;label(VIS.name,sx(o.dx||o.x),sy((o.dy||o.y)-20),'#ffe27a');VIS.gs.forEach(q=>label(q.name||'',sx(q.dx||q.x),sy((q.dy||q.y)-20),'#cfe'));}
 function highlightObj(o){g.strokeStyle='#fff6b0';g.lineWidth=1;g.strokeRect(o.x+.5,o.y+.5,o.w-1,o.h-1);}
-function present(){cx.imageSmoothingEnabled=false;cx.clearRect(0,0,cv.width,cv.height);cx.drawImage(lo,0,0,VW,VH,0,0,VW*SC,VH*SC);
+function present(){LBR=[];cx.imageSmoothingEnabled=false;cx.clearRect(0,0,cv.width,cv.height);cx.drawImage(lo,0,0,VW,VH,0,0,VW*SC,VH*SC);
   if(!S)return;if(VIEW==='isl'){islLabels();return;}if(VIEW==='visit'){presentVisit();return;}if(VIEW==='helm')helmLabels();cx.textBaseline='middle';cx.textAlign='center';const fnt=n=>(n*SC)+'px Gugi,"Malgun Gothic",sans-serif';
   if(VIEW==='sea'||VIEW==='helm'){cx.font=fnt(7);(S.found||[]).forEach(id=>{const q=secretOf(id);label(tx(q.n),(OX+q.x)*SC,(OY+q.y+q.r*.7+7)*SC,'#cfeaff');});const rk=rankOf(S.stats.earned);PORTS.forEach((p,i)=>{const x=(OX+p.x)*SC,y=(OY+p.y+p.r*0.8+7)*SC;const lock=rk<p.rank;label(lock?tx(p.n)+' ('+tx(RANKS[p.rank][1])+')':tx(p.n),x,y,lock?'#9aa4b0':null);
       const ev=EV.filter(e=>e.p===i&&e.until>NOW());if(ev.length)label(ev.map(e=>({boom:T('수요↑','Demand+'),fest:T('축제','Festival'),storm:T('폭풍','Storm'),sick:T('병 소문','Sickness')}[e.kind])).join(' '),x,y+8*SC,'#ffd27a');
@@ -31494,9 +31498,15 @@ function present(){cx.imageSmoothingEnabled=false;cx.clearRect(0,0,cv.width,cv.h
     label(T('집','Home'),sx(54),sy(236),'#fff6b0');label(T('영주의 성','Castle'),sx(CAS.x+115),sy(CAS.y+30),'#fff6b0');TOWNB.forEach(b=>{if(b[3])label(T(b[3],b[4]),sx(b[1]+b[2]/2),sy(796),'#fff6b0');});label(T('식당가','Restaurant row'),sx(651),sy(796),'#fff6b0');NEWB.forEach(b=>label(T(b[4],b[5]),sx(b[1]+b[3]/2),sy(b[2]+42),'#fff6b0'));label(T('분수 광장','Fountain plaza'),sx(370),sy(838),'#fff6b0');label(T('시계탑','Clock tower'),sx(271),sy(866),'#fff6b0');label(T('공원','Park'),sx(126),sy(808),'#fff6b0');label(T('호수','Lake'),sx(720),sy(1070),'#fff6b0');Object.keys(STN).forEach(id=>{const n=STN[id],mk=stMark(id);label(tx([n.n,n.n]),sx(n.x),sy(n.y-22),'#fff6b0');if(mk)label(mk,sx(n.x),sy(n.y-30+Math.round(Math.sin(performance.now()/250))),mk==='…'?'#cfd8e0':'#ffe27a');});label(T('회관','Hall'),sx(314),sy(242),'#fff6b0');label(T('기차역','Station'),sx(262),sy(572),'#fff6b0');label(T('숙소','Inn'),sx(599),sy(412),'#fff6b0');label(T('신문 가판대','Newsstand'),sx(580),sy(326),'#fff6b0');label(T('우체국','Post office'),sx(599),sy(456),'#fff6b0');label(T('식당','Diner'),sx(488),sy(272),'#fff6b0');label(T('박물관','Museum'),sx(583),sy(252),'#fff6b0');label(T('창고','Warehouse'),sx(118),sy(240),'#fff6b0');label(T('연구','Research'),sx(265),sy(228),'#fff6b0');label(T('은행·계약','Bank & contracts'),sx(634),sy(312),'#fff6b0');label(T('항만 사무소','Harbor office'),sx(667),sy(426),'#fff6b0');label(T('해운 창고','Cargo shed'),sx(670),sy(474),'#fff6b0');label(T('어시장','Fish market'),sx(622),sy(510),'#fff6b0');label(T('등대','Lighthouse'),sx(718),sy(466),'#fff6b0');label(T('게시판','Notice board'),sx(448),sy(278),'#fff6b0');if(MP.on&&MP.inbox.length)label('!',sx(448),sy(268),'#ffe27a');
     if(S.visitor)label(T('방문 상인','Trader'),sx(513),sy(280),'#ffe27a');
     const sail=S.ships.filter(s=>s.st==='sail').length;if(sail)label(T('항해 중 {0}척','{0} at sea',sail),sx(752),sy(306),'#ffe27a');
-    const now=performance.now();for(let i=FL.length-1;i>=0;i--){const f=FL[i],a=(now-f.t)/1400;if(a>1){FL.splice(i,1);continue;}cx.globalAlpha=1-a;cx.font=(7*SC)+'px "Press Start 2P",Gugi,monospace';label(f.txt,sx(f.x),sy(f.y-a*18),f.col);cx.globalAlpha=1;}}
+    LBR=null;const now=performance.now();for(let i=FL.length-1;i>=0;i--){const f=FL[i],a=(now-f.t)/1400;if(a>1){FL.splice(i,1);continue;}cx.globalAlpha=1-a;cx.font=(7*SC)+'px "Press Start 2P",Gugi,monospace';label(f.txt,sx(f.x),sy(f.y-a*18),f.col);cx.globalAlpha=1;}}
 }
-function label(txt,x,y,col){cx.lineWidth=3;cx.strokeStyle='#14100a';cx.lineJoin='round';cx.strokeText(txt,x,y);cx.fillStyle=col||'#f6efd8';cx.fillText(txt,x,y);}
+let LBR=null;
+function label(txt,x,y,col){const m=/^([\d.]+)px (.*)$/.exec(cx.font);if(m&&+m[1]<9)cx.font='9px '+m[2];
+  if(LBR&&txt!==''&&txt!=null){const w=cx.measureText(txt).width+4,h=(m?Math.max(9,+m[1]):9)+2;
+    const hit=yy=>LBR.some(r=>Math.abs(r[0]-x)<(r[2]+w)/2&&Math.abs(r[1]-yy)<(r[3]+h)/2);
+    if(hit(y)){let ok=false;for(let k=1;k<=4&&!ok;k++)for(const sg of [1,-1]){const yy=y+sg*k*h;if(!hit(yy)){y=yy;ok=true;break;}}}
+    LBR.push([x,y,w,h]);}
+  cx.lineWidth=3;cx.strokeStyle='#14100a';cx.lineJoin='round';cx.strokeText(txt,x,y);cx.fillStyle=col||'#f6efd8';cx.fillText(txt,x,y);}
 
 /* ================= 화면 ================= */
 const UG=()=>LANG==='ko'?'금화':'g';
