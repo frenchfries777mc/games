@@ -1140,7 +1140,8 @@ function syncScene() {
     const prev = S.lastPh; S.lastPh = sn.ph;
     if (sn.ph === 'intro') { show('sIntro'); setHud(false); }
     else if (prev === 'intro' || prev === '') { view.battleOff(); show(''); setHud(true); S.area = -2; S.introHero = null; view.camId = null; $('introCard').classList.remove('on'); }
-    if (sn.ph === 'won') { S.wonT = 0; bigMsg('', '', 0); const w = sn.pl.find(q => q.id === sn.win); S.winId = w ? w.id : null; S.winPoseT = 0; if (w) { view.focusOn(w.x, w.z, 4); view.crownDrop(w.id); view.pose(w.id, 'rally'); view.flash(w.x, w.z, 0xffe08a, 160); SFX.play('won'); } } else if (sn.ph !== 'won') S.winId = null;
+    if (sn.ph === 'won') { S.wonT = 0; bigMsg('', '', 0); const w = sn.pl.find(q => q.id === sn.win); S.winId = w ? w.id : null; S.winPoseT = 0; if (w) { view.focusOn(w.x, w.z, 4); view.crownDrop(w.id); view.pose(w.id, 'rally'); view.flash(w.x, w.z, 0xffe08a, 160); SFX.play('won'); }
+      S.winTeam = sn.pv && sn.wtm >= 0 ? sn.pl.filter(q => q.tm === sn.wtm && !q.dd).map(q => q.id) : null; if (S.winTeam && S.winTeam.length) { teamCheer(sn); const ws = sn.pl.filter(q => S.winTeam.includes(q.id)); view.focusOn(ws.reduce((s, q) => s + q.x, 0) / ws.length, ws.reduce((s, q) => s + q.z, 0) / ws.length, 4); } } else if (sn.ph !== 'won') { S.winId = null; S.winTeam = null; }
   }
   // 비밀 방: 열린 것은 지도와 화면에서도 열어요 (게스트는 여기서 길도 열어요)
   if (sn.w.sc) sn.w.sc.forEach((o, k) => { if (!o) return; if (!SOPEN[k]) { openSecret(k); mini.dirty = true; } if (!view.secOn[k]) view.openSecret(k, sn.w.lr); });
@@ -1557,6 +1558,10 @@ function hlFrame(dt, t) {
   const f = R.fr[R.i]; S.snap = f.s; view.sync(f.s, S.me, dt, t, false);
 }
 $('hlSkip').onclick = () => { SFX.play('click'); hlEnd(); };
+// 승리한 팀 모두가 차례로 무기를 높이 치켜들어요 (0.15초씩 어긋나게)
+function teamCheer(sn) {
+  (S.winTeam || []).forEach((id, i) => setTimeout(() => { const q = sn.pl.find(z => z.id === id); view.pose(id, 'rally'); if (q) { view.burst(q.x, 2.5, q.z, 0xffe08a, 14, 6, 0.8, 0.14); if (i === 0) view.flash(q.x, q.z, 0xffe08a, 140); } }, i * 150));
+}
 function showWin() {
   S.resultShown = true; bigMsg('', '', 0); const h = S.lastH = awardHonor() || 0, sn = S.snap, mine = myP(), wt = sn.wtm, won = mine && mine.tm === wt;
   if (won) { unlock('win'); SAVE.wins = SAVE.wins || {}; SAVE.wins[mine.role] = 1; save(); if (ROLE_IDS.every(r => SAVE.wins[r])) unlock('winall'); }
@@ -1644,7 +1649,7 @@ function frame(now) {
       for (const e of S.evq) { onEvent(e); if (HL.ev.length < 400) HL.ev.push(e); } S.evq.length = 0;
       hlTick(dt, t); specTick(me); if (ph === 'won' && S.winId) view.camId = S.winId; view.sync(S.snap, S.me, dt, t, !!S.G); paintHud(); finalCheck(S.snap); paintBless();
       if (ph === 'over') { S.overT += dt; if (S.overT > 3.6 && !S.resultShown) showDeepResult(); }
-      if (ph === 'won') { S.wonT += dt; S.winPoseT = (S.winPoseT || 0) + dt; if (S.winPoseT > 1.2 && S.winId) { S.winPoseT = 0; view.pose(S.winId, 'rally'); const w = S.snap.pl.find(q => q.id === S.winId); if (w) view.burst(w.x, 2.5, w.z, 0xffe08a, 16, 6, 0.8, 0.14); } if (S.wonT >= 1.6 && !S.resultShown) showWin(); }
+      if (ph === 'won') { S.wonT += dt; S.winPoseT = (S.winPoseT || 0) + dt; if (S.winPoseT > 1.2 && S.winTeam && S.winTeam.length) { S.winPoseT = 0; teamCheer(S.snap); } if (S.winPoseT > 1.2 && S.winId) { S.winPoseT = 0; view.pose(S.winId, 'rally'); const w = S.snap.pl.find(q => q.id === S.winId); if (w) view.burst(w.x, 2.5, w.z, 0xffe08a, 16, 6, 0.8, 0.14); } if (S.wonT >= 1.6 && !S.resultShown) showWin(); }
     }
     S.evq.length = 0;
   }
