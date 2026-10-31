@@ -1048,7 +1048,7 @@ function onEvent(e) {
     case 'skill': setTimeout(() => skillFx(e), 130); break; // 예비 동작이 끝나고 터지는 순간에 맞춰요
     case 'mark': view.rune(e.x, e.z, 1.6, 0xff3a3a, 1.4, 4); view.column(e.x, e.z, 0xff3a3a, 0.6); view.flash(e.x, e.z, 0xff3a3a, 60); break;
     case 'splash': view.burst(e.x, 0.6, e.z, 0x9af0a8, 16, 6, 0.6, 0.14); view.ring(e.x, e.z, 3, 0x9af0a8, 0.5); view.rise(e.x, e.z, 0x9af0a8, 10, 2.5, 0.8, 4); view.flash(e.x, e.z, 0x9af0a8, 70); break;
-    case 'multi': { const q = S.snap && S.snap.pl.find(z => z.id === e.id), nm = e.n === 2 ? T('더블 킬') : e.n === 3 ? T('트리플 킬') : T('{0}연속 킬', e.n), pe = view.ents.get('p' + e.id), n = Math.min(e.n, 5);
+    case 'multi': { if (e.id === me && e.n >= 3) unlock('triple'); const q = S.snap && S.snap.pl.find(z => z.id === e.id), nm = e.n === 2 ? T('더블 킬') : e.n === 3 ? T('트리플 킬') : T('{0}연속 킬', e.n), pe = view.ents.get('p' + e.id), n = Math.min(e.n, 5);
       const col = n === 2 ? 0xffb347 : n === 3 ? 0xff5a4a : n === 4 ? 0xff4adf : 0xb06aff;
       if (pe) { view.column(pe.x, pe.z, col, 1.2); view.ring(pe.x, pe.z, 3 + n, col, 0.8); view.shock(pe.x, pe.z, 4 + n * 2, col, 0.6); view.burst(pe.x, 1.4, pe.z, col, 14 + n * 8, 8 + n, 0.8, 0.14); view.burst(pe.x, 1.4, pe.z, 0xfff0b0, 10 + n * 4, 6, 0.6, 0.1); view.rise(pe.x, pe.z, col, 14 + n * 4, 1.8, 1.4, 7); view.flash(pe.x, pe.z, col, 160 + n * 30); if (n >= 3) { view.ring(pe.x, pe.z, 5 + n * 1.5, 0xfff0b0, 1.0); view.shatter(pe.x, pe.z, [col, 0xffe8b0], 10 + n * 4, true); } }
       multiBanner(nm, n, e.id === S.me || !q ? '' : q.bot ? ROLES[q.role].name : q.name); view.shake = Math.max(view.shake, 0.5 + n * 0.2); SFX.play('clear'); SFX.play('kill'); break; }   // 남이 한 더블·트리플 킬도 내 것과 똑같이 화려하게 (이름만 위에 붙어요)
@@ -1644,6 +1644,7 @@ function showWin() {
   S.resultShown = true; bigMsg('', '', 0); const h = S.lastH = awardHonor() || 0, sn = S.snap, mine = myP(), wt = sn.wtm, won = mine && mine.tm === wt;
   if (won) { unlock('win'); SAVE.wins = SAVE.wins || {}; SAVE.wins[mine.role] = 1; save(); if (ROLE_IDS.every(r => SAVE.wins[r])) unlock('winall'); }
   if (mine && mine.kl >= 3) unlock('kill3');
+  if (won && mine && !(mine.dth | 0)) unlock('flawless');
   const row = p => `<tr${p.id === S.me ? ' style="background:#2a2014"' : ''}><td style="color:${ROLES[p.role].color}">${roleImg(p.role, 16)}${ROLES[p.role].name}</td><td>${esc(p.id === S.me ? T('나') : p.bot ? T('봇') : p.name)}${!p.bot && p.rl ? ` <small style="color:${charRankFor(p.mp).color}">${rankImg(charRankFor(p.mp), 13)}${charRankFor(p.mp).name} · Lv.${p.rl}</small>` : ''}</td><td>${p.kl | 0}</td><td>${p.dth | 0}</td></tr>`;
   const tab = t => `<div><h3 style="color:${hex(TEAMS[t].c)}">${tmName(t)}${t === wt ? ' · ' + T('승리') : ''}</h3><table><tr><th>${T('직업')}</th><th>${T('이름')}</th><th>${T('쓰러뜨림')}</th><th>${T('쓰러짐')}</th></tr>${sn.pl.filter(p => p.tm === t).map(row).join('')}</table></div>`;
   const top3 = sn.pl.slice().sort((a, b) => (b.kl | 0) - (a.kl | 0)).slice(0, 3), pod = [[1, 'd8d8e0', 46], [0, 'ffd36b', 62], [2, 'c8884a', 36]].filter(([i]) => top3[i]).map(([i, c, hh]) => { const q = top3[i]; return `<div style="flex:1;text-align:center"><div style="font-size:12px;color:${ROLES[q.role].color}">${ROLES[q.role].name}</div><div style="font-size:12px;margin:2px 0 4px">${esc(q.id === S.me ? T('나') : q.bot ? T('봇') : q.name)}</div><div style="height:${hh}px;background:#${c};color:#201810;font-weight:700;line-height:${hh}px;border-radius:4px 4px 0 0">${q.kl | 0} · ${q.dth | 0}</div></div>`; }).join('');
@@ -1695,6 +1696,9 @@ function frame(now) {
   musicTick(dt, now); talkTick(dt, !!S.snap && S.scr === '' && (S.snap.ph === 'play' || S.snap.ph === 'bossIntro'));
   if (S.snap && (S.G || S.net === 'guest') && S.scr !== 'sLobby' && S.scr !== 'sRoom') {
     const me = myP();
+    // 귀환 중에는 (나·아군·상대 모두) 몸 둘레로 민트색 빛이 솟구쳐요
+    S.rcFx = S.rcFx || {};
+    for (const q of S.snap.pl) { if (!(q.rct > 0) || q.dd) continue; const E = view.ents.get('p' + q.id); if (!E) continue; const n0 = S.rcFx[q.id] || 0; if (now - n0 > 110) { S.rcFx[q.id] = now; view.rise(E.x, E.z, 0x7dffd8, 8, 0.9, 0.9, 7); if (now - (S.rcFx[q.id + "r"] || 0) > 700) { S.rcFx[q.id + "r"] = now; view.ring(E.x, E.z, 1.6, 0x7dffd8, 0.6); } } }
     const inp = me ? gatherInput(me) : {};
     if (S.G) {
       // 방장·혼자: 규칙을 직접 돌려요
