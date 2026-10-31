@@ -182,9 +182,10 @@ const PICKS = {
   chars: ['캐릭터', [['weps', '직업·조작', '직업 정보와 조작 방법'], ['ward', '치장·스킨', '스킨과 치장 아이템'], ['daily', '일일 임무', '오늘의 임무']]],
   conf: ['설정', [['settings', '설정', '소리·화면 설정'], ['notes', '패치노트', '바뀐 점 보기'], ['site', '사이트로 돌아가기', '사이트로 나가요']]]
 };
+const PKIMG = { match: 'online', solo: 'bots', range: 'range', daily: 'daily', weps: 'weps', ward: 'ward', settings: 'conf', notes: 'conf', site: 'conf' };
 function paintPick(k) {
   const p = PICKS[k]; document.querySelector('#sMode h2').textContent = T(p[0]);
-  $('modeCards').innerHTML = p[1].map(c => '<button class="mcard pk" data-g="' + c[0] + '"><b>' + T(c[1]) + '</b><small>' + T(c[2]) + '</small></button>').join('');
+  $('modeCards').innerHTML = p[1].map(c => '<button class="mcard pk" data-g="' + c[0] + '" style="background-image:url(pk-' + PKIMG[c[0]] + '.jpg)"><b>' + T(c[1]) + '</b><small>' + T(c[2]) + '</small></button>').join('');
   $('modeCards').querySelectorAll('button').forEach(b => b.onclick = () => { SFX.play('click'); menu(b.dataset.g); });
   show('sMode');
 }
