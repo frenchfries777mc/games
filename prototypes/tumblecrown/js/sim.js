@@ -750,8 +750,8 @@ function stepPlayer(G, p, inp, dt) {
     if (p.rcCd > 0) p.rcCd -= dt;
     if (!alive(p) || G.phase !== 'play') p.rcT = 0;
     else if (inp && inp.rcl && !(p.rcCd > 0) && !(p.rcT > 0)) {
-      p.rcCd = D.RECALL_CD; const f = inp.rcl > 0 ? G.fl[inp.rcl - 1] : null;
-      if (f && f.own === p.team) { p.rcT = D.RECALL_T; p.rcF = inp.rcl - 1; ev(G, 'recall', { id: p.id, x: p.x, z: p.z }); }
+      const f = inp.rcl > 0 ? G.fl[inp.rcl - 1] : null;   // 우리 깃발이 아닌 곳을 잘못 눌렀을 때는 쿨타임이 돌지 않아요
+      if (f && f.own === p.team) { p.rcCd = D.RECALL_CD; p.rcT = D.RECALL_T; p.rcF = inp.rcl - 1; ev(G, 'recall', { id: p.id, x: p.x, z: p.z }); }
     }
     if (p.rcT > 0) {
       inp = {}; p.rcT -= dt;
