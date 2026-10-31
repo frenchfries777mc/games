@@ -3,7 +3,6 @@
 <html lang="ko">
 <head><style id="ffTap">#ffpModal .dc,#ffpModal .hn{display:none!important}html,body{touch-action:manipulation}</style>
 <meta charset="utf-8">
-<link rel="icon" type="image/svg+xml" href="https://frenchfries777mc.github.io/games/gamelogo/isleport.svg">
 <script src="https://frenchfries777mc.github.io/games/ff-lang.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <title>Isleport</title>
@@ -491,7 +490,7 @@ const TUT=[
  [P('다 자라면 ▼ 표시의 밭을 눌러 수확해요','When it is grown, tap the field with the ▼ to harvest'),s=>s.stats.harvest>=1],
  [P('마을 장터에서 수확한 것을 팔아요','Sell your harvest at the town market'),s=>(s.stats.shop||0)>=1],
  [P('항구에서 배에 짐을 싣고 보내요','Load a ship at the harbor and send it off'),s=>s.stats.sailed>=1]];
-const OUTMAX=12,BUILD=77;
+const OUTMAX=12,BUILD=78;
 const hasB=(s,b)=>s.slots.some(x=>x&&x.b===b);
 const CASTLE_T=[
  {n:P('망루','Watchtower'),d:P('돌로 쌓은 망루를 세워요. 세금이 걷히기 시작해요','A stone watchtower. Taxes start to come in'),cost:6000,rank:1},
@@ -619,6 +618,10 @@ A('nw1m',P('백만장자','Millionaire'),P('재산 1,000,000 모으기','Reach a
 const CROPK=Object.keys(CROPS),SPEC=['goldbarley','pomegranate','saffron','cloudcotton','seaweed','dragonfruit'],CROPK17=CROPK.filter(c=>!SPEC.includes(c));
 const ACHN={};ACH.forEach(a=>ACHN[a.id]=a);
 const NOTES=[
+ {date:'2026-10-31',build:'v0.2 build 78',title:P('활동 보너스','Activity bonus'),items:[
+  P('직접 플레이한 시간이 1분 쌓일 때마다 금화 보너스가 들어오고, 끊기지 않고 이어 하면 최대 5분 연속까지 보너스가 커짐','Every minute of hands-on play pays a gold bonus, growing up to a 5-minute streak if you keep going'),
+  P('90초 넘게 손대지 않으면 연속이 끊기고, 오프라인 수입은 그대로임','Idling for over 90 seconds resets the streak; offline income is unchanged')
+ ]},
  {date:'2026-10-31',build:'v0.2 build 77',title:P('첫 로딩 가볍게, 패치노트 번역 확대','Lighter first load, patch notes in more languages'),items:[
   P('번역 자료를 한국어로 시작할 때는 풀지 않고 다른 언어를 고를 때만 풀어서 시작이 빨라짐','Translation data is unpacked only when you pick a non-Korean language, so Korean starts faster'),
   P('패치노트를 15개 언어 목록으로 확대하고, 번역이 없는 문장은 영어로 보여 줌','Patch notes now cover 15 languages and fall back to English where a line is not translated yet')
@@ -1435,7 +1438,7 @@ function tick(dt){if(!S)return;const t=NOW();rescue(dt);
   if(S.visitor&&(S.visitor.until<t||S.visitor.fake))S.visitor=null;
   if(!S.visitor&&t>S.visNext){S.visNext=t+(150+Math.random()*90)*1000;if(S.stats.sold>0||S.stats.harvest>=20)genVisitor();}
   if(S.loan>0)S.loan+=S.loan*0.01/60*dt;
-  ensureBank(S);provTick(dt);postTick(dt);shopTick(dt);aqTick(dt);innTick(dt);preTick();qtTick();opTick();reTick(dt);gdTick(dt);hillTick(t);chalTick(t);dnTick(t);dnCritTick(t);muTick(t);if(!S.paper||t>=S.paper.t+PAPERMS){const first=!S.paper;genPaper();if(!first)toast(T('새 시세 신문이 나왔어요','A new price paper is out'));}
+  ensureBank(S);provTick(dt);postTick(dt);shopTick(dt);aqTick(dt);innTick(dt);preTick();qtTick();opTick();actTick();reTick(dt);gdTick(dt);hillTick(t);chalTick(t);dnTick(t);dnCritTick(t);muTick(t);if(!S.paper||t>=S.paper.t+PAPERMS){const first=!S.paper;genPaper();if(!first)toast(T('새 시세 신문이 나왔어요','A new price paper is out'));}
   if(S.ins.auto&&S.ins.until<t&&S.money>=insCost()*3&&S.ships.length)insBuy();
   if(S.dep>0)S.dep+=Math.min(S.dep,depCap())*DEPR/60*dt;
   {const k=S.stk;if(t-k.t>200*STKMS)k.t=t-200*STKMS;while(t>=k.t+STKMS){stkStep();k.t+=STKMS;}}
@@ -1460,7 +1463,7 @@ function evText(e){const s=Math.max(0,Math.round((e.until-NOW())/1000)),P=tx(POR
 const SAVEB='islandtrade.save.v2';const SAVEK=()=>UID?SAVEB+'.u.'+UID:SAVEB;
 function save(){if(!S||LOCKLOST)return;S.savedAt=Date.now();const b=MP.on&&MP.bak;try{localStorage.setItem(SAVEK(),JSON.stringify({S,DEM:b?b.DEM:DEM,EV:b?b.EV:EV,PROJ:b?b.PROJ:PROJ,CO:b?b.CO:CO}));}catch(e){}}
 function loadSave(){try{const t=JSON.parse(localStorage.getItem(SAVEK()));if(t&&t.S&&t.S.v===2){migrate(t.S);if(t.DEM)t.DEM.forEach(r=>{while(r.length<GOODS.length)r.push(1);});return t;}}catch(e){}return null;}
-function migrate(s){ensureBank(s);if(!s.deco)s.deco=[];if(!s.crew){s.crew=[];s.cwAcc=0;s.cwOK=true;}if(!s.store)s.store={stock:{},mult:1.2,till:0,rep:0,acc:0,fx:0};if(!s.found){s.maps=0;s.found=[];}if(!s.unl){s.unl={legacy:1};s.landed={};}if(!s.op)s.op={};if(!s.er)s.er={act:[],cd:{},done:0};if(!s.castle)s.castle={t:0,bank:0,t0:0};s.ships.forEach(q=>{if(q.st==='helm')q.st='dock';});if(!s.seeds)s.seeds={wheat:4};s.slots=s.slots||[];s.stats=s.stats||{};if(s.wk==null){s.wk=0;s.wkAcc=0;s.lastCrop='wheat';}if(s.slots.length<16)while(s.slots.length<16)s.slots.push(null);const ss=s.stats;ss.visits=ss.visits||0;ss.guests=ss.guests||0;ss.live=ss.live||0;if(s.own)return;const old=s.plots,pu=s.pu||8;s.plots=Array(48).fill(null);s.own=Array(48).fill(0);for(let i=0;i<24;i++){const j=FORDER[i];if(i<pu){s.own[j]=1;s.plots[j]=old[i]||null;}}s.pu=ownedN2(s);s.pens=s.pens.concat(Array(12).fill(null)).slice(0,12);s.peu=Math.max(4,s.peu||4);}
+function migrate(s){ensureBank(s);if(!s.deco)s.deco=[];if(!s.crew){s.crew=[];s.cwAcc=0;s.cwOK=true;}if(!s.store)s.store={stock:{},mult:1.2,till:0,rep:0,acc:0,fx:0};if(!s.found){s.maps=0;s.found=[];}if(!s.unl){s.unl={legacy:1};s.landed={};}if(!s.op)s.op={};if(!s.er)s.er={act:[],cd:{},done:0};if(!s.castle)s.castle={t:0,bank:0,t0:0};if(!s.act)s.act={acc:0,streak:0,total:0};s.ships.forEach(q=>{if(q.st==='helm')q.st='dock';});if(!s.seeds)s.seeds={wheat:4};s.slots=s.slots||[];s.stats=s.stats||{};if(s.wk==null){s.wk=0;s.wkAcc=0;s.lastCrop='wheat';}if(s.slots.length<16)while(s.slots.length<16)s.slots.push(null);const ss=s.stats;ss.visits=ss.visits||0;ss.guests=ss.guests||0;ss.live=ss.live||0;if(s.own)return;const old=s.plots,pu=s.pu||8;s.plots=Array(48).fill(null);s.own=Array(48).fill(0);for(let i=0;i<24;i++){const j=FORDER[i];if(i<pu){s.own[j]=1;s.plots[j]=old[i]||null;}}s.pu=ownedN2(s);s.pens=s.pens.concat(Array(12).fill(null)).slice(0,12);s.peu=Math.max(4,s.peu||4);}
 const ownedN2=s=>s.own.slice(0,48).reduce((a,b)=>a+b,0);
 let sb=null,UID=null,UNAME=null;
 const TABK='sb-islandtrade-tab',SHK='sb-kebsbuvuutilitwlvxzv-auth-token';
@@ -1574,6 +1577,14 @@ const castleOf=()=>S.castle||(S.castle={t:0,bank:0,t0:0});
 function castlePend(){const c=castleOf();if(!c.t)return c.bank||0;return Math.floor((c.bank||0)+Math.min(60,Math.max(0,NOW()-c.t0)/60000)*CASTLE_RATE[c.t]);}
 function castleBuild(){const c=castleOf(),nx=CASTLE_T[c.t];if(!nx||S.money<nx.cost||rankOf(S.stats.earned)<nx.rank)return false;c.bank=castlePend();spend(nx.cost);c.t++;c.t0=NOW();sfx('build');toast(T('성이 자랐어요: <b>{0}</b>','The castle grew: <b>{0}</b>',tx(nx.n)));return true;}
 function castleTax(){const c=castleOf(),v=castlePend();if(v<1)return;S.money+=v;S.stats.earned+=v;c.bank=0;c.t0=NOW();sfx('coin');toast(T('세금 {0}을 걷었어요','Collected {0} in taxes',fmt(v)+UG()));}
+
+/* ---- 활동 보너스: 직접 플레이한 시간이 1분 쌓일 때마다 금화, 이어 하면 점점 커져요 ---- */
+let LASTACT=0,ACTPREV=0;['keydown','pointerdown','touchstart'].forEach(e=>window.addEventListener(e,()=>{LASTACT=performance.now();},{passive:true}));
+function actTick(){if(!S)return;const n=performance.now(),dtr=Math.min(2000,n-(ACTPREV||n));ACTPREV=n;if(document.visibilityState!=='visible')return;
+  const a=S.act||(S.act={acc:0,streak:0,total:0});
+  if(n-LASTACT<20000)a.acc+=dtr;else if(n-LASTACT>90000&&a.streak){a.streak=0;a.acc=0;}
+  if(a.acc>=60000){a.acc-=60000;a.streak=Math.min(5,a.streak+1);const v=Math.round((10+netWorth()*0.0001)*(1+a.streak*0.3));S.money+=v;S.stats.earned+=v;a.total=(a.total||0)+v;sfx('coin');
+    toast(T('활동 보너스 +{0} ({1}분 연속)','Activity bonus +{0} ({1} min streak)',fmt(v)+UG(),a.streak));}}
 
 /* ================= 멀티플레이 ================= */
 const MP={on:false,host:false,code:'',me:'',hostId:'',players:{},T:null,cool:0,offers:{},inbox:[],slot:0,name:'',auc:[],chat:[],chatT:0,unread:0};
