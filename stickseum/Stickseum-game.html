@@ -288,6 +288,13 @@ if(document.readyState==='loading') document.addEventListener('DOMContentLoaded'
   #cardModal .cmBtns button{ padding:10px 18px; border-radius:9px; border:none; font-weight:800; cursor:pointer; background:#3fe0c5; color:#0b1d1a; }
   #cardModal .cmBtns button.alt{ background:transparent; border:1px solid #3a4152; color:#cfd3dc; }
   #modeListScreen.active{ display:flex !important; }
+  /* clan screen: its buttons share the .modeRow class with the tall mode cards, so they are put back to flat rows here */
+  #clanScreen .modeRow{ flex-direction:row; align-items:center; justify-content:flex-start; height:auto; min-width:0; flex:0 0 auto; padding:12px 16px; gap:12px; text-align:left; width:100%; }
+  #clanScreen #clanTabs .modeRow{ flex:1 1 0; width:auto; }
+  #clanScreen .modeRow .mrIcon{ width:36px; flex:none; text-align:center; }
+  #clanScreen .modeRow .mrText{ flex:1; width:auto; min-width:0; text-align:left; }
+  #clanScreen .modeRow .mrName{ font-size:16px; }
+  #clanScreen .modeRow .mrDesc{ margin-top:2px; }
   #modeListBody{ overflow-x:auto; overflow-y:hidden; display:flex; flex-direction:row; gap:12px; padding:6px 6px 12px 6px; min-height:0; align-items:stretch; }
   .modeRow{ position:relative; display:flex; flex-direction:column; align-items:center; justify-content:space-between; gap:12px; width:auto; min-width:128px; height:min(78vh,640px); padding:18px 8px 22px; border-radius:14px; text-align:center; border:1px solid var(--line); background-color:var(--panel-2); background-size:cover; background-position:center; color:var(--text); cursor:pointer; flex:1 0 128px; overflow:hidden; transition:transform .1s, border-color .15s, background .15s; }
   .modeRow:hover{ transform:translateY(-4px); border-color:#3fe0c5; background:#1d2a2a; }
@@ -5618,7 +5625,7 @@ function shuffle(arr){ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.
 /* ===== the version of this file =====
    Different BUILDS of one version meet and play together (room names online-v<ver>-<mode>-<map>-<slot>); different VERSIONS (the 0.x part) never do - the host refuses them (verNo) and the dispatcher answers busy.
    The build is only sent along with the join message and the lobby (for information); the corner of the screen shows it. */
-const GAME_BUILD='build 2026-10-31-v579';
+const GAME_BUILD='build 2026-10-31-v580';
 const GAME_VERSION='0.9', GAME_VERSION_NAME='은하 제국의 황혼';   // 게임 버전 이름: versions.json의 title과 같게 (빌드마다 바꾸지 않음)
 /* version (the 0.x part) vs build: different BUILDS of one version meet and play together, different VERSIONS never do (rooms, quick match, ranked, friend invites, dispatcher).
    Builds before 470 do not send a version, so it is read from the build number (0.9 started at build 458). */
