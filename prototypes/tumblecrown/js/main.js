@@ -1067,7 +1067,7 @@ function onEvent(e) {
     case 'ping': if (e.tm === myTm()) { const dg = e.pk === 'danger', col = dg ? 0xff5a4a : 0x5fd0ff; view.ring(e.x, e.z, 2.2, col, 1.4); view.ring(e.x, e.z, 1.2, 0xffffff, 1.0); view.column(e.x, e.z, col, 1.2); num(e.x, e.z, dg ? T('조심!') : T('여기 오세요'), dg ? '#ff7a6a' : '#8ae0ff', 1.3); SFX.play('click'); } break;
     case 'recall': view.column(e.x, e.z, 0x9af0e0); if (e.id === me && e.end) bigMsg(T('깃발로 귀환했어요'), '', 1400); break;
     case 'respawn': view.column(e.x, e.z, 0xff9a48); if (e.id === me) bigMsg(T('진지에서 다시 일어났어요'), '', 1800); break;
-    case 'flag': { const mine = e.own === myTm(), c = TEAMS[e.own].c; view.column(e.x, e.z, c, 1.4); view.ring(e.x, e.z, 6, c, 0.9); view.shock(e.x, e.z, 7, c, 0.6); view.flash(e.x, e.z, c, 120); bigMsg(mine ? T('깃발을 차지했어요!') : T('깃발을 빼앗겼어요!'), '', 1800); SFX.play(mine ? 'kill' : 'roar'); break; }
+    case 'flag': { const mine = e.own === myTm(), c = TEAMS[e.own].c; view.column(e.x, e.z, c, 1.4); view.ring(e.x, e.z, 6, c, 0.9); view.shock(e.x, e.z, 7, c, 0.6); view.flash(e.x, e.z, c, 120); if (mine || e.was === myTm()) { bigMsg(mine ? T('깃발을 차지했어요!') : T('깃발을 빼앗겼어요!'), '', 1800); SFX.play(mine ? 'kill' : 'roar'); } break; }   // 주인 없던 깃발을 상대가 차지한 건 빼앗긴 게 아니라서 알리지 않아요
     case 'capbuff': view.rise(e.x, e.z, 0xffd36a, 12, 2.2, 0.9, 5); view.ring(e.x, e.z, 1.8, 0xffd36a, 0.5); if (e.id === me) { toast(T('점령 효과! 5초 동안 이동 속도와 공격이 20% 올라요'), 2400); SFX.play('bless'); } break;
     case 'door': toast(e.open ? T('신전 문이 열렸어요! 가운데 깃발을 차지할 수 있어요') : T('신전 문이 닫혔어요'), 2400); SFX.play(e.open ? 'warn' : 'slam'); view.shake = Math.max(view.shake, 0.5); break;
     case 'storm': toast(e.on ? T('모래폭풍이 불어요! 멀리가 안 보여요') : T('모래폭풍이 잦아들었어요'), 2400); break;
