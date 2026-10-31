@@ -1,7 +1,7 @@
 /* Gatecrash · © 2026 Frenchfries777 · CC BY-NC-ND 4.0
    데이터: 상수, 무기, 맵 */
 'use strict';
-const VERSION = '0.1', BUILD = 21;
+const VERSION = '0.1', BUILD = 22;
 const TS = 16;                                   // 타일 한 칸 (px)
 const PH = { RUN: 120, ACC: 1500, AIR: 1000, G: 1500, JUMP: 440, CUT: 300, MAXF: 560, W: 10, H: 22, COY: 0.08, BUF: 0.12, BELT: 70, ICE: 180, LIFT: 130 };
 const MAX_HP = 100, RACERS = 4;
@@ -107,8 +107,8 @@ function floorsMap(F, roof, seed) {
       const x = c.x; res.push([x - 2, x + 9]);
       if (c.kind === 'lift') {
         b.fill(x, slab, x + 2, slab, '=');
-        for (let y = slab - 2; y <= slab + 5; y++) b.fill(x, y, x + 2, y, 'U');
-        b.deco('liftshaft', x, slab + 5, 3, 8);
+        for (let y = slab - 4; y <= slab + 5; y++) b.fill(x, y, x + 2, y, 'U');
+        b.deco('liftshaft', x, slab + 5, 3, 10);
       } else {
         b.fill(x, slab, x + 5, slab, '=');
         if (x < FW / 2) { b.fill(x, slab + 4, x + 2, slab + 4, '='); b.fill(x + 3, slab + 2, x + 5, slab + 2, '='); }
@@ -157,7 +157,7 @@ function longMap(segs, goal, seed) {
   segs.forEach(s => {
     if (s.k === 'up') {
       if (s.how === 'lift') {
-        for (let y = 10; y <= 19; y++) b.fill(x, y, x + 2, y, 'U'); b.deco('liftshaft', x, 19, 3, 10); b.fill(x + 3, 12, x + 7, 19, '#'); x += 8;
+        for (let y = 8; y <= 19; y++) b.fill(x, y, x + 2, y, 'U'); b.deco('liftshaft', x, 19, 3, 12); b.fill(x + 3, 12, x + 7, 19, '#'); x += 8;
       } else { b.fill(x, 18, x + 2, 19, '#'); b.fill(x + 3, 16, x + 5, 19, '#'); b.fill(x + 6, 14, x + 8, 19, '#'); b.fill(x + 9, 12, x + 9, 19, '#'); b.deco('stairwell', x, 19, 10, 8); x += 10; }
       b.room(x - (s.how === 'lift' ? 8 : 10), 3, x - 1, 11, s.theme || segs[0].theme); lvl = 1; return;
     }
