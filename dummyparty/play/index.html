@@ -1703,7 +1703,9 @@ body.playing #emoBar{display:flex}
    <div class="row"><input id="codeIn" maxlength="5" placeholder="방 코드" autocomplete="off"><button class="pb dark" id="joinBtn" style="flex:0 0 auto">들어가기</button></div>
    <div class="msg" id="homeMsg"></div>
   </aside>
-  <template id="patchnotes"><details class="notes" open><summary>패치노트 · v0.1 (b89)</summary>
+  <template id="patchnotes"><details class="notes" open><summary>패치노트 · v0.1 (b90)</summary>
+   <b>2026-10-31 · v0.1 · b90 · 닉네임을 눌러 프로필 보기</b>
+   <ul><li>친구 목록의 닉네임을 누르면 그 사람의 Dummy Party 프로필 카드가 열려요</li></ul>
    <b>2026-10-31 · v0.1 · b89 · 느린 화면 안내</b>
    <ul><li>경기 중 화면이 계속 느리면 「최적화」 버튼을 눌러 보라고 한 번 알려 줘요</li></ul>
    <b>2026-10-31 · v0.1 · b88 · 판 총평과 점수 표시</b>
@@ -1880,7 +1882,7 @@ body.playing #emoBar{display:flex}
    <ul><li>무너지는 발판 칸 수 대폭 증가 (19×10)와 용암 동굴 맵</li><li>10개 맵 전부 새로 그림 (관중석, 야자수 섬, 링, 정원 미로, 서커스, 우노 테이블 등)</li><li>글자 대신 아이콘·말풍선·이펙트로 표현 (무기, 아이템, 카드 효과, 시작 안내)</li><li>타격·폭발·물보라 효과와 화면 흔들림 추가</li></ul>
    <b>2026-10-19 · v0.1 · b1 · 첫 시험판</b>
    <ul><li>마네킹 미니게임 10개 추가 (장애물 달리기, 섬 밀치기, 싸우기, 병맛 미로, 체스 대난투, 폭탄 돌리기, 병맛 우노, 쇼윈도 얼음땡, 무너지는 발판, 컨베이어 서바이벌)</li><li>방 코드로 최대 8명 멀티플레이, 빈자리는 봇으로 채우기</li><li>판마다 10개 중 5개를 무작위로 골라 점수를 합산</li><li>PC 키보드와 휴대폰 터치 조작 지원</li></ul></details></template>
-  <p class="foot">2~8명 · 판마다 38개 미니게임 중 7개 · v0.1 b89 · <a href="../">← Dummy Party 사이트로</a></p>
+  <p class="foot">2~8명 · 판마다 38개 미니게임 중 7개 · v0.1 b90 · <a href="../">← Dummy Party 사이트로</a></p>
   <p class="foot"><span class="ff-copy">© 2026 Frenchfries777 · <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.ko" target="_blank" rel="noopener">CC BY-NC-ND 4.0</a></span></p>
  </div>
 </section>
@@ -9115,7 +9117,7 @@ function dpAsk(msg, okLabel, onOk) {
     function head(t) { var h = document.createElement('h4'); h.textContent = t; L.appendChild(h); }
     function row(id, name, tag) {
       var d = document.createElement('div'); d.className = 'r'; d.innerHTML = '<b></b><small></small><button class="pb gold" type="button">초대</button>';
-      d.querySelector('b').textContent = name; var bt = d.querySelector('button'), sm = d.querySelector('small');
+      d.querySelector('b').textContent = name; (function (nb) { nb.style.cursor = 'pointer'; nb.title = '프로필 보기'; nb.onclick = function () { SFX.play('pop'); try { FFAuth.openProfile(id, { game: 'dummyparty' }); } catch (e) { } }; })(d.querySelector('b')); var bt = d.querySelector('button'), sm = d.querySelector('small');
       function paint() {
         clearTimeout(bt._t); var v = invLive(id); bt.disabled = false; bt.textContent = v ? '취소' : '초대'; bt.className = 'pb' + (v ? '' : ' gold');
         sm.textContent = v ? '초대함 · ' + Math.max(1, Math.ceil((v.at + INV_T - Date.now()) / 60000)) + '분 남음' : tag;
