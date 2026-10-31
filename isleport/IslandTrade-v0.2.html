@@ -492,7 +492,7 @@ const TUT=[
  [P('다 자라면 ▼ 표시의 밭을 눌러 수확해요','When it is grown, tap the field with the ▼ to harvest'),s=>s.stats.harvest>=1],
  [P('마을 장터에서 수확한 것을 팔아요','Sell your harvest at the town market'),s=>(s.stats.shop||0)>=1],
  [P('항구에서 배에 짐을 싣고 보내요','Load a ship at the harbor and send it off'),s=>s.stats.sailed>=1]];
-const OUTMAX=12,BUILD=81;
+const OUTMAX=12,BUILD=82;
 const hasB=(s,b)=>s.slots.some(x=>x&&x.b===b);
 const CASTLE_T=[
  {n:P('망루','Watchtower'),d:P('돌로 쌓은 망루를 세워요. 세금이 걷히기 시작해요','A stone watchtower. Taxes start to come in'),cost:6000,rank:1},
@@ -501,6 +501,22 @@ const CASTLE_T=[
  {n:P('정원과 깃발','Gardens and banners'),d:P('안뜰 정원과 깃발을 꾸며 성을 완성해요','Courtyard gardens and banners to finish the castle'),cost:100000,rank:4}];
 const FEAST_CD=20*60000,FEAST_LEN=10*60000,FEAST_PAY=[0,0,0,300,600];
 const CASTLE_RATE=[0,20,50,110,220],CAS={x:600,y:1230,w:230,h:130};
+const ERCH=[
+ {n:P('바다에 띄운 편지','The letter in the bottle'),s:[
+  P('오래전에 병에 넣어 바다에 띄운 편지의 주인을 찾았어요. 이 편지를 전해 줄래요?','I found the owner of a letter set adrift long ago. Will you deliver it?'),
+  P('그분이 답장을 썼대요! 이 답장을 처음 보낸 사람에게 가져다주세요.','They wrote back! Please bring this reply to the sender.'),
+  P('두 분이 드디어 만나기로 했어요. 약속의 선물을 전해 주세요.','The two finally agreed to meet. Please deliver this gift.')],
+  end:P('병편지가 이어 준 두 사람이 마을에서 잔치를 열었어요!','The two connected by the bottle letter held a feast in town!')},
+ {n:P('날아간 요리책 한 쪽','The lost recipe page'),s:[
+  P('할머니의 비밀 요리책 한 쪽이 바람에 날아갔어요. 찾은 사람에게 이 메모를 전해 줄래요?','A page of Grandma\'s secret cookbook blew away. Can you pass this note to the finder?'),
+  P('요리책 쪽을 찾았대요! 이 감사 인사를 전해 주세요.','They found the page! Please pass on my thanks.'),
+  P('이제 요리책이 완성됐어요. 첫 시식 초대장을 전해 주세요.','The cookbook is whole again. Please deliver the invitation to the first tasting.')],
+  end:P('완성된 요리책으로 연 시식회가 큰 인기를 끌었어요!','The tasting with the finished cookbook was a hit!')},
+ {n:P('등대지기의 약속','The lighthouse keeper\'s promise'),s:[
+  P('등대지기가 기름이 떨어졌대요. 이 쪽지를 다른 섬 친구에게 전해 줄래요?','The lighthouse keeper ran out of oil. Can you take this note to a friend on another isle?'),
+  P('기름을 보내 준대요! 이 약속 증서를 전해 주세요.','They will send oil! Please deliver this promise.'),
+  P('등대가 다시 켜졌어요. 감사의 등불을 전해 주세요.','The lighthouse is lit again. Please deliver this thank-you lantern.')],
+  end:P('다시 켜진 등대가 밤바다의 배들을 안전하게 이끌어요!','The relit lighthouse guides ships safely through the night!')}];
 const rankOf=e=>{let r=0;RANKS.forEach((x,i)=>{if(e>=x[0])r=i;});return r;};
 /* 업적: id, 이름, 설명, 조건 */
 const ACH=[];
@@ -621,6 +637,10 @@ A('nw1m',P('백만장자','Millionaire'),P('재산 1,000,000 모으기','Reach a
 const CROPK=Object.keys(CROPS),SPEC=['goldbarley','pomegranate','saffron','cloudcotton','seaweed','dragonfruit'],CROPK17=CROPK.filter(c=>!SPEC.includes(c));
 const ACHN={};ACH.forEach(a=>ACHN[a.id]=a);
 const NOTES=[
+ {date:'2026-10-31',build:'v0.2 build 82',title:P('이어지는 이야기 의뢰','Story errand chains'),items:[
+  P('주민 심부름을 세 번 끝내면 세 번에 걸쳐 이어지는 이야기 의뢰가 나오기 시작함','After finishing three errands, story errands that span three steps start to appear'),
+  P('이야기 의뢰는 보상이 1.5배이고 마지막 단계를 끝내면 큰 보너스를 받음 (이야기는 세 가지)','Story errands pay 1.5x and the final step gives a big bonus (three stories)')
+ ]},
  {date:'2026-10-31',build:'v0.2 build 81',title:P('섬마다 특산 요리','A signature dish for each port'),items:[
   P('여섯 항구마다 그 항구의 특산품으로 만드는 특산 요리가 생겨, 그 항구에서 한 번 팔면 식당에서 만들 수 있음','Each of the six ports has a signature dish made from its specialty goods; sell there once to unlock it at the diner'),
   P('특산 요리는 일반 요리보다 30% 비싸게 팔려요','Signature dishes sell for 30% more than normal dishes')
@@ -1590,12 +1610,16 @@ function opTick(){const t=NOW();if(t-opLast<4000)return;opLast=t;if(!S||!S.op)re
 /* ---- 주민 심부름 ---- */
 const ERITEM=[P('편지','letter'),P('소포','parcel'),P('약초 꾸러미','bundle of herbs'),P('수선한 도구','repaired tool'),P('달콤한 간식','sweet snack')];
 const erTo=e=>({name:NPCNM[(e.to*4+e.tj)%NPCNM.length],role:NPCRL[ISLNPC[e.to][e.tj]].n});
-function erOffer(k,j){S.er=S.er||{act:[],cd:{},done:0};if(S.er.act.length>=3||NOW()<(S.er.cd[k+':'+j]||0))return null;
+function erCh(){S.er=S.er||{act:[],cd:{},done:0};return S.er.chs||(S.er.chs={});}
+function erOffer(k,j){const o=erOffer0(k,j);if(!o)return o;const er=S.er,c=erCh();
+  if((er.done||0)>=3&&!er.act.some(e=>e.ch!=null)){const id=ERCH.findIndex((x,i)=>(c[i]||0)<3);if(id>=0){o.ch=id;o.st=c[id]||0;o.rw=Math.round(o.rw*1.5/10)*10;}}return o;}
+function erOffer0(k,j){S.er=S.er||{act:[],cd:{},done:0};if(S.er.act.length>=3||NOW()<(S.er.cd[k+':'+j]||0))return null;
   const rk=rankOf(S.stats.earned),cs=[];for(let q=0;q<6;q++)if(q!==k&&ISLNPC[q]&&ISLNPC[q].length&&rk>=PORTS[q].rank)cs.push(q);if(!cs.length)return null;
   const to=cs[Math.floor(Math.random()*cs.length)],tj=Math.floor(Math.random()*ISLNPC[to].length);
   return {from:k,fj:j,to,tj,it:Math.floor(Math.random()*ERITEM.length),rw:Math.round((180+rk*120)*(.8+Math.random()*.5)/10)*10};}
 function erAccept(off){if(!off||S.er.act.length>=3)return false;S.er.act.push(off);S.er.cd[off.from+':'+off.fj]=NOW()+300000;sfx('coin');toast(T('심부름을 맡았어요','You took the errand'));return true;}
-function erDeliver(idx){const e=S.er.act[idx];if(!e)return false;S.er.act.splice(idx,1);S.money+=e.rw;S.stats.earned+=e.rw;S.er.done=(S.er.done||0)+1;sfx('ach');toast(T('심부름 완료! 보상 {0}','Errand done! Reward {0}',fmt(e.rw)+UG()));return true;}
+function erDeliver(idx){const e=S.er.act[idx];if(!e)return false;S.er.act.splice(idx,1);S.money+=e.rw;S.stats.earned+=e.rw;S.er.done=(S.er.done||0)+1;sfx('ach');toast(T('심부름 완료! 보상 {0}','Errand done! Reward {0}',fmt(e.rw)+UG()));
+  if(e.ch!=null){const c=erCh();c[e.ch]=(e.st||0)+1;if(c[e.ch]>=3){const b=Math.round((1500+rankOf(S.stats.earned)*500)/10)*10;S.money+=b;S.stats.earned+=b;toast(T('이야기 완결! {0} 보너스 {1}','Story complete! {0} bonus {1}',tx(ERCH[e.ch].end),fmt(b)+UG()));}}return true;}
 
 /* ---- 영주의 성 ---- */
 const castleOf=()=>S.castle||(S.castle={t:0,bank:0,t0:0});
@@ -3327,8 +3351,8 @@ MODS.errand=m=>{const o=m.wk,R0=NPCRL[o.role],er=S.er=S.er||{act:[],cd:{},done:0
   const here=er.act.map((e,i)=>({e,i})).filter(x=>x.e.to===ISL.k&&(x.e.tj===o.j||!ISL.walkers.some(w=>w.j===x.e.tj)));
   let h=`<h2>${tx(o.nm)} <small>${tx(R0.n)}</small></h2><div class="muted">${m.line||''}</div>`;
   here.forEach(x=>{h+=`<div class="card"><div class="grow">${T('{0}을(를) 전해 줘요','Deliver the {0}',tx(ERITEM[x.e.it]))}<div class="muted">${T('보상 {0}','Reward {0}',fmt(x.e.rw)+UG())}</div></div><button class="pb sm gold" data-act="erdeliver:${x.i}">${T('전해 주기','Deliver')}</button></div>`;});
-  if(m.off){const t=erTo(m.off);h+=`<div class="card"><div class="grow">${T('{0}을(를) {1}({2})에게 전해 줄래요?','Could you take this {0} to {1} ({2})?',tx(ERITEM[m.off.it]),tx(t.name)+' · '+tx(t.role),islName(m.off.to))}<div class="muted">${T('보상 {0}','Reward {0}',fmt(m.off.rw)+UG())}</div></div><button class="pb sm gold" data-act="eraccept">${T('맡기','Accept')}</button></div>`;}
-  if(er.act.length){h+=`<h5>${T('받은 심부름 {0}/3','Errands {0}/3',er.act.length)}</h5>`+er.act.map(e=>{const t=erTo(e);return `<div class="muted">${tx(ERITEM[e.it])} → ${tx(t.name)} (${tx(t.role)}), ${islName(e.to)} · ${fmt(e.rw)}${UG()}</div>`;}).join('');}
+  if(m.off){const t=erTo(m.off);h+=`<div class="card"><div class="grow">${m.off.ch!=null?`<div class="muted">「${tx(ERCH[m.off.ch].n)}」 ${m.off.st+1}/3 · ${tx(ERCH[m.off.ch].s[m.off.st])}</div>`:''}${T('{0}을(를) {1}({2})에게 전해 줄래요?','Could you take this {0} to {1} ({2})?',tx(ERITEM[m.off.it]),tx(t.name)+' · '+tx(t.role),islName(m.off.to))}<div class="muted">${T('보상 {0}','Reward {0}',fmt(m.off.rw)+UG())}</div></div><button class="pb sm gold" data-act="eraccept">${T('맡기','Accept')}</button></div>`;}
+  if(er.act.length){h+=`<h5>${T('받은 심부름 {0}/3','Errands {0}/3',er.act.length)}</h5>`+er.act.map(e=>{const t=erTo(e);return `<div class="muted">${e.ch!=null?'「'+tx(ERCH[e.ch].n)+'」 '+(e.st+1)+'/3 · ':''}${tx(ERITEM[e.it])} → ${tx(t.name)} (${tx(t.role)}), ${islName(e.to)} · ${fmt(e.rw)}${UG()}</div>`;}).join('');}
   return h;};
 ACT.eraccept=()=>{if(MOD&&erAccept(MOD.off))MOD.off=null;updateHud();renderModal();};
 ACT.erdeliver=a=>{erDeliver(+a);updateHud();renderModal();};
