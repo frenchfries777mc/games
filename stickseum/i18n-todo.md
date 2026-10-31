@@ -48,3 +48,5 @@ patchnotes.json | v578 title | 은하 제국의 황혼 | build 578 | 2026-10-31
 patchnotes.json | v578 items[0] | 시즌 패스 보상 아이콘 교체: 칭호, 플레이어 XP를 새 로고로 표시 | build 578 | 2026-10-31
 patchnotes.json | v579 title | 은하 제국의 황혼 | build 579 | 2026-10-31
 patchnotes.json | v579 items[0] | 시즌 패스·보상 창의 랜덤 캐릭터 XP, 선택 XP 아이콘을 새 로고로 교체 | build 579 | 2026-10-31
+patchnotes.json | v580 title | 은하 제국의 황혼 | build 580 | 2026-10-31
+patchnotes.json | v580 items[0] | 클랜 찾기·내 클랜·클랜 만들기 버튼이 세로로 비정상적으로 길어지던 문제 수정 | build 580 | 2026-10-31
