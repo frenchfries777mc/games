@@ -1190,7 +1190,6 @@ function stepEnemy(G, e, dt) {
   // 잠든 적: 사람이 보이는 곳까지 오면 깨어나요
   if (e.st === 'sleep') {
     if (e.k === 'boss') return;
-    if (e.mon) e.hp = Math.min(e.maxhp, e.hp + e.maxhp * 0.03 * dt);   // 자리에서 쉬는 중립 괴물은 금세 다시 차올라요
     for (const p of G.players) if (alive(p) && dist(p, e) < WAKE_R && lineClear(e.x, e.z, p.x, p.z)) { wake(G, e); break; }
     if (e.st === 'sleep') return;
   }
@@ -1203,7 +1202,7 @@ function stepEnemy(G, e, dt) {
     if (!e.mon) for (const p of G.players) if (alive(p) && dist(p, e) < WAKE_R * 0.8 && lineClear(e.x, e.z, p.x, p.z)) { e.st = 'idle'; return; }
     if (d < 0.8) { e.st = 'sleep'; if (!e.mon) e.hp = e.maxhp; e.moving = false; return; }
     const a = navDir(e.x, e.z, e.hx, e.hz, G.t); if (a == null) { e.x = e.hx; e.z = e.hz; return; }
-    e.a = a; e.x += Math.cos(a) * E.speed * 1.3 * dt; e.z += Math.sin(a) * E.speed * 1.3 * dt; e.moving = true; e.hp = Math.min(e.maxhp, e.hp + e.maxhp * (e.mon ? 0.03 : 0.2) * dt);
+    e.a = a; e.x += Math.cos(a) * E.speed * 1.3 * dt; e.z += Math.sin(a) * E.speed * 1.3 * dt; e.moving = true; e.hp = Math.min(e.maxhp, e.hp + e.maxhp * (e.mon ? 0.004 : 0.2) * dt);   // 중립 괴물은 아주 천천히 회복해요
     return;
   }
   if (e.life != null && (e.life -= dt) <= 0) { e.hp = 0; ev(G, 'ekill', { x: e.x, z: e.z, en: e.k, id: e.id }); return; }   // 소환된 해골은 18초 뒤 사라져요
