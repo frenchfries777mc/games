@@ -13318,9 +13318,9 @@ function frRender(){
   const acc=FR.list.filter(f=>f.status==='accepted'),inc=FR.list.filter(f=>f.inc),out=FR.list.filter(f=>f.out);
   const st=f=>{const m=frMeta(f.id);return m?(m.room?2:1):0;};
   acc.sort((a,b)=>st(b)-st(a)||a.name.localeCompare(b.name));
-  const nm=n=>`<b data-noi18n="1">${esc(n)}</b>`;
+  const nm=(n,id)=>`<b data-noi18n="1"${id?` data-frprof="${esc(id)}" title="프로필 보기" style="cursor:pointer"`:''}>${esc(n)}</b>`;
   let h=`<h3>친구<small style="margin-left:8px;opacity:.7">${acc.filter(f=>st(f)>0).length} / ${acc.length}</small></h3>`;
-  for(const f of inc)h+=`<div class="achrow" style="display:flex;align-items:center;gap:6px;flex-wrap:wrap"><span style="flex:1">👋 ${nm(f.name)} 님의 친구 요청</span><button class="btn sm" data-fracc="${esc(f.row)}">수락</button><button class="btn sm ghost" data-frdec="${esc(f.row)}">거절</button></div>`;
+  for(const f of inc)h+=`<div class="achrow" style="display:flex;align-items:center;gap:6px;flex-wrap:wrap"><span style="flex:1">👋 ${nm(f.name,f.id)} 님의 친구 요청</span><button class="btn sm" data-fracc="${esc(f.row)}">수락</button><button class="btn sm ghost" data-frdec="${esc(f.row)}">거절</button></div>`;
   if(!acc.length)h+=`<p class="hint">아직 친구가 없어요</p>`;
   for(const f of acc){
     const s=st(f),m=frMeta(f.id),room=m&&m.room;
@@ -13331,9 +13331,9 @@ function frRender(){
     else if(s===1&&!inGuest&&!myRoom)btn=(f.reqT&&Date.now()-f.reqT<30000?`<span class="hint">요청함</span>`:`<button class="btn sm ghost" data-frreq="${esc(f.id)}">참가 요청</button>`)+inv;
     else btn=inv;
     const del=FR.rmArm===f.row?`<button class="btn sm ghost" data-frrm="${esc(f.row)}">정말 삭제?</button>`:`<button class="btn sm ghost" data-frarm="${esc(f.row)}">삭제</button>`;
-    h+=`<div class="achrow${s?' on':''}" style="display:flex;align-items:center;gap:6px;flex-wrap:wrap"><div style="flex:1;min-width:120px">${s?'🟢':'⚪'} ${nm(f.name)}<span style="margin-left:8px;opacity:.8">${s===2?'방 열림':s===1?'Beaconfall 접속 중':'오프라인'}</span></div>${btn}${del}</div>`;
+    h+=`<div class="achrow${s?' on':''}" style="display:flex;align-items:center;gap:6px;flex-wrap:wrap"><div style="flex:1;min-width:120px">${s?'🟢':'⚪'} ${nm(f.name,f.id)}<span style="margin-left:8px;opacity:.8">${s===2?'방 열림':s===1?'Beaconfall 접속 중':'오프라인'}</span></div>${btn}${del}</div>`;
   }
-  for(const f of out)h+=`<div class="achrow" style="display:flex;align-items:center;gap:6px"><span style="flex:1">${nm(f.name)}</span><span class="hint">요청 보냄</span></div>`;
+  for(const f of out)h+=`<div class="achrow" style="display:flex;align-items:center;gap:6px"><span style="flex:1">${nm(f.name,f.id)}</span><span class="hint">요청 보냄</span></div>`;
   h+=`<div class="seedrow" style="margin-top:8px"><input class="field" id="fradd" maxlength="24" placeholder="친구 아이디 또는 닉네임" autocomplete="off"><button class="btn sm" data-fradd ${FR.busy?'disabled':''}>친구 요청</button></div>${FR.msg?`<p class="hint">${esc(FR.msg)}</p>`:''}`;
   box.innerHTML=h;
   const ni=box.querySelector('#fradd');ni.value=FR.q;if(focus){ni.focus();ni.setSelectionRange(ni.value.length,ni.value.length);}
@@ -13343,6 +13343,7 @@ function frRender(){
   box.querySelectorAll('[data-fracc]').forEach(b=>b.onclick=e=>{e.stopPropagation();frRespond(b.dataset.fracc,true);});
   box.querySelectorAll('[data-frdec]').forEach(b=>b.onclick=e=>{e.stopPropagation();frRespond(b.dataset.frdec,false);});
   box.querySelectorAll('[data-frjoin]').forEach(b=>b.onclick=e=>{e.stopPropagation();frJoin(b.dataset.frjoin);});
+  box.querySelectorAll('[data-frprof]').forEach(b=>b.onclick=e=>{e.stopPropagation();try{if(window.FFProfile&&sb)FFProfile.open(sb,b.dataset.frprof,{game:'beaconfall'});}catch(er){}});
   box.querySelectorAll('[data-frreq]').forEach(b=>b.onclick=e=>{e.stopPropagation();const f=FR.list.find(x=>x.id===b.dataset.frreq);if(f)frSendReq(f);});
   box.querySelectorAll('[data-frinv]').forEach(b=>b.onclick=e=>{e.stopPropagation();const f=FR.list.find(x=>x.id===b.dataset.frinv);if(f)frSendInvite(f);});
   box.querySelectorAll('[data-frarm]').forEach(b=>b.onclick=e=>{e.stopPropagation();FR.rmArm=b.dataset.frarm;frRender();});
