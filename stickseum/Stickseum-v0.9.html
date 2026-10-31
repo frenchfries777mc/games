@@ -4299,6 +4299,16 @@ function buildXmView(t){
   }
   return v;
 }
+function xmTargetBias(p,o){          // objective modes: who a bot would rather shoot (a factor on the distance, smaller = more wanted)
+  if(!xm) return 1;
+  switch(xm.id){
+    case 'crownhold': return (xm.crown.holder===o.id) ? 0.2 : 1;                                    // the crown holder is the prey
+    case 'koth': { const z=xm.zone; return (z && Math.abs(o.x-z.x)<=(z.w||200)/2+20 && Math.abs(o.y-z.y)<60) ? 0.5 : 1; }      // whoever stands on the hill
+    case 'bounty': return (xm.tgt===o.id) ? 0.25 : 1;                                                  // the one with the price on his head
+    case 'rush': return ((xm.sc[o.id]||0)>=4) ? 0.6 : 1;                                               // a coin carrier drops half of his coins when he falls
+  }
+  return 1;
+}
 function xmBotGoal(p,target,d){
   if(!xm) return null;
   const near=target && d<260;
@@ -4309,13 +4319,16 @@ function xmBotGoal(p,target,d){
       if(target && d<340) return null;
       let b=null, bd=1e9; for(const rid of xm.rebels){ const q=players[rid]; if(!q||!q.alive) continue; const dd=Math.hypot(q.x-c.x,q.y-c.y); if(dd<bd){ bd=dd; b=q; } }
       return (b && bd<900) ? {x:b.x,y:b.y} : {x:c.x+(((p.teamSlot||0)%5)-2)*70, y:c.y}; }
-    case 'koth': return near ? null : {x:xm.zone.x, y:xm.zone.y};
-    case 'rush': { let b=null, bd=1e9; for(const c of xm.coins){ const dd=Math.hypot(c.x-p.x,c.y-p.y); if(dd<bd){ bd=dd; b=c; } } return (b && !near) ? {x:b.x,y:b.y+26} : null; }
-    case 'turf': { if(near) return null; let b=null, bd=1e9; for(let i=0;i<xm.segs.length;i++){ if(xm.own[i]===p.team) continue; const s=xm.segs[i], dd=Math.hypot(s.x+s.w/2-p.x,s.y-p.y); if(dd<bd){ bd=dd; b=s; } } return b?{x:b.x+b.w/2,y:b.y}:null; }
+    case 'koth': { const z=xm.zone, inZ=Math.abs(p.x-z.x)<=(z.w||200)/2+20 && Math.abs(p.y-z.y)<60; return (inZ || (target && d<150)) ? ((inZ && target && d>=150)?{x:z.x,y:z.y}:null) : {x:z.x, y:z.y}; }      // the hill: get on it and stay on it, only a fight on top of me leaves it
+    case 'rush': { let b=null, bd=1e9; for(const c of xm.coins){ const dd=Math.hypot(c.x-p.x,c.y-p.y); if(dd<bd){ bd=dd; b=c; } } return (b && !(target && d<140)) ? {x:b.x,y:b.y+26} : null; }
+    case 'turf': { if(target && d<150) return null; let b=null, bd=1e9; for(let i=0;i<xm.segs.length;i++){ if(xm.own[i]===p.team) continue; const s=xm.segs[i], dd=Math.hypot(s.x+s.w/2-p.x,s.y-p.y); if(dd<bd){ bd=dd; b=s; } } return b?{x:b.x+b.w/2,y:b.y}:null; }
     case 'freeze': { if(near) return null; let b=null, bd=1e9; for(const k in xm.fz){ const q=players[k]; if(!q || q.team!==p.team) continue; const f=xm.fz[k], dd=Math.hypot(f.x-p.x,f.y-p.y); if(dd<bd){ bd=dd; b=f; } } return b?{x:b.x,y:b.y}:null; }
     case 'vip': { if(near) return null; const ek=players[xm.kings[1-p.team]]; return (ek && ek.alive && p.id!==xm.kings[p.team]) ? {x:ek.x,y:ek.y} : null; }
-    case 'bounty': { const b=players[xm.tgt]; return (!near && b && b.alive && b.id!==p.id) ? {x:b.x,y:b.y} : null; }
-    case 'crownhold': { const C=xm.crown; if(C.holder===p.id) return null; if(!C.holder) return {x:C.x, y:C.y+30}; const h=players[C.holder]; return (!near && h && h.alive) ? {x:h.x,y:h.y} : null; }
+    case 'bounty': { const b=players[xm.tgt]; return (b && b.alive && b.id!==p.id && !(target && d<150 && target.id!==b.id)) ? {x:b.x,y:b.y} : null; }
+    case 'crownhold': { const C=xm.crown, h=C.holder?players[C.holder]:null;
+      if(C.holder===p.id){ const rs=(d<700)?botRestSpot(p):null; return rs?{x:rs.x,y:rs.y}:null; }        // holding the crown: keep away from everybody (and still shoot whoever comes)
+      if(!C.holder) return {x:C.x, y:C.y+30};                                                          // nobody has it: go and take it
+      return (h && h.alive && !(target && d<150 && target.id!==h.id)) ? {x:h.x,y:h.y} : null; }       // somebody has it: hunt the holder (only a fight right on top of me comes first)
   }
   return null;
 }
@@ -5599,7 +5612,7 @@ function shuffle(arr){ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.
 /* ===== the version of this file =====
    Different BUILDS of one version meet and play together (room names online-v<ver>-<mode>-<map>-<slot>); different VERSIONS (the 0.x part) never do - the host refuses them (verNo) and the dispatcher answers busy.
    The build is only sent along with the join message and the lobby (for information); the corner of the screen shows it. */
-const GAME_BUILD='build 2026-10-31-v567';
+const GAME_BUILD='build 2026-10-31-v575';
 const GAME_VERSION='0.9', GAME_VERSION_NAME='은하 제국의 황혼';   // 게임 버전 이름: versions.json의 title과 같게 (빌드마다 바꾸지 않음)
 /* version (the 0.x part) vs build: different BUILDS of one version meet and play together, different VERSIONS never do (rooms, quick match, ranked, friend invites, dispatcher).
    Builds before 470 do not send a version, so it is read from the build number (0.9 started at build 458). */
@@ -7047,7 +7060,7 @@ const MODE_LIST=[
   {id:'tournament', icon:'🏆', desc:'16명이 1대1로 겨루는 토너먼트, 끝까지 살아남으면 우승'},
   {id:'vault', icon:'🔐', desc:'상대 기지의 금고를 먼저 부수면 승리'}
 ];
-function kstDateKey(){ const d=new Date(Date.now()+9*3600*1000); return d.getUTCFullYear()+'-'+(d.getUTCMonth()+1)+'-'+d.getUTCDate(); }      // (the day changes at 0:00 Korean time, the same for everybody)
+function kstDateKey(){ const d=new Date(Date.now()); return d.getUTCFullYear()+'-'+(d.getUTCMonth()+1)+'-'+d.getUTCDate(); }      // (the day changes at 0:00 GMT, the same for everybody (owner 10-31; the name is from when it was Korean time))
 const MODE_GROUPS=[{tag:'클래식', ids:['duel','br','duo','ffa'], n:3}, {tag:'팀', ids:['ctf','gold','vault','conquest','team'], n:2}, {tag:'특수', ids:['defend','raid','tournament'], n:1}];
 function dailyModeLineup(){        // today's modes: 3 of the classic 4, 2 of the 5 team modes, 1 of the 3 special ones (picked from the date, so it is the same for everybody and different every day)
   const key=kstDateKey(); let h=17; for(let k=0;k<key.length;k++) h=(h*31+key.charCodeAt(k))>>>0;
@@ -7137,8 +7150,8 @@ function buildModeList(){
   body.scrollLeft=0;
 }
 let modeResetTimer=null, modeResetDay='';
-function modeResetText(){          // the list changes at 0:00 Korean time, the same moment for everybody
-  const ms=86400000-((Date.now()+9*3600*1000)%86400000), m=Math.max(1,Math.ceil(ms/60000)), h=Math.floor(m/60), mm=m%60;
+function modeResetText(){          // the list changes at 0:00 GMT, the same moment for everybody
+  const ms=86400000-(Date.now()%86400000), m=Math.max(1,Math.ceil(ms/60000)), h=Math.floor(m/60), mm=m%60;
   return '⏳ '+(h>0?h+'시간 ':'')+mm+'분 뒤에 모드 목록 초기화';
 }
 function modeResetTick(){
@@ -10002,7 +10015,7 @@ document.getElementById('botAddBtn').onclick=privateBotAdd;
 document.getElementById('botRemoveBtn').onclick=privateBotRemove;
 document.getElementById('botLevelBtn').onclick=privateBotCycleLevel;
 let botFillShowAt=null; // when the bots will start joining (the host announces it; every player's screen counts down to it)
-const LOBBY_TIPS=['오늘의 모드 목록은 한국 시간 자정에 바뀌어요.','하루 첫 승리에는 보너스 골드가 붙어요.','군인의 지뢰는 상대에게도 보여요.','Esc를 누르면 열린 창이 닫혀요.','온라인 방에서 15초 동안 사람이 안 들어오면 봇이 빈자리를 채워요.','연속으로 처치하면 더블 킬, 트리플 킬 표시가 떠요.'];
+const LOBBY_TIPS=['오늘의 모드 목록은 GMT 자정에 바뀌어요.','하루 첫 승리에는 보너스 골드가 붙어요.','군인의 지뢰는 상대에게도 보여요.','Esc를 누르면 열린 창이 닫혀요.','온라인 방에서 15초 동안 사람이 안 들어오면 봇이 빈자리를 채워요.','연속으로 처치하면 더블 킬, 트리플 킬 표시가 떠요.'];
 function updateCountdownUI(){
   const tp=document.getElementById('lobbyTip');
   if(tp){ if(!started){ tp.style.display='block'; tp.textContent='💡 '+LOBBY_TIPS[Math.floor(Date.now()/8000)%LOBBY_TIPS.length]; } else tp.style.display='none'; }
@@ -10066,7 +10079,7 @@ function startHostPeer(idString, mapId, mode, code, attemptInfo, modeId){
     peer=p; isHost=true; myId=id;
     MAP = MAP_TEMPLATES[mapId]; currentMapId=mapId; currentMode=mode; gameMode = modeId || gameMode || 'ffa';
     weaponMode = (mode==='private') ? selectedWeaponMode : 'normal'; // random weapons are private-room only
-    roomOpts = (mode==='private') ? cleanOpts(selectedOpts) : {balance:false, vote:false};
+    roomOpts = (mode==='private') ? cleanOpts(selectedOpts) : {balance:(mode==='online'), vote:false};       // (online team matches split the teams by level too)
     roomRules = (mode==='online' && onlineEvent) ? cleanRules(currentEvent().rules) : Object.assign({},RULE_DEFAULT);      // (private rooms no longer have custom rules)
     if((MODES[gameMode]||{}).rules) roomRules=cleanRules(Object.assign({},roomRules,MODES[gameMode].rules));
     conns={}; players={}; started=false;
@@ -10396,7 +10409,7 @@ function onHostData(conn, data){
     broadcastLobby(); updatePlayerListUI(); evaluateAutoStart();
     return;
   }
-  if(data.t==='input'){ const p=players[peerId]; if(p){ p.input=data.input; p.lastSeen=Date.now(); if(Array.isArray(data.chat)) for(const m of data.chat.slice(0,3)){ if(m && typeof m.text==='string') handleChatMessage(peerId, p.name, m.text, m.cid); } } return; }
+  if(data.t==='input'){ const p=players[peerId]; if(p){ if(p.afkBot){ if(afkInputActive(data.input)) afkBack(p); else { p.lastSeen=Date.now(); return; } } p.input=data.input; p.lastSeen=Date.now(); if(Array.isArray(data.chat)) for(const m of data.chat.slice(0,3)){ if(m && typeof m.text==='string') handleChatMessage(peerId, p.name, m.text, m.cid); } } return; }
   if(data.t==='shootOnce'){ const p=players[peerId]; if(p){ p.lastSeen=Date.now(); if(p.weapon!=='flamethrower') tryFire(p, data.angle, performance.now()); } return; }
   if(data.t==='passBomb'){ const p=players[peerId]; if(p){ p.lastSeen=Date.now(); tryPassBomb(p, data.angle, performance.now()); } return; }
   if(data.t==='parkourPush'){ const p=players[peerId]; if(p){ p.lastSeen=Date.now(); tryParkourPush(p, data.angle, performance.now()); } return; }
@@ -10603,8 +10616,13 @@ function rebalanceTeams(){
   if(roomOpts.balance){
     const humans=list.filter(p=>!p.isBot), avg=humans.length?humans.reduce((a,p)=>a+(p.level||1),0)/humans.length:1;
     const str=p=>p.isBot?avg:(p.level||1), n=numTeamsFor(currentMapId,gameMode)||2;
-    const sorted=list.slice().sort((a,b)=>str(b)-str(a)); let dir=1, t=0;
-    for(const p of sorted){ p.team=t; t+=dir; if(t>=n){ t=n-1; dir=-1; } else if(t<0){ t=0; dir=1; } }      // (snake draft: the strongest, then the next two to the other team, ...)
+    const groups={}, keys=[];
+    for(const p of list){ const k=p.party?('p:'+p.party):('s:'+p.id); if(!groups[k]){ groups[k]=[]; keys.push(k); } groups[k].push(p); }       // (a party stays together)
+    const gs=k=>groups[k].reduce((a,p)=>a+str(p),0); keys.sort((a,b)=>gs(b)-gs(a));
+    const cap=Math.ceil(list.length/n), cnt=new Array(n).fill(0), sum=new Array(n).fill(0);
+    for(const k of keys){ let t=-1; for(let i=0;i<n;i++){ if(cnt[i]+groups[k].length>cap) continue; if(t<0 || sum[i]<sum[t]) t=i; }
+      if(t<0){ t=0; for(let i=1;i<n;i++) if(cnt[i]<cnt[t]) t=i; }
+      for(const p of groups[k]){ p.team=t; cnt[t]++; sum[t]+=str(p); } }      // (the strongest first, each to the team that is weaker so far)
     try{ pushSystemLine('⚖️ 레벨을 보고 팀을 자동으로 나눴어요'); }catch(e){}
   } else partyAssignTeams(list);
 }
@@ -14118,6 +14136,7 @@ function botPickTarget(p, ai){
     if(o.invis && d>160) continue;        // a cloaked player can only be noticed up close
     if(o.darkSub) continue;               // nobody can see (or hit) 쿠루스 inside his darkness
     if(o.id===ai.tgt) d*=0.5;             // stay on the current target instead of flickering between two
+    if(xm) d*=xmTargetBias(p,o);
     if(o.isVault && xm && xm.id==='vault') d*=1.0;      // 금고 약탈: the vault is a real objective, a bot near it shoots it unless a player is much closer
     if(ai.personality==='revenge' && ai.grudge===o.id && !(ai.pstuck && ai.pstuck.until>(ai.nowMs||0)/1000)) d*=0.2;   // the avenger wants the one who killed it (unless it is giving up for a while: see botPersonalityStep)
     else if(ai.personality==='rival'){ if(ai.rivalId===o.id) d*=0.25; else if(!o.isBot) d*=0.6; }   // the rival wants its human (somebody right on top of it still gets attention)
@@ -14746,6 +14765,24 @@ let BOT_START_GRACE_MS=1200;   // bots stand still for this long once the match 
 // Bots act only while a match is really being played. The game loop keeps calling hostTick for the host even before a match has
 // started (and in the next room of the same session), so without this gate the bots - which pick their weapon the instant the
 // weapon phase opens - were already fighting during the lobby and while the people were still choosing their weapon.
+// ---- 잠수: a person who has not touched anything for AFK_SEC seconds while alive in a running match is played by a bot until they move again ----
+const AFK_SEC=30;
+function afkInputActive(i){ return !!(i && (i.left||i.right||i.jump||i.shoot||i.dash||i.down)); }
+function afkBack(p){ p.afkBot=false; p.lastAct=Date.now(); p.ai=null; pushFx('skill', p.x, p.y-70, performance.now(), {color:'#9ad0ff', name:'돌아왔어요'}); }
+function afkWatch(p, t){
+  if(p.isBot || p.id===myId || p.isDummy || p.isVault || p.isBoss || p.isMinion) return;
+  const now=Date.now(), i=p.input||{};
+  const ang=(i.angle===undefined)?0:i.angle, moved=afkInputActive(i) || (p.afkAng!==undefined && Math.abs(ang-p.afkAng)>0.03);
+  p.afkAng=ang;
+  if(p.afkBot){ if(!p.alive) return; return; }
+  if(moved || !p.alive || !p.weapon || practiceMode || onlineRanked || onlineClan || currentMode!=='online' || !BOT_MODES[gameMode] || gameMode==='duel' || gameMode==='tournament'){ p.lastAct=now; return; }
+  if(p.lastAct===undefined){ p.lastAct=now; return; }
+  if(now-p.lastAct<AFK_SEC*1000) return;
+  const tmp=addBot({force:true, quiet:true}); if(!tmp) { p.lastAct=now; return; }
+  p.ai=tmp.ai; delete players[tmp.id]; p.afkBot=true; p.lastAct=now;
+  p.input={left:false,right:false,jump:false,angle:ang,shoot:false,dash:false};
+  pushFx('skill', p.x, p.y-70, performance.now(), {color:'#ffd34d', name:'자리 비움 · 봇이 대신 플레이'});
+}
 function botsThink(dt, t){
   const live = started && gameLoopStarted && !weaponPhase && !matchEnded;
   if(!live){ botLiveSince=null; return; }
@@ -14753,7 +14790,8 @@ function botsThink(dt, t){
   const grace = (t-botLiveSince) < BOT_START_GRACE_MS;
   for(const id in players){
     const p=players[id];
-    if(!p.isBot || !p.alive || !p.ai || !p.weapon) continue;
+    afkWatch(p, t);
+    if(!(p.isBot || p.afkBot) || !p.alive || !p.ai || !p.weapon) continue;
     if(p.isDummy){ botDummyThink(p, t, dt); continue; }
     if(grace){ const i=p.input; i.left=i.right=i.shoot=i.jump=i.dash=i.down=false; continue; }
     botThink(p, t, dt);
@@ -15123,7 +15161,7 @@ function tickHook(dt, t){
       if(Math.abs(tg.x-p.x)<=PLAYER_W+14 && Math.abs(tg.y-p.y)<=PLAYER_H){             // arrived: shove, stun and hurt him
         p.hook=null; p.vx=0; p.vy=0; p.kbX=0;
         skillDamage(p, tg, HOOK_HIT_DMG, t, {kb:HOOK_HIT_KB, up:HOOK_HIT_UP, stun:HOOK_HIT_STUN});
-        pushFx('skillring', tg.x, tg.y-40, t, {color:'#ffd34d', r:70});
+        pushFx('skillring', tg.x, tg.y-40, t, {color:'#ffd34d', r:70}); try{ pvPop(p, 'bow', t); }catch(e){}
         continue;
       }
     }
@@ -15146,9 +15184,9 @@ const PASSIVES={
   bat:{n:'역전 홈런',c:'#ffd34d'}, shuriken:{n:'그림자 연계',c:'#c0c0ff'}, shotgun:{n:'명사수의 위협',q:1}, gloves:{n:'맷집 폭발',c:'#ff6a4d'},
   grenade:{n:'폭발의 여진',c:'#ff8a3d'}, bazooka:{n:'화염 포화',c:'#ff7a2a'}, rifle:{n:'지뢰 족쇄',c:'#9bd37f'}, dracula:{n:'피의 만찬',c:'#ff4d6a'},
   gambler:{n:'승부사의 감',c:'#ffe27a'}, flamethrower:{n:'불길 질주',c:'#ff8a3d'}, portalgun:{n:'',q:1}, dagger:{n:'그림자 일격',c:'#c0c0ff'},
-  samurai:{n:'일섬 연참',c:'#ff5a6a'}, tionis:{n:'피의 연극',c:'#ff4d6a'}
+  samurai:{n:'일섬 연참',c:'#ff5a6a'}, tionis:{n:'피의 연극',c:'#ff4d6a'}, bow:{n:'추격의 화살',c:'#9ad0ff'}
 };
-const PASSIVE_DESC={pistol:"6번째 발사마다 탄환이 붉게 변하고 피해와 크기가 1.25배", smg:"연발을 모두 맞히면 주위 상대를 밀치고 3초 동안 이동속도 1.75배", lightsaber:"공격을 튕겨내면 다음 공격 피해 +20%", horemheb:"모래바람에 맞은 상대를 3초 안에 공격하면 피해 1.5배", pizarro:"4단계가 되면 치유 효과 2배, 이동속도 1.25배", puppeteer:"실이 이어진 상대를 조종하면 자폭 피해 +10", kan:"독이 4번 쌓인 상대는 이동속도 20% 감소", sword:"돌진 베기가 아무도 못 맞히고 끝나면 스킬 쿨타임 절반", bat:"상대를 4번 연속 맞히면 다음 공격이 매우 큰 넉백과 피해 1.25배", boomerang:"돌아오는 길에 맞히면 피해 1.5배", shuriken:"대쉬 후 표창을 맞히면 대쉬 쿨타임 0.3초 감소", shotgun:"알갱이를 모두 맞히면 상대 이동속도 20% 감소 (3초)", rifle:"지뢰를 밟은 상대는 3초 동안 이동속도 10% 감소", gloves:"피격마다 받는 피해가 1%씩 줄고, 10%가 되면 초기화되며 2.5초 동안 이동속도 2배와 공격 피해 1.5배", grenade:"폭발 점프로 피해를 주면 착지 때 근처 상대를 밀치고 기절", bazooka:"스킬 로켓 3발이 모두 맞으면 그 자리에 3초 동안 화염 (닿으면 초당 3 피해)", dagger:"암습 후 첫 일격이 맞으면 1초 동안 은신", dracula:"처치하면 체력 25 회복", gambler:"칩이 3개 이상이면 공격 피해 +10%", magiccard:"스킬 카드 5장이 모두 한 상대에게 맞으면 기절", kurus:"어둠 탈출 후 3초 동안 이동속도 1.5배", wizard:"마법진 안에서는 스킬 밀쳐내는 힘 2배", vacuum:"스택 1개마다 이동속도 +5%", pirate:"대포 비행으로 맞히면 스킬 쿨타임 3초 감소", cleon:"근위병이 살아 있는 동안 받는 피해 15% 감소", pel:"드론 6대가 모두 살아 있으면 드론 공격 속도 1.2배", portalgun:"탄환이 튕길 때마다 피해 증가", flamethrower:"내가 남긴 불길 위에서는 이동속도 1.3배와 초당 체력 3 회복", samurai:"거합으로 2명 이상 베면 거합 쿨타임 절반", tionis:"채혈 주사기가 맞으면 체력 10 회복"};      // the codex lines of the passives (the name comes from PASSIVES)
+const PASSIVE_DESC={bow:"스킬이 상대에게 맞으면 상대에게 끌려가 밀치고 기절시킴", pistol:"6번째 발사마다 탄환이 붉게 변하고 피해와 크기가 1.25배", smg:"연발을 모두 맞히면 주위 상대를 밀치고 3초 동안 이동속도 1.75배", lightsaber:"공격을 튕겨내면 다음 공격 피해 +20%", horemheb:"모래바람에 맞은 상대를 3초 안에 공격하면 피해 1.5배", pizarro:"4단계가 되면 치유 효과 2배, 이동속도 1.25배", puppeteer:"실이 이어진 상대를 조종하면 자폭 피해 +10", kan:"독이 4번 쌓인 상대는 이동속도 20% 감소", sword:"돌진 베기가 아무도 못 맞히고 끝나면 스킬 쿨타임 절반", bat:"상대를 4번 연속 맞히면 다음 공격이 매우 큰 넉백과 피해 1.25배", boomerang:"돌아오는 길에 맞히면 피해 1.5배", shuriken:"대쉬 후 표창을 맞히면 대쉬 쿨타임 0.3초 감소", shotgun:"알갱이를 모두 맞히면 상대 이동속도 20% 감소 (3초)", rifle:"지뢰를 밟은 상대는 3초 동안 이동속도 10% 감소", gloves:"피격마다 받는 피해가 1%씩 줄고, 10%가 되면 초기화되며 2.5초 동안 이동속도 2배와 공격 피해 1.5배", grenade:"폭발 점프로 피해를 주면 착지 때 근처 상대를 밀치고 기절", bazooka:"스킬 로켓 3발이 모두 맞으면 그 자리에 3초 동안 화염 (닿으면 초당 3 피해)", dagger:"암습 후 첫 일격이 맞으면 1초 동안 은신", dracula:"처치하면 체력 25 회복", gambler:"칩이 3개 이상이면 공격 피해 +10%", magiccard:"스킬 카드 5장이 모두 한 상대에게 맞으면 기절", kurus:"어둠 탈출 후 3초 동안 이동속도 1.5배", wizard:"마법진 안에서는 스킬 밀쳐내는 힘 2배", vacuum:"스택 1개마다 이동속도 +5%", pirate:"대포 비행으로 맞히면 스킬 쿨타임 3초 감소", cleon:"근위병이 살아 있는 동안 받는 피해 15% 감소", pel:"드론 6대가 모두 살아 있으면 드론 공격 속도 1.2배", portalgun:"탄환이 튕길 때마다 피해 증가", flamethrower:"내가 남긴 불길 위에서는 이동속도 1.3배와 초당 체력 3 회복", samurai:"거합으로 2명 이상 베면 거합 쿨타임 절반", tionis:"채혈 주사기가 맞으면 체력 10 회복"};      // the codex lines of the passives (the name comes from PASSIVES)
 function passiveInfo(wid){ const d=PASSIVE_DESC[wid]; if(!d) return null; const p=PASSIVES[wid]||{}; return {name:p.n||({pistol:'붉은 탄환', wizard:'마법진의 파동', shotgun:'명사수의 위협', portalgun:'튕김 강화'})[wid]||'', desc:d}; }
 function pvPop(p, key, tMs){ const d=PASSIVES[key]; if(!d || d.q || !p || !p.alive || p.isClone) return; const tS=tMs/1000; if(!p.pvAt) p.pvAt={}; if(p.pvAt[key]>tS-1.0) return; p.pvAt[key]=tS; pushFx('passive', p.x, p.y-96, tMs, {name:d.n, color:d.c}); }
 function pvEdge(p, key, on, tMs){ if(!p.pvOn) p.pvOn={}; if(on && !p.pvOn[key]) pvPop(p, key, tMs); p.pvOn[key]=!!on; }

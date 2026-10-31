@@ -1,8 +1,8 @@
 // Tumblecrown · © 2026 Frenchfries777 · CC BY-NC-ND 4.0
 // 화면 흐름, 조작, 멀티(친구 초대, PeerJS), 저장
 import { View } from './render.js';
-import { createGame, step, snapshot, chooseBless, carryOver, koPlayer, INTRO_T, HV_DELAY, wallClamp, setupRange } from './sim.js';
-import { useMode, PUSH_N, PUSH_T, TEAMS, FLAG_T, RESP_T, ARENA_THEMES, MODES, ROLES, ROLE_IDS, COLORS, BOT_NAMES, MAX_PLAYERS, BLESSINGS, CHAPTERS, CH, FOES, MAP, ACHIEVEMENTS, TALK, GEAR_TIERS, GEAR_COST, COSMETICS, MIDB, WEEKLY, weekInfo, VERSION, BUILD, roleLevel, CHAR_RANKS, charRankFor, MASTERY_PT, streakBonusFor, LORE, COMBOS, CURSES, DEEP, DEEP_I, TALK_X, ROLE_PUZ, flagShown } from './data.js';
+import { createGame, step, snapshot, chooseBless, carryOver, koPlayer, INTRO_T, HV_DELAY, wallClamp, setupRange, callBots } from './sim.js';
+import { useMode, RECALL_CD, pushTime, PUSH_N, PUSH_T, TEAMS, FLAG_T, RESP_T, ARENA_THEMES, MODES, ROLES, ROLE_IDS, COLORS, BOT_NAMES, MAX_PLAYERS, BLESSINGS, CHAPTERS, CH, FOES, MAP, ACHIEVEMENTS, TALK, GEAR_TIERS, GEAR_COST, COSMETICS, MIDB, WEEKLY, weekInfo, VERSION, BUILD, roleLevel, CHAR_RANKS, charRankFor, MASTERY_PT, streakBonusFor, LORE, COMBOS, CURSES, DEEP, DEEP_I, TALK_X, ROLE_PUZ, flagShown } from './data.js';
 import { collide as mapCollide, areaAt, floorCell, MW, MH, CS, cw, useChapter, chapterIndex, SOPEN, openSecret, resetSecrets, hiddenCell, GOPEN, openGate, setDoors, DSTATE, PDOWN, dropPillar, LIFTH, liftOk, CUT } from './map.js';
 import * as SFX from './sfx.js';
 import * as MUS from './music.js';
@@ -95,6 +95,11 @@ function killBanner(name) {
   const el = $('killBanner'); el.innerHTML = '<b>' + T('처치!') + '</b> ' + esc(name) + (S.kN > 1 ? '<i>' + T('{0}연속 처치', S.kN) + ' · ' + T('기술 대기 절반') + '</i>' : '');
   el.classList.remove('on'); void el.offsetWidth; el.classList.add('on'); clearTimeout(killBanner._t); killBanner._t = setTimeout(() => el.classList.remove('on'), 2200);
 }
+// 더블·트리플 킬: 가운데에 크고 화려하게 (연속 수가 클수록 색과 번쩍임이 커져요)
+function multiBanner(nm, n) {
+  const el = $('multiBanner'); el.className = ''; el.dataset.n = n; el.innerHTML = '<i class="mr"></i><b>' + esc(nm) + '!</b><u></u>';
+  void el.offsetWidth; el.classList.add('on'); clearTimeout(multiBanner._t); multiBanner._t = setTimeout(() => el.classList.remove('on'), 2400);
+}
 function killFeed(txt, mine) {
   const box = $('killFeed'), d = document.createElement('div'); d.className = 'kf' + (mine ? ' me' : ''); d.textContent = txt; box.prepend(d);
   while (box.children.length > 4) box.lastChild.remove();
@@ -174,13 +179,27 @@ function autoJoin() { const c = (qs.get('join') || '').toUpperCase().replace(/[^
 }
 
 /* ---------- 메뉴 ---------- */
-document.querySelectorAll('#menu button, #menu2 button').forEach(b => b.addEventListener('click', () => { SFX.unlock(); SFX.play('click'); menu(b.dataset.go); }));
+document.querySelectorAll('#menu button').forEach(b => b.addEventListener('click', () => { SFX.unlock(); SFX.play('click'); menu(b.dataset.go); }));
 document.querySelectorAll('[data-back]').forEach(b => b.addEventListener('click', () => { SFX.play('click'); if (S.scr === 'sRoom' || S.info) leaveNet(); show('sLobby'); paintWho(); }));
+// 로비 버튼 3개: 누르면 모드 선택처럼 카드를 골라요
+const PICKS = {
+  play: ['플레이', [['match', '온라인 게임', '다른 플레이어와 대결해요'], ['solo', '봇과 연습', '봇과 함께 해봐요'], ['range', '연습장', '혼자 마음껏 연습해요']]],
+  chars: ['캐릭터', [['weps', '직업·조작', '직업 정보와 조작 방법'], ['ward', '치장·스킨', '스킨과 치장 아이템'], ['daily', '일일 임무', '오늘의 임무']]],
+  conf: ['설정', [['settings', '설정', '소리·화면 설정'], ['notes', '패치노트', '바뀐 점 보기'], ['site', '사이트로 돌아가기', '사이트로 나가요']]]
+};
+const PKIMG = { match: 'online', solo: 'bots', range: 'range', daily: 'daily', weps: 'weps', ward: 'ward', settings: 'conf', notes: 'notes', site: 'site' };
+function paintPick(k) {
+  const p = PICKS[k]; document.querySelector('#sMode h2').textContent = T(p[0]);
+  $('modeCards').innerHTML = p[1].map(c => '<button class="mcard pk" data-g="' + c[0] + '" style="background-image:url(pk-' + PKIMG[c[0]] + '.jpg)"><b>' + T(c[1]) + '</b><small>' + T(c[2]) + '</small></button>').join('');
+  $('modeCards').querySelectorAll('button').forEach(b => b.onclick = () => { SFX.play('click'); menu(b.dataset.g); });
+  show('sMode');
+}
 function menu(go) {
   homeMsg('');
+  if (PICKS[go]) { paintPick(go); return; }
   if (go === 'solo') { leaveNet(); S.net = 'solo'; S.slots = [meSlot()]; newBots(); openRoom(); }
   if (go === 'range') { leaveNet(); S.net = 'solo'; S.range = true; S.slots = [meSlot()]; newBots(); openRoom(); }
-  else if (go === 'match') { if (needLogin()) return; paintModes(); show('sMode'); }
+  else if (go === 'match') { if (needLogin()) return; document.querySelector('#sMode h2').textContent = T('모드 선택'); paintModes(); show('sMode'); }
   else if (go === 'ward') { S.wardTab = S.wardTab || 'skin'; S.wardSel = null; paintWard(); show('sWard'); view.cos = SAVE.cos.on; view.setPreview(SAVE.role, COLORS[SAVE.col | 0].c); }
   else if (go === 'weps') { leaveNet(); S.net = 'solo'; S.info = true; S.slots = [meSlot()]; openRoom(); }   // 직업·조작: 시작 버튼 없이 직업을 눌러 정보만 봐요
   else if (go === 'daily') { paintDaily(); show('sDaily'); }
@@ -365,7 +384,13 @@ function roster() {
 }
 S.botN = 0; S.botRoles = null; S.mapSel = Math.min(CHAPTERS.length - 1, (SAVE.mapSel == null ? -1 : SAVE.mapSel | 0));
 $('ctlBtn').onclick = () => { SFX.play('click'); paintWepInfo(); show('sWeps'); };
-$('mapBtn').onclick = () => { SFX.play('click'); S.mapSel = S.mapSel + 1 >= CHAPTERS.length ? -1 : S.mapSel + 1; SAVE.mapSel = S.mapSel; save(); paintRoom(); };
+$('mapBtn').onclick = () => {
+  SFX.play('click');
+  $('mapList').innerHTML = [-1].concat(CHAPTERS.map((c, i) => i)).map(i => `<button class="btn${i === S.mapSel ? ' sel' : ''}" data-m="${i}">${i < 0 ? T('무작위') : CHAPTERS[i].title}</button>`).join('');
+  $('mapWin').classList.add('on');
+};
+$('mapList').onclick = e => { const b = e.target.closest('[data-m]'); if (!b) return; SFX.play('click'); S.mapSel = +b.dataset.m; SAVE.mapSel = S.mapSel; save(); $('mapWin').classList.remove('on'); paintRoom(); };
+$('mapX').onclick = () => { SFX.play('click'); $('mapWin').classList.remove('on'); };
 function pick() {
   if (S.net !== 'solo' && S.ph !== 'pick') return;
   if (S.net === 'guest') { send({ t: 'pick', role: SAVE.role, col: SAVE.col | 0 }); const m = S.slots.find(s => s.uid === UID); if (m) { m.role = SAVE.role; m.col = SAVE.col | 0; } paintRoom(); return; }
@@ -571,7 +596,7 @@ function hostMsg(c, d) {
   }
   const uid = c._uid; if (!uid) return;
   if (d.t === 'rdy' && !S.G && S.ph === 'pick') { S.rdy[uid] = !S.rdy[uid]; hostLobby(); if (S.scr === 'sRoom') paintRoom(); }
-  else if (d.t === 'ping' && S.G) { const p = S.G.players.find(q => q.uid === uid); if (p && !p.dead && (p.pgT || 0) < S.G.t && isFinite(d.x) && isFinite(d.z)) { p.pgT = S.G.t + 2; S.G.ev.push({ k: 'ping', id: p.id, tm: p.team, x: +d.x, z: +d.z, pk: d.pk === 'danger' ? 'danger' : 'go' }); } }
+  else if (d.t === 'ping' && S.G) { const p = S.G.players.find(q => q.uid === uid); if (p && !p.dead && (p.pgT || 0) < S.G.t && isFinite(d.x) && isFinite(d.z)) { p.pgT = S.G.t + 2; S.G.ev.push({ k: 'ping', id: p.id, tm: p.team, x: +d.x, z: +d.z, pk: d.pk === 'danger' ? 'danger' : 'go' }); if (d.pk !== 'danger') callBots(S.G, p.team, +d.x, +d.z); } }
   else if (d.t === 'pick' && !S.G && S.ph === 'pick') { const sl = S.slots.find(s => s.uid === uid); if (sl) { if (ROLES[d.role]) sl.role = d.role; const col = +d.col | 0; if (COLORS[col] && !S.slots.some(s => s !== sl && s.col === col)) sl.col = col; hostLobby(); if (S.scr === 'sRoom') paintRoom(); } }
   else if (d.t === 'i' && S.G) { const pid = c._pid; if (!pid) return; const r = S.rin[pid] || (S.rin[pid] = {}); const once = { q: r.q || d.q, e: r.e || d.e, r: r.r || d.r, roll: r.roll || d.roll, skip: r.skip || d.skip, atkR: r.atkR || d.atkR, rcl: r.rcl || d.rcl }; Object.assign(r, d, once); }
   else if (d.t === 'b' && S.G) { if (c._pid) chooseBless(S.G, c._pid, d.id); }
@@ -634,7 +659,7 @@ function beginGame(prevG) {
   startClient();
 }
 function startClient() {
-  talkReset(); if (!S.G) resetSecrets(); S.overT = 0; S.cleared = false; S.built = false; S.area = -2; S.seenA = {}; S.voted = false; S.lastPh = ''; S.saved = false; S.resultShown = false; S.everDown = false; S.local = null; S.nums = []; S.evq = []; S.wonT = 0; S.lastBless = null; S.solvedP = {}; S.flagGot = 0;
+  hlReset(); talkReset(); if (!S.G) resetSecrets(); S.overT = 0; S.cleared = false; S.built = false; S.area = -2; S.seenA = {}; S.voted = false; S.lastPh = ''; S.saved = false; S.resultShown = false; S.everDown = false; S.local = null; S.nums = []; S.evq = []; S.wonT = 0; S.lastBless = null; S.solvedP = {}; S.flagGot = 0;
   if (S.G) S.snap = snapshot(S.G);
   unlock('first');
   setHud(false); show('sIntro'); $('introCh').textContent = CH.title; $('introLine').classList.remove('on'); S.introIdx = -1;
@@ -659,7 +684,7 @@ function awardHonor() {
   const p = myP(); if (!p) return;
   let h = Math.round((S.snap.honor[S.me] || 0) * ((p.b || []).indexOf('honor') >= 0 ? 1.25 : 1));
   const gain = S.net === 'solo' ? 0 : h;   // 봇과 연습은 tC를 못 얻어요
-  SAVE.honor += gain; const won = p.tm === S.snap.wtm; S.lastRt = null; if (S.G && S.G.mode === 'rank' && S.net !== 'solo') { const rb = SAVE.rating | 0, rg = won ? RANK_WIN : -RANK_LOSS; SAVE.rating = Math.max(0, rb + rg); S.lastRt = { gain: SAVE.rating - rb, total: SAVE.rating }; } S.dailyGain = 0; if (S.net !== 'solo') dailyAward(p.role, p.kl | 0, won); SAVE.pts = SAVE.pts || {}; SAVE.winStreak = won ? (SAVE.winStreak | 0) + 1 : 0; const kp = (p.kl | 0) * MASTERY_PT.kill, wp = won ? MASTERY_PT.win : 0, sp = won ? streakBonusFor(SAVE.winStreak) : 0, mg = kp + wp + sp + MASTERY_PT.match, mb = SAVE.pts[p.role] || 0; SAVE.pts[p.role] = mb + mg; S.lastMp = { role: p.role, gain: mg, k: p.kl | 0, won, sp, st: SAVE.winStreak, total: mb + mg, up: charRankFor(mb + mg).name !== charRankFor(mb).name }; const xg = 20 + (p.kl | 0) * 5 + (won ? 30 : 0); if (!S.range) { const st = SAVE.st = SAVE.st || {}; st.matches = (st.matches | 0) + 1; if (won) st.wins = (st.wins | 0) + 1; st.kills = (st.kills | 0) + (p.kl | 0); st.flags = (st.flags | 0) + (p.fcp | 0); st.mon = (st.mon | 0) + (p.mkp | 0); st.pl = st.pl || {}; st.pl[p.role] = (st.pl[p.role] | 0) + 1;
+  SAVE.honor += gain; const won = p.tm === S.snap.wtm; S.lastRt = null; if (S.G && S.G.mode === 'rank' && S.net !== 'solo') { const rb = SAVE.rating | 0, rg = won ? RANK_WIN : -RANK_LOSS; SAVE.rating = Math.max(0, rb + rg); S.lastRt = { gain: SAVE.rating - rb, total: SAVE.rating }; } S.dailyGain = 0; if (S.net !== 'solo') dailyAward(p.role, p.kl | 0, won); SAVE.pts = SAVE.pts || {}; SAVE.winStreak = won ? (SAVE.winStreak | 0) + 1 : 0; const kp = (p.kl | 0) * MASTERY_PT.kill + (p.as | 0) * MASTERY_PT.assist, wp = won ? MASTERY_PT.win : 0, sp = won ? streakBonusFor(SAVE.winStreak) : 0, mg = Math.round((kp + wp + sp + MASTERY_PT.match) * (S.mode === 'quick' && S.net !== 'solo' ? 0.75 : 1) * 0.56), mb = SAVE.pts[p.role] || 0; SAVE.pts[p.role] = mb + mg; S.lastMp = { role: p.role, gain: mg, k: p.kl | 0, a: p.as | 0, won, sp, st: SAVE.winStreak, total: mb + mg, up: charRankFor(mb + mg).name !== charRankFor(mb).name }; const xg = 20 + (p.kl | 0) * 5 + (won ? 30 : 0); if (!S.range) { const st = SAVE.st = SAVE.st || {}; st.matches = (st.matches | 0) + 1; if (won) st.wins = (st.wins | 0) + 1; st.kills = (st.kills | 0) + (p.kl | 0); st.flags = (st.flags | 0) + (p.fcp | 0); st.mon = (st.mon | 0) + (p.mkp | 0); st.pl = st.pl || {}; st.pl[p.role] = (st.pl[p.role] | 0) + 1;
     if (st.wins >= 10) unlock('wins10'); if (st.kills >= 50) unlock('kill50'); if (st.kills >= 300) unlock('kill300'); if (st.flags >= 10) unlock('flag10'); if (st.flags >= 100) unlock('flag100'); if (st.mon >= 1) unlock('mon1'); if (st.mon >= 10) unlock('mon10'); if (st.matches >= 50) unlock('match50'); if ((p.kl | 0) >= 5) unlock('kill5'); }
   S.lastXp = xg; S.lastLv = roleLevel(SAVE.xp[p.role]); SAVE.xp[p.role] = (SAVE.xp[p.role] || 0) + xg; S.lastLv = roleLevel(SAVE.xp[p.role]) > S.lastLv ? roleLevel(SAVE.xp[p.role]) : 0; if (roleLevel(SAVE.xp[p.role]) >= 10) unlock('lv10'); if (SAVE.pts[p.role] >= 530) unlock('gold'); save();   // 직업 경험치: 한 판 20 + 쓰러뜨림당 5 + 승리 30
   return gain;
@@ -698,8 +723,9 @@ $('gl').addEventListener('mousedown', e => {
   if (e.button !== 1) return; e.preventDefault();
   if (!inGame() || S.scr !== '' || !S.snap || S.rcOpen || !S.G && S.net !== 'guest' || (S.pingT || 0) > performance.now()) return;
   const m = myP(); if (!m || m.dd) return; S.pingT = performance.now() + 2000;
-  const g = view.groundAt(e.clientX, e.clientY), foe = S.snap.pl.find(q => q.tm !== m.tm && !q.dn && !q.dd && Math.hypot(q.x - g.x, q.z - g.z) < 3.5), pk = foe ? 'danger' : 'go', x = foe ? foe.x : g.x, z = foe ? foe.z : g.z;
-  if (S.net === 'guest') send({ t: 'ping', x, z, pk }); else S.G.ev.push({ k: 'ping', id: m.id, tm: m.tm, x, z, pk });
+  const R = S.mmR, inMini = R && e.clientX >= R.x && e.clientX <= R.x + R.w && e.clientY >= R.y && e.clientY <= R.y + R.h;   // 미니맵 위에서 누르면 그 자리에 찍어요
+  const g = inMini ? { x: (e.clientX - R.x) / R.sc * CS, z: (e.clientY - R.y) / R.sc * CS } : view.groundAt(e.clientX, e.clientY), foe = S.snap.pl.find(q => q.tm !== m.tm && !q.dn && !q.dd && Math.hypot(q.x - g.x, q.z - g.z) < 3.5), pk = foe ? 'danger' : 'go', x = foe ? foe.x : g.x, z = foe ? foe.z : g.z;
+  if (S.net === 'guest') send({ t: 'ping', x, z, pk }); else { S.G.ev.push({ k: 'ping', id: m.id, tm: m.tm, x, z, pk }); if (pk === 'go') callBots(S.G, m.tm, x, z); }
 });
 const keyDown = (...ks) => ks.some(k => K[k]);
 // 휴대폰
@@ -840,6 +866,8 @@ function pickBlessIdx(i) {
 function skillFx(e) {
   const c = Math.cos(e.a || 0), s = Math.sin(e.a || 0), mine = e.id === S.me;
   if (mine && ['block', 'pierce', 'ward', 'trap', 'rain', 'heal'].includes(e.s)) view.shake = Math.max(view.shake, 0.35);
+  { const sp = S.G && S.G.players.find(q => q.id === e.id), rc = sp && ROLES[sp.role] ? parseInt(ROLES[sp.role].color.slice(1), 16) : 0;   // 스킬을 쓰는 순간 직업 색 오라가 번쩍해요
+    if (rc) { view.ring(e.x, e.z, 2.6, rc, 0.45); view.shock(e.x, e.z, 3, rc, 0.35); view.column(e.x, e.z, rc, 0.4); view.flash(e.x, e.z, rc, 60); } }
   switch (e.s) {
     case 'block': view.dome(e.x + c * 0.6, e.z + s * 0.6, 1.9, 0xffe08a, 1.2); view.burst(e.x + c, 1.6, e.z + s, 0xffe08a, 10, 5, 0.35, 0.1); view.flash(e.x, e.z, 0xffe08a, 70); SFX.play('clang'); break;
     case 'rapidfx': { const col = 0xffc060; view.burst(e.x + c * 2.2, 1.9, e.z + s * 2.2, col, 10, 6, 0.3, 0.1); view.flash(e.x + c * 2.2, e.z + s * 2.2, col, 90); for (const o of [-0.05, 0, 0.05]) view.streak(e.x, e.z, e.a + o, 40, col, 0.25, 0.3); SFX.play('slam'); break; }
@@ -916,7 +944,9 @@ function onEvent(e) {
     case 'swing': if (e.role === 'spearman' && !e.n) { const c = Math.cos(e.a), s = Math.sin(e.a); view.streak(e.x + c * 0.8, e.z + s * 0.8, e.a, 3.6, 0xe8f0ff, 0.12, 0.35); view.burst(e.x + c * 3.6, 1.2, e.z + s * 3.6, 0xe8f0ff, 5, 6, 0.2, 0.08); SFX.play('swing'); break; }
       if (e.role === 'necro') { const c = Math.cos(e.a), s = Math.sin(e.a); const w = e.w || 5; view.streak(e.x, e.z, e.a, e.r, 0x6aff8a, 0.4, w); view.streak(e.x, e.z, e.a, e.r * 0.85, 0xc8ffd8, 0.3, w * 0.45); view.burst(e.x + c * e.r * 0.7, 1.3, e.z + s * e.r * 0.7, 0x6aff8a, 10, 5, 0.35, 0.1); SFX.play('swing'); break; }
       if (e.role === 'streltsy') { const c = Math.cos(e.a), s = Math.sin(e.a); setTimeout(() => { view.fanSweep(e.x, e.z, e.a, e.r, 1.2, 0xdfe6f0, 0.34); view.streak(e.x + c * 0.6, e.z + s * 0.6, e.a, 4.4, 0xffffff, 0.3, 4.5); view.burst(e.x + c * 3, 1.3, e.z + s * 3, 0xdfe6f0, 16, 8, 0.4, 0.14); view.shock(e.x + c * 2, e.z + s * 2, 4.4, 0xdfe6f0, 0.4); view.shake = Math.max(view.shake, 0.5); }, 190); SFX.play('swing'); break; }
-      view.arc(e.x, e.z, e.a, e.r, COL[e.role] || 0xffffff); SFX.play('swing'); break;
+      view.arc(e.x, e.z, e.a, e.r, COL[e.role] || 0xffffff);
+      if (e.t3) { const c3 = Math.cos(e.a), s3 = Math.sin(e.a), cl = COL[e.role] || 0xffffff; view.arc(e.x, e.z, e.a, e.r * 1.15, 0xffffff); view.arc(e.x, e.z, e.a, e.r * 1.3, cl); view.shock(e.x + c3 * e.r * 0.7, e.z + s3 * e.r * 0.7, 3.2, cl, 0.4); view.burst(e.x + c3 * e.r * 0.8, 1.4, e.z + s3 * e.r * 0.8, 0xffe8b0, 12, 7, 0.4, 0.12); if (e.id === me) view.shake = Math.max(view.shake, 0.4); }   // 3타째는 칼 궤적이 겹겹이 길게 남아요
+      SFX.play('swing'); break;
     case 'wallhit': view.burst(e.x, 1.4, e.z, 0xd8cca8, 8, 5, 0.3, 0.1); SFX.play('clang'); break;
     case 'vowhit': view.streak(e.tx, e.tz, Math.atan2(e.z - e.tz, e.x - e.tx), Math.hypot(e.x - e.tx, e.z - e.tz), 0xffe08a, 0.25, 0.4); break;
     case 'shoot': if (e.pk === 'musket') { const c = Math.cos(e.a || 0), s = Math.sin(e.a || 0); view.burst(e.x + c * 3.6, 2.0, e.z + s * 3.6, 0xffc060, 8, 5, 0.25, 0.1); view.burst(e.x + c * 3.2, 2.0, e.z + s * 3.2, 0x8a8a8a, 5, 2, 0.6, 0.2); view.flash(e.x + c * 3.4, e.z + s * 3.4, 0xffc060, 70); SFX.play('slam'); } else SFX.play(e.pk === 'orb' ? 'orb' : 'arrow'); break;
@@ -937,8 +967,11 @@ function onEvent(e) {
     case 'weak': num(e.x, e.z, T('약점!'), '#ff9c4a', 1.4, 3.8); view.shock(e.x, e.z, 3, 0xff7a20, 0.35); view.burst(e.x, 2.4, e.z, 0xffb060, 14, 9, 0.5, 0.14); view.flash(e.x, e.z, 0xff7a20, 90); view.shake = Math.max(view.shake, 0.35); SFX.play('parry'); break;
     case 'phit': { // 맞는 순간: 빨간 불꽃과 충격파, 번쩍임, 큰 피해일수록 큰 숫자와 화면 흔들림, 때린 사람·맞은 사람 모두 잠깐 멈칫해요
       const big = e.v >= 25, hv = Math.min(1, e.v / 45);
+      view.flinch(e.id, e.by, hv);
       view.burst(e.x, 1.6, e.z, 0xff5a4a, 8 + (big ? 10 : 0), 6 + hv * 4, 0.35, 0.11); view.burst(e.x, 1.6, e.z, 0xfff0d0, 4, 5, 0.25, 0.08); view.shock(e.x, e.z, 2.2 + hv * 2.4, 0xff6a5a, 0.3); view.flash(e.x, e.z, 0xff6a5a, 70 + hv * 90);
-      num(e.x, e.z, '-' + e.v, big ? '#ffd36b' : '#ff7a6a', big ? 1.5 : 1.1);
+      if (e.by === me && e.id !== me) num(e.x, e.z, '-' + e.v, big ? '#ffe45a' : '#ffffff', big ? 1.9 : 1.5, 3.6);   // 내가 넣은 피해: 크고 하얗게 (큰 피해는 노랗게)
+      else if (e.id === me) num(e.x, e.z, '-' + e.v, big ? '#ff9a6a' : '#ff5a4a', big ? 1.5 : 1.1);   // 내가 받은 피해: 빨갛게
+      else num(e.x, e.z, '-' + e.v, '#b8a0a8', 0.8);   // 남들끼리 주고받은 피해: 작고 흐리게
       if (e.id === me) { view.shake = Math.max(view.shake, 0.6 + hv * 0.8); SFX.play('phit'); redFlash(0.25 + hv * 0.3); }
       else if (e.by === me) { view.shake = Math.max(view.shake, 0.3 + hv * 0.5); SFX.play('hit'); }
       if ((e.id === me || e.by === me) && S.net === 'solo') S.slowT = Math.max(S.slowT || 0, big ? 0.1 : 0.05);
@@ -959,7 +992,10 @@ function onEvent(e) {
     case 'skill': setTimeout(() => skillFx(e), 130); break; // 예비 동작이 끝나고 터지는 순간에 맞춰요
     case 'mark': view.rune(e.x, e.z, 1.6, 0xff3a3a, 1.4, 4); view.column(e.x, e.z, 0xff3a3a, 0.6); view.flash(e.x, e.z, 0xff3a3a, 60); break;
     case 'splash': view.burst(e.x, 0.6, e.z, 0x9af0a8, 16, 6, 0.6, 0.14); view.ring(e.x, e.z, 3, 0x9af0a8, 0.5); view.rise(e.x, e.z, 0x9af0a8, 10, 2.5, 0.8, 4); view.flash(e.x, e.z, 0x9af0a8, 70); break;
-    case 'multi': { const q = S.snap && S.snap.pl.find(z => z.id === e.id), nm = e.n === 2 ? T('더블 킬') : e.n === 3 ? T('트리플 킬') : T('{0}연속 킬', e.n); if (e.id === S.me) { bigMsg(nm + '!', '', 1500); SFX.play('clear'); } else if (q) toast((q.bot ? ROLES[q.role].name : q.name) + ' · ' + nm, 1800); break; }
+    case 'multi': { const q = S.snap && S.snap.pl.find(z => z.id === e.id), nm = e.n === 2 ? T('더블 킬') : e.n === 3 ? T('트리플 킬') : T('{0}연속 킬', e.n), pe = view.ents.get('p' + e.id), n = Math.min(e.n, 5);
+      const col = n === 2 ? 0xffb347 : n === 3 ? 0xff5a4a : n === 4 ? 0xff4adf : 0xb06aff;
+      if (pe) { view.column(pe.x, pe.z, col, 1.2); view.ring(pe.x, pe.z, 3 + n, col, 0.8); view.shock(pe.x, pe.z, 4 + n * 2, col, 0.6); view.burst(pe.x, 1.4, pe.z, col, 14 + n * 8, 8 + n, 0.8, 0.14); view.burst(pe.x, 1.4, pe.z, 0xfff0b0, 10 + n * 4, 6, 0.6, 0.1); view.rise(pe.x, pe.z, col, 14 + n * 4, 1.8, 1.4, 7); view.flash(pe.x, pe.z, col, 160 + n * 30); if (n >= 3) { view.ring(pe.x, pe.z, 5 + n * 1.5, 0xfff0b0, 1.0); view.shatter(pe.x, pe.z, [col, 0xffe8b0], 10 + n * 4, true); } }
+      if (e.id === S.me) { multiBanner(nm, n); view.shake = Math.max(view.shake, 0.5 + n * 0.2); SFX.play('clear'); SFX.play('kill'); } else if (q) toast((q.bot ? ROLES[q.role].name : q.name) + ' · ' + nm, 1800); break; }
     case 'ko': { // 탈락: 몸이 조각나 흩어져요
       view.shatter(e.x, e.z, [0xd8d0bc, 0x6a6470, 0x5a5040, 0x8a8a96], 30, true); view.burst(e.x, 1.2, e.z, 0xffe8b0, 16, 7, 0.6, 0.12); view.shock(e.x, e.z, 5, 0xffe08a, 0.5); view.flash(e.x, e.z, 0xffd08a, 140); view.shake = Math.max(view.shake, 0.6); SFX.play('kill');
       const by = S.snap && S.snap.pl.find(q => q.id === e.by), who = S.snap && S.snap.pl.find(q => q.id === e.id), nm = q => q ? (q.id === S.me ? T('나') : q.bot ? ROLES[q.role].name : q.name) : '';
@@ -1044,12 +1080,12 @@ function onEvent(e) {
       break; }
     case 'pillar': view.column(e.x, e.z, 0x6ab0ff, 0.9); view.burst(e.x, 0.5, e.z, 0x9ad0ff, 14, 6, 0.6, 0.14); view.flash(e.x, e.z, 0x6ab0ff, 80); SFX.play('slam'); break;
     case 'blink': view.column(e.x, e.z, 0x9ad0ff, 0.5); view.rise(e.x, e.z, 0x9ad0ff, 12, 1.5, 0.7, 6); SFX.play('orb'); break;
-    case 'ping': if (e.tm === myTm()) { const dg = e.pk === 'danger', col = dg ? 0xff5a4a : 0x5fd0ff; view.ring(e.x, e.z, 2.2, col, 1.4); view.ring(e.x, e.z, 1.2, 0xffffff, 1.0); view.column(e.x, e.z, col, 1.2); num(e.x, e.z, dg ? T('조심!') : T('여기 오세요'), dg ? '#ff7a6a' : '#8ae0ff', 1.3); SFX.play('click'); } break;
+    case 'ping': if (e.tm === myTm()) { const dg = e.pk === 'danger', col = dg ? 0xff5a4a : 0x5fd0ff; S.pings = (S.pings || []).filter(q => performance.now() - q.t < 5000).concat([{ x: e.x, z: e.z, dg, t: performance.now() }]); /* 미니맵에도 5초 동안 표시해요 */ view.ring(e.x, e.z, 2.2, col, 1.4); view.ring(e.x, e.z, 1.2, 0xffffff, 1.0); view.column(e.x, e.z, col, 1.2); num(e.x, e.z, dg ? T('조심!') : T('여기 오세요'), dg ? '#ff7a6a' : '#8ae0ff', 1.3); SFX.play('click'); } break;
     case 'recall': view.column(e.x, e.z, 0x9af0e0); if (e.id === me && e.end) bigMsg(T('깃발로 귀환했어요'), '', 1400); break;
     case 'respawn': view.column(e.x, e.z, 0xff9a48); if (e.id === me) bigMsg(T('진지에서 다시 일어났어요'), '', 1800); break;
-    case 'flag': { const mine = e.own === myTm(), c = TEAMS[e.own].c; view.column(e.x, e.z, c, 1.4); view.ring(e.x, e.z, 6, c, 0.9); view.shock(e.x, e.z, 7, c, 0.6); view.flash(e.x, e.z, c, 120); bigMsg(mine ? T('깃발을 차지했어요!') : T('깃발을 빼앗겼어요!'), '', 1800); SFX.play(mine ? 'kill' : 'roar'); break; }
+    case 'flag': { const mine = e.own === myTm(), c = TEAMS[e.own].c; view.column(e.x, e.z, c, 1.4); view.ring(e.x, e.z, 6, c, 0.9); view.shock(e.x, e.z, 7, c, 0.6); view.flash(e.x, e.z, c, 120); if (mine || e.was === myTm()) { bigMsg(mine ? T('깃발을 차지했어요!') : T('깃발을 빼앗겼어요!'), '', 1800); SFX.play(mine ? 'kill' : 'roar'); } break; }   // 주인 없던 깃발을 상대가 차지한 건 빼앗긴 게 아니라서 알리지 않아요
     case 'capbuff': view.rise(e.x, e.z, 0xffd36a, 12, 2.2, 0.9, 5); view.ring(e.x, e.z, 1.8, 0xffd36a, 0.5); if (e.id === me) { toast(T('점령 효과! 5초 동안 이동 속도와 공격이 20% 올라요'), 2400); SFX.play('bless'); } break;
-    case 'door': toast(e.open ? T('신전 문이 열렸어요! 가운데 깃발을 차지할 수 있어요') : T('신전 문이 닫혔어요'), 2400); SFX.play(e.open ? 'warn' : 'slam'); view.shake = Math.max(view.shake, 0.5); break;
+    case 'door': if (e.open) toast(T('신전 문이 열렸어요!'), 2400); else bigMsg(T('신전 문이 닫혔어요!'), T('안에 있는 깃발은 닫혀도 차지할 수 있어요'), 2600); SFX.play(e.open ? 'warn' : 'slam'); view.shake = Math.max(view.shake, 0.5); break;
     case 'storm': toast(e.on ? T('모래폭풍이 불어요! 멀리가 안 보여요') : T('모래폭풍이 잦아들었어요'), 2400); break;
     case 'monster': view.column(e.x, e.z, 0xff7a3a, 1.6); view.shock(e.x, e.z, 8, 0xff7a3a, 0.6); view.flash(e.x, e.z, 0xff7a3a, 140); if (e.big) { bigMsg(T('가운데에 큰 괴물이 나타났어요!'), T('쓰러뜨린 팀은 점령이 40초 동안 빨라지고 공격이 영구히 4% 올라요'), 3200); SFX.play('roar'); break; } bigMsg(T('꼭짓점에 괴물이 나타났어요!'), T('쓰러뜨리면 우리 팀 공격과 점령 속도가 영구히 2% 올라요'), 2600); SFX.play('roar'); break;
     case 'push': if (e.id === S.me && S.local) { S.local.kvx = (S.local.kvx || 0) + e.vx; S.local.kvz = (S.local.kvz || 0) + e.vz; } break;
@@ -1109,7 +1145,8 @@ function syncScene() {
     const prev = S.lastPh; S.lastPh = sn.ph;
     if (sn.ph === 'intro') { show('sIntro'); setHud(false); }
     else if (prev === 'intro' || prev === '') { view.battleOff(); show(''); setHud(true); S.area = -2; S.introHero = null; view.camId = null; $('introCard').classList.remove('on'); }
-    if (sn.ph === 'won') { S.wonT = 0; bigMsg('', '', 0); const w = sn.pl.find(q => q.id === sn.win); S.winId = w ? w.id : null; S.winPoseT = 0; if (w) { view.focusOn(w.x, w.z, 4); view.crownDrop(w.id); view.pose(w.id, 'rally'); view.flash(w.x, w.z, 0xffe08a, 160); SFX.play('won'); } } else if (sn.ph !== 'won') S.winId = null;
+    if (sn.ph === 'won') { S.wonT = 0; bigMsg('', '', 0); const w = sn.pl.find(q => q.id === sn.win); S.winId = w ? w.id : null; S.winPoseT = 0; if (w) { view.focusOn(w.x, w.z, 4); view.crownDrop(w.id); view.pose(w.id, 'rally'); view.flash(w.x, w.z, 0xffe08a, 160); SFX.play('won'); }
+      S.winTeam = sn.pv && sn.wtm >= 0 ? sn.pl.filter(q => q.tm === sn.wtm && !q.dd).map(q => q.id) : null; if (S.winTeam && S.winTeam.length) { teamCheer(sn); const ws = sn.pl.filter(q => S.winTeam.includes(q.id)); view.focusOn(ws.reduce((s, q) => s + q.x, 0) / ws.length, ws.reduce((s, q) => s + q.z, 0) / ws.length, 4); } } else if (sn.ph !== 'won') { S.winId = null; S.winTeam = null; }
   }
   // 비밀 방: 열린 것은 지도와 화면에서도 열어요 (게스트는 여기서 길도 열어요)
   if (sn.w.sc) sn.w.sc.forEach((o, k) => { if (!o) return; if (!SOPEN[k]) { openSecret(k); mini.dirty = true; } if (!view.secOn[k]) view.openSecret(k, sn.w.lr); });
@@ -1163,9 +1200,10 @@ function paintHud() {
   if (me) {
     const R = ROLES[me.role], sk = $('skills');
     const kbs = JSON.stringify(KB()); if (sk.dataset.role !== me.role || sk.dataset.kb !== kbs) { sk.dataset.role = me.role; sk.dataset.kb = kbs; sk.innerHTML = ''; [{ key: 'f', name: T('귀환'), cd: 25 }].concat(R.skills, [{ key: 'roll', name: T('구르기'), cd: 1.2 }]).forEach((s, i) => { const kk = i === 0 ? 'F' : keyLabel(KB()[['q', 'e', 'r', 'roll'][i - 1]]); const d = document.createElement('div'); d.className = 'sk'; d.innerHTML = `<i class="cd"></i><span class="nm">${s.name}</span><small>${kk}</small><b class="cn"></b>`; sk.appendChild(d); }); ['tQ', 'tE', 'tR'].forEach((id, i) => $(id).querySelector('span').textContent = R.skills[i].name); }
-    const cds = me.cd.concat([me.rc]), maxs = R.skills.map(s => s.cd).concat([1.2]), cds1 = [0].concat(cds), maxs1 = [25].concat(maxs);
+    const cds = me.cd.concat([me.rc]), maxs = R.skills.map(s => s.cd).concat([1.2]), cds1 = [me.rcc || 0].concat(cds), maxs1 = [25].concat(maxs);
     [...sk.children].forEach((d, i) => { const c = Math.max(0, cds1[i]); d.querySelector('.cd').style.height = Math.min(100, c / maxs1[i] * 100) + '%'; d.querySelector('.cn').textContent = c > 0.05 ? Math.ceil(c) : ''; d.classList.toggle('cool', c > 0.05); });
     ['tQ', 'tE', 'tR', 'tRoll'].forEach((id, i) => { const c = Math.max(0, cds[i]); $(id).querySelector('.cd').style.height = Math.min(100, c / maxs[i] * 100) + '%'; });
+    $('tF').querySelector('.cd').style.height = Math.min(100, (me.rcc || 0) / RECALL_CD * 100) + '%';
   }
   // 안내
   let pr = '';
@@ -1288,16 +1326,26 @@ function scoreboard(sn) {
 function teamHud(sn) {
   const mt = myTm(), n = sn.tf.length, x0 = innerWidth / 2 - (n - 1) * 17, y = innerWidth < 700 ? 74 : 40, nw = innerWidth < 1000, LX = nw ? innerWidth / 2 - 10 : x0 - 24, RX = nw ? innerWidth / 2 + 10 : x0 + (n - 1) * 34 + 24, yK = nw ? 24 : 4, yM = nw ? 56 : 22, yL = nw ? 40 : 38, dy = nw ? 40 : 0;   // 좁은 화면에서는 글자를 깃발 줄 아래 가운데에 쌓아요(방 이름·미니맵과 안 겹치게)
   // 깃발 줄은 위치와 상관없이 상대 팀은 왼쪽 끝부터, 우리 팀은 오른쪽 끝부터 채우고 주인 없는 깃발은 가운데에 둬요
-  const rk = i => sn.tf[i][0] === mt ? 2 : sn.tf[i][0] < 0 ? 1 : 0, ord = sn.tf.map((f, i) => i).sort((a, b) => rk(a) - rk(b) || a - b);
+  const rk = i => sn.tf[i][0] === mt ? 0 : sn.tf[i][0] < 0 ? 1 : 2, ord = sn.tf.map((f, i) => i).sort((a, b) => rk(a) - rk(b) || a - b);
+  // 점령 중 표시: 주인 있는 깃발은 점령하는 팀 쪽에서 가장 가까운 상대 팀 동그라미에, 주인 없는 깃발은 가장 가까운 주인 없는 동그라미에 떠요 (여럿이면 안쪽으로 이어서)
+  const ringAt = {}, nMine = ord.filter(i => sn.tf[i][0] === mt).length, nNeu = ord.filter(i => sn.tf[i][0] < 0).length, nFoe = n - nMine - nNeu, kc = [0, 0], kn = [0, 0];
+  ord.map((i, k) => [i, k]).sort((a, b) => (sn.tf[a[0]][0] < 0) - (sn.tf[b[0]][0] < 0)).forEach(([i, k]) => {   // 주인 있는 깃발이 먼저 맞닿은 자리를 차지해요
+    const f = sn.tf[i]; if (!(f[1] >= 0 && f[1] !== f[0] && f[2] > 0)) return;
+    const byMe = f[1] === mt;
+    if (f[0] < 0) { if (byMe) ringAt[nMine + kn[0]++] = f; else ringAt[nMine + nNeu - 1 - kn[1]++] = f; }   // 주인 없는 깃발: 점령하는 팀 쪽에서 가장 가까운 주인 없는 동그라미
+    else if (byMe && kc[1] < nFoe) ringAt[nMine + nNeu + kc[1]++] = f;
+    else if (!byMe && kc[0] < nMine) ringAt[nMine - 1 - kc[0]++] = f;
+    else ringAt[k] = f;
+  });
   ord.forEach((i, k) => {
-    const f = sn.tf[i], x = x0 + k * 34, own = f[0], cap = f[1], pr = f[2];
+    const f = sn.tf[i], x = x0 + k * 34, own = f[0], cap = f[1], pr = f[2], rg = ringAt[k];
     oc.fillStyle = 'rgba(10,8,14,.78)'; oc.beginPath(); oc.arc(x, y, 14, 0, 7); oc.fill();
     oc.fillStyle = own < 0 ? '#6a6676' : hex(TEAMS[own].c); oc.beginPath(); oc.arc(x, y, 9, 0, 7); oc.fill();
-    if (cap >= 0 && pr > 0) { oc.strokeStyle = hex(TEAMS[cap].c); oc.lineWidth = 4; oc.beginPath(); oc.arc(x, y, 13, -Math.PI / 2, -Math.PI / 2 + Math.PI * 2 * pr / FLAG_T); oc.stroke(); }
-    if (own === mt && cap >= 0 && cap !== mt && pr > 0) { const pu = 0.5 + 0.5 * Math.sin(performance.now() / 110); oc.strokeStyle = 'rgba(255,70,60,' + (0.45 + pu * 0.55) + ')'; oc.lineWidth = 3; oc.beginPath(); oc.arc(x, y, 18 + pu * 3, 0, 7); oc.stroke(); }
+    if (rg) { oc.strokeStyle = hex(TEAMS[rg[1]].c); oc.lineWidth = 4; oc.beginPath(); oc.arc(x, y, 13, -Math.PI / 2, -Math.PI / 2 + Math.PI * 2 * rg[2] / FLAG_T); oc.stroke(); }
+    if (rg && rg[0] === mt) { const pu = 0.5 + 0.5 * Math.sin(performance.now() / 110); oc.strokeStyle = 'rgba(255,70,60,' + (0.45 + pu * 0.55) + ')'; oc.lineWidth = 3; oc.beginPath(); oc.arc(x, y, 18 + pu * 3, 0, 7); oc.stroke(); }
   });
   // 괴물 보너스: 우리 팀 점령이 빨라지는 동안 남은 시간을 깃발 아래에 보여 줘요
-  if (sn.dr) { oc.font = 'bold 13px sans-serif'; oc.textAlign = 'center'; oc.fillStyle = sn.dr[0] ? '#7affb0' : '#ffb08a'; oc.fillText(sn.dr[0] ? T('신전 문 열림 ') + Math.ceil(sn.dr[1]) + T('초') : T('신전 문 닫힘 · ') + Math.ceil(sn.dr[1]) + T('초 뒤 열려요'), innerWidth / 2, y + 48 + dy); }
+  if (sn.dr) { oc.font = sn.dr[0] ? 'bold 13px sans-serif' : 'bold 16px sans-serif'; oc.textAlign = 'center'; oc.fillStyle = sn.dr[0] ? '#7affb0' : Math.sin(performance.now() / 200) > 0 ? '#ff5a4a' : '#ffb08a'; oc.fillText(sn.dr[0] ? T('신전 문 열림 ') + Math.ceil(sn.dr[1]) + T('초') : T('신전 문 닫힘 · ') + Math.ceil(sn.dr[1]) + T('초 뒤 열려요'), innerWidth / 2, y + 48 + dy); }
   if (sn.mc && sn.mc[mt] > 0) { oc.font = 'bold 13px sans-serif'; oc.textAlign = 'center'; oc.fillStyle = '#ffd36a'; oc.fillText(T('점령 1.5배 ') + sn.mc[mt] + T('초'), innerWidth / 2, y + 30 + dy); }
   // 괴물 처치 효과 레벨 (팀마다)
   { oc.font = 'bold 12px Galmuri, system-ui'; oc.lineWidth = 4; oc.strokeStyle = '#140f18'; const mk = sn.mk || [0, 0];
@@ -1314,14 +1362,19 @@ function teamHud(sn) {
   // 점령 경보: 우리 깃발을 상대가 점령하는 중이면 깃발이 깜빡이고 알림이 떠요
   { S.fAl = S.fAl || []; let any = false; sn.tf.forEach((f, i) => { const on = f[0] === mt && f[1] >= 0 && f[1] !== mt && f[2] > 0; if (on && !S.fAl[i]) SFX.play('warn'); S.fAl[i] = on; if (on) any = true; });
     if (any) { oc.font = 'bold 15px Galmuri, system-ui'; oc.textAlign = 'center'; oc.lineWidth = 4; oc.strokeStyle = '#140f18'; const tx = T('우리 깃발을 점령당하고 있어요!'); oc.strokeText(tx, innerWidth / 2, y + 48 + dy); oc.fillStyle = Math.sin(performance.now() / 140) > 0 ? '#ff6a5a' : '#ffd0c8'; oc.fillText(tx, innerWidth / 2, y + 48 + dy); } }
-  { const own = [0, 0]; for (const f of sn.tf) if (f[0] >= 0) own[f[0]]++; const PN = sn.tf.length - 1, pt = own[0] >= PN ? 0 : own[1] >= PN ? 1 : -1;
-    if (pt >= 0) { oc.font = 'bold 13px Galmuri, system-ui'; oc.textAlign = 'center'; oc.lineWidth = 4; oc.strokeStyle = '#140f18'; const tx = pt === mt ? T('몰아붙이는 중 · 상대 부활 +{0}초', PUSH_T) : T('몰리는 중 · 우리 부활 +{0}초', PUSH_T); oc.strokeText(tx, innerWidth / 2, y + 44 + dy); oc.fillStyle = pt === mt ? '#ffd36b' : '#ff8a7a'; oc.fillText(tx, innerWidth / 2, y + 44 + dy); } }
+  { const own = [0, 0]; for (const f of sn.tf) if (f[0] >= 0) own[f[0]]++; const pu = [pushTime(own[0], sn.tf.length), pushTime(own[1], sn.tf.length)], pt = pu[0] ? 0 : pu[1] ? 1 : -1;
+    if (pt >= 0) { oc.font = 'bold 13px Galmuri, system-ui'; oc.textAlign = 'center'; oc.lineWidth = 4; oc.strokeStyle = '#140f18'; const tx = pt === mt ? T('몰아붙이는 중 · 상대 부활 +{0}초', pu[pt]) : T('몰리는 중 · 우리 부활 +{0}초', pu[pt]); oc.strokeText(tx, innerWidth / 2, y + 44 + dy); oc.fillStyle = pt === mt ? '#ffd36b' : '#ff8a7a'; oc.fillText(tx, innerWidth / 2, y + 44 + dy); } }
   const me0 = sn.pl.find(q => q.id === S.me); if (me0 && me0.fz && !me0.dd) { oc.font = 'bold 14px Galmuri, system-ui'; oc.lineWidth = 4; oc.strokeStyle = '#140f18'; const tx = T('깃발의 가호 · 치유 · 공격 +20%'); oc.strokeText(tx, innerWidth / 2, y + 26 + dy); oc.fillStyle = '#9af0a8'; oc.fillText(tx, innerWidth / 2, y + 26 + dy); }
   const sc = Math.min(innerWidth < 700 ? 1.1 : 1.6, (innerWidth < 700 ? 130 : 190) / MW), w = MW * sc, h = MH * sc, mx = innerWidth - w - 14, my = innerWidth < 700 ? 100 : 64;
+  S.mmR = { x: mx, y: my, w, h, sc };
   if (mini.dirty) mini.paint(); if (!CH.pvp && !S.mapImg && !S.mapTry) { S.mapTry = 1; try { S.mapImg = view.captureMap(); } catch (e) { } }
   oc.fillStyle = 'rgba(10,8,14,.85)'; oc.fillRect(mx - 4, my - 4, w + 8, h + 8); oc.imageSmoothingEnabled = !!S.mapImg || !!CH.pvp; oc.globalAlpha = CH.pvp ? 1 : S.mapImg ? 0.95 : 0.8; oc.drawImage(S.mapImg || mini.c, mx, my, w, h); oc.globalAlpha = 1; oc.strokeStyle = '#c8b480'; oc.lineWidth = 2; oc.strokeRect(mx - 4, my - 4, w + 8, h + 8);
   const P = (wx, wz) => [mx + wx / CS * sc, my + wz / CS * sc], mate = sn.pl.filter(q => q.tm === mt && !q.dd);
   sn.tf.forEach((f, i) => { const fl = MAP.tflags[i], [a, b] = P(cw(fl[0]), cw(fl[1])); oc.fillStyle = f[0] < 0 ? '#9a96a6' : hex(TEAMS[f[0]].c); oc.fillRect(a - 3.5, b - 3.5, 7, 7); oc.strokeStyle = '#140f18'; oc.lineWidth = 1.5; oc.strokeRect(a - 3.5, b - 3.5, 7, 7); if (S.fAl && S.fAl[i]) { const pu = 0.5 + 0.5 * Math.sin(performance.now() / 110); oc.strokeStyle = 'rgba(255,70,60,' + (0.5 + pu * 0.5) + ')'; oc.lineWidth = 2; oc.beginPath(); oc.arc(a, b, 7 + pu * 4, 0, 7); oc.stroke(); } });
+  for (const pg of S.pings || []) {   // 우리 팀이 찍은 핑 (내 핑 포함): 5초 동안 깜빡여요
+    const age = performance.now() - pg.t; if (age > 5000) continue; const [a, b] = P(pg.x, pg.z), pu = (age % 800) / 800, col = pg.dg ? '255,90,74' : '95,208,255';
+    oc.strokeStyle = 'rgba(' + col + ',' + (1 - pu) + ')'; oc.lineWidth = 2; oc.beginPath(); oc.arc(a, b, 3 + pu * 9, 0, 7); oc.stroke(); oc.fillStyle = 'rgb(' + col + ')'; oc.strokeStyle = '#fff'; oc.lineWidth = 1.2; oc.beginPath(); oc.arc(a, b, 3.2, 0, 7); oc.fill(); oc.stroke();
+  }
   for (const mn of sn.mn || []) { const [a, b] = P(mn[0], mn[1]), pu = 0.5 + 0.5 * Math.sin(performance.now() / 260); oc.fillStyle = '#ff7a3a'; oc.strokeStyle = '#140f18'; oc.lineWidth = 1.5; oc.beginPath(); oc.moveTo(a, b - 6); oc.lineTo(a + 5, b); oc.lineTo(a, b + 6); oc.lineTo(a - 5, b); oc.closePath(); oc.fill(); oc.stroke(); oc.strokeStyle = 'rgba(255,122,58,' + (0.3 + pu * 0.5) + ')'; oc.beginPath(); oc.arc(a, b, 8 + pu * 2, 0, 7); oc.stroke(); }
   for (const p of sn.pl) {
     if (p.dd) continue; const q = p.id === S.me && S.local ? S.local : p;
@@ -1479,6 +1532,41 @@ function showDeepResult() {
   setHud(false); show('sResult');
 }
 // 우승 화면: 이긴 사람이 크게 나와요. '순위 보기'를 누르면 전체 순위표로 가요
+/* ---------- 하이라이트: 내가 쓰러뜨린 장면(연속·위기)을 짧게 저장해 두었다가 경기가 끝나면 다시 보여 줘요 ---------- */
+const HL = { buf: [], ev: [], clips: [], pend: null, kl: 0, kt: [], acc: 0 };
+function hlReset() { HL.buf = []; HL.ev = []; HL.clips = []; HL.pend = null; HL.kl = 0; HL.kt = []; HL.acc = 0; S.replay = null; }
+function hlTick(dt, t) {
+  const sn = S.snap; if (!sn || sn.ph !== 'play' || sn.rg || S.replay) return;
+  HL.acc += dt; if (HL.acc < 0.1) return; HL.acc -= 0.1;
+  const me = myP(), fr = { s: JSON.parse(JSON.stringify(sn)), ev: HL.ev }; HL.ev = []; HL.buf.push(fr); if (HL.buf.length > 40) HL.buf.shift();
+  if (HL.pend) { HL.pend.post.push(fr); if (HL.pend.post.length >= HL.pend.need) { const c = HL.pend; HL.pend = null; HL.clips.push({ fr: c.pre.concat(c.post), score: c.score }); if (HL.clips.length > 3) HL.clips.splice(HL.clips.indexOf(HL.clips.slice().sort((a, b) => a.score - b.score)[0]), 1); } }
+  if (me) {
+    const kl = me.kl | 0;
+    if (kl > HL.kl) {
+      HL.kl = kl; HL.kt = HL.kt.filter(x => t - x < 8); HL.kt.push(t);
+      const sc = HL.kt.length * 3 + (me.hp < me.mx * 0.3 ? 2 : 0) + (me.cb > 0 ? 1 : 0);
+      if (HL.pend) { HL.pend.score = Math.max(HL.pend.score, sc); HL.pend.need = Math.min(30, HL.pend.post.length + 10); }
+      else HL.pend = { pre: HL.buf.slice(-30, -1), post: [fr], need: 10, score: sc };
+    }
+  }
+}
+function hlFlush() { if (!HL.pend) return; const c = HL.pend; HL.pend = null; if (c.pre.length + c.post.length >= 8) HL.clips.push({ fr: c.pre.concat(c.post), score: c.score }); }   // 경기가 끝나 마무리하지 못한 장면도 저장해요
+function hlPlay() {
+  if (!HL.clips.length) return; const best = HL.clips.slice().sort((a, b) => b.score - a.score || b.fr.length - a.fr.length)[0];
+  S.replay = { fr: best.fr, i: 0, acc: 0, fin: S.snap }; show(''); $('hlBar').classList.add('on');
+}
+function hlEnd() { const R = S.replay; if (!R) return; S.replay = null; S.snap = R.fin; $('hlBar').classList.remove('on'); bigMsg('', '', 0); show('sWin'); }
+function hlFrame(dt, t) {
+  const R = S.replay; R.acc += dt;
+  while (R.acc >= 0.1 && R.i < R.fr.length - 1) { R.acc -= 0.1; R.i++; for (const e of R.fr[R.i].ev) onEvent(e); }
+  if (R.i >= R.fr.length - 1 && R.acc >= 0.5) { hlEnd(); return; }
+  const f = R.fr[R.i]; S.snap = f.s; view.sync(f.s, S.me, dt, t, false);
+}
+$('hlSkip').onclick = () => { SFX.play('click'); hlEnd(); };
+// 승리한 팀 모두가 차례로 무기를 높이 치켜들어요 (0.15초씩 어긋나게)
+function teamCheer(sn) {
+  (S.winTeam || []).forEach((id, i) => setTimeout(() => { const q = sn.pl.find(z => z.id === id); view.pose(id, 'rally'); if (q) { view.burst(q.x, 2.5, q.z, 0xffe08a, 14, 6, 0.8, 0.14); if (i === 0) view.flash(q.x, q.z, 0xffe08a, 140); } }, i * 150));
+}
 function showWin() {
   S.resultShown = true; bigMsg('', '', 0); const h = S.lastH = awardHonor() || 0, sn = S.snap, mine = myP(), wt = sn.wtm, won = mine && mine.tm === wt;
   if (won) { unlock('win'); SAVE.wins = SAVE.wins || {}; SAVE.wins[mine.role] = 1; save(); if (ROLE_IDS.every(r => SAVE.wins[r])) unlock('winall'); }
@@ -1486,9 +1574,10 @@ function showWin() {
   const row = p => `<tr${p.id === S.me ? ' style="background:#2a2014"' : ''}><td style="color:${ROLES[p.role].color}">${ROLES[p.role].name}</td><td>${esc(p.id === S.me ? T('나') : p.bot ? T('봇') : p.name)}</td><td>${p.kl | 0}</td><td>${p.dth | 0}</td></tr>`;
   const tab = t => `<div><h3 style="color:${hex(TEAMS[t].c)}">${tmName(t)}${t === wt ? ' · ' + T('승리') : ''}</h3><table><tr><th>${T('직업')}</th><th>${T('이름')}</th><th>${T('쓰러뜨림')}</th><th>${T('쓰러짐')}</th></tr>${sn.pl.filter(p => p.tm === t).map(row).join('')}</table></div>`;
   const top3 = sn.pl.slice().sort((a, b) => (b.kl | 0) - (a.kl | 0)).slice(0, 3), pod = [[1, 'd8d8e0', 46], [0, 'ffd36b', 62], [2, 'c8884a', 36]].filter(([i]) => top3[i]).map(([i, c, hh]) => { const q = top3[i]; return `<div style="flex:1;text-align:center"><div style="font-size:12px;color:${ROLES[q.role].color}">${ROLES[q.role].name}</div><div style="font-size:12px;margin:2px 0 4px">${esc(q.id === S.me ? T('나') : q.bot ? T('봇') : q.name)}</div><div style="height:${hh}px;background:#${c};color:#201810;font-weight:700;line-height:${hh}px;border-radius:4px 4px 0 0">${q.kl | 0} · ${q.dth | 0}</div></div>`; }).join('');
-  $('winBox').innerHTML = `<div class="wt" style="color:${won ? '#ffd36b' : '#ff6a5a'}">${won ? T('승리!') : T('패배')}</div><div class="ws">${T('깃발 일곱 개를 모두 차지했어요')}</div><div class="pod">${pod}</div><div class="rk">${tab(0)}${tab(1)}</div><div class="tc">${T('받은 tC {0}', '<b style="color:#ffd36b">' + h + '</b>')} · ${T('지금 tC {0}', SAVE.honor)} · ${T('경험치 +{0}', S.lastXp | 0)}${S.lastLv ? ' · ' + T('레벨 {0} 달성!', S.lastLv) : ''}</div>${S.dailyGain ? `<div class="tc">${T('일일 임무 완료')}: ${(S.lastDaily || []).join(', ')} · <b style="color:#ffd36b">+${S.dailyGain} tC</b></div>` : ''}${S.lastRt ? `<div class="tc">${T('랭킹 점수 {0}', (S.lastRt.gain >= 0 ? '+' : '') + S.lastRt.gain)} · <b style="color:${charRankFor(S.lastRt.total).color}">${S.lastRt.total}${T('점')} · ${charRankFor(S.lastRt.total).name}</b></div>` : ''}${S.lastMp ? `<div class="tc">${T('마스터리 +{0}', '<b style="color:#ffd36b">' + S.lastMp.gain + '</b>')} (${T('처치 {0}×{1}', S.lastMp.k, MASTERY_PT.kill)} + ${T('완주 {0}', MASTERY_PT.match)}${S.lastMp.won ? ' + ' + T('승리 {0}', MASTERY_PT.win) : ''}${S.lastMp.sp ? ' + 🔥' + T('{0}연승 +{1}', S.lastMp.st, S.lastMp.sp) : ''}) · <b style="color:${charRankFor(S.lastMp.total).color}">${charRankFor(S.lastMp.total).name}</b>${S.lastMp.up ? ' ' + T('계급 올랐어요!') : ''}</div>` : ''}`;
+  $('winBox').innerHTML = `<div class="wt" style="color:${won ? '#ffd36b' : '#ff6a5a'}">${won ? T('승리!') : T('패배')}</div><div class="ws">${S.snap.tf.length === 7 ? T('깃발 일곱 개를 모두 차지했어요') : T('깃발 {0}개를 모두 차지했어요', S.snap.tf.length)}</div><div class="pod">${pod}</div><div class="rk">${tab(0)}${tab(1)}</div><div class="tc">${T('받은 tC {0}', '<b style="color:#ffd36b">' + h + '</b>')} · ${T('지금 tC {0}', SAVE.honor)} · ${T('경험치 +{0}', S.lastXp | 0)}${S.lastLv ? ' · ' + T('레벨 {0} 달성!', S.lastLv) : ''}</div>${S.dailyGain ? `<div class="tc">${T('일일 임무 완료')}: ${(S.lastDaily || []).join(', ')} · <b style="color:#ffd36b">+${S.dailyGain} tC</b></div>` : ''}${S.lastRt ? `<div class="tc">${T('랭킹 점수 {0}', (S.lastRt.gain >= 0 ? '+' : '') + S.lastRt.gain)} · <b style="color:${charRankFor(S.lastRt.total).color}">${S.lastRt.total}${T('점')} · ${charRankFor(S.lastRt.total).name}</b></div>` : ''}${S.lastMp ? `<div class="tc">${T('마스터리 +{0}', '<b style="color:#ffd36b">' + S.lastMp.gain + '</b>')} (${T('처치 {0}×{1}', S.lastMp.k, MASTERY_PT.kill)} + ${T('도움 {0}×{1}', S.lastMp.a, MASTERY_PT.assist)} + ${T('완주 {0}', MASTERY_PT.match)}${S.lastMp.won ? ' + ' + T('승리 {0}', MASTERY_PT.win) : ''}${S.lastMp.sp ? ' + 🔥' + T('{0}연승 +{1}', S.lastMp.st, S.lastMp.sp) : ''}) · <b style="color:${charRankFor(S.lastMp.total).color}">${charRankFor(S.lastMp.total).name}</b>${S.lastMp.up ? ' ' + T('계급 올랐어요!') : ''}</div>` : ''}`;
   $('winBox').classList.toggle('me', !!won);
   $('winBack').onclick = () => { SFX.play('click'); endToLobby(''); };
+  hlFlush(); { const old = $('winHl'); if (old) old.remove(); if (HL.clips.length) { const b = document.createElement('button'); b.className = 'btn gold'; b.id = 'winHl'; b.textContent = T('하이라이트 보기'); b.onclick = () => { SFX.play('click'); hlPlay(); }; $('winBack').before(b); } }
   setHud(false); show('sWin');
   if (mine) { const E = view.ents.get('p' + sn.win); if (E) view.burst(E.x, 1.5, E.z, 0xffd36b, 30, 8, 0.8, 0.14); }
 }
@@ -1529,6 +1618,7 @@ function frame(now) {
   // 모든 기기: 화면이 계속 느리면 설정의 「최적화」를 한 번만 권해요
   if (!lowHintDone && inGame() && S.scr === '' && !SAVE.set.opt) { S.hintAvg = (S.hintAvg || 16) * 0.97 + Math.min(raw, 100) * 0.03; S.hintN = S.hintAvg > 40 ? (S.hintN | 0) + 1 : 0; if (S.hintN > 240) { lowHintDone = true; try { localStorage.setItem('tc_lowHint', '1'); } catch (e) { } toast(T('화면이 느려요. 설정의 「최적화」를 켜면 그림자와 빛 번짐을 줄여 더 부드러워져요.'), 5000); } }
  const t = (now - S.t0) / 1000;
+  if (S.replay) { hlFrame(dt, t); view.tick(dt, t); view.render(); oc.clearRect(0, 0, innerWidth, innerHeight); return; }
   musicTick(dt, now); talkTick(dt, !!S.snap && S.scr === '' && (S.snap.ph === 'play' || S.snap.ph === 'bossIntro'));
   if (S.snap && (S.G || S.net === 'guest') && S.scr !== 'sLobby' && S.scr !== 'sRoom') {
     const me = myP();
@@ -1561,10 +1651,10 @@ function frame(now) {
     const ph = S.snap.ph;
     if (ph === 'intro') { paintIntro(); view.sync(S.snap, S.me, dt, t, !!S.G); }
     else {
-      for (const e of S.evq) onEvent(e); S.evq.length = 0;
-      specTick(me); if (ph === 'won' && S.winId) view.camId = S.winId; view.sync(S.snap, S.me, dt, t, !!S.G); paintHud(); finalCheck(S.snap); paintBless();
+      for (const e of S.evq) { onEvent(e); if (HL.ev.length < 400) HL.ev.push(e); } S.evq.length = 0;
+      hlTick(dt, t); specTick(me); if (ph === 'won' && S.winId) view.camId = S.winId; view.sync(S.snap, S.me, dt, t, !!S.G); paintHud(); finalCheck(S.snap); paintBless();
       if (ph === 'over') { S.overT += dt; if (S.overT > 3.6 && !S.resultShown) showDeepResult(); }
-      if (ph === 'won') { S.wonT += dt; S.winPoseT = (S.winPoseT || 0) + dt; if (S.winPoseT > 1.2 && S.winId) { S.winPoseT = 0; view.pose(S.winId, 'rally'); const w = S.snap.pl.find(q => q.id === S.winId); if (w) view.burst(w.x, 2.5, w.z, 0xffe08a, 16, 6, 0.8, 0.14); } if (S.wonT >= 1.6 && !S.resultShown) showWin(); }
+      if (ph === 'won') { S.wonT += dt; S.winPoseT = (S.winPoseT || 0) + dt; if (S.winPoseT > 1.2 && S.winTeam && S.winTeam.length) { S.winPoseT = 0; teamCheer(S.snap); } if (S.winPoseT > 1.2 && S.winId) { S.winPoseT = 0; view.pose(S.winId, 'rally'); const w = S.snap.pl.find(q => q.id === S.winId); if (w) view.burst(w.x, 2.5, w.z, 0xffe08a, 16, 6, 0.8, 0.14); } if (S.wonT >= 1.6 && !S.resultShown) showWin(); }
     }
     S.evq.length = 0;
   }
@@ -1576,7 +1666,7 @@ requestAnimationFrame(frame);
 // 시험용: ?test=1 로 바로 혼자 원정을 시작해요 (화면 확인용). &skip=1 이야기 건너뛰기, &room=구역 번호
 // 내 컴퓨터에서 열었을 때만 돼요 (배포된 주소에서는 잠긴 장이 열리지 않게)
 const DEV = /^(localhost|127\.0\.0\.1)$/.test(location.hostname);
-if (DEV) window.__T = { SAVE, paintSettings, step, relBasic, aimedSkill, mouse, once, TOUCH, S, menu, beginGame, startHost, startMatch, startGuest, view, CH };
+if (DEV) window.__T = { onEvent, SAVE, paintSettings, step, relBasic, aimedSkill, mouse, once, TOUCH, S, menu, beginGame, startHost, startMatch, startGuest, view, CH };
 if (DEV && qs.get('test')) {
   const r = qs.get('role') || 'knight'; SAVE.role = r;
   S.net = 'solo'; S.slots = [meSlot()]; newBots(); S.botN = +(qs.get('bots') || 5);

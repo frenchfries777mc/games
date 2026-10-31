@@ -395,7 +395,7 @@ window.bfIntro=function(){if(run)return;run=1;t0=Date.now();el.classList.add('ru
     <button class="btn" data-act="skins"><span class="arrow">▶</span>스킨 상점<span class="en">SKIN SHOP</span></button>
     <button class="btn" data-act="stats"><span class="arrow">▶</span>통계<span class="en">STATS</span></button>
     <button class="btn" data-act="settings"><span class="arrow">▶</span>설정<span class="en">SETTINGS</span></button>
-    <p class="foot">v0.5<br>build 141</p>
+    <p class="foot">v0.5<br>build 142</p>
   </nav>
 </div>
 
@@ -8657,7 +8657,8 @@ function updateHazards(dt){
   const b=P.buff,st=P.status;
   for(const k in b)if(b[k]>0)b[k]=Math.max(0,b[k]-dt);
   if(P.dead){st.poison=st.burn=st.cold=0;return;}
-  const id=(P.sailing||P.air)?-1:bioAt(P.x,P.y);P.bioId=id>0?id:0;
+  const safe=world.vill>=0&&isleNear(P.x,P.y)===world.vill;   // 마을섬은 안전해요: 섬의 독·더위·추위·용암이 없어요
+  const id=(P.sailing||P.air||safe)?-1:bioAt(P.x,P.y);P.bioId=id>0?id:0;
   st.cold=(id===8&&!fullSet('leather'))?5:0;
   hz.tick+=dt;
   if(hz.tick>=1){hz.tick-=1;if(st.poison>0)dotDamage(0.5);if(st.burn>0)dotDamage(1);}

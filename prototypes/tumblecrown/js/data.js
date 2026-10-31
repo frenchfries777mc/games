@@ -3,11 +3,11 @@
 
 import { T } from './tr.js';
 
-export const VERSION = 'v0.1', BUILD = 142;
+export const VERSION = 'v0.2', BUILD = 186;
 
 export const ROLES = {
   knight: {
-    name: T('기사'), type: T('근접 딜러'), color: '#3f6fd0', hp: 345, speed: 6.0,
+    name: T('기사'), type: T('근접 딜러'), color: '#3f6fd0', hp: 345, speed: 6.6,
     atk: { kind: 'melee', range: 2.5, arc: 1.9, dmg: 21, cd: 0.45 },
     skills: [
       { id: 'block', name: T('막기'), key: 'Q', cd: 5, desc: T('1.2초 동안 방패를 들어 앞에서 오는 피해를 70% 줄여요.') },
@@ -40,7 +40,7 @@ export const ROLES = {
     role: T('멀리서 쏴요. 공격을 꾹 누르면 0.8초에 두 발, 2초에 세 발을 한 번에 쏴요.')
   },
   viking: {
-    name: T('바이킹'), type: T('근접 딜러'), color: '#c8873a', hp: 314, speed: 5.6,
+    name: T('바이킹'), type: T('근접 딜러'), color: '#c8873a', hp: 314, speed: 6.16,
     atk: { kind: 'melee', range: 2.6, arc: 2.0, dmg: 22, cd: 0.55 },
     skills: [
       { id: 'leap', name: T('도약 강타'), key: 'Q', cd: 5, desc: T('앞으로 크게 뛰어올라 내려앉으며 둘레 상대에게 36 피해를 주고 1.5초 동안 느리게 해요.') },
@@ -51,7 +51,7 @@ export const ROLES = {
     role: T('느리지만 도끼 한 방이 무거운 가장 튼튼한 전사예요.')
   },
   mamluk: {
-    name: T('맘루크'), type: T('근접 딜러'), color: '#d0443a', hp: 316, speed: 7.2,
+    name: T('맘루크'), type: T('근접 딜러'), color: '#d0443a', hp: 316, speed: 7.92,
     atk: { kind: 'melee', range: 2.2, arc: 1.8, dmg: 18, cd: 0.3 },
     skills: [
       { id: 'flurry', name: T('연속 베기'), key: 'Q', cd: 4, desc: T('앞으로 파고들며 다섯 번 번갈아 베어 9씩 피해를 줘요.') },
@@ -73,7 +73,7 @@ export const ROLES = {
     role: T('마법 구슬과 저주로 멀리서 괴롭혀요.')
   },
   skeleton: {
-    name: T('스켈레톤'), type: T('근접 딜러'), color: '#cfc8b0', hp: 292, speed: 7.0,
+    name: T('스켈레톤'), type: T('근접 딜러'), color: '#cfc8b0', hp: 292, speed: 7.7,
     atk: { kind: 'melee', range: 2.0, arc: 2.0, dmg: 16, cd: 0.32 },
     skills: [
       { id: 'scatter', name: T('뼈 흩어지기'), key: 'Q', cd: 6, desc: T('뒤로 빠지며 몸이 흩어져 뼛조각 여덟 개가 사방으로 튀어요. 하나에 12 피해.') },
@@ -95,7 +95,7 @@ export const ROLES = {
     role: T('길목을 막고 아군을 지켜요. 느리고 공격은 약하지만 가장 오래 버텨요.')
   },
   assassin: {
-    name: T('자객'), type: T('근접 딜러'), color: '#3a5a66', hp: 280, speed: 7.8,
+    name: T('자객'), type: T('근접 딜러'), color: '#3a5a66', hp: 280, speed: 8.58,
     atk: { kind: 'melee', range: 2.1, arc: 1.6, dmg: 24, cd: 0.3 },
     skills: [
       { id: 'vanish', name: T('그림자 걸음'), key: 'Q', cd: 10, desc: T('3.5초 동안 멀리 있는 상대 눈에 보이지 않고 25% 빨라져요. 숨은 채 처음 때리는 한 번은 피해가 1.8배예요.') },
@@ -161,7 +161,7 @@ export const ROLES = {
     role: T('노래로 아군을 빠르게 하고 치유해요. 자장가로 다가오는 상대를 늦춰 시간을 벌어요.')
   },
   spearman: {
-    name: T('창병'), type: T('근접 딜러'), color: '#6a7a8c', hp: 378, speed: 6.0,
+    name: T('창병'), type: T('근접 딜러'), color: '#6a7a8c', hp: 378, speed: 6.6,
     atk: { kind: 'melee', range: 3.9, arc: 0.5, dmg: 47, cd: 0.6 },
     skills: [
       { id: 'lunge', name: T('돌진 찌르기'), key: 'Q', cd: 6, desc: T('앞으로 크게 돌진하며 지나가는 상대를 꿰뚫어요. 40 피해를 주고 1.5초 동안 느리게 해요.') },
@@ -437,7 +437,8 @@ function grow(ci, rooms, [p1, dk, p2]) {
 // 장: 이야기, 지도, 보스, 색
 // 투기장: 보우킵 보스 방을 크게 키운 한 방 (적도 이야기도 없이 마지막 한 명이 남을 때까지)
 // 5대5 깃발 점령전 지도: 아주 넓은 벌판에 돌담과 기둥이 흩어져 있어요 (180도 돌려도 똑같아서 두 팀이 공평해요)
-export const PUSH_N = 6, PUSH_T = 10;   // 깃발을 이만큼 가진 팀이 몰아붙이면 상대 부활이 이만큼(초) 늘어요
+export const PUSH_N = 6, PUSH_T = 10;
+export function pushTime(n, total) { return n >= total - 1 ? 15 : n >= total - 2 ? 10 : 0; }   // 깃발을 (전체-2)개 가진 팀이 몰아붙이면 상대 부활 +10초, (전체-1)개면 +15초 (5대5는 5·6개, 3대3은 3·4개)   // 깃발을 이만큼 가진 팀이 몰아붙이면 상대 부활이 이만큼(초) 늘어요
 export const DOOR_OPEN_T = 14, DOOR_SHUT_T = 16, STORM_CALM_T = 30, STORM_T = 12;   // 사막 신전: 문이 열려 있는 시간·닫혀 있는 시간, 모래폭풍이 잠잠한 시간·부는 시간(초)
 export const BIG_T = 600;   // 큰 괴물이 나타나는 시각(초)
 export const TEAM_N = 5, FLAG_T = 7, FLAG_R = 6.5, RESP_T = 15, SPAWN_INV = 2, TEAM_HP = 1.5, RECALL_CD = 25, RECALL_T = 3;
@@ -485,12 +486,12 @@ const ARENAS = [
     wallIf: (i, j, W, H) => { const ax = Math.abs(i + 0.5 - W / 2), ay = Math.abs(j + 0.5 - H / 2); if (ax < 22 && ay < 14) return (ax >= 19 && !(ay < 6)) || (ay >= 11 && ax < 22); return false; },
     colIf: (i, j, W, H) => { const ax = Math.abs(i + 0.5 - W / 2), ay = Math.abs(j + 0.5 - H / 2); if (ax < 24 && ay < 16) return false; return ax < 66 && ay < 48 && Math.abs(ax % 20 - 10.5) < 1.5 && Math.abs(ay % 18 - 9.5) < 1.5; },   // 흩어진 장애물은 벽이 아니라 둥근 기둥이에요
     fl: [[8, 60], [26, 48]], mid: [[56, 36], [30, 20]], pil: [[20, 10], [40, 26]] },
-  { name: '사막 신전', line: '가운데 신전 안에 깃발이 있어요. 신전 문은 닫혀 있다가 주기적으로 열리고, 문이 열려 있을 때만 그 깃발을 차지할 수 있어요. 가끔 모래폭풍이 불어 멀리가 안 보여요.', theme: 'desert',
+  { name: '사막 신전', line: '가운데 신전 안에 깃발이 있어요. 신전 문은 닫혀 있다가 주기적으로 열리고, 문이 닫혀 있어도 안에 있으면 그 깃발을 차지할 수 있어요. 가끔 모래폭풍이 불어 멀리가 안 보여요.', theme: 'desert',
     walls: [[45, 28, 6, 3], [45, 28, 3, 5], [14, 12, 12, 3], [22, 5, 3, 9], [8, 25, 8, 3]],
     gates: [['h', 0], ['v', 1]],
     fl: [[10, 42], [30, 60]], mid: [[56, 36], [30, 17]], pil: [[14, 6], [44, 10], [22, 22], [6, 30], [38, 18]] },
   // 왕의 길: 왼쪽 아래(푸른)와 오른쪽 위(붉은) 진지 사이에 위쪽 길·가운데 길·아래쪽 길이 있고, 길 사이 숲 속에 빈터가 있어요 (180도 돌려도 똑같아요)
-  { name: '왕의 길', line: '두 진지 사이에 위쪽 길, 가운데 대각선 길, 아래쪽 길이 있어요. 길 사이 숲 속 빈터에도 깃발이 있어서 샛길로 돌아 들어갈 수 있어요.', theme: 'forest',
+  { name: '왕의 길', lanes: 1, line: '두 진지 사이에 위쪽 길, 가운데 대각선 길, 아래쪽 길이 있어요. 길 사이 숲 속 빈터에도 깃발이 있어서 샛길로 돌아 들어갈 수 있어요.', theme: 'forest',
     walls: [],
     wallIf: (i, j, W, H) => {
       const o = (u, v) => u < 0.085 || v < 0.085 || Math.abs(u + v - 1) < 0.06 || (u < 0.2 && v > 0.8)   // 위쪽 길(왼쪽 가장자리+위쪽 가장자리), 가운데 대각선 길, 진지 방
@@ -509,6 +510,7 @@ function arenaMap(def) {
   m.areas[0].r = [[ox, oy, AW, AH]];
   const sc = ([x, y]) => [Math.round(x * SX), Math.round(y * SY)], wallSc = ([x, y, w, h]) => { const [a, b] = sc([x, y]); return [a, b, w > 4 ? Math.round(w * SX) : w, h > 4 ? Math.round(h * SY) : h]; };
   def = Object.assign({}, def, { walls: def.walls.map(wallSc), fl: def.fl.map(sc), mid: def.mid.map(sc), pil: def.pil.map(sc) });
+  m.lanes = !!def.lanes;   // 길이 셋인 지도: 봇이 위·가운데·아래 길로 나눠 가요
   const mr = ([x, y]) => [AW - 1 - x, AH - 1 - y], sp = [[11, AH - 11], [AW - 12, 10]];
   const fl = [...def.fl.map(([x, y]) => [x, y, 0]), ...def.fl.map(p => [...mr(p), 1]), [...def.mid[0], -1], [...def.mid[1], -1], [...mr(def.mid[1]), -1]];
   // 왼쪽 위 사분면만 적어 두면 좌우·위아래로 뒤집어 네 쪽 모두 똑같이 만들어요
@@ -735,7 +737,8 @@ export function setChapterData(i) {
 setChapterData(0);
 // 모드에 맞게 깃발을 정해요: 빠른 대전은 팀마다 시작 깃발 하나와 가운데 깃발만 써요 (MAP.tfi = 원래 깃발 번호)
 export function useMode(md) {
-  const t = (CH.map && CH.map.tflags) || MAP.tflags, sp = MAP.tspawn; MAP.tfi = t.map((_, i) => i); MAP.tflags = t;
+  const t = (CH.map && CH.map.tflags) || MAP.tflags, sp = MAP.tspawn0 || (MAP.tspawn0 = MAP.tspawn); MAP.tfi = t.map((_, i) => i); MAP.tflags = t;
+  if (sp && t.some(f => f[2] >= 0)) MAP.tspawn = [0, 1].map(o => { const own = t.filter(f => f[2] === o).sort((a, b) => Math.hypot(a[0] - sp[o][0], a[1] - sp[o][1]) - Math.hypot(b[0] - sp[o][0], b[1] - sp[o][1])); return own[0] ? [own[0][0], own[0][1]] : sp[o]; });   // 팀 거점은 그 팀의 시작 깃발 자리예요
   if (md !== 'quick' || !sp) return;
   const keep = new Set(); t.forEach((f, i) => { if (f[2] < 0) keep.add(i); });
   for (const o of [0, 1]) { const own = t.map((f, i) => ({ f, i })).filter(q => q.f[2] === o).sort((a, b) => Math.hypot(a.f[0] - sp[o][0], a.f[1] - sp[o][1]) - Math.hypot(b.f[0] - sp[o][0], b.f[1] - sp[o][1])); if (own[0]) keep.add(own[0].i); }
@@ -784,7 +787,7 @@ COSMETICS.skin.items.push(
 // 온라인 대전 모드: key는 방 이름 앞글자 (모드마다 방이 따로 열려요)
 export const MODES = {
   normal: { key: 'q', cap: 10, name: T('5대5 일반'), desc: T('열 명이 모여 깃발 일곱 개를 두고 겨뤄요') },
-  quick: { key: 'k', cap: 6, limit: 300, name: T('3대3 빠른 대전'), desc: T('여섯 명, 깃발 다섯 개, 5분 안에 끝나요') },
+  quick: { key: 'k', cap: 6, name: T('3대3 빠른 대전'), desc: T('여섯 명, 깃발 다섯 개, 깃발을 전부 점령하면 이겨요') },
   rank: { key: 'r', cap: 10, name: T('팀 랭킹전'), desc: T('이기면 랭킹 점수가 오르고 지면 내려가요') }
 };
 export const GEAR_BONUS = { weapon: [0, 0.1, 0.22], armor: [0, 15, 35] };
@@ -799,7 +802,7 @@ export const CHAR_RANKS = (() => {
   return out;
 })();
 export function charRankFor(pts) { let cur = CHAR_RANKS[0]; for (const r of CHAR_RANKS) if ((pts || 0) >= r.min) cur = r; return cur; }
-export const MASTERY_PT = { kill: 16, win: 24, match: 8 };   // 한 판에 쓰러뜨림 16점, 승리 24점, 완주 8점 (+ 연승 보너스) — 스틱세움 큰 판 점수의 8배
-export const STREAK_BONUS = [[10, 40], [7, 32], [5, 24], [3, 16], [1, 8]];
+export const MASTERY_PT = { kill: 12, win: 20, assist: 8, match: 5 };   // 한 판에 쓰러뜨림 12점, 도움 8점, 승리 20점, 완주 5점 (+ 연승 보너스)
+export const STREAK_BONUS = [[10, 20], [7, 15], [5, 10], [3, 5]];   // 3연승 5, 5연승 10, 7연승 15, 10연승 20
 export function streakBonusFor(n) { for (const [a, b] of STREAK_BONUS) if (n >= a) return b; return 0; }
 export function roleLevel(xp) { return Math.min(10, 1 + Math.floor(Math.sqrt((xp || 0) / 25))); }
