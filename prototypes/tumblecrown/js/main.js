@@ -959,7 +959,9 @@ function onEvent(e) {
     case 'phit': { // 맞는 순간: 빨간 불꽃과 충격파, 번쩍임, 큰 피해일수록 큰 숫자와 화면 흔들림, 때린 사람·맞은 사람 모두 잠깐 멈칫해요
       const big = e.v >= 25, hv = Math.min(1, e.v / 45);
       view.burst(e.x, 1.6, e.z, 0xff5a4a, 8 + (big ? 10 : 0), 6 + hv * 4, 0.35, 0.11); view.burst(e.x, 1.6, e.z, 0xfff0d0, 4, 5, 0.25, 0.08); view.shock(e.x, e.z, 2.2 + hv * 2.4, 0xff6a5a, 0.3); view.flash(e.x, e.z, 0xff6a5a, 70 + hv * 90);
-      num(e.x, e.z, '-' + e.v, big ? '#ffd36b' : '#ff7a6a', big ? 1.5 : 1.1);
+      if (e.by === me && e.id !== me) num(e.x, e.z, '-' + e.v, big ? '#ffe45a' : '#ffffff', big ? 1.9 : 1.5, 3.6);   // 내가 넣은 피해: 크고 하얗게 (큰 피해는 노랗게)
+      else if (e.id === me) num(e.x, e.z, '-' + e.v, big ? '#ff9a6a' : '#ff5a4a', big ? 1.5 : 1.1);   // 내가 받은 피해: 빨갛게
+      else num(e.x, e.z, '-' + e.v, '#b8a0a8', 0.8);   // 남들끼리 주고받은 피해: 작고 흐리게
       if (e.id === me) { view.shake = Math.max(view.shake, 0.6 + hv * 0.8); SFX.play('phit'); redFlash(0.25 + hv * 0.3); }
       else if (e.by === me) { view.shake = Math.max(view.shake, 0.3 + hv * 0.5); SFX.play('hit'); }
       if ((e.id === me || e.by === me) && S.net === 'solo') S.slowT = Math.max(S.slowT || 0, big ? 0.1 : 0.05);
