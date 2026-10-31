@@ -129,7 +129,7 @@ function peerOpts() {
   return o;
 }
 function leaveNet() {
-  N.gen++; N.mg++; try { N.peer && N.peer.destroy(); } catch (e) { } N.peer = null; N.conns = []; N.host = null; N.mode = ''; N.G = null; N.code = ''; clearTimeout(N.autoT);
+  N.gen++; N.mg++; try { N.peer && N.peer.destroy(); } catch (e) { } N.peer = null; N.conns = []; N.host = null; N.mode = ''; N.pub = false; N.G = null; N.code = ''; clearTimeout(N.autoT);
   try { if (window.FFAuth && FFAuth.setRoom) FFAuth.setRoom(null); } catch (e) { }
 }
 function send(c, m) { try { c.open && c.send(m); } catch (e) { } }
@@ -142,8 +142,8 @@ function openRoom() {
   show('sRoom');
   const host = N.mode === 'solo' || N.mode === 'host';
   $('roomTitle').textContent = N.mode === 'solo' ? '봇과 연습' : N.pub ? '온라인 대전' : '친구와 대결';
-  $('roomSub').textContent = N.mode === 'host' && N.code ? (N.pub ? '방장이 시작을 누르면 빈자리를 봇이 채워 시작해요' : '방 코드 ' + N.code + ' · 친구는 로비의 "코드로 입장"에 이 코드를 입력해요') : '';
-  $('startBtn').style.display = host ? '' : 'none'; 
+  $('roomSub').textContent = (N.mode === 'host' || N.pub) && N.code ? (N.pub ? '누구든 시작을 누르면 빈자리를 봇이 채워 시작해요' : '방 코드 ' + N.code + ' · 친구는 로비의 "코드로 입장"에 이 코드를 입력해요') : '';
+  $('startBtn').style.display = host || N.pub ? '' : 'none'; 
   paintSlots();
 }
 function paintSlots() {
@@ -153,7 +153,7 @@ function paintSlots() {
 function esc(s) { return String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c])); }
 document.addEventListener('click', e => { const t = e.target.closest && e.target.closest('.slot.pn'); if (t) openProf(t.dataset.aid); });
 function pushRoom() { if (N.mode === 'host') bcast({ t: 'room', players: N.players }); }
-$('startBtn').onclick = () => { if (N.mode === 'solo' || N.mode === 'host') beginGame(); };
+$('startBtn').onclick = () => { if (N.mode === 'solo' || N.mode === 'host') beginGame(); else if (N.mode === 'guest' && N.pub) send(N.host, { t: 'go' }); };
 
 function hostHandlers(p) {
   p.on('connection', c => {
@@ -164,6 +164,7 @@ function hostHandlers(p) {
         if (N.G || N.players.length >= MAXP) { send(c, { t: 'no', why: '가득 찼거나 이미 시작했어요' }); setTimeout(() => c.close(), 300); return; }
         const pl = { id: d.id, aid: /^[0-9a-f-]{36}$/i.test(String(d.aid || '')) ? String(d.aid) : '', name: String(d.name || '손님').slice(0, 15), col: pickCol(d.col), skin: SKINS[d.skin] ? d.skin : '' }; c.gid = d.id; N.players.push(pl); N.conns.push(c);
         send(c, { t: 'welcome', id: d.id, players: N.players }); pushRoom(); paintSlots();
+      } else if (d.t === 'go') { if (N.pub && !N.G && N.mode === 'host') beginGame();
       } else if (d.t === 'i') { N.inputs[c.gid] = Object.assign(N.inputs[c.gid] || {}, d.i, { jp: (N.inputs[c.gid] || {}).jp || d.i.jp, swap: (N.inputs[c.gid] || {}).swap || d.i.swap, emo: d.i.emo || (N.inputs[c.gid] || {}).emo }); }
     });
     const drop = () => { N.conns = N.conns.filter(x => x !== c); if (!N.G) { N.players = N.players.filter(p => p.id !== c.gid); pushRoom(); if (scr === 'sRoom') paintSlots(); } else { const r = N.G.racers.find(r => r.id === c.gid); if (r) { r.bot = true; r.ai = { plan: null, stuck: 0, best: Infinity, wait: 0, noise: .3, aimT: 0, react: .35 }; } } };
@@ -186,7 +187,7 @@ function startGuest(code) {
   p.on('open', () => {
     const c = p.connect(PREFIX + code, { reliable: false }); N.host = c; setTimeout(() => { if (!c.open) fail('방을 찾지 못했어요.'); }, 6000);
     c.on('open', () => send(c, { t: 'hello', v: VERSION, id: UID, aid: myAid(), name: myName(), col: COLORS[SAVE.col % COLORS.length], skin: skinOf() }));
-    c.on('data', d => guestMsg(d, fail, () => { done = true; })); c.on('close', () => { if (!done || N.mode === 'guest') { if (N.G) { endToLobby('방장과 연결이 끊겼어요.'); } else fail('방과 연결이 끊겼어요.'); } });
+    c.on('data', d => guestMsg(d, fail, () => { done = true; })); c.on('close', () => { if (!done || N.mode === 'guest') { if (N.G) { endToLobby('연결이 끊겼어요.'); } else fail('방과 연결이 끊겼어요.'); } });
   });
 }
 function doJoin() {
@@ -215,10 +216,10 @@ function startMatch() {
     const next = () => { if (ended) return; ended = true; try { p.destroy(); } catch (e) { } n++; tryJoin(); };
     p.on('error', next);
     p.on('open', () => {
-      const c = p.connect(PREFIX + 'q' + n, { reliable: false }); N.host = c; N.mode = 'guest'; const to = setTimeout(next, 3500);
+      const c = p.connect(PREFIX + 'q' + n, { reliable: false }); N.host = c; N.mode = 'guest'; N.pub = true; const to = setTimeout(next, 3500);
       c.on('open', () => { clearTimeout(to); send(c, { t: 'hello', v: VERSION, id: UID, aid: myAid(), name: myName(), col: COLORS[SAVE.col % COLORS.length], skin: skinOf() }); });
       c.on('data', d => { if (d && d.t === 'no') { clearTimeout(to); next(); } else if (d && d.t === 'welcome') { ended = true; homeMsg(''); guestMsg(d, () => { }, () => { }); } else guestMsg(d, () => { }, () => { }); });
-      c.on('close', () => { if (ended) { if (N.G) endToLobby('방장과 연결이 끊겼어요.'); } else next(); });
+      c.on('close', () => { if (ended) { if (N.G) endToLobby('연결이 끊겼어요.'); } else next(); });
     });
   };
   tryJoin();
