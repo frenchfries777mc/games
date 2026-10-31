@@ -1064,6 +1064,7 @@ function paintIntro() {
   if (who && S.introHero !== who.id) {
     S.introHero = who.id; view.camId = who.id; view.focusOn(who.x, who.z, 0.9);
     const card = $('introCard'); card.firstElementChild.textContent = who.name; card.lastElementChild.textContent = ROLES[who.role].name; card.classList.remove('on'); setTimeout(() => card.classList.add('on'), 30);
+    if (who.role === 'streltsy') setTimeout(() => { view.burst(who.x, 3.6, who.z, 0xffc060, 10, 5, 0.3, 0.1); view.flash(who.x, who.z, 0xffc060, 80); SFX.play('slam'); }, 220);   // 하늘로 한 발
     view.pose(who.id, 'rally'); view.shock(who.x, who.z, 5, pcol(who) ? 0xffe08a : 0xffe08a, 0.5); view.flash(who.x, who.z, 0xffe08a, 90); SFX.play('parry');
   }
   $('introSkip').classList.remove('on'); $('introSkip').style.display = 'none';
