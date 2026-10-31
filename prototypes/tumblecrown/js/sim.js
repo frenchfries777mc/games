@@ -87,10 +87,18 @@ function pvpSpawn(G) {
     G.enemies.push(e); p.px = e;
   });
 }
+// 봇은 되살아날 때 우리 깃발 가운데 상대 깃발과 가장 가까운 앞쪽 깃발(둘 중 하나)을 골라요
+function botRespawnFlag(G, p) {
+  const mine = [], other = []; G.fl.forEach((f, i) => (f.own === p.team ? mine : other).push(i));
+  if (!mine.length) return null; if (!other.length) return mine[Math.floor(G.rng() * mine.length)];
+  const sc = mine.map(i => ({ i, d: Math.min(...other.map(j => Math.hypot(G.fl[i].x - G.fl[j].x, G.fl[i].z - G.fl[j].z))) })).sort((a, b) => a.d - b.d);
+  return sc[Math.min(sc.length - 1, G.rng() < 0.5 ? 0 : 1)].i;
+}
 function respawnP(G, p) {
   p.dead = false; p.down = false; p.hp = p.maxhp; p.inv = D.SPAWN_INV; p.shield = 0; p.burn = 0; p.stl = 0; p.slow = 0; p.stun = 0; p.noHit = 0; p.mh = null; p.vow = null; p.bast = 0;
   teamPos(G, p);
   // 우리 팀 깃발을 골랐고 아직 우리 것이면 그 둘레에서 일어나요
+  if (p.ai && p.rspF == null) p.rspF = botRespawnFlag(G, p);
   const f = p.rspF != null ? G.fl[p.rspF] : null; p.rspF = null;
   if (f && f.own === p.team) { const a = p.tIdx / D.TEAM_N * TAU; p.x = f.x + Math.cos(a) * 3.2; p.z = f.z + Math.sin(a) * 3.2; mapCollide(p, 0.6); }
   ev(G, 'respawn', { id: p.id, x: p.x, z: p.z });
@@ -1676,6 +1684,11 @@ function botFlag(G, p, dt) {
     ai.fi = sl != null && sl >= 0 ? sl : bi;
   }
   const f = G.fl[ai.fi], d = Math.hypot(f.x - p.x, f.z - p.z);
+  // 목표 깃발이 아주 멀고 근처에 상대가 없으면 목표에 가까운 우리 깃발로 귀환해요
+  if (d > 55 && !(p.rcCd > 0) && !(p.rcT > 0) && !G.players.some(q => q.team !== p.team && alive(q) && Math.hypot(q.x - p.x, q.z - p.z) < 18)) {
+    let bj = -1, bd = d - 35; G.fl.forEach((g, j) => { if (g.own !== p.team) return; const dd = Math.hypot(g.x - f.x, g.z - f.z); if (dd < bd) { bd = dd; bj = j; } });
+    if (bj >= 0) { inp.rcl = bj + 1; return inp; }
+  }
   if (d > D.FLAG_R * 0.55) { moveTo(G, p, inp, f.x, f.z, 1); if (d > 25 && p.rollCd <= 0 && G.rng() < 0.01) inp.roll = true; }
   else { ai.hl = (ai.hl || 0) - dt; if (ai.hl <= 0) { ai.hl = 1 + G.rng() * 1.5; ai.ha = G.rng() * TAU; } inp.mx = Math.cos(ai.ha) * 0.35; inp.mz = Math.sin(ai.ha) * 0.35; }
   return inp;
@@ -1721,12 +1734,12 @@ function botPvp(G, p, dt) {
     }
   }
   if (ai.t <= 0) { ai.t = 0.4 + G.rng() * 0.5; ai.sd = G.rng() < 0.5 ? 1 : -1; ai.hold = G.rng() < 0.15; if (!(ai.rush > 0) && G.rng() < 0.45) ai.rush = 2.5 + G.rng() * 2; }
-  const want = ranged ? 6.5 : (R.atk.range + 0.7) * 0.8;
+  const want = ranged ? 8 : (R.atk.range + 0.7) * 0.8, nd = dist(p, nearest);
   if (inp.mx == null) {
     if (low && d < 8) { const a = safeDir(G, p, Math.atan2(p.z - nearest.z, p.x - nearest.x)); inp.mx = Math.cos(a); inp.mz = Math.sin(a); if (d < 3 && p.rollCd <= 0 && G.rng() < 0.05) inp.roll = true; }   // 체력이 낮으면 물러나요 (맞지 않고 4초가 지나면 저절로 차올라요)
     else if (ai.rush > 0 && d > (ranged ? 4 : 1.6)) moveTo(G, p, inp, tgt.x, tgt.z, ranged ? 3.5 : 1.2);
     else if (d > want + 1.5 || !clear) moveTo(G, p, inp, tgt.x, tgt.z, 0.6);
-    else if (ranged && d < 2.4 && d > 1.5) { const a = safeDir(G, p, ta + Math.PI); inp.mx = Math.cos(a); inp.mz = Math.sin(a); }
+    else if (ranged && nd < 5.5) { const a = safeDir(G, p, Math.atan2(p.z - nearest.z, p.x - nearest.x)); if (nd < 3 && p.rollCd <= 0 && G.rng() < 0.04) inp.roll = true; inp.mx = Math.cos(a); inp.mz = Math.sin(a); }
     else if (!ai.hold) { inp.mx = -Math.sin(ta) * ai.sd * 0.8 + Math.cos(ta) * 0.2; inp.mz = Math.cos(ta) * ai.sd * 0.8 + Math.sin(ta) * 0.2; }
     // 멀리서 구르며 파고들기
     if (!ranged && d > 7 && p.rollCd <= 0 && G.rng() < 0.02) inp.roll = true;
