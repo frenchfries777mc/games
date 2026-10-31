@@ -8,7 +8,8 @@ import { RenderPixelatedPass } from 'three/addons/postprocessing/RenderPixelated
 import { ROLES, MAP, CH, FOES, COSMETICS, TEAMS, FLAG_R, FLAG_T } from './data.js';
 import { DSTATE, CS, MW, MH, GRID, WATER, PILLARS, cw, chapterIndex, SEC, SOPEN, GATE, CUT, HGT, LEDGE_H, hAt, pillarAt } from './map.js';
 // 화면에서 '바닥'은 비밀 방(SEC)을 뺀 곳이에요. 비밀 방은 따로 그려 두고 벽이 무너질 때 보여요. 창살문(GATE) 자리는 닫혀 있어도 바닥으로 그려요
-const floorCell = (i, j) => i >= 0 && j >= 0 && i < MW && j < MH && (GRID[j * MW + i] === 1 || GATE[j * MW + i] > 0) && !SEC[j * MW + i] && CUT[j * MW + i] !== 4 && CUT[j * MW + i] !== 1;
+const inDoor = (i, j) => (MAP.doors || []).some(([x, y, w, h]) => i >= x && i < x + w && j >= y && j < y + h);   // 사막 신전 문 자리는 닫혀 있어도 바닥으로 그려요 (닫힌 모습은 돌문이 맡아요)
+const floorCell = (i, j) => i >= 0 && j >= 0 && i < MW && j < MH && (GRID[j * MW + i] === 1 || GATE[j * MW + i] > 0 || inDoor(i, j)) && !SEC[j * MW + i] && CUT[j * MW + i] !== 4 && CUT[j * MW + i] !== 1;
 // 낭떠러지·절벽·승강기 칸 (벽을 세우지 않아요)
 const cutCell = (i, j) => i >= 0 && j >= 0 && i < MW && j < MH && CUT[j * MW + i] > 0 && CUT[j * MW + i] !== 3 && CUT[j * MW + i] !== 5;
 const cellH = (i, j) => i >= 0 && j >= 0 && i < MW && j < MH ? HGT[j * MW + i] * LEDGE_H : 0;
@@ -728,7 +729,7 @@ export class View {
       box(sx + 0.02, 0.26, sz + 0.02, M(T.top), 0, 4.12, 0, g);
       g.position.set((x + w / 2) * CS, 0, (y + h / 2) * CS); s.add(g); return g;
     });   // 열리면 땅속으로 내려가요
-    this.doorG = (MAP.doors || []).map(([x, y, w, h]) => { const g = box(w * CS, 0.06, h * CS, M(0x6aff9a, { e: 0x6aff9a, ei: 0.7, op: 0.35, uniq: true }), (x + w / 2) * CS, 0.07, (y + h / 2) * CS, s, false); g.visible = true; return g; });   // 열리면 길바닥이 초록으로 빛나요
+    this.doorG = [];
     // 팀 대전 장식: 바닥에 흩어진 돌·상자·풀, 진지와 깃발 곁의 횃불, 진지 기둥 깃발
     if (CH.pvp) {
       const bad = (x, z) => MAP.tflags.some(([a, b]) => Math.hypot(cw(a) - x, cw(b) - z) < 7.5) || MAP.tspawn.some(([a, b]) => Math.hypot(cw(a) - x, cw(b) - z) < 9), forest = CH.theme === 'forest';
