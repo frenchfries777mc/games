@@ -7,7 +7,7 @@
 <script src="../ff-pnsearch.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <title>Tumble Crown</title>
-<meta name="description" content="5대5 깃발 점령 팀 대전 게임. 15가지 직업으로 깃발 일곱 개를 모두 차지하세요.">
+<meta name="description" content="5대5 깃발 점령 팀 대전 게임. 16가지 직업으로 깃발 일곱 개를 모두 차지하세요.">
 <meta property="og:title" content="Tumble Crown"><meta property="og:image" content="shots/battle2.jpg"><meta name="theme-color" content="#0c1018">
 <link rel="icon" href="../gamelogo/tumblecrown.svg">
 <style>
@@ -27,6 +27,11 @@ a{color:inherit}
 .top .wrap{display:flex;align-items:center;gap:6px;min-height:54px;flex-wrap:wrap;padding-block:6px}
 .logo{display:flex;align-items:center;gap:10px;font-weight:700;font-size:20px;letter-spacing:.04em;color:var(--gold);text-decoration:none;margin-right:auto}
 .nav{display:flex;gap:2px;flex-wrap:wrap}
+.sw{display:inline-flex;padding:3px;border-radius:99px;border:1px solid var(--line);background:var(--panel);margin-right:8px}
+.sw a{font-weight:700;font-size:13px;letter-spacing:.04em;text-transform:uppercase;color:var(--mu);text-decoration:none;padding:3px 12px;border-radius:99px}
+.sw a:hover{color:var(--tx)}
+.sw a.on{background:linear-gradient(90deg,var(--gold),var(--gold2));color:#1c1405}
+@media (max-width:520px){.top .wrap{gap:6px}.logo{margin-right:0;flex:1 0 100%}.sw{order:3;flex:1 0 100%;justify-content:space-between;margin:0}.sw a{padding:3px 8px;font-size:12px}}
 .nav a{text-decoration:none;font-size:14px;font-weight:700;padding:4px 10px}
 .nav a:hover{color:var(--gold)}
 .hero{position:relative;min-height:max(560px,92svh);padding:70px 0 110px;display:flex;align-items:center;overflow:hidden;background:#06090e}
@@ -78,6 +83,7 @@ footer{padding:44px 0 50px;color:var(--mu);font-size:13px;text-align:center}
 <body>
 <div class="top" id="topbar"><div class="wrap">
  <a class="logo" href="#top"><img src="../gamelogo/tumblecrown.svg" alt="" width="34" height="34">TUMBLE CROWN</a>
+ <span class="sw" data-notr><a href="https://frenchfries777mc.github.io/hub/">Hub</a><a class="on" href="https://frenchfries777mc.github.io/games/" aria-current="page">Games</a><a href="https://frenchfries777mc.github.io/educations/">Educations</a><a href="https://frenchfries777mc.github.io/tools/">Tools</a></span>
  <nav class="nav"><a href="#feat">특징</a><a href="#roles">직업</a><a href="#maps">맵</a><a href="#guide">플레이 방법</a></nav>
  <span data-ff-account></span>
 </div></div>
@@ -92,7 +98,7 @@ footer{padding:44px 0 50px;color:var(--mu);font-size:13px;text-align:center}
  </div></div>
 </header>
 <div class="wrap">
-<div class="stats"><div class="box">5 대 5 팀전</div><div class="box">직업 15가지</div><div class="box">맵 9곳</div><div class="box">온라인 방 대전</div></div>
+<div class="stats"><div class="box">5 대 5 팀전</div><div class="box">직업 16가지</div><div class="box">맵 13곳</div><div class="box">온라인 방 대전</div></div>
 <section id="feat">
  <h2>게임 특징</h2>
  <div class="grid" style="margin-top:22px">
@@ -102,14 +108,14 @@ footer{padding:44px 0 50px;color:var(--mu);font-size:13px;text-align:center}
  </div>
 </section>
 <section id="roles">
- <h2>직업 15가지</h2>
+ <h2>직업 16가지</h2>
  <p class="sub2">공격과 Q·E·R 기술이 직업마다 달라요. 게임 안에서 연습장으로 먼저 써 볼 수 있어요.</p>
- <div class="rg"><div class="box rc" style="--c:#3f6fd0"><b>기사</b><small>근접 딜러</small><p>튼튼하게 버티며 공격·공격·강타로 몰아붙여요.</p></div><div class="box rc" style="--c:#6a7a8c"><b>창병</b><small>근접 딜러</small><p>긴 창으로 멀리서 찌르고, 돌진과 휩쓸기로 밀어내요.</p></div><div class="box rc" style="--c:#c8873a"><b>바이킹</b><small>근접 딜러</small><p>느리지만 도끼 한 방이 무거운 가장 튼튼한 전사예요.</p></div><div class="box rc" style="--c:#d0443a"><b>맘루크</b><small>근접 딜러</small><p>굽은 칼로 빠르게 베고 파고드는 날랜 전사예요.</p></div><div class="box rc" style="--c:#cfc8b0"><b>스켈레톤</b><small>근접 딜러</small><p>가볍고 빠른 뼈다귀예요. 파고들었다 빠져요.</p></div><div class="box rc" style="--c:#3a5a66"><b>자객</b><small>근접 딜러</small><p>몰래 파고들어 약한 한 명을 끊어요.</p></div><div class="box rc" style="--c:#5a9a4e"><b>사냥꾼</b><small>원거리 딜러</small><p>멀리서 쏴요. 공격을 꾹 누르면 여러 발을 한 번에 쏴요.</p></div><div class="box rc" style="--c:#8a6a3a"><b>석궁병</b><small>원거리 딜러</small><p>멀리서 한 발씩 정확히 쏘고, 저격으로 마무리해요.</p></div><div class="box rc" style="--c:#c8643a"><b>폭파병</b><small>원거리 딜러</small><p>벽 너머 깃발 위를 폭탄으로 때려 점령을 방해해요.</p></div><div class="box rc" style="--c:#a56ad8"><b>마녀</b><small>원거리 딜러</small><p>마법 구슬과 저주로 멀리서 괴롭혀요.</p></div><div class="box rc" style="--c:#9a8f78"><b>성벽지기</b><small>유틸리티</small><p>길목을 막고 아군을 지켜요. 가장 오래 버텨요.</p></div><div class="box rc" style="--c:#7a4ab8"><b>궁정 마법사</b><small>유틸리티</small><p>표식을 남기고, 자리를 맞바꿔 아군을 구해요.</p></div><div class="box rc" style="--c:#e8e4ef"><b>사제</b><small>서포터</small><p>빛 구슬로 따라붙고, 큰 빛을 꿰뚫어 쏴요.</p></div><div class="box rc" style="--c:#c05a7a"><b>음유시인</b><small>서포터</small><p>노래로 아군을 빠르게 하고 치유해요.</p></div><div class="box rc" style="--c:#8a5ac8"><b>네크로멘서</b><small>서포터</small><p>넓게 휘두르는 공격으로 싸우고, 치유와 해골 소환으로 전선을 만들어요.</p></div></div>
+ <div class="rg"><div class="box rc" style="--c:#3f6fd0"><b>기사</b><small>근접 딜러</small><p>튼튼하게 버티며 공격·공격·강타로 몰아붙여요.</p></div><div class="box rc" style="--c:#6a7a8c"><b>창병</b><small>근접 딜러</small><p>긴 창으로 멀리서 찌르고, 돌진과 휩쓸기로 밀어내요.</p></div><div class="box rc" style="--c:#c8873a"><b>바이킹</b><small>근접 딜러</small><p>느리지만 도끼 한 방이 무거운 가장 튼튼한 전사예요.</p></div><div class="box rc" style="--c:#d0443a"><b>맘루크</b><small>근접 딜러</small><p>굽은 칼로 빠르게 베고 파고드는 날랜 전사예요.</p></div><div class="box rc" style="--c:#cfc8b0"><b>스켈레톤</b><small>근접 딜러</small><p>가볍고 빠른 뼈다귀예요. 파고들었다 빠져요.</p></div><div class="box rc" style="--c:#3a5a66"><b>자객</b><small>근접 딜러</small><p>몰래 파고들어 약한 한 명을 끊어요.</p></div><div class="box rc" style="--c:#5a9a4e"><b>사냥꾼</b><small>원거리 딜러</small><p>멀리서 쏴요. 공격을 꾹 누르면 여러 발을 한 번에 쏴요.</p></div><div class="box rc" style="--c:#8a6a3a"><b>석궁병</b><small>원거리 딜러</small><p>멀리서 한 발씩 정확히 쏘고, 저격으로 마무리해요.</p></div><div class="box rc" style="--c:#6a7a8a"><b>스트렐치</b><small>원거리 딜러</small><p>가장 멀리 강한 총알을 쏘고, 연사와 엄폐물로 버텨요.</p></div><div class="box rc" style="--c:#c8643a"><b>폭파병</b><small>원거리 딜러</small><p>벽 너머 깃발 위를 폭탄으로 때려 점령을 방해해요.</p></div><div class="box rc" style="--c:#a56ad8"><b>마녀</b><small>원거리 딜러</small><p>마법 구슬과 저주로 멀리서 괴롭혀요.</p></div><div class="box rc" style="--c:#9a8f78"><b>성벽지기</b><small>유틸리티</small><p>길목을 막고 아군을 지켜요. 가장 오래 버텨요.</p></div><div class="box rc" style="--c:#7a4ab8"><b>궁정 마법사</b><small>유틸리티</small><p>표식을 남기고, 자리를 맞바꿔 아군을 구해요.</p></div><div class="box rc" style="--c:#e8e4ef"><b>사제</b><small>서포터</small><p>빛 구슬로 따라붙고, 큰 빛을 꿰뚫어 쏴요.</p></div><div class="box rc" style="--c:#c05a7a"><b>음유시인</b><small>서포터</small><p>노래로 아군을 빠르게 하고 치유해요.</p></div><div class="box rc" style="--c:#8a5ac8"><b>네크로멘서</b><small>서포터</small><p>넓게 휘두르는 공격으로 싸우고, 치유와 해골 소환으로 전선을 만들어요.</p></div></div>
 </section>
 <section id="maps">
- <h2>맵 9곳</h2>
+ <h2>맵 13곳</h2>
  <p class="sub2">맵마다 모양이 달라 깃발 싸움도 달라져요. 팀은 맞은편 구석에서 시작해요.</p>
- <div class="chips"><span class="box chip">세 갈래 길</span><span class="box chip">중앙 요새</span><span class="box chip">십자 광장</span><span class="box chip">돌담 마을</span><span class="box chip">얼음 호수</span><span class="box chip">심연 다리</span><span class="box chip">해적 항구</span><span class="box chip">시계탑</span><span class="box chip">지하 수로</span></div>
+ <div class="chips"><span class="box chip">세 갈래 길</span><span class="box chip">중앙 요새</span><span class="box chip">십자 광장</span><span class="box chip">돌담 마을</span><span class="box chip">얼음 호수</span><span class="box chip">심연 다리</span><span class="box chip">해적 항구</span><span class="box chip">시계탑</span><span class="box chip">지하 수로</span><span class="box chip">불타는 성벽</span><span class="box chip">무너진 대성당</span><span class="box chip">사막 신전</span><span class="box chip">왕의 길</span></div>
 </section>
 <section id="guide">
  <h2>플레이 방법</h2>
@@ -127,8 +133,10 @@ footer{padding:44px 0 50px;color:var(--mu);font-size:13px;text-align:center}
 <footer><span class="ff-copy">© 2026 Frenchfries777 · <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/" target="_blank" rel="noopener">CC BY-NC-ND 4.0</a></span></footer>
 <script>
 (function(){var box=document.getElementById('vbox');function esc(x){return String(x).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})}
-fetch('../prototypes/tumblecrown/patchnotes.json',{cache:'no-store'}).then(function(r){return r.ok?r.json():Promise.reject()}).then(function(d){var l=(d.notes||[]).slice(0,3);
-box.innerHTML=l.map(function(n,i){return '<div class="tv box"><div class="vn"><b class="v">'+esc(n.build)+'</b>'+(i?'':'<span class="badge">최신</span>')+'<small>'+esc(n.date)+'</small></div><p>'+esc(n.title)+'</p></div>'}).join('')}).catch(function(){});
+var V=[{v:'0.1',t:'일곱 깃발의 전장',d:'5대5 깃발 점령 팀 대전이 처음 열린 버전이에요.'}];
+function draw(b,date){box.innerHTML=V.map(function(x,i){return '<div class="tv box"><div class="vn"><b class="v">v'+esc(x.v)+'</b>'+(i?'':'<span class="badge">최신</span>')+'<small>'+(b?'b'+esc(b):'')+(date?' · '+esc(date):'')+'</small></div><p>'+esc(x.t)+' · '+esc(x.d)+'</p></div>'}).join('')}
+draw();
+Promise.all([fetch('../prototypes/tumblecrown/build.json',{cache:'no-store'}).then(function(r){return r.json()}),fetch('../prototypes/tumblecrown/patchnotes.json',{cache:'no-store'}).then(function(r){return r.json()})]).then(function(a){var n=(a[1].notes||[])[0]||{};draw(a[0].build,n.date)}).catch(function(){});
 })();
 (function(){var t=document.getElementById('topbar');function f(){t.classList.toggle('solid',window.scrollY>60)}addEventListener('scroll',f,{passive:true});f()})();
 </script>
