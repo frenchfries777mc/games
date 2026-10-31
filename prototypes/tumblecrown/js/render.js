@@ -720,8 +720,8 @@ export class View {
       const em = M(0xffffff, { e: 0xffffff, ei: 2, op: 0.7, uniq: true }), edge = mesh(geo('fedge', () => new THREE.RingGeometry(0.88, 1, 64)), em, x, 0.15, z, s, false); edge.rotation.x = -Math.PI / 2; edge.castShadow = false; edge.visible = false;
       const mkB = (col, ox) => { const bg = new THREE.Group(); bg.position.set(ox, 0, 2.2); g.add(bg); cyl(0.1, 0.12, 5.2, 6, M(0x5a4a3a), 0, 2.6, 0, bg); const cl = box(2.0, 1.4, 0.08, M(col, { e: col, ei: 1.1 }), 1.1, 4.4, 0, bg); cone(0.2, 0.5, 4, gold(), 0, 5.45, 0, bg); bg.visible = false; return { bg, cl }; };
       const hold = mkB(0xffd23a, -2.6), seize = mkB(0x9a3aff, 2.6);
-      const lk = new THREE.Group(); lk.position.set(0, 8.6, 0); lk.visible = false; g.add(lk); const lkm = M(0xe0c060, { e: 0xe0c060, ei: 0.9, uniq: true });   // 잠긴 깃발 위에 떠서 도는 자물쇠
-      box(1.1, 0.9, 0.5, lkm, 0, 0, 0, lk); box(0.16, 0.8, 0.16, lkm, -0.34, 0.8, 0, lk); box(0.16, 0.8, 0.16, lkm, 0.34, 0.8, 0, lk); box(0.84, 0.16, 0.16, lkm, 0, 1.25, 0, lk);
+      const lk = new THREE.Group(); lk.position.set(0, 7.4, 0); lk.visible = false; g.add(lk); const lkm = M(0xffd23a, { e: 0xffd23a, ei: 1.3, uniq: true });   // 잠긴 깃발 위에 노란 깃발을 세워요
+      cyl(0.08, 0.1, 3.2, 6, M(0x5a4a3a), 0, 1.6, 0, lk); box(1.7, 1.1, 0.08, lkm, 0.9, 2.5, 0, lk); cone(0.16, 0.4, 4, gold(), 0, 3.4, 0, lk);
       this.flagM.push({ cm, rm, pm, cloth, prog, bm, beam, em, edge, hold, seize, lk });
     }
     // 사막 신전 문: 닫히면 돌문이 올라와 길을 막고, 열리면 땅속으로 내려가요
@@ -1229,7 +1229,7 @@ export class View {
       F.cm.color.setHex(c); F.cm.emissive.setHex(c); F.rm.color.setHex(c); F.rm.emissive.setHex(c); F.pm.color.setHex(pc); F.pm.emissive.setHex(pc);
       const lkd = ((f[5] | 0) >> (this.myTm | 0)) & 1;   // 순서 규칙 때문에 우리 팀이 아직 못 점령하는 깃발: 흐리게 하고 자물쇠를 띄워요
       if (lkd) { F.cm.color.setHex(0x4c4a56); F.cm.emissive.setHex(0x1c1a22); F.rm.color.setHex(0x4c4a56); F.rm.emissive.setHex(0x1c1a22); }
-      F.lk.visible = !!lkd; if (lkd) { F.lk.rotation.y = t * 1.6; F.lk.position.y = 8.6 + 0.25 * Math.sin(t * 2.4 + i); }
+      F.lk.visible = !!lkd; if (lkd) { F.lk.rotation.y = Math.sin(t * 1.4 + i) * 0.25; F.lk.position.y = 7.4 + 0.15 * Math.sin(t * 2.4 + i); }
       for (const [B, v] of [[F.hold, f[3]], [F.seize, f[4]]]) { B.bg.visible = v > 0; if (v > 0) { B.bg.scale.setScalar(Math.min(1, (10 - v) / 0.3 + 0.01 > 1 ? 1 : Math.max(0.05, (10 - v) / 0.3))); B.cl.rotation.y = Math.sin(t * 3 + i) * 0.2; } }   // 웰링턴이 세운 황금·보라 깃발
       F.prog.visible = f[2] > 0; F.prog.scale.setScalar(Math.max(0.01, f[2] / FLAG_T) * FLAG_R); F.cloth.rotation.y = Math.sin(t * 2.2 + i) * 0.18;
       const on = f[2] > 0, fr = Math.min(1, f[2] / FLAG_T);
