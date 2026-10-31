@@ -187,6 +187,9 @@ function menu(go) {
   else if (go === 'site') { try { window.close(); } catch (e) { } setTimeout(() => { location.href = '../../'; }, 250); }   // 창이 닫히면 그대로 사라지고, 못 닫으면 사이트로 가요
 }
 // 치장·스킨: 재화는 tC. 한 번 사면 계속 쓸 수 있고, 눌러서 입고 벗어요
+// 입을 수 있는 아이템인가: 사서 가졌거나, 마스터리 스킨이면 지금 직업의 마스터리 점수가 기준 이상
+function ownCos(cur, it) { return it.rk ? ((SAVE.pts || {})[SAVE.role] || 0) >= it.rk : (!it.cost || !!SAVE.cos.own[cur + ':' + it.id]); }
+function myCos() { const c = Object.assign({}, SAVE.cos.on), it = c.skin && COSMETICS.skin.items.find(i => i.id === c.skin); if (it && it.rk && !ownCos('skin', it)) delete c.skin; return c; }
 function paintWard() {
   const tabs = Object.keys(COSMETICS), cur = COSMETICS[S.wardTab] ? S.wardTab : tabs[0];
   $('wardTc').textContent = SAVE.honor + ' tC';
@@ -196,9 +199,9 @@ function paintWard() {
   // 누르면 바로 사지 않고 미리보기만 해요. 사는 것과 입고 벗는 건 아래 버튼으로 해요
   const sel = S.wardSel && S.wardSel.tab === cur ? S.wardSel.id : null;
   let act = $('wardAct'); if (!act) { act = document.createElement('div'); act.id = 'wardAct'; act.style.cssText = 'display:flex;gap:8px;margin-top:10px;align-items:center'; $('wardBox').appendChild(act); }
-  $('wardGrid').innerHTML = COSMETICS[cur].items.map(it => { const own = !it.cost || SAVE.cos.own[cur + ':' + it.id]; return '<button data-i="' + it.id + '" class="' + ((on === it.id) ? 'on ' : '') + (own ? 'own ' : '') + (sel === it.id ? 'sel' : '') + '"' + (sel === it.id ? ' style="outline:2px solid #5ff0c0"' : '') + '><b>' + it.name + '</b><small>' + (on === it.id ? T('입는 중') : own ? T('보유') : it.cost + ' tC') + '</small></button>'; }).join('');
-  const it0 = sel != null ? COSMETICS[cur].items.find(x => x.id === sel) : null, key0 = it0 ? cur + ':' + it0.id : '', own0 = it0 && (!it0.cost || SAVE.cos.own[key0]);
-  act.innerHTML = it0 ? (own0 ? '<button class="btn gold" id="wardDo">' + ((SAVE.cos.on[cur] || '') === it0.id ? T('벗기') : T('입기')) + '</button>' : '<button class="btn gold" id="wardDo">' + T('구매 {0} tC', it0.cost) + '</button>') : '<small>' + T('아이템을 누르면 미리 볼 수 있어요') + '</small>';
+  $('wardGrid').innerHTML = COSMETICS[cur].items.map(it => { const own = ownCos(cur, it); return '<button data-i="' + it.id + '" class="' + ((on === it.id) ? 'on ' : '') + (own ? 'own ' : '') + (sel === it.id ? 'sel' : '') + '"' + (sel === it.id ? ' style="outline:2px solid #5ff0c0"' : '') + '><b>' + it.name + '</b><small>' + (on === it.id ? T('입는 중') : own ? T('보유') : it.rk ? T('{0}점부터 · 지금 직업', it.rk) : it.cost + ' tC') + '</small></button>'; }).join('');
+  const it0 = sel != null ? COSMETICS[cur].items.find(x => x.id === sel) : null, key0 = it0 ? cur + ':' + it0.id : '', own0 = it0 && ownCos(cur, it0);
+  act.innerHTML = it0 ? (own0 ? '<button class="btn gold" id="wardDo">' + ((SAVE.cos.on[cur] || '') === it0.id ? T('벗기') : T('입기')) + '</button>' : (it0.rk ? '<small>' + T('지금 직업의 마스터리 점수 {0}점이 되면 열려요', it0.rk) + '</small>' : '<button class="btn gold" id="wardDo">' + T('구매 {0} tC', it0.cost) + '</button>')) : '<small>' + T('아이템을 누르면 미리 볼 수 있어요') + '</small>';
   // 고른 아이템을 입혀 보여 줘요 (사거나 입기 전에는 저장하지 않아요)
   view.cos = it0 ? Object.assign({}, SAVE.cos.on, it0.id ? { [cur]: it0.id } : {}) : SAVE.cos.on; if (it0 && !it0.id) { view.cos = Object.assign({}, SAVE.cos.on); delete view.cos[cur]; }
   view.setPreview(SAVE.role, COLORS[SAVE.col | 0].c);
@@ -500,7 +503,7 @@ function matchJoin(n, gen) {
   p.on('open', () => {
     if (S.mg !== gen || S.peer !== p) return;
     const c = p.connect(PREFIX + 'q' + n, { reliable: true, serialization: 'json' });
-    c.on('open', () => { c.send({ t: 'hello', ver: VERSION, uid: UID, aid: myAid(), name: myName(), role: SAVE.role, col: SAVE.col | 0, cos: SAVE.cos.on }); });
+    c.on('open', () => { c.send({ t: 'hello', ver: VERSION, uid: UID, aid: myAid(), name: myName(), role: SAVE.role, col: SAVE.col | 0, cos: myCos() }); });
     c.on('data', d => {
       if (S.mg !== gen) return;
       if (done) { guestMsg(d); return; }
@@ -559,7 +562,7 @@ function startGuest(code) {
   const tm = setTimeout(() => { if (S.peer === p && S.scr !== 'sRoom' && !inGame()) { homeMsg(T('연결 시간이 초과됐어요. 초대를 다시 받아 주세요.')); leaveNet(); } }, 15000);
   p.on('open', () => {
     const c = p.connect(PREFIX + code, { reliable: true, serialization: 'json' }); S.conn = c;
-    c.on('open', () => { c.send({ t: 'hello', ver: VERSION, uid: UID, aid: myAid(), name: myName(), role: SAVE.role, col: SAVE.col | 0, cos: SAVE.cos.on }); });
+    c.on('open', () => { c.send({ t: 'hello', ver: VERSION, uid: UID, aid: myAid(), name: myName(), role: SAVE.role, col: SAVE.col | 0, cos: myCos() }); });
     c.on('data', d => { clearTimeout(tm); guestMsg(d); });
     c.on('close', () => { if (S.conn !== c) return; const wasGame = inGame(); endToLobby(wasGame ? T('방장이 나가서 대전이 끝났어요.') : T('방이 닫혔어요.')); });
   });
@@ -586,7 +589,7 @@ function beginGame(prevG) {
   const solo = S.net === 'solo';
   const sl = prevG ? S.lastSl : roster().map((s, i) => {
     const id = 's' + i, c = s.uid && s.uid !== UID ? S.conns[s.uid] : null;
-    return { id, uid: s.uid, role: s.role, col: TEAMS[s.team].c, team: s.team, name: s.bot ? s.name : s.uid === UID ? myName() : s.name, bot: !!s.bot || !!s.srv, lv: 1, gear: { weapon: 0, armor: 0 }, cos: s.uid === UID ? SAVE.cos.on : c && c._cos || null };
+    return { id, uid: s.uid, role: s.role, col: TEAMS[s.team].c, team: s.team, name: s.bot ? s.name : s.uid === UID ? myName() : s.name, bot: !!s.bot || !!s.srv, lv: 1, gear: { weapon: 0, armor: 0 }, cos: s.uid === UID ? myCos() : c && c._cos || null };
   });
   if (!prevG && !sl.some(s => s.uid === UID)) { $('roomMsg').textContent = T('내 직업을 먼저 골라 주세요.'); return; }
   if (prevG) sl.forEach((s, i) => { const q = prevG.players[i]; s.bot = q.bot; s.uid = q.uid; s.name = q.name; });
