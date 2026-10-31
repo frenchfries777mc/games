@@ -492,7 +492,7 @@ const TUT=[
  [P('다 자라면 ▼ 표시의 밭을 눌러 수확해요','When it is grown, tap the field with the ▼ to harvest'),s=>s.stats.harvest>=1],
  [P('마을 장터에서 수확한 것을 팔아요','Sell your harvest at the town market'),s=>(s.stats.shop||0)>=1],
  [P('항구에서 배에 짐을 싣고 보내요','Load a ship at the harbor and send it off'),s=>s.stats.sailed>=1]];
-const OUTMAX=12,BUILD=80;
+const OUTMAX=12,BUILD=81;
 const hasB=(s,b)=>s.slots.some(x=>x&&x.b===b);
 const CASTLE_T=[
  {n:P('망루','Watchtower'),d:P('돌로 쌓은 망루를 세워요. 세금이 걷히기 시작해요','A stone watchtower. Taxes start to come in'),cost:6000,rank:1},
@@ -621,6 +621,10 @@ A('nw1m',P('백만장자','Millionaire'),P('재산 1,000,000 모으기','Reach a
 const CROPK=Object.keys(CROPS),SPEC=['goldbarley','pomegranate','saffron','cloudcotton','seaweed','dragonfruit'],CROPK17=CROPK.filter(c=>!SPEC.includes(c));
 const ACHN={};ACH.forEach(a=>ACHN[a.id]=a);
 const NOTES=[
+ {date:'2026-10-31',build:'v0.2 build 81',title:P('섬마다 특산 요리','A signature dish for each port'),items:[
+  P('여섯 항구마다 그 항구의 특산품으로 만드는 특산 요리가 생겨, 그 항구에서 한 번 팔면 식당에서 만들 수 있음','Each of the six ports has a signature dish made from its specialty goods; sell there once to unlock it at the diner'),
+  P('특산 요리는 일반 요리보다 30% 비싸게 팔려요','Signature dishes sell for 30% more than normal dishes')
+ ]},
  {date:'2026-10-31',build:'v0.2 build 80',title:P('성이 자라면 마을도 달라져요','The town changes as the castle grows'),items:[
   P('성이 2단계가 되면 마을 길 위에 깃발 줄이 걸리고, 3단계는 줄이 더 늘고 4단계는 깃대가 서요','From stage 2 bunting hangs over the town roads, more at stage 3, and flag poles at stage 4'),
   P('성 3단계부터 빵 3개로 연회를 열 수 있고, 20분마다 금화를 받으며 연회 중에는 깃발 줄이 반짝여요','From stage 3 you can hold a feast for 3 bread every 20 minutes for gold, and the bunting sparkles during it')
@@ -1176,7 +1180,7 @@ function genContract(){const rk=rankOf(S.stats.earned),ps=PORTS.map((p,i)=>i).fi
   const n=o?2+Math.floor(Math.random()*(3+rk*2)):4+Math.floor(Math.random()*(5+rk*4)),reward=Math.round(quote(p,g.i)*n*(o?1.9+Math.random()*.5:1.45+Math.random()*.4)*(hasT('broker')?1.25:1));
   S.contracts.push({id:rid(),p,g:g.id,n,reward,o:o?1:0,exp:NOW()+(o?7+n*1.5:4+n/5)*60000});if(S.contracts.length>4+rk)S.contracts.shift();}
 function dnCritTick(t){const dn=S.dn;if(dn.crit&&t>dn.crit.exp){dn.crit=null;dn.rep=Math.max(0,dn.rep-3);toast('<span class="bad">'+T('평론가가 기다리다 그냥 돌아갔어요 (평판 -3)','The critic got tired of waiting and left (rep -3)')+'</span>');}
-  if(!dn.crit&&dn.served>=5&&t>(dn.critNext||0)){if(!dn.critNext){dn.critNext=t+240000;return;}dn.critNext=t+(480+Math.random()*240)*1000;dn.crit={d:Math.floor(Math.random()*dnUnl()),exp:t+120000};toast(T('음식 평론가가 식당에 왔어요!','A food critic is at your diner!'));sfx('ach');}}
+  if(!dn.crit&&dn.served>=5&&t>(dn.critNext||0)){if(!dn.critNext){dn.critNext=t+240000;return;}dn.critNext=t+(480+Math.random()*240)*1000;dn.crit={d:dnPickable()[Math.floor(Math.random()*dnPickable().length)],exp:t+120000};toast(T('음식 평론가가 식당에 왔어요!','A food critic is at your diner!'));sfx('ach');}}
 function dnCritServe(){const dn=S.dn,c=dn.crit;if(!c||!(dn.stock[c.d]>0))return;dn.stock[c.d]--;const stars=Math.max(1,Math.min(5,Math.round(2+dn.rep/10+Math.random()*1.2-.2))),rw=Math.round(dishPrice(RECIPES[c.d])*(1+stars));S.money+=rw;S.stats.earned+=rw;dn.rep=Math.max(0,Math.min(30,dn.rep+stars-2));dn.stars=(dn.stars||[]).concat(stars).slice(-10);dn.crit=null;
   toast(T('평론가의 평가: {0} 보상 +{1}','Critic rating: {0} reward +{1}','★'.repeat(stars)+'☆'.repeat(5-stars),fmt(rw)));sfx(stars>=4?'ach':'coin');}
 function genVisitor(){const gs=GOODS.filter(g=>g.k!=='import'&&(S.codex[g.id]));const g=gs[Math.floor(Math.random()*gs.length)];if(!g)return;
@@ -1199,15 +1203,23 @@ const RECIPES=[
  {id:'tomstew',ko:'토마토 스튜',en:'Tomato stew',need:{tomato:2,salt:1}},
  {id:'fishgrill',ko:'구운 생선',en:'Grilled fish',need:{fish:2,salt:1}},
  {id:'pumpie',ko:'호박 파이',en:'Pumpkin pie',need:{pumpkin:2,flour:1,egg:1}},
- {id:'wineset',ko:'와인 코스',en:'Wine course',need:{wine:1,bread:1,cheese:1}}];
+ {id:'wineset',ko:'와인 코스',en:'Wine course',need:{wine:1,bread:1,cheese:1}},
+ {id:'sp0',port:0,mult:1.3,ko:'황금 보리죽',en:'Golden barley porridge',need:{goldbarley:2,milk:1}},
+ {id:'sp1',port:1,mult:1.3,ko:'석류 사과 샐러드',en:'Pomegranate apple salad',need:{pomegranate:2,apple:1}},
+ {id:'sp2',port:2,mult:1.3,ko:'라벤더 와인 푸딩',en:'Lavender wine pudding',need:{lavender:2,wine:1}},
+ {id:'sp3',port:3,mult:1.3,ko:'꿀 찻잎 과자',en:'Honey tea biscuits',need:{honey:2,tea:1}},
+ {id:'sp4',port:4,mult:1.3,ko:'해초 생선 수프',en:'Seaweed fish soup',need:{seaweed:2,fish:1}},
+ {id:'sp5',port:5,mult:1.3,ko:'향신 쌀 요리',en:'Spiced rice',need:{spice:2,rice:1}}];
+const dnOpen=i=>{const r=RECIPES[i];return r.port!=null?!!(S.visited&&S.visited[r.port]):i<dnUnl();};
+const dnPickable=()=>RECIPES.map((r,i)=>i).filter(dnOpen);
 const dnUnl=()=>S.dn.lv*2;
-const dishPrice=r=>{let v=0;for(const k in r.need)v+=GI[k].base*r.need[k];return Math.round(v*1.7/5)*5*(1+Math.min(0.3,S.dn.rep*0.01))*(muSet('craft')?1.1:1);};
+const dishPrice=r=>{let v=0;for(const k in r.need)v+=GI[k].base*r.need[k];return Math.round(v*1.7/5)*5*(r.mult||1)*(1+Math.min(0.3,S.dn.rep*0.01))*(muSet('craft')?1.1:1);};
 const dnUpCost=()=>S.dn.lv===1?800:3000;
-function dnCook(i){const r=RECIPES[i],dn=S.dn;if(i>=dnUnl()||dn.cook)return;for(const k in r.need)if(inv(k)<r.need[k])return;for(const k in r.need)S.inv[k]-=r.need[k];dn.cook={d:i,end:NOW()+5000};sfx('plant');}
+function dnCook(i){const r=RECIPES[i],dn=S.dn;if(!dnOpen(i)||dn.cook)return;for(const k in r.need)if(inv(k)<r.need[k])return;for(const k in r.need)S.inv[k]-=r.need[k];dn.cook={d:i,end:NOW()+5000};sfx('plant');}
 function dnServe(o){const dn=S.dn,od=dn.orders[o];if(!od||!(dn.stock[od.d]>0))return;dn.stock[od.d]--;const p=Math.round(dishPrice(RECIPES[od.d])),tip=Math.round(p*Math.random()*0.2);S.money+=p+tip;S.stats.earned+=p+tip;dn.rep=Math.min(30,dn.rep+1);dn.served++;S.stats.served=(S.stats.served||0)+1;dn.orders.splice(o,1);toast(T('{0} 손님이 만족했어요! +{1}','The {0} customer is happy! +{1}',T(RECIPES[od.d].ko,RECIPES[od.d].en),fmt(p+tip)));sfx('coin');}
 function dnTick(t){const dn=S.dn;if(dn.cook&&t>=dn.cook.end){dn.stock[dn.cook.d]=(dn.stock[dn.cook.d]||0)+1;dn.cook=null;}
   const n0=dn.orders.length;dn.orders=dn.orders.filter(x=>x.exp>t);if(dn.orders.length<n0)dn.rep=Math.max(0,dn.rep-(n0-dn.orders.length));
-  if(t>dn.next){dn.next=t+(60-Math.min(30,dn.rep))*1000*(0.8+Math.random()*0.4);if(dn.orders.length<2+dn.lv){dn.orders.push({d:Math.floor(Math.random()*dnUnl()),exp:t+(muSet('craft')?195000:150000)});}}}
+  if(t>dn.next){dn.next=t+(60-Math.min(30,dn.rep))*1000*(0.8+Math.random()*0.4);if(dn.orders.length<2+dn.lv){dn.orders.push({d:dnPickable()[Math.floor(Math.random()*dnPickable().length)],exp:t+(muSet('craft')?195000:150000)});}}}
 const MUSETS=[
  {id:'sea',ko:'바다의 보물',en:'Treasures of the sea',items:['pearl','coral','seaweed','amber'],b:['낚시에서 보물 상자가 두 배로 잘 걸려요','Sunken chests bite twice as often']},
  {id:'spec',ko:'섬의 특산',en:'Island specialties',items:['goldbarley','pomegranate','saffron','cloudcotton','dragonfruit'],b:['모든 판매가 2% 올라요','All sales +2%']},
@@ -2976,7 +2988,7 @@ MODS.cal=()=>{if(!UPC.length)return `<h2>${T('항구 달력','Port calendar')}</
 MODS.diner=()=>{const dn=S.dn,t=NOW(),un=dnUnl();
   return `<h2>${T('식당','Diner')} ${T('{0}단계','Lv {0}',dn.lv)}</h2><div class="muted">${T('평판 {0} · 손님 {1}명 대접','Reputation {0} · {1} served',dn.rep,dn.served)}</div>
   ${critHtml()}<h5>${T('손님 주문','Orders')}</h5>${dn.orders.length?dn.orders.map((o,i)=>{const r=RECIPES[o.d],has=dn.stock[o.d]>0;return `<div class="card"><div class="grow"><b>${T(r.ko,r.en)}</b> · ${fmt(dishPrice(r))}${UG()}<div class="muted">${T('남은 시간 {0}초','{0}s left',Math.max(0,Math.ceil((o.exp-t)/1000)))}</div></div><button class="pb sm ${has?'gold':''}" data-act="dnserve:${i}" ${has?'':'disabled'}>${T('내가기','Serve')}</button></div>`;}).join(''):`<div class="muted">${T('손님을 기다리고 있어요','Waiting for customers')}</div>`}
-  <h5>${T('요리하기','Cook')}${dn.cook?` · ${T(RECIPES[dn.cook.d].ko,RECIPES[dn.cook.d].en)} ${Math.max(0,Math.ceil((dn.cook.end-t)/1000))}s`:''}</h5>${RECIPES.map((r,i)=>{if(i>=un)return `<div class="card"><div class="grow muted">🔒 ${T(r.ko,r.en)} · ${T('식당 {0}단계에 열려요','Opens at diner Lv {0}',Math.floor(i/2)+1)}</div></div>`;const ok=Object.keys(r.need).every(k=>inv(k)>=r.need[k]);return `<div class="card"><div class="grow"><b>${T(r.ko,r.en)}</b> ×${dn.stock[i]||0}<div class="muted">${Object.keys(r.need).map(k=>GN(k)+' '+inv(k)+'/'+r.need[k]).join(', ')}</div></div><button class="pb sm" data-act="dncook:${i}" ${ok&&!dn.cook?'':'disabled'}>${T('만들기','Cook')}</button></div>`;}).join('')}
+  <h5>${T('요리하기','Cook')}${dn.cook?` · ${T(RECIPES[dn.cook.d].ko,RECIPES[dn.cook.d].en)} ${Math.max(0,Math.ceil((dn.cook.end-t)/1000))}s`:''}</h5>${RECIPES.map((r,i)=>{if(!dnOpen(i))return `<div class="card"><div class="grow muted">🔒 ${T(r.ko,r.en)} · ${r.port!=null?T('{0}에 물건을 한 번 팔면 열려요','Sell goods at {0} once to unlock',tx(PORTS[r.port].n)):T('식당 {0}단계에 열려요','Opens at diner Lv {0}',Math.floor(i/2)+1)}</div></div>`;const ok=Object.keys(r.need).every(k=>inv(k)>=r.need[k]);return `<div class="card"><div class="grow"><b>${T(r.ko,r.en)}</b> ×${dn.stock[i]||0}<div class="muted">${Object.keys(r.need).map(k=>GN(k)+' '+inv(k)+'/'+r.need[k]).join(', ')}</div></div><button class="pb sm" data-act="dncook:${i}" ${ok&&!dn.cook?'':'disabled'}>${T('만들기','Cook')}</button></div>`;}).join('')}
   ${dn.lv<3?`<div class="btns" style="margin-top:6px"><button class="pb sm gold" data-act="dnup" ${S.money<dnUpCost()?'disabled':''}>${T('식당 키우기','Upgrade')} ${fmt(dnUpCost())}${UG()}</button></div>`:''}`;};
 ACT.dncook=a=>{dnCook(+a);updateHud();renderModal();};ACT.dnserve=a=>{dnServe(+a);updateHud();renderModal();};ACT.dnup=()=>{if(S.money>=dnUpCost()&&S.dn.lv<3){S.money-=dnUpCost();S.dn.lv++;sfx('build');}updateHud();renderModal();};
 /* 박물관 */
