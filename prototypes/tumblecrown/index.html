@@ -12,7 +12,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
 <!-- 새 빌드마다 아래 ?v= 숫자를 BUILD와 같게 올려요 (브라우저가 옛 파일을 쓰지 않게) -->
-<script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/","./js/data.js":"./js/data.js?v=156","./js/main.js":"./js/main.js?v=156","./js/map.js":"./js/map.js?v=156","./js/music.js":"./js/music.js?v=156","./js/render.js":"./js/render.js?v=156","./js/sfx.js":"./js/sfx.js?v=156","./js/sim.js":"./js/sim.js?v=156","./js/tr.js":"./js/tr.js?v=156"}}</script>
+<script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/","./js/data.js":"./js/data.js?v=157","./js/main.js":"./js/main.js?v=157","./js/map.js":"./js/map.js?v=157","./js/music.js":"./js/music.js?v=157","./js/render.js":"./js/render.js?v=157","./js/sfx.js":"./js/sfx.js?v=157","./js/sim.js":"./js/sim.js?v=157","./js/tr.js":"./js/tr.js?v=157"}}</script>
 <script src="../../ff-presence.js" async></script>
 <script src="https://cdn.jsdelivr.net/npm/peerjs@1.5.4/dist/peerjs.min.js"></script>
 <script src="https://frenchfries777mc.github.io/games/ff-lang.js"></script>
@@ -52,13 +52,13 @@ html:not(.tcReady) #sLobby{visibility:hidden}
 #sLobby .title .tlg{display:block;width:clamp(64px,9vw,128px);height:auto;margin-bottom:8px;filter:drop-shadow(0 4px 0 rgba(0,0,0,.45))}
 #sLobby .title h1{margin:0;font-family:Galmuri,system-ui,sans-serif;font-weight:700;font-size:clamp(52px,8.5vw,120px);line-height:.95;color:#ffe08a;letter-spacing:.02em;text-shadow:0 5px 0 #7a3a10,0 9px 0 #2a1408,0 0 18px rgba(0,0,0,.6)}
 #sLobby .title p{margin:10px 0 0 4px;font-size:clamp(14px,1.6vw,20px);color:#efe3c8}
-#menu{position:absolute;left:50%;bottom:44px;transform:translateX(-50%);display:flex;gap:10px;flex-wrap:wrap;justify-content:center;width:max-content;max-width:94vw}
-#menu button{background:rgba(14,10,18,.82);border:3px solid #8a6a30;border-radius:999px;padding:11px 20px;font-size:clamp(14px,1.4vw,18px);font-weight:700;color:var(--ink);box-shadow:0 4px 0 #2a1e10}
+#menu{position:absolute;left:max(28px,5vw);bottom:44px;display:flex;flex-direction:column;gap:12px;width:min(260px,86vw)}
+#menu button{background:rgba(14,10,18,.82);border:3px solid #8a6a30;border-radius:999px;padding:14px 20px;font-size:clamp(16px,1.6vw,21px);font-weight:700;color:var(--ink);box-shadow:0 4px 0 #2a1e10}
 #menu button.big{background:#7a5414;border-color:#ffd36b;color:#fff3cf;font-size:clamp(16px,1.6vw,21px);padding:12px 26px}
 #menu button:hover,#menu button:focus-visible{border-color:#ffd36b;color:#ffd36b;outline:none}
 #menu button.big:hover{color:#fff}
-@media (max-aspect-ratio:1/1){#menu{bottom:40px;flex-direction:column;align-items:stretch;width:min(320px,86vw)}}
-#menu2{position:absolute;right:18px;top:46px;display:flex;gap:8px}
+@media (max-aspect-ratio:1/1){#menu{bottom:40px}}
+#menu2{display:none;position:absolute;right:18px;top:46px;display:flex;gap:8px}
 #menu2 button{width:40px;height:40px;border-radius:50%;background:rgba(14,10,18,.82);border:3px solid #8a6a30;color:var(--ink);font-size:20px;line-height:1;padding:0;box-shadow:0 3px 0 #2a1e10}
 #menu2 button:hover,#menu2 button:focus-visible{border-color:#ffd36b;color:#ffd36b;outline:none}
 #who{position:absolute;right:18px;top:14px;font-weight:700;color:#d9b75a;font-size:15px}
@@ -125,6 +125,7 @@ input[type=range]{width:220px;accent-color:#d9b75a}
 #sMode .mcard:hover{border-color:var(--gold);transform:translateY(-3px)}
 #sMode .mcard::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(10,8,14,0) 45%,rgba(10,8,14,.9) 100%)}
 #sMode .mcard .lg{position:relative;z-index:1;width:78%;max-width:220px;aspect-ratio:1;margin:0 auto auto;image-rendering:pixelated;filter:drop-shadow(0 6px 0 rgba(0,0,0,.6))}
+#sMode .mcard.pk{background:linear-gradient(160deg,#3a2a14,#16101c)}
 #sMode .mcard b{position:relative;z-index:1;font-size:24px}
 #sMode .mcard small{position:relative;z-index:1;font-size:13px;color:#d8d0bc;line-height:1.35}
 #clsList{position:absolute;left:16px;top:50%;transform:translateY(-50%);display:flex;flex-direction:column;gap:6px;max-height:calc(100vh - 150px);overflow-y:auto;overscroll-behavior:contain}
@@ -256,14 +257,10 @@ body.touch #exitBtn{top:auto;bottom:auto}
   <div id="who"></div>
   <div class="title"><img class="tlg" src="logo.svg" alt=""><h1>Tumble<br><span style="color:#fff">crown</span></h1></div>
   <nav id="menu">
-    <button class="big" data-go="match">온라인 대전</button>
-    <button data-go="solo">봇과 연습</button>
-    <button data-go="range">연습장</button>
-    <button data-go="daily">일일 임무</button>
-    <button data-go="ward">치장·스킨</button>
-    <button data-go="weps">직업·조작</button>
+    <button class="big" data-go="play">플레이</button>
+    <button data-go="chars">캐릭터</button>
+    <button data-go="conf">설정</button>
   </nav>
-  <div id="menu2"><button data-go="notes" title="패치노트" aria-label="패치노트">≡</button><button data-go="settings" title="설정" aria-label="설정">⚙</button><button data-go="site" title="사이트로 돌아가기" aria-label="사이트로 돌아가기">⌂</button></div>
   <div id="homeMsg" class="tx"></div>
   <div id="ver" class="tx"></div>
   <span class="ff-copy tx">© 2026 Frenchfries777 · <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.ko" target="_blank" rel="noopener">CC BY-NC-ND 4.0</a></span>
@@ -359,7 +356,7 @@ body.touch #exitBtn{top:auto;bottom:auto}
 <div id="touch"><div id="joy"><div id="joyBase"><div id="joyKnob"></div></div></div>
   <div id="tbtns"><button id="tA"><span>공격</span></button><button id="tQ"><i class="cd"></i><span>Q</span></button><button id="tE"><i class="cd"></i><span>E</span></button><button id="tR"><i class="cd"></i><span>R</span></button><button id="tRoll"><i class="cd"></i><span>구르기</span></button><button id="tF"><span>귀환</span></button></div>
 </div>
-<script type="module" src="js/main.js?v=156"></script>
+<script type="module" src="js/main.js?v=157"></script>
 <div id="findBlock" style="position:fixed;inset:0;z-index:60;display:none;cursor:wait"></div>
 </body>
 </html>
