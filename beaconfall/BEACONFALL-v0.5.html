@@ -1111,6 +1111,18 @@ let PERF={low:false,fx:'high',fps:0};
 const perfLoad=()=>{try{if(window.FFPerf)PERF=FFPerf.get();}catch(e){}};
 perfLoad();
 window.addEventListener('ffperf',()=>{perfLoad();if(world){resize();clampCam();}});
+/* 느린 화면 안내: 저사양 모드가 꺼져 있는데 플레이 중 화면이 계속 느리면, 이 기기에서 한 번만 켜 보라고 물어요 */
+let lhDone=false,lhAvg=16,lhN=0;try{lhDone=!!localStorage.getItem('bf_lowHint');}catch(e){}
+function lowHintTick(gap){
+  if(lhDone||PERF.low||mode!=='play'||!$('#modal').hidden)return;
+  lhAvg=lhAvg*0.97+Math.min(gap,100)*0.03;lhN=lhAvg>40?lhN+1:0;
+  if(lhN<240)return;
+  lhDone=true;try{localStorage.setItem('bf_lowHint','1');}catch(e){}
+  openModal(`<h2>화면이 느려요</h2><p class="hint">저사양 모드를 켜면 화면을 더 크게 그리고 효과와 프레임을 줄여서 더 부드러워져요. 설정에서 언제든 바꿀 수 있어요.</p><div class="actions"><button class="btn sm" data-lowon>저사양 모드 켜기</button><button class="btn sm ghost" data-close>괜찮아요</button></div>`,m=>{
+    m.querySelector('[data-lowon]').onclick=()=>{try{FFPerf.set({low:true,fx:'low',fps:30});}catch(e){}perfLoad();if(world){resize();clampCam();}closeModal();};
+    m.querySelector('[data-close]').onclick=closeModal;
+  },'lowhint');
+}
 const optOn=()=>PERF.low;
 let S=4,VW=0,VH=0,panelW=0;
 const cam={x:0,y:0}, vel={x:0,y:0};
@@ -13020,7 +13032,7 @@ let rz=0;addEventListener('resize',()=>{clearTimeout(rz);rz=setTimeout(()=>{if(w
 let last=performance.now();
 function frame(now){
   if(PERF.fps&&now-last<(PERF.fps===30?28:14)){requestAnimationFrame(frame);return;}   // 최적화: 프레임 제한
-  let dt=Math.min(0.05,(now-last)/1000);last=now;if(hitStop>0){hitStop-=dt;dt*=0.05;}frameDt=dt;
+  const gap=now-last;let dt=Math.min(0.05,gap/1000);last=now;lowHintTick(gap);if(hitStop>0){hitStop-=dt;dt*=0.05;}frameDt=dt;
   achPopTick(dt);dnTick(dt);
   if(forge)updateForge(dt);
   if(world&&base){chunkFrame++;prefetchAround(mode==='play'?P.x:cam.x+VW/2,mode==='play'?P.y:cam.y+VH/2,3,false);time+=dt;if(mode==='play'){updatePlayer(dt);updateObjs(dt);updateFishing(dt);updateHazards(dt);updateTele(dt);updateEvents(dt);if(now-lastSaveT>5000){lastSaveT=now;saveWorld(true);}}else{updateCamera(dt);if(isHost()&&net.conns.length)updateSim(dt);}netTick(now);draw();}
