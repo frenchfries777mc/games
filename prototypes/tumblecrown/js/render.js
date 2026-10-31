@@ -1809,9 +1809,10 @@ function animHero(E, p, dt, t, view) {
     if (rec > 0) { T.bx -= 0.2 * rec; T.hx -= 0.18 * rec; }
     T.jy = 0; T.sq = 0;   // 쏜 뒤에 점프하지 않아요
     // R: 머스켓은 오른손에 든 채, 왼손의 도끼를 앞으로 뻗어 부채꼴로 크게 휘둘러요
-    const sw = (E.ak === 'cover' || E.ak === 'axeswing') ? Math.min(1, E.aT / 0.6) : 0, sp = seg(sw, 0.12, 0.6), wi = seg(sw, 0, 0.12) * (1 - seg(sw, 0.8, 1));
-    if (u.axeG) u.axeG.rotation.x += ((sw > 0 ? Math.PI : 0) - u.axeG.rotation.x) * Math.min(1, dt * 20);
-    if (sw > 0) { T.lx = -1.5 * wi - 0.35 * (1 - wi); T.bry = (1.2 - 2.4 * sp) * wi; T.bx = 0.2 * wi; }
+    // 1) 도끼를 머리 위로 들며 몸을 뒤로 비틀고 → 2) 앞으로 내디디며 부채꼴로 크게 휘둘러요 → 3) 천천히 자세를 풀어요
+    const ax = E.ak === 'axeswing', t = ax ? E.aT : 0, wi = seg(t, 0, 0.2), sp = seg(t, 0.2, 0.45), rc = seg(t, 0.5, 0.8), sw = ax ? 0.6 * wi * (1 - rc) : 0;
+    if (u.axeG) u.axeG.rotation.x += ((ax ? Math.PI : 0) - u.axeG.rotation.x) * Math.min(1, dt * 20);
+    if (ax) { T.lx = (-2.7 * wi + 1.3 * sp) * (1 - rc) - 0.35 * rc; T.lz = 0.1 + 0.5 * wi * (1 - sp); T.bry = (1.3 * wi - 2.9 * sp) * (1 - rc); T.bx = (-0.18 * wi + 0.55 * sp) * (1 - rc); T.bz = 0.7 * sp * (1 - rc); T.rx -= 0.2 * sp * (1 - rc); }
   }
   if (p.bk && E.ak !== 'block') { T.lx = -1.6; }
   const k0 = dt * (E.blT > 0 ? 14 : 34), L = (o, kk, v2) => { const r = kk === 'hx' || kk === 'hy' || kk === 'hz' ? 0.45 : kk === 'bx' || kk === 'bry' || kk === 'brz' || kk === 'bz' ? 0.8 : kk === 'jy' || kk === 'sq' ? 1.3 : 1; E[kk] = E[kk] == null ? v2 : E[kk] + (v2 - E[kk]) * (1 - Math.exp(-k0 * r)); return E[kk]; };  // 머리는 몸보다 늦게, 몸은 팔보다 늦게 따라와요
