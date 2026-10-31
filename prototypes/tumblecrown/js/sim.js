@@ -1199,7 +1199,7 @@ function stepEnemy(G, e, dt) {
   // 너무 멀리 끌려가면 제자리로 돌아가 다시 잠들어요
   if (e.st === 'home') {
     const d = Math.hypot(e.hx - e.x, e.hz - e.z);
-    if (!e.mon) for (const p of G.players) if (alive(p) && dist(p, e) < WAKE_R * 0.8 && lineClear(e.x, e.z, p.x, p.z)) { e.st = 'idle'; return; }
+    for (const p of G.players) if (alive(p) && dist(p, e) < WAKE_R * 0.8 && lineClear(e.x, e.z, p.x, p.z) && (!e.mon || Math.hypot(p.x - e.hx, p.z - e.hz) < 20)) { e.st = 'idle'; return; }   // 중립 괴물은 자리 가까이 온 사람에게만 다시 나서요
     if (d < 0.8) { e.st = 'sleep'; if (!e.mon) e.hp = e.maxhp; e.moving = false; return; }
     const a = navDir(e.x, e.z, e.hx, e.hz, G.t); if (a == null) { e.x = e.hx; e.z = e.hz; return; }
     e.a = a; e.x += Math.cos(a) * E.speed * 1.3 * dt; e.z += Math.sin(a) * E.speed * 1.3 * dt; e.moving = true; e.hp = Math.min(e.maxhp, e.hp + e.maxhp * (e.mon ? 0.004 : 0.2) * dt);   // 중립 괴물은 아주 천천히 회복해요
@@ -1207,7 +1207,7 @@ function stepEnemy(G, e, dt) {
   }
   if (e.life != null && (e.life -= dt) <= 0) { e.hp = 0; ev(G, 'ekill', { x: e.x, z: e.z, en: e.k, id: e.id }); return; }   // 소환된 해골은 18초 뒤 사라져요
   if (e.k === 'boss') { stepBoss(G, e, dt); return; }
-  if (e.mon && Math.hypot(e.hx - e.x, e.hz - e.z) > 26) { e.st = 'home'; e.tgt = null; return; }   // 너무 멀리 끌려 나오면 맞아도 돌아가요
+  if (e.mon && e.st === 'idle' && Math.hypot(e.hx - e.x, e.hz - e.z) > 26) { e.st = 'home'; e.tgt = null; return; }   // 너무 멀리 끌려 나오면 맞아도 돌아가요
   if (!e.summoned && e.hx != null && !G.players.some(p => alive(p) && dist(p, e) < LEASH_R) && Math.hypot(e.hx - e.x, e.hz - e.z) > 4) { e.st = 'home'; e.tgt = null; return; }
   if (e.stun > 0) return;
   // 소환형 중간 보스: 아홉 초마다 부하 둘을 불러요
@@ -1217,7 +1217,7 @@ function stepEnemy(G, e, dt) {
     // 덫이 터지며 불길이 번져요: 둘레 적이 불타고 조금 다쳐요
     for (const q of G.enemies) if (q !== e && q.hp > 0 && Math.hypot(q.x - z.x, q.z - z.z) < 3) { q.burn = 3; hurtEnemy(G, q, 10, ow, { spread: 1 }); } if (e.hp <= 0) return; }
   const t = pickTarget(G, e); if (!t) return;
-  if (e.mon && Math.hypot(t.x - e.hx, t.z - e.hz) > 22) { e.st = 'home'; e.tgt = null; e.moving = false; return; }   // 가장 가까운 사람마저 너무 멀면 자기 자리로 돌아가요 (멀리서 쏘는 사람에게 가만히 맞고 있지 않아요)
+  if (e.mon && e.st === 'idle' && Math.hypot(t.x - e.hx, t.z - e.hz) > 22) { e.st = 'home'; e.tgt = null; e.moving = false; return; }   // 가장 가까운 사람마저 너무 멀면 자기 자리로 돌아가요 (멀리서 쏘는 사람에게 가만히 맞고 있지 않아요)
   const d = dist(e, t), sees = lineClear(e.x, e.z, t.x, t.z), ta = angTo(e, t);
   if (e.st === 'wind') {
     e.wind -= dt;
