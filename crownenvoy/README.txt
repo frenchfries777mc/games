@@ -12,7 +12,7 @@ Crown Envoy 사이트 (정적 사이트: 서버 프로그램이 필요 없어요
   CrownEnvoy-v0.1.html       v0.1 게임 파일
   CrownEnvoy-v0.2.html       v0.2 게임 파일
   CrownEnvoy-v0.3.html       v0.3 게임 파일(최신)
-  CrownEnvoy-latest.html     최신 게임 파일의 사본 (지금은 v0.3와 같아요. 음악·영상은 안에 넣지 않고 옆의 mp3 파일을 따로 불러와요)
+  CrownEnvoy-latest.html     시작 파일 (versions.json 의 latestFile 을 받는 동안 진행률 막대를 보여 주고, 다 받으면 게임으로 바뀌어요. "바로 플레이"가 이 파일을 열어요. 고치지 않아요. 안의 FALLBACK 이름은 새 버전을 낼 때 같이 바꿔요)
   CrownEnvoy-music.mp3       게임 배경음악 (v0.2·v0.3 게임 파일이 이 파일을 불러와요. 지우면 안 돼요)
   i18n.js                    7개 언어 번역(ko·en·es·fr·de·ja·ar). 접속자 브라우저 언어를 자동 감지
   hero.js, hero-map.js       첫 화면 배경(유럽 지도에서 두 나라가 영토를 뺏고 뺏기는 장면)
