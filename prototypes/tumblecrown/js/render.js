@@ -1818,6 +1818,11 @@ function animHero(E, p, dt, t, view) {
     Gn.gr.rotation.x = Math.PI / 2 + 0.3 * rec; Gn.gr.position.set(0, -0.55 + 0.4 * rec, 0.05); Gn.fl.visible = x < 0.09; Gn.fl.scale.setScalar(1 + (x < 0.09 ? 0.4 * (1 - x / 0.09) : 0));
     if (rec > 0) { T.bx -= 0.2 * rec; T.hx -= 0.18 * rec; }
     T.jy = 0; T.sq = 0;   // 쏜 뒤에 점프하지 않아요
+    if (E.ak === 'rally') {   // 경기 전 등장: 머스켓을 하늘로 들어 한 발 쏘고 반동을 받고, 도끼도 높이 들어요
+      const t = E.aT, up = seg(t, 0, 0.18), shot = t > 0.2 && t < 0.3, rc2 = t >= 0.2 ? Math.max(0, 1 - (t - 0.2) / 0.12) : 0;
+      T.rx = -2.6 * up - 0.3 * rc2; T.rz = -0.1; T.lx = -2.7 * up; T.lz = 0.25 * up; T.hx = -0.35 * up; T.bx = -0.15 * up + 0.1 * rc2;
+      Gn.fl.visible = shot; Gn.fl.scale.setScalar(1.4); Gn.gr.position.set(0, -0.55 + 0.4 * rc2, 0.05); Gn.gr.rotation.x = Math.PI / 2 + 0.3 * rc2;
+    }
     // R: 머스켓은 오른손에 든 채, 왼손의 도끼를 앞으로 뻗어 부채꼴로 크게 휘둘러요
     // 1) 도끼를 머리 위로 들며 몸을 뒤로 비틀고 → 2) 앞으로 내디디며 부채꼴로 크게 휘둘러요 → 3) 천천히 자세를 풀어요
     const ax = E.ak === 'axeswing', t = ax ? E.aT : 0, wi = seg(t, 0, 0.2), sp = seg(t, 0.2, 0.45), rc = seg(t, 0.5, 0.8), sw = ax ? 0.6 * wi * (1 - rc) : 0;
