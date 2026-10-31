@@ -347,7 +347,7 @@ function aimPoint(p, inp, range) {
 }
 // 보스 피해 배율 (모든 보스 공격이 세져요)
 export const BOSS_DMG = 1.3;
-export const COMBO_T = 0.65, COMBO_PRIEST = 0.65;
+export const COMBO_T = 1.0, COMBO_PRIEST = 1.0;
 // 폭탄: 던지면 fuse초 뒤 그 자리에서 터져 둘레 상대에게 피해 (같은 편은 안 맞아요)
 function throwBomb(G, p, x, z, fuse, r, dmg, chill) {
   G.zones.push({ id: G.uid++, k: 'tcircle', x, z, r, t: fuse, T: fuse, dmg: dmg / 0.7, fx: 'bomb', own: p.id, chill });
