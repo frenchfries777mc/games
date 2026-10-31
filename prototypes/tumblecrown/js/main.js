@@ -1096,9 +1096,9 @@ function paintHud() {
   // 기술 칸
   if (me) {
     const R = ROLES[me.role], sk = $('skills');
-    const kbs = JSON.stringify(KB()); if (sk.dataset.role !== me.role || sk.dataset.kb !== kbs) { sk.dataset.role = me.role; sk.dataset.kb = kbs; sk.innerHTML = ''; R.skills.concat([{ key: 'roll', name: T('구르기'), cd: 1.2 }]).forEach((s, i) => { const kk = keyLabel(KB()[['q', 'e', 'r', 'roll'][i]]); const d = document.createElement('div'); d.className = 'sk'; d.innerHTML = `<i class="cd"></i><span class="nm">${s.name}</span><small>${kk}</small><b class="cn"></b>`; sk.appendChild(d); }); ['tQ', 'tE', 'tR'].forEach((id, i) => $(id).querySelector('span').textContent = R.skills[i].name); }
-    const cds = me.cd.concat([me.rc]), maxs = R.skills.map(s => s.cd).concat([1.2]);
-    [...sk.children].forEach((d, i) => { const c = Math.max(0, cds[i]); d.querySelector('.cd').style.height = Math.min(100, c / maxs[i] * 100) + '%'; d.querySelector('.cn').textContent = c > 0.05 ? Math.ceil(c) : ''; d.classList.toggle('cool', c > 0.05); });
+    const kbs = JSON.stringify(KB()); if (sk.dataset.role !== me.role || sk.dataset.kb !== kbs) { sk.dataset.role = me.role; sk.dataset.kb = kbs; sk.innerHTML = ''; [{ key: 'f', name: T('귀환'), cd: 25 }].concat(R.skills, [{ key: 'roll', name: T('구르기'), cd: 1.2 }]).forEach((s, i) => { const kk = i === 0 ? 'F' : keyLabel(KB()[['q', 'e', 'r', 'roll'][i - 1]]); const d = document.createElement('div'); d.className = 'sk'; d.innerHTML = `<i class="cd"></i><span class="nm">${s.name}</span><small>${kk}</small><b class="cn"></b>`; sk.appendChild(d); }); ['tQ', 'tE', 'tR'].forEach((id, i) => $(id).querySelector('span').textContent = R.skills[i].name); }
+    const cds = me.cd.concat([me.rc]), maxs = R.skills.map(s => s.cd).concat([1.2]), cds1 = [me.rcc || 0].concat(cds), maxs1 = [25].concat(maxs);
+    [...sk.children].forEach((d, i) => { const c = Math.max(0, cds1[i]); d.querySelector('.cd').style.height = Math.min(100, c / maxs1[i] * 100) + '%'; d.querySelector('.cn').textContent = c > 0.05 ? Math.ceil(c) : ''; d.classList.toggle('cool', c > 0.05); });
     ['tQ', 'tE', 'tR', 'tRoll'].forEach((id, i) => { const c = Math.max(0, cds[i]); $(id).querySelector('.cd').style.height = Math.min(100, c / maxs[i] * 100) + '%'; });
   }
   // 안내
