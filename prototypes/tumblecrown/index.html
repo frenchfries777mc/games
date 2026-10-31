@@ -12,7 +12,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
 <!-- 새 빌드마다 아래 ?v= 숫자를 BUILD와 같게 올려요 (브라우저가 옛 파일을 쓰지 않게) -->
-<script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/","./js/data.js":"./js/data.js?v=142","./js/main.js":"./js/main.js?v=142","./js/map.js":"./js/map.js?v=142","./js/music.js":"./js/music.js?v=142","./js/render.js":"./js/render.js?v=142","./js/sfx.js":"./js/sfx.js?v=142","./js/sim.js":"./js/sim.js?v=142","./js/tr.js":"./js/tr.js?v=142"}}</script>
+<script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/","./js/data.js":"./js/data.js?v=143","./js/main.js":"./js/main.js?v=143","./js/map.js":"./js/map.js?v=143","./js/music.js":"./js/music.js?v=143","./js/render.js":"./js/render.js?v=143","./js/sfx.js":"./js/sfx.js?v=143","./js/sim.js":"./js/sim.js?v=143","./js/tr.js":"./js/tr.js?v=143"}}</script>
 <script src="../../ff-presence.js" async></script>
 <script src="https://cdn.jsdelivr.net/npm/peerjs@1.5.4/dist/peerjs.min.js"></script>
 <script src="https://frenchfries777mc.github.io/games/ff-lang.js"></script>
@@ -205,6 +205,7 @@ body.touch #prompt.up{bottom:324px}
 #bless .card b{display:block;font-size:17px;margin-bottom:8px;color:#ffe3a0}#bless .card span{font-size:14px;color:#d8ccb4}#bless .card em{display:block;font-style:normal;color:var(--dim);font-size:12px;margin-top:10px}
 /* 우승 화면 */
 #sWin{background:radial-gradient(ellipse at 50% 40%,rgba(80,50,10,.55),rgba(6,4,12,.92) 70%)}
+#hlBar{display:none;position:fixed;left:50%;bottom:7vh;transform:translateX(-50%);z-index:60;align-items:center;gap:14px;padding:8px 16px;background:rgba(10,8,16,.8);border-radius:8px;color:#ffe08a;font-size:18px}#hlBar.on{display:flex}
 #winBox{position:absolute;left:50%;top:2vh;bottom:19vh;padding-top:18px;width:min(94vw,900px);transform:translateX(-50%);text-align:center;overflow-y:auto}
 #winBox .rk{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;margin-top:14px;text-align:left}#winBox .rk>div{flex:1 1 300px;max-width:430px;background:rgba(10,8,16,.8);padding:8px 10px;border-radius:6px}#winBox .rk h3{margin:0 0 4px;font-size:15px}#winBox .rk table{width:100%;border-collapse:collapse;font-size:13px}#winBox .rk th{color:var(--dim);font-weight:400;text-align:left;padding:3px 6px}#winBox .rk td{padding:4px 6px;border-bottom:1px solid #2a2230}#winBox .pod{display:flex;align-items:flex-end;gap:8px;margin:12px auto 0;max-width:360px}#winBox .tc{margin-top:10px;color:var(--dim);font-size:14px}
 #winBox .wk{font-size:clamp(14px,1.8vw,20px);letter-spacing:.3em;color:#cfc2a0;margin-bottom:6px}
@@ -331,6 +332,7 @@ body.touch #exitBtn{top:auto;bottom:auto}
 <section class="scr" id="sIntro"><div id="introBox"><div class="ch" id="introCh" style="display:none"></div><div id="introLine"></div><div id="introCard"><b></b><span></span></div><div id="introBar"><i></i></div><button id="introSkip">건너뛰기</button></div></section>
 
 <!-- 우승 -->
+<div id="hlBar"><b>하이라이트</b><button class="btn" id="hlSkip">건너뛰기</button></div>
 <section class="scr" id="sWin"><div id="winBox"></div><div id="winBtns"><button class="btn" id="winBack">로비로</button></div></section>
 
 <!-- 결과 -->
@@ -355,7 +357,7 @@ body.touch #exitBtn{top:auto;bottom:auto}
 <div id="touch"><div id="joy"><div id="joyBase"><div id="joyKnob"></div></div></div>
   <div id="tbtns"><button id="tA"><span>공격</span></button><button id="tQ"><i class="cd"></i><span>Q</span></button><button id="tE"><i class="cd"></i><span>E</span></button><button id="tR"><i class="cd"></i><span>R</span></button><button id="tRoll"><i class="cd"></i><span>구르기</span></button><button id="tF"><span>귀환</span></button></div>
 </div>
-<script type="module" src="js/main.js?v=142"></script>
+<script type="module" src="js/main.js?v=143"></script>
 <div id="findBlock" style="position:fixed;inset:0;z-index:60;display:none;cursor:wait"></div>
 </body>
 </html>
