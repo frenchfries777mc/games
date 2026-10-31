@@ -29,3 +29,7 @@ patchnotes.json | v567 items[0] | 모드마다 봇의 플레이 방식 변경 (�
 patchnotes.json | v567 items[1] | 무기 릴레이·무기 룰렛·저중력 난투: 봇이 계속 상대를 쫓음 (룰렛은 체력이 낮은 상대 우선) | build 567 | 2026-10-31
 patchnotes.json | v567 items[2] | 한 방 승부: 봇이 날아오는 탄을 점프·대쉬로 피함 | build 567 | 2026-10-31
 patchnotes.json | v567 items[3] | 무한 대쉬·하이퍼 배틀로얄: 봇이 대쉬로 상대에게 달려듦 | build 567 | 2026-10-31
+index.html | 캐릭터 31명 | 캐릭터 31명 | build 572 | 2026-10-31
+index.html | 도감 소개 | 31명의 무기·스킬·궁극기와 강한 상대, 약한 상대. | build 572 | 2026-10-31
+patchnotes.json | v572 title | 은하 제국의 황혼 | build 572 | 2026-10-31
+patchnotes.json | v572 items[0] | 홈의 캐릭터 수 27명 → 31명 (캐릭터 도감 소개 문구 포함) | build 572 | 2026-10-31
