@@ -81,10 +81,11 @@ const HERO = {
   court: { body: 0xb02828, robe: 1, leg: 0x6a4a2a, arm: 0xb02828, inner: 0x7a5232, beard: 0xd8d2c4, redhat: 1, staff: 1, wand: 1, staffC: 0xff2a2a, lightC: 0xff4040, belt: 1, beltC: 0xe0b030 },
   spearman: { body: 0x5a6a7a, leg: 0x3a3a44, arm: 0x5a6a7a, helm: 1, helmC: 0x8a8f9c, plume: 0xb83a3a, spear: 1, belt: 1 },
   crossbow: { body: 0x6b4a2e, leg: 0x2e2a34, arm: 0x6b4a2e, kettle: 1, scarf: 0xb8442e, xh: 1, bolts: 1, strap: 1, belt: 1, wide: 1.1 },
-  streltsy: { body: 0xc4281f, leg: 0x2a2024, arm: 0xc4281f, beard: 0x6a4a30, kolpak: 1, gun: 1, berdysh: 1, belt: 1, beltC: 0x2a1c14, wide: 1.1 }
+  streltsy: { body: 0xc4281f, leg: 0x2a2024, arm: 0xc4281f, beard: 0x6a4a30, kolpak: 1, gun: 1, berdysh: 1, belt: 1, beltC: 0x2a1c14, wide: 1.1 },
+  wellington: { body: 0x14214a, leg: 0xe8e4dc, arm: 0x14214a, hairW: 1, reg: 1, sword: 1 }
 };
 // 동작은 비슷한 직업의 것을 같이 써요 (마녀는 사제처럼, 바이킹·맘루크·스켈레톤은 종자처럼)
-const FAM = { witch: 'priest', viking: 'squire', mamluk: 'squire', skeleton: 'squire', warden: 'knight', assassin: 'squire', crossbow: 'archer', streltsy: 'archer', bomber: 'squire', bard: 'priest', court: 'priest', necro: 'priest', spearman: 'squire' };
+const FAM = { witch: 'priest', viking: 'squire', mamluk: 'squire', skeleton: 'squire', warden: 'knight', assassin: 'squire', crossbow: 'archer', streltsy: 'archer', wellington: 'knight', bomber: 'squire', bard: 'priest', court: 'priest', necro: 'priest', spearman: 'squire' };
 function matOf(v) { return v === 'dm' ? dmetal() : v === 'mt' ? metal() : M(v); }
 export const makeHero = toonify(function (role, cos) {
   const o = Object.assign({}, HERO[role]), cp = cos && COSMETICS.cape.items.find(i => i.id === cos.cape && i.col);
@@ -141,6 +142,7 @@ function makeFigure(o) {
     if (o.kettle) { const km = M(0x6a6f7c, { m: 0.7, r: 0.4 }); cyl(0.92, 0.92, 0.07, 14, km, 0, 0.3, 0, head); sph(0.46, 10, 6, km, 0, 0.32, 0, head, 1.3); cyl(0.5, 0.5, 0.08, 10, M(0x3a2a20), 0, 0.34, 0, head); }
     if (o.cap) { cyl(0.46, 0.46, 0.25, 10, M(o.cap), 0, 0.3, 0, head); sph(0.44, 10, 6, M(o.cap), 0, 0.35, 0, head, 1.4); const f = cone(0.06, 0.6, 4, M(0xf0e8d0), 0.3, 0.7, -0.1, head); f.rotation.z = -0.6; }
   }
+  if (o.hairW) { const hw = M(0xf2f2f6); const cp2 = sph(0.47, 10, 6, hw, 0, 0.14, -0.1, head); cp2.scale.set(1, 0.78, 1); sph(0.3, 6, 5, hw, 0, -0.12, -0.38, head); for (const sx of [-1, 1]) { const sb = sph(0.16, 6, 5, hw, sx * 0.4, -0.02, 0.0, head); sb.scale.set(0.6, 1.2, 1); } }   // 흰 머리카락
   if (o.beard) { const bd = cone(0.4, 0.9, 6, M(o.beard), 0, -0.55, 0.28, head); bd.rotation.x = Math.PI + 0.25; for (const sx of [-1, 1]) { const br = cone(0.1, 0.5, 4, M(o.beard), sx * 0.2, -0.9, 0.38, head); br.rotation.x = Math.PI; } }
   if (o.turban) { sph(0.5, 10, 7, M(0xf0e8d8), 0, 0.28, -0.02, head).scale.set(1, 0.75, 1); mesh(geo('tb', () => new THREE.TorusGeometry(0.45, 0.1, 5, 12)), M(0xe8dcc0), 0, 0.12, 0, head).rotation.x = Math.PI / 2; sph(0.1, 6, 5, M(0xb0302a), 0, 0.35, 0.44, head); const f = cone(0.06, 0.5, 4, M(0xb0302a), 0, 0.75, 0.3, head); f.rotation.x = 0.3; box(0.42, 0.14, 0.08, M(0x2a1a14), 0, -0.24, 0.36, head); }
   if (o.kolpak) {   // 러시아 모자(콜팍): 높고 둥근 붉은 모자에 흰 털 띠
@@ -221,6 +223,17 @@ function makeFigure(o) {
       const g = new THREE.ExtrudeGeometry(sh, { depth: 0.07, bevelEnabled: false }); g.translate(0, 0, -0.035); return g; }), st, 0, 0.535, 0, ax).scale.setScalar(0.55);   // 날은 자루 맨 위쪽에만 붙어요
     box(0.16, 0.14, 0.16, st, 0.03, 1.47, 0, ax); box(0.16, 0.14, 0.16, st, 0.03, 0.84, 0, ax); }
 
+  if (o.reg) {   // 리젠시 시대 영국 장교 제복: 금사 자수 서 있는 카라와 견장, 푸른 사선 대수장, 붉은·금 복대
+    const gl = M(0xe0b030, { m: 0.6, r: 0.35, e: 0xe0b030, ei: 0.35 }), nv = M(0x14214a);
+    cyl(0.4, 0.46, 0.5, 10, nv, 0, 2.42, 0, body); const cr = mesh(geo('rcol', () => new THREE.TorusGeometry(0.42, 0.06, 4, 12)), gl, 0, 2.66, 0, body, false); cr.rotation.x = Math.PI / 2;
+    for (let k = 0; k < 3; k++) box(0.34 - k * 0.06, 0.05, 0.06, gl, 0, 2.35 - k * 0.1, 0.46, body);
+    for (const sx of [-1, 1]) { box(0.55, 0.1, 0.45, gl, sx * 0.66, 2.28, 0, body); for (let k = 0; k < 5; k++) cyl(0.025, 0.025, 0.28, 4, gl, sx * 0.66 + (k - 2) * 0.1, 2.1, 0, body); box(0.4, 0.04, 0.34, nv, sx * 0.66, 2.35, 0, body); }
+    for (let k = 0; k < 4; k++) { box(0.1, 0.1, 0.04, gl, -0.2 + (k % 2) * 0.4, 1.9 - Math.floor(k / 2) * 0.35, 0.6, body); }
+    const bs = M(0x2a62c8, { e: 0x1a3a88, ei: 0.5 }); const sa = box(0.22, 2.2, 0.1, bs, 0, 1.75, 0.5, body); sa.rotation.z = 0.62; const sb2 = box(0.22, 2.2, 0.1, bs, 0, 1.75, -0.5, body); sb2.rotation.z = -0.62;
+    const rs = mesh(geo('wsash', () => new THREE.TorusGeometry(0.62, 0.15, 5, 14)), M(0xb01c1c, { e: 0x601010, ei: 0.3 }), 0, 1.2, 0, body); rs.rotation.x = Math.PI / 2;
+    const gs = mesh(geo('wsash2', () => new THREE.TorusGeometry(0.64, 0.04, 4, 14)), gl, 0, 1.32, 0, body); gs.rotation.x = Math.PI / 2; const gs2 = mesh(geo('wsash2', () => new THREE.TorusGeometry(0.64, 0.04, 4, 14)), gl, 0, 1.08, 0, body); gs2.rotation.x = Math.PI / 2;
+    box(0.14, 0.4, 0.06, M(0xb01c1c), 0.5, 0.95, 0.4, body); for (let k = 0; k < 3; k++) cyl(0.025, 0.025, 0.25, 4, gl, 0.45 + k * 0.05, 0.62, 0.4, body);
+  }
   if (o.bolts) { const bc = box(0.5, 0.35, 0.3, M(0x4a3020), -0.62, 1.05, 0.1, body); bc.rotation.z = 0.3; for (let i = 0; i < 4; i++) box(0.04, 0.3, 0.04, M(0xc8c0a8), -0.74 + i * 0.1, 1.3, 0.1, body); }
   if (o.strap) { const sb2 = box(0.14, 1.9, 0.08, leather(), 0, 1.9, 0.42, body); sb2.rotation.z = 0.55; }
   if (o.scarf) { const sf = mesh(geo('scarf', () => new THREE.TorusGeometry(0.46, 0.14, 5, 10)), M(o.scarf), 0, 2.35, 0.02, body); sf.rotation.x = Math.PI / 2; box(0.28, 0.8, 0.08, M(o.scarf), 0.25, 2.0, -0.55, body); }
@@ -704,7 +717,9 @@ export class View {
       const pm = M(0xffffff, { e: 0xffffff, ei: 1.4, op: 0.4, uniq: true }), prog = mesh(geo('fprog', () => new THREE.CircleGeometry(1, 48)), pm, x, 0.11, z, s, false); prog.rotation.x = -Math.PI / 2; prog.castShadow = false; prog.visible = false;
       const bm = M(0xffffff, { e: 0xffffff, ei: 1.8, op: 0.3, uniq: true }), beam = mesh(geo('fbeam', () => new THREE.CylinderGeometry(1.5, 2.2, 1, 16, 1, true)), bm, x, 0, z, s, false); beam.castShadow = false; beam.visible = false;
       const em = M(0xffffff, { e: 0xffffff, ei: 2, op: 0.7, uniq: true }), edge = mesh(geo('fedge', () => new THREE.RingGeometry(0.88, 1, 64)), em, x, 0.15, z, s, false); edge.rotation.x = -Math.PI / 2; edge.castShadow = false; edge.visible = false;
-      this.flagM.push({ cm, rm, pm, cloth, prog, bm, beam, em, edge });
+      const mkB = (col, ox) => { const bg = new THREE.Group(); bg.position.set(ox, 0, 2.2); g.add(bg); cyl(0.1, 0.12, 5.2, 6, M(0x5a4a3a), 0, 2.6, 0, bg); const cl = box(2.0, 1.4, 0.08, M(col, { e: col, ei: 1.1 }), 1.1, 4.4, 0, bg); cone(0.2, 0.5, 4, gold(), 0, 5.45, 0, bg); bg.visible = false; return { bg, cl }; };
+      const hold = mkB(0xffd23a, -2.6), seize = mkB(0x9a3aff, 2.6);
+      this.flagM.push({ cm, rm, pm, cloth, prog, bm, beam, em, edge, hold, seize });
     }
     // 사막 신전 문: 닫히면 돌문이 올라와 길을 막고, 열리면 땅속으로 내려가요
     this.doorM = (MAP.doors || []).map(([x, y, w, h]) => { const sx = w * CS, sz = h * CS, m = box(sx, 3.4, sz, M(0x5a2a1e, { m: 0.2, e: 0xc83a14, ei: 0.2 }), (x + w / 2) * CS, 1.7, (y + h / 2) * CS, s); m.castShadow = true; return m; });   // 닫힌 문은 붉게 빛나는 봉인 돌문
@@ -1204,6 +1219,7 @@ export class View {
     if (S.tf && this.flagM) S.tf.forEach((f, i) => {
       const F = this.flagM[i]; if (!F) return; const c = f[0] < 0 ? 0x8a8696 : TEAMS[f[0]].c, pc = f[1] >= 0 ? TEAMS[f[1]].c : c;
       F.cm.color.setHex(c); F.cm.emissive.setHex(c); F.rm.color.setHex(c); F.rm.emissive.setHex(c); F.pm.color.setHex(pc); F.pm.emissive.setHex(pc);
+      for (const [B, v] of [[F.hold, f[3]], [F.seize, f[4]]]) { B.bg.visible = v > 0; if (v > 0) { B.bg.scale.setScalar(Math.min(1, (8 - v) / 0.3 + 0.01 > 1 ? 1 : Math.max(0.05, (8 - v) / 0.3))); B.cl.rotation.y = Math.sin(t * 3 + i) * 0.2; } }   // 웰링턴이 세운 황금·보라 깃발
       F.prog.visible = f[2] > 0; F.prog.scale.setScalar(Math.max(0.01, f[2] / FLAG_T) * FLAG_R); F.cloth.rotation.y = Math.sin(t * 2.2 + i) * 0.18;
       const on = f[2] > 0, fr = Math.min(1, f[2] / FLAG_T);
       F.beam.visible = on; F.edge.visible = on;
@@ -1767,7 +1783,7 @@ function animHero(E, p, dt, t, view) {
           const rl = seg(v, 0.42, 0.5); T.pull = 0.75 * seg(v, 0, 0.4) * (1 - rl); T.rpz = -0.8 * seg(v, 0, 0.4) * (1 - rl); T.bx = (-0.3 * seg(v, 0, 0.4) - 0.5 * rl) * hold; T.bry = 0.5 * seg(v, 0, 0.4) * (1 - rl); T.lx = -1.55 - 0.7 * rl * hold; T.bz = -0.8 * rl * hold; T.jy = hop(0.42, 0.75, 0.6); T.sq = 0.25 * seg(v, 0, 0.4) * (1 - rl) + land(0.75, 0.3); T.lg = 0.7 * pk; break; }
         case 'rain': // 높이 뛰어올라 하늘로 쏘아 올려요
           T.lx = -1.55 - 1.5 * pk; T.rx = -1.5 - 1.4 * pk; T.bx = 0.3 * cr - 0.75 * pk; T.hx = -0.6 * pk; T.jy = hop(0.18, 0.62, 1.7); T.pull = 0.75 * seg(v, 0, 0.3) * (1 - seg(v, 0.38, 0.44)); T.sq = 0.4 * cr + land(0.62, 0.45); T.lg = -0.5 * pk; break;
-        case 'mark': // 몸을 홱 비틀며 손가락으로 적을 콕 집어요
+        case 'mark': case 'hold': case 'seize': // 몸을 홱 비틀며 손가락으로 적을 콕 집어요 (깃발 지시도 같은 동작: 팔을 뻗어 가리켜요)
           T.lx = -1.75; T.lz = 0.5 * pk; T.rx = -0.4 * pk + base[0] * (1 - pk); T.rz = 0.9 * pk; T.bry = 0.5 * cr - 0.9 * pk; T.bx = 0.45 * pk; T.bz = 0.6 * pk; T.hx = 0.2 * pk; T.sq = 0.2 * cr - 0.15 * pk; T.lg = 0.9 * pk; break;
         case 'heal': case 'raise': case 'smite': { // 지팡이를 하늘 높이 들고 떠오르듯 솟아요 (부활은 더 높이)
           const big = a === 'raise' ? 1.6 : 1;
@@ -1793,6 +1809,8 @@ function animHero(E, p, dt, t, view) {
         case 'scatter': { // 팔다리를 활짝 펴고 뼈가 흩어지듯 뒤로 튀어 올라요
           const pk2 = seg(v, 0.05, 0.25) * (1 - seg(v, 0.7, 1));
           T.rz = 1.5 * pk2; T.lz = -1.5 * pk2; T.rx = -0.4 * pk2; T.lx = -0.4 * pk2; T.bx = -0.55 * pk2; T.jy = hop(0, 0.7, 1.3); T.lg = 1.0 * pk2; T.hx = -0.5 * pk2; T.sq = -0.2 * pk2; T.spin = 0.4 * Math.sin(v * 12) * pk2; break; }
+        case 'morale': // 한 손을 번쩍 위로 들어 올려 사기를 북돋워요
+          T.lx = -3.05 * pk + base[1] * (1 - pk); T.lz = -0.25 * pk; T.rx = -0.2 * pk + base[0] * (1 - pk); T.hx = -0.45 * pk; T.bx = -0.2 * pk + 0.12 * cr; T.jy = hop(0.2, 0.7, 0.25); T.lg = 0.3 * pk; break;
         case 'rally': // 높이 뛰어올라 칼을 하늘로 치켜들고 외쳐요
           T.rx = -3.15 * pk + base[0] * (1 - pk); T.lx = -2.6 * pk; T.lz = -0.8 * pk; T.hx = -0.7 * pk; T.bx = 0.4 * cr - 0.3 * pk; T.jy = hop(0.2, 0.6, 1.5); T.sq = 0.45 * cr - 0.25 * go * (1 - seg(v, 0.45, 0.55)) + land(0.6, 0.45); T.lg = -0.6 * pk + 0.8 * seg(v, 0.6, 0.7) * hold; break;
         case 'kill': { const kp = seg(v, 0, 0.3) * (1 - seg(v, 0.62, 1)); T.rx = -2.9 * kp + base[0] * (1 - kp); T.lx = base[1] * (1 - kp) - 0.3 * kp; T.bx = -0.22 * kp; T.hx = -0.3 * kp; T.jy = hop(0.05, 0.55, 0.8); T.sq = -0.12 * kp; T.spin = 0.5 * Math.sin(v * 9) * kp; break; }
