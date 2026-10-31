@@ -3,7 +3,7 @@
 // Crown Envoy·Isleport 는 캐릭터 스킨이 없어요 (국기·장식은 세지 않아요).
 const fs=require('fs'), vm=require('vm'), path=require('path'), root=path.join(__dirname,'..');
 function arr(src,name){ const a=src.indexOf('const '+name+'='); const e=src.indexOf('\n]',a)+2; const c={}; vm.createContext(c); vm.runInContext(src.slice(a,e)+';this.R='+name,c); return c.R; }
-const st=fs.readFileSync(path.join(root,'stickseum/Stickseum-latest.html'),'utf8');
+const st=fs.readFileSync(path.join(root,'stickseum/Stickseum-game.html'),'utf8');
 const a=st.indexOf('const COSMETICS={'), e=st.indexOf('\n};',a);
 const shop=(st.slice(a,e).match(/cat:'skin'/g)||[]).length;
 const season=(st.match(/COSMETICS\.skin_\w+=\{cat:'skin'/g)||[]).length;

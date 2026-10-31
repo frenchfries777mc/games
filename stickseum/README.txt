@@ -14,7 +14,8 @@ Stickseum 사이트 (정적 사이트: 서버 프로그램이 필요 없어요)
   balance.html               캐릭터별 승률과 수치 변경 기록 페이지
   site-i18n.js               사이트 번역 (6개 언어, 브라우저 언어로 자동 선택, 게임과 같은 언어 설정 사용)
   Stickseum-v0.1 ~ v0.8.html 각 버전의 게임 파일
-  Stickseum-latest.html      최신 버전의 복사본 ("바로 플레이"가 이 파일을 열어요)
+  Stickseum-latest.html      시작 파일 (게임 본체를 받는 동안 진행률 막대를 보여 주고, 다 받으면 게임으로 바뀌어요. "바로 플레이"가 이 파일을 열어요. 고치지 않아요)
+  Stickseum-game.html        최신 버전의 게임 본체 (게임을 고칠 때는 이 파일을 고쳐요)
 
 [ 올리는 방법: GitHub Pages ]
   1. 저장소 화면에서 Add file > Upload files
@@ -25,7 +26,7 @@ Stickseum 사이트 (정적 사이트: 서버 프로그램이 필요 없어요)
 
 [ 새 버전을 낼 때 ]
   1. 새 게임 파일을 Stickseum-v0.8.html 처럼 올리기
-  2. 같은 내용을 Stickseum-latest.html 로도 덮어쓰기 (같은 이름으로 올리면 교체돼요)
+  2. 같은 내용을 Stickseum-game.html 로도 덮어쓰기 (Stickseum-latest.html 은 시작 파일이라 덮어쓰지 않아요)
   3. versions.json 맨 위에 새 항목을 추가하고 이전 최신 항목의 "latest" 를 false 로, latest 값과 latestFile 을 바꾸기
      (저한테 새 버전을 알려 주시면 versions.json 까지 고친 파일을 만들어 드려요)
 
