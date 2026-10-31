@@ -166,7 +166,16 @@ function ffSync() {
     } catch (e) { }
   }, 1500);
 }
-if (window.FFAuth) { FFAuth.ready.then(() => { paintWho(); autoJoin(); ffSync(); }); FFAuth.onChange(() => { paintWho(); ffSync(); }); }
+/* 허브 코인 → tC: 허브에서 바꾼 코인을 로그인할 때 한 번씩 받아 와요 */
+let claimedFor = '';
+async function claimTC() {
+  try {
+    const sb = window.FFAuth && FFAuth.client && FFAuth.client(), u = window.FFAuth && FFAuth.user(); if (!sb || !u || claimedFor === u.id) return; claimedFor = u.id;
+    const r = await sb.rpc('ff_coin_claim', { p_game: 'tumblecrown' }), n = r && r.data | 0; if (!n || r.error) return;
+    SAVE.honor += n; save(); homeMsg(T('허브 코인에서 바꾼 tC {0}을 받았어요.', n));
+  } catch (e) { }
+}
+if (window.FFAuth) { FFAuth.ready.then(() => { paintWho(); autoJoin(); ffSync(); claimTC(); }); FFAuth.onChange(() => { paintWho(); ffSync(); claimTC(); }); }
 paintWho();
 function needLogin() { if (!window.FFAuth) return false; if (loggedIn()) return false; homeMsg(T('친구와 대전은 Frenchfries777 계정으로 로그인해야 해요.')); try { FFAuth.openLogin(); } catch (e) { } return true; }
 function hubRoom(on) { try { if (window.FFAuth && FFAuth.setRoom) FFAuth.setRoom(on && S.code ? { game: 'tumblecrown', code: S.code, path: 'prototypes/tumblecrown/index.html' } : null); } catch (e) { } }
