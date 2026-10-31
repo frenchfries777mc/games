@@ -795,12 +795,13 @@ export const GEAR_BONUS = { weapon: [0, 0.1, 0.22], armor: [0, 15, 35] };
 export const CHAR_RANKS = (() => {
   const base = [[0, '입문', '#8890a4'], [90, '브론즈', '#c47a3d'], [260, '실버', '#c7ccd6'], [530, '골드', '#ffd34d'], [880, '플래티넘', '#4dd9ff'], [1750, '다이아', '#7bf3ff'], [3050, '크리스탈', '#74a9ff'], [4800, '아메시스트', '#b36bff'], [7000, '마스터', '#ff5fd2'], [9000, '그랜드 마스터', '#ff5252']], out = [];
   base.forEach(([min, nm, col], i) => {
-    if (nm === '그랜드 마스터') { ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X'].forEach((r, k) => out.push({ min: min + k * 1000, name: T(nm) + ' ' + r, color: col })); return; }
-    out.push({ min, name: T(nm), color: col }); const nx = base[i + 1];
-    if (nx && i > 0) for (let k = 1; k <= 2; k++) out.push({ min: Math.round((min + (nx[0] - min) * k / 3) / 10) * 10, name: T(nm) + ' ' + (k === 1 ? 'II' : 'III'), color: col });
+    if (nm === '그랜드 마스터') { ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X'].forEach((r, k) => out.push({ min: min + k * 1000, name: T(nm) + ' ' + r, color: col, t: i })); return; }
+    out.push({ min, name: T(nm), color: col, t: i }); const nx = base[i + 1];
+    if (nx && i > 0) for (let k = 1; k <= 2; k++) out.push({ min: Math.round((min + (nx[0] - min) * k / 3) / 10) * 10, name: T(nm) + ' ' + (k === 1 ? 'II' : 'III'), color: col, t: i });
   });
   return out;
 })();
+export const rankImg = (rk, h = 18) => '<img src="rank/t' + (rk.t | 0) + '.svg" alt="" height="' + h + '" width="' + h + '" style="vertical-align:middle;margin-right:4px">';   // 마스터리 계급 로고 (II·III 단계는 같은 로고)
 export function charRankFor(pts) { let cur = CHAR_RANKS[0]; for (const r of CHAR_RANKS) if ((pts || 0) >= r.min) cur = r; return cur; }
 export const MASTERY_PT = { kill: 12, win: 20, assist: 8, match: 5 };   // 한 판에 쓰러뜨림 12점, 도움 8점, 승리 20점, 완주 5점 (+ 연승 보너스)
 export const STREAK_BONUS = [[10, 20], [7, 15], [5, 10], [3, 5]];   // 3연승 5, 5연승 10, 7연승 15, 10연승 20
