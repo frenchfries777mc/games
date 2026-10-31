@@ -33,6 +33,8 @@ function perfApply() {
 }
 perfApply();
 addEventListener('ffperf', () => { perfApply(); if (S.scr === 'sSettings') paintSettings(); });
+// 저사양 안내는 이 기기에서 한 번만 해요 (설정의 「최적화」는 사용자가 직접 켭니다)
+let lowHintDone = false; try { lowHintDone = !!localStorage.getItem('tc_lowHint'); } catch (e) { }
 // 깬 장 수 (예전 저장은 1장을 깼으면 1)
 if (SAVE.chMax == null) SAVE.chMax = Object.keys(SAVE.clears || {}).length ? 1 : 0;
 SAVE.cos = SAVE.cos || { own: {}, on: {} }; SAVE.cos.own = SAVE.cos.own || {}; SAVE.cos.on = SAVE.cos.on || {};
@@ -1461,6 +1463,8 @@ function frame(now) {
   if (now - (S.ambN || 0) > 1000) { S.ambN = now; SFX.ambient(inGame() && S.scr === '' && S.snap && S.snap.ph === 'play' ? CH.theme : ''); }
   // 방장 컴퓨터가 느리면(화면 간격이 길게 이어지면) 스스로 가벼운 모드로 바꿔요: 전송 줄이기, 봇 판단 줄이기, 가벼운 화질 (규칙은 그대로)
   if (S.G && S.net === 'host' && S.scr === '' && !S.lite) { S.fAvg = (S.fAvg || 16) * 0.95 + Math.min(raw, 100) * 0.05; if (S.fAvg > 38) { S.slowN = (S.slowN | 0) + 1; if (S.slowN > 180) { S.lite = true; S.G.lite = true; try { view.setLow(true); } catch (e) { } toast('컴퓨터가 느려서 가벼운 모드로 바꿨어요. 친구 화면은 그대로예요.', 3600); } } else S.slowN = 0; }
+  // 모든 기기: 화면이 계속 느리면 설정의 「최적화」를 한 번만 권해요
+  if (!lowHintDone && inGame() && S.scr === '' && !SAVE.set.opt) { S.hintAvg = (S.hintAvg || 16) * 0.97 + Math.min(raw, 100) * 0.03; S.hintN = S.hintAvg > 40 ? (S.hintN | 0) + 1 : 0; if (S.hintN > 240) { lowHintDone = true; try { localStorage.setItem('tc_lowHint', '1'); } catch (e) { } toast(T('화면이 느려요. 설정의 「최적화」를 켜면 그림자와 빛 번짐을 줄여 더 부드러워져요.'), 5000); } }
  const t = (now - S.t0) / 1000;
   musicTick(dt, now); talkTick(dt, !!S.snap && S.scr === '' && (S.snap.ph === 'play' || S.snap.ph === 'bossIntro'));
   if (S.snap && (S.G || S.net === 'guest') && S.scr !== 'sLobby' && S.scr !== 'sRoom') {
