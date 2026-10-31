@@ -866,6 +866,8 @@ function pickBlessIdx(i) {
 function skillFx(e) {
   const c = Math.cos(e.a || 0), s = Math.sin(e.a || 0), mine = e.id === S.me;
   if (mine && ['block', 'pierce', 'ward', 'trap', 'rain', 'heal'].includes(e.s)) view.shake = Math.max(view.shake, 0.35);
+  { const sp = S.G && S.G.players.find(q => q.id === e.id), rc = sp && ROLES[sp.role] ? parseInt(ROLES[sp.role].color.slice(1), 16) : 0;   // 스킬을 쓰는 순간 직업 색 오라가 번쩍해요
+    if (rc) { view.ring(e.x, e.z, 2.6, rc, 0.45); view.shock(e.x, e.z, 3, rc, 0.35); view.column(e.x, e.z, rc, 0.4); view.flash(e.x, e.z, rc, 60); } }
   switch (e.s) {
     case 'block': view.dome(e.x + c * 0.6, e.z + s * 0.6, 1.9, 0xffe08a, 1.2); view.burst(e.x + c, 1.6, e.z + s, 0xffe08a, 10, 5, 0.35, 0.1); view.flash(e.x, e.z, 0xffe08a, 70); SFX.play('clang'); break;
     case 'rapidfx': { const col = 0xffc060; view.burst(e.x + c * 2.2, 1.9, e.z + s * 2.2, col, 10, 6, 0.3, 0.1); view.flash(e.x + c * 2.2, e.z + s * 2.2, col, 90); for (const o of [-0.05, 0, 0.05]) view.streak(e.x, e.z, e.a + o, 40, col, 0.25, 0.3); SFX.play('slam'); break; }
