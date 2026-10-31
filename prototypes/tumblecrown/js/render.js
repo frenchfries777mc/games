@@ -629,9 +629,10 @@ export class View {
       }
     });
     // 벽: 방 뒤쪽(북쪽) 벽은 높게, 앞쪽·옆 벽은 낮게 해서 캐릭터가 가려지지 않게 해요
+    const colSet = new Set(); for (const [cx, cy, n] of MAP.cols || []) for (let j = Math.round(cy - n / 2); j < Math.round(cy + n / 2); j++) for (let i = Math.round(cx - n / 2); i < Math.round(cx + n / 2); i++) colSet.add(j * MW + i);
     instBoxes(s, (add) => {
       for (let j = 0; j < MH; j++) for (let i = 0; i < MW; i++) {
-        if (floorCell(i, j) || SEC[j * MW + i] || cutCell(i, j)) continue;
+        if (floorCell(i, j) || SEC[j * MW + i] || cutCell(i, j) || colSet.has(j * MW + i)) continue;
         let nb = false, nh = 0; for (let dj = -1; dj <= 1; dj++) for (let di = -1; di <= 1; di++) if (floorCell(i + di, j + dj)) { nb = true; nh = Math.max(nh, cellH(i + di, j + dj)); }
         if (!nb) continue;
         const x = cw(i), z = cw(j), bc = inBoss(i, j + 1) || inBoss(i, j - 1) ? bbrick : brick;
@@ -653,6 +654,13 @@ export class View {
       }
     });
     this.torchPos = torches;
+    // 둥근 기둥: 받침돌 위에 굵은 기둥, 윗부분에 머리돌
+    for (const [cx, cy, n] of MAP.cols || []) {
+      const x = cx * CS, z = cy * CS, r = n * CS / 2 * 0.92, h = 5.2, sm = M(0x6a6074), bm = M(0x5a5266);
+      cyl(r * 1.02, r * 1.1, 0.5, 14, bm, x, 0.25, z, s); cyl(r * 0.84, r * 0.92, h, 14, sm, x, 0.5 + h / 2, z, s);
+      for (let k = 0; k < 4; k++) cyl(r * 0.88, r * 0.88, 0.1, 14, bm, x, 1.3 + k * 1.1, z, s);   // 기둥 마디
+      cyl(r * 1.12, r * 0.9, 0.5, 14, bm, x, 0.5 + h + 0.25, z, s); box(r * 2.3, 0.3, r * 2.3, bm, x, 0.5 + h + 0.65, z, s);
+    }
     this.buildSecrets(s, T, brick); this.buildPuzzles(s, T); this.buildDarks(s); this.buildExit(s); this.buildCuts(s, T, brick); this.escOn = false;
     for (const [x, z] of torches) { box(0.3, T.trees ? 4.6 : 1, 0.3, M(0x4a3020), x, T.trees ? 2.3 : 4, z, s); box(0.6, 0.25, 0.6, M(0x2a2830, { m: 0.7 }), x, 4.5, z, s); this.flame(s, x, 5.05, z, 1, false, T.torch); }
     // 횃불 빛은 가까운 곳에만 몇 개 켜요 (빛이 너무 많으면 느려져요)
