@@ -2,7 +2,7 @@
 // 화면 흐름, 조작, 멀티(친구 초대, PeerJS), 저장
 import { View } from './render.js';
 import { createGame, step, snapshot, chooseBless, carryOver, koPlayer, INTRO_T, HV_DELAY, wallClamp, setupRange, callBots } from './sim.js';
-import { useMode, RECALL_CD, pushTime, PUSH_N, PUSH_T, TEAMS, FLAG_T, RESP_T, ARENA_THEMES, MODES, ROLES, ROLE_IDS, COLORS, BOT_NAMES, MAX_PLAYERS, BLESSINGS, CHAPTERS, CH, FOES, MAP, ACHIEVEMENTS, TALK, GEAR_TIERS, GEAR_COST, COSMETICS, MIDB, WEEKLY, weekInfo, VERSION, BUILD, roleLevel, CHAR_RANKS, charRankFor, MASTERY_PT, streakBonusFor, LORE, COMBOS, CURSES, DEEP, DEEP_I, TALK_X, ROLE_PUZ, flagShown } from './data.js';
+import { useMode, RECALL_CD, pushTime, PUSH_N, PUSH_T, TEAMS, FLAG_T, FLAG_R, RESP_T, ARENA_THEMES, MODES, ROLES, ROLE_IDS, COLORS, BOT_NAMES, MAX_PLAYERS, BLESSINGS, CHAPTERS, CH, FOES, MAP, ACHIEVEMENTS, TALK, GEAR_TIERS, GEAR_COST, COSMETICS, MIDB, WEEKLY, weekInfo, VERSION, BUILD, roleLevel, CHAR_RANKS, charRankFor, MASTERY_PT, streakBonusFor, LORE, COMBOS, CURSES, DEEP, DEEP_I, TALK_X, ROLE_PUZ, flagShown } from './data.js';
 import { collide as mapCollide, areaAt, floorCell, MW, MH, CS, cw, useChapter, chapterIndex, SOPEN, openSecret, resetSecrets, hiddenCell, GOPEN, openGate, setDoors, DSTATE, PDOWN, dropPillar, LIFTH, liftOk, CUT } from './map.js';
 import * as SFX from './sfx.js';
 import * as MUS from './music.js';
@@ -606,7 +606,7 @@ function hostMsg(c, d) {
   }
   const uid = c._uid; if (!uid) return;
   if (d.t === 'rdy' && !S.G && S.ph === 'pick') { S.rdy[uid] = !S.rdy[uid]; hostLobby(); if (S.scr === 'sRoom') paintRoom(); }
-  else if (d.t === 'ping' && S.G) { const p = S.G.players.find(q => q.uid === uid); if (p && !p.dead && (p.pgT || 0) < S.G.t && isFinite(d.x) && isFinite(d.z)) { p.pgT = S.G.t + 2; S.G.ev.push({ k: 'ping', id: p.id, tm: p.team, x: +d.x, z: +d.z, pk: d.pk === 'danger' ? 'danger' : 'go' }); if (d.pk !== 'danger') callBots(S.G, p.team, +d.x, +d.z); } }
+  else if (d.t === 'ping' && S.G) { const p = S.G.players.find(q => q.uid === uid); if (p && !p.dead && (p.pgT || 0) < S.G.t && isFinite(d.x) && isFinite(d.z)) { p.pgT = S.G.t + 2; S.G.ev.push({ k: 'ping', id: p.id, tm: p.team, x: +d.x, z: +d.z, pk: PINGK[d.pk] ? d.pk : 'go' }); if (!PINGK[d.pk] || d.pk === 'go') callBots(S.G, p.team, +d.x, +d.z); } }
   else if (d.t === 'pick' && !S.G && S.ph === 'pick') { const sl = S.slots.find(s => s.uid === uid); if (sl) { if (ROLES[d.role]) sl.role = d.role; const col = +d.col | 0; if (COLORS[col] && !S.slots.some(s => s !== sl && s.col === col)) sl.col = col; hostLobby(); if (S.scr === 'sRoom') paintRoom(); } }
   else if (d.t === 'i' && S.G) { const pid = c._pid; if (!pid) return; const r = S.rin[pid] || (S.rin[pid] = {}); const once = { q: r.q || d.q, e: r.e || d.e, r: r.r || d.r, roll: r.roll || d.roll, skip: r.skip || d.skip, atkR: r.atkR || d.atkR, rcl: r.rcl || d.rcl }; Object.assign(r, d, once); }
   else if (d.t === 'b' && S.G) { if (c._pid) chooseBless(S.G, c._pid, d.id); }
@@ -746,7 +746,7 @@ $('gl').addEventListener('mousedown', e => {
   if (!inGame() || S.scr !== '' || !S.snap || S.rcOpen || !S.G && S.net !== 'guest' || (S.pingT || 0) > performance.now()) return;
   const m = myP(); if (!m || m.dd) return; S.pingT = performance.now() + 2000;
   const R = S.mmR, inMini = R && e.clientX >= R.x && e.clientX <= R.x + R.w && e.clientY >= R.y && e.clientY <= R.y + R.h;   // 미니맵 위에서 누르면 그 자리에 찍어요
-  const g = inMini ? { x: (e.clientX - R.x) / R.sc * CS, z: (e.clientY - R.y) / R.sc * CS } : view.groundAt(e.clientX, e.clientY), foe = S.snap.pl.find(q => q.tm !== m.tm && !q.dn && !q.dd && Math.hypot(q.x - g.x, q.z - g.z) < 3.5), pk = foe ? 'danger' : 'go', x = foe ? foe.x : g.x, z = foe ? foe.z : g.z;
+  const g = inMini ? { x: (e.clientX - R.x) / R.sc * CS, z: (e.clientY - R.y) / R.sc * CS } : view.groundAt(e.clientX, e.clientY), foe = S.snap.pl.find(q => q.tm !== m.tm && !q.dn && !q.dd && Math.hypot(q.x - g.x, q.z - g.z) < 3.5), pk = pingKind(g, m, foe), x = foe ? foe.x : g.x, z = foe ? foe.z : g.z;
   if (S.net === 'guest') send({ t: 'ping', x, z, pk }); else { S.G.ev.push({ k: 'ping', id: m.id, tm: m.tm, x, z, pk }); if (pk === 'go') callBots(S.G, m.tm, x, z); }
 });
 const keyDown = (...ks) => ks.some(k => K[k]);
@@ -1102,7 +1102,7 @@ function onEvent(e) {
       break; }
     case 'pillar': view.column(e.x, e.z, 0x6ab0ff, 0.9); view.burst(e.x, 0.5, e.z, 0x9ad0ff, 14, 6, 0.6, 0.14); view.flash(e.x, e.z, 0x6ab0ff, 80); SFX.play('slam'); break;
     case 'blink': view.column(e.x, e.z, 0x9ad0ff, 0.5); view.rise(e.x, e.z, 0x9ad0ff, 12, 1.5, 0.7, 6); SFX.play('orb'); break;
-    case 'ping': if (e.tm === myTm()) { const dg = e.pk === 'danger', col = dg ? 0xff5a4a : 0x5fd0ff; S.pings = (S.pings || []).filter(q => performance.now() - q.t < 5000).concat([{ x: e.x, z: e.z, dg, t: performance.now() }]); /* 미니맵에도 5초 동안 표시해요 */ view.ring(e.x, e.z, 2.2, col, 1.4); view.ring(e.x, e.z, 1.2, 0xffffff, 1.0); view.column(e.x, e.z, col, 1.2); num(e.x, e.z, dg ? T('조심!') : T('여기 오세요'), dg ? '#ff7a6a' : '#8ae0ff', 1.3); SFX.play('click'); } break;
+    case 'ping': if (e.tm === myTm()) { const pi = PINGK[e.pk] || PINGK.go, col = pi.c; S.pings = (S.pings || []).filter(q => performance.now() - q.t < 5000).concat([{ x: e.x, z: e.z, rgb: pi.r, t: performance.now() }]); /* 미니맵에도 5초 동안 표시해요 */ view.ring(e.x, e.z, 2.2, col, 1.4); view.ring(e.x, e.z, 1.2, 0xffffff, 1.0); view.column(e.x, e.z, col, 1.2); num(e.x, e.z, T(pi.t), pi.h, 1.3); SFX.play('click'); } break;
     case 'recall': view.column(e.x, e.z, 0x9af0e0); if (e.id === me && e.end) bigMsg(T('깃발로 귀환했어요'), '', 1400); break;
     case 'respawn': view.column(e.x, e.z, 0xff9a48); if (e.id === me) bigMsg(T('진지에서 다시 일어났어요'), '', 1800); break;
     case 'flag': { const mine = e.own === myTm(), c = TEAMS[e.own].c; view.column(e.x, e.z, c, 1.4); view.ring(e.x, e.z, 6, c, 0.9); view.shock(e.x, e.z, 7, c, 0.6); view.flash(e.x, e.z, c, 120); if (mine || e.was === myTm()) { bigMsg(mine ? T('깃발을 차지했어요!') : T('깃발을 빼앗겼어요!'), '', 1800); SFX.play(mine ? 'kill' : 'roar'); } break; }   // 주인 없던 깃발을 상대가 차지한 건 빼앗긴 게 아니라서 알리지 않아요
@@ -1132,6 +1132,16 @@ function num(x, z, v, col, sc = 1, y = 3) {
 /* ---------- 화면 갱신 ---------- */
 // 탈락하면 관전: 아직 살아 있는 사람의 시점을 따라가요 (←/→ 또는 화면 누르기로 바꿔요)
 const tmName = t => T(t === myTm() ? '우리 팀' : '상대 팀');   // 군단 이름 대신, 나에게는 늘 내 편이 '우리 팀'이에요
+// 핑 종류: 찍은 자리를 보고 알아서 골라요 (조작 키는 그대로예요)
+const PINGK = { go: { c: 0x5fd0ff, t: '여기 오세요', h: '#8ae0ff', r: '95,208,255' }, danger: { c: 0xff5a4a, t: '조심!', h: '#ff7a6a', r: '255,90,74' }, crowd: { c: 0xff8a3a, t: '적이 많아요!', h: '#ffa860', r: '255,138,58' }, flag: { c: 0xffd23a, t: '깃발이 위험해요!', h: '#ffe070', r: '255,210,58' }, mon: { c: 0xc070ff, t: '괴물이 있어요!', h: '#d8a0ff', r: '192,112,255' } };
+function pingKind(g, m, foe) {
+  const sn = S.snap, near = sn.pl.filter(q => q.tm !== m.tm && !q.dn && !q.dd && Math.hypot(q.x - g.x, q.z - g.z) < 9).length;
+  if (near >= 3) return 'crowd';
+  if ((sn.mn || []).some(q => Math.hypot(q[0] - g.x, q[1] - g.z) < 5)) return 'mon';
+  if (foe) return 'danger';
+  const fi = sn.tf.findIndex((f, i) => f[0] === m.tm && Math.hypot(cw(MAP.tflags[i][0]) - g.x, cw(MAP.tflags[i][1]) - g.z) < FLAG_R * 1.3);
+  return fi >= 0 ? 'flag' : 'go';
+}
 function myTm() { const m = S.snap && S.snap.pl.find(q => q.id === S.me); return m ? m.tm : 0; }
 function specList() { return S.snap ? S.snap.pl.filter(q => !q.dd && q.id !== S.me && q.tm === myTm()) : []; }
 function specCycle(d) { const L = specList(); if (!L.length) return; const i = L.findIndex(q => q.id === S.spec); S.spec = L[(i + d + L.length * 2) % L.length].id; SFX.play('click'); }
@@ -1394,7 +1404,7 @@ function teamHud(sn) {
   const P = (wx, wz) => [mx + wx / CS * sc, my + wz / CS * sc], mate = sn.pl.filter(q => q.tm === mt && !q.dd);
   sn.tf.forEach((f, i) => { const fl = MAP.tflags[i], [a, b] = P(cw(fl[0]), cw(fl[1])); oc.fillStyle = f[0] < 0 ? '#9a96a6' : hex(TEAMS[f[0]].c); oc.fillRect(a - 3.5, b - 3.5, 7, 7); oc.strokeStyle = '#140f18'; oc.lineWidth = 1.5; oc.strokeRect(a - 3.5, b - 3.5, 7, 7); if (S.fAl && S.fAl[i]) { const pu = 0.5 + 0.5 * Math.sin(performance.now() / 110); oc.strokeStyle = 'rgba(255,70,60,' + (0.5 + pu * 0.5) + ')'; oc.lineWidth = 2; oc.beginPath(); oc.arc(a, b, 7 + pu * 4, 0, 7); oc.stroke(); } });
   for (const pg of S.pings || []) {   // 우리 팀이 찍은 핑 (내 핑 포함): 5초 동안 깜빡여요
-    const age = performance.now() - pg.t; if (age > 5000) continue; const [a, b] = P(pg.x, pg.z), pu = (age % 800) / 800, col = pg.dg ? '255,90,74' : '95,208,255';
+    const age = performance.now() - pg.t; if (age > 5000) continue; const [a, b] = P(pg.x, pg.z), pu = (age % 800) / 800, col = pg.rgb || '95,208,255';
     oc.strokeStyle = 'rgba(' + col + ',' + (1 - pu) + ')'; oc.lineWidth = 2; oc.beginPath(); oc.arc(a, b, 3 + pu * 9, 0, 7); oc.stroke(); oc.fillStyle = 'rgb(' + col + ')'; oc.strokeStyle = '#fff'; oc.lineWidth = 1.2; oc.beginPath(); oc.arc(a, b, 3.2, 0, 7); oc.fill(); oc.stroke();
   }
   for (const mn of sn.mn || []) { const [a, b] = P(mn[0], mn[1]), pu = 0.5 + 0.5 * Math.sin(performance.now() / 260); oc.fillStyle = '#ff7a3a'; oc.strokeStyle = '#140f18'; oc.lineWidth = 1.5; oc.beginPath(); oc.moveTo(a, b - 6); oc.lineTo(a + 5, b); oc.lineTo(a, b + 6); oc.lineTo(a - 5, b); oc.closePath(); oc.fill(); oc.stroke(); oc.strokeStyle = 'rgba(255,122,58,' + (0.3 + pu * 0.5) + ')'; oc.beginPath(); oc.arc(a, b, 8 + pu * 2, 0, 7); oc.stroke(); }
