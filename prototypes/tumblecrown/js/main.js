@@ -634,7 +634,7 @@ function beginGame(prevG) {
   startClient();
 }
 function startClient() {
-  talkReset(); if (!S.G) resetSecrets(); S.overT = 0; S.cleared = false; S.built = false; S.area = -2; S.seenA = {}; S.voted = false; S.lastPh = ''; S.saved = false; S.resultShown = false; S.everDown = false; S.local = null; S.nums = []; S.evq = []; S.wonT = 0; S.lastBless = null; S.solvedP = {}; S.flagGot = 0;
+  hlReset(); talkReset(); if (!S.G) resetSecrets(); S.overT = 0; S.cleared = false; S.built = false; S.area = -2; S.seenA = {}; S.voted = false; S.lastPh = ''; S.saved = false; S.resultShown = false; S.everDown = false; S.local = null; S.nums = []; S.evq = []; S.wonT = 0; S.lastBless = null; S.solvedP = {}; S.flagGot = 0;
   if (S.G) S.snap = snapshot(S.G);
   unlock('first');
   setHud(false); show('sIntro'); $('introCh').textContent = CH.title; $('introLine').classList.remove('on'); S.introIdx = -1;
@@ -1479,6 +1479,37 @@ function showDeepResult() {
   setHud(false); show('sResult');
 }
 // 우승 화면: 이긴 사람이 크게 나와요. '순위 보기'를 누르면 전체 순위표로 가요
+/* ---------- 하이라이트: 내가 쓰러뜨린 장면(연속·위기)을 짧게 저장해 두었다가 경기가 끝나면 다시 보여 줘요 ---------- */
+const HL = { buf: [], ev: [], clips: [], pend: null, kl: 0, kt: [], acc: 0 };
+function hlReset() { HL.buf = []; HL.ev = []; HL.clips = []; HL.pend = null; HL.kl = 0; HL.kt = []; HL.acc = 0; S.replay = null; }
+function hlTick(dt, t) {
+  const sn = S.snap; if (!sn || sn.ph !== 'play' || sn.rg || S.replay) return;
+  HL.acc += dt; if (HL.acc < 0.1) return; HL.acc -= 0.1;
+  const me = myP(), fr = { s: JSON.parse(JSON.stringify(sn)), ev: HL.ev }; HL.ev = []; HL.buf.push(fr); if (HL.buf.length > 40) HL.buf.shift();
+  if (HL.pend) { HL.pend.post.push(fr); if (HL.pend.post.length >= HL.pend.need) { const c = HL.pend; HL.pend = null; HL.clips.push({ fr: c.pre.concat(c.post), score: c.score }); if (HL.clips.length > 3) HL.clips.splice(HL.clips.indexOf(HL.clips.slice().sort((a, b) => a.score - b.score)[0]), 1); } }
+  if (me) {
+    const kl = me.kl | 0;
+    if (kl > HL.kl) {
+      HL.kl = kl; HL.kt = HL.kt.filter(x => t - x < 8); HL.kt.push(t);
+      const sc = HL.kt.length * 3 + (me.hp < me.mx * 0.3 ? 2 : 0) + (me.cb > 0 ? 1 : 0);
+      if (HL.pend) { HL.pend.score = Math.max(HL.pend.score, sc); HL.pend.need = Math.min(30, HL.pend.post.length + 10); }
+      else HL.pend = { pre: HL.buf.slice(-30, -1), post: [fr], need: 10, score: sc };
+    }
+  }
+}
+function hlFlush() { if (!HL.pend) return; const c = HL.pend; HL.pend = null; if (c.pre.length + c.post.length >= 8) HL.clips.push({ fr: c.pre.concat(c.post), score: c.score }); }   // 경기가 끝나 마무리하지 못한 장면도 저장해요
+function hlPlay() {
+  if (!HL.clips.length) return; const best = HL.clips.slice().sort((a, b) => b.score - a.score || b.fr.length - a.fr.length)[0];
+  S.replay = { fr: best.fr, i: 0, acc: 0, fin: S.snap }; show(''); $('hlBar').classList.add('on');
+}
+function hlEnd() { const R = S.replay; if (!R) return; S.replay = null; S.snap = R.fin; $('hlBar').classList.remove('on'); bigMsg('', '', 0); show('sWin'); }
+function hlFrame(dt, t) {
+  const R = S.replay; R.acc += dt;
+  while (R.acc >= 0.1 && R.i < R.fr.length - 1) { R.acc -= 0.1; R.i++; for (const e of R.fr[R.i].ev) onEvent(e); }
+  if (R.i >= R.fr.length - 1 && R.acc >= 0.5) { hlEnd(); return; }
+  const f = R.fr[R.i]; S.snap = f.s; view.sync(f.s, S.me, dt, t, false);
+}
+$('hlSkip').onclick = () => { SFX.play('click'); hlEnd(); };
 function showWin() {
   S.resultShown = true; bigMsg('', '', 0); const h = S.lastH = awardHonor() || 0, sn = S.snap, mine = myP(), wt = sn.wtm, won = mine && mine.tm === wt;
   if (won) { unlock('win'); SAVE.wins = SAVE.wins || {}; SAVE.wins[mine.role] = 1; save(); if (ROLE_IDS.every(r => SAVE.wins[r])) unlock('winall'); }
@@ -1489,6 +1520,7 @@ function showWin() {
   $('winBox').innerHTML = `<div class="wt" style="color:${won ? '#ffd36b' : '#ff6a5a'}">${won ? T('승리!') : T('패배')}</div><div class="ws">${T('깃발 일곱 개를 모두 차지했어요')}</div><div class="pod">${pod}</div><div class="rk">${tab(0)}${tab(1)}</div><div class="tc">${T('받은 tC {0}', '<b style="color:#ffd36b">' + h + '</b>')} · ${T('지금 tC {0}', SAVE.honor)} · ${T('경험치 +{0}', S.lastXp | 0)}${S.lastLv ? ' · ' + T('레벨 {0} 달성!', S.lastLv) : ''}</div>${S.dailyGain ? `<div class="tc">${T('일일 임무 완료')}: ${(S.lastDaily || []).join(', ')} · <b style="color:#ffd36b">+${S.dailyGain} tC</b></div>` : ''}${S.lastRt ? `<div class="tc">${T('랭킹 점수 {0}', (S.lastRt.gain >= 0 ? '+' : '') + S.lastRt.gain)} · <b style="color:${charRankFor(S.lastRt.total).color}">${S.lastRt.total}${T('점')} · ${charRankFor(S.lastRt.total).name}</b></div>` : ''}${S.lastMp ? `<div class="tc">${T('마스터리 +{0}', '<b style="color:#ffd36b">' + S.lastMp.gain + '</b>')} (${T('처치 {0}×{1}', S.lastMp.k, MASTERY_PT.kill)} + ${T('완주 {0}', MASTERY_PT.match)}${S.lastMp.won ? ' + ' + T('승리 {0}', MASTERY_PT.win) : ''}${S.lastMp.sp ? ' + 🔥' + T('{0}연승 +{1}', S.lastMp.st, S.lastMp.sp) : ''}) · <b style="color:${charRankFor(S.lastMp.total).color}">${charRankFor(S.lastMp.total).name}</b>${S.lastMp.up ? ' ' + T('계급 올랐어요!') : ''}</div>` : ''}`;
   $('winBox').classList.toggle('me', !!won);
   $('winBack').onclick = () => { SFX.play('click'); endToLobby(''); };
+  hlFlush(); { const old = $('winHl'); if (old) old.remove(); if (HL.clips.length) { const b = document.createElement('button'); b.className = 'btn gold'; b.id = 'winHl'; b.textContent = T('하이라이트 보기'); b.onclick = () => { SFX.play('click'); hlPlay(); }; $('winBack').before(b); } }
   setHud(false); show('sWin');
   if (mine) { const E = view.ents.get('p' + sn.win); if (E) view.burst(E.x, 1.5, E.z, 0xffd36b, 30, 8, 0.8, 0.14); }
 }
@@ -1529,6 +1561,7 @@ function frame(now) {
   // 모든 기기: 화면이 계속 느리면 설정의 「최적화」를 한 번만 권해요
   if (!lowHintDone && inGame() && S.scr === '' && !SAVE.set.opt) { S.hintAvg = (S.hintAvg || 16) * 0.97 + Math.min(raw, 100) * 0.03; S.hintN = S.hintAvg > 40 ? (S.hintN | 0) + 1 : 0; if (S.hintN > 240) { lowHintDone = true; try { localStorage.setItem('tc_lowHint', '1'); } catch (e) { } toast(T('화면이 느려요. 설정의 「최적화」를 켜면 그림자와 빛 번짐을 줄여 더 부드러워져요.'), 5000); } }
  const t = (now - S.t0) / 1000;
+  if (S.replay) { hlFrame(dt, t); view.tick(dt, t); view.render(); oc.clearRect(0, 0, innerWidth, innerHeight); return; }
   musicTick(dt, now); talkTick(dt, !!S.snap && S.scr === '' && (S.snap.ph === 'play' || S.snap.ph === 'bossIntro'));
   if (S.snap && (S.G || S.net === 'guest') && S.scr !== 'sLobby' && S.scr !== 'sRoom') {
     const me = myP();
@@ -1561,8 +1594,8 @@ function frame(now) {
     const ph = S.snap.ph;
     if (ph === 'intro') { paintIntro(); view.sync(S.snap, S.me, dt, t, !!S.G); }
     else {
-      for (const e of S.evq) onEvent(e); S.evq.length = 0;
-      specTick(me); if (ph === 'won' && S.winId) view.camId = S.winId; view.sync(S.snap, S.me, dt, t, !!S.G); paintHud(); finalCheck(S.snap); paintBless();
+      for (const e of S.evq) { onEvent(e); if (HL.ev.length < 400) HL.ev.push(e); } S.evq.length = 0;
+      hlTick(dt, t); specTick(me); if (ph === 'won' && S.winId) view.camId = S.winId; view.sync(S.snap, S.me, dt, t, !!S.G); paintHud(); finalCheck(S.snap); paintBless();
       if (ph === 'over') { S.overT += dt; if (S.overT > 3.6 && !S.resultShown) showDeepResult(); }
       if (ph === 'won') { S.wonT += dt; S.winPoseT = (S.winPoseT || 0) + dt; if (S.winPoseT > 1.2 && S.winId) { S.winPoseT = 0; view.pose(S.winId, 'rally'); const w = S.snap.pl.find(q => q.id === S.winId); if (w) view.burst(w.x, 2.5, w.z, 0xffe08a, 16, 6, 0.8, 0.14); } if (S.wonT >= 1.6 && !S.resultShown) showWin(); }
     }
