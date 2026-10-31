@@ -489,7 +489,7 @@ const TUT=[
  [P('다 자라면 ▼ 표시의 밭을 눌러 수확해요','When it is grown, tap the field with the ▼ to harvest'),s=>s.stats.harvest>=1],
  [P('마을 장터에서 수확한 것을 팔아요','Sell your harvest at the town market'),s=>(s.stats.shop||0)>=1],
  [P('항구에서 배에 짐을 싣고 보내요','Load a ship at the harbor and send it off'),s=>s.stats.sailed>=1]];
-const OUTMAX=12,BUILD=74;
+const OUTMAX=12,BUILD=75;
 const hasB=(s,b)=>s.slots.some(x=>x&&x.b===b);
 const CASTLE_T=[
  {n:P('망루','Watchtower'),d:P('돌로 쌓은 망루를 세워요. 세금이 걷히기 시작해요','A stone watchtower. Taxes start to come in'),cost:6000,rank:1},
@@ -617,6 +617,9 @@ A('nw1m',P('백만장자','Millionaire'),P('재산 1,000,000 모으기','Reach a
 const CROPK=Object.keys(CROPS),SPEC=['goldbarley','pomegranate','saffron','cloudcotton','seaweed','dragonfruit'],CROPK17=CROPK.filter(c=>!SPEC.includes(c));
 const ACHN={};ACH.forEach(a=>ACHN[a.id]=a);
 const NOTES=[
+ {date:'2026-10-31',build:'v0.2 build 75',title:P('닉네임을 눌러 프로필 보기','Tap a name to see a profile'),items:[
+  P('방 접속자 목록에서 계정으로 들어온 사람의 닉네임을 누르면 그 사람의 Isleport 프로필 카드가 열림','Tap the name of a signed-in player in the room list to open their Isleport profile card')
+ ]},
  {date:'2026-10-30',build:'v0.2 build 74',title:P('영주의 성','The lord\'s castle'),items:[
   P('시작섬 남쪽 호숫가 빈 터에 영주의 성을 짓는 자리가 생김','A castle lot opens on the empty land south of the lake on the home island'),
   P('망루, 성벽, 본관, 정원과 깃발의 4단계로 지으며 단계마다 계급과 금화가 필요함','Build it in 4 stages: watchtower, wall, keep, gardens and banners, each needing rank and gold'),
@@ -30582,13 +30585,14 @@ async function openTransport(code,host){
         c.on('open',()=>{done=true;res({send:m=>{try{c.send(m);}catch(e){}},close:()=>{try{peer.destroy();}catch(e){}}});});
         c.on('data',d=>onMsg(d));c.on('close',()=>{if(MP.on)mpLeave(T('방장과 연결이 끊겼어요','Lost connection to the host'));});});}
   });}
+const okAid=a=>/^[0-9a-f-]{36}$/i.test(String(a||''))?String(a):'';
 function freeSlot(){const used=new Set(Object.values(MP.players).map(p=>p.slot));let sl=1;while(used.has(sl))sl++;return Math.min(sl,7);}
 async function startMP(host,code){
   if(MP.on)return;
   try{MP.code=code;MP.host=host;MP.me=rid();MP.name=myName();MP.players={};MP.inbox=[];MP.offers={};MP.slot=0;MP.auc=[];MP.chat=[];MP.guests={};MP.seenG={};MP.seenV={};
     MP.T=await openTransport(code,host);MP.on=true;MP.bak=host?null:{DEM,EV,PROJ,CO};
-    if(host){MP.hostId=MP.me;MP.players[MP.me]={name:MP.name,nw:300,rk:0,slot:0,last:Date.now(),ships:[]};}
-    else MP.send({t:'hello',pid:MP.me,name:MP.name});
+    if(host){MP.hostId=MP.me;MP.players[MP.me]={name:MP.name,aid:UID||'',nw:300,rk:0,slot:0,last:Date.now(),ships:[]};}
+    else MP.send({t:'hello',pid:MP.me,name:MP.name,aid:UID||''});
     S.stats.mp++;applyStatic();openModal('mp');try{window.FFAuth&&FFAuth.setRoom({game:'isleport',code:code,path:'isleport/IslandTrade-v0.2.html'});}catch(e){}
     toast(host?T('방을 열었어요. 코드 <b>{0}</b>','Room opened. Code <b>{0}</b>',code):T('방에 들어왔어요','Joined the room'));
   }catch(e){toast(T('연결하지 못했어요','Could not connect'));MP.on=false;if(MP.T){try{MP.T.close();}catch(x){}MP.T=null;}}}
@@ -30608,8 +30612,8 @@ function onMsg(m){if(!m||!MP.on||!S)return;if(m.to&&m.to!==MP.me)return;
   handle(m);}
 function hostHandle(m){
   switch(m.t){
-   case 'hello':if(m.pid!==MP.me&&!MP.players[m.pid])MP.players[m.pid]={name:m.name,nw:300,rk:0,slot:freshSlot(),last:Date.now(),ships:[]};break;
-   case 'nw':{let p=MP.players[m.pid];if(!p)p=MP.players[m.pid]={name:m.name,nw:m.nw,rk:0,slot:freshSlot(),last:Date.now(),ships:[]};p.nw=m.nw;p.rk=m.rk||0;p.ships=m.ships||[];p.last=Date.now();p.name=m.name||p.name;break;}
+   case 'hello':if(m.pid!==MP.me&&!MP.players[m.pid])MP.players[m.pid]={name:m.name,aid:okAid(m.aid),nw:300,rk:0,slot:freshSlot(),last:Date.now(),ships:[]};break;
+   case 'nw':{let p=MP.players[m.pid];if(!p)p=MP.players[m.pid]={name:m.name,nw:m.nw,rk:0,slot:freshSlot(),last:Date.now(),ships:[]};if(m.aid)p.aid=okAid(m.aid);p.nw=m.nw;p.rk=m.rk||0;p.ships=m.ships||[];p.last=Date.now();p.name=m.name||p.name;break;}
    case 'sell':if(m.n>0)DEM[m.p][m.g]=Math.max(0.35,DEM[m.p][m.g]*Math.pow(sellDrop(),m.n));else DEM[m.p][m.g]=Math.min(1.8,DEM[m.p][m.g]*Math.pow(BUYRISE,-m.n));break;
    case 'bye':delete MP.players[m.pid];break;
    case 'aucNew':{const g=GI[m.g];if(!g||m.n<=0||MP.auc.length>=12||MP.auc.filter(a=>a.seller===m.from).length>=3){deliver(m.from,{t:'aucRet',g:m.g,n:m.n});break;}
@@ -30674,7 +30678,7 @@ const mkTick=()=>{setTimeout(mkTick,perf().low?4000:2500);if(!MP.on||!S)return;c
     for(const pid in MP.players)if(pid!==MP.me&&t-MP.players[pid].last>12000)delete MP.players[pid];
     const dem=DEM.map(r=>r.map(v=>Math.round(v*1000)/1000));
     MP.send({t:'mk',dem,ev:EV,pl:MP.players,host:MP.me,auc:MP.auc,proj:PROJ,co:CO});}
-  else MP.send({t:'nw',pid:MP.me,name:MP.name,nw:netWorth(),rk:rankOf(S.stats.earned),ships:myShips()});
+  else MP.send({t:'nw',pid:MP.me,name:MP.name,aid:UID||'',nw:netWorth(),rk:rankOf(S.stats.earned),ships:myShips()});
   MP.inbox=MP.inbox.filter(o=>o.exp>t);};
 setTimeout(mkTick,2500);
 setInterval(()=>{if(MP.on&&MP.host)finishAuctions();},1000);
@@ -31718,7 +31722,7 @@ function boxCon(){let h='';
 function boxMP(){let h='';
   if(MP.on){const ids=Object.keys(MP.players).sort((a,b)=>MP.players[b].nw-MP.players[a].nw);
     h+=`<div class="box"><h3>${T('섬 주인들','Islands')} <span>${ids.length}</span></h3>`;ids.forEach((pid,r)=>{const p=MP.players[pid],me=pid===MP.me;
-      h+=`<div class="row" style="padding:2px 0"><span><span class="pcol" style="background:${PCOLS[(p.slot||0)%8]}"></span>${r+1}. ${esc(p.name)}${me?' ('+T('나','me')+')':''}${pid===MP.hostId?' ★':''}${MP.guests[pid]?' 👣':''}</span><b style="font:9px var(--px)">${fmt(me?netWorth():p.nw)}</b></div>`;
+      h+=`<div class="row" style="padding:2px 0"><span><span class="pcol" style="background:${PCOLS[(p.slot||0)%8]}"></span>${r+1}. ${p.aid&&!me?`<span data-act="prof:${pid}" style="cursor:pointer;text-decoration:underline dotted" title="${T('프로필 보기','View profile')}">${esc(p.name)}</span>`:esc(p.name)}${me?' ('+T('나','me')+')':''}${pid===MP.hostId?' ★':''}${MP.guests[pid]?' 👣':''}</span><b style="font:9px var(--px)">${fmt(me?netWorth():p.nw)}</b></div>`;
       if(!me)h+=`<div class="btns" style="margin:0 0 4px"><button class="pb sm" data-act="visit:${pid}">${T('섬 구경','Visit')}</button><button class="pb sm gold" data-act="ltreq:${pid}">${T('실시간 거래','Live trade')}</button><button class="pb sm dark" data-act="trade:${pid}">${T('거래·선물','Offer / gift')}</button></div>`;});
     h+=`</div>`;
     if(MP.inbox.length){h+=`<div class="box inbox"><h3>${T('받은 제안','Offers')}</h3>`;MP.inbox.forEach(o=>{h+=`<div class="ship"><div><b>${esc(o.name)}</b>: ${o.dir==='sell'?T('{0} {1}개를 {2} 금화에 팔겠대요','sells {0} x{1} for {2} gold',GN(o.g),o.n,fmt(o.price)):T('{0} {1}개를 {2} 금화에 사겠대요','wants {0} x{1} for {2} gold',GN(o.g),o.n,fmt(o.price))}</div><div class="btns"><button class="pb sm gold" data-act="yes:${o.id}">${T('수락','Accept')}</button><button class="pb sm dark" data-act="no:${o.id}">${T('거절','Decline')}</button></div></div>`;});h+='</div>';}}
@@ -32231,6 +32235,7 @@ ACT.dologin=async()=>{const u=($('lgId')||{}).value||'',p=($('lgPw')||{}).value|
     let r=await sb.auth.signInWithPassword({email:emailFor(u),password:p});if(r.error&&/invalid/i.test((r.error.code||'')+' '+(r.error.message||'')))r=await sb.auth.signInWithPassword({email:emailFor(u,EMAIL_DOM2),password:p});if(r.error||!r.data||!r.data.user){if(m)m.textContent=T('아이디나 비밀번호가 맞지 않아요','Wrong ID or password');return;}
     try{sessionStorage.removeItem('it.guest');}catch(e){}if(S){save();if(MP.on)mpLeave();S=null;}UID=r.data.user.id;const q=await sb.from('profiles').select('display_name,username').eq('id',UID).maybeSingle();UNAME=q.data&&(q.data.display_name||q.data.username)||u;
     closeModal();toast(T('<b>{0}</b>님, 어서 와요','Welcome, <b>{0}</b>',esc(UNAME)));applyStatic();showTitle();markOnce();}catch(e){if(m)m.textContent=T('로그인하지 못했어요','Login failed');}};
+ACT.prof=pid=>{const a=MP.players[pid]&&MP.players[pid].aid;if(!a||!sb||!window.FFProfile)return;try{FFProfile.open(sb,a,{game:'isleport',gameName:'Isleport'});}catch(e){}};
 ACT.myprof=()=>{if(!sb||!UID||!window.FFProfile)return;closeModal();try{FFProfile.open(sb,UID,{game:'isleport',gameName:'Isleport'});}catch(e){}};
 ACT.dologout=async()=>{if(S){save();if(MP.on)mpLeave();S=null;}try{if(sb)await sb.auth.signOut({scope:'local'});}catch(e){}try{sessionStorage.setItem('it.guest','1');sessionStorage.removeItem(TABK);}catch(e){}UID=null;UNAME=null;closeModal();applyStatic();showTitle();toast(T('로그아웃했어요','Logged out'));};
 document.addEventListener('keydown',e=>{if(e.key==='Enter'&&e.target&&(e.target.id==='lgPw'||e.target.id==='lgId'))ACT.dologin();});
