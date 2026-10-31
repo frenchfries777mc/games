@@ -20,3 +20,7 @@ Stickseum-v0.8.html | match-end mastery rank block | 마스터리 포인트 +N �
 ## Stickseum v560 화면 안내 (2026-10-31)
 - Stickseum-latest.html lowFxHint 토스트 (도전과제 토스트 재사용): '화면이 느려서 효과를 줄였어요. 설정의 화질을 「낮음」으로 두면 계속 가볍게 할 수 있어요.' / 제목 '화면 안내'
 - 패치노트 v560: 제목 "화면 안내", 항목 1개
+
+## Stickseum v561 로딩 진행바 (2026-10-31)
+- Stickseum-latest.html (시작 파일): 'STICKSEUM' 제목, '불러오는 중 N%'
+- 패치노트 v561: 제목 "로딩 진행바", 항목 2개
