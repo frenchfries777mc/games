@@ -352,7 +352,7 @@ function paintRoom() {
   $('botRow').style.display = 'none'; $('colRow').style.display = 'none'; $('mapRow').style.display = S.net === 'solo' && !S.range ? '' : 'none'; $('mapBtn').textContent = S.mapSel >= 0 ? CHAPTERS[S.mapSel].title : T('무작위');
   $('startBtn').style.display = !online && !S.info ? '' : 'none'; $('ctlBtn').style.display = S.info ? '' : 'none';
   if (S.info) { $('mapRow').style.display = 'none'; $('roomMsg').textContent = ''; $('slots').innerHTML = ''; }
-  $('roomMsg').textContent = !online ? (all.length < 2 ? T('봇을 넣어 주세요.') : '') : wait ? (S.pub ? ((S.net === 'host' ? (S.fillT > 0 ? Math.ceil(FILL_T - S.fillT) : -1) : S.ft) >= 0 ? T('{0}초 뒤 빈자리를 봇으로 채워요.', S.net === 'host' ? Math.ceil(FILL_T - S.fillT) : S.ft) : T('다른 플레이어를 기다리는 중이에요.')) : T('친구를 초대해 주세요.')) : T('직업을 골라 주세요 · {0}초 뒤 시작', Math.max(0, Math.ceil(S.pickT))); 
+  $('roomMsg').textContent = !online ? (all.length < 2 ? T('봇을 넣어 주세요.') : '') : wait ? (S.pub ? ((S.net === 'host' ? (S.fillT > 0 ? Math.ceil(FILL_T - S.fillT) : -1) : S.ft) >= 0 ? T('{0}초 뒤 빈자리를 봇으로 채워요.', S.net === 'host' ? Math.ceil(FILL_T - S.fillT) : S.ft) : (S.mode === 'rank' ? T('랭킹전은 봇 없이 사람이 다 모이면 시작해요.') : T('다른 플레이어를 기다리는 중이에요.'))) : T('친구를 초대해 주세요.')) : T('직업을 골라 주세요 · {0}초 뒤 시작', Math.max(0, Math.ceil(S.pickT))); 
   view.setPreview(wait ? null : mine.role, COLORS[mine.col].c);
 }
 addEventListener('keydown', e => { if (S.scr !== 'sRoom' || (S.net !== 'solo' && S.ph !== 'pick')) return; const n = e.key === '0' ? 10 : +e.key; if (n >= 1 && n <= ROLE_IDS.length) { SAVE.role = ROLE_IDS[n - 1]; save(); pick(); } });
@@ -460,6 +460,7 @@ const FILL_T = 15;
 setInterval(() => {
   if (S.net !== 'host' || S.G || !S.pub || S.ph !== 'wait') { S.fillT = 0; return; }
   if (!S.slots.some(s => !s.srv && !s.bot)) { S.fillT = 0; if (S.slots.some(s => s.bot)) { S.slots = S.slots.filter(s => !s.bot); hostLobby(); if (S.scr === 'sRoom') paintRoom(); } return; }
+  if (S.mode === 'rank') { S.fillT = 0; return; }   // 팀 랭킹전에는 봇이 들어오지 않아요: 사람이 다 모일 때까지 기다려요
   S.fillT = (S.fillT || 0) + 0.25; const left = Math.max(0, Math.ceil(FILL_T - S.fillT));
   if (S.fillT >= FILL_T) {
     S.fillT = 0; newBots();
