@@ -145,7 +145,7 @@ function flagsStep(G, dt) {
     if (lead >= 0 && lead !== f.own) {
       if (f.cap === lead || f.cap < 0) { f.cap = lead; f.prog += dt * rt; }
       else { f.prog -= dt * rt; if (f.prog <= 0) { f.prog = 0; f.cap = lead; } }
-      if (f.prog >= D.FLAG_T) { f.own = lead; f.prog = 0; f.cap = -1; f.hold = 10; f.holdTm = lead; ev(G, 'flag', { i, own: lead, x: f.x, z: f.z });   // 점령하면 10초 동안 잠겨서 바로 뺏기지 않아요
+      if (f.prog >= D.FLAG_T) { const was = f.own; f.own = lead; f.prog = 0; f.cap = -1; f.hold = 10; f.holdTm = lead; ev(G, 'flag', { i, own: lead, was, x: f.x, z: f.z });   // 점령하면 10초 동안 잠겨서 바로 뺏기지 않아요
       for (const q of G.players) if (q.team === lead && alive(q) && Math.hypot(q.x - f.x, q.z - f.z) < D.FLAG_R) { q.capB = 5; q.fcap = (q.fcap | 0) + 1; ev(G, 'capbuff', { id: q.id, x: q.x, z: q.z }); } }
     } else if (lead < 0 && n0 + n1 > 0) { /* 같은 수: 그대로 */ }
     else if (f.prog > 0) { f.prog = Math.max(0, f.prog - dt); if (f.prog === 0) f.cap = -1; }
