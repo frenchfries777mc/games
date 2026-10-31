@@ -3,7 +3,7 @@
 
 import { T } from './tr.js';
 
-export const VERSION = 'v0.1', BUILD = 129;
+export const VERSION = 'v0.1', BUILD = 131;
 
 export const ROLES = {
   knight: {
@@ -779,7 +779,7 @@ export const CHAR_RANKS = (() => {
   return out;
 })();
 export function charRankFor(pts) { let cur = CHAR_RANKS[0]; for (const r of CHAR_RANKS) if ((pts || 0) >= r.min) cur = r; return cur; }
-export const MASTERY_PT = { kill: 2, win: 3, match: 1 };   // 한 판에 쓰러뜨림 2점, 승리 3점, 완주 1점 (+ 연승 보너스)
-export const STREAK_BONUS = [[10, 5], [7, 4], [5, 3], [3, 2], [1, 1]];
+export const MASTERY_PT = { kill: 16, win: 24, match: 8 };   // 한 판에 쓰러뜨림 16점, 승리 24점, 완주 8점 (+ 연승 보너스) — 스틱세움 큰 판 점수의 8배
+export const STREAK_BONUS = [[10, 40], [7, 32], [5, 24], [3, 16], [1, 8]];
 export function streakBonusFor(n) { for (const [a, b] of STREAK_BONUS) if (n >= a) return b; return 0; }
 export function roleLevel(xp) { return Math.min(10, 1 + Math.floor(Math.sqrt((xp || 0) / 25))); }

@@ -127,7 +127,7 @@ function hurtProxy(G, e, dmg, p, o) {
 // 체력이 다하면 쓰러져요: 15초 뒤에 우리 팀 진지에서 다시 일어나요
 export function koPlayer(G, p, src) {
   p.hp = 0; p.dead = true; p.down = false; p.respT = D.RESP_T + (G.pvp && G.fl && G.fl.filter(f => f.own === 1 - p.team).length >= D.PUSH_N ? D.PUSH_T : 0); p.roll = 0; p.hvT = p.pbT = 0; p.block = p.taunt = 0; p.burn = 0; p.deaths++;
-  const k = src && src.id && src.id !== p.id ? G.players.find(q => q.id === src.id) : null; if (k && k.team !== p.team) { k.kills++; if (G.pvp) { if (k.lastKillT != null && G.t - k.lastKillT <= 8) for (const c of ['s0', 's1', 's2']) k.cd[c] *= 0.5; k.lastKillT = G.t; } }   // 8초 안에 연속으로 쓰러뜨리면 기술 대기가 절반으로 줄어요
+  const k = src && src.id && src.id !== p.id ? G.players.find(q => q.id === src.id) : null; if (k && k.team !== p.team) { k.kills++; if (G.pvp) { if (k.lastKillT != null && G.t - k.lastKillT <= 8) for (const c of ['s0', 's1', 's2']) k.cd[c] *= 0.5; k.mkN = k.lastKillT != null && G.t - k.lastKillT <= 8 ? (k.mkN || 1) + 1 : 1; if (k.mkN >= 2) ev(G, 'multi', { id: k.id, n: k.mkN }); k.lastKillT = G.t; } }   // 8초 안에 연속으로 쓰러뜨리면 기술 대기가 절반으로 줄어요
   G.stats.downs++; ev(G, 'ko', { id: p.id, by: k ? k.id : null, x: p.x, z: p.z });
 }
 // 깃발: 둘레 안에 더 많은 팀이 7초 동안 서 있으면 그 팀 것이 돼요 (같은 수면 아무도 못 세요, 아무도 없으면 천천히 되돌아가요)
@@ -156,7 +156,7 @@ function spawnMonsters(G, ci) {
     let x = cx + (k ? 2.5 : -2.5), z = cz;
     for (let r = 0; r < 14 && isWall(x, z); r++) { x = cx + (r % 2 ? r : -r) * MAP.cs * 0.7 + (k ? 2.5 : -2.5); z = cz + ((r >> 1) % 2 ? 2 : -2) * MAP.cs; }
     const e = spawnEnemy(G, 'elite', x, z, false);
-    e.mon = 1; e.cn = ci; e.hp = e.maxhp = 1400; e.hx = x; e.hz = z; e.summoned = false; e.dmgBy = [0, 0];
+    e.mon = 1; e.cn = ci; e.dm *= 0.6; e.hp = e.maxhp = 1400; e.hx = x; e.hz = z; e.summoned = false; e.dmgBy = [0, 0];
     if (!k) ev(G, 'monster', { x, z });
   }
 }
@@ -299,7 +299,7 @@ function hurtEnemy(G, e, dmg, p, o) {
     if (e.phase >= 3 && from && angDiff(e.a, angTo(e, from)) > 1.9) { d *= 2; ev(G, 'weak', { x: e.x, z: e.z }); }
   }
   d = Math.max(1, Math.round(d));
-  e.hp -= d; if (e.mon && p && p.team != null) { e.dmgBy[p.team] += d; e.lastBy = p.id; } e.hitT = 0.15; ev(G, 'ehit', { x: e.x, z: e.z, v: d, id: e.id, crit: d > dmg * 1.4, hv: o.heavy ? 1 : 0 });
+  e.hp -= d; if (e.mon && p && p.team != null) { e.dmgBy[p.team] += d; e.lastTm = p.team; e.lastBy = p.id; } e.hitT = 0.15; ev(G, 'ehit', { x: e.x, z: e.z, v: d, id: e.id, crit: d > dmg * 1.4, hv: o.heavy ? 1 : 0 });
   if (p && hasB(p, 'leech') && alive(p)) healP(G, p, 1);
   if ((o.burn || (p && hasB(p, 'fire') && o.basic)) && e.hp > 0) { e.burn = 3; }
   // 종자 함성 중에는 횃불 공격의 불똥이 튀어 옆의 적도 불타요
@@ -310,8 +310,9 @@ function hurtEnemy(G, e, dmg, p, o) {
 }
 function killEnemy(G, e) {
   e.hp = 0; G.stats.kills++; ev(G, 'ekill', { x: e.x, z: e.z, en: e.k, id: e.id }); ev(G, 'ach', { id: 'room1' });
-  const h = G.EN[e.k].honor, mw = e.mon ? (e.dmgBy[0] > e.dmgBy[1] ? 0 : e.dmgBy[1] > e.dmgBy[0] ? 1 : -1) : -2; for (const p of G.players) if (mw === -2 || p.team === mw) G.honor[p.id] += h;   // 중립 괴물의 명예는 쓰러뜨린 팀만 받아요
-  if (e.mon) { const kq = G.players.find(q => q.id === e.lastBy); if (kq) kq.monK = (kq.monK | 0) + 1; const d = e.dmgBy, w = d[0] > d[1] ? 0 : d[1] > d[0] ? 1 : -1; G.cTim[e.cn | 0] = 60; if (w >= 0) { G.cb[w] = 20; G.mk[w]++; ev(G, 'monkill', { tm: w, x: e.x, z: e.z, lv: G.mk[w] }); } }
+  const h = G.EN[e.k].honor, mw = e.mon ? (e.lastTm != null ? e.lastTm : e.dmgBy[0] > e.dmgBy[1] ? 0 : e.dmgBy[1] > e.dmgBy[0] ? 1 : -1) : -2; for (const p of G.players) if (mw === -2 || p.team === mw) G.honor[p.id] += h;   // 중립 괴물의 명예는 쓰러뜨린 팀만 받아요
+  if (e.mon) { const kq = G.players.find(q => q.id === e.lastBy); if (kq) kq.monK = (kq.monK | 0) + 1; const d = e.dmgBy, w = e.lastTm != null ? e.lastTm : d[0] > d[1] ? 0 : d[1] > d[0] ? 1 : -1;   // 마지막으로 때려 쓰러뜨린 팀이 보상을 받아요
+    G.cTim[e.cn | 0] = 60; if (w >= 0) { G.cb[w] = 20; G.mk[w]++; ev(G, 'monkill', { tm: w, x: e.x, z: e.z, lv: G.mk[w] }); } }
   if (e.k === 'elite') ev(G, 'ach', { id: 'elite' });
   if (e.mb) { for (const p of G.players) G.honor[p.id] += 30; if (G.fork) G.fork.done = 1; ev(G, 'chest', { x: e.x, z: e.z, h: 30 }); ev(G, 'mbkill', { x: e.x, z: e.z }); }
   if (e.k === 'mimic') { for (const p of G.players) G.honor[p.id] += 40; ev(G, 'chest', { x: e.x, z: e.z, h: 40 }); for (const p of G.players) if (!p.bot) ev(G, 'ach', { id: 'mimic', pid: p.id }); }
