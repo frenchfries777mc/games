@@ -15,12 +15,17 @@ html,body{margin:0;height:100%;background:#05061a;color:#cfd6e4;font-family:syst
 </head>
 <body>
 <!-- 게임 본체(Stickseum-game.html)를 받으면서 진행률을 보여 주는 시작 파일이에요. 다 받으면 그 자리에서 게임으로 바뀌어요. 게임을 고칠 때는 Stickseum-game.html 을 고쳐요. -->
-<div id="ld"><b>STICKSEUM</b><div id="ldb"><i id="ldi"></i></div><div id="ldp">불러오는 중 0%</div></div>
+<div id="ld"><b>STICKSEUM</b><div id="ldb"><i id="ldi"></i></div><div id="ldp"></div></div>
 <script>
 (function(){
 var SRC='Stickseum-game.html', EST=3914897, bar=document.getElementById('ldi'), txt=document.getElementById('ldp');
-function set(p){ p=Math.max(0,Math.min(100,p)); bar.style.width=p+'%'; txt.textContent='불러오는 중 '+Math.round(p)+'%'; }
+var LANGS=['ko','en','es','fr','de','ja','zh','pt','ru','tr','it','pl','ar','nw','gk'];      // (언어는 게임과 같은 규칙: 저장된 선택 → 브라우저 언어 → 영어. nw·gk는 한국어 그대로)
+var LT={en:'Loading {p}%',es:'Cargando {p}%',fr:'Chargement {p} %',de:'Lädt {p} %',ja:'読み込み中 {p}%',zh:'加载中 {p}%',pt:'Carregando {p}%',ru:'Загрузка {p}%',tr:'Yükleniyor %{p}',it:'Caricamento {p}%',pl:'Wczytywanie {p}%',ar:'جارٍ التحميل {p}%'};
+var LG=(function(){ var s=null; try{ s=localStorage.getItem('arenaClashLang'); }catch(e){} if(LANGS.indexOf(s)>=0) return s; var c=(navigator.languages&&navigator.languages.length)?navigator.languages:[navigator.language||'']; for(var i=0;i<c.length;i++){ var b=String(c[i]||'').toLowerCase().split('-')[0]; if(LANGS.indexOf(b)>=0) return b; } return 'en'; })();
+var MSG=(LT[LG])?LT[LG]:'불러오는 중 {p}%';
+function set(p){ p=Math.max(0,Math.min(100,p)); bar.style.width=p+'%'; txt.textContent=MSG.replace('{p}',Math.round(p)); }
 function plain(){ location.replace(SRC+location.search+location.hash); }      // (진행률을 못 쓰는 브라우저·오류일 때는 게임 파일을 그대로 열어요)
+set(0);
 if(!window.fetch||!window.ReadableStream||!window.Blob){ plain(); return; }
 var est=EST; try{ est=+localStorage.getItem('stk_gsize')||EST; }catch(e){}      // (서버가 압축해서 보내면 파일 길이를 알 수 없어서, 지난번에 받은 크기를 기준으로 삼아요)
 fetch(SRC).then(function(r){
