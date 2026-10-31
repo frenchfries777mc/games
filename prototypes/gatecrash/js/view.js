@@ -354,6 +354,13 @@ function drawLiftOff(x, o) {
   const X = o.x * TS, Y = o.y * TS, w = o.w * TS, h = o.h * TS; R(x, 'rgba(10,14,24,.6)', X, Y, w, h);
   for (let i = 0; i < h; i += 12) R(x, i % 24 ? 'rgba(232,72,59,.8)' : 'rgba(255,230,120,.8)', X + 2, Y + i, w - 4, 5);
 }
+/* 이벤트 3초 전: 천장에 경고등이 깜빡여요 (엘리베이터는 승강로 위에도) */
+function drawWarn(x, W, t) {
+  const on = Math.floor(t * 4) % 2 === 0, col = { lift: '#e8483b', wet: '#4aa8ff', flip: '#f2b632' }[W.soonK] || '#fff';
+  const lamp = (X, Y) => { R(x, '#333', X - 3, Y - 1, 7, 3); R(x, on ? col : '#5a4a4a', X - 2, Y + 2, 5, 4); if (on) R(x, col + '55', X - 6, Y + 6, 13, 6); };
+  for (const rm of W.rooms) for (let tx = rm.x0 + 6; tx < rm.x1; tx += 24) lamp(tx * TS, rm.y0 * TS + 1);
+  if (W.soonK === 'lift') for (const o of W.objs) if (o.t === 'liftshaft') lamp((o.x + o.w / 2) * TS, o.y * TS - 4);
+}
 const EMO_NAMES = ['', '웃음', '화남', '울음', '하트'];
 const EMO_PIX = [null,
   ['..yyyyy..', '.yyyyyyy.', 'yyKyyyKyy', 'yyyyyyyyy', 'yKyyyyyKy', 'yyKKKKKyy', '.yyyyyyy.', '..yyyyy..'],
