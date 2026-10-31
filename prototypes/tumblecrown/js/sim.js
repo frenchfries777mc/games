@@ -134,7 +134,7 @@ export function koPlayer(G, p, src) {
 // 깃발: 둘레 안에 더 많은 팀이 7초 동안 서 있으면 그 팀 것이 돼요 (같은 수면 아무도 못 세요, 아무도 없으면 천천히 되돌아가요)
 function flagsStep(G, dt) {
   G.fl.forEach((f, i) => {
-    if (G.dr && i === G.gi && !DSTATE.open) return;   // 신전 문이 닫혀 있는 동안 가운데 깃발은 차지할 수 없어요
+    const shut = G.dr && i === G.gi && !DSTATE.open;   // 신전 문이 닫혀 있는 동안 가운데 깃발은 진행도가 60%까지만 차고 차지할 수는 없어요
     if (f.hold > 0) { f.hold -= dt; f.prog = 0; f.cap = -1; return; }   // 견고한 수비: 8초 동안 적이 와도 깃발은 그대로예요
     if (f.seize > 0) f.seize -= dt;
     let n0 = 0, n1 = 0;
@@ -145,6 +145,7 @@ function flagsStep(G, dt) {
     if (lead >= 0 && lead !== f.own) {
       if (f.cap === lead || f.cap < 0) { f.cap = lead; f.prog += dt * rt; }
       else { f.prog -= dt * rt; if (f.prog <= 0) { f.prog = 0; f.cap = lead; } }
+      if (shut && f.prog > D.FLAG_T * 0.6) f.prog = D.FLAG_T * 0.6;
       if (f.prog >= D.FLAG_T) { const was = f.own; f.own = lead; f.prog = 0; f.cap = -1; f.hold = 10; f.holdTm = lead; ev(G, 'flag', { i, own: lead, was, x: f.x, z: f.z });   // 점령하면 10초 동안 잠겨서 바로 뺏기지 않아요
       for (const q of G.players) if (q.team === lead && alive(q) && Math.hypot(q.x - f.x, q.z - f.z) < D.FLAG_R) { q.capB = 5; q.fcap = (q.fcap | 0) + 1; ev(G, 'capbuff', { id: q.id, x: q.x, z: q.z }); } }
     } else if (lead < 0 && n0 + n1 > 0) { /* 같은 수: 그대로 */ }
