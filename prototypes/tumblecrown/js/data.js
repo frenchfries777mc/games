@@ -3,7 +3,7 @@
 
 import { T } from './tr.js';
 
-export const VERSION = 'v0.1', BUILD = 109;
+export const VERSION = 'v0.1', BUILD = 110;
 
 export const ROLES = {
   knight: {
@@ -125,7 +125,18 @@ export const ROLES = {
       { id: 'axeswing', name: T('도끼 휘두르기'), key: 'R', cd: 14, desc: T('다른 손의 러시아 도끼를 앞쪽 부채꼴로 크게 휘둘러요. 주변 상대에게 90 피해를 주고 강하게 밀쳐 내요.') }
     ],
     st: [5, 2, 5, 3], atkTxt: T('총 한 발 (가장 멀리 날아가지만 맞추기 어렵고 다시 쏘기까지 오래 걸려요)'),
-    role: T('아주 멀리서 한 발씩 강하게 쏘고, 엄폐물 뒤에서 더 세져요.')
+    role: T('아주 멀리서 한 발씩 강하게 쏘고, 가까이 온 상대는 도끼를 휘둘러 밀쳐 내요.')
+  },
+  wellington: {
+    name: T('웰링턴'), type: T('유틸리티'), color: '#1f2d52', hp: 250, speed: 6.0,
+    atk: { kind: 'melee', range: 2.8, arc: 1.5, dmg: 18, cd: 0.5 },
+    skills: [
+      { id: 'morale', name: T('사기 고양'), key: 'Q', cd: 12, desc: T('손을 들어 범위 안의 아군(나 포함)의 이동 속도를 2초 동안 50% 늘려요.') },
+      { id: 'hold', name: T('견고한 수비'), key: 'E', cd: 18, desc: T('나와 가장 가까운 우리 팀 깃발에 황금 깃발을 세워요. 8초 동안 적이 와도 그 깃발은 변하지 않아요.') },
+      { id: 'seize', name: T('점령'), key: 'R', cd: 24, desc: T('나와 가장 가까운 상대 깃발에 보라색 깃발을 세워요. 8초 동안 그 깃발의 상대 깃발 효과가 사라지고, 아군이 한 명이라도 있으면 상대가 아무리 많아도 점령이 진행돼요.') }
+    ],
+    st: [2, 3, 2, 4], atkTxt: T('칼 베기 (부채꼴로 휘둘러요)'),
+    role: T('깃발을 지키고 빼앗는 지휘관이에요. 아군을 빠르게 하고 깃발 싸움의 판을 바꿔요.')
   },
   crossbow: {
     name: T('석궁병'), type: T('원거리 딜러'), color: '#8a6a3a', hp: 190, speed: 5.8,
