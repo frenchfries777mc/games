@@ -522,9 +522,9 @@ function matchTry(n, gen) {
 }
 function matchJoin(n, gen) {
   if (S.mg !== gen) return;
-  const p = new Peer(peerOpts()); S.peer = p; let done = false;
+  const p = new Peer(PREFIX + 'g' + Math.random().toString(36).slice(2, 12), peerOpts()); S.peer = p; let done = false;   // 번호를 직접 정해 서버에 번호를 묻는 한 번을 아껴요
   const next = () => { if (done || S.mg !== gen) return; done = true; clearTimeout(tm); S.conn = null; matchGone(p); matchTry(n + 1, gen); };
-  const tm = setTimeout(next, 7000);
+  const tm = setTimeout(next, 4000);
   p.on('open', () => {
     if (S.mg !== gen || S.peer !== p) return;
     const c = p.connect(PREFIX + MODES[S.mode || 'normal'].key + n, { reliable: true, serialization: 'json' });
