@@ -2,6 +2,52 @@
  "notes": [
   {
    "date": "2026-10-31",
+   "build": "v0.2 build 76",
+   "title": "글자 겹침 정리",
+   "items": [
+    "마을과 섬에서 이름표가 서로 겹치면 위아래로 자동으로 비켜 서서 모두 읽을 수 있음",
+    "폰처럼 화면이 작을 때도 이름표 글자가 너무 작아지지 않도록 최소 크기를 둠"
+   ],
+   "tr": {
+    "en": {
+     "title": "Labels no longer overlap",
+     "items": [
+      "Names on the town and islands now shift up or down so they never cover each other",
+      "Labels keep a minimum size on small phone screens"
+     ]
+    },
+    "ja": {
+     "title": "Labels no longer overlap",
+     "items": [
+      "Names on the town and islands now shift up or down so they never cover each other",
+      "Labels keep a minimum size on small phone screens"
+     ]
+    },
+    "es": {
+     "title": "Labels no longer overlap",
+     "items": [
+      "Names on the town and islands now shift up or down so they never cover each other",
+      "Labels keep a minimum size on small phone screens"
+     ]
+    },
+    "fr": {
+     "title": "Labels no longer overlap",
+     "items": [
+      "Names on the town and islands now shift up or down so they never cover each other",
+      "Labels keep a minimum size on small phone screens"
+     ]
+    },
+    "de": {
+     "title": "Labels no longer overlap",
+     "items": [
+      "Names on the town and islands now shift up or down so they never cover each other",
+      "Labels keep a minimum size on small phone screens"
+     ]
+    }
+   }
+  },
+  {
+   "date": "2026-10-31",
    "build": "v0.2 build 75",
    "title": "닉네임을 눌러 프로필 보기",
    "items": [
@@ -9,6 +55,30 @@
    ],
    "tr": {
     "en": {
+     "title": "Tap a name to see a profile",
+     "items": [
+      "Tap the name of a signed-in player in the room list to open their Isleport profile card"
+     ]
+    },
+    "ja": {
+     "title": "Tap a name to see a profile",
+     "items": [
+      "Tap the name of a signed-in player in the room list to open their Isleport profile card"
+     ]
+    },
+    "es": {
+     "title": "Tap a name to see a profile",
+     "items": [
+      "Tap the name of a signed-in player in the room list to open their Isleport profile card"
+     ]
+    },
+    "fr": {
+     "title": "Tap a name to see a profile",
+     "items": [
+      "Tap the name of a signed-in player in the room list to open their Isleport profile card"
+     ]
+    },
+    "de": {
      "title": "Tap a name to see a profile",
      "items": [
       "Tap the name of a signed-in player in the room list to open their Isleport profile card"
