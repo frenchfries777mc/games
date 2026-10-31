@@ -7312,7 +7312,7 @@ const nick=p=>(p&&(String(p.display_name||'').trim()||p.username))||'???';
 const escH=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const css=document.createElement('style');css.textContent='#frBtn .frb{display:inline-block;min-width:16px;padding:0 4px;margin-left:4px;border-radius:9px;background:#c0392b;color:#fff;font-size:11px;line-height:16px;text-align:center}#frBtn .frd{display:inline-block;width:7px;height:7px;border-radius:50%;background:#46d37a;margin-left:5px;vertical-align:middle}'
  +'#frOv{position:fixed;inset:0;background:#000b;z-index:99980;display:flex;align-items:center;justify-content:center;padding:14px}#frOv .fb{background:#0e182b;border:1px solid #c9a24a;border-radius:12px;padding:16px 16px 12px;width:min(94vw,420px);max-height:86vh;overflow:auto;color:#eef1f7;box-shadow:0 10px 40px #000a}'
- +'#frOv h2{margin:0 0 2px;font-size:19px}#frOv h3{margin:14px 0 6px;font-size:14px;color:#e7c873}#frOv .fn{color:#9fb0c8;font-size:12px}#frOv .fr{display:flex;align-items:center;gap:8px;padding:7px 8px;border-radius:8px;background:#13213a;margin:4px 0}#frOv .fr .nm{flex:1;min-width:0}#frOv .fr .nm b{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:14px}#frOv .fr .nm small{color:#9fb0c8;font-size:12px}#frOv .fr .nm small.on{color:#7be0a0}#frOv .fr .nm small.gm{color:#ffc27a}'
+ +'#frOv h2{margin:0 0 2px;font-size:19px}#frOv h3{margin:14px 0 6px;font-size:14px;color:#e7c873}#frOv .fn{color:#9fb0c8;font-size:12px}#frOv .pn{cursor:pointer}#frOv .pn:hover{text-decoration:underline}#frOv .fr{display:flex;align-items:center;gap:8px;padding:7px 8px;border-radius:8px;background:#13213a;margin:4px 0}#frOv .fr .nm{flex:1;min-width:0}#frOv .fr .nm b{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:14px}#frOv .fr .nm small{color:#9fb0c8;font-size:12px}#frOv .fr .nm small.on{color:#7be0a0}#frOv .fr .nm small.gm{color:#ffc27a}'
  +'#frOv .fs{display:flex;gap:6px;margin-top:4px}#frOv .fs input{flex:1;min-width:0;padding:9px 10px;border-radius:8px;border:1px solid #35507f;background:#0a1322;color:#eef1f7;font-size:14px}#frOv .x{background:none;border:0;color:#9fb0c8;font-size:16px;cursor:pointer;padding:2px 6px}#frOv .ft{display:flex;justify-content:space-between;align-items:center}#frOv .fe{color:#9fb0c8;font-size:13px;padding:6px 2px}'
  +'#frInv{position:fixed;right:14px;bottom:14px;z-index:99970;display:flex;flex-direction:column;gap:8px;max-width:min(92vw,340px)}#frInv .fi{background:#0e182b;border:1px solid #c9a24a;border-radius:10px;padding:10px 12px;color:#eef1f7;box-shadow:0 6px 24px #000a;font-size:14px}#frInv .fi div{display:flex;gap:6px;justify-content:flex-end;margin-top:8px}';
 document.head.appendChild(css);
@@ -7389,31 +7389,32 @@ async function search(q){q=String(q||'').trim();squery=q;if(!q){sres=null;toast(
 function close(){const o=$('#frOv');if(o)o.remove();}
 function open(){if(!uid){try{CEAuth.open();}catch(e){}return;}close();const o=document.createElement('div');o.id='frOv';document.body.appendChild(o);
   o.addEventListener('click',onClick);draw();if(Date.now()-refreshAt>5000)refresh().catch(()=>{});}
-function row(name,sub,cls,btns){return '<div class="fr"><div class="nm"><b>'+escH(name)+'</b>'+(sub?'<small class="'+cls+'">'+escH(sub)+'</small>':'')+'</div>'+btns+'</div>';}
+function row(name,sub,cls,btns,pid){return '<div class="fr"><div class="nm"><b'+(pid?' class="pn" data-a="prof" data-id="'+escH(pid)+'" title="프로필 보기"':'')+'>'+escH(name)+'</b>'+(sub?'<small class="'+cls+'">'+escH(sub)+'</small>':'')+'</div>'+btns+'</div>';}
 const B=(a,id,label,pri)=>'<button class="btn sm'+(pri?' primary':'')+'" data-a="'+a+'" data-id="'+escH(id)+'">'+label+'</button>';
 function draw(){const o=$('#frOv');if(!o)return;
   const me=myState(),inc=friends.filter(f=>f.incoming),acc=friends.filter(f=>f.status==='accepted'),out=friends.filter(f=>f.outgoing);
   const rank=f=>{const s=statusOf(f.other);return s.join?0:s.c==='on'?1:s.c==='gm'?2:3;};
   acc.sort((a,b)=>rank(a)-rank(b)||a.name.localeCompare(b.name));
   let h='<div class="fb"><div class="ft"><h2>👥 친구</h2><button class="x" data-a="close" aria-label="닫기">✕</button></div><div class="fn">친구 목록은 Frenchfries777 계정의 모든 게임에서 같아요.</div>';
-  if(inc.length){h+='<h3>받은 친구 요청</h3>';inc.forEach(f=>h+=row(f.name,'','',B('acc',f.row,'수락',1)+B('dec',f.row,'거절')));}
+  if(inc.length){h+='<h3>받은 친구 요청</h3>';inc.forEach(f=>h+=row(f.name,'','',B('acc',f.row,'수락',1)+B('dec',f.row,'거절'),f.other));}
   h+='<h3>친구 목록</h3>';
   if(!acc.length)h+='<div class="fe">아직 친구가 없어요. 아래에서 닉네임으로 찾아 친구 요청을 보내 보세요.</div>';
   acc.forEach(f=>{const s=statusOf(f.other);let bt='';
     if(s.join)bt+=B('join',f.other,'참가',1);
     if(me.st==='room'&&s.c&&s.c!=='gm'&&!s.join)bt+=invited[f.other]&&Date.now()-invited[f.other]<60000?'<button class="btn sm" disabled>초대 보냄</button>':B('inv',f.other,'초대');
     bt+='<button class="x" data-a="del" data-id="'+escH(f.row)+'" title="삭제">✕</button>';
-    h+=row(f.name,(s.c?'● ':'')+s.t,s.c,bt);});
-  if(out.length){h+='<h3>보낸 요청</h3>';out.forEach(f=>h+=row(f.name,'요청 보냄','',B('dec',f.row,'취소')));}
+    h+=row(f.name,(s.c?'● ':'')+s.t,s.c,bt,f.other);});
+  if(out.length){h+='<h3>보낸 요청</h3>';out.forEach(f=>h+=row(f.name,'요청 보냄','',B('dec',f.row,'취소'),f.other));}
   h+='<h3>친구 찾기</h3><div class="fs"><input id="frQ" type="text" maxlength="16" placeholder="닉네임" autocomplete="off" spellcheck="false"><button class="btn sm" data-a="find">찾기</button></div>';
   if(sres){if(!sres.length)h+='<div class="fe">찾는 사람이 없어요.</div>';
-    sres.forEach(p=>{const f=friends.find(x=>x.other===p.id);const bt=!f?B('req',p.id,'친구 요청',1):f.status==='accepted'?'<small class="fn">이미 친구</small>':f.incoming?B('acc',f.row,'수락',1):'<small class="fn">요청 보냄</small>';h+=row(nick(p),p.display_name&&p.username?p.username:'','',bt);});}
+    sres.forEach(p=>{const f=friends.find(x=>x.other===p.id);const bt=!f?B('req',p.id,'친구 요청',1):f.status==='accepted'?'<small class="fn">이미 친구</small>':f.incoming?B('acc',f.row,'수락',1):'<small class="fn">요청 보냄</small>';h+=row(nick(p),p.display_name&&p.username?p.username:'','',bt,p.id);});}
   h+='</div>';
   const q=($('#frQ')||{}).value,foc=document.activeElement&&document.activeElement.id==='frQ';
   o.innerHTML=h;const qi=$('#frQ');if(qi){qi.value=q!=null?q:squery;qi.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();act(()=>search(qi.value));}});if(foc)qi.focus();}}
 function onClick(e){const o=$('#frOv');if(e.target===o){close();return;}const b=e.target.closest('[data-a]');if(!b)return;const a=b.dataset.a,id=b.dataset.id;
   const f=friends.find(x=>String(x.row)===id||x.other===id);
   if(a==='close')close();
+  else if(a==='prof'){try{if(window.FFProfile&&sb)FFProfile.open(sb,id,{game:'crownenvoy'});}catch(e){}}
   else if(a==='find')act(()=>search(($('#frQ')||{}).value));
   else if(a==='req')act(async()=>{if(friends.some(x=>x.other===id))return;const r=await sb.from('friendships').insert({requester_id:uid,addressee_id:id});if(r.error)throw r.error;toast('친구 요청을 보냈어요.','ok');});
   else if(a==='acc'&&f)act(async()=>{const r=await sb.from('friendships').update({status:'accepted'}).eq('id',f.row);if(r.error)throw r.error;});
