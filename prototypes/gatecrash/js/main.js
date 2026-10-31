@@ -333,7 +333,7 @@ function loop(now) {
     N.inputs[UID] = Object.assign(oi, inp, { jp: inp.jp || oi.jp, swap: inp.swap || oi.swap, emo: inp.emo || oi.emo });
     let ran = false;
     while (acc >= 1 / 60) {
-      acc -= 1 / 60; const pc = G.phase, pt = Math.ceil(G.t); stepGame(G, 1 / 60, N.inputs); ran = true;
+      acc -= 1 / 60; for (const r of G.racers) { r.px = r.x; r.py = r.y; } const pc = G.phase, pt = Math.ceil(G.t); stepGame(G, 1 / 60, N.inputs); ran = true;
       for (const k in N.inputs) { N.inputs[k].jp = false; N.inputs[k].swap = false; N.inputs[k].emo = 0; }
       if (G.phase === 'count' && G.t <= 3 && Math.ceil(G.t) !== pt) SFX.beep();
     }
@@ -344,10 +344,11 @@ function loop(now) {
     if (me && me.wep) { me.aim = inp.aim; me.face = Math.cos(inp.aim) >= 0 ? 1 : -1; }
     sendT += dt; if (sendT > 1 / 30) { sendT = 0; send(N.host, { t: 'i', i: inp }); pend.jp = false; pend.swap = false; pend.emo = 0; }
     // 내 캐릭터는 바로 움직여요 (서버 위치로 조금씩 맞춰요)
-    while (acc >= 1 / 60) { acc -= 1 / 60; if (me && G.phase === 'race' && !me.fin && me.stun <= 0) { const own = Object.assign({}, inp, { jp: inp.jp || pend.jp }); if (stepBody(G.W, me, own, 1 / 60)) { addFx({ t: 'jump', x: me.x + 5, y: me.y + 22, id: UID, local: 1 }); } } }
+    while (acc >= 1 / 60) { acc -= 1 / 60; if (me) { me.px = me.x; me.py = me.y; } if (me && G.phase === 'race' && !me.fin && me.stun <= 0) { const own = Object.assign({}, inp, { jp: inp.jp || pend.jp }); if (stepBody(G.W, me, own, 1 / 60)) { addFx({ t: 'jump', x: me.x + 5, y: me.y + 22, id: UID, local: 1 }); } } }
     for (const r of G.racers) if (r !== me && r.tx !== undefined) { r.x += (r.tx - r.x) * Math.min(1, dt * 14); r.y += (r.ty - r.y) * Math.min(1, dt * 14); }
-    acc = 0; evUpdate(G.W, G.clock, G.phase); liftCap(G);
+    evUpdate(G.W, G.clock, G.phase); liftCap(G);
   }
+  ialpha = Math.min(1, acc * 60);
   for (const e of G.ev) addFx(e); G.ev.length = 0;
   fx = fx.filter(f => (f.age += dt) < f.life);
   if (guest && G.phase === 'end') { /* 결과는 호스트 신호로 */ }
@@ -382,8 +383,16 @@ function addFx(e) {
   if (me && e.x !== undefined && Math.hypot(e.x - me.x, e.y - me.y) > 450) return;
   GCSfx(e);
 }
+let ialpha = 1;
+/* 물리는 1/60초 단위라서 화면이 더 빠른 기기에서는 그 사이 위치를 이어서 그려요 */
 function render(t, G, op) {
+  const sv = [];
+  if (!(op && op.replay)) for (const r of G.racers) if (r.px !== undefined && Math.abs(r.x - r.px) < 48 && Math.abs(r.y - r.py) < 48) { sv.push([r, r.x, r.y]); r.x = r.px + (r.x - r.px) * ialpha; r.y = r.py + (r.y - r.py) * ialpha; }
+  try { render0(t, G, op); } finally { for (const q of sv) { q[0].x = q[1]; q[0].y = q[2]; } }
+}
+function render0(t, G, op) {
   op = op || {};
+  const rdt = Math.min(.1, Math.max(0, t - (render0.lt || t))); render0.lt = t;
   const c = gl, dpr = Math.min(OPT ? 1 : 2, devicePixelRatio || 1), w = Math.round(c.clientWidth * dpr), h = Math.round(c.clientHeight * dpr);
   if (c.width !== w || c.height !== h) { c.width = w; c.height = h; }
   const x = c.getContext('2d'); x.imageSmoothingEnabled = false;
@@ -391,11 +400,11 @@ function render(t, G, op) {
   const tx = me.x + 5 - vw / 2, ty = me.y - VH / 2 + 30;
   if (!op.replay && G.phase === 'count' && G.t > 3) {
     // 시작 전 맵 소개: 출발점에서 목표 지점까지 부드럽게 보여 줘요
-    const u = 8 - G.t, F = G.W.finish, gx = (F.x0 + F.x1 + 1) / 2 * TS - vw / 2, gy = (F.y0 + F.y1) / 2 * TS - VH / 2 + 30, ez = k => k * k * (3 - 2 * k);
-    const e = u < 3.5 ? ez(u / 3.5) : u < 4 ? 1 : 1 - ez(Math.min(1, u - 4));
+    const IT = G.W.introT, u = IT + 4.5 - G.t, F = G.W.finish, gx = (F.x0 + F.x1 + 1) / 2 * TS - vw / 2, gy = (F.y0 + F.y1) / 2 * TS - VH / 2 + 30, ez = k => k * k * (3 - 2 * k);
+    const e = u < IT ? ez(u / IT) : u < IT + .5 ? 1 : 1 - ez(Math.min(1, u - IT - .5));
     cam.x = tx + (gx - tx) * e; cam.y = ty + (gy - ty) * e;
   } else if (op.replay) { cam.x += (tx - cam.x) * .1; cam.y += (ty - cam.y) * .1; }
-  else { cam.x += (tx - cam.x) * .12; cam.y += (ty - cam.y) * .12; }
+  else { const k = 1 - Math.exp(-rdt * 7.7); cam.x += (tx - cam.x) * k; cam.y += (ty - cam.y) * k; }
   const cx = Math.max(0, Math.min(G.W.pw - vw, cam.x)), cy = Math.max(0, Math.min(G.W.ph - VH, cam.y));
   if (!op.replay) { view.x = Math.round(cx); view.y = Math.round(cy); }
   x.setTransform(sc, 0, 0, sc, 0, 0); x.fillStyle = '#0c1220'; x.fillRect(0, 0, vw + 2, VH + 2);
