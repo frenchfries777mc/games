@@ -811,7 +811,7 @@ export const roleImg = (id, h = 22) => clsImg(id, h);   // 직업 로고
 export const typeImg = (type, h = 18) => TYPE_ICO[type] ? clsImg(TYPE_ICO[type], h) : '';   // 역할(근접 딜러 등) 로고
 export const rankImg = (rk, h = 18) => '<img src="rank/t' + (rk.t | 0) + '.svg" alt="" height="' + h + '" width="' + h + '" style="vertical-align:middle;margin-right:4px">';   // 마스터리 계급 로고 (II·III 단계는 같은 로고)
 export function charRankFor(pts) { let cur = CHAR_RANKS[0]; for (const r of CHAR_RANKS) if ((pts || 0) >= r.min) cur = r; return cur; }
-export const MASTERY_PT = { kill: 12, win: 20, assist: 8, match: 5 };   // 한 판에 쓰러뜨림 12점, 도움 8점, 승리 20점, 완주 5점 (+ 연승 보너스)
+export const MASTERY_PT = { kill: 10, win: 20, assist: 5, match: 5 };   // 한 판에 쓰러뜨림 10점, 도움 5점, 승리 20점, 완주 5점 (+ 연승 보너스)
 export const STREAK_BONUS = [[10, 20], [7, 15], [5, 10], [3, 5]];   // 3연승 5, 5연승 10, 7연승 15, 10연승 20
 export function streakBonusFor(n) { for (const [a, b] of STREAK_BONUS) if (n >= a) return b; return 0; }
 export function roleLevel(xp) { return Math.min(10, 1 + Math.floor(Math.sqrt((xp || 0) / 25))); }
