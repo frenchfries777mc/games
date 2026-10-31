@@ -3,7 +3,7 @@
 
 import { T } from './tr.js';
 
-export const VERSION = 'v0.2', BUILD = 206;
+export const VERSION = 'v0.2', BUILD = 207;
 
 export const ROLES = {
   knight: {
@@ -762,6 +762,8 @@ export const ACHIEVEMENTS = [
   { id: 'match50', name: T('전장의 단골'), desc: T('대전을 쉰 판 마쳐요.') },
   { id: 'lv10', name: T('직업의 달인'), desc: T('직업 하나를 최고 레벨까지 올려요.') },
   { id: 'gold', name: T('골드 계급'), desc: T('직업 하나의 마스터리를 골드까지 올려요.') },
+  { id: 'flawless', name: T('무패 승리'), desc: T('한 번도 쓰러지지 않고 대전에서 이겨요.') },
+  { id: 'triple', name: T('트리플 킬'), desc: T('짧은 시간에 세 명을 연달아 쓰러뜨려요.') },
   { id: 'friends', name: T('함께하는 대전'), desc: T('다른 사람과 같은 방에서 대전해요.') }
 ];
 
