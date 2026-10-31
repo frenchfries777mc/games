@@ -1065,7 +1065,7 @@ function onEvent(e) {
       break; }
     case 'pillar': view.column(e.x, e.z, 0x6ab0ff, 0.9); view.burst(e.x, 0.5, e.z, 0x9ad0ff, 14, 6, 0.6, 0.14); view.flash(e.x, e.z, 0x6ab0ff, 80); SFX.play('slam'); break;
     case 'blink': view.column(e.x, e.z, 0x9ad0ff, 0.5); view.rise(e.x, e.z, 0x9ad0ff, 12, 1.5, 0.7, 6); SFX.play('orb'); break;
-    case 'ping': if (e.tm === myTm()) { const dg = e.pk === 'danger', col = dg ? 0xff5a4a : 0x5fd0ff; view.ring(e.x, e.z, 2.2, col, 1.4); view.ring(e.x, e.z, 1.2, 0xffffff, 1.0); view.column(e.x, e.z, col, 1.2); num(e.x, e.z, dg ? T('조심!') : T('여기 오세요'), dg ? '#ff7a6a' : '#8ae0ff', 1.3); SFX.play('click'); } break;
+    case 'ping': if (e.tm === myTm()) { const dg = e.pk === 'danger', col = dg ? 0xff5a4a : 0x5fd0ff; S.pings = (S.pings || []).filter(q => performance.now() - q.t < 5000).concat([{ x: e.x, z: e.z, dg, t: performance.now() }]); /* 미니맵에도 5초 동안 표시해요 */ view.ring(e.x, e.z, 2.2, col, 1.4); view.ring(e.x, e.z, 1.2, 0xffffff, 1.0); view.column(e.x, e.z, col, 1.2); num(e.x, e.z, dg ? T('조심!') : T('여기 오세요'), dg ? '#ff7a6a' : '#8ae0ff', 1.3); SFX.play('click'); } break;
     case 'recall': view.column(e.x, e.z, 0x9af0e0); if (e.id === me && e.end) bigMsg(T('깃발로 귀환했어요'), '', 1400); break;
     case 'respawn': view.column(e.x, e.z, 0xff9a48); if (e.id === me) bigMsg(T('진지에서 다시 일어났어요'), '', 1800); break;
     case 'flag': { const mine = e.own === myTm(), c = TEAMS[e.own].c; view.column(e.x, e.z, c, 1.4); view.ring(e.x, e.z, 6, c, 0.9); view.shock(e.x, e.z, 7, c, 0.6); view.flash(e.x, e.z, c, 120); if (mine || e.was === myTm()) { bigMsg(mine ? T('깃발을 차지했어요!') : T('깃발을 빼앗겼어요!'), '', 1800); SFX.play(mine ? 'kill' : 'roar'); } break; }   // 주인 없던 깃발을 상대가 차지한 건 빼앗긴 게 아니라서 알리지 않아요
@@ -1354,6 +1354,10 @@ function teamHud(sn) {
   oc.fillStyle = 'rgba(10,8,14,.85)'; oc.fillRect(mx - 4, my - 4, w + 8, h + 8); oc.imageSmoothingEnabled = !!S.mapImg || !!CH.pvp; oc.globalAlpha = CH.pvp ? 1 : S.mapImg ? 0.95 : 0.8; oc.drawImage(S.mapImg || mini.c, mx, my, w, h); oc.globalAlpha = 1; oc.strokeStyle = '#c8b480'; oc.lineWidth = 2; oc.strokeRect(mx - 4, my - 4, w + 8, h + 8);
   const P = (wx, wz) => [mx + wx / CS * sc, my + wz / CS * sc], mate = sn.pl.filter(q => q.tm === mt && !q.dd);
   sn.tf.forEach((f, i) => { const fl = MAP.tflags[i], [a, b] = P(cw(fl[0]), cw(fl[1])); oc.fillStyle = f[0] < 0 ? '#9a96a6' : hex(TEAMS[f[0]].c); oc.fillRect(a - 3.5, b - 3.5, 7, 7); oc.strokeStyle = '#140f18'; oc.lineWidth = 1.5; oc.strokeRect(a - 3.5, b - 3.5, 7, 7); if (S.fAl && S.fAl[i]) { const pu = 0.5 + 0.5 * Math.sin(performance.now() / 110); oc.strokeStyle = 'rgba(255,70,60,' + (0.5 + pu * 0.5) + ')'; oc.lineWidth = 2; oc.beginPath(); oc.arc(a, b, 7 + pu * 4, 0, 7); oc.stroke(); } });
+  for (const pg of S.pings || []) {   // 우리 팀이 찍은 핑 (내 핑 포함): 5초 동안 깜빡여요
+    const age = performance.now() - pg.t; if (age > 5000) continue; const [a, b] = P(pg.x, pg.z), pu = (age % 800) / 800, col = pg.dg ? '255,90,74' : '95,208,255';
+    oc.strokeStyle = 'rgba(' + col + ',' + (1 - pu) + ')'; oc.lineWidth = 2; oc.beginPath(); oc.arc(a, b, 3 + pu * 9, 0, 7); oc.stroke(); oc.fillStyle = 'rgb(' + col + ')'; oc.strokeStyle = '#fff'; oc.lineWidth = 1.2; oc.beginPath(); oc.arc(a, b, 3.2, 0, 7); oc.fill(); oc.stroke();
+  }
   for (const mn of sn.mn || []) { const [a, b] = P(mn[0], mn[1]), pu = 0.5 + 0.5 * Math.sin(performance.now() / 260); oc.fillStyle = '#ff7a3a'; oc.strokeStyle = '#140f18'; oc.lineWidth = 1.5; oc.beginPath(); oc.moveTo(a, b - 6); oc.lineTo(a + 5, b); oc.lineTo(a, b + 6); oc.lineTo(a - 5, b); oc.closePath(); oc.fill(); oc.stroke(); oc.strokeStyle = 'rgba(255,122,58,' + (0.3 + pu * 0.5) + ')'; oc.beginPath(); oc.arc(a, b, 8 + pu * 2, 0, 7); oc.stroke(); }
   for (const p of sn.pl) {
     if (p.dd) continue; const q = p.id === S.me && S.local ? S.local : p;
