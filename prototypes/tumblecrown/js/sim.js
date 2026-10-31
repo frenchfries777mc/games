@@ -112,6 +112,7 @@ function hurtProxy(G, e, dmg, p, o) {
   if (e.mark > 0) d *= 1.5;
   const r = hurtPlayer(G, t, Math.max(1, d * PVP_DMG), p);
   if (r > 0 && o.burn) t.burn = 3;
+  if (r > 0 && o.push) { const vx = Math.cos(o.kbA) * o.push, vz = Math.sin(o.kbA) * o.push; t.kvx = (t.kvx || 0) + vx; t.kvz = (t.kvz || 0) + vz; ev(G, 'push', { id: t.id, vx, vz }); }   // 밀치기: 방장 화면 선수는 여기서, 손님은 알림을 받아 자기 화면에서 밀려나요
   if (r > 0 && p && p.leech > 0) p.hp = Math.min(p.maxhp, p.hp + r * 0.6);
   return r;
 }
@@ -564,7 +565,7 @@ function useSkill(G, p, si, inp) {
     case 'sweep': for (const e of G.enemies) if (e.hp > 0 && foeOf(G, p.id, e) && dist(p, e) < 3.9 + e.r) { hurtEnemy(G, e, 36, p, { kb: 6, kbA: angTo(p, e) }); if (e.hp > 0) { e.slow = 1.5; e.slowM = 0.5; } } ev(G, 'swing', { id: p.id, x: p.x, z: p.z, a: p.a, r: 3.9, role: p.role, n: 1 }); break;
     case 'rapidfire': p.burst = { n: 3, t: 0 }; ev(G, 'skill', { id: p.id, s: 'rapidfx', x: p.x, z: p.z, a: p.a }); break;
     case 'bigshot': G.projs.push({ id: G.uid++, k: 'bigshot', own: p.id, x: p.x + Math.cos(p.a) * 0.9, z: p.z + Math.sin(p.a) * 0.9, vx: Math.cos(p.a) * 30, vz: Math.sin(p.a) * 30, dmg: 88, life: 1.15, hr: 2 * (p.covT > 0 ? 1.6 : 1), sz: 2.6, hit: [], team: 0 }); ev(G, 'shoot', { id: p.id, pk: 'bigshot', x: p.x, z: p.z }); break;
-    case 'axeswing': for (const e of G.enemies) if (e.hp > 0 && foeOf(G, p.id, e) && dist(p, e) < 4.4 + e.r && angDiff(p.a, angTo(p, e)) < 1.2) hurtEnemy(G, e, 90, p, { kb: 11, kbA: angTo(p, e) }); ev(G, 'swing', { id: p.id, x: p.x, z: p.z, a: p.a, r: 4.4, role: p.role, n: 1 }); p.animT = 0.8; break;   // 부채꼴 도끼 휘두르기
+    case 'axeswing': p.axeSw = 0.2; ev(G, 'swing', { id: p.id, x: p.x, z: p.z, a: p.a, r: 4.4, role: p.role, n: 1 }); p.animT = 0.8; break;   // 도끼를 휘두르는 순간(0.2초 뒤)에 맞아요
     case 'rootbolt': G.projs.push({ id: G.uid++, k: 'bolt', own: p.id, x: p.x + Math.cos(p.a) * 0.8, z: p.z + Math.sin(p.a) * 0.8, vx: Math.cos(p.a) * 28, vz: Math.sin(p.a) * 28, dmg: 18, life: 0.9, hit: [], team: 0, slow: 2.5 }); break;
     case 'backstep': { const ox = p.x, oz = p.z; p.x -= Math.cos(p.a) * 6; p.z -= Math.sin(p.a) * 6; collide(G, p, 0.6); p.inv = 0.3; p.focus = Math.max(p.focus || 0, 3); ev(G, 'skill', { id: p.id, s: 'backfx', x: ox, z: oz, a: p.a }); break; }
     case 'snipe': p.snipeT = 1.2; ev(G, 'skill', { id: p.id, s: 'snipecharge', x: p.x, z: p.z, a: p.a }); break;
@@ -744,6 +745,8 @@ function stepPlayer0(G, p, inp, dt) {
   if (p.ai && p.ai.cmbT > 0) p.ai.cmbT -= dt;
   if (p.hvT > 0) { p.hvT -= dt; if (p.hvT <= 0) { p.hvT = 0; if (!p.down && !p.dead) heavyLand(G, p); } }
   if (p.covT > 0) p.covT -= dt;
+  if (p.axeSw > 0) { p.axeSw -= dt; if (p.axeSw <= 0 && alive(p)) { p.axeSw = 0; for (const e of G.enemies) if (e.hp > 0 && foeOf(G, p.id, e) && dist(p, e) < 4.4 + e.r && angDiff(p.a, angTo(p, e)) < 1.2) hurtEnemy(G, e, 90, p, { kb: 11, kbA: angTo(p, e), push: 40 }); } }
+  if (p.kvx || p.kvz) { if (inp.px == null) { p.x += p.kvx * dt; p.z += p.kvz * dt; collide(G, p, 0.6); } const dk = Math.pow(0.02, dt); p.kvx *= dk; p.kvz *= dk; if (Math.hypot(p.kvx, p.kvz) < 0.5) p.kvx = p.kvz = 0; }
   if (p.burst) {   // 연사: 0.14초마다 한 발씩, 그때그때 바라보는 쪽으로 나가요
     if (p.down || p.dead) p.burst = null;
     else { p.burst.t -= dt; if (p.burst.t <= 0) { p.burst.t = 0.14; p.burst.n--; G.projs.push({ id: G.uid++, k: 'musket', own: p.id, x: p.x + Math.cos(p.a) * 0.8, z: p.z + Math.sin(p.a) * 0.8, vx: Math.cos(p.a) * 46, vz: Math.sin(p.a) * 46, dmg: 26, life: 1.0, hr: 0.7 * (p.covT > 0 ? 1.6 : 1), sz: p.covT > 0 ? 1.6 : 0, hit: [], team: 0 }); ev(G, 'shoot', { id: p.id, pk: 'musket', x: p.x, z: p.z }); if (p.burst.n <= 0) p.burst = null; } }
