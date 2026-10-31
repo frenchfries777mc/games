@@ -144,6 +144,9 @@ function regStats() {
     ROLE_IDS.forEach(r => { const cl = SAVE.clears[r] | 0; h += row(ROLES[r].name, 'Lv ' + roleLevel(SAVE.xp[r] || 0) + (cl ? ' · ' + T('{0}장까지 완료', cl) : '')); });
     h += row(T('가장 먼 장'), (SAVE.chMax | 0) + 1);
     h += row(T('vC'), SAVE.honor);
+    h += row(T('잡은 몹'), T('{0}마리', SAVE.kills | 0));
+    h += row(T('잡은 보스'), T('{0}회', SAVE.bossK | 0));
+    h += row(T('모은 깃발'), T('{0}개', Object.keys(SAVE.flags || {}).length));
     h += row(T('도전과제'), ACHIEVEMENTS.filter(a => SAVE.ach[a.id]).length + ' / ' + ACHIEVEMENTS.length);
     const wk = SAVE.wkRec || {}, n = Object.keys(wk).filter(k => wk[k] && wk[k].best).length;
     if (n) h += row(T('주간 원정 완주'), T('{0}회', n));
@@ -244,7 +247,6 @@ $('setVol').oninput = e => { SAVE.set.vol = +e.target.value; SFX.setVol(SAVE.set
 /* ---------- 대기실 ---------- */
 // 대기실: 장은 고르지 않고, 저장된 이야기에서 이어서 시작해요. 친구 방은 방장의 이야기를 따라가요
 const fmtT = s => T('{0}분 {1}초', Math.floor(s / 60), String(Math.floor(s % 60)).padStart(2, '0'));
-const weekLabel = id => { const m = /^(\d+)년 (\d+)주$/.exec(id); return m ? T('{0}년 {1}주', m[1], m[2]) : id; };
 function weeklyRec(id) { SAVE.wkRec = SAVE.wkRec || {}; return SAVE.wkRec[id] || {}; }
 function weeklyDone() {
   const W = S.snap.wk, t = S.snap.wt || 0, r = Object.assign({}, weeklyRec(W.id)), first = !r.paid; const old = r.best || 0;
@@ -267,7 +269,7 @@ function paintChapters() {
   $('chRow').innerHTML = (pick ? `<div class="chpick">${CHAPTERS.slice(0, top + 1).map((ch, i) => `<button class="btn${i === S.chSel && !S.wk ? ' gold' : ''}" data-ch="${i}">${T('{0}장', i + 1)}</button>`).join('')}${dOpen ? `<button class="btn${deep ? ' gold' : ''}" data-ch="${DEEP_I}">${T('끝없는 심연')}</button>` : ''}</div>` : '') + story;
   { const W = weekInfo(), cn = W.curses.map(c => CURSES.find(x => x.id === c).name).join(' · '), rec = weeklyRec(W.id), open = (SAVE.chMax | 0) >= W.ch;
     const wkS = `<div class="story"><b>${T('주간 원정 · {0}', esc(CHAPTERS[W.ch].title))}</b><small>${T('이번 주 저주: {0}', cn)}</small></div>`, wk = S.net === 'guest' ? (S.wk ? `<div class="story"><b>${T('주간 원정 · {0}', esc(CHAPTERS[S.chSel].title))}</b><small>${T('이번 주 저주: {0}', cn)}</small></div>` : '')
-      : (S.wk ? wkS : '') + `<div class="chpick"><button class="btn${S.wk ? ' gold' : ''}" id="wkBtn"${open ? '' : ' disabled'}>${T('주간 원정 · {0}장 · 저주 {1}', W.ch + 1, cn)}</button></div><small class="note">${open ? T('이번 주({0}) 같은 장, 같은 저주로 걸린 시간을 겨뤄요.', weekLabel(W.id)) + ' ' + (rec.best ? T('내 최고 {0}', fmtT(rec.best)) : T('아직 기록이 없어요')) + (rec.paid ? '' : ' · ' + T('첫 완주 vC +300')) : T('{0}장까지 깨면 열려요.', W.ch + 1)}</small>`;
+      : (S.wk ? wkS : '') + `<div class="chpick"><button class="btn${S.wk ? ' gold' : ''}" id="wkBtn"${open ? '' : ' disabled'}>${T('주간 원정 · {0}장 · 저주 {1}', W.ch + 1, cn)}</button></div><small class="note">${open ? T('이번 주 같은 장, 같은 저주로 걸린 시간을 겨뤄요.') + ' ' + (rec.best ? T('내 최고 {0}', fmtT(rec.best)) : T('아직 기록이 없어요')) + (rec.paid ? '' : ' · ' + T('첫 완주 vC +300')) : T('{0}장까지 깨면 열려요.', W.ch + 1)}</small>`;
     $('chRow').insertAdjacentHTML('beforeend', wk);
     const wb = $('wkBtn'); if (wb) wb.onclick = () => { SFX.play('click'); S.wk = !S.wk; if (S.wk) S.chSel = W.ch; else S.chSel = chOpen(); paintChapters(); hostLobby(); };
   }
@@ -665,6 +667,7 @@ function onEvent(e) {
     case 'phit': num(e.x, e.z, '-' + e.v, '#ff7a6a', 1); if (e.id === me) { view.shake = Math.max(view.shake, 0.5); SFX.play('phit'); } break;
     case 'ekill': {
       const boss = e.en === 'boss', big = boss || e.en === 'elite';
+      if (boss) SAVE.bossK = (SAVE.bossK | 0) + 1; else SAVE.kills = (SAVE.kills | 0) + 1; // 통계용 (저장은 장을 마칠 때 같이)
       view.shatter(e.x, e.z, boss ? [0x3a2e2a, 0xff5a3a, 0xe6c15a, 0x5a5f70] : [0xd8d0bc, 0x6a6470, 0x5a5040, 0x8a8a96], boss ? 70 : big ? 30 : 16, big);
       view.burst(e.x, 1.2, e.z, boss ? 0xff3a3a : 0xffe8b0, boss ? 40 : 8, 7, 0.6, 0.12); SFX.play('kill');
       if (big) { view.shock(e.x, e.z, boss ? 12 : 5, boss ? 0xff6a3a : 0xffe08a, boss ? 0.9 : 0.5); view.flash(e.x, e.z, 0xffd08a, boss ? 300 : 120); view.shake = Math.max(view.shake, boss ? 1.6 : 0.6); }
