@@ -3,7 +3,7 @@
 
 import { T } from './tr.js';
 
-export const VERSION = 'v0.2', BUILD = 196;
+export const VERSION = 'v0.2', BUILD = 201;
 
 export const ROLES = {
   knight: {
@@ -803,6 +803,7 @@ export const CHAR_RANKS = (() => {
 })();
 const TYPE_ICO = { '근접 딜러': 'role-melee', '원거리 딜러': 'role-ranged', '서포터': 'role-support', '유틸리티': 'role-utility' };
 const clsImg = (f, h) => '<img src="cls/' + f + '.svg" alt="" height="' + h + '" width="' + h + '" style="vertical-align:middle;margin-right:4px">';
+export const typeFile = t => TYPE_ICO[t] || '';   // 역할 로고 파일 이름 (캔버스용)
 export const roleImg = (id, h = 22) => clsImg(id, h);   // 직업 로고
 export const typeImg = (type, h = 18) => TYPE_ICO[type] ? clsImg(TYPE_ICO[type], h) : '';   // 역할(근접 딜러 등) 로고
 export const rankImg = (rk, h = 18) => '<img src="rank/t' + (rk.t | 0) + '.svg" alt="" height="' + h + '" width="' + h + '" style="vertical-align:middle;margin-right:4px">';   // 마스터리 계급 로고 (II·III 단계는 같은 로고)
