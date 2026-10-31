@@ -101,7 +101,7 @@ function killBanner(name) {
 }
 // 더블·트리플 킬: 가운데에 크고 화려하게 (연속 수가 클수록 색과 번쩍임이 커져요)
 function multiBanner(nm, n, who) {
-  const el = $('multiBanner'); el.className = ''; el.dataset.n = n; el.innerHTML = '<i class="mr"></i><b>' + (who ? '<small style="display:block;font-size:.3em;letter-spacing:.02em;margin-bottom:.15em">' + esc(who) + '</small>' : '') + esc(nm) + '!</b><u></u>';
+  const el = $('multiBanner'); el.className = ''; el.dataset.n = n; el.innerHTML = '<i class="mr"></i><b>' + (who ? '<small style="display:block;font-size:.4em;letter-spacing:.02em;margin-bottom:.15em">' + esc(who) + '</small>' : '') + esc(nm) + '!</b><u></u>';
   void el.offsetWidth; el.classList.add('on'); clearTimeout(multiBanner._t); multiBanner._t = setTimeout(() => el.classList.remove('on'), 2400);
 }
 function killFeed(txt, mine) {
