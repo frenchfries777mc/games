@@ -5598,7 +5598,7 @@ function shuffle(arr){ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.
 /* ===== the version of this file =====
    Different BUILDS of one version meet and play together (room names online-v<ver>-<mode>-<map>-<slot>); different VERSIONS (the 0.x part) never do - the host refuses them (verNo) and the dispatcher answers busy.
    The build is only sent along with the join message and the lobby (for information); the corner of the screen shows it. */
-const GAME_BUILD='build 2026-10-31-v563';
+const GAME_BUILD='build 2026-10-31-v564';
 const GAME_VERSION='0.9', GAME_VERSION_NAME='은하 제국의 황혼';   // 게임 버전 이름: versions.json의 title과 같게 (빌드마다 바꾸지 않음)
 /* version (the 0.x part) vs build: different BUILDS of one version meet and play together, different VERSIONS never do (rooms, quick match, ranked, friend invites, dispatcher).
    Builds before 470 do not send a version, so it is read from the build number (0.9 started at build 458). */
@@ -6879,7 +6879,7 @@ function renderModeCarousel(){
   const mg=MORE_MODES.find(it=>it.id===mid) || SPECIAL_ITEMS.find(it=>it.id===mid);
   if(mg) renderModePanelCanvas(document.getElementById('modeCarouselPreview'), mg.mapId, mg.weapons, 50);
   else renderModePanelCanvas(document.getElementById('modeCarouselPreview'), MODE_THEME_FOR_ART[mid], MODE_WEAPON_PAIR[mid], 50);
-  document.getElementById('modeCarouselName').textContent=MODES[mid].name;
+  { const cn=document.getElementById('modeCarouselName'); cn.textContent=MODES[mid].name; const lh=modeLogoHtml(mid, 34); if(lh) cn.innerHTML=lh+' '+escapeHtmlText(MODES[mid].name); }
   document.getElementById('modeCarouselMeta').textContent=MODES[mid].desc+'  ('+(modeCarouselIdx+1)+'/'+PRIVATE_MODE_ORDER.length+')';
   document.getElementById('wmodeSection').style.display = (MODES[mid].noWeapon||MODES[mid].autoWeapon) ? 'none' : ''; // modes with no weapon selection at all (hot potato, hide-and-seek, survival, parkour) have nothing for "무기 방식" to apply to
   // the map list only needs re-deriving when a mode with its own map rules is involved (or a mode with a player minimum such as duo),
@@ -6989,6 +6989,7 @@ function pickOnlineModeAndMatch(mid, evt, ranked, clan){
   onlineEvent=!!evt; onlineRanked=!!ranked; onlineClan=clan?String(clan):''; selectedOnlineMode=mid;
   onlineWar=(clan && clanWarPending && String(clan)===clanWarPending.key) ? clanWarPending : null; clanWarPending=null;
   document.getElementById('onlineModeTitle').textContent='온라인 플레이 · '+(clan?(mid==='raid'?'🐲 클랜 보스 레이드':(onlineWar?'⚔ 클랜 대항전 (듀얼)':'⚔ 클랜 경기 (듀얼)')):ranked?'🏅 랭크전 (듀얼)':(evt?('주간 이벤트 · '+currentEvent().name):MODES[mid].name));
+  if(!clan && !ranked && !evt){ const lh=modeLogoHtml(mid, 30); if(lh) document.getElementById('onlineModeTitle').innerHTML=escapeHtmlText('온라인 플레이 · ')+lh+' '+escapeHtmlText(MODES[mid].name); }
   showScreen('onlineScreen');
   if(connecting) return; connecting=true;
   partyLeaderStart(mid);
@@ -7084,6 +7085,9 @@ function dailyModeItem(){
 const EXP_MODES=[{id:'xkit', icon:'🎲'}, {id:'redlight', icon:'🚦'}, {id:'crownhold', icon:'👑'}, {id:'hyperbr', icon:'💥'}];       // 실험적 모드: not released yet, the player votes 좋아요/나빠요 on the result screen
 function expVotes(){ try{ return JSON.parse(localStorage.getItem('stickseumExpVotes')||'{}')||{}; }catch(e){ return {}; } }
 const MODE_GRAD='linear-gradient(180deg, rgba(8,11,18,.25) 0%, rgba(8,11,18,.05) 40%, rgba(8,11,18,.9) 100%)';
+const MODE_LOGO_IDS=new Set(['ffa','br','dashbr','duo','team','duel','conquest','zombie','hotpotato','survival','ctf','gold','raid','tournament','vip','koth','relay','freeze','rush','roulette','oneshot','turf','bounty','lowg','defend','vault','redlight','crownhold','hyperbr','xkit']);
+function modeLogoHtml(id, px){ return MODE_LOGO_IDS.has(id) ? '<img src="modes/icons/'+id+'.svg?v='+buildNum(GAME_BUILD)+'" alt="" width="'+px+'" height="'+px+'" style="vertical-align:middle; filter:drop-shadow(0 2px 6px rgba(0,0,0,.6));">' : ''; }      // (the 30 mode logos, one per mode id)
+function setModeLogo(el, id, px){ const h=modeLogoHtml(id, px||60); if(h) el.innerHTML=h; }
 function modeCardArt(row, img){          // photo as the card background; the saved video of the mode plays while the mouse is over the card (modes/<img>.mp4)
   const v='?v='+buildNum(GAME_BUILD);
   row.style.backgroundImage=MODE_GRAD+', url(modes/'+img+'.jpg'+v+')';
@@ -7108,7 +7112,7 @@ function buildExpList(){
   for(const it of EXP_MODES){ const m=MODES[it.id]; if(!m) continue; const v=votes[it.id]||{up:0,down:0};
     const row=document.createElement('button'); row.className='modeRow';
     row.innerHTML='<span class="mrIcon"></span><span class="mrText"><div class="mrName"></div><div class="mrDesc"></div></span>';
-    modeCardArt(row, it.id); row.querySelector('.mrIcon').textContent=it.icon; row.querySelector('.mrName').textContent='🧪 '+m.name;
+    modeCardArt(row, it.id); row.querySelector('.mrIcon').textContent=it.icon; setModeLogo(row.querySelector('.mrIcon'), it.id, 60); row.querySelector('.mrName').textContent='🧪 '+m.name;
     row.querySelector('.mrDesc').textContent=m.desc.replace(/^🧪 실험적 모드 · /,'')+((v.up||v.down)?(' · 내 평가 👍 '+v.up+' · 👎 '+v.down):'');
     if(partyActive()) row.classList.add('partyOff');
     row.onclick=()=>pickOnlineModeAndMatch(it.id, false); body.appendChild(row); }
@@ -7117,14 +7121,14 @@ function buildExpList(){
 function buildModeList(){
   const body=document.getElementById('modeListBody'); if(!body) return;
   body.innerHTML='';
-  const mk=(icon,name,desc,img)=>{ const row=document.createElement('button'); row.className='modeRow';
+  const mk=(icon,name,desc,img,logo)=>{ const row=document.createElement('button'); row.className='modeRow';
     row.innerHTML='<span class="mrIcon"></span><span class="mrText"><div class="mrName"></div><div class="mrDesc"></div></span>';
-    modeCardArt(row, img); row.querySelector('.mrIcon').textContent=icon; row.querySelector('.mrName').textContent=name; row.querySelector('.mrDesc').textContent=desc; return row; };
+    modeCardArt(row, img); row.querySelector('.mrIcon').textContent=icon; if(logo) setModeLogo(row.querySelector('.mrIcon'), logo, 60); row.querySelector('.mrName').textContent=name; row.querySelector('.mrDesc').textContent=desc; return row; };
   { const it=MODE_LIST.find(x=>x.id==='ranked'); const rr=rankedModeRow(it); modeCardArt(rr, 'ranked'); if(partyActive()) rr.classList.add('partyOff'); body.appendChild(rr); }
-  { const di=dailyModeItem(), row=mk(di.icon, '일일 모드 · '+di.name, di.desc+' · 오늘 하루 한정, 매일 바뀌어요', di.id);
+  { const di=dailyModeItem(), row=mk(di.icon, '일일 모드 · '+di.name, di.desc+' · 오늘 하루 한정, 매일 바뀌어요', di.id, di.id);
     if(partyActive()) row.classList.add('partyOff'); row.onclick=()=>pickOnlineModeAndMatch(di.id, false); body.appendChild(row); }
   for(const L of dailyModeLineup()){ const it=MODE_LIST.find(x=>x.id===L.id), m=MODES[L.id]; if(!it || !m) continue;
-    const row=mk(it.icon, m.name, it.desc, L.id);
+    const row=mk(it.icon, m.name, it.desc, L.id, L.id);
     if(partyActive() && (!partyIsLeader() || !partyModeOk(L.id))) row.classList.add('partyOff');      // (in a party only the party modes, and only for the leader)
     row.onclick=()=>pickOnlineModeAndMatch(L.id, false); body.appendChild(row); }
   { const it=MODE_LIST.find(x=>x.id==='exp'), row=mk(it.icon, '실험적 모드', it.desc, 'crownhold');
@@ -8592,7 +8596,7 @@ function partyFollowStart(mode){
   if(started || peer) return;
   cancelOnlineMatchmaking();
   onlineEvent=false; onlineRanked=false; onlineClan=''; selectedOnlineMode=mode;
-  document.getElementById('onlineModeTitle').textContent='온라인 플레이 · '+MODES[mode].name+' (파티)';
+  { const ot=document.getElementById('onlineModeTitle'); ot.textContent='온라인 플레이 · '+MODES[mode].name+' (파티)'; const lh=modeLogoHtml(mode, 30); if(lh) ot.innerHTML=escapeHtmlText('온라인 플레이 · ')+lh+' '+escapeHtmlText(MODES[mode].name+' (파티)'); }
   showScreen('onlineScreen');
   partyWaiting=true; connecting=true;
   setOnlineProgress(0, '파티장이 방을 찾는 중...');
