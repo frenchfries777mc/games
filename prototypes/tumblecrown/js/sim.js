@@ -1647,8 +1647,13 @@ function botHunters(G) {
   const ms = G.enemies.filter(e => e.mon && e.hp > 0); if (!ms.length) return h;
   for (const tm of [0, 1]) {
     const pl = botPlan(G, tm), bs = G.players.filter(q => q.team === tm && q.ai && alive(q));
-    if (pl.mon) { h.m[tm] = pl.mon; for (const q of bs) if (pl.slots[q.id] === -1) h.ids.push(q.id); continue; }
-    if (bs.length >= 2) continue;   // 계획이 있는데 괴물 몫이 없으면 사냥하지 않아요
+    if (pl.mon) { h.m[tm] = pl.mon; const n0 = h.ids.length; for (const q of bs) if (pl.slots[q.id] === -1) h.ids.push(q.id); if (h.ids.length > n0) continue; h.m[tm] = null; }   // 계획에 괴물 몫이 없으면 아래에서 따로 정해요
+    if (bs.length >= 2) {   // 계획에 괴물 몫이 없어도, 괴물이 20초 넘게 아무도 건드리지 않은 채 있으면 가장 가까운 봇 한 명이 가요
+      h.seen = h.seen || {}; let best2 = null, bd2 = 420, who2 = null;
+      for (const m of ms) { if (h.seen[m.id] == null) h.seen[m.id] = G.t; if (G.t - h.seen[m.id] < 20) continue; for (const q of bs) { const d = dist(q, m); if (d < bd2) { bd2 = d; best2 = m; who2 = q; } } }
+      if (best2) { h.m[tm] = best2; h.ids.push(who2.id); }
+      continue;
+    }
     let best = null, bd = 420, who = null;
     for (const m of ms) for (const q of bs) { const d = dist(q, m); if (d < bd) { bd = d; best = m; who = q; } }
     if (best) { h.m[tm] = best; h.ids.push(who.id); }
