@@ -203,7 +203,7 @@ function render(d){
  document.getElementById('footVer').textContent=t('foot_v',{v:latest.version,d:d.updated||latest.date});
  const row=(v,tag)=>'<div><div class="vrow"><span class="vcol"><span class="pb on">'+(tag?t('v_latest')+' ':'')+'v'+esc(v.version)+'</span>'+(v.build?'<small class="vb">build '+esc(v.build)+'</small>':'')+'</span><span>'+esc(v.date)+(v.size?' · '+mb(v.size):'')+'</span>'+(tag?'<a class="pb" href="'+esc(v.file)+(v.build?'?b='+esc(v.build):'')+'">'+t('b_play')+'</a>':'')+'<a class="pb" href="'+esc(v.file)+'" download="'+esc(v.file.split('/').pop())+'">'+t('b_dl')+'</a></div><p class="vtxt"><b>'+esc(tv(v.version,'title',v.title))+'</b> — '+esc(tv(v.version,'summary',v.summary))+'</p></div>';
  document.getElementById('latestBox').innerHTML=row(latest,true);
- {const hb=document.getElementById('hiBox'),hl=Array.isArray(latest.highlights)?latest.highlights:[];if(hb){hb.style.display=hl.length?'':'none';hb.innerHTML=hl.length?'<span class="pb on">'+(LANG==='ko'?'이번 버전 핵심 · v'+esc(latest.version):'Highlights · v'+esc(latest.version))+'</span><ul>'+hl.map(x=>'<li>'+esc(x)+'</li>').join('')+'</ul>':'';}}
+ {const hb=document.getElementById('hiBox'),hl=Array.isArray(latest.highlights)?latest.highlights:[];if(hb){hb.style.display=hl.length?'':'none';hb.innerHTML=hl.length?'<span class="pb on">'+esc(t('이번 버전 핵심 · v{v}',{v:latest.version}))+'</span><ul>'+hl.map((x,i)=>'<li>'+esc(tv(latest.version,'hl'+i,x))+'</li>').join('')+'</ul>':'';}}
  document.getElementById('historyBox').innerHTML=rest.map(v=>row(v,false)).join('')||'<span style="text-shadow:2px 2px 0 #000">—</span>';
 }
 const SHOWN=5;
