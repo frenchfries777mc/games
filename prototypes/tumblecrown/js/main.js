@@ -365,7 +365,13 @@ function roster() {
 }
 S.botN = 0; S.botRoles = null; S.mapSel = Math.min(CHAPTERS.length - 1, (SAVE.mapSel == null ? -1 : SAVE.mapSel | 0));
 $('ctlBtn').onclick = () => { SFX.play('click'); paintWepInfo(); show('sWeps'); };
-$('mapBtn').onclick = () => { SFX.play('click'); S.mapSel = S.mapSel + 1 >= CHAPTERS.length ? -1 : S.mapSel + 1; SAVE.mapSel = S.mapSel; save(); paintRoom(); };
+$('mapBtn').onclick = () => {
+  SFX.play('click');
+  $('mapList').innerHTML = [-1].concat(CHAPTERS.map((c, i) => i)).map(i => `<button class="btn${i === S.mapSel ? ' sel' : ''}" data-m="${i}">${i < 0 ? T('무작위') : CHAPTERS[i].title}</button>`).join('');
+  $('mapWin').classList.add('on');
+};
+$('mapList').onclick = e => { const b = e.target.closest('[data-m]'); if (!b) return; SFX.play('click'); S.mapSel = +b.dataset.m; SAVE.mapSel = S.mapSel; save(); $('mapWin').classList.remove('on'); paintRoom(); };
+$('mapX').onclick = () => { SFX.play('click'); $('mapWin').classList.remove('on'); };
 function pick() {
   if (S.net !== 'solo' && S.ph !== 'pick') return;
   if (S.net === 'guest') { send({ t: 'pick', role: SAVE.role, col: SAVE.col | 0 }); const m = S.slots.find(s => s.uid === UID); if (m) { m.role = SAVE.role; m.col = SAVE.col | 0; } paintRoom(); return; }
