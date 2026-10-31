@@ -1296,15 +1296,17 @@ function teamHud(sn) {
   const mt = myTm(), n = sn.tf.length, x0 = innerWidth / 2 - (n - 1) * 17, y = innerWidth < 700 ? 74 : 40, nw = innerWidth < 1000, LX = nw ? innerWidth / 2 - 10 : x0 - 24, RX = nw ? innerWidth / 2 + 10 : x0 + (n - 1) * 34 + 24, yK = nw ? 24 : 4, yM = nw ? 56 : 22, yL = nw ? 40 : 38, dy = nw ? 40 : 0;   // 좁은 화면에서는 글자를 깃발 줄 아래 가운데에 쌓아요(방 이름·미니맵과 안 겹치게)
   // 깃발 줄은 위치와 상관없이 상대 팀은 왼쪽 끝부터, 우리 팀은 오른쪽 끝부터 채우고 주인 없는 깃발은 가운데에 둬요
   const rk = i => sn.tf[i][0] === mt ? 0 : sn.tf[i][0] < 0 ? 1 : 2, ord = sn.tf.map((f, i) => i).sort((a, b) => rk(a) - rk(b) || a - b);
-  // 점령 중 표시: 주인 있는 깃발을 점령하는 중이면 그 깃발 자리가 아니라, 점령하는 팀 쪽에서 가장 가까운 상대 팀 동그라미(맞닿은 쪽)에 떠요 (여럿이면 안쪽으로 이어서)
-  const ringAt = {}, nMine = ord.filter(i => sn.tf[i][0] === mt).length, nNeu = ord.filter(i => sn.tf[i][0] < 0).length, kc = [0, 0];
-  ord.forEach((i, k) => {
-    const f = sn.tf[i]; if (!(f[0] >= 0 && f[1] >= 0 && f[1] !== f[0] && f[2] > 0)) return;
-    const mineOwn = f[0] === mt, slot = mineOwn ? nMine - 1 - kc[0]++ : nMine + nNeu + kc[1]++;
-    ringAt[slot] = f;
+  // 점령 중 표시: 점령하는 팀 쪽에서 가장 가까운 상대 팀 동그라미(맞닿은 쪽)에 떠요. 여럿이면 안쪽으로 이어서, 상대 팀 동그라미가 모자라면(주인 없는 깃발일 때) 그 깃발 자리에 떠요
+  const ringAt = {}, nMine = ord.filter(i => sn.tf[i][0] === mt).length, nNeu = ord.filter(i => sn.tf[i][0] < 0).length, nFoe = n - nMine - nNeu, kc = [0, 0];
+  ord.map((i, k) => [i, k]).sort((a, b) => (sn.tf[a[0]][0] < 0) - (sn.tf[b[0]][0] < 0)).forEach(([i, k]) => {   // 주인 있는 깃발이 먼저 맞닿은 자리를 차지해요
+    const f = sn.tf[i]; if (!(f[1] >= 0 && f[1] !== f[0] && f[2] > 0)) return;
+    const byMe = f[1] === mt;
+    if (byMe && kc[1] < nFoe) ringAt[nMine + nNeu + kc[1]++] = f;
+    else if (!byMe && kc[0] < nMine) ringAt[nMine - 1 - kc[0]++] = f;
+    else ringAt[k] = f;
   });
   ord.forEach((i, k) => {
-    const f = sn.tf[i], x = x0 + k * 34, own = f[0], cap = f[1], pr = f[2], rg = own < 0 ? (cap >= 0 && pr > 0 ? f : null) : ringAt[k];
+    const f = sn.tf[i], x = x0 + k * 34, own = f[0], cap = f[1], pr = f[2], rg = ringAt[k];
     oc.fillStyle = 'rgba(10,8,14,.78)'; oc.beginPath(); oc.arc(x, y, 14, 0, 7); oc.fill();
     oc.fillStyle = own < 0 ? '#6a6676' : hex(TEAMS[own].c); oc.beginPath(); oc.arc(x, y, 9, 0, 7); oc.fill();
     if (rg) { oc.strokeStyle = hex(TEAMS[rg[1]].c); oc.lineWidth = 4; oc.beginPath(); oc.arc(x, y, 13, -Math.PI / 2, -Math.PI / 2 + Math.PI * 2 * rg[2] / FLAG_T); oc.stroke(); }
