@@ -11,8 +11,8 @@
 <link rel="icon" href="logo.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
-<!-- 새 빌드마다 아래 ?v=195 숫자를 BUILD와 같게 올려요 (브라우저가 옛 파일을 쓰지 않게) -->
-<script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/","./js/data.js":"./js/data.js?v=195","./js/main.js":"./js/main.js?v=195","./js/map.js":"./js/map.js?v=195","./js/music.js":"./js/music.js?v=195","./js/render.js":"./js/render.js?v=195","./js/sfx.js":"./js/sfx.js?v=195","./js/sim.js":"./js/sim.js?v=195","./js/tr.js":"./js/tr.js?v=195"}}</script>
+<!-- 새 빌드마다 아래 ?v=196 숫자를 BUILD와 같게 올려요 (브라우저가 옛 파일을 쓰지 않게) -->
+<script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/","./js/data.js":"./js/data.js?v=196","./js/main.js":"./js/main.js?v=196","./js/map.js":"./js/map.js?v=196","./js/music.js":"./js/music.js?v=196","./js/render.js":"./js/render.js?v=196","./js/sfx.js":"./js/sfx.js?v=196","./js/sim.js":"./js/sim.js?v=196","./js/tr.js":"./js/tr.js?v=196"}}</script>
 <script src="../../ff-presence.js" async></script>
 <script src="https://cdn.jsdelivr.net/npm/peerjs@1.5.4/dist/peerjs.min.js"></script>
 <script src="https://frenchfries777mc.github.io/games/ff-lang.js"></script>
@@ -170,6 +170,15 @@ body.touch #talk{bottom:228px}
 
 #hud.on{display:block}
 #roomTag{position:absolute;left:14px;top:12px;background:var(--panel);border:3px solid var(--line);padding:8px 14px;font-weight:700;color:#d9b75a;font-size:15px}
+#chatBtn{position:absolute;left:14px;bottom:210px;pointer-events:auto;display:none;background:var(--panel);border:3px solid var(--line);padding:6px 12px;font-weight:700;font-size:14px}
+#chatLog{position:absolute;left:14px;bottom:250px;width:min(340px,60vw);pointer-events:none;font-size:13px;line-height:1.35}
+#chatLog div{background:rgba(10,8,14,.62);padding:2px 8px;margin-top:2px;text-shadow:0 1px 2px #000;word-break:break-all}
+#chatBox{position:absolute;left:14px;bottom:210px;width:min(360px,80vw);display:none;pointer-events:auto;background:var(--panel);border:3px solid var(--line);padding:8px}
+#chatBox.on{display:block}
+#chatQ{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:6px}
+#chatQ button,#chatBox .row button{padding:4px 8px;font-size:13px;font-weight:700}
+#chatBox .row{display:flex;gap:4px}
+#chatIn{flex:1;min-width:0;padding:5px 8px;font-size:14px;background:#140f18;color:#fff;border:2px solid var(--line)}
 #exitBtn{position:absolute;right:14px;top:12px;pointer-events:auto;background:var(--panel);border:3px solid var(--line);padding:7px 12px;font-weight:700;font-size:14px}
 #bossBar{position:absolute;left:50%;top:12px;transform:translateX(-50%);width:min(440px,70vw);background:var(--panel);border:3px solid var(--line);padding:6px 14px 10px;text-align:center;display:none}
 #bossBar b{font-size:16px}#bossBar .bar{height:10px;background:#2a1418;margin-top:6px;position:relative}#bossBar .bar i{position:absolute;left:0;top:0;bottom:0;background:#b9302a;box-shadow:inset 0 3px 0 #ff6a4a}
@@ -354,6 +363,7 @@ body.touch #exitBtn{top:auto;bottom:auto}
 <div id="hud"><div id="lbT" class="lb"></div><div id="lbB" class="lb"></div><div id="wflash"></div><div id="talk"><img class="face" alt="" id="talkFace"><b class="who" id="talkWho"></b><p id="talkText"></p></div>
   <div id="roomTag"></div>
   <button id="exitBtn">나가기</button>
+  <button id="chatBtn">채팅</button><div id="chatLog"></div><div id="chatBox"><div id="chatQ"></div><div class="row"><input id="chatIn" maxlength="40" autocomplete="off" placeholder="메시지 (40자)"><button id="chatSend">보내기</button><button id="chatX">닫기</button></div></div>
   <div id="bossBar"><b id="bossName"></b><div class="ph" id="bossPh"></div><div class="bar"><i id="bossHp"></i></div></div>
   <div id="center"><div id="bigMsg" class="tx"></div><div id="subMsg" class="tx"></div></div>
   <div id="toast"></div>
@@ -369,7 +379,7 @@ body.touch #exitBtn{top:auto;bottom:auto}
 <div id="touch"><div id="joy"><div id="joyBase"><div id="joyKnob"></div></div></div>
   <div id="tbtns"><button id="tA"><span>공격</span></button><button id="tQ"><i class="cd"></i><span>Q</span></button><button id="tE"><i class="cd"></i><span>E</span></button><button id="tR"><i class="cd"></i><span>R</span></button><button id="tRoll"><i class="cd"></i><span>구르기</span></button><button id="tF"><i class="cd"></i><span>귀환</span></button></div>
 </div>
-<script type="module" src="js/main.js?v=195"></script>
+<script type="module" src="js/main.js?v=196"></script>
 <div id="findBlock" style="position:fixed;inset:0;z-index:60;display:none;cursor:wait"></div>
 </body>
 </html>
