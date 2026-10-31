@@ -1749,7 +1749,13 @@ function botPvp(G, p, dt) {
   for (const q of foes) { const s = dist(p, q) + (q.hp / q.maxhp) * 7 - (q === ai.tg ? 3 : 0); if (s < bs) { bs = s; tgt = q; } }
   ai.tg = tgt;
   // 괴물: 팀마다 괴물에 가장 가까운 봇 둘이 먼저 잡으러 가요 (가까운 상대 플레이어가 있으면 그쪽이 먼저예요)
-  const hk = botHunters(G); if (hk.m[p.team] && hk.ids.includes(p.id) && (!tgt || dist(p, tgt) > 9)) tgt = hk.m[p.team];
+  const hk = botHunters(G);
+  if (hk.m[p.team] && hk.ids.includes(p.id) && (!tgt || dist(p, tgt) > 9)) {
+    // 상대·중립 깃발까지가 괴물까지와 비슷하거나 더 가까우면 괴물 대신 깃발로 가요
+    const mo = hk.m[p.team], dm = dist(p, mo); let df = 1e9;
+    G.fl.forEach((f, i) => { if (f.own === p.team || (G.dr && i === G.gi && !DSTATE.open)) return; const d = Math.hypot(f.x - p.x, f.z - p.z); if (d < df) df = d; });
+    if (!(df <= dm * 1.3)) tgt = mo;
+  }
   // 가까운 상대가 없으면 깃발로 가요: 깃발이 목표인 봇은 13칸 안의 상대만 상대하고, 깃발 위에서는 조금 더 멀리까지 지켜요
   const mf = ai.fi != null ? G.fl[ai.fi] : null, onF = mf && Math.hypot(mf.x - p.x, mf.z - p.z) < D.FLAG_R * 1.6;
   if (tgt && tgt.mon && dist(p, tgt) > 9) { const q = {}; moveTo(G, p, q, tgt.x, tgt.z, 1); if (dist(p, tgt) > 25 && p.rollCd <= 0 && G.rng() < 0.01) q.roll = true; return q; }
