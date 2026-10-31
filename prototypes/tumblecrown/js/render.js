@@ -1416,6 +1416,13 @@ export class View {
     m.rotation.set(-Math.PI / 2, 0, -a - Math.PI * 0.375);
     this.fx.push({ m, t: 0, T: 0.18, up: (f) => { m.material.opacity = 0.9 * (1 - f.t / f.T); m.scale.setScalar(1 + f.t * 2); } });
   }
+  // 부채꼴 휘두르기: 날이 지나간 부채꼴이 하얗게 남고, 빛나는 칼날 선이 한쪽에서 반대쪽으로 쓸고 지나가요
+  fanSweep(x, z, a, r, half, col, T = 0.32) {
+    const sec = mesh(new THREE.CircleGeometry(r, 28, -half, half * 2), M(col, { e: col, ei: 0.8, op: 0.45, uniq: true, ds: true }), x, 0.45, z, this.scene, false); sec.rotation.set(-Math.PI / 2, 0, -a);
+    const g = new THREE.Group(); g.position.set(x, 1.4, z); this.scene.add(g); const blade = mesh(geo('fanbl', () => new THREE.BoxGeometry(1, 0.35, 0.5)), M(0xffffff, { e: 0xffffff, ei: 3, op: 0.95, uniq: true }), r / 2, 0, 0, g, false); blade.scale.x = r;
+    this.fx.push({ m: sec, t: 0, T, up: (f) => { const u = Math.min(1, f.t / (T * 0.7)), e = 1 - Math.pow(1 - u, 3); g.rotation.y = -(a + half - e * half * 2); sec.material.opacity = 0.45 * (1 - f.t / T); blade.material.opacity = 0.95 * (1 - f.t / T); } });
+    this.fx.push({ m: g, t: 0, T, up: () => { } });
+  }
   ring(x, z, r, col, T = 0.5) {
     const m = mesh(geo('ring1', () => new THREE.RingGeometry(0.9, 1, 32)), M(col, { e: col, ei: 2, op: 0.8, uniq: true }), x, 0.2, z, this.scene, false); m.rotation.x = -Math.PI / 2;
     this.fx.push({ m, t: 0, T, up: (f) => { const u = f.t / f.T; m.scale.setScalar(r * u + 0.2); m.material.opacity = 0.8 * (1 - u); } });
