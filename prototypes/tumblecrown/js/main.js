@@ -1393,7 +1393,7 @@ function scoreboard(sn) {
 function teamHud(sn) {
   const mt = myTm(), n = sn.tf.length, x0 = innerWidth / 2 - (n - 1) * 17, y = innerWidth < 700 ? 74 : 40, nw = innerWidth < 1000, LX = nw ? innerWidth / 2 - 10 : x0 - 24, RX = nw ? innerWidth / 2 + 10 : x0 + (n - 1) * 34 + 24, yK = nw ? 24 : 4, yM = nw ? 56 : 22, yL = nw ? 40 : 38, dy = nw ? 40 : 0;   // 좁은 화면에서는 글자를 깃발 줄 아래 가운데에 쌓아요(방 이름·미니맵과 안 겹치게)
   // 깃발 줄은 위치와 상관없이 상대 팀은 왼쪽 끝부터, 우리 팀은 오른쪽 끝부터 채우고 주인 없는 깃발은 가운데에 둬요
-  const rk = i => sn.tf[i][0] === mt ? 0 : sn.tf[i][0] < 0 ? 1 : 2, ord = sn.tf.map((f, i) => i).sort((a, b) => rk(a) - rk(b) || a - b);
+  const rk = i => sn.tf[i][0] === mt ? 0 : sn.tf[i][0] < 0 ? 1 : 2, lk = i => rk(i) === 2 ? lockedFor(sn.tf[i], mt) : 0, ord = sn.tf.map((f, i) => i).sort((a, b) => rk(a) - rk(b) || lk(a) - lk(b) || a - b);   // 상대 깃발 중 지금 점령할 수 있는 것은 가장 왼쪽에
   // 점령 중 표시: 주인 있는 깃발은 점령하는 팀 쪽에서 가장 가까운 상대 팀 동그라미에, 주인 없는 깃발은 가장 가까운 주인 없는 동그라미에 떠요 (여럿이면 안쪽으로 이어서)
   const ringAt = {}, nMine = ord.filter(i => sn.tf[i][0] === mt).length, nNeu = ord.filter(i => sn.tf[i][0] < 0).length, nFoe = n - nMine - nNeu, kc = [0, 0], kn = [0, 0];
   ord.map((i, k) => [i, k]).sort((a, b) => (sn.tf[a[0]][0] < 0) - (sn.tf[b[0]][0] < 0)).forEach(([i, k]) => {   // 주인 있는 깃발이 먼저 맞닿은 자리를 차지해요
