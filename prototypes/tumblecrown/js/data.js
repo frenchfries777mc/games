@@ -3,7 +3,7 @@
 
 import { T } from './tr.js';
 
-export const VERSION = 'v0.1', BUILD = 99;
+export const VERSION = 'v0.1', BUILD = 100;
 
 export const ROLES = {
   knight: {
@@ -122,7 +122,7 @@ export const ROLES = {
     skills: [
       { id: 'rapidfire', name: T('연사'), key: 'Q', cd: 9, desc: T('같은 방향으로 총알 세 발을 잇달아 쏴요. 한 발에 26 피해.') },
       { id: 'bigshot', name: T('거대 총알'), key: 'E', cd: 11, desc: T('크고 느린 총알을 한 발 쏴요. 88 피해.') },
-      { id: 'cover', name: T('엄폐물'), key: 'R', cd: 22, desc: T('앞에 엄폐물을 5초 동안 세워요. 적은 지나갈 수 없고 적의 공격이 막혀요. 그동안 내 공격 쿨타임이 20% 줄고, 총알이 커지고, 공격 피해가 25% 늘어요.') }
+      { id: 'axeswing', name: T('도끼 휘두르기'), key: 'R', cd: 14, desc: T('다른 손의 러시아 도끼를 앞쪽 부채꼴로 크게 휘둘러요. 주변 상대에게 90 피해를 주고 강하게 밀쳐 내요.') }
     ],
     st: [5, 2, 5, 3], atkTxt: T('총 한 발 (가장 멀리 날아가지만 맞추기 어렵고 다시 쏘기까지 오래 걸려요)'),
     role: T('아주 멀리서 한 발씩 강하게 쏘고, 엄폐물 뒤에서 더 세져요.')
