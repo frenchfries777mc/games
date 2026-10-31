@@ -460,7 +460,7 @@ try{if(sessionStorage.getItem('ce_noIntro')){sessionStorage.removeItem('ce_noInt
 sting();})();</script>
 <div id="app">
  <div id="lobby" class="screen">
-  <canvas id="lobbyBg"></canvas><canvas id="lobbyWar"></canvas><div id="cpTag">© 2026 Frenchfries777 · <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.ko" target="_blank" rel="noopener">CC BY-NC-ND 4.0</a></div><div id="verTag">v0.6 · build 137</div>
+  <canvas id="lobbyBg"></canvas><canvas id="lobbyWar"></canvas><div id="cpTag">© 2026 Frenchfries777 · <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.ko" target="_blank" rel="noopener">CC BY-NC-ND 4.0</a></div><div id="verTag">v0.6 · build 138</div>
   <header class="brand"><h1>Crown Envoy</h1><div class="sub"><i></i>DIPLOMACY · WAR · EMPIRE<i></i></div></header>
   <div id="lobbyRight">
    <div id="lobbyHome" class="modes">
@@ -1428,7 +1428,6 @@ function resolveRound(){
       rep.attacks.push({pid:p.id,from:o.from,to:o.to,n:o.n,gid:o.gid});p.fought=true;};
   for(const p of G.players){if(!p.alive)continue;const list=LISTS[p.id];
     for(const o of list){if(o.mv){moves.push({pid:p.id,...o});rep.moves.push({pid:p.id,from:o.from,to:o.to});continue;}
-      {const F0=G.terr[o.from];if(hitAt[o.from]&&F0.owner===p.id&&!F0.sea){deferred.push({p,o});continue;}}
       addAtk(p,o);}}
   const execMove=m=>{const F=G.terr[m.from],T=G.terr[m.to];const gF=!!(F.owner!==m.pid&&F.gst&&F.gst[m.pid]>0);const toAlly=guestOK(m.pid,T);
     if(F.owner!==m.pid&&!gF)return;if(T.owner!==m.pid&&!toAlly)return;const tk=takeUnits(F,gF?m.pid:null,m.u||{i:m.n});if(sumU(tk)>0){if(toAlly){addUnits(T,m.pid,tk);}else addUnits(T,null,tk);}   // 병력 0명인 이동(장군만 옮기는 명령)도 장군은 따라간다
