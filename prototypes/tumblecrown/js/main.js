@@ -747,6 +747,7 @@ function localMove(p, inp, dt) {
   if (inp.roll && !fl && L.rollCd <= 0 && !(L.roll > 0)) { L.roll = 0.35; L.rollCd = 1.2 * ((p.b || []).indexOf('roll') >= 0 ? 0.6 : 1); const ra = ml > 0.1 ? Math.atan2(mz, mx) : p.a; L.rdx = Math.cos(ra); L.rdz = Math.sin(ra); }
   if (L.roll > 0) { L.roll -= dt; L.x += L.rdx * 15 * dt; L.z += L.rdz * 15 * dt; }
   else { const sp = R.speed * ((p.b || []).indexOf('feet') >= 0 ? 1.12 : 1) * (p.ra ? 1.3 : 1) * (p.cb ? 1.2 : 1) * (p.bk ? 0.8 : 1) * (fl ? 0.7 : 1) * (p.cl ? 0.6 : 1) * (p.em ? 0.75 : 1) * (p.stl ? 1.25 : 1) * (p.sp ? 0.25 : 1) * (p.bs ? 0.6 : 1); L.x += mx * sp * dt; L.z += mz * sp * dt; }
+  if (L.kvx || L.kvz) { L.x += L.kvx * dt; L.z += L.kvz * dt; const dk = Math.pow(0.02, dt); L.kvx *= dk; L.kvz *= dk; if (Math.hypot(L.kvx, L.kvz) < 0.5) L.kvx = L.kvz = 0; }   // 밀치기 속도는 빠르게 줄어요
   mapCollide(L, 0.6);
   { const ws = (S.snap.zn || []).filter(z => z.k === 'wall' || z.k === 'cover'); if (ws.length && p.tm != null) wallClamp(ws, p.tm, ox, oz, L); }
   if (!liftOk(ox, oz, L.x, L.z)) { L.x = ox; L.z = oz; }
@@ -848,7 +849,7 @@ function onEvent(e) {
   switch (e.k) {
     case 'swing': if (e.role === 'spearman' && !e.n) { const c = Math.cos(e.a), s = Math.sin(e.a); view.streak(e.x + c * 0.8, e.z + s * 0.8, e.a, 3.6, 0xe8f0ff, 0.12, 0.35); view.burst(e.x + c * 3.6, 1.2, e.z + s * 3.6, 0xe8f0ff, 5, 6, 0.2, 0.08); SFX.play('swing'); break; }
       if (e.role === 'necro') { const c = Math.cos(e.a), s = Math.sin(e.a); const w = e.w || 5; view.streak(e.x, e.z, e.a, e.r, 0x6aff8a, 0.4, w); view.streak(e.x, e.z, e.a, e.r * 0.85, 0xc8ffd8, 0.3, w * 0.45); view.burst(e.x + c * e.r * 0.7, 1.3, e.z + s * e.r * 0.7, 0x6aff8a, 10, 5, 0.35, 0.1); SFX.play('swing'); break; }
-      if (e.role === 'streltsy') { const c = Math.cos(e.a), s = Math.sin(e.a); setTimeout(() => { view.arc(e.x, e.z, e.a, e.r, 0xdfe6f0); view.streak(e.x + c * 0.6, e.z + s * 0.6, e.a, 4.4, 0xffffff, 0.3, 4.5); view.burst(e.x + c * 3, 1.3, e.z + s * 3, 0xdfe6f0, 16, 8, 0.4, 0.14); view.shock(e.x + c * 2, e.z + s * 2, 4.4, 0xdfe6f0, 0.4); view.shake = Math.max(view.shake, 0.5); }, 190); SFX.play('swing'); break; }
+      if (e.role === 'streltsy') { const c = Math.cos(e.a), s = Math.sin(e.a); setTimeout(() => { view.fanSweep(e.x, e.z, e.a, e.r, 1.2, 0xdfe6f0, 0.34); view.streak(e.x + c * 0.6, e.z + s * 0.6, e.a, 4.4, 0xffffff, 0.3, 4.5); view.burst(e.x + c * 3, 1.3, e.z + s * 3, 0xdfe6f0, 16, 8, 0.4, 0.14); view.shock(e.x + c * 2, e.z + s * 2, 4.4, 0xdfe6f0, 0.4); view.shake = Math.max(view.shake, 0.5); }, 190); SFX.play('swing'); break; }
       view.arc(e.x, e.z, e.a, e.r, COL[e.role] || 0xffffff); SFX.play('swing'); break;
     case 'wallhit': view.burst(e.x, 1.4, e.z, 0xd8cca8, 8, 5, 0.3, 0.1); SFX.play('clang'); break;
     case 'vowhit': view.streak(e.tx, e.tz, Math.atan2(e.z - e.tz, e.x - e.tx), Math.hypot(e.x - e.tx, e.z - e.tz), 0xffe08a, 0.25, 0.4); break;
@@ -983,6 +984,7 @@ function onEvent(e) {
     case 'door': toast(e.open ? T('신전 문이 열렸어요! 가운데 깃발을 차지할 수 있어요') : T('신전 문이 닫혔어요'), 2400); SFX.play(e.open ? 'warn' : 'slam'); view.shake = Math.max(view.shake, 0.5); break;
     case 'storm': toast(e.on ? T('모래폭풍이 불어요! 멀리가 안 보여요') : T('모래폭풍이 잦아들었어요'), 2400); break;
     case 'monster': view.column(e.x, e.z, 0xff7a3a, 1.6); view.shock(e.x, e.z, 8, 0xff7a3a, 0.6); view.flash(e.x, e.z, 0xff7a3a, 140); bigMsg(T('꼭짓점에 괴물이 나타났어요!'), T('쓰러뜨리면 우리 팀 공격과 점령 속도가 영구히 2% 올라요'), 2600); SFX.play('roar'); break;
+    case 'push': if (e.id === S.me && S.local) { S.local.kvx = (S.local.kvx || 0) + e.vx; S.local.kvz = (S.local.kvz || 0) + e.vz; } break;
     case 'monkill': { const mine = e.tm === myTm(); view.column(e.x, e.z, TEAMS[e.tm].c, 1.4); view.shock(e.x, e.z, 8, TEAMS[e.tm].c, 0.6); bigMsg(mine ? T('괴물을 쓰러뜨렸어요! 괴물 처치 효과 lvl.{0}', e.lv) : T('상대가 괴물을 쓰러뜨렸어요 · lvl.{0}', e.lv), T('{0}팀 공격·점령 속도 +{1}%', mine ? T('우리') : T('상대'), e.lv * 2), 2800);
       // 레벨이 오르면 그 팀 모두의 발밑에서 빛이 솟아요 (살아 있는 팀원 모두)
       if (S.snap) for (const q of S.snap.pl) if (q.tm === e.tm && !q.dd) { view.ring(q.x, q.z, 3.4, TEAMS[e.tm].c, 0.9); view.rise(q.x, q.z, 0xffe08a, 16, 1.6, 1, 6); view.column(q.x, q.z, TEAMS[e.tm].c, 0.7); }
@@ -1029,7 +1031,7 @@ $('gl').addEventListener('mousedown', e => { if (!S.rcOpen) return; e.stopImmedi
 $('gl').addEventListener('pointerdown', e => {
   // 쓰러졌을 때 뜨는 지도에서 깃발(또는 진지)을 누르면 거기서 다시 일어나요
   if (S.rspHit && S.rspHit.length) { const h = S.rspHit.find(q => Math.hypot(q.x - e.clientX, q.y - e.clientY) < q.r + 8); if (h) { if (h.v === -9) S.rspDone = false; else { S.rspSel = h.v; S.rspDone = true; } SFX.play('click'); return; } }
-  if (view.camId) specCycle(1);
+  if (view.camId && !S.rspOpen) specCycle(1);
 });
 function syncScene() {
   const sn = S.snap;
@@ -1307,6 +1309,8 @@ function respawnPanel(sn) {
   oc.imageSmoothingEnabled = !!S.mapImg; oc.drawImage(S.mapImg || mini.c, x0, y0, pw, ph); oc.strokeStyle = '#c8b480'; oc.lineWidth = 3; oc.strokeRect(x0 - 2, y0 - 2, pw + 4, ph + 4);
   oc.font = 'bold 16px Galmuri, system-ui'; oc.textAlign = 'center'; oc.lineWidth = 4; oc.strokeStyle = '#140f18';
   const tx = T('{0}초 뒤 되살아나요 · 다시 일어날 곳을 눌러요', Math.max(0, Math.ceil(me.rs))); oc.strokeText(tx, innerWidth / 2, y0 - 18); oc.fillStyle = '#ffe08a'; oc.fillText(tx, innerWidth / 2, y0 - 18);
+  S.rspOpen = true;   // 이 지도가 떠 있는 동안은 화면을 눌러도 관전 대상이 바뀌지 않아요
+  oc.font = 'bold 13px Galmuri, system-ui'; oc.fillStyle = '#c8c0d0'; oc.strokeText(T('우리 팀 깃발과 진지에서만 일어날 수 있어요'), innerWidth / 2, y0 + ph + 22); oc.fillText(T('우리 팀 깃발과 진지에서만 일어날 수 있어요'), innerWidth / 2, y0 + ph + 22);
   const pulse = 0.5 + 0.5 * Math.sin(performance.now() / 260), tc = hex(TEAMS[mt].c), pick = S.rspSel | 0;
   const sp = MAP.tspawn[mt], [sx, sy] = P(cw(sp[0]), cw(sp[1]));
   S.rspHit.push({ x: sx, y: sy, r: 16, v: -1 });
@@ -1336,7 +1340,7 @@ function hpBar(x, y, p, me, ally) {
 function drawOverlay(dt) {
   oc.clearRect(0, 0, innerWidth, innerHeight);
   const sn = S.snap; if (!sn || S.scr === 'sIntro') return;
-  S.rspHit = [];
+  S.rspHit = []; S.rspOpen = false;
   if (sn.tf && !sn.rg && S.scr === '' && sn.ph !== 'won') { teamHud(sn); respawnPanel(sn); recallPanel(sn); }
   oc.textAlign = 'center'; oc.textBaseline = 'middle';
   // 적 체력
