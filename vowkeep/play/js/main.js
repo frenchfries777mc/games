@@ -1,7 +1,7 @@
 // Vowkeep · © 2026 Frenchfries777 · CC BY-NC-ND 4.0
 // 화면 흐름, 조작, 멀티(친구 초대, PeerJS), 저장
 import { View } from './render.js';
-import { createGame, step, snapshot, chooseBless, carryOver, INTRO_T, HV_DELAY } from './sim.js';
+import { createGame, step, snapshot, chooseBless, carryOver, emote, INTRO_T, HV_DELAY } from './sim.js';
 import { ROLES, ROLE_IDS, BLESSINGS, CHAPTERS, CH, FOES, MAP, ACHIEVEMENTS, TALK, GEAR_TIERS, GEAR_COST, COSMETICS, MIDB, WEEKLY, weekInfo, VERSION, BUILD, roleLevel, LORE, COMBOS, CURSES, DEEP, DEEP_I, TALK_X, ROLE_PUZ, flagShown } from './data.js';
 import { collide as mapCollide, areaAt, floorCell, MW, MH, CS, cw, useChapter, chapterIndex, SOPEN, openSecret, resetSecrets, hiddenCell, GOPEN, openGate, PDOWN, dropPillar, LIFTH, liftOk, CUT } from './map.js';
 import * as SFX from './sfx.js';
@@ -274,8 +274,20 @@ function paintChapters() {
   if (S.wk && S.net !== 'guest') $('startBtn').textContent = T('주간 원정 시작');
   $('chRow').querySelectorAll('[data-ch]').forEach(b => b.onclick = () => { SFX.play('click'); S.chSel = +b.dataset.ch; S.wk = false; paintChapters(); hostLobby(); });
 }
+// 처음 한 번만 방에서 조작을 알려 줘요 (게임이 흐르는 중이 아니라 안전해요)
+function showGuide() {
+  if (SAVE.tipSeen) return; const R = ROLES[SAVE.role]; if (!R) return;
+  $('gT').textContent = T('조작 안내 · {0}', R.name);
+  const rows = TOUCH
+    ? [T('왼쪽 엄지로 이동해요.'), T('오른쪽 버튼: 공격(가까운 적을 자동으로 겨눠요), 기술, 구르기, 상호작용.')]
+    : [T('WASD로 이동하고 마우스로 겨눠요. 왼쪽 클릭은 공격이에요.'), T('Space는 구르기, F는 꾹 눌러 일으키기·상자 열기·모닥불 피우기예요.')];
+  R.skills.forEach(s => rows.push((TOUCH ? '' : s.key + ' · ') + s.name + ': ' + s.desc));
+  rows.push(T('공격이 닿기 직전에 구르면 2.5초 동안 집중(피해 +50%)해요.'));
+  $('gB').innerHTML = rows.map(r => '<p>' + esc(r) + '</p>').join(''); $('gOk').textContent = T('알겠어요');
+  $('guide').classList.add('on'); $('gOk').onclick = () => { $('guide').classList.remove('on'); SAVE.tipSeen = 1; save(); };
+}
 function openRoom() {
-  show('sRoom'); const solo = S.net === 'solo'; if (S.net !== 'guest') { S.chSel = chOpen(); S.wk = false; } paintChapters();
+  show('sRoom'); showGuide(); const solo = S.net === 'solo'; if (S.net !== 'guest') { S.chSel = chOpen(); S.wk = false; } paintChapters();
   $('roomTitle').textContent = solo ? T('혼자 원정 준비') : S.net === 'host' ? T('친구와 원정') : T('친구 방');
   $('codeRow').style.display = S.net === 'host' ? 'flex' : 'none';
   $('roomNote').textContent = solo ? T('내 역할을 고르세요. 나머지 세 자리는 봇 동료가 맡아요.') : T('역할을 하나 골라 주세요. 빈 자리는 봇 동료가 맡아요.');
@@ -414,6 +426,7 @@ function hostMsg(c, d) {
   const uid = c._uid; if (!uid) return;
   if (d.t === 'role' && !S.G) { const tgt = S.slots.find(s => s.role === d.role); if (tgt && !tgt.uid) { const cur = S.slots.find(s => s.uid === uid); if (cur) { cur.uid = null; cur.name = ''; } tgt.uid = uid; tgt.name = c._name || T('기사'); hostLobby(); paintSlots(); } }
   else if (d.t === 'i' && S.G) { const pid = c._pid; if (!pid) return; const r = S.rin[pid] || (S.rin[pid] = {}); const once = { q: r.q || d.q, e: r.e || d.e, r: r.r || d.r, roll: r.roll || d.roll, skip: r.skip || d.skip }; Object.assign(r, d, once); }
+  else if (d.t === 'em' && S.G) { if (c._pid) emote(S.G, c._pid, d.k | 0); }
   else if (d.t === 'b' && S.G) { if (c._pid) chooseBless(S.G, c._pid, d.id); }
 }
 function dropConn(c) {
@@ -487,6 +500,15 @@ function endToLobby(msg) {
   leaveNet(); S.G = null; S.snap = null; setHud(false); $('bless').classList.remove('on');
   view.buildLobby(); show('sLobby'); paintWho(); if (msg) homeMsg(msg);
 }
+// 동료 이모트: 버튼을 눌러 네 가지 중 하나를 보내요 (방장은 바로, 손님은 방장에게 보내요)
+const EMO = [T('고마워요'), T('도와줘요'), T('조심해요'), T('가요')];
+function sendEmote(k) {
+  if (!S.snap || !S.me) return;
+  if (S.G) emote(S.G, S.me, k); else if (S.conn && S.conn.open) S.conn.send({ t: 'em', k });
+  $('emoRow').classList.remove('on');
+}
+$('emoBtn').onclick = () => { SFX.play('click'); $('emoRow').classList.toggle('on'); };
+EMO.forEach((t, k) => { const b = document.createElement('button'); b.textContent = t; b.onclick = () => sendEmote(k); $('emoRow').appendChild(b); });
 $('exitBtn').onclick = () => {
   const b = $('exitBtn');
   if (b.dataset.arm) { delete b.dataset.arm; b.textContent = T('나가기'); endToLobby(''); return; }
@@ -624,7 +646,7 @@ function onEvent(e) {
     case 'charge': view.ring(e.x, e.z, e.n === 3 ? 2.4 : 1.6, e.n === 3 ? 0xffd36b : 0x9af0a8, 0.4); view.burst(e.x, 1.8, e.z, e.n === 3 ? 0xffd36b : 0x9af0a8, e.n === 3 ? 12 : 6, 3, 0.4, 0.1); if (e.id === S.me) SFX.play(e.n === 3 ? 'clear' : 'clang'); break;
     case 'raising': view.column(e.x, e.z, 0xfff0b0, 1.1); view.ring(e.x, e.z, 6, 0xfff0b0, 1.0); break;
     case 'eshoot': SFX.play('arrow'); break;
-    case 'ehit': view.react(e.id, e.hv || e.crit); if (e.hv) view.spark(e.x, e.z, e.id, true); else view.burst(e.x, 1.6, e.z, 0xe8e0c8, e.crit ? 6 : 3, 4, 0.3, 0.09); num(e.x, e.z, e.v, e.crit ? '#ffd36b' : '#ffffff', e.crit ? 1.3 : 1); SFX.play('hit'); break;
+    case 'ehit': view.react(e.id, e.hv || e.crit); if (e.hv) view.spark(e.x, e.z, e.id, true); else view.burst(e.x, 1.6, e.z, 0xe8e0c8, e.crit ? 6 : 3, 4, 0.3, 0.09); { const other = e.by && e.by !== me; num(e.x, e.z, e.v, e.crit ? '#ffd36b' : '#ffffff', (e.crit ? 1.3 : 1) * (other ? 0.7 : 1), 3, other); } SFX.play('hit'); break;
     case 'pdodge': view.ring(e.x, e.z, 2.6, 0x9ad0ff, 0.4); view.streak(e.x, e.z, 0, 0.1, 0x9ad0ff, 0.2, 0.1); view.rise(e.x, e.z, 0x9ad0ff, 10, 1, 0.6, 6); if (e.id === me) { num(e.x, e.z, T('완벽한 회피!'), '#9ad0ff', 1.3, 4.2); view.flash(e.x, e.z, 0x9ad0ff, 120); SFX.play('parry'); if (S.net === 'solo') S.slowT = Math.max(S.slowT || 0, 0.45); } break;
     case 'heavy': { // 내려찍은 자리: 큰 충격파 두 겹, 흙먼지, 땅 문양, 화면 크게 흔들기
       const hp = view.entPos('p' + e.id); if (hp) { view.ring(hp.x + Math.cos(e.a) * 1.4, hp.z + Math.sin(e.a) * 1.4, 3.4, 0xffe08a, 0.4); view.burst(hp.x + Math.cos(e.a) * 1.4, 0.3, hp.z + Math.sin(e.a) * 1.4, 0xbcae94, 26, 9, 0.6, 0.18); }
@@ -635,6 +657,7 @@ function onEvent(e) {
     case 'big': { // 사제·종자 세 번째 큰 공격
       const col = e.role === 'priest' ? 0xfff0b0 : 0xffb060; view.shock(e.x, e.z, 3.6, col, 0.4); view.burst(e.x, 1.4, e.z, col, 18, 8, 0.45, 0.14); view.rise(e.x, e.z, col, 10, 1.2, 0.5, 7); view.flash(e.x, e.z, col, 110);
       if (e.id === me) view.shake = Math.max(view.shake, 0.6); SFX.play('clang'); break; }
+    case 'emote': { const hp = view.entPos('p' + e.id); if (hp) num(hp.x, hp.z, EMO[e.n] || '', '#9af0a8', 1.2, 4.4); SFX.play('click'); break; }
     case 'wkOn': num(e.x, e.z, T('약점이 드러났다!'), '#ffe08a', 1.1, 4.2); view.shock(e.x, e.z, 2.4, 0xffd070, 0.3); break;
     case 'weak': num(e.x, e.z, T('약점!'), '#ff9c4a', 1.4, 3.8); view.shock(e.x, e.z, 3, 0xff7a20, 0.35); view.burst(e.x, 2.4, e.z, 0xffb060, 14, 9, 0.5, 0.14); view.flash(e.x, e.z, 0xff7a20, 90); view.shake = Math.max(view.shake, 0.35); SFX.play('parry'); break;
     case 'phit': num(e.x, e.z, '-' + e.v, '#ff7a6a', 1); if (e.id === me) { view.shake = Math.max(view.shake, 0.5); SFX.play('phit'); } break;
@@ -736,10 +759,10 @@ function onEvent(e) {
   }
 }
 // 피해 숫자: 같은 자리에 잇달아 뜨면 하나로 합쳐서 덩어리지지 않게 해요
-function num(x, z, v, col, sc = 1, y = 3) {
+function num(x, z, v, col, sc = 1, y = 3, dim = false) {
   v = String(v); const m = /^([+-]?)(\d+)$/.exec(v);
-  if (m) { const o = S.nums.find(n => n.col === col && n.t < 0.45 && n.n != null && Math.abs(n.x - x) < 1.6 && Math.abs(n.z - z) < 1.6); if (o) { o.n += +m[2]; o.v = m[1] + o.n; o.t = Math.min(o.t, 0.12); o.sc = Math.min(1.6, Math.max(o.sc, sc) + 0.04); return; } }
-  S.nums.push({ x: x + (Math.random() - .5) * 0.6, z, y, v, n: m ? +m[2] : null, col, sc, t: 0 });
+  if (m) { const o = S.nums.find(n => n.col === col && !n.dim === !dim && n.t < 0.45 && n.n != null && Math.abs(n.x - x) < 1.6 && Math.abs(n.z - z) < 1.6); if (o) { o.n += +m[2]; o.v = m[1] + o.n; o.t = Math.min(o.t, 0.12); o.sc = Math.min(1.6, Math.max(o.sc, sc) + 0.04); return; } }
+  S.nums.push({ x: x + (Math.random() - .5) * 0.6, z, y, v, n: m ? +m[2] : null, col, sc, t: 0, dim });
   if (S.nums.length > 18) S.nums.shift();
 }
 
@@ -935,7 +958,7 @@ function drawOverlay(dt) {
       oc.save(); oc.translate(c.x + Math.cos(a) * r, c.y + Math.sin(a) * r); oc.rotate(a); oc.fillStyle = '#9af0a8'; oc.strokeStyle = '#140f18'; oc.lineWidth = 3; oc.beginPath(); oc.moveTo(14, 0); oc.lineTo(-8, -10); oc.lineTo(-3, 0); oc.lineTo(-8, 10); oc.closePath(); oc.stroke(); oc.fill(); oc.restore(); } }
   }
   // 피해 숫자
-  for (const n of S.nums) { n.t += dt; const s = view.project(n.x, n.y + n.t * 2.2, n.z); oc.globalAlpha = Math.max(0, 1 - n.t / 0.9); oc.font = 'bold ' + Math.round(18 * n.sc) + 'px Galmuri, system-ui'; oc.lineWidth = 4; oc.strokeStyle = '#140f18'; oc.strokeText(n.v, s.x, s.y); oc.fillStyle = n.col; oc.fillText(n.v, s.x, s.y); }
+  for (const n of S.nums) { n.t += dt; const s = view.project(n.x, n.y + n.t * 2.2, n.z); oc.globalAlpha = Math.max(0, 1 - n.t / 0.9) * (n.dim ? 0.55 : 1); oc.font = 'bold ' + Math.round(18 * n.sc) + 'px Galmuri, system-ui'; oc.lineWidth = 4; oc.strokeStyle = '#140f18'; oc.strokeText(n.v, s.x, s.y); oc.fillStyle = n.col; oc.fillText(n.v, s.x, s.y); }
   oc.globalAlpha = 1; S.nums = S.nums.filter(n => n.t < 0.9);
 }
 // 장을 깼을 때: vC와 이야기 진행을 저장해요 (한 장에 한 번)
