@@ -605,8 +605,9 @@ function awardHonor() {
   if (S.saved || !S.snap || !S.me) return; S.saved = true;
   const p = myP(); if (!p) return;
   let h = Math.round((S.snap.honor[S.me] || 0) * ((p.b || []).indexOf('honor') >= 0 ? 1.25 : 1));
-  SAVE.honor += h; SAVE.xp[p.role] = (SAVE.xp[p.role] || 0) + h; save();
-  return h;
+  const gain = S.net === 'solo' ? 0 : h;   // 봇과 연습은 tC를 못 얻어요
+  SAVE.honor += gain; SAVE.xp[p.role] = (SAVE.xp[p.role] || 0) + h; save();
+  return gain;
 }
 
 /* ---------- 조작 ---------- */
