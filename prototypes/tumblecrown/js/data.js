@@ -785,7 +785,7 @@ COSMETICS.skin.items.push(
 // 온라인 대전 모드: key는 방 이름 앞글자 (모드마다 방이 따로 열려요)
 export const MODES = {
   normal: { key: 'q', cap: 10, name: T('5대5 일반'), desc: T('열 명이 모여 깃발 일곱 개를 두고 겨뤄요') },
-  quick: { key: 'k', cap: 6, limit: 300, name: T('3대3 빠른 대전'), desc: T('여섯 명, 깃발 다섯 개, 5분 안에 끝나요') },
+  quick: { key: 'k', cap: 6, name: T('3대3 빠른 대전'), desc: T('여섯 명, 깃발 다섯 개, 깃발을 전부 점령하면 이겨요') },
   rank: { key: 'r', cap: 10, name: T('팀 랭킹전'), desc: T('이기면 랭킹 점수가 오르고 지면 내려가요') }
 };
 export const GEAR_BONUS = { weapon: [0, 0.1, 0.22], armor: [0, 15, 35] };
