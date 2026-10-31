@@ -183,6 +183,7 @@ function menu(go) {
   else if (go === 'match') { if (needLogin()) return; paintModes(); show('sMode'); }
   else if (go === 'ward') { S.wardTab = S.wardTab || 'skin'; S.wardSel = null; paintWard(); show('sWard'); view.cos = SAVE.cos.on; view.setPreview(SAVE.role, COLORS[SAVE.col | 0].c); }
   else if (go === 'weps') { leaveNet(); S.net = 'solo'; S.info = true; S.slots = [meSlot()]; openRoom(); }   // 직업·조작: 시작 버튼 없이 직업을 눌러 정보만 봐요
+  else if (go === 'daily') { paintDaily(); show('sDaily'); }
   else if (go === 'notes') { loadNotes(); show('sNotes'); }
   else if (go === 'settings') { paintSettings(); show('sSettings'); }
   else if (go === 'site') { try { window.close(); } catch (e) { } setTimeout(() => { location.href = '../../'; }, 250); }   // 창이 닫히면 그대로 사라지고, 못 닫으면 사이트로 가요
@@ -224,6 +225,27 @@ function paintWepInfo() { $('wepInfo').innerHTML = ROLE_IDS.map(roleCard).join('
 
 /* ---------- 패치노트 ---------- */
 let NOTES = null;
+/* ---------- 일일 임무 (한국 시간 자정에 새로 나와요, 온라인 대전에서만 쌓여요) ---------- */
+const DAILY_REW = 40;
+function dayKey() { return new Date(Date.now() + 9 * 36e5).toISOString().slice(0, 10); }
+function dailyList() {
+  const k = dayKey(); if (!SAVE.daily || SAVE.daily.d !== k) {
+    const seed = +k.replace(/-/g, '') | 0, role = ROLE_IDS[seed % ROLE_IDS.length];
+    SAVE.daily = { d: k, role, m: [{ t: 'play', n: 2, v: 0 }, { t: 'kill', n: 12, v: 0 }, { t: 'win', n: 1, v: 0 }, { t: 'role', n: 1, v: 0 }] }; save();
+  }
+  return SAVE.daily;
+}
+const dailyText = (D, m) => m.t === 'play' ? T('온라인 대전 {0}판 마치기', m.n) : m.t === 'kill' ? T('온라인 대전에서 {0}명 쓰러뜨리기', m.n) : m.t === 'win' ? T('온라인 대전 {0}판 이기기', m.n) : T('{0}(으)로 온라인 대전 {1}판 마치기', ROLES[D.role].name, m.n);
+// 한 판이 끝날 때: 진행도를 올리고 새로 채운 임무의 보상 tC를 돌려줘요
+function dailyAward(role, kills, won) {
+  const D = dailyList(); let g = 0; S.lastDaily = [];
+  for (const m of D.m) { if (m.v >= m.n) continue; const add = m.t === 'play' ? 1 : m.t === 'kill' ? kills : m.t === 'win' ? (won ? 1 : 0) : (role === D.role ? 1 : 0); m.v = Math.min(m.n, m.v + add); if (m.v >= m.n) { g += DAILY_REW; S.lastDaily.push(dailyText(D, m)); } }
+  if (g) SAVE.honor += g; S.dailyGain = g; save(); return g;
+}
+function paintDaily() {
+  const D = dailyList(); $('dailyNote').textContent = T('한국 시간 자정에 새로 나와요. 온라인 대전에서만 채워지고, 하나를 채울 때마다 {0} tC를 받아요.', DAILY_REW);
+  $('dailyBox').innerHTML = D.m.map(m => '<div class="bar" style="display:flex;gap:10px;align-items:center;margin:10px 0"><span style="flex:1;color:' + (m.v >= m.n ? '#7affb0' : '#efe3c8') + '">' + (m.v >= m.n ? '✔ ' : '') + dailyText(D, m) + '</span><u style="width:90px;display:inline-block;height:8px;background:#2a2230"><i style="display:block;height:8px;background:#ffd36b;width:' + Math.round(m.v / m.n * 100) + '%"></i></u><small>' + m.v + '/' + m.n + '</small></div>').join('');
+}
 function loadNotes() { if (NOTES) return renderNotes(); fetch('patchnotes.json?v=' + BUILD).then(r => r.json()).then(d => { NOTES = d; renderNotes(); }, () => { $('notesBox').innerHTML = '<p class="note">' + T('패치노트를 불러오지 못했어요.') + '</p>'; }); }
 function renderNotes() {
   const raw = (NOTES && NOTES.notes) || [], list = window.FFPN ? FFPN.filter(raw) : raw, box = $('notesBox');
@@ -636,7 +658,7 @@ function awardHonor() {
   const p = myP(); if (!p) return;
   let h = Math.round((S.snap.honor[S.me] || 0) * ((p.b || []).indexOf('honor') >= 0 ? 1.25 : 1));
   const gain = S.net === 'solo' ? 0 : h;   // 봇과 연습은 tC를 못 얻어요
-  SAVE.honor += gain; const won = p.tm === S.snap.wtm; S.lastRt = null; if (S.G && S.G.mode === 'rank' && S.net !== 'solo') { const rb = SAVE.rating | 0, rg = won ? RANK_WIN : -RANK_LOSS; SAVE.rating = Math.max(0, rb + rg); S.lastRt = { gain: SAVE.rating - rb, total: SAVE.rating }; } SAVE.pts = SAVE.pts || {}; SAVE.winStreak = won ? (SAVE.winStreak | 0) + 1 : 0; const kp = (p.kl | 0) * MASTERY_PT.kill, wp = won ? MASTERY_PT.win : 0, sp = won ? streakBonusFor(SAVE.winStreak) : 0, mg = kp + wp + sp + MASTERY_PT.match, mb = SAVE.pts[p.role] || 0; SAVE.pts[p.role] = mb + mg; S.lastMp = { role: p.role, gain: mg, k: p.kl | 0, won, sp, st: SAVE.winStreak, total: mb + mg, up: charRankFor(mb + mg).name !== charRankFor(mb).name }; const xg = 20 + (p.kl | 0) * 5 + (won ? 30 : 0); if (!S.range) { const st = SAVE.st = SAVE.st || {}; st.matches = (st.matches | 0) + 1; if (won) st.wins = (st.wins | 0) + 1; st.kills = (st.kills | 0) + (p.kl | 0); st.flags = (st.flags | 0) + (p.fcp | 0); st.mon = (st.mon | 0) + (p.mkp | 0); st.pl = st.pl || {}; st.pl[p.role] = (st.pl[p.role] | 0) + 1;
+  SAVE.honor += gain; const won = p.tm === S.snap.wtm; S.lastRt = null; if (S.G && S.G.mode === 'rank' && S.net !== 'solo') { const rb = SAVE.rating | 0, rg = won ? RANK_WIN : -RANK_LOSS; SAVE.rating = Math.max(0, rb + rg); S.lastRt = { gain: SAVE.rating - rb, total: SAVE.rating }; } S.dailyGain = 0; if (S.net !== 'solo') dailyAward(p.role, p.kl | 0, won); SAVE.pts = SAVE.pts || {}; SAVE.winStreak = won ? (SAVE.winStreak | 0) + 1 : 0; const kp = (p.kl | 0) * MASTERY_PT.kill, wp = won ? MASTERY_PT.win : 0, sp = won ? streakBonusFor(SAVE.winStreak) : 0, mg = kp + wp + sp + MASTERY_PT.match, mb = SAVE.pts[p.role] || 0; SAVE.pts[p.role] = mb + mg; S.lastMp = { role: p.role, gain: mg, k: p.kl | 0, won, sp, st: SAVE.winStreak, total: mb + mg, up: charRankFor(mb + mg).name !== charRankFor(mb).name }; const xg = 20 + (p.kl | 0) * 5 + (won ? 30 : 0); if (!S.range) { const st = SAVE.st = SAVE.st || {}; st.matches = (st.matches | 0) + 1; if (won) st.wins = (st.wins | 0) + 1; st.kills = (st.kills | 0) + (p.kl | 0); st.flags = (st.flags | 0) + (p.fcp | 0); st.mon = (st.mon | 0) + (p.mkp | 0); st.pl = st.pl || {}; st.pl[p.role] = (st.pl[p.role] | 0) + 1;
     if (st.wins >= 10) unlock('wins10'); if (st.kills >= 50) unlock('kill50'); if (st.kills >= 300) unlock('kill300'); if (st.flags >= 10) unlock('flag10'); if (st.flags >= 100) unlock('flag100'); if (st.mon >= 1) unlock('mon1'); if (st.mon >= 10) unlock('mon10'); if (st.matches >= 50) unlock('match50'); if ((p.kl | 0) >= 5) unlock('kill5'); }
   S.lastXp = xg; S.lastLv = roleLevel(SAVE.xp[p.role]); SAVE.xp[p.role] = (SAVE.xp[p.role] || 0) + xg; S.lastLv = roleLevel(SAVE.xp[p.role]) > S.lastLv ? roleLevel(SAVE.xp[p.role]) : 0; if (roleLevel(SAVE.xp[p.role]) >= 10) unlock('lv10'); if (SAVE.pts[p.role] >= 530) unlock('gold'); save();   // 직업 경험치: 한 판 20 + 쓰러뜨림당 5 + 승리 30
   return gain;
@@ -1463,7 +1485,7 @@ function showWin() {
   const row = p => `<tr${p.id === S.me ? ' style="background:#2a2014"' : ''}><td style="color:${ROLES[p.role].color}">${ROLES[p.role].name}</td><td>${esc(p.id === S.me ? T('나') : p.bot ? T('봇') : p.name)}</td><td>${p.kl | 0}</td><td>${p.dth | 0}</td></tr>`;
   const tab = t => `<div><h3 style="color:${hex(TEAMS[t].c)}">${tmName(t)}${t === wt ? ' · ' + T('승리') : ''}</h3><table><tr><th>${T('직업')}</th><th>${T('이름')}</th><th>${T('쓰러뜨림')}</th><th>${T('쓰러짐')}</th></tr>${sn.pl.filter(p => p.tm === t).map(row).join('')}</table></div>`;
   const top3 = sn.pl.slice().sort((a, b) => (b.kl | 0) - (a.kl | 0)).slice(0, 3), pod = [[1, 'd8d8e0', 46], [0, 'ffd36b', 62], [2, 'c8884a', 36]].filter(([i]) => top3[i]).map(([i, c, hh]) => { const q = top3[i]; return `<div style="flex:1;text-align:center"><div style="font-size:12px;color:${ROLES[q.role].color}">${ROLES[q.role].name}</div><div style="font-size:12px;margin:2px 0 4px">${esc(q.id === S.me ? T('나') : q.bot ? T('봇') : q.name)}</div><div style="height:${hh}px;background:#${c};color:#201810;font-weight:700;line-height:${hh}px;border-radius:4px 4px 0 0">${q.kl | 0} · ${q.dth | 0}</div></div>`; }).join('');
-  $('winBox').innerHTML = `<div class="wt" style="color:${won ? '#ffd36b' : '#ff6a5a'}">${won ? T('승리!') : T('패배')}</div><div class="ws">${T('깃발 일곱 개를 모두 차지했어요')}</div><div class="pod">${pod}</div><div class="rk">${tab(0)}${tab(1)}</div><div class="tc">${T('받은 tC {0}', '<b style="color:#ffd36b">' + h + '</b>')} · ${T('지금 tC {0}', SAVE.honor)} · ${T('경험치 +{0}', S.lastXp | 0)}${S.lastLv ? ' · ' + T('레벨 {0} 달성!', S.lastLv) : ''}</div>${S.lastRt ? `<div class="tc">${T('랭킹 점수 {0}', (S.lastRt.gain >= 0 ? '+' : '') + S.lastRt.gain)} · <b style="color:${charRankFor(S.lastRt.total).color}">${S.lastRt.total}${T('점')} · ${charRankFor(S.lastRt.total).name}</b></div>` : ''}${S.lastMp ? `<div class="tc">${T('마스터리 +{0}', '<b style="color:#ffd36b">' + S.lastMp.gain + '</b>')} (${T('처치 {0}×{1}', S.lastMp.k, MASTERY_PT.kill)} + ${T('완주 {0}', MASTERY_PT.match)}${S.lastMp.won ? ' + ' + T('승리 {0}', MASTERY_PT.win) : ''}${S.lastMp.sp ? ' + 🔥' + T('{0}연승 +{1}', S.lastMp.st, S.lastMp.sp) : ''}) · <b style="color:${charRankFor(S.lastMp.total).color}">${charRankFor(S.lastMp.total).name}</b>${S.lastMp.up ? ' ' + T('계급 올랐어요!') : ''}</div>` : ''}`;
+  $('winBox').innerHTML = `<div class="wt" style="color:${won ? '#ffd36b' : '#ff6a5a'}">${won ? T('승리!') : T('패배')}</div><div class="ws">${T('깃발 일곱 개를 모두 차지했어요')}</div><div class="pod">${pod}</div><div class="rk">${tab(0)}${tab(1)}</div><div class="tc">${T('받은 tC {0}', '<b style="color:#ffd36b">' + h + '</b>')} · ${T('지금 tC {0}', SAVE.honor)} · ${T('경험치 +{0}', S.lastXp | 0)}${S.lastLv ? ' · ' + T('레벨 {0} 달성!', S.lastLv) : ''}</div>${S.dailyGain ? `<div class="tc">${T('일일 임무 완료')}: ${(S.lastDaily || []).join(', ')} · <b style="color:#ffd36b">+${S.dailyGain} tC</b></div>` : ''}${S.lastRt ? `<div class="tc">${T('랭킹 점수 {0}', (S.lastRt.gain >= 0 ? '+' : '') + S.lastRt.gain)} · <b style="color:${charRankFor(S.lastRt.total).color}">${S.lastRt.total}${T('점')} · ${charRankFor(S.lastRt.total).name}</b></div>` : ''}${S.lastMp ? `<div class="tc">${T('마스터리 +{0}', '<b style="color:#ffd36b">' + S.lastMp.gain + '</b>')} (${T('처치 {0}×{1}', S.lastMp.k, MASTERY_PT.kill)} + ${T('완주 {0}', MASTERY_PT.match)}${S.lastMp.won ? ' + ' + T('승리 {0}', MASTERY_PT.win) : ''}${S.lastMp.sp ? ' + 🔥' + T('{0}연승 +{1}', S.lastMp.st, S.lastMp.sp) : ''}) · <b style="color:${charRankFor(S.lastMp.total).color}">${charRankFor(S.lastMp.total).name}</b>${S.lastMp.up ? ' ' + T('계급 올랐어요!') : ''}</div>` : ''}`;
   $('winBox').classList.toggle('me', !!won);
   $('winBack').onclick = () => { SFX.play('click'); endToLobby(''); };
   setHud(false); show('sWin');
