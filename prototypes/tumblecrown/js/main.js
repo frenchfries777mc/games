@@ -160,7 +160,7 @@ paintWho();
 function needLogin() { if (!window.FFAuth) return false; if (loggedIn()) return false; homeMsg(T('친구와 대전은 Frenchfries777 계정으로 로그인해야 해요.')); try { FFAuth.openLogin(); } catch (e) { } return true; }
 function hubRoom(on) { try { if (window.FFAuth && FFAuth.setRoom) FFAuth.setRoom(on && S.code ? { game: 'tumblecrown', code: S.code, path: 'prototypes/tumblecrown/index.html' } : null); } catch (e) { } }
 let autoDone = false;
-function autoJoin() { const c = (qs.get('join') || '').toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 6); if (autoDone || c.length !== 6 || S.net) return; autoDone = true; if (needLogin()) return;
+function autoJoin() { const c = (qs.get('join') || '').toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 6); if (autoDone || c.length !== 6 || S.net) return; autoDone = true; homeMsg(T('친구와 대결은 없어졌어요. 온라인 대전을 이용해 주세요.')); return;
   // 초대 링크로 들어왔을 때: 취소됐거나 30분이 지난 초대면 들어가지 않아요 (확인 기능이 아직 없으면 그냥 들어가요)
   const sb = window.FFAuth && FFAuth.client && FFAuth.client();
   if (!sb) { startGuest(c); return; }
@@ -175,7 +175,6 @@ function menu(go) {
   if (go === 'solo') { leaveNet(); S.net = 'solo'; S.slots = [meSlot()]; newBots(); openRoom(); }
   if (go === 'range') { leaveNet(); S.net = 'solo'; S.range = true; S.slots = [meSlot()]; newBots(); openRoom(); }
   else if (go === 'match') { if (needLogin()) return; startMatch(); }
-  else if (go === 'host') { if (needLogin()) return; startHost(); }
   else if (go === 'ward') { S.wardTab = S.wardTab || 'skin'; S.wardSel = null; paintWard(); show('sWard'); view.cos = SAVE.cos.on; view.setPreview(SAVE.role, COLORS[SAVE.col | 0].c); }
   else if (go === 'weps') { paintWepInfo(); show('sWeps'); }
   else if (go === 'notes') { loadNotes(); show('sNotes'); }
