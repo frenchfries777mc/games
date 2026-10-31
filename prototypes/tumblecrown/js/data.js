@@ -440,7 +440,7 @@ function grow(ci, rooms, [p1, dk, p2]) {
 export const PUSH_N = 5, PUSH_T = 5;   // 깃발을 이만큼 가진 팀이 몰아붙이면 상대 부활이 이만큼(초) 늘어요
 export const DOOR_OPEN_T = 14, DOOR_SHUT_T = 16, STORM_CALM_T = 30, STORM_T = 12;   // 사막 신전: 문이 열려 있는 시간·닫혀 있는 시간, 모래폭풍이 잠잠한 시간·부는 시간(초)
 export const TEAM_N = 5, FLAG_T = 7, FLAG_R = 6.5, RESP_T = 15, SPAWN_INV = 2, TEAM_HP = 1.5, RECALL_CD = 25, RECALL_T = 3;
-export const TEAMS = [{ name: T('푸른 군단'), c: 0x4a8cff }, { name: T('붉은 군단'), c: 0xff5a4a }];
+export const TEAMS = [{ name: T('우리 팀'), c: 0x4a8cff }, { name: T('상대 팀'), c: 0xff5a4a }];
 // 전략이 있는 지도 네 개 (모두 180도 돌려도 똑같아서 공평해요). 담은 [x,y,너비,높이] 칸 단위로 한쪽 반만 적고 반대쪽은 돌려서 만들어요.
 // A = 푸른 팀 (왼쪽 아래 진지), 기둥은 [x,y]. fl = 푸른 팀 쪽 깃발 둘 / mid = 가운데 깃발 (첫째는 한가운데, 둘째와 그 맞은편은 자동)
 const ARENAS = [
