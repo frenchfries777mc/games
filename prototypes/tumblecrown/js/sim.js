@@ -153,7 +153,8 @@ function flagsStep(G, dt) {
   });
 }
 // 중립 괴물: 우리 팀 진지가 아닌 나머지 두 꼭짓점에서 한 마리씩 나와요. 꼭짓점에 괴물이 남아 있으면 거기서는 다시 나오지 않아요
-function monCorners() { const a = MAP.tspawn[0], b = MAP.tspawn[1]; return [[a[0], b[1]], [b[0], a[1]]].map(([x, y]) => [(x + 0.5) * MAP.cs, (y + 0.5) * MAP.cs]); }
+function monCorners() { const sp = MAP.tspawn0 || MAP.tspawn, a = sp[0], b = sp[1];   // 괴물 자리는 지도의 원래 두 진지 쪽 모서리예요 (팀 거점을 시작 깃발 자리로 옮겨도 그대로)
+  return [[a[0], b[1]], [b[0], a[1]]].map(([x, y]) => [(x + 0.5) * MAP.cs, (y + 0.5) * MAP.cs]); }
 function spawnMonsters(G, ci) {
   const [cx, cz] = monCorners()[ci];
   for (let k = 0; k < 1; k++) {
