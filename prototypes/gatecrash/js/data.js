@@ -1,7 +1,7 @@
 /* Gatecrash · © 2026 Frenchfries777 · CC BY-NC-ND 4.0
    데이터: 상수, 무기, 맵 */
 'use strict';
-const VERSION = '0.1', BUILD = 25;
+const VERSION = '0.1', BUILD = 26;
 const TS = 16;                                   // 타일 한 칸 (px)
 const PH = { RUN: 120, ACC: 1500, AIR: 1000, G: 1500, JUMP: 440, CUT: 300, MAXF: 560, W: 10, H: 22, COY: 0.08, BUF: 0.12, BELT: 70, ICE: 180, LIFT: 130 };
 const MAX_HP = 100, RACERS = 4;
@@ -119,12 +119,13 @@ function floorsMap(F, roof, seed) {
     const GA = ['ice', 'gap', 'mezz'];
     for (let q = 0; g.length < 3 && q < 3; q++) { const k = GA[(i + seed + q) % 3]; if (!g.includes(k)) g.push(k); }
     for (const k of g) {
-      const len = k === 'ice' ? 12 : 3;
+      const pit = k === 'gap' && (i + seed) % 2 === 0, len = k === 'ice' ? 12 : pit ? 9 : 3;
       if (k === 'mezz' || (k === 'gap' && i < 1)) continue;
       for (let t = 0; t < 14; t++) {
         const x0 = 18 + (R() * (FW - 36 - len) | 0);
         if (res.some(r => x0 + len + 2 >= r[0] && x0 - 2 <= r[1])) continue;
         if (k === 'ice') { b.fill(x0, S(i), x0 + 11, S(i), 'I'); res.push([x0 - 1, x0 + 12]); b.deco('cone', x0 - 1, bottom, 1, 1); }
+        else if (pit) { b.fill(x0, S(i), x0 + 8, S(i), '.'); b.fill(x0 + 2, S(i) - 1, x0 + 3, S(i) - 1, '='); b.fill(x0 + 5, S(i) - 1, x0 + 6, S(i) - 1, '='); res.push([x0 - 2, x0 + 11]); }   // 파쿠르: 징검다리 구덩이
         else { b.fill(x0, S(i), x0 + 2, S(i), '.'); res.push([x0 - 2, x0 + 5]); }
         break;
       }
@@ -169,6 +170,7 @@ function longMap(segs, goal, seed) {
     if (g.includes('belt')) { const bx = x + 14 + (R() * Math.max(1, s.len - 44) | 0); b.fill(bx, top, bx + 14, top, R() < .5 ? '>' : '<'); res.push([bx - 1, bx + 15]); }
     if (g.includes('ice')) { const ix = x + 18 + (R() * Math.max(1, s.len - 50) | 0); if (!res.some(r => ix + 14 >= r[0] && ix - 2 <= r[1])) { b.fill(ix, top, ix + 11, top, 'I'); res.push([ix - 1, ix + 12]); b.deco('cone', ix - 1, bottom, 1, 1); } }
     for (const o of s.objs) if (o[0][0] === '~') b.deco(o[0].slice(1), x + o[1], bottom, o[2], o[3]);
+    if (s.len >= 70) { const hx = x + 20 + (R() * (s.len - 56) | 0); if (!res.some(r => hx + 24 >= r[0] && hx <= r[1])) { [1, 2, 3, 2, 1].forEach((hh, n) => b.obj('boxes', hx + n * 5, bottom, 2, hh)); res.push([hx - 2, hx + 24]); } }   // 파쿠르: 점점 높아지는 상자 넘기
     const placed = []; placeRun(b, R, s.objs, x + 5, x1 - 4, bottom, res, placed);
     if (g.includes('mezz')) mezzOn(b, placed, bottom, Math.max(1, placed.length >> 2));
     itemSpots(b, x + 3, x1 - 3, bottom, Math.max(2, s.len / 22 | 0));
