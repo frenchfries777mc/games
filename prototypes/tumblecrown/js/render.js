@@ -6,7 +6,7 @@ import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js'
 import { OutputPass } from 'three/addons/postprocessing/OutputPass.js';
 import { RenderPixelatedPass } from 'three/addons/postprocessing/RenderPixelatedPass.js';
 import { ROLES, MAP, CH, FOES, COSMETICS, TEAMS, FLAG_R, FLAG_T } from './data.js';
-import { CS, MW, MH, GRID, WATER, PILLARS, cw, chapterIndex, SEC, SOPEN, GATE, CUT, HGT, LEDGE_H, hAt, pillarAt } from './map.js';
+import { DSTATE, CS, MW, MH, GRID, WATER, PILLARS, cw, chapterIndex, SEC, SOPEN, GATE, CUT, HGT, LEDGE_H, hAt, pillarAt } from './map.js';
 // 화면에서 '바닥'은 비밀 방(SEC)을 뺀 곳이에요. 비밀 방은 따로 그려 두고 벽이 무너질 때 보여요. 창살문(GATE) 자리는 닫혀 있어도 바닥으로 그려요
 const floorCell = (i, j) => i >= 0 && j >= 0 && i < MW && j < MH && (GRID[j * MW + i] === 1 || GATE[j * MW + i] > 0) && !SEC[j * MW + i] && CUT[j * MW + i] !== 4 && CUT[j * MW + i] !== 1;
 // 낭떠러지·절벽·승강기 칸 (벽을 세우지 않아요)
@@ -56,6 +56,7 @@ const THEMES = {
   abyss: { bg: 0x040208, fog: 0x0c0614, amb: 0x4a3a6a, hemi: 0x9a80c8, floor: [0x3a3444, 0x423a4c, 0x4a4254, 0x36303e, 0x463e50], bfloor: [0x2e2440, 0x362a48, 0x3e3050, 0x2a203a, 0x3a2c4c], wet: [0x3a2a5a, 0x423064, 0x36264e, 0x4a366a], wall: [0x36303e, 0x3e3646, 0x463e50, 0x302a38], bwall: [0x2e2240, 0x362848, 0x3e2e52, 0x2a1e3a], top: 0x1e1828, moss: 0x5a3a8a, mossP: 0.08, torch: 0xc08aff, water: 0x5a3a9a, ring: 0xb06aff, fz: [0x5a1aa0, 0xb06aff], ember: [0xd0a0ff, 0xa06ae0], banner: 0x3a1a5a },
   tower: { bg: 0x0a0505, fog: 0x160a08, amb: 0x6a4a4a, hemi: 0xc89a8a, floor: [0x4a4040, 0x524646, 0x5a4c4a, 0x463c3c, 0x54484a], bfloor: [0x4a3030, 0x523434, 0x5a3a36, 0x462c2c, 0x503432], wet: [0x3a3440, 0x403848, 0x36303c, 0x443c4c], wall: [0x4a3a36, 0x52423c, 0x5a4842, 0x443430], bwall: [0x5a2a22, 0x622e26, 0x6a3428, 0x52261e], top: 0x2e2220, moss: 0x5a4a2a, mossP: 0.04, torch: 0xff7a30, water: 0x6a3a2a, ring: 0xc04a10, fz: [0xa03a10, 0xff6a20], ember: [0xffa040, 0xff6a20], banner: 0x3a3a3a },
   harbor: { bg: 0x04080e, fog: 0x0c1a26, amb: 0x5a7088, hemi: 0xa0c0d8, floor: [0x5a4c3a, 0x625440, 0x6a5c46, 0x564834, 0x60523e], bfloor: [0x4a3e30, 0x524636, 0x5a4c3a, 0x463a2c, 0x50443a], wet: [0x24506a, 0x2a5a76, 0x204862, 0x2e6280], wall: [0x4a3a2c, 0x54442f, 0x5c4a36, 0x42342a], bwall: [0x3a2c20, 0x443426, 0x4c3a2c, 0x34281e], top: 0x2a2018, moss: 0x3a5a4a, mossP: 0.05, torch: 0xffb050, water: 0x2a6a8a, ring: 0x4aa0c8, fz: [0x2a6a8a, 0x60c0e0], ember: [0xffc060, 0xff9030], banner: 0x203a52 },
+  desert: { bg: 0x120c06, fog: 0x2a1c0e, amb: 0x8a7050, hemi: 0xf0d8a0, floor: [0x9a7e50, 0xa28656, 0xaa8e5e, 0x967a4c, 0xa48858], bfloor: [0x8a6e44, 0x92764a, 0x9a7e52, 0x866a40, 0x947a4e], wet: [0x6a7a5a, 0x74846a, 0x607050, 0x7a8a70], wall: [0x8a6a3e, 0x947446, 0x9c7c4e, 0x846438], bwall: [0x7a5a34, 0x84623a, 0x8c6a42, 0x74542e], top: 0x5a4428, moss: 0x7a8a3a, mossP: 0.02, torch: 0xffb050, water: 0x4a8a8a, ring: 0xe8b040, fz: [0xa06a20, 0xffc060], ember: [0xf0d090, 0xe0b868], banner: 0x8a5a1a },
   sewer: { bg: 0x030806, fog: 0x0a1a14, amb: 0x4a6a58, hemi: 0x88b098, floor: [0x3a443c, 0x424c42, 0x4a544a, 0x363e36, 0x444e44], bfloor: [0x2e382e, 0x364036, 0x3e483e, 0x2a342a, 0x364236], wet: [0x2a5a40, 0x306648, 0x264e38, 0x347050], wall: [0x2e3a32, 0x36423a, 0x3e4a42, 0x28322c], bwall: [0x26342a, 0x2e3c32, 0x36443a, 0x222e24], top: 0x1a2a20, moss: 0x4a7a3a, mossP: 0.12, torch: 0x9aff7a, water: 0x2a6a44, ring: 0x58c878, fz: [0x2a6a44, 0x70e090], ember: [0xa0ff80, 0x60d060], banner: 0x1e3a2a },
 };
 // 장마다 다른 기사단 깃발 색 (1장부터 8장까지)
@@ -79,10 +80,11 @@ const HERO = {
   necro: { body: 0x2a2634, robe: 1, leg: 0x1c1826, arm: 0x2a2634, hood: 0x3a2a5a, eye: 0x6aff8a, staff: 1, staffC: 0x6aff8a, belt: 1, cape: 0x7a3aa8 },
   court: { body: 0xb02828, robe: 1, leg: 0x6a4a2a, arm: 0xb02828, inner: 0x7a5232, beard: 0xd8d2c4, redhat: 1, staff: 1, wand: 1, staffC: 0xff2a2a, lightC: 0xff4040, belt: 1, beltC: 0xe0b030 },
   spearman: { body: 0x5a6a7a, leg: 0x3a3a44, arm: 0x5a6a7a, helm: 1, helmC: 0x8a8f9c, plume: 0xb83a3a, spear: 1, belt: 1 },
-  crossbow: { body: 0x6b4a2e, leg: 0x2e2a34, arm: 0x6b4a2e, kettle: 1, scarf: 0xb8442e, xh: 1, bolts: 1, strap: 1, belt: 1, wide: 1.1 }
+  crossbow: { body: 0x6b4a2e, leg: 0x2e2a34, arm: 0x6b4a2e, kettle: 1, scarf: 0xb8442e, xh: 1, bolts: 1, strap: 1, belt: 1, wide: 1.1 },
+  streltsy: { body: 0xc4281f, leg: 0x2a2024, arm: 0xc4281f, beard: 0x6a4a30, kolpak: 1, gun: 1, berdysh: 1, belt: 1, beltC: 0x2a1c14, wide: 1.1 }
 };
 // 동작은 비슷한 직업의 것을 같이 써요 (마녀는 사제처럼, 바이킹·맘루크·스켈레톤은 종자처럼)
-const FAM = { witch: 'priest', viking: 'squire', mamluk: 'squire', skeleton: 'squire', warden: 'knight', assassin: 'squire', crossbow: 'archer', bomber: 'squire', bard: 'priest', court: 'priest', necro: 'priest', spearman: 'squire' };
+const FAM = { witch: 'priest', viking: 'squire', mamluk: 'squire', skeleton: 'squire', warden: 'knight', assassin: 'squire', crossbow: 'archer', streltsy: 'archer', bomber: 'squire', bard: 'priest', court: 'priest', necro: 'priest', spearman: 'squire' };
 function matOf(v) { return v === 'dm' ? dmetal() : v === 'mt' ? metal() : M(v); }
 export const makeHero = toonify(function (role, cos) {
   const o = Object.assign({}, HERO[role]), cp = cos && COSMETICS.cape.items.find(i => i.id === cos.cape && i.col);
@@ -141,6 +143,10 @@ function makeFigure(o) {
   }
   if (o.beard) { const bd = cone(0.4, 0.9, 6, M(o.beard), 0, -0.55, 0.28, head); bd.rotation.x = Math.PI + 0.25; for (const sx of [-1, 1]) { const br = cone(0.1, 0.5, 4, M(o.beard), sx * 0.2, -0.9, 0.38, head); br.rotation.x = Math.PI; } }
   if (o.turban) { sph(0.5, 10, 7, M(0xf0e8d8), 0, 0.28, -0.02, head).scale.set(1, 0.75, 1); mesh(geo('tb', () => new THREE.TorusGeometry(0.45, 0.1, 5, 12)), M(0xe8dcc0), 0, 0.12, 0, head).rotation.x = Math.PI / 2; sph(0.1, 6, 5, M(0xb0302a), 0, 0.35, 0.44, head); const f = cone(0.06, 0.5, 4, M(0xb0302a), 0, 0.75, 0.3, head); f.rotation.x = 0.3; box(0.42, 0.14, 0.08, M(0x2a1a14), 0, -0.24, 0.36, head); }
+  if (o.kolpak) {   // 러시아 모자(콜팍): 높고 둥근 붉은 모자에 흰 털 띠
+    const rc = M(0xc4281f); cyl(0.5, 0.52, 0.5, 12, rc, 0, 0.55, 0, head); sph(0.5, 10, 6, rc, 0, 0.8, 0, head, 0.7);
+    cyl(0.56, 0.56, 0.24, 12, M(0xf2eee4), 0, 0.3, 0, head); sph(0.1, 6, 5, M(0xe8c040), 0, 0.5, 0.52, head);
+  }
   if (o.redhat) {   // 빨간 마법사 모자: 넓은 챙과 높은 뾰족 모자, 금색 띠
     const hc = M(0xc02828); cyl(0.8, 0.8, 0.06, 12, M(0x8a1a1a), 0, 0.3, 0, head); const hh = cone(0.46, 1.5, 8, hc, 0, 1.05, -0.06, head); hh.rotation.x = -0.2;
     cyl(0.48, 0.48, 0.12, 10, M(0xe0b030, { e: 0xe0b030, ei: 0.3 }), 0, 0.42, 0, head);
@@ -168,7 +174,7 @@ function makeFigure(o) {
   else if (o.sword) { const sw = new THREE.Group(); sw.position.set(0, -0.9, 0.1); armR.add(sw); box(0.12, 2, 0.04, M(0xe9edf5, { m: 0.9, r: 0.2 }), 0, 1.1, 0, sw); box(0.6, 0.1, 0.14, gold(), 0, 0.1, 0, sw); box(0.08, 0.35, 0.08, leather(), 0, -0.1, 0, sw); sw.rotation.x = Math.PI / 2; }
   if (o.shield) { const shc = o.shieldC || 0x2c4f9e; const sh = new THREE.Group(); shG = sh; sh.position.set(-0.15, -0.7, 0.45); armL.add(sh); sh.rotation.x = 0.6; box(1.1, 1.4, 0.14, M(shc), 0, 0, 0, sh); const c = cone(0.78, 0.7, 4, M(shc), 0, -0.95, 0, sh); c.rotation.set(Math.PI, Math.PI / 4, 0); box(0.18, 1.2, 0.05, gold(), 0, -0.1, 0.09, sh); box(0.8, 0.18, 0.05, gold(), 0, 0.25, 0.09, sh); if (o.shS) sh.scale.setScalar(o.shS); }
   // 활: 왼손에 쥐고, 팔을 앞으로 뻗으면 위아래로 선 활이 조준 방향으로 휘어요 (시위는 몸 쪽)
-  let bowS = null, xbS = null;
+  let bowS = null, xbS = null, gnS = null, axeG = null;
   if (o.bow) {
     // 얕게 휜 활: 손잡이는 손에, 시위는 몸 쪽. 시위는 두 가닥이라 당기면 V자로 접혀요
     const bw = mesh(geo('bow2', () => { const t = new THREE.TorusGeometry(1.6, 0.06, 4, 12, 1.24); t.rotateZ(Math.PI / 2 - 0.62); return t; }), M(0x8a5a2a), 0.12, 0.65, 0, armL);
@@ -192,6 +198,29 @@ function makeFigure(o) {
     const stir = mesh(geo('stir', () => new THREE.TorusGeometry(0.2, 0.03, 4, 8)), dmetal(), 0, 1.3, 0, xm, false); stir.rotation.y = Math.PI / 2;
     xbS = { xr, sa, sb, bolt, tips }; setXb(xbS, 1, true);
   }
+  if (o.gun) {
+    // 머스켓: 어깨 앞에 두 손으로 들고 앞(+z)을 겨눠요. 쏘면 총구가 번쩍이며 반동이 오고, 쏜 뒤엔 총을 내려 장전해요
+    const gr = new THREE.Group(); gr.position.set(0, -0.55, 0.05); gr.rotation.x = Math.PI / 2; armR.add(gr);   // 총은 오른손에 붙어서 손을 따라가요 (손은 총 중간, 총구는 팔 방향)
+    const wd = M(0x6a4228), st = M(0x8a909c, { m: 0.8, r: 0.3 });
+    box(0.24, 0.42, 0.9, wd, 0, -0.1, -0.85, gr); box(0.2, 0.2, 1.7, wd, 0, -0.1, 0.35, gr);
+    const br = cyl(0.09, 0.09, 3.6, 8, st, 0, 0.08, 1.2, gr); br.rotation.x = Math.PI / 2;
+    for (const z of [0.2, 1.1, 2.0]) { const rg = cyl(0.12, 0.12, 0.08, 8, dmetal(), 0, 0.08, z, gr); rg.rotation.x = Math.PI / 2; }
+    box(0.1, 0.16, 0.1, dmetal(), 0, 0.2, 0.0, gr); box(0.14, 0.12, 0.3, dmetal(), 0, -0.2, -0.1, gr);
+    const fl = new THREE.Group(); fl.position.set(0, 0.08, 3.05); gr.add(fl); fl.visible = false;
+    sph(0.5, 8, 6, M(0xfff0b0, { e: 0xffc040, ei: 5 }), 0, 0, 0, fl); const fc = cone(0.32, 1.5, 6, M(0xffa030, { e: 0xff7a10, ei: 4 }), 0, 0, 0.9, fl); fc.rotation.x = Math.PI / 2;
+    gnS = { gr, fl };
+  }
+  if (o.frog) for (let i = 0; i < 4; i++) for (const sx of [-1, 1]) box(0.34, 0.07, 0.06, M(0x2a1c14), sx * 0.2, 1.1 + i * 0.28, 0.62 - Math.abs(sx) * 0.02, body);
+  if (o.bandolier) { const bd = box(0.16, 2.0, 0.1, M(0x3a2618), 0, 1.7, 0.4, body); bd.rotation.z = -0.62; for (let i = 0; i < 6; i++) { const c = cyl(0.06, 0.06, 0.26, 5, M(0xc8c0a8), -0.42 + i * 0.17, 2.05 - i * 0.28, 0.5, body); c.rotation.z = -0.62; } box(0.42, 0.34, 0.2, M(0x4a3020), 0.55, 0.95, 0.35, body); }
+  if (o.sabre) { const sb = new THREE.Group(); sb.position.set(-0.62, 1.0, 0.1); sb.rotation.z = 0.35; body.add(sb); box(0.07, 1.5, 0.1, M(0xb8c0cc, { m: 0.8, r: 0.3 }), 0, -0.75, 0, sb); box(0.28, 0.07, 0.12, gold(), 0, 0.02, 0, sb); box(0.08, 0.3, 0.1, M(0x3a2618), 0, 0.2, 0, sb); }
+  if (o.berdysh) {   // 베르디슈: 곧은 자루 한쪽에만 초승달 날, 날과 자루 사이는 뚫려 있어요
+    const ax = new THREE.Group(); ax.position.set(0, -0.9, 0.15); armL.add(ax); axeG = ax; const st = M(0xa4adb8, { m: 0.8, r: 0.35 });
+    cyl(0.07, 0.07, 2.6, 5, M(0x7a4e2c), 0, 0.5, 0, ax);
+    mesh(geo('bdy2', () => { const sh = new THREE.Shape(); sh.moveTo(0.05, 1.7); sh.lineTo(0.3, 1.75); sh.bezierCurveTo(0.4, 1.9, 0.5, 2.05, 0.4, 2.3); sh.bezierCurveTo(1.3, 2.0, 1.35, 0.85, 0.3, 0.35); sh.lineTo(0.05, 0.55); sh.lineTo(0.05, 1.7);
+      const h = new THREE.Path(); h.moveTo(0.12, 0.85); h.lineTo(0.55, 0.9); h.quadraticCurveTo(0.7, 1.2, 0.5, 1.5); h.lineTo(0.12, 1.5); h.closePath(); sh.holes.push(h);
+      const g = new THREE.ExtrudeGeometry(sh, { depth: 0.07, bevelEnabled: false }); g.translate(0, 0, -0.035); return g; }), st, 0, 0.535, 0, ax).scale.setScalar(0.55);   // 날은 자루 맨 위쪽에만 붙어요
+    box(0.16, 0.14, 0.16, st, 0.03, 1.47, 0, ax); box(0.16, 0.14, 0.16, st, 0.03, 0.84, 0, ax); }
+
   if (o.bolts) { const bc = box(0.5, 0.35, 0.3, M(0x4a3020), -0.62, 1.05, 0.1, body); bc.rotation.z = 0.3; for (let i = 0; i < 4; i++) box(0.04, 0.3, 0.04, M(0xc8c0a8), -0.74 + i * 0.1, 1.3, 0.1, body); }
   if (o.strap) { const sb2 = box(0.14, 1.9, 0.08, leather(), 0, 1.9, 0.42, body); sb2.rotation.z = 0.55; }
   if (o.scarf) { const sf = mesh(geo('scarf', () => new THREE.TorusGeometry(0.46, 0.14, 5, 10)), M(o.scarf), 0, 2.35, 0.02, body); sf.rotation.x = Math.PI / 2; box(0.28, 0.8, 0.08, M(o.scarf), 0.25, 2.0, -0.55, body); }
@@ -226,7 +255,7 @@ function makeFigure(o) {
   if (o.core) { sph(0.3, 8, 6, M(o.core, { e: o.core, ei: 5 }), 0, 1.9, 0.5, body); for (let i = 0; i < 4; i++) { const a = i / 4 * 6.283, c = cone(0.08, 0.5, 4, M(0x1a1420), Math.cos(a) * 0.38, 1.9 + Math.sin(a) * 0.38, 0.45, body); c.rotation.set(Math.PI / 2, 0, a - Math.PI / 2); } }
   if (o.spikes) for (let i = 0; i < 5; i++) { const c = cone(0.14, 0.9 + (i === 2 ? 0.4 : 0), 4, M(0x1a1420), (i - 2) * 0.32, 2.3 + Math.abs(i - 2) * -0.15, -0.6, body); c.rotation.x = -0.9; }
   if (o.scale) g.scale.setScalar(o.scale);
-  g.userData = { body, legL, legR, armL, armR, head, light, kind: 'hero', bowS, xbS, shield: shG, spG };
+  g.userData = { body, legL, legR, armL, armR, head, light, kind: 'hero', bowS, xbS, gnS, axeG, shield: shG, spG };
   return g;
 }
 // 장마다 다른 적 모습
@@ -600,9 +629,10 @@ export class View {
       }
     });
     // 벽: 방 뒤쪽(북쪽) 벽은 높게, 앞쪽·옆 벽은 낮게 해서 캐릭터가 가려지지 않게 해요
+    const colSet = new Set(); for (const [cx, cy, n] of MAP.cols || []) for (let j = Math.round(cy - n / 2); j < Math.round(cy + n / 2); j++) for (let i = Math.round(cx - n / 2); i < Math.round(cx + n / 2); i++) colSet.add(j * MW + i);
     instBoxes(s, (add) => {
       for (let j = 0; j < MH; j++) for (let i = 0; i < MW; i++) {
-        if (floorCell(i, j) || SEC[j * MW + i] || cutCell(i, j)) continue;
+        if (floorCell(i, j) || SEC[j * MW + i] || cutCell(i, j) || colSet.has(j * MW + i)) continue;
         let nb = false, nh = 0; for (let dj = -1; dj <= 1; dj++) for (let di = -1; di <= 1; di++) if (floorCell(i + di, j + dj)) { nb = true; nh = Math.max(nh, cellH(i + di, j + dj)); }
         if (!nb) continue;
         const x = cw(i), z = cw(j), bc = inBoss(i, j + 1) || inBoss(i, j - 1) ? bbrick : brick;
@@ -624,6 +654,13 @@ export class View {
       }
     });
     this.torchPos = torches;
+    // 둥근 기둥: 받침돌 위에 굵은 기둥, 윗부분에 머리돌
+    for (const [cx, cy, n] of MAP.cols || []) {
+      const x = cx * CS, z = cy * CS, r = n * CS / 2 * 0.92, h = 5.2, sm = M(0x6a6074), bm = M(0x5a5266);
+      cyl(r * 1.02, r * 1.1, 0.5, 14, bm, x, 0.25, z, s); cyl(r * 0.84, r * 0.92, h, 14, sm, x, 0.5 + h / 2, z, s);
+      for (let k = 0; k < 4; k++) cyl(r * 0.88, r * 0.88, 0.1, 14, bm, x, 1.3 + k * 1.1, z, s);   // 기둥 마디
+      cyl(r * 1.12, r * 0.9, 0.5, 14, bm, x, 0.5 + h + 0.25, z, s); box(r * 2.3, 0.3, r * 2.3, bm, x, 0.5 + h + 0.65, z, s);
+    }
     this.buildSecrets(s, T, brick); this.buildPuzzles(s, T); this.buildDarks(s); this.buildExit(s); this.buildCuts(s, T, brick); this.escOn = false;
     for (const [x, z] of torches) { box(0.3, T.trees ? 4.6 : 1, 0.3, M(0x4a3020), x, T.trees ? 2.3 : 4, z, s); box(0.6, 0.25, 0.6, M(0x2a2830, { m: 0.7 }), x, 4.5, z, s); this.flame(s, x, 5.05, z, 1, false, T.torch); }
     // 횃불 빛은 가까운 곳에만 몇 개 켜요 (빛이 너무 많으면 느려져요)
@@ -669,10 +706,13 @@ export class View {
       const em = M(0xffffff, { e: 0xffffff, ei: 2, op: 0.7, uniq: true }), edge = mesh(geo('fedge', () => new THREE.RingGeometry(0.88, 1, 64)), em, x, 0.15, z, s, false); edge.rotation.x = -Math.PI / 2; edge.castShadow = false; edge.visible = false;
       this.flagM.push({ cm, rm, pm, cloth, prog, bm, beam, em, edge });
     }
+    // 사막 신전 문: 닫히면 돌문이 올라와 길을 막고, 열리면 땅속으로 내려가요
+    this.doorM = (MAP.doors || []).map(([x, y, w, h]) => { const sx = w * CS, sz = h * CS, m = box(sx, 3.4, sz, M(0x5a2a1e, { m: 0.2, e: 0xc83a14, ei: 0.2 }), (x + w / 2) * CS, 1.7, (y + h / 2) * CS, s); m.castShadow = true; return m; });   // 닫힌 문은 붉게 빛나는 봉인 돌문
+    this.doorG = (MAP.doors || []).map(([x, y, w, h]) => { const g = box(w * CS, 0.06, h * CS, M(0x6aff9a, { e: 0x6aff9a, ei: 0.7, op: 0.35 }), (x + w / 2) * CS, 0.07, (y + h / 2) * CS, s, false); g.visible = false; return g; });   // 열리면 길바닥이 초록으로 빛나요
     // 팀 대전 장식: 바닥에 흩어진 돌·상자·풀, 진지와 깃발 곁의 횃불, 진지 기둥 깃발
     if (CH.pvp) {
       const bad = (x, z) => MAP.tflags.some(([a, b]) => Math.hypot(cw(a) - x, cw(b) - z) < 7.5) || MAP.tspawn.some(([a, b]) => Math.hypot(cw(a) - x, cw(b) - z) < 9), forest = CH.theme === 'forest';
-      const col = { dungeon: [0x5a5560, 0x6a5238], abyss: [0x4a3a5c, 0x5a4a78], temple: [0x7a6a50, 0x8a6a3a], forest: [0x3a4a2c, 0x5a4228], frost: [0x9ab4cc, 0x6a8aa8], deep: [0x1e3a4c, 0x2a5a6a] }[CH.theme] || [0x5a5560, 0x6a5238];
+      const col = { dungeon: [0x5a5560, 0x6a5238], abyss: [0x4a3a5c, 0x5a4a78], temple: [0x7a6a50, 0x8a6a3a], desert: [0xa88a54, 0x8a6a3a], forest: [0x3a4a2c, 0x5a4228], frost: [0x9ab4cc, 0x6a8aa8], deep: [0x1e3a4c, 0x2a5a6a] }[CH.theme] || [0x5a5560, 0x6a5238];
       instBoxes(s, add => { let n = 0; for (let t = 0; t < 4000 && n < 260; t++) {
         const i = 2 + (R() * (MW - 4) | 0), j = 2 + (R() * (MH - 4) | 0); if (!floorCell(i, j) || !floorCell(i + 1, j) || !floorCell(i - 1, j) || !floorCell(i, j + 1) || !floorCell(i, j - 1)) continue;
         const x = cw(i), z = cw(j); if (bad(x, z)) continue; n++; const k = R();
@@ -1184,7 +1224,7 @@ export class View {
     // 투사체
     for (const p of S.pr) {
       const key = 'r' + p.id; seen.add(key); let E = this.ents.get(key);
-      if (!E) { E = { m: projMesh(p.k), x: p.x, z: p.z }; if (p.bg) E.m.scale.setScalar(2.2); s.add(E.m); this.ents.set(key, E); }
+      if (!E) { E = { m: projMesh(p.k), x: p.x, z: p.z }; if (p.bg) E.m.scale.setScalar(2.2); else if (p.sz > 0 && p.k === 'musket') E.m.scale.setScalar(p.sz); s.add(E.m); this.ents.set(key, E); }
       const k = exact ? 1 : Math.min(1, dt * 18); E.x += (p.x - E.x) * k; E.z += (p.z - E.z) * k;
       E.m.position.set(E.x, (p.k === 'potion' ? p.y : 0) + 1.6, E.z); E.m.rotation.y = -p.a; if (p.k === 'potion') E.m.rotation.z += dt * 12;
       const TC = { pierce: 0xffe08a, orb: 0x9af0d0, eorb: 0x6ab0ff, ember: 0xff7a20, arrow: 0xe8e0c8, xbolt: 0xc8c0a8, bolt: 0xff8a5a, spear: 0xffb060, earrow: 0xff5a4a, vorb: 0xb06aff }[p.k]; if (TC && (E.tr = (E.tr || 0) - dt) <= 0) { E.tr = 0.03; const big = p.k !== 'arrow' && p.k !== 'earrow'; this.burst(E.x, 1.6, E.z, TC, big ? 3 : 1, 1.2, big ? 0.45 : 0.25, big ? 0.12 : 0.08); }
@@ -1276,6 +1316,8 @@ export class View {
     });
   }
   tick(dt, t) {
+    for (const m of this.doorM || []) { const ty = DSTATE.open ? -1.9 : 1.7; m.position.y += (ty - m.position.y) * Math.min(1, dt * 4); m.visible = m.position.y > -1.8; }
+    for (const g of this.doorG || []) { g.visible = !!DSTATE.open; if (g.visible) g.material.opacity = 0.3 + 0.15 * Math.sin(t * 5); }
     for (const f of this.flick || []) f.L.intensity = f.b * (0.9 + Math.sin(t * 2.2 + f.ph) * 0.04 + Math.sin(t * 3.7 + f.ph * 2) * 0.02);
     if (this.fireG) { this.fireG.children.forEach((c, i) => { c.scale.y = 0.85 + Math.sin(t * 4 + i * 1.7) * 0.12; }); }
     // 금 간 벽: 가끔 부스러기가 떨어져요
@@ -1303,7 +1345,7 @@ export class View {
     for (const d of this.drips || []) { d.t += dt; const u = d.t / d.T; if (u >= 1) { d.t = 0; this.ring(d.x, d.z, 1.1, 0x9ad0ff, 0.7); } d.m.position.y = u < 0.55 ? 8 : 8 - Math.pow((u - 0.55) / 0.45, 2) * 8; d.m.visible = u > 0.4; }
     if (this.cdrop) { const C = this.cdrop, E = this.ents.get('p' + C.id); C.t += dt; if (E) { const u = Math.min(1, C.t / 1.4), e = 1 - Math.pow(1 - u, 3), bob = u >= 1 ? Math.sin(t * 3) * 0.1 : 0; C.g.position.set(E.x, 10 - 6.6 * e + bob, E.z); C.g.rotation.y += dt * (u >= 1 ? 1.4 : 7); if (u >= 1 && !C.hit) { C.hit = 1; this.shock(E.x, E.z, 6, 0xffe08a, 0.6); this.burst(E.x, 3.4, E.z, 0xffe08a, 30, 8, 0.9, 0.14); this.flash(E.x, E.z, 0xffe08a, 200); this.shake = Math.max(this.shake, 0.9); } } }
     if (this.crownG) { this.crownG.rotation.y += dt * 0.9; this.crownG.position.y = (this.mode === 'ped' ? 6.2 : 6.4) + Math.sin(t * 1.6) * 0.25; }
-    if (this.pv) { this.pv.g.rotation.y = 0.45 + Math.sin(t * 0.7) * 0.5; const u = this.pv.g.userData; if (u.body) u.body.position.y = Math.sin(t * 1.6) * 0.04; }
+    if (this.pv) { this.pv.g.rotation.y = 0.45 + Math.sin(t * 0.7) * 0.5; const u = this.pv.g.userData; if (u.body) u.body.position.y = Math.sin(t * 1.6) * 0.04; if (u.gnS) { u.armR.rotation.set(-1.2, 0, -0.1); u.armL.rotation.set(-0.35, 0, -0.12); } }   // 선택 화면에서도 총이 손에 닿게 팔을 들어요
     if (this.brawl) this.tickBrawl(t);
     else if (this.lobbyHeroes) this.lobbyHeroes.forEach((h, i) => { h.userData.body.position.y = Math.sin(t * 1.5 + i) * 0.03; h.userData.head.rotation.y = Math.sin(t * 0.6 + i * 2) * 0.3; });
     if (this.fxL && this.fxLI > 0) { this.fxLI = Math.max(0, this.fxLI - dt * this.fxLI * 5 - dt * 10); this.fxL.intensity = this.fxLI; }
@@ -1373,6 +1415,13 @@ export class View {
     const m = mesh(geo('arc' + r, () => new THREE.TorusGeometry(r * 0.8, 0.12, 3, 20, Math.PI * 0.75)), M(col, { e: col, ei: 3, op: 0.9, uniq: true }), x, 1.6, z, this.scene, false);
     m.rotation.set(-Math.PI / 2, 0, -a - Math.PI * 0.375);
     this.fx.push({ m, t: 0, T: 0.18, up: (f) => { m.material.opacity = 0.9 * (1 - f.t / f.T); m.scale.setScalar(1 + f.t * 2); } });
+  }
+  // 부채꼴 휘두르기: 날이 지나간 부채꼴이 하얗게 남고, 빛나는 칼날 선이 한쪽에서 반대쪽으로 쓸고 지나가요
+  fanSweep(x, z, a, r, half, col, T = 0.32) {
+    const sec = mesh(new THREE.CircleGeometry(r, 28, -half, half * 2), M(col, { e: col, ei: 0.8, op: 0.45, uniq: true, ds: true }), x, 0.45, z, this.scene, false); sec.rotation.set(-Math.PI / 2, 0, -a);
+    const g = new THREE.Group(); g.position.set(x, 1.4, z); this.scene.add(g); const blade = mesh(geo('fanbl', () => new THREE.BoxGeometry(1, 0.35, 0.5)), M(0xffffff, { e: 0xffffff, ei: 3, op: 0.95, uniq: true }), r / 2, 0, 0, g, false); blade.scale.x = r;
+    this.fx.push({ m: sec, t: 0, T, up: (f) => { const u = Math.min(1, f.t / (T * 0.7)), e = 1 - Math.pow(1 - u, 3); g.rotation.y = -(a + half - e * half * 2); sec.material.opacity = 0.45 * (1 - f.t / T); blade.material.opacity = 0.95 * (1 - f.t / T); } });
+    this.fx.push({ m: g, t: 0, T, up: () => { } });
   }
   ring(x, z, r, col, T = 0.5) {
     const m = mesh(geo('ring1', () => new THREE.RingGeometry(0.9, 1, 32)), M(col, { e: col, ei: 2, op: 0.8, uniq: true }), x, 0.2, z, this.scene, false); m.rotation.x = -Math.PI / 2;
@@ -1481,10 +1530,16 @@ export class View {
 function instBoxes(s, fill) {
   const items = []; fill((x, y, z, w, h, d, c) => items.push([x, y, z, w, h, d, c]));
   if (!items.length) return;
-  const im = new THREE.InstancedMesh(geo('ub', () => new THREE.BoxGeometry(1, 1, 1)), new THREE.MeshStandardMaterial({ roughness: 0.9, flatShading: true }), items.length);
-  const m4 = new THREE.Matrix4(), q = new THREE.Quaternion(), col = new THREE.Color();
-  items.forEach((it, i) => { m4.compose(new THREE.Vector3(it[0], it[1], it[2]), q, new THREE.Vector3(it[3], it[4], it[5])); im.setMatrixAt(i, m4); im.setColorAt(i, col.setHex(it[6])); });
-  im.castShadow = im.receiveShadow = true; s.add(im); return im;
+  // 칸으로 나눠 따로 그려요: 화면 밖 칸은 그리지도 않고 그림자에도 넣지 않아서 큰 맵에서도 가벼워요
+  const T = 20, tiles = new Map();
+  for (const it of items) { const k = Math.floor(it[0] / T) + ',' + Math.floor(it[2] / T); let a = tiles.get(k); if (!a) tiles.set(k, a = []); a.push(it); }
+  const m4 = new THREE.Matrix4(), q = new THREE.Quaternion(), col = new THREE.Color(), bg = geo('ub', () => new THREE.BoxGeometry(1, 1, 1)), mat = new THREE.MeshStandardMaterial({ roughness: 0.9, flatShading: true }); let last;
+  for (const list of tiles.values()) {
+    const im = new THREE.InstancedMesh(bg, mat, list.length);
+    list.forEach((it, i) => { m4.compose(new THREE.Vector3(it[0], it[1], it[2]), q, new THREE.Vector3(it[3], it[4], it[5])); im.setMatrixAt(i, m4); im.setColorAt(i, col.setHex(it[6])); });
+    im.castShadow = im.receiveShadow = true; im.computeBoundingSphere(); s.add(im); last = im;
+  }
+  return last;
 }
 function ringMesh(s, color) { const m = mesh(geo('pring', () => new THREE.RingGeometry(0.85, 1.0, 24)), M(new THREE.Color(color).getHex(), { e: new THREE.Color(color).getHex(), ei: 0.8, op: 0.55 }), 0, 0.12, 0, s, false); m.rotation.x = -Math.PI / 2; return m; }
 function projMesh(k) {
@@ -1498,6 +1553,8 @@ function projMesh(k) {
     const gm = M(0x6aff8a, { e: 0x3ad060, ei: 4 }); const cr = mesh(geo('ncres', () => new THREE.TorusGeometry(0.9, 0.12, 4, 12, 2.4)), gm, 0, 0, 0, g); cr.rotation.set(Math.PI / 2, 0, Math.PI / 2 - 1.2); cr.position.x = 0.15;
     sph(0.26, 8, 6, M(0xd8ffe0, { e: 0x9aff9a, ei: 5 }), 0, 0, 0, g); for (let i = -1; i <= 1; i += 2) sph(0.14, 6, 5, gm, -0.3, 0, i * 0.7, g);
   }
+  else if (k === 'musket') { sph(0.2, 6, 5, M(0xffe8a0, { e: 0xffb040, ei: 3 }), 0, 0, 0, g); box(0.9, 0.08, 0.08, M(0xffd070, { e: 0xffa030, ei: 2, op: 0.7 }), -0.5, 0, 0, g); }
+  else if (k === 'bigshot') { sph(0.7, 10, 8, M(0x3a3a44, { m: 0.7, r: 0.35 }), 0, 0, 0, g); sph(0.82, 10, 8, M(0xffa030, { e: 0xff7a10, ei: 3, op: 0.45 }), 0, 0, 0, g); box(1.8, 0.4, 0.4, M(0xffd070, { e: 0xffa030, ei: 2, op: 0.6 }), -1.1, 0, 0, g); }
   else if (k === 'xbolt') { box(1.0, 0.09, 0.09, M(0x4a3020), 0, 0, 0, g); const h = cone(0.11, 0.32, 4, metal(), 0.62, 0, 0, g); h.rotation.z = -Math.PI / 2; box(0.18, 0.02, 0.2, M(0xc8c0a8), -0.45, 0, 0, g); }
   else if (k === 'spear') { box(2.2, 0.08, 0.08, M(0x5a3a22), 0, 0, 0, g); const h = cone(0.14, 0.5, 4, M(0xffb060, { e: 0xff7a20, ei: 2 }), 1.3, 0, 0, g); h.rotation.z = -Math.PI / 2; }
   else if (k === 'vorb') { sph(0.34, 8, 6, M(0xd8b0ff, { e: 0x8a3ae0, ei: 4 }), 0, 0, 0, g); }
@@ -1524,6 +1581,7 @@ function zoneMesh(z) {
     const rr2 = mesh(geo('zr', () => new THREE.RingGeometry(0.94, 1, 40)), rg, 0, 0.03, 0, sp, false); rr2.rotation.x = -Math.PI / 2; rr2.scale.setScalar(z.r * 0.45);
   }
   else if (z.k === 'wall') { const L = z.len; const w = box(L, 2.4, 0.7, M(0x8a8478), 0, 1.2, 0, g); box(L + 0.3, 0.3, 0.9, M(0x5a554c), 0, 2.45, 0, g); for (let i = 0; i < 4; i++) box(0.5, 0.6, 0.72, M(0xb0a890, { e: 0xffe08a, ei: 0.5 }), (i - 1.5) * L / 4, 1.3, 0, g); g.rotation.y = -z.a; g.userData.wall = 1; }
+  else if (z.k === 'cover') { const L = z.len; box(L, 2.6, 0.6, M(0x6a4a2a), 0, 1.3, 0, g); for (let i = 0; i < 9; i++) { const px = (i - 4) * L / 8.5, st2 = box(0.55, 3.0 + (i % 2) * 0.4, 0.8, M(0x8a6238), px, 1.5, 0, g); st2.rotation.z = (i % 3 - 1) * 0.04; } box(L + 0.2, 0.3, 0.9, M(0x3a2a1a), 0, 2.7, 0, g); for (let i = 0; i < 4; i++) box(0.5, 0.5, 0.2, M(0xd8c090, { e: 0xffe08a, ei: 0.3 }), (i - 1.5) * L / 4, 1.4, 0.45, g); g.rotation.y = -z.a; g.userData.wall = 1; }
   else if (z.k === 'ptrap') { box(1.2, 0.12, 1.2, dmetal(), 0, 0.05, 0, g); for (let i = 0; i < 6; i++) { const a = i / 6 * 6.28; const t = cone(0.1, 0.4, 4, metal(), Math.cos(a) * 0.5, 0.25, Math.sin(a) * 0.5, g); t.rotation.z = Math.cos(a) * 0.5; t.rotation.x = -Math.sin(a) * 0.5; } }
   // 보스 바닥 경고는 다른 효과보다 늘 위에 그려요
   if (z.k === 'tcircle' || z.k === 'tcone' || z.k === 'tline' || z.k === 'rock') g.traverse(o => { if (o.material && o !== g.userData.rock) { o.material.depthTest = false; o.renderOrder = 20; } });
@@ -1534,7 +1592,7 @@ function zoneAnim(E, z, t) {
   if (f && z.T) { const u = 1 - z.t / z.T; f.material.opacity = 0.24 + u * 0.4; if (z.k === 'tcircle' || z.k === 'rock') f.scale.setScalar(z.r * (0.2 + 0.8 * u)); }
   if (z.k === 'rune') { E.m.userData.spin.rotation.y = t * 1.2; }
   if (z.k === 'rock') { const r = E.m.userData.rock, u = Math.max(0, z.t / z.T); r.position.y = 0.6 + 12 * u * u; r.rotation.x += 0.1; r.rotation.z += 0.07; }
-  if (z.k === 'wall') { const u = Math.min(1, (z.T - z.t) / 0.25), fo = Math.min(1, z.t / 0.6); E.m.scale.set(1, Math.max(0.01, u * fo), 1); }
+  if (z.k === 'wall' || z.k === 'cover') { const u = Math.min(1, (z.T - z.t) / 0.25), fo = Math.min(1, z.t / 0.6); E.m.scale.set(1, Math.max(0.01, u * fo), 1); }
   if (z.k === 'fire') { E.m.visible = !z.dl; E.m.children.forEach((c, i) => { if (c.geometry.type === 'ConeGeometry') c.scale.y = 0.8 + Math.sin(t * 4 + i) * 0.15; }); }
   if (z.k === 'rain') E.m.userData.drops.forEach((d, i) => { d.position.y = 4 - ((t * 9 + i * 0.37) % 1) * 4; });
 }
@@ -1759,6 +1817,24 @@ function animHero(E, p, dt, t, view) {
     X.xr.rotation.x = -0.8 * low + 0.35 * rec; X.xr.position.set(0.05, 1.95 - 0.35 * low, 0.85 - 0.22 * rec + 0.1 * low);
     setXb(X, pull, x >= 0.66 || x > 5); if (x > 5) setXb(X, 1, true);
     if (rec > 0) { T.bx -= 0.14 * rec; T.hx -= 0.15 * rec; }
+  }
+  if (u.gnS) { // 머스켓: 쏘는 순간 반동과 총구 불꽃 → 총을 내려 꽂을대로 장전하고 → 다시 들어 겨눠요
+    const Gn = u.gnS; if (p.aN !== E.gN && p.ak === 'atk') { E.gN = p.aN; E.gT = 0; } else E.gT = E.gT == null ? 9 : E.gT + dt;
+    const x = E.gT, rec = Math.max(0, 1 - x / 0.16), low = seg(x, 0.16, 0.34) * (1 - seg(x, 0.7, 0.95)), rm = x > 0.3 && x < 0.75 ? Math.sin((x - 0.3) * 40) : 0;
+    T.rx = -1.2 - 0.3 * rec - 0.25 * low * (0.6 + 0.4 * rm); T.rz = -0.1; T.rpz = 0; T.lx = -0.35; T.lz = -0.12; T.ry = 0;
+    Gn.gr.rotation.x = Math.PI / 2 + 0.3 * rec; Gn.gr.position.set(0, -0.55 + 0.4 * rec, 0.05); Gn.fl.visible = x < 0.09; Gn.fl.scale.setScalar(1 + (x < 0.09 ? 0.4 * (1 - x / 0.09) : 0));
+    if (rec > 0) { T.bx -= 0.2 * rec; T.hx -= 0.18 * rec; }
+    T.jy = 0; T.sq = 0;   // 쏜 뒤에 점프하지 않아요
+    if (E.ak === 'rally') {   // 경기 전 등장: 머스켓을 하늘로 들어 한 발 쏘고 반동을 받고, 도끼도 높이 들어요
+      const t = E.aT, up = seg(t, 0, 0.18), shot = t > 0.2 && t < 0.3, rc2 = t >= 0.2 ? Math.max(0, 1 - (t - 0.2) / 0.12) : 0;
+      T.rx = -2.6 * up - 0.3 * rc2; T.rz = -0.1; T.lx = -2.7 * up; T.lz = 0.25 * up; T.hx = -0.35 * up; T.bx = -0.15 * up + 0.1 * rc2;
+      Gn.fl.visible = shot; Gn.fl.scale.setScalar(1.4); Gn.gr.position.set(0, -0.55 + 0.4 * rc2, 0.05); Gn.gr.rotation.x = Math.PI / 2 + 0.3 * rc2;
+    }
+    // R: 머스켓은 오른손에 든 채, 왼손의 도끼를 앞으로 뻗어 부채꼴로 크게 휘둘러요
+    // 1) 도끼를 머리 위로 들며 몸을 뒤로 비틀고 → 2) 앞으로 내디디며 부채꼴로 크게 휘둘러요 → 3) 천천히 자세를 풀어요
+    const ax = E.ak === 'axeswing', t = ax ? E.aT : 0, wi = seg(t, 0, 0.2), sp = seg(t, 0.2, 0.45), rc = seg(t, 0.5, 0.8), sw = ax ? 0.6 * wi * (1 - rc) : 0;
+    if (u.axeG) u.axeG.rotation.x += ((ax ? Math.PI : 0) - u.axeG.rotation.x) * Math.min(1, dt * 20);
+    if (ax) { T.lx = (-2.7 * wi + 1.3 * sp) * (1 - rc) - 0.35 * rc; T.lz = 0.1 + 0.5 * wi * (1 - sp); T.bry = (1.3 * wi - 2.9 * sp) * (1 - rc); T.bx = (-0.18 * wi + 0.55 * sp) * (1 - rc); T.bz = 0.7 * sp * (1 - rc); T.rx -= 0.2 * sp * (1 - rc); }
   }
   if (p.bk && E.ak !== 'block') { T.lx = -1.6; }
   const k0 = dt * (E.blT > 0 ? 14 : 34), L = (o, kk, v2) => { const r = kk === 'hx' || kk === 'hy' || kk === 'hz' ? 0.45 : kk === 'bx' || kk === 'bry' || kk === 'brz' || kk === 'bz' ? 0.8 : kk === 'jy' || kk === 'sq' ? 1.3 : 1; E[kk] = E[kk] == null ? v2 : E[kk] + (v2 - E[kk]) * (1 - Math.exp(-k0 * r)); return E[kk]; };  // 머리는 몸보다 늦게, 몸은 팔보다 늦게 따라와요
