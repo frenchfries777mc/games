@@ -371,7 +371,7 @@ function basicAttack(G, p, inp, nShot = 1) {
   if (big) { ev(G, 'big', { id: p.id, role: p.role, x: p.x + Math.cos(p.a) * 1.4, z: p.z + Math.sin(p.a) * 1.4, a: p.a }); breakWall(G, p.x + Math.cos(p.a) * 1.6, p.z + Math.sin(p.a) * 1.6, 2.2, p); }
   if (A.kind === 'melee') {
     hitPuzzle(G, p.x + Math.cos(p.a) * 1.6, p.z + Math.sin(p.a) * 1.6, A.range * 0.8, p, 1, 'melee');
-    ev(G, 'swing', { id: p.id, x: p.x, z: p.z, a: p.a, r: A.range * (big ? 1.3 : 1), role: p.role, w: A.w ? A.w * 2 : 0 });
+    ev(G, 'swing', { id: p.id, x: p.x, z: p.z, a: p.a, r: A.range * (big ? 1.3 : 1), t3: third ? 1 : 0, role: p.role, w: A.w ? A.w * 2 : 0 });
     for (const e of G.enemies) { if (e.hp <= 0) continue; const d = dist(p, e); const ca = Math.cos(p.a), sa = Math.sin(p.a), fx = (e.x - p.x) * ca + (e.z - p.z) * sa, sx = -(e.x - p.x) * sa + (e.z - p.z) * ca; if (A.w ? (fx > -0.5 && fx < A.range * (big ? 1.3 : 1) + e.r && Math.abs(sx) < A.w + e.r) : (d < A.range * (big ? 1.3 : 1) + e.r && angDiff(p.a, angTo(p, e)) < A.arc / 2 + (big ? 0.7 : 0.25))) hurtEnemy(G, e, A.dmg * hm, p, { basic: true, aid, burn: A.burn || p.venom > 0, kb: big ? 6 : 3, kbA: angTo(p, e) }); }
   } else if (A.kind === 'bomb') {
     const q = aimPoint(p, inp, A.range); throwBomb(G, p, q.x, q.z, 0.75, A.r, A.dmg, 0);
