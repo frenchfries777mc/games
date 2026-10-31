@@ -1219,7 +1219,7 @@ export class View {
     if (S.tf && this.flagM) S.tf.forEach((f, i) => {
       const F = this.flagM[i]; if (!F) return; const c = f[0] < 0 ? 0x8a8696 : TEAMS[f[0]].c, pc = f[1] >= 0 ? TEAMS[f[1]].c : c;
       F.cm.color.setHex(c); F.cm.emissive.setHex(c); F.rm.color.setHex(c); F.rm.emissive.setHex(c); F.pm.color.setHex(pc); F.pm.emissive.setHex(pc);
-      for (const [B, v] of [[F.hold, f[3]], [F.seize, f[4]]]) { B.bg.visible = v > 0; if (v > 0) { B.bg.scale.setScalar(Math.min(1, (8 - v) / 0.3 + 0.01 > 1 ? 1 : Math.max(0.05, (8 - v) / 0.3))); B.cl.rotation.y = Math.sin(t * 3 + i) * 0.2; } }   // 웰링턴이 세운 황금·보라 깃발
+      for (const [B, v] of [[F.hold, f[3]], [F.seize, f[4]]]) { B.bg.visible = v > 0; if (v > 0) { B.bg.scale.setScalar(Math.min(1, (10 - v) / 0.3 + 0.01 > 1 ? 1 : Math.max(0.05, (10 - v) / 0.3))); B.cl.rotation.y = Math.sin(t * 3 + i) * 0.2; } }   // 웰링턴이 세운 황금·보라 깃발
       F.prog.visible = f[2] > 0; F.prog.scale.setScalar(Math.max(0.01, f[2] / FLAG_T) * FLAG_R); F.cloth.rotation.y = Math.sin(t * 2.2 + i) * 0.18;
       const on = f[2] > 0, fr = Math.min(1, f[2] / FLAG_T);
       F.beam.visible = on; F.edge.visible = on;
