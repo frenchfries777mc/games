@@ -1719,8 +1719,9 @@ function animHero(E, p, dt, t, view) {
   // 동작 시작: 동작 번호가 바뀌면 처음부터
   // 앞 동작이 아직 남아 있으면 그 자세에서 이어서 시작해요 (blT 동안 천천히 따라가요)
   if (p.aN !== E.aN) { E.aN = p.aN; if (E.aN != null && p.ak) { if (E.ak || E.kh) E.blT = 0.1; E.ak = p.ak; E.aT = 0; E.kc = (p.ac | 0) % 2; E.kh = null; } }
-  const kind = E.ak ? (E.ak === 'atk' || E.ak === 'hv' || E.ak === 'big' ? E.ak : 'skill') : '', D = kind === 'atk' && p.role === 'spearman' ? 0.45 : kind === 'big' && role === 'priest' ? 0.9 : kind === 'skill' && p.role === 'viking' && VK_T[E.ak] ? VK_T[E.ak] : kind === 'skill' && SK_T[E.ak] ? SK_T[E.ak] : ANIM_T[kind] || 0.5;
+  const kind = E.ak ? (E.ak === 'atk' || E.ak === 'hv' || E.ak === 'big' ? E.ak : 'skill') : '', D0 = kind === 'atk' && p.role === 'spearman' ? 0.45 : kind === 'big' && role === 'priest' ? 0.9 : kind === 'skill' && p.role === 'viking' && VK_T[E.ak] ? VK_T[E.ak] : kind === 'skill' && SK_T[E.ak] ? SK_T[E.ak] : ANIM_T[kind] || 0.5;
   // 기사 베기가 끝나면 끝 자세를 잠깐 들고 있다가 (연타가 이어질 수 있는 동안) 천천히 돌아와요
+  const slow = p.role === 'knight' || p.role === 'priest' || p.role === 'archer' ? 1 : 1.3, D = D0 * slow;   // 기사·사제·궁수 말고는 동작을 조금 느리고 부드럽게 해요
   if (E.ak) { E.aT += dt; if (E.aT > D) { if ((role === 'knight' || CHAIN[role]) && E.ak === 'atk') E.kh = { c: E.kc, t: 0 }; E.ak = null; } }
   if (E.kh && (E.kh.t += dt) > KH_T) E.kh = null;
   if (E.blT > 0) E.blT -= dt;
@@ -1869,7 +1870,7 @@ function animHero(E, p, dt, t, view) {
   if (kind === 'atk') { const wu = seg(v, 0, 0.22) * (1 - seg(v, 0.22, 0.45)); T.bx -= 0.2 * wu; T.hx += 0.1 * wu; T.sq += 0.05 * wu; }   // 공격 직전 몸을 살짝 뒤로 젖혔다가 내려쳐요
   if (E.pkb > 0) { E.pkb = Math.max(0, E.pkb - dt * 3.2); T.bx -= E.pkb * 0.7; T.hx -= E.pkb * 0.9; T.sq += E.pkb * 0.3; T.rx -= E.pkb * 0.8; T.lx -= E.pkb * 0.8; }   // 맞으면 움찔
   if (p.bk && E.ak !== 'block') { T.lx = -1.6; }
-  const k0 = dt * (E.blT > 0 ? 14 : 34), L = (o, kk, v2) => { const r = kk === 'hx' || kk === 'hy' || kk === 'hz' ? 0.45 : kk === 'bx' || kk === 'bry' || kk === 'brz' || kk === 'bz' ? 0.8 : kk === 'jy' || kk === 'sq' ? 1.3 : 1; E[kk] = E[kk] == null ? v2 : E[kk] + (v2 - E[kk]) * (1 - Math.exp(-k0 * r)); return E[kk]; };  // 머리는 몸보다 늦게, 몸은 팔보다 늦게 따라와요
+  const k0 = dt * (E.blT > 0 ? 14 : slow > 1 ? 20 : 34), L = (o, kk, v2) => { const r = kk === 'hx' || kk === 'hy' || kk === 'hz' ? 0.45 : kk === 'bx' || kk === 'bry' || kk === 'brz' || kk === 'bz' ? 0.8 : kk === 'jy' || kk === 'sq' ? 1.3 : 1; E[kk] = E[kk] == null ? v2 : E[kk] + (v2 - E[kk]) * (1 - Math.exp(-k0 * r)); return E[kk]; };  // 머리는 몸보다 늦게, 몸은 팔보다 늦게 따라와요
   u.armR.rotation.order = 'XZY'; u.armR.rotation.set(L(0, 'ar', T.rx), L(0, 'ary', T.ry), L(0, 'arz', T.rz)); u.armL.rotation.set(L(0, 'al', T.lx), 0, L(0, 'alz', T.lz));
   if (u.vAxe) {   // 바이킹 도끼 던지기: 손을 떠난 도끼가 하늘에서 한 바퀴 돌아 다시 손으로 돌아와요
     const ax = u.vAxe, f = E.ak === 'bloodlust' ? (v - 0.22) / 0.5 : -1;
