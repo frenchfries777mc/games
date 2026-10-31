@@ -1,7 +1,7 @@
 // Tumblecrown · © 2026 Frenchfries777 · CC BY-NC-ND 4.0
 // 화면 흐름, 조작, 멀티(친구 초대, PeerJS), 저장
 import { View } from './render.js';
-import { createGame, step, snapshot, chooseBless, carryOver, koPlayer, INTRO_T, HV_DELAY, wallClamp, setupRange } from './sim.js';
+import { createGame, step, snapshot, chooseBless, carryOver, koPlayer, INTRO_T, HV_DELAY, wallClamp, setupRange, callBots } from './sim.js';
 import { useMode, pushTime, PUSH_N, PUSH_T, TEAMS, FLAG_T, RESP_T, ARENA_THEMES, MODES, ROLES, ROLE_IDS, COLORS, BOT_NAMES, MAX_PLAYERS, BLESSINGS, CHAPTERS, CH, FOES, MAP, ACHIEVEMENTS, TALK, GEAR_TIERS, GEAR_COST, COSMETICS, MIDB, WEEKLY, weekInfo, VERSION, BUILD, roleLevel, CHAR_RANKS, charRankFor, MASTERY_PT, streakBonusFor, LORE, COMBOS, CURSES, DEEP, DEEP_I, TALK_X, ROLE_PUZ, flagShown } from './data.js';
 import { collide as mapCollide, areaAt, floorCell, MW, MH, CS, cw, useChapter, chapterIndex, SOPEN, openSecret, resetSecrets, hiddenCell, GOPEN, openGate, setDoors, DSTATE, PDOWN, dropPillar, LIFTH, liftOk, CUT } from './map.js';
 import * as SFX from './sfx.js';
@@ -577,7 +577,7 @@ function hostMsg(c, d) {
   }
   const uid = c._uid; if (!uid) return;
   if (d.t === 'rdy' && !S.G && S.ph === 'pick') { S.rdy[uid] = !S.rdy[uid]; hostLobby(); if (S.scr === 'sRoom') paintRoom(); }
-  else if (d.t === 'ping' && S.G) { const p = S.G.players.find(q => q.uid === uid); if (p && !p.dead && (p.pgT || 0) < S.G.t && isFinite(d.x) && isFinite(d.z)) { p.pgT = S.G.t + 2; S.G.ev.push({ k: 'ping', id: p.id, tm: p.team, x: +d.x, z: +d.z, pk: d.pk === 'danger' ? 'danger' : 'go' }); } }
+  else if (d.t === 'ping' && S.G) { const p = S.G.players.find(q => q.uid === uid); if (p && !p.dead && (p.pgT || 0) < S.G.t && isFinite(d.x) && isFinite(d.z)) { p.pgT = S.G.t + 2; S.G.ev.push({ k: 'ping', id: p.id, tm: p.team, x: +d.x, z: +d.z, pk: d.pk === 'danger' ? 'danger' : 'go' }); if (d.pk !== 'danger') callBots(S.G, p.team, +d.x, +d.z); } }
   else if (d.t === 'pick' && !S.G && S.ph === 'pick') { const sl = S.slots.find(s => s.uid === uid); if (sl) { if (ROLES[d.role]) sl.role = d.role; const col = +d.col | 0; if (COLORS[col] && !S.slots.some(s => s !== sl && s.col === col)) sl.col = col; hostLobby(); if (S.scr === 'sRoom') paintRoom(); } }
   else if (d.t === 'i' && S.G) { const pid = c._pid; if (!pid) return; const r = S.rin[pid] || (S.rin[pid] = {}); const once = { q: r.q || d.q, e: r.e || d.e, r: r.r || d.r, roll: r.roll || d.roll, skip: r.skip || d.skip, atkR: r.atkR || d.atkR, rcl: r.rcl || d.rcl }; Object.assign(r, d, once); }
   else if (d.t === 'b' && S.G) { if (c._pid) chooseBless(S.G, c._pid, d.id); }
@@ -706,7 +706,7 @@ $('gl').addEventListener('mousedown', e => {
   const m = myP(); if (!m || m.dd) return; S.pingT = performance.now() + 2000;
   const R = S.mmR, inMini = R && e.clientX >= R.x && e.clientX <= R.x + R.w && e.clientY >= R.y && e.clientY <= R.y + R.h;   // 미니맵 위에서 누르면 그 자리에 찍어요
   const g = inMini ? { x: (e.clientX - R.x) / R.sc * CS, z: (e.clientY - R.y) / R.sc * CS } : view.groundAt(e.clientX, e.clientY), foe = S.snap.pl.find(q => q.tm !== m.tm && !q.dn && !q.dd && Math.hypot(q.x - g.x, q.z - g.z) < 3.5), pk = foe ? 'danger' : 'go', x = foe ? foe.x : g.x, z = foe ? foe.z : g.z;
-  if (S.net === 'guest') send({ t: 'ping', x, z, pk }); else S.G.ev.push({ k: 'ping', id: m.id, tm: m.tm, x, z, pk });
+  if (S.net === 'guest') send({ t: 'ping', x, z, pk }); else { S.G.ev.push({ k: 'ping', id: m.id, tm: m.tm, x, z, pk }); if (pk === 'go') callBots(S.G, m.tm, x, z); }
 });
 const keyDown = (...ks) => ks.some(k => K[k]);
 // 휴대폰
