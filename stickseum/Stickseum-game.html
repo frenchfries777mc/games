@@ -5598,7 +5598,7 @@ function shuffle(arr){ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.
 /* ===== the version of this file =====
    Different BUILDS of one version meet and play together (room names online-v<ver>-<mode>-<map>-<slot>); different VERSIONS (the 0.x part) never do - the host refuses them (verNo) and the dispatcher answers busy.
    The build is only sent along with the join message and the lobby (for information); the corner of the screen shows it. */
-const GAME_BUILD='build 2026-10-31-v562';
+const GAME_BUILD='build 2026-10-31-v563';
 const GAME_VERSION='0.9', GAME_VERSION_NAME='은하 제국의 황혼';   // 게임 버전 이름: versions.json의 title과 같게 (빌드마다 바꾸지 않음)
 /* version (the 0.x part) vs build: different BUILDS of one version meet and play together, different VERSIONS never do (rooms, quick match, ranked, friend invites, dispatcher).
    Builds before 470 do not send a version, so it is read from the build number (0.9 started at build 458). */
@@ -10663,7 +10663,7 @@ function doStart(){
   const modeMin=(MODES[gameMode]||{}).minPlayers;
   if(modeMin && Object.keys(players).length<modeMin){ uiAlert((MODES[gameMode].name)+'는 최소 '+modeMin+'명이 필요해요. (현재 '+Object.keys(players).length+'명)'); return; }
   if(currentMode==='private' && Object.keys(players).length<2){ uiAlert('비공개 플레이는 최소 2명이 필요해요'); return; }      // (a private room alone: nobody to play with; add a friend or a bot first)
-  started=true; countdownEndsAt=null; try{ clanWaitSet(false); clanDuelAnnounce(); }catch(e){} // this flag is a one-way guard (see the line above) - same reasoning
+  started=true; noteMapPlayed(); countdownEndsAt=null; try{ clanWaitSet(false); clanDuelAnnounce(); }catch(e){} // this flag is a one-way guard (see the line above) - same reasoning
   // as gameLoopStarted in finalizeGameplayStart: if anything below throws before we actually reach
   // beginGame()/enterWeaponPhase(), the player would be stuck forever with no way to retry "시작" again
   try{
@@ -10808,7 +10808,7 @@ function onClientData(data, mode, code){
   else if(data.t==='duelPickEnd'){ closeDuelPickScreen(data.weapons||{}); }
   else if(data.t==='weaponState'){ applyWeaponState(data); }
   else if(data.t==='weaponReveal'){ showWeaponReveal(data.list, data.endsAt); }
-  else if(data.t==='begin'){ started=true; finalizeGameplayStart(data.matchTimerEndsAt); } // THE root cause of the long-standing survival black-screen reports: a client only ever set started=true upon receiving 'weaponPhase', but noWeapon modes (hotpotato/survival/parkour) never send that message at all - so on any CLIENT (never the host, which is why host-side testing never caught it), started stayed false forever and render()'s "if(!started||!MAP) return" permanently blacked out the canvas, with the HUD's static "1" placeholder never getting overwritten. No exception was ever thrown, which is also why no error banner or diagnostic line ever caught it.
+  else if(data.t==='begin'){ started=true; noteMapPlayed(); finalizeGameplayStart(data.matchTimerEndsAt); } // THE root cause of the long-standing survival black-screen reports: a client only ever set started=true upon receiving 'weaponPhase', but noWeapon modes (hotpotato/survival/parkour) never send that message at all - so on any CLIENT (never the host, which is why host-side testing never caught it), started stayed false forever and render()'s "if(!started||!MAP) return" permanently blacked out the canvas, with the HUD's static "1" placeholder never getting overwritten. No exception was ever thrown, which is also why no error banner or diagnostic line ever caught it.
   else if(data.t==='state'){
     { const lf=(netLastFull=netLastFull||{}); data.players=data.players.map(sp=>{ const m=Object.assign(lf[sp.id]||{}, sp); lf[sp.id]=m; return Object.assign({}, m); }); for(const id in lf) if(!data.players.some(sp=>sp.id===id)) delete lf[id]; }      // (the host sends only what changed: put the full player back together)
     if(!isHost) rpRecAdd(data);
@@ -11365,7 +11365,14 @@ function seededShuffleIds(ids, seed){
   for(let i=a.length-1;i>0;i--){ const j=Math.floor(rnd()*(i+1)); const x=a[i]; a[i]=a[j]; a[j]=x; }
   return a;
 }
-function matchmakingOrder(ids, now){ return seededShuffleIds(ids, Math.floor((now===undefined?Date.now():now)/MATCH_WINDOW_MS)+7919*ids.length); }
+const MAP_COOLDOWN_MS=3*60*1000, MAP_COOL_KEY='ffMapCool';      // a map this device played in an online match is not tried first again for 3 minutes (owner 10-31)
+function mapCoolRead(){ try{ const o=JSON.parse(localStorage.getItem(MAP_COOL_KEY)||'{}'); return (o && typeof o==='object') ? o : {}; }catch(e){ return {}; } }
+function noteMapPlayed(){ if(currentMode!=='online' || !currentMapId) return; try{ const o=mapCoolRead(), now=Date.now(); for(const k in o) if(now-o[k]>MAP_COOLDOWN_MS) delete o[k]; o[currentMapId]=now; localStorage.setItem(MAP_COOL_KEY, JSON.stringify(o)); }catch(e){} }
+function matchmakingOrder(ids, now){
+  const order=seededShuffleIds(ids, Math.floor((now===undefined?Date.now():now)/MATCH_WINDOW_MS)+7919*ids.length);
+  const o=mapCoolRead(), t=(now===undefined?Date.now():now), hot=order.filter(id=>o[id] && t-o[id]<MAP_COOLDOWN_MS);
+  return (hot.length && hot.length<order.length) ? order.filter(id=>!hot.includes(id)).concat(hot) : order;      // (the maps in their cooldown go to the end of the order; when every map is cooling down the order stays as it is)
+}
 function onlineMatchmake(){
   onlineMatchActive=true;
   gameMode = selectedOnlineMode || 'ffa';
