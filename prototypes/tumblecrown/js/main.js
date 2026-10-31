@@ -944,7 +944,9 @@ function onEvent(e) {
     case 'swing': if (e.role === 'spearman' && !e.n) { const c = Math.cos(e.a), s = Math.sin(e.a); view.streak(e.x + c * 0.8, e.z + s * 0.8, e.a, 3.6, 0xe8f0ff, 0.12, 0.35); view.burst(e.x + c * 3.6, 1.2, e.z + s * 3.6, 0xe8f0ff, 5, 6, 0.2, 0.08); SFX.play('swing'); break; }
       if (e.role === 'necro') { const c = Math.cos(e.a), s = Math.sin(e.a); const w = e.w || 5; view.streak(e.x, e.z, e.a, e.r, 0x6aff8a, 0.4, w); view.streak(e.x, e.z, e.a, e.r * 0.85, 0xc8ffd8, 0.3, w * 0.45); view.burst(e.x + c * e.r * 0.7, 1.3, e.z + s * e.r * 0.7, 0x6aff8a, 10, 5, 0.35, 0.1); SFX.play('swing'); break; }
       if (e.role === 'streltsy') { const c = Math.cos(e.a), s = Math.sin(e.a); setTimeout(() => { view.fanSweep(e.x, e.z, e.a, e.r, 1.2, 0xdfe6f0, 0.34); view.streak(e.x + c * 0.6, e.z + s * 0.6, e.a, 4.4, 0xffffff, 0.3, 4.5); view.burst(e.x + c * 3, 1.3, e.z + s * 3, 0xdfe6f0, 16, 8, 0.4, 0.14); view.shock(e.x + c * 2, e.z + s * 2, 4.4, 0xdfe6f0, 0.4); view.shake = Math.max(view.shake, 0.5); }, 190); SFX.play('swing'); break; }
-      view.arc(e.x, e.z, e.a, e.r, COL[e.role] || 0xffffff); SFX.play('swing'); break;
+      view.arc(e.x, e.z, e.a, e.r, COL[e.role] || 0xffffff);
+      if (e.t3) { const c3 = Math.cos(e.a), s3 = Math.sin(e.a), cl = COL[e.role] || 0xffffff; view.arc(e.x, e.z, e.a, e.r * 1.15, 0xffffff); view.arc(e.x, e.z, e.a, e.r * 1.3, cl); view.shock(e.x + c3 * e.r * 0.7, e.z + s3 * e.r * 0.7, 3.2, cl, 0.4); view.burst(e.x + c3 * e.r * 0.8, 1.4, e.z + s3 * e.r * 0.8, 0xffe8b0, 12, 7, 0.4, 0.12); if (e.id === me) view.shake = Math.max(view.shake, 0.4); }   // 3타째는 칼 궤적이 겹겹이 길게 남아요
+      SFX.play('swing'); break;
     case 'wallhit': view.burst(e.x, 1.4, e.z, 0xd8cca8, 8, 5, 0.3, 0.1); SFX.play('clang'); break;
     case 'vowhit': view.streak(e.tx, e.tz, Math.atan2(e.z - e.tz, e.x - e.tx), Math.hypot(e.x - e.tx, e.z - e.tz), 0xffe08a, 0.25, 0.4); break;
     case 'shoot': if (e.pk === 'musket') { const c = Math.cos(e.a || 0), s = Math.sin(e.a || 0); view.burst(e.x + c * 3.6, 2.0, e.z + s * 3.6, 0xffc060, 8, 5, 0.25, 0.1); view.burst(e.x + c * 3.2, 2.0, e.z + s * 3.2, 0x8a8a8a, 5, 2, 0.6, 0.2); view.flash(e.x + c * 3.4, e.z + s * 3.4, 0xffc060, 70); SFX.play('slam'); } else SFX.play(e.pk === 'orb' ? 'orb' : 'arrow'); break;
@@ -965,6 +967,7 @@ function onEvent(e) {
     case 'weak': num(e.x, e.z, T('약점!'), '#ff9c4a', 1.4, 3.8); view.shock(e.x, e.z, 3, 0xff7a20, 0.35); view.burst(e.x, 2.4, e.z, 0xffb060, 14, 9, 0.5, 0.14); view.flash(e.x, e.z, 0xff7a20, 90); view.shake = Math.max(view.shake, 0.35); SFX.play('parry'); break;
     case 'phit': { // 맞는 순간: 빨간 불꽃과 충격파, 번쩍임, 큰 피해일수록 큰 숫자와 화면 흔들림, 때린 사람·맞은 사람 모두 잠깐 멈칫해요
       const big = e.v >= 25, hv = Math.min(1, e.v / 45);
+      view.flinch(e.id, e.by, hv);
       view.burst(e.x, 1.6, e.z, 0xff5a4a, 8 + (big ? 10 : 0), 6 + hv * 4, 0.35, 0.11); view.burst(e.x, 1.6, e.z, 0xfff0d0, 4, 5, 0.25, 0.08); view.shock(e.x, e.z, 2.2 + hv * 2.4, 0xff6a5a, 0.3); view.flash(e.x, e.z, 0xff6a5a, 70 + hv * 90);
       if (e.by === me && e.id !== me) num(e.x, e.z, '-' + e.v, big ? '#ffe45a' : '#ffffff', big ? 1.9 : 1.5, 3.6);   // 내가 넣은 피해: 크고 하얗게 (큰 피해는 노랗게)
       else if (e.id === me) num(e.x, e.z, '-' + e.v, big ? '#ff9a6a' : '#ff5a4a', big ? 1.5 : 1.1);   // 내가 받은 피해: 빨갛게
