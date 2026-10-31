@@ -3,7 +3,7 @@
 
 import { T } from './tr.js';
 
-export const VERSION = 'v0.2', BUILD = 205;
+export const VERSION = 'v0.2', BUILD = 206;
 
 export const ROLES = {
   knight: {
@@ -496,7 +496,8 @@ const ARENAS = [
     wallIf: (i, j, W, H) => {
       const o = (u, v) => u < 0.085 || v < 0.085 || Math.abs(u + v - 1) < 0.06 || (u < 0.2 && v > 0.8)   // 위쪽 길(왼쪽 가장자리+위쪽 가장자리), 가운데 대각선 길, 진지 방
         || Math.hypot((u - 0.27) * W, (v - 0.25) * H) < 15 || (Math.abs(u - 0.27) * W < 4 && v < 0.25) || (Math.abs(v - 0.25) * H < 4 && u < 0.27)   // 숲 빈터와 위·왼쪽 길로 나가는 샛길
-        || (u > 0.27 && u < 0.5 && Math.abs((u - 0.27) - (v - 0.25)) < 0.022);   // 빈터에서 가운데 길로 이어지는 샛길
+        || (u > 0.27 && u < 0.5 && Math.abs((u - 0.27) - (v - 0.25)) < 0.022)   // 빈터에서 가운데 길로 이어지는 샛길
+        || (u > 0.04 && u < 0.47 && Math.abs(v - 0.55) * H < 6) || (v > 0.04 && v < 0.47 && Math.abs(u - 0.55) * W < 6);   // 지름길: 왼쪽 길에서 가운데 길로, 위쪽 길에서 가운데 길로 곧게 뚫린 길 (180도 돌려 반대쪽에도 똑같이 생겨요)
       const u = (i + 0.5) / W, v = (j + 0.5) / H;
       return !(o(u, v) || o(1 - u, 1 - v));
     },
