@@ -286,15 +286,16 @@ function botPickRole(sl) {
 }
 function newBots() { S.botRoles = ROLE_IDS.slice().sort(() => Math.random() - 0.5); }
 function openRoom() { S.chSel = 0; S.wk = false; if (!S.botRoles) newBots(); show('sRoom'); paintRoom(); }
+function roleXpBar(id) { const xp = SAVE.xp[id] || 0, L = roleLevel(xp); if (L >= 10) return '<p class="note">' + T('최고 레벨이에요') + '</p>'; const a = 25 * (L - 1) * (L - 1), b = 25 * L * L; return '<div class="bar"><span>' + T('경험치') + '</span><u style="width:120px;display:inline-block;height:8px;background:#2a2230"><i style="display:block;height:8px;background:#ffd36b;width:' + Math.round((xp - a) / (b - a) * 100) + '%"></i></u> <small>' + (xp - a) + '/' + (b - a) + '</small></div>'; }
 function paintRoom() {
   const host = S.net !== 'guest', mine = S.slots.find(s => s.uid === UID) || meSlot(), c = ROLES[mine.role] || ROLES.knight;
   const online = S.net !== 'solo', wait = online && S.ph === 'wait', pickP = online && S.ph === 'pick';
   $('sRoom').classList.toggle('waiting', wait);
   $('roomTitle').textContent = S.range ? T('연습장') : S.net === 'solo' ? T('봇과 연습') : S.pub ? T('온라인 대전') : host ? T('친구와 대결 · 방장') : T('친구와 대결');
   $('inviteBtn').style.display = S.net === 'host' && !S.pub && wait ? '' : 'none';
-  $('clsList').innerHTML = ROLE_IDS.map((id, k) => '<button data-c="' + id + '"' + (mine.role === id ? ' class="on"' : '') + '><i>' + (k + 1) + '</i><b>' + ROLES[id].name + '</b></button>').join('');
+  $('clsList').innerHTML = ROLE_IDS.map((id, k) => '<button data-c="' + id + '"' + (mine.role === id ? ' class="on"' : '') + '><i>' + (k + 1) + '</i><b>' + ROLES[id].name + '</b><small class="lv">Lv.' + roleLevel(SAVE.xp[id]) + '</small></button>').join('');
   $('clsList').querySelectorAll('button').forEach(el => el.onclick = () => { SFX.play('click'); SAVE.role = el.dataset.c; save(); pick(); });
-  $('clsInfo').innerHTML = '<h2>' + c.name + '</h2><p>' + c.role + '</p>' + BARS.map((n, k) => '<div class="bar"><span>' + n + '</span><u>' + '<i class="on"></i>'.repeat(c.st[k]) + '<i></i>'.repeat(5 - c.st[k]) + '</u></div>').join('') +
+  $('clsInfo').innerHTML = '<h2>' + c.name + ' <small class="lv">Lv.' + roleLevel(SAVE.xp[mine.role]) + '</small></h2><p>' + c.role + '</p>' + roleXpBar(mine.role) + BARS.map((n, k) => '<div class="bar"><span>' + n + '</span><u>' + '<i class="on"></i>'.repeat(c.st[k]) + '<i></i>'.repeat(5 - c.st[k]) + '</u></div>').join('') +
     '<h4>' + T('기본 공격') + '</h4><p>' + c.atkTxt + '</p>' + c.skills.map(s => '<h4>' + s.key + ' · ' + s.name + '</h4><p>' + s.desc + '</p>').join('');
   const all = online ? S.slots : roster(), cap = online ? S.cap : MAX_PLAYERS;
   $('slots').innerHTML = all.map((s, i) => (s.team = i % 2, '<div class="slot' + (s.uid === UID ? ' me' : '') + '"><i style="background:' + hex(TEAMS[s.team == null ? 0 : s.team].c) + '"></i><b>' + esc(s.name) + '</b><small>' + (pickP ? (s.rd || (S.net === 'host' && S.rdy[s.uid]) ? '✔ ' + T('준비') + ' · ' : '') : '') + (wait ? '' : ROLES[s.role].name) + (s.bot ? ' · ' + T('봇') : '') + '</small></div>')).join('') +
@@ -605,7 +606,7 @@ function awardHonor() {
   const p = myP(); if (!p) return;
   let h = Math.round((S.snap.honor[S.me] || 0) * ((p.b || []).indexOf('honor') >= 0 ? 1.25 : 1));
   const gain = S.net === 'solo' ? 0 : h;   // 봇과 연습은 tC를 못 얻어요
-  SAVE.honor += gain; SAVE.xp[p.role] = (SAVE.xp[p.role] || 0) + h; save();
+  SAVE.honor += gain; const xg = 20 + (p.kl | 0) * 5 + (p.tm === S.snap.wtm ? 30 : 0); S.lastXp = xg; S.lastLv = roleLevel(SAVE.xp[p.role]); SAVE.xp[p.role] = (SAVE.xp[p.role] || 0) + xg; S.lastLv = roleLevel(SAVE.xp[p.role]) > S.lastLv ? roleLevel(SAVE.xp[p.role]) : 0; save();   // 직업 경험치: 한 판 20 + 쓰러뜨림당 5 + 승리 30
   return gain;
 }
 
@@ -1420,7 +1421,7 @@ function showWin() {
   const row = p => `<tr${p.id === S.me ? ' style="background:#2a2014"' : ''}><td style="color:${ROLES[p.role].color}">${ROLES[p.role].name}</td><td>${esc(p.id === S.me ? T('나') : p.bot ? T('봇') : p.name)}</td><td>${p.kl | 0}</td><td>${p.dth | 0}</td></tr>`;
   const tab = t => `<div><h3 style="color:${hex(TEAMS[t].c)}">${tmName(t)}${t === wt ? ' · ' + T('승리') : ''}</h3><table><tr><th>${T('직업')}</th><th>${T('이름')}</th><th>${T('쓰러뜨림')}</th><th>${T('쓰러짐')}</th></tr>${sn.pl.filter(p => p.tm === t).map(row).join('')}</table></div>`;
   const top3 = sn.pl.slice().sort((a, b) => (b.kl | 0) - (a.kl | 0)).slice(0, 3), pod = [[1, 'd8d8e0', 46], [0, 'ffd36b', 62], [2, 'c8884a', 36]].filter(([i]) => top3[i]).map(([i, c, hh]) => { const q = top3[i]; return `<div style="flex:1;text-align:center"><div style="font-size:12px;color:${ROLES[q.role].color}">${ROLES[q.role].name}</div><div style="font-size:12px;margin:2px 0 4px">${esc(q.id === S.me ? T('나') : q.bot ? T('봇') : q.name)}</div><div style="height:${hh}px;background:#${c};color:#201810;font-weight:700;line-height:${hh}px;border-radius:4px 4px 0 0">${q.kl | 0} · ${q.dth | 0}</div></div>`; }).join('');
-  $('winBox').innerHTML = `<div class="wt" style="color:${won ? '#ffd36b' : '#ff6a5a'}">${won ? T('승리!') : T('패배')}</div><div class="ws">${T('깃발 일곱 개를 모두 차지했어요')}</div><div class="pod">${pod}</div><div class="rk">${tab(0)}${tab(1)}</div><div class="tc">${T('받은 tC {0}', '<b style="color:#ffd36b">' + h + '</b>')} · ${T('지금 tC {0}', SAVE.honor)}</div>`;
+  $('winBox').innerHTML = `<div class="wt" style="color:${won ? '#ffd36b' : '#ff6a5a'}">${won ? T('승리!') : T('패배')}</div><div class="ws">${T('깃발 일곱 개를 모두 차지했어요')}</div><div class="pod">${pod}</div><div class="rk">${tab(0)}${tab(1)}</div><div class="tc">${T('받은 tC {0}', '<b style="color:#ffd36b">' + h + '</b>')} · ${T('지금 tC {0}', SAVE.honor)} · ${T('경험치 +{0}', S.lastXp | 0)}${S.lastLv ? ' · ' + T('레벨 {0} 달성!', S.lastLv) : ''}</div>`;
   $('winBox').classList.toggle('me', !!won);
   $('winBack').onclick = () => { SFX.play('click'); endToLobby(''); };
   setHud(false); show('sWin');
