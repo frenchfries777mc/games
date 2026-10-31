@@ -497,7 +497,7 @@ if (qs.get('dedicated') === '1') {
   window.__ffd = { open(n) { S.err = ''; startMatch(n); }, status() { return { live: S.net === 'host' && !!S.peer && !S.err, humans: S.slots.filter(s => !s.srv && !s.bot).length, started: !!S.G, ended: !!(S.snap && S.snap.ph === 'won'), err: S.err || '' }; } };
 }
 /* 온라인 대전 (Stickseum 방식): 방 이름 ff-tumblecrown-q1, q2... 를 차례로 만들어 보고, 이미 있으면 그 방에 들어가요. 가득 차거나 이미 시작했으면 다음 방으로 가요 */
-function paintModes() { $('modeCards').innerHTML = Object.keys(MODES).map(k => '<button class="mcard" data-m="' + k + '" style="background-image:url(mode-' + k + '.jpg)"><b>' + MODES[k].name + '</b><small>' + MODES[k].desc + (k === 'rank' ? '<br>' + T('내 랭킹 {0}점 · {1}', SAVE.rating | 0, charRankFor(SAVE.rating | 0).name) : '') + '</small></button>').join(''); $('modeCards').querySelectorAll('button').forEach(b => b.onclick = () => { SFX.play('click'); S.mode = b.dataset.m; startMatch(); }); }
+function paintModes() { $('modeCards').innerHTML = Object.keys(MODES).map(k => '<button class="mcard" data-m="' + k + '" style="background-image:url(mode-' + k + '.jpg)"><img class="lg" alt="" src="mode-' + k + '-logo.png"><b>' + MODES[k].name + '</b><small>' + MODES[k].desc + (k === 'rank' ? '<br>' + T('내 랭킹 {0}점 · {1}', SAVE.rating | 0, charRankFor(SAVE.rating | 0).name) : '') + '</small></button>').join(''); $('modeCards').querySelectorAll('button').forEach(b => b.onclick = () => { SFX.play('click'); S.mode = b.dataset.m; startMatch(); }); }
 function startMatch(n) {
   if (!window.Peer) { homeMsg(T('연결 도구를 불러오지 못했어요. 인터넷 연결을 확인하고 새로고침해 주세요.')); return; }
   leaveNet(); homeMsg(T('같이 할 사람을 찾는 중...')); matchTry(n || 1, S.mg);
