@@ -7,7 +7,93 @@
    "items": [
     "프로필 카드에 온라인인지 오프라인인지 나와요. 온라인이면 어떤 게임(또는 사이트)에 있는지도 보여요",
     "오프라인이면 마지막으로 있던 곳과 얼마 전인지 나와요"
-   ]
+   ],
+   "tr": {
+    "en": {
+     "title": "Profile online status",
+     "items": [
+      "The profile card shows whether you are online or offline. If you are online, it also shows which game (or site) you are in.",
+      "If you are offline, it shows where you were last and how long ago."
+     ]
+    },
+    "es": {
+     "title": "Estado de conexión en el perfil",
+     "items": [
+      "La tarjeta de perfil muestra si estás en línea o desconectado. Si estás en línea, también indica en qué juego (o sitio) estás.",
+      "Si estás desconectado, muestra dónde estuviste por última vez y hace cuánto."
+     ]
+    },
+    "fr": {
+     "title": "Statut de connexion du profil",
+     "items": [
+      "La carte de profil indique si vous êtes en ligne ou hors ligne. En ligne, elle montre aussi le jeu (ou le site) où vous êtes.",
+      "Hors ligne, elle indique où vous étiez en dernier et il y a combien de temps."
+     ]
+    },
+    "de": {
+     "title": "Online-Status im Profil",
+     "items": [
+      "Die Profilkarte zeigt, ob du online oder offline bist. Online wird zusätzlich angezeigt, in welchem Spiel (oder auf welcher Seite) du bist.",
+      "Offline wird angezeigt, wo du zuletzt warst und wie lange das her ist."
+     ]
+    },
+    "ja": {
+     "title": "プロフィールの接続状態",
+     "items": [
+      "プロフィールカードにオンラインかオフラインかが表示されます。オンラインの場合は、どのゲーム（またはサイト）にいるかも表示されます。",
+      "オフラインの場合は、最後にいた場所と、それからの経過時間が表示されます。"
+     ]
+    },
+    "zh": {
+     "title": "个人资料在线状态",
+     "items": [
+      "个人资料卡会显示你是在线还是离线。在线时还会显示你所在的游戏（或网站）。",
+      "离线时会显示你最后所在的位置以及距今多久。"
+     ]
+    },
+    "pt": {
+     "title": "Status online no perfil",
+     "items": [
+      "O cartão de perfil mostra se você está online ou offline. Se estiver online, também mostra em qual jogo (ou site) você está.",
+      "Se estiver offline, mostra onde você esteve por último e há quanto tempo."
+     ]
+    },
+    "ru": {
+     "title": "Статус в профиле",
+     "items": [
+      "В карточке профиля видно, в сети вы или нет. Если вы в сети, показывается, в какой игре (или на каком сайте) вы находитесь.",
+      "Если вы не в сети, показывается, где вы были в последний раз и как давно это было."
+     ]
+    },
+    "tr": {
+     "title": "Profilde çevrimiçi durumu",
+     "items": [
+      "Profil kartında çevrimiçi mi çevrimdışı mısın görünür. Çevrimiçiysen hangi oyunda (veya sitede) olduğun da gösterilir.",
+      "Çevrimdışıysan en son nerede olduğun ve bunun ne kadar önce olduğu gösterilir."
+     ]
+    },
+    "it": {
+     "title": "Stato online nel profilo",
+     "items": [
+      "La scheda profilo mostra se sei online o offline. Se sei online, mostra anche in quale gioco (o sito) ti trovi.",
+      "Se sei offline, mostra dove eri l'ultima volta e da quanto tempo."
+     ]
+    },
+    "pl": {
+     "title": "Status online w profilu",
+     "items": [
+      "Karta profilu pokazuje, czy jesteś online, czy offline. Gdy jesteś online, pokazuje też, w jakiej grze (lub na jakiej stronie) jesteś.",
+      "Gdy jesteś offline, pokazuje, gdzie byłeś ostatnio i jak dawno temu."
+     ]
+    },
+    "ar": {
+     "title": "حالة الاتصال في الملف الشخصي",
+     "items": [
+      "تعرض بطاقة الملف الشخصي ما إذا كنت متصلًا أم غير متصل. وإذا كنت متصلًا، تعرض أيضًا اللعبة (أو الموقع) الذي تتواجد فيه.",
+      "وإذا كنت غير متصل، تعرض آخر مكان كنت فيه والمدة منذ ذلك."
+     ]
+    }
+   }
   },
   {
    "date": "2026-10-31",
@@ -15,7 +101,81 @@
    "title": "브라우저 탭 로고",
    "items": [
     "허브, 게임, 교육, 도구 사이트의 모든 페이지에서 브라우저 탭에 로고가 보이도록 했어요 (게임 페이지는 그 게임 로고)"
-   ]
+   ],
+   "tr": {
+    "en": {
+     "title": "Browser tab logo",
+     "items": [
+      "The logo now shows in the browser tab on every page of the hub, games, Educations and Tools sites (game pages show that game's logo)."
+     ]
+    },
+    "es": {
+     "title": "Logotipo en la pestaña del navegador",
+     "items": [
+      "El logotipo aparece ahora en la pestaña del navegador en todas las páginas del hub, de los juegos, de Educations y de Tools (las páginas de juegos muestran el logotipo de ese juego)."
+     ]
+    },
+    "fr": {
+     "title": "Logo dans l'onglet du navigateur",
+     "items": [
+      "Le logo s'affiche désormais dans l'onglet du navigateur sur toutes les pages du hub, des jeux, d'Educations et de Tools (les pages de jeu affichent le logo du jeu)."
+     ]
+    },
+    "de": {
+     "title": "Logo im Browser-Tab",
+     "items": [
+      "Das Logo wird jetzt auf jeder Seite des Hubs, der Spiele, von Educations und Tools im Browser-Tab angezeigt (Spielseiten zeigen das Logo des jeweiligen Spiels)."
+     ]
+    },
+    "ja": {
+     "title": "ブラウザのタブのロゴ",
+     "items": [
+      "ハブ、ゲーム、Educations、Toolsのすべてのページで、ブラウザのタブにロゴが表示されるようになりました（ゲームのページはそのゲームのロゴ）。"
+     ]
+    },
+    "zh": {
+     "title": "浏览器标签页图标",
+     "items": [
+      "枢纽、游戏、Educations、Tools 网站的所有页面，浏览器标签页都会显示徽标（游戏页面显示该游戏的徽标）。"
+     ]
+    },
+    "pt": {
+     "title": "Logotipo na aba do navegador",
+     "items": [
+      "O logotipo agora aparece na aba do navegador em todas as páginas do hub, dos jogos, do Educations e do Tools (as páginas de jogos mostram o logotipo do respectivo jogo)."
+     ]
+    },
+    "ru": {
+     "title": "Логотип во вкладке браузера",
+     "items": [
+      "Логотип теперь отображается во вкладке браузера на всех страницах хаба, игр, Educations и Tools (на страницах игр — логотип этой игры)."
+     ]
+    },
+    "tr": {
+     "title": "Tarayıcı sekmesinde logo",
+     "items": [
+      "Hub, oyunlar, Educations ve Tools sitelerinin tüm sayfalarında logo tarayıcı sekmesinde görünür (oyun sayfalarında o oyunun logosu görünür)."
+     ]
+    },
+    "it": {
+     "title": "Logo nella scheda del browser",
+     "items": [
+      "Il logo ora appare nella scheda del browser in tutte le pagine di hub, giochi, Educations e Tools (le pagine dei giochi mostrano il logo del gioco)."
+     ]
+    },
+    "pl": {
+     "title": "Logo na karcie przeglądarki",
+     "items": [
+      "Logo jest teraz widoczne na karcie przeglądarki na każdej stronie hubu, gier, Educations i Tools (na stronach gier — logo danej gry)."
+     ]
+    },
+    "ar": {
+     "title": "شعار علامة تبويب المتصفح",
+     "items": [
+      "يظهر الشعار الآن في علامة تبويب المتصفح في كل صفحات المركز والألعاب وEducations وTools (تعرض صفحات الألعاب شعار اللعبة نفسها)."
+     ]
+    }
+   }
   },
   {
    "date": "2026-10-31",
@@ -25,7 +185,105 @@
     "Crown Envoy 위키의 템플릿 문서에 템플릿마다 게임에서 찍은 지도 사진이 들어갔고, 적대·난이도가 build 135 값으로 바뀌었어요",
     "Tumblecrown 위키의 직업 문서에 직업 17개의 사진이 들어갔어요",
     "위키 글에서 개발자 말투가 사라지고, 위키 게임 목록에서 Gatecrash가 빠졌어요"
-   ]
+   ],
+   "tr": {
+    "en": {
+     "title": "Wiki cleanup",
+     "items": [
+      "Crown Envoy wiki template pages now include a map photo taken in the game for each template, and hostility and difficulty were updated to the build 135 values.",
+      "The Tumblecrown wiki class pages now include photos for 17 classes.",
+      "The developer tone was removed from wiki articles, and Gatecrash was removed from the wiki game list."
+     ]
+    },
+    "es": {
+     "title": "Organización de la wiki",
+     "items": [
+      "Las páginas de plantillas de la wiki de Crown Envoy incluyen ahora una foto del mapa tomada en el juego para cada plantilla, y la hostilidad y la dificultad se actualizaron a los valores de la build 135.",
+      "Las páginas de clases de la wiki de Tumblecrown incluyen ahora fotos de 17 clases.",
+      "Se eliminó el tono de desarrollador de los artículos de la wiki y Gatecrash se quitó de la lista de juegos de la wiki."
+     ]
+    },
+    "fr": {
+     "title": "Nettoyage du wiki",
+     "items": [
+      "Les pages de modèles du wiki de Crown Envoy contiennent maintenant une photo de carte prise dans le jeu pour chaque modèle, et l'hostilité et la difficulté ont été mises à jour avec les valeurs de la build 135.",
+      "Les pages de classes du wiki de Tumblecrown contiennent maintenant des photos de 17 classes.",
+      "Le ton développeur a été retiré des articles du wiki, et Gatecrash a été retiré de la liste des jeux du wiki."
+     ]
+    },
+    "de": {
+     "title": "Wiki aufgeräumt",
+     "items": [
+      "Die Vorlagenseiten im Crown-Envoy-Wiki enthalten jetzt für jede Vorlage ein im Spiel aufgenommenes Kartenfoto, und Feindseligkeit und Schwierigkeit entsprechen den Werten aus Build 135.",
+      "Die Klassenseiten im Tumblecrown-Wiki enthalten jetzt Fotos von 17 Klassen.",
+      "Der Entwickler-Ton wurde aus den Wiki-Artikeln entfernt, und Gatecrash wurde aus der Spieleliste des Wikis gestrichen."
+     ]
+    },
+    "ja": {
+     "title": "ウィキの整理",
+     "items": [
+      "Crown Envoyのウィキのテンプレートページには、テンプレートごとにゲームで撮影した地図の写真が入り、敵対度と難易度がビルド135の値に変わりました。",
+      "Tumblecrownのウィキの職業ページに、17職業分の写真が入りました。",
+      "ウィキの記事から開発者向けの話し方を取り除き、ウィキのゲーム一覧からGatecrashを外しました。"
+     ]
+    },
+    "zh": {
+     "title": "维基整理",
+     "items": [
+      "Crown Envoy 维基的模板页面现在为每个模板加入了游戏中拍摄的地图照片，敌对度和难度也改为 build 135 的数值。",
+      "Tumblecrown 维基的职业页面现在包含 17 个职业的照片。",
+      "维基文章中的开发者口吻已去除，维基游戏列表中已移除 Gatecrash。"
+     ]
+    },
+    "pt": {
+     "title": "Organização da wiki",
+     "items": [
+      "As páginas de modelos da wiki do Crown Envoy agora incluem uma foto do mapa tirada no jogo para cada modelo, e a hostilidade e a dificuldade foram atualizadas para os valores da build 135.",
+      "As páginas de classes da wiki do Tumblecrown agora incluem fotos de 17 classes.",
+      "O tom de desenvolvedor foi removido dos artigos da wiki, e o Gatecrash saiu da lista de jogos da wiki."
+     ]
+    },
+    "ru": {
+     "title": "Очистка вики",
+     "items": [
+      "На страницах шаблонов вики Crown Envoy теперь есть снимок карты из игры для каждого шаблона, а враждебность и сложность изменены на значения сборки 135.",
+      "На страницах классов вики Tumblecrown теперь есть фотографии 17 классов.",
+      "Из статей вики убран тон разработчика, а Gatecrash удалён из списка игр вики."
+     ]
+    },
+    "tr": {
+     "title": "Wiki düzenlemesi",
+     "items": [
+      "Crown Envoy wiki şablon sayfalarına her şablon için oyundan alınmış bir harita fotoğrafı eklendi; düşmanlık ve zorluk build 135 değerlerine güncellendi.",
+      "Tumblecrown wiki sınıf sayfalarına 17 sınıfın fotoğrafı eklendi.",
+      "Wiki yazılarındaki geliştirici dili kaldırıldı ve wiki oyun listesinden Gatecrash çıkarıldı."
+     ]
+    },
+    "it": {
+     "title": "Riordino della wiki",
+     "items": [
+      "Pagine dei modelli nella wiki di Crown Envoy includono ora una foto della mappa scattata nel gioco per ogni modello, e ostilità e difficoltà sono cambiate ai valori della build 135.",
+      "Le pagine delle classi nella wiki di Tumblecrown includono ora foto di 17 classi.",
+      "Il tono da sviluppatore è stato rimosso dagli articoli della wiki e Gatecrash è stato tolto dall'elenco dei giochi della wiki."
+     ]
+    },
+    "pl": {
+     "title": "Porządki w wiki",
+     "items": [
+      "Strony szablonów w wiki Crown Envoy zawierają teraz zdjęcie mapy z gry dla każdego szablonu, a wrogość i trudność zmieniono na wartości z builda 135.",
+      "Strony klas w wiki Tumblecrown zawierają teraz zdjęcia 17 klas.",
+      "Usunięto styl deweloperski z artykułów wiki, a Gatecrash zniknął z listy gier w wiki."
+     ]
+    },
+    "ar": {
+     "title": "تنظيم الويكي",
+     "items": [
+      "تتضمن صفحات القوالب في ويكي Crown Envoy الآن صورة للخريطة من داخل اللعبة لكل قالب، وتم تحديث العداء والصعوبة إلى قيم الإصدار 135.",
+      "تتضمن صفحات الفئات في ويكي Tumblecrown الآن صورًا لـ 17 فئة.",
+      "أُزيل الأسلوب الموجّه للمطورين من مقالات الويكي، وأُزيلت Gatecrash من قائمة الألعاب في الويكي."
+     ]
+    }
+   }
   },
   {
    "date": "2026-10-30",
@@ -3446,7 +3704,93 @@
    "items": [
     "허브 도전과제 목록과 프로필 카드의 Stickseum 업적에 새 업적 10개(모드별 100판 업적과 기사 업적 등)가 들어갔어요",
     "허브 첫 화면의 달성할 업적이 294개에서 304개가 됐어요"
-   ]
+   ],
+   "tr": {
+    "en": {
+     "title": "10 new Stickseum achievements",
+     "items": [
+      "The hub achievement list and the Stickseum achievements on profile cards now include 10 new achievements (such as 100-match achievements for each mode and knight achievements).",
+      "The number of achievements to reach on the hub home screen went from 294 to 304."
+     ]
+    },
+    "es": {
+     "title": "10 logros nuevos de Stickseum",
+     "items": [
+      "La lista de logros del hub y los logros de Stickseum en las tarjetas de perfil incluyen ahora 10 logros nuevos (como los de 100 partidas por modo y los de caballero).",
+      "El número de logros pendientes en la pantalla principal del hub pasó de 294 a 304."
+     ]
+    },
+    "fr": {
+     "title": "10 nouveaux succès Stickseum",
+     "items": [
+      "La liste des succès du hub et les succès Stickseum des cartes de profil incluent maintenant 10 nouveaux succès (par exemple 100 parties par mode et succès de chevalier).",
+      "Le nombre de succès à obtenir sur l'écran d'accueil du hub est passé de 294 à 304."
+     ]
+    },
+    "de": {
+     "title": "10 neue Stickseum-Erfolge",
+     "items": [
+      "Die Erfolgsliste im Hub und die Stickseum-Erfolge auf den Profilkarten enthalten jetzt 10 neue Erfolge (zum Beispiel 100 Partien pro Modus und Ritter-Erfolge).",
+      "Die Anzahl der offenen Erfolge auf dem Startbildschirm des Hubs ist von 294 auf 304 gestiegen."
+     ]
+    },
+    "ja": {
+     "title": "Stickseumの実績を10個追加",
+     "items": [
+      "ハブの実績一覧とプロフィールカードのStickseum実績に、新しい実績が10個入りました（モードごとの100戦実績や騎士の実績など）。",
+      "ハブのトップ画面に表示される未達成の実績数が294個から304個になりました。"
+     ]
+    },
+    "zh": {
+     "title": "新增 10 项 Stickseum 成就",
+     "items": [
+      "枢纽成就列表和个人资料卡上的 Stickseum 成就新增了 10 项（如每个模式 100 场的成就和骑士成就）。",
+      "枢纽首页的待达成成就数量从 294 个变为 304 个。"
+     ]
+    },
+    "pt": {
+     "title": "10 novas conquistas do Stickseum",
+     "items": [
+      "A lista de conquistas do hub e as conquistas do Stickseum nos cartões de perfil agora incluem 10 novas conquistas (como as de 100 partidas por modo e as de cavaleiro).",
+      "O número de conquistas a alcançar na tela inicial do hub passou de 294 para 304."
+     ]
+    },
+    "ru": {
+     "title": "10 новых достижений Stickseum",
+     "items": [
+      "В списке достижений хаба и в достижениях Stickseum на карточках профиля теперь 10 новых достижений (например, за 100 матчей в каждом режиме и достижения рыцаря).",
+      "Количество достижений, которые нужно получить, на главном экране хаба изменилось с 294 до 304."
+     ]
+    },
+    "tr": {
+     "title": "10 yeni Stickseum başarımı",
+     "items": [
+      "Hub başarı listesi ve profil kartlarındaki Stickseum başarıları artık 10 yeni başarı içeriyor (her mod için 100 maç ve şövalye başarıları gibi).",
+      "Hub ana ekranındaki hedeflenecek başarı sayısı 294'ten 304'e çıktı."
+     ]
+    },
+    "it": {
+     "title": "10 nuovi obiettivi di Stickseum",
+     "items": [
+      "L'elenco degli obiettivi dell'hub e gli obiettivi di Stickseum sulle schede profilo includono ora 10 nuovi obiettivi (come quelli delle 100 partite per modalità e quelli del cavaliere).",
+      "Il numero di obiettivi da raggiungere nella schermata iniziale dell'hub è passato da 294 a 304."
+     ]
+    },
+    "pl": {
+     "title": "10 nowych osiągnięć Stickseum",
+     "items": [
+      "Lista osiągnięć w hubie i osiągnięcia Stickseum na kartach profilu zawierają teraz 10 nowych osiągnięć (np. 100 meczów w każdym trybie i osiągnięcia rycerza).",
+      "Liczba osiągnięć do zdobycia na ekranie głównym hubu wzrosła z 294 do 304."
+     ]
+    },
+    "ar": {
+     "title": "10 إنجازات جديدة في Stickseum",
+     "items": [
+      "تتضمن قائمة إنجازات المركز وإنجازات Stickseum في بطاقات الملف الشخصي الآن 10 إنجازات جديدة (مثل إنجازات 100 مباراة لكل وضع وإنجازات الفارس).",
+      "انتقل عدد الإنجازات المتبقية في الشاشة الرئيسية للمركز من 294 إلى 304."
+     ]
+    }
+   }
   },
   {
    "date": "2026-10-25",
