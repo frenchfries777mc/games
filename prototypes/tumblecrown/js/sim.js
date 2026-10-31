@@ -1795,8 +1795,8 @@ function botPvp(G, p, dt) {
   const d = dist(p, tgt), ta = angTo(p, tgt), ranged = R.atk.kind !== 'melee', clear = lineClear(p.x, p.z, tgt.x, tgt.z);
   const near = foes.filter(q => dist(p, q) < 6).length, nearest = foes.length ? foes.reduce((m, q) => dist(p, q) < dist(p, m) ? q : m, foes[0]) : tgt, low = dist(p, nearest) < 8 && nearest.hp >= p.hp * 4 && flee75(G, p, dt);   // 가까운 적 체력이 내 체력의 네 배 이상일 때만 도망쳐요
   // 앞질러 조준: 상대가 움직이는 방향으로 조금 앞을 겨눠요
-  // 원거리·폭탄병은 쏠 때마다 30% 확률로 예측 샷 (상대가 가는 방향 앞을 겨눠요), 나머지는 지금 서 있는 자리를 겨눠요
-  const cdA = p.cd.atk || 0; if (cdA > (ai.lcd || 0) + 0.01) ai.lead = G.rng() < 0.3; ai.lcd = cdA;
+  // 원거리·폭탄병은 쏠 때마다 36% 확률로 예측 샷 (상대가 가는 방향 앞을 겨눠요), 나머지는 지금 서 있는 자리를 겨눠요
+  const cdA = p.cd.atk || 0; if (cdA > (ai.lcd || 0) + 0.01) ai.lead = G.rng() < 0.36; ai.lcd = cdA;
   const sp = R.atk.speed || 20, lt = ranged && ai.lead ? Math.min(0.7, d / Math.max(8, sp)) : 0, px = tgt.x + (tgt.mvx || tgt.vx || 0) * lt, pz = tgt.z + (tgt.mvz || tgt.vz || 0) * lt;
   inp.aim = Math.atan2(pz - p.z, px - p.x); inp.ax = px; inp.az = pz;
   // 1) 바닥 경고 피하기
