@@ -2,6 +2,101 @@
  "notes": [
   {
    "date": "2026-10-31",
+   "build": "v0.2 build 82",
+   "title": "이어지는 이야기 의뢰",
+   "items": [
+    "주민 심부름을 세 번 끝내면 세 번에 걸쳐 이어지는 이야기 의뢰가 나오기 시작함",
+    "이야기 의뢰는 보상이 1.5배이고 마지막 단계를 끝내면 큰 보너스를 받음 (이야기는 세 가지)"
+   ],
+   "tr": {
+    "en": {
+     "title": "Story errand chains",
+     "items": [
+      "After finishing three errands, story errands that span three steps start to appear",
+      "Story errands pay 1.5x and the final step gives a big bonus (three stories)"
+     ]
+    },
+    "ja": {
+     "title": "Story errand chains",
+     "items": [
+      "After finishing three errands, story errands that span three steps start to appear",
+      "Story errands pay 1.5x and the final step gives a big bonus (three stories)"
+     ]
+    },
+    "es": {
+     "title": "Story errand chains",
+     "items": [
+      "After finishing three errands, story errands that span three steps start to appear",
+      "Story errands pay 1.5x and the final step gives a big bonus (three stories)"
+     ]
+    },
+    "fr": {
+     "title": "Story errand chains",
+     "items": [
+      "After finishing three errands, story errands that span three steps start to appear",
+      "Story errands pay 1.5x and the final step gives a big bonus (three stories)"
+     ]
+    },
+    "de": {
+     "title": "Story errand chains",
+     "items": [
+      "After finishing three errands, story errands that span three steps start to appear",
+      "Story errands pay 1.5x and the final step gives a big bonus (three stories)"
+     ]
+    },
+    "zh": {
+     "title": "Story errand chains",
+     "items": [
+      "After finishing three errands, story errands that span three steps start to appear",
+      "Story errands pay 1.5x and the final step gives a big bonus (three stories)"
+     ]
+    },
+    "pt": {
+     "title": "Story errand chains",
+     "items": [
+      "After finishing three errands, story errands that span three steps start to appear",
+      "Story errands pay 1.5x and the final step gives a big bonus (three stories)"
+     ]
+    },
+    "ru": {
+     "title": "Story errand chains",
+     "items": [
+      "After finishing three errands, story errands that span three steps start to appear",
+      "Story errands pay 1.5x and the final step gives a big bonus (three stories)"
+     ]
+    },
+    "tr": {
+     "title": "Story errand chains",
+     "items": [
+      "After finishing three errands, story errands that span three steps start to appear",
+      "Story errands pay 1.5x and the final step gives a big bonus (three stories)"
+     ]
+    },
+    "it": {
+     "title": "Story errand chains",
+     "items": [
+      "After finishing three errands, story errands that span three steps start to appear",
+      "Story errands pay 1.5x and the final step gives a big bonus (three stories)"
+     ]
+    },
+    "pl": {
+     "title": "Story errand chains",
+     "items": [
+      "After finishing three errands, story errands that span three steps start to appear",
+      "Story errands pay 1.5x and the final step gives a big bonus (three stories)"
+     ]
+    },
+    "ar": {
+     "title": "Story errand chains",
+     "items": [
+      "After finishing three errands, story errands that span three steps start to appear",
+      "Story errands pay 1.5x and the final step gives a big bonus (three stories)"
+     ]
+    }
+   }
+  },
+  {
+   "date": "2026-10-31",
    "build": "v0.2 build 81",
    "title": "섬마다 특산 요리",
    "items": [
