@@ -180,7 +180,7 @@ paintWho();
 function needLogin() { if (!window.FFAuth) return false; if (loggedIn()) return false; homeMsg(T('친구와 대전은 Frenchfries777 계정으로 로그인해야 해요.')); try { FFAuth.openLogin(); } catch (e) { } return true; }
 function hubRoom(on) { try { if (window.FFAuth && FFAuth.setRoom) FFAuth.setRoom(on && S.code ? { game: 'tumblecrown', code: S.code, path: 'prototypes/tumblecrown/index.html' } : null); } catch (e) { } }
 let autoDone = false;
-function autoJoin() { const c = (qs.get('join') || '').toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 6); if (autoDone || c.length !== 6 || S.net) return; autoDone = true; homeMsg(T('친구와 대결은 없어졌어요. 온라인 대전을 이용해 주세요.')); return;
+function autoJoin() { const c = (qs.get('join') || '').toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 6); if (autoDone || c.length !== 6 || S.net) return; autoDone = true;
   // 초대 링크로 들어왔을 때: 취소됐거나 30분이 지난 초대면 들어가지 않아요 (확인 기능이 아직 없으면 그냥 들어가요)
   const sb = window.FFAuth && FFAuth.client && FFAuth.client();
   if (!sb) { startGuest(c); return; }
@@ -364,8 +364,8 @@ function paintRoom() {
   const host = S.net !== 'guest', mine = S.slots.find(s => s.uid === UID) || meSlot(), c = ROLES[mine.role] || ROLES.knight;
   const online = S.net !== 'solo', wait = online && S.ph === 'wait', pickP = online && S.ph === 'pick';
   $('sRoom').classList.toggle('waiting', wait);
-  $('roomTitle').textContent = S.info ? T('직업·조작') : S.range ? T('연습장') : S.net === 'solo' ? T('봇과 연습') : S.pub ? T('온라인 대전') + ' · ' + MODES[S.mode || 'normal'].name : host ? T('친구와 대결 · 방장') : T('친구와 대결');
-  $('inviteBtn').style.display = S.net === 'host' && !S.pub && wait ? '' : 'none';
+  $('roomTitle').textContent = S.info ? T('직업·조작') : S.range ? T('연습장') : S.net === 'solo' ? T('봇과 연습') : S.pub ? T('온라인 대전') + ' · ' + MODES[S.mode || 'normal'].name : S.priv ? T('봇과 연습 · 친구 초대') : host ? T('친구와 대결 · 방장') : T('친구와 대결');
+  $('inviteBtn').style.display = (S.net === 'host' && !S.pub && wait) || (S.net === 'solo' && !S.range && !S.info) ? '' : 'none';
   $('clsList').innerHTML = ROLE_IDS.map((id, k) => '<button data-c="' + id + '"' + (mine.role === id ? ' class="on"' : '') + '><i>' + (k + 1) + '</i><b>' + ROLES[id].name + '</b><small class="lv" style="color:' + charRankFor((SAVE.pts || {})[id]).color + '">' + charRankFor((SAVE.pts || {})[id]).name + ' · Lv.' + roleLevel(SAVE.xp[id]) + '</small></button>').join('');
   $('clsList').querySelectorAll('button').forEach(el => el.onclick = () => { SFX.play('click'); SAVE.role = el.dataset.c; save(); pick(); });
   $('clsInfo').innerHTML = '<h2>' + c.name + ' <small class="lv">Lv.' + roleLevel(SAVE.xp[mine.role]) + '</small></h2><p>' + c.role + '</p>' + roleXpBar(mine.role) + rankBar(mine.role) + BARS.map((n, k) => '<div class="bar"><span>' + n + '</span><u>' + '<i class="on"></i>'.repeat(c.st[k]) + '<i></i>'.repeat(5 - c.st[k]) + '</u></div>').join('') +
@@ -374,20 +374,20 @@ function paintRoom() {
   $('slots').innerHTML = all.map((s, i) => (s.team = i % 2, '<div class="slot' + (s.uid === UID ? ' me' : '') + (s.aid && !s.bot ? ' pn' : '') + '"' + (s.aid && !s.bot ? ' data-aid="' + esc(s.aid) + '"' : '') + '><i style="background:' + hex(TEAMS[s.team == null ? 0 : s.team].c) + '"></i><b>' + esc(s.name) + '</b><small>' + (pickP ? (s.rd || (S.net === 'host' && S.rdy[s.uid]) ? '✔ ' + T('준비') + ' · ' : '') : '') + (wait ? '' : ROLES[s.role].name) + (s.bot ? ' · ' + T('봇') : '') + '</small></div>')).join('') +
     (online ? Array.from({ length: Math.max(0, cap - all.length) }, () => '<div class="slot empty"><i></i><b>' + T('빈자리') + '</b></div>').join('') : '') +
     '<span class="cnt">' + all.length + '/' + cap + '</span>';
-  $('waitTxt').textContent = T('{0}/{1}명 모이는 중', all.length, cap); $('waitTitle').textContent = S.pub ? T('온라인 대전') : T('친구와 대결');
+  $('waitTxt').textContent = T('{0}/{1}명 모이는 중', all.length, cap); $('waitTitle').textContent = S.pub ? T('온라인 대전') : S.priv ? T('봇과 연습') : T('친구와 대결');
   $('waitList').innerHTML = all.map(s => '<span' + (s.aid && !s.bot ? ' class="pn" data-aid="' + esc(s.aid) + '"' : '') + '><i style="background:' + hex(TEAMS[s.team == null ? 0 : s.team].c) + '"></i>' + esc(s.name) + '</span>').join('') + Array.from({ length: Math.max(0, cap - all.length) }, () => '<span class="empty"><i></i>' + T('빈자리') + '</span>').join('');
-  $('capRow').style.display = S.net === 'host' && !S.pub && wait ? '' : 'none'; $('capN').textContent = S.cap; $('readyBtn').style.display = pickP ? '' : 'none'; $('readyBtn').textContent = mine.rd || (S.net === 'host' && S.rdy[UID]) ? T('준비됨') : T('준비 완료');
-  $('botRow').style.display = 'none'; $('colRow').style.display = 'none'; $('mapRow').style.display = S.net === 'solo' && !S.range ? '' : 'none'; $('mapBtn').textContent = S.mapSel >= 0 ? CHAPTERS[S.mapSel].title : T('무작위');
-  $('startBtn').style.display = !online && !S.info ? '' : 'none'; $('ctlBtn').style.display = S.info ? '' : 'none';
+  $('capRow').style.display = S.net === 'host' && !S.pub && !S.priv && wait ? '' : 'none'; $('capN').textContent = S.cap; $('readyBtn').style.display = pickP ? '' : 'none'; $('readyBtn').textContent = mine.rd || (S.net === 'host' && S.rdy[UID]) ? T('준비됨') : T('준비 완료');
+  $('botRow').style.display = 'none'; $('colRow').style.display = 'none'; $('mapRow').style.display = (S.net === 'solo' && !S.range) || (S.priv && S.net === 'host') ? '' : 'none'; $('mapBtn').textContent = S.mapSel >= 0 ? CHAPTERS[S.mapSel].title : T('무작위');
+  $('startBtn').style.display = (!online && !S.info) || (S.priv && S.net === 'host' && wait) ? '' : 'none'; $('ctlBtn').style.display = S.info ? '' : 'none';
   if (S.info) { $('mapRow').style.display = 'none'; $('roomMsg').textContent = ''; $('slots').innerHTML = ''; }
-  $('roomMsg').textContent = !online ? (all.length < 2 ? T('봇을 넣어 주세요.') : '') : wait ? (S.pub ? ((S.net === 'host' ? (S.fillT > 0 ? Math.ceil(FILL_T - S.fillT) : -1) : S.ft) >= 0 ? T('{0}초 뒤 빈자리를 봇으로 채워요.', S.net === 'host' ? Math.ceil(FILL_T - S.fillT) : S.ft) : (S.mode === 'rank' ? T('랭킹전은 봇 없이 사람이 다 모이면 시작해요.') : T('다른 플레이어를 기다리는 중이에요.'))) : T('친구를 초대해 주세요.')) : T('직업을 골라 주세요 · {0}초 뒤 시작', Math.max(0, Math.ceil(S.pickT))); 
+  $('roomMsg').textContent = !online ? (all.length < 2 ? T('봇을 넣어 주세요.') : '') : wait ? (S.pub ? ((S.net === 'host' ? (S.fillT > 0 ? Math.ceil(FILL_T - S.fillT) : -1) : S.ft) >= 0 ? T('{0}초 뒤 빈자리를 봇으로 채워요.', S.net === 'host' ? Math.ceil(FILL_T - S.fillT) : S.ft) : (S.mode === 'rank' ? T('랭킹전은 봇 없이 사람이 다 모이면 시작해요.') : T('다른 플레이어를 기다리는 중이에요.'))) : S.priv ? (S.net === 'host' ? T('친구를 초대하고 시작을 누르면 남는 자리는 봇이 채워요.') : T('방장이 시작하면 남는 자리는 봇이 채워요.')) : T('친구를 초대해 주세요.')) : T('직업을 골라 주세요 · {0}초 뒤 시작', Math.max(0, Math.ceil(S.pickT))); 
   view.setPreview(wait ? null : mine.role, COLORS[mine.col].c);
 }
 addEventListener('keydown', e => { if (S.scr !== 'sRoom' || (S.net !== 'solo' && S.ph !== 'pick')) return; const n = e.key === '0' ? 10 : +e.key; if (n >= 1 && n <= ROLE_IDS.length) { SAVE.role = ROLE_IDS[n - 1]; save(); pick(); } });
 // 사람 + 봇 목록 (봇은 남은 색과 직업을 받아요)
 function roster() {
   const out = S.slots.map((s, i) => Object.assign({}, s, { team: i % 2 }));
-  const nb = S.net === 'solo' && !S.range ? Math.max(0, MAX_PLAYERS - out.length) : 0, br = S.botRoles || ROLE_IDS;
+  const nb = (S.net === 'solo' && !S.range) || (S.priv && S.net === 'host') ? Math.max(0, MAX_PLAYERS - out.length) : 0, br = S.botRoles || ROLE_IDS;
   for (let i = 0; i < nb; i++) out.push({ bot: true, name: BOT_NAMES[i % BOT_NAMES.length], role: br[i % br.length], col: 0, team: out.length % 2 });
   return out;
 }
@@ -410,7 +410,7 @@ function esc(s) { return String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<':
 $('capMinus').onclick = () => { SFX.play('click'); S.cap = Math.max(Math.max(2, S.slots.length), S.cap - 2); SAVE.cap = S.cap; save(); paintRoom(); hostLobby(); };
 $('capPlus').onclick = () => { SFX.play('click'); S.cap = Math.min(MAX_PLAYERS, S.cap + 2); SAVE.cap = S.cap; save(); paintRoom(); hostLobby(); };
 $('readyBtn').onclick = () => { SFX.unlock(); SFX.play('click'); if (S.ph !== 'pick') return; if (S.net === 'guest') send({ t: 'rdy' }); else { S.rdy[UID] = !S.rdy[UID]; hostLobby(); paintRoom(); } };
-$('inviteBtn').onclick = () => { SFX.play('click'); openInvite(); };
+$('inviteBtn').onclick = () => { SFX.play('click'); if (S.net === 'solo') { if (needLogin()) return; startHost(0, true); } else openInvite(); };   // 봇과 연습에서 누르면 친구가 들어올 수 있는 방으로 바뀌어요
 /* 초대 창: 친구는 접속 여부와 상관없이 맨 위(접속 중인 친구 먼저), 그 아래 지금 접속 중인 다른 플레이어 */
 const GN = { vowkeep: 'Vowkeep', stickseum: 'Stickseum', crownenvoy: 'Crown Envoy', beaconfall: 'Beaconfall', isleport: 'Isleport', dummyparty: 'Dummy Party', tumblecrown: 'Tumblecrown', hub: T('허브') };
 const INV_T = 30 * 60 * 1000; S.sent = {};
@@ -469,7 +469,7 @@ async function openInvite() {
 document.addEventListener('click', e => { const t = e.target.closest && e.target.closest('#slots .pn, #waitList .pn'); if (t) { SFX.play('click'); openProf(t.dataset.aid); } });
 $('invX').onclick = () => $('inv').classList.remove('on');
 $('inv').addEventListener('click', e => { if (e.target === $('inv')) $('inv').classList.remove('on'); });
-$('startBtn').onclick = () => { SFX.unlock(); SFX.play('click'); if (S.net !== 'solo') return; if (roster().length < 2 && !S.range) return; beginGame(); };
+$('startBtn').onclick = () => { SFX.unlock(); SFX.play('click'); if (S.priv && S.net === 'host' && S.ph === 'wait') { beginGame(); return; } if (S.net !== 'solo') return; if (roster().length < 2 && !S.range) return; beginGame(); };
 
 /* ---------- 멀티: 친구 초대 (허브 초대 링크 ?join=) ---------- */
 function peerOpts() {
@@ -504,9 +504,9 @@ setInterval(() => {
   }
   if (left !== S.lastFill) { S.lastFill = left; hostLobby(); if (S.scr === 'sRoom') paintRoom(); }
 }, 250);
-function checkFull() { if (S.net === 'host' && !S.G && S.ph === 'wait' && S.slots.length >= S.cap) { S.ph = 'pick'; S.pickT = PICK_T; S.rdy = {}; S.lastLeft = null; for (const sl of S.slots) if (sl.bot) sl.rdT = 1 + Math.random() * 3; SFX.play('click'); } }
+function checkFull() { if (S.net === 'host' && !S.priv && !S.G && S.ph === 'wait' && S.slots.length >= S.cap) { S.ph = 'pick'; S.pickT = PICK_T; S.rdy = {}; S.lastLeft = null; for (const sl of S.slots) if (sl.bot) sl.rdT = 1 + Math.random() * 3; SFX.play('click'); } }
 function leaveNet() {
-  S.range = false; S.info = false;
+  S.range = false; S.info = false; S.priv = false;
   S.ph = null; S.pub = false; S.rdy = {}; S.mg = (S.mg | 0) + 1;
   hubRoom(false); cancelInvites();
   if (S.peer) { try { S.peer.destroy(); } catch (e) { } }
@@ -514,16 +514,16 @@ function leaveNet() {
 }
 function send(d) { if (S.conn && S.conn.open) try { S.conn.send(d); } catch (e) { } }
 function bcast(d) { for (const k in S.conns) { const c = S.conns[k]; if (c.open) try { c.send(d); } catch (e) { } } }
-function startHost(tries = 0) {
+function startHost(tries = 0, priv = false) {
   if (!window.Peer) { homeMsg(T('연결 도구를 불러오지 못했어요. 인터넷 연결을 확인하고 새로고침해 주세요.')); return; }
-  leaveNet(); S.net = 'host'; S.code = newCode(); homeMsg(T('방을 만드는 중...'));
+  leaveNet(); S.net = 'host'; S.priv = priv; S.code = newCode(); homeMsg(T('방을 만드는 중...'));
   S.slots = [meSlot()]; newBots();
-  S.ph = 'wait'; S.cap = Math.min(MAX_PLAYERS, Math.max(2, SAVE.cap | 0 || PUB_CAP)); S.rdy = {};
+  S.ph = 'wait'; S.cap = priv ? MAX_PLAYERS : Math.min(MAX_PLAYERS, Math.max(2, SAVE.cap | 0 || PUB_CAP)); S.rdy = {};
   const p = new Peer(PREFIX + S.code, peerOpts()); S.peer = p;
-  p.on('open', () => { if (S.peer !== p) return; homeMsg(''); hubRoom(true); openRoom(); });
+  p.on('open', () => { if (S.peer !== p) return; homeMsg(''); hubRoom(true); openRoom(); if (priv) openInvite(); });
   p.on('connection', c => { c.on('data', d => hostMsg(c, d)); c.on('close', () => dropConn(c)); c.on('error', () => dropConn(c)); });
   p.on('disconnected', () => { if (S.peer === p && !p.destroyed) setTimeout(() => { if (S.peer === p && !p.destroyed) p.reconnect(); }, 1000); });
-  p.on('error', err => { if (S.peer !== p) return; if (err.type === 'unavailable-id' && tries < 5) { startHost(tries + 1); return; } if (S.scr !== 'sRoom' && !inGame()) { homeMsg(T('방을 만들지 못했어요 ({0}). 잠시 후 다시 해 보세요.', err.type)); leaveNet(); } });
+  p.on('error', err => { if (S.peer !== p) return; if (err.type === 'unavailable-id' && tries < 5) { startHost(tries + 1, priv); return; } if (S.scr !== 'sRoom' && !inGame()) { homeMsg(T('방을 만들지 못했어요 ({0}). 잠시 후 다시 해 보세요.', err.type)); leaveNet(); } });
 }
 // 서버 방장(?dedicated=1): 오라클 서버의 화면 없는 브라우저가 이 모드로 열어서 공개 방 하나를 대신 열어 둬요. 경기에서는 봇 한 자리로 서 있어요
 if (qs.get('dedicated') === '1') {
@@ -575,7 +575,7 @@ function matchJoin(n, gen) {
   });
   p.on('error', () => { if (!done) next(); });
 }
-function lobbyMeta() { return { t: 'lobby', slots: S.slots.map(s => ({ bot: s.bot ? 1 : 0, role: s.role, uid: s.uid, aid: s.aid || '', name: s.name, col: s.col, rd: S.rdy && S.rdy[s.uid] ? 1 : 0 })), bots: 0, code: S.code, ch: S.chSel, wk: S.wk ? 1 : 0, ph: S.ph, cap: S.cap, pub: S.pub ? 1 : 0, pt: S.pickT, ft: S.pub && S.ph === 'wait' && S.fillT > 0 ? Math.max(0, Math.ceil(FILL_T - S.fillT)) : -1 }; }
+function lobbyMeta() { return { t: 'lobby', slots: S.slots.map(s => ({ bot: s.bot ? 1 : 0, role: s.role, uid: s.uid, aid: s.aid || '', name: s.name, col: s.col, rd: S.rdy && S.rdy[s.uid] ? 1 : 0 })), bots: 0, code: S.code, ch: S.chSel, wk: S.wk ? 1 : 0, ph: S.ph, cap: S.cap, pub: S.pub ? 1 : 0, priv: S.priv ? 1 : 0, pt: S.pickT, ft: S.pub && S.ph === 'wait' && S.fillT > 0 ? Math.max(0, Math.ceil(FILL_T - S.fillT)) : -1 }; }
 function hostLobby() { if (S.net === 'host') bcast(lobbyMeta()); }
 function hostMsg(c, d) {
   if (!d || typeof d !== 'object') return;
@@ -632,7 +632,7 @@ function guestMsg(d) {
   if (!d || typeof d !== 'object') return;
   if (d.t === 'welcome' && d.ver && d.ver !== VERSION) { homeMsg(T('버전이 달라요. 이 방은 {0} 버전이에요.', d.ver)); leaveNet(); return; }
   if (d.t === 'welcome') { homeMsg(''); if (d.start) { S.me = d.pid; useDeep(d.dp); { const fw = useWk(d.wk); useChapter(d.ch | 0, !!d.dp || fw); if (d.md) S.mode = d.md; useMode(d.md || 'normal'); if (d.th) CH.theme = d.th; } startClient(); } else { openRoom(); } }
-  else if (d.t === 'lobby') { S.slots = d.slots; S.ph = d.ph; S.cap = d.cap || PUB_CAP; S.pub = !!d.pub; S.pickT = d.pt; S.ft = d.ft; if (S.scr === 'sRoom') paintRoom(); }
+  else if (d.t === 'lobby') { S.slots = d.slots; S.ph = d.ph; S.cap = d.cap || PUB_CAP; S.pub = !!d.pub; S.priv = !!d.priv; S.pickT = d.pt; S.ft = d.ft; if (S.scr === 'sRoom') paintRoom(); }
   else if (d.t === 'deny') { homeMsg(d.ver ? T('버전이 달라요. 이 방은 {0} 버전이에요.', d.ver) : T(d.why || '들어갈 수 없어요.')); leaveNet(); }
   else if (d.t === 'start') { if (S.snap && S.snap.won) clearChapter(); S.me = d.pid; useDeep(d.dp); { const fw = useWk(d.wk); useChapter(d.ch | 0, !!d.dp || fw); if (d.md) S.mode = d.md; useMode(d.md || 'normal'); if (d.th) CH.theme = d.th; } startClient(); }
   else if (d.t === 's') {
@@ -656,8 +656,8 @@ function beginGame(prevG) {
   S.lastSl = sl;
   if (S.chSel === DEEP_I && !prevG) { DEEP.floor = 1; DEEP.seed = (Math.random() * 1e6) | 0; DEEP.curses = []; }
   { const wk = !!S.wk && !prevG && S.chSel !== DEEP_I, was = WEEKLY.on; WEEKLY.on = wk; if (wk) { const w = weekInfo(); WEEKLY.id = w.id; WEEKLY.curses = w.curses; S.chSel = w.ch; } if (wk || was) useChapter(S.chSel, true); }
-  if (!prevG && !(DEV_CH)) S.chSel = S.net === 'solo' && !S.range && S.mapSel >= 0 ? S.mapSel : Math.random() * CHAPTERS.length | 0;   // 지도는 판마다 무작위 (온라인은 방장이 골라 모두에게 알려요)
-  S.G = createGame(sl, (Math.random() * 4e9) >>> 0, S.chSel, S.net === 'solo' ? 'normal' : S.mode || 'normal');
+  if (!prevG && !(DEV_CH)) S.chSel = (S.net === 'solo' || S.priv) && !S.range && S.mapSel >= 0 ? S.mapSel : Math.random() * CHAPTERS.length | 0;   // 지도는 판마다 무작위 (온라인은 방장이 골라 모두에게 알려요)
+  S.G = createGame(sl, (Math.random() * 4e9) >>> 0, S.chSel, S.net === 'solo' || S.priv ? 'normal' : S.mode || 'normal');
   if (S.range) { S.G.range = true; setupRange(S.G); toast(T('연습장이에요. 허수아비를 쳐 보세요. 나가기를 누르면 직업을 바꿀 수 있어요.'), 6000); }
   S.G.lite = !!S.lite; 
   S.G.players.forEach((p, i) => { p.uid = sl[i].uid; });
@@ -692,7 +692,7 @@ function awardHonor() {
   if (S.saved || !S.snap || !S.me) return; S.saved = true;
   const p = myP(); if (!p) return;
   let h = Math.round((S.snap.honor[S.me] || 0) * ((p.b || []).indexOf('honor') >= 0 ? 1.25 : 1));
-  const gain = S.net === 'solo' ? 0 : h;   // 봇과 연습은 tC를 못 얻어요
+  const gain = S.net === 'solo' || S.priv ? 0 : h;   // 봇과 연습은 tC를 못 얻어요
   SAVE.honor += gain; const won = p.tm === S.snap.wtm; S.lastRt = null; if (S.G && S.G.mode === 'rank' && S.net !== 'solo') { const rb = SAVE.rating | 0, rg = won ? RANK_WIN : -RANK_LOSS; SAVE.rating = Math.max(0, rb + rg); S.lastRt = { gain: SAVE.rating - rb, total: SAVE.rating }; } S.dailyGain = 0; if (S.net !== 'solo') dailyAward(p.role, p.kl | 0, won); SAVE.pts = SAVE.pts || {}; SAVE.winStreak = won ? (SAVE.winStreak | 0) + 1 : 0; const kp = (p.kl | 0) * MASTERY_PT.kill + (p.as | 0) * MASTERY_PT.assist, wp = won ? MASTERY_PT.win : 0, sp = won ? streakBonusFor(SAVE.winStreak) : 0, mg = Math.round((kp + wp + sp + MASTERY_PT.match) * (S.mode === 'quick' && S.net !== 'solo' ? 0.75 : 1) * 0.56), mb = SAVE.pts[p.role] || 0; SAVE.pts[p.role] = mb + mg; S.lastMp = { role: p.role, gain: mg, k: p.kl | 0, a: p.as | 0, won, sp, st: SAVE.winStreak, total: mb + mg, up: charRankFor(mb + mg).name !== charRankFor(mb).name }; const xg = 20 + (p.kl | 0) * 5 + (won ? 30 : 0); if (!S.range) { const st = SAVE.st = SAVE.st || {}; st.matches = (st.matches | 0) + 1; if (won) st.wins = (st.wins | 0) + 1; st.kills = (st.kills | 0) + (p.kl | 0); st.flags = (st.flags | 0) + (p.fcp | 0); st.mon = (st.mon | 0) + (p.mkp | 0); st.pl = st.pl || {}; st.pl[p.role] = (st.pl[p.role] | 0) + 1;
     if (st.wins >= 10) unlock('wins10'); if (st.kills >= 50) unlock('kill50'); if (st.kills >= 300) unlock('kill300'); if (st.flags >= 10) unlock('flag10'); if (st.flags >= 100) unlock('flag100'); if (st.mon >= 1) unlock('mon1'); if (st.mon >= 10) unlock('mon10'); if (st.matches >= 50) unlock('match50'); if ((p.kl | 0) >= 5) unlock('kill5'); }
   S.lastXp = xg; S.lastLv = roleLevel(SAVE.xp[p.role]); SAVE.xp[p.role] = (SAVE.xp[p.role] || 0) + xg; S.lastLv = roleLevel(SAVE.xp[p.role]) > S.lastLv ? roleLevel(SAVE.xp[p.role]) : 0; if (roleLevel(SAVE.xp[p.role]) >= 10) unlock('lv10'); if (SAVE.pts[p.role] >= 530) unlock('gold'); save();   // 직업 경험치: 한 판 20 + 쓰러뜨림당 5 + 승리 30
