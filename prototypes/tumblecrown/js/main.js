@@ -1612,23 +1612,23 @@ function hlTick(dt, t) {
   const sn = S.snap; if (!sn || sn.ph !== 'play' || sn.rg || S.replay) return;
   HL.acc += dt; if (HL.acc < 0.1) return; HL.acc -= 0.1;
   const me = myP(), fr = { s: JSON.parse(JSON.stringify(sn)), ev: HL.ev }; HL.ev = []; HL.buf.push(fr); if (HL.buf.length > 40) HL.buf.shift();
-  if (HL.pend) { HL.pend.post.push(fr); if (HL.pend.post.length >= HL.pend.need) { const c = HL.pend; HL.pend = null; HL.clips.push({ fr: c.pre.concat(c.post), score: c.score }); if (HL.clips.length > 3) HL.clips.splice(HL.clips.indexOf(HL.clips.slice().sort((a, b) => a.score - b.score)[0]), 1); } }
+  if (HL.pend) { HL.pend.post.push(fr); if (HL.pend.post.length >= HL.pend.need) { const c = HL.pend; HL.pend = null; HL.clips.push({ fr: c.pre.concat(c.post), score: c.score, tri: c.tri }); if (HL.clips.length > 3) HL.clips.splice(HL.clips.indexOf(HL.clips.slice().sort((a, b) => a.score - b.score)[0]), 1); } }
   if (me) {
     const kl = me.kl | 0;
     if (kl > HL.kl) {
       HL.kl = kl; HL.kt = HL.kt.filter(x => t - x < 8); HL.kt.push(t);
-      const sc = HL.kt.length * 3 + (me.hp < me.mx * 0.3 ? 2 : 0) + (me.cb > 0 ? 1 : 0);
-      if (HL.pend) { HL.pend.score = Math.max(HL.pend.score, sc); HL.pend.need = Math.min(30, HL.pend.post.length + 10); }
-      else HL.pend = { pre: HL.buf.slice(-30, -1), post: [fr], need: 10, score: sc };
+      const tri = HL.kt.length >= 3, sc = HL.kt.length * 3 + (tri ? 50 : 0) + (me.hp < me.mx * 0.3 ? 2 : 0) + (me.cb > 0 ? 1 : 0);
+      if (HL.pend) { HL.pend.score = Math.max(HL.pend.score, sc); if (tri) HL.pend.tri = true; HL.pend.need = Math.min(30, HL.pend.post.length + 10); }
+      else HL.pend = { pre: HL.buf.slice(-30, -1), post: [fr], need: 10, score: sc, tri };
     }
   }
 }
-function hlFlush() { if (!HL.pend) return; const c = HL.pend; HL.pend = null; if (c.pre.length + c.post.length >= 8) HL.clips.push({ fr: c.pre.concat(c.post), score: c.score }); }   // 경기가 끝나 마무리하지 못한 장면도 저장해요
-function hlPlay() {
-  if (!HL.clips.length) return; const best = HL.clips.slice().sort((a, b) => b.score - a.score || b.fr.length - a.fr.length)[0];
-  S.replay = { fr: best.fr, i: 0, acc: 0, fin: S.snap }; show(''); $('hlBar').classList.add('on');
+function hlFlush() { if (!HL.pend) return; const c = HL.pend; HL.pend = null; if (c.pre.length + c.post.length >= 8) HL.clips.push({ fr: c.pre.concat(c.post), score: c.score, tri: c.tri }); }   // 경기가 끝나 마무리하지 못한 장면도 저장해요
+function hlPlay(tri, back) {
+  const pool = tri ? HL.clips.filter(c => c.tri) : HL.clips; if (!pool.length) return; const best = pool.slice().sort((a, b) => b.score - a.score || b.fr.length - a.fr.length)[0];
+  S.replay = { fr: best.fr, i: 0, acc: 0, fin: S.snap, back }; show(''); $('hlBar').classList.add('on');
 }
-function hlEnd() { const R = S.replay; if (!R) return; S.replay = null; S.snap = R.fin; $('hlBar').classList.remove('on'); bigMsg('', '', 0); show('sWin'); }
+function hlEnd() { const R = S.replay; if (!R) return; S.replay = null; S.snap = R.fin; $('hlBar').classList.remove('on'); bigMsg('', '', 0); show(R.back || 'sWin'); }
 function hlFrame(dt, t) {
   const R = S.replay; R.acc += dt;
   while (R.acc >= 0.1 && R.i < R.fr.length - 1) { R.acc -= 0.1; R.i++; for (const e of R.fr[R.i].ev) onEvent(e); }
@@ -1662,6 +1662,7 @@ function showResult() {
   const top3 = sn.pl.slice().sort((a, b) => (b.kl | 0) - (a.kl | 0)).slice(0, 3), pod = [[1, 'd8d8e0', 58], [0, 'ffd36b', 78], [2, 'c8884a', 44]].filter(([i]) => top3[i]).map(([i, c, hh]) => { const q = top3[i]; return `<div style="flex:1;text-align:center"><div style="font-size:12px;color:${ROLES[q.role].color}">${ROLES[q.role].name}</div><div style="font-size:12px;margin:2px 0 4px">${esc(q.id === S.me ? T('나') : q.bot ? T('봇') : q.name)}</div><div style="height:${hh}px;background:#${c};color:#201810;font-weight:700;line-height:${hh}px;border-radius:4px 4px 0 0">${q.kl | 0} · ${q.dth | 0}</div></div>`; }).join('');
   $('result').innerHTML = `<div class="big">${mine0 && mine0.tm === wt ? T('승리') : T('패배')}</div><div style="display:flex;align-items:flex-end;gap:8px;margin:8px 0 14px">${pod}</div>${tab(0)}${tab(1)}<p>${T('받은 tC {0}', '<b style="color:#ffd36b">' + h + '</b>')} · ${T('지금 tC {0}', SAVE.honor)}</p><div class="row"><button class="btn gold" id="resBack">${T('로비로')}</button></div>`;
   $('resBack').onclick = () => endToLobby('');
+  { const old = $('resTri'); if (old) old.remove(); hlFlush(); if (HL.clips.some(c => c.tri)) { const b = document.createElement('button'); b.className = 'btn gold'; b.id = 'resTri'; b.textContent = T('트리플 킬 다시 보기'); b.onclick = () => { SFX.play('click'); hlPlay(true, 'sResult'); }; $('resBack').before(b); } }
   setHud(false); show('sResult');
 }
 
@@ -1743,7 +1744,7 @@ requestAnimationFrame(frame);
 // 시험용: ?test=1 로 바로 혼자 원정을 시작해요 (화면 확인용). &skip=1 이야기 건너뛰기, &room=구역 번호
 // 내 컴퓨터에서 열었을 때만 돼요 (배포된 주소에서는 잠긴 장이 열리지 않게)
 const DEV = /^(localhost|127\.0\.0\.1)$/.test(location.hostname);
-if (DEV) window.__T = { onEvent, SAVE, paintSettings, step, relBasic, aimedSkill, mouse, once, TOUCH, S, menu, beginGame, startHost, startMatch, startGuest, view, CH };
+if (DEV) window.__T = { HL, showResult, hlPlay, onEvent, SAVE, paintSettings, step, relBasic, aimedSkill, mouse, once, TOUCH, S, menu, beginGame, startHost, startMatch, startGuest, view, CH };
 if (DEV && qs.get('test')) {
   const r = qs.get('role') || 'knight'; SAVE.role = r;
   S.net = 'solo'; S.slots = [meSlot()]; newBots(); S.botN = +(qs.get('bots') || 5);
