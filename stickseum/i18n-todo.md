@@ -42,3 +42,5 @@ patchnotes.json | v575 title | 은하 제국의 황혼 | build 575 | 2026-10-31
 patchnotes.json | v575 items[0] | 신규 유저 보호 매칭 취소: 방이 하나뿐이어도 레벨 차이와 상관없이 그 방에 들어감 (원래대로 레벨이 가까운 방을 우선 선택) | build 575 | 2026-10-31
 patchnotes.json | v576 title | 은하 제국의 황혼 | build 576 | 2026-10-31
 patchnotes.json | v576 items[0] | 영혼석 로고 적용: 시즌 패스 보상, 상점의 영혼석 표시, 상자 구매·보상 화면, 보상 창의 💜를 새 로고로 교체 | build 576 | 2026-10-31
+patchnotes.json | v577 title | 은하 제국의 황혼 | build 577 | 2026-10-31
+patchnotes.json | v577 items[0] | sC 표시를 로고로 교체 (상점 sC 태그·가격, 킬피드, 보상 창, 도전과제 보상, 선물 화면) | build 577 | 2026-10-31
