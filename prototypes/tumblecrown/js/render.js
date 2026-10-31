@@ -200,7 +200,7 @@ function makeFigure(o) {
   }
   if (o.gun) {
     // 머스켓: 어깨 앞에 두 손으로 들고 앞(+z)을 겨눠요. 쏘면 총구가 번쩍이며 반동이 오고, 쏜 뒤엔 총을 내려 장전해요
-    const gr = new THREE.Group(); gr.position.set(0.05, 1.95, 0.85); body.add(gr);
+    const gr = new THREE.Group(); gr.position.set(0.5, 1.8, 0.85); body.add(gr);
     const wd = M(0x6a4228), st = M(0x8a909c, { m: 0.8, r: 0.3 });
     box(0.24, 0.42, 0.9, wd, 0, -0.1, -0.85, gr); box(0.2, 0.2, 1.7, wd, 0, -0.1, 0.35, gr);
     const br = cyl(0.09, 0.09, 3.6, 8, st, 0, 0.08, 1.2, gr); br.rotation.x = Math.PI / 2;
@@ -213,7 +213,7 @@ function makeFigure(o) {
   if (o.frog) for (let i = 0; i < 4; i++) for (const sx of [-1, 1]) box(0.34, 0.07, 0.06, M(0x2a1c14), sx * 0.2, 1.1 + i * 0.28, 0.62 - Math.abs(sx) * 0.02, body);
   if (o.bandolier) { const bd = box(0.16, 2.0, 0.1, M(0x3a2618), 0, 1.7, 0.4, body); bd.rotation.z = -0.62; for (let i = 0; i < 6; i++) { const c = cyl(0.06, 0.06, 0.26, 5, M(0xc8c0a8), -0.42 + i * 0.17, 2.05 - i * 0.28, 0.5, body); c.rotation.z = -0.62; } box(0.42, 0.34, 0.2, M(0x4a3020), 0.55, 0.95, 0.35, body); }
   if (o.sabre) { const sb = new THREE.Group(); sb.position.set(-0.62, 1.0, 0.1); sb.rotation.z = 0.35; body.add(sb); box(0.07, 1.5, 0.1, M(0xb8c0cc, { m: 0.8, r: 0.3 }), 0, -0.75, 0, sb); box(0.28, 0.07, 0.12, gold(), 0, 0.02, 0, sb); box(0.08, 0.3, 0.1, M(0x3a2618), 0, 0.2, 0, sb); }
-  if (o.berdysh) { const bg = new THREE.Group(); bg.position.set(0.5, 1.9, -0.7); bg.rotation.z = -0.25; body.add(bg); cyl(0.07, 0.07, 3.8, 5, M(0x5a3a22), 0, 0.2, 0, bg); const bl = mesh(geo('bdy', () => new THREE.TorusGeometry(0.6, 0.09, 4, 10, 2.6)), M(0xb8c0cc, { m: 0.8, r: 0.3 }), 0.28, 1.6, 0, bg); bl.rotation.z = Math.PI / 2 - 1.3; }
+  if (o.berdysh) { const ax = new THREE.Group(); ax.position.set(0, -0.9, 0.15); armL.add(ax); cyl(0.07, 0.07, 2.6, 5, M(0x5a3a22), 0, 0.5, 0, ax); const bl = mesh(geo('bdy', () => new THREE.TorusGeometry(0.7, 0.1, 4, 10, 2.6)), M(0xb8c0cc, { m: 0.8, r: 0.3 }), 0.35, 1.5, 0, ax); bl.rotation.z = Math.PI / 2 - 1.3; box(0.5, 0.12, 0.12, M(0xb8c0cc, { m: 0.8, r: 0.3 }), 0.2, 1.8, 0, ax); }
   if (o.bolts) { const bc = box(0.5, 0.35, 0.3, M(0x4a3020), -0.62, 1.05, 0.1, body); bc.rotation.z = 0.3; for (let i = 0; i < 4; i++) box(0.04, 0.3, 0.04, M(0xc8c0a8), -0.74 + i * 0.1, 1.3, 0.1, body); }
   if (o.strap) { const sb2 = box(0.14, 1.9, 0.08, leather(), 0, 1.9, 0.42, body); sb2.rotation.z = 0.55; }
   if (o.scarf) { const sf = mesh(geo('scarf', () => new THREE.TorusGeometry(0.46, 0.14, 5, 10)), M(o.scarf), 0, 2.35, 0.02, body); sf.rotation.x = Math.PI / 2; box(0.28, 0.8, 0.08, M(o.scarf), 0.25, 2.0, -0.55, body); }
@@ -1797,8 +1797,8 @@ function animHero(E, p, dt, t, view) {
   if (u.gnS) { // 머스켓: 쏘는 순간 반동과 총구 불꽃 → 총을 내려 꽂을대로 장전하고 → 다시 들어 겨눠요
     const Gn = u.gnS; if (p.aN !== E.gN && p.ak === 'atk') { E.gN = p.aN; E.gT = 0; } else E.gT = E.gT == null ? 9 : E.gT + dt;
     const x = E.gT, rec = Math.max(0, 1 - x / 0.16), low = seg(x, 0.16, 0.34) * (1 - seg(x, 0.7, 0.95)), rm = x > 0.3 && x < 0.75 ? Math.sin((x - 0.3) * 40) : 0;
-    T.rx = -1.1 - 0.3 * rec - 0.25 * low * (0.6 + 0.4 * rm); T.rz = -0.3; T.rpz = 0; T.lx = -1.5 + 0.35 * low; T.lz = 0.1; T.ry = 0;
-    Gn.gr.rotation.x = -0.4 * rec + 0.7 * low; Gn.gr.position.set(0.05, 1.95 - 0.4 * low, 0.85 - 0.45 * rec - 0.15 * low); Gn.fl.visible = x < 0.09; Gn.fl.scale.setScalar(1 + (x < 0.09 ? 0.4 * (1 - x / 0.09) : 0));
+    T.rx = -1.2 - 0.3 * rec - 0.25 * low * (0.6 + 0.4 * rm); T.rz = -0.1; T.rpz = 0; T.lx = -0.35; T.lz = -0.12; T.ry = 0;
+    Gn.gr.rotation.x = -0.4 * rec + 0.7 * low; Gn.gr.position.set(0.5, 1.8 - 0.4 * low, 0.85 - 0.45 * rec - 0.15 * low); Gn.fl.visible = x < 0.09; Gn.fl.scale.setScalar(1 + (x < 0.09 ? 0.4 * (1 - x / 0.09) : 0));
     if (rec > 0) { T.bx -= 0.2 * rec; T.hx -= 0.18 * rec; }
   }
   if (p.bk && E.ak !== 'block') { T.lx = -1.6; }
