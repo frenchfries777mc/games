@@ -81,7 +81,7 @@ const HERO = {
   court: { body: 0xb02828, robe: 1, leg: 0x6a4a2a, arm: 0xb02828, inner: 0x7a5232, beard: 0xd8d2c4, redhat: 1, staff: 1, wand: 1, staffC: 0xff2a2a, lightC: 0xff4040, belt: 1, beltC: 0xe0b030 },
   spearman: { body: 0x5a6a7a, leg: 0x3a3a44, arm: 0x5a6a7a, helm: 1, helmC: 0x8a8f9c, plume: 0xb83a3a, spear: 1, belt: 1 },
   crossbow: { body: 0x6b4a2e, leg: 0x2e2a34, arm: 0x6b4a2e, kettle: 1, scarf: 0xb8442e, xh: 1, bolts: 1, strap: 1, belt: 1, wide: 1.1 },
-  streltsy: { body: 0xc2501f, leg: 0x2a2024, arm: 0xc2501f, helm: 1, helmC: 0x8a8f9c, plume: 0, beard: 0x6a4a30, gun: 1, frog: 1, bandolier: 1, sabre: 1, berdysh: 1, belt: 1, beltC: 0x2a1c14, wide: 1.1 }
+  streltsy: { body: 0xc4281f, leg: 0x2a2024, arm: 0xc4281f, beard: 0x6a4a30, kolpak: 1, gun: 1, berdysh: 1, belt: 1, beltC: 0x2a1c14, wide: 1.1 }
 };
 // 동작은 비슷한 직업의 것을 같이 써요 (마녀는 사제처럼, 바이킹·맘루크·스켈레톤은 종자처럼)
 const FAM = { witch: 'priest', viking: 'squire', mamluk: 'squire', skeleton: 'squire', warden: 'knight', assassin: 'squire', crossbow: 'archer', streltsy: 'archer', bomber: 'squire', bard: 'priest', court: 'priest', necro: 'priest', spearman: 'squire' };
@@ -143,6 +143,10 @@ function makeFigure(o) {
   }
   if (o.beard) { const bd = cone(0.4, 0.9, 6, M(o.beard), 0, -0.55, 0.28, head); bd.rotation.x = Math.PI + 0.25; for (const sx of [-1, 1]) { const br = cone(0.1, 0.5, 4, M(o.beard), sx * 0.2, -0.9, 0.38, head); br.rotation.x = Math.PI; } }
   if (o.turban) { sph(0.5, 10, 7, M(0xf0e8d8), 0, 0.28, -0.02, head).scale.set(1, 0.75, 1); mesh(geo('tb', () => new THREE.TorusGeometry(0.45, 0.1, 5, 12)), M(0xe8dcc0), 0, 0.12, 0, head).rotation.x = Math.PI / 2; sph(0.1, 6, 5, M(0xb0302a), 0, 0.35, 0.44, head); const f = cone(0.06, 0.5, 4, M(0xb0302a), 0, 0.75, 0.3, head); f.rotation.x = 0.3; box(0.42, 0.14, 0.08, M(0x2a1a14), 0, -0.24, 0.36, head); }
+  if (o.kolpak) {   // 러시아 모자(콜팍): 높고 둥근 붉은 모자에 흰 털 띠
+    const rc = M(0xc4281f); cyl(0.5, 0.52, 0.5, 12, rc, 0, 0.55, 0, head); sph(0.5, 10, 6, rc, 0, 0.8, 0, head, 0.7);
+    cyl(0.56, 0.56, 0.24, 12, M(0xf2eee4), 0, 0.3, 0, head); sph(0.1, 6, 5, M(0xe8c040), 0, 0.5, 0.52, head);
+  }
   if (o.redhat) {   // 빨간 마법사 모자: 넓은 챙과 높은 뾰족 모자, 금색 띠
     const hc = M(0xc02828); cyl(0.8, 0.8, 0.06, 12, M(0x8a1a1a), 0, 0.3, 0, head); const hh = cone(0.46, 1.5, 8, hc, 0, 1.05, -0.06, head); hh.rotation.x = -0.2;
     cyl(0.48, 0.48, 0.12, 10, M(0xe0b030, { e: 0xe0b030, ei: 0.3 }), 0, 0.42, 0, head);
