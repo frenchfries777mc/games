@@ -174,13 +174,26 @@ function autoJoin() { const c = (qs.get('join') || '').toUpperCase().replace(/[^
 }
 
 /* ---------- 메뉴 ---------- */
-document.querySelectorAll('#menu button, #menu2 button').forEach(b => b.addEventListener('click', () => { SFX.unlock(); SFX.play('click'); menu(b.dataset.go); }));
+document.querySelectorAll('#menu button').forEach(b => b.addEventListener('click', () => { SFX.unlock(); SFX.play('click'); menu(b.dataset.go); }));
 document.querySelectorAll('[data-back]').forEach(b => b.addEventListener('click', () => { SFX.play('click'); if (S.scr === 'sRoom' || S.info) leaveNet(); show('sLobby'); paintWho(); }));
+// 로비 버튼 3개: 누르면 모드 선택처럼 카드를 골라요
+const PICKS = {
+  play: ['플레이', [['match', '온라인 게임', '다른 플레이어와 대결해요'], ['solo', '봇과 연습', '봇과 함께 해봐요'], ['range', '연습장', '혼자 마음껏 연습해요']]],
+  chars: ['캐릭터', [['weps', '직업·조작', '직업 정보와 조작 방법'], ['ward', '치장·스킨', '스킨과 치장 아이템'], ['daily', '일일 임무', '오늘의 임무']]],
+  conf: ['설정', [['settings', '설정', '소리·화면 설정'], ['notes', '패치노트', '바뀐 점 보기'], ['site', '사이트로 돌아가기', '사이트로 나가요']]]
+};
+function paintPick(k) {
+  const p = PICKS[k]; document.querySelector('#sMode h2').textContent = T(p[0]);
+  $('modeCards').innerHTML = p[1].map(c => '<button class="mcard pk" data-g="' + c[0] + '"><b>' + T(c[1]) + '</b><small>' + T(c[2]) + '</small></button>').join('');
+  $('modeCards').querySelectorAll('button').forEach(b => b.onclick = () => { SFX.play('click'); menu(b.dataset.g); });
+  show('sMode');
+}
 function menu(go) {
   homeMsg('');
+  if (PICKS[go]) { paintPick(go); return; }
   if (go === 'solo') { leaveNet(); S.net = 'solo'; S.slots = [meSlot()]; newBots(); openRoom(); }
   if (go === 'range') { leaveNet(); S.net = 'solo'; S.range = true; S.slots = [meSlot()]; newBots(); openRoom(); }
-  else if (go === 'match') { if (needLogin()) return; paintModes(); show('sMode'); }
+  else if (go === 'match') { if (needLogin()) return; document.querySelector('#sMode h2').textContent = T('모드 선택'); paintModes(); show('sMode'); }
   else if (go === 'ward') { S.wardTab = S.wardTab || 'skin'; S.wardSel = null; paintWard(); show('sWard'); view.cos = SAVE.cos.on; view.setPreview(SAVE.role, COLORS[SAVE.col | 0].c); }
   else if (go === 'weps') { leaveNet(); S.net = 'solo'; S.info = true; S.slots = [meSlot()]; openRoom(); }   // 직업·조작: 시작 버튼 없이 직업을 눌러 정보만 봐요
   else if (go === 'daily') { paintDaily(); show('sDaily'); }
