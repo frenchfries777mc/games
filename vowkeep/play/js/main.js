@@ -345,6 +345,7 @@ async function openInvite(quiet) {
   const row = (id, name, tag, on) => {
     const d = document.createElement('div'); d.className = 'r' + (on ? ' on' : ''); d.innerHTML = '<b></b><small></small><button class="btn gold">' + T('초대') + '</button>';
     d.querySelector('b').textContent = name; d.querySelector('small').textContent = tag;
+    { const nb = d.querySelector('b'); nb.style.cursor = 'pointer'; nb.title = T('프로필 보기'); nb.onclick = () => { SFX.play('click'); try { FFAuth.openProfile(id, { game: 'vowkeep' }); } catch (e) { } }; }
     const bt = d.querySelector('button'), sm = d.querySelector('small');
     // 보낸 초대는 '취소'로 바뀌고, 30분이 지나면 저절로 만료돼서 다시 '초대'로 돌아와요
     const paint = () => {
