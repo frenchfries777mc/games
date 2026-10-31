@@ -490,7 +490,7 @@ const ARENAS = [
     gates: [['h', 0], ['v', 1]],
     fl: [[10, 42], [30, 60]], mid: [[56, 36], [30, 17]], pil: [[14, 6], [44, 10], [22, 22], [6, 30], [38, 18]] },
   // 왕의 길: 왼쪽 아래(푸른)와 오른쪽 위(붉은) 진지 사이에 위쪽 길·가운데 길·아래쪽 길이 있고, 길 사이 숲 속에 빈터가 있어요 (180도 돌려도 똑같아요)
-  { name: '왕의 길', line: '두 진지 사이에 위쪽 길, 가운데 대각선 길, 아래쪽 길이 있어요. 길 사이 숲 속 빈터에도 깃발이 있어서 샛길로 돌아 들어갈 수 있어요.', theme: 'forest',
+  { name: '왕의 길', lanes: 1, line: '두 진지 사이에 위쪽 길, 가운데 대각선 길, 아래쪽 길이 있어요. 길 사이 숲 속 빈터에도 깃발이 있어서 샛길로 돌아 들어갈 수 있어요.', theme: 'forest',
     walls: [],
     wallIf: (i, j, W, H) => {
       const o = (u, v) => u < 0.085 || v < 0.085 || Math.abs(u + v - 1) < 0.06 || (u < 0.2 && v > 0.8)   // 위쪽 길(왼쪽 가장자리+위쪽 가장자리), 가운데 대각선 길, 진지 방
@@ -509,6 +509,7 @@ function arenaMap(def) {
   m.areas[0].r = [[ox, oy, AW, AH]];
   const sc = ([x, y]) => [Math.round(x * SX), Math.round(y * SY)], wallSc = ([x, y, w, h]) => { const [a, b] = sc([x, y]); return [a, b, w > 4 ? Math.round(w * SX) : w, h > 4 ? Math.round(h * SY) : h]; };
   def = Object.assign({}, def, { walls: def.walls.map(wallSc), fl: def.fl.map(sc), mid: def.mid.map(sc), pil: def.pil.map(sc) });
+  m.lanes = !!def.lanes;   // 길이 셋인 지도: 봇이 위·가운데·아래 길로 나눠 가요
   const mr = ([x, y]) => [AW - 1 - x, AH - 1 - y], sp = [[11, AH - 11], [AW - 12, 10]];
   const fl = [...def.fl.map(([x, y]) => [x, y, 0]), ...def.fl.map(p => [...mr(p), 1]), [...def.mid[0], -1], [...def.mid[1], -1], [...mr(def.mid[1]), -1]];
   // 왼쪽 위 사분면만 적어 두면 좌우·위아래로 뒤집어 네 쪽 모두 똑같이 만들어요
