@@ -393,7 +393,7 @@ window.bfIntro=function(){if(run)return;run=1;t0=Date.now();el.classList.add('ru
     <button class="btn" data-act="skins"><span class="arrow">▶</span>스킨 상점<span class="en">SKIN SHOP</span></button>
     <button class="btn" data-act="stats"><span class="arrow">▶</span>통계<span class="en">STATS</span></button>
     <button class="btn" data-act="settings"><span class="arrow">▶</span>설정<span class="en">SETTINGS</span></button>
-    <p class="foot">v0.5<br>build 138</p>
+    <p class="foot">v0.5<br>build 139</p>
   </nav>
 </div>
 
@@ -12278,7 +12278,7 @@ addEventListener('keydown',e=>{
   else if((e.code==='Minus'||e.code==='NumpadSubtract')&&!crafting){zoomStep(-1);e.preventDefault();}
   else if(e.code==='KeyF'&&!e.repeat&&P.sleeping){wakeUp();}
   else if(e.code==='KeyF'&&!crafting&&(csel=cursorSel())){e.preventDefault();const o=selInteract(csel);if(o){if(!e.repeat)doInteract(o,'KeyF');}else if(csel.kind!=='s'||!csel.b.lm)fHold=true;}
-  else if((e.code==='ControlLeft'||e.code==='ControlRight'||e.code==='KeyF')&&!e.repeat&&!crafting&&!(e.code!=='KeyF'&&cursorSel())){const o=nearInteract();if(o&&(e.code==='KeyF'||o.id==='conveyor'||o.id==='sorter')){e.preventDefault();doInteract(o,e.code);}}
+  else if((e.code==='ControlLeft'||e.code==='ControlRight'||e.code==='KeyF')&&!e.repeat&&!crafting&&!(e.code!=='KeyF'&&cursorSel())){const o=nearInteract();if(o&&(e.code==='KeyF'||o.id==='conveyor'||o.id==='sorter')){e.preventDefault();doInteract(o,e.code);}else if(!o&&e.code==='KeyF'&&inv[P.sel]&&POT[inv[P.sel].id]){e.preventDefault();useSelected();}}   // 물약을 들고 F: 마셔요 (가까이 누를 것이 없을 때)
   else if(e.code==='Space'){keys.add('Space');if(crafting&&!e.repeat)craftMaxAction();e.preventDefault();}
   else if(/^Digit[1-7]$/.test(e.code)){P.sel=+e.code.slice(5)-1;renderInv();}
 });

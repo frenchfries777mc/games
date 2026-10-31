@@ -3057,6 +3057,7 @@ function claimDaily(now, rand){
 let shopCat='skin', shopQuery='';
 function shopApplyFilter(){ const q=(shopQuery||'').trim().toLowerCase(), g=document.getElementById('shopGrid'); if(!g) return; for(const b of g.querySelectorAll('.shopItem')) b.style.display=(!q || (b.dataset.q||'').indexOf(q)!==-1)?'':'none'; }
 let shopMaxGridHeight=0;
+let myKillByW={};      // kills counted by the character the kill was made with (taken from the kill event itself, so it does not depend on when a weapon change reaches this screen)
 let myCharKb={}, myCharUsed=[], myTrackW=null, myTrackK=0;      // the characters I played in this match (a duel changes it every round) and the kills each one got
 function trueW(p){ return (p && p.tioStage==='disg') ? 'tionis' : (p&&p.weapon); }       // a disguised 티오니스 still counts as 티오니스 (마스터리, 캐릭터 XP, 통계)
 function trackMyChar(me){
@@ -10942,7 +10943,8 @@ function showMatchEndOverlay(resultText, winnerIds, forcedPick){
     if(wid && !me.kit){ saveData.charKills=saveData.charKills||{}; saveData.charPts=saveData.charPts||{}; const won=!!(winnerIds && winnerIds.indexOf(myId)!==-1);
       const bigm=Object.values(players).filter(q=>q && !q.isMinion && !q.isBoss).length>=TIER_PT_BIG_PLAYERS && !!MODES[gameMode] && !MODES[gameMode].elim, kpt=(gameMode==='duel')?TIER_PT_DUEL_KILL:(brLike(gameMode)?TIER_PT_BR_KILL:(bigm?TIER_PT_BIG_KILL:TIER_PT_KILL));
       const used=usedCharsOfMatch(me), as=Math.max(0,matchAssists||0); lastTierGain=[];
-      for(const uw of used){ const kb=charKillsFor(uw), kk=(used.length>1)?(myCharKb[uw]||0):(me.kills||0), aa=(uw===wid)?as:0; saveData.charKills[uw]=(saveData.charKills[uw]||0)+kk;
+      const evSum=Object.keys(myKillByW).reduce((a,k)=>a+myKillByW[k],0);      // (when every kill was seen as an event, each kill goes to the character that made it: a duel's first character used to lose its kills when the next round's weapon arrived before the kill count did)
+      for(const uw of used){ const kb=charKillsFor(uw), kk=(used.length>1)?((evSum>0 && evSum===(me.kills||0))?(myKillByW[uw]||0):(myCharKb[uw]||0)):(me.kills||0), aa=(uw===wid)?as:0; saveData.charKills[uw]=(saveData.charKills[uw]||0)+kk;
         const sh=((MODES[gameMode]||{}).autoWeapon && used.length>1)?1/used.length:1;      // relay / roulette: the win and match points are shared by the characters I was handed, not paid in full to each
         saveData.charPts[uw]=kb+kk*kpt+aa*TIER_PT_ASSIST+Math.round(((won?(bigm?TIER_PT_BIG_WIN:(gameMode==='duel'?TIER_PT_DUEL_WIN:(brLike(gameMode)?TIER_PT_BR_WIN:TIER_PT_WIN)))+streakPts:0)+TIER_PT_MATCH)*sh);
         lastTierUps=lastTierUps.concat(tierUpsFor(uw, kb, saveData.charPts[uw]));
@@ -11967,7 +11969,7 @@ function finalizeGameplayStart(mte){
   // silent freeze, and the error banner mechanism gets its chance to work.
   try{
     matchEnded=false; try{ rpRecStart(); }catch(e){}
-    myCharKb={}; myCharUsed=[]; myTrackW=null; myTrackK=0; expVoted=null;
+    myCharKb={}; myKillByW={}; myCharUsed=[]; myTrackW=null; myTrackK=0; expVoted=null;
     xm=null; xmV=null; brz=null; brzV=null; particles=[]; fxSeen={}; prevGround={}; prevHp={}; hitFlashUntil={}; screenShake=0; walls=[]; hostTimers=[]; magicCircles=[]; fieldZones=[]; poisonZones=[]; turrets=[]; droneBombs=[]; fleetShows=[]; darkPools=[]; darkView=[]; lastKnownKills=0; matchAssists=0;
     matchKillLog=[]; killcamActive=false; killcamOverride=null; killcamSnapshot=null; killcamReplay=null; killcamReplayStartAt=0; replayBuffer={}; replayFrames=[]; replayFxLog=[]; replayDefs={};
     hitStopUntil=0; staggers={}; setTimeout(()=>{ try{ entranceShow(); }catch(e){ console.error('[entrance]', e); } }, 450);
@@ -16740,6 +16742,7 @@ function multiKillCount(name){
 }
 function onKillEvent(data){
   pushKillFeed(data.msg);
+  { const me0=players[myId], kw=data.killerSnap&&data.killerSnap.weapon; if(data.hasKiller && me0 && data.killerName===me0.name && kw && SELECTABLE_WEAPONS.includes(kw)) myKillByW[kw]=(myKillByW[kw]||0)+1; }
   if(data.hasKiller) matchKillLog.push({killerName:data.killerName, victimName:data.victimName, x:data.x, y:data.y, color:data.color, killerSnap:data.killerSnap, victimSnap:data.victimSnap, killerReplay:data.killerReplay||[], victimReplay:data.victimReplay||[], killerEvents:data.killerEvents||[], victimEvents:data.victimEvents||[], boss:!!data.boss});
   const mk=data.hasKiller ? multiKillCount(data.killerName) : 0;
   if(mk>=2){ showKillBannerText(data.killerName+'님 '+(MULTI_KILL_NAMES[mk]||(mk+'연속 처치'))+'!'); try{ playSfx('ach'); }catch(e){} }
