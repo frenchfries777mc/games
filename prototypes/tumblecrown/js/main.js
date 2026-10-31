@@ -106,11 +106,7 @@ function multiBanner(nm, n, who) {
   const el = $('multiBanner'); el.className = ''; el.dataset.n = n; el.innerHTML = '<i class="mr"></i><b>' + (who ? '<small style="display:block;font-size:.4em;letter-spacing:.02em;margin-bottom:.15em">' + esc(who) + '</small>' : '') + esc(nm) + '!</b><u></u>';
   void el.offsetWidth; el.classList.add('on'); clearTimeout(multiBanner._t); multiBanner._t = setTimeout(() => el.classList.remove('on'), 2400);
 }
-function killFeed(txt, mine) {
-  const box = $('killFeed'), d = document.createElement('div'); d.className = 'kf' + (mine ? ' me' : ''); d.textContent = txt; box.prepend(d);
-  while (box.children.length > 4) box.lastChild.remove();
-  setTimeout(() => d.classList.add('out'), 4200); setTimeout(() => d.remove(), 4800);
-}
+function killFeed(txt, mine) { logLine([[txt, null]], mine); }   // 쓰러뜨림 소식은 채팅줄에 한 줄씩 떠요 (내가 한 건 노랗게)
 function letterbox(ms) { document.body.classList.add('lbox'); clearTimeout(letterbox._t); letterbox._t = setTimeout(() => document.body.classList.remove('lbox'), ms); }
 function redFlash(a) { const f = $('wflash'); f.style.transition = 'none'; f.style.background = '#ff3a2a'; f.style.opacity = a; requestAnimationFrame(() => { f.style.transition = 'opacity .35s'; f.style.opacity = 0; setTimeout(() => { f.style.background = ''; }, 400); }); }
 function flashScreen() { const f = $('wflash'); f.style.transition = 'none'; f.style.opacity = 0.85; requestAnimationFrame(() => { f.style.transition = 'opacity 1.1s'; f.style.opacity = 0; }); }
@@ -618,6 +614,7 @@ function hostMsg(c, d) {
   else if (d.t === 'i' && S.G) { const pid = c._pid; if (!pid) return; const r = S.rin[pid] || (S.rin[pid] = {}); const once = { q: r.q || d.q, e: r.e || d.e, r: r.r || d.r, roll: r.roll || d.roll, skip: r.skip || d.skip, atkR: r.atkR || d.atkR, rcl: r.rcl || d.rcl }; Object.assign(r, d, once); }
   else if (d.t === 'b' && S.G) { if (c._pid) chooseBless(S.G, c._pid, d.id); }
   else if (d.t === 'chat' && S.G) { hostChat(uid, d.m); }
+  else if (d.t === 'emo' && S.G) { hostEmo(uid, d.i); }
 }
 function dropConn(c) {
   const uid = c._uid; if (!uid || S.conns[uid] !== c) return; delete S.conns[uid];
@@ -651,10 +648,25 @@ function hostChat(uid, t) {
   t = String(t || '').replace(/\s+/g, ' ').trim().slice(0, 40); if (!t || (p.chT || 0) > S.G.t) return; p.chT = S.G.t + 0.8;
   S.G.ev.push({ k: 'chat', id: p.id, tm: p.team, n: p.name, m: t });
 }
+const EMOS = ['👍', '😂', '😡', '😢'];   // 감정 표현 말풍선 4개 (단추로만 보내요, 새 키는 없어요)
+function emoSend(i) { if (!(i >= 0 && i < EMOS.length)) return; if (S.net === 'guest') send({ t: 'emo', i }); else hostEmo(UID, i); }
+function hostEmo(uid, i) {
+  if (!S.G || S.net === 'solo') return; const p = S.G.players.find(q => q.uid === uid && !q.bot); if (!p) return;
+  i |= 0; if (!(i >= 0 && i < EMOS.length) || (p.emT || 0) > S.G.t) return; p.emT = S.G.t + 1.2;
+  S.G.ev.push({ k: 'emo', id: p.id, i });
+}
+// 전투 기록: 쓰러뜨림·깃발 점령 소식을 채팅줄에 한 줄씩 보여줘요
+function logLine(parts, mine) {
+  const d = document.createElement('div'); d.style.opacity = '.9'; d.style.fontSize = '12px'; d.style.borderLeft = '3px solid ' + (mine ? '#ffd36b' : '#7a6a48'); if (mine) d.style.color = '#ffe08a';
+  for (const [t, c] of parts) { const b = document.createElement('span'); b.textContent = t; if (c != null) b.style.color = hex(c); d.appendChild(b); }
+  const L = $('chatLog'); L.appendChild(d); while (L.children.length > 6) L.removeChild(L.firstChild); setTimeout(() => { try { d.remove(); } catch (x) { } }, 7000);
+}
 function chatShow(e) {
   const d = document.createElement('div'), b = document.createElement('b'), tx = document.createElement('span'); b.textContent = (e.n || '') + ' '; b.style.color = hex(TEAMS[e.tm == null ? 0 : e.tm].c); tx.textContent = e.m; d.appendChild(b); d.appendChild(tx);
   const L = $('chatLog'); L.appendChild(d); while (L.children.length > 6) L.removeChild(L.firstChild); setTimeout(() => { try { d.remove(); } catch (x) { } }, 9000);
 }
+$('chatE').innerHTML = EMOS.map((q, i) => '<button class="btn" data-e="' + i + '" style="font-size:20px">' + q + '</button>').join('');
+$('chatE').onclick = e => { const b = e.target.closest('[data-e]'); if (!b) return; SFX.play('click'); emoSend(+b.dataset.e); chatOpen(false); };
 $('chatQ').innerHTML = QUICK.map((q, i) => '<button class="btn" data-q="' + i + '">' + T(q) + '</button>').join('');
 $('chatQ').onclick = e => { const b = e.target.closest('[data-q]'); if (!b) return; SFX.play('click'); chatSendText(T(QUICK[+b.dataset.q])); chatOpen(false); };
 $('chatBtn').onclick = () => { SFX.play('click'); chatOpen(true); };
@@ -1137,10 +1149,11 @@ function onEvent(e) {
     case 'pillar': view.column(e.x, e.z, 0x6ab0ff, 0.9); view.burst(e.x, 0.5, e.z, 0x9ad0ff, 14, 6, 0.6, 0.14); view.flash(e.x, e.z, 0x6ab0ff, 80); SFX.play('slam'); break;
     case 'blink': view.column(e.x, e.z, 0x9ad0ff, 0.5); view.rise(e.x, e.z, 0x9ad0ff, 12, 1.5, 0.7, 6); SFX.play('orb'); break;
     case 'chat': chatShow(e); break;
+    case 'emo': S.emo = S.emo || {}; S.emo[e.id] = { i: e.i, u: performance.now() + 2200 }; break;
     case 'ping': if (e.tm === myTm()) { const pi = PINGK[e.pk] || PINGK.go, col = pi.c; S.pings = (S.pings || []).filter(q => performance.now() - q.t < 5000).concat([{ x: e.x, z: e.z, rgb: pi.r, t: performance.now() }]); /* 미니맵에도 5초 동안 표시해요 */ view.ring(e.x, e.z, 2.2, col, 1.4); view.ring(e.x, e.z, 1.2, 0xffffff, 1.0); view.column(e.x, e.z, col, 1.2); num(e.x, e.z, T(pi.t), pi.h, 1.3); SFX.play('click'); } break;
     case 'recall': view.column(e.x, e.z, 0x9af0e0); if (e.id === me && e.end) bigMsg(T('깃발로 귀환했어요'), '', 1400); break;
     case 'respawn': view.column(e.x, e.z, 0xff9a48); if (e.id === me) bigMsg(T('진지에서 다시 일어났어요'), '', 1800); break;
-    case 'flag': { const mine = e.own === myTm(), c = TEAMS[e.own].c; view.column(e.x, e.z, c, 1.4); view.ring(e.x, e.z, 6, c, 0.9); view.shock(e.x, e.z, 7, c, 0.6); view.flash(e.x, e.z, c, 120); if (mine || e.was === myTm()) { bigMsg(mine ? T('깃발을 차지했어요!') : T('깃발을 빼앗겼어요!'), '', 1800); SFX.play(mine ? 'kill' : 'roar'); } break; }   // 주인 없던 깃발을 상대가 차지한 건 빼앗긴 게 아니라서 알리지 않아요
+    case 'flag': { if (S.snap && S.snap.tf) { const a = TEAMS[e.own]; logLine([[tmName(e.own) + ' ', a.c], [T('깃발 점령'), null]]); } const mine = e.own === myTm(), c = TEAMS[e.own].c; view.column(e.x, e.z, c, 1.4); view.ring(e.x, e.z, 6, c, 0.9); view.shock(e.x, e.z, 7, c, 0.6); view.flash(e.x, e.z, c, 120); if (mine || e.was === myTm()) { bigMsg(mine ? T('깃발을 차지했어요!') : T('깃발을 빼앗겼어요!'), '', 1800); SFX.play(mine ? 'kill' : 'roar'); } break; }   // 주인 없던 깃발을 상대가 차지한 건 빼앗긴 게 아니라서 알리지 않아요
     case 'capbuff': view.rise(e.x, e.z, 0xffd36a, 12, 2.2, 0.9, 5); view.ring(e.x, e.z, 1.8, 0xffd36a, 0.5); if (e.id === me) { toast(T('점령 효과! 5초 동안 이동 속도와 공격이 20% 올라요'), 2400); SFX.play('bless'); } break;
     case 'door': if (e.open) toast(T('신전 문이 열렸어요!'), 2400); else bigMsg(T('신전 문이 닫혔어요!'), T('안에 있는 깃발은 닫혀도 차지할 수 있어요'), 2600); SFX.play(e.open ? 'warn' : 'slam'); view.shake = Math.max(view.shake, 0.5); break;
     case 'storm': toast(e.on ? T('모래폭풍이 불어요! 멀리가 안 보여요') : T('모래폭풍이 잦아들었어요'), 2400); break;
@@ -1557,6 +1570,7 @@ function drawOverlay(dt) {
     if (p.dd) continue; const E = view.ents.get('p' + p.id); if (!E) continue;
     if (p.stl && p.id !== S.me && p.tm !== myTm() && S.snap && !sn.pl.some(q => q.id === S.me && Math.hypot(q.x - p.x, q.z - p.z) <= 2.8)) continue;   // 숨은 자객은 이름표도 숨겨요
     const s = view.project(E.x, 3.9, E.z);
+    { const em = S.emo && S.emo[p.id]; if (em && em.u > performance.now() && !p.dd) { const bx = s.x, by = s.y - 44; oc.fillStyle = 'rgba(255,255,255,.94)'; oc.strokeStyle = '#140f18'; oc.lineWidth = 3; oc.beginPath(); oc.arc(bx, by, 19, 0, 7); oc.fill(); oc.stroke(); oc.beginPath(); oc.moveTo(bx - 5, by + 17); oc.lineTo(bx, by + 28); oc.lineTo(bx + 6, by + 17); oc.fill(); oc.font = '22px system-ui'; oc.textAlign = 'center'; oc.textBaseline = 'middle'; oc.fillStyle = '#000'; oc.fillText(EMOS[em.i], bx, by + 1); oc.textBaseline = 'alphabetic'; } }
     // 이름표가 겹치면 위로 비켜 올려요
     if (p.id !== S.me) { for (let k = 0; k < 4 && tags.some(t => Math.abs(t.x - s.x) < 64 && Math.abs(t.y - s.y) < 30); k++) s.y -= 30; tags.push({ x: s.x, y: s.y }); oc.font = 'bold 13px Galmuri, system-ui'; oc.lineWidth = 4; oc.strokeStyle = '#140f18'; const t = p.bot ? T('{0} 봇', ROLES[p.role].name) : p.name; oc.strokeText(t, s.x, s.y - 10); oc.fillStyle = pcol(p); oc.fillText(t, s.x, s.y - 10); if (!p.bot && p.rl) { const rk = charRankFor(p.mp), mt = rk.name + ' · Lv.' + p.rl; oc.font = 'bold 10px Galmuri, system-ui'; oc.lineWidth = 3; oc.strokeText(mt, s.x, s.y + 2); oc.fillStyle = rk.color; oc.fillText(mt, s.x, s.y + 2); { const ic = rankIco(rk.t); if (ic) try { oc.drawImage(ic, s.x - oc.measureText(mt).width / 2 - 14, s.y - 9, 12, 12); } catch (x) { } } oc.font = 'bold 13px Galmuri, system-ui'; } { const ty = ROLES[p.role].type; if (ty) { oc.font = 'bold 11px Galmuri, system-ui'; oc.lineWidth = 3; oc.strokeText(ty, s.x, s.y - 24); oc.fillStyle = '#e8e0cc'; oc.fillText(ty, s.x, s.y - 24); const ti = typeFile(ty) ? svgIco('cls/' + typeFile(ty)) : null; if (ti) try { oc.drawImage(ti, s.x - oc.measureText(ty).width / 2 - 14, s.y - 34, 12, 12); } catch (x) { } } } hpBar(s.x, s.y, p, false, p.tm === myTm()); runeMark(s.x + 58, s.y, p.rn); }
     else hpBar(s.x, s.y, p, true);
