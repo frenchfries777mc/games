@@ -5598,7 +5598,7 @@ function shuffle(arr){ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.
 /* ===== the version of this file =====
    Different BUILDS of one version meet and play together (room names online-v<ver>-<mode>-<map>-<slot>); different VERSIONS (the 0.x part) never do - the host refuses them (verNo) and the dispatcher answers busy.
    The build is only sent along with the join message and the lobby (for information); the corner of the screen shows it. */
-const GAME_BUILD='build 2026-10-31-v565';
+const GAME_BUILD='build 2026-10-31-v566';
 const GAME_VERSION='0.9', GAME_VERSION_NAME='은하 제국의 황혼';   // 게임 버전 이름: versions.json의 title과 같게 (빌드마다 바꾸지 않음)
 /* version (the 0.x part) vs build: different BUILDS of one version meet and play together, different VERSIONS never do (rooms, quick match, ranked, friend invites, dispatcher).
    Builds before 470 do not send a version, so it is read from the build number (0.9 started at build 458). */
@@ -18910,7 +18910,8 @@ function drawOverheadExtras(p, HEADCY){
   let hpColor=cb?'#D55E00':'#ff4d4d'; // default: enemy = red
   let hpMark=cb?2:0;                                                // (colour-blind mode: also a shape - diamond = enemy, dot = team-mate)
   const meId=(rpView && rpView.meta && rpView.meta.me) || myId;   // (in a replay "me" is the one who recorded it, not the viewer)
-  if(p.id===meId){ hpColor=cb?'#F0E442':'#4da6ff'; hpMark=0; } // me = blue
+  const kcMe=(typeof p.id==='string' && p.id.indexOf('killcam_')===0 && !!players[meId] && !!p.name && p.name===players[meId].name);      // (a killcam figure has a made-up id, so it is recognised as me by name)
+  if(p.id===meId || kcMe){ hpColor=cb?'#F0E442':'#4da6ff'; hpMark=0; } // me = blue
   else if(isAlly(players[meId], p)){ hpColor=cb?'#56B4E9':'#4ddb7a'; hpMark=cb?1:0; } // ally = green
   if(p.dgn && p.alive && p.id!==meId){ hpColor=cb?'#56B4E9':'#4ddb7a'; hpMark=cb?1:0; }       // a disguised 티오니스: a green bar for everybody
   ctx.fillStyle = p.alive ? hpColor : '#555';
