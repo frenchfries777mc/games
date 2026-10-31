@@ -722,7 +722,12 @@ export class View {
       this.flagM.push({ cm, rm, pm, cloth, prog, bm, beam, em, edge, hold, seize });
     }
     // 사막 신전 문: 닫히면 돌문이 올라와 길을 막고, 열리면 땅속으로 내려가요
-    this.doorM = (MAP.doors || []).map(([x, y, w, h]) => { const sx = w * CS, sz = h * CS, m = box(sx, 3.4, sz, M(0x5a2a1e, { m: 0.2, e: 0xc83a14, ei: 0.2 }), (x + w / 2) * CS, 1.7, (y + h / 2) * CS, s); m.castShadow = true; return m; });   // 닫힌 문은 붉게 빛나는 봉인 돌문
+    this.doorM = (MAP.doors || []).map(([x, y, w, h]) => {   // 닫힌 문은 주변 벽과 똑같은 돌벽이에요: 벽돌 줄을 쌓고 맨 위에 뚜껑을 얹어요
+      const sx = w * CS, sz = h * CS, g = new THREE.Group(), pal = T.wall;
+      for (let r = 0; r < 4; r++) { const b = box(sx, 0.97, sz, M(pal[r % pal.length]), 0, r + 0.5, 0, g); b.castShadow = true; }
+      box(sx + 0.02, 0.26, sz + 0.02, M(T.top), 0, 4.12, 0, g);
+      g.position.set((x + w / 2) * CS, 0, (y + h / 2) * CS); s.add(g); return g;
+    });   // 열리면 땅속으로 내려가요
     this.doorG = (MAP.doors || []).map(([x, y, w, h]) => { const g = box(w * CS, 0.06, h * CS, M(0x6aff9a, { e: 0x6aff9a, ei: 0.7, op: 0.35, uniq: true }), (x + w / 2) * CS, 0.07, (y + h / 2) * CS, s, false); g.visible = true; return g; });   // 열리면 길바닥이 초록으로 빛나요
     // 팀 대전 장식: 바닥에 흩어진 돌·상자·풀, 진지와 깃발 곁의 횃불, 진지 기둥 깃발
     if (CH.pvp) {
@@ -1332,7 +1337,7 @@ export class View {
     });
   }
   tick(dt, t) {
-    for (const m of this.doorM || []) { const ty = DSTATE.open ? -1.9 : 1.7; m.position.y += (ty - m.position.y) * Math.min(1, dt * 4); m.visible = m.position.y > -1.8; }
+    for (const m of this.doorM || []) { const ty = DSTATE.open ? -4.4 : 0; m.position.y += (ty - m.position.y) * Math.min(1, dt * 4); m.visible = m.position.y > -4.3; }
     for (const g of this.doorG || []) { const c = DSTATE.open ? 0x6aff9a : 0xff3a2a; g.material.color.setHex(c); g.material.emissive.setHex(c); g.material.emissiveIntensity = DSTATE.open ? 0.7 : 1.4; g.material.opacity = (DSTATE.open ? 0.3 : 0.45) + 0.15 * Math.sin(t * (DSTATE.open ? 5 : 3)); }   // 열리면 초록, 닫히면 붉은 빛이 길바닥에 깔려요
     for (const f of this.flick || []) f.L.intensity = f.b * (0.9 + Math.sin(t * 2.2 + f.ph) * 0.04 + Math.sin(t * 3.7 + f.ph * 2) * 0.02);
     if (this.fireG) { this.fireG.children.forEach((c, i) => { c.scale.y = 0.85 + Math.sin(t * 4 + i * 1.7) * 0.12; }); }
