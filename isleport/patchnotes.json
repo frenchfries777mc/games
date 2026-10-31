@@ -2,6 +2,196 @@
  "notes": [
   {
    "date": "2026-10-31",
+   "build": "v0.2 build 77",
+   "title": "첫 로딩 가볍게, 패치노트 번역 확대",
+   "items": [
+    "번역 자료를 한국어로 시작할 때는 풀지 않고 다른 언어를 고를 때만 풀어서 시작이 빨라짐",
+    "패치노트를 15개 언어 목록으로 확대하고, 번역이 없는 문장은 영어로 보여 줌"
+   ],
+   "tr": {
+    "en": {
+     "title": "Lighter first load, patch notes in more languages",
+     "items": [
+      "Translation data is unpacked only when you pick a non-Korean language, so Korean starts faster",
+      "Patch notes now cover 15 languages and fall back to English where a line is not translated yet"
+     ]
+    },
+    "ja": {
+     "title": "Lighter first load, patch notes in more languages",
+     "items": [
+      "Translation data is unpacked only when you pick a non-Korean language, so Korean starts faster",
+      "Patch notes now cover 15 languages and fall back to English where a line is not translated yet"
+     ]
+    },
+    "es": {
+     "title": "Lighter first load, patch notes in more languages",
+     "items": [
+      "Translation data is unpacked only when you pick a non-Korean language, so Korean starts faster",
+      "Patch notes now cover 15 languages and fall back to English where a line is not translated yet"
+     ]
+    },
+    "fr": {
+     "title": "Lighter first load, patch notes in more languages",
+     "items": [
+      "Translation data is unpacked only when you pick a non-Korean language, so Korean starts faster",
+      "Patch notes now cover 15 languages and fall back to English where a line is not translated yet"
+     ]
+    },
+    "de": {
+     "title": "Lighter first load, patch notes in more languages",
+     "items": [
+      "Translation data is unpacked only when you pick a non-Korean language, so Korean starts faster",
+      "Patch notes now cover 15 languages and fall back to English where a line is not translated yet"
+     ]
+    },
+    "zh": {
+     "title": "Lighter first load, patch notes in more languages",
+     "items": [
+      "Translation data is unpacked only when you pick a non-Korean language, so Korean starts faster",
+      "Patch notes now cover 15 languages and fall back to English where a line is not translated yet"
+     ]
+    },
+    "pt": {
+     "title": "Lighter first load, patch notes in more languages",
+     "items": [
+      "Translation data is unpacked only when you pick a non-Korean language, so Korean starts faster",
+      "Patch notes now cover 15 languages and fall back to English where a line is not translated yet"
+     ]
+    },
+    "ru": {
+     "title": "Lighter first load, patch notes in more languages",
+     "items": [
+      "Translation data is unpacked only when you pick a non-Korean language, so Korean starts faster",
+      "Patch notes now cover 15 languages and fall back to English where a line is not translated yet"
+     ]
+    },
+    "tr": {
+     "title": "Lighter first load, patch notes in more languages",
+     "items": [
+      "Translation data is unpacked only when you pick a non-Korean language, so Korean starts faster",
+      "Patch notes now cover 15 languages and fall back to English where a line is not translated yet"
+     ]
+    },
+    "it": {
+     "title": "Lighter first load, patch notes in more languages",
+     "items": [
+      "Translation data is unpacked only when you pick a non-Korean language, so Korean starts faster",
+      "Patch notes now cover 15 languages and fall back to English where a line is not translated yet"
+     ]
+    },
+    "pl": {
+     "title": "Lighter first load, patch notes in more languages",
+     "items": [
+      "Translation data is unpacked only when you pick a non-Korean language, so Korean starts faster",
+      "Patch notes now cover 15 languages and fall back to English where a line is not translated yet"
+     ]
+    },
+    "ar": {
+     "title": "Lighter first load, patch notes in more languages",
+     "items": [
+      "Translation data is unpacked only when you pick a non-Korean language, so Korean starts faster",
+      "Patch notes now cover 15 languages and fall back to English where a line is not translated yet"
+     ]
+    }
+   }
+  },
+  {
+   "date": "2026-10-31",
+   "build": "v0.2 build 76",
+   "title": "글자 겹침 정리",
+   "items": [
+    "마을과 섬에서 이름표가 서로 겹치면 위아래로 자동으로 비켜 서서 모두 읽을 수 있음",
+    "폰처럼 화면이 작을 때도 이름표 글자가 너무 작아지지 않도록 최소 크기를 둠"
+   ],
+   "tr": {
+    "en": {
+     "title": "Labels no longer overlap",
+     "items": [
+      "Names on the town and islands now shift up or down so they never cover each other",
+      "Labels keep a minimum size on small phone screens"
+     ]
+    },
+    "ja": {
+     "title": "Labels no longer overlap",
+     "items": [
+      "Names on the town and islands now shift up or down so they never cover each other",
+      "Labels keep a minimum size on small phone screens"
+     ]
+    },
+    "es": {
+     "title": "Labels no longer overlap",
+     "items": [
+      "Names on the town and islands now shift up or down so they never cover each other",
+      "Labels keep a minimum size on small phone screens"
+     ]
+    },
+    "fr": {
+     "title": "Labels no longer overlap",
+     "items": [
+      "Names on the town and islands now shift up or down so they never cover each other",
+      "Labels keep a minimum size on small phone screens"
+     ]
+    },
+    "de": {
+     "title": "Labels no longer overlap",
+     "items": [
+      "Names on the town and islands now shift up or down so they never cover each other",
+      "Labels keep a minimum size on small phone screens"
+     ]
+    },
+    "zh": {
+     "title": "Labels no longer overlap",
+     "items": [
+      "Names on the town and islands now shift up or down so they never cover each other",
+      "Labels keep a minimum size on small phone screens"
+     ]
+    },
+    "pt": {
+     "title": "Labels no longer overlap",
+     "items": [
+      "Names on the town and islands now shift up or down so they never cover each other",
+      "Labels keep a minimum size on small phone screens"
+     ]
+    },
+    "ru": {
+     "title": "Labels no longer overlap",
+     "items": [
+      "Names on the town and islands now shift up or down so they never cover each other",
+      "Labels keep a minimum size on small phone screens"
+     ]
+    },
+    "tr": {
+     "title": "Labels no longer overlap",
+     "items": [
+      "Names on the town and islands now shift up or down so they never cover each other",
+      "Labels keep a minimum size on small phone screens"
+     ]
+    },
+    "it": {
+     "title": "Labels no longer overlap",
+     "items": [
+      "Names on the town and islands now shift up or down so they never cover each other",
+      "Labels keep a minimum size on small phone screens"
+     ]
+    },
+    "pl": {
+     "title": "Labels no longer overlap",
+     "items": [
+      "Names on the town and islands now shift up or down so they never cover each other",
+      "Labels keep a minimum size on small phone screens"
+     ]
+    },
+    "ar": {
+     "title": "Labels no longer overlap",
+     "items": [
+      "Names on the town and islands now shift up or down so they never cover each other",
+      "Labels keep a minimum size on small phone screens"
+     ]
+    }
+   }
+  },
+  {
+   "date": "2026-10-31",
    "build": "v0.2 build 75",
    "title": "닉네임을 눌러 프로필 보기",
    "items": [
@@ -9,6 +199,72 @@
    ],
    "tr": {
     "en": {
+     "title": "Tap a name to see a profile",
+     "items": [
+      "Tap the name of a signed-in player in the room list to open their Isleport profile card"
+     ]
+    },
+    "ja": {
+     "title": "Tap a name to see a profile",
+     "items": [
+      "Tap the name of a signed-in player in the room list to open their Isleport profile card"
+     ]
+    },
+    "es": {
+     "title": "Tap a name to see a profile",
+     "items": [
+      "Tap the name of a signed-in player in the room list to open their Isleport profile card"
+     ]
+    },
+    "fr": {
+     "title": "Tap a name to see a profile",
+     "items": [
+      "Tap the name of a signed-in player in the room list to open their Isleport profile card"
+     ]
+    },
+    "de": {
+     "title": "Tap a name to see a profile",
+     "items": [
+      "Tap the name of a signed-in player in the room list to open their Isleport profile card"
+     ]
+    },
+    "zh": {
+     "title": "Tap a name to see a profile",
+     "items": [
+      "Tap the name of a signed-in player in the room list to open their Isleport profile card"
+     ]
+    },
+    "pt": {
+     "title": "Tap a name to see a profile",
+     "items": [
+      "Tap the name of a signed-in player in the room list to open their Isleport profile card"
+     ]
+    },
+    "ru": {
+     "title": "Tap a name to see a profile",
+     "items": [
+      "Tap the name of a signed-in player in the room list to open their Isleport profile card"
+     ]
+    },
+    "tr": {
+     "title": "Tap a name to see a profile",
+     "items": [
+      "Tap the name of a signed-in player in the room list to open their Isleport profile card"
+     ]
+    },
+    "it": {
+     "title": "Tap a name to see a profile",
+     "items": [
+      "Tap the name of a signed-in player in the room list to open their Isleport profile card"
+     ]
+    },
+    "pl": {
+     "title": "Tap a name to see a profile",
+     "items": [
+      "Tap the name of a signed-in player in the room list to open their Isleport profile card"
+     ]
+    },
+    "ar": {
      "title": "Tap a name to see a profile",
      "items": [
       "Tap the name of a signed-in player in the room list to open their Isleport profile card"
@@ -59,6 +315,62 @@
      ]
     },
     "de": {
+     "title": "The lord's castle",
+     "items": [
+      "A castle lot opens on the empty land south of the lake on the home island",
+      "Build it in 4 stages: watchtower, wall, keep, gardens and banners, each needing rank and gold",
+      "Taxes pile up as the castle grows, from 20 to 220 gold per minute, up to 60 minutes worth"
+     ]
+    },
+    "zh": {
+     "title": "The lord's castle",
+     "items": [
+      "A castle lot opens on the empty land south of the lake on the home island",
+      "Build it in 4 stages: watchtower, wall, keep, gardens and banners, each needing rank and gold",
+      "Taxes pile up as the castle grows, from 20 to 220 gold per minute, up to 60 minutes worth"
+     ]
+    },
+    "pt": {
+     "title": "The lord's castle",
+     "items": [
+      "A castle lot opens on the empty land south of the lake on the home island",
+      "Build it in 4 stages: watchtower, wall, keep, gardens and banners, each needing rank and gold",
+      "Taxes pile up as the castle grows, from 20 to 220 gold per minute, up to 60 minutes worth"
+     ]
+    },
+    "ru": {
+     "title": "The lord's castle",
+     "items": [
+      "A castle lot opens on the empty land south of the lake on the home island",
+      "Build it in 4 stages: watchtower, wall, keep, gardens and banners, each needing rank and gold",
+      "Taxes pile up as the castle grows, from 20 to 220 gold per minute, up to 60 minutes worth"
+     ]
+    },
+    "tr": {
+     "title": "The lord's castle",
+     "items": [
+      "A castle lot opens on the empty land south of the lake on the home island",
+      "Build it in 4 stages: watchtower, wall, keep, gardens and banners, each needing rank and gold",
+      "Taxes pile up as the castle grows, from 20 to 220 gold per minute, up to 60 minutes worth"
+     ]
+    },
+    "it": {
+     "title": "The lord's castle",
+     "items": [
+      "A castle lot opens on the empty land south of the lake on the home island",
+      "Build it in 4 stages: watchtower, wall, keep, gardens and banners, each needing rank and gold",
+      "Taxes pile up as the castle grows, from 20 to 220 gold per minute, up to 60 minutes worth"
+     ]
+    },
+    "pl": {
+     "title": "The lord's castle",
+     "items": [
+      "A castle lot opens on the empty land south of the lake on the home island",
+      "Build it in 4 stages: watchtower, wall, keep, gardens and banners, each needing rank and gold",
+      "Taxes pile up as the castle grows, from 20 to 220 gold per minute, up to 60 minutes worth"
+     ]
+    },
+    "ar": {
      "title": "The lord's castle",
      "items": [
       "A castle lot opens on the empty land south of the lake on the home island",
@@ -116,6 +428,69 @@
      ]
     },
     "de": {
+     "title": "Islander errands",
+     "items": [
+      "Talk to an islander to be asked to carry a letter or parcel to a villager on another port",
+      "You can carry up to 3 at a time and get gold when you deliver",
+      "Talking to anyone shows your errands and where to deliver",
+      "The same villager asks again after 5 minutes"
+     ]
+    },
+    "zh": {
+     "title": "Islander errands",
+     "items": [
+      "Talk to an islander to be asked to carry a letter or parcel to a villager on another port",
+      "You can carry up to 3 at a time and get gold when you deliver",
+      "Talking to anyone shows your errands and where to deliver",
+      "The same villager asks again after 5 minutes"
+     ]
+    },
+    "pt": {
+     "title": "Islander errands",
+     "items": [
+      "Talk to an islander to be asked to carry a letter or parcel to a villager on another port",
+      "You can carry up to 3 at a time and get gold when you deliver",
+      "Talking to anyone shows your errands and where to deliver",
+      "The same villager asks again after 5 minutes"
+     ]
+    },
+    "ru": {
+     "title": "Islander errands",
+     "items": [
+      "Talk to an islander to be asked to carry a letter or parcel to a villager on another port",
+      "You can carry up to 3 at a time and get gold when you deliver",
+      "Talking to anyone shows your errands and where to deliver",
+      "The same villager asks again after 5 minutes"
+     ]
+    },
+    "tr": {
+     "title": "Islander errands",
+     "items": [
+      "Talk to an islander to be asked to carry a letter or parcel to a villager on another port",
+      "You can carry up to 3 at a time and get gold when you deliver",
+      "Talking to anyone shows your errands and where to deliver",
+      "The same villager asks again after 5 minutes"
+     ]
+    },
+    "it": {
+     "title": "Islander errands",
+     "items": [
+      "Talk to an islander to be asked to carry a letter or parcel to a villager on another port",
+      "You can carry up to 3 at a time and get gold when you deliver",
+      "Talking to anyone shows your errands and where to deliver",
+      "The same villager asks again after 5 minutes"
+     ]
+    },
+    "pl": {
+     "title": "Islander errands",
+     "items": [
+      "Talk to an islander to be asked to carry a letter or parcel to a villager on another port",
+      "You can carry up to 3 at a time and get gold when you deliver",
+      "Talking to anyone shows your errands and where to deliver",
+      "The same villager asks again after 5 minutes"
+     ]
+    },
+    "ar": {
      "title": "Islander errands",
      "items": [
       "Talk to an islander to be asked to carry a letter or parcel to a villager on another port",
@@ -181,6 +556,69 @@
       "Added a cart station: it hauls ripe crops and stored goods to your warehouse and replants if you have seeds",
       "Only one irrigation well and one cart station per isle"
      ]
+    },
+    "zh": {
+     "title": "Frontier workshops and carts",
+     "items": [
+      "Frontier facility slots grew from 4 to 6",
+      "Added a frontier mill and winery: load ingredients and they make flour and wine on the isle",
+      "Added a cart station: it hauls ripe crops and stored goods to your warehouse and replants if you have seeds",
+      "Only one irrigation well and one cart station per isle"
+     ]
+    },
+    "pt": {
+     "title": "Frontier workshops and carts",
+     "items": [
+      "Frontier facility slots grew from 4 to 6",
+      "Added a frontier mill and winery: load ingredients and they make flour and wine on the isle",
+      "Added a cart station: it hauls ripe crops and stored goods to your warehouse and replants if you have seeds",
+      "Only one irrigation well and one cart station per isle"
+     ]
+    },
+    "ru": {
+     "title": "Frontier workshops and carts",
+     "items": [
+      "Frontier facility slots grew from 4 to 6",
+      "Added a frontier mill and winery: load ingredients and they make flour and wine on the isle",
+      "Added a cart station: it hauls ripe crops and stored goods to your warehouse and replants if you have seeds",
+      "Only one irrigation well and one cart station per isle"
+     ]
+    },
+    "tr": {
+     "title": "Frontier workshops and carts",
+     "items": [
+      "Frontier facility slots grew from 4 to 6",
+      "Added a frontier mill and winery: load ingredients and they make flour and wine on the isle",
+      "Added a cart station: it hauls ripe crops and stored goods to your warehouse and replants if you have seeds",
+      "Only one irrigation well and one cart station per isle"
+     ]
+    },
+    "it": {
+     "title": "Frontier workshops and carts",
+     "items": [
+      "Frontier facility slots grew from 4 to 6",
+      "Added a frontier mill and winery: load ingredients and they make flour and wine on the isle",
+      "Added a cart station: it hauls ripe crops and stored goods to your warehouse and replants if you have seeds",
+      "Only one irrigation well and one cart station per isle"
+     ]
+    },
+    "pl": {
+     "title": "Frontier workshops and carts",
+     "items": [
+      "Frontier facility slots grew from 4 to 6",
+      "Added a frontier mill and winery: load ingredients and they make flour and wine on the isle",
+      "Added a cart station: it hauls ripe crops and stored goods to your warehouse and replants if you have seeds",
+      "Only one irrigation well and one cart station per isle"
+     ]
+    },
+    "ar": {
+     "title": "Frontier workshops and carts",
+     "items": [
+      "Frontier facility slots grew from 4 to 6",
+      "Added a frontier mill and winery: load ingredients and they make flour and wine on the isle",
+      "Added a cart station: it hauls ripe crops and stored goods to your warehouse and replants if you have seeds",
+      "Only one irrigation well and one cart station per isle"
+     ]
     }
    }
   },
@@ -237,6 +675,76 @@
      ]
     },
     "de": {
+     "title": "Medieval villages and islanders",
+     "items": [
+      "Houses, markets, harbor buildings, manors, towers and chapels redrawn in a medieval European style",
+      "Buildings on the home island now have timber frames, stone bases and steep tiled roofs",
+      "The mill and lighthouse are now built of stone",
+      "Every isle now has villagers such as farmers, fishers, smiths and monks walking around",
+      "Walk up and press E to hear what they say about the isle"
+     ]
+    },
+    "zh": {
+     "title": "Medieval villages and islanders",
+     "items": [
+      "Houses, markets, harbor buildings, manors, towers and chapels redrawn in a medieval European style",
+      "Buildings on the home island now have timber frames, stone bases and steep tiled roofs",
+      "The mill and lighthouse are now built of stone",
+      "Every isle now has villagers such as farmers, fishers, smiths and monks walking around",
+      "Walk up and press E to hear what they say about the isle"
+     ]
+    },
+    "pt": {
+     "title": "Medieval villages and islanders",
+     "items": [
+      "Houses, markets, harbor buildings, manors, towers and chapels redrawn in a medieval European style",
+      "Buildings on the home island now have timber frames, stone bases and steep tiled roofs",
+      "The mill and lighthouse are now built of stone",
+      "Every isle now has villagers such as farmers, fishers, smiths and monks walking around",
+      "Walk up and press E to hear what they say about the isle"
+     ]
+    },
+    "ru": {
+     "title": "Medieval villages and islanders",
+     "items": [
+      "Houses, markets, harbor buildings, manors, towers and chapels redrawn in a medieval European style",
+      "Buildings on the home island now have timber frames, stone bases and steep tiled roofs",
+      "The mill and lighthouse are now built of stone",
+      "Every isle now has villagers such as farmers, fishers, smiths and monks walking around",
+      "Walk up and press E to hear what they say about the isle"
+     ]
+    },
+    "tr": {
+     "title": "Medieval villages and islanders",
+     "items": [
+      "Houses, markets, harbor buildings, manors, towers and chapels redrawn in a medieval European style",
+      "Buildings on the home island now have timber frames, stone bases and steep tiled roofs",
+      "The mill and lighthouse are now built of stone",
+      "Every isle now has villagers such as farmers, fishers, smiths and monks walking around",
+      "Walk up and press E to hear what they say about the isle"
+     ]
+    },
+    "it": {
+     "title": "Medieval villages and islanders",
+     "items": [
+      "Houses, markets, harbor buildings, manors, towers and chapels redrawn in a medieval European style",
+      "Buildings on the home island now have timber frames, stone bases and steep tiled roofs",
+      "The mill and lighthouse are now built of stone",
+      "Every isle now has villagers such as farmers, fishers, smiths and monks walking around",
+      "Walk up and press E to hear what they say about the isle"
+     ]
+    },
+    "pl": {
+     "title": "Medieval villages and islanders",
+     "items": [
+      "Houses, markets, harbor buildings, manors, towers and chapels redrawn in a medieval European style",
+      "Buildings on the home island now have timber frames, stone bases and steep tiled roofs",
+      "The mill and lighthouse are now built of stone",
+      "Every isle now has villagers such as farmers, fishers, smiths and monks walking around",
+      "Walk up and press E to hear what they say about the isle"
+     ]
+    },
+    "ar": {
      "title": "Medieval villages and islanders",
      "items": [
       "Houses, markets, harbor buildings, manors, towers and chapels redrawn in a medieval European style",
@@ -315,6 +823,83 @@
       "The hut gathers island goods, the yard wool, the stall coins",
       "An irrigation well makes crops on that isle grow 30% faster"
      ]
+    },
+    "zh": {
+     "title": "Settling other isles",
+     "items": [
+      "Every isle you land on now has 6 frontier fields and 4 frontier facility slots",
+      "Till a frontier field for 400 g and plant seeds; it keeps growing while you are away",
+      "Walk over a ripe field to harvest it automatically",
+      "4 facilities: gatherer hut, irrigation well, grazing yard, market stall",
+      "The hut gathers island goods, the yard wool, the stall coins",
+      "An irrigation well makes crops on that isle grow 30% faster"
+     ]
+    },
+    "pt": {
+     "title": "Settling other isles",
+     "items": [
+      "Every isle you land on now has 6 frontier fields and 4 frontier facility slots",
+      "Till a frontier field for 400 g and plant seeds; it keeps growing while you are away",
+      "Walk over a ripe field to harvest it automatically",
+      "4 facilities: gatherer hut, irrigation well, grazing yard, market stall",
+      "The hut gathers island goods, the yard wool, the stall coins",
+      "An irrigation well makes crops on that isle grow 30% faster"
+     ]
+    },
+    "ru": {
+     "title": "Settling other isles",
+     "items": [
+      "Every isle you land on now has 6 frontier fields and 4 frontier facility slots",
+      "Till a frontier field for 400 g and plant seeds; it keeps growing while you are away",
+      "Walk over a ripe field to harvest it automatically",
+      "4 facilities: gatherer hut, irrigation well, grazing yard, market stall",
+      "The hut gathers island goods, the yard wool, the stall coins",
+      "An irrigation well makes crops on that isle grow 30% faster"
+     ]
+    },
+    "tr": {
+     "title": "Settling other isles",
+     "items": [
+      "Every isle you land on now has 6 frontier fields and 4 frontier facility slots",
+      "Till a frontier field for 400 g and plant seeds; it keeps growing while you are away",
+      "Walk over a ripe field to harvest it automatically",
+      "4 facilities: gatherer hut, irrigation well, grazing yard, market stall",
+      "The hut gathers island goods, the yard wool, the stall coins",
+      "An irrigation well makes crops on that isle grow 30% faster"
+     ]
+    },
+    "it": {
+     "title": "Settling other isles",
+     "items": [
+      "Every isle you land on now has 6 frontier fields and 4 frontier facility slots",
+      "Till a frontier field for 400 g and plant seeds; it keeps growing while you are away",
+      "Walk over a ripe field to harvest it automatically",
+      "4 facilities: gatherer hut, irrigation well, grazing yard, market stall",
+      "The hut gathers island goods, the yard wool, the stall coins",
+      "An irrigation well makes crops on that isle grow 30% faster"
+     ]
+    },
+    "pl": {
+     "title": "Settling other isles",
+     "items": [
+      "Every isle you land on now has 6 frontier fields and 4 frontier facility slots",
+      "Till a frontier field for 400 g and plant seeds; it keeps growing while you are away",
+      "Walk over a ripe field to harvest it automatically",
+      "4 facilities: gatherer hut, irrigation well, grazing yard, market stall",
+      "The hut gathers island goods, the yard wool, the stall coins",
+      "An irrigation well makes crops on that isle grow 30% faster"
+     ]
+    },
+    "ar": {
+     "title": "Settling other isles",
+     "items": [
+      "Every isle you land on now has 6 frontier fields and 4 frontier facility slots",
+      "Till a frontier field for 400 g and plant seeds; it keeps growing while you are away",
+      "Walk over a ripe field to harvest it automatically",
+      "4 facilities: gatherer hut, irrigation well, grazing yard, market stall",
+      "The hut gathers island goods, the yard wool, the stall coins",
+      "An irrigation well makes crops on that isle grow 30% faster"
+     ]
     }
    }
   },
@@ -351,6 +936,48 @@
      ]
     },
     "de": {
+     "title": "Profile window cleanup",
+     "items": [
+      "Removed the customize button from the in-game profile window"
+     ]
+    },
+    "zh": {
+     "title": "Profile window cleanup",
+     "items": [
+      "Removed the customize button from the in-game profile window"
+     ]
+    },
+    "pt": {
+     "title": "Profile window cleanup",
+     "items": [
+      "Removed the customize button from the in-game profile window"
+     ]
+    },
+    "ru": {
+     "title": "Profile window cleanup",
+     "items": [
+      "Removed the customize button from the in-game profile window"
+     ]
+    },
+    "tr": {
+     "title": "Profile window cleanup",
+     "items": [
+      "Removed the customize button from the in-game profile window"
+     ]
+    },
+    "it": {
+     "title": "Profile window cleanup",
+     "items": [
+      "Removed the customize button from the in-game profile window"
+     ]
+    },
+    "pl": {
+     "title": "Profile window cleanup",
+     "items": [
+      "Removed the customize button from the in-game profile window"
+     ]
+    },
+    "ar": {
      "title": "Profile window cleanup",
      "items": [
       "Removed the customize button from the in-game profile window"
@@ -396,6 +1023,55 @@
      ]
     },
     "de": {
+     "title": "Fix old build showing up",
+     "items": [
+      "Play on the site now opens a build-numbered address",
+      "If an old build loads from cache, the latest build is checked and reloaded once"
+     ]
+    },
+    "zh": {
+     "title": "Fix old build showing up",
+     "items": [
+      "Play on the site now opens a build-numbered address",
+      "If an old build loads from cache, the latest build is checked and reloaded once"
+     ]
+    },
+    "pt": {
+     "title": "Fix old build showing up",
+     "items": [
+      "Play on the site now opens a build-numbered address",
+      "If an old build loads from cache, the latest build is checked and reloaded once"
+     ]
+    },
+    "ru": {
+     "title": "Fix old build showing up",
+     "items": [
+      "Play on the site now opens a build-numbered address",
+      "If an old build loads from cache, the latest build is checked and reloaded once"
+     ]
+    },
+    "tr": {
+     "title": "Fix old build showing up",
+     "items": [
+      "Play on the site now opens a build-numbered address",
+      "If an old build loads from cache, the latest build is checked and reloaded once"
+     ]
+    },
+    "it": {
+     "title": "Fix old build showing up",
+     "items": [
+      "Play on the site now opens a build-numbered address",
+      "If an old build loads from cache, the latest build is checked and reloaded once"
+     ]
+    },
+    "pl": {
+     "title": "Fix old build showing up",
+     "items": [
+      "Play on the site now opens a build-numbered address",
+      "If an old build loads from cache, the latest build is checked and reloaded once"
+     ]
+    },
+    "ar": {
      "title": "Fix old build showing up",
      "items": [
       "Play on the site now opens a build-numbered address",
@@ -447,6 +1123,55 @@
       "Wealth ranking updates now include the build number",
       "After a new version, an old window stops updating ranking and goals and asks for a refresh"
      ]
+    },
+    "zh": {
+     "title": "Old build guard",
+     "items": [
+      "Wealth ranking updates now include the build number",
+      "After a new version, an old window stops updating ranking and goals and asks for a refresh"
+     ]
+    },
+    "pt": {
+     "title": "Old build guard",
+     "items": [
+      "Wealth ranking updates now include the build number",
+      "After a new version, an old window stops updating ranking and goals and asks for a refresh"
+     ]
+    },
+    "ru": {
+     "title": "Old build guard",
+     "items": [
+      "Wealth ranking updates now include the build number",
+      "After a new version, an old window stops updating ranking and goals and asks for a refresh"
+     ]
+    },
+    "tr": {
+     "title": "Old build guard",
+     "items": [
+      "Wealth ranking updates now include the build number",
+      "After a new version, an old window stops updating ranking and goals and asks for a refresh"
+     ]
+    },
+    "it": {
+     "title": "Old build guard",
+     "items": [
+      "Wealth ranking updates now include the build number",
+      "After a new version, an old window stops updating ranking and goals and asks for a refresh"
+     ]
+    },
+    "pl": {
+     "title": "Old build guard",
+     "items": [
+      "Wealth ranking updates now include the build number",
+      "After a new version, an old window stops updating ranking and goals and asks for a refresh"
+     ]
+    },
+    "ar": {
+     "title": "Old build guard",
+     "items": [
+      "Wealth ranking updates now include the build number",
+      "After a new version, an old window stops updating ranking and goals and asks for a refresh"
+     ]
     }
    }
   },
@@ -487,6 +1212,48 @@
      "items": [
       "Blocked double-tap and pinch zoom gestures on iPhone"
      ]
+    },
+    "zh": {
+     "title": "No zoom gestures",
+     "items": [
+      "Blocked double-tap and pinch zoom gestures on iPhone"
+     ]
+    },
+    "pt": {
+     "title": "No zoom gestures",
+     "items": [
+      "Blocked double-tap and pinch zoom gestures on iPhone"
+     ]
+    },
+    "ru": {
+     "title": "No zoom gestures",
+     "items": [
+      "Blocked double-tap and pinch zoom gestures on iPhone"
+     ]
+    },
+    "tr": {
+     "title": "No zoom gestures",
+     "items": [
+      "Blocked double-tap and pinch zoom gestures on iPhone"
+     ]
+    },
+    "it": {
+     "title": "No zoom gestures",
+     "items": [
+      "Blocked double-tap and pinch zoom gestures on iPhone"
+     ]
+    },
+    "pl": {
+     "title": "No zoom gestures",
+     "items": [
+      "Blocked double-tap and pinch zoom gestures on iPhone"
+     ]
+    },
+    "ar": {
+     "title": "No zoom gestures",
+     "items": [
+      "Blocked double-tap and pinch zoom gestures on iPhone"
+     ]
     }
    }
   },
@@ -523,6 +1290,48 @@
      ]
     },
     "de": {
+     "title": "No double-tap zoom",
+     "items": [
+      "Double-tapping the game no longer zooms in"
+     ]
+    },
+    "zh": {
+     "title": "No double-tap zoom",
+     "items": [
+      "Double-tapping the game no longer zooms in"
+     ]
+    },
+    "pt": {
+     "title": "No double-tap zoom",
+     "items": [
+      "Double-tapping the game no longer zooms in"
+     ]
+    },
+    "ru": {
+     "title": "No double-tap zoom",
+     "items": [
+      "Double-tapping the game no longer zooms in"
+     ]
+    },
+    "tr": {
+     "title": "No double-tap zoom",
+     "items": [
+      "Double-tapping the game no longer zooms in"
+     ]
+    },
+    "it": {
+     "title": "No double-tap zoom",
+     "items": [
+      "Double-tapping the game no longer zooms in"
+     ]
+    },
+    "pl": {
+     "title": "No double-tap zoom",
+     "items": [
+      "Double-tapping the game no longer zooms in"
+     ]
+    },
+    "ar": {
      "title": "No double-tap zoom",
      "items": [
       "Double-tapping the game no longer zooms in"
@@ -579,6 +1388,62 @@
       "Isleport stats under the profile card",
       "Name and profile can be changed on the hub only"
      ]
+    },
+    "zh": {
+     "title": "Shared profile window",
+     "items": [
+      "Open the same profile card as the hub from the account window",
+      "Isleport stats under the profile card",
+      "Name and profile can be changed on the hub only"
+     ]
+    },
+    "pt": {
+     "title": "Shared profile window",
+     "items": [
+      "Open the same profile card as the hub from the account window",
+      "Isleport stats under the profile card",
+      "Name and profile can be changed on the hub only"
+     ]
+    },
+    "ru": {
+     "title": "Shared profile window",
+     "items": [
+      "Open the same profile card as the hub from the account window",
+      "Isleport stats under the profile card",
+      "Name and profile can be changed on the hub only"
+     ]
+    },
+    "tr": {
+     "title": "Shared profile window",
+     "items": [
+      "Open the same profile card as the hub from the account window",
+      "Isleport stats under the profile card",
+      "Name and profile can be changed on the hub only"
+     ]
+    },
+    "it": {
+     "title": "Shared profile window",
+     "items": [
+      "Open the same profile card as the hub from the account window",
+      "Isleport stats under the profile card",
+      "Name and profile can be changed on the hub only"
+     ]
+    },
+    "pl": {
+     "title": "Shared profile window",
+     "items": [
+      "Open the same profile card as the hub from the account window",
+      "Isleport stats under the profile card",
+      "Name and profile can be changed on the hub only"
+     ]
+    },
+    "ar": {
+     "title": "Shared profile window",
+     "items": [
+      "Open the same profile card as the hub from the account window",
+      "Isleport stats under the profile card",
+      "Name and profile can be changed on the hub only"
+     ]
     }
    }
   },
@@ -625,6 +1490,62 @@
      ]
     },
     "de": {
+     "title": "Calmer screen",
+     "items": [
+      "Fixed the screen trembling while walking",
+      "Removed the up-and-down flicker on crops, ships, shops, villagers and island items",
+      "Slower and softer water sparkle, flags and selection outline"
+     ]
+    },
+    "zh": {
+     "title": "Calmer screen",
+     "items": [
+      "Fixed the screen trembling while walking",
+      "Removed the up-and-down flicker on crops, ships, shops, villagers and island items",
+      "Slower and softer water sparkle, flags and selection outline"
+     ]
+    },
+    "pt": {
+     "title": "Calmer screen",
+     "items": [
+      "Fixed the screen trembling while walking",
+      "Removed the up-and-down flicker on crops, ships, shops, villagers and island items",
+      "Slower and softer water sparkle, flags and selection outline"
+     ]
+    },
+    "ru": {
+     "title": "Calmer screen",
+     "items": [
+      "Fixed the screen trembling while walking",
+      "Removed the up-and-down flicker on crops, ships, shops, villagers and island items",
+      "Slower and softer water sparkle, flags and selection outline"
+     ]
+    },
+    "tr": {
+     "title": "Calmer screen",
+     "items": [
+      "Fixed the screen trembling while walking",
+      "Removed the up-and-down flicker on crops, ships, shops, villagers and island items",
+      "Slower and softer water sparkle, flags and selection outline"
+     ]
+    },
+    "it": {
+     "title": "Calmer screen",
+     "items": [
+      "Fixed the screen trembling while walking",
+      "Removed the up-and-down flicker on crops, ships, shops, villagers and island items",
+      "Slower and softer water sparkle, flags and selection outline"
+     ]
+    },
+    "pl": {
+     "title": "Calmer screen",
+     "items": [
+      "Fixed the screen trembling while walking",
+      "Removed the up-and-down flicker on crops, ships, shops, villagers and island items",
+      "Slower and softer water sparkle, flags and selection outline"
+     ]
+    },
+    "ar": {
      "title": "Calmer screen",
      "items": [
       "Fixed the screen trembling while walking",
@@ -689,6 +1610,69 @@
       "Messages for one player are no longer relayed to everyone",
       "Faster island generation, smaller islands with the low-spec option"
      ]
+    },
+    "zh": {
+     "title": "Lighter load for the room host",
+     "items": [
+      "Host market updates are sent less often (even less with the low-spec option)",
+      "Position updates are skipped while nothing moves",
+      "Messages for one player are no longer relayed to everyone",
+      "Faster island generation, smaller islands with the low-spec option"
+     ]
+    },
+    "pt": {
+     "title": "Lighter load for the room host",
+     "items": [
+      "Host market updates are sent less often (even less with the low-spec option)",
+      "Position updates are skipped while nothing moves",
+      "Messages for one player are no longer relayed to everyone",
+      "Faster island generation, smaller islands with the low-spec option"
+     ]
+    },
+    "ru": {
+     "title": "Lighter load for the room host",
+     "items": [
+      "Host market updates are sent less often (even less with the low-spec option)",
+      "Position updates are skipped while nothing moves",
+      "Messages for one player are no longer relayed to everyone",
+      "Faster island generation, smaller islands with the low-spec option"
+     ]
+    },
+    "tr": {
+     "title": "Lighter load for the room host",
+     "items": [
+      "Host market updates are sent less often (even less with the low-spec option)",
+      "Position updates are skipped while nothing moves",
+      "Messages for one player are no longer relayed to everyone",
+      "Faster island generation, smaller islands with the low-spec option"
+     ]
+    },
+    "it": {
+     "title": "Lighter load for the room host",
+     "items": [
+      "Host market updates are sent less often (even less with the low-spec option)",
+      "Position updates are skipped while nothing moves",
+      "Messages for one player are no longer relayed to everyone",
+      "Faster island generation, smaller islands with the low-spec option"
+     ]
+    },
+    "pl": {
+     "title": "Lighter load for the room host",
+     "items": [
+      "Host market updates are sent less often (even less with the low-spec option)",
+      "Position updates are skipped while nothing moves",
+      "Messages for one player are no longer relayed to everyone",
+      "Faster island generation, smaller islands with the low-spec option"
+     ]
+    },
+    "ar": {
+     "title": "Lighter load for the room host",
+     "items": [
+      "Host market updates are sent less often (even less with the low-spec option)",
+      "Position updates are skipped while nothing moves",
+      "Messages for one player are no longer relayed to everyone",
+      "Faster island generation, smaller islands with the low-spec option"
+     ]
     }
    }
   },
@@ -740,6 +1724,69 @@
      ]
     },
     "de": {
+     "title": "Bigger, grander islands",
+     "items": [
+      "Other islands are about 30% bigger",
+      "Manors, towers, fountains, houses, stalls, lanterns, flower beds on every island",
+      "Faster walking on islands",
+      "Shady traders and the report button removed"
+     ]
+    },
+    "zh": {
+     "title": "Bigger, grander islands",
+     "items": [
+      "Other islands are about 30% bigger",
+      "Manors, towers, fountains, houses, stalls, lanterns, flower beds on every island",
+      "Faster walking on islands",
+      "Shady traders and the report button removed"
+     ]
+    },
+    "pt": {
+     "title": "Bigger, grander islands",
+     "items": [
+      "Other islands are about 30% bigger",
+      "Manors, towers, fountains, houses, stalls, lanterns, flower beds on every island",
+      "Faster walking on islands",
+      "Shady traders and the report button removed"
+     ]
+    },
+    "ru": {
+     "title": "Bigger, grander islands",
+     "items": [
+      "Other islands are about 30% bigger",
+      "Manors, towers, fountains, houses, stalls, lanterns, flower beds on every island",
+      "Faster walking on islands",
+      "Shady traders and the report button removed"
+     ]
+    },
+    "tr": {
+     "title": "Bigger, grander islands",
+     "items": [
+      "Other islands are about 30% bigger",
+      "Manors, towers, fountains, houses, stalls, lanterns, flower beds on every island",
+      "Faster walking on islands",
+      "Shady traders and the report button removed"
+     ]
+    },
+    "it": {
+     "title": "Bigger, grander islands",
+     "items": [
+      "Other islands are about 30% bigger",
+      "Manors, towers, fountains, houses, stalls, lanterns, flower beds on every island",
+      "Faster walking on islands",
+      "Shady traders and the report button removed"
+     ]
+    },
+    "pl": {
+     "title": "Bigger, grander islands",
+     "items": [
+      "Other islands are about 30% bigger",
+      "Manors, towers, fountains, houses, stalls, lanterns, flower beds on every island",
+      "Faster walking on islands",
+      "Shady traders and the report button removed"
+     ]
+    },
+    "ar": {
      "title": "Bigger, grander islands",
      "items": [
       "Other islands are about 30% bigger",
@@ -2985,6 +4032,34 @@
       "Das erste Foto am Brunnenplatz, Uhrturm, See, Bahnhof, Leuchtturm, Museum oder Hafen bringt einen Goldbonus"
      ]
     },
+    "zh": {
+     "title": "Photo mode",
+     "items": [
+      "Press P or choose Take a photo at home to snap the screen; the album keeps up to twelve",
+      "The first photo at the fountain plaza, clock tower, lake, station, lighthouse, museum or harbor earns a gold bonus"
+     ]
+    },
+    "pt": {
+     "title": "Photo mode",
+     "items": [
+      "Press P or choose Take a photo at home to snap the screen; the album keeps up to twelve",
+      "The first photo at the fountain plaza, clock tower, lake, station, lighthouse, museum or harbor earns a gold bonus"
+     ]
+    },
+    "ru": {
+     "title": "Photo mode",
+     "items": [
+      "Press P or choose Take a photo at home to snap the screen; the album keeps up to twelve",
+      "The first photo at the fountain plaza, clock tower, lake, station, lighthouse, museum or harbor earns a gold bonus"
+     ]
+    },
+    "tr": {
+     "title": "Photo mode",
+     "items": [
+      "Press P or choose Take a photo at home to snap the screen; the album keeps up to twelve",
+      "The first photo at the fountain plaza, clock tower, lake, station, lighthouse, museum or harbor earns a gold bonus"
+     ]
+    },
     "it": {
      "title": "Modalità foto",
      "items": [
@@ -3060,6 +4135,30 @@
       "Erstellst du einen Raum oder trittst einem bei, sehen ihn deine Hub-Freunde; tippst du auf eine Einladung, öffnet sich das Spiel direkt in diesem Raum"
      ]
     },
+    "zh": {
+     "title": "Join friends from invites",
+     "items": [
+      "Open or join a room and hub friends can see it; tapping an invite opens the game and joins that room"
+     ]
+    },
+    "pt": {
+     "title": "Join friends from invites",
+     "items": [
+      "Open or join a room and hub friends can see it; tapping an invite opens the game and joins that room"
+     ]
+    },
+    "ru": {
+     "title": "Join friends from invites",
+     "items": [
+      "Open or join a room and hub friends can see it; tapping an invite opens the game and joins that room"
+     ]
+    },
+    "tr": {
+     "title": "Join friends from invites",
+     "items": [
+      "Open or join a room and hub friends can see it; tapping an invite opens the game and joins that room"
+     ]
+    },
     "it": {
      "title": "Unisciti agli amici dagli inviti",
      "items": [
@@ -3128,6 +4227,30 @@
      "title": "Urheberrechtshinweis",
      "items": [
       "Urheberrechtshinweis (CC BY-NC-ND 4.0) in Spieldatei, Titelbildschirm und Einstellungen ergänzt"
+     ]
+    },
+    "zh": {
+     "title": "Copyright notice",
+     "items": [
+      "Added a copyright notice (CC BY-NC-ND 4.0) to the game file, title screen and settings"
+     ]
+    },
+    "pt": {
+     "title": "Copyright notice",
+     "items": [
+      "Added a copyright notice (CC BY-NC-ND 4.0) to the game file, title screen and settings"
+     ]
+    },
+    "ru": {
+     "title": "Copyright notice",
+     "items": [
+      "Added a copyright notice (CC BY-NC-ND 4.0) to the game file, title screen and settings"
+     ]
+    },
+    "tr": {
+     "title": "Copyright notice",
+     "items": [
+      "Added a copyright notice (CC BY-NC-ND 4.0) to the game file, title screen and settings"
      ]
     },
     "it": {
@@ -3206,6 +4329,34 @@
       "Arbeiter heuerst du zu Hause an, nachdem die Forschung „Arbeiter anheuern“ fertig ist; steht auch in der Hilfe"
      ]
     },
+    "zh": {
+     "title": "Trees grow slower",
+     "items": [
+      "Fruit trees, tea and cocoa now take twice as long to ripen",
+      "Hire workers at home after finishing the \"Hire workers\" research; also noted in the guide"
+     ]
+    },
+    "pt": {
+     "title": "Trees grow slower",
+     "items": [
+      "Fruit trees, tea and cocoa now take twice as long to ripen",
+      "Hire workers at home after finishing the \"Hire workers\" research; also noted in the guide"
+     ]
+    },
+    "ru": {
+     "title": "Trees grow slower",
+     "items": [
+      "Fruit trees, tea and cocoa now take twice as long to ripen",
+      "Hire workers at home after finishing the \"Hire workers\" research; also noted in the guide"
+     ]
+    },
+    "tr": {
+     "title": "Trees grow slower",
+     "items": [
+      "Fruit trees, tea and cocoa now take twice as long to ripen",
+      "Hire workers at home after finishing the \"Hire workers\" research; also noted in the guide"
+     ]
+    },
     "it": {
      "title": "Gli alberi crescono più lentamente",
      "items": [
@@ -3281,6 +4432,30 @@
       "Der Markt am Dorfeingang öffnet wieder das Verkaufsfenster; Restaurantlieferungen gibt es nur in der Restaurantmeile"
      ]
     },
+    "zh": {
+     "title": "Market back to normal",
+     "items": [
+      "The market at the town gate opens the selling window again; restaurant deliveries are only at the restaurant row"
+     ]
+    },
+    "pt": {
+     "title": "Market back to normal",
+     "items": [
+      "The market at the town gate opens the selling window again; restaurant deliveries are only at the restaurant row"
+     ]
+    },
+    "ru": {
+     "title": "Market back to normal",
+     "items": [
+      "The market at the town gate opens the selling window again; restaurant deliveries are only at the restaurant row"
+     ]
+    },
+    "tr": {
+     "title": "Market back to normal",
+     "items": [
+      "The market at the town gate opens the selling window again; restaurant deliveries are only at the restaurant row"
+     ]
+    },
     "it": {
      "title": "Mercato tornato normale",
      "items": [
@@ -3350,6 +4525,48 @@
      "items": [
       "Die Anmeldung nutzt zuerst die neue Kontoadresse und versucht es bei Fehlschlag mit der alten. ID und Passwort bleiben gleich"
      ]
+    },
+    "zh": {
+     "title": "Login on the new account address",
+     "items": [
+      "Login now uses the new account address first and falls back to the old one. Your ID and password stay the same"
+     ]
+    },
+    "pt": {
+     "title": "Login on the new account address",
+     "items": [
+      "Login now uses the new account address first and falls back to the old one. Your ID and password stay the same"
+     ]
+    },
+    "ru": {
+     "title": "Login on the new account address",
+     "items": [
+      "Login now uses the new account address first and falls back to the old one. Your ID and password stay the same"
+     ]
+    },
+    "tr": {
+     "title": "Login on the new account address",
+     "items": [
+      "Login now uses the new account address first and falls back to the old one. Your ID and password stay the same"
+     ]
+    },
+    "it": {
+     "title": "Accesso con il nuovo indirizzo dell'account",
+     "items": [
+      "L'accesso ora usa prima il nuovo indirizzo dell'account e poi ripiega sul vecchio. ID e password restano gli stessi"
+     ]
+    },
+    "pl": {
+     "title": "Logowanie na nowy adres konta",
+     "items": [
+      "Logowanie używa teraz najpierw nowego adresu konta, a w razie potrzeby starego. ID i hasło pozostają te same"
+     ]
+    },
+    "ar": {
+     "title": "تسجيل الدخول بعنوان الحساب الجديد",
+     "items": [
+      "يستخدم تسجيل الدخول الآن عنوان الحساب الجديد أولًا ثم القديم. المعرّف وكلمة المرور كما هما"
+     ]
     }
    }
   },
@@ -3389,6 +4606,48 @@
      "title": "Vorbereitung des Kontodomain-Umzugs",
      "items": [
       "Beim Anmelden wird auch die neue Kontoadresse versucht. ID und Passwort bleiben dieselben"
+     ]
+    },
+    "zh": {
+     "title": "Account domain move prep",
+     "items": [
+      "Login now also tries the new account address. Keep using the same ID and password"
+     ]
+    },
+    "pt": {
+     "title": "Account domain move prep",
+     "items": [
+      "Login now also tries the new account address. Keep using the same ID and password"
+     ]
+    },
+    "ru": {
+     "title": "Account domain move prep",
+     "items": [
+      "Login now also tries the new account address. Keep using the same ID and password"
+     ]
+    },
+    "tr": {
+     "title": "Account domain move prep",
+     "items": [
+      "Login now also tries the new account address. Keep using the same ID and password"
+     ]
+    },
+    "it": {
+     "title": "Preparazione al cambio di dominio dell'account",
+     "items": [
+      "L'accesso ora prova anche il nuovo indirizzo dell'account. Continua a usare lo stesso ID e la stessa password"
+     ]
+    },
+    "pl": {
+     "title": "Przygotowanie do zmiany domeny konta",
+     "items": [
+      "Logowanie próbuje teraz także nowego adresu konta. Używaj dalej tego samego ID i hasła"
+     ]
+    },
+    "ar": {
+     "title": "التحضير لنقل نطاق الحساب",
+     "items": [
+      "يجرب تسجيل الدخول الآن عنوان الحساب الجديد أيضًا. استمر باستخدام المعرّف وكلمة المرور نفسيهما"
      ]
     }
    }
@@ -3442,6 +4701,62 @@
       "Bewohner spazieren durch Straßen, über Platz, Park und Brücke. Im Park flattern Schmetterlinge",
       "Nachts leuchten Straßenlaternen und Fenster"
      ]
+    },
+    "zh": {
+     "title": "Homes and a lively town",
+     "items": [
+      "A residential quarter with fences and gardens; chimneys smoke",
+      "Residents stroll the streets, plaza, park and bridge; butterflies flutter in the park",
+      "Street lamps and windows light up at night"
+     ]
+    },
+    "pt": {
+     "title": "Homes and a lively town",
+     "items": [
+      "A residential quarter with fences and gardens; chimneys smoke",
+      "Residents stroll the streets, plaza, park and bridge; butterflies flutter in the park",
+      "Street lamps and windows light up at night"
+     ]
+    },
+    "ru": {
+     "title": "Homes and a lively town",
+     "items": [
+      "A residential quarter with fences and gardens; chimneys smoke",
+      "Residents stroll the streets, plaza, park and bridge; butterflies flutter in the park",
+      "Street lamps and windows light up at night"
+     ]
+    },
+    "tr": {
+     "title": "Homes and a lively town",
+     "items": [
+      "A residential quarter with fences and gardens; chimneys smoke",
+      "Residents stroll the streets, plaza, park and bridge; butterflies flutter in the park",
+      "Street lamps and windows light up at night"
+     ]
+    },
+    "it": {
+     "title": "Case e una città vivace",
+     "items": [
+      "Un quartiere residenziale con recinti e giardini; i camini fumano",
+      "Gli abitanti passeggiano per strade, piazza, parco e ponte; nel parco svolazzano farfalle",
+      "Lampioni e finestre si illuminano di notte"
+     ]
+    },
+    "pl": {
+     "title": "Domy i tętniące życiem miasto",
+     "items": [
+      "Dzielnica mieszkalna z płotami i ogrodami; z kominów leci dym",
+      "Mieszkańcy spacerują po ulicach, placu, parku i moście; w parku fruwają motyle",
+      "Latarnie i okna rozświetlają się nocą"
+     ]
+    },
+    "ar": {
+     "title": "منازل وبلدة نابضة بالحياة",
+     "items": [
+      "حي سكني بأسوار وحدائق؛ المداخن تنفث الدخان",
+      "يتجول السكان في الشوارع والساحة والحديقة والجسر؛ والفراشات ترفرف في الحديقة",
+      "تضيء مصابيح الشوارع والنوافذ ليلًا"
+     ]
     }
    }
   },
@@ -3493,6 +4808,62 @@
       "Nördlich des Platzes stehen Schule, Bibliothek, Krankenhaus, Feuerwache, Polizei und Theater. Tippe sie an, um dich umzusehen",
       "Restaurantmeile und Bäckerei: Liefere Gerichte oder Zutaten und verdiene Geld",
       "Mit jeder Lieferung wachsen die Stammkunden, und die Belohnung steigt um bis zu 20%"
+     ]
+    },
+    "zh": {
+     "title": "Town buildings and delivery shops",
+     "items": [
+      "A school, library, hospital, fire station, police station and theater line the plaza",
+      "Restaurant row and a bakery: deliver dishes and ingredients for money",
+      "Regulars grow with deliveries, raising rewards up to 20%"
+     ]
+    },
+    "pt": {
+     "title": "Town buildings and delivery shops",
+     "items": [
+      "A school, library, hospital, fire station, police station and theater line the plaza",
+      "Restaurant row and a bakery: deliver dishes and ingredients for money",
+      "Regulars grow with deliveries, raising rewards up to 20%"
+     ]
+    },
+    "ru": {
+     "title": "Town buildings and delivery shops",
+     "items": [
+      "A school, library, hospital, fire station, police station and theater line the plaza",
+      "Restaurant row and a bakery: deliver dishes and ingredients for money",
+      "Regulars grow with deliveries, raising rewards up to 20%"
+     ]
+    },
+    "tr": {
+     "title": "Town buildings and delivery shops",
+     "items": [
+      "A school, library, hospital, fire station, police station and theater line the plaza",
+      "Restaurant row and a bakery: deliver dishes and ingredients for money",
+      "Regulars grow with deliveries, raising rewards up to 20%"
+     ]
+    },
+    "it": {
+     "title": "Edifici cittadini e negozi di consegna",
+     "items": [
+      "Scuola, biblioteca, ospedale, caserma dei pompieri, stazione di polizia e teatro si affacciano sulla piazza",
+      "Via dei ristoranti e panetteria: consegna piatti e ingredienti in cambio di denaro",
+      "I clienti abituali crescono con le consegne, aumentando le ricompense fino al 20%"
+     ]
+    },
+    "pl": {
+     "title": "Budynki miejskie i sklepy z dostawami",
+     "items": [
+      "Szkoła, biblioteka, szpital, straż pożarna, komisariat i teatr stoją przy placu",
+      "Ulica restauracji i piekarnia: dostarczaj dania i składniki za pieniądze",
+      "Stałych klientów przybywa z dostawami, co podnosi nagrody do 20%"
+     ]
+    },
+    "ar": {
+     "title": "مباني البلدة ومحلات التوصيل",
+     "items": [
+      "مدرسة ومكتبة ومستشفى ومركز إطفاء ومركز شرطة ومسرح تحيط بالساحة",
+      "شارع المطاعم ومخبز: وصّل الأطباق والمكونات مقابل المال",
+      "يزداد الزبائن الدائمون مع التوصيلات فترتفع المكافآت حتى 20%"
      ]
     }
    }
@@ -3552,6 +4923,69 @@
       "Ein Park mit Bänken und Blumenbeeten",
       "Ein See mit Holzbrücke, auf dem Enten schwimmen"
      ]
+    },
+    "zh": {
+     "title": "The town grows south",
+     "items": [
+      "New land opens south of the rails, nearly doubling the map",
+      "A fountain plaza with a clock tower. Make a wish at the fountain",
+      "A park with benches and flower beds",
+      "A lake with a wooden bridge, and ducks swimming on it"
+     ]
+    },
+    "pt": {
+     "title": "The town grows south",
+     "items": [
+      "New land opens south of the rails, nearly doubling the map",
+      "A fountain plaza with a clock tower. Make a wish at the fountain",
+      "A park with benches and flower beds",
+      "A lake with a wooden bridge, and ducks swimming on it"
+     ]
+    },
+    "ru": {
+     "title": "The town grows south",
+     "items": [
+      "New land opens south of the rails, nearly doubling the map",
+      "A fountain plaza with a clock tower. Make a wish at the fountain",
+      "A park with benches and flower beds",
+      "A lake with a wooden bridge, and ducks swimming on it"
+     ]
+    },
+    "tr": {
+     "title": "The town grows south",
+     "items": [
+      "New land opens south of the rails, nearly doubling the map",
+      "A fountain plaza with a clock tower. Make a wish at the fountain",
+      "A park with benches and flower beds",
+      "A lake with a wooden bridge, and ducks swimming on it"
+     ]
+    },
+    "it": {
+     "title": "La città cresce verso sud",
+     "items": [
+      "Nuove terre si aprono a sud dei binari, quasi raddoppiando la mappa",
+      "Una piazza della fontana con una torre dell'orologio. Esprimi un desiderio alla fontana",
+      "Un parco con panchine e aiuole",
+      "Un lago con un ponte di legno e anatre che nuotano"
+     ]
+    },
+    "pl": {
+     "title": "Miasto rośnie na południe",
+     "items": [
+      "Na południe od torów otwiera się nowy teren, prawie podwajając mapę",
+      "Plac z fontanną i wieżą zegarową. Pomyśl życzenie przy fontannie",
+      "Park z ławkami i klombami",
+      "Jezioro z drewnianym mostem i pływającymi kaczkami"
+     ]
+    },
+    "ar": {
+     "title": "البلدة تتوسع جنوبًا",
+     "items": [
+      "تنفتح أرض جديدة جنوب السكة فتتضاعف الخريطة تقريبًا",
+      "ساحة نافورة فيها برج ساعة. تمنَّ أمنية عند النافورة",
+      "حديقة بمقاعد وأحواض زهور",
+      "بحيرة بجسر خشبي وبط يسبح فيها"
+     ]
     }
    }
   },
@@ -3591,6 +5025,48 @@
      "title": "Zurück zur Seite",
      "items": [
       "In den Einstellungen gibt es die Schaltfläche „Zurück zur Seite“: Sie speichert und kehrt zur Spieleseite zurück"
+     ]
+    },
+    "zh": {
+     "title": "返回网站",
+     "items": [
+      "Settings now has a \"Back to site\" button that saves and returns to the games site"
+     ]
+    },
+    "pt": {
+     "title": "Voltar ao site",
+     "items": [
+      "Settings now has a \"Back to site\" button that saves and returns to the games site"
+     ]
+    },
+    "ru": {
+     "title": "Вернуться на сайт",
+     "items": [
+      "Settings now has a \"Back to site\" button that saves and returns to the games site"
+     ]
+    },
+    "tr": {
+     "title": "Siteye dön",
+     "items": [
+      "Settings now has a \"Back to site\" button that saves and returns to the games site"
+     ]
+    },
+    "it": {
+     "title": "Torna al sito",
+     "items": [
+      "Nelle impostazioni c'è ora un pulsante \"Torna al sito\" che salva e riporta al sito dei giochi"
+     ]
+    },
+    "pl": {
+     "title": "Powrót na stronę",
+     "items": [
+      "W ustawieniach jest teraz przycisk „Wróć na stronę”, który zapisuje grę i wraca na stronę z grami"
+     ]
+    },
+    "ar": {
+     "title": "العودة إلى الموقع",
+     "items": [
+      "في الإعدادات الآن زر \"العودة إلى الموقع\" يحفظ ويعود إلى موقع الألعاب"
      ]
     }
    }
@@ -3637,6 +5113,55 @@
      "items": [
       "Neue Forschung Endlose Samen: Samen verbrauchen sich nicht mehr, du pflanzt jede freigeschaltete Sorte, ohne zu kaufen",
       "Wird nach Aufseher freigeschaltet"
+     ]
+    },
+    "zh": {
+     "title": "Research: Endless seeds",
+     "items": [
+      "New research Endless seeds: seeds no longer run out, so you can plant any unlocked crop without buying them",
+      "It unlocks after Overseer"
+     ]
+    },
+    "pt": {
+     "title": "Research: Endless seeds",
+     "items": [
+      "New research Endless seeds: seeds no longer run out, so you can plant any unlocked crop without buying them",
+      "It unlocks after Overseer"
+     ]
+    },
+    "ru": {
+     "title": "Research: Endless seeds",
+     "items": [
+      "New research Endless seeds: seeds no longer run out, so you can plant any unlocked crop without buying them",
+      "It unlocks after Overseer"
+     ]
+    },
+    "tr": {
+     "title": "Research: Endless seeds",
+     "items": [
+      "New research Endless seeds: seeds no longer run out, so you can plant any unlocked crop without buying them",
+      "It unlocks after Overseer"
+     ]
+    },
+    "it": {
+     "title": "Ricerca: Semi infiniti",
+     "items": [
+      "Nuova ricerca Semi infiniti: i semi non finiscono più, così puoi piantare qualsiasi coltura sbloccata senza comprarli",
+      "Si sblocca dopo Sorvegliante"
+     ]
+    },
+    "pl": {
+     "title": "Badanie: Niekończące się nasiona",
+     "items": [
+      "Nowe badanie Niekończące się nasiona: nasiona już się nie kończą, więc możesz siać każdą odblokowaną uprawę bez kupowania",
+      "Odblokowuje się po Nadzorcy"
+     ]
+    },
+    "ar": {
+     "title": "بحث: بذور لا تنفد",
+     "items": [
+      "بحث جديد بذور لا تنفد: لم تعد البذور تنفد، فتزرع أي محصول مفتوح دون شرائها",
+      "يُفتح بعد المشرف"
      ]
     }
    }
@@ -3690,6 +5215,62 @@
       "Am Provinzbahnhof fährt der Zug auf demselben Gleis ein und hält; zurück fährt er ab und in deinen Bahnhof ein",
       "Die Provinzen sind wie die Inseln 3,5-mal so groß"
      ]
+    },
+    "zh": {
+     "title": "Train on real rails",
+     "items": [
+      "Boarding makes the train pull out of the station, run down the rails and into the tunnel, with the camera following",
+      "At the provincial station the train rolls in on the same line; going home it leaves and pulls into your station",
+      "Provinces are 3.5x larger, like the islands"
+     ]
+    },
+    "pt": {
+     "title": "Train on real rails",
+     "items": [
+      "Boarding makes the train pull out of the station, run down the rails and into the tunnel, with the camera following",
+      "At the provincial station the train rolls in on the same line; going home it leaves and pulls into your station",
+      "Provinces are 3.5x larger, like the islands"
+     ]
+    },
+    "ru": {
+     "title": "Train on real rails",
+     "items": [
+      "Boarding makes the train pull out of the station, run down the rails and into the tunnel, with the camera following",
+      "At the provincial station the train rolls in on the same line; going home it leaves and pulls into your station",
+      "Provinces are 3.5x larger, like the islands"
+     ]
+    },
+    "tr": {
+     "title": "Train on real rails",
+     "items": [
+      "Boarding makes the train pull out of the station, run down the rails and into the tunnel, with the camera following",
+      "At the provincial station the train rolls in on the same line; going home it leaves and pulls into your station",
+      "Provinces are 3.5x larger, like the islands"
+     ]
+    },
+    "it": {
+     "title": "Viaggia su binari veri",
+     "items": [
+      "Salendo a bordo il treno lascia la stazione, corre sui binari ed entra nel tunnel, con la telecamera che lo segue",
+      "Alla stazione di provincia il treno arriva sulla stessa linea; tornando a casa riparte ed entra nella tua stazione",
+      "Le province sono 3,5 volte più grandi, come le isole"
+     ]
+    },
+    "pl": {
+     "title": "Jedź po prawdziwych torach",
+     "items": [
+      "Po wejściu pociąg rusza ze stacji, jedzie po torach i wjeżdża do tunelu, a kamera za nim podąża",
+      "Na stacji prowincji pociąg wjeżdża tą samą linią; w drodze do domu odjeżdża i wjeżdża na Twoją stację",
+      "Prowincje są 3,5 raza większe, jak wyspy"
+     ]
+    },
+    "ar": {
+     "title": "اركب على سكة حقيقية",
+     "items": [
+      "عند الصعود يغادر القطار المحطة ويسير على السكة ويدخل النفق والكاميرا تتبعه",
+      "في محطة الإقليم يصل القطار على الخط نفسه؛ وعند العودة يغادر ويدخل محطتك",
+      "الأقاليم أكبر بـ3.5 مرات مثل الجزر"
+     ]
     }
    }
   },
@@ -3742,6 +5323,62 @@
       "Felder, Bäume, Deko, Erz und Sammelwaren gibt es jetzt viel mehr",
       "Passend dazu läufst du etwas schneller"
      ]
+    },
+    "zh": {
+     "title": "Bigger islands",
+     "items": [
+      "Landed islands are 3.5x wider and taller, about 12x the area",
+      "Fields, trees, decor, ore and pick-up goods are far more plentiful",
+      "Walking is a bit faster to match the size"
+     ]
+    },
+    "pt": {
+     "title": "Bigger islands",
+     "items": [
+      "Landed islands are 3.5x wider and taller, about 12x the area",
+      "Fields, trees, decor, ore and pick-up goods are far more plentiful",
+      "Walking is a bit faster to match the size"
+     ]
+    },
+    "ru": {
+     "title": "Bigger islands",
+     "items": [
+      "Landed islands are 3.5x wider and taller, about 12x the area",
+      "Fields, trees, decor, ore and pick-up goods are far more plentiful",
+      "Walking is a bit faster to match the size"
+     ]
+    },
+    "tr": {
+     "title": "Bigger islands",
+     "items": [
+      "Landed islands are 3.5x wider and taller, about 12x the area",
+      "Fields, trees, decor, ore and pick-up goods are far more plentiful",
+      "Walking is a bit faster to match the size"
+     ]
+    },
+    "it": {
+     "title": "Isole più grandi",
+     "items": [
+      "Le isole dove sbarchi sono 3,5 volte più larghe e più alte, circa 12 volte l'area",
+      "Campi, alberi, decorazioni, minerali e merci da raccogliere sono molto più abbondanti",
+      "Si cammina un po' più veloci per adattarsi alle dimensioni"
+     ]
+    },
+    "pl": {
+     "title": "Większe wyspy",
+     "items": [
+      "Wyspy, na których lądujesz, są 3,5 raza szersze i wyższe, około 12 razy większe",
+      "Pól, drzew, ozdób, rudy i towarów do zebrania jest znacznie więcej",
+      "Chodzenie jest nieco szybsze, by pasowało do rozmiaru"
+     ]
+    },
+    "ar": {
+     "title": "جزر أكبر",
+     "items": [
+      "الجزر التي تنزل فيها أعرض وأطول بـ3.5 مرات، أي نحو 12 ضعف المساحة",
+      "الحقول والأشجار والزينة والخام والبضائع القابلة للالتقاط أكثر بكثير",
+      "المشي أسرع قليلًا ليناسب الحجم"
+     ]
     }
    }
   },
@@ -3788,6 +5425,55 @@
       "Auf der Seekarte ist deine Insel jetzt ein großer Kontinent mit weiteren Bergen, Wäldern und Dörfern",
       "Das Korallen-Eiland liegt jetzt im Meer südlich des Kontinents"
      ]
+    },
+    "zh": {
+     "title": "Home continent",
+     "items": [
+      "On the sea chart, your home isle is now a large continent with wider forests and villages",
+      "Coral Cay moved to the sea south of the continent"
+     ]
+    },
+    "pt": {
+     "title": "Home continent",
+     "items": [
+      "On the sea chart, your home isle is now a large continent with wider forests and villages",
+      "Coral Cay moved to the sea south of the continent"
+     ]
+    },
+    "ru": {
+     "title": "Home continent",
+     "items": [
+      "On the sea chart, your home isle is now a large continent with wider forests and villages",
+      "Coral Cay moved to the sea south of the continent"
+     ]
+    },
+    "tr": {
+     "title": "Home continent",
+     "items": [
+      "On the sea chart, your home isle is now a large continent with wider forests and villages",
+      "Coral Cay moved to the sea south of the continent"
+     ]
+    },
+    "it": {
+     "title": "Continente di casa",
+     "items": [
+      "Sulla carta nautica, la tua isola di casa è ora un grande continente con foreste e villaggi più ampi",
+      "L'Isolotto del Corallo si è spostato nel mare a sud del continente"
+     ]
+    },
+    "pl": {
+     "title": "Rodzinny kontynent",
+     "items": [
+      "Na mapie morskiej Twoja wyspa to teraz duży kontynent z rozleglejszymi lasami i wioskami",
+      "Koralową Wysepkę przeniesiono na morze na południe od kontynentu"
+     ]
+    },
+    "ar": {
+     "title": "القارة الأم",
+     "items": [
+      "على الخريطة البحرية صارت جزيرتك قارة كبيرة بغابات وقرى أوسع",
+      "انتقلت جزيرة المرجان إلى البحر جنوب القارة"
+     ]
     }
    }
   },
@@ -3833,6 +5519,55 @@
      "items": [
       "Statt des Bank-Tabs gibt es im Dorf einen Zeitungskiosk. Kauf eine Ausgabe für 3 Gold, sie öffnet sich sofort",
       "Wie eine echte Zeitung: Titelkopf, Schlagzeile, Kurstabelle, Prognosen, Nachrichten, ein Witz und Anzeigen"
+     ]
+    },
+    "zh": {
+     "title": "报刊亭",
+     "items": [
+      "A newsstand opened in town instead of the bank tab. Buy a copy for 3 gold and it opens right away",
+      "The paper has a masthead, a headline, price tables, forecasts, news, a dad joke and classifieds"
+     ]
+    },
+    "pt": {
+     "title": "Banca de jornal",
+     "items": [
+      "A newsstand opened in town instead of the bank tab. Buy a copy for 3 gold and it opens right away",
+      "The paper has a masthead, a headline, price tables, forecasts, news, a dad joke and classifieds"
+     ]
+    },
+    "ru": {
+     "title": "Газетный киоск",
+     "items": [
+      "A newsstand opened in town instead of the bank tab. Buy a copy for 3 gold and it opens right away",
+      "The paper has a masthead, a headline, price tables, forecasts, news, a dad joke and classifieds"
+     ]
+    },
+    "tr": {
+     "title": "Gazete bayii",
+     "items": [
+      "A newsstand opened in town instead of the bank tab. Buy a copy for 3 gold and it opens right away",
+      "The paper has a masthead, a headline, price tables, forecasts, news, a dad joke and classifieds"
+     ]
+    },
+    "it": {
+     "title": "Edicola",
+     "items": [
+      "In città ha aperto un'edicola al posto della scheda della banca. Compra una copia per 3 oro e si apre subito",
+      "Il giornale ha una testata, un titolo, tabelle dei prezzi, previsioni, notizie, una battuta da papà e annunci"
+     ]
+    },
+    "pl": {
+     "title": "Kiosk z gazetami",
+     "items": [
+      "W mieście otwarto kiosk zamiast zakładki banku. Kup egzemplarz za 3 złota, a od razu się otworzy",
+      "Gazeta ma winietę, nagłówek, tabele cen, prognozy, wiadomości, suchar i ogłoszenia"
+     ]
+    },
+    "ar": {
+     "title": "كشك الصحف",
+     "items": [
+      "افتُتح كشك صحف في البلدة بدل تبويب البنك. اشترِ نسخة بـ3 ذهب فتُفتح فورًا",
+      "للصحيفة ترويسة وعنوان رئيسي وجداول أسعار وتوقعات وأخبار ونكتة سخيفة وإعلانات مبوبة"
      ]
     }
    }
@@ -3885,6 +5620,62 @@
       "Sammle mehr Kartenstücke, um die Vulkaninsel zu finden. Dort baust du Obsidian, Schwefel und Rubine ab",
       "Ein roter Kreis am Boden heißt: Gleich bricht Lava aus. Verlass ihn, sonst verlierst du Gold",
       "Verkaufe Mineralien im Vulkanladen oder fertige hitzefeste Handschuhe, um schneller abzubauen und weniger Brandschaden zu nehmen"
+     ]
+    },
+    "zh": {
+     "title": "火山岛",
+     "items": [
+      "Collect more map pieces to find Volcano Isle, where you mine obsidian, sulfur and rubies",
+      "A red circle on the ground means lava is about to burst. Step out of it or lose gold",
+      "Sell minerals at the volcano store, or craft heat-proof gloves to mine faster and take less lava damage"
+     ]
+    },
+    "pt": {
+     "title": "Ilha do Vulcão",
+     "items": [
+      "Collect more map pieces to find Volcano Isle, where you mine obsidian, sulfur and rubies",
+      "A red circle on the ground means lava is about to burst. Step out of it or lose gold",
+      "Sell minerals at the volcano store, or craft heat-proof gloves to mine faster and take less lava damage"
+     ]
+    },
+    "ru": {
+     "title": "Вулканический остров",
+     "items": [
+      "Collect more map pieces to find Volcano Isle, where you mine obsidian, sulfur and rubies",
+      "A red circle on the ground means lava is about to burst. Step out of it or lose gold",
+      "Sell minerals at the volcano store, or craft heat-proof gloves to mine faster and take less lava damage"
+     ]
+    },
+    "tr": {
+     "title": "Volkan Adası",
+     "items": [
+      "Collect more map pieces to find Volcano Isle, where you mine obsidian, sulfur and rubies",
+      "A red circle on the ground means lava is about to burst. Step out of it or lose gold",
+      "Sell minerals at the volcano store, or craft heat-proof gloves to mine faster and take less lava damage"
+     ]
+    },
+    "it": {
+     "title": "Isola del Vulcano",
+     "items": [
+      "Raccogli altri pezzi di mappa per trovare l'Isola del Vulcano, dove estrai ossidiana, zolfo e rubini",
+      "Un cerchio rosso a terra significa che la lava sta per eruttare. Esci o perdi oro",
+      "Vendi i minerali al negozio del vulcano, o crea guanti resistenti al calore per estrarre più in fretta e subire meno danni dalla lava"
+     ]
+    },
+    "pl": {
+     "title": "Wyspa Wulkanu",
+     "items": [
+      "Zbierz więcej kawałków mapy, by znaleźć Wyspę Wulkanu, gdzie wydobywasz obsydian, siarkę i rubiny",
+      "Czerwony krąg na ziemi oznacza, że zaraz wybuchnie lawa. Wyjdź z niego albo stracisz złoto",
+      "Sprzedawaj minerały w sklepie przy wulkanie albo zrób żaroodporne rękawice, by kopać szybciej i mniej obrywać od lawy"
+     ]
+    },
+    "ar": {
+     "title": "جزيرة البركان",
+     "items": [
+      "اجمع المزيد من قطع الخريطة لتجد جزيرة البركان حيث تستخرج السبج والكبريت والياقوت",
+      "الدائرة الحمراء على الأرض تعني أن الحمم على وشك الانفجار. اخرج منها وإلا خسرت ذهبًا",
+      "بع المعادن في متجر البركان أو اصنع قفازات مقاومة للحرارة لتعدّن أسرع وتتضرر أقل من الحمم"
      ]
     }
    }
@@ -3944,6 +5735,69 @@
       "Das Museum wurde als prächtiger Bau mit Säulen und Giebel neu errichtet",
       "Die Karte wurde etwas nach Süden erweitert"
      ]
+    },
+    "zh": {
+     "title": "Outskirts station and a grand museum",
+     "items": [
+      "The station moved to the southern outskirts, rebuilt large with a clock tower, a covered platform and a train",
+      "Rails run west from the station into a tunnel, and the same line continues from each provincial station",
+      "The museum was rebuilt as a grand building with columns and a pediment",
+      "The map grew a little to the south"
+     ]
+    },
+    "pt": {
+     "title": "Outskirts station and a grand museum",
+     "items": [
+      "The station moved to the southern outskirts, rebuilt large with a clock tower, a covered platform and a train",
+      "Rails run west from the station into a tunnel, and the same line continues from each provincial station",
+      "The museum was rebuilt as a grand building with columns and a pediment",
+      "The map grew a little to the south"
+     ]
+    },
+    "ru": {
+     "title": "Outskirts station and a grand museum",
+     "items": [
+      "The station moved to the southern outskirts, rebuilt large with a clock tower, a covered platform and a train",
+      "Rails run west from the station into a tunnel, and the same line continues from each provincial station",
+      "The museum was rebuilt as a grand building with columns and a pediment",
+      "The map grew a little to the south"
+     ]
+    },
+    "tr": {
+     "title": "Outskirts station and a grand museum",
+     "items": [
+      "The station moved to the southern outskirts, rebuilt large with a clock tower, a covered platform and a train",
+      "Rails run west from the station into a tunnel, and the same line continues from each provincial station",
+      "The museum was rebuilt as a grand building with columns and a pediment",
+      "The map grew a little to the south"
+     ]
+    },
+    "it": {
+     "title": "Stazione periferica e grande museo",
+     "items": [
+      "La stazione si è spostata nella periferia sud, ricostruita in grande con torre dell'orologio, pensilina e treno",
+      "I binari corrono verso ovest dalla stazione fino a un tunnel, e la stessa linea continua da ogni stazione di provincia",
+      "Il museo è stato ricostruito come un grande edificio con colonne e frontone",
+      "La mappa si è allargata un po' verso sud"
+     ]
+    },
+    "pl": {
+     "title": "Stacja na obrzeżach i wielkie muzeum",
+     "items": [
+      "Stację przeniesiono na południowe obrzeża i odbudowano w dużej skali z wieżą zegarową, zadaszonym peronem i pociągiem",
+      "Tory biegną od stacji na zachód do tunelu, a ta sama linia ciągnie się z każdej stacji prowincji",
+      "Muzeum odbudowano jako okazały gmach z kolumnami i frontonem",
+      "Mapa nieco urosła na południe"
+     ]
+    },
+    "ar": {
+     "title": "محطة الضواحي ومتحف كبير",
+     "items": [
+      "انتقلت المحطة إلى الضواحي الجنوبية وأُعيد بناؤها كبيرة ببرج ساعة ورصيف مسقوف وقطار",
+      "تمتد السكة غربًا من المحطة إلى نفق، ويستمر الخط نفسه من كل محطة إقليم",
+      "أُعيد بناء المتحف مبنى كبيرًا بأعمدة وجبهة مثلثة",
+      "كبرت الخريطة قليلًا نحو الجنوب"
+     ]
     }
    }
   },
@@ -3995,6 +5849,62 @@
       "Im Rathaus kannst du am Fest jeder Jahreszeit teilnehmen: Reiche Gerichte oder Spezialitäten ein, tritt gegen andere an und gewinne Preisgeld und Pokale",
       "Im Rathaus öffnest du das Immobilienbüro: Kaufe Grundstücke, baue Häuser, Läden oder Villen und kassiere Miete; Miete und Bodenpreis folgen dem Markt",
       "Tritt der Händlergilde bei und erfülle Aufträge für Beitragspunkte; je höher dein Rang, desto besser deine Verkaufspreise"
+     ]
+    },
+    "zh": {
+     "title": "Festivals, real estate and merchants guild",
+     "items": [
+      "Enter the seasonal festival at the town hall: submit goods, compete for prize money and trophies",
+      "Buy lots, build houses, shops or mansions and collect rent that follows the market index",
+      "Join the merchants guild, fulfill requests and rise in rank for better sale prices"
+     ]
+    },
+    "pt": {
+     "title": "Festivals, real estate and merchants guild",
+     "items": [
+      "Enter the seasonal festival at the town hall: submit goods, compete for prize money and trophies",
+      "Buy lots, build houses, shops or mansions and collect rent that follows the market index",
+      "Join the merchants guild, fulfill requests and rise in rank for better sale prices"
+     ]
+    },
+    "ru": {
+     "title": "Festivals, real estate and merchants guild",
+     "items": [
+      "Enter the seasonal festival at the town hall: submit goods, compete for prize money and trophies",
+      "Buy lots, build houses, shops or mansions and collect rent that follows the market index",
+      "Join the merchants guild, fulfill requests and rise in rank for better sale prices"
+     ]
+    },
+    "tr": {
+     "title": "Festivals, real estate and merchants guild",
+     "items": [
+      "Enter the seasonal festival at the town hall: submit goods, compete for prize money and trophies",
+      "Buy lots, build houses, shops or mansions and collect rent that follows the market index",
+      "Join the merchants guild, fulfill requests and rise in rank for better sale prices"
+     ]
+    },
+    "it": {
+     "title": "Feste, immobili e gilda dei mercanti",
+     "items": [
+      "Partecipa alla festa stagionale al municipio: presenta merci, gareggia per premi in denaro e trofei",
+      "Compra lotti, costruisci case, negozi o ville e incassa affitti che seguono l'indice di mercato",
+      "Entra nella gilda dei mercanti, soddisfa le richieste e sali di grado per prezzi di vendita migliori"
+     ]
+    },
+    "pl": {
+     "title": "Festyny, nieruchomości i gildia kupiecka",
+     "items": [
+      "Weź udział w sezonowym festynie w ratuszu: zgłaszaj towary, walcz o nagrody pieniężne i trofea",
+      "Kupuj działki, buduj domy, sklepy lub rezydencje i pobieraj czynsz zależny od indeksu rynku",
+      "Dołącz do gildii kupieckiej, spełniaj prośby i awansuj po lepsze ceny sprzedaży"
+     ]
+    },
+    "ar": {
+     "title": "المهرجانات والعقارات ونقابة التجار",
+     "items": [
+      "شارك في مهرجان الموسم في دار البلدية: قدّم البضائع وتنافس على جوائز مالية وكؤوس",
+      "اشترِ قطع أرض وابنِ منازل أو متاجر أو قصورًا واجمع إيجارًا يتبع مؤشر السوق",
+      "انضم إلى نقابة التجار ونفّذ الطلبات وارتقِ في الرتبة لأسعار بيع أفضل"
      ]
     }
    }
@@ -4054,6 +5964,69 @@
       "Daneben gibt es ein Gasthaus: Jeder Reisende zahlt fürs Zimmer, und ein Gericht aus dem Restaurant bringt Trinkgeld",
       "Das Gasthaus lässt sich bis Stufe 3 ausbauen, und Gäste kommen öfter, wenn du schon Zug gefahren bist"
      ]
+    },
+    "zh": {
+     "title": "Post office and inn",
+     "items": [
+      "A post office opened by the harbor. Send parcels to ports and provinces and collect replies and rewards",
+      "The more parcels you send, the faster replies arrive",
+      "An inn opened next to it. Travelers pay for rooms, and dishes from the diner earn tips",
+      "The inn upgrades to level 3, and guests come more often once you have taken a train"
+     ]
+    },
+    "pt": {
+     "title": "Post office and inn",
+     "items": [
+      "A post office opened by the harbor. Send parcels to ports and provinces and collect replies and rewards",
+      "The more parcels you send, the faster replies arrive",
+      "An inn opened next to it. Travelers pay for rooms, and dishes from the diner earn tips",
+      "The inn upgrades to level 3, and guests come more often once you have taken a train"
+     ]
+    },
+    "ru": {
+     "title": "Post office and inn",
+     "items": [
+      "A post office opened by the harbor. Send parcels to ports and provinces and collect replies and rewards",
+      "The more parcels you send, the faster replies arrive",
+      "An inn opened next to it. Travelers pay for rooms, and dishes from the diner earn tips",
+      "The inn upgrades to level 3, and guests come more often once you have taken a train"
+     ]
+    },
+    "tr": {
+     "title": "Post office and inn",
+     "items": [
+      "A post office opened by the harbor. Send parcels to ports and provinces and collect replies and rewards",
+      "The more parcels you send, the faster replies arrive",
+      "An inn opened next to it. Travelers pay for rooms, and dishes from the diner earn tips",
+      "The inn upgrades to level 3, and guests come more often once you have taken a train"
+     ]
+    },
+    "it": {
+     "title": "Ufficio postale e locanda",
+     "items": [
+      "Vicino al porto ha aperto un ufficio postale. Invia pacchi a porti e province e ricevi risposte e ricompense",
+      "Più pacchi invii, più in fretta arrivano le risposte",
+      "Accanto ha aperto una locanda. I viaggiatori pagano le stanze e i piatti della trattoria fanno guadagnare mance",
+      "La locanda si migliora fino al livello 3, e gli ospiti arrivano più spesso dopo che hai preso un treno"
+     ]
+    },
+    "pl": {
+     "title": "Poczta i gospoda",
+     "items": [
+      "Przy porcie otwarto pocztę. Wysyłaj paczki do portów i prowincji i odbieraj odpowiedzi oraz nagrody",
+      "Im więcej paczek wysyłasz, tym szybciej przychodzą odpowiedzi",
+      "Obok otwarto gospodę. Podróżni płacą za pokoje, a dania z jadłodajni przynoszą napiwki",
+      "Gospodę można ulepszyć do poziomu 3, a goście przychodzą częściej, gdy już jechałeś pociągiem"
+     ]
+    },
+    "ar": {
+     "title": "مكتب البريد والنُّزل",
+     "items": [
+      "افتُتح مكتب بريد قرب الميناء. أرسل طرودًا إلى الموانئ والأقاليم واجمع الردود والمكافآت",
+      "كلما أرسلت طرودًا أكثر وصلت الردود أسرع",
+      "افتُتح بجانبه نُزل. يدفع المسافرون ثمن الغرف وأطباق المطعم تكسبك إكراميات",
+      "يتطور النُّزل حتى المستوى 3، ويأتي الضيوف أكثر بعد أن تركب القطار"
+     ]
     }
    }
   },
@@ -4093,6 +6066,48 @@
      "title": "Hafennamen",
      "items": [
       "Violetthafen, Wolkenhafen und Blaue Bucht heißen nach ihren Spezialitäten jetzt Lavender Port, Cotton Port und Salt Bay"
+     ]
+    },
+    "zh": {
+     "title": "Port names",
+     "items": [
+      "Three ports renamed after their specialties: Lavender Port, Cotton Port and Salt Bay"
+     ]
+    },
+    "pt": {
+     "title": "Port names",
+     "items": [
+      "Three ports renamed after their specialties: Lavender Port, Cotton Port and Salt Bay"
+     ]
+    },
+    "ru": {
+     "title": "Port names",
+     "items": [
+      "Three ports renamed after their specialties: Lavender Port, Cotton Port and Salt Bay"
+     ]
+    },
+    "tr": {
+     "title": "Port names",
+     "items": [
+      "Three ports renamed after their specialties: Lavender Port, Cotton Port and Salt Bay"
+     ]
+    },
+    "it": {
+     "title": "Nomi dei porti",
+     "items": [
+      "Tre porti rinominati in base alle loro specialità: Porto Lavanda, Porto Cotone e Baia del Sale"
+     ]
+    },
+    "pl": {
+     "title": "Nazwy portów",
+     "items": [
+      "Trzy porty przemianowano od ich specjałów: Port Lawendowy, Port Bawełniany i Solna Zatoka"
+     ]
+    },
+    "ar": {
+     "title": "أسماء الموانئ",
+     "items": [
+      "تغيرت أسماء ثلاثة موانئ حسب تخصصاتها: ميناء الخزامى وميناء القطن وخليج الملح"
      ]
     }
    }
@@ -4134,6 +6149,48 @@
      "items": [
       "Rothafen heißt jetzt Redport"
      ]
+    },
+    "zh": {
+     "title": "Port name",
+     "items": [
+      "Redport now has a Korean name that matches its English one"
+     ]
+    },
+    "pt": {
+     "title": "Port name",
+     "items": [
+      "Redport now has a Korean name that matches its English one"
+     ]
+    },
+    "ru": {
+     "title": "Port name",
+     "items": [
+      "Redport now has a Korean name that matches its English one"
+     ]
+    },
+    "tr": {
+     "title": "Port name",
+     "items": [
+      "Redport now has a Korean name that matches its English one"
+     ]
+    },
+    "it": {
+     "title": "Nomi dei porti",
+     "items": [
+      "Portorosso ora ha un nome coreano che corrisponde a quello inglese"
+     ]
+    },
+    "pl": {
+     "title": "Nazwy portów",
+     "items": [
+      "Czerwony Port ma teraz koreańską nazwę zgodną z angielską"
+     ]
+    },
+    "ar": {
+     "title": "أسماء الموانئ",
+     "items": [
+      "صار للميناء الأحمر اسم كوري يطابق اسمه الإنجليزي"
+     ]
     }
    }
   },
@@ -4174,6 +6231,48 @@
      "items": [
       "Die Provinzen im Landesinneren heißen jetzt Hochland Blue Hills, Dorf Pinewood und Station Red Ridge"
      ]
+    },
+    "zh": {
+     "title": "Province names",
+     "items": [
+      "Inland provinces are now named Blue Hills, Pinewood and Red Ridge"
+     ]
+    },
+    "pt": {
+     "title": "Province names",
+     "items": [
+      "Inland provinces are now named Blue Hills, Pinewood and Red Ridge"
+     ]
+    },
+    "ru": {
+     "title": "Province names",
+     "items": [
+      "Inland provinces are now named Blue Hills, Pinewood and Red Ridge"
+     ]
+    },
+    "tr": {
+     "title": "Province names",
+     "items": [
+      "Inland provinces are now named Blue Hills, Pinewood and Red Ridge"
+     ]
+    },
+    "it": {
+     "title": "Nomi delle province",
+     "items": [
+      "Le province interne ora si chiamano Colline Azzurre, Pineta e Cresta Rossa"
+     ]
+    },
+    "pl": {
+     "title": "Nazwy prowincji",
+     "items": [
+      "Prowincje w głębi lądu nazywają się teraz Błękitne Wzgórza, Sosnowy Las i Czerwona Grań"
+     ]
+    },
+    "ar": {
+     "title": "أسماء الأقاليم",
+     "items": [
+      "الأقاليم الداخلية اسمها الآن التلال الزرقاء وغابة الصنوبر والحافة الحمراء"
+     ]
     }
    }
   },
@@ -4213,6 +6312,48 @@
      "title": "NPC-Namen",
      "items": [
       "Inselbewohner und Story-NPCs tragen jetzt westliche Namen wie die Figuren aus der Zeitung"
+     ]
+    },
+    "zh": {
+     "title": "NPC names",
+     "items": [
+      "Island residents and story NPCs now have names in the same style as the newspaper characters"
+     ]
+    },
+    "pt": {
+     "title": "NPC names",
+     "items": [
+      "Island residents and story NPCs now have names in the same style as the newspaper characters"
+     ]
+    },
+    "ru": {
+     "title": "NPC names",
+     "items": [
+      "Island residents and story NPCs now have names in the same style as the newspaper characters"
+     ]
+    },
+    "tr": {
+     "title": "NPC names",
+     "items": [
+      "Island residents and story NPCs now have names in the same style as the newspaper characters"
+     ]
+    },
+    "it": {
+     "title": "Nomi dei PNG",
+     "items": [
+      "Gli abitanti dell'isola e i PNG della storia ora hanno nomi nello stesso stile dei personaggi del giornale"
+     ]
+    },
+    "pl": {
+     "title": "Imiona NPC",
+     "items": [
+      "Mieszkańcy wyspy i NPC z fabuły mają teraz imiona w tym samym stylu co postacie z gazety"
+     ]
+    },
+    "ar": {
+     "title": "أسماء الشخصيات",
+     "items": [
+      "لسكان الجزيرة وشخصيات القصة الآن أسماء بنفس أسلوب شخصيات الصحيفة"
      ]
     }
    }
@@ -4265,6 +6406,62 @@
       "Neben dem Markt deiner Insel steht ein Bahnhof: Fahr mit dem Zug in drei Provinzen im Landesinneren",
       "Hochland Blue Hills (Rang 1), Dorf Pinewood (Rang 2) und Station Red Ridge (Rang 3), jeweils mit begehbarer Karte, Markt und Bewohnern",
       "Auf Provinzmärkten verkaufst du teuer und kaufst ihre Spezialitäten günstig"
+     ]
+    },
+    "zh": {
+     "title": "Train station and inland provinces",
+     "items": [
+      "A train station stands by the market. Ride to three inland provinces",
+      "Blue Highlands (rank 1), Pine Forest Village (rank 2) and Red Ridge Depot (rank 3), each with a walkable map, market and resident",
+      "Sell goods dear at provincial markets and buy local specialties cheaply"
+     ]
+    },
+    "pt": {
+     "title": "Train station and inland provinces",
+     "items": [
+      "A train station stands by the market. Ride to three inland provinces",
+      "Blue Highlands (rank 1), Pine Forest Village (rank 2) and Red Ridge Depot (rank 3), each with a walkable map, market and resident",
+      "Sell goods dear at provincial markets and buy local specialties cheaply"
+     ]
+    },
+    "ru": {
+     "title": "Train station and inland provinces",
+     "items": [
+      "A train station stands by the market. Ride to three inland provinces",
+      "Blue Highlands (rank 1), Pine Forest Village (rank 2) and Red Ridge Depot (rank 3), each with a walkable map, market and resident",
+      "Sell goods dear at provincial markets and buy local specialties cheaply"
+     ]
+    },
+    "tr": {
+     "title": "Train station and inland provinces",
+     "items": [
+      "A train station stands by the market. Ride to three inland provinces",
+      "Blue Highlands (rank 1), Pine Forest Village (rank 2) and Red Ridge Depot (rank 3), each with a walkable map, market and resident",
+      "Sell goods dear at provincial markets and buy local specialties cheaply"
+     ]
+    },
+    "it": {
+     "title": "Stazione ferroviaria e province interne",
+     "items": [
+      "Accanto al mercato c'è una stazione ferroviaria. Viaggia verso tre province interne",
+      "Altipiani Azzurri (grado 1), Villaggio della Pineta (grado 2) e Deposito della Cresta Rossa (grado 3), ognuno con mappa esplorabile, mercato e abitante",
+      "Vendi caro ai mercati di provincia e compra le specialità locali a poco"
+     ]
+    },
+    "pl": {
+     "title": "Dworzec i prowincje w głębi lądu",
+     "items": [
+      "Przy targu stoi dworzec. Jedź do trzech prowincji w głębi lądu",
+      "Błękitne Wyżyny (ranga 1), Wioska w Sosnowym Lesie (ranga 2) i Skład pod Czerwoną Granią (ranga 3), każda z mapą do chodzenia, targiem i mieszkańcem",
+      "Sprzedawaj drogo na targach prowincji i kupuj tanio lokalne specjały"
+     ]
+    },
+    "ar": {
+     "title": "محطة القطار والأقاليم الداخلية",
+     "items": [
+      "بجانب السوق محطة قطار. اركب إلى ثلاثة أقاليم داخلية",
+      "المرتفعات الزرقاء (الرتبة 1) وقرية غابة الصنوبر (الرتبة 2) ومستودع الحافة الحمراء (الرتبة 3)، ولكل منها خريطة للمشي وسوق وساكن",
+      "بع بسعر مرتفع في أسواق الأقاليم واشترِ التخصصات المحلية بسعر رخيص"
      ]
     }
    }
@@ -4324,6 +6521,69 @@
       "Deine letzte Entscheidung bestimmt einen dauerhaften Bonus",
       "Zwischen den Kapiteln geben NPCs Tipps, und die Bewohner jeder Insel zeigen sich"
      ]
+    },
+    "zh": {
+     "title": "NPCs and a story",
+     "items": [
+      "Three talkable NPCs: Granny Bori by the fields, navigator Organ at the pier and merchant Mira at the market",
+      "An eight-chapter story about your grandfather's old ledger: reach each goal and talk again to continue",
+      "Your final choice decides a permanent bonus",
+      "NPCs share a tip between story beats; island residents now stand by their landmarks"
+     ]
+    },
+    "pt": {
+     "title": "NPCs and a story",
+     "items": [
+      "Three talkable NPCs: Granny Bori by the fields, navigator Organ at the pier and merchant Mira at the market",
+      "An eight-chapter story about your grandfather's old ledger: reach each goal and talk again to continue",
+      "Your final choice decides a permanent bonus",
+      "NPCs share a tip between story beats; island residents now stand by their landmarks"
+     ]
+    },
+    "ru": {
+     "title": "NPCs and a story",
+     "items": [
+      "Three talkable NPCs: Granny Bori by the fields, navigator Organ at the pier and merchant Mira at the market",
+      "An eight-chapter story about your grandfather's old ledger: reach each goal and talk again to continue",
+      "Your final choice decides a permanent bonus",
+      "NPCs share a tip between story beats; island residents now stand by their landmarks"
+     ]
+    },
+    "tr": {
+     "title": "NPCs and a story",
+     "items": [
+      "Three talkable NPCs: Granny Bori by the fields, navigator Organ at the pier and merchant Mira at the market",
+      "An eight-chapter story about your grandfather's old ledger: reach each goal and talk again to continue",
+      "Your final choice decides a permanent bonus",
+      "NPCs share a tip between story beats; island residents now stand by their landmarks"
+     ]
+    },
+    "it": {
+     "title": "PNG e una storia",
+     "items": [
+      "Tre PNG con cui parlare: nonna Bori vicino ai campi, il navigatore Organ al molo e la mercante Mira al mercato",
+      "Una storia in otto capitoli sul vecchio libro mastro di tuo nonno: raggiungi ogni obiettivo e parla di nuovo per continuare",
+      "La tua scelta finale decide un bonus permanente",
+      "I PNG danno un consiglio tra un momento della storia e l'altro; gli abitanti dell'isola ora stanno vicino ai loro luoghi simbolo"
+     ]
+    },
+    "pl": {
+     "title": "NPC i fabuła",
+     "items": [
+      "Trzy NPC do rozmowy: babcia Bori przy polach, nawigator Organ na molo i kupiec Mira na targu",
+      "Ośmiorozdziałowa historia o starej księdze rachunkowej Twojego dziadka: osiągnij każdy cel i porozmawiaj ponownie, by kontynuować",
+      "Twój ostateczny wybór decyduje o stałej premii",
+      "NPC dzielą się wskazówką między etapami fabuły; mieszkańcy wyspy stoją teraz przy swoich charakterystycznych miejscach"
+     ]
+    },
+    "ar": {
+     "title": "شخصيات وقصة",
+     "items": [
+      "ثلاث شخصيات للحديث: الجدة بوري قرب الحقول والملاح أورغان عند الرصيف والتاجرة ميرا في السوق",
+      "قصة من ثمانية فصول عن دفتر حسابات جدك القديم: حقق كل هدف وتحدث مجددًا لتكمل",
+      "اختيارك الأخير يحدد مكافأة دائمة",
+      "تشارك الشخصيات نصيحة بين محطات القصة؛ ويقف سكان الجزيرة الآن عند معالمهم"
+     ]
     }
    }
   },
@@ -4369,6 +6629,55 @@
      "items": [
       "Die Hintergrundmusik von Isleport ist ein neues Stück: entspannt, mit Gitarre, Klavier und Streichern übereinander",
       "Es gibt jetzt zwei Hintergrundstücke im Wechsel; das neue ist ein entspanntes Stück aus Synth-Pad und Klavier"
+     ]
+    },
+    "zh": {
+     "title": "New harbor music",
+     "items": [
+      "Isleport's background music is a new track: a relaxed layering of guitar, piano and strings",
+      "The background music now has two tracks that take turns; the new one is a relaxed mix of synth pad and piano"
+     ]
+    },
+    "pt": {
+     "title": "New harbor music",
+     "items": [
+      "Isleport's background music is a new track: a relaxed layering of guitar, piano and strings",
+      "The background music now has two tracks that take turns; the new one is a relaxed mix of synth pad and piano"
+     ]
+    },
+    "ru": {
+     "title": "New harbor music",
+     "items": [
+      "Isleport's background music is a new track: a relaxed layering of guitar, piano and strings",
+      "The background music now has two tracks that take turns; the new one is a relaxed mix of synth pad and piano"
+     ]
+    },
+    "tr": {
+     "title": "New harbor music",
+     "items": [
+      "Isleport's background music is a new track: a relaxed layering of guitar, piano and strings",
+      "The background music now has two tracks that take turns; the new one is a relaxed mix of synth pad and piano"
+     ]
+    },
+    "it": {
+     "title": "Nuova musica del porto",
+     "items": [
+      "La musica di sottofondo di Isleport è un nuovo brano: una rilassata stratificazione di chitarra, pianoforte e archi",
+      "La musica di sottofondo ora ha due brani che si alternano; quello nuovo è un mix rilassato di pad di sintetizzatore e pianoforte"
+     ]
+    },
+    "pl": {
+     "title": "Nowa muzyka portu",
+     "items": [
+      "Muzyka w tle Isleport to nowy utwór: spokojne nakładanie gitary, fortepianu i smyczków",
+      "Muzyka w tle ma teraz dwa utwory na zmianę; nowy to spokojne połączenie syntezatorowego tła i fortepianu"
+     ]
+    },
+    "ar": {
+     "title": "موسيقى جديدة للميناء",
+     "items": [
+      "موسيقى Isleport الخلفية مقطوعة جديدة: طبقات هادئة من الغيتار والبيانو والوتريات",
+      "للموسيقى الخلفية الآن مقطوعتان تتناوبان؛ الجديدة مزيج هادئ من وسادة السنثسايزر والبيانو"
      ]
     }
    }
@@ -4428,6 +6737,69 @@
       "Schiffe können eine Stahlverstärkung bekommen: mehr Laderaum und mehr Tempo",
       "Mit Eisenbarren stellst du ein Gebäude im Bau sofort fertig"
      ]
+    },
+    "zh": {
+     "title": "矿石岛",
+     "items": [
+      "A new isle to discover: the Mine Isle. Walk around and strike rocks for stone, iron ore, copper ore and gem ore",
+      "Smelt ore into iron and copper ingots, sell at the miners' store, or upgrade your pickaxe",
+      "Ships can get steel reinforcement for more hold and speed",
+      "Use iron ingots to finish a building under construction at once"
+     ]
+    },
+    "pt": {
+     "title": "Ilha da Mina",
+     "items": [
+      "A new isle to discover: the Mine Isle. Walk around and strike rocks for stone, iron ore, copper ore and gem ore",
+      "Smelt ore into iron and copper ingots, sell at the miners' store, or upgrade your pickaxe",
+      "Ships can get steel reinforcement for more hold and speed",
+      "Use iron ingots to finish a building under construction at once"
+     ]
+    },
+    "ru": {
+     "title": "Рудный остров",
+     "items": [
+      "A new isle to discover: the Mine Isle. Walk around and strike rocks for stone, iron ore, copper ore and gem ore",
+      "Smelt ore into iron and copper ingots, sell at the miners' store, or upgrade your pickaxe",
+      "Ships can get steel reinforcement for more hold and speed",
+      "Use iron ingots to finish a building under construction at once"
+     ]
+    },
+    "tr": {
+     "title": "Maden Adası",
+     "items": [
+      "A new isle to discover: the Mine Isle. Walk around and strike rocks for stone, iron ore, copper ore and gem ore",
+      "Smelt ore into iron and copper ingots, sell at the miners' store, or upgrade your pickaxe",
+      "Ships can get steel reinforcement for more hold and speed",
+      "Use iron ingots to finish a building under construction at once"
+     ]
+    },
+    "it": {
+     "title": "Isola della Miniera",
+     "items": [
+      "Una nuova isola da scoprire: l'Isola della Miniera. Girala e colpisci le rocce per pietra, minerale di ferro, di rame e di gemme",
+      "Fondi il minerale in lingotti di ferro e rame, vendili al negozio dei minatori o migliora il piccone",
+      "Le navi possono ricevere un rinforzo in acciaio per più stiva e velocità",
+      "Usa lingotti di ferro per completare subito un edificio in costruzione"
+     ]
+    },
+    "pl": {
+     "title": "Wyspa Kopalni",
+     "items": [
+      "Nowa wyspa do odkrycia: Wyspa Kopalni. Chodź po niej i rozbijaj skały, by zdobyć kamień, rudę żelaza, miedzi i kamieni szlachetnych",
+      "Przetapiaj rudę na sztabki żelaza i miedzi, sprzedawaj w sklepie górników albo ulepsz kilof",
+      "Statki mogą dostać stalowe wzmocnienie dla większej ładowni i prędkości",
+      "Użyj sztabek żelaza, by od razu ukończyć budowany budynek"
+     ]
+    },
+    "ar": {
+     "title": "جزيرة المنجم",
+     "items": [
+      "جزيرة جديدة للاكتشاف: جزيرة المنجم. تجوّل واضرب الصخور لتحصل على الحجر وخام الحديد وخام النحاس وخام الأحجار الكريمة",
+      "صهر الخام إلى سبائك حديد ونحاس، وبعها في متجر عمال المناجم أو طوّر معولك",
+      "يمكن تزويد السفن بتقوية فولاذية لعنبر أكبر وسرعة أعلى",
+      "استخدم سبائك الحديد لإكمال مبنى قيد الإنشاء فورًا"
+     ]
     }
    }
   },
@@ -4486,6 +6858,69 @@
       "Ein Museum: Ausstellungsstücke bringen Eintritt, vollständige Sammlungen dauerhafte Boni",
       "Lande an und tippe auf ein Wahrzeichen: Ein Bewohner bittet dich um Gefallen; erfülle drei für eine Karte"
      ]
+    },
+    "zh": {
+     "title": "Diner, museum and resident requests",
+     "items": [
+      "A diner opened by the market: cook dishes and serve customer orders",
+      "Upgrade the diner for new dishes; better reputation brings more customers",
+      "A museum: displays earn admission fees and complete sets give permanent bonuses",
+      "Landmarks on islands now host a resident who asks for favors; finish three for a map"
+     ]
+    },
+    "pt": {
+     "title": "Diner, museum and resident requests",
+     "items": [
+      "A diner opened by the market: cook dishes and serve customer orders",
+      "Upgrade the diner for new dishes; better reputation brings more customers",
+      "A museum: displays earn admission fees and complete sets give permanent bonuses",
+      "Landmarks on islands now host a resident who asks for favors; finish three for a map"
+     ]
+    },
+    "ru": {
+     "title": "Diner, museum and resident requests",
+     "items": [
+      "A diner opened by the market: cook dishes and serve customer orders",
+      "Upgrade the diner for new dishes; better reputation brings more customers",
+      "A museum: displays earn admission fees and complete sets give permanent bonuses",
+      "Landmarks on islands now host a resident who asks for favors; finish three for a map"
+     ]
+    },
+    "tr": {
+     "title": "Diner, museum and resident requests",
+     "items": [
+      "A diner opened by the market: cook dishes and serve customer orders",
+      "Upgrade the diner for new dishes; better reputation brings more customers",
+      "A museum: displays earn admission fees and complete sets give permanent bonuses",
+      "Landmarks on islands now host a resident who asks for favors; finish three for a map"
+     ]
+    },
+    "it": {
+     "title": "Trattoria, museo e richieste degli abitanti",
+     "items": [
+      "Vicino al mercato ha aperto una trattoria: cucina piatti e servi le ordinazioni dei clienti",
+      "Migliora la trattoria per nuovi piatti; una reputazione migliore porta più clienti",
+      "Un museo: le esposizioni fanno guadagnare biglietti e le collezioni complete danno bonus permanenti",
+      "I luoghi simbolo sulle isole ora ospitano un abitante che chiede favori; completane tre per una mappa"
+     ]
+    },
+    "pl": {
+     "title": "Jadłodajnia, muzeum i prośby mieszkańców",
+     "items": [
+      "Przy targu otwarto jadłodajnię: gotuj dania i realizuj zamówienia klientów",
+      "Ulepsz jadłodajnię, by mieć nowe dania; lepsza reputacja przyciąga więcej klientów",
+      "Muzeum: ekspozycje przynoszą opłaty za wstęp, a pełne zestawy dają stałe premie",
+      "Charakterystyczne miejsca na wyspach mają teraz mieszkańca proszącego o przysługi; wykonaj trzy, by dostać mapę"
+     ]
+    },
+    "ar": {
+     "title": "المطعم والمتحف وطلبات السكان",
+     "items": [
+      "افتُتح مطعم قرب السوق: اطبخ الأطباق ولبِّ طلبات الزبائن",
+      "طوّر المطعم لأطباق جديدة؛ السمعة الأفضل تجلب زبائن أكثر",
+      "متحف: المعروضات تكسب رسوم دخول والمجموعات المكتملة تعطي مكافآت دائمة",
+      "صار في معالم الجزر ساكن يطلب خدمات؛ أكمل ثلاثًا لتحصل على خريطة"
+     ]
     }
    }
   },
@@ -4531,6 +6966,55 @@
      "items": [
       "Isleport hat jetzt eigene Hintergrundmusik: ein entspanntes Stück mit Gitarre und E-Piano",
       "Die Musik ist eine eigene Datei neben dem Spiel; lässt sie sich nicht laden, läuft wie früher die erzeugte Musik"
+     ]
+    },
+    "zh": {
+     "title": "Harbor music",
+     "items": [
+      "Isleport now has its own background music: a relaxed track with guitar and electric piano",
+      "The music is a separate file next to the game; if it can't be loaded, the old generated music plays instead"
+     ]
+    },
+    "pt": {
+     "title": "Harbor music",
+     "items": [
+      "Isleport now has its own background music: a relaxed track with guitar and electric piano",
+      "The music is a separate file next to the game; if it can't be loaded, the old generated music plays instead"
+     ]
+    },
+    "ru": {
+     "title": "Harbor music",
+     "items": [
+      "Isleport now has its own background music: a relaxed track with guitar and electric piano",
+      "The music is a separate file next to the game; if it can't be loaded, the old generated music plays instead"
+     ]
+    },
+    "tr": {
+     "title": "Harbor music",
+     "items": [
+      "Isleport now has its own background music: a relaxed track with guitar and electric piano",
+      "The music is a separate file next to the game; if it can't be loaded, the old generated music plays instead"
+     ]
+    },
+    "it": {
+     "title": "Musica del porto",
+     "items": [
+      "Isleport ora ha la sua musica di sottofondo: un brano rilassato con chitarra e piano elettrico",
+      "La musica è un file separato accanto al gioco; se non si carica, suona la vecchia musica generata"
+     ]
+    },
+    "pl": {
+     "title": "Muzyka portu",
+     "items": [
+      "Isleport ma teraz własną muzykę w tle: spokojny utwór z gitarą i pianinem elektrycznym",
+      "Muzyka to osobny plik obok gry; jeśli nie da się go wczytać, gra dawna generowana muzyka"
+     ]
+    },
+    "ar": {
+     "title": "موسيقى الميناء",
+     "items": [
+      "صار لـIsleport موسيقاه الخلفية الخاصة: مقطوعة هادئة بالغيتار والبيانو الكهربائي",
+      "الموسيقى ملف منفصل بجانب اللعبة؛ إن لم يُحمَّل تُعزف الموسيقى المولّدة القديمة"
      ]
     }
    }
@@ -4590,6 +7074,69 @@
       "Rodung am Hinterberg: Bezahle, um Wald und Felsen zu räumen, und erhalte 12 weitere Felder",
       "Herausforderungen: Erfülle drei Ziele in der Zeit für Gold und Titel"
      ]
+    },
+    "zh": {
+     "title": "Town hall, fishing, reclamation and challenges",
+     "items": [
+      "A town hall now stands near the farm: challenges and the back-hill reclamation open from it",
+      "Fishing huts now have a timing mini-game; catches depend on season and weather",
+      "Back-hill reclamation: clear forest and rocks for gold to gain 12 more fields",
+      "Challenges: finish three timed goals for gold and titles"
+     ]
+    },
+    "pt": {
+     "title": "Town hall, fishing, reclamation and challenges",
+     "items": [
+      "A town hall now stands near the farm: challenges and the back-hill reclamation open from it",
+      "Fishing huts now have a timing mini-game; catches depend on season and weather",
+      "Back-hill reclamation: clear forest and rocks for gold to gain 12 more fields",
+      "Challenges: finish three timed goals for gold and titles"
+     ]
+    },
+    "ru": {
+     "title": "Town hall, fishing, reclamation and challenges",
+     "items": [
+      "A town hall now stands near the farm: challenges and the back-hill reclamation open from it",
+      "Fishing huts now have a timing mini-game; catches depend on season and weather",
+      "Back-hill reclamation: clear forest and rocks for gold to gain 12 more fields",
+      "Challenges: finish three timed goals for gold and titles"
+     ]
+    },
+    "tr": {
+     "title": "Town hall, fishing, reclamation and challenges",
+     "items": [
+      "A town hall now stands near the farm: challenges and the back-hill reclamation open from it",
+      "Fishing huts now have a timing mini-game; catches depend on season and weather",
+      "Back-hill reclamation: clear forest and rocks for gold to gain 12 more fields",
+      "Challenges: finish three timed goals for gold and titles"
+     ]
+    },
+    "it": {
+     "title": "Municipio, pesca, bonifica e sfide",
+     "items": [
+      "Ora c'è un municipio vicino alla fattoria: da lì si aprono le sfide e la bonifica della collina dietro",
+      "I capanni da pesca ora hanno un minigioco a tempo; le catture dipendono da stagione e meteo",
+      "Bonifica della collina dietro: sgombra bosco e rocce pagando oro per ottenere 12 campi in più",
+      "Sfide: completa tre obiettivi a tempo per oro e titoli"
+     ]
+    },
+    "pl": {
+     "title": "Ratusz, wędkowanie, rekultywacja i wyzwania",
+     "items": [
+      "Przy farmie stoi teraz ratusz: z niego otwierają się wyzwania i rekultywacja tylnego wzgórza",
+      "Chaty rybackie mają teraz minigrę na wyczucie czasu; połowy zależą od pory roku i pogody",
+      "Rekultywacja tylnego wzgórza: oczyść las i skały za złoto, by zyskać 12 pól więcej",
+      "Wyzwania: wykonaj trzy cele na czas, by zdobyć złoto i tytuły"
+     ]
+    },
+    "ar": {
+     "title": "دار البلدية والصيد والاستصلاح والتحديات",
+     "items": [
+      "تقف الآن دار بلدية قرب المزرعة: منها تُفتح التحديات واستصلاح التل الخلفي",
+      "لأكواخ الصيد الآن لعبة توقيت مصغرة؛ والصيد يعتمد على الموسم والطقس",
+      "استصلاح التل الخلفي: أزل الغابة والصخور مقابل ذهب لتكسب 12 حقلًا إضافيًا",
+      "التحديات: أكمل ثلاثة أهداف محددة بوقت مقابل ذهب وألقاب"
+     ]
     }
    }
   },
@@ -4648,6 +7195,69 @@
       "Boom, Feste, Stürme und Piratenangriffe in den Häfen bewegen die passenden Aktien",
       "Die Bank bietet eine Handelsversicherung: 70% des von Piraten geraubten Werts werden erstattet"
      ]
+    },
+    "zh": {
+     "title": "Price paper and trade insurance",
+     "items": [
+      "The bank has a Paper tab: current stock prices, a forecast until the next issue, last issue's results and market news",
+      "The paper also carries silly news and dad jokes",
+      "Port booms, festivals, storms and pirate raids now move related stocks",
+      "The bank offers trade insurance: pirate losses are refunded at 70% of their value"
+     ]
+    },
+    "pt": {
+     "title": "Price paper and trade insurance",
+     "items": [
+      "The bank has a Paper tab: current stock prices, a forecast until the next issue, last issue's results and market news",
+      "The paper also carries silly news and dad jokes",
+      "Port booms, festivals, storms and pirate raids now move related stocks",
+      "The bank offers trade insurance: pirate losses are refunded at 70% of their value"
+     ]
+    },
+    "ru": {
+     "title": "Price paper and trade insurance",
+     "items": [
+      "The bank has a Paper tab: current stock prices, a forecast until the next issue, last issue's results and market news",
+      "The paper also carries silly news and dad jokes",
+      "Port booms, festivals, storms and pirate raids now move related stocks",
+      "The bank offers trade insurance: pirate losses are refunded at 70% of their value"
+     ]
+    },
+    "tr": {
+     "title": "Price paper and trade insurance",
+     "items": [
+      "The bank has a Paper tab: current stock prices, a forecast until the next issue, last issue's results and market news",
+      "The paper also carries silly news and dad jokes",
+      "Port booms, festivals, storms and pirate raids now move related stocks",
+      "The bank offers trade insurance: pirate losses are refunded at 70% of their value"
+     ]
+    },
+    "it": {
+     "title": "Giornale dei prezzi e assicurazione commerciale",
+     "items": [
+      "La banca ha una scheda Giornale: prezzi attuali delle azioni, previsione fino al prossimo numero, risultati del numero scorso e notizie di mercato",
+      "Il giornale riporta anche notizie buffe e battute da papà",
+      "Boom portuali, feste, tempeste e assalti pirati ora muovono le azioni collegate",
+      "La banca offre un'assicurazione commerciale: le perdite per pirati vengono rimborsate al 70% del valore"
+     ]
+    },
+    "pl": {
+     "title": "Gazeta cenowa i ubezpieczenie handlu",
+     "items": [
+      "Bank ma zakładkę Gazeta: bieżące ceny akcji, prognoza do następnego wydania, wyniki poprzedniego i wiadomości rynkowe",
+      "Gazeta zawiera też głupie wiadomości i suchary",
+      "Boomy portowe, festyny, burze i napady piratów poruszają teraz powiązanymi akcjami",
+      "Bank oferuje ubezpieczenie handlu: straty przez piratów są zwracane w 70% wartości"
+     ]
+    },
+    "ar": {
+     "title": "صحيفة الأسعار وتأمين التجارة",
+     "items": [
+      "في البنك تبويب الصحيفة: أسعار الأسهم الحالية وتوقع حتى العدد التالي ونتائج العدد السابق وأخبار السوق",
+      "تنشر الصحيفة أيضًا أخبارًا طريفة ونكاتًا سخيفة",
+      "صارت طفرات الموانئ والمهرجانات والعواصف وغارات القراصنة تحرك الأسهم المرتبطة",
+      "يقدم البنك تأمين التجارة: تُعوَّض خسائر القراصنة بـ70% من قيمتها"
+     ]
     }
    }
   },
@@ -4700,6 +7310,62 @@
       "Du kannst Geld bei der Bank anlegen: 0,2% Zinsen pro Minute, jederzeit abhebbar",
       "Kredite sind jetzt im Kredit-Tab desselben Bankfensters"
      ]
+    },
+    "zh": {
+     "title": "Bank expansion",
+     "items": [
+      "You can now buy and sell stocks at the bank: grain, orchard, wine, textile, fishing and trade",
+      "You can deposit money at the bank: 0.2% interest per minute, withdraw anytime",
+      "Loans moved to the Loan tab of the same bank window"
+     ]
+    },
+    "pt": {
+     "title": "Bank expansion",
+     "items": [
+      "You can now buy and sell stocks at the bank: grain, orchard, wine, textile, fishing and trade",
+      "You can deposit money at the bank: 0.2% interest per minute, withdraw anytime",
+      "Loans moved to the Loan tab of the same bank window"
+     ]
+    },
+    "ru": {
+     "title": "Bank expansion",
+     "items": [
+      "You can now buy and sell stocks at the bank: grain, orchard, wine, textile, fishing and trade",
+      "You can deposit money at the bank: 0.2% interest per minute, withdraw anytime",
+      "Loans moved to the Loan tab of the same bank window"
+     ]
+    },
+    "tr": {
+     "title": "Bank expansion",
+     "items": [
+      "You can now buy and sell stocks at the bank: grain, orchard, wine, textile, fishing and trade",
+      "You can deposit money at the bank: 0.2% interest per minute, withdraw anytime",
+      "Loans moved to the Loan tab of the same bank window"
+     ]
+    },
+    "it": {
+     "title": "Ampliamento della banca",
+     "items": [
+      "Ora puoi comprare e vendere azioni in banca: grano, frutteti, vino, tessile, pesca e commercio",
+      "Puoi depositare denaro in banca: 0,2% di interesse al minuto, prelievo in qualsiasi momento",
+      "I prestiti si sono spostati nella scheda Prestito della stessa finestra della banca"
+     ]
+    },
+    "pl": {
+     "title": "Rozbudowa banku",
+     "items": [
+      "Możesz teraz kupować i sprzedawać akcje w banku: zboże, sady, wino, tekstylia, rybołówstwo i handel",
+      "Możesz wpłacać pieniądze do banku: 0,2% odsetek na minutę, wypłata w każdej chwili",
+      "Pożyczki przeniesiono do zakładki Pożyczka w tym samym oknie banku"
+     ]
+    },
+    "ar": {
+     "title": "توسيع البنك",
+     "items": [
+      "يمكنك الآن شراء الأسهم وبيعها في البنك: الحبوب والبساتين والنبيذ والنسيج والصيد والتجارة",
+      "يمكنك إيداع المال في البنك: فائدة 0.2% في الدقيقة والسحب في أي وقت",
+      "انتقلت القروض إلى تبويب القرض في نافذة البنك نفسها"
+     ]
     }
    }
   },
@@ -4746,6 +7412,55 @@
       "Dein Hafen hat Gebäude: Hafenamt (Schiffe und Aufträge), Frachtlager, Fischmarkt, Leuchtturm und Kran an den Stegen",
       "Jede Insel, auf der du anlandest, hat ein eigenes Hafengebäude am Steg"
      ]
+    },
+    "zh": {
+     "title": "Harbor buildings",
+     "items": [
+      "Your harbor now has buildings: a harbor office (ships and contracts), a cargo shed, a fish market, a lighthouse and a crane beside the piers",
+      "Each island you land on now has its own harbor building next to the pier"
+     ]
+    },
+    "pt": {
+     "title": "Harbor buildings",
+     "items": [
+      "Your harbor now has buildings: a harbor office (ships and contracts), a cargo shed, a fish market, a lighthouse and a crane beside the piers",
+      "Each island you land on now has its own harbor building next to the pier"
+     ]
+    },
+    "ru": {
+     "title": "Harbor buildings",
+     "items": [
+      "Your harbor now has buildings: a harbor office (ships and contracts), a cargo shed, a fish market, a lighthouse and a crane beside the piers",
+      "Each island you land on now has its own harbor building next to the pier"
+     ]
+    },
+    "tr": {
+     "title": "Harbor buildings",
+     "items": [
+      "Your harbor now has buildings: a harbor office (ships and contracts), a cargo shed, a fish market, a lighthouse and a crane beside the piers",
+      "Each island you land on now has its own harbor building next to the pier"
+     ]
+    },
+    "it": {
+     "title": "Edifici del porto",
+     "items": [
+      "Il tuo porto ora ha edifici: capitaneria (navi e contratti), capannone merci, mercato del pesce, faro e gru accanto ai moli",
+      "Ogni isola dove sbarchi ora ha il suo edificio portuale accanto al molo"
+     ]
+    },
+    "pl": {
+     "title": "Budynki portowe",
+     "items": [
+      "Twój port ma teraz budynki: kapitanat (statki i kontrakty), magazyn ładunków, targ rybny, latarnię i dźwig przy nabrzeżach",
+      "Każda wyspa, na której lądujesz, ma teraz własny budynek portowy przy molo"
+     ]
+    },
+    "ar": {
+     "title": "مباني الميناء",
+     "items": [
+      "صار لميناءك مبانٍ: مكتب الميناء (السفن والعقود) وسقيفة البضائع وسوق السمك والمنارة ورافعة بجانب الأرصفة",
+      "لكل جزيرة تنزل فيها الآن مبنى ميناء خاص بجانب الرصيف"
+     ]
     }
    }
   },
@@ -4791,6 +7506,55 @@
      "items": [
       "Segelst du selbst zu einer Insel, landest du auf ihrer eigenen Karte. Jede sieht anders aus: Goldhafen hat Weizenfelder und eine Windmühle, Redport einen Apfelgarten, Lavender Port Weinberge und eine Steinvilla, Cotton Port Baumwolle und Schafe, Salt Bay ein Fischerdorf an einer Bucht, Gewürzhafen Basarzelte, das Korallen-Eiland Korallenbecken, die Bernsteininsel einen Harzwald und das Ruinen-Atoll alte Säulen und einen Altar",
       "Lauf über die Insel und sammle glitzernde Spezialitäten, handle und schalte im Marktgebäude frei und kehre über den Steg zum Schiff zurück"
+     ]
+    },
+    "zh": {
+     "title": "Landing",
+     "items": [
+      "Sailing to an island now lets you land on its own map: Goldport has wheat fields and a windmill, Redport an apple orchard, Violetport vineyards and a villa, Cloudport cotton and sheep, Blue Bay a fishing village on a bay, Spiceport bazaar tents, Coral Cay coral pools, Amber Isle a resin forest, and Ruin Atoll old pillars and an altar",
+      "Walk around to pick up local goods, trade and unlock at the market building, and return to your ship from the pier"
+     ]
+    },
+    "pt": {
+     "title": "Landing",
+     "items": [
+      "Sailing to an island now lets you land on its own map: Goldport has wheat fields and a windmill, Redport an apple orchard, Violetport vineyards and a villa, Cloudport cotton and sheep, Blue Bay a fishing village on a bay, Spiceport bazaar tents, Coral Cay coral pools, Amber Isle a resin forest, and Ruin Atoll old pillars and an altar",
+      "Walk around to pick up local goods, trade and unlock at the market building, and return to your ship from the pier"
+     ]
+    },
+    "ru": {
+     "title": "Landing",
+     "items": [
+      "Sailing to an island now lets you land on its own map: Goldport has wheat fields and a windmill, Redport an apple orchard, Violetport vineyards and a villa, Cloudport cotton and sheep, Blue Bay a fishing village on a bay, Spiceport bazaar tents, Coral Cay coral pools, Amber Isle a resin forest, and Ruin Atoll old pillars and an altar",
+      "Walk around to pick up local goods, trade and unlock at the market building, and return to your ship from the pier"
+     ]
+    },
+    "tr": {
+     "title": "Landing",
+     "items": [
+      "Sailing to an island now lets you land on its own map: Goldport has wheat fields and a windmill, Redport an apple orchard, Violetport vineyards and a villa, Cloudport cotton and sheep, Blue Bay a fishing village on a bay, Spiceport bazaar tents, Coral Cay coral pools, Amber Isle a resin forest, and Ruin Atoll old pillars and an altar",
+      "Walk around to pick up local goods, trade and unlock at the market building, and return to your ship from the pier"
+     ]
+    },
+    "it": {
+     "title": "Sbarco",
+     "items": [
+      "Navigando verso un'isola ora puoi sbarcare sulla sua mappa: Portodoro ha campi di grano e un mulino a vento, Portorosso un meleto, Portoviola vigneti e una villa, Portonuvola cotone e pecore, Baia Blu un villaggio di pescatori in una baia, Portospezie tende del bazar, Isolotto del Corallo pozze di corallo, Isola d'Ambra una foresta di resina e Atollo delle Rovine vecchie colonne e un altare",
+      "Gira per raccogliere merci locali, commercia e sblocca all'edificio del mercato, e torna alla nave dal molo"
+     ]
+    },
+    "pl": {
+     "title": "Lądowanie",
+     "items": [
+      "Płynąc na wyspę, możesz teraz zejść na jej mapę: Złoty Port ma pola pszenicy i wiatrak, Czerwony Port sad jabłoniowy, Fioletowy Port winnice i willę, Chmurny Port bawełnę i owce, Błękitna Zatoka wioskę rybacką nad zatoką, Port Przypraw namioty bazaru, Koralowa Wysepka koralowe sadzawki, Bursztynowa Wyspa żywiczny las, a Atol Ruin stare kolumny i ołtarz",
+      "Chodź, by zbierać lokalne towary, handluj i odblokowuj w budynku targu, a do statku wracaj z molo"
+     ]
+    },
+    "ar": {
+     "title": "النزول",
+     "items": [
+      "الإبحار إلى جزيرة يتيح الآن النزول على خريطتها: ميناء الذهب فيه حقول قمح وطاحونة هواء، والميناء الأحمر بستان تفاح، والميناء البنفسجي كروم وفيلا، وميناء السحاب قطن وأغنام، والخليج الأزرق قرية صيادين على خليج، وميناء التوابل خيام بازار، وجزيرة المرجان برك مرجانية، وجزيرة الكهرمان غابة راتنج، وجزيرة الأطلال أعمدة قديمة ومذبح",
+      "تجوّل لالتقاط البضائع المحلية، وتاجر وافتح العناصر في مبنى السوق، وعد إلى سفينتك من الرصيف"
      ]
     }
    }
@@ -4867,6 +7631,90 @@
       "Die Schrift in der Lobby ist größer",
       "Gebäude brauchen jetzt Bauzeit: Fundament, Gerüst, dann Dach. Auch Ausbauten erfordern Bauarbeiten, und währenddessen ist das Gebäude nicht nutzbar",
       "Die Build-Nummer steht jetzt neben der Version, etwa „v0.2 build 1“"
+     ]
+    },
+    "zh": {
+     "title": "打磨",
+     "items": [
+      "New games show one short step at a time instead of a long guide",
+      "\"Plant in all empty fields\" and \"Collect all\" now unlock through research",
+      "The research window is now a branching tree: finish a research to open the ones at its edge",
+      "Processing starts by hand: load ingredients into a building and carry the goods out. Research Auto feed and Auto carry to automate it",
+      "Lobby text is bigger",
+      "Buildings now take time to construct, rising from foundation to frame to roof. Upgrades also take time, and the building is unusable meanwhile",
+      "The build number now shows next to the version, like v0.2 build 1"
+     ]
+    },
+    "pt": {
+     "title": "Polimento",
+     "items": [
+      "New games show one short step at a time instead of a long guide",
+      "\"Plant in all empty fields\" and \"Collect all\" now unlock through research",
+      "The research window is now a branching tree: finish a research to open the ones at its edge",
+      "Processing starts by hand: load ingredients into a building and carry the goods out. Research Auto feed and Auto carry to automate it",
+      "Lobby text is bigger",
+      "Buildings now take time to construct, rising from foundation to frame to roof. Upgrades also take time, and the building is unusable meanwhile",
+      "The build number now shows next to the version, like v0.2 build 1"
+     ]
+    },
+    "ru": {
+     "title": "Шлифовка",
+     "items": [
+      "New games show one short step at a time instead of a long guide",
+      "\"Plant in all empty fields\" and \"Collect all\" now unlock through research",
+      "The research window is now a branching tree: finish a research to open the ones at its edge",
+      "Processing starts by hand: load ingredients into a building and carry the goods out. Research Auto feed and Auto carry to automate it",
+      "Lobby text is bigger",
+      "Buildings now take time to construct, rising from foundation to frame to roof. Upgrades also take time, and the building is unusable meanwhile",
+      "The build number now shows next to the version, like v0.2 build 1"
+     ]
+    },
+    "tr": {
+     "title": "Cilalama",
+     "items": [
+      "New games show one short step at a time instead of a long guide",
+      "\"Plant in all empty fields\" and \"Collect all\" now unlock through research",
+      "The research window is now a branching tree: finish a research to open the ones at its edge",
+      "Processing starts by hand: load ingredients into a building and carry the goods out. Research Auto feed and Auto carry to automate it",
+      "Lobby text is bigger",
+      "Buildings now take time to construct, rising from foundation to frame to roof. Upgrades also take time, and the building is unusable meanwhile",
+      "The build number now shows next to the version, like v0.2 build 1"
+     ]
+    },
+    "it": {
+     "title": "Rifinitura",
+     "items": [
+      "Le nuove partite mostrano un breve passo alla volta invece di una lunga guida",
+      "\"Pianta in tutti i campi vuoti\" e \"Raccogli tutto\" ora si sbloccano con la ricerca",
+      "La finestra della ricerca ora è un albero ramificato: completa una ricerca per aprire quelle al suo bordo",
+      "La lavorazione inizia a mano: carica gli ingredienti in un edificio e porta fuori le merci. Ricerca Rifornimento automatico e Trasporto automatico per automatizzarla",
+      "Il testo della lobby è più grande",
+      "Gli edifici ora richiedono tempo per essere costruiti, salendo da fondamenta a struttura a tetto. Anche i miglioramenti richiedono tempo e nel frattempo l'edificio non è utilizzabile",
+      "Il numero di build ora appare accanto alla versione, come v0.2 build 1"
+     ]
+    },
+    "pl": {
+     "title": "Szlif",
+     "items": [
+      "Nowe gry pokazują po jednym krótkim kroku zamiast długiego przewodnika",
+      "„Zasiej na wszystkich pustych polach” i „Zbierz wszystko” odblokowuje się teraz badaniami",
+      "Okno badań to teraz rozgałęzione drzewo: ukończ badanie, by otworzyć te na jego krawędzi",
+      "Przetwarzanie zaczyna się ręcznie: załaduj składniki do budynku i wynieś towary. Zbadaj Automatyczne zasilanie i Automatyczny transport, by to zautomatyzować",
+      "Tekst w lobby jest większy",
+      "Budowa budynków trwa teraz: od fundamentów, przez szkielet, po dach. Ulepszenia też trwają, a budynek jest wtedy niedostępny",
+      "Numer buildu jest teraz pokazywany obok wersji, np. v0.2 build 1"
+     ]
+    },
+    "ar": {
+     "title": "تحسينات",
+     "items": [
+      "تعرض الألعاب الجديدة خطوة قصيرة في كل مرة بدل دليل طويل",
+      "\"ازرع في كل الحقول الفارغة\" و\"اجمع الكل\" يُفتحان الآن بالبحث",
+      "نافذة البحث الآن شجرة متفرعة: أنهِ بحثًا لتفتح الأبحاث المتصلة به",
+      "يبدأ التصنيع يدويًا: حمّل المكونات في مبنى وأخرج البضائع. ابحث التغذية التلقائية والنقل التلقائي لأتمتته",
+      "نص الردهة أكبر",
+      "صار بناء المباني يستغرق وقتًا، من الأساس إلى الهيكل إلى السقف. والتطوير أيضًا يستغرق وقتًا والمبنى غير متاح خلاله",
+      "يظهر رقم البناء الآن بجانب الإصدار مثل v0.2 build 1"
      ]
     }
    }
@@ -5166,6 +8014,349 @@
       "Sound und Musik, 6 Sprachen, 80 Erfolge, ein Kodex und Preisdiagramme hinzugefügt",
       "Die gesamte Pixelgrafik wurde neu gezeichnet"
      ]
+    },
+    "zh": {
+     "title": "The big voyage",
+     "items": [
+      "Accounts no longer overlap in one browser. Each account has its own save, and each tab can log in as a different account",
+      "Turn on \"Replant in every field\" in a field menu to auto-replant after harvest (needs the Auto-sowing research)",
+      "Buildings are more detailed, with proper pitched roofs, shingles, chimneys, window frames and doors",
+      "Day and night, weather and seasons now change gradually",
+      "You can expand the warehouse from the barn: +25 per slot, up to 10 times",
+      "Hire sailors at the harbor: navigators, gunners, porters and hagglers with different personalities",
+      "Fish up bottles while sailing to collect map pieces. Every three pieces reveal a secret island",
+      "A shop of your own opens in town. Display goods, set the price and customers come",
+      "Town big orders arrive. Deliver processed goods, or fill them together with the room and split the reward",
+      "Codex tiers: every 10 goods raises your tier and sale prices, and unlocks six new decorations",
+      "Each island now has a specialty crop you can only unlock there",
+      "Ports now post orders for processed goods with much bigger rewards",
+      "Land at a port with your own ship to sell, buy and fill orders on the spot",
+      "Decorate your island from home with paths, flowers, trees, benches, lamps, flags, a fountain and a statue. Visitors see them too",
+      "Fields, ranch, town and harbor are now one big map you can walk across",
+      "You walk around by controlling your character",
+      "Fields can grow up to 48 plots, and empty ones can be sold",
+      "The ranch grew to 12 pens with more animals",
+      "No menus: walk up to the home, warehouse, research mill, bank, notice board and harbor to use them",
+      "The lobby got a new layout",
+      "The isle grew into four places: fields, ranch, town and sea",
+      "Six ports now, plus importing goods on the way home",
+      "Added port contracts, reputation, visiting traders and pirates",
+      "Added four seasons, weather and day-night",
+      "Added 16 researches, 7 ranks, a bank and 12 guide quests",
+      "Added three ship types and a shipyard",
+      "Seeds now come from the seed shop; you start with only 6 wheat seeds",
+      "Ranch lots are redrawn with dense grass, dirt, stones and fences",
+      "You can log in with a Frenchfries777 account from the lobby or home",
+      "Cookies from eggs and flour, pudding from eggs and milk; the market shows how much more processing earns",
+      "Sail your own ship to other islands and unlock seeds and workshops your home island lacks",
+      "The game is now called Isleport, with a new lobby island of lighthouse and windmill",
+      "Each field plot is bigger and crops grow denser",
+      "A market at the town gate lets you sell goods straight from the warehouse",
+      "If you run out of gold and goods, a neighbor pays a wage so you can restart",
+      "Everyone has their own island, and you can visit other players’ islands",
+      "Trade live with the person you meet: both see the offers and swap when ready",
+      "Connect by room code for auctions, chat and shared projects",
+      "Slow at first, automatic later: up to 12 workers, conveyors, greenhouses and sprinklers",
+      "Fields have more pixel detail and the 48 plots now sit side by side",
+      "Now 65 goods, 17 crops and 7 animals",
+      "20 buildings, 16 town lots and 27 researches",
+      "Added sound and music, 6 languages, 80 achievements, a codex and price charts",
+      "All pixel art was redrawn"
+     ]
+    },
+    "pt": {
+     "title": "The big voyage",
+     "items": [
+      "Accounts no longer overlap in one browser. Each account has its own save, and each tab can log in as a different account",
+      "Turn on \"Replant in every field\" in a field menu to auto-replant after harvest (needs the Auto-sowing research)",
+      "Buildings are more detailed, with proper pitched roofs, shingles, chimneys, window frames and doors",
+      "Day and night, weather and seasons now change gradually",
+      "You can expand the warehouse from the barn: +25 per slot, up to 10 times",
+      "Hire sailors at the harbor: navigators, gunners, porters and hagglers with different personalities",
+      "Fish up bottles while sailing to collect map pieces. Every three pieces reveal a secret island",
+      "A shop of your own opens in town. Display goods, set the price and customers come",
+      "Town big orders arrive. Deliver processed goods, or fill them together with the room and split the reward",
+      "Codex tiers: every 10 goods raises your tier and sale prices, and unlocks six new decorations",
+      "Each island now has a specialty crop you can only unlock there",
+      "Ports now post orders for processed goods with much bigger rewards",
+      "Land at a port with your own ship to sell, buy and fill orders on the spot",
+      "Decorate your island from home with paths, flowers, trees, benches, lamps, flags, a fountain and a statue. Visitors see them too",
+      "Fields, ranch, town and harbor are now one big map you can walk across",
+      "You walk around by controlling your character",
+      "Fields can grow up to 48 plots, and empty ones can be sold",
+      "The ranch grew to 12 pens with more animals",
+      "No menus: walk up to the home, warehouse, research mill, bank, notice board and harbor to use them",
+      "The lobby got a new layout",
+      "The isle grew into four places: fields, ranch, town and sea",
+      "Six ports now, plus importing goods on the way home",
+      "Added port contracts, reputation, visiting traders and pirates",
+      "Added four seasons, weather and day-night",
+      "Added 16 researches, 7 ranks, a bank and 12 guide quests",
+      "Added three ship types and a shipyard",
+      "Seeds now come from the seed shop; you start with only 6 wheat seeds",
+      "Ranch lots are redrawn with dense grass, dirt, stones and fences",
+      "You can log in with a Frenchfries777 account from the lobby or home",
+      "Cookies from eggs and flour, pudding from eggs and milk; the market shows how much more processing earns",
+      "Sail your own ship to other islands and unlock seeds and workshops your home island lacks",
+      "The game is now called Isleport, with a new lobby island of lighthouse and windmill",
+      "Each field plot is bigger and crops grow denser",
+      "A market at the town gate lets you sell goods straight from the warehouse",
+      "If you run out of gold and goods, a neighbor pays a wage so you can restart",
+      "Everyone has their own island, and you can visit other players’ islands",
+      "Trade live with the person you meet: both see the offers and swap when ready",
+      "Connect by room code for auctions, chat and shared projects",
+      "Slow at first, automatic later: up to 12 workers, conveyors, greenhouses and sprinklers",
+      "Fields have more pixel detail and the 48 plots now sit side by side",
+      "Now 65 goods, 17 crops and 7 animals",
+      "20 buildings, 16 town lots and 27 researches",
+      "Added sound and music, 6 languages, 80 achievements, a codex and price charts",
+      "All pixel art was redrawn"
+     ]
+    },
+    "ru": {
+     "title": "The big voyage",
+     "items": [
+      "Accounts no longer overlap in one browser. Each account has its own save, and each tab can log in as a different account",
+      "Turn on \"Replant in every field\" in a field menu to auto-replant after harvest (needs the Auto-sowing research)",
+      "Buildings are more detailed, with proper pitched roofs, shingles, chimneys, window frames and doors",
+      "Day and night, weather and seasons now change gradually",
+      "You can expand the warehouse from the barn: +25 per slot, up to 10 times",
+      "Hire sailors at the harbor: navigators, gunners, porters and hagglers with different personalities",
+      "Fish up bottles while sailing to collect map pieces. Every three pieces reveal a secret island",
+      "A shop of your own opens in town. Display goods, set the price and customers come",
+      "Town big orders arrive. Deliver processed goods, or fill them together with the room and split the reward",
+      "Codex tiers: every 10 goods raises your tier and sale prices, and unlocks six new decorations",
+      "Each island now has a specialty crop you can only unlock there",
+      "Ports now post orders for processed goods with much bigger rewards",
+      "Land at a port with your own ship to sell, buy and fill orders on the spot",
+      "Decorate your island from home with paths, flowers, trees, benches, lamps, flags, a fountain and a statue. Visitors see them too",
+      "Fields, ranch, town and harbor are now one big map you can walk across",
+      "You walk around by controlling your character",
+      "Fields can grow up to 48 plots, and empty ones can be sold",
+      "The ranch grew to 12 pens with more animals",
+      "No menus: walk up to the home, warehouse, research mill, bank, notice board and harbor to use them",
+      "The lobby got a new layout",
+      "The isle grew into four places: fields, ranch, town and sea",
+      "Six ports now, plus importing goods on the way home",
+      "Added port contracts, reputation, visiting traders and pirates",
+      "Added four seasons, weather and day-night",
+      "Added 16 researches, 7 ranks, a bank and 12 guide quests",
+      "Added three ship types and a shipyard",
+      "Seeds now come from the seed shop; you start with only 6 wheat seeds",
+      "Ranch lots are redrawn with dense grass, dirt, stones and fences",
+      "You can log in with a Frenchfries777 account from the lobby or home",
+      "Cookies from eggs and flour, pudding from eggs and milk; the market shows how much more processing earns",
+      "Sail your own ship to other islands and unlock seeds and workshops your home island lacks",
+      "The game is now called Isleport, with a new lobby island of lighthouse and windmill",
+      "Each field plot is bigger and crops grow denser",
+      "A market at the town gate lets you sell goods straight from the warehouse",
+      "If you run out of gold and goods, a neighbor pays a wage so you can restart",
+      "Everyone has their own island, and you can visit other players’ islands",
+      "Trade live with the person you meet: both see the offers and swap when ready",
+      "Connect by room code for auctions, chat and shared projects",
+      "Slow at first, automatic later: up to 12 workers, conveyors, greenhouses and sprinklers",
+      "Fields have more pixel detail and the 48 plots now sit side by side",
+      "Now 65 goods, 17 crops and 7 animals",
+      "20 buildings, 16 town lots and 27 researches",
+      "Added sound and music, 6 languages, 80 achievements, a codex and price charts",
+      "All pixel art was redrawn"
+     ]
+    },
+    "tr": {
+     "title": "The big voyage",
+     "items": [
+      "Accounts no longer overlap in one browser. Each account has its own save, and each tab can log in as a different account",
+      "Turn on \"Replant in every field\" in a field menu to auto-replant after harvest (needs the Auto-sowing research)",
+      "Buildings are more detailed, with proper pitched roofs, shingles, chimneys, window frames and doors",
+      "Day and night, weather and seasons now change gradually",
+      "You can expand the warehouse from the barn: +25 per slot, up to 10 times",
+      "Hire sailors at the harbor: navigators, gunners, porters and hagglers with different personalities",
+      "Fish up bottles while sailing to collect map pieces. Every three pieces reveal a secret island",
+      "A shop of your own opens in town. Display goods, set the price and customers come",
+      "Town big orders arrive. Deliver processed goods, or fill them together with the room and split the reward",
+      "Codex tiers: every 10 goods raises your tier and sale prices, and unlocks six new decorations",
+      "Each island now has a specialty crop you can only unlock there",
+      "Ports now post orders for processed goods with much bigger rewards",
+      "Land at a port with your own ship to sell, buy and fill orders on the spot",
+      "Decorate your island from home with paths, flowers, trees, benches, lamps, flags, a fountain and a statue. Visitors see them too",
+      "Fields, ranch, town and harbor are now one big map you can walk across",
+      "You walk around by controlling your character",
+      "Fields can grow up to 48 plots, and empty ones can be sold",
+      "The ranch grew to 12 pens with more animals",
+      "No menus: walk up to the home, warehouse, research mill, bank, notice board and harbor to use them",
+      "The lobby got a new layout",
+      "The isle grew into four places: fields, ranch, town and sea",
+      "Six ports now, plus importing goods on the way home",
+      "Added port contracts, reputation, visiting traders and pirates",
+      "Added four seasons, weather and day-night",
+      "Added 16 researches, 7 ranks, a bank and 12 guide quests",
+      "Added three ship types and a shipyard",
+      "Seeds now come from the seed shop; you start with only 6 wheat seeds",
+      "Ranch lots are redrawn with dense grass, dirt, stones and fences",
+      "You can log in with a Frenchfries777 account from the lobby or home",
+      "Cookies from eggs and flour, pudding from eggs and milk; the market shows how much more processing earns",
+      "Sail your own ship to other islands and unlock seeds and workshops your home island lacks",
+      "The game is now called Isleport, with a new lobby island of lighthouse and windmill",
+      "Each field plot is bigger and crops grow denser",
+      "A market at the town gate lets you sell goods straight from the warehouse",
+      "If you run out of gold and goods, a neighbor pays a wage so you can restart",
+      "Everyone has their own island, and you can visit other players’ islands",
+      "Trade live with the person you meet: both see the offers and swap when ready",
+      "Connect by room code for auctions, chat and shared projects",
+      "Slow at first, automatic later: up to 12 workers, conveyors, greenhouses and sprinklers",
+      "Fields have more pixel detail and the 48 plots now sit side by side",
+      "Now 65 goods, 17 crops and 7 animals",
+      "20 buildings, 16 town lots and 27 researches",
+      "Added sound and music, 6 languages, 80 achievements, a codex and price charts",
+      "All pixel art was redrawn"
+     ]
+    },
+    "it": {
+     "title": "Il grande viaggio",
+     "items": [
+      "Gli account non si sovrappongono più nello stesso browser. Ogni account ha il suo salvataggio e ogni scheda può accedere con un account diverso",
+      "Attiva \"Risemina in tutti i campi\" nel menu di un campo per riseminare automaticamente dopo il raccolto (richiede la ricerca Semina automatica)",
+      "Gli edifici sono più dettagliati, con veri tetti a falde, tegole, camini, cornici delle finestre e porte",
+      "Giorno e notte, meteo e stagioni ora cambiano gradualmente",
+      "Puoi ampliare il magazzino dal fienile: +25 per slot, fino a 10 volte",
+      "Assumi marinai al porto: navigatori, cannonieri, facchini e mercanteggiatori con personalità diverse",
+      "Pesca bottiglie navigando per raccogliere pezzi di mappa. Ogni tre pezzi si rivela un'isola segreta",
+      "In città apre un tuo negozio. Esponi le merci, fissa il prezzo e arrivano i clienti",
+      "Arrivano grandi ordini della città. Consegna merci lavorate, o evadili insieme alla stanza e dividete la ricompensa",
+      "Livelli del catalogo: ogni 10 merci alzano il livello e i prezzi di vendita, e sbloccano sei nuove decorazioni",
+      "Ogni isola ora ha una coltura tipica che si sblocca solo lì",
+      "I porti ora pubblicano ordini di merci lavorate con ricompense molto più alte",
+      "Sbarca in un porto con la tua nave per vendere, comprare ed evadere ordini sul posto",
+      "Decora la tua isola da casa con sentieri, fiori, alberi, panchine, lampioni, bandiere, una fontana e una statua. Li vedono anche i visitatori",
+      "Campi, ranch, città e porto ora sono un'unica grande mappa da attraversare a piedi",
+      "Ti muovi controllando il tuo personaggio",
+      "I campi possono arrivare a 48 appezzamenti, e quelli vuoti si possono vendere",
+      "Il ranch è cresciuto a 12 recinti con più animali",
+      "Niente menu: avvicinati a casa, magazzino, mulino della ricerca, banca, bacheca e porto per usarli",
+      "La lobby ha una nuova disposizione",
+      "L'isola è cresciuta in quattro luoghi: campi, ranch, città e mare",
+      "Ora sei porti, più l'importazione di merci sulla via di casa",
+      "Aggiunti contratti portuali, reputazione, mercanti in visita e pirati",
+      "Aggiunte quattro stagioni, meteo e ciclo giorno-notte",
+      "Aggiunte 16 ricerche, 7 gradi, una banca e 12 missioni guida",
+      "Aggiunti tre tipi di nave e un cantiere navale",
+      "I semi ora vengono dal negozio di semi; inizi con solo 6 semi di grano",
+      "I lotti del ranch sono stati ridisegnati con erba fitta, terra, sassi e recinti",
+      "Puoi accedere con un account Frenchfries777 dalla lobby o da casa",
+      "Biscotti da uova e farina, budino da uova e latte; il mercato mostra quanto rende di più la lavorazione",
+      "Naviga con la tua nave verso altre isole e sblocca semi e laboratori che la tua isola non ha",
+      "Il gioco ora si chiama Isleport, con una nuova isola nella lobby con faro e mulino a vento",
+      "Ogni appezzamento è più grande e le colture crescono più fitte",
+      "Un mercato alla porta della città permette di vendere merci direttamente dal magazzino",
+      "Se resti senza oro e merci, un vicino ti paga un salario così puoi ripartire",
+      "Ognuno ha la sua isola, e puoi visitare le isole degli altri giocatori",
+      "Commercia dal vivo con chi incontri: entrambi vedete le offerte e scambiate quando siete pronti",
+      "Collegati con il codice della stanza per aste, chat e progetti condivisi",
+      "Lento all'inizio, automatico dopo: fino a 12 lavoratori, nastri trasportatori, serre e irrigatori",
+      "I campi hanno più dettagli pixel e i 48 appezzamenti ora stanno uno accanto all'altro",
+      "Ora 65 merci, 17 colture e 7 animali",
+      "20 edifici, 16 lotti cittadini e 27 ricerche",
+      "Aggiunti suoni e musica, 6 lingue, 80 obiettivi, un catalogo e grafici dei prezzi",
+      "Tutta la pixel art è stata ridisegnata"
+     ]
+    },
+    "pl": {
+     "title": "Wielki rejs",
+     "items": [
+      "Konta nie nakładają się już w jednej przeglądarce. Każde konto ma własny zapis, a każda karta może być zalogowana na inne konto",
+      "Włącz „Ponowny siew na wszystkich polach” w menu pola, by automatycznie siać po zbiorze (wymaga badania Automatyczny siew)",
+      "Budynki są bardziej szczegółowe, z prawdziwymi spadzistymi dachami, gontem, kominami, ramami okien i drzwiami",
+      "Dzień i noc, pogoda i pory roku zmieniają się teraz stopniowo",
+      "Możesz rozbudować magazyn ze stodoły: +25 na miejsce, do 10 razy",
+      "Zatrudniaj marynarzy w porcie: nawigatorów, kanonierów, tragarzy i targujących o różnych osobowościach",
+      "Wyławiaj butelki podczas rejsu, by zbierać kawałki mapy. Co trzy kawałki odkrywają tajną wyspę",
+      "W mieście otwiera się Twój własny sklep. Wystaw towary, ustal cenę, a klienci przyjdą",
+      "Przychodzą duże zamówienia miasta. Dostarcz przetworzone towary albo zrealizuj je razem z pokojem i podzielcie nagrodę",
+      "Poziomy kodeksu: każde 10 towarów podnosi poziom i ceny sprzedaży oraz odblokowuje sześć nowych ozdób",
+      "Każda wyspa ma teraz uprawę specjalną, którą można odblokować tylko tam",
+      "Porty wystawiają teraz zamówienia na przetworzone towary ze znacznie większymi nagrodami",
+      "Przybij do portu własnym statkiem, by sprzedawać, kupować i realizować zamówienia na miejscu",
+      "Udekoruj wyspę z domu ścieżkami, kwiatami, drzewami, ławkami, latarniami, flagami, fontanną i posągiem. Goście też je widzą",
+      "Pola, ranczo, miasto i port to teraz jedna duża mapa, po której można chodzić",
+      "Poruszasz się, sterując swoją postacią",
+      "Pól może być do 48 działek, a puste można sprzedać",
+      "Ranczo urosło do 12 zagród z większą liczbą zwierząt",
+      "Bez menu: podejdź do domu, magazynu, młyna badań, banku, tablicy ogłoszeń i portu, by z nich korzystać",
+      "Lobby ma nowy układ",
+      "Wyspa rozrosła się w cztery miejsca: pola, ranczo, miasto i morze",
+      "Teraz sześć portów oraz import towarów w drodze do domu",
+      "Dodano kontrakty portowe, reputację, odwiedzających kupców i piratów",
+      "Dodano cztery pory roku, pogodę i cykl dnia i nocy",
+      "Dodano 16 badań, 7 rang, bank i 12 zadań przewodnika",
+      "Dodano trzy typy statków i stocznię",
+      "Nasiona pochodzą teraz ze sklepu z nasionami; zaczynasz tylko z 6 nasionami pszenicy",
+      "Działki rancza narysowano na nowo z gęstą trawą, ziemią, kamieniami i płotami",
+      "Możesz zalogować się kontem Frenchfries777 z lobby lub domu",
+      "Ciasteczka z jajek i mąki, budyń z jajek i mleka; targ pokazuje, ile więcej daje przetwarzanie",
+      "Płyń własnym statkiem na inne wyspy i odblokowuj nasiona oraz warsztaty, których brak na Twojej wyspie",
+      "Gra nazywa się teraz Isleport, a w lobby jest nowa wyspa z latarnią i wiatrakiem",
+      "Każda działka pola jest większa, a uprawy rosną gęściej",
+      "Targ przy bramie miasta pozwala sprzedawać towary prosto z magazynu",
+      "Jeśli zabraknie ci złota i towarów, sąsiad zapłaci ci pensję, byś mógł zacząć od nowa",
+      "Każdy ma własną wyspę, a ty możesz odwiedzać wyspy innych graczy",
+      "Handluj na żywo z napotkaną osobą: oboje widzicie oferty i wymieniacie się, gdy jesteście gotowi",
+      "Połącz się kodem pokoju, by korzystać z aukcji, czatu i wspólnych projektów",
+      "Najpierw powoli, potem automatycznie: do 12 pracowników, taśmociągi, szklarnie i zraszacze",
+      "Pola mają więcej pikselowych detali, a 48 działek leży teraz obok siebie",
+      "Teraz 65 towarów, 17 upraw i 7 zwierząt",
+      "20 budynków, 16 działek miejskich i 27 badań",
+      "Dodano dźwięki i muzykę, 6 języków, 80 osiągnięć, kodeks i wykresy cen",
+      "Cała grafika pikselowa została narysowana od nowa"
+     ]
+    },
+    "ar": {
+     "title": "الرحلة الكبرى",
+     "items": [
+      "لم تعد الحسابات تتداخل في متصفح واحد. لكل حساب حفظه، ويمكن لكل تبويب تسجيل الدخول بحساب مختلف",
+      "شغّل \"إعادة الزراعة في كل الحقول\" في قائمة الحقل لإعادة الزراعة تلقائيًا بعد الحصاد (يتطلب بحث الزراعة التلقائية)",
+      "المباني أكثر تفصيلًا بأسقف مائلة حقيقية وقرميد ومداخن وإطارات نوافذ وأبواب",
+      "الليل والنهار والطقس والفصول تتغير الآن تدريجيًا",
+      "يمكنك توسيع المستودع من الحظيرة: +25 لكل خانة، حتى 10 مرات",
+      "وظّف بحارة في الميناء: ملاحين ومدفعيين وحمّالين ومساومين بشخصيات مختلفة",
+      "التقط الزجاجات أثناء الإبحار لتجمع قطع الخريطة. كل ثلاث قطع تكشف جزيرة سرية",
+      "يُفتتح متجرك الخاص في البلدة. اعرض البضائع وحدد السعر فيأتي الزبائن",
+      "تصل طلبات كبيرة من البلدة. سلّم بضائع مصنّعة أو نفّذها مع الغرفة وتقاسموا المكافأة",
+      "مستويات الموسوعة: كل 10 بضائع ترفع مستواك وأسعار البيع وتفتح ست زينات جديدة",
+      "لكل جزيرة الآن محصول خاص لا يُفتح إلا فيها",
+      "تنشر الموانئ الآن طلبات لبضائع مصنّعة بمكافآت أكبر بكثير",
+      "انزل في ميناء بسفينتك لتبيع وتشتري وتنفّذ الطلبات في المكان",
+      "زيّن جزيرتك من المنزل بممرات وزهور وأشجار ومقاعد ومصابيح وأعلام ونافورة وتمثال. يراها الزوار أيضًا",
+      "الحقول والمزرعة والبلدة والميناء صارت خريطة واحدة كبيرة تمشي فيها",
+      "تتنقل بالتحكم في شخصيتك",
+      "يمكن أن تصل الحقول إلى 48 قطعة، ويمكن بيع الفارغة",
+      "كبرت المزرعة إلى 12 حظيرة بحيوانات أكثر",
+      "بلا قوائم: امشِ إلى المنزل والمستودع وطاحونة البحث والبنك ولوحة الإعلانات والميناء لاستخدامها",
+      "للردهة تصميم جديد",
+      "كبرت الجزيرة إلى أربعة أماكن: الحقول والمزرعة والبلدة والبحر",
+      "ستة موانئ الآن، إضافة إلى استيراد البضائع في طريق العودة",
+      "إضافة عقود الموانئ والسمعة والتجار الزائرين والقراصنة",
+      "إضافة الفصول الأربعة والطقس والليل والنهار",
+      "إضافة 16 بحثًا و7 رتب وبنك و12 مهمة إرشادية",
+      "إضافة ثلاثة أنواع من السفن وحوض لبناء السفن",
+      "البذور الآن من متجر البذور؛ تبدأ بست بذور قمح فقط",
+      "أُعيد رسم قطع المزرعة بعشب كثيف وتراب وحجارة وأسوار",
+      "يمكنك تسجيل الدخول بحساب Frenchfries777 من الردهة أو المنزل",
+      "بسكويت من البيض والدقيق، وبودنغ من البيض والحليب؛ يعرض السوق كم يربح التصنيع أكثر",
+      "أبحر بسفينتك إلى جزر أخرى وافتح بذورًا وورشًا لا تملكها جزيرتك",
+      "اسم اللعبة الآن Isleport، مع جزيرة جديدة في الردهة فيها منارة وطاحونة هواء",
+      "كل قطعة حقل أكبر والمحاصيل تنمو أكثف",
+      "سوق عند بوابة البلدة يتيح بيع البضائع مباشرة من المستودع",
+      "إذا نفد ذهبك وبضائعك يدفع لك جار أجرًا لتبدأ من جديد",
+      "لكل لاعب جزيرته، ويمكنك زيارة جزر اللاعبين الآخرين",
+      "تاجر مباشرة مع من تقابله: يرى كلاكما العروض وتتبادلان عند الاستعداد",
+      "اتصل برمز الغرفة للمزادات والدردشة والمشاريع المشتركة",
+      "بطيء في البداية وتلقائي لاحقًا: حتى 12 عاملًا وسيور ناقلة ودفيئات ومرشات",
+      "للحقول تفاصيل بكسل أكثر والقطع الـ48 صارت متجاورة",
+      "الآن 65 بضاعة و17 محصولًا و7 حيوانات",
+      "20 مبنى و16 قطعة في البلدة و27 بحثًا",
+      "إضافة الأصوات والموسيقى و6 لغات و80 إنجازًا وموسوعة ورسوم بيانية للأسعار",
+      "أُعيد رسم كل فن البكسل"
+     ]
     }
    }
   },
@@ -5229,6 +8420,76 @@
       "4 Häfen, Preisschwankungen und Ereignisse hinzugefügt",
       "Multiplayer-Räume und Ranglisten hinzugefügt",
       "Handelsangebote, Geschenke, Piratenüberfälle und Eskorten hinzugefügt"
+     ]
+    },
+    "zh": {
+     "title": "First sailing",
+     "items": [
+      "Island Trade released",
+      "Added 24 fields, 5 crops and 3 workshops",
+      "Added 4 ports, price swings and events",
+      "Added multiplayer rooms and rankings",
+      "Added trade offers, gifts, pirate raids and escorts"
+     ]
+    },
+    "pt": {
+     "title": "First sailing",
+     "items": [
+      "Island Trade released",
+      "Added 24 fields, 5 crops and 3 workshops",
+      "Added 4 ports, price swings and events",
+      "Added multiplayer rooms and rankings",
+      "Added trade offers, gifts, pirate raids and escorts"
+     ]
+    },
+    "ru": {
+     "title": "First sailing",
+     "items": [
+      "Island Trade released",
+      "Added 24 fields, 5 crops and 3 workshops",
+      "Added 4 ports, price swings and events",
+      "Added multiplayer rooms and rankings",
+      "Added trade offers, gifts, pirate raids and escorts"
+     ]
+    },
+    "tr": {
+     "title": "First sailing",
+     "items": [
+      "Island Trade released",
+      "Added 24 fields, 5 crops and 3 workshops",
+      "Added 4 ports, price swings and events",
+      "Added multiplayer rooms and rankings",
+      "Added trade offers, gifts, pirate raids and escorts"
+     ]
+    },
+    "it": {
+     "title": "Prima navigazione",
+     "items": [
+      "Pubblicato Island Trade",
+      "Aggiunti 24 campi, 5 colture e 3 laboratori",
+      "Aggiunti 4 porti, oscillazioni dei prezzi ed eventi",
+      "Aggiunte stanze multigiocatore e classifiche",
+      "Aggiunte offerte di scambio, regali, incursioni pirata e scorte"
+     ]
+    },
+    "pl": {
+     "title": "Pierwszy rejs",
+     "items": [
+      "Wydano Island Trade",
+      "Dodano 24 pola, 5 upraw i 3 warsztaty",
+      "Dodano 4 porty, wahania cen i wydarzenia",
+      "Dodano pokoje wieloosobowe i rankingi",
+      "Dodano oferty wymiany, prezenty, napady pirackie i eskorty"
+     ]
+    },
+    "ar": {
+     "title": "الإبحار الأول",
+     "items": [
+      "صدور Island Trade",
+      "إضافة 24 حقلًا و5 محاصيل و3 ورش",
+      "إضافة 4 موانئ وتقلبات أسعار وأحداث",
+      "إضافة غرف اللعب الجماعي والترتيب",
+      "إضافة عروض التبادل والهدايا وغارات القراصنة والمرافقة"
      ]
     }
    }

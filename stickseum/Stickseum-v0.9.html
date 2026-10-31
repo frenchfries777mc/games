@@ -4298,6 +4298,16 @@ function buildXmView(t){
   }
   return v;
 }
+function xmTargetBias(p,o){          // objective modes: who a bot would rather shoot (a factor on the distance, smaller = more wanted)
+  if(!xm) return 1;
+  switch(xm.id){
+    case 'crownhold': return (xm.crown.holder===o.id) ? 0.2 : 1;                                    // the crown holder is the prey
+    case 'koth': { const z=xm.zone; return (z && Math.abs(o.x-z.x)<=(z.w||200)/2+20 && Math.abs(o.y-z.y)<60) ? 0.5 : 1; }      // whoever stands on the hill
+    case 'bounty': return (xm.tgt===o.id) ? 0.25 : 1;                                                  // the one with the price on his head
+    case 'rush': return ((xm.sc[o.id]||0)>=4) ? 0.6 : 1;                                               // a coin carrier drops half of his coins when he falls
+  }
+  return 1;
+}
 function xmBotGoal(p,target,d){
   if(!xm) return null;
   const near=target && d<260;
@@ -4308,13 +4318,16 @@ function xmBotGoal(p,target,d){
       if(target && d<340) return null;
       let b=null, bd=1e9; for(const rid of xm.rebels){ const q=players[rid]; if(!q||!q.alive) continue; const dd=Math.hypot(q.x-c.x,q.y-c.y); if(dd<bd){ bd=dd; b=q; } }
       return (b && bd<900) ? {x:b.x,y:b.y} : {x:c.x+(((p.teamSlot||0)%5)-2)*70, y:c.y}; }
-    case 'koth': return near ? null : {x:xm.zone.x, y:xm.zone.y};
-    case 'rush': { let b=null, bd=1e9; for(const c of xm.coins){ const dd=Math.hypot(c.x-p.x,c.y-p.y); if(dd<bd){ bd=dd; b=c; } } return (b && !near) ? {x:b.x,y:b.y+26} : null; }
-    case 'turf': { if(near) return null; let b=null, bd=1e9; for(let i=0;i<xm.segs.length;i++){ if(xm.own[i]===p.team) continue; const s=xm.segs[i], dd=Math.hypot(s.x+s.w/2-p.x,s.y-p.y); if(dd<bd){ bd=dd; b=s; } } return b?{x:b.x+b.w/2,y:b.y}:null; }
+    case 'koth': { const z=xm.zone, inZ=Math.abs(p.x-z.x)<=(z.w||200)/2+20 && Math.abs(p.y-z.y)<60; return (inZ || (target && d<150)) ? ((inZ && target && d>=150)?{x:z.x,y:z.y}:null) : {x:z.x, y:z.y}; }      // the hill: get on it and stay on it, only a fight on top of me leaves it
+    case 'rush': { let b=null, bd=1e9; for(const c of xm.coins){ const dd=Math.hypot(c.x-p.x,c.y-p.y); if(dd<bd){ bd=dd; b=c; } } return (b && !(target && d<140)) ? {x:b.x,y:b.y+26} : null; }
+    case 'turf': { if(target && d<150) return null; let b=null, bd=1e9; for(let i=0;i<xm.segs.length;i++){ if(xm.own[i]===p.team) continue; const s=xm.segs[i], dd=Math.hypot(s.x+s.w/2-p.x,s.y-p.y); if(dd<bd){ bd=dd; b=s; } } return b?{x:b.x+b.w/2,y:b.y}:null; }
     case 'freeze': { if(near) return null; let b=null, bd=1e9; for(const k in xm.fz){ const q=players[k]; if(!q || q.team!==p.team) continue; const f=xm.fz[k], dd=Math.hypot(f.x-p.x,f.y-p.y); if(dd<bd){ bd=dd; b=f; } } return b?{x:b.x,y:b.y}:null; }
     case 'vip': { if(near) return null; const ek=players[xm.kings[1-p.team]]; return (ek && ek.alive && p.id!==xm.kings[p.team]) ? {x:ek.x,y:ek.y} : null; }
-    case 'bounty': { const b=players[xm.tgt]; return (!near && b && b.alive && b.id!==p.id) ? {x:b.x,y:b.y} : null; }
-    case 'crownhold': { const C=xm.crown; if(C.holder===p.id) return null; if(!C.holder) return {x:C.x, y:C.y+30}; const h=players[C.holder]; return (!near && h && h.alive) ? {x:h.x,y:h.y} : null; }
+    case 'bounty': { const b=players[xm.tgt]; return (b && b.alive && b.id!==p.id && !(target && d<150 && target.id!==b.id)) ? {x:b.x,y:b.y} : null; }
+    case 'crownhold': { const C=xm.crown, h=C.holder?players[C.holder]:null;
+      if(C.holder===p.id){ const rs=(d<700)?botRestSpot(p):null; return rs?{x:rs.x,y:rs.y}:null; }        // holding the crown: keep away from everybody (and still shoot whoever comes)
+      if(!C.holder) return {x:C.x, y:C.y+30};                                                          // nobody has it: go and take it
+      return (h && h.alive && !(target && d<150 && target.id!==h.id)) ? {x:h.x,y:h.y} : null; }       // somebody has it: hunt the holder (only a fight right on top of me comes first)
   }
   return null;
 }
@@ -5598,7 +5611,7 @@ function shuffle(arr){ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.
 /* ===== the version of this file =====
    Different BUILDS of one version meet and play together (room names online-v<ver>-<mode>-<map>-<slot>); different VERSIONS (the 0.x part) never do - the host refuses them (verNo) and the dispatcher answers busy.
    The build is only sent along with the join message and the lobby (for information); the corner of the screen shows it. */
-const GAME_BUILD='build 2026-10-31-v566';
+const GAME_BUILD='build 2026-10-31-v568';
 const GAME_VERSION='0.9', GAME_VERSION_NAME='은하 제국의 황혼';   // 게임 버전 이름: versions.json의 title과 같게 (빌드마다 바꾸지 않음)
 /* version (the 0.x part) vs build: different BUILDS of one version meet and play together, different VERSIONS never do (rooms, quick match, ranked, friend invites, dispatcher).
    Builds before 470 do not send a version, so it is read from the build number (0.9 started at build 458). */
@@ -14117,6 +14130,7 @@ function botPickTarget(p, ai){
     if(o.invis && d>160) continue;        // a cloaked player can only be noticed up close
     if(o.darkSub) continue;               // nobody can see (or hit) 쿠루스 inside his darkness
     if(o.id===ai.tgt) d*=0.5;             // stay on the current target instead of flickering between two
+    if(xm) d*=xmTargetBias(p,o);
     if(o.isVault && xm && xm.id==='vault') d*=1.0;      // 금고 약탈: the vault is a real objective, a bot near it shoots it unless a player is much closer
     if(ai.personality==='revenge' && ai.grudge===o.id && !(ai.pstuck && ai.pstuck.until>(ai.nowMs||0)/1000)) d*=0.2;   // the avenger wants the one who killed it (unless it is giving up for a while: see botPersonalityStep)
     else if(ai.personality==='rival'){ if(ai.rivalId===o.id) d*=0.25; else if(!o.isBot) d*=0.6; }   // the rival wants its human (somebody right on top of it still gets attention)
@@ -14315,6 +14329,51 @@ function botBrainCtf(p, ai, t, inp){
   if(carrier && carrier.team===myT && carrier.alive && carrier.x!==undefined) return {goalX:carrier.x+(ownHome.x>carrier.x?1:-1)*110, goalY:carrier.y};   // escort
   return {goalX:enHome.x, goalY:enHome.y};
 }
+// ---- mode-specific bot habits (each mode its own way of playing) ----
+function botNearestEnemy(p){ let b=null, bd=1e9; for(const o of enemiesOf(p)){ const d=Math.hypot(o.x-p.x,o.y-p.y); if(d<bd){ bd=d; b=o; } } return b; }
+function botBrainFreeze(p, ai, t){          // 얼음땡: the two bots nearest to a frozen mate go and stand on it to thaw it (unless an enemy is right on them), the rest fight
+  if(!xm || !xm.fz) return null;
+  for(const k of Object.keys(xm.fz)){
+    const f=players[k]; if(!f || f.id===p.id || !isAlly(p,f)) continue;
+    const z=xm.fz[k], mates=Object.values(players).filter(o=>o.isBot && o.alive && o.x!==undefined && o.id!==f.id && isAlly(o,f)).sort((a,b)=>Math.hypot(a.x-z.x,a.y-z.y)-Math.hypot(b.x-z.x,b.y-z.y));
+    if(!mates.slice(0,2).some(o=>o.id===p.id)) continue;
+    const foe=botNearestEnemy(p); if(foe && Math.hypot(foe.x-p.x,foe.y-p.y)<170) return null;
+    return {goalX:z.x, goalY:z.y};
+  }
+  return null;
+}
+function botBrainVip(p, ai, t){          // 왕 지키기: half of the team goes for the enemy king, the other half stays near its own king and meets whoever comes close to it
+  if(!xm || !xm.kings || p.team===undefined || p.team===null) return null;
+  const mk=players[xm.kings[p.team]], ek=players[xm.kings[1-p.team]];
+  if(!mk || mk.id===p.id) return null;
+  const mates=Object.values(players).filter(o=>o.isBot && o.alive && o.x!==undefined && o.team===p.team && o.id!==mk.id);
+  if(ek && ek.alive && ek.x!==undefined){
+    mates.sort((a,b)=>Math.hypot(a.x-ek.x,a.y-ek.y)-Math.hypot(b.x-ek.x,b.y-ek.y));
+    if(mates.findIndex(o=>o.id===p.id) < Math.ceil(mates.length/2)){ ai.tgt=ek.id; return {goalX:ek.x, goalY:ek.y}; }
+  }
+  if(mk.alive && mk.x!==undefined){
+    const threat=enemiesOf(p).find(o=>Math.hypot(o.x-mk.x,o.y-mk.y)<420);
+    if(threat){ ai.tgt=threat.id; return {goalX:threat.x, goalY:threat.y}; }
+    if(Math.hypot(p.x-mk.x,p.y-mk.y)>300) return {goalX:mk.x, goalY:mk.y};
+  }
+  return null;
+}
+function botBrainHunt(p, ai, t, pickLowHp){          // kill-count modes: always go after somebody (relay: the nearest, roulette: the weakest one in reach)
+  let tg=botNearestEnemy(p);
+  if(pickLowHp){ let bf=2; for(const o of enemiesOf(p)){ if(Math.hypot(o.x-p.x,o.y-p.y)>800) continue; const fr=o.hp/maxHpFor(o); if(fr<bf){ bf=fr; tg=o; } } }
+  if(!tg) return null;
+  ai.tgt=tg.id; return {goalX:tg.x, goalY:tg.y};
+}
+function botDodgeStep(p, ai, t, navBusy){          // 한 방 승부: every hit kills, so a bot hops and dashes away from shots that are about to arrive
+  if(navBusy || !p.grounded || !botIncomingShot(p, 240)) return;
+  if(Math.random()<0.5) ai.hopAt=t;
+  if(Math.random()<0.3){ const sh=bullets.find(b=>!b.dmgless && b.owner!==p.id && Math.hypot(b.x-p.x,b.y-(p.y-40))<240); if(sh){ p.input.left=sh.x>p.x; p.input.right=sh.x<=p.x; p.input.dash=true; } }
+}
+function botDashChaseStep(p, ai, t, navBusy, chance){          // dash battle royales: the dash has no cooldown, so a bot dashes in on its target all the time
+  const tg=players[ai.tgt]; if(!tg || !tg.alive || tg.x===undefined || navBusy) return;
+  const d=Math.hypot(tg.x-p.x,tg.y-p.y);
+  if(d>220 && d<650 && Math.random()<chance){ p.input.left=tg.x<p.x; p.input.right=tg.x>=p.x; p.input.dash=true; }
+}
 function botModeBrain(p, ai, t, tSec, inp, navBusy){
   switch(gameMode){
     case 'hotpotato': return botBrainHotpotato(p, ai, t, inp, navBusy);
@@ -14322,6 +14381,14 @@ function botModeBrain(p, ai, t, tSec, inp, navBusy){
     case 'survival':  return botBrainSurvival(p, ai, t, tSec, inp, navBusy);
     case 'ctf':       return botBrainCtf(p, ai, t, inp);
     case 'gold':      return botBrainGold(p, ai, t, inp);
+    case 'freeze':    return botBrainFreeze(p, ai, t);
+    case 'vip':       return botBrainVip(p, ai, t);
+    case 'relay':     return botBrainHunt(p, ai, t, false);
+    case 'roulette':  return botBrainHunt(p, ai, t, true);
+    case 'lowg':      return botBrainHunt(p, ai, t, false);
+    case 'oneshot':   botDodgeStep(p, ai, t, navBusy); return null;
+    case 'dashbr':    botDashChaseStep(p, ai, t, navBusy, 0.25); return null;
+    case 'hyperbr':   botDashChaseStep(p, ai, t, navBusy, 0.12); return null;
   }
   return null;
 }
