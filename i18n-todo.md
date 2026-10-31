@@ -718,3 +718,7 @@ patchnotes.json | v544 items[1] | 제국 수호전은 연승을 올리지도 끊
 
 ## Stickseum b559 (2026-10-31)
 - 패치노트 b559: 제목 "은하 제국의 황혼", 항목 1개 (듀얼 캐릭터별 처치 계산 수정)
+
+## Crown Envoy 로딩 진행바 (2026-10-31)
+- crownenvoy/CrownEnvoy-latest.html (시작 파일): 'CROWN ENVOY' 제목, '불러오는 중 N%'
+- 패치노트 b134 항목 1개 추가: "시작할 때 실제로 받은 만큼 차는 넓은 로딩 진행바 추가"
