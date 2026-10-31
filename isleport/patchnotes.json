@@ -2,6 +2,101 @@
  "notes": [
   {
    "date": "2026-10-31",
+   "build": "v0.2 build 81",
+   "title": "섬마다 특산 요리",
+   "items": [
+    "여섯 항구마다 그 항구의 특산품으로 만드는 특산 요리가 생겨, 그 항구에서 한 번 팔면 식당에서 만들 수 있음",
+    "특산 요리는 일반 요리보다 30% 비싸게 팔려요"
+   ],
+   "tr": {
+    "en": {
+     "title": "A signature dish for each port",
+     "items": [
+      "Each of the six ports has a signature dish made from its specialty goods; sell there once to unlock it at the diner",
+      "Signature dishes sell for 30% more than normal dishes"
+     ]
+    },
+    "ja": {
+     "title": "A signature dish for each port",
+     "items": [
+      "Each of the six ports has a signature dish made from its specialty goods; sell there once to unlock it at the diner",
+      "Signature dishes sell for 30% more than normal dishes"
+     ]
+    },
+    "es": {
+     "title": "A signature dish for each port",
+     "items": [
+      "Each of the six ports has a signature dish made from its specialty goods; sell there once to unlock it at the diner",
+      "Signature dishes sell for 30% more than normal dishes"
+     ]
+    },
+    "fr": {
+     "title": "A signature dish for each port",
+     "items": [
+      "Each of the six ports has a signature dish made from its specialty goods; sell there once to unlock it at the diner",
+      "Signature dishes sell for 30% more than normal dishes"
+     ]
+    },
+    "de": {
+     "title": "A signature dish for each port",
+     "items": [
+      "Each of the six ports has a signature dish made from its specialty goods; sell there once to unlock it at the diner",
+      "Signature dishes sell for 30% more than normal dishes"
+     ]
+    },
+    "zh": {
+     "title": "A signature dish for each port",
+     "items": [
+      "Each of the six ports has a signature dish made from its specialty goods; sell there once to unlock it at the diner",
+      "Signature dishes sell for 30% more than normal dishes"
+     ]
+    },
+    "pt": {
+     "title": "A signature dish for each port",
+     "items": [
+      "Each of the six ports has a signature dish made from its specialty goods; sell there once to unlock it at the diner",
+      "Signature dishes sell for 30% more than normal dishes"
+     ]
+    },
+    "ru": {
+     "title": "A signature dish for each port",
+     "items": [
+      "Each of the six ports has a signature dish made from its specialty goods; sell there once to unlock it at the diner",
+      "Signature dishes sell for 30% more than normal dishes"
+     ]
+    },
+    "tr": {
+     "title": "A signature dish for each port",
+     "items": [
+      "Each of the six ports has a signature dish made from its specialty goods; sell there once to unlock it at the diner",
+      "Signature dishes sell for 30% more than normal dishes"
+     ]
+    },
+    "it": {
+     "title": "A signature dish for each port",
+     "items": [
+      "Each of the six ports has a signature dish made from its specialty goods; sell there once to unlock it at the diner",
+      "Signature dishes sell for 30% more than normal dishes"
+     ]
+    },
+    "pl": {
+     "title": "A signature dish for each port",
+     "items": [
+      "Each of the six ports has a signature dish made from its specialty goods; sell there once to unlock it at the diner",
+      "Signature dishes sell for 30% more than normal dishes"
+     ]
+    },
+    "ar": {
+     "title": "A signature dish for each port",
+     "items": [
+      "Each of the six ports has a signature dish made from its specialty goods; sell there once to unlock it at the diner",
+      "Signature dishes sell for 30% more than normal dishes"
+     ]
+    }
+   }
+  },
+  {
+   "date": "2026-10-31",
    "build": "v0.2 build 80",
    "title": "성이 자라면 마을도 달라져요",
    "items": [
