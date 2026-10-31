@@ -160,6 +160,7 @@ body.crafting #inv{ top:calc(14px + var(--slot) + 18px + env(safe-area-inset-top
 #bagrow{ position:fixed; left:calc(16px + env(safe-area-inset-left,0px)); top:calc(14px + var(--slot) + 18px + env(safe-area-inset-top,0px)); z-index:6; display:none; gap:8px; pointer-events:none; }
 body.crafting.hasbag:not(.chest):not(.armor):not(.anvil) #bagrow{ display:flex; pointer-events:auto; }
 body.crafting.hasbag #recipes{ top:calc(14px + var(--slot) * 3 + 54px + env(safe-area-inset-top,0px)); max-height:calc(100vh - 14px - var(--slot) * 3 - 54px - 110px - env(safe-area-inset-top,0px)); }
+body.crafting.hasbag.chest #bagrow{ display:flex; pointer-events:auto; top:calc(14px + var(--slot) * 4 + 8px * 2 + 18px + 10px + env(safe-area-inset-top,0px)); }   /* 보관함을 열어도 추가 아이템 칸(가방)이 인벤토리 아래에 보여요 */
 body.crafting.hasbag:not(.chest):not(.armor):not(.anvil) #inv{ top:calc(14px + var(--slot) * 2 + 18px * 2 + env(safe-area-inset-top,0px)); }
 .slot{ position:relative; flex:none; width:var(--slot); height:var(--slot); background:repeating-linear-gradient(0deg,rgba(0,0,0,.08) 0 2px,rgba(255,255,255,.02) 2px 5px),rgba(52,34,18,.9);
   box-shadow:0 -3px 0 0 var(--ink),0 3px 0 0 var(--ink),-3px 0 0 0 var(--ink),3px 0 0 0 var(--ink),inset 0 3px 0 0 rgba(255,255,255,.07); }
@@ -393,7 +394,7 @@ window.bfIntro=function(){if(run)return;run=1;t0=Date.now();el.classList.add('ru
     <button class="btn" data-act="skins"><span class="arrow">▶</span>스킨 상점<span class="en">SKIN SHOP</span></button>
     <button class="btn" data-act="stats"><span class="arrow">▶</span>통계<span class="en">STATS</span></button>
     <button class="btn" data-act="settings"><span class="arrow">▶</span>설정<span class="en">SETTINGS</span></button>
-    <p class="foot">v0.5<br>build 139</p>
+    <p class="foot">v0.5<br>build 141</p>
   </nav>
 </div>
 
@@ -3861,9 +3862,9 @@ function addToArr(arr,id,n,dur){
   return n;
 }
 function quickMove(area,i,cnt){   // cnt: 옮길 개수 (없으면 한꺼번에)
-  const st=(area==='inv'?inv:chestArr)[i];if(!st)return;
+  const src=area==='inv'?inv:area==='bg'?bag:chestArr,st=src[i];if(!st)return;
   const c=cnt?Math.min(cnt,st.n):st.n;
-  if(area==='inv'){const left=addToArr(chestArr,st.id,c,st.d);st.n-=c-left;if(st.n<=0)inv[i]=null;}
+  if(area==='inv'||area==='bg'){const left=addToArr(chestArr,st.id,c,st.d);st.n-=c-left;if(st.n<=0)src[i]=null;}
   else{const take=Math.min(c,roomN(st.id));if(take<=0)return;addStack(st.id,take,st.d);st.n-=take;if(st.n<=0)chestArr[i]=null;}
   afterChange();
 }
@@ -3901,7 +3902,7 @@ function slotClick(area,i,right,shift){
     st.n--;if(st.n<=0)inv[i]=null;afterChange();return;
   }
   if(area==='ch'&&!chestArr)return;
-  if(craftMode==='chest'&&(area==='inv'||area==='ch')&&!held){quickMove(area,i,(shift||right)?0:1);return;}   // 좌클릭 하나씩 · 우클릭/Shift 한꺼번에
+  if(craftMode==='chest'&&(area==='inv'||area==='ch'||(area==='bg'&&bagSlot))&&!held){quickMove(area,i,(shift||right)?0:1);return;}   // 좌클릭 하나씩 · 우클릭/Shift 한꺼번에
   if(area==='bg'&&(!document.body.classList.contains('hasbag')||(held&&held.id==='bag')))return;
   const arr=area==='inv'?inv:area==='ch'?chestArr:area==='bg'?bag:craft, st=arr[i], one=!right;   // 좌클릭: 하나씩 · 우클릭: 한꺼번에
   if(!held){
