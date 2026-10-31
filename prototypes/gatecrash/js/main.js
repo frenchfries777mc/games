@@ -36,6 +36,8 @@ $('modalOk').onclick = () => $('modal').classList.remove('on');
 
 /* ---------- 계정 / 프로필 ---------- */
 function loggedIn() { try { return !!(window.FFAuth && FFAuth.user()); } catch (e) { return false; } }
+function myAid() { try { const u = window.FFAuth && FFAuth.user(); return u && u.id ? String(u.id) : ''; } catch (e) { return ''; } }
+function openProf(aid) { try { if (aid && window.FFAuth && FFAuth.openProfile) FFAuth.openProfile(aid, { game: 'gatecrash' }); } catch (e) { } }
 function myName() { try { const n = window.FFAuth && FFAuth.user() && FFAuth.nickname(); if (n) return String(n).slice(0, 15); } catch (e) { } return '손님'; }
 function paintWho() {
   const w = $('who'); w.innerHTML = '';
@@ -145,10 +147,11 @@ function openRoom() {
   paintSlots();
 }
 function paintSlots() {
-  let h = ''; for (let i = 0; i < MAXP; i++) { const p = N.players[i]; h += p ? '<div class="slot"><i style="background:' + p.col + '"></i><b>' + esc(p.name) + '</b></div>' : '<div class="slot empty"><i style="background:#555"></i>비어 있음 (봇)</div>'; }
+  let h = ''; for (let i = 0; i < MAXP; i++) { const p = N.players[i]; h += p ? '<div class="slot' + (p.aid ? ' pn' : '') + '"' + (p.aid ? ' data-aid="' + esc(p.aid) + '"' : '') + '><i style="background:' + p.col + '"></i><b>' + esc(p.name) + '</b></div>' : '<div class="slot empty"><i style="background:#555"></i>비어 있음 (봇)</div>'; }
   $('slots').innerHTML = h;
 }
 function esc(s) { return String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c])); }
+document.addEventListener('click', e => { const t = e.target.closest && e.target.closest('.slot.pn'); if (t) openProf(t.dataset.aid); });
 function pushRoom() { if (N.mode === 'host') bcast({ t: 'room', players: N.players }); }
 $('startBtn').onclick = () => { if (N.mode === 'solo' || N.mode === 'host') beginGame(); };
 
@@ -159,7 +162,7 @@ function hostHandlers(p) {
       if (d.t === 'hello') {
         if (d.v !== VERSION) { send(c, { t: 'no', why: '버전이 달라요 (v' + VERSION + ')' }); setTimeout(() => c.close(), 300); return; }
         if (N.G || N.players.length >= MAXP) { send(c, { t: 'no', why: '가득 찼거나 이미 시작했어요' }); setTimeout(() => c.close(), 300); return; }
-        const pl = { id: d.id, name: String(d.name || '손님').slice(0, 15), col: pickCol(d.col), skin: SKINS[d.skin] ? d.skin : '' }; c.gid = d.id; N.players.push(pl); N.conns.push(c);
+        const pl = { id: d.id, aid: /^[0-9a-f-]{36}$/i.test(String(d.aid || '')) ? String(d.aid) : '', name: String(d.name || '손님').slice(0, 15), col: pickCol(d.col), skin: SKINS[d.skin] ? d.skin : '' }; c.gid = d.id; N.players.push(pl); N.conns.push(c);
         send(c, { t: 'welcome', id: d.id, players: N.players }); pushRoom(); paintSlots();
       } else if (d.t === 'i') { N.inputs[c.gid] = Object.assign(N.inputs[c.gid] || {}, d.i, { jp: (N.inputs[c.gid] || {}).jp || d.i.jp, swap: (N.inputs[c.gid] || {}).swap || d.i.swap, emo: d.i.emo || (N.inputs[c.gid] || {}).emo }); }
     });
@@ -170,7 +173,7 @@ function hostHandlers(p) {
 }
 N.inputs = {};
 function startHost() {
-  leaveNet(); const gen = N.gen; N.mode = 'host'; N.pub = false; N.code = rcode(); N.players = [{ id: UID, name: myName(), col: COLORS[SAVE.col % COLORS.length], skin: skinOf() }];
+  leaveNet(); const gen = N.gen; N.mode = 'host'; N.pub = false; N.code = rcode(); N.players = [{ id: UID, aid: myAid(), name: myName(), col: COLORS[SAVE.col % COLORS.length], skin: skinOf() }];
   homeMsg('방을 만드는 중이에요'); const p = new Peer(PREFIX + N.code, peerOpts()); N.peer = p; hostHandlers(p);
   p.on('open', () => { if (N.gen !== gen) return; homeMsg(''); try { FFAuth.setRoom && FFAuth.setRoom({ game: 'gatecrash', code: N.code, path: 'prototypes/gatecrash/index.html' }); } catch (e) { } openRoom(); });
   p.on('error', e => { if (N.gen !== gen) return; if (e.type === 'unavailable-id') startHost(); else { leaveNet(); show('sLobby'); homeMsg('연결하지 못했어요. 잠시 뒤에 다시 해 봐요.'); } });
@@ -182,7 +185,7 @@ function startGuest(code) {
   p.on('error', () => fail('방을 찾지 못했어요.'));
   p.on('open', () => {
     const c = p.connect(PREFIX + code, { reliable: false }); N.host = c; setTimeout(() => { if (!c.open) fail('방을 찾지 못했어요.'); }, 6000);
-    c.on('open', () => send(c, { t: 'hello', v: VERSION, id: UID, name: myName(), col: COLORS[SAVE.col % COLORS.length], skin: skinOf() }));
+    c.on('open', () => send(c, { t: 'hello', v: VERSION, id: UID, aid: myAid(), name: myName(), col: COLORS[SAVE.col % COLORS.length], skin: skinOf() }));
     c.on('data', d => guestMsg(d, fail, () => { done = true; })); c.on('close', () => { if (!done || N.mode === 'guest') { if (N.G) { endToLobby('방장과 연결이 끊겼어요.'); } else fail('방과 연결이 끊겼어요.'); } });
   });
 }
@@ -213,7 +216,7 @@ function startMatch() {
     p.on('error', next);
     p.on('open', () => {
       const c = p.connect(PREFIX + 'q' + n, { reliable: false }); N.host = c; N.mode = 'guest'; const to = setTimeout(next, 3500);
-      c.on('open', () => { clearTimeout(to); send(c, { t: 'hello', v: VERSION, id: UID, name: myName(), col: COLORS[SAVE.col % COLORS.length], skin: skinOf() }); });
+      c.on('open', () => { clearTimeout(to); send(c, { t: 'hello', v: VERSION, id: UID, aid: myAid(), name: myName(), col: COLORS[SAVE.col % COLORS.length], skin: skinOf() }); });
       c.on('data', d => { if (d && d.t === 'no') { clearTimeout(to); next(); } else if (d && d.t === 'welcome') { ended = true; homeMsg(''); guestMsg(d, () => { }, () => { }); } else guestMsg(d, () => { }, () => { }); });
       c.on('close', () => { if (ended) { if (N.G) endToLobby('방장과 연결이 끊겼어요.'); } else next(); });
     });
