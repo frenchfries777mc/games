@@ -2,7 +2,7 @@
 // 화면 흐름, 조작, 멀티(친구 초대, PeerJS), 저장
 import { View } from './render.js';
 import { createGame, step, snapshot, chooseBless, carryOver, koPlayer, INTRO_T, HV_DELAY, wallClamp, setupRange, callBots } from './sim.js';
-import { useMode, RECALL_CD, pushTime, PUSH_N, PUSH_T, TEAMS, FLAG_T, FLAG_R, RESP_T, ARENA_THEMES, MODES, ROLES, ROLE_IDS, COLORS, BOT_NAMES, MAX_PLAYERS, BLESSINGS, CHAPTERS, CH, FOES, MAP, ACHIEVEMENTS, TALK, GEAR_TIERS, GEAR_COST, COSMETICS, MIDB, WEEKLY, weekInfo, VERSION, BUILD, roleLevel, CHAR_RANKS, charRankFor, MASTERY_PT, streakBonusFor, LORE, COMBOS, CURSES, DEEP, DEEP_I, TALK_X, ROLE_PUZ, flagShown } from './data.js';
+import { useMode, RECALL_CD, pushTime, PUSH_N, PUSH_T, TEAMS, FLAG_T, FLAG_R, RESP_T, ARENA_THEMES, MODES, ROLES, ROLE_IDS, COLORS, BOT_NAMES, MAX_PLAYERS, BLESSINGS, CHAPTERS, CH, FOES, MAP, ACHIEVEMENTS, TALK, GEAR_TIERS, GEAR_COST, COSMETICS, MIDB, WEEKLY, weekInfo, VERSION, BUILD, roleLevel, CHAR_RANKS, charRankFor, rankImg, MASTERY_PT, streakBonusFor, LORE, COMBOS, CURSES, DEEP, DEEP_I, TALK_X, ROLE_PUZ, flagShown } from './data.js';
 import { collide as mapCollide, areaAt, floorCell, MW, MH, CS, cw, useChapter, chapterIndex, SOPEN, openSecret, resetSecrets, hiddenCell, GOPEN, openGate, setDoors, DSTATE, PDOWN, dropPillar, LIFTH, liftOk, CUT } from './map.js';
 import * as SFX from './sfx.js';
 import * as MUS from './music.js';
@@ -305,7 +305,7 @@ function profStats(box, ctx) {
   const st = SAVE.st || {}, row = (a, b) => '<div class="gr"><span>' + ctx.esc(a) + '</span><b>' + ctx.esc(String(b)) + '</b></div>';
   let fav = null, fn = 0; for (const r of ROLE_IDS) { const n = (st.pl || {})[r] | 0; if (n > fn) { fn = n; fav = r; } }
   let h = '';
-  if (fav) { const pt = (SAVE.pts || {})[fav] | 0; h += row(T('대표 직업'), ROLES[fav].name + ' · ' + charRankFor(pt).name + ' · Lv.' + roleLevel((SAVE.xp || {})[fav])); }
+  if (fav) { const pt = (SAVE.pts || {})[fav] | 0; h += '<div class="gr"><span>' + ctx.esc(T('대표 직업')) + '</span><b>' + rankImg(charRankFor(pt), 16) + ctx.esc(ROLES[fav].name + ' · ' + charRankFor(pt).name + ' · Lv.' + roleLevel((SAVE.xp || {})[fav])) + '</b></div>'; }
   h += row(T('대전'), T('{0}판 · {1}승', st.matches | 0, st.wins | 0));
   h += row(T('깃발 점령'), T('{0}번', st.flags | 0));
   h += row(T('상대 처치'), T('{0}명', st.kills | 0));
@@ -359,7 +359,7 @@ function botPickRole(sl) {
 }
 function newBots() { S.botRoles = ROLE_IDS.slice().sort(() => Math.random() - 0.5); }
 function openRoom() { S.chSel = 0; S.wk = false; if (!S.botRoles) newBots(); show('sRoom'); paintRoom(); }
-function rankBar(id) { const pt = (SAVE.pts || {})[id] || 0, rk = charRankFor(pt), i = CHAR_RANKS.indexOf(rk), nx = CHAR_RANKS[i + 1]; return '<div class="bar"><span style="color:' + rk.color + '">' + rk.name + '</span><u style="width:120px;display:inline-block;height:8px;background:#2a2230"><i style="display:block;height:8px;background:' + rk.color + ';width:' + (nx ? Math.round((pt - rk.min) / (nx.min - rk.min) * 100) : 100) + '%"></i></u> <small>' + (nx ? T('다음 {0}까지 {1}점', nx.name, nx.min - pt) : T('최고 계급')) + '</small></div>'; }
+function rankBar(id) { const pt = (SAVE.pts || {})[id] || 0, rk = charRankFor(pt), i = CHAR_RANKS.indexOf(rk), nx = CHAR_RANKS[i + 1]; return '<div class="bar"><span style="color:' + rk.color + '">' + rankImg(rk, 22) + rk.name + '</span><u style="width:120px;display:inline-block;height:8px;background:#2a2230"><i style="display:block;height:8px;background:' + rk.color + ';width:' + (nx ? Math.round((pt - rk.min) / (nx.min - rk.min) * 100) : 100) + '%"></i></u> <small>' + (nx ? T('다음 {0}까지 {1}점', nx.name, nx.min - pt) : T('최고 계급')) + '</small></div>'; }
 function roleXpBar(id) { const xp = SAVE.xp[id] || 0, L = roleLevel(xp); if (L >= 10) return '<p class="note">' + T('최고 레벨이에요') + '</p>'; const a = 25 * (L - 1) * (L - 1), b = 25 * L * L; return '<div class="bar"><span>' + T('경험치') + '</span><u style="width:120px;display:inline-block;height:8px;background:#2a2230"><i style="display:block;height:8px;background:#ffd36b;width:' + Math.round((xp - a) / (b - a) * 100) + '%"></i></u> <small>' + (xp - a) + '/' + (b - a) + '</small></div>'; }
 function paintRoom() {
   const host = S.net !== 'guest', mine = S.slots.find(s => s.uid === UID) || meSlot(), c = ROLES[mine.role] || ROLES.knight;
@@ -367,7 +367,7 @@ function paintRoom() {
   $('sRoom').classList.toggle('waiting', wait);
   $('roomTitle').textContent = S.info ? T('직업·조작') : S.range ? T('연습장') : S.net === 'solo' ? T('봇과 연습') : S.pub ? T('온라인 대전') + ' · ' + MODES[S.mode || 'normal'].name : S.priv ? T('봇과 연습 · 친구 초대') : host ? T('친구와 대결 · 방장') : T('친구와 대결');
   $('inviteBtn').style.display = (S.net === 'host' && !S.pub && wait) || (S.net === 'solo' && !S.range && !S.info) ? '' : 'none';
-  $('clsList').innerHTML = ROLE_IDS.map((id, k) => '<button data-c="' + id + '"' + (mine.role === id ? ' class="on"' : '') + '><i>' + (k + 1) + '</i><b>' + ROLES[id].name + '</b><small class="lv" style="color:' + charRankFor((SAVE.pts || {})[id]).color + '">' + charRankFor((SAVE.pts || {})[id]).name + ' · Lv.' + roleLevel(SAVE.xp[id]) + '</small></button>').join('');
+  $('clsList').innerHTML = ROLE_IDS.map((id, k) => '<button data-c="' + id + '"' + (mine.role === id ? ' class="on"' : '') + '><i>' + (k + 1) + '</i><b>' + ROLES[id].name + '</b><small class="lv" style="color:' + charRankFor((SAVE.pts || {})[id]).color + '">' + rankImg(charRankFor((SAVE.pts || {})[id]), 14) + charRankFor((SAVE.pts || {})[id]).name + ' · Lv.' + roleLevel(SAVE.xp[id]) + '</small></button>').join('');
   $('clsList').querySelectorAll('button').forEach(el => el.onclick = () => { SFX.play('click'); SAVE.role = el.dataset.c; save(); pick(); });
   $('clsInfo').innerHTML = '<h2>' + c.name + ' <small class="lv">Lv.' + roleLevel(SAVE.xp[mine.role]) + '</small></h2><p>' + c.role + '</p>' + roleXpBar(mine.role) + rankBar(mine.role) + BARS.map((n, k) => '<div class="bar"><span>' + n + '</span><u>' + '<i class="on"></i>'.repeat(c.st[k]) + '<i></i>'.repeat(5 - c.st[k]) + '</u></div>').join('') +
     '<h4>' + T('기본 공격') + '</h4><p>' + c.atkTxt + '</p>' + c.skills.map(s => '<h4>' + s.key + ' · ' + s.name + '</h4><p>' + s.desc + '</p>').join('');
