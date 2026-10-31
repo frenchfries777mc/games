@@ -3443,12 +3443,14 @@ window.addEventListener('ffperf', ()=>{ if(perfFromShared()){ persistOtherSettin
 function applyTouchLayout(){ const r=document.documentElement.style; r.setProperty('--tscale', String(otherSettings.touchScale||1)); r.setProperty('--tlift', (otherSettings.touchLift||0)+'px'); }       // the size and the height of the phone buttons (settings)
 let fxFrames=0, fxSumDt=0, fxGoodStreak=0;
 function applyFxQualityNow(){ if(otherSettings.quality==='high') fxQuality=2; else if(otherSettings.quality==='mid') fxQuality=1; else if(otherSettings.quality==='low') fxQuality=0; }
+// 자동 화질이 가장 낮아지면 이 기기에서 한 번만 설정 화질 「낮음」을 권해요
+function lowFxHint(){ try{ if(localStorage.getItem('stk_lowFxHint')) return; localStorage.setItem('stk_lowFxHint','1'); }catch(e){ return; } showAchievementToast({icon:'',name:'화면이 느려서 효과를 줄였어요. 설정의 화질을 「낮음」으로 두면 계속 가볍게 할 수 있어요.'}, '화면 안내'); }
 function updateFxQuality(dtSec){         // once per frame with the real time since the last frame: 'auto' lowers the effects when the game is slower than ~30 fps and raises them again after 4 s of more than ~52 fps
   if(otherSettings.quality!=='auto'){ applyFxQualityNow(); return; }
   if(!(dtSec>0) || dtSec>0.5) return;                       // (a tab that was in the background wakes up with one huge step: not a measurement)
   fxFrames++; fxSumDt+=dtSec;
   if(fxFrames>=60){ const avg=fxSumDt/fxFrames; fxFrames=0; fxSumDt=0;
-    if(avg>0.034){ if(fxQuality>0) fxQuality--; fxGoodStreak=0; }
+    if(avg>0.034){ if(fxQuality>0) fxQuality--; fxGoodStreak=0; if(fxQuality===0) lowFxHint(); }
     else if(avg<0.019){ if(++fxGoodStreak>=4 && fxQuality<2){ fxQuality++; fxGoodStreak=0; } }
     else fxGoodStreak=0;
   }
@@ -5602,7 +5604,7 @@ function shuffle(arr){ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.
 /* ===== the version of this file =====
    Different BUILDS of one version meet and play together (room names online-v<ver>-<mode>-<map>-<slot>); different VERSIONS (the 0.x part) never do - the host refuses them (verNo) and the dispatcher answers busy.
    The build is only sent along with the join message and the lobby (for information); the corner of the screen shows it. */
-const GAME_BUILD='build 2026-10-18-v559';
+const GAME_BUILD='build 2026-10-31-v560';
 const GAME_VERSION='0.9', GAME_VERSION_NAME='은하 제국의 황혼';   // 게임 버전 이름: versions.json의 title과 같게 (빌드마다 바꾸지 않음)
 /* version (the 0.x part) vs build: different BUILDS of one version meet and play together, different VERSIONS never do (rooms, quick match, ranked, friend invites, dispatcher).
    Builds before 470 do not send a version, so it is read from the build number (0.9 started at build 458). */

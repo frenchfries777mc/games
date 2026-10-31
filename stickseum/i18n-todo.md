@@ -16,3 +16,7 @@ Stickseum-v0.8.html | shop tier hint | (봇이 8명 이상이고 부활이 있�
 Stickseum-v0.8.html | shop tier hint | (듀얼 처치 8점, 배틀로얄 처치 5점, 6명 이상 부활 모드 처치 2점·승리 3점) | build 414 | 2026-10-26
 Stickseum-v0.8.html | match-end mastery points line | 마스터리 포인트 +N (처치 · 어시스트 · 완주 · 승리) · 계급 · N점 · 다음 계급까지 N점 · 최고 계급 | build 415 | 2026-10-26
 Stickseum-v0.8.html | match-end mastery rank block | 마스터리 포인트 +N · 계급 이름 · N점 · 다음 계급까지 N점 · 최고 계급 | build 416 | 2026-10-26
+
+## Stickseum v560 화면 안내 (2026-10-31)
+- Stickseum-latest.html lowFxHint 토스트 (도전과제 토스트 재사용): '화면이 느려서 효과를 줄였어요. 설정의 화질을 「낮음」으로 두면 계속 가볍게 할 수 있어요.' / 제목 '화면 안내'
+- 패치노트 v560: 제목 "화면 안내", 항목 1개
