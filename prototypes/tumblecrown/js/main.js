@@ -242,9 +242,22 @@ function paintSettings() {
 $('setVol').oninput = e => { SAVE.set.vol = +e.target.value; SFX.setVol(SAVE.set.vol / 100); save(); };
 $('setMus').oninput = e => { SAVE.set.mus = +e.target.value; MUS.setVol(SAVE.set.mus / 100); save(); };
 const LANG_NAMES = [['ko', '한국어'], ['en', 'English'], ['ja', '日本語'], ['zh', '简体中文'], ['es', 'Español'], ['fr', 'Français'], ['de', 'Deutsch'], ['pt', 'Português (Brasil)'], ['ru', 'Русский'], ['tr', 'Türkçe'], ['it', 'Italiano'], ['pl', 'Polski'], ['ar', 'العربية']];
+// 프로필 통계: 이 기기에 모은 기록을 프로필 창 아래에 보여 줘요
+function profStats(box, ctx) {
+  const st = SAVE.st || {}, row = (a, b) => '<div class="gr"><span>' + ctx.esc(a) + '</span><b>' + ctx.esc(String(b)) + '</b></div>';
+  let fav = null, fn = 0; for (const r of ROLE_IDS) { const n = (st.pl || {})[r] | 0; if (n > fn) { fn = n; fav = r; } }
+  let h = '';
+  if (fav) { const pt = (SAVE.pts || {})[fav] | 0; h += row(T('대표 직업'), ROLES[fav].name + ' · ' + charRankFor(pt).name + ' · Lv.' + roleLevel((SAVE.xp || {})[fav])); }
+  h += row(T('대전'), T('{0}판 · {1}승', st.matches | 0, st.wins | 0));
+  h += row(T('깃발 점령'), T('{0}번', st.flags | 0));
+  h += row(T('상대 처치'), T('{0}명', st.kills | 0));
+  h += row(T('괴물 처치'), T('{0}마리', st.mon | 0));
+  h += row(T('도전과제'), ACHIEVEMENTS.filter(a => SAVE.ach[a.id]).length + ' / ' + ACHIEVEMENTS.length);
+  return h;
+}
 $('setProf').onclick = async () => {
   if (needLogin()) return;
-  try { const sb = window.FFAuth && FFAuth.client && FFAuth.client(), u = window.FFAuth && FFAuth.user(); if (!sb || !u || !(await ffProfile())) return homeMsg(T('프로필을 불러오지 못했어요.')); FFProfile.open(sb, u.id, { game: 'tumblecrown' }); } catch (e) { homeMsg(T('프로필을 불러오지 못했어요.')); }
+  try { const sb = window.FFAuth && FFAuth.client && FFAuth.client(), u = window.FFAuth && FFAuth.user(); if (!sb || !u || !(await ffProfile())) return homeMsg(T('프로필을 불러오지 못했어요.')); FFProfile.open(sb, u.id, { game: 'tumblecrown', stats: profStats }); } catch (e) { homeMsg(T('프로필을 불러오지 못했어요.')); }
 };
 // 키 바꾸기: 버튼을 누르고 원하는 키를 눌러요 (Esc는 취소, 겹치는 키는 서로 바꿔요)
 function bindKey(n, btn) {
@@ -609,7 +622,9 @@ function awardHonor() {
   const p = myP(); if (!p) return;
   let h = Math.round((S.snap.honor[S.me] || 0) * ((p.b || []).indexOf('honor') >= 0 ? 1.25 : 1));
   const gain = S.net === 'solo' ? 0 : h;   // 봇과 연습은 tC를 못 얻어요
-  SAVE.honor += gain; const won = p.tm === S.snap.wtm; SAVE.pts = SAVE.pts || {}; SAVE.winStreak = won ? (SAVE.winStreak | 0) + 1 : 0; const kp = (p.kl | 0) * MASTERY_PT.kill, wp = won ? MASTERY_PT.win : 0, sp = won ? streakBonusFor(SAVE.winStreak) : 0, mg = kp + wp + sp + MASTERY_PT.match, mb = SAVE.pts[p.role] || 0; SAVE.pts[p.role] = mb + mg; S.lastMp = { role: p.role, gain: mg, k: p.kl | 0, won, sp, st: SAVE.winStreak, total: mb + mg, up: charRankFor(mb + mg).name !== charRankFor(mb).name }; const xg = 20 + (p.kl | 0) * 5 + (won ? 30 : 0); S.lastXp = xg; S.lastLv = roleLevel(SAVE.xp[p.role]); SAVE.xp[p.role] = (SAVE.xp[p.role] || 0) + xg; S.lastLv = roleLevel(SAVE.xp[p.role]) > S.lastLv ? roleLevel(SAVE.xp[p.role]) : 0; save();   // 직업 경험치: 한 판 20 + 쓰러뜨림당 5 + 승리 30
+  SAVE.honor += gain; const won = p.tm === S.snap.wtm; SAVE.pts = SAVE.pts || {}; SAVE.winStreak = won ? (SAVE.winStreak | 0) + 1 : 0; const kp = (p.kl | 0) * MASTERY_PT.kill, wp = won ? MASTERY_PT.win : 0, sp = won ? streakBonusFor(SAVE.winStreak) : 0, mg = kp + wp + sp + MASTERY_PT.match, mb = SAVE.pts[p.role] || 0; SAVE.pts[p.role] = mb + mg; S.lastMp = { role: p.role, gain: mg, k: p.kl | 0, won, sp, st: SAVE.winStreak, total: mb + mg, up: charRankFor(mb + mg).name !== charRankFor(mb).name }; const xg = 20 + (p.kl | 0) * 5 + (won ? 30 : 0); if (!S.range) { const st = SAVE.st = SAVE.st || {}; st.matches = (st.matches | 0) + 1; if (won) st.wins = (st.wins | 0) + 1; st.kills = (st.kills | 0) + (p.kl | 0); st.flags = (st.flags | 0) + (p.fcp | 0); st.mon = (st.mon | 0) + (p.mkp | 0); st.pl = st.pl || {}; st.pl[p.role] = (st.pl[p.role] | 0) + 1;
+    if (st.wins >= 10) unlock('wins10'); if (st.kills >= 50) unlock('kill50'); if (st.kills >= 300) unlock('kill300'); if (st.flags >= 10) unlock('flag10'); if (st.flags >= 100) unlock('flag100'); if (st.mon >= 1) unlock('mon1'); if (st.mon >= 10) unlock('mon10'); if (st.matches >= 50) unlock('match50'); if ((p.kl | 0) >= 5) unlock('kill5'); }
+  S.lastXp = xg; S.lastLv = roleLevel(SAVE.xp[p.role]); SAVE.xp[p.role] = (SAVE.xp[p.role] || 0) + xg; S.lastLv = roleLevel(SAVE.xp[p.role]) > S.lastLv ? roleLevel(SAVE.xp[p.role]) : 0; if (roleLevel(SAVE.xp[p.role]) >= 10) unlock('lv10'); if (SAVE.pts[p.role] >= 530) unlock('gold'); save();   // 직업 경험치: 한 판 20 + 쓰러뜨림당 5 + 승리 30
   return gain;
 }
 
@@ -1419,7 +1434,7 @@ function showDeepResult() {
 // 우승 화면: 이긴 사람이 크게 나와요. '순위 보기'를 누르면 전체 순위표로 가요
 function showWin() {
   S.resultShown = true; bigMsg('', '', 0); const h = S.lastH = awardHonor() || 0, sn = S.snap, mine = myP(), wt = sn.wtm, won = mine && mine.tm === wt;
-  if (won) { unlock('win'); SAVE.wins = SAVE.wins || {}; SAVE.wins[mine.role] = 1; save(); if (ROLE_IDS.slice(0, 7).every(r => SAVE.wins[r])) unlock('winall'); }
+  if (won) { unlock('win'); SAVE.wins = SAVE.wins || {}; SAVE.wins[mine.role] = 1; save(); if (ROLE_IDS.every(r => SAVE.wins[r])) unlock('winall'); }
   if (mine && mine.kl >= 3) unlock('kill3');
   const row = p => `<tr${p.id === S.me ? ' style="background:#2a2014"' : ''}><td style="color:${ROLES[p.role].color}">${ROLES[p.role].name}</td><td>${esc(p.id === S.me ? T('나') : p.bot ? T('봇') : p.name)}</td><td>${p.kl | 0}</td><td>${p.dth | 0}</td></tr>`;
   const tab = t => `<div><h3 style="color:${hex(TEAMS[t].c)}">${tmName(t)}${t === wt ? ' · ' + T('승리') : ''}</h3><table><tr><th>${T('직업')}</th><th>${T('이름')}</th><th>${T('쓰러뜨림')}</th><th>${T('쓰러짐')}</th></tr>${sn.pl.filter(p => p.tm === t).map(row).join('')}</table></div>`;
