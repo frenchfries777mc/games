@@ -1337,7 +1337,7 @@ export class View {
     });
   }
   tick(dt, t) {
-    for (const m of this.doorM || []) { const ty = DSTATE.open ? -4.4 : 0; m.position.y += (ty - m.position.y) * Math.min(1, dt * 4); m.visible = m.position.y > -4.3; }
+    for (const m of this.doorM || []) { if (DSTATE.open) { m.position.y = -4.4; m.visible = false; } else { m.visible = true; m.position.y += (0 - m.position.y) * Math.min(1, dt * 4); } }
     for (const g of this.doorG || []) { const c = DSTATE.open ? 0x6aff9a : 0xff3a2a; g.material.color.setHex(c); g.material.emissive.setHex(c); g.material.emissiveIntensity = DSTATE.open ? 0.7 : 1.4; g.material.opacity = (DSTATE.open ? 0.3 : 0.45) + 0.15 * Math.sin(t * (DSTATE.open ? 5 : 3)); }   // 열리면 초록, 닫히면 붉은 빛이 길바닥에 깔려요
     for (const f of this.flick || []) f.L.intensity = f.b * (0.9 + Math.sin(t * 2.2 + f.ph) * 0.04 + Math.sin(t * 3.7 + f.ph * 2) * 0.02);
     if (this.fireG) { this.fireG.children.forEach((c, i) => { c.scale.y = 0.85 + Math.sin(t * 4 + i * 1.7) * 0.12; }); }
