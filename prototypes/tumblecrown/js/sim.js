@@ -143,8 +143,8 @@ function initOrder(G) {
 export function flagLocked(G, i, tm) {
   if (!G.fl || !G.home || !G.fq || G.fl[i].own === tm || i === G.home[tm]) return false;
   if (G.fl[G.home[tm]].own !== tm) return true;   // 우리 진지 깃발을 뺏겼으면 먼저 되찾아야 해요
-  const q = G.fq[tm]; if (q[i] <= 0.65) return false;
-  return G.fl.some((g, j) => j !== i && q[j] <= 0.65 && g.own !== tm);   // 상대 진영: 우리 진지·중앙·측면을 모두 가져야 해요
+  const q = G.fq[tm];
+  return G.fl.some((g, j) => j !== i && q[j] < q[i] - 0.2 && g.own !== tm);   // 우리 진지에서 더 가까운 깃발을 모두 가져야 그다음 깃발을 점령할 수 있어요 (측면·중앙·상대 진영 모두)
 }
 // 깃발: 둘레 안에 더 많은 팀이 7초 동안 서 있으면 그 팀 것이 돼요 (같은 수면 아무도 못 세요, 아무도 없으면 천천히 되돌아가요)
 function flagsStep(G, dt) {
