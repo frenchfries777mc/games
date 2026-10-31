@@ -1719,7 +1719,7 @@ function botFlag(G, p, dt) {
       let al = 0, en = 0; for (const q of G.players) { if (q === p || !alive(q) || Math.hypot(q.x - f.x, q.z - f.z) > D.FLAG_R * 3) continue; if (q.team === p.team) al++; else en++; }
       if (f.own !== p.team) sc -= Math.min(al, 3) * 14; if (en > al + 1) sc += (en - al - 1) * 30;
       if (i >= G.fl.length - 3) sc *= 0.65;   // 가운데 깃발 셋을 먼저 노려요
-      if (MAP.lanes && botLane(G, p) !== flagLane(G, f)) sc += 220;   // 길이 셋인 지도: 자기 길의 깃발을 먼저 노려요
+      if (MAP.lanes && f.own < 0 && botLane(G, p) !== flagLane(G, f)) sc += 220;   // 길이 셋인 지도: 주인 없는 깃발은 자기 길의 것을 먼저 노려요 (주인 있는 깃발은 아무 길이나)
       if (sc < bs) { bs = sc; bi = i; }
     });
     ai.fi = sl != null && sl >= 0 && !MAP.lanes ? sl : bi;
