@@ -126,9 +126,12 @@ export function koPlayer(G, p, src) {
 function flagsStep(G, dt) {
   G.fl.forEach((f, i) => {
     if (G.dr && i === 4 && !DSTATE.open) return;   // 신전 문이 닫혀 있는 동안 가운데 깃발은 차지할 수 없어요
+    if (f.hold > 0) { f.hold -= dt; f.prog = 0; f.cap = -1; return; }   // 견고한 수비: 8초 동안 적이 와도 깃발은 그대로예요
+    if (f.seize > 0) f.seize -= dt;
     let n0 = 0, n1 = 0;
     for (const p of G.players) if (alive(p) && Math.hypot(p.x - f.x, p.z - f.z) < D.FLAG_R) { if (p.team === 0) n0++; else n1++; }
-    const lead = n0 > n1 ? 0 : n1 > n0 ? 1 : -1, rt = Math.min(3, 1 + 0.5 * (Math.abs(n0 - n1) - 1)) * (lead >= 0 && G.cb[lead] > 0 ? 1.5 : 1) * (lead >= 0 ? 1 + 0.02 * G.mk[lead] : 1);   // 더 많은 사람이 있을수록 빨리 차지해요 (한 명 1배, 둘 1.5배, 셋 2배, 최대 3배)
+    let lead = n0 > n1 ? 0 : n1 > n0 ? 1 : -1; if (f.seize > 0 && (f.seizeTm === 0 ? n0 : n1) > 0) { lead = f.seizeTm; if (f.own === lead) lead = -1; }   // 점령: 아군이 한 명이라도 있으면 수가 적어도 점령이 진행돼요
+    const rt = (f.seize > 0 && lead === f.seizeTm && (lead === 0 ? n0 <= n1 : n1 <= n0)) ? 1 : Math.min(3, 1 + 0.5 * (Math.abs(n0 - n1) - 1)) * (lead >= 0 && G.cb[lead] > 0 ? 1.5 : 1) * (lead >= 0 ? 1 + 0.02 * G.mk[lead] : 1);   // 더 많은 사람이 있을수록 빨리 차지해요 (한 명 1배, 둘 1.5배, 셋 2배, 최대 3배)
     if (lead >= 0 && lead !== f.own) {
       if (f.cap === lead || f.cap < 0) { f.cap = lead; f.prog += dt * rt; }
       else { f.prog -= dt * rt; if (f.prog <= 0) { f.prog = 0; f.cap = lead; } }
@@ -184,7 +187,7 @@ function pvpCheck(G, dt) {
   G.cb[0] = Math.max(0, G.cb[0] - dt); G.cb[1] = Math.max(0, G.cb[1] - dt);
   for (let c = 0; c < 2; c++) if (!G.enemies.some(e => e.mon && e.cn === c && e.hp > 0) && (G.cTim[c] -= dt) <= 0) { G.cTim[c] = 60; spawnMonsters(G, c); }
   // 우리 팀 깃발 둘레 안에서는 힘이 나요 (지속 치유 + 공격 증가)
-  for (const p of G.players) p.inFl = alive(p) && G.fl.some(f => f.own === p.team && Math.hypot(p.x - f.x, p.z - f.z) < D.FLAG_R);
+  for (const p of G.players) p.inFl = alive(p) && G.fl.some(f => f.own === p.team && !(f.seize > 0 && f.seizeTm !== p.team) && Math.hypot(p.x - f.x, p.z - f.z) < D.FLAG_R);
   let wt = -1;
   for (const t of [0, 1]) if (G.fl.every(f => f.own === t)) wt = t;
   for (const t of [0, 1]) if (G.players.filter(p => p.team === t).every(p => p.gone)) wt = 1 - t;   // 한 팀이 모두 나가 버리면 남은 팀이 이겨요
@@ -565,6 +568,14 @@ function useSkill(G, p, si, inp) {
     case 'sweep': for (const e of G.enemies) if (e.hp > 0 && foeOf(G, p.id, e) && dist(p, e) < 3.9 + e.r) { hurtEnemy(G, e, 36, p, { kb: 6, kbA: angTo(p, e) }); if (e.hp > 0) { e.slow = 1.5; e.slowM = 0.5; } } ev(G, 'swing', { id: p.id, x: p.x, z: p.z, a: p.a, r: 3.9, role: p.role, n: 1 }); break;
     case 'rapidfire': p.burst = { n: 3, t: 0 }; ev(G, 'skill', { id: p.id, s: 'rapidfx', x: p.x, z: p.z, a: p.a }); break;
     case 'bigshot': G.projs.push({ id: G.uid++, k: 'bigshot', own: p.id, x: p.x + Math.cos(p.a) * 0.9, z: p.z + Math.sin(p.a) * 0.9, vx: Math.cos(p.a) * 30, vz: Math.sin(p.a) * 30, dmg: 88, life: 1.15, hr: 2 * (p.covT > 0 ? 1.6 : 1), sz: 2.6, hit: [], team: 0 }); ev(G, 'shoot', { id: p.id, pk: 'bigshot', x: p.x, z: p.z }); break;
+    case 'morale': for (const q of friends(G, p)) if (alive(q) && dist(p, q) < 10) { q.moraleT = 2; } ev(G, 'skill', { id: p.id, s: 'moralefx', x: p.x, z: p.z, a: p.a, r: 10 }); break;   // 사기 고양: 범위 안 아군 이동 속도 +50% 2초
+    case 'hold': case 'seize': {   // 견고한 수비: 가장 가까운 우리 깃발을 8초 지켜요 / 점령: 가장 가까운 상대(또는 주인 없는) 깃발을 8초 동안 우리가 유리하게 차지해요
+      const mine = S.id === 'hold', pool = G.fl.filter(f => mine ? f.own === p.team : f.own !== p.team && !(G.dr && f === G.fl[4] && !DSTATE.open));
+      let best = null, bd = mine ? 1e9 : 40; for (const f of pool) { const dd = Math.hypot(f.x - p.x, f.z - p.z); if (dd < bd) { bd = dd; best = f; } }
+      if (!best) { p.cd[key] = 1.5; break; }
+      if (mine) { best.hold = 8; best.holdTm = p.team; best.prog = 0; best.cap = -1; } else { best.seize = 8; best.seizeTm = p.team; }
+      ev(G, 'skill', { id: p.id, s: mine ? 'holdfx' : 'seizefx', x: p.x, z: p.z, a: Math.atan2(best.z - p.z, best.x - p.x), fx: best.x, fz: best.z, i: G.fl.indexOf(best) }); break;
+    }
     case 'axeswing': p.axeSw = 0.2; ev(G, 'swing', { id: p.id, x: p.x, z: p.z, a: p.a, r: 4.4, role: p.role, n: 1 }); p.animT = 0.8; break;   // 도끼를 휘두르는 순간(0.2초 뒤)에 맞아요
     case 'rootbolt': G.projs.push({ id: G.uid++, k: 'bolt', own: p.id, x: p.x + Math.cos(p.a) * 0.8, z: p.z + Math.sin(p.a) * 0.8, vx: Math.cos(p.a) * 28, vz: Math.sin(p.a) * 28, dmg: 18, life: 0.9, hit: [], team: 0, slow: 2.5 }); break;
     case 'backstep': { const ox = p.x, oz = p.z; p.x -= Math.cos(p.a) * 6; p.z -= Math.sin(p.a) * 6; collide(G, p, 0.6); p.inv = 0.3; p.focus = Math.max(p.focus || 0, 3); ev(G, 'skill', { id: p.id, s: 'backfx', x: ox, z: oz, a: p.a }); break; }
@@ -737,7 +748,7 @@ function stepPlayer(G, p, inp, dt) {
 }
 function stepPlayer0(G, p, inp, dt) {
   for (const k in p.cd) if (p.cd[k] > 0) p.cd[k] -= dt;
-  ['block', 'taunt', 'rally', 'inv', 'hitT', 'animT', 'rollCd', 'focus', 'pdCd', 'chill', 'slow', 'bast', 'vwSelf', 'capB'].forEach(k => { if (p[k] > 0) p[k] = Math.max(0, p[k] - dt); });
+  ['block', 'taunt', 'rally', 'inv', 'hitT', 'animT', 'rollCd', 'focus', 'pdCd', 'chill', 'slow', 'bast', 'vwSelf', 'capB', 'moraleT'].forEach(k => { if (p[k] > 0) p[k] = Math.max(0, p[k] - dt); });
   if (p.stl > 0 && p.moving && G.pvp) { p.fpT = (p.fpT || 0) - dt; if (p.fpT <= 0) { p.fpT = 0.3; ev(G, 'foot', { x: p.x, z: p.z, a: p.a, tm: p.team }); } }
   if (p.stl > 0) { p.stl -= dt; if (p.stl <= 0) { p.stl = 0; ev(G, 'skill', { id: p.id, s: 'unvanish', x: p.x, z: p.z, a: p.a }); } }
   if (p.vow) { p.vow.t -= dt; if (p.vow.t <= 0) p.vow = null; }
@@ -773,7 +784,7 @@ function stepPlayer0(G, p, inp, dt) {
   p.reviving = null;
   if (p.burn > 0) { p.burn -= dt; if ((p.burnT = (p.burnT || 0) - dt) <= 0) { p.burnT = 0.5; if (p.roll <= 0) hurtPlayer(G, p, 3, null); } }
   const R = ROLES[p.role];
-  let sp = R.speed * (G.pvp && !p.bot && R.atk.kind === 'melee' ? 1.06 : 1) * (hasB(p, 'feet') ? 1.12 : 1) * (p.rally > 0 ? 1.3 : 1) * (p.capB > 0 ? 1.2 : 1) * (p.block > 0 ? 0.8 : 1) * (hasFlag(G, p) ? 0.7 : 1) * (p.chill > 0 ? 0.6 : 1) * (p.emb ? 0.75 : 1) * (p.slow > 0 ? (p.slowM || 0.5) : 1) * (p.stl > 0 ? 1.25 : 1) * (p.snipeT > 0 ? 0.25 : 1) * (p.bast > 0 ? 0.6 : 1);
+  let sp = R.speed * (G.pvp && !p.bot && R.atk.kind === 'melee' ? 1.06 : 1) * (hasB(p, 'feet') ? 1.12 : 1) * (p.rally > 0 ? 1.3 : 1) * (p.capB > 0 ? 1.2 : 1) * (p.moraleT > 0 ? 1.5 : 1) * (p.block > 0 ? 0.8 : 1) * (hasFlag(G, p) ? 0.7 : 1) * (p.chill > 0 ? 0.6 : 1) * (p.emb ? 0.75 : 1) * (p.slow > 0 ? (p.slowM || 0.5) : 1) * (p.stl > 0 ? 1.25 : 1) * (p.snipeT > 0 ? 0.25 : 1) * (p.bast > 0 ? 0.6 : 1);
   const fl = hasFlag(G, p);
   if (p.snipeT > 0) { p.snipeT -= dt; if (p.snipeT <= 0) { p.snipeT = 0; const a = p.a; G.projs.push({ id: G.uid++, k: 'pierce', own: p.id, x: p.x + Math.cos(a) * 0.8, z: p.z + Math.sin(a) * 0.8, vx: Math.cos(a) * 60, vz: Math.sin(a) * 60, dmg: 110, life: 0.9, pierce: true, hit: [], team: 0, snipe: 1 }); ev(G, 'skill', { id: p.id, s: 'snipefx', x: p.x, z: p.z, a }); } }
   if (inp.aim != null && isFinite(inp.aim)) p.a = inp.aim;
@@ -1721,7 +1732,7 @@ function botPvp(G, p, dt) {
     } else inp.atk = true;
   }
   R.skills.forEach((S, i) => {
-    if (p.cd['s' + i] > 0 || (!clear && S.id !== 'heal' && S.id !== 'ward')) return;
+    if (p.cd['s' + i] > 0 || (!clear && S.id !== 'heal' && S.id !== 'ward' && S.id !== 'morale' && S.id !== 'hold' && S.id !== 'seize')) return;
     let go = false; const r = G.rng(), hpf = p.hp / p.maxhp;
     switch (S.id) {
       case 'block': go = d < 4 && hpf < 0.8 && r < 0.03; break;
@@ -1757,6 +1768,9 @@ function botPvp(G, p, dt) {
       case 'bigshot': go = d > 6 && d < 26 && r < 0.1; break;
       case 'axeswing': go = d < 4.2 && r < 0.1; break;
       case 'march': go = d < 12 && r < 0.1; break;
+      case 'morale': go = G.players.filter(q => q !== p && q.team === p.team && alive(q) && dist(p, q) < 10).length >= 2 && d < 26 && r < 0.08; break;
+      case 'hold': go = G.fl.some(f => f.own === p.team && f.cap >= 0 && f.cap !== p.team && f.prog > 0 && Math.hypot(f.x - p.x, f.z - p.z) < 30) && r < 0.5; break;
+      case 'seize': go = G.fl.some(f => f.own !== p.team && Math.hypot(f.x - p.x, f.z - p.z) < D.FLAG_R + 4 && G.players.some(q => q.team !== p.team && alive(q) && Math.hypot(f.x - q.x, f.z - q.z) < D.FLAG_R)) && r < 0.4; break;
       case 'necroheal': go = hpf < 0.55 && r < 0.15; break;
       case 'necroraise': go = d < 10 && r < 0.12; break;
       case 'courtswap': go = hpf < 0.5 && r < 0.12; break;
@@ -1785,9 +1799,9 @@ export function snapshot(G) {
   const near = e => e.k === 'boss' || (e.st !== 'sleep') || G.players.some(p => Math.abs(p.x - e.x) < 34 && Math.abs(p.z - e.z) < 26);
   return {
     mn: G.enemies.filter(e => e.mon && e.hp > 0).map(m => [r1(m.x), r1(m.z), Math.round(m.hp / m.maxhp * 100)]), mk: G.mk || [0, 0],
-    pv: G.pvp ? 1 : 0, win: G.winner || 0, wtm: G.winTeam != null ? G.winTeam : -1, tf: G.fl ? G.fl.map(f => [f.own, f.cap, r1(f.prog)]) : 0, rg: G.range ? 1 : 0, dr: G.dr ? [DSTATE.open, r1(G.dr.t)] : 0, sm: G.sm ? [G.sm.on, r1(G.sm.t)] : 0, mc: G.cb ? [Math.ceil(G.cb[0]), Math.ceil(G.cb[1])] : 0, t: r1(G.t), ph: G.phase, pt: r1(G.phaseT), c: G.ch, dp: G.deep, wk: G.weekly, wt: r1(G.winT || 0), msg: G.msg, won: G.won,
+    pv: G.pvp ? 1 : 0, win: G.winner || 0, wtm: G.winTeam != null ? G.winTeam : -1, tf: G.fl ? G.fl.map(f => [f.own, f.cap, r1(f.prog), f.hold > 0 ? r1(f.hold) : 0, f.seize > 0 ? r1(f.seize) : 0]) : 0, rg: G.range ? 1 : 0, dr: G.dr ? [DSTATE.open, r1(G.dr.t)] : 0, sm: G.sm ? [G.sm.on, r1(G.sm.t)] : 0, mc: G.cb ? [Math.ceil(G.cb[0]), Math.ceil(G.cb[1])] : 0, t: r1(G.t), ph: G.phase, pt: r1(G.phaseT), c: G.ch, dp: G.deep, wk: G.weekly, wt: r1(G.winT || 0), msg: G.msg, won: G.won,
     sk: G.players.filter(p => !p.bot && G.skip[p.id]).length, hu: G.players.filter(p => !p.bot).length,
-    pl: G.players.map(p => ({ id: p.id, tm: p.team, fz: p.inFl ? 1 : 0, dth: p.deaths | 0, role: p.role, rn: p.px && p.px.runeT > G.t ? r1(p.px.runeT - G.t) : 0, col: p.col, cos: p.cos, name: p.name, bot: p.bot, x: r1(p.x), z: r1(p.z), a: r1(p.a), hp: Math.round(p.hp), mx: p.maxhp, dn: p.down ? 1 : 0, dd: p.dead ? 1 : 0, bl: r1(p.bleed), rs: r1(p.respT), rv: r1(p.revT), ro: p.roll > 0 ? 1 : 0, bk: p.block > 0 ? 1 : 0, sh: Math.round(p.shield), tn: p.taunt > 0 ? 1 : 0, ra: p.rally > 0 ? 1 : 0, cb: p.capB > 0 ? r1(p.capB) : 0, an: p.animT > 0 ? p.anim : '', aN: p.animN || 0, ak: p.anim, mv: p.moving ? 1 : 0, cd: [r1(p.cd.s0), r1(p.cd.s1), r1(p.cd.s2)], rc: r1(p.rollCd), cv: p.covT > 0 ? r1(p.covT) : 0, rct: p.rcT > 0 ? r1(p.rcT) : 0, rcc: p.rcCd > 0 ? r1(p.rcCd) : 0, b: p.bl, cb: p.comboT > 0 ? p.combo : 0, ac: p.animC || 0, fc: p.focus > 0 ? 1 : 0, tc: p.torch || 0, cg: p.chg > 0 ? r1(p.chg) : 0, cl: p.chill > 0 ? 1 : 0, em: p.emb ? 1 : 0, kl: p.kills | 0, pc: p.place | 0, sv: r1(p.survT || 0), bn: p.burn > 0 ? 1 : 0, sw: p.slow > 0 ? 1 : 0, stl: p.stl > 0 ? 1 : 0, sp: p.snipeT > 0 ? 1 : 0, bs: p.bast > 0 ? 1 : 0, vw: (p.vow && p.vow.t > 0) || p.vwSelf > 0 ? 1 : 0 })),
+    pl: G.players.map(p => ({ id: p.id, tm: p.team, fz: p.inFl ? 1 : 0, dth: p.deaths | 0, role: p.role, rn: p.px && p.px.runeT > G.t ? r1(p.px.runeT - G.t) : 0, col: p.col, cos: p.cos, name: p.name, bot: p.bot, x: r1(p.x), z: r1(p.z), a: r1(p.a), hp: Math.round(p.hp), mx: p.maxhp, dn: p.down ? 1 : 0, dd: p.dead ? 1 : 0, bl: r1(p.bleed), rs: r1(p.respT), rv: r1(p.revT), ro: p.roll > 0 ? 1 : 0, bk: p.block > 0 ? 1 : 0, sh: Math.round(p.shield), tn: p.taunt > 0 ? 1 : 0, ra: p.rally > 0 ? 1 : 0, mr: p.moraleT > 0 ? 1 : 0, cb: p.capB > 0 ? r1(p.capB) : 0, an: p.animT > 0 ? p.anim : '', aN: p.animN || 0, ak: p.anim, mv: p.moving ? 1 : 0, cd: [r1(p.cd.s0), r1(p.cd.s1), r1(p.cd.s2)], rc: r1(p.rollCd), cv: p.covT > 0 ? r1(p.covT) : 0, rct: p.rcT > 0 ? r1(p.rcT) : 0, rcc: p.rcCd > 0 ? r1(p.rcCd) : 0, b: p.bl, cb: p.comboT > 0 ? p.combo : 0, ac: p.animC || 0, fc: p.focus > 0 ? 1 : 0, tc: p.torch || 0, cg: p.chg > 0 ? r1(p.chg) : 0, cl: p.chill > 0 ? 1 : 0, em: p.emb ? 1 : 0, kl: p.kills | 0, pc: p.place | 0, sv: r1(p.survT || 0), bn: p.burn > 0 ? 1 : 0, sw: p.slow > 0 ? 1 : 0, stl: p.stl > 0 ? 1 : 0, sp: p.snipeT > 0 ? 1 : 0, bs: p.bast > 0 ? 1 : 0, vw: (p.vow && p.vow.t > 0) || p.vwSelf > 0 ? 1 : 0 })),
     en: G.enemies.filter(e => e.k !== 'dummy' && near(e)).map(e => ({ id: e.id, k: e.k, x: r1(e.x), z: r1(e.z), a: r1(e.a), hp: Math.round(e.hp), mx: e.maxhp, st: e.st, mk: e.mark > 0 ? 1 : 0, sn: e.stun > 0 ? 1 : 0, sl: e.slow > 0 ? 1 : 0, bu: e.burn > 0 ? 1 : 0, ph: e.phase || 0, mb: e.mb || 0, tm: e.tm != null ? e.tm : -1, mv: e.moving ? 1 : 0, ak: e.atk ? e.atk.k + (e.atk.go ? '!' : '') : '', ht: e.hitT > 0 ? 1 : 0 })),
     pr: G.projs.map(p => ({ id: p.id, k: p.k, x: r1(p.x), z: r1(p.z), y: r1(p.y || 0), bg: p.big ? 1 : 0, sz: p.k === 'musket' ? p.sz || 0 : 0, a: r1(Math.atan2(p.vz || (p.tz - p.sz) || 0, p.vx || (p.tx - p.sx) || 1)) })),
     zn: G.zones.map(z => ({ tm: z.k === 'wall' || z.k === 'cover' || z.k === 'rune' ? tOf(G, z.own) : -1, id: z.id, k: z.k, x: r1(z.x), z: r1(z.z), r: z.r, a: z.a, len: z.len, w: z.w, arc: z.arc, t: r1(z.t), T: z.T, dl: z.delay > 0 ? 1 : 0 })),
