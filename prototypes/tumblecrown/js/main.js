@@ -1288,7 +1288,7 @@ function scoreboard(sn) {
 function teamHud(sn) {
   const mt = myTm(), n = sn.tf.length, x0 = innerWidth / 2 - (n - 1) * 17, y = innerWidth < 700 ? 74 : 40, nw = innerWidth < 1000, LX = nw ? innerWidth / 2 - 10 : x0 - 24, RX = nw ? innerWidth / 2 + 10 : x0 + (n - 1) * 34 + 24, yK = nw ? 24 : 4, yM = nw ? 56 : 22, yL = nw ? 40 : 38, dy = nw ? 40 : 0;   // 좁은 화면에서는 글자를 깃발 줄 아래 가운데에 쌓아요(방 이름·미니맵과 안 겹치게)
   // 깃발 줄은 위치와 상관없이 상대 팀은 왼쪽 끝부터, 우리 팀은 오른쪽 끝부터 채우고 주인 없는 깃발은 가운데에 둬요
-  const rk = i => sn.tf[i][0] === mt ? 2 : sn.tf[i][0] < 0 ? 1 : 0, ord = sn.tf.map((f, i) => i).sort((a, b) => rk(a) - rk(b) || a - b);
+  const rk = i => sn.tf[i][0] === mt ? 0 : sn.tf[i][0] < 0 ? 1 : 2, ord = sn.tf.map((f, i) => i).sort((a, b) => rk(a) - rk(b) || a - b);
   ord.forEach((i, k) => {
     const f = sn.tf[i], x = x0 + k * 34, own = f[0], cap = f[1], pr = f[2];
     oc.fillStyle = 'rgba(10,8,14,.78)'; oc.beginPath(); oc.arc(x, y, 14, 0, 7); oc.fill();
