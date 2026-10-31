@@ -171,14 +171,14 @@ function autoJoin() { const c = (qs.get('join') || '').toUpperCase().replace(/[^
 
 /* ---------- 메뉴 ---------- */
 document.querySelectorAll('#menu button, #menu2 button').forEach(b => b.addEventListener('click', () => { SFX.unlock(); SFX.play('click'); menu(b.dataset.go); }));
-document.querySelectorAll('[data-back]').forEach(b => b.addEventListener('click', () => { SFX.play('click'); if (S.scr === 'sRoom') leaveNet(); show('sLobby'); paintWho(); }));
+document.querySelectorAll('[data-back]').forEach(b => b.addEventListener('click', () => { SFX.play('click'); if (S.scr === 'sRoom' || S.info) leaveNet(); show('sLobby'); paintWho(); }));
 function menu(go) {
   homeMsg('');
   if (go === 'solo') { leaveNet(); S.net = 'solo'; S.slots = [meSlot()]; newBots(); openRoom(); }
   if (go === 'range') { leaveNet(); S.net = 'solo'; S.range = true; S.slots = [meSlot()]; newBots(); openRoom(); }
   else if (go === 'match') { if (needLogin()) return; startMatch(); }
   else if (go === 'ward') { S.wardTab = S.wardTab || 'skin'; S.wardSel = null; paintWard(); show('sWard'); view.cos = SAVE.cos.on; view.setPreview(SAVE.role, COLORS[SAVE.col | 0].c); }
-  else if (go === 'weps') { paintWepInfo(); show('sWeps'); }
+  else if (go === 'weps') { leaveNet(); S.net = 'solo'; S.info = true; S.slots = [meSlot()]; openRoom(); }   // 직업·조작: 시작 버튼 없이 직업을 눌러 정보만 봐요
   else if (go === 'notes') { loadNotes(); show('sNotes'); }
   else if (go === 'settings') { paintSettings(); show('sSettings'); }
   else if (go === 'site') { try { window.close(); } catch (e) { } setTimeout(() => { location.href = '../../'; }, 250); }   // 창이 닫히면 그대로 사라지고, 못 닫으면 사이트로 가요
@@ -294,7 +294,7 @@ function paintRoom() {
   const host = S.net !== 'guest', mine = S.slots.find(s => s.uid === UID) || meSlot(), c = ROLES[mine.role] || ROLES.knight;
   const online = S.net !== 'solo', wait = online && S.ph === 'wait', pickP = online && S.ph === 'pick';
   $('sRoom').classList.toggle('waiting', wait);
-  $('roomTitle').textContent = S.range ? T('연습장') : S.net === 'solo' ? T('봇과 연습') : S.pub ? T('온라인 대전') : host ? T('친구와 대결 · 방장') : T('친구와 대결');
+  $('roomTitle').textContent = S.info ? T('직업·조작') : S.range ? T('연습장') : S.net === 'solo' ? T('봇과 연습') : S.pub ? T('온라인 대전') : host ? T('친구와 대결 · 방장') : T('친구와 대결');
   $('inviteBtn').style.display = S.net === 'host' && !S.pub && wait ? '' : 'none';
   $('clsList').innerHTML = ROLE_IDS.map((id, k) => '<button data-c="' + id + '"' + (mine.role === id ? ' class="on"' : '') + '><i>' + (k + 1) + '</i><b>' + ROLES[id].name + '</b><small class="lv" style="color:' + charRankFor((SAVE.pts || {})[id]).color + '">' + charRankFor((SAVE.pts || {})[id]).name + ' · Lv.' + roleLevel(SAVE.xp[id]) + '</small></button>').join('');
   $('clsList').querySelectorAll('button').forEach(el => el.onclick = () => { SFX.play('click'); SAVE.role = el.dataset.c; save(); pick(); });
@@ -308,7 +308,8 @@ function paintRoom() {
   $('waitList').innerHTML = all.map(s => '<span><i style="background:' + hex(TEAMS[s.team == null ? 0 : s.team].c) + '"></i>' + esc(s.name) + '</span>').join('') + Array.from({ length: Math.max(0, cap - all.length) }, () => '<span class="empty"><i></i>' + T('빈자리') + '</span>').join('');
   $('capRow').style.display = S.net === 'host' && !S.pub && wait ? '' : 'none'; $('capN').textContent = S.cap; $('readyBtn').style.display = pickP ? '' : 'none'; $('readyBtn').textContent = mine.rd || (S.net === 'host' && S.rdy[UID]) ? T('준비됨') : T('준비 완료');
   $('botRow').style.display = 'none'; $('colRow').style.display = 'none'; $('mapRow').style.display = S.net === 'solo' && !S.range ? '' : 'none'; $('mapBtn').textContent = S.mapSel >= 0 ? CHAPTERS[S.mapSel].title : T('무작위');
-  $('startBtn').style.display = !online ? '' : 'none';
+  $('startBtn').style.display = !online && !S.info ? '' : 'none'; $('ctlBtn').style.display = S.info ? '' : 'none';
+  if (S.info) { $('mapRow').style.display = 'none'; $('roomMsg').textContent = ''; $('slots').innerHTML = ''; }
   $('roomMsg').textContent = !online ? (all.length < 2 ? T('봇을 넣어 주세요.') : '') : wait ? (S.pub ? ((S.net === 'host' ? (S.fillT > 0 ? Math.ceil(FILL_T - S.fillT) : -1) : S.ft) >= 0 ? T('{0}초 뒤 빈자리를 봇으로 채워요.', S.net === 'host' ? Math.ceil(FILL_T - S.fillT) : S.ft) : T('다른 플레이어를 기다리는 중이에요.')) : T('친구를 초대해 주세요.')) : T('직업을 골라 주세요 · {0}초 뒤 시작', Math.max(0, Math.ceil(S.pickT))); 
   view.setPreview(wait ? null : mine.role, COLORS[mine.col].c);
 }
@@ -321,6 +322,7 @@ function roster() {
   return out;
 }
 S.botN = 0; S.botRoles = null; S.mapSel = Math.min(CHAPTERS.length - 1, (SAVE.mapSel == null ? -1 : SAVE.mapSel | 0));
+$('ctlBtn').onclick = () => { SFX.play('click'); paintWepInfo(); show('sWeps'); };
 $('mapBtn').onclick = () => { SFX.play('click'); S.mapSel = S.mapSel + 1 >= CHAPTERS.length ? -1 : S.mapSel + 1; SAVE.mapSel = S.mapSel; save(); paintRoom(); };
 function pick() {
   if (S.net !== 'solo' && S.ph !== 'pick') return;
@@ -425,7 +427,7 @@ setInterval(() => {
 }, 250);
 function checkFull() { if (S.net === 'host' && !S.G && S.ph === 'wait' && S.slots.length >= S.cap) { S.ph = 'pick'; S.pickT = PICK_T; S.rdy = {}; S.lastLeft = null; for (const sl of S.slots) if (sl.bot) sl.rdT = 1 + Math.random() * 3; SFX.play('click'); } }
 function leaveNet() {
-  S.range = false;
+  S.range = false; S.info = false;
   S.ph = null; S.pub = false; S.rdy = {}; S.mg = (S.mg | 0) + 1;
   hubRoom(false); cancelInvites();
   if (S.peer) { try { S.peer.destroy(); } catch (e) { } }
@@ -899,6 +901,7 @@ function onEvent(e) {
     case 'skill': setTimeout(() => skillFx(e), 130); break; // 예비 동작이 끝나고 터지는 순간에 맞춰요
     case 'mark': view.rune(e.x, e.z, 1.6, 0xff3a3a, 1.4, 4); view.column(e.x, e.z, 0xff3a3a, 0.6); view.flash(e.x, e.z, 0xff3a3a, 60); break;
     case 'splash': view.burst(e.x, 0.6, e.z, 0x9af0a8, 16, 6, 0.6, 0.14); view.ring(e.x, e.z, 3, 0x9af0a8, 0.5); view.rise(e.x, e.z, 0x9af0a8, 10, 2.5, 0.8, 4); view.flash(e.x, e.z, 0x9af0a8, 70); break;
+    case 'multi': { const q = S.snap && S.snap.pl.find(z => z.id === e.id), nm = e.n === 2 ? T('더블 킬') : e.n === 3 ? T('트리플 킬') : T('{0}연속 킬', e.n); if (e.id === S.me) { bigMsg(nm + '!', '', 1500); SFX.play('clear'); } else if (q) toast((q.bot ? ROLES[q.role].name : q.name) + ' · ' + nm, 1800); break; }
     case 'ko': { // 탈락: 몸이 조각나 흩어져요
       view.shatter(e.x, e.z, [0xd8d0bc, 0x6a6470, 0x5a5040, 0x8a8a96], 30, true); view.burst(e.x, 1.2, e.z, 0xffe8b0, 16, 7, 0.6, 0.12); view.shock(e.x, e.z, 5, 0xffe08a, 0.5); view.flash(e.x, e.z, 0xffd08a, 140); view.shake = Math.max(view.shake, 0.6); SFX.play('kill');
       const by = S.snap && S.snap.pl.find(q => q.id === e.by), who = S.snap && S.snap.pl.find(q => q.id === e.id), nm = q => q ? (q.id === S.me ? T('나') : q.bot ? ROLES[q.role].name : q.name) : '';
@@ -1101,7 +1104,7 @@ function paintHud() {
   if (me) {
     const R = ROLES[me.role], sk = $('skills');
     const kbs = JSON.stringify(KB()); if (sk.dataset.role !== me.role || sk.dataset.kb !== kbs) { sk.dataset.role = me.role; sk.dataset.kb = kbs; sk.innerHTML = ''; [{ key: 'f', name: T('귀환'), cd: 25 }].concat(R.skills, [{ key: 'roll', name: T('구르기'), cd: 1.2 }]).forEach((s, i) => { const kk = i === 0 ? 'F' : keyLabel(KB()[['q', 'e', 'r', 'roll'][i - 1]]); const d = document.createElement('div'); d.className = 'sk'; d.innerHTML = `<i class="cd"></i><span class="nm">${s.name}</span><small>${kk}</small><b class="cn"></b>`; sk.appendChild(d); }); ['tQ', 'tE', 'tR'].forEach((id, i) => $(id).querySelector('span').textContent = R.skills[i].name); }
-    const cds = me.cd.concat([me.rc]), maxs = R.skills.map(s => s.cd).concat([1.2]), cds1 = [me.rcc || 0].concat(cds), maxs1 = [25].concat(maxs);
+    const cds = me.cd.concat([me.rc]), maxs = R.skills.map(s => s.cd).concat([1.2]), cds1 = [0].concat(cds), maxs1 = [25].concat(maxs);
     [...sk.children].forEach((d, i) => { const c = Math.max(0, cds1[i]); d.querySelector('.cd').style.height = Math.min(100, c / maxs1[i] * 100) + '%'; d.querySelector('.cn').textContent = c > 0.05 ? Math.ceil(c) : ''; d.classList.toggle('cool', c > 0.05); });
     ['tQ', 'tE', 'tR', 'tRoll'].forEach((id, i) => { const c = Math.max(0, cds[i]); $(id).querySelector('.cd').style.height = Math.min(100, c / maxs[i] * 100) + '%'; });
   }
@@ -1285,7 +1288,7 @@ function recallPanel(sn) {
   S.rcHit = [];
   if (!live) { S.rcOpen = false; return; }
   oc.font = 'bold 15px Galmuri, system-ui'; oc.textAlign = 'center'; oc.lineWidth = 4; oc.strokeStyle = '#140f18';
-  const st = me.rct > 0 ? T('귀환 중 {0}', Math.ceil(me.rct)) : me.rcc > 0 ? T('귀환 {0}', Math.ceil(me.rcc)) : '', yy = innerHeight - 118;
+  const st = me.rct > 0 ? T('귀환 중 {0}', Math.ceil(me.rct)) : '', yy = innerHeight - 118;
   if (st && !S.rcOpen) { oc.strokeText(st, innerWidth / 2, yy); oc.fillStyle = me.rct > 0 ? '#9af0e0' : '#c8c0d0'; oc.fillText(st, innerWidth / 2, yy); }
   if (!S.rcOpen) return;
   const mt = me.tm, { pw, ph, x0, y0 } = bigMapRect(), sc = pw / (MW * CS), P = (wx, wz) => [x0 + wx * sc, y0 + wz * sc];
