@@ -2,6 +2,14 @@
  "notes": [
   {
    "date": "2026-10-31",
+   "build": "b156",
+   "title": "로비 제목 줄바꿈",
+   "items": [
+    "로비의 Tumblecrown 글자를 Tumble 다음에서 줄바꿈"
+   ]
+  },
+  {
+   "date": "2026-10-31",
    "build": "b155",
    "title": "주인 없는 깃발 점령 표시",
    "items": [
