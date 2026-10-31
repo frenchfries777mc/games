@@ -735,11 +735,21 @@ setChapterData(0);
 
 export const ACHIEVEMENTS = [
   { id: 'first', name: T('첫 대전'), desc: T('대전을 처음 시작해요.') },
-  { id: 'win', name: T('마지막 한 명'), desc: T('마지막까지 살아남아 우승해요.') },
-  { id: 'winall', name: T('일곱 직업의 왕관'), desc: T('일곱 직업으로 모두 한 번 이상 우승해요.') },
+  { id: 'win', name: T('첫 승리'), desc: T('대전에서 처음 이겨요.') },
+  { id: 'wins10', name: T('열 번의 승리'), desc: T('대전에서 열 번 이겨요.') },
+  { id: 'winall', name: T('모든 직업의 왕관'), desc: T('모든 직업으로 한 번 이상 이겨요.') },
   { id: 'kill3', name: T('연속 탈락'), desc: T('한 판에 세 명 이상을 쓰러뜨려요.') },
-  { id: 'pdodge', name: T('종이 한 장 차이'), desc: T('공격이 닿기 직전에 굴러서 피해요.') },
-  { id: 'friends', name: T('함께하는 대전'), desc: T('친구와 같은 방에서 대전해요.') }
+  { id: 'kill5', name: T('전장의 지배자'), desc: T('한 판에 다섯 명 이상을 쓰러뜨려요.') },
+  { id: 'kill50', name: T('쉰 명 처치'), desc: T('상대를 합쳐서 쉰 명 쓰러뜨려요.') },
+  { id: 'kill300', name: T('삼백 명 처치'), desc: T('상대를 합쳐서 삼백 명 쓰러뜨려요.') },
+  { id: 'flag10', name: T('깃발 수집가'), desc: T('깃발을 열 번 점령해요.') },
+  { id: 'flag100', name: T('깃발의 주인'), desc: T('깃발을 백 번 점령해요.') },
+  { id: 'mon1', name: T('괴물 사냥 첫걸음'), desc: T('중립 괴물을 처음 쓰러뜨려요.') },
+  { id: 'mon10', name: T('괴물 사냥꾼'), desc: T('중립 괴물을 열 마리 쓰러뜨려요.') },
+  { id: 'match50', name: T('전장의 단골'), desc: T('대전을 쉰 판 마쳐요.') },
+  { id: 'lv10', name: T('직업의 달인'), desc: T('직업 하나를 최고 레벨까지 올려요.') },
+  { id: 'gold', name: T('골드 계급'), desc: T('직업 하나의 마스터리를 골드까지 올려요.') },
+  { id: 'friends', name: T('함께하는 대전'), desc: T('다른 사람과 같은 방에서 대전해요.') }
 ];
 
 // 갈림길 중간 보스 (장마다 이름이 달라요): 첫째는 돌격형, 둘째는 부하를 부르는 소환형
