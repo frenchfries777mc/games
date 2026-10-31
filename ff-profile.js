@@ -1034,6 +1034,18 @@ async function gameSection(el, sb, uid, d, o, T, own){
     if(typeof r==='string') gx.insertAdjacentHTML('beforeend', r); else if(r&&r.nodeType) gx.appendChild(r); }catch(e){}
 }
 function inGame(o){ if(o&&o.noDeco!=null) return !!o.noDeco; if(window.FF_INGAME) return true; return /\/(Stickseum|CrownEnvoy|BEACONFALL|IslandTrade)-[^\/]*\.html/i.test(location.pathname); }
+/* 온라인 표시: 지금 접속 중이면 어느 게임/사이트에 있는지, 아니면 오프라인과 마지막으로 있던 곳 (RPC ff_user_status, supabase-ff-user-status.sql) */
+var PLACE={hub:'허브',tools:'Tools',educations:'Educations'};
+async function statusLine(el, sb, uid){
+  var old=el.querySelector('.pst'); if(old) old.remove();
+  var box=document.createElement('div'); box.className='pst'; box.style.cssText='margin:8px 0 2px;text-align:center;font-size:13px;color:#cfd3dc';
+  var G=el.querySelector('.G'); if(!G||!G.parentNode) return; G.parentNode.insertBefore(box,G);
+  try{ var r=await sb.rpc('ff_user_status',{p_uid:uid}); if(r.error||!r.data) { box.remove(); return; }
+    var x=Array.isArray(r.data)?r.data[0]:r.data; if(!x||!x.at){ box.textContent='⚫ 오프라인'; return; }
+    var nm=function(g){ var q=GAMES.filter(function(k){ return k.id===g; })[0]; return q?q.name:(PLACE[g]||g); }, t=Date.parse(x.at), m=Math.max(0,Math.round((Date.now()-t)/60000));
+    if(Date.now()-t<100000){ box.innerHTML='<span style="color:#5be38a">🟢 온라인</span> · '+esc(nm(x.game)); return; }
+    var a=m<60?m+'분 전':(m<1440?Math.round(m/60)+'시간 전':Math.round(m/1440)+'일 전');
+    box.textContent='⚫ 오프라인 · '+nm(x.game)+' '+a; }catch(e){ box.remove(); } }
 async function open(sb, uid, o){
   var T=L[lang(o)], el=modal(T), cv=el.querySelector('canvas'), msg=el.querySelector('.m');
   el.querySelector('.s').textContent=T.save; el.querySelector('.c').textContent=T.close; var dcb=el.querySelector('.dc'); dcb.textContent=T.deco; dcb.style.display='none'; el.querySelector('.D').className='D'; el.querySelector('.D').innerHTML=''; el.querySelector('.k').textContent=T.link; el.querySelector('.k').style.display='none';
@@ -1041,6 +1053,7 @@ async function open(sb, uid, o){
   el.style.display='flex'; cv.style.display='none'; msg.textContent=T.loading;
   try{ var d=await fetchData(sb, uid); await draw(cv, d, o); cv.style.display=''; msg.textContent=''; }
   catch(e){ msg.textContent=T.fail; return; }
+  statusLine(el, sb, uid);
   var own=false;
   try{ var s=await sb.auth.getSession(), me=s&&s.data&&s.data.session&&s.data.session.user;
     if(me&&me.id===uid){ own=true; var h=await syncHub(sb, uid, d); if(h){ d.ids=d.ids||{}; d.ids.hub={}; h.forEach(function(k){ d.ids.hub[k]=1; }); rateCache=null; }
