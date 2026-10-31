@@ -1696,8 +1696,16 @@ function botLane(G, p) {
   const bs = G.players.filter(q => q.team === p.team && q.ai).sort((x, y) => x.id - y.id);
   return [0, 1, 2][bs.indexOf(p) % 3];
 }
+// "여기 오세요" 신호를 찍으면 그 팀 봇 중 절반(올림)이 신호 자리로 가요 (신호 자리와 가까운 순서, 12초 동안)
+export function callBots(G, tm, x, z) {
+  const bs = G.players.filter(q => q.team === tm && q.ai && alive(q)).sort((a, b) => Math.hypot(a.x - x, a.z - z) - Math.hypot(b.x - x, b.z - z));
+  for (const q of bs.slice(0, Math.ceil(bs.length / 2))) { q.ai.callT = G.t + 12; q.ai.callX = x; q.ai.callZ = z; }
+}
 function botFlag(G, p, dt) {
   const inp = {}, ai = p.ai; ai.fT = (ai.fT || 0) - dt;
+  if (ai.callT > G.t) {   // "여기 오세요" 신호: 신호 자리로 모여요 (싸울 상대가 가까이 있으면 그쪽이 먼저예요)
+    if (Math.hypot(ai.callX - p.x, ai.callZ - p.z) > 4) moveTo(G, p, inp, ai.callX, ai.callZ, 1); return inp;
+  }
   if (ai.fT <= 0 || ai.fi == null) {
     ai.fT = 2 + G.rng() * 1.5; let bi = 0, bs = 1e9;
     const sl = botPlan(G, p.team).slots[p.id];
