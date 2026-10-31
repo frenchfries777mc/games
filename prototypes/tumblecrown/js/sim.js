@@ -1757,6 +1757,10 @@ function botFlag(G, p, dt) {
     let bj = -1, bd = d - 35; G.fl.forEach((g, j) => { if (g.own !== p.team) return; const dd = Math.hypot(g.x - f.x, g.z - f.z); if (dd < bd) { bd = dd; bj = j; } });
     if (bj >= 0) { inp.rcl = bj + 1; return inp; }
   }
+  if (G.dr && ai.fi === G.gi && !DSTATE.open && d > 14) {   // 사막 신전: 문이 닫혀 있으면 우리 쪽 문 앞에서 기다렸다가 열리면 바로 들어가요
+    const dd = MAP.doors.filter(r => r[2] < r[3]).sort((u, w) => Math.abs((u[0] + u[2] / 2) * MAP.cs - G.fl[G.home[p.team]].x) - Math.abs((w[0] + w[2] / 2) * MAP.cs - G.fl[G.home[p.team]].x))[0];
+    if (dd) { const side = Math.sign(G.fl[G.home[p.team]].x - f.x) || -1, gx = (dd[0] + dd[2] / 2) * MAP.cs + side * 8, gz = (dd[1] + dd[3] / 2) * MAP.cs + ((p.tIdx % 3) - 1) * 4; if (Math.hypot(gx - p.x, gz - p.z) > 3) moveTo(G, p, inp, gx, gz, 1); return inp; }
+  }
   if (d > D.FLAG_R * 0.55) { moveTo(G, p, inp, f.x, f.z, 1); if (d > 25 && p.rollCd <= 0 && G.rng() < 0.01) inp.roll = true; }
   else { ai.hl = (ai.hl || 0) - dt; if (ai.hl <= 0) { ai.hl = 1 + G.rng() * 1.5; ai.ha = G.rng() * TAU; } inp.mx = Math.cos(ai.ha) * 0.35; inp.mz = Math.sin(ai.ha) * 0.35; }
   return inp;
