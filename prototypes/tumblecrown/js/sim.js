@@ -782,6 +782,7 @@ function stepPlayer(G, p, inp, dt) {
   if (p.px) p.px.hp = 0;
   const wsx = p.x, wsz = p.z;
   stepPlayer0(G, p, inp, dt);
+  if (dt > 0) { p.mvx = (p.x - wsx) / dt; p.mvz = (p.z - wsz) / dt; }   // 지금 움직이는 속도 (봇의 예측 샷용)
   if (G.pvp && p.team != null && G.zones.some(z => z.k === 'wall' || z.k === 'cover')) wallClamp(G.zones.filter(z => z.k === 'wall' || z.k === 'cover').map(z => ({ x: z.x, z: z.z, a: z.a, len: z.len, tm: tOf(G, z.own) })), p.team, wsx, wsz, p);
   if (G.pvp && alive(p) && G.phase === 'play') {
     if (p.inFl && p.hp < p.maxhp) p.hp = Math.min(p.maxhp, p.hp + p.maxhp * 0.025 * dt);
@@ -1794,7 +1795,9 @@ function botPvp(G, p, dt) {
   const d = dist(p, tgt), ta = angTo(p, tgt), ranged = R.atk.kind !== 'melee', clear = lineClear(p.x, p.z, tgt.x, tgt.z);
   const near = foes.filter(q => dist(p, q) < 6).length, nearest = foes.length ? foes.reduce((m, q) => dist(p, q) < dist(p, m) ? q : m, foes[0]) : tgt, low = dist(p, nearest) < 8 && nearest.hp >= p.hp * 4 && flee75(G, p, dt);   // 가까운 적 체력이 내 체력의 네 배 이상일 때만 도망쳐요
   // 앞질러 조준: 상대가 움직이는 방향으로 조금 앞을 겨눠요
-  const sp = R.atk.speed || 20, lt = Math.min(0.6, d / sp), px = tgt.x + (tgt.vx || 0) * lt * 0.9, pz = tgt.z + (tgt.vz || 0) * lt * 0.9;
+  // 원거리·폭탄병은 쏠 때마다 30% 확률로 예측 샷 (상대가 가는 방향 앞을 겨눠요), 나머지는 지금 서 있는 자리를 겨눠요
+  const cdA = p.cd.atk || 0; if (cdA > (ai.lcd || 0) + 0.01) ai.lead = G.rng() < 0.3; ai.lcd = cdA;
+  const sp = R.atk.speed || 20, lt = ranged && ai.lead ? Math.min(0.7, d / Math.max(8, sp)) : 0, px = tgt.x + (tgt.mvx || tgt.vx || 0) * lt, pz = tgt.z + (tgt.mvz || tgt.vz || 0) * lt;
   inp.aim = Math.atan2(pz - p.z, px - p.x); inp.ax = px; inp.az = pz;
   // 1) 바닥 경고 피하기
   const dz = inDanger(G, p);
