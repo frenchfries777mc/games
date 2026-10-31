@@ -1,9 +1,9 @@
 /* Gatecrash · © 2026 Frenchfries777 · CC BY-NC-ND 4.0
    데이터: 상수, 무기, 맵 */
 'use strict';
-const VERSION = '0.1', BUILD = 19;
+const VERSION = '0.1', BUILD = 20;
 const TS = 16;                                   // 타일 한 칸 (px)
-const PH = { RUN: 120, ACC: 1500, AIR: 1000, G: 1500, JUMP: 440, CUT: 300, MAXF: 560, W: 10, H: 22, COY: 0.08, BUF: 0.12, BELT: 70, ICE: 180, LIFT: 200 };
+const PH = { RUN: 120, ACC: 1500, AIR: 1000, G: 1500, JUMP: 440, CUT: 300, MAXF: 560, W: 10, H: 22, COY: 0.08, BUF: 0.12, BELT: 70, ICE: 180, LIFT: 130 };
 const MAX_HP = 100, RACERS = 4;
 const COLORS = ['#e8483b', '#3b8de8', '#3fbf5a', '#f2b632', '#a65be0', '#f07ab8', '#2cc4c4', '#f0f0f0'];
 

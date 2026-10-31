@@ -56,7 +56,7 @@ function moveY(W, b, dy) {
 function iceUnder(W, b) { return b.ground && (W.wet || tileAt(W, Math.floor((b.x + PH.W / 2) / TS), Math.floor((b.y + PH.H) / TS)) === 'I'); }
 function inLift(W, b) {
   const cx = Math.floor((b.x + PH.W / 2) / TS);
-  if (W.liftOff || tileAt(W, cx, Math.floor((b.y + PH.H / 2) / TS)) !== 'U') return false;
+  if (W.liftOff || b.noLift || tileAt(W, cx, Math.floor((b.y + PH.H / 2) / TS)) !== 'U') return false;
   return !(b.ground && tileAt(W, cx, Math.floor((b.y + PH.H) / TS)) === '=');      // 승강로 위 발판에 서 있으면 끌려가지 않아요
 }
 function beltUnder(W, b) {
@@ -152,9 +152,19 @@ function evUpdate(W, clock, phase) {
   W.liftOff = act('lift'); W.wet = act('wet'); W.flipB = act('flip');
   const name = { lift: '엘리베이터 점검 중', wet: '물청소 중! 바닥이 미끄러워요', flip: '컨베이어가 거꾸로 돌아요' };
   W.evMsg = on1 ? name[k1] : on2 ? name[k2] : soon1 ? '곧 ' + name[k1] : soon2 ? '곧 ' + name[k2] : '';
-  W.evNow = on1 || on2;
+  W.evNow = on1 || on2; W.soonK = soon1 ? k1 : soon2 ? k2 : '';
 }
 
+/* 엘리베이터 정원은 2명: 먼저 탄 사람 둘만 올라가고 나머지는 밀려나요 (모두 같은 식으로 계산해요) */
+function liftCap(G) {
+  const W = G.W, by = {};
+  G.racers.forEach((r, i) => {
+    const cx = Math.floor((r.x + PH.W / 2) / TS), cy = Math.floor((r.y + PH.H / 2) / TS);
+    if (!r.fin && tileAt(W, cx, cy) === 'U') { let a = cx; while (tileAt(W, a - 1, cy) === 'U') a--; if (r.liftIn === undefined) r.liftIn = G.clock; (by[a + ':' + ((cy / 6) | 0)] = by[a + ':' + ((cy / 6) | 0)] || []).push([r.liftIn, i, r]); }
+    else { r.liftIn = undefined; r.noLift = false; }
+  });
+  for (const k in by) by[k].sort((p, q) => p[0] - q[0] || p[1] - q[1]).forEach((e, n) => { e[2].noLift = n >= 2; });
+}
 /* ---------- 레이서 ---------- */
 function newRacer(o, W) {
   const s = W.starts[o.slot % W.starts.length];
@@ -321,7 +331,7 @@ function stepShots(G, dt) {
 }
 /* 한 걸음. inputs: id -> { d, jp, j, atk, aim, swap } */
 function stepGame(G, dt, inputs) {
-  G.clock += dt; evUpdate(G.W, G.clock, G.phase);
+  G.clock += dt; evUpdate(G.W, G.clock, G.phase); liftCap(G);
   if (G.phase === 'count') { G.t -= dt; if (G.t <= 0) { G.phase = 'race'; G.clock = 0; G.ev.push({ t: 'go' }); } }
   for (const r of G.racers) {
     const inp = r.bot ? botInput(G, r, dt) : (inputs[r.id] || { d: 0 });
