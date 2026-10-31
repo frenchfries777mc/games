@@ -7,7 +7,93 @@
    "items": [
     "시작할 때 실제로 받은 만큼 차는 넓은 진행바 추가",
     "인트로의 시간 기준 막대 삭제"
-   ]
+   ],
+   "tr": {
+    "en": {
+     "title": "Loading Progress Bar",
+     "items": [
+      "Wide progress bar at startup that fills with the amount actually downloaded",
+      "Removed the time-based bar on the intro"
+     ]
+    },
+    "es": {
+     "title": "Barra de carga",
+     "items": [
+      "Barra de progreso ancha al iniciar que se llena con lo que realmente se descarga",
+      "Eliminada la barra basada en el tiempo de la introducción"
+     ]
+    },
+    "fr": {
+     "title": "Barre de chargement",
+     "items": [
+      "Grande barre de progression au lancement, qui se remplit selon les données réellement téléchargées",
+      "Suppression de la barre basée sur le temps dans l'intro"
+     ]
+    },
+    "de": {
+     "title": "Ladebalken",
+     "items": [
+      "Breiter Fortschrittsbalken beim Start, der sich nach den tatsächlich geladenen Daten füllt",
+      "Zeitbasierter Balken im Intro entfernt"
+     ]
+    },
+    "ja": {
+     "title": "ローディングバー",
+     "items": [
+      "起動時に実際にダウンロードした分だけ進む、幅広い進行バーを追加",
+      "イントロの時間基準のバーを削除"
+     ]
+    },
+    "zh": {
+     "title": "加载进度条",
+     "items": [
+      "启动时新增按实际下载量填充的宽进度条",
+      "删除开场动画中按时间计算的进度条"
+     ]
+    },
+    "pt": {
+     "title": "Barra de carregamento",
+     "items": [
+      "Barra de progresso larga na inicialização, que enche conforme o que é realmente baixado",
+      "Removida a barra baseada em tempo da introdução"
+     ]
+    },
+    "ru": {
+     "title": "Полоса загрузки",
+     "items": [
+      "Широкая полоса загрузки при запуске: заполняется по реально загруженным данным",
+      "Удалена полоса по времени во вступлении"
+     ]
+    },
+    "tr": {
+     "title": "Yükleme çubuğu",
+     "items": [
+      "Başlangıçta gerçekten indirilen miktara göre dolan geniş bir ilerleme çubuğu eklendi",
+      "Girişteki zamana dayalı çubuk kaldırıldı"
+     ]
+    },
+    "it": {
+     "title": "Barra di caricamento",
+     "items": [
+      "Ampia barra di avanzamento all'avvio, che si riempie in base ai dati realmente scaricati",
+      "Rimossa la barra basata sul tempo nell'intro"
+     ]
+    },
+    "pl": {
+     "title": "Pasek postępu wczytywania",
+     "items": [
+      "Szeroki pasek postępu przy starcie, który wypełnia się według faktycznie pobranych danych",
+      "Usunięto pasek czasowy we wstępie"
+     ]
+    },
+    "ar": {
+     "title": "شريط تقدم التحميل",
+     "items": [
+      "شريط تقدم عريض عند البدء يمتلئ بحسب ما تم تنزيله فعلاً",
+      "حذف الشريط الزمني في المقدمة"
+     ]
+    }
+   }
   },
   {
    "date": "2026-10-31",
@@ -15,7 +101,81 @@
    "title": "화면 안내",
    "items": [
     "화면이 계속 느리면 효과를 자동으로 줄이고, 설정의 화질을 「낮음」으로 두라고 한 번 알려 줘요"
-   ]
+   ],
+   "tr": {
+    "en": {
+     "title": "Screen Notice",
+     "items": [
+      "If the screen keeps lagging, effects are reduced automatically and you are told once to set graphics quality to \"Low\" in Settings"
+     ]
+    },
+    "es": {
+     "title": "Aviso de pantalla",
+     "items": [
+      "Si la pantalla sigue yendo lenta, los efectos se reducen automáticamente y se avisa una vez para poner la calidad gráfica en «Baja» en Ajustes"
+     ]
+    },
+    "fr": {
+     "title": "Info écran",
+     "items": [
+      "Si l'écran continue de ramer, les effets sont réduits automatiquement et un message vous invite une fois à régler la qualité graphique sur « Basse » dans les Paramètres"
+     ]
+    },
+    "de": {
+     "title": "Bildschirmhinweis",
+     "items": [
+      "Wenn das Bild dauerhaft ruckelt, werden die Effekte automatisch reduziert, und einmal erscheint der Hinweis, die Grafikqualität in den Einstellungen auf „Niedrig“ zu stellen"
+     ]
+    },
+    "ja": {
+     "title": "画面のお知らせ",
+     "items": [
+      "画面が遅い状態が続くと効果を自動で減らし、設定のグラフィック品質を「低」にするようお知らせします（一度だけ）"
+     ]
+    },
+    "zh": {
+     "title": "画面提示",
+     "items": [
+      "画面持续卡顿时会自动减少特效，并提示一次在设置中将画质设为“低”"
+     ]
+    },
+    "pt": {
+     "title": "Aviso de tela",
+     "items": [
+      "Se a tela continuar lenta, os efeitos são reduzidos automaticamente e você é avisado uma vez para definir a qualidade gráfica como «Baixa» nas Configurações"
+     ]
+    },
+    "ru": {
+     "title": "Подсказка по экрану",
+     "items": [
+      "Если экран продолжает тормозить, эффекты автоматически уменьшаются, и один раз появляется подсказка выставить качество графики «Низкое» в настройках"
+     ]
+    },
+    "tr": {
+     "title": "Ekran bilgisi",
+     "items": [
+      "Ekran yavaş kalmaya devam ederse efektler otomatik azaltılır ve bir kez Ayarlar'da grafik kalitesini «Düşük» yapman önerilir"
+     ]
+    },
+    "it": {
+     "title": "Avviso schermo",
+     "items": [
+      "Se lo schermo resta lento, gli effetti vengono ridotti automaticamente e viene suggerito una volta di impostare la qualità grafica su «Bassa» nelle Impostazioni"
+     ]
+    },
+    "pl": {
+     "title": "Komunikat o ekranie",
+     "items": [
+      "Jeśli obraz dalej działa wolno, efekty są automatycznie ograniczane i raz pojawia się podpowiedź, by ustawić jakość grafiki na „Niska” w Ustawieniach"
+     ]
+    },
+    "ar": {
+     "title": "إشعار الشاشة",
+     "items": [
+      "إذا استمرت الشاشة في البطء، تُقلَّل المؤثرات تلقائياً ويظهر تنبيه مرة واحدة لضبط جودة الرسومات على «منخفضة» في الإعدادات"
+     ]
+    }
+   }
   },
   {
    "date": "2026-10-31",
