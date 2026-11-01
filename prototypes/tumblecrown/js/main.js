@@ -20,7 +20,7 @@ if (TOUCH) document.body.classList.add('touch');
 /* ---------- 저장 ---------- */
 function lsGet(k, d) { try { const v = localStorage.getItem(k); return v ? JSON.parse(v) : d; } catch (e) { return d; } }
 function lsSet(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) { } }
-const RANK_WIN = 30, RANK_LOSS = 20;   // 팀 랭킹전: 이기면 +30점, 지면 -20점 (0점 아래로는 내려가지 않아요)
+const RANK_WIN = 30, RANK_LOSS = 20;   // 랭크전: 이기면 +30점, 지면 -20점 (0점 아래로는 내려가지 않아요)
 const SAVE = Object.assign({ honor: 0, xp: {}, ach: {}, clears: {}, role: 'knight', cos: { own: {}, on: {} }, set: { vol: 70, px: 3, bloom: 1, shake: 1 } }, lsGet('tumblecrown.save', {}));
 SAVE.set = Object.assign({ mv: 'wasd', keys: {}, vol: 70, px: 3, bloom: 1, shake: 1, opt: matchMedia('(pointer: coarse)').matches ? 1 : 0 }, SAVE.set || {});
 // 최적화: 허브 설정의 공용 값(ff_perf)이 있으면 그걸 따르고, 여기서 바꾸면 공용 값도 같이 바꿔요
@@ -514,7 +514,7 @@ const FILL_T = 15;
 setInterval(() => {
   if (S.net !== 'host' || S.G || !S.pub || S.ph !== 'wait') { S.fillT = 0; return; }
   if (!S.slots.some(s => !s.srv && !s.bot)) { S.fillT = 0; if (S.slots.some(s => s.bot)) { S.slots = S.slots.filter(s => !s.bot); hostLobby(); if (S.scr === 'sRoom') paintRoom(); } return; }
-  if (S.mode === 'rank') { S.fillT = 0; return; }   // 팀 랭킹전에는 봇이 들어오지 않아요: 사람이 다 모일 때까지 기다려요
+  if (S.mode === 'rank') { S.fillT = 0; return; }   // 랭크전에는 봇이 들어오지 않아요: 사람이 다 모일 때까지 기다려요
   S.fillT = (S.fillT || 0) + 0.25; const left = Math.max(0, Math.ceil(FILL_T - S.fillT));
   if (S.fillT >= FILL_T) {
     S.fillT = 0; newBots();
