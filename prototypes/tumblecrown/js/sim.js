@@ -1,6 +1,6 @@
 // Tumblecrown · © 2026 Frenchfries777 · CC BY-NC-ND 4.0
 // 게임 규칙 (방장·혼자 하기에서만 돌아가요). three.js를 쓰지 않아서 node에서도 시험할 수 있어요.
-import { ROLES, ROLE_IDS, ENEMIES, BLESSINGS, CHAPTERS, FOES, MAP, COMBOS, DEEP, ROLE_PUZ, flagShown } from './data.js';
+import { ROLES, ROLE_IDS, ENEMIES, BLESSINGS, FOES, MAP, COMBOS, DEEP, ROLE_PUZ, flagShown } from './data.js';
 import * as D from './data.js';
 import { collide as mapCollide, isWall, lineClear, navDir, areaAt, cw, useChapter, PILLARS, resetSecrets, openSecret, secretFace, openGate, setDoors, DSTATE, dropPillar, pillarAt, LIFTH, liftOk } from './map.js';
 
@@ -1148,12 +1148,6 @@ function botCut(G, p, inp, leader) {
     return true;
   }
   return false;
-}
-export const ESC_T = 45;
-function startEsc(G) {
-  const [x, y, w, h] = MAP.areas[G.bossArea].r[0];
-  G.esc = { t: ESC_T, T: ESC_T, x: cw(MAP.exit[0]), z: cw(MAP.exit[1]), area: MAP.exitA, rk: 1.2, bx: (x + w / 2) * 2, bz: (y + h / 2) * 2 };
-  ev(G, 'esc', { x: G.esc.x, z: G.esc.z });
 }
 // 시간 안에 못 나가면 무너진 돌에 갇혀 보스 방에서 다시 달려요
 function escReset(G) {
