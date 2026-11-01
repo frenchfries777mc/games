@@ -1245,8 +1245,11 @@ export class View {
     const s = this.scene; if (!s) return;
     const seen = new Set();
     // 플레이어
+    const fp = S.ph === 'play' && S.pl.length > 12 ? S.pl.find(q => q.id === (this.camId || me)) : null;   // 하이퍼처럼 사람이 많을 때: 화면에서 아주 먼 캐릭터는 움직임 계산과 그리기를 건너뛰어요
     for (const p of S.pl) {
       const key = 'p' + p.id; seen.add(key); let E = this.ents.get(key);
+      if (E && fp && p.id !== fp.id && Math.abs(p.x - fp.x) > 48 || E && fp && p.id !== fp.id && Math.abs(p.z - fp.z) > 36) { E.x = p.x; E.z = p.z; E.a = p.a; E.m.visible = false; E.ring.visible = false; E.far = 1; continue; }
+      if (E && E.far) E.far = 0;
       if (!E) { const m = makeHero(p.role, p.cos); s.add(m); E = { m, x: p.x, z: p.z, a: p.a, ph: 0 }; this.ents.set(key, E); E.ring = ringMesh(s, p.col || ROLES[p.role].color); E.ward = sph(1.3, 12, 10, M(0x9af0e0, { e: 0x6ad0c0, ei: 0.5, op: 0.08, uniq: true }), 0, 1.5, 0, m); E.ward.castShadow = false; }
       const k = exact || p.id === me ? 1 : Math.min(1, dt * 12);
       E.x += (p.x - E.x) * k; E.z += (p.z - E.z) * k; E.a = lerpA(E.a, p.a, Math.min(1, dt * 18));
