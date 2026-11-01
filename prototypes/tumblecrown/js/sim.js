@@ -1,6 +1,6 @@
 // Tumblecrown · © 2026 Frenchfries777 · CC BY-NC-ND 4.0
 // 게임 규칙 (방장·혼자 하기에서만 돌아가요). three.js를 쓰지 않아서 node에서도 시험할 수 있어요.
-import { ROLES, ROLE_IDS, ENEMIES, BLESSINGS, CHAPTERS, FOES, MAP, GEAR_BONUS, COMBOS, DEEP, ROLE_PUZ, flagShown } from './data.js';
+import { ROLES, ROLE_IDS, ENEMIES, BLESSINGS, CHAPTERS, FOES, MAP, COMBOS, DEEP, ROLE_PUZ, flagShown } from './data.js';
 import * as D from './data.js';
 import { collide as mapCollide, isWall, lineClear, navDir, areaAt, cw, useChapter, PILLARS, resetSecrets, openSecret, secretFace, openGate, setDoors, DSTATE, dropPillar, pillarAt, LIFTH, liftOk } from './map.js';
 
@@ -14,7 +14,7 @@ const angDiff = (a, b) => { let d = (b - a) % TAU; if (d > Math.PI) d -= TAU; if
 
 export function mkRng(seed) { let s = seed >>> 0 || 1; return () => { s ^= s << 13; s >>>= 0; s ^= s >> 17; s ^= s << 5; s >>>= 0; return s / 4294967296; }; }
 
-/* slots: [{id, role, name, bot, lv, gear:{weapon,armor}}] */
+/* slots: [{id, role, name, bot, lv}] */
 // 장마다 적 능력치: 1장 값에 장 난이도와 적 종류별 배율을 곱해요
 function enemyStats(ch) {
   const C = D.CH, F = FOES[ch] || FOES[0], o = {}, cu = C.curse || {};
@@ -51,13 +51,13 @@ export function createGame(slots, seed, ch = 0, mode = 'normal') {
     traps: MAP.traps.map(([x, y], i) => ({ id: i, x: cw(x), z: cw(y), on: true, t: i * 0.7, up: false }))
   };
   slots.forEach((s, i) => {
-    const R = ROLES[s.role], lv = s.lv || 1, gear = s.gear || { weapon: 0, armor: 0 };
-    const maxhp = Math.round((R.hp * (1 + 0.03 * (lv - 1)) + GEAR_BONUS.armor[gear.armor | 0]) * (D.CH.pvp ? D.TEAM_HP : 1));
+    const R = ROLES[s.role], lv = s.lv || 1;
+    const maxhp = Math.round((R.hp * (1 + 0.03 * (lv - 1))) * (D.CH.pvp ? D.TEAM_HP : 1));
     G.players.push({
       id: s.id, team: s.team != null ? s.team : i % 2, tIdx: 0, deaths: 0, role: s.role, col: s.col || 0, cos: s.cos || null, name: s.name, bot: !!s.bot, mp: s.mp | 0, rl: s.rl | 0, slot: i, x: 0, z: 0, vx: 0, vz: 0, a: -Math.PI / 2,
       hp: maxhp, maxhp, baseHp: maxhp, down: false, dead: false, bleed: 0, revT: 0, respT: 0, roll: 0, rollCd: 0, inv: 0,
       cd: { atk: 0, s0: 0, s1: 0, s2: 0 }, block: 0, taunt: 0, rally: 0, shield: 0, shieldT: 0,
-      dmgMul: 1 + 0.03 * (lv - 1) + GEAR_BONUS.weapon[gear.weapon | 0], bl: [], anim: '', animT: 0, hitT: 0,
+      dmgMul: 1 + 0.03 * (lv - 1), bl: [], anim: '', animT: 0, hitT: 0,
       ai: { t: 0, tx: 0, tz: 0, target: 0 }, everDown: false, kills: 0, place: 0, survT: 0
     });
     G.honor[s.id] = 0;
