@@ -75,7 +75,7 @@ const HERO = {
   witch: { body: 0x4a2a6a, robe: 1, leg: 0x2a1a3a, arm: 0x4a2a6a, skinC: 0xb8d0a0, hat: 1, staff: 1, staffC: 0xc06aff },
   skeleton: { skel: 1 },
   warden: { body: 0x6b5b3e, leg: 'dm', arm: 'mt', helm: 1, helmC: 0x4a4a52, plume: 0xc8a030, sword: 1, shield: 1, shieldC: 0x6a5030, shS: 1.45, belt: 1, wide: 1.24 },
-  telaris: { body: 0x2a6f66, leg: 'dm', arm: 'mt', helm: 1, helmC: 0xaebcc0, plume: 0x3ad0b0, sword: 1, shield: 1, shieldC: 0x2fa58f, shS: 1.6, cape: 0x1a4f48, belt: 1, wide: 1.2 },
+  telaris: { body: 0x3c4c56, leg: 'dm', arm: 'mt', helm: 1, helmC: 0x74848e, plume: 0, tower: 1, guard: 1, belt: 1, beltC: 0x2fa58f, wide: 1.3 },
   assassin: { body: 0x24343c, leg: 0x161e24, arm: 0x24343c, hood: 0x1a2830, scim: 1, belt: 1 },
   bomber: { body: 0x7a4a32, leg: 0x3a3030, arm: 0x7a4a32, goggles: 1, bombs: 1, bhand: 1, sack: 1, belt: 1, cap: 0x5a3a28, wide: 1.1 },
   bard: { body: 0xb04a6a, leg: 0x4a3a50, arm: 0xb04a6a, cap: 0x3a6a8a, lute: 1, belt: 1, cape: 0x6a3a8a },
@@ -206,6 +206,24 @@ function makeFigure(o) {
   if (o.sword === 2) { const sw = new THREE.Group(); sw.position.set(0, -0.9, 0.1); armR.add(sw); const bk = M(0xf2f4f8, { m: 0.6, r: 0.3 }); box(0.42, 2.5, 0.22, bk, 0, 1.45, 0, sw); box(0.1, 2.2, 0.23, M(0xc8d0dc, { m: 0.8, r: 0.25 }), 0, 1.35, 0, sw); cone(0.26, 0.34, 4, bk, 0, 2.86, 0, sw).rotation.y = Math.PI / 4; box(0.85, 0.16, 0.2, M(0xe2e6ee, { m: 0.7, r: 0.35 }), 0, 0.15, 0, sw); box(0.11, 0.55, 0.11, leather(), 0, -0.2, 0, sw); box(0.18, 0.14, 0.18, M(0xe2e6ee, { m: 0.7, r: 0.35 }), 0, -0.52, 0, sw); sw.rotation.x = Math.PI / 2; }
   else if (o.sword) { const sw = new THREE.Group(); sw.position.set(0, -0.9, 0.1); armR.add(sw); box(0.12, 2, 0.04, M(0xe9edf5, { m: 0.9, r: 0.2 }), 0, 1.1, 0, sw); box(0.6, 0.1, 0.14, gold(), 0, 0.1, 0, sw); box(0.08, 0.35, 0.08, leather(), 0, -0.1, 0, sw); sw.rotation.x = Math.PI / 2; }
   if (o.shield) { const shc = o.shieldC || 0x2c4f9e; const sh = new THREE.Group(); shG = sh; sh.position.set(-0.15, -0.7, 0.45); armL.add(sh); sh.rotation.x = 0.6; box(1.1, 1.4, 0.14, M(shc), 0, 0, 0, sh); const c = cone(0.78, 0.7, 4, M(shc), 0, -0.95, 0, sh); c.rotation.set(Math.PI, Math.PI / 4, 0); box(0.18, 1.2, 0.05, gold(), 0, -0.1, 0.09, sh); box(0.8, 0.18, 0.05, gold(), 0, 0.25, 0.09, sh); if (o.shS) sh.scale.setScalar(o.shS); }
+  if (o.tower) {   // 텔라리스: 몸보다 키 큰 탑 방패 (위가 둥글고 청록 테두리, 가운데 빛나는 문장)
+    const sh = new THREE.Group(); shG = sh; sh.position.set(0.5, -0.9, 0.8); armL.add(sh); sh.rotation.x = 0.1; sh.scale.set(0.9, 0.65, 1);
+    const st = M(0x6a7a84, { m: 0.7, r: 0.4 }), tl = M(0x2fa58f, { e: 0x2fa58f, ei: 0.5 }), gl = M(0x9af5e0, { e: 0x4af0c8, ei: 3 });
+    box(1.5, 2.5, 0.16, tl, 0, 0, -0.05, sh); cyl(0.75, 0.75, 0.16, 14, tl, 0, 1.25, -0.05, sh).rotation.x = Math.PI / 2;
+    box(1.26, 2.34, 0.26, st, 0, -0.03, 0.02, sh); cyl(0.63, 0.63, 0.26, 14, st, 0, 1.14, 0.02, sh).rotation.x = Math.PI / 2;
+    box(0.16, 2.0, 0.1, tl, 0, 0, 0.16, sh); box(1.0, 0.16, 0.1, tl, 0, 0.45, 0.16, sh);
+    mesh(geo('tlring', () => new THREE.TorusGeometry(0.34, 0.06, 5, 14)), gl, 0, 0.45, 0.18, sh); sph(0.13, 8, 6, gl, 0, 0.45, 0.2, sh);
+    for (let i = 0; i < 4; i++) box(0.1, 0.1, 0.1, gl, -0.45 + i * 0.3, -1.0, 0.16, sh);
+  }
+  if (o.guard) {   // 텔라리스: 둥근 큰 어깨갑옷, 앞 천, 허리 판금, 등 뒤에 떠 있는 청록 문장 고리
+    const gm = M(0x74848e, { m: 0.7, r: 0.4 }), tl = M(0x2fa58f, { e: 0x2fa58f, ei: 0.5 }), gd = M(0xc8b070, { m: 0.7, r: 0.35 });
+    for (const sx of [-1, 1]) { sph(0.5, 10, 8, gm, sx * 0.85, 2.3, 0, body).scale.set(1, 0.75, 1.05); const r = mesh(geo('tlpr', () => new THREE.TorusGeometry(0.48, 0.06, 4, 12)), tl, sx * 0.85, 2.15, 0, body); r.rotation.x = Math.PI / 2; for (let k = 0; k < 3; k++) cone(0.06, 0.24, 4, gd, sx * (0.85 + (k - 1) * 0.22), 2.75, 0, body); }
+    box(0.9, 1.5, 0.08, tl, 0, 1.05, 0.62, body); box(0.12, 1.5, 0.1, gd, 0, 1.05, 0.65, body); box(0.9, 0.12, 0.1, gd, 0, 0.32, 0.65, body);
+    for (const sx of [-1, 1]) box(0.5, 0.7, 0.2, gm, sx * 0.5, 0.75, 0.25, body);
+    const ring = mesh(geo('tlhalo', () => new THREE.TorusGeometry(1.25, 0.08, 5, 24)), M(0x9af5e0, { e: 0x4af0c8, ei: 3 }), 0, 2.0, -0.95, body); const r2 = mesh(geo('tlhalo2', () => new THREE.TorusGeometry(0.85, 0.05, 5, 20)), M(0x2fa58f, { e: 0x2fa58f, ei: 2 }), 0, 2.0, -0.95, body);
+    for (let i = 0; i < 6; i++) { const a = i / 6 * 6.283; box(0.14, 0.14, 0.08, M(0x9af5e0, { e: 0x4af0c8, ei: 3 }), Math.cos(a) * 1.25, 2.0 + Math.sin(a) * 1.25, -0.95, body).rotation.z = a; }
+    sph(0.28, 8, 6, gm, 0, -0.95, 0, armR);
+  }
   // 활: 왼손에 쥐고, 팔을 앞으로 뻗으면 위아래로 선 활이 조준 방향으로 휘어요 (시위는 몸 쪽)
   let bowS = null, xbS = null, gnS = null, axeG = null, stG = null, vAxe = null, vAxeM = null;
   if (o.bow) {
