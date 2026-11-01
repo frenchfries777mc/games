@@ -79,3 +79,5 @@ patchnotes.json | v592 title | 은하 제국의 황혼 | build 592 | 2026-11-01
 patchnotes.json | v592 items[0] | 배틀로얄 듀오 연승 규칙 변경: 1등 팀은 연승 +1, 2등 팀은 연승 유지 | build 592 | 2026-11-01
 patchnotes.json | v593 title | 은하 제국의 황혼 | build 593 | 2026-11-01
 patchnotes.json | v593 items[0] | 듀얼 2라운드부터도 캐릭터 소개 카드 표시, 제임스 6번째 큰 총알을 붉은 빛과 불꽃으로 눈에 띄게 | build 593 | 2026-11-01
+patchnotes.json | v594 title | 은하 제국의 황혼 | build 594 | 2026-11-01
+patchnotes.json | v594 items[0] | 팀 자동 배치 안내 문구 삭제 | build 594 | 2026-11-01
