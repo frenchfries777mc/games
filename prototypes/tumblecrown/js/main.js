@@ -275,6 +275,12 @@ function paintDaily() {
   const D = dailyList(); $('dailyNote').textContent = T('한국 시간 자정에 새로 나와요. 온라인 대전에서만 채워지고, 하나를 채울 때마다 {0} tC를 받아요.', DAILY_REW);
   $('dailyBox').innerHTML = D.m.map(m => '<div class="bar" style="display:flex;gap:10px;align-items:center;margin:10px 0"><span style="flex:1;color:' + (m.v >= m.n ? '#7affb0' : '#efe3c8') + '">' + (m.v >= m.n ? '✔ ' : '') + dailyText(D, m) + '</span><u style="width:90px;display:inline-block;height:8px;background:#2a2230"><i style="display:block;height:8px;background:#ffd36b;width:' + Math.round(m.v / m.n * 100) + '%"></i></u><small>' + m.v + '/' + m.n + '</small></div>').join('');
 }
+function paintAch() {
+  const done = ACHIEVEMENTS.filter(a => SAVE.ach[a.id]).length; $('achCnt').textContent = done + ' / ' + ACHIEVEMENTS.length;
+  const ord = ACHIEVEMENTS.slice().sort((a, b) => (SAVE.ach[b.id] ? 1 : 0) - (SAVE.ach[a.id] ? 1 : 0));
+  $('achList').innerHTML = ord.map(a => '<div class="ar' + (SAVE.ach[a.id] ? '' : ' off') + '">' + achImg(a.id, 44, !!SAVE.ach[a.id]) + '<div><b>' + esc(a.name) + '</b><small>' + esc(a.desc) + '</small></div></div>').join('');
+}
+$('achBtn').onclick = () => { SFX.play('click'); paintAch(); show('sAch'); };
 function loadNotes() { if (NOTES) return renderNotes(); fetch('patchnotes.json?v=' + BUILD).then(r => r.json()).then(d => { NOTES = d; renderNotes(); }, () => { $('notesBox').innerHTML = '<p class="note">' + T('패치노트를 불러오지 못했어요.') + '</p>'; }); }
 function renderNotes() {
   const raw = (NOTES && NOTES.notes) || [], list = window.FFPN ? FFPN.filter(raw) : raw, box = $('notesBox');
