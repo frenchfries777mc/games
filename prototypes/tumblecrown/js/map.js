@@ -173,11 +173,6 @@ export function navDir(fx, fz, tx, tz, now) {
   if (bi < 0) return null;
   return Math.atan2(cw(bj) - fz, cw(bi) - fx);
 }
-// 길로 잰 거리 (칸 수 × 칸 크기)
-export function pathDist(fx, fz, tx, tz, now) {
-  const d = field(Math.floor(tx / CS), Math.floor(tz / CS), now)[Math.floor(fz / CS) * MW + Math.floor(fx / CS)];
-  return d * CS;
-}
 
 // 그 위치가 어느 구역인지 (없으면 -1)
 export function areaAt(x, z) {

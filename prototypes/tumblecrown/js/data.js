@@ -3,7 +3,7 @@
 
 import { T } from './tr.js';
 
-export const VERSION = 'v0.2', BUILD = 219;
+export const VERSION = 'v0.2', BUILD = 220;
 
 export const ROLES = {
   knight: {
@@ -379,10 +379,6 @@ function genMap(seed, rooms, opt = {}) {
   m.niches = {}; if (!opt.noSecret) { if (di >= 0) m.niches.d = nich(di, false); const np = pi != null && nich(pi, true); if (np) m.niches.p = [...np, m.puzzles.findIndex(q => q.area === pi)]; }
   return m;
 }
-// 장마다 수수께끼 방 둘과 어둠의 방 하나를 끼워 넣어요 (원래 방 번호는 대사 번호로 남겨요)
-// 장마다 끊어진 길과 도르래 승강기도 하나씩 있어요 (방 14개)
-const CUTS = [[T('무너진 다리목'), T('우물 도르래')], [T('끊어진 협곡'), T('사냥꾼 망루 도르래')], [T('무너진 회랑'), T('종탑 도르래')], [T('끊어진 탑 복도'), T('탑 승강기')], [T('얼음 틈'), T('성벽 도르래')], [T('꺼진 갱도'), T('광산 승강기')], [T('무너진 순례길'), T('사원 도르래')], [T('끊어진 심연 다리'), T('불씨 승강기')]];
-const PIT_LINE = T('천장이 무너져 길이 끊겼어요. 금 간 기둥을 강타로 쓰러뜨리면 다리가 돼요.'), LIFT_LINE = T('위층으로 가는 길은 도르래 승강기뿐이에요. 한 명이 손잡이를 돌리는 동안 나머지가 올라가요.');
 // 역할 전용 수수께끼: 장마다 두 번째 수수께끼 방은 한 역할만 풀 수 있어요 (1장 기사, 2장 궁수, 3장 사제, 4장 종자, 5장부터 다시)
 export const ROLE_PUZ = {
   oath: { role: 'knight', name: T('방패 맹세의 방'), line: T('기사만 풀 수 있어요. 방패 석판 셋 위에서 각각 막기(Q)를 쓰면 창살문이 열려요.') },
@@ -397,42 +393,6 @@ Object.assign(ROLE_PUZ, {
   vigil: { role: 'priest', name: T('기도의 원'), line: T('사제만 풀 수 있어요. 빛의 원 셋에 각각 2초씩 서서 기도해요.') },
   blackfire: { role: 'squire', name: T('검은 불꽃 제단'), line: T('종자만 풀 수 있어요. 물약(Q)을 던져 검은 불꽃 셋을 꺼요.') }
 });
-const RP_ORDER = ['oath', 'targets', 'basins', 'vines', 'icecrys', 'lanterns', 'vigil', 'blackfire'];
-export const GEN_PUZ = {
-  levers: { name: T('탑 지렛대 방'), line: T('지렛대를 당기면 그 등불과 양옆 등불이 함께 켜지거나 꺼져요. 등불 넷을 모두 켜요.') },
-  sigils: { name: T('얼음 문양 바닥'), line: T('얼음 문양 아홉 칸을 이어서 한 번씩만 밟아 모두 빛나게 해요. 빛나는 칸을 다시 밟으면 처음부터예요.') },
-  crystals: { name: T('빛 수정 갱도'), line: T('수정 넷을 공격해 빛을 켜요. 빛은 8초 뒤 꺼지니 넷이 함께 빛나게 해요.') },
-  mirrors: { name: T('거울 회랑'), line: T('거울 셋을 돌려(F) 햇빛이 창살문까지 닿게 해요.') },
-  embers: { name: T('불씨 제단'), line: T('가운데 불씨 더미에서 불씨를 들어(F) 제단 셋에 하나씩 올려요(F).') }
-};
-// 장마다 다른 일반 수수께끼 (1~3장은 원래 방 그대로, 4장부터 새것)
-// 장마다 다른 지도 짜임: 1 지하 미로(3열, 곧은 통로) 2 숲(구불구불한 오솔길) 3 수도원(2열, 기둥 늘어선 넓은 회랑) 4 탑(1열로 곧게 올라가는 둥근 방)
-// 5 얼음 국경(4열, 둥근 동굴) 6 광산(4열, 좁고 꺾인 갱도) 7 사원(2열, 넓은 회랑과 둥근 성소) 8 심연(좁은 다리로 이어진 흩어진 방)
-// sc 방 크기 배율, ex 덧붙는 통로 방 수 (장마다 지도 크기와 방 수가 달라져요)
-export const MAP_ST = [{ sc: 0.8 }, { zig: 1, jit: 4, cw: 3, sc: 1.05, ex: 2 }, { cols: 2, cw: 6, colon: 1, ex: 1 }, { cols: 1, round: 3, sc: 0.85 }, { cols: 4, round: 2, jit: 2, zig: 1, sc: 1.25, ex: 3 }, { cols: 4, cw: 2, zig: 1, jit: 3, sc: 0.75, ex: 1 }, { cols: 2, cw: 6, round: 3, colon: 1, sc: 1.15, ex: 2 }, { cw: 2, zig: 1, jit: 4, sc: 1.1, ex: 4 }];
-// 덧붙는 통로 방: 장마다 이름과 한 줄
-const EXTRA = [
-  [[T('무너진 복도'), T('천장에서 돌가루가 떨어져요. 해골 몇이 서성여요.')]],
-  [[T('잿빛 오솔길'), T('나뭇가지 사이로 눈이 번뜩여요.')], [T('쓰러진 고목'), T('고목 뒤에 무언가 숨어 있어요.')]],
-  [[T('수도사 회랑'), T('긴 회랑에 발소리가 울려요.')]],
-  [],
-  [[T('얼어붙은 다리'), T('발밑 얼음이 갈라지는 소리가 나요.')], [T('눈보라 골짜기'), T('눈보라 속에서 그림자가 다가와요.')], [T('얼음 동굴'), T('고드름 사이로 숨소리가 들려요.')]],
-  [[T('버려진 갱도'), T('광부들이 남긴 수레가 뒤집혀 있어요.')]],
-  [[T('순례자의 길'), T('무너진 석상이 길을 지켜요.')], [T('향 피우던 방'), T('꺼진 향로에서 아직 연기가 나요.')]],
-  [[T('떠도는 바위섬'), T('발밑이 끝없는 어둠이에요.')], [T('불씨 다리'), T('다리 아래에서 불씨가 솟아요.')], [T('잿빛 돌기둥'), T('돌기둥 사이에 그림자가 숨어요.')], [T('마지막 길목'), T('불꽃의 숨결이 바로 앞이에요.')]]
-];
-const GEN_ORDER = [null, null, null, 'levers', 'sigils', 'crystals', 'mirrors', 'embers'];
-function grow(ci, rooms, [p1, dk, p2]) {
-  { const k = RP_ORDER[ci % 8]; p2 = Object.assign({}, p2, { puz: k, name: ROLE_PUZ[k].name, line: ROLE_PUZ[k].line }); }
-  { const k = GEN_ORDER[ci]; if (k) p1 = Object.assign({}, p1, { puz: k, name: GEN_PUZ[k].name, line: GEN_PUZ[k].line }); }
-  const r = rooms.map((o, i) => Object.assign({ t: i }, o)), [pn, ln] = CUTS[ci];
-  const pit = { name: pn, line: PIT_LINE, cut: 'pit', t: 'pit', w: 20, h: 17 }, lift = { name: ln, line: LIFT_LINE, cut: 'lift', t: 'lift', w: 20, h: 17 };
-  const out = [r[0], r[1], Object.assign({ t: 'puz' }, p1), r[2], pit, r[3], r[4], Object.assign({ t: 'dark' }, dk), r[5], lift, Object.assign({ t: 'puz' }, p2), r[6], r[7], r[8]];
-  // 통로 방은 전투 방 뒤에 끼워요 (뒤에서부터 넣어 자리가 밀리지 않게)
-  const ex = EXTRA[ci].slice(0, MAP_ST[ci].ex || 0), at = [12, 8, 6, 3];
-  ex.map((e, k) => ({ name: e[0], line: e[1], t: 'ex', foes: { skel: 2 + (ci >> 2), archer: 1 + (k % 2) }, traps: k % 2 ? 2 : 0, at: at[k] })).sort((a, b) => b.at - a.at).forEach(o => { const a = o.at; delete o.at; out.splice(a, 0, o); });
-  out.st = MAP_ST[ci]; return out;
-}
 
 // 장: 이야기, 지도, 보스, 색
 // 투기장: 보우킵 보스 방을 크게 키운 한 방 (적도 이야기도 없이 마지막 한 명이 남을 때까지)
@@ -643,7 +603,6 @@ export const TALK_X = {
   basins: [['priest', T('성수반이 말라 있어요. 제 빛으로 채울게요.')], ['archer', T('빛 구슬이 아니면 안 되는 모양이야.')]],
   vines: [['squire', T('가시덩굴이에요! 제 횃불로 태워 버릴게요.')], ['priest', T('칼로는 안 베어져요. 불이 필요해요.')]]
 };
-export const CHAPTER1 = CHAPTERS[0];
 
 // 비밀 방의 옛 기록: 장마다 두 개, 하나에 두 줄
 

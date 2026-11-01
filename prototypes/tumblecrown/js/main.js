@@ -2,7 +2,7 @@
 // 화면 흐름, 조작, 멀티(친구 초대, PeerJS), 저장
 import { View } from './render.js';
 import { createGame, step, snapshot, chooseBless, carryOver, koPlayer, INTRO_T, HV_DELAY, wallClamp, setupRange, callBots } from './sim.js';
-import { useMode, RECALL_CD, pushTime, PUSH_N, PUSH_T, TEAMS, FLAG_T, FLAG_R, RESP_T, ARENA_THEMES, MODES, ROLES, ROLE_IDS, COLORS, BOT_NAMES, MAX_PLAYERS, BLESSINGS, CHAPTERS, CH, FOES, MAP, ACHIEVEMENTS, TALK, COSMETICS, WEEKLY, weekInfo, VERSION, BUILD, roleLevel, CHAR_RANKS, charRankFor, rankImg, achImg, roleImg, typeImg, typeFile, MASTERY_PT, streakBonusFor, COMBOS, DEEP, DEEP_I, TALK_X, ROLE_PUZ, flagShown } from './data.js';
+import { useMode, RECALL_CD, pushTime, TEAMS, FLAG_T, FLAG_R, RESP_T, MODES, ROLES, ROLE_IDS, COLORS, BOT_NAMES, MAX_PLAYERS, BLESSINGS, CHAPTERS, CH, FOES, MAP, ACHIEVEMENTS, TALK, COSMETICS, WEEKLY, weekInfo, VERSION, BUILD, roleLevel, CHAR_RANKS, charRankFor, rankImg, roleImg, typeImg, typeFile, MASTERY_PT, streakBonusFor, COMBOS, DEEP, DEEP_I, TALK_X, ROLE_PUZ, flagShown, achImg } from './data.js';
 import { collide as mapCollide, areaAt, floorCell, MW, MH, CS, cw, useChapter, chapterIndex, SOPEN, openSecret, resetSecrets, hiddenCell, GOPEN, openGate, setDoors, DSTATE, PDOWN, dropPillar, LIFTH, liftOk, CUT } from './map.js';
 import * as SFX from './sfx.js';
 import * as MUS from './music.js';
@@ -331,8 +331,6 @@ function bindKey(n, btn) {
 }
 
 /* ---------- 대기실 ---------- */
-// 대기실: 장은 고르지 않고, 저장된 이야기에서 이어서 시작해요. 친구 방은 방장의 이야기를 따라가요
-const fmtT = s => T('{0}분 {1}초', Math.floor(s / 60), String(Math.floor(s % 60)).padStart(2, '0'));
 /* ---------- 대기실 = 직업 고르기 화면 ---------- */
 // 왼쪽 직업 목록, 가운데 받침돌 위 캐릭터, 오른쪽 능력 카드, 위에 참가자 줄, 아래에 색·봇·시작
 const pcol = p => p.col ? '#' + p.col.toString(16).padStart(6, '0') : ROLES[p.role].color;
@@ -1591,8 +1589,6 @@ function clearChapter() {
   SAVE.chMax = Math.max(SAVE.chMax | 0, ci + 1); save();
   return h;
 }
-// 결말이 끝나면 같은 동료와 다음 장 이야기로 바로 넘어가요
-function afterOutro() { showResult(); }
 // 우승 화면: 이긴 사람이 크게 나와요. '순위 보기'를 누르면 전체 순위표로 가요
 /* ---------- 하이라이트: 내가 쓰러뜨린 장면(연속·위기)을 짧게 저장해 두었다가 경기가 끝나면 다시 보여 줘요 ---------- */
 const HL = { buf: [], ev: [], clips: [], pend: null, kl: 0, kt: [], acc: 0 };
