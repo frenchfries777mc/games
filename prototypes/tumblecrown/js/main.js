@@ -22,7 +22,7 @@ function lsGet(k, d) { try { const v = localStorage.getItem(k); return v ? JSON.
 function lsSet(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) { } }
 const RANK_WIN = 30, RANK_LOSS = 20;   // 랭크전: 이기면 +30점, 지면 -20점 (0점 아래로는 내려가지 않아요)
 const SAVE = Object.assign({ honor: 0, xp: {}, ach: {}, clears: {}, role: 'knight', cos: { own: {}, on: {} }, set: { vol: 70, px: 3, bloom: 1, shake: 1 } }, lsGet('tumblecrown.save', {}));
-SAVE.set = Object.assign({ mv: 'wasd', keys: {}, vol: 70, px: 3, bloom: 1, shake: 1, opt: matchMedia('(pointer: coarse)').matches ? 1 : 0 }, SAVE.set || {});
+SAVE.set = Object.assign({ mv: 'wasd', keys: {}, vol: 70, px: 3, bloom: 1, shake: 1, fps: 0, opt: matchMedia('(pointer: coarse)').matches ? 1 : 0 }, SAVE.set || {});
 // 최적화: 허브 설정의 공용 값(ff_perf)이 있으면 그걸 따르고, 여기서 바꾸면 공용 값도 같이 바꿔요
 let FPS_CAP = 0;
 function perfApply() {
@@ -312,6 +312,7 @@ function paintSettings() {
   seg('setPx', SAVE.set.px, v => { SAVE.set.px = v; view.setPixel(v); });
   seg('setBloom', SAVE.set.bloom, v => { SAVE.set.bloom = v; view.setBloom(!!v); });
   seg('setShake', SAVE.set.shake, v => { SAVE.set.shake = v; view.shakeOn = !!v; });
+  seg('setFps', SAVE.set.fps, v => { SAVE.set.fps = v; });
   seg('setOpt', SAVE.set.opt, v => { SAVE.set.opt = v; try { if (window.FFPerf) FFPerf.set({ low: !!v, fx: v ? 'low' : 'high', fps: v ? 30 : 0 }); } catch (e) { } perfApply(); });
 }
 $('setVol').oninput = e => { SAVE.set.vol = +e.target.value; SFX.setVol(SAVE.set.vol / 100); save(); };
@@ -1748,11 +1749,12 @@ function musicTick(dt, now) {
 }
 addEventListener('pointerdown', () => MUS.kick()); addEventListener('keydown', () => MUS.kick());
 let lastT = performance.now();
-let lastF = 0;
+let lastF = 0, fpsN = 0, fpsT = 0;
 function frame(now) {
   requestAnimationFrame(frame);
   // 최적화를 켜면 1초에 30번만 그려요 (휴대폰 발열·배터리)
   if (FPS_CAP && now - lastF < 1000 / FPS_CAP - 2) return; lastF = now;
+  { const fb = $('fpsBox'); if (SAVE.set.fps) { fpsN++; if (now - fpsT >= 500) { fb.textContent = Math.round(fpsN * 1000 / (now - fpsT)) + ' FPS'; fpsN = 0; fpsT = now; } if (fb.style.display !== 'block') fb.style.display = 'block'; } else if (fb.style.display !== 'none') fb.style.display = 'none'; }   // 설정에서 켜면 오른쪽 위에 FPS를 보여줘요
   const raw = now - lastT; lastT = now; const dt = Math.min(0.05, raw / 1000);
   if (now - (S.ambN || 0) > 1000) { S.ambN = now; SFX.ambient(inGame() && S.scr === '' && S.snap && S.snap.ph === 'play' ? CH.theme : ''); }
   // 방장 컴퓨터가 느리면(화면 간격이 길게 이어지면) 스스로 가벼운 모드로 바꿔요: 전송 줄이기, 봇 판단 줄이기, 가벼운 화질 (규칙은 그대로)
