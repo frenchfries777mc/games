@@ -1056,7 +1056,7 @@ sting();})();</script>
   <div id="lobbyBg"></div>
   <div id="profileBadge"><canvas id="profileBadgeCanvas" width="38" height="38"></canvas></div>
   <button id="feedbackBadge" title="피드백" style="position:fixed; top:16px; left:62px; z-index:6; display:none; width:38px; height:38px; border-radius:50%; border:none; background:rgba(20,22,28,0.85); color:#fff; font-size:17px; cursor:pointer; align-items:center; justify-content:center;">💬</button>
-  <button id="settingsBadge" style="position:fixed; top:16px; left:108px; z-index:6; display:none; width:38px; height:38px; border-radius:50%; border:none; background:rgba(20,22,28,0.85); color:#fff; font-size:17px; cursor:pointer; align-items:center; justify-content:center;">⚙️</button>
+  <button id="settingsBadge" style="position:fixed; top:16px; left:108px; z-index:6; display:none; width:38px; height:38px; border-radius:50%; border:none; background:rgba(20,22,28,0.85); color:#fff; font-size:17px; cursor:pointer; align-items:center; justify-content:center;"><img src="emoji/ui-settings.svg" alt="" style="width:30px;height:30px;pointer-events:none"></button>
 
   <div class="card active" id="authGateScreen" style="text-align:center;">
     <h2 style="margin-top:0;">🪪 Frenchfries777 계정</h2>
@@ -2647,7 +2647,7 @@ let lastSeasonGain=0, lastSeasonTierShown=-1;
 // ---- the screen ----
 function ensureMissionBadge(){
   let b=document.getElementById('missionBadge'); if(b) return b;
-  b=document.createElement('button'); b.id='missionBadge'; b.title='미션 · 시즌 패스'; b.innerHTML='📋<span class="dot"></span>';
+  b=document.createElement('button'); b.id='missionBadge'; b.title='미션 · 시즌 패스'; b.innerHTML='<img src="emoji/ui-quest.svg" alt="" style="width:30px;height:30px;pointer-events:none"><span class="dot"></span>';
   b.onclick=()=>{ showScreen('missionScreen'); renderMissionScreen(true); };
   (document.getElementById('lobby')||document.body).appendChild(b); return b;
 }
@@ -5654,7 +5654,7 @@ function shuffle(arr){ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.
 /* ===== the version of this file =====
    Different BUILDS of one version meet and play together (room names online-v<ver>-<mode>-<map>-<slot>); different VERSIONS (the 0.x part) never do - the host refuses them (verNo) and the dispatcher answers busy.
    The build is only sent along with the join message and the lobby (for information); the corner of the screen shows it. */
-const GAME_BUILD='build 2026-10-31-v595';
+const GAME_BUILD='build 2026-10-31-v596';
 const GAME_VERSION='0.9', GAME_VERSION_NAME='은하 제국의 황혼';   // 게임 버전 이름: versions.json의 title과 같게 (빌드마다 바꾸지 않음)
 /* version (the 0.x part) vs build: different BUILDS of one version meet and play together, different VERSIONS never do (rooms, quick match, ranked, friend invites, dispatcher).
    Builds before 470 do not send a version, so it is read from the build number (0.9 started at build 458). */
