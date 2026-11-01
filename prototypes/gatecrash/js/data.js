@@ -1,7 +1,7 @@
 /* Gatecrash · © 2026 Frenchfries777 · CC BY-NC-ND 4.0
    데이터: 상수, 무기, 맵 */
 'use strict';
-const VERSION = '0.1', BUILD = 26;
+const VERSION = '0.1', BUILD = 27;
 const TS = 16;                                   // 타일 한 칸 (px)
 const PH = { RUN: 120, ACC: 1500, AIR: 1000, G: 1500, JUMP: 440, CUT: 300, MAXF: 560, W: 10, H: 22, COY: 0.08, BUF: 0.12, BELT: 70, ICE: 180, LIFT: 130 };
 const MAX_HP = 100, RACERS = 4;
@@ -238,11 +238,11 @@ function mapAirport() {
 
 function mapMall() {
   return floorsMap([
-    { theme: 'mall', conn: 'lift', g: ['mezz'], objs: [ob('fountain', 0, 5, 1), ob('plant', 0, 1, 2), ob('bench', 0, 3, 1), ob('cart', 0, 2, 1), ob('kiosk', 0, 3, 2)] },
-    { theme: 'mallF', g: ['gap'], objs: [ob('mannequin', 0, 1, 3), ob('rackc', 0, 3, 2), ob('rackc', 0, 4, 2), ob('boxes', 0, 2, 1)] },
-    { theme: 'mall', g: ['ice'], objs: [ob('shoes', 0, 4, 1), ob('bench', 0, 3, 1), ob('shoes', 0, 4, 2), ob('cart', 0, 2, 1), ob('mannequin', 0, 1, 3)] },
-    { theme: 'food', conn: 'lift', g: ['mezz', 'gap'], objs: [ob('table', 0, 3, 1), ob('foodbar', 0, 5, 2), ob('trash', 0, 1, 1), ob('table', 0, 3, 1)] },
-    { theme: 'mallF', g: ['ice'], objs: [ob('rackc', 0, 3, 2), ob('boxes', 0, 2, 2), ob('rackc', 0, 4, 2), ob('mannequin', 0, 1, 3)] }
+    { theme: 'mCos', conn: 'lift', g: ['mezz'], objs: [ob('cosm', 0, 5, 2), ob('perfume', 0, 3, 2), ob('plant', 0, 1, 2), ob('mirror', 0, 2, 2), ob('bench', 0, 3, 1), ob('cosm', 0, 5, 2), ob('fountain', 0, 5, 1)] },
+    { theme: 'mCloth', g: ['gap'], objs: [ob('mannequin', 0, 1, 3), ob('rackc', 0, 4, 2), ob('shoes', 0, 4, 1), ob('rackc', 0, 3, 2), ob('mannequin', 0, 1, 3), ob('mirror', 0, 2, 2), ob('boxes', 0, 2, 1)] },
+    { theme: 'mFurn', g: ['ice'], objs: [ob('sofaL', 0, 5, 1), ob('wardrobe', 0, 3, 3), ob('bedL', 0, 5, 1), ob('tableL', 0, 4, 1), ob('lamp', 0, 1, 3), ob('sofaL', 0, 4, 2)] },
+    { theme: 'mFood', conn: 'lift', g: ['mezz', 'gap'], objs: [ob('fruit', 0, 4, 2), ob('deli', 0, 5, 2), ob('fridge', 0, 2, 3), ob('tableL', 0, 3, 1), ob('cake', 0, 2, 1), ob('fruit', 0, 4, 2)] },
+    { theme: 'mTech', g: ['ice'], objs: [ob('tv', 0, 4, 2), ob('washer', 0, 2, 2), ob('fridge', 0, 2, 3), ob('tv', 0, 5, 2), ob('washer', 0, 2, 2), ob('kiosk', 0, 3, 2)] }
   ], [ob('ac', 0, 3, 2), ob('tank', 0, 3, 2), ob('vent', 0, 1, 1), ob('ac', 0, 2, 2)], 37);
 }
 function mapHospital() {
