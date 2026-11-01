@@ -38,7 +38,8 @@ addEventListener('ffperf', () => { perfApply(); if (S.scr === 'sSettings') paint
 let lowHintDone = false; try { lowHintDone = !!localStorage.getItem('tc_lowHint'); } catch (e) { }
 // 깬 장 수 (예전 저장은 1장을 깼으면 1)
 if (SAVE.chMax == null) SAVE.chMax = Object.keys(SAVE.clears || {}).length ? 1 : 0;
-SAVE.cos = SAVE.cos || { own: {}, on: {} }; SAVE.cos.own = SAVE.cos.own || {}; SAVE.cos.on = SAVE.cos.on || {};
+SAVE.cos = SAVE.cos || { own: {}, on: {} }; SAVE.cos.own = SAVE.cos.own || {}; SAVE.cos.roles = SAVE.cos.roles || {}; if (SAVE.cos.on && Object.keys(SAVE.cos.on).length && !Object.keys(SAVE.cos.roles).length) SAVE.cos.roles[SAVE.role] = SAVE.cos.on; SAVE.cos.on = {};   // 치장은 직업마다 따로 입어요 (예전 저장은 지금 직업에만)
+const curOn = () => (SAVE.cos.roles[SAVE.role] = SAVE.cos.roles[SAVE.role] || {});
 SAVE.lore = SAVE.lore || {}; SAVE.flags = SAVE.flags || {}; SAVE.puz = SAVE.puz | 0; SAVE.combos = SAVE.combos || {}; SAVE.deepBest = SAVE.deepBest | 0;
 // 다음에 이어서 할 장 (모든 장을 깼으면 1장부터 새 원정)
 const chOpen = () => (SAVE.chMax | 0) >= CHAPTERS.length ? 0 : SAVE.chMax | 0;
@@ -53,7 +54,7 @@ const S = {
 };
 S.chSel = chOpen();
 const view = new View($('gl'));
-view.lobbyFlags = SAVE.flags; view.cos = SAVE.cos.on; view.setLow(!!SAVE.set.opt); view.setPixel(SAVE.set.px); view.setBloom(!!SAVE.set.bloom); view.shakeOn = !!SAVE.set.shake; SFX.setVol(SAVE.set.vol / 100); MUS.setVol((SAVE.set.mus != null ? SAVE.set.mus : SAVE.set.vol) / 100);
+view.lobbyFlags = SAVE.flags; view.cos = {}; view.setLow(!!SAVE.set.opt); view.setPixel(SAVE.set.px); view.setBloom(!!SAVE.set.bloom); view.shakeOn = !!SAVE.set.shake; SFX.setVol(SAVE.set.vol / 100); MUS.setVol((SAVE.set.mus != null ? SAVE.set.mus : SAVE.set.vol) / 100);
 // 처음 인트로: 글자 두 장면(Made by / With). 건너뛸 수 없어요 (끝까지 재생). 뒤에는 로비 장면이 깔려 있어요
 let INTRO = !(qs.get('test') && /^(localhost|127\.0\.0\.1)$/.test(location.hostname));
 window.__introSongDone = INTRO ? 0 : 1;
@@ -73,6 +74,7 @@ $('ver').textContent = VERSION + ' (build ' + BUILD + ')';
 /* ---------- 화면 전환 ---------- */
 function show(id) {
   document.querySelectorAll('.scr').forEach(e => e.classList.toggle('on', e.id === id));
+  if (id !== 'sWard') view.cos = {};   // 치장은 치장 창에서만 보이고, 로비·직업 화면은 영향받지 않아요
   $('storm').classList.remove('on');
   if (id === 'sLobby' || id === 'sMode' || id === 'sWeps' || id === 'sNotes' || id === 'sSettings') view.setPreview(null);
   S.scr = id;
@@ -210,7 +212,7 @@ function menu(go) {
   if (go === 'solo') { leaveNet(); S.net = 'solo'; S.slots = [meSlot()]; newBots(); openRoom(); }
   if (go === 'range') { leaveNet(); S.net = 'solo'; S.range = true; S.slots = [meSlot()]; newBots(); openRoom(); }
   else if (go === 'match') { if (needLogin()) return; document.querySelector('#sMode h2').textContent = T('모드 선택'); paintModes(); show('sMode'); }
-  else if (go === 'ward') { S.wardTab = S.wardTab || 'skin'; S.wardSel = null; paintWard(); show('sWard'); view.cos = SAVE.cos.on; view.setPreview(SAVE.role, COLORS[SAVE.col | 0].c); }
+  else if (go === 'ward') { S.wardTab = S.wardTab || 'skin'; S.wardSel = null; paintWard(); show('sWard'); view.cos = curOn(); view.setPreview(SAVE.role, COLORS[SAVE.col | 0].c); }
   else if (go === 'weps') { leaveNet(); S.net = 'solo'; S.info = true; S.slots = [meSlot()]; openRoom(); }   // 직업·조작: 시작 버튼 없이 직업을 눌러 정보만 봐요
   else if (go === 'daily') { paintDaily(); show('sDaily'); }
   else if (go === 'notes') { loadNotes(); show('sNotes'); }
@@ -220,27 +222,27 @@ function menu(go) {
 // 치장·스킨: 재화는 tC. 한 번 사면 계속 쓸 수 있고, 눌러서 입고 벗어요
 // 입을 수 있는 아이템인가: 사서 가졌거나, 마스터리 스킨이면 지금 직업의 마스터리 점수가 기준 이상
 function ownCos(cur, it) { return it.rk ? ((SAVE.pts || {})[SAVE.role] || 0) >= it.rk : (!it.cost || !!SAVE.cos.own[cur + ':' + it.id]); }
-function myCos() { const c = Object.assign({}, SAVE.cos.on), it = c.skin && COSMETICS.skin.items.find(i => i.id === c.skin); if (it && it.rk && !ownCos('skin', it)) delete c.skin; return c; }
+function myCos() { const c = Object.assign({}, curOn()), it = c.skin && COSMETICS.skin.items.find(i => i.id === c.skin); if (it && it.rk && !ownCos('skin', it)) delete c.skin; return c; }
 function paintWard() {
   const tabs = Object.keys(COSMETICS), cur = COSMETICS[S.wardTab] ? S.wardTab : tabs[0];
   $('wardTc').textContent = SAVE.honor + ' tC';
   $('wardTabs').innerHTML = tabs.map(k => '<button data-k="' + k + '"' + (k === cur ? ' class="on"' : '') + '>' + COSMETICS[k].name + '</button>').join('');
   $('wardTabs').querySelectorAll('button').forEach(b => b.onclick = () => { SFX.play('click'); S.wardTab = b.dataset.k; paintWard(); });
-  const on = SAVE.cos.on[cur] || '';
+  const on = curOn()[cur] || '';
   // 누르면 바로 사지 않고 미리보기만 해요. 사는 것과 입고 벗는 건 아래 버튼으로 해요
   const sel = S.wardSel && S.wardSel.tab === cur ? S.wardSel.id : null;
   let act = $('wardAct'); if (!act) { act = document.createElement('div'); act.id = 'wardAct'; act.style.cssText = 'display:flex;gap:8px;margin-top:10px;align-items:center'; $('wardBox').appendChild(act); }
   $('wardGrid').innerHTML = COSMETICS[cur].items.map(it => { const own = ownCos(cur, it); return '<button data-i="' + it.id + '" class="' + ((on === it.id) ? 'on ' : '') + (own ? 'own ' : '') + (sel === it.id ? 'sel' : '') + '"' + (sel === it.id ? ' style="outline:2px solid #5ff0c0"' : '') + '>' + (it.id ? itemImg('cos-' + cur + '-' + it.id, 30) : '') + '<b>' + it.name + '</b><small>' + (on === it.id ? T('입는 중') : own ? T('보유') : it.rk ? T('{0}점부터 · 지금 직업', it.rk) : it.cost + ' tC') + '</small></button>'; }).join('');
   const it0 = sel != null ? COSMETICS[cur].items.find(x => x.id === sel) : null, key0 = it0 ? cur + ':' + it0.id : '', own0 = it0 && ownCos(cur, it0);
-  act.innerHTML = it0 ? (own0 ? '<button class="btn gold" id="wardDo">' + ((SAVE.cos.on[cur] || '') === it0.id ? T('벗기') : T('입기')) + '</button>' : (it0.rk ? '<small>' + T('지금 직업의 마스터리 점수 {0}점이 되면 열려요', it0.rk) + '</small>' : '<button class="btn gold" id="wardDo">' + T('구매 {0} tC', it0.cost) + '</button>')) : '<small>' + T('아이템을 누르면 미리 볼 수 있어요') + '</small>';
+  act.innerHTML = it0 ? (own0 ? '<button class="btn gold" id="wardDo">' + ((curOn()[cur] || '') === it0.id ? T('벗기') : T('입기')) + '</button>' : (it0.rk ? '<small>' + T('지금 직업의 마스터리 점수 {0}점이 되면 열려요', it0.rk) + '</small>' : '<button class="btn gold" id="wardDo">' + T('구매 {0} tC', it0.cost) + '</button>')) : '<small>' + T('아이템을 누르면 미리 볼 수 있어요') + '</small>';
   // 고른 아이템을 입혀 보여 줘요 (사거나 입기 전에는 저장하지 않아요)
-  view.cos = it0 ? Object.assign({}, SAVE.cos.on, it0.id ? { [cur]: it0.id } : {}) : SAVE.cos.on; if (it0 && !it0.id) { view.cos = Object.assign({}, SAVE.cos.on); delete view.cos[cur]; }
+  view.cos = it0 ? Object.assign({}, curOn(), it0.id ? { [cur]: it0.id } : {}) : Object.assign({}, curOn()); if (it0 && !it0.id) { view.cos = Object.assign({}, curOn()); delete view.cos[cur]; }
   view.setPreview(SAVE.role, COLORS[SAVE.col | 0].c);
   $('wardGrid').querySelectorAll('button').forEach(b => b.onclick = () => { SFX.play('click'); S.wardSel = { tab: cur, id: b.dataset.i }; $('wardMsg').textContent = ''; paintWard(); });
   if ($('wardDo')) $('wardDo').onclick = () => {
     if (!own0) { if (SAVE.honor < it0.cost) { $('wardMsg').textContent = T('tC가 모자라요'); SFX.play('click'); return; } SAVE.honor -= it0.cost; SAVE.cos.own[key0] = 1; $('wardMsg').textContent = T('샀어요'); }
     else $('wardMsg').textContent = '';
-    if ((SAVE.cos.on[cur] || '') === it0.id) delete SAVE.cos.on[cur]; else if (it0.id) SAVE.cos.on[cur] = it0.id; else delete SAVE.cos.on[cur];
+    const on1 = curOn(); if ((on1[cur] || '') === it0.id) delete on1[cur]; else if (it0.id) on1[cur] = it0.id; else delete on1[cur];
     save(); SFX.play('click'); paintWard();
   };
 }
