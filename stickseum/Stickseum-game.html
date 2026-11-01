@@ -5625,7 +5625,7 @@ function shuffle(arr){ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.
 /* ===== the version of this file =====
    Different BUILDS of one version meet and play together (room names online-v<ver>-<mode>-<map>-<slot>); different VERSIONS (the 0.x part) never do - the host refuses them (verNo) and the dispatcher answers busy.
    The build is only sent along with the join message and the lobby (for information); the corner of the screen shows it. */
-const GAME_BUILD='build 2026-10-31-v580';
+const GAME_BUILD='build 2026-10-31-v581';
 const GAME_VERSION='0.9', GAME_VERSION_NAME='은하 제국의 황혼';   // 게임 버전 이름: versions.json의 title과 같게 (빌드마다 바꾸지 않음)
 /* version (the 0.x part) vs build: different BUILDS of one version meet and play together, different VERSIONS never do (rooms, quick match, ranked, friend invites, dispatcher).
    Builds before 470 do not send a version, so it is read from the build number (0.9 started at build 458). */
@@ -11323,7 +11323,7 @@ function scanSequential(p, mapIds, idx, slot, freeSlots, held){
     if(!onlineMatchActive) return;
     const chosen = freeSlots[0] || {mapId: mapIds[Math.floor(Math.random()*mapIds.length)], slot:3};
     const hostSelf=()=>{ setOnlineProgress(1, MAP_TEMPLATES[chosen.mapId].name+' 방을 새로 만듭니다...'); startHostPeer(roomIdFor(chosen.mapId, chosen.slot), chosen.mapId, 'online', null); };
-    if(onlineClan || partySeatsNeeded()>1 || idleOnlineOthers()===0){ hostSelf(); return; }       // (the server only hosts matches where another person can show up: when nobody else is in the game it is a match against bots and is hosted here as before (owner 10-26))
+    if(onlineClan || partySeatsNeeded()>1 || idleOnlineOthers()===0 || (!onlineRanked && deviceBeatsServer())){ hostSelf(); return; }       // (the server only hosts matches where another person can show up: when nobody else is in the game it is a match against bots and is hosted here as before (owner 10-26))
     setOnlineProgress(1, '서버에 방을 부탁하는 중...');
     askServerRoom(chosen, roomId=>{
       if(!onlineMatchActive) return;
@@ -11367,6 +11367,22 @@ function scanSequential(p, mapIds, idx, slot, freeSlots, held){
   });
 }
 /* 서버 방장에게 방을 부탁해요: 'ff-dispatch' 에 연결해 {t:'want'} 를 보내면 서버가 방을 열고 {t:'ready', roomId} 로 알려 줘요. 서버가 없거나 바쁘면(busy) 6초 안에 null 을 돌려줘서 지금까지처럼 내가 방장이 돼요. */
+/* A fast computer hosts the room itself (owner 11-01: the server room can lag): a short CPU test (about 1M steps, best of two) plus the core and memory the browser reports.
+   The server is a small shared machine, so anything clearly quicker than a phone from a few years ago is better off as the host. Ranked rooms always stay on the server (fair play). The result is kept for the session. */
+let _devFast=null;
+function deviceBeatsServer(){
+  if(_devFast!==null) return _devFast;
+  let ok=false;
+  try{
+    const cores=navigator.hardwareConcurrency||0, mem=navigator.deviceMemory||0;
+    if(cores>=4 && (!mem || mem>=4)){
+      let best=1e9; for(let k=0;k<2;k++){ const t=performance.now(); let a=0; for(let i=1;i<1000000;i++){ a+=Math.sqrt(i)*Math.sin(i)%3; } best=Math.min(best, performance.now()-t); if(a===1e99) best=1e9; }
+      ok = best<=60;
+      console.log('[host] cpu test', Math.round(best)+'ms', cores+' cores', ok?'-> I host':'-> server hosts');
+    }
+  }catch(e){}
+  return (_devFast=ok);
+}
 const SERVER_ASK_MS=9000;
 function askServerRoom(chosen, cb){
   let done=false, dp=null;
