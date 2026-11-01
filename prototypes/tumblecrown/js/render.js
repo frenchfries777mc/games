@@ -1411,7 +1411,10 @@ export class View {
     for (const f of this.fx) { f.t += dt; f.up(f, dt); }
     this.fx = this.fx.filter(f => { if (f.t >= f.T) { this.scene.remove(f.m); return false; } return true; });
   }
-  render() { if (this.comp) this.comp.render(); }
+  render() {
+    if (this.comp) { const sm = this.r.shadowMap; sm.autoUpdate = false; this._sf = (this._sf | 0) + 1; sm.needsUpdate = this._sf % 3 === 0 || this._sf < 4;   // 그림자는 세 프레임에 한 번만 다시 계산해요 (눈에는 차이가 없어요)
+      this.comp.render(); }
+  }
   // 카메라를 픽셀 칸에 딱 맞춰 움직여요. 반 칸씩 밀리면 화면 전체가 지글거려요.
   snapCam() {
     const px = (this.cam.top - this.cam.bottom) / this.cam.zoom / (this.H / this.P); this.cam.updateMatrixWorld();
