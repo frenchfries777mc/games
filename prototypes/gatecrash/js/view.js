@@ -14,6 +14,11 @@ const THEMES = {
   subway: { wall: '#d6dde2', trim: '#aab6be', floor: '#6a7480', top: '#8a94a0', wain: '#4a8a9a' },
   subwayS: { wall: '#c8d0d8', trim: '#9aa6b2', floor: '#707a86', top: '#909aa6', wain: '#7a8a9a', glass: true },
   mall: { wall: '#f4e6ea', trim: '#d6b8c2', floor: '#8a7480', top: '#b09aa6', wain: '#e8c4d0', glass: true },
+  mCos: { wall: '#fcf8f6', trim: '#d9bf9a', floor: '#d8d2ce', top: '#f0ebe7', wain: '#f3d5dc', glass: true, sign: '화장품', dec: 'cos' },
+  mCloth: { wall: '#f8f8fc', trim: '#c9c9de', floor: '#d4d4dc', top: '#eeeef4', wain: '#dcdcf0', glass: true, sign: '의류', dec: 'cloth' },
+  mFurn: { wall: '#fbf7ef', trim: '#cdb48e', floor: '#d6cdbf', top: '#efe8dc', wain: '#e8d8bc', glass: true, sign: '가구', dec: 'furn' },
+  mFood: { wall: '#fbfbf3', trim: '#bccf98', floor: '#d6d8c8', top: '#eef0e2', wain: '#d4e8b4', glass: true, sign: '식품', dec: 'food' },
+  mTech: { wall: '#f5f9fc', trim: '#b4c8da', floor: '#d0d6dc', top: '#e8eef2', wain: '#cde0f0', glass: true, sign: '가전', dec: 'tech' },
   mallF: { wall: '#ece0f4', trim: '#c4b0d6', floor: '#7a6a8a', top: '#9c8cb0', wain: '#d8c4e8' },
   food: { wall: '#f6e2c0', trim: '#d6b078', floor: '#8a6a48', top: '#aa8a66', wain: '#e8a85a' },
   hospital: { wall: '#eef6f6', trim: '#bcd4d6', floor: '#7a9a9c', top: '#9cbcbe', wain: '#cfe8e8', glass: true },
@@ -51,7 +56,7 @@ const OBJC = {
   rack: ['#222a38', '#4a8aff'], meeting: ['#5a4a3a', '#a08868'], ac: ['#8a929e', '#c8d0dc'], vent: ['#7a828e', '#b4bcc8'], tank: ['#6a7a8a', '#a8bccc'],
   luggage: ['#a8433a', '#e0786a'], barrier: ['#c9a227', '#ffe070'], checkin: ['#3a5a8a', '#7aa8e0'], xray: ['#3a3f4a', '#8a92a2'], bins: ['#5a6a7a', '#a0b0c0'],
   cart: ['#6a7480', '#b0bac6'], turnstile: ['#6a7480', '#e8c040'], pillar: ['#8a94a0', '#c4ccd6'], ticket: ['#3a6a8a', '#8ac4e8'], kiosk: ['#c0852a', '#ffd070'], news: ['#a8483a', '#f0a090'],
-  fountain: ['#4a8ac8', '#a8e0ff'], mannequin: ['#d8d0c8', '#f4eee8'], rackc: ['#b0488a', '#f09ad0'], shoes: ['#6a4a8a', '#c8a0e8'], reception: ['#3a8a8a', '#8adcdc'], wheelchair: ['#5a6a7a', '#a8b8c8'],
+  fountain: ['#4a8ac8', '#a8e0ff'], mannequin: ['#d8d0c8', '#f4eee8'], rackc: ['#c8b88a', '#f4ecd0'], cosm: ['#f4efec', '#d9bf9a'], perfume: ['#e8dcd4', '#f3c0d0'], sofaL: ['#e8dfd0', '#fbf6ec'], bedL: ['#f4efe6', '#c8a878'], wardrobe: ['#b89a6e', '#dcc79e'], tableL: ['#c8b08a', '#f0e6d4'], fruit: ['#b88a50', '#e0b878'], deli: ['#eef0f2', '#bccf98'], fridge: ['#e8eef2', '#9fb4c4'], tv: ['#1a1e28', '#6ab0f0'], washer: ['#f2f4f6', '#9fb4c4'], shoes: ['#6a4a8a', '#c8a0e8'], reception: ['#3a8a8a', '#8adcdc'], wheelchair: ['#5a6a7a', '#a8b8c8'],
   bed: ['#e8eef4', '#8ac0e8'], drip: ['#aab4be', '#e0f0ff'], labtable: ['#6a8a96', '#d0e8f0'], scanner: ['#c8d4dc', '#8ab8d8'], locker: ['#4a6a9a', '#8aa8d8'], trophy: ['#c8a028', '#ffe070'], sdesk: ['#9a7a4a', '#d8b878'],
   teacher: ['#5a7a4a', '#9aca7a'], piano: ['#1a1a22', '#f0f0f0'], stool: ['#8a5a3a', '#c8885a'], drums: ['#b83a3a', '#f0c860'], mat: ['#3a8a5a', '#7adca0'], hoop: ['#e8662a', '#ffffff'], horse: ['#8a5a30', '#c0885a'], ball: ['#e8662a', '#ffa860'], bin: ['#5a6a5a', '#9aaa9a'],
   trolley: ['#c8a028', '#f0d870'], minibar: ['#4a4a58', '#8a8a9a'], cake: ['#f0b8c8', '#fff0f4'], chaise: ['#f0f4f8', '#6ac0e8'], parasol: ['#e8483b', '#ffd070'], towels: ['#6ac0e8', '#e8f8ff'],
@@ -91,7 +96,19 @@ function bakeWorld(W) {
     if (v === 1) for (let a = X + 30; a < X + w - 20; a += 90) { R(x, '#444', a + 17, Y, 2, 8); R(x, '#f4f0e0', a + 6, Y + 8, 24, 5); R(x, '#fffbe8', a + 9, Y + 11, 18, 2); }
     else for (let a = X + 40 + v * 20; a < X + w - 20; a += v === 3 ? 80 : 120) { R(x, '#f4f0e0', a, Y, 36, 4); R(x, '#fffbe8', a + 4, Y + 4, 28, 2); }
     // 벽 장식 (그림, 시계, 비상구)
-    for (let a = X + 70 + v * 31, k = v; a < X + w - 60; a += v === 2 ? 110 : 150, k++) {
+    if (T.sign) for (let a = X + 120; a < X + w - 90; a += 640) {          // 백화점 층 안내판
+      R(x, '#8a7a5a', a + 14, Y, 2, 12); R(x, '#8a7a5a', a + 62, Y, 2, 12); R(x, T.trim, a, Y + 12, 78, 13); R(x, '#fffdf8', a + 2, Y + 14, 74, 9);
+      x.fillStyle = '#6a5a3a'; x.font = '700 8px Galmuri, sans-serif'; x.textAlign = 'center'; x.fillText(T.sign, a + 39, Y + 22); x.textAlign = 'left';
+    }
+    if (T.dec) for (let a = X + 60 + v * 23, k = 0; a < X + w - 70; a += 118, k++) {
+      const D = T.dec, Y0 = Y + 20;
+      if (D === 'cos') { R(x, '#e8d4c8', a, Y0, 30, 20); for (let q = 0; q < 4; q++) { x.fillStyle = ['#e87a9a', '#c8a0e0', '#f0c860', '#e8a0a0'][(k + q) % 4]; x.beginPath(); x.arc(a + 6 + q * 7, Y0 + 12, 3 + (q % 2), 0, 7); x.fill(); } R(x, '#fff', a + 3, Y0 + 3, 18, 2); }
+      else if (D === 'cloth') { R(x, '#b8b8d0', a, Y0, 3, 22); R(x, ['#e8c0c8', '#c0c8e8', '#e0d0b0'][k % 3], a + 3, Y0, 24, 16); R(x, '#fff', a + 3, Y0 + 3, 24, 2); R(x, '#8a8aa8', a + 8, Y0 + 16, 14, 2); }
+      else if (D === 'furn') { R(x, '#8a6a40', a, Y0, 34, 22); R(x, '#fbf7ef', a + 2, Y0 + 2, 30, 18); R(x, ['#9ac0a0', '#c8a888', '#a0b8d0'][k % 3], a + 4, Y0 + 12, 26, 6); R(x, '#f0d890', a + 8, Y0 + 5, 6, 6); R(x, '#c8a878', a + 40, Y0 + 10, 14, 2); R(x, '#e8c0c8', a + 42, Y0 + 3, 5, 7); }
+      else if (D === 'food') { R(x, '#3a4a3a', a, Y0, 34, 22); R(x, '#4a5e4a', a + 2, Y0 + 2, 30, 18); for (let q = 0; q < 3; q++) R(x, '#e8f0d8', a + 5, Y0 + 5 + q * 5, 12 + (q % 2) * 8, 2); R(x, '#f0a030', a + 24, Y0 + 5, 5, 5); }
+      else if (D === 'tech') { R(x, '#1a1e28', a, Y0, 36, 22); R(x, ['#6ab0f0', '#f0c860', '#e87a9a'][k % 3], a + 2, Y0 + 2, 32, 15); R(x, '#fff', a + 6, Y0 + 5, 14, 2); R(x, '#444', a + 14, Y0 + 22, 8, 3); }
+    }
+    else for (let a = X + 70 + v * 31, k = v; a < X + w - 60; a += v === 2 ? 110 : 150, k++) {
       if (rm.theme === 'server') continue;
       if (k % 3 === 0) { R(x, '#5a4630', a, Y + 18, 22, 16); R(x, ['#e8a05a', '#6fb0e8', '#9ad07a'][(a / 150 | 0) % 3], a + 2, Y + 20, 18, 12); R(x, 'rgba(255,255,255,.5)', a + 3, Y + 21, 6, 2); }
       else if (k % 3 === 1) { x.fillStyle = '#f8f8f8'; x.beginPath(); x.arc(a + 8, Y + 24, 7, 0, 7); x.fill(); R(x, '#222', a + 8, Y + 19, 1, 6); R(x, '#222', a + 8, Y + 24, 4, 1); }
@@ -151,6 +168,18 @@ function drawObj(x, W, o) {
     case 'crate': R(x, col[0], X, Y, w, h); R(x, col[1], X + 2, Y + 2, w - 4, 3); R(x, 'rgba(0,0,0,.25)', X + w / 2 - 1, Y, 2, h); break;
     case 'drip': R(x, '#9aa4ae', X + 6, Y, 2, h); R(x, col[1], X + 3, Y + 2, 8, 10); break;
     case 'seats': for (let i = 0; i < o.w; i++) { R(x, col[0], X + i * TS + 1, Y + 4, 14, 12); R(x, col[1], X + i * TS + 1, Y, 14, 6); } break;
+    case 'cosm': R(x, col[0], X, Y + 6, w, h - 6); R(x, col[1], X, Y + 6, w, 3); R(x, 'rgba(180,220,240,.5)', X + 2, Y, w - 4, 7); for (let i = 0; i < w - 6; i += 7) R(x, ['#e87a9a', '#c8a0e0', '#f0c860', '#7ac0e0'][(i / 7 | 0) % 4], X + 4 + i, Y + 2, 3, 5); break;
+    case 'perfume': R(x, col[0], X + 2, Y + 2, w - 4, h - 2); R(x, col[1], X + 2, Y + 2, w - 4, 2); for (let q = 0; q < 3; q++) for (let i = 0; i < w - 8; i += 7) { R(x, ['#f3c0d0', '#c0d8f0', '#f0e0a0'][(q + (i / 7 | 0)) % 3], X + 4 + i, Y + 6 + q * 9, 5, 7); R(x, '#d9bf9a', X + 5 + i, Y + 4 + q * 9, 3, 2); } break;
+    case 'rackc': R(x, '#9a8a64', X + 2, Y + 3, w - 4, 2); R(x, '#9a8a64', X + 2, Y + 3, 2, h - 3); R(x, '#9a8a64', X + w - 4, Y + 3, 2, h - 3); for (let i = 0; i < w - 8; i += 4) R(x, ['#e8c0c8', '#c0c8e8', '#f4ecd0', '#c8e0c8', '#d0b8e0'][(i / 4 | 0) % 5], X + 5 + i, Y + 6, 3, h - 12); break;
+    case 'sofaL': R(x, col[0], X, Y + 5, w, h - 5); R(x, col[1], X + 2, Y, w - 4, 8); R(x, '#cdb48e', X + 2, Y + h - 2, 3, 2); R(x, '#cdb48e', X + w - 5, Y + h - 2, 3, 2); break;
+    case 'bedL': R(x, col[1], X, Y + h - 5, w, 5); R(x, col[0], X + 2, Y + 3, w - 4, h - 8); R(x, '#fff', X + 4, Y + 1, 14, 6); R(x, '#c8a878', X + w - 18, Y + 4, 16, h - 9); break;
+    case 'wardrobe': R(x, col[0], X, Y, w, h); R(x, col[1], X + 2, Y + 2, w / 2 - 3, h - 4); R(x, col[1], X + w / 2 + 1, Y + 2, w / 2 - 3, h - 4); R(x, '#8a6a40', X + w / 2 - 3, Y + h / 2, 2, 5); R(x, '#8a6a40', X + w / 2 + 1, Y + h / 2, 2, 5); break;
+    case 'tableL': R(x, col[1], X, Y, w, 5); R(x, col[0], X + 3, Y + 5, 3, h - 5); R(x, col[0], X + w - 6, Y + 5, 3, h - 5); R(x, '#fff', X + w / 2 - 3, Y - 3, 6, 3); break;
+    case 'fruit': R(x, col[0], X, Y + h / 2, w, h / 2); R(x, col[1], X, Y + h / 2, w, 3); for (let i = 0; i < w - 6; i += 7) { x.fillStyle = ['#e8483b', '#f0a030', '#7ac050', '#e8d040'][(i / 7 | 0) % 4]; x.beginPath(); x.arc(X + 6 + i, Y + h / 2 - 2, 4, 0, 7); x.fill(); } break;
+    case 'deli': R(x, col[0], X, Y + 6, w, h - 6); R(x, col[1], X, Y + 6, w, 3); R(x, 'rgba(190,225,240,.55)', X + 2, Y, w - 4, 8); for (let i = 0; i < w - 8; i += 9) R(x, ['#e89a6a', '#c8785a', '#f0d890'][(i / 9 | 0) % 3], X + 4 + i, Y + 3, 6, 4); break;
+    case 'fridge': R(x, col[0], X + 1, Y, w - 2, h); R(x, col[1], X + 1, Y + h * .38, w - 2, 2); R(x, '#8a96a2', X + w - 5, Y + 6, 2, 8); R(x, '#8a96a2', X + w - 5, Y + h * .38 + 6, 2, 10); break;
+    case 'tv': R(x, '#2a2f3a', X, Y, w, h); for (let i = 0; i < w - 6; i += 16) { R(x, col[1], X + 3 + i, Y + 3, 13, h - 10); R(x, ['#e8483b', '#f0c040', '#7ac050'][(i / 16 | 0) % 3], X + 3 + i, Y + h - 9, 13, 3); } R(x, '#444', X + w / 2 - 4, Y + h - 3, 8, 3); break;
+    case 'washer': R(x, col[0], X + 1, Y, w - 2, h); R(x, col[1], X + 1, Y, w - 2, 5); x.fillStyle = '#9fb4c4'; x.beginPath(); x.arc(X + w / 2, Y + h / 2 + 3, 8, 0, 7); x.fill(); R(x, '#d8ecf8', X + w / 2 - 4, Y + h / 2 - 1, 8, 5); break;
     case 'sofa': R(x, col[0], X, Y + 4, w, h - 4); R(x, col[1], X + 2, Y, w - 4, 7); break;
     case 'luggage': R(x, col[0], X + 1, Y + 2, w - 2, h - 2); R(x, col[1], X + 3, Y + 4, w - 6, 2); R(x, '#222', X + w / 2 - 2, Y - 2, 4, 3); break;
     case 'cone': R(x, col[0], X + 3, Y + 2, 10, 14); R(x, '#fff', X + 4, Y + 7, 8, 3); break;
