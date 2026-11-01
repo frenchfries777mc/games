@@ -85,3 +85,6 @@ patchnotes.json | v595 title | 은하 제국의 황혼 | build 595 | 2026-11-01
 patchnotes.json | v595 items[0] | 프로필 화면 위쪽의 옛 프로필(아바타·이름) 삭제, 허브 프로필 카드만 표시 (통계는 그대로) | build 595 | 2026-11-01
 patchnotes.json | v596 title | 은하 제국의 황혼 | build 596 | 2026-11-01
 patchnotes.json | v596 items[0] | 로비 설정과 퀘스트 버튼 아이콘을 로고로 교체 | build 596 | 2026-11-01
+patchnotes.json | v597 title | 은하 제국의 황혼 | build 597 | 2026-11-01
+patchnotes.json | v597 items[0] | 참가자 목록의 가로 스크롤 삭제, 긴 이름·클랜 태그는 줄바꿈으로 표시 | build 597 | 2026-11-01
+patchnotes.json | v597 items[1] | 참가자 목록에서 이름을 누르면 허브 프로필이 표시됨 | build 597 | 2026-11-01
