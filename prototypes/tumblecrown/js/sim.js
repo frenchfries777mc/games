@@ -155,6 +155,7 @@ function flagKinds(G) {
 export function flagLocked(G, i, tm) {
   if (!G.fl || !G.home || G.fl[i].own === tm || i === G.home[tm]) return false;
   if (G.fl[G.home[tm]].own !== tm) return true;   // 우리 진지 깃발을 뺏겼으면 먼저 되찾아야 해요
+  if (G.mode === 'duel' && i === G.home[1 - tm] && (G.mt || 0) < 90) return true;   // 듀얼: 시작하고 1분 30초가 지나야 상대 진지를 점령할 수 있어요
   if (MAP.tflags && MAP.tflags.c3 && G.fl.length === 7) {   // 중앙 요새: 우리 쪽 측면 → 중앙 셋 → 상대 쪽 측면 → 상대 진지
     const C = [4, 5, 6], sd = [0, 1, 2, 3].filter(j => j !== G.home[0] && j !== G.home[1]), nr = sd.slice().sort((a, b) => Math.hypot(G.fl[a].x - G.fl[G.home[tm]].x, G.fl[a].z - G.fl[G.home[tm]].z) - Math.hypot(G.fl[b].x - G.fl[G.home[tm]].x, G.fl[b].z - G.fl[G.home[tm]].z))[0], far = sd.find(j => j !== nr);
     if (i === G.home[1 - tm]) return G.fl[far].own !== tm;
