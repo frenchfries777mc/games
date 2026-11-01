@@ -3,7 +3,7 @@
 
 import { T } from './tr.js';
 
-export const VERSION = 'v0.2', BUILD = 262;
+export const VERSION = 'v0.2', BUILD = 263;
 
 export const ROLES = {
   knight: {
@@ -689,14 +689,9 @@ export function useMode(md) {
   if (sp && t.some(f => f[2] >= 0)) MAP.tspawn = [0, 1].map(o => { const own = t.filter(f => f[2] === o).sort((a, b) => Math.hypot(a[0] - sp[o][0], a[1] - sp[o][1]) - Math.hypot(b[0] - sp[o][0], b[1] - sp[o][1])); return own[0] ? [own[0][0], own[0][1]] : sp[o]; });   // 팀 거점은 그 팀의 시작 깃발 자리예요
   if ((md !== 'quick' && md !== 'duel') || !sp) return;
   const keep = new Set(); t.forEach((f, i) => { if (f[2] < 0) keep.add(i); });
-  if (md === 'duel') { const bx = MAP.boss[0], by = MAP.boss[1], ne = [...keep].sort((a, b) => Math.hypot(t[a][0] - bx, t[a][1] - by) - Math.hypot(t[b][0] - bx, t[b][1] - by)); keep.clear(); if (ne[0] != null) keep.add(ne[0]); }   // 듀얼: 가운데 깃발 하나와 양쪽 진지, 그리고 가운데 높이 줄 위에 맞은편 깃발 둘 (모두 다섯 개)
+  if (md === 'duel') { const bx = MAP.boss[0], by = MAP.boss[1], ne = [...keep].sort((a, b) => Math.hypot(t[a][0] - bx, t[a][1] - by) - Math.hypot(t[b][0] - bx, t[b][1] - by)); keep.clear(); if (ne[0] != null) keep.add(ne[0]); }   // 듀얼: 가운데 깃발 하나와 양쪽 진지, (모두 세 개)
   for (const o of [0, 1]) { const own = t.map((f, i) => ({ f, i })).filter(q => q.f[2] === o).sort((a, b) => Math.hypot(a.f[0] - sp[o][0], a.f[1] - sp[o][1]) - Math.hypot(b.f[0] - sp[o][0], b.f[1] - sp[o][1])); if (own[0]) keep.add(own[0].i); }
   MAP.tfi = [...keep].sort((a, b) => a - b); MAP.tflags = MAP.tfi.map(i => t[i]);
-  if (md === 'duel' && MAP.tflags.length === 3) {   // 추가 깃발 둘: 가운데 깃발과 같은 높이에서, 가운데와 각 진지의 중간쯤에 (벽이면 가까운 빈 자리로)
-    const ct = MAP.tflags.find(f => f[2] < 0), hm = MAP.tflags.filter(f => f[2] >= 0), cx = ct[0], cy = ct[1], dx = Math.round(Math.abs(hm[0][0] - cx) / 2), ok = (x, y) => !WALK.f || (WALK.f(x, y) && WALK.f(2 * cx - x, 2 * cy - y));
-    let pick = null; for (let r = 0; r < 40 && !pick; r++) for (let oy = -r; oy <= r && !pick; oy++) for (let ox = -r; ox <= r && !pick; ox++) { if (Math.max(Math.abs(ox), Math.abs(oy)) !== r) continue; const x = cx - dx + ox, y = cy + oy; if (ok(x, y)) pick = [x, y]; }
-    if (pick) { MAP.tflags = MAP.tflags.concat([[pick[0], pick[1], -1], [2 * cx - pick[0], 2 * cy - pick[1], -1]]); MAP.tfi = MAP.tfi.concat([-1, -1]); }
-  }
   if (t.night) MAP.tflags.night = 1;   // 밤낮 지도는 모드를 줄여도 밤낮이 바뀌어요
 }
 
@@ -750,7 +745,7 @@ export const MODES = {
   hyper: { key: 'h', cap: 20, tn: 10, name: T('10vs10 하이퍼'), desc: T('스무 명이 같은 깃발 일곱 개를 두고 크게 부딪쳐요 (점령이 1.5배 빠르고, 괴물이 네 마리 나와요. 쓰러뜨리면 공격과 점령이 영구히 3% 올라요)') },
   normal: { key: 'q', cap: 10, tn: 5, name: T('5vs5 클래식'), desc: T('열 명이 모여 깃발 일곱 개를 두고 겨뤄요 (우리 쪽 측면부터, 측면이 넷인 맵은 가까운 측면 둘을 잡아야 중앙이 열리고, 중앙을 잡으면 상대 쪽 측면, 그다음 상대 진지 순서로 점령)') },
   quick: { key: 'k', cap: 6, tn: 3, name: T('3vs3 블리츠'), desc: T('여섯 명, 깃발 다섯 개, 측면과 중앙을 먼저 점령해야 상대 진지가 열려요') },
-  duel: { key: 'd', cap: 2, tn: 1, name: T('1vs1 듀얼'), desc: T('둘이서 깃발 다섯 개를 두고 겨뤄요. 가운데 깃발 셋을 모두 잡고, 시작하고 1분 30초가 지나면 상대 진지를 점령할 수 있어요') }
+  duel: { key: 'd', cap: 2, tn: 1, name: T('1vs1 듀얼'), desc: T('둘이서 깃발 셋(양쪽 진지와 중앙)을 두고 겨뤄요. 가운데를 잡아야 상대 진지가 열리고, 시작하고 1분 30초가 지나야 점령할 수 있어요') }
 };
 // 마스터리 계급 (스틱세움과 같은 구간): 직업마다 마스터리 포인트로 올라가요. 브론즈부터는 II·III 단계가 있고, 그랜드 마스터는 I~X (1000점씩)
 export const CHAR_RANKS = (() => {
