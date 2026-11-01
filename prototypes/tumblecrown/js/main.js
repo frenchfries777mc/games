@@ -355,7 +355,8 @@ const hex = c => '#' + c.toString(16).padStart(6, '0');
 function botPickRole(sl) {
   const mine = S.slots.indexOf(sl) % 2, same = {}, all = {};
   S.slots.forEach((o, i) => { if (o === sl || !(o.bot ? S.rdy[o.uid] : o.role)) return; all[o.role] = (all[o.role] || 0) + 1; if (i % 2 === mine) same[o.role] = (same[o.role] || 0) + 1; });
-  let best = null, bs = 1e9; for (const r of ROLE_IDS) { const sc = (same[r] || 0) * 10 + (all[r] || 0) * 3 + Math.random(); if (sc < bs) { bs = sc; best = r; } }
+  const dl = (S.mode === 'duel' || S.cap <= 2), pool = ROLE_IDS.filter(r => !dl || roleKind(r) === 'M' || roleKind(r) === 'R');   // 듀얼(한 명씩)은 근접·원거리 딜러만 골라요
+  let best = null, bs = 1e9; for (const r of pool) { const sc = (same[r] || 0) * 10 + (all[r] || 0) * 3 + Math.random(); if (sc < bs) { bs = sc; best = r; } }
   return best;
 }
 function newBots() { S.botRoles = ROLE_IDS.slice().sort(() => Math.random() - 0.5); S.botSeed = (Math.random() * 1e9) | 0; }
@@ -1206,9 +1207,8 @@ function onEvent(e) {
 // 피해 숫자: 같은 자리에 잇달아 뜨면 하나로 합쳐서 덩어리지지 않게 해요
 function num(x, z, v, col, sc = 1, y = 3) {
   v = String(v); const m = /^([+-]?)(\d+)$/.exec(v);
-  if (m) { const o = S.nums.find(n => n.col === col && n.t < 0.45 && n.n != null && Math.abs(n.x - x) < 1.6 && Math.abs(n.z - z) < 1.6); if (o) { o.n += +m[2]; o.v = m[1] + o.n; o.t = Math.min(o.t, 0.12); o.sc = Math.min(1.6, Math.max(o.sc, sc) + 0.04); return; } }
-  S.nums.push({ x: x + (Math.random() - .5) * 0.6, z, y, v, n: m ? +m[2] : null, col, sc, t: 0 });
-  if (S.nums.length > 18) S.nums.shift();
+  S.nums.push({ x: x + (Math.random() - .5) * 1.2, z, y: y + Math.random() * 0.5, v, n: m ? +m[2] : null, col, sc, t: 0 });
+  if (S.nums.length > 40) S.nums.shift();
 }
 
 /* ---------- 화면 갱신 ---------- */
