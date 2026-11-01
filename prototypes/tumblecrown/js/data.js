@@ -3,7 +3,7 @@
 
 import { T } from './tr.js';
 
-export const VERSION = 'v0.2', BUILD = 266;
+export const VERSION = 'v0.2', BUILD = 267;
 
 export const ROLES = {
   knight: {
@@ -93,6 +93,17 @@ export const ROLES = {
     ],
     st: [3, 1, 1, 2], atkTxt: T('무거운 방패 내려치기'),
     role: T('길목을 막고 아군을 지켜요. 느리고 공격은 약하지만 가장 오래 버텨요.')
+  },
+  telaris: {
+    name: T('텔라리스'), type: T('서포터'), color: '#2fa58f', hp: 460, speed: 5.4,
+    atk: { kind: 'melee', range: 2.5, arc: 2.8, dmg: 20, cd: 0.75, push: 14 },
+    skills: [
+      { id: 'aegis', name: T('수호의 가호'), key: 'Q', cd: 8, desc: T('가장 가까운 아군(없으면 나)에게 4초 동안 피해 60을 막는 보호막을 씌워요.') },
+      { id: 'cry', name: T('용기의 외침'), key: 'E', cd: 14, desc: T('둘레 아군이 3초 동안 받는 피해가 25% 줄고 15% 빨라져요.') },
+      { id: 'rush', name: T('철벽 쇄도'), key: 'R', cd: 16, desc: T('방패를 앞세워 2.5초 동안 곧장 돌진해요(조작 불가). 부딪힌 상대에게 55 피해와 큰 밀치기를 주고, 벽에 부딪히면 잠깐 어지러워요.') }
+    ],
+    st: [4, 1, 1, 3], atkTxt: T('방패 치기 (넓게 쳐서 살짝 밀어내요)'),
+    role: T('방패로 아군을 지키고 밀어붙이는 수호자예요. 느리지만 가장 든든해요.')
   },
   assassin: {
     name: T('자객'), type: T('근접 딜러'), color: '#3a5a66', hp: 280, speed: 8.58,
@@ -204,7 +215,7 @@ export const COLORS = [
 ];
 export const BOT_NAMES = ['데굴이', '휘청이', '꽈당이', '비틀이', '아슬이', '쿵쾅이', '덜렁이', '허둥이', '깜빡이', '뒤뚱이'];
 export const MAX_PLAYERS = 10;
-export const ROLE_IDS = ['knight', 'priest', 'archer', 'viking', 'mamluk', 'witch', 'skeleton', 'warden', 'assassin', 'crossbow', 'bomber', 'bard', 'spearman', 'court', 'necro', 'streltsy', 'wellington'];
+export const ROLE_IDS = ['knight', 'priest', 'archer', 'viking', 'mamluk', 'witch', 'skeleton', 'warden', 'assassin', 'crossbow', 'bomber', 'bard', 'spearman', 'court', 'necro', 'streltsy', 'wellington', 'telaris'];
 
 export const ENEMIES = {
   skel: { name: T('해골 병사'), hp: 130, speed: 4.4, r: 0.6, dmg: 32, range: 1.8, windup: 0.42, cd: 0.9, honor: 1 },

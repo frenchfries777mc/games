@@ -931,8 +931,8 @@ function gatherInput(p) {
 function localMove(p, inp, dt) {
   const L = S.local; const R = ROLES[p.role];
   if (p.dn || p.dd || S.snap.ph === 'intro' || S.snap.ph === 'wipe' || S.snap.ph === 'won') { L.x = p.x; L.z = p.z; L.roll = 0; return; }
-  if (p.rct > 0 || Math.hypot(L.x - p.x, L.z - p.z) > 5) { L.x = p.x; L.z = p.z; }
-  if (p.rct > 0) { L.roll = 0; return; }
+  if (p.rct > 0 || p.rsh || Math.hypot(L.x - p.x, L.z - p.z) > 5) { L.x = p.x; L.z = p.z; }
+  if (p.rct > 0 || p.rsh) { L.roll = 0; return; }
   const ox = L.x, oz = L.z;
   L.rollCd = Math.max(0, (L.rollCd || 0) - dt);
   let mx = inp.mx, mz = inp.mz; const ml = Math.hypot(mx, mz); if (ml > 1) { mx /= ml; mz /= ml; }
@@ -942,7 +942,7 @@ function localMove(p, inp, dt) {
   const fl = S.snap.w.fl && S.snap.w.fl[2] === p.id;
   if (inp.roll && !fl && L.rollCd <= 0 && !(L.roll > 0)) { L.roll = 0.35; L.rollCd = 1.2 * ((p.b || []).indexOf('roll') >= 0 ? 0.6 : 1); const ra = ml > 0.1 ? Math.atan2(mz, mx) : p.a; L.rdx = Math.cos(ra); L.rdz = Math.sin(ra); }
   if (L.roll > 0) { L.roll -= dt; L.x += L.rdx * 15 * dt; L.z += L.rdz * 15 * dt; }
-  else { const sp = R.speed * ((p.b || []).indexOf('feet') >= 0 ? 1.12 : 1) * (p.ra ? 1.3 : 1) * (p.mr ? 1.5 : 1) * (p.cb ? 1.2 : 1) * (p.bk ? 0.8 : 1) * (fl ? 0.7 : 1) * (p.cl ? 0.6 : 1) * (p.em ? 0.75 : 1) * (p.stl ? 1.25 : 1) * (p.sp ? 0.25 : 1) * (p.bs ? 0.6 : 1); L.x += mx * sp * dt; L.z += mz * sp * dt; }
+  else { const sp = R.speed * ((p.b || []).indexOf('feet') >= 0 ? 1.12 : 1) * (p.ra ? 1.3 : 1) * (p.mr ? 1.5 : 1) * (p.cb ? 1.2 : 1) * (p.bk ? 0.8 : 1) * (fl ? 0.7 : 1) * (p.cl ? 0.6 : 1) * (p.em ? 0.75 : 1) * (p.cy ? 1.15 : 1) * (p.stl ? 1.25 : 1) * (p.sp ? 0.25 : 1) * (p.bs ? 0.6 : 1); L.x += mx * sp * dt; L.z += mz * sp * dt; }
   if (L.kvx || L.kvz) { L.x += L.kvx * dt; L.z += L.kvz * dt; const dk = Math.pow(0.02, dt); L.kvx *= dk; L.kvz *= dk; if (Math.hypot(L.kvx, L.kvz) < 0.5) L.kvx = L.kvz = 0; }   // 밀치기 속도는 빠르게 줄어요
   mapCollide(L, 0.6);
   { const ws = (S.snap.zn || []).filter(z => z.k === 'wall' || z.k === 'cover'); if (ws.length && p.tm != null) wallClamp(ws, p.tm, ox, oz, L); }
@@ -1020,6 +1020,11 @@ function skillFx(e) {
     case 'quake': view.shock(e.x, e.z, 8, 0xffb060, 0.6); view.ring(e.x, e.z, 4.4, 0xffb060, 0.6); view.burst(e.x, 0.4, e.z, 0xbcae94, 26, 9, 0.7, 0.18); view.flash(e.x, e.z, 0xffb060, 120); if (mine) view.shake = Math.max(view.shake, 1.0); break;
     case 'smite': case 'curse': view.rune(e.x + c * 2, e.z + s * 2, 1.4, e.s === 'smite' ? 0xfff0b0 : 0xb06aff, 0.6, 3); view.rise(e.x, e.z, e.s === 'smite' ? 0xfff0b0 : 0xb06aff, 8, 1, 0.6, 6); break;
     case 'wallfx': view.shock(e.x, e.z, 5, 0xc8b890, 0.45); view.burst(e.x, 0.3, e.z, 0xbcae94, 28, 8, 0.7, 0.18); view.rise(e.x, e.z, 0xe0d0a0, 12, 2.4, 0.9, 6); view.flash(e.x, e.z, 0xffe08a, 100); if (mine) view.shake = Math.max(view.shake, 0.7); SFX.play('slam'); break;
+    case 'aegisfx': view.ring(e.x, e.z, 2.2, 0x6af0d0, 0.9); view.column(e.x, e.z, 0x6af0d0, 0.8); view.rise(e.x, e.z, 0xb8fff0, 12, 1.4, 0.9, 6); view.flash(e.x, e.z, 0x6af0d0, 90); SFX.play('bless'); break;
+    case 'cryfx': view.shock(e.x, e.z, 8, 0x6af0d0, 0.6); view.ring(e.x, e.z, 8, 0x6af0d0, 0.8); view.rise(e.x, e.z, 0xb8fff0, 22, 4, 1.1, 6); view.flash(e.x, e.z, 0x6af0d0, 120); if (mine) view.shake = Math.max(view.shake, 0.4); SFX.play('bless'); break;
+    case 'rush': view.streak(e.x, e.z, e.a, 10, 0x6af0d0, 0.5, 2); view.burst(e.x, 0.4, e.z, 0xbcae94, 16, 5, 0.6, 0.16); SFX.play('roll'); break;
+    case 'rushhit': view.burst(e.x, 1.2, e.z, 0xfff0c0, 18, 8, 0.4, 0.12); view.shock(e.x, e.z, 4, 0x6af0d0, 0.45); view.flash(e.x, e.z, 0xfff0c0, 110); view.shake = Math.max(view.shake, 0.7); SFX.play('slam'); break;
+    case 'rushbump': view.burst(e.x + Math.cos(e.a) * 1.2, 1, e.z + Math.sin(e.a) * 1.2, 0xd8c8a8, 20, 7, 0.5, 0.14); view.shock(e.x, e.z, 3, 0xd8c8a8, 0.4); view.shake = Math.max(view.shake, 0.6); SFX.play('clang'); break;
     case 'vowfx': view.ring(e.x, e.z, 2.6, 0xffe08a, 0.9); view.rune(e.x, e.z, 2.2, 0xffd36b, 1.0, 3); view.column(e.x, e.z, 0xffe08a, 0.8); view.rise(e.x, e.z, 0xffe08a, 14, 2, 1.0, 6); SFX.play('clear'); break;
     case 'bastfx': view.shock(e.x, e.z, 8, 0xc8d8f0, 0.6); view.ring(e.x, e.z, 4.5, 0xc8d8f0, 0.8); view.rune(e.x, e.z, 3.2, 0xffe08a, 1.2, -3); view.burst(e.x, 1.2, e.z, 0xe8e0c8, 24, 8, 0.6, 0.14); view.flash(e.x, e.z, 0xc8d8f0, 130); if (mine) view.shake = Math.max(view.shake, 0.8); SFX.play('clang'); break;
     case 'vanishfx': view.burst(e.x, 1.2, e.z, 0x6a8a98, 30, 5, 0.9, 0.2); view.ring(e.x, e.z, 2.2, 0x6a8a98, 0.6); view.rise(e.x, e.z, 0x4a6a78, 16, 2, 1.0, 5); SFX.play('parry'); break;
@@ -1034,7 +1039,7 @@ function skillFx(e) {
 }
 const COL = { wellington: 0xffd36b, streltsy: 0xffc060, necro: 0x6aff8a, knight: 0xcfe0ff, viking: 0xffb060, mamluk: 0xffd0a0, skeleton: 0xe8e0c8 };
 // 직업마다 다르게 쓰러져요: 무거운 직업은 땅이 울리고, 마법 직업은 영혼이 떠오르고, 날랜 직업은 연기로 사라져요
-const DEATHFX = { knight: ['heavy', 0xc8d0dc], warden: ['heavy', 0x9a8f78], viking: ['heavy', 0xe0803a], spearman: ['heavy', 0x9ab0c8], priest: ['soul', 0xfff0b0], witch: ['soul', 0xb06aff], bard: ['soul', 0xff7aa0], court: ['soul', 0x9a6ad8], necro: ['bones', 0x7ad07a], assassin: ['smoke', 0x6a8a96], mamluk: ['smoke', 0xe0a050], archer: ['arrows', 0x8ac860], crossbow: ['arrows', 0xc8a060], bomber: ['boom', 0xff7a3a], skeleton: ['bones', 0xe8e0c8] };
+const DEATHFX = { knight: ['heavy', 0xc8d0dc], warden: ['heavy', 0x9a8f78], telaris: ['heavy', 0x2fa58f], viking: ['heavy', 0xe0803a], spearman: ['heavy', 0x9ab0c8], priest: ['soul', 0xfff0b0], witch: ['soul', 0xb06aff], bard: ['soul', 0xff7aa0], court: ['soul', 0x9a6ad8], necro: ['bones', 0x7ad07a], assassin: ['smoke', 0x6a8a96], mamluk: ['smoke', 0xe0a050], archer: ['arrows', 0x8ac860], crossbow: ['arrows', 0xc8a060], bomber: ['boom', 0xff7a3a], skeleton: ['bones', 0xe8e0c8] };
 function deathFx(role, x, z) {
   const d = DEATHFX[role]; if (!d) return; const [k, c] = d;
   if (k === 'heavy') { view.shock(x, z, 4.4, c, 0.5); view.burst(x, 0.4, z, c, 14, 6, 0.4, 0.12); view.shake = Math.max(view.shake, 0.8); SFX.play('clang'); }
