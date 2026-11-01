@@ -5654,7 +5654,7 @@ function shuffle(arr){ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.
 /* ===== the version of this file =====
    Different BUILDS of one version meet and play together (room names online-v<ver>-<mode>-<map>-<slot>); different VERSIONS (the 0.x part) never do - the host refuses them (verNo) and the dispatcher answers busy.
    The build is only sent along with the join message and the lobby (for information); the corner of the screen shows it. */
-const GAME_BUILD='build 2026-10-31-v593';
+const GAME_BUILD='build 2026-10-31-v594';
 const GAME_VERSION='0.9', GAME_VERSION_NAME='은하 제국의 황혼';   // 게임 버전 이름: versions.json의 title과 같게 (빌드마다 바꾸지 않음)
 /* version (the 0.x part) vs build: different BUILDS of one version meet and play together, different VERSIONS never do (rooms, quick match, ranked, friend invites, dispatcher).
    Builds before 470 do not send a version, so it is read from the build number (0.9 started at build 458). */
@@ -10703,7 +10703,6 @@ function rebalanceTeams(){
     for(const k of keys){ let t=-1; for(let i=0;i<n;i++){ if(cnt[i]+groups[k].length>cap) continue; if(t<0 || sum[i]<sum[t]) t=i; }
       if(t<0){ t=0; for(let i=1;i<n;i++) if(cnt[i]<cnt[t]) t=i; }
       for(const p of groups[k]){ p.team=t; cnt[t]++; sum[t]+=str(p); } }      // (the strongest first, each to the team that is weaker so far)
-    try{ pushSystemLine('⚖️ 레벨을 보고 팀을 자동으로 나눴어요'); }catch(e){}
   } else partyAssignTeams(list);
 }
 function applyRoomMap(id){
