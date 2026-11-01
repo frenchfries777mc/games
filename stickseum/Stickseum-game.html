@@ -2705,7 +2705,7 @@ function renderMissionScreen(center){
     const card=document.createElement('div'); card.style.cssText='flex:none; width:128px; display:flex; flex-direction:column; align-items:center; gap:8px; padding:10px 8px; border:1px solid '+(ok&&!got?'#c17bff':'var(--line)')+'; border-radius:10px; background:var(--panel-2); opacity:'+(ok?1:0.6)+';';
     const n=document.createElement('div'); n.style.cssText='font-weight:800; color:#c17bff; font-size:15px;'; n.textContent=i+'단계';
     const rp=seasonRewardParts(r), l=document.createElement('div'); l.style.cssText='flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:6px; min-height:96px; text-align:center; word-break:keep-all;';
-    const lic=document.createElement('div'); lic.style.cssText='font-size:44px; line-height:1;'; setIconEl(lic, rp.ic); const lnm=document.createElement('div'); lnm.style.cssText='font-size:13px; line-height:1.35;'; lnm.textContent=rp.nm; l.appendChild(lic); l.appendChild(lnm);
+    const lic=document.createElement('div'); lic.style.cssText='font-size:44px; line-height:1;'; if(r.kind==='cos' && COSMETICS[r.id] && COSMETICS[r.id].cat==='emo') lic.setAttribute('data-noemo','1'); setIconEl(lic, rp.ic); const lnm=document.createElement('div'); lnm.style.cssText='font-size:13px; line-height:1.35;'; lnm.textContent=rp.nm; l.appendChild(lic); l.appendChild(lnm);
     const b=document.createElement('button'); b.style.cssText='padding:5px 11px; width:100%;';
     if(got){ b.textContent='받음'; b.className='off'; b.disabled=true; }
     else if(ok){ b.textContent='받기'; b.onclick=(ev)=>{ const rc=ev.currentTarget.getBoundingClientRect(), lab=seasonRewardLabel(SEASON_REWARDS[i-1]); if(claimSeasonTier(i)){ claimSparkle(rc.left+rc.width/2, rc.top, lab, SEASON_REWARDS[i-1].kind==='cos'||SEASON_REWARDS[i-1].kind==='title'); renderMissionScreen(); } }; }
@@ -3704,7 +3704,7 @@ function renderShop(){
     if(it.cat==='pbg' || it.cat==='pfr'){ cv=document.createElement('div'); cv.style.cssText='width:80px; height:64px; margin:0 auto 4px; border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:26px;'+(it.cat==='pbg'?('background:'+pbgCss(id)+'; background-size:cover;'):'background:#1a1d26;');
       if(it.cat==='pfr'){ const f=pfrInfo(id); const inner=document.createElement('div'); inner.style.cssText='width:44px; height:44px; border-radius:10px; background:#274d3a; box-sizing:border-box; border:3px solid '+f.color+'; box-shadow:'+f.shadow+';'; if(f.cls) inner.className=f.cls; cv.appendChild(inner); } else cv.textContent='👤';
       box.appendChild(cv); }
-    else if(it.cat==='emo'){ cv=document.createElement('div'); cv.style.cssText='width:80px; height:64px; margin:0 auto 4px; border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:38px; background:#1a1d26;'; cv.textContent=it.em; box.appendChild(cv); }
+    else if(it.cat==='emo'){ cv=document.createElement('div'); cv.style.cssText='width:80px; height:64px; margin:0 auto 4px; border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:38px; background:#1a1d26;'; cv.setAttribute('data-noemo','1'); cv.textContent=it.em; box.appendChild(cv); }
     else { cv=document.createElement('canvas'); box.appendChild(cv); drawItemPreview(cv,id); }
     if(it.lux || it.shine || it.cat==='pose' || skinIsSpecial(id)) shopAnimList.push({cv,id});            // its little figure moves (the show is a function of the time)
     if(it.cat==='skin'){ const cn=document.createElement('div'); cn.className='wk'; cn.style.display='block'; cn.textContent=(WEAPON_PERSONA_NAME[it.char]||it.char); box.appendChild(cn); }
@@ -5628,11 +5628,46 @@ function shuffle(arr){ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.
 /* ===== the version of this file =====
    Different BUILDS of one version meet and play together (room names online-v<ver>-<mode>-<map>-<slot>); different VERSIONS (the 0.x part) never do - the host refuses them (verNo) and the dispatcher answers busy.
    The build is only sent along with the join message and the lobby (for information); the corner of the screen shows it. */
-const GAME_BUILD='build 2026-10-31-v583';
+const GAME_BUILD='build 2026-10-31-v584';
 const GAME_VERSION='0.9', GAME_VERSION_NAME='은하 제국의 황혼';   // 게임 버전 이름: versions.json의 title과 같게 (빌드마다 바꾸지 않음)
 /* version (the 0.x part) vs build: different BUILDS of one version meet and play together, different VERSIONS never do (rooms, quick match, ranked, friend invites, dispatcher).
    Builds before 470 do not send a version, so it is read from the build number (0.9 started at build 458). */
 function buildNum(b){ const m=/-v(\d+)$/.exec(String(b||'')); return m?+m[1]:0; }
+/* emoji logos (owner 11-01): the emoji listed in EMOJI_LOGO are shown as the picture emoji/<name>.svg wherever the screen shows them as text.
+   The text stays inside the element (hidden), so textContent still reads the same. Emotes (the wheel, the emote shop, the gift list) keep the real emoji: those carry data-noemo. To add a logo, add one line here and the svg file. */
+const EMOJI_LOGO={"⚔": "swords", "🚫": "ban", "👑": "crown", "🧪": "potion", "🔒": "lock", "🔐": "lock", "🎁": "gift", "🏅": "medal", "🎖": "medal", "🪙": "coin", "💰": "coin", "⚠": "warn", "🔴": "reddot", "🌊": "wave", "🏰": "castle", "👥": "group", "🎲": "dice", "👍": "like", "✔": "check", "✅": "okcheck", "💧": "drop", "🧊": "ice", "👁": "eye", "🎓": "grad", "🛠": "tools", "🔍": "search", "💬": "chat", "🏆": "trophy", "💨": "dash", "🐲": "dragon", "⭐": "star", "🪪": "idcard", "🔥": "fire"};
+(function(){
+  const keys=Object.keys(EMOJI_LOGO).sort((a,b)=>b.length-a.length), re=new RegExp('('+keys.join('|')+')\\uFE0F?','g');
+  const SKIP={SCRIPT:1,STYLE:1,TEXTAREA:1,INPUT:1,OPTION:1,TITLE:1,CANVAS:1,NOSCRIPT:1,SELECT:1,BUTTON_NO:1};
+  let on=false;
+  function css(){
+    const v=buildNum(GAME_BUILD), names=Array.from(new Set(Object.values(EMOJI_LOGO)));
+    const st=document.createElement('style'); st.id='emoLogoCss';
+    st.textContent='.emoL{display:inline-block; width:1.15em; height:1.15em; vertical-align:-0.22em; overflow:hidden; text-indent:-9999px; white-space:nowrap; background:center/contain no-repeat; font-size:inherit;}'+names.map(n=>'.emoL.e-'+n+'{background-image:url(emoji/'+n+'.svg?v='+v+');}').join('');
+    document.head.appendChild(st);
+  }
+  function blocked(el){ for(let e=el; e; e=e.parentElement){ if(SKIP[e.tagName] || (e.classList && e.classList.contains('emoL')) || (e.hasAttribute && (e.hasAttribute('data-noemo') || e.isContentEditable===true))) return true; if(e.id==='emoteWheel') return true; } return false; }
+  function fixText(t){
+    const s=t.nodeValue; if(!s || !re.test(s)){ re.lastIndex=0; return; } re.lastIndex=0;
+    if(blocked(t.parentElement)) return;
+    const frag=document.createDocumentFragment(); let last=0, m;
+    while((m=re.exec(s))){ if(m.index>last) frag.appendChild(document.createTextNode(s.slice(last,m.index))); const sp=document.createElement('span'); sp.className='emoL e-'+EMOJI_LOGO[m[1]]; sp.textContent=m[0]; frag.appendChild(sp); last=m.index+m[0].length; }
+    re.lastIndex=0; if(last<s.length) frag.appendChild(document.createTextNode(s.slice(last)));
+    t.parentNode.replaceChild(frag, t);
+  }
+  function scan(root){
+    if(root.nodeType===3){ fixText(root); return; }
+    if(root.nodeType!==1 && root.nodeType!==11) return;
+    if(root.nodeType===1 && blocked(root)) return;
+    const w=document.createTreeWalker(root, NodeFilter.SHOW_TEXT, null), list=[]; let n; while((n=w.nextNode())) list.push(n);
+    for(const t of list) fixText(t);
+  }
+  function start(){
+    if(on || !document.body) return; on=true; css(); scan(document.body);
+    new MutationObserver(ms=>{ for(const m of ms){ if(m.type==='characterData') fixText(m.target); else for(const n of m.addedNodes) scan(n); } }).observe(document.body, {childList:true, subtree:true, characterData:true});
+  }
+  if(document.body) start(); else document.addEventListener('DOMContentLoaded', start);
+})();
 function bLabel(b){ const n=buildNum(b); return n ? 'b'+n : '오래된 버전'; }          // a build is always shown as b123 (a version as v0.9)
 function verOf(d){ if(d && typeof d.ver==='string' && d.ver) return d.ver; const n=buildNum(d&&d.build); return n>=458 ? '0.9' : (n>0 ? '0.8' : '?'); }
 const VER_TAG=GAME_VERSION.replace(/\D/g,'');          // (in room names: 0.9 -> '09')
@@ -8839,7 +8874,7 @@ function giftable(it){ return !!it && !it.free && !it.tier && !it.mast && !it.se
 function giftItemThumb(id){
   const it=COSMETICS[id], el=document.createElement('div');
   el.style.cssText='width:72px; height:56px; margin:0 auto 4px; border-radius:8px; display:flex; align-items:center; justify-content:center; background:#1a1d26; font-size:30px; overflow:hidden;';
-  if(it.cat==='emo') el.textContent=it.em;
+  if(it.cat==='emo'){ el.setAttribute('data-noemo','1'); el.textContent=it.em; }
   else if(it.cat==='pbg'){ el.style.background=pbgCss(id); el.style.backgroundSize='cover'; el.textContent='👤'; el.style.fontSize='22px'; }
   else if(it.cat==='pfr'){ const f=pfrInfo(id), inner=document.createElement('div'); inner.style.cssText='width:38px; height:38px; border-radius:8px; background:#274d3a; box-sizing:border-box; border:3px solid '+f.color+'; box-shadow:'+f.shadow+';'; if(f.cls) inner.className=f.cls; el.appendChild(inner); }
   else { const cv=document.createElement('canvas'); cv.style.cssText='width:72px; height:56px;'; el.appendChild(cv); try{ drawItemPreview(cv,id); }catch(e){} }
