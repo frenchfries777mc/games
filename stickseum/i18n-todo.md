@@ -98,3 +98,5 @@ patchnotes.json | v601 title | 은하 제국의 황혼 | build 601 | 2026-11-01
 patchnotes.json | v601 items[0] | 설명 속 이모지 3차 23종 로고 적용 (칼, 박쥐, 로켓, 마법사 등) | build 601 | 2026-11-01
 patchnotes.json | v602 title | 은하 제국의 황혼 | build 602 | 2026-11-01
 patchnotes.json | v602 items[0] | 설명 속 이모지 14종(닌자·안개·수정구·근육·춤·복숭아 등)을 전용 로고로 교체 | build 602 | 2026-11-01
+patchnotes.json | v603 title | 은하 제국의 황혼 | build 603 | 2026-11-01
+patchnotes.json | v603 items[0] | 설명 속 이모지 4차 로고 적용 (달력, 토네이도, 감자튀김, 은하 등 13종과 다른 곳에서 만든 로고 재사용 16종) | build 603 | 2026-11-01
