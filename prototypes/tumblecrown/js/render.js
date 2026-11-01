@@ -75,7 +75,7 @@ const HERO = {
   witch: { body: 0x4a2a6a, robe: 1, leg: 0x2a1a3a, arm: 0x4a2a6a, skinC: 0xb8d0a0, hat: 1, staff: 1, staffC: 0xc06aff },
   skeleton: { skel: 1 },
   warden: { body: 0x6b5b3e, leg: 'dm', arm: 'mt', helm: 1, helmC: 0x4a4a52, plume: 0xc8a030, sword: 1, shield: 1, shieldC: 0x6a5030, shS: 1.45, belt: 1, wide: 1.24 },
-  telaris: { body: 0xf0b820, leg: 0xece8e0, arm: 0xe8721a, stripes: [0xf0b820, 0xe8721a], belt: 1, beltC: 0x5a3a1c, shield: 0 },
+  telaris: { body: 0xf0b820, leg: 0xece8e0, arm: 0xe8721a, stripes: 1, shield: 0 },
   assassin: { body: 0x24343c, leg: 0x161e24, arm: 0x24343c, hood: 0x1a2830, scim: 1, belt: 1 },
   bomber: { body: 0x7a4a32, leg: 0x3a3030, arm: 0x7a4a32, goggles: 1, bombs: 1, bhand: 1, sack: 1, belt: 1, cap: 0x5a3a28, wide: 1.1 },
   bard: { body: 0xb04a6a, leg: 0x4a3a50, arm: 0xb04a6a, cap: 0x3a6a8a, lute: 1, belt: 1, cape: 0x6a3a8a },
@@ -156,8 +156,10 @@ function makeFigure(o) {
   const legL = new THREE.Group(), legR = new THREE.Group(); legL.position.set(-0.25, 0.9, 0); legR.position.set(0.25, 0.9, 0); body.add(legL, legR);
   cap(0.2, 0.6, lg, 0, -0.4, 0, legL); cap(0.2, 0.6, lg, 0, -0.4, 0, legR);
   box(0.5, 0.25, 0.65, M(0x2a2228), 0, -0.78, 0.1, legL); box(0.5, 0.25, 0.65, M(0x2a2228), 0, -0.78, 0.1, legR);
+  if (!o.stripes) {
   cyl(0.5, o.robe ? (o.robeB || 0.85) : 0.62, o.robe ? 1.9 : 1.3, 10, M(o.body), 0, o.robe ? 1.1 : 1.45, 0, body);
   sph(0.55, 10, 8, M(o.body), 0, 2.05, 0, body).scale.set(1, 0.7, 0.85);
+  }
   if (o.inner) box(0.5, 1.3, 0.06, M(o.inner), 0, 1.05, 0.8, body);   // 로브 앞이 벌어져 속옷이 보여요
   if (o.belt) { const b = mesh(geo('belt', () => new THREE.TorusGeometry(0.58, 0.08, 5, 12)), o.beltC ? M(o.beltC, { e: o.beltC, ei: 0.35 }) : leather(), 0, 1.2, 0, body); b.rotation.x = Math.PI / 2; if (o.beltC) box(0.2, 0.2, 0.08, M(o.beltC, { e: o.beltC, ei: 0.5 }), 0, 1.2, 0.62, body); }
   const head = new THREE.Group(); head.position.y = 2.75; body.add(head);
@@ -206,15 +208,27 @@ function makeFigure(o) {
   if (o.sword === 2) { const sw = new THREE.Group(); sw.position.set(0, -0.9, 0.1); armR.add(sw); const bk = M(0xf2f4f8, { m: 0.6, r: 0.3 }); box(0.42, 2.5, 0.22, bk, 0, 1.45, 0, sw); box(0.1, 2.2, 0.23, M(0xc8d0dc, { m: 0.8, r: 0.25 }), 0, 1.35, 0, sw); cone(0.26, 0.34, 4, bk, 0, 2.86, 0, sw).rotation.y = Math.PI / 4; box(0.85, 0.16, 0.2, M(0xe2e6ee, { m: 0.7, r: 0.35 }), 0, 0.15, 0, sw); box(0.11, 0.55, 0.11, leather(), 0, -0.2, 0, sw); box(0.18, 0.14, 0.18, M(0xe2e6ee, { m: 0.7, r: 0.35 }), 0, -0.52, 0, sw); sw.rotation.x = Math.PI / 2; }
   else if (o.sword) { const sw = new THREE.Group(); sw.position.set(0, -0.9, 0.1); armR.add(sw); box(0.12, 2, 0.04, M(0xe9edf5, { m: 0.9, r: 0.2 }), 0, 1.1, 0, sw); box(0.6, 0.1, 0.14, gold(), 0, 0.1, 0, sw); box(0.08, 0.35, 0.08, leather(), 0, -0.1, 0, sw); sw.rotation.x = Math.PI / 2; }
   if (o.shield) { const shc = o.shieldC || 0x2c4f9e; const sh = new THREE.Group(); shG = sh; sh.position.set(-0.15, -0.7, 0.45); armL.add(sh); sh.rotation.x = 0.6; box(1.1, 1.4, 0.14, M(shc), 0, 0, 0, sh); const c = cone(0.78, 0.7, 4, M(shc), 0, -0.95, 0, sh); c.rotation.set(Math.PI, Math.PI / 4, 0); box(0.18, 1.2, 0.05, gold(), 0, -0.1, 0.09, sh); box(0.8, 0.18, 0.05, gold(), 0, 0.25, 0.09, sh); if (o.shS) sh.scale.setScalar(o.shS); }
-  if (o.stripes) {   // 텔라리스: 노랑·주황 세로 줄무늬 겉옷, 흰 바지, 갈색 머리, 하얀색·빨간색 직사각 방패
-    const c1 = M(o.stripes[0]), c2 = M(o.stripes[1]), lt = M(0x5a3a1c), N = 14;
-    for (let i = 0; i < N; i++) { const a = i / N * 6.283, g = new THREE.Group(); g.rotation.y = a; body.add(g); const cc = i % 2 ? c1 : c2; box(0.26, 1.3, 0.05, cc, 0, 1.45, 0.56 + 0.02, g).rotation.x = -0.09; box(0.26, 0.6, 0.05, cc, 0, 0.72, 0.68 + 0.02, g).rotation.x = -0.12; }
-    cyl(0.64, 0.7, 0.6, 14, c1, 0, 0.72, 0, body).scale.set(0.98, 1, 0.98);
-    for (const sx of [-1, 1]) { sph(0.26, 8, 6, c2, sx * 0.7, 2.3, 0, body); const ar = sx > 0 ? armR : armL; cyl(0.2, 0.2, 0.1, 8, lt, 0, -0.62, 0, ar); sph(0.24, 8, 6, lt, 0, -0.95, 0, ar); }
-    const hr = M(0x4a2e18); sph(0.45, 10, 7, hr, 0, 0.1, -0.08, head).scale.set(1, 0.85, 1); box(0.9, 0.2, 0.2, hr, 0, 0.3, 0.3, head).visible = false;
-    const sh = new THREE.Group(); shG = sh; sh.position.set(-0.04, -0.62, 0.34); armL.add(sh); sh.rotation.x = 0.1; sh.scale.setScalar(0.78);
-    const wh = M(0xf4f2ee), rd = M(0xc42a2a);
-    box(1.1, 1.9, 0.14, wh, 0, -0.2, 0, sh); box(0.24, 1.9, 0.141, rd, 0, -0.2, 0, sh); box(0.74, 0.24, 0.141, rd, 0, 0.1, 0, sh);
+  if (o.stripes) {   // 텔라리스: 처음부터 새로 만든 몸 — 줄무늬 겉옷(그림 무늬), 가죽 어깨받이, 팔에 묶인 직사각 방패
+    const toon = (map, extra = {}) => new THREE.MeshToonMaterial(Object.assign({ map, gradientMap: toonGrad() }, extra));
+    const cv = (w, h, f) => { const c = document.createElement('canvas'); c.width = w; c.height = h; f(c.getContext('2d'), w, h); const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace; t.wrapS = THREE.RepeatWrapping; t.magFilter = THREE.NearestFilter; return t; };
+    const stripeTex = geo('tlStripeTex', () => cv(128, 8, (x, w, h) => { const n = 10, sw = w / n; for (let i = 0; i < n; i++) { x.fillStyle = i % 2 ? '#f0b820' : '#e8721a'; x.fillRect(i * sw, 0, sw, h); x.fillStyle = '#8a3a10'; x.fillRect(i * sw, 0, 2, h); } }));
+    const sm = toon(stripeTex);
+    const tor = mesh(geo('tlTorso', () => new THREE.CylinderGeometry(0.56, 0.64, 1.4, 20)), sm, 0, 1.45, 0, body); tor.scale.set(1, 1, 0.9);
+    const sk = mesh(geo('tlSkirt', () => new THREE.CylinderGeometry(0.64, 0.8, 0.62, 20, 1, true)), toon(stripeTex, { side: THREE.DoubleSide }), 0, 0.78, 0, body); sk.scale.set(1, 1, 0.9);
+    const ch = sph(0.56, 12, 8, sm, 0, 2.12, 0, body); ch.scale.set(1, 0.42, 0.85);
+    const lt = M(0x5a3a1c), br = M(0xc8a040, { m: 0.7, r: 0.35 });
+    const bt = mesh(geo('tlBelt', () => new THREE.TorusGeometry(0.62, 0.08, 5, 20)), lt, 0, 1.0, 0, body); bt.rotation.x = Math.PI / 2; bt.scale.set(1, 0.9, 1); box(0.26, 0.26, 0.1, br, 0, 1.0, 0.58, body);
+    for (const sx of [-1, 1]) { const ar = sx > 0 ? armR : armL; const ep = cyl(0.27, 0.27, 0.1, 12, lt, sx * 0.7, 2.34, 0, body); ep.rotation.z = sx * 0.12; cyl(0.2, 0.2, 0.12, 8, lt, 0, -0.64, 0, ar); sph(0.23, 8, 6, lt, 0, -0.96, 0, ar); }
+    const hr = M(0x4a2e18); sph(0.45, 10, 7, hr, 0, 0.1, -0.08, head).scale.set(1, 0.85, 1);
+    // 방패: 둥근 모서리의 평평한 직사각형, 문양은 그림이라 튀어나오지 않아요
+    const W = 0.95, H = 1.5, R = 0.18, shp = new THREE.Shape();
+    shp.moveTo(-W / 2 + R, H / 2); shp.lineTo(W / 2 - R, H / 2); shp.quadraticCurveTo(W / 2, H / 2, W / 2, H / 2 - R); shp.lineTo(W / 2, -H / 2 + R); shp.quadraticCurveTo(W / 2, -H / 2, W / 2 - R, -H / 2); shp.lineTo(-W / 2 + R, -H / 2); shp.quadraticCurveTo(-W / 2, -H / 2, -W / 2, -H / 2 + R); shp.lineTo(-W / 2, H / 2 - R); shp.quadraticCurveTo(-W / 2, H / 2, -W / 2 + R, H / 2);
+    const sh = new THREE.Group(); shG = sh; sh.position.set(-0.05, -0.6, 0.34); armL.add(sh); sh.rotation.x = 0.08;
+    mesh(geo('tlShBody', () => new THREE.ExtrudeGeometry(shp, { depth: 0.12, bevelEnabled: false })), M(0xc83030), 0, 0, -0.06, sh);
+    const fg = geo('tlShFace', () => { const g = new THREE.ShapeGeometry(shp), p = g.attributes.position, uv = g.attributes.uv; for (let i = 0; i < p.count; i++) uv.setXY(i, (p.getX(i) + W / 2) / W, (p.getY(i) + H / 2) / H); return g; });
+    const faceTex = geo('tlShTex', () => cv(96, 144, (x, w, h) => { x.fillStyle = '#c83030'; x.fillRect(0, 0, w, h); x.fillStyle = '#f6f3ee'; x.fillRect(8, 8, w - 16, h - 16); x.fillStyle = '#c83030'; x.fillRect(w / 2 - 10, 14, 20, h - 28); x.fillRect(16, h * 0.3, w - 32, 20); }));
+    faceTex.wrapS = THREE.ClampToEdgeWrapping; mesh(fg, toon(faceTex), 0, 0, 0.062, sh, false);
+    for (const y of [0.35, -0.45]) box(0.2, 0.12, 0.7, lt, 0, y, -0.4, sh);
   }
   // 활: 왼손에 쥐고, 팔을 앞으로 뻗으면 위아래로 선 활이 조준 방향으로 휘어요 (시위는 몸 쪽)
   let bowS = null, xbS = null, gnS = null, axeG = null, stG = null, vAxe = null, vAxeM = null;
