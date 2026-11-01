@@ -72,6 +72,7 @@ function pickMap(cb) {
 }
 function menu(go) {
   SFX.unlock();
+  if (go === 'more') { const on = $('moreBox').classList.toggle('on'); $('moreBtn').textContent = on ? '더보기 ▴' : '더보기 ▾'; return; }
   homeMsg('');
   if (go === 'solo') { leaveNet(); N.mode = 'solo'; N.players = [{ id: UID, name: myName(), col: COLORS[SAVE.col % COLORS.length], skin: skinOf() }]; pickMap(id => { N.pick = id; beginGame(); }); }
   else if (go === 'match') { if (needLogin()) return; startMatch(); }
