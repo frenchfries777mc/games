@@ -1227,8 +1227,8 @@ export class View {
     if (S.tf && this.flagM) S.tf.forEach((f, i) => {
       const F = this.flagM[i]; if (!F) return; const c = f[0] < 0 ? 0x8a8696 : TEAMS[f[0]].c, pc = f[1] >= 0 ? TEAMS[f[1]].c : c;
       F.cm.color.setHex(c); F.cm.emissive.setHex(c); F.rm.color.setHex(c); F.rm.emissive.setHex(c); F.pm.color.setHex(pc); F.pm.emissive.setHex(pc);
-      const lkd = ((f[5] | 0) >> (this.myTm | 0)) & 1;   // 순서 규칙 때문에 우리 팀이 아직 못 점령하는 깃발: 흐리게 하고 자물쇠를 띄워요
-      if (lkd) { F.cm.color.setHex(0x4c4a56); F.cm.emissive.setHex(0x1c1a22); F.rm.color.setHex(0x4c4a56); F.rm.emissive.setHex(0x1c1a22); }
+      const lkd = ((f[5] | 0) >> (this.myTm | 0)) & 1;   // 순서 규칙 때문에 우리 팀이 아직 못 점령하는 깃발: 주인 없는 깃발은 흐리게, 상대 깃발은 상대 색 그대로 두고 자물쇠를 띄워요
+      if (lkd && !(f[0] >= 0 && f[0] !== (this.myTm | 0))) { F.cm.color.setHex(0x4c4a56); F.cm.emissive.setHex(0x1c1a22); F.rm.color.setHex(0x4c4a56); F.rm.emissive.setHex(0x1c1a22); }
       F.lk.visible = !!lkd; if (lkd) { F.lk.rotation.y = Math.sin(t * 1.4 + i) * 0.25; F.lk.position.y = 7.4 + 0.15 * Math.sin(t * 2.4 + i); }
       for (const [B, v] of [[F.hold, f[3]], [F.seize, f[4]]]) { B.bg.visible = v > 0; if (v > 0) { B.bg.scale.setScalar(Math.min(1, (10 - v) / 0.3 + 0.01 > 1 ? 1 : Math.max(0.05, (10 - v) / 0.3))); B.cl.rotation.y = Math.sin(t * 3 + i) * 0.2; } }   // 웰링턴이 세운 황금·보라 깃발
       F.prog.visible = f[2] > 0; F.prog.scale.setScalar(Math.max(0.01, f[2] / FLAG_T) * FLAG_R); F.cloth.rotation.y = Math.sin(t * 2.2 + i) * 0.18;
