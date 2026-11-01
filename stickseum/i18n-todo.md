@@ -92,3 +92,5 @@ patchnotes.json | v598 title | 은하 제국의 황혼 | build 598 | 2026-11-01
 patchnotes.json | v598 items[0] | 로비 프로필 버튼을 로고로 교체, 비공개 방 경기 중 나가기 버튼 추가 | build 598 | 2026-11-01
 patchnotes.json | v599 title | 은하 제국의 황혼 | build 599 | 2026-11-01
 patchnotes.json | v599 items[0] | 설명 속 이모지 37종(그래프·표적·번개·해골·지구·보석·방패 등)을 전용 로고로 교체 | build 599 | 2026-11-01
+patchnotes.json | v600 title | 은하 제국의 황혼 | build 600 | 2026-11-01
+patchnotes.json | v600 items[0] | 설명 속 이모지 24종(단검·폭죽·폭탄·게임패드·확성기·글러브 등)을 전용 로고로 교체 | build 600 | 2026-11-01
