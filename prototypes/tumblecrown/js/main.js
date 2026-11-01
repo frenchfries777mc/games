@@ -305,13 +305,12 @@ function paintSettings() {
   const sl = $('setLang'); if (!sl.options.length) { for (const [k, n] of LANG_NAMES) sl.add(new Option(n, k)); sl.onchange = () => { try { if (window.FFLang) FFLang.set(sl.value); } catch (e) { } }; }
   try { sl.value = (window.FFLang && FFLang.get()) || 'ko'; } catch (e) { }
   $('setMv').querySelectorAll('button').forEach(b => { b.classList.toggle('on', b.dataset.v === SAVE.set.mv); b.onclick = () => { SAVE.set.mv = b.dataset.v; S.ck = null; save(); paintSettings(); }; });
-  const names = { q: T('기술 1'), e: T('기술 2'), r: T('기술 3'), roll: T('구르기') }, kb = KB();
-  $('setKeys').innerHTML = ''; ['q', 'e', 'r', 'roll'].forEach(n => { const b = document.createElement('button'); b.textContent = names[n] + ' · ' + keyLabel(kb[n]); b.onclick = () => bindKey(n, b); $('setKeys').appendChild(b); });
+  const names = { q: T('기술 1'), e: T('기술 2'), r: T('기술 3'), roll: T('구르기'), chat: T('채팅') }, kb = KB();
+  $('setKeys').innerHTML = ''; ['q', 'e', 'r', 'roll', 'chat'].forEach(n => { const b = document.createElement('button'); b.textContent = names[n] + ' · ' + keyLabel(kb[n]); b.onclick = () => bindKey(n, b); $('setKeys').appendChild(b); });
   $('setKeyReset').onclick = () => { SAVE.set.keys = {}; save(); paintSettings(); };
   const seg = (id, v, f) => { const el = $(id); el.querySelectorAll('button').forEach(b => { b.classList.toggle('on', +b.dataset.v === +v); b.onclick = () => { f(+b.dataset.v); save(); paintSettings(); }; }); };
   seg('setPx', SAVE.set.px, v => { SAVE.set.px = v; view.setPixel(v); });
   seg('setBloom', SAVE.set.bloom, v => { SAVE.set.bloom = v; view.setBloom(!!v); });
-  seg('setChat', SAVE.set.chatBtn | 0, v => { SAVE.set.chatBtn = v; });
   seg('setShake', SAVE.set.shake, v => { SAVE.set.shake = v; view.shakeOn = !!v; });
   seg('setOpt', SAVE.set.opt, v => { SAVE.set.opt = v; try { if (window.FFPerf) FFPerf.set({ low: !!v, fx: v ? 'low' : 'high', fps: v ? 30 : 0 }); } catch (e) { } perfApply(); });
 }
@@ -341,7 +340,7 @@ function bindKey(n, btn) {
   btn.textContent = T('키를 누르세요');
   const h = e => {
     e.preventDefault(); e.stopImmediatePropagation(); removeEventListener('keydown', h, true);
-    const k = keyOf(e); if (k !== 'escape' && k !== 'tab' && k !== 'f' && k !== 'enter') { const b = KB(), old = b[n]; for (const o in b) if (o !== n && b[o] === k) SAVE.set.keys[o] = old; SAVE.set.keys[n] = k; save(); }
+    const k = keyOf(e); if (n === 'chat' ? (k !== 'escape' && k !== 'tab' && k !== 'f' && !Object.entries(KB()).some(([o, v]) => o !== 'chat' && v === k)) : (k !== 'escape' && k !== 'tab' && k !== 'f' && k !== 'enter')) { const b = KB(), old = b[n]; for (const o in b) if (o !== n && b[o] === k) SAVE.set.keys[o] = old; SAVE.set.keys[n] = k; save(); }
     paintSettings();
   };
   addEventListener('keydown', h, true);
@@ -655,7 +654,7 @@ function startGuest(code) {
 /* ---------- 채팅 (온라인·친구 방): 단추를 눌러 열고, 빠른 말이나 직접 쓴 짧은 글을 팀 색으로 보여줘요. 새 키는 쓰지 않아요 ---------- */
 const QUICK = ['도와주세요!', '깃발로 가요', '괴물 잡아요', '조심하세요!', '좋아요', '고마워요', '잘했어요', '미안해요'];
 const chatAvail = () => !!(S.net && S.net !== 'solo' && inGame());   // 온라인·친구 방 경기 중이면 채팅을 쓸 수 있어요
-const chatBtnShown = () => chatAvail() && (SAVE.set.chatBtn === 1 || (!SAVE.set.chatBtn && TOUCH));   // 채팅 단추: 기본은 모바일만, 설정에서 바꿔요. 컴퓨터는 Enter로 열어요
+const chatBtnShown = () => chatAvail() && TOUCH;   // 채팅 단추는 모바일에만 보여요. 컴퓨터는 채팅 키(설정에서 바꿔요, 기본 Enter)로 열어요
 function chatOpen(on) { $('chatBox').classList.toggle('on', on); $('chatBtn').style.display = !on && chatBtnShown() ? 'block' : 'none'; if (on) { $('chatIn').focus(); } else { $('chatIn').blur(); } }
 function chatSendText(t) {
   t = String(t || '').replace(/\s+/g, ' ').trim().slice(0, 40); if (!t) return;
@@ -779,9 +778,9 @@ function awardHonor() {
 /* ---------- 조작 ---------- */
 // 한글 입력 상태여도 같은 자리의 글쇠로 읽어요 (e.code 기준)
 // 기술·구르기 키 (설정에서 바꿔요)
-const KEYDEF = { q: 'q', e: 'e', r: 'r', roll: ' ' }, JAMO = { q: 'ㅂ', e: 'ㄷ', r: 'ㄱ' };
+const KEYDEF = { q: 'q', e: 'e', r: 'r', roll: ' ', chat: 'enter' }, JAMO = { q: 'ㅂ', e: 'ㄷ', r: 'ㄱ' };
 const KB = () => Object.assign({}, KEYDEF, SAVE.set.keys || {});
-const keyLabel = k => k === ' ' ? 'Space' : k.length === 1 ? k.toUpperCase() : k.replace(/^arrow/, '');
+const keyLabel = k => k === ' ' ? 'Space' : k === 'enter' ? 'Enter' : k.length === 1 ? k.toUpperCase() : k.replace(/^arrow/, '');
 function skOf(k) { const b = KB(); for (const n of ['q', 'e', 'r']) if (b[n] === k || JAMO[b[n]] === k) return n; return ''; }
 function keyOf(e) { const c = e.code || ''; if (/^Key[A-Z]$/.test(c)) return c[3].toLowerCase(); if (/^Digit[0-9]$/.test(c)) return c[5]; if (c === 'Space') return ' '; return e.key.toLowerCase(); }
 const K = {}; let mouse = { x: innerWidth / 2, y: innerHeight / 2, down: false }; const once = { q: 0, e: 0, r: 0, roll: 0, skip: 0, atkR: 0, rcl: 0 };
@@ -790,7 +789,7 @@ addEventListener('keydown', e => {
   const k = keyOf(e); K[k] = true; SFX.unlock();
   if (!inGame()) return;
   if (S.scr === 'sIntro') { if (k === ' ' || k === 'enter' || k === 'escape') { once.skip = 1; e.preventDefault(); } return; }
-  if (k === 'enter' && chatAvail() && !$('chatBox').classList.contains('on')) { chatOpen(true); e.preventDefault(); return; }
+  if (k === KB().chat && chatAvail() && !$('chatBox').classList.contains('on')) { chatOpen(true); e.preventDefault(); return; }
   const sk = skOf(k);
   if (sk) { if (aimedSkill(sk)) { if (!e.repeat && !S.aimK) S.aimK = sk; } else once[sk] = 1; }
   if (k === KB().roll) { once.roll = 1; e.preventDefault(); } else if (k === ' ') e.preventDefault();
