@@ -424,7 +424,7 @@ if(document.readyState==='loading') document.addEventListener('DOMContentLoaded'
   .wpnCard.sel{ border-color:#ffd34d; box-shadow:0 0 10px rgba(255,211,77,.45); }
   .wpnCard.taken{ opacity:.35; cursor:not-allowed; }
   .wpnCard.lockedAll{ cursor:default; }
-  .wpnCard .wi{ font-size:22px; line-height:1.1; }
+  .wpnCard .wi{ font-size:22px; line-height:1.1; } .wpnCard .wi img{ width:1.3em; height:1.3em; }
   .wpnCard .wn{ font-weight:700; font-size:10.5px; margin-top:2px; white-space:normal; line-height:1.25; }
   .wpnCard .tagRow{ display:flex; flex-wrap:wrap; justify-content:center; align-items:center; gap:1px 3px; margin-top:2px; }
   .wpnCard .tagRow .tierTag{ margin-left:0; font-size:8.5px; padding:0 4px; }
@@ -679,7 +679,7 @@ if(document.readyState==='loading') document.addEventListener('DOMContentLoaded'
   #entranceBox .entCard.right{ transform:translateX(60vw) skewX(8deg); flex-direction:row-reverse; text-align:right; }
   #entranceBox.in .entCard{ transform:none; opacity:1; }
   #entranceBox.out .entCard{ opacity:0; transform:translateY(-30px); }
-  #entranceBox .entEmoji{ font-size:46px; line-height:1; filter:drop-shadow(0 0 10px rgba(255,255,255,.35)); }
+  #entranceBox .entEmoji img{ width:1em; height:1em; } #entranceBox .entEmoji{ font-size:46px; line-height:1; filter:drop-shadow(0 0 10px rgba(255,255,255,.35)); }
   #entranceBox .entName{ font-size:26px; font-weight:800; letter-spacing:.02em; }
   #entranceBox .entPlayer{ font-size:14px; color:#e8eaed; font-weight:700; }
   #entranceBox .entMeta{ font-size:12px; color:#9aa3b2; margin-top:2px; }
@@ -2739,6 +2739,12 @@ function ensureCardModal(){
   document.getElementById('cardSaveBtn').onclick=()=>{ try{ document.getElementById('cardCanvas').toBlob(b=>{ const a=document.createElement('a'); a.href=URL.createObjectURL(b); a.download='Stickseum-card.png'; document.body.appendChild(a); a.click(); setTimeout(()=>{ a.remove(); URL.revokeObjectURL(a.href); },500); }); }catch(e){} };
   return el;
 }
+const charLogoImgs={};
+function charLogoImg(wid, onload){          // the character logo as an Image for a canvas (null until it has loaded; onload is called once it has)
+  if(!CHAR_LOGO_IDS.has(wid)) return null;
+  let e=charLogoImgs[wid]; if(!e){ e=charLogoImgs[wid]={im:new Image(), ok:false, cbs:[]}; e.im.onload=()=>{ e.ok=true; const l=e.cbs.splice(0); l.forEach(f=>{ try{ f(); }catch(x){} }); }; e.im.src='characters/'+wid+'.svg?v='+buildNum(GAME_BUILD); }
+  if(e.ok) return e.im; if(onload) e.cbs.push(onload); return null;
+}
 function drawProfileCard(cv){
   const c=cv.getContext('2d'), W=cv.width, H=cv.height, xp=saveData.xp||0, lv=levelFromXp(xp);
   const hue=(lv*37)%360, g=c.createLinearGradient(0,0,W,H); g.addColorStop(0,'hsl('+hue+',55%,22%)'); g.addColorStop(1,'#12151c');
@@ -2756,7 +2762,7 @@ function drawProfileCard(cv){
     c.fillStyle='rgba(255,255,255,.6)'; c.font='600 13px Rajdhani, sans-serif'; c.fillText(s0[0],x,y+20); c.fillStyle='#fff'; c.font='900 22px Rajdhani, sans-serif'; c.fillText(String(s0[1]),x,y+44); });
   c.fillStyle='rgba(255,255,255,.6)'; c.font='700 13px Rajdhani, sans-serif'; c.fillText('대표 캐릭터',W/2,452);
   const top=SELECTABLE_WEAPONS.map(w=>[w,(saveData.weaponXp&&saveData.weaponXp[w])||0]).sort((a,b)=>b[1]-a[1]).slice(0,3);
-  top.forEach((e,i)=>{ const x=W/2+(i-1)*130, w=WEAPONS[e[0]]||{}; c.font='38px serif'; c.fillStyle='#fff'; c.fillText(w.emoji||'🎖️',x,500);
+  top.forEach((e,i)=>{ const x=W/2+(i-1)*130, w=WEAPONS[e[0]]||{}; { const lg=charLogoImg(e[0], ()=>{ if(cv.isConnected) drawProfileCard(cv); }); if(lg) c.drawImage(lg,x-20,464,40,40); else { c.font='38px serif'; c.fillStyle='#fff'; c.fillText(CHAR_LOGO_IDS.has(e[0])?'':(w.emoji||'🎖️'),x,500); } }
     c.font='700 13px Rajdhani, sans-serif'; c.fillStyle='#e8ecf3'; c.fillText(WEAPON_PERSONA_NAME[e[0]]||e[0],x,522); c.fillStyle='#ffd34d'; c.fillText('Lv.'+masteryLevelFor(e[1]),x,540); });
   const ach=Object.keys(saveData.achievements||{}).length, tn=(function(){ try{ return seasonTier(); }catch(e){ return 0; } })(), tt=allTitleIds().filter(titleUnlocked).length;
   FF_GAMES.forEach((g,i)=>{ const x=W/2+(i-1)*144, on=ffHasPlayed(g.id); c.fillStyle=on?'rgba(255,211,77,.16)':'rgba(255,255,255,.05)'; c.fillRect(x-68,553,136,26);
@@ -5628,7 +5634,7 @@ function shuffle(arr){ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.
 /* ===== the version of this file =====
    Different BUILDS of one version meet and play together (room names online-v<ver>-<mode>-<map>-<slot>); different VERSIONS (the 0.x part) never do - the host refuses them (verNo) and the dispatcher answers busy.
    The build is only sent along with the join message and the lobby (for information); the corner of the screen shows it. */
-const GAME_BUILD='build 2026-10-31-v584';
+const GAME_BUILD='build 2026-10-31-v585';
 const GAME_VERSION='0.9', GAME_VERSION_NAME='은하 제국의 황혼';   // 게임 버전 이름: versions.json의 title과 같게 (빌드마다 바꾸지 않음)
 /* version (the 0.x part) vs build: different BUILDS of one version meet and play together, different VERSIONS never do (rooms, quick match, ranked, friend invites, dispatcher).
    Builds before 470 do not send a version, so it is read from the build number (0.9 started at build 458). */
@@ -7349,7 +7355,7 @@ function renderStatsBox(){
   box.innerHTML='';
   const h=document.createElement('div'); h.style.cssText='font-size:12px; color:var(--text-dim); font-weight:700; margin:14px 0 6px;'; h.textContent='📊 전적'; box.appendChild(h);
   if(!st || !st.log || !st.log.length){ const d=document.createElement('div'); d.style.cssText='color:var(--text-dim); font-size:13px; padding:6px 0;'; d.textContent='아직 기록된 경기가 없어요'; box.appendChild(d); return; }
-  const row=(k,v)=>{ const r=document.createElement('div'); r.className='profRow'; r.innerHTML='<span class="k"></span><span class="v"></span>'; r.querySelector('.k').textContent=k; r.querySelector('.v').textContent=v; box.appendChild(r); };
+  const row=(k,v,kHtml)=>{ const r=document.createElement('div'); r.className='profRow'; r.innerHTML='<span class="k"></span><span class="v"></span>'; if(kHtml) r.querySelector('.k').innerHTML=k; else r.querySelector('.k').textContent=k; r.querySelector('.v').textContent=v; box.appendChild(r); };
   const sub=(t)=>{ const d=document.createElement('div'); d.style.cssText='font-size:12px; color:var(--text-dim); margin:10px 0 4px;'; d.textContent=t; box.appendChild(d); };
   sub('최근 10판');
   const chips=document.createElement('div'); chips.style.cssText='display:flex; gap:4px; flex-wrap:wrap;';
@@ -7359,7 +7365,7 @@ function renderStatsBox(){
   sub('모드별 승률');
   Object.entries(st.mode||{}).sort((a,b)=>b[1].m-a[1].m).slice(0,6).forEach(([id,v])=>row((MODES[id]?MODES[id].name:id), v.w+'/'+v.m+' · '+Math.round(v.w/v.m*100)+'%'));
   sub('자주 쓰는 캐릭터');
-  Object.entries(st.weapon||{}).sort((a,b)=>b[1].m-a[1].m).slice(0,3).forEach(([wid,v])=>{ const wp=WEAPONS[wid]; row((wp?wp.emoji+' ':'')+(WEAPON_PERSONA_NAME[wid]||wid), v.m+'판 · '+Math.round(v.w/v.m*100)+'% · K/D '+(v.d?(v.k/v.d).toFixed(1):v.k)); });
+  Object.entries(st.weapon||{}).sort((a,b)=>b[1].m-a[1].m).slice(0,3).forEach(([wid,v])=>{ const wp=WEAPONS[wid]; row(charLogo(wid,18)+' '+escapeHtmlText(WEAPON_PERSONA_NAME[wid]||wid), v.m+'판 · '+Math.round(v.w/v.m*100)+'% · K/D '+(v.d?(v.k/v.d).toFixed(1):v.k), true); });
   sub('최고 기록');
   row('한 판 최다 처치', (st.best&&st.best.kills)||0); row('한 판 최대 피해', (st.best&&st.best.dmg)||0);
 }
@@ -8412,7 +8418,7 @@ function renderPublicProfileHtml(prof, rel){        // rel: {friend, outgoing, i
     html+=ppAchievementsHtml(st.ach);
     const top=SELECTABLE_WEAPONS.map(w=>({w, k:(st.ck&&st.ck[w])||0, m:masteryLevelFor((st.wx&&st.wx[w])||0)})).filter(o=>o.k>0||o.m>1).sort((a,b)=>b.k-a.k||b.m-a.m).slice(0,5);
     html+='<div style="font-size:12px; color:var(--text-dim); font-weight:700; margin:12px 0 6px;">많이 쓴 캐릭터</div>';
-    html+= top.length ? top.map(o=>row(WEAPONS[o.w].emoji+' '+(WEAPON_PERSONA_NAME[o.w]||WEAPONS[o.w].name)+charTierHtml(o.k*TIER_PT_MULT), o.k+'킬 · 숙련 Lv.'+o.m)).join('') : '<div class="hint">아직 기록이 없어요.</div>';
+    html+= top.length ? top.map(o=>row(charLogo(o.w,18)+' '+escapeHtmlText(WEAPON_PERSONA_NAME[o.w]||WEAPONS[o.w].name)+charTierHtml(o.k*TIER_PT_MULT), o.k+'킬 · 숙련 Lv.'+o.m)).join('') : '<div class="hint">아직 기록이 없어요.</div>';
     const modeRows=Object.keys(st.modes||{}).sort((a,b)=>st.modes[b]-st.modes[a]);
     if(modeRows.length){ html+='<div style="font-size:12px; color:var(--text-dim); font-weight:700; margin:12px 0 6px;">모드별 플레이한 경기</div>'+modeRows.map(m=>row(m==='daily'?'📅 일일 모드':((MODES[m]&&MODES[m].name)||m), st.modes[m]+'경기')).join(''); }
   }
@@ -10568,11 +10574,11 @@ function showMvpVote(cands, ms){
   o.style.width='min(96vw,'+Math.max(560, cands.length*134+60)+'px)';
   let any=false;
   for(const c of cands){ const me=(c.id===myId); if(!me) any=true;
-    const w=WEAPONS[c.w], wn=w?(w.emoji+' '+w.name):'-';
+    const w=WEAPONS[c.w], wn=w?(charLogo(c.w,18)+' '+escapeHtmlText(w.name)):'-';
     const b=document.createElement('button'); b.className='btn-secondary'; b.style.cssText='display:flex; flex-direction:column; align-items:center; gap:8px; padding:12px 10px 14px; flex:1 1 0; min-width:110px; max-width:160px; min-height:430px; border-radius:14px; text-align:center;';
     const st=(l,v,col)=>'<div style="display:flex; justify-content:space-between; width:100%; font-size:14px; font-weight:600;"><span style="color:#9aa3b5;">'+l+'</span><b style="color:'+col+';">'+v+'</b></div>';
     b.innerHTML='<canvas width="170" height="240" style="width:100%; max-width:130px; aspect-ratio:170/240; flex:none;"></canvas><div style="font-size:18px; font-weight:800; word-break:break-all;"></div><div style="font-size:15px; color:#c9ced8; padding-bottom:8px; border-bottom:1px solid #2a3350; width:100%;"></div><div style="display:flex; flex-direction:column; gap:6px; width:100%; margin-top:2px;">'+st('처치',c.k||0,'#ffd34d')+st('어시스트',c.a||0,'#3fe0c5')+st('사망',c.d||0,'#ff7a7a')+st('피해량',c.dm||0,'#fff')+(c.o?st(c.o[0],c.o[1],'#ff9f43'):'')+'</div>';
-    b.children[1].textContent=c.name; b.children[2].textContent=wn; try{ drawFigureOn(b.children[0], c); }catch(e){}
+    b.children[1].textContent=c.name; b.children[2].innerHTML=wn; try{ drawFigureOn(b.children[0], c); }catch(e){}
     if(me){ b.disabled=true; b.style.opacity='.45'; b.style.filter='grayscale(1)'; b.style.cursor='not-allowed'; b.title='자기 자신에게는 투표할 수 없어요'; row.appendChild(b); continue; }       // (your own card is shown for the numbers, but grey and not clickable)
     b.onclick=()=>{ mvpMyPick=c.id; [...row.children].forEach(x=>{ x.style.outline='none'; x.style.background=''; }); b.style.outline='3px solid var(--accent)'; b.style.background='rgba(63,224,197,.18)'; if(isHost) hostMvpCast(myId,c.id); else if(hostConn) safeSend(hostConn,{t:'mvpCast', id:c.id}); };
     row.appendChild(b); }
@@ -11763,7 +11769,7 @@ function enterCharacterBrowse(){
     const w=WEAPONS[wid];
     const el=document.createElement('div'); el.className='wpnCard'; el.dataset.wid=wid;
     el.innerHTML='<div class="wi"></div><div class="wn"></div><div class="wk"></div><div class="wt"></div><div class="wm"></div>';
-    el.querySelector('.wi').textContent=w.emoji; el.querySelector('.wn').innerHTML=charNameWithTierHtml(wid);
+    el.querySelector('.wi').innerHTML=charLogo(wid,22); el.querySelector('.wn').innerHTML=charNameWithTierHtml(wid);
     addWeaponFavStar(el, wid);
     el.onclick=()=>{ weaponUI.selected=wid; weaponShowDetail(true); renderWeaponUI(); };
     grid.appendChild(el);
@@ -11812,7 +11818,7 @@ function enterWeaponPhase(deadline, wmode, offer, banEnds){
     const w=WEAPONS[wid];
     const el=document.createElement('div'); el.className='wpnCard'; el.dataset.wid=wid;
     el.innerHTML='<div class="wi"></div><div class="wn"></div><div class="wk"></div><div class="wt"></div><div class="wm"></div>';
-    el.querySelector('.wi').textContent=w.emoji; el.querySelector('.wn').innerHTML=charNameWithTierHtml(wid); el.querySelector('.wk').textContent=KIND_LABEL[w.kind]||'';
+    el.querySelector('.wi').innerHTML=charLogo(wid,22); el.querySelector('.wn').innerHTML=charNameWithTierHtml(wid); el.querySelector('.wk').textContent=KIND_LABEL[w.kind]||'';
     addWeaponFavStar(el, wid);
     el.onclick=()=>pickWeapon(wid);
     grid.appendChild(el);
@@ -11959,7 +11965,7 @@ function renderWeaponUI(){
       const dot=document.createElement('span'); dot.className='dot'; dot.style.background=q.color||'#888';
       const nm=document.createElement('span'); nm.textContent=(q.mine?'':'[상대] ')+q.name+(q.id===myId?' (나)':'');
       const s=document.createElement('span'); s.className='st';
-      s.textContent = q.pick&&WEAPONS[q.pick] ? ('🚫 '+WEAPONS[q.pick].emoji+' '+(WEAPON_PERSONA_NAME[q.pick]||WEAPONS[q.pick].name)) : '🚫 정하는 중...';
+      s.innerHTML = q.pick&&WEAPONS[q.pick] ? ('🚫 '+charLogo(q.pick,16)+' '+escapeHtmlText(WEAPON_PERSONA_NAME[q.pick]||WEAPONS[q.pick].name)) : '🚫 정하는 중...';
       chip.appendChild(dot); chip.appendChild(nm); chip.appendChild(s); box.appendChild(chip);
     }
   } else if(st && (st.dup || (bm && st.picks.length>1))){
@@ -11969,8 +11975,8 @@ function renderWeaponUI(){
       const nm=document.createElement('span'); nm.textContent=p.name+(p.id===myId?' (나)':'');
       const s=document.createElement('span'); s.className='st';
       const bw=bm&&st.ban?st.ban.mine:null;
-      if(bm) s.textContent = bw&&WEAPONS[bw] ? ('🚫 우리 팀 금지: '+WEAPONS[bw].emoji+' '+(WEAPON_PERSONA_NAME[bw]||WEAPONS[bw].name)) : '🚫 금지할 캐릭터 정하는 중...';
-      else s.textContent = p.pick ? ((WEAPONS[p.pick]?WEAPONS[p.pick].emoji+' '+(WEAPON_PERSONA_NAME[p.pick]||WEAPONS[p.pick].name):'')+(p.locked?' ✔':'')) : '고르는 중...';
+      if(bm) s.innerHTML = bw&&WEAPONS[bw] ? ('🚫 우리 팀 금지: '+charLogo(bw,16)+' '+escapeHtmlText(WEAPON_PERSONA_NAME[bw]||WEAPONS[bw].name)) : '🚫 금지할 캐릭터 정하는 중...';
+      else s.innerHTML = p.pick ? ((WEAPONS[p.pick]?charLogo(p.pick,16)+' '+escapeHtmlText(WEAPON_PERSONA_NAME[p.pick]||WEAPONS[p.pick].name):'')+(p.locked?' ✔':'')) : '고르는 중...';
       chip.appendChild(dot); chip.appendChild(nm); chip.appendChild(s); box.appendChild(chip);
     }
   }
@@ -11979,7 +11985,7 @@ function renderWeaponUI(){
     const dot=document.createElement('span'); dot.className='dot'; dot.style.background='#d11a24';
     const nm=document.createElement('span'); nm.textContent='상대 진영';
     const s2=document.createElement('span'); s2.className='st'; const ows=[].concat(st.ban.oppPick||[]).filter(x=>WEAPONS[x]), ow=ows[0];
-    s2.textContent = ow ? ('🚫 금지: '+ows.map(x=>WEAPONS[x].emoji+' '+(WEAPON_PERSONA_NAME[x]||WEAPONS[x].name)).join(', ')) : (st.ban.mine ? '🚫 금지할 캐릭터 정하는 중...' : '🚫 우리 쪽이 정하면 보여요');
+    s2.innerHTML = ow ? ('🚫 금지: '+ows.map(x=>charLogo(x,16)+' '+escapeHtmlText(WEAPON_PERSONA_NAME[x]||WEAPONS[x].name)).join(', ')) : (st.ban.mine ? '🚫 금지할 캐릭터 정하는 중...' : '🚫 우리 쪽이 정하면 보여요');
     chip.appendChild(dot); chip.appendChild(nm); chip.appendChild(s2); box.appendChild(chip);
   }
   const det=document.getElementById('weaponDetail');
@@ -11991,7 +11997,7 @@ function renderWeaponUI(){
     det.textContent='어떤 캐릭터가 나올까요...';
   } else if(sel && WEAPONS[sel]){
     const w=WEAPONS[sel], u=ULTS[sel]||{name:'',desc:''};
-    nameEl.innerHTML=escapeHtmlText((WEAPON_PERSONA_NAME[sel]||w.name)+' · '+w.emoji+' '+w.name)+charTierTagHtml(sel);
+    nameEl.innerHTML=escapeHtmlText((WEAPON_PERSONA_NAME[sel]||w.name)+' · ')+charLogo(sel,20)+' '+escapeHtmlText(w.name)+charTierTagHtml(sel);
     drawWeaponPortrait(sel);
     det.innerHTML='';
     const skd=SKILLS[sel];
@@ -12013,7 +12019,7 @@ function renderWeaponUI(){
   }
   { const fb=document.getElementById('weaponFavBtn'); if(fb){ const ok=!rolling2 && sel && WEAPONS[sel]; fb.style.display=ok?'':'none'; if(ok){ fb.textContent=isFavChar(sel)?'★ 즐겨찾기 해제':'☆ 즐겨찾기'; fb.onclick=()=>toggleFavChar(sel); } } }
   const btn=document.getElementById('weaponLockBtn');
-  if(bm){ const sb=st&&st.ban; btn.disabled = !sb || !sb.can || !!sb.mine || !weaponUI.banSel; btn.textContent = (sb&&sb.mine) ? ('금지함: '+(WEAPONS[sb.mine]?WEAPONS[sb.mine].emoji:'')) : '금지 확정'; }
+  if(bm){ const sb=st&&st.ban; btn.disabled = !sb || !sb.can || !!sb.mine || !weaponUI.banSel; btn.innerHTML = (sb&&sb.mine) ? ('금지함: '+(WEAPONS[sb.mine]?charLogo(sb.mine,18):'')) : '금지 확정'; }
   else { btn.disabled = !sel || weaponUI.locked; btn.textContent = weaponUI.locked ? '확정됨' : '선택 확정'; }
   if(st) document.getElementById('weaponChosenCount').textContent = bm ? '' : '선택 확정: '+st.count+' / '+st.total;
 }
@@ -12035,7 +12041,7 @@ function showWeaponReveal(list, endsAt){
       const dot=document.createElement('span'); dot.style.cssText='width:10px;height:10px;border-radius:50%;background:'+(p.color||'#888')+';flex:none;';
       const rn=document.createElement('span'); rn.className='rn'; rn.textContent=p.name+(p.id===myId?' (나)':''); { const sn=Math.floor(+((players[p.id]&&players[p.id].streak)||0)); if(sn>=2){ const stg=document.createElement('span'); stg.className='streakTag'; stg.textContent=' 🔥'+sn+'연승'; rn.appendChild(stg); } }
       const w=WEAPONS[p.w]||{emoji:'?',name:'?'}, u=ULTS[p.w]||{name:''};
-      const rw=document.createElement('span'); rw.className='rw'; rw.innerHTML=escapeHtmlText(w.emoji+' '+(WEAPON_PERSONA_NAME[p.w]||w.name))+((p.tk!==undefined && p.ml!==undefined && SELECTABLE_WEAPONS.includes(p.w)) ? tierLvTagHtml(p.tk, p.ml) : '');      // + the tier and level of that character
+      const rw=document.createElement('span'); rw.className='rw'; rw.innerHTML=charLogo(p.w,18)+' '+escapeHtmlText(WEAPON_PERSONA_NAME[p.w]||w.name)+((p.tk!==undefined && p.ml!==undefined && SELECTABLE_WEAPONS.includes(p.w)) ? tierLvTagHtml(p.tk, p.ml) : '');      // + the tier and level of that character
       const ru=document.createElement('span'); ru.className='ru'; ru.textContent='궁극기 '+u.name;
       row.appendChild(dot); row.appendChild(rn); row.appendChild(rw); row.appendChild(ru); box.appendChild(row);
     }
@@ -19159,11 +19165,11 @@ function staggerAngle(p){
 function entranceCard(p, side, ally){
   const w=WEAPONS[p.weapon]; if(!w) return '';
   const sk=SKILLS[p.weapon], ul=ULTS[p.weapon];
-  return '<div class="entCard '+side+(ally?' ally':' foe')+'"><div class="entEmoji">'+w.emoji+'</div><div class="entTxt"><div class="entName" style="color:'+p.color+'">'+escapeHtmlText(WEAPON_PERSONA_NAME[p.weapon]||w.name)+'</div><div class="entPlayer" data-notr>'+escapeHtmlText(p.name||'')+'</div><div class="entMeta">'+escapeHtmlText(w.name)+(sk?' · F '+escapeHtmlText(sk.name):'')+(ul?' · R '+escapeHtmlText(ul.name):'')+'</div></div></div>';
+  return '<div class="entCard '+side+(ally?' ally':' foe')+'"><div class="entEmoji">'+charLogo(p.weapon,46)+'</div><div class="entTxt"><div class="entName" style="color:'+p.color+'">'+escapeHtmlText(WEAPON_PERSONA_NAME[p.weapon]||w.name)+'</div><div class="entPlayer" data-notr>'+escapeHtmlText(p.name||'')+'</div><div class="entMeta">'+escapeHtmlText(w.name)+(sk?' · F '+escapeHtmlText(sk.name):'')+(ul?' · R '+escapeHtmlText(ul.name):'')+'</div></div></div>';
 }
 function entranceMini(p, ally){
   const w=WEAPONS[p.weapon]; if(!w) return '';
-  return '<div class="entCard mini '+(ally?'ally':'foe')+'"><div class="entEmoji">'+w.emoji+'</div><div class="entTxt"><div class="entName" style="color:'+p.color+'">'+escapeHtmlText(WEAPON_PERSONA_NAME[p.weapon]||w.name)+'</div><div class="entPlayer" data-notr>'+escapeHtmlText(p.name||'')+'</div></div></div>';
+  return '<div class="entCard mini '+(ally?'ally':'foe')+'"><div class="entEmoji">'+charLogo(p.weapon,24)+'</div><div class="entTxt"><div class="entName" style="color:'+p.color+'">'+escapeHtmlText(WEAPON_PERSONA_NAME[p.weapon]||w.name)+'</div><div class="entPlayer" data-notr>'+escapeHtmlText(p.name||'')+'</div></div></div>';
 }
 function entranceShow(){
   if(!started || matchEnded || practiceMode || spectatorMode || rpView || highlightViewing) return;
