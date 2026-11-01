@@ -83,3 +83,5 @@ patchnotes.json | v594 title | 은하 제국의 황혼 | build 594 | 2026-11-01
 patchnotes.json | v594 items[0] | 팀 자동 배치 안내 문구 삭제 | build 594 | 2026-11-01
 patchnotes.json | v595 title | 은하 제국의 황혼 | build 595 | 2026-11-01
 patchnotes.json | v595 items[0] | 프로필 화면 위쪽의 옛 프로필(아바타·이름) 삭제, 허브 프로필 카드만 표시 (통계는 그대로) | build 595 | 2026-11-01
+patchnotes.json | v596 title | 은하 제국의 황혼 | build 596 | 2026-11-01
+patchnotes.json | v596 items[0] | 로비 설정과 퀘스트 버튼 아이콘을 로고로 교체 | build 596 | 2026-11-01
