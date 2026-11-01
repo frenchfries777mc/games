@@ -90,3 +90,5 @@ patchnotes.json | v597 items[0] | 참가자 목록의 가로 스크롤 삭제, �
 patchnotes.json | v597 items[1] | 참가자 목록에서 이름을 누르면 허브 프로필이 표시됨 | build 597 | 2026-11-01
 patchnotes.json | v598 title | 은하 제국의 황혼 | build 598 | 2026-11-01
 patchnotes.json | v598 items[0] | 로비 프로필 버튼을 로고로 교체, 비공개 방 경기 중 나가기 버튼 추가 | build 598 | 2026-11-01
+patchnotes.json | v599 title | 은하 제국의 황혼 | build 599 | 2026-11-01
+patchnotes.json | v599 items[0] | 설명 속 이모지 37종(그래프·표적·번개·해골·지구·보석·방패 등)을 전용 로고로 교체 | build 599 | 2026-11-01
