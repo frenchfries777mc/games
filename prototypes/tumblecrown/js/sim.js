@@ -65,7 +65,7 @@ export function createGame(slots, seed, ch = 0, mode = 'normal') {
   G.tm = {}; const cnt = [0, 0]; for (const p of G.players) { G.tm[p.id] = p.team; p.tIdx = cnt[p.team]++; }
   if (G.pvp) { G.fl = MAP.tflags.map(([x, y, o]) => ({ x: cw(x), z: cw(y), own: o, cap: -1, prog: 0 }));   // 시작할 때 팀마다 깃발은 진지에서 가장 가까운 하나만 가지고, 나머지는 주인 없이 시작해요
     for (const t of [0, 1]) { const sp = MAP.tspawn[t], mine = G.fl.filter(f => f.own === t).sort((a, b) => Math.hypot(a.x - cw(sp[0]), a.z - cw(sp[1])) - Math.hypot(b.x - cw(sp[0]), b.z - cw(sp[1]))); for (const f of mine.slice(1)) f.own = -1; }
-    initOrder(G); G.winTeam = -1; G.cb = [0, 0]; G.mk = [0, 0]; G.dr = MAP.doors && MAP.doors.length ? { t: D.DOOR_SHUT_T } : null; G.sm = G.dr ? { on: 0, t: D.STORM_CALM_T } : null; G.nt = MAP.tflags.night ? { on: 0, t: D.NIGHT_T } : null; setDoors(0); G.cTim = [50, 50]; G.gi = G.dr ? MAP.tfi.indexOf(4) : -1; pvpSpawn(G); return G; }
+    initOrder(G); G.winTeam = -1; G.cb = [0, 0]; G.mk = [0, 0]; G.dr = MAP.doors && MAP.doors.length ? { t: D.DOOR_SHUT_T } : null; G.sm = G.dr ? { on: 0, t: D.STORM_CALM_T } : null; G.nt = MAP.tflags.night ? { on: 0, t: D.NIGHT_T } : null; setDoors(0); G.cTim = [50, 50, 50]; G.gi = G.dr ? MAP.tfi.indexOf(4) : -1; pvpSpawn(G); return G; }
   placeAt(G, G.cp);
   // 몬스터는 지도에 정해진 자리에 한 번만 나와요
   for (const [k, x, y] of MAP.spawns) spawnEnemy(G, k, cw(x), cw(y), true);
@@ -177,7 +177,7 @@ function flagsStep(G, dt) {
     for (const p of G.players) if (alive(p) && Math.hypot(p.x - f.x, p.z - f.z) < D.FLAG_R) { if (p.team === 0) n0++; else n1++; }
     let lead = n0 > n1 ? 0 : n1 > n0 ? 1 : -1; if (f.seize > 0 && (f.seizeTm === 0 ? n0 : n1) > 0) { lead = f.seizeTm; if (f.own === lead) lead = -1; }   // 점령: 아군이 한 명이라도 있으면 수가 적어도 점령이 진행돼요
     if (lead >= 0 && lead !== f.own && flagLocked(G, i, lead)) lead = -1;   // 순서가 안 된 깃발은 점령이 진행되지 않아요
-    const rt0 = (f.seize > 0 && lead === f.seizeTm && (lead === 0 ? n0 <= n1 : n1 <= n0)) ? 1 : Math.min(3, 1 + 0.5 * (Math.abs(n0 - n1) - 1)) * (lead >= 0 && G.cb[lead] > 0 ? 1.5 : 1) * (lead >= 0 ? 1 + 0.02 * G.mk[lead] : 1);
+    const rt0 = (f.seize > 0 && lead === f.seizeTm && (lead === 0 ? n0 <= n1 : n1 <= n0)) ? 1 : Math.min(3, 1 + 0.5 * (Math.abs(n0 - n1) - 1)) * (lead >= 0 && G.cb[lead] > 0 ? 1.5 : 1) * (lead >= 0 ? 1 + mkF(G) * G.mk[lead] : 1);
     const rt = rt0 * (G.pvp && G.mt >= 300 && lead >= 0 && G.fl.filter(g => g.own === lead).length > G.fl.filter(g => g.own === 1 - lead).length ? 1.3 : 1);   // 5분이 지나면 깃발을 더 많이 가진 팀의 점령이 30% 빨라져요 (판이 늘어지지 않게)   // 더 많은 사람이 있을수록 빨리 차지해요 (한 명 1배, 둘 1.5배, 셋 2배, 최대 3배)
     if (lead >= 0 && lead !== f.own) {
       if (f.cap === lead || f.cap < 0) { f.cap = lead; f.prog += dt * rt; }
@@ -191,7 +191,19 @@ function flagsStep(G, dt) {
 // 중립 괴물: 우리 팀 진지가 아닌 나머지 두 꼭짓점에서 한 마리씩 나와요. 꼭짓점에 괴물이 남아 있으면 거기서는 다시 나오지 않아요
 function monCorners() { const sp = MAP.tspawn0 || MAP.tspawn, a = sp[0], b = sp[1];   // 괴물 자리는 지도의 원래 두 진지 쪽 모서리예요 (팀 거점을 시작 깃발 자리로 옮겨도 그대로)
   return [[a[0], b[1]], [b[0], a[1]]].map(([x, y]) => [(x + 0.5) * MAP.cs, (y + 0.5) * MAP.cs]); }
+// 하이퍼: 가운데를 중심으로 한 작은 정사각형의 대각선 하나를 무작위로 골라, 그 두 꼭짓점에 괴물이 한 마리씩 나와요 (모서리 괴물 둘과 합쳐 모두 네 마리)
+function spawnCenterPair(G) {
+  const bx = (MAP.boss[0] + 0.5) * MAP.cs, bz = (MAP.boss[1] + 0.5) * MAP.cs, h = 5 * MAP.cs, dg = G.rng() < 0.5 ? [[-h, -h], [h, h]] : [[-h, h], [h, -h]];
+  dg.forEach(([dx, dz], k) => {
+    let x = bx + dx, z = bz + dz;
+    for (let r = 0; r < 14 && isWall(x, z); r++) { x = bx + dx + (r % 2 ? r : -r) * MAP.cs * 0.7; z = bz + dz + ((r >> 1) % 2 ? 2 : -2) * MAP.cs; }
+    const e = spawnEnemy(G, 'elite', x, z, false);
+    e.mon = 1; e.cn = 2; e.dm *= 0.6; e.hp = e.maxhp = 1400; e.hx = x; e.hz = z; e.summoned = false; e.dmgBy = [0, 0];
+    if (!k) ev(G, 'monster', { x, z });
+  });
+}
 function spawnMonsters(G, ci) {
+  if (ci === 2) return spawnCenterPair(G);
   const [cx, cz] = monCorners()[ci];
   for (let k = 0; k < 1; k++) {
     let x = cx + (k ? 2.5 : -2.5), z = cz;
@@ -210,7 +222,8 @@ function spawnBig(G) {
   ev(G, 'monster', { x, z, big: 1 });
 }
 // 쓰러뜨린 팀은 영구히 공격이 2%씩 올라요 (겹쳐서 쌓여요)
-const mkM = (G, p) => p && G.mk ? 1 + 0.02 * G.mk[p.team] : 1;
+const mkF = G => G.mode === 'hyper' ? 0.03 : 0.02;   // 괴물을 쓰러뜨릴 때마다 오르는 비율 (하이퍼는 3%)
+const mkM = (G, p) => p && G.mk ? 1 + mkF(G) * G.mk[p.team] : 1;
 // 연습장: 앞쪽에 허수아비 여섯 개를 세워 둬요. 때려도 반격하지 않고, 잠깐 안 맞으면 체력이 빨리 차오르고, 쓰러져도 2초 뒤 다시 서요
 const RANGE_SPOTS = [[8, 0], [12, -5], [12, 5], [17, 0], [22, -8], [22, 8]];
 export function setupRange(G) {
@@ -237,7 +250,7 @@ function pvpCheck(G, dt) {
   if (G.range) return;   // 연습장은 깃발도 승패도 없어요
   flagsStep(G, dt);
   G.mt += dt;
-  if (!G.limit && !G.bigDone && G.mt >= D.BIG_T) { G.bigDone = 1; spawnBig(G); }   // 10분이 지나면 가운데에 큰 괴물이 나타나요
+  if (!G.limit && G.mode !== 'hyper' && !G.bigDone && G.mt >= D.BIG_T) { G.bigDone = 1; spawnBig(G); }   // 10분이 지나면 가운데에 큰 괴물이 나타나요
   if (G.dr) {   // 사막 신전: 문은 닫혀 있다가 열리고, 모래폭풍은 잠잠하다가 불어요
     G.dr.t -= dt; if (G.dr.t <= 0) { const o = DSTATE.open ? 0 : 1; setDoors(o); G.dr.t = o ? D.DOOR_OPEN_T : D.DOOR_SHUT_T; ev(G, 'door', { open: o }); }
     G.sm.t -= dt; if (G.sm.t <= 0) { G.sm.on = G.sm.on ? 0 : 1; G.sm.t = G.sm.on ? D.STORM_T : D.STORM_CALM_T; ev(G, 'storm', { on: G.sm.on }); }
@@ -245,7 +258,7 @@ function pvpCheck(G, dt) {
   if (G.nt) { G.nt.t -= dt; if (G.nt.t <= 0) { G.nt.on = G.nt.on ? 0 : 1; G.nt.t = D.NIGHT_T; ev(G, 'night', { on: G.nt.on }); } }   // 달빛 성채: 30초마다 낮과 밤이 바뀌어요
   // 중립 괴물: 가운데에 가끔 나타나고, 더 많이 때린 팀이 쓰러뜨리면 그 팀 점령이 20초 동안 1.5배 빨라져요
   G.cb[0] = Math.max(0, G.cb[0] - dt); G.cb[1] = Math.max(0, G.cb[1] - dt);
-  for (let c = 0; c < 2; c++) if (!G.enemies.some(e => e.mon && e.cn === c && e.hp > 0) && (G.cTim[c] -= dt) <= 0) { G.cTim[c] = 60; spawnMonsters(G, c); }
+  for (let c = 0; c < (G.mode === 'hyper' ? 3 : 2); c++) if (!G.enemies.some(e => e.mon && e.cn === c && e.hp > 0) && (G.cTim[c] -= dt) <= 0) { G.cTim[c] = 60; spawnMonsters(G, c); }
   // 우리 팀 깃발 둘레 안에서는 힘이 나요 (지속 치유 + 공격 증가)
   for (const p of G.players) p.inFl = alive(p) && G.fl.some(f => f.own === p.team && !(f.seize > 0 && f.seizeTm !== p.team) && Math.hypot(p.x - f.x, p.z - f.z) < D.FLAG_R);
   let wt = -1;
