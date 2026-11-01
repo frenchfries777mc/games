@@ -75,3 +75,5 @@ patchnotes.json | v590 items[1] | 봇과 연습할 때 시작 직후 한 번 멈
 patchnotes.json | v591 title | 은하 제국의 황혼 | build 591 | 2026-11-01
 patchnotes.json | v591 items[0] | 배틀로얄 연승 규칙 변경: 1등은 연승 +1, 2등은 연승 유지 (6인 이상은 2등 연승 +1, 3등 연승 유지) | build 591 | 2026-11-01
 patchnotes.json | v591 items[1] | 토너먼트 연승 규칙 변경: 1등은 연승 +1, 2~4등은 연승 유지 | build 591 | 2026-11-01
+patchnotes.json | v592 title | 은하 제국의 황혼 | build 592 | 2026-11-01
+patchnotes.json | v592 items[0] | 배틀로얄 듀오 연승 규칙 변경: 1등 팀은 연승 +1, 2등 팀은 연승 유지 | build 592 | 2026-11-01
