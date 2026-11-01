@@ -2,7 +2,7 @@
 // 화면 흐름, 조작, 멀티(친구 초대, PeerJS), 저장
 import { View } from './render.js';
 import { createGame, step, snapshot, chooseBless, carryOver, koPlayer, INTRO_T, HV_DELAY, wallClamp, setupRange, callBots } from './sim.js';
-import { useMode, RECALL_CD, pushTime, PUSH_N, PUSH_T, TEAMS, FLAG_T, FLAG_R, RESP_T, ARENA_THEMES, MODES, ROLES, ROLE_IDS, COLORS, BOT_NAMES, MAX_PLAYERS, BLESSINGS, CHAPTERS, CH, FOES, MAP, ACHIEVEMENTS, TALK, GEAR_TIERS, GEAR_COST, COSMETICS, MIDB, WEEKLY, weekInfo, VERSION, BUILD, roleLevel, CHAR_RANKS, charRankFor, rankImg, roleImg, typeImg, typeFile, MASTERY_PT, streakBonusFor, LORE, COMBOS, CURSES, DEEP, DEEP_I, TALK_X, ROLE_PUZ, flagShown } from './data.js';
+import { useMode, RECALL_CD, pushTime, PUSH_N, PUSH_T, TEAMS, FLAG_T, FLAG_R, RESP_T, ARENA_THEMES, MODES, ROLES, ROLE_IDS, COLORS, BOT_NAMES, MAX_PLAYERS, BLESSINGS, CHAPTERS, CH, FOES, MAP, ACHIEVEMENTS, TALK, COSMETICS, WEEKLY, weekInfo, VERSION, BUILD, roleLevel, CHAR_RANKS, charRankFor, rankImg, roleImg, typeImg, typeFile, MASTERY_PT, streakBonusFor, COMBOS, DEEP, DEEP_I, TALK_X, ROLE_PUZ, flagShown } from './data.js';
 import { collide as mapCollide, areaAt, floorCell, MW, MH, CS, cw, useChapter, chapterIndex, SOPEN, openSecret, resetSecrets, hiddenCell, GOPEN, openGate, setDoors, DSTATE, PDOWN, dropPillar, LIFTH, liftOk, CUT } from './map.js';
 import * as SFX from './sfx.js';
 import * as MUS from './music.js';
@@ -21,7 +21,7 @@ if (TOUCH) document.body.classList.add('touch');
 function lsGet(k, d) { try { const v = localStorage.getItem(k); return v ? JSON.parse(v) : d; } catch (e) { return d; } }
 function lsSet(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) { } }
 const RANK_WIN = 30, RANK_LOSS = 20;   // 팀 랭킹전: 이기면 +30점, 지면 -20점 (0점 아래로는 내려가지 않아요)
-const SAVE = Object.assign({ honor: 0, xp: {}, gear: {}, ach: {}, clears: {}, role: 'knight', cos: { own: {}, on: {} }, set: { vol: 70, px: 3, bloom: 1, shake: 1 } }, lsGet('tumblecrown.save', {}));
+const SAVE = Object.assign({ honor: 0, xp: {}, ach: {}, clears: {}, role: 'knight', cos: { own: {}, on: {} }, set: { vol: 70, px: 3, bloom: 1, shake: 1 } }, lsGet('tumblecrown.save', {}));
 SAVE.set = Object.assign({ mv: 'wasd', keys: {}, vol: 70, px: 3, bloom: 1, shake: 1, opt: matchMedia('(pointer: coarse)').matches ? 1 : 0 }, SAVE.set || {});
 // 최적화: 허브 설정의 공용 값(ff_perf)이 있으면 그걸 따르고, 여기서 바꾸면 공용 값도 같이 바꿔요
 let FPS_CAP = 0;
@@ -44,7 +44,6 @@ SAVE.lore = SAVE.lore || {}; SAVE.flags = SAVE.flags || {}; SAVE.puz = SAVE.puz 
 const chOpen = () => (SAVE.chMax | 0) >= CHAPTERS.length ? 0 : SAVE.chMax | 0;
 function save() { lsSet('tumblecrown.save', SAVE); }
 let UID = lsGet('tumblecrown.uid', null); if (!UID) { UID = 'u' + Math.random().toString(36).slice(2, 10); lsSet('tumblecrown.uid', UID); }
-const gearOf = r => Object.assign({ weapon: 0, armor: 0 }, SAVE.gear[r] || {});
 
 /* ---------- 상태 ---------- */
 const S = {
@@ -333,21 +332,6 @@ function bindKey(n, btn) {
 /* ---------- 대기실 ---------- */
 // 대기실: 장은 고르지 않고, 저장된 이야기에서 이어서 시작해요. 친구 방은 방장의 이야기를 따라가요
 const fmtT = s => T('{0}분 {1}초', Math.floor(s / 60), String(Math.floor(s % 60)).padStart(2, '0'));
-const weekLabel = id => { const m = /^(\d+)년 (\d+)주$/.exec(id); return m ? T('{0}년 {1}주', m[1], m[2]) : id; };
-function weeklyRec(id) { SAVE.wkRec = SAVE.wkRec || {}; return SAVE.wkRec[id] || {}; }
-function weeklyDone() {
-  const W = S.snap.wk, t = S.snap.wt || 0, r = Object.assign({}, weeklyRec(W.id)), first = !r.paid; const old = r.best || 0;
-  r.best = old ? Math.min(old, t) : t; r.tries = (r.tries | 0) + 1; r.paid = 1; SAVE.wkRec[W.id] = r;
-  const ks = Object.keys(SAVE.wkRec).sort(); while (ks.length > 12) delete SAVE.wkRec[ks.shift()];
-  if (first) SAVE.honor += 60; save();
-  return { t, best: r.best, first, rec: !old || t < old, W };
-}
-function showWeeklyResult(h) {
-  S.resultShown = true; const R = weeklyDone(), cn = R.W.curses.map(c => CURSES.find(x => x.id === c).name).join(', ');
-  $('result').innerHTML = `<div class="big">${T('주간 원정 완료')}</div><p class="note">${CH.title}</p><p class="note">${T('이번 주 저주: {0}', cn)}</p><p>${T('걸린 시간 {0}', '<b style="color:#ffd36b">' + fmtT(R.t) + '</b>')}${R.rec ? ' · ' + T('새 최고 기록') : ''} · ${T('내 최고 {0}', fmtT(R.best))}</p><p>${T('받은 tC {0}', '<b style="color:#ffd36b">' + (h + (R.first ? 60 : 0)) + '</b>')}${R.first ? ' ' + T('(첫 완주 보너스 60 포함)') : ''} · ${T('지금 tC {0}', SAVE.honor)}</p><div class="row"><button class="btn gold" id="resBack">${T('로비로')}</button></div>`;
-  $('resBack').onclick = () => endToLobby('');
-  setHud(false); show('sResult');
-}
 /* ---------- 대기실 = 직업 고르기 화면 ---------- */
 // 왼쪽 직업 목록, 가운데 받침돌 위 캐릭터, 오른쪽 능력 카드, 위에 참가자 줄, 아래에 색·봇·시작
 const pcol = p => p.col ? '#' + p.col.toString(16).padStart(6, '0') : ROLES[p.role].color;
@@ -586,7 +570,7 @@ function hostMsg(c, d) {
   if (d.t === 'hello') {
     if (d.ver && d.ver !== VERSION) { c.send({ t: 'deny', ver: VERSION, why: '버전이 달라요.' }); setTimeout(() => c.close(), 300); return; }
     const uid = String(d.uid || '').slice(0, 20), name = String(d.name || T('기사')).slice(0, 15);
-    c._uid = uid; c._name = name; c._aid = /^[0-9a-f-]{36}$/i.test(String(d.aid || '')) ? String(d.aid) : ''; c._xp = d.xp || {}; c._gear = d.gear || {}; c._cos = d.cos || null; c._mp = Math.max(0, Math.min(99999, d.mp | 0)); c._rl = Math.max(0, Math.min(10, d.rl | 0));
+    c._uid = uid; c._name = name; c._aid = /^[0-9a-f-]{36}$/i.test(String(d.aid || '')) ? String(d.aid) : ''; c._xp = d.xp || {}; c._cos = d.cos || null; c._mp = Math.max(0, Math.min(99999, d.mp | 0)); c._rl = Math.max(0, Math.min(10, d.rl | 0));
     if (S.G) { // 진행 중: 내 자리로 돌아오거나, 봇 자리를 맡아요
       const p = S.G.players.find(q => q.uid === uid && !q.bot && !q.dead);
       if (!p) { c.send({ t: 'deny', why: '이미 시작한 방이에요.' }); setTimeout(() => c.close(), 300); return; }
@@ -696,7 +680,7 @@ function beginGame(prevG) {
   const solo = S.net === 'solo';
   const sl = prevG ? S.lastSl : roster().map((s, i) => {
     const id = 's' + i, c = s.uid && s.uid !== UID ? S.conns[s.uid] : null;
-    return { id, uid: s.uid, role: s.role, col: TEAMS[s.team].c, team: s.team, name: s.bot ? s.name : s.uid === UID ? myName() : s.name, bot: !!s.bot || !!s.srv, lv: 1, mp: s.bot || s.srv ? 0 : s.uid === UID ? mastOf(s.role).mp : c ? c._mp | 0 : 0, rl: s.bot || s.srv ? 0 : s.uid === UID ? mastOf(s.role).rl : c ? c._rl | 0 : 0, gear: { weapon: 0, armor: 0 }, cos: s.uid === UID ? myCos() : c && c._cos || null };
+    return { id, uid: s.uid, role: s.role, col: TEAMS[s.team].c, team: s.team, name: s.bot ? s.name : s.uid === UID ? myName() : s.name, bot: !!s.bot || !!s.srv, lv: 1, mp: s.bot || s.srv ? 0 : s.uid === UID ? mastOf(s.role).mp : c ? c._mp | 0 : 0, rl: s.bot || s.srv ? 0 : s.uid === UID ? mastOf(s.role).rl : c ? c._rl | 0 : 0, cos: s.uid === UID ? myCos() : c && c._cos || null };
   });
   if (!prevG && !sl.some(s => s.uid === UID)) { $('roomMsg').textContent = T('내 직업을 먼저 골라 주세요.'); return; }
   if (prevG) sl.forEach((s, i) => { const q = prevG.players[i]; s.bot = q.bot; s.uid = q.uid; s.name = q.name; });
@@ -1098,8 +1082,6 @@ function onEvent(e) {
     case 'secret': { // 금 간 벽이 무너지고 비밀 방이 열려요
       view.shatter(e.x, e.z, [0x6e6a74, 0x58545e, 0x8a8494, 0x4a4650], 40, true); view.burst(e.x, 1.5, e.z, 0xbcae94, 30, 8, 0.8, 0.2); view.shock(e.x, e.z, 5, 0xffe08a, 0.5); view.flash(e.x, e.z, 0xffe08a, 200);
       view.shake = Math.max(view.shake, 1.2); SFX.play('slam'); bigMsg(T('비밀 방을 찾았어요'), T('무너진 벽 너머에 옛 기사단의 방이 있어요'), 3200); mini.dirty = true; break; }
-    case 'lore': { const ci = chapterIndex(), L = (LORE[ci] || [])[e.li]; if (!L) break; TK.q.length = 0; TK.cur = null; for (const t of L) TK.q.push({ r: 'lore', t }); TK.wait = 0; SFX.play('bless'); view.column(e.x, e.z, 0xffd36b, 0.8);
-      SAVE.lore[ci + '-' + e.li] = 1; save(); if (Object.keys(SAVE.lore).length >= 16) unlock('lore'); break; }
     case 'combo': { // 합동기: 화면 가운데 큰 글씨, 크게 터지는 빛
       const col = { lightdash: 0xfff0b0, sanct: 0x9af0a8, wall: 0x9ad0ff, firerain: 0xff7a20, net: 0xffb060 }[e.c] || 0xffffff;
       bigMsg(T('합동기! {0}', (COMBOS.find(x => x.id === e.c) || e).name), '', 2000); view.shock(e.x, e.z, 7, col, 0.6); view.shock(e.x, e.z, 4, 0xffffff, 0.35); view.rune(e.x, e.z, 3.4, col, 1.2, 3); view.column(e.x, e.z, col, 1.0); view.rise(e.x, e.z, col, 30, 3, 1.4, 8); view.flash(e.x, e.z, col, 220);
@@ -1130,7 +1112,6 @@ function onEvent(e) {
     case 'rock': view.shatter(e.x, e.z, [0x6a625a, 0x58504a, 0x8a8076], 12, false); view.ring(e.x, e.z, 2, 0x8a7a6a, 0.4); view.burst(e.x, 0.4, e.z, 0x8a7a6a, 10, 5, 0.6, 0.14); if (Math.random() < 0.5) SFX.play('slam'); break;
     case 'escfail': bigMsg(T('무너진 돌에 길이 막혔어요'), T('보스 방에서 다시 달려요'), 3000); SFX.play('wipe'); break;
     case 'escaped': bigMsg(T('무너지는 곳을 빠져나왔어요'), '', 2400); SFX.play('clear'); break;
-    case 'fork': bigMsg(MIDB[chapterIndex()][e.k], e.k ? T('부하를 부르는 중간 보스예요') : T('돌진하는 중간 보스예요'), 2400); SFX.play('clear'); view.column(e.x, e.z, e.k ? 0x6ab0ff : 0xff6a50, 1.6); break;
     case 'mbkill': bigMsg(T('중간 보스 처치'), T('명예 30'), 2000); SFX.play('clear'); view.rise(e.x, e.z, 0xffd36b, 24, 2, 1.2, 6); break;
     case 'altar': bigMsg(T('제단의 축복'), T('축복을 하나 골라요'), 2200); SFX.play('clear'); view.column(e.x, e.z, 0xffe08a, 1.2); break;
     case 'checkpoint': bigMsg(T('모닥불에 불을 붙였어요'), T('모두 쓰러지면 여기서 다시 시작해요'), 3000); SFX.play('door'); break;
@@ -1602,7 +1583,6 @@ function drawOverlay(dt) {
 function clearChapter() {
   if (S.cleared) return S.lastH || 0; S.cleared = true;
   const h = S.lastH = awardHonor() || 0, me = myP(), ci = chapterIndex();
-  if (CH.deep) { deepRecord(DEEP.floor + 1); return h; }
   if (S.snap && S.snap.wk) return h;
   if (me) { SAVE.clears[me.role] = Math.max(SAVE.clears[me.role] || 0, ci + 1); if (!S.everDown) unlock('nodown'); if (ROLE_IDS.every(r => SAVE.clears[r])) unlock('all4'); }
   if (ci === 0) unlock('boss'); else unlock('ch' + (ci + 1));
@@ -1611,15 +1591,7 @@ function clearChapter() {
   return h;
 }
 // 결말이 끝나면 같은 동료와 다음 장 이야기로 바로 넘어가요
-function deepRecord(f) { SAVE.deepBest = Math.max(SAVE.deepBest | 0, f); save(); if (f >= 5) unlock('deep5'); if (f >= 10) unlock('deep10'); }
 function afterOutro() { showResult(); }
-function showDeepResult() {
-  S.resultShown = true; const h = awardHonor() || 0, f = S.snap.dp ? S.snap.dp.floor : DEEP.floor; deepRecord(f);
-  const cs = (S.snap.dp ? S.snap.dp.curses : DEEP.curses).map(c => CURSES.find(x => x.id === c).name);
-  $('result').innerHTML = `<div class="big">${T('끝없는 심연 {0}층', f)}</div><p class="note">${T('{0}층에서 모두 쓰러졌어요. {1}층까지 지나왔어요.', f, f - 1)}</p><p class="note">${T('쌓인 저주: {0}', cs.length ? cs.join(', ') : T('없음'))}</p><p>${T('받은 tC {0}', '<b style="color:#ffd36b">' + h + '</b>')} · ${T('최고 기록 {0}층', '<b style="color:#ffd36b">' + SAVE.deepBest)}</b></p><div class="row"><button class="btn gold" id="resBack">${T('로비로')}</button></div>`;
-  $('resBack').onclick = () => endToLobby('');
-  setHud(false); show('sResult');
-}
 // 우승 화면: 이긴 사람이 크게 나와요. '순위 보기'를 누르면 전체 순위표로 가요
 /* ---------- 하이라이트: 내가 쓰러뜨린 장면(연속·위기)을 짧게 저장해 두었다가 경기가 끝나면 다시 보여 줘요 ---------- */
 const HL = { buf: [], ev: [], clips: [], pend: null, kl: 0, kt: [], acc: 0 };
@@ -1747,7 +1719,6 @@ function frame(now) {
     else {
       for (const e of S.evq) { onEvent(e); if (HL.ev.length < 400) HL.ev.push(e); } S.evq.length = 0;
       hlTick(dt, t); specTick(me); if (ph === 'won' && S.winId) view.camId = S.winId; view.sync(S.snap, S.me, dt, t, !!S.G); paintHud(); finalCheck(S.snap); paintBless();
-      if (ph === 'over') { S.overT += dt; if (S.overT > 3.6 && !S.resultShown) showDeepResult(); }
       if (ph === 'won') { S.wonT += dt; S.winPoseT = (S.winPoseT || 0) + dt; if (S.winPoseT > 1.2 && S.winTeam && S.winTeam.length) { S.winPoseT = 0; teamCheer(S.snap); } if (S.winPoseT > 1.2 && S.winId) { S.winPoseT = 0; view.pose(S.winId, 'rally'); const w = S.snap.pl.find(q => q.id === S.winId); if (w) view.burst(w.x, 2.5, w.z, 0xffe08a, 16, 6, 0.8, 0.14); } if (S.wonT >= 1.6 && !S.resultShown) showWin(); }
     }
     S.evq.length = 0;
