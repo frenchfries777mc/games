@@ -98,25 +98,54 @@ export const makeHero = toonify(function (role, cos) {
 // 꾸밈: 투구 장식, 방패(없으면 가슴) 문장
 function dressHero(g, cos) {
   const u = g.userData, head = u.head, hy = HERO[g.userData.role] && HERO[g.userData.role].helm ? 0.45 : 0.1, lit = c => M(c, { e: c, ei: 1.2 }), hold = [];
-  if (cos.helm === 'plume') for (let i = 0; i < 3; i++) { const p = cone(0.13, 0.9 - i * 0.12, 5, M(0xc02a2a), 0, hy + 0.95 - i * 0.04, -0.12 - i * 0.14, head); p.rotation.x = -0.5 - i * 0.25; }
-  else if (cos.helm === 'horns') for (const sx of [-1, 1]) { const h = cone(0.11, 0.85, 5, bone(), sx * 0.44, hy + 0.35, 0, head); h.rotation.z = -sx * 0.75; }
-  else if (cos.helm === 'wreath') { const w = mesh(geo('wreath', () => new THREE.TorusGeometry(0.46, 0.055, 4, 14)), M(0x6aa04a), 0, hy + 0.2, 0, head); w.rotation.x = Math.PI / 2; for (let i = 0; i < 6; i++) { const a = i / 6 * 6.283; sph(0.07, 5, 4, gold(), Math.cos(a) * 0.46, hy + 0.2, Math.sin(a) * 0.46, head); } }
-  else if (cos.helm === 'crown') { cyl(0.44, 0.46, 0.18, 8, gold(), 0, hy + 0.55, 0, head); for (let i = 0; i < 5; i++) { const a = i / 5 * 6.283; cone(0.07, 0.3, 4, gold(), Math.cos(a) * 0.42, hy + 0.78, Math.sin(a) * 0.42, head); } }
-  if (cos.helm === 'halo') { const h = mesh(geo('halo2', () => new THREE.TorusGeometry(0.5, 0.06, 5, 16)), M(0xffe890, { e: 0xffd860, ei: 3 }), 0, hy + 1.0, 0, head); h.rotation.x = Math.PI / 2; }
-  else if (cos.helm === 'antlers') for (const sx of [-1, 1]) { const a = new THREE.Group(); a.position.set(sx * 0.3, hy + 0.5, 0); head.add(a); a.rotation.z = -sx * 0.45; cyl(0.05, 0.07, 0.85, 4, M(0xcfc0a0), 0, 0.42, 0, a); for (let k = 0; k < 2; k++) { const br = cyl(0.04, 0.05, 0.4, 4, M(0xcfc0a0), sx * 0.15, 0.3 + k * 0.3, 0, a); br.rotation.z = -sx * 0.9; } }
+  const gem = (c, r = 0.07) => M(c, { e: c, ei: 1.6 }), glow = (c, op = 0.28) => new THREE.MeshBasicMaterial({ color: c, transparent: true, opacity: op, depthWrite: false, blending: THREE.AdditiveBlending });
+  if (cos.helm === 'plume') {   // 금빛 받침에 붉은 깃털 다섯 장이 부채처럼 펼쳐져요
+    cyl(0.12, 0.16, 0.22, 6, gold(), 0, hy + 0.5, -0.05, head); sph(0.09, 6, 5, gem(0xff4a4a), 0, hy + 0.62, 0.02, head);
+    for (let i = 0; i < 5; i++) { const t = (i - 2) / 2, c = i % 2 ? 0xe03a3a : 0xff6a3a, p = cone(0.12, 1.0 - Math.abs(t) * 0.25, 5, M(c, { e: c, ei: 0.25 }), t * 0.28, hy + 1.05 - Math.abs(t) * 0.1, -0.2, head); p.rotation.set(-0.45, 0, -t * 0.55); }
+  } else if (cos.helm === 'horns') {   // 마디가 있는 굽은 뼈 뿔, 뿌리에 금 고리
+    for (const sx of [-1, 1]) { const a = new THREE.Group(); a.position.set(sx * 0.4, hy + 0.3, 0); head.add(a); cyl(0.17, 0.2, 0.1, 6, gold(), 0, 0, 0, a);
+      const h1 = cone(0.14, 0.6, 6, bone(), 0, 0.3, 0, a); h1.rotation.z = -sx * 0.55; const h2 = cone(0.1, 0.6, 6, bone(), sx * 0.3, 0.8, 0, a); h2.rotation.z = -sx * 0.95; const tip = cone(0.05, 0.28, 5, M(0xfff4d8, { e: 0xffe8b0, ei: 0.5 }), sx * 0.55, 1.1, 0, a); tip.rotation.z = -sx * 1.25; }
+  } else if (cos.helm === 'wreath') {   // 잎 열 개와 붉은 열매가 달린 월계관
+    const w = mesh(geo('wreath', () => new THREE.TorusGeometry(0.46, 0.055, 4, 14)), M(0x4a8a3a), 0, hy + 0.2, 0, head); w.rotation.x = Math.PI / 2;
+    for (let i = 0; i < 10; i++) { const a = i / 10 * 6.283, l = sph(0.12, 5, 4, M(i % 2 ? 0x6aba4a : 0x4a9a3a), Math.cos(a) * 0.46, hy + 0.24, Math.sin(a) * 0.46, head); l.scale.set(0.45, 0.25, 1.3); l.rotation.y = -a; }
+    for (let i = 0; i < 5; i++) { const a = i / 5 * 6.283 + 0.3; sph(0.055, 5, 4, gem(0xff4a5a), Math.cos(a) * 0.5, hy + 0.3, Math.sin(a) * 0.5, head); }
+    sph(0.1, 6, 5, gem(0xffd870), 0, hy + 0.3, 0.47, head);
+  } else if (cos.helm === 'crown') {   // 보석과 진주 끝이 달린 황금 왕관, 은은한 빛
+    cyl(0.44, 0.46, 0.2, 8, gold(), 0, hy + 0.55, 0, head); cyl(0.46, 0.46, 0.05, 8, M(0xfff0b0, { e: 0xffe080, ei: 0.5 }), 0, hy + 0.47, 0, head);
+    for (let i = 0; i < 5; i++) { const a = i / 5 * 6.283, x = Math.cos(a) * 0.42, z = Math.sin(a) * 0.42; cone(0.08, 0.38, 4, gold(), x, hy + 0.84, z, head); sph(0.06, 6, 5, M(0xfff8e0, { e: 0xfff0c0, ei: 1 }), x, hy + 1.07, z, head); const c = [0xff3a4a, 0x3a8aff, 0x4aff8a][i % 3]; sph(0.075, 6, 5, gem(c), Math.cos(a + 0.6) * 0.45, hy + 0.56, Math.sin(a + 0.6) * 0.45, head); }
+  } else if (cos.helm === 'halo') {   // 이중 빛 고리와 떠도는 작은 빛 알갱이
+    const h = mesh(geo('halo2', () => new THREE.TorusGeometry(0.5, 0.06, 5, 20)), M(0xffe890, { e: 0xffd860, ei: 3 }), 0, hy + 1.0, 0, head); h.rotation.x = Math.PI / 2;
+    const h2 = mesh(geo('halo3', () => new THREE.TorusGeometry(0.62, 0.025, 4, 20)), glow(0xfff0b0, 0.5), 0, hy + 1.0, 0, head, false); h2.rotation.x = Math.PI / 2;
+    const h3 = mesh(geo('halo4', () => new THREE.TorusGeometry(0.5, 0.16, 4, 20)), glow(0xffd860, 0.16), 0, hy + 1.0, 0, head, false); h3.rotation.x = Math.PI / 2;
+    for (let i = 0; i < 6; i++) { const a = i / 6 * 6.283; sph(0.035, 4, 3, M(0xffffff, { e: 0xfff0b0, ei: 3 }), Math.cos(a) * 0.62, hy + 1.0, Math.sin(a) * 0.62, head, undefined).castShadow = false; }
+  } else if (cos.helm === 'antlers') for (const sx of [-1, 1]) {   // 가지가 셋인 사슴뿔
+    const a = new THREE.Group(); a.position.set(sx * 0.3, hy + 0.5, 0); head.add(a); a.rotation.z = -sx * 0.45; const am = M(0xd8c8a4);
+    cyl(0.05, 0.08, 0.95, 5, am, 0, 0.45, 0, a); cone(0.045, 0.2, 5, M(0xfff0d0), 0, 1.0, 0, a);
+    for (let k = 0; k < 3; k++) { const br = cyl(0.035, 0.05, 0.42 - k * 0.06, 5, am, sx * 0.17, 0.25 + k * 0.28, 0, a); br.rotation.z = -sx * 0.95; cone(0.03, 0.14, 4, M(0xfff0d0), sx * (0.34 + k * 0.01), 0.36 + k * 0.28 + 0.12, 0, a).rotation.z = -sx * 0.95; }
+  }
   if (cos.back) { const b = u.body;
-    if (cos.back === 'banner') { cyl(0.04, 0.04, 2.2, 5, M(0x5a4030), 0.45, 2.2, -0.6, b); box(0.06, 0.9, 0.6, M(0x8a2a9a, { e: 0x8a2a9a, ei: 0.4 }), 0.45, 2.9, -0.95, b); }
-    else if (cos.back === 'wings') for (const sx of [-1, 1]) for (let k = 0; k < 2; k++) { const w = mesh(geo('wing2', () => new THREE.PlaneGeometry(0.8, 1.5)), M(0xf4f0ff, { e: 0xc8d0ff, ei: 0.6, ds: true }), sx * (0.5 + k * 0.25), 2.3 - k * 0.35, -0.6, b); w.rotation.set(0.2, sx * 0.5, -sx * (0.7 + k * 0.4)); }
-    else if (cos.back === 'lantern') { cyl(0.03, 0.03, 1.8, 4, M(0x4a3a2a), 0.4, 2.3, -0.55, b); box(0.3, 0.36, 0.3, M(0xffd070, { e: 0xffb040, ei: 2.5 }), 0.4, 3.35, -0.55, b); cone(0.24, 0.2, 4, dmetal(), 0.4, 3.6, -0.55, b); } }
+    if (cos.back === 'banner') {   // 금테를 두른 보랏빛 등깃발, 별 문양과 술
+      cyl(0.04, 0.04, 2.4, 5, M(0x5a4030), 0.45, 2.3, -0.6, b); sph(0.07, 6, 5, gold(), 0.45, 3.55, -0.6, b); box(0.07, 1.0, 0.62, M(0x8a2a9a, { e: 0x8a2a9a, ei: 0.35 }), 0.45, 2.9, -0.95, b);
+      box(0.09, 0.07, 0.66, gold(), 0.45, 3.4, -0.95, b); box(0.09, 0.07, 0.66, gold(), 0.45, 2.42, -0.95, b);
+      for (let i = 0; i < 3; i++) cone(0.045, 0.2, 4, gold(), 0.45, 2.3, -0.7 - i * 0.25, b).rotation.x = Math.PI;
+      const st = cone(0.15, 0.3, 4, M(0xfff0b0, { e: 0xffe080, ei: 1 }), 0.5, 2.95, -0.95, b); st.rotation.z = 1.5708; }
+    else if (cos.back === 'wings') for (const sx of [-1, 1]) for (let k = 0; k < 3; k++) {   // 깃털 세 겹의 빛나는 날개
+      const w = mesh(geo('wing3', () => new THREE.PlaneGeometry(0.75 , 1.6)), M([0xaab8f0, 0xc4ccf4, 0xdde0fa][k], { e: 0x8a98e0, ei: 0.35, ds: true }), sx * (0.5 + k * 0.22), 2.45 - k * 0.38, -0.6 - k * 0.04, b); w.rotation.set(0.2, sx * 0.5, -sx * (0.55 + k * 0.38));
+      const g2 = mesh(geo('wing3', () => new THREE.PlaneGeometry(0.75 , 1.6)), glow(0x8aa0ff, 0.12 - k * 0.025), sx * (0.5 + k * 0.22), 2.45 - k * 0.38, -0.64 - k * 0.04, b, false); g2.rotation.copy(w.rotation); g2.scale.setScalar(1.18); }
+    else if (cos.back === 'lantern') {   // 굽은 막대에 매단 따뜻한 등불, 둘레에 빛무리
+      cyl(0.03, 0.03, 1.9, 4, M(0x4a3a2a), 0.4, 2.3, -0.55, b); const arm = cyl(0.025, 0.025, 0.5, 4, M(0x4a3a2a), 0.55, 3.28, -0.55, b); arm.rotation.z = 1.2; cyl(0.015, 0.015, 0.3, 3, M(0x4a3a2a), 0.75, 3.1, -0.55, b);
+      box(0.3, 0.36, 0.3, M(0xffd070, { e: 0xffb040, ei: 2.8 }), 0.75, 2.82, -0.55, b); cone(0.26, 0.2, 4, dmetal(), 0.75, 3.08, -0.55, b); box(0.34, 0.05, 0.34, dmetal(), 0.75, 2.62, -0.55, b);
+      sph(0.62, 8, 6, glow(0xffb040, 0.16), 0.75, 2.82, -0.55, b).castShadow = false; } }
   if (cos.emblem) {
     const par = u.shield || u.body, z = u.shield ? 0.14 : 0.64, y = u.shield ? 0.08 : 1.7, s = u.shield ? 1 : 0.75, gm = lit(0xf0d070);
     const e = new THREE.Group(); e.position.set(0, y, z); e.scale.setScalar(s); par.add(e);
-    if (cos.emblem === 'cross') { box(0.16, 0.7, 0.05, gm, 0, 0, 0, e); box(0.5, 0.16, 0.05, gm, 0, 0.1, 0, e); }
-    else if (cos.emblem === 'star') for (let i = 0; i < 5; i++) { const c = cone(0.1, 0.42, 4, gm, 0, 0, 0, e); c.position.set(Math.sin(i * 1.2566) * 0.2, Math.cos(i * 1.2566) * 0.2, 0); c.rotation.z = -i * 1.2566; }
-    else if (cos.emblem === 'flame') { cone(0.22, 0.7, 5, lit(0xff7a2a), 0, 0, 0, e); cone(0.12, 0.45, 5, lit(0xffd060), 0, -0.05, 0.03, e); }
-    else if (cos.emblem === 'skull') { sph(0.26, 8, 6, M(0xe8e0d0), 0, 0.08, 0, e); box(0.2, 0.12, 0.1, M(0x1a1418), 0, -0.2, 0.1, e); for (const sx of [-1, 1]) box(0.09, 0.09, 0.08, M(0x1a1418), sx * 0.1, 0.1, 0.22, e); }
-    else if (cos.emblem === 'leaf') for (let i = 0; i < 3; i++) { const l = sph(0.2, 6, 5, M(0x5aa040), 0, 0, 0, e); l.scale.set(0.5, 1.2, 0.2); l.position.set((i - 1) * 0.2, 0.05, 0); l.rotation.z = (1 - i) * 0.5; }
-    else if (cos.emblem === 'moon') { const m = mesh(geo('moon', () => new THREE.TorusGeometry(0.28, 0.07, 4, 12, 4.2)), gm, 0, 0, 0, e); m.rotation.z = 1.2; }
+    { const rim = cyl(0.46, 0.46, 0.05, 14, gold(), 0, 0, -0.04, e); rim.rotation.x = Math.PI / 2; const bk = cyl(0.4, 0.4, 0.06, 14, M(0x1a1620), 0, 0, -0.02, e); bk.rotation.x = Math.PI / 2; }   // 어두운 바탕에 금테 둘러서 문양이 또렷해요
+    if (cos.emblem === 'cross') { box(0.16, 0.7, 0.05, gm, 0, 0, 0, e); box(0.5, 0.16, 0.05, gm, 0, 0.1, 0, e); sph(0.05, 5, 4, gem(0xff4a4a), 0, 0.1, 0.04, e); }
+    else if (cos.emblem === 'star') { for (let i = 0; i < 5; i++) { const c = cone(0.1, 0.42, 4, gm, 0, 0, 0, e); c.position.set(Math.sin(i * 1.2566) * 0.2, Math.cos(i * 1.2566) * 0.2, 0); c.rotation.z = -i * 1.2566; } sph(0.09, 6, 5, M(0xfff8d0, { e: 0xffe890, ei: 1.5 }), 0, 0, 0.03, e); }
+    else if (cos.emblem === 'flame') { cone(0.24, 0.75, 6, lit(0xff5a1a), 0, 0, 0.0, e); cone(0.15, 0.5, 6, lit(0xffa030), 0, -0.04, 0.03, e); cone(0.07, 0.3, 5, lit(0xfff0a0), 0, -0.08, 0.06, e); }
+    else if (cos.emblem === 'skull') { sph(0.26, 8, 6, M(0xe8e0d0), 0, 0.08, 0, e); box(0.2, 0.12, 0.1, M(0x1a1418), 0, -0.2, 0.1, e); for (const sx of [-1, 1]) { box(0.09, 0.09, 0.08, M(0x1a1418), sx * 0.1, 0.1, 0.22, e); sph(0.025, 4, 3, gem(0xff3a3a), sx * 0.1, 0.1, 0.27, e); } for (let i = 0; i < 3; i++) box(0.025, 0.07, 0.04, M(0x1a1418), (i - 1) * 0.06, -0.2, 0.15, e); }
+    else if (cos.emblem === 'leaf') { for (let i = 0; i < 3; i++) { const l = sph(0.2, 6, 5, M(i === 1 ? 0x7aca50 : 0x5aa040), 0, 0, 0, e); l.scale.set(0.5, 1.2, 0.2); l.position.set((i - 1) * 0.2, 0.05, 0); l.rotation.z = (1 - i) * 0.5; } cyl(0.02, 0.02, 0.3, 4, M(0x3a6a2a), 0, -0.25, 0.02, e); }
+    else if (cos.emblem === 'moon') { const m = mesh(geo('moon', () => new THREE.TorusGeometry(0.28, 0.08, 4, 14, 4.2)), gm, 0, 0, 0, e); m.rotation.z = 1.2; sph(0.05, 5, 4, M(0xfff8d0, { e: 0xffe890, ei: 1.5 }), 0.1, 0.12, 0.03, e); sph(0.035, 5, 4, M(0xfff8d0, { e: 0xffe890, ei: 1.5 }), 0.22, -0.05, 0.03, e); }
   }
 }
 // 사람 모양 (주인공과 사람 모양 적이 같이 써요)

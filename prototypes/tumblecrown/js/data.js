@@ -3,7 +3,7 @@
 
 import { T } from './tr.js';
 
-export const VERSION = 'v0.2', BUILD = 248;
+export const VERSION = 'v0.2', BUILD = 249;
 
 export const ROLES = {
   knight: {
@@ -722,11 +722,11 @@ export const ACHIEVEMENTS = [
 // 갈림길 중간 보스 (장마다 이름이 달라요): 첫째는 돌격형, 둘째는 부하를 부르는 소환형
 // 겉모습 꾸미기: 능력치는 그대로, 명예로 사서 모든 역할에 입혀요
 export const COSMETICS = {
-  cape: { name: T('망토 색'), items: [{ id: '', name: T('기본'), cost: 0 }, { id: 'crimson', name: T('진홍'), cost: 480, col: 0xa02030 }, { id: 'forest', name: T('숲 녹색'), cost: 480, col: 0x2f6a3a }, { id: 'violet', name: T('보랏빛'), cost: 720, col: 0x6a3a9a }, { id: 'dawn', name: T('새벽 금빛'), cost: 1280, col: 0xd4a63a }] },
-  helm: { name: T('투구 장식'), items: [{ id: '', name: T('기본'), cost: 0 }, { id: 'plume', name: T('붉은 깃털'), cost: 640 }, { id: 'horns', name: T('뼈 뿔'), cost: 800 }, { id: 'wreath', name: T('월계관'), cost: 960 }, { id: 'crown', name: T('작은 왕관'), cost: 1760 }, { id: 'halo', name: T('빛 고리'), cost: 2080 }, { id: 'antlers', name: T('사슴뿔'), cost: 1120 }] },
-  emblem: { name: T('방패 문장'), items: [{ id: '', name: T('기본'), cost: 0 }, { id: 'cross', name: T('십자'), cost: 560 }, { id: 'star', name: T('별'), cost: 720 }, { id: 'flame', name: T('불꽃'), cost: 880 }, { id: 'moon', name: T('달'), cost: 1120 }, { id: 'skull', name: T('해골'), cost: 960 }, { id: 'leaf', name: T('잎사귀'), cost: 720 }] },
-  skin: { name: T('스킨'), items: [{ id: '', name: T('기본'), cost: 0 }, { id: 'shadow', name: T('칠흑'), cost: 1920, b: 0x2c2a36, l: 0x1c1a24, c: 0x6a3a9a }, { id: 'snow', name: T('눈서리'), cost: 1920, b: 0xdce6f2, l: 0x8a9ab0, c: 0x6ab0e8 }, { id: 'ember', name: T('불씨'), cost: 2400, b: 0xb0381a, l: 0x4a1c12, c: 0xff8a2a }, { id: 'gilded', name: T('황금빛'), cost: 3360, b: 0xc8a040, l: 0x6a5420, c: 0xfff0b0 }, { id: 'mint', name: T('박하빛'), cost: 1600, b: 0x4ab89a, l: 0x2a5a52, c: 0xd8fff0 }] },
-  back: { name: T('등 장식'), items: [{ id: '', name: T('없음'), cost: 0 }, { id: 'banner', name: T('등깃발'), cost: 1200 }, { id: 'wings', name: T('작은 날개'), cost: 2560 }, { id: 'lantern', name: T('등불'), cost: 1440 }] }
+  cape: { name: T('망토 색'), items: [{ id: '', name: T('기본'), cost: 0 }, { id: 'crimson', name: T('진홍'), cost: 720, col: 0xa02030 }, { id: 'forest', name: T('숲 녹색'), cost: 720, col: 0x2f6a3a }, { id: 'violet', name: T('보랏빛'), cost: 1080, col: 0x6a3a9a }, { id: 'dawn', name: T('새벽 금빛'), cost: 1920, col: 0xd4a63a }] },
+  helm: { name: T('투구 장식'), items: [{ id: '', name: T('기본'), cost: 0 }, { id: 'plume', name: T('붉은 깃털'), cost: 960 }, { id: 'horns', name: T('뼈 뿔'), cost: 1200 }, { id: 'wreath', name: T('월계관'), cost: 1440 }, { id: 'crown', name: T('작은 왕관'), cost: 2640 }, { id: 'halo', name: T('빛 고리'), cost: 3120 }, { id: 'antlers', name: T('사슴뿔'), cost: 1680 }] },
+  emblem: { name: T('방패 문장'), items: [{ id: '', name: T('기본'), cost: 0 }, { id: 'cross', name: T('십자'), cost: 840 }, { id: 'star', name: T('별'), cost: 1080 }, { id: 'flame', name: T('불꽃'), cost: 1320 }, { id: 'moon', name: T('달'), cost: 1680 }, { id: 'skull', name: T('해골'), cost: 1440 }, { id: 'leaf', name: T('잎사귀'), cost: 1080 }] },
+  skin: { name: T('스킨'), items: [{ id: '', name: T('기본'), cost: 0 }, { id: 'shadow', name: T('칠흑'), cost: 2880, b: 0x2c2a36, l: 0x1c1a24, c: 0x6a3a9a }, { id: 'snow', name: T('눈서리'), cost: 2880, b: 0xdce6f2, l: 0x8a9ab0, c: 0x6ab0e8 }, { id: 'ember', name: T('불씨'), cost: 3600, b: 0xb0381a, l: 0x4a1c12, c: 0xff8a2a }, { id: 'gilded', name: T('황금빛'), cost: 5040, b: 0xc8a040, l: 0x6a5420, c: 0xfff0b0 }, { id: 'mint', name: T('박하빛'), cost: 2400, b: 0x4ab89a, l: 0x2a5a52, c: 0xd8fff0 }] },
+  back: { name: T('등 장식'), items: [{ id: '', name: T('없음'), cost: 0 }, { id: 'banner', name: T('등깃발'), cost: 1800 }, { id: 'wings', name: T('작은 날개'), cost: 3840 }, { id: 'lantern', name: T('등불'), cost: 2160 }] }
 };
 // 마스터리 스킨: 지금 고른 직업의 마스터리 점수가 기준에 닿으면 열려요 (다이아 · 마스터 · 그랜드 마스터)
 COSMETICS.skin.items.push(
