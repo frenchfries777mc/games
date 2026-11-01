@@ -1,7 +1,7 @@
 /* Gatecrash · © 2026 Frenchfries777 · CC BY-NC-ND 4.0
    데이터: 상수, 무기, 맵 */
 'use strict';
-const VERSION = '0.1', BUILD = 27;
+const VERSION = '0.1', BUILD = 28;
 const TS = 16;                                   // 타일 한 칸 (px)
 const PH = { RUN: 120, ACC: 1500, AIR: 1000, G: 1500, JUMP: 440, CUT: 300, MAXF: 560, W: 10, H: 22, COY: 0.08, BUF: 0.12, BELT: 70, ICE: 180, LIFT: 130 };
 const MAX_HP = 100, RACERS = 4;
@@ -82,6 +82,27 @@ function itemSpots(b, from, to, bottom, n) {
   for (let k = 0; k < n; k++) { const t = from + (to - from) * (k + 0.5) / n | 0; for (let d = 0; d < 12; d++) { const hit = [t - d, t + d].find(q => q > from && q < to && freeSpot(b, q, bottom)); if (hit !== undefined) { b.spawn(hit, bottom); break; } } }
 }
 
+/* 파쿠르: 점점 높아지는 상자 넘기 / 떠 있는 발판 길 (둘 다 새 조작 없이 점프만으로 지나가요) */
+function hurdles(b, R, from, to, bottom, res, hs) {
+  const w = hs.length * 5 + 3;
+  for (let t = 0; t < 12; t++) {
+    const hx = from + (R() * Math.max(1, to - from - w) | 0);
+    if (res.some(r => hx + w + 2 >= r[0] && hx - 2 <= r[1])) continue;
+    hs.forEach((hh, n) => b.obj('boxes', hx + n * 5, bottom, 2, hh)); res.push([hx - 2, hx + w + 2]); return hx;
+  }
+  return -1;
+}
+function skyRoute(b, R, from, to, bottom, res, rows) {
+  const w = rows.length * 6 + 4;
+  for (let t = 0; t < 12; t++) {
+    const hx = from + (R() * Math.max(1, to - from - w) | 0);
+    if (res.some(r => hx + w + 2 >= r[0] && hx - 2 <= r[1])) continue;
+    rows.forEach((up, n) => b.fill(hx + n * 6, bottom - up, hx + n * 6 + 3, bottom - up, '='));
+    const last = rows.length - 1; b.spawn(hx + last * 6 + 2, bottom - rows[last] - 1);
+    res.push([hx - 2, hx + w + 2]); return hx;
+  }
+  return -1;
+}
 /* 층 구조 건물: F = 아래 층부터 [{ theme, objs, belt, conn: 'lift', g: ['ice','gap','mezz'] }]
    층마다 위로 가는 길의 위치가 달라요 (왼쪽 끝, 가운데, 오른쪽 끝). 어떤 층은 길이 둘이라 골라서 갈 수 있어요.
    기믹: ice 미끄러운 바닥, gap 바닥 구멍(떨어지면 아래층), mezz 가구 위 선반, belt 컨베이어 */
@@ -119,18 +140,27 @@ function floorsMap(F, roof, seed) {
     const GA = ['ice', 'gap', 'mezz'];
     for (let q = 0; g.length < 3 && q < 3; q++) { const k = GA[(i + seed + q) % 3]; if (!g.includes(k)) g.push(k); }
     for (const k of g) {
-      const pit = k === 'gap' && (i + seed) % 2 === 0, len = k === 'ice' ? 12 : pit ? 9 : 3;
+      const pit = k === 'gap', len = k === 'ice' ? 12 : pit ? 20 : 3;
       if (k === 'mezz' || (k === 'gap' && i < 1)) continue;
       for (let t = 0; t < 14; t++) {
         const x0 = 18 + (R() * (FW - 36 - len) | 0);
-        if (res.some(r => x0 + len + 2 >= r[0] && x0 - 2 <= r[1])) continue;
+        if (res.some(r => x0 + len + 2 >= r[0] && x0 - (pit ? 8 : 2) <= r[1])) continue;
         if (k === 'ice') { b.fill(x0, S(i), x0 + 11, S(i), 'I'); res.push([x0 - 1, x0 + 12]); b.deco('cone', x0 - 1, bottom, 1, 1); }
-        else if (pit) { b.fill(x0, S(i), x0 + 8, S(i), '.'); b.fill(x0 + 2, S(i) - 1, x0 + 3, S(i) - 1, '='); b.fill(x0 + 5, S(i) - 1, x0 + 6, S(i) - 1, '='); res.push([x0 - 2, x0 + 11]); }   // 파쿠르: 징검다리 구덩이
+        else if (pit) {
+          // 위험한 지름길: 징검다리(실패하면 아래층으로). 안전한 긴 길: 위쪽 컨베이어 다리 (가는 방향과 반대로 돌아서 느려요)
+          const dep = conn[i].reduce((a, c) => a + c.x, 0) / conn[i].length, arr = i ? conn[i - 1].reduce((a, c) => a + c.x, 0) / conn[i - 1].length : 8, right = dep > arr;
+          b.fill(x0, S(i), x0 + 10, S(i), '.'); b.fill(x0 + 3, S(i), x0 + 3, S(i), '='); b.fill(x0 + 7, S(i), x0 + 7, S(i), '=');
+          b.fill(x0 - 3, S(i) - 3, x0 + 13, S(i) - 3, right ? '<' : '>');
+          b.fill(x0 - 6, S(i) - 1, x0 - 5, S(i) - 1, '='); b.fill(x0 + 14, S(i) - 1, x0 + 15, S(i) - 1, '=');
+          res.push([x0 - 8, x0 + 17]);
+        }   // 파쿠르: 징검다리 구덩이
         else { b.fill(x0, S(i), x0 + 2, S(i), '.'); res.push([x0 - 2, x0 + 5]); }
         break;
       }
     }
     for (const o of f.objs) if (o[0][0] === '~') b.deco(o[0].slice(1), o[1], bottom, o[2], o[3]);
+    hurdles(b, R, 16, FW - 16, bottom, res, [1, 2, 1]); if (i % 2 === 0) hurdles(b, R, 16, FW - 16, bottom, res, [2, 1, 2]);
+    skyRoute(b, R, 16, FW - 16, bottom, res, [2, 2, 2, 2]);
     const placed = []; placeRun(b, R, f.objs, 14, FW - 14, bottom, res, placed);
     if (g.includes('mezz')) mezzOn(b, placed, bottom, Math.max(1, placed.length >> 1));
     itemSpots(b, 12, FW - 12, bottom, 4);
@@ -170,7 +200,7 @@ function longMap(segs, goal, seed) {
     if (g.includes('belt')) { const bx = x + 14 + (R() * Math.max(1, s.len - 44) | 0); b.fill(bx, top, bx + 14, top, R() < .5 ? '>' : '<'); res.push([bx - 1, bx + 15]); }
     if (g.includes('ice')) { const ix = x + 18 + (R() * Math.max(1, s.len - 50) | 0); if (!res.some(r => ix + 14 >= r[0] && ix - 2 <= r[1])) { b.fill(ix, top, ix + 11, top, 'I'); res.push([ix - 1, ix + 12]); b.deco('cone', ix - 1, bottom, 1, 1); } }
     for (const o of s.objs) if (o[0][0] === '~') b.deco(o[0].slice(1), x + o[1], bottom, o[2], o[3]);
-    if (s.len >= 70) { const hx = x + 20 + (R() * (s.len - 56) | 0); if (!res.some(r => hx + 24 >= r[0] && hx <= r[1])) { [1, 2, 3, 2, 1].forEach((hh, n) => b.obj('boxes', hx + n * 5, bottom, 2, hh)); res.push([hx - 2, hx + 24]); } }   // 파쿠르: 점점 높아지는 상자 넘기
+    if (s.len >= 50) { hurdles(b, R, x + 16, x1 - 8, bottom, res, [1, 2, 3, 2, 1]); if (s.len >= 90) hurdles(b, R, x + 16, x1 - 8, bottom, res, [2, 3, 2]); if (s.len >= 60) skyRoute(b, R, x + 14, x1 - 8, bottom, res, [3, 6, 3, 6]); }   // 파쿠르
     const placed = []; placeRun(b, R, s.objs, x + 5, x1 - 4, bottom, res, placed);
     if (g.includes('mezz')) mezzOn(b, placed, bottom, Math.max(1, placed.length >> 2));
     itemSpots(b, x + 3, x1 - 3, bottom, Math.max(2, s.len / 22 | 0));
