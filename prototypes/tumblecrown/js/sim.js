@@ -132,7 +132,7 @@ export function koPlayer(G, p, src) {
   if (G.pvp && p.hitBy) { for (const [id, t] of Object.entries(p.hitBy)) { const q = G.players.find(x => x.id === id); if (q && q.team !== p.team && (!k || q.id !== k.id) && G.t - t <= 10) q.assists = (q.assists | 0) + 1; } p.hitBy = null; }   // 쓰러뜨리기 10초 안에 때린 다른 상대에게 도움 1   // 8초 안에 연속으로 쓰러뜨리면 기술 대기가 절반으로 줄어요
   G.stats.downs++; ev(G, 'ko', { id: p.id, by: k ? k.id : null, x: p.x, z: p.z });
 }
-// 순차 점령: 진지 → 가까운 측면 → 중앙 → 먼 측면 → 상대 진지 순서로 차지할 수 있어요
+// 순차 점령: 진지 → 중앙 → 측면 전부 → 상대 진지 순서로 차지할 수 있어요
 // q = 우리 진지(0)에서 상대 진지(1)까지 가는 길에서 그 깃발이 놓인 위치 (두 진지를 잇는 선에 내린 그림자)
 function initOrder(G) {
   G.home = [0, 1].map(t => G.fl.findIndex(f => f.own === t));
@@ -144,9 +144,10 @@ export function flagLocked(G, i, tm) {
   if (!G.fl || !G.home || !G.fq || G.fl[i].own === tm || i === G.home[tm]) return false;
   if (G.fl[G.home[tm]].own !== tm) return true;   // 우리 진지 깃발을 뺏겼으면 먼저 되찾아야 해요
   const q = G.fq[tm];
-  if (q[i] > 0.9) return G.fl.some((g, j) => j !== i && q[j] >= 0.4 && q[j] <= 0.9 && g.own !== tm);   // 상대 진지: 중앙과 먼 측면을 모두 점령한 뒤에
-  if (q[i] > 0.6) return G.fl.some((g, j) => j !== i && q[j] >= 0.4 && q[j] <= 0.6 && g.own !== tm);   // 상대 쪽 깃발: 중앙을 점령하면 먼 측면 깃발부터 점령할 수 있어요
-  return G.fl.some((g, j) => j !== i && q[j] < q[i] - 0.2 && g.own !== tm);   // 우리 진지에서 더 가까운 깃발을 모두 가져야 그다음 깃발을 점령할 수 있어요 (측면·중앙·상대 진영 모두)
+  const mid = j => q[j] >= 0.4 && q[j] <= 0.6;
+  if (q[i] > 0.9) return G.fl.some((g, j) => j !== i && g.own !== tm);   // 상대 진지: 다른 깃발(중앙·측면)을 모두 점령한 뒤에
+  if (mid(i)) return false;   // 중앙: 진지를 지키고 있으면 바로 점령할 수 있어요
+  return G.fl.some((g, j) => j !== i && mid(j) && g.own !== tm);   // 측면(가까운·먼 쪽 모두): 중앙을 점령한 뒤에
 }
 // 깃발: 둘레 안에 더 많은 팀이 7초 동안 서 있으면 그 팀 것이 돼요 (같은 수면 아무도 못 세요, 아무도 없으면 천천히 되돌아가요)
 function flagsStep(G, dt) {
