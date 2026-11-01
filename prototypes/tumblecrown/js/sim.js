@@ -350,7 +350,8 @@ function hurtPlayer(G, p, dmg, src) {
   if (hasB(p, 'last') && p.hp < p.maxhp * 0.3) d *= 0.75;
   if (p.shield > 0) { const s = Math.min(p.shield, d); p.shield -= s; d -= s; }
   d = Math.round(d); if (d <= 0) return 0;
-  p.hp -= d; p.hitT = 0.25; p.noHit = 0; if (src && src.id && src.id !== p.id) (p.hitBy || (p.hitBy = {}))[src.id] = G.t;   // 도움 판정용: 누가 언제 때렸는지 ev(G, 'phit', { id: p.id, x: p.x, z: p.z, v: d, by: src && src.id || null });
+  p.hp -= d; p.hitT = 0.25; p.noHit = 0; if (src && src.id && src.id !== p.id) (p.hitBy || (p.hitBy = {}))[src.id] = G.t;   // 도움 판정용: 누가 언제 때렸는지
+  ev(G, 'phit', { id: p.id, x: p.x, z: p.z, v: d, by: src && src.id || null });
   if (hasB(p, 'thorn') && src && src.hp > 0 && src.id) hurtEnemy(G, src, 8, null, {});
   if (p.hp <= 0 && G.pvp) { koPlayer(G, p, src); return d; }
   if (p.hp <= 0) { if (p.emb) { p.emb = 0; ev(G, 'emb', { id: p.id, on: 0 }); } p.hp = 0; p.down = true; p.bleed = 20; p.revT = 0; p.everDown = true; G.stats.downs++; ev(G, 'down', { id: p.id, x: p.x, z: p.z }); }
@@ -1827,7 +1828,7 @@ function botPvp(G, p, dt) {
     if (!(ai.offT > 0)) { ai.offT = 1; ai.ox = (G.rng() - 0.5) * 10; ai.oz = (G.rng() - 0.5) * 10; } ai.offT -= dt; const q = {}; moveTo(G, p, q, tgt.x + ai.ox, tgt.z + ai.oz, 1.5); return q;
   }
   const d = dist(p, tgt), ta = angTo(p, tgt), ranged = R.atk.kind !== 'melee', clear = lineClear(p.x, p.z, tgt.x, tgt.z);
-  const near = foes.filter(q => dist(p, q) < 6).length, nearest = foes.length ? foes.reduce((m, q) => dist(p, q) < dist(p, m) ? q : m, foes[0]) : tgt, low = dist(p, nearest) < 8 && nearest.hp >= p.hp * 4 && flee75(G, p, dt);   // 가까운 적 체력이 내 체력의 네 배 이상일 때만 도망쳐요
+  const near = foes.filter(q => dist(p, q) < 6).length, nearest = foes.length ? foes.reduce((m, q) => dist(p, q) < dist(p, m) ? q : m, foes[0]) : tgt, low = dist(p, nearest) < 8 && nearest.hp >= p.hp * (G.mode === 'duel' ? 2 : 4) && flee75(G, p, dt);   // 가까운 적 체력이 내 체력의 네 배 이상일 때만 도망쳐요
   // 앞질러 조준: 상대가 움직이는 방향으로 조금 앞을 겨눠요
   // 원거리·폭탄병은 쏠 때마다 36% 확률로 예측 샷 (상대가 가는 방향 앞을 겨눠요), 나머지는 지금 서 있는 자리를 겨눠요
   const cdA = p.cd.atk || 0; if (cdA > (ai.lcd || 0) + 0.01) ai.lead = G.rng() < 0.36; ai.lcd = cdA;
@@ -1840,7 +1841,7 @@ function botPvp(G, p, dt) {
   // 2) 날아오는 화살·구슬 피하기
   for (const pr of G.projs) {
     if (pr.own === p.id || pr.vx == null) continue;
-    if (ai.pj !== pr.id) { ai.pj = pr.id; ai.pjOk = G.rng() < (ranged || d > 4 ? 0.22 : 0.07); }   // 날아오는 걸 알아채는 건 열에 여섯 번쯤이에요
+    if (ai.pj !== pr.id) { ai.pj = pr.id; ai.pjOk = G.rng() < (G.mode === 'duel' ? 0.6 : ranged || d > 4 ? 0.22 : 0.07); }   // 날아오는 걸 알아채는 건 열에 여섯 번쯤이에요
     if (!ai.pjOk || ai.rush > 0) continue;   // 몰아칠 때는 날아오는 것도 무시하고 파고들어요
     const rx = p.x - pr.x, rz = p.z - pr.z, v2 = pr.vx * pr.vx + pr.vz * pr.vz; if (v2 < 1) continue;
     const t = (rx * pr.vx + rz * pr.vz) / v2; if (t < 0 || t > 0.55) continue;
@@ -1856,7 +1857,7 @@ function botPvp(G, p, dt) {
     if (low && d < 8) { const a = safeDir(G, p, Math.atan2(p.z - nearest.z, p.x - nearest.x)); inp.mx = Math.cos(a); inp.mz = Math.sin(a); if (d < 3 && p.rollCd <= 0 && G.rng() < 0.05) inp.roll = true; }   // 체력이 낮으면 물러나요 (맞지 않고 4초가 지나면 저절로 차올라요)
     else if (ai.rush > 0 && d > (ranged ? 4 : 1.6)) moveTo(G, p, inp, tgt.x, tgt.z, ranged ? 3.5 : 1.2);
     else if (d > want + 1.5 || !clear) moveTo(G, p, inp, tgt.x, tgt.z, 0.6);
-    else if (ranged && nd < 5.5) { const a = safeDir(G, p, Math.atan2(p.z - nearest.z, p.x - nearest.x)); if (nd < 3 && p.rollCd <= 0 && G.rng() < 0.04) inp.roll = true; inp.mx = Math.cos(a); inp.mz = Math.sin(a); }
+    else if (ranged && nd < (G.mode === 'duel' ? 8 : 5.5)) { const a = safeDir(G, p, Math.atan2(p.z - nearest.z, p.x - nearest.x)); if (nd < (G.mode === 'duel' ? 5 : 3) && p.rollCd <= 0 && G.rng() < (G.mode === 'duel' ? 0.15 : 0.04)) inp.roll = true; inp.mx = Math.cos(a); inp.mz = Math.sin(a); }
     else if (!ai.hold) { inp.mx = -Math.sin(ta) * ai.sd * 0.8 + Math.cos(ta) * 0.2; inp.mz = Math.cos(ta) * ai.sd * 0.8 + Math.sin(ta) * 0.2; }
     // 멀리서 구르며 파고들기
     if (!ranged && d > 7 && p.rollCd <= 0 && G.rng() < 0.02) inp.roll = true;
