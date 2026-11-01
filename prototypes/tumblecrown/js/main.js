@@ -381,7 +381,7 @@ function roleXpBar(id) { const xp = SAVE.xp[id] || 0, L = roleLevel(xp); if (L >
 function paintRoom() {
   const host = S.net !== 'guest', mine = S.slots.find(s => s.uid === UID) || meSlot(), c = ROLES[mine.role] || ROLES.knight;
   const online = S.net !== 'solo', wait = online && S.ph === 'wait', pickP = online && S.ph === 'pick';
-  $('sRoom').classList.toggle('waiting', wait);
+  $('sRoom').classList.toggle('waiting', wait); { const mt = wait && S.pub; $('sRoom').classList.toggle('matching', mt); $('sRoom').style.backgroundImage = mt ? 'url(match-bg.png?v=' + BUILD + ')' : ''; }   // 방을 찾는 동안 배경 그림
   $('roomTitle').textContent = S.info ? T('직업·조작') : S.range ? T('연습장') : S.net === 'solo' ? T('봇과 연습') : S.pub ? T('온라인 대전') + ' · ' + MODES[S.mode || 'normal'].name : S.priv ? T('봇과 연습 · 친구 초대') : host ? T('친구와 대결 · 방장') : T('친구와 대결');
   $('inviteBtn').style.display = (S.net === 'host' && !S.pub && wait) || (S.net === 'solo' && !S.range && !S.info) ? '' : 'none';
   $('clsList').innerHTML = ROLE_IDS.map((id, k) => '<button data-c="' + id + '"' + (mine.role === id ? ' class="on"' : '') + '><i>' + (k + 1) + '</i><b>' + roleImg(id, 22) + ROLES[id].name + '</b><small class="lv" style="color:' + charRankFor((SAVE.pts || {})[id]).color + '">' + rankImg(charRankFor((SAVE.pts || {})[id]), 14) + charRankFor((SAVE.pts || {})[id]).name + ' · Lv.' + roleLevel(SAVE.xp[id]) + '</small></button>').join('');
@@ -1807,7 +1807,7 @@ requestAnimationFrame(frame);
 // 시험용: ?test=1 로 바로 혼자 원정을 시작해요 (화면 확인용). &skip=1 이야기 건너뛰기, &room=구역 번호
 // 내 컴퓨터에서 열었을 때만 돼요 (배포된 주소에서는 잠긴 장이 열리지 않게)
 const DEV = /^(localhost|127\.0\.0\.1)$/.test(location.hostname);
-if (DEV) window.__T = { unlock, achBars, HL, showResult, hlPlay, onEvent, SAVE, paintSettings, step, relBasic, aimedSkill, mouse, once, TOUCH, S, menu, beginGame, startHost, startMatch, startGuest, view, CH };
+if (DEV) window.__T = { paintRoom, unlock, achBars, HL, showResult, hlPlay, onEvent, SAVE, paintSettings, step, relBasic, aimedSkill, mouse, once, TOUCH, S, menu, beginGame, startHost, startMatch, startGuest, view, CH };
 if (DEV && qs.get('test')) {
   const r = qs.get('role') || 'knight'; SAVE.role = r;
   S.net = 'solo'; S.slots = [meSlot()]; newBots(); S.botN = +(qs.get('bots') || 5);
