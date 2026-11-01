@@ -550,8 +550,9 @@ if(document.readyState==='loading') document.addEventListener('DOMContentLoaded'
     color:var(--accent-2); background:var(--panel-2); border:1px dashed var(--line); border-radius:8px; padding:12px 0; margin:6px 0 4px;
   }
   .hint{font-size:12px; color:var(--text-dim); text-align:center; margin:0 0 16px;}
-  #playerList{list-style:none; margin:0; padding:0; max-height:150px; overflow-y:auto;}
-  #playerList li{display:flex; align-items:center; gap:8px; padding:7px 0; border-bottom:1px solid var(--line); font-size:14px; font-weight:600;}
+  #playerList{list-style:none; margin:0; padding:0; max-height:150px; overflow-y:auto; overflow-x:hidden;}
+  #playerList li{display:flex; flex-wrap:wrap; row-gap:2px; align-items:center; gap:8px; padding:7px 0; border-bottom:1px solid var(--line); font-size:14px; font-weight:600;}
+  #playerList li > *{white-space:nowrap; max-width:100%;}
   #playerList li .dot{width:10px; height:10px; border-radius:50%; flex-shrink:0;}
   #playerList li .dot.dotRainbow{ background:#ff5f5f; animation:dotHue 2.4s linear infinite; box-shadow:0 0 6px rgba(255,255,255,.6); }
   #playerList li .dot.dotSilver{ animation:dotGlint 1.6s ease-in-out infinite; }
@@ -5654,7 +5655,7 @@ function shuffle(arr){ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.
 /* ===== the version of this file =====
    Different BUILDS of one version meet and play together (room names online-v<ver>-<mode>-<map>-<slot>); different VERSIONS (the 0.x part) never do - the host refuses them (verNo) and the dispatcher answers busy.
    The build is only sent along with the join message and the lobby (for information); the corner of the screen shows it. */
-const GAME_BUILD='build 2026-10-31-v596';
+const GAME_BUILD='build 2026-10-31-v597';
 const GAME_VERSION='0.9', GAME_VERSION_NAME='은하 제국의 황혼';   // 게임 버전 이름: versions.json의 title과 같게 (빌드마다 바꾸지 않음)
 /* version (the 0.x part) vs build: different BUILDS of one version meet and play together, different VERSIONS never do (rooms, quick match, ranked, friend invites, dispatcher).
    Builds before 470 do not send a version, so it is read from the build number (0.9 started at build 458). */
@@ -10059,6 +10060,7 @@ function updatePlayerListUI(){
         li.appendChild(btn);
       }
     }
+    if(p.sbId){ li.style.cursor='pointer'; li.title='허브 프로필 보기'; li.onclick=e=>{ if(e.target.closest('button')) return; try{ openSharedProfile(p.sbId); }catch(er){} }; }      // (a click on a player opens his hub profile card)
     playerListEl.appendChild(li);
   }
   const max = currentMapId ? effectiveMaxPlayers(currentMapId, gameMode) : (MAP? MAP.maxPlayers : '?');
