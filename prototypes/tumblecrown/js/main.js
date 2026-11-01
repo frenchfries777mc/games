@@ -1154,6 +1154,7 @@ function onEvent(e) {
     case 'flag': { if (S.snap && S.snap.tf) { const a = TEAMS[e.own]; logLine([[tmName(e.own) + ' ', a.c], [T('깃발 점령'), null]]); } const mine = e.own === myTm(), c = TEAMS[e.own].c; view.column(e.x, e.z, c, 1.4); view.ring(e.x, e.z, 6, c, 0.9); view.shock(e.x, e.z, 7, c, 0.6); view.flash(e.x, e.z, c, 120); if (mine || e.was === myTm()) { bigMsg(mine ? T('깃발을 차지했어요!') : T('깃발을 빼앗겼어요!'), '', 1800); SFX.play(mine ? 'kill' : 'roar'); } break; }   // 주인 없던 깃발을 상대가 차지한 건 빼앗긴 게 아니라서 알리지 않아요
     case 'capbuff': view.rise(e.x, e.z, 0xffd36a, 12, 2.2, 0.9, 5); view.ring(e.x, e.z, 1.8, 0xffd36a, 0.5); if (e.id === me) { toast(T('점령 효과! 5초 동안 이동 속도와 공격이 20% 올라요'), 2400); SFX.play('bless'); } break;
     case 'door': if (e.open) toast(T('신전 문이 열렸어요!'), 2400); else bigMsg(T('신전 문이 닫혔어요!'), T('안에 있는 깃발은 닫혀도 차지할 수 있어요'), 2600); SFX.play(e.open ? 'warn' : 'slam'); view.shake = Math.max(view.shake, 0.5); break;
+    case 'night': toast(e.on ? T('밤이 됐어요! 내 둘레와 바라보는 방향만 보여요') : T('아침이 밝았어요'), 2400); break;
     case 'storm': toast(e.on ? T('모래폭풍이 불어요! 멀리가 안 보여요') : T('모래폭풍이 잦아들었어요'), 2400); break;
     case 'monster': view.column(e.x, e.z, 0xff7a3a, 1.6); view.shock(e.x, e.z, 8, 0xff7a3a, 0.6); view.flash(e.x, e.z, 0xff7a3a, 140); if (e.big) { bigMsg(T('가운데에 큰 괴물이 나타났어요!'), T('쓰러뜨린 팀은 점령이 40초 동안 빨라지고 공격이 영구히 4% 올라요'), 3200); SFX.play('roar'); break; } bigMsg(T('꼭짓점에 괴물이 나타났어요!'), T('쓰러뜨리면 우리 팀 공격과 점령 속도가 영구히 2% 올라요'), 2600); SFX.play('roar'); break;
     case 'push': if (e.id === S.me && S.local) { S.local.kvx = (S.local.kvx || 0) + e.vx; S.local.kvz = (S.local.kvz || 0) + e.vz; } break;
@@ -1256,6 +1257,32 @@ function paintIntro() {
   $('introSkip').classList.remove('on'); $('introSkip').style.display = 'none';
 }
 function finalCheck(sn) { }
+// 달빛 성채의 밤: 화면을 어둡게 덮고, 내 둘레 작은 원과 바라보는 방향의 좁고 긴 부채꼴만 밝게 보여요 (낮밤은 서서히 바뀌어요)
+const nvEl = $('nv'), nvc = nvEl.getContext('2d');
+function nightDraw(dt) {
+  const sn = S.snap, want = sn && sn.nt && sn.nt[0] && sn.ph === 'play' ? 1 : 0;
+  S.nv = (S.nv || 0) + Math.sign(want - (S.nv || 0)) * Math.min(Math.abs(want - (S.nv || 0)), dt * 0.7);
+  if (S.nv < 0.01) { if (nvEl.style.display !== 'none') nvEl.style.display = 'none'; return; }
+  const W = innerWidth, H = innerHeight, me = sn.pl.find(q => q.id === S.me), E = me && view.ents.get('p' + me.id);
+  if (nvEl.style.display !== 'block') nvEl.style.display = 'block';
+  if (nvEl.width !== W || nvEl.height !== H) { nvEl.width = W; nvEl.height = H; }
+  nvc.globalCompositeOperation = 'source-over'; nvc.clearRect(0, 0, W, H); nvc.fillStyle = 'rgba(3,5,16,' + (0.93 * S.nv).toFixed(3) + ')'; nvc.fillRect(0, 0, W, H);
+  if (!E || (me.dd | 0)) return;
+  const a = me.a || 0, ex = E.x, ez = E.z;
+  nvc.globalCompositeOperation = 'destination-out';
+  // 바깥부터 안쪽으로 겹쳐 그려서 가장자리를 부드럽게
+  for (const [k, al] of [[1.35, 0.22], [1.2, 0.28], [1.08, 0.35], [1, 0.6]]) {
+    nvc.globalAlpha = al * S.nv; nvc.beginPath();
+    const c = view.project(ex, 0.6, ez); nvc.moveTo(c.x, c.y);
+    const half = 0.3 * (1 + (k - 1) * 0.9), len = 21 * k;
+    for (let i = 0; i <= 10; i++) { const t = a - half + half * 2 * i / 10, q = view.project(ex + Math.cos(t) * len, 0.6, ez + Math.sin(t) * len); nvc.lineTo(q.x, q.y); }
+    nvc.closePath(); nvc.fill();
+    nvc.beginPath(); const r = 4.6 * k;
+    for (let i = 0; i < 20; i++) { const t = i / 20 * Math.PI * 2, q = view.project(ex + Math.cos(t) * r, 0.6, ez + Math.sin(t) * r); i ? nvc.lineTo(q.x, q.y) : nvc.moveTo(q.x, q.y); }
+    nvc.closePath(); nvc.fill();
+  }
+  nvc.globalAlpha = 1; nvc.globalCompositeOperation = 'source-over';
+}
 function paintHud() {
   const sn = S.snap, me = myP();
   if (sn.dr) { if (sn.dr[0] !== DSTATE.open) { setDoors(sn.dr[0]); mini.dirty = true; } } else if (DSTATE.open) { setDoors(0); mini.dirty = true; }
@@ -1738,7 +1765,7 @@ function frame(now) {
     }
     S.evq.length = 0;
   }
-  view.tick(dt, t); view.render();
+  view.tick(dt, t); view.render(); nightDraw(dt);
   if (S.snap && S.snap.ph !== 'intro' && $('hud').classList.contains('on')) drawOverlay(dt); else oc.clearRect(0, 0, innerWidth, innerHeight);
 }
 requestAnimationFrame(frame);
