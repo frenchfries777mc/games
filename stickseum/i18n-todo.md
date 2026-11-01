@@ -94,3 +94,5 @@ patchnotes.json | v599 title | 은하 제국의 황혼 | build 599 | 2026-11-01
 patchnotes.json | v599 items[0] | 설명 속 이모지 37종(그래프·표적·번개·해골·지구·보석·방패 등)을 전용 로고로 교체 | build 599 | 2026-11-01
 patchnotes.json | v600 title | 은하 제국의 황혼 | build 600 | 2026-11-01
 patchnotes.json | v600 items[0] | 설명 속 이모지 24종(단검·폭죽·폭탄·게임패드·확성기·글러브 등)을 전용 로고로 교체 | build 600 | 2026-11-01
+patchnotes.json | v601 title | 은하 제국의 황혼 | build 601 | 2026-11-01
+patchnotes.json | v601 items[0] | 설명 속 이모지 3차 23종 로고 적용 (칼, 박쥐, 로켓, 마법사 등) | build 601 | 2026-11-01
