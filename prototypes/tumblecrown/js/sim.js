@@ -179,7 +179,7 @@ function flagsStep(G, dt) {
     let lead = n0 > n1 ? 0 : n1 > n0 ? 1 : -1; if (f.seize > 0 && (f.seizeTm === 0 ? n0 : n1) > 0) { lead = f.seizeTm; if (f.own === lead) lead = -1; }   // 점령: 아군이 한 명이라도 있으면 수가 적어도 점령이 진행돼요
     if (lead >= 0 && lead !== f.own && flagLocked(G, i, lead)) lead = -1;   // 순서가 안 된 깃발은 점령이 진행되지 않아요
     const rt0 = (f.seize > 0 && lead === f.seizeTm && (lead === 0 ? n0 <= n1 : n1 <= n0)) ? 1 : Math.min(3, 1 + 0.5 * (Math.abs(n0 - n1) - 1)) * (lead >= 0 && G.cb[lead] > 0 ? 1.5 : 1) * (lead >= 0 ? 1 + mkF(G) * G.mk[lead] : 1);
-    const rt = rt0 * (G.pvp && G.mt >= 300 && lead >= 0 && G.fl.filter(g => g.own === lead).length > G.fl.filter(g => g.own === 1 - lead).length ? 1.3 : 1);   // 5분이 지나면 깃발을 더 많이 가진 팀의 점령이 30% 빨라져요 (판이 늘어지지 않게)   // 더 많은 사람이 있을수록 빨리 차지해요 (한 명 1배, 둘 1.5배, 셋 2배, 최대 3배)
+    const rt = rt0 * (G.mode === 'hyper' ? 1.5 : 1) * (G.pvp && G.mt >= 300 && lead >= 0 && G.fl.filter(g => g.own === lead).length > G.fl.filter(g => g.own === 1 - lead).length ? 1.3 : 1);   // 5분이 지나면 깃발을 더 많이 가진 팀의 점령이 30% 빨라져요 (판이 늘어지지 않게)   // 더 많은 사람이 있을수록 빨리 차지해요 (한 명 1배, 둘 1.5배, 셋 2배, 최대 3배)
     if (lead >= 0 && lead !== f.own) {
       if (f.cap === lead || f.cap < 0) { f.cap = lead; f.prog += dt * rt; }
       else { f.prog -= dt * rt; if (f.prog <= 0) { f.prog = 0; f.cap = lead; } }
