@@ -3,7 +3,7 @@
 
 import { T } from './tr.js';
 
-export const VERSION = 'v0.2', BUILD = 251;
+export const VERSION = 'v0.2', BUILD = 252;
 
 export const ROLES = {
   knight: {
@@ -715,6 +715,11 @@ export const ACHIEVEMENTS = [
   { id: 'mon100', name: T('괴물 사냥의 달인'), desc: T('중립 괴물을 백 마리 쓰러뜨려요.') },
   { id: 'maps', name: T('전 맵 정복'), desc: T('모든 대전 맵에서 한 번 이상 이겨요.') },
   { id: 'fast', name: T('5분 컷'), desc: T('5분 안에 대전에서 이겨요.') },
+  { id: 'rankwin', name: T('랭크 첫 승'), desc: T('랭크전에서 처음 이겨요.') },
+  { id: 'hyper10', name: T('난전의 한가운데'), desc: T('하이퍼에서 한 판에 열 명을 쓰러뜨려요.') },
+  { id: 'classic30', name: T('클래식 정복자'), desc: T('클래식에서 서른 번 이겨요.') },
+  { id: 'blitz3', name: T('번개 같은 승부'), desc: T('블리츠에서 3분 안에 이겨요.') },
+  { id: 'duel10', name: T('일대일의 달인'), desc: T('듀얼에서 열 번 이겨요.') },
   { id: 'streak', name: T('연승 행진'), desc: T('대전에서 5연승을 해요.') },
   { id: 'friends', name: T('함께하는 대전'), desc: T('다른 사람과 같은 방에서 대전해요.') }
 ];
