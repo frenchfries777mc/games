@@ -157,7 +157,8 @@ export function flagLocked(G, i, tm) {
   if (G.fl[G.home[tm]].own !== tm) return true;   // 우리 진지 깃발을 뺏겼으면 먼저 되찾아야 해요
   const K = flagKinds(G), four = K.sides.length === 4;
   if (i === G.home[1 - tm]) return four ? K.sides.some(j => !K.near[tm].includes(j) && G.fl[j].own !== tm) : G.fl.some((g, j) => j !== i && g.own !== tm);   // 상대 진지
-  if (i === K.ctr || !four || K.near[tm].includes(i)) return false;   // 중앙, 우리 쪽 측면: 바로
+  if (i === K.ctr) return four ? K.near[tm].some(j => G.fl[j].own !== tm) : false;   // 중앙: 측면이 넷인 맵은 우리 쪽 측면 둘을 먼저
+  if (!four || K.near[tm].includes(i)) return false;   // 우리 쪽 측면: 바로
   return G.fl[K.ctr].own !== tm;   // 상대 쪽 측면: 중앙을 점령한 뒤에
 }
 // 깃발: 둘레 안에 더 많은 팀이 7초 동안 서 있으면 그 팀 것이 돼요 (같은 수면 아무도 못 세요, 아무도 없으면 천천히 되돌아가요)
