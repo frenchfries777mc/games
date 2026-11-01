@@ -3,7 +3,7 @@
 
 import { T } from './tr.js';
 
-export const VERSION = 'v0.2', BUILD = 239;
+export const VERSION = 'v0.2', BUILD = 240;
 
 export const ROLES = {
   knight: {
@@ -686,10 +686,12 @@ setChapterData(0);
 export function useMode(md) {
   const t = (CH.map && CH.map.tflags) || MAP.tflags, sp = MAP.tspawn0 || (MAP.tspawn0 = MAP.tspawn); MAP.tfi = t.map((_, i) => i); MAP.tflags = t;
   if (sp && t.some(f => f[2] >= 0)) MAP.tspawn = [0, 1].map(o => { const own = t.filter(f => f[2] === o).sort((a, b) => Math.hypot(a[0] - sp[o][0], a[1] - sp[o][1]) - Math.hypot(b[0] - sp[o][0], b[1] - sp[o][1])); return own[0] ? [own[0][0], own[0][1]] : sp[o]; });   // 팀 거점은 그 팀의 시작 깃발 자리예요
-  if (md !== 'quick' || !sp) return;
+  if ((md !== 'quick' && md !== 'duel') || !sp) return;
   const keep = new Set(); t.forEach((f, i) => { if (f[2] < 0) keep.add(i); });
+  if (md === 'duel') { const bx = MAP.boss[0], by = MAP.boss[1], ne = [...keep].sort((a, b) => Math.hypot(t[a][0] - bx, t[a][1] - by) - Math.hypot(t[b][0] - bx, t[b][1] - by)); keep.clear(); if (ne[0] != null) keep.add(ne[0]); }   // 듀얼: 가운데 깃발 하나와 양쪽 진지만
   for (const o of [0, 1]) { const own = t.map((f, i) => ({ f, i })).filter(q => q.f[2] === o).sort((a, b) => Math.hypot(a.f[0] - sp[o][0], a.f[1] - sp[o][1]) - Math.hypot(b.f[0] - sp[o][0], b.f[1] - sp[o][1])); if (own[0]) keep.add(own[0].i); }
   MAP.tfi = [...keep].sort((a, b) => a - b); MAP.tflags = MAP.tfi.map(i => t[i]);
+  if (t.night) MAP.tflags.night = 1;   // 밤낮 지도는 모드를 줄여도 밤낮이 바뀌어요
 }
 
 export const ACHIEVEMENTS = [
@@ -733,9 +735,11 @@ COSMETICS.skin.items.push(
   { id: 'mr3', name: T('그랜드 마스터 스킨'), cost: 0, rk: 9000, b: 0xc03a3a, l: 0x4a1418, c: 0xffd36b });
 // 온라인 대전 모드: key는 방 이름 앞글자 (모드마다 방이 따로 열려요)
 export const MODES = {
-  rank: { key: 'r', cap: 10, name: T('랭크전'), desc: T('이기면 랭킹 점수가 오르고 지면 내려가요') },
-  normal: { key: 'q', cap: 10, name: T('5vs5 클래식'), desc: T('열 명이 모여 깃발 일곱 개를 두고 겨뤄요 (우리 쪽 측면부터, 측면이 넷인 맵은 가까운 측면 둘을 잡아야 중앙이 열리고, 중앙을 잡으면 상대 쪽 측면, 그다음 상대 진지 순서로 점령)') },
-  quick: { key: 'k', cap: 6, name: T('3vs3 블리츠'), desc: T('여섯 명, 깃발 다섯 개, 측면과 중앙을 먼저 점령해야 상대 진지가 열려요') }
+  rank: { key: 'r', cap: 10, tn: 5, noBots: 1, name: T('랭크전'), desc: T('이기면 랭킹 점수가 오르고 지면 내려가요') },
+  hyper: { key: 'h', cap: 20, tn: 10, name: T('10vs10 하이퍼'), desc: T('스무 명이 같은 깃발 일곱 개를 두고 크게 부딪쳐요') },
+  normal: { key: 'q', cap: 10, tn: 5, name: T('5vs5 클래식'), desc: T('열 명이 모여 깃발 일곱 개를 두고 겨뤄요 (우리 쪽 측면부터, 측면이 넷인 맵은 가까운 측면 둘을 잡아야 중앙이 열리고, 중앙을 잡으면 상대 쪽 측면, 그다음 상대 진지 순서로 점령)') },
+  quick: { key: 'k', cap: 6, tn: 3, name: T('3vs3 블리츠'), desc: T('여섯 명, 깃발 다섯 개, 측면과 중앙을 먼저 점령해야 상대 진지가 열려요') },
+  duel: { key: 'd', cap: 2, tn: 1, noBots: 1, name: T('1vs1 듀얼'), desc: T('둘이서 깃발 셋(양쪽 진지와 중앙)을 두고 겨뤄요. 중앙을 잡아야 상대 진지가 열려요') }
 };
 // 마스터리 계급 (스틱세움과 같은 구간): 직업마다 마스터리 포인트로 올라가요. 브론즈부터는 II·III 단계가 있고, 그랜드 마스터는 I~X (1000점씩)
 export const CHAR_RANKS = (() => {
