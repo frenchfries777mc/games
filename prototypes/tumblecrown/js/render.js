@@ -75,6 +75,7 @@ const HERO = {
   witch: { body: 0x4a2a6a, robe: 1, leg: 0x2a1a3a, arm: 0x4a2a6a, skinC: 0xb8d0a0, hat: 1, staff: 1, staffC: 0xc06aff },
   skeleton: { skel: 1 },
   warden: { body: 0x6b5b3e, leg: 'dm', arm: 'mt', helm: 1, helmC: 0x4a4a52, plume: 0xc8a030, sword: 1, shield: 1, shieldC: 0x6a5030, shS: 1.45, belt: 1, wide: 1.24 },
+  telaris: { body: 0x2a6f66, leg: 'dm', arm: 'mt', helm: 1, helmC: 0xaebcc0, plume: 0x3ad0b0, sword: 1, shield: 1, shieldC: 0x2fa58f, shS: 1.6, cape: 0x1a4f48, belt: 1, wide: 1.2 },
   assassin: { body: 0x24343c, leg: 0x161e24, arm: 0x24343c, hood: 0x1a2830, scim: 1, belt: 1 },
   bomber: { body: 0x7a4a32, leg: 0x3a3030, arm: 0x7a4a32, goggles: 1, bombs: 1, bhand: 1, sack: 1, belt: 1, cap: 0x5a3a28, wide: 1.1 },
   bard: { body: 0xb04a6a, leg: 0x4a3a50, arm: 0xb04a6a, cap: 0x3a6a8a, lute: 1, belt: 1, cape: 0x6a3a8a },
@@ -86,7 +87,7 @@ const HERO = {
   wellington: { body: 0x14214a, leg: 0xe8e4dc, arm: 0x14214a, hairW: 1, reg: 1, sword: 1 }
 };
 // 동작은 비슷한 직업의 것을 같이 써요 (마녀는 사제처럼, 바이킹·맘루크·스켈레톤은 종자처럼)
-const FAM = { witch: 'priest', viking: 'squire', mamluk: 'squire', skeleton: 'squire', warden: 'knight', assassin: 'squire', crossbow: 'archer', streltsy: 'archer', wellington: 'knight', bomber: 'squire', bard: 'priest', court: 'priest', necro: 'priest', spearman: 'squire' };
+const FAM = { witch: 'priest', viking: 'squire', mamluk: 'squire', skeleton: 'squire', warden: 'knight', telaris: 'knight', assassin: 'squire', crossbow: 'archer', streltsy: 'archer', wellington: 'knight', bomber: 'squire', bard: 'priest', court: 'priest', necro: 'priest', spearman: 'squire' };
 function matOf(v) { return v === 'dm' ? dmetal() : v === 'mt' ? metal() : M(v); }
 export const makeHero = toonify(function (role, cos) {
   const o = Object.assign({}, HERO[role]), cp = cos && COSMETICS.cape.items.find(i => i.id === cos.cape && i.col);
