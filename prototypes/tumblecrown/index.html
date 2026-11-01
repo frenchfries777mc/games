@@ -12,8 +12,8 @@
 <link rel="icon" href="logo.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
-<!-- 새 빌드마다 아래 ?v=265 숫자를 BUILD와 같게 올려요 (브라우저가 옛 파일을 쓰지 않게) -->
-<script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/","./js/data.js":"./js/data.js?v=265","./js/main.js":"./js/main.js?v=265","./js/map.js":"./js/map.js?v=265","./js/music.js":"./js/music.js?v=265","./js/render.js":"./js/render.js?v=265","./js/sfx.js":"./js/sfx.js?v=265","./js/sim.js":"./js/sim.js?v=265","./js/tr.js":"./js/tr.js?v=265"}}</script>
+<!-- 새 빌드마다 아래 ?v=266 숫자를 BUILD와 같게 올려요 (브라우저가 옛 파일을 쓰지 않게) -->
+<script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/","./js/data.js":"./js/data.js?v=266","./js/main.js":"./js/main.js?v=266","./js/map.js":"./js/map.js?v=266","./js/music.js":"./js/music.js?v=266","./js/render.js":"./js/render.js?v=266","./js/sfx.js":"./js/sfx.js?v=266","./js/sim.js":"./js/sim.js?v=266","./js/tr.js":"./js/tr.js?v=266"}}</script>
 <script src="../../ff-presence.js" async></script>
 <script src="https://cdn.jsdelivr.net/npm/peerjs@1.5.4/dist/peerjs.min.js"></script>
 <script src="https://frenchfries777mc.github.io/games/ff-lang.js"></script>
@@ -351,6 +351,7 @@ body.touch #exitBtn{top:auto;bottom:auto}
     <span>화질</span><div class="seg" id="setPx"><button data-v="2">선명하게</button><button data-v="3">보통</button><button data-v="4">가볍게</button></div>
     <span>빛 번짐</span><div class="seg" id="setBloom"><button data-v="1">켜기</button><button data-v="0">끄기</button></div>
     <span>화면 흔들림</span><div class="seg" id="setShake"><button data-v="1">켜기</button><button data-v="0">끄기</button></div>
+    <span>FPS 표시</span><div class="seg" id="setFps"><button data-v="1">켜기</button><button data-v="0">끄기</button></div>
     <span>최적화</span><div class="seg" id="setOpt"><button data-v="1">켜기</button><button data-v="0">끄기</button></div>
     <span>이동 방식</span><div class="seg" id="setMv"><button data-v="wasd">WASD</button><button data-v="arrows">화살표</button><button data-v="click">우클릭 · 터치</button></div>
     <span>기술 키</span><div class="seg" id="setKeys"></div>
@@ -369,7 +370,7 @@ body.touch #exitBtn{top:auto;bottom:auto}
 <section class="scr" id="sResult"><div class="pan" style="width:min(560px,94vw)" id="result"></div></section>
 
 <!-- 전투 화면 -->
-<div id="hud"><div id="lbT" class="lb"></div><div id="lbB" class="lb"></div><div id="wflash"></div><div id="talk"><img class="face" alt="" id="talkFace"><b class="who" id="talkWho"></b><p id="talkText"></p></div>
+<div id="fpsBox" style="display:none;position:fixed;top:6px;right:8px;z-index:60;padding:2px 7px;font:bold 13px Galmuri,system-ui;color:#9af0a8;background:rgba(20,15,24,.65);border-radius:4px;pointer-events:none"></div><div id="hud"><div id="lbT" class="lb"></div><div id="lbB" class="lb"></div><div id="wflash"></div><div id="talk"><img class="face" alt="" id="talkFace"><b class="who" id="talkWho"></b><p id="talkText"></p></div>
   <div id="roomTag"></div>
   <button id="exitBtn">나가기</button>
   <button id="chatBtn">채팅</button><div id="chatLog"></div><div id="chatBox"><div id="chatE" style="display:flex;gap:6px;margin-bottom:6px"></div><div id="chatQ"></div><div class="row"><input id="chatIn" maxlength="40" autocomplete="off" placeholder="메시지 (40자)"><button id="chatSend">보내기</button><button id="chatX">닫기</button></div></div>
@@ -388,7 +389,7 @@ body.touch #exitBtn{top:auto;bottom:auto}
 <div id="touch"><div id="joy"><div id="joyBase"><div id="joyKnob"></div></div></div>
   <div id="tbtns"><button id="tA"><span>공격</span></button><button id="tQ"><i class="cd"></i><span>Q</span></button><button id="tE"><i class="cd"></i><span>E</span></button><button id="tR"><i class="cd"></i><span>R</span></button><button id="tRoll"><i class="cd"></i><span>구르기</span></button><button id="tF"><i class="cd"></i><span>귀환</span></button></div>
 </div>
-<script type="module" src="js/main.js?v=265"></script>
+<script type="module" src="js/main.js?v=266"></script>
 <div id="findBlock" style="position:fixed;inset:0;z-index:60;display:none;cursor:wait"></div>
 </body>
 </html>

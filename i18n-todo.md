@@ -914,3 +914,6 @@ patchnotes.json | v544 items[1] | 제국 수호전은 연승을 올리지도 끊
 
 ## Tumble Crown b261 (2026-11-01)
 - 매칭 배경 그림 복구 (문구 변경 없음)
+
+## Tumble Crown b266 (2026-11-01)
+- 설정: "FPS 표시" (켜기/끄기)
