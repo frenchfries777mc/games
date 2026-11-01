@@ -72,3 +72,6 @@ patchnotes.json | v589 items[1] | 로비 위쪽 버튼(피드백·일일 보상�
 patchnotes.json | v590 title | 은하 제국의 황혼 | build 590 | 2026-11-01
 patchnotes.json | v590 items[0] | 야구선수 방망이 쿨타임 0.25초에서 0.6초로 변경 | build 590 | 2026-11-01
 patchnotes.json | v590 items[1] | 봇과 연습할 때 시작 직후 한 번 멈칫하던 현상 수정 (봇 이동 경로를 미리 계산) | build 590 | 2026-11-01
+patchnotes.json | v591 title | 은하 제국의 황혼 | build 591 | 2026-11-01
+patchnotes.json | v591 items[0] | 배틀로얄 연승 규칙 변경: 1등은 연승 +1, 2등은 연승 유지 (6인 이상은 2등 연승 +1, 3등 연승 유지) | build 591 | 2026-11-01
+patchnotes.json | v591 items[1] | 토너먼트 연승 규칙 변경: 1등은 연승 +1, 2~4등은 연승 유지 | build 591 | 2026-11-01
