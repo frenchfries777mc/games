@@ -213,17 +213,17 @@ function makeFigure(o) {
     const cv = (w, h, f) => { const c = document.createElement('canvas'); c.width = w; c.height = h; f(c.getContext('2d'), w, h); const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace; t.wrapS = THREE.RepeatWrapping; t.magFilter = THREE.NearestFilter; return t; };
     const stripeTex = geo('tlStripeTex', () => cv(128, 8, (x, w, h) => { const n = 10, sw = w / n; for (let i = 0; i < n; i++) { x.fillStyle = i % 2 ? '#f0b820' : '#e8721a'; x.fillRect(i * sw, 0, sw, h); x.fillStyle = '#8a3a10'; x.fillRect(i * sw, 0, 2, h); } }));
     const sm = toon(stripeTex);
-    const tor = mesh(geo('tlTorso', () => new THREE.CylinderGeometry(0.56, 0.64, 1.4, 20)), sm, 0, 1.45, 0, body); tor.scale.set(1, 1, 0.9);
-    const sk = mesh(geo('tlSkirt', () => new THREE.CylinderGeometry(0.64, 0.8, 0.62, 20, 1, true)), toon(stripeTex, { side: THREE.DoubleSide }), 0, 0.78, 0, body); sk.scale.set(1, 1, 0.9);
-    const ch = sph(0.56, 12, 8, sm, 0, 2.12, 0, body); ch.scale.set(1, 0.42, 0.85);
-    const lt = M(0x5a3a1c), br = M(0xc8a040, { m: 0.7, r: 0.35 });
-    const bt = mesh(geo('tlBelt', () => new THREE.TorusGeometry(0.62, 0.08, 5, 20)), lt, 0, 1.0, 0, body); bt.rotation.x = Math.PI / 2; bt.scale.set(1, 0.9, 1); box(0.26, 0.26, 0.1, br, 0, 1.0, 0.58, body);
-    for (const sx of [-1, 1]) { const ar = sx > 0 ? armR : armL; const ep = cyl(0.27, 0.27, 0.1, 12, lt, sx * 0.7, 2.34, 0, body); ep.rotation.z = sx * 0.12; cyl(0.2, 0.2, 0.12, 8, lt, 0, -0.64, 0, ar); sph(0.23, 8, 6, lt, 0, -0.96, 0, ar); }
-    const hr = M(0x4a2e18); sph(0.45, 10, 7, hr, 0, 0.1, -0.08, head).scale.set(1, 0.85, 1);
+    const rb = mesh(geo('tlRobe', () => new THREE.CylinderGeometry(0.56, 0.82, 2.2, 24)), sm, 0, 1.2, 0, body); rb.scale.set(1, 1, 0.9);
+    const ch = sph(0.56, 12, 8, sm, 0, 2.2, 0, body); ch.scale.set(1, 0.4, 0.85);
+    const lt = M(0x5a3a1c), br = M(0xc8a040, { m: 0.7, r: 0.35 }), dk = M(0x8a3a10);
+    const hm = mesh(geo('tlHem', () => new THREE.TorusGeometry(0.82, 0.05, 4, 24)), dk, 0, 0.1, 0, body); hm.rotation.x = Math.PI / 2; hm.scale.set(1, 0.9, 1);
+    const cl = mesh(geo('tlCollar', () => new THREE.TorusGeometry(0.46, 0.1, 5, 16)), dk, 0, 2.32, 0, body); cl.rotation.x = Math.PI / 2;
+    const bt = mesh(geo('tlBelt', () => new THREE.TorusGeometry(0.66, 0.08, 5, 20)), lt, 0, 1.3, 0, body); bt.rotation.x = Math.PI / 2; bt.scale.set(1, 0.9, 1); box(0.26, 0.26, 0.1, br, 0, 1.3, 0.62, body);
+    for (const sx of [-1, 1]) { const ar = sx > 0 ? armR : armL; cyl(0.24, 0.4, 0.95, 12, sm, 0, -0.62, 0, ar); const cf = cyl(0.41, 0.41, 0.08, 12, dk, 0, -1.1, 0, ar); sph(0.2, 8, 6, M(0xe8b48a), 0, -1.2, 0, ar); }
     // 방패: 둥근 모서리의 평평한 직사각형, 문양은 그림이라 튀어나오지 않아요
     const W = 0.95, H = 1.5, R = 0.18, shp = new THREE.Shape();
     shp.moveTo(-W / 2 + R, H / 2); shp.lineTo(W / 2 - R, H / 2); shp.quadraticCurveTo(W / 2, H / 2, W / 2, H / 2 - R); shp.lineTo(W / 2, -H / 2 + R); shp.quadraticCurveTo(W / 2, -H / 2, W / 2 - R, -H / 2); shp.lineTo(-W / 2 + R, -H / 2); shp.quadraticCurveTo(-W / 2, -H / 2, -W / 2, -H / 2 + R); shp.lineTo(-W / 2, H / 2 - R); shp.quadraticCurveTo(-W / 2, H / 2, -W / 2 + R, H / 2);
-    const sh = new THREE.Group(); shG = sh; sh.position.set(-0.05, -0.6, 0.34); armL.add(sh); sh.rotation.x = 0.08;
+    const sh = new THREE.Group(); shG = sh; sh.position.set(-0.12, -0.55, 0.27); armL.add(sh); sh.rotation.x = 0.08; sh.rotation.y = 0.22;
     mesh(geo('tlShBody', () => new THREE.ExtrudeGeometry(shp, { depth: 0.12, bevelEnabled: false })), M(0xc83030), 0, 0, -0.06, sh);
     const fg = geo('tlShFace', () => { const g = new THREE.ShapeGeometry(shp), p = g.attributes.position, uv = g.attributes.uv; for (let i = 0; i < p.count; i++) uv.setXY(i, (p.getX(i) + W / 2) / W, (p.getY(i) + H / 2) / H); return g; });
     const faceTex = geo('tlShTex', () => cv(96, 144, (x, w, h) => { x.fillStyle = '#c83030'; x.fillRect(0, 0, w, h); x.fillStyle = '#f6f3ee'; x.fillRect(8, 8, w - 16, h - 16); x.fillStyle = '#c83030'; x.fillRect(w / 2 - 10, 14, 20, h - 28); x.fillRect(16, h * 0.3, w - 32, 20); }));
