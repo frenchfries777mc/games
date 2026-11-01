@@ -1436,8 +1436,8 @@ const WEAPONS = {
             desc:'데미지 5 · 쿨타임 0.5초 · 맞으면 독이 쌓임 (최대 4중첩, 중첩마다 초당 2 피해, 3초 지속, 맞을 때마다 시간 갱신) · 빠르게 날아가는 독침'},
   sword:   {id:'sword',   name:'칼',       emoji:'🗡️', kind:'melee',    dmg:32, cd:0.55, range:100, shape:'blade',
             desc:'데미지 32 · 쿨타임 0.55초 · 사거리 100 · 빠르고 날카로운 근접 베기'},
-  bat:     {id:'bat',     name:'방망이',   emoji:'🏏', kind:'melee',    dmg:45, cd:0.25, range:105, shape:'club',
-            desc:'데미지 45 · 쿨타임 0.25초 · 사거리 105 · 클릭한 채 마우스를 아래로 내렸다가 다시 올리면(스윙) 그때 맞은 상대에게 타격'},
+  bat:     {id:'bat',     name:'방망이',   emoji:'🏏', kind:'melee',    dmg:45, cd:0.6, range:105, shape:'club',
+            desc:'데미지 45 · 쿨타임 0.6초 · 사거리 105 · 클릭한 채 마우스를 아래로 내렸다가 다시 올리면(스윙) 그때 맞은 상대에게 타격'},
   boomerang:{id:'boomerang',name:'부메랑', emoji:'🪃', kind:'boomerang',dmg:21, cd:0,  bulletSpeed:700, shape:'boomerang',
             desc:'데미지 20(돌아올 때도 20) · 쿨타임 없음 · 더 멀리 날아가는 부메랑 · 던진 부메랑이 돌아와 나에게 닿고 0.25초 뒤에 다시 던질 수 있음 · 사람은 관통하고, 발판·바닥·벽에 닿으면 즉시 귀환'},
   shuriken:{id:'shuriken',name:'표창',     emoji:'⭐', kind:'gun',      dmg:14, cd:0.48, bulletSpeed:1050, shape:'star',
@@ -5654,7 +5654,7 @@ function shuffle(arr){ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.
 /* ===== the version of this file =====
    Different BUILDS of one version meet and play together (room names online-v<ver>-<mode>-<map>-<slot>); different VERSIONS (the 0.x part) never do - the host refuses them (verNo) and the dispatcher answers busy.
    The build is only sent along with the join message and the lobby (for information); the corner of the screen shows it. */
-const GAME_BUILD='build 2026-10-31-v589';
+const GAME_BUILD='build 2026-10-31-v590';
 const GAME_VERSION='0.9', GAME_VERSION_NAME='은하 제국의 황혼';   // 게임 버전 이름: versions.json의 title과 같게 (빌드마다 바꾸지 않음)
 /* version (the 0.x part) vs build: different BUILDS of one version meet and play together, different VERSIONS never do (rooms, quick match, ranked, friend invites, dispatcher).
    Builds before 470 do not send a version, so it is read from the build number (0.9 started at build 458). */
@@ -7775,6 +7775,7 @@ function startPractice(cfg){
     input:{left:false,right:false,jump:false,angle:0,shoot:false,dash:false}, lastShot:0, lastDash:-9999, lastTeleport:-9999, lastSeen:Date.now(),
     weapon:cfg.wid, weaponChosen:true, pick:cfg.wid};
   if(cfg.oppKind!=='none') for(let i=0;i<cfg.oppCount;i++) addPracticeOpponent(cfg.oppKind, cfg.botLevel);
+  if(cfg.oppKind==='bot') try{ botGraph(); }catch(e){}      // the bots' path graph takes up to ~0.65 s to build: do it here, not in the first match tick
   started=true;
   beginGame();                                                  // the normal start: HUD on, loop running (practiceMode skips the match timer)
   const me=players[myId]; me.lastUlt=-9999; me.lastTeleport=-9999; me.lastDash=-9999; me.lastSkill=-9999;     // everything ready from the first second
