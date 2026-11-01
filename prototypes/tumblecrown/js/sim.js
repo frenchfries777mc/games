@@ -127,7 +127,7 @@ function hurtProxy(G, e, dmg, p, o) {
 }
 // 체력이 다하면 쓰러져요: 15초 뒤에 우리 팀 진지에서 다시 일어나요
 export function koPlayer(G, p, src) {
-  p.hp = 0; p.dead = true; p.down = false; p.respT = D.RESP_T + (G.pvp && G.fl && D.pushTime(G.fl.filter(f => f.own === 1 - p.team).length, G.fl.length)); p.roll = 0; p.hvT = p.pbT = 0; p.block = p.taunt = 0; p.burn = 0; p.deaths++;
+  p.hp = 0; p.dead = true; p.down = false; p.respT = D.RESP_T + (G.pvp && G.fl && D.pushTime(G.fl.filter(f => f.own === 1 - p.team).length, G.fl.length, G.mode)); p.roll = 0; p.hvT = p.pbT = 0; p.block = p.taunt = 0; p.burn = 0; p.deaths++;
   const k = src && src.id && src.id !== p.id ? G.players.find(q => q.id === src.id) : null; if (k && k.team !== p.team) { k.kills++; if (G.pvp) { if (k.lastKillT != null && G.t - k.lastKillT <= 8) for (const c of ['s0', 's1', 's2']) k.cd[c] *= 0.5; k.mkN = k.lastKillT != null && G.t - k.lastKillT <= 8 ? (k.mkN || 1) + 1 : 1; if (k.mkN >= 2) ev(G, 'multi', { id: k.id, n: k.mkN }); k.lastKillT = G.t; } }
   if (G.pvp && p.hitBy) { for (const [id, t] of Object.entries(p.hitBy)) { const q = G.players.find(x => x.id === id); if (q && q.team !== p.team && (!k || q.id !== k.id) && G.t - t <= 10) q.assists = (q.assists | 0) + 1; } p.hitBy = null; }   // 쓰러뜨리기 10초 안에 때린 다른 상대에게 도움 1   // 8초 안에 연속으로 쓰러뜨리면 기술 대기가 절반으로 줄어요
   G.stats.downs++; ev(G, 'ko', { id: p.id, by: k ? k.id : null, x: p.x, z: p.z });
