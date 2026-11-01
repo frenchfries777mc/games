@@ -460,7 +460,7 @@ try{if(sessionStorage.getItem('ce_noIntro')){sessionStorage.removeItem('ce_noInt
 sting();})();</script>
 <div id="app">
  <div id="lobby" class="screen">
-  <canvas id="lobbyBg"></canvas><canvas id="lobbyWar"></canvas><div id="cpTag">© 2026 Frenchfries777 · <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.ko" target="_blank" rel="noopener">CC BY-NC-ND 4.0</a></div><div id="verTag">v0.6 · build 139</div>
+  <canvas id="lobbyBg"></canvas><canvas id="lobbyWar"></canvas><div id="cpTag">© 2026 Frenchfries777 · <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.ko" target="_blank" rel="noopener">CC BY-NC-ND 4.0</a></div><div id="verTag">v0.6 · build 140</div>
   <header class="brand"><h1>Crown Envoy</h1><div class="sub"><i></i>DIPLOMACY · WAR · EMPIRE<i></i></div></header>
   <div id="lobbyRight">
    <div id="lobbyHome" class="modes">
@@ -7736,6 +7736,42 @@ function hook(){if(typeof UI==='undefined'||!UI.handleView||!UI.showOver||UI.sho
 if(!hook()){const t=setInterval(()=>{if(hook())clearInterval(t);},300);}
 setInterval(()=>{paintBtn();try{paint();}catch(e){}let u=null;try{u=window.CEAuth&&CEAuth.user();}catch(e){}const id=u&&u.id||null;if(id!==lastUid){lastUid=id;if(id)syncStars(false);}},1500);
 window.CETurnRep={onView,paint,_snap:()=>snap};window.CEGameStats=()=>tot;
+})();
+</script>
+<script>
+/* 이모지 로고 (오너 11-01): EMOJI_LOGO에 있는 이모지는 화면의 글자와 지도 캔버스에서 emoji/<이름>.svg 그림으로 보인다.
+   글자는 요소 안에 숨겨 두어 textContent는 그대로다. 채팅(.chatbox)과 data-noemo 요소는 진짜 이모지를 그대로 둔다. 로고를 더하려면 아래 목록에 한 줄과 svg 파일을 더한다. */
+(function(){
+const EMOJI_LOGO={"🏆": "trophy", "🕊": "dove", "🛡": "shield", "⚔": "swords", "👑": "crown", "🎯": "target", "⏩": "ffwd", "🏛": "temple", "🌐": "globe", "🪵": "wood", "🚩": "flag", "👥": "group", "🚢": "ship", "🚫": "ban", "📜": "scroll", "💰": "coin", "⚓": "anchor", "⚙": "gear", "✝": "cross", "⚠": "warn", "💍": "ring", "✋": "hand", "🎮": "gamepad", "🤺": "duel", "📊": "chart", "🎖": "medal", "🔒": "lock", "☠": "skull", "⭐": "star", "🪖": "helmet", "🔨": "hammer", "👁": "eye", "💸": "moneywing", "📖": "book", "🎌": "flags", "🎁": "gift", "📰": "news", "🏕": "tent", "🏭": "factory", "🖌": "brush", "🧽": "sponge", "💾": "floppy", "⏸": "pause", "🎬": "clapper", "🎪": "fair", "🏴‍☠": "piratef", "🏦": "bank", "❓": "question", "🖼": "pic", "🪪": "idcard", "✉": "letter", "❗": "exclaim", "🏙": "city", "📡": "dish", "🗳": "ballot", "❔": "unknown", "🏗": "build", "🗡": "dagger", "🔄": "reversal", "🔍": "search", "🔥": "fire", "🏰": "castle", "🏅": "medal", "🕵": "spy", "🍖": "meat", "🌾": "wheat", "🌶": "pepper", "📚": "books", "🚜": "tractor", "🦠": "germ", "🐎": "horse", "🐴": "horse", "🏪": "shop", "⚒": "hammers", "🪑": "chair", "🥓": "bacon", "🍞": "bread", "🧴": "bottle", "🏯": "pagoda", "⛩": "gate", "🌿": "herb", "🏟": "stadium", "🥁": "drum", "🐂": "ox", "💠": "diamond", "🏺": "vase", "🐪": "camel", "🧭": "compass", "🚂": "train", "🚨": "siren", "☪": "crescent", "☸": "wheel", "⚛": "atom", "⛪": "church", "🦅": "eagle", "🐺": "wolf", "🦁": "lion", "🌹": "rose", "🐻": "bear", "🪦": "grave", "☮": "peace", "♛": "queen", "🛒": "cart", "🤖": "robot", "⏳": "hourglass", "💔": "broken", "✊": "fist", "🙏": "pray", "😀": "smile", "⬇": "arrowdown", "🗺": "map", "🤝": "handshake", "🗑": "trash", "👍": "like", "📍": "pin", "👤": "person", "📋": "list", "🧹": "broom", "✏": "pencil", "🧱": "brick", "🎓": "grad", "🔁": "repeat", "✨": "sparkle", "🔫": "gun", "🎉": "party", "🎭": "mask", "💬": "chat", "⚖": "scale", "✅": "okcheck", "🏴": "blackflag", "💧": "drop", "🛠": "tools", "💀": "skull", "🪙": "coin"};
+const EMO_V='1';
+const keys=Object.keys(EMOJI_LOGO).sort((a,b)=>b.length-a.length),SRC='('+keys.join('|')+')\uFE0F?';
+const re=new RegExp(SRC,'g'),reT=new RegExp(SRC);
+const SKIP={SCRIPT:1,STYLE:1,TEXTAREA:1,INPUT:1,OPTION:1,TITLE:1,CANVAS:1,NOSCRIPT:1,SELECT:1};
+let on=false;
+function css(){const names=Array.from(new Set(Object.values(EMOJI_LOGO)));const st=document.createElement('style');st.id='emoLogoCss';
+  st.textContent='.emoL{display:inline-block;flex:none;width:1.3em;height:1.3em;margin:-0.1em 0;vertical-align:-0.3em;overflow:hidden;text-indent:-9999px;white-space:nowrap;background:center/contain no-repeat;font-size:inherit}'+names.map(n=>'.emoL.e-'+n+'{background-image:url(emoji/'+n+'.svg?v='+EMO_V+')}').join('');document.head.appendChild(st);}
+function blocked(el){for(let e=el;e;e=e.parentElement){if(SKIP[e.tagName]||(e.classList&&(e.classList.contains('emoL')||e.classList.contains('chatbox')))||(e.hasAttribute&&(e.hasAttribute('data-noemo')||e.isContentEditable===true)))return true;}return false;}
+function fixText(t){const s=t.nodeValue;if(!s||!reT.test(s))return;if(blocked(t.parentElement))return;
+  const frag=document.createDocumentFragment();let last=0,m;re.lastIndex=0;
+  while((m=re.exec(s))){if(m.index>last)frag.appendChild(document.createTextNode(s.slice(last,m.index)));const sp=document.createElement('span');sp.className='emoL e-'+EMOJI_LOGO[m[1]];sp.textContent=m[0];frag.appendChild(sp);last=m.index+m[0].length;}
+  re.lastIndex=0;if(last<s.length)frag.appendChild(document.createTextNode(s.slice(last)));t.parentNode.replaceChild(frag,t);}
+function scan(root){if(root.nodeType===3){fixText(root);return;}if(root.nodeType!==1&&root.nodeType!==11)return;if(root.nodeType===1&&blocked(root))return;
+  const w=document.createTreeWalker(root,NodeFilter.SHOW_TEXT,null),list=[];let n;while((n=w.nextNode()))list.push(n);for(const t of list)fixText(t);}
+function start(){if(on||!document.body)return;on=true;css();scan(document.body);
+  new MutationObserver(ms=>{for(const m of ms){if(m.type==='characterData')fixText(m.target);else for(const n of m.addedNodes)scan(n);}}).observe(document.body,{childList:true,subtree:true,characterData:true});}
+if(document.body)start();else document.addEventListener('DOMContentLoaded',start);
+/* 지도 캔버스: fillText/strokeText 안의 이모지를 그림으로 바꿔 그린다 (그림이 아직 안 왔으면 그냥 이모지) */
+const imgs={};
+function img(n){let e=imgs[n];if(!e){e=imgs[n]={im:new Image(),ok:false};e.im.onload=()=>{e.ok=true;};e.im.src='emoji/'+n+'.svg?v='+EMO_V;}return e.ok?e.im:null;}
+const P=CanvasRenderingContext2D.prototype,oF=P.fillText,oS=P.strokeText;
+function parts(t){const out=[];let last=0,m;re.lastIndex=0;while((m=re.exec(t))){if(m.index>last)out.push({t:t.slice(last,m.index)});out.push({e:EMOJI_LOGO[m[1]],t:m[0]});last=m.index+m[0].length;}re.lastIndex=0;if(last<t.length)out.push({t:t.slice(last)});return out;}
+function mixed(c,stroke,t,x,y,orig){const px=parseFloat(/([\d.]+)px/.exec(c.font||'')||[0,12])||12,sz=px*1.15;const ps=parts(t);
+  for(const p of ps){if(p.e){p.im=img(p.e);if(!p.im)return orig.call(c,t,x,y);p.w=sz;}else p.w=c.measureText(p.t).width;}
+  const tot=ps.reduce((s,p)=>s+p.w,0),al=c.textAlign;let cx=(al==='center')?x-tot/2:(al==='right'||al==='end')?x-tot:x;
+  const bl=c.textBaseline,iy=bl==='middle'?y-sz/2:(bl==='top'||bl==='hanging')?y:y-sz*0.82;
+  c.textAlign='left';try{for(const p of ps){if(p.e){if(!stroke)c.drawImage(p.im,cx,iy,sz,sz);}else orig.call(c,p.t,cx,y);cx+=p.w;}}finally{c.textAlign=al;}}
+P.fillText=function(t,x,y,w){if(typeof t==='string'&&reT.test(t))return mixed(this,false,t,x,y,oF);return oF.apply(this,arguments);};
+P.strokeText=function(t,x,y,w){if(typeof t==='string'&&reT.test(t))return mixed(this,true,t,x,y,oS);return oS.apply(this,arguments);};
 })();
 </script>
 <script src="https://frenchfries777mc.github.io/games/ff-profile.js"></script>
