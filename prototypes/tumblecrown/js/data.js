@@ -3,7 +3,7 @@
 
 import { T } from './tr.js';
 
-export const VERSION = 'v0.2', BUILD = 264;
+export const VERSION = 'v0.2', BUILD = 265;
 
 export const ROLES = {
   knight: {
@@ -769,7 +769,7 @@ export function charRankFor(pts) { let cur = CHAR_RANKS[0]; for (const r of CHAR
 export const MASTERY_PT = { kill: 10, win: 20, assist: 5, match: 5 };
 // 마스터리 배율: 5vs5 한 판을 4~5판 하면 계급이 한 칸(예: 플래티넘 I→II) 오르게 맞춰요 (MASTERY_BASE). 모드별 배율은 5vs5 대비 한 판이 걸리는 시간이에요 (봇 시험 기준: 블리츠 0.75, 듀얼 0.5, 하이퍼 1)
 export const MASTERY_BASE = 1;
-export const MODE_MASTERY = { rank: 1, hyper: 1, normal: 1, quick: 0.75, duel: 0.5 };   // 한 판에 쓰러뜨림 10점, 도움 5점, 승리 20점, 완주 5점 (+ 연승 보너스)
+export const MODE_MASTERY = { rank: 1, hyper: 1, normal: 1, quick: 0.75, duel: 1 };   // 한 판에 쓰러뜨림 10점, 도움 5점, 승리 20점, 완주 5점 (+ 연승 보너스)
 export const STREAK_BONUS = [[10, 20], [7, 15], [5, 10], [3, 5]];   // 3연승 5, 5연승 10, 7연승 15, 10연승 20
 export function streakBonusFor(n) { for (const [a, b] of STREAK_BONUS) if (n >= a) return b; return 0; }
 export function roleLevel(xp) { return Math.min(10, 1 + Math.floor(Math.sqrt((xp || 0) / 25))); }
