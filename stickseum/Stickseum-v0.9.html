@@ -5654,7 +5654,7 @@ function shuffle(arr){ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.
 /* ===== the version of this file =====
    Different BUILDS of one version meet and play together (room names online-v<ver>-<mode>-<map>-<slot>); different VERSIONS (the 0.x part) never do - the host refuses them (verNo) and the dispatcher answers busy.
    The build is only sent along with the join message and the lobby (for information); the corner of the screen shows it. */
-const GAME_BUILD='build 2026-10-31-v592';
+const GAME_BUILD='build 2026-10-31-v593';
 const GAME_VERSION='0.9', GAME_VERSION_NAME='은하 제국의 황혼';   // 게임 버전 이름: versions.json의 title과 같게 (빌드마다 바꾸지 않음)
 /* version (the 0.x part) vs build: different BUILDS of one version meet and play together, different VERSIONS never do (rooms, quick match, ranked, friend invites, dispatcher).
    Builds before 470 do not send a version, so it is read from the build number (0.9 started at build 458). */
@@ -16529,6 +16529,7 @@ function closeDuelPickScreen(map){
   document.getElementById('lobby').style.display='none';
   document.getElementById('hud').style.display='block';
   applyDuelWeapons(map);
+  if(gameMode==='duel'){ setTimeout(()=>{ try{ entranceShow(); }catch(e){ console.error('[entrance]', e); } }, 450); }   // round 2 and later: the character cards show again
 }
 function finishDuelRepick(){
   const map={}, clock=performance.now()/1000;
@@ -18661,6 +18662,11 @@ function luxFx(b, fx, swing, now, sp){
   }
 }
 function drawProjectile(b){
+  if(b.wid==='pistol' && b.big){      // 제임스 6th shot: pulsing red halo and a spark trail so it is easy to spot
+    const k=0.5+0.5*Math.sin(performance.now()/60), g=ctx.createRadialGradient(b.x,b.y,2,b.x,b.y,34+k*8);
+    ctx.save(); ctx.globalCompositeOperation='lighter'; g.addColorStop(0,'rgba(255,90,70,0.65)'); g.addColorStop(1,'rgba(255,45,45,0)'); ctx.fillStyle=g; ctx.beginPath(); ctx.arc(b.x,b.y,42,0,7); ctx.fill(); ctx.restore();
+    if(Math.random()<0.7){ const ua=Math.atan2(b.vy||0,b.vx||0)+Math.PI+RND(-0.5,0.5), us=RND(40,140); addP({x:b.x+RND(-4,4),y:b.y+RND(-4,4),vx:Math.cos(ua)*us,vy:Math.sin(ua)*us,life:RND(.25,.5),size:RND(2,4),color:Math.random()<0.5?'#ff5a46':'#ffd0c8',glow:1}); }
+  }
   AURA=gmOwner(b.owner) || ((b.sk && COSMETICS[b.sk] && COSMETICS[b.sk].lux>=4)?1:0);
   const cp=b.sk?conceptOfSkin(b.sk):'';
   if(AURA===1 && Math.random()<0.6){ const nS=performance.now()/1000, ua=Math.atan2(b.vy||0,b.vx||0)+Math.PI+RND(-0.6,0.6), us=RND(30,160); AURA_SPAWN=1; addP({x:b.x+RND(-4,4),y:b.y+RND(-4,4),vx:Math.cos(ua)*us,vy:Math.sin(ua)*us,life:RND(.3,.6),size:RND(1.6,3.4),color:auroraHex(nS*0.9,Math.floor(RND(0,5))),shape:Math.random()<0.5?'streak':'dot',drag:2}); AURA_SPAWN=false; }
@@ -18865,6 +18871,11 @@ function drawProjectileBase(b){
       ctx.fillStyle='#e9d5ff'; ctx.beginPath(); ctx.arc(0,0,2.2,0,7); ctx.fill();
       break;
     default:
+      if(b.wid==='pistol' && b.big){      // 제임스 6th shot: a big red bullet with a hot white core
+        const r=BULLET_R*2.1; ctx.beginPath(); ctx.arc(0,0,r,0,7); ctx.shadowColor='#ff2d2d'; ctx.shadowBlur=22; ctx.fill(); ctx.shadowBlur=0;
+        ctx.fillStyle='#ffb3a8'; ctx.beginPath(); ctx.arc(0,0,r*0.55,0,7); ctx.fill(); ctx.fillStyle='#fff'; ctx.beginPath(); ctx.arc(-r*0.1,0,r*0.25,0,7); ctx.fill();
+        ctx.strokeStyle='#fff'; ctx.lineWidth=1.6; ctx.beginPath(); ctx.arc(0,0,r+1,0,7); ctx.stroke(); break;
+      }
       ctx.beginPath(); ctx.arc(0,0,BULLET_R,0,7);
       ctx.shadowColor=b.color; ctx.shadowBlur=8; ctx.fill(); ctx.shadowBlur=0;
   }
