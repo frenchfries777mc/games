@@ -213,12 +213,10 @@ function makeFigure(o) {
     const col = mesh(geo('rcol2', () => new THREE.TorusGeometry(0.5, 0.1, 5, 14)), M(0x6a2a10), 0, 2.28, 0, body); col.rotation.x = Math.PI / 2;
     for (const [ar, sx] of [[armR, 1], [armL, -1]]) { const cf = cyl(0.3, 0.42, 0.7, 8, c2, 0, -0.78, 0, ar); cyl(0.43, 0.43, 0.08, 8, M(0x6a2a10), 0, -1.12, 0, ar); }
     box(1.3, 0.2, 0.2, M(0x6a2a10), 0, 1.2, 0.0, body).visible = false;
-    const sh = new THREE.Group(); shG = sh; sh.position.set(-0.25, -0.55, 0.55); armL.add(sh); sh.rotation.x = 0.2; sh.scale.setScalar(1.1);
+    const sh = new THREE.Group(); shG = sh; sh.position.set(0.4, -0.5, 0.85); armL.add(sh); sh.rotation.x = 0.12; sh.scale.setScalar(0.8);
     const wh = M(0xf4f2ee), rd = M(0xc42a2a);
-    box(1.1, 1.4, 0.14, wh, 0, 0, 0, sh); const c = cone(0.78, 0.7, 4, wh, 0, -0.95, 0, sh); c.rotation.set(Math.PI, Math.PI / 4, 0);
-    box(0.22, 1.4, 0.141, rd, 0, 0, 0, sh); box(0.7, 0.2, 0.141, rd, 0, 0.2, 0, sh);
-    const cr = cone(0.55, 0.7, 4, wh, 0, -0.95, 0, sh); cr.visible = false;
-    box(0.22, 0.7, 0.141, rd, 0, -0.9, 0, sh).visible = false;
+    box(1.1, 1.9, 0.14, wh, 0, -0.2, 0, sh);
+    box(0.24, 1.9, 0.141, rd, 0, -0.2, 0, sh); box(0.74, 0.24, 0.141, rd, 0, 0.1, 0, sh);
   }
   // 활: 왼손에 쥐고, 팔을 앞으로 뻗으면 위아래로 선 활이 조준 방향으로 휘어요 (시위는 몸 쪽)
   let bowS = null, xbS = null, gnS = null, axeG = null, stG = null, vAxe = null, vAxeM = null;
