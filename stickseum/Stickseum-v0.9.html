@@ -1055,7 +1055,7 @@ sting();})();</script>
 <div id="achievementToastHost" style="position:fixed; top:16px; right:16px; z-index:60; display:flex; flex-direction:column; gap:8px; pointer-events:none;"></div>
 <div id="lobby">
   <div id="lobbyBg"></div>
-  <div id="profileBadge"><canvas id="profileBadgeCanvas" width="38" height="38"></canvas></div>
+  <div id="profileBadge"><img src="emoji/ui-profile.svg" alt="" style="width:100%;height:100%;pointer-events:none"></div>
   <button id="feedbackBadge" title="피드백" style="position:fixed; top:16px; left:62px; z-index:6; display:none; width:38px; height:38px; border-radius:50%; border:none; background:rgba(20,22,28,0.85); color:#fff; font-size:17px; cursor:pointer; align-items:center; justify-content:center;">💬</button>
   <button id="settingsBadge" style="position:fixed; top:16px; left:108px; z-index:6; display:none; width:38px; height:38px; border-radius:50%; border:none; background:rgba(20,22,28,0.85); color:#fff; font-size:17px; cursor:pointer; align-items:center; justify-content:center;"><img src="emoji/ui-settings.svg" alt="" style="width:30px;height:30px;pointer-events:none"></button>
 
@@ -5655,7 +5655,7 @@ function shuffle(arr){ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.
 /* ===== the version of this file =====
    Different BUILDS of one version meet and play together (room names online-v<ver>-<mode>-<map>-<slot>); different VERSIONS (the 0.x part) never do - the host refuses them (verNo) and the dispatcher answers busy.
    The build is only sent along with the join message and the lobby (for information); the corner of the screen shows it. */
-const GAME_BUILD='build 2026-10-31-v597';
+const GAME_BUILD='build 2026-10-31-v598';
 const GAME_VERSION='0.9', GAME_VERSION_NAME='은하 제국의 황혼';   // 게임 버전 이름: versions.json의 title과 같게 (빌드마다 바꾸지 않음)
 /* version (the 0.x part) vs build: different BUILDS of one version meet and play together, different VERSIONS never do (rooms, quick match, ranked, friend invites, dispatcher).
    Builds before 470 do not send a version, so it is read from the build number (0.9 started at build 458). */
@@ -9975,6 +9975,14 @@ async function elimLeave(){
   leaveRoom();
 }
 document.getElementById('elimLeaveBtn').onclick=elimLeave;
+/* a private room (no rewards) can be left at any time with a small 나가기 button in the corner of the match (the host gets the usual "the match ends for everybody" question) */
+(function(){
+  const b=document.createElement('button'); b.id='privLeaveBtn'; b.className='btn-secondary'; b.textContent='나가기';
+  b.style.cssText='display:none; position:fixed; top:12px; right:12px; z-index:7; padding:7px 14px; font-size:13px; pointer-events:auto; opacity:.85;';
+  b.onclick=()=>{ elimLeave(); };
+  document.body.appendChild(b);
+  setInterval(()=>{ const x=document.getElementById('elimExitBtn'); b.style.display = (started && currentMode==='private' && !practiceMode && !matchEnded && !spectatorMode && !(x && x.style.display!=='none')) ? '' : 'none'; }, 400);
+})();
 document.getElementById('elimExitBtn').onclick=elimLeave;
 document.getElementById('elimSpecBtn').onclick=()=>{ document.getElementById('elimOverlay').style.display='none'; if(elimState) elimState.spec=true; };
 function resetFlowState(){
