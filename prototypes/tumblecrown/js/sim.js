@@ -140,14 +140,25 @@ function initOrder(G) {
   const p = G.fl.map(f => Math.max(0, Math.min(1, ((f.x - h0.x) * ax + (f.z - h0.z) * az) / l2)));
   G.fq = [p, p.map(v => 1 - v)];
 }
+// 깃발 종류 나누기 (한 번만): 중앙 = 두 진지의 한가운데에 가장 가까운 깃발, 나머지(진지 둘 빼고)는 측면
+function flagKinds(G) {
+  if (G.fseq) return G.fseq;
+  const h0 = G.fl[G.home[0]], h1 = G.fl[G.home[1]], mx = (h0.x + h1.x) / 2, mz = (h0.z + h1.z) / 2;
+  const rest = G.fl.map((f, i) => i).filter(i => i !== G.home[0] && i !== G.home[1]);
+  rest.sort((a, b) => Math.hypot(G.fl[a].x - mx, G.fl[a].z - mz) - Math.hypot(G.fl[b].x - mx, G.fl[b].z - mz));
+  const ctr = rest[0], sides = rest.slice(1);
+  const near = [G.home[0], G.home[1]].map(h => sides.slice().sort((a, b) => Math.hypot(G.fl[a].x - G.fl[h].x, G.fl[a].z - G.fl[h].z) - Math.hypot(G.fl[b].x - G.fl[h].x, G.fl[b].z - G.fl[h].z)).slice(0, 2));
+  return (G.fseq = { ctr, sides, near });
+}
+// 순차 점령 (오너 규칙): 우리 진지를 가진 채로, 우리 쪽 측면 2개와 중앙은 처음부터 열려요 (측면이 2개뿐인 지도는 측면 모두).
+// 중앙을 점령하면 상대 쪽 측면 2개가 열리고, 그 둘을 점령하면 상대 진지를 점령할 수 있어요 (측면이 2개뿐인 지도는 나머지 깃발을 모두 점령한 뒤에)
 export function flagLocked(G, i, tm) {
-  if (!G.fl || !G.home || !G.fq || G.fl[i].own === tm || i === G.home[tm]) return false;
+  if (!G.fl || !G.home || G.fl[i].own === tm || i === G.home[tm]) return false;
   if (G.fl[G.home[tm]].own !== tm) return true;   // 우리 진지 깃발을 뺏겼으면 먼저 되찾아야 해요
-  const q = G.fq[tm];
-  const mid = j => q[j] >= 0.4 && q[j] <= 0.6;
-  if (q[i] > 0.9) return G.fl.some((g, j) => j !== i && g.own !== tm);   // 상대 진지: 다른 깃발(중앙·측면)을 모두 점령한 뒤에
-  if (mid(i)) return false;   // 중앙: 진지를 지키고 있으면 바로 점령할 수 있어요
-  return G.fl.some((g, j) => j !== i && mid(j) && g.own !== tm);   // 측면(가까운·먼 쪽 모두): 중앙을 점령한 뒤에
+  const K = flagKinds(G), four = K.sides.length === 4;
+  if (i === G.home[1 - tm]) return four ? K.sides.some(j => !K.near[tm].includes(j) && G.fl[j].own !== tm) : G.fl.some((g, j) => j !== i && g.own !== tm);   // 상대 진지
+  if (i === K.ctr || !four || K.near[tm].includes(i)) return false;   // 중앙, 우리 쪽 측면: 바로
+  return G.fl[K.ctr].own !== tm;   // 상대 쪽 측면: 중앙을 점령한 뒤에
 }
 // 깃발: 둘레 안에 더 많은 팀이 7초 동안 서 있으면 그 팀 것이 돼요 (같은 수면 아무도 못 세요, 아무도 없으면 천천히 되돌아가요)
 function flagsStep(G, dt) {
