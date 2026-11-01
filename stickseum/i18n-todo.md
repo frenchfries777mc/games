@@ -58,3 +58,5 @@ patchnotes.json | v583 title | 은하 제국의 황혼 | build 583 | 2026-11-01
 patchnotes.json | v583 items[0] | 캐릭터 로고 33종 적용 (1차): 연습 모드 캐릭터 선택, 도감, 전적 통계, 숙련도 보상 창, 화면의 캐릭터 이름, 릴레이 다음 캐릭터 표시 | build 583 | 2026-11-01
 patchnotes.json | v584 title | 은하 제국의 황혼 | build 584 | 2026-11-01
 patchnotes.json | v584 items[0] | 화면 속 이모지 로고 1차 30종 적용: ⚔ 🚫 👑 🧪 🔒 🎁 🏅 🪙 ⚠ 🔴 🌊 🏰 👥 🎲 👍 ✔ ✅ 💧 🧊 👁 🎓 🛠 🔍 💬 🏆 💨 🐲 ⭐ 🪪 🔥 (이모트는 그대로) | build 584 | 2026-11-01
+patchnotes.json | v585 title | 은하 제국의 황혼 | build 585 | 2026-11-01
+patchnotes.json | v585 items[0] | 캐릭터 로고 적용 (프로필 카드, 숙련도·랭킹 목록, 자주 쓰는 캐릭터, 캐릭터 선택·금지 표시, 라운드 결과, 등장 카드, MVP 투표) | build 585 | 2026-11-01
