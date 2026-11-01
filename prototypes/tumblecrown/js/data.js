@@ -3,16 +3,16 @@
 
 import { T } from './tr.js';
 
-export const VERSION = 'v0.2', BUILD = 263;
+export const VERSION = 'v0.2', BUILD = 264;
 
 export const ROLES = {
   knight: {
-    name: T('기사'), type: T('근접 딜러'), color: '#3f6fd0', hp: 345, speed: 6.6,
-    atk: { kind: 'melee', range: 2.5, arc: 1.9, dmg: 24, cd: 0.45 },
+    name: T('기사'), type: T('근접 딜러'), color: '#3f6fd0', hp: 360, speed: 6.8,
+    atk: { kind: 'melee', range: 2.65, arc: 1.9, dmg: 27, cd: 0.45 },
     skills: [
       { id: 'block', name: T('막기'), key: 'Q', cd: 5, desc: T('1.2초 동안 방패를 들어 앞에서 오는 피해를 70% 줄여요.') },
-      { id: 'dash', name: T('돌진'), key: 'E', cd: 5, desc: T('앞으로 돌진하며 부딪힌 상대에게 30 피해를 주고 1.5초 동안 느리게 해요.') },
-      { id: 'shieldbash', name: T('방패 강타'), key: 'R', cd: 10, desc: T('방패를 앞세워 짧게 파고들며 28 피해를 주고 상대를 1.1초 기절시켜요.') }
+      { id: 'dash', name: T('돌진'), key: 'E', cd: 5, desc: T('앞으로 돌진하며 부딪힌 상대에게 40 피해를 주고 1.5초 동안 느리게 해요.') },
+      { id: 'shieldbash', name: T('방패 강타'), key: 'R', cd: 10, desc: T('방패를 앞세워 짧게 파고들며 36 피해를 주고 상대를 1.1초 기절시켜요.') }
     ],
     st: [3, 3, 2, 1], atkTxt: T('칼 베기 (이어 치면 세 번째에 내려찍는 강타)'),
     role: T('튼튼하게 버티며 공격·공격·강타로 몰아붙여요.')
@@ -768,7 +768,7 @@ export const achImg = (id, h = 40, on = true) => '<img src="ach/' + id + '.svg" 
 export function charRankFor(pts) { let cur = CHAR_RANKS[0]; for (const r of CHAR_RANKS) if ((pts || 0) >= r.min) cur = r; return cur; }
 export const MASTERY_PT = { kill: 10, win: 20, assist: 5, match: 5 };
 // 마스터리 배율: 5vs5 한 판을 4~5판 하면 계급이 한 칸(예: 플래티넘 I→II) 오르게 맞춰요 (MASTERY_BASE). 모드별 배율은 5vs5 대비 한 판이 걸리는 시간이에요 (봇 시험 기준: 블리츠 0.75, 듀얼 0.5, 하이퍼 1)
-export const MASTERY_BASE = 0.75;
+export const MASTERY_BASE = 1;
 export const MODE_MASTERY = { rank: 1, hyper: 1, normal: 1, quick: 0.75, duel: 0.5 };   // 한 판에 쓰러뜨림 10점, 도움 5점, 승리 20점, 완주 5점 (+ 연승 보너스)
 export const STREAK_BONUS = [[10, 20], [7, 15], [5, 10], [3, 5]];   // 3연승 5, 5연승 10, 7연승 15, 10연승 20
 export function streakBonusFor(n) { for (const [a, b] of STREAK_BONUS) if (n >= a) return b; return 0; }
