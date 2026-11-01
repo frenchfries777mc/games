@@ -232,6 +232,8 @@ body:has(#introScr.run:not(.out)) #loading{ visibility:hidden; }
 body.crafting #recipes{ display:block; }
 #recipes h3{ margin:0 0 6px; font-size:15px; font-weight:400; color:var(--gold); }
 #recipes h3 small{ display:block; margin-top:3px; font-size:11px; color:var(--muted); }
+#rsearch{ display:block; width:100%; box-sizing:border-box; margin:0 0 8px; padding:6px 8px; font:inherit; font-size:13px; color:var(--text,#f4ecd6); background:rgba(0,0,0,.35); border:2px solid rgba(255,255,255,.18); border-radius:4px; outline:none; }
+#rsearch:focus{ border-color:var(--gold); }
 #recipes h4{ margin:12px 0 6px; font-size:12px; font-weight:400; color:var(--muted); }
 .rrow{ display:flex; align-items:center; gap:10px; padding:6px 8px; margin:0 0 6px; cursor:pointer; background:rgba(255,255,255,.04); box-shadow:0 0 0 2px var(--line); }
 .rrow:hover{ background:rgba(255,255,255,.1); }
@@ -395,12 +397,12 @@ window.bfIntro=function(){if(run)return;run=1;t0=Date.now();el.classList.add('ru
     <button class="btn" data-act="skins"><span class="arrow">▶</span>스킨 상점<span class="en">SKIN SHOP</span></button>
     <button class="btn" data-act="stats"><span class="arrow">▶</span>통계<span class="en">STATS</span></button>
     <button class="btn" data-act="settings"><span class="arrow">▶</span>설정<span class="en">SETTINGS</span></button>
-    <p class="foot">v0.5<br>build 147</p>
+    <p class="foot">v0.5<br>build 148</p>
   </nav>
 </div>
 
 <div id="craft" aria-label="제작"></div>
-<div id="recipes" class="pix"><h3>레시피<small>좌클릭: 재료 한 번 분량 채우기 · 우클릭 / Shift+클릭 / Space: 가진 재료로 최대한 한꺼번에 제작<br>금색 테두리는 지금 만들 수 있어요</small></h3><div id="rlist"></div></div>
+<div id="recipes" class="pix"><h3>레시피<small>좌클릭: 재료 한 번 분량 채우기 · 우클릭 / Shift+클릭 / Space: 가진 재료로 최대한 한꺼번에 제작<br>금색 테두리는 지금 만들 수 있어요</small></h3><input id="rsearch" type="search" placeholder="🔍 레시피 검색 (이름 · 재료)" autocomplete="off" spellcheck="false" maxlength="30"><div id="rlist"></div></div>
 <div id="chest" aria-label="보관함"></div>
 <div id="bagrow" aria-label="아이템 가방"></div>
 <div id="inv" aria-label="인벤토리"></div>
@@ -3835,6 +3837,7 @@ const HAND_OK=['paper','glue','bench','log','plank','sapling','thread','bed'];
 const needBench=r=>!r.st&&(r.bench||!(r.out&&r.out[0]&&HAND_OK.includes(r.out[0].id)));
 const BOOKS=[
   {id:'mach',name:'기계공학 입문',price:150,grp:['작업대 · 기계','자동화'],nm:['컨베이어 벨트','분류기','경비초소']},
+  {id:'rsig',name:'원격 신호',price:1200,grp:[],nm:['신호기']},
   {id:'sig',name:'신호와 회로',price:220,grp:['신호','신호기 부품'],nm:['회로장치']},
   {id:'cookb',name:'고급 요리집',price:90,grp:['고급 요리 (냄비 필요)'],nm:['냄비']},
   {id:'comp',name:'압축 연금술',price:180,grp:['강화·압축'],nm:['강화철판','강화구리판','강화금판']}
@@ -4085,13 +4088,21 @@ function resolveRecipe(r,real){
   }
   return {pat,miss,can:Object.keys(miss).length===0};
 }
+const recText=r=>{
+  if(r._tx!==undefined)return r._tx;
+  const a=[r.grp||'',recNameOf(r)];
+  for(const q of r.pat){if(!q)continue;if(q.any)for(const id of q.any)a.push(ITEMS[id]?ITEMS[id].name:'');else a.push(ITEMS[q.id]?ITEMS[q.id].name:'');}
+  return r._tx=a.join(' ').toLowerCase();
+};
 function renderRecipes(){
   const box=$('#recipes'),list=$('#rlist'),st=box.scrollTop;
+  const rq=(($('#rsearch')||{}).value||'').trim().toLowerCase();
   let html='',grp='';
   RECIPES.forEach((r,ri)=>{
     if(craftMode==='smelt'&&r.st!=='smelt')return;
     if(craftMode==='cook'&&r.st!=='cook')return;
     if(r.st&&craftMode!==r.st)return;   // 제련·요리 레시피는 용광로·화덕에서만 보여요
+    if(rq&&!rq.split(/\s+/).every(w=>recText(r).includes(w)))return;
     if(r.grp!==grp){grp=r.grp;html+=`<h4>${grp==='맨손'?'기본':grp}</h4>`;}
     const outId=typeof r.out==='function'?r.showId:r.out[0].id,outN=typeof r.out==='function'?1:r.out[0].n;
     const can=resolveRecipe(r).can,dim=!recipeOk(r);
@@ -4106,6 +4117,7 @@ function renderRecipes(){
     }
     html+=`<div class="rrow${can?' can':''}${dim?' dim':''}" data-ri="${ri}" title="${r.note||''}"><div class="rout"><img src="${iconURL(outId)}" alt=""><b>${outN>1?'×'+outN:''}</b></div><div class="rname">${r.name||ITEMS[outId].name}<small>${recipeWhere(r)}</small></div><div class="rpat">${cells}</div></div>`;
   });
+  if(rq&&!html)html='<h4>검색 결과가 없어요</h4>';
   list.innerHTML=html;box.scrollTop=st;
 }
 function fillRecipe(r){
@@ -4162,6 +4174,8 @@ function craftMaxAction(){
   if(craftMode==='armor'){armorAction();return;}
   craftMax(active||(hoverRI!=null?RECIPES[hoverRI]:null));
 }
+$('#rsearch').addEventListener('input',()=>{try{renderRecipes();}catch(e){}});
+$('#rsearch').addEventListener('keydown',e=>{e.stopPropagation();if(e.key==='Escape'){e.target.value='';renderRecipes();e.target.blur();}});
 $('#rlist').addEventListener('mouseover',e=>{const row=e.target.closest('.rrow');hoverRI=row?+row.dataset.ri:null;});
 $('#rlist').addEventListener('mouseleave',()=>{hoverRI=null;});
 $('#rlist').addEventListener('click',e=>{
