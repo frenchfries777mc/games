@@ -2,7 +2,7 @@
 // 화면 흐름, 조작, 멀티(친구 초대, PeerJS), 저장
 import { View } from './render.js';
 import { createGame, step, snapshot, chooseBless, carryOver, koPlayer, INTRO_T, HV_DELAY, wallClamp, setupRange, callBots } from './sim.js';
-import { useMode, RECALL_CD, pushTime, TEAMS, FLAG_T, FLAG_R, RESP_T, MODES, ROLES, ROLE_IDS, COLORS, BOT_NAMES, MAX_PLAYERS, BLESSINGS, CHAPTERS, CH, FOES, MAP, ACHIEVEMENTS, TALK, COSMETICS, WEEKLY, weekInfo, VERSION, BUILD, roleLevel, CHAR_RANKS, charRankFor, rankImg, roleImg, typeImg, typeFile, MASTERY_PT, streakBonusFor, COMBOS, DEEP, DEEP_I, TALK_X, ROLE_PUZ, flagShown, achImg } from './data.js';
+import { useMode, RECALL_CD, pushTime, TEAMS, FLAG_T, FLAG_R, RESP_T, MODES, ROLES, ROLE_IDS, COLORS, BOT_NAMES, MAX_PLAYERS, BLESSINGS, CHAPTERS, CH, FOES, MAP, ACHIEVEMENTS, TALK, COSMETICS, WEEKLY, weekInfo, VERSION, BUILD, roleLevel, CHAR_RANKS, charRankFor, rankImg, roleImg, typeImg, typeFile, MASTERY_PT, streakBonusFor, COMBOS, DEEP, DEEP_I, TALK_X, ROLE_PUZ, flagShown, achImg, itemImg } from './data.js';
 import { collide as mapCollide, areaAt, floorCell, MW, MH, CS, cw, useChapter, chapterIndex, SOPEN, openSecret, resetSecrets, hiddenCell, GOPEN, openGate, setDoors, DSTATE, PDOWN, dropPillar, LIFTH, liftOk, CUT } from './map.js';
 import * as SFX from './sfx.js';
 import * as MUS from './music.js';
@@ -230,7 +230,7 @@ function paintWard() {
   // 누르면 바로 사지 않고 미리보기만 해요. 사는 것과 입고 벗는 건 아래 버튼으로 해요
   const sel = S.wardSel && S.wardSel.tab === cur ? S.wardSel.id : null;
   let act = $('wardAct'); if (!act) { act = document.createElement('div'); act.id = 'wardAct'; act.style.cssText = 'display:flex;gap:8px;margin-top:10px;align-items:center'; $('wardBox').appendChild(act); }
-  $('wardGrid').innerHTML = COSMETICS[cur].items.map(it => { const own = ownCos(cur, it); return '<button data-i="' + it.id + '" class="' + ((on === it.id) ? 'on ' : '') + (own ? 'own ' : '') + (sel === it.id ? 'sel' : '') + '"' + (sel === it.id ? ' style="outline:2px solid #5ff0c0"' : '') + '><b>' + it.name + '</b><small>' + (on === it.id ? T('입는 중') : own ? T('보유') : it.rk ? T('{0}점부터 · 지금 직업', it.rk) : it.cost + ' tC') + '</small></button>'; }).join('');
+  $('wardGrid').innerHTML = COSMETICS[cur].items.map(it => { const own = ownCos(cur, it); return '<button data-i="' + it.id + '" class="' + ((on === it.id) ? 'on ' : '') + (own ? 'own ' : '') + (sel === it.id ? 'sel' : '') + '"' + (sel === it.id ? ' style="outline:2px solid #5ff0c0"' : '') + '>' + (it.id ? itemImg('cos-' + cur + '-' + it.id, 30) : '') + '<b>' + it.name + '</b><small>' + (on === it.id ? T('입는 중') : own ? T('보유') : it.rk ? T('{0}점부터 · 지금 직업', it.rk) : it.cost + ' tC') + '</small></button>'; }).join('');
   const it0 = sel != null ? COSMETICS[cur].items.find(x => x.id === sel) : null, key0 = it0 ? cur + ':' + it0.id : '', own0 = it0 && ownCos(cur, it0);
   act.innerHTML = it0 ? (own0 ? '<button class="btn gold" id="wardDo">' + ((SAVE.cos.on[cur] || '') === it0.id ? T('벗기') : T('입기')) + '</button>' : (it0.rk ? '<small>' + T('지금 직업의 마스터리 점수 {0}점이 되면 열려요', it0.rk) + '</small>' : '<button class="btn gold" id="wardDo">' + T('구매 {0} tC', it0.cost) + '</button>')) : '<small>' + T('아이템을 누르면 미리 볼 수 있어요') + '</small>';
   // 고른 아이템을 입혀 보여 줘요 (사거나 입기 전에는 저장하지 않아요)
@@ -381,7 +381,7 @@ S.botN = 0; S.botRoles = null; S.mapSel = Math.min(CHAPTERS.length - 1, (SAVE.ma
 $('ctlBtn').onclick = () => { SFX.play('click'); paintWepInfo(); show('sWeps'); };
 $('mapBtn').onclick = () => {
   SFX.play('click');
-  $('mapList').innerHTML = [-1].concat(CHAPTERS.map((c, i) => i)).map(i => `<button class="btn${i === S.mapSel ? ' sel' : ''}" data-m="${i}">${i < 0 ? T('무작위') : CHAPTERS[i].title}</button>`).join('');
+  $('mapList').innerHTML = [-1].concat(CHAPTERS.map((c, i) => i)).map(i => `<button class="btn${i === S.mapSel ? ' sel' : ''}" data-m="${i}">${i < 0 ? T('무작위') : itemImg('map-' + CHAPTERS[i].theme, 22) + CHAPTERS[i].title}</button>`).join('');
   $('mapWin').classList.add('on');
 };
 $('mapList').onclick = e => { const b = e.target.closest('[data-m]'); if (!b) return; SFX.play('click'); S.mapSel = +b.dataset.m; SAVE.mapSel = S.mapSel; save(); $('mapWin').classList.remove('on'); paintRoom(); };
