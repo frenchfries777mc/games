@@ -404,7 +404,7 @@ function paintRoom() {
 addEventListener('keydown', e => { if (S.scr !== 'sRoom' || (S.net !== 'solo' && S.ph !== 'pick')) return; const n = e.key === '0' ? 10 : +e.key; if (n >= 1 && n <= ROLE_IDS.length) { SAVE.role = ROLE_IDS[n - 1]; save(); pick(); } });
 // 사람 + 봇 목록 (봇은 남은 색과 직업을 받아요)
 function roster() {
-  const out = S.slots.map((s, i) => Object.assign({}, s, { team: i % 2 }));
+  const out = S.slots.filter(s => !(S.srv && S.mode === 'rank' && s.srv)).map((s, i) => Object.assign({}, s, { team: i % 2 }));   // 서버 방장이 여는 랭크전은 서버가 경기에 서지 않아요 (사람 열 명이 5대5)
   const nb = (S.net === 'solo' && !S.range) || (S.priv && S.net === 'host') ? Math.max(0, MAX_PLAYERS - out.length) : 0, br = S.botRoles || ROLE_IDS;
   for (let i = 0; i < nb; i++) out.push({ bot: true, name: BOT_NAMES[i % BOT_NAMES.length], role: br[i % br.length], col: 0, team: out.length % 2 });
   if (nb) balanceBots(out, S.botSeed);
@@ -548,7 +548,7 @@ function startHost(tries = 0, priv = false) {
 }
 // 서버 방장(?dedicated=1): 오라클 서버의 화면 없는 브라우저가 이 모드로 열어서 공개 방 하나를 대신 열어 둬요. 경기에서는 봇 한 자리로 서 있어요
 if (qs.get('dedicated') === '1') {
-  S.srv = true;
+  S.srv = true; { const m = qs.get('mode'); if (m && MODES[m]) S.mode = m; }   // &mode=rank 처럼 이 서버 방이 열 모드를 정해요
   window.__ffd = { open(n) { S.err = ''; startMatch(n); }, status() { return { live: S.net === 'host' && !!S.peer && !S.err, humans: S.slots.filter(s => !s.srv && !s.bot).length, started: !!S.G, ended: !!(S.snap && S.snap.ph === 'won'), err: S.err || '' }; } };
 }
 /* 온라인 대전 (Stickseum 방식): 방 이름 ff-tumblecrown-q1, q2... 를 차례로 만들어 보고, 이미 있으면 그 방에 들어가요. 가득 차거나 이미 시작했으면 다음 방으로 가요 */
@@ -564,7 +564,7 @@ function matchTry(n, gen) {
   const p = new Peer(PREFIX + MODES[S.mode || 'normal'].key + n, peerOpts()); S.peer = p;
   p.on('open', () => {
     if (S.mg !== gen || S.peer !== p) { matchGone(p); return; }
-    S.net = 'host'; S.pub = true; S.cap = MODES[S.mode || 'normal'].cap || PUB_CAP; S.ph = 'wait'; S.rdy = {}; S.code = ''; S.slots = [meSlot()]; homeMsg('');
+    S.net = 'host'; S.pub = true; S.cap = (MODES[S.mode || 'normal'].cap || PUB_CAP) + (S.srv && S.mode === 'rank' ? 1 : 0); S.ph = 'wait'; S.rdy = {}; S.code = ''; S.slots = [meSlot()]; homeMsg('');
     p.on('connection', c => { c.on('data', d => hostMsg(c, d)); c.on('close', () => dropConn(c)); c.on('error', () => dropConn(c)); });
     p.on('disconnected', () => { if (S.peer === p && !p.destroyed) setTimeout(() => { if (S.peer === p && !p.destroyed) p.reconnect(); }, 1000); });
     openRoom();
@@ -716,7 +716,7 @@ function beginGame(prevG) {
     const id = 's' + i, c = s.uid && s.uid !== UID ? S.conns[s.uid] : null;
     return { id, uid: s.uid, role: s.role, col: TEAMS[s.team].c, team: s.team, name: s.bot ? s.name : s.uid === UID ? myName() : s.name, bot: !!s.bot || !!s.srv, lv: 1, mp: s.bot || s.srv ? 0 : s.uid === UID ? mastOf(s.role).mp : c ? c._mp | 0 : 0, rl: s.bot || s.srv ? 0 : s.uid === UID ? mastOf(s.role).rl : c ? c._rl | 0 : 0, cos: s.uid === UID ? myCos() : c && c._cos || null };
   });
-  if (!prevG && !sl.some(s => s.uid === UID)) { $('roomMsg').textContent = T('내 직업을 먼저 골라 주세요.'); return; }
+  if (!prevG && !S.srv && !sl.some(s => s.uid === UID)) { $('roomMsg').textContent = T('내 직업을 먼저 골라 주세요.'); return; }
   if (prevG) sl.forEach((s, i) => { const q = prevG.players[i]; s.bot = q.bot; s.uid = q.uid; s.name = q.name; });
   S.lastSl = sl;
   if (S.chSel === DEEP_I && !prevG) { DEEP.floor = 1; DEEP.seed = (Math.random() * 1e6) | 0; DEEP.curses = []; }
@@ -727,7 +727,7 @@ function beginGame(prevG) {
   S.G.lite = !!S.lite; 
   S.G.players.forEach((p, i) => { p.uid = sl[i].uid; });
   if (prevG) carryOver(S.G, prevG);
-  S.me = sl.find(s => s.uid === UID).id;
+  { const mine = sl.find(s => s.uid === UID); S.me = mine ? mine.id : ''; }
   if (!solo) { for (const uid in S.conns) { const p = S.G.players.find(q => q.uid === uid); if (p) { S.conns[uid]._pid = p.id; S.conns[uid].send({ t: 'start', pid: p.id, ch: S.G.ch, dp: S.G.deep, wk: S.G.weekly, th: CH.theme, md: S.G.mode }); } } }
   if (S.G.humans > 1) unlock('friends');
   startClient();
