@@ -388,7 +388,7 @@ function paintRoom() {
   $('clsList').querySelectorAll('button').forEach(el => el.onclick = () => { SFX.play('click'); SAVE.role = el.dataset.c; save(); pick(); });
   $('clsInfo').innerHTML = '<h2>' + roleImg(mine.role, 34) + c.name + ' <small class="lv">Lv.' + roleLevel(SAVE.xp[mine.role]) + '</small></h2><p class="note">' + typeImg(c.type, 18) + c.type + '</p><p>' + c.role + '</p>' + roleXpBar(mine.role) + rankBar(mine.role) + BARS.map((n, k) => '<div class="bar"><span>' + n + '</span><u>' + '<i class="on"></i>'.repeat(c.st[k]) + '<i></i>'.repeat(5 - c.st[k]) + '</u></div>').join('') +
     '<h4>' + T('기본 공격') + '</h4><p>' + c.atkTxt + '</p>' + c.skills.map(s => '<h4>' + s.key + ' · ' + s.name + '</h4><p>' + s.desc + '</p>').join('');
-  const all = online ? S.slots : roster(), cap = online ? S.cap : pcap();
+  const srvSeat = online && S.slots.some(s => s.srv), all = (online ? S.slots : roster()).filter(s => !s.srv), cap = (online ? S.cap : pcap()) - (srvSeat ? 1 : 0);   // 서버 자리는 목록에 보이지 않아요
   $('slots').innerHTML = all.map((s, i) => (s.team = i % 2, '<div class="slot' + (s.uid === UID ? ' me' : '') + (s.aid && !s.bot ? ' pn' : '') + '"' + (s.aid && !s.bot ? ' data-aid="' + esc(s.aid) + '"' : '') + '><i style="background:' + hex(TEAMS[s.team == null ? 0 : s.team].c) + '"></i><b>' + esc(s.name) + '</b><small>' + (pickP ? (s.rd || (S.net === 'host' && S.rdy[s.uid]) ? '✔ ' + T('준비') + ' · ' : '') : '') + (wait ? '' : roleImg(s.role, 14) + ROLES[s.role].name) + (s.bot ? ' · ' + T('봇') : '') + '</small></div>')).join('') +
     (online ? Array.from({ length: Math.max(0, cap - all.length) }, () => '<div class="slot empty"><i></i><b>' + T('빈자리') + '</b></div>').join('') : '') +
     '<span class="cnt">' + all.length + '/' + cap + '</span>';
@@ -611,7 +611,7 @@ function matchJoin(n, gen) {
   });
   p.on('error', () => { if (!done) next(); });
 }
-function lobbyMeta() { return { t: 'lobby', slots: S.slots.map(s => ({ bot: s.bot ? 1 : 0, role: s.role, uid: s.uid, aid: s.aid || '', name: s.name, col: s.col, rd: S.rdy && S.rdy[s.uid] ? 1 : 0 })), bots: 0, code: S.code, ch: S.chSel, wk: S.wk ? 1 : 0, ph: S.ph, cap: S.cap, pub: S.pub ? 1 : 0, priv: S.priv ? 1 : 0, pt: S.pickT, ft: S.pub && S.ph === 'wait' && S.fillT > 0 ? Math.max(0, Math.ceil(FILL_T - S.fillT)) : -1 }; }
+function lobbyMeta() { return { t: 'lobby', slots: S.slots.map(s => ({ bot: s.bot ? 1 : 0, role: s.role, uid: s.uid, aid: s.aid || '', name: s.name, col: s.col, rd: S.rdy && S.rdy[s.uid] ? 1 : 0, srv: s.srv ? 1 : 0 })), bots: 0, code: S.code, ch: S.chSel, wk: S.wk ? 1 : 0, ph: S.ph, cap: S.cap, pub: S.pub ? 1 : 0, priv: S.priv ? 1 : 0, pt: S.pickT, ft: S.pub && S.ph === 'wait' && S.fillT > 0 ? Math.max(0, Math.ceil(FILL_T - S.fillT)) : -1 }; }
 function hostLobby() { if (S.net === 'host') bcast(lobbyMeta()); }
 function hostMsg(c, d) {
   if (!d || typeof d !== 'object') return;
