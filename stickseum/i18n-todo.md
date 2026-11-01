@@ -66,3 +66,6 @@ patchnotes.json | v587 title | 은하 제국의 황혼 | build 587 | 2026-11-01
 patchnotes.json | v587 items[0] | 이모지 로고 적용 보완 (프로필 카드, 점령 구역 왕관을 로고 이미지로 표시) | build 587 | 2026-11-01
 patchnotes.json | v588 title | 은하 제국의 황혼 | build 588 | 2026-11-01
 patchnotes.json | v588 items[0] | 더블 킬·트리플 킬·쿼드라 킬·펜타 킬 연출 강화: 화면 가운데 큰 글자와 폭죽·광선·번쩍임 (연속 처치가 길수록 더 크고 화려하게), 직접 한 사람에게는 더 크게 '내가 해냈어요!' 표시 | build 588 | 2026-11-01
+patchnotes.json | v589 title | 은하 제국의 황혼 | build 589 | 2026-11-01
+patchnotes.json | v589 items[0] | 멀티킬(더블~펜타 킬) 연출에서 뒤쪽 광선 삭제 (경기에 방해되지 않게) | build 589 | 2026-11-01
+patchnotes.json | v589 items[1] | 로비 위쪽 버튼(피드백·일일 보상·클랜)과 상점 가격·sC·영혼석 로고를 더 크게 표시, 로고가 줄어들어 작게 보이던 문제 수정 | build 589 | 2026-11-01
