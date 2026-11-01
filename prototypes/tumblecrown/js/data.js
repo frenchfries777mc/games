@@ -3,12 +3,12 @@
 
 import { T } from './tr.js';
 
-export const VERSION = 'v0.2', BUILD = 256;
+export const VERSION = 'v0.2', BUILD = 257;
 
 export const ROLES = {
   knight: {
     name: T('기사'), type: T('근접 딜러'), color: '#3f6fd0', hp: 345, speed: 6.6,
-    atk: { kind: 'melee', range: 2.5, arc: 1.9, dmg: 21, cd: 0.45 },
+    atk: { kind: 'melee', range: 2.5, arc: 1.9, dmg: 24, cd: 0.45 },
     skills: [
       { id: 'block', name: T('막기'), key: 'Q', cd: 5, desc: T('1.2초 동안 방패를 들어 앞에서 오는 피해를 70% 줄여요.') },
       { id: 'dash', name: T('돌진'), key: 'E', cd: 5, desc: T('앞으로 돌진하며 부딪힌 상대에게 30 피해를 주고 1.5초 동안 느리게 해요.') },
