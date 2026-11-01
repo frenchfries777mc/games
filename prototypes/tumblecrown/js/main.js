@@ -247,7 +247,16 @@ function paintWard() {
   };
 }
 function meSlot() { return S.srv ? { uid: UID, name: T('서버'), role: 'knight', col: 0, srv: 1 } : { uid: UID, aid: myAid(), name: myName(), role: SAVE.role, col: SAVE.col | 0 }; }
-function unlock(id) { if (SAVE.ach[id]) return; const a = ACHIEVEMENTS.find(x => x.id === id); if (!a) return; SAVE.ach[id] = Date.now(); save(); ffSync(); }
+function unlock(id) { if (SAVE.ach[id]) return; const a = ACHIEVEMENTS.find(x => x.id === id); if (!a) return; SAVE.ach[id] = Date.now(); save(); ffSync(); (S.newAch = S.newAch || []).push(a); if (S.resultShown) achBars(); }
+// 도전과제를 이루면 결과 화면에서 오른쪽 위로 막대가 밀려 나와요 (로고 · 이름 · 노란 「달성!」)
+function achBars() {
+  const q = S.newAch || []; S.newAch = []; if (!q.length) return;
+  let box = $('achToasts'); if (!box) { box = document.createElement('div'); box.id = 'achToasts'; document.body.appendChild(box); }
+  q.forEach((a, i) => setTimeout(() => {
+    const d = document.createElement('div'); d.className = 'achBar'; d.innerHTML = achImg(a.id, 40) + '<span class="nm">' + esc(a.name) + '</span><b class="ok">' + T('달성!') + '</b>'; box.appendChild(d); SFX.play('click');
+    setTimeout(() => { d.classList.add('out'); setTimeout(() => d.remove(), 500); }, 4200);
+  }, 500 + i * 700));
+}
 
 /* ---------- 직업 소개 ---------- */
 const BARS = [T('힘'), T('속도'), T('사거리'), T('난이도')];
@@ -684,6 +693,7 @@ function useWk(wk) { const was = WEEKLY.on; WEEKLY.on = !!wk; if (wk) { WEEKLY.i
 function useDeep(dp) { if (dp) { DEEP.floor = dp.floor; DEEP.seed = dp.seed; DEEP.curses = dp.curses.slice(); } }
 /* ---------- 게임 시작 ---------- */
 function beginGame(prevG) {
+  S.newAch = [];
   const solo = S.net === 'solo';
   const sl = prevG ? S.lastSl : roster().map((s, i) => {
     const id = 's' + i, c = s.uid && s.uid !== UID ? S.conns[s.uid] : null;
@@ -1634,7 +1644,7 @@ function teamCheer(sn) {
   (S.winTeam || []).forEach((id, i) => setTimeout(() => { const q = sn.pl.find(z => z.id === id); view.pose(id, 'rally'); if (q) { view.burst(q.x, 2.5, q.z, 0xffe08a, 14, 6, 0.8, 0.14); if (i === 0) view.flash(q.x, q.z, 0xffe08a, 140); } }, i * 150));
 }
 function showWin() {
-  S.resultShown = true; bigMsg('', '', 0); const h = S.lastH = awardHonor() || 0, sn = S.snap, mine = myP(), wt = sn.wtm, won = mine && mine.tm === wt;
+  S.resultShown = true; bigMsg('', '', 0); achBars(); const h = S.lastH = awardHonor() || 0, sn = S.snap, mine = myP(), wt = sn.wtm, won = mine && mine.tm === wt;
   if (won) { unlock('win'); SAVE.wins = SAVE.wins || {}; SAVE.wins[mine.role] = 1; save(); if (ROLE_IDS.every(r => SAVE.wins[r])) unlock('winall'); if (!S.range && sn.pv) { SAVE.mapWins = SAVE.mapWins || {}; SAVE.mapWins[CH.id] = 1; save(); if (CHAPTERS.filter(c => c.pvp).every(c => SAVE.mapWins[c.id])) unlock('maps'); if ((sn.mt | 0) > 0 && sn.mt <= 300) unlock('fast'); } }
   if (mine && mine.kl >= 3) unlock('kill3');
   if (won && mine && !(mine.dth | 0)) unlock('flawless');
@@ -1736,7 +1746,7 @@ requestAnimationFrame(frame);
 // 시험용: ?test=1 로 바로 혼자 원정을 시작해요 (화면 확인용). &skip=1 이야기 건너뛰기, &room=구역 번호
 // 내 컴퓨터에서 열었을 때만 돼요 (배포된 주소에서는 잠긴 장이 열리지 않게)
 const DEV = /^(localhost|127\.0\.0\.1)$/.test(location.hostname);
-if (DEV) window.__T = { HL, showResult, hlPlay, onEvent, SAVE, paintSettings, step, relBasic, aimedSkill, mouse, once, TOUCH, S, menu, beginGame, startHost, startMatch, startGuest, view, CH };
+if (DEV) window.__T = { unlock, achBars, HL, showResult, hlPlay, onEvent, SAVE, paintSettings, step, relBasic, aimedSkill, mouse, once, TOUCH, S, menu, beginGame, startHost, startMatch, startGuest, view, CH };
 if (DEV && qs.get('test')) {
   const r = qs.get('role') || 'knight'; SAVE.role = r;
   S.net = 'solo'; S.slots = [meSlot()]; newBots(); S.botN = +(qs.get('bots') || 5);
