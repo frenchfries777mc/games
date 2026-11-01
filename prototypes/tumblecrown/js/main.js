@@ -1425,14 +1425,16 @@ function teamHud(sn) {
     if (lockedFor(f, mt)) { oc.fillStyle = 'rgba(10,8,14,.62)'; oc.beginPath(); oc.arc(x, y, 9, 0, 7); oc.fill(); lockGlyph(oc, x, y + 1, 10, '#ffd23a'); }
     if (rg && rg[0] === mt) { const pu = 0.5 + 0.5 * Math.sin(performance.now() / 110); oc.strokeStyle = 'rgba(255,70,60,' + (0.45 + pu * 0.55) + ')'; oc.lineWidth = 3; oc.beginPath(); oc.arc(x, y, 18 + pu * 3, 0, 7); oc.stroke(); }
   });
+  // 가운데 글자는 위에서부터 차례로 쌓아요 (서로, 그리고 양옆 처치·괴물 효과 글자와 겹치지 않게)
+  let ty = 0, cy = nw ? y + dy + 26 : y + 62; const nextY = () => { const r = cy; cy += 24; return r; };
   // 잠긴 깃발에 서 있으면 먼저 점령할 깃발을 알려 줘요
   view.myTm = mt;
   { const me1 = sn.pl.find(q => q.id === S.me); if (me1 && !me1.dd) { const fi = sn.tf.findIndex((f, i) => lockedFor(f, mt) && Math.hypot(cw(MAP.tflags[i][0]) - me1.x, cw(MAP.tflags[i][1]) - me1.z) < FLAG_R);
     if (fi >= 0) { const sp = MAP.tspawn[mt], hi = sn.tf.reduce((b, f, i) => Math.hypot(cw(MAP.tflags[i][0]) - cw(sp[0]), cw(MAP.tflags[i][1]) - cw(sp[1])) < b[1] ? [i, Math.hypot(cw(MAP.tflags[i][0]) - cw(sp[0]), cw(MAP.tflags[i][1]) - cw(sp[1]))] : b, [0, 1e9])[0], txt = sn.tf[hi][0] !== mt ? T('먼저 우리 진지 깃발을 되찾으세요') : T('먼저 우리 진지·중앙·측면 깃발을 모두 점령하세요');   // 진지 깃발을 뺏겼으면 되찾는 것이 먼저, 아니면 상대 진영 깃발이라 우리 쪽 깃발을 모두 가져야 해요
-      oc.font = 'bold 15px Galmuri, system-ui'; oc.textAlign = 'center'; oc.lineWidth = 4; oc.strokeStyle = '#140f18'; oc.fillStyle = '#ffd7a0'; oc.strokeText(txt, innerWidth / 2, y + 66 + dy); oc.fillText(txt, innerWidth / 2, y + 66 + dy); } } }
+      oc.font = 'bold 15px Galmuri, system-ui'; oc.textAlign = 'center'; oc.lineWidth = 4; oc.strokeStyle = '#140f18'; oc.fillStyle = '#ffd7a0'; oc.strokeText(txt, innerWidth / 2, (ty = nextY())); oc.fillText(txt, innerWidth / 2, ty); } } }
   // 괴물 보너스: 우리 팀 점령이 빨라지는 동안 남은 시간을 깃발 아래에 보여 줘요
-  if (sn.dr) { oc.font = sn.dr[0] ? 'bold 13px sans-serif' : 'bold 16px sans-serif'; oc.textAlign = 'center'; oc.fillStyle = sn.dr[0] ? '#7affb0' : Math.sin(performance.now() / 200) > 0 ? '#ff5a4a' : '#ffb08a'; oc.fillText(sn.dr[0] ? T('신전 문 열림 ') + Math.ceil(sn.dr[1]) + T('초') : T('신전 문 닫힘 · ') + Math.ceil(sn.dr[1]) + T('초 뒤 열려요'), innerWidth / 2, y + 48 + dy); }
-  if (sn.mc && sn.mc[mt] > 0) { oc.font = 'bold 13px sans-serif'; oc.textAlign = 'center'; oc.fillStyle = '#ffd36a'; oc.fillText(T('점령 1.5배 ') + sn.mc[mt] + T('초'), innerWidth / 2, y + 30 + dy); }
+  if (sn.dr) { oc.font = sn.dr[0] ? 'bold 13px sans-serif' : 'bold 16px sans-serif'; oc.textAlign = 'center'; oc.fillStyle = sn.dr[0] ? '#7affb0' : Math.sin(performance.now() / 200) > 0 ? '#ff5a4a' : '#ffb08a'; oc.fillText(sn.dr[0] ? T('신전 문 열림 ') + Math.ceil(sn.dr[1]) + T('초') : T('신전 문 닫힘 · ') + Math.ceil(sn.dr[1]) + T('초 뒤 열려요'), innerWidth / 2, (ty = nextY())); }
+  if (sn.mc && sn.mc[mt] > 0) { oc.font = 'bold 13px sans-serif'; oc.textAlign = 'center'; oc.fillStyle = '#ffd36a'; oc.fillText(T('점령 1.5배 ') + sn.mc[mt] + T('초'), innerWidth / 2, (ty = nextY())); }
   // 괴물 처치 효과 레벨 (팀마다)
   { oc.font = 'bold 12px Galmuri, system-ui'; oc.lineWidth = 4; oc.strokeStyle = '#140f18'; const mk = sn.mk || [0, 0];
     oc.textAlign = 'right'; oc.fillStyle = hex(TEAMS[0].c); const l0 = T('괴물 처치 효과 lvl.{0}', mk[0]); oc.strokeText(l0, LX, y + yL); oc.fillText(l0, LX, y + yL);
@@ -1443,14 +1445,14 @@ function teamHud(sn) {
     oc.textAlign = 'right'; oc.fillStyle = hex(TEAMS[0].c); const t0 = T('처치 {0}', kt[0]); oc.strokeText(t0, LX, y + yK); oc.fillText(t0, LX, y + yK);
     oc.textAlign = 'left'; oc.fillStyle = hex(TEAMS[1].c); const t1 = T('처치 {0}', kt[1]); oc.strokeText(t1, RX, y + yK); oc.fillText(t1, RX, y + yK);
     if (me1 && (me1.kl | 0) > 0) { oc.textAlign = 'right'; oc.fillStyle = '#ffe08a'; const t2 = T('내 처치 {0}', me1.kl | 0); oc.strokeText(t2, LX, y + yM); oc.fillText(t2, LX, y + yM); } }
-  { const mb = sn.pl.find(q => q.id === S.me); if (mb && mb.cb > 0) { oc.font = 'bold 13px Galmuri, system-ui'; oc.textAlign = 'center'; oc.lineWidth = 4; oc.strokeStyle = '#140f18'; const tx = T('점령 효과 · 이동 속도·공격 +20% · {0}초', Math.ceil(mb.cb)); oc.strokeText(tx, innerWidth / 2, y + 64 + dy); oc.fillStyle = '#ffd36a'; oc.fillText(tx, innerWidth / 2, y + 64 + dy); } }
+  { const mb = sn.pl.find(q => q.id === S.me); if (mb && mb.cb > 0) { oc.font = 'bold 13px Galmuri, system-ui'; oc.textAlign = 'center'; oc.lineWidth = 4; oc.strokeStyle = '#140f18'; const tx = T('점령 효과 · 이동 속도·공격 +20% · {0}초', Math.ceil(mb.cb)); oc.strokeText(tx, innerWidth / 2, (ty = nextY())); oc.fillStyle = '#ffd36a'; oc.fillText(tx, innerWidth / 2, ty); } }
   if (keyDown('tab')) scoreboard(sn);
   // 점령 경보: 우리 깃발을 상대가 점령하는 중이면 깃발이 깜빡이고 알림이 떠요
   { S.fAl = S.fAl || []; let any = false; sn.tf.forEach((f, i) => { const on = f[0] === mt && f[1] >= 0 && f[1] !== mt && f[2] > 0; if (on && !S.fAl[i]) SFX.play('warn'); S.fAl[i] = on; if (on) any = true; });
-    if (any) { oc.font = 'bold 15px Galmuri, system-ui'; oc.textAlign = 'center'; oc.lineWidth = 4; oc.strokeStyle = '#140f18'; const tx = T('우리 깃발을 점령당하고 있어요!'); oc.strokeText(tx, innerWidth / 2, y + 48 + dy); oc.fillStyle = Math.sin(performance.now() / 140) > 0 ? '#ff6a5a' : '#ffd0c8'; oc.fillText(tx, innerWidth / 2, y + 48 + dy); } }
+    if (any) { oc.font = 'bold 15px Galmuri, system-ui'; oc.textAlign = 'center'; oc.lineWidth = 4; oc.strokeStyle = '#140f18'; const tx = T('우리 깃발을 점령당하고 있어요!'); oc.strokeText(tx, innerWidth / 2, (ty = nextY())); oc.fillStyle = Math.sin(performance.now() / 140) > 0 ? '#ff6a5a' : '#ffd0c8'; oc.fillText(tx, innerWidth / 2, ty); } }
   { const own = [0, 0]; for (const f of sn.tf) if (f[0] >= 0) own[f[0]]++; const pu = [pushTime(own[0], sn.tf.length), pushTime(own[1], sn.tf.length)], pt = pu[0] ? 0 : pu[1] ? 1 : -1;
-    if (pt >= 0) { oc.font = 'bold 13px Galmuri, system-ui'; oc.textAlign = 'center'; oc.lineWidth = 4; oc.strokeStyle = '#140f18'; const tx = pt === mt ? T('몰아붙이는 중 · 상대 부활 +{0}초', pu[pt]) : T('몰리는 중 · 우리 부활 +{0}초', pu[pt]); oc.strokeText(tx, innerWidth / 2, y + 44 + dy); oc.fillStyle = pt === mt ? '#ffd36b' : '#ff8a7a'; oc.fillText(tx, innerWidth / 2, y + 44 + dy); } }
-  const me0 = sn.pl.find(q => q.id === S.me); if (me0 && me0.fz && !me0.dd) { oc.font = 'bold 14px Galmuri, system-ui'; oc.lineWidth = 4; oc.strokeStyle = '#140f18'; const tx = T('깃발의 가호 · 치유 · 공격 +20%'); oc.strokeText(tx, innerWidth / 2, y + 26 + dy); oc.fillStyle = '#9af0a8'; oc.fillText(tx, innerWidth / 2, y + 26 + dy); }
+    if (pt >= 0) { oc.font = 'bold 13px Galmuri, system-ui'; oc.textAlign = 'center'; oc.lineWidth = 4; oc.strokeStyle = '#140f18'; const tx = pt === mt ? T('몰아붙이는 중 · 상대 부활 +{0}초', pu[pt]) : T('몰리는 중 · 우리 부활 +{0}초', pu[pt]); oc.strokeText(tx, innerWidth / 2, (ty = nextY())); oc.fillStyle = pt === mt ? '#ffd36b' : '#ff8a7a'; oc.fillText(tx, innerWidth / 2, ty); } }
+  const me0 = sn.pl.find(q => q.id === S.me); if (me0 && me0.fz && !me0.dd) { oc.font = 'bold 14px Galmuri, system-ui'; oc.lineWidth = 4; oc.strokeStyle = '#140f18'; const tx = T('깃발의 가호 · 치유 · 공격 +20%'); oc.strokeText(tx, innerWidth / 2, (ty = nextY())); oc.fillStyle = '#9af0a8'; oc.fillText(tx, innerWidth / 2, ty); }
   const sc = Math.min(innerWidth < 700 ? 1.1 : 1.6, (innerWidth < 700 ? 130 : 190) / MW), w = MW * sc, h = MH * sc, mx = innerWidth - w - 14, my = innerWidth < 700 ? 100 : 64;
   S.mmR = { x: mx, y: my, w, h, sc };
   if (mini.dirty) mini.paint(); if (!CH.pvp && !S.mapImg && !S.mapTry) { S.mapTry = 1; try { S.mapImg = view.captureMap(); } catch (e) { } }
