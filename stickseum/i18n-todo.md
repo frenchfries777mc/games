@@ -60,3 +60,5 @@ patchnotes.json | v584 title | 은하 제국의 황혼 | build 584 | 2026-11-01
 patchnotes.json | v584 items[0] | 화면 속 이모지 로고 1차 30종 적용: ⚔ 🚫 👑 🧪 🔒 🎁 🏅 🪙 ⚠ 🔴 🌊 🏰 👥 🎲 👍 ✔ ✅ 💧 🧊 👁 🎓 🛠 🔍 💬 🏆 💨 🐲 ⭐ 🪪 🔥 (이모트는 그대로) | build 584 | 2026-11-01
 patchnotes.json | v585 title | 은하 제국의 황혼 | build 585 | 2026-11-01
 patchnotes.json | v585 items[0] | 캐릭터 로고 적용 (프로필 카드, 숙련도·랭킹 목록, 자주 쓰는 캐릭터, 캐릭터 선택·금지 표시, 라운드 결과, 등장 카드, MVP 투표) | build 585 | 2026-11-01
+patchnotes.json | v586 title | 은하 제국의 황혼 | build 586 | 2026-11-01
+patchnotes.json | v586 items[0] | 야구선수(방망이) 쿨타임 0.6초 → 0.25초 | build 586 | 2026-11-01
