@@ -52,3 +52,5 @@ patchnotes.json | v580 title | 은하 제국의 황혼 | build 580 | 2026-10-31
 patchnotes.json | v580 items[0] | 클랜 찾기·내 클랜·클랜 만들기 버튼이 세로로 비정상적으로 길어지던 문제 수정 | build 580 | 2026-10-31
 patchnotes.json | v581 title | 은하 제국의 황혼 | build 581 | 2026-11-01
 patchnotes.json | v581 items[0] | 온라인 매칭: 컴퓨터가 충분히 빠르면(짧은 성능 검사 통과) 서버 방 대신 내가 방장이 됨 (랭크전은 계속 서버가 열어요) | build 581 | 2026-11-01
+patchnotes.json | v582 title | 은하 제국의 황혼 | build 582 | 2026-11-01
+patchnotes.json | v582 items[0] | 야구선수(방망이) 공격 속도 제한 추가: 쿨타임 없음 → 0.6초 (마우스를 빠르게 흔들어 1분에 88킬을 하던 문제 수정) | build 582 | 2026-11-01
