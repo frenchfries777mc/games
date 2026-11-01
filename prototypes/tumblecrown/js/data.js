@@ -3,7 +3,7 @@
 
 import { T } from './tr.js';
 
-export const VERSION = 'v0.2', BUILD = 228;
+export const VERSION = 'v0.2', BUILD = 229;
 
 export const ROLES = {
   knight: {
@@ -409,7 +409,7 @@ const ARENAS = [
   { name: '세 갈래 길', line: '위·가운데·아래 세 갈래 길이 긴 담으로 나뉘어 있어요. 담 끝과 한가운데 틈으로만 길을 바꿀 수 있어요.', theme: 'dungeon',
     walls: [[6, 22, 44, 3], [24, 8, 3, 8], [40, 10, 3, 8], [22, 32, 3, 6]],
     fl: [[10, 40], [36, 60]], mid: [[56, 36], [32, 14]], pil: [[16, 12], [46, 16], [14, 34], [38, 34]] },
-  { name: '중앙 요새', line: '한가운데 요새 안에 깃발 셋이 있어요. 요새 문은 네 곳이에요.', theme: 'abyss',
+  { name: '중앙 요새', c3: 1, line: '한가운데 요새 안에 깃발 셋이 있어요. 요새 문은 네 곳이에요.', theme: 'abyss',
     walls: [[36, 24, 14, 3], [36, 24, 3, 8], [14, 26, 10, 3], [20, 8, 3, 10], [8, 8, 8, 3]],
     fl: [[10, 40], [36, 60]], mid: [[56, 36], [46, 32]], pil: [[48, 14], [28, 32], [10, 20], [32, 16]] },
   { name: '십자 광장', line: '네 덩어리 건물 사이로 넓은 십자 길이 나 있어요. 광장 한가운데를 쥐면 이겨요.', theme: 'temple',
@@ -488,6 +488,7 @@ function arenaMap(def) {
   m.pillars = pil.filter(([x, y]) => g[Math.round(y) * AW + Math.round(x)]).map(([x, y]) => [ox + Math.round(x), oy + Math.round(y)]);
   m.tspawn = sp.map(([x, y]) => [ox + x, oy + y]);
   m.tflags = fl.map(([x, y, o]) => [ox + Math.round(x), oy + Math.round(y), o]);
+  if (def.c3) m.tflags.c3 = 1;   // 중앙 깃발이 셋인 지도 (끝 세 개가 중앙): 점령 순서가 달라요
   m.boss = [ox + (AW >> 1), oy + (AH >> 1)]; m.bossTrig = [0, 0, 0, 0]; m.start = m.tspawn[0]; m.route = [m.boss];
   m.doors = (def.gates || []).flatMap(([t, k]) => { const [x, y, w, h] = def.walls[k]; return t === 'h' ? [[x + w, y, AW - 2 * x - 2 * w, h], [x + w, AH - y - h, AW - 2 * x - 2 * w, h]] : [[x, y + h, w, AH - 2 * y - 2 * h], [AW - x - w, y + h, w, AH - 2 * y - 2 * h]]; }).map(([x, y, w, h]) => [ox + x, oy + y, w, h]);   // 신전 문: 닫히면 막히고 열리면 지나가요
   m.spawns = []; m.traps = []; m.fires = []; m.altars = []; m.chests = []; m.secrets = []; m.puzzles = []; m.darks = []; m.pits = []; m.lifts = []; m.fork = null; m.niches = {}; m.mimic = -1;

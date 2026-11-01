@@ -155,6 +155,13 @@ function flagKinds(G) {
 export function flagLocked(G, i, tm) {
   if (!G.fl || !G.home || G.fl[i].own === tm || i === G.home[tm]) return false;
   if (G.fl[G.home[tm]].own !== tm) return true;   // 우리 진지 깃발을 뺏겼으면 먼저 되찾아야 해요
+  if (MAP.tflags && MAP.tflags.c3 && G.fl.length === 7) {   // 중앙 요새: 우리 쪽 측면 → 중앙 셋 → 상대 쪽 측면 → 상대 진지
+    const C = [4, 5, 6], sd = [0, 1, 2, 3].filter(j => j !== G.home[0] && j !== G.home[1]), nr = sd.slice().sort((a, b) => Math.hypot(G.fl[a].x - G.fl[G.home[tm]].x, G.fl[a].z - G.fl[G.home[tm]].z) - Math.hypot(G.fl[b].x - G.fl[G.home[tm]].x, G.fl[b].z - G.fl[G.home[tm]].z))[0], far = sd.find(j => j !== nr);
+    if (i === G.home[1 - tm]) return G.fl[far].own !== tm;
+    if (C.includes(i)) return G.fl[nr].own !== tm;
+    if (i === far) return C.some(j => G.fl[j].own !== tm);
+    return false;
+  }
   const K = flagKinds(G), four = K.sides.length === 4;
   if (i === G.home[1 - tm]) return four ? K.sides.some(j => !K.near[tm].includes(j) && G.fl[j].own !== tm) : G.fl.some((g, j) => j !== i && g.own !== tm);   // 상대 진지
   if (i === K.ctr) return four ? K.near[tm].some(j => G.fl[j].own !== tm) : false;   // 중앙: 측면이 넷인 맵은 우리 쪽 측면 둘을 먼저
