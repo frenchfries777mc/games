@@ -359,7 +359,23 @@ function botPickRole(sl) {
   let best = null, bs = 1e9; for (const r of ROLE_IDS) { const sc = (same[r] || 0) * 10 + (all[r] || 0) * 3 + Math.random(); if (sc < bs) { bs = sc; best = r; } }
   return best;
 }
-function newBots() { S.botRoles = ROLE_IDS.slice().sort(() => Math.random() - 0.5); }
+function newBots() { S.botRoles = ROLE_IDS.slice().sort(() => Math.random() - 0.5); S.botSeed = (Math.random() * 1e9) | 0; }
+// 봇 직업 고르기: 사람이 고른 직업을 보고 팀마다 역할이 골고루 되게 채워요 (5명: 근접 2·원거리 1·유틸리티 1·서포터 1 / 3명: 근접 1·원거리 1·유틸리티 또는 서포터 1)
+function roleKind(r) { const t = ROLES[r] && ROLES[r].type; return t === T('근접 딜러') ? 'M' : t === T('원거리 딜러') ? 'R' : t === T('유틸리티') ? 'U' : t === T('서포터') ? 'S' : 'M'; }
+function balanceBots(list, seed) {
+  let z = (seed || 1) >>> 0; const rnd = () => { z = (z * 1664525 + 1013904223) >>> 0; return z / 4294967296; };
+  const used = new Set(list.filter(q => !q.bot && q.role).map(q => q.role));
+  for (const tm of [0, 1]) {
+    const mem = list.filter(q => q.team === tm), n = mem.length; if (!n) continue;
+    const tgt = (n >= 5 ? ['M', 'M', 'R', 'U', 'S', 'M', 'R', 'U', 'S', 'M'] : ['M', 'R', 'X', 'M', 'U', 'S']).slice(0, n);
+    for (const q of mem) if (!q.bot) { const k = roleKind(q.role); let i = tgt.indexOf(k); if (i < 0 && (k === 'U' || k === 'S')) i = tgt.indexOf('X'); if (i >= 0) tgt.splice(i, 1); }
+    for (const q of mem) if (q.bot) {
+      const k = tgt.shift() || 'M', want = k === 'X' ? (rnd() < 0.5 ? 'U' : 'S') : k;
+      let pool = ROLE_IDS.filter(r => roleKind(r) === want && !used.has(r)); if (!pool.length) pool = ROLE_IDS.filter(r => !used.has(r)); if (!pool.length) pool = ROLE_IDS;
+      q.role = pool[Math.floor(rnd() * pool.length)]; used.add(q.role);
+    }
+  }
+}
 function openRoom() { S.chSel = 0; S.wk = false; if (!S.botRoles) newBots(); show('sRoom'); paintRoom(); }
 function rankBar(id) { const pt = (SAVE.pts || {})[id] || 0, rk = charRankFor(pt), i = CHAR_RANKS.indexOf(rk), nx = CHAR_RANKS[i + 1]; return '<div class="bar" style="flex-wrap:wrap;row-gap:2px"><span style="color:' + rk.color + ';white-space:nowrap;width:auto;flex:none">' + rankImg(rk, 18) + rk.name + '</span><u style="width:120px;flex:none;display:inline-block;height:8px;background:#2a2230"><i style="display:block;height:8px;background:' + rk.color + ';width:' + (nx ? Math.round((pt - rk.min) / (nx.min - rk.min) * 100) : 100) + '%"></i></u> <small style="white-space:nowrap">' + (nx ? T('다음 {0}까지 {1}점', nx.name, nx.min - pt) : T('최고 계급')) + '</small></div>'; }
 function roleXpBar(id) { const xp = SAVE.xp[id] || 0, L = roleLevel(xp); if (L >= 10) return '<p class="note">' + T('최고 레벨이에요') + '</p>'; const a = 25 * (L - 1) * (L - 1), b = 25 * L * L; return '<div class="bar"><span>' + T('경험치') + '</span><u style="width:120px;display:inline-block;height:8px;background:#2a2230"><i style="display:block;height:8px;background:#ffd36b;width:' + Math.round((xp - a) / (b - a) * 100) + '%"></i></u> <small>' + (xp - a) + '/' + (b - a) + '</small></div>'; }
@@ -392,6 +408,7 @@ function roster() {
   const out = S.slots.map((s, i) => Object.assign({}, s, { team: i % 2 }));
   const nb = (S.net === 'solo' && !S.range) || (S.priv && S.net === 'host') ? Math.max(0, MAX_PLAYERS - out.length) : 0, br = S.botRoles || ROLE_IDS;
   for (let i = 0; i < nb; i++) out.push({ bot: true, name: BOT_NAMES[i % BOT_NAMES.length], role: br[i % br.length], col: 0, team: out.length % 2 });
+  if (nb) balanceBots(out, S.botSeed);
   return out;
 }
 S.botN = 0; S.botRoles = null; S.mapSel = Math.min(CHAPTERS.length - 1, (SAVE.mapSel == null ? -1 : SAVE.mapSel | 0));
@@ -503,6 +520,7 @@ setInterval(() => {
     S.fillT = 0; newBots();
     const used = new Set(S.slots.map(s => s.col));
     for (let i = 0; S.slots.length < S.cap; i++) { let col = COLORS.findIndex((x, k) => !used.has(k)); if (col < 0) col = 0; used.add(col); S.slots.push({ uid: 'bot' + i, bot: true, name: BOT_NAMES[i % BOT_NAMES.length], role: S.botRoles[i % S.botRoles.length], col }); }
+    { const L = S.slots.map((q, i) => ({ bot: q.bot, role: q.role, team: i % 2 })); balanceBots(L, S.botSeed); S.slots.forEach((q, i) => { if (q.bot) q.role = L[i].role; }); }
     checkFull(); hostLobby(); if (S.scr === 'sRoom') paintRoom(); return;
   }
   if (left !== S.lastFill) { S.lastFill = left; hostLobby(); if (S.scr === 'sRoom') paintRoom(); }
