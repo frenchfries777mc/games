@@ -69,3 +69,6 @@ patchnotes.json | v588 items[0] | 더블 킬·트리플 킬·쿼드라 킬·펜�
 patchnotes.json | v589 title | 은하 제국의 황혼 | build 589 | 2026-11-01
 patchnotes.json | v589 items[0] | 멀티킬(더블~펜타 킬) 연출에서 뒤쪽 광선 삭제 (경기에 방해되지 않게) | build 589 | 2026-11-01
 patchnotes.json | v589 items[1] | 로비 위쪽 버튼(피드백·일일 보상·클랜)과 상점 가격·sC·영혼석 로고를 더 크게 표시, 로고가 줄어들어 작게 보이던 문제 수정 | build 589 | 2026-11-01
+patchnotes.json | v590 title | 은하 제국의 황혼 | build 590 | 2026-11-01
+patchnotes.json | v590 items[0] | 야구선수 방망이 쿨타임 0.25초에서 0.6초로 변경 | build 590 | 2026-11-01
+patchnotes.json | v590 items[1] | 봇과 연습할 때 시작 직후 한 번 멈칫하던 현상 수정 (봇 이동 경로를 미리 계산) | build 590 | 2026-11-01
