@@ -34,7 +34,7 @@ export function createGame(slots, seed, ch = 0, mode = 'normal') {
   const G = {
     ch, CH: D.CH, EN: enemyStats(ch), deep: D.CH.deep ? { floor: DEEP.floor, seed: DEEP.seed, curses: DEEP.curses.slice() } : null, sk: [], combos: {},
     secrets: MAP.secrets.map(() => ({ open: false })), lores: MAP.lores.map(() => ({ read: false, prog: 0 })), bossArea: MAP.areas.findIndex(a => a.boss),
-    pvp: !!D.CH.pvp, winner: 0, t0: 0, mode, tn: mode === 'quick' ? 3 : D.TEAM_N, limit: (D.MODES[mode] && D.MODES[mode].limit) || 0, mt: 0,
+    pvp: !!D.CH.pvp, winner: 0, t0: 0, mode, tn: (D.MODES[mode] && D.MODES[mode].tn) || D.TEAM_N, limit: (D.MODES[mode] && D.MODES[mode].limit) || 0, mt: 0,
     t: 0, rng: mkRng(seed || Date.now()), phase: 'intro', phaseT: 0,
     players: [], enemies: [], projs: [], zones: [], ev: [], uid: 1, msg: '', stats: { downs: 0, kills: 0 },
     humans: slots.filter(s => !s.bot).length, bless: {}, honor: {}, won: false,
