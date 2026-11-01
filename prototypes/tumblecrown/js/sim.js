@@ -470,7 +470,7 @@ function comboFx(G, C, A, B) {
   ev(G, 'combo', { c: C.id, name: C.name, x, z, a: A.id, b: B.id });
   if (!A.bot || !B.bot) { for (const o of [A, B]) if (!o.bot) { ev(G, 'ach', { id: 'combo', pid: o.id }); ev(G, 'combo1', { c: C.id, pid: o.id }); } }
 }
-const ANIMOF = { necroheal: 'heal', necroraise: 'rally', courtswap: 'blink', runetrap: 'mark', courtshift: 'shadow', bigbomb: 'mark', sticky: 'mark', barrage: 'scatter', wall: 'ward', vow: 'heal', bastion: 'block', vanish: 'blink', venom: 'mark', execute: 'shadow', rootbolt: 'pierce', rapidfire: 'pierce', bigshot: 'pierce', cover: 'ward', backstep: 'dash', snipe: 'pierce', shieldbash: 'block', frost: 'curse', leap: 'leap', flurry: 'flurry', blink: 'shadow', scatter: 'scatter', fan: 'pierce', bonestorm: 'storm', march: 'rally', lullaby: 'ward', chorus: 'heal', lunge: 'lunge', spearthrow: 'pierce', sweep: 'whirl' };
+const ANIMOF = { necroheal: 'heal', necroraise: 'rally', courtswap: 'blink', runetrap: 'mark', courtshift: 'shadow', bigbomb: 'mark', sticky: 'mark', barrage: 'scatter', wall: 'ward', vow: 'heal', bastion: 'block', vanish: 'blink', venom: 'mark', execute: 'shadow', rootbolt: 'pierce', rapidfire: 'pierce', bigshot: 'pierce', cover: 'ward', backstep: 'dash', snipe: 'pierce', shieldbash: 'hv', frost: 'curse', leap: 'leap', flurry: 'flurry', blink: 'shadow', scatter: 'scatter', fan: 'pierce', bonestorm: 'storm', march: 'rally', lullaby: 'ward', chorus: 'heal', lunge: 'lunge', spearthrow: 'pierce', sweep: 'whirl' };
 const friends = (G, p) => G.pvp ? G.players.filter(q => q.team === p.team) : G.players;   // 대전에서는 같은 팀이 내 편이에요
 function swapPos(G, a, b, inv) {
   const ax = a.x, az = a.z; a.x = b.x; a.z = b.z; b.x = ax; b.z = az;
@@ -481,7 +481,7 @@ function swapPos(G, a, b, inv) {
 function useSkill(G, p, si, inp) {
   const R = ROLES[p.role], S = R.skills[si], key = 's' + si;
   if (p.cd[key] > 0) return;
-  p.cd[key] = S.cd * cdMul(p, 'skill', G); p.anim = ANIMOF[S.id] || S.id; p.animT = 0.8; p.animN = (p.animN || 0) + 1;
+  p.cd[key] = S.cd * cdMul(p, 'skill', G); p.anim = ANIMOF[S.id] || S.id; p.animT = S.id === 'shieldbash' ? 0.95 : 0.8; p.animN = (p.animN || 0) + 1;
   ev(G, 'skill', { id: p.id, s: S.id, x: p.x, z: p.z, a: p.a });
   switch (S.id) {
     case 'block': p.block = 1.2; rolePuz(G, p, 'oath', 1.7); break;
