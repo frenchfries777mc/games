@@ -1,6 +1,6 @@
 // Tumblecrown · © 2026 Frenchfries777 · CC BY-NC-ND 4.0
 // 지도: 벽 칸, 충돌, 시야, 길찾기 (규칙·화면·게스트 이동이 같이 써요)
-import { MAP, CHAPTERS, CH, setChapterData, DEEP_I } from './data.js';
+import { MAP, CHAPTERS, CH, setChapterData, DEEP_I, WALK } from './data.js';
 
 const FIELDS = new Map();
 export let CS = 2, MW = 0, MH = 0, WX = 0, WZ = 0; // 지도 전체 크기 (m)
@@ -93,6 +93,7 @@ export function secretFace(k) { const [x, y, w, h] = MAP.secrets[k].face; return
 export function chapterIndex() { return CUR; }
 
 export function floorCell(i, j) { return i >= 0 && j >= 0 && i < MW && j < MH && GRID[j * MW + i] === 1; }
+WALK.f = floorCell;
 export function isWall(x, z) { return !floorCell(Math.floor(x / CS), Math.floor(z / CS)); }
 
 // 원(위치 o, 반지름 r)을 벽과 기둥 밖으로 밀어내요

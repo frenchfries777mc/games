@@ -3,7 +3,7 @@
 
 import { T } from './tr.js';
 
-export const VERSION = 'v0.2', BUILD = 257;
+export const VERSION = 'v0.2', BUILD = 258;
 
 export const ROLES = {
   knight: {
@@ -664,6 +664,7 @@ export function flagShown(sc, pd) { const F = MAP.flag; if (!F) return false; re
 
 // 지금 고른 장의 지도. map.js의 useChapter로 바꿔요
 export const MAP = {};
+export const WALK = { f: null };   // 지도 파일이 걸을 수 있는 칸인지 알려 주는 함수를 여기에 걸어 둬요
 export let CH = CHAPTERS[0];
 export function setChapterData(i) {
   if (i === DEEP_I) { CH = makeDeep({}); FOES[DEEP_I] = FOES[CH.src]; TALK[DEEP_I] = {}; }
@@ -688,9 +689,14 @@ export function useMode(md) {
   if (sp && t.some(f => f[2] >= 0)) MAP.tspawn = [0, 1].map(o => { const own = t.filter(f => f[2] === o).sort((a, b) => Math.hypot(a[0] - sp[o][0], a[1] - sp[o][1]) - Math.hypot(b[0] - sp[o][0], b[1] - sp[o][1])); return own[0] ? [own[0][0], own[0][1]] : sp[o]; });   // 팀 거점은 그 팀의 시작 깃발 자리예요
   if ((md !== 'quick' && md !== 'duel') || !sp) return;
   const keep = new Set(); t.forEach((f, i) => { if (f[2] < 0) keep.add(i); });
-  if (md === 'duel') { const bx = MAP.boss[0], by = MAP.boss[1], ne = [...keep].sort((a, b) => Math.hypot(t[a][0] - bx, t[a][1] - by) - Math.hypot(t[b][0] - bx, t[b][1] - by)); keep.clear(); if (ne[0] != null) { keep.add(ne[0]); const rest = ne.slice(1); if (rest[0] != null) { keep.add(rest[0]); const mx = 2 * bx - t[rest[0]][0], my = 2 * by - t[rest[0]][1], mr = rest.slice(1).sort((a, b) => Math.hypot(t[a][0] - mx, t[a][1] - my) - Math.hypot(t[b][0] - mx, t[b][1] - my))[0]; if (mr != null) keep.add(mr); } } }   // 듀얼: 양쪽 진지와 가운데 깃발 셋(가운데 하나와 서로 맞은편 둘) 모두 다섯 개
+  if (md === 'duel') { const bx = MAP.boss[0], by = MAP.boss[1], ne = [...keep].sort((a, b) => Math.hypot(t[a][0] - bx, t[a][1] - by) - Math.hypot(t[b][0] - bx, t[b][1] - by)); keep.clear(); if (ne[0] != null) keep.add(ne[0]); }   // 듀얼: 가운데 깃발 하나와 양쪽 진지, 그리고 가운데 높이 줄 위에 맞은편 깃발 둘 (모두 다섯 개)
   for (const o of [0, 1]) { const own = t.map((f, i) => ({ f, i })).filter(q => q.f[2] === o).sort((a, b) => Math.hypot(a.f[0] - sp[o][0], a.f[1] - sp[o][1]) - Math.hypot(b.f[0] - sp[o][0], b.f[1] - sp[o][1])); if (own[0]) keep.add(own[0].i); }
   MAP.tfi = [...keep].sort((a, b) => a - b); MAP.tflags = MAP.tfi.map(i => t[i]);
+  if (md === 'duel' && MAP.tflags.length === 3) {   // 추가 깃발 둘: 가운데 깃발과 같은 높이에서, 가운데와 각 진지의 중간쯤에 (벽이면 가까운 빈 자리로)
+    const ct = MAP.tflags.find(f => f[2] < 0), hm = MAP.tflags.filter(f => f[2] >= 0), cx = ct[0], cy = ct[1], dx = Math.round(Math.abs(hm[0][0] - cx) / 2), ok = (x, y) => !WALK.f || (WALK.f(x, y) && WALK.f(2 * cx - x, 2 * cy - y));
+    let pick = null; for (let r = 0; r < 40 && !pick; r++) for (let oy = -r; oy <= r && !pick; oy++) for (let ox = -r; ox <= r && !pick; ox++) { if (Math.max(Math.abs(ox), Math.abs(oy)) !== r) continue; const x = cx - dx + ox, y = cy + oy; if (ok(x, y)) pick = [x, y]; }
+    if (pick) { MAP.tflags = MAP.tflags.concat([[pick[0], pick[1], -1], [2 * cx - pick[0], 2 * cy - pick[1], -1]]); MAP.tfi = MAP.tfi.concat([-1, -1]); }
+  }
   if (t.night) MAP.tflags.night = 1;   // 밤낮 지도는 모드를 줄여도 밤낮이 바뀌어요
 }
 
