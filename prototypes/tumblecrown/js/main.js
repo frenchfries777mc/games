@@ -2,7 +2,7 @@
 // 화면 흐름, 조작, 멀티(친구 초대, PeerJS), 저장
 import { View } from './render.js';
 import { createGame, step, snapshot, chooseBless, carryOver, koPlayer, INTRO_T, HV_DELAY, wallClamp, setupRange, callBots } from './sim.js';
-import { useMode, RECALL_CD, pushTime, PUSH_N, PUSH_T, TEAMS, FLAG_T, FLAG_R, RESP_T, ARENA_THEMES, MODES, ROLES, ROLE_IDS, COLORS, BOT_NAMES, MAX_PLAYERS, BLESSINGS, CHAPTERS, CH, FOES, MAP, ACHIEVEMENTS, TALK, COSMETICS, WEEKLY, weekInfo, VERSION, BUILD, roleLevel, CHAR_RANKS, charRankFor, rankImg, roleImg, typeImg, typeFile, MASTERY_PT, streakBonusFor, COMBOS, DEEP, DEEP_I, TALK_X, ROLE_PUZ, flagShown } from './data.js';
+import { useMode, RECALL_CD, pushTime, PUSH_N, PUSH_T, TEAMS, FLAG_T, FLAG_R, RESP_T, ARENA_THEMES, MODES, ROLES, ROLE_IDS, COLORS, BOT_NAMES, MAX_PLAYERS, BLESSINGS, CHAPTERS, CH, FOES, MAP, ACHIEVEMENTS, TALK, COSMETICS, WEEKLY, weekInfo, VERSION, BUILD, roleLevel, CHAR_RANKS, charRankFor, rankImg, achImg, roleImg, typeImg, typeFile, MASTERY_PT, streakBonusFor, COMBOS, DEEP, DEEP_I, TALK_X, ROLE_PUZ, flagShown } from './data.js';
 import { collide as mapCollide, areaAt, floorCell, MW, MH, CS, cw, useChapter, chapterIndex, SOPEN, openSecret, resetSecrets, hiddenCell, GOPEN, openGate, setDoors, DSTATE, PDOWN, dropPillar, LIFTH, liftOk, CUT } from './map.js';
 import * as SFX from './sfx.js';
 import * as MUS from './music.js';
@@ -312,6 +312,7 @@ function profStats(box, ctx) {
   h += row(T('상대 처치'), T('{0}명', st.kills | 0));
   h += row(T('괴물 처치'), T('{0}마리', st.mon | 0));
   h += row(T('도전과제'), ACHIEVEMENTS.filter(a => SAVE.ach[a.id]).length + ' / ' + ACHIEVEMENTS.length);
+  h += '<div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:8px">' + ACHIEVEMENTS.map(a => '<span title="' + ctx.esc(a.name + ' · ' + a.desc) + '">' + achImg(a.id, 40, !!SAVE.ach[a.id]) + '</span>').join('') + '</div>';
   return h;
 }
 $('setProf').onclick = async () => {
