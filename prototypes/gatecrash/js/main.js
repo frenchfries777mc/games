@@ -66,7 +66,7 @@ function show(id) { document.querySelectorAll('.scr').forEach(s => s.classList.t
 document.querySelectorAll('[data-back]').forEach(b => b.addEventListener('click', () => { if (scr === 'sRoom' || scr === 'sMap') leaveNet(); show('sLobby'); paintWho(); }));
 document.querySelectorAll('#menu .btn').forEach(b => b.addEventListener('click', () => menu(b.dataset.go)));
 function pickMap(cb) {
-  $('mapPick').innerHTML = MAP_IDS.map(id => '<button class="mapc" data-m="' + id + '"><b>' + MAPS[id].name + '</b><small>' + MAPS[id].desc + '</small></button>').join('');
+  $('mapPick').innerHTML = '<button class="mapc" data-m=""><b>랜덤 맵</b><small>어떤 맵이 나올지 몰라요. 매번 다른 곳에서 달려요!</small></button>' + MAP_IDS.map(id => '<button class="mapc" data-m="' + id + '"><b>' + MAPS[id].name + '</b><small>' + MAPS[id].desc + '</small></button>').join('');
   $('mapPick').querySelectorAll('button').forEach(b => b.onclick = () => { SFX.unlock(); cb(b.dataset.m); });
   show('sMap');
 }
