@@ -194,7 +194,7 @@ function monCorners() { const sp = MAP.tspawn0 || MAP.tspawn, a = sp[0], b = sp[
   return [[a[0], b[1]], [b[0], a[1]]].map(([x, y]) => [(x + 0.5) * MAP.cs, (y + 0.5) * MAP.cs]); }
 // 하이퍼: 가운데를 중심으로 한 작은 정사각형의 대각선 하나를 무작위로 골라, 그 두 꼭짓점에 괴물이 한 마리씩 나와요 (모서리 괴물 둘과 합쳐 모두 네 마리)
 function spawnCenterPair(G) {
-  const bx = (MAP.boss[0] + 0.5) * MAP.cs, bz = (MAP.boss[1] + 0.5) * MAP.cs, h = 5 * MAP.cs, dg = G.rng() < 0.5 ? [[-h, -h], [h, h]] : [[-h, h], [h, -h]];
+  const bx = (MAP.boss[0] + 0.5) * MAP.cs, bz = (MAP.boss[1] + 0.5) * MAP.cs, h = 17.5 * MAP.cs, dg = G.rng() < 0.5 ? [[-h, -h], [h, h]] : [[-h, h], [h, -h]];
   dg.forEach(([dx, dz], k) => {
     let x = bx + dx, z = bz + dz;
     for (let r = 0; r < 14 && isWall(x, z); r++) { x = bx + dx + (r % 2 ? r : -r) * MAP.cs * 0.7; z = bz + dz + ((r >> 1) % 2 ? 2 : -2) * MAP.cs; }
