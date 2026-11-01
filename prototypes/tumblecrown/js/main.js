@@ -366,7 +366,7 @@ function balanceBots(list, seed) {
   const used = new Set(list.filter(q => !q.bot && q.role).map(q => q.role));
   for (const tm of [0, 1]) {
     const mem = list.filter(q => q.team === tm), n = mem.length; if (!n) continue;
-    const tgt = (n >= 5 ? ['M', 'M', 'R', 'U', 'S', 'M', 'R', 'U', 'S', 'M'] : ['M', 'R', 'X', 'M', 'U', 'S']).slice(0, n);
+    const tgt = (n === 1 ? [rnd() < 0.5 ? 'M' : 'R'] : n >= 5 ? ['M', 'M', 'R', 'U', 'S', 'M', 'R', 'U', 'S', 'M'] : ['M', 'R', 'X', 'M', 'U', 'S']).slice(0, n);
     for (const q of mem) if (!q.bot) { const k = roleKind(q.role); let i = tgt.indexOf(k); if (i < 0 && (k === 'U' || k === 'S')) i = tgt.indexOf('X'); if (i >= 0) tgt.splice(i, 1); }
     for (const q of mem) if (q.bot) {
       const k = tgt.shift() || 'M', want = k === 'X' ? (rnd() < 0.5 ? 'U' : 'S') : k;
