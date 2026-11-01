@@ -2739,6 +2739,22 @@ function ensureCardModal(){
   document.getElementById('cardSaveBtn').onclick=()=>{ try{ document.getElementById('cardCanvas').toBlob(b=>{ const a=document.createElement('a'); a.href=URL.createObjectURL(b); a.download='Stickseum-card.png'; document.body.appendChild(a); a.click(); setTimeout(()=>{ a.remove(); URL.revokeObjectURL(a.href); },500); }); }catch(e){} };
   return el;
 }
+const emoImgs={};
+function emoImg(name, onload){          // an emoji logo (emoji/<name>.svg) as an Image for a canvas: null until it has loaded (onload is called once it has)
+  let e=emoImgs[name]; if(!e){ e=emoImgs[name]={im:new Image(), ok:false, cbs:[]}; e.im.onload=()=>{ e.ok=true; const l=e.cbs.splice(0); l.forEach(f=>{ try{ f(); }catch(x){} }); }; e.im.src='emoji/'+name+'.svg?v='+buildNum(GAME_BUILD); }
+  if(e.ok) return e.im; if(onload) e.cbs.push(onload); return null;
+}
+function drawEmoText(c, str, cx, y, again){          // fillText for a line that may hold logo emoji (the ones in EMOJI_LOGO): they are drawn as pictures, centered on cx; until the pictures have loaded the plain text is drawn (and again() is called when they have)
+  const px=parseFloat((/(\d+(?:\.\d+)?)px/.exec(c.font)||[0,14])[1]), keys=Object.keys(EMOJI_LOGO).sort((a,b)=>b.length-a.length), re=new RegExp('('+keys.join('|')+')\\uFE0F?','g');
+  const parts=[]; let last=0, m, ready=true; while((m=re.exec(str))){ if(m.index>last) parts.push({t:str.slice(last,m.index)}); parts.push({im:emoImg(EMOJI_LOGO[m[1]], again)}); last=m.index+m[0].length; } if(last<str.length) parts.push({t:str.slice(last)});
+  for(const p of parts) if('im' in p && !p.im) ready=false;
+  const al=c.textAlign;
+  if(!ready){ c.fillText(str, cx, y); return; }
+  const sz=px*1.1; let w=0; for(const p of parts) w+= p.t!==undefined ? c.measureText(p.t).width : sz+2;
+  let x=cx-w/2; c.textAlign='left';
+  for(const p of parts){ if(p.t!==undefined){ c.fillText(p.t, x, y); x+=c.measureText(p.t).width; } else { c.drawImage(p.im, x, y-sz*0.85, sz, sz); x+=sz+2; } }
+  c.textAlign=al;
+}
 const charLogoImgs={};
 function charLogoImg(wid, onload){          // the character logo as an Image for a canvas (null until it has loaded; onload is called once it has)
   if(!CHAR_LOGO_IDS.has(wid)) return null;
@@ -2766,8 +2782,8 @@ function drawProfileCard(cv){
     c.font='700 13px Rajdhani, sans-serif'; c.fillStyle='#e8ecf3'; c.fillText(WEAPON_PERSONA_NAME[e[0]]||e[0],x,522); c.fillStyle='#ffd34d'; c.fillText('Lv.'+masteryLevelFor(e[1]),x,540); });
   const ach=Object.keys(saveData.achievements||{}).length, tn=(function(){ try{ return seasonTier(); }catch(e){ return 0; } })(), tt=allTitleIds().filter(titleUnlocked).length;
   FF_GAMES.forEach((g,i)=>{ const x=W/2+(i-1)*144, on=ffHasPlayed(g.id); c.fillStyle=on?'rgba(255,211,77,.16)':'rgba(255,255,255,.05)'; c.fillRect(x-68,553,136,26);
-    c.fillStyle=on?'#ffd34d':'rgba(255,255,255,.35)'; c.font='700 13px Rajdhani, sans-serif'; c.fillText(g.icon+' '+g.name+(on?' ✓':''),x,571); });
-  c.fillStyle='rgba(255,255,255,.75)'; c.font='600 14px Rajdhani, sans-serif'; c.fillText('🏆 '+ach+' / '+ACHIEVEMENTS.length+'   ·   🏷️ '+tt+'   ·   🎫 '+tn+' / '+SEASON_TIERS,W/2,600);
+    c.fillStyle=on?'#ffd34d':'rgba(255,255,255,.35)'; c.font='700 13px Rajdhani, sans-serif'; drawEmoText(c, g.icon+' '+g.name+(on?' ✓':''), x, 571, ()=>{ if(cv.isConnected) drawProfileCard(cv); }); });
+  c.fillStyle='rgba(255,255,255,.75)'; c.font='600 14px Rajdhani, sans-serif'; drawEmoText(c, '🏆 '+ach+' / '+ACHIEVEMENTS.length+'   ·   🏷️ '+tt+'   ·   🎫 '+tn+' / '+SEASON_TIERS, W/2, 600, ()=>{ if(cv.isConnected) drawProfileCard(cv); });
   c.fillStyle='rgba(255,255,255,.35)'; c.font='600 12px Rajdhani, sans-serif'; c.fillText(new Date().toISOString().slice(0,10),W/2,616);
 }
 /* the profile window is the hub's shared one (ff-profile.js): the same card in every game and on the hub; the name and the look are changed on the hub only.
@@ -4397,7 +4413,7 @@ function drawXmWorld(){
     ctx.save();
     ctx.fillStyle='rgba('+col+','+(0.12+0.08*pulse)+')'; ctx.fillRect(z.x-z.w/2, z.y-CQ_ZONE_H, z.w, CQ_ZONE_H);
     ctx.strokeStyle='rgba('+col+',0.85)'; ctx.lineWidth=3; ctx.setLineDash([12,8]); ctx.strokeRect(z.x-z.w/2, z.y-CQ_ZONE_H, z.w, CQ_ZONE_H); ctx.setLineDash([]);
-    ctx.font='900 22px sans-serif'; ctx.textAlign='center'; ctx.fillStyle='rgba('+col+',0.9)'; ctx.fillText('👑', z.x, z.y-CQ_ZONE_H-8);
+    ctx.font='900 22px sans-serif'; ctx.textAlign='center'; ctx.fillStyle='rgba('+col+',0.9)'; { const im=emoImg('crown'); if(im) ctx.drawImage(im, z.x-13, z.y-CQ_ZONE_H-30, 26, 26); else ctx.fillText('👑', z.x, z.y-CQ_ZONE_H-8); }
     ctx.restore();
   } else if(v.m==='rush' && v.c){
     ctx.save();
@@ -5634,7 +5650,7 @@ function shuffle(arr){ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.
 /* ===== the version of this file =====
    Different BUILDS of one version meet and play together (room names online-v<ver>-<mode>-<map>-<slot>); different VERSIONS (the 0.x part) never do - the host refuses them (verNo) and the dispatcher answers busy.
    The build is only sent along with the join message and the lobby (for information); the corner of the screen shows it. */
-const GAME_BUILD='build 2026-10-31-v586';
+const GAME_BUILD='build 2026-10-31-v587';
 const GAME_VERSION='0.9', GAME_VERSION_NAME='은하 제국의 황혼';   // 게임 버전 이름: versions.json의 title과 같게 (빌드마다 바꾸지 않음)
 /* version (the 0.x part) vs build: different BUILDS of one version meet and play together, different VERSIONS never do (rooms, quick match, ranked, friend invites, dispatcher).
    Builds before 470 do not send a version, so it is read from the build number (0.9 started at build 458). */

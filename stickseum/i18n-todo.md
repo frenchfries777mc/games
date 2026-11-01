@@ -62,3 +62,5 @@ patchnotes.json | v585 title | 은하 제국의 황혼 | build 585 | 2026-11-01
 patchnotes.json | v585 items[0] | 캐릭터 로고 적용 (프로필 카드, 숙련도·랭킹 목록, 자주 쓰는 캐릭터, 캐릭터 선택·금지 표시, 라운드 결과, 등장 카드, MVP 투표) | build 585 | 2026-11-01
 patchnotes.json | v586 title | 은하 제국의 황혼 | build 586 | 2026-11-01
 patchnotes.json | v586 items[0] | 야구선수(방망이) 쿨타임 0.6초 → 0.25초 | build 586 | 2026-11-01
+patchnotes.json | v587 title | 은하 제국의 황혼 | build 587 | 2026-11-01
+patchnotes.json | v587 items[0] | 이모지 로고 적용 보완 (프로필 카드, 점령 구역 왕관을 로고 이미지로 표시) | build 587 | 2026-11-01
