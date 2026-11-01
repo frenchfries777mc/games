@@ -527,7 +527,7 @@ function useSkill(G, p, si, inp) {
         if (Math.hypot(p.x - qx, p.z - qz) > 0.02) { p.x = px; p.z = pz; break; } d += st;
       }
       p.inv = 0.3;
-      for (const e of G.enemies) { if (e.hp <= 0) continue; if (segDist(ox, oz, p.x, p.z, e.x, e.z) < 1.3 + e.r) { hurtEnemy(G, e, 30, p, { kb: 8, kbA: p.a }); if (e.hp > 0) { e.slow = Math.max(e.slow || 0, 1.5); e.slowM = 0.6; } } }   // 맞은 상대는 1.5초 느려져요 (도망치는 상대를 따라잡기 쉬워요)
+      for (const e of G.enemies) { if (e.hp <= 0) continue; if (segDist(ox, oz, p.x, p.z, e.x, e.z) < 1.3 + e.r) { hurtEnemy(G, e, 40, p, { kb: 8, kbA: p.a }); if (e.hp > 0) { e.slow = Math.max(e.slow || 0, 1.5); e.slowM = 0.6; } } }   // 맞은 상대는 1.5초 느려져요 (도망치는 상대를 따라잡기 쉬워요)
       break;
     }
     case 'taunt': p.taunt = 4; for (const e of G.enemies) if (dist(p, e) < 10) { e.tgt = p.id; e.tauntT = 4; } break;
@@ -560,7 +560,7 @@ function useSkill(G, p, si, inp) {
     case 'shieldbash': { // 방패를 앞세워 파고들며 세게 쳐서 맞은 상대를 잠깐 기절시켜요
       p.x += Math.cos(p.a) * 2.6; p.z += Math.sin(p.a) * 2.6; collide(G, p, 0.6); ev(G, 'skill', { id: p.id, s: 'bashfx', x: p.x, z: p.z, a: p.a });
       ev(G, 'swing', { id: p.id, x: p.x, z: p.z, a: p.a, r: 3.0, role: p.role });
-      for (const e of G.enemies) if (e.hp > 0 && foeOf(G, p.id, e) && dist(p, e) < 3.0 + e.r && angDiff(p.a, angTo(p, e)) < 1.0) { hurtEnemy(G, e, 28, p, {}); e.stun = 1.1; }
+      for (const e of G.enemies) if (e.hp > 0 && foeOf(G, p.id, e) && dist(p, e) < 3.0 + e.r && angDiff(p.a, angTo(p, e)) < 1.0) { hurtEnemy(G, e, 36, p, {}); e.stun = 1.1; }
       break;
     }
     case 'frost': { // 조준한 곳에 서리를 터뜨려 둘레 상대를 느리게 해요
