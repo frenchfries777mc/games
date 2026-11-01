@@ -652,6 +652,10 @@ if(document.readyState==='loading') document.addEventListener('DOMContentLoaded'
     opacity:0; transition:opacity .25s ease, transform .25s ease;
   }
   #killBanner.show{ opacity:1; transform:translateX(-50%) translateY(0); }
+  #multiKillBig{ position:fixed; left:50%; top:32%; transform:translate(-50%,-50%) scale(.2); z-index:100001; pointer-events:none; opacity:0; text-align:center; font-family:Rajdhani,sans-serif; font-weight:900; white-space:nowrap; letter-spacing:2px; -webkit-text-stroke:3px rgba(0,0,0,.8); paint-order:stroke fill; }
+  #multiKillBig .mkSub{ font-size:.32em; letter-spacing:1px; margin-top:2px; -webkit-text-stroke:2px rgba(0,0,0,.8); color:#fff; }
+  #multiKillBig.show{ animation:mkPop 2.1s cubic-bezier(.2,1.4,.4,1) forwards; }
+  @keyframes mkPop{ 0%{opacity:0; transform:translate(-50%,-50%) scale(.2) rotate(-6deg);} 12%{opacity:1; transform:translate(-50%,-50%) scale(1.3) rotate(2deg);} 22%{transform:translate(-50%,-50%) scale(1) rotate(0);} 80%{opacity:1; transform:translate(-50%,-50%) scale(1.04);} 100%{opacity:0; transform:translate(-50%,-34%) scale(1.15);} }
   #killcamLabel{
     display:none; position:absolute; top:50%; left:50%; transform:translate(-50%,-50%);
     background:rgba(15,17,23,.85); border:1px solid #ffd34d; border-radius:10px; padding:10px 22px;
@@ -5650,7 +5654,7 @@ function shuffle(arr){ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.
 /* ===== the version of this file =====
    Different BUILDS of one version meet and play together (room names online-v<ver>-<mode>-<map>-<slot>); different VERSIONS (the 0.x part) never do - the host refuses them (verNo) and the dispatcher answers busy.
    The build is only sent along with the join message and the lobby (for information); the corner of the screen shows it. */
-const GAME_BUILD='build 2026-10-31-v587';
+const GAME_BUILD='build 2026-10-31-v588';
 const GAME_VERSION='0.9', GAME_VERSION_NAME='은하 제국의 황혼';   // 게임 버전 이름: versions.json의 title과 같게 (빌드마다 바꾸지 않음)
 /* version (the 0.x part) vs build: different BUILDS of one version meet and play together, different VERSIONS never do (rooms, quick match, ranked, friend invites, dispatcher).
    Builds before 470 do not send a version, so it is read from the build number (0.9 started at build 458). */
@@ -6055,7 +6059,7 @@ const uiFx=(function(){
       if(p.shape==='rect'){ cx.save(); cx.globalCompositeOperation='source-over'; cx.translate(p.x,p.y); cx.rotate(p.rot); cx.scale(1,Math.cos(p.life*8+p.rot)); cx.fillRect(-p.size/2,-p.size/3,p.size,p.size*0.66); cx.restore(); }
       else if(p.shape==='star'){ star(cx,p.x,p.y,p.size*(1-k*0.4),p.rot); }
       else if(p.shape==='spark'){ cx.lineWidth=p.size*0.7; cx.lineCap='round'; cx.beginPath(); cx.moveTo(p.x,p.y); cx.lineTo(p.x-p.vx*0.035,p.y-p.vy*0.035); cx.stroke(); }
-      else { cx.beginPath(); cx.arc(p.x,p.y,p.size*(1-k*0.5),0,Math.PI*2); cx.fill(); } }
+      else { cx.beginPath(); cx.arc(p.x,p.y,Math.max(0,p.size*(1-k*0.5)),0,Math.PI*2); cx.fill(); } }
     cx.globalCompositeOperation='source-over';
     if(flash){ flash.t+=dt; const k=flash.t/flash.dur; if(k>=1) flash=null; else { cx.globalAlpha=flash.a*(1-k)*(1-k); cx.fillStyle=flash.color; cx.fillRect(0,0,W,H); } }
     for(let i=TX.length-1;i>=0;i--){ const t=TX[i]; t.t+=dt; if(t.t>=t.dur){ TX.splice(i,1); continue; } const k=t.t/t.dur, sc=k<0.15?0.4+k/0.15*0.9:1.3-Math.min(0.3,(k-0.15)*1.0); t.y+=t.vy*dt; t.vy*=0.97;
@@ -16933,8 +16937,28 @@ function onKillEvent(data){
   { const me0=players[myId], kw=data.killerSnap&&data.killerSnap.weapon; if(data.hasKiller && me0 && data.killerName===me0.name && kw && SELECTABLE_WEAPONS.includes(kw)) myKillByW[kw]=(myKillByW[kw]||0)+1; }
   if(data.hasKiller) matchKillLog.push({killerName:data.killerName, victimName:data.victimName, x:data.x, y:data.y, color:data.color, killerSnap:data.killerSnap, victimSnap:data.victimSnap, killerReplay:data.killerReplay||[], victimReplay:data.victimReplay||[], killerEvents:data.killerEvents||[], victimEvents:data.victimEvents||[], boss:!!data.boss});
   const mk=data.hasKiller ? multiKillCount(data.killerName) : 0;
-  if(mk>=2){ showKillBannerText(data.killerName+'님 '+(MULTI_KILL_NAMES[mk]||(mk+'연속 처치'))+'!'); try{ playSfx('ach'); }catch(e){} }
+  if(mk>=2){ const mine=!!(players[myId] && data.killerName===players[myId].name); showKillBannerText(data.killerName+'님 '+(MULTI_KILL_NAMES[mk]||(mk+'연속 처치'))+'!'); showMultiKillBig(data.killerName, mk, mine); try{ playSfx('ach'); if(mk>=3) setTimeout(()=>{ try{ playSfx('ach'); }catch(e){} }, 220); if(mk>=5) setTimeout(()=>{ try{ playSfx('ach'); }catch(e){} }, 440); }catch(e){} }
   else if(gameMode!=='duel') showKillBanner(data.killerName, data.victimName);
+}
+/* a big multi-kill show for everybody (a bigger one when it is my own multi-kill): the bigger the streak, the bigger and hotter the text, the more bursts, rays and flashes */
+const MK_TIERS={2:{c:'#ffd34d', px:64, n:36}, 3:{c:'#ff9f43', px:84, n:60}, 4:{c:'#ff5d5d', px:104, n:90}, 5:{c:'#d58bff', px:124, n:130}};
+function showMultiKillBig(name, mk, mine){
+  let el=document.getElementById('multiKillBig'); if(!el){ el=document.createElement('div'); el.id='multiKillBig'; el.setAttribute('data-notr','1'); document.body.appendChild(el); }
+  const T=MK_TIERS[Math.min(5,mk)], title=MULTI_KILL_NAMES[mk]||(mk+'연속 처치');
+  const px=Math.round(T.px*(mine?1:0.72));
+  el.className=''; el.style.fontSize=px+'px'; el.style.color=T.c; el.style.textShadow='0 0 18px '+T.c+', 0 0 46px '+T.c+', 0 4px 0 rgba(0,0,0,.6)';
+  el.innerHTML=escapeHtmlText(title)+'!<div class="mkSub">'+(mine?'🔥 내가 해냈어요!':escapeHtmlText(name)+'님')+'</div>';
+  void el.offsetWidth; el.classList.add('show'); clearTimeout(el._t); el._t=setTimeout(()=>el.classList.remove('show'), 2200);
+  try{
+    const W=window.innerWidth, H=window.innerHeight, x=W/2, y=H*0.32, cols=[T.c,'#ffffff','#ffe9a8'];
+    if(mk>=5) cols.push('#6ee7ff','#ff7ab6','#7dff9a');
+    uiFx.burst(x,y,mine?T.n:Math.round(T.n*0.55),cols,mine?520:380);
+    uiFx.ring(x,y,T.c,mine?380:260,0.7,10);
+    if(mk>=3){ uiFx.rays(x,y,T.c,1.6,14); uiFx.ring(x,y,'#ffffff',mine?300:200,0.55,6); }
+    if(mk>=4){ uiFx.flash(T.c, mine?0.35:0.18, 0.5); setTimeout(()=>{ try{ uiFx.burst(x,y,T.n,cols,600); }catch(e){} }, 180); }
+    if(mk>=5){ uiFx.rain(2.4,cols); uiFx.flash('#ffffff', mine?0.5:0.25, 0.6); }
+    else if(mine && mk>=3) uiFx.flash(T.c, 0.2, 0.4);
+  }catch(e){}
 }
 function showKillBannerText(text){
   const el=document.getElementById('killBanner');

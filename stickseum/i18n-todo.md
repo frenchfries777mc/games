@@ -64,3 +64,5 @@ patchnotes.json | v586 title | 은하 제국의 황혼 | build 586 | 2026-11-01
 patchnotes.json | v586 items[0] | 야구선수(방망이) 쿨타임 0.6초 → 0.25초 | build 586 | 2026-11-01
 patchnotes.json | v587 title | 은하 제국의 황혼 | build 587 | 2026-11-01
 patchnotes.json | v587 items[0] | 이모지 로고 적용 보완 (프로필 카드, 점령 구역 왕관을 로고 이미지로 표시) | build 587 | 2026-11-01
+patchnotes.json | v588 title | 은하 제국의 황혼 | build 588 | 2026-11-01
+patchnotes.json | v588 items[0] | 더블 킬·트리플 킬·쿼드라 킬·펜타 킬 연출 강화: 화면 가운데 큰 글자와 폭죽·광선·번쩍임 (연속 처치가 길수록 더 크고 화려하게), 직접 한 사람에게는 더 크게 '내가 해냈어요!' 표시 | build 588 | 2026-11-01
