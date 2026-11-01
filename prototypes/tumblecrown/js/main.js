@@ -1495,6 +1495,7 @@ function teamHud(sn) {
     const [a, b] = P(q.x, q.z); oc.fillStyle = hex(TEAMS[p.tm].c); oc.beginPath(); oc.arc(a, b, p.id === S.me ? 3.6 : 2.4, 0, 7); oc.fill();
     if (p.id === S.me) { oc.strokeStyle = '#fff'; oc.lineWidth = 1.5; oc.stroke(); }
   }
+  if (S.nv > 0.01) { oc.fillStyle = 'rgba(3,5,16,' + (0.9 * S.nv).toFixed(3) + ')'; oc.fillRect(mx - 4, my - 4, w + 8, h + 8); }   // 달빛 성채의 밤: 미니맵도 거의 안 보여요
 }
 // 귀환(F): 살아 있을 때 큰 지도를 펴요 (쿨타임 25초)
 function recallToggle() {
