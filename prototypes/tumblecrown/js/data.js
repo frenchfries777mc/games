@@ -3,7 +3,7 @@
 
 import { T } from './tr.js';
 
-export const VERSION = 'v0.2', BUILD = 287;
+export const VERSION = 'v0.2', BUILD = 288;
 
 export const ROLES = {
   knight: {
@@ -106,7 +106,7 @@ export const ROLES = {
     role: T('방패로 아군을 지키고 밀어붙이는 수호자예요. 느리지만 가장 든든해요.')
   },
   assassin: {
-    name: T('자객'), type: T('근접 딜러'), color: '#3a5a66', hp: 240, speed: 8.58,
+    name: T('자객'), type: T('근접 딜러'), color: '#3a5a66', hp: 220, speed: 8.58,
     atk: { kind: 'melee', range: 2.1, arc: 1.6, dmg: 20, cd: 0.3 },
     skills: [
       { id: 'vanish', name: T('그림자 걸음'), key: 'Q', cd: 10, desc: T('3.5초 동안 멀리 있는 상대 눈에 보이지 않고 25% 빨라져요. 숨은 채 처음 때리는 한 번은 피해가 1.8배예요.') },
@@ -129,7 +129,7 @@ export const ROLES = {
   },
   streltsy: {
     name: T('스트렐치'), type: T('원거리 딜러'), color: '#6a7a8a', hp: 220, speed: 5.6,
-    atk: { kind: 'musket', dmg: 65, cd: 1.4, speed: 52, life: 1.2, hr: 0.5 },
+    atk: { kind: 'musket', dmg: 70, cd: 1.4, speed: 52, life: 1.2, hr: 0.5 },
     skills: [
       { id: 'rapidfire', name: T('연사'), key: 'Q', cd: 9, desc: T('같은 방향으로 총알 세 발을 잇달아 쏴요. 한 발에 26 피해.') },
       { id: 'bigshot', name: T('거대 총알'), key: 'E', cd: 11, desc: T('크고 느린 총알을 한 발 쏴요. 88 피해.') },
