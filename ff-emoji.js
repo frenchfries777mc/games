@@ -9,7 +9,7 @@ var MAP={'🏠':'house','🏘':'houses','🎣':'fishing','🚀':'rocket','👻':
   '🏷':'tag','📋':'list','✏':'pencil','💬':'chat','🏆':'trophy','🪙':'coin','👥':'group','🔍':'search','🎉':'party','💡':'bulb','🗑':'trash','🎁':'gift','🎮':'gamepad','🚪':'door','📅':'calendar','📊':'graph','📢':'megaphone','✅':'okcheck','🔥':'fire','⭐':'star','👤':'person','⚖':'scale','📌':'pin','⏸':'pause','📖':'book','🗡':'dagger','💀':'skull','👁':'eye','👋':'wave','🎭':'mask','💎':'gem'};
 /* 반응 이모트(😂 😮 😢 ❤ 👏 👍)와 😀 는 일부러 넣지 않았어요 */
 var keys=Object.keys(MAP), RX=new RegExp('('+keys.join('|')+')\\uFE0F?','g');
-var SKIP='script,style,textarea,input,select,option,noscript,title,svg,.rx,.cm-chat,.cm-txt,.cm-cms,[data-notr],[data-noemo],#ffaDM,#ffaRep';
+var SKIP='script,style,textarea,input,select,option,noscript,title,svg,.rx,.cm-chat,.cm-txt,.cm-cms,[data-notr],[data-noemo],#annBar,#ffaDM,#ffaRep';
 var css=document.createElement('style');
 css.textContent='img.ffe{width:1.2em;height:1.2em;vertical-align:-.25em;display:inline-block;margin:0 .06em;-webkit-user-drag:none;user-select:none}';
 (document.head||document.documentElement).appendChild(css);
