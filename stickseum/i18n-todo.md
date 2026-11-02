@@ -67,3 +67,5 @@ patchnotes.json | v611 title | 은하 제국의 황혼 | build 611 | 2026-11-02
 patchnotes.json | v611 items[0] | 춤 이모지도 로고로 바꿨어요 | build 611 | 2026-11-02
 patchnotes.json | v612 title | 은하 제국의 황혼 | build 612 | 2026-11-02
 patchnotes.json | v612 items[0] | 깃발·로봇·두 사람·정보·재생·화살표 이모지를 로고로 바꿨어요 | build 612 | 2026-11-02
+patchnotes.json | v613 title | 은하 제국의 황혼 | build 613 | 2026-11-02
+patchnotes.json | v613 items[0] | 모든 이모지 로고를 배경 없는 투명 그림으로 교체했어요 (온라인·오프라인 점 포함) | build 613 | 2026-11-02
