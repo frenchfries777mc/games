@@ -5655,7 +5655,7 @@ function shuffle(arr){ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.
 /* ===== the version of this file =====
    Different BUILDS of one version meet and play together (room names online-v<ver>-<mode>-<map>-<slot>); different VERSIONS (the 0.x part) never do - the host refuses them (verNo) and the dispatcher answers busy.
    The build is only sent along with the join message and the lobby (for information); the corner of the screen shows it. */
-const GAME_BUILD='build 2026-10-31-v605';
+const GAME_BUILD='build 2026-10-31-v606';
 const GAME_VERSION='0.9', GAME_VERSION_NAME='은하 제국의 황혼';   // 게임 버전 이름: versions.json의 title과 같게 (빌드마다 바꾸지 않음)
 /* version (the 0.x part) vs build: different BUILDS of one version meet and play together, different VERSIONS never do (rooms, quick match, ranked, friend invites, dispatcher).
    Builds before 470 do not send a version, so it is read from the build number (0.9 started at build 458). */
@@ -7950,6 +7950,9 @@ try{ if(window.supabase) sb=window.supabase.createClient(SUPABASE_URL, SUPABASE_
 if(sb) window.FFAuthClient=sb;          // the hub's account script (ff-auth.js, loaded at the end of the page) reuses this client
 
 let sbUser=null; // {id, username}
+let sbSessionReloading=false;
+function sbSessionChanged(){ if(sbSessionReloading) return; sbSessionReloading=true; try{ location.reload(); }catch(e){} }      // the browser's account was switched (hub / another tab) while this tab kept the old one: start again with the right one
+try{ if(sb) sb.auth.onAuthStateChange((ev, session)=>{ try{ const uid=session && session.user && session.user.id; if(sbUser && uid && uid!==sbUser.id) setTimeout(()=>{ if(sbUser && uid!==sbUser.id) sbSessionChanged(); }, 400); }catch(e){} }); }catch(e){}
 let presenceChannel=null, friendReqChannel=null, inviteChannel=null;
 let friendsCache=[];
 const SB_EMAIL_DOMAIN='frenchfries777.com', SB_EMAIL_DOMAIN_OLD='arenaclash.local';   // sign-up and login use the new domain; a login that is refused there tries the old one as a safety net
@@ -8204,6 +8207,8 @@ async function cloudSaveUpload(force){
   const payload=cloudSavePayload(), key=JSON.stringify(Object.assign({}, payload, {at:0}));
   if(!force && key===cloudSaveLastJson) return true;
   try{
+    const cs=await sb.auth.getSession(), cuid=cs && cs.data && cs.data.session && cs.data.session.user && cs.data.session.user.id;
+    if(!cuid || cuid!==sbUser.id){ cloudSaveReady=false; cloudSaveState='error'; try{ sbSessionChanged(); }catch(e){} return false; }      // this browser is signed in as ANOTHER account now (the hub / another tab): never write this tab's progress into that account
     const packed=await packSave(payload); packed.at=Date.now(); packed.gv=GAME_VERSION;
     if(packed.d.length>CLOUD_MAX_CHARS){ cloudSaveState='toolarge'; return false; }                                     // (it would make the login token too big)
     const r=await sb.auth.updateUser({ data:{ [CLOUD_META_KEY]: packed, stickseumGv: GAME_VERSION } });
