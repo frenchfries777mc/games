@@ -3565,8 +3565,45 @@ function auroraHex(t, i){
   const a=sa*Math.min(l,1-l), f=n=>{ const kk=(n+h*12)%12; return l-a*Math.max(-1,Math.min(kk-3,9-kk,1)); };
   return '#'+[f(0),f(8),f(4)].map(v=>Math.round(Math.max(0,Math.min(1,v))*255).toString(16).padStart(2,'0')).join('');
 }
+const STARLIGHT_TINT='#ff9ed8';
+/* 별빛 사과 마법사의 쇼 (그랜드 마스터 수준): pink / gold / sky stars. Every star is the same pre-drawn picture (starSprite), so it stays smooth. */
+function drawStarlightShow(c, t, layer, q){
+  const sp=starSprite(), fr=(v)=>v-Math.floor(v), P='#ff9ed8', G='#ffe27a', S='#7fd8ff', W='#ffffff';
+  const star=(x,y,s,a,rot)=>{ c.globalAlpha=a; c.save(); c.translate(x,y); c.rotate(rot||0); c.scale(s,s); c.drawImage(sp,-48,-48); c.restore(); c.globalAlpha=1; };
+  c.save(); c.lineCap='round'; c.globalCompositeOperation='lighter';
+  if(layer==='back'){
+    const pulse=1+0.08*Math.sin(t*3);
+    { c.save(); c.translate(0,-30); c.scale(0.85*pulse,1.35*pulse); const g=c.createRadialGradient(0,0,2,0,0,62); g.addColorStop(0,hexA(P,0.5)); g.addColorStop(0.5,hexA(S,0.2)); g.addColorStop(1,hexA(P,0)); c.fillStyle=g; c.beginPath(); c.arc(0,0,62,0,7); c.fill(); c.restore(); }
+    if(q>=1){
+      c.save(); c.translate(0,-34); c.rotate(t*0.3); for(let k=0;k<16;k++){ const a=k*Math.PI/8, w=0.05+0.015*Math.sin(t*2+k), R=120+10*Math.sin(t*2.2+k*1.3); c.fillStyle=hexA(k%3===0?G:(k%3===1?P:S),0.16); c.beginPath(); c.moveTo(0,0); c.arc(0,0,R,a-w,a+w); c.closePath(); c.fill(); } c.restore();
+      c.save(); c.translate(0,-34); c.rotate(-t*0.5); for(let k=0;k<10;k++){ const a=k*Math.PI/5, w=0.07, R=82+8*Math.sin(t*2.6+k); c.fillStyle=hexA(k%2?W:P,0.13); c.beginPath(); c.moveTo(0,0); c.arc(0,0,R,a-w,a+w); c.closePath(); c.fill(); } c.restore();
+      const pw=10+3*Math.sin(t*3.2), pg=c.createLinearGradient(0,-165,0,0); pg.addColorStop(0,hexA(S,0)); pg.addColorStop(0.55,hexA(P,0.2)); pg.addColorStop(1,hexA(W,0.36)); c.fillStyle=pg; c.fillRect(-pw,-165,pw*2,165); c.fillStyle=hexA(W,0.2); c.fillRect(-pw*0.3,-165,pw*0.6,165);
+    }
+    c.save(); c.translate(0,1); c.setLineDash([7,5]); c.lineDashOffset=-t*34; c.strokeStyle=hexA(P,0.9); c.lineWidth=2; c.beginPath(); c.ellipse(0,0,34,8.5,0,0,7); c.stroke(); c.setLineDash([3,6]); c.lineDashOffset=t*28; c.strokeStyle=hexA(S,0.8); c.beginPath(); c.ellipse(0,0,46,11.5,0,0,7); c.stroke(); c.setLineDash([]);
+    for(let k=0;k<3;k++){ const ph=fr(t*0.5+k/3); c.strokeStyle=hexA(k%2?G:W,(1-ph)*0.65); c.lineWidth=3.5*(1-ph)+0.8; c.beginPath(); c.ellipse(0,0,14+110*ph,3.5+27*ph,0,0,7); c.stroke(); }
+    c.restore();
+    // a magic star on the floor: a five-pointed star in a ring
+    c.save(); c.translate(0,1); c.scale(1,0.24); c.rotate(t*0.6); c.strokeStyle=hexA(G,0.75); c.lineWidth=2.6; c.beginPath(); for(let k=0;k<=5;k++){ const a=-Math.PI/2+k*Math.PI*4/5; k?c.lineTo(Math.cos(a)*38,Math.sin(a)*38):c.moveTo(Math.cos(a)*38,Math.sin(a)*38); } c.stroke(); c.restore();
+    if(q>=1) for(let k=0;k<4;k++){ const a=t*1.5+k*Math.PI/2; if(Math.sin(a)>0) continue; star(Math.cos(a)*36, -30+Math.sin(a)*12, 0.2, 0.6, a*2); }      // the stars behind the body
+  } else {
+    const n=q>=2?18:(q===1?10:5);
+    for(let i=0;i<n;i++){ const ph=fr(t*(0.5+0.4*fr(i*0.618))+i*0.37), x=Math.sin(i*12.9898+t*0.8)*(10+16*ph), y=-2-ph*96; star(x,y,0.09+0.08*(1-ph),(1-ph)*(0.6+0.4*Math.abs(Math.sin(t*6+i))),t*3+i); }
+    // two rings of stars round the body
+    if(q>=1){ const m=q>=2?9:6; for(let k=0;k<m;k++){ const a=-t*1.4+k*Math.PI*2/m, d=Math.sin(a); if(d<=0) continue; star(Math.cos(a)*30, -34+d*9, 0.17+0.08*d, 0.95, t*2+k); }
+      for(let k=0;k<5;k++){ const a=t*1.9+k*Math.PI*2/5, d=Math.sin(a); if(d<=0) continue; star(Math.cos(a)*18, -72+d*5, 0.14+0.05*d, 0.95, -t*3+k); } }
+    // a gold star halo over the hat
+    c.strokeStyle=hexA(G,0.8); c.lineWidth=2; c.beginPath(); c.ellipse(0,-84,17,4.6,0,0,7); c.stroke(); c.strokeStyle=hexA(P,0.6); c.lineWidth=1.4; c.beginPath(); c.ellipse(0,-89,23,6,0,0,7); c.stroke();
+    // two comets with long tails circling the body
+    for(let k=0;k<2;k++){ for(let j=0;j<16;j++){ const a=t*2.6+k*Math.PI-j*0.1, fade=1-j/16; if(Math.sin(a)<=0) continue; c.fillStyle=hexA(j===0?W:(k?S:G),0.9*fade); c.beginPath(); c.arc(Math.cos(a)*40, -34+Math.sin(a)*13+j*0.3, (j===0?3.4:2.6)*fade+0.4, 0,7); c.fill(); } }
+    // stars that burst out of the body and fly away
+    const nb=q>=2?10:5; for(let k=0;k<nb;k++){ const ph=fr(t*1.1+k/nb), a=k*2.399+t*0.45, d=10+70*ph; star(Math.cos(a)*d, -34+Math.sin(a)*d*0.8, 0.22*(1-ph*0.6), (1-ph)*0.95, a*3+t*4); }
+    const fp=fr(t*0.5+0.2); c.strokeStyle=hexA(W,(1-fp)*0.55); c.lineWidth=3.2*(1-fp)+0.6; c.beginPath(); c.ellipse(0,-34,14+70*fp,20+95*fp,0,0,7); c.stroke();
+  }
+  c.restore();
+}
 function drawSkinLux(c, lux, tint, now, seed, layer){
   if(!lux) return;
+  if(lux===3 && tint===STARLIGHT_TINT){ drawStarlightShow(c, (now||0)/1000+(seed||0)*0.37, layer, fxQuality); return; }      // 별빛 사과 마법사: its own show
   if(lux>=4){ drawAuroraShow(c, (now||0)/1000+(seed||0)*0.37, layer, fxQuality); return; }
   const seedNum=Math.floor((seed||0)*37)%1000, t=(now||0)/1000+(seed||0)*0.37, col=(lux>=4)?auroraHex(((now||0)/1000+(seed||0)*0.37)*0.6,0):(tint||'#ffffff'), col2=(lux>=4)?auroraHex(((now||0)/1000+(seed||0)*0.37)*0.6,3):((lux>=2)?shiftHex(tint||'#ffffff',45):(tint||'#ffffff')), big=lux>=2, q=fxQuality;
   const scol=(lux>=4)?auroraHex(Math.floor(((now||0)/1000+(seed||0)*0.37)*2)/2*0.6,0):col, scol2=(lux>=4)?auroraHex(Math.floor(((now||0)/1000+(seed||0)*0.37)*2)/2*0.6,3):col2;      // (the little cached pictures only change twice a second)
@@ -3634,6 +3671,7 @@ function drawSkinLux(c, lux, tint, now, seed, layer){
 function skinIsSpecial(sid){ const it=sid && COSMETICS[sid]; return !!(it && it.cat==='skin' && ((it.price||0)>=2000 || (it.lux||0)>=3)); }
 function skinMotion(sid, t){
   const it=COSMETICS[sid]||{}, th=(it.lux>=4)?'aurora':(it.fx||'');
+  if(it.concept==='starlight') return {dx:Math.sin(t*0.8)*2.5, dy:-6-Math.sin(t*1.7)*4.5, rot:Math.sin(t*1.1)*0.06};      // 별빛: floats and sways
   switch(th){
     case 'flame': return {dx:Math.sin(t*23)*0.7, dy:-Math.abs(Math.sin(t*3.2))*3.5, rot:Math.sin(t*7)*0.035};
     case 'frost': return {dx:0, dy:Math.sin(t*1.5)*1.6, rot:Math.sin(t*0.8)*0.012};
@@ -17522,6 +17560,17 @@ function drawHeldWeapon(c, weaponId, ax, ay, hx, hy, swingProg, concept){
       c.beginPath(); c.moveTo(0,0); c.lineTo(20,0); c.stroke();
       break;
     case 'fireball': // 마법사: 빨간 보석이 달린 지팡이
+      if(concept==='starlight'){      // 별빛 사과 마법사: a pink-gold twisted wand with a big pulsing star on the tip and little stars circling it
+        const tt=performance.now()*0.001, pu=1+0.12*Math.sin(tt*5), sp=starSprite();
+        c.lineCap='round'; const wg=c.createLinearGradient(-8,0,22,0); wg.addColorStop(0,'#ffd34d'); wg.addColorStop(0.5,'#ff9ed8'); wg.addColorStop(1,'#bfeaff');
+        c.strokeStyle='#ffffff'; c.lineWidth=4.6; c.beginPath(); c.moveTo(-8,0); c.lineTo(21,0); c.stroke(); c.strokeStyle=wg; c.lineWidth=3; c.stroke();
+        c.strokeStyle='rgba(255,255,255,0.8)'; c.lineWidth=1; c.beginPath(); for(let k=0;k<=8;k++){ const x=-6+k*3.4, y=Math.sin(k*1.6+tt*4)*1.6; k?c.lineTo(x,y):c.moveTo(x,y); } c.stroke();
+        c.save(); c.globalCompositeOperation='lighter'; c.translate(27,0);
+        const gg=c.createRadialGradient(0,0,1,0,0,22*pu); gg.addColorStop(0,'rgba(255,240,200,0.9)'); gg.addColorStop(0.4,'rgba(255,150,215,0.4)'); gg.addColorStop(1,'rgba(120,210,255,0)'); c.fillStyle=gg; c.beginPath(); c.arc(0,0,22*pu,0,7); c.fill();
+        for(let k=0;k<3;k++){ const a=tt*4+k*2.094; c.save(); c.translate(Math.cos(a)*12,Math.sin(a)*12); c.rotate(a*2); c.scale(0.1,0.1); c.drawImage(sp,-48,-48); c.restore(); }
+        c.rotate(tt*1.5); c.scale(0.32*pu,0.32*pu); c.drawImage(sp,-48,-48); c.restore();
+        break;
+      }
       c.strokeStyle='#6b4423'; c.lineWidth=3; c.lineCap='round';
       c.beginPath(); c.moveTo(-8,0); c.lineTo(20,0); c.stroke();
       c.fillStyle='#d62839'; c.beginPath(); c.arc(24,0,4.2,0,7); c.fill();
@@ -18617,12 +18666,16 @@ function starSprite(){
 }
 function drawStarShot(b){
   const now=performance.now(), sc=(b.ult?1.5:1)*0.62, ang=Math.atan2(b.vy||0,b.vx||0), sp=starSprite();
-  if(Math.random()<0.3) addP({x:b.x+RND(-3,3),y:b.y+RND(-3,3),vx:RND(-25,25),vy:RND(-30,10),life:RND(.3,.55),size:RND(1.6,3),color:['#ff9ed8','#ffe27a','#7fd8ff'][(Math.random()*3)|0],drag:2});
+  const SC=['#ff9ed8','#ffe27a','#7fd8ff','#ffffff'];
+  for(let i=0;i<2;i++) addP({x:b.x+RND(-4,4),y:b.y+RND(-4,4),vx:RND(-35,35)-(b.vx||0)*0.04,vy:RND(-40,15)-(b.vy||0)*0.04,life:RND(.35,.7),size:RND(1.8,3.4),color:SC[(Math.random()*4)|0],drag:1.6});
+  if(Math.random()<0.45) addP({x:b.x+RND(-3,3),y:b.y+RND(-3,3),vx:RND(-30,30),vy:RND(-50,-5),life:RND(.5,.9),size:RND(9,15),color:SC[(Math.random()*3)|0],shape:'text',add:true,text:Math.random()<.5?'✦':'★',drag:1.4});
+  if(Math.random()<0.25) addP({x:b.x,y:b.y,vx:RND(-20,20),vy:RND(10,60),life:RND(.5,.8),size:RND(2,3.4),color:'#ffe27a',grav:260,drag:0.6});
   ctx.save(); ctx.translate(b.x,b.y);
   ctx.save(); ctx.rotate(ang); ctx.globalCompositeOperation='lighter'; const tl=46*sc/0.62*(b.ult?1.3:1), tg=ctx.createLinearGradient(0,0,-tl,0);
   tg.addColorStop(0,'rgba(255,190,230,0.75)'); tg.addColorStop(0.5,'rgba(255,230,150,0.35)'); tg.addColorStop(1,'rgba(120,210,255,0)');
   ctx.fillStyle=tg; ctx.beginPath(); ctx.moveTo(0,-8*sc/0.62); ctx.lineTo(-tl,0); ctx.lineTo(0,8*sc/0.62); ctx.closePath(); ctx.fill(); ctx.restore();
-  ctx.rotate(now*0.008+(b.sx||0)*0.01); ctx.scale(sc,sc); ctx.drawImage(sp,-48,-48);
+  ctx.save(); ctx.globalCompositeOperation='lighter'; for(let k=0;k<3;k++){ const a=now*0.012+k*2.094, d=17*sc/0.62; ctx.globalAlpha=0.9; ctx.save(); ctx.translate(Math.cos(a)*d,Math.sin(a)*d); ctx.rotate(-a*2); ctx.scale(0.2*sc/0.62,0.2*sc/0.62); ctx.drawImage(sp,-48,-48); ctx.restore(); } ctx.restore();
+  ctx.rotate(now*0.008+(b.sx||0)*0.01); ctx.scale(sc*1.25,sc*1.25); ctx.drawImage(sp,-48,-48);
   ctx.restore();
 }
 function drawConceptProjectile(b,cp){
