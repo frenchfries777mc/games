@@ -3,7 +3,7 @@
 
 import { T } from './tr.js';
 
-export const VERSION = 'v0.2', BUILD = 288;
+export const VERSION = 'v0.2', BUILD = 289;
 
 export const ROLES = {
   knight: {
@@ -129,7 +129,7 @@ export const ROLES = {
   },
   streltsy: {
     name: T('스트렐치'), type: T('원거리 딜러'), color: '#6a7a8a', hp: 220, speed: 5.6,
-    atk: { kind: 'musket', dmg: 70, cd: 1.4, speed: 52, life: 1.2, hr: 0.5 },
+    atk: { kind: 'musket', dmg: 67, cd: 1.75, speed: 52, life: 1.2, hr: 0.5 },
     skills: [
       { id: 'rapidfire', name: T('연사'), key: 'Q', cd: 9, desc: T('같은 방향으로 총알 세 발을 잇달아 쏴요. 한 발에 26 피해.') },
       { id: 'bigshot', name: T('거대 총알'), key: 'E', cd: 11, desc: T('크고 느린 총알을 한 발 쏴요. 88 피해.') },
