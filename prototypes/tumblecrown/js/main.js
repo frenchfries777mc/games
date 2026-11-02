@@ -1459,13 +1459,13 @@ const mini = {
 // 팀 화면: 위쪽 가운데에 깃발 일곱 개의 주인과 점령 진행, 오른쪽 위에 지도 (같은 편은 늘 보이고, 상대는 우리 편 가까이에 있을 때만 보여요)
 // Tab을 누르고 있는 동안 팀별 처치 표
 function scoreboard(sn) {
-  const w = Math.min(460, innerWidth - 24), x0 = (innerWidth - w) / 2, rh = 22, y0 = 120, rows = [0, 1].map(t => sn.pl.filter(q => q.tm === t));
+  const w = Math.min(540, innerWidth - 24), x0 = (innerWidth - w) / 2, rh = 22, y0 = 120, rows = [0, 1].map(t => sn.pl.filter(q => q.tm === t));
   const h = 30 + rows.reduce((a, r) => a + 26 + r.length * rh, 0) + 8;
   oc.fillStyle = 'rgba(10,8,14,.86)'; oc.fillRect(x0, y0, w, h); oc.strokeStyle = '#c8b480'; oc.lineWidth = 2; oc.strokeRect(x0, y0, w, h);
   oc.font = 'bold 13px Galmuri, system-ui'; let y = y0 + 22;
   rows.forEach((r, t) => {
-    oc.textAlign = 'left'; oc.fillStyle = hex(TEAMS[t].c); oc.fillText(tmName(t), x0 + 12, y); oc.textAlign = 'right'; oc.fillStyle = '#b8b0a0'; oc.fillText(T('쓰러뜨림'), x0 + w - 70, y); oc.fillText(T('쓰러짐'), x0 + w - 12, y); y += 4;
-    for (const q of r.slice().sort((a, b) => (b.kl | 0) - (a.kl | 0))) { y += rh; oc.textAlign = 'left'; oc.fillStyle = q.id === S.me ? '#ffe08a' : ROLES[q.role].color; { const ic = !q.bot && q.rl ? rankIco(charRankFor(q.mp).t) : null, ci = svgIco('cls/' + q.role); let tx = x0 + 12; if (ci) { try { oc.drawImage(ci, tx, y - 12, 14, 14); } catch (x) { } tx += 18; } if (ic) { try { oc.drawImage(ic, tx, y - 12, 14, 14); } catch (x) { } tx += 18; } oc.fillText(ROLES[q.role].name + ' · ' + (q.id === S.me ? T('나') : q.bot ? T('봇') : q.name) + (!q.bot && q.rl ? ' · ' + charRankFor(q.mp).name + ' Lv.' + q.rl : ''), tx, y); } oc.textAlign = 'right'; oc.fillStyle = '#e8e0cc'; oc.fillText(q.kl | 0, x0 + w - 70, y); oc.fillText(q.dth | 0, x0 + w - 12, y); }
+    oc.textAlign = 'left'; oc.fillStyle = hex(TEAMS[t].c); oc.fillText(tmName(t), x0 + 12, y); oc.textAlign = 'right'; oc.fillStyle = '#b8b0a0'; oc.fillText(T('쓰러뜨림'), x0 + w - 150, y); oc.fillText(T('도움'), x0 + w - 100, y); oc.fillText(T('쓰러짐'), x0 + w - 56, y); oc.fillText(T('괴물'), x0 + w - 12, y); y += 4;
+    for (const q of r.slice().sort((a, b) => (b.kl | 0) - (a.kl | 0))) { y += rh; oc.textAlign = 'left'; oc.fillStyle = q.id === S.me ? '#ffe08a' : ROLES[q.role].color; { const ic = !q.bot && q.rl ? rankIco(charRankFor(q.mp).t) : null, ci = svgIco('cls/' + q.role); let tx = x0 + 12; if (ci) { try { oc.drawImage(ci, tx, y - 12, 14, 14); } catch (x) { } tx += 18; } if (ic) { try { oc.drawImage(ic, tx, y - 12, 14, 14); } catch (x) { } tx += 18; } oc.fillText(ROLES[q.role].name + ' · ' + (q.id === S.me ? T('나') : q.bot ? T('봇') : q.name) + (!q.bot && q.rl ? ' · ' + charRankFor(q.mp).name + ' Lv.' + q.rl : ''), tx, y); } oc.textAlign = 'right'; oc.fillStyle = '#e8e0cc'; oc.fillText(q.kl | 0, x0 + w - 150, y); oc.fillText(q.as | 0, x0 + w - 100, y); oc.fillText(q.dth | 0, x0 + w - 56, y); oc.fillText(q.mkp | 0, x0 + w - 12, y); }
     y += 26;
   });
 }
