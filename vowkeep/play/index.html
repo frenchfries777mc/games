@@ -217,7 +217,7 @@ body.touch #prompt.up,#prompt.up{bottom:262px}
 <canvas id="ov"></canvas>
 
 <!-- 로비 -->
-<section class="scr on" id="sLobby">
+<section class="scr on" data-noemo id="sLobby">
   <div id="who"></div>
   <div class="title"><img class="logoMark" src="logo.svg" alt="" width="112" height="112"><h1>Vowkeep</h1><p class="tx">무너진 기사단의 마지막 기사들</p></div>
   <nav id="menu" class="tx">
@@ -234,7 +234,7 @@ body.touch #prompt.up,#prompt.up{bottom:262px}
 </section>
 
 <!-- 대기실 -->
-<section class="scr" id="sRoom"><div class="pan"><button class="x" data-back>×</button>
+<section class="scr" data-noemo id="sRoom"><div class="pan"><button class="x" data-back>×</button>
   <h2 id="roomTitle">원정 준비</h2>
   <div id="codeRow" class="row" style="margin-bottom:6px"><button class="btn gold" id="inviteBtn">초대하기</button><span class="note">친구나 지금 접속 중인 플레이어에게 초대를 보내면 바로 들어와요.</span></div>
   <div class="chs" id="chRow"></div><p class="note" id="chNote"></p>
@@ -244,7 +244,7 @@ body.touch #prompt.up,#prompt.up{bottom:262px}
 </div></section>
 
 <!-- 역할·장비 -->
-<section class="scr" id="sRoles"><div class="pan"><button class="x" data-back>×</button>
+<section class="scr" data-noemo id="sRoles"><div class="pan"><button class="x" data-back>×</button>
   <h2>역할·장비</h2>
   <p class="note">원정에서 받은 vC로 역할 레벨이 오르고, 모은 vC로 장비와 겉모습을 바꿀 수 있어요. 허브 코인 1개는 20vC예요. <b id="honorNow" style="color:#ffd36b"></b></p>
   <div class="cos" id="cosBox"></div>
@@ -252,10 +252,10 @@ body.touch #prompt.up,#prompt.up{bottom:262px}
 </div></section>
 
 <!-- 업적 -->
-<section class="scr" id="sAchs"><div class="pan"><button class="x" data-back>×</button><h2>업적</h2><div class="achs" id="achList"></div></div></section>
+<section class="scr" data-noemo id="sAchs"><div class="pan"><button class="x" data-back>×</button><h2>업적</h2><div class="achs" id="achList"></div></div></section>
 
 <!-- 설정 -->
-<section class="scr" id="sSettings"><div class="pan" style="width:min(600px,94vw)"><button class="x" data-back>×</button>
+<section class="scr" data-noemo id="sSettings"><div class="pan" style="width:min(600px,94vw)"><button class="x" data-back>×</button>
   <h2>설정</h2>
   <div class="set">
     <span>효과음 크기</span><input type="range" id="setVol" min="0" max="100">
@@ -272,7 +272,7 @@ body.touch #prompt.up,#prompt.up{bottom:262px}
 <section class="scr" id="sIntro"><div id="introBox"><div class="ch" id="introCh"></div><div id="introLine"></div><div id="introBar"><i></i></div><button id="introSkip">건너뛰기</button></div></section>
 
 <!-- 결과 -->
-<section class="scr" id="sResult"><div class="pan" style="width:min(560px,94vw)" id="result"></div></section>
+<section class="scr" data-noemo id="sResult"><div class="pan" style="width:min(560px,94vw)" id="result"></div></section>
 
 <!-- 전투 화면 -->
 <div id="hud"><div id="lbT" class="lb"></div><div id="lbB" class="lb"></div><div id="wflash"></div><div id="talk"><img class="face" alt="" id="talkFace"><b class="who" id="talkWho"></b><p id="talkText"></p></div>
@@ -288,7 +288,7 @@ body.touch #prompt.up,#prompt.up{bottom:262px}
 </div>
 <!-- 초대 창: 친구(접속과 상관없이)가 맨 위, 그 아래 지금 접속 중인 다른 플레이어 -->
 <div id="guide"><div class="gbox"><h3 id="gT"></h3><div id="gB"></div><button id="gOk"></button></div></div>
-<div id="inv"><div class="in"><button class="x" id="invX">×</button><h2>초대하기</h2><div id="invList"></div></div></div>
+<div id="inv" data-noemo><div class="in"><button class="x" id="invX">×</button><h2>초대하기</h2><div id="invList"></div></div></div>
 <div id="bless"><div class="in"><h2>축복을 하나 고르세요</h2><p>이번 원정 동안 계속 유지돼요. (1 2 3)</p><div class="cards" id="blessCards"></div></div></div>
 <div id="touch"><div id="joy"><div id="joyBase"><div id="joyKnob"></div></div></div>
   <div id="tbtns"><button id="tA"><span>공격</span></button><button id="tQ"><i class="cd"></i><span>Q</span></button><button id="tE"><i class="cd"></i><span>E</span></button><button id="tR"><i class="cd"></i><span>R</span></button><button id="tRoll"><i class="cd"></i><span>구르기</span></button><button id="tF"><span>F</span></button></div>
@@ -298,6 +298,6 @@ body.touch #prompt.up,#prompt.up{bottom:262px}
 <script>["gesturestart","gesturechange","gestureend"].forEach(function(e){document.addEventListener(e,function(x){x.preventDefault()})});</script>
 <script>/* 옛 빌드가 캐시에서 뜨면: 사이트에 더 새 빌드가 있을 때 그 빌드 번호를 주소에 넣어 한 번만 다시 불러와요 (새 주소는 캐시에서 나오지 않아요) */
 (function(){try{var m=document.querySelector('script[src*="js/main.js"]').src.match(/v=(\d+)/),cur=m?+m[1]:0;fetch('../versions.json?t='+Date.now(),{cache:'no-store'}).then(function(r){return r.json()}).then(function(j){var v=(j.versions||[]).find(function(x){return x.version==='0.2'}),n=v?+String(v.build||'').replace(/\D/g,''):0,u=new URL(location.href);if(n>cur&&u.searchParams.get('b')!==String(n)){u.searchParams.set('b',n);location.replace(u.toString())}}).catch(function(){})}catch(e){}})();</script>
-<script type="module" src="js/main.js?v=68"></script>
+<script type="module" src="js/main.js?v=69"></script>
 </body>
 </html>
