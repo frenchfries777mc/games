@@ -1970,12 +1970,13 @@ function animHero(E, p, dt, t, view) {
   // 구르기: 몸 가운데를 축으로 앞으로 한 바퀴 (발끝 축으로 돌면 머리가 바닥에 파묻혀요). 다리와 팔은 웅크려요
   if (p.ro && p.role === 'squire') { // 종자: 발부터 미끄러져 들어가며 다리 걸기
     u.body.rotation.set(-1.0, 0, 0.15); u.body.position.set(0, 0.55, 0.3); u.legL.rotation.x = -1.5; u.legR.rotation.x = -0.4; u.armL.rotation.x = 1.2; u.armR.rotation.x = -2.6; u.body.scale.set(1, 1, 1); E.rollA = 0;
-  } else if (p.ro) { // 구르기: 몸을 공처럼 웅크려 앞으로 한 바퀴. 처음엔 숙이며 들어가고 끝엔 쪼그려 앉았다 일어나요
-    const q = E.rollQ = Math.min(1, (E.rollQ || 0) + dt / 0.35), tk = Math.min(1, q / 0.18, (1 - q) / 0.18 + 0.25), a = Math.PI * 2 * ease(q), c = 0.95;
+  } else if (p.ro || p.rsh) { // 구르기: 몸을 공처럼 웅크려 앞으로 한 바퀴. 처음엔 숙이며 들어가고 끝엔 쪼그려 앉았다 일어나요
+    let q = E.rollQ = Math.min(1, (E.rollQ || 0) + dt / 0.35), tk = Math.min(1, q / 0.18, (1 - q) / 0.18 + 0.25), a = Math.PI * 2 * ease(q); const c = 0.95;
+    if (p.rsh) { E.rushT = (E.rushT || 0) + dt; tk = 1; a = E.rushT * 14; }   // 텔라리스 철벽 쇄도: 구르기 동작을 계속 이어서 돌아요
     u.body.rotation.set(a, 0, 0); u.body.position.set(0, c - c * Math.cos(a) - 0.2 * tk, -c * Math.sin(a));
     u.legL.rotation.x = u.legR.rotation.x = -1.9 * tk; u.armL.rotation.x = u.armR.rotation.x = -1.4 * tk; u.armL.rotation.z = 0.35 * tk; u.armR.rotation.z = -0.35 * tk; u.head.rotation.x = 0.5 * tk;
     u.body.scale.set(1, 1 - 0.22 * tk, 1);
-  } else E.rollQ = 0;
+  } else { E.rollQ = 0; E.rushT = 0; }
   if (p.dn) { // 비틀거리다 뒤로 넘어지며 한 번 튕기고, 팔다리가 늘어져요
     const q = E.dnT = Math.min(1, (E.dnT || 0) + dt / 0.55), f = ease(q), bn = q > 0.7 ? Math.sin((q - 0.7) / 0.3 * Math.PI) * 0.1 : 0;
     u.body.rotation.set((-Math.PI / 2 + 0.2) * f - 0.25 * Math.sin(Math.min(1, q * 2) * Math.PI) + bn, 0, Math.sin(q * 9) * 0.12 * (1 - q)); u.body.position.set(0, 0.4 * f + bn * 1.5, -1 * f);
