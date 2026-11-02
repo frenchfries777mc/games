@@ -2950,6 +2950,10 @@ Object.assign(COSMETICS.skin_bat_new, {name:'감자튀김 선수', tint:'#ffd34d
 Object.assign(COSMETICS.skin_bow_new, {name:'큐피트', tint:'#ff6fae', fx:'sparkle', concept:'cupid'});
 COSMETICS.skin_flamethrower_br={cat:'skin', char:'flamethrower', name:'입냄새 학살자', price:4000, tint:'#9fb52a', fx:'sparkle', concept:'breath', premium:true};      // 4000 sC: no weapon, a stink cloud round the body, the attack is breath from the mouth, shield / skills in the same sickly green
 Object.assign(COSMETICS.skin_pistol_new, {name:'바나나 제임스', price:1500, tint:'#ffe14d', fx:'sparkle', concept:'banana'});
+/* 별빛 사과 skins (owner 11-02, an apology gift for one account): never sold, only given as a gift (gifts row). Drawn from a few cached little pictures, so it costs far less than the 그랜드 마스터 show. */
+const STAR_TINT='#ff9ad5';
+COSMETICS.skin_pistol_apology={cat:'skin', char:'pistol', name:'별빛 사과 제임스', price:0, tint:STAR_TINT, fx:'sparkle', lux:3, exclusive:true, concept:'starlight'};
+COSMETICS.skin_wizard_apology={cat:'skin', char:'wizard', name:'별빛 사과 마법사', price:0, tint:STAR_TINT, fx:'sparkle', lux:3, exclusive:true, concept:'starlight'};
 /* ===== the character's own color in a match: plain colors are free, the shiny ones are bought (cat 'bcol', equipped as saveData.equipped.bcol, sent as cos.col) ===== */
 [['red','빨강','#ff4d4d'],['mint','민트','#3fe0c5'],['yellow','노랑','#f5c94c'],['blue','파랑','#7c9eff'],['pink','분홍','#ff8fd9'],['lime','연두','#8dff7c'],
  ['orange','주황','#ff9d4d'],['purple','보라','#b98cff'],['sky','하늘','#4dd9ff'],['rose','장미','#ff6b9d'],['emerald','에메랄드','#6bffb3'],['white','하양','#eef1f6']]
@@ -3000,7 +3004,7 @@ const EPIC_REWARDS=[
 for(const [ch,nm,tint,fx] of [['sword','유령 기사 투구','#b86bff','glow'], ['pistol','영혼 수집가 중절모','#c9a0ff','void'], ['wizard','영혼 마법사 후드','#9a5cff','sparkle'],
   ['dracula','영혼 군주의 망토','#7a2cff','void'], ['bow','영혼 사냥 두건','#d6b3ff','frost'], ['kurus','영혼 늪의 두건','#e0c4ff','halo']])
   COSMETICS['skin_'+ch+'_soul']={cat:'skin', char:ch, name:nm, price:0, soul:SOUL_SKIN_PRICE, tint, fx};      // bought with souls (the purple currency), not gold
-function epicSkinCandidates(){ return Object.keys(COSMETICS).filter(id=>{ const it=COSMETICS[id]; return it.cat==='skin' && !it.tier && !it.seasonOnly && !cosOwned(id) && ((it.price>BOX_SKIN_MAX_PRICE && it.price<=800) || it.soul); }); }
+function epicSkinCandidates(){ return Object.keys(COSMETICS).filter(id=>{ const it=COSMETICS[id]; return it.cat==='skin' && !it.tier && !it.seasonOnly && !it.exclusive && !cosOwned(id) && ((it.price>BOX_SKIN_MAX_PRICE && it.price<=800) || it.soul); }); }
 const DAILY_REWARDS=[ {kind:'gold', amount:DAILY_GOLD, w:30}, {kind:'charxp', amount:DAILY_XP, w:25}, {kind:'playerxp', amount:DAILY_XP*2, w:25}, {kind:'box', amount:1, w:20},
   {kind:'pickxp', amount:25, w:10}, {kind:'pickxp', amount:50, w:6}, {kind:'pickxp', amount:100, w:3} ];
 function pickWeighted(list, rand){ let tot=0; for(const r of list) tot+=r.w; let x=(rand||Math.random)()*tot; for(const r of list){ x-=r.w; if(x<0) return r; } return list[list.length-1]; }
@@ -3357,6 +3361,15 @@ function drawWeaponPersona(c,wid,hx,hy,r,shy,tint,concept){
       c.fillStyle=tint||'#2a3a2a'; c.beginPath(); c.arc(hx,hy+r*0.55,2.2,0,7); c.fill();
       break;
     case 'wizard': // 마법사: 빨간 마법사 모자, 아래쪽 금색 띠 + 꼬불꼬불한 뾰족 끝
+      if(concept==='starlight'){      // 별빛 사과 마법사: a pink-to-sky hat with a gold band, a gold star on the tip and a few little stars
+        const hg=c.createLinearGradient(hx-r,hy,hx+r,hy-r*4); hg.addColorStop(0,'#7fd8ff'); hg.addColorStop(0.55,'#ff9ed8'); hg.addColorStop(1,'#ffd9f0');
+        c.fillStyle=hg; c.beginPath(); c.moveTo(hx-r-3,hy-1); c.quadraticCurveTo(hx-r*0.3,hy-r*2.6,hx+r*0.9,hy-r*3.4); c.quadraticCurveTo(hx+r*1.4,hy-r*3.5,hx+r*1.2,hy-r*3.9);
+        c.quadraticCurveTo(hx+r*0.5,hy-r*3.2,hx+r*0.3,hy-r*1.9); c.quadraticCurveTo(hx+r*0.8,hy-r*1.2,hx+r+3,hy-1); c.closePath(); c.fill();
+        c.fillStyle='#ffd34d'; c.fillRect(hx-r-3,hy-3.4,(r+3)*2,2.8);
+        const st=(x,y,R,col)=>{ c.fillStyle=col; c.beginPath(); for(let k=0;k<10;k++){ const a=-Math.PI/2+k*Math.PI/5, rr=(k%2)?R*0.45:R; k?c.lineTo(x+Math.cos(a)*rr,y+Math.sin(a)*rr):c.moveTo(x+Math.cos(a)*rr,y+Math.sin(a)*rr); } c.closePath(); c.fill(); };
+        st(hx+r*1.25,hy-r*4.1,r*0.62,'#ffe27a'); st(hx-r*0.2,hy-r*1.45,r*0.28,'#ffffff'); st(hx+r*0.55,hy-r*2.4,r*0.22,'#fff6c0');
+        break;
+      }
       c.fillStyle=tint||'#c81e2c';
       c.beginPath();
       c.moveTo(hx-r-2, hy-1);
@@ -3557,6 +3570,7 @@ function auroraHex(t, i){
 }
 function drawSkinLux(c, lux, tint, now, seed, layer){
   if(!lux) return;
+  if(tint===STAR_TINT){ drawStarlightShow(c, (now||0)/1000+(seed||0)*0.37, layer); return; }      // 별빛 사과
   if(lux>=4){ drawAuroraShow(c, (now||0)/1000+(seed||0)*0.37, layer, fxQuality); return; }
   const seedNum=Math.floor((seed||0)*37)%1000, t=(now||0)/1000+(seed||0)*0.37, col=(lux>=4)?auroraHex(((now||0)/1000+(seed||0)*0.37)*0.6,0):(tint||'#ffffff'), col2=(lux>=4)?auroraHex(((now||0)/1000+(seed||0)*0.37)*0.6,3):((lux>=2)?shiftHex(tint||'#ffffff',45):(tint||'#ffffff')), big=lux>=2, q=fxQuality;
   const scol=(lux>=4)?auroraHex(Math.floor(((now||0)/1000+(seed||0)*0.37)*2)/2*0.6,0):col, scol2=(lux>=4)?auroraHex(Math.floor(((now||0)/1000+(seed||0)*0.37)*2)/2*0.6,3):col2;      // (the little cached pictures only change twice a second)
@@ -3624,6 +3638,7 @@ function drawSkinLux(c, lux, tint, now, seed, layer){
 function skinIsSpecial(sid){ const it=sid && COSMETICS[sid]; return !!(it && it.cat==='skin' && ((it.price||0)>=2000 || (it.lux||0)>=3)); }
 function skinMotion(sid, t){
   const it=COSMETICS[sid]||{}, th=(it.lux>=4)?'aurora':(it.fx||'');
+  if(it.concept==='starlight') return {dx:Math.sin(t*1.6)*2.4, dy:-6-Math.abs(Math.sin(t*2.2))*5, rot:Math.sin(t*1.6)*0.09};      // 별빛 사과: floats and sways like dancing
   switch(th){
     case 'flame': return {dx:Math.sin(t*23)*0.7, dy:-Math.abs(Math.sin(t*3.2))*3.5, rot:Math.sin(t*7)*0.035};
     case 'frost': return {dx:0, dy:Math.sin(t*1.5)*1.6, rot:Math.sin(t*0.8)*0.012};
@@ -3725,6 +3740,7 @@ function renderShop(){
   const shopIds=Object.keys(COSMETICS); if(shopCat==='skin') shopIds.sort((a,b)=>(COSMETICS[a].seasonOnly?1:0)-(COSMETICS[b].seasonOnly?1:0));      // 시즌 패스 skins sit at the very bottom
   for(const id of shopIds){
     const it=COSMETICS[id]; if(!shopItemInTab(it, shopCat)) continue;
+    if(it.exclusive && !cosOwned(id)) continue;      // a gift-only item shows up only for the one who owns it
     const box=document.createElement('div'); box.className='shopItem'+(it.lux?' lux'+it.lux:'');
     if(it.lux){ const rk0=CHAR_RANKS.find(r=>r.name===it.tier); if(rk0 && box.style && box.style.setProperty) box.style.setProperty('--luxc', rk0.color); }
     let cv;
@@ -5655,7 +5671,7 @@ function shuffle(arr){ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.
 /* ===== the version of this file =====
    Different BUILDS of one version meet and play together (room names online-v<ver>-<mode>-<map>-<slot>); different VERSIONS (the 0.x part) never do - the host refuses them (verNo) and the dispatcher answers busy.
    The build is only sent along with the join message and the lobby (for information); the corner of the screen shows it. */
-const GAME_BUILD='build 2026-11-02-v607';
+const GAME_BUILD='build 2026-11-02-v608';
 const GAME_VERSION='0.9', GAME_VERSION_NAME='은하 제국의 황혼';   // 게임 버전 이름: versions.json의 title과 같게 (빌드마다 바꾸지 않음)
 /* version (the 0.x part) vs build: different BUILDS of one version meet and play together, different VERSIONS never do (rooms, quick match, ranked, friend invites, dispatcher).
    Builds before 470 do not send a version, so it is read from the build number (0.9 started at build 458). */
@@ -17512,6 +17528,17 @@ function drawHeldWeapon(c, weaponId, ax, ay, hx, hy, swingProg, concept){
       c.beginPath(); c.moveTo(0,0); c.lineTo(20,0); c.stroke();
       break;
     case 'fireball': // 마법사: 빨간 보석이 달린 지팡이
+      if(concept==='starlight'){      // 별빛 사과 마법사: a pink-gold twisted wand with a big pulsing star on the tip and little stars circling it
+        const tt=performance.now()*0.001, pu=1+0.12*Math.sin(tt*5), sp=starSpriteW();
+        c.lineCap='round'; const wg=c.createLinearGradient(-8,0,22,0); wg.addColorStop(0,'#ffd34d'); wg.addColorStop(0.5,'#ff9ed8'); wg.addColorStop(1,'#bfeaff');
+        c.strokeStyle='#ffffff'; c.lineWidth=4.6; c.beginPath(); c.moveTo(-8,0); c.lineTo(21,0); c.stroke(); c.strokeStyle=wg; c.lineWidth=3; c.stroke();
+        c.strokeStyle='rgba(255,255,255,0.8)'; c.lineWidth=1; c.beginPath(); for(let k=0;k<=8;k++){ const x=-6+k*3.4, y=Math.sin(k*1.6+tt*4)*1.6; k?c.lineTo(x,y):c.moveTo(x,y); } c.stroke();
+        c.save(); c.globalCompositeOperation='lighter'; c.translate(27,0);
+        const gg=c.createRadialGradient(0,0,1,0,0,22*pu); gg.addColorStop(0,'rgba(255,240,200,0.9)'); gg.addColorStop(0.4,'rgba(255,150,215,0.4)'); gg.addColorStop(1,'rgba(120,210,255,0)'); c.fillStyle=gg; c.beginPath(); c.arc(0,0,22*pu,0,7); c.fill();
+        for(let k=0;k<3;k++){ const a=tt*4+k*2.094; c.save(); c.translate(Math.cos(a)*12,Math.sin(a)*12); c.rotate(a*2); c.scale(0.1,0.1); c.drawImage(sp,-48,-48); c.restore(); }
+        c.rotate(tt*1.5); c.scale(0.32*pu,0.32*pu); c.drawImage(sp,-48,-48); c.restore();
+        break;
+      }
       c.strokeStyle='#6b4423'; c.lineWidth=3; c.lineCap='round';
       c.beginPath(); c.moveTo(-8,0); c.lineTo(20,0); c.stroke();
       c.fillStyle='#d62839'; c.beginPath(); c.arc(24,0,4.2,0,7); c.fill();
@@ -18489,7 +18516,7 @@ function drawParticles(){
   AURA=false;
 }
 const MELEE_DRAW_RANGE={spear:160, blade:85, club:82, dagger:40, fist:45, saber:100, pitchfork:105, hook:55, katana:90};   // the reach the swing graphics were drawn for
-const CONCEPT_COLOR={gold:'#ffd34d', fry:'#ffd34d', cupid:'#ff6fae', banana:'#ffe14d'};
+const CONCEPT_COLOR={gold:'#ffd34d', fry:'#ffd34d', cupid:'#ff6fae', banana:'#ffe14d', starlight:'#ff8fd0'};
 function conceptOfSkin(sid){ const c=sid&&COSMETICS[sid]; return (c&&c.concept)||''; }
 function conceptOfP(p){ return (p&&p.cos&&p.cos.skin)?conceptOfSkin(p.cos.skin[p.weapon]):''; }
 const DREAM_STOPS=['#7ff3e8','#9fd4ff','#c9b6ff','#ff9ad9','#ffd9f2'];      // the colour of the 꿈 photo: turquoise, sky, lavender, pink, a pale blush
@@ -18593,6 +18620,83 @@ function drawBananaShot(b){
   ctx.fillStyle='#5a3b12'; ctx.beginPath(); ctx.arc(11,2.4,2,0,7); ctx.fill(); ctx.beginPath(); ctx.arc(-10,3.4,1.6,0,7); ctx.fill();
   ctx.restore();
 }
+/* ===== 별빛 사과: everything is drawn from a handful of little cached pictures (sprites), so a whole show is about 20 drawImage calls ===== */
+const STAR_COL=['#ff8fd0','#ffd66b','#8fe3ff'], starSp={};
+function starSprite(key, W, H, fn){ let s=starSp[key]; if(s) return s; const cv=document.createElement('canvas'); cv.width=W; cv.height=H; const c=cv.getContext('2d'); c.translate(W/2,H/2); fn(c,W,H); return starSp[key]={cv,W,H}; }
+function starPath(c, R, r, n){ c.beginPath(); for(let i=0;i<n*2;i++){ const a=-Math.PI/2+i*Math.PI/n, d=(i%2)?r:R; i?c.lineTo(Math.cos(a)*d,Math.sin(a)*d):c.moveTo(Math.cos(a)*d,Math.sin(a)*d); } c.closePath(); }
+function starImg(ci){ return starSprite('star'+ci,48,48,(c)=>{
+  const g=c.createRadialGradient(0,0,1,0,0,22); g.addColorStop(0,'rgba(255,255,255,0.9)'); g.addColorStop(0.35,STAR_COL[ci]+'99'); g.addColorStop(1,STAR_COL[ci]+'00'); c.fillStyle=g; c.beginPath(); c.arc(0,0,22,0,7); c.fill();
+  starPath(c,15,4.2,4); c.fillStyle='#ffffff'; c.fill(); starPath(c,15,4.2,4); c.lineWidth=2.4; c.strokeStyle=STAR_COL[ci]; c.stroke(); }); }
+function starAura(){ return starSprite('aura',170,210,(c,W,H)=>{ c.scale(0.82,1.1);
+  const g=c.createRadialGradient(0,0,4,0,0,76); g.addColorStop(0,'rgba(255,214,235,0.55)'); g.addColorStop(0.5,'rgba(255,143,208,0.26)'); g.addColorStop(0.8,'rgba(143,227,255,0.12)'); g.addColorStop(1,'rgba(143,227,255,0)'); c.fillStyle=g; c.beginPath(); c.arc(0,0,76,0,7); c.fill(); }); }
+function starRays(){ return starSprite('rays',230,230,(c)=>{ for(let k=0;k<10;k++){ const a=k*Math.PI/5, w=0.075; const g=c.createRadialGradient(0,0,6,0,0,112); g.addColorStop(0,'rgba(255,230,160,0.24)'); g.addColorStop(1,'rgba(255,143,208,0)'); c.fillStyle=g; c.beginPath(); c.moveTo(0,0); c.arc(0,0,112,a-w,a+w); c.closePath(); c.fill(); } }); }
+function starGround(){ return starSprite('ground',150,44,(c)=>{ c.scale(1,0.3); const g=c.createRadialGradient(0,0,2,0,0,70); g.addColorStop(0,'rgba(255,214,107,0.7)'); g.addColorStop(0.6,'rgba(255,143,208,0.3)'); g.addColorStop(1,'rgba(255,143,208,0)'); c.fillStyle=g; c.beginPath(); c.arc(0,0,70,0,7); c.fill(); }); }
+function starHeart(){ return starSprite('heart',40,40,(c)=>{ c.scale(1.15,1.15); const g=c.createLinearGradient(0,-10,0,12); g.addColorStop(0,'#ffd9ee'); g.addColorStop(1,'#ff6fb5'); c.fillStyle=g; c.beginPath(); c.moveTo(0,10); c.bezierCurveTo(-14,-1,-9,-12,0,-5); c.bezierCurveTo(9,-12,14,-1,0,10); c.fill(); c.lineWidth=1.6; c.strokeStyle='#fff'; c.stroke(); }); }
+function starSeal(){ return starSprite('seal',160,160,(c)=>{ c.lineJoin='round'; const g=c.createLinearGradient(-70,-70,70,70); g.addColorStop(0,'#fff2a8'); g.addColorStop(0.5,'#ff9ad5'); g.addColorStop(1,'#8fe3ff'); c.strokeStyle=g; c.lineWidth=3; c.beginPath(); c.arc(0,0,70,0,7); c.stroke(); c.lineWidth=1.6; c.beginPath(); c.arc(0,0,60,0,7); c.stroke(); c.lineWidth=2.6; c.beginPath(); for(let k=0;k<5;k++){ const a=-Math.PI/2+k*Math.PI*4/5; k?c.lineTo(Math.cos(a)*62,Math.sin(a)*62):c.moveTo(Math.cos(a)*62,Math.sin(a)*62); } c.closePath(); c.stroke(); for(let k=0;k<5;k++){ const a=-Math.PI/2+k*Math.PI*2/5; c.fillStyle='#fff6c8'; c.beginPath(); c.arc(Math.cos(a)*70,Math.sin(a)*70,4,0,7); c.fill(); } }); }
+function starPillar(){ return starSprite('pillar',60,230,(c)=>{ const g=c.createLinearGradient(0,-110,0,110); g.addColorStop(0,'rgba(255,230,250,0)'); g.addColorStop(0.55,'rgba(255,170,225,0.07)'); g.addColorStop(1,'rgba(255,200,235,0.2)'); c.fillStyle=g; c.fillRect(-22,-110,44,220); c.fillStyle='rgba(255,255,255,0.07)'; c.fillRect(-6,-110,12,220); }); }
+function starRays2(){ return starSprite('rays2',300,300,(c)=>{ for(let k=0;k<14;k++){ const a=k*Math.PI/7, w=0.045; const g=c.createRadialGradient(0,0,6,0,0,145); g.addColorStop(0,(k%2?'rgba(143,227,255,0.22)':'rgba(255,214,107,0.22)')); g.addColorStop(1,'rgba(255,143,208,0)'); c.fillStyle=g; c.beginPath(); c.moveTo(0,0); c.arc(0,0,145,a-w,a+w); c.closePath(); c.fill(); } }); }
+function drawStarlightShow(c, t, layer){
+  const fr=v=>v-Math.floor(v), q=(typeof fxQuality==='number')?fxQuality:2;
+  c.save(); c.globalCompositeOperation='lighter';
+  if(layer==='back'){
+    { const pl=starPillar(), pw=1+0.08*Math.sin(t*3); c.save(); c.scale(pw,1); c.drawImage(pl.cv,-pl.W/2,-pl.H+2); c.restore(); }
+    const au=starAura(), pulse=1+0.07*Math.sin(t*2.4); c.save(); c.translate(0,-34); c.scale(pulse,pulse); c.drawImage(au.cv,-au.W/2,-au.H/2); c.scale(1.5,1.5); c.globalAlpha=0.25; c.drawImage(au.cv,-au.W/2,-au.H/2); c.restore();
+    if(q>=1){ const ry=starRays(); c.save(); c.translate(0,-36); c.rotate(t*0.28); c.globalAlpha=0.7; c.drawImage(ry.cv,-ry.W/2,-ry.H/2); c.restore();
+      const r2=starRays2(); c.save(); c.translate(0,-36); c.rotate(-t*0.42); c.globalAlpha=0.6; c.drawImage(r2.cv,-r2.W/2,-r2.H/2); c.restore(); c.globalAlpha=1; }
+    const gr=starGround(), gp=1+0.08*Math.sin(t*3); c.save(); c.translate(0,2); c.scale(gp,1); c.drawImage(gr.cv,-gr.W/2,-gr.H/2); c.restore();
+    { const sl=starSeal(); c.save(); c.translate(0,1); c.scale(0.62,0.17); c.rotate(t*0.7); c.globalAlpha=0.95; c.drawImage(sl.cv,-sl.W/2,-sl.H/2); c.restore(); c.globalAlpha=1; }
+    c.save(); c.translate(0,2); for(let k=0;k<2;k++){ const ph=fr(t*0.6+k*0.5); c.strokeStyle=(k?'rgba(143,227,255,':'rgba(255,170,220,')+((1-ph)*0.75).toFixed(2)+')'; c.lineWidth=3*(1-ph)+0.6; c.beginPath(); c.ellipse(0,0,16+78*ph,4+19*ph,0,0,7); c.stroke(); } c.restore();
+    for(let k=0;k<4;k++){ const a=t*1.4+k*Math.PI/2; if(Math.sin(a)>0) continue; const im=starImg(k%3); c.globalAlpha=0.6; c.drawImage(im.cv,Math.cos(a)*30-9,-32+Math.sin(a)*10-9,18,18); } c.globalAlpha=1;
+  } else {
+    const n=q>=1?8:4;
+    for(let k=0;k<n;k++){ const a=-t*1.5+k*Math.PI*2/n, sn=Math.sin(a); if(sn<=0 && k%2) continue; const sc=0.75+0.4*sn, sz=(12+6*Math.abs(Math.sin(t*3+k)))*sc, im=starImg(k%3); c.globalAlpha=0.55+0.4*Math.max(0,sn); c.drawImage(im.cv,Math.cos(a)*29-sz/2,-34+sn*11-sz/2,sz,sz); }
+    c.globalAlpha=1;
+    if(q>=1){ for(let k=0;k<2;k++){ for(let j=0;j<12;j++){ const a=t*2.6+k*Math.PI-j*0.1, sn=Math.sin(a); if(sn<=0) continue; const fade=1-j/12, sz=(j===0?15:9)*fade+3, im=starImg(k?2:1); c.globalAlpha=fade*0.9; c.drawImage(im.cv,Math.cos(a)*46-sz/2,-34+sn*22-sz/2,sz,sz); } } c.globalAlpha=1; }
+    const m=q>=1?10:4;
+    for(let i=0;i<m;i++){ const ph=fr(t*(0.5+0.3*fr(i*0.618))+i*0.37), x=Math.sin(i*12.99+t*0.7)*(8+18*ph), y=-2-ph*96, a=(1-ph)*0.9, im=(i%3===2)?starHeart():starImg(i%3), sz=(i%3===2?11:10)*(1-ph*0.5)+3; c.globalAlpha=a; c.drawImage(im.cv,x-sz/2,y-sz/2,sz,sz); }
+    c.globalAlpha=1;
+    if(q>=1){ for(let i=0;i<6;i++){ const ph=fr(t*0.8+i/6), x=60-ph*120+Math.sin(i*7)*8, y=-120+ph*130, a=Math.sin(ph*Math.PI), sz=9+4*Math.sin(i*3), im=starImg(i%3); c.globalAlpha=a*0.85; c.drawImage(im.cv,x-sz/2,y-sz/2,sz,sz); c.globalAlpha=a*0.4; c.drawImage(im.cv,x+9-sz*0.3,y-7-sz*0.3,sz*0.6,sz*0.6); } c.globalAlpha=1; }
+    c.save(); c.translate(0,-76); c.rotate(Math.sin(t*1.2)*0.06); c.lineWidth=2.4; c.strokeStyle='rgba(255,226,140,0.95)'; c.beginPath(); c.ellipse(0,0,15,4.2,0,0,7); c.stroke(); c.lineWidth=1; c.strokeStyle='rgba(255,255,255,0.8)'; c.beginPath(); c.ellipse(0,0,15,4.2,0,0,7); c.stroke();
+    for(let k=0;k<5;k++){ const a=t*2+k*Math.PI*2/5, sz=6+1.5*Math.sin(t*5+k), im=starImg(k%3); c.drawImage(im.cv,Math.cos(a)*15-sz/2,Math.sin(a)*4.2-sz/2,sz,sz); }
+    { const im=starImg(1), sz=14+2.5*Math.sin(t*4); c.drawImage(im.cv,-sz/2,-4.2-8-sz/2,sz,sz); } c.restore();
+  }
+  c.restore();
+}
+function drawStarShot(b){      // the bullet: a spinning star in a pink glow, with a short tail of little stars
+  const now=performance.now()*0.001, sp=Math.hypot(b.vx||0,b.vy||0)||1, ux=b.vx/sp, uy=b.vy/sp, sc=b.ult?1.6:(b.big?1.35:1);
+  ctx.save(); ctx.globalCompositeOperation='lighter';
+  { const age=Math.hypot(b.x-(b.spawnX===undefined?b.x:b.spawnX), b.y-(b.spawnY===undefined?b.y:b.spawnY)); if(age<70){ const k=age/70, im=starImg(1); for(let r=0;r<6;r++){ const a=r*Math.PI/3+now*3, d=10+k*46, sz=(16-k*10)*sc; ctx.globalAlpha=(1-k)*0.9; ctx.drawImage(im.cv,(b.spawnX===undefined?b.x:b.spawnX)+Math.cos(a)*d-sz/2,(b.spawnY===undefined?b.y:b.spawnY)+Math.sin(a)*d-sz/2,sz,sz); } ctx.globalAlpha=1; } }
+  for(let i=4;i>=1;i--){ const d=i*9*sc, im=starImg((i+Math.floor(now*6))%3), sz=(11-i*1.6)*sc, w=Math.sin(now*30+i*2)*2; ctx.globalAlpha=0.7-i*0.14; ctx.drawImage(im.cv,b.x-ux*d-uy*w-sz/2,b.y-uy*d+ux*w-sz/2,sz,sz); }
+  ctx.globalAlpha=1; const g=starImg(0), gs=52*sc; ctx.globalAlpha=0.6; ctx.drawImage(g.cv,b.x-gs/2,b.y-gs/2,gs,gs); ctx.globalAlpha=1;
+  ctx.save(); ctx.translate(b.x,b.y); ctx.rotate(now*9); const im=starImg(1), sz=28*sc; ctx.drawImage(im.cv,-sz/2,-sz/2,sz,sz); ctx.restore();
+  ctx.restore();
+}
+// 별빛 사과 마법사: the bullet is a spinning star (one pre-drawn picture, so it stays light) with a short pink-to-sky comet tail
+let _starSprite=null;
+function starSpriteW(){
+  if(_starSprite) return _starSprite;
+  const cv=document.createElement('canvas'); cv.width=cv.height=96; const c=cv.getContext('2d'); c.translate(48,48);
+  let g=c.createRadialGradient(0,0,2,0,0,46); g.addColorStop(0,'rgba(255,230,250,0.85)'); g.addColorStop(0.4,'rgba(255,150,215,0.35)'); g.addColorStop(1,'rgba(120,200,255,0)'); c.fillStyle=g; c.beginPath(); c.arc(0,0,46,0,7); c.fill();
+  const star=(R,r)=>{ c.beginPath(); for(let k=0;k<10;k++){ const a=-Math.PI/2+k*Math.PI/5, rr=(k%2)?r:R; k?c.lineTo(Math.cos(a)*rr,Math.sin(a)*rr):c.moveTo(Math.cos(a)*rr,Math.sin(a)*rr); } c.closePath(); };
+  g=c.createLinearGradient(-22,-22,22,22); g.addColorStop(0,'#fff2a8'); g.addColorStop(0.5,'#ff9ed8'); g.addColorStop(1,'#7fd8ff');
+  c.lineJoin='round'; star(24,10); c.fillStyle=g; c.fill(); c.strokeStyle='#ffffff'; c.lineWidth=2.4; c.stroke();
+  c.fillStyle='rgba(255,255,255,0.95)'; star(9,4); c.fill();
+  return _starSprite=cv;
+}
+function drawWizardStarShot(b){
+  const now=performance.now(), sc=(b.ult?1.5:1)*0.62, ang=Math.atan2(b.vy||0,b.vx||0), sp=starSpriteW();
+  const SC=['#ff9ed8','#ffe27a','#7fd8ff','#ffffff'];
+  for(let i=0;i<2;i++) addP({x:b.x+RND(-4,4),y:b.y+RND(-4,4),vx:RND(-35,35)-(b.vx||0)*0.04,vy:RND(-40,15)-(b.vy||0)*0.04,life:RND(.35,.7),size:RND(1.8,3.4),color:SC[(Math.random()*4)|0],drag:1.6});
+  if(Math.random()<0.45) addP({x:b.x+RND(-3,3),y:b.y+RND(-3,3),vx:RND(-30,30),vy:RND(-50,-5),life:RND(.5,.9),size:RND(9,15),color:SC[(Math.random()*3)|0],shape:'text',add:true,text:Math.random()<.5?'✦':'★',drag:1.4});
+  if(Math.random()<0.25) addP({x:b.x,y:b.y,vx:RND(-20,20),vy:RND(10,60),life:RND(.5,.8),size:RND(2,3.4),color:'#ffe27a',grav:260,drag:0.6});
+  ctx.save(); ctx.translate(b.x,b.y);
+  ctx.save(); ctx.rotate(ang); ctx.globalCompositeOperation='lighter'; const tl=46*sc/0.62*(b.ult?1.3:1), tg=ctx.createLinearGradient(0,0,-tl,0);
+  tg.addColorStop(0,'rgba(255,190,230,0.75)'); tg.addColorStop(0.5,'rgba(255,230,150,0.35)'); tg.addColorStop(1,'rgba(120,210,255,0)');
+  ctx.fillStyle=tg; ctx.beginPath(); ctx.moveTo(0,-8*sc/0.62); ctx.lineTo(-tl,0); ctx.lineTo(0,8*sc/0.62); ctx.closePath(); ctx.fill(); ctx.restore();
+  ctx.save(); ctx.globalCompositeOperation='lighter'; for(let k=0;k<3;k++){ const a=now*0.012+k*2.094, d=17*sc/0.62; ctx.globalAlpha=0.9; ctx.save(); ctx.translate(Math.cos(a)*d,Math.sin(a)*d); ctx.rotate(-a*2); ctx.scale(0.2*sc/0.62,0.2*sc/0.62); ctx.drawImage(sp,-48,-48); ctx.restore(); } ctx.restore();
+  ctx.rotate(now*0.008+(b.sx||0)*0.01); ctx.scale(sc*1.25,sc*1.25); ctx.drawImage(sp,-48,-48);
+  ctx.restore();
+}
 function drawConceptProjectile(b,cp){
   const swing=b.swingAngle!==undefined, shot=!swing && !b.dmgless && b.vx!==undefined;
   if(cp==='dragon' && shot && b.wid==='wizard'){ drawDragonShot(b); return true; }
@@ -18600,6 +18704,7 @@ function drawConceptProjectile(b,cp){
   if(cp==='dream' && shot && b.wid==='kurus'){ drawDreamFlask(b); return true; }
   if(cp==='cupid' && shot && b.wid==='bow'){ drawCupidArrow(b); return true; }
   if(cp==='banana' && shot && b.wid==='pistol'){ drawBananaShot(b); return true; }
+  if(cp==='starlight' && shot){ if(b.wid==='wizard') drawWizardStarShot(b); else drawStarShot(b); return true; }
   if(swing && cp==='gold'){ for(let i=0;i<3;i++){ const a=b.swingAngle+RND(-0.9,0.9), r=RND(30,80); addP({x:b.x-Math.cos(b.swingAngle)*30+Math.cos(a)*r,y:b.y-Math.sin(b.swingAngle)*30+Math.sin(a)*r,vx:RND(-60,60),vy:RND(-120,-20),life:RND(.4,.8),size:RND(1.8,3.6),color:i%2?'#ffd34d':'#fff3b0',grav:80,drag:1.2}); } }
   if(swing && cp==='fry'){ for(let i=0;i<3;i++){ const a=b.swingAngle+RND(-0.8,0.8), r=RND(30,80); addP({x:b.x-Math.cos(b.swingAngle)*30+Math.cos(a)*r,y:b.y-Math.sin(b.swingAngle)*30+Math.sin(a)*r,vx:Math.cos(a)*RND(60,200),vy:Math.sin(a)*RND(60,200)-60,life:RND(.4,.8),size:RND(3,5),color:i%2?'#ffd34d':'#ffe98a',shape:'square',rot:RND(0,6),vr:RND(-9,9),grav:500,drag:0.6}); } }
   return false;
