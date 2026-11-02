@@ -835,8 +835,8 @@ function stepPlayer(G, p, inp, dt) {
       const st = 20 * dt, ex = p.x + Math.cos(r.a) * st, ez = p.z + Math.sin(r.a) * st; p.x = ex; p.z = ez; collide(G, p, 0.6);
       if (Math.hypot(p.x - ex, p.z - ez) > 0.02) { p.stun = 0.5; p.rush = null; p.block = 0; ev(G, 'skill', { id: p.id, s: 'rushbump', x: p.x, z: p.z, a: r.a }); }
       else {
-        for (const e of G.enemies) { if (e.hp <= 0 || r.hit[e.id] || !foeOf(G, p.id, e) || dist(p, e) > 1.7 + e.r) continue; r.hit[e.id] = 1; hurtEnemy(G, e, 55, p, { kb: 14, kbA: r.a, push: 38 }); ev(G, 'skill', { id: p.id, s: 'rushhit', x: e.x, z: e.z, a: r.a }); }
-        if (r.t <= 0) { p.rush = null; p.block = 0; }
+        for (const e of G.enemies) { if (e.hp <= 0 || r.hit[e.id] || !foeOf(G, p.id, e) || dist(p, e) > 1.7 + e.r) continue; r.hit[e.id] = 1; r.stop = 1; hurtEnemy(G, e, 100, p, { kb: 24, kbA: r.a, push: 62 }); ev(G, 'skill', { id: p.id, s: 'rushhit', x: e.x, z: e.z, a: r.a }); }
+        if (r.t <= 0 || r.stop) { p.rush = null; p.block = 0; }   // 상대와 부딪히면 거기서 멈춰요
       }
     }
   }
