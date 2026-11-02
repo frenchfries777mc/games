@@ -59,3 +59,5 @@ patchnotes.json | v607 title | 은하 제국의 황혼 | build 607 | 2026-11-02
 patchnotes.json | v607 items[0] | 듀얼·배틀로얄 듀오·일일 모드·실험적 모드 카드 배경을 서로 다른 맵으로 교체 | build 607 | 2026-11-02
 patchnotes.json | v608 title | 은하 제국의 황혼 | build 608 | 2026-11-02
 patchnotes.json | v608 items[0] | 특별 선물 스킨 「별빛 사과 제임스」「별빛 사과 마법사」 추가 (판매하지 않음, 분홍·금·하늘 별빛 효과, 별 지팡이, 별 탄환) | build 608 | 2026-11-02
+patchnotes.json | v609 title | 한정판 스킨 이름 | build 609 | 2026-11-02
+patchnotes.json | v609 items[0] | 별빛 사과 스킨 이름 앞에 (한정판)을 붙였어요. 상점에서는 팔지 않고, 선물받은 사람에게만 보여요 | build 609 | 2026-11-02
