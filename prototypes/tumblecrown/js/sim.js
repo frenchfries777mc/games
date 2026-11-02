@@ -838,6 +838,7 @@ function stepPlayer(G, p, inp, dt) {
     const r = p.rush;
     if (!alive(p) || p.stun > 0 || G.phase !== 'play') { p.rush = null; p.block = 0; }
     else {
+      if (inp && inp.aim != null && isFinite(inp.aim)) { let df = inp.aim - r.a; df = Math.atan2(Math.sin(df), Math.cos(df)); r.a += Math.max(-6 * dt, Math.min(6 * dt, df)); }   // 마우스 쪽으로 방향을 틀어요 (초당 6라디안까지)
       inp = {}; r.t -= dt; p.a = r.a; p.block = Math.max(p.block, 0.3);
       const st = 20 * dt; r.d = (r.d || 0) + st; const ex = p.x + Math.cos(r.a) * st, ez = p.z + Math.sin(r.a) * st; p.x = ex; p.z = ez; collide(G, p, 0.6);
       if (Math.hypot(p.x - ex, p.z - ez) > 0.02) { p.stun = 0.5; p.rush = null; p.block = 0; ev(G, 'skill', { id: p.id, s: 'rushbump', x: p.x, z: p.z, a: r.a }); }
