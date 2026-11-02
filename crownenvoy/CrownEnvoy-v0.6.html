@@ -460,7 +460,7 @@ try{if(sessionStorage.getItem('ce_noIntro')){sessionStorage.removeItem('ce_noInt
 sting();})();</script>
 <div id="app">
  <div id="lobby" class="screen">
-  <canvas id="lobbyBg"></canvas><canvas id="lobbyWar"></canvas><div id="cpTag">© 2026 Frenchfries777 · <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.ko" target="_blank" rel="noopener">CC BY-NC-ND 4.0</a></div><div id="verTag">v0.6 · build 142</div>
+  <canvas id="lobbyBg"></canvas><canvas id="lobbyWar"></canvas><div id="cpTag">© 2026 Frenchfries777 · <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.ko" target="_blank" rel="noopener">CC BY-NC-ND 4.0</a></div><div id="verTag">v0.6 · build 143</div>
   <header class="brand"><h1>Crown Envoy</h1><div class="sub"><i></i>DIPLOMACY · WAR · EMPIRE<i></i></div></header>
   <div id="lobbyRight">
    <div id="lobbyHome" class="modes">
@@ -4551,11 +4551,11 @@ const MapView={cv:null,ctx:null,W:0,H:0,dpr:1,scale:1,ox:0,oy:0,hover:-1,deco:[]
     const v=C.view;const c=this.ctx;if(!v||!this.sea||$('#game').classList.contains('hidden')||!GEO||v.terr.length!==GEO.polys.length)return;const pl=v.players;const vw=this.view;
     c.setTransform(this.dpr,0,0,this.dpr,0,0);c.drawImage(this.sea,0,0,this.W,this.H);
     // 정적 층 캐시
-    /* 시점을 움직이는 동안(드래그·확대)은 정적 층을 다시 그리지 않고 만들어 둔 그림을 늘이거나 옮겨 쓴다. 움직임이 멈추면(0.12초) 선명하게 다시 그린다 */
+    /* 저사양 절약 모드에서만: 시점을 움직이는 동안(드래그·확대)은 정적 층을 다시 그리지 않고 만들어 둔 그림을 늘이거나 옮겨 쓴다. 움직임이 멈추면(0.12초) 선명하게 다시 그린다. 평소에는 움직이는 동안에도 매 프레임 선명하게 그려서 늘였다 다시 그리는 깜빡임이 없다 */
     if(this._kv!==v||v.draft){this._kv=v;this._kk=v.terr.map(t=>t.owner).join('')+v.players.map(p=>p.color).join('')+'|'+MAPMODE+(MAPMODE==='alliance'?JSON.stringify(Object.values(alClusters(v).cl).map(c=>[c.ids,c.name])):'');this._gl=null;}
     const key=this._kk+'|'+this.W+'x'+this.H+'|'+MAPID;
     const vk=vw.z.toFixed(3)+'|'+vw.x.toFixed(1)+'|'+vw.y.toFixed(1);const tn=performance.now();if(vk!==this.lastVK){this.lastVK=vk;this.vkAt=tn;}
-    const act=!!((this.drag&&this.drag.moved)||this.pinch);let tf=null;if(this.layer&&key===this.layerKey&&vk!==this.layerVK&&(act||tn-this.vkAt<120)){const L=this.layerV,a=vw.z/L.z,bx=this.ox*(1-a)+this.scale*(vw.x-a*L.x),by=this.oy*(1-a)+this.scale*(vw.y-a*L.y);
+    const act=!!((this.drag&&this.drag.moved)||this.pinch);let tf=null;if(UI.optOn()&&this.layer&&key===this.layerKey&&vk!==this.layerVK&&(act||tn-this.vkAt<120)){const L=this.layerV,a=vw.z/L.z,bx=this.ox*(1-a)+this.scale*(vw.x-a*L.x),by=this.oy*(1-a)+this.scale*(vw.y-a*L.y);
       if(act||(a>0.6&&a<1.7&&Math.abs(bx)<this.W*0.3&&Math.abs(by)<this.H*0.3))tf={a,bx,by};}
     if(!tf&&(!this.layer||key!==this.layerKey||vk!==this.layerVK)){const L=this.layer||(this.layer=document.createElement('canvas'));const lw=this.W*this.dpr,lh=this.H*this.dpr;if(L.width!==lw||L.height!==lh){L.width=lw;L.height=lh;}const lc=L.getContext('2d');lc.setTransform(this.dpr,0,0,this.dpr,0,0);lc.clearRect(0,0,this.W,this.H);
       lc.save();lc.translate(this.ox,this.oy);lc.scale(this.scale,this.scale);lc.translate(vw.x,vw.y);lc.scale(vw.z,vw.z);this.drawStatic(lc,v,pl,this.scale*vw.z);lc.restore();this.layerKey=key;this.layerVK=vk;this.layerV={z:vw.z,x:vw.x,y:vw.y};}
@@ -4642,8 +4642,8 @@ const MapView={cv:null,ctx:null,W:0,H:0,dpr:1,scale:1,ox:0,oy:0,hover:-1,deco:[]
         for(let i=0;i<3;i++){const a=(age*1.6-i*0.25);if(a<=0||a>=1)continue;c.strokeStyle=COL[m.k]||'#fff';c.globalAlpha=(1-a)*.9;c.lineWidth=4*uu;c.beginPath();c.arc(td.x,td.y,(14+a*110)*uu,0,6.3);c.stroke();}
         c.globalAlpha=Math.min(1,(1-age)*1.6);c.font=`${Math.round(46*uu)}px sans-serif`;c.textAlign='center';c.textBaseline='middle';c.fillText(ICON[m.k]||'⚑',td.x,td.y-(10+age*38)*uu);c.globalAlpha=1;}
       // 며칠 남아 있는 표시(시설 파괴·소요·암살 현장)
-      const vv=(typeof C!=='undefined')?C.view:null;if(vv&&vv.terr){const ICON2={dead:'🪦',fire:'🔥',riot:'⚑',build:'🔨',bandit:'🏕️'};vv.terr.forEach(t=>{if(!t.bl&&t.post==null)return;const td=TDEF[t.id];if(!td)return;const uu=1/vw.z,L=t.bl||[],n=L.length;c.font=`${Math.round(15*uu)}px sans-serif`;c.fillStyle='#fff';c.textAlign='center';c.textBaseline='middle';c.globalAlpha=.95;L.forEach((b,i)=>{if(BLD[b])c.fillText(BLD[b].ic,td.x+(i-(n-1)/2)*16*uu,td.y+36*uu);});if(t.post!=null)c.fillText('🚩',td.x-16*uu,td.y-15*uu);if(L.includes('thea')){const k=Math.sin(nowT/300+t.id);c.fillText('✨',td.x+(10+k*3)*uu,td.y-20*uu-Math.abs(k)*4*uu);}c.globalAlpha=1;});
-      vv.terr.forEach(t=>{if(!t.mk)return;const td=TDEF[t.id];if(!td)return;const uu=1/vw.z,bob=Math.sin(nowT/420+t.id)*2.2*uu;c.fillStyle='#fff';c.font=`${Math.round(20*uu)}px sans-serif`;c.textAlign='center';c.textBaseline='middle';c.globalAlpha=.95;c.fillText(ICON2[t.mk.k]||'⚑',td.x+14*uu,td.y-18*uu+bob);c.globalAlpha=1;});}}
+      const vv=(typeof C!=='undefined')?C.view:null;if(vv&&vv.terr){const ICON2={dead:'🪦',fire:'🔥',riot:'⚑',build:'🔨',bandit:'🏕️'};vv.terr.forEach(t=>{if(!t.bl&&t.post==null)return;const td=TDEF[t.id];if(!td)return;const uu=1/vw.z,L=t.bl||[],n=L.length;c.font=`${Math.round(15*uu)}px sans-serif`;c.fillStyle='#fff';c.textAlign='center';c.textBaseline='middle';c.globalAlpha=.95;const showB=vw.z>=2.2||C.sel===t.id;L.forEach((b,i)=>{if(showB&&BLD[b])c.fillText(BLD[b].ic,td.x+(i-(n-1)/2)*16*uu,td.y+36*uu);});if(t.post!=null)c.fillText('🚩',td.x-16*uu,td.y-15*uu);if(L.includes('thea')){const k=Math.sin(nowT/300+t.id);c.fillText('✨',td.x+(10+k*3)*uu,td.y-20*uu-Math.abs(k)*4*uu);}c.globalAlpha=1;});
+      vv.terr.forEach(t=>{if(!t.mk)return;if(t.mk.k==='build'&&t.owner!==vv.me&&vw.z<2.2)return;const td=TDEF[t.id];if(!td)return;const uu=1/vw.z,bob=Math.sin(nowT/420+t.id)*2.2*uu;c.fillStyle='#fff';c.font=`${Math.round(16*uu)}px sans-serif`;c.textAlign='center';c.textBaseline='middle';c.globalAlpha=.95;c.fillText(ICON2[t.mk.k]||'⚑',td.x+14*uu,td.y-18*uu+bob);c.globalAlpha=1;});}}
     c.restore();try{this.seasonFx(c,now,v);}catch(e){}}
 };
 
