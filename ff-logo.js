@@ -4,6 +4,8 @@
 (function(){
 'use strict';
 if(window.FFLogo) return;
+/* 오너 요청(2026-11-02): 사이트에서는 로고 대신 원래 이모티콘을 보여 줘요. 다시 켜려면 true */
+if(!window.FF_LOGO_ON) return;
 if(/\/patchnotes\//.test(location.pathname)) return;      /* 패치노트와 공지는 원래 이모지 그대로 */
 var BASE='https://frenchfries777mc.github.io/games/hubicons/emoji/';
 var MAP={'🏠':'house','🏘':'houses','🎣':'fishing','🚀':'rocket','👻':'ghost','📕':'redbook','📷':'camera','⛵':'sailboat','🐣':'chick','🏹':'bow','🚚':'truck','🥇':'gold','🥈':'silver','🥉':'bronze','🐾':'paw','🙋':'raisehand','⚪':'whitedot','🕘':'clock','🍟':'fries','📮':'postbox','🔔':'bell','📝':'memo',
