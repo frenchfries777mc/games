@@ -66,7 +66,8 @@ function show(id) { document.querySelectorAll('.scr').forEach(s => s.classList.t
 document.querySelectorAll('[data-back]').forEach(b => b.addEventListener('click', () => { if (scr === 'sRoom' || scr === 'sMap') leaveNet(); show('sLobby'); paintWho(); }));
 document.querySelectorAll('#menu .btn').forEach(b => b.addEventListener('click', () => menu(b.dataset.go)));
 function pickMap(cb) {
-  $('mapPick').innerHTML = '<button class="mapc" data-m=""><b>랜덤 맵</b><small>어떤 맵이 나올지 몰라요. 매번 다른 곳에서 달려요!</small></button>' + MAP_IDS.map(id => '<button class="mapc" data-m="' + id + '"><b>' + MAPS[id].name + '</b><small>' + MAPS[id].desc + '</small></button>').join('');
+  $('mapPick').innerHTML = '<button class="mapc" data-m=""><b>랜덤 맵</b><small>어떤 맵이 나올지 몰라요. 매번 다른 곳에서 달려요!</small></button>' + MAP_IDS.map(id => '<button class="mapc" data-m="' + id + '"><canvas class="mth" data-id="' + id + '"></canvas><b>' + MAPS[id].name + '</b><small>' + MAPS[id].desc + '</small></button>').join('');
+  $('mapPick').querySelectorAll('canvas.mth').forEach(c => { try { mapThumb(c, c.dataset.id); } catch (e) { c.remove(); } });
   $('mapPick').querySelectorAll('button').forEach(b => b.onclick = () => { SFX.unlock(); cb(b.dataset.m); });
   show('sMap');
 }
@@ -248,7 +249,7 @@ function playGame(map, pl) {
   N.G = G = newGame(map, pl.map((p, i) => ({ id: p.id, name: p.name, col: p.col, skin: SKINS[p.skin] ? p.skin : '', bot: p.bot, own: p.id === UID })));
     baked = bakeWorld(G.W); fx = []; REC.length = 0; RP = null; recT = 0; N.inputs = {}; last = performance.now(); acc = 0; PHOTO.url = ''; PHOTO.tried = false; $('res').classList.remove('on'); const og = $('resGc'); if (og) og.remove();
   const me = G.racers.find(r => r.id === UID); cam.x = me ? me.x : 0; cam.y = me ? me.y : 0; snapT = 0;
-  $('hint').style.visibility = ''; $('hint').textContent = 'A D 이동 · W/Space 점프 · 클릭 무기 · F 바꾸기';
+  $('hint').style.visibility = ''; $('hint').textContent = 'A D 이동 · W/Space 점프(길게 누르면 더 높이) · 클릭 무기 · F 바꾸기';
   show('game'); BGM.play('pixel-sprint'); loop.on = true; requestAnimationFrame(loop);
 }
 /* 한 판을 끝까지 마치고(결과 화면에서) 로비로 돌아올 때만 한 번 허브 퀘스트에 알려요 */
@@ -425,7 +426,8 @@ function render0(t, G, op) {
   const S = (px, py) => [(px - Math.round(cx)) * sc, (py - Math.round(cy)) * sc], fs = Math.max(11, Math.round(sc * 4.4));
   x.font = '700 ' + fs + 'px Galmuri, sans-serif';
   for (const r of G.racers) {
-    const [X, Y] = S(r.x + 5, r.y - 9), bw = 26 * sc;
+    let near = 0; for (const o of G.racers) { if (o === r) break; if (Math.abs(o.x - r.x) < 44 && Math.abs(o.y - r.y) < 24) near++; }       // 가까이 모여 있으면 이름표를 위로 쌓아요
+    const [X, Y0] = S(r.x + 5, r.y - 9), Y = Y0 - near * (fs + 6), bw = 26 * sc;
     x.fillStyle = 'rgba(0,0,0,.65)'; x.fillRect(X - bw / 2 - 2, Y - 1, bw + 4, 4 * sc); x.fillStyle = r.hp > 50 ? '#6fe08a' : r.hp > 25 ? '#ffd36b' : '#ff6a5a'; x.fillRect(X - bw / 2, Y, bw * Math.max(0, r.hp) / MAX_HP, 2.4 * sc);
     x.lineWidth = 3; x.strokeStyle = 'rgba(0,0,0,.8)'; x.strokeText(r.name, X, Y - 4); x.fillStyle = r === me ? '#ffd36b' : '#fff'; x.fillText(r.name, X, Y - 4);
   }
