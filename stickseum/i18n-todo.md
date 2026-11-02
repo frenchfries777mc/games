@@ -63,3 +63,7 @@ patchnotes.json | v609 title | 한정판 스킨 이름 | build 609 | 2026-11-02
 patchnotes.json | v609 items[0] | 별빛 사과 스킨 이름 앞에 (한정판)을 붙였어요. 상점에서는 팔지 않고, 선물받은 사람에게만 보여요 | build 609 | 2026-11-02
 patchnotes.json | v610 title | 은하 제국의 황혼 | build 610 | 2026-11-02
 patchnotes.json | v610 items[0] | 로비에서 반복해서 나던 화면 오류(replaceChild) 수정 | build 610 | 2026-11-02
+patchnotes.json | v611 title | 은하 제국의 황혼 | build 611 | 2026-11-02
+patchnotes.json | v611 items[0] | 춤 이모지도 로고로 바꿨어요 | build 611 | 2026-11-02
+patchnotes.json | v612 title | 은하 제국의 황혼 | build 612 | 2026-11-02
+patchnotes.json | v612 items[0] | 깃발·로봇·두 사람·정보·재생·화살표 이모지를 로고로 바꿨어요 | build 612 | 2026-11-02
