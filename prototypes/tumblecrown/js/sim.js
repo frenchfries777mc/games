@@ -870,6 +870,7 @@ function stepPlayer(G, p, inp, dt) {
 }
 function stepPlayer0(G, p, inp, dt) {
   if (!p.rush) for (const k in p.cd) if (p.cd[k] > 0) p.cd[k] -= dt;   // 철벽 쇄도 중에는 쿨타임이 차지 않아요
+  if (G.range) for (const k in p.cd) if (p.cd[k] > 1) p.cd[k] = 1;   // 연습장에서는 모든 기술 쿨타임이 1초예요
   ['block', 'taunt', 'rally', 'inv', 'hitT', 'animT', 'rollCd', 'focus', 'pdCd', 'chill', 'slow', 'bast', 'vwSelf', 'cry', 'capB', 'moraleT'].forEach(k => { if (p[k] > 0) p[k] = Math.max(0, p[k] - dt); });
   if (p.stl > 0 && p.moving && G.pvp) { p.fpT = (p.fpT || 0) - dt; if (p.fpT <= 0) { p.fpT = 0.3; ev(G, 'foot', { x: p.x, z: p.z, a: p.a, tm: p.team }); } }
   if (p.stl > 0) { p.stl -= dt; if (p.stl <= 0) { p.stl = 0; ev(G, 'skill', { id: p.id, s: 'unvanish', x: p.x, z: p.z, a: p.a }); } }
