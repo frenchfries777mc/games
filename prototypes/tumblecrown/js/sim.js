@@ -832,10 +832,10 @@ function stepPlayer(G, p, inp, dt) {
     if (!alive(p) || p.stun > 0 || G.phase !== 'play') { p.rush = null; p.block = 0; }
     else {
       inp = {}; r.t -= dt; p.a = r.a; p.block = Math.max(p.block, 0.3);
-      const st = 20 * dt, ex = p.x + Math.cos(r.a) * st, ez = p.z + Math.sin(r.a) * st; p.x = ex; p.z = ez; collide(G, p, 0.6);
+      const st = 20 * dt; r.d = (r.d || 0) + st; const ex = p.x + Math.cos(r.a) * st, ez = p.z + Math.sin(r.a) * st; p.x = ex; p.z = ez; collide(G, p, 0.6);
       if (Math.hypot(p.x - ex, p.z - ez) > 0.02) { p.stun = 0.5; p.rush = null; p.block = 0; ev(G, 'skill', { id: p.id, s: 'rushbump', x: p.x, z: p.z, a: r.a }); }
       else {
-        for (const e of G.enemies) { if (e.hp <= 0 || r.hit[e.id] || !foeOf(G, p.id, e) || dist(p, e) > 1.7 + e.r) continue; r.hit[e.id] = 1; r.stop = 1; hurtEnemy(G, e, 100, p, { kb: 24, kbA: r.a, push: 62 }); ev(G, 'skill', { id: p.id, s: 'rushhit', x: e.x, z: e.z, a: r.a }); }
+        for (const e of G.enemies) { if (e.hp <= 0 || r.hit[e.id] || !foeOf(G, p.id, e) || dist(p, e) > 1.7 + e.r) continue; r.hit[e.id] = 1; r.stop = 1; const f = Math.min(1, (r.d || 0) / 70); hurtEnemy(G, e, Math.round(40 + 120 * f), p, { kb: 10 + 20 * f, kbA: r.a, push: 25 + 55 * f });   // 오래(멀리) 굴러올수록 피해 40~160, 밀치기도 커져요 ev(G, 'skill', { id: p.id, s: 'rushhit', x: e.x, z: e.z, a: r.a }); }
         if (r.t <= 0 || r.stop) { p.rush = null; p.block = 0; }   // 상대와 부딪히면 거기서 멈춰요
       }
     }
