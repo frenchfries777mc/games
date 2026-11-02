@@ -1056,6 +1056,7 @@ function onEvent(e) {
     case 'swing': if (e.role === 'spearman' && !e.n) { const c = Math.cos(e.a), s = Math.sin(e.a); view.streak(e.x + c * 0.8, e.z + s * 0.8, e.a, 3.6, 0xe8f0ff, 0.12, 0.35); view.burst(e.x + c * 3.6, 1.2, e.z + s * 3.6, 0xe8f0ff, 5, 6, 0.2, 0.08); SFX.play('swing'); break; }
       if (e.role === 'necro') { const c = Math.cos(e.a), s = Math.sin(e.a); const w = e.w || 5; view.streak(e.x, e.z, e.a, e.r, 0x6aff8a, 0.4, w); view.streak(e.x, e.z, e.a, e.r * 0.85, 0xc8ffd8, 0.3, w * 0.45); view.burst(e.x + c * e.r * 0.7, 1.3, e.z + s * e.r * 0.7, 0x6aff8a, 10, 5, 0.35, 0.1); SFX.play('swing'); break; }
       if (e.role === 'streltsy') { const c = Math.cos(e.a), s = Math.sin(e.a); setTimeout(() => { view.fanSweep(e.x, e.z, e.a, e.r, 1.2, 0xdfe6f0, 0.34); view.streak(e.x + c * 0.6, e.z + s * 0.6, e.a, 4.4, 0xffffff, 0.3, 4.5); view.burst(e.x + c * 3, 1.3, e.z + s * 3, 0xdfe6f0, 16, 8, 0.4, 0.14); view.shock(e.x + c * 2, e.z + s * 2, 4.4, 0xdfe6f0, 0.4); view.shake = Math.max(view.shake, 0.5); }, 190); SFX.play('swing'); break; }
+      if (e.role === 'telaris') { const c = Math.cos(e.a), s = Math.sin(e.a); setTimeout(() => { view.streak(e.x + c * 0.8, e.z + s * 0.8, e.a, 2.6, 0x6af0d0, 0.28, 3.2); view.shock(e.x + c * 1.9, e.z + s * 1.9, 3.4, 0xdfe6f0, 0.35); view.burst(e.x + c * 2.2, 0.9, e.z + s * 2.2, 0xd8c8a8, 12, 6, 0.4, 0.14); SFX.play('clang'); if (e.id === me) view.shake = Math.max(view.shake, 0.35); }, 120); break; }   // 방패로 미는 효과: 앞으로 밀려나가는 충격파 (베는 호는 안 그려요)
       view.arc(e.x, e.z, e.a, e.r, COL[e.role] || 0xffffff);
       if (e.t3) { const c3 = Math.cos(e.a), s3 = Math.sin(e.a), cl = COL[e.role] || 0xffffff; view.arc(e.x, e.z, e.a, e.r * 1.15, 0xffffff); view.arc(e.x, e.z, e.a, e.r * 1.3, cl); view.shock(e.x + c3 * e.r * 0.7, e.z + s3 * e.r * 0.7, 3.2, cl, 0.4); view.burst(e.x + c3 * e.r * 0.8, 1.4, e.z + s3 * e.r * 0.8, 0xffe8b0, 12, 7, 0.4, 0.12); if (e.id === me) view.shake = Math.max(view.shake, 0.4); }   // 3타째는 칼 궤적이 겹겹이 길게 남아요
       SFX.play('swing'); break;
@@ -1615,6 +1616,7 @@ function hpBar(x, y, p, me, ally) {
   oc.fillStyle = 'rgba(20,10,14,.9)'; oc.fillRect(x - w / 2 - 2, y - 2, w + 4, 9);
   oc.fillStyle = me ? '#4cd070' : ally ? '#4a9cff' : '#e0403a'; oc.fillRect(x - w / 2, y, w * f, 5);
   if (p.sh > 0) { oc.fillStyle = 'rgba(154,240,224,.85)'; oc.fillRect(x - w / 2, y, Math.min(w, w * p.sh / p.mx), 2); }
+  if (p.rst > 0) { const g = Math.max(0, Math.min(1, p.rst / 3.5)); oc.fillStyle = 'rgba(20,10,14,.9)'; oc.fillRect(x - w / 2 - 2, y - 10, w + 4, 7); oc.fillStyle = '#6af0d0'; oc.fillRect(x - w / 2, y - 8, w * g, 3); }   // 철벽 쇄도 남은 시간 게이지 (체력바 위)
 }
 function drawOverlay(dt) {
   oc.clearRect(0, 0, innerWidth, innerHeight);
