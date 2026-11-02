@@ -50,3 +50,8 @@ patchnotes.json | v579 title | 은하 제국의 황혼 | build 579 | 2026-10-31
 patchnotes.json | v579 items[0] | 시즌 패스·보상 창의 랜덤 캐릭터 XP, 선택 XP 아이콘을 새 로고로 교체 | build 579 | 2026-10-31
 patchnotes.json | v580 title | 은하 제국의 황혼 | build 580 | 2026-10-31
 patchnotes.json | v580 items[0] | 클랜 찾기·내 클랜·클랜 만들기 버튼이 세로로 비정상적으로 길어지던 문제 수정 | build 580 | 2026-10-31
+patchnotes.json | v605 title | 은하 제국의 황혼 | build 605 | 2026-11-02
+patchnotes.json | v605 items[0] | 차원여행자 포탈건: 벽 안에서 발사한 탄환이 같은 자리에서 여러 번 튕겨 피해가 비정상적으로 커지던 버그 수정 | build 605 | 2026-11-02
+patchnotes.json | v605 items[1] | 차원여행자 포탈건 탄환 최대 데미지 30으로 제한 | build 605 | 2026-11-02
+patchnotes.json | v606 title | 은하 제국의 황혼 | build 606 | 2026-11-02
+patchnotes.json | v606 items[0] | 같은 브라우저에서 계정을 바꿔 쓸 때 이전 계정의 마스터리·진행 상황이 다른 계정에 저장되던 버그 수정 | build 606 | 2026-11-02
