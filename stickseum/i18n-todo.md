@@ -55,3 +55,5 @@ patchnotes.json | v605 items[0] | 차원여행자 포탈건: 벽 안에서 발�
 patchnotes.json | v605 items[1] | 차원여행자 포탈건 탄환 최대 데미지 30으로 제한 | build 605 | 2026-11-02
 patchnotes.json | v606 title | 은하 제국의 황혼 | build 606 | 2026-11-02
 patchnotes.json | v606 items[0] | 같은 브라우저에서 계정을 바꿔 쓸 때 이전 계정의 마스터리·진행 상황이 다른 계정에 저장되던 버그 수정 | build 606 | 2026-11-02
+patchnotes.json | v607 title | 은하 제국의 황혼 | build 607 | 2026-11-02
+patchnotes.json | v607 items[0] | 듀얼·배틀로얄 듀오·일일 모드·실험적 모드 카드 배경을 서로 다른 맵으로 교체 | build 607 | 2026-11-02
