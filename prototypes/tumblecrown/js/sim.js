@@ -621,7 +621,7 @@ function useSkill(G, p, si, inp) {
       ev(G, 'skill', { id: p.id, s: 'cryfx', x: p.x, z: p.z, a: p.a }); break;
     }
     case 'rush': { // 2.5초 곧장 돌진 (조작 불가). 닿은 상대는 한 번씩 피해와 큰 밀치기
-      p.rush = { t: 2.5, a: p.a, hit: {} }; p.block = 2.5; p.animT = 2.5; p.roll = 0; p.hvT = 0; break;
+      p.rush = { t: 3, a: p.a, hit: {} }; p.block = 3; p.animT = 3; p.roll = 0; p.hvT = 0; break;
     }
     case 'bastion': { // 3초 동안 모든 방향에서 피해 60% 감소, 가까운 아군 보호막, 둘레 상대 느려짐
       p.bast = 3; for (const q of friends(G, p)) if (q !== p && alive(q) && dist(p, q) < 6) { q.shield = 20; q.shieldT = 5; ev(G, 'ward', { id: q.id }); }
@@ -832,7 +832,7 @@ function stepPlayer(G, p, inp, dt) {
     if (!alive(p) || p.stun > 0 || G.phase !== 'play') { p.rush = null; p.block = 0; }
     else {
       inp = {}; r.t -= dt; p.a = r.a; p.block = Math.max(p.block, 0.3);
-      const st = 10.5 * dt, ex = p.x + Math.cos(r.a) * st, ez = p.z + Math.sin(r.a) * st; p.x = ex; p.z = ez; collide(G, p, 0.6);
+      const st = 14 * dt, ex = p.x + Math.cos(r.a) * st, ez = p.z + Math.sin(r.a) * st; p.x = ex; p.z = ez; collide(G, p, 0.6);
       if (Math.hypot(p.x - ex, p.z - ez) > 0.02) { p.stun = 0.5; p.rush = null; p.block = 0; ev(G, 'skill', { id: p.id, s: 'rushbump', x: p.x, z: p.z, a: r.a }); }
       else {
         for (const e of G.enemies) { if (e.hp <= 0 || r.hit[e.id] || !foeOf(G, p.id, e) || dist(p, e) > 1.7 + e.r) continue; r.hit[e.id] = 1; hurtEnemy(G, e, 55, p, { kb: 14, kbA: r.a, push: 38 }); ev(G, 'skill', { id: p.id, s: 'rushhit', x: e.x, z: e.z, a: r.a }); }
