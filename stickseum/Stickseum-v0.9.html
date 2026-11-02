@@ -5671,7 +5671,7 @@ function shuffle(arr){ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.
 /* ===== the version of this file =====
    Different BUILDS of one version meet and play together (room names online-v<ver>-<mode>-<map>-<slot>); different VERSIONS (the 0.x part) never do - the host refuses them (verNo) and the dispatcher answers busy.
    The build is only sent along with the join message and the lobby (for information); the corner of the screen shows it. */
-const GAME_BUILD='build 2026-11-02-v617';
+const GAME_BUILD='build 2026-11-02-v618';
 const GAME_VERSION='0.9', GAME_VERSION_NAME='은하 제국의 황혼';   // 게임 버전 이름: versions.json의 title과 같게 (빌드마다 바꾸지 않음)
 /* version (the 0.x part) vs build: different BUILDS of one version meet and play together, different VERSIONS never do (rooms, quick match, ranked, friend invites, dispatcher).
    Builds before 470 do not send a version, so it is read from the build number (0.9 started at build 458). */
@@ -8319,7 +8319,7 @@ async function sbSignOut(){
   try{ clearTimeout(cloudSaveTimer); }catch(e){} cloudSaveReady=false; cloudSaveState='off'; cloudSaveNote=''; sbUserMeta={};
   sbForgetPassword();
   switchLocalAccount('');
-  sbUser=null; fcUnread={}; try{ closeFriendChat(); }catch(e){} myClan=null; friendsCache=[]; presenceLastSeen={}; presenceBusySent=false; pendingNoticeDone=false; pendingNoticeClose();
+  sbUser=null; fcUnread={}; try{ closeFriendChat(); }catch(e){} myClan=null; friendsCache=[]; srvOnline={}; presenceLastSeen={}; presenceBusySent=false; pendingNoticeDone=false; pendingNoticeClose();
   renderSocialBox(); updateInviteFriendBox();
 }
 const PRESENCE_GRACE_MS=10000; // treat a friend as still online for a short grace window after they briefly drop out of a presence sync (reconnect blips, tab-switch pauses, etc.)
@@ -8380,8 +8380,28 @@ function sbIsBusy(uid){
   return Array.isArray(metas) && metas.some(m=>m && m.busy);
 }
 function busyTagHtml(uid){ return sbIsBusy(uid) ? '<span class="busyTag">상대가 경기 중이에요</span>' : ''; }
+/* The hub profile card says who is online from the SERVER signal (every page and game sends it; ff_online_friends lists the friends that sent one in the last 100 s).
+   The game's own realtime channel only knows people who have Stickseum open right now and drops them on every reconnect, so the friend list said "offline" for somebody the card showed as online.
+   Both are used now: online if either one says so. */
+let srvOnline={}, srvOnlineBusy=false;
+async function srvOnlineRefresh(){
+  if(!sb || !sbUser || srvOnlineBusy) return;
+  srvOnlineBusy=true;
+  try{
+    const r=await sb.rpc('ff_online_friends');
+    if(r && !r.error){
+      const now=Date.now(), m={}; (r.data||[]).forEach(x=>{ if(x && x.user_id) m[x.user_id]=now; });
+      const changed=Object.keys(m).sort().join()!==Object.keys(srvOnline).filter(k=>now-srvOnline[k]<45000).sort().join();
+      srvOnline=m;
+      if(changed){ try{ if(document.getElementById('profileScreen').classList.contains('active')) renderSocialBox(); }catch(e){} }
+    }
+  }catch(e){}
+  srvOnlineBusy=false;
+}
+setInterval(()=>{ try{ if(sbUser) srvOnlineRefresh(); }catch(e){} }, 20000);
 function sbIsOnline(uid){
   if(presenceChannel && presenceChannel.presenceState()[uid]) return true;
+  if(srvOnline[uid] && Date.now()-srvOnline[uid]<45000) return true;
   const last=presenceLastSeen[uid];
   return !!(last && (Date.now()-last < PRESENCE_GRACE_MS));
 }
@@ -8533,7 +8553,7 @@ async function refreshFriends(){
     otherId: r.requester_id===sbUser.id ? r.addressee_id : r.requester_id,
     otherName: profMap[r.requester_id===sbUser.id ? r.addressee_id : r.requester_id] || '???'
   }));
-  renderSocialBox(); updateInviteFriendBox();
+  renderSocialBox(); updateInviteFriendBox(); srvOnlineRefresh();
 }
 function subscribeFriendRequests(){
   friendReqChannel=sb.channel('friendreq-'+sbUser.id)
