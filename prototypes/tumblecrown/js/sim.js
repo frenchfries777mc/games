@@ -721,7 +721,7 @@ export function step(G, dt, inputs) {
   if (G.phase === 'intro') {
     for (const p of G.players) if (!p.bot && inputs[p.id] && inputs[p.id].skip) G.skip[p.id] = 1;
     const hum = G.players.filter(p => !p.bot);
-    if (G.phaseT > (G.CH.introT || INTRO_T) || (hum.length && hum.every(p => G.skip[p.id]))) { G.phase = 'play'; G.phaseT = 0; G.t0 = G.t; ev(G, 'start', {}); }
+    if (G.phaseT > (G.CH.introT || INTRO_T) || (hum.length && hum.every(p => G.skip[p.id]))) { G.phase = 'play'; G.phaseT = 0; G.t0 = G.t; ev(G, 'start', {}); if (G.pvp) for (const p of G.players) ROLES[p.role].skills.forEach((S, i) => { p.cd['s' + i] = Math.max(p.cd['s' + i] || 0, S.cd * cdMul(p, 'skill', G)); }); }   // 대전은 모든 기술이 쿨타임을 채운 채로 시작해요
     return;
   }
   if (G.phase === 'wipe') { if (G.phaseT > 3) respawnAll(G); return; }
