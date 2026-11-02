@@ -185,8 +185,8 @@ if(document.readyState==='loading') document.addEventListener('DOMContentLoaded'
   #publicProfileModal .ppAch{ display:inline-flex; width:34px; height:34px; align-items:center; justify-content:center; background:var(--panel-2); border:1px solid var(--line); border-radius:9px; font-size:18px; margin:0 5px 5px 0; }
   #publicProfileModal .ppAch.off{ opacity:.22; filter:grayscale(1); }
   .socialRow{ display:flex; align-items:center; justify-content:space-between; gap:8px; background:var(--panel-2); border:1px solid var(--line); border-radius:10px; padding:10px 14px; margin-bottom:8px; }
-  .socialRow .onlineDot{ width:8px; height:8px; border-radius:50%; display:inline-block; margin-right:6px; background:#555; }
-  .socialRow .onlineDot.on{ background:#3fe0c5; box-shadow:0 0 5px #3fe0c5; }
+  .onlineDot{ width:18px; height:18px; display:inline-block; margin-right:4px; vertical-align:-4px; background:url(emoji/greendot.svg) center/contain no-repeat; filter:grayscale(1) opacity(.45); }
+  .onlineDot.on{ filter:none; }
   .socialRow button{ padding:5px 10px; font-size:12px; flex:0 0 auto; }
   #socialAuthForm input{ width:100%; margin-bottom:8px; }
   #inviteToast, #friendReqToast, #partyToast{
@@ -5671,7 +5671,7 @@ function shuffle(arr){ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.
 /* ===== the version of this file =====
    Different BUILDS of one version meet and play together (room names online-v<ver>-<mode>-<map>-<slot>); different VERSIONS (the 0.x part) never do - the host refuses them (verNo) and the dispatcher answers busy.
    The build is only sent along with the join message and the lobby (for information); the corner of the screen shows it. */
-const GAME_BUILD='build 2026-11-02-v612';
+const GAME_BUILD='build 2026-11-02-v613';
 const GAME_VERSION='0.9', GAME_VERSION_NAME='은하 제국의 황혼';   // 게임 버전 이름: versions.json의 title과 같게 (빌드마다 바꾸지 않음)
 /* version (the 0.x part) vs build: different BUILDS of one version meet and play together, different VERSIONS never do (rooms, quick match, ranked, friend invites, dispatcher).
    Builds before 470 do not send a version, so it is read from the build number (0.9 started at build 458). */
@@ -8449,7 +8449,7 @@ function renderPublicProfileHtml(prof, rel){        // rel: {friend, outgoing, i
   const dpb=(st&&COSMETICS[st.pbg]&&COSMETICS[st.pbg].cat==='pbg')?st.pbg:null, dpf=(st&&COSMETICS[st.pfr]&&COSMETICS[st.pfr].cat==='pfr')?st.pfr:null;
   let html='<div style="'+profHeaderStyle(dpb)+'"><div style="text-align:center;"><canvas id="ppAvatar" class="'+avatarFrameCls(dpf)+'" width="84" height="84" style="border-radius:14px; '+avatarFrameStyle(dpf)+'"></canvas></div>'+
     '<div style="text-align:center; margin:8px 0 2px; font-weight:800; font-size:18px;">'+nameWithStyleHtml(name, (st&&COSMETICS[st.nm]&&COSMETICS[st.nm].cat==='name')?st.nm:null, (st&&st.clan&&st.clan.t)?st.clan.e:'', st&&st.clan?st.clan.c:'', (st&&st.clan&&st.clan.t)?String(st.clan.t).slice(0,4):'')+'</div></div>'+
-    '<div style="text-align:center; color:var(--text-dim); font-size:12px; margin-bottom:10px;"><span class="onlineDot'+(sbIsOnline(prof.id)?' on':'')+'" style="width:8px;height:8px;border-radius:50%;display:inline-block;margin-right:5px;background:'+(sbIsOnline(prof.id)?'#3fe0c5':'#555')+';"></span>@'+escapeHtmlText(prof.username)+' · '+(sbIsOnline(prof.id)?'온라인':'오프라인')+'</div>';
+    '<div style="text-align:center; color:var(--text-dim); font-size:12px; margin-bottom:10px;"><span class="onlineDot'+(sbIsOnline(prof.id)?' on':'')+'" ></span>@'+escapeHtmlText(prof.username)+' · '+(sbIsOnline(prof.id)?'온라인':'오프라인')+'</div>';
   if(!st){
     html+='<div class="hint" style="text-align:center; margin:10px 0 14px;">아직 상세 기록이 공개되지 않은 유저예요.<br>(이 유저가 최신 버전으로 경기를 한 번 하면 레벨·전적·도전과제가 보여요)</div>';
   } else {
