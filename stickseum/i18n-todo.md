@@ -65,3 +65,5 @@ patchnotes.json | v610 title | 은하 제국의 황혼 | build 610 | 2026-11-02
 patchnotes.json | v610 items[0] | 로비에서 반복해서 나던 화면 오류(replaceChild) 수정 | build 610 | 2026-11-02
 patchnotes.json | v611 title | 은하 제국의 황혼 | build 611 | 2026-11-02
 patchnotes.json | v611 items[0] | 춤 이모지도 로고로 바꿨어요 | build 611 | 2026-11-02
+patchnotes.json | v612 title | 은하 제국의 황혼 | build 612 | 2026-11-02
+patchnotes.json | v612 items[0] | 깃발·로봇·두 사람·정보·재생·화살표 이모지를 로고로 바꿨어요 | build 612 | 2026-11-02
