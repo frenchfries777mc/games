@@ -6,7 +6,7 @@
 function makeWorld(mapId) {
   const m = MAPS[mapId].make();
   const W = { id: mapId, w: m.w, h: m.h, g: m.g, objs: m.objs, spawns: m.spawns, starts: m.starts, rooms: m.rooms, finish: m.finish, pw: m.w * TS, ph: m.h * TS };
-  { const st = W.starts[0], F = W.finish; W.introT = Math.max(3.5, Math.min(10, (Math.abs((F.x0 + F.x1 + 1) / 2 * TS - st.x) + Math.abs((F.y0 + F.y1) / 2 * TS - st.y)) / 520)); }   // 맵 소개: 먼 맵일수록 천천히 (초당 약 520px)
+  { const st = W.starts[0], F = W.finish; W.introT = Math.max(3.5, Math.min(8, (Math.abs((F.x0 + F.x1 + 1) / 2 * TS - st.x) + Math.abs((F.y0 + F.y1) / 2 * TS - st.y)) / 620)); }   // 맵 소개: 먼 맵일수록 천천히 (최대 8초)
   // 무기 자리가 가구 속이면 가까운 빈 바닥으로 옮겨요
   for (const sp of W.spawns) {
     const row = Math.floor(sp.y / TS), free = tx => tx > 0 && tx < W.w - 1 && !isSolid(tileAt(W, tx, row)) && !isSolid(tileAt(W, tx, row - 1)) && canStand(tileAt(W, tx, row + 1)) && tileAt(W, tx, row + 1) !== 'I';
