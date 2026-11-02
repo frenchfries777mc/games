@@ -91,7 +91,8 @@ async function fetchData(sb, uid){
   var card=null; try{ var cd=await sb.from('ff_card').select('bio,fav,title').eq('user_id',uid).limit(1); if(cd&&!cd.error&&cd.data&&cd.data[0]) card=cd.data[0]; }catch(e){}      // (empty before supabase-ff-more.sql is run)
   var avpick=null; try{ var ap=await sb.from('ff_avatar').select('pick').eq('user_id',uid).limit(1); if(ap&&!ap.error&&ap.data&&ap.data[0]) avpick=ap.data[0].pick||null; }catch(e){}      // (empty before supabase-ff-avatar.sql is run)
   var dev=null; try{ var dv=await sb.from('ff_devs').select('role').eq('user_id',uid).limit(1); if(dv&&!dv.error&&dv.data&&dv.data[0]) dev=dv.data[0].role; }catch(e){}      // (empty before supabase-ff-dev.sql is run)
-  return {profile:(p&&p.data)||{id:uid}, played:played, ach:ach, ids:ids, deco:deco, card:card, dev:dev, avpick:avpick};
+  var ctitle=null; try{ var ct=await sb.from('ff_custom_title').select('title').eq('user_id',uid).limit(1); if(ct&&!ct.error&&ct.data&&ct.data[0]) ctitle=ct.data[0].title||null; }catch(e){}      // (empty before supabase-custom-title-2026-11-02.sql is run)
+  return {profile:(p&&p.data)||{id:uid}, played:played, ach:ach, ids:ids, deco:deco, card:card, dev:dev, avpick:avpick, ctitle:ctitle};
 }
 
 /* ---- card looks unlocked by hub achievements (ff_deco in supabase-ff-extra.sql; keep the "need" numbers in step with ff_deco_need there) ---- */
@@ -806,7 +807,7 @@ async function draw(cv, d, o){
   c.save(); rrect(c,AX,AY,AS,AS,20); c.lineWidth=fr?5:2; c.strokeStyle=fr?(fr.cls==='pfrRainbow'?rainbow(c,AX,AX+AS):fr.color):'rgba(255,255,255,.18)'; c.stroke(); c.restore();
   if(d.dev){ var DVN={owner:{ko:'총괄 개발자',en:'Lead Developer',es:'Desarrollador jefe',fr:'Développeur en chef',de:'Chefentwickler',ja:'総括開発者',zh:"总开发者",pt:"Desenvolvedor-chefe",ru:"Главный разработчик",tr:"Baş geliştirici",it:"Sviluppatore principale",pl:"Główny deweloper",ar:"المطور الرئيسي",nw:"Lead Inner party",gk:"Lead 현상액"},dev:{ko:'개발자',en:'Developer',es:'Desarrollador',fr:'Développeur',de:'Entwickler',ja:'開発者',zh:"开发者",pt:"Desenvolvedor",ru:"Разработчик",tr:"Geliştirici",it:"Sviluppatore",pl:"Deweloper",ar:"مطوّر",nw:"Inner party",gk:"현상액"}}[d.dev]; if(DVN){ var dl=(d.dev==='owner'?'👑 ':'🛠️ ')+(DVN[lang(o)]||DVN.en); c.save(); c.font='800 13px system-ui, sans-serif'; c.textAlign='left'; var dw=c.measureText(dl).width+20; rrect(c,HX+12,HY+12,dw,26,13); c.fillStyle=d.dev==='owner'?'rgba(255,196,61,.2)':'rgba(90,160,255,.2)'; c.fill(); c.lineWidth=1.5; c.strokeStyle=d.dev==='owner'?'rgba(255,196,61,.75)':'rgba(120,180,255,.7)'; c.stroke(); c.fillStyle=d.dev==='owner'?'#ffe08a':'#b5d8ff'; c.fillText(dl,HX+22,HY+30); c.restore(); } }
   // the name in the name colour (the clan is Stickseum-only, so it is not on the shared card)
-  var CD=d.card||{}, TT=CD.title&&titleOf(CD.title), bio=String(CD.bio||'').trim(), lg=lang(o);
+  var CD=d.card||{}, TT=d.ctitle?{n:{en:d.ctitle}}:(CD.title&&titleOf(CD.title)), bio=String(CD.bio||'').trim(), lg=lang(o);
   var name=String(pr.display_name||pr.username||T.player).slice(0,16), ny=AY+AS+(bio||TT?38:46)+(LVB?32:0), fs=29;
   if(LVB){ c.save(); c.textAlign='center'; c.shadowColor='rgba(0,0,0,.8)'; c.shadowBlur=6; c.fillStyle='#ffd36b'; c.font='900 26px system-ui, sans-serif'; c.fillText(SL.plv+st.lv,W/2,AY+AS+32); c.restore(); }      // the player level, big, right under the avatar
   c.save(); c.shadowColor='rgba(0,0,0,.8)'; c.shadowBlur=6; c.shadowOffsetY=1; c.textAlign='left';
@@ -1060,6 +1061,14 @@ async function open(sb, uid, o){
       if(inGame(o)){ }
       else if(editOk){ dcb.style.display=''; dcb.onclick=function(){ var P=el.querySelector('.D'); if(P.classList.toggle('on')) decoPanel(el, sb, uid, d, cv, o); }; }
       else { var hn=el.querySelector('.hn'); hn.innerHTML=esc(T.hubOnly)+'<a href="'+HUBSITE+'">'+esc(T.hubGo)+'</a>'; hn.style.display='block'; } } }catch(e){}
+  try{ if(window.FFAuth&&FFAuth.loadDevs&&FFAuth.devRole&&!inGame(o)){ await FFAuth.loadDevs(); var s2=await sb.auth.getSession(), me2=s2&&s2.data&&s2.data.session&&s2.data.session.user;
+      if(me2&&FFAuth.devRole(me2.id)==='owner'){ var old=el.querySelector('.ct'); if(old) old.remove(); var cb=document.createElement('div'); cb.className='ct'; cb.style.cssText='margin:10px 0;display:flex;gap:6px;justify-content:center;flex-wrap:wrap';
+        cb.innerHTML='<input maxlength="12" placeholder="칭호 (12자까지, 비우면 지워요)" style="padding:6px 8px;border-radius:8px;border:1px solid #333;background:#10131b;color:#eef0f5;font:inherit;min-width:0;flex:1;max-width:220px"><button type="button" class="cm-btn2" style="padding:6px 10px;border-radius:8px;border:1px solid #ffd36b;background:#2a2110;color:#ffd36b;font:inherit;cursor:pointer">🏷️ 칭호 주기</button><span class="ctm" style="width:100%;text-align:center;font-size:12px;color:#9aa3b5"></span>';
+        cb.querySelector('input').value=d.ctitle||''; var host=el.querySelector('.G'); host.parentNode.insertBefore(cb,host);
+        cb.querySelector('button').onclick=async function(){ var v=cb.querySelector('input').value.trim().slice(0,12), mm=cb.querySelector('.ctm'); mm.textContent='…';
+          var r; try{ r=await sb.rpc('ff_title_give',{p_user:uid,p_title:v}); }catch(e){ r={error:e}; }
+          if(r&&r.error){ mm.textContent='저장하지 못했어요 (supabase-custom-title-2026-11-02.sql 을 먼저 실행해 주세요)'; return; }
+          d.ctitle=v||null; try{ await draw(cv,d,o); }catch(e){} mm.textContent=v?'칭호를 줬어요':'칭호를 지웠어요'; }; } } }catch(e){}
   gameSection(el, sb, uid, d, o, T, own);
   acb.style.display=''; acb.onclick=async function(){ var w=achWin(T), box=w.querySelector('.L'); box.innerHTML='<div class="n">'+esc(T.loading)+'</div>'; box.scrollTop=0; w.classList.add('on');
     try{ await list(box, sb, d, o); }catch(e){ box.innerHTML='<div class="n">'+esc(T.fail)+'</div>'; } };
