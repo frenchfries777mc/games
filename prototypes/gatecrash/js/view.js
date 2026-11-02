@@ -408,3 +408,15 @@ function drawEmo(x, id, px, py) {
   if (p) for (let j = 0; j < p.length; j++) for (let i = 0; i < 9; i++) { const c = p[j][i]; if (c !== '.') { x.fillStyle = C[c]; x.fillRect(i * 1.5 + 0.5, j * 1.5 + 1, 1.6, 1.6); } }
   x.restore();
 }
+
+/* 맵 고르는 화면의 작은 미리보기: 방 색과 바닥·가구만 아주 작게 그려요 */
+function mapThumb(c, id) {
+  const m = MAPS[id].make(), k = 2; c.width = m.w * k; c.height = m.h * k; const x = c.getContext('2d'); x.imageSmoothingEnabled = false;
+  x.fillStyle = '#0c1220'; x.fillRect(0, 0, c.width, c.height);
+  for (const rm of m.rooms) { const T = THEMES[rm.theme] || THEMES.office; x.fillStyle = T.wall; x.fillRect(rm.x0 * k, rm.y0 * k, (rm.x1 - rm.x0 + 1) * k, (rm.y1 - rm.y0 + 1) * k); x.fillStyle = T.wain || T.trim; x.fillRect(rm.x0 * k, (rm.y1 - 1) * k, (rm.x1 - rm.x0 + 1) * k, 2 * k); }
+  for (let ty = 0; ty < m.h; ty++) for (let tx = 0; tx < m.w; tx++) {
+    const ch = m.g[ty][tx]; if (ch === '.') continue;
+    x.fillStyle = ch === '#' ? '#3a4458' : ch === 'x' ? '#b88a50' : ch === '=' ? '#c89a5a' : ch === 'I' ? '#9ad4ee' : ch === 'U' ? '#6ab0f0' : '#f2b632'; x.fillRect(tx * k, ty * k, k, k);
+  }
+  const F = m.finish; if (F) { x.fillStyle = '#ffffff'; x.fillRect(F.x0 * k, F.y0 * k, (F.x1 - F.x0 + 1) * k, (F.y1 - F.y0 + 1) * k); x.fillStyle = '#111'; x.fillRect(F.x0 * k, F.y0 * k, k, (F.y1 - F.y0 + 1) * k); }
+}
