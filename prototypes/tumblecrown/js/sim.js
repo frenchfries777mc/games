@@ -514,7 +514,7 @@ function comboFx(G, C, A, B) {
   ev(G, 'combo', { c: C.id, name: C.name, x, z, a: A.id, b: B.id });
   if (!A.bot || !B.bot) { for (const o of [A, B]) if (!o.bot) { ev(G, 'ach', { id: 'combo', pid: o.id }); ev(G, 'combo1', { c: C.id, pid: o.id }); } }
 }
-const ANIMOF = { necroheal: 'heal', necroraise: 'rally', courtswap: 'blink', runetrap: 'mark', courtshift: 'shadow', bigbomb: 'mark', sticky: 'mark', barrage: 'scatter', wall: 'ward', aegis: 'ward', cry: 'rally', rush: 'block', vow: 'heal', bastion: 'block', vanish: 'blink', venom: 'mark', execute: 'shadow', rootbolt: 'pierce', rapidfire: 'pierce', bigshot: 'pierce', cover: 'ward', backstep: 'dash', snipe: 'pierce', shieldbash: 'hv', frost: 'curse', leap: 'leap', flurry: 'flurry', blink: 'shadow', scatter: 'scatter', fan: 'pierce', bonestorm: 'storm', march: 'rally', lullaby: 'ward', chorus: 'heal', lunge: 'lunge', spearthrow: 'pierce', sweep: 'whirl' };
+const ANIMOF = { necroheal: 'heal', necroraise: 'rally', courtswap: 'blink', runetrap: 'mark', courtshift: 'shadow', bigbomb: 'mark', sticky: 'mark', barrage: 'scatter', wall: 'ward', aegis: 'ward', shieldslam: 'block', rush: 'block', vow: 'heal', bastion: 'block', vanish: 'blink', venom: 'mark', execute: 'shadow', rootbolt: 'pierce', rapidfire: 'pierce', bigshot: 'pierce', cover: 'ward', backstep: 'dash', snipe: 'pierce', shieldbash: 'hv', frost: 'curse', leap: 'leap', flurry: 'flurry', blink: 'shadow', scatter: 'scatter', fan: 'pierce', bonestorm: 'storm', march: 'rally', lullaby: 'ward', chorus: 'heal', lunge: 'lunge', spearthrow: 'pierce', sweep: 'whirl' };
 const friends = (G, p) => G.pvp ? G.players.filter(q => q.team === p.team) : G.players;   // 대전에서는 같은 팀이 내 편이에요
 function swapPos(G, a, b, inv) {
   const ax = a.x, az = a.z; a.x = b.x; a.z = b.z; b.x = ax; b.z = az;
@@ -624,9 +624,10 @@ function useSkill(G, p, si, inp) {
       let ally = null, bd = 12; for (const q of friends(G, p)) if (q !== p && alive(q) && dist(p, q) < bd) { bd = dist(p, q); ally = q; }
       const t = ally || p; t.shield = Math.max(t.shield || 0, 60); t.shieldT = 4; ev(G, 'ward', { id: t.id }); ev(G, 'skill', { id: p.id, s: 'aegisfx', x: t.x, z: t.z, a: p.a }); break;
     }
-    case 'cry': { // 둘레 아군 3초 동안 피해 25% 감소, 15% 빠르게
-      for (const q of friends(G, p)) if (alive(q) && dist(p, q) < 8) q.cry = 3;
-      ev(G, 'skill', { id: p.id, s: 'cryfx', x: p.x, z: p.z, a: p.a }); break;
+    case 'shieldslam': { // 방패를 바닥에 내려찍어 둘레 상대에게 25 피해와 0.8초 기절
+      ev(G, 'skill', { id: p.id, s: 'slamfx', x: p.x, z: p.z, a: p.a });
+      for (const e of G.enemies) if (e.hp > 0 && foeOf(G, p.id, e) && dist(p, e) < 4.2 + e.r) { hurtEnemy(G, e, 25, p, {}); if (e.hp > 0) e.stun = Math.max(e.stun || 0, 0.8); }
+      break;
     }
     case 'rush': { // 2.5초 곧장 돌진 (조작 불가). 닿은 상대는 한 번씩 피해와 큰 밀치기
       p.rush = { t: 3.5, a: p.a, hit: {} }; p.block = 3.5; p.animT = 3.5; p.roll = 0; p.hvT = 0; break;
@@ -1932,7 +1933,7 @@ function botPvp(G, p, dt) {
       case 'wall': go = d < 10 && r < 0.08; break;
       case 'vow': go = d < 9 && r < 0.1; break;
       case 'aegis': go = d < 12 && r < 0.1; break;
-      case 'cry': go = d < 10 && r < 0.08; break;
+      case 'shieldslam': go = d < 4 && r < 0.2; break;
       case 'rush': go = d > 4 && d < 13 && r < 0.12; break;
       case 'bastion': go = d < 4 && hpf < 0.7 && r < 0.12; break;
       case 'vanish': go = d > 5 && d < 14 && r < 0.08; break;
