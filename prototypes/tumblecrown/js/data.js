@@ -3,7 +3,7 @@
 
 import { T } from './tr.js';
 
-export const VERSION = 'v0.2', BUILD = 292;
+export const VERSION = 'v0.2', BUILD = 293;
 
 export const ROLES = {
   knight: {
@@ -99,7 +99,7 @@ export const ROLES = {
     atk: { kind: 'melee', range: 2.5, arc: 2.8, dmg: 20, cd: 0.75, push: 32, kb: 10 },
     skills: [
       { id: 'aegis', name: T('수호의 가호'), key: 'Q', cd: 8, desc: T('가장 가까운 아군(없으면 나)에게 4초 동안 피해 60을 막는 보호막을 씌워요.') },
-      { id: 'cry', name: T('용기의 외침'), key: 'E', cd: 14, desc: T('둘레 아군이 3초 동안 받는 피해가 25% 줄고 15% 빨라져요.') },
+      { id: 'shieldslam', name: T('방패 내려찍기'), key: 'E', cd: 12, desc: T('방패를 바닥에 내려찍어 둘레 상대에게 25 피해를 주고 0.8초 기절시켜요.') },
       { id: 'rush', name: T('철벽 쇄도'), key: 'R', cd: 16, desc: T('몸을 둥글게 말아 3.5초 동안 아주 빠르게 굴러가요(이동 키는 안 먹고 마우스로 방향만 틀 수 있어요, 구르는 동안 스킬 쿨타임이 차지 않아요). 상대와 부딪히면 그 자리에서 멈추고 피해(40~160)와 밀치기를 줘요. 멀리 굴러올수록 둘 다 커져요. 벽에 부딪히면 잠깐 어지러워요.') }
     ],
     st: [4, 1, 1, 3], atkTxt: T('방패로 밀치기 (넓게 밀어서 크게 밀려나요)'),
