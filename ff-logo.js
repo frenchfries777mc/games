@@ -8,7 +8,7 @@ if(/\/patchnotes\//.test(location.pathname)) return;      /* 패치노트와 공
 var BASE='https://frenchfries777mc.github.io/games/hubicons/emoji/';
 var MAP={'🏠':'house','🏘':'houses','🎣':'fishing','🚀':'rocket','👻':'ghost','📕':'redbook','📷':'camera','⛵':'sailboat','🐣':'chick','🏹':'bow','🚚':'truck','🥇':'gold','🥈':'silver','🥉':'bronze','🐾':'paw','🙋':'raisehand','⚪':'whitedot','🕘':'clock','🍟':'fries','📮':'postbox','🔔':'bell','📝':'memo',
   '🏷':'tag','📋':'list','✏':'pencil','💬':'chat','🏆':'trophy','🪙':'coin','👥':'group','🔍':'search','🎉':'party','💡':'bulb','🗑':'trash','🎁':'gift','🎮':'gamepad','🚪':'door','📅':'calendar','📊':'graph','📢':'megaphone','✅':'okcheck','🔥':'fire','⭐':'star','👤':'person','⚖':'scale','📌':'pin','⏸':'pause','📖':'book','🗡':'dagger','💀':'skull','👁':'eye','👋':'wave','🎭':'mask','💎':'gem',
-  '🪪':'idcard','⚙':'gear','👑':'crown','🛠':'tools','🟢':'greendot','🔴':'reddot','🌙':'moon','☀':'sun','🚫':'ban','🚩':'flag','🖼':'picture','🐞':'bug','🔁':'repeat','⬜':'sq_white','⚔':'swords','🛡':'shield','🏃':'runner','🎨':'palette','🔗':'link','🏅':'medal','🔒':'lock','⚡':'bolt'};
+  '🪪':'idcard','🟡':'yellowdot','🔵':'bluedot','⚫':'blackdot','➕':'plus','🏝':'island','⚙':'gear','👑':'crown','🛠':'tools','🟢':'greendot','🔴':'reddot','🌙':'moon','☀':'sun','🚫':'ban','🚩':'flag','🖼':'picture','🐞':'bug','🔁':'repeat','⬜':'sq_white','⚔':'swords','🛡':'shield','🏃':'runner','🎨':'palette','🔗':'link','🏅':'medal','🔒':'lock','⚡':'bolt'};
 /* 반응 이모트(😂 😮 😢 ❤ 👏 👍)와 😀 는 일부러 넣지 않았어요 */
 var keys=Object.keys(MAP), RX=new RegExp('('+keys.join('|')+')\\uFE0F?','g');
 var SKIP='.ann,#annBar,#newsList,#hubNotes,script,style,textarea,input,select,option,noscript,title,svg,.rx,.cm-chat,.cm-txt,.cm-cms,[data-notr],[data-noemo],#ffaDM,#ffaRep';
