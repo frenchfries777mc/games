@@ -76,3 +76,5 @@ patchnotes.json | v615 title | 투명 로고와 접속 점 | build 615 | 2026-11
 patchnotes.json | v615 items[0] | 캐릭터·모드·재화·상자·프로필·설정·퀘스트 로고를 배경 없는 투명 그림으로 바꿨어요 | build 615 | 2026-11-02
 patchnotes.json | v616 title | 투명 로고와 접속 점 | build 616 | 2026-11-02
 patchnotes.json | v616 items[0] | 이모지를 로고로 바꿔 보여 주던 것을 되돌려 원래 이모지로 보여요 (캐릭터·모드·재화 그림은 그대로) | build 616 | 2026-11-02
+patchnotes.json | v617 title | 투명 로고와 접속 점 | build 617 | 2026-11-02
+patchnotes.json | v617 items[0] | 게임 안 이모지 로고를 다시 켰어요 (사이트·허브 화면만 원래 이모지) | build 617 | 2026-11-02
