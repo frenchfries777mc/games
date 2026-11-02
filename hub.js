@@ -3,7 +3,7 @@
    필요한 SQL: supabase-ff-hub.sql, supabase-ff-images.sql, supabase-ff-social.sql, supabase-ff-extra.sql, supabase-ff-more.sql, supabase-ff-react.sql, supabase-ff-coin.sql, supabase-ff-wiki.sql, supabase-ff-follow.sql (+ crownenvoy/supabase-ff-rank.sql) */
 (function(){
 'use strict';
-try{ var em=document.createElement('script'); em.src='https://frenchfries777mc.github.io/games/ff-logo.js?v=20261102b'; (document.head||document.documentElement).appendChild(em); }catch(e){}   /* 이모지를 그림으로 (사람이 쓴 글과 반응 이모트는 그대로) */
+try{ var em=document.createElement('script'); em.src='https://frenchfries777mc.github.io/games/ff-logo.js?v=20261102c'; (document.head||document.documentElement).appendChild(em); }catch(e){}   /* 이모지를 그림으로 (사람이 쓴 글과 반응 이모트는 그대로) */
 var SI=window.SI18N||{lang:'ko',F:function(t){ var a=arguments; return String(t).replace(/\{(\d)\}/g,function(_,n){ return a[+n+1]; }); }};
 var LANG=SI.lang||'ko', F=SI.F;
 var GAMES={}, GLIST=[], NSRC={};
