@@ -1623,6 +1623,7 @@ i.ti{font-style:normal;font-size:.72em;font-weight:900;background:#ffd23f;color:
 .lobTop h2{font-size:16px}.lobCtl .pb{padding:6px 10px;font-size:13px}#lobEmo button{width:34px;height:34px}.lobHint{display:none}
 }
 #rulesRow span,#botRow span{white-space:nowrap}
+img.ffe{width:1.2em;height:1.2em;vertical-align:-.25em;display:inline-block;margin:0 .06em;-webkit-user-drag:none;user-select:none}
 #toast{position:fixed;left:50%;bottom:30px;transform:translateX(-50%) translateY(30px);background:#2b2117;color:#fff;padding:10px 16px;border-radius:12px;font-weight:700;font-size:14px;opacity:0;transition:.25s;z-index:20;pointer-events:none;max-width:90vw;text-align:center}
 #toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
 @keyframes finIn{from{opacity:0;transform:translateY(40px) scale(.92)}to{opacity:1;transform:none}}
@@ -1720,9 +1721,9 @@ body.playing #emoBar{display:flex}
    <div class="row"><input id="codeIn" maxlength="5" placeholder="방 코드" autocomplete="off"><button class="pb dark" id="joinBtn" style="flex:0 0 auto">들어가기</button></div>
    <div class="msg" id="homeMsg"></div>
   </aside>
-  <template id="patchnotes"><details class="notes" open><summary>패치노트 · v0.1 (b94)</summary>
-   <b>2026-11-02 · v0.1 · b94 · 이모지 원래대로</b>
-   <ul><li>게임 안의 이모지를 다시 원래 이모지로 되돌렸어요</li></ul>
+  <template id="patchnotes"><details class="notes" open><summary>패치노트 · v0.1 (b95)</summary>
+   <b>2026-11-02 · v0.1 · b95 · 게임 안 이모지 그림 유지</b>
+   <ul><li>게임 안의 이모지는 계속 허브와 같은 그림으로 보여요 (사이트 화면만 원래 이모지)</li></ul>
    <b>2026-11-02 · v0.1 · b93 · 이모지 그림 배경 제거</b>
    <ul><li>자물쇠, 축구공, 접속 중 초록 점 그림에서 배경을 없앴어요</li></ul>
    <b>2026-11-02 · v0.1 · b92 · 이모지를 그림으로</b>
@@ -1907,7 +1908,7 @@ body.playing #emoBar{display:flex}
    <ul><li>무너지는 발판 칸 수 대폭 증가 (19×10)와 용암 동굴 맵</li><li>10개 맵 전부 새로 그림 (관중석, 야자수 섬, 링, 정원 미로, 서커스, 우노 테이블 등)</li><li>글자 대신 아이콘·말풍선·이펙트로 표현 (무기, 아이템, 카드 효과, 시작 안내)</li><li>타격·폭발·물보라 효과와 화면 흔들림 추가</li></ul>
    <b>2026-10-19 · v0.1 · b1 · 첫 시험판</b>
    <ul><li>마네킹 미니게임 10개 추가 (장애물 달리기, 섬 밀치기, 싸우기, 병맛 미로, 체스 대난투, 폭탄 돌리기, 병맛 우노, 쇼윈도 얼음땡, 무너지는 발판, 컨베이어 서바이벌)</li><li>방 코드로 최대 8명 멀티플레이, 빈자리는 봇으로 채우기</li><li>판마다 10개 중 5개를 무작위로 골라 점수를 합산</li><li>PC 키보드와 휴대폰 터치 조작 지원</li></ul></details></template>
-  <p class="foot">2~8명 · 판마다 39개 미니게임 중 7개 · v0.1 b94 · <a href="../">← Dummy Party 사이트로</a></p>
+  <p class="foot">2~8명 · 판마다 39개 미니게임 중 7개 · v0.1 b95 · <a href="../">← Dummy Party 사이트로</a></p>
   <p class="foot"><span class="ff-copy">© 2026 Frenchfries777 · <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.ko" target="_blank" rel="noopener">CC BY-NC-ND 4.0</a></span></p>
  </div>
 </section>
@@ -3039,7 +3040,7 @@ regMG({
       s.ids.slice().sort(function (a, b) { return s.pl[a].y - s.pl[b].y; }).forEach(function (id) {
         var p = s.pl[id]; if (p.fin) return;
         dummyOf(ctx, p, v, id, { s: 0.62, alpha: p.ghost > 0 ? 0.55 : 1, dizzy: p.stun > 0.3 || p.inv > 0, pose: p.stun > 0 ? 'fall' : 'stand' });
-        if (p.fast > 0) txt(ctx, '🔥', p.x - 14 * p.face, p.y - 4, { size: 14, stroke: false });
+        if (p.fast > 0) emoDraw(ctx, 'fire', p.x - 14 * p.face, p.y - 8, 16);
       });
       var yy2 = 30; s.tl.slice(-4).forEach(function (a) { var nm = v.players[a.id].name; txt(ctx, nm + ' — ' + a.s, 20, yy2, { size: 14, al: 'left', c: v.players[a.id].color }); yy2 += 18; });
     },
@@ -7790,7 +7791,7 @@ function achSync() {
 }
 function achShow() {
   if (achBusy || !achQ.length) return; achBusy = true;
-  var n = achQ.shift(); toast('🏆 업적 달성! ' + n); SFX.play('coin');
+  var n = achQ.shift(); toast('업적 달성! ' + n, 'trophy'); SFX.play('coin');
   setTimeout(function () { achBusy = false; achShow(); }, 3000);
 }
 function achUnlock(id, a) {
@@ -7843,10 +7844,10 @@ function achCoin() { if (WAL.ready && WAL.bal >= 1000) achUnlock('rich'); }
 function renderAch() {
   var a = achLoad(), box = $('achList'); if (!box) return;
   var n = achDone().length;
-  $('achSum').textContent = '🏆 ' + n + ' / ' + ACH.length;
+  $('achSum').innerHTML = emoHtml('trophy') + ' ' + n + ' / ' + ACH.length;
   box.innerHTML = ACH.map(function (r) {
     var on = !!a.d[r[0]];
-    return '<li class="' + (on ? 'on' : '') + '"><b>' + (on ? '🏆 ' : '🔒 ') + esc(r[1]) + '</b><span>' + esc(r[2]) + '</span></li>';
+    return '<li class="' + (on ? 'on' : '') + '"><b>' + emoHtml(on ? 'trophy' : 'lock') + ' ' + esc(r[1]) + '</b><span>' + esc(r[2]) + '</span></li>';
   }).join('');
 }
 
@@ -7925,7 +7926,7 @@ var PREFIX = 'ff-dummyparty-', CODE_CH = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789', MAX
 var PTS = [5, 3, 2, 1];
 var T_INTRO = 6, T_COUNT = 3, T_END = 4.0, T_RESULT = 6;
 // 게임 버전(0.x)과 빌드. 버전이 다르면 같은 방에 못 들어와요 (빌드가 달라도 괜찮아요). dp_config 의 min_build 보다 낮은 빌드는 dC를 못 받아요
-var DP_VER = '0.1', DP_BUILD = 94;
+var DP_VER = '0.1', DP_BUILD = 95;
 function dpNotice(msg) { dpAsk(msg, '확인', function () { }); }
 var BOT_NAMES = ['방귀쟁이', '홀쭉이', '바보1', '멍청이', '10급 공무원', '교무실 단골', '벌점부자', '말썽이', '김개똥'];
 var qs = new URLSearchParams(location.search);
@@ -8423,7 +8424,7 @@ function onPhase(prev) {
         return '<div class="pd p' + (i + 1) + '"><canvas class="mini" data-c="' + p.color + '" data-p="' + (i === 0 ? 'dance' : 'stand') + '"' + (i === 0 ? ' data-anim="1"' : '') + ' width="70" height="90"></canvas><span style="color:' + COLORS[p.color] + '">' + nameH(p) + '</span><div class="blk">' + (i + 1) + '<small>' + p.score + '점</small></div></div>';
       }).join('') + '</div>' +
       awardsHtml(m) + '<div class="iv" id="ivBox"></div><ol class="rl sm">' + ps.slice(3).map(function (p, i) { return '<li><b class="rk">' + (i + 4) + '</b><span style="color:' + COLORS[p.color] + '">' + nameH(p) + '</span><strong>' + p.score + '점</strong></li>'; }).join('') + '</ol>' +
-      '<div class="fbtn"><button class="pb" id="photoBtn" type="button">📷 기념사진</button>' + (host ? '<button class="pb gold" id="againBtn">한 번 더</button><button class="pb" id="toLobbyBtn">로비로</button>' : '<p class="wait">방장이 다음 경기를 고르는 중이에요.</p>') + '<button class="pb dark" id="quitBtn2">나가기</button></div></div>';
+      '<div class="fbtn"><button class="pb" id="photoBtn" type="button">' + emoHtml('camera') + ' ' + ((window.DP_T ? DP_T('📷 기념사진') : '📷 기념사진').replace(/^📷\s*/, '')) + '</button>' + (host ? '<button class="pb gold" id="againBtn">한 번 더</button><button class="pb" id="toLobbyBtn">로비로</button>' : '<p class="wait">방장이 다음 경기를 고르는 중이에요.</p>') + '<button class="pb dark" id="quitBtn2">나가기</button></div></div>';
     paintMinis(ov); ivRender(m);
     if (host) { $('againBtn').onclick = function () { startMatch(); }; $('toLobbyBtn').onclick = function () { matchDoneSignal(); G.phase = 'lobby'; lobReset(); G.st = null; G.mgId = null; sendMeta(); show('sLobby'); trimBots(); renderLobby(); ov.className = 'ov'; }; }
     $('quitBtn2').onclick = goHome; $('photoBtn').onclick = function () { dpPhoto(G.meta || m); };
@@ -8610,7 +8611,13 @@ function canvasTap(e) {
 /* ---------- 화면 전환 ---------- */
 function show(id) { document.querySelectorAll('.screen').forEach(function (s) { s.classList.toggle('on', s.id === id); }); document.body.classList.toggle('onhome', id === 'sHome'); if (id !== 'sGame') { $('ov').className = 'ov'; document.body.classList.remove('playing'); $('touch').classList.remove('on'); } }
 var toastT;
-function toast(t) { var el = $('toast'); el.textContent = t; el.classList.add('on'); clearTimeout(toastT); toastT = setTimeout(function () { el.classList.remove('on'); }, 2600); }
+/* 허브 그림 이모지: 글자 이모지 대신 hubicons/emoji 그림을 써요 (게임 화면 글자와 캔버스 모두) */
+var EMO_BASE = 'https://frenchfries777mc.github.io/games/hubicons/emoji/', EMO_IMG = {};
+function emoImg(n) { var o = EMO_IMG[n]; if (!o) { o = EMO_IMG[n] = new Image(); o.src = EMO_BASE + n + '.svg'; } return o; }
+function emoHtml(n, alt) { return '<img class="ffe" src="' + EMO_BASE + n + '.svg" alt="' + (alt || '') + '" draggable="false" onerror="this.style.display=\'none\'">'; }
+function emoDraw(c, n, x, y, s) { var im = emoImg(n); if (im.complete && im.naturalWidth) c.drawImage(im, x - s / 2, y - s / 2, s, s); }
+['trophy', 'fire', 'coin', 'soccer', 'camera'].forEach(emoImg);
+function toast(t, ico) { var el = $('toast'); el.textContent = t; if (ico) el.insertAdjacentHTML('afterbegin', emoHtml(ico) + ' '); el.classList.add('on'); clearTimeout(toastT); toastT = setTimeout(function () { el.classList.remove('on'); }, 2600); }
 function exitHub() { destroyPeer(); location.href = 'https://frenchfries777mc.github.io/games/dummyparty/'; }
 function goHome() { G.practice = null; G._doneArm = 0; destroyPeer(); G.role = null; G.phase = 'idle'; G.st = null; G.meta = null; G.snapCur = G.snapPrev = null; busy(false); show('sHome'); }
 
@@ -8738,13 +8745,20 @@ function lobRaw() {
   r.ac += LOB.a; r.bc += LOB.b; return r;
 }
 function lobTag(c, v, ny) {
-  var nm = v.p.name + (v.p.id === G.me ? ' ★' : '') + (v.gl ? '  ⚽' + v.gl : '') + (v.cc ? '  🪙' + v.cc : '');
-  c.save(); c.font = '800 15px ' + FONT; c.textAlign = 'center'; c.lineWidth = 4; c.strokeStyle = 'rgba(0,0,0,.65)'; c.strokeText(nm, v.x, ny); c.fillStyle = COLORS[v.p.color]; c.fillText(nm, v.x, ny); c.restore();
+  c.save(); c.font = '800 15px ' + FONT; c.textAlign = 'left'; c.lineWidth = 4; c.strokeStyle = 'rgba(0,0,0,.65)'; c.fillStyle = COLORS[v.p.color];
+  var parts = tagParts(v), x = v.x - tagWidth(c, parts) / 2;
+  parts.forEach(function (o) {
+    if (o.i) { x += 8; emoDraw(c, o.i, x + 8, ny - 5, 17); x += 20; }
+    c.strokeText(o.t, x, ny); c.fillText(o.t, x, ny); x += c.measureText(o.t).width;
+  });
+  c.restore();
 }
+function tagParts(v) { var a = [{ t: v.p.name + (v.p.id === G.me ? ' ★' : '') }]; if (v.gl) a.push({ i: 'soccer', t: String(v.gl) }); if (v.cc) a.push({ i: 'coin', t: String(v.cc) }); return a; }
+function tagWidth(c, parts) { var w = 0; parts.forEach(function (o) { w += c.measureText(o.t).width + (o.i ? 28 : 0); }); return w; }
 /* 이름표가 겹치면 위로 밀어 올려서 모두 읽을 수 있게 해요 */
 function lobTags(c, vis) {
   var arr = []; c.save(); c.font = '800 15px ' + FONT;
-  for (var id in vis) { var v = vis[id]; if (!v || !v.p) continue; arr.push({ v: v, y: v.y - v.z - 118, w: c.measureText(v.p.name + (v.p.id === G.me ? ' ★' : '') + (v.gl ? '  ⚽' + v.gl : '') + (v.cc ? '  🪙' + v.cc : '')).width + 8 }); }
+  for (var id in vis) { var v = vis[id]; if (!v || !v.p) continue; arr.push({ v: v, y: v.y - v.z - 118, w: tagWidth(c, tagParts(v)) + 8 }); }
   c.restore(); arr.sort(function (a, b) { return b.v.y - a.v.y; });
   var placed = [];
   arr.forEach(function (o) {
@@ -9031,7 +9045,7 @@ function dpPhoto(m) {
     var c = cvp.getContext('2d'); c.fillStyle = '#14081f'; c.fillRect(0, 0, 1280, 800);
     c.save(); c.scale(1280 / W, 720 / H); c.beginPath(); c.rect(0, 0, W, H); c.clip(); drawCeremony(c, m, performance.now()); c.restore();
     c.fillStyle = '#1d0f2e'; c.fillRect(0, 720, 1280, 80); c.textBaseline = 'middle';
-    c.font = '800 30px ' + FONT; c.textAlign = 'left'; c.fillStyle = '#ffe68a'; c.fillText('🏆 ' + ps[0].name + ' 우승!', 28, 746);
+    c.font = '800 30px ' + FONT; c.textAlign = 'left'; c.fillStyle = '#ffe68a'; c.drawImage(emoImg('trophy'), 28, 728, 36, 36); c.fillText(ps[0].name + ' 우승!', 72, 746);
     c.textAlign = 'right'; c.fillStyle = '#fff'; c.font = '700 22px ' + FONT; c.fillText(ps.slice(0, 3).map(function (p, i) { return (i + 1) + '. ' + p.name + ' ' + p.score + '점'; }).join('   '), 1252, 746);
     var d = new Date(), ds = d.getFullYear() + '-' + ('0' + (d.getMonth() + 1)).slice(-2) + '-' + ('0' + d.getDate()).slice(-2);
     c.textAlign = 'left'; c.fillStyle = 'rgba(255,255,255,.6)'; c.font = '600 16px ' + FONT; c.fillText('Dummy Party · ' + ds + ' · © 2026 Frenchfries777 · CC BY-NC-ND 4.0', 28, 780);
@@ -9253,12 +9267,12 @@ function dpAsk(msg, okLabel, onOk) {
     fr.sort(function (a, b) { return ((onF[b.otherId] ? 1 : 0) - (onF[a.otherId] ? 1 : 0)) || a.name.localeCompare(b.name, 'ko'); });
     L.innerHTML = '';
     function head(t) { var h = document.createElement('h4'); h.textContent = t; L.appendChild(h); }
-    function row(id, name, tag) {
+    function row(id, name, tag, on) {
       var d = document.createElement('div'); d.className = 'r'; d.innerHTML = '<b></b><small></small><button class="pb gold" type="button">초대</button>';
       d.querySelector('b').textContent = name; (function (nb) { nb.style.cursor = 'pointer'; nb.title = '프로필 보기'; nb.onclick = function () { SFX.play('pop'); try { FFAuth.openProfile(id, { game: 'dummyparty' }); } catch (e) { } }; })(d.querySelector('b')); var bt = d.querySelector('button'), sm = d.querySelector('small');
       function paint() {
         clearTimeout(bt._t); var v = invLive(id); bt.disabled = false; bt.textContent = v ? '취소' : '초대'; bt.className = 'pb' + (v ? '' : ' gold');
-        sm.textContent = v ? '초대함 · ' + Math.max(1, Math.ceil((v.at + INV_T - Date.now()) / 60000)) + '분 남음' : tag;
+        sm.textContent = v ? '초대함 · ' + Math.max(1, Math.ceil((v.at + INV_T - Date.now()) / 60000)) + '분 남음' : tag; if (!v && on) sm.insertAdjacentHTML('afterbegin', emoHtml('greendot', '🟢') + ' ');
         if (v) bt._t = setTimeout(function () { if (d.isConnected) paint(); }, Math.min(30000, v.at + INV_T - Date.now() + 50));
       }
       bt.onclick = async function () {
@@ -9272,11 +9286,11 @@ function dpAsk(msg, okLabel, onOk) {
     }
     head('친구 (' + fr.length + ')');
     if (!fr.length) L.insertAdjacentHTML('beforeend', '<p class="note">아직 친구가 없어요.</p>');
-    fr.forEach(function (f) { row(f.otherId, f.name, onF[f.otherId] ? '🟢 ' + (GNAME[onF[f.otherId]] || onF[f.otherId]) : '접속 안 함'); });
+    fr.forEach(function (f) { row(f.otherId, f.name, onF[f.otherId] ? (GNAME[onF[f.otherId]] || onF[f.otherId]) : '접속 안 함', !!onF[f.otherId]); });
     head('지금 접속 중인 플레이어 (' + others.length + ')');
     if (otherErr) L.insertAdjacentHTML('beforeend', '<p class="note">접속 중인 플레이어 목록을 못 불러왔어요.</p>');
     else if (!others.length) L.insertAdjacentHTML('beforeend', '<p class="note">지금 접속 중인 다른 플레이어가 없어요.</p>');
-    others.forEach(function (x) { row(x.user_id, x.name || '???', '🟢 ' + (GNAME[x.place] || x.place || '')); });
+    others.forEach(function (x) { row(x.user_id, x.name || '???', (GNAME[x.place] || x.place || ''), true); });
   }
   $('invBtn').onclick = openInvite;
   $('invClose').onclick = function () { $('invModal').classList.remove('on'); };
