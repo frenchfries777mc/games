@@ -247,7 +247,8 @@ function rangeStep(G, dt) {
   }
 }
 function stepTrain(G, e, dt) {
-  e.vx = e.vz = 0;
+  if (Math.hypot(e.vx, e.vz) > 0.3) { const nx = e.x + e.vx * dt, nz = e.z + e.vz * dt; if (!isWall(nx, nz)) { e.x = nx; e.z = nz; } const k = Math.pow(0.02, dt); e.vx *= k; e.vz *= k; e.kbT = 1; }   // 연습장 허수아비도 밀려나요
+  else { e.vx = e.vz = 0; if ((e.kbT || 0) > 0) e.kbT -= dt; else { const sp = G.rangeSpots && G.rangeSpots[e.train]; if (sp) { const d = Math.hypot(sp.x - e.x, sp.z - e.z); if (d > 0.2) { const st = Math.min(d, 5 * dt); e.x += (sp.x - e.x) / d * st; e.z += (sp.z - e.z) / d * st; } } } }   // 밀려난 뒤엔 제자리로 걸어 돌아와요
   if (e.st === 'rise') { e.stT -= dt; if (e.stT <= 0) e.st = 'idle'; e.pHp = e.hp; return; }
   if (e.hp < e.pHp) e.calm = 0; else e.calm = (e.calm || 0) + dt;
   if (e.calm > 3 && e.hp < e.maxhp) e.hp = Math.min(e.maxhp, e.hp + e.maxhp * 0.5 * dt);
@@ -434,7 +435,7 @@ function basicAttack(G, p, inp, nShot = 1) {
   if (A.kind === 'melee') {
     hitPuzzle(G, p.x + Math.cos(p.a) * 1.6, p.z + Math.sin(p.a) * 1.6, A.range * 0.8, p, 1, 'melee');
     ev(G, 'swing', { id: p.id, x: p.x, z: p.z, a: p.a, r: A.range * (big ? 1.3 : 1), t3: third ? 1 : 0, role: p.role, w: A.w ? A.w * 2 : 0 });
-    for (const e of G.enemies) { if (e.hp <= 0) continue; const d = dist(p, e); const ca = Math.cos(p.a), sa = Math.sin(p.a), fx = (e.x - p.x) * ca + (e.z - p.z) * sa, sx = -(e.x - p.x) * sa + (e.z - p.z) * ca; if (A.w ? (fx > -0.5 && fx < A.range * (big ? 1.3 : 1) + e.r && Math.abs(sx) < A.w + e.r) : (d < A.range * (big ? 1.3 : 1) + e.r && angDiff(p.a, angTo(p, e)) < A.arc / 2 + (big ? 0.7 : 0.25))) hurtEnemy(G, e, A.dmg * hm, p, { basic: true, aid, burn: A.burn || p.venom > 0, kb: big ? 6 : 3, kbA: angTo(p, e), push: A.push }); }
+    for (const e of G.enemies) { if (e.hp <= 0) continue; const d = dist(p, e); const ca = Math.cos(p.a), sa = Math.sin(p.a), fx = (e.x - p.x) * ca + (e.z - p.z) * sa, sx = -(e.x - p.x) * sa + (e.z - p.z) * ca; if (A.w ? (fx > -0.5 && fx < A.range * (big ? 1.3 : 1) + e.r && Math.abs(sx) < A.w + e.r) : (d < A.range * (big ? 1.3 : 1) + e.r && angDiff(p.a, angTo(p, e)) < A.arc / 2 + (big ? 0.7 : 0.25))) hurtEnemy(G, e, A.dmg * hm, p, { basic: true, aid, burn: A.burn || p.venom > 0, kb: A.kb || (big ? 6 : 3), kbA: angTo(p, e), push: A.push }); }
   } else if (A.kind === 'bomb') {
     const q = aimPoint(p, inp, A.range); throwBomb(G, p, q.x, q.z, 0.75, A.r, A.dmg, 0);
   } else {
