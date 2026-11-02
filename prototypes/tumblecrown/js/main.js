@@ -11,6 +11,7 @@ import { T, trDom } from './tr.js';
 trDom(document.body);
 
 const $ = id => document.getElementById(id);
+{ const ab = $('achBtnImg'); if (ab) ab.src = 'item/ui-ach.svg?v=' + BUILD; }   // 도전과제 단추 로고도 새 빌드마다 새로 받아요
 const qs = new URLSearchParams(location.search);
 const DEV_CH = /^(localhost|127\.0\.0\.1)$/.test(location.hostname) && qs.has("ch");
 const PUB_CAP = 10, PICK_T = 25, PREFIX = 'ff-tumblecrown-', CODE_CH = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789', SNAP_HZ = 20;
@@ -84,7 +85,7 @@ const lockedFor = (f, tm) => ((f[5] | 0) >> tm) & 1;   // 순서 규칙: 이 팀
 function lockGlyph(oc, x, y, s, col) { oc.fillStyle = col; oc.strokeStyle = '#5a4a3a'; oc.lineWidth = Math.max(1.2, s * 0.16); oc.beginPath(); oc.moveTo(x - s * 0.35, y + s * 0.6); oc.lineTo(x - s * 0.35, y - s * 0.6); oc.stroke(); oc.fillRect(x - s * 0.35, y - s * 0.6, s * 0.95, s * 0.6); }   // 잠긴 깃발 표시: 노란 깃발 모양
 const RIMG = {};   // 캔버스(이름표·점수판)에 그릴 마스터리 계급 로고 (한 번 불러 두고 계속 써요)
 function rankIco(t) { return svgIco('rank/t' + (t | 0)); }
-function svgIco(f) { let i = RIMG[f]; if (!i) { i = RIMG[f] = new Image(); i.src = f + '.svg'; } return i.complete ? i : null; }
+function svgIco(f) { let i = RIMG[f]; if (!i) { i = RIMG[f] = new Image(); i.src = f + '.svg?v=' + BUILD; } return i.complete ? i : null; }
 const mastOf = r => ({ mp: (SAVE.pts || {})[r] | 0, rl: roleLevel((SAVE.xp || {})[r]) });   // 내 직업의 마스터리 점수와 직업 레벨 (다른 사람 화면의 이름표에 보여요)
 function setHud(on) { $('hud').classList.toggle('on', on); $('touch').classList.toggle('on', on && TOUCH); $('exitBtn').style.display = on && S.net && S.net !== 'solo' ? 'none' : ''; }   // 온라인 대전 중에는 나가기 버튼이 없어요
 // 같이 할 사람을 찾는 중에는 어떤 버튼도 누를 수 없어요 (찾기가 끝나거나 실패하면 풀려요, 늦어져도 25초 뒤엔 풀려요)
