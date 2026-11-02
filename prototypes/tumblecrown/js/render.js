@@ -74,7 +74,7 @@ const HERO = {
   mamluk: { body: 0xb0302a, leg: 0xe8dcc0, arm: 0xb0302a, turban: 1, scim: 1, buckler: 1, belt: 1 },
   witch: { body: 0x4a2a6a, robe: 1, leg: 0x2a1a3a, arm: 0x4a2a6a, skinC: 0xb8d0a0, hat: 1, staff: 1, staffC: 0xc06aff },
   skeleton: { skel: 1 },
-  warden: { body: 0x6b5b3e, leg: 'dm', arm: 'mt', helm: 1, helmC: 0x4a4a52, plume: 0xc8a030, sword: 1, shield: 1, shieldC: 0x6a5030, shS: 1.45, belt: 1, wide: 1.24 },
+  warden: { body: 0x6b5b3e, leg: 'dm', arm: 'mt', helm: 1, helmC: 0x4a4a52, plume: 0xc8a030, sword: 1, shield: 1, shieldC: 0x6a5030, shS: 1.1, belt: 1, wide: 1.24 },
   telaris: { body: 0xb02a24, leg: 0xe0a880, arm: 0xb02a24, plate: 1, shield: 0 },
   assassin: { body: 0x24343c, leg: 0x161e24, arm: 0x24343c, hood: 0x1a2830, scim: 1, belt: 1 },
   bomber: { body: 0x7a4a32, leg: 0x3a3030, arm: 0x7a4a32, goggles: 1, bombs: 1, bhand: 1, sack: 1, belt: 1, cap: 0x5a3a28, wide: 1.1 },
