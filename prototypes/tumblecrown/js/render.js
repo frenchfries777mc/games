@@ -1842,6 +1842,9 @@ function animHero(E, p, dt, t, view) {
         T.jy = hop(0.07, L1, 3.8); T.bz = 0.3 * dn * x; T.bry = 0.5 * cr * (1 - dn) * x;
         T.sq = 0.5 * cr * (1 - up) - 0.4 * up * (1 - dn) + land(L1, 0.75); T.by = (-0.35 * cr * (1 - up) - 0.45 * dn) * x; T.lg = (0.6 * cr * (1 - up) + 0.9 * dn) * x;
         if (role === 'archer') { T.pull = 0.75 * up * (1 - dn); T.rpz = -0.4 * up * (1 - dn); }
+      } else if (role === 'telaris') { // 텔라리스 기본 공격: 방패를 몸 앞으로 끌어당겼다가 온몸으로 쾅 밀어요
+        const pre = seg(v, 0, 0.25), go = seg(v, 0.25, 0.42), rc = seg(v, 0.62, 1), x = 1 - rc;
+        T.lx = base[1] + (0.4 * pre - 2.5 * go) * x; T.rx = base[0] + (-0.5 * go) * x; T.lz = 0.25 * go * x; T.bx = (-0.15 * pre + 0.65 * go) * x; T.bz = 0.8 * go * x; T.lg = 0.9 * go * x; T.sq = 0.12 * pre * x; T.by = -0.3 * go * x; T.hx = 0.2 * go * x;
       } else if (p.role === 'spearman') { // 창병 찌르기: 창을 뒤로 빼며 몸을 비틀어 웅크렸다가, 한 발 크게 내딛으며 앞으로 내질러요 (뒤로 쭉 빼면 창끝이 앞을 가리켜요)
         // 준비(0~0.3): 창을 눕혀 뒤로 빼며 몸을 낮춰요 → 찌름(0.3~0.42): 창이 앞으로 쭉 나가요 → 회수(0.62~1): 창을 당겨 자세로 돌아와요. 창끝 각도는 그대로고 창이 앞뒤로 미끄러져요
         const lv = seg(v, 0, 0.14) * (1 - seg(v, 0.8, 1)), pl = seg(v, 0.04, 0.3) * (1 - seg(v, 0.3, 0.4)), st = seg(v, 0.3, 0.42) * (1 - seg(v, 0.6, 0.95));
