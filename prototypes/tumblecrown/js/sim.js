@@ -163,6 +163,13 @@ export function flagLocked(G, i, tm) {
     if (i === far) return C.some(j => G.fl[j].own !== tm);
     return false;
   }
+  if (G.ch === 2 && G.fl.length === 7 && flagKinds(G).sides.length === 4) {   // 십자 광장: 우리 진지 옆 깃발을 점령하면 중앙과 위·아래 측면이 모두 열리고, 중앙 뒤에 상대 진지 옆 깃발, 그 뒤에 상대 진지
+    const K = flagKinds(G), dh = (j, h) => Math.hypot(G.fl[j].x - G.fl[h].x, G.fl[j].z - G.fl[h].z), nf = K.sides.slice().sort((a, b) => dh(a, G.home[tm]) - dh(b, G.home[tm]))[0], en = K.sides.slice().sort((a, b) => dh(a, G.home[1 - tm]) - dh(b, G.home[1 - tm]))[0];
+    if (i === nf) return false;
+    if (i === G.home[1 - tm]) return K.sides.some(j => j !== nf && G.fl[j].own !== tm);
+    if (i === en) return G.fl[K.ctr].own !== tm;
+    return G.fl[nf].own !== tm;
+  }
   const K = flagKinds(G), four = K.sides.length === 4;
   if (i === G.home[1 - tm]) return four ? K.sides.some(j => !K.near[tm].includes(j) && G.fl[j].own !== tm) : G.fl.some((g, j) => j !== i && g.own !== tm);   // 상대 진지
   if (i === K.ctr) return four ? K.near[tm].some(j => G.fl[j].own !== tm) : false;   // 중앙: 측면이 넷인 맵은 우리 쪽 측면 둘을 먼저
