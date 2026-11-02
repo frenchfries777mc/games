@@ -3,7 +3,7 @@
 
 import { T } from './tr.js';
 
-export const VERSION = 'v0.2', BUILD = 284;
+export const VERSION = 'v0.2', BUILD = 285;
 
 export const ROLES = {
   knight: {
@@ -748,8 +748,8 @@ export const COSMETICS = {
 // 마스터리 스킨: 지금 고른 직업의 마스터리 점수가 기준에 닿으면 열려요 (다이아 · 마스터 · 그랜드 마스터)
 COSMETICS.skin.items.push(
   { id: 'mr1', name: T('다이아 스킨'), cost: 0, rk: 1750, b: 0x5fc4d8, l: 0x2a6a80, c: 0xbafcff },
-  { id: 'mr2', name: T('마스터 스킨'), cost: 0, rk: 7000, b: 0xb0388e, l: 0x5a1a52, c: 0xff9ae6 },
-  { id: 'mr3', name: T('그랜드 마스터 스킨'), cost: 0, rk: 9000, b: 0xc03a3a, l: 0x4a1418, c: 0xffd36b });
+  { id: 'mr2', name: T('마스터 스킨'), cost: 0, rk: 3050, b: 0xb0388e, l: 0x5a1a52, c: 0xff9ae6 },
+  { id: 'mr3', name: T('그랜드 마스터 스킨'), cost: 0, rk: 6000, b: 0xc03a3a, l: 0x4a1418, c: 0xffd36b });
 // 온라인 대전 모드: key는 방 이름 앞글자 (모드마다 방이 따로 열려요)
 export const MODES = {
   rank: { key: 'r', cap: 10, tn: 5, noBots: 1, name: T('랭크전'), desc: T('이기면 랭킹 점수가 오르고 지면 내려가요') },
@@ -758,11 +758,11 @@ export const MODES = {
   quick: { key: 'k', cap: 6, tn: 3, name: T('3vs3 블리츠'), desc: T('여섯 명, 깃발 다섯 개, 측면과 중앙을 먼저 점령해야 상대 진지가 열려요') },
   duel: { key: 'd', cap: 2, tn: 1, name: T('1vs1 듀얼'), desc: T('둘이서 깃발 셋(양쪽 진지와 중앙)을 두고 겨뤄요. 가운데를 잡아야 상대 진지가 열리고, 시작하고 1분 30초가 지나야 점령할 수 있어요') }
 };
-// 마스터리 계급 (스틱세움과 같은 구간): 직업마다 마스터리 포인트로 올라가요. 브론즈부터는 II·III 단계가 있고, 마스터는 I~V (400점씩), 그랜드 마스터는 I~V (1000점씩)
+// 마스터리 계급 (스틱세움과 같은 구간): 직업마다 마스터리 포인트로 올라가요. 브론즈부터는 II·III 단계가 있고, 마스터는 I~V (600점씩), 그랜드 마스터는 I~V (1000점씩)
 export const CHAR_RANKS = (() => {
-  const base = [[0, '입문', '#8890a4'], [90, '브론즈', '#c47a3d'], [260, '실버', '#c7ccd6'], [530, '골드', '#ffd34d'], [880, '플래티넘', '#4dd9ff'], [1750, '다이아', '#7bf3ff'], [7000, '마스터', '#ff5fd2', 8], [9000, '그랜드 마스터', '#ff5252', 9]], out = [];
+  const base = [[0, '입문', '#8890a4'], [90, '브론즈', '#c47a3d'], [260, '실버', '#c7ccd6'], [530, '골드', '#ffd34d'], [880, '플래티넘', '#4dd9ff'], [1750, '다이아', '#7bf3ff'], [3050, '마스터', '#ff5fd2', 8], [6000, '그랜드 마스터', '#ff5252', 9]], out = [];
   base.forEach(([min, nm, col, ti], i) => {   // ti = 로고 번호 (크리스탈·아메시스트를 없애도 마스터·그랜드 마스터 로고는 그대로)
-    if (nm === '마스터') { ['I', 'II', 'III', 'IV', 'V'].forEach((r, k) => out.push({ min: min + k * 400, name: T(nm) + ' ' + r, color: col, t: ti })); return; }   // 마스터 I~V (400점씩)
+    if (nm === '마스터') { ['I', 'II', 'III', 'IV', 'V'].forEach((r, k) => out.push({ min: min + k * 600, name: T(nm) + ' ' + r, color: col, t: ti })); return; }   // 마스터 I~V (600점씩)
     if (nm === '그랜드 마스터') { ['I', 'II', 'III', 'IV', 'V'].forEach((r, k) => out.push({ min: min + k * 1000, name: T(nm) + ' ' + r, color: col, t: ti })); return; }   // 그랜드 마스터 I~V (1000점씩)
     out.push({ min, name: T(nm), color: col, t: i }); const nx = base[i + 1];
     if (nx && i > 0) for (let k = 1; k <= 2; k++) out.push({ min: Math.round((min + (nx[0] - min) * k / 3) / 10) * 10, name: T(nm) + ' ' + (k === 1 ? 'II' : 'III'), color: col, t: i });
