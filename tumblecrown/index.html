@@ -51,6 +51,8 @@ a{color:inherit}
 .tv p{margin:0;font-size:13.5px;text-align:left}
 .tv .go{grid-column:3;grid-row:1}
 .pb.sm{font-size:14px;padding:6px 18px}
+.tv .go{display:flex;gap:8px;align-items:center}
+button.pb{cursor:pointer;font-family:inherit}
 @media(max-width:560px){.tv{grid-template-columns:1fr}.tv .go{grid-column:1;grid-row:auto;margin-top:6px}}
 .more2{margin-top:18px}
 .badge{background:var(--gold);color:#1a1203;font-weight:700;font-size:11px;padding:0 7px;border-radius:4px}
@@ -169,9 +171,10 @@ footer{padding:44px 0 50px;color:var(--mu);font-size:13px;text-align:center}
 <footer><span class="ff-copy">© 2026 Frenchfries777 · <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/" target="_blank" rel="noopener">CC BY-NC-ND 4.0</a></span></footer>
 <script>
 (function(){var box=document.getElementById('vbox');function esc(x){return String(x).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})}
-var V=[{v:'0.2',t:'새 로비와 전투 연출',d:'왼쪽 글자 버튼 로비, 핑, 멀티킬 연출, 직업 동작 개선이 들어간 버전이에요.'},{v:'0.1',b:'158',date:'2026-10-31',t:'일곱 깃발의 전장',d:'5대5 깃발 점령 팀 대전이 처음 열린 버전이에요.'}];
-function draw(b,date){box.innerHTML=V.map(function(x,i){return '<div class="tv box"><div class="vn"><b class="v">v'+esc(x.v)+'</b>'+(i?'':'<span class="badge">최신</span>')+'<small>'+((x.b||(i?'':b))?'b'+esc(x.b||b):'')+((x.date||(i?'':date))?' · '+esc(x.date||date):'')+'</small></div><p>'+esc(x.t)+' · '+esc(x.d)+'</p>'+(i?'':'<div class="go"><a class="pb gold sm" href="../prototypes/tumblecrown/" target="_blank" rel="noopener">플레이</a></div>')+'</div>'}).join('')}
+var V=[{v:'0.2',f:'TumbleCrown-v0.2.html',t:'새 로비와 전투 연출',d:'왼쪽 글자 버튼 로비, 핑, 멀티킬 연출, 직업 동작 개선이 들어간 버전이에요.'},{v:'0.1',f:'downloads/TumbleCrown-v0.1.html',b:'158',date:'2026-10-31',t:'일곱 깃발의 전장',d:'5대5 깃발 점령 팀 대전이 처음 열린 버전이에요.'}];
+function draw(b,date){box.innerHTML=V.map(function(x,i){return '<div class="tv box"><div class="vn"><b class="v">v'+esc(x.v)+'</b>'+(i?'':'<span class="badge">최신</span>')+'<small>'+((x.b||(i?'':b))?'b'+esc(x.b||b):'')+((x.date||(i?'':date))?' · '+esc(x.date||date):'')+'</small></div><p>'+esc(x.t)+' · '+esc(x.d)+'</p>'+'<div class="go">'+(i?'':'<a class="pb gold sm" href="../prototypes/tumblecrown/" target="_blank" rel="noopener">플레이</a>')+(i?'<a class="pb sm" href="'+esc(x.f)+'" download="TumbleCrown-v'+esc(x.v)+'.html">다운로드</a>':'<button type="button" class="pb sm dlb" data-n="TumbleCrown-v'+esc(x.v)+'.html">다운로드</button>')+'</div>'+'</div>'}).join('')}
 draw();
+box.addEventListener('click',function(e){var t=e.target.closest&&e.target.closest('.dlb');if(!t||!window.tcDownload)return;t.disabled=true;var o=t.textContent;t.textContent='만드는 중…';tcDownload(t.dataset.n).catch(function(){}).then(function(){t.disabled=false;t.textContent=o})});
 Promise.all([fetch('../prototypes/tumblecrown/build.json',{cache:'no-store'}).then(function(r){return r.json()}),fetch('../prototypes/tumblecrown/patchnotes.json',{cache:'no-store'}).then(function(r){return r.json()})]).then(function(a){var n=(a[1].notes||[])[0]||{};draw(a[0].build,n.date)}).catch(function(){});
 })();
 (function(){var lg=document.getElementById('lg');if(!lg)return;
@@ -211,5 +214,6 @@ try{new MutationObserver(function(ms){ms.forEach(function(m){m.addedNodes.forEac
 })();
 </script>
 <script src="https://frenchfries777mc.github.io/games/ff-auth.js?v=20261031t"></script>
+<script src="dl.js"></script>
 </body>
 </html>
