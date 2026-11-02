@@ -126,11 +126,12 @@ async function loadNames(ids){
   if(window.FFAuth&&FFAuth.loadDevs) await FFAuth.loadDevs();
   ids=ids.filter(function(id,i){ return id&&!names[id]&&ids.indexOf(id)===i; }); if(!ids.length||!sb) return;
   try{ var r=await sb.from('profiles').select('id,username,display_name').in('id',ids); ((r&&r.data)||[]).forEach(function(p){ names[p.id]=(p.display_name&&String(p.display_name).trim())||p.username||'???'; }); }catch(e){}
+  try{ var ct=await sb.from('ff_custom_title').select('user_id,title').in('user_id',ids); ((ct&&!ct.error&&ct.data)||[]).forEach(function(x){ if(x.title) CT[x.user_id]=x.title; }); }catch(e){}
   if(CARDS) try{ var c=await sb.from('ff_card').select('user_id,title').in('user_id',ids); if(c.error) CARDS=false; ((c&&c.data)||[]).forEach(function(x){ if(TNAME[x.title]) titles[x.user_id]=x.title; }); }catch(e){}
 }
 /* 칭호 (ff-profile.js 의 TITLES 와 같은 id, supabase-ff-more.sql) */
-var titles={}, CARDS=true, TNAME={newbie:'새내기',traveler:'여행자',explorer:'탐험가',friendly:'다정한 친구',popular:'인기쟁이',writer:'글쟁이',commenter:'댓글러',chatter:'수다쟁이',helper:'도우미',allround:'만능',collector:'수집가',master:'달인',legend:'전설'};
-function who(id){ var t=titles[id]; return '<a class="who" data-uid="'+esc(id)+'" data-notr>'+esc(names[id]||'???')+'</a>'+(window.FFAuth&&FFAuth.devBadge?FFAuth.devBadge(id):'')+(t?' <span class="ttl">🏷️ <span>'+esc(TNAME[t])+'</span></span>':''); }
+var titles={}, CT={}, CARDS=true, TNAME={newbie:'새내기',traveler:'여행자',explorer:'탐험가',friendly:'다정한 친구',popular:'인기쟁이',writer:'글쟁이',commenter:'댓글러',chatter:'수다쟁이',helper:'도우미',allround:'만능',collector:'수집가',master:'달인',legend:'전설'};
+function who(id){ var t=titles[id], ct=CT[id]; return '<a class="who" data-uid="'+esc(id)+'" data-notr>'+esc(names[id]||'???')+'</a>'+(window.FFAuth&&FFAuth.devBadge?FFAuth.devBadge(id):'')+(ct?' <span class="ttl">🏷️ <span data-notr>'+esc(ct)+'</span></span>':(t?' <span class="ttl">🏷️ <span>'+esc(TNAME[t])+'</span></span>':'')); }
 document.addEventListener('click',function(e){ var a=e.target.closest&&e.target.closest('a.who[data-uid]'); if(a&&window.FFAuth){ e.preventDefault(); FFAuth.openProfile(a.getAttribute('data-uid')); } });
 function blocked(id){ try{ return !!(window.FFAuth&&FFAuth.isBlocked&&FFAuth.isBlocked(id)); }catch(e){ return false; } }
 function report(o){ if(!me) return login(); if(window.FFAuth&&FFAuth.openReport) FFAuth.openReport(o); }
