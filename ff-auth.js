@@ -295,7 +295,7 @@ function backSite(){ var own=siteOf(location.href)||'games', from=siteOf(documen
 function hubLink(s){ if(onHub||s.hasAttribute('data-ff-nohub')) return ''; var k=backSite(); return '<a class="ffa-hub" href="'+esc('https://frenchfries777mc.github.io/'+k+'/')+'" title="'+esc(T.hubT)+'" aria-label="'+esc(T.hubT)+'">\u2190<span class="t">'+esc(T.hub)+'</span></a>'; }
 /* 계정 버튼 옆 사진: 허브에서 고른 프로필 사진(ff_avatar), 없으면 기본 "내 계정" 아이콘 */
 var avPick=null, avFor=null, avGame=null;
-function avSrc(){ return avPick&&/^[a-z0-9_-]{1,30}$/i.test(avPick)?BASE+'avatars/'+avPick+(/^(stk|ce|bf|ip|dp|vk)_/.test(avPick)?'.png':'.svg'):(avGame||BASE+'hubicons/account.svg'); }
+function avSrc(){ return avPick&&/^[a-z0-9_-]{1,30}$/i.test(avPick)?BASE+'avatars/'+avPick+(/^(stk|ce|bf|ip|dp|vk)_/.test(avPick)?'.png':'.svg'):(avGame||BASE+'hubicons/account.svg?v=20261103a'); }
 /* no profile photo picked: show the game character, as the profile card does */
 function loadAvGame(){ if(avPick||avGame||!sb||!user) return; var id=user.id; profileLib().then(function(ok){ if(!ok||!window.FFProfile.avatarDataUrl||avPick||!user||user.id!==id) return; window.FFProfile.avatarDataUrl(sb,id).then(function(u){ if(u&&!avPick&&user&&user.id===id){ avGame=u; paint(); } }); }); }
 function loadAv(){ if(!sb||!user||avFor===user.id) return; var id=user.id; avFor=id; avPick=null; avGame=null;
@@ -306,7 +306,7 @@ function paint(){
   css(); loadAv(); var slots=document.querySelectorAll('[data-ff-account]');
   for(var i=0;i<slots.length;i++){
     var s=slots[i]; s.setAttribute('data-notr','');
-    if(!user){ s.innerHTML=hubLink(s)+'<span class="ffa-wrap"><button type="button" class="ffa-btn"><img class="ffa-ic" src="https://frenchfries777mc.github.io/games/hubicons/account.svg" alt="" width="20" height="20" draggable="false"> '+esc(T.login)+'</button></span>'; s.querySelector('button').onclick=function(){ openLogin(); }; continue; }
+    if(!user){ s.innerHTML=hubLink(s)+'<span class="ffa-wrap"><button type="button" class="ffa-btn"><img class="ffa-ic" src="https://frenchfries777mc.github.io/games/hubicons/account.svg?v=20261103a" alt="" width="20" height="20" draggable="false"> '+esc(T.login)+'</button></span>'; s.querySelector('button').onclick=function(){ openLogin(); }; continue; }
     s.innerHTML=hubLink(s)+'<span class="ffa-wrap"><button type="button" class="ffa-chip" aria-haspopup="true"><img class="ffa-ic ffa-av" src="'+esc(avSrc())+'" alt="" width="20" height="20" draggable="false"> <span>'+esc(fmt(T.hi,nick()))+'</span><i class="ffa-badge" style="display:none;font-style:normal"></i><i class="ffa-badge ffa-nb ffa-nbc" style="display:none;font-style:normal"></i> ▾</button>'+
       '<span class="ffa-menu" role="menu"><button type="button" data-a="friends">'+esc(F.friends)+'<span class="ffa-badge" style="display:none"></span></button><button type="button" data-a="card">'+esc(T.card)+'</button><button type="button" data-a="ach">'+esc(T.ach||ACHL[lang()]||'🏆 Achievements')+'</button><button type="button" data-a="acct">'+esc(AL().menu)+'</button><button type="button" data-a="notes" class="ffa-ph">🔔 '+esc(N.bell)+'<span class="ffa-badge ffa-nb" style="display:none"></span></button><button type="button" data-a="set" class="ffa-ph">'+esc('⚙️ '+S_.set)+'</button><button type="button" data-a="out">'+esc(T.logout)+'</button></span></span>';
     (function(s){ var menu=s.querySelector('.ffa-menu');
