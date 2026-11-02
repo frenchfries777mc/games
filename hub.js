@@ -566,7 +566,7 @@ var coin={n:null, streak:0, today:false, err:''}, UNIT={gold:'골드',coin:'코�
 function unitName(u){ var k=UNIT[u]||u; return SI.T?SI.T(k):k; }
 /* 허브 아이콘: 동전·랭킹·업적 (hubicons/*.svg) */
 var HICON='https://frenchfries777mc.github.io/games/hubicons/';
-function hIco(n,c){ return '<img class="hci '+(c||'')+'" src="'+HICON+n+'.svg" alt="" width="20" height="20" draggable="false">'; }
+function hIco(n,c){ return '<img class="hci '+(c||'')+'" src="'+HICON+n+'.svg?v=20261103a" alt="" width="20" height="20" draggable="false">'; }
 var HMAP={'\ud83e\ude99':'coin','\ud83c\udfc6':'ranking'};
 var RE=/(\ud83e\ude99|\ud83c\udfc6)/;
 function hCoinSwap(root){ /* 번역으로 다시 쓰이는 글자에서도 동전 이모지를 아이콘으로 바꾼다 */
