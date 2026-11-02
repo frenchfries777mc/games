@@ -407,7 +407,7 @@ window.bfIntro=function(){if(run)return;run=1;t0=Date.now();el.classList.add('ru
     <button class="btn" data-act="skins"><span class="arrow">▶</span>스킨 상점<span class="en">SKIN SHOP</span></button>
     <button class="btn" data-act="stats"><span class="arrow">▶</span>통계<span class="en">STATS</span></button>
     <button class="btn" data-act="settings"><span class="arrow">▶</span>설정<span class="en">SETTINGS</span></button>
-    <p class="foot">v0.5<br>build 152</p>
+    <p class="foot">v0.5<br>build 153</p>
   </nav>
 </div>
 
@@ -4990,8 +4990,8 @@ function drawStruct(g,b){
 const structMap=l=>l==='f'?world.fgrid:l==='c'?world.cgrid:l==='r'?world.rgrid:world.sgrid;
 const skey=(l,gx,gy)=>l==='c'?gy*CW+gx:gy*GW+gx;
 const L2=l=>l==='f'||l==='c'||l==='r'?l:'o';
-const structKey=b=>b.layer==='c'?2000000+b.gy*CW+b.gx:b.layer==='r'?3000000+b.gy*GW+b.gx:b.layer==='f'?1000000+b.gy*GW+b.gx:b.gy*GW+b.gx;
-const structByKey=key=>key>=3000000?world.rgrid.get(key-3000000):key>=2000000?world.cgrid.get(key-2000000):key>=1000000?world.fgrid.get(key-1000000):world.sgrid.get(key);
+const structKey=b=>b.layer==='c'?10000000+b.gy*CW+b.gx:b.layer==='r'?4000000+b.gy*GW+b.gx:b.layer==='f'?2000000+b.gy*GW+b.gx:b.gy*GW+b.gx;   // 칸 번호가 겹치지 않게 간격을 넓게 (예전엔 멀리 있는 컨베이어가 안 부서졌어요)
+const structByKey=key=>key>=10000000?world.cgrid.get(key-10000000):key>=4000000?world.rgrid.get(key-4000000):key>=2000000?world.fgrid.get(key-2000000):world.sgrid.get(key);
 const structBox=b=>b.layer==='c'?[b.gx*CG,b.gy*CG,CG]:[b.gx*GRID,b.gy*GRID,GRID];
 function addStructCell(id,gx,gy,ex){
   id=normId(id);const def=STRUCT[id];
@@ -5307,7 +5307,7 @@ function smashStructAuth(gx,gy,layer,belt,sap,burn){
     if(belt){const sp=beltSpot(belt);tx=sp[0];ty=sp[1];}
     ds.push({id:nextDropId++,item,sx:cx,sy:cy,tx:Math.round(tx*10)/10,ty:Math.round(ty*10)/10,v:(Math.random()*3)|0});
   }
-  if(b.id==='hut')for(const [it,n] of Object.entries(b.ps||{}))if(ITEMS[it]&&n>0)ds.push({id:nextDropId++,item:it,n,sx:cx,sy:cy,tx:Math.round((cx+(Math.random()-0.5)*14)*10)/10,ty:Math.round((cy+Math.random()*6)*10)/10,v:(Math.random()*3)|0});
+  if(b.id==='hut'||b.id==='tgate')for(const [it,n] of Object.entries(b.ps||{}))if(ITEMS[it]&&n>0)ds.push({id:nextDropId++,item:it,n,sx:cx,sy:cy,tx:Math.round((cx+(Math.random()-0.5)*14)*10)/10,ty:Math.round((cy+Math.random()*6)*10)/10,v:(Math.random()*3)|0});
   if(b.id==='crafter'){
     const lst=Object.entries(b.cb||{});if(b.co)lst.push([b.co.id,b.co.n]);
     for(const [it,n] of lst)ds.push({id:nextDropId++,item:it,n,sx:cx,sy:cy,tx:Math.round((cx+(Math.random()-0.5)*14)*10)/10,ty:Math.round((cy+Math.random()*6)*10)/10,v:(Math.random()*3)|0});
@@ -6052,6 +6052,7 @@ function workFor(kind,key){
     return {kind,key,need:ORE_NEED[world.boulders.t[key]]*(pt?MAT_SPEED[pt.mat]:SLOW_MINE)*(bufOn('work')?0.78:1)};
   }
   const b=structByKey(key);
+  if(b&&b.id==='tgate'&&b.ow&&b.ow!==myName()){if(time-(workFor.nt||-9)>2){workFor.nt=time;toast('통행문은 설치한 사람만 부술 수 있어요.');}return null;}
   return b?{kind:'s',key,need:STRUCT[b.id].need*axeMult()*(bufOn('work')?0.78:1),b}:null;
 }
 function stickyWork(){
@@ -12831,7 +12832,7 @@ function onHostData(c,d){
     const k=boulderIdAtKey(d.key);
     if(k!==undefined&&!world.brem[k])mineBoulderAuth(k,!okTool(world.boulders.t[k],d.tm));
   }else if(d.t==='smash'&&Number.isFinite(d.gx)&&Number.isFinite(d.gy)){
-    smashStructAuth(d.gx|0,d.gy|0,L2(d.l));
+    {const sb=structMap(L2(d.l)).get(skey(L2(d.l),d.gx|0,d.gy|0));if(!(sb&&sb.id==='tgate'&&sb.ow&&sb.ow!==nameOfPeer(c.peer)))smashStructAuth(d.gx|0,d.gy|0,L2(d.l));}
   }else if(d.t==='hit'){
     const m=monsters.find(q=>q.id===d.id),r=remotes.get(c.peer);
     if(m&&r&&Math.hypot(m.x-r.x,m.y-r.y)<=(d.bow?200:26))monsterDamage(m,Math.max(0.5,Math.min(d.bow?26:30,+d.d||1)),r.x,r.y,(d.rn==='fire'||d.rn==='ice'||d.rn==='venom')?d.rn:'',Math.max(0,Math.min(2,d.hv|0)));
