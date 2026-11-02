@@ -72,3 +72,5 @@ patchnotes.json | v613 items[0] | 이모티콘 로고를 배경 없는 새 그�
 patchnotes.json | v613 items[1] | 접속 점(온라인·오프라인)도 로고 그림으로 바꿨어요 | build 613 | 2026-11-02
 patchnotes.json | v614 title | 투명 로고와 접속 점 | build 614 | 2026-11-02
 patchnotes.json | v614 items[0] | 코인 로고가 안 보이던 문제 수정 | build 614 | 2026-11-02
+patchnotes.json | v615 title | 투명 로고와 접속 점 | build 615 | 2026-11-02
+patchnotes.json | v615 items[0] | 캐릭터·모드·재화·상자·프로필·설정·퀘스트 로고를 배경 없는 투명 그림으로 바꿨어요 | build 615 | 2026-11-02
