@@ -70,3 +70,5 @@ patchnotes.json | v612 items[0] | 깃발·로봇·두 사람·정보·재생·�
 patchnotes.json | v613 title | 투명 로고와 접속 점 | build 613 | 2026-11-02
 patchnotes.json | v613 items[0] | 이모티콘 로고를 배경 없는 새 그림으로 바꿨어요 | build 613 | 2026-11-02
 patchnotes.json | v613 items[1] | 접속 점(온라인·오프라인)도 로고 그림으로 바꿨어요 | build 613 | 2026-11-02
+patchnotes.json | v614 title | 투명 로고와 접속 점 | build 614 | 2026-11-02
+patchnotes.json | v614 items[0] | 코인 로고가 안 보이던 문제 수정 | build 614 | 2026-11-02
