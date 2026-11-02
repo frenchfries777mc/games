@@ -1,9 +1,9 @@
 /* Gatecrash · © 2026 Frenchfries777 · CC BY-NC-ND 4.0
    데이터: 상수, 무기, 맵 */
 'use strict';
-const VERSION = '0.1', BUILD = 29;
+const VERSION = '0.1', BUILD = 30;
 const TS = 16;                                   // 타일 한 칸 (px)
-const PH = { RUN: 120, ACC: 1500, AIR: 1000, G: 1500, JUMP: 440, CUT: 300, MAXF: 560, W: 10, H: 22, COY: 0.08, BUF: 0.12, BELT: 70, ICE: 180, LIFT: 130 };
+const PH = { RUN: 120, ACC: 1500, AIR: 1000, G: 1500, JUMP: 440, CUT: 400, MAXF: 560, W: 10, H: 22, COY: 0.08, BUF: 0.12, BELT: 70, ICE: 180, LIFT: 130 };
 const MAX_HP = 100, RACERS = 4;
 const COLORS = ['#e8483b', '#3b8de8', '#3fbf5a', '#f2b632', '#a65be0', '#f07ab8', '#2cc4c4', '#f0f0f0'];
 
@@ -171,7 +171,7 @@ function floorsMap(F, roof, seed) {
   const goalLeft = Math.min(...last) > FW / 2;
   b.spawn(goalLeft ? FW - 24 : 24, rb); b.spawn(FW >> 1, rb);
   if (goalLeft) { b.deco('helipad', 1, rb, 9, 1); b.finish = { x0: 1, y0: rb - 4, x1: 8, y1: rb }; } else { b.deco('helipad', FW - 10, rb, 9, 1); b.finish = { x0: FW - 9, y0: rb - 4, x1: FW - 2, y1: rb }; }
-  for (let i = 0; i < RACERS; i++) b.starts.push({ x: (2 + i) * TS + 3, y: (H - 1) * TS - PH.H });
+  for (let i = 0; i < RACERS; i++) b.starts.push({ x: (2 + i * 2) * TS + 3, y: (H - 1) * TS - PH.H });
   return b;
 }
 
@@ -210,7 +210,7 @@ function longMap(segs, goal, seed) {
   b.room(x, 3, W - 2, lvl ? 11 : 19, segs[segs.length - 1].theme);
   b.deco(goal || 'door', W - 5, lvl ? 11 : 19, 3, 4);
   b.finish = lvl ? { x0: W - 8, y0: 9, x1: W - 2, y1: 11 } : { x0: W - 8, y0: 17, x1: W - 2, y1: 19 };
-  for (let i = 0; i < RACERS; i++) b.starts.push({ x: (2 + i) * TS + 3, y: 20 * TS - PH.H });
+  for (let i = 0; i < RACERS; i++) b.starts.push({ x: (2 + i * 2) * TS + 3, y: 20 * TS - PH.H });
   return b;
 }
 function isSolidC(c) { return c === '#' || c === 'x' || c === '>' || c === '<' || c === 'I'; }
@@ -262,7 +262,7 @@ function mapAirport() {
   b.obj('luggage', B(125), 11, 1, 1); b.obj('cone', B(129), 11, 1, 1);
   b.deco('plane', B(133), 14, 7, 12);
   b.finish = { x0: B(134), y0: 9, x1: B(138), y1: 11 };
-  for (let i = 0; i < RACERS; i++) b.starts.push({ x: (4 + i) * TS + 3, y: 20 * TS - PH.H });
+  for (let i = 0; i < RACERS; i++) b.starts.push({ x: (4 + i * 2) * TS + 3, y: 20 * TS - PH.H });
   return b;
 }
 

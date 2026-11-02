@@ -41,7 +41,11 @@
       x.shadowBlur = 0; x.globalAlpha = 1;
     };
     scene(t / 3, 'Made by', 'Frenchfries777', false); scene((t - 3) / 3, 'With', 'Claude AI', true);
-    if (hold) { x.globalAlpha = .55 + .45 * Math.sin(now / 220); x.fillStyle = '#fff8ea'; x.font = '700 ' + Math.round(Math.max(16, Math.min(22, w * .026 / dpr)) * dpr) + 'px system-ui, sans-serif'; x.fillText('화면을 누르면 시작해요', w / 2, h * .86); x.globalAlpha = 1; }
+    if (hold) {
+      const fz = Math.round(Math.max(16, Math.min(22, w * .026 / dpr)) * dpr), msg = '화면을 누르면 시작해요'; x.font = '700 ' + fz + 'px system-ui, sans-serif';
+      const tw = x.measureText(msg).width + fz * 1.6; x.globalAlpha = .8 + .2 * Math.sin(now / 220); x.fillStyle = 'rgba(8,12,24,.78)'; x.fillRect(w / 2 - tw / 2, h * .72 - fz * 1.25, tw, fz * 1.9);
+      x.fillStyle = '#fff8ea'; x.fillText(msg, w / 2, h * .72); x.globalAlpha = 1;
+    }
     const fade = t > DUR - .8 ? ez((t - (DUR - .8)) / .8) : 0, fi = 0;
     x.fillStyle = 'rgba(8,12,24,' + Math.max(fade, fi) + ')'; x.fillRect(0, 0, w, h);
     if (started && t >= DUR) { finish(); return; }
