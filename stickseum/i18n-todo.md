@@ -78,3 +78,5 @@ patchnotes.json | v616 title | 투명 로고와 접속 점 | build 616 | 2026-11
 patchnotes.json | v616 items[0] | 이모지를 로고로 바꿔 보여 주던 것을 되돌려 원래 이모지로 보여요 (캐릭터·모드·재화 그림은 그대로) | build 616 | 2026-11-02
 patchnotes.json | v617 title | 투명 로고와 접속 점 | build 617 | 2026-11-02
 patchnotes.json | v617 items[0] | 게임 안 이모지 로고를 다시 켰어요 (사이트·허브 화면만 원래 이모지) | build 617 | 2026-11-02
+patchnotes.json | v618 title | 투명 로고와 접속 점 | build 618 | 2026-11-02
+patchnotes.json | v618 items[0] | 허브 프로필에는 온라인인데 친구 목록에는 오프라인으로 나오던 문제 수정 (허브와 같은 접속 신호도 함께 봐요) | build 618 | 2026-11-02
