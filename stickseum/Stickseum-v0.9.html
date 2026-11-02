@@ -1407,7 +1407,7 @@ const TELEPORT_CHANNEL_SEC = 1.2;   // how long the teleporter stands still befo
 let TELEPORT_CD = 10;   // (a `let` only so the practice mode can shorten it)
 const PROJECTILE_GRAVITY = 700;
 const PLAYER_W = 26, PLAYER_H = 58;
-const BULLET_R = 5, BULLET_LIFE = 1.2, PORTAL_BOUNCE_DMG = 1.3;
+const BULLET_R = 5, BULLET_LIFE = 1.2, PORTAL_BOUNCE_DMG = 1.3, PORTAL_MAX_DMG = 30;
 
 /* ================= WEAPONS (13) — damage/cooldown balanced by real-world weapon character ================= */
 const FLAME_RANGE=400, FLAME_HALF_ANGLE=0.32, FLAME_DIRECT_DPS=31;
@@ -1467,7 +1467,7 @@ const WEAPONS = {
   flamethrower:{id:'flamethrower',name:'화염방사기',emoji:'🔥', kind:'flame', dmg:0, cd:0, range:FLAME_RANGE, shape:'flamethrower',
             desc:'중거리 화염방사 · 쏜 시간이 합쳐서 6초가 되면 2초간 과열(끊었다 다시 쏴도 이어서 셈) · 닿으면 초당 '+FLAME_DIRECT_DPS+' 직접 피해 · 발판에 막힘'},
   portalgun:{id:'portalgun',name:'포탈건',emoji:'🌀', kind:'gun', dmg:15, cd:0.5, bulletSpeed:700, shape:'portalbullet', bounces:3,
-            desc:'데미지 15 · 쿨타임 0.5초 · 바닥이나 발판에 닿으면 최대 3번까지 튕기는 탄환 · 튕길 때마다 데미지 30% 증가'},
+            desc:'데미지 15 · 쿨타임 0.5초 · 바닥이나 발판에 닿으면 최대 3번까지 튕기는 탄환 · 튕길 때마다 데미지 30% 증가 (최대 30)'},
   vacuum:{id:'vacuum',name:'청소기',emoji:'🧹', kind:'vacuum', dmg:24, cd:0.9, range:VACUUM_RANGE, shape:'vacuum',
             desc:'사거리 '+VACUUM_RANGE+'(화염방사기보다 조금 김) · 데미지 24 · 쿨타임 0.9초 · 맞힐 때마다 스택 축적(최대 8) · 맞은 상대를 나에게 살짝 끌어당김'},
   pirate:{id:'pirate',name:'갈고리손',emoji:'🏴‍☠️', kind:'melee', dmg:30, cd:0.3, range:70, shape:'hook',
@@ -5655,7 +5655,7 @@ function shuffle(arr){ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.
 /* ===== the version of this file =====
    Different BUILDS of one version meet and play together (room names online-v<ver>-<mode>-<map>-<slot>); different VERSIONS (the 0.x part) never do - the host refuses them (verNo) and the dispatcher answers busy.
    The build is only sent along with the join message and the lobby (for information); the corner of the screen shows it. */
-const GAME_BUILD='build 2026-10-31-v604';
+const GAME_BUILD='build 2026-10-31-v605';
 const GAME_VERSION='0.9', GAME_VERSION_NAME='은하 제국의 황혼';   // 게임 버전 이름: versions.json의 title과 같게 (빌드마다 바꾸지 않음)
 /* version (the 0.x part) vs build: different BUILDS of one version meet and play together, different VERSIONS never do (rooms, quick match, ranked, friend invites, dispatcher).
    Builds before 470 do not send a version, so it is read from the build number (0.9 started at build 458). */
@@ -12251,6 +12251,7 @@ function computeFalloffDamage(b){
     const t=clamp(dist/b.dmgFalloff.maxDist, 0, 1);
     dmg = b.dmg*(1-t) + b.dmgFalloff.min*t;
   }
+  if(b.wid==='portalgun') dmg=Math.min(dmg, PORTAL_MAX_DMG);      // 차원여행자: a bullet never hits for more than 30
   const owner=players[b.owner];
   if(owner && owner.wizBuff) dmg*=WIZ_DMG_MULT;
   if(owner && owner.isZombie) dmg*=ZOMBIE_DMG_MULT;
@@ -15674,16 +15675,16 @@ function hostTickCore(dt,t){
         for(const pl of MAP.platforms){
           if(nx>=pl.x-BULLET_R && nx<=pl.x+pl.w+BULLET_R && ny>=pl.y-BULLET_R && ny<=pl.y+pl.h+BULLET_R){
             if(b.bouncesLeft>0){
-              b.bouncesLeft--; if(b.wid==='portalgun') b.dmg*=PORTAL_BOUNCE_DMG;       // 차원여행자: every bounce makes the bullet hit harder
+              b.bouncesLeft--; if(b.wid==='portalgun') b.dmg=Math.min(PORTAL_MAX_DMG, b.dmg*PORTAL_BOUNCE_DMG);       // 차원여행자: every bounce makes the bullet hit harder (never above PORTAL_MAX_DMG)
               if(b.y>=pl.y+pl.h){ b.vy=Math.abs(b.vy)*0.8; b.x=nx; b.y=pl.y+pl.h+BULLET_R+1; pushFx('hit', nx, pl.y+pl.h, t, {color:b.color, ang:Math.PI/2, v:0}); }      // came from below: bounce back down, not up through the platform
-              else if(b.y>pl.y){ b.vx=-b.vx*0.8; pushFx('hit', b.x, b.y, t, {color:b.color, ang:b.vx>0?0:Math.PI, v:0}); }                                             // came from the side: bounce off the wall of the platform
+              else if(b.y>pl.y){ if(b.x<pl.x+pl.w/2){ b.vx=-Math.abs(b.vx)*0.8; b.x=pl.x-BULLET_R-1; } else { b.vx=Math.abs(b.vx)*0.8; b.x=pl.x+pl.w+BULLET_R+1; } pushFx('hit', b.x, b.y, t, {color:b.color, ang:b.vx>0?0:Math.PI, v:0}); }      // came from the side: bounce away from the wall and out of it (a bullet that was inside the wall used to flip back and forth in place, bouncing 3 times at once)                                             // came from the side: bounce off the wall of the platform
               else { b.vy=-Math.abs(b.vy)*0.8; b.x=nx; b.y=pl.y-BULLET_R-1; pushFx('hit', nx, pl.y, t, {color:b.color, ang:-Math.PI/2, v:0}); }
               bounced=true;
             } else { hit=true; hitPlatform=true; hitPl=pl; }
             break;
           }
         }
-        if(bounced) continue;
+        if(bounced){ b.life-=dt; if(b.life<=0) bullets.splice(i,1); continue; }
       }
     }
     if(!hit && !b.pierce) for(let wi=walls.length-1; wi>=0; wi--){ // energy walls / shields stop everything except their owner's shots (piercing attacks fly through instead - see damage halving below)
