@@ -21,7 +21,7 @@ function fix(n){
   if(skip(n)) return;
   var f=document.createDocumentFragment(), last=0, m;
   while((m=RX.exec(t))){ if(m.index>last) f.appendChild(document.createTextNode(t.slice(last,m.index)));
-    var i=document.createElement('img'); i.className='ffe'; i.alt=m[1]; i.src=BASE+MAP[m[1]]+'.svg?v=20261102c'; i.draggable=false; i.decoding='async'; f.appendChild(i); last=m.index+m[0].length; }
+    var i=document.createElement('img'); i.className='ffe'; i.alt=m[1]; i.src=BASE+MAP[m[1]]+'.svg?v=20261102t'; i.draggable=false; i.decoding='async'; f.appendChild(i); last=m.index+m[0].length; }
   RX.lastIndex=0;
   if(last<t.length) f.appendChild(document.createTextNode(t.slice(last)));
   n.parentNode.replaceChild(f,n);
