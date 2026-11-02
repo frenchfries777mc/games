@@ -622,9 +622,8 @@ async function openCoin(){
   var el=$('#coinBox'); if(!el){ el=document.createElement('div'); el.id='coinBox'; el.className='hn-bg'; document.body.appendChild(el); hCoinSwap(el); el.addEventListener('click',function(e){ if(e.target===el||e.target.closest('.hn-x')) el.style.display='none'; }); }
   el.innerHTML='<div class="hn-b"><div class="hn-h"><b>🪙 Hub Coin 교환</b><button type="button" class="hn-x" aria-label="닫기">×</button></div>'+
     '<div class="cx-have">갖고 있는 코인 <b data-notr>'+(coin.n||0)+'</b><button type="button" class="cm-btn2 cx-cal" style="float:right">📅 달력</button></div>'+
-    '<div class="cx-tabs"><button type="button" data-t="ex">교환</button><button type="button" data-t="gift">🎁 선물</button><button type="button" data-t="q">📋 퀘스트<i class="cx-dot" hidden></i></button><button type="button" data-t="log">기록</button></div>'+
+    '<div class="cx-tabs"><button type="button" data-t="ex">교환</button><button type="button" data-t="q">📋 퀘스트<i class="cx-dot" hidden></i></button><button type="button" data-t="log">기록</button></div>'+
     '<div class="cx-pane" data-p="ex"><div class="cx-games"></div><div class="cx-list"><div class="cm-e">불러오는 중…</div></div><div class="cx-wait"></div></div>'+
-    '<div class="cx-pane" data-p="gift"></div>'+
     '<div class="cx-pane" data-p="q"><div class="cx-q"><div class="cm-e">불러오는 중…</div></div></div>'+
     '<div class="cx-pane" data-p="log"><div class="cx-log"></div></div></div>';
   el.querySelector('.cx-cal').onclick=function(){ openCal(); };
@@ -661,7 +660,6 @@ async function openCoin(){
       var y=(r.data||[])[0]||{}; coin.n=y.coins; paintCoin(); openCoin().then(function(){ var m2=$('#coinBox .cx-wait'); if(m2) m2.insertAdjacentHTML('afterbegin','<div class="cx-ok">'+esc(F('{0}에 들어가면 받아요: {1} {2}',G.name,y.amount,unitName(x.unit)))+'</div>'); }); };
     L.appendChild(d); });
   pickGame(coinGame);
-  el.querySelector('[data-p=gift]').appendChild(giftForm());
   var w=await sb.from('ff_coin_out').select('game,amount').eq('claimed',false), W=el.querySelector('.cx-wait'), sum={};
   ((w&&w.data)||[]).forEach(function(z){ sum[z.game]=(sum[z.game]||0)+z.amount; });
   W.innerHTML=Object.keys(sum).map(function(g){ var u=(rates.filter(function(x){ return x.game===g; })[0]||{}).unit||''; return '<div class="cx-pend">'+esc(F('{0} 접속하면 받을 {1}: {2}',(GAMES[g]||{name:g}).name,unitName(u),sum[g]))+'</div>'; }).join('');
@@ -691,22 +689,6 @@ async function openCal(off){
     '<div class="cal-g">'+['일','월','화','수','목','금','토'].map(function(w){ return '<span class="cal-w">'+w+'</span>'; }).join('')+cells+'</div>'+
     '<div class="cal-s"><span>'+esc(F('이번 달 출석 {0}일',n))+'</span><span>'+esc(F('{0}일 연속',coin.streak||0))+'</span></div>'+
     '<div class="cal-tip">'+esc(F('7일 연속 출석하면 보너스 +20! (다음 보너스까지 {0}일)',left))+'</div>';
-}
-
-/* ===================== Hub Coin 선물 (supabase-ff-wiki.sql 의 ff_coin_gift) ===================== */
-function giftForm(){
-  var fr=[]; try{ fr=((window.FFAuth&&FFAuth.friends&&FFAuth.friends())||[]).filter(function(f){ return f.status==='accepted'; }); }catch(e){}
-  var d=document.createElement('form'); d.className='cx-r cx-gift';
-  d.innerHTML='<div class="cx-g"><b>🎁 친구에게 보내기</b><span class="cx-rt">하루 100개까지</span></div>'+
-    (fr.length?'<div class="cx-in"><select class="cx-fr">'+fr.map(function(f){ return '<option value="'+esc(f.otherId)+'" data-notr>'+esc(f.name)+'</option>'; }).join('')+'</select><input type="number" inputmode="numeric" min="1" max="100" step="1" value="10"></div><div class="cx-go"><span></span><button class="cm-btn">보내기</button></div><div class="cm-m"></div>'
-      :'<div class="cm-e">친구를 추가하면 코인을 보낼 수 있어요.</div>');
-  d.onsubmit=async function(e){ e.preventDefault(); var m=d.querySelector('.cm-m'), to=d.querySelector('.cx-fr').value, n=Math.floor(+d.querySelector('input').value||0);
-    if(n<1||n>100){ m.textContent='1~100개 사이로 적어 주세요.'; return; } if(n>(coin.n||0)){ m.textContent='코인이 모자라요.'; return; }
-    var r=await sb.rpc('ff_coin_gift',{p_to:to, p_coins:n});
-    if(r.error){ var t=r.error.message||''; m.textContent=/daily gift/i.test(t)?'오늘은 더 보낼 수 없어요. (하루 100개까지)':/not enough/i.test(t)?'코인이 모자라요.':/not friends/i.test(t)?'친구에게만 보낼 수 있어요.':errText(r.error); return; }
-    coin.n=r.data; paintCoin(); var nm=d.querySelector('.cx-fr').selectedOptions[0].textContent;
-    openCoin().then(function(){ var w=$('#coinBox .cx-wait'); if(w) w.insertAdjacentHTML('afterbegin','<div class="cx-ok">'+esc(F('{0}님에게 {1}개를 보냈어요.',nm,n))+'</div>'); }); };
-  return d;
 }
 
 /* ===================== 지금 접속 중 (ff_online · ff_online_friends · ff_hub_ping) ===================== */
