@@ -22,7 +22,7 @@ function isSolid(c) { return c === '#' || c === 'x' || c === '>' || c === '<' ||
 function canStand(c) { return isSolid(c) || c === '='; }
 
 /* ---------- 물리 ---------- */
-function newBody(x, y) { return { x, y, vx: 0, vy: 0, ground: false, coy: 0, buf: 0, jumped: false, stun: 0, air: 0 }; }
+function newBody(x, y) { return { x, y, vx: 0, vy: 0, ground: false, coy: 0, buf: 0, jumped: false, stun: 0, air: 0, boost: 0, slow: 0 }; }
 function approach(v, t, d) { return v < t ? Math.min(t, v + d) : Math.max(t, v - d); }
 
 function moveX(W, b, dx) {
@@ -68,9 +68,10 @@ function beltUnder(W, b) {
 /* inp: { d: -1|0|1, jp: 이번에 누름, j: 누르고 있음 } */
 function stepBody(W, b, inp, dt) {
   let dir = inp.d | 0;
+  if (b.boost > 0) b.boost -= dt; if (b.slow > 0) b.slow -= dt;
   if (b.stun > 0) { b.stun -= dt; dir = 0; }
   if (b.stun > 0) b.vx -= b.vx * Math.min(1, dt * (b.ground ? 5 : 0.8));
-  else b.vx = approach(b.vx, dir * PH.RUN, (b.ground ? (iceUnder(W, b) ? PH.ICE : PH.ACC) : PH.AIR) * dt);
+  else b.vx = approach(b.vx, dir * PH.RUN * ((b.boost > 0 ? 1.5 : 1) * (b.slow > 0 ? 0.5 : 1)), (b.ground ? (iceUnder(W, b) ? PH.ICE : PH.ACC) : PH.AIR) * dt);
   if (inp.jp) b.buf = PH.BUF; else b.buf = Math.max(0, b.buf - dt);
   if (b.ground) { b.coy = PH.COY; b.jumped = false; } else b.coy = Math.max(0, b.coy - dt);
   let jumpedNow = false;
@@ -243,6 +244,7 @@ function botInput(G, r, dt) {
 function botFight(G, r) {
   const ai = r.ai; if (!r.wep || r.cd > 0 || r.fin || G.phase !== 'race') return null;
   const w = WEAPONS[r.wep.k], reach = w.kind === 'melee' ? w.range + 8 : w.reach;
+  if (w.kind === 'boost') return r.ground && r.boost <= 0 ? 0 : null;
   if (w.kind === 'trap') { for (const o of G.racers) if (o !== r && !o.fin && Math.abs(o.x - r.x) < 110 && Math.abs(o.y - r.y) < 30 && o.prog > r.prog && r.ground) return 0; return null; }
   let tgt = null, bd = Infinity;
   for (const o of G.racers) {
@@ -292,8 +294,10 @@ function useWeapon(G, r, ang) {
     for (let i = 0; i < (w.n || 1); i++) { const a = ang + (w.n ? (i / (w.n - 1) - .5) * w.spread : 0) + (w.spread && !w.n ? (Math.random() - .5) * w.spread : 0); G.shots.push({ k: r.wep.k, x: cx + Math.cos(a) * 8, y: cy + Math.sin(a) * 8, vx: Math.cos(a) * w.speed, vy: Math.sin(a) * w.speed, t: w.life, by: r.id }); }
     G.ev.push({ t: 'fire', x: cx, y: cy, k: r.wep.k });
   } else if (w.kind === 'trap') {
-    G.traps.push({ x: cx, y: r.y + PH.H - 2, by: r.id, t: 25, arm: 0.7 });
+    G.traps.push({ x: cx, y: r.y + PH.H - 2, by: r.id, t: r.wep.k === 'glue' ? 14 : 25, arm: 0.7, k: r.wep.k });
     G.ev.push({ t: 'drop', x: cx, y: r.y + PH.H - 2 });
+  } else if (w.kind === 'boost') {
+    r.boost = w.dur; G.ev.push({ t: 'boost', x: cx, y: r.y + PH.H });
   } else if (w.kind === 'spray') {
     for (let i = 0; i < 2; i++) { const a = ang + (Math.random() - .5) * .35; G.shots.push({ k: r.wep.k, x: cx + Math.cos(a) * 8, y: cy + Math.sin(a) * 8, vx: Math.cos(a) * w.speed, vy: Math.sin(a) * w.speed, t: w.life, by: r.id }); }
     r.vx -= Math.cos(ang) * w.recoil; if (!r.ground) r.vy -= Math.sin(ang) * w.recoil * 0.4;
@@ -305,7 +309,9 @@ function stepTraps(G, dt) {
     t.t -= dt; t.arm -= dt;
     for (const o of G.racers) {
       if (t.t <= 0 || o.fin || o.inv > 0 || (o.id === t.by && t.arm > 0) || t.arm > 0 && o.id === t.by) continue;
-      if (Math.abs(o.x + PH.W / 2 - t.x) < 10 && Math.abs(o.y + PH.H - t.y) < 8) {
+      if (Math.abs(o.x + PH.W / 2 - t.x) < (t.k === 'glue' ? 14 : 10) && Math.abs(o.y + PH.H - t.y) < 8) {
+        if (t.k === 'glue') { if (o.slow <= 0.3) G.ev.push({ t: 'hit', x: o.x + 5, y: o.y + 18 }); o.slow = Math.max(o.slow, WEAPONS.glue.slow); continue; }
+        if (t.k === 'tack') { hurt(G, o, null, WEAPONS.tack, o.vx >= 0 ? -1 : 1, 0, 1); t.t = 0; continue; }
         o.stun = Math.max(o.stun, WEAPONS.banana.stun); o.vx = ((o.vx >= 0 ? 1 : -1) * 280); o.vy = -230; o.ground = false; o.flash = .18; t.t = 0;
         G.ev.push({ t: 'hit', x: o.x + 5, y: o.y + 18 });
       }
@@ -347,7 +353,7 @@ function stepGame(G, dt, inputs) {
     if (r.y > G.W.ph + 40) respawn(G.W, r);
     const it = nearItem(G, r);
     if (it) {
-      if (!r.wep) { r.wep = { k: it.k, u: WEAPONS[it.k].uses }; it.on = false; it.t = 14; G.ev.push({ t: 'pick', x: it.x, y: it.y }); }
+      if (!r.wep) { const lastP = G.racers.some(o => o !== r && !o.fin && o.prog < r.prog - 4) && !G.racers.some(o => o !== r && !o.fin && o.prog > r.prog), k2 = lastP && Math.random() < 0.6 ? 'boots' : it.k; r.wep = { k: k2, u: WEAPONS[k2].uses }; it.on = false; it.t = 14; G.ev.push({ t: 'pick', x: it.x, y: it.y }); }
       else if (inp.swap && !r.bot && r.wep.k !== it.k) { const old = r.wep.k; r.wep = { k: it.k, u: WEAPONS[it.k].uses }; it.k = old; G.ev.push({ t: 'pick', x: it.x, y: it.y }); }
     }
     if (inp.atk) { const a = r.bot ? botFight(G, r) : inp.aim; if (a !== null) useWeapon(G, r, a); }
