@@ -407,7 +407,7 @@ window.bfIntro=function(){if(run)return;run=1;t0=Date.now();el.classList.add('ru
     <button class="btn" data-act="skins"><span class="arrow">▶</span>스킨 상점<span class="en">SKIN SHOP</span></button>
     <button class="btn" data-act="stats"><span class="arrow">▶</span>통계<span class="en">STATS</span></button>
     <button class="btn" data-act="settings"><span class="arrow">▶</span>설정<span class="en">SETTINGS</span></button>
-    <p class="foot">v0.5<br>build 164</p>
+    <p class="foot">v0.5<br>build 165</p>
   </nav>
 </div>
 
@@ -12525,11 +12525,11 @@ function openTrainCargo(T){
   const l=document.querySelector('#chest .clabel');if(l)l.textContent=i18nTr('기차 (화물칸)');
   if(l&&!isGuest()&&(world.trains||[]).includes(T)){const bt=document.createElement('button');bt.className='btn sm';bt.textContent=i18nTr('기차 치우기');bt.style.marginLeft='10px';bt.onclick=()=>pickTrain(T);l.appendChild(bt);}
 }
-function pickTrain(T){   // 세워 둔 기차를 치워요 (기차 아이템은 쓸 때 줄지 않으니 되돌려 주지 않고, 화물칸 물건만 가방으로)
+function pickTrain(T){   // 세워 둔 기차를 치워요: 기차 아이템과 화물칸 물건을 가방으로
   const L=world.trains||[],i=L.indexOf(T);if(i<0)return;
   const cargo=(T.it||[]).filter(Boolean);
-  if(cargo.some(q=>!roomFor(q.id,q.n))){toast(i18nTr('인벤토리가 가득 찼어요.'));return;}
-  L.splice(i,1);for(const q of cargo)addStack(q.id,q.n,q.dur);
+  if(!roomFor('train',1)||cargo.some(q=>!roomFor(q.id,q.n))){toast(i18nTr('인벤토리가 가득 찼어요.'));return;}
+  L.splice(i,1);addStack('train',1);for(const q of cargo)addStack(q.id,q.n,q.dur);
   trainRef=null;closeCraft();saveWorld(true);toast(i18nTr('기차를 치웠어요'));
 }
 function trainPick(T){
@@ -12630,6 +12630,7 @@ function toggleTrain(){
   const T={gx:best[0],gy:best[1],dx:P.f>0?1:-1,dy:0,p:0,spd:96,stop:false,rider:true};
   if(!railAt(T.gx+T.dx,T.gy+T.dy)){const d=trainPick(T);if(d){T.dx=d[0];T.dy=d[1];}else T.stop=true;}
   P.train=T;P.mount=false;P.hold=false;P.kx=P.ky=0;
+  takeItemN('train',1);   // 선로에 새로 올릴 때 기차 아이템이 하나 줄어요 (치우면 돌려받아요)
   trainStep(0);
   toast('출발해요! 갈림길에서는 방향키로 고르고, Shift로 내려요');
 }
