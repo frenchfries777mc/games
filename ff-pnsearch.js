@@ -1,5 +1,5 @@
 /* © 2026 Frenchfries777. CC BY-NC-ND 4.0 (https://creativecommons.org/licenses/by-nc-nd/4.0/)
-   패치노트 검색: 빌드 번호(371, b371, v371, build 371, 빌드 371)나 내용으로 찾기.
+   패치노트 검색: 빌드 번호(371, b371, v371, build 371, 빌드 371)나 범위(300~320, 300-320), 내용으로 찾기. 찾은 낱말은 <mark>로 표시.
    목록 페이지: FFPN.mount('notesBox', 다시그리기) 뒤에 FFPN.filter(notes)로 거르기.
    글로 적힌 페이지: FFPN.mountDom('notes', '.note') 로 요소를 숨기고 보이기. */
 (function(){
@@ -30,7 +30,8 @@ function css(){
     '.ffpn input:focus{outline:none;border-color:rgba(255,255,255,.6)}'+
     '.ffpn input::placeholder{color:inherit;opacity:.55}'+
     '.ffpn span{font-size:13.5px;opacity:.7}'+
-    '.ffpn-none{opacity:.7;padding:8px 0}';
+    '.ffpn-none{opacity:.7;padding:8px 0}'+
+    'mark.ffpn-mark{background:#ffc93c;color:#1a1206;border-radius:3px;padding:0 2px}';
   document.head.appendChild(s);
 }
 function words(v,out){
@@ -41,9 +42,17 @@ function words(v,out){
   return out;
 }
 function buildNum(b){ var m=String(b||'').match(/\d+/g); return m?+m[m.length-1]:null; }
-function terms(q){ return q.toLowerCase().replace(/(^|\s)(?:build|빌드)\s*(?=\d)/g,'$1b').split(/\s+/).filter(Boolean); }
-/* 한 낱말: b45·v45처럼 빌드를 적으면 그 빌드만, 그냥 글이면 글 안에 들어 있으면 맞음 */
+/* 300~320, 300-320, 300 - 320 은 빌드 범위 (2026-10처럼 연도로 시작하는 날짜는 제외) */
+function terms(q){
+  q=q.toLowerCase().replace(/(^|\s)(?:build|빌드)\s*(?=\d)/g,'$1b')
+   .replace(/(^|\s)([bv]?\d+)\s*[~–-]\s*([bv]?\d+)(?=\s|$)/g,function(m,a,x,y){ return /^20\d\d$/.test(x)?m:a+x+'~'+y; });
+  return q.split(/\s+/).filter(Boolean);
+}
+function isRange(t){ return /^[bv]?\d+~[bv]?\d+$/.test(t); }
+/* 한 낱말: 범위면 그 안의 빌드, b45·v45처럼 빌드를 적으면 그 빌드만, 그냥 글이면 글 안에 들어 있으면 맞음 */
 function hit(text,num,t){
+  var r=t.match(/^[bv]?(\d+)~[bv]?(\d+)$/);
+  if(r){ var lo=Math.min(+r[1],+r[2]), hi=Math.max(+r[1],+r[2]); return num!=null&&num>=lo&&num<=hi; }
   var m=t.match(/^[bv](\d+)$/);
   if(m) return (num!=null&&+m[1]===num)||new RegExp('(^|[^0-9a-z])'+t+'(?![0-9])').test(text);
   if(/^\d+$/.test(t)&&num!=null&&+t===num) return true;
@@ -53,6 +62,27 @@ function matchNote(n,q){
   var ts=terms(q==null?Q:q); if(!ts.length) return true;
   var text=words(n,[]).join(' ').toLowerCase(), num=buildNum(n&&n.build);
   return ts.every(function(t){ return hit(text,num,t); });
+}
+/* 찾은 낱말 표시: 낱말(범위·b45 제외)을 글 조각에서 찾아 <mark>로 감쌈. 다시 그릴 때마다 먼저 걷어 냄 */
+function unmark(el){
+  Array.prototype.forEach.call(el.querySelectorAll('mark.ffpn-mark'),function(m){ m.replaceWith(document.createTextNode(m.textContent)); });
+  el.normalize();
+}
+function highlight(el,q){
+  if(!el) return; unmark(el);
+  var ts=terms(q==null?Q:q).filter(function(t){ return !isRange(t)&&!/^[bv]\d+$/.test(t); });
+  if(!ts.length) return;
+  var re=new RegExp(ts.map(function(t){ return t.replace(/[.*+?^${}()|[\]\\]/g,'\\$&'); }).join('|'),'gi');
+  var w=document.createTreeWalker(el,NodeFilter.SHOW_TEXT,{acceptNode:function(n){
+    var pn=n.parentNode, p=pn&&pn.nodeName; return /^(SCRIPT|STYLE|INPUT|TEXTAREA|MARK)$/.test(p)||(pn.closest&&pn.closest('.ffpn,.ffpn-none'))?NodeFilter.FILTER_REJECT:NodeFilter.FILTER_ACCEPT; }}), nodes=[], n;
+  while((n=w.nextNode())) if(re.test(n.nodeValue)){ nodes.push(n); } re.lastIndex=0;
+  nodes.forEach(function(n){
+    var txt=n.nodeValue, frag=document.createDocumentFragment(), last=0, m; re.lastIndex=0;
+    while((m=re.exec(txt))){ if(!m[0]){ re.lastIndex++; continue; }
+      if(m.index>last) frag.appendChild(document.createTextNode(txt.slice(last,m.index)));
+      var k=document.createElement('mark'); k.className='ffpn-mark'; k.textContent=m[0]; frag.appendChild(k); last=m.index+m[0].length; }
+    if(last<txt.length) frag.appendChild(document.createTextNode(txt.slice(last)));
+    n.parentNode.replaceChild(frag,n); });
 }
 function bar(before,onInput){
   css();
@@ -66,6 +96,7 @@ function bar(before,onInput){
 var FFPN={
   q:function(){ return Q; },
   match:matchNote,
+  highlight:highlight,
   filter:function(list){ list=list||[]; return Q?list.filter(function(n){ return matchNote(n); }):list; },
   /* 찾은 개수 표시 */
   count:function(found){ var s=document.querySelector('.ffpn span'); if(s) s.textContent=Q&&found?L('hit').replace('{0}',found):''; },
@@ -73,6 +104,8 @@ var FFPN={
   mount:function(boxId,redraw){
     var box=document.getElementById(boxId); if(!box||box.previousElementSibling&&box.previousElementSibling.className==='ffpn') return;
     bar(box,redraw);
+    var busy=false, mo=new MutationObserver(function(){ if(busy) return; busy=true; mo.disconnect(); highlight(box); mo.observe(box,{childList:true}); busy=false; });
+    mo.observe(box,{childList:true});
   },
   mountDom:function(sectionId,sel){
     var sec=document.getElementById(sectionId); if(!sec) return;
@@ -82,7 +115,7 @@ var FFPN={
       var c=0; Array.prototype.forEach.call(els,function(el){
         var ok=!Q||matchNote({build:(el.textContent.match(/\bb(\d+)\b/)||[])[1],t:el.textContent},Q);
         el.style.display=ok?'':'none'; if(ok){ c++; if(Q&&el.tagName==='DETAILS') el.open=true; } });
-      none.style.display=Q&&!c?'':'none'; FFPN.count(c);
+      none.style.display=Q&&!c?'':'none'; FFPN.count(c); highlight(sec);
     });
     w.parentNode.insertBefore(none,els[0]);
   }
