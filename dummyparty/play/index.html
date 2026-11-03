@@ -7729,7 +7729,7 @@ var ffProfWait = [];
 function ffProf(cb) {
   if (window.FFProfile) return cb();
   ffProfWait.push(cb); if (ffProfWait.length > 1) return;
-  var sc = document.createElement('script'); sc.src = 'https://frenchfries777mc.github.io/games/ff-profile.js?v=20261030a';
+  var sc = document.createElement('script'); sc.src = 'https://frenchfries777mc.github.io/games/ff-profile.js?v=20261103e';
   sc.onload = function () { var q = ffProfWait; ffProfWait = []; if (window.FFProfile) q.forEach(function (f) { try { f(); } catch (e) { } }); };
   sc.onerror = function () { ffProfWait = []; };
   document.head.appendChild(sc);
