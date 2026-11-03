@@ -575,12 +575,38 @@ function hCoinSwap(root){ /* 번역으로 다시 쓰이는 글자에서도 동�
   run(); try{ new MutationObserver(run).observe(root,{childList:true,subtree:true,characterData:true}); }catch(e){}
 }
 function coinPop(n){ var el=document.createElement('div'); el.className='coin-pop'; el.innerHTML=hIco('coin')+' <b data-notr>+'+n+'</b> Hub Coin'+(n>10?' <span class="cp-b">🔥 7일 연속 보너스!</span>':''); document.body.appendChild(el); setTimeout(function(){ el.classList.add('go'); },30); setTimeout(function(){ el.remove(); },2600); }
+/* 총괄 개발자가 보낸 코인 선물: 들어오면 "+n hC!" 창이 뜨고 아래에 메시지가 나와요 (supabase-coin-give-2026-11-03.sql) */
+var grantBusy=false;
+async function grantPop(){
+  if(grantBusy||!me||!sb) return; grantBusy=true;
+  try{
+    var r=await sb.rpc('ff_coin_grants_pending'); var rows=(r&&!r.error&&r.data)||[];
+    for(var i=0;i<rows.length;i++){ var g=rows[i];
+      await new Promise(function(done){
+        var el=document.createElement('div'); el.id='coinGrant'; el.style.cssText='position:fixed;inset:0;z-index:2147483001;display:grid;place-items:center;padding:20px;background:rgba(5,6,10,.72);backdrop-filter:blur(4px)';
+        el.innerHTML='<div style="max-width:340px;width:100%;text-align:center;padding:26px 22px 20px;border-radius:20px;background:#10131b;border:1px solid #3a3320;box-shadow:0 20px 60px rgba(0,0,0,.6);animation:cgIn .35s ease both">'+
+          '<div style="display:flex;justify-content:center"><img src="'+HICON+'coin.svg?v=20261103a" alt="" style="width:72px;height:72px" draggable="false"></div>'+
+          '<div data-notr style="margin:8px 0 2px;font:700 38px Oswald,system-ui,sans-serif;color:#ffc93c">+'+(+g.amount||0)+' hC!</div>'+
+          '<div style="font-size:13px;color:#8a93a6">Hub Coin</div>'+
+          (g.message?'<div data-notr style="margin-top:14px;padding:12px 14px;border-radius:12px;background:#171b26;color:#eef0f5;font-size:15px;line-height:1.5;word-break:break-word;white-space:pre-wrap">'+esc(g.message)+'</div>':'')+
+          '<button type="button" style="margin-top:18px;padding:9px 26px;border:0;border-radius:99px;background:linear-gradient(90deg,#ffc93c,#ff8a3d);color:#1c1405;font:700 15px system-ui,sans-serif;cursor:pointer">확인</button></div>'+
+          '<style>@keyframes cgIn{from{opacity:0;transform:translateY(12px) scale(.94)}to{opacity:1;transform:none}}</style>';
+        document.body.appendChild(el);
+        var fin=function(){ el.remove(); done(); }; el.querySelector('button').onclick=fin; el.addEventListener('click',function(e){ if(e.target===el) fin(); });
+      });
+      try{ await sb.rpc('ff_coin_grants_seen',{p_ids:[g.id]}); }catch(e){}
+    }
+    if(rows.length){ var c=await sb.rpc('ff_coin_daily'); var x=(c&&c.data||[])[0]; if(x&&x.coins!=null){ coin.n=x.coins; paintCoin(); } }
+  }catch(e){}
+  grantBusy=false;
+}
 async function coinDaily(){
   coin={n:null, streak:0, today:false, err:''}; paintCoin(); if(!me||!sb) return;
   var r=await sb.rpc('ff_coin_daily');
   if(r.error){ coin.err=errText(r.error); paintCoin(); return; }
   var x=(r.data||[])[0]||{}; coin.n=x.coins||0; coin.streak=x.streak||0; coin.today=true; paintCoin();
   if(x.got>0){ coinPop(x.got); hubSync(); }
+  grantPop();
   coinDay=kstNow();
 }
 /* 페이지를 켜 둔 채 날짜(한국 시간)가 바뀌면 출석 코인을 자동으로 받아요 */
