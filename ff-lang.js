@@ -1,3 +1,5 @@
+/* 스크롤바 숨김: 스크롤은 되지만 막대는 안 보이게 (모든 사이트 공통) */
+(function(){ try{ if(document.getElementById('ff-noscrollbar')) return; var st=document.createElement('style'); st.id='ff-noscrollbar'; st.textContent='*{scrollbar-width:none!important;-ms-overflow-style:none!important}*::-webkit-scrollbar{display:none!important;width:0!important;height:0!important}'; (document.head||document.documentElement).appendChild(st); }catch(e){} })();
 /* Frenchfries777 공용 언어 설정 (허브 · 게임 사이트 · 게임)
    허브와 게임들은 모두 frenchfries777mc.github.io 아래라 브라우저 저장소를 같이 쓰지만, 언어를 저장하는 이름이 게임마다 달라요.
    이 스크립트는 그 이름들을 한 묶음으로 맞춰요: 어느 한 곳에서 언어를 바꾸면, 이 스크립트가 있는 페이지가 열릴 때 나머지도 같은 언어가 돼요.
