@@ -41,7 +41,93 @@
    "items": [
     "화면이 계속 느리면 설정의 「최적화」를 켜 보라고 한 번 알려 줘요 (모든 기기)",
     "최적화를 켜면 그림자와 빛 번짐을 끄고 화면을 30프레임으로 맞춰요"
-   ]
+   ],
+   "tr": {
+     "en": {
+       "title": "Low-spec notice",
+       "items": [
+         "If the screen keeps running slowly, we now suggest turning on \"Optimize\" in Settings once (on all devices)",
+         "Turning on \"Optimize\" turns off shadows and light bloom and sets the screen to 30 frames per second"
+       ]
+     },
+     "es": {
+       "title": "Aviso de bajo rendimiento",
+       "items": [
+         "Si la pantalla sigue yendo lenta, ahora se sugiere activar «Optimizar» en Ajustes una vez (en todos los dispositivos)",
+         "Al activar «Optimizar», se desactivan las sombras y el resplandor de luz, y la pantalla se fija a 30 fotogramas"
+       ]
+     },
+     "fr": {
+       "title": "Avis pour configurations modestes",
+       "items": [
+         "Si l'écran reste lent, un message vous conseille une fois d'activer « Optimisation » dans les Paramètres (tous les appareils)",
+         "Activer « Optimisation » désactive les ombres et l'éclat lumineux, et cale l'écran à 30 images par seconde"
+       ]
+     },
+     "de": {
+       "title": "Hinweis für schwache Geräte",
+       "items": [
+         "Wenn das Bild dauerhaft ruckelt, wird einmal vorgeschlagen, „Optimierung“ in den Einstellungen einzuschalten (alle Geräte)",
+         "Die Optimierung schaltet Schatten und Lichtschein aus und stellt das Bild auf 30 Bilder pro Sekunde ein"
+       ]
+     },
+     "ja": {
+       "title": "低スペック向けのご案内",
+       "items": [
+         "画面が遅いままなら、設定の「最適化」をオンにするよう一度お知らせします（すべての機器）",
+         "最適化をオンにすると、影と光のにじみを消し、画面を30フレームに合わせます"
+       ]
+     },
+     "ar": {
+       "title": "تنبيه للأجهزة الضعيفة",
+       "items": [
+         "إذا استمرت الشاشة بطيئة، نقترح مرة واحدة تفعيل «التحسين» من الإعدادات (على جميع الأجهزة)",
+         "يؤدي تفعيل «التحسين» إلى إيقاف الظلال وتوهج الضوء وضبط الشاشة على 30 إطارًا في الثانية"
+       ]
+     },
+     "zh": {
+       "title": "低配置提示",
+       "items": [
+         "如果画面持续卡顿，会提示一次在设置中开启「优化」（所有设备）",
+         "开启「优化」后会关闭阴影和光晕，并将画面锁定为 30 帧"
+       ]
+     },
+     "pt": {
+       "title": "Aviso para computadores fracos",
+       "items": [
+         "Se a tela continuar lenta, um aviso sugere uma vez ativar a «Otimização» nas Configurações (todos os dispositivos)",
+         "Ativar a «Otimização» desliga as sombras e o brilho da luz e ajusta a tela para 30 quadros"
+       ]
+     },
+     "ru": {
+       "title": "Подсказка для слабых устройств",
+       "items": [
+         "Если экран постоянно тормозит, один раз подскажем включить «Оптимизацию» в настройках (на всех устройствах)",
+         "При включении «Оптимизации» тени и свечение отключаются, а экран переводится на 30 кадров в секунду"
+       ]
+     },
+     "tr": {
+       "title": "Düşük donanım bildirimi",
+       "items": [
+         "Ekran sürekli yavaş kalırsa, Ayarlar'daki «Optimizasyon» seçeneğini açmanız bir kez önerilir (tüm cihazlar)",
+         "«Optimizasyon» açıldığında gölgeler ve ışık parlaması kapanır, ekran 30 kare hızına ayarlanır"
+       ]
+     },
+     "it": {
+       "title": "Avviso per PC meno potenti",
+       "items": [
+         "Se lo schermo continua a rallentare, viene suggerito una volta di attivare «Ottimizza» nelle Impostazioni (tutti i dispositivi)",
+         "Attivando «Ottimizza» si disattivano ombre e bagliore delle luci e lo schermo viene portato a 30 fotogrammi"
+       ]
+     },
+     "pl": {
+       "title": "Informacja dla słabszych komputerów",
+       "items": [
+         "Jeśli obraz dalej zwalnia, raz zasugerujemy włączenie „Optymalizacji” w ustawieniach (wszystkie urządzenia)",
+         "Włączenie „Optymalizacji” wyłącza cienie i poświatę świateł oraz ustawia obraz na 30 klatek"
+       ]
+     }
+   }
   },
   {
    "date": "2026-10-31",
