@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head><style id="ffTap">html,body{touch-action:manipulation}</style>
+<meta name="copyright" content="© 2026 Frenchfries777. CC BY-NC-ND 4.0 (https://creativecommons.org/licenses/by-nc-nd/4.0/)">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Frenchfries777 로그인 허용</title>
+<link rel="icon" href="/games/favicon.svg" type="image/svg+xml">
+<script src="/games/ff-lang.js"></script>
+<style>
+  :root{ --bg:#08090d; --panel:#10131b; --line:#222837; --text:#eef0f5; --dim:#8a93a6; --fry:#ffc93c; --fry2:#ff8a3d; }
+  html[data-ff-theme=light]{ --bg:#f4f5f9; --panel:#fff; --line:#d8dde7; --text:#151922; --dim:#5b6476; }
+  html,body{margin:0;background:var(--bg);color:var(--text);font-family:'Noto Sans KR',system-ui,sans-serif;}
+  main{min-height:80vh;display:flex;align-items:center;justify-content:center;padding:24px 16px;}
+  .card{width:100%;max-width:420px;background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:26px 22px;text-align:center;}
+  h1{margin:0 0 6px;font-size:20px;}
+  p{color:var(--dim);margin:10px 0;line-height:1.5;font-size:14px;}
+  .app{display:inline-block;margin:6px 0 2px;padding:6px 14px;border-radius:999px;background:linear-gradient(135deg,var(--fry),var(--fry2));color:#1a1206;font-weight:800;font-size:16px;}
+  ul{list-style:none;margin:14px 0;padding:0;text-align:left;}
+  li{padding:9px 12px;border:1px solid var(--line);border-radius:10px;margin-bottom:6px;font-size:14px;}
+  .row{display:flex;gap:10px;margin-top:16px;}
+  button{flex:1;padding:12px 14px;border-radius:12px;font:inherit;font-weight:700;cursor:pointer;border:1px solid var(--line);background:none;color:var(--text);}
+  button.go{border:0;background:linear-gradient(135deg,var(--fry),var(--fry2));color:#1a1206;}
+  button:disabled{opacity:.5;cursor:default;}
+  .err{color:#ff7a7a;}
+  footer{text-align:center;color:var(--dim);font-size:13px;padding:18px 16px;}
+  footer a{color:inherit;}
+</style>
+</head>
+<body>
+<main><div class="card" id="c"><p>불러오는 중…</p></div></main>
+<footer><span class="ff-copy">© 2026 Frenchfries777 · <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.ko" target="_blank" rel="noopener">CC BY-NC-ND 4.0</a></span></footer>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.86.0/dist/umd/supabase.min.js"></script>
+<script src="../../ff-auth.js"></script>
+<script>
+(function(){
+  var SB_URL='https://kebsbuvuutilitwlvxzv.supabase.co', SB_KEY='sb_publishable_4Egu0zm3p6cxWGvP_-GlIw_mlCpO1Nf';
+  var C=document.getElementById('c'), id=new URLSearchParams(location.search).get('authorization_id');
+  var SC={openid:'내 계정 확인(로그인)', email:'이메일 주소', profile:'닉네임과 프로필'};
+  function esc(s){ return String(s==null?'':s).replace(/[&<>"']/g,function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); }
+  function say(h){ C.innerHTML=h; }
+  function err(m){ say('<h1>앗!</h1><p class="err">'+esc(m)+'</p>'); }
+  if(!id){ err('로그인 요청 번호가 없어요. 로그인을 시작한 앱에서 다시 눌러 주세요.'); return; }
+  if(!window.supabase||!window.supabase.createClient){ err('불러오지 못했어요. 새로고침해 주세요.'); return; }
+  var sb=window.supabase.createClient(SB_URL, SB_KEY);   // 같은 프로젝트라 허브 로그인 세션을 그대로 써요
+  async function run(){
+    var s=(await sb.auth.getSession()).data.session;
+    if(!s){
+      say('<h1>먼저 로그인해 주세요</h1><p>Frenchfries777 계정으로 로그인하면 이어서 허용 화면이 나와요.</p><div class="row"><button class="go" id="lg">로그인</button></div>');
+      document.getElementById('lg').onclick=function(){ if(window.FFAuth&&window.FFAuth.openLogin) window.FFAuth.openLogin(); };
+      sb.auth.onAuthStateChange(function(ev,ss){ if(ss&&ss.user) setTimeout(run,0); });
+      return;
+    }
+    if(!sb.auth.oauth){ err('이 화면에서 쓸 수 있는 도구가 아직 없어요.'); return; }
+    var r=await sb.auth.oauth.getAuthorizationDetails(id);
+    if(r.error||!r.data){ err((r.error&&r.error.message)||'요청을 찾지 못했어요. 앱에서 다시 시도해 주세요.'); return; }
+    var d=r.data;
+    if(!d.authorization_id&&d.redirect_url){ location.href=d.redirect_url; return; }   // 이미 허용한 앱
+    var sc=String(d.scope||'').split(/\s+/).filter(Boolean);
+    say('<h1>로그인 허용</h1><p>이 앱이 Frenchfries777 계정으로 로그인하려고 해요.</p><div class="app">'+esc((d.client&&d.client.name)||'앱')+'</div>'+
+      (sc.length?'<p>이 앱이 볼 수 있는 것</p><ul>'+sc.map(function(x){ return '<li>'+esc(SC[x]||x)+'</li>'; }).join('')+'</ul>':'')+
+      '<div class="row"><button id="no">거부</button><button class="go" id="ok">허용</button></div><p id="m"></p>');
+    function decide(yes){
+      var b=C.querySelectorAll('button'); b.forEach(function(x){ x.disabled=true; });
+      (yes?sb.auth.oauth.approveAuthorization(id):sb.auth.oauth.denyAuthorization(id)).then(function(z){
+        if(z.error||!z.data||!z.data.redirect_url){ b.forEach(function(x){ x.disabled=false; }); document.getElementById('m').innerHTML='<span class="err">'+esc((z.error&&z.error.message)||'처리하지 못했어요.')+'</span>'; return; }
+        location.href=z.data.redirect_url;
+      });
+    }
+    document.getElementById('ok').onclick=function(){ decide(true); };
+    document.getElementById('no').onclick=function(){ decide(false); };
+  }
+  run().catch(function(e){ err(String(e&&e.message||e)); });
+})();
+</script>
+</body>
+</html>
