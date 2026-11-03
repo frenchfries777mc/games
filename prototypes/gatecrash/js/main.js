@@ -80,7 +80,7 @@ function menu(go) {
   else if (go === 'shop') { paintShop(); show('sShop'); }
   else if (go === 'host') { if (needLogin()) return; startHost(); }
   else if (go === 'join') { if (needLogin()) return; $('joinMsg').textContent = ''; $('joinCode').value = ''; show('sJoin'); setTimeout(() => $('joinCode').focus(), 50); }
-  else if (go === 'help') { $('wl').innerHTML = WEP_IDS.map(k => { const w = WEAPONS[k]; return '<div><b>' + w.name + '</b><small>' + ({ melee: '가까이 휘둘러요', shot: '멀리 쏴요', spray: '뿌리는 동안 뒤로 밀려요', rocket: '터지면 주변이 다 날아가요' })[w.kind] + ' · ' + w.uses + '번</small></div>'; }).join(''); show('sHelp'); }
+  else if (go === 'help') { $('wl').innerHTML = WEP_IDS.concat('boots').map(k => { const w = WEAPONS[k]; return '<div><b>' + w.name + '</b><small>' + ({ melee: '가까이 휘둘러요', shot: '멀리 쏴요', spray: '뿌리는 동안 뒤로 밀려요', rocket: '터지면 주변이 다 날아가요', boost: '꼴찌일 때만 나와요, 3초 동안 빨라져요', trap: '바닥에 놓으면 밟은 사람이 걸려요' })[w.kind] + ' · ' + w.uses + '번</small></div>'; }).join(''); show('sHelp'); }
   else if (go === 'notes') { loadNotes(); show('sNotes'); }
   else if (go === 'opt') {
     const on = !OPT;
@@ -307,8 +307,8 @@ function myInput() {
 }
 function snapshot() {
   return { t: 's', ph: G.phase, tt: G.t, ck: G.clock, rk: G.rank,
-    r: G.racers.map(r => [r.id, +r.x.toFixed(1), +r.y.toFixed(1), +r.vx.toFixed(0), +r.vy.toFixed(0), r.hp | 0, r.wep ? r.wep.k : '', r.face, +r.aim.toFixed(2), r.swing > 0 ? 1 : 0, r.fin ? 1 : 0, r.inv > 0 ? 1 : 0, r.flash > 0 ? 1 : 0, r.stun > 0 ? 1 : 0, r.ground ? 1 : 0, r.ko, r.prog.toFixed(1), r.emoT > 0 ? r.emo : 0]),
-    it: G.items.map(i => [i.on ? 1 : 0, i.k]), sh: G.shots.map(s => [s.k, +s.x.toFixed(0), +s.y.toFixed(0), +s.vx.toFixed(0), +s.vy.toFixed(0)]), tr: G.traps.map(t => [Math.round(t.x), Math.round(t.y)]), ev: G.ev };
+    r: G.racers.map(r => [r.id, +r.x.toFixed(1), +r.y.toFixed(1), +r.vx.toFixed(0), +r.vy.toFixed(0), r.hp | 0, r.wep ? r.wep.k : '', r.face, +r.aim.toFixed(2), r.swing > 0 ? 1 : 0, r.fin ? 1 : 0, r.inv > 0 ? 1 : 0, r.flash > 0 ? 1 : 0, r.stun > 0 ? 1 : 0, r.ground ? 1 : 0, r.ko, r.prog.toFixed(1), r.emoT > 0 ? r.emo : 0, r.boost > 0 ? 1 : 0, r.slow > 0 ? 1 : 0]),
+    it: G.items.map(i => [i.on ? 1 : 0, i.k]), sh: G.shots.map(s => [s.k, +s.x.toFixed(0), +s.y.toFixed(0), +s.vx.toFixed(0), +s.vy.toFixed(0)]), tr: G.traps.map(t => [Math.round(t.x), Math.round(t.y), t.k]), ev: G.ev };
 }
 function applySnap(d) {
   if (d.ph === 'count' && d.tt <= 3 && Math.ceil(d.tt) !== Math.ceil(G.t)) SFX.beep();
@@ -317,10 +317,10 @@ function applySnap(d) {
     const r = G.racers.find(r => r.id === a[0]); if (!r) continue;
     if (r.id === UID) { a[8] = r.aim; a[7] = r.face; const dx = a[1] - r.x, dy = a[2] - r.y; if (Math.hypot(dx, dy) > 40) { r.x = a[1]; r.y = a[2]; } else { r.x += dx * .12; r.y += dy * .12; } }
     else { r.tx = a[1]; r.ty = a[2]; if (Math.hypot(a[1] - r.x, a[2] - r.y) > 60) { r.x = a[1]; r.y = a[2]; } }
-    if (r.id !== UID || G.phase !== 'race') { r.vx = a[3]; r.vy = a[4]; } r.hp = a[5]; r.wep = a[6] ? { k: a[6], u: 1 } : null; r.face = a[7]; r.aim = a[8]; r.swing = a[9] ? .1 : 0; r.fin = !!a[10]; r.inv = a[11] ? 1 : 0; r.flash = a[12] ? .1 : 0; r.stun = a[13] ? .1 : 0; r.ground = !!a[14]; r.ko = a[15]; r.prog = +a[16]; r.emo = a[17] | 0; r.emoT = r.emo ? 1 : 0;
+    if (r.id !== UID || G.phase !== 'race') { r.vx = a[3]; r.vy = a[4]; } r.hp = a[5]; r.wep = a[6] ? { k: a[6], u: 1 } : null; r.face = a[7]; r.aim = a[8]; r.swing = a[9] ? .1 : 0; r.fin = !!a[10]; r.inv = a[11] ? 1 : 0; r.flash = a[12] ? .1 : 0; r.stun = a[13] ? .1 : 0; r.ground = !!a[14]; r.ko = a[15]; r.prog = +a[16]; r.emo = a[17] | 0; r.emoT = r.emo ? 1 : 0; r.boost = a[18] ? .3 : 0; r.slow = a[19] ? .3 : 0;
   }
   d.it.forEach((a, i) => { if (G.items[i]) { G.items[i].on = !!a[0]; G.items[i].k = a[1]; } });
-  G.traps = (d.tr || []).map(a => ({ x: a[0], y: a[1], t: 1 }));
+  G.traps = (d.tr || []).map(a => ({ x: a[0], y: a[1], t: 1, k: a[2] }));
   evUpdate(G.W, G.clock, G.phase); liftCap(G);
   G.shots = d.sh.map(a => ({ k: a[0], x: a[1], y: a[2], vx: a[3], vy: a[4], t: 1 }));
   G.ev.push(...d.ev);
@@ -364,14 +364,14 @@ function loop(now) {
 const REC = [], REC_HZ = 20, REC_MAX = 260; let RP = null, recT = 0;
 function recFrame(dt) {
   if (G.phase !== 'race') return; recT += dt; if (recT < 1 / REC_HZ) return; recT = 0;
-  REC.push({ r: G.racers.map(r => ({ id: r.id, name: r.name, col: r.col, skin: r.skin, slot: r.slot, x: r.x, y: r.y, vx: r.vx, face: r.face, aim: r.aim, swing: r.swing > 0 ? .1 : 0, wep: r.wep ? { k: r.wep.k, u: 1 } : null, hp: r.hp, fin: r.fin, inv: r.inv > 0 ? 1 : 0, flash: r.flash > 0 ? .1 : 0, stun: r.stun > 0 ? .1 : 0, ground: r.ground, anim: r.anim, prog: 1 })), it: G.items.map(i => [i.on, i.k]), sh: G.shots.map(s => ({ k: s.k, x: s.x, y: s.y, vx: s.vx, vy: s.vy })), tr: G.traps.map(t => [t.x, t.y]) });
+  REC.push({ r: G.racers.map(r => ({ id: r.id, name: r.name, col: r.col, skin: r.skin, slot: r.slot, x: r.x, y: r.y, vx: r.vx, face: r.face, aim: r.aim, swing: r.swing > 0 ? .1 : 0, wep: r.wep ? { k: r.wep.k, u: 1 } : null, hp: r.hp, fin: r.fin, inv: r.inv > 0 ? 1 : 0, flash: r.flash > 0 ? .1 : 0, stun: r.stun > 0 ? .1 : 0, boost: r.boost > 0 ? .1 : 0, slow: r.slow > 0 ? .1 : 0, ground: r.ground, anim: r.anim, prog: 1 })), it: G.items.map(i => [i.on, i.k]), sh: G.shots.map(s => ({ k: s.k, x: s.x, y: s.y, vx: s.vx, vy: s.vy })), tr: G.traps.map(t => [t.x, t.y, t.k]) });
   if (REC.length > REC_MAX) REC.shift();
 }
 function startReplay() { if (REC.length < 20) return; RP = { t: 0, frames: REC.slice(), focus: G.rank[0] || UID }; }
 function replayAt(t) {
   const f = RP.frames, p = t * REC_HZ, i = Math.floor(p); if (i >= f.length - 1) return null;
   const a = f[i], b = f[i + 1], k = p - i, L = (u, v) => u + (v - u) * k;
-  return { W: G.W, phase: 'race', t: 0, clock: 99, rank: [], ev: [], shots: a.sh, traps: (a.tr || []).map(q => ({ x: q[0], y: q[1] })), items: G.items.map((it, n) => ({ id: it.id, x: it.x, y: it.y, on: a.it[n][0], k: a.it[n][1] })),
+  return { W: G.W, phase: 'race', t: 0, clock: 99, rank: [], ev: [], shots: a.sh, traps: (a.tr || []).map(q => ({ x: q[0], y: q[1], k: q[2] })), items: G.items.map((it, n) => ({ id: it.id, x: it.x, y: it.y, on: a.it[n][0], k: a.it[n][1] })),
     racers: a.r.map((r, n) => Object.assign({}, r, { x: L(r.x, b.r[n].x), y: L(r.y, b.r[n].y), anim: L(r.anim, b.r[n].anim) })) };
 }
 function addFx(e) {
