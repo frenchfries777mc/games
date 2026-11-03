@@ -5,6 +5,7 @@
 <meta charset="UTF-8">
 <link rel="icon" type="image/svg+xml" href="https://frenchfries777mc.github.io/games/gamelogo/crownenvoy.svg">
 <script src="https://frenchfries777mc.github.io/games/ff-lang.js"></script>
+<script src="../ff-verpick.js?v=1"></script>
 <script src="../ff-pnsearch.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Crown Envoy</title>
@@ -211,6 +212,7 @@ function render(d){
   const ti=v=>esc(tv(v.version,'title',v.title)),su=v=>esc(tv(v.version,'summary',v.summary)).replace(/\\n|\n/g,'<br>');
   document.getElementById('latestBox').innerHTML='<div class="latest"><span class="tag">'+t('v_latest')+'</span><div class="ver">v'+esc(latest.version)+'<small>'+esc(latest.date)+(latest.build?' · '+esc(bldTxt(latest.build)):'')+' · '+mb(latest.size)+'</small></div><div class="sum"><b>'+ti(latest)+'</b><br>'+su(latest)+'</div><div class="cta" style="margin-top:0"><a class="btn play" target="_blank" href="'+esc(latest.file)+'">'+t('v_play')+'</a><a class="btn dl" href="'+esc(latest.file)+'" download="'+esc(latest.file.split('/').pop())+'">'+dlSvg+' '+t('b_dl')+'</a></div></div>';
   document.getElementById('historyBox').innerHTML=rest.length?rest.map(v=>'<div class="vrow"><div><div class="v">v'+esc(v.version)+'</div><div class="d">'+esc(v.date)+(v.build?' · '+esc(bldTxt(v.build)):'')+' · '+mb(v.size)+'</div></div><div><div class="t">'+ti(v)+'</div><div class="s">'+su(v)+'</div></div><div><a class="get" href="'+esc(v.file)+'" download="'+esc(v.file.split('/').pop())+'">'+dlSvg+'</a></div></div>').join(''):'<div style="color:var(--muted)">'+t('v_nopast')+'</div>';
+  if(window.FFVerPick) FFVerPick(document.getElementById('historyBox'));
 }
 const NOTES_SHOWN=5;
 function renderNotes(d){

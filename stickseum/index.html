@@ -12,6 +12,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet">
 <script src="https://frenchfries777mc.github.io/games/ff-lang.js"></script>
+<script src="../ff-verpick.js?v=1"></script>
 <script src="../ff-pnsearch.js"></script>
 <script src="site-i18n.js"></script>
 <style>
@@ -188,6 +189,7 @@ function render(d){
   document.getElementById('footVer').textContent=SI18N.F('최신 v{0} · 업데이트 {1}', latest.version, d.updated||latest.date);
   document.getElementById('latestBox').innerHTML='<div class="latest"><span class="tag">최신 버전</span><div class="ver">v'+esc(latest.version)+'<small>'+esc(latest.date)+' · '+kb(latest.size)+'</small></div>'+bld(latest)+'<div class="sum"><b>'+esc(latest.title)+'</b>'+(String(latest.summary||'').indexOf('\n')>=0?sumHtml(latest.summary):' — '+esc(latest.summary))+'</div><div class="cta" style="margin-top:6px"><a class="btn play" href="'+esc(d.latestFile||latest.file)+'">'+'<svg viewBox="0 0 24 24" fill="currentColor"><path d="M7 4.5v15l13-7.5z"/></svg>바로 플레이</a><a class="btn dl" href="'+esc(latest.file)+'" download="'+esc(latest.file.split('/').pop())+'">'+dlSvg+'다운로드</a></div></div>';
   document.getElementById('historyBox').innerHTML=rest.length?rest.map(v=>'<div class="vrow"><div><div class="v">v'+esc(v.version)+'</div>'+bld(v)+'<div class="d">'+esc(v.date)+' · '+kb(v.size)+'</div></div><div><div class="t">'+esc(v.title)+'</div><div class="s">'+esc(v.summary)+'</div></div><div class="act"><a class="get" href="'+esc(v.file)+'" download="'+esc(v.file.split('/').pop())+'">'+dlSvg+'다운로드</a></div></div>').join(''):'<div class="s" style="color:var(--text-dim)">다른 버전이 아직 없어요.</div>';
+  if(window.FFVerPick) FFVerPick(document.getElementById('historyBox'));
 }
 render(FALLBACK);
 /* patch notes: read from patchnotes.json (newest first); the copy below is used when the page is opened as a plain file */
