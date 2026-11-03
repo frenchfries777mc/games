@@ -395,7 +395,7 @@ function arm(){clearTimeout(T1);T1=setTimeout(go,Math.max(0,6200-(Date.now()-t0)
 /* 인트로 곡(스틱세움 인트로 곡, 5초): 인트로와 함께 시작하고, 끝나면 로비 곡이 이어진다. 컴퓨터 브라우저가 소리를 막으면 인트로가 멈춘 채 화면을 누를 때까지 기다린다 */
 function sting(){if(window.__introSongDone)return;try{var vol=0.35;try{var v=parseFloat(localStorage.getItem('stranded.bgmvol'));if(v>=0&&v<=1)vol=v;}catch(e){}try{if(localStorage.getItem('stranded.bgm')==='0'){window.__introSongDone=1;return;}}catch(e){}var a=new Audio('bgm-intro.mp3'),alt=0;A=a;a.volume=Math.min(1,vol*1.5);a.onerror=function(){if(!alt){alt=1;a.src='https://frenchfries777mc.github.io/games/beaconfall/bgm-intro.mp3';a.load();var q=a.play();if(q&&q.catch)q.catch(function(){});}else fin();};a.addEventListener('ended',fin);a.addEventListener('playing',function(){window.__ip=1;setTimeout(fin,5300);},{once:true});function hold(){if(held||done)return;held=1;clearTimeout(T1);el.classList.add('hold');var h=document.createElement('div');h.id='introHold';h.textContent=i18nTr('화면을 누르면 시작해요');el.appendChild(h);var go2=function(){if(!held)return;held=0;['pointerdown','keydown','touchend','click'].forEach(function(ev){removeEventListener(ev,go2,true);});h.remove();el.classList.remove('hold');t0=Date.now();arm();var r=a.play();if(r&&r.catch)r.catch(function(){});};['pointerdown','keydown','touchend','click'].forEach(function(ev){addEventListener(ev,go2,true);});}var p=a.play();if(p&&p.catch)p.catch(function(e){if(!(e&&e.name==='NotSupportedError'))hold();});setTimeout(function(){if(!window.__ip)hold();},900);}catch(e){window.__introSongDone=1;}}
 window.bfIntro=function(){if(run)return;run=1;t0=Date.now();el.classList.add('run');arm();sting();};setTimeout(function(){window.bfIntro();},15000);})();</script>
-<div id="stage"><canvas id="view"></canvas></div>
+<div id="stage"><canvas id="view"></canvas><canvas id="lblcv" style="position:absolute;left:0;top:0;width:100%;height:100%;pointer-events:none"></canvas></div>
 <div id="shade"></div>
 
 <div id="ui">
@@ -407,7 +407,7 @@ window.bfIntro=function(){if(run)return;run=1;t0=Date.now();el.classList.add('ru
     <button class="btn" data-act="skins"><span class="arrow">▶</span>스킨 상점<span class="en">SKIN SHOP</span></button>
     <button class="btn" data-act="stats"><span class="arrow">▶</span>통계<span class="en">STATS</span></button>
     <button class="btn" data-act="settings"><span class="arrow">▶</span>설정<span class="en">SETTINGS</span></button>
-    <p class="foot">v0.5<br>build 162</p>
+    <p class="foot">v0.5<br>build 163</p>
   </nav>
 </div>
 
@@ -3453,6 +3453,18 @@ function drawFlag(g,b){
   g.fillStyle='#ff8a8a';g.fillRect(cx+9,cy-8,6+w,1);
   g.fillStyle='#f2c75a';g.fillRect(cx+11+w,cy-6,2,2);
 }
+const STLBL=[];
+function drawLabels(){   // 기차역 이름표: 픽셀 확대 없이 실제 화면 해상도로 그려서 흐려지지 않아요
+  const lc=$('#lblcv');if(!lc)return;
+  const dpr=Math.min(2,window.devicePixelRatio||1),w=Math.round(innerWidth*dpr),h=Math.round(innerHeight*dpr);
+  if(lc.width!==w||lc.height!==h){lc.width=w;lc.height=h;}
+  const g=lc.getContext('2d');g.setTransform(1,0,0,1,0,0);g.clearRect(0,0,w,h);
+  if(STLBL.length){
+    g.scale(dpr,dpr);g.font=`bold ${Math.max(13,Math.round(S*3.8))}px Galmuri11,Gugi,sans-serif`;g.textAlign='center';g.textBaseline='alphabetic';g.lineWidth=3;g.lineJoin='round';
+    for(const q of STLBL){const x=(q.x-cam.x)*S,y=(q.y-cam.y)*S;if(x<-200||y<-40||x>innerWidth+200||y>innerHeight+40)continue;g.strokeStyle='#14161c';g.strokeText(q.t,x,y);g.fillStyle='#f4ecd0';g.fillText(q.t,x,y);}
+  }
+  STLBL.length=0;
+}
 function drawStation(g,b){
   const cx=b.gx*GRID,cy=b.gy*GRID;
   g.fillStyle='rgba(8,24,12,0.3)';g.fillRect(cx+1,cy+GRID,GRID-1,1);
@@ -3463,7 +3475,7 @@ function drawStation(g,b){
   g.fillStyle='#c9b88a';g.fillRect(cx+4,cy+6,8,6);g.fillStyle='#e8dcb0';g.fillRect(cx+4,cy+6,8,1);
   g.fillStyle='#3d2412';g.fillRect(cx+5,cy+8,6,1);g.fillRect(cx+5,cy+10,4,1);
   g.fillStyle='#8a8d9c';g.fillRect(cx+1,cy+14,14,1);
-  if(b.snm){g.save();g.font='7px Gugi,sans-serif';g.textAlign='center';g.textBaseline='alphabetic';g.lineWidth=2;g.strokeStyle='#14161c';g.strokeText(b.snm,cx+8,cy-1);g.fillStyle='#f4ecd0';g.fillText(b.snm,cx+8,cy-1);g.restore();}
+  if(b.snm)STLBL.push({t:b.snm,x:cx+8,y:cy-1});   // 글자는 화면 해상도로 또렷하게 따로 그려요
 }
 const stationClean=t=>String(t||'').replace(/[\u0000-\u001f\u007f<>]/g,'').replace(/\s+/g,' ').trim().slice(0,FLAG_MAX);
 function stationSet(b,nm){b.snm=stationClean(nm);}
@@ -13267,7 +13279,7 @@ async function hostRoom(addr,wid){
     const peer=await openPeer(PREFIX+addr.toLowerCase());
     Object.assign(net,{peer,role:'host',addr:addr.toLowerCase(),wname:w.name,conns:[],count:1,msg:'',id:'host',tPlayers:0,tMons:0,tClock:0});
     peer.on('connection',c=>{
-      const drop=()=>{if(!net.conns.includes(c))return;net.conns=net.conns.filter(x=>x!==c);remotes.delete(c.peer);for(const b of world.structs)if(b.user===c.peer)b.user=null;bcast();};
+      const drop=()=>{if(!net.conns.includes(c))return;const lr=remotes.get(c.peer);net.conns=net.conns.filter(x=>x!==c);remotes.delete(c.peer);try{toast((lr&&lr.name?lr.name+'님과':'참가자와')+' 연결이 끊어졌어요.');}catch(e){}for(const b of world.structs)if(b.user===c.peer)b.user=null;bcast();};
       c.on('open',()=>{
         if(!world||world.id!==w.id){try{c.close();}catch(e){}return;}
         net.conns.push(c);
@@ -13448,6 +13460,7 @@ function frame(now){
   achPopTick(dt);dnTick(dt);
   if(forge)updateForge(dt);
   if(world&&base){chunkFrame++;prefetchAround(mode==='play'?P.x:cam.x+VW/2,mode==='play'?P.y:cam.y+VH/2,3,false);time+=dt;if(mode==='play'){updatePlayer(dt);updateObjs(dt);updateFishing(dt);updateHazards(dt);updateTele(dt);updateEvents(dt);if(now-lastSaveT>5000){lastSaveT=now;saveWorld(true);}}else{updateCamera(dt);if(isHost()&&net.conns.length)updateSim(dt);}netTick(now);draw();}
+  try{drawLabels();}catch(e){STLBL.length=0;}
   requestAnimationFrame(frame);
 }
 (async()=>{
