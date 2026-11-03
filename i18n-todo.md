@@ -34,11 +34,8 @@
 - prototypes/dummyparty/index.html | patch note block "build 24 · 시작 화면 배경" | "시작 화면 배경에 실제 게임 장면이 나옵니다" etc. | b24 | 2026-10-20
 - prototypes/dummyparty/index.html | DANCE_NAMES[5] "L을 가져가", floating text "L을 가져가!" | b24 | 2026-10-20
 
-## Vowkeep v0.1 b1 (2026-10-21)
-- prototypes/index.html | 소개 문장·Vowkeep 카드 | Dummy Party와 Vowkeep이 올라와 있어요. / 무너진 기사단의 마지막 기사가 되어 친구, 봇과 함께 던전을 내려가는 협동 게임이에요. | b1 | 2026-10-21
 
 ## 갤러리 Isleport·Dummy Party·Vowkeep (2026-10-23)
-- gallery/index.html | 새 사진 11장의 제목·설명 (ko, en만 작성; 나머지 언어는 en으로 표시됨), 프로토타입 배지 글자(ko,en,es,fr,de,ja,zh,pt,ru,tr,it,pl,ar 작성됨, nw 없음)
 - patchnotes.json | "갤러리에 Isleport·Dummy Party·Vowkeep" 3줄
 
 ## Dummy Party 사이트 (games/dummyparty/) b62 (2026-10-24)
