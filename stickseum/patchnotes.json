@@ -6,7 +6,81 @@
    "title": "투명 로고와 접속 점",
    "items": [
     "야구선수(방망이) 쿨타임 0.6초 → 0.65초"
-   ]
+   ],
+   "tr": {
+    "en": {
+     "title": "Transparent logos and status dots",
+     "items": [
+      "Baseball player (bat) cooldown changed from 0.6s to 0.65s"
+     ]
+    },
+    "es": {
+     "title": "Logos transparentes y puntos de estado",
+     "items": [
+      "Enfriamiento del jugador de béisbol (bate) de 0,6 s a 0,65 s"
+     ]
+    },
+    "fr": {
+     "title": "Logos transparents et pastilles d'état",
+     "items": [
+      "Recharge du joueur de baseball (batte) : 0,6 s → 0,65 s"
+     ]
+    },
+    "de": {
+     "title": "Transparente Logos und Statuspunkte",
+     "items": [
+      "Abklingzeit des Baseballspielers (Schläger): 0,6 s → 0,65 s"
+     ]
+    },
+    "ja": {
+     "title": "透明ロゴと接続ドット",
+     "items": [
+      "野球選手（バット）のクールタイムを0.6秒から0.65秒に変更"
+     ]
+    },
+    "zh": {
+     "title": "透明徽标与在线状态点",
+     "items": [
+      "棒球选手（球棒）冷却时间从 0.6 秒改为 0.65 秒"
+     ]
+    },
+    "pt": {
+     "title": "Logos transparentes e pontos de status",
+     "items": [
+      "Recarga do jogador de beisebol (bastão): 0,6 s → 0,65 s"
+     ]
+    },
+    "ru": {
+     "title": "Прозрачные логотипы и точки статуса",
+     "items": [
+      "Перезарядка бейсболиста (бита): 0,6 с → 0,65 с"
+     ]
+    },
+    "tr": {
+     "title": "Şeffaf logolar ve durum noktaları",
+     "items": [
+      "Beyzbolcu (sopa) bekleme süresi 0,6 sn → 0,65 sn"
+     ]
+    },
+    "it": {
+     "title": "Loghi trasparenti e punti di stato",
+     "items": [
+      "Ricarica del giocatore di baseball (mazza): 0,6 s → 0,65 s"
+     ]
+    },
+    "pl": {
+     "title": "Przezroczyste logo i kropki statusu",
+     "items": [
+      "Czas odnowienia zawodnika baseballu (kij): 0,6 s → 0,65 s"
+     ]
+    },
+    "ar": {
+     "title": "شعارات شفافة ونقاط الحالة",
+     "items": [
+      "زمن إعادة شحن لاعب البيسبول (المضرب) من 0.6 ثانية إلى 0.65 ثانية"
+     ]
+    }
+   }
   },
   {
    "date": "2026-11-02",
@@ -14,7 +88,81 @@
    "title": "투명 로고와 접속 점",
    "items": [
     "허브 프로필에는 온라인인데 친구 목록에는 오프라인으로 나오던 문제 수정 (허브와 같은 접속 신호도 함께 봐요)"
-   ]
+   ],
+   "tr": {
+    "en": {
+     "title": "Transparent logos and status dots",
+     "items": [
+      "Fixed a case where the hub profile showed online but the friends list showed offline (the friends list now also uses the same online signal as the hub)"
+     ]
+    },
+    "es": {
+     "title": "Logos transparentes y puntos de estado",
+     "items": [
+      "Corregido el caso en que el perfil del hub mostraba en línea pero la lista de amigos mostraba desconectado (ahora la lista de amigos también usa la misma señal de conexión que el hub)"
+     ]
+    },
+    "fr": {
+     "title": "Logos transparents et pastilles d'état",
+     "items": [
+      "Correction d'un cas où le profil du hub affichait « en ligne » mais la liste d'amis « hors ligne » (la liste d'amis utilise désormais le même signal de connexion que le hub)"
+     ]
+    },
+    "de": {
+     "title": "Transparente Logos und Statuspunkte",
+     "items": [
+      "Fehler behoben: Im Hub-Profil stand „online“, in der Freundesliste aber „offline“ (die Freundesliste nutzt jetzt dasselbe Online-Signal wie der Hub)"
+     ]
+    },
+    "ja": {
+     "title": "透明ロゴと接続ドット",
+     "items": [
+      "ハブのプロフィールではオンラインなのに友達リストではオフラインと表示される問題を修正（友達リストもハブと同じ接続信号を使うようになりました）"
+     ]
+    },
+    "zh": {
+     "title": "透明徽标与在线状态点",
+     "items": [
+      "修复了中心个人资料显示在线、好友列表却显示离线的问题（好友列表现在也使用与中心相同的在线信号）"
+     ]
+    },
+    "pt": {
+     "title": "Logos transparentes e pontos de status",
+     "items": [
+      "Corrigido o caso em que o perfil do hub mostrava online, mas a lista de amigos mostrava offline (a lista de amigos agora também usa o mesmo sinal de conexão do hub)"
+     ]
+    },
+    "ru": {
+     "title": "Прозрачные логотипы и точки статуса",
+     "items": [
+      "Исправлена ситуация, когда в профиле хаба было «в сети», а в списке друзей «не в сети» (список друзей теперь тоже использует тот же сигнал онлайн-статуса, что и хаб)"
+     ]
+    },
+    "tr": {
+     "title": "Şeffaf logolar ve durum noktaları",
+     "items": [
+      "Hub profilinde çevrim içi görünen ama arkadaş listesinde çevrim dışı görünen durum düzeltildi (arkadaş listesi artık hub ile aynı çevrim içi sinyalini de kullanır)"
+     ]
+    },
+    "it": {
+     "title": "Loghi trasparenti e punti di stato",
+     "items": [
+      "Corretto il caso in cui il profilo dell'hub risultava online ma nell'elenco amici risultava offline (ora anche l'elenco amici usa lo stesso segnale di connessione dell'hub)"
+     ]
+    },
+    "pl": {
+     "title": "Przezroczyste logo i kropki statusu",
+     "items": [
+      "Naprawiono sytuację, w której profil w hubie pokazywał online, a lista znajomych offline (lista znajomych korzysta teraz z tego samego sygnału połączenia co hub)"
+     ]
+    },
+    "ar": {
+     "title": "شعارات شفافة ونقاط الحالة",
+     "items": [
+      "إصلاح حالة كان فيها ملف المركز الشخصي يظهر متصلا بينما تظهر قائمة الأصدقاء غير متصل (قائمة الأصدقاء تستخدم الآن إشارة الاتصال نفسها التي يستخدمها المركز)"
+     ]
+    }
+   }
   },
   {
    "date": "2026-11-02",
@@ -22,7 +170,81 @@
    "title": "투명 로고와 접속 점",
    "items": [
     "게임 안 이모지 로고를 다시 켰어요 (사이트·허브 화면만 원래 이모지)"
-   ]
+   ],
+   "tr": {
+    "en": {
+     "title": "Transparent logos and status dots",
+     "items": [
+      "In-game emoji logos are back on (only the site and hub screens show the original emojis)"
+     ]
+    },
+    "es": {
+     "title": "Logos transparentes y puntos de estado",
+     "items": [
+      "Los logotipos de emoji dentro del juego vuelven a estar activados (solo las pantallas del sitio y del hub muestran los emojis originales)"
+     ]
+    },
+    "fr": {
+     "title": "Logos transparents et pastilles d'état",
+     "items": [
+      "Les logos d'emojis en jeu sont de nouveau activés (seuls les écrans du site et du hub affichent les emojis d'origine)"
+     ]
+    },
+    "de": {
+     "title": "Transparente Logos und Statuspunkte",
+     "items": [
+      "Die Emoji-Logos im Spiel sind wieder aktiv (nur die Bildschirme von Website und Hub zeigen die ursprünglichen Emojis)"
+     ]
+    },
+    "ja": {
+     "title": "透明ロゴと接続ドット",
+     "items": [
+      "ゲーム内の絵文字ロゴを再びオンにしました（サイト・ハブ画面だけ元の絵文字）"
+     ]
+    },
+    "zh": {
+     "title": "透明徽标与在线状态点",
+     "items": [
+      "游戏内的表情徽标已重新开启（仅网站和中心界面显示原来的表情符号）"
+     ]
+    },
+    "pt": {
+     "title": "Logos transparentes e pontos de status",
+     "items": [
+      "Os logotipos de emoji dentro do jogo voltaram a ser exibidos (apenas as telas do site e do hub mostram os emojis originais)"
+     ]
+    },
+    "ru": {
+     "title": "Прозрачные логотипы и точки статуса",
+     "items": [
+      "Логотипы эмодзи в игре снова включены (только экраны сайта и хаба показывают обычные эмодзи)"
+     ]
+    },
+    "tr": {
+     "title": "Şeffaf logolar ve durum noktaları",
+     "items": [
+      "Oyun içi emoji logoları yeniden açıldı (yalnızca site ve hub ekranları orijinal emojileri gösterir)"
+     ]
+    },
+    "it": {
+     "title": "Loghi trasparenti e punti di stato",
+     "items": [
+      "I loghi delle emoji in gioco sono di nuovo attivi (solo le schermate del sito e dell'hub mostrano le emoji originali)"
+     ]
+    },
+    "pl": {
+     "title": "Przezroczyste logo i kropki statusu",
+     "items": [
+      "Logo emoji w grze znów są włączone (tylko ekrany strony i huba pokazują oryginalne emoji)"
+     ]
+    },
+    "ar": {
+     "title": "شعارات شفافة ونقاط الحالة",
+     "items": [
+      "أُعيد تفعيل شعارات الرموز التعبيرية داخل اللعبة (شاشات الموقع والمركز فقط تعرض الرموز الأصلية)"
+     ]
+    }
+   }
   },
   {
    "date": "2026-11-02",
@@ -30,7 +252,81 @@
    "title": "투명 로고와 접속 점",
    "items": [
     "이모지를 로고로 바꿔 보여 주던 것을 되돌려 원래 이모지로 보여요 (캐릭터·모드·재화 그림은 그대로)"
-   ]
+   ],
+   "tr": {
+    "en": {
+     "title": "Transparent logos and status dots",
+     "items": [
+      "Emojis that had been shown as logos are back to their original emojis (character, mode and currency pictures stay the same)"
+     ]
+    },
+    "es": {
+     "title": "Logos transparentes y puntos de estado",
+     "items": [
+      "Los emojis que se mostraban como logotipos vuelven a ser los emojis originales (las imágenes de personajes, modos y monedas se mantienen)"
+     ]
+    },
+    "fr": {
+     "title": "Logos transparents et pastilles d'état",
+     "items": [
+      "Les emojis affichés comme logos reviennent à leur forme d'origine (les images de personnages, modes et monnaies restent identiques)"
+     ]
+    },
+    "de": {
+     "title": "Transparente Logos und Statuspunkte",
+     "items": [
+      "Emojis, die als Logos angezeigt wurden, werden wieder als ursprüngliche Emojis angezeigt (Bilder für Charaktere, Modi und Währung bleiben gleich)"
+     ]
+    },
+    "ja": {
+     "title": "透明ロゴと接続ドット",
+     "items": [
+      "ロゴで表示していた絵文字を元の絵文字に戻しました（キャラクター・モード・通貨の絵はそのまま）"
+     ]
+    },
+    "zh": {
+     "title": "透明徽标与在线状态点",
+     "items": [
+      "将改为徽标显示的表情符号恢复为原来的表情符号（角色、模式、货币的图画保持不变）"
+     ]
+    },
+    "pt": {
+     "title": "Logos transparentes e pontos de status",
+     "items": [
+      "Os emojis que estavam sendo mostrados como logotipos voltaram aos emojis originais (as imagens de personagens, modos e moedas continuam as mesmas)"
+     ]
+    },
+    "ru": {
+     "title": "Прозрачные логотипы и точки статуса",
+     "items": [
+      "Эмодзи, которые показывались как логотипы, снова выводятся как обычные эмодзи (рисунки персонажей, режимов и валюты остаются прежними)"
+     ]
+    },
+    "tr": {
+     "title": "Şeffaf logolar ve durum noktaları",
+     "items": [
+      "Logo olarak gösterilen emojiler yeniden orijinal emojilerine döndü (karakter, mod ve para birimi resimleri aynı kaldı)"
+     ]
+    },
+    "it": {
+     "title": "Loghi trasparenti e punti di stato",
+     "items": [
+      "Le emoji mostrate come loghi tornano alle emoji originali (le immagini di personaggi, modalità e valute restano invariate)"
+     ]
+    },
+    "pl": {
+     "title": "Przezroczyste logo i kropki statusu",
+     "items": [
+      "Emoji wyświetlane jako logo wróciły do oryginalnych emoji (rysunki postaci, trybów i walut pozostają bez zmian)"
+     ]
+    },
+    "ar": {
+     "title": "شعارات شفافة ونقاط الحالة",
+     "items": [
+      "عادت الرموز التعبيرية التي كانت تظهر كشعارات إلى شكلها الأصلي (صور الشخصيات والأوضاع والعملات تبقى كما هي)"
+     ]
+    }
+   }
   },
   {
    "date": "2026-11-02",
@@ -38,7 +334,81 @@
    "title": "투명 로고와 접속 점",
    "items": [
     "캐릭터·모드·재화·상자·프로필·설정·퀘스트 로고를 배경 없는 투명 그림으로 바꿨어요"
-   ]
+   ],
+   "tr": {
+    "en": {
+     "title": "Transparent logos and status dots",
+     "items": [
+      "Character, mode, currency, box, profile, settings and quest logos were replaced with transparent drawings with no background"
+     ]
+    },
+    "es": {
+     "title": "Logos transparentes y puntos de estado",
+     "items": [
+      "Los logotipos de personajes, modos, monedas, cajas, perfil, ajustes y misiones se cambiaron por dibujos transparentes sin fondo"
+     ]
+    },
+    "fr": {
+     "title": "Logos transparents et pastilles d'état",
+     "items": [
+      "Les logos des personnages, modes, monnaies, coffres, profil, paramètres et quêtes ont été remplacés par des dessins transparents sans fond"
+     ]
+    },
+    "de": {
+     "title": "Transparente Logos und Statuspunkte",
+     "items": [
+      "Die Logos für Charaktere, Modi, Währung, Kisten, Profil, Einstellungen und Quests wurden durch transparente Zeichnungen ohne Hintergrund ersetzt"
+     ]
+    },
+    "ja": {
+     "title": "透明ロゴと接続ドット",
+     "items": [
+      "キャラクター・モード・通貨・宝箱・プロフィール・設定・クエストのロゴを、背景のない透明な絵に変更しました"
+     ]
+    },
+    "zh": {
+     "title": "透明徽标与在线状态点",
+     "items": [
+      "角色、模式、货币、宝箱、个人资料、设置和任务的徽标已换成无背景的透明图画"
+     ]
+    },
+    "pt": {
+     "title": "Logos transparentes e pontos de status",
+     "items": [
+      "Os logotipos de personagens, modos, moedas, caixas, perfil, configurações e missões foram trocados por desenhos transparentes sem fundo"
+     ]
+    },
+    "ru": {
+     "title": "Прозрачные логотипы и точки статуса",
+     "items": [
+      "Логотипы персонажей, режимов, валюты, ящиков, профиля, настроек и заданий заменены прозрачными рисунками без фона"
+     ]
+    },
+    "tr": {
+     "title": "Şeffaf logolar ve durum noktaları",
+     "items": [
+      "Karakter, mod, para birimi, kutu, profil, ayarlar ve görev logoları arka planı olmayan şeffaf çizimlerle değiştirildi"
+     ]
+    },
+    "it": {
+     "title": "Loghi trasparenti e punti di stato",
+     "items": [
+      "I loghi di personaggi, modalità, valute, casse, profilo, impostazioni e missioni sono stati sostituiti con disegni trasparenti senza sfondo"
+     ]
+    },
+    "pl": {
+     "title": "Przezroczyste logo i kropki statusu",
+     "items": [
+      "Logo postaci, trybów, walut, skrzyń, profilu, ustawień i zadań zastąpiono przezroczystymi rysunkami bez tła"
+     ]
+    },
+    "ar": {
+     "title": "شعارات شفافة ونقاط الحالة",
+     "items": [
+      "تم استبدال شعارات الشخصيات والأوضاع والعملات والصناديق والملف الشخصي والإعدادات والمهام برسوم شفافة بلا خلفية"
+     ]
+    }
+   }
   },
   {
    "date": "2026-11-02",
@@ -46,7 +416,81 @@
    "title": "투명 로고와 접속 점",
    "items": [
     "코인 로고가 안 보이던 문제 수정"
-   ]
+   ],
+   "tr": {
+    "en": {
+     "title": "Transparent logos and status dots",
+     "items": [
+      "Fixed the coin logo not showing"
+     ]
+    },
+    "es": {
+     "title": "Logos transparentes y puntos de estado",
+     "items": [
+      "Corregido el problema de que no se veía el logotipo de monedas"
+     ]
+    },
+    "fr": {
+     "title": "Logos transparents et pastilles d'état",
+     "items": [
+      "Correction du logo de pièce qui ne s'affichait pas"
+     ]
+    },
+    "de": {
+     "title": "Transparente Logos und Statuspunkte",
+     "items": [
+      "Fehler behoben: Das Münz-Logo wurde nicht angezeigt"
+     ]
+    },
+    "ja": {
+     "title": "透明ロゴと接続ドット",
+     "items": [
+      "コインのロゴが表示されない問題を修正"
+     ]
+    },
+    "zh": {
+     "title": "透明徽标与在线状态点",
+     "items": [
+      "修复了金币徽标无法显示的问题"
+     ]
+    },
+    "pt": {
+     "title": "Logos transparentes e pontos de status",
+     "items": [
+      "Corrigido o problema em que o logotipo da moeda não aparecia"
+     ]
+    },
+    "ru": {
+     "title": "Прозрачные логотипы и точки статуса",
+     "items": [
+      "Исправлена проблема: не отображался логотип монеты"
+     ]
+    },
+    "tr": {
+     "title": "Şeffaf logolar ve durum noktaları",
+     "items": [
+      "Coin logosunun görünmeme sorunu düzeltildi"
+     ]
+    },
+    "it": {
+     "title": "Loghi trasparenti e punti di stato",
+     "items": [
+      "Corretto il problema per cui il logo della moneta non si vedeva"
+     ]
+    },
+    "pl": {
+     "title": "Przezroczyste logo i kropki statusu",
+     "items": [
+      "Naprawiono problem z brakiem widoczności logo monety"
+     ]
+    },
+    "ar": {
+     "title": "شعارات شفافة ونقاط الحالة",
+     "items": [
+      "إصلاح مشكلة عدم ظهور شعار العملة"
+     ]
+    }
+   }
   },
   {
    "date": "2026-11-02",
@@ -55,7 +499,93 @@
    "items": [
     "이모티콘 로고를 배경 없는 새 그림으로 바꿨어요",
     "접속 점(온라인·오프라인)도 로고 그림으로 바꿨어요"
-   ]
+   ],
+   "tr": {
+    "en": {
+     "title": "Transparent logos and status dots",
+     "items": [
+      "Emoticon logos were replaced with new drawings with no background",
+      "Online and offline status dots were also replaced with logo drawings"
+     ]
+    },
+    "es": {
+     "title": "Logos transparentes y puntos de estado",
+     "items": [
+      "Los logotipos de emoticonos se sustituyeron por dibujos nuevos sin fondo",
+      "Los puntos de conexión (en línea y desconectado) también se cambiaron por dibujos de logotipo"
+     ]
+    },
+    "fr": {
+     "title": "Logos transparents et pastilles d'état",
+     "items": [
+      "Les logos d'émoticônes ont été remplacés par de nouveaux dessins sans fond",
+      "Les points de connexion (en ligne et hors ligne) ont aussi été remplacés par des dessins de logo"
+     ]
+    },
+    "de": {
+     "title": "Transparente Logos und Statuspunkte",
+     "items": [
+      "Die Emoticon-Logos wurden durch neue Zeichnungen ohne Hintergrund ersetzt",
+      "Die Online- und Offline-Punkte wurden ebenfalls durch Logo-Grafiken ersetzt"
+     ]
+    },
+    "ja": {
+     "title": "透明ロゴと接続ドット",
+     "items": [
+      "エモーティコンのロゴを、背景のない新しい絵に変更しました",
+      "接続ドット（オンライン・オフライン）もロゴの絵に変更しました"
+     ]
+    },
+    "zh": {
+     "title": "透明徽标与在线状态点",
+     "items": [
+      "表情图标已换成无背景的全新图画",
+      "在线和离线状态点也已换成徽标图画"
+     ]
+    },
+    "pt": {
+     "title": "Logos transparentes e pontos de status",
+     "items": [
+      "Os logotipos de emoticons foram trocados por novos desenhos sem fundo",
+      "Os pontos de conexão (online e offline) também foram trocados por desenhos de logotipo"
+     ]
+    },
+    "ru": {
+     "title": "Прозрачные логотипы и точки статуса",
+     "items": [
+      "Логотипы эмотиконов заменены новыми рисунками без фона",
+      "Точки онлайн- и офлайн-статуса тоже заменены рисунками логотипов"
+     ]
+    },
+    "tr": {
+     "title": "Şeffaf logolar ve durum noktaları",
+     "items": [
+      "Emoticon logoları arka planı olmayan yeni çizimlerle değiştirildi",
+      "Çevrim içi ve çevrim dışı durum noktaları da logo çizimleriyle değiştirildi"
+     ]
+    },
+    "it": {
+     "title": "Loghi trasparenti e punti di stato",
+     "items": [
+      "I loghi delle emoticon sono stati sostituiti con nuovi disegni senza sfondo",
+      "Anche i punti di connessione (online e offline) sono stati sostituiti con disegni di logo"
+     ]
+    },
+    "pl": {
+     "title": "Przezroczyste logo i kropki statusu",
+     "items": [
+      "Logo emotikonów zastąpiono nowymi rysunkami bez tła",
+      "Kropki statusu (online i offline) również zastąpiono rysunkami logo"
+     ]
+    },
+    "ar": {
+     "title": "شعارات شفافة ونقاط الحالة",
+     "items": [
+      "تم استبدال شعارات الرموز التعبيرية برسومات جديدة بلا خلفية",
+      "تم أيضا استبدال نقاط الاتصال (متصل وغير متصل) برسوم الشعار"
+     ]
+    }
+   }
   },
   {
    "date": "2026-11-02",
@@ -63,7 +593,81 @@
    "title": "은하 제국의 황혼",
    "items": [
     "깃발·로봇·두 사람·정보·재생·화살표 이모지를 로고로 바꿨어요"
-   ]
+   ],
+   "tr": {
+    "en": {
+     "title": "The Twilight of the Galactic Empire",
+     "items": [
+      "Flag, robot, two people, info, play and arrow emojis were replaced with logos"
+     ]
+    },
+    "es": {
+     "title": "El crepúsculo del Imperio Galáctico",
+     "items": [
+      "Los emojis de bandera, robot, dos personas, información, reproducir y flecha se cambiaron por logotipos"
+     ]
+    },
+    "fr": {
+     "title": "Le Crépuscule de l'Empire galactique",
+     "items": [
+      "Les emojis drapeau, robot, deux personnes, info, lecture et flèche ont été remplacés par des logos"
+     ]
+    },
+    "de": {
+     "title": "Die Dämmerung des Galaktischen Imperiums",
+     "items": [
+      "Die Emojis für Flagge, Roboter, zwei Personen, Info, Play und Pfeil wurden durch Logos ersetzt"
+     ]
+    },
+    "ja": {
+     "title": "銀河帝国の黄昏",
+     "items": [
+      "旗・ロボット・二人・情報・再生・矢印の絵文字をロゴに変更しました"
+     ]
+    },
+    "zh": {
+     "title": "银河帝国的黄昏",
+     "items": [
+      "旗帜、机器人、两人、信息、播放和箭头表情符号已替换为徽标"
+     ]
+    },
+    "pt": {
+     "title": "O Crepúsculo do Império Galáctico",
+     "items": [
+      "Os emojis de bandeira, robô, duas pessoas, informação, play e seta foram trocados por logotipos"
+     ]
+    },
+    "ru": {
+     "title": "Сумерки Галактической империи",
+     "items": [
+      "Эмодзи флага, робота, двух людей, информации, воспроизведения и стрелки заменены логотипами"
+     ]
+    },
+    "tr": {
+     "title": "Galaktik İmparatorluğun Alacakaranlığı",
+     "items": [
+      "Bayrak, robot, iki kişi, bilgi, oynat ve ok emojileri logolarla değiştirildi"
+     ]
+    },
+    "it": {
+     "title": "Il crepuscolo dell'Impero galattico",
+     "items": [
+      "Le emoji di bandiera, robot, due persone, info, riproduzione e freccia sono state sostituite con loghi"
+     ]
+    },
+    "pl": {
+     "title": "Zmierzch Imperium Galaktycznego",
+     "items": [
+      "Emoji flagi, robota, dwóch osób, informacji, odtwarzania i strzałki zastąpiono logo"
+     ]
+    },
+    "ar": {
+     "title": "أفول الإمبراطورية المجرية",
+     "items": [
+      "تم استبدال رموز العلم والروبوت والشخصين والمعلومات والتشغيل والسهم بشعارات"
+     ]
+    }
+   }
   },
   {
    "date": "2026-11-02",
@@ -71,7 +675,81 @@
    "title": "은하 제국의 황혼",
    "items": [
     "춤 이모지도 로고로 바꿨어요"
-   ]
+   ],
+   "tr": {
+    "en": {
+     "title": "The Twilight of the Galactic Empire",
+     "items": [
+      "The dance emoji was also replaced with a logo"
+     ]
+    },
+    "es": {
+     "title": "El crepúsculo del Imperio Galáctico",
+     "items": [
+      "El emoji de baile también se cambió por un logotipo"
+     ]
+    },
+    "fr": {
+     "title": "Le Crépuscule de l'Empire galactique",
+     "items": [
+      "L'emoji de danse a aussi été remplacé par un logo"
+     ]
+    },
+    "de": {
+     "title": "Die Dämmerung des Galaktischen Imperiums",
+     "items": [
+      "Auch das Tanz-Emoji wurde durch ein Logo ersetzt"
+     ]
+    },
+    "ja": {
+     "title": "銀河帝国の黄昏",
+     "items": [
+      "ダンスの絵文字もロゴに変更しました"
+     ]
+    },
+    "zh": {
+     "title": "银河帝国的黄昏",
+     "items": [
+      "舞蹈表情符号也已替换为徽标"
+     ]
+    },
+    "pt": {
+     "title": "O Crepúsculo do Império Galáctico",
+     "items": [
+      "O emoji de dança também foi trocado por um logotipo"
+     ]
+    },
+    "ru": {
+     "title": "Сумерки Галактической империи",
+     "items": [
+      "Эмодзи танца тоже заменён логотипом"
+     ]
+    },
+    "tr": {
+     "title": "Galaktik İmparatorluğun Alacakaranlığı",
+     "items": [
+      "Dans emojisi de logoyla değiştirildi"
+     ]
+    },
+    "it": {
+     "title": "Il crepuscolo dell'Impero galattico",
+     "items": [
+      "Anche l'emoji della danza è stata sostituita con un logo"
+     ]
+    },
+    "pl": {
+     "title": "Zmierzch Imperium Galaktycznego",
+     "items": [
+      "Emoji tańca również zastąpiono logo"
+     ]
+    },
+    "ar": {
+     "title": "أفول الإمبراطورية المجرية",
+     "items": [
+      "تم استبدال رمز الرقص التعبيري بشعار أيضا"
+     ]
+    }
+   }
   },
   {
    "date": "2026-11-02",
@@ -79,7 +757,81 @@
    "title": "은하 제국의 황혼",
    "items": [
     "로비에서 반복해서 나던 화면 오류(replaceChild) 수정"
-   ]
+   ],
+   "tr": {
+    "en": {
+     "title": "The Twilight of the Galactic Empire",
+     "items": [
+      "Fixed a screen error (replaceChild) that kept occurring in the lobby"
+     ]
+    },
+    "es": {
+     "title": "El crepúsculo del Imperio Galáctico",
+     "items": [
+      "Corregido el error de pantalla (replaceChild) que se repetía en el lobby"
+     ]
+    },
+    "fr": {
+     "title": "Le Crépuscule de l'Empire galactique",
+     "items": [
+      "Correction de l'erreur d'affichage (replaceChild) qui se répétait dans le salon"
+     ]
+    },
+    "de": {
+     "title": "Die Dämmerung des Galaktischen Imperiums",
+     "items": [
+      "Anzeigefehler (replaceChild) behoben, der in der Lobby immer wieder auftrat"
+     ]
+    },
+    "ja": {
+     "title": "銀河帝国の黄昏",
+     "items": [
+      "ロビーで繰り返し発生していた画面エラー（replaceChild）を修正"
+     ]
+    },
+    "zh": {
+     "title": "银河帝国的黄昏",
+     "items": [
+      "修复了大厅中反复出现的画面错误（replaceChild）"
+     ]
+    },
+    "pt": {
+     "title": "O Crepúsculo do Império Galáctico",
+     "items": [
+      "Corrigido o erro de tela (replaceChild) que se repetia no lobby"
+     ]
+    },
+    "ru": {
+     "title": "Сумерки Галактической империи",
+     "items": [
+      "Исправлена ошибка отображения (replaceChild), которая часто возникала в лобби"
+     ]
+    },
+    "tr": {
+     "title": "Galaktik İmparatorluğun Alacakaranlığı",
+     "items": [
+      "Lobide tekrar tekrar görülen ekran hatası (replaceChild) düzeltildi"
+     ]
+    },
+    "it": {
+     "title": "Il crepuscolo dell'Impero galattico",
+     "items": [
+      "Corretto l'errore di schermo (replaceChild) che si ripeteva nella lobby"
+     ]
+    },
+    "pl": {
+     "title": "Zmierzch Imperium Galaktycznego",
+     "items": [
+      "Naprawiono błąd ekranu (replaceChild), który powtarzał się w lobby"
+     ]
+    },
+    "ar": {
+     "title": "أفول الإمبراطورية المجرية",
+     "items": [
+      "إصلاح خطأ الشاشة (replaceChild) الذي كان يتكرر في الردهة"
+     ]
+    }
+   }
   },
   {
    "date": "2026-11-02",
@@ -87,7 +839,81 @@
    "title": "한정판 스킨 이름",
    "items": [
     "별빛 사과 스킨 이름 앞에 (한정판)을 붙였어요. 상점에서는 팔지 않고, 선물받은 사람에게만 보여요"
-   ]
+   ],
+   "tr": {
+    "en": {
+     "title": "Limited Edition Skin Name",
+     "items": [
+      "The Starlight Apple skin names now have (Limited Edition) in front. They are not sold in the shop and only show for players who received them as gifts"
+     ]
+    },
+    "es": {
+     "title": "Nombre de skin en edición limitada",
+     "items": [
+      "Los nombres de las skins de Manzana Estelar ahora llevan (Edición limitada) delante. No se venden en la tienda y solo se muestran a quienes las recibieron como regalo"
+     ]
+    },
+    "fr": {
+     "title": "Nom du skin en édition limitée",
+     "items": [
+      "Les noms des skins Pomme Étoilée sont désormais précédés de (Édition limitée). Elles ne sont pas vendues dans la boutique et ne s'affichent que pour ceux qui les ont reçues en cadeau"
+     ]
+    },
+    "de": {
+     "title": "Name des limitierten Skins",
+     "items": [
+      "Vor den Namen der Sternenapfel-Skins steht jetzt (Limitierte Edition). Sie werden nicht im Shop verkauft und sind nur für Spieler sichtbar, die sie geschenkt bekommen haben"
+     ]
+    },
+    "ja": {
+     "title": "限定スキン名",
+     "items": [
+      "星光りのアップルスキンの名前の前に（限定版）を付けました。ショップでは販売せず、ギフトで受け取った人にだけ表示されます"
+     ]
+    },
+    "zh": {
+     "title": "限定皮肤名称",
+     "items": [
+      "星光苹果皮肤名称前加上了（限定版）。商店不出售，仅对收到礼物的玩家显示"
+     ]
+    },
+    "pt": {
+     "title": "Nome da skin de edição limitada",
+     "items": [
+      "Os nomes das skins Maçã Estelar agora têm (Edição limitada) na frente. Não são vendidas na loja e só aparecem para quem as recebeu de presente"
+     ]
+    },
+    "ru": {
+     "title": "Название скина ограниченного выпуска",
+     "items": [
+      "Перед названием скинов «Звёздное яблоко» добавлена приписка (Ограниченный выпуск). В магазине они не продаются и видны только тем, кто получил их в подарок"
+     ]
+    },
+    "tr": {
+     "title": "Sınırlı Sürüm Kostüm Adı",
+     "items": [
+      "Yıldız Elması kostümlerinin adlarının önüne (Sınırlı Sürüm) eklendi. Mağazada satılmazlar ve yalnızca hediye olarak alanlara görünürler"
+     ]
+    },
+    "it": {
+     "title": "Nome della skin in edizione limitata",
+     "items": [
+      "Davanti al nome delle skin Mela Stellare è stato aggiunto (Edizione limitata). Non sono in vendita nel negozio e sono visibili solo a chi le ha ricevute in regalo"
+     ]
+    },
+    "pl": {
+     "title": "Nazwa skórki w limitowanej edycji",
+     "items": [
+      "Przed nazwami skórek Gwiezdne Jabłko dodano (Edycja limitowana). Nie są sprzedawane w sklepie i widzą je tylko osoby, które otrzymały je w prezencie"
+     ]
+    },
+    "ar": {
+     "title": "اسم السكن ذو الإصدار المحدود",
+     "items": [
+      "أُضيف (إصدار محدود) قبل أسماء سكنات تفاحة النجوم. لا تُباع في المتجر، ولا تظهر إلا لمن تلقاها كهدية"
+     ]
+    }
+   }
   },
   {
    "date": "2026-11-02",
@@ -95,7 +921,81 @@
    "title": "은하 제국의 황혼",
    "items": [
     "특별 선물 스킨 「별빛 사과 제임스」「별빛 사과 마법사」 추가 (판매하지 않음, 분홍·금·하늘 별빛 효과, 별 지팡이, 별 탄환)"
-   ]
+   ],
+   "tr": {
+    "en": {
+     "title": "The Twilight of the Galactic Empire",
+     "items": [
+      "Added special gift skins 'Starlight Apple James' and 'Starlight Apple Wizard' (not for sale; pink, gold and sky starlight effects, star staff, star bullets)"
+     ]
+    },
+    "es": {
+     "title": "El crepúsculo del Imperio Galáctico",
+     "items": [
+      "Añadidas las skins de regalo especiales «Manzana Estelar James» y «Manzana Estelar Mago» (no están a la venta; efectos de luz estelar rosa, dorado y celeste, bastón estelar, balas estelares)"
+     ]
+    },
+    "fr": {
+     "title": "Le Crépuscule de l'Empire galactique",
+     "items": [
+      "Ajout des skins cadeaux spéciaux « James Pomme Étoilée » et « Mage Pomme Étoilée » (non vendus ; effets de lumière stellaire rose, or et bleu ciel, bâton étoilé, balles étoilées)"
+     ]
+    },
+    "de": {
+     "title": "Die Dämmerung des Galaktischen Imperiums",
+     "items": [
+      "Neue besondere Geschenk-Skins „Sternenapfel James“ und „Sternenapfel Magier“ (nicht im Verkauf; rosa, goldene und himmelblaue Sternlichteffekte, Sternstab, Sternkugeln)"
+     ]
+    },
+    "ja": {
+     "title": "銀河帝国の黄昏",
+     "items": [
+      "特別ギフトスキン「星光りのアップル・ジェームズ」「星光りのアップル・ウィザード」を追加（非売品。ピンク・金・空色の星の光エフェクト、星の杖、星の弾）"
+     ]
+    },
+    "zh": {
+     "title": "银河帝国的黄昏",
+     "items": [
+      "新增特别礼物皮肤「星光苹果·詹姆斯」「星光苹果·巫师」（不出售；粉、金、天蓝星光特效，星杖，星星子弹）"
+     ]
+    },
+    "pt": {
+     "title": "O Crepúsculo do Império Galáctico",
+     "items": [
+      "Novas skins especiais de presente «Maçã Estelar James» e «Maçã Estelar Mago» (não são vendidas; efeitos de brilho estelar rosa, dourado e azul-céu, cajado estelar, balas estelares)"
+     ]
+    },
+    "ru": {
+     "title": "Сумерки Галактической империи",
+     "items": [
+      "Добавлены особые подарочные скины «Звёздное яблоко Джеймс» и «Звёздное яблоко Маг» (не продаются; розовый, золотой и небесно-голубой звёздный эффект, звёздный посох, звёздные пули)"
+     ]
+    },
+    "tr": {
+     "title": "Galaktik İmparatorluğun Alacakaranlığı",
+     "items": [
+      "Özel hediye kostümleri eklendi: «Yıldız Elması James» ve «Yıldız Elması Büyücü» (satışta değil; pembe, altın ve gök mavisi yıldız ışığı efektleri, yıldız asası, yıldız mermileri)"
+     ]
+    },
+    "it": {
+     "title": "Il crepuscolo dell'Impero galattico",
+     "items": [
+      "Aggiunte le skin regalo speciali «James Mela Stellare» e «Mago Mela Stellare» (non in vendita; effetti di luce stellare rosa, oro e azzurro cielo, bastone stellare, proiettili stellari)"
+     ]
+    },
+    "pl": {
+     "title": "Zmierzch Imperium Galaktycznego",
+     "items": [
+      "Dodano specjalne skórki-prezenty „Gwiezdne Jabłko James” i „Gwiezdne Jabłko Czarodziej” (nie na sprzedaż; różowe, złote i błękitne efekty gwiezdnego blasku, gwiezdna laska, gwiezdne pociski)"
+     ]
+    },
+    "ar": {
+     "title": "أفول الإمبراطورية المجرية",
+     "items": [
+      "إضافة سكنات هدايا خاصة «جيمس تفاحة النجوم» و«ساحر تفاحة النجوم» (غير متاحة للبيع؛ تأثيرات ضوء نجمي وردية وذهبية وسماوية، وعصا نجمية، ورصاص نجمي)"
+     ]
+    }
+   }
   },
   {
    "date": "2026-11-02",
@@ -103,7 +1003,81 @@
    "title": "은하 제국의 황혼",
    "items": [
     "듀얼·배틀로얄 듀오·일일 모드·실험적 모드 카드 배경을 서로 다른 맵으로 교체"
-   ]
+   ],
+   "tr": {
+    "en": {
+     "title": "The Twilight of the Galactic Empire",
+     "items": [
+      "Card backgrounds for Duel, Battle Royale Duo, Daily and Experimental modes now use different maps"
+     ]
+    },
+    "es": {
+     "title": "El crepúsculo del Imperio Galáctico",
+     "items": [
+      "Los fondos de las tarjetas de Duelo, Battle Royale Dúo, Diario y Modo experimental ahora usan mapas distintos"
+     ]
+    },
+    "fr": {
+     "title": "Le Crépuscule de l'Empire galactique",
+     "items": [
+      "Les fonds des cartes Duel, Battle Royale Duo, Mode du jour et Mode expérimental utilisent désormais des cartes différentes"
+     ]
+    },
+    "de": {
+     "title": "Die Dämmerung des Galaktischen Imperiums",
+     "items": [
+      "Die Kartenhintergründe für Duell, Battle Royale Duo, Tagesmodus und Experimentalmodus zeigen jetzt unterschiedliche Karten"
+     ]
+    },
+    "ja": {
+     "title": "銀河帝国の黄昏",
+     "items": [
+      "デュエル・バトルロイヤルデュオ・デイリーモード・実験的モードのカード背景を、それぞれ別のマップに変更"
+     ]
+    },
+    "zh": {
+     "title": "银河帝国的黄昏",
+     "items": [
+      "对决、大逃杀双人、每日模式和实验模式的卡片背景改为不同地图"
+     ]
+    },
+    "pt": {
+     "title": "O Crepúsculo do Império Galáctico",
+     "items": [
+      "Os fundos dos cartões de Duelo, Battle Royale Dupla, Modo diário e Modo experimental agora usam mapas diferentes"
+     ]
+    },
+    "ru": {
+     "title": "Сумерки Галактической империи",
+     "items": [
+      "Фоны карточек режимов «Дуэль», «Battle Royale: дуэт», «Ежедневный» и «Экспериментальный» теперь показывают разные карты"
+     ]
+    },
+    "tr": {
+     "title": "Galaktik İmparatorluğun Alacakaranlığı",
+     "items": [
+      "Düello, Battle Royale İkili, Günlük ve Deneysel mod kartlarının arka planları artık farklı haritalara ait"
+     ]
+    },
+    "it": {
+     "title": "Il crepuscolo dell'Impero galattico",
+     "items": [
+      "Gli sfondi delle schede Duello, Battle Royale Duo, Modalità giornaliera e Modalità sperimentale ora usano mappe diverse"
+     ]
+    },
+    "pl": {
+     "title": "Zmierzch Imperium Galaktycznego",
+     "items": [
+      "Tła kart trybów Pojedynek, Battle Royale Duo, Dzienny i Eksperymentalny używają teraz różnych map"
+     ]
+    },
+    "ar": {
+     "title": "أفول الإمبراطورية المجرية",
+     "items": [
+      "خلفيات بطاقات الدويل وباتل رويال الثنائي والوضع اليومي والوضع التجريبي تستخدم الآن خرائط مختلفة"
+     ]
+    }
+   }
   },
   {
    "date": "2026-11-02",
@@ -111,7 +1085,81 @@
    "title": "은하 제국의 황혼",
    "items": [
     "같은 브라우저에서 계정을 바꿔 쓸 때 이전 계정의 마스터리·진행 상황이 다른 계정에 저장되던 버그 수정"
-   ]
+   ],
+   "tr": {
+    "en": {
+     "title": "The Twilight of the Galactic Empire",
+     "items": [
+      "Fixed a bug where, when switching accounts in the same browser, the previous account's mastery and progress were saved to the other account"
+     ]
+    },
+    "es": {
+     "title": "El crepúsculo del Imperio Galáctico",
+     "items": [
+      "Corregido un error por el que, al cambiar de cuenta en el mismo navegador, la maestría y el progreso de la cuenta anterior se guardaban en la otra cuenta"
+     ]
+    },
+    "fr": {
+     "title": "Le Crépuscule de l'Empire galactique",
+     "items": [
+      "Correction d'un bug où, en changeant de compte dans le même navigateur, la maîtrise et la progression de l'ancien compte étaient enregistrées sur le nouveau"
+     ]
+    },
+    "de": {
+     "title": "Die Dämmerung des Galaktischen Imperiums",
+     "items": [
+      "Fehler behoben: Beim Wechsel des Kontos im selben Browser wurden Meisterschaft und Fortschritt des vorherigen Kontos im anderen Konto gespeichert"
+     ]
+    },
+    "ja": {
+     "title": "銀河帝国の黄昏",
+     "items": [
+      "同じブラウザでアカウントを切り替えた際、前のアカウントのマスタリーや進行状況が別のアカウントに保存されるバグを修正"
+     ]
+    },
+    "zh": {
+     "title": "银河帝国的黄昏",
+     "items": [
+      "修复了在同一浏览器切换账号时，上一个账号的熟练度和进度被保存到其他账号的问题"
+     ]
+    },
+    "pt": {
+     "title": "O Crepúsculo do Império Galáctico",
+     "items": [
+      "Corrigido um bug em que, ao trocar de conta no mesmo navegador, a maestria e o progresso da conta anterior eram salvos na outra conta"
+     ]
+    },
+    "ru": {
+     "title": "Сумерки Галактической империи",
+     "items": [
+      "Исправлена ошибка: при смене аккаунта в одном браузере мастерство и прогресс предыдущего аккаунта сохранялись в другом аккаунте"
+     ]
+    },
+    "tr": {
+     "title": "Galaktik İmparatorluğun Alacakaranlığı",
+     "items": [
+      "Aynı tarayıcıda hesap değiştirildiğinde önceki hesabın ustalık ve ilerlemesinin diğer hesaba kaydedilmesi hatası düzeltildi"
+     ]
+    },
+    "it": {
+     "title": "Il crepuscolo dell'Impero galattico",
+     "items": [
+      "Corretto un bug per cui, cambiando account nello stesso browser, maestria e progressi dell'account precedente venivano salvati nell'altro account"
+     ]
+    },
+    "pl": {
+     "title": "Zmierzch Imperium Galaktycznego",
+     "items": [
+      "Naprawiono błąd, przez który po zmianie konta w tej samej przeglądarce biegłość i postęp poprzedniego konta zapisywały się na innym koncie"
+     ]
+    },
+    "ar": {
+     "title": "أفول الإمبراطورية المجرية",
+     "items": [
+      "إصلاح خلل كان يحفظ فيه إتقان الحساب السابق وتقدمه في حساب آخر عند تبديل الحسابات في المتصفح نفسه"
+     ]
+    }
+   }
   },
   {
    "date": "2026-11-02",
@@ -120,7 +1168,93 @@
    "items": [
     "차원여행자 포탈건: 벽 안에서 발사한 탄환이 같은 자리에서 여러 번 튕겨 피해가 비정상적으로 커지던 버그 수정",
     "차원여행자 포탈건 탄환 최대 데미지 30으로 제한"
-   ]
+   ],
+   "tr": {
+    "en": {
+     "title": "The Twilight of the Galactic Empire",
+     "items": [
+      "Dimension Traveler Portal Gun: fixed a bug where bullets fired from inside a wall bounced repeatedly at the same spot and dealt abnormally high damage",
+      "Dimension Traveler Portal Gun: max bullet damage capped at 30"
+     ]
+    },
+    "es": {
+     "title": "El crepúsculo del Imperio Galáctico",
+     "items": [
+      "Pistola portal del viajero dimensional: corregido un error por el que las balas disparadas desde dentro de una pared rebotaban varias veces en el mismo punto e infligían daño anormalmente alto",
+      "Pistola portal del viajero dimensional: el daño máximo por bala se limita a 30"
+     ]
+    },
+    "fr": {
+     "title": "Le Crépuscule de l'Empire galactique",
+     "items": [
+      "Pistolet portail du voyageur dimensionnel : correction d'un bug où les balles tirées depuis un mur rebondissaient plusieurs fois au même endroit et infligeaient des dégâts anormalement élevés",
+      "Pistolet portail du voyageur dimensionnel : dégâts maximum par balle limités à 30"
+     ]
+    },
+    "de": {
+     "title": "Die Dämmerung des Galaktischen Imperiums",
+     "items": [
+      "Dimensionsreisender-Portalkanone: Fehler behoben, bei dem Projektile, die aus einer Wand abgefeuert wurden, am selben Punkt mehrfach abprallten und unnatürlich viel Schaden machten",
+      "Dimensionsreisender-Portalkanone: maximaler Schaden pro Projektil auf 30 begrenzt"
+     ]
+    },
+    "ja": {
+     "title": "銀河帝国の黄昏",
+     "items": [
+      "次元旅行者ポータルガン：壁の中から撃った弾が同じ場所で何度も跳ね返り、ダメージが異常に大きくなるバグを修正",
+      "次元旅行者ポータルガン：弾の最大ダメージを30に制限"
+     ]
+    },
+    "zh": {
+     "title": "银河帝国的黄昏",
+     "items": [
+      "次元旅行者传送门枪：修复了从墙内发射的子弹在同一位置多次弹回、造成异常高伤害的问题",
+      "次元旅行者传送门枪：子弹最大伤害限制为 30"
+     ]
+    },
+    "pt": {
+     "title": "O Crepúsculo do Império Galáctico",
+     "items": [
+      "Canhão de portal do viajante dimensional: corrigido um bug em que balas disparadas de dentro de uma parede quicavam várias vezes no mesmo lugar e causavam dano anormalmente alto",
+      "Canhão de portal do viajante dimensional: dano máximo da bala limitado a 30"
+     ]
+    },
+    "ru": {
+     "title": "Сумерки Галактической империи",
+     "items": [
+      "Портальная пушка путешественника измерений: исправлена ошибка, из-за которой пули, выпущенные из стены, многократно отскакивали в одной точке и наносили аномально высокий урон",
+      "Портальная пушка путешественника измерений: максимальный урон пули ограничен 30"
+     ]
+    },
+    "tr": {
+     "title": "Galaktik İmparatorluğun Alacakaranlığı",
+     "items": [
+      "Boyut Gezgini Portal Silahı: duvarın içinden ateşlenen mermilerin aynı noktada defalarca sekip anormal yüksek hasar vermesi hatası düzeltildi",
+      "Boyut Gezgini Portal Silahı: mermi başına en yüksek hasar 30 ile sınırlandı"
+     ]
+    },
+    "it": {
+     "title": "Il crepuscolo dell'Impero galattico",
+     "items": [
+      "Cannone portale del viaggiatore dimensionale: corretto un bug per cui i proiettili sparati dall'interno di un muro rimbalzavano più volte nello stesso punto causando danni anomali",
+      "Cannone portale del viaggiatore dimensionale: danno massimo del proiettile limitato a 30"
+     ]
+    },
+    "pl": {
+     "title": "Zmierzch Imperium Galaktycznego",
+     "items": [
+      "Działo portalowe podróżnika wymiarów: naprawiono błąd, przez który pociski wystrzelone ze ściany odbijały się wielokrotnie w tym samym miejscu i zadawały nienormalnie duże obrażenia",
+      "Działo portalowe podróżnika wymiarów: maksymalne obrażenia pocisku ograniczone do 30"
+     ]
+    },
+    "ar": {
+     "title": "أفول الإمبراطورية المجرية",
+     "items": [
+      "مسدس بوابة مسافر الأبعاد: إصلاح خلل كانت فيه الرصاصات المطلقة من داخل الجدار ترتد عدة مرات من المكان نفسه وتسبب ضررا مبالغا فيه",
+      "مسدس بوابة مسافر الأبعاد: الحد الأقصى لضرر الرصاصة 30"
+     ]
+    }
+   }
   },
   {
    "date": "2026-11-01",
