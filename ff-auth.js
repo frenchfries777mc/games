@@ -207,8 +207,70 @@ function openSetup(){
       if(d&&d.data&&d.data.length){ m.textContent=T.taken; return; }
       var r=await sb.from('profiles').insert({id:user.id, username:id, display_name:(f.n.value.trim()||id).slice(0,15)});
       if(r.error){ m.textContent=/duplicate|unique|23505/i.test(JSON.stringify(r.error))?T.taken:T.fail; return; }
-      el.remove(); await setUser(user);
+      el.remove(); await setUser(user); setTimeout(welcome,400);
     }catch(x){ m.textContent=T.fail; } finally{ go.disabled=false; } };
+}
+
+/* ---- 가입 환영 창: 새 계정이 만들어진 직후 한 번만 (1 닉네임 → 2 프로필 사진 → 3 준비 끝) ---- */
+var WL={
+ ko:{s1:'닉네임을 정해요',s1p:'다른 사람에게 보이는 이름이에요.<br>나중에 프로필 페이지에서 바꿀 수 있어요.',nick:'닉네임',later:'나중에',next:'다음',prev:'이전',
+     s2:'프로필 사진을 골라요',s2p:'내 프로필에 보이는 얼굴이에요. 나중에 언제든 바꿀 수 있어요.',scroll:'아래로 스크롤해서 더 보기',free:'처음부터 모두 무료예요',game:'게임 캐릭터',
+     s3:'준비 끝! 🎉',s3p:'님, Frenchfries777에 온 걸 환영해요.',coin:'첫 출석 +10 Hub Coin',coin2:'7일 연속 출석하면 보너스 +20!',start:'시작하기',
+     g:['게임 모아 보기','배우면서 놀기','쓸모 있는 도구들','라운지·음악·위키'],fail:'저장하지 못했어요.'},
+ en:{s1:'Pick a nickname',s1p:'This is the name other people see.<br>You can change it later on your profile page.',nick:'Nickname',later:'Later',next:'Next',prev:'Back',
+     s2:'Pick a profile picture',s2p:'This is the face on your profile. You can change it any time.',scroll:'Scroll down for more',free:'Everything is free from the start',game:'Game characters',
+     s3:'All set! 🎉',s3p:', welcome to Frenchfries777.',coin:'First check-in +10 Hub Coin',coin2:'Check in 7 days in a row for a +20 bonus!',start:'Start',
+     g:['Browse the games','Learn while you play','Handy tools','Lounge, music, wiki'],fail:'Could not save.'}
+};
+function welcome(){
+  if(!user||!prof) return;
+  var W=WL[lang()]||WL.en, el=document.getElementById('ffaWelcome'); if(el) el.remove();
+  if(!document.getElementById('ffaWelcomeCss')){ var st=document.createElement('style'); st.id='ffaWelcomeCss'; st.textContent=
+   '#ffaWelcome{position:fixed;inset:0;z-index:2147482600;background:rgba(5,6,10,.78);display:flex;align-items:center;justify-content:center;padding:14px;font-family:system-ui,-apple-system,"Noto Sans KR",sans-serif;overflow-y:auto}'+
+   '#ffaWelcome .w{position:relative;width:100%;max-width:480px;margin:auto;border-radius:26px;padding:28px 26px 24px;text-align:center;overflow:hidden;color:#2b2540;border:1px solid #ffffff88;box-shadow:0 30px 80px rgba(0,0,0,.7);background:linear-gradient(180deg,#7ec8ff 0%,#b5defa 20%,#ffe9a8 50%,#ffc6d9 78%,#ffaecb 100%)}'+
+   '#ffaWelcome .w>*{position:relative;z-index:2}#ffaWelcome .cl{position:absolute;z-index:1;background:#fff;border-radius:999px;opacity:.95}#ffaWelcome .cl i{position:absolute;background:#fff;border-radius:50%}'+
+   '#ffaWelcome .x{position:absolute;right:16px;top:10px;width:32px;height:32px;padding:0;border:0;background:none;color:#fff;font-size:24px;cursor:pointer;text-shadow:0 1px 4px rgba(0,0,0,.3)}'+
+   '#ffaWelcome .dots{display:flex;gap:7px;justify-content:center;margin:0 0 12px}#ffaWelcome .dots s{width:28px;height:6px;border-radius:9px;background:rgba(255,255,255,.7);text-decoration:none}#ffaWelcome .dots s.on{background:linear-gradient(90deg,#ffc93c,#ff8a3d)}'+
+   '#ffaWelcome .st{font-size:12px;color:#c4600a;font-weight:800;letter-spacing:.08em}#ffaWelcome h2{margin:6px 0 6px;font-size:23px;color:#2b2540}#ffaWelcome p{margin:0;color:#5f5a78;font-size:14px;line-height:1.55}'+
+   '#ffaWelcome .row{display:flex;gap:10px;margin-top:20px}#ffaWelcome .go{flex:1;padding:14px;border-radius:14px;border:0;background:linear-gradient(135deg,#ffc93c,#ff8a3d);color:#2a1a05;font:800 16px inherit;cursor:pointer;box-shadow:0 6px 16px rgba(255,138,61,.35)}'+
+   '#ffaWelcome .bk{flex:0 0 96px;border:1px solid #e6dff0;border-radius:14px;background:#fff;color:#5f5a78;font:700 15px inherit;cursor:pointer}'+
+   '#ffaWelcome .av0{width:92px;height:92px;border-radius:50%;margin:14px auto 4px;background:#fff6dc;border:3px solid #ffc93c;display:flex;align-items:center;justify-content:center;font-size:44px;box-shadow:0 0 0 6px rgba(255,255,255,.4)}'+
+   '#ffaWelcome input{display:block;width:100%;box-sizing:border-box;margin-top:6px;padding:13px 14px;border:2px solid #ffc93c;border-radius:12px;background:#fff;color:#2b2540;font:16px inherit;outline:none}#ffaWelcome label{display:block;margin-top:14px;text-align:left;font-size:12px;font-weight:700;color:#5f5a78}'+
+   '#ffaWelcome .mm{min-height:18px;margin-top:6px;text-align:left;font-size:12px;font-weight:700;color:#c0392b}'+
+   '#ffaWelcome .gw{position:relative;margin-top:14px;border-radius:16px;overflow:hidden;background:rgba(255,255,255,.8)}#ffaWelcome .g{height:236px;overflow-y:auto;scrollbar-width:none;display:grid;grid-template-columns:repeat(6,1fr);gap:7px;padding:10px}#ffaWelcome .g::-webkit-scrollbar{display:none}'+
+   '#ffaWelcome .a{height:56px;padding:0;border-radius:12px;background:#f6f1ff;border:2px solid transparent;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:24px}#ffaWelcome .a img{width:44px;height:44px;border-radius:9px;object-fit:contain}#ffaWelcome .a.px img{image-rendering:pixelated}#ffaWelcome .a.on{border-color:#ffc93c;background:#fff3cf;box-shadow:0 0 0 3px rgba(255,201,60,.5)}'+
+   '#ffaWelcome .fd{position:absolute;left:0;right:0;bottom:0;height:44px;background:linear-gradient(180deg,rgba(255,255,255,0),#fff);display:flex;align-items:flex-end;justify-content:center;padding-bottom:5px;pointer-events:none;font-size:12px;font-weight:800;color:#7a5fb0}'+
+   '#ffaWelcome .more{margin-top:10px;font-size:12.5px;font-weight:700;color:#5f5a78}'+
+   '#ffaWelcome .coin{margin:16px 0 4px;padding:14px;border-radius:16px;background:rgba(255,255,255,.88);border:1px solid #ffd98a;display:flex;align-items:center;justify-content:center;gap:12px}#ffaWelcome .coin img{width:52px;height:52px;border-radius:14px}#ffaWelcome .coin div{text-align:left}#ffaWelcome .coin b{display:block;font-size:17px}#ffaWelcome .coin span{font-size:12.5px;color:#5f5a78}'+
+   '#ffaWelcome .s{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}#ffaWelcome .s a{padding:12px 14px;border-radius:14px;background:rgba(255,255,255,.88);text-align:left;text-decoration:none;color:#2b2540}#ffaWelcome .s i{font-style:normal;font-size:22px}#ffaWelcome .s b{display:block;margin:4px 0 1px;font-size:14.5px}#ffaWelcome .s span{font-size:12px;color:#5f5a78}';
+   document.head.appendChild(st); }
+  function cl(x,y,w,h){ return '<div class="cl" style="left:'+x+'px;top:'+y+'px;width:'+w+'px;height:'+h+'px"><i style="left:'+(w*.16)+'px;top:'+(-h*.55)+'px;width:'+(h*1.25)+'px;height:'+(h*1.25)+'px"></i><i style="left:'+(w*.46)+'px;top:'+(-h*.8)+'px;width:'+(h*1.6)+'px;height:'+(h*1.6)+'px"></i></div>'; }
+  el=document.createElement('div'); el.id='ffaWelcome'; el.setAttribute('data-notr','');
+  el.innerHTML='<div class="w">'+cl(-30,60,150,44)+cl(330,20,150,40)+cl(-40,480,170,48)+cl(300,520,190,52)+'<button type="button" class="x" aria-label="×">×</button><div class="body"></div></div>';
+  document.body.appendChild(el);
+  var body=el.querySelector('.body'), nm=nick(), sel=null, step=1;
+  function done(){ el.remove(); }
+  el.querySelector('.x').onclick=done;
+  function dots(n){ return '<div class="dots"><s'+(n>=1?' class="on"':'')+'></s><s'+(n>=2?' class="on"':'')+'></s><s'+(n>=3?' class="on"':'')+'></s></div><div class="st">'+n+' / 3</div>'; }
+  function s1(){ step=1; body.innerHTML=dots(1)+'<h2>'+W.s1+'</h2><p>'+W.s1p+'</p><div class="av0">🍟</div><label>'+W.nick+'</label><input maxlength="15" value="'+esc(nm)+'"><div class="mm"></div><div class="row"><button type="button" class="bk">'+W.later+'</button><button type="button" class="go">'+W.next+'</button></div>';
+    var inp=body.querySelector('input'), mm=body.querySelector('.mm'); body.querySelector('.bk').onclick=done;
+    body.querySelector('.go').onclick=async function(){ var v=inp.value.trim().slice(0,15); if(!v){ mm.textContent=W.fail; return; } var b=this; b.disabled=true;
+      if(v!==nick()){ var r=await setNick(v); if(r&&r.error&&!r.hub){ mm.textContent=W.fail; b.disabled=false; return; } } nm=nick(); b.disabled=false; s2(); }; }
+  function s2(){ step=2; body.innerHTML=dots(2)+'<h2>'+W.s2+'</h2><p>'+W.s2p+'</p><div class="gw"><div class="g"></div><div class="fd">⌄ '+W.scroll+'</div></div><div class="more">✨ '+W.free+'</div><div class="row"><button type="button" class="bk">'+W.prev+'</button><button type="button" class="go">'+W.next+'</button></div>';
+    var g=body.querySelector('.g');
+    function paint(list){ var h='<button type="button" class="a'+(sel===null?' on':'')+'" data-i="" title="'+esc(W.game)+'">🎮</button>';
+      list.forEach(function(x){ h+='<button type="button" class="a'+(/^(bf|ip|vk)_/.test(x.id)?' px':'')+(sel===x.id?' on':'')+'" data-i="'+esc(x.id)+'"><img src="'+esc(window.FFProfile.avatarUrl(x.id))+'" alt="" loading="lazy"></button>'; }); g.innerHTML=h; }
+    profileLib().then(function(ok){ if(!ok||!window.FFProfile||!window.FFProfile.avatars){ paint([]); return; }
+      var all=window.FFProfile.avatars.filter(function(x){ return x.kind==='free'; }), list=all.filter(function(x){ return !x.grp; }).concat(all.filter(function(x){ return x.grp; })); paint(list); });
+    g.onclick=function(e){ var b=e.target.closest('button[data-i]'); if(!b) return; sel=b.getAttribute('data-i')||null; [].forEach.call(g.querySelectorAll('.a'),function(x){ x.classList.toggle('on',x===b); }); };
+    body.querySelector('.bk').onclick=s1;
+    body.querySelector('.go').onclick=async function(){ var b=this; b.disabled=true;
+      if(sel){ try{ var r=await sb.rpc('ff_avatar_set',{p_id:sel}); if(!(r&&r.error)){ try{ window.dispatchEvent(new CustomEvent('ff-avatar',{detail:{pick:sel}})); }catch(e){} } }catch(e){} }
+      b.disabled=false; s3(); }; }
+  function s3(){ step=3; var H='https://frenchfries777mc.github.io/', L=[['🎮','Games',H+'games/'],['📚','Educations',H+'educations/'],['🛠️','Tools',H+'tools/'],['🏠','Hub',H+'hub/']];
+    body.innerHTML=dots(3)+'<h2>'+W.s3+'</h2><p><b style="color:#c4600a">'+esc(nm)+'</b>'+W.s3p+'</p><div class="coin"><img src="'+BASE+'hubicons/coin.svg" alt=""><div><b>'+W.coin+'</b><span>'+W.coin2+'</span></div></div><div class="s">'+L.map(function(x,i){ return '<a href="'+x[2]+'"><i>'+x[0]+'</i><b>'+x[1]+'</b><span>'+W.g[i]+'</span></a>'; }).join('')+'</div><div class="row"><button type="button" class="bk">'+W.prev+'</button><button type="button" class="go">'+W.start+'</button></div>';
+    body.querySelector('.bk').onclick=s2; body.querySelector('.go').onclick=done; }
+  s1();
 }
 async function signOut(){ pwClear(); try{ if(sb) await sb.auth.signOut({scope:'local'}); }catch(e){} await setUser(null); }   // 'local': only this browser, other devices stay logged in
 
@@ -274,7 +336,7 @@ function modal(){
     var r=mode==='in'?await signIn(f.username.value, f.password.value):await signUp(f.username.value, f.password.value, f.nick.value);
     go.disabled=false;
     if(r.error){ m.textContent=r.error; return; }
-    f.password.value=''; close();
+    f.password.value=''; close(); if(mode==='up') setTimeout(welcome,400);
   };
   return el;
 }
@@ -939,7 +1001,7 @@ subs.push(function(){ pollCheck(); });
 setInterval(function(){ if(document.visibilityState!=='hidden') pollCheck(); }, 5*60*1000);
 document.addEventListener('visibilitychange', function(){ if(document.visibilityState==='visible') pollCheck(); });
 
-window.FFAuth={ ready:ready, pollCheck:pollCheck, client:function(){ return sb; }, user:function(){ return user; }, profile:function(){ return prof; }, nickname:nick,
+window.FFAuth={ welcome:welcome, ready:ready, pollCheck:pollCheck, client:function(){ return sb; }, user:function(){ return user; }, profile:function(){ return prof; }, nickname:nick,
   canEditProfile:function(){ return editOk; }, hubUrl:HUBSITE,
   onChange:function(f){ if(typeof f==='function') subs.push(f); }, onNick:function(f){ if(typeof f!=='function') return; nickSubs.push(f); ready.then(function(){ if(user){ try{ f(nick(), user, prof); }catch(e){} } }); }, setNick:setNick, refreshNick:function(){ return nickRefresh(true); }, openLogin:openLogin, openProfile:openProfile, openFriends:openFriends, friends:function(){ return friends.slice(); }, signOut:signOut, refresh:paint, syncHub:syncHub,
   openDM:openDM, setRoom:setRoom, openReport:openReport, openAcct:openAcct, notePrefs:{get:npGet,set:npSet}, userKey:userKey, lang:lang, loadDevs:loadDevs, devRole:devRole, devBadge:devBadge, block:block, isBlocked:isBlocked, blocked:function(){ return Object.assign({},blocks); } };
