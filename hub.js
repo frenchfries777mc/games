@@ -672,7 +672,7 @@ async function openCoin(){
   var el=$('#coinBox'); if(!el){ el=document.createElement('div'); el.id='coinBox'; el.className='hn-bg'; document.body.appendChild(el); hCoinSwap(el); el.addEventListener('click',function(e){ if(e.target===el||e.target.closest('.hn-x')) el.style.display='none'; }); }
   el.innerHTML='<div class="hn-b"><div class="hn-h"><b>🪙 Hub Coin 교환</b><button type="button" class="hn-x" aria-label="닫기">×</button></div>'+
     '<div class="cx-have">갖고 있는 코인 <b data-notr>'+(coin.n||0)+'</b><button type="button" class="cm-btn2 cx-cal" style="float:right">📅 달력</button></div>'+
-    '<div class="cx-tabs"><button type="button" data-t="ex">교환</button><button type="button" data-t="q">📋 퀘스트<i class="cx-dot" hidden></i></button><button type="button" data-t="log">기록</button><button type="button" data-t="code">🎁 코드</button></div>'+
+    '<div class="cx-tabs"><button type="button" data-t="ex">교환</button><button type="button" data-t="q">📋 퀘스트<i class="cx-dot" hidden></i></button><button type="button" data-t="log">기록</button><button type="button" data-t="code">🎁 선물 코드</button></div>'+
     '<div class="cx-pane" data-p="ex"><div class="cx-games"></div><div class="cx-list"><div class="cm-e">불러오는 중…</div></div><div class="cx-wait"></div></div>'+
     '<div class="cx-pane" data-p="q"><div class="cx-q"><div class="cm-e">불러오는 중…</div></div></div>'+
     '<div class="cx-pane" data-p="log"><div class="cx-log"></div></div>'+
