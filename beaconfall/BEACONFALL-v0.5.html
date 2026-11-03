@@ -407,7 +407,7 @@ window.bfIntro=function(){if(run)return;run=1;t0=Date.now();el.classList.add('ru
     <button class="btn" data-act="skins"><span class="arrow">▶</span>스킨 상점<span class="en">SKIN SHOP</span></button>
     <button class="btn" data-act="stats"><span class="arrow">▶</span>통계<span class="en">STATS</span></button>
     <button class="btn" data-act="settings"><span class="arrow">▶</span>설정<span class="en">SETTINGS</span></button>
-    <p class="foot">v0.5<br>build 158</p>
+    <p class="foot">v0.5<br>build 159</p>
   </nav>
 </div>
 
@@ -12590,6 +12590,7 @@ const drawPlayer=g=>{
 };
 const drawRemote=(g,r)=>{if(r.dead||(r.sleep&&onBed(r.x,r.y)))return;if(r.down){g.globalAlpha=0.55;drawPerson(g,r.x,r.y+4,r.f,false,0,false,0,r.suit,r.sk);g.globalAlpha=1;drawDownMark(g,r.x,r.y);return;}if(r.air){drawAirRider(g,r.x,r.y,r.f,r.suit,r.sk);return;}if(r.boat){drawBoatHull(g,r.x,r.y);drawPerson(g,r.x,r.y-3,r.f,false,0,false,0,r.suit,r.sk);}else if(r.horse){drawHorseBody(g,r.x,r.y,r.f,r.m,r.walk);drawPerson(g,r.x,r.y-7,r.f,false,0,false,0,r.suit,r.sk);}else drawPerson(g,r.x,r.y,r.f,r.m,r.walk,false,0,r.suit,r.sk);};
 function enterPlay(){
+  try{bfOwnerFix();}catch(e){}
   loadInvFor(invKey());renderInv();renderEquip();
   {const cw=settings.worlds.find(w=>w.id===settings.current);SANDBOX=!!(cw&&cw.sandbox)&&!isGuest();SBX.fly=false;SBX.tm=1;P.train=null;if(!isGuest())setWopt(cw);}
   mode='play';document.body.classList.add('playing');keys.clear();
@@ -13545,7 +13546,32 @@ function ffRoomSync(){try{const r=frRoom();if(r===ffRoomSent||!window.FFAuth||!F
 /* 로그인했으면 계정 닉네임(사이트·다른 게임에서 바꾼 이름 포함)이 곧 내 이름이에요 */
 function ffNickSync(){try{if(!window.FFAuth||!FFAuth.user())return;const n=String(FFAuth.nickname()||'').trim().slice(0,15);if(n&&settings.pname!==n){settings.pname=n;saveSettings();}}catch(e){}}
 window.addEventListener('ff-nick',ffNickSync);
-setInterval(()=>{ffRoomSync();ffNickSync();},2000);
+/* 채팅·방 이름: 로그인했으면 프로필 닉네임(profiles.display_name)이 내 이름이에요. 로그인 안 했거나 체험이면 '탐험가1234' 손님 이름을 써요.
+   (허브 FFAuth가 없는 화면에서도 되도록 게임이 직접 읽어요. 이름이 바뀌면 내가 설치한 통행문·상점·우편함 주인 이름도 같이 바꿔요) */
+let bfNickAt=0,bfNickUid=null,bfNickBusy=false;
+function bfOwnerFix(){try{const al=settings.palias||[],me=myName();if(!al.length||typeof world==='undefined'||!world||!world.structs)return;for(const b of world.structs){if(b.ow&&al.includes(b.ow))b.ow=me;if(b.on&&al.includes(b.on))b.on=me;}}catch(e){}}
+function bfNickApply(n){
+  if(!n||settings.pname===n)return;
+  const old=settings.pname;
+  if(old){settings.palias=[old].concat((settings.palias||[]).filter(x=>x!==old&&x!==n)).slice(0,6);}
+  settings.pname=n;settings.pacct=1;saveSettings();bfOwnerFix();
+}
+async function bfNickPull(){
+  const uid=window.bfUid,now=Date.now();
+  if(!sb||!uid||window.bfTrial||bfNickBusy||(uid===bfNickUid&&now-bfNickAt<30000))return;
+  bfNickBusy=true;bfNickAt=now;
+  try{
+    const q=await sb.from('profiles').select('username,display_name').eq('id',uid).single();
+    const p=q&&q.data,n=String((p&&(p.display_name||p.username))||'').trim().slice(0,15);
+    if(n&&window.bfUid===uid){bfNickUid=uid;bfNickApply(n);}
+  }catch(e){}
+  bfNickBusy=false;
+}
+function bfNickGuest(){   // 로그아웃·체험이면 손님 이름으로 되돌려요
+  if(!settings.pacct||!(window.bfTrial||(bfNickUid&&!window.bfUid)))return;
+  delete settings.pname;settings.pacct=0;bfNickUid=null;saveSettings();
+}
+setInterval(()=>{ffRoomSync();ffNickSync();bfNickGuest();bfNickPull();},2000);
 async function frTrack(force){
   if(!FR.ch)return;const room=frRoom();if(!force&&room===FR.room)return;FR.room=room;
   try{await FR.ch.track({name:window.bfUser||'',room,at:Date.now()});}catch(e){}
@@ -13717,7 +13743,7 @@ const ID_DOM='frenchfries777.com',ID_DOM_OLD='arenaclash.local';   // 계정 도
 const emailFor=(u,d)=>u.toLowerCase().replace(/[^a-z0-9_]/g,'')+'@'+(d||ID_DOM);
 const say=(t,ok)=>{msg.textContent=t||'';msg.className=ok?'ok':'';};
 const busy=b=>{bl.disabled=bs.disabled=b;};
-function enter(name,uid){window.bfUser=name;window.bfUid=uid||null;csLogin(uid||null);frStart();gate.classList.remove('show');me.textContent=(window.bfTrial&&!uid?'체험 중 · 로그인하기':name+' · 로그아웃');me.classList.add('show');profShow();markOnce();try{achSync();}catch(e){}try{window.dispatchEvent(new CustomEvent('bf-login',{detail:{name}}));}catch(e){}}
+function enter(name,uid){window.bfUser=name;window.bfUid=uid||null;try{bfNickPull();}catch(e){}csLogin(uid||null);frStart();gate.classList.remove('show');me.textContent=(window.bfTrial&&!uid?'체험 중 · 로그인하기':name+' · 로그아웃');me.classList.add('show');profShow();markOnce();try{achSync();}catch(e){}try{window.dispatchEvent(new CustomEvent('bf-login',{detail:{name}}));}catch(e){}}
 /* 초대 링크: ?join=주소 로 들어오면 로그인한 뒤 바로 그 방에 참가해요 */
 (function(){
   let a='';try{a=new URLSearchParams(location.search).get('join')||'';}catch(e){}
