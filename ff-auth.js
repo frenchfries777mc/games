@@ -132,13 +132,13 @@ async function signIn(id, pw){
       err=r.error; if(errText(err)!==T.cred) return {error:errText(err)}; } }
   return {error:errText(err)};
 }
-async function signUp(id, pw){
+async function signUp(id, pw, nick){
   id=String(id||'').trim();
   if(!/^[a-zA-Z0-9_]{3,16}$/.test(id)) return {error:T.badId};
   if(!pw||pw.length<6) return {error:T.badPw};
   var r=await sb.auth.signUp({email:emailFor(id), password:pw});
   if(r.error) return {error:/already|registered/i.test(r.error.message)?T.taken:errText(r.error)};
-  var p=await sb.from('profiles').insert({id:r.data.user.id, username:id, display_name:id.slice(0,15)});
+  var p=await sb.from('profiles').insert({id:r.data.user.id, username:id, display_name:(String(nick||'').trim()||id).slice(0,15)});
   if(p.error) return {error:T.taken};
   pwSave(id,pw); await setUser(r.data.user); return {ok:true};
 }
@@ -194,6 +194,7 @@ function openSetup(){
   el=document.createElement('div'); el.id='ffaSetup'; el.setAttribute('data-notr','');
   el.innerHTML='<form class="b"><h3>'+esc(O.setT)+'</h3><p>'+esc(O.setP)+'</p>'+
     '<input name="u" autocapitalize="off" spellcheck="false" maxlength="16" placeholder="'+esc(T.id)+'">'+
+    '<input name="n" maxlength="15" placeholder="'+esc(O.nick)+'">'+
     '<div class="m"></div>'+
     '<button type="submit" class="ffa-btn go">'+esc(O.go)+'</button><div class="sw"><a>'+esc(O.later)+'</a></div></form>';
   document.body.appendChild(el);
@@ -204,7 +205,7 @@ function openSetup(){
     go.disabled=true; m.textContent=T.busy;
     try{ var d=await sb.from('profiles').select('id').ilike('username',likeEsc(id)).limit(1);
       if(d&&d.data&&d.data.length){ m.textContent=T.taken; return; }
-      var r=await sb.from('profiles').insert({id:user.id, username:id, display_name:id.slice(0,15)});
+      var r=await sb.from('profiles').insert({id:user.id, username:id, display_name:(f.n.value.trim()||id).slice(0,15)});
       if(r.error){ m.textContent=/duplicate|unique|23505/i.test(JSON.stringify(r.error))?T.taken:T.fail; return; }
       el.remove(); await setUser(user);
     }catch(x){ m.textContent=T.fail; } finally{ go.disabled=false; } };
@@ -257,6 +258,7 @@ function modal(){
   el=document.createElement('div'); el.id='ffaModal'; el.setAttribute('data-notr','');
   el.innerHTML='<form class="b" autocomplete="on"><button type="button" class="x" aria-label="'+esc(T.close)+'">×</button><h3></h3><p>'+esc(T.sub)+'</p>'+
     '<input name="username" autocomplete="username" autocapitalize="off" spellcheck="false" maxlength="16" placeholder="'+esc(T.id)+'">'+
+    '<input name="nick" class="nk" autocomplete="nickname" maxlength="15" style="display:none" placeholder="'+esc(OA().nick)+'">'+
     '<div class="pwr"><input name="password" type="password" placeholder="'+esc(T.pw)+'"><button type="button" class="eye" aria-label="'+esc(AL().show)+'">👁</button></div>'+
     '<div class="m"></div><button type="submit" class="ffa-btn go"></button><div class="or">'+esc(OA().or)+'</div>'+'<div class="oas">'+oaBtns()+'</div><div class="sw"><span></span><a></a></div></form>';
   document.body.appendChild(el);
@@ -269,7 +271,7 @@ function modal(){
     e.preventDefault(); var f=e.target, m=el.querySelector('.m'), go=el.querySelector('.go');
     if(!sb){ m.textContent=T.net; return; }
     m.textContent=T.busy; go.disabled=true;
-    var r=mode==='in'?await signIn(f.username.value, f.password.value):await signUp(f.username.value, f.password.value);
+    var r=mode==='in'?await signIn(f.username.value, f.password.value):await signUp(f.username.value, f.password.value, f.nick.value);
     go.disabled=false;
     if(r.error){ m.textContent=r.error; return; }
     f.password.value=''; close();
@@ -279,11 +281,16 @@ function modal(){
 function fill(){ var el=modal(); el.querySelector('h3').textContent=mode==='in'?T.title:T.signup; el.querySelector('.go').textContent=mode==='in'?T.login:T.signup;
   el.querySelector('.sw span').textContent=mode==='in'?T.noAcc:T.hasAcc; el.querySelector('.sw a').textContent=mode==='in'?T.signup:T.login;
   el.querySelector('input[name=password]').setAttribute('autocomplete',mode==='in'?'current-password':'new-password'); el.querySelector('.m').textContent='';
-  el.querySelector('form').classList.toggle('ffa-in',mode==='in'); }
+  el.querySelector('form').classList.toggle('ffa-in',mode==='in'); el.querySelector('input[name=nick]').style.display=mode==='in'?'none':''; }
 function openLogin(m){ mode=m==='up'?'up':'in'; fill(); var el=modal(); el.style.display='flex'; setTimeout(function(){ try{ el.querySelector('input').focus(); }catch(e){} },30); }
 function close(){ var el=document.getElementById('ffaModal'); if(el) el.style.display='none'; }
 
-function profileLib(){ return loadScript(BASE+'ff-profile.js?v=20261103b', function(){ return !!window.FFProfile; }); }
+/* the worn profile border (ff-borders.js) as a ring on the small avatar of the account button */
+async function chipBorder(root){ try{ if(!sb||!user) return; var uid=user.id;
+  if(!window.FFBorders) await loadScript(BASE+'ff-borders.js?v=20261103c', function(){ return !!window.FFBorders; });
+  if(!window.FFBorders||!user||user.id!==uid) return; var id=await window.FFBorders.equipped(sb,uid), b=window.FFBorders.get(id); if(!b) return;
+  var col=b.a==='rainbow'?'#ffd23f':b.a, im=root.querySelector('.ffa-av'); if(im){ im.style.borderRadius='6px'; im.style.boxShadow='0 0 0 2px '+col+',0 0 8px '+col+'99'; } }catch(e){} }
+function profileLib(){ return loadScript(BASE+'ff-profile.js?v=20261103c', function(){ return !!window.FFProfile; }); }
 async function openProfile(uid, o){ if(!sb) return; if(!uid&&!user) return openLogin(); if(await profileLib()) window.FFProfile.open(sb, uid||user.id, o); }
 
 /* 게임 사이트(허브가 아닌 페이지)에는 계정 버튼 옆에 '← 허브' 버튼을 붙여요. 빼고 싶으면 자리에 data-ff-nohub */
@@ -314,10 +321,11 @@ function paint(){
       menu.querySelector('[data-a=friends]').onclick=function(){ closeMenus(); openFriends(); };
       menu.querySelector('[data-a=card]').onclick=function(){ closeMenus(); openProfile(); };
       menu.querySelector('[data-a=ach]').onclick=function(){ closeMenus(); try{ if(typeof window.ffOpenAch==='function') window.ffOpenAch(); else openProfile(null,{openAch:true}); }catch(e){} };   // 게임이 window.ffOpenAch를 정하면 그 게임의 도전과제 창, 아니면 프로필 카드의 도전과제 창이 열려요
-      menu.querySelector('[data-a=acct]').onclick=function(){ closeMenus(); location.href=SETURL+'#account'; };
+      menu.querySelector('[data-a=acct]').onclick=function(){ closeMenus(); location.href='https://frenchfries777mc.github.io/hub/profile/'; };
       menu.querySelector('[data-a=set]').onclick=function(){ closeMenus(); location.href=SETURL; };
       menu.querySelector('[data-a=notes]').onclick=function(e){ e.stopPropagation(); closeMenus(); var w=s.querySelector('.ffa-wrap'), pn=w&&w.querySelector('.ffa-notes'); if(!pn) return; pn.style.display='block'; paintNotes(pn); markRead(); };
       menu.querySelector('[data-a=out]').onclick=function(){ closeMenus(); signOut(); };
+      chipBorder(s);
     })(s);
   }
   if(typeof badge==='function') try{ badge(); }catch(e){}
