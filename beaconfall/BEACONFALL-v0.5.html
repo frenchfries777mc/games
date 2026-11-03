@@ -407,7 +407,7 @@ window.bfIntro=function(){if(run)return;run=1;t0=Date.now();el.classList.add('ru
     <button class="btn" data-act="skins"><span class="arrow">▶</span>스킨 상점<span class="en">SKIN SHOP</span></button>
     <button class="btn" data-act="stats"><span class="arrow">▶</span>통계<span class="en">STATS</span></button>
     <button class="btn" data-act="settings"><span class="arrow">▶</span>설정<span class="en">SETTINGS</span></button>
-    <p class="foot">v0.5<br>build 170</p>
+    <p class="foot">v0.5<br>build 171</p>
   </nav>
 </div>
 
@@ -1349,7 +1349,7 @@ async function loadWorld(seed,name,id){
   await progress(0,'월드를 준비하는 중…');
   world=null;base=null;    // 이전 월드의 큰 메모리를 먼저 놓아줘요
   world=await generateTerrain(seed,(p,m)=>progress(p*0.8,m));
-  world.rcIt=null;world.voidWon=0;world.voidBD=0;world.rit=null;ritV=null;world.seedStr=String(seed);world.id=id||null;world.savedPlayer=null;world.clock=DAY_SEC*2/24;monsters=[];world.conv=[];world.pend=new Map();world.trader=null;world.lastTraderDay=0;world.weather={t:'clear',left:120};animals=[];world.expl=new Uint8Array(EW*EH);world.mapBase=null;world.treasureInit=false;world.esc={ph:'idle',t:0};world.escaped=false;world.pilot=false;world.voidShip=null;world.pilE=null;PIL=null;world.introSeen=false;world.disc=world.islands.map((o,i)=>i===0);world.seen=world.islands.map(()=>false);world.lm=[];world.bossDay=world.islands.map(()=>0);oreT=30;
+  world.pt=0;world.pe=0;world.rcIt=null;world.voidWon=0;world.voidBD=0;world.rit=null;ritV=null;world.seedStr=String(seed);world.id=id||null;world.savedPlayer=null;world.clock=DAY_SEC*2/24;monsters=[];world.conv=[];world.pend=new Map();world.trader=null;world.lastTraderDay=0;world.weather={t:'clear',left:120};animals=[];world.expl=new Uint8Array(EW*EH);world.mapBase=null;world.treasureInit=false;world.esc={ph:'idle',t:0};world.escaped=false;world.pilot=false;world.voidShip=null;world.pilE=null;PIL=null;world.introSeen=false;world.disc=world.islands.map((o,i)=>i===0);world.seen=world.islands.map(()=>false);world.lm=[];world.bossDay=world.islands.map(()=>0);oreT=30;
   world.structs=[];world.sgrid=new Map();world.fgrid=new Map();world.cgrid=new Map();world.rgrid=new Map();FIRE.clear();
   buildTreeGrid();drops=[];parts=[];
   applySave();
@@ -4344,7 +4344,7 @@ function saveWorld(force){
     const rem=collectRemoved(),brm=collectBrem();
     if(mode==='play')world.savedPlayer=(P.air&&P.airX!==undefined)?{x:Math.round(P.airX),y:Math.round(P.airY),f:P.f}:{x:Math.round(P.sailing&&P.landX!==undefined?P.landX:P.x),y:Math.round(P.sailing&&P.landY!==undefined?P.landY:P.y),f:P.f};
     localStorage.setItem(SAVE_KEY(world.id),JSON.stringify({
-      v:1,rc:world.rcIt||null,stc:world.stc||{},nt:world.nt|0,clock:Math.round(world.clock),removed:rem,brem:brm,ores:world.conv,trader:world.trader,lastTraderDay:world.lastTraderDay,expl:packBits(world.expl),treasureInit:!!world.treasureInit,lmChestInit:world.lmChestInit|0,pirInit:world.pirInit|0,ruinInit:world.ruinInit|0,trClean:world.trClean|0,dunFl:world.dunFl||{},dunBD:world.dunBD|0,fortBD:world.fortBD|0,skyDay:world.skyDay||{},dby:world.discBy||{},gsDay:world.gsDay|0,trains:[...(world.trains||[]),...((typeof P!=='undefined'&&P&&P.train)?[P.train]:[])].slice(0,40).map(T=>({x:T.gx,y:T.gy,dx:T.dx,dy:T.dy,p:Math.round(T.p*100)/100,run:T.run?1:0,it:(T.it||[]).map(q=>q?Object.assign({},q):null)})),herd:animals.filter(a=>a.tame).map(a=>[ANIM_IDX.indexOf(a.type),Math.round(a.hx),Math.round(a.hy),a.baby?1:0,Math.round(a.gt||0)]),disc:world.disc.map(b=>b?'1':'0').join(''),seen:world.seen.map(b=>b?'1':'0').join(''),escaped:!!world.escaped,pilot:world.pilot?1:0,vship:world.voidShip?world.voidShip.x+','+world.voidShip.y:'',voidWon:world.voidWon|0,voidBD:world.voidBD|0,intro:world.introSeen?1:0,bossDay:world.bossDay.join(','),
+      v:1,rc:world.rcIt||null,stc:world.stc||{},nt:world.nt|0,pt:Math.round(world.pt||0),pe:Math.round(world.pe||0),clock:Math.round(world.clock),removed:rem,brem:brm,ores:world.conv,trader:world.trader,lastTraderDay:world.lastTraderDay,expl:packBits(world.expl),treasureInit:!!world.treasureInit,lmChestInit:world.lmChestInit|0,pirInit:world.pirInit|0,ruinInit:world.ruinInit|0,trClean:world.trClean|0,dunFl:world.dunFl||{},dunBD:world.dunBD|0,fortBD:world.fortBD|0,skyDay:world.skyDay||{},dby:world.discBy||{},gsDay:world.gsDay|0,trains:[...(world.trains||[]),...((typeof P!=='undefined'&&P&&P.train)?[P.train]:[])].slice(0,40).map(T=>({x:T.gx,y:T.gy,dx:T.dx,dy:T.dy,p:Math.round(T.p*100)/100,run:T.run?1:0,it:(T.it||[]).map(q=>q?Object.assign({},q):null)})),herd:animals.filter(a=>a.tame).map(a=>[ANIM_IDX.indexOf(a.type),Math.round(a.hx),Math.round(a.hy),a.baby?1:0,Math.round(a.gt||0)]),disc:world.disc.map(b=>b?'1':'0').join(''),seen:world.seen.map(b=>b?'1':'0').join(''),escaped:!!world.escaped,pilot:world.pilot?1:0,vship:world.voidShip?world.voidShip.x+','+world.voidShip.y:'',voidWon:world.voidWon|0,voidBD:world.voidBD|0,intro:world.introSeen?1:0,bossDay:world.bossDay.join(','),
       beltv:2,
       structs:world.structs.filter(b=>!b.lm).map(b=>Object.assign({id:b.id,gx:b.gx,gy:b.gy},exOf(b))),
       drops:drops.map(d=>({x:Math.round(d.tx),y:Math.round(d.ty),v:d.v,item:d.item||'stick',n:d.n||1,dur:d.dur})),
@@ -4368,7 +4368,7 @@ function applySave(){
   if(typeof d.disc==='string')for(let i=0;i<world.disc.length;i++)if(d.disc[i]==='1')world.disc[i]=true;
   if(typeof d.seen==='string')for(let i=0;i<world.seen.length;i++)if(d.seen[i]==='1')world.seen[i]=true;
   world.rcIt=Array.isArray(d.rc)?d.rc.slice(0,CH_N).map(q=>q&&typeof q.id==='string'&&ITEMS[q.id]&&(q.n|0)>0?q:null):null;
-  world.nt=d.nt===1?1:0;ntT=0;
+  world.nt=d.nt===1?1:0;ntT=0;world.pt=Math.max(0,+d.pt||0);world.pe=Math.max(0,+d.pe||0);
   world.stc=(d.stc&&typeof d.stc==='object')?{tree:Math.max(0,+d.stc.tree||0),kill:Math.max(0,+d.stc.kill||0)}:{};
   world.escaped=!!d.escaped;world.pilot=!!d.pilot;world.voidShip=null;if(typeof d.vship==='string'&&d.vship){const vs=d.vship.split(',').map(Number);if(vs.length===2&&vs.every(Number.isFinite))world.voidShip={x:vs[0],y:vs[1]};}world.voidWon=d.voidWon|0;world.voidBD=d.voidBD|0;world.introSeen=!!d.intro;
   if(typeof d.bossDay==='string')d.bossDay.split(',').forEach((v,i)=>{if(i<world.bossDay.length)world.bossDay[i]=+v||0;});
@@ -10562,7 +10562,7 @@ function drawSpaceship(g,s){
 }
 function boardShip(){
   if(world.esc&&world.esc.v){P.hold=false;showEnding(1);return;}
-  if(isGuest())sendHost({t:'escb'});else{world.escaped=true;saveWorld(true);}
+  if(isGuest())sendHost({t:'escb'});else{if(!world.escaped&&!SANDBOX&&world.pt>=300)world.pe=Math.round(world.pt);world.escaped=true;saveWorld(true);}   // 신호기 엔딩까지 걸린 시간(플레이 시간)을 처음 한 번만 기록해요
   P.hold=false;achGrant('escape');showEnding();
 }
 /* ===== 우주선 엔딩: 우주선 위에서 외계인 조종사와 나누는 대화 ===== */
@@ -11296,7 +11296,12 @@ function updateMonsters(dt){
 /* 허브 랭킹 (최장 생존 일수): 로그인한 계정이 내 월드에서 새 기록 일수에 닿으면 서버에 보내요.
    호출 방식은 허브 SQL이 정해지면 RANK.fn(함수 이름)과 RANK.args만 맞추면 돼요. fn이 null인 동안은 아무것도 보내지 않아요.
    로그인을 안 했거나 보내기에 실패해도 게임은 그대로 돌아가고, 다음 확인 때 다시 시도해요. */
-const SURV={fn:'ff_set_survival',args:d=>({p_days:d})};
+const SURV={fn:'ff_set_survival',args:d=>({p_days:d})},BTIME={fn:'ff_set_beacon_time',args:t=>({p_secs:t})};
+let ptLast=0;
+function ptTick(){   // 플레이 시간: 내 월드(혼자 또는 방장)에서 화면이 켜져 있는 동안만 쌓여요
+  const n=Date.now(),d=ptLast?Math.min(3,(n-ptLast)/1000):0;ptLast=n;
+  if(world&&!isGuest()&&!SANDBOX&&mode==='play'&&!P.dead&&!world.escaped)world.pt=(world.pt||0)+d;
+}
 let rankT=20,rankBusy=false;
 async function rankCheck(){
   if(!SURV.fn||rankBusy||!window.bfUid||!window.bfSb||!world||isGuest()||SANDBOX||mode!=='play')return;
@@ -11304,6 +11309,13 @@ async function rankCheck(){
   if(days<1||days<=(settings.rankDays|0))return;
   rankBusy=true;
   try{const r=await window.bfSb.rpc(SURV.fn,SURV.args(days));if(r&&r.error)throw r.error;settings.rankDays=days;saveSettings();}catch(e){}
+  rankBusy=false;
+}
+async function rankTimeCheck(){   // 신호기 엔딩 시간 랭킹 (적을수록 위): 엔딩을 본 내 월드의 기록을 한 번 보내요
+  if(rankBusy||!window.bfUid||!window.bfSb||!world||isGuest()||SANDBOX||!(world.pe>=300))return;
+  const cur=settings.rankSecs|0;if(cur>0&&world.pe>=cur)return;
+  rankBusy=true;
+  try{const r=await window.bfSb.rpc(BTIME.fn,BTIME.args(world.pe));if(r&&r.error)throw r.error;settings.rankSecs=world.pe;saveSettings();}catch(e){}
   rankBusy=false;
 }
 /* 탭이 가려져도 자동 장치·컨베이어·작물이 계속 돌아요 (브라우저가 화면 그리기를 멈추는 동안 방장 쪽 계산만 이어서 해요) */
@@ -11324,7 +11336,7 @@ setInterval(bgSim,500);
 function updateSim(dt){
   world.clock+=SANDBOX?dt*SBX.tm:dt;
   updateFire(dt);
-  rankT-=dt;if(rankT<=0){rankT=20;rankCheck();}
+  ptTick();rankT-=dt;if(rankT<=0){rankT=20;rankCheck();rankTimeCheck();}
   if(!isGuest()){oreT-=dt;if(oreT<=0){oreT=45;trySpawnOre();}updateConveyors(dt);updatePorts(dt);updateGuards(dt);updateCrafters(dt);updateAutoFurnaces(dt);updateSignals(dt);updateEscape(dt);updateWeather(dt);growSaplings(dt*(wetNow()?1.5:1));growCrops(dt*(wetNow()?2:1));updateFellers(dt);updateMiners(dt);updateFurnaces(dt);updatePend(dt);checkSleepSkip(dt);updateTrader(dt);}else{if(world.trader)world.trader.pt+=dt;if(world.esc.ph!=='idle')world.esc.t+=dt;growCrops(dt*(wetNow()?2:1));}
   updateAnimals(dt);
   if(!isGuest()){updateTradeposts(dt);updateTraps(dt);updateHuts(dt);}

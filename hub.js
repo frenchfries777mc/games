@@ -443,8 +443,26 @@ async function rankingStk(box){
   box.innerHTML='<style>.rk-two{display:grid;grid-template-columns:1fr 1fr;gap:18px}.rk-two h4{margin:0 0 6px;font-size:14px}.rk-two .rkt td:nth-child(2){max-width:none;white-space:normal}@media(max-width:760px){.rk-two{grid-template-columns:1fr}}</style><div class="rk-two"><div><h4>랭크 레이팅</h4>'+lh+'</div><div><h4>캐릭터 마스터리</h4>'+rh+'</div></div>';
 }
 
+/* Beaconfall 랭킹도 둘로 나눠요: 왼쪽 = 최장 생존 일수(ff_survival), 오른쪽 = 신호기 엔딩까지 걸린 시간(ff_beacon_time, supabase-beaconfall-time-2026-11-03.sql) — 시간은 적을수록 위 */
+async function rankingBf(box){
+  var res=await Promise.all([
+    sb.from('ff_survival').select('user_id,days').order('days',{ascending:false}).limit(20),
+    sb.from('ff_beacon_time').select('user_id,secs').order('secs',{ascending:true}).limit(20)]);
+  if(rkGame!=='beaconfall') return;
+  var D=res[0], T=res[1], drows=(D&&!D.error&&D.data)||[], trows=(T&&!T.error&&T.data)||[];
+  await loadNames(drows.map(function(x){ return x.user_id; }).concat(trows.map(function(x){ return x.user_id; })));
+  if(rkGame!=='beaconfall') return;
+  var n=function(v){ try{ return Number(v).toLocaleString(); }catch(e){ return v; } }, p2=function(v){ return (v<10?'0':'')+v; },
+      tm=function(sec){ sec=Math.max(0,sec|0); return Math.floor(sec/3600)+':'+p2(Math.floor(sec%3600/60))+':'+p2(sec%60); },
+      medal=function(i){ return i<3?['🥇','🥈','🥉'][i]:i+1; }, mine=function(x){ return me&&x.user_id===me.id?' me':''; };
+  var lh='<table class="rkt"><tr><th></th><th>닉네임</th><th>최장 생존 일수</th></tr>'+(D&&D.error?'<tr><td colspan="3" class="cm-e">생존 순위는 서버 준비 중이에요.</td></tr>':drows.length?drows.map(function(x,i){ return '<tr class="'+(i<3?'t'+(i+1):'')+mine(x)+'"><td>'+medal(i)+'</td><td>'+who(x.user_id)+'</td><td class="pt" data-notr>'+esc(F('{0}일',n(x.days)))+'</td></tr>'; }).join(''):'<tr><td colspan="3" class="cm-e">아직 생존 기록을 보낸 사람이 없어요.</td></tr>')+'</table>';
+  var rh='<table class="rkt"><tr><th></th><th>닉네임</th><th>신호기 엔딩 시간</th></tr>'+(T&&T.error?'<tr><td colspan="3" class="cm-e">엔딩 시간 순위는 서버 준비 중이에요.</td></tr>':trows.length?trows.map(function(x,i){ return '<tr class="'+(i<3?'t'+(i+1):'')+mine(x)+'"><td>'+medal(i)+'</td><td>'+who(x.user_id)+'</td><td class="pt" data-notr>'+tm(x.secs)+'</td></tr>'; }).join(''):'<tr><td colspan="3" class="cm-e">아직 신호기 엔딩을 본 사람이 없어요.</td></tr>')+'</table>';
+  box.innerHTML='<style>.rk-two{display:grid;grid-template-columns:1fr 1fr;gap:18px}.rk-two h4{margin:0 0 6px;font-size:14px}.rk-two .rkt td:nth-child(2){max-width:none;white-space:normal}@media(max-width:760px){.rk-two{grid-template-columns:1fr}}</style><div class="rk-two"><div><h4>생존 일수</h4>'+lh+'</div><div><h4>신호기 엔딩 (적을수록 위)</h4>'+rh+'</div></div>';
+}
+
 async function rankingBy(g,box){
   if(g==='stickseum') return rankingStk(box);
+  if(g==='beaconfall') return rankingBf(box);
   var st=g==='stickseum', bf=g==='beaconfall', tb=st?'ranked_ratings':bf?'ff_survival':'ff_wealth', col=st?'rating':bf?'days':'wealth', season=new Date(Date.now()+9*36e5).toISOString().slice(0,7);
   var q=sb.from(tb).select(st?'user_id,rating,wins,losses':'user_id,'+col);
   if(st) q=q.eq('season',season).order('rating',{ascending:false}).order('wins',{ascending:false}); else q=q.order(col,{ascending:false});
