@@ -1068,7 +1068,16 @@ async function open(sb, uid, o){
         cb.querySelector('button').onclick=async function(){ var v=cb.querySelector('input').value.trim().slice(0,12), mm=cb.querySelector('.ctm'); mm.textContent='…';
           var r; try{ r=await sb.rpc('ff_title_give',{p_user:uid,p_title:v}); }catch(e){ r={error:e}; }
           if(r&&r.error){ mm.textContent='저장하지 못했어요 (supabase-custom-title-2026-11-02.sql 을 먼저 실행해 주세요)'; return; }
-          d.ctitle=v||null; try{ await draw(cv,d,o); }catch(e){} mm.textContent=v?'칭호를 줬어요':'칭호를 지웠어요'; }; } } }catch(e){}
+          d.ctitle=v||null; try{ await draw(cv,d,o); }catch(e){} mm.textContent=v?'칭호를 줬어요':'칭호를 지웠어요'; };
+        if(me2.id!==uid){ var oc=el.querySelector('.cg'); if(oc) oc.remove(); var cg=document.createElement('div'); cg.className='cg'; cg.style.cssText='margin:6px 0 10px;display:flex;gap:6px;justify-content:center;flex-wrap:wrap';
+          var st='padding:6px 8px;border-radius:8px;border:1px solid #333;background:#10131b;color:#eef0f5;font:inherit;min-width:0';
+          cg.innerHTML='<input type="number" class="cga" min="1" max="100000" placeholder="개수" style="'+st+';width:80px"><input class="cgm" maxlength="100" placeholder="메시지 (100자까지)" style="'+st+';flex:1;max-width:220px"><button type="button" style="padding:6px 10px;border-radius:8px;border:1px solid #ffd36b;background:#2a2110;color:#ffd36b;font:inherit;cursor:pointer">🪙 코인 주기</button><span class="cgs" style="width:100%;text-align:center;font-size:12px;color:#9aa3b5"></span>';
+          cb.parentNode.insertBefore(cg,cb.nextSibling);
+          cg.querySelector('button').onclick=async function(){ var n=parseInt(cg.querySelector('.cga').value,10), ms=cg.querySelector('.cgm').value.trim().slice(0,100), st2=cg.querySelector('.cgs');
+            if(!(n>=1&&n<=100000)){ st2.textContent='개수는 1에서 100000 사이로 적어 주세요'; return; }
+            st2.textContent='…'; var r; try{ r=await sb.rpc('ff_coin_give',{p_user:uid,p_amount:n,p_msg:ms}); }catch(e){ r={error:e}; }
+            if(r&&r.error){ st2.textContent='보내지 못했어요 (supabase-coin-give-2026-11-03.sql 을 먼저 실행해 주세요)'; return; }
+            cg.querySelector('.cga').value=''; cg.querySelector('.cgm').value=''; st2.textContent=n+' hC를 보냈어요. 받는 사람이 들어오면 창이 떠요'; }; } } } }catch(e){}
   gameSection(el, sb, uid, d, o, T, own);
   acb.style.display=''; acb.onclick=async function(){ var w=achWin(T), box=w.querySelector('.L'); box.innerHTML='<div class="n">'+esc(T.loading)+'</div>'; box.scrollTop=0; w.classList.add('on');
     try{ await list(box, sb, d, o); }catch(e){ box.innerHTML='<div class="n">'+esc(T.fail)+'</div>'; } };
