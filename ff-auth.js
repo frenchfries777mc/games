@@ -788,12 +788,12 @@ function setFill(p){
 }
 
 var NL={
- ko:{blist:'차단한 사람',bell:'알림',none:'새 알림이 없어요.',mention:'{0}님이 나를 언급했어요',mentionc:'{0}님이 채팅에서 나를 불렀어요',coin:'{0}님이 Hub Coin을 보냈어요 🎁',comment:'{0}님이 내 글에 댓글을 남겼어요',like:'{0}님이 내 글을 좋아해요',friend:'{0}님이 친구 요청을 보냈어요',dm:'{0}님이 메시지를 보냈어요',invite:'{0}님이 {1} 방에 초대했어요 (코드 {2})',inviteOld:'{0}님의 초대가 지났어요',invBtn:'➕ 초대',invDone:'초대를 보냈어요',invFail:'초대를 보내지 못했어요. 잠시 뒤 다시 해 주세요.',
+ ko:{blist:'차단한 사람',bell:'알림',none:'새 알림이 없어요.',friendpost:'{0}님이 새 글을 올렸어요',mention:'{0}님이 나를 언급했어요',mentionc:'{0}님이 채팅에서 나를 불렀어요',coin:'{0}님이 Hub Coin을 보냈어요 🎁',comment:'{0}님이 내 글에 댓글을 남겼어요',like:'{0}님이 내 글을 좋아해요',friend:'{0}님이 친구 요청을 보냈어요',dm:'{0}님이 메시지를 보냈어요',invite:'{0}님이 {1} 방에 초대했어요 (코드 {2})',inviteOld:'{0}님의 초대가 지났어요',invBtn:'➕ 초대',invDone:'초대를 보냈어요',invFail:'초대를 보내지 못했어요. 잠시 뒤 다시 해 주세요.',
      feedback:'보낸 피드백을 관리자가 확인했어요',report:'보낸 신고를 관리자가 처리했어요',clear:'모두 지우기',msg:'💬 메시지',dmPh:'메시지 보내기',send:'보내기',dmEmpty:'아직 나눈 메시지가 없어요.',
      dmOnly:'친구끼리만 메시지를 보낼 수 있어요.',block:'🚫 차단',unblock:'차단 풀기',blocked:'차단한 사람이에요. 이 사람의 글과 채팅은 보이지 않아요.',report_:'🚩 신고',
      rTitle:'신고하기',rWhy:'이유',r1:'스팸 · 광고',r2:'욕설 · 괴롭힘',r3:'부적절한 사진',r4:'기타',rMore:'자세히 (선택)',rBlock:'이 사람도 차단하기',rSend:'신고 보내기',rDone:'신고했어요. 관리자가 확인할게요.',
      sureBlock:'정말 차단할까요?',blockedT:'차단했어요',err:'처리하지 못했어요. 잠시 뒤 다시 해 주세요.',notReady:'아직 준비 중이에요.'},
- en:{blist:'Blocked',bell:'Notifications',none:'No new notifications.',mention:'{0} mentioned you',mentionc:'{0} mentioned you in chat',coin:'{0} sent you Hub Coin 🎁',comment:'{0} commented on your post',like:'{0} liked your post',friend:'{0} sent you a friend request',dm:'{0} sent you a message',invite:'{0} invited you to a {1} room (code {2})',inviteOld:'{0}’s invite has expired',invBtn:'➕ Invite',invDone:'Invite sent',invFail:'Couldn’t send the invite. Try again soon.',
+ en:{blist:'Blocked',bell:'Notifications',none:'No new notifications.',friendpost:'{0} posted something new',mention:'{0} mentioned you',mentionc:'{0} mentioned you in chat',coin:'{0} sent you Hub Coin 🎁',comment:'{0} commented on your post',like:'{0} liked your post',friend:'{0} sent you a friend request',dm:'{0} sent you a message',invite:'{0} invited you to a {1} room (code {2})',inviteOld:'{0}’s invite has expired',invBtn:'➕ Invite',invDone:'Invite sent',invFail:'Couldn’t send the invite. Try again soon.',
      feedback:'The admin has seen your feedback',report:'The admin has handled your report',clear:'Clear all',msg:'💬 Message',dmPh:'Send a message',send:'Send',dmEmpty:'No messages yet.',
      dmOnly:'Only friends can message each other.',block:'🚫 Block',unblock:'Unblock',blocked:'You blocked this person. Their posts and chat are hidden.',report_:'🚩 Report',
      rTitle:'Report',rWhy:'Reason',r1:'Spam · ads',r2:'Abuse · harassment',r3:'Inappropriate photo',r4:'Other',rMore:'Details (optional)',rBlock:'Also block this person',rSend:'Send report',rDone:'Reported. The admin will take a look.',
@@ -894,7 +894,7 @@ function goNote(n){
   if(n.kind==='dm') return openDM(n.actor_id);
   if(n.kind==='coin'){ if(onHub&&window.FFHub&&FFHub.coin) return FFHub.coin(); location.href=hubUrl+'#coin'; return; }
   if(n.kind==='mentionc'){ if(onHub&&window.FFHub) return FFHub.tab('chat'); location.href=hubUrl+'#chat'; return; }
-  if(n.kind==='comment'||n.kind==='like'||n.kind==='mention'){ if(onHub&&window.FFHub) return FFHub.openPost(n.ref); location.href=hubUrl+'?post='+encodeURIComponent(n.ref)+'#community'; return; }
+  if(n.kind==='comment'||n.kind==='like'||n.kind==='mention'||n.kind==='friendpost'){ if(onHub&&window.FFHub) return FFHub.openPost(n.ref); location.href=hubUrl+'?post='+encodeURIComponent(n.ref)+'#community'; return; }
   if(onHub&&window.FFHub) return FFHub.tab('fb'); location.href=hubUrl+'#feedback';
 }
 function watchNotes(){
