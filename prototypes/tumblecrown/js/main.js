@@ -160,7 +160,6 @@ function ffProfile() {
   return new Promise(res => { const s = document.createElement('script'); s.src = 'https://frenchfries777mc.github.io/games/ff-profile.js?v=20261031a'; s.onload = () => res(!!window.FFProfile); s.onerror = () => res(false); document.head.appendChild(s); });
 }
 function ffSync() {
-  return; // 시험작이라 계정 기록·업적을 보내지 않아요
   clearTimeout(ffAchT); ffAchT = setTimeout(async () => {
     try {
       const sb = window.FFAuth && FFAuth.client && FFAuth.client(), u = window.FFAuth && FFAuth.user(); if (!sb || !u || !(await ffProfile())) return;
