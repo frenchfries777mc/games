@@ -407,7 +407,7 @@ window.bfIntro=function(){if(run)return;run=1;t0=Date.now();el.classList.add('ru
     <button class="btn" data-act="skins"><span class="arrow">▶</span>스킨 상점<span class="en">SKIN SHOP</span></button>
     <button class="btn" data-act="stats"><span class="arrow">▶</span>통계<span class="en">STATS</span></button>
     <button class="btn" data-act="settings"><span class="arrow">▶</span>설정<span class="en">SETTINGS</span></button>
-    <p class="foot">v0.5<br>build 159</p>
+    <p class="foot">v0.5<br>build 160</p>
   </nav>
 </div>
 
@@ -5064,8 +5064,9 @@ function placeCell(kind){
     return first;
   }
   let first=null;
-  for(const d of [11,17]){
-    for(const sd of [0,1,-1]){
+  const rl=kind==='rail';   // 선로는 옆 칸으로 새지 않고, 앞 칸이 이미 선로면 그 다음 칸으로 곧게 이어 놓아요
+  for(const d of (rl?[11,27,43]:[11,17])){
+    for(const sd of (rl?[0]:[0,1,-1])){
       const c=cellOf(P.x+fx*d+qx*GRID*sd,P.y+fy*d+qy*GRID*sd);
       const x0=c.gx*GRID,y0=c.gy*GRID;
       const onPlayer=P.x>=x0-1.5&&P.x<x0+GRID+1.5&&P.y>=y0-1.5&&P.y<y0+GRID+1.5;

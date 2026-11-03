@@ -912,3 +912,6 @@ Stickseum-v0.9.html | SKILLS.magiccard desc 카드 5장 (장당 8 피해) | buil
 ## 프로필 개편 (2026-11-03)
 - hub/profile/index.html 문구 전부(제목, 안내, 테두리 이름 ff-borders.js의 ko/en, 버튼) 번역 필요. 설정 탭의 '프로필 설정 열기' 문구도.
 - 패치노트: 석궁병 연사 빨라짐, 기사 체력 조정 (개발 문구 한국어만)
+
+## Beaconfall 선로 곧게
+- 패치노트: 선로를 연달아 놓으면 옆 칸으로 새지 않고 바라보는 방향으로 곧게 이어 놓여요
