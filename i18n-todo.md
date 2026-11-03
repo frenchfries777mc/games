@@ -915,3 +915,4 @@ Stickseum-v0.9.html | SKILLS.magiccard desc 카드 5장 (장당 8 피해) | buil
 
 ## Beaconfall 선로 곧게
 - 패치노트: 선로를 연달아 놓으면 옆 칸으로 새지 않고 바라보는 방향으로 곧게 이어 놓여요
+- 친구 새 글 알림 문구(friendpost)는 ko/en만 있음 → 나머지 언어 번역 필요; 설정 알림 항목 friendpost/friendpostD도 ko/en만
