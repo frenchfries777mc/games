@@ -909,3 +909,4 @@ Stickseum-v0.9.html | SKILLS.magiccard desc 카드 5장 (장당 8 피해) | buil
 
 ## 프로필 개편 (2026-11-03)
 - hub/profile/index.html 문구 전부(제목, 안내, 테두리 이름 ff-borders.js의 ko/en, 버튼) 번역 필요. 설정 탭의 '프로필 설정 열기' 문구도.
+- 친구 새 글 알림 문구(friendpost)는 ko/en만 있음 → 나머지 언어 번역 필요; 설정 알림 항목 friendpost/friendpostD도 ko/en만
