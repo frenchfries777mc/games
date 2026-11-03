@@ -715,7 +715,7 @@ function fpaint(){
   var acc=friends.filter(function(f){ return f.status==='accepted'; }).sort(function(a,b){ return (online(b)-online(a))||a.name.localeCompare(b.name,'ko'); });
   if(acc.length) section(F.list, acc, function(f){ var d=row(f.name,f.otherId,[[F.card,function(){ openProfile(f.otherId); return null; }]],presText(f));
       var dm=document.createElement('button'); dm.type='button'; dm.className='dmb'; dm.textContent='💬'; dm.title=N.msg; dm.setAttribute('aria-label',N.msg); var un=dmUnread[f.otherId]||0; if(un){ var bg=document.createElement('span'); bg.className='ffa-badge'; bg.textContent=un>9?'9+':String(un); dm.appendChild(bg); } dm.onclick=function(e){ e.stopPropagation(); openDM(f.otherId); }; d.appendChild(dm);
-      if(myRoom){ var iv=document.createElement('button'); iv.type='button'; iv.textContent=N.invBtn||NL.ko.invBtn; iv.onclick=function(e){ e.stopPropagation(); iv.disabled=true; sendInvite(f.otherId).then(function(ok){ iv.disabled=false; toast(ok?(N.invDone||NL.ko.invDone):(N.invFail||NL.ko.invFail)); }); }; d.appendChild(iv); }
+      if(myRoom){ var iv=document.createElement('button'); iv.type='button'; iv.textContent=N.invBtn||NL.en.invBtn; iv.onclick=function(e){ e.stopPropagation(); iv.disabled=true; sendInvite(f.otherId).then(function(ok){ iv.disabled=false; toast(ok?(N.invDone||NL.en.invDone):(N.invFail||NL.en.invFail)); }); }; d.appendChild(iv); }
       if(online(f)) d.classList.add('on');
       var rm=document.createElement('button'); rm.type='button'; rm.textContent=F.remove;
       rm.onclick=async function(e){ e.stopPropagation(); if(fbusy) return; if(!rm.dataset.sure){ rm.dataset.sure='1'; rm.textContent=F.sure; setTimeout(function(){ if(rm.isConnected&&!fbusy){ delete rm.dataset.sure; rm.textContent=F.remove; } },3000); return; } fbusy=true; rm.disabled=true; var r; try{ r=await removeRow(f.rowId); }catch(x){ r={error:x}; } fbusy=false; if(r&&r.error) toastErr(); fpaint(); };
@@ -848,8 +848,8 @@ var NCSS='[data-ff-account] .ffa-wrap{white-space:nowrap}.ffa-bell{position:rela
  '#ffaFriends .row .nm{min-width:64px}#ffaFriends .row .tg{flex-shrink:1;min-width:0}#ffaFriends .row .dmb{position:relative}#ffaFriends .row .dmb .ffa-badge{position:absolute;top:-7px;right:-7px;margin:0}';
 function ncss(){ fcss(); if(document.getElementById('ffaNCss')) return; var s=document.createElement('style'); s.id='ffaNCss'; s.textContent=NCSS; document.head.appendChild(s); }
 function ago2(iso){ var t=Date.parse(iso), m=Math.max(0,Math.round((Date.now()-t)/60000)); return m<1?F.now:(m<60?fmt(F.mn,m):(m<1440?fmt(F.hr,Math.round(m/60)):fmt(F.dy,Math.round(m/1440)))); }
-function noteText(n){ var nm=noteNames[n.actor_id]||'???', t=N[n.kind]||NL.ko[n.kind]||'';
-  if(n.kind==='invite'){ var v=invMap[n.ref]; if(!v||!inviteLive(v)) return fmt(N.inviteOld||NL.ko.inviteOld,nm); return fmt(t,nm).replace('{1}',GNAME[v.game]||v.game).replace('{2}',v.code); }
+function noteText(n){ var nm=noteNames[n.actor_id]||'???', t=N[n.kind]||NL.en[n.kind]||'';
+  if(n.kind==='invite'){ var v=invMap[n.ref]; if(!v||!inviteLive(v)) return fmt(N.inviteOld||NL.en.inviteOld,nm); return fmt(t,nm).replace('{1}',GNAME[v.game]||v.game).replace('{2}',v.code); }
   return fmt(t,nm); }
 function inviteLive(v){ var t=Date.parse(v&&v.created_at); return !!t&&Date.now()-t<30*60*1000; }
 function inviteUrl(v){ return HUB+v.path+(v.path.indexOf('?')<0?'?':'&')+'join='+encodeURIComponent(v.code)+'&room='+encodeURIComponent(v.code); }
