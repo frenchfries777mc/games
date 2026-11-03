@@ -407,7 +407,7 @@ window.bfIntro=function(){if(run)return;run=1;t0=Date.now();el.classList.add('ru
     <button class="btn" data-act="skins"><span class="arrow">▶</span>스킨 상점<span class="en">SKIN SHOP</span></button>
     <button class="btn" data-act="stats"><span class="arrow">▶</span>통계<span class="en">STATS</span></button>
     <button class="btn" data-act="settings"><span class="arrow">▶</span>설정<span class="en">SETTINGS</span></button>
-    <p class="foot">v0.5<br>build 169</p>
+    <p class="foot">v0.5<br>build 170</p>
   </nav>
 </div>
 
@@ -3085,7 +3085,9 @@ function openStall(b){
       box.querySelectorAll('[data-buy]').forEach(x=>x.onclick=()=>{
         const [id,ns]=x.dataset.buy.split(':'),n=+ns,u=(b.pp||{})[id]|0,q=Math.min(n,(b.ps||{})[id]|0);
         if(q<=0||u<=0||cntItem('coin')<q*u)return;
-        takeItemN('coin',q*u);act('buy',id,q,q*u);
+        takeItemN('coin',q*u);
+        if(!roomFor(id,q)){addStack('coin',q*u);toast('인벤토리가 가득 찼어요. 자리를 비우고 다시 사 주세요.');renderInv();return;}   // 자리가 없으면 동전을 돌려줘요
+        act('buy',id,q,q*u);
         if(isGuest()){b.ps[id]=Math.max(0,(b.ps[id]|0)-q);if(b.ps[id]<=0){delete b.ps[id];delete b.pp[id];}}
         rd();
       });
@@ -6688,7 +6690,9 @@ function openShop(n){
       box.querySelectorAll('[data-buy]').forEach(b=>b.onclick=()=>{
         const [id,q,pr0,ml]=buy[+b.dataset.buy],pr=bpr(id,pr0);
         if(cntItem('coin')<pr||prosLv()<(ml|0)||((id==='horse'||id==='cart')&&cntItem(id)>0))return;
-        takeItemN('coin',pr);giveItem(id,q);renderInv();persist();prosAdd(pr/15);
+        takeItemN('coin',pr);
+        if(!roomFor(id,q)){addStack('coin',pr);toast('인벤토리가 가득 찼어요. 자리를 비우고 다시 사 주세요.');renderInv();return;}   // 자리가 없으면 동전을 돌려줘요
+        giveItem(id,q);renderInv();persist();prosAdd(pr/15);
         const sc=box.scrollTop;box.innerHTML=draw();box.scrollTop=sc;bind();
       });
       box.querySelectorAll('[data-sell]').forEach(b=>b.onclick=()=>{
