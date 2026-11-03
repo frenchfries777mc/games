@@ -287,7 +287,7 @@ function close(){ var el=document.getElementById('ffaModal'); if(el) el.style.di
 
 /* the worn profile border (ff-borders.js) as a ring on the small avatar of the account button */
 async function chipBorder(root){ try{ if(!sb||!user) return; var uid=user.id;
-  if(!window.FFBorders) await loadScript(BASE+'ff-borders.js?v=20261103d', function(){ return !!window.FFBorders; });
+  if(!window.FFBorders) await loadScript(BASE+'ff-borders.js?v=20261103e', function(){ return !!window.FFBorders; });
   if(!window.FFBorders||!user||user.id!==uid) return; var id=await window.FFBorders.equipped(sb,uid), b=window.FFBorders.get(id); if(!b) return;
   var col=b.a==='rainbow'?'#ffd23f':b.a, im=root.querySelector('.ffa-av'); if(im){ im.style.borderRadius='6px'; im.style.boxShadow='0 0 0 2px '+col+',0 0 8px '+col+'99'; } }catch(e){} }
 function profileLib(){ return loadScript(BASE+'ff-profile.js?v=20261103d', function(){ return !!window.FFProfile; }); }
