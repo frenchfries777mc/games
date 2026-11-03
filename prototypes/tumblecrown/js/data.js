@@ -3,7 +3,7 @@
 
 import { T } from './tr.js';
 
-export const VERSION = 'v0.2', BUILD = 301;
+export const VERSION = 'v0.2', BUILD = 302;
 
 export const ROLES = {
   knight: {
@@ -201,7 +201,7 @@ export const ROLES = {
       { id: 'necroraise', name: T('해골 소환'), key: 'E', cd: 16, desc: T('둘레에 약한 해골 네 마리를 불러요. 해골은 18초 동안 우리 편으로 싸워요.') },
       { id: 'necrodoom', name: T('죽음의 영역'), key: 'R', cd: 24, desc: T('넓은 원 안의 상대를 1초 기절시키고 피해를 준 뒤 3초 동안 이동 속도를 50% 느리게 해요.') }
     ],
-    st: [2, 3, 5, 3], atkTxt: T('넓은 직사각형으로 휘두르기'),
+    st: [2, 3, 4, 3], atkTxt: T('넓은 직사각형으로 휘두르기'),
     role: T('넓게 휘두르는 공격으로 멀리서 싸워요. 아군을 치유하고 해골을 불러 전선을 만들어요.')
   }
 };
