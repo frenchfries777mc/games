@@ -2,6 +2,101 @@
  "notes": [
   {
    "date": "2026-11-03",
+   "build": "v0.2 build 85",
+   "title": "유머 쪽지 여러 나라 말 보기",
+   "items": [
+    "시세 신문의 유머가 고른 나라 말로 보여요",
+    "프로필 창의 개수와 번 표시 영어를 고쳤어요"
+   ],
+   "tr": {
+    "en": {
+     "title": "Newspaper jokes in more languages",
+     "items": [
+      "The joke box in the price paper now shows in your language",
+      "Fixed the English labels for counts in the profile window"
+     ]
+    },
+    "ja": {
+     "title": "新聞のユーモア欄を多言語化",
+     "items": [
+      "相場新聞のユーモア欄が選んだ言語で表示されます",
+      "プロフィール窓の「個」「回」の英語表示を修正しました"
+     ]
+    },
+    "es": {
+     "title": "Humor del periódico en más idiomas",
+     "items": [
+      "El recuadro de humor del periódico de precios se muestra en tu idioma",
+      "Corregidas las etiquetas en inglés de las cantidades en la ventana de perfil"
+     ]
+    },
+    "fr": {
+     "title": "Humour du journal en plusieurs langues",
+     "items": [
+      "La case humour du journal des prix s’affiche dans votre langue",
+      "Corrigé l’affichage anglais des compteurs dans la fenêtre de profil"
+     ]
+    },
+    "de": {
+     "title": "Zeitungshumor in mehr Sprachen",
+     "items": [
+      "Der Humor-Kasten der Preiszeitung wird jetzt in deiner Sprache angezeigt",
+      "Englische Zähler im Profilfenster korrigiert"
+     ]
+    },
+    "zh": {
+     "title": "报纸趣味栏支持更多语言",
+     "items": [
+      "行情报纸里的趣味栏现在会以你的语言显示",
+      "修正了个人资料窗口中计数的英文显示"
+     ]
+    },
+    "pt": {
+     "title": "Humor do jornal em mais idiomas",
+     "items": [
+      "A caixa de humor do jornal de preços agora aparece no seu idioma",
+      "Corrigida a exibição em inglês das contagens na janela de perfil"
+     ]
+    },
+    "ru": {
+     "title": "Юмор из газеты на большем числе языков",
+     "items": [
+      "Блок юмора в газете цен теперь показывается на вашем языке",
+      "Исправлено английское отображение счётчиков в окне профиля"
+     ]
+    },
+    "tr": {
+     "title": "Gazetenin mizahı daha fazla dilde",
+     "items": [
+      "Fiyat gazetesindeki mizah kutusu artık sizin dilinizde görünüyor",
+      "Profil penceresindeki sayaçların İngilizce gösterimi düzeltildi"
+     ]
+    },
+    "it": {
+     "title": "Umorismo del giornale in più lingue",
+     "items": [
+      "Il riquadro umoristico del giornale dei prezzi ora appare nella tua lingua",
+      "Corretta la visualizzazione inglese dei contatori nella finestra profilo"
+     ]
+    },
+    "pl": {
+     "title": "Humor z gazety w większej liczbie języków",
+     "items": [
+      "Ramka humoru w gazecie cenowej pokazuje się teraz w Twoim języku",
+      "Poprawiono angielskie wyświetlanie liczników w oknie profilu"
+     ]
+    },
+    "ar": {
+     "title": "طُرف الجريدة بلغات أكثر",
+     "items": [
+      "يظهر صندوق الطرائف في جريدة الأسعار بلغتك الآن",
+      "تم إصلاح عرض العدادات بالإنجليزية في نافذة الملف الشخصي"
+     ]
+    }
+   }
+  },
+  {
+   "date": "2026-11-03",
    "build": "v0.2 build 84",
    "title": "다른 나라 말 문구 번역 보강",
    "items": [
