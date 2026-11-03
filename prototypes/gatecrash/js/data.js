@@ -1,7 +1,7 @@
 /* Gatecrash · © 2026 Frenchfries777 · CC BY-NC-ND 4.0
    데이터: 상수, 무기, 맵 */
 'use strict';
-const VERSION = '0.1', BUILD = 30;
+const VERSION = '0.1', BUILD = 31;
 const TS = 16;                                   // 타일 한 칸 (px)
 const PH = { RUN: 120, ACC: 1500, AIR: 1000, G: 1500, JUMP: 440, CUT: 400, MAXF: 560, W: 10, H: 22, COY: 0.08, BUF: 0.12, BELT: 70, ICE: 180, LIFT: 130 };
 const MAX_HP = 100, RACERS = 4;
@@ -19,12 +19,15 @@ const WEAPONS = {
   sling:   { name: '새총',       kind: 'shot',   dmg: 6,  kb: 120, up: 60,  cd: 0.17, uses: 26, speed: 540, life: 0.7, stun: 0.15, reach: 210 },
   hose:    { name: '소방 호스',   kind: 'spray',  dmg: 2,  kb: 230, up: 30,  cd: 0.08, uses: 40, speed: 300, life: 0.3, stun: 0.1, recoil: 90, reach: 90 },
   banana:  { name: '바나나 껍질', kind: 'trap',   dmg: 0,  kb: 0,   up: 0,   cd: 0.5,  uses: 3,  stun: 1.0 },
+  tack:    { name: '압정',       kind: 'trap',   dmg: 8,  kb: 140, up: 170, cd: 0.5,  uses: 3,  stun: 0.55 },
+  glue:    { name: '끈끈이',     kind: 'trap',   dmg: 0,  kb: 0,   up: 0,   cd: 0.5,  uses: 2,  stun: 0, slow: 2.0 },
+  boots:   { name: '로켓 신발',   kind: 'boost',  dmg: 0,  kb: 0,   up: 0,   cd: 0.3,  uses: 1,  stun: 0, dur: 3 },
   shotgun: { name: '산탄총',     kind: 'shot',   dmg: 7,  kb: 150, up: 80,  cd: 0.9,  uses: 8,  speed: 400, life: 0.35, stun: 0.3, reach: 130, n: 5, spread: 0.5 },
   bow:     { name: '장난감 활',   kind: 'shot',   dmg: 17, kb: 230, up: 110, cd: 0.8,  uses: 9,  speed: 360, life: 1.1, stun: 0.4, reach: 260 },
   minigun: { name: '장난감 기관총', kind: 'shot',  dmg: 3,  kb: 70,  up: 30,  cd: 0.07, uses: 45, speed: 480, life: 0.55, stun: 0.1, reach: 190, spread: 0.12 },
   firework:{ name: '폭죽 발사기', kind: 'rocket', dmg: 16, kb: 300, up: 200, cd: 0.7,  uses: 6,  speed: 340, life: 1.6, radius: 30, stun: 0.4, reach: 200 }
 };
-const WEP_IDS = Object.keys(WEAPONS);
+const WEP_IDS = Object.keys(WEAPONS).filter(k => k !== 'boots');      // 로켓 신발은 꼴찌일 때만 나와요
 
 /* 스킨: 능력치는 그대로, gC로 사서 입어요 */
 const SKINS = {
