@@ -407,7 +407,7 @@ window.bfIntro=function(){if(run)return;run=1;t0=Date.now();el.classList.add('ru
     <button class="btn" data-act="skins"><span class="arrow">▶</span>스킨 상점<span class="en">SKIN SHOP</span></button>
     <button class="btn" data-act="stats"><span class="arrow">▶</span>통계<span class="en">STATS</span></button>
     <button class="btn" data-act="settings"><span class="arrow">▶</span>설정<span class="en">SETTINGS</span></button>
-    <p class="foot">v0.5<br>build 166</p>
+    <p class="foot">v0.5<br>build 167</p>
   </nav>
 </div>
 
@@ -5848,10 +5848,17 @@ function useSelected(){
   eatSelected();
 }
 /* 장착한 갑옷을 캐릭터에도 입혀 보여요 */
-function drawArmorOverlay(g,px,py,f,moving,walkT,chopping,swingT){
-  if(!eq.helm&&!eq.chest&&!eq.legs&&!eq.boots)return;
+const armStr=()=>ARMOR_ORDER.map(k=>eq[k]||'').join(',');   // 내 갑옷을 다른 사람에게 알려 줄 때
+function cleanArm(t){
+  const a=String(t||'').split(',').slice(0,4),o={};let any=false;
+  ARMOR_ORDER.forEach((k,i)=>{const id=a[i]||'',ai=id&&armorInfo(id);if(ai&&ai.piece===k&&MATCOL[ai.mat]){o[k]=id;any=true;}});
+  return any?o:null;
+}
+function drawArmorOverlay(g,px,py,f,moving,walkT,chopping,swingT,E){
+  const EQ=E||eq;
+  if(!EQ.helm&&!EQ.chest&&!EQ.legs&&!EQ.boots)return;
   const sw=chopping?(((swingT*6)|0)&1):0,step=moving?(((walkT*9)|0)&1):0,bob=((moving&&step)||sw)?1:0;
-  const x=Math.round(px)+(sw?f:0),y=Math.round(py),by=y-5-bob,col=k=>eq[k]?MATCOL[armorInfo(eq[k]).mat]:null;
+  const x=Math.round(px)+(sw?f:0),y=Math.round(py),by=y-5-bob,col=k=>EQ[k]?MATCOL[armorInfo(EQ[k]).mat]:null;
   let c=col('legs');
   if(c){g.fillStyle=c.m;g.fillRect(x-1,y-(moving&&step?1:2),1,moving&&step?1:2);g.fillRect(x+1,y-(moving&&!step?1:2),1,moving&&!step?1:2);}
   c=col('boots');
@@ -12655,7 +12662,7 @@ const drawPlayer=g=>{
   if(cartOn&&!P.sailing&&cartP.y>=P.y)drawCart(g,cartP.x,cartP.y);
   g.globalAlpha=1;
 };
-const drawRemote=(g,r)=>{if(r.dead||(r.sleep&&onBed(r.x,r.y)))return;if(r.down){g.globalAlpha=0.55;drawPerson(g,r.x,r.y+4,r.f,false,0,false,0,r.suit,r.sk);g.globalAlpha=1;drawDownMark(g,r.x,r.y);return;}if(r.air){drawAirRider(g,r.x,r.y,r.f,r.suit,r.alt||0,r.sk);return;}if(r.boat){drawBoatHull(g,r.x,r.y);drawPerson(g,r.x,r.y-3,r.f,false,0,false,0,r.suit,r.sk);}else if(r.horse){drawHorseBody(g,r.x,r.y,r.f,r.m,r.walk);drawPerson(g,r.x,r.y-7,r.f,false,0,false,0,r.suit,r.sk);}else drawPerson(g,r.x,r.y,r.f,r.m,r.walk,false,0,r.suit,r.sk);};
+const drawRemote=(g,r)=>{if(r.dead||(r.sleep&&onBed(r.x,r.y)))return;const AO=(x,y,m,w)=>{if(r.eq)drawArmorOverlay(g,x,y,r.f,m,w,false,0,r.eq);};if(r.down){g.globalAlpha=0.55;drawPerson(g,r.x,r.y+4,r.f,false,0,false,0,r.suit,r.sk);AO(r.x,r.y+4,false,0);g.globalAlpha=1;drawDownMark(g,r.x,r.y);return;}if(r.air){drawAirRider(g,r.x,r.y,r.f,r.suit,r.alt||0,r.sk);return;}if(r.boat){drawBoatHull(g,r.x,r.y);drawPerson(g,r.x,r.y-3,r.f,false,0,false,0,r.suit,r.sk);AO(r.x,r.y-3,false,0);}else if(r.horse){drawHorseBody(g,r.x,r.y,r.f,r.m,r.walk);drawPerson(g,r.x,r.y-7,r.f,false,0,false,0,r.suit,r.sk);AO(r.x,r.y-7,false,0);}else{drawPerson(g,r.x,r.y,r.f,r.m,r.walk,false,0,r.suit,r.sk);AO(r.x,r.y,r.m,r.walk);}};
 function enterPlay(){
   try{bfOwnerFix();}catch(e){}
   loadInvFor(invKey());renderInv();renderEquip();
@@ -12858,8 +12865,8 @@ function bcast(){
 }
 function playerList(){
   const a=[];
-  if(mode==='play')a.push({id:'host',x:P.x,y:P.y,f:P.f,m:P.moving?1:0,d:P.dead?1:0,s:P.sleeping?1:0,b:P.sailing?1:0,h:P.mount?1:0,a:P.air?1:0,al:Math.round((P.alt||0)*10)/10,n:myName(),dn:P.down?1:0,w:wkStr(),k:myLook()});
-  for(const [id,r] of remotes)a.push({id,x:r.tx,y:r.ty,f:r.f,m:r.m?1:0,d:r.dead?1:0,s:r.sleep?1:0,b:r.boat?1:0,h:r.horse?1:0,a:r.air?1:0,al:Math.round((r.alt||0)*10)/10,n:r.name||'',dn:r.down?1:0,w:r.wk||'',k:r.sk||''});
+  if(mode==='play')a.push({id:'host',x:P.x,y:P.y,f:P.f,m:P.moving?1:0,d:P.dead?1:0,s:P.sleeping?1:0,b:P.sailing?1:0,h:P.mount?1:0,a:P.air?1:0,al:Math.round((P.alt||0)*10)/10,e:armStr(),n:myName(),dn:P.down?1:0,w:wkStr(),k:myLook()});
+  for(const [id,r] of remotes)a.push({id,x:r.tx,y:r.ty,f:r.f,m:r.m?1:0,d:r.dead?1:0,s:r.sleep?1:0,b:r.boat?1:0,h:r.horse?1:0,a:r.air?1:0,al:Math.round((r.alt||0)*10)/10,e:r.ea||'',n:r.name||'',dn:r.down?1:0,w:r.wk||'',k:r.sk||''});
   return a;
 }
 function snapshot(){
@@ -12884,7 +12891,7 @@ function onHostData(c,d){
   if(d.t==='pos'&&Number.isFinite(d.x)&&Number.isFinite(d.y)){
     let r=remotes.get(c.peer);
     if(!r){r={x:d.x,y:d.y,tx:d.x,ty:d.y,f:1,m:0,walk:0,suit:suitOf(c.peer)};remotes.set(c.peer,r);}
-    r.tx=d.x;r.ty=d.y;r.f=d.f===-1?-1:1;r.m=d.m?1:0;r.dead=d.d?1:0;r.sleep=!!d.s;r.boat=!!d.b;r.horse=!!d.h;r.air=!!d.a;r.alt=Math.max(0,Math.min(3,+d.al||0));r.name=String(d.n||r.name||'').slice(0,15);r.down=!!d.dn;r.wk=String(d.w||'').slice(0,12);r.sk=cleanLook(d.k);if(r.sleep){r.x=d.x;r.y=d.y;}
+    r.tx=d.x;r.ty=d.y;r.f=d.f===-1?-1:1;r.m=d.m?1:0;r.dead=d.d?1:0;r.sleep=!!d.s;r.boat=!!d.b;r.horse=!!d.h;r.air=!!d.a;r.alt=Math.max(0,Math.min(3,+d.al||0));r.ea=String(d.e||'').slice(0,80);r.eq=cleanArm(r.ea);r.name=String(d.n||r.name||'').slice(0,15);r.down=!!d.dn;r.wk=String(d.w||'').slice(0,12);r.sk=cleanLook(d.k);if(r.sleep){r.x=d.x;r.y=d.y;}
   }else if(d.t==='chat'){
     const r=remotes.get(c.peer),t=chatClean(d.x),now=performance.now();
     if(t&&r&&!(r._ct>now-500)){r._ct=now;const n=r.name||'손님';chatAdd(c.peer,n,t);bcastAll({t:'chat',id:c.peer,n,x:t},c);}
@@ -13157,7 +13164,7 @@ async function guestHandle(d){
       seen.add(p.id);
       let r=remotes.get(p.id);
       if(!r){r={x:p.x,y:p.y,tx:p.x,ty:p.y,f:1,m:0,walk:0,suit:suitOf(p.id)};remotes.set(p.id,r);}
-      r.tx=p.x;r.ty=p.y;r.f=p.f===-1?-1:1;r.m=p.m?1:0;r.dead=p.d?1:0;r.sleep=!!p.s;r.boat=!!p.b;r.horse=!!p.h;r.air=!!p.a;r.alt=Math.max(0,Math.min(3,+p.al||0));r.name=String(p.n||'').slice(0,15);r.down=!!p.dn;r.wk=String(p.w||'').slice(0,12);r.sk=cleanLook(p.k);if(r.sleep){r.x=p.x;r.y=p.y;}
+      r.tx=p.x;r.ty=p.y;r.f=p.f===-1?-1:1;r.m=p.m?1:0;r.dead=p.d?1:0;r.sleep=!!p.s;r.boat=!!p.b;r.horse=!!p.h;r.air=!!p.a;r.alt=Math.max(0,Math.min(3,+p.al||0));r.ea=String(p.e||'').slice(0,80);r.eq=cleanArm(r.ea);r.name=String(p.n||'').slice(0,15);r.down=!!p.dn;r.wk=String(p.w||'').slice(0,12);r.sk=cleanLook(p.k);if(r.sleep){r.x=p.x;r.y=p.y;}
     }
     for(const id of [...remotes.keys()])if(!seen.has(id))remotes.delete(id);
   }else if(d.t==='mons'){
@@ -13263,7 +13270,7 @@ function netTick(now){
   if(!net.role||!world)return;
   if(isGuest()){
     if(net.rx&&now-net.rx>10000){netLeave('방장과 연결이 끊어졌어요.');return;}   // 방장이 10초 넘게 아무 소식이 없으면 끊긴 거예요
-    if(mode==='play'&&now-net.tPos>100){net.tPos=now;sendHost({t:'pos',x:Math.round(P.x*10)/10,y:Math.round(P.y*10)/10,f:P.f,m:P.moving?1:0,d:P.dead?1:0,s:P.sleeping?1:0,b:P.sailing?1:0,h:P.mount?1:0,a:P.air?1:0,al:Math.round((P.alt||0)*10)/10,n:myName(),dn:P.down?1:0,w:wkStr(),k:myLook()});}
+    if(mode==='play'&&now-net.tPos>100){net.tPos=now;sendHost({t:'pos',x:Math.round(P.x*10)/10,y:Math.round(P.y*10)/10,f:P.f,m:P.moving?1:0,d:P.dead?1:0,s:P.sleeping?1:0,b:P.sailing?1:0,h:P.mount?1:0,a:P.air?1:0,al:Math.round((P.alt||0)*10)/10,e:armStr(),n:myName(),dn:P.down?1:0,w:wkStr(),k:myLook()});}
   }else if(isHost()&&net.conns.length){
     const lowH=!!(typeof PERF!=='undefined'&&PERF&&PERF.low),pls=allPlayers();   // 방장 부담 줄이기: 멀리 있는 것은 보내지 않고, 몬스터가 많거나 저사양이면 전송 간격을 늘려요
     const nearP=(x,y,rr)=>{for(const p of pls)if(Math.abs(p.x-x)<rr&&Math.abs(p.y-y)<rr)return true;return false;};

@@ -934,3 +934,6 @@ Stickseum-v0.9.html | SKILLS.magiccard desc 카드 5장 (장당 8 피해) | buil
 
 ## b166
 - 패치노트: 다른 사람 열기구 높이 표시 수정
+
+## b167
+- 패치노트: 멀티 갑옷 표시
