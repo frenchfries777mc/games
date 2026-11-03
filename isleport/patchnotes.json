@@ -1,6 +1,88 @@
 {
  "notes": [
   {
+   "date": "2026-11-03",
+   "build": "v0.2 build 84",
+   "title": "다른 나라 말 문구 번역 보강",
+   "items": [
+    "개척지 시설, 영주의 성, 주민 심부름, 특산 요리 등 게임 안 문구가 더 많은 나라 말로 보여요"
+   ],
+   "tr": {
+    "en": {
+     "title": "More in-game text translated",
+     "items": [
+      "Frontier buildings, the lord's castle, villager errands and specialty dishes now show in more languages"
+     ]
+    },
+    "ja": {
+     "title": "ゲーム内の文言の翻訳を拡充",
+     "items": [
+      "開拓施設、領主の城、住民の使い、特産料理などの文言がより多くの言語で表示されます"
+     ]
+    },
+    "es": {
+     "title": "Más textos del juego traducidos",
+     "items": [
+      "Las instalaciones de frontera, el castillo del señor, los encargos de los habitantes y los platos especiales ahora se ven en más idiomas"
+     ]
+    },
+    "fr": {
+     "title": "Plus de textes du jeu traduits",
+     "items": [
+      "Les bâtiments de frontière, le château du seigneur, les missions des habitants et les plats spéciaux s'affichent dans davantage de langues"
+     ]
+    },
+    "de": {
+     "title": "Mehr Spieltexte übersetzt",
+     "items": [
+      "Grenzanlagen, die Burg des Lehnsherrn, Bewohner-Aufträge und Spezialgerichte werden nun in mehr Sprachen angezeigt"
+     ]
+    },
+    "zh": {
+     "title": "补充翻译更多游戏内文字",
+     "items": [
+      "开拓设施、领主城堡、居民差事和特色菜等游戏文字现在支持更多语言显示"
+     ]
+    },
+    "pt": {
+     "title": "Mais textos do jogo traduzidos",
+     "items": [
+      "Construções de fronteira, o castelo do senhor feudal, pedidos dos moradores e pratos especiais agora aparecem em mais idiomas"
+     ]
+    },
+    "ru": {
+     "title": "Переведено больше текстов игры",
+     "items": [
+      "Постройки на фронтире, замок лорда, поручения жителей и фирменные блюда теперь показываются на большем числе языков"
+     ]
+    },
+    "tr": {
+     "title": "Oyun içi metinlerin çevirisi genişletildi",
+     "items": [
+      "Öncü tesisleri, derebeyinin kalesi, sakin görevleri ve özel yemekler artık daha fazla dilde görünüyor"
+     ]
+    },
+    "it": {
+     "title": "Più testi di gioco tradotti",
+     "items": [
+      "Impianti di frontiera, il castello del signore, gli incarichi degli abitanti e i piatti speciali ora si vedono in più lingue"
+     ]
+    },
+    "pl": {
+     "title": "Przetłumaczono więcej tekstów gry",
+     "items": [
+      "Obiekty pogranicza, zamek pana, zlecenia mieszkańców i specjały są teraz wyświetlane w większej liczbie języków"
+     ]
+    },
+    "ar": {
+     "title": "ترجمة المزيد من نصوص اللعبة",
+     "items": [
+      "تظهر منشآت الحدود وقلعة اللورد ومهام السكان والأطباق الخاصة الآن بلغات أكثر"
+     ]
+    }
+   }
+  },
+  {
    "date": "2026-11-02",
    "build": "v0.2 build 83",
    "title": "이모지를 로고로 통일",
