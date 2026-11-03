@@ -92,7 +92,7 @@ async function fetchData(sb, uid){
   var avpick=null; try{ var ap=await sb.from('ff_avatar').select('pick').eq('user_id',uid).limit(1); if(ap&&!ap.error&&ap.data&&ap.data[0]) avpick=ap.data[0].pick||null; }catch(e){}      // (empty before supabase-ff-avatar.sql is run)
   var dev=null; try{ var dv=await sb.from('ff_devs').select('role').eq('user_id',uid).limit(1); if(dv&&!dv.error&&dv.data&&dv.data[0]) dev=dv.data[0].role; }catch(e){}      // (empty before supabase-ff-dev.sql is run)
   var ctitle=null; try{ var ct=await sb.from('ff_custom_title').select('title').eq('user_id',uid).limit(1); if(ct&&!ct.error&&ct.data&&ct.data[0]) ctitle=ct.data[0].title||null; }catch(e){}      // (empty before supabase-custom-title-2026-11-02.sql is run)
-  var border=''; try{ if(!window.FFBorders) await new Promise(function(res){ var sc=document.createElement('script'); sc.src='https://frenchfries777mc.github.io/games/ff-borders.js?v=20261103d'; sc.onload=sc.onerror=res; document.head.appendChild(sc); }); if(window.FFBorders) border=await window.FFBorders.equipped(sb,uid); }catch(e){}      // (empty before supabase-profile-borders-2026-11-03.sql is run)
+  var border=''; try{ if(!window.FFBorders) await new Promise(function(res){ var sc=document.createElement('script'); sc.src='https://frenchfries777mc.github.io/games/ff-borders.js?v=20261103e'; sc.onload=sc.onerror=res; document.head.appendChild(sc); }); if(window.FFBorders) border=await window.FFBorders.equipped(sb,uid); }catch(e){}      // (empty before supabase-profile-borders-2026-11-03.sql is run)
   return {profile:(p&&p.data)||{id:uid}, border:border, played:played, ach:ach, ids:ids, deco:deco, card:card, dev:dev, avpick:avpick, ctitle:ctitle};
 }
 
