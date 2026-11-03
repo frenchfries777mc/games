@@ -407,7 +407,7 @@ window.bfIntro=function(){if(run)return;run=1;t0=Date.now();el.classList.add('ru
     <button class="btn" data-act="skins"><span class="arrow">▶</span>스킨 상점<span class="en">SKIN SHOP</span></button>
     <button class="btn" data-act="stats"><span class="arrow">▶</span>통계<span class="en">STATS</span></button>
     <button class="btn" data-act="settings"><span class="arrow">▶</span>설정<span class="en">SETTINGS</span></button>
-    <p class="foot">v0.5<br>build 165</p>
+    <p class="foot">v0.5<br>build 166</p>
   </nav>
 </div>
 
@@ -2776,10 +2776,10 @@ function airLand(auto){
   P.x=best.x;P.y=best.y;P.air=false;P.kx=P.ky=0;
   for(let j=0;j<10;j++)parts.push({x:P.x,y:P.y,vx:(Math.random()-0.5)*40,vy:-6-Math.random()*16,life:0.5,c:'#d8d0b0'});
 }
-function drawAirRider(g,x,y,f,suit,alt){
+function drawAirRider(g,x,y,f,suit,alt,look){
   g.fillStyle='rgba(8,24,12,0.28)';for(let yy=-2;yy<=2;yy++){const half=Math.round(Math.sqrt(Math.max(0,1-(yy*yy)/9))*8);g.fillRect(Math.round(x)-half,Math.round(y)+yy,half*2,1);}
   const by=Math.round(y-12-(alt||0)*7+Math.sin(time*2.4)*1);
-  drawPerson(g,x,by-6,f,false,0,false,0,suit||0);
+  drawPerson(g,x,by-6,f,false,0,false,0,suit||0,look);
   const bx=Math.round(x);
   g.fillStyle='#14161c';g.fillRect(bx-6,by-2,12,7);g.fillStyle='#8a5a2b';g.fillRect(bx-5,by-1,10,5);g.fillStyle='#b5834a';g.fillRect(bx-5,by-1,10,1);g.fillStyle='#6b4423';g.fillRect(bx-5,by+2,10,1);
 }
@@ -2930,7 +2930,7 @@ function drawSkyReef(g,x0,y0,x1,y1){
     skyBirdsDraw(g,x0,y0,x1,y1);drawBalloonEnv(g,P.x,P.y,P.alt||0);
     {const a=P.alt||0,gx=Math.round(P.x)+16,gy=Math.round(P.y)-24;for(let k=0;k<3;k++){g.fillStyle='#14161c';g.fillRect(gx-1,gy+(2-k)*5-1,8,5);g.fillStyle=a>=k+0.6?(k===2?'#7ad0ff':'#f4ecd6'):'rgba(255,255,255,0.25)';g.fillRect(gx,gy+(2-k)*5,6,3);}}
   }
-  for(const r of remotes.values())if(r.air&&!r.dead)drawBalloonEnv(g,r.x,r.y);
+  for(const r of remotes.values())if(r.air&&!r.dead)drawBalloonEnv(g,r.x,r.y,r.alt||0);
 }
 /* ----- 유령선 ----- */
 function ghostTick(dt){
@@ -12646,7 +12646,7 @@ const drawPlayer=g=>{
   if(P.hurtT>0&&(((time*20)|0)&1))g.globalAlpha=0.35;else if(P.rollT>time)g.globalAlpha=0.55;
   if(cartOn&&!P.sailing&&cartP.y<P.y)drawCart(g,cartP.x,cartP.y);
   if(P.down){g.globalAlpha=0.55;drawPerson(g,P.x,P.y+4,P.f,false,0,false,0,0,myLook());g.globalAlpha=1;drawDownMark(g,P.x,P.y,P.downT);}
-  else if(P.air){drawAirRider(g,P.x,P.y,P.f,0,P.alt||0);}
+  else if(P.air){drawAirRider(g,P.x,P.y,P.f,0,P.alt||0,myLook());}
   else if(P.sailing){drawBoatHull(g,P.x,P.y);drawPerson(g,P.x,P.y-3,P.f,false,0,false,0,0,myLook());drawArmorOverlay(g,P.x,P.y-3,P.f,false,0,false,0);}
   else if(P.mount){drawHorseBody(g,P.x,P.y,P.f,P.moving,P.walk);drawPerson(g,P.x,P.y-7,P.f,false,0,P.chopping||P.atkAnim>0,P.swing,0,myLook());drawArmorOverlay(g,P.x,P.y-7,P.f,false,0,P.chopping||P.atkAnim>0,P.swing);}
   else if(P.train){drawTrain(g,P.x,P.y,P.train.dx,P.train.dy,trainLoad(P.train));const tx=P.x-P.train.dx*4,ty=P.y-(P.train.dx?6:8);drawPerson(g,tx,ty,P.f,false,0,false,0,0,myLook());drawArmorOverlay(g,tx,ty,P.f,false,0,false,0);}
@@ -12655,7 +12655,7 @@ const drawPlayer=g=>{
   if(cartOn&&!P.sailing&&cartP.y>=P.y)drawCart(g,cartP.x,cartP.y);
   g.globalAlpha=1;
 };
-const drawRemote=(g,r)=>{if(r.dead||(r.sleep&&onBed(r.x,r.y)))return;if(r.down){g.globalAlpha=0.55;drawPerson(g,r.x,r.y+4,r.f,false,0,false,0,r.suit,r.sk);g.globalAlpha=1;drawDownMark(g,r.x,r.y);return;}if(r.air){drawAirRider(g,r.x,r.y,r.f,r.suit,r.sk);return;}if(r.boat){drawBoatHull(g,r.x,r.y);drawPerson(g,r.x,r.y-3,r.f,false,0,false,0,r.suit,r.sk);}else if(r.horse){drawHorseBody(g,r.x,r.y,r.f,r.m,r.walk);drawPerson(g,r.x,r.y-7,r.f,false,0,false,0,r.suit,r.sk);}else drawPerson(g,r.x,r.y,r.f,r.m,r.walk,false,0,r.suit,r.sk);};
+const drawRemote=(g,r)=>{if(r.dead||(r.sleep&&onBed(r.x,r.y)))return;if(r.down){g.globalAlpha=0.55;drawPerson(g,r.x,r.y+4,r.f,false,0,false,0,r.suit,r.sk);g.globalAlpha=1;drawDownMark(g,r.x,r.y);return;}if(r.air){drawAirRider(g,r.x,r.y,r.f,r.suit,r.alt||0,r.sk);return;}if(r.boat){drawBoatHull(g,r.x,r.y);drawPerson(g,r.x,r.y-3,r.f,false,0,false,0,r.suit,r.sk);}else if(r.horse){drawHorseBody(g,r.x,r.y,r.f,r.m,r.walk);drawPerson(g,r.x,r.y-7,r.f,false,0,false,0,r.suit,r.sk);}else drawPerson(g,r.x,r.y,r.f,r.m,r.walk,false,0,r.suit,r.sk);};
 function enterPlay(){
   try{bfOwnerFix();}catch(e){}
   loadInvFor(invKey());renderInv();renderEquip();
@@ -12858,8 +12858,8 @@ function bcast(){
 }
 function playerList(){
   const a=[];
-  if(mode==='play')a.push({id:'host',x:P.x,y:P.y,f:P.f,m:P.moving?1:0,d:P.dead?1:0,s:P.sleeping?1:0,b:P.sailing?1:0,h:P.mount?1:0,a:P.air?1:0,n:myName(),dn:P.down?1:0,w:wkStr(),k:myLook()});
-  for(const [id,r] of remotes)a.push({id,x:r.tx,y:r.ty,f:r.f,m:r.m?1:0,d:r.dead?1:0,s:r.sleep?1:0,b:r.boat?1:0,h:r.horse?1:0,a:r.air?1:0,n:r.name||'',dn:r.down?1:0,w:r.wk||'',k:r.sk||''});
+  if(mode==='play')a.push({id:'host',x:P.x,y:P.y,f:P.f,m:P.moving?1:0,d:P.dead?1:0,s:P.sleeping?1:0,b:P.sailing?1:0,h:P.mount?1:0,a:P.air?1:0,al:Math.round((P.alt||0)*10)/10,n:myName(),dn:P.down?1:0,w:wkStr(),k:myLook()});
+  for(const [id,r] of remotes)a.push({id,x:r.tx,y:r.ty,f:r.f,m:r.m?1:0,d:r.dead?1:0,s:r.sleep?1:0,b:r.boat?1:0,h:r.horse?1:0,a:r.air?1:0,al:Math.round((r.alt||0)*10)/10,n:r.name||'',dn:r.down?1:0,w:r.wk||'',k:r.sk||''});
   return a;
 }
 function snapshot(){
@@ -12884,7 +12884,7 @@ function onHostData(c,d){
   if(d.t==='pos'&&Number.isFinite(d.x)&&Number.isFinite(d.y)){
     let r=remotes.get(c.peer);
     if(!r){r={x:d.x,y:d.y,tx:d.x,ty:d.y,f:1,m:0,walk:0,suit:suitOf(c.peer)};remotes.set(c.peer,r);}
-    r.tx=d.x;r.ty=d.y;r.f=d.f===-1?-1:1;r.m=d.m?1:0;r.dead=d.d?1:0;r.sleep=!!d.s;r.boat=!!d.b;r.horse=!!d.h;r.air=!!d.a;r.name=String(d.n||r.name||'').slice(0,15);r.down=!!d.dn;r.wk=String(d.w||'').slice(0,12);r.sk=cleanLook(d.k);if(r.sleep){r.x=d.x;r.y=d.y;}
+    r.tx=d.x;r.ty=d.y;r.f=d.f===-1?-1:1;r.m=d.m?1:0;r.dead=d.d?1:0;r.sleep=!!d.s;r.boat=!!d.b;r.horse=!!d.h;r.air=!!d.a;r.alt=Math.max(0,Math.min(3,+d.al||0));r.name=String(d.n||r.name||'').slice(0,15);r.down=!!d.dn;r.wk=String(d.w||'').slice(0,12);r.sk=cleanLook(d.k);if(r.sleep){r.x=d.x;r.y=d.y;}
   }else if(d.t==='chat'){
     const r=remotes.get(c.peer),t=chatClean(d.x),now=performance.now();
     if(t&&r&&!(r._ct>now-500)){r._ct=now;const n=r.name||'손님';chatAdd(c.peer,n,t);bcastAll({t:'chat',id:c.peer,n,x:t},c);}
@@ -13157,7 +13157,7 @@ async function guestHandle(d){
       seen.add(p.id);
       let r=remotes.get(p.id);
       if(!r){r={x:p.x,y:p.y,tx:p.x,ty:p.y,f:1,m:0,walk:0,suit:suitOf(p.id)};remotes.set(p.id,r);}
-      r.tx=p.x;r.ty=p.y;r.f=p.f===-1?-1:1;r.m=p.m?1:0;r.dead=p.d?1:0;r.sleep=!!p.s;r.boat=!!p.b;r.horse=!!p.h;r.air=!!p.a;r.name=String(p.n||'').slice(0,15);r.down=!!p.dn;r.wk=String(p.w||'').slice(0,12);r.sk=cleanLook(p.k);if(r.sleep){r.x=p.x;r.y=p.y;}
+      r.tx=p.x;r.ty=p.y;r.f=p.f===-1?-1:1;r.m=p.m?1:0;r.dead=p.d?1:0;r.sleep=!!p.s;r.boat=!!p.b;r.horse=!!p.h;r.air=!!p.a;r.alt=Math.max(0,Math.min(3,+p.al||0));r.name=String(p.n||'').slice(0,15);r.down=!!p.dn;r.wk=String(p.w||'').slice(0,12);r.sk=cleanLook(p.k);if(r.sleep){r.x=p.x;r.y=p.y;}
     }
     for(const id of [...remotes.keys()])if(!seen.has(id))remotes.delete(id);
   }else if(d.t==='mons'){
@@ -13263,7 +13263,7 @@ function netTick(now){
   if(!net.role||!world)return;
   if(isGuest()){
     if(net.rx&&now-net.rx>10000){netLeave('방장과 연결이 끊어졌어요.');return;}   // 방장이 10초 넘게 아무 소식이 없으면 끊긴 거예요
-    if(mode==='play'&&now-net.tPos>100){net.tPos=now;sendHost({t:'pos',x:Math.round(P.x*10)/10,y:Math.round(P.y*10)/10,f:P.f,m:P.moving?1:0,d:P.dead?1:0,s:P.sleeping?1:0,b:P.sailing?1:0,h:P.mount?1:0,a:P.air?1:0,n:myName(),dn:P.down?1:0,w:wkStr(),k:myLook()});}
+    if(mode==='play'&&now-net.tPos>100){net.tPos=now;sendHost({t:'pos',x:Math.round(P.x*10)/10,y:Math.round(P.y*10)/10,f:P.f,m:P.moving?1:0,d:P.dead?1:0,s:P.sleeping?1:0,b:P.sailing?1:0,h:P.mount?1:0,a:P.air?1:0,al:Math.round((P.alt||0)*10)/10,n:myName(),dn:P.down?1:0,w:wkStr(),k:myLook()});}
   }else if(isHost()&&net.conns.length){
     const lowH=!!(typeof PERF!=='undefined'&&PERF&&PERF.low),pls=allPlayers();   // 방장 부담 줄이기: 멀리 있는 것은 보내지 않고, 몬스터가 많거나 저사양이면 전송 간격을 늘려요
     const nearP=(x,y,rr)=>{for(const p of pls)if(Math.abs(p.x-x)<rr&&Math.abs(p.y-y)<rr)return true;return false;};
