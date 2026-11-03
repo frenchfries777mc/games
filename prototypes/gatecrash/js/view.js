@@ -192,6 +192,8 @@ function drawRacer(x, r, t, me) {
   const px = Math.round(r.x - 3), py = Math.round(r.y - 0), f = r.face, walk = Math.abs(r.vx) > 20 && r.ground, ph = walk ? Math.floor(r.anim / 7) % 2 : 0;
   if (r.inv > 0 && Math.floor(t * 14) % 2) return;
   R(x, 'rgba(0,0,0,.22)', px + 1, r.y + PH.H - 1, 14, 2);
+  if (r.boost > 0) { const fl = Math.floor(t * 30) % 2; R(x, '#ff7a2a', px + 8 - r.face * 9 - 2, r.y + PH.H - 6, 6 + fl * 3, 4); R(x, '#ffe070', px + 8 - r.face * 9, r.y + PH.H - 5, 3 + fl * 2, 2); }
+  if (r.slow > 0) R(x, '#8ad060', px + 1, r.y + PH.H - 2, 14, 2);
   x.save(); x.translate(px + 8, py);
   if (f < 0) x.scale(-1, 1); x.translate(-8, 0);
   const dead = r.stun > 0, flash = r.flash > 0;
@@ -238,6 +240,9 @@ function drawWep(x, k) {
     case 'sling': R(x, '#8a5a30', 3, -1, 8, 3); R(x, '#8a5a30', 9, -6, 2, 6); R(x, '#8a5a30', 13, -6, 2, 6); R(x, '#e8c39a', 9, -7, 6, 1); break;
     case 'hose': R(x, '#c0392b', 0, -3, 9, 8); R(x, '#222', 8, -2, 7, 4); R(x, '#4a8ad0', 14, -2, 4, 4); R(x, '#e8c040', 0, 4, 9, 2); break;
     case 'banana': R(x, '#f2d040', 2, -2, 12, 4); R(x, '#f2d040', 12, -4, 3, 3); R(x, '#c8a020', 2, 1, 12, 1); R(x, '#6a4a20', 2, -3, 2, 2); break;
+    case 'tack': R(x, '#c8ccd4', 2, 2, 12, 2); R(x, '#8a92a2', 4, -2, 2, 4); R(x, '#8a92a2', 8, -3, 2, 5); R(x, '#8a92a2', 12, -2, 2, 4); break;
+    case 'glue': R(x, '#e8e4d8', 2, -3, 8, 8); R(x, '#8ad060', 3, -1, 6, 3); R(x, '#8ad060', 10, 1, 6, 3); R(x, '#6aa848', 12, 4, 3, 2); break;
+    case 'boots': R(x, '#c0392b', 2, -2, 8, 8); R(x, '#222', 2, 4, 12, 3); R(x, '#ffe070', 3, 0, 6, 2); R(x, '#ff7a2a', 0, 6, 4, 3); break;
     case 'shotgun': R(x, '#5a3a20', 0, -1, 7, 4); R(x, '#2a2f3a', 6, -2, 13, 3); R(x, '#2a2f3a', 6, 1, 11, 1); break;
     case 'bow': R(x, '#8a5a30', 6, -7, 2, 14); R(x, '#8a5a30', 8, -7, 3, 2); R(x, '#8a5a30', 8, 5, 3, 2); R(x, '#e8e4d8', 5, -6, 1, 12); R(x, '#c8c8c8', 6, -1, 10, 1); break;
     case 'minigun': R(x, '#3a4350', 0, -3, 9, 7); R(x, '#222', 8, -3, 11, 2); R(x, '#222', 8, 0, 11, 2); R(x, '#c0392b', 2, 4, 5, 3); break;
@@ -378,7 +383,15 @@ function drawView(x, W, a, y, w, h, rm) {
 }
 
 /* ---------- 바나나, 물청소, 점검, 이모티콘 ---------- */
-function drawTraps(x, list) { for (const t of list) { const X = Math.round(t.x), Y = Math.round(t.y); R(x, 'rgba(0,0,0,.25)', X - 5, Y - 1, 10, 2); R(x, '#f2d040', X - 5, Y - 4, 10, 3); R(x, '#f2d040', X - 3, Y - 6, 3, 2); R(x, '#c8a020', X - 5, Y - 2, 10, 1); R(x, '#6a4a20', X + 4, Y - 5, 2, 2); } }
+function drawTraps(x, list) {
+  for (const t of list) {
+    const X = Math.round(t.x), Y = Math.round(t.y);
+    R(x, 'rgba(0,0,0,.25)', X - 5, Y - 1, 10, 2);
+    if (t.k === 'tack') { for (const dx of [-5, -1, 3]) { R(x, '#8a92a2', X + dx, Y - 4, 2, 4); R(x, '#d8dce4', X + dx, Y - 5, 2, 1); } }
+    else if (t.k === 'glue') { R(x, '#8ad060', X - 8, Y - 2, 16, 2); R(x, '#a8e078', X - 6, Y - 3, 8, 1); R(x, '#6aa848', X + 3, Y - 4, 3, 2); }
+    else { R(x, '#f2d040', X - 5, Y - 4, 10, 3); R(x, '#f2d040', X - 3, Y - 6, 3, 2); R(x, '#c8a020', X - 5, Y - 2, 10, 1); R(x, '#6a4a20', X + 4, Y - 5, 2, 2); }
+  }
+}
 function drawWet(x, W, cx, cy, vw) {
   const t0 = Math.max(0, Math.floor(cx / TS) - 1), t1 = Math.min(W.w - 1, Math.ceil((cx + vw) / TS) + 1), y0 = Math.max(1, Math.floor(cy / TS)), y1 = Math.min(W.h - 1, Math.ceil((cy + VH) / TS));
   x.fillStyle = 'rgba(150,215,255,.45)';
