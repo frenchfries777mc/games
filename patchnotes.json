@@ -6,7 +6,93 @@
    "title": "게시판 글 아래쪽도 눌러져요",
    "items": [
     "사진 미리보기가 있는 글도 사진·미리보기 글 아래쪽을 눌러서 열고 닫을 수 있어요"
-   ]
+   ],
+   "tr": {
+    "en": {
+     "title": "Board posts can be tapped at the bottom too",
+     "items": [
+      "Posts with a photo preview can also be opened and closed by tapping the area below the photo and preview."
+     ]
+    },
+    "es": {
+     "title": "También se puede pulsar la parte inferior de las publicaciones del tablón",
+     "items": [
+      "Las publicaciones con vista previa de foto también se pueden abrir y cerrar pulsando en la parte de abajo de la foto y la vista previa."
+     ]
+    },
+    "fr": {
+     "title": "On peut aussi appuyer en bas des messages du tableau",
+     "items": [
+      "Les messages avec aperçu photo s'ouvrent et se ferment aussi en appuyant sous la photo et l'aperçu."
+     ]
+    },
+    "de": {
+     "title": "Beitrags-Unterkanten sind jetzt auch antippbar",
+     "items": [
+      "Beiträge mit Fotovorschau lassen sich auch durch Tippen unter Foto und Vorschau öffnen und schließen."
+     ]
+    },
+    "ja": {
+     "title": "掲示板の投稿は下の部分も押せます",
+     "items": [
+      "写真のプレビューがある投稿も、写真・プレビューの下の部分を押して開いたり閉じたりできます。"
+     ]
+    },
+    "zh": {
+     "title": "留言板帖子下方也可以点按",
+     "items": [
+      "带图片预览的帖子也可以点按图片和预览下方的区域来展开或收起。"
+     ]
+    },
+    "pt": {
+     "title": "Posts do mural também abrem ao tocar embaixo",
+     "items": [
+      "Posts com prévia de foto também podem ser abertos e fechados tocando na parte de baixo da foto e da prévia."
+     ]
+    },
+    "ru": {
+     "title": "Посты на доске теперь открываются и снизу",
+     "items": [
+      "Посты с превью фото тоже можно открывать и закрывать, нажав на область под фото и превью."
+     ]
+    },
+    "tr": {
+     "title": "Pano gönderilerinin alt kısmına da dokunulabiliyor",
+     "items": [
+      "Fotoğraf önizlemesi olan gönderiler de fotoğrafın ve önizlemenin altına dokunarak açılıp kapanabilir."
+     ]
+    },
+    "it": {
+     "title": "Anche la parte bassa dei post della bacheca si tocca",
+     "items": [
+      "I post con anteprima della foto si possono aprire e chiudere anche toccando sotto la foto e l'anteprima."
+     ]
+    },
+    "pl": {
+     "title": "Wpisy na tablicy można kliknąć także od dołu",
+     "items": [
+      "Wpisy z podglądem zdjęcia też można otwierać i zamykać, klikając pod zdjęciem i podglądem."
+     ]
+    },
+    "ar": {
+     "title": "يمكن النقر على أسفل منشورات اللوحة أيضًا",
+     "items": [
+      "يمكن فتح المنشورات التي تحتوي على معاينة صورة وإغلاقها أيضًا بالنقر أسفل الصورة والمعاينة."
+     ]
+    },
+    "nw": {
+     "title": "Board posts unclose from below too",
+     "items": [
+      "Posts with photo preview can be opened and unopened by pressing below the photo and preview."
+     ]
+    },
+    "gk": {
+     "title": "게시판 글 아래 쪽 도 누르다 어요",
+     "items": [
+      "사진 미리보기 가 있다 글 도 사진 · 미리보기 아래쪽 을 누르다 어 열다 고 닫다 수 있다 어요"
+     ]
+    }
+   }
   },
   {
    "date": "2026-11-03",
@@ -14,7 +100,93 @@
    "title": "번역이 없는 문구는 영어로",
    "items": [
     "아직 번역되지 않은 알림·설정 문구는 한국어 대신 영어로 나와요"
-   ]
+   ],
+   "tr": {
+    "en": {
+     "title": "Untranslated text shows in English",
+     "items": [
+      "Notifications and settings text that is not translated yet now appear in English instead of Korean."
+     ]
+    },
+    "es": {
+     "title": "El texto sin traducir aparece en inglés",
+     "items": [
+      "Los avisos y textos de ajustes que aún no están traducidos ahora aparecen en inglés en lugar de coreano."
+     ]
+    },
+    "fr": {
+     "title": "Les textes non traduits s'affichent en anglais",
+     "items": [
+      "Les notifications et réglages non encore traduits s'affichent désormais en anglais au lieu du coréen."
+     ]
+    },
+    "de": {
+     "title": "Nicht übersetzte Texte erscheinen auf Englisch",
+     "items": [
+      "Benachrichtigungs- und Einstellungstexte, die noch nicht übersetzt sind, erscheinen jetzt auf Englisch statt Koreanisch."
+     ]
+    },
+    "ja": {
+     "title": "未翻訳の文言は英語で表示",
+     "items": [
+      "まだ翻訳されていない通知や設定の文言は、韓国語の代わりに英語で表示されます。"
+     ]
+    },
+    "zh": {
+     "title": "未翻译的文字改用英文显示",
+     "items": [
+      "尚未翻译的通知和设置文字现在会显示为英文，而不是韩文。"
+     ]
+    },
+    "pt": {
+     "title": "Textos sem tradução aparecem em inglês",
+     "items": [
+      "Avisos e textos de configurações que ainda não foram traduzidos agora aparecem em inglês em vez de coreano."
+     ]
+    },
+    "ru": {
+     "title": "Непереведённые тексты показываются по-английски",
+     "items": [
+      "Уведомления и настройки, которые ещё не переведены, теперь показываются на английском вместо корейского."
+     ]
+    },
+    "tr": {
+     "title": "Çevrilmemiş metinler İngilizce görünür",
+     "items": [
+      "Henüz çevrilmemiş bildirim ve ayar metinleri artık Korece yerine İngilizce görünür."
+     ]
+    },
+    "it": {
+     "title": "I testi non tradotti appaiono in inglese",
+     "items": [
+      "Notifiche e impostazioni non ancora tradotte ora appaiono in inglese invece che in coreano."
+     ]
+    },
+    "pl": {
+     "title": "Nieprzetłumaczone teksty są po angielsku",
+     "items": [
+      "Powiadomienia i ustawienia, których jeszcze nie przetłumaczono, pokazują się teraz po angielsku zamiast po koreańsku."
+     ]
+    },
+    "ar": {
+     "title": "تظهر النصوص غير المترجمة بالإنجليزية",
+     "items": [
+      "تظهر الإشعارات ونصوص الإعدادات التي لم تُترجم بعد بالإنجليزية بدلًا من الكورية."
+     ]
+    },
+    "nw": {
+     "title": "Untranslated words show in English, not Korean",
+     "items": [
+      "Alerts and settings words not yet translated now come out in English instead of Korean."
+     ]
+    },
+    "gk": {
+     "title": "번역 없다 문구 는 영어 로 나오다",
+     "items": [
+      "아직 번역 되다 않다 알림 · 설정 문구 는 한국어 대신 영어 로 나오다 어요"
+     ]
+    }
+   }
   },
   {
    "date": "2026-11-03",
@@ -22,7 +194,93 @@
    "title": "친구 새 글 알림",
    "items": [
     "친구가 게시판에 글을 올리면 알림이 와요 (설정 > 알림에서 끌 수 있어요)"
-   ]
+   ],
+   "tr": {
+    "en": {
+     "title": "Friend new post alerts",
+     "items": [
+      "You get a notification when a friend posts on the board (you can turn it off in Settings > Notifications)."
+     ]
+    },
+    "es": {
+     "title": "Aviso de nuevas publicaciones de amigos",
+     "items": [
+      "Recibes un aviso cuando un amigo publica en el tablón (puedes desactivarlo en Ajustes > Notificaciones)."
+     ]
+    },
+    "fr": {
+     "title": "Alerte des nouveaux messages d'amis",
+     "items": [
+      "Tu reçois une notification quand un ami publie sur le tableau (tu peux la désactiver dans Réglages > Notifications)."
+     ]
+    },
+    "de": {
+     "title": "Benachrichtigung über neue Beiträge von Freunden",
+     "items": [
+      "Du bekommst eine Benachrichtigung, wenn ein Freund am Brett etwas postet (du kannst sie unter Einstellungen > Benachrichtigungen ausschalten)."
+     ]
+    },
+    "ja": {
+     "title": "友だちの新しい投稿の通知",
+     "items": [
+      "友だちが掲示板に投稿すると通知が届きます（設定 > 通知でオフにできます）。"
+     ]
+    },
+    "zh": {
+     "title": "好友发新帖提醒",
+     "items": [
+      "好友在留言板发帖时会收到通知（可以在设置 > 通知中关闭）。"
+     ]
+    },
+    "pt": {
+     "title": "Aviso de novos posts de amigos",
+     "items": [
+      "Você recebe um aviso quando um amigo posta no mural (dá para desligar em Configurações > Notificações)."
+     ]
+    },
+    "ru": {
+     "title": "Уведомления о новых постах друзей",
+     "items": [
+      "Вам придёт уведомление, когда друг опубликует пост на доске (отключить можно в Настройки > Уведомления)."
+     ]
+    },
+    "tr": {
+     "title": "Arkadaş yeni gönderi bildirimi",
+     "items": [
+      "Bir arkadaşın panoya gönderi yazdığında bildirim alırsın (Ayarlar > Bildirimler'den kapatabilirsin)."
+     ]
+    },
+    "it": {
+     "title": "Avviso per i nuovi post degli amici",
+     "items": [
+      "Ricevi una notifica quando un amico pubblica nella bacheca (puoi disattivarla in Impostazioni > Notifiche)."
+     ]
+    },
+    "pl": {
+     "title": "Powiadomienia o nowych wpisach znajomych",
+     "items": [
+      "Dostajesz powiadomienie, gdy znajomy opublikuje wpis na tablicy (można to wyłączyć w Ustawienia > Powiadomienia)."
+     ]
+    },
+    "ar": {
+     "title": "تنبيه بالمنشورات الجديدة للأصدقاء",
+     "items": [
+      "تصلك إشعار عندما ينشر صديق على اللوحة (يمكنك إيقافه من الإعدادات > الإشعارات)."
+     ]
+    },
+    "nw": {
+     "title": "Friend new postings alert",
+     "items": [
+      "You get a notify when a comrade posts on the Board (can unnotify in Rules > Notify)."
+     ]
+    },
+    "gk": {
+     "title": "친구 새 글 알림",
+     "items": [
+      "친구 가 게시판 에 글 을 올리다 면 알림 이 오다 어요 (설정 > 알림 에서 끄다 수 있다 어요)"
+     ]
+    }
+   }
   },
   {
    "date": "2026-11-03",
@@ -32,7 +290,121 @@
     "빌드 범위로 검색 추가 (예: 300~320, 300-320)",
     "검색에서 찾은 낱말을 노랗게 표시",
     "Stickseum 사이트 패치노트 검색칸 복구"
-   ]
+   ],
+   "tr": {
+    "en": {
+     "title": "Patch note search improved",
+     "items": [
+      "Search by build range added (e.g. 300~320, 300-320)",
+      "Words found in search are highlighted in yellow",
+      "Restored the patch note search box on the Stickseum site"
+     ]
+    },
+    "es": {
+     "title": "Búsqueda de notas de parche mejorada",
+     "items": [
+      "Añadida la búsqueda por rango de builds (p. ej. 300~320, 300-320)",
+      "Las palabras encontradas en la búsqueda se resaltan en amarillo",
+      "Recuperado el cuadro de búsqueda de notas de parche en el sitio de Stickseum"
+     ]
+    },
+    "fr": {
+     "title": "Recherche des notes de version améliorée",
+     "items": [
+      "Recherche par plage de builds ajoutée (ex. 300~320, 300-320)",
+      "Les mots trouvés sont surlignés en jaune",
+      "Champ de recherche des notes de version rétabli sur le site Stickseum"
+     ]
+    },
+    "de": {
+     "title": "Patchnotiz-Suche verbessert",
+     "items": [
+      "Suche nach Build-Bereich hinzugefügt (z. B. 300~320, 300-320)",
+      "Gefundene Wörter werden gelb markiert",
+      "Patchnotiz-Suchfeld auf der Stickseum-Seite wiederhergestellt"
+     ]
+    },
+    "ja": {
+     "title": "パッチノート検索を改善",
+     "items": [
+      "ビルド範囲での検索を追加（例: 300~320、300-320）",
+      "検索で見つかった語を黄色で表示",
+      "Stickseumサイトのパッチノート検索欄を復旧"
+     ]
+    },
+    "zh": {
+     "title": "改进补丁说明搜索",
+     "items": [
+      "新增按版本号范围搜索（例如 300~320、300-320）",
+      "搜索到的词会以黄色高亮",
+      "恢复 Stickseum 网站的补丁说明搜索框"
+     ]
+    },
+    "pt": {
+     "title": "Busca de notas de patch melhorada",
+     "items": [
+      "Busca por faixa de build adicionada (ex.: 300~320, 300-320)",
+      "As palavras encontradas ficam destacadas em amarelo",
+      "Campo de busca das notas de patch do site Stickseum restaurado"
+     ]
+    },
+    "ru": {
+     "title": "Улучшен поиск по патч-нотам",
+     "items": [
+      "Добавлен поиск по диапазону сборок (например, 300~320, 300-320)",
+      "Найденные слова подсвечиваются жёлтым",
+      "Восстановлено поле поиска патч-нотов на сайте Stickseum"
+     ]
+    },
+    "tr": {
+     "title": "Yama notu araması geliştirildi",
+     "items": [
+      "Derleme aralığıyla arama eklendi (ör. 300~320, 300-320)",
+      "Aramada bulunan kelimeler sarıyla vurgulanır",
+      "Stickseum sitesindeki yama notu arama kutusu geri getirildi"
+     ]
+    },
+    "it": {
+     "title": "Ricerca nelle note di patch migliorata",
+     "items": [
+      "Aggiunta la ricerca per intervallo di build (es. 300~320, 300-320)",
+      "Le parole trovate sono evidenziate in giallo",
+      "Ripristinata la casella di ricerca delle note di patch sul sito Stickseum"
+     ]
+    },
+    "pl": {
+     "title": "Ulepszone wyszukiwanie w notatkach o łatach",
+     "items": [
+      "Dodano wyszukiwanie po zakresie buildów (np. 300~320, 300-320)",
+      "Znalezione słowa są podświetlone na żółto",
+      "Przywrócono pole wyszukiwania notatek o łatach na stronie Stickseum"
+     ]
+    },
+    "ar": {
+     "title": "تحسين البحث في ملاحظات التحديث",
+     "items": [
+      "أُضيف البحث بنطاق البناء (مثل 300~320 و300-320)",
+      "تُظهر الكلمات التي يجدها البحث باللون الأصفر",
+      "أُعيد حقل البحث في ملاحظات التحديث على موقع Stickseum"
+     ]
+    },
+    "nw": {
+     "title": "Patchnote searching doubleplus improved",
+     "items": [
+      "Search by build range added (e.g. 300~320, 300-320)",
+      "Words found by search shown in yellow",
+      "Stickseum site patchnote search box restored"
+     ]
+    },
+    "gk": {
+     "title": "패치노트 검색 개선",
+     "items": [
+      "빌드 범위 로 검색 더하다 (예: 300~320, 300-320)",
+      "검색 에서 찾다 낱말 을 노랗다 게 표시",
+      "Stickseum 사이트 패치노트 검색칸 되살리다"
+     ]
+    }
+   }
   },
   {
    "date": "2026-11-03",
@@ -40,7 +412,93 @@
    "title": "로그인 전 상단 정리",
    "items": [
     "로그인하기 전에는 Hub Coin 표시를 숨겨요"
-   ]
+   ],
+   "tr": {
+    "en": {
+     "title": "Top bar tidied before login",
+     "items": [
+      "Hub Coin display is hidden before you log in"
+     ]
+    },
+    "es": {
+     "title": "Barra superior ordenada antes de entrar",
+     "items": [
+      "Antes de iniciar sesión se oculta el saldo de Hub Coin"
+     ]
+    },
+    "fr": {
+     "title": "Barre du haut rangée avant connexion",
+     "items": [
+      "Avant la connexion, l'affichage des Hub Coin est masqué"
+     ]
+    },
+    "de": {
+     "title": "Obere Leiste vor dem Login aufgeräumt",
+     "items": [
+      "Vor dem Einloggen wird die Hub-Coin-Anzeige ausgeblendet"
+     ]
+    },
+    "ja": {
+     "title": "ログイン前の上部バーを整理",
+     "items": [
+      "ログインする前はHub Coinの表示を隠します"
+     ]
+    },
+    "zh": {
+     "title": "登录前整理顶部栏",
+     "items": [
+      "登录前隐藏 Hub Coin 显示"
+     ]
+    },
+    "pt": {
+     "title": "Barra superior organizada antes do login",
+     "items": [
+      "Antes de entrar, o saldo de Hub Coin fica oculto"
+     ]
+    },
+    "ru": {
+     "title": "Верхняя панель до входа упорядочена",
+     "items": [
+      "До входа показ Hub Coin скрыт"
+     ]
+    },
+    "tr": {
+     "title": "Girişten önce üst çubuk düzenlendi",
+     "items": [
+      "Giriş yapmadan önce Hub Coin göstergesi gizlenir"
+     ]
+    },
+    "it": {
+     "title": "Barra superiore sistemata prima del login",
+     "items": [
+      "Prima di accedere il saldo di Hub Coin è nascosto"
+     ]
+    },
+    "pl": {
+     "title": "Górny pasek uporządkowany przed logowaniem",
+     "items": [
+      "Przed zalogowaniem wskaźnik Hub Coin jest ukryty"
+     ]
+    },
+    "ar": {
+     "title": "ترتيب الشريط العلوي قبل تسجيل الدخول",
+     "items": [
+      "يُخفى عرض Hub Coin قبل تسجيل الدخول"
+     ]
+    },
+    "nw": {
+     "title": "Top bar tidied before selfgive",
+     "items": [
+      "Hub Coin display hidden before you selfgive in"
+     ]
+    },
+    "gk": {
+     "title": "로그인 하다 기 전 상단 정리",
+     "items": [
+      "로그인 하다 기 전 에는 Hub Coin 표시 를 숨기다 어요"
+     ]
+    }
+   }
   },
   {
    "date": "2026-11-03",
@@ -49,7 +507,107 @@
    "items": [
     "테두리 꼭짓점 장식이 모두 중앙을 바라봐요",
     "마술사 테두리는 트럼프 카드 세 장이에요"
-   ]
+   ],
+   "tr": {
+    "en": {
+     "title": "Border ornament direction",
+     "items": [
+      "Corner ornaments on all borders now face the center",
+      "The Magician border is three playing cards"
+     ]
+    },
+    "es": {
+     "title": "Dirección de los adornos del borde",
+     "items": [
+      "Los adornos de las esquinas de todos los bordes miran ahora al centro",
+      "El borde del Mago son tres cartas de juego"
+     ]
+    },
+    "fr": {
+     "title": "Sens des ornements de bordure",
+     "items": [
+      "Les ornements des coins de toutes les bordures regardent maintenant vers le centre",
+      "La bordure du Magicien est faite de trois cartes à jouer"
+     ]
+    },
+    "de": {
+     "title": "Richtung der Rahmenverzierungen",
+     "items": [
+      "Die Eckverzierungen aller Rahmen zeigen jetzt zur Mitte",
+      "Der Zauberer-Rahmen besteht aus drei Spielkarten"
+     ]
+    },
+    "ja": {
+     "title": "枠の飾りの向きを変更",
+     "items": [
+      "すべての枠の角の飾りが中央を向くようになりました",
+      "マジシャンの枠はトランプ3枚です"
+     ]
+    },
+    "zh": {
+     "title": "边框装饰方向调整",
+     "items": [
+      "所有边框的角饰现在都朝向中央",
+      "魔术师边框是三张扑克牌"
+     ]
+    },
+    "pt": {
+     "title": "Direção dos enfeites da borda",
+     "items": [
+      "Os enfeites dos cantos de todas as bordas agora apontam para o centro",
+      "A borda do Mágico são três cartas de baralho"
+     ]
+    },
+    "ru": {
+     "title": "Направление украшений рамок",
+     "items": [
+      "Уголковые украшения всех рамок теперь смотрят к центру",
+      "Рамка Мага — три игральные карты"
+     ]
+    },
+    "tr": {
+     "title": "Çerçeve süslemelerinin yönü",
+     "items": [
+      "Tüm çerçelerin köşe süslemeleri artık merkeze bakıyor",
+      "Büyücü çerçevesi üç oyun kağıdıdır"
+     ]
+    },
+    "it": {
+     "title": "Direzione degli ornamenti dei bordi",
+     "items": [
+      "Gli ornamenti agli angoli di tutti i bordi ora guardano al centro",
+      "Il bordo del Mago sono tre carte da gioco"
+     ]
+    },
+    "pl": {
+     "title": "Kierunek ozdób ramek",
+     "items": [
+      "Ozdoby narożne wszystkich ramek są teraz zwrócone do środka",
+      "Ramka Maga to trzy karty do gry"
+     ]
+    },
+    "ar": {
+     "title": "اتجاه زخارف الإطارات",
+     "items": [
+      "زخارف الزوايا في جميع الإطارات تتجه الآن نحو المركز",
+      "إطار الساحر هو ثلاث ورقات لعب"
+     ]
+    },
+    "nw": {
+     "title": "Border ornament facing changed",
+     "items": [
+      "All border corner ornaments now face the middle",
+      "Magician border is three playcards"
+     ]
+    },
+    "gk": {
+     "title": "테두리 장식 방향",
+     "items": [
+      "테두리 꼭짓점 장식 이 모두 중앙 을 바라보다 어요",
+      "마술사 테두리 는 트럼프 카드 세 장 이다 어요"
+     ]
+    }
+   }
   },
   {
    "date": "2026-11-03",
@@ -57,7 +615,93 @@
    "title": "스틱세움 테두리 장식",
    "items": [
     "스틱세움 테두리 오른쪽 위에 그 캐릭터의 무기, 왼쪽 아래에 착용품(모자 등)이 보여요"
-   ]
+   ],
+   "tr": {
+    "en": {
+     "title": "Stickseum border ornaments",
+     "items": [
+      "On a Stickseum border, the character's weapon shows at the top right and worn items (such as hats) show at the bottom left"
+     ]
+    },
+    "es": {
+     "title": "Adornos del borde de Stickseum",
+     "items": [
+      "En el borde de Stickseum, el arma del personaje aparece arriba a la derecha y los objetos que lleva (como sombreros) abajo a la izquierda"
+     ]
+    },
+    "fr": {
+     "title": "Ornements de bordure Stickseum",
+     "items": [
+      "Sur une bordure Stickseum, l'arme du personnage apparaît en haut à droite et les objets portés (comme les chapeaux) en bas à gauche"
+     ]
+    },
+    "de": {
+     "title": "Stickseum-Rahmenschmuck",
+     "items": [
+      "Beim Stickseum-Rahmen zeigt sich oben rechts die Waffe des Charakters und unten links die getragenen Teile (z. B. Hüte)"
+     ]
+    },
+    "ja": {
+     "title": "Stickseumの枠の飾り",
+     "items": [
+      "Stickseumの枠の右上にそのキャラクターの武器、左下に装備品（帽子など）が表示されます"
+     ]
+    },
+    "zh": {
+     "title": "Stickseum 边框装饰",
+     "items": [
+      "Stickseum 边框的右上角显示该角色的武器，左下角显示装备（如帽子等）"
+     ]
+    },
+    "pt": {
+     "title": "Enfeites da borda do Stickseum",
+     "items": [
+      "Na borda do Stickseum, a arma do personagem aparece no canto superior direito e os itens vestidos (como chapéus) no inferior esquerdo"
+     ]
+    },
+    "ru": {
+     "title": "Украшения рамки Stickseum",
+     "items": [
+      "На рамке Stickseum в правом верхнем углу показано оружие персонажа, в левом нижнем — надетые предметы (например, шляпа)"
+     ]
+    },
+    "tr": {
+     "title": "Stickseum çerçeve süslemeleri",
+     "items": [
+      "Stickseum çerçevesinde sağ üstte karakterin silahı, sol altta giydiği eşyalar (şapka gibi) görünür"
+     ]
+    },
+    "it": {
+     "title": "Decorazioni del bordo Stickseum",
+     "items": [
+      "Sul bordo Stickseum, in alto a destra compare l'arma del personaggio e in basso a sinistra gli oggetti indossati (come il cappello)"
+     ]
+    },
+    "pl": {
+     "title": "Ozdoby ramki Stickseum",
+     "items": [
+      "Na ramce Stickseum w prawym górnym rogu widać broń postaci, a w lewym dolnym ubranie i dodatki (np. kapelusz)"
+     ]
+    },
+    "ar": {
+     "title": "زخارف إطار Stickseum",
+     "items": [
+      "على إطار Stickseum يظهر سلاح الشخصية في الأعلى على اليمين، وما ترتديه (مثل القبعة) في الأسفل على اليسار"
+     ]
+    },
+    "nw": {
+     "title": "Stickseum border decorations",
+     "items": [
+      "On Stickseum border, the character's weapon shows top right and wornthings (hat etc) show bottom left"
+     ]
+    },
+    "gk": {
+     "title": "스틱세움 테두리 장식",
+     "items": [
+      "스틱세움 테두리 오른쪽 위 에 그 캐릭터 의 무기 , 왼쪽 아래 에 착용품 ( 모자 등 ) 이 보이다 어요"
+     ]
+    }
+   }
   },
   {
    "date": "2026-11-03",
@@ -68,7 +712,135 @@
     "프로필 페이지 디자인을 새로 만들었어요",
     "프로필 카드의 게임 목록에서 '몇 번 플레이' 글자를 없앴어요",
     "Tumble Crown의 도전과제와 플레이 기록이 프로필에 보내지도록 고쳤어요"
-   ]
+   ],
+   "tr": {
+    "en": {
+     "title": "New profile border design",
+     "items": [
+      "Borders were redrawn in a different shape for each game (crown, mineral shards, crop leaves, character trait ornaments)",
+      "The profile page has a new design",
+      "Removed the 'played N times' text from the game list on the profile card",
+      "Fixed Tumble Crown achievements and play records so they reach the profile"
+     ]
+    },
+    "es": {
+     "title": "Nuevo diseño de borde de perfil",
+     "items": [
+      "Los bordes se han rehecho con una forma distinta para cada juego (corona, fragmentos minerales, hojas de cultivo, adornos de rasgos del personaje)",
+      "La página de perfil tiene un diseño nuevo",
+      "Se ha quitado el texto 'jugado N veces' de la lista de juegos de la tarjeta de perfil",
+      "Corregido para que los logros y los registros de Tumble Crown lleguen al perfil"
+     ]
+    },
+    "fr": {
+     "title": "Nouveau design des bordures de profil",
+     "items": [
+      "Les bordures ont été refaites avec une forme différente pour chaque jeu (couronne, éclats de minerai, feuilles de culture, ornements de traits de personnage)",
+      "La page de profil a un nouveau design",
+      "Suppression du texte « joué N fois » dans la liste des jeux de la carte de profil",
+      "Correction : les succès et les enregistrements de Tumble Crown arrivent maintenant au profil"
+     ]
+    },
+    "de": {
+     "title": "Neues Design der Profilrahmen",
+     "items": [
+      "Die Rahmen wurden für jedes Spiel in einer eigenen Form neu gezeichnet (Krone, Mineralsplitter, Feldblätter, Verzierungen der Charakterzüge)",
+      "Die Profilseite hat ein neues Design",
+      "Der Text „N-mal gespielt“ wurde aus der Spieleliste der Profilkarte entfernt",
+      "Tumble-Crown-Erfolge und Spielstände werden jetzt ins Profil übertragen"
+     ]
+    },
+    "ja": {
+     "title": "プロフィールの枠を新デザインに",
+     "items": [
+      "枠をゲームごとに違う形に作り直しました（王冠、鉱石のかけら、作物の葉、キャラクター特性の飾り）",
+      "プロフィールページのデザインを新しくしました",
+      "プロフィールカードのゲーム一覧から「○回プレイ」の文字を消しました",
+      "Tumble Crownの実績とプレイ記録がプロフィールに反映されるように直しました"
+     ]
+    },
+    "zh": {
+     "title": "个人资料边框换新设计",
+     "items": [
+      "边框按游戏重新绘制为不同形状（王冠、矿石碎片、作物叶子、角色特性装饰）",
+      "个人资料页面有了新设计",
+      "去掉了个人资料卡游戏列表里的「玩了N次」文字",
+      "修复了 Tumble Crown 的成就和游戏记录无法同步到个人资料的问题"
+     ]
+    },
+    "pt": {
+     "title": "Novo design das bordas do perfil",
+     "items": [
+      "As bordas foram refeitas com um formato diferente para cada jogo (coroa, fragmentos de minério, folhas de plantação, enfeites de traços do personagem)",
+      "A página de perfil ganhou um novo design",
+      "Removido o texto 'jogou N vezes' da lista de jogos no cartão de perfil",
+      "Corrigido para que as conquistas e os registros de Tumble Crown sejam enviados ao perfil"
+     ]
+    },
+    "ru": {
+     "title": "Новый дизайн рамок профиля",
+     "items": [
+      "Рамки переделаны: у каждой игры своя форма (корона, осколки минералов, листья культур, украшения черт персонажа)",
+      "Страница профиля получила новый дизайн",
+      "Убрана надпись «сыграно N раз» из списка игр на карточке профиля",
+      "Исправлено: достижения и записи Tumble Crown теперь попадают в профиль"
+     ]
+    },
+    "tr": {
+     "title": "Profil çerçevelerine yeni tasarım",
+     "items": [
+      "Çerçeveler her oyun için farklı şekilde yeniden çizildi (taç, maden parçaları, ekin yaprakları, karakter özelliği süsleri)",
+      "Profil sayfası yeni tasarıma kavuştu",
+      "Profil kartındaki oyun listesinden 'N kez oynandı' yazısı kaldırıldı",
+      "Tumble Crown başarıları ve oyun kayıtlarının profile gitmesi düzeltildi"
+     ]
+    },
+    "it": {
+     "title": "Nuovo design per i bordi del profilo",
+     "items": [
+      "I bordi sono stati ridisegnati con una forma diversa per ogni gioco (corona, frammenti di minerale, foglie dei raccolti, ornamenti dei tratti del personaggio)",
+      "La pagina del profilo ha un nuovo design",
+      "Rimosso il testo 'giocato N volte' dall'elenco dei giochi nella scheda del profilo",
+      "Corretto: i risultati e i record di Tumble Crown ora finiscono nel profilo"
+     ]
+    },
+    "pl": {
+     "title": "Nowy wygląd ramek profilu",
+     "items": [
+      "Ramki narysowano od nowa, z innym kształtem dla każdej gry (korona, odłamki minerałów, liście plonów, ozdoby cech postaci)",
+      "Strona profilu ma nowy wygląd",
+      "Usunięto napis „zagrane N razy” z listy gier na karcie profilu",
+      "Naprawiono: osiągnięcia i zapisy Tumble Crown trafiają teraz do profilu"
+     ]
+    },
+    "ar": {
+     "title": "تصميم جديد لإطارات الملف الشخصي",
+     "items": [
+      "أُعيد رسم الإطارات بشكل مختلف لكل لعبة (التاج، شظايا المعادن، أوراق المحاصيل، زخارف صفات الشخصية)",
+      "صفحة الملف الشخصي بتصميم جديد",
+      "حُذفت كلمة «لُعب N مرة» من قائمة الألعاب في بطاقة الملف الشخصي",
+      "أُصلح إرسال إنجازات Tumble Crown وسجلات اللعب إلى الملف الشخصي"
+     ]
+    },
+    "nw": {
+     "title": "Profile borders new design",
+     "items": [
+      "Borders made again in different shape for each game (crown, mineral bits, crop leaves, character trait decor)",
+      "Profile page made in new design",
+      "Removed 'played N times' words from game list on profile card",
+      "Fixed so Tumble Crown achievements and play records goes to profile"
+     ]
+    },
+    "gk": {
+     "title": "프로필 테두리 새 디자인",
+     "items": [
+      "테두리 를 게임 마다 다르다 모양 으로 다시 만들다 었다 ( 왕관 , 광물 조각 , 작물 잎 , 캐릭터 특성 장식 )",
+      "프로필 페이지 디자인 을 새로 만들다 었다",
+      "프로필 카드 의 게임 목록 에서 ' 몇 번 플레이 ' 글자 를 없애다 었다",
+      "Tumble Crown 의 도전과제 와 플레이 기록 이 프로필 에 보내다 지도록 고치다 었다"
+     ]
+    }
+   }
   },
   {
    "date": "2026-11-03",
@@ -78,7 +850,121 @@
     "프로필 설정이 설정 탭에서 따로 나와 '프로필' 페이지가 생겼어요",
     "회원가입할 때 닉네임도 정할 수 있어요",
     "프로필 테두리가 생겼어요. 각 게임에서 사면 프로필 카드와 계정 버튼에 적용되고, 안 사면 없어요"
-   ]
+   ],
+   "tr": {
+    "en": {
+     "title": "Profile overhaul",
+     "items": [
+      "Profile settings now have their own 'Profile' page, separate from the Settings tab",
+      "You can also choose a nickname when you sign up",
+      "Profile borders are here. Buy one in each game and it applies to your profile card and account button; without one, there is no border"
+     ]
+    },
+    "es": {
+     "title": "Renovación del perfil",
+     "items": [
+      "Los ajustes del perfil ahora están en su propia página 'Perfil', separada de la pestaña Ajustes",
+      "También puedes elegir un apodo al registrarte",
+      "Ya hay bordes de perfil. Cómpralos en cada juego y se aplican a la tarjeta de perfil y al botón de la cuenta; si no compras ninguno, no hay borde"
+     ]
+    },
+    "fr": {
+     "title": "Refonte du profil",
+     "items": [
+      "Les réglages du profil ont maintenant leur propre page « Profil », séparée de l'onglet Réglages",
+      "Tu peux aussi choisir un pseudo à l'inscription",
+      "Des bordures de profil existent maintenant. Achète-les dans chaque jeu : elles s'appliquent à la carte de profil et au bouton du compte ; sans achat, pas de bordure"
+     ]
+    },
+    "de": {
+     "title": "Profil überarbeitet",
+     "items": [
+      "Die Profileinstellungen haben jetzt eine eigene Seite „Profil“, getrennt vom Reiter Einstellungen",
+      "Beim Registrieren kannst du auch einen Spitznamen wählen",
+      "Es gibt jetzt Profilrahmen. Kauf sie in jedem Spiel: Sie gelten für die Profilkarte und den Kontoknopf; ohne Kauf gibt es keinen Rahmen"
+     ]
+    },
+    "ja": {
+     "title": "プロフィールを改編",
+     "items": [
+      "プロフィールの設定が設定タブから独立し、「プロフィール」ページができました",
+      "会員登録のときにニックネームも決められます",
+      "プロフィールの枠ができました。各ゲームで買うとプロフィールカードとアカウントボタンに適用され、買わなければ枠はありません"
+     ]
+    },
+    "zh": {
+     "title": "个人资料改版",
+     "items": [
+      "个人资料设置从设置标签中独立出来，有了「个人资料」页面",
+      "注册时也可以设置昵称",
+      "新增个人资料边框。在各个游戏里购买后会应用到个人资料卡和账户按钮上，不买就没有边框"
+     ]
+    },
+    "pt": {
+     "title": "Perfil reformulado",
+     "items": [
+      "As configurações do perfil agora ficam em uma página própria, 'Perfil', separada da aba Configurações",
+      "Você também pode escolher um apelido ao se cadastrar",
+      "Agora existem bordas de perfil. Compre em cada jogo e elas valem para o cartão de perfil e o botão da conta; sem compra, não há borda"
+     ]
+    },
+    "ru": {
+     "title": "Профиль переработан",
+     "items": [
+      "Настройки профиля теперь на отдельной странице «Профиль», а не во вкладке «Настройки»",
+      "При регистрации можно сразу выбрать никнейм",
+      "Появились рамки профиля. Купите их в каждой игре: они применяются к карточке профиля и кнопке аккаунта, без покупки рамки нет"
+     ]
+    },
+    "tr": {
+     "title": "Profil yenilendi",
+     "items": [
+      "Profil ayarları artık Ayarlar sekmesinden ayrı, kendi 'Profil' sayfasında",
+      "Kayıt olurken takma adını da seçebilirsin",
+      "Profil çerçeveleri geldi. Her oyunda satın alırsan profil kartına ve hesap düğmesine uygulanır; satın almazsan çerçeve olmaz"
+     ]
+    },
+    "it": {
+     "title": "Profilo rinnovato",
+     "items": [
+      "Le impostazioni del profilo ora hanno una pagina 'Profilo' tutta loro, separata dalla scheda Impostazioni",
+      "Puoi scegliere anche il nickname durante la registrazione",
+      "Sono arrivati i bordi del profilo. Acquistali in ogni gioco: si applicano alla scheda del profilo e al pulsante dell'account; senza acquisto non c'è bordo"
+     ]
+    },
+    "pl": {
+     "title": "Przebudowa profilu",
+     "items": [
+      "Ustawienia profilu mają teraz osobną stronę „Profil”, oddzieloną od karty Ustawienia",
+      "Przy rejestracji możesz też wybrać pseudonim",
+      "Pojawiły się ramki profilu. Kup je w każdej grze, a zastosują się do karty profilu i przycisku konta; bez zakupu nie ma ramki"
+     ]
+    },
+    "ar": {
+     "title": "إعادة تصميم الملف الشخصي",
+     "items": [
+      "صارت إعدادات الملف الشخصي في صفحة «الملف الشخصي» مستقلة عن تبويب الإعدادات",
+      "يمكنك أيضًا اختيار اسم مستعار عند التسجيل",
+      "ظهرت إطارات الملف الشخصي. اشترِها من كل لعبة لتظهر على بطاقة الملف الشخصي وزر الحساب؛ إن لم تشترِ فلا يوجد إطار"
+     ]
+    },
+    "nw": {
+     "title": "Profile remade",
+     "items": [
+      "Profile settings now have own 'Profile' page, not in Rules tab",
+      "You can also pick a nickname when you join up",
+      "Profile borders now exist. Buy in each game and it goes on profile card and account button; if you do not buy, there is no border"
+     ]
+    },
+    "gk": {
+     "title": "프로필 개편",
+     "items": [
+      "프로필 설정 이 설정 탭 에서 따로 나오다 어 ' 프로필 ' 페이지 가 생기다 었다",
+      "회원가입 하다 때 닉네임 도 정하다 수 있다 어요",
+      "프로필 테두리 가 생기다 었다. 각 게임 에서 사다 면 프로필 카드 와 계정 버튼 에 적용되다 고 , 안 사다 면 없다 어요"
+     ]
+    }
+   }
   },
   {
    "date": "2026-11-03",
@@ -87,7 +973,107 @@
    "items": [
     "총괄 개발자가 다른 사람에게 Hub Coin을 메시지와 함께 보낼 수 있어요",
     "받는 사람이 허브나 Games에 들어오면 +n hC! 창이 뜨고 아래에 메시지가 나와요"
-   ]
+   ],
+   "tr": {
+    "en": {
+     "title": "Coin gifts (lead developer)",
+     "items": [
+      "The lead developer can send Hub Coin to another person with a message",
+      "When the recipient enters the hub or Games, a '+n hC!' window appears with the message below it"
+     ]
+    },
+    "es": {
+     "title": "Regalo de monedas (desarrollador principal)",
+     "items": [
+      "El desarrollador principal puede enviar Hub Coin a otra persona con un mensaje",
+      "Cuando la persona entra en el hub o en Games, aparece una ventana '+n hC!' con el mensaje debajo"
+     ]
+    },
+    "fr": {
+     "title": "Cadeaux de pièces (développeur en chef)",
+     "items": [
+      "Le développeur en chef peut envoyer des Hub Coin à quelqu'un avec un message",
+      "Quand le destinataire entre dans le hub ou dans Games, une fenêtre « +n hC! » s'affiche avec le message en dessous"
+     ]
+    },
+    "de": {
+     "title": "Münzgeschenke (Hauptentwickler)",
+     "items": [
+      "Der Hauptentwickler kann anderen Hub Coins mit einer Nachricht schicken",
+      "Wenn der Empfänger den Hub oder Games betritt, erscheint ein Fenster „+n hC!“ mit der Nachricht darunter"
+     ]
+    },
+    "ja": {
+     "title": "コインのプレゼント（総合開発者）",
+     "items": [
+      "総合開発者は他の人にメッセージを添えてHub Coinを送れます",
+      "受け取る人がハブやGamesに入ると「+n hC!」の窓が出て、下にメッセージが表示されます"
+     ]
+    },
+    "zh": {
+     "title": "金币赠送（总开发者）",
+     "items": [
+      "总开发者可以附带留言向其他人赠送 Hub Coin",
+      "收到的人进入 Hub 或 Games 时会弹出「+n hC!」窗口，下方显示留言"
+     ]
+    },
+    "pt": {
+     "title": "Presente de moedas (desenvolvedor geral)",
+     "items": [
+      "O desenvolvedor geral pode enviar Hub Coin para outra pessoa com uma mensagem",
+      "Quando a pessoa entrar no hub ou no Games, aparece uma janela '+n hC!' com a mensagem embaixo"
+     ]
+    },
+    "ru": {
+     "title": "Подарки монет (главный разработчик)",
+     "items": [
+      "Главный разработчик может отправить Hub Coin другому человеку с сообщением",
+      "Когда получатель заходит в хаб или Games, появляется окно «+n hC!» с сообщением внизу"
+     ]
+    },
+    "tr": {
+     "title": "Jeton hediyesi (baş geliştirici)",
+     "items": [
+      "Baş geliştirici başka birine mesajla birlikte Hub Coin gönderebilir",
+      "Alıcı hub'a veya Games'e girdiğinde '+n hC!' penceresi açılır ve altında mesaj görünür"
+     ]
+    },
+    "it": {
+     "title": "Regali di monete (sviluppatore capo)",
+     "items": [
+      "Lo sviluppatore capo può inviare Hub Coin a un'altra persona con un messaggio",
+      "Quando il destinatario entra nell'hub o in Games, compare una finestra '+n hC!' con il messaggio sotto"
+     ]
+    },
+    "pl": {
+     "title": "Prezenty z monetami (główny developer)",
+     "items": [
+      "Główny developer może wysłać komuś Hub Coin z wiadomością",
+      "Gdy odbiorca wejdzie do hubu lub Games, pojawi się okno „+n hC!” z wiadomością pod spodem"
+     ]
+    },
+    "ar": {
+     "title": "هدايا العملات (المطوّر الرئيسي)",
+     "items": [
+      "يمكن للمطوّر الرئيسي إرسال Hub Coin إلى شخص آخر مع رسالة",
+      "عندما يدخل المستلم المركز أو Games تظهر نافذة «+n hC!» وتحتها الرسالة"
+     ]
+    },
+    "nw": {
+     "title": "Coin gifts (Chief Developer)",
+     "items": [
+      "Chief Developer can send Hub Coin to another person with a message",
+      "When the receiver goes in hub or Games, a '+n hC!' window shows with the message below"
+     ]
+    },
+    "gk": {
+     "title": "코인 선물 ( 총괄 개발자 )",
+     "items": [
+      "총괄 개발자 가 다른 사람 에게 Hub Coin 을 메시지 와 함께 보내다 수 있다 어요",
+      "받다 사람 이 허브 나 Games 에 들어오다 면 +n hC! 창 이 뜨다 고 아래 에 메시지 가 나오다 어요"
+     ]
+    }
+   }
   },
   {
    "date": "2026-11-03",
@@ -95,7 +1081,93 @@
    "title": "허브 아이콘 배경 없앰",
    "items": [
     "허브 코인, 계정, 업적, 랭킹, 위키 아이콘의 둥근 배경을 없애 투명하게 바꿨어요"
-   ]
+   ],
+   "tr": {
+    "en": {
+     "title": "Hub icon backgrounds removed",
+     "items": [
+      "The round backgrounds of the Hub Coin, account, achievements, ranking and wiki icons were removed and made transparent"
+     ]
+    },
+    "es": {
+     "title": "Sin fondo en los iconos del hub",
+     "items": [
+      "Se quitó el fondo redondo de los iconos de Hub Coin, cuenta, logros, ranking y wiki, y ahora son transparentes"
+     ]
+    },
+    "fr": {
+     "title": "Fond des icônes du hub supprimé",
+     "items": [
+      "Le fond rond des icônes Hub Coin, compte, succès, classement et wiki a été retiré et rendu transparent"
+     ]
+    },
+    "de": {
+     "title": "Hintergründe der Hub-Symbole entfernt",
+     "items": [
+      "Die runden Hintergründe der Symbole für Hub Coin, Konto, Erfolge, Rangliste und Wiki wurden entfernt und sind jetzt durchsichtig"
+     ]
+    },
+    "ja": {
+     "title": "ハブのアイコンの背景を削除",
+     "items": [
+      "Hub Coin、アカウント、実績、ランキング、ウィキのアイコンの丸い背景をなくし、透明にしました"
+     ]
+    },
+    "zh": {
+     "title": "去掉 Hub 图标的底色",
+     "items": [
+      "Hub Coin、账户、成就、排行榜、维基图标的圆形底色已去掉，改为透明"
+     ]
+    },
+    "pt": {
+     "title": "Fundo dos ícones do hub removido",
+     "items": [
+      "O fundo redondo dos ícones de Hub Coin, conta, conquistas, ranking e wiki foi removido e ficou transparente"
+     ]
+    },
+    "ru": {
+     "title": "Убраны фоны иконок хаба",
+     "items": [
+      "Круглые фоны иконок Hub Coin, аккаунта, достижений, рейтинга и вики убраны, теперь они прозрачные"
+     ]
+    },
+    "tr": {
+     "title": "Hub simgelerinin arka planı kaldırıldı",
+     "items": [
+      "Hub Coin, hesap, başarılar, sıralama ve wiki simgelerinin yuvarlak arka planları kaldırılıp saydam yapıldı"
+     ]
+    },
+    "it": {
+     "title": "Sfondo delle icone dell'hub rimosso",
+     "items": [
+      "Lo sfondo rotondo delle icone di Hub Coin, account, obiettivi, classifica e wiki è stato tolto e reso trasparente"
+     ]
+    },
+    "pl": {
+     "title": "Usunięto tło ikon hubu",
+     "items": [
+      "Okrągłe tła ikon Hub Coin, konta, osiągnięć, rankingu i wiki zostały usunięte i są przezroczyste"
+     ]
+    },
+    "ar": {
+     "title": "إزالة خلفيات أيقونات المركز",
+     "items": [
+      "أُزيلت الخلفيات الدائرية لأيقونات Hub Coin والحساب والإنجازات والتصنيف والويكي وصارت شفافة"
+     ]
+    },
+    "nw": {
+     "title": "Hub icon backgrounds unmade",
+     "items": [
+      "Round backgrounds of Hub Coin, account, achievements, ranking, wiki icons unmade, now see-through"
+     ]
+    },
+    "gk": {
+     "title": "허브 아이콘 배경 없애다",
+     "items": [
+      "허브 코인 , 계정 , 업적 , 랭킹 , 위키 아이콘 의 둥글다 배경 을 없애다 어 투명 하다 게 바꾸다 었다"
+     ]
+    }
+   }
   },
   {
    "date": "2026-11-02",
@@ -103,7 +1175,93 @@
    "title": "허브 이모티콘 원래대로",
    "items": [
     "허브와 공용 화면의 이모티콘을 로고 그림 대신 원래 이모티콘으로 되돌렸어요"
-   ]
+   ],
+   "tr": {
+    "en": {
+     "title": "Hub emoji back to normal",
+     "items": [
+      "Emoji on the hub and shared screens are back to the original emoji instead of logo pictures"
+     ]
+    },
+    "es": {
+     "title": "Emoji del hub de nuevo como antes",
+     "items": [
+      "Los emojis del hub y de las pantallas compartidas vuelven a ser los emojis originales en lugar de imágenes del logo"
+     ]
+    },
+    "fr": {
+     "title": "Emoji du hub revenus à la normale",
+     "items": [
+      "Les emoji du hub et des écrans partagés sont redevenus les emoji d'origine au lieu des images de logo"
+     ]
+    },
+    "de": {
+     "title": "Hub-Emojis wieder wie zuvor",
+     "items": [
+      "Die Emojis im Hub und auf gemeinsamen Bildschirmen sind wieder die ursprünglichen Emojis statt Logo-Bilder"
+     ]
+    },
+    "ja": {
+     "title": "ハブの絵文字を元に戻しました",
+     "items": [
+      "ハブと共用画面の絵文字を、ロゴ画像ではなく元の絵文字に戻しました"
+     ]
+    },
+    "zh": {
+     "title": "Hub 表情恢复原样",
+     "items": [
+      "Hub 和共用画面的表情改回原来的 emoji，不再使用 logo 图片"
+     ]
+    },
+    "pt": {
+     "title": "Emojis do hub de volta ao normal",
+     "items": [
+      "Os emojis do hub e das telas compartilhadas voltaram aos emojis originais em vez das imagens do logo"
+     ]
+    },
+    "ru": {
+     "title": "Эмодзи хаба вернули как было",
+     "items": [
+      "Эмодзи в хабе и на общих экранах снова обычные, а не картинки с логотипом"
+     ]
+    },
+    "tr": {
+     "title": "Hub emojileri eski haline döndü",
+     "items": [
+      "Hub ve ortak ekranlardaki emojiler logo resimleri yerine yeniden orijinal emojiler oldu"
+     ]
+    },
+    "it": {
+     "title": "Emoji dell'hub di nuovo originali",
+     "items": [
+      "Le emoji dell'hub e delle schermate condivise sono tornate quelle originali invece delle immagini del logo"
+     ]
+    },
+    "pl": {
+     "title": "Emoji w hubie wróciły do normy",
+     "items": [
+      "Emoji w hubie i na wspólnych ekranach znów są oryginalnymi emoji zamiast obrazków logo"
+     ]
+    },
+    "ar": {
+     "title": "إعادة إيموجي المركز إلى ما كانت عليه",
+     "items": [
+      "عادت إيموجي المركز والشاشات المشتركة إلى الإيموجي الأصلية بدل صور الشعار"
+     ]
+    },
+    "nw": {
+     "title": "Hub emoji unchanged to before",
+     "items": [
+      "Hub and shared screen emoji back to original emoji, not logo pictures"
+     ]
+    },
+    "gk": {
+     "title": "허브 이모티콘 원래대로",
+     "items": [
+      "허브 와 공용 화면 의 이모티콘 을 로고 그림 대신 원래 이모티콘 으로 되돌리다 었다"
+     ]
+    }
+   }
   },
   {
    "date": "2026-11-02",
@@ -113,7 +1271,121 @@
     "허브의 남은 이모지(설정, 자물쇠, 왕관, 깃발 등)도 로고 그림으로 바꿨어요",
     "공지와 패치노트 글은 원래 이모지 그대로 보여요",
     "이모지어(가상 언어)가 11-01 변경 때 잘못 바뀐 것을 원래대로 고쳤어요"
-   ]
+   ],
+   "tr": {
+    "en": {
+     "title": "Hub emoji unified to logo",
+     "items": [
+      "The remaining hub emoji (settings, lock, crown, flag and so on) were also changed to logo pictures",
+      "Notices and patch note posts still show their original emoji",
+      "Fixed the Emojish (fictional language) text that was wrongly changed in the 11-01 update, restoring it to the original"
+     ]
+    },
+    "es": {
+     "title": "Emojis del hub unificados con el logo",
+     "items": [
+      "Los demás emojis del hub (ajustes, candado, corona, bandera, etc.) también se cambiaron por imágenes del logo",
+      "Los anuncios y las notas de parche siguen mostrando sus emojis originales",
+      "Corregido el Emojish (idioma ficticio) que el cambio del 11-01 había alterado por error, devuelto a su versión original"
+     ]
+    },
+    "fr": {
+     "title": "Emoji du hub unifiés avec le logo",
+     "items": [
+      "Les autres emoji du hub (réglages, cadenas, couronne, drapeau, etc.) ont aussi été remplacés par des images de logo",
+      "Les annonces et les notes de version gardent leurs emoji d'origine",
+      "Corrigé : l'Emojish (langue fictive), changé par erreur lors de la mise à jour du 11-01, est revenu à l'original"
+     ]
+    },
+    "de": {
+     "title": "Hub-Emojis mit Logo vereinheitlicht",
+     "items": [
+      "Die übrigen Emojis im Hub (Einstellungen, Schloss, Krone, Flagge usw.) wurden ebenfalls durch Logo-Bilder ersetzt",
+      "Ankündigungen und Patchnotiz-Beiträge zeigen weiterhin ihre ursprünglichen Emojis",
+      "Der Emojish (fiktive Sprache) wurde bei der Änderung am 11-01 versehentlich verändert und ist jetzt wieder im Original"
+     ]
+    },
+    "ja": {
+     "title": "ハブの絵文字をロゴに統一",
+     "items": [
+      "ハブに残っていた絵文字（設定、錠前、王冠、旗など）もロゴ画像に変えました",
+      "お知らせとパッチノートの投稿は元の絵文字のまま表示されます",
+      "11-01の変更で誤って変わっていたエモジ語（架空の言語）を元に戻しました"
+     ]
+    },
+    "zh": {
+     "title": "Hub 表情统一为 logo",
+     "items": [
+      "Hub 里其余的表情（设置、锁、王冠、旗帜等）也换成了 logo 图片",
+      "公告和补丁说明帖仍然显示原来的表情",
+      "修正了在 11-01 改动中被误改的 Emojish（虚构语言），已恢复原样"
+     ]
+    },
+    "pt": {
+     "title": "Emojis do hub unificados com o logo",
+     "items": [
+      "Os demais emojis do hub (configurações, cadeado, coroa, bandeira etc.) também foram trocados por imagens do logo",
+      "Avisos e notas de patch continuam mostrando os emojis originais",
+      "Corrigido o Emojish (idioma fictício), que tinha sido alterado por engano na mudança de 11-01, e voltou ao original"
+     ]
+    },
+    "ru": {
+     "title": "Эмодзи хаба приведены к логотипу",
+     "items": [
+      "Остальные эмодзи хаба (настройки, замок, корона, флаг и т. д.) тоже заменены картинками логотипа",
+      "Объявления и посты с патч-нотами по-прежнему показывают исходные эмодзи",
+      "Исправлено: Emojish (вымышленный язык), ошибочно изменённый при обновлении 11-01, возвращён к оригиналу"
+     ]
+    },
+    "tr": {
+     "title": "Hub emojileri logoyla birleştirildi",
+     "items": [
+      "Hub'daki kalan emojiler (ayarlar, kilit, taç, bayrak vb.) da logo resimlerine çevrildi",
+      "Duyurular ve yama notu gönderileri orijinal emojilerini göstermeye devam eder",
+      "11-01 değişikliğinde yanlışlıkla değişen Emojish (kurgusal dil) düzeltildi, orijinaline döndü"
+     ]
+    },
+    "it": {
+     "title": "Emoji dell'hub unificate con il logo",
+     "items": [
+      "Anche le altre emoji dell'hub (impostazioni, lucchetto, corona, bandiera ecc.) sono state sostituite con immagini del logo",
+      "Avvisi e post delle note di patch mostrano ancora le emoji originali",
+      "Corretto l'Emojish (lingua fittizia), cambiato per errore nell'aggiornamento del 11-01, ora è tornato all'originale"
+     ]
+    },
+    "pl": {
+     "title": "Emoji hubu ujednolicone z logo",
+     "items": [
+      "Pozostałe emoji w hubie (ustawienia, kłódka, korona, flaga itd.) też zamieniono na obrazki logo",
+      "Ogłoszenia i wpisy z notatkami o łatach nadal pokazują oryginalne emoji",
+      "Naprawiono Emojish (język fikcyjny), który przez pomyłkę zmieniono przy aktualizacji 11-01, przywrócono oryginał"
+     ]
+    },
+    "ar": {
+     "title": "توحيد إيموجي المركز مع الشعار",
+     "items": [
+      "الإيموجي المتبقية في المركز (الإعدادات والقفل والتاج والعلم وغيرها) صارت أيضًا صور شعار",
+      "الإعلانات ومنشورات ملاحظات التحديث ما زالت تعرض إيموجيها الأصلية",
+      "أُصلح Emojish (لغة خيالية) الذي تغيّر بالخطأ في تحديث 11-01، وعاد إلى الأصل"
+     ]
+    },
+    "nw": {
+     "title": "Hub emoji all made same as logo",
+     "items": [
+      "Remaining hub emoji (rules, lock, crown, flag etc.) also made into logo pictures",
+      "Announcements and patchnote posts still show original emoji",
+      "Emojish (fictional language) that was wrongly changed in 11-01 is put back as before"
+     ]
+    },
+    "gk": {
+     "title": "허브 이모지 로고 통일",
+     "items": [
+      "허브 의 남다 이모지 ( 설정 , 자물쇠 , 왕관 , 깃발 등 ) 도 로고 그림 으로 바꾸다 었다",
+      "공지 와 패치노트 글 은 원래 이모지 그대로 보이다 어요",
+      "이모지어 ( 가상 언어 ) 가 11-01 변경 때 잘못 바뀌다 것 을 원래대로 고치다 었다"
+     ]
+    }
+   }
   },
   {
    "date": "2026-11-02",
@@ -122,7 +1394,107 @@
    "items": [
     "총괄 개발자가 친구 프로필 카드에서 칭호를 직접 지어 줄 수 있어요",
     "칭호는 닉네임 옆과 프로필 카드에 보여요"
-   ]
+   ],
+   "tr": {
+    "en": {
+     "title": "Custom titles",
+     "items": [
+      "The lead developer can write a title for a friend on their profile card",
+      "Titles show next to the nickname and on the profile card"
+     ]
+    },
+    "es": {
+     "title": "Títulos personalizados",
+     "items": [
+      "El desarrollador principal puede escribir un título para un amigo en su tarjeta de perfil",
+      "Los títulos aparecen junto al apodo y en la tarjeta de perfil"
+     ]
+    },
+    "fr": {
+     "title": "Titres personnalisés",
+     "items": [
+      "Le développeur en chef peut écrire lui-même un titre pour un ami sur sa carte de profil",
+      "Les titres s'affichent à côté du pseudo et sur la carte de profil"
+     ]
+    },
+    "de": {
+     "title": "Eigene Titel",
+     "items": [
+      "Der Hauptentwickler kann Freunden auf deren Profilkarte selbst einen Titel vergeben",
+      "Titel werden neben dem Spitznamen und auf der Profilkarte angezeigt"
+     ]
+    },
+    "ja": {
+     "title": "オリジナル称号",
+     "items": [
+      "総合開発者が友だちのプロフィールカードに称号を自分で付けられます",
+      "称号はニックネームの横とプロフィールカードに表示されます"
+     ]
+    },
+    "zh": {
+     "title": "自定义称号",
+     "items": [
+      "总开发者可以在好友的个人资料卡上亲自设置称号",
+      "称号会显示在昵称旁边和个人资料卡上"
+     ]
+    },
+    "pt": {
+     "title": "Títulos personalizados",
+     "items": [
+      "O desenvolvedor geral pode criar um título para um amigo diretamente no cartão de perfil dele",
+      "Os títulos aparecem ao lado do apelido e no cartão de perfil"
+     ]
+    },
+    "ru": {
+     "title": "Свои звания",
+     "items": [
+      "Главный разработчик может сам придумать звание другу на карточке его профиля",
+      "Звания показываются рядом с никнеймом и на карточке профиля"
+     ]
+    },
+    "tr": {
+     "title": "Özel unvanlar",
+     "items": [
+      "Baş geliştirici, arkadaşının profil kartında unvanı kendisi yazabilir",
+      "Unvanlar takma adın yanında ve profil kartında görünür"
+     ]
+    },
+    "it": {
+     "title": "Titoli personalizzati",
+     "items": [
+      "Lo sviluppatore capo può scrivere lui stesso un titolo per un amico sulla sua scheda del profilo",
+      "I titoli appaiono accanto al nickname e sulla scheda del profilo"
+     ]
+    },
+    "pl": {
+     "title": "Własne tytuły",
+     "items": [
+      "Główny developer może sam wpisać tytuł dla znajomego na jego karcie profilu",
+      "Tytuły pokazują się obok pseudonimu i na karcie profilu"
+     ]
+    },
+    "ar": {
+     "title": "ألقاب مخصصة",
+     "items": [
+      "يمكن للمطوّر الرئيسي كتابة لقب لصديق بنفسه على بطاقة ملفه الشخصي",
+      "تظهر الألقاب بجانب الاسم المستعار وعلى بطاقة الملف الشخصي"
+     ]
+    },
+    "nw": {
+     "title": "Custom titles",
+     "items": [
+      "Chief Developer can write own title for a comrade on their profile card",
+      "Titles show by nickname and on profile card"
+     ]
+    },
+    "gk": {
+     "title": "커스텀 칭호",
+     "items": [
+      "총괄 개발자 가 친구 프로필 카드 에서 칭호 를 직접 짓다 어 주다 수 있다 어요",
+      "칭호 는 닉네임 옆 과 프로필 카드 에 보이다 어요"
+     ]
+    }
+   }
   },
   {
    "date": "2026-11-02",
@@ -138,7 +1510,93 @@
    "title": "위키 카드 로고",
    "items": [
     "공략 위키 카드의 그림을 위키 사이트에서 쓰는 위키 로고로 바꿨어요"
-   ]
+   ],
+   "tr": {
+    "en": {
+     "title": "Wiki card logo",
+     "items": [
+      "The guide wiki card picture was changed to the wiki logo used on the wiki site"
+     ]
+    },
+    "es": {
+     "title": "Logo de la wiki en la tarjeta",
+     "items": [
+      "La imagen de la tarjeta de la wiki de guías ahora es el logo de la wiki que se usa en el sitio de la wiki"
+     ]
+    },
+    "fr": {
+     "title": "Logo du wiki sur la carte",
+     "items": [
+      "L'image de la carte du wiki de guides a été remplacée par le logo du wiki utilisé sur le site du wiki"
+     ]
+    },
+    "de": {
+     "title": "Wiki-Logo auf der Karte",
+     "items": [
+      "Das Bild der Wiki-Karte mit den Anleitungen wurde durch das Wiki-Logo der Wiki-Seite ersetzt"
+     ]
+    },
+    "ja": {
+     "title": "ウィキカードのロゴ",
+     "items": [
+      "攻略ウィキのカードの絵を、ウィキサイトで使っているウィキのロゴに変えました"
+     ]
+    },
+    "zh": {
+     "title": "维基卡片换成维基 logo",
+     "items": [
+      "攻略维基卡片上的图片已换成维基网站使用的维基 logo"
+     ]
+    },
+    "pt": {
+     "title": "Logo da wiki no cartão",
+     "items": [
+      "A imagem do cartão da wiki de guias foi trocada pelo logo da wiki usado no site da wiki"
+     ]
+    },
+    "ru": {
+     "title": "Логотип вики на карточке",
+     "items": [
+      "Картинка на карточке гайд-вики заменена на логотип вики, который используется на сайте вики"
+     ]
+    },
+    "tr": {
+     "title": "Wiki kartında logo",
+     "items": [
+      "Rehber wiki kartındaki resim, wiki sitesinde kullanılan wiki logosuyla değiştirildi"
+     ]
+    },
+    "it": {
+     "title": "Logo della wiki sulla scheda",
+     "items": [
+      "L'immagine della scheda della wiki guide è stata sostituita con il logo della wiki usato sul sito della wiki"
+     ]
+    },
+    "pl": {
+     "title": "Logo wiki na karcie",
+     "items": [
+      "Obrazek karty wiki poradników zmieniono na logo wiki używane na stronie wiki"
+     ]
+    },
+    "ar": {
+     "title": "شعار الويكي على البطاقة",
+     "items": [
+      "استُبدلت صورة بطاقة ويكي الأدلة بشعار الويكي المستخدم في موقع الويكي"
+     ]
+    },
+    "nw": {
+     "title": "Wiki card logo",
+     "items": [
+      "Guide wiki card picture changed to the wiki logo used on the wiki site"
+     ]
+    },
+    "gk": {
+     "title": "위키 카드 로고",
+     "items": [
+      "공략 위키 카드 의 그림 을 위키 사이트 에서 쓰다 위키 로고 로 바꾸다 었다"
+     ]
+    }
+   }
   },
   {
    "date": "2026-11-02",
@@ -147,7 +1605,107 @@
    "items": [
     "허브 코인 창에서 선물 탭을 없앴어요",
     "코인 교환과 퀘스트, 기록은 그대로예요"
-   ]
+   ],
+   "tr": {
+    "en": {
+     "title": "Hub coin gift removed",
+     "items": [
+      "The gift tab was removed from the Hub Coin window",
+      "Coin exchange, quests and records are unchanged"
+     ]
+    },
+    "es": {
+     "title": "Eliminado el regalo de Hub Coin",
+     "items": [
+      "Se quitó la pestaña de regalos de la ventana de Hub Coin",
+      "El cambio de monedas, las misiones y los registros siguen igual"
+     ]
+    },
+    "fr": {
+     "title": "Cadeau de Hub Coin supprimé",
+     "items": [
+      "L'onglet cadeau a été retiré de la fenêtre Hub Coin",
+      "L'échange de pièces, les quêtes et les historiques restent inchangés"
+     ]
+    },
+    "de": {
+     "title": "Hub-Coin-Geschenk entfernt",
+     "items": [
+      "Der Geschenk-Reiter wurde aus dem Hub-Coin-Fenster entfernt",
+      "Münztausch, Quests und Verlauf bleiben unverändert"
+     ]
+    },
+    "ja": {
+     "title": "ハブコインの贈り物を削除",
+     "items": [
+      "ハブコインの画面から贈り物のタブをなくしました",
+      "コイン交換、クエスト、記録はそのままです"
+     ]
+    },
+    "zh": {
+     "title": "取消 Hub Coin 赠送",
+     "items": [
+      "Hub Coin 窗口中的赠送标签已删除",
+      "金币兑换、任务和记录保持不变"
+     ]
+    },
+    "pt": {
+     "title": "Presente de Hub Coin removido",
+     "items": [
+      "A aba de presentes saiu da janela de Hub Coin",
+      "Troca de moedas, missões e registros continuam iguais"
+     ]
+    },
+    "ru": {
+     "title": "Убран подарок Hub Coin",
+     "items": [
+      "Вкладка подарков убрана из окна Hub Coin",
+      "Обмен монет, задания и записи остались прежними"
+     ]
+    },
+    "tr": {
+     "title": "Hub Coin hediyesi kaldırıldı",
+     "items": [
+      "Hub Coin penceresindeki hediye sekmesi kaldırıldı",
+      "Jeton değişimi, görevler ve kayıtlar aynı kaldı"
+     ]
+    },
+    "it": {
+     "title": "Rimosso il regalo di Hub Coin",
+     "items": [
+      "La scheda regali è stata tolta dalla finestra di Hub Coin",
+      "Cambio delle monete, missioni e registri restano invariati"
+     ]
+    },
+    "pl": {
+     "title": "Usunięto prezent Hub Coin",
+     "items": [
+      "Karta prezentów zniknęła z okna Hub Coin",
+      "Wymiana monet, zadania i zapisy pozostają bez zmian"
+     ]
+    },
+    "ar": {
+     "title": "إزالة هدية Hub Coin",
+     "items": [
+      "أُزيل تبويب الهدايا من نافذة Hub Coin",
+      "تبادل العملات والمهام والسجلات كما هي"
+     ]
+    },
+    "nw": {
+     "title": "Hub coin gift unmade",
+     "items": [
+      "Gift tab unmade from Hub Coin window",
+      "Coin changing, quests and records stay same"
+     ]
+    },
+    "gk": {
+     "title": "허브 코인 선물 없애다",
+     "items": [
+      "허브 코인 창 에서 선물 탭 을 없애다 었다",
+      "코인 교환 과 퀘스트 , 기록 은 그대로 이다 어요"
+     ]
+    }
+   }
   },
   {
    "date": "2026-11-01",
@@ -156,7 +1714,107 @@
    "items": [
     "공략 위키 카드의 책 그림이 위키 로고(초록 책 W)로 바뀌었어요",
     "위키가 읽기 전용이 되어 설명 문장도 \"누구나 읽을 수 있어요.\"로 고쳤어요"
-   ]
+   ],
+   "tr": {
+    "en": {
+     "title": "Wiki logo",
+     "items": [
+      "The book picture on the guide wiki card was changed to the wiki logo (green book with a W)",
+      "The wiki is now read-only, so the description sentence was changed to \"Anyone can read it.\""
+     ]
+    },
+    "es": {
+     "title": "Logo de la wiki",
+     "items": [
+      "El dibujo de libro de la tarjeta de la wiki de guías cambió por el logo de la wiki (libro verde con una W)",
+      "La wiki ahora es de solo lectura, así que la frase de descripción cambió a \"Cualquiera puede leerla.\""
+     ]
+    },
+    "fr": {
+     "title": "Logo du wiki",
+     "items": [
+      "L'image du livre sur la carte du wiki de guides a été remplacée par le logo du wiki (livre vert avec un W)",
+      "Le wiki est maintenant en lecture seule, donc la phrase de description est devenue « Tout le monde peut le lire. »"
+     ]
+    },
+    "de": {
+     "title": "Wiki-Logo",
+     "items": [
+      "Das Buchbild auf der Wiki-Karte mit den Anleitungen wurde durch das Wiki-Logo (grünes Buch mit W) ersetzt",
+      "Das Wiki ist jetzt nur noch lesbar, deshalb lautet der Beschreibungssatz jetzt „Jeder kann es lesen.“"
+     ]
+    },
+    "ja": {
+     "title": "ウィキのロゴ",
+     "items": [
+      "攻略ウィキのカードの本の絵を、ウィキのロゴ（緑の本のWマーク）に変えました",
+      "ウィキが読み取り専用になったため、説明文を「誰でも読めます。」に直しました"
+     ]
+    },
+    "zh": {
+     "title": "维基 logo",
+     "items": [
+      "攻略维基卡片上的书本图片已换成维基 logo（绿色书本带 W）",
+      "维基现在为只读，因此说明文字改为「任何人都可以阅读。」"
+     ]
+    },
+    "pt": {
+     "title": "Logo da wiki",
+     "items": [
+      "O desenho do livro no cartão da wiki de guias foi trocado pelo logo da wiki (livro verde com W)",
+      "A wiki agora é somente leitura, então a frase de descrição mudou para \"Qualquer pessoa pode ler.\""
+     ]
+    },
+    "ru": {
+     "title": "Логотип вики",
+     "items": [
+      "Книга на карточке гайд-вики заменена логотипом вики (зелёная книга с буквой W)",
+      "Вики теперь только для чтения, поэтому описание изменено на «Читать может любой»"
+     ]
+    },
+    "tr": {
+     "title": "Wiki logosu",
+     "items": [
+      "Rehber wiki kartındaki kitap resmi wiki logosuyla değiştirildi (W harfli yeşil kitap)",
+      "Wiki artık salt okunur olduğu için açıklama cümlesi \"Herkes okuyabilir.\" olarak değiştirildi"
+     ]
+    },
+    "it": {
+     "title": "Logo della wiki",
+     "items": [
+      "L'immagine del libro sulla scheda della wiki guide è stata sostituita dal logo della wiki (libro verde con una W)",
+      "La wiki ora è di sola lettura, quindi la frase di descrizione è diventata \"Chiunque può leggerla.\""
+     ]
+    },
+    "pl": {
+     "title": "Logo wiki",
+     "items": [
+      "Obrazek książki na karcie wiki poradników zmieniono na logo wiki (zielona książka z literą W)",
+      "Wiki jest teraz tylko do odczytu, więc zdanie opisu zmieniono na „Każdy może je przeczytać.”"
+     ]
+    },
+    "ar": {
+     "title": "شعار الويكي",
+     "items": [
+      "صورة الكتاب على بطاقة ويكي الأدلة استُبدلت بشعار الويكي (كتاب أخضر بحرف W)",
+      "صار الويكي للقراءة فقط، لذلك غُيّرت جملة الوصف إلى «يستطيع أي شخص قراءته.»"
+     ]
+    },
+    "nw": {
+     "title": "Wiki logo",
+     "items": [
+      "Book picture on guide wiki card changed to wiki logo (green book with W)",
+      "Wiki now read-only, so description sentence changed to \"Anybody can read.\""
+     ]
+    },
+    "gk": {
+     "title": "위키 로고",
+     "items": [
+      "공략 위키 카드 의 책 그림 이 위키 로고 ( 초록 책 W ) 로 바뀌다 었다",
+      "위키 가 읽기 전용 이 되다 어 설명 문장 도 \" 누구 나 읽다 수 있다 어요 . \" 로 고치다 었다"
+     ]
+    }
+   }
   },
   {
    "date": "2026-11-01",
@@ -165,7 +1823,107 @@
    "items": [
     "허브의 이모지가 새 그림(비콘폴·허브 이모지)으로 바뀌었어요",
     "글과 채팅, 반응 이모트는 그대로예요"
-   ]
+   ],
+   "tr": {
+    "en": {
+     "title": "Hub emoji pictures",
+     "items": [
+      "The hub emoji were changed to new pictures (Beaconpole and hub emoji)",
+      "Posts, chat and reaction emotes are unchanged"
+     ]
+    },
+    "es": {
+     "title": "Imágenes de emojis del hub",
+     "items": [
+      "Los emojis del hub cambiaron a imágenes nuevas (Beaconpole y emojis del hub)",
+      "Las publicaciones, el chat y los emotes de reacción siguen igual"
+     ]
+    },
+    "fr": {
+     "title": "Images des emoji du hub",
+     "items": [
+      "Les emoji du hub ont été remplacés par de nouvelles images (Beaconpole et emoji du hub)",
+      "Les messages, le chat et les émotes de réaction ne changent pas"
+     ]
+    },
+    "de": {
+     "title": "Hub-Emoji-Bilder",
+     "items": [
+      "Die Emojis im Hub wurden durch neue Bilder ersetzt (Beaconpole und Hub-Emojis)",
+      "Beiträge, Chat und Reaktions-Emotes bleiben gleich"
+     ]
+    },
+    "ja": {
+     "title": "ハブの絵文字の絵",
+     "items": [
+      "ハブの絵文字が新しい絵（ビーコンポールとハブの絵文字）に変わりました",
+      "投稿、チャット、リアクションのエモートはそのままです"
+     ]
+    },
+    "zh": {
+     "title": "Hub 表情换成新图",
+     "items": [
+      "Hub 的表情换成了新图（信标杆和 Hub 表情）",
+      "帖子、聊天和回应表情保持不变"
+     ]
+    },
+    "pt": {
+     "title": "Imagens dos emojis do hub",
+     "items": [
+      "Os emojis do hub mudaram para novas imagens (Beaconpole e emojis do hub)",
+      "Posts, chat e emotes de reação continuam iguais"
+     ]
+    },
+    "ru": {
+     "title": "Новые картинки эмодзи хаба",
+     "items": [
+      "Эмодзи хаба заменены на новые картинки (маяк-столб и эмодзи хаба)",
+      "Посты, чат и эмоции-реакции остались прежними"
+     ]
+    },
+    "tr": {
+     "title": "Hub emojilerinin resimleri",
+     "items": [
+      "Hub emojileri yeni resimlerle değişti (Beaconpole ve hub emojileri)",
+      "Gönderiler, sohbet ve tepki emojileri aynı kaldı"
+     ]
+    },
+    "it": {
+     "title": "Immagini delle emoji dell'hub",
+     "items": [
+      "Le emoji dell'hub sono state sostituite con nuove immagini (Beaconpole ed emoji dell'hub)",
+      "Post, chat ed emoji di reazione restano invariati"
+     ]
+    },
+    "pl": {
+     "title": "Nowe obrazki emoji hubu",
+     "items": [
+      "Emoji w hubie zmieniono na nowe obrazki (słup sygnałowy i emoji hubu)",
+      "Wpisy, czat i emotki reakcji pozostają bez zmian"
+     ]
+    },
+    "ar": {
+     "title": "صور جديدة لإيموجي المركز",
+     "items": [
+      "تغيّرت إيموجي المركز إلى صور جديدة (عمود الإشارة وإيموجي المركز)",
+      "المنشورات والدردشة وإيموجي الردود تبقى كما هي"
+     ]
+    },
+    "nw": {
+     "title": "Hub emoji pictures new",
+     "items": [
+      "Hub emoji changed to new pictures (Beaconpole and hub emoji)",
+      "Posts, chat and reaction emotes stay same"
+     ]
+    },
+    "gk": {
+     "title": "허브 이모지 그림",
+     "items": [
+      "허브 의 이모지 가 새 그림 ( 비콘폴 · 허브 이모지 ) 으로 바뀌다 었다",
+      "글 과 채팅 , 반응 이모트 는 그대로 이다 어요"
+     ]
+    }
+   }
   },
   {
    "date": "2026-11-01",
@@ -173,7 +1931,93 @@
    "title": "허브 랭킹에 Tumble Crown",
    "items": [
     "게임 랭킹 탭에 Tumble Crown이 생겼어요"
-   ]
+   ],
+   "tr": {
+    "en": {
+     "title": "Tumble Crown in the hub ranking",
+     "items": [
+      "A Tumble Crown tab was added to the game ranking tab"
+     ]
+    },
+    "es": {
+     "title": "Tumble Crown en el ranking del hub",
+     "items": [
+      "La pestaña de ranking de juegos ahora tiene Tumble Crown"
+     ]
+    },
+    "fr": {
+     "title": "Tumble Crown dans le classement du hub",
+     "items": [
+      "Un onglet Tumble Crown est apparu dans l'onglet classement des jeux"
+     ]
+    },
+    "de": {
+     "title": "Tumble Crown in der Hub-Rangliste",
+     "items": [
+      "Im Reiter „Spielrangliste“ gibt es jetzt Tumble Crown"
+     ]
+    },
+    "ja": {
+     "title": "ハブのランキングにTumble Crown",
+     "items": [
+      "ゲームランキングのタブにTumble Crownが追加されました"
+     ]
+    },
+    "zh": {
+     "title": "Hub 排行榜加入 Tumble Crown",
+     "items": [
+      "游戏排行榜标签新增了 Tumble Crown"
+     ]
+    },
+    "pt": {
+     "title": "Tumble Crown no ranking do hub",
+     "items": [
+      "A aba de ranking de jogos ganhou uma aba para Tumble Crown"
+     ]
+    },
+    "ru": {
+     "title": "Tumble Crown в рейтинге хаба",
+     "items": [
+      "На вкладке рейтинга игр появилась вкладка Tumble Crown"
+     ]
+    },
+    "tr": {
+     "title": "Hub sıralamasında Tumble Crown",
+     "items": [
+      "Oyun sıralaması sekmesine Tumble Crown eklendi"
+     ]
+    },
+    "it": {
+     "title": "Tumble Crown nella classifica dell'hub",
+     "items": [
+      "Nella scheda classifica giochi è apparsa una scheda Tumble Crown"
+     ]
+    },
+    "pl": {
+     "title": "Tumble Crown w rankingu hubu",
+     "items": [
+      "W zakładce rankingu gier pojawiła się Tumble Crown"
+     ]
+    },
+    "ar": {
+     "title": "Tumble Crown في تصنيف المركز",
+     "items": [
+      "أُضيف تبويب Tumble Crown إلى تبويب تصنيف الألعاب"
+     ]
+    },
+    "nw": {
+     "title": "Tumble Crown in hub ranking",
+     "items": [
+      "Tumble Crown tab added to game ranking tab"
+     ]
+    },
+    "gk": {
+     "title": "허브 랭킹 에 Tumble Crown",
+     "items": [
+      "게임 랭킹 탭 에 Tumble Crown 이 생기다 었다"
+     ]
+    }
+   }
   },
   {
    "date": "2026-10-31",
