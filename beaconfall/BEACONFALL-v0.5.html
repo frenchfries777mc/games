@@ -407,7 +407,7 @@ window.bfIntro=function(){if(run)return;run=1;t0=Date.now();el.classList.add('ru
     <button class="btn" data-act="skins"><span class="arrow">▶</span>스킨 상점<span class="en">SKIN SHOP</span></button>
     <button class="btn" data-act="stats"><span class="arrow">▶</span>통계<span class="en">STATS</span></button>
     <button class="btn" data-act="settings"><span class="arrow">▶</span>설정<span class="en">SETTINGS</span></button>
-    <p class="foot">v0.5<br>build 160</p>
+    <p class="foot">v0.5<br>build 161</p>
   </nav>
 </div>
 
@@ -1948,6 +1948,12 @@ ITEMS.furnace={name:'용광로',place:'furnace',icon(g){   // 검은 철제 용�
   g.fillStyle='#2a2d3a';g.fillRect(2,7,8,1);g.fillRect(2,10,8,1);g.fillStyle='#c9a24a';g.fillRect(2,6,1,1);g.fillRect(9,6,1,1);
   g.fillStyle='#0c0a08';g.fillRect(4,8,4,3);g.fillStyle='#ff5a1e';g.fillRect(4,9,4,2);g.fillStyle='#ffe27a';g.fillRect(5,10,2,1);
 }};
+ITEMS.autofurnace={name:'자동 용광로',place:'autofurnace',icon(g){   // 용광로 + 황동 띠
+  g.fillStyle='#14161c';g.fillRect(4,0,4,4);g.fillRect(1,4,10,8);
+  g.fillStyle='#4a4f60';g.fillRect(5,0,2,4);g.fillRect(2,5,8,6);g.fillStyle='#6f7690';g.fillRect(2,5,8,1);
+  g.fillStyle='#c9a24a';g.fillRect(1,7,10,1);g.fillRect(1,10,10,1);
+  g.fillStyle='#0c0a08';g.fillRect(4,8,4,2);g.fillStyle='#ff5a1e';g.fillRect(5,8,2,2);g.fillStyle='#9ad0ff';g.fillRect(0,6,1,2);g.fillRect(11,6,1,2);
+}};
 ITEMS.wheat_seed={name:'밀 씨앗',icon(g){
   g.fillStyle='#8a6a3a';g.fillRect(3,4,6,6);g.fillStyle='#b58f55';g.fillRect(3,4,6,1);g.fillRect(4,3,4,1);g.fillStyle='#6b4a22';g.fillRect(3,9,6,1);
   g.fillStyle='#e8d27a';g.fillRect(5,6,1,2);g.fillRect(7,5,1,2);g.fillRect(6,7,1,2);
@@ -2101,6 +2107,7 @@ RECIPES.push({grp:'건축',bench:true,name:'석재벽돌',note:'강화석재 3�
   RECIPES.push({grp:'시설',name:'회로장치',note:'회로조각 · 강화금판 ×3 · 회로조각',pat:[{id:'circuit',n:1},{id:'rgold_plate',n:1},{id:'rgold_plate',n:1},{id:'rgold_plate',n:1},{id:'circuit',n:1}],out:[{id:'circuit_device',n:1}]});
   RECIPES.push({grp:'신호',name:'제어장치',note:'벌목기·채광기·컨베이어 벨트 옆에 놓아 켜고 끄고(벨트는 멈춤) 초기화하고, 기차 정거장 옆에 놓으면 기차를 세우거나 보내요',pat:[{id:'rcopper_plate',n:1},{id:'circuit',n:1},{id:'rcopper_plate',n:1}],out:[{id:'controller',n:1}]});
   RECIPES.push({grp:'자동화',name:'자동제작장치',note:'컨베이어로 재료를 받아 설정한 아이템을 자동으로 만들어요',pat:[{id:'circuit_device',n:1},{id:'brass_plate',n:1},{id:'brass_plate',n:1},{id:'controller',n:1},{id:'circuit_device',n:1}],out:[{id:'crafter',n:1}]});
+  RECIPES.push({grp:'자동화',name:'자동 용광로',note:'컨베이어로 광석을 받아 두 배 빨리 녹이고, 주괴는 옆 상자나 나가는 컨베이어로 내보내요',pat:[{id:'furnace',n:1},{id:'circuit_device',n:1},{id:'brass_plate',n:1},{id:'brass_plate',n:1}],out:[{id:'autofurnace',n:1}]});
   {const P1={id:'plank',n:1},TH={id:'thread',n:1},SL={id:'slime',n:1};
    RECIPES.push({grp:'건축',bench:true,name:'나무 벽',note:'판자 3개 → 벽 2개',pat:[P1,P1,P1],out:[{id:'bwall',n:2}]});
    RECIPES.push({grp:'건축',bench:true,name:'창문 벽',note:'판자 2 · 슬라임 2 → 창문 벽 2개',pat:[P1,P1,SL,SL],out:[{id:'bwin',n:2}]});
@@ -4079,6 +4086,22 @@ function furnacePutFromInv(i){
 function furnaceBurst(fz){
   for(let j=0;j<16;j++){const a=Math.random()*6.2832;parts.push({x:fz.x,y:fz.y-9,vx:Math.cos(a)*34,vy:-12-Math.random()*34,life:0.55,c:j%3?'#ffb23a':'#fff2a8'});}
 }
+const AUTOF_CAP=20;
+function updateAutoFurnaces(dt){   // 호스트: 컨베이어로 받은 광석을 두 배 속도(1.5초)로 녹여 내보내요
+  if(isGuest())return;
+  for(const b of world.structs){
+    if(b.id!=='autofurnace')continue;
+    if(b.co){if(crafterEject(b)){b.fp=0;saveWorld();}else{b.hot=0;continue;}}
+    const ore=b.fi,ing=ore&&SMELT_ORE[ore.id];
+    if(!ing){b.fp=0;continue;}
+    b.fp=(b.fp||0)+dt*2;b.hot=time+0.3;
+    if(Math.random()<dt*10&&onScr(b.x,b.y))parts.push({x:b.x-2+Math.random()*4,y:b.y-12,vx:(Math.random()-0.5)*14,vy:-14-Math.random()*16,life:0.5,c:Math.random()<0.5?'#ff9a2e':'#ffe27a'});
+    if(b.fp>=3){
+      b.fp=0;ore.n--;if(ore.n<=0)b.fi=null;
+      b.co={id:ing,n:1};furnaceBurst(b);crafterEject(b);saveWorld();
+    }
+  }
+}
 function updateFurnaces(dt){   // 호스트(혼자 할 때 포함): 모든 용광로가 계속 제련해요
   if(isGuest())return;
   for(const b of world.structs){
@@ -4485,6 +4508,7 @@ const STRUCT={
   anvil:{layer:'o',block:true,item:'anvil',n:1,need:3},
   armorbench:{layer:'o',block:true,item:'armorbench',n:1,need:2.5},
   furnace:{layer:'o',block:true,item:'furnace',n:1,need:2.5},
+  autofurnace:{layer:'o',block:true,item:'autofurnace',n:1,need:3},
   logfloor:{layer:'f',block:false,item:'log',n:1,need:1.2},
   floor:{layer:'f',block:false,item:'plank',n:1,need:1},
   farm:{layer:'f',block:false,item:null,n:0,need:0.8},
@@ -4690,6 +4714,13 @@ function drawTrash(g,b){
   g.fillStyle='#4a4f60';g.fillRect(cx+7,cy+6,1,7);g.fillRect(cx+9,cy+6,1,7);
   g.fillStyle='#c3c5cf';g.fillRect(cx+4,cy+2,8,1);
 }
+function drawAutoFurnace(g,b){   // 용광로 + 황동 띠 + 입출력 표시
+  drawFurnace(g,b);
+  const cx=b.gx*GRID,cy=b.gy*GRID,hot=b.hot&&b.hot>time;
+  g.fillStyle='#c9a24a';g.fillRect(cx+1,cy+9,14,1);g.fillRect(cx+1,cy+13,14,1);
+  g.fillStyle='#9ad0ff';g.fillRect(cx,cy+7,1,2);g.fillRect(cx+15,cy+7,1,2);
+  g.fillStyle=hot?'#5ec86e':b.co?'#f2c75a':'#6a6f80';g.fillRect(cx+7,cy+10,2,2);
+}
 function drawFurnace(g,b){   // 검은 철제 용광로 + 높은 굴뚝
   const cx=b.gx*GRID,cy=b.gy*GRID,f=((time*8)|0)%3;
   g.fillStyle='rgba(8,24,12,0.3)';g.fillRect(cx+1,cy+GRID,GRID-1,1);
@@ -4872,6 +4903,7 @@ function drawStructSprite(g,kind,cx,cy,mat){
   else if(kind==='anvil')drawAnvil(g,{gx:cx/GRID,gy:cy/GRID});
   else if(kind==='armorbench')drawArmorBench(g,{gx:cx/GRID,gy:cy/GRID});
   else if(kind==='furnace')drawFurnace(g,{gx:cx/GRID,gy:cy/GRID});
+  else if(kind==='autofurnace')drawAutoFurnace(g,{gx:cx/GRID,gy:cy/GRID});
   else if(kind==='bed')drawBed(g,{gx:cx/GRID,gy:cy/GRID});
   else if(kind==='hammock')drawHammock(g,{gx:cx/GRID,gy:cy/GRID});
   else if(kind==='fishtrap')drawFishTrap(g,{gx:cx/GRID,gy:cy/GRID,ps:{}});
@@ -4984,6 +5016,7 @@ function drawStruct(g,b){
   if(b.id==='anvil'){drawAnvil(g,b);return;}
   if(b.id==='armorbench'){drawArmorBench(g,b);return;}
   if(b.id==='furnace'){drawFurnace(g,b);return;}
+  if(b.id==='autofurnace'){drawAutoFurnace(g,b);return;}
   if(b.id==='bed'){drawBed(g,b);return;}
   if(b.id==='miner'){drawMiner(g,b);drawMachineStatus(g,b);return;}
   g.fillStyle='rgba(8,24,12,0.28)';g.fillRect(cx+1,cy+GRID,GRID-1,1);
@@ -5315,7 +5348,7 @@ function smashStructAuth(gx,gy,layer,belt,sap,burn){
     const lst=Object.entries(b.cb||{});if(b.co)lst.push([b.co.id,b.co.n]);
     for(const [it,n] of lst)ds.push({id:nextDropId++,item:it,n,sx:cx,sy:cy,tx:Math.round((cx+(Math.random()-0.5)*14)*10)/10,ty:Math.round((cy+Math.random()*6)*10)/10,v:(Math.random()*3)|0});
   }
-  if(b.id==='furnace')for(const q of [b.fi,b.fo])if(q)ds.push({id:nextDropId++,item:q.id,n:q.n,sx:cx,sy:cy,tx:Math.round((cx+(Math.random()-0.5)*14)*10)/10,ty:Math.round((cy+Math.random()*6)*10)/10,v:(Math.random()*3)|0});
+  if(b.id==='furnace'||b.id==='autofurnace')for(const q of [b.fi,b.fo,b.co])if(q)ds.push({id:nextDropId++,item:q.id,n:q.n,sx:cx,sy:cy,tx:Math.round((cx+(Math.random()-0.5)*14)*10)/10,ty:Math.round((cy+Math.random()*6)*10)/10,v:(Math.random()*3)|0});
   if(b.id==='chest'&&b.it)for(const q of b.it){
     if(!q)continue;
     ds.push({id:nextDropId++,item:q.id,n:q.n,dur:q.d,sx:cx,sy:cy,tx:Math.round((cx+(Math.random()-0.5)*14)*10)/10,ty:Math.round((cy+Math.random()*6)*10)/10,v:(Math.random()*3)|0});
@@ -7803,7 +7836,7 @@ const SFX=(()=>{
     flesh:(t,v,r)=>{noise(t,0.09,'lowpass',500*r,200,0.8,v*0.7);tone(t,0.08,'sine',120*r,70,v*0.4);}
   };
   const SM={bwall:'stone',rstone:'stone',sbrick:'stone',gpil:'stone',arch:'stone',spire:'stone',brickfloor:'stone',monument:'stone',dinoskel:'stone',furnace:'stone',oven:'stone',
-    anvil:'iron',armorbench:'iron',guard:'iron',conveyor:'iron',sorter:'iron',crafter:'iron',feller:'iron',miner:'iron',gauge:'iron',rsd:'iron',relay:'iron',tele:'iron',port:'iron',controller:'iron',beacon:'iron',bell:'copper',
+    anvil:'iron',armorbench:'iron',guard:'iron',conveyor:'iron',sorter:'iron',crafter:'iron',autofurnace:'iron',feller:'iron',miner:'iron',gauge:'iron',rsd:'iron',relay:'iron',tele:'iron',port:'iron',controller:'iron',beacon:'iron',bell:'copper',
     bwin:'glass',aquarium:'glass',crop:'leaf',sapling:'leaf',tree:'wood',farm:'dirt',carpet:'leaf',alchemy:'glass',runetable:'stone'};
   return {
     // 캐기·부수기 중 두드리는 소리 (kind: 't' 나무 · 'b' 바위 · 's' 설치물)
@@ -8917,6 +8950,18 @@ function updateConveyors(dt){
       if(ch&&ch.id==='tele'){   // 시공간이동장치: 같은 주파수의 장치로 아이템이 이동해요
         if(teleSend(ch,d)){drops.splice(i,1);if(isHost())bcastAll({t:'dropgone',id:d.id});}
         continue;   // 꺼져 있으면 벨트 끝에서 기다려요
+      }
+      if(ch&&ch.id==='autofurnace'){   // 자동 용광로: 광석만 받아요
+        const it=d.item||'stick',cur=ch.fi;
+        if(SMELT_ORE[it]&&(!cur||cur.id===it)){
+          const take=Math.min(d.n||1,Math.max(0,AUTOF_CAP-(cur?cur.n:0)));
+          if(take>0){
+            ch.fi=cur?{id:it,n:cur.n+take}:{id:it,n:take};d.n=(d.n||1)-take;saveWorld();
+            if(d.n<=0){drops.splice(i,1);if(isHost())bcastAll({t:'dropgone',id:d.id});}
+            else if(isHost())bcastAll({t:'dropn',id:d.id,n:d.n});
+          }
+        }
+        continue;
       }
       if(ch&&ch.id==='crafter'){   // 자동제작장치로 재료 공급
         const before=d.n||1;
@@ -11205,7 +11250,7 @@ function bgSim(){
     const dt=Math.min(0.25,el);
     world.clock+=dt;oreT-=dt;if(oreT<=0){oreT=45;trySpawnOre();}
     for(const d of drops)d.age+=dt;
-    updateConveyors(dt);updatePorts(dt);updateCrafters(dt);updateSignals(dt);
+    updateConveyors(dt);updatePorts(dt);updateCrafters(dt);updateAutoFurnaces(dt);updateSignals(dt);
     growSaplings(dt*(wetNow()?1.5:1));growCrops(dt*(wetNow()?2:1));updateFellers(dt);updateMiners(dt);updateFurnaces(dt);updatePend(dt);
   }
 }
@@ -11214,7 +11259,7 @@ function updateSim(dt){
   world.clock+=SANDBOX?dt*SBX.tm:dt;
   updateFire(dt);
   rankT-=dt;if(rankT<=0){rankT=20;rankCheck();}
-  if(!isGuest()){oreT-=dt;if(oreT<=0){oreT=45;trySpawnOre();}updateConveyors(dt);updatePorts(dt);updateGuards(dt);updateCrafters(dt);updateSignals(dt);updateEscape(dt);updateWeather(dt);growSaplings(dt*(wetNow()?1.5:1));growCrops(dt*(wetNow()?2:1));updateFellers(dt);updateMiners(dt);updateFurnaces(dt);updatePend(dt);checkSleepSkip(dt);updateTrader(dt);}else{if(world.trader)world.trader.pt+=dt;if(world.esc.ph!=='idle')world.esc.t+=dt;growCrops(dt*(wetNow()?2:1));}
+  if(!isGuest()){oreT-=dt;if(oreT<=0){oreT=45;trySpawnOre();}updateConveyors(dt);updatePorts(dt);updateGuards(dt);updateCrafters(dt);updateAutoFurnaces(dt);updateSignals(dt);updateEscape(dt);updateWeather(dt);growSaplings(dt*(wetNow()?1.5:1));growCrops(dt*(wetNow()?2:1));updateFellers(dt);updateMiners(dt);updateFurnaces(dt);updatePend(dt);checkSleepSkip(dt);updateTrader(dt);}else{if(world.trader)world.trader.pt+=dt;if(world.esc.ph!=='idle')world.esc.t+=dt;growCrops(dt*(wetNow()?2:1));}
   updateAnimals(dt);
   if(!isGuest()){updateTradeposts(dt);updateTraps(dt);updateHuts(dt);}
   updateMarket();
