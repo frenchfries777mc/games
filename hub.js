@@ -619,6 +619,7 @@ function coinChip(){
   document.addEventListener('click',function(e){ if(!d.hidden&&!d.contains(e.target)&&!c.contains(e.target)){ d.hidden=true; c.setAttribute('aria-expanded','false'); } });
 }
 function paintCoin(){
+  var cw=document.querySelector('.cchip'); if(cw) cw.style.display=me?'':'none';      // 로그인 전에는 Hub Coin 표시를 숨겨요
   var cn=$('#coinChipN'); if(cn) cn.textContent=(me&&coin.n!=null)?coin.n:(me?'…':'0');
   var b=$('#coinBar'); if(!b) return;
   if(!me){ b.innerHTML='<span class="cb-i">'+hIco('coin','big')+'</span><span class="cb-t"><b>Hub Coin</b><span class="cb-s">로그인하면 매일 10 Hub Coin을 받아요</span></span><button type="button" class="cm-btn cb-go">로그인</button>'; b.querySelector('.cb-go').onclick=login; return; }
