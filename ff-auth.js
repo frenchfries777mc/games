@@ -194,10 +194,15 @@ function openSetup(){
   el=document.createElement('div'); el.id='ffaSetup'; el.setAttribute('data-notr','');
   el.innerHTML='<form class="b"><h3>'+esc(O.setT)+'</h3><p>'+esc(O.setP)+'</p>'+
     '<input name="u" autocapitalize="off" spellcheck="false" maxlength="16" placeholder="'+esc(T.id)+'">'+
-    '<input name="n" maxlength="15" placeholder="'+esc(O.nick)+'">'+
     '<div class="m"></div>'+
     '<button type="submit" class="ffa-btn go">'+esc(O.go)+'</button><div class="sw"><a>'+esc(O.later)+'</a></div></form>';
-  document.body.appendChild(el);
+  if(!document.getElementById('ffaSetupSky')){ var sk=document.createElement('style'); sk.id='ffaSetupSky'; sk.textContent=
+   '#ffaSetup .b{border:1px solid #ffffff88;border-radius:26px;padding:28px 26px 24px;text-align:center;color:#2b2540;background:linear-gradient(180deg,#7ec8ff 0%,#b5defa 20%,#ffe9a8 50%,#ffc6d9 78%,#ffaecb 100%);box-shadow:0 30px 80px rgba(0,0,0,.7)}#ffaSetup .b:before{display:none}'+
+   '#ffaSetup .b>*{position:relative;z-index:2}#ffaSetup .cl{position:absolute;z-index:1;background:#fff;border-radius:999px;opacity:.95}#ffaSetup .cl i{position:absolute;background:#fff;border-radius:50%}'+
+   '#ffaSetup h3{font-size:23px;color:#2b2540}#ffaSetup p{color:#5f5a78;font-size:14px}#ffaSetup input{background:#fff;color:#2b2540;border:2px solid #ffc93c;border-radius:12px;padding:13px 14px}'+
+   '#ffaSetup .ffa-btn{padding:14px;border-radius:14px;font-weight:800;font-size:16px;color:#2a1a05;box-shadow:0 6px 16px rgba(255,138,61,.35)}#ffaSetup .sw a{color:#5f5a78}#ffaSetup .m{color:#c0392b;font-weight:700;text-align:left}';
+   document.head.appendChild(sk); }
+  document.body.appendChild(el); el.querySelector('form').insertAdjacentHTML('afterbegin','<div class="cl" style="left:-30px;top:40px;width:130px;height:38px"><i style="left:20px;top:-20px;width:48px;height:48px"></i><i style="left:60px;top:-30px;width:60px;height:60px"></i></div><div class="cl" style="right:-40px;top:300px;width:150px;height:42px"><i style="left:24px;top:-22px;width:52px;height:52px"></i><i style="left:70px;top:-34px;width:66px;height:66px"></i></div>');
   var f=el.querySelector('form'), m=el.querySelector('.m'); f.u.value=suggestId(user);
   el.querySelector('.sw a').onclick=function(){ el.remove(); signOut(); };
   f.onsubmit=async function(e){ e.preventDefault(); var id=f.u.value.trim(), go=el.querySelector('.go');
@@ -205,7 +210,7 @@ function openSetup(){
     go.disabled=true; m.textContent=T.busy;
     try{ var d=await sb.from('profiles').select('id').ilike('username',likeEsc(id)).limit(1);
       if(d&&d.data&&d.data.length){ m.textContent=T.taken; return; }
-      var r=await sb.from('profiles').insert({id:user.id, username:id, display_name:(f.n.value.trim()||id).slice(0,15)});
+      var r=await sb.from('profiles').insert({id:user.id, username:id, display_name:id.slice(0,15)});
       if(r.error){ m.textContent=/duplicate|unique|23505/i.test(JSON.stringify(r.error))?T.taken:T.fail; return; }
       el.remove(); await setUser(user); setTimeout(welcome,400);
     }catch(x){ m.textContent=T.fail; } finally{ go.disabled=false; } };
