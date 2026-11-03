@@ -407,7 +407,7 @@ window.bfIntro=function(){if(run)return;run=1;t0=Date.now();el.classList.add('ru
     <button class="btn" data-act="skins"><span class="arrow">▶</span>스킨 상점<span class="en">SKIN SHOP</span></button>
     <button class="btn" data-act="stats"><span class="arrow">▶</span>통계<span class="en">STATS</span></button>
     <button class="btn" data-act="settings"><span class="arrow">▶</span>설정<span class="en">SETTINGS</span></button>
-    <p class="foot">v0.5<br>build 161</p>
+    <p class="foot">v0.5<br>build 162</p>
   </nav>
 </div>
 
@@ -13241,6 +13241,7 @@ async function guestHandle(d){
 function netTick(now){
   if(!net.role||!world)return;
   if(isGuest()){
+    if(net.rx&&now-net.rx>10000){netLeave('방장과 연결이 끊어졌어요.');return;}   // 방장이 10초 넘게 아무 소식이 없으면 끊긴 거예요
     if(mode==='play'&&now-net.tPos>100){net.tPos=now;sendHost({t:'pos',x:Math.round(P.x*10)/10,y:Math.round(P.y*10)/10,f:P.f,m:P.moving?1:0,d:P.dead?1:0,s:P.sleeping?1:0,b:P.sailing?1:0,h:P.mount?1:0,a:P.air?1:0,n:myName(),dn:P.down?1:0,w:wkStr(),k:myLook()});}
   }else if(isHost()&&net.conns.length){
     const lowH=!!(typeof PERF!=='undefined'&&PERF&&PERF.low),pls=allPlayers();   // 방장 부담 줄이기: 멀리 있는 것은 보내지 않고, 몬스터가 많거나 저사양이면 전송 간격을 늘려요
@@ -13293,7 +13294,7 @@ async function joinRoom(addr){
     peer=await openPeer();
     const conn=peer.connect(PREFIX+addr.toLowerCase(),{reliable:true});
     net.chain=Promise.resolve();
-    conn.on('data',d=>{net.chain=net.chain.then(()=>guestHandle(d)).catch(()=>{});});
+    conn.on('data',d=>{net.rx=performance.now();net.chain=net.chain.then(()=>guestHandle(d)).catch(()=>{});});
     await new Promise((res,rej)=>{
       const to=setTimeout(()=>rej({type:'peer-unavailable'}),10000);
       conn.on('open',()=>{clearTimeout(to);res();});
@@ -13301,7 +13302,10 @@ async function joinRoom(addr){
       peer.on('error',e=>{clearTimeout(to);rej(e);});
     });
     Object.assign(net,{peer,role:'guest',addr:addr.toLowerCase(),wname:'',conns:[conn],count:2,msg:'',id:peer.id,tPos:0});
-    conn.on('close',()=>netLeave('방장이 연결을 끊었어요.'));
+    net.rx=performance.now();
+    conn.on('close',()=>{if(net.role==='guest')netLeave('방장이 연결을 끊었어요.');});
+    conn.on('error',()=>{if(net.role==='guest')netLeave('방장과 연결이 끊어졌어요.');});
+    try{const pc=conn.peerConnection;if(pc)pc.addEventListener('iceconnectionstatechange',()=>{if(net.role==='guest'&&(pc.iceConnectionState==='failed'||pc.iceConnectionState==='closed'))netLeave('방장과 연결이 끊어졌어요.');});}catch(e){}
     peer.on('error',e=>{net.msg=netErr(e);netRefresh();});
   }catch(e){net.msg=netErr(e);try{if(peer)peer.destroy();}catch(x){}}
   net.busy=false;netRefresh();
