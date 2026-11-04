@@ -1,8 +1,8 @@
 /* Frenchfries777 계정 로그인 (허브 · 게임 사이트 공용)
    쓰는 법 (사이트 HTML에):
      <span data-ff-account></span>                         ← 로그인 버튼 / 닉네임이 들어갈 자리 (여러 개 가능)
-     <script src="https://frenchfries777mc.github.io/games/ff-auth.js"></script>
-   - frenchfries777mc.github.io 아래의 모든 페이지는 로그인 정보를 같이 써요. 여기서 로그인하면 Stickseum · Beaconfall 게임은
+     <script src="https://frenchfries777.com/games/ff-auth.js"></script>
+   - frenchfries777.com/ 아래의 모든 페이지는 로그인 정보를 같이 써요. 여기서 로그인하면 Stickseum · Beaconfall 게임은
      따로 할 것 없이 로그인된 채로 열려요 (supabase-js 기본 저장 위치 sb-<프로젝트>-auth-token 을 그대로 쓰기 때문).
    - 닉네임을 누르면 공용 프로필 카드(ff-profile.js)와 로그아웃이 나와요.
    - 스크립트로 쓰고 싶으면: FFAuth.ready.then(sb=>...), FFAuth.user(), FFAuth.onChange(fn), FFAuth.openLogin(), FFAuth.openProfile(), FFAuth.signOut()
@@ -12,7 +12,7 @@
 if(window.FFAuth) return;
 var SB_URL='https://kebsbuvuutilitwlvxzv.supabase.co', SB_KEY='sb_publishable_4Egu0zm3p6cxWGvP_-GlIw_mlCpO1Nf';
 var SB_LIB='https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js';
-var me=document.currentScript, BASE=(me&&me.src)?me.src.replace(/[^\/]*$/,''):'https://frenchfries777mc.github.io/games/';
+var me=document.currentScript, BASE=(me&&me.src)?me.src.replace(/[^\/]*$/,''):'https://frenchfries777.com/games/';
 
 var L={
  ko:{login:'로그인',signup:'계정 만들기',logout:'로그아웃',card:'🪪 프로필 카드',ach:'🏆 도전과제',id:'아이디 (영문/숫자, 3~16자)',pw:'비밀번호 (6자 이상)',busy:'처리 중...',
@@ -275,7 +275,7 @@ function welcome(skipNick){
     body.querySelector('.go').onclick=async function(){ var b=this; b.disabled=true;
       if(sel){ try{ var r=await sb.rpc('ff_avatar_set',{p_id:sel}); if(!(r&&r.error)){ try{ window.dispatchEvent(new CustomEvent('ff-avatar',{detail:{pick:sel}})); }catch(e){} } }catch(e){} }
       b.disabled=false; s3(); }; }
-  function s3(){ step=3; var H='https://frenchfries777mc.github.io/', L=[['🎮','Games',H+'games/'],['📚','Educations',H+'educations/'],['🛠️','Tools',H+'tools/'],['🏠','Hub',H+'hub/']];
+  function s3(){ step=3; var H='https://frenchfries777.com/', L=[['🎮','Games',H+'games/'],['📚','Educations',H+'educations/'],['🛠️','Tools',H+'tools/'],['🏠','Hub',H+'hub/']];
     body.innerHTML=dots(3)+'<h2>'+W.s3+'</h2><p><b style="color:#c4600a">'+esc(nm)+'</b>'+W.s3p+'</p><div class="coin"><img src="'+BASE+'hubicons/coin.svg" alt=""><div><b>'+W.coin+'</b><span>'+W.coin2+'</span></div></div><div class="s">'+L.map(function(x,i){ return '<a href="'+x[2]+'"><i>'+x[0]+'</i><b>'+x[1]+'</b><span>'+W.g[i]+'</span></a>'; }).join('')+'</div><div class="row"><button type="button" class="bk">'+W.prev+'</button><button type="button" class="go">'+W.start+'</button></div>';
     body.querySelector('.bk').onclick=s2; body.querySelector('.go').onclick=done; }
   if(skipNick) s2(); else s1();
@@ -364,12 +364,12 @@ function profileLib(){ return loadScript(BASE+'ff-profile.js?v=20261104a', funct
 async function openProfile(uid, o){ if(!sb) return; if(!uid&&!user) return openLogin(); if(await profileLib()) window.FFProfile.open(sb, uid||user.id, o); }
 
 /* 게임 사이트(허브가 아닌 페이지)에는 계정 버튼 옆에 '← 허브' 버튼을 붙여요. 빼고 싶으면 자리에 data-ff-nohub */
-var HUB=BASE, HUBSITE='https://frenchfries777mc.github.io/hub/', onHub=/\/hub\//.test(location.pathname||'') || location.href.indexOf(HUB)===0 && !/\/(stickseum|crownenvoy|beaconfall|isleport|vowkeep|dummyparty|tumblecrown|educations|tools)\//i.test(location.pathname||''), SETURL='https://frenchfries777mc.github.io/hub/settings/';
+var HUB=BASE, HUBSITE='https://frenchfries777.com/', onHub=/\/hub\//.test(location.pathname||'') || location.href.indexOf(HUB)===0 && !/\/(stickseum|crownenvoy|beaconfall|isleport|vowkeep|dummyparty|tumblecrown|educations|tools)\//i.test(location.pathname||''), SETURL='https://frenchfries777.com/settings/';
 /* '← 허브' 버튼: 무조건 허브가 아니라, 이 창을 열기 전에 있던 사이트(games·educations·tools·hub)의 첫 화면으로 가요. 모르면 이 페이지가 속한 사이트로 가요. */
 var SITES={hub:1, games:1, educations:1, tools:1};
 function siteOf(u){ try{ var x=new URL(u, location.href); if(x.origin!==location.origin) return ''; var m=x.pathname.split('/')[1]; return SITES[m]?m:''; }catch(e){ return ''; } }
 function backSite(){ var own=siteOf(location.href)||'games', from=siteOf(document.referrer); return from||own; }
-function hubLink(s){ if(onHub||s.hasAttribute('data-ff-nohub')) return ''; var k=backSite(); return '<a class="ffa-hub" href="'+esc('https://frenchfries777mc.github.io/'+k+'/')+'" title="'+esc(T.hubT)+'" aria-label="'+esc(T.hubT)+'">\u2190<span class="t">'+esc(T.hub)+'</span></a>'; }
+function hubLink(s){ if(onHub||s.hasAttribute('data-ff-nohub')) return ''; var k=backSite(); return '<a class="ffa-hub" href="'+esc('https://frenchfries777.com/'+k+'/')+'" title="'+esc(T.hubT)+'" aria-label="'+esc(T.hubT)+'">\u2190<span class="t">'+esc(T.hub)+'</span></a>'; }
 /* 계정 버튼 옆 사진: 허브에서 고른 프로필 사진(ff_avatar), 없으면 기본 "내 계정" 아이콘 */
 var avPick=null, avFor=null, avGame=null;
 function avSrc(){ return avPick&&/^[a-z0-9_-]{1,30}$/i.test(avPick)?BASE+'avatars/'+avPick+(/^(stk|ce|bf|ip|dp|vk)_/.test(avPick)?'.png':'.svg'):(avGame||BASE+'hubicons/account.svg?v=20261103a'); }
@@ -383,7 +383,7 @@ function paint(){
   css(); loadAv(); var slots=document.querySelectorAll('[data-ff-account]');
   for(var i=0;i<slots.length;i++){
     var s=slots[i]; s.setAttribute('data-notr','');
-    if(!user){ s.innerHTML=hubLink(s)+'<span class="ffa-wrap"><button type="button" class="ffa-btn"><img class="ffa-ic" src="https://frenchfries777mc.github.io/games/hubicons/account.svg?v=20261103a" alt="" width="20" height="20" draggable="false"> '+esc(T.login)+'</button></span>'; s.querySelector('button').onclick=function(){ openLogin(); }; continue; }
+    if(!user){ s.innerHTML=hubLink(s)+'<span class="ffa-wrap"><button type="button" class="ffa-btn"><img class="ffa-ic" src="https://frenchfries777.com/games/hubicons/account.svg?v=20261103a" alt="" width="20" height="20" draggable="false"> '+esc(T.login)+'</button></span>'; s.querySelector('button').onclick=function(){ openLogin(); }; continue; }
     s.innerHTML=hubLink(s)+'<span class="ffa-wrap"><button type="button" class="ffa-chip" aria-haspopup="true"><img class="ffa-ic ffa-av" src="'+esc(avSrc())+'" alt="" width="20" height="20" draggable="false"> <span>'+esc(fmt(T.hi,nick()))+'</span><i class="ffa-badge" style="display:none;font-style:normal"></i><i class="ffa-badge ffa-nb ffa-nbc" style="display:none;font-style:normal"></i> ▾</button>'+
       '<span class="ffa-menu" role="menu"><button type="button" data-a="friends">'+esc(F.friends)+'<span class="ffa-badge" style="display:none"></span></button><button type="button" data-a="card">'+esc(T.card)+'</button><button type="button" data-a="ach">'+esc(T.ach||ACHL[lang()]||'🏆 Achievements')+'</button><button type="button" data-a="acct">'+esc(AL().menu)+'</button><button type="button" data-a="notes" class="ffa-ph">🔔 '+esc(N.bell)+'<span class="ffa-badge ffa-nb" style="display:none"></span></button><button type="button" data-a="set" class="ffa-ph">'+esc('⚙️ '+S_.set)+'</button><button type="button" data-a="out">'+esc(T.logout)+'</button></span></span>';
     (function(s){ var menu=s.querySelector('.ffa-menu');
@@ -391,7 +391,7 @@ function paint(){
       menu.querySelector('[data-a=friends]').onclick=function(){ closeMenus(); openFriends(); };
       menu.querySelector('[data-a=card]').onclick=function(){ closeMenus(); openProfile(); };
       menu.querySelector('[data-a=ach]').onclick=function(){ closeMenus(); try{ if(typeof window.ffOpenAch==='function') window.ffOpenAch(); else openProfile(null,{openAch:true}); }catch(e){} };   // 게임이 window.ffOpenAch를 정하면 그 게임의 도전과제 창, 아니면 프로필 카드의 도전과제 창이 열려요
-      menu.querySelector('[data-a=acct]').onclick=function(){ closeMenus(); location.href='https://frenchfries777mc.github.io/hub/profile/'; };
+      menu.querySelector('[data-a=acct]').onclick=function(){ closeMenus(); location.href='https://frenchfries777.com/profile/'; };
       menu.querySelector('[data-a=set]').onclick=function(){ closeMenus(); location.href=SETURL; };
       menu.querySelector('[data-a=notes]').onclick=function(e){ e.stopPropagation(); closeMenus(); var w=s.querySelector('.ffa-wrap'), pn=w&&w.querySelector('.ffa-notes'); if(!pn) return; pn.style.display='block'; paintNotes(pn); markRead(); };
       menu.querySelector('[data-a=out]').onclick=function(){ closeMenus(); signOut(); };

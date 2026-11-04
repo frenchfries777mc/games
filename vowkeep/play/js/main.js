@@ -130,7 +130,7 @@ function paintWho() {
 let ffMarked = '', ffAchT = 0;
 function ffProfile() {
   if (window.FFProfile) return Promise.resolve(true);
-  return new Promise(res => { const s = document.createElement('script'); s.src = 'https://frenchfries777mc.github.io/games/ff-profile.js?v=20261103e'; s.onload = () => { regStats(); res(!!window.FFProfile); }; s.onerror = () => res(false); document.head.appendChild(s); });
+  return new Promise(res => { const s = document.createElement('script'); s.src = 'https://frenchfries777.com/games/ff-profile.js?v=20261103e'; s.onload = () => { regStats(); res(!!window.FFProfile); }; s.onerror = () => res(false); document.head.appendChild(s); });
 }
 // 공용 프로필 창: 이름·프로필 변경은 허브에서만, 여기서는 Vowkeep 통계만 아래에 붙여요
 async function openProfile() {
