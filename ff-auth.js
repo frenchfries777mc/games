@@ -325,7 +325,6 @@ function modal(){
   el=document.createElement('div'); el.id='ffaModal'; el.setAttribute('data-notr','');
   el.innerHTML='<form class="b" autocomplete="on"><button type="button" class="x" aria-label="'+esc(T.close)+'">×</button><h3></h3><p>'+esc(T.sub)+'</p>'+
     '<input name="username" autocomplete="username" autocapitalize="off" spellcheck="false" maxlength="16" placeholder="'+esc(T.id)+'">'+
-    '<input name="nick" class="nk" autocomplete="nickname" maxlength="15" style="display:none" placeholder="'+esc(OA().nick)+'">'+
     '<div class="pwr"><input name="password" type="password" placeholder="'+esc(T.pw)+'"><button type="button" class="eye" aria-label="'+esc(AL().show)+'">👁</button></div>'+
     '<div class="m"></div><button type="submit" class="ffa-btn go"></button><div class="or">'+esc(OA().or)+'</div>'+'<div class="oas">'+oaBtns()+'</div><div class="sw"><span></span><a></a></div></form>';
   document.body.appendChild(el);
@@ -338,7 +337,7 @@ function modal(){
     e.preventDefault(); var f=e.target, m=el.querySelector('.m'), go=el.querySelector('.go');
     if(!sb){ m.textContent=T.net; return; }
     m.textContent=T.busy; go.disabled=true;
-    var r=mode==='in'?await signIn(f.username.value, f.password.value):await signUp(f.username.value, f.password.value, f.nick.value);
+    var r=mode==='in'?await signIn(f.username.value, f.password.value):await signUp(f.username.value, f.password.value);
     go.disabled=false;
     if(r.error){ m.textContent=r.error; return; }
     f.password.value=''; close(); if(mode==='up') setTimeout(welcome,400);
@@ -348,7 +347,7 @@ function modal(){
 function fill(){ var el=modal(); el.querySelector('h3').textContent=mode==='in'?T.title:T.signup; el.querySelector('.go').textContent=mode==='in'?T.login:T.signup;
   el.querySelector('.sw span').textContent=mode==='in'?T.noAcc:T.hasAcc; el.querySelector('.sw a').textContent=mode==='in'?T.signup:T.login;
   el.querySelector('input[name=password]').setAttribute('autocomplete',mode==='in'?'current-password':'new-password'); el.querySelector('.m').textContent='';
-  el.querySelector('form').classList.toggle('ffa-in',mode==='in'); el.querySelector('input[name=nick]').style.display=mode==='in'?'none':''; }
+  el.querySelector('form').classList.toggle('ffa-in',mode==='in'); }
 function openLogin(m){ mode=m==='up'?'up':'in'; fill(); var el=modal(); el.style.display='flex'; setTimeout(function(){ try{ el.querySelector('input').focus(); }catch(e){} },30); }
 function close(){ var el=document.getElementById('ffaModal'); if(el) el.style.display='none'; }
 
