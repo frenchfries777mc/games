@@ -107,7 +107,7 @@ function paintShop() {
     d.appendChild(b); box.appendChild(d);
   }
 }
-/* 허브 코인 → gC: 허브에서 바꾼 코인을 로그인할 때 한 번씩 받아 와요 (1코인 = 20gC) */
+/* 허브 코인 → gC: 허브에서 바꾼 코인을 로그인할 때 한 번씩 받아 와요 (1코인 = 10gC) */
 async function claimGC() {
   try {
     const sb = window.FFAuth && FFAuth.client && FFAuth.client(), u = window.FFAuth && FFAuth.user(); if (!sb || !u) return;
