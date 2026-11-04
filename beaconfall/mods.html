@@ -46,6 +46,10 @@ input.q{width:100%;padding:10px 12px;border:3px solid var(--gold);background:var
 .mrow .tx{flex:1;min-width:0}
 .mrow .nm{font-weight:700;font-size:16px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .mrow .ds{font-size:12px;color:#d9cfb0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.mrow{flex-wrap:wrap}
+.mrow .inf{flex:1 0 100%;border-top:1px dashed #e9d9a433;padding-top:6px;font-size:12px;color:#d9cfb0;display:flex;flex-wrap:wrap;gap:4px 14px;word-break:break-word}
+.mrow .inf .d{flex:1 0 100%;color:var(--cream)}
+.mrow .inf b{color:var(--gold);font-weight:400}
 .mrow .mt{font-size:11px;color:var(--gold);margin-top:2px}
 .mrow .tg{display:inline-block;font-size:11px;padding:0 6px;border:1px solid var(--sky);color:var(--sky);margin-right:6px}
 .mrow .tg.p{border-color:#ffb0d0;color:#ffb0d0}
@@ -96,9 +100,9 @@ footer{padding:40px 0 30px;color:var(--gold);font-size:12px;text-shadow:2px 2px 
  <label>이름 (최대 40자)</label><input id="un" maxlength="40">
  <label>설명 (최대 120자)</label><input id="ud" maxlength="120">
  <label>분류</label><select id="uc"></select>
- <label>내용 (JSON 파일 고르기 또는 붙여넣기)</label>
+ <label>내용 (영어 스크립트 또는 JSON, 파일 고르기도 돼요)</label>
  <input type="file" id="uf" accept=".json,application/json">
- <textarea id="uj" spellcheck="false" placeholder='{"events":[{"on":"blockBreak","block":"stone","do":[{"give":"coal","n":1}]}]}'></textarea>
+ <textarea id="uj" spellcheck="false" placeholder='mod "Iron from stone"&#10;&#10;on mine stone:&#10;    give 1 iron&#10;&#10;on kill wolf:&#10;    chance 30%:&#10;        give 2 iron&#10;        say "Lucky!"'></textarea>
  <div class="msg" id="um"></div>
  <div class="row" style="margin-top:12px"><button class="pb" id="us">올리기</button></div>
 </div></div>
@@ -149,9 +153,9 @@ function draw(){
   if(!rows.length){L.innerHTML='<div class="empty">'+(SERVER==='off'&&K!=='on'?'서버를 준비하는 중이라 아직 목록을 볼 수 없어요.':K==='on'?'적용 중인 것이 없어요.':'아직 올라온 게 없어요. 첫 번째로 올려 보세요!')+'</div>';return;}
   L.innerHTML=rows.map(function(m){
     var a=!!on[m.id],mine=ME&&m.author_id===ME;
-    return '<div class="mrow" data-id="'+esc(m.id)+'"><div class="ic">'+(m.kind==='pack'?'🎨':'🧩')+'</div><div class="tx"><div class="nm">'+esc(m.name)+'</div><div class="ds">'+esc(m.descr||'')+'</div><div class="mt"><span class="tg'+(m.kind==='pack'?' p':'')+'">'+(m.kind==='pack'?'리소스팩':'모드')+'</span>'+esc(m.cat||'기타')+(m.author_name?' · '+esc(m.author_name):'')+'</div></div><div class="act">'
+    return '<div class="mrow" data-id="'+esc(m.id)+'"><div class="ic">'+(m.kind==='pack'?'🎨':'🧩')+'</div><div class="tx"><div class="nm">'+esc(m.name)+'</div><div class="mt"><span class="tg'+(m.kind==='pack'?' p':'')+'">'+(m.kind==='pack'?'리소스팩':'모드')+'</span>'+esc(m.cat||'기타')+'</div></div><div class="act">'
       +(mine&&SERVER==='ok'?'<button class="pb" data-del="'+esc(m.id)+'">삭제</button>':'')
-      +(a?'<button class="pb off" data-off="'+esc(m.id)+'">적용 해제</button>':'<button class="pb" data-on="'+esc(m.id)+'">적용</button>')+'</div></div>';
+      +(a?'<button class="pb off" data-off="'+esc(m.id)+'">적용 해제</button>':'<button class="pb" data-on="'+esc(m.id)+'">적용</button>')+'</div><div class="inf">'+(m.descr?'<div class="d">'+esc(m.descr)+'</div>':'')+'<span>제작자 <b>'+esc(m.author_name||'알 수 없음')+'</b></span><span>올린 날 <b>'+esc(String(m.created_at||'').slice(0,10)||'-')+'</b></span></div></div>';
   }).join('');
 }
 function find(id){return LIST.filter(function(m){return m.id===id;})[0]||(getOn()[id]&&Object.assign({id:id},getOn()[id]));}
@@ -177,10 +181,77 @@ $('upb').addEventListener('click',function(){
 });
 $('ux').addEventListener('click',function(){$('upl').classList.remove('on');});
 $('uf').addEventListener('change',function(){var f=this.files[0];if(!f)return;if(f.size>65536){umsg('파일이 너무 커요 (64KB까지).',1);return;}var r=new FileReader();r.onload=function(){$('uj').value=String(r.result||'');umsg('');};r.readAsText(f);});
+
+var ITEMN={"stick":"나뭇가지","bench":"작업대","sapling":"묘목","log":"통나무","plank":"판자","stone":"돌","iron":"철","gold":"금","copper":"구리","rwood":"강화목재","riron":"강화철","rcopper":"강화구리","rgold":"강화금","pickaxe_log":"통나무 곡괭이","pickaxe_stone":"돌 곡괭이","pickaxe_rwood":"강화목재 곡괭이","pickaxe_iron":"철 곡괭이","pickaxe_copper":"구리 곡괭이","pickaxe_riron":"강화철 곡괭이","pickaxe_gold":"금 곡괭이","pickaxe_rcopper":"강화구리 곡괭이","pickaxe_rgold":"강화금 곡괭이","axe_log":"통나무 도끼","axe_stone":"돌 도끼","axe_rwood":"강화목재 도끼","axe_iron":"철 도끼","axe_copper":"구리 도끼","axe_riron":"강화철 도끼","axe_gold":"금 도끼","axe_rcopper":"강화구리 도끼","axe_rgold":"강화금 도끼","sword_log":"통나무 장검","sword_stone":"돌 장검","sword_rwood":"강화목재 장검","sword_iron":"철 장검","sword_copper":"구리 장검","sword_riron":"강화철 장검","sword_gold":"금 장검","sword_rcopper":"강화구리 장검","sword_rgold":"강화금 장검","dagger_log":"통나무 단검","dagger_stone":"돌 단검","dagger_rwood":"강화목재 단검","dagger_iron":"철 단검","dagger_copper":"구리 단검","dagger_riron":"강화철 단검","dagger_gold":"금 단검","dagger_rcopper":"강화구리 단검","dagger_rgold":"강화금 단검","hoe_log":"통나무 괭이","hoe_stone":"돌 괭이","hoe_rwood":"강화목재 괭이","hoe_iron":"철 괭이","hoe_copper":"구리 괭이","hoe_riron":"강화철 괭이","hoe_gold":"금 괭이","hoe_rcopper":"강화구리 괭이","hoe_rgold":"강화금 괭이","rune_fire":"화염의 룬","rune_ice":"냉기의 룬","rune_venom":"맹독의 룬","rune_life":"생명의 룬","pot_heal":"회복 물약","pot_swift":"질풍 물약","pot_might":"괴력 물약","pot_guard":"철벽 물약","pot_night":"야시 물약","pot_breath":"숨결 물약","alchemy":"연금솥","runetable":"룬 제단","trap":"덫","hut":"주민의 집","balloon":"열기구","diving":"잠수 장비","pearl":"진주","coral":"산호","stall":"가판대","mailbox":"우체통","gpil":"대형 기둥","arch":"아치문","spire":"첨탑","monument":"방명록 비석","feller_log":"통나무 벌목기","feller_stone":"돌 벌목기","feller_rwood":"강화목재 벌목기","feller_iron":"철 벌목기","feller_copper":"구리 벌목기","feller_riron":"강화철 벌목기","feller_gold":"금 벌목기","feller_rcopper":"강화구리 벌목기","feller_rgold":"강화금 벌목기","miner_log":"통나무 채광기","miner_stone":"돌 채광기","miner_rwood":"강화목재 채광기","miner_iron":"철 채광기","miner_copper":"구리 채광기","miner_riron":"강화철 채광기","miner_gold":"금 채광기","miner_rcopper":"강화구리 채광기","miner_rgold":"강화금 채광기","bread":"빵","baked_potato":"구운 감자","popcorn":"팝콘","stew":"스튜","egg":"달걀","fried_egg":"달걀프라이","milk":"우유","raw_meat":"생고기","steak":"구운 고기","iron_ingot":"철 주괴","copper_ingot":"구리 주괴","gold_ingot":"금 주괴","boat":"보트","ar_helm_leather_1":"가죽 헬멧 ★","ar_helm_leather_2":"가죽 헬멧 ★★","ar_helm_leather_3":"가죽 헬멧 ★★★","ar_helm_iron_1":"철 헬멧 ★","ar_helm_iron_2":"철 헬멧 ★★","ar_helm_iron_3":"철 헬멧 ★★★","ar_helm_copper_1":"구리 헬멧 ★","ar_helm_copper_2":"구리 헬멧 ★★","ar_helm_copper_3":"구리 헬멧 ★★★","ar_helm_riron_1":"강화철 헬멧 ★","ar_helm_riron_2":"강화철 헬멧 ★★","ar_helm_riron_3":"강화철 헬멧 ★★★","ar_helm_gold_1":"금 헬멧 ★","ar_helm_gold_2":"금 헬멧 ★★","ar_helm_gold_3":"금 헬멧 ★★★","ar_helm_rcopper_1":"강화구리 헬멧 ★","ar_helm_rcopper_2":"강화구리 헬멧 ★★","ar_helm_rcopper_3":"강화구리 헬멧 ★★★","ar_helm_rgold_1":"강화금 헬멧 ★","ar_helm_rgold_2":"강화금 헬멧 ★★","ar_helm_rgold_3":"강화금 헬멧 ★★★","ar_helm_crystal_1":"수정 헬멧 ★","ar_helm_crystal_2":"수정 헬멧 ★★","ar_helm_crystal_3":"수정 헬멧 ★★★","ar_helm_obsidian_1":"화산석 헬멧 ★","ar_helm_obsidian_2":"화산석 헬멧 ★★","ar_helm_obsidian_3":"화산석 헬멧 ★★★","ar_helm_frost_1":"서리 헬멧 ★","ar_helm_frost_2":"서리 헬멧 ★★","ar_helm_frost_3":"서리 헬멧 ★★★","ar_chest_leather_1":"가죽 흉갑 ★","ar_chest_leather_2":"가죽 흉갑 ★★","ar_chest_leather_3":"가죽 흉갑 ★★★","ar_chest_iron_1":"철 흉갑 ★","ar_chest_iron_2":"철 흉갑 ★★","ar_chest_iron_3":"철 흉갑 ★★★","ar_chest_copper_1":"구리 흉갑 ★","ar_chest_copper_2":"구리 흉갑 ★★","ar_chest_copper_3":"구리 흉갑 ★★★","ar_chest_riron_1":"강화철 흉갑 ★","ar_chest_riron_2":"강화철 흉갑 ★★","ar_chest_riron_3":"강화철 흉갑 ★★★","ar_chest_gold_1":"금 흉갑 ★","ar_chest_gold_2":"금 흉갑 ★★","ar_chest_gold_3":"금 흉갑 ★★★","ar_chest_rcopper_1":"강화구리 흉갑 ★","ar_chest_rcopper_2":"강화구리 흉갑 ★★","ar_chest_rcopper_3":"강화구리 흉갑 ★★★","ar_chest_rgold_1":"강화금 흉갑 ★","ar_chest_rgold_2":"강화금 흉갑 ★★","ar_chest_rgold_3":"강화금 흉갑 ★★★","ar_chest_crystal_1":"수정 흉갑 ★","ar_chest_crystal_2":"수정 흉갑 ★★","ar_chest_crystal_3":"수정 흉갑 ★★★","ar_chest_obsidian_1":"화산석 흉갑 ★","ar_chest_obsidian_2":"화산석 흉갑 ★★","ar_chest_obsidian_3":"화산석 흉갑 ★★★","ar_chest_frost_1":"서리 흉갑 ★","ar_chest_frost_2":"서리 흉갑 ★★","ar_chest_frost_3":"서리 흉갑 ★★★","ar_legs_leather_1":"가죽 각반 ★","ar_legs_leather_2":"가죽 각반 ★★","ar_legs_leather_3":"가죽 각반 ★★★","ar_legs_iron_1":"철 각반 ★","ar_legs_iron_2":"철 각반 ★★","ar_legs_iron_3":"철 각반 ★★★","ar_legs_copper_1":"구리 각반 ★","ar_legs_copper_2":"구리 각반 ★★","ar_legs_copper_3":"구리 각반 ★★★","ar_legs_riron_1":"강화철 각반 ★","ar_legs_riron_2":"강화철 각반 ★★","ar_legs_riron_3":"강화철 각반 ★★★","ar_legs_gold_1":"금 각반 ★","ar_legs_gold_2":"금 각반 ★★","ar_legs_gold_3":"금 각반 ★★★","ar_legs_rcopper_1":"강화구리 각반 ★","ar_legs_rcopper_2":"강화구리 각반 ★★","ar_legs_rcopper_3":"강화구리 각반 ★★★","ar_legs_rgold_1":"강화금 각반 ★","ar_legs_rgold_2":"강화금 각반 ★★","ar_legs_rgold_3":"강화금 각반 ★★★","ar_legs_crystal_1":"수정 각반 ★","ar_legs_crystal_2":"수정 각반 ★★","ar_legs_crystal_3":"수정 각반 ★★★","ar_legs_obsidian_1":"화산석 각반 ★","ar_legs_obsidian_2":"화산석 각반 ★★","ar_legs_obsidian_3":"화산석 각반 ★★★","ar_legs_frost_1":"서리 각반 ★","ar_legs_frost_2":"서리 각반 ★★","ar_legs_frost_3":"서리 각반 ★★★","ar_boots_leather_1":"가죽 신발 ★","ar_boots_leather_2":"가죽 신발 ★★","ar_boots_leather_3":"가죽 신발 ★★★","ar_boots_iron_1":"철 신발 ★","ar_boots_iron_2":"철 신발 ★★","ar_boots_iron_3":"철 신발 ★★★","ar_boots_copper_1":"구리 신발 ★","ar_boots_copper_2":"구리 신발 ★★","ar_boots_copper_3":"구리 신발 ★★★","ar_boots_riron_1":"강화철 신발 ★","ar_boots_riron_2":"강화철 신발 ★★","ar_boots_riron_3":"강화철 신발 ★★★","ar_boots_gold_1":"금 신발 ★","ar_boots_gold_2":"금 신발 ★★","ar_boots_gold_3":"금 신발 ★★★","ar_boots_rcopper_1":"강화구리 신발 ★","ar_boots_rcopper_2":"강화구리 신발 ★★","ar_boots_rcopper_3":"강화구리 신발 ★★★","ar_boots_rgold_1":"강화금 신발 ★","ar_boots_rgold_2":"강화금 신발 ★★","ar_boots_rgold_3":"강화금 신발 ★★★","ar_boots_crystal_1":"수정 신발 ★","ar_boots_crystal_2":"수정 신발 ★★","ar_boots_crystal_3":"수정 신발 ★★★","ar_boots_obsidian_1":"화산석 신발 ★","ar_boots_obsidian_2":"화산석 신발 ★★","ar_boots_obsidian_3":"화산석 신발 ★★★","ar_boots_frost_1":"서리 신발 ★","ar_boots_frost_2":"서리 신발 ★★","ar_boots_frost_3":"서리 신발 ★★★","armorbench":"갑옷제작대","leaf":"나뭇잎","feather":"깃털","thread":"실","rod_log":"통나무 낚싯대","rod_stone":"돌 낚싯대","rod_rwood":"강화목재 낚싯대","rod_iron":"철 낚싯대","rod_copper":"구리 낚싯대","rod_riron":"강화철 낚싯대","rod_gold":"금 낚싯대","rod_rcopper":"강화구리 낚싯대","rod_rgold":"강화금 낚싯대","bow_log":"통나무 활","bow_stone":"돌 활","bow_rwood":"강화목재 활","bow_iron":"철 활","bow_copper":"구리 활","bow_riron":"강화철 활","bow_gold":"금 활","bow_rcopper":"강화구리 활","bow_rgold":"강화금 활","arrow_f":"깃털 화살","arrow":"화살","anchovy":"멸치","mackerel":"고등어","seabream":"도미","flounder":"광어","tuna":"참치","pufferfish":"복어","marlin":"청새치","crucian":"붕어","minnow":"피라미","trout":"송어","catfish":"메기","carp":"잉어","sturgeon":"철갑상어","goldcarp":"황금 잉어","grilled_fish":"구운 생선","hammer_log":"통나무 망치","hammer_stone":"돌 망치","hammer_rwood":"강화목재 망치","hammer_iron":"철 망치","hammer_copper":"구리 망치","hammer_riron":"강화철 망치","hammer_gold":"금 망치","hammer_rcopper":"강화구리 망치","hammer_rgold":"강화금 망치","riron_plate":"강화철판","anvil":"모루","slime":"슬라임","snake_fang":"뱀의 송곳니","leather":"가죽","bone":"뼈다귀","ash":"잿가루","glue":"접착제","frost":"서리 조각","cactus_fiber":"선인장 섬유","rubber":"고무","mangrove_root":"맹그로브 뿌리","resin":"송진","clay":"점토","obsidian":"화산석","crystal":"수정","cactus_juice":"선인장 즙","fire_potion":"내화 물약","antidote":"해독제","torch":"횃불","brick":"벽돌","conveyor":"컨베이어 벨트","paper":"종이","compass":"나침반","island_map":"섬 지도","bag":"아이템 가방","trash":"쓰레기통","circuit":"회로조각","sorter":"분류기","rcopper_plate":"강화구리판","rgold_plate":"강화금판","circuit_device":"회로장치","bell":"종","rsd":"원격신호장치","gauge":"측정기","controller":"제어장치","zinc":"아연","zinc_ingot":"아연 주괴","obsidian_ingot":"화산석 주괴","rzinc":"강화아연","rzinc_plate":"강화아연판","brass":"황동","brass_plate":"강화황동판","rgold_c":"압축된 강화금","rgold_cp":"압축된 강화금판","rcopper_c":"압축된 강화구리","rcopper_cp":"압축된 강화구리판","riron_c":"압축된 강화철","riron_cp":"압축된 강화철판","brass_c":"압축된 강화황동","brass_cp":"압축된 강화황동판","circuit_crystal":"회로 결정체","ult_signal":"초장거리 신호 장치","wave_device":"파동음파장치","beacon":"신호기","crafter":"자동제작장치","relay":"신호중계기","gear":"톱니바퀴","clock":"시계","tele":"시공간이동장치","port":"화물항","guard":"경비초소","coin":"동전","flag":"깃발","rstone":"강화석재","sbrick":"석재벽돌","bwall":"나무 벽","bwin":"창문 벽","aquarium":"수족관","horse":"말","cart":"수레","tradepost":"교역소","door":"문","roof":"지붕","carpet":"카펫","table":"탁자","chair":"의자","shelf":"책장","bucket":"양동이","bucket_w":"물 양동이","fence":"울타리","oven":"화덕","furnace":"용광로","wheat_seed":"밀 씨앗","potato":"감자","corn":"옥수수","bed":"침대","chest":"보관함","rl_bwolf":"늑대왕의 유물","rl_bscorp":"전갈의 유물","rl_bmagma":"불꽃 거인의 유물","rl_bspider":"거미 여왕의 유물","rl_bsnake":"모래뱀의 유물","rl_bgolem":"바위 거인의 유물","rl_bcroc":"악어왕의 유물","rl_byeti":"대설인의 유물","void_essence":"공허의 정수","vkey_a":"공허의 열쇠 · 동","vkey_b":"공허의 열쇠 · 서","voidcore":"공허의 핵","pot":"냄비","seafood_stew":"해물탕","feast":"정찬","marlin_dish":"청새치 요리","goldcarp_dish":"황금 잉어 요리","wheat":"밀","hammock":"해먹","fishtrap":"통발","dinoskel":"공룡 골격 전시","soulwisp":"혼불 등"};
+var NAME2ID={};Object.keys(ITEMN).forEach(function(k){NAME2ID[ITEMN[k].replace(/\s+/g,'')]=k;});
+var EVS={mine:'mine',chop:'chop',kill:'kill',craft:'craft',fish:'fish',place:'place',die:'die'};
+var MONS=['slime','wolf','scorpion','spirit','spider','snake','golem','croc','yeti','bwolf','bscorp','bmagma','bspider','bsnake','bgolem','bcroc','byeti'];
+function lev(a,b){var d=[],i,j;for(i=0;i<=a.length;i++){d[i]=[i];}for(j=1;j<=b.length;j++)d[0][j]=j;for(i=1;i<=a.length;i++)for(j=1;j<=b.length;j++)d[i][j]=Math.min(d[i-1][j]+1,d[i][j-1]+1,d[i-1][j-1]+(a[i-1]===b[j-1]?0:1));return d[a.length][b.length];}
+function guess(w,list){var best='',bd=3;list.forEach(function(x){var d=lev(w.toLowerCase(),x.toLowerCase());if(d<bd){bd=d;best=x;}});return best;}
+function itemId(w){if(ITEMN[w])return w;var k=NAME2ID[w.replace(/\s+/g,'')];return k||'';}
+function PE(n,m){var e=new Error('line '+n+': '+m);e.script=1;return e;}
+function parseScript(text){
+  var raw=String(text).replace(/\r/g,'').split('\n'),L=[],i;
+  for(i=0;i<raw.length;i++){var t=raw[i];if(/^\s*(#|$)/.test(t))continue;var m=t.match(/^[ \t]*/)[0].replace(/\t/g,'    ').length;L.push({n:i+1,ind:m,t:t.trim()});}
+  var pos=0,out={kind:'mod',name:'',events:[],names:null};
+  function block(ind,depth,top){
+    var acts=[];
+    while(pos<L.length&&L[pos].ind>=ind){
+      var l=L[pos];
+      if(l.ind>ind)throw PE(l.n,'indent does not match the line above');
+      pos++;var m;
+      if(m=l.t.match(/^give\s+(?:(\d+)\s+)?(.+)$/i)){
+        var n=m[1]?+m[1]:1,w=m[2].trim();if(n<1||n>20)throw PE(l.n,'give amount must be 1 to 20');
+        var id=itemId(w);if(!id){var g=guess(w,Object.keys(ITEMN).concat(Object.keys(ITEMN).map(function(k){return ITEMN[k];})));throw PE(l.n,"unknown item '"+w+"'."+(g?" Did you mean '"+g+"'?":''));}
+        acts.push({give:{item:id,n:n}});
+      }else if(m=l.t.match(/^say\s+"([^"]{1,60})"$/i)){acts.push({say:m[1]});}
+      else if(m=l.t.match(/^chance\s+(\d{1,3})\s*%\s*:$/i)){
+        if(+m[1]>100)throw PE(l.n,'chance must be 0 to 100%');
+        if(depth>=3)throw PE(l.n,'blocks are nested too deep');
+        if(!(pos<L.length&&L[pos].ind>l.ind))throw PE(l.n,'nothing is written under this line');
+        acts.push({chance:+m[1],do:block(L[pos].ind,depth+1)});
+      }else throw PE(l.n,"I don't understand '"+l.t.split(' ')[0]+"'. You can use: give, say, chance");
+    }
+    return acts;
+  }
+  var hdr=false;
+  while(pos<L.length){
+    var l=L[pos],m;
+    if(l.ind!==0)throw PE(l.n,'this line should not be indented');
+    pos++;
+    if(m=l.t.match(/^(mod|resource\s*pack|pack)\s+"([^"]{1,40})"$/i)){out.kind=/mod/i.test(m[1])?'mod':'pack';out.name=m[2];hdr=true;}
+    else if(m=l.t.match(/^on\s+(\w+)(?:\s+(\w+))?\s*:$/i)){
+      var ev=EVS[m[1].toLowerCase()];if(!ev){var g=guess(m[1],Object.keys(EVS));throw PE(l.n,"unknown event '"+m[1]+"'."+(g?" Did you mean '"+g+"'?":" You can use: mine, chop, kill, craft, fish, place, die"));}
+      var tg=m[2]?m[2].toLowerCase():'';
+      if(tg){if(ev==='kill'){if(MONS.indexOf(tg)<0){var g2=guess(tg,MONS);throw PE(l.n,"unknown monster '"+tg+"'."+(g2?" Did you mean '"+g2+"'?":''));}}
+        else if(ev==='mine'&&(tg==='stone'||tg==='rock')){tg='';}
+        else if(ev==='chop'&&(tg==='tree'||tg==='wood')){tg='';}
+        else throw PE(l.n,"'"+ev+"' does not take '"+m[2]+"'");}
+      if(!(pos<L.length&&L[pos].ind>0))throw PE(l.n,'nothing is written under this line');
+      var body=block(L[pos].ind,0);
+      var o={on:ev,do:body};if(tg)o.target=tg;out.events.push(o);
+    }else if(/^rename\s*:$/i.test(l.t)){
+      if(!(pos<L.length&&L[pos].ind>0))throw PE(l.n,'nothing is written under this line');
+      var ind2=L[pos].ind;out.names=out.names||{};
+      while(pos<L.length&&L[pos].ind>=ind2){
+        var r=L[pos++],mm=r.t.match(/^(.+?)\s*=\s*"([^"]{1,40})"$/);
+        if(!mm)throw PE(r.n,'write it like  wood = "새 이름"');
+        var id2=itemId(mm[1].trim());if(!id2){var g3=guess(mm[1].trim(),Object.keys(ITEMN));throw PE(r.n,"unknown item '"+mm[1].trim()+"'."+(g3?" Did you mean '"+g3+"'?":''));}
+        out.names[id2]=mm[2];
+      }
+    }else throw PE(l.n,"I don't understand '"+l.t.split(' ')[0]+"'. Start a line with: mod, resource pack, on, rename");
+  }
+  var data={};if(out.events.length)data.events=out.events;if(out.names)data.names=out.names;
+  if(!data.events&&!data.names)throw PE(1,'nothing to upload: add an "on ...:" or "rename:" block');
+  return {kind:out.name?out.kind:null,name:out.name,data:data};
+}
+
 function check(kind,d){
   if(!d||typeof d!=='object'||Array.isArray(d))return 'JSON 안쪽이 { } 모양이어야 해요.';
   if(kind==='mod'){
-    if(!Array.isArray(d.events)||!d.events.length)return '모드는 "events" 목록이 하나 이상 있어야 해요.';
+    if(d.names&&(typeof d.names!=='object'||Array.isArray(d.names)))return '"names"는 { "아이템": "새 이름" } 모양이어야 해요.';
+    if(!d.names&&(!Array.isArray(d.events)||!d.events.length))return '모드는 "events" 목록이나 "names" 중 하나는 있어야 해요.';
+    if(!d.events)return '';
     if(d.events.length>200)return '이벤트는 200개까지예요.';
     for(var i=0;i<d.events.length;i++){var ev=d.events[i];if(!ev||typeof ev.on!=='string'||!Array.isArray(ev.do)||!ev.do.length)return (i+1)+'번째 이벤트에 "on"(문자열)과 "do"(목록)가 필요해요.';if(ev.do.length>20)return (i+1)+'번째 이벤트의 "do"는 20개까지예요.';}
   }else{
@@ -192,9 +263,11 @@ function check(kind,d){
 }
 $('us').addEventListener('click',async function(){
   var kind=$('uk').value,name=$('un').value.trim(),descr=$('ud').value.trim(),cat=$('uc').value,raw=$('uj').value.trim();
-  if(!name){umsg('이름을 적어 주세요.',1);return;}
   if(raw.length>65536){umsg('내용이 너무 커요 (64KB까지).',1);return;}
-  var d;try{d=JSON.parse(raw);}catch(e){umsg('JSON 모양이 올바르지 않아요.',1);return;}
+  var d;
+  if(raw.charAt(0)==='{'){try{d=JSON.parse(raw);}catch(e){umsg('JSON 모양이 올바르지 않아요.',1);return;}}
+  else{try{var ps=parseScript(raw);d=ps.data;if(ps.kind){kind=ps.kind;}if(ps.name&&!name)name=ps.name;}catch(e){umsg(e.script?e.message:'스크립트를 읽지 못했어요.',1);return;}}
+  if(!name){umsg('이름을 적어 주세요.',1);return;}
   var er=check(kind,d);if(er){umsg(er,1);return;}
   var u=FFAuth.user(),c=sb();if(!u||!c){umsg('로그인이 필요해요.',1);return;}
   var pr=null;try{pr=FFAuth.profile();}catch(e){}
