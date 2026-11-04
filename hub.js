@@ -145,6 +145,7 @@ function scrollToCm(){ var c=$('#community'); if(c) c.scrollIntoView({behavior:'
 /* ---- 사진: 줄여서(긴 쪽 1600px) Supabase 저장소 'ff-images/<내 id>/' 에 올리고, 글 · 채팅에는 주소만 저장 (supabase-ff-images.sql) ---- */
 var PUB='https://kebsbuvuutilitwlvxzv.supabase.co/storage/v1/object/public/ff-images/', IMG=true;     // IMG=false: the images column is not there yet
 function okImg(u){ return typeof u==='string'&&u.indexOf(PUB)===0&&/^[0-9a-f-]{36}\/[A-Za-z0-9._-]{1,80}$/.test(u.slice(PUB.length)); }
+function thumbs(a){ a=(a||[]).filter(okImg); if(!a.length) return ''; var show=a.slice(0,2); return '<div class="cm-ths">'+show.map(function(u,i){ return '<span class="cm-thw"><img class="cm-th" alt="" loading="lazy" src="'+esc(u)+'">'+(i===1&&a.length>2?'<em>+'+(a.length-2)+'</em>':'')+'</span>'; }).join('')+'</div>'; }
 function imgsHtml(a, cls){ a=(a||[]).filter(okImg); if(!a.length) return ''; return '<div class="'+cls+' n'+Math.min(a.length,4)+'">'+a.map(function(u){ return '<a href="'+esc(u)+'" target="_blank" rel="noopener"><img src="'+esc(u)+'" alt="" loading="lazy"></a>'; }).join('')+'</div>'; }
 function shrink(file){ return new Promise(function(res,rej){
   if(!file||!/^image\//.test(file.type)) return rej('type');
@@ -207,7 +208,7 @@ function addPend(fs){ var m=$('.cm-p[data-p=board] .cm-w .cm-m'); fs.forEach(fun
 function paintPend(){ var v=$('.cm-p[data-p=board] .cm-pv'); if(!v) return; v.innerHTML='';
   pend.forEach(function(x,i){ var d=document.createElement('div'); d.className='cm-pi'; d.innerHTML='<img alt=""><button type="button" title="빼기">×</button>'; d.querySelector('img').src=x.u;
     d.querySelector('button').onclick=function(){ URL.revokeObjectURL(x.u); pend.splice(i,1); paintPend(); }; v.appendChild(d); }); }
-var PCOLS='id,user_id,game,title,body,created_at';
+var PCOLS='id,user_id,game,title,body,created_at,edited_at';
 var bSeen=0; try{ bSeen=+localStorage.getItem('ff.board.seen')||0; }catch(e){}
 /* search word for a PostgREST or=(...) filter: characters that would break the filter are dropped */
 function qWord(v){ return String(v||'').replace(/[,()*%\\"'.:]/g,' ').replace(/\s+/g,' ').trim().slice(0,40); }
@@ -244,7 +245,7 @@ async function listPosts(){
   L.innerHTML=rows.length?'':'<div class="cm-e">'+(bQuery?'검색 결과가 없어요.':(bFilter==='hot'?'아직 좋아요를 받은 글이 없어요.':bFilter==='mine'?'아직 내가 쓰거나 댓글 단 글이 없어요.':'아직 글이 없어요. 첫 글을 써 보세요!'))+'</div>';
   rows.forEach(function(x){ var d=document.createElement('div'); d.className='cm-post'+(bOpen===x.id?' open':''); d.dataset.id=x.id; d.dataset.g=x.game||'';
     d.innerHTML='<div class="cm-ph">'+gameTag(x.game)+(bSeen&&Date.parse(x.created_at)>bSeen&&!(me&&me.id===x.user_id)?'<span class="cm-new">NEW</span>':'')+'<b class="cm-t" data-notr>'+mark(x.title)+'</b>'+((x.images||[]).length?'<span class="cm-pic">📷 '+F('사진 {0}장',x.images.length)+'</span>':'')+(cnt[x.id]?'<span class="cm-c">💬 '+cnt[x.id]+'</span>':'')+(likes[x.id]?'<span class="cm-c cm-lc">👍 '+likes[x.id]+'</span>':'')+'</div>'+
-      '<div class="cm-meta">'+who(x.user_id)+' · <span>'+esc(ago(x.created_at))+'</span></div>'+(((x.images||[]).filter(okImg)[0])?'<img class="cm-th" alt="" loading="lazy" src="'+esc((x.images||[]).filter(okImg)[0])+'">':'')+((x.body||'').trim()?'<div class="cm-ex">'+esc(String(x.body).replace(/\s+/g,' ').trim().slice(0,90))+'</div>':'')+'<div class="cm-body"></div>';
+      '<div class="cm-meta">'+who(x.user_id)+' · <span>'+esc(ago(x.created_at))+'</span>'+(x.edited_at?' · <span>(수정됨)</span>':'')+'</div>'+thumbs(x.images)+((x.body||'').trim()?'<div class="cm-ex">'+esc(String(x.body).replace(/\s+/g,' ').trim().slice(0,90))+'</div>':'')+'<div class="cm-body"></div>';
     d.onclick=function(e){ if(e.target.closest('.cm-body,a,button,input,textarea,select,label')) return; bOpen=bOpen===x.id?null:x.id; d.classList.toggle('open',bOpen===x.id); if(bOpen===x.id) openPost(d,x); };
     L.appendChild(d); if(bOpen===x.id){ openPost(d,x); if(bScroll){ bScroll=false; setTimeout(function(){ d.scrollIntoView({behavior:'smooth',block:'center'}); },60); } } });
   p.querySelector('.cm-more').style.display=more?'':'none';
@@ -268,12 +269,24 @@ function likeBtn(d, x, B){
   return b;
 }
 function reportBtn(o, cls){ var b=document.createElement('button'); b.className=cls||'cm-btn2'; b.title='신고'; b.textContent=cls?'🚩':'🚩 신고'; b.onclick=function(e){ e.stopPropagation(); report(o); }; return b; }
+function editPost(d, x, B){
+  var T=B.querySelector('.cm-txt'); if(B.querySelector('.cm-ed')) return;
+  var f=document.createElement('form'); f.className='cm-w cm-ed'; f.style.display='block';
+  f.innerHTML='<input name="t" maxlength="80" required><textarea name="b" rows="6" maxlength="4000"></textarea><div class="cm-row" style="display:flex;gap:8px;margin-top:8px"><button class="cm-btn" type="submit">저장</button><button class="cm-btn2" type="button" style="margin-top:0">취소</button></div><div class="cm-m"></div>';
+  f.t.value=x.title||''; f.b.value=x.body||''; B.insertBefore(f,B.firstChild); T.style.display='none';
+  var close=function(){ f.remove(); if(x.body) T.style.display=''; };
+  f.querySelector('.cm-btn2').onclick=close;
+  f.onsubmit=async function(e){ e.preventDefault(); var t=f.t.value.trim(), b=f.b.value.trim(), m=f.querySelector('.cm-m'); if(!t) return; if(!b&&!(x.images||[]).length){ m.textContent='내용을 적어 주세요.'; return; }
+    var r=await sb.from('ff_posts').update({title:t, body:b||' ', edited_at:new Date().toISOString()}).eq('id',x.id).eq('user_id',me.id); if(r.error){ m.textContent=errText(r.error); return; }
+    bOpen=x.id; listPosts(); };
+}
 async function openPost(d, x){
   var B=d.querySelector('.cm-body'); B.innerHTML='<div class="cm-txt" data-notr></div>'+imgsHtml(x.images,'cm-gal')+'<div class="cm-acts2"></div><div class="cm-cms"></div><form class="cm-cf"><input maxlength="1000" placeholder="댓글 달기"><button class="cm-btn">등록</button></form><div class="cm-m"></div>';
   setMn(B.querySelector('.cm-txt'),x.body); if(!x.body) B.querySelector('.cm-txt').style.display='none';
   if(LIKES) B.querySelector('.cm-acts2').appendChild(likeBtn(d,x,B));
   if(RX) loadRx('post',[x.id]).then(function(){ var bar=rxBar('post',x.id); if(bar) B.querySelector('.cm-acts2').insertBefore(bar, B.querySelector('.cm-acts2').children[1]||null); });
   if(!me||me.id!==x.user_id) B.querySelector('.cm-acts2').appendChild(reportBtn({kind:'post', id:x.id, user:x.user_id, text:x.title+' / '+x.body}));
+  if(me&&me.id===x.user_id){ var ed=document.createElement('button'); ed.className='cm-btn2'; ed.textContent='글 수정'; ed.onclick=function(){ editPost(d,x,B); }; B.querySelector('.cm-acts2').appendChild(ed); }
   if(me&&(me.id===x.user_id||admin)){ var del=document.createElement('button'); del.className='cm-btn2'; del.textContent='글 삭제'; del.onclick=async function(){ if(!del.dataset.s){ del.dataset.s=1; del.textContent='정말 삭제할까요?'; return; } var r=await sb.from('ff_posts').delete().eq('id',x.id); if(r.error) B.querySelector('.cm-m').textContent=errText(r.error); else { bOpen=null; listPosts(); } }; B.querySelector('.cm-acts2').appendChild(del); }
   var cf=B.querySelector('.cm-cf'); cf.onsubmit=async function(e){ e.preventDefault(); if(!me) return login(); var v=cf.querySelector('input').value.trim(); if(!v) return;
     var r=await sb.from('ff_comments').insert({post_id:x.id, body:v}); if(r.error){ B.querySelector('.cm-m').textContent=errText(r.error); return; } cf.reset(); hubSync(); comments(B,x); };

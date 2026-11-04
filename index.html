@@ -271,6 +271,10 @@ if(document.readyState==='loading') document.addEventListener('DOMContentLoaded'
   .cm-post:hover{transform:translateY(-1px); background:rgba(127,127,127,.09); box-shadow:0 8px 22px rgba(0,0,0,.18);}
   .cm-post[data-g=stickseum]{border-left-color:#3ee0c4;} .cm-post[data-g=crownenvoy]{border-left-color:#e8c25a;} .cm-post[data-g=beaconfall]{border-left-color:#ffae5a;} .cm-post[data-g=devlog]{border-left-color:#ff8fc2;} .cm-post[data-g=isleport]{border-left-color:#6aa8ff;}
   .cm-post.open{border-color:var(--fry); border-left-color:var(--fry);}
+  .cm-ths{display:flex; gap:6px; margin-top:7px;} .cm-post.open .cm-ths{display:none;}
+  .cm-thw{position:relative; display:block; width:96px; max-width:calc(50% - 3px); height:72px; border-radius:8px; overflow:hidden; border:1px solid var(--line); background:#0b0d13; flex:none;}
+  .cm-th{width:100%; height:100%; object-fit:cover; display:block;}
+  .cm-thw em{position:absolute; right:4px; bottom:4px; font-style:normal; font-size:12px; font-weight:700; background:rgba(0,0,0,.65); color:#fff; border-radius:99px; padding:1px 7px;}
   .cm-ex{margin-top:5px; color:var(--dim); font-size:14px; line-height:1.5; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;} .cm-post.open .cm-ex{display:none;}
   .cm-ph{display:flex; align-items:center; gap:8px; cursor:pointer;}
   .cm-post{cursor:pointer;} .cm-post .cm-body{cursor:auto;}
@@ -716,7 +720,7 @@ if(document.readyState==='loading') document.addEventListener('DOMContentLoaded'
 </div>
 <script src="ff-hate.js?v=20261021r"></script>
 <script src="ff-auth.js?v=20261103m"></script>
-<script src="hub.js?v=20261103n"></script>
+<script src="hub.js?v=20261104a"></script>
 <script src="devlog.js?v=20261027a"></script>
 <script src="ff-splash.js?v=20261022d" defer></script>
 <script>
