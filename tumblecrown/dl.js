@@ -2,7 +2,7 @@
    모듈은 data: 주소로 넣고, 그림·글꼴은 사이트 주소(base)에서 불러와요. 인터넷 연결은 필요해요. */
 (function (root) {
   var NAMES = ['data', 'main', 'map', 'music', 'render', 'sfx', 'sim', 'tr'];
-  var BASE = 'https://frenchfries777mc.github.io/games/prototypes/tumblecrown/';
+  var BASE = 'https://frenchfries777.com/games/prototypes/tumblecrown/';
   function b64(s) {
     if (typeof Buffer !== 'undefined') return Buffer.from(s, 'utf8').toString('base64');
     var bytes = new TextEncoder().encode(s), bin = '', i, CH = 0x8000;

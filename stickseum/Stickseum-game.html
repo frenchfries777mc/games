@@ -3,10 +3,10 @@
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
-<link rel="icon" type="image/svg+xml" href="https://frenchfries777mc.github.io/games/gamelogo/stickseum.svg">
+<link rel="icon" type="image/svg+xml" href="https://frenchfries777.com/games/gamelogo/stickseum.svg">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <title>Stickseum</title>
-<script src="https://frenchfries777mc.github.io/games/ff-lang.js"></script>   <!-- Frenchfries777 공용 언어: 허브·다른 게임과 언어 설정을 맞춤 (언어를 읽는 코드보다 먼저) -->
+<script src="https://frenchfries777.com/games/ff-lang.js"></script>   <!-- Frenchfries777 공용 언어: 허브·다른 게임과 언어 설정을 맞춤 (언어를 읽는 코드보다 먼저) -->
 <script id="i18nEngine">
 (function(){
 var LS='arenaClashLang', LANGS=['ko','en','es','fr','de','ja','zh','pt','ru','tr','it','pl','ar','nw','gk'];
@@ -969,7 +969,7 @@ h1,h2{ text-shadow:0 0 10px rgba(63,224,197,.55), 0 0 26px rgba(63,224,197,.25);
 function arm(){clearTimeout(T1);clearTimeout(T2);T1=setTimeout(go,Math.max(0,9400-(Date.now()-t0)));T2=setTimeout(go,Math.max(0,14000-(Date.now()-t0)));}
 arm();
 /* intro sting (5 s, a separate file next to the game): starts as soon as the intro starts. Browsers on a computer block sound until the first click or key, so then the intro waits (frozen, with a short hint) and starts from that click, so the song always plays with the intro; silent if sound is off */
-function sting(){try{var st=JSON.parse(localStorage.getItem('arenaClashSettings')||'null');if(st&&st.bgm===false){window.__introSongDone=1;return;}var a=new Audio('music-intro.mp3'),alt=0;a.volume=Math.min(1,((st&&typeof st.bgmVol==='number')?st.bgmVol:0.4)*1.5);a.onerror=function(){if(!alt){alt=1;a.src='https://frenchfries777mc.github.io/games/stickseum/music-intro.mp3';a.load();var q=a.play();if(q&&q.catch)q.catch(function(){});}};
+function sting(){try{var st=JSON.parse(localStorage.getItem('arenaClashSettings')||'null');if(st&&st.bgm===false){window.__introSongDone=1;return;}var a=new Audio('music-intro.mp3'),alt=0;a.volume=Math.min(1,((st&&typeof st.bgmVol==='number')?st.bgmVol:0.4)*1.5);a.onerror=function(){if(!alt){alt=1;a.src='https://frenchfries777.com/games/stickseum/music-intro.mp3';a.load();var q=a.play();if(q&&q.catch)q.catch(function(){});}};
 function hold(){if(held||done)return;held=1;clearTimeout(T1);clearTimeout(T2);el.classList.add('hold');var h=document.createElement('div');h.id='introHold';h.textContent='화면을 누르면 시작해요';el.appendChild(h);
 var go2=function(){if(!held)return;held=0;['pointerdown','keydown','touchend','click'].forEach(function(ev){removeEventListener(ev,go2,true);});h.remove();el.classList.remove('hold');t0=Date.now();arm();var r=a.play();if(r&&r.catch)r.catch(function(){});};
 ['pointerdown','keydown','touchend','click'].forEach(function(ev){addEventListener(ev,go2,true);});}
@@ -1895,7 +1895,7 @@ function persistOtherSettings(){ try{ localStorage.setItem('arenaClashSettings',
    fetched from the site, and if that fails too the game simply stays without music. Web Audio is used (not <audio>) so the
    loop has no gap and the volume can fade on iPad, where an <audio> element's volume can't be changed. */
 const BGM_GAIN={battle:1.5};      // the battle song is mastered quieter than the rest
-const BGM_FILES={lobby:'music-lobby.mp3', battle:'music-battle-jump.mp3', boss:'music-boss.mp3'}, BGM_ALT='https://frenchfries777mc.github.io/games/stickseum/';
+const BGM_FILES={lobby:'music-lobby.mp3', battle:'music-battle-jump.mp3', boss:'music-boss.mp3'}, BGM_ALT='https://frenchfries777.com/games/stickseum/';
 const BGM_LOOP={lobby:41.739, battle:51.2, boss:41.143};            // loop length in seconds (whole bars, so the end joins the start)
 let bgmCtx=null, bgmBufs={}, bgmLoading={}, bgmCur=null, bgmGain=null;
 function bgmWanted(){
@@ -2064,7 +2064,7 @@ document.getElementById('settingsBackBtn').onclick=()=>showScreen('menuScreen');
 document.getElementById('settingsToSiteBtn').onclick=async ()=>{      // 나가기: the game is opened in its own window by the site, so it closes that window
   try{ window.close(); }catch(e){}
   await new Promise(r=>setTimeout(r,250));
-  if(!window.closed && await uiConfirm('이 창은 직접 닫을 수 없어요. 사이트로 돌아갈까요?')) location.href='https://frenchfries777mc.github.io/games/?r='+Date.now();       // (opened by typing the address: the browser refuses to close it)
+  if(!window.closed && await uiConfirm('이 창은 직접 닫을 수 없어요. 사이트로 돌아갈까요?')) location.href='https://frenchfries777.com/games/?r='+Date.now();       // (opened by typing the address: the browser refuses to close it)
 };
 document.getElementById('keybindResetBtn').onclick=()=>{ keyBindings=defaultKeyBindings(); persistKeyBindings(); renderKeybinds(); updateControlsHint(); };
 // ===== Weapon mastery =====
@@ -19816,7 +19816,7 @@ initAuthGate();
 if(!DED_HOST){ try{ fetch('versions.json?t='+Date.now(), {cache:'no-store'}).then(r=>r.json()).then(j=>{ const v=(j.versions||[]).find(x=>x.version===GAME_VERSION), n=v?+String(v.build||'').replace(/\D/g,''):0, u=new URL(location.href); if(n>buildNum(GAME_BUILD) && u.searchParams.get('b')!==String(n)){ u.searchParams.set('b', n); location.replace(u.toString()); } }).catch(()=>{}); }catch(e){} }
 })();
 </script>
-<script src="https://frenchfries777mc.github.io/games/ff-profile.js?v=20261029e"></script>
-<script src="https://frenchfries777mc.github.io/games/ff-auth.js"></script>
+<script src="https://frenchfries777.com/games/ff-profile.js?v=20261029e"></script>
+<script src="https://frenchfries777.com/games/ff-auth.js"></script>
 </body>
 </html>

@@ -12,7 +12,7 @@ const os=require('os');
 const MAX_BY_MEM=Math.max(2, Math.floor(os.totalmem()/1048576/250));            // (한 방에 램 약 250MB: 램 1GB 서버면 최대 4방)
 const MAXR=Math.max(1, Math.min(+process.env.FF_MAX||10, MAX_BY_MEM)), WAITING=Math.max(1, Math.min(+process.env.FF_WAITING||3, Math.max(1, Math.floor(MAXR/4)))), RESTART_H=+process.env.FF_RESTART_H||6;
 const BUSY_LOAD=+process.env.FF_BUSY_LOAD||(os.cpus().length*2.5);              // (이보다 바쁘면 새 방 부탁을 거절해요: 그 사람이 직접 방장이 돼요)
-const URL=process.env.FF_URL||'https://frenchfries777mc.github.io/games/stickseum/Stickseum-latest.html?dedicated=1';
+const URL=process.env.FF_URL||'https://frenchfries777.com/games/stickseum/Stickseum-latest.html?dedicated=1';
 const T0=Date.now();
 const log=(...a)=>console.log(new Date().toISOString().slice(11,19), ...a);
 if(!USER || !PASS){ console.error('FF_USER / FF_PASS 가 없어요 (/etc/ff-host.env 를 확인하세요)'); process.exit(2); }

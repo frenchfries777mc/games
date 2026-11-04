@@ -3,7 +3,7 @@
    필요한 SQL: supabase-ff-hub.sql, supabase-ff-images.sql, supabase-ff-social.sql, supabase-ff-extra.sql, supabase-ff-more.sql, supabase-ff-react.sql, supabase-ff-coin.sql, supabase-ff-wiki.sql, supabase-ff-follow.sql (+ crownenvoy/supabase-ff-rank.sql) */
 (function(){
 'use strict';
-/* 사이트(허브·첫 화면)는 이모지를 그림으로 바꾸지 않고 원래 이모티콘 그대로 보여요 (오너 11-02). 되돌리려면 ff-logo.js 를 다시 불러요: try{ var em=document.createElement('script'); em.src='https://frenchfries777mc.github.io/games/ff-logo.js?v=20261102d'; (document.head||document.documentElement).appendChild(em); }catch(e){}    이모지를 그림으로 (사람이 쓴 글과 반응 이모트는 그대로)  */
+/* 사이트(허브·첫 화면)는 이모지를 그림으로 바꾸지 않고 원래 이모티콘 그대로 보여요 (오너 11-02). 되돌리려면 ff-logo.js 를 다시 불러요: try{ var em=document.createElement('script'); em.src='https://frenchfries777.com/games/ff-logo.js?v=20261102d'; (document.head||document.documentElement).appendChild(em); }catch(e){}    이모지를 그림으로 (사람이 쓴 글과 반응 이모트는 그대로)  */
 var SI=window.SI18N||{lang:'ko',F:function(t){ var a=arguments; return String(t).replace(/\{(\d)\}/g,function(_,n){ return a[+n+1]; }); }};
 var LANG=SI.lang||'ko', F=SI.F;
 var GAMES={}, GLIST=[], NSRC={};
@@ -14,7 +14,7 @@ function gOpts(first){ return (first||'')+GLIST.map(function(g){ return '<option
 function gBtns(){ return GLIST.map(function(g){ return '<button data-f="'+g+'">'+GAMES[g].name+'</button>'; }).join(''); }
 function $(s,r){ return (r||document).querySelector(s); }
 /* 허브 첫 페이지와 커뮤니티 페이지(community/)가 같은 파일을 써요. ROOT = 허브 맨 위 경로 */
-var CMP=!!document.getElementById('community'), ROOT=document.body.getAttribute('data-root')||'', HR=document.body.hasAttribute('data-hub')?document.body.getAttribute('data-hub'):'https://frenchfries777mc.github.io/hub/', CMURL=CMP?'':HR+'community/';
+var CMP=!!document.getElementById('community'), ROOT=document.body.getAttribute('data-root')||'', HR=document.body.hasAttribute('data-hub')?document.body.getAttribute('data-hub'):'https://frenchfries777.com/', CMURL=CMP?'':HR+'community/';
 function esc(s){ return String(s==null?'':s).replace(/[&<>"']/g,function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); }
 function ago(iso){ var t=Date.parse(iso); if(!t) return ''; var m=Math.round((Date.now()-t)/60000);
   if(m<1) return '방금'; if(m<60) return F('{0}분 전',m); if(m<1440) return F('{0}시간 전',Math.round(m/60)); if(m<1440*7) return F('{0}일 전',Math.round(m/1440));
@@ -440,7 +440,7 @@ async function rankingStk(box){
   var res=await Promise.all([
     sb.from('ranked_ratings').select('user_id,rating').eq('season',season).order('rating',{ascending:false}).order('wins',{ascending:false}).limit(20),
     sb.from('profiles').select('id,ck:stats->ck,cp:stats->cp').not('stats->ck','is',null).limit(3000),
-    rkChars?Promise.resolve(rkChars):fetch('https://frenchfries777mc.github.io/games/stickseum/chars.json').then(function(r){ return r.json(); }).catch(function(){ return {}; })]);
+    rkChars?Promise.resolve(rkChars):fetch('https://frenchfries777.com/games/stickseum/chars.json').then(function(r){ return r.json(); }).catch(function(){ return {}; })]);
   if(rkGame!=='stickseum') return;
   var L=res[0], M=res[1]; rkChars=res[2]||{};
   if(L.error){ box.innerHTML='<div class="cm-e">'+esc(errText(L.error))+'</div>'; return; }
@@ -596,7 +596,7 @@ async function lfgList(){
 var coin={n:null, streak:0, today:false, err:''}, UNIT={gold:'골드',coin:'코인',coins:'코인'};
 function unitName(u){ var k=UNIT[u]||u; return SI.T?SI.T(k):k; }
 /* 허브 아이콘: 동전·랭킹·업적 (hubicons/*.svg) */
-var HICON='https://frenchfries777mc.github.io/games/hubicons/';
+var HICON='https://frenchfries777.com/games/hubicons/';
 function hIco(n,c){ return '<img class="hci '+(c||'')+'" src="'+HICON+n+'.svg?v=20261103a" alt="" width="20" height="20" draggable="false">'; }
 var HMAP={'\ud83e\ude99':'coin','\ud83c\udfc6':'ranking'};
 var RE=/(\ud83e\ude99|\ud83c\udfc6)/;
@@ -787,7 +787,7 @@ async function online(){
   GLIST.concat(['hub'],SITE_IDS).forEach(function(g){ if(c[g]) html+='<span class="on-c">'+(g==='hub'?'<span>허브</span>':'<span data-notr>'+esc(placeName(g))+'</span>')+' <b data-notr>'+c[g]+'</b></span>'; });
   if(me){ var f=await sb.rpc('ff_online_friends'), rows=((f&&!f.error&&f.data)||[]).filter(function(x){ return !blocked(x.user_id); });
     if(rows.length){ await loadNames(rows.map(function(x){ return x.user_id; })); await loadAv(rows.slice(0,8).map(function(x){ return x.user_id; }));
-      html+='<span class="on-f"><span>친구</span> '+rows.slice(0,8).map(function(x){ var pn=placeName(x.place); return '<a class="who on-p" data-uid="'+esc(x.user_id)+'" data-notr title="'+esc(pn)+'">'+'<img class="on-i" src="https://frenchfries777mc.github.io/games/avatars/'+encodeURIComponent(/^[a-z0-9_-]{2,30}$/.test(AV[x.user_id]||'')?AV[x.user_id]:'account')+(/^(stk|ce|bf|ip|dp|vk)_/.test(AV[x.user_id]||'')?'.png':'.svg')+'" alt="" width="20" height="20" onerror="this.style.display=\'none\'">'+esc(names[x.user_id]||'???')+'<small>'+esc(pn)+'</small></a>'; }).join('')+(rows.length>8?'<span>+'+(rows.length-8)+'</span>':'')+'</span>'; } }
+      html+='<span class="on-f"><span>친구</span> '+rows.slice(0,8).map(function(x){ var pn=placeName(x.place); return '<a class="who on-p" data-uid="'+esc(x.user_id)+'" data-notr title="'+esc(pn)+'">'+'<img class="on-i" src="https://frenchfries777.com/games/avatars/'+encodeURIComponent(/^[a-z0-9_-]{2,30}$/.test(AV[x.user_id]||'')?AV[x.user_id]:'account')+(/^(stk|ce|bf|ip|dp|vk)_/.test(AV[x.user_id]||'')?'.png':'.svg')+'" alt="" width="20" height="20" onerror="this.style.display=\'none\'">'+esc(names[x.user_id]||'???')+'<small>'+esc(pn)+'</small></a>'; }).join('')+(rows.length>8?'<span>+'+(rows.length-8)+'</span>':'')+'</span>'; } }
   b.innerHTML=html;
 }
 var hubPT=null;
@@ -938,12 +938,12 @@ function banner(){
 /* ===== 통합 검색: 게임 · 위키 · 게시판 ===== */
 var WIKIX={tools:{name:'Tools',cls:'g4'},educations:{name:'Educations',cls:'g5'}};
 var SX={wiki:null, tr:null, seq:0, sel:-1};
-var SGAMES=[['stickseum','Stickseum','g1','https://frenchfries777mc.github.io/games/stickseum/','친구들과 실시간으로 붙는 스틱맨 난투','스틱맨 난투 액션 stickman brawl'],
-  ['crownenvoy','Crown Envoy','g2','https://frenchfries777mc.github.io/games/crownenvoy/','외교와 전쟁으로 제국을 키우는 턴제 전략','외교 전쟁 전략 diplomacy war strategy'],
-  ['beaconfall','Beaconfall','g3','https://frenchfries777mc.github.io/games/beaconfall/','외계 행성에서 살아남아 탈출하는 생존 제작','생존 제작 픽셀 survival crafting pixel'],
-  ['isleport','Isleport','g3','https://frenchfries777mc.github.io/games/isleport/','섬을 가꾸고 배로 교역하는 섬 경영','섬 경영 교역 타이쿤 픽셀 tycoon trade island pixel'],
-  ['vowkeep','Vowkeep','g3','https://frenchfries777mc.github.io/games/vowkeep/','기사 넷이 서약을 지키러 던전으로 내려가는 협동 액션','기사 던전 협동 액션 픽셀 knight dungeon co-op action pixel'],
-  ['dummyparty','Dummy Party','g3','https://frenchfries777mc.github.io/games/dummyparty/','마네킹들이 벌이는 병맛 미니게임 파티','마네킹 미니게임 파티 병맛 mannequin minigame party']];
+var SGAMES=[['stickseum','Stickseum','g1','https://frenchfries777.com/games/stickseum/','친구들과 실시간으로 붙는 스틱맨 난투','스틱맨 난투 액션 stickman brawl'],
+  ['crownenvoy','Crown Envoy','g2','https://frenchfries777.com/games/crownenvoy/','외교와 전쟁으로 제국을 키우는 턴제 전략','외교 전쟁 전략 diplomacy war strategy'],
+  ['beaconfall','Beaconfall','g3','https://frenchfries777.com/games/beaconfall/','외계 행성에서 살아남아 탈출하는 생존 제작','생존 제작 픽셀 survival crafting pixel'],
+  ['isleport','Isleport','g3','https://frenchfries777.com/games/isleport/','섬을 가꾸고 배로 교역하는 섬 경영','섬 경영 교역 타이쿤 픽셀 tycoon trade island pixel'],
+  ['vowkeep','Vowkeep','g3','https://frenchfries777.com/games/vowkeep/','기사 넷이 서약을 지키러 던전으로 내려가는 협동 액션','기사 던전 협동 액션 픽셀 knight dungeon co-op action pixel'],
+  ['dummyparty','Dummy Party','g3','https://frenchfries777.com/games/dummyparty/','마네킹들이 벌이는 병맛 미니게임 파티','마네킹 미니게임 파티 병맛 mannequin minigame party']];
 function sfnv(s){ var h=0x811c9dc5; for(var i=0;i<s.length;i++){ h^=s.charCodeAt(i); h=Math.imul(h,0x01000193)>>>0; } return ('0000000'+h.toString(16)).slice(-8); }
 function smark(t,q){ var e=esc(t); if(!q) return e; var r=esc(q).replace(/[.*+?^${}()|[\]\\]/g,'\\$&'); try{ return e.replace(new RegExp(r,'gi'),function(x){ return '<mark>'+x+'</mark>'; }); }catch(_){ return e; } }
 function splain(b){ return String(b||'').replace(/^::.*$/gm,'').replace(/\*\*/g,'').replace(/^#{2,3}\s+|^\s*[-•]\s+|^\s*\d+[.)]\s+/gm,'').replace(/\s+/g,' ').trim(); }

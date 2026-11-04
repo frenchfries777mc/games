@@ -1,6 +1,6 @@
 Frenchfries777 게임 허브 사이트
 ==============================
-주소: https://frenchfries777mc.github.io/games/
+주소: https://frenchfries777.com/games/
 
   index.html          첫 화면 (게임 3개 소개, 플레이 버튼, 로그인)
   stickseum.webp      Stickseum 미리보기 그림
@@ -28,25 +28,25 @@ Frenchfries777 게임 허브 사이트
   patchnotes.json               허브 패치노트 (뉴스에 '허브'로 나오고, 뉴스의 '허브 패치노트 →'에서 전체 목록)
 
 [ 플레이 버튼 주소 ]
-  - Stickseum   https://frenchfries777mc.github.io/games/stickseum/
-  - Crown Envoy https://frenchfries777mc.github.io/games/crownenvoy/
-  - Beaconfall  https://frenchfries777mc.github.io/games/beaconfall/
+  - Stickseum   https://frenchfries777.com/games/stickseum/
+  - Crown Envoy https://frenchfries777.com/games/crownenvoy/
+  - Beaconfall  https://frenchfries777.com/games/beaconfall/
 
 [ 게임·도구 사이트 폴더 (2026-10-18부터 이 저장소 안에 있어요) ]
   stickseum/  beaconfall/  crownenvoy/  isleport/
   - 예전 저장소(stickseum, beaconfall, crownenvoy)에서 옮겨 왔어요. 이제 파일은 이 폴더들에 올려요.
-  - 주소는 https://frenchfries777mc.github.io/games/<폴더 이름>/ 이에요.
-  - Educations(frenchfries777mc.github.io/educations/)와 Tools(frenchfries777mc.github.io/tools/)는 게임이 아니라서 각자 저장소와 주소를 그대로 써요.
+  - 주소는 https://frenchfries777.com/games/<폴더 이름>/ 이에요.
+  - Educations(frenchfries777.com/educations/)와 Tools(frenchfries777.com/tools/)는 게임이 아니라서 각자 저장소와 주소를 그대로 써요.
 
 [ 로그인이 이어지는 원리 ]
-  허브와 세 게임은 모두 frenchfries777mc.github.io 아래에 있어서 브라우저 저장소를 같이 써요.
+  허브와 세 게임은 모두 frenchfries777.com 아래에 있어서 브라우저 저장소를 같이 써요.
   로그인 정보는 Supabase 기본 위치(localStorage 'sb-kebsbuvuutilitwlvxzv-auth-token')에 저장돼요.
   그래서 허브에서 로그인하면, 같은 기본 위치를 쓰는 게임(지금은 Stickseum, Beaconfall)은
   열자마자 로그인된 채로 시작해요.
 
 [ 게임 사이트에 로그인 버튼 붙이기 ]
   로그인 버튼이 들어갈 자리에:   <span data-ff-account></span>
-  </body> 바로 앞에:            <script src="https://frenchfries777mc.github.io/games/ff-auth.js"></script>
+  </body> 바로 앞에:            <script src="https://frenchfries777.com/games/ff-auth.js"></script>
   로그인 전에는 "로그인" 버튼, 로그인 후에는 닉네임이 보여요. 닉네임을 누르면 친구, 프로필 카드, 로그아웃이 나와요.
   허브가 아닌 페이지에는 그 옆에 '← 허브' 버튼도 붙어요(휴대폰에서는 화면 왼쪽 아래). 빼려면 자리에 data-ff-nohub.
 
@@ -62,7 +62,7 @@ Frenchfries777 게임 허브 사이트
 [ 언어 공유 ]
   게임마다 언어를 저장하는 이름이 달라요(arenaClashLang, ce_lang, cq_lang, beaconfallSiteLang, Beaconfall 설정 안의 lang).
   ff-lang.js가 이 이름들을 같은 언어로 맞춰요. 어느 한 곳에서 바꾸면, ff-lang.js나 ff-auth.js가 있는 페이지가 열릴 때 전부 그 언어가 돼요.
-  가장 확실하게 하려면 각 사이트·게임의 <head> 맨 앞에:  <script src="https://frenchfries777mc.github.io/games/ff-lang.js"></script>
+  가장 확실하게 하려면 각 사이트·게임의 <head> 맨 앞에:  <script src="https://frenchfries777.com/games/ff-lang.js"></script>
 
 [ 프로필 카드의 도전과제 ]
   supabase-ff-achievements.sql을 실행한 뒤, 각 게임이 도전과제를 달성할 때(또는 로그인할 때):
@@ -79,4 +79,4 @@ Frenchfries777 게임 허브 사이트
   뉴스는 각 게임 사이트의 patchnotes.json 을 읽어서 최신순으로 보여줘요. 게임 쪽에서 패치노트만 쓰면 허브에도 자동으로 떠요.
 
 [ 프로필 카드 링크 ]
-  https://frenchfries777mc.github.io/games/?card=<로그인 아이디>  를 열면 그 사람의 카드가 열려요. 카드의 "🔗 링크" 버튼이 이 주소를 복사해요.
+  https://frenchfries777.com/games/?card=<로그인 아이디>  를 열면 그 사람의 카드가 열려요. 카드의 "🔗 링크" 버튼이 이 주소를 복사해요.

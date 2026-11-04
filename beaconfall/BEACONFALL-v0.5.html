@@ -3,8 +3,8 @@
 <html lang="ko">
 <head><style id="ffTap">html,body{touch-action:manipulation}</style>
 <meta charset="utf-8">
-<link rel="icon" type="image/svg+xml" href="https://frenchfries777mc.github.io/games/gamelogo/beaconfall.svg">
-<script src="https://frenchfries777mc.github.io/games/ff-lang.js"></script>
+<link rel="icon" type="image/svg+xml" href="https://frenchfries777.com/games/gamelogo/beaconfall.svg">
+<script src="https://frenchfries777.com/games/ff-lang.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>BEACONFALL</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -393,7 +393,7 @@ html:not(.introDone) #ui,html:not(.introDone) #authgate,html:not(.introDone) #au
 function go(){if(done)return;done=1;clearTimeout(T1);if(A&&!window.__ip){try{A.pause();A.removeAttribute('src');A.load();}catch(e){}}fin();el.classList.add('out');document.documentElement.classList.add('introDone');setTimeout(function(){el.remove();},800);}
 function arm(){clearTimeout(T1);T1=setTimeout(go,Math.max(0,6200-(Date.now()-t0)));}
 /* 인트로 곡(스틱세움 인트로 곡, 5초): 인트로와 함께 시작하고, 끝나면 로비 곡이 이어진다. 컴퓨터 브라우저가 소리를 막으면 인트로가 멈춘 채 화면을 누를 때까지 기다린다 */
-function sting(){if(window.__introSongDone)return;try{var vol=0.35;try{var v=parseFloat(localStorage.getItem('stranded.bgmvol'));if(v>=0&&v<=1)vol=v;}catch(e){}try{if(localStorage.getItem('stranded.bgm')==='0'){window.__introSongDone=1;return;}}catch(e){}var a=new Audio('bgm-intro.mp3'),alt=0;A=a;a.volume=Math.min(1,vol*1.5);a.onerror=function(){if(!alt){alt=1;a.src='https://frenchfries777mc.github.io/games/beaconfall/bgm-intro.mp3';a.load();var q=a.play();if(q&&q.catch)q.catch(function(){});}else fin();};a.addEventListener('ended',fin);a.addEventListener('playing',function(){window.__ip=1;setTimeout(fin,5300);},{once:true});function hold(){if(held||done)return;held=1;clearTimeout(T1);el.classList.add('hold');var h=document.createElement('div');h.id='introHold';h.textContent=i18nTr('화면을 누르면 시작해요');el.appendChild(h);var go2=function(){if(!held)return;held=0;['pointerdown','keydown','touchend','click'].forEach(function(ev){removeEventListener(ev,go2,true);});h.remove();el.classList.remove('hold');t0=Date.now();arm();var r=a.play();if(r&&r.catch)r.catch(function(){});};['pointerdown','keydown','touchend','click'].forEach(function(ev){addEventListener(ev,go2,true);});}var p=a.play();if(p&&p.catch)p.catch(function(e){if(!(e&&e.name==='NotSupportedError'))hold();});setTimeout(function(){if(!window.__ip)hold();},900);}catch(e){window.__introSongDone=1;}}
+function sting(){if(window.__introSongDone)return;try{var vol=0.35;try{var v=parseFloat(localStorage.getItem('stranded.bgmvol'));if(v>=0&&v<=1)vol=v;}catch(e){}try{if(localStorage.getItem('stranded.bgm')==='0'){window.__introSongDone=1;return;}}catch(e){}var a=new Audio('bgm-intro.mp3'),alt=0;A=a;a.volume=Math.min(1,vol*1.5);a.onerror=function(){if(!alt){alt=1;a.src='https://frenchfries777.com/games/beaconfall/bgm-intro.mp3';a.load();var q=a.play();if(q&&q.catch)q.catch(function(){});}else fin();};a.addEventListener('ended',fin);a.addEventListener('playing',function(){window.__ip=1;setTimeout(fin,5300);},{once:true});function hold(){if(held||done)return;held=1;clearTimeout(T1);el.classList.add('hold');var h=document.createElement('div');h.id='introHold';h.textContent=i18nTr('화면을 누르면 시작해요');el.appendChild(h);var go2=function(){if(!held)return;held=0;['pointerdown','keydown','touchend','click'].forEach(function(ev){removeEventListener(ev,go2,true);});h.remove();el.classList.remove('hold');t0=Date.now();arm();var r=a.play();if(r&&r.catch)r.catch(function(){});};['pointerdown','keydown','touchend','click'].forEach(function(ev){addEventListener(ev,go2,true);});}var p=a.play();if(p&&p.catch)p.catch(function(e){if(!(e&&e.name==='NotSupportedError'))hold();});setTimeout(function(){if(!window.__ip)hold();},900);}catch(e){window.__introSongDone=1;}}
 window.bfIntro=function(){if(run)return;run=1;t0=Date.now();el.classList.add('run');arm();sting();};setTimeout(function(){window.bfIntro();},15000);})();</script>
 <div id="stage"><canvas id="view"></canvas><canvas id="lblcv" style="position:absolute;left:0;top:0;width:100%;height:100%;pointer-events:none"></canvas></div>
 <div id="shade"></div>
@@ -455,7 +455,7 @@ window.bfIntro=function(){if(run)return;run=1;t0=Date.now();el.classList.add('ru
 const BGM=(()=>{
   let vol=0.35;try{const v=parseFloat(localStorage.getItem('stranded.bgmvol'));if(v>=0&&v<=1)vol=v;}catch(e){}
   let on=true;try{const v=localStorage.getItem('stranded.bgm');if(v==='0')on=false;}catch(e){}
-  const BASE='bgm-summer.mp3',ALT='https://frenchfries777mc.github.io/games/beaconfall/';
+  const BASE='bgm-summer.mp3',ALT='https://frenchfries777.com/games/beaconfall/';
   const SEASON=['bgm-spring.mp3','base','bgm-autumn.mp3','bgm-winter.mp3'];          // seasonNow 순서
   const ISLE={2:'bgm-desert.mp3',3:'bgm-volcano.mp3',4:'bgm-jungle.mp3',5:'bgm-desert.mp3',7:'bgm-jungle.mp3',8:'bgm-ice.mp3'};   // BIOME_NAME 번호
   const LEVEL={'bgm-battle.mp3':1,'bgm-startagain.mp3':2.1,base:0.4,'bgm-night.mp3':0.9,'bgm-volcano.mp3':1.8,'bgm-storm.mp3':0.9};   // 파일 안의 곡은 원래 소리가 커서 줄여요
@@ -12433,7 +12433,7 @@ function exitWindow(){
     openModal(`<h2>나가기<small>EXIT</small></h2><p class="hint">이 창은 직접 닫을 수 없어요. 탭을 닫거나 사이트로 이동해 주세요.</p>
       <div class="actions"><button class="btn sm" data-gosite>사이트로 이동</button><button class="btn sm ghost" data-close>닫기</button></div>`,m=>{
       m.querySelector('[data-close]').onclick=closeModal;
-      m.querySelector('[data-gosite]').onclick=()=>{location.href='https://frenchfries777mc.github.io/games/?r='+Date.now();};
+      m.querySelector('[data-gosite]').onclick=()=>{location.href='https://frenchfries777.com/games/?r='+Date.now();};
     },'single');
   },350);
 }
@@ -13943,6 +13943,6 @@ me.onclick=async()=>{try{if(csOn&&csDirty)await csPush();}catch(e){}csUid=null;c
 })();
 })();
 </script>
-<script src="https://frenchfries777mc.github.io/games/ff-profile.js"></script>
+<script src="https://frenchfries777.com/games/ff-profile.js"></script>
 </body>
 </html>

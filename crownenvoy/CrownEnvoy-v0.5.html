@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <!-- © 2026 Frenchfries777 · CC BY-NC-ND 4.0 (https://creativecommons.org/licenses/by-nc-nd/4.0/deed.ko) -->
 <html lang="ko">
-<head><script src="https://frenchfries777mc.github.io/games/ff-oldguard.js"></script><style id="ffTap">html,body{touch-action:manipulation}</style>
+<head><script src="https://frenchfries777.com/games/ff-oldguard.js"></script><style id="ffTap">html,body{touch-action:manipulation}</style>
 <meta charset="UTF-8">
-<script src="https://frenchfries777mc.github.io/games/ff-lang.js"></script>
+<script src="https://frenchfries777.com/games/ff-lang.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Crown Envoy</title>
 <script src="https://cdn.jsdelivr.net/npm/peerjs@1.5.4/dist/peerjs.min.js"></script>
@@ -449,7 +449,7 @@ setInterval(function(){if(cur()===window.CE_UID)return;try{if(typeof Net!=='unde
 function go(){if(done)return;done=1;clearTimeout(T1);fin();el.classList.add('out');document.documentElement.classList.add('introDone');try{window.dispatchEvent(new Event('introdone'));}catch(e){}setTimeout(function(){el.remove();},800);}
 function arm(){clearTimeout(T1);T1=setTimeout(go,Math.max(0,6200-(Date.now()-t0)));}arm();   /* 인트로는 건너뛸 수 없다 (끝까지 재생) */window.__introGo=go;
 /* 인트로 곡(스틱세움 인트로 곡, 5초): 인트로와 함께 시작하고, 끝나면 로비 곡이 이어진다. 컴퓨터 브라우저가 소리를 막으면 인트로가 멈춘 채 화면을 누를 때까지 기다린다 */
-function sting(){if(window.__introSongDone)return;try{var vol=0.35;try{var v=parseFloat(localStorage.getItem('ce_bgm_vol'));if(v>=0&&v<=1)vol=v;}catch(e){}try{if(localStorage.getItem('ce_bgm_on')==='0'){window.__introSongDone=1;return;}}catch(e){}var a=new Audio('CrownEnvoy-intro.mp3'),alt=0;a.volume=Math.min(1,vol*1.5);a.onerror=function(){if(!alt){alt=1;a.src='https://frenchfries777mc.github.io/games/crownenvoy/CrownEnvoy-intro.mp3';a.load();var q=a.play();if(q&&q.catch)q.catch(function(){});}else fin();};a.addEventListener('ended',fin);a.addEventListener('playing',function(){setTimeout(fin,5300);},{once:true});function hold(){if(held||done)return;held=1;clearTimeout(T1);el.classList.add('hold');var h=document.createElement('div');h.id='introHold';h.textContent='화면을 누르면 시작해요';el.appendChild(h);var go2=function(){if(!held)return;held=0;['pointerdown','keydown','touchend','click'].forEach(function(ev){removeEventListener(ev,go2,true);});h.remove();el.classList.remove('hold');t0=Date.now();arm();var r=a.play();if(r&&r.catch)r.catch(function(){});};['pointerdown','keydown','touchend','click'].forEach(function(ev){addEventListener(ev,go2,true);});}var p=a.play();if(p&&p.catch)p.catch(function(e){if(e&&e.name==='NotAllowedError')hold();});}catch(e){window.__introSongDone=1;}}
+function sting(){if(window.__introSongDone)return;try{var vol=0.35;try{var v=parseFloat(localStorage.getItem('ce_bgm_vol'));if(v>=0&&v<=1)vol=v;}catch(e){}try{if(localStorage.getItem('ce_bgm_on')==='0'){window.__introSongDone=1;return;}}catch(e){}var a=new Audio('CrownEnvoy-intro.mp3'),alt=0;a.volume=Math.min(1,vol*1.5);a.onerror=function(){if(!alt){alt=1;a.src='https://frenchfries777.com/games/crownenvoy/CrownEnvoy-intro.mp3';a.load();var q=a.play();if(q&&q.catch)q.catch(function(){});}else fin();};a.addEventListener('ended',fin);a.addEventListener('playing',function(){setTimeout(fin,5300);},{once:true});function hold(){if(held||done)return;held=1;clearTimeout(T1);el.classList.add('hold');var h=document.createElement('div');h.id='introHold';h.textContent='화면을 누르면 시작해요';el.appendChild(h);var go2=function(){if(!held)return;held=0;['pointerdown','keydown','touchend','click'].forEach(function(ev){removeEventListener(ev,go2,true);});h.remove();el.classList.remove('hold');t0=Date.now();arm();var r=a.play();if(r&&r.catch)r.catch(function(){});};['pointerdown','keydown','touchend','click'].forEach(function(ev){addEventListener(ev,go2,true);});}var p=a.play();if(p&&p.catch)p.catch(function(e){if(e&&e.name==='NotAllowedError')hold();});}catch(e){window.__introSongDone=1;}}
 
 /* 게임에서 나가 로비로 돌아올 때(페이지를 다시 불러올 때)는 인트로 없이 바로 로비 */
 window.ceReload=function(){try{if(window.FFAuth&&FFAuth.setRoom)FFAuth.setRoom(null);}catch(e){}try{sessionStorage.setItem('ce_noIntro','1');}catch(e){}location.reload();};
@@ -5126,7 +5126,7 @@ const Battle={_skip:null,skipAll:false,snd:true,_ac:null,
 
 /* 배경음악: 게임 중에는 전투 음악, 전쟁 행진곡, 느리고 비장한 곡을 번갈아 틀고, 로비에서는 잔잔한 곡을 튼다. 첫 로딩을 줄이려고 게임 파일 옆의 mp3를 불러오고, 파일만 따로 받아 열었을 땐 사이트에서 불러온다.
    k는 곡마다의 소리 크기 보정 (두 곡 모두 파일에서 같은 크기로 맞춰 둬서 지금은 1) */
-const BGM_TRACKS=[{uri:'CrownEnvoy-music.mp3',k:1},{uri:'CrownEnvoy-music2.mp3',k:1},{uri:'CrownEnvoy-music3.mp3',k:1},{uri:'CrownEnvoy-music5.mp3',k:1}],BGM_GAME=[0,2,3],BGM_SITE='https://frenchfries777mc.github.io/games/crownenvoy/';
+const BGM_TRACKS=[{uri:'CrownEnvoy-music.mp3',k:1},{uri:'CrownEnvoy-music2.mp3',k:1},{uri:'CrownEnvoy-music3.mp3',k:1},{uri:'CrownEnvoy-music5.mp3',k:1}],BGM_GAME=[0,2,3],BGM_SITE='https://frenchfries777.com/games/crownenvoy/';
 
 /* 배경음악 재생기: 게임이 시작되면 반복 재생하고, 설정에서 켜고 끄거나 음량을 조절한다 (이 기기에만 저장) */
 const Music={el:null,vol:0.35,on:true,started:false,ti:0,gi:0,want:'lobby',cur:null,
@@ -5828,7 +5828,7 @@ const UI={
     h+=`<div class="sm muted" style="margin-top:8px">최근 변화</div>`;const lg=M.log.map(e=>({r:e.r,d:Math.round(e.d),why:e.why})).filter(e=>e.d).sort((a,b)=>a.r-b.r);h+=lg.length?lg.map(e=>row((e.r?'지난 턴':'이번 턴')+' · '+e.why,sg(e.d),col(e.d))).join(''):`<div class="sm muted">변화 없음</div>`;
     if(me.rs&&me.rs.rev>0)h+=`<div class="sm" style="margin-top:8px;color:var(--bad)">자원이 바닥나 반란 확률 +${me.rs.rev}%</div>`;UI.info(h);},
   /* 나가기: 새 창으로 열린 게임은 스크립트로 닫을 수 있다. 막히면 기본 팝업 대신 자체 창으로 안내한다 */
-  closeWin(){try{window.close();}catch(_){}setTimeout(()=>{UI.ask('브라우저가 이 창을 닫지 못했어요. 탭을 직접 닫거나 사이트로 이동해 주세요.',()=>{location.href='https://frenchfries777mc.github.io/games/?r='+Date.now();},{yes:'사이트로 이동',no:'그대로 있기'});},400);},
+  closeWin(){try{window.close();}catch(_){}setTimeout(()=>{UI.ask('브라우저가 이 창을 닫지 못했어요. 탭을 직접 닫거나 사이트로 이동해 주세요.',()=>{location.href='https://frenchfries777.com/games/?r='+Date.now();},{yes:'사이트로 이동',no:'그대로 있기'});},400);},
   closeAsk(yes){const box=$('#askbox');if(box)box.className='hidden';const f=UI._askYes;UI._askYes=null;if(UI.stk[UI.stk.length-1]==='ask')UI.stk.pop();if(yes&&f)setTimeout(f,0);},
   /* ----- 뒤로 가기: 버튼·Esc·브라우저 뒤로 가기가 모두 같은 길을 탄다 ----- */
   /* 화면(층)을 쌓아 두고, 브라우저 히스토리에는 '함정 항목'을 하나만 둔다.
@@ -7717,7 +7717,7 @@ setInterval(()=>{paintBtn();try{paint();}catch(e){}let u=null;try{u=window.CEAut
 window.CETurnRep={onView,paint,_snap:()=>snap};window.CEGameStats=()=>tot;
 })();
 </script>
-<script src="https://frenchfries777mc.github.io/games/ff-profile.js"></script>
-<script src="https://frenchfries777mc.github.io/games/ff-auth.js"></script>
+<script src="https://frenchfries777.com/games/ff-profile.js"></script>
+<script src="https://frenchfries777.com/games/ff-auth.js"></script>
 </body>
 </html>
