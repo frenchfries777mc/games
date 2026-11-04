@@ -109,7 +109,7 @@ function paintAnn(){
   var box=$('#annBar'); if(!box) return; var hid=annHidden();
   var live=anns.filter(function(a){ return annLive(a)&&hid.indexOf(a.id)<0; }).slice(0,3);
   box.innerHTML=live.map(function(a){ return '<div class="ann '+(a.kind==='event'?'ev':'nt')+'"><span class="ak">'+(a.kind==='event'?'🎉 이벤트':'📢 공지')+'</span><span class="ab" data-notr>'+esc(a.body)+'</span>'+
-    (a.link?'<a class="al" href="'+esc(a.link)+'" target="_blank" rel="noopener">자세히 →</a>':'')+(a.ends_at?'<span class="ae">'+esc(F('{0}까지',String(a.ends_at).slice(5,10).replace('-','/')))+'</span>':'')+
+    (a.link&&/^https?:\/\//i.test(a.link)?'<a class="al" href="'+esc(a.link)+'" target="_blank" rel="noopener">자세히 →</a>':'')+(a.ends_at?'<span class="ae">'+esc(F('{0}까지',String(a.ends_at).slice(5,10).replace('-','/')))+'</span>':'')+
     '<button type="button" class="ax" data-id="'+a.id+'" aria-label="닫기">×</button></div>'; }).join('');
   [].forEach.call(box.querySelectorAll('.ax'),function(b){ b.onclick=function(){ var h=annHidden(); h.push(+b.getAttribute('data-id')); try{ localStorage.setItem(annKey(),JSON.stringify(h.slice(-50))); }catch(e){} paintAnn(); }; });
 }
@@ -586,7 +586,7 @@ async function lfgList(){
   rows.forEach(function(x){ var G=GAMES[x.game], d=document.createElement('div'); d.className='lf';
     d.innerHTML='<div class="lf-h">'+gameTag(x.game)+'<span class="cm-meta">'+who(x.user_id)+' · <span>'+esc(ago(x.created_at))+'</span></span></div><div class="lf-n" data-notr></div><div class="cm-acts2"></div>';
     d.querySelector('.lf-n').textContent=x.note;
-    var a=document.createElement('a'); a.className='cm-btn lf-go'; a.target='_blank'; a.rel='noopener'; a.href=x.link&&/^https:\/\//.test(x.link)?x.link:(G?G.site:'#'); a.textContent=x.link?'🚪 참가하기':'🎮 게임 열기'; d.querySelector('.cm-acts2').appendChild(a);
+    var a=document.createElement('a'); a.className='cm-btn lf-go'; a.target='_blank'; a.rel='noopener'; a.href=x.link&&/^https?:\/\//i.test(x.link)?x.link:(G?G.site:'#'); a.textContent=x.link?'🚪 참가하기':'🎮 게임 열기'; d.querySelector('.cm-acts2').appendChild(a);
     if(me&&(me.id===x.user_id||admin)){ var del=document.createElement('button'); del.className='cm-btn2'; del.textContent='내리기'; del.onclick=async function(){ await sb.from('ff_lfg').delete().eq('id',x.id); lfgList(); }; d.querySelector('.cm-acts2').appendChild(del); }
     else if(me) d.querySelector('.cm-acts2').appendChild(reportBtn({kind:'user', user:x.user_id, text:x.note}));
     L.appendChild(d); });
