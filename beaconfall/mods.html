@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head><style id="ffTap">html,body{touch-action:manipulation}</style>
+<meta name="copyright" content="© 2026 Frenchfries777. CC BY-NC-ND 4.0 (https://creativecommons.org/licenses/by-nc-nd/4.0/)">
+<meta charset="UTF-8">
+<link rel="icon" type="image/svg+xml" href="https://frenchfries777.com/games/gamelogo/beaconfall.svg">
+<script src="https://frenchfries777.com/games/ff-lang.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>BEACONFALL · 모드</title>
+<meta name="theme-color" content="#14527e">
+<style>
+html,body{touch-action:manipulation}   /* 더블터치 확대 막기 */
+@font-face{font-family:Galmuri;src:url(Galmuri11.woff2) format('woff2');font-weight:400;font-display:swap}
+@font-face{font-family:Galmuri;src:url(Galmuri11-Bold.woff2) format('woff2');font-weight:700;font-display:swap}
+:root{--ink:#0b1626;--cream:#f4ecd0;--gold:#e9d9a4;--sky:#9ae0ff;--btn:rgba(14,18,30,.78);--panel:rgba(10,16,28,.86)}
+*{box-sizing:border-box}
+html{background:var(--ink)}
+html,body{margin:0;color:var(--cream);font-family:Galmuri,'Noto Sans KR','Hiragino Sans','Malgun Gothic',monospace;font-size:15px;line-height:1.6}
+body{background:linear-gradient(180deg,rgba(6,16,30,.55),rgba(6,16,30,.9)),url(shot-camp.png) center/cover fixed;min-height:100vh}
+img{image-rendering:pixelated;image-rendering:crisp-edges}
+a{color:inherit}
+.wrap{max-width:960px;margin:0 auto;padding:0 16px}
+.pb{display:inline-block;padding:8px 14px;border:3px solid var(--gold);border-radius:0;background:var(--btn);color:var(--cream);font:700 14px/1.2 inherit;text-decoration:none;cursor:pointer;box-shadow:4px 4px 0 #000b;text-align:center}
+.pb:hover,.pb.on{background:var(--gold);color:#10141f}
+.pb:active{transform:translate(3px,3px);box-shadow:1px 1px 0 #000b}
+.row{display:flex;flex-wrap:wrap;gap:8px}
+.top{padding:12px 0 6px}
+.top .wrap{display:flex;flex-wrap:wrap;gap:8px;justify-content:space-between;align-items:center}
+.top .pb{padding:6px 10px;font-size:13px;border-width:2px;box-shadow:3px 3px 0 #000b}
+h1{margin:18px 0 4px;font-size:clamp(30px,7vw,52px);letter-spacing:.06em;line-height:1.1;text-shadow:4px 4px 0 #000}
+.sub{margin:0 0 16px;color:var(--gold);font-size:13px;text-shadow:2px 2px 0 #000}
+.tabs{margin:6px 0 14px}
+.tabs .pb{border-color:var(--sky)}
+.tabs .pb.on{background:var(--sky)}
+input.q{width:100%;padding:10px 12px;border:3px solid var(--gold);background:var(--panel);color:var(--cream);font:15px inherit;box-shadow:4px 4px 0 #000b;outline:none;margin:0 0 12px}
+.cats{margin:0 0 14px}
+.cats .pb{padding:5px 9px;font-size:12px;border-width:2px;box-shadow:2px 2px 0 #000b}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(96px,1fr));gap:8px}
+.card{display:flex;flex-direction:column;align-items:center;gap:4px;padding:8px 4px;border:2px solid #e9d9a466;background:var(--panel);cursor:pointer;font-size:12px;text-align:center;line-height:1.3;color:var(--cream)}
+.card:hover{border-color:var(--gold)}
+.card img{width:40px;height:40px}
+.cnt{color:var(--gold);font-size:12px;margin:0 0 8px;text-shadow:2px 2px 0 #000}
+
+.mrow{display:flex;align-items:center;gap:12px;padding:10px 12px;border:2px solid #e9d9a444;background:var(--panel);margin:0 0 8px}
+.mrow .ic{flex:0 0 44px;height:44px;display:flex;align-items:center;justify-content:center;font-size:26px;background:#e9d9a41a;border:2px solid #e9d9a444}
+.mrow .tx{flex:1;min-width:0}
+.mrow .nm{font-weight:700;font-size:16px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.mrow .ds{font-size:12px;color:#d9cfb0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.mrow .mt{font-size:11px;color:var(--gold);margin-top:2px}
+.mrow .tg{display:inline-block;font-size:11px;padding:0 6px;border:1px solid var(--sky);color:var(--sky);margin-right:6px}
+.mrow .tg.p{border-color:#ffb0d0;color:#ffb0d0}
+.mrow .act{flex:0 0 auto;display:flex;gap:6px}
+.mrow .pb{padding:8px 12px;font-size:13px}
+.pb.off{background:#7a2b2b;border-color:#ffb0b0}
+.pb.off:hover{background:#ffb0b0;color:#10141f}
+.pb.warn{background:#7a2b2b;border-color:#ffb0b0}
+#upl{position:fixed;inset:0;z-index:20;background:#000a;display:none;align-items:flex-start;justify-content:center;overflow:auto;padding:28px 12px}
+#upl.on{display:flex}
+#upl .box{width:min(560px,100%);background:#141c2c;border:3px solid var(--gold);box-shadow:6px 6px 0 #000;padding:16px;position:relative}
+#upl label{display:block;margin:10px 0 4px;color:var(--sky);font-size:13px}
+#upl input,#upl textarea,#upl select{width:100%;padding:8px 10px;border:2px solid var(--gold);background:var(--panel);color:var(--cream);font:14px inherit;outline:none}
+#upl textarea{min-height:150px;font-family:monospace;font-size:12px}
+.msg{margin:8px 0 0;font-size:13px;color:var(--gold)}
+.msg.err{color:#ffb0b0}
+.empty{padding:22px;text-align:center;opacity:.8}
+footer{padding:40px 0 30px;color:var(--gold);font-size:12px;text-shadow:2px 2px 0 #000}
+@media(max-width:560px){.mrow{flex-wrap:wrap}.mrow .act{width:100%}.mrow .act .pb{flex:1}}
+</style>
+</head>
+<body>
+<div class="top"><div class="wrap">
+ <a class="pb" href="index.html">← 홈</a>
+ <div class="row"><a class="pb" href="codex.html">도감</a></div>
+ <span data-ff-account></span>
+</div></div>
+<div class="wrap">
+ <h1>모드 · 리소스팩</h1>
+ <p class="sub">모드와 리소스팩을 올리고, 찾아보고, 적용해 보세요</p>
+ <div class="row tabs" id="tabs">
+  <button class="pb on" data-k="all">전체</button>
+  <button class="pb" data-k="mod">모드</button>
+  <button class="pb" data-k="pack">리소스팩</button>
+  <button class="pb" data-k="on">적용 중</button>
+  <button class="pb" id="upb" style="margin-left:auto">＋ 올리기</button>
+ </div>
+ <input class="q" id="q" autocomplete="off" placeholder="이름, 설명, 올린 사람으로 찾기">
+ <div class="row cats" id="cats"></div>
+ <div class="cnt" id="cnt"></div>
+ <div id="list"></div>
+ <footer>BEACONFALL · <span data-notr>Created by Frenchfries777</span> · <span class="ff-copy">© 2026 Frenchfries777 · <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.ko" target="_blank" rel="noopener">CC BY-NC-ND 4.0</a></span></footer>
+</div>
+<div id="upl"><div class="box">
+ <button class="pb x" id="ux" style="position:absolute;right:10px;top:10px;padding:4px 10px">✕</button>
+ <h2 style="margin:0 40px 6px 0">모드 · 리소스팩 올리기</h2>
+ <label>종류</label><select id="uk"><option value="mod">모드</option><option value="pack">리소스팩</option></select>
+ <label>이름 (최대 40자)</label><input id="un" maxlength="40">
+ <label>설명 (최대 120자)</label><input id="ud" maxlength="120">
+ <label>분류</label><select id="uc"></select>
+ <label>내용 (JSON 파일 고르기 또는 붙여넣기)</label>
+ <input type="file" id="uf" accept=".json,application/json">
+ <textarea id="uj" spellcheck="false" placeholder='{"events":[{"on":"blockBreak","block":"stone","do":[{"give":"coal","n":1}]}]}'></textarea>
+ <div class="msg" id="um"></div>
+ <div class="row" style="margin-top:12px"><button class="pb" id="us">올리기</button></div>
+</div></div>
+<script>
+(function(){
+var CATS={mod:['아이템','전투','편의','월드','기타'],pack:['이름','그림','소리','기타']};
+var KEY='bf.mods.on';
+var LIST=[],K='all',CAT='',SERVER='load',ME=null;
+function $(i){return document.getElementById(i);}
+function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
+function getOn(){try{var o=JSON.parse(localStorage.getItem(KEY)||'{}');return o&&typeof o==='object'?o:{};}catch(e){return {};}}
+function setOn(o){try{localStorage.setItem(KEY,JSON.stringify(o));}catch(e){}}
+function sb(){return window.FFAuth&&FFAuth.client&&FFAuth.client();}
+async function load(){
+  SERVER='load';draw();
+  try{
+    if(window.FFAuth&&FFAuth.ready)await FFAuth.ready;
+    var c=sb();if(!c){SERVER='off';draw();return;}
+    try{var u=FFAuth.user();ME=u&&u.id||null;}catch(e){}
+    var r=await c.from('beaconfall_mods').select('id,kind,name,descr,cat,author_id,author_name,data,created_at').order('created_at',{ascending:false}).limit(500);
+    if(r.error){SERVER='off';draw();return;}
+    LIST=r.data||[];SERVER='ok';
+  }catch(e){SERVER='off';}
+  draw();
+}
+function cats(){
+  var set=K==='mod'?CATS.mod:K==='pack'?CATS.pack:CATS.mod.concat(CATS.pack.filter(function(x){return CATS.mod.indexOf(x)<0;}));
+  var h='<button class="pb'+(CAT===''?' on':'')+'" data-c="">전체</button>';
+  set.forEach(function(c){h+='<button class="pb'+(CAT===c?' on':'')+'" data-c="'+esc(c)+'">'+esc(c)+'</button>';});
+  $('cats').innerHTML=h;
+}
+function draw(){
+  cats();
+  var on=getOn(),q=$('q').value.trim().toLowerCase(),L=$('list');
+  document.querySelectorAll('#tabs [data-k]').forEach(function(b){b.classList.toggle('on',b.dataset.k===K);});
+  if(SERVER==='load'){L.innerHTML='<div class="empty">불러오는 중이에요…</div>';$('cnt').textContent='';return;}
+  var src=LIST.slice();
+  Object.keys(on).forEach(function(id){if(!src.some(function(m){return m.id===id;}))src.push({id:id,kind:on[id].kind,name:on[id].name,descr:on[id].descr||'',cat:on[id].cat||'기타',author_name:on[id].author_name||'',data:on[id].data});});
+  var rows=src.filter(function(m){
+    if(K==='mod'&&m.kind!=='mod')return false;
+    if(K==='pack'&&m.kind!=='pack')return false;
+    if(K==='on'&&!on[m.id])return false;
+    if(CAT&&m.cat!==CAT)return false;
+    if(q&&(m.name+' '+(m.descr||'')+' '+(m.author_name||'')+' '+(m.cat||'')).toLowerCase().indexOf(q)<0)return false;
+    return true;
+  });
+  $('cnt').textContent=rows.length+'개';
+  if(!rows.length){L.innerHTML='<div class="empty">'+(SERVER==='off'&&K!=='on'?'서버를 준비하는 중이라 아직 목록을 볼 수 없어요.':K==='on'?'적용 중인 것이 없어요.':'아직 올라온 게 없어요. 첫 번째로 올려 보세요!')+'</div>';return;}
+  L.innerHTML=rows.map(function(m){
+    var a=!!on[m.id],mine=ME&&m.author_id===ME;
+    return '<div class="mrow" data-id="'+esc(m.id)+'"><div class="ic">'+(m.kind==='pack'?'🎨':'🧩')+'</div><div class="tx"><div class="nm">'+esc(m.name)+'</div><div class="ds">'+esc(m.descr||'')+'</div><div class="mt"><span class="tg'+(m.kind==='pack'?' p':'')+'">'+(m.kind==='pack'?'리소스팩':'모드')+'</span>'+esc(m.cat||'기타')+(m.author_name?' · '+esc(m.author_name):'')+'</div></div><div class="act">'
+      +(mine&&SERVER==='ok'?'<button class="pb" data-del="'+esc(m.id)+'">삭제</button>':'')
+      +(a?'<button class="pb off" data-off="'+esc(m.id)+'">적용 해제</button>':'<button class="pb" data-on="'+esc(m.id)+'">적용</button>')+'</div></div>';
+  }).join('');
+}
+function find(id){return LIST.filter(function(m){return m.id===id;})[0]||(getOn()[id]&&Object.assign({id:id},getOn()[id]));}
+document.addEventListener('click',function(e){
+  var t=e.target.closest('button');if(!t)return;
+  if(t.dataset.k){K=t.dataset.k;CAT='';draw();return;}
+  if(t.dataset.c!==undefined&&t.parentNode.id==='cats'){CAT=t.dataset.c;draw();return;}
+  if(t.dataset.on){var m=find(t.dataset.on);if(!m)return;var o=getOn();o[m.id]={kind:m.kind,name:m.name,descr:m.descr||'',cat:m.cat||'',author_name:m.author_name||'',data:m.data};setOn(o);draw();return;}
+  if(t.dataset.off){var o2=getOn();delete o2[t.dataset.off];setOn(o2);draw();return;}
+  if(t.dataset.del){
+    if(!t.dataset.arm){t.dataset.arm=1;t.textContent='한 번 더 누르면 삭제';t.classList.add('warn');setTimeout(function(){if(t.isConnected){delete t.dataset.arm;t.textContent='삭제';t.classList.remove('warn');}},3500);return;}
+    var id=t.dataset.del;sb().from('beaconfall_mods').delete().eq('id',id).then(function(r){if(!r.error){LIST=LIST.filter(function(m){return m.id!==id;});var o3=getOn();delete o3[id];setOn(o3);}draw();});
+  }
+});
+$('q').addEventListener('input',draw);
+function fillCats(){$('uc').innerHTML=CATS[$('uk').value].map(function(c){return '<option>'+c+'</option>';}).join('');}
+$('uk').addEventListener('change',fillCats);fillCats();
+function umsg(s,err){var m=$('um');m.textContent=s||'';m.className='msg'+(err?' err':'');}
+$('upb').addEventListener('click',function(){
+  var u=window.FFAuth&&FFAuth.user&&FFAuth.user();
+  if(!u){$('cnt').textContent='올리려면 먼저 로그인해 주세요 (오른쪽 위).';return;}
+  $('upl').classList.add('on');umsg('');
+});
+$('ux').addEventListener('click',function(){$('upl').classList.remove('on');});
+$('uf').addEventListener('change',function(){var f=this.files[0];if(!f)return;if(f.size>65536){umsg('파일이 너무 커요 (64KB까지).',1);return;}var r=new FileReader();r.onload=function(){$('uj').value=String(r.result||'');umsg('');};r.readAsText(f);});
+function check(kind,d){
+  if(!d||typeof d!=='object'||Array.isArray(d))return 'JSON 안쪽이 { } 모양이어야 해요.';
+  if(kind==='mod'){
+    if(!Array.isArray(d.events)||!d.events.length)return '모드는 "events" 목록이 하나 이상 있어야 해요.';
+    if(d.events.length>200)return '이벤트는 200개까지예요.';
+    for(var i=0;i<d.events.length;i++){var ev=d.events[i];if(!ev||typeof ev.on!=='string'||!Array.isArray(ev.do)||!ev.do.length)return (i+1)+'번째 이벤트에 "on"(문자열)과 "do"(목록)가 필요해요.';if(ev.do.length>20)return (i+1)+'번째 이벤트의 "do"는 20개까지예요.';}
+  }else{
+    if(!d.names||typeof d.names!=='object'||Array.isArray(d.names))return '리소스팩은 "names": { "아이템": "새 이름" } 모양이 필요해요.';
+    var ks=Object.keys(d.names);if(!ks.length||ks.length>500)return '이름은 1~500개까지예요.';
+    for(var j=0;j<ks.length;j++){if(typeof d.names[ks[j]]!=='string'||d.names[ks[j]].length>40)return '"'+ks[j]+'"의 새 이름은 40자 이하 문자열이어야 해요.';}
+  }
+  return '';
+}
+$('us').addEventListener('click',async function(){
+  var kind=$('uk').value,name=$('un').value.trim(),descr=$('ud').value.trim(),cat=$('uc').value,raw=$('uj').value.trim();
+  if(!name){umsg('이름을 적어 주세요.',1);return;}
+  if(raw.length>65536){umsg('내용이 너무 커요 (64KB까지).',1);return;}
+  var d;try{d=JSON.parse(raw);}catch(e){umsg('JSON 모양이 올바르지 않아요.',1);return;}
+  var er=check(kind,d);if(er){umsg(er,1);return;}
+  var u=FFAuth.user(),c=sb();if(!u||!c){umsg('로그인이 필요해요.',1);return;}
+  var pr=null;try{pr=FFAuth.profile();}catch(e){}
+  var an=(pr&&pr.display_name)||(FFAuth.nickname&&FFAuth.nickname())||'';
+  this.disabled=true;umsg('올리는 중…');
+  var r=await c.from('beaconfall_mods').insert({kind:kind,name:name,descr:descr,cat:cat,author_name:String(an).slice(0,20),data:d}).select().single();
+  this.disabled=false;
+  if(r.error){umsg('올리지 못했어요. 서버가 아직 준비되지 않았을 수 있어요.',1);return;}
+  LIST.unshift(r.data);SERVER='ok';$('upl').classList.remove('on');$('un').value='';$('ud').value='';$('uj').value='';K='all';CAT='';draw();
+});
+window.addEventListener('storage',draw);
+draw();
+if(document.readyState==='complete')load();else window.addEventListener('load',load);
+})();
+</script>
+<script src="https://frenchfries777.com/games/ff-auth.js?v=20261104d"></script>
+</body>
+</html>

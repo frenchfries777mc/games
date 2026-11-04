@@ -921,3 +921,6 @@ Stickseum-v0.9.html | SKILLS.magiccard desc 카드 5장 (장당 8 피해) | buil
 
 ## b172
 - 패치노트: 랭킹 제목 문구 정리
+
+## b173
+- 사이트 모드 버튼, 모드·리소스팩 페이지(mods.html) 문구
