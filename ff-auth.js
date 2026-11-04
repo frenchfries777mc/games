@@ -16,32 +16,32 @@ var me=document.currentScript, BASE=(me&&me.src)?me.src.replace(/[^\/]*$/,''):'h
 
 var L={
  ko:{login:'로그인',signup:'계정 만들기',logout:'로그아웃',card:'🪪 프로필 카드',ach:'🏆 도전과제',id:'아이디 (영문/숫자, 3~16자)',pw:'비밀번호 (6자 이상)',busy:'처리 중...',
-     title:'Frenchfries777 계정',sub:'Stickseum, Crown Envoy, Beaconfall 모두 같은 계정이에요. 여기서 로그인하면 게임에서도 로그인된 채로 시작해요.',
+     title:'Frenchfries777 계정',sub:'Frenchfries777계정을 만들거나 Google/Github로 로그인 하세요. 로그인한 사람은 게임 기록이 저장되고 허브 코인과 친구 기능을 사용할 수 있습니다.',more:'자세히 알아보기',
      badId:'아이디는 영문/숫자/밑줄 3~16자로 해주세요.',badPw:'비밀번호는 6자 이상으로 해주세요.',taken:'이미 있는 아이디예요.',cred:'아이디 또는 비밀번호가 틀렸어요.',
      rate:'로그인을 너무 많이 시도했어요. 몇 분 뒤에 다시 해 주세요.',net:'서버에 연결하지 못했어요. 인터넷을 확인해 주세요.',fail:'로그인하지 못했어요.',
      noAcc:'계정이 없나요?',hasAcc:'이미 계정이 있나요?',close:'닫기',hi:'{0}님',hub:'허브',hubT:'Frenchfries777 허브로 돌아가기'},
  en:{login:'Log in',signup:'Create account',logout:'Log out',card:'🪪 Profile card',ach:'🏆 Achievements',id:'Username (letters/numbers, 3–16)',pw:'Password (6+ characters)',busy:'Working...',
-     title:'Frenchfries777 account',sub:'Stickseum, Crown Envoy and Beaconfall share one account. Log in here and the games start logged in too.',
+     title:'Frenchfries777 account',sub:'Create a Frenchfries777 account or sign in with Google/GitHub. Signed-in players get saved game records, Hub Coins and friends.',more:'Learn more',
      badId:'Use 3–16 letters, numbers or underscores.',badPw:'Use at least 6 characters.',taken:'That username is taken.',cred:'Wrong username or password.',
      rate:'Too many tries. Please wait a few minutes.',net:'Could not reach the server. Check your connection.',fail:'Could not log in.',
      noAcc:'No account yet?',hasAcc:'Already have an account?',close:'Close',hi:'{0}',hub:'Hub',hubT:'Back to the Frenchfries777 hub'},
  es:{login:'Iniciar sesión',signup:'Crear cuenta',logout:'Cerrar sesión',card:'🪪 Tarjeta de perfil',id:'Usuario (letras/números, 3–16)',pw:'Contraseña (6+ caracteres)',busy:'Procesando...',
-     title:'Cuenta Frenchfries777',sub:'Stickseum, Crown Envoy y Beaconfall comparten una cuenta. Inicia sesión aquí y los juegos empiezan con la sesión iniciada.',
+     title:'Cuenta Frenchfries777',sub:'Create a Frenchfries777 account or sign in with Google/GitHub. Signed-in players get saved game records, Hub Coins and friends.',more:'Learn more',
      badId:'Usa de 3 a 16 letras, números o guiones bajos.',badPw:'Usa al menos 6 caracteres.',taken:'Ese usuario ya existe.',cred:'Usuario o contraseña incorrectos.',
      rate:'Demasiados intentos. Espera unos minutos.',net:'No se pudo conectar con el servidor.',fail:'No se pudo iniciar sesión.',
      noAcc:'¿No tienes cuenta?',hasAcc:'¿Ya tienes cuenta?',close:'Cerrar',hi:'{0}',hub:'Inicio',hubT:'Volver al inicio de Frenchfries777'},
  fr:{login:'Se connecter',signup:'Créer un compte',logout:'Se déconnecter',card:'🪪 Carte de profil',id:'Identifiant (lettres/chiffres, 3–16)',pw:'Mot de passe (6+ caractères)',busy:'Traitement...',
-     title:'Compte Frenchfries777',sub:'Stickseum, Crown Envoy et Beaconfall partagent un seul compte. Connecte-toi ici et les jeux démarrent déjà connectés.',
+     title:'Compte Frenchfries777',sub:'Create a Frenchfries777 account or sign in with Google/GitHub. Signed-in players get saved game records, Hub Coins and friends.',more:'Learn more',
      badId:'Utilise 3 à 16 lettres, chiffres ou tirets bas.',badPw:'Au moins 6 caractères.',taken:'Cet identifiant est déjà pris.',cred:'Identifiant ou mot de passe incorrect.',
      rate:'Trop de tentatives. Réessaie dans quelques minutes.',net:'Impossible de joindre le serveur.',fail:'Connexion impossible.',
      noAcc:'Pas encore de compte ?',hasAcc:'Déjà un compte ?',close:'Fermer',hi:'{0}',hub:'Accueil',hubT:'Retour à l’accueil Frenchfries777'},
  de:{login:'Anmelden',signup:'Konto erstellen',logout:'Abmelden',card:'🪪 Profilkarte',id:'Benutzername (Buchstaben/Zahlen, 3–16)',pw:'Passwort (mind. 6 Zeichen)',busy:'Wird bearbeitet...',
-     title:'Frenchfries777-Konto',sub:'Stickseum, Crown Envoy und Beaconfall nutzen ein Konto. Hier anmelden und die Spiele starten schon angemeldet.',
+     title:'Frenchfries777-Konto',sub:'Create a Frenchfries777 account or sign in with Google/GitHub. Signed-in players get saved game records, Hub Coins and friends.',more:'Learn more',
      badId:'3–16 Buchstaben, Zahlen oder Unterstriche.',badPw:'Mindestens 6 Zeichen.',taken:'Dieser Name ist vergeben.',cred:'Benutzername oder Passwort falsch.',
      rate:'Zu viele Versuche. Bitte ein paar Minuten warten.',net:'Server nicht erreichbar.',fail:'Anmeldung fehlgeschlagen.',
      noAcc:'Noch kein Konto?',hasAcc:'Schon ein Konto?',close:'Schließen',hi:'{0}',hub:'Start',hubT:'Zurück zur Frenchfries777-Startseite'},
  ja:{login:'ログイン',signup:'アカウント作成',logout:'ログアウト',card:'🪪 プロフィールカード',id:'ID（英数字、3〜16文字）',pw:'パスワード（6文字以上）',busy:'処理中...',
-     title:'Frenchfries777アカウント',sub:'Stickseum、Crown Envoy、Beaconfallは同じアカウントです。ここでログインすると、ゲームもログインした状態で始まります。',
+     title:'Frenchfries777アカウント',sub:'Create a Frenchfries777 account or sign in with Google/GitHub. Signed-in players get saved game records, Hub Coins and friends.',more:'Learn more',
      badId:'IDは英数字とアンダーバーで3〜16文字にしてください。',badPw:'パスワードは6文字以上にしてください。',taken:'そのIDはすでに使われています。',cred:'IDまたはパスワードが違います。',
      rate:'試行回数が多すぎます。数分後にもう一度お試しください。',net:'サーバーに接続できませんでした。',fail:'ログインできませんでした。',
      noAcc:'アカウントがありませんか？',hasAcc:'すでにアカウントがありますか？',close:'閉じる',hi:'{0}さん',hub:'ハブ',hubT:'Frenchfries777 ハブに戻る'},
@@ -293,6 +293,7 @@ var CSS='.ffa-btn{display:inline-flex;align-items:center;gap:6px;background:line
  '#ffaModal{position:fixed;inset:0;z-index:2147482500;background:rgba(5,6,10,.72);display:none;align-items:center;justify-content:center;padding:16px;font-family:system-ui,-apple-system,"Noto Sans KR",sans-serif}'+
  '#ffaModal .b{width:100%;max-width:360px;background:#10131b;border:1px solid #2b3245;border-radius:16px;padding:22px;color:#eef0f5;box-shadow:0 20px 50px rgba(0,0,0,.5)}'+
  '#ffaModal h3{margin:0 0 6px;font-size:19px}#ffaModal p{margin:0 0 16px;color:#8a93a6;font-size:13px;line-height:1.5}'+
+ '#ffaSetup a.more{color:#ff9a1f;font-weight:800;text-decoration:underline;white-space:nowrap}'+
  '#ffaModal input{display:block;width:100%;box-sizing:border-box;margin:0 0 10px;padding:11px 12px;border-radius:9px;border:1px solid #2b3245;background:#08090d;color:#eef0f5;font:inherit;font-size:16px}'+
  '#ffaModal input:focus{outline:none;border-color:var(--fry,#ffc93c)}#ffaModal .ffa-btn{width:100%;justify-content:center;padding:11px;font-size:15px}'+
  '#ffaModal .m{min-height:18px;font-size:13px;color:#ff9b7a;margin:0 0 10px}#ffaModal .sw{margin-top:14px;text-align:center;font-size:13px;color:#8a93a6}'+
@@ -323,7 +324,7 @@ var mode='in';
 function modal(){
   css(); var el=document.getElementById('ffaModal'); if(el) return el;
   el=document.createElement('div'); el.id='ffaModal'; el.setAttribute('data-notr','');
-  el.innerHTML='<form class="b" autocomplete="on"><button type="button" class="x" aria-label="'+esc(T.close)+'">×</button><h3></h3><p>'+esc(T.sub)+'</p>'+
+  el.innerHTML='<form class="b" autocomplete="on"><button type="button" class="x" aria-label="'+esc(T.close)+'">×</button><h3></h3><p>'+esc(T.sub)+' <a class="more" href="https://frenchfries777.com/help/account/" target="_blank" rel="noopener">'+esc(T.more||'Learn more')+'</a></p>'+
     '<input name="username" autocomplete="username" autocapitalize="off" spellcheck="false" maxlength="16" placeholder="'+esc(T.id)+'">'+
     '<div class="pwr"><input name="password" type="password" placeholder="'+esc(T.pw)+'"><button type="button" class="eye" aria-label="'+esc(AL().show)+'">👁</button></div>'+
     '<div class="m"></div><button type="submit" class="ffa-btn go"></button><div class="or">'+esc(OA().or)+'</div>'+'<div class="oas">'+oaBtns()+'</div><div class="sw"><span></span><a></a></div></form>';
