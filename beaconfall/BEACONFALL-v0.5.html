@@ -407,7 +407,7 @@ window.bfIntro=function(){if(run)return;run=1;t0=Date.now();el.classList.add('ru
     <button class="btn" data-act="skins"><span class="arrow">▶</span>스킨 상점<span class="en">SKIN SHOP</span></button>
     <button class="btn" data-act="stats"><span class="arrow">▶</span>통계<span class="en">STATS</span></button>
     <button class="btn" data-act="settings"><span class="arrow">▶</span>설정<span class="en">SETTINGS</span></button>
-    <p class="foot">v0.5<br>build 175</p>
+    <p class="foot">v0.5<br>build 176</p>
   </nav>
 </div>
 
@@ -10006,18 +10006,26 @@ function openAnimalDex(){
 }
 const stObj=()=>(settings.st=settings.st&&typeof settings.st==='object'?settings.st:{});
 /* ---------- 모드 / 리소스팩 (사이트 mods.html 에서 적용한 목록) ---------- */
-const MOD={ev:[],orig:{},on:[],st:{},remap:{},btns:[]};
+const MOD={ev:[],orig:{},on:[],st:{},remap:{},btns:[],tex:{},iorig:{}};
 function modLocal(){try{const o=JSON.parse(localStorage.getItem('bf.mods.on')||'{}');return Object.keys(o).slice(0,50).map(id=>({id:String(id).slice(0,40),kind:o[id].kind,name:o[id].name,descr:o[id].descr,author_name:o[id].author_name,data:o[id].data})).filter(m=>m.data&&typeof m.data==='object');}catch(e){return [];}}
 const MOD_KEY=/^(Key[A-Z]|Digit[0-9]|F([1-9]|1[0-2]))$/;
 function modBox(){let b=document.getElementById('modbtns');if(!b){b=document.createElement('div');b.id='modbtns';b.style.cssText='position:fixed;inset:0;z-index:30;pointer-events:none';document.body.appendChild(b);setInterval(()=>{const m=document.getElementById('modal');b.style.display=(mode==='play'&&m&&m.hidden)?'':'none';},400);}return b;}
 function modApply(list){
   for(const k in MOD.orig){if(ITEMS[k])ITEMS[k].name=MOD.orig[k];}
   MOD.orig={};MOD.ev=[];MOD.on=[];MOD.st={};MOD.remap={};
+  for(const k in MOD.iorig){if(ITEMS[k])ITEMS[k].icon=MOD.iorig[k];}
+  MOD.iorig={};MOD.tex={};let texN=0;
   const bx=document.getElementById('modbtns');if(bx)bx.innerHTML='';
   const setName=(k,v)=>{if(ITEMS[k]&&typeof v==='string'&&v.length>0&&v.length<=40){if(!(k in MOD.orig))MOD.orig[k]=ITEMS[k].name;ITEMS[k].name=v;}};
   for(const m of (Array.isArray(list)?list:[]).slice(0,50)){
     const d=m&&m.data;if(!d||typeof d!=='object')continue;
     if(d.names&&typeof d.names==='object'&&!Array.isArray(d.names))for(const k of Object.keys(d.names).slice(0,500))setName(k,d.names[k]);
+    if(d.textures&&typeof d.textures==='object'&&!Array.isArray(d.textures))for(const k of Object.keys(d.textures).slice(0,200)){
+      const v=d.textures[k];if(!ITEMS[k]||typeof v!=='string'||!/^data:image\/png;base64,[A-Za-z0-9+\/=]{20,3000}$/.test(v)||texN>=200)continue;
+      texN++;
+      if(!MOD.iorig[k]){MOD.iorig[k]=ITEMS[k].icon;ITEMS[k].icon=function(g){const im=MOD.tex[k];if(im&&im.complete&&im.naturalWidth){g.imageSmoothingEnabled=false;g.drawImage(im,0,0,12,12);}else MOD.iorig[k](g);};}
+      const im=new Image();im.onload=()=>{MOD.tex[k]=im;try{for(const q in ICONURL)delete ICONURL[q];for(const q in ICONC)delete ICONC[q];renderInv();renderEquip();}catch(e){}};im.src=v;
+    }
     if(Array.isArray(d.sets))for(const t of d.sets.slice(0,100))modSet(t,setName);
     if(d.remap&&typeof d.remap==='object'&&!Array.isArray(d.remap))for(const k of Object.keys(d.remap).slice(0,30)){if(MOD_KEY.test(k)&&MOD_KEY.test(d.remap[k]))MOD.remap[k]=d.remap[k];}
     if(Array.isArray(d.events))for(const e of d.events.slice(0,200)){

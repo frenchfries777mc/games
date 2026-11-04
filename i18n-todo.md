@@ -852,3 +852,6 @@
 
 ## b175
 - BeaconScript 명령(on world generate/join/key, title, button, ui, teleport, spawn, place, remove, set, remap, if has) 도움말과 패치노트 9줄
+
+## b176
+- 메뉴 버튼 "모드/리소스팩", PNG 리소스팩 올리기 문구, 패치노트 3줄

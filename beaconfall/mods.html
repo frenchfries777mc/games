@@ -6,7 +6,7 @@
 <link rel="icon" type="image/svg+xml" href="https://frenchfries777.com/games/gamelogo/beaconfall.svg">
 <script src="https://frenchfries777.com/games/ff-lang.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>BEACONFALL · 모드</title>
+<title>BEACONFALL · 모드/리소스팩</title>
 <meta name="theme-color" content="#14527e">
 <style>
 html,body{touch-action:manipulation}   /* 더블터치 확대 막기 */
@@ -67,6 +67,11 @@ input.q{width:100%;padding:10px 12px;border:3px solid var(--gold);background:var
 .msg{margin:8px 0 0;font-size:13px;color:var(--gold)}
 .msg.err{color:#ffb0b0}
 .empty{padding:22px;text-align:center;opacity:.8}
+#uprev{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px;font-size:12px}
+#uprev span{display:inline-flex;align-items:center;gap:4px;padding:2px 6px;border:1px solid var(--sky)}
+#uprev span.bad{border-color:#ffb0b0;color:#ffb0b0}
+#uprev img,.inf img.tx{width:24px;height:24px;image-rendering:pixelated;background:#e9d9a41a}
+.inf .pv{flex:1 0 100%;display:flex;flex-wrap:wrap;gap:4px}
 details.help{margin:0 0 12px;border:2px solid #e9d9a444;background:var(--panel);padding:8px 12px}
 details.help summary{cursor:pointer;color:var(--gold)}
 details.help pre{margin:8px 0 0;font:12px/1.5 monospace;color:var(--cream);white-space:pre-wrap;overflow:auto}
@@ -131,6 +136,9 @@ rename:
  <label>내용 (BeaconScript 또는 JSON · .bs 파일도 돼요)</label>
  <input type="file" id="uf" accept=".bs,.beaconfall,.json,.txt,application/json,text/plain">
  <textarea id="uj" spellcheck="false" placeholder='mod "Iron from stone"&#10;&#10;on mine stone:&#10;    give 1 iron&#10;&#10;on kill wolf:&#10;    chance 30%:&#10;        give 2 iron&#10;        say "Lucky!"'></textarea>
+ <label>그림 PNG (선택, 여러 장 · 파일 이름이 아이템 이름, 예: iron.png)</label>
+ <input type="file" id="up" accept="image/png" multiple>
+ <div class="uprev" id="uprev"></div>
  <div class="msg" id="um"></div>
  <div class="row" style="margin-top:12px"><button class="pb" id="us">올리기</button></div>
 </div></div>
@@ -183,9 +191,10 @@ function draw(){
     var a=!!on[m.id],mine=ME&&m.author_id===ME;
     return '<div class="mrow" data-id="'+esc(m.id)+'"><div class="ic">'+(m.kind==='pack'?'🎨':'🧩')+'</div><div class="tx"><div class="nm">'+esc(m.name)+'</div><div class="mt"><span class="tg'+(m.kind==='pack'?' p':'')+'">'+(m.kind==='pack'?'리소스팩':'모드')+'</span>'+esc(m.cat||'기타')+'</div></div><div class="act">'
       +(mine&&SERVER==='ok'?'<button class="pb" data-del="'+esc(m.id)+'">삭제</button>':'')
-      +(a?'<button class="pb off" data-off="'+esc(m.id)+'">적용 해제</button>':'<button class="pb" data-on="'+esc(m.id)+'">적용</button>')+'</div><div class="inf">'+(m.descr?'<div class="d">'+esc(m.descr)+'</div>':'')+'<span>제작자 <b>'+esc(m.author_name||'알 수 없음')+'</b></span><span>올린 날 <b>'+esc(String(m.created_at||'').slice(0,10)||'-')+'</b></span></div></div>';
+      +(a?'<button class="pb off" data-off="'+esc(m.id)+'">적용 해제</button>':'<button class="pb" data-on="'+esc(m.id)+'">적용</button>')+'</div><div class="inf">'+(m.descr?'<div class="d">'+esc(m.descr)+'</div>':'')+pv(m)+'<span>제작자 <b>'+esc(m.author_name||'알 수 없음')+'</b></span><span>올린 날 <b>'+esc(String(m.created_at||'').slice(0,10)||'-')+'</b></span></div></div>';
   }).join('');
 }
+function pv(m){var t=m.data&&m.data.textures;if(!t||typeof t!=='object')return '';var h='',n=0;Object.keys(t).forEach(function(k){if(n<10&&/^data:image\/png;base64,[A-Za-z0-9+\/=]{1,3000}$/.test(t[k])){h+='<img class="tx" title="'+esc(k)+'" src="'+t[k]+'">';n++;}});return h?'<div class="pv">'+h+'</div>':'';}
 function find(id){return LIST.filter(function(m){return m.id===id;})[0]||(getOn()[id]&&Object.assign({id:id},getOn()[id]));}
 document.addEventListener('click',function(e){
   var t=e.target.closest('button');if(!t)return;
@@ -300,20 +309,39 @@ function parseScript(text){
   if(!Object.keys(data).length)throw PE(1,'nothing to upload: add an "on ...:" block, "rename:", "set ..." or "remap ..."');
   return {kind:out.name?out.kind:null,name:out.name,data:data};
 }
+var TEX={};
+$('up').addEventListener('change',async function(){
+  TEX={};var box=$('uprev');box.innerHTML='';
+  var files=[].slice.call(this.files).slice(0,150);
+  for(var i=0;i<files.length;i++){
+    var f=files[i],base=f.name.replace(/\.png$/i,'').trim(),id=itemId(base),sp=document.createElement('span');
+    if(!id){var g=guess(base,Object.keys(ITEMN));sp.className='bad';sp.textContent=f.name+' ✗ 아이템 이름을 몰라요'+(g?' ('+g+'?)':'');box.appendChild(sp);continue;}
+    try{
+      var url=await new Promise(function(res,rej){var im=new Image(),u=URL.createObjectURL(f);im.onload=function(){var c=document.createElement('canvas');c.width=c.height=12;var x=c.getContext('2d');x.imageSmoothingEnabled=false;x.drawImage(im,0,0,12,12);URL.revokeObjectURL(u);res(c.toDataURL('image/png'));};im.onerror=function(){rej();};im.src=u;});
+      TEX[id]=url;var ig=document.createElement('img');ig.src=url;sp.appendChild(ig);sp.appendChild(document.createTextNode(id+' ✓'));
+    }catch(e){sp.className='bad';sp.textContent=f.name+' ✗ 그림을 읽지 못했어요';}
+    box.appendChild(sp);
+  }
+});
 function check(kind,d){
   if(!d||typeof d!=='object'||Array.isArray(d))return 'JSON 안쪽이 { } 모양이어야 해요.';
   if(kind==='mod'){
     if(d.names&&(typeof d.names!=='object'||Array.isArray(d.names)))return '"names"는 { "아이템": "새 이름" } 모양이어야 해요.';
     if(d.sets&&(!Array.isArray(d.sets)||d.sets.length>100))return '"sets"는 100개까지예요.';
     if(d.remap&&(typeof d.remap!=='object'||Array.isArray(d.remap)||Object.keys(d.remap).length>30))return '"remap"은 30개까지예요.';
-    if(!d.names&&!d.sets&&!d.remap&&(!Array.isArray(d.events)||!d.events.length))return '모드에는 규칙(on), 이름 바꾸기, set, remap 중 하나는 있어야 해요.';
+    if(d.textures&&(typeof d.textures!=='object'||Array.isArray(d.textures)))return '"textures" 모양이 올바르지 않아요.';
+    if(!d.names&&!d.sets&&!d.remap&&!d.textures&&(!Array.isArray(d.events)||!d.events.length))return '모드에는 규칙(on), 이름 바꾸기, set, remap, 그림 중 하나는 있어야 해요.';
     if(!d.events)return '';
     if(d.events.length>200)return '이벤트는 200개까지예요.';
     for(var i=0;i<d.events.length;i++){var ev=d.events[i];if(!ev||typeof ev.on!=='string'||!Array.isArray(ev.do)||!ev.do.length)return (i+1)+'번째 이벤트에 "on"(문자열)과 "do"(목록)가 필요해요.';if(ev.do.length>20)return (i+1)+'번째 이벤트의 "do"는 20개까지예요.';}
   }else{
-    if(!d.names||typeof d.names!=='object'||Array.isArray(d.names))return '리소스팩은 "names": { "아이템": "새 이름" } 모양이 필요해요.';
-    var ks=Object.keys(d.names);if(!ks.length||ks.length>500)return '이름은 1~500개까지예요.';
-    for(var j=0;j<ks.length;j++){if(typeof d.names[ks[j]]!=='string'||d.names[ks[j]].length>40)return '"'+ks[j]+'"의 새 이름은 40자 이하 문자열이어야 해요.';}
+    if(!d.names&&!d.textures)return '리소스팩은 이름 바꾸기("names")나 그림(PNG)이 필요해요.';
+    if(d.names){
+      if(typeof d.names!=='object'||Array.isArray(d.names))return '"names"는 { "아이템": "새 이름" } 모양이어야 해요.';
+      var ks=Object.keys(d.names);if(!ks.length||ks.length>500)return '이름은 1~500개까지예요.';
+      for(var j=0;j<ks.length;j++){if(typeof d.names[ks[j]]!=='string'||d.names[ks[j]].length>40)return '"'+ks[j]+'"의 새 이름은 40자 이하 문자열이어야 해요.';}
+    }
+    if(d.textures&&(typeof d.textures!=='object'||Array.isArray(d.textures)))return '"textures" 모양이 올바르지 않아요.';
   }
   return '';
 }
@@ -321,9 +349,12 @@ $('us').addEventListener('click',async function(){
   var kind=$('uk').value,name=$('un').value.trim(),descr=$('ud').value.trim(),cat=$('uc').value,raw=$('uj').value.trim();
   if(raw.length>65536){umsg('내용이 너무 커요 (64KB까지).',1);return;}
   var d;
-  if(raw.charAt(0)==='{'){try{d=JSON.parse(raw);}catch(e){umsg('JSON 모양이 올바르지 않아요.',1);return;}}
+  if(!raw&&Object.keys(TEX).length){d={};}
+  else if(raw.charAt(0)==='{'){try{d=JSON.parse(raw);}catch(e){umsg('JSON 모양이 올바르지 않아요.',1);return;}}
   else{try{var ps=parseScript(raw);d=ps.data;if(ps.kind){kind=ps.kind;}if(ps.name&&!name)name=ps.name;}catch(e){umsg(e.script?e.message:'스크립트를 읽지 못했어요.',1);return;}}
   if(!name){umsg('이름을 적어 주세요.',1);return;}
+  if(Object.keys(TEX).length){d.textures=TEX;}
+  if(JSON.stringify(d).length>65536){umsg('내용이 너무 커요 (64KB까지). 그림 수를 줄여 주세요.',1);return;}
   var er=check(kind,d);if(er){umsg(er,1);return;}
   var u=FFAuth.user(),c=sb();if(!u||!c){umsg('로그인이 필요해요.',1);return;}
   var pr=null;try{pr=FFAuth.profile();}catch(e){}
@@ -332,7 +363,7 @@ $('us').addEventListener('click',async function(){
   var r=await c.from('beaconfall_mods').insert({kind:kind,name:name,descr:descr,cat:cat,author_name:String(an).slice(0,20),data:d}).select().single();
   this.disabled=false;
   if(r.error){umsg('올리지 못했어요. 서버가 아직 준비되지 않았을 수 있어요.',1);return;}
-  LIST.unshift(r.data);SERVER='ok';$('upl').classList.remove('on');$('un').value='';$('ud').value='';$('uj').value='';K='all';CAT='';draw();
+  LIST.unshift(r.data);SERVER='ok';$('upl').classList.remove('on');$('un').value='';$('ud').value='';$('uj').value='';TEX={};$('uprev').innerHTML='';$('up').value='';K='all';CAT='';draw();
 });
 window.addEventListener('storage',draw);
 draw();
