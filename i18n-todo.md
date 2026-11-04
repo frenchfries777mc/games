@@ -662,6 +662,8 @@ Stickseum-v0.9.html | SKILLS.magiccard desc 카드 5장 (장당 8 피해) | buil
 
 ## Crown Envoy b139 (2026-10-31)
 
+## Crown Envoy b149 (2026-11-04)
+
 ## Crown Envoy b148 (2026-11-04)
 
 ## Crown Envoy b147 (2026-11-03)
