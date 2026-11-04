@@ -57,7 +57,6 @@ var RAW=[
 ["ip_melon", "isleport", "수박", "Melon", "#5fcf6f", "#e0324d"],
 ["ip_flax", "isleport", "아마", "Flax", "#8fb8ff", "#4a6aa8"],
 ["ip_lavender", "isleport", "라벤더", "Lavender", "#b48cff", "#5a3aa8"],
-["ip_tobacco", "isleport", "담배", "Tobacco", "#a88a4a", "#4a3a14"],
 ["ip_sunflower", "isleport", "해바라기", "Sunflower", "#ffd23f", "#6b4a10"],
 ["tc_archer", "tumblecrown", "궁수", "Archer", "#8bd45a", "#3a6a1f"],
 ["tc_assassin", "tumblecrown", "암살자", "Assassin", "#7a7fa8", "#2c2f55"],
@@ -104,7 +103,7 @@ function css(id){          /* for an HTML avatar: border + glow */
 var RB=['#ff5f5f','#ffd23f','#3ee08f','#35e0ff','#b46bff'];
 var FAM={st_pistol:'bullet',st_rifle:'bullet',st_smg:'bullet',st_shotgun:'bullet',st_streltsy:'bullet',st_magiccard:'star',st_wizard:'star',st_shuriken:'blade',st_dagger:'blade',st_samurai:'blade',st_sword:'blade',st_lightsaber:'blade',st_bat:'rivet',st_gloves:'rivet',st_pirate:'rivet',st_dracula:'bat',st_gambler:'card',st_horemheb:'ankh',st_bazooka:'burst',st_grenade:'burst',st_bow:'arrow',st_boomerang:'arrow',st_flamethrower:'flame',st_kurus:'flame',st_portalgun:'ring',st_vacuum:'ring',
  tc_archer:'arrow',tc_assassin:'blade',tc_bard:'star',tc_bomber:'burst',tc_crossbow:'arrow',tc_knight:'shield',tc_mamluk:'blade',tc_necro:'flame',tc_priest:'cross',tc_spearman:'blade',tc_streltsy:'bullet',tc_telaris:'shield',tc_viking:'rivet',tc_warden:'shield',tc_witch:'star'};
-var FRUIT={tomato:'round',apple:'round',berry:'round',onion:'round',grape:'round',pumpkin:'round',melon:'round',cabbage:'round',cacao:'round',potato:'round',carrot:'long',corn:'long',pepper:'long',sugar:'long',flax:'long',wheat:'grain',rice:'grain',tea:'grain',coffee:'grain',cotton:'grain',lavender:'grain',sunflower:'flower',tobacco:'grain'};
+var FRUIT={tomato:'round',apple:'round',berry:'round',onion:'round',grape:'round',pumpkin:'round',melon:'round',cabbage:'round',cacao:'round',potato:'round',carrot:'long',corn:'long',pepper:'long',sugar:'long',flax:'long',wheat:'grain',rice:'grain',tea:'grain',coffee:'grain',cotton:'grain',lavender:'grain',sunflower:'flower'};
 var CROWN={bronze:3,silver:3,gold:5,ruby:5,emerald:5,royal:7};
 function P(c,pts,fill,stroke){ c.beginPath(); pts.forEach(function(p,i){ i?c.lineTo(p[0],p[1]):c.moveTo(p[0],p[1]); }); c.closePath(); if(fill){ c.fillStyle=fill; c.fill(); } if(stroke){ c.strokeStyle=stroke; c.lineWidth=1.5; c.stroke(); } }
 function star(c,x,y,r,n,fill){ var p=[]; for(var i=0;i<n*2;i++){ var a=-Math.PI/2+i*Math.PI/n, q=i%2?r*.42:r; p.push([x+Math.cos(a)*q,y+Math.sin(a)*q]); } P(c,p,fill,'rgba(0,0,0,.45)'); }
