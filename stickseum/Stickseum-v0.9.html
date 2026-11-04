@@ -145,7 +145,7 @@ if(document.readyState==='loading') document.addEventListener('DOMContentLoaded'
     width:38px; height:38px; border-radius:9px; cursor:pointer;
     background:rgba(12,14,19,.88); border:1px solid var(--line); overflow:hidden;}
   #profileBadge.show{display:flex;}
-  body.matching #profileBadge, body.matching #feedbackBadge{display:none !important;}      /* while a room is being searched for */
+  body.matching #profileBadge, body.matching #feedbackBadge, body.matching #settingsBadge, body.matching #dailyBadge, body.matching #clanBadge, body.matching #missionBadge, body.matching #onlineCount, body.roomMatching #profileBadge, body.roomMatching #feedbackBadge, body.roomMatching #settingsBadge{display:none !important;}      /* while a room is being searched for */
   #profileBadge canvas{width:100%; height:100%;}
   #shopSoulTag{display:inline-flex; align-items:center; gap:4px; padding:3px 10px; margin-left:8px; border-radius:999px; font-size:13px; font-weight:800; color:#d9b3ff; background:rgba(184,107,255,.14); border:1px solid rgba(184,107,255,.55);}
   .scIco{display:inline-block; flex:none; width:1.5em; height:1.5em; margin:-0.15em 0; vertical-align:-0.38em; background:url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMjAgMTIwIj48ZGVmcz48bGluZWFyR3JhZGllbnQgaWQ9ImJzYyIgeDE9IjAiIHkxPSIwIiB4Mj0iMSIgeTI9IjEiPjxzdG9wIG9mZnNldD0iMCIgc3RvcC1jb2xvcj0iIzNkMmEwYSIvPjxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iIzFhMTAwNCIvPjwvbGluZWFyR3JhZGllbnQ+PHJhZGlhbEdyYWRpZW50IGlkPSJnc2MiIGN4PSIuNSIgY3k9Ii41IiByPSIuNSI+PHN0b3Agb2Zmc2V0PSIwIiBzdG9wLWNvbG9yPSIjZmZjODNkIiBzdG9wLW9wYWNpdHk9Ii41Ii8+PHN0b3Agb2Zmc2V0PSIxIiBzdG9wLWNvbG9yPSIjZmZjODNkIiBzdG9wLW9wYWNpdHk9IjAiLz48L3JhZGlhbEdyYWRpZW50PjwvZGVmcz48Y2lyY2xlIGN4PSI2MCIgY3k9IjYyIiByPSIzNiIgZmlsbD0iI2U4YTMxNyIgc3Ryb2tlPSIjMTQxMDBmIiBzdHJva2Utd2lkdGg9IjMuNiIvPjxjaXJjbGUgY3g9IjYwIiBjeT0iNjAiIHI9IjMzIiBmaWxsPSIjZmZkMTRhIi8+PGNpcmNsZSBjeD0iNjAiIGN5PSI2MCIgcj0iMjYiIGZpbGw9Im5vbmUiIHN0cm9rZT0iI2I4NzQwOCIgc3Ryb2tlLXdpZHRoPSIyLjYiLz48cGF0aCBkPSJNMzggNDQgQTI4IDI4IDAgMCAxIDYwIDM0IiBmaWxsPSJub25lIiBzdHJva2U9IiNmZmY0YjAiIHN0cm9rZS13aWR0aD0iMy40IiBzdHJva2UtbGluZWNhcD0icm91bmQiLz48dGV4dCB4PSI2MCIgeT0iNzIiIGZvbnQtZmFtaWx5PSJBcmlhbCBCbGFjayxBcmlhbCxzYW5zLXNlcmlmIiBmb250LXdlaWdodD0iOTAwIiBmb250LXNpemU9IjM0IiBmaWxsPSIjOGE0YTAwIiBzdHJva2U9IiNmZmU5YTAiIHN0cm9rZS13aWR0aD0iMyIgcGFpbnQtb3JkZXI9InN0cm9rZSIgdGV4dC1hbmNob3I9Im1pZGRsZSI+c0M8L3RleHQ+PHBhdGggZD0iTTk4IDE0IFE5OS4xIDIwLjkgMTA2IDIyIFE5OS4xIDIzLjEgOTggMzAgUTk2LjkgMjMuMSA5MCAyMiBROTYuOSAyMC45IDk4IDE0WiIgZmlsbD0iI2ZmZjRkNiIgb3BhY2l0eT0iMSIvPjxwYXRoIGQ9Ik0yMCAyOSBRMjAuNyAzMy4zIDI1IDM0IFEyMC43IDM0LjcgMjAgMzkgUTE5LjMgMzQuNyAxNSAzNCBRMTkuMyAzMy4zIDIwIDI5WiIgZmlsbD0iI2ZmZjRkNiIgb3BhY2l0eT0iMSIvPjxwYXRoIGQ9Ik0xMDAgODcgUTEwMC43IDkxLjMgMTA1IDkyIFExMDAuNyA5Mi43IDEwMCA5NyBROTkuMyA5Mi43IDk1IDkyIFE5OS4zIDkxLjMgMTAwIDg3WiIgZmlsbD0iI2ZmZjRkNiIgb3BhY2l0eT0iMSIvPjwvc3ZnPg==) center/contain no-repeat;}
@@ -5671,7 +5671,7 @@ function shuffle(arr){ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.
 /* ===== the version of this file =====
    Different BUILDS of one version meet and play together (room names online-v<ver>-<mode>-<map>-<slot>); different VERSIONS (the 0.x part) never do - the host refuses them (verNo) and the dispatcher answers busy.
    The build is only sent along with the join message and the lobby (for information); the corner of the screen shows it. */
-const GAME_BUILD='build 2026-11-02-v620';
+const GAME_BUILD='build 2026-11-04-v621';
 const GAME_VERSION='0.9', GAME_VERSION_NAME='은하 제국의 황혼';   // 게임 버전 이름: versions.json의 title과 같게 (빌드마다 바꾸지 않음)
 /* version (the 0.x part) vs build: different BUILDS of one version meet and play together, different VERSIONS never do (rooms, quick match, ranked, friend invites, dispatcher).
    Builds before 470 do not send a version, so it is read from the build number (0.9 started at build 458). */
@@ -6875,11 +6875,13 @@ function showScreen(id){
   document.querySelectorAll('.card').forEach(c=>c.classList.remove('active'));
   document.getElementById(id).classList.add('active');
   const gb=document.getElementById('profileBadge');
-  if(gb) gb.classList.toggle('show', id==='menuScreen'||id==='shopScreen'||id==='roomScreen');
+  const lobbyBtnsOk=(id==='menuScreen'||id==='shopScreen'||(id==='roomScreen' && currentMode!=='online'));      // while an online room is being matched (search bar and waiting in the room) the profile / settings / feedback buttons are hidden
+  document.body.classList.toggle('roomMatching', id==='roomScreen' && currentMode==='online');
+  if(gb) gb.classList.toggle('show', lobbyBtnsOk);
   if(gb && gb.classList.contains('show')) drawProfileBadge();
   const stb=document.getElementById('settingsBadge');
-  if(stb) stb.style.display = (id==='menuScreen'||id==='shopScreen'||id==='roomScreen') ? 'flex' : 'none';
-  const fbb=document.getElementById('feedbackBadge'); if(fbb) fbb.style.display = (id==='menuScreen'||id==='shopScreen'||id==='roomScreen') ? 'flex' : 'none';
+  if(stb) stb.style.display = lobbyBtnsOk ? 'flex' : 'none';
+  const fbb=document.getElementById('feedbackBadge'); if(fbb) fbb.style.display = lobbyBtnsOk ? 'flex' : 'none';
   const brand=document.getElementById('brandDisplay');
   if(brand) brand.classList.toggle('show', id==='menuScreen');
   { const lf=document.getElementById('lobbyFoot'); if(lf) lf.style.display=(id==='menuScreen'||id==='shopScreen'||id==='roomScreen'||id==='modeListScreen')?'block':'none'; }      // (build number and copyright, small at the edge of the lobby)
