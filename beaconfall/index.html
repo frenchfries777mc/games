@@ -220,7 +220,7 @@ function renderNotes(d){
   const items=(n.items||[]).map((x,ix)=>{const it=e&&e.items&&e.items[ix];return (it&&(it[LANG]||it.en||it.ko))||x;});
   return '<details'+(ni&&!(window.FFPN&&FFPN.q())?'':' open')+'><summary class="pb nlh">'+esc(title)+'<small>'+esc(n.date)+(n.build?' · '+esc(n.build):'')+'</small></summary><ul>'+items.map(i=>'<li>'+esc(i)+'</li>').join('')+'</ul></details>';}).join('');
  more.style.display=(!all&&list.length>SHOWN)?'':'none';
- more.onclick=()=>{box.dataset.all='1';renderNotes(d);};
+ more.onclick=()=>{location.href='https://frenchfries777.com/patchnotes/#beaconfall';};
 }
 /* 언어 */
 const lg=document.getElementById('lg');

@@ -204,8 +204,8 @@ function renderNotes(d){
   const all=box.dataset.all==='1'||!!(window.FFPN&&FFPN.q()), shown=all?list:list.slice(0,NOTES_SHOWN);
   box.innerHTML=shown.map(n0=>{ const n=Object.assign({}, n0, SI18N.pick(n0)); return n; }).map(n=>'<div class="note"><div class="nh"><span class="nt">'+esc(n.title)+'</span><span class="nd">'+esc(n.date)+(n.build?' · '+esc(String(n.build).replace(/^v(\d+)$/,'b$1')):'')+'</span></div><ul>'+(n.items||[]).map(i=>'<li>'+esc(i)+'</li>').join('')+'</ul></div>').join('');
   more.style.display=(!(window.FFPN&&FFPN.q())&&list.length>NOTES_SHOWN)?'':'none';
-  more.textContent=SI18N.T(all?'패치노트 접기':'이전 패치노트 더 보기');
-  more.onclick=()=>{ box.dataset.all=all?'':'1'; renderNotes(d); if(all) document.getElementById('notes').scrollIntoView({behavior:'smooth', block:'start'}); };
+  more.textContent=SI18N.T('이전 패치노트 더 보기');
+  more.onclick=()=>{ location.href='https://frenchfries777.com/patchnotes/#stickseum'; };
 }
 renderNotes(NOTES_FALLBACK);
 fetch('patchnotes.json',{cache:'no-store'}).then(r=>r.ok?r.json():Promise.reject()).then(renderNotes).catch(()=>{});

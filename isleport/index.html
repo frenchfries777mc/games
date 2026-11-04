@@ -223,7 +223,7 @@ function renderNotes(d){
   const title=(e&&e.title)||n.title,items=(e&&e.items&&e.items.length===(n.items||[]).length)?e.items:(n.items||[]);
   return '<details class="box"'+(ni&&!(window.FFPN&&FFPN.q())?'':' open')+'><summary><b>'+esc(title)+'</b><small>'+esc(n.date)+(n.build?' · '+esc(n.build):'')+'</small></summary><ul>'+items.map(i=>'<li>'+esc(i)+'</li>').join('')+'</ul></details>';}).join('');
  more.style.display=(!all&&list.length>SHOWN)?'':'none';
- more.onclick=()=>{box.dataset.all='1';renderNotes(d);};
+ more.onclick=()=>{location.href='https://frenchfries777.com/patchnotes/#isleport';};
 }
 const lg=document.getElementById('lg');
 {const op=l=>'<option value="'+l+'"'+(l==='au'?' style="font-family:\'FF Aurebesh\',system-ui"':l==='sg'?' style="font-family:\'FF Galactic\',system-ui"':'')+'>'+NAMES[l]+'</option>';
