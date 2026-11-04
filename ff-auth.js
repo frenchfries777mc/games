@@ -609,15 +609,19 @@ async function loadFriends(){
   var names={}; if(ids.length){ var p=await sb.from('profiles').select('id,username,display_name').in('id',ids); ((p&&p.data)||[]).forEach(function(x){ names[x.id]=nickOf(x); }); }
   var acc=rows.filter(function(x){ return x.status==='accepted'; }).map(function(x){ return x.requester_id===me?x.addressee_id:x.requester_id; }), pres={};
   if(acc.length){ try{ var pr=await sb.from('ff_presence').select('user_id,game,at').in('user_id',acc); ((pr&&!pr.error&&pr.data)||[]).forEach(function(x){ pres[x.user_id]=x; }); }catch(e){} }   // (empty before supabase-ff-hub.sql is run)
+  /* the hub's online bar uses ff_online_friends (games + hub + Tools/Educations, 150 s); use the same answer here so both agree */
+  if(acc.length){ try{ var of=await sb.rpc('ff_online_friends'); ((of&&!of.error&&of.data)||[]).forEach(function(x){ if(x&&x.user_id&&acc.indexOf(x.user_id)>=0) pres[x.user_id]={user_id:x.user_id,game:x.place,at:new Date().toISOString()}; }); }catch(e){} }
   friends=rows.map(function(x){ var o=x.requester_id===me?x.addressee_id:x.requester_id;
     return {rowId:x.id, status:x.status, otherId:o, name:names[o]||'???', incoming:x.addressee_id===me&&x.status==='pending', outgoing:x.requester_id===me&&x.status==='pending', pres:pres[o]||null}; });
   badge(); return friends;
 }
 /* what a friend is playing: "🟢 Stickseum 하는 중" while the game is open (it pings every minute), else the last game and how long ago */
 var GNAME={stickseum:'Stickseum',crownenvoy:'Crown Envoy',beaconfall:'Beaconfall',isleport:'Isleport',dummyparty:'Dummy Party',vowkeep:'Vowkeep'};
-function online(f){ var t=f&&f.pres&&Date.parse(f.pres.at); return !!(t&&Date.now()-t<100000); }
-function presText(f){ var p=f&&f.pres; if(!p) return ''; var g=GNAME[p.game]||p.game, t=Date.parse(p.at); if(!t) return '';
-  var m=Math.max(0,Math.round((Date.now()-t)/60000)); if(online(f)) return fmt(F.playing,g);
+function online(f){ var t=f&&f.pres&&Date.parse(f.pres.at); return !!(t&&Date.now()-t<150000); }
+function placeName(id){ var l=(window.FF_REG||[]).concat(window.FF_SITES||[]); for(var i=0;i<l.length;i++) if(l[i].id===id) return l[i].name; return GNAME[id]||id; }
+function isGame(id){ return id&&id!=='hub'&&id!=='educations'&&id!=='tools'; }
+function presText(f){ var p=f&&f.pres; if(!p) return ''; var g=placeName(p.game), t=Date.parse(p.at); if(!t) return '';
+  var m=Math.max(0,Math.round((Date.now()-t)/60000)); if(online(f)) return isGame(p.game)?fmt(F.playing,g):g;
   var a=m<1?F.now:(m<60?fmt(F.mn,m):(m<60*24?fmt(F.hr,Math.round(m/60)):fmt(F.dy,Math.round(m/1440)))); return m<1?g+' · '+a:fmt(F.ago,g).replace('{1}',a); }
 function incomingCount(){ return friends.filter(function(f){ return f.incoming; }).length; }
 function badge(){ var n=incomingCount(), bs=document.querySelectorAll('.ffa-chip>.ffa-badge:not(.ffa-nb),.ffa-menu [data-a=friends]>.ffa-badge'); for(var i=0;i<bs.length;i++){ bs[i].textContent=n>9?'9+':String(n); bs[i].style.display=n?'':'none'; } }
