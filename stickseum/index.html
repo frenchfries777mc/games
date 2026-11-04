@@ -102,9 +102,19 @@
   #notesMore{margin-top:4px; background:transparent; border:1px solid var(--line); color:var(--text-dim); border-radius:7px; padding:8px 16px; font:inherit; font-size:15px; cursor:pointer;}
   #notesMore:hover{color:var(--text); border-color:var(--teal);}
 html,body{touch-action:manipulation;}
+  /* 1.0 trailer: a full-screen layer on the first visit of a session (no browser popup) */
+  #trailerLay{position:fixed; inset:0; z-index:9999; background:#000; display:none; align-items:center; justify-content:center;}
+  #trailerLay.on{display:flex;}
+  #trailerLay video{width:100%; height:100%; object-fit:contain; background:#000;}
+  #trailerLay .tlPlay{position:absolute; left:50%; top:50%; transform:translate(-50%,-50%); padding:18px 34px; font:inherit; font-size:22px; font-weight:800; color:#1a1208; background:linear-gradient(180deg,#f3dc9a,#d4a83e); border:2px solid #5b3a1a; border-radius:6px; cursor:pointer; display:none; box-shadow:0 6px 24px rgba(0,0,0,.6);}
+  #trailerLay.wait .tlPlay{display:block;}
+  #trailerLay .tlBtns{position:absolute; top:14px; right:14px; display:flex; gap:8px;}
+  #trailerLay .tlBtns button{font:inherit; font-size:15px; font-weight:700; color:#fff; background:rgba(20,22,28,.72); border:1px solid rgba(255,255,255,.35); border-radius:6px; padding:8px 14px; cursor:pointer;}
+  #trailerLay .tlBtns button:hover{background:rgba(60,64,76,.9);}
 </style>
 </head>
 <body>
+<div id="trailerLay" role="dialog" aria-label="Stickseum 1.0 trailer"><video id="trailerVid" playsinline preload="none" poster="trailer/poster.jpg"></video><button class="tlPlay" id="tlPlay" type="button">▶ 탭해서 재생</button><div class="tlBtns"><button id="tlSkip" type="button">건너뛰기</button><button id="tlClose" type="button" aria-label="닫기">✕</button></div></div>
 <div class="heroBg" aria-hidden="true"><video id="heroVid" autoplay muted loop playsinline preload="auto"><source src="hero-demo.webm?v=3" type="video/webm"><source src="hero-demo.mp4?v=3" type="video/mp4"></video></div>
 <div class="wrap">
   <div class="topbar"><a class="wordmark" href="index.html">STICK<b>SEUM</b></a><div class="right"><nav><a href="index.html#play">플레이</a><a href="codex.html">캐릭터 도감</a><a href="ranking.html">순위표</a><a href="balance.html">밸런스</a><a href="index.html#notes">패치노트</a><a href="index.html#help">도움말</a></nav><span data-lang-slot></span><span data-ff-account></span></div></div>
@@ -222,6 +232,26 @@ fetch('versions.json',{cache:'no-store'}).then(r=>r.ok?r.json():Promise.reject()
   function go(){ var p=v.play(); if(p && p.catch) p.catch(function(){}); }
   if('IntersectionObserver' in window){ new IntersectionObserver(function(es){ if(es[0].isIntersecting) go(); else v.pause(); }).observe(v); }
   document.addEventListener('visibilitychange', function(){ if(document.hidden) v.pause(); else go(); });
+})();
+</script>
+<script>
+(function(){
+  var lay=document.getElementById('trailerLay'), v=document.getElementById('trailerVid'); if(!lay||!v) return;
+  var seen=false; try{ seen=!!sessionStorage.getItem('ssTrailerSeen'); }catch(e){}
+  if(seen) return;
+  function mark(){ try{ sessionStorage.setItem('ssTrailerSeen','1'); }catch(e){} }
+  function close(){ mark(); try{ v.pause(); }catch(e){} v.removeAttribute('src'); try{ v.load(); }catch(e){} lay.classList.remove('on','wait'); try{ if(document.fullscreenElement) document.exitFullscreen(); }catch(e){} }
+  function start(userTap){
+    v.muted=false; v.volume=1;
+    var p; try{ p=v.play(); }catch(e){ p=Promise.reject(e); }
+    if(p && p.then) p.then(function(){ lay.classList.remove('wait'); mark(); }, function(){ lay.classList.add('wait'); });
+    if(userTap){ try{ var r=lay.requestFullscreen&&lay.requestFullscreen(); if(r&&r.catch) r.catch(function(){}); }catch(e){} }
+  }
+  lay.classList.add('on'); v.src='trailer/stickseum-1.0-trailer.mp4'; start(false);
+  document.getElementById('tlPlay').addEventListener('click', function(){ start(true); });
+  document.getElementById('tlSkip').addEventListener('click', close);
+  document.getElementById('tlClose').addEventListener('click', close);
+  v.addEventListener('ended', close);
 })();
 </script>
 </body>
