@@ -235,9 +235,9 @@ function draw(c,id,x,y,w,h,r){      /* canvas: paints a themed border around the
   else { var fm=FAM[id]||'star', pal=b.game==='tumblecrown'?[a1,a2]:[a1,a2]; cs.forEach(function(p,k){ motif(c,fm,p[0],p[1],s*.95,pal[0],pal[1],fm==='arrow'||fm==='blade'||fm==='bullet'?p[2]+(k<2?0:0):0); }); motif(c,fm,x+w/2,y-o,s*1.05,pal[0],pal[1],0); }
   c.restore();
 }
-function preview(id,size){      /* a small picture of the border on a plain tile, for lists */
+function preview(id,size,img){      /* a small picture of the border on a plain tile, for lists; img = a loaded profile-photo image shown in the tile */
   var cv=document.createElement('canvas'), k=size||84; cv.width=cv.height=k; var c=cv.getContext('2d'), p=k*.27, w=k-p*2, y0=k*.32;
-  c.fillStyle='#1b2030'; rr(c,p,y0,w,w,w*.2); c.fill(); c.fillStyle='rgba(255,255,255,.12)'; c.beginPath(); c.arc(k/2,y0+w*.38,w*.2,0,7); c.fill(); c.fillRect(k/2-w*.3,y0+w*.62,w*.6,w*.3);
+  c.fillStyle='#1b2030'; rr(c,p,y0,w,w,w*.2); c.fill(); if(img&&img.naturalWidth){ c.save(); rr(c,p,y0,w,w,w*.2); c.clip(); c.drawImage(img,p,y0,w,w); c.restore(); } else { c.fillStyle='rgba(255,255,255,.12)'; c.beginPath(); c.arc(k/2,y0+w*.38,w*.2,0,7); c.fill(); c.fillRect(k/2-w*.3,y0+w*.62,w*.6,w*.3); }
   if(id) draw(c,id,p,y0,w,w,w*.2); return cv.toDataURL('image/png'); }
 async function mine(sb){ try{ var r=await sb.rpc('ff_border_owned'); return (r&&!r.error&&r.data||[]).map(function(o){ return o.border_id; }); }catch(e){ return []; } }
 async function equipped(sb,uid){ try{ var r=await sb.from('ff_border_equipped').select('border_id').eq('user_id',uid).limit(1); return r&&!r.error&&r.data&&r.data[0]?r.data[0].border_id:''; }catch(e){ return ''; } }
