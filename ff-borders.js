@@ -84,11 +84,9 @@ var RAW=[
 ["st_kan", "stickseum", "칸", "Kan", "#3ee08f", "#c0143c"],
 ["st_pizarro", "stickseum", "피사로", "Pizarro", "#b8c4d6", "#7a4a20"],
 ["st_puppeteer", "stickseum", "인형술사", "Puppeteer", "#ff9ad1", "#7b6bff"],
-["st_cleon", "stickseum", "황제", "Emperor", "#ffd23f", "#7a1030"],
-["st_pel", "stickseum", "조종사", "Pilot", "#4dd2ff", "#1a3a6a"],
+["st_cleon", "stickseum", "크레온 1세", "Emperor", "#ffd23f", "#7a1030"],
+["st_pel", "stickseum", "드론 조종사", "Pilot", "#4dd2ff", "#1a3a6a"],
 ["st_tionis", "stickseum", "연극배우", "Actor", "#e8d8ff", "#6a3aa8"],
-["st_syringe", "stickseum", "의사", "Doctor", "#7fffd4", "#2a7a6a"],
-["st_guard", "stickseum", "수호병", "Guard", "#6fa8ff", "#1a3a8a"]
 ];
 var LIST=RAW.map(function(r){ return {id:r[0],game:r[1],ko:r[2],en:r[3],a:r[4],b:r[5]}; }), BY={};
 LIST.forEach(function(b){ BY[b.id]=b; });
