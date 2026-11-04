@@ -407,7 +407,7 @@ window.bfIntro=function(){if(run)return;run=1;t0=Date.now();el.classList.add('ru
     <button class="btn" data-act="skins"><span class="arrow">▶</span>스킨 상점<span class="en">SKIN SHOP</span></button>
     <button class="btn" data-act="stats"><span class="arrow">▶</span>통계<span class="en">STATS</span></button>
     <button class="btn" data-act="settings"><span class="arrow">▶</span>설정<span class="en">SETTINGS</span></button>
-    <p class="foot">v0.5<br>build 174</p>
+    <p class="foot">v0.5<br>build 175</p>
   </nav>
 </div>
 
@@ -1357,6 +1357,7 @@ async function loadWorld(seed,name,id){
   if(!isGuest()&&world.id&&!world.treasureInit)generateTreasures();
   else if(!isGuest()&&world.id&&world.treasureInit&&(world.lmChestInit!==2||world.pirInit!==2||world.ruinInit!==2)){placeLmChests();placePirChests();placeRuinChests();saveWorld(true);}
   cleanLooseChests();
+  try{modGen();}catch(e){}
   achIslands();
   const rnd=mulberry32(hashStr(seed)^0x9e3779b9);
   cloudSprites=[];
@@ -4344,7 +4345,7 @@ function saveWorld(force){
     const rem=collectRemoved(),brm=collectBrem();
     if(mode==='play')world.savedPlayer=(P.air&&P.airX!==undefined)?{x:Math.round(P.airX),y:Math.round(P.airY),f:P.f}:{x:Math.round(P.sailing&&P.landX!==undefined?P.landX:P.x),y:Math.round(P.sailing&&P.landY!==undefined?P.landY:P.y),f:P.f};
     localStorage.setItem(SAVE_KEY(world.id),JSON.stringify({
-      v:1,rc:world.rcIt||null,stc:world.stc||{},nt:world.nt|0,pt:Math.round(world.pt||0),pe:Math.round(world.pe||0),clock:Math.round(world.clock),removed:rem,brem:brm,ores:world.conv,trader:world.trader,lastTraderDay:world.lastTraderDay,expl:packBits(world.expl),treasureInit:!!world.treasureInit,lmChestInit:world.lmChestInit|0,pirInit:world.pirInit|0,ruinInit:world.ruinInit|0,trClean:world.trClean|0,dunFl:world.dunFl||{},dunBD:world.dunBD|0,fortBD:world.fortBD|0,skyDay:world.skyDay||{},dby:world.discBy||{},gsDay:world.gsDay|0,trains:[...(world.trains||[]),...((typeof P!=='undefined'&&P&&P.train)?[P.train]:[])].slice(0,40).map(T=>({x:T.gx,y:T.gy,dx:T.dx,dy:T.dy,p:Math.round(T.p*100)/100,run:T.run?1:0,it:(T.it||[]).map(q=>q?Object.assign({},q):null)})),herd:animals.filter(a=>a.tame).map(a=>[ANIM_IDX.indexOf(a.type),Math.round(a.hx),Math.round(a.hy),a.baby?1:0,Math.round(a.gt||0)]),disc:world.disc.map(b=>b?'1':'0').join(''),seen:world.seen.map(b=>b?'1':'0').join(''),escaped:!!world.escaped,pilot:world.pilot?1:0,vship:world.voidShip?world.voidShip.x+','+world.voidShip.y:'',voidWon:world.voidWon|0,voidBD:world.voidBD|0,intro:world.introSeen?1:0,bossDay:world.bossDay.join(','),
+      v:1,mg:world.mg||[],rc:world.rcIt||null,stc:world.stc||{},nt:world.nt|0,pt:Math.round(world.pt||0),pe:Math.round(world.pe||0),clock:Math.round(world.clock),removed:rem,brem:brm,ores:world.conv,trader:world.trader,lastTraderDay:world.lastTraderDay,expl:packBits(world.expl),treasureInit:!!world.treasureInit,lmChestInit:world.lmChestInit|0,pirInit:world.pirInit|0,ruinInit:world.ruinInit|0,trClean:world.trClean|0,dunFl:world.dunFl||{},dunBD:world.dunBD|0,fortBD:world.fortBD|0,skyDay:world.skyDay||{},dby:world.discBy||{},gsDay:world.gsDay|0,trains:[...(world.trains||[]),...((typeof P!=='undefined'&&P&&P.train)?[P.train]:[])].slice(0,40).map(T=>({x:T.gx,y:T.gy,dx:T.dx,dy:T.dy,p:Math.round(T.p*100)/100,run:T.run?1:0,it:(T.it||[]).map(q=>q?Object.assign({},q):null)})),herd:animals.filter(a=>a.tame).map(a=>[ANIM_IDX.indexOf(a.type),Math.round(a.hx),Math.round(a.hy),a.baby?1:0,Math.round(a.gt||0)]),disc:world.disc.map(b=>b?'1':'0').join(''),seen:world.seen.map(b=>b?'1':'0').join(''),escaped:!!world.escaped,pilot:world.pilot?1:0,vship:world.voidShip?world.voidShip.x+','+world.voidShip.y:'',voidWon:world.voidWon|0,voidBD:world.voidBD|0,intro:world.introSeen?1:0,bossDay:world.bossDay.join(','),
       beltv:2,
       structs:world.structs.filter(b=>!b.lm).map(b=>Object.assign({id:b.id,gx:b.gx,gy:b.gy},exOf(b))),
       drops:drops.map(d=>({x:Math.round(d.tx),y:Math.round(d.ty),v:d.v,item:d.item||'stick',n:d.n||1,dur:d.dur})),
@@ -4360,6 +4361,7 @@ function applySave(){
   let d=null;try{d=JSON.parse(localStorage.getItem(SAVE_KEY(world.id)));}catch(e){}
   if(!d||d.v!==1)return;
   if(Number.isFinite(d.clock))world.clock=d.clock;
+  world.mg=Array.isArray(d.mg)?d.mg.slice(0,50).map(String):[];
   world.lastTraderDay=d.lastTraderDay|0;
   if(typeof d.expl==='string')unpackBits(d.expl,world.expl);
   world.treasureInit=!!d.treasureInit;world.lmChestInit=d.lmChestInit|0;world.pirInit=d.pirInit|0;world.ruinInit=d.ruinInit|0;world.trClean=d.trClean|0;world.dunFl=(d.dunFl&&typeof d.dunFl==='object')?d.dunFl:{};world.dunBD=d.dunBD|0;world.fortBD=d.fortBD|0;world.skyDay=(d.skyDay&&typeof d.skyDay==='object')?d.skyDay:{};world.gsDay=d.gsDay|0;world.discBy=(d.dby&&typeof d.dby==='object')?d.dby:{};
@@ -4473,8 +4475,11 @@ const bufOn=k=>((P.buf&&P.buf[k])||0)>time;
 const wstat=ti=>({dmg:WDMG[ti.tool][ti.mat]*(bufOn('atk')?1.25:1)*(ti.rune==='fire'?1.3:1),cd:WCD[ti.tool],tool:true,rune:ti.rune||''});
 function weaponStats(){
   const sel=inv[P.sel],st=sel&&toolInfo(sel.id);
-  if(st&&WCD[st.tool])return wstat(st);
-  return {dmg:bufOn('atk')?1.25:1,cd:0.5};
+  let r;
+  if(st&&WCD[st.tool])r=wstat(st);else r={dmg:bufOn('atk')?1.25:1,cd:0.5};
+  const o=sel&&(MOD.st[sel.id]||MOD.st[String(sel.id).split('~')[0]]);
+  if(o){if(o.dmg!=null)r.dmg=o.dmg*(bufOn('atk')?1.25:1);if(o.cd!=null)r.cd=o.cd;}
+  return r;
 }
 /* 철/구리/금 광석: 산 바위가 시간이 지나면 무작위로 광석으로 바뀌어요 (아주 드물게) */
 let oreT=30;
@@ -10001,31 +10006,94 @@ function openAnimalDex(){
 }
 const stObj=()=>(settings.st=settings.st&&typeof settings.st==='object'?settings.st:{});
 /* ---------- 모드 / 리소스팩 (사이트 mods.html 에서 적용한 목록) ---------- */
-const MOD={ev:[],orig:{},on:[]};
+const MOD={ev:[],orig:{},on:[],st:{},remap:{},btns:[]};
 function modLocal(){try{const o=JSON.parse(localStorage.getItem('bf.mods.on')||'{}');return Object.keys(o).slice(0,50).map(id=>({id:String(id).slice(0,40),kind:o[id].kind,name:o[id].name,descr:o[id].descr,author_name:o[id].author_name,data:o[id].data})).filter(m=>m.data&&typeof m.data==='object');}catch(e){return [];}}
+const MOD_KEY=/^(Key[A-Z]|Digit[0-9]|F([1-9]|1[0-2]))$/;
+function modBox(){let b=document.getElementById('modbtns');if(!b){b=document.createElement('div');b.id='modbtns';b.style.cssText='position:fixed;inset:0;z-index:30;pointer-events:none';document.body.appendChild(b);setInterval(()=>{const m=document.getElementById('modal');b.style.display=(mode==='play'&&m&&m.hidden)?'':'none';},400);}return b;}
 function modApply(list){
   for(const k in MOD.orig){if(ITEMS[k])ITEMS[k].name=MOD.orig[k];}
-  MOD.orig={};MOD.ev=[];MOD.on=[];
+  MOD.orig={};MOD.ev=[];MOD.on=[];MOD.st={};MOD.remap={};
+  const bx=document.getElementById('modbtns');if(bx)bx.innerHTML='';
+  const setName=(k,v)=>{if(ITEMS[k]&&typeof v==='string'&&v.length>0&&v.length<=40){if(!(k in MOD.orig))MOD.orig[k]=ITEMS[k].name;ITEMS[k].name=v;}};
   for(const m of (Array.isArray(list)?list:[]).slice(0,50)){
     const d=m&&m.data;if(!d||typeof d!=='object')continue;
-    if(d.names&&typeof d.names==='object'&&!Array.isArray(d.names)){
-      for(const k of Object.keys(d.names).slice(0,500)){const v=d.names[k];
-        if(ITEMS[k]&&typeof v==='string'&&v.length>0&&v.length<=40){if(!(k in MOD.orig))MOD.orig[k]=ITEMS[k].name;ITEMS[k].name=v;}}
-    }
+    if(d.names&&typeof d.names==='object'&&!Array.isArray(d.names))for(const k of Object.keys(d.names).slice(0,500))setName(k,d.names[k]);
+    if(Array.isArray(d.sets))for(const t of d.sets.slice(0,100))modSet(t,setName);
+    if(d.remap&&typeof d.remap==='object'&&!Array.isArray(d.remap))for(const k of Object.keys(d.remap).slice(0,30)){if(MOD_KEY.test(k)&&MOD_KEY.test(d.remap[k]))MOD.remap[k]=d.remap[k];}
     if(Array.isArray(d.events))for(const e of d.events.slice(0,200)){
-      if(e&&typeof e.on==='string'&&Array.isArray(e.do))MOD.ev.push({on:e.on,t:typeof e.target==='string'?e.target:'',do:e.do});
+      if(e&&typeof e.on==='string'&&Array.isArray(e.do))MOD.ev.push({on:e.on,t:typeof e.target==='string'?e.target:'',do:e.do,mid:m.id});
     }
     MOD.on.push(m);
   }
   try{if(typeof renderInv==='function')renderInv();}catch(e){}
 }
+function modSet(t,setName){
+  if(!t||typeof t!=='object'||!ITEMS[t.item])return;
+  const o=MOD.st[t.item]||(MOD.st[t.item]={});
+  if(t.field==='damage'&&typeof t.value==='number')o.dmg=Math.max(0,Math.min(100,t.value));
+  else if(t.field==='speed'&&typeof t.value==='number')o.cd=Math.max(0.05,Math.min(5,t.value));
+  else if(t.field==='name'&&typeof t.value==='string'){(setName||((k,v)=>{if(!(k in MOD.orig))MOD.orig[k]=ITEMS[k].name;ITEMS[k].name=v.slice(0,40);}))(t.item,t.value);}
+}
+function modAnchor(of,gen){if(gen||of==='spawn'||mode!=='play'){const c=world.camp;return {x:c.x+10,y:c.y+7};}return {x:P.x,y:P.y};}
+function modFreeSpot(a,min,max){for(let t=0;t<14;t++){const ang=Math.random()*6.2832,r=min+Math.random()*(max-min),x=a.x+Math.cos(ang)*r,y=a.y+Math.sin(ang)*r;if(inW(x,y)&&walkable(x,y))return {x,y};}return null;}
+function modTitle(text,sec){
+  let el=document.getElementById('modtitle');
+  if(!el){el=document.createElement('div');el.id='modtitle';el.style.cssText='position:fixed;left:0;right:0;top:34%;text-align:center;z-index:31;pointer-events:none;font:700 clamp(26px,6vw,54px)/1.2 Galmuri,monospace;color:#fff;text-shadow:3px 3px 0 #000;transition:opacity .4s;opacity:0';document.body.appendChild(el);}
+  el.textContent=text;el.style.opacity='1';clearTimeout(el._t);el._t=setTimeout(()=>{el.style.opacity='0';},Math.max(1,Math.min(10,sec||3))*1000);
+}
+function modButton(b){
+  if(!b||typeof b.label!=='string'||!Array.isArray(b.do))return;
+  const box=modBox();if(box.children.length>=6)return;
+  if([...box.children].some(x=>x.dataset.l===b.label))return;
+  const pos=['top left','top right','bottom left','bottom right','center'].includes(b.pos)?b.pos:'top right';
+  const el=document.createElement('button');el.className='btn sm';el.dataset.l=b.label;el.textContent=b.label.slice(0,20);
+  const n=box.children.length;
+  const st=el.style;st.position='absolute';st.pointerEvents='auto';
+  const off=10+Math.floor(n/1)*0;
+  if(pos==='center'){st.left='50%';st.top='50%';st.transform='translate(-50%,-50%)';}
+  else{st[pos.startsWith('top')?'top':'bottom']=(48+n*40)+'px';st[pos.endsWith('left')?'left':'right']=off+'px';}
+  el.onclick=e=>{e.stopPropagation();modRun(b.do,0,{n:50});};
+  box.appendChild(el);
+}
+function modInv(id){let n=0;for(const q of inv)if(q&&q.id===id)n+=q.n;for(const q of bag)if(q&&q.id===id)n+=q.n;return n;}
 function modRun(acts,depth,box){
   if(!Array.isArray(acts)||depth>3)return;
   for(const a of acts){
     if(!a||typeof a!=='object'||--box.n<0)return;
+    const host=!isGuest();
     if(a.give&&typeof a.give==='object'){const id=String(a.give.item||''),n=Math.max(1,Math.min(20,a.give.n|0||1));if(ITEMS[id])addStack(id,n);}
     else if(typeof a.say==='string'){chatAdd('mod','MOD',a.say.slice(0,60));}
     else if(typeof a.chance==='number'&&Array.isArray(a.do)){if(Math.random()*100<Math.max(0,Math.min(100,a.chance)))modRun(a.do,depth+1,box);}
+    else if(a.has&&typeof a.has==='object'&&Array.isArray(a.do)){if(ITEMS[a.has.item]&&modInv(a.has.item)>=Math.max(1,a.has.n|0||1))modRun(a.do,depth+1,box);}
+    else if(a.title&&typeof a.title.text==='string'){modTitle(a.title.text.slice(0,60),+a.title.sec||3);}
+    else if(a.button){modButton(a.button);}
+    else if(a.ui&&Array.isArray(a.ui.lines)){const ls=a.ui.lines.slice(0,12).map(x=>'<p>'+esc(String(x).slice(0,80))+'</p>').join('');openModal('<h2>'+esc(String(a.ui.title||'').slice(0,30))+'</h2>'+ls+'<div class="actions"><button class="btn sm" data-close>닫기</button></div>',null,'modui');}
+    else if(a.set){modSet(a.set);}
+    else if(a.tp&&typeof a.tp==='object'){
+      const w=a.tp.who,to=a.tp.to;
+      if(w==='player'){let x,y;if(to==='spawn'){const c=world.camp;x=c.x+10;y=c.y+7;}else if(to&&typeof to==='object'){x=+to.x;y=+to.y;}
+        if(x!=null&&inW(x,y)&&mode==='play'&&!P.air&&!P.sailing){P.x=x;P.y=y;cam.x=P.x-VW/2;cam.y=P.y-VH/2;clampCam();}}
+      else if(host&&MTYPES[w]&&to==='player'&&mode==='play'){let n=0;for(const m of monsters){if(m.ty!==w||n>=20)continue;const sp=modFreeSpot({x:P.x,y:P.y},25,50);if(!sp)continue;m.x=sp.x;m.y=sp.y;m.tx=sp.x;m.ty2=sp.y;n++;}}
+    }
+    else if(a.spawn&&host&&MTYPES[a.spawn.ty]){
+      const ty=a.spawn.ty,T=MTYPES[ty],n=Math.max(1,Math.min(10,a.spawn.n|0||1)),an=modAnchor(a.spawn.near,box.gen);
+      for(let i=0;i<n&&monsters.length<250;i++){const sp=modFreeSpot(an,30,90);if(!sp)continue;monsters.push({id:nextMid++,ty,x:sp.x,y:sp.y,tx:sp.x,ty2:sp.y,f:1,born:0,burn:0,wt:0,wa:0,ws:0,spd:T.wander,hp:T.hp,st:0,wind:0,cd:1,stun:0,hurt:0,kx:0,ky:0});}
+    }
+    else if(a.place&&host&&ITEMS[a.place.item]&&ITEMS[a.place.item].placeable&&STRUCT[a.place.item]){
+      const k=a.place.item,an=modAnchor(a.place.near,box.gen),cx=(an.x/GRID)|0,cy=(an.y/GRID)|0;let done=false;
+      for(let r=2;r<=10&&!done;r++)for(let t=0;t<12&&!done;t++){const gx=cx+Math.round(Math.cos(t*0.52)*r),gy=cy+Math.round(Math.sin(t*0.52)*r);if(canPlaceCell(gx,gy,k,true)){addStruct(k,gx,gy,'host',k);done=true;}}
+    }
+    else if(a.remove&&host&&(a.remove.what==='tree'||a.remove.what==='rock')){
+      const an=modAnchor(a.remove.of,box.gen),R=Math.max(1,Math.min(60,a.remove.r|0||5))*GRID,R2=R*R;
+      for(let yy=an.y-R;yy<=an.y+R+CHK;yy+=CHK/2)for(let xx=an.x-R;xx<=an.x+R+CHK;xx+=CHK/2)ensureObjs(xx,yy);
+      const cx0=Math.max(0,((an.x-R)>>8)-1),cx1=Math.min(CXN-1,((an.x+R)>>8)+1),cy0=Math.max(0,((an.y-R)>>8)-1),cy1=Math.min(CYN-1,((an.y+R)>>8)+1);
+      for(let cy=cy0;cy<=cy1;cy++)for(let cx=cx0;cx<=cx1;cx++){
+        const ci=cy*CXN+cx;
+        if(a.remove.what==='tree'){const T=world.trees,n=TER.tn[ci];if(n>0)for(let j=0;j<n;j++){const k=ci*TMAX+j;if(world.removed[k])continue;const dx=T.x[k]-an.x,dy=T.y[k]-an.y;if(dx*dx+dy*dy<=R2)world.removed[k]=1;}}
+        else{const B=world.boulders,n=TER.bn[ci];if(n>0)for(let j=0;j<n;j++){const k=ci*BMAX+j;if(world.brem[k])continue;const dx=B.x[k]-an.x,dy=B.y[k]-an.y;if(dx*dx+dy*dy<=R2)world.brem[k]=1;}}
+      }
+      try{buildTreeGrid();}catch(e){}
+    }
   }
 }
 function modEvent(on,target){
@@ -10033,9 +10101,38 @@ function modEvent(on,target){
   const box={n:50};
   for(const e of MOD.ev){if(e.on!==on)continue;if(e.t&&e.t!==target)continue;try{modRun(e.do,0,box);}catch(x){}}
 }
+function modGen(){
+  if(isGuest()||!world||!world.id||!MOD.ev.length)return;
+  const done=world.mg||(world.mg=[]);let ran=false;
+  for(const m of MOD.on){
+    if(done.includes(m.id))continue;
+    const evs=MOD.ev.filter(e=>e.mid===m.id&&e.on==='generate');if(!evs.length)continue;
+    for(const e of evs){try{modRun(e.do,0,{n:200,gen:1});}catch(x){}}
+    done.push(m.id);ran=true;
+  }
+  if(ran)saveWorld(true);
+}
+function modKey(e,down){
+  if(e._mod)return;
+  const to=MOD.remap[e.code];
+  if(to){
+    e.stopImmediatePropagation();e.preventDefault();
+    const key=to.startsWith('Key')?to.slice(3).toLowerCase():to.startsWith('Digit')?to.slice(5):to;
+    const ne=new KeyboardEvent(down?'keydown':'keyup',{code:to,key,bubbles:true,cancelable:true,shiftKey:e.shiftKey,ctrlKey:e.ctrlKey,repeat:e.repeat});
+    ne._mod=1;(e.target||document).dispatchEvent(ne);return;
+  }
+  if(down&&!e.repeat&&mode==='play'&&MOD.ev.length){
+    const ae=document.activeElement,tg=ae&&ae.tagName;
+    if(tg==='INPUT'||tg==='TEXTAREA'||tg==='SELECT')return;
+    const m=document.getElementById('modal');if(m&&!m.hidden)return;
+    modEvent('key',e.code);
+  }
+}
+addEventListener('keydown',e=>modKey(e,true),true);
+addEventListener('keyup',e=>modKey(e,false),true);
 function modAsk(list){
   return new Promise(res=>{
-    const rows=list.map(m=>`<li><b>${esc(String(m.name||'').slice(0,40))}</b> <small>${m.kind==='pack'?'리소스팩':'모드'}${m.author_name?' · '+esc(String(m.author_name).slice(0,20)):''}</small></li>`).join('');
+    const rows=list.map(m=>{const d=m.data||{};const km=d.remap&&Object.keys(d.remap).length?' <small>· 키 설정이 바뀌어요</small>':'';return `<li><b>${esc(String(m.name||'').slice(0,40))}</b> <small>${m.kind==='pack'?'리소스팩':'모드'}${m.author_name?' · '+esc(String(m.author_name).slice(0,20)):''}</small>${km}</li>`;}).join('');
     openModal(`<h2>방장이 모드를 켰어요<small>MODS</small></h2><p>이 방은 아래 모드와 리소스팩을 쓰고 있어요. 허용하면 이 방에 있는 동안만 적용돼요.</p><ul class="wlist" style="padding-left:18px">${rows}</ul><div class="actions"><button class="btn sm ghost" data-modno>나가기</button><button class="btn sm" data-modok>허용하고 들어가기</button></div>`,m=>{
       m.querySelector('[data-modok]').onclick=()=>res(true);
       m.querySelector('[data-modno]').onclick=()=>res(false);
@@ -12775,7 +12872,7 @@ function enterPlay(){
   try{bfOwnerFix();}catch(e){}
   loadInvFor(invKey());renderInv();renderEquip();
   {const cw=settings.worlds.find(w=>w.id===settings.current);SANDBOX=!!(cw&&cw.sandbox)&&!isGuest();SBX.fly=false;SBX.tm=1;P.train=null;if(!isGuest())setWopt(cw);}
-  mode='play';document.body.classList.add('playing');keys.clear();
+  mode='play';document.body.classList.add('playing');keys.clear();setTimeout(()=>{try{modEvent('join','');}catch(e){}},400);
   if(!isGuest()&&!world.introSeen){world.introSeen=true;showIntro();}
   const c=world.camp;P.x=c.x+10;P.y=c.y+7;P.f=1;P.walk=0;
   const sp=world.savedPlayer;
