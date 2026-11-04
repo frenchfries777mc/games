@@ -2,6 +2,22 @@
  "notes": [
   {
    "date": "2026-11-04",
+   "build": "v0.5 b175",
+   "title": "업데이트 0.5 · 빌드 175",
+   "items": [
+    "모드 언어 이름은 BeaconScript, 파일 확장자는 .bs예요 (.beaconfall도 받아요)",
+    "월드 만들 때 한 번 실행되는 명령이 생겼어요: on world generate (나무·바위 없애기 remove, 몹 소환 spawn, 구조물 설치 place)",
+    "화면 명령이 생겼어요: title (가운데 글자), chat, button (화면 버튼), ui (작은 창)",
+    "키 명령이 생겼어요: on key \"G\" press (새 키), remap \"E\" to \"R\" (키 바꾸기)",
+    "위치 명령이 생겼어요: teleport (나와 몬스터 옮기기)",
+    "아이템 명령이 생겼어요: set 아이템 damage / speed / name (데미지, 공격 간격, 이름)",
+    "조건 if has N 아이템 과, 월드에 들어갈 때 실행되는 on join이 생겼어요",
+    "모드 페이지에 BeaconScript 문법 도움말이 생겼어요",
+    "방장 모드에 키 변경이 있으면 입장 허용창에서 미리 알려줘요"
+   ]
+  },
+  {
+   "date": "2026-11-04",
    "build": "v0.5 b174",
    "title": "업데이트 0.5 · 빌드 174",
    "items": [

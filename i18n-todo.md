@@ -927,3 +927,6 @@ Stickseum-v0.9.html | SKILLS.magiccard desc 카드 5장 (장당 8 피해) | buil
 
 ## b174
 - 모드·리소스팩 페이지 영어 스크립트 문법 오류 문구, 정보줄(제작자/올린 날), 방 입장 모드 허용창, 패치노트 5줄
+
+## b175
+- BeaconScript 명령(on world generate/join/key, title, button, ui, teleport, spawn, place, remove, set, remap, if has) 도움말과 패치노트 9줄
