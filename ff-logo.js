@@ -6,7 +6,7 @@
 if(window.FFLogo) return;
 if(true) return;      /* 오너 11-02: 사이트에서는 이모지를 로고로 바꾸지 않고 원래 이모지 그대로 보여요 (다시 켜려면 이 줄을 지워요) */
 if(/\/patchnotes\//.test(location.pathname)) return;      /* 패치노트와 공지는 원래 이모지 그대로 */
-var BASE='https://frenchfries777mc.github.io/games/hubicons/emoji/';
+var BASE='https://frenchfries777.com/games/hubicons/emoji/';
 var MAP={'🏠':'house','🏘':'houses','🎣':'fishing','🚀':'rocket','👻':'ghost','📕':'redbook','📷':'camera','⛵':'sailboat','🐣':'chick','🏹':'bow','🚚':'truck','🥇':'gold','🥈':'silver','🥉':'bronze','🐾':'paw','🙋':'raisehand','⚪':'whitedot','🕘':'clock','🍟':'fries','📮':'postbox','🔔':'bell','📝':'memo',
   '🏷':'tag','📋':'list','✏':'pencil','💬':'chat','🏆':'trophy','🪙':'coin','👥':'group','🔍':'search','🎉':'party','💡':'bulb','🗑':'trash','🎁':'gift','🎮':'gamepad','🚪':'door','📅':'calendar','📊':'graph','📢':'megaphone','✅':'okcheck','🔥':'fire','⭐':'star','👤':'person','⚖':'scale','📌':'pin','⏸':'pause','📖':'book','🗡':'dagger','💀':'skull','👁':'eye','👋':'wave','🎭':'mask','💎':'gem',
   '🪪':'idcard','🟡':'yellowdot','🔵':'bluedot','⚫':'blackdot','➕':'plus','🏝':'island','⚙':'gear','👑':'crown','🛠':'tools','🟢':'greendot','🔴':'reddot','🌙':'moon','☀':'sun','🚫':'ban','🚩':'flag','🖼':'picture','🐞':'bug','🔁':'repeat','⬜':'sq_white','⚔':'swords','🛡':'shield','🏃':'runner','🎨':'palette','🔗':'link','🏅':'medal','🔒':'lock','⚡':'bolt'};
