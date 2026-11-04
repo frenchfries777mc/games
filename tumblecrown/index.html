@@ -189,7 +189,7 @@ function draw(d){ND=d;var raw=(d&&Array.isArray(d.notes))?d.notes:[],list=window
  if(!list.length){box.innerHTML=(raw.length&&window.FFPN)?FFPN.none():'<div class="sub2">패치 노트가 아직 없어요.</div>';more.style.display='none';return}
  var all=box.dataset.all==='1'||!!(window.FFPN&&FFPN.q()),sh=all?list:list.slice(0,SH);
  box.innerHTML=sh.map(function(n,i){return '<details class="box"'+(i&&!(window.FFPN&&FFPN.q())?'':' open')+'><summary><b>'+esc(n.title)+'</b><small>'+esc(n.date)+(n.build?' · '+esc(n.build):'')+'</small></summary><ul>'+(n.items||[]).map(function(t){return '<li>'+esc(t)+'</li>'}).join('')+'</ul></details>'}).join('');
- more.style.display=(!all&&list.length>SH)?'':'none';more.onclick=function(){box.dataset.all='1';draw(d)}}
+ more.style.display=(!all&&list.length>SH)?'':'none';more.onclick=function(){location.href='https://frenchfries777.com/patchnotes/#tumblecrown'}}
 fetch('../prototypes/tumblecrown/patchnotes.json',{cache:'no-store'}).then(function(r){return r.ok?r.json():Promise.reject()}).then(draw).catch(function(){});
 })();
 (function(){var t=document.getElementById('topbar');function f(){t.classList.toggle('solid',window.scrollY>60)}addEventListener('scroll',f,{passive:true});f()})();
