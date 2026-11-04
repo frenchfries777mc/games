@@ -5,6 +5,7 @@
 <meta charset="UTF-8">
 <link rel="icon" type="image/svg+xml" href="https://frenchfries777mc.github.io/games/gamelogo/isleport.svg">
 <script src="https://frenchfries777mc.github.io/games/ff-lang.js"></script>
+<script src="../ff-verpick.js?v=2"></script>
 <script src="../ff-pnsearch.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <title>Isleport</title>
@@ -210,6 +211,7 @@ function render(d){
  document.getElementById('heroMeta').textContent=t('meta',{v:latest.version+(latest.build?' build '+latest.build:''),d:latest.date,s:mb(latest.size)||'—'});
  document.getElementById('footVer').textContent=t('foot_v',{v:latest.version+(latest.build?' build '+latest.build:''),d:d.updated||latest.date});
  box.innerHTML=list.map(v=>'<div class="tv box"><div><b class="v">v'+esc(v.version)+'</b>'+(v===latest?'<span class="badge">'+esc(t('v_latest'))+'</span>':'')+'<small>'+esc(v.date)+(v.size?' · '+mb(v.size):'')+'</small></div><p><b style="color:var(--gold)">'+esc(vt(v,'title'))+'</b> — '+esc(vt(v,'summary'))+'</p><div class="go"><a class="pb sm gold" href="'+esc(v.file)+'">'+t('b_play')+'</a><a class="pb sm" href="'+esc(v.file)+'" download="'+esc(v.file.split('/').pop())+'">'+t('b_dl')+'</a></div></div>').join('');
+ if(window.FFVerPick)FFVerPick(box,{keep:1,sel:'.tv'});
 }
 const SHOWN=5;
 function renderNotes(d){

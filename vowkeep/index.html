@@ -4,6 +4,7 @@
 <meta name="copyright" content="© 2026 Frenchfries777. CC BY-NC-ND 4.0 (https://creativecommons.org/licenses/by-nc-nd/4.0/)">
 <meta charset="UTF-8">
 <script src="https://frenchfries777mc.github.io/games/ff-lang.js"></script>
+<script src="../ff-verpick.js?v=2"></script>
 <script src="../ff-pnsearch.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <title>Vowkeep</title>
@@ -197,6 +198,7 @@ function render(d){
  [document.getElementById('playBtn'),document.getElementById('playBtn2')].forEach(a=>a.href=(d.latestFile||latest.file)+(latest.build?'?b='+String(latest.build).replace(/\D/g,''):''));
   document.getElementById('footVer').textContent=t('foot_v',{v:ver,d:d.updated||latest.date});
  box.innerHTML=list.map(v=>'<div class="tv box"><div class="vn"><b class="v">v'+esc(v.version)+'</b>'+(v===latest?'<span class="badge">'+esc(t('v_latest'))+'</span>':'')+'<small>'+esc(t('v_build',{b:v.build?'b'+v.build:'—',d:v.date}))+'</small></div><p><b style="color:var(--gold)">'+esc(vt(v,'title'))+'</b> — '+esc(vt(v,'summary'))+'</p><div class="go"><a class="pb sm gold" href="'+esc(v.file)+'" target="_blank" rel="noopener">'+t('b_play')+'</a></div></div>').join('');
+ if(window.FFVerPick)FFVerPick(box,{keep:1,sel:'.tv'});
 }
 const SHOWN=5;
 function renderNotes(d){
