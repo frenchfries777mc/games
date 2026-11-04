@@ -67,6 +67,9 @@ input.q{width:100%;padding:10px 12px;border:3px solid var(--gold);background:var
 .msg{margin:8px 0 0;font-size:13px;color:var(--gold)}
 .msg.err{color:#ffb0b0}
 .empty{padding:22px;text-align:center;opacity:.8}
+details.help{margin:0 0 12px;border:2px solid #e9d9a444;background:var(--panel);padding:8px 12px}
+details.help summary{cursor:pointer;color:var(--gold)}
+details.help pre{margin:8px 0 0;font:12px/1.5 monospace;color:var(--cream);white-space:pre-wrap;overflow:auto}
 footer{padding:40px 0 30px;color:var(--gold);font-size:12px;text-shadow:2px 2px 0 #000}
 @media(max-width:560px){.mrow{flex-wrap:wrap}.mrow .act{width:100%}.mrow .act .pb{flex:1}}
 </style>
@@ -88,6 +91,31 @@ footer{padding:40px 0 30px;color:var(--gold);font-size:12px;text-shadow:2px 2px 
   <button class="pb" id="upb" style="margin-left:auto">＋ 올리기</button>
  </div>
  <input class="q" id="q" autocomplete="off" placeholder="이름, 설명, 올린 사람으로 찾기">
+ <details class="help"><summary>BeaconScript 문법 보기</summary><pre>mod "My mod"            # 이름 (resource pack "..." 도 돼요)
+
+on world generate:      # 월드를 처음 만들 때 한 번
+    remove tree in 20 blocks of spawn
+    spawn wolf 5 times near spawn
+    place bench near spawn
+on join:                # 월드에 들어갈 때
+    title "Welcome!" for 3 seconds
+    button "Shop" at top right:
+        give 2 iron
+on key "G" press:
+    teleport player to spawn
+on mine stone:          # chop, kill wolf, craft, fish, place, die
+    chance 30%:
+        give 1 iron
+        chat "Lucky!"
+    if has 5 iron:
+        teleport wolf to player
+
+set sword_iron damage 12
+set sword_iron speed 0.4
+set sword_iron name "Big Sword"
+remap "E" to "R"
+rename:
+    log = "나무"</pre></details>
  <div class="row cats" id="cats"></div>
  <div class="cnt" id="cnt"></div>
  <div id="list"></div>
@@ -100,8 +128,8 @@ footer{padding:40px 0 30px;color:var(--gold);font-size:12px;text-shadow:2px 2px 
  <label>이름 (최대 40자)</label><input id="un" maxlength="40">
  <label>설명 (최대 120자)</label><input id="ud" maxlength="120">
  <label>분류</label><select id="uc"></select>
- <label>내용 (영어 스크립트 또는 JSON, 파일 고르기도 돼요)</label>
- <input type="file" id="uf" accept=".json,application/json">
+ <label>내용 (BeaconScript 또는 JSON · .bs 파일도 돼요)</label>
+ <input type="file" id="uf" accept=".bs,.beaconfall,.json,.txt,application/json,text/plain">
  <textarea id="uj" spellcheck="false" placeholder='mod "Iron from stone"&#10;&#10;on mine stone:&#10;    give 1 iron&#10;&#10;on kill wolf:&#10;    chance 30%:&#10;        give 2 iron&#10;        say "Lucky!"'></textarea>
  <div class="msg" id="um"></div>
  <div class="row" style="margin-top:12px"><button class="pb" id="us">올리기</button></div>
@@ -190,67 +218,95 @@ function lev(a,b){var d=[],i,j;for(i=0;i<=a.length;i++){d[i]=[i];}for(j=1;j<=b.l
 function guess(w,list){var best='',bd=3;list.forEach(function(x){var d=lev(w.toLowerCase(),x.toLowerCase());if(d<bd){bd=d;best=x;}});return best;}
 function itemId(w){if(ITEMN[w])return w;var k=NAME2ID[w.replace(/\s+/g,'')];return k||'';}
 function PE(n,m){var e=new Error('line '+n+': '+m);e.script=1;return e;}
+var POS=['top left','top right','bottom left','bottom right','center'];
+function keyCode(w){var u=String(w).toUpperCase();if(/^[A-Z]$/.test(u))return 'Key'+u;if(/^[0-9]$/.test(u))return 'Digit'+u;if(/^F([1-9]|1[0-2])$/.test(u))return u;return '';}
 function parseScript(text){
   var raw=String(text).replace(/\r/g,'').split('\n'),L=[],i;
   for(i=0;i<raw.length;i++){var t=raw[i];if(/^\s*(#|$)/.test(t))continue;var m=t.match(/^[ \t]*/)[0].replace(/\t/g,'    ').length;L.push({n:i+1,ind:m,t:t.trim()});}
-  var pos=0,out={kind:'mod',name:'',events:[],names:null};
-  function block(ind,depth,top){
+  var pos=0,out={kind:'mod',name:'',events:[],names:null,sets:[],remap:null};
+  function item(l,w){var id=itemId(w);if(!id){var g=guess(w,Object.keys(ITEMN).concat(Object.keys(ITEMN).map(function(k){return ITEMN[k];})));throw PE(l.n,"unknown item '"+w+"'."+(g?" Did you mean '"+g+"'?":''));}return id;}
+  function mon(l,w){w=w.toLowerCase();if(MONS.indexOf(w)<0){var g=guess(w,MONS);throw PE(l.n,"unknown monster '"+w+"'."+(g?" Did you mean '"+g+"'?":''));}return w;}
+  function sub(l,depth){if(depth>=3)throw PE(l.n,'blocks are nested too deep');if(!(pos<L.length&&L[pos].ind>l.ind))throw PE(l.n,'nothing is written under this line');return block(L[pos].ind,depth+1);}
+  function setStmt(l,m){
+    var id=item(l,m[1].trim()),f=m[2].toLowerCase(),v=m[3].trim();
+    if(f==='name'){var q=v.match(/^"([^"]{1,40})"$/);if(!q)throw PE(l.n,'write the name in quotes, like  set sword_iron name "Big Sword"');return {item:id,field:'name',value:q[1]};}
+    var num=parseFloat(v);if(!isFinite(num))throw PE(l.n,'the '+f+' must be a number');
+    if(f==='damage'&&(num<0||num>100))throw PE(l.n,'damage must be 0 to 100');
+    if(f==='speed'&&(num<0.05||num>5))throw PE(l.n,'speed must be 0.05 to 5 (seconds between attacks)');
+    return {item:id,field:f,value:num};
+  }
+  function block(ind,depth){
     var acts=[];
     while(pos<L.length&&L[pos].ind>=ind){
       var l=L[pos];
       if(l.ind>ind)throw PE(l.n,'indent does not match the line above');
       pos++;var m;
       if(m=l.t.match(/^give\s+(?:(\d+)\s+)?(.+)$/i)){
-        var n=m[1]?+m[1]:1,w=m[2].trim();if(n<1||n>20)throw PE(l.n,'give amount must be 1 to 20');
-        var id=itemId(w);if(!id){var g=guess(w,Object.keys(ITEMN).concat(Object.keys(ITEMN).map(function(k){return ITEMN[k];})));throw PE(l.n,"unknown item '"+w+"'."+(g?" Did you mean '"+g+"'?":''));}
-        acts.push({give:{item:id,n:n}});
-      }else if(m=l.t.match(/^say\s+"([^"]{1,60})"$/i)){acts.push({say:m[1]});}
+        var n=m[1]?+m[1]:1;if(n<1||n>20)throw PE(l.n,'give amount must be 1 to 20');
+        acts.push({give:{item:item(l,m[2].trim()),n:n}});
+      }else if(m=l.t.match(/^(?:say|chat)\s+"([^"]{1,60})"$/i)){acts.push({say:m[1]});}
+      else if(m=l.t.match(/^title\s+"([^"]{1,60})"(?:\s+for\s+(\d+)\s+seconds?)?$/i)){var sec=m[2]?+m[2]:3;if(sec<1||sec>10)throw PE(l.n,'title seconds must be 1 to 10');acts.push({title:{text:m[1],sec:sec}});}
       else if(m=l.t.match(/^chance\s+(\d{1,3})\s*%\s*:$/i)){
         if(+m[1]>100)throw PE(l.n,'chance must be 0 to 100%');
-        if(depth>=3)throw PE(l.n,'blocks are nested too deep');
+        acts.push({chance:+m[1],do:sub(l,depth)});
+      }else if(m=l.t.match(/^if\s+has\s+(?:(\d+)\s+)?(.+?)\s*:$/i)){
+        acts.push({has:{item:item(l,m[2].trim()),n:m[1]?+m[1]:1},do:sub(l,depth)});
+      }else if(m=l.t.match(/^teleport\s+player\s+to\s+spawn$/i)){acts.push({tp:{who:'player',to:'spawn'}});}
+      else if(m=l.t.match(/^teleport\s+player\s+to\s+(-?\d+)\s+(-?\d+)$/i)){acts.push({tp:{who:'player',to:{x:+m[1],y:+m[2]}}});}
+      else if(m=l.t.match(/^teleport\s+(\w+)\s+to\s+player$/i)){acts.push({tp:{who:mon(l,m[1]),to:'player'}});}
+      else if(m=l.t.match(/^spawn\s+(\w+)(?:\s+(\d+)\s+times?)?(?:\s+near\s+(spawn|player))?$/i)){var c=m[2]?+m[2]:1;if(c<1||c>10)throw PE(l.n,'spawn count must be 1 to 10');var sp={ty:mon(l,m[1]),n:c};if(m[3])sp.near=m[3].toLowerCase();acts.push({spawn:sp});}
+      else if(m=l.t.match(/^place\s+(.+?)\s+near\s+(spawn|player)$/i)){acts.push({place:{item:item(l,m[1].trim()),near:m[2].toLowerCase()}});}
+      else if(m=l.t.match(/^remove\s+(tree|rock)s?\s+in\s+(\d+)\s+blocks?\s+of\s+(spawn|player)$/i)){var r=+m[2];if(r<1||r>60)throw PE(l.n,'range must be 1 to 60 blocks');acts.push({remove:{what:m[1].toLowerCase(),r:r,of:m[3].toLowerCase()}});}
+      else if(m=l.t.match(/^button\s+"([^"]{1,20})"(?:\s+at\s+([a-z ]+?))?\s*:$/i)){var ps=m[2]?m[2].toLowerCase().trim():'top right';if(POS.indexOf(ps)<0)throw PE(l.n,"unknown position '"+ps+"'. You can use: "+POS.join(', '));acts.push({button:{label:m[1],pos:ps,do:sub(l,depth)}});}
+      else if(m=l.t.match(/^ui\s+"([^"]{1,30})"\s*:$/i)){
         if(!(pos<L.length&&L[pos].ind>l.ind))throw PE(l.n,'nothing is written under this line');
-        acts.push({chance:+m[1],do:block(L[pos].ind,depth+1)});
-      }else throw PE(l.n,"I don't understand '"+l.t.split(' ')[0]+"'. You can use: give, say, chance");
+        var ui=L[pos].ind,lines=[];
+        while(pos<L.length&&L[pos].ind>=ui){var t2=L[pos++],q=t2.t.match(/^text\s+"([^"]{1,80})"$/i);if(!q)throw PE(t2.n,'inside ui, write  text "..."');lines.push(q[1]);}
+        if(lines.length>12)throw PE(l.n,'ui can have 12 lines');acts.push({ui:{title:m[1],lines:lines}});
+      }else if(m=l.t.match(/^set\s+(\S+)\s+(damage|speed|name)\s+(.+)$/i)){acts.push({set:setStmt(l,m)});}
+      else throw PE(l.n,"I don't understand '"+l.t.split(' ')[0]+"'. You can use: give, say, chat, title, chance, if, teleport, spawn, place, remove, button, ui, set");
     }
     return acts;
   }
-  var hdr=false;
   while(pos<L.length){
     var l=L[pos],m;
     if(l.ind!==0)throw PE(l.n,'this line should not be indented');
     pos++;
-    if(m=l.t.match(/^(mod|resource\s*pack|pack)\s+"([^"]{1,40})"$/i)){out.kind=/mod/i.test(m[1])?'mod':'pack';out.name=m[2];hdr=true;}
+    if(m=l.t.match(/^(mod|resource\s*pack|pack)\s+"([^"]{1,40})"$/i)){out.kind=/mod/i.test(m[1])?'mod':'pack';out.name=m[2];}
+    else if(m=l.t.match(/^on\s+world\s+generate\s*:$/i)){out.events.push({on:'generate',do:sub(l,0)});}
+    else if(m=l.t.match(/^on\s+join\s*:$/i)){out.events.push({on:'join',do:sub(l,0)});}
+    else if(m=l.t.match(/^on\s+key\s+"([^"]+)"\s+press\s*:$/i)){var kc=keyCode(m[1]);if(!kc)throw PE(l.n,"unknown key '"+m[1]+"'. Use A-Z, 0-9 or F1-F12");out.events.push({on:'key',target:kc,do:sub(l,0)});}
     else if(m=l.t.match(/^on\s+(\w+)(?:\s+(\w+))?\s*:$/i)){
-      var ev=EVS[m[1].toLowerCase()];if(!ev){var g=guess(m[1],Object.keys(EVS));throw PE(l.n,"unknown event '"+m[1]+"'."+(g?" Did you mean '"+g+"'?":" You can use: mine, chop, kill, craft, fish, place, die"));}
+      var ev=EVS[m[1].toLowerCase()];if(!ev){var g=guess(m[1],Object.keys(EVS).concat(['join']));throw PE(l.n,"unknown event '"+m[1]+"'."+(g?" Did you mean '"+g+"'?":" You can use: world generate, join, key, mine, chop, kill, craft, fish, place, die"));}
       var tg=m[2]?m[2].toLowerCase():'';
-      if(tg){if(ev==='kill'){if(MONS.indexOf(tg)<0){var g2=guess(tg,MONS);throw PE(l.n,"unknown monster '"+tg+"'."+(g2?" Did you mean '"+g2+"'?":''));}}
+      if(tg){if(ev==='kill'){tg=mon(l,tg);}
         else if(ev==='mine'&&(tg==='stone'||tg==='rock')){tg='';}
         else if(ev==='chop'&&(tg==='tree'||tg==='wood')){tg='';}
         else throw PE(l.n,"'"+ev+"' does not take '"+m[2]+"'");}
-      if(!(pos<L.length&&L[pos].ind>0))throw PE(l.n,'nothing is written under this line');
-      var body=block(L[pos].ind,0);
-      var o={on:ev,do:body};if(tg)o.target=tg;out.events.push(o);
+      var o={on:ev,do:sub(l,0)};if(tg)o.target=tg;out.events.push(o);
     }else if(/^rename\s*:$/i.test(l.t)){
       if(!(pos<L.length&&L[pos].ind>0))throw PE(l.n,'nothing is written under this line');
       var ind2=L[pos].ind;out.names=out.names||{};
       while(pos<L.length&&L[pos].ind>=ind2){
-        var r=L[pos++],mm=r.t.match(/^(.+?)\s*=\s*"([^"]{1,40})"$/);
-        if(!mm)throw PE(r.n,'write it like  wood = "새 이름"');
-        var id2=itemId(mm[1].trim());if(!id2){var g3=guess(mm[1].trim(),Object.keys(ITEMN));throw PE(r.n,"unknown item '"+mm[1].trim()+"'."+(g3?" Did you mean '"+g3+"'?":''));}
-        out.names[id2]=mm[2];
+        var r2=L[pos++],mm=r2.t.match(/^(.+?)\s*=\s*"([^"]{1,40})"$/);
+        if(!mm)throw PE(r2.n,'write it like  log = "나무"');
+        out.names[item(r2,mm[1].trim())]=mm[2];
       }
-    }else throw PE(l.n,"I don't understand '"+l.t.split(' ')[0]+"'. Start a line with: mod, resource pack, on, rename");
+    }else if(m=l.t.match(/^set\s+(\S+)\s+(damage|speed|name)\s+(.+)$/i)){out.sets.push(setStmt(l,m));}
+    else if(m=l.t.match(/^remap\s+"([^"]+)"\s+to\s+"([^"]+)"$/i)){var k1=keyCode(m[1]),k2=keyCode(m[2]);if(!k1||!k2)throw PE(l.n,'keys must be A-Z, 0-9 or F1-F12');out.remap=out.remap||{};out.remap[k1]=k2;}
+    else throw PE(l.n,"I don't understand '"+l.t.split(' ')[0]+"'. Start a line with: mod, resource pack, on, rename, set, remap");
   }
-  var data={};if(out.events.length)data.events=out.events;if(out.names)data.names=out.names;
-  if(!data.events&&!data.names)throw PE(1,'nothing to upload: add an "on ...:" or "rename:" block');
+  var data={};if(out.events.length)data.events=out.events;if(out.names)data.names=out.names;if(out.sets.length)data.sets=out.sets;if(out.remap)data.remap=out.remap;
+  if(!Object.keys(data).length)throw PE(1,'nothing to upload: add an "on ...:" block, "rename:", "set ..." or "remap ..."');
   return {kind:out.name?out.kind:null,name:out.name,data:data};
 }
-
 function check(kind,d){
   if(!d||typeof d!=='object'||Array.isArray(d))return 'JSON 안쪽이 { } 모양이어야 해요.';
   if(kind==='mod'){
     if(d.names&&(typeof d.names!=='object'||Array.isArray(d.names)))return '"names"는 { "아이템": "새 이름" } 모양이어야 해요.';
-    if(!d.names&&(!Array.isArray(d.events)||!d.events.length))return '모드는 "events" 목록이나 "names" 중 하나는 있어야 해요.';
+    if(d.sets&&(!Array.isArray(d.sets)||d.sets.length>100))return '"sets"는 100개까지예요.';
+    if(d.remap&&(typeof d.remap!=='object'||Array.isArray(d.remap)||Object.keys(d.remap).length>30))return '"remap"은 30개까지예요.';
+    if(!d.names&&!d.sets&&!d.remap&&(!Array.isArray(d.events)||!d.events.length))return '모드에는 규칙(on), 이름 바꾸기, set, remap 중 하나는 있어야 해요.';
     if(!d.events)return '';
     if(d.events.length>200)return '이벤트는 200개까지예요.';
     for(var i=0;i<d.events.length;i++){var ev=d.events[i];if(!ev||typeof ev.on!=='string'||!Array.isArray(ev.do)||!ev.do.length)return (i+1)+'번째 이벤트에 "on"(문자열)과 "do"(목록)가 필요해요.';if(ev.do.length>20)return (i+1)+'번째 이벤트의 "do"는 20개까지예요.';}
