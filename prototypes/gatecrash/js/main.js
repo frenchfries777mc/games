@@ -47,7 +47,7 @@ function paintWho() {
 let ffMarked = '';
 function ffProfile() {
   if (window.FFProfile) return Promise.resolve(true);
-  return new Promise(res => { const s = document.createElement('script'); s.src = 'https://frenchfries777mc.github.io/games/ff-profile.js?v=20261103e'; s.onload = () => res(!!window.FFProfile); s.onerror = () => res(false); document.head.appendChild(s); });
+  return new Promise(res => { const s = document.createElement('script'); s.src = 'https://frenchfries777.com/games/ff-profile.js?v=20261103e'; s.onload = () => res(!!window.FFProfile); s.onerror = () => res(false); document.head.appendChild(s); });
 }
 async function ffSync() {
   try {

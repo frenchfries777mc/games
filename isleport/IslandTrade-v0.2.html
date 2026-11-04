@@ -3,8 +3,8 @@
 <html lang="ko">
 <head><style id="ffTap">#ffpModal .dc,#ffpModal .hn{display:none!important}html,body{touch-action:manipulation}</style>
 <meta charset="utf-8">
-<link rel="icon" type="image/svg+xml" href="https://frenchfries777mc.github.io/games/gamelogo/isleport.svg">
-<script src="https://frenchfries777mc.github.io/games/ff-lang.js"></script>
+<link rel="icon" type="image/svg+xml" href="https://frenchfries777.com/games/gamelogo/isleport.svg">
+<script src="https://frenchfries777.com/games/ff-lang.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <title>Isleport</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -168,7 +168,7 @@ frame();
 function go(){if(done)return;done=1;clearTimeout(T1);fin();el.classList.add('out');setTimeout(function(){run=false;el.remove();},800);}
 function arm(){clearTimeout(T1);T1=setTimeout(go,Math.max(0,8900-(Date.now()-tt)));}arm();
 /* 인트로 곡(스틱세움 인트로 곡, 5초): 인트로와 함께 시작하고, 끝나면 게임 음악이 이어진다. 컴퓨터 브라우저가 소리를 막으면 인트로가 멈춘 채 화면을 누를 때까지 기다린다 */
-function sting(){if(window.__introSongDone)return;try{var vol=0.4;try{var v=(function(){var s=JSON.parse(localStorage.getItem('islandtrade.set'));return s&&typeof s.vol==='number'?s.vol:.6;})();if(v>=0&&v<=1)vol=v;}catch(e){}try{if((function(){var s=JSON.parse(localStorage.getItem('islandtrade.set'));return !!s&&s.mus===false;})()){window.__introSongDone=1;return;}}catch(e){}var a=new Audio('isleport-intro.mp3'),alt=0;a.volume=Math.min(1,vol*0.9);a.onerror=function(){if(!alt){alt=1;a.src='https://frenchfries777mc.github.io/games/isleport/isleport-intro.mp3';a.load();var q=a.play();if(q&&q.catch)q.catch(function(){});}else fin();};a.addEventListener('ended',fin);a.addEventListener('playing',function(){setTimeout(fin,5300);},{once:true});function hold(){if(held||done)return;held=1;clearTimeout(T1);el.classList.add('hold');var h=document.createElement('div');h.id='introHold';h.textContent=IT({ko:'화면을 누르면 시작해요',en:'Tap the screen to start',ja:'画面をタップしてスタート',es:'Toca la pantalla para empezar',fr:'Touchez l’écran pour commencer',de:'Tippe auf den Bildschirm, um zu starten',zh:'点击屏幕开始',pt:'Toque na tela para começar',ru:'Коснитесь экрана, чтобы начать',tr:'Başlamak için ekrana dokunun',it:'Tocca lo schermo per iniziare',pl:'Dotknij ekranu, aby zacząć',ar:'المس الشاشة للبدء',nw:'Touch telescreen to start',gk:'수도꼭지 그 칸막이 에게 시작하다'});el.appendChild(h);var go2=function(){if(!held)return;held=0;['pointerdown','keydown','touchend','click'].forEach(function(ev){removeEventListener(ev,go2,true);});h.remove();el.classList.remove('hold');t0=performance.now();tt=Date.now();arm();var r=a.play();if(r&&r.catch)r.catch(function(){});};['pointerdown','keydown','touchend','click'].forEach(function(ev){addEventListener(ev,go2,true);});}var p=a.play();if(p&&p.catch)p.catch(function(e){if(e&&e.name==='NotAllowedError')hold();});}catch(e){window.__introSongDone=1;}}
+function sting(){if(window.__introSongDone)return;try{var vol=0.4;try{var v=(function(){var s=JSON.parse(localStorage.getItem('islandtrade.set'));return s&&typeof s.vol==='number'?s.vol:.6;})();if(v>=0&&v<=1)vol=v;}catch(e){}try{if((function(){var s=JSON.parse(localStorage.getItem('islandtrade.set'));return !!s&&s.mus===false;})()){window.__introSongDone=1;return;}}catch(e){}var a=new Audio('isleport-intro.mp3'),alt=0;a.volume=Math.min(1,vol*0.9);a.onerror=function(){if(!alt){alt=1;a.src='https://frenchfries777.com/games/isleport/isleport-intro.mp3';a.load();var q=a.play();if(q&&q.catch)q.catch(function(){});}else fin();};a.addEventListener('ended',fin);a.addEventListener('playing',function(){setTimeout(fin,5300);},{once:true});function hold(){if(held||done)return;held=1;clearTimeout(T1);el.classList.add('hold');var h=document.createElement('div');h.id='introHold';h.textContent=IT({ko:'화면을 누르면 시작해요',en:'Tap the screen to start',ja:'画面をタップしてスタート',es:'Toca la pantalla para empezar',fr:'Touchez l’écran pour commencer',de:'Tippe auf den Bildschirm, um zu starten',zh:'点击屏幕开始',pt:'Toque na tela para começar',ru:'Коснитесь экрана, чтобы начать',tr:'Başlamak için ekrana dokunun',it:'Tocca lo schermo per iniziare',pl:'Dotknij ekranu, aby zacząć',ar:'المس الشاشة للبدء',nw:'Touch telescreen to start',gk:'수도꼭지 그 칸막이 에게 시작하다'});el.appendChild(h);var go2=function(){if(!held)return;held=0;['pointerdown','keydown','touchend','click'].forEach(function(ev){removeEventListener(ev,go2,true);});h.remove();el.classList.remove('hold');t0=performance.now();tt=Date.now();arm();var r=a.play();if(r&&r.catch)r.catch(function(){});};['pointerdown','keydown','touchend','click'].forEach(function(ev){addEventListener(ev,go2,true);});}var p=a.play();if(p&&p.catch)p.catch(function(e){if(e&&e.name==='NotAllowedError')hold();});}catch(e){window.__introSongDone=1;}}
 sting();})();</script>
 <div id="app">
   <div id="main"><div id="stage"><canvas id="cv"></canvas><div id="hud"></div><div id="tut" hidden></div><div id="pop" hidden></div><div id="joy" hidden><i></i></div><button id="actBtn" class="pb big gold" data-act="act" hidden></button></div></div>
@@ -179,7 +179,7 @@ sting();})();</script>
 <canvas id="fx"></canvas>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/peerjs/1.5.2/peerjs.min.js" async></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
-<script src="https://frenchfries777mc.github.io/games/ff-profile.js"></script>
+<script src="https://frenchfries777.com/games/ff-profile.js"></script>
 <script>
 'use strict';
 const $=id=>document.getElementById(id);
@@ -191,7 +191,7 @@ const VIRT={nw:1,gk:1},VLABEL={ko:'가상 언어',en:'Fictional languages',es:'I
 const auOn=()=>{try{return !!(window.FFLang&&FFLang.script&&FFLang.script());}catch(e){return false;}};
 const langOpts=()=>LANGS.filter(l=>!VIRT[l]).map(l=>`<option value="${l}" ${l===LANG&&!auOn()?'selected':''}>${LANGN[l]}</option>`).join('')+`<optgroup label="${VLABEL[LANG]||VLABEL.en}">`+LANGS.filter(l=>VIRT[l]).map(l=>`<option value="${l}" ${l===LANG?'selected':''}>${LANGN[l]}</option>`).join('')+`<option value="au" style="font-family:'FF Aurebesh',system-ui" ${auOn()&&FFLang.script()==='au'?'selected':''}>Aurebesh</option><option value="sg" style="font-family:'FF Galactic',system-ui" ${auOn()&&FFLang.script()==='sg'?'selected':''}>Standard Galactic</option><option value="em" ${auOn()&&FFLang.script()==='em'?'selected':''}>😀💬</option></optgroup>`;
 let LANG='ko';
-const EMO_URL='https://frenchfries777mc.github.io/games/hubicons/emoji/';
+const EMO_URL='https://frenchfries777.com/games/hubicons/emoji/';
 const EI=(n,ch)=>`<img class="ffe" src="${EMO_URL}isleport-emoji-${n}.svg" alt="${ch}" onerror="this.replaceWith(this.alt)">`;
 const EN={};
 function P(ko,en){EN[ko]=en;return [ko,en];}
@@ -1891,7 +1891,7 @@ function musicTick(){if(!AU.mus||!AU.ctx||AU.ctx.state!=='running'||!S)return;co
     else if(rnd()<.8)tone(note(deg+Math.floor(rnd()*7),sn===1?1:0),t,beat*1.4,'triangle',.1,AU.mg);
     AU.next+=beat;AU.step++;}}
 /* 음악 파일: 게임 옆의 mp3 곡들을 불러와 차례로 이어서 틀어요 (게임 파일을 작게 두려고 따로 둬요). 첫 곡을 못 불러오면 위의 만들어 내는 음악으로 대신해요 */
-const MFILES=['isleport-music.mp3?v=11','isleport-music2.mp3?v=12','isleport-music3.mp3?v=13','isleport-music4.mp3?v=14','isleport-music5.mp3?v=15','isleport-music6.mp3?v=16','isleport-music7.mp3?v=17'],MALT='https://frenchfries777mc.github.io/games/isleport/';
+const MFILES=['isleport-music.mp3?v=11','isleport-music2.mp3?v=12','isleport-music3.mp3?v=13','isleport-music4.mp3?v=14','isleport-music5.mp3?v=15','isleport-music6.mp3?v=16','isleport-music7.mp3?v=17'],MALT='https://frenchfries777.com/games/isleport/';
 AU.file={st:0,bufs:[],i:-1,tend:0};
 function musicLoad(k){const get=u=>fetch(u).then(r=>{if(!r.ok)throw new Error(r.status);return r.arrayBuffer();});
   return get(MFILES[k]).catch(()=>get(MALT+MFILES[k])).then(ab=>new Promise((ok,no)=>AU.ctx.decodeAudioData(ab,ok,no))).then(buf=>{AU.file.bufs[k]=buf;});}
@@ -3405,7 +3405,7 @@ MODS.settings=()=>`<h2>${T('설정','Settings')}</h2>
 $('mbody').addEventListener('input',e=>{if(e.target.id==='setLang'){setLang(e.target.value);applyStatic();renderModal();}if(e.target.id==='setVol')setVol(e.target.value/100);});
 ACT.exitGame=()=>{try{if(S)save();}catch(e){}try{window.close();}catch(e){}setTimeout(()=>{if(!window.closed&&document.visibilityState!=='hidden')openModal('exitfail');},500);};
 MODS.exitfail=()=>`<h2>${T('창을 닫지 못했어요','Could not close the window')}</h2><div class="muted">${T('저장은 끝났어요. 브라우저에서 이 탭을 직접 닫아 주세요. 사이트에서 새 창으로 연 게임만 나가기로 닫을 수 있어요.','Your game is saved. Please close this tab yourself. Only games opened in a new window from the site can be closed with Exit.')}</div><div class="btns" style="margin-top:10px"><button class="pb sm gold" data-act="toSite">${T('사이트로 가기','Go to the site')}</button></div>`;
-ACT.toSite=()=>{location.href='https://frenchfries777mc.github.io/games/';};
+ACT.toSite=()=>{location.href='https://frenchfries777.com/games/';};
 ACT.topt=()=>{const l=!perf().low;FFPerf&&FFPerf.set({low:l,fx:l?'low':'high',fps:l?30:0});renderModal();};ACT.pfx=a=>{FFPerf&&FFPerf.set({fx:a});renderModal();};ACT.pfps=a=>{FFPerf&&FFPerf.set({fps:+a});renderModal();};ACT.tsfx=()=>{AU.sfx=!AU.sfx;saveSet();renderModal();};ACT.tmus=()=>{AU.mus=!AU.mus;saveSet();if(AU.mus)musicStart();renderModal();};
 ACT.saveExp=()=>{save();try{$('saveTxt').value=btoa(unescape(encodeURIComponent(JSON.stringify({S,DEM,EV,PROJ}))));$('saveTxt').select();}catch(e){}};
 ACT.saveImp=()=>{try{const t=JSON.parse(decodeURIComponent(escape(atob($('saveTxt').value.trim()))));if(!t.S||t.S.v!==2)throw 0;migrate(t.S);S=t.S;DEM=t.DEM;EV=t.EV||[];CO=t.CO||freshCO();PROJ=t.PROJ||freshProj();save();toast(T('불러왔어요','Imported'));closeModal();renderSide(true);}catch(e){toast(T('저장 글자가 올바르지 않아요','Invalid save text'));}};

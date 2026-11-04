@@ -1,6 +1,6 @@
 /* 스플래시 문구: 허브 세 사이트(games, educations, tools)의 큰 제목 첫 줄 끝에 30도 기울어진 노란 문구를 한 줄 띄워요.
    들어올 때마다 무작위로 하나. 사이트 언어(FFLang)에 맞는 문구만 고르고, 한국어 전용 문구는 한국어일 때만 나와요.
-   각 사이트가 <script src="https://frenchfries777mc.github.io/games/ff-splash.js" defer></script> 로 불러요. */
+   각 사이트가 <script src="https://frenchfries777.com/games/ff-splash.js" defer></script> 로 불러요. */
 (function(){
 var L=['ko','en','es','fr','de','ja','zh','pt','ru','tr','it','pl','ar','nw','gk'];
 /* 번역기 한국어 (gk): the Korean lines in stiff machine-translation style */

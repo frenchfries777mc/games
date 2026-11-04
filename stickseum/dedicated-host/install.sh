@@ -1,9 +1,9 @@
 #!/bin/bash
 # Stickseum 전용 방장 설치 (Oracle Cloud Ubuntu 22.04 ARM 서버에서 한 번만 실행)
-#   curl -fsSLo install.sh https://frenchfries777mc.github.io/games/stickseum/dedicated-host/install.sh && bash install.sh
+#   curl -fsSLo install.sh https://frenchfries777.com/games/stickseum/dedicated-host/install.sh && bash install.sh
 # 다시 실행해도 괜찮아요 (프로그램만 새로 받고 설정은 다시 물어봐요).
 set -e
-BASE="https://frenchfries777mc.github.io/games/stickseum/dedicated-host"
+BASE="https://frenchfries777.com/games/stickseum/dedicated-host"
 PW_VER="1.56.1"
 
 echo "== 1/6 기본 프로그램 설치 =="

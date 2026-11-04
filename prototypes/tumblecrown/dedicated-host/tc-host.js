@@ -4,7 +4,7 @@
    경기가 끝나거나 오류가 나면 스스로 새 방을 다시 열어요 (그때 새 빌드도 받아요). 기다리는 방에 사람이 없을 때 새 빌드가 올라와도 스스로 다시 열어요.
    설정(환경변수):  TC_URL  게임 주소 (기본: 공개 사이트의 최신 빌드)  TC_ROOMS  동시에 열어 둘 방 수 (기본 1)  TC_MODES  방마다 열 모드를 쉼표로 (예: rank,normal 이면 방1은 랭크전, 방2는 5vs5 클래식, 기본은 모두 normal) */
 const { chromium } = require('playwright');
-const URL = process.env.TC_URL || 'https://frenchfries777mc.github.io/games/prototypes/tumblecrown/index.html?dedicated=1';
+const URL = process.env.TC_URL || 'https://frenchfries777.com/games/prototypes/tumblecrown/index.html?dedicated=1';
 const log = (...a) => console.log(new Date().toISOString().slice(11, 19), ...a);
 const sleep = ms => new Promise(r => setTimeout(r, ms));
 const MODES = (process.env.TC_MODES || '').split(',').map(x => x.trim()).filter(Boolean), modeOf = i => MODES.length ? MODES[i % MODES.length] : 'normal';
