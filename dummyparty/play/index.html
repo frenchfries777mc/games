@@ -1721,7 +1721,9 @@ body.playing #emoBar{display:flex}
    <div class="row"><input id="codeIn" maxlength="5" placeholder="방 코드" autocomplete="off"><button class="pb dark" id="joinBtn" style="flex:0 0 auto">들어가기</button></div>
    <div class="msg" id="homeMsg"></div>
   </aside>
-  <template id="patchnotes"><details class="notes" open><summary>패치노트 · v0.1 (b95)</summary>
+  <template id="patchnotes"><details class="notes" open><summary>패치노트 · v0.1 (b96)</summary>
+   <b>2026-11-04 · v0.1 · b96 · 스킨 값 14배</b>
+   <ul><li>상점의 스킨(얼굴, 모자, 안경, 승리 춤) 값이 14배로 올랐어요. 칭호 값은 그대로예요</li><li>허브 코인 1개는 이제 7dC로 바뀌어요</li></ul>
    <b>2026-11-02 · v0.1 · b95 · 게임 안 이모지 그림 유지</b>
    <ul><li>게임 안의 이모지는 계속 허브와 같은 그림으로 보여요 (사이트 화면만 원래 이모지)</li></ul>
    <b>2026-11-02 · v0.1 · b93 · 이모지 그림 배경 제거</b>
@@ -1908,7 +1910,7 @@ body.playing #emoBar{display:flex}
    <ul><li>무너지는 발판 칸 수 대폭 증가 (19×10)와 용암 동굴 맵</li><li>10개 맵 전부 새로 그림 (관중석, 야자수 섬, 링, 정원 미로, 서커스, 우노 테이블 등)</li><li>글자 대신 아이콘·말풍선·이펙트로 표현 (무기, 아이템, 카드 효과, 시작 안내)</li><li>타격·폭발·물보라 효과와 화면 흔들림 추가</li></ul>
    <b>2026-10-19 · v0.1 · b1 · 첫 시험판</b>
    <ul><li>마네킹 미니게임 10개 추가 (장애물 달리기, 섬 밀치기, 싸우기, 병맛 미로, 체스 대난투, 폭탄 돌리기, 병맛 우노, 쇼윈도 얼음땡, 무너지는 발판, 컨베이어 서바이벌)</li><li>방 코드로 최대 8명 멀티플레이, 빈자리는 봇으로 채우기</li><li>판마다 10개 중 5개를 무작위로 골라 점수를 합산</li><li>PC 키보드와 휴대폰 터치 조작 지원</li></ul></details></template>
-  <p class="foot">2~8명 · 판마다 39개 미니게임 중 7개 · v0.1 b95 · <a href="../">← Dummy Party 사이트로</a></p>
+  <p class="foot">2~8명 · 판마다 39개 미니게임 중 7개 · v0.1 b96 · <a href="../">← Dummy Party 사이트로</a></p>
   <p class="foot"><span class="ff-copy">© 2026 Frenchfries777 · <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.ko" target="_blank" rel="noopener">CC BY-NC-ND 4.0</a></span></p>
  </div>
 </section>
@@ -7618,16 +7620,17 @@ function funPhase(m, ph) {
 }
 
 /* ---------- dC 지갑 · 스킨 가게 ---------- */
-// 값은 supabase-dp-coin.sql 의 dp_price 와 같아야 해요. 허브 코인 1개 = 8dC
+// 값은 supabase-dp-price-2026-11-04.sql 의 dp_price 와 같아야 해요. 허브 코인 1개 = 7dC (스킨 값은 b96부터 14배)
 var WAL = { bal: 0, today: 0, own: {}, ready: false, busy: false };
-var DP_PRICE = { f1: 60, f2: 30, f3: 30, d1: 80, d2: 100, d3: 130, d4: 180, d5: 160, d6: 220 };
+var SKIN_X = 14;   // b96: 스킨(얼굴·모자·안경·춤) 값 14배. 칭호는 그대로
+var DP_PRICE = { f1: 60 * SKIN_X, f2: 30 * SKIN_X, f3: 30 * SKIN_X, d1: 80 * SKIN_X, d2: 100 * SKIN_X, d3: 130 * SKIN_X, d4: 180 * SKIN_X, d5: 160 * SKIN_X, d6: 220 * SKIN_X };
 // 칭호 (상점 "칭호" 탭): 이름 옆에 작게 붙는 병맛 한마디. 가격은 supabase-dp-v02.sql 의 dp_price 와 같아야 해요
 var TITLES = ['칭호 없음', '아무개', '방귀쟁이', '뿡뿡이', '12중 스파이', '대통령', '전직 마네킹', '무릎에 스프링', '', '라면 3분 장인', '숨은 마네킹', '쇼윈도의 전설', '우승 예약석'];
 var TITLE_PRICE = [0, 20, 30, 40, 60, 150, 50, 70, 80, 100, 120, 90, 200];
 var TITLE_COUNT = TITLES.length;
 TITLE_PRICE.forEach(function (n, i) { if (n > 0) DP_PRICE['t' + i] = n; });
-HAT_NEED.forEach(function (n, i) { if (n > 0) DP_PRICE['h' + i] = n * 10; });
-GL_NEED.forEach(function (n, i) { if (n > 0) DP_PRICE['g' + i] = n * 10; });
+HAT_NEED.forEach(function (n, i) { if (n > 0) DP_PRICE['h' + i] = n * 10 * SKIN_X; });
+GL_NEED.forEach(function (n, i) { if (n > 0) DP_PRICE['g' + i] = n * 10 * SKIN_X; });
 function ownsItem(k) { return !!WAL.own[k]; }
 function walClient() { try { return window.FFAuth && FFAuth.user() ? FFAuth.client() : null; } catch (e) { return null; } }
 function walRow(r) { var d = r && r.data; if (Array.isArray(d)) d = d[0]; return d || null; }
