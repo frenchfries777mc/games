@@ -1,11 +1,11 @@
 // Tumblecrown · © 2026 Frenchfries777 · CC BY-NC-ND 4.0
 // 인트로 곡은 Vowkeep 인트로 곡(5초)을 그대로 써요. 못 불러오면 사이트 주소로, 그래도 안 되면 조용히 넘어가요
-const SRC = '../../vowkeep/play/vowkeep-intro.mp3', ALT = 'https://frenchfries777mc.github.io/games/vowkeep/play/';
+const SRC = '../../vowkeep/play/vowkeep-intro.mp3', ALT = 'https://frenchfries777.com/games/vowkeep/play/';
 let vol = 0.7;
 export function setVol(v) { vol = v; }
 // 배경음악: 로비, 방, 이야기는 Velocity Run, 싸우는 동안(던전, 보스)은 The Perfect Run (둘 다 제미나이가 만든 곡). 인트로 곡이 끝난 뒤부터 나와요
 const BGM = { lobby: 'velocity-run.mp3', fight: 'perfect-run.mp3' };
-const ALT0 = 'https://frenchfries777mc.github.io/games/prototypes/tumblecrown/';
+const ALT0 = 'https://frenchfries777.com/games/prototypes/tumblecrown/';
 const bg = {}, bgAlt = {}; let cur = 'lobby', bgTry = 0;
 function bgEl(k) {
   if (bg[k]) return bg[k];

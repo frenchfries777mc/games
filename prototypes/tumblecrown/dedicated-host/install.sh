@@ -2,7 +2,7 @@
 # Tumblecrown 전용 방장 설치. 먼저 Stickseum 전용 방장(ff-host)이 설치돼 있어야 해요 (같은 프로그램 폴더와 브라우저를 같이 써요).
 # 다시 실행해도 괜찮아요.
 set -e
-BASE="https://frenchfries777mc.github.io/games/prototypes/tumblecrown/dedicated-host"
+BASE="https://frenchfries777.com/games/prototypes/tumblecrown/dedicated-host"
 if [ ! -d /opt/ff-host/node_modules/playwright ]; then echo "먼저 Stickseum 전용 방장을 설치해 주세요 (/opt/ff-host 가 없어요)"; exit 1; fi
 cd /opt/ff-host
 curl -fsSL "$BASE/tc-host.js" -o tc-host.js

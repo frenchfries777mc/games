@@ -1,10 +1,10 @@
 /* 스크롤바 숨김: 스크롤은 되지만 막대는 안 보이게 (모든 사이트 공통) */
 (function(){ try{ if(document.getElementById('ff-noscrollbar')) return; var st=document.createElement('style'); st.id='ff-noscrollbar'; st.textContent='*{scrollbar-width:none!important;-ms-overflow-style:none!important}*::-webkit-scrollbar{display:none!important;width:0!important;height:0!important}'; (document.head||document.documentElement).appendChild(st); }catch(e){} })();
 /* Frenchfries777 공용 언어 설정 (허브 · 게임 사이트 · 게임)
-   허브와 게임들은 모두 frenchfries777mc.github.io 아래라 브라우저 저장소를 같이 쓰지만, 언어를 저장하는 이름이 게임마다 달라요.
+   허브와 게임들은 모두 frenchfries777.com/ 아래라 브라우저 저장소를 같이 쓰지만, 언어를 저장하는 이름이 게임마다 달라요.
    이 스크립트는 그 이름들을 한 묶음으로 맞춰요: 어느 한 곳에서 언어를 바꾸면, 이 스크립트가 있는 페이지가 열릴 때 나머지도 같은 언어가 돼요.
    쓰는 법: 언어를 읽는 다른 스크립트보다 먼저, <head> 안에
-     <script src="https://frenchfries777mc.github.io/games/ff-lang.js"></script>
+     <script src="https://frenchfries777.com/games/ff-lang.js"></script>
    스크립트로: FFLang.get(), FFLang.set('en'), FFTheme.get(), FFTheme.set('light','l') */
 (function(){
 'use strict';
@@ -45,7 +45,7 @@ if(now&&now!=='en'&&auOn()){ try{ localStorage.removeItem(AU); }catch(x){} }    
 /* 더블터치(더블탭)로 화면이 확대되지 않게: 모든 페이지 공통. 확대·축소는 두 손가락으로만 가능해요. */
 try{ if(!document.getElementById('ffTap')){ var tp=document.createElement('style'); tp.id='ffTap'; tp.textContent='html,body{touch-action:manipulation}'; (document.head||document.documentElement).appendChild(tp); } }catch(e){}
 /* 모든 페이지에서 접속 신호(+게임 화면이면 "지금 하는 게임")를 보내는 ff-presence.js 도 불러요 */
-try{ var me=document.currentScript, base=(me&&me.src)?me.src.replace(/[^\/]*$/,''):'https://frenchfries777mc.github.io/games/';
+try{ var me=document.currentScript, base=(me&&me.src)?me.src.replace(/[^\/]*$/,''):'https://frenchfries777.com/games/';
   if(!window.FFPresence){ var ps=document.createElement('script'); ps.src=base+'ff-presence.js?v=20261028c'; ps.async=true; (document.head||document.documentElement).appendChild(ps); } }catch(e){}
 /* 테마(다크 · 라이트)와 글자 크기: 허브나 게임 사이트의 ⚙️ 에서 고르면 모두 같이 바뀌어요.
    <html> 에 data-ff-theme="dark|light" 와 data-ff-size="s|m|l|xl" 를 붙이고, 허브와 게임 사이트(게임 화면은 빼고)는 크기만큼 확대해요.
@@ -165,7 +165,7 @@ if(now==='ar'){ try{ var h0=document.documentElement; h0.classList.add('ff-ar');
 if(now==='nw'){ if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',ingsoc); else ingsoc(); }
 /* Aurebesh and Standard Galactic: our own letter drawings (fonts/ff-aurebesh.woff2, fonts/ff-galactic.woff2) over every text on the page; language pickers stay readable */
 /* The "Aurebesh" and "Standard Galactic" entries in every language picker are always written in their own letters, so the font faces are declared on every page */
-function aurebesh(){ if(document.getElementById('ff-au')) return; var base='https://frenchfries777mc.github.io/games/'; try{ var me=document.currentScript; if(me&&me.src) base=me.src.replace(/[^\/]*$/,''); }catch(x){}
+function aurebesh(){ if(document.getElementById('ff-au')) return; var base='https://frenchfries777.com/games/'; try{ var me=document.currentScript; if(me&&me.src) base=me.src.replace(/[^\/]*$/,''); }catch(x){}
   var h=document.documentElement, on=scr(), FILE={au:'ff-aurebesh.woff2?v=2',sg:'ff-galactic.woff2?v=1'}, css=''; if(on) h.classList.add('ff-'+on); var st=document.createElement('style'); st.id='ff-au';
   for(var k in SCR) if(FILE[k]) css+="@font-face{font-family:'"+SCR[k]+"';src:url('"+base+"fonts/"+FILE[k]+"') format('woff2');font-display:"+(on===k?'block':'swap')+"}"+
     "[data-lg="+k+"],[data-l="+k+"],option[value="+k+"],[data-lang="+k+"]{font-family:'"+SCR[k]+"',system-ui,sans-serif!important}";
@@ -173,7 +173,7 @@ function aurebesh(){ if(document.getElementById('ff-au')) return; var base='http
   st.textContent=css; (document.head||h).appendChild(st); }
 try{ aurebesh(); }catch(e){}
 /* 이모지어: the page waits hidden (at most 2.5 s) until ff-emoji.js has turned its English into emoji */
-function emoji(){ var h=document.documentElement, base='https://frenchfries777mc.github.io/games/'; try{ var me=document.currentScript; if(me&&me.src) base=me.src.replace(/[^\/]*$/,''); }catch(x){}
+function emoji(){ var h=document.documentElement, base='https://frenchfries777.com/games/'; try{ var me=document.currentScript; if(me&&me.src) base=me.src.replace(/[^\/]*$/,''); }catch(x){}
   var st=document.createElement('style'); st.textContent='html.ff-em:not(.ff-em-ready) body{visibility:hidden}'; (document.head||h).appendChild(st);
   setTimeout(function(){ h.classList.add('ff-em-ready'); },2500);
   var s=document.createElement('script'); s.src=base+'ff-emoji.js?v=3'; s.onerror=function(){ h.classList.add('ff-em-ready'); }; (document.head||h).appendChild(s); }
@@ -181,7 +181,7 @@ if(scr()==='em'){ try{ emoji(); }catch(e){} }
 /* ===== 게임 목록 한 곳: 새 게임이 생기면 FF_REG에 한 줄만 넣으면 돼요. hub.js(글쓰기·필터·소식·소식 받기 등), 허브 패치노트 페이지, 위키 목록이 여기서 읽어요.
    notes = 패치노트 파일 주소(site 기준), 없으면 tpl = 게임 페이지 안의 <template id="patchnotes"> 에서 읽어요. ===== */
 (function(){
-var B='https://frenchfries777mc.github.io/games/';
+var B='https://frenchfries777.com/games/';
 var REG=[
  {id:'hub',name:'허브',cls:'g0',c:'--g0',site:B,notes:'patchnotes.json',hub:true},
  {id:'stickseum',name:'Stickseum',cls:'g1',c:'--g1',site:B+'stickseum/',notes:'patchnotes.json'},

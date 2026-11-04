@@ -4,7 +4,7 @@
 <head><style id="ffTap">html,body{touch-action:manipulation}</style>
 <link rel="icon" href="logo.svg" type="image/svg+xml">
 <meta charset="UTF-8">
-<script src="https://frenchfries777mc.github.io/games/ff-lang.js"></script>
+<script src="https://frenchfries777.com/games/ff-lang.js"></script>
 <script>
 /* 화면 번역 (한국어 원문은 그대로 두고, 다른 언어일 때만 화면에 보이는 글자를 바꿔요).
    언어: 사이트 공용 설정(ff-lang.js, localStorage 'arenaClashLang')을 따르고, 없으면 브라우저 언어.
@@ -1690,7 +1690,7 @@ body.playing #emoBar{display:flex}
 @media(max-height:480px){#emoBar{bottom:3px;gap:4px}#emoBar button{width:30px;height:30px;opacity:.55}}
 </style>
 <script>window.FF_INGAME=true</script>
-<script src="https://frenchfries777mc.github.io/games/ff-auth.js"></script>
+<script src="https://frenchfries777.com/games/ff-auth.js"></script>
 </head>
 <body class="onhome">
 <button class="exitHub" id="exitHub">← 나가기</button>
@@ -7729,7 +7729,7 @@ var ffProfWait = [];
 function ffProf(cb) {
   if (window.FFProfile) return cb();
   ffProfWait.push(cb); if (ffProfWait.length > 1) return;
-  var sc = document.createElement('script'); sc.src = 'https://frenchfries777mc.github.io/games/ff-profile.js?v=20261103e';
+  var sc = document.createElement('script'); sc.src = 'https://frenchfries777.com/games/ff-profile.js?v=20261103e';
   sc.onload = function () { var q = ffProfWait; ffProfWait = []; if (window.FFProfile) q.forEach(function (f) { try { f(); } catch (e) { } }); };
   sc.onerror = function () { ffProfWait = []; };
   document.head.appendChild(sc);
@@ -7853,7 +7853,7 @@ function renderAch() {
 
 /* ---------- 의자 뺏기 음악 (파일은 게임 옆에 따로 있어요. 못 불러오면 사이트 주소로, 그래도 안 되면 조용히 넘어가요) ---------- */
 var CHM = (function () {
-  var FILES = ['chairs-a.mp3', 'chairs-b.mp3'], ALT = 'https://frenchfries777mc.github.io/games/dummyparty/play/';
+  var FILES = ['chairs-a.mp3', 'chairs-b.mp3'], ALT = 'https://frenchfries777.com/games/dummyparty/play/';
   var el = null, key = null, alt = false;
   function pause() { if (el && !el.paused) { try { el.pause(); } catch (e) { } } }
   function tick(m, s) {
@@ -8612,13 +8612,13 @@ function canvasTap(e) {
 function show(id) { document.querySelectorAll('.screen').forEach(function (s) { s.classList.toggle('on', s.id === id); }); document.body.classList.toggle('onhome', id === 'sHome'); if (id !== 'sGame') { $('ov').className = 'ov'; document.body.classList.remove('playing'); $('touch').classList.remove('on'); } }
 var toastT;
 /* 허브 그림 이모지: 글자 이모지 대신 hubicons/emoji 그림을 써요 (게임 화면 글자와 캔버스 모두) */
-var EMO_BASE = 'https://frenchfries777mc.github.io/games/hubicons/emoji/', EMO_IMG = {};
+var EMO_BASE = 'https://frenchfries777.com/games/hubicons/emoji/', EMO_IMG = {};
 function emoImg(n) { var o = EMO_IMG[n]; if (!o) { o = EMO_IMG[n] = new Image(); o.src = EMO_BASE + n + '.svg'; } return o; }
 function emoHtml(n, alt) { return '<img class="ffe" src="' + EMO_BASE + n + '.svg" alt="' + (alt || '') + '" draggable="false" onerror="this.style.display=\'none\'">'; }
 function emoDraw(c, n, x, y, s) { var im = emoImg(n); if (im.complete && im.naturalWidth) c.drawImage(im, x - s / 2, y - s / 2, s, s); }
 ['trophy', 'fire', 'coin', 'soccer', 'camera'].forEach(emoImg);
 function toast(t, ico) { var el = $('toast'); el.textContent = t; if (ico) el.insertAdjacentHTML('afterbegin', emoHtml(ico) + ' '); el.classList.add('on'); clearTimeout(toastT); toastT = setTimeout(function () { el.classList.remove('on'); }, 2600); }
-function exitHub() { destroyPeer(); location.href = 'https://frenchfries777mc.github.io/games/dummyparty/'; }
+function exitHub() { destroyPeer(); location.href = 'https://frenchfries777.com/games/dummyparty/'; }
 function goHome() { G.practice = null; G._doneArm = 0; destroyPeer(); G.role = null; G.phase = 'idle'; G.st = null; G.meta = null; G.snapCur = G.snapPrev = null; busy(false); show('sHome'); }
 
 /* ===== 대기실 놀이터: 기다리는 동안 마네킹을 움직이고 이모트를 보내고 소품을 던져요 =====
@@ -9084,7 +9084,7 @@ function dpPhoto(m) {
     if (lsGet('dummyparty.sfx') === '0') return;
     try {
       var a = new Audio('party-intro.mp3'), alt = false; a.volume = 0.5;
-      a.onerror = function () { if (!alt) { alt = true; a.src = 'https://frenchfries777mc.github.io/games/dummyparty/play/party-intro.mp3'; a.load(); var q = a.play(); if (q && q.catch) q.catch(function () { }); } };
+      a.onerror = function () { if (!alt) { alt = true; a.src = 'https://frenchfries777.com/games/dummyparty/play/party-intro.mp3'; a.load(); var q = a.play(); if (q && q.catch) q.catch(function () { }); } };
       var p = a.play();
       // 브라우저가 소리를 막아도 인트로는 멈추지 않아요. 키·클릭·터치가 처음 들어오는 순간 곡을 시작하고,
       // 인트로가 거의 끝났으면 곡을 건너뛰어요 (이어지는 첫 화면 음악도 같은 입력으로 켜져요)

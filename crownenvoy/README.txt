@@ -1,6 +1,6 @@
 Crown Envoy 사이트 (정적 사이트: 서버 프로그램이 필요 없어요)
 ================================================================
-주소: https://frenchfries777mc.github.io/games/crownenvoy/
+주소: https://frenchfries777.com/games/crownenvoy/
 이 폴더는 games 저장소의 crownenvoy/ 폴더예요 (2026-10-18에 crownenvoy 저장소에서 옮겨 왔어요). 파일은 이 폴더에 올려요.
 
 

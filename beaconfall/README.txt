@@ -1,6 +1,6 @@
 BEACONFALL 사이트 (정적 사이트: 서버 프로그램이 필요 없어요)
 =========================================================
-주소: https://frenchfries777mc.github.io/games/beaconfall/
+주소: https://frenchfries777.com/games/beaconfall/
 이 폴더는 games 저장소의 beaconfall/ 폴더예요 (2026-10-18에 beaconfall 저장소에서 옮겨 왔어요). 파일은 이 폴더에 올려요.
 
 모든 파일이 폴더 없이 한 곳에 있어요. 파일을 전부(폴더 말고 파일들) 그대로 GitHub 저장소에 올리고 Pages를 켜면 돼요.
