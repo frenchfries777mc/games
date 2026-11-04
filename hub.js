@@ -145,7 +145,7 @@ function scrollToCm(){ var c=$('#community'); if(c) c.scrollIntoView({behavior:'
 /* ---- 사진: 줄여서(긴 쪽 1600px) Supabase 저장소 'ff-images/<내 id>/' 에 올리고, 글 · 채팅에는 주소만 저장 (supabase-ff-images.sql) ---- */
 var PUB='https://kebsbuvuutilitwlvxzv.supabase.co/storage/v1/object/public/ff-images/', IMG=true;     // IMG=false: the images column is not there yet
 function okImg(u){ return typeof u==='string'&&u.indexOf(PUB)===0&&/^[0-9a-f-]{36}\/[A-Za-z0-9._-]{1,80}$/.test(u.slice(PUB.length)); }
-function thumbs(a){ a=(a||[]).filter(okImg); if(!a.length) return ''; var show=a.slice(0,2); return '<div class="cm-ths">'+show.map(function(u,i){ return '<span class="cm-thw"><img class="cm-th" alt="" loading="lazy" src="'+esc(u)+'">'+(i===1&&a.length>2?'<em>+'+(a.length-2)+'</em>':'')+'</span>'; }).join('')+'</div>'; }
+function thumbs(a){ a=(a||[]).filter(okImg); if(!a.length) return ''; var show=a.slice(0,2); return '<div class="cm-ths">'+show.map(function(u,i){ return '<span class="cm-thw"><img class="cm-th" alt="" loading="lazy" src="'+esc(u)+'">'+'</span>'; }).join('')+(a.length>2?'<span class="cm-thm">+'+(a.length-2)+'</span>':'')+'</div>'; }
 function imgsHtml(a, cls){ a=(a||[]).filter(okImg); if(!a.length) return ''; return '<div class="'+cls+' n'+Math.min(a.length,4)+'">'+a.map(function(u){ return '<a href="'+esc(u)+'" target="_blank" rel="noopener"><img src="'+esc(u)+'" alt="" loading="lazy"></a>'; }).join('')+'</div>'; }
 function shrink(file){ return new Promise(function(res,rej){
   if(!file||!/^image\//.test(file.type)) return rej('type');
