@@ -10392,7 +10392,7 @@ function modEvSubj(e,sj){   // 'of' 가 없으면 플레이어 본인 일에만 
 function modEvent(on,target,subj,only){
   if(!MOD.ev.length)return;
   const box={n:50};
-  for(const e of MOD.ev){if(e.on!==on)continue;if(only&&e!==only)continue;if(e.t&&e.t!==target)continue;if(!modEvSubj(e,subj))continue;MODX.mn=e.mn||'';MODX.mid=e.mid||'';MODX.uid=e.u||'';MODX.uses=e.uu||[];MODX.loc={};try{modRun(e.do,0,box);}catch(x){}}
+  for(const e of MOD.ev){if(e.on!==on)continue;if(only&&e!==only)continue;if(e.t&&e.t!==target)continue;if(!modEvSubj(e,subj))continue;MODX.mn=e.mn||'';MODX.mid=e.mid||'';MODX.uid=/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(e.mid||'')?String(e.mid).toLowerCase():(e.u||'');MODX.uses=e.uu||[];MODX.loc={};try{modRun(e.do,0,box);}catch(x){}}
 }
 function modSpawnScan(){
   if(!world||!MOD.ev.some(e=>e.on==='spawn'))return;
