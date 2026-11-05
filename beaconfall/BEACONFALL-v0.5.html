@@ -10202,17 +10202,27 @@ function modSet(t,setName){
 }
 function modAnchor(of,gen){if(gen||of==='spawn'||mode!=='play'){const c=world.camp;return {x:c.x+10,y:c.y+7};}return {x:P.x,y:P.y};}
 function modFreeSpot(a,min,max){for(let t=0;t<14;t++){const ang=Math.random()*6.2832,r=min+Math.random()*(max-min),x=a.x+Math.cos(ang)*r,y=a.y+Math.sin(ang)*r;if(inW(x,y)&&walkable(x,y))return {x,y};}return null;}
+const MODCOL={a:'#55ff55',b:'#55ffff',e:'#ffff55',f:'#ffffff','0':'#000000','1':'#0000aa','2':'#00aa00','3':'#00aaaa','4':'#aa0000','5':'#aa00aa','6':'#ffaa00','7':'#aaaaaa','8':'#555555',d:'#ff55ff'};
+function modPlain(t){return String(t).replace(/\\[abef0-8udlr]/g,'');}
+function modRich(t){   // 글자 안의 \a(초록) \b(하늘) \e(노랑) \f(하양) \0~\8(색) \d(보라) \u(밑줄) \l(볼드) \r(지움)
+  t=String(t);let col='',ul=false,bd=false,out='',buf='';
+  const flush=()=>{if(!buf)return;const st=(col?'color:'+col+';':'')+(ul?'text-decoration:underline;':'')+(bd?'font-weight:900;':'');out+=st?'<span style="'+st+'">'+esc(buf)+'</span>':esc(buf);buf='';};
+  for(let i=0;i<t.length;i++){const c=t[i];
+    if(c==='\\'&&i+1<t.length&&/[abef0-8udlr]/.test(t[i+1])){flush();const k=t[++i];if(k==='r'){col='';ul=false;bd=false;}else if(k==='u')ul=true;else if(k==='l')bd=true;else col=MODCOL[k];}
+    else buf+=c;}
+  flush();return out;
+}
 function modTitle(text,sec){
   let el=document.getElementById('modtitle');
   if(!el){el=document.createElement('div');el.id='modtitle';el.style.cssText='position:fixed;left:0;right:0;top:34%;text-align:center;z-index:31;pointer-events:none;font:700 clamp(26px,6vw,54px)/1.2 Galmuri,monospace;color:#fff;text-shadow:3px 3px 0 #000;transition:opacity .4s;opacity:0';document.body.appendChild(el);}
-  el.textContent=text;el.style.opacity='1';clearTimeout(el._t);el._t=setTimeout(()=>{el.style.opacity='0';},Math.max(1,Math.min(10,sec||3))*1000);
+  el.innerHTML=modRich(text);el.style.opacity='1';clearTimeout(el._t);el._t=setTimeout(()=>{el.style.opacity='0';},Math.max(1,Math.min(10,sec||3))*1000);
 }
 function modButton(b){
   if(!b||typeof b.label!=='string'||!Array.isArray(b.do))return;
   const box=modBox();if(box.children.length>=6)return;
   if([...box.children].some(x=>x.dataset.l===b.label))return;
   const pos=['top left','top right','bottom left','bottom right','center'].includes(b.pos)?b.pos:'top right';
-  const el=document.createElement('button');el.className='btn sm';el.dataset.l=b.label;el.textContent=b.label.slice(0,20);
+  const el=document.createElement('button');el.className='btn sm';el.dataset.l=b.label;el.innerHTML=modRich(b.label.slice(0,20));
   const n=box.children.length;
   const st=el.style;st.position='absolute';st.pointerEvents='auto';
   const off=10+Math.floor(n/1)*0;
@@ -10252,7 +10262,7 @@ function modSnd(name,to){for(const t of modTargets(to))modSnd1(name,t);}
 function modFx(key,sec,to){for(const t of modTargets(to))modFx1(key,sec,t);}
 function modSay1(text,t){
   if(t.k==='me')chatAdd('mod','MOD',text);
-  else if(t.k==='peer')modSendTo(t,{k:'chat',x:chatClean(text).slice(0,100)});
+  else if(t.k==='peer')modSendTo(t,{k:'chat',x:String(text||'').replace(/[\u0000-\u001f\u007f]/g,' ').slice(0,200)});
   else chatAdd('mod',modMobName(t),text);
 }
 function modPlay(name,x,y){try{({click:()=>SFX.blip(),hurt:()=>SFX.hurt(),swing:()=>SFX.swing(),bow:()=>SFX.bow(),hit:()=>SFX.weaponHit(x,y),break:()=>SFX.done('t',0,x,y)})[name]?.();}catch(e){}}
@@ -10269,7 +10279,7 @@ function modFx1(key,sec,t){
 }
 function modToApply(d){   // 다른 플레이어의 모드가 나에게 보낸 chat / sound / effect
   if(!d||typeof d.k!=='string')return;
-  if(d.k==='chat')chatAdd('mod',String(d.fr||'MOD').slice(0,15),chatClean(d.x).slice(0,100));
+  if(d.k==='chat')chatAdd('mod',String(d.fr||'MOD').slice(0,15),String(d.x||'').replace(/[\u0000-\u001f\u007f]/g,' ').slice(0,200));
   else if(d.k==='snd')modPlay(String(d.s),P.x,P.y);
   else if(d.k==='fx')modFxMe(String(d.e),+d.sec,60);
 }
@@ -10308,7 +10318,7 @@ function modRun(acts,depth,box){
     if(!a||typeof a!=='object'||--box.n<0)return;
     const host=!isGuest();
     if(a.give&&typeof a.give==='object'){const id=String(a.give.item||''),n=Math.max(1,Math.min(20,a.give.n|0||1));if(ITEMS[id])addStack(id,n);}
-    else if(typeof a.say==='string'){modSay(modTxt(a.say).slice(0,100),a.to);}
+    else if(typeof a.say==='string'){modSay(modTxt(a.say).slice(0,200),a.to);}
     else if(typeof a.chance==='number'&&Array.isArray(a.do)){if(Math.random()*100<Math.max(0,Math.min(100,a.chance)))modRun(a.do,depth+1,box);}
     else if(a.ifg&&Array.isArray(a.do)){if(modGCmp(a.ifg))modRun(a.do,depth+1,box);}
     else if(a.md&&typeof a.md.n==='string'&&Array.isArray(a.do)){if(modHasMod(a.md))modRun(a.do,depth+1,box);}
@@ -10316,7 +10326,7 @@ function modRun(acts,depth,box){
     else if(a.has&&typeof a.has==='object'&&Array.isArray(a.do)){if(ITEMS[a.has.item]&&modInv(a.has.item)>=Math.max(1,a.has.n|0||1))modRun(a.do,depth+1,box);}
     else if(a.title&&typeof a.title.text==='string'){modTitle(modTxt(a.title.text).slice(0,80),+a.title.sec||3);}
     else if(a.button){modButton(a.button);}
-    else if(a.ui&&Array.isArray(a.ui.lines)){const ls=a.ui.lines.slice(0,12).map(x=>'<p>'+esc(modTxt(x).slice(0,120))+'</p>').join('');openModal('<h2>'+esc(modTxt(a.ui.title||'').slice(0,40))+'</h2>'+ls+'<div class="actions"><button class="btn sm" data-close>닫기</button></div>',null,'modui');}
+    else if(a.ui&&Array.isArray(a.ui.lines)){const ls=a.ui.lines.slice(0,12).map(x=>'<p>'+modRich(modTxt(x).slice(0,120))+'</p>').join('');openModal('<h2>'+modRich(modTxt(a.ui.title||'').slice(0,40))+'</h2>'+ls+'<div class="actions"><button class="btn sm" data-close>닫기</button></div>',null,'modui');}
     else if(a.set){modSet(a.set);}
     else if(a.setv&&typeof a.setv.n==='string'){
       const v=a.setv.v;
@@ -10970,13 +10980,13 @@ function chatSend(t){
   if(isGuest())sendHost({t:'chat',x:t});else bcastAll({t:'chat',id:'host',n:myName(),x:t});
 }
 function chatAdd(id,name,t){
-  t=chatClean(t);if(!t)return;chatUI();
+  if(id==='mod'){const raw=String(t||'').replace(/[\u0000-\u001f\u007f]/g,' ').replace(/\s+/g,' ').trim();t=raw.slice(0,CHAT_MAX+2*((raw.match(/\\[abef0-8udlr]/g)||[]).length));}else t=chatClean(t);if(!t)return;chatUI();
   name=String(name||'').slice(0,15)||'???';
-  const d=document.createElement('div');d.innerHTML=`<b>${esc(name)}</b>${esc(t)}`;
+  const d=document.createElement('div');d.innerHTML=`<b>${esc(name)}</b>${id==='mod'?modRich(t):esc(t)}`;
   chatEl.appendChild(d);while(chatEl.children.length>8)chatEl.firstChild.remove();
   setTimeout(()=>d.classList.add('old'),12000);
   const o=chatBub.get(id);if(o&&o.el)o.el.remove();
-  chatBub.set(id,{t,until:performance.now()+6000,el:null});
+  chatBub.set(id,{t:id==='mod'?modPlain(t):t,until:performance.now()+6000,el:null});
 }
 function chatTick(){
   const mp=!!net.role&&mode==='play';
