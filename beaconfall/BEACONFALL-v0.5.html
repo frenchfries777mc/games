@@ -10069,6 +10069,7 @@ function modTxt(s){   // Potato API: %player_name% 같은 값을 글에 넣어�
   if(s.indexOf('%player\'s mod%')>=0)s=s.split('%player\'s mod%').join(MOD.on.map(m=>String(m.name||'')).join(', '));   // Potato API 없이도 읽혀요
   if(s.indexOf('{:')>=0)s=s.replace(/\{:([a-z0-9_]{1,30}):\}/g,(m,k)=>{shLoad();return SHV[k]===undefined?'':String(SHV[k]);});   // 제작자끼리 공유하는 변수
   if(s.indexOf('{')>=0)s=s.replace(/\{(_?[a-z0-9_]{1,20}_?)\}/g,(m,k)=>{const v=modVGet(k);return v===undefined?'0':String(v);});   // {변수} / {_지역변수_}
+  if(s.indexOf('%')>=0)s=s.replace(/%([a-z0-9_]{1,20})%/g,(m,k)=>{const v=modVGet(k);return v===undefined?m:String(v);});   // %변수% 도 읽혀요 (bs로 만든 API를 %player_hp% 로 부를 수 있어요)
   if(!MOD.potato||s.indexOf('%')<0)return s;
   return s.replace(/%([a-z0-9_' ]{3,30})%/g,(m,k)=>{
     switch(k){
