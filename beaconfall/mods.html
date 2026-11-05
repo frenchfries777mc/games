@@ -312,8 +312,27 @@ function parseScript(text,lenient){
       else throw PE(l.n,"'"+ev+"' does not take '"+tw+"'");}
     return {on:ev,tg:tg};
   }
+  var GN={hp:'player',maxhp:'player',x:'player',y:'player',z:'player',biome:'player',item:'player',name:'player',day:'world',hour:'world',players:'world'};
+  function gameCond(l,m){
+    var sc=m[1].toLowerCase(),k=m[2].toLowerCase().replace(/\s+/g,''),op=m[3].toLowerCase().replace(/\s+/g,' '),rv=m[4].trim();
+    if(GN[k]!==sc)throw PE(l.n,"'"+sc+" "+k+"' is not available. player: hp, max hp, x, y, z, biome, item, name. world: day, hour, players");
+    var NUMK=['hp','maxhp','x','y','z','day','hour','players'];
+    if(op==='is')op='=';else if(op==='is not')op='!=';
+    if(NUMK.indexOf(k)>=0){
+      var vm=rv.match(/^variable\s+([a-z0-9_]{1,20})$/i);
+      if(vm)return {ifg:{k:k,op:op,vn:vm[1].toLowerCase()}};
+      if(!/^-?\d{1,9}(?:\.\d{1,3})?$/.test(rv))throw PE(l.n,'after '+sc+' '+k+' write a number or  variable name');
+      return {ifg:{k:k,op:op,v:+rv}};
+    }
+    if(op!=='='&&op!=='!=')throw PE(l.n,k+' can only be checked with  is  or  is not');
+    if(k==='biome'){var bw=rv.toLowerCase();if(BIOMES.indexOf(bw)<0){var gb=guess(bw,BIOMES);throw PE(l.n,"unknown biome '"+rv+"'."+(gb?" Did you mean '"+gb+"'?":" You can use: "+BIOMES.join(', ')));}return {ifg:{k:k,op:op,s:bw}};}
+    if(k==='item')return {ifg:{k:k,op:op,s:item(l,rv)}};
+    var nm=rv.match(/^"([^"]{1,40})"$/);if(!nm)throw PE(l.n,'write the name in quotes, like  if player name is "Bob":');
+    return {ifg:{k:k,op:op,s:nm[1]}};
+  }
   function condOf(l,c){
     c=c.trim();var m;
+    if(m=c.match(/^(player|world)\s+(max\s*hp|hp|x|y|z|biome|item|name|day|hour|players)\s*(>=|<=|!=|>|<|=|is\s+not|is)\s*(.+)$/i))return gameCond(l,m);
     if(m=c.match(/^has\s+(?:(\d+)\s+)?(.+)$/i))return {has:{item:item(l,m[2].trim()),n:m[1]?+m[1]:1}};
     if(m=c.match(/^%(attacker|victim)%\s+is\s+(not\s+)?player$/i))return {ifp:{w:m[1].toLowerCase(),not:!!m[2]}};
     if(m=c.match(/^variable\s+([a-z0-9_]{1,20})\s*(>=|<=|!=|>|<|=)\s*(?:"([^"]{0,40})"|(-?\d{1,9}(?:\.\d{1,3})?))$/i))return {ifv:{n:m[1].toLowerCase(),op:m[2],v:m[3]!==undefined?m[3]:+m[4]}};
@@ -345,6 +364,8 @@ function parseScript(text,lenient){
       else if(m=l.t.match(/^chance\s+(\d{1,3})\s*%\s*:$/i)){
         if(+m[1]>100)throw PE(l.n,'chance must be 0 to 100%');
         acts.push({chance:+m[1],do:sub(l,depth)});
+      }else if(/^if\s+(?:player|world)\s+/i.test(l.t)&&splitOr(l.t.replace(/^if\s+/i,'').replace(/\s*:$/,'')).length<2){
+        var gc=condOf(l,l.t.replace(/^if\s+/i,'').replace(/\s*:$/,''));gc.do=sub(l,depth);acts.push(gc);
       }else if((m=l.t.match(/^if\s+(.+?)\s*:$/i))&&splitOr(m[1]).length>1){
         acts.push({anyof:splitOr(m[1]).map(function(c){return condOf(l,c);}),do:sub(l,depth)});
       }else if(m=l.t.match(/^if\s+has\s+(?:(\d+)\s+)?(.+?)\s*:$/i)){
