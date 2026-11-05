@@ -585,6 +585,7 @@ $('us').addEventListener('click',async function(){
   if($('uprev').querySelector('.bad')){umsg('빨간 줄이 있는 파일을 먼저 고쳐 주세요.',1);return;}
   if(!name&&!EDIT){umsg('이름을 적어 주세요.',1);return;}
   if(ULOGO)d.logo=ULOGO;
+  if(EDIT&&!d.logo&&EDIT.data&&EDIT.data.logo)d.logo=EDIT.data.logo;
   var er=check(kind,d);if(er){umsg(er,1);return;}
   var u=FFAuth.user(),c=sb();if(!u||!c){umsg('로그인이 필요해요.',1);return;}
   if(EDIT){
