@@ -107,7 +107,8 @@ footer{padding:40px 0 30px;color:var(--gold);font-size:12px;text-shadow:2px 2px 
  <label>폴더 (mode.bs가 있으면 모드, 없으면 리소스팩)</label>
  <input type="file" id="uf" webkitdirectory directory multiple>
  <div class="hint">폴더 안에 .bs 파일을 여러 개 넣을 수 있어요. 그림은 PNG로 넣고 파일 이름이 아이템 이름이에요 (예: iron.png).</div>
- <div id="ufields"><label>이름 (최대 40자)</label><input id="un" maxlength="40">
+ <div id="ufields"><label>로고 (PNG 그림, 고르지 않으면 폴더의 logo.png)</label><input type="file" id="ulg" accept="image/png"><div class="hint" id="ulgm"></div>
+ <label>이름 (최대 40자)</label><input id="un" maxlength="40">
  <label>설명 (최대 120자)</label><input id="ud" maxlength="120">
  <label>분류</label><select id="uc"></select></div>
  <div class="uprev" id="uprev"></div>
@@ -213,7 +214,7 @@ function menuAct(a,id){
       });
     };
   }else if(a==='ver'){
-    EDIT=m;TEX={};FD=null;$('uprev').innerHTML='';$('uf').value='';umsg('');
+    EDIT=m;TEX={};FD=null;ULOGO=null;$('ulg').value='';$('ulgm').textContent='';$('uprev').innerHTML='';$('uf').value='';umsg('');
     $('uth').textContent='버전 추가하기 · '+m.name;$('ufields').style.display='none';$('us').textContent='새 폴더로 덮어쓰기';
     $('upl').classList.add('on');
   }
@@ -256,7 +257,7 @@ function draw(){
       +(a?'<button class="pb off" data-off="'+esc(m.id)+'">적용 해제</button>':'<button class="pb" data-on="'+esc(m.id)+'">적용</button>')+'</div><div class="inf">'+(m.descr?'<div class="d">'+esc(m.descr)+'</div>':'')+pv(m)+'<span>제작자 <b>'+esc(m.author_name||'알 수 없음')+'</b></span><span>올린 날 <b>'+esc(String(m.created_at||'').slice(0,10)||'-')+'</b></span><span>적용 <b>'+(COUNTS[m.id]||0)+'</b></span>'+(m.ver>1?'<span>버전 <b>'+m.ver+'</b></span>':'')+menuOf(m,mine)+'</div></div>';
   }).join('');
 }
-function logoOf(m){var l=m.data&&m.data.logo;if(typeof l==='string'&&/^data:image\/png;base64,[A-Za-z0-9+\/=]{20,6000}$/.test(l))return '<img class="lg" src="'+l+'" alt="">';return m.kind==='pack'?'🎨':'🧩';}
+function logoOf(m){var l=m.data&&m.data.logo;if(typeof l==='string'&&/^data:image\/png;base64,[A-Za-z0-9+\/=]{20,40000}$/.test(l))return '<img class="lg" src="'+l+'" alt="">';return m.kind==='pack'?'🎨':'🧩';}
 function pv(m){var t=m.data&&m.data.textures;if(!t||typeof t!=='object')return '';var h='',n=0;Object.keys(t).forEach(function(k){if(n<10&&/^data:image\/png;base64,[A-Za-z0-9+\/=]{1,3000}$/.test(t[k])){h+='<img class="tx" title="'+esc(k)+'" src="'+t[k]+'">';n++;}});return h?'<div class="pv">'+h+'</div>':'';}
 function find(id){if(id===POTATO.id)return POTATO;return LIST.filter(function(m){return m.id===id;})[0]||(getOn()[id]&&Object.assign({id:id},getOn()[id]));}
 function closeDD(){document.querySelectorAll('.dd.open').forEach(function(d){d.classList.remove('open');});}
@@ -500,6 +501,8 @@ function parseScript(text,lenient){
 var TEX={},FD=null;
 function readPng(f,sz){sz=sz||12;return new Promise(function(res,rej){var im=new Image(),u=URL.createObjectURL(f);im.onload=function(){var c=document.createElement('canvas');c.width=c.height=sz;var x=c.getContext('2d');x.imageSmoothingEnabled=false;x.drawImage(im,0,0,sz,sz);URL.revokeObjectURL(u);res(c.toDataURL('image/png'));};im.onerror=function(){rej();};im.src=u;});}
 function readTxt(f){return new Promise(function(res,rej){var r=new FileReader();r.onload=function(){res(String(r.result));};r.onerror=function(){rej();};r.readAsText(f);});}
+var ULOGO=null;
+$('ulg').addEventListener('change',async function(){var f=this.files[0];ULOGO=null;$('ulgm').textContent='';if(!f)return;try{ULOGO=await readPng(f,32);$('ulgm').textContent='✓ '+f.name;}catch(e){$('ulgm').textContent='✗ 그림을 읽지 못했어요';}});
 $('uf').addEventListener('change',async function(){
   TEX={};FD=null;var box=$('uprev');box.innerHTML='';umsg('');
   var files=[].slice.call(this.files);if(!files.length)return;
@@ -532,9 +535,8 @@ $('uf').addEventListener('change',async function(){
     }
   }
   if(!okc){umsg('폴더 안에 .bs 파일이나 PNG 그림이 없어요.',1);return;}
-  if(LOGO&&LOGO.length>6000){umsg('logo.png가 너무 복잡해요. 더 단순한 그림으로 해 주세요.',1);return;}
-  var data={};if(M.events.length)data.events=M.events;if(M.names)data.names=M.names;if(M.sets.length)data.sets=M.sets;if(M.remap)data.remap=M.remap;if(M.col)data.col=M.col;if(M.api)data.api=M.api;if(M.pa)data.pa=M.pa;
-  if(LOGO&&LOGO.length<=6000)data.logo=LOGO;
+    var data={};if(M.events.length)data.events=M.events;if(M.names)data.names=M.names;if(M.sets.length)data.sets=M.sets;if(M.remap)data.remap=M.remap;if(M.col)data.col=M.col;if(M.api)data.api=M.api;if(M.pa)data.pa=M.pa;
+  if(LOGO)data.logo=LOGO;
   if(Object.keys(TEX).length)data.textures=TEX;
   kind=files.some(function(f){return /^mod[e]?\.bs$/i.test(f.name);})?'mod':'pack';   // mode.bs(또는 mod.bs)가 있으면 모드, 없으면 리소스팩
   if(kind==='pack'&&(data.events||data.sets||data.remap)){umsg('on, set, remap 규칙이 있는 폴더에는 mode.bs 파일이 있어야 해요.',1);return;}
@@ -571,6 +573,7 @@ $('us').addEventListener('click',async function(){
   var kind=FD.kind,d=FD.data;
   if($('uprev').querySelector('.bad')){umsg('빨간 줄이 있는 파일을 먼저 고쳐 주세요.',1);return;}
   if(!name&&!EDIT){umsg('이름을 적어 주세요.',1);return;}
+  if(ULOGO)d.logo=ULOGO;
   var er=check(kind,d);if(er){umsg(er,1);return;}
   var u=FFAuth.user(),c=sb();if(!u||!c){umsg('로그인이 필요해요.',1);return;}
   if(EDIT){
@@ -578,7 +581,7 @@ $('us').addEventListener('click',async function(){
     var rv=await c.from('beaconfall_mods').update({kind:kind,data:d,ver:(cur.ver||1)+1}).eq('id',cur.id).select().single();
     this.disabled=false;
     if(rv.error||!rv.data){umsg('올리지 못했어요. 서버가 아직 준비되지 않았을 수 있어요.',1);return;}
-    replaceMod(Object.assign({},cur,rv.data));EDIT=null;$('upl').classList.remove('on');TEX={};FD=null;$('uprev').innerHTML='';$('uf').value='';draw();return;
+    replaceMod(Object.assign({},cur,rv.data));EDIT=null;$('upl').classList.remove('on');TEX={};FD=null;ULOGO=null;$('ulg').value='';$('ulgm').textContent='';$('uprev').innerHTML='';$('uf').value='';draw();return;
   }
   var pr=null;try{pr=FFAuth.profile();}catch(e){}
   var an=(pr&&pr.display_name)||(FFAuth.nickname&&FFAuth.nickname())||'';
@@ -586,7 +589,7 @@ $('us').addEventListener('click',async function(){
   var r=await c.from('beaconfall_mods').insert({kind:kind,name:name,descr:descr,cat:cat,author_name:String(an).slice(0,20),data:d}).select().single();
   this.disabled=false;
   if(r.error){umsg('올리지 못했어요. 서버가 아직 준비되지 않았을 수 있어요.',1);return;}
-  LIST.unshift(r.data);SERVER='ok';$('upl').classList.remove('on');$('un').value='';$('ud').value='';TEX={};FD=null;$('uprev').innerHTML='';$('uf').value='';K='all';CAT='';draw();
+  LIST.unshift(r.data);SERVER='ok';$('upl').classList.remove('on');$('un').value='';$('ud').value='';TEX={};FD=null;ULOGO=null;$('ulg').value='';$('ulgm').textContent='';$('uprev').innerHTML='';$('uf').value='';K='all';CAT='';draw();
 });
 window.addEventListener('storage',draw);
 draw();
