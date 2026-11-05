@@ -407,7 +407,7 @@ window.bfIntro=function(){if(run)return;run=1;t0=Date.now();el.classList.add('ru
     <button class="btn" data-act="skins"><span class="arrow">▶</span>스킨 상점<span class="en">SKIN SHOP</span></button>
     <button class="btn" data-act="stats"><span class="arrow">▶</span>통계<span class="en">STATS</span></button>
     <button class="btn" data-act="settings"><span class="arrow">▶</span>설정<span class="en">SETTINGS</span></button>
-    <p class="foot">v0.5<br>build 193</p>
+    <p class="foot">v0.5<br>build 194</p>
   </nav>
 </div>
 
@@ -5290,7 +5290,7 @@ function placeItem(){
   if(i<0)return;
   const item=inv[i].id,kind=ITEMS[item].place,c=placeCell(kind);
   if(c.far||!canPlaceCell(c.gx,c.gy,kind)){toast(kind==='station'&&!c.far?i18nTr('정거장은 선로 바로 옆에만 설치할 수 있어요.'):'여기에는 설치할 수 없어요.');return;}
-  achPlace(kind,item);MODX.placed=(ITEMS[item]&&ITEMS[item].name)||String(item);stAdd('place');
+  achPlace(kind,item);MODX.placed=(ITEMS[item]&&ITEMS[item].name)||String(item);MODX.pid=String(item);stAdd('place');
   if(kind==='station'){let tries=0;const op=()=>{const sb=world.sgrid.get(c.gy*GW+c.gx);if(sb&&sb.id==='station'){if(mode==='play'&&$('#modal').hidden)openStation(sb);}else if(++tries<10)setTimeout(op,200);};setTimeout(op,250);}
   if(kind==='flag'){let tries=0;const op=()=>{const fb=world.sgrid.get(c.gy*GW+c.gx);if(fb&&fb.id==='flag'){if(mode==='play'&&$('#modal').hidden)openFlag(fb);}else if(++tries<10)setTimeout(op,200);};setTimeout(op,250);}   // 꽂자마자 이름 짓기 창
   if(isGuest()){sendHost({t:'place',item,gx:c.gx,gy:c.gy,dr:faceDir()});return;}
@@ -10383,7 +10383,7 @@ function modAsk(list){
   });
 }
 modApply(modLocal());
-function stAdd(k,n){const o=stObj();o[k]=(+o[k]||0)+(n===undefined?1:n);{const me={tree:'chop',rock:'mine',craft:'craft',fish:'fish',place:'place',death:'die'}[k];if(me)modEvent(me,'');}
+function stAdd(k,n){const o=stObj();o[k]=(+o[k]||0)+(n===undefined?1:n);{const me={tree:'chop',rock:'mine',craft:'craft',fish:'fish',place:'place',death:'die'}[k];if(me)modEvent(me,me==='place'?(MODX.pid||''):'');}
   if((k==='tree'||k==='kill')&&typeof world!=='undefined'&&world){const w=(settings.wst=settings.wst&&typeof settings.wst==='object'?settings.wst:{}),wk=invKey();if(wk){const c=w[wk]=w[wk]||{};c[k]=(+c[k]||0)+(n===undefined?1:n);}const sc=world.stc=world.stc||{};sc[k]=(+sc[k]||0)+(n===undefined?1:n);}}   // 엔딩 대사용: 월드별 집계
 let ntT=0;
 function worldNotice(){   // 방식이 바뀐 장치가 있는 월드를 열면 한 번만 알려요
@@ -10601,7 +10601,7 @@ function bpPlace(ax,ay){
   try{
     for(const r of res){
       if(r.ok){
-        achPlace(r.k,r.it);MODX.placed=(ITEMS[r.it]&&ITEMS[r.it].name)||String(r.it);stAdd('place');
+        achPlace(r.k,r.it);MODX.placed=(ITEMS[r.it]&&ITEMS[r.it].name)||String(r.it);MODX.pid=String(r.it);stAdd('place');
         if(isGuest())sendHost({t:'place',item:r.it,gx:r.gx,gy:r.gy,dr:0});
         else{addStruct(r.k,r.gx,r.gy,'host',r.it,0);consumeItem(r.it);}
         n++;

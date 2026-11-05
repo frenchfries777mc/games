@@ -366,12 +366,13 @@ function parseScript(text,lenient){
     else if(m=l.t.match(/^every\s+(\S+)\s+seconds?\s*:$/i)){if(!/^\d+$/.test(m[1])||+m[1]<1)throw PE(l.n,'every needs a whole number of seconds, 1 or more');if(+m[1]>3600)throw PE(l.n,'every can be at most 3600 seconds');out.events.push({on:'every',n:+m[1],do:sub(l,0)});}
     else if(m=l.t.match(/^on\s+join\s*:$/i)){out.events.push({on:'join',do:sub(l,0)});}
     else if(m=l.t.match(/^on\s+key\s+"([^"]+)"\s+press\s*:$/i)){var kc=keyCode(m[1]);if(!kc)throw PE(l.n,"unknown key '"+m[1]+"'. Use A-Z, 0-9 or F1-F12");out.events.push({on:'key',target:kc,do:sub(l,0)});}
-    else if(m=l.t.match(/^on\s+(\w+)(?:\s+(?!of\s)(\w+))?(?:\s+of\s+(.+?))?\s*:$/i)){
+    else if(m=l.t.match(/^on\s+(\w+)(?:\s+(?!of\s)([\w가-힣]+))?(?:\s+of\s+(.+?))?\s*:$/i)){
       var ev=EVS[m[1].toLowerCase()];if(!ev){var g=guess(m[1],Object.keys(EVS).concat(['join']));throw PE(l.n,"unknown event '"+m[1]+"'."+(g?" Did you mean '"+g+"'?":" You can use: world generate, join, key, every, mine, chop, kill, craft, fish, place, break, damage, die, respawn"));}
       var tg=m[2]?m[2].toLowerCase():'';
       if(tg){if(ev==='kill'){tg=mon(l,tg);}
         else if(ev==='mine'&&(tg==='stone'||tg==='rock')){tg='';}
         else if(ev==='chop'&&(tg==='tree'||tg==='wood')){tg='';}
+        else if(ev==='place'){tg=item(l,m[2]);}
         else throw PE(l.n,"'"+ev+"' does not take '"+m[2]+"'");}
       var o={on:ev,do:sub(l,0)};if(tg)o.target=tg;if(m[3]){var ow=m[3].trim().replace(/^"(.*)"$/,'$1');if(!ow||ow.length>40)throw PE(l.n,'write who after "of": player, monster, mob or a player name');var owl=ow.toLowerCase();if(owl==='player'||owl==='monster'||owl==='mob')o.of=owl;else{o.of='name';o.ofn=ow;}}out.events.push(o);
     }else if(/^rename\s*:$/i.test(l.t)){
