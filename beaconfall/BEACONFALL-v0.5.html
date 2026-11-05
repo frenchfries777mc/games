@@ -407,7 +407,7 @@ window.bfIntro=function(){if(run)return;run=1;t0=Date.now();el.classList.add('ru
     <button class="btn" data-act="skins"><span class="arrow">▶</span>스킨 상점<span class="en">SKIN SHOP</span></button>
     <button class="btn" data-act="stats"><span class="arrow">▶</span>통계<span class="en">STATS</span></button>
     <button class="btn" data-act="settings"><span class="arrow">▶</span>설정<span class="en">SETTINGS</span></button>
-    <p class="foot">v0.5<br>build 190</p>
+    <p class="foot">v0.5<br>build 191</p>
   </nav>
 </div>
 
@@ -3991,7 +3991,7 @@ function takeOutput(i,shift){
   else if(held&&(held.id!==o.id||held.n+o.n>maxStack(o.id)))return;
   active.pat.forEach((p,k)=>{if(p){craft[k].n-=p.n;if(craft[k].n<=0)craft[k]=null;}});
   if(shift)addStack(o.id,o.n);else held=held?{id:o.id,n:held.n+o.n}:{id:o.id,n:o.n};
-  achCraft(o.id);stAdd('craft',o.n);
+  achCraft(o.id);MODX.crafted=(ITEMS[o.id]&&ITEMS[o.id].name)||String(o.id);stAdd('craft',o.n);
   afterChange();
 }
 function addToArr(arr,id,n,dur){
@@ -5290,7 +5290,7 @@ function placeItem(){
   if(i<0)return;
   const item=inv[i].id,kind=ITEMS[item].place,c=placeCell(kind);
   if(c.far||!canPlaceCell(c.gx,c.gy,kind)){toast(kind==='station'&&!c.far?i18nTr('정거장은 선로 바로 옆에만 설치할 수 있어요.'):'여기에는 설치할 수 없어요.');return;}
-  achPlace(kind,item);stAdd('place');
+  achPlace(kind,item);MODX.placed=(ITEMS[item]&&ITEMS[item].name)||String(item);stAdd('place');
   if(kind==='station'){let tries=0;const op=()=>{const sb=world.sgrid.get(c.gy*GW+c.gx);if(sb&&sb.id==='station'){if(mode==='play'&&$('#modal').hidden)openStation(sb);}else if(++tries<10)setTimeout(op,200);};setTimeout(op,250);}
   if(kind==='flag'){let tries=0;const op=()=>{const fb=world.sgrid.get(c.gy*GW+c.gx);if(fb&&fb.id==='flag'){if(mode==='play'&&$('#modal').hidden)openFlag(fb);}else if(++tries<10)setTimeout(op,200);};setTimeout(op,250);}   // 꽂자마자 이름 짓기 창
   if(isGuest()){sendHost({t:'place',item,gx:c.gx,gy:c.gy,dr:faceDir()});return;}
@@ -6419,12 +6419,12 @@ function updatePlayer(dt){
         if(work.kind==='t'){
           const kk=work.key;SFX.done('t',0,world.trees.x[kk],world.trees.y[kk]);
           if(isGuest()){const bk=world.trees.y[kk]*W+world.trees.x[kk];sendHost({t:'break',key:bk});pendBreak.set(bk,{t:time,n:0});}else breakTreeAuth(kk);
-          stAdd('tree');
+          MODX.destroyed='나무';stAdd('tree');
           if(bestTool('axe'))wearSel();
         }else if(work.kind==='b'){
           const kk=work.key,pt=pickTool(kk);SFX.done('b',world.boulders.t[kk],world.boulders.x[kk],world.boulders.y[kk]);
           if(isGuest())sendHost({t:'mine',key:world.boulders.y[kk]*W+world.boulders.x[kk],tm:pt?pt.mat:''});else mineBoulderAuth(kk,!pt);
-          stAdd('rock');
+          MODX.destroyed='바위';stAdd('rock');
           if(pt)wearSel();
         }else{
           const b=P.starget;SFX.done('s',b.id,b.x,b.y);
@@ -10028,7 +10028,7 @@ function openAnimalDex(){
 }
 const stObj=()=>(settings.st=settings.st&&typeof settings.st==='object'?settings.st:{});
 /* ---------- 모드 / 리소스팩 (사이트 mods.html 에서 적용한 목록) ---------- */
-let MODX={attacker:'',victim:'',ap:false,vp:false},LASTHIT={n:'',t:-99};
+let MODX={attacker:'',victim:'',ap:false,vp:false,crafted:'',placed:'',destroyed:'',mn:'',mid:'',loc:{}},LASTHIT={n:'',t:-99};
 const MOD={ev:[],orig:{},on:[],st:{},remap:{},btns:[],tex:{},iorig:{},col:{},potato:false};
 function modLocal(){try{const o=JSON.parse(localStorage.getItem('bf.mods.on')||'{}');return Object.keys(o).slice(0,50).map(id=>({id:String(id).slice(0,40),kind:o[id].kind,name:o[id].name,descr:o[id].descr,author_name:o[id].author_name,data:o[id].data})).filter(m=>m.data&&typeof m.data==='object');}catch(e){return [];}}
 const MOD_KEY=/^(Key[A-Z]|Digit[0-9]|F([1-9]|1[0-2]))$/;
@@ -10054,15 +10054,17 @@ function modApply(list){
     if(Array.isArray(d.sets))for(const t of d.sets.slice(0,100))modSet(t,setName);
     if(d.remap&&typeof d.remap==='object'&&!Array.isArray(d.remap))for(const k of Object.keys(d.remap).slice(0,30)){if(MOD_KEY.test(k)&&MOD_KEY.test(d.remap[k]))MOD.remap[k]=d.remap[k];}
     if(Array.isArray(d.events))for(const e of d.events.slice(0,200)){
-      if(e&&typeof e.on==='string'&&Array.isArray(e.do))MOD.ev.push({on:e.on,t:typeof e.target==='string'?e.target:'',do:e.do,mid:m.id});
+      if(e&&typeof e.on==='string'&&Array.isArray(e.do))MOD.ev.push({on:e.on,t:typeof e.target==='string'?e.target:'',do:e.do,mid:m.id,mn:String(m.name||'').slice(0,40)});
     }
     MOD.on.push(m);
   }
   try{if(typeof renderInv==='function')renderInv();}catch(e){}
 }
 function modTxt(s){   // Potato API: %player_name% 같은 값을 글에 넣어요 (Potato API 모드를 켜야 읽혀요)
-  s=String(s);if(!MOD.potato||s.indexOf('%')<0)return s;
-  return s.replace(/%([a-z0-9_]{3,30})%/g,(m,k)=>{
+  s=String(s);
+  if(s.indexOf('{')>=0)s=s.replace(/\{(_?[a-z0-9_]{1,20}_?)\}/g,(m,k)=>{const v=modVGet(k);return v===undefined?'0':String(v);});   // {변수} / {_지역변수_}
+  if(!MOD.potato||s.indexOf('%')<0)return s;
+  return s.replace(/%([a-z0-9_']{3,30})%/g,(m,k)=>{
     switch(k){
       case 'player_name':return myName();
       case 'player_location':return Math.round(P.x)+', '+(Math.round((P.alt||0)*10)/10)+', '+Math.round(P.y);   // x, y(고도), z
@@ -10077,7 +10079,22 @@ function modTxt(s){   // Potato API: %player_name% 같은 값을 글에 넣어�
       case 'player_biome':{try{return String(BIOME_NAME[bioAt(P.x,P.y)]||'');}catch(e){return '';}}
       case 'world_day':return String(Math.floor(world.clock/DAY_SEC)+1);
       case 'world_time':{const h=(6+world.clock/DAY_SEC*24)%24;return String(Math.floor(h)).padStart(2,'0')+':'+String(Math.floor((h%1)*60)).padStart(2,'0');}
-      case 'player':return myName();   // on 이벤트에서는 그 일을 한 사람 이름
+      case 'player':return myName();
+      case "player's_uuid":case 'player_uuid':return myUuid();
+      case 'mod_name':return MODX.mn;
+      case 'mod_uuid':return MODX.mid;
+      case 'crafted_item':return MODX.crafted;
+      case 'placed_block':return MODX.placed;
+      case 'distroyed_block':case 'destroyed_block':return MODX.destroyed;
+      case 'nearest_player':case 'nearst_player':return modPick('player','near');
+      case 'farest_player':case 'farthest_player':return modPick('player','far');
+      case 'random_player':return modPick('player','rand');
+      case 'nearest_mob':case 'nearst_mob':return modPick('mob','near');
+      case 'farest_mob':case 'farthest_mob':return modPick('mob','far');
+      case 'random_mob':return modPick('mob','rand');
+      case 'nearest_monster':case 'nearst_monster':return modPick('monster','near');
+      case 'farest_monster':case 'farthest_monster':return modPick('monster','far');
+      case 'random_monster':return modPick('monster','rand');   // on 이벤트에서는 그 일을 한 사람 이름
       case 'attacker':return MODX.attacker;
       case 'victim':return MODX.victim;
       case 'random':return String(1+Math.floor(Math.random()*100));
@@ -10090,17 +10107,35 @@ function modTxt(s){   // Potato API: %player_name% 같은 값을 글에 넣어�
     }
   });
 }
+function myUuid(){try{let u=localStorage.getItem('bf.uuid');if(!u){u=(crypto.randomUUID?crypto.randomUUID():'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g,c=>{const r=Math.random()*16|0;return(c==='x'?r:(r&3|8)).toString(16);}));localStorage.setItem('bf.uuid',u);}return u;}catch(e){return 'unknown';}}
+function modPick(kind,how){
+  const L=[];   // {n:이름, d:거리}
+  if(kind==='player'){
+    if(how==='rand')L.push({n:myName(),d:0});
+    for(const r of remotes.values())if(r&&r.name)L.push({n:String(r.name).slice(0,15),d:Math.hypot(r.x-P.x,r.y-P.y)});
+    if(!L.length)return myName();
+  }else{
+    if(!monsters)return '';
+    for(const m of monsters){if(m.hid)continue;const T=MT(m);L.push({n:String(T.name||m.ty||''),d:Math.hypot(m.x-P.x,m.y-P.y)});}
+    if(kind==='mob')for(const a of animals){const nm=(typeof ANIM_NAME!=='undefined'&&ANIM_NAME[a.type])||a.type;L.push({n:String(nm),d:Math.hypot(a.x-P.x,a.y-P.y)});}
+    if(!L.length)return '';
+  }
+  if(how==='rand')return L[Math.floor(Math.random()*L.length)].n;
+  L.sort((a,b)=>a.d-b.d);return (how==='near'?L[0]:L[L.length-1]).n;
+}
+function modIsLoc(n){return n.length>2&&n[0]==='_'&&n[n.length-1]==='_';}   // {_이름_} = 이 이벤트 안에서만 쓰는 변수
+function modVGet(n){return modIsLoc(n)?MODX.loc[n]:modVars()[n];}
 function modVars(){if(!world)return {};return world.vars||(world.vars={});}   // 모드 변수 (월드 저장에 같이 들어가요)
 function modVarSet(n,v){
-  const vs=modVars();
   if(!/^[a-z0-9_]{1,20}$/.test(n))return;
+  const vs=modIsLoc(n)?MODX.loc:modVars();
   if(!(n in vs)&&Object.keys(vs).length>=50)return;
   if(typeof v==='number'){if(!isFinite(v))return;vs[n]=Math.max(-1e9,Math.min(1e9,Math.round(v*1000)/1000));}
   else if(typeof v==='string')vs[n]=v.slice(0,40);
 }
 function modVarCmp(c){
   if(!c||typeof c.n!=='string')return false;
-  const cur=modVars()[c.n],v=c.v,num=typeof v==='number';
+  const cur=modVGet(c.n),v=c.v,num=typeof v==='number';
   const a=num?(Number.isFinite(Number(cur))?Number(cur):0):String(cur===undefined?'':cur);
   switch(c.op){case '>=':return a>=v;case '<=':return a<=v;case '>':return a>v;case '<':return a<v;case '=':return a===v;case '!=':return a!==v;}
   return false;
@@ -10160,8 +10195,8 @@ function modRun(acts,depth,box){
     else if(a.effect&&typeof a.effect.k==='string'){const k={speed:'spd',strength:'atk',defense:'def',regen:'reg',haste:'work',breath:'breath',night:'night'}[a.effect.k];if(k&&mode==='play'){P.buf=P.buf||{};P.buf[k]=time+Math.max(1,Math.min(600,+a.effect.sec||10));renderBuf();}}
     else if(typeof a.sound==='string'){try{({click:()=>SFX.blip(),hurt:()=>SFX.hurt(),swing:()=>SFX.swing(),bow:()=>SFX.bow(),hit:()=>SFX.weaponHit(P.x,P.y),break:()=>SFX.done('t',0,P.x,P.y)})[a.sound]?.();}catch(e){}}
     else if(typeof a.bc==='string'){const tx=modTxt(a.bc).slice(0,100);chatAdd('mod','MOD',tx);if(host&&net.role)try{bcastAll({t:'chat',id:'mod',n:'MOD',x:chatClean(tx)});}catch(e){}}
-    else if(a.addv&&typeof a.addv.n==='string'&&typeof a.addv.d==='number'){const cur=Number(modVars()[a.addv.n]);modVarSet(a.addv.n,(Number.isFinite(cur)?cur:0)+a.addv.d);}
-    else if(typeof a.resv==='string'){delete modVars()[a.resv];}
+    else if(a.addv&&typeof a.addv.n==='string'&&typeof a.addv.d==='number'){const cur=Number(modVGet(a.addv.n));modVarSet(a.addv.n,(Number.isFinite(cur)?cur:0)+a.addv.d);}
+    else if(typeof a.resv==='string'){delete (modIsLoc(a.resv)?MODX.loc:modVars())[a.resv];}
     else if(a.ifp&&Array.isArray(a.do)){if(MOD.potato){const isp=a.ifp.w==='victim'?MODX.vp:MODX.ap;if(isp!==!!a.ifp.not)modRun(a.do,depth+1,box);}}
     else if(a.ifv&&Array.isArray(a.do)){if(modVarCmp(a.ifv))modRun(a.do,depth+1,box);}
     else if(a.col&&typeof a.col.t==='string'&&/^[a-z_0-9]{1,30}$/.test(a.col.t)){MOD.col[a.col.t]=!!a.col.on;}
@@ -10233,7 +10268,7 @@ function modTf(kind,a){
 function modEvent(on,target){
   if(!MOD.ev.length)return;
   const box={n:50};
-  for(const e of MOD.ev){if(e.on!==on)continue;if(e.t&&e.t!==target)continue;try{modRun(e.do,0,box);}catch(x){}}
+  for(const e of MOD.ev){if(e.on!==on)continue;if(e.t&&e.t!==target)continue;MODX.mn=e.mn||'';MODX.mid=e.mid||'';MODX.loc={};try{modRun(e.do,0,box);}catch(x){}}
 }
 function modGen(){
   if(isGuest()||!world||!world.id||!MOD.ev.length)return;
@@ -10493,7 +10528,7 @@ function bpPlace(ax,ay){
   try{
     for(const r of res){
       if(r.ok){
-        achPlace(r.k,r.it);stAdd('place');
+        achPlace(r.k,r.it);MODX.placed=(ITEMS[r.it]&&ITEMS[r.it].name)||String(r.it);stAdd('place');
         if(isGuest())sendHost({t:'place',item:r.it,gx:r.gx,gy:r.gy,dr:0});
         else{addStruct(r.k,r.gx,r.gy,'host',r.it,0);consumeItem(r.it);}
         n++;
