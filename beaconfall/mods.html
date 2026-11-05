@@ -44,6 +44,7 @@ input.q{width:100%;padding:10px 12px;border:3px solid var(--gold);background:var
 .cnt{color:var(--gold);font-size:12px;margin:0 0 8px;text-shadow:2px 2px 0 #000}
 
 .mrow{display:flex;align-items:center;gap:12px;padding:10px 12px;border:2px solid #e9d9a444;background:var(--panel);margin:0 0 8px}
+.mrow .ic img.lg{width:40px;height:40px;image-rendering:pixelated}
 .mrow .ic{flex:0 0 44px;height:44px;display:flex;align-items:center;justify-content:center;font-size:26px;background:#e9d9a41a;border:2px solid #e9d9a444}
 .mrow .tx{flex:1;min-width:0}
 .mrow .nm{font-weight:700;font-size:16px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
@@ -141,12 +142,19 @@ function cats(){
   set.forEach(function(c){h+='<button class="pb'+(CAT===c?' on':'')+'" data-c="'+esc(c)+'">'+esc(c)+'</button>';});
   $('cats').innerHTML=h;
 }
+function potatoLogo(){var c=document.createElement('canvas');c.width=c.height=32;var g=c.getContext('2d');
+  function px(x,y,w,h,col){g.fillStyle=col;g.fillRect(x,y,w,h);}
+  px(6,8,20,16,'#7a5230');px(4,11,24,10,'#7a5230');px(8,6,16,20,'#7a5230');px(8,9,16,14,'#c99a5b');px(6,12,20,8,'#c99a5b');px(10,8,12,16,'#c99a5b');
+  px(10,12,3,3,'#5a3a1c');px(18,16,3,3,'#5a3a1c');px(14,20,3,2,'#5a3a1c');px(20,10,2,2,'#5a3a1c');
+  px(11,3,2,5,'#4a9650');px(13,2,5,3,'#5aaa5e');
+  return c.toDataURL('image/png');}
+var POTATO={id:'builtin-potato-api',kind:'mod',name:'Potato API',descr:'모드 글에 %player_name%, %player_location%, %world_player_count%, %online_player% 같은 값을 넣을 수 있게 해줘요',cat:'기타',author_name:'Frenchfries777',created_at:'2026-11-05',data:{api:'potato',logo:potatoLogo()}};
 function draw(){
   cats();
   var on=getOn(),q=$('q').value.trim().toLowerCase(),L=$('list');
   document.querySelectorAll('#tabs [data-k]').forEach(function(b){b.classList.toggle('on',b.dataset.k===K);});
   if(SERVER==='load'){L.innerHTML='<div class="empty">불러오는 중이에요…</div>';$('cnt').textContent='';return;}
-  var src=LIST.slice();
+  var src=[POTATO].concat(LIST);
   Object.keys(on).forEach(function(id){if(!src.some(function(m){return m.id===id;}))src.push({id:id,kind:on[id].kind,name:on[id].name,descr:on[id].descr||'',cat:on[id].cat||'기타',author_name:on[id].author_name||'',data:on[id].data});});
   var rows=src.filter(function(m){
     if(K==='mod'&&m.kind!=='mod')return false;
@@ -160,13 +168,14 @@ function draw(){
   if(!rows.length){L.innerHTML='<div class="empty">'+(SERVER==='off'&&K!=='on'?'서버를 준비하는 중이라 아직 목록을 볼 수 없어요.':K==='on'?'적용 중인 것이 없어요.':'아직 올라온 게 없어요. 첫 번째로 올려 보세요!')+'</div>';return;}
   L.innerHTML=rows.map(function(m){
     var a=!!on[m.id],mine=ME&&m.author_id===ME;
-    return '<div class="mrow" data-id="'+esc(m.id)+'"><div class="ic">'+(m.kind==='pack'?'🎨':'🧩')+'</div><div class="tx"><div class="nm">'+esc(m.name)+'</div><div class="mt"><span class="tg'+(m.kind==='pack'?' p':'')+'">'+(m.kind==='pack'?'리소스팩':'모드')+'</span>'+esc(m.cat||'기타')+'</div></div><div class="act">'
+    return '<div class="mrow" data-id="'+esc(m.id)+'"><div class="ic">'+logoOf(m)+'</div><div class="tx"><div class="nm">'+esc(m.name)+'</div><div class="mt"><span class="tg'+(m.kind==='pack'?' p':'')+'">'+(m.kind==='pack'?'리소스팩':'모드')+'</span>'+esc(m.cat||'기타')+'</div></div><div class="act">'
       +(mine&&SERVER==='ok'?'<button class="pb" data-del="'+esc(m.id)+'">삭제</button>':'')
       +(a?'<button class="pb off" data-off="'+esc(m.id)+'">적용 해제</button>':'<button class="pb" data-on="'+esc(m.id)+'">적용</button>')+'</div><div class="inf">'+(m.descr?'<div class="d">'+esc(m.descr)+'</div>':'')+pv(m)+'<span>제작자 <b>'+esc(m.author_name||'알 수 없음')+'</b></span><span>올린 날 <b>'+esc(String(m.created_at||'').slice(0,10)||'-')+'</b></span></div></div>';
   }).join('');
 }
+function logoOf(m){var l=m.data&&m.data.logo;if(typeof l==='string'&&/^data:image\/png;base64,[A-Za-z0-9+\/=]{20,6000}$/.test(l))return '<img class="lg" src="'+l+'" alt="">';return m.kind==='pack'?'🎨':'🧩';}
 function pv(m){var t=m.data&&m.data.textures;if(!t||typeof t!=='object')return '';var h='',n=0;Object.keys(t).forEach(function(k){if(n<10&&/^data:image\/png;base64,[A-Za-z0-9+\/=]{1,3000}$/.test(t[k])){h+='<img class="tx" title="'+esc(k)+'" src="'+t[k]+'">';n++;}});return h?'<div class="pv">'+h+'</div>':'';}
-function find(id){return LIST.filter(function(m){return m.id===id;})[0]||(getOn()[id]&&Object.assign({id:id},getOn()[id]));}
+function find(id){if(id===POTATO.id)return POTATO;return LIST.filter(function(m){return m.id===id;})[0]||(getOn()[id]&&Object.assign({id:id},getOn()[id]));}
 document.addEventListener('click',function(e){
   var t=e.target.closest('button');if(!t)return;
   if(t.dataset.k){K=t.dataset.k;CAT='';draw();return;}
@@ -206,6 +215,7 @@ function parseScript(text,lenient){
   var pos=0,out={kind:'mod',name:'',events:[],names:null,sets:[],remap:null};
   function item(l,w){var id=itemId(w);if(!id){var g=guess(w,Object.keys(ITEMN).concat(Object.keys(ITEMN).map(function(k){return ITEMN[k];})));throw PE(l.n,"unknown item '"+w+"'."+(g?" Did you mean '"+g+"'?":''));}return id;}
   function mon(l,w){w=w.toLowerCase();if(MONS.indexOf(w)<0){var g=guess(w,MONS);throw PE(l.n,"unknown monster '"+w+"'."+(g?" Did you mean '"+g+"'?":''));}return w;}
+  function colT(l,w){var k=w.toLowerCase(),M={tree:'tree',trees:'tree',rock:'rock',rocks:'rock',stone:'rock',ore:'ore',ores:'ore',water:'water',sea:'water',ocean:'water',block:'block',blocks:'block'};return M[k]||item(l,w);}
   function sub(l,depth){if(depth>=3)throw PE(l.n,'blocks are nested too deep');if(!(pos<L.length&&L[pos].ind>l.ind))throw PE(l.n,'nothing is written under this line');return block(L[pos].ind,depth+1);}
   function setStmt(l,m){
     var id=item(l,m[1].trim()),f=m[2].toLowerCase(),v=m[3].trim();
@@ -241,6 +251,7 @@ function parseScript(text,lenient){
         var fb=m[6]?m[6].toLowerCase():null;if(fb&&BIOMES.indexOf(fb)<0)throw PE(l.n,"unknown biome '"+fb+"'. You can use: "+BIOMES.join(', '));
         acts.push({fill:{c:fc,mode:m[5].toLowerCase(),b:fb}});
       }else if(m=l.t.match(/^remove\s+all\s+(trees|rocks|ores|structures)$/i)){acts.push({wipe:m[1].toLowerCase()});}
+      else if(m=l.t.match(/^(disable|enable)\s+collision\s+of\s+(.+)$/i)){acts.push({col:{t:colT(l,m[2].trim()),on:m[1].toLowerCase()==='enable'}});}
       else if(m=l.t.match(/^remove\s+(tree|rock)s?\s+in\s+(\d+)\s+blocks?\s+of\s+(spawn|player)$/i)){var r=+m[2];if(r<1||r>60)throw PE(l.n,'range must be 1 to 60 blocks');acts.push({remove:{what:m[1].toLowerCase(),r:r,of:m[3].toLowerCase()}});}
       else if(m=l.t.match(/^button\s+"([^"]{1,20})"(?:\s+at\s+([a-z ]+?))?\s*:$/i)){var ps=m[2]?m[2].toLowerCase().trim():'top right';if(POS.indexOf(ps)<0)throw PE(l.n,"unknown position '"+ps+"'. You can use: "+POS.join(', '));acts.push({button:{label:m[1],pos:ps,do:sub(l,depth)}});}
       else if(m=l.t.match(/^ui\s+"([^"]{1,30})"\s*:$/i)){
@@ -249,7 +260,7 @@ function parseScript(text,lenient){
         while(pos<L.length&&L[pos].ind>=ui){var t2=L[pos++],q=t2.t.match(/^text\s+"([^"]{1,80})"$/i);if(!q)throw PE(t2.n,'inside ui, write  text "..."');lines.push(q[1]);}
         if(lines.length>12)throw PE(l.n,'ui can have 12 lines');acts.push({ui:{title:m[1],lines:lines}});
       }else if(m=l.t.match(/^set\s+(\S+)\s+(damage|speed|name)\s+(.+)$/i)){acts.push({set:setStmt(l,m)});}
-      else throw PE(l.n,"I don't understand '"+l.t.split(' ')[0]+"'. You can use: give, say, chat, title, chance, if, teleport, spawn, place, remove, fill, button, ui, set");
+      else throw PE(l.n,"I don't understand '"+l.t.split(' ')[0]+"'. You can use: give, say, chat, title, chance, if, teleport, spawn, place, remove, fill, disable, enable, button, ui, set");
     }
     return acts;
   }
@@ -277,28 +288,30 @@ function parseScript(text,lenient){
         if(!mm)throw PE(r2.n,'write it like  log = "나무"');
         out.names[item(r2,mm[1].trim())]=mm[2];
       }
-    }else if(m=l.t.match(/^set\s+(\S+)\s+(damage|speed|name)\s+(.+)$/i)){out.sets.push(setStmt(l,m));}
+    }else if(m=l.t.match(/^(disable|enable)\s+collision\s+of\s+(.+)$/i)){out.col=out.col||{};out.col[colT(l,m[2].trim())]=m[1].toLowerCase()==='enable';}
+    else if(m=l.t.match(/^set\s+(\S+)\s+(damage|speed|name)\s+(.+)$/i)){out.sets.push(setStmt(l,m));}
     else if(m=l.t.match(/^remap\s+"([^"]+)"\s+to\s+"([^"]+)"$/i)){var k1=keyCode(m[1]),k2=keyCode(m[2]);if(!k1||!k2)throw PE(l.n,'keys must be A-Z, 0-9 or F1-F12');out.remap=out.remap||{};out.remap[k1]=k2;}
-    else throw PE(l.n,"I don't understand '"+l.t.split(' ')[0]+"'. Start a line with: mod, resource pack, on, rename, set, remap");
+    else throw PE(l.n,"I don't understand '"+l.t.split(' ')[0]+"'. Start a line with: mod, resource pack, on, rename, set, remap, disable, enable");
   }
-  var data={};if(out.events.length)data.events=out.events;if(out.names)data.names=out.names;if(out.sets.length)data.sets=out.sets;if(out.remap)data.remap=out.remap;
+  var data={};if(out.events.length)data.events=out.events;if(out.names)data.names=out.names;if(out.sets.length)data.sets=out.sets;if(out.remap)data.remap=out.remap;if(out.col)data.col=out.col;
   if(!Object.keys(data).length&&!lenient)throw PE(1,'nothing to upload: add an "on ...:" block, "rename:", "set ..." or "remap ..."');
   return {kind:out.name?out.kind:null,name:out.name,data:data};
 }
 var TEX={},FD=null;
-function readPng(f){return new Promise(function(res,rej){var im=new Image(),u=URL.createObjectURL(f);im.onload=function(){var c=document.createElement('canvas');c.width=c.height=12;var x=c.getContext('2d');x.imageSmoothingEnabled=false;x.drawImage(im,0,0,12,12);URL.revokeObjectURL(u);res(c.toDataURL('image/png'));};im.onerror=function(){rej();};im.src=u;});}
+function readPng(f,sz){sz=sz||12;return new Promise(function(res,rej){var im=new Image(),u=URL.createObjectURL(f);im.onload=function(){var c=document.createElement('canvas');c.width=c.height=sz;var x=c.getContext('2d');x.imageSmoothingEnabled=false;x.drawImage(im,0,0,sz,sz);URL.revokeObjectURL(u);res(c.toDataURL('image/png'));};im.onerror=function(){rej();};im.src=u;});}
 function readTxt(f){return new Promise(function(res,rej){var r=new FileReader();r.onload=function(){res(String(r.result));};r.onerror=function(){rej();};r.readAsText(f);});}
 $('uf').addEventListener('change',async function(){
   TEX={};FD=null;var box=$('uprev');box.innerHTML='';umsg('');
   var files=[].slice.call(this.files);if(!files.length)return;
   var root=((files[0].webkitRelativePath||'').split('/')[0]||'').trim();
   files=files.filter(function(f){return /\.(bs|beaconfall|png)$/i.test(f.name);}).slice(0,200);
-  var M={events:[],names:null,sets:[],remap:null},kind=null,name='',okc=0,bad=0;
+  var M={events:[],names:null,sets:[],remap:null,col:null},LOGO=null,kind=null,name='',okc=0,bad=0;
   function line(txt,cls){var sp=document.createElement('span');if(cls)sp.className=cls;sp.textContent=txt;box.appendChild(sp);}
   for(var i=0;i<files.length;i++){
     var f=files[i],rel=(f.webkitRelativePath||f.name).split('/').slice(1).join('/')||f.name;
     if(/\.png$/i.test(f.name)){
       var base=f.name.replace(/\.png$/i,'').trim(),id=itemId(base);
+      if(base.toLowerCase()==='logo'){try{LOGO=await readPng(f,32);var sl=document.createElement('span'),il=document.createElement('img');il.src=LOGO;sl.appendChild(il);sl.appendChild(document.createTextNode(rel+' ✓ (로고)'));box.appendChild(sl);okc++;}catch(e){line(rel+' ✗ 그림을 읽지 못했어요','bad');bad++;}continue;}
       if(!id){var g=guess(base,Object.keys(ITEMN));line(rel+' ✗ 아이템 이름을 몰라요'+(g?' ('+g+'?)':''),'bad');bad++;continue;}
       if(f.size>300000){line(rel+' ✗ 그림이 너무 커요','bad');bad++;continue;}
       try{TEX[id]=await readPng(f);var sp=document.createElement('span'),ig=document.createElement('img');ig.src=TEX[id];sp.appendChild(ig);sp.appendChild(document.createTextNode(rel+' ✓'));box.appendChild(sp);okc++;}
@@ -310,6 +323,7 @@ $('uf').addEventListener('change',async function(){
         if(d.events)M.events=M.events.concat(d.events);
         if(d.names){M.names=M.names||{};for(var k in d.names)M.names[k]=d.names[k];}
         if(d.sets)M.sets=M.sets.concat(d.sets);
+        if(d.col){M.col=M.col||{};for(var k3 in d.col)M.col[k3]=d.col[k3];}
         if(d.remap){M.remap=M.remap||{};for(var k2 in d.remap)M.remap[k2]=d.remap[k2];}
         if(ps.name&&!name){name=ps.name;}
         if(ps.kind&&!kind)kind=ps.kind;
@@ -318,7 +332,9 @@ $('uf').addEventListener('change',async function(){
     }
   }
   if(!okc){umsg('폴더 안에 .bs 파일이나 PNG 그림이 없어요.',1);return;}
-  var data={};if(M.events.length)data.events=M.events;if(M.names)data.names=M.names;if(M.sets.length)data.sets=M.sets;if(M.remap)data.remap=M.remap;
+  if(LOGO&&LOGO.length>6000){umsg('logo.png가 너무 복잡해요. 더 단순한 그림으로 해 주세요.',1);return;}
+  var data={};if(M.events.length)data.events=M.events;if(M.names)data.names=M.names;if(M.sets.length)data.sets=M.sets;if(M.remap)data.remap=M.remap;if(M.col)data.col=M.col;
+  if(LOGO&&LOGO.length<=6000)data.logo=LOGO;
   if(Object.keys(TEX).length)data.textures=TEX;
   kind=files.some(function(f){return /^mod[e]?\.bs$/i.test(f.name);})?'mod':'pack';   // mode.bs(또는 mod.bs)가 있으면 모드, 없으면 리소스팩
   if(kind==='pack'&&(data.events||data.sets||data.remap)){umsg('on, set, remap 규칙이 있는 폴더에는 mode.bs 파일이 있어야 해요.',1);return;}
@@ -334,7 +350,7 @@ function check(kind,d){
     if(d.sets&&(!Array.isArray(d.sets)||d.sets.length>100))return '"sets"는 100개까지예요.';
     if(d.remap&&(typeof d.remap!=='object'||Array.isArray(d.remap)||Object.keys(d.remap).length>30))return '"remap"은 30개까지예요.';
     if(d.textures&&(typeof d.textures!=='object'||Array.isArray(d.textures)))return '"textures" 모양이 올바르지 않아요.';
-    if(!d.names&&!d.sets&&!d.remap&&!d.textures&&(!Array.isArray(d.events)||!d.events.length))return '모드에는 규칙(on), 이름 바꾸기, set, remap, 그림 중 하나는 있어야 해요.';
+    if(!d.names&&!d.sets&&!d.remap&&!d.textures&&!d.col&&(!Array.isArray(d.events)||!d.events.length))return '모드에는 규칙(on), 이름 바꾸기, set, remap, 그림 중 하나는 있어야 해요.';
     if(!d.events)return '';
     if(d.events.length>200)return '이벤트는 200개까지예요.';
     for(var i=0;i<d.events.length;i++){var ev=d.events[i];if(!ev||typeof ev.on!=='string'||!Array.isArray(ev.do)||!ev.do.length)return (i+1)+'번째 이벤트에 "on"(문자열)과 "do"(목록)가 필요해요.';if(ev.do.length>20)return (i+1)+'번째 이벤트의 "do"는 20개까지예요.';}
