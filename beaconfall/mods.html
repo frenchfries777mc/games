@@ -72,9 +72,6 @@ input.q{width:100%;padding:10px 12px;border:3px solid var(--gold);background:var
 #uprev span.bad{border-color:#ffb0b0;color:#ffb0b0}
 #uprev img,.inf img.tx{width:24px;height:24px;image-rendering:pixelated;background:#e9d9a41a}
 .inf .pv{flex:1 0 100%;display:flex;flex-wrap:wrap;gap:4px}
-details.help{margin:0 0 12px;border:2px solid #e9d9a444;background:var(--panel);padding:8px 12px}
-details.help summary{cursor:pointer;color:var(--gold)}
-details.help pre{margin:8px 0 0;font:12px/1.5 monospace;color:var(--cream);white-space:pre-wrap;overflow:auto}
 footer{padding:40px 0 30px;color:var(--gold);font-size:12px;text-shadow:2px 2px 0 #000}
 @media(max-width:560px){.mrow{flex-wrap:wrap}.mrow .act{width:100%}.mrow .act .pb{flex:1}}
 </style>
@@ -96,31 +93,6 @@ footer{padding:40px 0 30px;color:var(--gold);font-size:12px;text-shadow:2px 2px 
   <button class="pb" id="upb" style="margin-left:auto">＋ 올리기</button>
  </div>
  <input class="q" id="q" autocomplete="off" placeholder="이름, 설명, 올린 사람으로 찾기">
- <details class="help"><summary>BeaconScript 문법 보기</summary><pre>mod "My mod"            # 이름 (resource pack "..." 도 돼요)
-
-on world generate:      # 월드를 처음 만들 때 한 번
-    remove tree in 20 blocks of spawn
-    spawn wolf 5 times near spawn
-    place bench near spawn
-on join:                # 월드에 들어갈 때
-    title "Welcome!" for 3 seconds
-    button "Shop" at top right:
-        give 2 iron
-on key "G" press:
-    teleport player to spawn
-on mine stone:          # chop, kill wolf, craft, fish, place, die
-    chance 30%:
-        give 1 iron
-        chat "Lucky!"
-    if has 5 iron:
-        teleport wolf to player
-
-set sword_iron damage 12
-set sword_iron speed 0.4
-set sword_iron name "Big Sword"
-remap "E" to "R"
-rename:
-    log = "나무"</pre></details>
  <div class="row cats" id="cats"></div>
  <div class="cnt" id="cnt"></div>
  <div id="list"></div>
@@ -133,7 +105,7 @@ rename:
  <label>이름 (최대 40자)</label><input id="un" maxlength="40">
  <label>설명 (최대 120자)</label><input id="ud" maxlength="120">
  <label>분류</label><select id="uc"></select>
- <label>내용 (BeaconScript 또는 JSON · .bs 파일도 돼요)</label>
+ <label>내용 (.bs 또는 JSON)</label>
  <input type="file" id="uf" accept=".bs,.beaconfall,.json,.txt,application/json,text/plain">
  <textarea id="uj" spellcheck="false" placeholder='mod "Iron from stone"&#10;&#10;on mine stone:&#10;    give 1 iron&#10;&#10;on kill wolf:&#10;    chance 30%:&#10;        give 2 iron&#10;        say "Lucky!"'></textarea>
  <label>그림 PNG (선택, 여러 장 · 파일 이름이 아이템 이름, 예: iron.png)</label>
