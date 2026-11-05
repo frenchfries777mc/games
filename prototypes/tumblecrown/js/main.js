@@ -1,7 +1,7 @@
 // Tumblecrown · © 2026 Frenchfries777 · CC BY-NC-ND 4.0
 // 화면 흐름, 조작, 멀티(친구 초대, PeerJS), 저장
 import { View } from './render.js';
-import { createGame, step, snapshot, chooseBless, carryOver, koPlayer, INTRO_T, HV_DELAY, wallClamp, setupRange, callBots } from './sim.js';
+import { createGame, step, snapshot, chooseBless, carryOver, koPlayer, surVote, INTRO_T, HV_DELAY, wallClamp, setupRange, callBots } from './sim.js';
 import { useMode, RECALL_CD, pushTime, TEAMS, FLAG_T, FLAG_R, RESP_T, MODES, ROLES, ROLE_IDS, COLORS, BOT_NAMES, MAX_PLAYERS, BLESSINGS, CHAPTERS, CH, FOES, MAP, ACHIEVEMENTS, TALK, COSMETICS, WEEKLY, weekInfo, VERSION, BUILD, roleLevel, CHAR_RANKS, charRankFor, rankImg, roleImg, typeImg, typeFile, MASTERY_PT, MASTERY_BASE, MODE_MASTERY, streakBonusFor, COMBOS, DEEP, DEEP_I, TALK_X, ROLE_PUZ, flagShown, achImg, itemImg } from './data.js';
 import { collide as mapCollide, areaAt, floorCell, MW, MH, CS, cw, useChapter, chapterIndex, SOPEN, openSecret, resetSecrets, hiddenCell, GOPEN, openGate, setDoors, DSTATE, PDOWN, dropPillar, LIFTH, liftOk, CUT } from './map.js';
 import * as SFX from './sfx.js';
@@ -353,10 +353,19 @@ function bindKey(n, btn) {
 const pcol = p => p.col ? '#' + p.col.toString(16).padStart(6, '0') : ROLES[p.role].color;
 const hex = c => '#' + c.toString(16).padStart(6, '0');
 // 봇이 직업을 고를 때: 같은 편에 이미 있는 직업은 피하고, 전체에서도 덜 나온 직업을 먼저 골라요
+// 랭크전 직업 밴: 각 팀의 팀장(팀에서 가장 먼저 들어온 사람)이 직업 하나를 금지해요. 금지된 직업은 양쪽 팀 모두 못 골라요
+const banned = r => !!(S.bans && S.bans.includes(r));
+function capOf(uid) { const all = S.slots.filter(s => !s.srv), i = all.findIndex(s => s.uid === uid); if (i < 0) return -1; const tm = i % 2; return all.findIndex((s, k) => k % 2 === tm && !s.bot) === i ? tm : -1; }   // 팀장이면 팀 번호, 아니면 -1
+function setBan(tm, role) {
+  if (!S.bans || !(tm === 0 || tm === 1) || (role && !ROLES[role])) return; S.bans[tm] = role && S.bans[tm] !== role ? role : null;
+  for (const sl of S.slots) if (banned(sl.role)) sl.role = sl.bot ? botPickRole(sl) : (ROLE_IDS.find(r => !banned(r)) || sl.role);
+  hostLobby(); if (S.scr === 'sRoom') paintRoom();
+}
+function banSend(role) { if (S.net === 'guest') send({ t: 'ban', role }); else { const c = capOf(UID); if (c >= 0) setBan(c, role); } }
 function botPickRole(sl) {
   const mine = S.slots.indexOf(sl) % 2, same = {}, all = {};
   S.slots.forEach((o, i) => { if (o === sl || !(o.bot ? S.rdy[o.uid] : o.role)) return; all[o.role] = (all[o.role] || 0) + 1; if (i % 2 === mine) same[o.role] = (same[o.role] || 0) + 1; });
-  const dl = (S.mode === 'duel' || S.cap <= 2), pool = ROLE_IDS.filter(r => !dl || roleKind(r) === 'M' || roleKind(r) === 'R');   // 듀얼(한 명씩)은 근접·원거리 딜러만 골라요
+  const dl = (S.mode === 'duel' || S.cap <= 2), pool = ROLE_IDS.filter(r => (!dl || roleKind(r) === 'M' || roleKind(r) === 'R') && !banned(r));   // 듀얼(한 명씩)은 근접·원거리 딜러만 골라요
   let best = null, bs = 1e9; for (const r of pool) { const sc = (same[r] || 0) * 10 + (all[r] || 0) * 3 + Math.random(); if (sc < bs) { bs = sc; best = r; } }
   return best;
 }
@@ -387,10 +396,12 @@ function paintRoom() {
   { const mt = wait && S.pub; $('sRoom').classList.toggle('matching', mt); $('sRoom').style.backgroundImage = mt ? 'url(match-bg.png?v=' + BUILD + ')' : ''; }   // 방을 찾는 동안 배경 그림
   $('roomTitle').textContent = S.info ? T('직업·조작') : S.range ? T('연습장') : S.net === 'solo' ? T('봇과 연습') : S.pub ? T('온라인 대전') + ' · ' + MODES[S.mode || 'normal'].name : S.priv ? T('봇과 연습 · 친구 초대') : host ? T('친구와 대결 · 방장') : T('친구와 대결');
   $('inviteBtn').style.display = (S.net === 'host' && !S.pub && wait) || (S.net === 'solo' && !S.range && !S.info) ? '' : 'none';
-  $('clsList').innerHTML = ROLE_IDS.map((id, k) => '<button data-c="' + id + '"' + (mine.role === id ? ' class="on"' : '') + '><i>' + (k + 1) + '</i><b>' + roleImg(id, 22) + ROLES[id].name + '</b><small class="lv" style="color:' + charRankFor((SAVE.pts || {})[id]).color + '">' + rankImg(charRankFor((SAVE.pts || {})[id]), 14) + charRankFor((SAVE.pts || {})[id]).name + ' · Lv.' + roleLevel(SAVE.xp[id]) + '</small></button>').join('');
+  $('clsList').innerHTML = ROLE_IDS.map((id, k) => '<button data-c="' + id + '"' + (mine.role === id ? ' class="on"' : '') + (banned(id) ? ' style="opacity:.4;text-decoration:line-through"' : '') + '><i>' + (k + 1) + '</i><b>' + roleImg(id, 22) + ROLES[id].name + '</b><small class="lv" style="color:' + charRankFor((SAVE.pts || {})[id]).color + '">' + rankImg(charRankFor((SAVE.pts || {})[id]), 14) + charRankFor((SAVE.pts || {})[id]).name + ' · Lv.' + roleLevel(SAVE.xp[id]) + '</small></button>').join('');
   $('clsList').querySelectorAll('button').forEach(el => el.onclick = () => { SFX.play('click'); SAVE.role = el.dataset.c; save(); pick(); });
-  $('clsInfo').innerHTML = '<h2>' + roleImg(mine.role, 34) + c.name + ' <small class="lv">Lv.' + roleLevel(SAVE.xp[mine.role]) + '</small></h2><p class="note">' + typeImg(c.type, 18) + c.type + '</p><p>' + c.role + '</p>' + roleXpBar(mine.role) + rankBar(mine.role) + BARS.map((n, k) => '<div class="bar"><span>' + n + '</span><u>' + '<i class="on"></i>'.repeat(c.st[k]) + '<i></i>'.repeat(5 - c.st[k]) + '</u></div>').join('') +
+  const bt = pickP && S.bans ? capOf(UID) : -1, bl = pickP && S.bans ? '<p class="note">🚫 ' + T('금지') + ': ' + (S.bans.filter(Boolean).map(r => ROLES[r].name).join(', ') || T('없음')) + '</p>' + (bt >= 0 ? '<button class="btn" id="banBtn">' + (S.bans[bt] === mine.role ? T('금지 취소') : T('🚫 이 직업 금지 (팀장)')) + '</button>' : '<p class="note">' + T('팀장이 직업 하나를 금지해요') + '</p>') : '';
+  $('clsInfo').innerHTML = bl + '<h2>' + roleImg(mine.role, 34) + c.name + ' <small class="lv">Lv.' + roleLevel(SAVE.xp[mine.role]) + '</small></h2><p class="note">' + typeImg(c.type, 18) + c.type + '</p><p>' + c.role + '</p>' + roleXpBar(mine.role) + rankBar(mine.role) + BARS.map((n, k) => '<div class="bar"><span>' + n + '</span><u>' + '<i class="on"></i>'.repeat(c.st[k]) + '<i></i>'.repeat(5 - c.st[k]) + '</u></div>').join('') +
     '<h4>' + T('기본 공격') + '</h4><p>' + c.atkTxt + '</p>' + c.skills.map(s => '<h4>' + s.key + ' · ' + s.name + '</h4><p>' + s.desc + '</p>').join('');
+  if ($('banBtn')) $('banBtn').onclick = () => { SFX.play('click'); banSend(S.bans[bt] === mine.role ? null : mine.role); };
   const srvSeat = online && S.slots.some(s => s.srv), all = (online ? S.slots : roster()).filter(s => !s.srv), cap = (online ? S.cap : pcap()) - (srvSeat ? 1 : 0);
   const myIdx = all.findIndex(s => s.uid === UID), myTm = myIdx < 0 ? 0 : myIdx % 2, shown = pickP ? all.filter((s, i) => i % 2 === myTm) : all;   // 직업을 고를 때는 우리 팀만 위쪽 목록에 보여요   // 서버 자리는 목록에 보이지 않아요
   $('slots').innerHTML = shown.map(s => (s.team = all.indexOf(s) % 2, '<div class="slot' + (s.uid === UID ? ' me' : '') + (s.aid && !s.bot ? ' pn' : '') + '"' + (s.aid && !s.bot ? ' data-aid="' + esc(s.aid) + '"' : '') + '><i style="background:' + hex(TEAMS[s.team == null ? 0 : s.team].c) + '"></i><b>' + esc(s.name) + '</b><small>' + (pickP ? (s.rd || (S.net === 'host' && S.rdy[s.uid]) ? '✔ ' + T('준비') + ' · ' : '') : '') + (wait ? '' : roleImg(s.role, 14) + ROLES[s.role].name) + (s.bot ? ' · ' + T('봇') : '') + '</small></div>')).join('') +
@@ -441,6 +452,7 @@ $('modeX').onclick = () => { SFX.play('click'); $('modeWin').classList.remove('o
 $('mapX').onclick = () => { SFX.play('click'); $('mapWin').classList.remove('on'); };
 function pick() {
   if (S.net !== 'solo' && S.ph !== 'pick') return;
+  if (banned(SAVE.role)) { const m0 = S.slots.find(s => s.uid === UID); SAVE.role = m0 && !banned(m0.role) ? m0.role : (ROLE_IDS.find(r => !banned(r)) || SAVE.role); save(); toast(T('금지된 직업이에요.')); paintRoom(); return; }
   if (S.net === 'guest') { send({ t: 'pick', role: SAVE.role, col: SAVE.col | 0, mp: mastOf(SAVE.role).mp, rl: mastOf(SAVE.role).rl }); const m = S.slots.find(s => s.uid === UID); if (m) { m.role = SAVE.role; m.col = SAVE.col | 0; } paintRoom(); return; }
   const m = S.slots.find(s => s.uid === UID); if (m) { m.role = SAVE.role; if (!S.slots.some(s => s !== m && s.col === (SAVE.col | 0))) m.col = SAVE.col | 0; }
   paintRoom(); hostLobby();
@@ -544,11 +556,11 @@ setInterval(() => {
   }
   if (left !== S.lastFill) { S.lastFill = left; hostLobby(); if (S.scr === 'sRoom') paintRoom(); }
 }, 250);
-function checkFull() { if (S.net === 'host' && !S.priv && !S.G && S.ph === 'wait' && S.slots.length >= S.cap) { S.ph = 'pick'; S.pickT = PICK_T; S.rdy = {}; S.lastLeft = null; for (const sl of S.slots) if (sl.bot) sl.rdT = 1 + Math.random() * 3; SFX.play('click'); } }
+function checkFull() { if (S.net === 'host' && !S.priv && !S.G && S.ph === 'wait' && S.slots.length >= S.cap) { S.ph = 'pick'; S.pickT = PICK_T; S.rdy = {}; S.lastLeft = null; S.bans = S.mode === 'rank' ? [null, null] : null; for (const sl of S.slots) if (sl.bot) sl.rdT = 1 + Math.random() * 3; SFX.play('click'); } }
 function leaveNet() {
   S.back = 0;
   S.range = false; S.info = false; S.priv = false;
-  S.ph = null; S.pub = false; S.rdy = {}; S.mg = (S.mg | 0) + 1;
+  S.ph = null; S.pub = false; S.rdy = {}; S.bans = null; S.mg = (S.mg | 0) + 1;
   hubRoom(false); cancelInvites();
   if (S.peer) { try { S.peer.destroy(); } catch (e) { } }
   S.peer = null; S.conn = null; S.conns = {}; S.net = null; S.code = '';
@@ -616,7 +628,7 @@ function matchJoin(n, gen) {
   });
   p.on('error', () => { if (!done) next(); });
 }
-function lobbyMeta() { return { t: 'lobby', slots: S.slots.map(s => ({ bot: s.bot ? 1 : 0, role: s.role, uid: s.uid, aid: s.aid || '', name: s.name, col: s.col, rd: S.rdy && S.rdy[s.uid] ? 1 : 0, srv: s.srv ? 1 : 0 })), bots: 0, code: S.code, ch: S.chSel, wk: S.wk ? 1 : 0, ph: S.ph, cap: S.cap, pub: S.pub ? 1 : 0, priv: S.priv ? 1 : 0, pt: S.pickT, ft: S.pub && S.ph === 'wait' && S.fillT > 0 ? Math.max(0, Math.ceil(FILL_T - S.fillT)) : -1 }; }
+function lobbyMeta() { return { t: 'lobby', slots: S.slots.map(s => ({ bot: s.bot ? 1 : 0, role: s.role, uid: s.uid, aid: s.aid || '', name: s.name, col: s.col, rd: S.rdy && S.rdy[s.uid] ? 1 : 0, srv: s.srv ? 1 : 0 })), bots: 0, code: S.code, ch: S.chSel, wk: S.wk ? 1 : 0, ph: S.ph, cap: S.cap, pub: S.pub ? 1 : 0, priv: S.priv ? 1 : 0, pt: S.pickT, bn: S.bans || 0, ft: S.pub && S.ph === 'wait' && S.fillT > 0 ? Math.max(0, Math.ceil(FILL_T - S.fillT)) : -1 }; }
 function hostLobby() { if (S.net === 'host') bcast(lobbyMeta()); }
 function hostMsg(c, d) {
   if (!d || typeof d !== 'object') return;
@@ -652,6 +664,8 @@ function hostMsg(c, d) {
   else if (d.t === 'b' && S.G) { if (c._pid) chooseBless(S.G, c._pid, d.id); }
   else if (d.t === 'chat' && S.G) { hostChat(uid, d.m); }
   else if (d.t === 'emo' && S.G) { hostEmo(uid, d.i); }
+  else if (d.t === 'ban' && !S.G && S.ph === 'pick' && S.bans) { const t = capOf(uid); if (t >= 0) setBan(t, d.role); }
+  else if (d.t === 'sur' && S.G) { const p = S.G.players.find(q => q.uid === uid && !q.bot); if (p) surVote(S.G, p); }
 }
 function dropConn(c) {
   const uid = c._uid; if (!uid || S.conns[uid] !== c) return; delete S.conns[uid];
@@ -703,6 +717,8 @@ function chatShow(e) {
   const L = $('chatLog'); L.appendChild(d); while (L.children.length > 6) L.removeChild(L.firstChild); setTimeout(() => { try { d.remove(); } catch (x) { } }, 9000);
 }
 $('chatE').innerHTML = EMOS.map((q, i) => '<button class="btn" data-e="' + i + '" style="font-size:20px">' + q + '</button>').join('');
+$('chatE').insertAdjacentHTML('beforeend', '<button class="btn" id="surBtn" style="margin-left:auto">' + T('🏳 항복 투표') + '</button>');
+$('surBtn').onclick = () => { SFX.play('click'); if (!S.G || !S.net || S.net === 'solo' || S.G.range) return; if (S.net === 'guest') send({ t: 'sur' }); else { const p = S.G.players.find(q => q.uid === UID && !q.bot); if (p) surVote(S.G, p); } chatOpen(false); };
 $('chatE').onclick = e => { const b = e.target.closest('[data-e]'); if (!b) return; SFX.play('click'); emoSend(+b.dataset.e); chatOpen(false); };
 $('chatQ').innerHTML = QUICK.map((q, i) => '<button class="btn" data-q="' + i + '">' + T(q) + '</button>').join('');
 $('chatQ').onclick = e => { const b = e.target.closest('[data-q]'); if (!b) return; SFX.play('click'); chatSendText(T(QUICK[+b.dataset.q])); chatOpen(false); };
@@ -715,9 +731,9 @@ function guestMsg(d) {
   if (!d || typeof d !== 'object') return;
   if (d.t === 'welcome' && d.ver && d.ver !== VERSION) { homeMsg(T('버전이 달라요. 이 방은 {0} 버전이에요.', d.ver)); leaveNet(); return; }
   if (d.t === 'welcome') { homeMsg(''); if (d.start) { S.me = d.pid; useDeep(d.dp); { const fw = useWk(d.wk); useChapter(d.ch | 0, !!d.dp || fw); if (d.md) S.mode = d.md; useMode(d.md || 'normal'); if (d.th) CH.theme = d.th; } startClient(); } else { openRoom(); } }
-  else if (d.t === 'lobby') { S.slots = d.slots; S.ph = d.ph; S.cap = d.cap || PUB_CAP; S.pub = !!d.pub; S.priv = !!d.priv; S.pickT = d.pt; S.ft = d.ft; if (S.scr === 'sRoom') paintRoom(); }
+  else if (d.t === 'lobby') { S.slots = d.slots; S.ph = d.ph; S.cap = d.cap || PUB_CAP; S.pub = !!d.pub; S.priv = !!d.priv; S.pickT = d.pt; S.bans = d.bn || null; S.ft = d.ft; if (S.scr === 'sRoom') paintRoom(); }
   else if (d.t === 'deny') { homeMsg(d.ver ? T('버전이 달라요. 이 방은 {0} 버전이에요.', d.ver) : T(d.why || '들어갈 수 없어요.')); leaveNet(); }
-  else if (d.t === 'start') { S.back = 0; if (S.snap && S.snap.won) clearChapter(); S.me = d.pid; useDeep(d.dp); { const fw = useWk(d.wk); useChapter(d.ch | 0, !!d.dp || fw); if (d.md) S.mode = d.md; useMode(d.md || 'normal'); if (d.th) CH.theme = d.th; } startClient(); }
+  else if (d.t === 'start') { S.back = 0; S.bans = null; if (S.snap && S.snap.won) clearChapter(); S.me = d.pid; useDeep(d.dp); { const fw = useWk(d.wk); useChapter(d.ch | 0, !!d.dp || fw); if (d.md) S.mode = d.md; useMode(d.md || 'normal'); if (d.th) CH.theme = d.th; } startClient(); }
   else if (d.t === 's') {
     if (S.back) return;
     if (d.S && d.S.c != null && (d.S.c !== chapterIndex() || (d.S.dp && d.S.dp.floor !== DEEP.floor) || !!d.S.wk !== WEEKLY.on)) { useDeep(d.S.dp); useWk(d.S.wk); useChapter(d.S.c, true); S.built = false; }
@@ -730,7 +746,7 @@ function useWk(wk) { const was = WEEKLY.on; WEEKLY.on = !!wk; if (wk) { WEEKLY.i
 function useDeep(dp) { if (dp) { DEEP.floor = dp.floor; DEEP.seed = dp.seed; DEEP.curses = dp.curses.slice(); } }
 /* ---------- 게임 시작 ---------- */
 function beginGame(prevG) {
-  S.newAch = [];
+  S.newAch = []; S.bans = null;
   const solo = S.net === 'solo';
   const sl = prevG ? S.lastSl : roster().map((s, i) => {
     const id = 's' + i, c = s.uid && s.uid !== UID ? S.conns[s.uid] : null;
