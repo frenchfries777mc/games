@@ -365,6 +365,16 @@ function parseScript(text,lenient){
       if(l.ind>ind)throw PE(l.n,'indent does not match the line above');
       pos++;var m;
       if(/^(set|add|subtract|multiply|divide|reset|loop|if\s+(variable|player|world|signal)|signal|every)\b/i.test(l.t))l={n:l.n,ind:l.ind,t:nb(l.t)};   // {변수} 는 {} 를 떼고 읽어요
+      var pe=null,em=l.t.match(/^else(?:\s+if\s+(.+?))?\s*:$/i);
+      if(em){
+        var tl=acts[acts.length-1];
+        while(tl&&tl.elseIf&&tl.else&&tl.else.length===1)tl=tl.else[0];
+        if(!tl||!Array.isArray(tl.do)||!(tl.has||tl.ifp||tl.ifv||tl.ifc||tl.ifg||tl.md||tl.anyof||typeof tl.chance==='number'))throw PE(l.n,'else has to come right under an if, with the same indent');
+        if(tl.else)throw PE(l.n,'this if already has an else');
+        if(!em[1]){tl.else=sub(l,depth);continue;}
+        pe=tl;l={n:l.n,ind:l.ind,t:'if '+em[1]+':'};
+        if(/^if\s+(variable|player|world|signal)\b/i.test(l.t))l.t=nb(l.t);
+      }
       if(m=l.t.match(/^give\s+effect\s+(\w+)\s+(\d{1,3})\s+seconds?(?:\s+to\s+(.+?))?$/i)){
         var ef=m[1].toLowerCase(),EFS=['speed','strength','defense','regen','haste','breath','night','stun'];if(EFS.indexOf(ef)<0)throw PE(l.n,"unknown effect '"+m[1]+"'. You can use: "+EFS.join(', '));
         if(+m[2]<1||+m[2]>600)throw PE(l.n,'effect seconds must be 1 to 600');var ea={effect:{k:ef,sec:+m[2]}};if(m[3])ea.to=toT(l,m[3]);acts.push(ea);
@@ -433,6 +443,7 @@ function parseScript(text,lenient){
         if(lines.length>12)throw PE(l.n,'ui can have 12 lines');acts.push({ui:{title:m[1],lines:lines}});
       }else if(m=l.t.match(/^set\s+(\S+)\s+(damage|speed|name)\s+(.+)$/i)){acts.push({set:setStmt(l,m)});}
       else throw PE(l.n,"I don't understand '"+l.t.split(' ')[0]+"'. You can use: give, say, chat, title, chance, if, teleport, spawn, place, remove, fill, disable, enable, add, subtract, reset, loop, heal, damage, broadcast, play, button, ui, set");
+      if(pe){var na=acts.pop();pe.else=[na];pe.elseIf=true;}
     }
     return acts;
   }
