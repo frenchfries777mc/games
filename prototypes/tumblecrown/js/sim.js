@@ -126,6 +126,15 @@ function hurtProxy(G, e, dmg, p, o) {
   return r;
 }
 // 체력이 다하면 쓰러져요: 15초 뒤에 우리 팀 진지에서 다시 일어나요
+// 항복 투표: 온라인 대전에서 2분이 지난 뒤, 우리 팀 사람의 과반이 찬성하면 상대 팀이 이겨요 (다시 누르면 취소)
+export function surVote(G, p) {
+  if (!G || !G.pvp || G.range || G.won || !p || p.bot || p.gone) return;
+  if ((G.mt || 0) < 120) { ev(G, 'chat', { id: p.id, tm: p.team, n: p.name, m: '🏳 항복은 시작하고 2분 뒤부터 할 수 있어요' }); return; }
+  const mem = G.players.filter(q => q.team === p.team && !q.bot && !q.gone), need = Math.floor(mem.length / 2) + 1;
+  p.sv = !p.sv; const c = mem.filter(q => q.sv).length;
+  ev(G, 'chat', { id: p.id, tm: p.team, n: p.name, m: p.sv ? '🏳 항복에 투표했어요 (' + c + '/' + need + ')' : '🏳 항복 투표를 취소했어요 (' + c + '/' + need + ')' });
+  if (c >= need) G.surTeam = p.team;
+}
 export function koPlayer(G, p, src) {
   p.hp = 0; p.dead = true; p.down = false; p.respT = D.RESP_T + (G.pvp && G.fl && D.pushTime(G.fl.filter(f => f.own === 1 - p.team).length, G.fl.length, G.mode)); p.roll = 0; p.hvT = p.pbT = 0; p.block = p.taunt = 0; p.burn = 0; p.deaths++;
   const k = src && src.id && src.id !== p.id ? G.players.find(q => q.id === src.id) : null; if (k && k.team !== p.team) { k.kills++; if (G.pvp) { if (k.lastKillT != null && G.t - k.lastKillT <= 8) for (const c of ['s0', 's1', 's2']) k.cd[c] *= 0.5; k.mkN = k.lastKillT != null && G.t - k.lastKillT <= 8 ? (k.mkN || 1) + 1 : 1; if (k.mkN >= 2) ev(G, 'multi', { id: k.id, n: k.mkN }); k.lastKillT = G.t; } }
@@ -279,6 +288,7 @@ function pvpCheck(G, dt) {
       wt = nf[0] !== nf[1] ? (nf[0] > nf[1] ? 0 : 1) : nk[0] !== nk[1] ? (nk[0] > nk[1] ? 0 : 1) : (G.rng() < 0.5 ? 0 : 1); G.timeUp = 1;
     }
   }
+  if (G.surTeam != null) wt = 1 - G.surTeam;   // 항복 투표가 통과되면 상대 팀이 이겨요
   if (wt < 0) return;
   G.winTeam = wt; const mv = G.players.filter(p => p.team === wt).sort((a, b) => (b.kills | 0) - (a.kills | 0))[0]; G.winner = mv ? mv.id : 0;
   for (const p of G.players) { p.place = p.team === wt ? 1 : 2; G.honor[p.id] += (p.team === wt ? 60 : 20) + (p.kills | 0) * 5; }
