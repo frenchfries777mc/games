@@ -10062,7 +10062,7 @@ function modApply(list){
     if(Array.isArray(d.sets))for(const t of d.sets.slice(0,100))modSet(t,setName);
     if(d.remap&&typeof d.remap==='object'&&!Array.isArray(d.remap))for(const k of Object.keys(d.remap).slice(0,30)){if(MOD_KEY.test(k)&&MOD_KEY.test(d.remap[k]))MOD.remap[k]=d.remap[k];}
     if(Array.isArray(d.events))for(const e of d.events.slice(0,200)){
-      if(e&&typeof e.on==='string'&&Array.isArray(e.do))MOD.ev.push({on:e.on,t:typeof e.target==='string'?e.target:'',do:e.do,mid:m.id,mn:String(m.name||'').slice(0,40),of:typeof e.of==='string'?e.of:'',ofn:typeof e.ofn==='string'?e.ofn.slice(0,40):'',ofl:Array.isArray(e.ofl)?e.ofl.slice(0,8).map(x=>String(x).slice(0,40)):null,n:e.on==='every'?Math.max(1,Math.min(3600,e.n|0)):0,nv:typeof e.nv==='string'&&/^[a-z0-9_]{1,20}$/.test(e.nv)?e.nv:'',c:0});
+      if(e&&typeof e.on==='string'&&Array.isArray(e.do))MOD.ev.push({on:e.on,t:typeof e.target==='string'?e.target:'',do:e.do,mid:m.id,mn:String(m.name||'').slice(0,40),of:typeof e.of==='string'?e.of:'',ofn:typeof e.ofn==='string'?e.ofn.slice(0,40):'',ofl:Array.isArray(e.ofl)?e.ofl.slice(0,8).map(x=>String(x).slice(0,40)):null,u:typeof e.u==='string'&&/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/.test(e.u)?e.u:'',n:e.on==='every'?Math.max(1,Math.min(3600,e.n|0)):0,nv:typeof e.nv==='string'&&/^[a-z0-9_]{1,20}$/.test(e.nv)?e.nv:'',c:0});
     }
     MOD.on.push(m);
   }
@@ -10072,7 +10072,8 @@ function modApply(list){
 function modTxt(s){   // Potato API: %player_name% 같은 값을 글에 넣어요 (Potato API 모드를 켜야 읽혀요)
   s=String(s);
   if(s.indexOf('%player\'s mod%')>=0)s=s.split('%player\'s mod%').join(MOD.on.map(m=>String(m.name||'')).join(', '));   // Potato API 없이도 읽혀요
-  if(s.indexOf('{:')>=0)s=s.replace(/\{:([a-z0-9_]{1,30}):\}/g,(m,k)=>{shLoad();return SHV[k]===undefined?'':String(SHV[k]);});   // 제작자끼리 공유하는 변수
+  if(s.indexOf('{:')>=0)s=s.replace(/\{:([a-z0-9_]{1,30}):\}/g,(m,k)=>{shLoad();const u=MODX.uid?MODX.uid.slice(0,8)+'_'+k:'';return SHV[u]!==undefined?String(SHV[u]):SHV[k]===undefined?'':String(SHV[k]);});   // 제작자끼리 공유하는 변수 (uuid 모드는 자기 번호 안에서 먼저 찾아요)
+  if(s.indexOf('%')>=0)s=s.replace(/%([0-9a-f]{8})-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}_([a-z0-9_]{1,21})%/gi,(m,a,k)=>{shLoad();const v=SHV[a.toLowerCase()+'_'+k.toLowerCase()];return v===undefined?'':String(v);});   // %uuid_이름% 로 다른 모드의 공유 변수 부르기
   if(s.indexOf('{')>=0)s=s.replace(/\{(_?[a-z0-9_]{1,20}_?)\}/g,(m,k)=>{const v=modVGet(k);return v===undefined?'0':String(v);});   // {변수} / {_지역변수_}
   if(!MOD.potato||s.indexOf('%')<0)return s;
   return s.replace(/%([a-z0-9_' ]{3,30})%/g,(m,k)=>{
@@ -10304,7 +10305,7 @@ function modRun(acts,depth,box){
     else if(a.addv&&typeof a.addv.n==='string'&&typeof a.addv.d==='number'){const cur=Number(modVGet(a.addv.n));modVarSet(a.addv.n,(Number.isFinite(cur)?cur:0)+a.addv.d);}
     else if(typeof a.resv==='string'){delete (modIsLoc(a.resv)?MODX.loc:modVars())[a.resv];}
     else if(a.ifp&&Array.isArray(a.do)){if(MOD.potato){const isp=a.ifp.w==='victim'?MODX.vp:MODX.ap;if(isp!==!!a.ifp.not)modRun(a.do,depth+1,box);}}
-    else if(a.shset&&typeof a.shset.n==='string'){shSet(a.shset.n,modTxt(String(a.shset.v)));}
+    else if(a.shset&&typeof a.shset.n==='string'){shSet(MODX.uid?MODX.uid.slice(0,8)+'_'+a.shset.n:a.shset.n,modTxt(String(a.shset.v)));}
     else if(a.ifc&&typeof a.ifc.c==='string'&&Array.isArray(a.do)){if(String(modTxt(String(a.ifc.v))).toLowerCase().includes(a.ifc.c.toLowerCase()))modRun(a.do,depth+1,box);}
     else if(a.ifv&&Array.isArray(a.do)){if(modVarCmp(a.ifv))modRun(a.do,depth+1,box);}
     else if(a.col&&typeof a.col.t==='string'&&/^[a-z_0-9]{1,30}$/.test(a.col.t)){MOD.col[a.col.t]=!!a.col.on;}
@@ -10390,7 +10391,7 @@ function modEvSubj(e,sj){   // 'of' 가 없으면 플레이어 본인 일에만 
 function modEvent(on,target,subj,only){
   if(!MOD.ev.length)return;
   const box={n:50};
-  for(const e of MOD.ev){if(e.on!==on)continue;if(only&&e!==only)continue;if(e.t&&e.t!==target)continue;if(!modEvSubj(e,subj))continue;MODX.mn=e.mn||'';MODX.mid=e.mid||'';MODX.loc={};try{modRun(e.do,0,box);}catch(x){}}
+  for(const e of MOD.ev){if(e.on!==on)continue;if(only&&e!==only)continue;if(e.t&&e.t!==target)continue;if(!modEvSubj(e,subj))continue;MODX.mn=e.mn||'';MODX.mid=e.mid||'';MODX.uid=e.u||'';MODX.loc={};try{modRun(e.do,0,box);}catch(x){}}
 }
 function modSpawnScan(){
   if(!world||!MOD.ev.some(e=>e.on==='spawn'))return;
