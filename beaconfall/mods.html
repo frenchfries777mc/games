@@ -250,7 +250,7 @@ function draw(){
   $('cnt').textContent=rows.length+'개';
   if(!rows.length){L.innerHTML='<div class="empty">'+(SERVER==='off'&&K!=='on'?'서버를 준비하는 중이라 아직 목록을 볼 수 없어요.':K==='on'?'적용 중인 것이 없어요.':'아직 올라온 게 없어요. 첫 번째로 올려 보세요!')+'</div>';return;}
   L.innerHTML=rows.map(function(m){
-    var a=!!on[m.id],mine=ME&&m.author_id===ME;
+    var a=!!on[m.id],me=ME||(function(){try{var u=FFAuth.user();return u&&u.id||null;}catch(e){return null;}})(),mine=!!me&&m.author_id===me;
     return '<div class="mrow" data-id="'+esc(m.id)+'"><div class="ic">'+logoOf(m)+'</div><div class="tx"><div class="nm">'+esc(m.name)+'</div><div class="mt"><span class="tg'+(m.kind==='pack'?' p':'')+'">'+(m.kind==='pack'?'리소스팩':'모드')+'</span>'+esc(m.cat||'기타')+'</div></div><div class="act">'
       +(a?'<button class="pb off" data-off="'+esc(m.id)+'">적용 해제</button>':'<button class="pb" data-on="'+esc(m.id)+'">적용</button>')+'</div><div class="inf">'+(m.descr?'<div class="d">'+esc(m.descr)+'</div>':'')+pv(m)+'<span>제작자 <b>'+esc(m.author_name||'알 수 없음')+'</b></span><span>올린 날 <b>'+esc(String(m.created_at||'').slice(0,10)||'-')+'</b></span><span>적용 <b>'+(COUNTS[m.id]||0)+'</b></span>'+(m.ver>1?'<span>버전 <b>'+m.ver+'</b></span>':'')+menuOf(m,mine)+'</div></div>';
   }).join('');
