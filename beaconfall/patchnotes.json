@@ -2,6 +2,16 @@
  "notes": [
   {
    "date": "2026-11-05",
+   "build": "v0.5 b189",
+   "title": "업데이트 0.5 · b189",
+   "items": [
+    "Potato API 값 추가: %player_hp%, %player_max_hp%, %player_item%, %player_biome%, %world_day%, %world_time%",
+    "변수 명령 추가: set variable, add/subtract ... variable, reset variable, if variable ... (글 안에서는 %var_이름%로 읽어요, 월드 저장에 같이 저장돼요)",
+    "모든 모드 줄에 ⋯ 메뉴가 보여요 (Potato API 포함)"
+   ]
+  },
+  {
+   "date": "2026-11-05",
    "build": "v0.5 b188",
    "title": "업데이트 0.5 · b188",
    "items": [
