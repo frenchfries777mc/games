@@ -1,6 +1,22 @@
 {
  "notes": [
   {
+   "date": "2026-11-05",
+   "build": "v622",
+   "title": "경기 종료 화면 스크롤",
+   "items": [
+    "마스터리 줄이 많아도 경기 종료 화면이 스크롤되고 메인으로 버튼이 항상 보여요"
+   ],
+   "tr": {
+    "en": {
+     "title": "Match-end screen scrolls",
+     "items": [
+      "The match-end screen now scrolls when there are many mastery rows, and the Back to main button always stays visible."
+     ]
+    }
+   }
+  },
+  {
    "date": "2026-11-04",
    "build": "v621",
    "title": "방 매칭 중 로비 버튼 숨김",
