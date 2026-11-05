@@ -583,9 +583,11 @@ function shape(x,y,hb,fb,L){
     else if(b===3&&bd<0.6){v+=0.2*(1-bd/0.6);if(bd<0.17+0.05*(hb-0.5)*2){v=0.99;bv|=128;}}
   }
   const tf=TER.tf;
-  if(tf&&tf.r){   // 모드: fill 구역 (땅/해변/바다)
+  if(tf&&tf.r){   // 모드: fill 구역 (땅/해변/바다), load 는 원래 지형으로
+    const v0=v,bv0=bv;
     for(let k=0;k<tf.r.length;k++){
       const q=tf.r[k];if(x<q[0]||x>q[2]||y<q[1]||y>q[3])continue;
+      if(q[4]===4){v=v0;bv=bv0;continue;}
       if(q[4]===0){v=SEA+0.08+Math.max(0,0.55*((hb-0.5)*2.8+0.5)-0.3)*0.6;if(v>0.7)v=0.7;}
       else if(q[4]===1)v=SEA+0.012+Math.max(0,hb-0.5)*0.05;
       else if(q[4]===3)v=Math.min(0.95,0.8+Math.max(0,hb-0.3)*0.3);   // 산
@@ -643,11 +645,13 @@ const ORE=[[.003,.012,.015],[.003,.012,.015],[0,.01,.02],[.01,.016,.022],[.003,.
 for(let i=1;i<ORE.length;i++)ORE[i]=ORE[i].map(v=>v*1.5);   // 시작섬(0) 말고 다른 섬은 광물이 더 많이 생겨요
 const FLOWER_OK=[1,1,0,0,1,0,0,1];
 
+function tfInLoad(x,y){const r=TER.tf&&TER.tf.r;if(!r)return false;for(let k=0;k<r.length;k++){const q=r[k];if(q[4]===4&&x>=q[0]&&x<=q[2]&&y>=q[1]&&y<=q[3])return true;}return false;}   // load 구역 안인가
+function tfLoadChunk(cx,cy){const r=TER.tf&&TER.tf.r;if(!r)return false;const X0=cx*CHK,Y0=cy*CHK;for(let k=0;k<r.length;k++){const q=r[k];if(q[4]===4&&q[2]>=X0&&q[0]<X0+CHK&&q[3]>=Y0&&q[1]<Y0+CHK)return true;}return false;}
 /* ----- 구역의 나무 ----- */
 function ensureTrees(cx,cy){
   if(cx<0||cy<0||cx>=CXN||cy>=CYN)return;
   const ci=cy*CXN+cx;if(TER.tn[ci]>=0)return;
-  if(TER.tf&&TER.tf.nt){TER.tn[ci]=0;return;}
+  if(TER.tf&&TER.tf.nt&&!tfLoadChunk(cx,cy)){TER.tn[ci]=0;return;}
   const X0=cx*CHK,Y0=cy*CHK,list=[],camp=TER.camp;
   const c0=Math.floor((X0-TREE_CELL)/TREE_CELL),c1=Math.ceil((X0+CHK)/TREE_CELL);
   const r0=Math.floor((Y0-TREE_CELL)/TREE_CELL),r1=Math.ceil((Y0+CHK)/TREE_CELL);
@@ -655,6 +659,7 @@ function ensureTrees(cx,cy){
     for(let cxx=Math.max(1,c0);cxx<Math.min(c1,W/TREE_CELL-1);cxx++){
       const x=cxx*TREE_CELL+((hs(cxx,cyy,21)*TREE_CELL)|0),y=cyy*TREE_CELL+((hs(cxx,cyy,22)*TREE_CELL)|0);
       if(x<X0||x>=X0+CHK||y<Y0||y>=Y0+CHK)continue;
+      if(TER.tf&&TER.tf.nt&&!tfInLoad(x,y))continue;
       ptShape(x,y);
       const hv=sV,bb=sB;
       if(hv<SEA+0.05||hv>0.97||(bb&128))continue;
@@ -715,7 +720,7 @@ const hr=(x,y,sl)=>hash2(x+sl*977,y+sl*131);
 function ensureBoulders(cx,cy){
   if(cx<0||cy<0||cx>=CXN||cy>=CYN)return;
   const ci=cy*CXN+cx;if(TER.bn[ci]>=0)return;
-  if(TER.tf&&TER.tf.nr){TER.bn[ci]=0;return;}
+  if(TER.tf&&TER.tf.nr&&!tfLoadChunk(cx,cy)){TER.bn[ci]=0;return;}
   for(let dy=-1;dy<=1;dy++)for(let dx=-1;dx<=1;dx++)ensureTrees(cx+dx,cy+dy);
   const X0=cx*CHK,Y0=cy*CHK,camp=TER.camp,list=[];
   const gx0=8+Math.floor((X0-8-7)/7)*7,gy0=8+Math.floor((Y0-8-7)/7)*7;
@@ -738,7 +743,7 @@ function ensureBoulders(cx,cy){
       break;
     }
   }
-  if(TER.tf&&TER.tf.no)for(let k=list.length-1;k>=0;k--)if(list[k][2]>=2)list.splice(k,1);
+  if(TER.tf&&(TER.tf.nr||TER.tf.no))for(let k=list.length-1;k>=0;k--){const e=list[k];if(tfInLoad(e[1],e[0]))continue;if(TER.tf.nr||(TER.tf.no&&e[2]>=2))list.splice(k,1);}
   list.sort((a,b)=>a[0]-b[0]||a[1]-b[1]);
   if(list.length>BMAX)list.length=BMAX;
   const B=TER.B,base=ci*BMAX;
@@ -10255,8 +10260,10 @@ function modGCmp(g){
   switch(g.op){case '>=':return cur>=b;case '<=':return cur<=b;case '>':return cur>b;case '<':return cur<b;case '=':return cur===b;case '!=':return cur!==b;}
   return false;
 }
+function modHasMod(c){const n=String(c.n||'').toLowerCase().trim();const has=!!n&&MOD.on.some(m=>String(m.name||'').toLowerCase().includes(n));return has!==!!c.not;}   // if mod "이름":
 function modCondOk(c){   // if A or B: 안의 조건 하나
   if(!c||typeof c!=='object')return false;
+  if(c.md)return modHasMod(c.md);
   if(c.has)return !!(ITEMS[c.has.item]&&modInv(c.has.item)>=Math.max(1,c.has.n|0||1));
   if(c.ifp){if(!MOD.potato)return false;const isp=c.ifp.w==='victim'?MODX.vp:MODX.ap;return isp!==!!c.ifp.not;}
   if(c.ifv)return modVarCmp(c.ifv);
@@ -10273,6 +10280,7 @@ function modRun(acts,depth,box){
     else if(typeof a.say==='string'){modSay(modTxt(a.say).slice(0,100),a.to);}
     else if(typeof a.chance==='number'&&Array.isArray(a.do)){if(Math.random()*100<Math.max(0,Math.min(100,a.chance)))modRun(a.do,depth+1,box);}
     else if(a.ifg&&Array.isArray(a.do)){if(modGCmp(a.ifg))modRun(a.do,depth+1,box);}
+    else if(a.md&&typeof a.md.n==='string'&&Array.isArray(a.do)){if(modHasMod(a.md))modRun(a.do,depth+1,box);}
     else if(Array.isArray(a.anyof)&&Array.isArray(a.do)){if(a.anyof.slice(0,8).some(modCondOk))modRun(a.do,depth+1,box);}
     else if(a.has&&typeof a.has==='object'&&Array.isArray(a.do)){if(ITEMS[a.has.item]&&modInv(a.has.item)>=Math.max(1,a.has.n|0||1))modRun(a.do,depth+1,box);}
     else if(a.title&&typeof a.title.text==='string'){modTitle(modTxt(a.title.text).slice(0,80),+a.title.sec||3);}
@@ -10334,7 +10342,7 @@ function cleanTF(t){
   const r=[];if(Array.isArray(t.r))for(const q of t.r.slice(0,16)){
     if(!Array.isArray(q)||q.length<6)continue;
     const n=q.slice(0,6).map(v=>Math.round(+v));if(n.some(v=>!Number.isFinite(v)))continue;
-    r.push([Math.max(0,n[0]),Math.max(0,n[1]),Math.min(W,n[2]),Math.min(H,n[3]),n[4]>=0&&n[4]<=3?n[4]:0,n[5]>=-1&&n[5]<=8?n[5]:-1]);
+    r.push([Math.max(0,n[0]),Math.max(0,n[1]),Math.min(W,n[2]),Math.min(H,n[3]),n[4]>=0&&n[4]<=4?n[4]:0,n[5]>=-1&&n[5]<=8?n[5]:-1]);
   }
   const o={r,nt:t.nt?1:0,nr:t.nr?1:0,no:t.no?1:0,ns:t.ns?1:0};
   return (r.length||o.nt||o.nr||o.no||o.ns)?o:null;
@@ -10358,9 +10366,9 @@ function modTf(kind,a){
   if(kind==='wipe'){const f={trees:'nt',rocks:'nr',ores:'no',structures:'ns'}[a];if(f)tf[f]=1;}
   else{
     const an=modAnchor(null,true),c=a.c.map((p,i)=>{const v=Math.round(+p[1])||0;return p[0]?(i%2?an.y:an.x)+v:v;});
-    const md={land:0,beach:1,ocean:2,mountain:3}[a.mode],bi=a.b==null?-1:TF_BIO.indexOf(String(a.b));
+    const md={land:0,beach:1,ocean:2,mountain:3,load:4}[a.mode],bi=a.b==null?-1:TF_BIO.indexOf(String(a.b));
     if(md===undefined||tf.r.length>=16)return;
-    tf.r.push([Math.min(c[0],c[2]),Math.min(c[1],c[3]),Math.max(c[0],c[2]),Math.max(c[1],c[3]),md,md===0&&bi<0?0:bi]);
+    tf.r.push([Math.min(c[0],c[2]),Math.min(c[1],c[3]),Math.max(c[0],c[2]),Math.max(c[1],c[3]),md,md===0&&bi<0?0:md===4?-1:bi]);
   }
   MOD.tfDirty=1;
 }
