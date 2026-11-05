@@ -10036,7 +10036,7 @@ function openAnimalDex(){
 }
 const stObj=()=>(settings.st=settings.st&&typeof settings.st==='object'?settings.st:{});
 /* ---------- 모드 / 리소스팩 (사이트 mods.html 에서 적용한 목록) ---------- */
-let MODX={actor:'',touched:'',dmg:0,attacker:'',victim:'',ap:false,vp:false,crafted:'',placed:'',destroyed:'',mn:'',mid:'',loc:{}},LASTHIT={n:'',t:-99};
+let MODX={eaten:'',actor:'',touched:'',dmg:0,attacker:'',victim:'',ap:false,vp:false,crafted:'',placed:'',destroyed:'',mn:'',mid:'',loc:{}},LASTHIT={n:'',t:-99};
 const MOD={ev:[],orig:{},on:[],st:{},remap:{},btns:[],tex:{},iorig:{},col:{},potato:false};
 function modLocal(){try{const o=JSON.parse(localStorage.getItem('bf.mods.on')||'{}');return Object.keys(o).slice(0,50).map(id=>({id:String(id).slice(0,40),kind:o[id].kind,name:o[id].name,descr:o[id].descr,author_name:o[id].author_name,data:o[id].data})).filter(m=>m.data&&typeof m.data==='object');}catch(e){return [];}}
 const MOD_KEY=/^(Key[A-Z]|Digit[0-9]|F([1-9]|1[0-2]))$/;
@@ -10092,6 +10092,7 @@ function modTxt(s){   // Potato API: %player_name% 같은 값을 글에 넣어�
       case 'world_time':{const h=(6+world.clock/DAY_SEC*24)%24;return String(Math.floor(h)).padStart(2,'0')+':'+String(Math.floor((h%1)*60)).padStart(2,'0');}
       case 'player':return MODX.actor||myName();
       case 'interacted':case 'interacted_item':return MODX.touched||'';
+      case 'eaten_item':case 'eaten':return MODX.eaten||'';
       case "player's_uuid":case 'player_uuid':return myUuid();   // 로그인하면 Supabase 계정 id
       case 'mod_name':return MODX.mn;
       case 'mod_uuid':return MODX.mid;
@@ -11829,7 +11830,9 @@ function eatSelected(){
   P.hp=Math.min(P.maxhp,P.hp+FOOD[sel.id]);renderHp();
   if(bf){achGrant('feast');P.buf=P.buf||{};for(const k in bf)P.buf[k]=time+bf[k];renderBuf();}
   for(let j=0;j<5;j++)parts.push({x:P.x,y:P.y-8,vx:(Math.random()-0.5)*24,vy:-18-Math.random()*14,life:0.6,c:j%2?'#ff9aa2':'#e0434f'});
+  const eid=sel.id;MODX.eaten=(ITEMS[eid]&&ITEMS[eid].name)||String(eid);
   sel.n--;if(sel.n<=0)inv[P.sel]=null;persist();renderInv();
+  try{modEvent('eat',String(eid));}catch(e){}
 }
 function dropFromSlot(arr,i,all){
   const st=arr[i];if(!st||P.dead)return;
