@@ -2,6 +2,16 @@
  "notes": [
   {
    "date": "2026-11-05",
+   "build": "v0.5 b185",
+   "title": "업데이트 0.5 · b185",
+   "items": [
+    "모드 명령 추가: disable/enable collision of tree·rock·ore·water·block·아이템 — 나무, 바위, 광물, 바다, 블록의 충돌을 없애거나 되살려요",
+    "Potato API 추가: 이 모드를 적용하면 모드 글에 %player_name%, %player_location%, %world_player_count%, %online_player% 값을 넣을 수 있어요",
+    "모드 폴더에 logo.png를 넣으면 목록에 모드 로고로 보여요"
+   ]
+  },
+  {
+   "date": "2026-11-05",
    "build": "v0.5 b184",
    "title": "업데이트 0.5 · b184",
    "items": [
