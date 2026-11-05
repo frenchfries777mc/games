@@ -95,7 +95,7 @@ var B='html body ', BAR={
   crownenvoy: B+'.top .wrap{flex-wrap:nowrap}'+B+'.top .mark{white-space:nowrap}'+B+'.top nav{display:flex;align-items:center;flex:none;white-space:nowrap}'+
     '@media(max-width:1000px){'+B+'.top nav a{display:none}}'+
     '@media(max-width:620px){'+B+'.top .mark{font-size:18px}'+B+'.lang{max-width:84px;margin-inline-start:0}'+B+'.top nav [data-ff-account]{margin-left:8px!important}'+B+'.ffa-wrap{margin-left:0}}',
-  beaconfall: B+'.top .wrap{flex-wrap:nowrap;align-items:center}'+B+'.top .nav{flex:1 1 auto;min-width:0;flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none}'+B+'.top .nav::-webkit-scrollbar{display:none}'+B+'.top .nav .pb{flex:none;white-space:nowrap}'+
+  beaconfall: B+'.top .wrap{flex-wrap:wrap;align-items:center;row-gap:8px}'+B+'.top .nav{flex:1 1 0;min-width:240px;flex-wrap:wrap}'+B+'.top .nav .pb{flex:none;white-space:nowrap}'+
     B+'.top .lg{flex:none;flex-wrap:nowrap}'+B+'.top .lg .pb{white-space:nowrap}'+
     '@media(max-width:620px){'+B+'.top .wrap{flex-wrap:wrap;row-gap:8px}'+B+'.top .nav{order:3;flex:1 0 100%}'+B+'.top .lg{flex:1 1 0;min-width:0;overflow-x:auto;scrollbar-width:none}'+B+'.top .lg::-webkit-scrollbar{display:none}'+B+'.top .lg .pb{flex:none}}',
   isleport: B+'.top .wrap{flex-wrap:nowrap;align-items:center}'+B+'.top .logo{flex:none}'+B+'.top .nav{flex:1 1 auto;min-width:0;display:flex;flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none}'+B+'.top .nav::-webkit-scrollbar{display:none}'+B+'.top .nav a{flex:none;white-space:nowrap}'+
