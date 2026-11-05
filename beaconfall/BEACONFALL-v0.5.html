@@ -10150,15 +10150,17 @@ function modTxt(s){   // Potato API: %player_name% 같은 값을 글에 넣어�
     }
   });
 }
-const SHV={};let shAt=0,shWarn=false;const shLast={};
+const SHV={};let shAt=0,shWarn=false;const shLast={},shPend={};
 function shLoad(force){const sb=window.bfSb;if(!sb)return;const t=Date.now();if(!force&&t-shAt<20000)return;shAt=t;try{sb.from('beaconfall_shared_vars').select('name,value').limit(500).then(r=>{if(r&&r.data)for(const q of r.data)SHV[q.name]=q.value;}).catch(()=>{});}catch(e){}}
 function shSet(n,v){
   if(!/^[a-z0-9_]{1,30}$/.test(n))return;
-  const sb=window.bfSb,t=Date.now();if(shLast[n]&&t-shLast[n]<1000)return;shLast[n]=t;
+  const sb=window.bfSb,t=Date.now();
   v=String(v).slice(0,100);
   if(!sb||!window.bfUid){if(!shWarn){shWarn=true;toast('공유 변수를 바꾸려면 로그인해야 해요.');}return;}
   SHV[n]=v;
-  try{sb.rpc('beaconfall_shared_set',{p_name:n,p_value:v}).then(r=>{if(r&&r.error)shLoad(true);}).catch(()=>{});}catch(e){}
+  const send=()=>{try{sb.rpc('beaconfall_shared_set',{p_name:n,p_value:SHV[n]}).then(r=>{if(r&&r.error)shLoad(true);}).catch(()=>{});}catch(e){}};
+  if(shLast[n]&&t-shLast[n]<1000){if(!shPend[n])shPend[n]=setTimeout(()=>{shPend[n]=0;shLast[n]=Date.now();send();},1000-(t-shLast[n]));return;}   // 1초에 한 번만 보내고, 그 사이 바뀐 마지막 값은 곧 이어서 보내요
+  shLast[n]=t;send();
 }
 function myUuid(){try{if(window.bfUid)return String(window.bfUid);let u=localStorage.getItem('bf.uuid');if(!u){u=(crypto.randomUUID?crypto.randomUUID():'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g,c=>{const r=Math.random()*16|0;return(c==='x'?r:(r&3|8)).toString(16);}));localStorage.setItem('bf.uuid',u);}return u;}catch(e){return 'unknown';}}
 function modPick(kind,how){
@@ -10177,9 +10179,12 @@ function modPick(kind,how){
   L.sort((a,b)=>a.d-b.d);return (how==='near'?L[0]:L[L.length-1]).n;
 }
 function modIsLoc(n){return n.length>2&&n[0]==='_'&&n[n.length-1]==='_';}   // {_이름_} = 이 이벤트 안에서만 쓰는 변수
-function modVGet(n){return modIsLoc(n)?MODX.loc[n]:modVars()[n];}
+function modShKey(n){return (MODX.uid?MODX.uid.slice(0,8)+'_':'')+n;}
+function modShGet(n){shLoad();const k=modShKey(n);if(SHV[k]!==undefined)return SHV[k];for(const x of (MODX.uses||[])){const w=SHV[x.slice(0,8)+'_'+n];if(w!==undefined)return w;}return SHV[n];}   // {:이름:} 공유 변수
+function modVGet(n){return n.startsWith('s__')?modShGet(n.slice(3)):modIsLoc(n)?MODX.loc[n]:modVars()[n];}
 function modVars(){if(!world)return {};const root=world.vars||(world.vars={});const k=String(MODX.mid||'').slice(0,12);if(!k)return root;return root['@'+k]||(root['@'+k]={});}   // 모드마다 따로 쓰는 변수 (다른 모드와 이름이 겹쳐도 괜찮아요)   // 모드 변수 (월드 저장에 같이 들어가요)
 function modVarSet(n,v){
+  if(n.startsWith('s__')){const sn=n.slice(3);if(!/^[a-z0-9_]{1,17}$/.test(sn))return;shSet(modShKey(sn),typeof v==='number'?(isFinite(v)?String(Math.round(v*1000)/1000):'0'):String(v).slice(0,40));return;}
   if(!/^[a-z0-9_]{1,20}$/.test(n))return;
   const vs=modIsLoc(n)?MODX.loc:modVars();
   if(!(n in vs)&&Object.keys(vs).length>=50)return;
@@ -10356,7 +10361,7 @@ function modRun(acts,depth,box){
     else if(a.sigr&&typeof a.sigr.n==='string'){const got=MOD.sig[a.sigr.n];if(got!==undefined){modVarSet(a.sigr.x,got);const y=modVGet(a.sigr.y);if(typeof MODX.txt==='string')MODX.txt=MODX.txt.split(String(a.sigr.a)).join(String(y===undefined?'':y));}}
     else if(a.inl&&Array.isArray(a.do)){modRun(a.do,depth+1,box);}
     else if(a.addv&&typeof a.addv.n==='string'&&typeof a.addv.d==='number'){const cur=Number(modVGet(a.addv.n));modVarSet(a.addv.n,(Number.isFinite(cur)?cur:0)+a.addv.d);}
-    else if(typeof a.resv==='string'){delete (modIsLoc(a.resv)?MODX.loc:modVars())[a.resv];}
+    else if(typeof a.resv==='string'){if(a.resv.startsWith('s__'))modVarSet(a.resv,'');else delete (modIsLoc(a.resv)?MODX.loc:modVars())[a.resv];}
     else if(a.ifp&&Array.isArray(a.do)){if(MOD.potato){const isp=a.ifp.w==='victim'?MODX.vp:MODX.ap;if(isp!==!!a.ifp.not)modRun(a.do,depth+1,box);}}
     else if(a.shset&&typeof a.shset.n==='string'){shSet(MODX.uid?MODX.uid.slice(0,8)+'_'+a.shset.n:a.shset.n,modTxt(String(a.shset.v)));}
     else if(a.ifc&&typeof a.ifc.c==='string'&&Array.isArray(a.do)){if(String(modTxt(String(a.ifc.v))).toLowerCase().includes(a.ifc.c.toLowerCase()))modRun(a.do,depth+1,box);}
