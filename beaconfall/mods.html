@@ -580,6 +580,7 @@ function check(kind,d){
 }
 $('us').addEventListener('click',async function(){
   var name=$('un').value.trim(),descr=$('ud').value.trim(),cat=$('uc').value;
+  if(!FD&&EDIT){if(!ULOGO){umsg('폴더나 로고를 골라 주세요.',1);return;}FD={kind:EDIT.kind,data:JSON.parse(JSON.stringify(EDIT.data||{}))};}
   if(!FD){umsg('먼저 폴더를 골라 주세요.',1);return;}
   var kind=FD.kind,d=FD.data;
   if($('uprev').querySelector('.bad')){umsg('빨간 줄이 있는 파일을 먼저 고쳐 주세요.',1);return;}
