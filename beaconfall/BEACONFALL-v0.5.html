@@ -5345,6 +5345,7 @@ function stationNear(mode){
   return true;
 }
 function doInteract(o,code){
+  try{MODX.touched=(ITEMS[o.id]&&ITEMS[o.id].name)||String(o.id);modEvent('interaction',String(o.id));}catch(e){}
   if(o.id==='bench'||o.id==='lbench')openCraft('bench');else if(o.id==='chest'||o.id==='rchest')openChest(o);else if(o.id==='trader')tradeWith();else if(o.id==='trash')openTrash(o);else if(o.id==='oven'||o.id==='campfire')openCraft('cook');else if(o.id==='furnace'){smeltRef=o;smeltLast=o.fo?o.fo.n:0;openCraft('smelt');}else if(o.id==='armorbench')openArmor();else if(o.id==='anvil')openAnvil();else if(o.id==='cow')milkCow(o.a);else if(o.id==='chicken'||o.id==='penguin'||o.id==='salamander')feedChicken(o.a);else if(o.id==='bone')startDig(o.q);else if(o.id==='conveyor')rotateConveyor(o);else if(o.id==='sorter'){if(code==='KeyF')rotateConveyor(o);else toggleSorterSide(o);}else if(o.id==='rsd'||o.id==='gauge'||o.id==='relay'||o.id==='tele'||o.id==='port')openSignalUI(o);else if(o.id==='bell')ringBell(o);else if(o.id==='guard')openGuardUI(o);else if(o.id==='vnpc')openShop(o.n);else if(o.id==='controller')toggleControl(o);else if(o.id==='beacon')callShip(o);else if(o.id==='ship')boardShip();else if(o.id==='crafter')openCrafterUI(o);else if(o.id==='feller')openFellerUI(o);else if(o.id==='door')toggleDoor(o);else if(o.id==='tgate')openGate(o);else if(o.id==='aquarium')openAquarium(o);else if(o.id==='cart')openCart();else if(o.id==='train')openTrainCargo(o.T);else if(o.id==='mirror')showLook();else if(o.id==='tradepost')openTradepost(o);else if(o.id==='alchemy')openAlchemy();else if(o.id==='runetable')openRunes();else if(o.id==='trap')openTrap(o);else if(o.id==='hammock')napStart(o);else if(o.id==='fishtrap')openFishTrap(o);else if(o.id==='hut')openHut(o);else if(o.id==='stall')openStall(o);else if(o.id==='mailbox')openMailbox(o);else if(o.id==='monument')openMonument(o);else if(o.id==='flag')openFlag(o);else if(o.id==='station')openStation(o);else if(o.id==='revive')reviveReq(o.peer);else if(o.id==='dunin')dunGo(1,'down');else if(o.id==='dunst')dunGo(o.k,o.dir);else trySleep(o);
 }
 function nearInteract(){
@@ -6012,6 +6013,7 @@ function doRoll(){
   if(!dx&&!dy){dx=P.f>0?1:-1;dy=0;}
   const l=Math.hypot(dx,dy)||1;dx/=l;dy/=l;
   P.kx=dx*430;P.ky=dy*430;P.rollT=time+0.45;P.rollCd=time+(SANDBOX?0.5:1.3);P.atkAnim=0;if(!SANDBOX)P.rolls=rollsLeft()-1;
+  try{modEvent('roll','');}catch(e){}
   for(let j=0;j<6;j++)parts.push({x:P.x,y:P.y,vx:-dx*30+(Math.random()-0.5)*30,vy:-8-Math.random()*14,life:0.4,c:j%2?'#d9c9a0':'#ffffff'});
 }
 function damagePlayer(n,kx,ky){
@@ -10029,14 +10031,14 @@ function openAnimalDex(){
 }
 const stObj=()=>(settings.st=settings.st&&typeof settings.st==='object'?settings.st:{});
 /* ---------- 모드 / 리소스팩 (사이트 mods.html 에서 적용한 목록) ---------- */
-let MODX={dmg:0,attacker:'',victim:'',ap:false,vp:false,crafted:'',placed:'',destroyed:'',mn:'',mid:'',loc:{}},LASTHIT={n:'',t:-99};
+let MODX={actor:'',touched:'',dmg:0,attacker:'',victim:'',ap:false,vp:false,crafted:'',placed:'',destroyed:'',mn:'',mid:'',loc:{}},LASTHIT={n:'',t:-99};
 const MOD={ev:[],orig:{},on:[],st:{},remap:{},btns:[],tex:{},iorig:{},col:{},potato:false};
 function modLocal(){try{const o=JSON.parse(localStorage.getItem('bf.mods.on')||'{}');return Object.keys(o).slice(0,50).map(id=>({id:String(id).slice(0,40),kind:o[id].kind,name:o[id].name,descr:o[id].descr,author_name:o[id].author_name,data:o[id].data})).filter(m=>m.data&&typeof m.data==='object');}catch(e){return [];}}
 const MOD_KEY=/^(Key[A-Z]|Digit[0-9]|F([1-9]|1[0-2]))$/;
 function modBox(){let b=document.getElementById('modbtns');if(!b){b=document.createElement('div');b.id='modbtns';b.style.cssText='position:fixed;inset:0;z-index:30;pointer-events:none';document.body.appendChild(b);setInterval(()=>{const m=document.getElementById('modal');b.style.display=(mode==='play'&&m&&m.hidden)?'':'none';},400);}return b;}
 function modApply(list){
   for(const k in MOD.orig){if(ITEMS[k])ITEMS[k].name=MOD.orig[k];}
-  MOD.orig={};MOD.ev=[];MOD.on=[];MOD.st={};MOD.remap={};MOD.col={};MOD.potato=false;
+  MOD.spW=null;MOD.orig={};MOD.ev=[];MOD.on=[];MOD.st={};MOD.remap={};MOD.col={};MOD.potato=false;
   for(const k in MOD.iorig){if(ITEMS[k])ITEMS[k].icon=MOD.iorig[k];}
   MOD.iorig={};MOD.tex={};let texN=0;
   const bx=document.getElementById('modbtns');if(bx)bx.innerHTML='';
@@ -10055,7 +10057,7 @@ function modApply(list){
     if(Array.isArray(d.sets))for(const t of d.sets.slice(0,100))modSet(t,setName);
     if(d.remap&&typeof d.remap==='object'&&!Array.isArray(d.remap))for(const k of Object.keys(d.remap).slice(0,30)){if(MOD_KEY.test(k)&&MOD_KEY.test(d.remap[k]))MOD.remap[k]=d.remap[k];}
     if(Array.isArray(d.events))for(const e of d.events.slice(0,200)){
-      if(e&&typeof e.on==='string'&&Array.isArray(e.do))MOD.ev.push({on:e.on,t:typeof e.target==='string'?e.target:'',do:e.do,mid:m.id,mn:String(m.name||'').slice(0,40),of:typeof e.of==='string'?e.of:'',ofn:typeof e.ofn==='string'?e.ofn.slice(0,40):'',n:e.on==='every'?Math.max(1,Math.min(3600,e.n|0)):0,nv:typeof e.nv==='string'&&/^[a-z0-9_]{1,20}$/.test(e.nv)?e.nv:'',c:0});
+      if(e&&typeof e.on==='string'&&Array.isArray(e.do))MOD.ev.push({on:e.on,t:typeof e.target==='string'?e.target:'',do:e.do,mid:m.id,mn:String(m.name||'').slice(0,40),of:typeof e.of==='string'?e.of:'',ofn:typeof e.ofn==='string'?e.ofn.slice(0,40):'',ofl:Array.isArray(e.ofl)?e.ofl.slice(0,8).map(x=>String(x).slice(0,40)):null,n:e.on==='every'?Math.max(1,Math.min(3600,e.n|0)):0,nv:typeof e.nv==='string'&&/^[a-z0-9_]{1,20}$/.test(e.nv)?e.nv:'',c:0});
     }
     MOD.on.push(m);
   }
@@ -10083,7 +10085,8 @@ function modTxt(s){   // Potato API: %player_name% 같은 값을 글에 넣어�
       case 'player_biome':{try{return String(BIOME_NAME[bioAt(P.x,P.y)]||'');}catch(e){return '';}}
       case 'world_day':return String(Math.floor(world.clock/DAY_SEC)+1);
       case 'world_time':{const h=(6+world.clock/DAY_SEC*24)%24;return String(Math.floor(h)).padStart(2,'0')+':'+String(Math.floor((h%1)*60)).padStart(2,'0');}
-      case 'player':return myName();
+      case 'player':return MODX.actor||myName();
+      case 'interacted':return MODX.touched||'';
       case "player's_uuid":case 'player_uuid':return myUuid();   // 로그인하면 Supabase 계정 id
       case 'mod_name':return MODX.mn;
       case 'mod_uuid':return MODX.mid;
@@ -10204,22 +10207,27 @@ function modSendTo(t,msg){
   else{const c=net.conns.find(q=>q.peer===t.id);if(c&&c.open)try{c.send(msg);}catch(e){}}
 }
 function modMobName(t){const o=t.o;return t.k==='ani'?String((typeof ANIM_NAME!=='undefined'&&ANIM_NAME[o.type])||o.type):String(MT(o).name||o.ty||'');}
-function modSay(text,to){
-  const t=to===undefined?{k:'me'}:modTarget(to);if(!t)return;
+function modTargets(to){   // to A or B : 여러 대상
+  if(to===undefined)return [{k:'me'}];
+  const out=[];for(const w of String(to).split(/\s+or\s+/i).slice(0,6)){const t=modTarget(w);if(t)out.push(t);}
+  return out;
+}
+function modSay(text,to){for(const t of modTargets(to))modSay1(text,t);}
+function modSnd(name,to){for(const t of modTargets(to))modSnd1(name,t);}
+function modFx(key,sec,to){for(const t of modTargets(to))modFx1(key,sec,t);}
+function modSay1(text,t){
   if(t.k==='me')chatAdd('mod','MOD',text);
   else if(t.k==='peer')modSendTo(t,{k:'chat',x:chatClean(text).slice(0,100)});
   else chatAdd('mod',modMobName(t),text);
 }
 function modPlay(name,x,y){try{({click:()=>SFX.blip(),hurt:()=>SFX.hurt(),swing:()=>SFX.swing(),bow:()=>SFX.bow(),hit:()=>SFX.weaponHit(x,y),break:()=>SFX.done('t',0,x,y)})[name]?.();}catch(e){}}
-function modSnd(name,to){
-  const t=to===undefined?{k:'me'}:modTarget(to);if(!t)return;
+function modSnd1(name,t){
   if(t.k==='me')modPlay(name,P.x,P.y);
   else if(t.k==='peer')modSendTo(t,{k:'snd',s:String(name).slice(0,10)});
   else modPlay(name,t.o.x,t.o.y);
 }
 function modFxMe(key,sec,cap){const k=MODFX[key];if(k&&mode==='play'){P.buf=P.buf||{};P.buf[k]=time+Math.max(1,Math.min(cap,+sec||10));renderBuf();}}
-function modFx(key,sec,to){
-  const t=to===undefined?{k:'me'}:modTarget(to);if(!t)return;
+function modFx1(key,sec,t){
   if(t.k==='me')modFxMe(key,sec,600);
   else if(t.k==='peer')modSendTo(t,{k:'fx',e:String(key).slice(0,10),sec:Math.min(60,+sec||10)});
   else if(key==='stun'&&!isGuest())t.o.stun=Math.max(t.o.stun||0,Math.max(1,Math.min(10,+sec||3)));   // 몬스터·동물에게는 stun 만 먹혀요
@@ -10356,21 +10364,32 @@ function modTf(kind,a){
   }
   MOD.tfDirty=1;
 }
-function modEvSubj(e,sj){   // 'of' 가 없으면 플레이어 본인 일에만, 있으면 player / monster / mob / 이름으로 걸러요
+function modEvSubj(e,sj){   // 'of' 가 없으면 플레이어 본인 일에만 (spawn 은 모든 몹), 있으면 player / monster / mob / 이름(or 로 여러 개)으로 걸러요
   sj=sj||{k:'player',n:myName()};
-  if(!e.of)return sj.k==='player';
-  if(e.of==='player')return sj.k==='player';
-  if(e.of==='monster')return sj.k==='monster';
-  if(e.of==='mob')return sj.k==='monster'||sj.k==='animal';
-  const w=String(modTxt(e.ofn||'')).trim().toLowerCase();
-  return !!w&&(String(sj.n||'').toLowerCase()===w||String(sj.n2||'').toLowerCase()===w);
+  if(!e.of)return e.on==='spawn'?(sj.k==='monster'||sj.k==='animal'):sj.k==='player';
+  const tok=t=>{
+    if(t==='player')return sj.k==='player';
+    if(t==='monster')return sj.k==='monster';
+    if(t==='mob')return sj.k==='monster'||sj.k==='animal';
+    const w=String(modTxt(t)).trim().toLowerCase();
+    return !!w&&(String(sj.n||'').toLowerCase()===w||String(sj.n2||'').toLowerCase()===w);
+  };
+  if(e.of==='any')return !!e.ofl&&e.ofl.some(t=>tok(String(t).trim().toLowerCase()));
+  if(e.of==='player'||e.of==='monster'||e.of==='mob')return tok(e.of);
+  return tok(e.ofn||'');
 }
 function modEvent(on,target,subj,only){
   if(!MOD.ev.length)return;
   const box={n:50};
   for(const e of MOD.ev){if(e.on!==on)continue;if(only&&e!==only)continue;if(e.t&&e.t!==target)continue;if(!modEvSubj(e,subj))continue;MODX.mn=e.mn||'';MODX.mid=e.mid||'';MODX.loc={};try{modRun(e.do,0,box);}catch(x){}}
 }
-setInterval(()=>{try{if(mode!=='play'||!MOD.ev.length)return;for(const e of MOD.ev){if(e.on!=='every'||!(e.n>=1))continue;let iv=e.n;if(e.nv){const v=Math.floor(Number(modVars()[e.nv]));iv=Number.isFinite(v)?Math.max(1,Math.min(3600,v)):5;}   // %{변수}% 로 간격을 정해요 (값이 없으면 5초)
+function modSpawnScan(){
+  if(!world||!MOD.ev.some(e=>e.on==='spawn'))return;
+  const key=String(world.id)+':'+String(world.seedStr),first=MOD.spW!==key;MOD.spW=key;   // 월드가 바뀌었거나 모드를 막 켰을 땐 이미 있는 몹은 조용히 넘겨요
+  for(const m of monsters){if(m._sp)continue;m._sp=1;if(first||m.hid||m.burn)continue;try{const T=MT(m),nm=String(T.name||m.ty||'');MODX.victim=nm;MODX.attacker='';modEvent('spawn','',{k:'monster',n:nm,n2:m.ty||'slime'});}catch(e){}}
+  for(const a of animals){if(a._sp)continue;a._sp=1;if(first)continue;try{const nm=String((typeof ANIM_NAME!=='undefined'&&ANIM_NAME[a.type])||a.type);MODX.victim=nm;MODX.attacker='';modEvent('spawn','',{k:'animal',n:nm,n2:a.type});}catch(e){}}
+}
+setInterval(()=>{try{if(mode!=='play'||!MOD.ev.length)return;modSpawnScan();for(const e of MOD.ev){if(e.on!=='every'||!(e.n>=1))continue;let iv=e.n;if(e.nv){const v=Math.floor(Number(modVars()[e.nv]));iv=Number.isFinite(v)?Math.max(1,Math.min(3600,v)):5;}   // %{변수}% 로 간격을 정해요 (값이 없으면 5초)
     if(++e.c>=iv){e.c=0;modEvent('every','',undefined,e);}}}catch(x){}},1000);
 function modGen(){
   if(isGuest()||!world||!world.id||!MOD.ev.length)return;
@@ -13160,6 +13179,7 @@ function enterPlay(){
 function exitPlay(){
   bpEnd();
   if(crafting&&!closeCraft())return;
+  try{if(mode==='play'){MODX.actor=myName();modEvent('quit','');MODX.actor='';}}catch(e){}
   wakeUp();
   fishing=null;fgame=null;$('#fishgame').classList.remove('on');
   if(P.sailing){P.sailing=false;if(P.landX!==undefined){P.x=P.landX;P.y=P.landY;}}
@@ -13654,7 +13674,7 @@ async function guestHandle(d){
       if(!r){r={x:p.x,y:p.y,tx:p.x,ty:p.y,f:1,m:0,walk:0,suit:suitOf(p.id)};remotes.set(p.id,r);}
       r.tx=p.x;r.ty=p.y;r.f=p.f===-1?-1:1;r.m=p.m?1:0;r.dead=p.d?1:0;r.sleep=!!p.s;r.boat=!!p.b;r.horse=!!p.h;r.air=!!p.a;r.alt=Math.max(0,Math.min(3,+p.al||0));r.ea=String(p.e||'').slice(0,80);r.eq=cleanArm(r.ea);r.name=String(p.n||'').slice(0,15);r.down=!!p.dn;r.wk=String(p.w||'').slice(0,12);r.sk=cleanLook(p.k);if(r.sleep){r.x=p.x;r.y=p.y;}
     }
-    for(const id of [...remotes.keys()])if(!seen.has(id))remotes.delete(id);
+    for(const id of [...remotes.keys()])if(!seen.has(id)){try{const qr=remotes.get(id),qn=(qr&&qr.name)?String(qr.name):'참가자';MODX.actor=qn;modEvent('quit','',{k:'player',n:qn});MODX.actor='';}catch(e){}remotes.delete(id);}
   }else if(d.t==='mons'){
     const byId=new Map(monsters.map(m=>[m.id,m])),next=[];
     for(const a of (d.list||[])){
@@ -13784,7 +13804,7 @@ async function hostRoom(addr,wid){
     const peer=await openPeer(PREFIX+addr.toLowerCase());
     Object.assign(net,{peer,role:'host',addr:addr.toLowerCase(),wname:w.name,conns:[],count:1,msg:'',id:'host',tPlayers:0,tMons:0,tClock:0});
     peer.on('connection',c=>{
-      const drop=()=>{if(!net.conns.includes(c))return;const lr=remotes.get(c.peer);net.conns=net.conns.filter(x=>x!==c);remotes.delete(c.peer);try{toast((lr&&lr.name?lr.name+'님과':'참가자와')+' 연결이 끊어졌어요.');}catch(e){}for(const b of world.structs)if(b.user===c.peer)b.user=null;bcast();};
+      const drop=()=>{if(!net.conns.includes(c))return;const lr=remotes.get(c.peer);net.conns=net.conns.filter(x=>x!==c);remotes.delete(c.peer);try{const qn=(lr&&lr.name)?String(lr.name):'참가자';MODX.actor=qn;modEvent('quit','',{k:'player',n:qn});MODX.actor='';}catch(e){}try{toast((lr&&lr.name?lr.name+'님과':'참가자와')+' 연결이 끊어졌어요.');}catch(e){}for(const b of world.structs)if(b.user===c.peer)b.user=null;bcast();};
       c.on('open',()=>{
         if(!world||world.id!==w.id){try{c.close();}catch(e){}return;}
         net.conns.push(c);
