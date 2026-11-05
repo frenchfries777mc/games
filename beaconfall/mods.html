@@ -285,7 +285,7 @@ var POS=['top left','top right','bottom left','bottom right','center'];
 function keyCode(w){var u=String(w).toUpperCase();if(/^[A-Z]$/.test(u))return 'Key'+u;if(/^[0-9]$/.test(u))return 'Digit'+u;if(/^F([1-9]|1[0-2])$/.test(u))return u;return '';}
 function parseScript(text,lenient){
   var raw=String(text).replace(/\r/g,'').split('\n'),L=[],i;
-  for(i=0;i<raw.length;i++){var t=raw[i];if(/^\s*(#|$)/.test(t))continue;var m=t.match(/^[ \t]*/)[0].replace(/\t/g,'    ').length;L.push({n:i+1,ind:m,t:t.trim()});}
+  for(i=0;i<raw.length;i++){var t=raw[i];if(/^\s*(#|$)/.test(t))continue;var m=t.match(/^[ \t]*/)[0].replace(/\t/g,'    ').length;L.push({n:i+1,ind:m,t:t.trim().replace(/\bvariable\s+\{([a-z0-9_]{1,20})\}/gi,'variable $1')});}
   var pos=0,out={kind:'mod',name:'',events:[],names:null,sets:[],remap:null};
   function item(l,w){var id=itemId(w);if(!id){var g=guess(w,Object.keys(ITEMN).concat(Object.keys(ITEMN).map(function(k){return ITEMN[k];})));throw PE(l.n,"unknown item '"+w+"'."+(g?" Did you mean '"+g+"'?":''));}return id;}
   function mon(l,w){w=w.toLowerCase();if(MONS.indexOf(w)<0){var g=guess(w,MONS);throw PE(l.n,"unknown monster '"+w+"'."+(g?" Did you mean '"+g+"'?":''));}return w;}
