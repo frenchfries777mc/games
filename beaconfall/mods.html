@@ -102,7 +102,7 @@ footer{padding:40px 0 30px;color:var(--gold);font-size:12px;text-shadow:2px 2px 
 <div id="upl"><div class="box">
  <button class="pb x" id="ux" style="position:absolute;right:10px;top:10px;padding:4px 10px">✕</button>
  <h2 style="margin:0 40px 6px 0">모드 · 리소스팩 올리기</h2>
- <label>폴더 (mod 또는 resourcepack 폴더)</label>
+ <label>폴더 (mode.bs가 있으면 모드, 없으면 리소스팩)</label>
  <input type="file" id="uf" webkitdirectory directory multiple>
  <div class="hint">폴더 안에 .bs 파일을 여러 개 넣을 수 있어요. 그림은 PNG로 넣고 파일 이름이 아이템 이름이에요 (예: iron.png).</div>
  <label>이름 (최대 40자)</label><input id="un" maxlength="40">
@@ -319,8 +319,8 @@ $('uf').addEventListener('change',async function(){
   if(!okc){umsg('폴더 안에 .bs 파일이나 PNG 그림이 없어요.',1);return;}
   var data={};if(M.events.length)data.events=M.events;if(M.names)data.names=M.names;if(M.sets.length)data.sets=M.sets;if(M.remap)data.remap=M.remap;
   if(Object.keys(TEX).length)data.textures=TEX;
-  if(/res|pack/i.test(root))kind='pack';else if(/^mods?$/i.test(root)||/mod/i.test(root))kind='mod';
-  if(!kind)kind=(data.events||data.sets||data.remap)?'mod':'pack';
+  kind=files.some(function(f){return /^mod[e]?\.bs$/i.test(f.name);})?'mod':'pack';   // mode.bs(또는 mod.bs)가 있으면 모드, 없으면 리소스팩
+  if(kind==='pack'&&(data.events||data.sets||data.remap)){umsg('on, set, remap 규칙이 있는 폴더에는 mode.bs 파일이 있어야 해요.',1);return;}
   FD={kind:kind,data:data};
   if(!$('un').value&&(name||root))$('un').value=(name||root).slice(0,40);
   if(bad)umsg('고칠 곳이 '+bad+'개 있어요. 고친 뒤 폴더를 다시 골라 주세요.',1);
