@@ -461,6 +461,7 @@ function parseScript(text,lenient){
       }
     }else if(m=l.t.match(/^(disable|enable)\s+collision\s+of\s+(.+)$/i)){out.col=out.col||{};out.col[colT(l,m[2].trim())]=m[1].toLowerCase()==='enable';}
     else if(m=l.t.match(/^api\s+"?(potato)"?$/i)){out.api='potato';}
+    else if(m=l.t.match(/^provide\s+(%[a-z0-9_' *]{3,30}%(?:\s*,\s*%[a-z0-9_' *]{3,30}%)*)$/i)){out.ph=out.ph||[];m[1].match(/%([^%]+)%/g).forEach(function(x){var k=x.slice(1,-1).toLowerCase();if(out.ph.indexOf(k)<0)out.ph.push(k);});if(out.ph.length>120)throw PE(l.n,'provide can list 120 values at most');}
     else if(m=l.t.match(/^set\s+(\S+)\s+(damage|speed|name)\s+(.+)$/i)){out.sets.push(setStmt(l,m));}
     else if(m=l.t.match(/^remap\s+"([^"]+)"\s+to\s+"([^"]+)"$/i)){var k1=keyCode(m[1]),k2=keyCode(m[2]);if(!k1||!k2)throw PE(l.n,'keys must be A-Z, 0-9 or F1-F12');out.remap=out.remap||{};out.remap[k1]=k2;}
     else if(/^publish_short\s*:$/i.test(l.t)){
@@ -502,7 +503,7 @@ function parseScript(text,lenient){
     }
     else if(m=l.t.match(/^use_mod_uuid\s*:\s*([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})$/i)){out.uses=out.uses||[];if(out.uses.length>=5)throw PE(l.n,'use_mod_uuid can be written 5 times at most');out.uses.push(m[1].toLowerCase());}
     else if(/^use_mod_uuid\b/i.test(l.t))throw PE(l.n,'write it like  use_mod_uuid: 550e8400-e29b-41d4-a716-446655440000');
-    else throw PE(l.n,"I don't understand '"+l.t.split(' ')[0]+"'. Start a line with: use_mod_uuid, mod, resource pack, on, rename, set, remap, disable, enable");
+    else throw PE(l.n,"I don't understand '"+l.t.split(' ')[0]+"'. Start a line with: provide, use_mod_uuid, mod, resource pack, on, rename, set, remap, disable, enable");
   }
   if(out.pub){out.pub.forEach(function(P){
     if(!out.uuid)throw PE(1,'publish_short needs the mod uuid on the first line of the file');
@@ -515,7 +516,7 @@ function parseScript(text,lenient){
     if(!ex)throw PE(1,'publish_short "'+P.v+'" needs  expose "'+P.v+'" to "'+P.bind+'"  inside an on block');
   });}
   if(out.uuid||out.uses)out.events.forEach(function(e){if(out.uuid)e.u=out.uuid;if(out.uses)e.uu=out.uses;});
-  var data={};if(out.events.length)data.events=out.events;if(out.names)data.names=out.names;if(out.sets.length)data.sets=out.sets;if(out.remap)data.remap=out.remap;if(out.col)data.col=out.col;if(out.api)data.api=out.api;if(out.pub)data.pub=out.pub;
+  var data={};if(out.events.length)data.events=out.events;if(out.names)data.names=out.names;if(out.sets.length)data.sets=out.sets;if(out.remap)data.remap=out.remap;if(out.col)data.col=out.col;if(out.api)data.api=out.api;if(out.pub)data.pub=out.pub;if(out.ph)data.ph=out.ph;
   if(!Object.keys(data).length&&!lenient)throw PE(1,'nothing to upload: add an "on ...:" block, "rename:", "set ..." or "remap ..."');
   return {kind:out.name?out.kind:null,name:out.name,data:data};
 }
@@ -548,6 +549,7 @@ $('uf').addEventListener('change',async function(){
         if(d.col){M.col=M.col||{};for(var k3 in d.col)M.col[k3]=d.col[k3];}
         if(d.api)M.api=d.api;
         if(d.pub)M.pub=(M.pub||[]).concat(d.pub);
+        if(d.ph)M.ph=(M.ph||[]).concat(d.ph).slice(0,120);
         if(d.remap){M.remap=M.remap||{};for(var k2 in d.remap)M.remap[k2]=d.remap[k2];}
         if(ps.name&&!name){name=ps.name;}
         if(ps.kind&&!kind)kind=ps.kind;
@@ -557,7 +559,7 @@ $('uf').addEventListener('change',async function(){
   }
   if(!okc){umsg('폴더 안에 .bs 파일이나 PNG 그림이 없어요.',1);return;}
   if(LOGO&&LOGO.length>6000){umsg('logo.png가 너무 복잡해요. 더 단순한 그림으로 해 주세요.',1);return;}
-  var data={};if(M.events.length)data.events=M.events;if(M.names)data.names=M.names;if(M.sets.length)data.sets=M.sets;if(M.remap)data.remap=M.remap;if(M.col)data.col=M.col;if(M.api)data.api=M.api;if(M.pub)data.pub=M.pub;
+  var data={};if(M.events.length)data.events=M.events;if(M.names)data.names=M.names;if(M.sets.length)data.sets=M.sets;if(M.remap)data.remap=M.remap;if(M.col)data.col=M.col;if(M.api)data.api=M.api;if(M.pub)data.pub=M.pub;if(M.ph)data.ph=M.ph;
   if(LOGO&&LOGO.length<=6000)data.logo=LOGO;
   if(Object.keys(TEX).length)data.textures=TEX;
   kind=files.some(function(f){return /^mod[e]?\.bs$/i.test(f.name);})?'mod':'pack';   // mode.bs(또는 mod.bs)가 있으면 모드, 없으면 리소스팩
@@ -574,7 +576,7 @@ function check(kind,d){
     if(d.sets&&(!Array.isArray(d.sets)||d.sets.length>100))return '"sets"는 100개까지예요.';
     if(d.remap&&(typeof d.remap!=='object'||Array.isArray(d.remap)||Object.keys(d.remap).length>30))return '"remap"은 30개까지예요.';
     if(d.textures&&(typeof d.textures!=='object'||Array.isArray(d.textures)))return '"textures" 모양이 올바르지 않아요.';
-    if(!d.names&&!d.sets&&!d.remap&&!d.textures&&!d.col&&d.api!=='potato'&&(!Array.isArray(d.events)||!d.events.length))return '모드에는 규칙(on), 이름 바꾸기, set, remap, 그림 중 하나는 있어야 해요.';
+    if(!d.names&&!d.sets&&!d.remap&&!d.textures&&!d.col&&d.api!=='potato'&&!d.ph&&(!Array.isArray(d.events)||!d.events.length))return '모드에는 규칙(on), 이름 바꾸기, set, remap, 그림 중 하나는 있어야 해요.';
     if(!d.events)return '';
     if(d.events.length>200)return '이벤트는 200개까지예요.';
     for(var i=0;i<d.events.length;i++){var ev=d.events[i];if(!ev||typeof ev.on!=='string'||!Array.isArray(ev.do)||!ev.do.length)return (i+1)+'번째 이벤트에 "on"(문자열)과 "do"(목록)가 필요해요.';if(ev.do.length>20)return (i+1)+'번째 이벤트의 "do"는 20개까지예요.';}

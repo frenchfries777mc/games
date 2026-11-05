@@ -10043,7 +10043,7 @@ const MOD_KEY=/^(Key[A-Z]|Digit[0-9]|F([1-9]|1[0-2]))$/;
 function modBox(){let b=document.getElementById('modbtns');if(!b){b=document.createElement('div');b.id='modbtns';b.style.cssText='position:fixed;inset:0;z-index:30;pointer-events:none';document.body.appendChild(b);setInterval(()=>{const m=document.getElementById('modal');b.style.display=(mode==='play'&&m&&m.hidden)?'':'none';},400);}return b;}
 function modApply(list){
   for(const k in MOD.orig){if(ITEMS[k])ITEMS[k].name=MOD.orig[k];}
-  MOD.spW=null;MOD.orig={};MOD.ev=[];MOD.on=[];MOD.st={};MOD.remap={};MOD.col={};MOD.potato=false;MOD.pub=[];MOD.exp={};
+  MOD.spW=null;MOD.orig={};MOD.ev=[];MOD.on=[];MOD.st={};MOD.remap={};MOD.col={};MOD.potato=false;MOD.ph={};MOD.phAll=false;MOD.pub=[];MOD.exp={};
   for(const k in MOD.iorig){if(ITEMS[k])ITEMS[k].icon=MOD.iorig[k];}
   MOD.iorig={};MOD.tex={};let texN=0;
   const bx=document.getElementById('modbtns');if(bx)bx.innerHTML='';
@@ -10057,7 +10057,8 @@ function modApply(list){
       if(!MOD.iorig[k]){MOD.iorig[k]=ITEMS[k].icon;ITEMS[k].icon=function(g){const im=MOD.tex[k];if(im&&im.complete&&im.naturalWidth){g.imageSmoothingEnabled=false;g.drawImage(im,0,0,12,12);}else MOD.iorig[k](g);};}
       const im=new Image();im.onload=()=>{MOD.tex[k]=im;try{for(const q in ICONURL)delete ICONURL[q];for(const q in ICONC)delete ICONC[q];renderInv();renderEquip();}catch(e){}};im.src=v;
     }
-    if(d.api==='potato')MOD.potato=true;
+    if(d.api==='potato'){MOD.potato=true;MOD.phAll=true;}   // 옛날 형식 (api potato)
+    if(Array.isArray(d.ph)){for(const k of d.ph.slice(0,120))if(typeof k==='string'&&/^[a-z0-9_' *]{3,30}$/.test(k)){MOD.ph[k]=1;MOD.potato=true;}}   // provide %...% : 이 모드가 풀어주는 값
     if(Array.isArray(d.pub))for(const q of d.pub.slice(0,5)){const UR=/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/;if(q&&UR.test(q.u||'')&&/^[a-z0-9_]{1,21}$/.test(q.v||'')&&/^%[a-z0-9_]{1,21}%$/.test(q.bind||''))MOD.pub.push({v:q.v,u:q.u,bind:q.bind,fb:String(q.fb==null?'':q.fb).slice(0,40),ty:q.ty==='number'?'number':'text',sc:q.sc==='mod'?'mod':'world',mn:String(m.name||'').slice(0,40)});}
     if(d.col&&typeof d.col==='object'&&!Array.isArray(d.col))for(const k of Object.keys(d.col).slice(0,60)){if(/^[a-z_0-9]{1,30}$/.test(k))MOD.col[k]=!!d.col[k];}
     if(Array.isArray(d.sets))for(const t of d.sets.slice(0,100))modSet(t,setName);
@@ -10079,6 +10080,7 @@ for(const q of MOD.pub){if(!MODX.uses.includes(q.u)||q.sc!=='world'||isGuest())c
   if(s.indexOf('{')>=0)s=s.replace(/\{(_?[a-z0-9_]{1,20}_?)\}/g,(m,k)=>{const v=modVGet(k);return v===undefined?'0':String(v);});   // {변수} / {_지역변수_}
   if(!MOD.potato||s.indexOf('%')<0)return s;
   return s.replace(/%([a-z0-9_' ]{3,30})%/g,(m,k)=>{
+    if(!MOD.phAll&&!MOD.ph[k]&&!(/^player_.+_count$/.test(k)&&MOD.ph['player_*_count'])&&!(k.startsWith('var_')&&MOD.ph['var_*']))return m;   // 풀어주는 모드(Potato API)가 없으면 그대로 둬요
     switch(k){
       case 'player_name':return myName();
       case 'player_location':return Math.round(P.x)+', '+(Math.round((P.alt||0)*10)/10)+', '+Math.round(P.y);   // x, y(고도), z
