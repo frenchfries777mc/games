@@ -9,6 +9,7 @@
 <title>BEACONFALL · 모드/리소스팩</title>
 <meta name="theme-color" content="#14527e">
 <style>
+.hint{font-size:12px;color:var(--cream);opacity:.7;margin:4px 0 0}
 html,body{touch-action:manipulation}   /* 더블터치 확대 막기 */
 @font-face{font-family:Galmuri;src:url(Galmuri11.woff2) format('woff2');font-weight:400;font-display:swap}
 @font-face{font-family:Galmuri;src:url(Galmuri11-Bold.woff2) format('woff2');font-weight:700;font-display:swap}
@@ -101,15 +102,12 @@ footer{padding:40px 0 30px;color:var(--gold);font-size:12px;text-shadow:2px 2px 
 <div id="upl"><div class="box">
  <button class="pb x" id="ux" style="position:absolute;right:10px;top:10px;padding:4px 10px">✕</button>
  <h2 style="margin:0 40px 6px 0">모드 · 리소스팩 올리기</h2>
- <label>종류</label><select id="uk"><option value="mod">모드</option><option value="pack">리소스팩</option></select>
+ <label>폴더 (mod 또는 resourcepack 폴더)</label>
+ <input type="file" id="uf" webkitdirectory directory multiple>
+ <div class="hint">폴더 안에 .bs 파일을 여러 개 넣을 수 있어요. 그림은 PNG로 넣고 파일 이름이 아이템 이름이에요 (예: iron.png).</div>
  <label>이름 (최대 40자)</label><input id="un" maxlength="40">
  <label>설명 (최대 120자)</label><input id="ud" maxlength="120">
  <label>분류</label><select id="uc"></select>
- <label>내용 (.bs 또는 JSON)</label>
- <input type="file" id="uf" accept=".bs,.beaconfall,.json,.txt,application/json,text/plain">
- <textarea id="uj" spellcheck="false" placeholder='mod "Iron from stone"&#10;&#10;on mine stone:&#10;    give 1 iron&#10;&#10;on kill wolf:&#10;    chance 30%:&#10;        give 2 iron&#10;        say "Lucky!"'></textarea>
- <label>그림 PNG (선택, 여러 장 · 파일 이름이 아이템 이름, 예: iron.png)</label>
- <input type="file" id="up" accept="image/png" multiple>
  <div class="uprev" id="uprev"></div>
  <div class="msg" id="um"></div>
  <div class="row" style="margin-top:12px"><button class="pb" id="us">올리기</button></div>
@@ -180,8 +178,8 @@ document.addEventListener('click',function(e){
   }
 });
 $('q').addEventListener('input',draw);
-function fillCats(){$('uc').innerHTML=CATS[$('uk').value].map(function(c){return '<option>'+c+'</option>';}).join('');}
-$('uk').addEventListener('change',fillCats);fillCats();
+function fillCats(){$('uc').innerHTML=CATS.mod.concat(CATS.pack.filter(function(c){return c!=='기타';})).map(function(c){return '<option>'+c+'</option>';}).join('');}
+fillCats();
 function umsg(s,err){var m=$('um');m.textContent=s||'';m.className='msg'+(err?' err':'');}
 $('upb').addEventListener('click',function(){
   var u=window.FFAuth&&FFAuth.user&&FFAuth.user();
@@ -189,7 +187,6 @@ $('upb').addEventListener('click',function(){
   $('upl').classList.add('on');umsg('');
 });
 $('ux').addEventListener('click',function(){$('upl').classList.remove('on');});
-$('uf').addEventListener('change',function(){var f=this.files[0];if(!f)return;if(f.size>65536){umsg('파일이 너무 커요 (64KB까지).',1);return;}var r=new FileReader();r.onload=function(){$('uj').value=String(r.result||'');umsg('');};r.readAsText(f);});
 
 var ITEMN={"stick":"나뭇가지","bench":"작업대","sapling":"묘목","log":"통나무","plank":"판자","stone":"돌","iron":"철","gold":"금","copper":"구리","rwood":"강화목재","riron":"강화철","rcopper":"강화구리","rgold":"강화금","pickaxe_log":"통나무 곡괭이","pickaxe_stone":"돌 곡괭이","pickaxe_rwood":"강화목재 곡괭이","pickaxe_iron":"철 곡괭이","pickaxe_copper":"구리 곡괭이","pickaxe_riron":"강화철 곡괭이","pickaxe_gold":"금 곡괭이","pickaxe_rcopper":"강화구리 곡괭이","pickaxe_rgold":"강화금 곡괭이","axe_log":"통나무 도끼","axe_stone":"돌 도끼","axe_rwood":"강화목재 도끼","axe_iron":"철 도끼","axe_copper":"구리 도끼","axe_riron":"강화철 도끼","axe_gold":"금 도끼","axe_rcopper":"강화구리 도끼","axe_rgold":"강화금 도끼","sword_log":"통나무 장검","sword_stone":"돌 장검","sword_rwood":"강화목재 장검","sword_iron":"철 장검","sword_copper":"구리 장검","sword_riron":"강화철 장검","sword_gold":"금 장검","sword_rcopper":"강화구리 장검","sword_rgold":"강화금 장검","dagger_log":"통나무 단검","dagger_stone":"돌 단검","dagger_rwood":"강화목재 단검","dagger_iron":"철 단검","dagger_copper":"구리 단검","dagger_riron":"강화철 단검","dagger_gold":"금 단검","dagger_rcopper":"강화구리 단검","dagger_rgold":"강화금 단검","hoe_log":"통나무 괭이","hoe_stone":"돌 괭이","hoe_rwood":"강화목재 괭이","hoe_iron":"철 괭이","hoe_copper":"구리 괭이","hoe_riron":"강화철 괭이","hoe_gold":"금 괭이","hoe_rcopper":"강화구리 괭이","hoe_rgold":"강화금 괭이","rune_fire":"화염의 룬","rune_ice":"냉기의 룬","rune_venom":"맹독의 룬","rune_life":"생명의 룬","pot_heal":"회복 물약","pot_swift":"질풍 물약","pot_might":"괴력 물약","pot_guard":"철벽 물약","pot_night":"야시 물약","pot_breath":"숨결 물약","alchemy":"연금솥","runetable":"룬 제단","trap":"덫","hut":"주민의 집","balloon":"열기구","diving":"잠수 장비","pearl":"진주","coral":"산호","stall":"가판대","mailbox":"우체통","gpil":"대형 기둥","arch":"아치문","spire":"첨탑","monument":"방명록 비석","feller_log":"통나무 벌목기","feller_stone":"돌 벌목기","feller_rwood":"강화목재 벌목기","feller_iron":"철 벌목기","feller_copper":"구리 벌목기","feller_riron":"강화철 벌목기","feller_gold":"금 벌목기","feller_rcopper":"강화구리 벌목기","feller_rgold":"강화금 벌목기","miner_log":"통나무 채광기","miner_stone":"돌 채광기","miner_rwood":"강화목재 채광기","miner_iron":"철 채광기","miner_copper":"구리 채광기","miner_riron":"강화철 채광기","miner_gold":"금 채광기","miner_rcopper":"강화구리 채광기","miner_rgold":"강화금 채광기","bread":"빵","baked_potato":"구운 감자","popcorn":"팝콘","stew":"스튜","egg":"달걀","fried_egg":"달걀프라이","milk":"우유","raw_meat":"생고기","steak":"구운 고기","iron_ingot":"철 주괴","copper_ingot":"구리 주괴","gold_ingot":"금 주괴","boat":"보트","ar_helm_leather_1":"가죽 헬멧 ★","ar_helm_leather_2":"가죽 헬멧 ★★","ar_helm_leather_3":"가죽 헬멧 ★★★","ar_helm_iron_1":"철 헬멧 ★","ar_helm_iron_2":"철 헬멧 ★★","ar_helm_iron_3":"철 헬멧 ★★★","ar_helm_copper_1":"구리 헬멧 ★","ar_helm_copper_2":"구리 헬멧 ★★","ar_helm_copper_3":"구리 헬멧 ★★★","ar_helm_riron_1":"강화철 헬멧 ★","ar_helm_riron_2":"강화철 헬멧 ★★","ar_helm_riron_3":"강화철 헬멧 ★★★","ar_helm_gold_1":"금 헬멧 ★","ar_helm_gold_2":"금 헬멧 ★★","ar_helm_gold_3":"금 헬멧 ★★★","ar_helm_rcopper_1":"강화구리 헬멧 ★","ar_helm_rcopper_2":"강화구리 헬멧 ★★","ar_helm_rcopper_3":"강화구리 헬멧 ★★★","ar_helm_rgold_1":"강화금 헬멧 ★","ar_helm_rgold_2":"강화금 헬멧 ★★","ar_helm_rgold_3":"강화금 헬멧 ★★★","ar_helm_crystal_1":"수정 헬멧 ★","ar_helm_crystal_2":"수정 헬멧 ★★","ar_helm_crystal_3":"수정 헬멧 ★★★","ar_helm_obsidian_1":"화산석 헬멧 ★","ar_helm_obsidian_2":"화산석 헬멧 ★★","ar_helm_obsidian_3":"화산석 헬멧 ★★★","ar_helm_frost_1":"서리 헬멧 ★","ar_helm_frost_2":"서리 헬멧 ★★","ar_helm_frost_3":"서리 헬멧 ★★★","ar_chest_leather_1":"가죽 흉갑 ★","ar_chest_leather_2":"가죽 흉갑 ★★","ar_chest_leather_3":"가죽 흉갑 ★★★","ar_chest_iron_1":"철 흉갑 ★","ar_chest_iron_2":"철 흉갑 ★★","ar_chest_iron_3":"철 흉갑 ★★★","ar_chest_copper_1":"구리 흉갑 ★","ar_chest_copper_2":"구리 흉갑 ★★","ar_chest_copper_3":"구리 흉갑 ★★★","ar_chest_riron_1":"강화철 흉갑 ★","ar_chest_riron_2":"강화철 흉갑 ★★","ar_chest_riron_3":"강화철 흉갑 ★★★","ar_chest_gold_1":"금 흉갑 ★","ar_chest_gold_2":"금 흉갑 ★★","ar_chest_gold_3":"금 흉갑 ★★★","ar_chest_rcopper_1":"강화구리 흉갑 ★","ar_chest_rcopper_2":"강화구리 흉갑 ★★","ar_chest_rcopper_3":"강화구리 흉갑 ★★★","ar_chest_rgold_1":"강화금 흉갑 ★","ar_chest_rgold_2":"강화금 흉갑 ★★","ar_chest_rgold_3":"강화금 흉갑 ★★★","ar_chest_crystal_1":"수정 흉갑 ★","ar_chest_crystal_2":"수정 흉갑 ★★","ar_chest_crystal_3":"수정 흉갑 ★★★","ar_chest_obsidian_1":"화산석 흉갑 ★","ar_chest_obsidian_2":"화산석 흉갑 ★★","ar_chest_obsidian_3":"화산석 흉갑 ★★★","ar_chest_frost_1":"서리 흉갑 ★","ar_chest_frost_2":"서리 흉갑 ★★","ar_chest_frost_3":"서리 흉갑 ★★★","ar_legs_leather_1":"가죽 각반 ★","ar_legs_leather_2":"가죽 각반 ★★","ar_legs_leather_3":"가죽 각반 ★★★","ar_legs_iron_1":"철 각반 ★","ar_legs_iron_2":"철 각반 ★★","ar_legs_iron_3":"철 각반 ★★★","ar_legs_copper_1":"구리 각반 ★","ar_legs_copper_2":"구리 각반 ★★","ar_legs_copper_3":"구리 각반 ★★★","ar_legs_riron_1":"강화철 각반 ★","ar_legs_riron_2":"강화철 각반 ★★","ar_legs_riron_3":"강화철 각반 ★★★","ar_legs_gold_1":"금 각반 ★","ar_legs_gold_2":"금 각반 ★★","ar_legs_gold_3":"금 각반 ★★★","ar_legs_rcopper_1":"강화구리 각반 ★","ar_legs_rcopper_2":"강화구리 각반 ★★","ar_legs_rcopper_3":"강화구리 각반 ★★★","ar_legs_rgold_1":"강화금 각반 ★","ar_legs_rgold_2":"강화금 각반 ★★","ar_legs_rgold_3":"강화금 각반 ★★★","ar_legs_crystal_1":"수정 각반 ★","ar_legs_crystal_2":"수정 각반 ★★","ar_legs_crystal_3":"수정 각반 ★★★","ar_legs_obsidian_1":"화산석 각반 ★","ar_legs_obsidian_2":"화산석 각반 ★★","ar_legs_obsidian_3":"화산석 각반 ★★★","ar_legs_frost_1":"서리 각반 ★","ar_legs_frost_2":"서리 각반 ★★","ar_legs_frost_3":"서리 각반 ★★★","ar_boots_leather_1":"가죽 신발 ★","ar_boots_leather_2":"가죽 신발 ★★","ar_boots_leather_3":"가죽 신발 ★★★","ar_boots_iron_1":"철 신발 ★","ar_boots_iron_2":"철 신발 ★★","ar_boots_iron_3":"철 신발 ★★★","ar_boots_copper_1":"구리 신발 ★","ar_boots_copper_2":"구리 신발 ★★","ar_boots_copper_3":"구리 신발 ★★★","ar_boots_riron_1":"강화철 신발 ★","ar_boots_riron_2":"강화철 신발 ★★","ar_boots_riron_3":"강화철 신발 ★★★","ar_boots_gold_1":"금 신발 ★","ar_boots_gold_2":"금 신발 ★★","ar_boots_gold_3":"금 신발 ★★★","ar_boots_rcopper_1":"강화구리 신발 ★","ar_boots_rcopper_2":"강화구리 신발 ★★","ar_boots_rcopper_3":"강화구리 신발 ★★★","ar_boots_rgold_1":"강화금 신발 ★","ar_boots_rgold_2":"강화금 신발 ★★","ar_boots_rgold_3":"강화금 신발 ★★★","ar_boots_crystal_1":"수정 신발 ★","ar_boots_crystal_2":"수정 신발 ★★","ar_boots_crystal_3":"수정 신발 ★★★","ar_boots_obsidian_1":"화산석 신발 ★","ar_boots_obsidian_2":"화산석 신발 ★★","ar_boots_obsidian_3":"화산석 신발 ★★★","ar_boots_frost_1":"서리 신발 ★","ar_boots_frost_2":"서리 신발 ★★","ar_boots_frost_3":"서리 신발 ★★★","armorbench":"갑옷제작대","leaf":"나뭇잎","feather":"깃털","thread":"실","rod_log":"통나무 낚싯대","rod_stone":"돌 낚싯대","rod_rwood":"강화목재 낚싯대","rod_iron":"철 낚싯대","rod_copper":"구리 낚싯대","rod_riron":"강화철 낚싯대","rod_gold":"금 낚싯대","rod_rcopper":"강화구리 낚싯대","rod_rgold":"강화금 낚싯대","bow_log":"통나무 활","bow_stone":"돌 활","bow_rwood":"강화목재 활","bow_iron":"철 활","bow_copper":"구리 활","bow_riron":"강화철 활","bow_gold":"금 활","bow_rcopper":"강화구리 활","bow_rgold":"강화금 활","arrow_f":"깃털 화살","arrow":"화살","anchovy":"멸치","mackerel":"고등어","seabream":"도미","flounder":"광어","tuna":"참치","pufferfish":"복어","marlin":"청새치","crucian":"붕어","minnow":"피라미","trout":"송어","catfish":"메기","carp":"잉어","sturgeon":"철갑상어","goldcarp":"황금 잉어","grilled_fish":"구운 생선","hammer_log":"통나무 망치","hammer_stone":"돌 망치","hammer_rwood":"강화목재 망치","hammer_iron":"철 망치","hammer_copper":"구리 망치","hammer_riron":"강화철 망치","hammer_gold":"금 망치","hammer_rcopper":"강화구리 망치","hammer_rgold":"강화금 망치","riron_plate":"강화철판","anvil":"모루","slime":"슬라임","snake_fang":"뱀의 송곳니","leather":"가죽","bone":"뼈다귀","ash":"잿가루","glue":"접착제","frost":"서리 조각","cactus_fiber":"선인장 섬유","rubber":"고무","mangrove_root":"맹그로브 뿌리","resin":"송진","clay":"점토","obsidian":"화산석","crystal":"수정","cactus_juice":"선인장 즙","fire_potion":"내화 물약","antidote":"해독제","torch":"횃불","brick":"벽돌","conveyor":"컨베이어 벨트","paper":"종이","compass":"나침반","island_map":"섬 지도","bag":"아이템 가방","trash":"쓰레기통","circuit":"회로조각","sorter":"분류기","rcopper_plate":"강화구리판","rgold_plate":"강화금판","circuit_device":"회로장치","bell":"종","rsd":"원격신호장치","gauge":"측정기","controller":"제어장치","zinc":"아연","zinc_ingot":"아연 주괴","obsidian_ingot":"화산석 주괴","rzinc":"강화아연","rzinc_plate":"강화아연판","brass":"황동","brass_plate":"강화황동판","rgold_c":"압축된 강화금","rgold_cp":"압축된 강화금판","rcopper_c":"압축된 강화구리","rcopper_cp":"압축된 강화구리판","riron_c":"압축된 강화철","riron_cp":"압축된 강화철판","brass_c":"압축된 강화황동","brass_cp":"압축된 강화황동판","circuit_crystal":"회로 결정체","ult_signal":"초장거리 신호 장치","wave_device":"파동음파장치","beacon":"신호기","crafter":"자동제작장치","relay":"신호중계기","gear":"톱니바퀴","clock":"시계","tele":"시공간이동장치","port":"화물항","guard":"경비초소","coin":"동전","flag":"깃발","rstone":"강화석재","sbrick":"석재벽돌","bwall":"나무 벽","bwin":"창문 벽","aquarium":"수족관","horse":"말","cart":"수레","tradepost":"교역소","door":"문","roof":"지붕","carpet":"카펫","table":"탁자","chair":"의자","shelf":"책장","bucket":"양동이","bucket_w":"물 양동이","fence":"울타리","oven":"화덕","furnace":"용광로","wheat_seed":"밀 씨앗","potato":"감자","corn":"옥수수","bed":"침대","chest":"보관함","rl_bwolf":"늑대왕의 유물","rl_bscorp":"전갈의 유물","rl_bmagma":"불꽃 거인의 유물","rl_bspider":"거미 여왕의 유물","rl_bsnake":"모래뱀의 유물","rl_bgolem":"바위 거인의 유물","rl_bcroc":"악어왕의 유물","rl_byeti":"대설인의 유물","void_essence":"공허의 정수","vkey_a":"공허의 열쇠 · 동","vkey_b":"공허의 열쇠 · 서","voidcore":"공허의 핵","pot":"냄비","seafood_stew":"해물탕","feast":"정찬","marlin_dish":"청새치 요리","goldcarp_dish":"황금 잉어 요리","wheat":"밀","hammock":"해먹","fishtrap":"통발","dinoskel":"공룡 골격 전시","soulwisp":"혼불 등"};
 var NAME2ID={};Object.keys(ITEMN).forEach(function(k){NAME2ID[ITEMN[k].replace(/\s+/g,'')]=k;});
@@ -202,7 +199,7 @@ function PE(n,m){var e=new Error('line '+n+': '+m);e.script=1;return e;}
 var BIOMES=['start','forest','desert','volcano','jungle','mesa','rock','mangrove','ice'];
 var POS=['top left','top right','bottom left','bottom right','center'];
 function keyCode(w){var u=String(w).toUpperCase();if(/^[A-Z]$/.test(u))return 'Key'+u;if(/^[0-9]$/.test(u))return 'Digit'+u;if(/^F([1-9]|1[0-2])$/.test(u))return u;return '';}
-function parseScript(text){
+function parseScript(text,lenient){
   var raw=String(text).replace(/\r/g,'').split('\n'),L=[],i;
   for(i=0;i<raw.length;i++){var t=raw[i];if(/^\s*(#|$)/.test(t))continue;var m=t.match(/^[ \t]*/)[0].replace(/\t/g,'    ').length;L.push({n:i+1,ind:m,t:t.trim()});}
   var pos=0,out={kind:'mod',name:'',events:[],names:null,sets:[],remap:null};
@@ -284,22 +281,50 @@ function parseScript(text){
     else throw PE(l.n,"I don't understand '"+l.t.split(' ')[0]+"'. Start a line with: mod, resource pack, on, rename, set, remap");
   }
   var data={};if(out.events.length)data.events=out.events;if(out.names)data.names=out.names;if(out.sets.length)data.sets=out.sets;if(out.remap)data.remap=out.remap;
-  if(!Object.keys(data).length)throw PE(1,'nothing to upload: add an "on ...:" block, "rename:", "set ..." or "remap ..."');
+  if(!Object.keys(data).length&&!lenient)throw PE(1,'nothing to upload: add an "on ...:" block, "rename:", "set ..." or "remap ..."');
   return {kind:out.name?out.kind:null,name:out.name,data:data};
 }
-var TEX={};
-$('up').addEventListener('change',async function(){
-  TEX={};var box=$('uprev');box.innerHTML='';
-  var files=[].slice.call(this.files).slice(0,150);
+var TEX={},FD=null;
+function readPng(f){return new Promise(function(res,rej){var im=new Image(),u=URL.createObjectURL(f);im.onload=function(){var c=document.createElement('canvas');c.width=c.height=12;var x=c.getContext('2d');x.imageSmoothingEnabled=false;x.drawImage(im,0,0,12,12);URL.revokeObjectURL(u);res(c.toDataURL('image/png'));};im.onerror=function(){rej();};im.src=u;});}
+function readTxt(f){return new Promise(function(res,rej){var r=new FileReader();r.onload=function(){res(String(r.result));};r.onerror=function(){rej();};r.readAsText(f);});}
+$('uf').addEventListener('change',async function(){
+  TEX={};FD=null;var box=$('uprev');box.innerHTML='';umsg('');
+  var files=[].slice.call(this.files);if(!files.length)return;
+  var root=((files[0].webkitRelativePath||'').split('/')[0]||'').trim();
+  files=files.filter(function(f){return /\.(bs|beaconfall|png)$/i.test(f.name);}).slice(0,200);
+  var M={events:[],names:null,sets:[],remap:null},kind=null,name='',okc=0,bad=0;
+  function line(txt,cls){var sp=document.createElement('span');if(cls)sp.className=cls;sp.textContent=txt;box.appendChild(sp);}
   for(var i=0;i<files.length;i++){
-    var f=files[i],base=f.name.replace(/\.png$/i,'').trim(),id=itemId(base),sp=document.createElement('span');
-    if(!id){var g=guess(base,Object.keys(ITEMN));sp.className='bad';sp.textContent=f.name+' ✗ 아이템 이름을 몰라요'+(g?' ('+g+'?)':'');box.appendChild(sp);continue;}
-    try{
-      var url=await new Promise(function(res,rej){var im=new Image(),u=URL.createObjectURL(f);im.onload=function(){var c=document.createElement('canvas');c.width=c.height=12;var x=c.getContext('2d');x.imageSmoothingEnabled=false;x.drawImage(im,0,0,12,12);URL.revokeObjectURL(u);res(c.toDataURL('image/png'));};im.onerror=function(){rej();};im.src=u;});
-      TEX[id]=url;var ig=document.createElement('img');ig.src=url;sp.appendChild(ig);sp.appendChild(document.createTextNode(id+' ✓'));
-    }catch(e){sp.className='bad';sp.textContent=f.name+' ✗ 그림을 읽지 못했어요';}
-    box.appendChild(sp);
+    var f=files[i],rel=(f.webkitRelativePath||f.name).split('/').slice(1).join('/')||f.name;
+    if(/\.png$/i.test(f.name)){
+      var base=f.name.replace(/\.png$/i,'').trim(),id=itemId(base);
+      if(!id){var g=guess(base,Object.keys(ITEMN));line(rel+' ✗ 아이템 이름을 몰라요'+(g?' ('+g+'?)':''),'bad');bad++;continue;}
+      if(f.size>300000){line(rel+' ✗ 그림이 너무 커요','bad');bad++;continue;}
+      try{TEX[id]=await readPng(f);var sp=document.createElement('span'),ig=document.createElement('img');ig.src=TEX[id];sp.appendChild(ig);sp.appendChild(document.createTextNode(rel+' ✓'));box.appendChild(sp);okc++;}
+      catch(e){line(rel+' ✗ 그림을 읽지 못했어요','bad');bad++;}
+    }else{
+      if(f.size>65536){line(rel+' ✗ 파일이 너무 커요 (64KB까지)','bad');bad++;continue;}
+      try{
+        var ps=parseScript(await readTxt(f),true),d=ps.data;
+        if(d.events)M.events=M.events.concat(d.events);
+        if(d.names){M.names=M.names||{};for(var k in d.names)M.names[k]=d.names[k];}
+        if(d.sets)M.sets=M.sets.concat(d.sets);
+        if(d.remap){M.remap=M.remap||{};for(var k2 in d.remap)M.remap[k2]=d.remap[k2];}
+        if(ps.name&&!name){name=ps.name;}
+        if(ps.kind&&!kind)kind=ps.kind;
+        line(rel+' ✓');okc++;
+      }catch(e){line(rel+' ✗ '+(e.script?e.message:'읽지 못했어요'),'bad');bad++;}
+    }
   }
+  if(!okc){umsg('폴더 안에 .bs 파일이나 PNG 그림이 없어요.',1);return;}
+  var data={};if(M.events.length)data.events=M.events;if(M.names)data.names=M.names;if(M.sets.length)data.sets=M.sets;if(M.remap)data.remap=M.remap;
+  if(Object.keys(TEX).length)data.textures=TEX;
+  if(/res|pack/i.test(root))kind='pack';else if(/^mods?$/i.test(root)||/mod/i.test(root))kind='mod';
+  if(!kind)kind=(data.events||data.sets||data.remap)?'mod':'pack';
+  FD={kind:kind,data:data};
+  if(!$('un').value&&(name||root))$('un').value=(name||root).slice(0,40);
+  if(bad)umsg('고칠 곳이 '+bad+'개 있어요. 고친 뒤 폴더를 다시 골라 주세요.',1);
+  else umsg((kind==='pack'?'리소스팩으로':'모드로')+' 올려요. 파일 '+okc+'개');
 });
 function check(kind,d){
   if(!d||typeof d!=='object'||Array.isArray(d))return 'JSON 안쪽이 { } 모양이어야 해요.';
@@ -324,14 +349,11 @@ function check(kind,d){
   return '';
 }
 $('us').addEventListener('click',async function(){
-  var kind=$('uk').value,name=$('un').value.trim(),descr=$('ud').value.trim(),cat=$('uc').value,raw=$('uj').value.trim();
-  if(raw.length>65536){umsg('내용이 너무 커요 (64KB까지).',1);return;}
-  var d;
-  if(!raw&&Object.keys(TEX).length){d={};}
-  else if(raw.charAt(0)==='{'){try{d=JSON.parse(raw);}catch(e){umsg('JSON 모양이 올바르지 않아요.',1);return;}}
-  else{try{var ps=parseScript(raw);d=ps.data;if(ps.kind){kind=ps.kind;}if(ps.name&&!name)name=ps.name;}catch(e){umsg(e.script?e.message:'스크립트를 읽지 못했어요.',1);return;}}
+  var name=$('un').value.trim(),descr=$('ud').value.trim(),cat=$('uc').value;
+  if(!FD){umsg('먼저 폴더를 골라 주세요.',1);return;}
+  var kind=FD.kind,d=FD.data;
+  if($('uprev').querySelector('.bad')){umsg('빨간 줄이 있는 파일을 먼저 고쳐 주세요.',1);return;}
   if(!name){umsg('이름을 적어 주세요.',1);return;}
-  if(Object.keys(TEX).length){d.textures=TEX;}
   if(JSON.stringify(d).length>65536){umsg('내용이 너무 커요 (64KB까지). 그림 수를 줄여 주세요.',1);return;}
   var er=check(kind,d);if(er){umsg(er,1);return;}
   var u=FFAuth.user(),c=sb();if(!u||!c){umsg('로그인이 필요해요.',1);return;}
@@ -341,7 +363,7 @@ $('us').addEventListener('click',async function(){
   var r=await c.from('beaconfall_mods').insert({kind:kind,name:name,descr:descr,cat:cat,author_name:String(an).slice(0,20),data:d}).select().single();
   this.disabled=false;
   if(r.error){umsg('올리지 못했어요. 서버가 아직 준비되지 않았을 수 있어요.',1);return;}
-  LIST.unshift(r.data);SERVER='ok';$('upl').classList.remove('on');$('un').value='';$('ud').value='';$('uj').value='';TEX={};$('uprev').innerHTML='';$('up').value='';K='all';CAT='';draw();
+  LIST.unshift(r.data);SERVER='ok';$('upl').classList.remove('on');$('un').value='';$('ud').value='';TEX={};FD=null;$('uprev').innerHTML='';$('uf').value='';K='all';CAT='';draw();
 });
 window.addEventListener('storage',draw);
 draw();
