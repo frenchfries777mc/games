@@ -10043,7 +10043,7 @@ const MOD_KEY=/^(Key[A-Z]|Digit[0-9]|F([1-9]|1[0-2]))$/;
 function modBox(){let b=document.getElementById('modbtns');if(!b){b=document.createElement('div');b.id='modbtns';b.style.cssText='position:fixed;inset:0;z-index:30;pointer-events:none';document.body.appendChild(b);setInterval(()=>{const m=document.getElementById('modal');b.style.display=(mode==='play'&&m&&m.hidden)?'':'none';},400);}return b;}
 function modApply(list){
   for(const k in MOD.orig){if(ITEMS[k])ITEMS[k].name=MOD.orig[k];}
-  MOD.spW=null;MOD.orig={};MOD.ev=[];MOD.on=[];MOD.st={};MOD.remap={};MOD.col={};MOD.potato=false;
+  MOD.spW=null;MOD.orig={};MOD.ev=[];MOD.on=[];MOD.st={};MOD.remap={};MOD.col={};MOD.potato=false;MOD.pub=[];MOD.exp={};
   for(const k in MOD.iorig){if(ITEMS[k])ITEMS[k].icon=MOD.iorig[k];}
   MOD.iorig={};MOD.tex={};let texN=0;
   const bx=document.getElementById('modbtns');if(bx)bx.innerHTML='';
@@ -10058,6 +10058,7 @@ function modApply(list){
       const im=new Image();im.onload=()=>{MOD.tex[k]=im;try{for(const q in ICONURL)delete ICONURL[q];for(const q in ICONC)delete ICONC[q];renderInv();renderEquip();}catch(e){}};im.src=v;
     }
     if(d.api==='potato')MOD.potato=true;
+    if(Array.isArray(d.pub))for(const q of d.pub.slice(0,5)){const UR=/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/;if(q&&UR.test(q.u||'')&&/^[a-z0-9_]{1,21}$/.test(q.v||'')&&Array.isArray(q.rd)&&/^%[a-z0-9_]{1,21}%$/.test(q.bind||''))MOD.pub.push({v:q.v,u:q.u,rd:q.rd.filter(x=>UR.test(x)).slice(0,5),bind:q.bind,fb:String(q.fb==null?'':q.fb).slice(0,40),ty:q.ty==='number'?'number':'text',sc:q.sc==='mod'?'mod':'world',un:String(q.un||''),mn:String(m.name||'').slice(0,40)});}
     if(d.col&&typeof d.col==='object'&&!Array.isArray(d.col))for(const k of Object.keys(d.col).slice(0,60)){if(/^[a-z_0-9]{1,30}$/.test(k))MOD.col[k]=!!d.col[k];}
     if(Array.isArray(d.sets))for(const t of d.sets.slice(0,100))modSet(t,setName);
     if(d.remap&&typeof d.remap==='object'&&!Array.isArray(d.remap))for(const k of Object.keys(d.remap).slice(0,30)){if(MOD_KEY.test(k)&&MOD_KEY.test(d.remap[k]))MOD.remap[k]=d.remap[k];}
@@ -10072,9 +10073,8 @@ function modApply(list){
 function modTxt(s){   // Potato API: %player_name% 같은 값을 글에 넣어요 (Potato API 모드를 켜야 읽혀요)
   s=String(s);
   if(s.indexOf('%player\'s mod%')>=0)s=s.split('%player\'s mod%').join(MOD.on.map(m=>String(m.name||'')).join(', '));   // Potato API 없이도 읽혀요
-  if(s.indexOf('{:')>=0)s=s.replace(/\{:([a-z0-9_]{1,30}):\}/g,(m,k)=>{shLoad();const u=MODX.uid?MODX.uid.slice(0,8)+'_'+k:'';if(SHV[u]!==undefined)return String(SHV[u]);for(const x of (MODX.uses||[])){const w=SHV[x.slice(0,8)+'_'+k];if(w!==undefined)return String(w);}return SHV[k]===undefined?'':String(SHV[k]);});   // 제작자끼리 공유하는 변수 (uuid 모드는 자기 번호 안에서 먼저 찾아요)
-  if(MODX.uses&&MODX.uses.length&&s.indexOf('%')>=0)s=s.replace(/%([a-z0-9_]{1,21})%/g,(m,k)=>{shLoad();for(const x of MODX.uses){const w=SHV[x.slice(0,8)+'_'+k];if(w!==undefined)return String(w);}return m;});   // use_mod_uuid 로 쓴 모드의 공유 변수를 %이름% 으로
-  if(s.indexOf('%')>=0)s=s.replace(/%([0-9a-f]{8})-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}_([a-z0-9_]{1,21})%/gi,(m,a,k)=>{shLoad();const v=SHV[a.toLowerCase()+'_'+k.toLowerCase()];return v===undefined?'':String(v);});   // %uuid_이름% 로 다른 모드의 공유 변수 부르기
+  if(s.indexOf('{:')>=0)s=s.replace(/\{:([^:{}]{1,70}):\}/g,(m,k)=>{shLoad();for(const x of (MODX.uses||[])){for(const q of MOD.pub){if(q.u===x&&k===q.v+'_'+q.mn){const w=SHV[x.slice(0,8)+'_'+q.v];return w===undefined?'':String(w);}}}if(!/^[a-z0-9_]{1,30}$/.test(k))return m;const u=MODX.uid?MODX.uid.slice(0,8)+'_'+k:'';if(SHV[u]!==undefined)return String(SHV[u]);return SHV[k]===undefined?'':String(SHV[k]);});   // {:이름:} = 제작자끼리 공유, {:이름_모드이름:} = use_mod_uuid 한 모드의 공식 이름
+  if(MODX.uses&&MODX.uses.length&&MODX.uid&&s.indexOf('%')>=0){const td=new Date().toISOString().slice(0,10);for(const q of MOD.pub){if(!MODX.uses.includes(q.u)||q.sc!=='world'||!q.rd.includes(MODX.uid)||(q.un&&td>q.un)||isGuest())continue;if(!MOD.exp[q.u+q.v])continue;if(!MOD.on.some(x=>String(x.name||'')===q.mn))continue;if(s.indexOf(q.bind)<0)continue;shLoad();let w=SHV[q.u.slice(0,8)+'_'+q.v];if(w===undefined||(q.ty==='number'&&isNaN(Number(w))))w=q.fb;s=s.split(q.bind).join(String(w));}}   // publish_short 로 원조가 열어준 별칭 (%이름%)
   if(s.indexOf('{')>=0)s=s.replace(/\{(_?[a-z0-9_]{1,20}_?)\}/g,(m,k)=>{const v=modVGet(k);return v===undefined?'0':String(v);});   // {변수} / {_지역변수_}
   if(!MOD.potato||s.indexOf('%')<0)return s;
   return s.replace(/%([a-z0-9_' ]{3,30})%/g,(m,k)=>{
@@ -10306,6 +10306,7 @@ function modRun(acts,depth,box){
     else if(a.addv&&typeof a.addv.n==='string'&&typeof a.addv.d==='number'){const cur=Number(modVGet(a.addv.n));modVarSet(a.addv.n,(Number.isFinite(cur)?cur:0)+a.addv.d);}
     else if(typeof a.resv==='string'){delete (modIsLoc(a.resv)?MODX.loc:modVars())[a.resv];}
     else if(a.ifp&&Array.isArray(a.do)){if(MOD.potato){const isp=a.ifp.w==='victim'?MODX.vp:MODX.ap;if(isp!==!!a.ifp.not)modRun(a.do,depth+1,box);}}
+    else if(a.expose&&typeof a.expose.v==='string'){if(MODX.uid)MOD.exp[MODX.uid+a.expose.v]=1;}
     else if(a.shset&&typeof a.shset.n==='string'){shSet(MODX.uid?MODX.uid.slice(0,8)+'_'+a.shset.n:a.shset.n,modTxt(String(a.shset.v)));}
     else if(a.ifc&&typeof a.ifc.c==='string'&&Array.isArray(a.do)){if(String(modTxt(String(a.ifc.v))).toLowerCase().includes(a.ifc.c.toLowerCase()))modRun(a.do,depth+1,box);}
     else if(a.ifv&&Array.isArray(a.do)){if(modVarCmp(a.ifv))modRun(a.do,depth+1,box);}
