@@ -303,7 +303,7 @@ function parseScript(text,lenient){
   function mon(l,w){w=w.toLowerCase();if(MONS.indexOf(w)<0){var g=guess(w,MONS);throw PE(l.n,"unknown monster '"+w+"'."+(g?" Did you mean '"+g+"'?":''));}return w;}
   function colT(l,w){var k=w.toLowerCase(),M={tree:'tree',trees:'tree',rock:'rock',rocks:'rock',stone:'rock',ore:'ore',ores:'ore',water:'water',sea:'water',ocean:'water',block:'block',blocks:'block'};return M[k]||item(l,w);}
   function toT(l,w){w=w.trim().replace(/^"(.*)"$/,'$1');if(!w||w.length>90)throw PE(l.n,'write who after "to": player, monster, mob or a player name');return w;}
-  function sub(l,depth){if(depth>=3)throw PE(l.n,'blocks are nested too deep');if(!(pos<L.length&&L[pos].ind>l.ind))throw PE(l.n,'nothing is written under this line');return block(L[pos].ind,depth+1);}
+  function sub(l,depth){if(depth>=5)throw PE(l.n,'blocks are nested too deep');if(!(pos<L.length&&L[pos].ind>l.ind))throw PE(l.n,'nothing is written under this line');return block(L[pos].ind,depth+1);}
   function setStmt(l,m){
     var id=item(l,m[1].trim()),f=m[2].toLowerCase(),v=m[3].trim();
     if(f==='name'){var q=v.match(/^"([^"]{1,40})"$/);if(!q)throw PE(l.n,'write the name in quotes, like  set sword_iron name "Big Sword"');return {item:id,field:'name',value:q[1]};}
@@ -322,7 +322,7 @@ function parseScript(text,lenient){
     if(tg){if(ev==='kill'){tg=mon(l,tg);}
       else if(ev==='mine'&&(tg==='stone'||tg==='rock')){tg='';}
       else if(ev==='chop'&&(tg==='tree'||tg==='wood')){tg='';}
-      else if(ev==='place'||ev==='eat'){tg=item(l,tw);}
+      else if(ev==='place'||ev==='eat'||ev==='craft'){tg=item(l,tw);}
       else if(ev==='break'){var DW={tree:'tree',wood:'tree',rock:'rock',stone:'rock',iron:'iron',gold:'gold',copper:'copper',zinc:'zinc','나무':'tree','바위':'rock','철광석':'iron','금광석':'gold','구리광석':'copper','아연광석':'zinc'};tg=DW[tg]||item(l,tw);}
       else throw PE(l.n,"'"+ev+"' does not take '"+tw+"'");}
     return {on:ev,tg:tg};
@@ -356,22 +356,35 @@ function parseScript(text,lenient){
     if(!/^variable\s/i.test(c)&&(m=c.match(/^(.+?)\s+contained\s+(?:"([^"]{0,40})"|(-?\d{1,9}(?:\.\d{1,3})?))$/i)))return {ifc:{v:m[1].trim().slice(0,100),c:m[2]!==undefined?m[2]:m[3]}};
     throw PE(l.n,"I don't understand the condition '"+c+"'");
   }
+  function nb(t){return t.split('"').map(function(x,i){return i%2?x:x.replace(/\{(_?[a-z0-9_]{1,20}_?)\}/gi,'$1');}).join('"');}
   function block(ind,depth){
     var acts=[];
     while(pos<L.length&&L[pos].ind>=ind){
       var l=L[pos];
       if(l.ind>ind)throw PE(l.n,'indent does not match the line above');
       pos++;var m;
+      if(/^(set|add|subtract|multiply|divide|reset|loop|if\s+(variable|player|world|signal)|signal|every)\b/i.test(l.t))l={n:l.n,ind:l.ind,t:nb(l.t)};   // {변수} 는 {} 를 떼고 읽어요
       if(m=l.t.match(/^give\s+effect\s+(\w+)\s+(\d{1,3})\s+seconds?(?:\s+to\s+(.+?))?$/i)){
         var ef=m[1].toLowerCase(),EFS=['speed','strength','defense','regen','haste','breath','night','stun'];if(EFS.indexOf(ef)<0)throw PE(l.n,"unknown effect '"+m[1]+"'. You can use: "+EFS.join(', '));
         if(+m[2]<1||+m[2]>600)throw PE(l.n,'effect seconds must be 1 to 600');var ea={effect:{k:ef,sec:+m[2]}};if(m[3])ea.to=toT(l,m[3]);acts.push(ea);
       }else if(m=l.t.match(/^play\s+sound\s+(\w+)(?:\s+to\s+(.+?))?$/i)){
         var sn=m[1].toLowerCase(),SNS=['click','hurt','swing','bow','hit','break'];if(SNS.indexOf(sn)<0){var gs=guess(sn,SNS);throw PE(l.n,"unknown sound '"+m[1]+"'."+(gs?" Did you mean '"+gs+"'?":" You can use: "+SNS.join(', ')));}var sa={sound:sn};if(m[2])sa.to=toT(l,m[2]);acts.push(sa);
       }else if(m=l.t.match(/^broadcast\s+"([^"]{1,100})"$/i)){acts.push({bc:m[1]});}
-      else if(m=l.t.match(/^loop\s+(\d{1,2})\s+times?\s*:$/i)){if(+m[1]<1||+m[1]>20)throw PE(l.n,'loop must be 1 to 20 times');acts.push({loop:+m[1],do:sub(l,depth)});}
+      else if(m=l.t.match(/^loop\s+(\d{1,5})\s+times?\s*:$/i)){if(+m[1]<1||+m[1]>10000)throw PE(l.n,'loop must be 1 to 10000 times');acts.push({loop:+m[1],do:sub(l,depth)});}
       else if(m=l.t.match(/^(heal|damage)\s+player\s+(\d{1,3})$/i)){if(+m[2]<1||+m[2]>100)throw PE(l.n,'amount must be 1 to 100');acts.push(m[1].toLowerCase()==='heal'?{heal:+m[2]}:{hurt:+m[2]});}
       else if(m=l.t.match(/^set\s+time\s+(day|night|noon|midnight|sunrise|sunset|\d{1,2})$/i)){var TM={day:8,night:21,noon:12,midnight:0,sunrise:6,sunset:18},tv=/^\d+$/.test(m[1])?+m[1]:TM[m[1].toLowerCase()];if(tv>23)throw PE(l.n,'hour must be 0 to 23');acts.push({time:tv});}
       else if(m=l.t.match(/^set\s+weather\s+(clear|rain|storm)$/i)){acts.push({weather:m[1].toLowerCase()});}
+      else if(m=l.t.match(/^set\s+variable\s+([a-z0-9_]{1,20})\s+to\s+variable\s+([a-z0-9_]{1,20})$/i)){acts.push({setv:{n:m[1].toLowerCase(),v:{ref:m[2].toLowerCase()}}});}
+      else if(m=l.t.match(/^set\s+variable\s+([a-z0-9_]{1,20})\s+to\s+player\s+(name|uuid)$/i)){acts.push({setv:{n:m[1].toLowerCase(),v:{src:m[2].toLowerCase()}}});}
+      else if(m=l.t.match(/^set\s+variable\s+([a-z0-9_]{1,20})\s+to\s+distance\s+player\s+to\s+(nearest\s+monster|nearest\s+mob|[a-z0-9_]{1,30})$/i)){acts.push({setv:{n:m[1].toLowerCase(),v:{dist:m[2].toLowerCase().replace(/\s+/g,' ')}}});}
+      else if((m=l.t.match(/^(add)\s+(-?\d{1,9}(?:\.\d{1,3})?|variable\s+[a-z0-9_]{1,20})\s+to\s+variable\s+([a-z0-9_]{1,20})$/i))||(m=l.t.match(/^(subtract)\s+(-?\d{1,9}(?:\.\d{1,3})?|variable\s+[a-z0-9_]{1,20})\s+from\s+variable\s+([a-z0-9_]{1,20})$/i))||(m=l.t.match(/^(multiply|divide)\s+variable\s+([a-z0-9_]{1,20})\s+by\s+(-?\d{1,9}(?:\.\d{1,3})?|variable\s+[a-z0-9_]{1,20})$/i))){
+        var aop=m[1].toLowerCase(),isMD=aop==='multiply'||aop==='divide',tgt=(isMD?m[2]:m[3]).toLowerCase(),opd=(isMD?m[3]:m[2]),ar={op:aop,n:tgt};
+        if(/^variable/i.test(opd))ar.vr=opd.replace(/^variable\s+/i,'').toLowerCase();else{ar.v=+opd;if(aop==='divide'&&ar.v===0)throw PE(l.n,'cannot divide by 0');}
+        acts.push({ar:ar});
+      }
+      else if(m=l.t.match(/^signal\s+send\s+"([^"]{1,40})"(?:\s+(?:"([^"]{0,60})"|([a-z0-9_]{1,20})))?\s+to\s+mod\s+(?:"([^"]{1,40})"|(back))$/i)){acts.push({sig:{n:m[1],v:m[2],vr:m[3]?m[3].toLowerCase():undefined,to:m[4]||'',back:!!m[5]}});}
+      else if(m=l.t.match(/^if\s+signal\s+receive\s+"([^"]{1,40})"\s+into\s+([a-z0-9_]{1,20})\s+run\s+text\s+replace\s+"([^"]{1,40})"\s+to\s+([a-z0-9_]{1,20})$/i)){acts.push({sigr:{n:m[1],x:m[2].toLowerCase(),a:m[3],y:m[4].toLowerCase()}});}
+      else if(m=l.t.match(/^every\s+(\d{1,4})\s+seconds?\s*:$/i)){acts.push({inl:1,do:sub(l,depth)});}
       else if(m=l.t.match(/^set\s+variable\s+([a-z0-9_]{1,20})\s+to\s+random\s+(-?\d{1,6})\s+to\s+(-?\d{1,6})$/i)){acts.push({setv:{n:m[1].toLowerCase(),v:{r:[+m[2],+m[3]]}}});}
       else if(m=l.t.match(/^give\s+(?:(\d+)\s+)?(.+)$/i)){
         var n=m[1]?+m[1]:1;if(n<1||n>20)throw PE(l.n,'give amount must be 1 to 20');
@@ -406,7 +419,6 @@ function parseScript(text,lenient){
       else if(m=l.t.match(/^(add|subtract)\s+(\d{1,9}(?:\.\d{1,3})?)\s+(?:to|from)\s+variable\s+([a-z0-9_]{1,20})$/i)){acts.push({addv:{n:m[3].toLowerCase(),d:(m[1].toLowerCase()==='add'?1:-1)*+m[2]}});}
       else if(m=l.t.match(/^reset\s+variable\s+([a-z0-9_]{1,20})$/i)){acts.push({resv:m[1].toLowerCase()});}
       else if(m=l.t.match(/^if\s+%(attacker|victim)%\s+is\s+(not\s+)?player\s*:$/i)){acts.push({ifp:{w:m[1].toLowerCase(),not:!!m[2]},do:sub(l,depth)});}
-      else if(m=l.t.match(/^expose\s+"([a-z0-9_]{1,21})"(?:\s+to\s+"(%[a-z0-9_]{1,21}%)")?$/i)){acts.push({expose:{v:m[1].toLowerCase(),a:m[2]?m[2].toLowerCase():''}});}
       else if(m=l.t.match(/^\{:([a-z0-9_]{1,30})::(.{0,100}):\}$/i)){var sv=m[2].trim().replace(/^"(.*)"$/,'$1');if(out.uuid&&m[1].length>21)throw PE(l.n,'with a mod uuid, a shared variable name can be 21 characters at most');acts.push({shset:{n:m[1].toLowerCase(),v:sv}});}
       else if(!/^if\s+variable\s/i.test(l.t)&&(m=l.t.match(/^if\s+(.+?)\s+contained\s+(?:"([^"]{0,40})"|(-?\d{1,9}(?:\.\d{1,3})?))\s*:$/i))){acts.push({ifc:{v:m[1].trim().slice(0,100),c:m[2]!==undefined?m[2]:m[3]},do:sub(l,depth)});}
       else if(m=l.t.match(/^if\s+variable\s+([a-z0-9_]{1,20})\s*(>=|<=|!=|>|<|=)\s*(?:"([^"]{0,40})"|(-?\d{1,9}(?:\.\d{1,3})?))\s*:$/i)){acts.push({ifv:{n:m[1].toLowerCase(),op:m[2],v:m[3]!==undefined?m[3]:+m[4]},do:sub(l,depth)});}
@@ -434,8 +446,10 @@ function parseScript(text,lenient){
     else if(m=l.t.match(/^every\s+(\S+)\s+seconds?\s*:$/i)){if(!/^\d+$/.test(m[1])||+m[1]<1)throw PE(l.n,'every needs a whole number of seconds, 1 or more');if(+m[1]>3600)throw PE(l.n,'every can be at most 3600 seconds');out.events.push({on:'every',n:+m[1],do:sub(l,0)});}
     else if(m=l.t.match(/^on\s+join\s*:$/i)){out.events.push({on:'join',do:sub(l,0)});}
     else if(m=l.t.match(/^on\s+key\s+("[^"]+"(?:\s+or\s+"[^"]+")*)\s+press\s*:$/i)){var kl=m[1].match(/"([^"]+)"/g).map(function(x){return x.slice(1,-1);}),kd=sub(l,0);kl.forEach(function(kn){var kc=keyCode(kn);if(!kc)throw PE(l.n,"unknown key '"+kn+"'. Use A-Z, 0-9 or F1-F12");out.events.push({on:'key',target:kc,do:kd});});}
+    else if(m=l.t.match(/^on\s+signal\s+"([^"]{1,40})"\s*:$/i)){out.events.push({on:'signal',target:m[1],do:sub(l,0)});}
     else if(m=l.t.match(/^on\s+(.+?)\s*:$/i)){
-      var body=m[1],ofRaw='',om=body.match(/^(.*?)\s+of\s+(.+)$/i);if(om){body=om[1];ofRaw=om[2];}
+      var body=m[1],ofRaw='',byRaw='',om=body.match(/^(.*?)\s+of\s+(.+)$/i);if(om){body=om[1];ofRaw=om[2];}
+      var bm=(ofRaw||body).match(/^(.*?)\s+by\s+(.+)$/i);if(bm){if(ofRaw)ofRaw=bm[1];else body=bm[1];byRaw=bm[2];}
       var evs=[],prevEn=null;
       splitOr(body).forEach(function(pt){var pm=pt.trim().match(/^([\w가-힣]+)(?:\s+([\w가-힣]+))?$/);if(!pm)throw PE(l.n,"I don't understand 'on "+pt.trim()+"'");
         if(!pm[2]&&prevEn&&!EVS[pm[1].toLowerCase()]){evs.push(evOf(l,prevEn,pm[1]));return;}   // on eat bread or wheat: = 같은 이벤트의 다른 대상
@@ -450,7 +464,7 @@ function parseScript(text,lenient){
       }
       var bd=sub(l,0);
       if(ofT){var ev2=[];evs.forEach(function(e0){ofT.forEach(function(tt){ev2.push({on:e0.on,tg:tt});});});evs=ev2;}
-      evs.forEach(function(e0){var o={on:e0.on,do:bd};if(e0.tg)o.target=e0.tg;if(e0.ofn&&!ofo){o.of='name';o.ofn=e0.ofn;}if(ofo){o.of=ofo.of;if(ofo.ofn)o.ofn=ofo.ofn;if(ofo.ofl)o.ofl=ofo.ofl;}out.events.push(o);});
+      evs.forEach(function(e0){var o={on:e0.on,do:bd};if(e0.tg)o.target=e0.tg;if(e0.ofn&&!ofo){o.of='name';o.ofn=e0.ofn;}if(ofo){o.of=ofo.of;if(ofo.ofn)o.ofn=ofo.ofn;if(ofo.ofl)o.ofl=ofo.ofl;}if(byRaw)o.by=splitOr(byRaw).map(function(x){return x.trim().replace(/^"(.*)"$/,'$1').toLowerCase();}).slice(0,8);out.events.push(o);});
     }else if(/^rename\s*:$/i.test(l.t)){
       if(!(pos<L.length&&L[pos].ind>0))throw PE(l.n,'nothing is written under this line');
       var ind2=L[pos].ind;out.names=out.names||{};
@@ -461,62 +475,25 @@ function parseScript(text,lenient){
       }
     }else if(m=l.t.match(/^(disable|enable)\s+collision\s+of\s+(.+)$/i)){out.col=out.col||{};out.col[colT(l,m[2].trim())]=m[1].toLowerCase()==='enable';}
     else if(m=l.t.match(/^api\s+"?(potato)"?$/i)){out.api='potato';}
-    else if(m=l.t.match(/^provide\s+(%[a-z0-9_' *]{3,30}%(?:\s*,\s*%[a-z0-9_' *]{3,30}%)*)$/i)){out.ph=out.ph||[];m[1].match(/%([^%]+)%/g).forEach(function(x){var k=x.slice(1,-1).toLowerCase();if(out.ph.indexOf(k)<0)out.ph.push(k);});if(out.ph.length>120)throw PE(l.n,'provide can list 120 values at most');}
-    else if(m=l.t.match(/^set\s+(\S+)\s+(damage|speed|name)\s+(.+)$/i)){out.sets.push(setStmt(l,m));}
-    else if(m=l.t.match(/^remap\s+"([^"]+)"\s+to\s+"([^"]+)"$/i)){var k1=keyCode(m[1]),k2=keyCode(m[2]);if(!k1||!k2)throw PE(l.n,'keys must be A-Z, 0-9 or F1-F12');out.remap=out.remap||{};out.remap[k1]=k2;}
-    else if(/^publish_short\s*:$/i.test(l.t)){
+    else if(/^publish_aliases\s*:$/i.test(l.t)){
       if(!(pos<L.length&&L[pos].ind>0))throw PE(l.n,'nothing is written under this line');
-      var pind=L[pos].ind,P={v:'',al:null,u:'',ty:'',sc:'',sg:'',rule:null,n:l.n};
-      while(pos<L.length&&L[pos].ind>=pind){
-        var pl=L[pos++],pm;
-        if(pl.ind!==pind)throw PE(pl.n,'wrong indentation');
-        if(pm=pl.t.match(/^var\s+"([a-z0-9_]{1,21})"$/i))P.v=pm[1].toLowerCase();
-        else if(pm=pl.t.match(/^aliases\s+("%[a-z0-9_]{1,21}%"(?:\s*,\s*"%[a-z0-9_]{1,21}%"){0,4})$/i))P.al=pm[1].match(/"([^"]+)"/g).map(function(x){return x.slice(1,-1).toLowerCase();});
-        else if(pm=pl.t.match(/^from\s+uuid\s+([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})$/i))P.u=pm[1].toLowerCase();
-        else if(pm=pl.t.match(/^type\s+(text|number)$/i))P.ty=pm[1].toLowerCase();
-        else if(pm=pl.t.match(/^scope\s+(world|mod)$/i))P.sc=pm[1].toLowerCase();
-        else if(pm=pl.t.match(/^sign\s+"([^"]{1,40})"\s*\+\s*"([^"]{1,40})"\s*\+\s*"([^"]{1,40})"$/i))P.sg=pm[1]+'\n'+pm[2]+'\n'+pm[3];
-        else if(/^rule\s*:$/i.test(pl.t)){
-          if(!(pos<L.length&&L[pos].ind>pind))throw PE(pl.n,'nothing is written under this line');
-          var rind=L[pos].ind,R={w:0,bind:'',fb:null,rv:0};
-          while(pos<L.length&&L[pos].ind>=rind){
-            var rl=L[pos++],rm;
-            if(/^when\s+reader\s+mod\s+is\s+applied$/i.test(rl.t))R.w|=1;
-            else if(rm=rl.t.match(/^and\s+writer\s+mod\s+"([^"]{1,40})"\s+is\s+applied$/i)){R.w|=2;R.wn=rm[1];}
-            else if(/^and\s+world\s+is\s+host$/i.test(rl.t))R.w|=4;
-            else if(rm=rl.t.match(/^bind\s+"(%[a-z0-9_]{1,21}%)"\s+to\s+\{:([a-z0-9_]{1,21}):\}$/i)){R.bind=rm[1].toLowerCase();R.bv=rm[2].toLowerCase();}
-            else if(rm=rl.t.match(/^fallback\s+"([^"]{0,40})"$/i))R.fb=rm[1];
-            else if(/^revoke\s+on\s+mod\s+remove$/i.test(rl.t))R.rv=1;
-            else throw PE(rl.n,"I don't understand '"+rl.t+"' in rule. Use: when / and / bind / fallback / revoke");
-          }
-          P.rule=R;
-        }else throw PE(pl.n,"I don't understand '"+pl.t.split(' ')[0]+"' in publish_short. Use: var, aliases, from uuid, type, scope, sign, rule");
+      var aind=L[pos].ind;out.pa=out.pa||[];
+      while(pos<L.length&&L[pos].ind>=aind){
+        var al=L[pos++],am;
+        if(al.ind!==aind||!(am=al.t.match(/^aliases_name\s*:\s*"%([a-z0-9_]{1,30})%"$/i)))throw PE(al.n,'write it like  aliases_name: "%player_name%"');
+        if(!(pos<L.length&&L[pos].ind===aind&&/^use_command\s*:$/i.test(L[pos].t)))throw PE(al.n,'aliases_name needs a  use_command:  line right under it');
+        var ul=L[pos++];
+        if(out.pa.length>=120)throw PE(al.n,'publish_aliases can hold 120 aliases at most');
+        out.pa.push({a:am[1].toLowerCase(),do:sub(ul,0)});
       }
-      var miss=!P.v?'var':!P.al?'aliases':!P.u?'from uuid':!P.ty?'type':!P.sc?'scope':!P.sg?'sign':!P.rule?'rule':'';
-      if(miss)throw PE(P.n,'publish_short is missing "'+miss+'"');
-      var RR=P.rule,rmiss=!(RR.w&1)?'when reader mod is applied':!(RR.w&2)?'and writer mod "name" is applied':!(RR.w&4)?'and world is host':!RR.bind?'bind':RR.fb===null?'fallback':!RR.rv?'revoke on mod remove':'';
-      if(rmiss)throw PE(P.n,'rule is missing "'+rmiss+'"');
-      if(P.al.indexOf(RR.bind)<0)throw PE(P.n,'bind '+RR.bind+' is not in aliases');
-      if(RR.bv!==P.v)throw PE(P.n,'bind must point to {:'+P.v+':}');
-      out.pub=out.pub||[];if(out.pub.length>=5)throw PE(P.n,'publish_short can be written 5 times at most');
-      out.pub.push({v:P.v,al:P.al,u:P.u,ty:P.ty,sc:P.sc,sg:P.sg,bind:RR.bind,fb:RR.fb,wn:RR.wn});
     }
     else if(m=l.t.match(/^use_mod_uuid\s*:\s*([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})$/i)){out.uses=out.uses||[];if(out.uses.length>=5)throw PE(l.n,'use_mod_uuid can be written 5 times at most');out.uses.push(m[1].toLowerCase());}
     else if(/^use_mod_uuid\b/i.test(l.t))throw PE(l.n,'write it like  use_mod_uuid: 550e8400-e29b-41d4-a716-446655440000');
-    else throw PE(l.n,"I don't understand '"+l.t.split(' ')[0]+"'. Start a line with: provide, use_mod_uuid, mod, resource pack, on, rename, set, remap, disable, enable");
+    else throw PE(l.n,"I don't understand '"+l.t.split(' ')[0]+"'. Start a line with: publish_aliases, use_mod_uuid, mod, resource pack, on, rename, set, remap, disable, enable");
   }
-  if(out.pub){out.pub.forEach(function(P){
-    if(!out.uuid)throw PE(1,'publish_short needs the mod uuid on the first line of the file');
-    if(P.u!==out.uuid)throw PE(1,'publish_short "from uuid" must be this mod\'s uuid');
-    if(!out.name)throw PE(1,'publish_short needs  mod "name"  in the same file');
-    if(P.wn!==out.name)throw PE(1,'writer mod "'+P.wn+'" must be this mod "'+out.name+'"');
-    if(P.sg!==P.v+'\n'+out.name+'\n'+P.v)throw PE(1,'sign must be exactly  "'+P.v+'" + "'+out.name+'" + "'+P.v+'"');
-    var ex=false;
-    out.events.forEach(function(e){(function walk(a){(a||[]).forEach(function(x){if(x&&x.expose&&x.expose.v===P.v&&(!x.expose.a||x.expose.a===P.bind))ex=true;if(x&&Array.isArray(x.do))walk(x.do);});})(e.do);});
-    if(!ex)throw PE(1,'publish_short "'+P.v+'" needs  expose "'+P.v+'" to "'+P.bind+'"  inside an on block');
-  });}
+  if(out.pa&&out.uuid)out.pa.forEach(function(q){q.u=out.uuid;});
   if(out.uuid||out.uses)out.events.forEach(function(e){if(out.uuid)e.u=out.uuid;if(out.uses)e.uu=out.uses;});
-  var data={};if(out.events.length)data.events=out.events;if(out.names)data.names=out.names;if(out.sets.length)data.sets=out.sets;if(out.remap)data.remap=out.remap;if(out.col)data.col=out.col;if(out.api)data.api=out.api;if(out.pub)data.pub=out.pub;if(out.ph)data.ph=out.ph;
+  var data={};if(out.events.length)data.events=out.events;if(out.names)data.names=out.names;if(out.sets.length)data.sets=out.sets;if(out.remap)data.remap=out.remap;if(out.col)data.col=out.col;if(out.api)data.api=out.api;if(out.pa)data.pa=out.pa;
   if(!Object.keys(data).length&&!lenient)throw PE(1,'nothing to upload: add an "on ...:" block, "rename:", "set ..." or "remap ..."');
   return {kind:out.name?out.kind:null,name:out.name,data:data};
 }
@@ -548,8 +525,7 @@ $('uf').addEventListener('change',async function(){
         if(d.sets)M.sets=M.sets.concat(d.sets);
         if(d.col){M.col=M.col||{};for(var k3 in d.col)M.col[k3]=d.col[k3];}
         if(d.api)M.api=d.api;
-        if(d.pub)M.pub=(M.pub||[]).concat(d.pub);
-        if(d.ph)M.ph=(M.ph||[]).concat(d.ph).slice(0,120);
+        if(d.pa)M.pa=(M.pa||[]).concat(d.pa);
         if(d.remap){M.remap=M.remap||{};for(var k2 in d.remap)M.remap[k2]=d.remap[k2];}
         if(ps.name&&!name){name=ps.name;}
         if(ps.kind&&!kind)kind=ps.kind;
@@ -559,7 +535,7 @@ $('uf').addEventListener('change',async function(){
   }
   if(!okc){umsg('폴더 안에 .bs 파일이나 PNG 그림이 없어요.',1);return;}
   if(LOGO&&LOGO.length>6000){umsg('logo.png가 너무 복잡해요. 더 단순한 그림으로 해 주세요.',1);return;}
-  var data={};if(M.events.length)data.events=M.events;if(M.names)data.names=M.names;if(M.sets.length)data.sets=M.sets;if(M.remap)data.remap=M.remap;if(M.col)data.col=M.col;if(M.api)data.api=M.api;if(M.pub)data.pub=M.pub;if(M.ph)data.ph=M.ph;
+  var data={};if(M.events.length)data.events=M.events;if(M.names)data.names=M.names;if(M.sets.length)data.sets=M.sets;if(M.remap)data.remap=M.remap;if(M.col)data.col=M.col;if(M.api)data.api=M.api;if(M.pa)data.pa=M.pa;
   if(LOGO&&LOGO.length<=6000)data.logo=LOGO;
   if(Object.keys(TEX).length)data.textures=TEX;
   kind=files.some(function(f){return /^mod[e]?\.bs$/i.test(f.name);})?'mod':'pack';   // mode.bs(또는 mod.bs)가 있으면 모드, 없으면 리소스팩
@@ -576,9 +552,9 @@ function check(kind,d){
     if(d.sets&&(!Array.isArray(d.sets)||d.sets.length>100))return '"sets"는 100개까지예요.';
     if(d.remap&&(typeof d.remap!=='object'||Array.isArray(d.remap)||Object.keys(d.remap).length>30))return '"remap"은 30개까지예요.';
     if(d.textures&&(typeof d.textures!=='object'||Array.isArray(d.textures)))return '"textures" 모양이 올바르지 않아요.';
-    if(!d.names&&!d.sets&&!d.remap&&!d.textures&&!d.col&&d.api!=='potato'&&!d.ph&&(!Array.isArray(d.events)||!d.events.length))return '모드에는 규칙(on), 이름 바꾸기, set, remap, 그림 중 하나는 있어야 해요.';
+    if(!d.names&&!d.sets&&!d.remap&&!d.textures&&!d.col&&d.api!=='potato'&&!d.pa&&(!Array.isArray(d.events)||!d.events.length))return '모드에는 규칙(on), 이름 바꾸기, set, remap, 그림 중 하나는 있어야 해요.';
     if(!d.events)return '';
-    if(d.events.length>200)return '이벤트는 200개까지예요.';
+    if(d.events.length>1500)return '이벤트는 1500개까지예요.';
     for(var i=0;i<d.events.length;i++){var ev=d.events[i];if(!ev||typeof ev.on!=='string'||!Array.isArray(ev.do)||!ev.do.length)return (i+1)+'번째 이벤트에 "on"(문자열)과 "do"(목록)가 필요해요.';if(ev.do.length>20)return (i+1)+'번째 이벤트의 "do"는 20개까지예요.';}
   }else{
     if(!d.names&&!d.textures)return '리소스팩은 이름 바꾸기("names")나 그림(PNG)이 필요해요.';
