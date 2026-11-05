@@ -2,6 +2,14 @@
  "notes": [
   {
    "date": "2026-11-05",
+   "build": "v0.5 b195",
+   "title": "업데이트 0.5 · b195",
+   "items": [
+    "on destroy (부순 것): 이벤트 추가. tree, rock, iron, gold, copper, zinc 또는 건물 아이템 이름 (예: on destroy tree:)"
+   ]
+  },
+  {
+   "date": "2026-11-05",
    "build": "v0.5 b194",
    "title": "업데이트 0.5 · b194",
    "items": [
