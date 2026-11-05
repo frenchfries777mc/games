@@ -451,9 +451,11 @@ function parseScript(text,lenient){
     else if(m=l.t.match(/^api\s+"?(potato)"?$/i)){out.api='potato';}
     else if(m=l.t.match(/^set\s+(\S+)\s+(damage|speed|name)\s+(.+)$/i)){out.sets.push(setStmt(l,m));}
     else if(m=l.t.match(/^remap\s+"([^"]+)"\s+to\s+"([^"]+)"$/i)){var k1=keyCode(m[1]),k2=keyCode(m[2]);if(!k1||!k2)throw PE(l.n,'keys must be A-Z, 0-9 or F1-F12');out.remap=out.remap||{};out.remap[k1]=k2;}
-    else throw PE(l.n,"I don't understand '"+l.t.split(' ')[0]+"'. Start a line with: mod, resource pack, on, rename, set, remap, disable, enable");
+    else if(m=l.t.match(/^use_mod_uuid\s*:\s*([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})$/i)){out.uses=out.uses||[];if(out.uses.length>=5)throw PE(l.n,'use_mod_uuid can be written 5 times at most');out.uses.push(m[1].toLowerCase());}
+    else if(/^use_mod_uuid\b/i.test(l.t))throw PE(l.n,'write it like  use_mod_uuid: 550e8400-e29b-41d4-a716-446655440000');
+    else throw PE(l.n,"I don't understand '"+l.t.split(' ')[0]+"'. Start a line with: use_mod_uuid, mod, resource pack, on, rename, set, remap, disable, enable");
   }
-  if(out.uuid)out.events.forEach(function(e){e.u=out.uuid;});
+  if(out.uuid||out.uses)out.events.forEach(function(e){if(out.uuid)e.u=out.uuid;if(out.uses)e.uu=out.uses;});
   var data={};if(out.events.length)data.events=out.events;if(out.names)data.names=out.names;if(out.sets.length)data.sets=out.sets;if(out.remap)data.remap=out.remap;if(out.col)data.col=out.col;if(out.api)data.api=out.api;
   if(!Object.keys(data).length&&!lenient)throw PE(1,'nothing to upload: add an "on ...:" block, "rename:", "set ..." or "remap ..."');
   return {kind:out.name?out.kind:null,name:out.name,data:data};
