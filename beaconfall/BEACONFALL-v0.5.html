@@ -407,7 +407,7 @@ window.bfIntro=function(){if(run)return;run=1;t0=Date.now();el.classList.add('ru
     <button class="btn" data-act="skins"><span class="arrow">▶</span>스킨 상점<span class="en">SKIN SHOP</span></button>
     <button class="btn" data-act="stats"><span class="arrow">▶</span>통계<span class="en">STATS</span></button>
     <button class="btn" data-act="settings"><span class="arrow">▶</span>설정<span class="en">SETTINGS</span></button>
-    <p class="foot">v0.5<br>build 180</p>
+    <p class="foot">v0.5<br>build 181</p>
   </nav>
 </div>
 
@@ -562,7 +562,7 @@ const TREE_SW=[5,5,5,3,2,3,5,5,3,3];
 /* 월드: 시작섬 1개 + 테마 섬들. 지형은 한꺼번에 만들지 않고, 플레이어가 가까이 가면 구역(256×256)별로 불러와요.
    모든 값은 시드로 정해지는 함수라서 어디서든(손님 포함) 똑같은 월드가 나와요. */
 const CHK=256, CXN=W/CHK, CYN=H/CHK, APR=8, RGN=CHK+2*APR, TMAX=2048, BMAX=1024, CHK_CAP=150;
-let TER=null;
+let TER=null,PTF=null;   // PTF: 모드가 바꾼 지형 설정(방장→손님)
 let sV=0,sB=0,sM=0;   // shape()의 결과 (높이, 섬 종류(+128 용암), 습도)
 function shape(x,y,hb,fb,L){
   let best=-0.45,bo=null,bd=9;
@@ -581,6 +581,16 @@ function shape(x,y,hb,fb,L){
     else if(b===2&&v>SEA)v+=0.02*Math.sin((x+y*0.6)*0.035+hb*5);
     else if(b===7&&v>SEA&&v<0.85&&m>0.55)v-=0.16*clamp01((m-0.55)*6);
     else if(b===3&&bd<0.6){v+=0.2*(1-bd/0.6);if(bd<0.17+0.05*(hb-0.5)*2){v=0.99;bv|=128;}}
+  }
+  const tf=TER.tf;
+  if(tf&&tf.r){   // 모드: fill 구역 (땅/해변/바다)
+    for(let k=0;k<tf.r.length;k++){
+      const q=tf.r[k];if(x<q[0]||x>q[2]||y<q[1]||y>q[3])continue;
+      if(q[4]===0){v=SEA+0.08+Math.max(0,0.55*((hb-0.5)*2.8+0.5)-0.3)*0.6;if(v>0.7)v=0.7;}
+      else if(q[4]===1)v=SEA+0.012+Math.max(0,hb-0.5)*0.05;
+      else v=SEA-0.3-hb*0.1;
+      if(q[5]>=0)bv=q[5];
+    }
   }
   const e=Math.min(y,H-1-y,x,W-1-x)/280;
   if(e<1)v-=(1-e)*0.55;
@@ -636,6 +646,7 @@ const FLOWER_OK=[1,1,0,0,1,0,0,1];
 function ensureTrees(cx,cy){
   if(cx<0||cy<0||cx>=CXN||cy>=CYN)return;
   const ci=cy*CXN+cx;if(TER.tn[ci]>=0)return;
+  if(TER.tf&&TER.tf.nt){TER.tn[ci]=0;return;}
   const X0=cx*CHK,Y0=cy*CHK,list=[],camp=TER.camp;
   const c0=Math.floor((X0-TREE_CELL)/TREE_CELL),c1=Math.ceil((X0+CHK)/TREE_CELL);
   const r0=Math.floor((Y0-TREE_CELL)/TREE_CELL),r1=Math.ceil((Y0+CHK)/TREE_CELL);
@@ -703,6 +714,7 @@ const hr=(x,y,sl)=>hash2(x+sl*977,y+sl*131);
 function ensureBoulders(cx,cy){
   if(cx<0||cy<0||cx>=CXN||cy>=CYN)return;
   const ci=cy*CXN+cx;if(TER.bn[ci]>=0)return;
+  if(TER.tf&&TER.tf.nr){TER.bn[ci]=0;return;}
   for(let dy=-1;dy<=1;dy++)for(let dx=-1;dx<=1;dx++)ensureTrees(cx+dx,cy+dy);
   const X0=cx*CHK,Y0=cy*CHK,camp=TER.camp,list=[];
   const gx0=8+Math.floor((X0-8-7)/7)*7,gy0=8+Math.floor((Y0-8-7)/7)*7;
@@ -725,6 +737,7 @@ function ensureBoulders(cx,cy){
       break;
     }
   }
+  if(TER.tf&&TER.tf.no)for(let k=list.length-1;k>=0;k--)if(list[k][2]>=2)list.splice(k,1);
   list.sort((a,b)=>a[0]-b[0]||a[1]-b[1]);
   if(list.length>BMAX)list.length=BMAX;
   const B=TER.B,base=ci*BMAX;
@@ -1006,11 +1019,12 @@ async function generateTerrain(seed,prog){
     }
   }
   TER.camp.x=campX;TER.camp.y=campY;
+  TER.tf=PTF||null;
   await P(1,'완료');
   return {
     islands, camp:TER.camp, riverCount:sources.length,
     trees:TER.T, boulders:TER.B, removed:TER.removed, brem:TER.brem,
-    colorAt:colorAtPix, ter:TER
+    colorAt:colorAtPix, ter:TER, tf:PTF||null
   };
 }
 //==GEN_END
@@ -4345,7 +4359,7 @@ function saveWorld(force){
     const rem=collectRemoved(),brm=collectBrem();
     if(mode==='play')world.savedPlayer=(P.air&&P.airX!==undefined)?{x:Math.round(P.airX),y:Math.round(P.airY),f:P.f}:{x:Math.round(P.sailing&&P.landX!==undefined?P.landX:P.x),y:Math.round(P.sailing&&P.landY!==undefined?P.landY:P.y),f:P.f};
     localStorage.setItem(SAVE_KEY(world.id),JSON.stringify({
-      v:1,mg:world.mg||[],rc:world.rcIt||null,stc:world.stc||{},nt:world.nt|0,pt:Math.round(world.pt||0),pe:Math.round(world.pe||0),clock:Math.round(world.clock),removed:rem,brem:brm,ores:world.conv,trader:world.trader,lastTraderDay:world.lastTraderDay,expl:packBits(world.expl),treasureInit:!!world.treasureInit,lmChestInit:world.lmChestInit|0,pirInit:world.pirInit|0,ruinInit:world.ruinInit|0,trClean:world.trClean|0,dunFl:world.dunFl||{},dunBD:world.dunBD|0,fortBD:world.fortBD|0,skyDay:world.skyDay||{},dby:world.discBy||{},gsDay:world.gsDay|0,trains:[...(world.trains||[]),...((typeof P!=='undefined'&&P&&P.train)?[P.train]:[])].slice(0,40).map(T=>({x:T.gx,y:T.gy,dx:T.dx,dy:T.dy,p:Math.round(T.p*100)/100,run:T.run?1:0,it:(T.it||[]).map(q=>q?Object.assign({},q):null)})),herd:animals.filter(a=>a.tame).map(a=>[ANIM_IDX.indexOf(a.type),Math.round(a.hx),Math.round(a.hy),a.baby?1:0,Math.round(a.gt||0)]),disc:world.disc.map(b=>b?'1':'0').join(''),seen:world.seen.map(b=>b?'1':'0').join(''),escaped:!!world.escaped,pilot:world.pilot?1:0,vship:world.voidShip?world.voidShip.x+','+world.voidShip.y:'',voidWon:world.voidWon|0,voidBD:world.voidBD|0,intro:world.introSeen?1:0,bossDay:world.bossDay.join(','),
+      v:1,mg:world.mg||[],tf:world.tf||null,rc:world.rcIt||null,stc:world.stc||{},nt:world.nt|0,pt:Math.round(world.pt||0),pe:Math.round(world.pe||0),clock:Math.round(world.clock),removed:rem,brem:brm,ores:world.conv,trader:world.trader,lastTraderDay:world.lastTraderDay,expl:packBits(world.expl),treasureInit:!!world.treasureInit,lmChestInit:world.lmChestInit|0,pirInit:world.pirInit|0,ruinInit:world.ruinInit|0,trClean:world.trClean|0,dunFl:world.dunFl||{},dunBD:world.dunBD|0,fortBD:world.fortBD|0,skyDay:world.skyDay||{},dby:world.discBy||{},gsDay:world.gsDay|0,trains:[...(world.trains||[]),...((typeof P!=='undefined'&&P&&P.train)?[P.train]:[])].slice(0,40).map(T=>({x:T.gx,y:T.gy,dx:T.dx,dy:T.dy,p:Math.round(T.p*100)/100,run:T.run?1:0,it:(T.it||[]).map(q=>q?Object.assign({},q):null)})),herd:animals.filter(a=>a.tame).map(a=>[ANIM_IDX.indexOf(a.type),Math.round(a.hx),Math.round(a.hy),a.baby?1:0,Math.round(a.gt||0)]),disc:world.disc.map(b=>b?'1':'0').join(''),seen:world.seen.map(b=>b?'1':'0').join(''),escaped:!!world.escaped,pilot:world.pilot?1:0,vship:world.voidShip?world.voidShip.x+','+world.voidShip.y:'',voidWon:world.voidWon|0,voidBD:world.voidBD|0,intro:world.introSeen?1:0,bossDay:world.bossDay.join(','),
       beltv:2,
       structs:world.structs.filter(b=>!b.lm).map(b=>Object.assign({id:b.id,gx:b.gx,gy:b.gy},exOf(b))),
       drops:drops.map(d=>({x:Math.round(d.tx),y:Math.round(d.ty),v:d.v,item:d.item||'stick',n:d.n||1,dur:d.dur})),
@@ -4360,6 +4374,7 @@ function applySave(){
   if(!world.id)return;
   let d=null;try{d=JSON.parse(localStorage.getItem(SAVE_KEY(world.id)));}catch(e){}
   if(!d||d.v!==1)return;
+  {const t=cleanTF(d.tf);if(t)applyTF(t,false);}
   if(Number.isFinite(d.clock))world.clock=d.clock;
   world.mg=Array.isArray(d.mg)?d.mg.slice(0,50).map(String):[];
   world.lastTraderDay=d.lastTraderDay|0;
@@ -9848,6 +9863,7 @@ function placeRuinChests(){   // 옛 궁전 보물 상자 (방장이 한 번만)
 }
 function buildLandmarks0(){
   world.volc=[];world.lm=[];world.lmc=[];world.ruinc=[];world.ruin=null;world.vnpcs=[];world.vill=-1;world.village=null;world.tmDay=0;world.tm=null;world.vfolk=null;VOLC_B.clear();DUN=null;
+  if(TER.tf&&TER.tf.ns)return;
   for(const o of world.islands)delete o.vname;
   buildVillage();buildPirate();
   const rnd=mulberry32(hashStr((world.seedStr||shown.seed)+'lm'));
@@ -10091,6 +10107,8 @@ function modRun(acts,depth,box){
       const k=a.place.item,an=modAnchor(a.place.near,box.gen),cx=(an.x/GRID)|0,cy=(an.y/GRID)|0;let done=false;
       for(let r=2;r<=10&&!done;r++)for(let t=0;t<12&&!done;t++){const gx=cx+Math.round(Math.cos(t*0.52)*r),gy=cy+Math.round(Math.sin(t*0.52)*r);if(canPlaceCell(gx,gy,k,true)){addStruct(k,gx,gy,'host',k);done=true;}}
     }
+    else if(a.fill&&host&&box.gen&&box.fresh&&Array.isArray(a.fill.c)&&a.fill.c.length===4){modTf('fill',a.fill);}
+    else if(typeof a.wipe==='string'&&host&&box.gen&&box.fresh){modTf('wipe',a.wipe);}
     else if(a.remove&&host&&(a.remove.what==='tree'||a.remove.what==='rock')){
       const an=modAnchor(a.remove.of,box.gen),R=Math.max(1,Math.min(60,a.remove.r|0||5))*GRID,R2=R*R;
       for(let yy=an.y-R;yy<=an.y+R+CHK;yy+=CHK/2)for(let xx=an.x-R;xx<=an.x+R+CHK;xx+=CHK/2)ensureObjs(xx,yy);
@@ -10104,6 +10122,42 @@ function modRun(acts,depth,box){
     }
   }
 }
+const TF_BIO=['start','forest','desert','volcano','jungle','mesa','rock','mangrove','ice'];
+function cleanTF(t){
+  if(!t||typeof t!=='object')return null;
+  const r=[];if(Array.isArray(t.r))for(const q of t.r.slice(0,16)){
+    if(!Array.isArray(q)||q.length<6)continue;
+    const n=q.slice(0,6).map(v=>Math.round(+v));if(n.some(v=>!Number.isFinite(v)))continue;
+    r.push([Math.max(0,n[0]),Math.max(0,n[1]),Math.min(W,n[2]),Math.min(H,n[3]),n[4]>=0&&n[4]<=2?n[4]:0,n[5]>=-1&&n[5]<=8?n[5]:-1]);
+  }
+  const o={r,nt:t.nt?1:0,nr:t.nr?1:0,no:t.no?1:0,ns:t.ns?1:0};
+  return (r.length||o.nt||o.nr||o.no||o.ns)?o:null;
+}
+function applyTF(tf,wipe){   // 모드가 바꾼 지형을 적용 (구역·나무·바위 목록을 다시 만들게 비워요)
+  TER.tf=tf;world.tf=tf;
+  TER.tn.fill(-1);TER.bn.fill(-1);TER.fullEns.fill(0);TER.tcs.fill(undefined);TER.chunks.fill(null);chunkCount=0;
+  TER.removed.fill(0);TER.brem.fill(0);
+  for(const m of [TER.tkey,TER.bkey,TER.tgrid,TER.bgrid,TER.remPend,TER.bremPend,TER.convPend])m.clear();
+  buildTreeGrid();
+  try{base=null;}catch(e){}
+  if(wipe){
+    world.structs=[];world.sgrid=new Map();world.fgrid=new Map();world.cgrid=new Map();world.rgrid=new Map();FIRE.clear();
+    buildLandmarks();
+    if(tf.ns){world.treasureInit=true;world.lmChestInit=2;world.pirInit=2;world.ruinInit=2;}
+    else{world.treasureInit=false;world.lmChestInit=0;world.pirInit=0;world.ruinInit=0;generateTreasures();}
+  }
+}
+function modTf(kind,a){
+  const tf=world.tf||{r:[],nt:0,nr:0,no:0,ns:0};world.tf=tf;
+  if(kind==='wipe'){const f={trees:'nt',rocks:'nr',ores:'no',structures:'ns'}[a];if(f)tf[f]=1;}
+  else{
+    const an=modAnchor(null,true),c=a.c.map((p,i)=>{const v=Math.round(+p[1])||0;return p[0]?(i%2?an.y:an.x)+v:v;});
+    const md={land:0,beach:1,ocean:2}[a.mode],bi=a.b==null?-1:TF_BIO.indexOf(String(a.b));
+    if(md===undefined||tf.r.length>=16)return;
+    tf.r.push([Math.min(c[0],c[2]),Math.min(c[1],c[3]),Math.max(c[0],c[2]),Math.max(c[1],c[3]),md,md===0&&bi<0?0:bi]);
+  }
+  MOD.tfDirty=1;
+}
 function modEvent(on,target){
   if(!MOD.ev.length)return;
   const box={n:50};
@@ -10115,9 +10169,10 @@ function modGen(){
   for(const m of MOD.on){
     if(done.includes(m.id))continue;
     const evs=MOD.ev.filter(e=>e.mid===m.id&&e.on==='generate');if(!evs.length)continue;
-    for(const e of evs){try{modRun(e.do,0,{n:200,gen:1});}catch(x){}}
+    for(const e of evs){try{modRun(e.do,0,{n:200,gen:1,fresh:(world.pt||0)<1});}catch(x){}}
     done.push(m.id);ran=true;
   }
+  if(MOD.tfDirty){MOD.tfDirty=0;try{const t=cleanTF(world.tf);if(t)applyTF(t,true);}catch(x){}}
   if(ran)saveWorld(true);
 }
 function modKey(e,down){
@@ -13367,7 +13422,7 @@ async function guestHandle(d){
     {let ml=[];try{if(typeof d.mods==='string'&&d.mods)ml=JSON.parse(d.mods);}catch(e){ml=[];}if(!Array.isArray(ml))ml=[];ml=ml.slice(0,50).filter(m=>m&&m.data&&typeof m.data==='object');
       if(ml.length){const ok=await modAsk(ml);closeModal();if(!ok){netLeave('모드를 허용하지 않아서 방에서 나왔어요.');return;}}
       modApply(ml);}
-    if(/^\d{1,10}$/.test(String(d.seed))){net.wname=String(d.name||'').slice(0,16);WOPT.keep=!!d.keep;WOPT.hard=false;WOPT.dmg=WOPT.hp=1;netRefresh();await loadWorld(String(d.seed),net.wname,null);}
+    if(/^\d{1,10}$/.test(String(d.seed))){net.wname=String(d.name||'').slice(0,16);WOPT.keep=!!d.keep;WOPT.hard=false;WOPT.dmg=WOPT.hp=1;netRefresh();PTF=cleanTF(d.tf);try{await loadWorld(String(d.seed),net.wname,null);}finally{PTF=null;}}
   }else if(!world){return;}
   else if(d.t==='state'){
     applyState(d);closeModal();
@@ -13515,7 +13570,7 @@ async function hostRoom(addr,wid){
       c.on('open',()=>{
         if(!world||world.id!==w.id){try{c.close();}catch(e){}return;}
         net.conns.push(c);
-        try{let ms='';try{const l=MOD.on.map(m=>({id:m.id,kind:m.kind,name:m.name,author_name:m.author_name,data:m.data}));ms=JSON.stringify(l);if(ms.length>200000)ms='';if(ms==='[]')ms='';}catch(e){}c.send({t:'world',name:w.name,seed:w.seed,keep:WOPT.keep?1:0,ver:GAME_VER,mods:ms});}catch(e){}
+        try{let ms='';try{const l=MOD.on.map(m=>({id:m.id,kind:m.kind,name:m.name,author_name:m.author_name,data:m.data}));ms=JSON.stringify(l);if(ms.length>200000)ms='';if(ms==='[]')ms='';}catch(e){}c.send({t:'world',tf:(w.tf||null),name:w.name,seed:w.seed,keep:WOPT.keep?1:0,ver:GAME_VER,mods:ms});}catch(e){}
         sendSnapshot(c);
         bcast();
       });
