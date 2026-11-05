@@ -10058,7 +10058,7 @@ function modApply(list){
       const im=new Image();im.onload=()=>{MOD.tex[k]=im;try{for(const q in ICONURL)delete ICONURL[q];for(const q in ICONC)delete ICONC[q];renderInv();renderEquip();}catch(e){}};im.src=v;
     }
     if(d.api==='potato')MOD.potato=true;
-    if(Array.isArray(d.pub))for(const q of d.pub.slice(0,5)){const UR=/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/;if(q&&UR.test(q.u||'')&&/^[a-z0-9_]{1,21}$/.test(q.v||'')&&Array.isArray(q.rd)&&/^%[a-z0-9_]{1,21}%$/.test(q.bind||''))MOD.pub.push({v:q.v,u:q.u,rd:q.rd.filter(x=>UR.test(x)).slice(0,5),bind:q.bind,fb:String(q.fb==null?'':q.fb).slice(0,40),ty:q.ty==='number'?'number':'text',sc:q.sc==='mod'?'mod':'world',un:String(q.un||''),mn:String(m.name||'').slice(0,40)});}
+    if(Array.isArray(d.pub))for(const q of d.pub.slice(0,5)){const UR=/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/;if(q&&UR.test(q.u||'')&&/^[a-z0-9_]{1,21}$/.test(q.v||'')&&/^%[a-z0-9_]{1,21}%$/.test(q.bind||''))MOD.pub.push({v:q.v,u:q.u,bind:q.bind,fb:String(q.fb==null?'':q.fb).slice(0,40),ty:q.ty==='number'?'number':'text',sc:q.sc==='mod'?'mod':'world',mn:String(m.name||'').slice(0,40)});}
     if(d.col&&typeof d.col==='object'&&!Array.isArray(d.col))for(const k of Object.keys(d.col).slice(0,60)){if(/^[a-z_0-9]{1,30}$/.test(k))MOD.col[k]=!!d.col[k];}
     if(Array.isArray(d.sets))for(const t of d.sets.slice(0,100))modSet(t,setName);
     if(d.remap&&typeof d.remap==='object'&&!Array.isArray(d.remap))for(const k of Object.keys(d.remap).slice(0,30)){if(MOD_KEY.test(k)&&MOD_KEY.test(d.remap[k]))MOD.remap[k]=d.remap[k];}
@@ -10074,7 +10074,8 @@ function modTxt(s){   // Potato API: %player_name% 같은 값을 글에 넣어�
   s=String(s);
   if(s.indexOf('%player\'s mod%')>=0)s=s.split('%player\'s mod%').join(MOD.on.map(m=>String(m.name||'')).join(', '));   // Potato API 없이도 읽혀요
   if(s.indexOf('{:')>=0)s=s.replace(/\{:([^:{}]{1,70}):\}/g,(m,k)=>{shLoad();for(const x of (MODX.uses||[])){for(const q of MOD.pub){if(q.u===x&&k===q.v+'_'+q.mn){const w=SHV[x.slice(0,8)+'_'+q.v];return w===undefined?'':String(w);}}}if(!/^[a-z0-9_]{1,30}$/.test(k))return m;const u=MODX.uid?MODX.uid.slice(0,8)+'_'+k:'';if(SHV[u]!==undefined)return String(SHV[u]);return SHV[k]===undefined?'':String(SHV[k]);});   // {:이름:} = 제작자끼리 공유, {:이름_모드이름:} = use_mod_uuid 한 모드의 공식 이름
-  if(MODX.uses&&MODX.uses.length&&MODX.uid&&s.indexOf('%')>=0){const td=new Date().toISOString().slice(0,10);for(const q of MOD.pub){if(!MODX.uses.includes(q.u)||q.sc!=='world'||!q.rd.includes(MODX.uid)||(q.un&&td>q.un)||isGuest())continue;if(!MOD.exp[q.u+q.v])continue;if(!MOD.on.some(x=>String(x.name||'')===q.mn))continue;if(s.indexOf(q.bind)<0)continue;shLoad();let w=SHV[q.u.slice(0,8)+'_'+q.v];if(w===undefined||(q.ty==='number'&&isNaN(Number(w))))w=q.fb;s=s.split(q.bind).join(String(w));}}   // publish_short 로 원조가 열어준 별칭 (%이름%)
+  if(MOD.potato&&MODX.uses&&MODX.uses.length&&MODX.uid&&s.indexOf('%')>=0){   // %별칭% 은 Potato API 가 대신 실행해요
+for(const q of MOD.pub){if(!MODX.uses.includes(q.u)||q.sc!=='world'||isGuest())continue;if(!MOD.exp[q.u+q.v])continue;if(!MOD.on.some(x=>String(x.name||'')===q.mn))continue;if(s.indexOf(q.bind)<0)continue;shLoad();let w=SHV[q.u.slice(0,8)+'_'+q.v];if(w===undefined||(q.ty==='number'&&isNaN(Number(w))))w=q.fb;s=s.split(q.bind).join(String(w));}}   // publish_short 로 원조가 열어준 별칭 (%이름%)
   if(s.indexOf('{')>=0)s=s.replace(/\{(_?[a-z0-9_]{1,20}_?)\}/g,(m,k)=>{const v=modVGet(k);return v===undefined?'0':String(v);});   // {변수} / {_지역변수_}
   if(!MOD.potato||s.indexOf('%')<0)return s;
   return s.replace(/%([a-z0-9_' ]{3,30})%/g,(m,k)=>{
