@@ -273,7 +273,7 @@ if(document.readyState==='loading') document.addEventListener('DOMContentLoaded'
   .cm-post.open{border-color:var(--fry); border-left-color:var(--fry);}
   .cm-ths{display:flex; gap:6px; margin-top:7px;} .cm-post.open .cm-ths{display:none;}
   .cm-thw{position:relative; display:block; width:96px; max-width:calc(50% - 3px); height:72px; border-radius:8px; overflow:hidden; border:1px solid var(--line); background:#0b0d13; flex:none;}
-  .cm-th{width:100%; height:100%; object-fit:cover; display:block;}
+  .cm-th{width:100%; height:100%; max-width:100%; object-fit:contain; display:block;}
   .cm-thm{align-self:center; font-size:18px; font-weight:800; color:var(--dim); padding:0 6px;}
   .cm-ex{margin-top:5px; color:var(--dim); font-size:14px; line-height:1.5; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;} .cm-post.open .cm-ex{display:none;}
   .cm-ph{display:flex; align-items:center; gap:8px; cursor:pointer;}
