@@ -2,6 +2,14 @@
  "notes": [
   {
    "date": "2026-11-05",
+   "build": "v0.5 b188",
+   "title": "업데이트 0.5 · b188",
+   "items": [
+    "Potato API: %player_y%는 열기구 고도(0~3, 땅 위는 0)이고, %player_z%는 세로 좌표예요. %player_location%은 'x, y, z'로 나와요"
+   ]
+  },
+  {
+   "date": "2026-11-05",
    "build": "v0.5 b187",
    "title": "업데이트 0.5 · b187",
    "items": [
