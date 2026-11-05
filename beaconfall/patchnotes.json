@@ -2,6 +2,14 @@
  "notes": [
   {
    "date": "2026-11-05",
+   "build": "v0.5 b196",
+   "title": "업데이트 0.5 · b196",
+   "items": [
+    "every %{변수}% seconds: 변수 값만큼 초마다 실행 (변수가 없거나 1보다 작으면 쉬어요). on / if 뒤에 or 사용 가능 (예: on mine or chop:, if has iron or variable coins >= 5:)"
+   ]
+  },
+  {
+   "date": "2026-11-05",
    "build": "v0.5 b195",
    "title": "업데이트 0.5 · b195",
    "items": [

@@ -300,13 +300,40 @@ function parseScript(text,lenient){
     if(f==='speed'&&(num<0.05||num>5))throw PE(l.n,'speed must be 0.05 to 5 (seconds between attacks)');
     return {item:id,field:f,value:num};
   }
+  function splitOr(t){return t.split(/\s+or\s+(?=(?:[^"]*"[^"]*")*[^"]*$)/i).map(function(x){return x.trim();}).filter(Boolean);}
+  function onHead(l,t,keyMore){
+    var m;
+    if(/^join$/i.test(t))return {on:'join'};
+    if(/^world\s+generate$/i.test(t))return {on:'generate'};
+    if(m=t.match(/^key\s+"([^"]+)"(\s+press)?$/i)||(keyMore&&(m=t.match(/^"([^"]+)"(\s+press)?$/)))){if(!m[2]&&!keyMore)throw PE(l.n,'write it like  on key "A" press');var kc=keyCode(m[1]);if(!kc)throw PE(l.n,"unknown key '"+m[1]+"'. Use A-Z, 0-9 or F1-F12");return {on:'key',target:kc};}
+    if(!(m=t.match(/^(\w+)(?:\s+(?!of\s)([\w가-힣]+))?(?:\s+of\s+(.+?))?$/i)))throw PE(l.n,"I don't understand 'on "+t+"'");
+      var ev=EVS[m[1].toLowerCase()];if(!ev){var g=guess(m[1],Object.keys(EVS).concat(['join']));throw PE(l.n,"unknown event '"+m[1]+"'."+(g?" Did you mean '"+g+"'?":" You can use: world generate, join, key, every, mine, chop, kill, craft, fish, place, break, destroy, damage, die, respawn"));}
+      var tg=m[2]?m[2].toLowerCase():'';
+      if(tg){if(ev==='kill'){tg=mon(l,tg);}
+        else if(ev==='mine'&&(tg==='stone'||tg==='rock')){tg='';}
+        else if(ev==='chop'&&(tg==='tree'||tg==='wood')){tg='';}
+        else if(ev==='place'){tg=item(l,m[2]);}
+        else if(ev==='break'){var DW={tree:'tree',wood:'tree',rock:'rock',stone:'rock',iron:'iron',gold:'gold',copper:'copper',zinc:'zinc','나무':'tree','바위':'rock','철광석':'iron','금광석':'gold','구리광석':'copper','아연광석':'zinc'};tg=DW[tg]||item(l,m[2]);}
+        else throw PE(l.n,"'"+ev+"' does not take '"+m[2]+"'");}
+      var o={on:ev};if(tg)o.target=tg;if(m[3]){var ow=m[3].trim().replace(/^"(.*)"$/,'$1');if(!ow||ow.length>40)throw PE(l.n,'write who after "of": player, monster, mob or a player name');var owl=ow.toLowerCase();if(owl==='player'||owl==='monster'||owl==='mob')o.of=owl;else{o.of='name';o.ofn=ow;}}return o;
+  }
+  function condHead(l,t){
+    var m;
+    if(m=t.match(/^has\s+(?:(\d+)\s+)?(.+)$/i))return {has:{item:item(l,m[2].trim()),n:m[1]?+m[1]:1}};
+    if(m=t.match(/^%(attacker|victim)%\s+is\s+(not\s+)?player$/i))return {ifp:{w:m[1].toLowerCase(),not:!!m[2]}};
+    if(m=t.match(/^variable\s+([a-z0-9_]{1,20})\s*(>=|<=|!=|>|<|=)\s*(?:"([^"]{0,40})"|(-?\d{1,9}(?:\.\d{1,3})?))$/i))return {ifv:{n:m[1].toLowerCase(),op:m[2],v:m[3]!==undefined?m[3]:+m[4]}};
+    if(!/^variable\s/i.test(t)&&(m=t.match(/^(.+?)\s+contained\s+(?:"([^"]{0,40})"|(-?\d{1,9}(?:\.\d{1,3})?))$/i)))return {ifc:{v:m[1].trim().slice(0,100),c:m[2]!==undefined?m[2]:m[3]}};
+    throw PE(l.n,"I don't understand the condition '"+t.slice(0,30)+"'. After or, write a full condition: has ..., variable ..., %attacker% is player, ... contained ...");
+  }
   function block(ind,depth){
     var acts=[];
     while(pos<L.length&&L[pos].ind>=ind){
       var l=L[pos];
       if(l.ind>ind)throw PE(l.n,'indent does not match the line above');
       pos++;var m;
-      if(m=l.t.match(/^give\s+effect\s+(\w+)\s+(\d{1,3})\s+seconds?(?:\s+to\s+(.+?))?$/i)){
+      var oi=/^if\s+.+:$/i.test(l.t)?splitOr(l.t.replace(/^if\s+/i,'').replace(/\s*:$/,'')):null;
+      if(oi&&oi.length>1){var oc=oi.map(function(x){return condHead(l,x);});acts.push({anyof:oc,do:sub(l,depth)});}
+      else if(m=l.t.match(/^give\s+effect\s+(\w+)\s+(\d{1,3})\s+seconds?(?:\s+to\s+(.+?))?$/i)){
         var ef=m[1].toLowerCase(),EFS=['speed','strength','defense','regen','haste','breath','night','stun'];if(EFS.indexOf(ef)<0)throw PE(l.n,"unknown effect '"+m[1]+"'. You can use: "+EFS.join(', '));
         if(+m[2]<1||+m[2]>600)throw PE(l.n,'effect seconds must be 1 to 600');var ea={effect:{k:ef,sec:+m[2]}};if(m[3])ea.to=toT(l,m[3]);acts.push(ea);
       }else if(m=l.t.match(/^play\s+sound\s+(\w+)(?:\s+to\s+(.+?))?$/i)){
@@ -363,20 +390,17 @@ function parseScript(text,lenient){
     pos++;
     if(m=l.t.match(/^(mod|resource\s*pack|pack)\s+"([^"]{1,40})"$/i)){out.kind=/mod/i.test(m[1])?'mod':'pack';out.name=m[2];}
     else if(m=l.t.match(/^on\s+world\s+generate\s*:$/i)){out.events.push({on:'generate',do:sub(l,0)});}
-    else if(m=l.t.match(/^every\s+(\S+)\s+seconds?\s*:$/i)){if(!/^\d+$/.test(m[1])||+m[1]<1)throw PE(l.n,'every needs a whole number of seconds, 1 or more');if(+m[1]>3600)throw PE(l.n,'every can be at most 3600 seconds');out.events.push({on:'every',n:+m[1],do:sub(l,0)});}
-    else if(m=l.t.match(/^on\s+join\s*:$/i)){out.events.push({on:'join',do:sub(l,0)});}
-    else if(m=l.t.match(/^on\s+key\s+"([^"]+)"\s+press\s*:$/i)){var kc=keyCode(m[1]);if(!kc)throw PE(l.n,"unknown key '"+m[1]+"'. Use A-Z, 0-9 or F1-F12");out.events.push({on:'key',target:kc,do:sub(l,0)});}
-    else if(m=l.t.match(/^on\s+(\w+)(?:\s+(?!of\s)([\w가-힣]+))?(?:\s+of\s+(.+?))?\s*:$/i)){
-      var ev=EVS[m[1].toLowerCase()];if(!ev){var g=guess(m[1],Object.keys(EVS).concat(['join']));throw PE(l.n,"unknown event '"+m[1]+"'."+(g?" Did you mean '"+g+"'?":" You can use: world generate, join, key, every, mine, chop, kill, craft, fish, place, break, destroy, damage, die, respawn"));}
-      var tg=m[2]?m[2].toLowerCase():'';
-      if(tg){if(ev==='kill'){tg=mon(l,tg);}
-        else if(ev==='mine'&&(tg==='stone'||tg==='rock')){tg='';}
-        else if(ev==='chop'&&(tg==='tree'||tg==='wood')){tg='';}
-        else if(ev==='place'){tg=item(l,m[2]);}
-        else if(ev==='break'){var DW={tree:'tree',wood:'tree',rock:'rock',stone:'rock',iron:'iron',gold:'gold',copper:'copper',zinc:'zinc','나무':'tree','바위':'rock','철광석':'iron','금광석':'gold','구리광석':'copper','아연광석':'zinc'};tg=DW[tg]||item(l,m[2]);}
-        else throw PE(l.n,"'"+ev+"' does not take '"+m[2]+"'");}
-      var o={on:ev,do:sub(l,0)};if(tg)o.target=tg;if(m[3]){var ow=m[3].trim().replace(/^"(.*)"$/,'$1');if(!ow||ow.length>40)throw PE(l.n,'write who after "of": player, monster, mob or a player name');var owl=ow.toLowerCase();if(owl==='player'||owl==='monster'||owl==='mob')o.of=owl;else{o.of='name';o.ofn=ow;}}out.events.push(o);
-    }else if(/^rename\s*:$/i.test(l.t)){
+    else if(m=l.t.match(/^every\s+(?:%\{([a-z0-9_]{1,20})\}%|\{([a-z0-9_]{1,20})\}|(\S+))\s+seconds?\s*:$/i)){
+      if(m[1]||m[2]){out.events.push({on:'every',n:1,v:(m[1]||m[2]).toLowerCase(),do:sub(l,0)});}
+      else{if(!/^\d+$/.test(m[3])||+m[3]<1)throw PE(l.n,'every needs a whole number of seconds, 1 or more, or a variable like  every %{wait}% seconds:');if(+m[3]>3600)throw PE(l.n,'every can be at most 3600 seconds');out.events.push({on:'every',n:+m[3],do:sub(l,0)});}
+    }
+    else if((m=l.t.match(/^on\s+(.+?)\s*:$/i))&&!/^world\s+generate$/i.test(m[1])){
+      var parts=splitOr(m[1]),heads=[],pk=false;
+      for(var pi=0;pi<parts.length;pi++){var pt=parts[pi].replace(/^on\s+/i,'');var hd=onHead(l,pt,pi>0&&pk);heads.push(hd);pk=hd.on==='key';}
+      var body=sub(l,0);
+      heads.forEach(function(h){h.do=body;out.events.push(h);});
+    }
+    else if(/^rename\s*:$/i.test(l.t)){
       if(!(pos<L.length&&L[pos].ind>0))throw PE(l.n,'nothing is written under this line');
       var ind2=L[pos].ind;out.names=out.names||{};
       while(pos<L.length&&L[pos].ind>=ind2){
