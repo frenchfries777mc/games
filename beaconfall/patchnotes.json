@@ -2,6 +2,16 @@
  "notes": [
   {
    "date": "2026-11-05",
+   "build": "v0.5 b193",
+   "title": "업데이트 0.5 · b193",
+   "items": [
+    "새 이벤트 on damage(맞았을 때, %damage% 값 포함), every N second(N은 1 이상 정수)",
+    "on 뒤에 of player / monster / mob / 플레이어 이름을 붙여 누구의 일인지 고를 수 있어요 (예: on damage of monster:)",
+    "chat / play sound / give effect 뒤에 to player / monster / mob / 플레이어 이름을 붙일 수 있어요. 몬스터와 동물에게는 give effect stun만 돼요"
+   ]
+  },
+  {
+   "date": "2026-11-05",
    "build": "v0.5 b192",
    "title": "업데이트 0.5 · b192",
    "items": [
