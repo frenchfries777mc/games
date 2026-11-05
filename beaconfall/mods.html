@@ -513,11 +513,9 @@ $('uf').addEventListener('change',async function(){
       var base=f.name.replace(/\.png$/i,'').trim(),id=itemId(base);
       if(base.toLowerCase()==='logo'){try{LOGO=await readPng(f,32);var sl=document.createElement('span'),il=document.createElement('img');il.src=LOGO;sl.appendChild(il);sl.appendChild(document.createTextNode(rel+' ✓ (로고)'));box.appendChild(sl);okc++;}catch(e){line(rel+' ✗ 그림을 읽지 못했어요','bad');bad++;}continue;}
       if(!id){var g=guess(base,Object.keys(ITEMN));line(rel+' ✗ 아이템 이름을 몰라요'+(g?' ('+g+'?)':''),'bad');bad++;continue;}
-      if(f.size>300000){line(rel+' ✗ 그림이 너무 커요','bad');bad++;continue;}
       try{TEX[id]=await readPng(f);var sp=document.createElement('span'),ig=document.createElement('img');ig.src=TEX[id];sp.appendChild(ig);sp.appendChild(document.createTextNode(rel+' ✓'));box.appendChild(sp);okc++;}
       catch(e){line(rel+' ✗ 그림을 읽지 못했어요','bad');bad++;}
     }else{
-      if(f.size>65536){line(rel+' ✗ 파일이 너무 커요 (64KB까지)','bad');bad++;continue;}
       try{
         var ps=parseScript(await readTxt(f),true),d=ps.data;
         if(d.events)M.events=M.events.concat(d.events);
@@ -573,7 +571,6 @@ $('us').addEventListener('click',async function(){
   var kind=FD.kind,d=FD.data;
   if($('uprev').querySelector('.bad')){umsg('빨간 줄이 있는 파일을 먼저 고쳐 주세요.',1);return;}
   if(!name&&!EDIT){umsg('이름을 적어 주세요.',1);return;}
-  if(JSON.stringify(d).length>65536){umsg('내용이 너무 커요 (64KB까지). 그림 수를 줄여 주세요.',1);return;}
   var er=check(kind,d);if(er){umsg(er,1);return;}
   var u=FFAuth.user(),c=sb();if(!u||!c){umsg('로그인이 필요해요.',1);return;}
   if(EDIT){
