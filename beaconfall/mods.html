@@ -199,6 +199,7 @@ function lev(a,b){var d=[],i,j;for(i=0;i<=a.length;i++){d[i]=[i];}for(j=1;j<=b.l
 function guess(w,list){var best='',bd=3;list.forEach(function(x){var d=lev(w.toLowerCase(),x.toLowerCase());if(d<bd){bd=d;best=x;}});return best;}
 function itemId(w){if(ITEMN[w])return w;var k=NAME2ID[w.replace(/\s+/g,'')];return k||'';}
 function PE(n,m){var e=new Error('line '+n+': '+m);e.script=1;return e;}
+var BIOMES=['start','forest','desert','volcano','jungle','mesa','rock','mangrove','ice'];
 var POS=['top left','top right','bottom left','bottom right','center'];
 function keyCode(w){var u=String(w).toUpperCase();if(/^[A-Z]$/.test(u))return 'Key'+u;if(/^[0-9]$/.test(u))return 'Digit'+u;if(/^F([1-9]|1[0-2])$/.test(u))return u;return '';}
 function parseScript(text){
@@ -237,6 +238,11 @@ function parseScript(text){
       else if(m=l.t.match(/^teleport\s+(\w+)\s+to\s+player$/i)){acts.push({tp:{who:mon(l,m[1]),to:'player'}});}
       else if(m=l.t.match(/^spawn\s+(\w+)(?:\s+(\d+)\s+times?)?(?:\s+near\s+(spawn|player))?$/i)){var c=m[2]?+m[2]:1;if(c<1||c>10)throw PE(l.n,'spawn count must be 1 to 10');var sp={ty:mon(l,m[1]),n:c};if(m[3])sp.near=m[3].toLowerCase();acts.push({spawn:sp});}
       else if(m=l.t.match(/^place\s+(.+?)\s+near\s+(spawn|player)$/i)){acts.push({place:{item:item(l,m[1].trim()),near:m[2].toLowerCase()}});}
+      else if((m=l.t.match(/^fill\s+(~?-?\d*)\s+(~?-?\d*)\s+(~?-?\d*)\s+(~?-?\d*)\s+to\s+(land|beach|ocean)(?:\s+(\w+))?$/i))&&m[1]&&m[2]&&m[3]&&m[4]){
+        var fc=[];for(var fi=1;fi<=4;fi++){var tk=m[fi],rel=tk.charAt(0)==='~',nv=tk.replace('~','');if(nv===''||nv==='-')nv=0;fc.push([rel?1:0,+nv]);}
+        var fb=m[6]?m[6].toLowerCase():null;if(fb&&BIOMES.indexOf(fb)<0)throw PE(l.n,"unknown biome '"+fb+"'. You can use: "+BIOMES.join(', '));
+        acts.push({fill:{c:fc,mode:m[5].toLowerCase(),b:fb}});
+      }else if(m=l.t.match(/^remove\s+all\s+(trees|rocks|ores|structures)$/i)){acts.push({wipe:m[1].toLowerCase()});}
       else if(m=l.t.match(/^remove\s+(tree|rock)s?\s+in\s+(\d+)\s+blocks?\s+of\s+(spawn|player)$/i)){var r=+m[2];if(r<1||r>60)throw PE(l.n,'range must be 1 to 60 blocks');acts.push({remove:{what:m[1].toLowerCase(),r:r,of:m[3].toLowerCase()}});}
       else if(m=l.t.match(/^button\s+"([^"]{1,20})"(?:\s+at\s+([a-z ]+?))?\s*:$/i)){var ps=m[2]?m[2].toLowerCase().trim():'top right';if(POS.indexOf(ps)<0)throw PE(l.n,"unknown position '"+ps+"'. You can use: "+POS.join(', '));acts.push({button:{label:m[1],pos:ps,do:sub(l,depth)}});}
       else if(m=l.t.match(/^ui\s+"([^"]{1,30})"\s*:$/i)){
@@ -245,7 +251,7 @@ function parseScript(text){
         while(pos<L.length&&L[pos].ind>=ui){var t2=L[pos++],q=t2.t.match(/^text\s+"([^"]{1,80})"$/i);if(!q)throw PE(t2.n,'inside ui, write  text "..."');lines.push(q[1]);}
         if(lines.length>12)throw PE(l.n,'ui can have 12 lines');acts.push({ui:{title:m[1],lines:lines}});
       }else if(m=l.t.match(/^set\s+(\S+)\s+(damage|speed|name)\s+(.+)$/i)){acts.push({set:setStmt(l,m)});}
-      else throw PE(l.n,"I don't understand '"+l.t.split(' ')[0]+"'. You can use: give, say, chat, title, chance, if, teleport, spawn, place, remove, button, ui, set");
+      else throw PE(l.n,"I don't understand '"+l.t.split(' ')[0]+"'. You can use: give, say, chat, title, chance, if, teleport, spawn, place, remove, fill, button, ui, set");
     }
     return acts;
   }
