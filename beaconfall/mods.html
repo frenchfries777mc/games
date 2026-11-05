@@ -9,6 +9,7 @@
 <title>BEACONFALL · 모드/리소스팩</title>
 <meta name="theme-color" content="#14527e">
 <style>
+.dd{position:relative}.ddl{display:none;position:absolute;left:0;top:calc(100% + 6px);z-index:20;min-width:100%;background:#0f1520;border:2px solid var(--gold);box-shadow:4px 4px 0 #000b;padding:4px}.dd.open .ddl{display:block}.ddl button{display:block;width:100%;text-align:left;white-space:nowrap;background:none;border:0;color:var(--cream);font:700 14px/1.2 inherit;padding:9px 12px;cursor:pointer}.ddl button:hover,.ddl button.on{background:#e9d9a433;color:var(--gold)}
 .topnav{flex:1 1 0;min-width:240px;flex-wrap:wrap;gap:8px}.topnav .cur{background:var(--gold);color:#1a1408}
 .hint{font-size:12px;color:var(--cream);opacity:.7;margin:4px 0 0}
 html,body{touch-action:manipulation}   /* 더블터치 확대 막기 */
@@ -89,10 +90,8 @@ footer{padding:40px 0 30px;color:var(--gold);font-size:12px;text-shadow:2px 2px 
  <h1>모드 · 리소스팩</h1>
  <p class="sub">모드와 리소스팩을 올리고, 찾아보고, 적용해 보세요</p>
  <div class="row tabs" id="tabs">
-  <button class="pb on" data-k="all">전체</button>
-  <button class="pb" data-k="mod">모드</button>
-  <button class="pb" data-k="pack">리소스팩</button>
-  <button class="pb" data-k="on">적용 중</button>
+  <div class="dd" id="ddk"><button class="pb" id="ddkb"></button><div class="ddl" id="ddkl"></div></div>
+  <div class="dd" id="dds"><button class="pb" id="ddsb"></button><div class="ddl" id="ddsl"></div></div>
   <button class="pb" id="upb" style="margin-left:auto">＋ 올리기</button>
  </div>
  <input class="q" id="q" autocomplete="off" placeholder="이름, 설명, 올린 사람으로 찾기">
@@ -118,7 +117,8 @@ footer{padding:40px 0 30px;color:var(--gold);font-size:12px;text-shadow:2px 2px 
 (function(){
 var CATS={mod:['아이템','전투','편의','월드','기타'],pack:['이름','그림','소리','기타']};
 var KEY='bf.mods.on';
-var LIST=[],K='all',CAT='',SERVER='load',ME=null;
+var LIST=[],K='all',CAT='',SERVER='load',ME=null,SORT='apply',COUNTS={};
+var KOPT=[['all','전체'],['mod','모드'],['pack','리소스팩'],['on','적용 중']],SOPT=[['apply','적용 많은 순'],['new','최신 순'],['name','이름 순']];
 function $(i){return document.getElementById(i);}
 function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
 function getOn(){try{var o=JSON.parse(localStorage.getItem(KEY)||'{}');return o&&typeof o==='object'?o:{};}catch(e){return {};}}
@@ -134,7 +134,21 @@ async function load(){
     if(r.error){SERVER='off';draw();return;}
     LIST=r.data||[];SERVER='ok';
   }catch(e){SERVER='off';}
+  await loadCounts();
   draw();
+}
+async function loadCounts(){
+  try{var c=sb();if(!c)return;var r=await c.from('beaconfall_mod_counts').select('mod_id,applies').limit(2000);if(r.error||!r.data)return;var o={};r.data.forEach(function(x){o[x.mod_id]=x.applies|0;});COUNTS=o;}catch(e){}
+}
+function countApply(id){
+  try{var seen=JSON.parse(localStorage.getItem('bf.mods.seen')||'{}');if(seen[id])return;seen[id]=1;localStorage.setItem('bf.mods.seen',JSON.stringify(seen));}catch(e){}
+  try{var c=sb(),u=window.FFAuth&&FFAuth.user&&FFAuth.user();if(!c||!u)return;c.rpc('beaconfall_mod_apply',{mid:id}).then(function(){loadCounts().then(draw);});}catch(e){}
+}
+function ddDraw(){
+  function lab(o,v){for(var i=0;i<o.length;i++)if(o[i][0]===v)return o[i][1];return '';}
+  $('ddkb').textContent='보기: '+lab(KOPT,K)+' ▾';$('ddsb').textContent='정렬: '+lab(SOPT,SORT)+' ▾';
+  $('ddkl').innerHTML=KOPT.map(function(o){return '<button data-dk="'+o[0]+'"'+(o[0]===K?' class="on"':'')+'>'+o[1]+'</button>';}).join('');
+  $('ddsl').innerHTML=SOPT.map(function(o){return '<button data-ds="'+o[0]+'"'+(o[0]===SORT?' class="on"':'')+'>'+o[1]+'</button>';}).join('');
 }
 function cats(){
   var set=K==='mod'?CATS.mod:K==='pack'?CATS.pack:CATS.mod.concat(CATS.pack.filter(function(x){return CATS.mod.indexOf(x)<0;}));
@@ -152,9 +166,9 @@ var POTATO={id:'builtin-potato-api',kind:'mod',name:'Potato API',descr:'모드 �
 function draw(){
   cats();
   var on=getOn(),q=$('q').value.trim().toLowerCase(),L=$('list');
-  document.querySelectorAll('#tabs [data-k]').forEach(function(b){b.classList.toggle('on',b.dataset.k===K);});
+  ddDraw();
   if(SERVER==='load'){L.innerHTML='<div class="empty">불러오는 중이에요…</div>';$('cnt').textContent='';return;}
-  var src=[POTATO].concat(LIST);
+  var src=LIST.concat([POTATO]);
   Object.keys(on).forEach(function(id){if(!src.some(function(m){return m.id===id;}))src.push({id:id,kind:on[id].kind,name:on[id].name,descr:on[id].descr||'',cat:on[id].cat||'기타',author_name:on[id].author_name||'',data:on[id].data});});
   var rows=src.filter(function(m){
     if(K==='mod'&&m.kind!=='mod')return false;
@@ -164,23 +178,33 @@ function draw(){
     if(q&&(m.name+' '+(m.descr||'')+' '+(m.author_name||'')+' '+(m.cat||'')).toLowerCase().indexOf(q)<0)return false;
     return true;
   });
+  rows.sort(function(a,b){
+    if(SORT==='name')return String(a.name).localeCompare(String(b.name),'ko');
+    var da=String(a.created_at||''),db=String(b.created_at||'');
+    if(SORT==='apply'){var d=(COUNTS[b.id]||0)-(COUNTS[a.id]||0);if(d)return d;}
+    return da<db?1:da>db?-1:0;
+  });
   $('cnt').textContent=rows.length+'개';
   if(!rows.length){L.innerHTML='<div class="empty">'+(SERVER==='off'&&K!=='on'?'서버를 준비하는 중이라 아직 목록을 볼 수 없어요.':K==='on'?'적용 중인 것이 없어요.':'아직 올라온 게 없어요. 첫 번째로 올려 보세요!')+'</div>';return;}
   L.innerHTML=rows.map(function(m){
     var a=!!on[m.id],mine=ME&&m.author_id===ME;
     return '<div class="mrow" data-id="'+esc(m.id)+'"><div class="ic">'+logoOf(m)+'</div><div class="tx"><div class="nm">'+esc(m.name)+'</div><div class="mt"><span class="tg'+(m.kind==='pack'?' p':'')+'">'+(m.kind==='pack'?'리소스팩':'모드')+'</span>'+esc(m.cat||'기타')+'</div></div><div class="act">'
       +(mine&&SERVER==='ok'?'<button class="pb" data-del="'+esc(m.id)+'">삭제</button>':'')
-      +(a?'<button class="pb off" data-off="'+esc(m.id)+'">적용 해제</button>':'<button class="pb" data-on="'+esc(m.id)+'">적용</button>')+'</div><div class="inf">'+(m.descr?'<div class="d">'+esc(m.descr)+'</div>':'')+pv(m)+'<span>제작자 <b>'+esc(m.author_name||'알 수 없음')+'</b></span><span>올린 날 <b>'+esc(String(m.created_at||'').slice(0,10)||'-')+'</b></span></div></div>';
+      +(a?'<button class="pb off" data-off="'+esc(m.id)+'">적용 해제</button>':'<button class="pb" data-on="'+esc(m.id)+'">적용</button>')+'</div><div class="inf">'+(m.descr?'<div class="d">'+esc(m.descr)+'</div>':'')+pv(m)+'<span>제작자 <b>'+esc(m.author_name||'알 수 없음')+'</b></span><span>올린 날 <b>'+esc(String(m.created_at||'').slice(0,10)||'-')+'</b></span><span>적용 <b>'+(COUNTS[m.id]||0)+'</b></span></div></div>';
   }).join('');
 }
 function logoOf(m){var l=m.data&&m.data.logo;if(typeof l==='string'&&/^data:image\/png;base64,[A-Za-z0-9+\/=]{20,6000}$/.test(l))return '<img class="lg" src="'+l+'" alt="">';return m.kind==='pack'?'🎨':'🧩';}
 function pv(m){var t=m.data&&m.data.textures;if(!t||typeof t!=='object')return '';var h='',n=0;Object.keys(t).forEach(function(k){if(n<10&&/^data:image\/png;base64,[A-Za-z0-9+\/=]{1,3000}$/.test(t[k])){h+='<img class="tx" title="'+esc(k)+'" src="'+t[k]+'">';n++;}});return h?'<div class="pv">'+h+'</div>':'';}
 function find(id){if(id===POTATO.id)return POTATO;return LIST.filter(function(m){return m.id===id;})[0]||(getOn()[id]&&Object.assign({id:id},getOn()[id]));}
+function closeDD(){document.querySelectorAll('.dd.open').forEach(function(d){d.classList.remove('open');});}
 document.addEventListener('click',function(e){
+  if(!e.target.closest('.dd'))closeDD();
   var t=e.target.closest('button');if(!t)return;
-  if(t.dataset.k){K=t.dataset.k;CAT='';draw();return;}
+  if(t.dataset.dk){K=t.dataset.dk;CAT='';closeDD();draw();return;}
+  if(t.dataset.ds){SORT=t.dataset.ds;closeDD();draw();return;}
+  if(t.id==='ddkb'||t.id==='ddsb'){var dd=t.parentNode,was=dd.classList.contains('open');closeDD();if(!was)dd.classList.add('open');return;}
   if(t.dataset.c!==undefined&&t.parentNode.id==='cats'){CAT=t.dataset.c;draw();return;}
-  if(t.dataset.on){var m=find(t.dataset.on);if(!m)return;var o=getOn();o[m.id]={kind:m.kind,name:m.name,descr:m.descr||'',cat:m.cat||'',author_name:m.author_name||'',data:m.data};setOn(o);draw();return;}
+  if(t.dataset.on){var m=find(t.dataset.on);if(!m)return;var o=getOn();o[m.id]={kind:m.kind,name:m.name,descr:m.descr||'',cat:m.cat||'',author_name:m.author_name||'',data:m.data};setOn(o);countApply(m.id);draw();return;}
   if(t.dataset.off){var o2=getOn();delete o2[t.dataset.off];setOn(o2);draw();return;}
   if(t.dataset.del){
     if(!t.dataset.arm){t.dataset.arm=1;t.textContent='한 번 더 누르면 삭제';t.classList.add('warn');setTimeout(function(){if(t.isConnected){delete t.dataset.arm;t.textContent='삭제';t.classList.remove('warn');}},3500);return;}
