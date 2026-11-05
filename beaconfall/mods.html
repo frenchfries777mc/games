@@ -9,6 +9,7 @@
 <title>BEACONFALL · 모드/리소스팩</title>
 <meta name="theme-color" content="#14527e">
 <style>
+.topnav{flex:1 1 0;min-width:240px;flex-wrap:wrap;gap:8px}.topnav .cur{background:var(--gold);color:#1a1408}
 .hint{font-size:12px;color:var(--cream);opacity:.7;margin:4px 0 0}
 html,body{touch-action:manipulation}   /* 더블터치 확대 막기 */
 @font-face{font-family:Galmuri;src:url(Galmuri11.woff2) format('woff2');font-weight:400;font-display:swap}
@@ -80,7 +81,7 @@ footer{padding:40px 0 30px;color:var(--gold);font-size:12px;text-shadow:2px 2px 
 <body>
 <div class="top"><div class="wrap">
  <a class="pb" href="index.html">← 홈</a>
- <div class="row"><a class="pb" href="codex.html">도감</a></div>
+ <div class="row topnav"><a class="pb" href="index.html#play">플레이</a><a class="pb" href="index.html#versions">버전</a><a class="pb" href="index.html#notes">패치노트</a><a class="pb" href="index.html#guide">공략</a><a class="pb" href="index.html#islands">섬</a><a class="pb" href="index.html#items">아이템</a><a class="pb" href="codex.html">도감</a><a class="pb cur" href="mods.html">모드/리소스팩</a><a class="pb" href="index.html#help">도움말</a></div>
  <span data-ff-account></span>
 </div></div>
 <div class="wrap">
@@ -235,7 +236,7 @@ function parseScript(text,lenient){
       else if(m=l.t.match(/^teleport\s+(\w+)\s+to\s+player$/i)){acts.push({tp:{who:mon(l,m[1]),to:'player'}});}
       else if(m=l.t.match(/^spawn\s+(\w+)(?:\s+(\d+)\s+times?)?(?:\s+near\s+(spawn|player))?$/i)){var c=m[2]?+m[2]:1;if(c<1||c>10)throw PE(l.n,'spawn count must be 1 to 10');var sp={ty:mon(l,m[1]),n:c};if(m[3])sp.near=m[3].toLowerCase();acts.push({spawn:sp});}
       else if(m=l.t.match(/^place\s+(.+?)\s+near\s+(spawn|player)$/i)){acts.push({place:{item:item(l,m[1].trim()),near:m[2].toLowerCase()}});}
-      else if((m=l.t.match(/^fill\s+(~?-?\d*)\s+(~?-?\d*)\s+(~?-?\d*)\s+(~?-?\d*)\s+to\s+(land|beach|ocean)(?:\s+(\w+))?$/i))&&m[1]&&m[2]&&m[3]&&m[4]){
+      else if((m=l.t.match(/^fill\s+(~?-?\d*)\s+(~?-?\d*)\s+(~?-?\d*)\s+(~?-?\d*)\s+to\s+(land|beach|ocean|mountain)(?:\s+(\w+))?$/i))&&m[1]&&m[2]&&m[3]&&m[4]){
         var fc=[];for(var fi=1;fi<=4;fi++){var tk=m[fi],rel=tk.charAt(0)==='~',nv=tk.replace('~','');if(nv===''||nv==='-')nv=0;fc.push([rel?1:0,+nv]);}
         var fb=m[6]?m[6].toLowerCase():null;if(fb&&BIOMES.indexOf(fb)<0)throw PE(l.n,"unknown biome '"+fb+"'. You can use: "+BIOMES.join(', '));
         acts.push({fill:{c:fc,mode:m[5].toLowerCase(),b:fb}});
