@@ -161,8 +161,12 @@ function cats(){
   set.forEach(function(c){h+='<button class="pb'+(CAT===c?' on':'')+'" data-c="'+esc(c)+'">'+esc(c)+'</button>';});
   $('cats').innerHTML=h;
 }
+var POTATO_UUID='6f1c2b7e-3d4a-4e59-9a1b-7c0d5e8f2a43';
+function myAuthor(){try{var pr=FFAuth.profile();return String((pr&&pr.display_name)||(FFAuth.nickname&&FFAuth.nickname())||'').slice(0,20);}catch(e){return '';}}
 function menuOf(m,mine){
+  if(m.id==='builtin-potato-api')return '<div class="dd mn"><button class="pb" data-mn="1" title="더 보기">⋯</button><div class="ddl"><button data-ma="uuid" data-id="'+esc(m.id)+'">uuid 복사</button>'+(myAuthor()==='Frenchfries777'?'<button data-ma="own" data-id="'+esc(m.id)+'">내 모드로 올리기</button>':'')+'</div></div>';
   var it=(mine&&m.id!==POTATO.id)?[['ver','버전 추가하기'],['del','모드 내리기'],['edit','모드 수정하기']]:[['report','모드 신고하기']];
+  if(/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(m.id))it=[['uuid','uuid 복사']].concat(it);
   return '<div class="dd mn"><button class="pb" data-mn="1" title="더 보기">⋯</button><div class="ddl">'+it.map(function(o){return '<button data-ma="'+o[0]+'" data-id="'+esc(m.id)+'">'+o[1]+'</button>';}).join('')+'</div></div>';
 }
 var EDIT=null;
@@ -176,6 +180,28 @@ function replaceMod(r){
 function menuAct(a,id){
   var m=id===POTATO.id?POTATO:LIST.filter(function(x){return x.id===id;})[0];if(!m)return;
   var c=sb(),u=window.FFAuth&&FFAuth.user&&FFAuth.user();
+  if(a==='own'){
+    var c2=sb(),u2=window.FFAuth&&FFAuth.user&&FFAuth.user();
+    if(!c2||!u2){mopen('내 모드로 올리기','<p>로그인이 필요해요.</p>');return;}
+    mopen('내 모드로 올리기','<p>내장 Potato API를 내 모드로 서버에 올려요. 올리면 내장은 목록에서 숨고, 내 모드로 수정·내리기·uuid 복사를 쓸 수 있어요.</p><div class="row" style="margin-top:12px"><button class="pb" id="mgo">올리기</button></div>');
+    $('mgo').addEventListener('click',async function(){
+      this.disabled=true;
+      var r2=await c2.from('beaconfall_mods').insert({kind:'mod',name:POTATO.name,descr:POTATO.descr,cat:POTATO.cat,author_name:myAuthor(),data:POTATO.data}).select().single();
+      this.disabled=false;
+      if(r2.error||!r2.data){mmsg('올리지 못했어요. 서버가 아직 준비되지 않았을 수 있어요.',1);return;}
+      LIST.unshift(r2.data);SERVER='ok';
+      var o=getOn();if(o[POTATO.id]){o[r2.data.id]=Object.assign({},o[POTATO.id],{data:r2.data.data});delete o[POTATO.id];setOn(o);}
+      mmsg('올렸어요. uuid: '+r2.data.id);this.style.display='none';draw();
+    });
+    return;
+  }
+  if(a==='uuid'){
+    var uid=m.id===POTATO.id?POTATO_UUID:m.id;
+    mopen('모드 uuid','<p>'+esc(m.name)+'</p><input id="muu" readonly value="'+esc(uid)+'" style="width:100%"><p style="font-size:13px">다른 모드에서  use_mod_uuid: '+esc(uid)+'  로 쓰면 이 모드의 공유 변수를 %이름% 으로 읽어요.</p>');
+    var ue=$('muu');ue.focus();ue.select();
+    try{if(navigator.clipboard)navigator.clipboard.writeText(uid).then(function(){mmsg('uuid를 복사했어요.');},function(){});}catch(e){}
+    return;
+  }
   if(a==='report'){
     mopen('모드 신고하기','<p>'+esc(m.name)+'</p><label>이유 (최대 100자)</label><input id="mrs" maxlength="100"><div class="row" style="margin-top:12px"><button class="pb" id="mgo">신고하기</button></div>');
     $('mgo').onclick=async function(){
@@ -240,7 +266,7 @@ function draw(){
   $('cnt').textContent=rows.length+'개';
   if(!rows.length){L.innerHTML='<div class="empty">'+(SERVER==='off'&&K!=='on'?'서버를 준비하는 중이라 아직 목록을 볼 수 없어요.':K==='on'?'적용 중인 것이 없어요.':'아직 올라온 게 없어요. 첫 번째로 올려 보세요!')+'</div>';return;}
   L.innerHTML=rows.map(function(m){
-    var a=!!on[m.id],mine=ME&&m.author_id===ME;
+    var a=!!on[m.id],me=ME||(function(){try{var u=FFAuth.user();return u&&u.id||null;}catch(e){return null;}})(),mine=!!me&&m.author_id===me;
     return '<div class="mrow" data-id="'+esc(m.id)+'"><div class="ic">'+logoOf(m)+'</div><div class="tx"><div class="nm">'+esc(m.name)+'</div><div class="mt"><span class="tg'+(m.kind==='pack'?' p':'')+'">'+(m.kind==='pack'?'리소스팩':'모드')+'</span>'+esc(m.cat||'기타')+'</div></div><div class="act">'
       +(a?'<button class="pb off" data-off="'+esc(m.id)+'">적용 해제</button>':'<button class="pb" data-on="'+esc(m.id)+'">적용</button>')+'</div><div class="inf">'+(m.descr?'<div class="d">'+esc(m.descr)+'</div>':'')+pv(m)+'<span>제작자 <b>'+esc(m.author_name||'알 수 없음')+'</b></span><span>올린 날 <b>'+esc(String(m.created_at||'').slice(0,10)||'-')+'</b></span><span>적용 <b>'+(COUNTS[m.id]||0)+'</b></span>'+(m.ver>1?'<span>버전 <b>'+m.ver+'</b></span>':'')+menuOf(m,mine)+'</div></div>';
   }).join('');
@@ -451,9 +477,11 @@ function parseScript(text,lenient){
     else if(m=l.t.match(/^api\s+"?(potato)"?$/i)){out.api='potato';}
     else if(m=l.t.match(/^set\s+(\S+)\s+(damage|speed|name)\s+(.+)$/i)){out.sets.push(setStmt(l,m));}
     else if(m=l.t.match(/^remap\s+"([^"]+)"\s+to\s+"([^"]+)"$/i)){var k1=keyCode(m[1]),k2=keyCode(m[2]);if(!k1||!k2)throw PE(l.n,'keys must be A-Z, 0-9 or F1-F12');out.remap=out.remap||{};out.remap[k1]=k2;}
-    else throw PE(l.n,"I don't understand '"+l.t.split(' ')[0]+"'. Start a line with: mod, resource pack, on, rename, set, remap, disable, enable");
+    else if(m=l.t.match(/^use_mod_uuid\s*:\s*([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})$/i)){out.uses=out.uses||[];if(out.uses.length>=5)throw PE(l.n,'use_mod_uuid can be written 5 times at most');out.uses.push(m[1].toLowerCase());}
+    else if(/^use_mod_uuid\b/i.test(l.t))throw PE(l.n,'write it like  use_mod_uuid: 550e8400-e29b-41d4-a716-446655440000');
+    else throw PE(l.n,"I don't understand '"+l.t.split(' ')[0]+"'. Start a line with: use_mod_uuid, mod, resource pack, on, rename, set, remap, disable, enable");
   }
-  if(out.uuid)out.events.forEach(function(e){e.u=out.uuid;});
+  if(out.uuid||out.uses)out.events.forEach(function(e){if(out.uuid)e.u=out.uuid;if(out.uses)e.uu=out.uses;});
   var data={};if(out.events.length)data.events=out.events;if(out.names)data.names=out.names;if(out.sets.length)data.sets=out.sets;if(out.remap)data.remap=out.remap;if(out.col)data.col=out.col;if(out.api)data.api=out.api;
   if(!Object.keys(data).length&&!lenient)throw PE(1,'nothing to upload: add an "on ...:" block, "rename:", "set ..." or "remap ..."');
   return {kind:out.name?out.kind:null,name:out.name,data:data};
