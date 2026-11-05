@@ -2,6 +2,16 @@
  "notes": [
   {
    "date": "2026-11-05",
+   "build": "v0.5 b190",
+   "title": "업데이트 0.5 · b190",
+   "items": [
+    "BeaconScript 새 명령: loop N times, heal/damage player, set time, set weather, give effect, play sound, broadcast, set variable ... to random A to B",
+    "새 이벤트 on death, on respawn, 새 값 %attacker%, %victim%, %player%, %random%, %player_(아이템)_count%",
+    "Potato API가 켜져 있으면 if %attacker% is player: 같은 조건 사용 가능"
+   ]
+  },
+  {
+   "date": "2026-11-05",
    "build": "v0.5 b189",
    "title": "업데이트 0.5 · b189",
    "items": [
