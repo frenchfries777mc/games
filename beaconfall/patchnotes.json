@@ -2,6 +2,14 @@
  "notes": [
   {
    "date": "2026-11-05",
+   "build": "v0.5 b181",
+   "title": "업데이트 0.5 · b181",
+   "items": [
+    "모드 명령 추가: fill ~x ~z ~x2 ~z2 to land/beach/ocean (바이옴 선택), remove all trees/rocks/ores/structures — on world generate에서 지형을 통째로 바꿀 수 있어요"
+   ]
+  },
+  {
+   "date": "2026-11-05",
    "build": "v0.5 b180",
    "title": "업데이트 0.5 · b180",
    "items": [
