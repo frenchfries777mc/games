@@ -162,9 +162,8 @@ function cats(){
   $('cats').innerHTML=h;
 }
 var POTATO_UUID='6f1c2b7e-3d4a-4e59-9a1b-7c0d5e8f2a43';
-function myAuthor(){try{var pr=FFAuth.profile();return String((pr&&pr.display_name)||(FFAuth.nickname&&FFAuth.nickname())||'').slice(0,20);}catch(e){return '';}}
 function menuOf(m,mine){
-  if(m.id==='builtin-potato-api')return '<div class="dd mn"><button class="pb" data-mn="1" title="더 보기">⋯</button><div class="ddl"><button data-ma="uuid" data-id="'+esc(m.id)+'">uuid 복사</button>'+(myAuthor()==='Frenchfries777'?'<button data-ma="own" data-id="'+esc(m.id)+'">내 모드로 올리기</button>':'')+'</div></div>';
+  if(m.id==='builtin-potato-api')return '<div class="dd mn"><button class="pb" data-mn="1" title="더 보기">⋯</button><div class="ddl"><button data-ma="uuid" data-id="'+esc(m.id)+'">uuid 복사</button>'+'</div></div>';
   var it=(mine&&m.id!==POTATO.id)?[['ver','버전 추가하기'],['del','모드 내리기'],['edit','모드 수정하기']]:[['report','모드 신고하기']];
   if(/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(m.id))it=[['uuid','uuid 복사']].concat(it);
   return '<div class="dd mn"><button class="pb" data-mn="1" title="더 보기">⋯</button><div class="ddl">'+it.map(function(o){return '<button data-ma="'+o[0]+'" data-id="'+esc(m.id)+'">'+o[1]+'</button>';}).join('')+'</div></div>';
@@ -180,21 +179,6 @@ function replaceMod(r){
 function menuAct(a,id){
   var m=id===POTATO.id?POTATO:LIST.filter(function(x){return x.id===id;})[0];if(!m)return;
   var c=sb(),u=window.FFAuth&&FFAuth.user&&FFAuth.user();
-  if(a==='own'){
-    var c2=sb(),u2=window.FFAuth&&FFAuth.user&&FFAuth.user();
-    if(!c2||!u2){mopen('내 모드로 올리기','<p>로그인이 필요해요.</p>');return;}
-    mopen('내 모드로 올리기','<p>내장 Potato API를 내 모드로 서버에 올려요. 올리면 내장은 목록에서 숨고, 내 모드로 수정·내리기·uuid 복사를 쓸 수 있어요.</p><div class="row" style="margin-top:12px"><button class="pb" id="mgo">올리기</button></div>');
-    $('mgo').addEventListener('click',async function(){
-      this.disabled=true;
-      var r2=await c2.from('beaconfall_mods').insert({kind:'mod',name:POTATO.name,descr:POTATO.descr,cat:POTATO.cat,author_name:myAuthor(),data:POTATO.data}).select().single();
-      this.disabled=false;
-      if(r2.error||!r2.data){mmsg('올리지 못했어요. 서버가 아직 준비되지 않았을 수 있어요.',1);return;}
-      LIST.unshift(r2.data);SERVER='ok';
-      var o=getOn();if(o[POTATO.id]){o[r2.data.id]=Object.assign({},o[POTATO.id],{data:r2.data.data});delete o[POTATO.id];setOn(o);}
-      mmsg('올렸어요. uuid: '+r2.data.id);this.style.display='none';draw();
-    });
-    return;
-  }
   if(a==='uuid'){
     var uid=m.id===POTATO.id?POTATO_UUID:m.id;
     mopen('모드 uuid','<p>'+esc(m.name)+'</p><input id="muu" readonly value="'+esc(uid)+'" style="width:100%"><p style="font-size:13px">다른 모드에서  use_mod_uuid: '+esc(uid)+'  로 쓰면 이 모드의 공유 변수를 {:이름_모드이름:} 으로 읽어요.</p>');
