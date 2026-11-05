@@ -163,7 +163,7 @@ function cats(){
 }
 var POTATO_UUID='6f1c2b7e-3d4a-4e59-9a1b-7c0d5e8f2a43';
 function menuOf(m,mine){
-  if(m.id==='builtin-potato-api')return '<div class="dd mn"><button class="pb" data-mn="1" title="더 보기">⋯</button><div class="ddl"><button data-ma="uuid" data-id="'+esc(m.id)+'">uuid 복사</button></div></div>';
+  if(m.id==='builtin-potato-api')return '<div class="dd mn"><button class="pb" data-mn="1" title="더 보기">⋯</button><div class="ddl"><button data-ma="uuid" data-id="'+esc(m.id)+'">uuid 복사</button>'+'</div></div>';
   var it=(mine&&m.id!==POTATO.id)?[['ver','버전 추가하기'],['del','모드 내리기'],['edit','모드 수정하기']]:[['report','모드 신고하기']];
   if(/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(m.id))it=[['uuid','uuid 복사']].concat(it);
   return '<div class="dd mn"><button class="pb" data-mn="1" title="더 보기">⋯</button><div class="ddl">'+it.map(function(o){return '<button data-ma="'+o[0]+'" data-id="'+esc(m.id)+'">'+o[1]+'</button>';}).join('')+'</div></div>';
@@ -181,7 +181,7 @@ function menuAct(a,id){
   var c=sb(),u=window.FFAuth&&FFAuth.user&&FFAuth.user();
   if(a==='uuid'){
     var uid=m.id===POTATO.id?POTATO_UUID:m.id;
-    mopen('모드 uuid','<p>'+esc(m.name)+'</p><input id="muu" readonly value="'+esc(uid)+'" style="width:100%"><p style="font-size:13px">다른 모드에서  use_mod_uuid: '+esc(uid)+'  로 쓰면 이 모드의 공유 변수를 %이름% 으로 읽어요.</p>');
+    mopen('모드 uuid','<p>'+esc(m.name)+'</p><input id="muu" readonly value="'+esc(uid)+'" style="width:100%"><p style="font-size:13px">다른 모드에서  use_mod_uuid: '+esc(uid)+'  로 쓰면 이 모드의 공유 변수를 {:이름_모드이름:} 으로 읽어요.</p>');
     var ue=$('muu');ue.focus();ue.select();
     try{if(navigator.clipboard)navigator.clipboard.writeText(uid).then(function(){mmsg('uuid를 복사했어요.');},function(){});}catch(e){}
     return;
@@ -231,7 +231,8 @@ function draw(){
   ddDraw();
   if(SERVER==='load'){L.innerHTML='<div class="empty">불러오는 중이에요…</div>';$('cnt').textContent='';return;}
   var upPot=LIST.some(function(m){return m.name==='Potato API'&&m.author_name==='Frenchfries777'&&m.data&&m.data.api==='potato';});   // 직접 올린 Potato API 가 있으면 내장은 숨겨요
-  var src=upPot?LIST.slice():LIST.concat([POTATO]);
+  var src=LIST.slice();
+  if(on['builtin-potato-api']){delete on['builtin-potato-api'];setOn(on);}   // 내장 Potato API 는 없어졌어요
   Object.keys(on).forEach(function(id){if(!src.some(function(m){return m.id===id;}))src.push({id:id,kind:on[id].kind,name:on[id].name,descr:on[id].descr||'',cat:on[id].cat||'기타',author_name:on[id].author_name||'',data:on[id].data});});
   var rows=src.filter(function(m){
     if(K==='mod'&&m.kind!=='mod')return false;
@@ -405,6 +406,7 @@ function parseScript(text,lenient){
       else if(m=l.t.match(/^(add|subtract)\s+(\d{1,9}(?:\.\d{1,3})?)\s+(?:to|from)\s+variable\s+([a-z0-9_]{1,20})$/i)){acts.push({addv:{n:m[3].toLowerCase(),d:(m[1].toLowerCase()==='add'?1:-1)*+m[2]}});}
       else if(m=l.t.match(/^reset\s+variable\s+([a-z0-9_]{1,20})$/i)){acts.push({resv:m[1].toLowerCase()});}
       else if(m=l.t.match(/^if\s+%(attacker|victim)%\s+is\s+(not\s+)?player\s*:$/i)){acts.push({ifp:{w:m[1].toLowerCase(),not:!!m[2]},do:sub(l,depth)});}
+      else if(m=l.t.match(/^expose\s+"([a-z0-9_]{1,21})"(?:\s+to\s+"(%[a-z0-9_]{1,21}%)")?$/i)){acts.push({expose:{v:m[1].toLowerCase(),a:m[2]?m[2].toLowerCase():''}});}
       else if(m=l.t.match(/^\{:([a-z0-9_]{1,30})::(.{0,100}):\}$/i)){var sv=m[2].trim().replace(/^"(.*)"$/,'$1');if(out.uuid&&m[1].length>21)throw PE(l.n,'with a mod uuid, a shared variable name can be 21 characters at most');acts.push({shset:{n:m[1].toLowerCase(),v:sv}});}
       else if(!/^if\s+variable\s/i.test(l.t)&&(m=l.t.match(/^if\s+(.+?)\s+contained\s+(?:"([^"]{0,40})"|(-?\d{1,9}(?:\.\d{1,3})?))\s*:$/i))){acts.push({ifc:{v:m[1].trim().slice(0,100),c:m[2]!==undefined?m[2]:m[3]},do:sub(l,depth)});}
       else if(m=l.t.match(/^if\s+variable\s+([a-z0-9_]{1,20})\s*(>=|<=|!=|>|<|=)\s*(?:"([^"]{0,40})"|(-?\d{1,9}(?:\.\d{1,3})?))\s*:$/i)){acts.push({ifv:{n:m[1].toLowerCase(),op:m[2],v:m[3]!==undefined?m[3]:+m[4]},do:sub(l,depth)});}
@@ -461,12 +463,59 @@ function parseScript(text,lenient){
     else if(m=l.t.match(/^api\s+"?(potato)"?$/i)){out.api='potato';}
     else if(m=l.t.match(/^set\s+(\S+)\s+(damage|speed|name)\s+(.+)$/i)){out.sets.push(setStmt(l,m));}
     else if(m=l.t.match(/^remap\s+"([^"]+)"\s+to\s+"([^"]+)"$/i)){var k1=keyCode(m[1]),k2=keyCode(m[2]);if(!k1||!k2)throw PE(l.n,'keys must be A-Z, 0-9 or F1-F12');out.remap=out.remap||{};out.remap[k1]=k2;}
+    else if(/^publish_short\s*:$/i.test(l.t)){
+      if(!(pos<L.length&&L[pos].ind>0))throw PE(l.n,'nothing is written under this line');
+      var pind=L[pos].ind,P={v:'',al:null,u:'',ty:'',sc:'',sg:'',rule:null,n:l.n};
+      while(pos<L.length&&L[pos].ind>=pind){
+        var pl=L[pos++],pm;
+        if(pl.ind!==pind)throw PE(pl.n,'wrong indentation');
+        if(pm=pl.t.match(/^var\s+"([a-z0-9_]{1,21})"$/i))P.v=pm[1].toLowerCase();
+        else if(pm=pl.t.match(/^aliases\s+("%[a-z0-9_]{1,21}%"(?:\s*,\s*"%[a-z0-9_]{1,21}%"){0,4})$/i))P.al=pm[1].match(/"([^"]+)"/g).map(function(x){return x.slice(1,-1).toLowerCase();});
+        else if(pm=pl.t.match(/^from\s+uuid\s+([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})$/i))P.u=pm[1].toLowerCase();
+        else if(pm=pl.t.match(/^type\s+(text|number)$/i))P.ty=pm[1].toLowerCase();
+        else if(pm=pl.t.match(/^scope\s+(world|mod)$/i))P.sc=pm[1].toLowerCase();
+        else if(pm=pl.t.match(/^sign\s+"([^"]{1,40})"\s*\+\s*"([^"]{1,40})"\s*\+\s*"([^"]{1,40})"$/i))P.sg=pm[1]+'\n'+pm[2]+'\n'+pm[3];
+        else if(/^rule\s*:$/i.test(pl.t)){
+          if(!(pos<L.length&&L[pos].ind>pind))throw PE(pl.n,'nothing is written under this line');
+          var rind=L[pos].ind,R={w:0,bind:'',fb:null,rv:0};
+          while(pos<L.length&&L[pos].ind>=rind){
+            var rl=L[pos++],rm;
+            if(/^when\s+reader\s+mod\s+is\s+applied$/i.test(rl.t))R.w|=1;
+            else if(rm=rl.t.match(/^and\s+writer\s+mod\s+"([^"]{1,40})"\s+is\s+applied$/i)){R.w|=2;R.wn=rm[1];}
+            else if(/^and\s+world\s+is\s+host$/i.test(rl.t))R.w|=4;
+            else if(rm=rl.t.match(/^bind\s+"(%[a-z0-9_]{1,21}%)"\s+to\s+\{:([a-z0-9_]{1,21}):\}$/i)){R.bind=rm[1].toLowerCase();R.bv=rm[2].toLowerCase();}
+            else if(rm=rl.t.match(/^fallback\s+"([^"]{0,40})"$/i))R.fb=rm[1];
+            else if(/^revoke\s+on\s+mod\s+remove$/i.test(rl.t))R.rv=1;
+            else throw PE(rl.n,"I don't understand '"+rl.t+"' in rule. Use: when / and / bind / fallback / revoke");
+          }
+          P.rule=R;
+        }else throw PE(pl.n,"I don't understand '"+pl.t.split(' ')[0]+"' in publish_short. Use: var, aliases, from uuid, type, scope, sign, rule");
+      }
+      var miss=!P.v?'var':!P.al?'aliases':!P.u?'from uuid':!P.ty?'type':!P.sc?'scope':!P.sg?'sign':!P.rule?'rule':'';
+      if(miss)throw PE(P.n,'publish_short is missing "'+miss+'"');
+      var RR=P.rule,rmiss=!(RR.w&1)?'when reader mod is applied':!(RR.w&2)?'and writer mod "name" is applied':!(RR.w&4)?'and world is host':!RR.bind?'bind':RR.fb===null?'fallback':!RR.rv?'revoke on mod remove':'';
+      if(rmiss)throw PE(P.n,'rule is missing "'+rmiss+'"');
+      if(P.al.indexOf(RR.bind)<0)throw PE(P.n,'bind '+RR.bind+' is not in aliases');
+      if(RR.bv!==P.v)throw PE(P.n,'bind must point to {:'+P.v+':}');
+      out.pub=out.pub||[];if(out.pub.length>=5)throw PE(P.n,'publish_short can be written 5 times at most');
+      out.pub.push({v:P.v,al:P.al,u:P.u,ty:P.ty,sc:P.sc,sg:P.sg,bind:RR.bind,fb:RR.fb,wn:RR.wn});
+    }
     else if(m=l.t.match(/^use_mod_uuid\s*:\s*([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})$/i)){out.uses=out.uses||[];if(out.uses.length>=5)throw PE(l.n,'use_mod_uuid can be written 5 times at most');out.uses.push(m[1].toLowerCase());}
     else if(/^use_mod_uuid\b/i.test(l.t))throw PE(l.n,'write it like  use_mod_uuid: 550e8400-e29b-41d4-a716-446655440000');
     else throw PE(l.n,"I don't understand '"+l.t.split(' ')[0]+"'. Start a line with: use_mod_uuid, mod, resource pack, on, rename, set, remap, disable, enable");
   }
+  if(out.pub){out.pub.forEach(function(P){
+    if(!out.uuid)throw PE(1,'publish_short needs the mod uuid on the first line of the file');
+    if(P.u!==out.uuid)throw PE(1,'publish_short "from uuid" must be this mod\'s uuid');
+    if(!out.name)throw PE(1,'publish_short needs  mod "name"  in the same file');
+    if(P.wn!==out.name)throw PE(1,'writer mod "'+P.wn+'" must be this mod "'+out.name+'"');
+    if(P.sg!==P.v+'\n'+out.name+'\n'+P.v)throw PE(1,'sign must be exactly  "'+P.v+'" + "'+out.name+'" + "'+P.v+'"');
+    var ex=false;
+    out.events.forEach(function(e){(function walk(a){(a||[]).forEach(function(x){if(x&&x.expose&&x.expose.v===P.v&&(!x.expose.a||x.expose.a===P.bind))ex=true;if(x&&Array.isArray(x.do))walk(x.do);});})(e.do);});
+    if(!ex)throw PE(1,'publish_short "'+P.v+'" needs  expose "'+P.v+'" to "'+P.bind+'"  inside an on block');
+  });}
   if(out.uuid||out.uses)out.events.forEach(function(e){if(out.uuid)e.u=out.uuid;if(out.uses)e.uu=out.uses;});
-  var data={};if(out.events.length)data.events=out.events;if(out.names)data.names=out.names;if(out.sets.length)data.sets=out.sets;if(out.remap)data.remap=out.remap;if(out.col)data.col=out.col;if(out.api)data.api=out.api;
+  var data={};if(out.events.length)data.events=out.events;if(out.names)data.names=out.names;if(out.sets.length)data.sets=out.sets;if(out.remap)data.remap=out.remap;if(out.col)data.col=out.col;if(out.api)data.api=out.api;if(out.pub)data.pub=out.pub;
   if(!Object.keys(data).length&&!lenient)throw PE(1,'nothing to upload: add an "on ...:" block, "rename:", "set ..." or "remap ..."');
   return {kind:out.name?out.kind:null,name:out.name,data:data};
 }
@@ -498,6 +547,7 @@ $('uf').addEventListener('change',async function(){
         if(d.sets)M.sets=M.sets.concat(d.sets);
         if(d.col){M.col=M.col||{};for(var k3 in d.col)M.col[k3]=d.col[k3];}
         if(d.api)M.api=d.api;
+        if(d.pub)M.pub=(M.pub||[]).concat(d.pub);
         if(d.remap){M.remap=M.remap||{};for(var k2 in d.remap)M.remap[k2]=d.remap[k2];}
         if(ps.name&&!name){name=ps.name;}
         if(ps.kind&&!kind)kind=ps.kind;
@@ -507,7 +557,7 @@ $('uf').addEventListener('change',async function(){
   }
   if(!okc){umsg('폴더 안에 .bs 파일이나 PNG 그림이 없어요.',1);return;}
   if(LOGO&&LOGO.length>6000){umsg('logo.png가 너무 복잡해요. 더 단순한 그림으로 해 주세요.',1);return;}
-  var data={};if(M.events.length)data.events=M.events;if(M.names)data.names=M.names;if(M.sets.length)data.sets=M.sets;if(M.remap)data.remap=M.remap;if(M.col)data.col=M.col;if(M.api)data.api=M.api;
+  var data={};if(M.events.length)data.events=M.events;if(M.names)data.names=M.names;if(M.sets.length)data.sets=M.sets;if(M.remap)data.remap=M.remap;if(M.col)data.col=M.col;if(M.api)data.api=M.api;if(M.pub)data.pub=M.pub;
   if(LOGO&&LOGO.length<=6000)data.logo=LOGO;
   if(Object.keys(TEX).length)data.textures=TEX;
   kind=files.some(function(f){return /^mod[e]?\.bs$/i.test(f.name);})?'mod':'pack';   // mode.bs(또는 mod.bs)가 있으면 모드, 없으면 리소스팩
