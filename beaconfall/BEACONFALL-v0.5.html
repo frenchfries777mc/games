@@ -10060,7 +10060,7 @@ function modApply(list){
       const im=new Image();im.onload=()=>{MOD.tex[k]=im;try{for(const q in ICONURL)delete ICONURL[q];for(const q in ICONC)delete ICONC[q];renderInv();renderEquip();}catch(e){}};im.src=v;
     }
     if(d.api==='potato'){MOD.potato=true;MOD.phAll=true;}   // 옛날 형식 (api potato)
-    if(Array.isArray(d.pa)){for(const q of d.pa.slice(0,120)){if(q&&typeof q.a==='string'&&/^[a-z0-9_]{1,30}$/.test(q.a)&&Array.isArray(q.do)){MOD.pa.push({a:q.a,do:q.do,mid:m.id,mn:String(m.name||'').slice(0,40),u:/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/.test(String(q.u||''))?q.u:''});MOD.potato=true;}}}   // publish_aliases: 별칭 정의 (이 모드가 대신 풀어줘요)
+    if(Array.isArray(d.pa)){for(const q of d.pa.slice(0,120)){if(q&&typeof q.a==='string'&&/^[a-z0-9_]{1,30}$/.test(q.a)&&Array.isArray(q.do)){MOD.pa.push({a:q.a,do:q.do,mid:m.id,mn:String(m.name||'').slice(0,40),u:(/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/.test(String(q.u||''))?q.u:(/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(String(m.id||''))?String(m.id).toLowerCase():''))});MOD.potato=true;}}}   // publish_aliases: 별칭 정의 (이 모드가 대신 풀어줘요)
     if(d.col&&typeof d.col==='object'&&!Array.isArray(d.col))for(const k of Object.keys(d.col).slice(0,60)){if(/^[a-z_0-9]{1,30}$/.test(k))MOD.col[k]=!!d.col[k];}
     if(Array.isArray(d.sets))for(const t of d.sets.slice(0,100))modSet(t,setName);
     if(d.remap&&typeof d.remap==='object'&&!Array.isArray(d.remap))for(const k of Object.keys(d.remap).slice(0,30)){if(MOD_KEY.test(k)&&MOD_KEY.test(d.remap[k]))MOD.remap[k]=d.remap[k];}
