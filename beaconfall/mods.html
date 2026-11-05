@@ -394,7 +394,7 @@ function parseScript(text,lenient){
       else if(m=l.t.match(/^(add|subtract)\s+(\d{1,9}(?:\.\d{1,3})?)\s+(?:to|from)\s+variable\s+([a-z0-9_]{1,20})$/i)){acts.push({addv:{n:m[3].toLowerCase(),d:(m[1].toLowerCase()==='add'?1:-1)*+m[2]}});}
       else if(m=l.t.match(/^reset\s+variable\s+([a-z0-9_]{1,20})$/i)){acts.push({resv:m[1].toLowerCase()});}
       else if(m=l.t.match(/^if\s+%(attacker|victim)%\s+is\s+(not\s+)?player\s*:$/i)){acts.push({ifp:{w:m[1].toLowerCase(),not:!!m[2]},do:sub(l,depth)});}
-      else if(m=l.t.match(/^\{:([a-z0-9_]{1,30})::(.{0,100}):\}$/i)){var sv=m[2].trim().replace(/^"(.*)"$/,'$1');acts.push({shset:{n:m[1].toLowerCase(),v:sv}});}
+      else if(m=l.t.match(/^\{:([a-z0-9_]{1,30})::(.{0,100}):\}$/i)){var sv=m[2].trim().replace(/^"(.*)"$/,'$1');if(out.uuid&&m[1].length>21)throw PE(l.n,'with a mod uuid, a shared variable name can be 21 characters at most');acts.push({shset:{n:m[1].toLowerCase(),v:sv}});}
       else if(!/^if\s+variable\s/i.test(l.t)&&(m=l.t.match(/^if\s+(.+?)\s+contained\s+(?:"([^"]{0,40})"|(-?\d{1,9}(?:\.\d{1,3})?))\s*:$/i))){acts.push({ifc:{v:m[1].trim().slice(0,100),c:m[2]!==undefined?m[2]:m[3]},do:sub(l,depth)});}
       else if(m=l.t.match(/^if\s+variable\s+([a-z0-9_]{1,20})\s*(>=|<=|!=|>|<|=)\s*(?:"([^"]{0,40})"|(-?\d{1,9}(?:\.\d{1,3})?))\s*:$/i)){acts.push({ifv:{n:m[1].toLowerCase(),op:m[2],v:m[3]!==undefined?m[3]:+m[4]},do:sub(l,depth)});}
       else if(m=l.t.match(/^(disable|enable)\s+collision\s+of\s+(.+)$/i)){acts.push({col:{t:colT(l,m[2].trim()),on:m[1].toLowerCase()==='enable'}});}
@@ -410,6 +410,7 @@ function parseScript(text,lenient){
     }
     return acts;
   }
+  if(L.length&&L[0].ind===0&&/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(L[0].t)){out.uuid=L[0].t.toLowerCase();pos=1;}   // 맨 앞 줄 = 모드 고유 번호(uuid)
   while(pos<L.length){
     var l=L[pos],m;
     if(l.ind!==0)throw PE(l.n,'this line should not be indented');
@@ -447,6 +448,7 @@ function parseScript(text,lenient){
     else if(m=l.t.match(/^remap\s+"([^"]+)"\s+to\s+"([^"]+)"$/i)){var k1=keyCode(m[1]),k2=keyCode(m[2]);if(!k1||!k2)throw PE(l.n,'keys must be A-Z, 0-9 or F1-F12');out.remap=out.remap||{};out.remap[k1]=k2;}
     else throw PE(l.n,"I don't understand '"+l.t.split(' ')[0]+"'. Start a line with: mod, resource pack, on, rename, set, remap, disable, enable");
   }
+  if(out.uuid)out.events.forEach(function(e){e.u=out.uuid;});
   var data={};if(out.events.length)data.events=out.events;if(out.names)data.names=out.names;if(out.sets.length)data.sets=out.sets;if(out.remap)data.remap=out.remap;if(out.col)data.col=out.col;
   if(!Object.keys(data).length&&!lenient)throw PE(1,'nothing to upload: add an "on ...:" block, "rename:", "set ..." or "remap ..."');
   return {kind:out.name?out.kind:null,name:out.name,data:data};
