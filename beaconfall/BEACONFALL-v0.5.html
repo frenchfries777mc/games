@@ -407,7 +407,7 @@ window.bfIntro=function(){if(run)return;run=1;t0=Date.now();el.classList.add('ru
     <button class="btn" data-act="skins"><span class="arrow">▶</span>스킨 상점<span class="en">SKIN SHOP</span></button>
     <button class="btn" data-act="stats"><span class="arrow">▶</span>통계<span class="en">STATS</span></button>
     <button class="btn" data-act="settings"><span class="arrow">▶</span>설정<span class="en">SETTINGS</span></button>
-    <p class="foot">v0.5<br>build 191</p>
+    <p class="foot">v0.5<br>build 192</p>
   </nav>
 </div>
 
@@ -6419,15 +6419,15 @@ function updatePlayer(dt){
         if(work.kind==='t'){
           const kk=work.key;SFX.done('t',0,world.trees.x[kk],world.trees.y[kk]);
           if(isGuest()){const bk=world.trees.y[kk]*W+world.trees.x[kk];sendHost({t:'break',key:bk});pendBreak.set(bk,{t:time,n:0});}else breakTreeAuth(kk);
-          MODX.destroyed='나무';stAdd('tree');
+          MODX.destroyed='나무';stAdd('tree');try{modEvent('break','');}catch(e){}
           if(bestTool('axe'))wearSel();
         }else if(work.kind==='b'){
           const kk=work.key,pt=pickTool(kk);SFX.done('b',world.boulders.t[kk],world.boulders.x[kk],world.boulders.y[kk]);
           if(isGuest())sendHost({t:'mine',key:world.boulders.y[kk]*W+world.boulders.x[kk],tm:pt?pt.mat:''});else mineBoulderAuth(kk,!pt);
-          MODX.destroyed='바위';stAdd('rock');
+          {const tt=world.boulders.t[kk];MODX.destroyed=({2:'철광석',3:'금광석',4:'구리광석',5:'아연광석'})[tt]||'바위';}stAdd('rock');try{modEvent('break','');}catch(e){}
           if(pt)wearSel();
         }else{
-          const b=P.starget;SFX.done('s',b.id,b.x,b.y);
+          const b=P.starget;SFX.done('s',b.id,b.x,b.y);MODX.destroyed=(ITEMS[b.id]&&ITEMS[b.id].name)||String(b.id);try{modEvent('break','');}catch(e){}
           if(isGuest())sendHost({t:'smash',gx:b.gx,gy:b.gy,l:b.layer});else smashStructAuth(b.gx,b.gy,b.layer);
           if(b.id==='crop')P.hold=false;
           else if(b.id!=='farm'&&bestTool('axe'))wearSel();
@@ -10059,12 +10059,15 @@ function modApply(list){
     MOD.on.push(m);
   }
   try{if(typeof renderInv==='function')renderInv();}catch(e){}
+  try{shLoad(true);}catch(e){}
 }
 function modTxt(s){   // Potato API: %player_name% 같은 값을 글에 넣어요 (Potato API 모드를 켜야 읽혀요)
   s=String(s);
+  if(s.indexOf('%player\'s mod%')>=0)s=s.split('%player\'s mod%').join(MOD.on.map(m=>String(m.name||'')).join(', '));   // Potato API 없이도 읽혀요
+  if(s.indexOf('{:')>=0)s=s.replace(/\{:([a-z0-9_]{1,30}):\}/g,(m,k)=>{shLoad();return SHV[k]===undefined?'':String(SHV[k]);});   // 제작자끼리 공유하는 변수
   if(s.indexOf('{')>=0)s=s.replace(/\{(_?[a-z0-9_]{1,20}_?)\}/g,(m,k)=>{const v=modVGet(k);return v===undefined?'0':String(v);});   // {변수} / {_지역변수_}
   if(!MOD.potato||s.indexOf('%')<0)return s;
-  return s.replace(/%([a-z0-9_']{3,30})%/g,(m,k)=>{
+  return s.replace(/%([a-z0-9_' ]{3,30})%/g,(m,k)=>{
     switch(k){
       case 'player_name':return myName();
       case 'player_location':return Math.round(P.x)+', '+(Math.round((P.alt||0)*10)/10)+', '+Math.round(P.y);   // x, y(고도), z
@@ -10080,7 +10083,7 @@ function modTxt(s){   // Potato API: %player_name% 같은 값을 글에 넣어�
       case 'world_day':return String(Math.floor(world.clock/DAY_SEC)+1);
       case 'world_time':{const h=(6+world.clock/DAY_SEC*24)%24;return String(Math.floor(h)).padStart(2,'0')+':'+String(Math.floor((h%1)*60)).padStart(2,'0');}
       case 'player':return myName();
-      case "player's_uuid":case 'player_uuid':return myUuid();
+      case "player's_uuid":case 'player_uuid':return myUuid();   // 로그인하면 Supabase 계정 id
       case 'mod_name':return MODX.mn;
       case 'mod_uuid':return MODX.mid;
       case 'crafted_item':return MODX.crafted;
@@ -10107,7 +10110,17 @@ function modTxt(s){   // Potato API: %player_name% 같은 값을 글에 넣어�
     }
   });
 }
-function myUuid(){try{let u=localStorage.getItem('bf.uuid');if(!u){u=(crypto.randomUUID?crypto.randomUUID():'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g,c=>{const r=Math.random()*16|0;return(c==='x'?r:(r&3|8)).toString(16);}));localStorage.setItem('bf.uuid',u);}return u;}catch(e){return 'unknown';}}
+const SHV={};let shAt=0,shWarn=false;const shLast={};
+function shLoad(force){const sb=window.bfSb;if(!sb)return;const t=Date.now();if(!force&&t-shAt<20000)return;shAt=t;try{sb.from('beaconfall_shared_vars').select('name,value').limit(500).then(r=>{if(r&&r.data)for(const q of r.data)SHV[q.name]=q.value;}).catch(()=>{});}catch(e){}}
+function shSet(n,v){
+  if(!/^[a-z0-9_]{1,30}$/.test(n))return;
+  const sb=window.bfSb,t=Date.now();if(shLast[n]&&t-shLast[n]<1000)return;shLast[n]=t;
+  v=String(v).slice(0,100);
+  if(!sb||!window.bfUid){if(!shWarn){shWarn=true;toast('공유 변수를 바꾸려면 로그인해야 해요.');}return;}
+  SHV[n]=v;
+  try{sb.rpc('beaconfall_shared_set',{p_name:n,p_value:v}).then(r=>{if(r&&r.error)shLoad(true);}).catch(()=>{});}catch(e){}
+}
+function myUuid(){try{if(window.bfUid)return String(window.bfUid);let u=localStorage.getItem('bf.uuid');if(!u){u=(crypto.randomUUID?crypto.randomUUID():'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g,c=>{const r=Math.random()*16|0;return(c==='x'?r:(r&3|8)).toString(16);}));localStorage.setItem('bf.uuid',u);}return u;}catch(e){return 'unknown';}}
 function modPick(kind,how){
   const L=[];   // {n:이름, d:거리}
   if(kind==='player'){
@@ -10198,6 +10211,8 @@ function modRun(acts,depth,box){
     else if(a.addv&&typeof a.addv.n==='string'&&typeof a.addv.d==='number'){const cur=Number(modVGet(a.addv.n));modVarSet(a.addv.n,(Number.isFinite(cur)?cur:0)+a.addv.d);}
     else if(typeof a.resv==='string'){delete (modIsLoc(a.resv)?MODX.loc:modVars())[a.resv];}
     else if(a.ifp&&Array.isArray(a.do)){if(MOD.potato){const isp=a.ifp.w==='victim'?MODX.vp:MODX.ap;if(isp!==!!a.ifp.not)modRun(a.do,depth+1,box);}}
+    else if(a.shset&&typeof a.shset.n==='string'){shSet(a.shset.n,modTxt(String(a.shset.v)));}
+    else if(a.ifc&&typeof a.ifc.c==='string'&&Array.isArray(a.do)){if(String(modTxt(String(a.ifc.v))).toLowerCase().includes(a.ifc.c.toLowerCase()))modRun(a.do,depth+1,box);}
     else if(a.ifv&&Array.isArray(a.do)){if(modVarCmp(a.ifv))modRun(a.do,depth+1,box);}
     else if(a.col&&typeof a.col.t==='string'&&/^[a-z_0-9]{1,30}$/.test(a.col.t)){MOD.col[a.col.t]=!!a.col.on;}
     else if(a.tp&&typeof a.tp==='object'){
