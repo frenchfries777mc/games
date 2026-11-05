@@ -493,6 +493,12 @@ if(document.readyState==='loading') document.addEventListener('DOMContentLoaded'
     border:1px solid var(--line); color:var(--text); font-size:16px; padding:0; display:flex; align-items:center; justify-content:center;
   }
   .carousel-arrow:hover{ border-color:var(--accent-2); }
+  /* match-end screen: with many mastery rows it used to run off the screen with the button out of reach - now it scrolls and the button stays at the bottom */
+  #matchEndOverlay{ overflow-y:auto; justify-content:flex-start !important; padding:24px 0 20px; box-sizing:border-box; -webkit-overflow-scrolling:touch; }
+  #matchEndOverlay > *{ flex:none; }
+  #matchEndOverlay > :first-child{ margin-top:auto; }
+  #matchEndOverlay > #matchEndMenuBtn{ position:sticky; bottom:14px; margin-top:6px; margin-bottom:auto; z-index:2; box-shadow:0 4px 18px rgba(0,0,0,.6); }
+  #matchEndMastery{ max-width:min(560px,94vw); }
   .brand{
     display:none; flex-direction:column; align-items:center; text-align:center;
     position:absolute; left:50%; top:7%; transform:translateX(-50%);
@@ -5671,7 +5677,7 @@ function shuffle(arr){ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.
 /* ===== the version of this file =====
    Different BUILDS of one version meet and play together (room names online-v<ver>-<mode>-<map>-<slot>); different VERSIONS (the 0.x part) never do - the host refuses them (verNo) and the dispatcher answers busy.
    The build is only sent along with the join message and the lobby (for information); the corner of the screen shows it. */
-const GAME_BUILD='build 2026-11-04-v621';
+const GAME_BUILD='build 2026-11-05-v622';
 const GAME_VERSION='0.9', GAME_VERSION_NAME='은하 제국의 황혼';   // 게임 버전 이름: versions.json의 title과 같게 (빌드마다 바꾸지 않음)
 /* version (the 0.x part) vs build: different BUILDS of one version meet and play together, different VERSIONS never do (rooms, quick match, ranked, friend invites, dispatcher).
    Builds before 470 do not send a version, so it is read from the build number (0.9 started at build 458). */
