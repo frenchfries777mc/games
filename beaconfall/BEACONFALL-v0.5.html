@@ -10076,7 +10076,7 @@ function modSignal(n,val,to){   // signal send "이름" ... to mod "모드"
   const tl=String(to||'').toLowerCase();delete MOD.sig[n];
   for(const e of MOD.ev){
     if(e.on!=='signal'||e.t!==n)continue;
-    if(tl&&String(e.mn||'').toLowerCase()!==tl&&String(e.mid||'').toLowerCase()!==tl&&String(e.u||'').toLowerCase()!==tl)continue;
+    if(tl&&!String(e.mn||'').toLowerCase().includes(tl)&&String(e.mid||'').toLowerCase()!==tl&&String(e.u||'').toLowerCase()!==tl)continue;
     const sv={loc:MODX.loc,uid:MODX.uid,uses:MODX.uses,mn:MODX.mn,mid:MODX.mid,txt:MODX.txt};
     MODX.mn=e.mn||'';MODX.mid=e.mid||'';MODX.uid=e.u||'';MODX.uses=e.uu||[];MODX.loc={};MODX.sigv=val;
     try{modRun(e.do,0,{n:300000});}catch(x){}
