@@ -161,7 +161,9 @@ function cats(){
   set.forEach(function(c){h+='<button class="pb'+(CAT===c?' on':'')+'" data-c="'+esc(c)+'">'+esc(c)+'</button>';});
   $('cats').innerHTML=h;
 }
+var POTATO_UUID='6f1c2b7e-3d4a-4e59-9a1b-7c0d5e8f2a43';
 function menuOf(m,mine){
+  if(m.id==='builtin-potato-api')return '<div class="dd mn"><button class="pb" data-mn="1" title="더 보기">⋯</button><div class="ddl"><button data-ma="uuid" data-id="'+esc(m.id)+'">uuid 복사</button></div></div>';
   var it=(mine&&m.id!==POTATO.id)?[['ver','버전 추가하기'],['del','모드 내리기'],['edit','모드 수정하기']]:[['report','모드 신고하기']];
   if(/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(m.id))it=[['uuid','uuid 복사']].concat(it);
   return '<div class="dd mn"><button class="pb" data-mn="1" title="더 보기">⋯</button><div class="ddl">'+it.map(function(o){return '<button data-ma="'+o[0]+'" data-id="'+esc(m.id)+'">'+o[1]+'</button>';}).join('')+'</div></div>';
@@ -178,9 +180,10 @@ function menuAct(a,id){
   var m=id===POTATO.id?POTATO:LIST.filter(function(x){return x.id===id;})[0];if(!m)return;
   var c=sb(),u=window.FFAuth&&FFAuth.user&&FFAuth.user();
   if(a==='uuid'){
-    mopen('모드 uuid','<p>'+esc(m.name)+'</p><input id="muu" readonly value="'+esc(m.id)+'" style="width:100%"><p style="font-size:13px">다른 모드에서  use_mod_uuid: '+esc(m.id)+'  로 쓰면 이 모드의 공유 변수를 %이름% 으로 읽어요.</p>');
+    var uid=m.id===POTATO.id?POTATO_UUID:m.id;
+    mopen('모드 uuid','<p>'+esc(m.name)+'</p><input id="muu" readonly value="'+esc(uid)+'" style="width:100%"><p style="font-size:13px">다른 모드에서  use_mod_uuid: '+esc(uid)+'  로 쓰면 이 모드의 공유 변수를 %이름% 으로 읽어요.</p>');
     var ue=$('muu');ue.focus();ue.select();
-    try{if(navigator.clipboard)navigator.clipboard.writeText(m.id).then(function(){mmsg('uuid를 복사했어요.');},function(){});}catch(e){}
+    try{if(navigator.clipboard)navigator.clipboard.writeText(uid).then(function(){mmsg('uuid를 복사했어요.');},function(){});}catch(e){}
     return;
   }
   if(a==='report'){
