@@ -2,6 +2,15 @@
  "notes": [
   {
    "date": "2026-11-05",
+   "build": "v0.5 b191",
+   "title": "업데이트 0.5 · b191",
+   "items": [
+    "Potato API 값 추가: %nearest_player%, %random_player%, %farest_player%, %nearest_mob%, %random_mob%, %farest_mob%, %nearest_monster%, %random_monster%, %farest_monster%, %player's_uuid%, %mod_name%, %mod_uuid%, %crafted_item%, %placed_block%, %distroyed_block%",
+    "변수를 {이름} 형태로 쓸 수 있고, {_이름_}은 그 이벤트 안에서만 쓰는 변수예요"
+   ]
+  },
+  {
+   "date": "2026-11-05",
    "build": "v0.5 b190",
    "title": "업데이트 0.5 · b190",
    "items": [
