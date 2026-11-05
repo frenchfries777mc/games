@@ -10086,7 +10086,7 @@ function modTxt(s){   // Potato API: %player_name% 같은 값을 글에 넣어�
       case 'world_day':return String(Math.floor(world.clock/DAY_SEC)+1);
       case 'world_time':{const h=(6+world.clock/DAY_SEC*24)%24;return String(Math.floor(h)).padStart(2,'0')+':'+String(Math.floor((h%1)*60)).padStart(2,'0');}
       case 'player':return MODX.actor||myName();
-      case 'interacted':return MODX.touched||'';
+      case 'interacted':case 'interacted_item':return MODX.touched||'';
       case "player's_uuid":case 'player_uuid':return myUuid();   // 로그인하면 Supabase 계정 id
       case 'mod_name':return MODX.mn;
       case 'mod_uuid':return MODX.mid;
