@@ -13,6 +13,72 @@
      "items": [
       "In battle royale, leaving right after being eliminated now applies your win streak by placing (6+ players: 2nd +1, 3rd keeps, lower resets to 0)."
      ]
+    },
+    "es": {
+     "title": "Racha de victorias al salir tras ser eliminado",
+     "items": [
+      "En battle royale, salir justo después de ser eliminado ahora aplica tu racha de victorias según tu puesto (6 o más jugadores: 2.º +1, 3.º se mantiene, los demás se reinician a 0)."
+     ]
+    },
+    "fr": {
+     "title": "Série de victoires si l'on quitte après élimination",
+     "items": [
+      "En battle royale, quitter juste après une élimination applique désormais la série de victoires selon le classement (6 joueurs ou plus : 2e +1, 3e conservée, les autres remises à 0)."
+     ]
+    },
+    "de": {
+     "title": "Siegesserie beim Verlassen nach dem Ausscheiden",
+     "items": [
+      "Im Battle Royale wird deine Siegesserie nach Platzierung verrechnet, auch wenn du direkt nach dem Ausscheiden das Spiel verlässt (ab 6 Spielern: Platz 2 +1, Platz 3 bleibt, darunter auf 0)."
+     ]
+    },
+    "ja": {
+     "title": "脱落後に退出したときの連勝処理",
+     "items": [
+      "バトルロイヤルで脱落した直後に退出しても、順位に応じて連勝が処理されるようになりました（6人以上：2位は+1、3位は維持、それ以下は0）。"
+     ]
+    },
+    "zh": {
+     "title": "淘汰后退出时的连胜结算",
+     "items": [
+      "在大逃杀中，被淘汰后立即退出，也会按名次结算连胜（6人及以上：第2名+1，第3名保持，其余归零）。"
+     ]
+    },
+    "pt": {
+     "title": "Sequência de vitórias ao sair após eliminação",
+     "items": [
+      "No battle royale, sair logo após ser eliminado agora aplica sua sequência de vitórias conforme a colocação (6+ jogadores: 2º +1, 3º mantém, abaixo disso zera)."
+     ]
+    },
+    "ru": {
+     "title": "Серия побед при выходе после выбывания",
+     "items": [
+      "В battle royale выход сразу после выбывания теперь учитывает серию побед по месту (от 6 игроков: 2-е место +1, 3-е сохраняется, ниже — сброс до 0)."
+     ]
+    },
+    "tr": {
+     "title": "Elendikten sonra çıkınca galibiyet serisi",
+     "items": [
+      "Battle royale'de elendikten hemen sonra çıkılsa bile galibiyet seriniz artık sıralamaya göre işleniyor (6 ve üzeri oyuncu: 2. +1, 3. korunur, daha altı 0'a sıfırlanır)."
+     ]
+    },
+    "it": {
+     "title": "Serie di vittorie se esci dopo l'eliminazione",
+     "items": [
+      "In battle royale, uscire subito dopo l'eliminazione ora applica la serie di vittorie in base al piazzamento (6+ giocatori: 2° +1, 3° invariato, sotto si azzera)."
+     ]
+    },
+    "pl": {
+     "title": "Seria zwycięstw przy wyjściu po eliminacji",
+     "items": [
+      "W battle royale wyjście zaraz po eliminacji nalicza teraz serię zwycięstw według miejsca (6+ graczy: 2. miejsce +1, 3. zostaje, niżej zerowanie do 0)."
+     ]
+    },
+    "ar": {
+     "title": "سلسلة الانتصارات عند الخروج بعد الإقصاء",
+     "items": [
+      "في battle royale، الخروج مباشرة بعد الإقصاء يطبّق سلسلة انتصاراتك حسب المركز (6 لاعبين فأكثر: المركز الثاني +1، والثالث يبقى كما هو، وما دون ذلك يُصفَّر إلى 0)."
+     ]
     }
    }
   },
@@ -28,6 +94,72 @@
      "title": "Match-end screen scrolls",
      "items": [
       "The match-end screen now scrolls when there are many mastery rows, and the Back to main button always stays visible."
+     ]
+    },
+    "es": {
+     "title": "La pantalla de fin de partida se desplaza",
+     "items": [
+      "La pantalla de fin de partida ahora se desplaza cuando hay muchas filas de maestría, y el botón Volver al menú siempre se ve."
+     ]
+    },
+    "fr": {
+     "title": "L'écran de fin de match défile",
+     "items": [
+      "L'écran de fin de match défile désormais lorsqu'il y a beaucoup de lignes de maîtrise, et le bouton Retour au menu reste toujours visible."
+     ]
+    },
+    "de": {
+     "title": "Endbildschirm der Partie ist scrollbar",
+     "items": [
+      "Der Endbildschirm der Partie lässt sich jetzt scrollen, wenn viele Meisterschaftszeilen vorhanden sind, und die Schaltfläche Zurück zum Hauptmenü bleibt immer sichtbar."
+     ]
+    },
+    "ja": {
+     "title": "試合終了画面がスクロールできるように",
+     "items": [
+      "マスタリーの行が多くても試合終了画面がスクロールでき、メインへボタンは常に表示されるようになりました。"
+     ]
+    },
+    "zh": {
+     "title": "比赛结束画面可滚动",
+     "items": [
+      "熟练度行很多时，比赛结束画面也可以滚动，返回主菜单按钮始终可见。"
+     ]
+    },
+    "pt": {
+     "title": "Tela de fim de partida com rolagem",
+     "items": [
+      "A tela de fim de partida agora rola quando há muitas linhas de maestria, e o botão Voltar ao menu principal fica sempre visível."
+     ]
+    },
+    "ru": {
+     "title": "Экран окончания матча прокручивается",
+     "items": [
+      "Экран окончания матча теперь прокручивается, если строк мастерства много, а кнопка «В главное меню» всегда видна."
+     ]
+    },
+    "tr": {
+     "title": "Maç sonu ekranı kaydırılabiliyor",
+     "items": [
+      "Çok sayıda ustalık satırı olduğunda maç sonu ekranı artık kaydırılabiliyor ve Ana menüye dön düğmesi her zaman görünüyor."
+     ]
+    },
+    "it": {
+     "title": "La schermata di fine partita ora scorre",
+     "items": [
+      "La schermata di fine partita ora scorre quando ci sono molte righe di padronanza, e il pulsante Torna al menu principale è sempre visibile."
+     ]
+    },
+    "pl": {
+     "title": "Ekran końca meczu można przewijać",
+     "items": [
+      "Ekran końca meczu przewija się teraz, gdy jest wiele wierszy biegłości, a przycisk Wróć do menu głównego jest zawsze widoczny."
+     ]
+    },
+    "ar": {
+     "title": "شاشة نهاية المباراة قابلة للتمرير",
+     "items": [
+      "أصبحت شاشة نهاية المباراة قابلة للتمرير عند وجود صفوف إتقان كثيرة، وزر العودة إلى القائمة الرئيسية يبقى ظاهرًا دائمًا."
      ]
     }
    }
