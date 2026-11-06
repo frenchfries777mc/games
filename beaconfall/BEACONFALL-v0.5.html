@@ -10043,8 +10043,8 @@ const MOD={ev:[],orig:{},on:[],st:{},remap:{},btns:[],tex:{},iorig:{},col:{},pot
 function modLocal(){try{const o=JSON.parse(localStorage.getItem('bf.mods.on')||'{}');return Object.keys(o).slice(0,50).map(id=>({id:String(id).slice(0,40),kind:o[id].kind,name:o[id].name,descr:o[id].descr,author_name:o[id].author_name,data:o[id].data})).filter(m=>m.data&&typeof m.data==='object');}catch(e){return [];}}
 const MOD_KEY=/^(Key[A-Z]|Digit[0-9]|F([1-9]|1[0-2]))$/;
 function modBox(){let b=document.getElementById('modbtns');if(!b){b=document.createElement('div');b.id='modbtns';b.style.cssText='position:fixed;inset:0;z-index:30;pointer-events:none';document.body.appendChild(b);setInterval(()=>{const m=document.getElementById('modal');b.style.display=(mode==='play'&&m&&m.hidden)?'':'none';},400);}return b;}
-const MODDEF={mob:{},item:{},q:[],ready:false};
-function modDefsRun(){if(!MODDEF.ready)return;MODDEF.mob={};MODDEF.item={};for(const q of MODDEF.q)modDef(q);}
+const MODDEF={mob:{},item:{},q:[],sp:[],t:0,ready:false};
+function modDefsRun(){if(!MODDEF.ready)return;for(let i=RECIPES.length-1;i>=0;i--)if(RECIPES[i].mod)RECIPES.splice(i,1);MODDEF.mob={};MODDEF.item={};for(const q of MODDEF.q)modDef(q);MODDEF.sp=Object.keys(MODDEF.mob).map(n=>MODDEF.mob[n]).filter(k=>MTYPES[k].mb&&MTYPES[k].mb.length);}
 const modTy=t=>{t=String(t||'');return t[0]==='@'?(MODDEF.mob[t.slice(1)]||''):t;};
 const modIt=t=>{t=String(t||'');return t[0]==='@'?(MODDEF.item[t.slice(1)]||''):t;};
 function modDef(q){   // define mob|item "이름": 기존 것을 바탕(base)으로 새 몹/아이템을 만들어요
@@ -10055,12 +10055,14 @@ function modDef(q){   // define mob|item "이름": 기존 것을 바탕(base)으
     if(q.speed>0){const f=cl(q.speed,0.2,4);T.wander=B.wander*f;T.chase=B.chase*f;}
     if(typeof q.col==='string'&&/^#[0-9a-f]{6}$/.test(q.col))T.col=q.col;
     if(Array.isArray(q.drop))T.drop=q.drop.slice(0,5).filter(x=>Array.isArray(x)&&ITEMS[x[0]]).map(x=>[x[0],cl(x[1],0,20)|0,cl(x[2],0,20)|0]);
+    if(Array.isArray(q.bi)&&q.bi.length){T.mb=q.bi.filter(x=>Number.isInteger(x)&&x>=0&&x<9).slice(0,9);T.mr=cl(q.rt||6,1,100);T.mx=cl(q.mx||4,1,100)|0;}
     MTYPES[key]=T;MODDEF.mob[nm]=key;
     const b=MSPR[q.base];if(b){if(T.col&&q.col){const c=document.createElement('canvas');c.width=b.w;c.height=b.h;const g=c.getContext('2d');g.drawImage(b.c,0,0);g.globalCompositeOperation='source-atop';g.globalAlpha=0.55;g.fillStyle=q.col;g.fillRect(0,0,b.w,b.h);MSPR[key]={c,w:b.w,h:b.h,wc:b.wc};}else MSPR[key]=b;}
-  }else if(q.k==='item'){const B=ITEMS[q.base];if(!B)return;ITEMS[key]=Object.assign({},B,{name:nm});MODDEF.item[nm]=key;}
+  }else if(q.k==='item'){const B=ITEMS[q.base];if(!B)return;ITEMS[key]=Object.assign({},B,{name:nm});MODDEF.item[nm]=key;
+    if(Array.isArray(q.rc)&&q.rc.length>=1&&q.rc.length<=7&&q.rc.every(x=>typeof x==='string'&&ITEMS[x]))RECIPES.push({grp:'모드 제작법',bench:true,mod:1,name:nm,note:'모드로 만든 아이템이에요',pat:pad7(q.rc.map(x=>({id:x,n:1}))),out:[{id:key,n:cl(q.mk||1,1,20)|0}]});}
 }
 function modApply(list){
-  MODDEF.mob={};MODDEF.item={};MODDEF.q=[];
+  MODDEF.mob={};MODDEF.item={};MODDEF.q=[];MODDEF.sp=[];
   for(const k in MOD.orig){if(ITEMS[k])ITEMS[k].name=MOD.orig[k];}
   MOD.spW=null;MOD.orig={};MOD.ev=[];MOD.on=[];MOD.st={};MOD.remap={};MOD.col={};MOD.potato=false;MOD.phAll=false;MOD.pa=[];MOD.sig={};
   for(const k in MOD.iorig){if(ITEMS[k])ITEMS[k].icon=MOD.iorig[k];}
@@ -11752,6 +11754,8 @@ function updateMonsters(dt){
         if(monsters.filter(m=>!m.burn&&!m.boss&&!m.dun).length<cap)spawnMonster(pl,ty,p,b);
       }
     }
+    if(MODDEF.sp.length){MODDEF.t-=dt;if(MODDEF.t<=0){MODDEF.t=5;const p=pl[(Math.random()*pl.length)|0],b=bioAt(p.x,p.y);
+      for(const k of MODDEF.sp){const T=MTYPES[k];if(!T||!T.mb.includes(b)||(DUN&&dunFloorAt(p.x,p.y)))continue;if(monsters.reduce((c,m)=>c+(m.ty===k?1:0),0)>=T.mx)continue;if(Math.random()<T.mr*5/60)spawnMonster(pl,k,p,b);}}}   // define mob 의 biome / rate(분당) / max
     updateBosses(pl,dayNow());
   }
   for(let i=monsters.length-1;i>=0;i--){
