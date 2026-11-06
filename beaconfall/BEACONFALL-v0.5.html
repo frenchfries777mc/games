@@ -5029,6 +5029,7 @@ function drawStructSprite(g,kind,cx,cy,mat){
 }
 function drawStruct(g,b){
   const cx=b.gx*GRID,cy=b.gy*GRID;
+  if(MODPLACE[b.id]){g.drawImage(MODPLACE[b.id],cx,cy);return;}   // define item 설치 그림
   if(b.id==='tree'){
     const x=cx+8,y=cy+14,fr=Math.sin(time*1.2+x*0.012+y*0.008)>0.35?1:0,sp=SPR[b.tt|0][fr];
     g.fillStyle='rgba(8,24,12,0.28)';g.fillRect(x-4,y,9,1);g.fillRect(x-3,y+1,7,1);
@@ -10059,6 +10060,7 @@ const MOD={ev:[],orig:{},on:[],st:{},remap:{},btns:[],tex:{},iorig:{},col:{},pot
 function modLocal(){try{const o=JSON.parse(localStorage.getItem('bf.mods.on')||'{}');return Object.keys(o).slice(0,50).map(id=>({id:String(id).slice(0,40),kind:o[id].kind,name:o[id].name,descr:o[id].descr,author_name:o[id].author_name,data:o[id].data})).filter(m=>m.data&&typeof m.data==='object');}catch(e){return [];}}
 const MOD_KEY=/^(Key[A-Z]|Digit[0-9]|F([1-9]|1[0-2]))$/;
 function modBox(){let b=document.getElementById('modbtns');if(!b){b=document.createElement('div');b.id='modbtns';b.style.cssText='position:fixed;inset:0;z-index:30;pointer-events:none';document.body.appendChild(b);setInterval(()=>{const m=document.getElementById('modal');b.style.display=(mode==='play'&&m&&m.hidden)?'':'none';},400);}return b;}
+var MODPLACE={};
 const MODDEF={mob:{},item:{},held:{},food:{},fbuf:{},world:{},st:{},q:[],sp:[],t:0,ready:false};
 function modOre(q){   // define ore "이름": 기존 광물(iron gold copper zinc)을 바탕으로 새 광물 바위를 만들어요
   if(MODORE.n>=4||typeof q.n!=='string'||!q.n||q.n.length>20)return;
@@ -10122,6 +10124,10 @@ function modDef(q){   // define mob|item "이름": 기존 것을 바탕(base)으
   }else if(q.k==='structure'){if(Array.isArray(q.bl))MODDEF.st[nm]=q.bl.slice(0,80).filter(b=>Array.isArray(b)&&STRUCT[b[0]]&&Math.abs(b[1])<=20&&Math.abs(b[2])<=20);
   }else if(q.k==='item'){const B=ITEMS[q.base];if(!B)return;ITEMS[key]=Object.assign({},B,{name:nm});MODDEF.item[nm]=key;
     if(q.pl===false)ITEMS[key].placeable=false;
+    if(q.pl===true&&(q.pimg||q.pii)){const sk='md_'+nm;STRUCT[sk]={layer:'o',block:true,item:key,n:1,need:1.5};ITEMS[key].place=sk;ITEMS[key].placeable=true;
+      const pc=document.createElement('canvas');pc.width=pc.height=16;MODPLACE[sk]=pc;
+      modPic({img:q.pimg,ii:q.pii},src=>{const g=pc.getContext('2d');g.imageSmoothingEnabled=false;g.clearRect(0,0,16,16);g.drawImage(src,0,0,16,16);});}
+
     if(q.wp!==false&&(q.dg!=null||q.cd!=null||q.wp===true)){const o={};if(q.dg!=null)o.dmg=cl(q.dg,0,200);else if(q.wp===true)o.dmg=3;if(q.cd!=null)o.cd=cl(q.cd,0.1,10);else if(q.wp===true)o.cd=0.5;MOD.st[key]=o;}
     if(typeof q.hd==='string'&&MODFX[q.hd])MODDEF.held[key]=MODFX[q.hd];
     ITEMS[key].max=q.mc?cl(q.mc,1,999)|0:(B.max||99);
