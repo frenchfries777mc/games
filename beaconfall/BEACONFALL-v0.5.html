@@ -1372,7 +1372,7 @@ async function loadWorld(seed,name,id){
   await progress(0,'월드를 준비하는 중…');
   world=null;base=null;    // 이전 월드의 큰 메모리를 먼저 놓아줘요
   world=await generateTerrain(seed,(p,m)=>progress(p*0.8,m));
-  world.pt=0;world.pe=0;world.rcIt=null;world.voidWon=0;world.voidBD=0;world.rit=null;ritV=null;world.seedStr=String(seed);world.id=id||null;world.savedPlayer=null;world.clock=DAY_SEC*2/24;monsters=[];world.conv=[];world.pend=new Map();world.trader=null;world.lastTraderDay=0;world.weather={t:'clear',left:120};animals=[];world.expl=new Uint8Array(EW*EH);world.mapBase=null;world.treasureInit=false;world.esc={ph:'idle',t:0};world.escaped=false;world.pilot=false;world.voidShip=null;world.pilE=null;PIL=null;world.introSeen=false;world.disc=world.islands.map((o,i)=>i===0);world.seen=world.islands.map(()=>false);world.lm=[];world.bossDay=world.islands.map(()=>0);oreT=30;
+  world.pt=0;world.pe=0;world.rcIt=null;world.voidWon=0;world.voidBD=0;world.rit=null;ritV=null;world.seedStr=String(seed);world.id=id||null;world.dimP=(()=>{const q=settings.worlds.find(x=>x.id===id);return q&&q.dim?q.dim.p:null;})();world.savedPlayer=null;world.clock=DAY_SEC*2/24;monsters=[];world.conv=[];world.pend=new Map();world.trader=null;world.lastTraderDay=0;world.weather={t:'clear',left:120};animals=[];world.expl=new Uint8Array(EW*EH);world.mapBase=null;world.treasureInit=false;world.esc={ph:'idle',t:0};world.escaped=false;world.pilot=false;world.voidShip=null;world.pilE=null;PIL=null;world.introSeen=false;world.disc=world.islands.map((o,i)=>i===0);world.seen=world.islands.map(()=>false);world.lm=[];world.bossDay=world.islands.map(()=>0);oreT=30;
   world.structs=[];world.sgrid=new Map();world.fgrid=new Map();world.cgrid=new Map();world.rgrid=new Map();FIRE.clear();
   buildTreeGrid();drops=[];parts=[];
   applySave();
@@ -3903,7 +3903,7 @@ function renderInv(){
   else if(crafting&&craftMode!=='chest'&&craftMode!=='anvil')renderRecipes();
 }
 function flashSlot(i){const el=slotEls[i];el.classList.remove('flash');void el.offsetWidth;el.classList.add('flash');}
-const invKey=()=>(typeof world!=='undefined'&&world)?(world.id||('g:'+(shown.seed||''))):'';
+const invKey=()=>(typeof world!=='undefined'&&world)?(world.dimP||world.id||('g:'+(shown.seed||''))):'';
 let invLoadedKey=null;   // 지금 메모리의 인벤토리가 어느 월드 것인지
 function persist(){
   if(invKey()&&invLoadedKey!==invKey())return;   // 다른 월드 인벤토리를 이 월드 칸에 덮어쓰지 않아요
@@ -10059,7 +10059,7 @@ const MOD={ev:[],orig:{},on:[],st:{},remap:{},btns:[],tex:{},iorig:{},col:{},pot
 function modLocal(){try{const o=JSON.parse(localStorage.getItem('bf.mods.on')||'{}');return Object.keys(o).slice(0,50).map(id=>({id:String(id).slice(0,40),kind:o[id].kind,name:o[id].name,descr:o[id].descr,author_name:o[id].author_name,data:o[id].data})).filter(m=>m.data&&typeof m.data==='object');}catch(e){return [];}}
 const MOD_KEY=/^(Key[A-Z]|Digit[0-9]|F([1-9]|1[0-2]))$/;
 function modBox(){let b=document.getElementById('modbtns');if(!b){b=document.createElement('div');b.id='modbtns';b.style.cssText='position:fixed;inset:0;z-index:30;pointer-events:none';document.body.appendChild(b);setInterval(()=>{const m=document.getElementById('modal');b.style.display=(mode==='play'&&m&&m.hidden)?'':'none';},400);}return b;}
-const MODDEF={mob:{},item:{},held:{},food:{},fbuf:{},st:{},q:[],sp:[],t:0,ready:false};
+const MODDEF={mob:{},item:{},held:{},food:{},fbuf:{},world:{},st:{},q:[],sp:[],t:0,ready:false};
 function modOre(q){   // define ore "이름": 기존 광물(iron gold copper zinc)을 바탕으로 새 광물 바위를 만들어요
   if(MODORE.n>=4||typeof q.n!=='string'||!q.n||q.n.length>20)return;
   const bt={zinc:5,gold:3,copper:4,iron:2}[q.base];if(!bt)return;
@@ -10072,7 +10072,31 @@ function modOre(q){   // define ore "이름": 기존 광물(iron gold copper zin
   for(const b of bi){if(!(b>=0&&b<9))continue;(MODORE.bio[b]=MODORE.bio[b]||[]).push(id);}
   MODORE.n++;
 }
-function modDefsRun(){if(!MODDEF.ready)return;for(let i=RECIPES.length-1;i>=0;i--)if(RECIPES[i].mod)RECIPES.splice(i,1);MODDEF.mob={};MODDEF.item={};MODDEF.held={};MODDEF.food={};MODDEF.fbuf={};BAGX={};MODDEF.st={};for(const q of MODDEF.q)modDef(q);MODORE.t={};MODORE.bio={};MODORE.n=0;for(const q of MODDEF.q)if(q&&q.k==='ore')modOre(q);
+let modTravelBusy=false;
+async function modTravel(name){   // define world 로 만든 월드(또는 원래 월드)로 통째로 이동. 가방은 그대로 가져가요.
+  if(modTravelBusy||mode!=='play'||P.dead||isGuest()||net.role){if(net.role)toast('다른 월드 이동은 혼자 할 때만 돼요.');return;}
+  const cur=settings.worlds.find(w=>w.id===settings.current);if(!cur)return;
+  const par=cur.dim?settings.worlds.find(w=>w.id===cur.dim.p):cur;if(!par)return;
+  let tgt=par;
+  if(name){
+    const dd=MODDEF.world[name];if(!dd)return;
+    const id='d'+hashStr(par.id+'|'+name).toString(36);
+    tgt=settings.worlds.find(w=>w.id===id);
+    if(!tgt){const sd=dd.sd||String(1+hashStr(String(par.seed)+'|'+name)%999999998);
+      tgt={id,name:(par.name+' · '+name).slice(0,30),seed:sd,created:Date.now(),dim:{p:par.id,n:name}};
+      if(par.diff)tgt.diff=par.diff;if(par.keep)tgt.keep=true;if(par.hard)tgt.hard=true;if(par.sandbox){tgt.sandbox=true;tgt.sbEver=true;}
+      settings.worlds.push(tgt);}
+  }
+  if(tgt.id===cur.id)return;
+  modTravelBusy=true;
+  try{
+    persist();saveWorld(true);
+    settings.current=tgt.id;saveSettings();
+    await loadWorld(tgt.seed,tgt.name,tgt.id);
+    enterPlay();toast(name?`"${name}" 월드로 이동했어요.`:'원래 월드로 돌아왔어요.');
+  }finally{modTravelBusy=false;}
+}
+function modDefsRun(){if(!MODDEF.ready)return;for(let i=RECIPES.length-1;i>=0;i--)if(RECIPES[i].mod)RECIPES.splice(i,1);MODDEF.mob={};MODDEF.item={};MODDEF.held={};MODDEF.food={};MODDEF.fbuf={};MODDEF.world={};BAGX={};MODDEF.st={};for(const q of MODDEF.q)modDef(q);MODORE.t={};MODORE.bio={};MODORE.n=0;for(const q of MODDEF.q)if(q&&q.k==='ore')modOre(q);
   MODDEF.sp=Object.keys(MODDEF.mob).map(n=>MODDEF.mob[n]).filter(k=>MTYPES[k].mb&&MTYPES[k].mb.length);}
 const modTy=t=>{t=String(t||'');return t[0]==='@'?(MODDEF.mob[t.slice(1)]||''):t;};
 const modIt=t=>{t=String(t||'');return t[0]==='@'?(MODDEF.item[t.slice(1)]||''):t;};
@@ -10094,6 +10118,7 @@ function modDef(q){   // define mob|item "이름": 기존 것을 바탕(base)으
     if(Array.isArray(q.ho)){T.hp0=q.ho.includes('player');T.hm=q.ho.filter(x=>x!=='player').slice(0,10);}
     MTYPES[key]=T;MODDEF.mob[nm]=key;
     const b=MSPR[q.base];if(b){if(modPic(q)){const c=document.createElement('canvas');c.width=b.w;c.height=b.h;const wc=document.createElement('canvas');wc.width=b.w;wc.height=b.h;MSPR[key]={c,w:b.w,h:b.h,wc};modPic(q,src=>{const g=c.getContext('2d');g.imageSmoothingEnabled=false;g.clearRect(0,0,b.w,b.h);g.drawImage(src,0,0,b.w,b.h);const h=wc.getContext('2d');h.clearRect(0,0,b.w,b.h);h.drawImage(c,0,0);h.globalCompositeOperation='source-atop';h.fillStyle='#fff';h.fillRect(0,0,b.w,b.h);});}else if(T.col&&q.col){const c=document.createElement('canvas');c.width=b.w;c.height=b.h;const g=c.getContext('2d');g.drawImage(b.c,0,0);g.globalCompositeOperation='source-atop';g.globalAlpha=0.55;g.fillStyle=q.col;g.fillRect(0,0,b.w,b.h);MSPR[key]={c,w:b.w,h:b.h,wc:b.wc};}else MSPR[key]=b;}
+  }else if(q.k==='world'){MODDEF.world[nm]={sd:q.sd||''};
   }else if(q.k==='structure'){if(Array.isArray(q.bl))MODDEF.st[nm]=q.bl.slice(0,80).filter(b=>Array.isArray(b)&&STRUCT[b[0]]&&Math.abs(b[1])<=20&&Math.abs(b[2])<=20);
   }else if(q.k==='item'){const B=ITEMS[q.base];if(!B)return;ITEMS[key]=Object.assign({},B,{name:nm});MODDEF.item[nm]=key;
     if(q.pl===false)ITEMS[key].placeable=false;
@@ -10498,6 +10523,7 @@ function modRun(acts,depth,box){
       const ty=modTy(a.spawn.ty),T=MTYPES[ty],n=Math.max(1,Math.min(10,a.spawn.n|0||1)),an=modAnchor(a.spawn.near,box.gen);
       for(let i=0;i<n&&monsters.length<250;i++){const sp=modFreeSpot(an,30,90);if(!sp)continue;monsters.push({id:nextMid++,ty,x:sp.x,y:sp.y,tx:sp.x,ty2:sp.y,f:1,born:0,burn:0,wt:0,wa:0,ws:0,spd:T.wander,hp:T.hp,st:0,wind:0,cd:1,stun:0,hurt:0,kx:0,ky:0});}
     }
+    else if(a.travel&&host){const tw=String(a.travel.w||'');setTimeout(()=>{modTravel(tw);},30);}   // 다른 월드로 이동
     else if(a.build&&host&&MODDEF.st[String(a.build.n)]){   // define structure 로 만든 구조물 짓기
       const an=modAnchor(a.build.near,box.gen),cx=((an.x/GRID)|0)+3,cy=(an.y/GRID)|0;
       for(const [k,dx,dy] of MODDEF.st[String(a.build.n)]){const gx=cx+dx,gy=cy+dy;if(canPlaceCell(gx,gy,k,true))addStruct(k,gx,gy,'host',k);}
@@ -13469,7 +13495,7 @@ const randAddr=()=>{const a='abcdefghjkmnpqrstuvwxyz23456789';let s='isle-';for(
 let delArm='';
 function showSingle(){
   delArm='';
-  const rows=settings.worlds.map(w=>`<li class="wrow${w.id===settings.current?' on':''}">
+  const rows=settings.worlds.filter(w=>!w.dim).map(w=>`<li class="wrow${w.id===settings.current?' on':''}">
     <div class="winfo"><b>${esc(w.name)}</b><span>SEED ${esc(w.seed)}${wOptText(w)}</span></div>
     <div class="wbtn"><button class="btn sm" data-open="${esc(w.id)}"${w.over?' disabled':''}>열기</button><button class="btn sm ghost" data-share="${esc(w.id)}">주소 만들기</button><button class="btn sm ghost" data-bak="${esc(w.id)}">백업</button><button class="btn sm ghost" data-sbtog="${esc(w.id)}">샌드박스 ${w.sandbox?'끄기':'켜기'}</button><button class="btn sm ghost" data-del="${esc(w.id)}">삭제</button></div></li>`).join('');
   openModal(`<h2>싱글 플레이<small>SINGLE PLAY</small></h2>
@@ -14065,7 +14091,7 @@ function showMulti(pre){
       <div class="actions"><button class="btn sm ghost" data-close>닫기</button><button class="btn sm ghost" data-backplay>게임으로</button>${host?'<button class="btn sm ghost" data-copy>주소 복사</button><button class="btn sm ghost" data-invite>초대 링크 복사</button>':''}<button class="btn sm" data-leave>${host?'방 닫기':'나가기'}</button></div>`;
   }else{
     const sel=pre||settings.current;
-    const opts=settings.worlds.filter(w=>!w.over).map(w=>`<option value="${esc(w.id)}"${w.id===sel?' selected':''}>${esc(w.name)} (SEED ${esc(w.seed)})</option>`).join('');
+    const opts=settings.worlds.filter(w=>!w.over&&!w.dim).map(w=>`<option value="${esc(w.id)}"${w.id===sel?' selected':''}>${esc(w.name)} (SEED ${esc(w.seed)})</option>`).join('');
     body=`<div id="frbox"></div>
       <div class="split"></div>
       <h3>내 월드로 방 열기</h3>
