@@ -460,12 +460,13 @@ const BGM=(()=>{
   const ISLE={2:'bgm-desert.mp3',3:'bgm-volcano.mp3',4:'bgm-jungle.mp3',5:'bgm-desert.mp3',7:'bgm-jungle.mp3',8:'bgm-ice.mp3'};   // BIOME_NAME 번호
   const LEVEL={'bgm-battle.mp3':1,'bgm-startagain.mp3':2.1,base:0.4,'bgm-night.mp3':0.9,'bgm-volcano.mp3':1.8,'bgm-storm.mp3':0.9};   // 파일 안의 곡은 원래 소리가 커서 줄여요
   const AMB={'bgm-night.mp3':1,'bgm-rain.mp3':1,'bgm-storm.mp3':1};
-  let ctx=null,master=null,isle=0,isleT=0;const ch={};
+  let ctx=null,master=null,isle=0,isleT=0;const ch={};let PACK={};
+  const pname=key=>(key==='base'?BASE:key).replace(/\.mp3$/,'');
   const chan=key=>{
     if(ch[key])return ch[key];
     const a=new Audio();a.loop=true;a.preload='auto';a.crossOrigin='anonymous';let alt=false;
     a.onerror=()=>{if(!alt&&location.href.indexOf(ALT)!==0){alt=true;a.src=ALT+(key==='base'?BASE:key);}else a.dataset.bad='1';};
-    a.src=key==='base'?BASE:key;
+    a.src=PACK[pname(key)]||(key==='base'?BASE:key);
     const g=ctx.createGain();g.gain.value=0;try{ctx.createMediaElementSource(a).connect(g);}catch(e){}g.connect(master);
     return ch[key]={a,g};
   };
@@ -510,7 +511,12 @@ const BGM=(()=>{
   return {get vol(){return vol;},
     setVol(v){vol=Math.max(0,Math.min(1,v));if(master)master.gain.setTargetAtTime(vol,ctx.currentTime,0.05);try{localStorage.setItem('stranded.bgmvol',String(vol));}catch(e){}},
     toggle(){on=!on;try{localStorage.setItem('stranded.bgm',on?'1':'0');}catch(e){}if(!on){for(const k in ch)ch[k].a.pause();}else tick();return on;},
-    get on(){return on;}};
+    get on(){return on;},
+    setPack(m){   // 리소스팩/모드: 곡 바꾸기·새 곡 넣기 ({이름: 데이터주소})
+      PACK=(m&&typeof m==='object')?m:{};
+      for(const key in ch){const c=ch[key],u=PACK[pname(key)],orig=key==='base'?BASE:key;const want=u||orig;if(c.a.getAttribute('src')!==want){const was=!c.a.paused;c.a.dataset.bad='';c.a.src=want;if(was)c.a.play().catch(()=>{});}}
+    },
+    has(name){return !!PACK[name];}};
 })();
 </script>
 <script>
@@ -518,7 +524,7 @@ const BGM=(()=>{
 /* ---------- 월드 생성 (DOM 의존 없음) ---------- */
 const W=21504, H=13312, SEA=0.5;   // 구역(256×256)별로 불러오는 아주 큰 월드
 function mulberry32(a){return function(){a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296;};}
-var MODBLK={},MODPKO=[],MODPPL={},MODUI={},MODPKQ=[];   // 리소스팩 그림
+var MODBLK={},MODPKO=[],MODPPL={},MODUI={},MODPKQ=[],MODSND={},MODMUSP={};   // 리소스팩 그림
 function hashStr(s){let h=2166136261;s=String(s);for(let i=0;i<s.length;i++){h^=s.charCodeAt(i);h=Math.imul(h,16777619);}return h>>>0;}
 function hash2(x,y){let n=(Math.imul(x,374761393)+Math.imul(y,668265263))|0;n=Math.imul(n^(n>>>13),1274126177);return((n^(n>>>16))>>>0)/4294967296;}
 const rgb=(hex)=>{const n=parseInt(hex.slice(1),16);return((0xFF000000)|((n&255)<<16)|(n&0xFF00)|(n>>16))>>>0;};
@@ -7922,6 +7928,7 @@ const SFX=(()=>{
     if(typeof mode==='undefined'||mode!=='play')return;
     const L=lvl();if(L<=0||!ok(key,gap))return;
     let v=L*g;if(x!==undefined&&y!==undefined){v*=Math.max(0,1-Math.hypot(P.x-x,P.y-y)/260);}
+    if(MODSND[key]&&v>=0.02){try{const a=new Audio(MODSND[key]);a.volume=Math.max(0,Math.min(1,v));a.playbackRate=0.92+Math.random()*0.16;a.play().catch(()=>{});}catch(e){}return;}   // 리소스팩 소리
     if(v<0.02||!init())return;
     if(ctx.state==='suspended'){ctx.resume().catch(()=>{});return;}
     const r=0.92+Math.random()*0.16;
@@ -10080,7 +10087,8 @@ function modOre(q){   // define ore "이름": 기존 광물(iron gold copper zin
   MODORE.n++;
 }
 const MODUISEL={slot:'.slot',hotbar:'#inv',equip_bar:'#equip',clock:'#clock',button_back:'#backbtn',button_stat:'#statbtn',craft_window:'#craft',recipe_list:'#recipes',bag_row:'#bagrow'};
-function modPackReset(){for(let i=MODPKO.length-1;i>=0;i--){try{MODPKO[i]();}catch(e){}}MODPKO.length=0;for(const k in MODBLK)delete MODBLK[k];for(const k in MODPPL)delete MODPPL[k];for(const k in MODUI)delete MODUI[k];const st=document.getElementById('modui');if(st)st.textContent='';}
+function modPackReset(){MODMUSP={};for(const k in MODSND)delete MODSND[k];try{BGM.setPack({});}catch(e){}
+  for(let i=MODPKO.length-1;i>=0;i--){try{MODPKO[i]();}catch(e){}}MODPKO.length=0;for(const k in MODBLK)delete MODBLK[k];for(const k in MODPPL)delete MODPPL[k];for(const k in MODUI)delete MODUI[k];const st=document.getElementById('modui');if(st)st.textContent='';}
 function modPackLoad(P){   // 리소스팩 폴더(blocks/trees/rocks/mobs/animals/people/ui)의 그림으로 게임 그림 바꾸기
   let n=0;const css=[];
   const ld=(v,cb)=>{if(typeof v!=='string'||!/^data:image\/png;base64,[A-Za-z0-9+\/=]{20,32000}$/.test(v)||n++>=900)return;const im=new Image();im.onload=()=>{try{cb(im);}catch(e){}};im.src=v;};
@@ -10097,8 +10105,12 @@ function modPackLoad(P){   // 리소스팩 폴더(blocks/trees/rocks/mobs/animal
   for(const k of Object.keys(sub('ui')).slice(0,40)){const v=P.ui[k];if(typeof v!=='string'||!/^data:image\/png;base64,[A-Za-z0-9+\/=]{20,32000}$/.test(v))continue;
     if(/^heart_(empty|half|full)$/.test(k)){ld(v,im=>{MODUI[k]=im;try{renderHp();}catch(e){}});}
     else if(MODUISEL[k])css.push(MODUISEL[k]+'{background:url("'+v+'") center/100% 100% no-repeat!important;image-rendering:pixelated;'+(k==='slot'?'':'border:0!important;')+'}');}
+  {const S=sub('sounds'),SN={hit:'hit',done:'done',swing:'swing',weapon_hit:'wh',monster_hit:'mh',monster_die:'md',animal_hurt:'an',animal_call:'ac',hurt:'hu',bow:'bow',blip:'blip'},mus={};
+    for(const k of Object.keys(S).slice(0,60)){const v=S[k];if(typeof v!=='string'||!/^data:audio\/[a-z0-9.+-]{2,20};base64,[A-Za-z0-9+\/=]{20,}$/.test(v))continue;if(SN[k])MODSND[SN[k]]=v;else mus[k]=v;}
+    if(Object.keys(mus).length)MODMUSP=Object.assign(MODMUSP,mus);}
   if(css.length){let st=document.getElementById('modui');if(!st){st=document.createElement('style');st.id='modui';document.head.appendChild(st);}st.textContent+=css.join('\n');}
   setTimeout(()=>{try{renderInv();renderEquip();}catch(e){}},400);
+  try{BGM.setPack(MODMUSP);}catch(e){}
 }
 let modTravelBusy=false;
 async function modTravel(name){   // define world 로 만든 월드(또는 원래 월드)로 통째로 이동. 가방은 그대로 가져가요.

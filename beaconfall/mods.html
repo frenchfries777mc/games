@@ -587,7 +587,8 @@ function parseScript(text,lenient){
 }
 var TEX={},FD=null;
 function readPng(f,sz){sz=sz||12;return new Promise(function(res,rej){var im=new Image(),u=URL.createObjectURL(f);im.onload=function(){var c=document.createElement('canvas');c.width=c.height=sz;var x=c.getContext('2d');x.imageSmoothingEnabled=false;x.drawImage(im,0,0,sz,sz);URL.revokeObjectURL(u);res(c.toDataURL('image/png'));};im.onerror=function(){rej();};im.src=u;});}
-var PKC=['items','blocks','trees','rocks','mobs','animals','people','ui'];
+var PKC=['items','blocks','trees','rocks','mobs','animals','people','ui','sounds'];
+function readAud(f){return new Promise(function(res,rej){var r=new FileReader();r.onload=function(){var u=String(r.result),m=/\.ogg$/i.test(f.name)?'audio/ogg':/\.wav$/i.test(f.name)?'audio/wav':'audio/mpeg';var i=u.indexOf('base64,');if(i<0){rej();return;}res('data:'+m+';'+u.slice(i));};r.onerror=function(){rej();};r.readAsDataURL(f);});}
 function readPngN(f,mx){return new Promise(function(res,rej){var im=new Image(),u=URL.createObjectURL(f);im.onload=function(){var w=im.naturalWidth,h=im.naturalHeight;URL.revokeObjectURL(u);if(!w||!h||w>mx||h>mx){rej();return;}var c=document.createElement('canvas');c.width=w;c.height=h;var x=c.getContext('2d');x.imageSmoothingEnabled=false;x.drawImage(im,0,0);res(c.toDataURL('image/png'));};im.onerror=function(){rej();};im.src=u;});}
 function readTxt(f){return new Promise(function(res,rej){var r=new FileReader();r.onload=function(){res(String(r.result));};r.onerror=function(){rej();};r.readAsText(f);});}
 var ULOGO=null;
@@ -600,11 +601,20 @@ $('uf').addEventListener('change',async function(){
   TEX={};FD=null;var box=$('uprev');box.innerHTML='';umsg('');
   var files=[].slice.call(this.files);if(!files.length)return;
   var root=((files[0].webkitRelativePath||'').split('/')[0]||'').trim();
-  files=files.filter(function(f){return /\.(bs|beaconfall|png)$/i.test(f.name);}).slice(0,200);
-  var PK={},PKN=0,PEND=[],M={events:[],names:null,sets:[],remap:null,col:null},LOGO=null,kind=null,name='',okc=0,bad=0;
+  files=files.filter(function(f){return /\.(bs|beaconfall|png|mp3|ogg|wav)$/i.test(f.name);}).slice(0,1000);
+  var PK={},PKN=0,ASZ=0,PEND=[],M={events:[],names:null,sets:[],remap:null,col:null},LOGO=null,kind=null,name='',okc=0,bad=0;
   function line(txt,cls){var sp=document.createElement('span');if(cls)sp.className=cls;sp.textContent=txt;box.appendChild(sp);}
   for(var i=0;i<files.length;i++){
     var f=files[i],rel=(f.webkitRelativePath||f.name).split('/').slice(1).join('/')||f.name;
+    if(/\.(mp3|ogg|wav)$/i.test(f.name)){
+      var abase=f.name.replace(/\.(mp3|ogg|wav)$/i,'').trim();
+      if(rel.split('/')[0].toLowerCase()!=='sounds'||rel.indexOf('/')<0){line(rel+' ✗ 소리 파일은 sounds 폴더 안에 넣어 주세요','bad');bad++;continue;}
+      if(!/^[A-Za-z0-9_\-]{1,40}$/.test(abase)){line(rel+' ✗ 파일 이름은 영어·숫자·_ 만 돼요','bad');bad++;continue;}
+      if(f.size>3200000){line(rel+' ✗ 소리 파일은 3MB까지예요','bad');bad++;continue;}
+      if(ASZ+f.size>20000000){line(rel+' ✗ 소리는 모두 합쳐 20MB까지예요','bad');bad++;continue;}
+      try{var au=await readAud(f);(PK.sounds=PK.sounds||{})[abase]=au;ASZ+=f.size;PKN++;okc++;line(rel+' ✓ (소리)');}catch(e){line(rel+' ✗ 소리를 읽지 못했어요','bad');bad++;}
+      continue;
+    }
     if(/\.png$/i.test(f.name)&&rel.indexOf('/')>0&&PKC.indexOf(rel.split('/')[0].toLowerCase())>=0){
       var pcat=rel.split('/')[0].toLowerCase(),pbase=f.name.replace(/\.png$/i,'').trim();
       if(!/^[A-Za-z0-9_\-]{1,40}$/.test(pbase)){line(rel+' ✗ 파일 이름은 영어·숫자·_ 만 돼요','bad');bad++;continue;}
@@ -661,7 +671,7 @@ function check(kind,d){
     if(d.sets&&(!Array.isArray(d.sets)||d.sets.length>100))return '"sets"는 100개까지예요.';
     if(d.remap&&(typeof d.remap!=='object'||Array.isArray(d.remap)||Object.keys(d.remap).length>30))return '"remap"은 30개까지예요.';
     if(d.textures&&(typeof d.textures!=='object'||Array.isArray(d.textures)))return '"textures" 모양이 올바르지 않아요.';
-    if(d.packs){if(typeof d.packs!=='object'||Array.isArray(d.packs))return '"packs" 모양이 올바르지 않아요.';var pn=0;for(var pc in d.packs){if(PKC.indexOf(pc)<0||!d.packs[pc]||typeof d.packs[pc]!=='object')return '"packs"에 모르는 폴더 "'+pc+'"가 있어요.';for(var pk in d.packs[pc]){if(!/^[A-Za-z0-9_\-]{1,40}$/.test(pk)||typeof d.packs[pc][pk]!=='string'||!/^data:image\/png;base64,[A-Za-z0-9+\/=]{20,32000}$/.test(d.packs[pc][pk]))return '"packs" 그림 "'+pc+'/'+pk+'"이 올바르지 않아요.';pn++;}}if(pn>900)return '리소스팩 그림은 900장까지예요.';}
+    if(d.packs){if(typeof d.packs!=='object'||Array.isArray(d.packs))return '"packs" 모양이 올바르지 않아요.';var pn=0;for(var pc in d.packs){if(PKC.indexOf(pc)<0||!d.packs[pc]||typeof d.packs[pc]!=='object')return '"packs"에 모르는 폴더 "'+pc+'"가 있어요.';for(var pk in d.packs[pc]){if(!/^[A-Za-z0-9_\-]{1,40}$/.test(pk)||typeof d.packs[pc][pk]!=='string'||!(pc==='sounds'?/^data:audio\/[a-z0-9.+-]{2,20};base64,[A-Za-z0-9+\/=]{20,}$/.test(d.packs[pc][pk])&&d.packs[pc][pk].length<4400000:/^data:image\/png;base64,[A-Za-z0-9+\/=]{20,32000}$/.test(d.packs[pc][pk])))return '"packs" 그림 "'+pc+'/'+pk+'"이 올바르지 않아요.';pn++;}}if(pn>900)return '리소스팩 그림은 900장까지예요.';}
     if(!d.names&&!d.sets&&!d.remap&&!d.textures&&!d.packs&&!d.col&&d.api!=='potato'&&!d.pa&&!d.defs&&(!Array.isArray(d.events)||!d.events.length))return '모드에는 규칙(on), 이름 바꾸기, set, remap, 그림 중 하나는 있어야 해요.';
     if(d.defs){for(var di=0;di<d.defs.length;di++){var dq=d.defs[di];if(!dq||(dq.k!=='mob'&&dq.k!=='item'))continue;if(dq.k==='item'&&dq.pl===true&&(typeof dq.pimg!=='string'||!/^data:image\/png;base64,[A-Za-z0-9+\/=]{20,6000}$/.test(dq.pimg))&&typeof dq.pii!=='string')return '설치 아이템 "'+(dq.n||'')+'"의 설치 그림 image: "'+(dq.pimage||'')+'"를 못 찾았어요.';if((typeof dq.img!=='string'||!/^data:image\/png;base64,[A-Za-z0-9+\/=]{20,6000}$/.test(dq.img))&&typeof dq.ii!=='string'&&typeof dq.im!=='string')return '새 '+(dq.k==='mob'?'몹':'아이템')+' "'+(dq.n||'')+'"의 image: "'+(dq.image||'')+'"를 못 찾았어요. 폴더에 같은 이름의 PNG를 넣거나, 게임 속 아이템/몹 이름을 써 주세요.';}}
     if(!d.events)return '';
@@ -675,7 +685,7 @@ function check(kind,d){
       for(var j=0;j<ks.length;j++){if(typeof d.names[ks[j]]!=='string'||d.names[ks[j]].length>40)return '"'+ks[j]+'"의 새 이름은 40자 이하 문자열이어야 해요.';}
     }
     if(d.textures&&(typeof d.textures!=='object'||Array.isArray(d.textures)))return '"textures" 모양이 올바르지 않아요.';
-    if(d.packs){if(typeof d.packs!=='object'||Array.isArray(d.packs))return '"packs" 모양이 올바르지 않아요.';var pn=0;for(var pc in d.packs){if(PKC.indexOf(pc)<0||!d.packs[pc]||typeof d.packs[pc]!=='object')return '"packs"에 모르는 폴더 "'+pc+'"가 있어요.';for(var pk in d.packs[pc]){if(!/^[A-Za-z0-9_\-]{1,40}$/.test(pk)||typeof d.packs[pc][pk]!=='string'||!/^data:image\/png;base64,[A-Za-z0-9+\/=]{20,32000}$/.test(d.packs[pc][pk]))return '"packs" 그림 "'+pc+'/'+pk+'"이 올바르지 않아요.';pn++;}}if(pn>900)return '리소스팩 그림은 900장까지예요.';}
+    if(d.packs){if(typeof d.packs!=='object'||Array.isArray(d.packs))return '"packs" 모양이 올바르지 않아요.';var pn=0;for(var pc in d.packs){if(PKC.indexOf(pc)<0||!d.packs[pc]||typeof d.packs[pc]!=='object')return '"packs"에 모르는 폴더 "'+pc+'"가 있어요.';for(var pk in d.packs[pc]){if(!/^[A-Za-z0-9_\-]{1,40}$/.test(pk)||typeof d.packs[pc][pk]!=='string'||!(pc==='sounds'?/^data:audio\/[a-z0-9.+-]{2,20};base64,[A-Za-z0-9+\/=]{20,}$/.test(d.packs[pc][pk])&&d.packs[pc][pk].length<4400000:/^data:image\/png;base64,[A-Za-z0-9+\/=]{20,32000}$/.test(d.packs[pc][pk])))return '"packs" 그림 "'+pc+'/'+pk+'"이 올바르지 않아요.';pn++;}}if(pn>900)return '리소스팩 그림은 900장까지예요.';}
   }
   return '';
 }
