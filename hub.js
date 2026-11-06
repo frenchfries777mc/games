@@ -186,6 +186,11 @@ async function board(){
     p.querySelector('.cm-cancel').onclick=function(){ p.querySelector('.cm-w').style.display='none'; pend=[]; paintPend(); };
     var pick=p.querySelector('.cm-pick input'); pick.onchange=function(){ addPend([].slice.call(this.files||[])); this.value=''; };
     p.querySelector('.cm-w textarea').addEventListener('paste',function(e){ var fs=filesOf(e); if(fs.length){ e.preventDefault(); addPend(fs); } });
+    /* 사진 파일(PNG 등)을 글쓰기 칸 위로 끌어다 놓아도 추가돼요 */
+    (function(){ var w=p.querySelector('.cm-w'); function hasFiles(e){ var t=(e.dataTransfer&&e.dataTransfer.types)||[]; return [].indexOf.call(t,'Files')>=0; }
+      ['dragenter','dragover'].forEach(function(n){ w.addEventListener(n,function(e){ if(!hasFiles(e)) return; e.preventDefault(); w.classList.add('dz'); }); });
+      w.addEventListener('dragleave',function(e){ if(!w.contains(e.relatedTarget)) w.classList.remove('dz'); });
+      w.addEventListener('drop',function(e){ if(!hasFiles(e)) return; e.preventDefault(); w.classList.remove('dz'); var fs=[].slice.call(e.dataTransfer.files||[]).filter(function(f){ return /^image\//.test(f.type); }); if(fs.length) addPend(fs); }); })();
     p.querySelector('.cm-more').onclick=function(){ bLimit+=20; listPosts(); };
     /* 글 임시저장: 쓰던 글 제목·내용·게임을 이 기기에 남겨 두고, 닫았다가 다시 열면 이어 써요 (사진은 남지 않아요) */
     (function(){ var w=p.querySelector('.cm-w'), K='ff.board.draft';
