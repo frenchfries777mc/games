@@ -478,7 +478,9 @@ const BGM=(()=>{
     wasIn=true;
     try{const fight=(DUN&&dunFloorAt(P.x,P.y)>0)||monsters.some(m=>m.boss&&!m.burn&&!m.hid&&Math.hypot(m.x-P.x,m.y-P.y)<300);if(fight)fightT=performance.now()+6000;if(performance.now()<fightT)return ch['bgm-battle.mp3']&&ch['bgm-battle.mp3'].a.dataset.bad?'base':'bgm-battle.mp3';}catch(e){}   // 던전 안이나 보스 근처에서는 전투 곡 (벗어난 뒤 6초는 유지)
     try{if(!(P.sailing||P.air)){const b=bioAt(P.x,P.y);if(b!==isle){if(++isleT>=3){isle=b;isleT=0;}}else isleT=0;}}catch(e){}   // 섬 경계에서 곡이 자꾸 바뀌지 않게 3초 머물러야 바꿈
-    let k=ISLE[isle];if(!k){try{k=SEASON[seasonNow()];}catch(e){k='base';}}
+    let k=ISLE[isle];
+    try{const cu=cbOf(P.x,P.y);if(cu&&cu.mu&&!(P.sailing||P.air)){k=cu.mu;if(!ch[k])chan(k);}}catch(e){}   // define biome 의 music
+    if(!k){try{k=SEASON[seasonNow()];}catch(e){k='base';}}
     if(k!==rareFor){rareFor=k;rare=Math.random()<0.05;}   // 섬·계절이 바뀔 때마다 한 번 뽑아서, 아주 가끔 새 곡이 나와요
     if(rare)k='bgm-startagain.mp3';
     return ch[k]&&ch[k].a.dataset.bad?'base':k;
@@ -570,9 +572,9 @@ const TREE_SW=[5,5,5,3,2,3,5,5,3,3];
    모든 값은 시드로 정해지는 함수라서 어디서든(손님 포함) 똑같은 월드가 나와요. */
 const CHK=256, CXN=W/CHK, CYN=H/CHK, APR=8, RGN=CHK+2*APR, TMAX=2048, BMAX=1024, CHK_CAP=150;
 let TER=null,PTF=null;   // PTF: 모드가 바꾼 지형 설정(방장→손님)
-let sV=0,sB=0,sM=0;   // shape()의 결과 (높이, 섬 종류(+128 용암), 습도)
+let sV=0,sB=0,sM=0,sC=0;const MODBIO={id:{},by:[null],n:0};   // sC: 모드로 만든 바이옴 번호 (0=없음)   // shape()의 결과 (높이, 섬 종류(+128 용암), 습도)
 function shape(x,y,hb,fb,L){
-  let best=-0.45,bo=null,bd=9;
+  let best=-0.45,bo=null,bd=9;sC=0;
   for(let a=0;a<L.length;a++){
     const o=L[a],dx=(x-o.cx)/o.rx;if(dx>1.3||dx<-1.3)continue;
     const dy=(y-o.cy)/o.ry;if(dy>1.25||dy<-1.25)continue;
@@ -594,12 +596,19 @@ function shape(x,y,hb,fb,L){
     const v0=v,bv0=bv;
     for(let k=0;k<tf.r.length;k++){
       const q=tf.r[k];if(x<q[0]||x>q[2]||y<q[1]||y>q[3])continue;
-      if(q[4]===4){v=v0;bv=bv0;continue;}
+      if(q[4]===4){v=v0;bv=bv0;sC=0;continue;}
+      if(q[7]===1){   // 타원 섬 (새 바이옴)
+        const ex=(x-(q[0]+q[2])/2)/((q[2]-q[0])/2),ey=(y-(q[1]+q[3])/2)/((q[3]-q[1])/2),ed=Math.sqrt(ex*ex+ey*ey);
+        if(ed>=1)continue;
+        const lv=SEA+0.012+(1-ed)*(1-ed*0.4)*0.5+(hb-0.5)*0.1*(1-ed);
+        if(lv>v)v=lv;
+        bv=q[5]>=0?q[5]:1;sC=(q[6]&&MODBIO.id[q[6]])||0;continue;
+      }
       if(q[4]===0){v=SEA+0.08+Math.max(0,0.55*((hb-0.5)*2.8+0.5)-0.3)*0.6;if(v>0.7)v=0.7;}
       else if(q[4]===1)v=SEA+0.012+Math.max(0,hb-0.5)*0.05;
       else if(q[4]===3)v=Math.min(0.95,0.8+Math.max(0,hb-0.3)*0.3);   // 산
       else v=SEA-0.3-hb*0.1;
-      if(q[5]>=0)bv=q[5];
+      if(q[5]>=0){bv=q[5];sC=(q[6]&&MODBIO.id[q[6]])||0;}
     }
   }
   const e=Math.min(y,H-1-y,x,W-1-x)/280;
@@ -671,7 +680,7 @@ function ensureTrees(cx,cy){
       ptShape(x,y);
       const hv=sV,bb=sB;
       if(hv<SEA+0.05||hv>0.97||(bb&128))continue;
-      const b=bb&127;
+      let b=bb&127;{const cu=sC&&MODBIO.by[sC];if(cu&&cu.tr!=null)b=cu.tr;}   // 모드 바이옴은 trees 로 고른 바이옴의 나무가 자라요
       if(b===0&&Math.hypot(x-camp.x,(y-camp.y)*1.2)<52)continue;
       const m=Math.round(clamp01(sM)*127)/127;
       if(hs(cxx,cyy,23)>(Math.max(0,m-0.38)*2.0+0.03)*BDEN[b]*0.6)continue;   // 나무 밀집도
@@ -770,7 +779,7 @@ function ensureBoulders(cx,cy){
 /* ----- 구역 지형 (높이·섬·습도·강·해안·나무 그림자) ----- */
 function genRegion(cx,cy){
   const x0=cx*CHK-APR,y0=cy*CHK-APR,N=RGN*RGN;
-  const c={cx,cy,x0,y0,h:new Float32Array(N),bio:new Uint8Array(N),f8:new Uint8Array(N),rv:new Uint8Array(N),sm:new Uint8Array(N),dist:new Uint8Array(N),cv:null,used:0};
+  const c={cx,cy,x0,y0,h:new Float32Array(N),bio:new Uint8Array(N),f8:new Uint8Array(N),rv:new Uint8Array(N),sm:new Uint8Array(N),dist:new Uint8Array(N),cb:MODBIO.n?new Uint8Array(N):null,cv:null,used:0};
   const L=TER.isl.filter(o=>x0<o.cx+o.rx*1.3&&x0+RGN>o.cx-o.rx*1.3&&y0<o.cy+o.ry*1.25&&y0+RGN>o.cy-o.ry*1.25);
   const hb=new Float32Array(RGN),fb=new Float32Array(RGN),h=c.h,bio=c.bio,f8=c.f8,rv=c.rv;
   for(let ry=0;ry<RGN;ry++){
@@ -779,6 +788,7 @@ function genRegion(cx,cy){
     const row=ry*RGN;
     for(let rx=0;rx<RGN;rx++){
       shape(x0+rx,y,hb[rx],fb[rx],L);
+      if(c.cb)c.cb[row+rx]=sC;
       h[row+rx]=sV;bio[row+rx]=sB;f8[row+rx]=Math.round(clamp01(sM)*127);
       rv[row+rx]=rvPt(x0+rx,y);
     }
@@ -848,7 +858,7 @@ function ensureObjs(x,y){   // 이 점 주변의 나무·바위 목록이 준비
 function colorR(c,lx,ly){
   const x=c.x0+lx,y=c.y0+ly;
   if(x<1||y<1||x>=W-1||y>=H-1)return PAL.water[5];
-  const i=ly*RGN+lx,h=c.h,rv=c.rv,bio=c.bio,f8=c.f8,hv=h[i],b=BAY[((y&3)<<2)|(x&3)],r=rv[i],bb=bio[i],bid=bb&127,camp=TER.camp;
+  const i=ly*RGN+lx,h=c.h,rv=c.rv,bio=c.bio,f8=c.f8,hv=h[i],b=BAY[((y&3)<<2)|(x&3)],r=rv[i],bb=bio[i],bid=bb&127,camp=TER.camp,CU=c.cb&&c.cb[i]?MODBIO.by[c.cb[i]]:null;
   let col;
   if(hv<SEA&&!(r>0&&hv>SEA-0.03)){
     const l=((Math.min((SEA-hv)/0.22,1)*5)+b)|0;col=PAL.water[l>5?5:l];
@@ -863,13 +873,13 @@ function colorR(c,lx,ly){
     if(e<0.35&&(rv[i-1]>0||rv[i+1]>0||rv[i-RGN]>0||rv[i+RGN]>0))col=PAL.bank;
     else if(e<0.024+b*0.012){
       if(e<0.004)col=PAL.wet;
-      else{const sp=BIO_SAND[bid]||PAL.sand;const l=(clamp01(0.45-L*0.5+e*6)*2+b)|0;col=sp[l>2?2:l];}
+      else{const sp=(CU&&CU.sp)||BIO_SAND[bid]||PAL.sand;const l=(clamp01(0.45-L*0.5+e*6)*2+b)|0;col=sp[l>2?2:l];}
     }else if(hv>1.13+b*0.04&&(bid===0||bid===6||bid===8)){
       const l=(clamp01(0.4-L*0.7)*2+b)|0;col=PAL.snow[l>2?2:l];
     }else if(hv>0.98+b*0.04&&bid!==5){
-      const rp=BIO_ROCK[bid]||PAL.rock;
+      const rp=(CU&&CU.rp)||BIO_ROCK[bid]||PAL.rock;
       const l=(clamp01(0.5-L*0.8+(hv-0.98)*0.6)*4+b)|0;col=rp[l>4?4:l];
-    }else if(bid===5){
+    }else if(bid===5&&!(CU&&CU.gp)){
       const st=Math.max(0,Math.floor((hv-SEA-0.02)/0.09)),gp=BIO_GROUND[5];
       let l=[1,3,5,2,4,0][st%6]+(L>0.18?-1:L<-0.18?1:0);
       if(hash2(x,y)<0.05)l++;
@@ -878,7 +888,7 @@ function colorR(c,lx,ly){
       const m=(f8[i]&127)/127,t=0.42-L*0.45+(m-0.5)*0.8+e*0.25;
       let l=(clamp01(t)*5+b)|0;
       const sp=hash2(x,y);if(sp<0.05)l++;else if(sp>0.985)l--;
-      col=(BIO_GROUND[bid]||PAL.grass)[l<0?0:l>5?5:l];
+      col=((CU&&CU.gp)||BIO_GROUND[bid]||PAL.grass)[l<0?0:l>5?5:l];
     }
     const dx=x-camp.x,dy=y-camp.y;
     if(dx>=-12&&dx<=12&&dy>=-12&&dy<=12&&hv>=SEA+0.02&&Math.hypot(dx,dy*1.3)+hash2(x,y)*3.5<9.5)col=PAL.dirt[(dx+dy)&1];
@@ -916,15 +926,15 @@ function chunkCanvas(c){
 }
 /* 지도용 낮은 해상도 색 (구역 없이 계산) */
 function colorLow(x,y){
-  ptShape(x,y);const v=sV,bb=sB,bid=bb&127;
+  ptShape(x,y);const v=sV,bb=sB,bid=bb&127,CU=sC?MODBIO.by[sC]:null;
   if(v<SEA){const l=(Math.min((SEA-v)/0.22,1)*5)|0;return PAL.water[l>5?5:l];}
   if(bb&128)return LAVA[3];
   const e=v-SEA;
-  if(e<0.024)return (BIO_SAND[bid]||PAL.sand)[1];
+  if(e<0.024)return ((CU&&CU.sp)||BIO_SAND[bid]||PAL.sand)[1];
   if(v>1.13&&(bid===0||bid===6||bid===8))return PAL.snow[0];
   if(v>0.98&&bid!==5)return (BIO_ROCK[bid]||PAL.rock)[2];
   const m=clamp01(sM),l=(clamp01(0.42+(m-0.5)*0.8+e*0.25)*5)|0;
-  return (BIO_GROUND[bid]||PAL.grass)[l>5?5:l];
+  return ((CU&&CU.gp)||BIO_GROUND[bid]||PAL.grass)[l>5?5:l];
 }
 
 /* ----- 섬 배치 ----- */
@@ -7090,7 +7100,7 @@ function updateEvents(dt){
     evAcc-=1;
     for(const p of pl){
       if(Math.random()>=0.00008)continue;
-      const b=bioAt(p.x,p.y),ty=monsterTypeFor(b,true);
+      const b=bioAt(p.x,p.y),ty=cbHasMobs(p.x,p.y)?null:monsterTypeFor(b,true);
       if(!ty||MTYPES[ty].boss)continue;
       evRaid=20;for(let k=0;k<8;k++)spawnMonster(pl,ty,p,b);
     }
@@ -10136,7 +10146,7 @@ async function modTravel(name){   // define world 로 만든 월드(또는 원�
     enterPlay();toast(name?`"${name}" 월드로 이동했어요.`:'원래 월드로 돌아왔어요.');
   }finally{modTravelBusy=false;}
 }
-function modDefsRun(){if(!MODDEF.ready)return;try{modPackReset();for(const p of MODPKQ)modPackLoad(p);}catch(e){}for(let i=RECIPES.length-1;i>=0;i--)if(RECIPES[i].mod)RECIPES.splice(i,1);MODDEF.mob={};MODDEF.item={};MODDEF.held={};MODDEF.food={};MODDEF.fbuf={};MODDEF.world={};BAGX={};MODDEF.st={};for(const q of MODDEF.q)modDef(q);MODORE.t={};MODORE.bio={};MODORE.n=0;for(const q of MODDEF.q)if(q&&q.k==='ore')modOre(q);
+function modDefsRun(){if(!MODDEF.ready)return;try{modPackReset();for(const p of MODPKQ)modPackLoad(p);}catch(e){}for(let i=RECIPES.length-1;i>=0;i--)if(RECIPES[i].mod)RECIPES.splice(i,1);MODDEF.mob={};MODDEF.item={};MODDEF.held={};MODDEF.food={};MODDEF.fbuf={};MODDEF.world={};BAGX={};MODDEF.st={};MODBIO.id={};MODBIO.by=[null];MODBIO.n=0;for(const q of MODDEF.q)if(q&&q.k==='biome')modBiomeDef(q);for(const q of MODDEF.q)modDef(q);MODORE.t={};MODORE.bio={};MODORE.n=0;for(const q of MODDEF.q)if(q&&q.k==='ore')modOre(q);
   MODDEF.sp=Object.keys(MODDEF.mob).map(n=>MODDEF.mob[n]).filter(k=>MTYPES[k].mb&&MTYPES[k].mb.length);}
 const modTy=t=>{t=String(t||'');return t[0]==='@'?(MODDEF.mob[t.slice(1)]||''):t;};
 const modIt=t=>{t=String(t||'');return t[0]==='@'?(MODDEF.item[t.slice(1)]||''):t;};
@@ -10256,7 +10266,7 @@ function modTxt(s){   // Potato API: %player_name% 같은 값을 글에 넣어�
       case 'player_hp':return String(Math.round(P.hp*10)/10);
       case 'player_max_hp':return String(P.maxhp);
       case 'player_item':{const q=inv[P.sel];return q&&ITEMS[q.id]?String(ITEMS[q.id].name):'';}
-      case 'player_biome':{try{return String(BIOME_NAME[bioAt(P.x,P.y)]||'');}catch(e){return '';}}
+      case 'player_biome':{try{const cu=cbOf(P.x,P.y);return String(cu?cu.n:(BIOME_NAME[bioAt(P.x,P.y)]||''));}catch(e){return '';}}
       case 'world_day':return String(Math.floor(world.clock/DAY_SEC)+1);
       case 'world_time':{const h=(6+world.clock/DAY_SEC*24)%24;return String(Math.floor(h)).padStart(2,'0')+':'+String(Math.floor((h%1)*60)).padStart(2,'0');}
       case 'player':return MODX.actor||myName();
@@ -10577,6 +10587,7 @@ function modRun(acts,depth,box){
       const k=a.place.item,an=modAnchor(a.place.near,box.gen),cx=(an.x/GRID)|0,cy=(an.y/GRID)|0;let done=false;
       for(let r=2;r<=10&&!done;r++)for(let t=0;t<12&&!done;t++){const gx=cx+Math.round(Math.cos(t*0.52)*r),gy=cy+Math.round(Math.sin(t*0.52)*r);if(canPlaceCell(gx,gy,k,true)){addStruct(k,gx,gy,'host',k);done=true;}}
     }
+    else if(a.genbiome&&host&&box.gen&&box.fresh){modGenBiome(a.genbiome);}
     else if(a.fill&&host&&box.gen&&box.fresh&&Array.isArray(a.fill.c)&&a.fill.c.length===4){modTf('fill',a.fill);}
     else if(typeof a.wipe==='string'&&host&&box.gen&&box.fresh){modTf('wipe',a.wipe);}
     else if(a.remove&&host&&(a.remove.what==='tree'||a.remove.what==='rock')){
@@ -10595,10 +10606,12 @@ function modRun(acts,depth,box){
 const TF_BIO=['start','forest','desert','volcano','jungle','mesa','rock','mangrove','ice'];
 function cleanTF(t){
   if(!t||typeof t!=='object')return null;
-  const r=[];if(Array.isArray(t.r))for(const q of t.r.slice(0,16)){
+  const r=[];if(Array.isArray(t.r))for(const q of t.r.slice(0,200)){
     if(!Array.isArray(q)||q.length<6)continue;
     const n=q.slice(0,6).map(v=>Math.round(+v));if(n.some(v=>!Number.isFinite(v)))continue;
-    r.push([Math.max(0,n[0]),Math.max(0,n[1]),Math.min(W,n[2]),Math.min(H,n[3]),n[4]>=0&&n[4]<=4?n[4]:0,n[5]>=-1&&n[5]<=8?n[5]:-1]);
+    const o=[Math.max(0,n[0]),Math.max(0,n[1]),Math.min(W,n[2]),Math.min(H,n[3]),n[4]>=0&&n[4]<=4?n[4]:0,n[5]>=-1&&n[5]<=8?n[5]:-1];
+    if(typeof q[6]==='string'&&q[6]&&q[6].length<=20){o.push(q[6].slice(0,20),q[7]===1?1:0);}
+    r.push(o);
   }
   const o={r,nt:t.nt?1:0,nr:t.nr?1:0,no:t.no?1:0,ns:t.ns?1:0};
   return (r.length||o.nt||o.nr||o.no||o.ns)?o:null;
@@ -10617,13 +10630,62 @@ function applyTF(tf,wipe){   // 모드가 바꾼 지형을 적용 (구역·나�
     else{world.treasureInit=false;world.lmChestInit=0;world.pirInit=0;world.ruinInit=0;generateTreasures();}
   }
 }
+function cbOf(x,y){   // 이 자리가 모드 바이옴이면 그 정의를, 아니면 null
+  if(!MODBIO.n||!TER)return null;x=Math.round(x);y=Math.round(y);if(!inW(x,y))return null;
+  const c=TER.chunks[(y>>8)*CXN+(x>>8)];let id;
+  if(c&&c.cb)id=c.cb[(y-c.y0)*RGN+(x-c.x0)];else{ptShape(x,y);id=sC;}
+  return id?MODBIO.by[id]||null:null;
+}
+const cbHasMobs=(x,y)=>{const u=cbOf(x,y);return !!(u&&u.mobs&&u.mobs.length);};
+function modShades(h,fs){return fs.map(f=>{const n=parseInt(h.slice(1),16),c=v=>Math.max(0,Math.min(255,Math.round(v*f))).toString(16).padStart(2,'0');return rgb('#'+c((n>>16)&255)+c((n>>8)&255)+c(n&255));});}
+function modBiomeDef(q){   // define biome "이름": 새 바이옴 (generate biome 으로 섬을 만들어요)
+  if(!q||typeof q.n!=='string'||!q.n||q.n.length>20||MODBIO.n>=120||MODBIO.id[q.n])return;
+  const id=++MODBIO.n,H=v=>typeof v==='string'&&/^#[0-9a-f]{6}$/.test(v)?v:null,gd=H(q.gd),sa=H(q.sa),rk=H(q.rk);
+  const D={id,n:q.n,bs:Number.isInteger(q.bs)&&q.bs>=0&&q.bs<9?q.bs:1,tr:Number.isInteger(q.tr)&&q.tr>=0&&q.tr<9?q.tr:null,mu:(typeof q.mu==='string'&&/^(base|bgm-[a-z]+\.mp3)$/.test(q.mu))?q.mu:'',
+    fx:(Array.isArray(q.fx)?q.fx:[]).filter(k=>MODFX[k]).slice(0,7),sr:(Array.isArray(q.sr)?q.sr:[]).slice(0,50).filter(x=>Array.isArray(x)&&typeof x[0]==='string').map(x=>[x[0],Math.max(1,Math.min(50,x[1]|0||1))]),
+    mobs:(Array.isArray(q.mobs)?q.mobs:[]).slice(0,40).filter(x=>Array.isArray(x)&&typeof x[0]==='string').map(x=>[x[0],Math.max(1,Math.min(1000,x[1]|0||4)),Math.max(1,Math.min(1000,x[2]|0||6))]),
+    sz:Math.max(200,Math.min(3000,q.sz|0||800)),
+    gp:gd?modShades(gd,[0.62,0.74,0.88,1,1.12,1.25]):null,sp:sa?modShades(sa,[0.85,1,1.12]):(gd?modShades(gd,[1.3,1.4,1.5]):null),rp:rk?modShades(rk,[1.2,1,0.85,0.7,0.55]):null};
+  MODBIO.id[q.n]=id;MODBIO.by[id]=D;
+}
+function modGenBiome(a){   // 빈 바다에 새 바이옴 섬을 만들어요 (새 월드에서만)
+  const D=MODBIO.by[MODBIO.id[a.n]];if(!D||!TER)return;
+  const tf=world.tf||{r:[],nt:0,nr:0,no:0,ns:0};world.tf=tf;
+  const cnt=Math.max(1,Math.min(30,a.c|0||1));
+  for(let k=0;k<cnt&&tf.r.length<200;k++){
+    for(let t=0;t<500;t++){
+      const rx=D.sz*(0.8+Math.random()*0.4),ry=rx*(0.65+Math.random()*0.25),mx=rx+300,my=ry+300;
+      const cx=mx+Math.random()*(W-2*mx),cy=my+Math.random()*(H-2*my);
+      if(!TER.isl.every(o=>Math.hypot((cx-o.cx)/(o.rx+rx),(cy-o.cy)/(o.ry+ry))>1.05))continue;
+      if(!tf.r.every(q=>{if(q[7]!==1)return true;const qx=(q[0]+q[2])/2,qy=(q[1]+q[3])/2;return Math.hypot((cx-qx)/((q[2]-q[0])/2+rx),(cy-qy)/((q[3]-q[1])/2+ry))>1.05;}))continue;
+      tf.r.push([Math.round(cx-rx),Math.round(cy-ry),Math.round(cx+rx),Math.round(cy+ry),0,D.bs,D.n,1]);
+      (MOD.stPend=MOD.stPend||[]).push({b:D,cx,cy,rx,ry});
+      break;
+    }
+  }
+  MOD.tfDirty=1;
+}
+function modBiomeStructs(){   // 섬이 만들어진 뒤에, 바이옴에 적어 둔 구조물을 놓아요
+  const L=MOD.stPend||[];MOD.stPend=[];
+  for(const e of L)for(const [nm,cnt] of (e.b.sr||[])){
+    const bl=MODDEF.st&&MODDEF.st[nm];if(!bl)continue;
+    for(let i=0;i<cnt;i++)for(let t=0;t<30;t++){
+      const a=Math.random()*6.2832,r=Math.sqrt(Math.random())*0.55,px=e.cx+Math.cos(a)*r*e.rx,py=e.cy+Math.sin(a)*r*e.ry;
+      ptShape(px,py);if(sV<SEA+0.06||(sB&128))continue;
+      const cx=Math.floor(px/GRID),cy=Math.floor(py/GRID);let ok=0;
+      for(const [k,dx,dy] of bl){const gx=cx+dx,gy=cy+dy;if(canPlaceCell(gx,gy,k,true)){addStruct(k,gx,gy,'host',k);ok++;}}
+      if(ok)break;
+    }
+  }
+}
+setInterval(()=>{try{if(mode!=='play'||!MODBIO.n)return;const u=cbOf(P.x,P.y);if(u&&u.fx&&u.fx.length&&!(P.sailing||P.air))for(const k of u.fx)modFxMe(k,3,600);}catch(e){}},1000);   // 바이옴 안에 있는 동안 효과가 이어져요
 function modTf(kind,a){
   const tf=world.tf||{r:[],nt:0,nr:0,no:0,ns:0};world.tf=tf;
   if(kind==='wipe'){const f={trees:'nt',rocks:'nr',ores:'no',structures:'ns'}[a];if(f)tf[f]=1;}
   else{
     const an=modAnchor(null,true),c=a.c.map((p,i)=>{const v=Math.round(+p[1])||0;return p[0]?(i%2?an.y:an.x)+v:v;});
     const md={land:0,beach:1,ocean:2,mountain:3,load:4}[a.mode],bi=a.b==null?-1:TF_BIO.indexOf(String(a.b));
-    if(md===undefined||tf.r.length>=16)return;
+    if(md===undefined||tf.r.length>=200)return;
     tf.r.push([Math.min(c[0],c[2]),Math.min(c[1],c[3]),Math.max(c[0],c[2]),Math.max(c[1],c[3]),md,md===0&&bi<0?0:md===4?-1:bi]);
   }
   MOD.tfDirty=1;
@@ -10662,10 +10724,10 @@ function modGen(){
   for(const m of MOD.on){
     if(done.includes(m.id))continue;
     const evs=MOD.ev.filter(e=>e.mid===m.id&&e.on==='generate');if(!evs.length)continue;
-    for(const e of evs){try{modRun(e.do,0,{n:200,gen:1,fresh:(world.pt||0)<1});}catch(x){}}
+    for(const e of evs){try{modRun(e.do,0,{n:100000,gen:1,fresh:(world.pt||0)<1});}catch(x){}}
     done.push(m.id);ran=true;
   }
-  if(MOD.tfDirty){MOD.tfDirty=0;try{const t=cleanTF(world.tf);if(t)applyTF(t,true);}catch(x){}}
+  if(MOD.tfDirty){MOD.tfDirty=0;try{const t=cleanTF(world.tf);if(t)applyTF(t,true);}catch(x){}try{modBiomeStructs();}catch(x){}}
   if(ran)saveWorld(true);
 }
 function modKey(e,down){
@@ -11923,12 +11985,14 @@ function updateMonsters(dt){
     spawnT-=dt;
     if(spawnT<=0){
       spawnT=8+Math.random()*6;
-      const p=pl[(Math.random()*pl.length)|0],b=bioAt(p.x,p.y),onPir=world.pir>=0&&isleNear(p.x,p.y)===world.pir,ty=(DUN&&dunFloorAt(p.x,p.y))?null:onPir?'pirate':monsterTypeFor(b,night);
+      const p=pl[(Math.random()*pl.length)|0],b=bioAt(p.x,p.y),onPir=world.pir>=0&&isleNear(p.x,p.y)===world.pir,ty=(DUN&&dunFloorAt(p.x,p.y))?null:onPir?'pirate':(cbHasMobs(p.x,p.y)?null:monsterTypeFor(b,night));
       if(ty){
         const cap=b>=2?Math.min(5,2+pl.length):Math.min(6,2+pl.length);
         if(monsters.filter(m=>!m.burn&&!m.boss&&!m.dun).length<cap)spawnMonster(pl,ty,p,b);
       }
     }
+    if(MODBIO.n){MODBIO.t=(MODBIO.t||0)-dt;if(MODBIO.t<=0){MODBIO.t=5;const p=pl[(Math.random()*pl.length)|0],cu=cbOf(p.x,p.y);
+      if(cu&&cu.mobs&&!(DUN&&dunFloorAt(p.x,p.y)))for(const [ty0,mx,rt] of cu.mobs){const k=modTy(ty0),T=MTYPES[k];if(!T)continue;if(monsters.reduce((c,m)=>c+(m.ty===k?1:0),0)>=mx)continue;if(Math.random()<rt*5/60)spawnMonster(pl,k,p,bioAt(p.x,p.y));}}}   // define biome 의 mob / max / rate
     if(MODDEF.sp.length){MODDEF.t-=dt;if(MODDEF.t<=0){MODDEF.t=5;const p=pl[(Math.random()*pl.length)|0],b=bioAt(p.x,p.y);
       for(const k of MODDEF.sp){const T=MTYPES[k];if(!T||!T.mb.includes(b)||(DUN&&dunFloorAt(p.x,p.y)))continue;if(monsters.reduce((c,m)=>c+(m.ty===k?1:0),0)>=T.mx)continue;if(Math.random()<T.mr*5/60)spawnMonster(pl,k,p,b);}}}   // define mob 의 biome / rate(분당) / max
     updateBosses(pl,dayNow());
