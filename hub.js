@@ -12,6 +12,7 @@ var GAMES={}, GLIST=[], NSRC={};
 window.FF_GAMES={list:GLIST,games:GAMES};
 function gOpts(first){ return (first||'')+GLIST.map(function(g){ return '<option value="'+g+'">'+GAMES[g].name+'</option>'; }).join(''); }
 function gBtns(){ return GLIST.map(function(g){ return '<button data-f="'+g+'">'+GAMES[g].name+'</button>'; }).join(''); }
+if(!document.getElementById('ffwVars')){ var wv=document.createElement('style'); wv.id='ffwVars'; wv.textContent=':root{--ffw-bg:#171717;--ffw-in:#0e0e0e;--ffw-tx:#ece6d8;--ffw-dim:#a39c8c;--ffw-ln:#2e2b25;--ffw-hv:#262420;--ffw-ov:rgba(5,6,10,.72);--ffw-err:var(--ffw-err,#ff9b7a);--ffw-ok:var(--ffw-ok,#7ddc8a);--ffw-gold:#d9b45f;--ffw-gold2:#b8923a;--ffw-gt:#1a1206;--ffw-sh:rgba(0,0,0,.5)}html[data-ff-theme=light]{--ffw-bg:#fff;--ffw-in:#f7f5ef;--ffw-tx:#111;--ffw-dim:#444;--ffw-ln:#ddd6c6;--ffw-hv:#f1ede2;--ffw-ov:rgba(255,255,255,.72);--ffw-err:#b3261e;--ffw-ok:#1b6e2e;--ffw-gold:#a67c00;--ffw-gold2:#d4a62a;--ffw-gt:#111;--ffw-sh:rgba(0,0,0,.18)}'; (document.head||document.documentElement).appendChild(wv); }
 function $(s,r){ return (r||document).querySelector(s); }
 /* 허브 첫 페이지와 커뮤니티 페이지(community/)가 같은 파일을 써요. ROOT = 허브 맨 위 경로 */
 var CMP=!!document.getElementById('community'), ROOT=document.body.getAttribute('data-root')||'', HR=document.body.hasAttribute('data-hub')?document.body.getAttribute('data-hub'):'https://frenchfries777.com/', CMURL=CMP?'':HR+'community/';
@@ -619,13 +620,13 @@ async function grantPop(){
     var r=await sb.rpc('ff_coin_grants_pending'); var rows=(r&&!r.error&&r.data)||[];
     for(var i=0;i<rows.length;i++){ var g=rows[i];
       await new Promise(function(done){
-        var el=document.createElement('div'); el.id='coinGrant'; el.style.cssText='position:fixed;inset:0;z-index:2147483001;display:grid;place-items:center;padding:20px;background:rgba(5,6,10,.72);backdrop-filter:blur(4px)';
-        el.innerHTML='<div style="max-width:340px;width:100%;text-align:center;padding:26px 22px 20px;border-radius:20px;background:#10131b;border:1px solid #3a3320;box-shadow:0 20px 60px rgba(0,0,0,.6);animation:cgIn .35s ease both">'+
+        var el=document.createElement('div'); el.id='coinGrant'; el.style.cssText='position:fixed;inset:0;z-index:2147483001;display:grid;place-items:center;padding:20px;background:var(--ffw-ov,rgba(5,6,10,.72));backdrop-filter:blur(4px)';
+        el.innerHTML='<div style="max-width:340px;width:100%;text-align:center;padding:26px 22px 20px;border-radius:20px;background:var(--ffw-bg,#171717);border:1px solid var(--ffw-ln,#3a3320);box-shadow:0 20px 60px var(--ffw-sh,rgba(0,0,0,.6));animation:cgIn .35s ease both">'+
           '<div style="display:flex;justify-content:center"><img src="'+HICON+'coin.svg?v=20261103a" alt="" style="width:72px;height:72px" draggable="false"></div>'+
-          '<div data-notr style="margin:8px 0 2px;font:700 38px Oswald,system-ui,sans-serif;color:#ffc93c">+'+(+g.amount||0)+' hC!</div>'+
-          '<div style="font-size:13px;color:#8a93a6">Hub Coin</div>'+
-          (g.message?'<div data-notr style="margin-top:14px;padding:12px 14px;border-radius:12px;background:#171b26;color:#eef0f5;font-size:15px;line-height:1.5;word-break:break-word;white-space:pre-wrap">'+esc(g.message)+'</div>':'')+
-          '<button type="button" style="margin-top:18px;padding:9px 26px;border:0;border-radius:99px;background:linear-gradient(90deg,#ffc93c,#ff8a3d);color:#1c1405;font:700 15px system-ui,sans-serif;cursor:pointer">확인</button></div>'+
+          '<div data-notr style="margin:8px 0 2px;font:700 38px Oswald,system-ui,sans-serif;color:var(--ffw-gold,#d9b45f)">+'+(+g.amount||0)+' hC!</div>'+
+          '<div style="font-size:13px;color:var(--ffw-dim,#a39c8c)">Hub Coin</div>'+
+          (g.message?'<div data-notr style="margin-top:14px;padding:12px 14px;border-radius:12px;background:var(--ffw-in,#171b26);color:var(--ffw-tx,#ece6d8);font-size:15px;line-height:1.5;word-break:break-word;white-space:pre-wrap">'+esc(g.message)+'</div>':'')+
+          '<button type="button" style="margin-top:18px;padding:9px 26px;border:0;border-radius:99px;background:linear-gradient(90deg,#d9b45f,#b8923a);color:var(--ffw-gt,#1c1405);font:700 15px system-ui,sans-serif;cursor:pointer">확인</button></div>'+
           '<style>@keyframes cgIn{from{opacity:0;transform:translateY(12px) scale(.94)}to{opacity:1;transform:none}}</style>';
         document.body.appendChild(el);
         var fin=function(){ el.remove(); done(); }; el.querySelector('button').onclick=fin; el.addEventListener('click',function(e){ if(e.target===el) fin(); });
