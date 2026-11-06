@@ -10047,6 +10047,12 @@ const MODDEF={mob:{},item:{},q:[],ready:false};
 function modDefsRun(){if(!MODDEF.ready)return;MODDEF.mob={};MODDEF.item={};for(const q of MODDEF.q)modDef(q);}
 const modTy=t=>{t=String(t||'');return t[0]==='@'?(MODDEF.mob[t.slice(1)]||''):t;};
 const modIt=t=>{t=String(t||'');return t[0]==='@'?(MODDEF.item[t.slice(1)]||''):t;};
+function modPic(q,cb){   // image: 폴더 PNG(img) / 게임 아이템(ii) / 게임 몹(im) 그림
+  if(!q)return false;const v=q.img;
+  if(typeof v==='string'&&/^data:image\/png;base64,[A-Za-z0-9+\/=]{20,6000}$/.test(v)){if(cb){const im=new Image();im.onload=()=>cb(im);im.src=v;}return true;}
+  if(typeof q.ii==='string'&&ITEMS[q.ii]&&typeof ITEMS[q.ii].icon==='function'){if(cb){const c=document.createElement('canvas');c.width=c.height=12;try{ITEMS[q.ii].icon(c.getContext('2d'));}catch(e){}cb(c);}return true;}
+  if(typeof q.im==='string'&&MSPR[q.im]){if(cb)cb(MSPR[q.im].c);return true;}
+  return false;}
 function modDef(q){   // define mob|item "이름": 기존 것을 바탕(base)으로 새 몹/아이템을 만들어요
   if(!q||typeof q.n!=='string'||!q.n||q.n.length>20)return;const nm=q.n,key='md_'+nm,cl=(v,a,b)=>Math.max(a,Math.min(b,+v||0));
   if(q.k==='mob'){const B=MTYPES[q.base];if(!B||B.boss)return;
@@ -10056,8 +10062,8 @@ function modDef(q){   // define mob|item "이름": 기존 것을 바탕(base)으
     if(typeof q.col==='string'&&/^#[0-9a-f]{6}$/.test(q.col))T.col=q.col;
     if(Array.isArray(q.drop))T.drop=q.drop.slice(0,5).filter(x=>Array.isArray(x)&&ITEMS[x[0]]).map(x=>[x[0],cl(x[1],0,20)|0,cl(x[2],0,20)|0]);
     MTYPES[key]=T;MODDEF.mob[nm]=key;
-    const b=MSPR[q.base];if(b){if(T.col&&q.col){const c=document.createElement('canvas');c.width=b.w;c.height=b.h;const g=c.getContext('2d');g.drawImage(b.c,0,0);g.globalCompositeOperation='source-atop';g.globalAlpha=0.55;g.fillStyle=q.col;g.fillRect(0,0,b.w,b.h);MSPR[key]={c,w:b.w,h:b.h,wc:b.wc};}else MSPR[key]=b;}
-  }else if(q.k==='item'){const B=ITEMS[q.base];if(!B)return;ITEMS[key]=Object.assign({},B,{name:nm});MODDEF.item[nm]=key;}
+    const b=MSPR[q.base];if(b){if(modPic(q)){const c=document.createElement('canvas');c.width=b.w;c.height=b.h;const wc=document.createElement('canvas');wc.width=b.w;wc.height=b.h;MSPR[key]={c,w:b.w,h:b.h,wc};modPic(q,src=>{const g=c.getContext('2d');g.imageSmoothingEnabled=false;g.clearRect(0,0,b.w,b.h);g.drawImage(src,0,0,b.w,b.h);const h=wc.getContext('2d');h.clearRect(0,0,b.w,b.h);h.drawImage(c,0,0);h.globalCompositeOperation='source-atop';h.fillStyle='#fff';h.fillRect(0,0,b.w,b.h);});}else if(T.col&&q.col){const c=document.createElement('canvas');c.width=b.w;c.height=b.h;const g=c.getContext('2d');g.drawImage(b.c,0,0);g.globalCompositeOperation='source-atop';g.globalAlpha=0.55;g.fillStyle=q.col;g.fillRect(0,0,b.w,b.h);MSPR[key]={c,w:b.w,h:b.h,wc:b.wc};}else MSPR[key]=b;}
+  }else if(q.k==='item'){const B=ITEMS[q.base];if(!B)return;ITEMS[key]=Object.assign({},B,{name:nm});MODDEF.item[nm]=key;if(modPic(q)){const bi=B.icon;let pim=null;ITEMS[key].icon=function(g){if(pim){g.imageSmoothingEnabled=false;g.drawImage(pim,0,0,12,12);}else if(bi)bi(g);};modPic(q,src=>{pim=src;try{for(const z in ICONURL)delete ICONURL[z];for(const z in ICONC)delete ICONC[z];renderInv();renderEquip();}catch(e){}});}}
 }
 function modApply(list){
   MODDEF.mob={};MODDEF.item={};MODDEF.q=[];
