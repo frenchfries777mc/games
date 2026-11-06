@@ -5107,7 +5107,7 @@ function addStructCell(id,gx,gy,ex){
   if(def.layer==='c'?(gx>=CW||gy>=CH):(gx>=GW||gy>=GH))return null;
   const key=skey(def.layer,gx,gy),map=structMap(def.layer);if(map.has(key))return null;
   const b=def.layer==='c'?{id,gx,gy,layer:'c',x:gx*CG+4,y:gy*CG+8}:{id,gx,gy,layer:def.layer,x:gx*GRID+8,y:gy*GRID+15};
-  if(ex)for(const k of ['gr','tt','mat','it','ct','gt','tr','dr','lk','sr','fl','th','tg','to','rp','of','ru','rc','ob','cb','co','fq','sp','fi','fo','fp','lv','ar','ins','hd','op','aq','ps','pc','pl','pp','ow','on','ml','gb','fis','fnm','fnt','snm','rj','rn','rq'])if(ex[k]!==undefined&&ex[k]!==null){if(k==='fl'&&!ITEMS[ex[k]])continue;let v=(k==='it')?sanitize(ex[k],CH_N):ex[k];if(k==='tg'||k==='to')v=String(v).slice(0,8);if(k==='th')v=Math.max(1,Math.min(9999,(v|0)||10));if(k==='rp')v=Math.max(1,Math.min(9,(v|0)||1));if(k==='of')v=v?1:0;if(k==='ru')v=Math.max(0,v|0);if(k==='fq')v=String(v).slice(0,8);if(k==='rc')v=String(v).slice(0,90);if(k==='ob')v=Math.max(-1,Math.min(3,v|0));if(k==='cb'){const o={};for(const [i,n] of Object.entries(v||{}))if(ITEMS[i]&&n>0)o[i]=Math.min(999,n|0);v=o;}if(k==='fp')v=Math.max(0,Math.min(3,+v||0));if(k==='snm')v=stationClean(v);if(k==='rj')v=Math.max(-1,Math.min(4,v|0));if(k==='rn')v=Math.max(0,Math.min(11,v|0));if(k==='co'||k==='fi'||k==='fo'){if(!v||!ITEMS[v.id])continue;v={id:v.id,n:Math.max(1,v.n|0)};}b[k]=v;}
+  if(ex)for(const k of ['md','gr','tt','mat','it','ct','gt','tr','dr','lk','sr','fl','th','tg','to','rp','of','ru','rc','ob','cb','co','fq','sp','fi','fo','fp','lv','ar','ins','hd','op','aq','ps','pc','pl','pp','ow','on','ml','gb','fis','fnm','fnt','snm','rj','rn','rq'])if(ex[k]!==undefined&&ex[k]!==null){if(k==='fl'&&!ITEMS[ex[k]])continue;let v=(k==='it')?sanitize(ex[k],CH_N):ex[k];if(k==='tg'||k==='to')v=String(v).slice(0,8);if(k==='th')v=Math.max(1,Math.min(9999,(v|0)||10));if(k==='rp')v=Math.max(1,Math.min(9,(v|0)||1));if(k==='of')v=v?1:0;if(k==='ru')v=Math.max(0,v|0);if(k==='fq')v=String(v).slice(0,8);if(k==='rc')v=String(v).slice(0,90);if(k==='ob')v=Math.max(-1,Math.min(3,v|0));if(k==='cb'){const o={};for(const [i,n] of Object.entries(v||{}))if(ITEMS[i]&&n>0)o[i]=Math.min(999,n|0);v=o;}if(k==='fp')v=Math.max(0,Math.min(3,+v||0));if(k==='snm')v=stationClean(v);if(k==='rj')v=Math.max(-1,Math.min(4,v|0));if(k==='rn')v=Math.max(0,Math.min(11,v|0));if(k==='co'||k==='fi'||k==='fo'){if(!v||!ITEMS[v.id])continue;v={id:v.id,n:Math.max(1,v.n|0)};}b[k]=v;}
   map.set(key,b);world.structs.push(b);world.structs.sort((a,c)=>a.y-c.y);return b;
 }
 const exOf=b=>{const o={};for(const k of ['gr','tt','mat','it','ct','gt','tr','dr','lk','sr','fl','th','tg','to','rp','of','ru','rc','ob','cb','co','fq','sp','fi','fo','fp','lv','ar','ins','hd','op','aq','ps','pc','pl','pp','ow','on','ml','gb','fis','fnm','fnt','snm','rj','rn','rq'])if(b[k]!==undefined)o[k]=b[k];return o;};
@@ -5278,7 +5278,8 @@ function structExtra(kind,item,dr){
   return null;
 }
 function addStruct(kind,gx,gy,by,item,dr){
-  const ex=structExtra(kind,item,dr);
+  let ex=structExtra(kind,item,dr);
+  if(typeof item==='string'&&item.startsWith('md_')&&ITEMS[item]){ex=ex||{};ex.md=item;}   // 모드로 만든 아이템이 설치된 것
   if(kind==='flag')ex.fis=islAt(gx*GRID+8,gy*GRID+8);
   if(ex&&kind==='tgate')ex.ow=nameOfPeer(by);
   if(ex&&(kind==='stall'||kind==='mailbox')){ex.ow=nameOfPeer(by);ex.on=ex.ow;}
@@ -5355,17 +5356,27 @@ function stationNear(mode){
   return true;
 }
 function doInteract(o,code){
+  try{
+    const mk=o.id==='mdmob'?o.m&&o.m.ty:o.md;
+    if(mk&&ITEMS[mk]||(o.id==='mdmob'&&mk&&MTYPES[mk])){
+      const nm=o.id==='mdmob'?String(MTYPES[mk].name||''):String(ITEMS[mk].name||'');
+      MODX.touched=nm;
+      if(MOD.ev.some(e=>e.on==='interaction'&&e.t==='@'+nm)){modEvent('interaction','@'+nm);return;}
+      if(o.id==='mdmob')return;
+    }
+  }catch(e){}
   try{MODX.touched=(ITEMS[o.id]&&ITEMS[o.id].name)||String(o.id);modEvent('interaction',String(o.id));}catch(e){}
   if(o.id==='bench'||o.id==='lbench')openCraft('bench');else if(o.id==='chest'||o.id==='rchest')openChest(o);else if(o.id==='trader')tradeWith();else if(o.id==='trash')openTrash(o);else if(o.id==='oven'||o.id==='campfire')openCraft('cook');else if(o.id==='furnace'){smeltRef=o;smeltLast=o.fo?o.fo.n:0;openCraft('smelt');}else if(o.id==='armorbench')openArmor();else if(o.id==='anvil')openAnvil();else if(o.id==='cow')milkCow(o.a);else if(o.id==='chicken'||o.id==='penguin'||o.id==='salamander')feedChicken(o.a);else if(o.id==='bone')startDig(o.q);else if(o.id==='conveyor')rotateConveyor(o);else if(o.id==='sorter'){if(code==='KeyF')rotateConveyor(o);else toggleSorterSide(o);}else if(o.id==='rsd'||o.id==='gauge'||o.id==='relay'||o.id==='tele'||o.id==='port')openSignalUI(o);else if(o.id==='bell')ringBell(o);else if(o.id==='guard')openGuardUI(o);else if(o.id==='vnpc')openShop(o.n);else if(o.id==='controller')toggleControl(o);else if(o.id==='beacon')callShip(o);else if(o.id==='ship')boardShip();else if(o.id==='crafter')openCrafterUI(o);else if(o.id==='feller')openFellerUI(o);else if(o.id==='door')toggleDoor(o);else if(o.id==='tgate')openGate(o);else if(o.id==='aquarium')openAquarium(o);else if(o.id==='cart')openCart();else if(o.id==='train')openTrainCargo(o.T);else if(o.id==='mirror')showLook();else if(o.id==='tradepost')openTradepost(o);else if(o.id==='alchemy')openAlchemy();else if(o.id==='runetable')openRunes();else if(o.id==='trap')openTrap(o);else if(o.id==='hammock')napStart(o);else if(o.id==='fishtrap')openFishTrap(o);else if(o.id==='hut')openHut(o);else if(o.id==='stall')openStall(o);else if(o.id==='mailbox')openMailbox(o);else if(o.id==='monument')openMonument(o);else if(o.id==='flag')openFlag(o);else if(o.id==='station')openStation(o);else if(o.id==='revive')reviveReq(o.peer);else if(o.id==='dunin')dunGo(1,'down');else if(o.id==='dunst')dunGo(o.k,o.dir);else trySleep(o);
 }
 function nearInteract(){
   let best=null,bd=1e9;
   for(const b of world.structs){
-    if(b.id!=='mirror'&&b.id!=='hammock'&&b.id!=='fishtrap'&&b.id!=='bench'&&b.id!=='trash'&&b.id!=='chest'&&b.id!=='bed'&&b.id!=='oven'&&b.id!=='furnace'&&b.id!=='armorbench'&&b.id!=='anvil'&&b.id!=='rsd'&&b.id!=='gauge'&&b.id!=='bell'&&b.id!=='controller'&&b.id!=='beacon'&&b.id!=='crafter'&&b.id!=='relay'&&b.id!=='tele'&&b.id!=='port'&&b.id!=='guard'&&b.id!=='feller'&&b.id!=='door'&&b.id!=='aquarium'&&b.id!=='tradepost'&&b.id!=='alchemy'&&b.id!=='runetable'&&b.id!=='trap'&&b.id!=='stall'&&b.id!=='mailbox'&&b.id!=='monument'&&b.id!=='flag'&&b.id!=='station'&&b.id!=='hut'&&b.id!=='lbench'&&b.id!=='rchest'&&b.id!=='tgate')continue;
+    if(!b.md&&b.id!=='mirror'&&b.id!=='hammock'&&b.id!=='fishtrap'&&b.id!=='bench'&&b.id!=='trash'&&b.id!=='chest'&&b.id!=='bed'&&b.id!=='oven'&&b.id!=='furnace'&&b.id!=='armorbench'&&b.id!=='anvil'&&b.id!=='rsd'&&b.id!=='gauge'&&b.id!=='bell'&&b.id!=='controller'&&b.id!=='beacon'&&b.id!=='crafter'&&b.id!=='relay'&&b.id!=='tele'&&b.id!=='port'&&b.id!=='guard'&&b.id!=='feller'&&b.id!=='door'&&b.id!=='aquarium'&&b.id!=='tradepost'&&b.id!=='alchemy'&&b.id!=='runetable'&&b.id!=='trap'&&b.id!=='stall'&&b.id!=='mailbox'&&b.id!=='monument'&&b.id!=='flag'&&b.id!=='station'&&b.id!=='hut'&&b.id!=='lbench'&&b.id!=='rchest'&&b.id!=='tgate')continue;
     const d0=Math.hypot(P.x-b.x,P.y-(b.y-7)),d=d0-(b===P.starget&&d0<=20?100:0);if(d0<=20&&d<bd){bd=d;best=b;}   // 흰 테두리로 가리킨 시설이 먼저
   }
   if(!best)for(const b of world.cgrid.values()){const d=Math.hypot(P.x-(b.gx*CG+4),P.y-(b.gy*CG+4));if(d<=10&&d<bd){bd=d;best=b;}}
   {const q=nearBoneSpot(14);if(q&&!best){bd=0;best={id:'bone',q,x:q.x,y:q.y+7};}}
+  for(const m of monsters){if(!(typeof m.ty==='string'&&m.ty.startsWith('md_'))||m.hid||m.burn)continue;const d=Math.hypot(P.x-m.x,P.y-m.y);if(d<=20&&d<bd){bd=d;best={id:'mdmob',m,x:m.x,y:m.y+7};}}   // 모드로 만든 몹
   for(const a of animals){if(a.type!=='cow'&&a.type!=='chicken'&&a.type!=='penguin'&&a.type!=='salamander')continue;const d=Math.hypot(P.x-a.x,P.y-a.y);if(d<=20&&d<bd){bd=d;best={id:a.type,a,x:a.x,y:a.y+7};}}
   {const c=world.camp,d=Math.hypot(P.x-c.x,P.y-c.y);if(d<=22&&!best){bd=d;best={id:'campfire',x:c.x,y:c.y+7};}}   // 다른 시설이 가까이 있으면 그쪽이 먼저예요
   {const e=world.esc;if(e&&e.ph==='landed'){const d=Math.hypot(P.x-e.sx,P.y-(e.sy-8));if(d<=42&&d<bd){bd=d;best={id:'ship',x:e.sx,y:e.sy};}}}
@@ -10272,6 +10283,42 @@ function modTitle(text,sec){
   if(!el){el=document.createElement('div');el.id='modtitle';el.style.cssText='position:fixed;left:0;right:0;top:34%;text-align:center;z-index:31;pointer-events:none;font:700 clamp(26px,6vw,54px)/1.2 Galmuri,monospace;color:#fff;text-shadow:3px 3px 0 #000;transition:opacity .4s;opacity:0';document.body.appendChild(el);}
   el.innerHTML=modRich(text);el.style.opacity='1';clearTimeout(el._t);el._t=setTimeout(()=>{el.style.opacity='0';},Math.max(1,Math.min(10,sec||3))*1000);
 }
+let MODWIN=null;
+function modWinClose(){if(MODWIN){try{MODWIN.remove();}catch(e){}MODWIN=null;}}
+window.addEventListener('keydown',e=>{if(e.key==='Escape'&&MODWIN){e.preventDefault();e.stopImmediatePropagation();modWinClose();}},true);   // 창이 열려 있으면 ESC 는 무조건 먼저 창을 닫아요
+function modWindow(w){
+  if(!w||typeof w.t!=='string'||mode!=='play')return;
+  modWinClose();
+  const cx={mn:MODX.mn,mid:MODX.mid,uid:MODX.uid,uses:MODX.uses};
+  const el=document.createElement('div');el.style.cssText='position:fixed;inset:0;z-index:60;display:flex;align-items:center;justify-content:center;background:#0009';
+  el.addEventListener('mousedown',e=>{if(e.target===el)modWinClose();});
+  const pn=document.createElement('div');pn.style.cssText='position:relative;box-sizing:border-box;width:min(92vw,440px);max-height:88vh;overflow:auto;background:#10161f;border:3px solid #e9d9a4;box-shadow:4px 4px 0 #000b;padding:14px;color:#fff;font:inherit';
+  const hd=document.createElement('div');hd.style.cssText='font-size:18px;font-weight:700;margin:0 28px 10px 0;color:#e9d9a4';hd.innerHTML=modRich(modTxt(w.t.slice(0,30)));pn.appendChild(hd);
+  const x=document.createElement('button');x.textContent='✕';x.className='btn sm';x.style.cssText='position:absolute;right:8px;top:8px;padding:2px 8px';x.onclick=modWinClose;pn.appendChild(x);
+  for(const t of (Array.isArray(w.tx)?w.tx:[]).slice(0,8)){const d=document.createElement('div');d.style.cssText='margin:6px 0;line-height:1.5';d.innerHTML=modRich(modTxt(String(t).slice(0,200)));pn.appendChild(d);}
+  const ins=[];
+  for(const q of (Array.isArray(w.inp)?w.inp:[]).slice(0,3)){
+    if(!q||typeof q.v!=='string'||!/^(s__)?[a-z0-9_]{1,17}$/.test(q.v))continue;
+    const lb=document.createElement('div');lb.style.cssText='margin:10px 0 3px;font-size:13px;color:#8fd3ff';lb.textContent=String(q.l||'').slice(0,30);
+    const ip=document.createElement('input');ip.maxLength=40;ip.style.cssText='width:100%;box-sizing:border-box;padding:6px;background:#0b0f16;color:#fff;border:2px solid #e9d9a4;font:inherit';
+    for(const ev of ['keydown','keyup','keypress'])ip.addEventListener(ev,e=>{e.stopPropagation();});
+    pn.appendChild(lb);pn.appendChild(ip);ins.push([q.v,ip]);
+  }
+  const area=document.createElement('div');area.style.cssText='position:relative;height:96px;margin-top:14px';
+  const zone={};
+  const mk=p=>{const z=document.createElement('div');z.style.cssText='position:absolute;display:flex;gap:6px;'+({'top left':'left:0;top:0;','top right':'right:0;top:0;','bottom left':'left:0;bottom:0;','bottom right':'right:0;bottom:0;',center:'left:50%;top:50%;transform:translate(-50%,-50%);'})[p];area.appendChild(z);return z;};
+  for(const b of (Array.isArray(w.btn)?w.btn:[]).slice(0,6)){
+    if(!b||typeof b.l!=='string'||!Array.isArray(b.do))continue;
+    const p=['top left','top right','bottom left','bottom right','center'].includes(b.p)?b.p:'bottom right';
+    const z=zone[p]||(zone[p]=mk(p));
+    const bt=document.createElement('button');bt.className='btn sm';bt.innerHTML=modRich(String(b.l).slice(0,20));
+    if(typeof b.c==='string'&&/^#[0-9a-f]{6}$/.test(b.c)){bt.style.background=b.c;bt.style.borderColor=b.c;bt.style.color='#fff';}
+    bt.onclick=e=>{e.stopPropagation();Object.assign(MODX,cx,{loc:{}});for(const [v,ip] of ins){const t=ip.value.trim();modVarSet(v,t!==''&&/^-?\d{1,9}(\.\d{1,3})?$/.test(t)?+t:t);}modWinClose();try{modRun(b.do,0,{n:50});}catch(er){}};
+    z.appendChild(bt);
+  }
+  pn.appendChild(area);el.appendChild(pn);document.body.appendChild(el);MODWIN=el;
+  const f=ins[0];if(f)setTimeout(()=>f[1].focus(),30);
+}
 function modButton(b){
   if(!b||typeof b.label!=='string'||!Array.isArray(b.do))return;
   const box=modBox();if(box.children.length>=6)return;
@@ -10388,6 +10435,7 @@ function modRun(acts,depth,box){
     else if(a.has&&typeof a.has==='object'&&Array.isArray(a.do)){if(ITEMS[a.has.item]&&modInv(a.has.item)>=Math.max(1,a.has.n|0||1))modRun(a.do,depth+1,box);}
     else if(a.title&&typeof a.title.text==='string'){modTitle(modTxt(a.title.text).slice(0,80),+a.title.sec||3);}
     else if(a.button){modButton(a.button);}
+    else if(a.window){modWindow(a.window);}
     else if(a.ui&&Array.isArray(a.ui.lines)){const ls=a.ui.lines.slice(0,12).map(x=>'<p>'+modRich(modTxt(x).slice(0,120))+'</p>').join('');openModal('<h2>'+modRich(modTxt(a.ui.title||'').slice(0,40))+'</h2>'+ls+'<div class="actions"><button class="btn sm" data-close>닫기</button></div>',null,'modui');}
     else if(a.set){modSet(a.set);}
     else if(a.setv&&typeof a.setv.n==='string'){
