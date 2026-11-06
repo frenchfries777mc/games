@@ -13,7 +13,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
 <!-- 새 빌드마다 아래 ?v=271 숫자를 BUILD와 같게 올려요 (브라우저가 옛 파일을 쓰지 않게) -->
-<script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/","./js/data.js":"./js/data.js?v=304","./js/main.js":"./js/main.js?v=304","./js/map.js":"./js/map.js?v=304","./js/music.js":"./js/music.js?v=304","./js/render.js":"./js/render.js?v=304","./js/sfx.js":"./js/sfx.js?v=304","./js/sim.js":"./js/sim.js?v=304","./js/tr.js":"./js/tr.js?v=304"}}</script>
+<script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/","./js/data.js":"./js/data.js?v=306","./js/main.js":"./js/main.js?v=306","./js/map.js":"./js/map.js?v=306","./js/music.js":"./js/music.js?v=306","./js/render.js":"./js/render.js?v=306","./js/sfx.js":"./js/sfx.js?v=306","./js/sim.js":"./js/sim.js?v=306","./js/tr.js":"./js/tr.js?v=306"}}</script>
 <script src="../../ff-presence.js" async></script>
 <script src="https://cdn.jsdelivr.net/npm/peerjs@1.5.4/dist/peerjs.min.js"></script>
 <script src="https://frenchfries777.com/games/ff-lang.js"></script>
@@ -88,7 +88,7 @@ html:not(.tcReady) #sLobby{visibility:hidden}
 #inv .in{position:relative;width:min(440px,92vw);max-height:80vh;overflow:auto;background:var(--panel);border:3px solid var(--line);box-shadow:0 0 0 3px #1a1420,0 12px 40px rgba(0,0,0,.6);padding:18px 18px 14px}
 #inv .x{position:absolute;right:10px;top:6px;background:none;border:0;font-size:26px;color:var(--dim)}#inv h2{margin:0 0 6px}
 #inv h4{margin:14px 0 6px;font-size:13px;color:var(--dim)}#inv .r{display:flex;align-items:center;gap:8px;padding:7px 10px;background:#221b28;border:2px solid #3a2f44;margin-top:6px}
-#inv .r b{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}#inv .r small{color:var(--dim);font-size:12px;white-space:nowrap}#inv .r.on small{color:#7dff9b}#inv .r .btn{padding:5px 12px;font-size:13px}
+#rpList .r{display:flex;gap:6px;align-items:center;margin:7px 0}#rpList .r b{flex:1;min-width:0;display:block}#rpList .r small{display:block;color:var(--dim);font-size:12px}#rpList .r .btn,#rpBar .btn,label.btn{padding:5px 10px;font-size:13px;cursor:pointer}#inv .r b{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}#inv .r small{color:var(--dim);font-size:12px;white-space:nowrap}#inv .r.on small{color:#7dff9b}#inv .r .btn{padding:5px 12px;font-size:13px}
 .note{color:var(--dim);font-size:13px;line-height:1.5}
 .set{display:grid;grid-template-columns:140px 1fr;gap:12px 14px;align-items:center;font-size:15px}
 .seg{display:flex;gap:6px;flex-wrap:wrap}.seg button{background:#2a2230;border:2px solid var(--line);padding:6px 12px;font-size:14px}.seg button.on{border-color:var(--gold);color:var(--gold)}
@@ -112,7 +112,7 @@ input[type=range]{width:220px;accent-color:#d9b75a}
 .slot{border:2px solid var(--line);padding:8px 10px;background:#18223a;display:flex;align-items:center;gap:8px;min-height:46px}
 .slot i{width:16px;height:16px;border:2px solid #101828;flex:none}
 .slot b{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:14px}
-.slot small{color:var(--dim);font-size:12px;white-space:nowrap}
+.slot b em.ti{display:block;font-style:normal;font-size:11px;color:#ffd36b;font-weight:normal;overflow:hidden;text-overflow:ellipsis}#seaList .r{display:flex;gap:6px;align-items:center;margin:7px 0}#seaList .r b{flex:1;min-width:0;display:block}#seaList .r small{display:block;color:var(--dim);font-size:12px;font-weight:normal}.slot small{color:var(--dim);font-size:12px;white-space:nowrap}
 .slot.me{border-color:var(--gold)}
 .pn{cursor:pointer}b.pn:hover,.pn:hover b{text-decoration:underline}
 .slot.empty{opacity:.45}
@@ -339,6 +339,8 @@ body.touch #exitBtn{top:auto;bottom:auto}
 <!-- 패치노트 -->
 <div id="modeWin"><div class="pan" style="width:min(640px,94vw)"><button class="x" id="modeX">×</button><h2>모드 선택</h2><div id="modeList"></div></div></div>
 <div id="mapWin"><div class="pan" style="width:min(640px,94vw)"><button class="x" id="mapX">×</button><h2>맵 선택</h2><div id="mapList"></div></div></div>
+<section class="scr" id="sReplay"><div class="pan" style="width:min(600px,94vw)"><button class="x" data-back>×</button><h2>리플레이</h2><p class="note">최근 여섯 판이 이 브라우저에 저장돼요 (방장·혼자 한 경기만).</p><div id="rpList"></div><div class="row" style="margin-top:10px"><label class="btn">파일 열기<input type="file" id="rpFile" accept=".tcr,.json" style="display:none"></label></div><p class="note" id="rpMsg"></p></div></section>
+<section class="scr" id="sSeason"><div class="pan" style="width:min(560px,94vw)"><button class="x" data-back>×</button><h2>시즌 기록</h2><div id="seaNow" class="note" style="line-height:1.7"></div><div id="seaList"></div></div></section>
 <section class="scr" id="sDaily"><div class="pan" style="width:min(520px,94vw)"><button class="x" data-back>×</button><h2>일일 임무</h2><p class="note" id="dailyNote"></p><div id="dailyBox"></div></div></section>
 
 <section class="scr" id="sAch"><div class="pan" style="width:min(560px,94vw)"><button class="x" data-back>×</button><h2>도전과제 <small id="achCnt"></small></h2><div id="achList" style="max-height:62vh;overflow:auto"></div></div></section>
@@ -375,6 +377,7 @@ body.touch #exitBtn{top:auto;bottom:auto}
 <section class="scr" id="sResult"><div class="pan" style="width:min(560px,94vw)" id="result"></div></section>
 
 <!-- 전투 화면 -->
+<div id="rpBar" style="display:none;position:fixed;left:10px;bottom:10px;z-index:58;gap:6px;align-items:center;padding:6px 8px;background:rgba(20,15,24,.8);border:1px solid #6b5a3a;border-radius:8px"><button class="btn" id="rpPrev">◀</button><span id="rpWho" style="min-width:90px;text-align:center;font:bold 13px Galmuri,system-ui;color:#efe3c8"></span><button class="btn" id="rpNext">▶</button><button class="btn gold" id="rpPlay">일시정지</button><button class="btn" id="rpSpd">×1</button></div>
 <div id="fpsBox" style="display:none;position:fixed;top:6px;right:8px;z-index:60;padding:2px 7px;font:bold 13px Galmuri,system-ui;color:#9af0a8;background:rgba(20,15,24,.65);border-radius:4px;pointer-events:none"></div><div id="hud"><div id="lbT" class="lb"></div><div id="lbB" class="lb"></div><div id="wflash"></div><div id="talk"><img class="face" alt="" id="talkFace"><b class="who" id="talkWho"></b><p id="talkText"></p></div>
   <div id="roomTag"></div>
   <button id="exitBtn">나가기</button>
@@ -394,7 +397,7 @@ body.touch #exitBtn{top:auto;bottom:auto}
 <div id="touch"><div id="joy"><div id="joyBase"><div id="joyKnob"></div></div></div>
   <div id="tbtns"><button id="tA"><span>공격</span></button><button id="tQ"><i class="cd"></i><span>Q</span></button><button id="tE"><i class="cd"></i><span>E</span></button><button id="tR"><i class="cd"></i><span>R</span></button><button id="tRoll"><i class="cd"></i><span>구르기</span></button><button id="tF"><i class="cd"></i><span>귀환</span></button></div>
 </div>
-<script type="module" src="js/main.js?v=304"></script>
+<script type="module" src="js/main.js?v=306"></script>
 <div id="findBlock" style="position:fixed;inset:0;z-index:60;display:none;cursor:wait"></div>
 </body>
 </html>
