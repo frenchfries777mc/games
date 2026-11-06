@@ -440,6 +440,7 @@ function parseScript(text,lenient){
       else if(m=l.t.match(/^spawn\s+"([^"]{1,20})"(?:\s+(\d+)\s+times?)?(?:\s+near\s+(spawn|player))?$/i)){var c0=m[2]?+m[2]:1;if(c0<1||c0>100)throw PE(l.n,'spawn count must be 1 to 100');var sp0={ty:'@'+m[1],n:c0};if(m[3])sp0.near=m[3].toLowerCase();acts.push({spawn:sp0});}
       else if(m=l.t.match(/^spawn\s+(\w+)(?:\s+(\d+)\s+times?)?(?:\s+near\s+(spawn|player))?$/i)){var c=m[2]?+m[2]:1;if(c<1||c>100)throw PE(l.n,'spawn count must be 1 to 100');var sp={ty:mon(l,m[1]),n:c};if(m[3])sp.near=m[3].toLowerCase();acts.push({spawn:sp});}
       else if(m=l.t.match(/^place\s+(.+?)\s+near\s+(spawn|player)$/i)){acts.push({place:{item:item(l,m[1].trim()),near:m[2].toLowerCase()}});}
+      else if(m=l.t.match(/^generate\s+biome\s+"([^"]{1,20})"(?:\s+(\d+)\s+times?)?$/i)){var gb=m[2]?+m[2]:1;if(gb<1||gb>30)throw PE(l.n,'generate biome count must be 1 to 30');acts.push({genbiome:{n:m[1],c:gb}});}
       else if((m=l.t.match(/^fill\s+(~?-?\d*)\s+(~?-?\d*)\s+(~?-?\d*)\s+(~?-?\d*)\s+to\s+(land|beach|ocean|mountain)(?:\s+(\w+))?$/i))&&m[1]&&m[2]&&m[3]&&m[4]){
         var fc=[];for(var fi=1;fi<=4;fi++){var tk=m[fi],rel=tk.charAt(0)==='~',nv=tk.replace('~','');if(nv===''||nv==='-')nv=0;fc.push([rel?1:0,+nv]);}
         var fb=m[6]?m[6].toLowerCase():null;if(fb&&BIOMES.indexOf(fb)<0)throw PE(l.n,"unknown biome '"+fb+"'. You can use: "+BIOMES.join(', '));
@@ -540,13 +541,29 @@ function parseScript(text,lenient){
         out.pa.push({a:am[1].toLowerCase(),do:sub(ul,0)});
       }
     }
-    else if(m=l.t.match(/^define\s+(mob|item|ore|structure|world)\s+"([^"]{1,20})"\s*:$/i)){
+    else if(m=l.t.match(/^define\s+(mob|item|ore|structure|world|biome)\s+"([^"]{1,20})"\s*:$/i)){
       if(!(pos<L.length&&L[pos].ind>0))throw PE(l.n,'nothing is written under this line');
       var dind=L[pos].ind,df={k:m[1].toLowerCase(),n:m[2]};out.defs=out.defs||[];
       if(out.defs.length>=1000)throw PE(l.n,'define can be written 1000 times at most');
       while(pos<L.length&&L[pos].ind>=dind){
         var dl=L[pos++],dm;
-        if(dm=dl.t.match(/^base\s+(.+)$/i)){df.base=df.k==='mob'?mon(dl,dm[1].trim()):df.k==='ore'?(function(w){w=w.toLowerCase();if(['iron','gold','copper','zinc'].indexOf(w)<0)throw PE(dl.n,'ore base can be: iron, gold, copper, zinc');return w;})(dm[1].trim()):item(dl,dm[1].trim());}
+        if(df.k==='biome'){
+          if(dm=dl.t.match(/^base\s*:?\s*(\w+)$/i)){var bn=dm[1].toLowerCase(),bix=BIOMES.indexOf(bn);if(bix<0){var bg=guess(bn,BIOMES);throw PE(dl.n,"unknown biome '"+dm[1]+"'."+(bg?" Did you mean '"+bg+"'?":" You can use: "+BIOMES.join(', ')));}df.bs=bix;}
+          else if(dm=dl.t.match(/^ground\s*:?\s*"?(#[0-9a-f]{6})"?$/i)){df.gd=dm[1].toLowerCase();}
+          else if(dm=dl.t.match(/^sand\s*:?\s*"?(#[0-9a-f]{6})"?$/i)){df.sa=dm[1].toLowerCase();}
+          else if(dm=dl.t.match(/^rock\s*:?\s*"?(#[0-9a-f]{6})"?$/i)){df.rk=dm[1].toLowerCase();}
+          else if(dm=dl.t.match(/^mob\s*:?\s*(.+?)(?:\s+max\s+(\d+))?(?:\s+rate\s+(\d+))?$/i)){
+            df.mobs=df.mobs||[];var mq=dm[1].trim().match(/^"([^"]{1,20})"$/),mx1=dm[2]?+dm[2]:4,rt1=dm[3]?+dm[3]:6;
+            if(mx1<1||mx1>1000)throw PE(dl.n,'max must be 1 to 1000');if(rt1<1||rt1>1000)throw PE(dl.n,'rate must be 1 to 1000');
+            df.mobs.push([mq?'@'+mq[1]:mon(dl,dm[1].trim()),mx1,rt1]);}
+          else if(dm=dl.t.match(/^trees?\s*:?\s*(\w+)$/i)){var tn=dm[1].toLowerCase(),tix=BIOMES.indexOf(tn);if(tix<0)throw PE(dl.n,"unknown biome '"+dm[1]+"'. trees uses the trees of a biome: "+BIOMES.join(', '));df.tr=tix;}
+          else if(dm=dl.t.match(/^music\s*:?\s*"?([a-z]+)"?$/i)){var mn=dm[1].toLowerCase(),MUS=['spring','summer','autumn','winter','desert','volcano','jungle','ice','night','battle','rain','storm'];if(MUS.indexOf(mn)<0)throw PE(dl.n,"unknown music '"+dm[1]+"'. You can use: "+MUS.join(', '));df.mu=mn==='summer'?'base':'bgm-'+mn+'.mp3';}
+          else if(dm=dl.t.match(/^effect\s*:?\s*(speed|strength|defense|regen|haste|breath|night)$/i)){df.fx=df.fx||[];var fk=dm[1].toLowerCase();if(df.fx.indexOf(fk)<0)df.fx.push(fk);}
+          else if(dm=dl.t.match(/^structure\s*:?\s*"([^"]{1,20})"(?:\s+(\d+))?$/i)){df.sr=df.sr||[];var sc1=dm[2]?+dm[2]:1;if(sc1<1||sc1>50)throw PE(dl.n,'structure count must be 1 to 50');if(df.sr.length>=50)throw PE(dl.n,'structure can be written 50 times at most');df.sr.push([dm[1],sc1]);}
+          else if(dm=dl.t.match(/^size\s*:?\s*(\d+)$/i)){if(+dm[1]<200||+dm[1]>3000)throw PE(dl.n,'size must be 200 to 3000');df.sz=+dm[1];}
+          else throw PE(dl.n,'under define biome you can write: base, ground, sand, rock, mob, trees, music, effect, structure, size');
+        }
+        else if(dm=dl.t.match(/^base\s+(.+)$/i)){df.base=df.k==='mob'?mon(dl,dm[1].trim()):df.k==='ore'?(function(w){w=w.toLowerCase();if(['iron','gold','copper','zinc'].indexOf(w)<0)throw PE(dl.n,'ore base can be: iron, gold, copper, zinc');return w;})(dm[1].trim()):item(dl,dm[1].trim());}
         else if((df.k==='mob'||df.k==='item')&&(dm=dl.t.match(/^image\s*:?\s*"([^"]{1,40})"$/i))){if(df.k==='item'&&df.image){df.pimage=dm[1].trim();df.pii=itemId(df.pimage)||undefined;continue;}df.image=dm[1].trim();df.ii=itemId(df.image)||undefined;if(MONS.indexOf(df.image.toLowerCase())>=0)df.im=df.image.toLowerCase();}
         else if(df.k==='mob'&&(dm=dl.t.match(/^(hp|dmg|speed)\s+(\d+(?:\.\d+)?)$/i))){df[dm[1].toLowerCase()]=+dm[2];}
         else if((df.k==='mob'||df.k==='ore')&&(dm=dl.t.match(/^color\s+"?(#[0-9a-f]{6})"?$/i))){df.col=dm[1].toLowerCase();}
@@ -570,7 +587,7 @@ function parseScript(text,lenient){
         else if(df.k==='item'&&(dm=dl.t.match(/^makes\s+(\d+)$/i))){if(+dm[1]<1||+dm[1]>999)throw PE(dl.n,'makes must be 1 to 999');df.mk=+dm[1];}
         else throw PE(dl.n,df.k==='mob'?'under define mob you can write: base, image, hp, dmg, speed, color, drop, biome, rate, max, hostile':df.k==='ore'?'under define ore you can write: base, color, drop, biome, chance':df.k==='structure'?'under define structure you can write: block <item> <x> <y>':df.k==='world'?'under define world you can write: seed':'under define item you can write: base, image, recipe, makes, placeable, weapon, damage, cooldown, wearable, add_inventory, eatable, heal, effect, max_item_count, held');
       }
-      if(df.k==='structure'){if(!df.bl||!df.bl.length)throw PE(l.n,'define structure needs  block  lines');}else if(df.k==='world'){if(!df.sd)throw PE(l.n,'define world needs a  seed: 123  line');}else if(!df.base)throw PE(l.n,'define '+df.k+' needs a  base  line');
+      if(df.k==='structure'){if(!df.bl||!df.bl.length)throw PE(l.n,'define structure needs  block  lines');}else if(df.k==='world'){if(!df.sd)throw PE(l.n,'define world needs a  seed: 123  line');}else if(df.k!=='biome'&&!df.base)throw PE(l.n,'define '+df.k+' needs a  base  line');
       if(df.k==='item'&&df.pl===true&&!df.pimage)throw PE(l.n,'placeable: true needs a second  image  line for the placed picture, like  image: "'+df.n+'_place"');
       if((df.k==='mob'||df.k==='item')&&!df.image)throw PE(l.n,'define '+df.k+' needs an  image  line, like  image: "my_picture"  (a PNG name in the folder, or an in-game item/mob name)');
       out.defs.push(df);
