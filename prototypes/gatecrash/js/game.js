@@ -89,7 +89,9 @@ function stepBody(W, b, inp, dt) {
 function isNode(W, tx, ty) {
   if (tx < 0 || tx >= W.w || ty < 1 || ty >= W.h - 1) return false;
   const c = tileAt(W, tx, ty), up = tileAt(W, tx, ty - 1);
-  return !isSolid(c) && !isSolid(up) && c !== '=' && canStand(tileAt(W, tx, ty + 1));
+  const bt = tileAt(W, tx, ty + 1);
+  if (bt === '=' && !canStand(tileAt(W, tx - 1, ty + 1)) && !canStand(tileAt(W, tx + 1, ty + 1))) return false;      // 외딴 징검돌은 봇이 안 밟아요 (위험한 길)
+  return !isSolid(c) && !isSolid(up) && c !== '=' && canStand(bt);
 }
 function nodeOfFeet(W, x, y) {
   const tx = Math.floor((x + PH.W / 2) / TS), ty = Math.floor((y + PH.H) / TS) - 1;
