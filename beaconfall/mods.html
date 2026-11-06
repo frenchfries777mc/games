@@ -419,6 +419,7 @@ function parseScript(text,lenient){
       }else if(m=l.t.match(/^teleport\s+player\s+to\s+spawn$/i)){acts.push({tp:{who:'player',to:'spawn'}});}
       else if(m=l.t.match(/^teleport\s+player\s+to\s+(-?\d+)\s+(-?\d+)$/i)){acts.push({tp:{who:'player',to:{x:+m[1],y:+m[2]}}});}
       else if(m=l.t.match(/^teleport\s+(\w+)\s+to\s+player$/i)){acts.push({tp:{who:mon(l,m[1]),to:'player'}});}
+      else if(m=l.t.match(/^build\s+"([^"]{1,20})"(?:\s+near\s+(spawn|player))?$/i)){var bd={n:m[1]};if(m[2])bd.near=m[2].toLowerCase();acts.push({build:bd});}
       else if(m=l.t.match(/^spawn\s+"([^"]{1,20})"(?:\s+(\d+)\s+times?)?(?:\s+near\s+(spawn|player))?$/i)){var c0=m[2]?+m[2]:1;if(c0<1||c0>10)throw PE(l.n,'spawn count must be 1 to 10');var sp0={ty:'@'+m[1],n:c0};if(m[3])sp0.near=m[3].toLowerCase();acts.push({spawn:sp0});}
       else if(m=l.t.match(/^spawn\s+(\w+)(?:\s+(\d+)\s+times?)?(?:\s+near\s+(spawn|player))?$/i)){var c=m[2]?+m[2]:1;if(c<1||c>10)throw PE(l.n,'spawn count must be 1 to 10');var sp={ty:mon(l,m[1]),n:c};if(m[3])sp.near=m[3].toLowerCase();acts.push({spawn:sp});}
       else if(m=l.t.match(/^place\s+(.+?)\s+near\s+(spawn|player)$/i)){acts.push({place:{item:item(l,m[1].trim()),near:m[2].toLowerCase()}});}
@@ -446,7 +447,7 @@ function parseScript(text,lenient){
         while(pos<L.length&&L[pos].ind>=ui){var t2=L[pos++],q=t2.t.match(/^text\s+"([^"]{1,80})"$/i);if(!q)throw PE(t2.n,'inside ui, write  text "..."');lines.push(q[1]);}
         if(lines.length>12)throw PE(l.n,'ui can have 12 lines');acts.push({ui:{title:m[1],lines:lines}});
       }else if(m=l.t.match(/^set\s+(\S+)\s+(damage|speed|name)\s+(.+)$/i)){acts.push({set:setStmt(l,m)});}
-      else throw PE(l.n,"I don't understand '"+l.t.split(' ')[0]+"'. You can use: give, say, chat, title, chance, if, teleport, spawn, place, remove, fill, disable, enable, add, subtract, reset, loop, heal, damage, broadcast, play, button, ui, set");
+      else throw PE(l.n,"I don't understand '"+l.t.split(' ')[0]+"'. You can use: give, say, chat, title, chance, if, teleport, spawn, build, place, remove, fill, disable, enable, add, subtract, reset, loop, heal, damage, broadcast, play, button, ui, set");
       if(pe){var na=acts.pop();pe.else=[na];pe.elseIf=true;}
     }
     return acts;
@@ -503,7 +504,7 @@ function parseScript(text,lenient){
         out.pa.push({a:am[1].toLowerCase(),do:sub(ul,0)});
       }
     }
-    else if(m=l.t.match(/^define\s+(mob|item|ore)\s+"([^"]{1,20})"\s*:$/i)){
+    else if(m=l.t.match(/^define\s+(mob|item|ore|structure)\s+"([^"]{1,20})"\s*:$/i)){
       if(!(pos<L.length&&L[pos].ind>0))throw PE(l.n,'nothing is written under this line');
       var dind=L[pos].ind,df={k:m[1].toLowerCase(),n:m[2]};out.defs=out.defs||[];
       if(out.defs.length>=40)throw PE(l.n,'define can be written 40 times at most');
@@ -516,13 +517,14 @@ function parseScript(text,lenient){
         else if((df.k==='mob'||df.k==='ore')&&(dm=dl.t.match(/^biome\s+(.+)$/i))){var BIOS=['start','forest','desert','volcano','jungle','mesa','rock','mangrove','ice'];df.bi=[];dm[1].split(',').forEach(function(bn){var bw=bn.trim().toLowerCase(),bx=BIOS.indexOf(bw);if(bx<0){var bg=guess(bw,BIOS);throw PE(dl.n,"unknown biome '"+bw+"'."+(bg?" Did you mean '"+bg+"'?":" You can use: "+BIOS.join(', ')));}if(df.bi.indexOf(bx)<0)df.bi.push(bx);});}
         else if(df.k==='ore'&&(dm=dl.t.match(/^chance\s+(\d+)$/i))){if(+dm[1]<1||+dm[1]>100)throw PE(dl.n,'chance must be 1 to 100');df.ch=+dm[1];}
         else if(df.k==='mob'&&(dm=dl.t.match(/^(rate|max)\s+(\d+)$/i))){var rv=+dm[2];if(rv<1||rv>100)throw PE(dl.n,dm[1].toLowerCase()+' must be 1 to 100');df[dm[1].toLowerCase()==='rate'?'rt':'mx']=rv;}
+        else if(df.k==='structure'&&(dm=dl.t.match(/^block\s+(.+?)\s+(-?\d+)\s+(-?\d+)$/i))){df.bl=df.bl||[];if(df.bl.length>=80)throw PE(dl.n,'block can be written 80 times at most');var bx0=+dm[2],by0=+dm[3];if(Math.abs(bx0)>20||Math.abs(by0)>20)throw PE(dl.n,'block position must be -20 to 20');df.bl.push([item(dl,dm[1].trim()),bx0,by0]);}
         else if(df.k==='item'&&(dm=dl.t.match(/^recipe\s+(.+)$/i))){
           var rcs=[];dm[1].split(',').forEach(function(pt){var mm=pt.trim().match(/^(.+?)(?:\s+(\d+))?$/);if(!mm)throw PE(dl.n,'write it like  recipe iron 3, log 2');var cn=mm[2]?+mm[2]:1;if(cn<1||cn>7)throw PE(dl.n,'each ingredient count must be 1 to 7');var iid=item(dl,mm[1].trim());for(var ci=0;ci<cn;ci++)rcs.push(iid);});
           if(rcs.length<1||rcs.length>7)throw PE(dl.n,'a recipe can use 1 to 7 ingredient slots');df.rc=rcs;}
         else if(df.k==='item'&&(dm=dl.t.match(/^makes\s+(\d+)$/i))){if(+dm[1]<1||+dm[1]>20)throw PE(dl.n,'makes must be 1 to 20');df.mk=+dm[1];}
-        else throw PE(dl.n,df.k==='mob'?'under define mob you can write: base, hp, dmg, speed, color, drop, biome, rate, max':df.k==='ore'?'under define ore you can write: base, color, drop, biome, chance':'under define item you can write: base, recipe, makes');
+        else throw PE(dl.n,df.k==='mob'?'under define mob you can write: base, hp, dmg, speed, color, drop, biome, rate, max':df.k==='ore'?'under define ore you can write: base, color, drop, biome, chance':df.k==='structure'?'under define structure you can write: block <item> <x> <y>':'under define item you can write: base, recipe, makes');
       }
-      if(!df.base)throw PE(l.n,'define '+df.k+' needs a  base  line');
+      if(df.k==='structure'){if(!df.bl||!df.bl.length)throw PE(l.n,'define structure needs  block  lines');}else if(!df.base)throw PE(l.n,'define '+df.k+' needs a  base  line');
       out.defs.push(df);
     }
     else if(m=l.t.match(/^use_mod_uuid\s*:\s*([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})$/i)){out.uses=out.uses||[];if(out.uses.length>=5)throw PE(l.n,'use_mod_uuid can be written 5 times at most');out.uses.push(m[1].toLowerCase());}
