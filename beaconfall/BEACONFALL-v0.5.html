@@ -641,6 +641,7 @@ function rvSetPt(x,y,val){
 const TREE_CELL=6;
 const BDEN=[1,1.8,0.25,0.12,2.2,0.3,0.12,1.2,0.6];
 const BROCK=[0.35,0.3,0.25,0.26,0.3,0.55,0.6,0.25,0.5];   // 섬마다 바위 밀도
+const MODORE={t:{},bio:{},n:0};   // define ore: 6~9번 바위 종류
 const ORE=[[.003,.012,.015],[.003,.012,.015],[0,.01,.02],[.01,.016,.022],[.003,.012,.015],[.005,.07,.04],[.01,.04,.06,.06],[.003,.012,.015],[.004,.03,.05]];   // [금, 구리, 철, (아연)]
 for(let i=1;i<ORE.length;i++)ORE[i]=ORE[i].map(v=>v*1.5);   // 시작섬(0) 말고 다른 섬은 광물이 더 많이 생겨요
 const FLOWER_OK=[1,1,0,0,1,0,0,1];
@@ -739,7 +740,9 @@ function ensureBoulders(cx,cy){
       if(hr(x,y,3)>pr*BROCK[b])continue;
       if(th<0.97&&treeNear(bx,by))continue;
       const rr=hr(x,y,4),o=ORE[b];
-      list.push([by,bx,rr<o[0]?3:rr<o[0]+o[1]?4:rr<o[0]+o[1]+o[2]?2:(o[3]&&rr<o[0]+o[1]+o[2]+o[3])?5:(hr(x,y,5)<0.35?1:0)]);
+      let bt0=rr<o[0]?3:rr<o[0]+o[1]?4:rr<o[0]+o[1]+o[2]?2:(o[3]&&rr<o[0]+o[1]+o[2]+o[3])?5:(hr(x,y,5)<0.35?1:0);
+      if(bt0<2&&MODORE.bio[b])for(const mid of MODORE.bio[b])if(hr(x,y,7+mid)<MODORE.t[mid].p){bt0=mid;break;}   // define ore
+      list.push([by,bx,bt0]);
       break;
     }
   }
@@ -5595,7 +5598,7 @@ function mineBoulderAuth(k,noDrop,respawn,belt){
   if(respawn)world.pend.set(k,3);
   const tt=B.t[k],bid=bioRaw(B.x[k],B.y[k])&127,items=[];
   let item='stone',n=1+((Math.random()*2)|0);
-  if(tt===2){item='iron';n=2+((Math.random()*2)|0);}else if(tt===4){item='copper';n=1+((Math.random()*3)|0);}else if(tt===3){item='gold';n=1+((Math.random()*2)|0);}else if(tt===5){item='zinc';n=1+((Math.random()*3)|0);}
+  if(tt===2){item='iron';n=2+((Math.random()*2)|0);}else if(tt===4){item='copper';n=1+((Math.random()*3)|0);}else if(tt===3){item='gold';n=1+((Math.random()*2)|0);}else if(tt===5){item='zinc';n=1+((Math.random()*3)|0);}else if(tt>=6&&MODORE.t[tt]){const o=MODORE.t[tt];item=o.item;n=o.a+((Math.random()*(o.b-o.a+1))|0);}
   if(!noDrop){
     for(let j=0;j<n;j++)items.push(item);
     if(bid===5&&Math.random()<0.7)for(let j=0,m=1+((Math.random()*2)|0);j<m;j++)items.push('clay');  // 메사: 점토
@@ -6434,7 +6437,7 @@ function updatePlayer(dt){
         }else if(work.kind==='b'){
           const kk=work.key,pt=pickTool(kk);SFX.done('b',world.boulders.t[kk],world.boulders.x[kk],world.boulders.y[kk]);
           if(isGuest())sendHost({t:'mine',key:world.boulders.y[kk]*W+world.boulders.x[kk],tm:pt?pt.mat:''});else mineBoulderAuth(kk,!pt);
-          let bt='rock';{const tt=world.boulders.t[kk];MODX.destroyed=({2:'철광석',3:'금광석',4:'구리광석',5:'아연광석'})[tt]||'바위';bt=({2:'iron',3:'gold',4:'copper',5:'zinc'})[tt]||'rock';}stAdd('rock');try{modEvent('break',bt);}catch(e){}
+          let bt='rock';{const tt=world.boulders.t[kk];MODX.destroyed=({2:'철광석',3:'금광석',4:'구리광석',5:'아연광석'})[tt]||(MODORE.t[tt]&&MODORE.t[tt].name)||'바위';bt=({2:'iron',3:'gold',4:'copper',5:'zinc'})[tt]||(MODORE.t[tt]&&MODORE.t[tt].name)||'rock';}stAdd('rock');try{modEvent('break',bt);}catch(e){}
           if(pt)wearSel();
         }else{
           const b=P.starget;SFX.done('s',b.id,b.x,b.y);MODX.destroyed=(ITEMS[b.id]&&ITEMS[b.id].name)||String(b.id);try{modEvent('break',String(b.id));}catch(e){}
@@ -10044,7 +10047,20 @@ function modLocal(){try{const o=JSON.parse(localStorage.getItem('bf.mods.on')||'
 const MOD_KEY=/^(Key[A-Z]|Digit[0-9]|F([1-9]|1[0-2]))$/;
 function modBox(){let b=document.getElementById('modbtns');if(!b){b=document.createElement('div');b.id='modbtns';b.style.cssText='position:fixed;inset:0;z-index:30;pointer-events:none';document.body.appendChild(b);setInterval(()=>{const m=document.getElementById('modal');b.style.display=(mode==='play'&&m&&m.hidden)?'':'none';},400);}return b;}
 const MODDEF={mob:{},item:{},q:[],sp:[],t:0,ready:false};
-function modDefsRun(){if(!MODDEF.ready)return;for(let i=RECIPES.length-1;i>=0;i--)if(RECIPES[i].mod)RECIPES.splice(i,1);MODDEF.mob={};MODDEF.item={};for(const q of MODDEF.q)modDef(q);MODDEF.sp=Object.keys(MODDEF.mob).map(n=>MODDEF.mob[n]).filter(k=>MTYPES[k].mb&&MTYPES[k].mb.length);}
+function modOre(q){   // define ore "이름": 기존 광물(iron gold copper zinc)을 바탕으로 새 광물 바위를 만들어요
+  if(MODORE.n>=4||typeof q.n!=='string'||!q.n||q.n.length>20)return;
+  const bt={zinc:5,gold:3,copper:4,iron:2}[q.base];if(!bt)return;
+  const id=6+MODORE.n,col=(typeof q.col==='string'&&/^#[0-9a-f]{6}$/.test(q.col))?q.col:'#c0405a';
+  const item=Array.isArray(q.drop)&&q.drop[0]&&ITEMS[q.drop[0][0]]?q.drop[0]:null;if(!item)return;
+  const sp=(PAL)=>makeSprite(fleck(fleck(BIG_ROWS,FLK,'q'),[[5,5],[2,5]],'w'),Object.assign({q:col,w:'#ffffff'},PAL),0);
+  BOULDER[id]=sp(BPAL);BOULDER_V[id]=sp(BPAL_V);ORE_NEED[id]=ORE_NEED[bt];PICK_OK[id]=PICK_OK[bt];
+  MODORE.t[id]={name:q.n,item:item[0],a:Math.max(0,item[1]|0)||1,b:Math.max(item[1]|0,item[2]|0)||1,p:Math.max(1,Math.min(100,q.ch|0||3))/100};
+  const bi=Array.isArray(q.bi)&&q.bi.length?q.bi:[0,1,2,3,4,5,6,7,8];
+  for(const b of bi){if(!(b>=0&&b<9))continue;(MODORE.bio[b]=MODORE.bio[b]||[]).push(id);}
+  MODORE.n++;
+}
+function modDefsRun(){if(!MODDEF.ready)return;for(let i=RECIPES.length-1;i>=0;i--)if(RECIPES[i].mod)RECIPES.splice(i,1);MODDEF.mob={};MODDEF.item={};for(const q of MODDEF.q)modDef(q);MODORE.t={};MODORE.bio={};MODORE.n=0;for(const q of MODDEF.q)if(q&&q.k==='ore')modOre(q);
+  MODDEF.sp=Object.keys(MODDEF.mob).map(n=>MODDEF.mob[n]).filter(k=>MTYPES[k].mb&&MTYPES[k].mb.length);}
 const modTy=t=>{t=String(t||'');return t[0]==='@'?(MODDEF.mob[t.slice(1)]||''):t;};
 const modIt=t=>{t=String(t||'');return t[0]==='@'?(MODDEF.item[t.slice(1)]||''):t;};
 function modDef(q){   // define mob|item "이름": 기존 것을 바탕(base)으로 새 몹/아이템을 만들어요
