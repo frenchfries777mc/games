@@ -405,6 +405,16 @@ function parseScript(text,lenient){
       else if(m=l.t.match(/^if\s+signal\s+receive\s+"([^"]{1,40})"\s+into\s+([a-z0-9_]{1,20})\s+run\s+text\s+replace\s+"([^"]{1,40})"\s+to\s+([a-z0-9_]{1,20})$/i)){acts.push({sigr:{n:m[1],x:m[2].toLowerCase(),a:m[3],y:m[4].toLowerCase()}});}
       else if(m=l.t.match(/^every\s+(\d{1,4})\s+seconds?\s*:$/i)){acts.push({inl:1,do:sub(l,depth)});}
       else if(m=l.t.match(/^set\s+variable\s+([a-z0-9_]{1,20})\s+to\s+random\s+(-?\d{1,6})\s+to\s+(-?\d{1,6})$/i)){acts.push({setv:{n:m[1].toLowerCase(),v:{r:[+m[2],+m[3]]}}});}
+      else if(m=l.t.match(/^give\s+(?:(\d+)\s+)?(.+?)\s+(?:to|from)\s+player\s+inventory(?:\s*(\d{1,2}))?$/i)){
+        var gn=m[1]?+m[1]:1;if(gn<1||gn>20)throw PE(l.n,'give amount must be 1 to 20');
+        var gq=m[2].trim().match(/^"([^"]{1,20})"$/),gs=m[3]?+m[3]:0;if(m[3]&&(gs<1||gs>7))throw PE(l.n,'inventory slot must be 1 to 7');
+        var ga={item:gq?'@'+gq[1]:item(l,m[2].trim()),n:gn};if(gs)ga.slot=gs;acts.push({give:ga});
+      }
+      else if(m=l.t.match(/^(?:remove|clear)\s+(?:(\d+|all)\s+)?(.+?)\s+from\s+player\s+inventory(?:\s*(\d{1,2}))?$/i)){
+        var tn=m[1]?(m[1].toLowerCase()==='all'?0:+m[1]):1;if(m[1]&&tn<0||tn>9999)throw PE(l.n,'remove amount must be 1 to 9999, or all');
+        var tq=m[2].trim().match(/^"([^"]{1,20})"$/),ts=m[3]?+m[3]:0;if(m[3]&&(ts<1||ts>7))throw PE(l.n,'inventory slot must be 1 to 7');
+        var ta={item:tq?'@'+tq[1]:item(l,m[2].trim()),n:tn};if(ts)ta.slot=ts;acts.push({take:ta});
+      }
       else if(m=l.t.match(/^give\s+(?:(\d+)\s+)?"([^"]{1,20})"$/i)){var n0=m[1]?+m[1]:1;if(n0<1||n0>20)throw PE(l.n,'give amount must be 1 to 20');acts.push({give:{item:'@'+m[2],n:n0}});}
       else if(m=l.t.match(/^give\s+(?:(\d+)\s+)?(.+)$/i)){
         var n=m[1]?+m[1]:1;if(n<1||n>20)throw PE(l.n,'give amount must be 1 to 20');
