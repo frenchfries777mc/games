@@ -2,6 +2,15 @@
  "notes": [
   {
    "date": "2026-11-05",
+   "build": "v0.5 b196",
+   "title": "업데이트 0.5 · b196",
+   "items": [
+    "every %{변수}% seconds: 로 변수 값만큼 간격을 정할 수 있어요 (값이 없으면 5초)",
+    "on 뒤와 if 뒤에 or를 쓸 수 있어요 (예: on mine or chop:, if has 3 iron or variable {n} >= 5:)"
+   ]
+  },
+  {
+   "date": "2026-11-05",
    "build": "v0.5 b195",
    "title": "업데이트 0.5 · b195",
    "items": [
