@@ -1,7 +1,7 @@
 /* Gatecrash · © 2026 Frenchfries777 · CC BY-NC-ND 4.0
    데이터: 상수, 무기, 맵 */
 'use strict';
-const VERSION = '0.1', BUILD = 31;
+const VERSION = '0.1', BUILD = 32;
 const TS = 16;                                   // 타일 한 칸 (px)
 const PH = { RUN: 120, ACC: 1500, AIR: 1000, G: 1500, JUMP: 440, CUT: 400, MAXF: 560, W: 10, H: 22, COY: 0.08, BUF: 0.12, BELT: 70, ICE: 180, LIFT: 130 };
 const MAX_HP = 100, RACERS = 4;
@@ -140,13 +140,15 @@ function floorsMap(F, roof, seed) {
         b.deco('stairwell', x, slab + 5, 6, 6);
       }
     }
+    // 파쿠르는 올라온 곳과 올라갈 곳 사이(실제로 지나가는 길)에 둬요
+    const xs = arrive.concat(conn[i].map(c => c.x)).concat(i ? [] : [8]); let lo = Math.max(16, Math.min(...xs) + 8), hi = Math.min(FW - 16, Math.max(...xs) - 4); if (hi - lo < 26) { lo = 16; hi = FW - 16; }
     const GA = ['ice', 'gap', 'mezz'];
     for (let q = 0; g.length < 3 && q < 3; q++) { const k = GA[(i + seed + q) % 3]; if (!g.includes(k)) g.push(k); }
     for (const k of g) {
       const pit = k === 'gap', len = k === 'ice' ? 12 : pit ? 20 : 3;
       if (k === 'mezz' || (k === 'gap' && i < 1)) continue;
       for (let t = 0; t < 14; t++) {
-        const x0 = 18 + (R() * (FW - 36 - len) | 0);
+        const x0 = Math.max(18, lo) + (R() * Math.max(1, Math.min(hi, FW - 18) - Math.max(18, lo) - len) | 0);
         if (res.some(r => x0 + len + 2 >= r[0] && x0 - (pit ? 8 : 2) <= r[1])) continue;
         if (k === 'ice') { b.fill(x0, S(i), x0 + 11, S(i), 'I'); res.push([x0 - 1, x0 + 12]); b.deco('cone', x0 - 1, bottom, 1, 1); }
         else if (pit) {
