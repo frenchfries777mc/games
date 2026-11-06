@@ -47,12 +47,12 @@ function pick(l){
 }
 function css(){
   var st=document.createElement('style');
-  st.textContent='.ffs{position:absolute; z-index:5; left:0; top:0; color:#ffe14d; font-family:"Noto Sans KR",sans-serif; font-weight:900; line-height:1.15; text-align:center; white-space:normal; word-break:keep-all; width:max-content; max-width:210px; text-shadow:2px 2px 0 #3d2e00; text-decoration:none; pointer-events:none; transform-origin:50% 50%;}'+
+  st.textContent='.ffs{position:absolute; z-index:5; left:0; top:0; color:#d9b45f; font-family:"Noto Sans KR",sans-serif; font-weight:900; line-height:1.15; text-align:center; white-space:normal; word-break:keep-all; width:max-content; max-width:210px; text-shadow:2px 2px 0 #3d2e00; text-decoration:none; pointer-events:none; transform-origin:50% 50%;}'+
    '.ffs i{display:block; font-style:normal; animation:ffsP .5s ease-in-out infinite alternate;}'+
-   'a.ffs{pointer-events:auto; cursor:pointer;} a.ffs:hover i{color:#fff2a0;}'+
+   'a.ffs{pointer-events:auto; cursor:pointer;} a.ffs:hover i{color:#f0d88a;}'+
    '@keyframes ffsP{from{transform:scale(1)}to{transform:scale(1.08)}}'+
    '@media (prefers-reduced-motion:reduce){.ffs i{animation:none}}'+
-   'html[data-ff-theme=light] .ffs{color:#e6a400; text-shadow:2px 2px 0 rgba(90,60,0,.35);}';
+   'html[data-ff-theme=light] .ffs{color:#7a5a00; text-shadow:none;}html[data-ff-theme=light] a.ffs:hover i{color:#111;}';
   document.head.appendChild(st);
 }
 function run(){
@@ -61,7 +61,7 @@ function run(){
   var p=pick(lang()); if(!p) return; css();
   var el=document.createElement(p.href?'a':'span'); el.className='ffs'; el.setAttribute('data-notr',''); el.setAttribute('aria-hidden','true');
   if(p.href){ el.href=p.href; el.target='_blank'; el.rel='noopener'; el.removeAttribute('aria-hidden'); }
-  if(p.swap){ el.style.pointerEvents='auto'; el.style.cursor='pointer'; el.onclick=function(){ var x=el.querySelector('i'); if(x) x.textContent=p.swap; el.style.color='#ff5a4e'; el.onclick=null; }; }
+  if(p.swap){ el.style.pointerEvents='auto'; el.style.cursor='pointer'; el.onclick=function(){ var x=el.querySelector('i'); if(x) x.textContent=p.swap; el.style.color=document.documentElement.getAttribute('data-ff-theme')==='light'?'#111':'#fff'; el.onclick=null; }; }
   var i=document.createElement('i'); i.textContent=p.t; el.appendChild(i);
   var n=p.t.length; el.style.fontSize=Math.max(14,Math.min(22,25-n*0.3))+'px';
   var box=h.parentNode; if(getComputedStyle(box).position==='static') box.style.position='relative';
