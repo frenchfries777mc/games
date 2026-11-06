@@ -524,11 +524,15 @@ function parseScript(text,lenient){
         else if(df.k==='ore'&&(dm=dl.t.match(/^chance\s+(\d+)$/i))){if(+dm[1]<1||+dm[1]>100)throw PE(dl.n,'chance must be 1 to 100');df.ch=+dm[1];}
         else if(df.k==='mob'&&(dm=dl.t.match(/^(rate|max)\s+(\d+)$/i))){var rv=+dm[2];if(rv<1||rv>100)throw PE(dl.n,dm[1].toLowerCase()+' must be 1 to 100');df[dm[1].toLowerCase()==='rate'?'rt':'mx']=rv;}
         else if(df.k==='structure'&&(dm=dl.t.match(/^block\s+(.+?)\s+(-?\d+)\s+(-?\d+)$/i))){df.bl=df.bl||[];if(df.bl.length>=80)throw PE(dl.n,'block can be written 80 times at most');var bx0=+dm[2],by0=+dm[3];if(Math.abs(bx0)>20||Math.abs(by0)>20)throw PE(dl.n,'block position must be -20 to 20');df.bl.push([item(dl,dm[1].trim()),bx0,by0]);}
+        else if(df.k==='mob'&&(dm=dl.t.match(/^hostile\s+(.+)$/i))){df.ho=[];dm[1].split(',').forEach(function(hw){hw=hw.trim();var q1=hw.match(/^"([^"]{1,20})"$/);if(q1){df.ho.push('@'+q1[1]);return;}hw=hw.toLowerCase();if(hw==='player'||hw==='monster'){df.ho.push(hw);return;}df.ho.push(mon(dl,hw));});if(df.ho.length>10)throw PE(dl.n,'hostile can list 10 targets at most');}
+        else if(df.k==='item'&&(dm=dl.t.match(/^placeable\s+(yes|no)$/i))){df.pl=dm[1].toLowerCase()==='yes';}
+        else if(df.k==='item'&&(dm=dl.t.match(/^(damage|cooldown)\s+(\d+(?:\.\d+)?)$/i))){var nv=+dm[2];if(dm[1].toLowerCase()==='damage'){if(nv<0||nv>200)throw PE(dl.n,'damage must be 0 to 200');df.dg=nv;}else{if(nv<0.1||nv>10)throw PE(dl.n,'cooldown must be 0.1 to 10 seconds');df.cd=nv;}}
+        else if(df.k==='item'&&(dm=dl.t.match(/^held\s+(speed|strength|defense|regen|haste|breath|night)$/i))){df.hd=dm[1].toLowerCase();}
         else if(df.k==='item'&&(dm=dl.t.match(/^recipe\s+(.+)$/i))){
           var rcs=[];dm[1].split(',').forEach(function(pt){var mm=pt.trim().match(/^(.+?)(?:\s+(\d+))?$/);if(!mm)throw PE(dl.n,'write it like  recipe iron 3, log 2');var cn=mm[2]?+mm[2]:1;if(cn<1||cn>7)throw PE(dl.n,'each ingredient count must be 1 to 7');var iid=item(dl,mm[1].trim());for(var ci=0;ci<cn;ci++)rcs.push(iid);});
           if(rcs.length<1||rcs.length>7)throw PE(dl.n,'a recipe can use 1 to 7 ingredient slots');df.rc=rcs;}
         else if(df.k==='item'&&(dm=dl.t.match(/^makes\s+(\d+)$/i))){if(+dm[1]<1||+dm[1]>20)throw PE(dl.n,'makes must be 1 to 20');df.mk=+dm[1];}
-        else throw PE(dl.n,df.k==='mob'?'under define mob you can write: base, hp, dmg, speed, color, drop, biome, rate, max':df.k==='ore'?'under define ore you can write: base, color, drop, biome, chance':df.k==='structure'?'under define structure you can write: block <item> <x> <y>':'under define item you can write: base, recipe, makes');
+        else throw PE(dl.n,df.k==='mob'?'under define mob you can write: base, hp, dmg, speed, color, drop, biome, rate, max, hostile':df.k==='ore'?'under define ore you can write: base, color, drop, biome, chance':df.k==='structure'?'under define structure you can write: block <item> <x> <y>':'under define item you can write: base, recipe, makes, placeable, damage, cooldown, held');
       }
       if(df.k==='structure'){if(!df.bl||!df.bl.length)throw PE(l.n,'define structure needs  block  lines');}else if(!df.base)throw PE(l.n,'define '+df.k+' needs a  base  line');
       out.defs.push(df);
