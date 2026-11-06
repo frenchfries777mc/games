@@ -10611,7 +10611,7 @@ function modActCond(a){   // if/chance 줄의 결과 (else 용). if 가 아니�
 function modCondOk(c){   // if A or B: 안의 조건 하나
   if(!c||typeof c!=='object')return false;
   if(c.md)return modHasMod(c.md);
-  if(c.has)return !!(ITEMS[c.has.item]&&modInv(c.has.item)>=Math.max(1,c.has.n|0||1));
+  if(c.has){const hid=modIt(c.has.item);return !!(ITEMS[hid]&&modInv(hid)>=Math.max(1,c.has.n|0||1));}
   if(c.ifp){if(!MOD.potato)return false;const isp=c.ifp.w==='victim'?MODX.vp:MODX.ap;return isp!==!!c.ifp.not;}
   if(c.ifv)return modVarCmp(c.ifv);
   if(c.ifg)return modGCmp(c.ifg);
@@ -10631,7 +10631,7 @@ function modRun(acts,depth,box){
     else if(a.ifg&&Array.isArray(a.do)){if(modGCmp(a.ifg))modRun(a.do,depth+1,box);}
     else if(a.md&&typeof a.md.n==='string'&&Array.isArray(a.do)){if(modHasMod(a.md))modRun(a.do,depth+1,box);}
     else if(Array.isArray(a.anyof)&&Array.isArray(a.do)){if(a.anyof.slice(0,8).some(modCondOk))modRun(a.do,depth+1,box);}
-    else if(a.has&&typeof a.has==='object'&&Array.isArray(a.do)){if(ITEMS[a.has.item]&&modInv(a.has.item)>=Math.max(1,a.has.n|0||1))modRun(a.do,depth+1,box);}
+    else if(a.has&&typeof a.has==='object'&&Array.isArray(a.do)){const hid=modIt(a.has.item);if(ITEMS[hid]&&modInv(hid)>=Math.max(1,a.has.n|0||1))modRun(a.do,depth+1,box);}
     else if(a.title&&typeof a.title.text==='string'){modTitle(modTxt(a.title.text).slice(0,80),+a.title.sec||3);}
     else if(a.button){modButton(a.button);}
     else if(a.window){modWindow(a.window);}
@@ -11147,7 +11147,7 @@ function achPopTick(dt){
 }
 function achKill(ty){
   MODX.ap=true;MODX.vp=false;MODX.attacker=myName();MODX.victim=(MTYPES[ty]&&MTYPES[ty].name)||String(ty);
-  modEvent('kill',ty);
+  modEvent('kill',typeof ty==='string'&&ty.startsWith('md_')?'@'+ty.slice(3):ty);
   if(ty==='gship'){jrAdd('ghost');achGrant('ghost');}
   achGrant('kill_1');stAdd('kill');if(ACH_BOSSES.includes(ty))stAdd('boss');
   settings.killN=(settings.killN|0)+1;saveSettings();if(settings.killN>=100)achGrant('kill_100');
