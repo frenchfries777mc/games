@@ -10046,7 +10046,7 @@ const MOD={ev:[],orig:{},on:[],st:{},remap:{},btns:[],tex:{},iorig:{},col:{},pot
 function modLocal(){try{const o=JSON.parse(localStorage.getItem('bf.mods.on')||'{}');return Object.keys(o).slice(0,50).map(id=>({id:String(id).slice(0,40),kind:o[id].kind,name:o[id].name,descr:o[id].descr,author_name:o[id].author_name,data:o[id].data})).filter(m=>m.data&&typeof m.data==='object');}catch(e){return [];}}
 const MOD_KEY=/^(Key[A-Z]|Digit[0-9]|F([1-9]|1[0-2]))$/;
 function modBox(){let b=document.getElementById('modbtns');if(!b){b=document.createElement('div');b.id='modbtns';b.style.cssText='position:fixed;inset:0;z-index:30;pointer-events:none';document.body.appendChild(b);setInterval(()=>{const m=document.getElementById('modal');b.style.display=(mode==='play'&&m&&m.hidden)?'':'none';},400);}return b;}
-const MODDEF={mob:{},item:{},q:[],sp:[],t:0,ready:false};
+const MODDEF={mob:{},item:{},st:{},q:[],sp:[],t:0,ready:false};
 function modOre(q){   // define ore "이름": 기존 광물(iron gold copper zinc)을 바탕으로 새 광물 바위를 만들어요
   if(MODORE.n>=4||typeof q.n!=='string'||!q.n||q.n.length>20)return;
   const bt={zinc:5,gold:3,copper:4,iron:2}[q.base];if(!bt)return;
@@ -10059,7 +10059,7 @@ function modOre(q){   // define ore "이름": 기존 광물(iron gold copper zin
   for(const b of bi){if(!(b>=0&&b<9))continue;(MODORE.bio[b]=MODORE.bio[b]||[]).push(id);}
   MODORE.n++;
 }
-function modDefsRun(){if(!MODDEF.ready)return;for(let i=RECIPES.length-1;i>=0;i--)if(RECIPES[i].mod)RECIPES.splice(i,1);MODDEF.mob={};MODDEF.item={};for(const q of MODDEF.q)modDef(q);MODORE.t={};MODORE.bio={};MODORE.n=0;for(const q of MODDEF.q)if(q&&q.k==='ore')modOre(q);
+function modDefsRun(){if(!MODDEF.ready)return;for(let i=RECIPES.length-1;i>=0;i--)if(RECIPES[i].mod)RECIPES.splice(i,1);MODDEF.mob={};MODDEF.item={};MODDEF.st={};for(const q of MODDEF.q)modDef(q);MODORE.t={};MODORE.bio={};MODORE.n=0;for(const q of MODDEF.q)if(q&&q.k==='ore')modOre(q);
   MODDEF.sp=Object.keys(MODDEF.mob).map(n=>MODDEF.mob[n]).filter(k=>MTYPES[k].mb&&MTYPES[k].mb.length);}
 const modTy=t=>{t=String(t||'');return t[0]==='@'?(MODDEF.mob[t.slice(1)]||''):t;};
 const modIt=t=>{t=String(t||'');return t[0]==='@'?(MODDEF.item[t.slice(1)]||''):t;};
@@ -10074,6 +10074,7 @@ function modDef(q){   // define mob|item "이름": 기존 것을 바탕(base)으
     if(Array.isArray(q.bi)&&q.bi.length){T.mb=q.bi.filter(x=>Number.isInteger(x)&&x>=0&&x<9).slice(0,9);T.mr=cl(q.rt||6,1,100);T.mx=cl(q.mx||4,1,100)|0;}
     MTYPES[key]=T;MODDEF.mob[nm]=key;
     const b=MSPR[q.base];if(b){if(T.col&&q.col){const c=document.createElement('canvas');c.width=b.w;c.height=b.h;const g=c.getContext('2d');g.drawImage(b.c,0,0);g.globalCompositeOperation='source-atop';g.globalAlpha=0.55;g.fillStyle=q.col;g.fillRect(0,0,b.w,b.h);MSPR[key]={c,w:b.w,h:b.h,wc:b.wc};}else MSPR[key]=b;}
+  }else if(q.k==='structure'){if(Array.isArray(q.bl))MODDEF.st[nm]=q.bl.slice(0,80).filter(b=>Array.isArray(b)&&STRUCT[b[0]]&&Math.abs(b[1])<=20&&Math.abs(b[2])<=20);
   }else if(q.k==='item'){const B=ITEMS[q.base];if(!B)return;ITEMS[key]=Object.assign({},B,{name:nm});MODDEF.item[nm]=key;
     if(Array.isArray(q.rc)&&q.rc.length>=1&&q.rc.length<=7&&q.rc.every(x=>typeof x==='string'&&ITEMS[x]))RECIPES.push({grp:'모드 제작법',bench:true,mod:1,name:nm,note:'모드로 만든 아이템이에요',pat:pad7(q.rc.map(x=>({id:x,n:1}))),out:[{id:key,n:cl(q.mk||1,1,20)|0}]});}
 }
@@ -10413,6 +10414,10 @@ function modRun(acts,depth,box){
     else if(a.spawn&&host&&MTYPES[modTy(a.spawn.ty)]){
       const ty=modTy(a.spawn.ty),T=MTYPES[ty],n=Math.max(1,Math.min(10,a.spawn.n|0||1)),an=modAnchor(a.spawn.near,box.gen);
       for(let i=0;i<n&&monsters.length<250;i++){const sp=modFreeSpot(an,30,90);if(!sp)continue;monsters.push({id:nextMid++,ty,x:sp.x,y:sp.y,tx:sp.x,ty2:sp.y,f:1,born:0,burn:0,wt:0,wa:0,ws:0,spd:T.wander,hp:T.hp,st:0,wind:0,cd:1,stun:0,hurt:0,kx:0,ky:0});}
+    }
+    else if(a.build&&host&&MODDEF.st[String(a.build.n)]){   // define structure 로 만든 구조물 짓기
+      const an=modAnchor(a.build.near,box.gen),cx=((an.x/GRID)|0)+3,cy=(an.y/GRID)|0;
+      for(const [k,dx,dy] of MODDEF.st[String(a.build.n)]){const gx=cx+dx,gy=cy+dy;if(canPlaceCell(gx,gy,k,true))addStruct(k,gx,gy,'host',k);}
     }
     else if(a.place&&host&&ITEMS[a.place.item]&&ITEMS[a.place.item].placeable&&STRUCT[a.place.item]){
       const k=a.place.item,an=modAnchor(a.place.near,box.gen),cx=(an.x/GRID)|0,cy=(an.y/GRID)|0;let done=false;
