@@ -158,7 +158,7 @@ body.playing #inv{ display:flex; }
 body.playing #inv .slot{ pointer-events:auto; cursor:pointer; }
 body.crafting #craft{ display:flex; pointer-events:auto; }
 body.crafting #inv{ top:calc(14px + var(--slot) + 18px + env(safe-area-inset-top,0px)); pointer-events:auto; }
-#bagrow{ position:fixed; left:calc(16px + env(safe-area-inset-left,0px)); top:calc(14px + var(--slot) + 18px + env(safe-area-inset-top,0px)); z-index:6; display:none; gap:8px; pointer-events:none; }
+#bagrow{ position:fixed; left:calc(16px + env(safe-area-inset-left,0px)); top:calc(14px + var(--slot) + 18px + env(safe-area-inset-top,0px)); z-index:6; display:none; gap:8px; pointer-events:none; flex-wrap:wrap; max-width:calc(7 * (var(--slot) + 8px)); }
 body.crafting.hasbag:not(.chest):not(.armor):not(.anvil) #bagrow{ display:flex; pointer-events:auto; }
 body.crafting.hasbag #recipes{ top:calc(14px + var(--slot) * 3 + 54px + env(safe-area-inset-top,0px)); max-height:calc(100vh - 14px - var(--slot) * 3 - 54px - 110px - env(safe-area-inset-top,0px)); }
 body.crafting.hasbag.chest #bagrow{ display:flex; pointer-events:auto; top:calc(14px + var(--slot) * 4 + 8px * 2 + 18px + 10px + env(safe-area-inset-top,0px)); }   /* 보관함을 열어도 추가 아이템 칸(가방)이 인벤토리 아래에 보여요 */
@@ -2222,7 +2222,8 @@ const slotEls=[],cinEls=[],coutEls=[],chestEls=[],bagEls=[];
 let chestArr=null,chestRef=null,bulk=false,hoverRI=null;
 const CH_N=21;
 const chestFix=b=>{if(b.id==='rchest'){const a=world.rcIt||(world.rcIt=[]);while(a.length<CH_N)a.push(null);b.it=a;return a;}if(!b.it)b.it=[];while(b.it.length<CH_N)b.it.push(null);return b.it;};
-const bag=Array(CH_N).fill(null);let bagMode=false,bagSlot=false;
+const bag=Array(28).fill(null);let bagMode=false,bagSlot=false,bagId='bag';var BAGX={};
+const bagN=()=>bagSlot?(BAGX[bagId]||7):7,isBagId=id=>id==='bag'||!!BAGX[id];
 const cartArr=Array(CH_N).fill(null);let cartOn=false;const cartP={x:0,y:0};
 let trashMode=false,trashRef=null;
 function openTrash(b){
@@ -2258,7 +2259,7 @@ function alchTry(sel){
 const icoH=id=>`<img src="${iconURL(id)}" width="16" height="16" style="image-rendering:pixelated;vertical-align:middle">`;
 function openAlchemy(){
   let sel=[],msg='';
-  const mine=()=>{const m={};for(const q of inv)if(q)m[q.id]=(m[q.id]|0)+q.n;if(bagSlot)for(let i=0;i<7;i++){const q=bag[i];if(q)m[q.id]=(m[q.id]|0)+q.n;}return Object.keys(m).filter(id=>ITEMS[id]&&!durMax(id)&&!ITEMS[id].place&&!ITEMS[id].keep&&!ITEMS[id].vehicle&&id!=='coin').map(id=>[id,m[id]]);};
+  const mine=()=>{const m={};for(const q of inv)if(q)m[q.id]=(m[q.id]|0)+q.n;if(bagSlot)for(let i=0;i<bagN();i++){const q=bag[i];if(q)m[q.id]=(m[q.id]|0)+q.n;}return Object.keys(m).filter(id=>ITEMS[id]&&!durMax(id)&&!ITEMS[id].place&&!ITEMS[id].keep&&!ITEMS[id].vehicle&&id!=='coin').map(id=>[id,m[id]]);};
   const draw=()=>{
     const A=alchSet(),found=ALCH.filter(r=>A[r.id]).length,list=mine();
     return `<h2>연금솥<small>발견 ${found} / ${ALCH.length}</small></h2>
@@ -2298,7 +2299,7 @@ function openRunes(){
   const draw=()=>{
     const ws=[];
     inv.forEach((q,i)=>{if(q&&runable(q.id))ws.push(['inv',i,q]);});
-    if(bagSlot)for(let i=0;i<7;i++){const q=bag[i];if(q&&runable(q.id))ws.push(['bag',i,q]);}
+    if(bagSlot)for(let i=0;i<bagN();i++){const q=bag[i];if(q&&runable(q.id))ws.push(['bag',i,q]);}
     const rc=Object.keys(RUNES).map(rn=>[rn,cntItem('rune_'+rn)]);
     return `<h2>룬 제단<small>RUNES</small></h2>
     <div class="row col"><label>검·단검·도끼에 룬을 새겨요. 이미 새긴 룬 위에 덮어쓰면 이전 룬은 사라져요.<br>화염: 공격 +30% · 불태움 / 냉기: 적이 느려짐 / 맹독: 독 / 생명: 때릴 때 체력 회복</label></div>
@@ -3078,7 +3079,7 @@ function openStall(b){
     const ps=b.ps||{},pp=b.pp||{},ids=Object.keys(ps),coins=cntItem('coin');
     let h=`<span data-stalluid hidden></span><h2>가판대<small>${esc(b.on||'주인 없음')}의 가게</small></h2>`;
     if(own){
-      const mine=[...new Set(inv.concat(bagSlot?bag.slice(0,7):[]).filter(q=>q&&!ITEMS[q.id].place&&!ITEMS[q.id].keep&&!ITEMS[q.id].vehicle&&q.id!=='coin'&&!durMax(q.id)).map(q=>q.id))];
+      const mine=[...new Set(inv.concat(bagSlot?bag.slice(0,bagN()):[]).filter(q=>q&&!ITEMS[q.id].place&&!ITEMS[q.id].keep&&!ITEMS[q.id].vehicle&&q.id!=='coin'&&!durMax(q.id)).map(q=>q.id))];
       h+=`<div class="row col"><label>물건과 가격을 정해 두면 다른 플레이어가 와서 사 가요. 내가 접속해 있지 않아도 팔려요.</label></div>
       <div class="achrow" style="display:flex;align-items:center;gap:8px"><div style="flex:1"><b>💰 수익금 ${b.pc|0} 동전</b></div><button class="btn sm" data-cash="1"${(b.pc|0)>0?'':' disabled'}>받기</button></div>
       <div class="achcat">진열 중 (${ids.length}/${ST_MAXK})</div>
@@ -3151,7 +3152,7 @@ function openMailbox(b){
   const me=myName(),own=!b.ow||b.ow===me;
   let note='',att=[],tgt=null,msg='';
   const boxes=()=>world.structs.filter(q=>q.id==='mailbox');
-  const mineIds=()=>{const m={};for(const q of inv)if(q)m[q.id]=(m[q.id]|0)+q.n;if(bagSlot)for(let i=0;i<7;i++){const q=bag[i];if(q)m[q.id]=(m[q.id]|0)+q.n;}return Object.keys(m).filter(id=>ITEMS[id]&&!ITEMS[id].keep&&!ITEMS[id].vehicle&&!durMax(id)).map(id=>[id,m[id]]);};
+  const mineIds=()=>{const m={};for(const q of inv)if(q)m[q.id]=(m[q.id]|0)+q.n;if(bagSlot)for(let i=0;i<bagN();i++){const q=bag[i];if(q)m[q.id]=(m[q.id]|0)+q.n;}return Object.keys(m).filter(id=>ITEMS[id]&&!ITEMS[id].keep&&!ITEMS[id].vehicle&&!durMax(id)).map(id=>[id,m[id]]);};
   const draw=()=>{
     const bs=boxes(),ml=b.ml||[];if(!tgt||!bs.includes(tgt))tgt=bs.find(q=>q!==b)||b;
     const have=(id,n)=>n-(att.find(q=>q[0]===id)||[0,0])[1];
@@ -3618,7 +3619,7 @@ function buildTouch(){
     const id=heldId(),it=id&&ITEMS[id];
     if(id==='island_map'){mapBtn();return;}
     if(it&&(it.place||it.vehicle||id==='boat'||id==='balloon'||id==='horse'||id==='saddle'||id==='train')){keyTap('ShiftLeft','Shift');return;}
-    if(it&&(FOOD[id]||POT[id])){useSelected();return;}
+    if(it&&(foodV(id)||POT[id])){useSelected();return;}
     keyTap('KeyE','e');
   };
   const contextLong=()=>{
@@ -3627,7 +3628,7 @@ function buildTouch(){
     const id=heldId(),o=nearInteract();
     if(o&&(o.id==='sorter'||o.id==='conveyor')){keyTap('ControlLeft','Control',160);return;}
     if(id&&POT[id]){potThrow();return;}
-    if(id&&FOOD[id]){useSelected();return;}
+    if(id&&foodV(id)){useSelected();return;}
     keyTap('KeyE','e');
   };
   fb.addEventListener('pointerdown',e=>{e.preventDefault();fLong=false;fb.classList.add('on');try{fb.setPointerCapture(e.pointerId);}catch(x){}clearTimeout(fT);fT=setTimeout(()=>{fLong=true;fb.classList.remove('on');contextLong();},450);});
@@ -3861,7 +3862,7 @@ for(let i=0;i<7;i++)mkSlot($('#craft'),'cin',i,cinEls);
 }
 for(let i=0;i<3;i++)mkSlot($('#craft'),'cout',i,coutEls);
 for(let i=0;i<CH_N;i++)mkSlot($('#chest'),'ch',i,chestEls);
-for(let i=0;i<7;i++)mkSlot($('#bagrow'),'bg',i,bagEls);
+for(let i=0;i<28;i++)mkSlot($('#bagrow'),'bg',i,bagEls);
 {const lb=document.createElement('span');lb.className='clabel';lb.textContent='보관함';$('#chest').appendChild(lb);}
 {const lb=document.createElement('span');lb.className='clabel';$('#craft').appendChild(lb);}
 
@@ -3897,7 +3898,7 @@ function renderInv(){
   const h=$('#held');if(held){drawSlot(h,held);h.style.display='block';}else h.style.display='none';
   chestEls.forEach((el,i)=>drawSlot(el,chestArr?chestArr[i]:null));
   document.body.classList.toggle('hasbag',bagSlot);
-  bagEls.forEach((el,i)=>drawSlot(el,bag[i]));
+  bagEls.forEach((el,i)=>{el.style.display=i<bagN()?'':'none';drawSlot(el,bag[i]);});
   if(crafting&&craftMode==='armor')renderArmorPanel();
   else if(crafting&&craftMode!=='chest'&&craftMode!=='anvil')renderRecipes();
 }
@@ -3906,7 +3907,7 @@ const invKey=()=>(typeof world!=='undefined'&&world)?(world.id||('g:'+(shown.see
 let invLoadedKey=null;   // 지금 메모리의 인벤토리가 어느 월드 것인지
 function persist(){
   if(invKey()&&invLoadedKey!==invKey())return;   // 다른 월드 인벤토리를 이 월드 칸에 덮어쓰지 않아요
-  const d={inv:inv.map(cp),bag:bag.map(cp),cart:cartArr.map(cp),cartOn:cartOn,bagslot:bagSlot,craft:craft.map(cp),equip:eq?Object.assign({},eq):{},equipd:eq?Object.assign({},eqd):{}};
+  const d={inv:inv.map(cp),bag:bag.map(cp),cart:cartArr.map(cp),cartOn:cartOn,bagslot:bagSlot,bagid:bagId,craft:craft.map(cp),equip:eq?Object.assign({},eq):{},equipd:eq?Object.assign({},eqd):{}};
   const k=invKey();
   if(k){(settings.winv=settings.winv||{})[k]=d;}else{settings.inv=d.inv;settings.craft=d.craft;settings.equip=d.equip;settings.equipd=d.equipd;}
   saveSettings();
@@ -3919,23 +3920,23 @@ function loadInvFor(k){   // 월드마다 따로 가진 가방·제작칸·갑�
   const a=sanitize(d.inv),c=sanitize(d.craft,7);
   for(let i=0;i<inv.length;i++)inv[i]=a[i]||null;
   for(let i=0;i<craft.length;i++)craft[i]=c[i]||null;
-  {const bb=sanitize(d.bag,CH_N);for(let i=0;i<bag.length;i++)bag[i]=bb[i]||null;}
+  {const bb=sanitize(d.bag,28);for(let i=0;i<bag.length;i++)bag[i]=bb[i]||null;}
   {const cc=sanitize(d.cart,CH_N);for(let i=0;i<cartArr.length;i++)cartArr[i]=cc[i]||null;cartOn=!!d.cartOn&&(inv.some(q=>q&&q.id==='cart')||cartArr.some(Boolean)||true);cartP.x=P.x;cartP.y=P.y;}
   for(const q of ARMOR_ORDER){eq[q]=null;eqd[q]=undefined;}
   if(d.equip)for(const q of ARMOR_ORDER){const id=d.equip[q],ai=armorInfo(id);if(ai&&ai.piece===q){eq[q]=id;const dd=d.equipd&&d.equipd[q];if(Number.isFinite(dd))eqd[q]=Math.max(1,Math.min(ITEMS[id].dur,Math.round(dd)));}}
-  bagSlot=!!d.bagslot;
+  bagSlot=!!d.bagslot;bagId=(typeof d.bagid==='string'&&ITEMS[d.bagid]?d.bagid:'bag');
   held=null;
 }
-const roomN=id=>{const mx=maxStack(id),f=(a,q)=>a+(q?(q.id===id?mx-q.n:0):mx);let t=inv.reduce(f,0);if(bagSlot)for(let i=0;i<7;i++)t=f(t,bag[i]);return t;};   // 가방 칸(7)도 자리로 쳐요
+const roomN=id=>{const mx=maxStack(id),f=(a,q)=>a+(q?(q.id===id?mx-q.n:0):mx);let t=inv.reduce(f,0);if(bagSlot)for(let i=0;i<bagN();i++)t=f(t,bag[i]);return t;};   // 가방 칸(7)도 자리로 쳐요
 const roomFor=(id,n)=>roomN(id)>=n;
 function addStack(id,n,dur){
   if(id.charCodeAt(0)===114&&id.startsWith('rl_'))relicGot(id);
   while(n>0){
     const mx=maxStack(id);
     let arr=inv,i=inv.findIndex(s=>s&&s.id===id&&s.n<mx);
-    if(i<0&&bagSlot){for(let k=0;k<7;k++)if(bag[k]&&bag[k].id===id&&bag[k].n<mx){arr=bag;i=k;break;}}
+    if(i<0&&bagSlot){for(let k=0;k<bagN();k++)if(bag[k]&&bag[k].id===id&&bag[k].n<mx){arr=bag;i=k;break;}}
     if(i<0){i=inv.findIndex(s=>!s);arr=inv;}
-    if(i<0&&bagSlot){for(let k=0;k<7;k++)if(!bag[k]){arr=bag;i=k;break;}}
+    if(i<0&&bagSlot){for(let k=0;k<bagN();k++)if(!bag[k]){arr=bag;i=k;break;}}
     if(i<0){if(mode==='play'&&world&&!P.dead){try{spawnPlayerDrop(id,n,dur);toast('인벤토리가 가득 차서 남은 아이템을 바닥에 놓았어요.');}catch(e){}}if(!bulk){persist();renderInv();}return false;}   // 자리가 모자라면 사라지지 않고 발밑에 놓아요
     const cur=arr[i]||(arr[i]=(dur!==undefined&&durMax(id)?{id,n:0,d:dur}:{id,n:0})),mv=Math.min(mx-cur.n,n);cur.n+=mv;n-=mv;if(!bulk&&arr===inv)flashSlot(i);
   }
@@ -4050,7 +4051,7 @@ function slotClick(area,i,right,shift){
   }
   if(area==='ch'&&!chestArr)return;
   if(craftMode==='chest'&&(area==='inv'||area==='ch'||(area==='bg'&&bagSlot))&&!held){quickMove(area,i,(shift||right)?0:1);return;}   // 좌클릭 하나씩 · 우클릭/Shift 한꺼번에
-  if(area==='bg'&&(!document.body.classList.contains('hasbag')||(held&&held.id==='bag')))return;
+  if(area==='bg'&&(!document.body.classList.contains('hasbag')||(held&&isBagId(held.id))))return;
   const arr=area==='inv'?inv:area==='ch'?chestArr:area==='bg'?bag:craft, st=arr[i], one=!right;   // 좌클릭: 하나씩 · 우클릭: 한꺼번에
   if(!held){
     if(!st)return;
@@ -5823,15 +5824,15 @@ function renderEquip(){
       if(cur<m){bar.style.display='block';bar.style.width=Math.max(8,Math.round(f*100))+'%';bar.style.background=f>0.5?'#5ec86e':f>0.2?'#f2c75a':'#e0434f';}else bar.style.display='none';
     }else{ITEMS[`ar_${k}_iron_2`].icon(g);el.classList.add('empty');el.title=ARMOR_PIECES[k].name+' 칸';bar.style.display='none';}
   }
-  {const el=$('#eqbag'),g=el.firstChild.getContext('2d');g.clearRect(0,0,12,12);ITEMS.bag.icon(g);el.classList.toggle('empty',!bagSlot);}
+  {const el=$('#eqbag'),g=el.firstChild.getContext('2d');g.clearRect(0,0,12,12);(ITEMS[bagSlot?bagId:'bag']||ITEMS.bag).icon(g);el.classList.toggle('empty',!bagSlot);}
   const d=defTotal();$('#eqdef').textContent=d>0?`방어 ${d.toFixed(1)} · 피해 -${Math.round(defRed()*100)}%${fullSet('leather')?' · 방한':''}`:'';
 }
 function afterEq(){renderEquip();persist();renderInv();if(ARMOR_ORDER.every(k=>eq[k]))achGrant('armor_full');}
 $('#equip').addEventListener('click',e=>{
   const el=e.target.closest('.eq');if(!el||!crafting)return;
   if(el.id==='eqbag'){
-    if(held){if(held.id==='bag'&&!bagSlot){bagSlot=true;held=null;renderEquip();persist();renderInv();}return;}
-    if(bagSlot){if(!roomFor('bag',1)){toast('인벤토리가 가득 찼어요.');return;}addStack('bag',1);bagSlot=false;renderEquip();persist();renderInv();}
+    if(held){if(isBagId(held.id)&&!bagSlot){bagSlot=true;bagId=held.id;held=null;renderEquip();persist();renderInv();}return;}
+    if(bagSlot){if(!roomFor(bagId,1)){toast('인벤토리가 가득 찼어요.');return;}addStack(bagId,1);bagSlot=false;bagId='bag';renderEquip();persist();renderInv();}
     return;
   }
   const piece=el.dataset.piece;
@@ -6128,7 +6129,7 @@ function die(){
     if(held){list.push(held);held=null;}
     for(let i=0;i<bag.length;i++){const st=bag[i];if(st){list.push(st);bag[i]=null;}}
     for(const k of ARMOR_ORDER){if(eq[k]){const o={id:eq[k],n:1};if(eqd[k]!==undefined)o.d=eqd[k];list.push(o);eq[k]=null;eqd[k]=undefined;}}
-    if(bagSlot){list.push({id:'bag',n:1});bagSlot=false;}
+    if(bagSlot){list.push({id:bagId,n:1});bagSlot=false;bagId='bag';}
   };
   if(!WOPT.keep){grab();renderEquip();
   if(crafting){closeCraft();grab();}}
@@ -6235,7 +6236,7 @@ function bagArrows(){let n=0;for(const id of ARROW_IDS)n+=cntItem(id);return n;}
 function takeArrow(){
   for(const id of ARROW_IDS){
     for(let i=0;i<inv.length;i++){const q=inv[i];if(q&&q.id===id){q.n--;if(q.n<=0)inv[i]=null;return id;}}
-    if(bagSlot)for(let i=0;i<7;i++){const q=bag[i];if(q&&q.id===id){q.n--;if(q.n<=0)bag[i]=null;return id;}}
+    if(bagSlot)for(let i=0;i<bagN();i++){const q=bag[i];if(q&&q.id===id){q.n--;if(q.n<=0)bag[i]=null;return id;}}
   }
   return null;
 }
@@ -8355,9 +8356,9 @@ const SHIP_SPD=70,CARGO_MAX=150,SHIP_MUL=[1,1.6,2.2],SHIP_CAP=[6,12,24],PIRATE=[
 const PORT_COIN=[0,220,700],PORT_INS=80,GUARD_HIRE=100;
 const PORT_UP=[null,[['plank',10],['brass_plate',3]],[['gold_ingot',5],['circuit_device',2],['brass_plate',5]]];   // 개조 비용
 const PORT_LV=['기본 배','쾌속선','대형 쾌속선'];
-const cntItem=id=>{let n=0;for(const q of inv)if(q&&q.id===id)n+=q.n;if(bagSlot)for(let i=0;i<7;i++){const q=bag[i];if(q&&q.id===id)n+=q.n;}return n;};
+const cntItem=id=>{let n=0;for(const q of inv)if(q&&q.id===id)n+=q.n;if(bagSlot)for(let i=0;i<bagN();i++){const q=bag[i];if(q&&q.id===id)n+=q.n;}return n;};
 function takeItemN(id,n){
-  for(const arr of (bagSlot?[inv,bag.slice(0,7)&&bag]:[inv])){const lim=arr===bag?7:arr.length;for(let j=0;j<lim&&n>0;j++){const q=arr[j];if(q&&q.id===id){const t=Math.min(q.n,n);q.n-=t;n-=t;if(q.n<=0)arr[j]=null;}}}
+  for(const arr of (bagSlot?[inv,bag.slice(0,7)&&bag]:[inv])){const lim=arr===bag?bagN():arr.length;for(let j=0;j<lim&&n>0;j++){const q=arr[j];if(q&&q.id===id){const t=Math.min(q.n,n);q.n-=t;n-=t;if(q.n<=0)arr[j]=null;}}}
   persist();renderInv();
 }
 /* 화물선 항로: 바다 칸만 골라서 육지를 돌아가요 */
@@ -10047,7 +10048,7 @@ const MOD={ev:[],orig:{},on:[],st:{},remap:{},btns:[],tex:{},iorig:{},col:{},pot
 function modLocal(){try{const o=JSON.parse(localStorage.getItem('bf.mods.on')||'{}');return Object.keys(o).slice(0,50).map(id=>({id:String(id).slice(0,40),kind:o[id].kind,name:o[id].name,descr:o[id].descr,author_name:o[id].author_name,data:o[id].data})).filter(m=>m.data&&typeof m.data==='object');}catch(e){return [];}}
 const MOD_KEY=/^(Key[A-Z]|Digit[0-9]|F([1-9]|1[0-2]))$/;
 function modBox(){let b=document.getElementById('modbtns');if(!b){b=document.createElement('div');b.id='modbtns';b.style.cssText='position:fixed;inset:0;z-index:30;pointer-events:none';document.body.appendChild(b);setInterval(()=>{const m=document.getElementById('modal');b.style.display=(mode==='play'&&m&&m.hidden)?'':'none';},400);}return b;}
-const MODDEF={mob:{},item:{},held:{},st:{},q:[],sp:[],t:0,ready:false};
+const MODDEF={mob:{},item:{},held:{},food:{},fbuf:{},st:{},q:[],sp:[],t:0,ready:false};
 function modOre(q){   // define ore "이름": 기존 광물(iron gold copper zinc)을 바탕으로 새 광물 바위를 만들어요
   if(MODORE.n>=4||typeof q.n!=='string'||!q.n||q.n.length>20)return;
   const bt={zinc:5,gold:3,copper:4,iron:2}[q.base];if(!bt)return;
@@ -10060,7 +10061,7 @@ function modOre(q){   // define ore "이름": 기존 광물(iron gold copper zin
   for(const b of bi){if(!(b>=0&&b<9))continue;(MODORE.bio[b]=MODORE.bio[b]||[]).push(id);}
   MODORE.n++;
 }
-function modDefsRun(){if(!MODDEF.ready)return;for(let i=RECIPES.length-1;i>=0;i--)if(RECIPES[i].mod)RECIPES.splice(i,1);MODDEF.mob={};MODDEF.item={};MODDEF.held={};MODDEF.st={};for(const q of MODDEF.q)modDef(q);MODORE.t={};MODORE.bio={};MODORE.n=0;for(const q of MODDEF.q)if(q&&q.k==='ore')modOre(q);
+function modDefsRun(){if(!MODDEF.ready)return;for(let i=RECIPES.length-1;i>=0;i--)if(RECIPES[i].mod)RECIPES.splice(i,1);MODDEF.mob={};MODDEF.item={};MODDEF.held={};MODDEF.food={};MODDEF.fbuf={};BAGX={};MODDEF.st={};for(const q of MODDEF.q)modDef(q);MODORE.t={};MODORE.bio={};MODORE.n=0;for(const q of MODDEF.q)if(q&&q.k==='ore')modOre(q);
   MODDEF.sp=Object.keys(MODDEF.mob).map(n=>MODDEF.mob[n]).filter(k=>MTYPES[k].mb&&MTYPES[k].mb.length);}
 const modTy=t=>{t=String(t||'');return t[0]==='@'?(MODDEF.mob[t.slice(1)]||''):t;};
 const modIt=t=>{t=String(t||'');return t[0]==='@'?(MODDEF.item[t.slice(1)]||''):t;};
@@ -10085,8 +10086,16 @@ function modDef(q){   // define mob|item "이름": 기존 것을 바탕(base)으
   }else if(q.k==='structure'){if(Array.isArray(q.bl))MODDEF.st[nm]=q.bl.slice(0,80).filter(b=>Array.isArray(b)&&STRUCT[b[0]]&&Math.abs(b[1])<=20&&Math.abs(b[2])<=20);
   }else if(q.k==='item'){const B=ITEMS[q.base];if(!B)return;ITEMS[key]=Object.assign({},B,{name:nm});MODDEF.item[nm]=key;
     if(q.pl===false)ITEMS[key].placeable=false;
-    if(q.dg!=null||q.cd!=null){const o={};if(q.dg!=null)o.dmg=cl(q.dg,0,200);if(q.cd!=null)o.cd=cl(q.cd,0.1,10);MOD.st[key]=o;}
+    if(q.wp!==false&&(q.dg!=null||q.cd!=null||q.wp===true)){const o={};if(q.dg!=null)o.dmg=cl(q.dg,0,200);else if(q.wp===true)o.dmg=3;if(q.cd!=null)o.cd=cl(q.cd,0.1,10);else if(q.wp===true)o.cd=0.5;MOD.st[key]=o;}
     if(typeof q.hd==='string'&&MODFX[q.hd])MODDEF.held[key]=MODFX[q.hd];
+    ITEMS[key].max=q.mc?cl(q.mc,1,999)|0:(B.max||99);
+    if(q.wr&&q.wr!=='false'){
+      if(q.wr==='bag'&&q.ai){BAGX[key]=q.ai;ITEMS[key].max=1;}
+      else{const ba=B.armor;const pc={head:'helm',chest:'chest',legs:'legs',feet:'boots'}[q.wr]||(ba&&ba.piece)||'chest';if(q.wr!=='bag'){ITEMS[key].armor={piece:pc,mat:(ba&&ba.mat)||'iron',q:(ba&&ba.q)||2};ITEMS[key].dur=ITEMS[key].dur||200;ITEMS[key].max=1;}}
+    }else if(q.wr==='false'&&ITEMS[key].armor){delete ITEMS[key].armor;delete ITEMS[key].dur;}
+    else if(q.ai&&!BAGX[key]){BAGX[key]=q.ai;ITEMS[key].max=1;}
+    if(q.ea===true||typeof q.hl==='number'||q.ef){MODDEF.food[key]=typeof q.hl==='number'?q.hl:0.01;if(q.ef&&MODFX[q.ef])MODDEF.fbuf[key]={[MODFX[q.ef]]:cl(q.es||30,1,600)};}
+    else if(q.ea===false){MODDEF.food[key]=0;}
     if(modPic(q)){const bi=B.icon;let pim=null;ITEMS[key].icon=function(g){if(pim){g.imageSmoothingEnabled=false;g.drawImage(pim,0,0,12,12);}else if(bi)bi(g);};modPic(q,src=>{pim=src;try{for(const z in ICONURL)delete ICONURL[z];for(const z in ICONC)delete ICONC[z];renderInv();renderEquip();}catch(e){}});}
     if(Array.isArray(q.rc)&&q.rc.length>=1&&q.rc.length<=7&&q.rc.every(x=>typeof x==='string'&&ITEMS[x]))RECIPES.push({grp:'모드 제작법',bench:true,mod:1,name:nm,note:'모드로 만든 아이템이에요',pat:pad7(q.rc.map(x=>({id:x,n:1}))),out:[{id:key,n:cl(q.mk||1,1,20)|0}]});}
 }
@@ -11942,13 +11951,14 @@ function renderBuf(){
     h+=`<div style="width:16px;height:16px;background:${BUFC[k]};border:2px solid #0b1426;position:relative;opacity:${left<10?0.5:1}"><div style="position:absolute;left:0;bottom:-5px;height:3px;width:${Math.min(100,left/mx*100)}%;background:#fff"></div></div>`;}
   el.innerHTML=h;
 }
+function foodV(id){return FOOD[id]!==undefined?FOOD[id]:(MODDEF.food||{})[id];}
 function eatSelected(){
   if(mode!=='play'||P.dead||P.sleeping||crafting||(P.eatCd||0)>time)return;
-  const sel=inv[P.sel];if(!sel||!FOOD[sel.id])return;
-  const bf=FOODBUF[sel.id];
+  const sel=inv[P.sel];if(!sel||!foodV(sel.id))return;
+  const bf=FOODBUF[sel.id]||(MODDEF.fbuf||{})[sel.id];
   if(P.hp>=P.maxhp&&!bf&&rollsLeft()>=ROLL_MAX)return;
   P.eatCd=time+0.6;P.rolls=Math.min(ROLL_MAX,rollsLeft()+ROLL_FOOD);
-  P.hp=Math.min(P.maxhp,P.hp+FOOD[sel.id]);renderHp();
+  P.hp=Math.min(P.maxhp,P.hp+foodV(sel.id));renderHp();
   if(bf){achGrant('feast');P.buf=P.buf||{};for(const k in bf)P.buf[k]=time+bf[k];renderBuf();}
   for(let j=0;j<5;j++)parts.push({x:P.x,y:P.y-8,vx:(Math.random()-0.5)*24,vy:-18-Math.random()*14,life:0.6,c:j%2?'#ff9aa2':'#e0434f'});
   const eid=sel.id;MODX.eaten=(ITEMS[eid]&&ITEMS[eid].name)||String(eid);
