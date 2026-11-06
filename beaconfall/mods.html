@@ -65,6 +65,10 @@ input.q{width:100%;padding:10px 12px;border:3px solid var(--gold);background:var
 .pb.warn{background:#7a2b2b;border-color:#ffb0b0}
 #upl,#mdl{position:fixed;inset:0;z-index:20;background:#000a;display:none;align-items:flex-start;justify-content:center;overflow:auto;padding:28px 12px}
 #upl.on,#mdl.on{display:flex}
+#intro{position:fixed;inset:0;z-index:30;background:#000;display:none;align-items:center;justify-content:center}
+#intro.on{display:flex}
+#intro video{width:100%;height:100%;object-fit:contain;background:#000}
+#intro .pb{position:absolute;right:12px;top:12px;z-index:2}
 #upl .box,#mdl .box{width:min(560px,100%);background:#141c2c;border:3px solid var(--gold);box-shadow:6px 6px 0 #000;padding:16px;position:relative}
 #upl label,#mdl label{display:block;margin:10px 0 4px;color:var(--sky);font-size:13px}
 #upl input,#upl textarea,#upl select,#mdl input,#mdl textarea{width:100%;padding:8px 10px;border:2px solid var(--gold);background:var(--panel);color:var(--cream);font:14px inherit;outline:none}
@@ -93,7 +97,8 @@ footer{padding:40px 0 30px;color:var(--gold);font-size:12px;text-shadow:2px 2px 
  <div class="row tabs" id="tabs">
   <div class="dd" id="ddk"><button class="pb" id="ddkb"></button><div class="ddl" id="ddkl"></div></div>
   <div class="dd" id="dds"><button class="pb" id="ddsb"></button><div class="ddl" id="ddsl"></div></div>
-  <button class="pb" id="upb" style="margin-left:auto">＋ 올리기</button>
+  <button class="pb" id="introb" style="margin-left:auto">▶ 소개</button>
+  <button class="pb" id="upb">＋ 올리기</button>
  </div>
  <input class="q" id="q" autocomplete="off" placeholder="이름, 설명, 올린 사람으로 찾기">
  <div class="row cats" id="cats"></div>
@@ -101,6 +106,7 @@ footer{padding:40px 0 30px;color:var(--gold);font-size:12px;text-shadow:2px 2px 
  <div id="list"></div>
  <footer>BEACONFALL · <span data-notr>Created by Frenchfries777</span> · <span class="ff-copy">© 2026 Frenchfries777 · <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.ko" target="_blank" rel="noopener">CC BY-NC-ND 4.0</a></span></footer>
 </div>
+<div id="intro"><button class="pb" id="introx">✕</button><video id="introv" preload="none" playsinline controls></video></div>
 <div id="upl"><div class="box">
  <button class="pb x" id="ux" style="position:absolute;right:10px;top:10px;padding:4px 10px">✕</button>
  <h2 style="margin:0 40px 6px 0" id="uth">모드 · 리소스팩 올리기</h2>
@@ -542,6 +548,10 @@ function readPng(f,sz){sz=sz||12;return new Promise(function(res,rej){var im=new
 function readTxt(f){return new Promise(function(res,rej){var r=new FileReader();r.onload=function(){res(String(r.result));};r.onerror=function(){rej();};r.readAsText(f);});}
 var ULOGO=null;
 $('ulg').addEventListener('change',async function(){var f=this.files[0];ULOGO=null;$('ulgm').textContent='';if(!f)return;try{ULOGO=await readPng(f,32);$('ulgm').textContent='✓ '+f.name;}catch(e){$('ulgm').textContent='✗ 그림을 읽지 못했어요';}});
+$('introb').addEventListener('click',function(){var v=$('introv');if(!v.getAttribute('src'))v.src='mods-intro.mp4';$('intro').classList.add('on');var p=v.play();if(p&&p.catch)p.catch(function(){});});
+function introClose(){var v=$('introv');try{v.pause();}catch(e){}$('intro').classList.remove('on');}
+$('introx').addEventListener('click',introClose);
+document.addEventListener('keydown',function(e){if(e.key==='Escape'&&$('intro').classList.contains('on'))introClose();});
 $('uf').addEventListener('change',async function(){
   TEX={};FD=null;var box=$('uprev');box.innerHTML='';umsg('');
   var files=[].slice.call(this.files);if(!files.length)return;
