@@ -312,7 +312,7 @@ function parseScript(text,lenient){
   function mon(l,w){w=w.toLowerCase();if(MONS.indexOf(w)<0){var g=guess(w,MONS);throw PE(l.n,"unknown monster '"+w+"'."+(g?" Did you mean '"+g+"'?":''));}return w;}
   function colT(l,w){var k=w.toLowerCase(),M={tree:'tree',trees:'tree',rock:'rock',rocks:'rock',stone:'rock',ore:'ore',ores:'ore',water:'water',sea:'water',ocean:'water',block:'block',blocks:'block'};return M[k]||item(l,w);}
   function toT(l,w){w=w.trim().replace(/^"(.*)"$/,'$1');if(!w||w.length>90)throw PE(l.n,'write who after "to": player, monster, mob or a player name');return w;}
-  function sub(l,depth){if(depth>=5)throw PE(l.n,'blocks are nested too deep');if(!(pos<L.length&&L[pos].ind>l.ind))throw PE(l.n,'nothing is written under this line');return block(L[pos].ind,depth+1);}
+  function sub(l,depth){if(depth>=12)throw PE(l.n,'blocks are nested too deep');if(!(pos<L.length&&L[pos].ind>l.ind))throw PE(l.n,'nothing is written under this line');return block(L[pos].ind,depth+1);}
   function setStmt(l,m){
     var id=item(l,m[1].trim()),f=m[2].toLowerCase(),v=m[3].trim();
     if(f==='name'){var q=v.match(/^"([^"]{1,40})"$/);if(!q)throw PE(l.n,'write the name in quotes, like  set sword_iron name "Big Sword"');return {item:id,field:'name',value:q[1]};}
@@ -385,11 +385,11 @@ function parseScript(text,lenient){
       }
       if(m=l.t.match(/^give\s+effect\s+(\w+)\s+(\d{1,3})\s+seconds?(?:\s+to\s+(.+?))?$/i)){
         var ef=m[1].toLowerCase(),EFS=['speed','strength','defense','regen','haste','breath','night','stun'];if(EFS.indexOf(ef)<0)throw PE(l.n,"unknown effect '"+m[1]+"'. You can use: "+EFS.join(', '));
-        if(+m[2]<1||+m[2]>600)throw PE(l.n,'effect seconds must be 1 to 600');var ea={effect:{k:ef,sec:+m[2]}};if(m[3])ea.to=toT(l,m[3]);acts.push(ea);
+        if(+m[2]<1||+m[2]>86400)throw PE(l.n,'effect seconds must be 1 to 86400');var ea={effect:{k:ef,sec:+m[2]}};if(m[3])ea.to=toT(l,m[3]);acts.push(ea);
       }else if(m=l.t.match(/^play\s+sound\s+(\w+)(?:\s+to\s+(.+?))?$/i)){
         var sn=m[1].toLowerCase(),SNS=['click','hurt','swing','bow','hit','break'];if(SNS.indexOf(sn)<0){var gs=guess(sn,SNS);throw PE(l.n,"unknown sound '"+m[1]+"'."+(gs?" Did you mean '"+gs+"'?":" You can use: "+SNS.join(', ')));}var sa={sound:sn};if(m[2])sa.to=toT(l,m[2]);acts.push(sa);
       }else if(m=l.t.match(/^broadcast\s+"([^"]{1,100})"$/i)){acts.push({bc:m[1]});}
-      else if(m=l.t.match(/^loop\s+(\d{1,5})\s+times?\s*:$/i)){if(+m[1]<1||+m[1]>10000)throw PE(l.n,'loop must be 1 to 10000 times');acts.push({loop:+m[1],do:sub(l,depth)});}
+      else if(m=l.t.match(/^loop\s+(\d{1,6})\s+times?\s*:$/i)){if(+m[1]<1||+m[1]>100000)throw PE(l.n,'loop must be 1 to 100000 times');acts.push({loop:+m[1],do:sub(l,depth)});}
       else if(m=l.t.match(/^(heal|damage)\s+player\s+(\d{1,3})$/i)){if(+m[2]<1||+m[2]>100)throw PE(l.n,'amount must be 1 to 100');acts.push(m[1].toLowerCase()==='heal'?{heal:+m[2]}:{hurt:+m[2]});}
       else if(m=l.t.match(/^set\s+time\s+(day|night|noon|midnight|sunrise|sunset|\d{1,2})$/i)){var TM={day:8,night:21,noon:12,midnight:0,sunrise:6,sunset:18},tv=/^\d+$/.test(m[1])?+m[1]:TM[m[1].toLowerCase()];if(tv>23)throw PE(l.n,'hour must be 0 to 23');acts.push({time:tv});}
       else if(m=l.t.match(/^set\s+weather\s+(clear|rain|storm)$/i)){acts.push({weather:m[1].toLowerCase()});}
@@ -406,7 +406,7 @@ function parseScript(text,lenient){
       else if(m=l.t.match(/^every\s+(\d{1,4})\s+seconds?\s*:$/i)){acts.push({inl:1,do:sub(l,depth)});}
       else if(m=l.t.match(/^set\s+variable\s+([a-z0-9_]{1,20})\s+to\s+random\s+(-?\d{1,6})\s+to\s+(-?\d{1,6})$/i)){acts.push({setv:{n:m[1].toLowerCase(),v:{r:[+m[2],+m[3]]}}});}
       else if(m=l.t.match(/^give\s+(?:(\d+)\s+)?(.+?)\s+(?:to|from)\s+player\s+inventory(?:\s*(\d{1,2}))?$/i)){
-        var gn=m[1]?+m[1]:1;if(gn<1||gn>20)throw PE(l.n,'give amount must be 1 to 20');
+        var gn=m[1]?+m[1]:1;if(gn<1||gn>9999)throw PE(l.n,'give amount must be 1 to 9999');
         var gq=m[2].trim().match(/^"([^"]{1,20})"$/),gs=m[3]?+m[3]:0;if(m[3]&&(gs<1||gs>7))throw PE(l.n,'inventory slot must be 1 to 7');
         var ga={item:gq?'@'+gq[1]:item(l,m[2].trim()),n:gn};if(gs)ga.slot=gs;acts.push({give:ga});
       }
@@ -415,9 +415,9 @@ function parseScript(text,lenient){
         var tq=m[2].trim().match(/^"([^"]{1,20})"$/),ts=m[3]?+m[3]:0;if(m[3]&&(ts<1||ts>7))throw PE(l.n,'inventory slot must be 1 to 7');
         var ta={item:tq?'@'+tq[1]:item(l,m[2].trim()),n:tn};if(ts)ta.slot=ts;acts.push({take:ta});
       }
-      else if(m=l.t.match(/^give\s+(?:(\d+)\s+)?"([^"]{1,20})"$/i)){var n0=m[1]?+m[1]:1;if(n0<1||n0>20)throw PE(l.n,'give amount must be 1 to 20');acts.push({give:{item:'@'+m[2],n:n0}});}
+      else if(m=l.t.match(/^give\s+(?:(\d+)\s+)?"([^"]{1,20})"$/i)){var n0=m[1]?+m[1]:1;if(n0<1||n0>9999)throw PE(l.n,'give amount must be 1 to 9999');acts.push({give:{item:'@'+m[2],n:n0}});}
       else if(m=l.t.match(/^give\s+(?:(\d+)\s+)?(.+)$/i)){
-        var n=m[1]?+m[1]:1;if(n<1||n>20)throw PE(l.n,'give amount must be 1 to 20');
+        var n=m[1]?+m[1]:1;if(n<1||n>9999)throw PE(l.n,'give amount must be 1 to 9999');
         acts.push({give:{item:item(l,m[2].trim()),n:n}});
       }else if(m=l.t.match(/^(?:say|chat)\s+"([^"]{1,100})"(?:\s+to\s+(.+?))?$/i)){var ca={say:m[1]};if(m[2])ca.to=toT(l,m[2]);acts.push(ca);}
       else if(m=l.t.match(/^title\s+"([^"]{1,60})"(?:\s+for\s+(\d+)\s+seconds?)?$/i)){var sec=m[2]?+m[2]:3;if(sec<1||sec>10)throw PE(l.n,'title seconds must be 1 to 10');acts.push({title:{text:m[1],sec:sec}});}
@@ -437,8 +437,8 @@ function parseScript(text,lenient){
       else if(m=l.t.match(/^teleport\s+(\w+)\s+to\s+player$/i)){acts.push({tp:{who:mon(l,m[1]),to:'player'}});}
       else if(m=l.t.match(/^travel\s+to\s+(?:main\s+world|world\s+"([^"]{1,20})")$/i)){acts.push({travel:{w:m[1]||''}});}
       else if(m=l.t.match(/^build\s+"([^"]{1,20})"(?:\s+near\s+(spawn|player))?$/i)){var bd={n:m[1]};if(m[2])bd.near=m[2].toLowerCase();acts.push({build:bd});}
-      else if(m=l.t.match(/^spawn\s+"([^"]{1,20})"(?:\s+(\d+)\s+times?)?(?:\s+near\s+(spawn|player))?$/i)){var c0=m[2]?+m[2]:1;if(c0<1||c0>10)throw PE(l.n,'spawn count must be 1 to 10');var sp0={ty:'@'+m[1],n:c0};if(m[3])sp0.near=m[3].toLowerCase();acts.push({spawn:sp0});}
-      else if(m=l.t.match(/^spawn\s+(\w+)(?:\s+(\d+)\s+times?)?(?:\s+near\s+(spawn|player))?$/i)){var c=m[2]?+m[2]:1;if(c<1||c>10)throw PE(l.n,'spawn count must be 1 to 10');var sp={ty:mon(l,m[1]),n:c};if(m[3])sp.near=m[3].toLowerCase();acts.push({spawn:sp});}
+      else if(m=l.t.match(/^spawn\s+"([^"]{1,20})"(?:\s+(\d+)\s+times?)?(?:\s+near\s+(spawn|player))?$/i)){var c0=m[2]?+m[2]:1;if(c0<1||c0>100)throw PE(l.n,'spawn count must be 1 to 100');var sp0={ty:'@'+m[1],n:c0};if(m[3])sp0.near=m[3].toLowerCase();acts.push({spawn:sp0});}
+      else if(m=l.t.match(/^spawn\s+(\w+)(?:\s+(\d+)\s+times?)?(?:\s+near\s+(spawn|player))?$/i)){var c=m[2]?+m[2]:1;if(c<1||c>100)throw PE(l.n,'spawn count must be 1 to 100');var sp={ty:mon(l,m[1]),n:c};if(m[3])sp.near=m[3].toLowerCase();acts.push({spawn:sp});}
       else if(m=l.t.match(/^place\s+(.+?)\s+near\s+(spawn|player)$/i)){acts.push({place:{item:item(l,m[1].trim()),near:m[2].toLowerCase()}});}
       else if((m=l.t.match(/^fill\s+(~?-?\d*)\s+(~?-?\d*)\s+(~?-?\d*)\s+(~?-?\d*)\s+to\s+(land|beach|ocean|mountain)(?:\s+(\w+))?$/i))&&m[1]&&m[2]&&m[3]&&m[4]){
         var fc=[];for(var fi=1;fi<=4;fi++){var tk=m[fi],rel=tk.charAt(0)==='~',nv=tk.replace('~','');if(nv===''||nv==='-')nv=0;fc.push([rel?1:0,+nv]);}
@@ -463,10 +463,10 @@ function parseScript(text,lenient){
         while(pos<L.length&&L[pos].ind>=wi){
           var wl=L[pos++],wm;
           if(wl.ind!==wi)throw PE(wl.n,'indent does not match the line above');
-          if(wm=wl.t.match(/^text\s+"([^"]{1,200})"$/i)){if(w.tx.length>=8)throw PE(wl.n,'a window can have 8 text lines at most');w.tx.push(wm[1]);}
-          else if(wm=wl.t.match(/^input\s+"([^"]{1,30})"\s+into\s+\{(:?)([a-z0-9_]{1,17})\2\}$/i)){if(w.inp.length>=3)throw PE(wl.n,'a window can have 3 inputs at most');if(/^_.*_$/.test(wm[3]))throw PE(wl.n,'input needs a {name} or {:name:} variable (not {_name_})');w.inp.push({l:wm[1],v:(wm[2]?'s__':'')+wm[3].toLowerCase()});}
+          if(wm=wl.t.match(/^text\s+"([^"]{1,200})"$/i)){if(w.tx.length>=60)throw PE(wl.n,'a window can have 60 text lines at most');w.tx.push(wm[1]);}
+          else if(wm=wl.t.match(/^input\s+"([^"]{1,30})"\s+into\s+\{(:?)([a-z0-9_]{1,17})\2\}$/i)){if(w.inp.length>=20)throw PE(wl.n,'a window can have 20 inputs at most');if(/^_.*_$/.test(wm[3]))throw PE(wl.n,'input needs a {name} or {:name:} variable (not {_name_})');w.inp.push({l:wm[1],v:(wm[2]?'s__':'')+wm[3].toLowerCase()});}
           else if(wm=wl.t.match(/^button\s+"([^"]{1,20})"([^:]*):$/i)){
-            if(w.btn.length>=6)throw PE(wl.n,'a window can have 6 buttons at most');
+            if(w.btn.length>=40)throw PE(wl.n,'a window can have 40 buttons at most');
             var ro=wm[2],cm=ro.match(/\bcolor\s+"?(#[0-9a-f]{6})"?/i);if(cm)ro=ro.replace(cm[0],'');
             var pm2=ro.match(/\bat\s+([a-z ]+?)\s*$/i);if(pm2)ro=ro.replace(pm2[0],'');
             if(ro.trim())throw PE(wl.n,'write it like  button "OK" at bottom right color "#2a8f5a":');
@@ -536,38 +536,38 @@ function parseScript(text,lenient){
         if(al.ind!==aind||!(am=al.t.match(/^aliases_name\s*:\s*"%([a-z0-9_]{1,30})%"$/i)))throw PE(al.n,'write it like  aliases_name: "%player_name%"');
         if(!(pos<L.length&&L[pos].ind===aind&&/^use_command\s*:$/i.test(L[pos].t)))throw PE(al.n,'aliases_name needs a  use_command:  line right under it');
         var ul=L[pos++];
-        if(out.pa.length>=120)throw PE(al.n,'publish_aliases can hold 120 aliases at most');
+        if(out.pa.length>=1000)throw PE(al.n,'publish_aliases can hold 1000 aliases at most');
         out.pa.push({a:am[1].toLowerCase(),do:sub(ul,0)});
       }
     }
     else if(m=l.t.match(/^define\s+(mob|item|ore|structure|world)\s+"([^"]{1,20})"\s*:$/i)){
       if(!(pos<L.length&&L[pos].ind>0))throw PE(l.n,'nothing is written under this line');
       var dind=L[pos].ind,df={k:m[1].toLowerCase(),n:m[2]};out.defs=out.defs||[];
-      if(out.defs.length>=40)throw PE(l.n,'define can be written 40 times at most');
+      if(out.defs.length>=1000)throw PE(l.n,'define can be written 1000 times at most');
       while(pos<L.length&&L[pos].ind>=dind){
         var dl=L[pos++],dm;
         if(dm=dl.t.match(/^base\s+(.+)$/i)){df.base=df.k==='mob'?mon(dl,dm[1].trim()):df.k==='ore'?(function(w){w=w.toLowerCase();if(['iron','gold','copper','zinc'].indexOf(w)<0)throw PE(dl.n,'ore base can be: iron, gold, copper, zinc');return w;})(dm[1].trim()):item(dl,dm[1].trim());}
         else if((df.k==='mob'||df.k==='item')&&(dm=dl.t.match(/^image\s*:?\s*"([^"]{1,40})"$/i))){if(df.k==='item'&&df.image){df.pimage=dm[1].trim();df.pii=itemId(df.pimage)||undefined;continue;}df.image=dm[1].trim();df.ii=itemId(df.image)||undefined;if(MONS.indexOf(df.image.toLowerCase())>=0)df.im=df.image.toLowerCase();}
         else if(df.k==='mob'&&(dm=dl.t.match(/^(hp|dmg|speed)\s+(\d+(?:\.\d+)?)$/i))){df[dm[1].toLowerCase()]=+dm[2];}
         else if((df.k==='mob'||df.k==='ore')&&(dm=dl.t.match(/^color\s+"?(#[0-9a-f]{6})"?$/i))){df.col=dm[1].toLowerCase();}
-        else if((df.k==='mob'||df.k==='ore')&&(dm=dl.t.match(/^drop\s+(.+?)(?:\s+(\d+)(?:\s+(\d+))?)?$/i))){df.drop=df.drop||[];if(df.drop.length>=5)throw PE(dl.n,'drop can be written 5 times at most');var d1=dm[2]?+dm[2]:1,d2=dm[3]?+dm[3]:d1;df.drop.push([item(dl,dm[1].trim()),d1,Math.max(d1,d2)]);}
+        else if((df.k==='mob'||df.k==='ore')&&(dm=dl.t.match(/^drop\s+(.+?)(?:\s+(\d+)(?:\s+(\d+))?)?$/i))){df.drop=df.drop||[];if(df.drop.length>=50)throw PE(dl.n,'drop can be written 50 times at most');var d1=dm[2]?+dm[2]:1,d2=dm[3]?+dm[3]:d1;df.drop.push([item(dl,dm[1].trim()),d1,Math.max(d1,d2)]);}
         else if((df.k==='mob'||df.k==='ore')&&(dm=dl.t.match(/^biome\s+(.+)$/i))){var BIOS=['start','forest','desert','volcano','jungle','mesa','rock','mangrove','ice'];df.bi=[];dm[1].split(',').forEach(function(bn){var bw=bn.trim().toLowerCase(),bx=BIOS.indexOf(bw);if(bx<0){var bg=guess(bw,BIOS);throw PE(dl.n,"unknown biome '"+bw+"'."+(bg?" Did you mean '"+bg+"'?":" You can use: "+BIOS.join(', ')));}if(df.bi.indexOf(bx)<0)df.bi.push(bx);});}
         else if(df.k==='ore'&&(dm=dl.t.match(/^chance\s+(\d+)$/i))){if(+dm[1]<1||+dm[1]>100)throw PE(dl.n,'chance must be 1 to 100');df.ch=+dm[1];}
-        else if(df.k==='mob'&&(dm=dl.t.match(/^(rate|max)\s+(\d+)$/i))){var rv=+dm[2];if(rv<1||rv>100)throw PE(dl.n,dm[1].toLowerCase()+' must be 1 to 100');df[dm[1].toLowerCase()==='rate'?'rt':'mx']=rv;}
-        else if(df.k==='structure'&&(dm=dl.t.match(/^block\s+(.+?)\s+(-?\d+)\s+(-?\d+)$/i))){df.bl=df.bl||[];if(df.bl.length>=80)throw PE(dl.n,'block can be written 80 times at most');var bx0=+dm[2],by0=+dm[3];if(Math.abs(bx0)>20||Math.abs(by0)>20)throw PE(dl.n,'block position must be -20 to 20');df.bl.push([item(dl,dm[1].trim()),bx0,by0]);}
+        else if(df.k==='mob'&&(dm=dl.t.match(/^(rate|max)\s+(\d+)$/i))){var rv=+dm[2];if(rv<1||rv>1000)throw PE(dl.n,dm[1].toLowerCase()+' must be 1 to 100');df[dm[1].toLowerCase()==='rate'?'rt':'mx']=rv;}
+        else if(df.k==='structure'&&(dm=dl.t.match(/^block\s+(.+?)\s+(-?\d+)\s+(-?\d+)$/i))){df.bl=df.bl||[];if(df.bl.length>=2000)throw PE(dl.n,'block can be written 2000 times at most');var bx0=+dm[2],by0=+dm[3];if(Math.abs(bx0)>60||Math.abs(by0)>60)throw PE(dl.n,'block position must be -60 to 60');df.bl.push([item(dl,dm[1].trim()),bx0,by0]);}
         else if(df.k==='mob'&&(dm=dl.t.match(/^hostile\s*:?\s*(.+)$/i))){df.ho=[];dm[1].split(',').forEach(function(hw){hw=hw.trim();var q1=hw.match(/^"([^"]{1,20})"$/);if(q1){df.ho.push('@'+q1[1]);return;}hw=hw.toLowerCase();if(hw==='player'||hw==='monster'){df.ho.push(hw);return;}df.ho.push(mon(dl,hw));});if(df.ho.length>10)throw PE(dl.n,'hostile can list 10 targets at most');}
         else if(df.k==='item'&&(dm=dl.t.match(/^(placeable|weapon|eatable)\s*:?\s*(true|false|yes|no)$/i))){var bv=/^(true|yes)$/i.test(dm[2]),bk=dm[1].toLowerCase();if(bk==='placeable')df.pl=bv;else if(bk==='weapon')df.wp=bv;else df.ea=bv;}
-        else if(df.k==='item'&&(dm=dl.t.match(/^(damage|cooldown|attack_speed)\s*:?\s*(\d+(?:\.\d+)?)$/i))){var nv=+dm[2];if(dm[1].toLowerCase()==='damage'){if(nv<0||nv>200)throw PE(dl.n,'damage must be 0 to 200');df.dg=nv;}else{if(nv<0.1||nv>10)throw PE(dl.n,dm[1].toLowerCase()+' must be 0.1 to 10 seconds');df.cd=nv;}}
+        else if(df.k==='item'&&(dm=dl.t.match(/^(damage|cooldown|attack_speed)\s*:?\s*(\d+(?:\.\d+)?)$/i))){var nv=+dm[2];if(dm[1].toLowerCase()==='damage'){if(nv<0||nv>10000)throw PE(dl.n,'damage must be 0 to 10000');df.dg=nv;}else{if(nv<0.05||nv>600)throw PE(dl.n,dm[1].toLowerCase()+' must be 0.05 to 600 seconds');df.cd=nv;}}
         else if(df.k==='item'&&(dm=dl.t.match(/^wearable\s*:?\s*(true|false|yes|no|head|chest|legs|feet|bag)$/i))){var wv=dm[1].toLowerCase();df.wr=wv==='yes'?'true':wv==='no'?'false':wv;}
         else if(df.k==='item'&&(dm=dl.t.match(/^add_inventory\s*:?\s*(\d+)$/i))){if([7,14,21,28].indexOf(+dm[1])<0)throw PE(dl.n,'add_inventory must be 7, 14, 21 or 28');df.ai=+dm[1];}
-        else if(df.k==='item'&&(dm=dl.t.match(/^max_item_count\s*:?\s*(\d+)$/i))){if(+dm[1]<1||+dm[1]>999)throw PE(dl.n,'max_item_count must be 1 to 999');df.mc=+dm[1];}
+        else if(df.k==='item'&&(dm=dl.t.match(/^max_item_count\s*:?\s*(\d+)$/i))){if(+dm[1]<1||+dm[1]>9999)throw PE(dl.n,'max_item_count must be 1 to 9999');df.mc=+dm[1];}
         else if(df.k==='item'&&(dm=dl.t.match(/^heal\s*:?\s*(\d+(?:\.\d+)?)$/i))){if(+dm[1]>16)throw PE(dl.n,'heal must be 0 to 16 (2 = one heart)');df.hl=+dm[1];}
-        else if(df.k==='item'&&(dm=dl.t.match(/^(held|effect)\s*:?\s*(speed|strength|defense|regen|haste|breath|night)(?:\s+(\d+))?$/i))){var ek=dm[1].toLowerCase(),es=dm[3]?+dm[3]:30;if(es<1||es>600)throw PE(dl.n,'effect seconds must be 1 to 600');if(ek==='held')df.hd=dm[2].toLowerCase();else{df.ef=dm[2].toLowerCase();df.es=es;}}
+        else if(df.k==='item'&&(dm=dl.t.match(/^(held|effect)\s*:?\s*(speed|strength|defense|regen|haste|breath|night)(?:\s+(\d+))?$/i))){var ek=dm[1].toLowerCase(),es=dm[3]?+dm[3]:30;if(es<1||es>86400)throw PE(dl.n,'effect seconds must be 1 to 86400');if(ek==='held')df.hd=dm[2].toLowerCase();else{df.ef=dm[2].toLowerCase();df.es=es;}}
         else if(df.k==='world'&&(dm=dl.t.match(/^seed\s*:?\s*(\d{1,9})$/i))){df.sd=String(+dm[1]);}
         else if(df.k==='item'&&(dm=dl.t.match(/^recipe\s+(.+)$/i))){
           var rcs=[];dm[1].split(',').forEach(function(pt){var mm=pt.trim().match(/^(.+?)(?:\s+(\d+))?$/);if(!mm)throw PE(dl.n,'write it like  recipe iron 3, log 2');var cn=mm[2]?+mm[2]:1;if(cn<1||cn>7)throw PE(dl.n,'each ingredient count must be 1 to 7');var iid=item(dl,mm[1].trim());for(var ci=0;ci<cn;ci++)rcs.push(iid);});
           if(rcs.length<1||rcs.length>7)throw PE(dl.n,'a recipe can use 1 to 7 ingredient slots');df.rc=rcs;}
-        else if(df.k==='item'&&(dm=dl.t.match(/^makes\s+(\d+)$/i))){if(+dm[1]<1||+dm[1]>20)throw PE(dl.n,'makes must be 1 to 20');df.mk=+dm[1];}
+        else if(df.k==='item'&&(dm=dl.t.match(/^makes\s+(\d+)$/i))){if(+dm[1]<1||+dm[1]>999)throw PE(dl.n,'makes must be 1 to 999');df.mk=+dm[1];}
         else throw PE(dl.n,df.k==='mob'?'under define mob you can write: base, image, hp, dmg, speed, color, drop, biome, rate, max, hostile':df.k==='ore'?'under define ore you can write: base, color, drop, biome, chance':df.k==='structure'?'under define structure you can write: block <item> <x> <y>':df.k==='world'?'under define world you can write: seed':'under define item you can write: base, image, recipe, makes, placeable, weapon, damage, cooldown, wearable, add_inventory, eatable, heal, effect, max_item_count, held');
       }
       if(df.k==='structure'){if(!df.bl||!df.bl.length)throw PE(l.n,'define structure needs  block  lines');}else if(df.k==='world'){if(!df.sd)throw PE(l.n,'define world needs a  seed: 123  line');}else if(!df.base)throw PE(l.n,'define '+df.k+' needs a  base  line');
@@ -654,8 +654,8 @@ function check(kind,d){
     if(!d.names&&!d.sets&&!d.remap&&!d.textures&&!d.col&&d.api!=='potato'&&!d.pa&&!d.defs&&(!Array.isArray(d.events)||!d.events.length))return '모드에는 규칙(on), 이름 바꾸기, set, remap, 그림 중 하나는 있어야 해요.';
     if(d.defs){for(var di=0;di<d.defs.length;di++){var dq=d.defs[di];if(!dq||(dq.k!=='mob'&&dq.k!=='item'))continue;if(dq.k==='item'&&dq.pl===true&&(typeof dq.pimg!=='string'||!/^data:image\/png;base64,[A-Za-z0-9+\/=]{20,6000}$/.test(dq.pimg))&&typeof dq.pii!=='string')return '설치 아이템 "'+(dq.n||'')+'"의 설치 그림 image: "'+(dq.pimage||'')+'"를 못 찾았어요.';if((typeof dq.img!=='string'||!/^data:image\/png;base64,[A-Za-z0-9+\/=]{20,6000}$/.test(dq.img))&&typeof dq.ii!=='string'&&typeof dq.im!=='string')return '새 '+(dq.k==='mob'?'몹':'아이템')+' "'+(dq.n||'')+'"의 image: "'+(dq.image||'')+'"를 못 찾았어요. 폴더에 같은 이름의 PNG를 넣거나, 게임 속 아이템/몹 이름을 써 주세요.';}}
     if(!d.events)return '';
-    if(d.events.length>1500)return '이벤트는 1500개까지예요.';
-    for(var i=0;i<d.events.length;i++){var ev=d.events[i];if(!ev||typeof ev.on!=='string'||!Array.isArray(ev.do)||!ev.do.length)return (i+1)+'번째 이벤트에 "on"(문자열)과 "do"(목록)가 필요해요.';if(ev.do.length>20)return (i+1)+'번째 이벤트의 "do"는 20개까지예요.';}
+    if(d.events.length>20000)return '이벤트는 20000개까지예요.';
+    for(var i=0;i<d.events.length;i++){var ev=d.events[i];if(!ev||typeof ev.on!=='string'||!Array.isArray(ev.do)||!ev.do.length)return (i+1)+'번째 이벤트에 "on"(문자열)과 "do"(목록)가 필요해요.';if(ev.do.length>5000)return (i+1)+'번째 이벤트의 "do"는 5000개까지예요.';}
   }else{
     if(!d.names&&!d.textures)return '리소스팩은 이름 바꾸기("names")나 그림(PNG)이 필요해요.';
     if(d.names){
