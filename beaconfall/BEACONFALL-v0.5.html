@@ -518,6 +518,7 @@ const BGM=(()=>{
 /* ---------- 월드 생성 (DOM 의존 없음) ---------- */
 const W=21504, H=13312, SEA=0.5;   // 구역(256×256)별로 불러오는 아주 큰 월드
 function mulberry32(a){return function(){a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296;};}
+var MODBLK={},MODPKO=[],MODPPL={},MODUI={},MODPKQ=[];   // 리소스팩 그림
 function hashStr(s){let h=2166136261;s=String(s);for(let i=0;i<s.length;i++){h^=s.charCodeAt(i);h=Math.imul(h,16777619);}return h>>>0;}
 function hash2(x,y){let n=(Math.imul(x,374761393)+Math.imul(y,668265263))|0;n=Math.imul(n^(n>>>13),1274126177);return((n^(n>>>16))>>>0)/4294967296;}
 const rgb=(hex)=>{const n=parseInt(hex.slice(1),16);return((0xFF000000)|((n&255)<<16)|(n&0xFF00)|(n>>16))>>>0;};
@@ -5029,7 +5030,8 @@ function drawStructSprite(g,kind,cx,cy,mat){
 }
 function drawStruct(g,b){
   const cx=b.gx*GRID,cy=b.gy*GRID;
-  if(MODPLACE[b.id]){g.drawImage(MODPLACE[b.id],cx,cy);return;}   // define item 설치 그림
+  if(MODPLACE[b.id]){g.drawImage(MODPLACE[b.id],cx,cy);return;}
+  {const pk=MODBLK[b.id];if(pk){g.drawImage(pk,cx-16,cy-16);return;}}   // 리소스팩 blocks   // define item 설치 그림
   if(b.id==='tree'){
     const x=cx+8,y=cy+14,fr=Math.sin(time*1.2+x*0.012+y*0.008)>0.35?1:0,sp=SPR[b.tt|0][fr];
     g.fillStyle='rgba(8,24,12,0.28)';g.fillRect(x-4,y,9,1);g.fillRect(x-3,y+1,7,1);
@@ -5809,6 +5811,7 @@ const hpEls=[];
 for(let i=0;i<8;i++){const c=document.createElement('canvas');c.width=9;c.height=8;$('#hp').appendChild(c);hpEls.push(c);}
 function drawHeart(g,v){
   g.clearRect(0,0,9,8);
+  {const hi=MODUI['heart_'+['empty','half','full'][v]];if(hi){g.drawImage(hi,0,0,9,8);return;}}   // 리소스팩 ui
   for(let y=0;y<8;y++)for(let x=0;x<9;x++){
     const ch=HEART[y][x];if(ch==='.')continue;
     let col;
@@ -6849,6 +6852,7 @@ function updateMarket(){
   }
 }
 function drawMerchant(g,tr){
+  if(MODPPL.merchant){const im=MODPPL.merchant;g.drawImage(im,Math.round(tr.mx)-(im.width>>1),Math.round(tr.my)-im.height+1);return;}
   drawPerson(g,tr.mx,tr.my,tr.dx>0?-1:1,false,0,false,0,4);
   const x=Math.round(tr.mx),y=Math.round(tr.my);
   g.fillStyle='#6b3fa0';g.fillRect(x-3,y-10,7,2);g.fillRect(x-2,y-12,5,2);
@@ -7367,6 +7371,7 @@ function drawCargoShip(g,o){
 }
 function drawBoatHull(g,px,py){
   const x=Math.round(px),y=Math.round(py),b=Math.round(Math.sin(time*3)*0.6);
+  if(MODPPL.boat){const im=MODPPL.boat;g.drawImage(im,x-(im.width>>1),y+4-im.height+b);return;}
   g.fillStyle='rgba(8,24,56,0.3)';g.fillRect(x-8,y+2,16,2);
   g.fillStyle='#3d2412';g.fillRect(x-8,y-3+b,16,5);g.fillRect(x-10,y-4+b,3,2);g.fillRect(x+8,y-4+b,3,2);
   g.fillStyle='#8a5a2b';g.fillRect(x-7,y-2+b,14,3);g.fillStyle='#c9904f';g.fillRect(x-7,y-3+b,14,1);
@@ -10074,6 +10079,27 @@ function modOre(q){   // define ore "이름": 기존 광물(iron gold copper zin
   for(const b of bi){if(!(b>=0&&b<9))continue;(MODORE.bio[b]=MODORE.bio[b]||[]).push(id);}
   MODORE.n++;
 }
+const MODUISEL={slot:'.slot',hotbar:'#inv',equip_bar:'#equip',clock:'#clock',button_back:'#backbtn',button_stat:'#statbtn',craft_window:'#craft',recipe_list:'#recipes',bag_row:'#bagrow'};
+function modPackReset(){for(let i=MODPKO.length-1;i>=0;i--){try{MODPKO[i]();}catch(e){}}MODPKO.length=0;for(const k in MODBLK)delete MODBLK[k];for(const k in MODPPL)delete MODPPL[k];for(const k in MODUI)delete MODUI[k];const st=document.getElementById('modui');if(st)st.textContent='';}
+function modPackLoad(P){   // 리소스팩 폴더(blocks/trees/rocks/mobs/animals/people/ui)의 그림으로 게임 그림 바꾸기
+  let n=0;const css=[];
+  const ld=(v,cb)=>{if(typeof v!=='string'||!/^data:image\/png;base64,[A-Za-z0-9+\/=]{20,32000}$/.test(v)||n++>=900)return;const im=new Image();im.onload=()=>{try{cb(im);}catch(e){}};im.src=v;};
+  const cv=im=>{const c=document.createElement('canvas');c.width=im.naturalWidth;c.height=im.naturalHeight;const g=c.getContext('2d');g.imageSmoothingEnabled=false;g.drawImage(im,0,0);return c;};
+  const wh=c=>{const w=document.createElement('canvas');w.width=c.width;w.height=c.height;const g=w.getContext('2d');g.drawImage(c,0,0);g.globalCompositeOperation='source-in';g.fillStyle='#fff';g.fillRect(0,0,w.width,w.height);return w;};
+  const swap=(sp,im)=>{if(!sp)return;const o={c:sp.c,w:sp.w,h:sp.h,wc:sp.wc};MODPKO.push(()=>{sp.c=o.c;sp.w=o.w;sp.h=o.h;if(o.wc!==undefined)sp.wc=o.wc;});const c=cv(im);sp.c=c;sp.w=c.width;sp.h=c.height;if(o.wc)sp.wc=wh(c);};
+  const sub=k=>P[k]&&typeof P[k]==='object'&&!Array.isArray(P[k])?P[k]:{};
+  for(const k of Object.keys(sub('trees')).slice(0,60)){const m=/^tree_(\d\d)_([ab])$/.exec(k);if(!m)continue;const sp=SPR[+m[1]]&&SPR[+m[1]][m[2]==='b'?1:0];if(sp)ld(P.trees[k],im=>swap(sp,im));}
+  {const RN=['stone_small','stone_big','ore_iron','ore_gold','ore_copper','ore_zinc'];for(const k of Object.keys(sub('rocks')).slice(0,40)){const vol=/_volcano$/.test(k),i=RN.indexOf(k.replace(/_volcano$/,''));if(i<0)continue;const sp=(vol?BOULDER_V:BOULDER)[i];ld(P.rocks[k],im=>swap(sp,im));}}
+  for(const k of Object.keys(sub('mobs')).slice(0,60)){const sp=MSPR[k];if(sp)ld(P.mobs[k],im=>swap(sp,im));}
+  for(const k of Object.keys(sub('animals')).slice(0,80)){const m=/^(.+)_(left|right)$/.exec(k);if(!m||!ANIMSPR[m[1]])continue;const arr=ANIMSPR[m[1]],ix=m[2]==='right'?1:0;ld(P.animals[k],im=>{const o=arr[ix];MODPKO.push(()=>{arr[ix]=o;});arr[ix]=cv(im);});}
+  for(const k of Object.keys(sub('blocks')).slice(0,200))ld(P.blocks[k],im=>{MODBLK[k]=im;});
+  for(const k of Object.keys(sub('people')).slice(0,60))ld(P.people[k],im=>{MODPPL[k]=im;});
+  for(const k of Object.keys(sub('ui')).slice(0,40)){const v=P.ui[k];if(typeof v!=='string'||!/^data:image\/png;base64,[A-Za-z0-9+\/=]{20,32000}$/.test(v))continue;
+    if(/^heart_(empty|half|full)$/.test(k)){ld(v,im=>{MODUI[k]=im;try{renderHp();}catch(e){}});}
+    else if(MODUISEL[k])css.push(MODUISEL[k]+'{background:url("'+v+'") center/100% 100% no-repeat!important;image-rendering:pixelated;'+(k==='slot'?'':'border:0!important;')+'}');}
+  if(css.length){let st=document.getElementById('modui');if(!st){st=document.createElement('style');st.id='modui';document.head.appendChild(st);}st.textContent+=css.join('\n');}
+  setTimeout(()=>{try{renderInv();renderEquip();}catch(e){}},400);
+}
 let modTravelBusy=false;
 async function modTravel(name){   // define world 로 만든 월드(또는 원래 월드)로 통째로 이동. 가방은 그대로 가져가요.
   if(modTravelBusy||mode!=='play'||P.dead||isGuest()||net.role){if(net.role)toast('다른 월드 이동은 혼자 할 때만 돼요.');return;}
@@ -10098,7 +10124,7 @@ async function modTravel(name){   // define world 로 만든 월드(또는 원�
     enterPlay();toast(name?`"${name}" 월드로 이동했어요.`:'원래 월드로 돌아왔어요.');
   }finally{modTravelBusy=false;}
 }
-function modDefsRun(){if(!MODDEF.ready)return;for(let i=RECIPES.length-1;i>=0;i--)if(RECIPES[i].mod)RECIPES.splice(i,1);MODDEF.mob={};MODDEF.item={};MODDEF.held={};MODDEF.food={};MODDEF.fbuf={};MODDEF.world={};BAGX={};MODDEF.st={};for(const q of MODDEF.q)modDef(q);MODORE.t={};MODORE.bio={};MODORE.n=0;for(const q of MODDEF.q)if(q&&q.k==='ore')modOre(q);
+function modDefsRun(){if(!MODDEF.ready)return;try{modPackReset();for(const p of MODPKQ)modPackLoad(p);}catch(e){}for(let i=RECIPES.length-1;i>=0;i--)if(RECIPES[i].mod)RECIPES.splice(i,1);MODDEF.mob={};MODDEF.item={};MODDEF.held={};MODDEF.food={};MODDEF.fbuf={};MODDEF.world={};BAGX={};MODDEF.st={};for(const q of MODDEF.q)modDef(q);MODORE.t={};MODORE.bio={};MODORE.n=0;for(const q of MODDEF.q)if(q&&q.k==='ore')modOre(q);
   MODDEF.sp=Object.keys(MODDEF.mob).map(n=>MODDEF.mob[n]).filter(k=>MTYPES[k].mb&&MTYPES[k].mb.length);}
 const modTy=t=>{t=String(t||'');return t[0]==='@'?(MODDEF.mob[t.slice(1)]||''):t;};
 const modIt=t=>{t=String(t||'');return t[0]==='@'?(MODDEF.item[t.slice(1)]||''):t;};
@@ -10146,18 +10172,19 @@ function modApply(list){
   for(const k in MOD.orig){if(ITEMS[k])ITEMS[k].name=MOD.orig[k];}
   MOD.spW=null;MOD.orig={};MOD.ev=[];MOD.on=[];MOD.st={};MOD.remap={};MOD.col={};MOD.potato=false;MOD.phAll=false;MOD.pa=[];MOD.sig={};
   for(const k in MOD.iorig){if(ITEMS[k])ITEMS[k].icon=MOD.iorig[k];}
-  MOD.iorig={};MOD.tex={};let texN=0;
+  MOD.iorig={};MOD.tex={};let texN=0;MODPKQ=[];
   const bx=document.getElementById('modbtns');if(bx)bx.innerHTML='';
   const setName=(k,v)=>{if(ITEMS[k]&&typeof v==='string'&&v.length>0&&v.length<=40){if(!(k in MOD.orig))MOD.orig[k]=ITEMS[k].name;ITEMS[k].name=v;}};
   for(const m of (Array.isArray(list)?list:[]).slice(0,50)){
     const d=m&&m.data;if(!d||typeof d!=='object')continue;
     if(d.names&&typeof d.names==='object'&&!Array.isArray(d.names))for(const k of Object.keys(d.names).slice(0,500))setName(k,d.names[k]);
-    if(d.textures&&typeof d.textures==='object'&&!Array.isArray(d.textures))for(const k of Object.keys(d.textures).slice(0,200)){
-      const v=d.textures[k];if(!ITEMS[k]||typeof v!=='string'||!/^data:image\/png;base64,[A-Za-z0-9+\/=]{20,3000}$/.test(v)||texN>=200)continue;
+    {const tsrc=Object.assign({},(d.textures&&typeof d.textures==='object'&&!Array.isArray(d.textures))?d.textures:{},(d.packs&&d.packs.items&&typeof d.packs.items==='object')?d.packs.items:{});for(const k of Object.keys(tsrc).slice(0,900)){
+      const v=tsrc[k];if(!ITEMS[k]||typeof v!=='string'||!/^data:image\/png;base64,[A-Za-z0-9+\/=]{20,32000}$/.test(v)||texN>=900)continue;
       texN++;
       if(!MOD.iorig[k]){MOD.iorig[k]=ITEMS[k].icon;ITEMS[k].icon=function(g){const im=MOD.tex[k];if(im&&im.complete&&im.naturalWidth){g.imageSmoothingEnabled=false;g.drawImage(im,0,0,12,12);}else MOD.iorig[k](g);};}
       const im=new Image();im.onload=()=>{MOD.tex[k]=im;try{for(const q in ICONURL)delete ICONURL[q];for(const q in ICONC)delete ICONC[q];renderInv();renderEquip();}catch(e){}};im.src=v;
-    }
+    }}
+    if(d.packs&&typeof d.packs==='object')MODPKQ.push(d.packs);
     if(d.api==='potato'){MOD.potato=true;MOD.phAll=true;}   // 옛날 형식 (api potato)
     if(Array.isArray(d.defs)){for(const q of d.defs.slice(0,40))MODDEF.q.push(q);}
     if(Array.isArray(d.pa)){for(const q of d.pa.slice(0,120)){if(q&&typeof q.a==='string'&&/^[a-z0-9_]{1,30}$/.test(q.a)&&Array.isArray(q.do)){MOD.pa.push({a:q.a,do:q.do,mid:m.id,mn:String(m.name||'').slice(0,40),u:(/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/.test(String(q.u||''))?q.u:(/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(String(m.id||''))?String(m.id).toLowerCase():''))});MOD.potato=true;}}}   // publish_aliases: 별칭 정의 (이 모드가 대신 풀어줘요)
@@ -13193,6 +13220,9 @@ function showLook(){
 const SUITS=[{b:'#e8833a',h:'#f5a55a',d:'#b4571f'},{b:'#3f7fd9',h:'#6aa0ee',d:'#274f94'},{b:'#4aa860',h:'#74c98a',d:'#2d6a3c'},
   {b:'#d95a9a',h:'#ee86b8',d:'#9a2f66'},{b:'#8a5ad9',h:'#ab86ee',d:'#58369a'},{b:'#d9c53f',h:'#eedc6a',d:'#968a22'}];
 function drawPerson(g,px,py,f,moving,walkT,chopping,swingT,suit,skin){
+  if(!skin&&MODPPL){const stp=moving?(((walkT*9)|0)&1):0,k0='player_'+(f>0?'right':'left')+(moving?'_walk'+stp:'_idle')+'_suit0',N=SUITS.length,sn=((suit%N)+N)%N;
+    const im=chopping&&MODPPL.player_chopping?MODPPL.player_chopping:(sn===0?MODPPL[k0]:(MODPPL['player_suit'+sn]||MODPPL[k0]));
+    if(im){g.drawImage(im,Math.round(px)-(im.width>>1),Math.round(py)-im.height+1);return;}}   // 리소스팩 people
   const sw=chopping?(((swingT*6)|0)&1):0, step=moving?(((walkT*9)|0)&1):0, bob=((moving&&step)||sw)?1:0;
   const L=skin?parseLook(skin):null,sk=L&&L.s?SKIN_BY[L.s]:null,x=Math.round(px)+(sw?f:0), y=Math.round(py), c=sk||SUITS[suit%SUITS.length];
   g.fillStyle='rgba(8,24,12,0.32)';g.fillRect(Math.round(px)-2,y,5,1);
