@@ -517,6 +517,7 @@ function parseScript(text,lenient){
       while(pos<L.length&&L[pos].ind>=dind){
         var dl=L[pos++],dm;
         if(dm=dl.t.match(/^base\s+(.+)$/i)){df.base=df.k==='mob'?mon(dl,dm[1].trim()):df.k==='ore'?(function(w){w=w.toLowerCase();if(['iron','gold','copper','zinc'].indexOf(w)<0)throw PE(dl.n,'ore base can be: iron, gold, copper, zinc');return w;})(dm[1].trim()):item(dl,dm[1].trim());}
+        else if((df.k==='mob'||df.k==='item')&&(dm=dl.t.match(/^image\s*:?\s*"([^"]{1,40})"$/i))){df.image=dm[1].trim();df.ii=itemId(df.image)||undefined;if(MONS.indexOf(df.image.toLowerCase())>=0)df.im=df.image.toLowerCase();}
         else if(df.k==='mob'&&(dm=dl.t.match(/^(hp|dmg|speed)\s+(\d+(?:\.\d+)?)$/i))){df[dm[1].toLowerCase()]=+dm[2];}
         else if((df.k==='mob'||df.k==='ore')&&(dm=dl.t.match(/^color\s+"?(#[0-9a-f]{6})"?$/i))){df.col=dm[1].toLowerCase();}
         else if((df.k==='mob'||df.k==='ore')&&(dm=dl.t.match(/^drop\s+(.+?)(?:\s+(\d+)(?:\s+(\d+))?)?$/i))){df.drop=df.drop||[];if(df.drop.length>=5)throw PE(dl.n,'drop can be written 5 times at most');var d1=dm[2]?+dm[2]:1,d2=dm[3]?+dm[3]:d1;df.drop.push([item(dl,dm[1].trim()),d1,Math.max(d1,d2)]);}
@@ -532,9 +533,10 @@ function parseScript(text,lenient){
           var rcs=[];dm[1].split(',').forEach(function(pt){var mm=pt.trim().match(/^(.+?)(?:\s+(\d+))?$/);if(!mm)throw PE(dl.n,'write it like  recipe iron 3, log 2');var cn=mm[2]?+mm[2]:1;if(cn<1||cn>7)throw PE(dl.n,'each ingredient count must be 1 to 7');var iid=item(dl,mm[1].trim());for(var ci=0;ci<cn;ci++)rcs.push(iid);});
           if(rcs.length<1||rcs.length>7)throw PE(dl.n,'a recipe can use 1 to 7 ingredient slots');df.rc=rcs;}
         else if(df.k==='item'&&(dm=dl.t.match(/^makes\s+(\d+)$/i))){if(+dm[1]<1||+dm[1]>20)throw PE(dl.n,'makes must be 1 to 20');df.mk=+dm[1];}
-        else throw PE(dl.n,df.k==='mob'?'under define mob you can write: base, hp, dmg, speed, color, drop, biome, rate, max, hostile':df.k==='ore'?'under define ore you can write: base, color, drop, biome, chance':df.k==='structure'?'under define structure you can write: block <item> <x> <y>':'under define item you can write: base, recipe, makes, placeable, damage, cooldown, held');
+        else throw PE(dl.n,df.k==='mob'?'under define mob you can write: base, image, hp, dmg, speed, color, drop, biome, rate, max, hostile':df.k==='ore'?'under define ore you can write: base, color, drop, biome, chance':df.k==='structure'?'under define structure you can write: block <item> <x> <y>':'under define item you can write: base, image, recipe, makes, placeable, damage, cooldown, held');
       }
       if(df.k==='structure'){if(!df.bl||!df.bl.length)throw PE(l.n,'define structure needs  block  lines');}else if(!df.base)throw PE(l.n,'define '+df.k+' needs a  base  line');
+      if((df.k==='mob'||df.k==='item')&&!df.image)throw PE(l.n,'define '+df.k+' needs an  image  line, like  image: "my_picture"  (a PNG name in the folder, or an in-game item/mob name)');
       out.defs.push(df);
     }
     else if(m=l.t.match(/^use_mod_uuid\s*:\s*([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})$/i)){out.uses=out.uses||[];if(out.uses.length>=5)throw PE(l.n,'use_mod_uuid can be written 5 times at most');out.uses.push(m[1].toLowerCase());}
@@ -561,14 +563,14 @@ $('uf').addEventListener('change',async function(){
   var files=[].slice.call(this.files);if(!files.length)return;
   var root=((files[0].webkitRelativePath||'').split('/')[0]||'').trim();
   files=files.filter(function(f){return /\.(bs|beaconfall|png)$/i.test(f.name);}).slice(0,200);
-  var M={events:[],names:null,sets:[],remap:null,col:null},LOGO=null,kind=null,name='',okc=0,bad=0;
+  var PEND=[],M={events:[],names:null,sets:[],remap:null,col:null},LOGO=null,kind=null,name='',okc=0,bad=0;
   function line(txt,cls){var sp=document.createElement('span');if(cls)sp.className=cls;sp.textContent=txt;box.appendChild(sp);}
   for(var i=0;i<files.length;i++){
     var f=files[i],rel=(f.webkitRelativePath||f.name).split('/').slice(1).join('/')||f.name;
     if(/\.png$/i.test(f.name)){
       var base=f.name.replace(/\.png$/i,'').trim(),id=itemId(base);
       if(base.toLowerCase()==='logo'){try{LOGO=await readPng(f,32);var sl=document.createElement('span'),il=document.createElement('img');il.src=LOGO;sl.appendChild(il);sl.appendChild(document.createTextNode(rel+' ✓ (로고)'));box.appendChild(sl);okc++;}catch(e){line(rel+' ✗ 그림을 읽지 못했어요','bad');bad++;}continue;}
-      if(!id){var g=guess(base,Object.keys(ITEMN));line(rel+' ✗ 아이템 이름을 몰라요'+(g?' ('+g+'?)':''),'bad');bad++;continue;}
+      if(!id){PEND.push({f:f,base:base,rel:rel});continue;}
       try{TEX[id]=await readPng(f);var sp=document.createElement('span'),ig=document.createElement('img');ig.src=TEX[id];sp.appendChild(ig);sp.appendChild(document.createTextNode(rel+' ✓'));box.appendChild(sp);okc++;}
       catch(e){line(rel+' ✗ 그림을 읽지 못했어요','bad');bad++;}
     }else{
@@ -588,6 +590,13 @@ $('uf').addEventListener('change',async function(){
       }catch(e){line(rel+' ✗ '+(e.script?e.message:'읽지 못했어요'),'bad');bad++;}
     }
   }
+  for(var pi=0;pi<PEND.length;pi++){
+    var pd=PEND[pi],pk=pd.base.toLowerCase(),used=0,pimg=null;
+    for(var qi=0;qi<(M.defs||[]).length;qi++){var df=M.defs[qi];if((df.k==='mob'||df.k==='item')&&String(df.image||'').replace(/\.png$/i,'').trim().toLowerCase()===pk){if(!pimg){try{pimg=await readPng(pd.f,16);}catch(e){line(pd.rel+' ✗ 그림을 읽지 못했어요','bad');bad++;used=-1;break;}}df.img=pimg;used=1;}}
+    if(used===1){var spd=document.createElement('span'),igd=document.createElement('img');igd.src=pimg;spd.appendChild(igd);spd.appendChild(document.createTextNode(pd.rel+' ✓ (image)'));box.appendChild(spd);okc++;}
+    else if(!used){var g=guess(pd.base,Object.keys(ITEMN));line(pd.rel+' ✗ 아이템 이름을 몰라요'+(g?' ('+g+'?)':''),'bad');bad++;}
+  }
+  (M.defs||[]).forEach(function(q){if((q.k==='mob'||q.k==='item')&&!q.img&&!q.ii&&!q.im){line('"'+q.n+'" ✗ image: "'+q.image+'" 를 못 찾았어요 (폴더 PNG 이름이나 게임 아이템/몹 이름)','bad');bad++;}});
   if(!okc){umsg('폴더 안에 .bs 파일이나 PNG 그림이 없어요.',1);return;}
     var data={};if(M.events.length)data.events=M.events;if(M.names)data.names=M.names;if(M.sets.length)data.sets=M.sets;if(M.remap)data.remap=M.remap;if(M.col)data.col=M.col;if(M.api)data.api=M.api;if(M.pa)data.pa=M.pa;if(M.defs)data.defs=M.defs;
   if(LOGO)data.logo=LOGO;
@@ -607,6 +616,7 @@ function check(kind,d){
     if(d.remap&&(typeof d.remap!=='object'||Array.isArray(d.remap)||Object.keys(d.remap).length>30))return '"remap"은 30개까지예요.';
     if(d.textures&&(typeof d.textures!=='object'||Array.isArray(d.textures)))return '"textures" 모양이 올바르지 않아요.';
     if(!d.names&&!d.sets&&!d.remap&&!d.textures&&!d.col&&d.api!=='potato'&&!d.pa&&!d.defs&&(!Array.isArray(d.events)||!d.events.length))return '모드에는 규칙(on), 이름 바꾸기, set, remap, 그림 중 하나는 있어야 해요.';
+    if(d.defs){for(var di=0;di<d.defs.length;di++){var dq=d.defs[di];if(!dq||(dq.k!=='mob'&&dq.k!=='item'))continue;if((typeof dq.img!=='string'||!/^data:image\/png;base64,[A-Za-z0-9+\/=]{20,6000}$/.test(dq.img))&&typeof dq.ii!=='string'&&typeof dq.im!=='string')return '새 '+(dq.k==='mob'?'몹':'아이템')+' "'+(dq.n||'')+'"의 image: "'+(dq.image||'')+'"를 못 찾았어요. 폴더에 같은 이름의 PNG를 넣거나, 게임 속 아이템/몹 이름을 써 주세요.';}}
     if(!d.events)return '';
     if(d.events.length>1500)return '이벤트는 1500개까지예요.';
     for(var i=0;i<d.events.length;i++){var ev=d.events[i];if(!ev||typeof ev.on!=='string'||!Array.isArray(ev.do)||!ev.do.length)return (i+1)+'번째 이벤트에 "on"(문자열)과 "do"(목록)가 필요해요.';if(ev.do.length>20)return (i+1)+'번째 이벤트의 "do"는 20개까지예요.';}
