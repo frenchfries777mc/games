@@ -10272,6 +10272,8 @@ function modDef(q){   // define mob|item "이름": 기존 것을 바탕(base)으
     if(typeof q.col==='string'&&/^#[0-9a-f]{6}$/.test(q.col))T.col=q.col;
     if(Array.isArray(q.drop))T.drop=q.drop.slice(0,50).filter(x=>Array.isArray(x)&&ITEMS[x[0]]).map(x=>[x[0],cl(x[1],0,999)|0,cl(x[2],0,999)|0]);
     if(Array.isArray(q.bi)&&q.bi.length){T.mb=q.bi.filter(x=>Number.isInteger(x)&&x>=0&&x<9).slice(0,9);T.mr=cl(q.rt||6,1,1000);T.mx=cl(q.mx||4,1,1000)|0;}
+    if(q.nn>0)T.nn=cl(q.nn,1,200)|0;   // near_npc: 모드가 설치한 아이템(주민 등)에서 이 칸 수 안에서만 저절로 나와요
+    if(q.ka>0)T.ka=cl(q.ka,1,200)|0;   // keep_away: 모드가 설치한 아이템(주민 등)에서 이 칸 수 안에서는 저절로 안 나와요
     if(Array.isArray(q.ho)){T.hp0=q.ho.includes('player');T.hm=q.ho.filter(x=>x!=='player').slice(0,10);}
     MTYPES[key]=T;MODDEF.mob[nm]=key;
     const b=MSPR[q.base];if(b){if(modPic(q)){const c=document.createElement('canvas');c.width=b.w;c.height=b.h;const wc=document.createElement('canvas');wc.width=b.w;wc.height=b.h;MSPR[key]={c,w:b.w,h:b.h,wc};modPic(q,src=>{const g=c.getContext('2d');g.imageSmoothingEnabled=false;g.clearRect(0,0,b.w,b.h);g.drawImage(src,0,0,b.w,b.h);const h=wc.getContext('2d');h.clearRect(0,0,b.w,b.h);h.drawImage(c,0,0);h.globalCompositeOperation='source-atop';h.fillStyle='#fff';h.fillRect(0,0,b.w,b.h);});}else if(T.col&&q.col){const c=document.createElement('canvas');c.width=b.w;c.height=b.h;const g=c.getContext('2d');g.drawImage(b.c,0,0);g.globalCompositeOperation='source-atop';g.globalAlpha=0.55;g.fillStyle=q.col;g.fillRect(0,0,b.w,b.h);MSPR[key]={c,w:b.w,h:b.h,wc:b.wc};}else MSPR[key]=b;}
@@ -10339,6 +10341,12 @@ function modSignal(n,val,to){   // signal send "이름" ... to mod "모드"
     try{modRun(e.do,0,{n:300000});}catch(x){}
     MODX.loc=sv.loc;MODX.uid=sv.uid;MODX.uses=sv.uses;MODX.mn=sv.mn;MODX.mid=sv.mid;MODX.txt=sv.txt;
   }
+}
+function modNearPlaced(x,y,tiles){   // 모드 아이템(주민·설치물)이 근처에 있는지
+  let L=world.mdNear;if(!L||L.n!==world.structs.length){L={n:world.structs.length,a:world.structs.filter(b=>b.md).map(b=>[b.gx*GRID+8,b.gy*GRID+8])};world.mdNear=L;}
+  const r=tiles*GRID,r2=r*r;
+  for(const q of L.a){const dx=q[0]-x,dy=q[1]-y;if(dx*dx+dy*dy<=r2)return true;}
+  return false;
 }
 function modDist(w){   // distance player to nearest monster | nearest mob | 이름
   let best=-1;const take=d=>{if(best<0||d<best)best=d;};
@@ -12134,7 +12142,7 @@ function updateMonsters(dt){
     if(MODBIO.n){MODBIO.t=(MODBIO.t||0)-dt;if(MODBIO.t<=0){MODBIO.t=5;const p=pl[(Math.random()*pl.length)|0],cu=cbOf(p.x,p.y);
       if(cu&&cu.mobs&&!(DUN&&dunFloorAt(p.x,p.y)))for(const [ty0,mx,rt] of cu.mobs){const k=modTy(ty0),T=MTYPES[k];if(!T)continue;if(monsters.reduce((c,m)=>c+(m.ty===k?1:0),0)>=mx)continue;if(Math.random()<rt*5/60)spawnMonster(pl,k,p,bioAt(p.x,p.y));}}}   // define biome 의 mob / max / rate
     if(MODDEF.sp.length){MODDEF.t-=dt;if(MODDEF.t<=0){MODDEF.t=5;const p=pl[(Math.random()*pl.length)|0],b=bioAt(p.x,p.y);
-      for(const k of MODDEF.sp){const T=MTYPES[k];if(!T||!T.mb.includes(b)||(DUN&&dunFloorAt(p.x,p.y)))continue;if(monsters.reduce((c,m)=>c+(m.ty===k?1:0),0)>=T.mx)continue;if(Math.random()<T.mr*5/60)spawnMonster(pl,k,p,b);}}}   // define mob 의 biome / rate(분당) / max
+      for(const k of MODDEF.sp){const T=MTYPES[k];if(!T||!T.mb.includes(b)||(DUN&&dunFloorAt(p.x,p.y)))continue;if(monsters.reduce((c,m)=>c+(m.ty===k?1:0),0)>=T.mx)continue;if(T.ka&&modNearPlaced(p.x,p.y,T.ka))continue;if(T.nn&&!modNearPlaced(p.x,p.y,T.nn))continue;if(Math.random()<T.mr*5/60)spawnMonster(pl,k,p,b);}}}   // define mob 의 biome / rate(분당) / max
     updateBosses(pl,dayNow());
   }
   for(let i=monsters.length-1;i>=0;i--){
