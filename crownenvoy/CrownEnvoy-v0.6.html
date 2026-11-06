@@ -460,7 +460,7 @@ try{if(sessionStorage.getItem('ce_noIntro')){sessionStorage.removeItem('ce_noInt
 sting();})();</script>
 <div id="app">
  <div id="lobby" class="screen">
-  <canvas id="lobbyBg"></canvas><canvas id="lobbyWar"></canvas><div id="cpTag">© 2026 Frenchfries777 · <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.ko" target="_blank" rel="noopener">CC BY-NC-ND 4.0</a></div><div id="verTag">v0.6 · build 149</div>
+  <canvas id="lobbyBg"></canvas><canvas id="lobbyWar"></canvas><div id="cpTag">© 2026 Frenchfries777 · <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.ko" target="_blank" rel="noopener">CC BY-NC-ND 4.0</a></div><div id="verTag">v0.6 · build 150</div>
   <header class="brand"><h1>Crown Envoy</h1><div class="sub"><i></i>DIPLOMACY · WAR · EMPIRE<i></i></div></header>
   <div id="lobbyRight">
    <div id="lobbyHome" class="modes">
@@ -859,7 +859,7 @@ const KON={"Lapland":"라플란드","Murmansk":"무르만스크","Khanty-Mansiys
 const koTer=()=>{try{return !window.__lang||window.__lang()==="ko"||window.__lang()==="gk";}catch(e){return true;}};
 const terName=en=>koTer()&&KON[en]||en;
 function terLocalize(){TDEF.forEach(td=>{if(Object.getOwnPropertyDescriptor(td,"en"))return;const en=td.name;Object.defineProperty(td,"en",{value:en,writable:true,enumerable:false,configurable:true});Object.defineProperty(td,"name",{get(){return terName(this.en);},set(v){this.en=v;},enumerable:true,configurable:true});});}
-function ctName(tid){const tp=tid&&TEMPLATES.find(t=>t.id===tid);const nm=(tp&&tp.year!=null&&tp.year<330)?'Byzantium':(tp&&tp.year!=null&&tp.year<=1453)?'Constantinople':'Istanbul';TDEF.forEach(td=>{if(td.en==='Istanbul'||td.en==='Constantinople'||td.en==='Byzantium')td.en=nm;});}
+function ctName(tid){const tp=tid&&TEMPLATES.find(t=>t.id===tid);const nm=(tp&&tp.year!=null&&tp.year<330)?'Byzantium':(tp&&tp.year!=null&&tp.year<=1453)?'Constantinople':'Istanbul';TDEF.forEach(td=>{if(td.en==='Istanbul'||td.en==='Constantinople'||td.en==='Byzantium')td.en=nm;});if(tp&&tp.regionDefs)tp.regionDefs.forEach(d=>{if(d.nm&&TDEF[d.id])TDEF[d.id].en=String(d.nm);});}
 function setMap(i){i=MAPDATA[i]?i:0;MAPID=i;const m=mapBuild(i);TDEF=m.tdef;GEO=m.geo;terLocalize();let tp0=null;try{tp0=C.tplId;}catch(e){}ctName(tp0);}
 function resetMap(){delete _mapCache[MAPID];setMap(MAPID);}
 setMap(0);
@@ -4099,7 +4099,7 @@ function makeView(pid,opts){const omni=!!(opts&&opts.omni);setEra(G.era);const D
   return {marks:(G.marks||[]).filter(x=>G.round-x.r<5&&(pid==null||x.pid===pid||treatyBetween(pid,x.pid,'alliance'))).map(x=>({id:x.id,pid:x.pid,k:x.k,a:x.a,b:x.b})),pc:peaceView(pid),med:medPairs(pid),round:G.round,tpl:G.tplId||null,era:G.era||null,jops:jopView(pid),ind:indOn(),cowar:(G.cowar||[]).filter(x=>x.until>=G.round&&(pid==null||x.a===pid||x.b===pid)).map(x=>({a:x.a,b:x.b,e:x.e,left:x.until-G.round,sp:x.sp||0})),evs:(()=>{const out=[];let other=0;(G.turnEvents||[]).filter(e=>e.r===G.round).forEach(e=>{if(!e.decl||e.pids.includes(pid))out.push(e);else if(G.tplId&&other<3&&!e.mine){other++;out.push(e);}});return out;})(),mis:(G.miss||[]).filter(x=>x.from===pid).map(x=>({to:x.to,left:x.left})),date:ymOf(G.round),end:G.endRound?{at:G.endRound,left:Math.max(0,G.endRound-G.round+1),date:ymOf(G.endRound)}:null,trenchOK:!!G.trenchOK,unit:UN,phase:G.phase,remain:Math.max(0,G.phaseEnd-Date.now()),me:pid,over:G.over,
     players:G.players.map(p=>{const full=sees(p.id),eco=full||dipIn(p.id);
       const o={id:p.id,name:p.name,kingdom:p.kingdom,color:p.color,isBot:p.isBot,spn:(()=>{try{const q=nspOf(p.id);return [q.i,q.c].filter(Boolean).map(i=>NSP[i].n[0]);}catch(_){return [];}})(),flag:p.flag||null,vet:Math.round(p.vet||0),wounded:(G.wounded||[]).filter(w=>w.pid===p.id).reduce((s,w)=>s+w.n,0),alive:p.alive,eth:ethOf(p),foes:G.players.filter(y=>y.alive&&y.id!==p.id&&isHostile(p.id,y.id)).map(y=>y.id),persona:(p.persona&&PERSONA[p.persona])?PERSONA[p.persona].n:null,...(p.id!==pid?(()=>{const ch=hasChannel(pid,p.id);const r=ch?opnOf(p.id,pid):null;const m2=ch?opnOf(pid,p.id):null;return {ch,near:touching(pid,p.id),rel:r?{t:r.total,l:r.label,items:r.items.slice().sort((a,b)=>Math.abs(b.v)-Math.abs(a.v)).slice(0,9)}:null,rel2:m2?m2.total:null};})():{}),vp:p.vp,perf:Math.round(p.vp/Math.max(1,(p.baseVP||10)*Math.max(1,G.round))*100),ttl:p.title||null,oc:(p.obj&&p.obj.length)?[p.obj.filter(x=>x.done).length,p.obj.length]:null,hostile:p.id!==pid&&isHostile(pid,p.id),wait:p.id!==pid&&declWait(pid,p.id),trust:Math.round(p.trust),ready:p.ready,terrs:owned(p.id).length,cap:p.cap,tier:tierOf(totalTroops(p.id)),moraleTier:p.morale>=70?'높음':p.morale>=45?'보통':'낮음',scouted:p.id!==pid&&me.scouts[p.id]===G.round,ally:p.id!==pid&&allied(p.id),diplo:p.id!==pid&&dipIn(p.id),landless:!!p.landless,over:overlordOf(p.id)};
-      polEnsure(p);o.gov=p.gov;o.fai=p.fai;o.aln=p.alName||'';o.alt=p.alNameT||0;
+      polEnsure(p);o.gov=p.gov;o.fai=p.fai;o.cult=p.cult||'mix';o.aln=p.alName||'';o.alt=p.alNameT||0;
       if(eco){o.gold=Math.round(p.gold);o.stab=Math.round(p.stab);o.fat=Math.round(p.fat);o.pub=Math.round(pubOf(p));}
       o.gown=[...ownGoods(p.id)];if(p.id===pid||omni){o.form=formOf(p.id);if(p.exp)o.exp={route:p.exp.route,left:p.exp.left};}if(p.id===pid||(G.players[pid]&&G.players[pid].peek&&G.players[pid].peek[p.id]>=G.round)||dipIn(p.id)||allied(p.id)||omni||G.treaties.some(x=>(x.type==='trade'||x.type==='alliance')&&((x.a===pid&&x.b===p.id)||(x.b===pid&&x.a===p.id))))o.gstock=Object.assign({},p.stock||{});
       if(full){o.troops=totalTroops(p.id);o.morale=Math.round(clamp(p.morale*polMor(p),0,100));}
@@ -4431,7 +4431,14 @@ const inTerr=(x,y,rings)=>{let c=false;for(const r of rings)if(inPoly(x,y,r))c=!
 const TIERS=['소규모','중규모','대규모','대군'];
 /* 지도 보기: 도시(영토마다 경계) · 나라(나라별로 하나로) · 동맹(동맹을 한 나라로). 이 기기에만 저장 */
 let TRMODE=false;try{TRMODE=localStorage.getItem('ce_trmode')==='1';}catch(_){}
-let MAPMODE='city';try{const _m=localStorage.getItem('ce_mapmode');if(_m==='nation'||_m==='alliance')MAPMODE=_m;}catch(_){}
+const TINT_MODES={diplo:1,faith:1,cult:1};
+const FAITH_COL={chr:'#4a7fd0',pro:'#86bde8',isl:'#2fa36b',ath:'#9aa0a8',bud:'#e69a2e',con:'#c0504d'};
+const CULT_COL=['#c0504d','#4a7fd0','#2fa36b','#e69a2e','#9b6bd0','#3fb8b0','#d0709b','#8a9a3a','#b07a4a','#6f8fb0'];
+function cultCol(k){let h=0;String(k||'mix').split('').forEach(ch=>h=(h*31+ch.charCodeAt(0))>>>0);return k==='mix'||!k?'#9aa0a8':CULT_COL[h%CULT_COL.length];}
+function relCol(v,p){if(p.id===v.me)return '#f2c14e';if(p.hostile)return '#e0503f';if(p.ally)return '#4fbf6a';if((v.treaties||[]).some(t=>(t.a===v.me&&t.b===p.id)||(t.b===v.me&&t.a===p.id)))return '#4f9be0';return '#8a8f99';}
+function tintCol(v,p){return MAPMODE==='diplo'?relCol(v,p):MAPMODE==='faith'?(FAITH_COL[p.fai]||'#8a8f99'):cultCol(p.cult);}
+function tintSig(v){return MAPMODE==='diplo'?v.players.map(p=>relCol(v,p)).join(''):MAPMODE==='faith'?v.players.map(p=>p.fai).join(','):v.players.map(p=>p.cult).join(',');}
+let MAPMODE='city';try{const _m=localStorage.getItem('ce_mapmode');if(_m==='nation'||_m==='alliance'||_m==='diplo'||_m==='faith'||_m==='cult')MAPMODE=_m;}catch(_){}
 /* 동맹 묶음: 동맹 조약으로 이어진 나라들. 이름은 가장 최근에 이름을 정한 나라의 것을, 없으면 가장 큰 나라 이름으로 정한다 */
 function alClusters(v){const pl=v.players,par=pl.map((_,i)=>i);const fd=i=>{while(par[i]!==i){par[i]=par[par[i]];i=par[i];}return i;};
   const inA=new Set();(v.treaties||[]).forEach(t=>{if(t.type!=='alliance'||!pl[t.a]||!pl[t.b]||!pl[t.a].alive||!pl[t.b].alive)return;inA.add(t.a);inA.add(t.b);par[fd(t.a)]=fd(t.b);});
@@ -4530,7 +4537,7 @@ const MapView={cv:null,ctx:null,W:0,H:0,dpr:1,scale:1,ox:0,oy:0,hover:-1,deco:[]
     // 소유 색: 불투명하게 칠한 뒤 한 번에 반투명 합성 (경계 틈은 이웃 색으로 메운다)
     const T=this.tint||(this.tint=document.createElement('canvas'));const tw0=c.canvas.width,th0=c.canvas.height;const tc=T.getContext('2d');if(T.width!==tw0||T.height!==th0){T.width=tw0;T.height=th0;}else{tc.setTransform(1,0,0,1,0,0);tc.clearRect(0,0,tw0,th0);}tc.setTransform(c.getTransform());tc.lineJoin='round';
     tc.save();tc.clip(this.p2base,'evenodd');
-    const AC=MAPMODE==='alliance'?alClusters(v):null;const gkey=o=>o==null?'n':(AC&&AC.of[o]!=null?'a'+AC.of[o]:o);const gcol=k=>k==='n'?null:(String(k)[0]==='a'?AC.cl[String(k).slice(1)].col:pl[k].color);
+    const AC=MAPMODE==='alliance'?alClusters(v):null;const gkey=o=>o==null?'n':(AC&&AC.of[o]!=null?'a'+AC.of[o]:o);const gcol=k=>k==='n'?null:(String(k)[0]==='a'?AC.cl[String(k).slice(1)].col:TINT_MODES[MAPMODE]?tintCol(v,pl[k]):pl[k].color);
     const by={};v.terr.forEach(t=>{const o=gkey(t.owner);(by[o]=by[o]||[]).push(t.id);});
     const PAR=[220,207,166];const eff=(hex,a)=>{const n=parseInt(hex.slice(1),16),t=[n>>16&255,n>>8&255,n&255];const w=a/0.8;return `rgb(${PAR.map((p,i)=>Math.round(p*(0.8-a)/0.8+t[i]*w)).join(',')})`;};
     const groups=[];for(const o in by){const P=new Path2D();by[o].forEach(i=>P.addPath(this.p2[i]));groups.push({o,P,col:o==='n'?eff('#7a6f58',0.22):eff(gcol(o),0.55),hex:gcol(o)});}
@@ -4540,7 +4547,7 @@ const MapView={cv:null,ctx:null,W:0,H:0,dpr:1,scale:1,ox:0,oy:0,hover:-1,deco:[]
     
     c.strokeStyle='rgba(150,205,225,.38)';c.lineWidth=Math.max(1,1.3*px);c.setLineDash([7*px,5*px]);c.stroke(this.pSeaS);c.setLineDash([]);
     if(!this.big)GEO.polys.forEach((_,i)=>this.deco[i].forEach(d=>this.deco1(c,d)));
-    if(MAPMODE==='city'){c.strokeStyle='#1a1610';c.lineWidth=bw;c.stroke(this.pAllS);
+    if(MAPMODE==='city'||TINT_MODES[MAPMODE]){c.strokeStyle='#1a1610';c.lineWidth=bw;c.stroke(this.pAllS);
     groups.forEach(g=>{if(g.o==='n')return;c.strokeStyle=g.hex;c.globalAlpha=this.big?0.9:0.6;c.lineWidth=bw*(this.big?1.8:3.0);c.stroke(g.P);c.globalAlpha=1;});}
     else{/* 나라·동맹 보기: 안쪽 경계는 지우고 바깥 윤곽선만 남긴다 (칠한 면으로 안쪽 절반을 덮는 방식) */
       c.strokeStyle='#1a1610';c.lineWidth=bw;c.stroke(this.p2base);
@@ -4554,7 +4561,7 @@ const MapView={cv:null,ctx:null,W:0,H:0,dpr:1,scale:1,ox:0,oy:0,hover:-1,deco:[]
     c.setTransform(this.dpr,0,0,this.dpr,0,0);c.drawImage(this.sea,0,0,this.W,this.H);
     // 정적 층 캐시
     /* 저사양 절약 모드에서만: 시점을 움직이는 동안(드래그·확대)은 정적 층을 다시 그리지 않고 만들어 둔 그림을 늘이거나 옮겨 쓴다. 움직임이 멈추면(0.12초) 선명하게 다시 그린다. 평소에는 움직이는 동안에도 매 프레임 선명하게 그려서 늘였다 다시 그리는 깜빡임이 없다 */
-    if(this._kv!==v||v.draft){this._kv=v;this._kk=v.terr.map(t=>t.owner).join('')+v.players.map(p=>p.color).join('')+'|'+MAPMODE+(MAPMODE==='alliance'?JSON.stringify(Object.values(alClusters(v).cl).map(c=>[c.ids,c.name])):'');this._gl=null;}
+    if(this._kv!==v||v.draft){this._kv=v;this._kk=v.terr.map(t=>t.owner).join('')+v.players.map(p=>p.color).join('')+'|'+MAPMODE+(TINT_MODES[MAPMODE]?tintSig(v):'')+(MAPMODE==='alliance'?JSON.stringify(Object.values(alClusters(v).cl).map(c=>[c.ids,c.name])):'');this._gl=null;}
     const key=this._kk+'|'+this.W+'x'+this.H+'|'+MAPID;
     const vk=vw.z.toFixed(3)+'|'+vw.x.toFixed(1)+'|'+vw.y.toFixed(1);const tn=performance.now();if(vk!==this.lastVK){this.lastVK=vk;this.vkAt=tn;}
     const act=!!((this.drag&&this.drag.moved)||this.pinch);let tf=null;if(UI.optOn()&&this.layer&&key===this.layerKey&&vk!==this.layerVK&&(act||tn-this.vkAt<120)){const L=this.layerV,a=vw.z/L.z,bx=this.ox*(1-a)+this.scale*(vw.x-a*L.x),by=this.oy*(1-a)+this.scale*(vw.y-a*L.y);
@@ -4619,7 +4626,7 @@ const MapView={cv:null,ctx:null,W:0,H:0,dpr:1,scale:1,ox:0,oy:0,hover:-1,deco:[]
     // 나라·동맹 보기: 묶음 이름을 가운데에 띄운다
     if(MAPMODE!=='city'&&!v.draft){if(!this._gl){const AC=MAPMODE==='alliance'?alClusters(v):null,G2={};v.terr.forEach(t=>{const d=TDEF[t.id];if(!d||d.kind==='sea'||t.owner==null||!pl[t.owner].alive)return;const k=AC&&AC.of[t.owner]!=null?'a'+AC.of[t.owner]:'o'+t.owner;const g=G2[k]||(G2[k]={n:0,sx:0,sy:0,t:[],nm:k[0]==='a'?AC.cl[k.slice(1)].name:String(pl[t.owner].kingdom).split('(')[0]});g.n+=d.area;g.sx+=d.x*d.area;g.sy+=d.y*d.area;g.t.push(d);});
         this._gl=Object.values(G2).map(g=>{const cx=g.sx/g.n,cy=g.sy/g.n;let b=g.t[0];g.t.forEach(d=>{if(Math.hypot(d.x-cx,d.y-cy)<Math.hypot(b.x-cx,b.y-cy))b=d;});return {nm:g.nm,x:Math.hypot(b.x-cx,b.y-cy)<12?cx:b.x,y:Math.hypot(b.x-cx,b.y-cy)<12?cy:b.y,r:Math.sqrt(g.n)};});}
-      this._gl.forEach(g=>{if(g.x<mx0-mg||g.x>mx1+mg||g.y<my0-mg||g.y>my1+mg||g.r*K<26)return;c.save();c.translate(g.x,g.y);c.scale(uz,uz);const fs=Math.max(11,Math.min(19,g.r*K/9));c.font="800 "+fs+"px system-ui,'Malgun Gothic','Apple SD Gothic Neo',sans-serif";c.textAlign='center';c.textBaseline='middle';c.lineWidth=3;c.strokeStyle='rgba(10,12,18,.85)';c.fillStyle='#fff';c.strokeText(g.nm,0,-18);c.fillText(g.nm,0,-18);c.restore();});}
+      this._gl.forEach(g=>{if(g.x<mx0-mg||g.x>mx1+mg||g.y<my0-mg||g.y>my1+mg||g.r*K<26)return;c.save();c.translate(g.x,g.y);c.scale(uz,uz);const fs=Math.max(11,Math.min(19,g.r*K/9));c.font="800 "+fs+"px system-ui,'Malgun Gothic','Apple SD Gothic Neo',sans-serif";c.textAlign='center';c.textBaseline='middle';c.lineWidth=3;c.strokeStyle='rgba(10,12,18,.85)';c.fillStyle='#fff';if(g.nm.length>=2&&g.r*K>=40){const ch=[...g.nm],ws=ch.map(x=>c.measureText(x).width),tw=ws.reduce((a,b)=>a+b,0),R=Math.max(tw*1.3,70);let a=-tw/(2*R);c.translate(0,R-18);ch.forEach((x,i)=>{const w=ws[i];a+=w/(2*R);c.save();c.rotate(a);c.translate(0,-R);c.strokeText(x,0,0);c.fillText(x,0,0);c.restore();a+=w/(2*R);});}else{c.strokeText(g.nm,0,-18);c.fillText(g.nm,0,-18);}c.restore();});}
     if(v.phase==='plan'&&sel!=null&&v.terr[sel]&&(v.terr[sel].owner===v.me||v.terr[sel].mygst>0)){
       const gOK=ow=>ow!=null&&ow!==v.me&&(v.treaties||[]).some(x=>(x.type==='alliance'||x.type==='passage')&&((x.a===v.me&&x.b===ow)||(x.b===v.me&&x.a===ow)));const gOKT=n=>gOK(v.terr[n].owner)||(TDEF[n].kind==='sea'&&v.terr[n].owner!=null&&v.terr[n].owner!==v.me&&v.players[v.terr[n].owner]&&!v.players[v.terr[n].owner].hostile);const adjS=adjAll(sel);
       const needDecl=ow=>ow!=null&&ow!==v.me&&v.players[ow]&&!v.players[ow].hostile;
@@ -5389,12 +5396,12 @@ const Ed={
   WK:[['terr','영토 N곳 차지하기'],['gold','금화 N 모으기'],['turns','N턴 동안 살아남기'],['cap','다른 나라 수도 점령하기']],
   GM:[[0.25,'매우 적음'],[0.5,'적음'],[1,'보통'],[2,'많음'],[4,'매우 많음']],
   /* ---- 영토별 설정: 도시 단계(-1=자동)·요새 단계·건물 ---- */
-  defsFrom(t){const o={};(t.regionDefs||[]).forEach(d=>{if(!Number.isInteger(d.id)||!this.tdefOK(t.map,d.id))return;o[d.id]={city:Number.isInteger(d.city)?clamp(d.city,0,3):-1,fort:clamp(d.fort|0,0,3),bl:(d.bl||[]).filter(b=>BLD[b]).slice(0,4)};});return o;},
+  defsFrom(t){const o={};(t.regionDefs||[]).forEach(d=>{if(!Number.isInteger(d.id)||!this.tdefOK(t.map,d.id))return;o[d.id]={city:Number.isInteger(d.city)?clamp(d.city,0,3):-1,fort:clamp(d.fort|0,0,3),bl:(d.bl||[]).filter(b=>BLD[b]).slice(0,4),nm:String(d.nm||'').slice(0,20)};});return o;},
   tdefOK(map,id){const m=MAPDATA[map];return !!(m&&m.terr[id]&&m.terr[id].kind!=='sea');},
   slotsOf(d){return 1+(d.city<0?3:d.city);},
   setDef(i,patch){const st=this.st;const d=Object.assign({city:-1,fort:0,bl:[]},st.defs[i],patch);d.bl=[...new Set(d.bl)].filter(b=>BLD[b]);
-    if(d.bl.length>this.slotsOf(d))d.bl=d.bl.slice(0,this.slotsOf(d));if(d.city<0&&!d.fort&&!d.bl.length)delete st.defs[i];else st.defs[i]=d;this.dirty=true;this.renderSide();this.draw();},
-  defSum(i){const d=this.st.defs[i];if(!d)return '';const a=[];if(d.city>=0)a.push('도시 '+d.city+'단계');if(d.fort)a.push('요새 '+d.fort+'단계');if(d.bl.length)a.push(d.bl.map(b=>BLD[b].n).join('·'));return a.join(' · ');},
+    if(d.bl.length>this.slotsOf(d))d.bl=d.bl.slice(0,this.slotsOf(d));if(d.city<0&&!d.fort&&!d.bl.length&&!d.nm)delete st.defs[i];else st.defs[i]=d;this.dirty=true;this.renderSide();this.draw();},
+  defSum(i){const d=this.st.defs[i];if(!d)return '';const a=[];if(d.city>=0)a.push('도시 '+d.city+'단계');if(d.fort)a.push('요새 '+d.fort+'단계');if(d.bl.length)a.push(d.bl.map(b=>BLD[b].n).join('·'));if(d.nm)a.push('이름 '+d.nm);return a.join(' · ');},
   evDraft(){return {t:5,k:'war',a:0,b:1,r:null,n:1,txt:'',v:'',ck:'',ca:0,cb:1,cr:null,cn:10};},
   cedeList(a){const st=this.st,cap=st.nations[a]?st.nations[a].cap:null;return this.tdef.map((t,i)=>i).filter(i=>!this.tdef[i].sea&&st.owners[i]===+a&&i!==cap);},
   cedeFix(){const ev=this.st.evd;if(ev.k!=='cede')return;const l=this.cedeList(ev.a);if(!l.includes(ev.r))ev.r=l.length?l[0]:null;},
@@ -5564,7 +5571,8 @@ const Ed={
   defPanel(){const st=this.st,i=st.sel;if(i==null||!this.tdef[i]||this.tdef[i].sea)return `<div class="edpanel muted sm" style="margin-top:6px">지도에서 영토를 눌러 고르면 도시 단계·요새 단계·건물을 정할 수 있어요. 정하지 않은 영토는 게임이 알아서 정해요.</div>`;
     const d=Object.assign({city:-1,fort:0,bl:[]},st.defs[i]),o=st.owners[i],slots=this.slotsOf(d),port=!!(this.geo.sadj[i]&&this.geo.sadj[i].length);
     const bl=Object.keys(BLD).map(k=>{const dis=(BLD[k].port&&!port)||(!d.bl.includes(k)&&d.bl.length>=slots);return `<label style="display:flex;gap:6px;align-items:center;margin:2px 0;${dis?'opacity:.5':''}"><input type="checkbox" data-edbld="${k}" ${d.bl.includes(k)?'checked':''} ${dis?'disabled':''}> ${BLD[k].ic} ${BLD[k].n}${BLD[k].port?' <small class="muted">(항구만)</small>':''}</label>`;}).join('');
-    return `<div class="edpanel" style="margin-top:6px;padding:8px;border:1px solid #2c3d5e;border-radius:8px"><b>${esc(this.tdef[i].name)}</b> <span class="muted sm">${o>=0?esc(st.nations[o].name):'주인 없음'}</span>
+    return `<div class="edpanel" style="margin-top:6px;padding:8px;border:1px solid #2c3d5e;border-radius:8px"><b>${esc(d.nm||this.tdef[i].name)}</b> <span class="muted sm">${o>=0?esc(st.nations[o].name):'주인 없음'}</span>
+      <div class="edrel"><span>이름</span><input type="text" data-edrn="1" maxlength="20" value="${esc(d.nm||'')}" placeholder="${esc(this.tdef[i].name)}" style="flex:1;min-width:0"></div>
       <div class="edrel"><span>도시</span><select data-edcity="1"><option value="-1" ${d.city<0?'selected':''}>자동</option>${[0,1,2,3].map(v=>`<option value="${v}" ${d.city===v?'selected':''}>${v}단계</option>`).join('')}</select></div>
       <div class="edrel"><span>요새</span><select data-edfort="1">${[0,1,2,3].map(v=>`<option value="${v}" ${d.fort===v?'selected':''}>${v}단계</option>`).join('')}</select></div>
       <div class="muted sm" style="margin:4px 0 2px">건물 (${d.bl.length}/${slots}칸${d.city<0?' · 도시 자동이면 최대 4칸':''})</div>${bl}
@@ -5584,6 +5592,7 @@ const Ed={
       else if(t.dataset.eddiff){{const an=this.st.nations[this.st.active];if(t.value==='a')delete an.diff;else an.diff=+t.value;this.dirty=true;}}
       else if(t.dataset.edflag){this.st.nations[this.st.active].flag=t.value;this.dirty=true;this.renderSide();}
       else if(t.dataset.edstr){this.st.nations[this.st.active].str=+t.value;this.dirty=true;}
+      else if(t.dataset.edrn){const i=this.st.sel;if(i!=null){this.snap();this.setDef(i,{nm:String(t.value||'').trim().slice(0,20)});}}
       else if(t.dataset.edcity){const i=this.st.sel;if(i!=null)this.setDef(i,{city:+t.value});}
       else if(t.dataset.edfort){const i=this.st.sel;if(i!=null)this.setDef(i,{fort:+t.value});}
       else if(t.dataset.edbld){const i=this.st.sel;if(i!=null){const d=Object.assign({city:-1,fort:0,bl:[]},this.st.defs[i]);this.setDef(i,{bl:t.checked?d.bl.concat([t.dataset.edbld]):d.bl.filter(b=>b!==t.dataset.edbld)});}}
@@ -5690,7 +5699,7 @@ const Ed={
     const win=(st.win||[]).filter(w=>w.k!=='cap'||idx[w.b]!=null).map(w=>({k:w.k,n:w.k==='cap'?0:(w.n|0),b:w.k==='cap'?idx[w.b]:null}));
     const it=st.intro||{},intro=((it.title||'').trim()||(it.text||'').trim())?{title:(it.title||'').trim().slice(0,30),text:(it.text||'').trim().slice(0,400)}:null;
     const yr=Math.round(+st.year)||0;if(yr&&(yr<-3000||yr>2100))return {ok:false,err:'시작 연도는 -3000~2100 사이로 정하세요.'};
-    const regionDefs=Object.keys(st.defs||{}).filter(k=>this.tdefOK(st.mapId,+k)).map(k=>{const d=st.defs[k],r={id:+k,fort:d.fort|0,trench:0};if(d.city>=0)r.city=d.city;if(d.bl&&d.bl.length)r.bl=d.bl.slice();return r;});
+    const regionDefs=Object.keys(st.defs||{}).filter(k=>this.tdefOK(st.mapId,+k)).map(k=>{const d=st.defs[k],r={id:+k,fort:d.fort|0,trench:0};if(d.city>=0)r.city=d.city;if(d.bl&&d.bl.length)r.bl=d.bl.slice();if(d.nm)r.nm=String(d.nm).slice(0,20);return r;});
     return {ok:true,tpl:{mrev:MREV,crev:CITY_REV,id:st.id||('cus_'+Date.now().toString(36)),year:yr,month:yr?(st.month||1):1,label:'내 시나리오',name,desc:(st.desc||'').trim()||'내가 만든 시나리오입니다.',map:st.mapId,civil:[],sites:{},nations,owner,al,nap,war,vas,evs,regionDefs,tags:(st.tags||[]).slice(0,3),win,intro,custom:true}};},
   /* ---- AI 시험: AI끼리만 N턴 돌려서 나라별 결과를 보여 준다 (게임 상태는 끝나면 그대로 되돌린다) ---- */
   async aiTest(turns){if(this.testing)return;if(G&&!G.over&&C.started){this.say('진행 중인 게임이 있어서 지금은 시험할 수 없어요.',true);return;}
@@ -5974,7 +5983,7 @@ const UI={
     P(geo.base);c.fillStyle='#cdbf97';c.fill('evenodd');
     geo.polys.forEach((r,k)=>{const t=tdef[k];if(t.sea)return;P(r);c.fillStyle='#cdbf97';c.fill('evenodd');c.lineWidth=3;c.strokeStyle='#14100a';c.stroke();});
     c.restore();},
-  startGame(){Music.cue('game');$('#lobby').classList.add('hidden');$('#game').classList.remove('hidden');UI.navPush('game');C.started=true;C.sel=null;C.pend=null;C.orders=[];if(!C.mapInit){C.mapInit=true;MapView.init();}else{MapView.build();MapView.resize();}},
+  startGame(){Music.cue('game');try{UI.closeDipSide();}catch(_){}$('#lobby').classList.add('hidden');$('#game').classList.remove('hidden');UI.navPush('game');C.started=true;C.sel=null;C.pend=null;C.orders=[];if(!C.mapInit){C.mapInit=true;MapView.init();}else{MapView.build();MapView.resize();}},
   /* ----- 터 잡기 ----- */
   handleTplDraft(d){
     const tpl=TEMPLATES.find(t=>t.id===d.tpl);C.draft=d;C.endAt=Date.now()+d.remain;
@@ -6347,7 +6356,7 @@ const UI={
     const seg=(act,cur,items)=>`<div class="seg">${items.map(([val,l])=>`<button data-act="${act}" data-val="${val}" class="${cur===val?'on':''}">${l}</button>`).join('')}</div>`;
     m.innerHTML=`<div class="menubox"><div class="row" style="margin-bottom:8px"><h2 style="margin:0">기록·설정</h2><button class="btn sm" style="flex:none" data-act="closeMenu">닫기</button></div>
       ${UI.isMulti()?`<div class="pol"><div><b>전투 연출</b><small>멀티플레이에서는 내가 공격하거나 공격받은 전투만 보여요. (고정)</small></div><div class="seg"><button class="on" disabled>내 전투만 · 고정</button></div></div>`:`<div class="pol"><div><b>전투 연출</b><small>전체: 모든 전투 · 내 전투만: 내가 공격하거나 공격받은 전투 · 요약: 수도·대규모 전투만</small></div>${seg('fx',C.fx,[['full','전체'],['mine','내 전투만'],['brief','요약'],['off','끔']])}</div>`}<div class="pol"><div><b>최적화</b><small>모든 게임이 같이 쓰는 설정이에요. 켜면 지도 해상도를 낮추고 계절·도장 연출을 끄고 전투 연출을 요약으로 줄여서 느린 기기에서도 부드러워져요.</small></div>${seg('opt',UI.optOn()?'1':'0',[['0','끔'],['1','켬']])}</div>
-      <div class="pol"><div><b>지도 보기</b><small>도시: 영토마다 경계 · 나라: 나라별로 하나로 · 동맹: 동맹을 한 나라로 보여줘요. 이 기기에만 적용돼요.</small></div>${seg('mapmode',MAPMODE,[['city','도시'],['nation','나라'],['alliance','동맹']])}</div>
+      <div class="pol"><div><b>지도 보기</b><small>도시: 영토마다 경계 · 나라: 나라별로 하나로 · 동맹: 동맹을 한 나라로 보여줘요. 이 기기에만 적용돼요.</small></div>${seg('mapmode',MAPMODE,[['city','도시'],['nation','나라'],['alliance','동맹'],['diplo','외교'],['faith','종교'],['cult','문화']])}</div>
       <div class="pol"><div><b>병력 비교</b><small>켜면 영토마다 병력이 많을수록 큰 원으로 보여줘요. 이 기기에만 적용돼요.</small></div>${seg('trmode',TRMODE?'1':'0',[['0','끔'],['1','켬']])}</div>
       ${(()=>{const AC=alClusters(v),ci=AC.of[C.me];if(v.draft||ci==null)return '';const c=AC.cl[ci];return `<div class="pol"><div><b>동맹 이름</b><small>${esc(c.ids.map(i=>String(v.players[i].kingdom).split('(')[0]).join(' · '))} · 동맹에 속한 나라 누구나 바꿀 수 있어요.</small></div><div class="row" style="gap:6px;flex:none"><input type="text" id="alEdit" maxlength="16" value="${esc(c.name)}" style="width:120px"><button class="btn sm" data-act="saveAl">저장</button></div></div>`;})()}
       <div class="pol"><div><b>업적 · 도감</b><small>달성한 업적과, 만난 병종·장군을 모아 봐요. (이 기기에 저장)</small></div><button class="btn sm" data-act="meta">보기</button></div>
@@ -6374,7 +6383,10 @@ const UI={
     if(v.draft){if(id==null||!C.claimOpts||!C.claimOpts.includes(id)){if(id!=null)UI.toast('지금은 고를 수 없는 지역입니다.','bad');return;}if(C.sel===id){Net.send({t:'claim',tid:id});C.sel=null;}else C.sel=id;UI.renderAll();return;}
     if(v.spec){C.sel=(id==null||C.sel===id)?null:id;C.pend=null;C.tab='map';UI.renderAll();return;}
     if(UI.markMode&&id!=null){if(UI.markMode==='pin')send({a:'mark',k:'pin',x:id});else if(UI.markFrom==null){UI.markFrom=id;UI.toast('시작 지역을 골랐어요. 도착 지역을 눌러요.','ok');}else{if(id!==UI.markFrom)send({a:'mark',k:'arrow',x:UI.markFrom,y:id});UI.markFrom=null;}return;}
-    if(id==null){if(!C.pend)C.sel=null;UI.renderAll();return;}
+    if(id==null){if(!C.pend)C.sel=null;UI.closeDipSide();UI.renderAll();return;}
+    {const T0=v.terr[id],o0=T0?T0.owner:null;if(o0!=null&&o0!==v.me&&TDEF[id].kind!=='sea'&&v.players[o0]&&v.players[o0].alive&&!C.pend){const selOwn=C.sel!=null&&v.terr[C.sel]&&(v.terr[C.sel].owner===v.me||v.terr[C.sel].mygst>0);
+      if(!selOwn||UI.natDist(C.sel,o0)>=2){C.sel=id;C.pend=null;UI.renderAll();UI.openDipSide(o0);return;}}
+     if(!(o0!=null&&o0!==v.me))UI.closeDipSide();else if(C.sel!=null&&v.terr[C.sel]&&v.terr[C.sel].owner===v.me)UI.closeDipSide();}
     if(v.phase==='plan'&&C.sel!=null&&(v.terr[C.sel].owner===v.me||v.terr[C.sel].mygst>0)&&id!==C.sel){
       const used=C.orders.filter(o=>o.from===C.sel).reduce((s,o)=>s+o.n,0);const avail=(v.terr[C.sel].owner===v.me?v.terr[C.sel].troops:(v.terr[C.sel].mygst||0))-used;const allySea=v.terr[id].owner!=null&&v.terr[id].owner!==v.me&&v.treaties.some(x=>(x.type==='alliance'||x.type==='passage')&&((x.a===v.me&&x.b===v.terr[id].owner)||(x.b===v.me&&x.a===v.terr[id].owner)));const seaOpen=TDEF[id].kind==='sea'&&v.terr[id].owner!=null&&v.terr[id].owner!==v.me&&v.players[v.terr[id].owner]&&!v.players[v.terr[id].owner].hostile;const mv=v.terr[id].owner===v.me||allySea||seaOpen;
       if(v.terr[id].owner===v.me&&v.terr[C.sel].owner===v.me){const adj0=adjAll(C.sel).includes(id);const hasGen0=v.gens.some(g=>g.owner===v.me&&g.status==='ok'&&g.loc===C.sel&&!C.orders.some(o=>o.gid===g.id));const can0=adj0?(avail>=CFG.minMove||hasGen0):(UI.farOwn(C.sel).includes(id)&&UI.availU(C.sel).c>=CFG.minMove);if(!can0){C.sel=id;C.pend=null;C.tab='map';UI.renderAll();return;}}
@@ -6397,6 +6409,19 @@ const UI={
     if(t.id&&t.id.startsWith('pendU_')){const ty=t.id.slice(6);C.pend.u[ty]=+t.value;C.pend.n=sumU(C.pend.u);const sp=$('#pendUN_'+ty);if(sp)sp.textContent=fmt(+t.value);$('#pendNum').textContent=fmt(C.pend.n);UI.syncAddBtn();}
     else if(t.id==='pendG'){C.pend.gid=t.value?+t.value:null;UI.syncAddBtn();}},
   /* 기병이 두 칸 만에 갈 수 있는 내 영토: 사이에 내 육지 영토 하나를 거쳐 닿는 곳(바로 맞닿은 곳은 제외) */
+  /* 선택한 지역에서 그 나라의 가장 가까운 영토까지 몇 칸인지 (맞닿으면 1) */
+  natDist(from,owner){if(from==null)return 99;const seen=new Set([from]);let fr=[from],d=0;while(fr.length&&d<6){d++;const nx=[];for(const a of fr)for(const b of GEO.adj[a]){if(seen.has(b))continue;seen.add(b);if(C.view.terr[b]&&C.view.terr[b].owner===owner&&TDEF[b].kind!=='sea')return d;nx.push(b);}fr=nx;}return 99;},
+  dipKind(p){const v=C.view,a=[];if(p.hostile)a.push('전쟁 중');if(p.ally)a.push('동맹');(v.treaties||[]).filter(t=>(t.a===v.me&&t.b===p.id)||(t.b===v.me&&t.a===p.id)).forEach(t=>{const n=({nap:'불가침',trade:'무역 협정',passage:'통행 협정',truce:'휴전',vassal:'종속',alliance:''})[t.type];if(n&&!a.includes(n))a.push(n);});if(p.over===v.me)a.push('내 속국');if(p.id===(mePl()||{}).over)a.push('내 종주국');return a.length?a.join(' · '):'맺은 관계 없음';},
+  dipSideHTML(pid){const v=C.view,me=mePl(),p=v.players[pid];if(!p)return '';const myDips=v.dips.filter(d=>d.from===v.me);const r=p.rel;const num=r?`<b style="font-size:20px;color:${r.t>=0?'#7be0a0':'#ff9a86'}">${r.t>0?'+':''}${Math.round(r.t)}</b> <span class="muted">${esc(r.l||'')}</span>`:'<span class="muted">연락이 닿지 않아 관계 수치를 알 수 없어요</span>';
+    return `<div class="row" style="align-items:center;margin-bottom:8px"><h3 style="margin:0;flex:1">🤝 외교 · ${esc(String(p.kingdom).split('(')[0])}</h3><button class="btn sm" data-dipclose="1">닫기</button></div><div class="card sm" style="padding:8px 10px;margin-bottom:8px"><div class="row" style="align-items:center;gap:8px;flex-wrap:wrap"><span>관계 ${num}</span></div><div style="margin-top:4px"><span class="muted">종류</span> <b>${esc(UI.dipKind(p))}</b></div></div>`+UI.dipCmpHTML(p)+UI.dipCardHTML(p,me,v,myDips);},
+  dipCmpHTML(p){const v=C.view,st=id=>{let n=0,tr=0,unk=false,bd=0;v.terr.forEach(t=>{if(t.owner!==id||TDEF[t.id].kind==='sea')return;n++;if(t.troops==null)unk=true;else tr+=t.troops;});return {n,tr,unk};};
+    const A=st(v.me),B=st(p.id);let border=0;v.terr.forEach(t=>{if(t.owner!==v.me||TDEF[t.id].kind==='sea')return;if(GEO.adj[t.id].some(m=>v.terr[m]&&v.terr[m].owner===p.id&&TDEF[m].kind!=='sea'))border++;});
+    const row=(l,x,y)=>`<div class="row" style="padding:2px 0"><span class="muted" style="flex:1">${l}</span><b style="width:90px;text-align:right">${x}</b><b style="width:90px;text-align:right">${y}</b></div>`;
+    return `<div class="card sm" style="padding:8px 10px;margin-bottom:8px"><div class="row" style="padding-bottom:3px;border-bottom:1px solid var(--line)"><span style="flex:1"></span><span class="muted" style="width:90px;text-align:right">나</span><span class="muted" style="width:90px;text-align:right">${esc(String(p.kingdom).split('(')[0])}</span></div>`+row('영토',A.n+'곳',B.n+'곳')+row('병력',fmt(A.tr)+(A.unk?'+':''),B.unk&&!B.tr?'알 수 없음':fmt(B.tr)+(B.unk?'+':''))+`<div style="margin-top:4px" class="muted">내 영토 중 이 나라와 맞닿은 곳 <b style="color:var(--text)">${border}곳</b></div></div>`;},
+  openDipSide(pid){const w=$('#mapwrap');if(!w)return;let el=$('#dipSide');if(!el){el=document.createElement('div');el.id='dipSide';el.style.cssText='position:absolute;left:10px;top:10px;bottom:10px;width:min(330px,88vw);overflow:auto;background:#0f1a26f5;border:1px solid #c9a45a;border-radius:10px;padding:12px;z-index:30;box-shadow:0 8px 30px #000a';el.addEventListener('click',e=>{if(e.target.closest('[data-dipclose]')){UI.closeDipSide();return;}UI.onPanelClick(e);});el.addEventListener('input',e=>UI.onPanelInput(e));['pointerdown','wheel'].forEach(t=>el.addEventListener(t,e=>e.stopPropagation()));w.appendChild(el);}
+    C.dipSide=pid;el.innerHTML=UI.dipSideHTML(pid);el.style.display='block';},
+  closeDipSide(){C.dipSide=null;const el=$('#dipSide');if(el)el.style.display='none';},
+  dipSideRefresh(){if(C.dipSide==null)return;const el=$('#dipSide');if(!el||el.style.display==='none')return;const v=C.view;if(!v||v.draft||!v.players[C.dipSide]||!v.players[C.dipSide].alive){UI.closeDipSide();return;}const y=el.scrollTop;el.innerHTML=UI.dipSideHTML(C.dipSide);el.scrollTop=y;},
   farOwn(from){const v=C.view,out=new Set();if(!v.terr[from]||TDEF[from].kind==='sea')return [];const near=new Set(GEO.adj[from]);near.forEach(m=>{const M=v.terr[m];if(!M||M.owner!==v.me||TDEF[m].kind==='sea')return;GEO.adj[m].forEach(n=>{if(n===from||near.has(n))return;const N=v.terr[n];if(N&&N.owner===v.me&&TDEF[n].kind!=='sea')out.add(n);});});return [...out];},
   /* ---- 조용한 달 건너뛰기: 아무 일도 없으면 명령 없이 다음 달로 ---- */
   toggleAuto(){if(C.auto>0){C.auto=0;C.autoInf=false;C.autoUntil=null;UI.closeAutoPop();UI.toast('건너뛰기를 멈췄어요.');UI.renderAction();}else UI.openAutoPop();},
@@ -7030,6 +7055,15 @@ function mmTick(){try{const v=C.view;mmInit();if(!mm)return;const show=mmOn&&v&&
   const x=mm.getContext('2d');x.setTransform(1,0,0,1,0,0);x.drawImage(mmBase,0,0,340,238);const V=MapView.view,sc=MapView.scale;const x0=((0-MapView.ox)/sc-V.x)/V.z,x1=((MapView.W-MapView.ox)/sc-V.x)/V.z,y0=((0-MapView.oy)/sc-V.y)/V.z,y1=((MapView.H-MapView.oy)/sc-V.y)/V.z;
   x.strokeStyle='#ffe28a';x.lineWidth=2;x.strokeRect(Math.max(0,x0)*.34,Math.max(0,y0)*.34,(Math.min(1000,x1)-Math.max(0,x0))*.34,(Math.min(700,y1)-Math.max(0,y0))*.34);}catch(e){}}
 setInterval(mmTick,350);
+function legendTick(){try{const w=Q('#mapwrap');if(!w)return;let el=Q('#mapLegend');if(!el){el=document.createElement('div');el.id='mapLegend';el.style.cssText='position:absolute;left:10px;bottom:56px;z-index:5;background:#0b1220e6;border:1px solid #c9a45a;border-radius:8px;padding:6px 9px;font-size:12px;line-height:1.55;pointer-events:none;color:#eef0f5';w.appendChild(el);}
+ const v=C.view;if(!TINT_MODES[MAPMODE]||!v||v.draft||!C.started||(Q('#game')&&Q('#game').classList.contains('hidden'))){el.style.display='none';return;}
+ let rows=[];if(MAPMODE==='diplo')rows=[['#f2c14e','나'],['#4fbf6a','동맹'],['#4f9be0','조약'],['#e0503f','전쟁 중'],['#8a8f99','관계 없음']];
+ else if(MAPMODE==='faith')rows=Object.keys(FAITH_COL).map(k=>[FAITH_COL[k],FAITH[k].n]);
+ else{const seen={};v.players.forEach(p=>{if(p.alive&&!seen[p.cult||'mix'])seen[p.cult||'mix']=1;});rows=Object.keys(seen).map(k=>[cultCol(k),({mix:'혼합',ger:'게르만',fra:'프랑스',eng:'영국',irl:'아일랜드',spa:'스페인',por:'포르투갈',ita:'이탈리아',nld:'네덜란드',sca:'북유럽',pol:'폴란드',rus:'러시아',ukr:'우크라이나',tur:'튀르크',per:'페르시아',grc:'그리스',slav:'슬라브',rom:'로마',hun:'헝가리',cze:'체코',bal:'발칸',cau:'캅카스',heb:'히브리',lat:'라틴',pun:'카르타고',ibe:'이베리아',gau:'갈리아',kor:'한국',jpn:'일본',chn:'중국',mon:'몽골',alb:'알바니아',ara:'아랍'})[k]||k]);}
+ const key=MAPMODE+rows.map(r=>r[1]).join();if(el._k!==key){el._k=key;el.innerHTML='<b>'+({diplo:'외교 지도',faith:'종교 지도',cult:'문화 지도'})[MAPMODE]+'</b>'+rows.map(r=>'<div><span style="display:inline-block;width:11px;height:11px;border-radius:3px;background:'+r[0]+';margin-right:6px;vertical-align:-1px"></span>'+r[1]+'</div>').join('');}
+ el.style.display='block';}catch(e){}}
+setInterval(legendTick,500);
+(function(){const rp=UI.renderPanel;UI.renderPanel=function(){const r=rp.apply(this,arguments);try{UI.dipSideRefresh();}catch(e){}return r;};})();
 const KEYS=[['1 ~ 5','탭 전환 (지도·외교·무역·기술·목표)'],['E','계획 확정 / 취소'],['H','내 영토로 이동'],['+ / −','지도 확대 / 축소'],['방향키 · WASD','지도 이동'],['M','미니맵 켜기 / 끄기'],['?','이 도움말']];
 function openKeys(){modal('<h2>단축키</h2>'+KEYS.map(k=>`<div class="mvrow"><b style="min-width:120px;color:#f3c64f">${k[0]}</b><div class="s">${k[1]}</div></div>`).join(''));}
 window.addEventListener('keydown',e=>{const tg=e.target||{};if(/INPUT|TEXTAREA|SELECT/.test(tg.tagName||'')||tg.isContentEditable||e.ctrlKey||e.metaKey||e.altKey)return;
