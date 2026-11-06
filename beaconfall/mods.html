@@ -513,7 +513,13 @@ function parseScript(text,lenient){
         else if(df.k==='mob'&&(dm=dl.t.match(/^(hp|dmg|speed)\s+(\d+(?:\.\d+)?)$/i))){df[dm[1].toLowerCase()]=+dm[2];}
         else if(df.k==='mob'&&(dm=dl.t.match(/^color\s+"?(#[0-9a-f]{6})"?$/i))){df.col=dm[1].toLowerCase();}
         else if(df.k==='mob'&&(dm=dl.t.match(/^drop\s+(.+?)(?:\s+(\d+)(?:\s+(\d+))?)?$/i))){df.drop=df.drop||[];if(df.drop.length>=5)throw PE(dl.n,'drop can be written 5 times at most');var d1=dm[2]?+dm[2]:1,d2=dm[3]?+dm[3]:d1;df.drop.push([item(dl,dm[1].trim()),d1,Math.max(d1,d2)]);}
-        else throw PE(dl.n,df.k==='mob'?'under define mob you can write: base, hp, dmg, speed, color, drop':'under define item you can write: base');
+        else if(df.k==='mob'&&(dm=dl.t.match(/^biome\s+(.+)$/i))){var BIOS=['start','forest','desert','volcano','jungle','mesa','rock','mangrove','ice'];df.bi=[];dm[1].split(',').forEach(function(bn){var bw=bn.trim().toLowerCase(),bx=BIOS.indexOf(bw);if(bx<0){var bg=guess(bw,BIOS);throw PE(dl.n,"unknown biome '"+bw+"'."+(bg?" Did you mean '"+bg+"'?":" You can use: "+BIOS.join(', ')));}if(df.bi.indexOf(bx)<0)df.bi.push(bx);});}
+        else if(df.k==='mob'&&(dm=dl.t.match(/^(rate|max)\s+(\d+)$/i))){var rv=+dm[2];if(rv<1||rv>100)throw PE(dl.n,dm[1].toLowerCase()+' must be 1 to 100');df[dm[1].toLowerCase()==='rate'?'rt':'mx']=rv;}
+        else if(df.k==='item'&&(dm=dl.t.match(/^recipe\s+(.+)$/i))){
+          var rcs=[];dm[1].split(',').forEach(function(pt){var mm=pt.trim().match(/^(.+?)(?:\s+(\d+))?$/);if(!mm)throw PE(dl.n,'write it like  recipe iron 3, log 2');var cn=mm[2]?+mm[2]:1;if(cn<1||cn>7)throw PE(dl.n,'each ingredient count must be 1 to 7');var iid=item(dl,mm[1].trim());for(var ci=0;ci<cn;ci++)rcs.push(iid);});
+          if(rcs.length<1||rcs.length>7)throw PE(dl.n,'a recipe can use 1 to 7 ingredient slots');df.rc=rcs;}
+        else if(df.k==='item'&&(dm=dl.t.match(/^makes\s+(\d+)$/i))){if(+dm[1]<1||+dm[1]>20)throw PE(dl.n,'makes must be 1 to 20');df.mk=+dm[1];}
+        else throw PE(dl.n,df.k==='mob'?'under define mob you can write: base, hp, dmg, speed, color, drop, biome, rate, max':'under define item you can write: base, recipe, makes');
       }
       if(!df.base)throw PE(l.n,'define '+df.k+' needs a  base  line');
       out.defs.push(df);
