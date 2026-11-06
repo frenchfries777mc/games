@@ -460,7 +460,7 @@ try{if(sessionStorage.getItem('ce_noIntro')){sessionStorage.removeItem('ce_noInt
 sting();})();</script>
 <div id="app">
  <div id="lobby" class="screen">
-  <canvas id="lobbyBg"></canvas><canvas id="lobbyWar"></canvas><div id="cpTag">© 2026 Frenchfries777 · <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.ko" target="_blank" rel="noopener">CC BY-NC-ND 4.0</a></div><div id="verTag">v0.6 · build 150</div>
+  <canvas id="lobbyBg"></canvas><canvas id="lobbyWar"></canvas><div id="cpTag">© 2026 Frenchfries777 · <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.ko" target="_blank" rel="noopener">CC BY-NC-ND 4.0</a></div><div id="verTag">v0.6 · build 151</div>
   <header class="brand"><h1>Crown Envoy</h1><div class="sub"><i></i>DIPLOMACY · WAR · EMPIRE<i></i></div></header>
   <div id="lobbyRight">
    <div id="lobbyHome" class="modes">
@@ -1120,6 +1120,7 @@ function newGame(defs,plan){if(typeof Host!=='undefined')Host.snaps=[];if(plan&&
   /* 수도와 주요 도시는 높은 도시 레벨로 시작: 수도 3, 무역항·광산 2, 곡창·철옹성 1 (각국 영토 중 상위 몇 곳) */
   G.players.forEach(p=>{if(p.landless)return;const L=owned(p.id);L.forEach(t=>{if(t.id===p.cap){t.city=3;return;}const k=TDEF[t.id].kind;t.city=(k==='port'||k==='mine')?2:(k==='farm'||k==='fort')?1:0;});
     const rest=L.filter(t=>t.id!==p.cap&&(t.city||0)>0).sort((a,b)=>KIND[TDEF[b.id].kind].inc-KIND[TDEF[a.id].kind].inc);rest.slice(Math.max(2,Math.ceil(L.length*0.4))).forEach(t=>{t.city=Math.max(0,t.city-1);});});
+  {const tpU=plan.tpl&&TEMPLATES.find(t=>t.id===plan.tpl);G.umod=(tpU&&tpU.custom&&tpU.units)?tpU.units:null;}
   {const tpD=plan.tpl&&TEMPLATES.find(t=>t.id===plan.tpl);if(tpD&&tpD.custom&&tpD.regionDefs)tpD.regionDefs.forEach(d=>{const T=G.terr[d.id];if(!T||T.sea)return;if(Number.isInteger(d.city))T.city=clamp(d.city,0,CITY_MAX);if(Array.isArray(d.bl)){const L=d.bl.filter(b=>BLD[b]&&(!BLD[b].port||isPort(d.id)));T.bl=L.slice(0,bslots(T));if(T.owner!=null&&T.bl.length)T.blO=T.owner;}});}
   TDEF.forEach(td=>{if(td.fort0&&!td.sea){const T=G.terr[td.id];if(T)T.fort=Math.max(T.fort||0,td.fort0);}});
   return G;
@@ -1466,7 +1467,8 @@ function resolveRound(){
       let dGen=holder.gens.slice().sort((x,y)=>y.def-x.def)[0]||null;
       const SE=SEA_ERA[TK(G.tplId)]||SEA_ERA.def;const seaA=!!(a.srcs&&a.srcs.length&&a.srcs.every(s=>G.terr[s.from].sea));const pin=(a.srcs&&a.srcs.length>1)?Math.min(0.3,0.12*(a.srcs.length-1)):0;const A={pid:a.pid,troops:a.n,morale:armyMorale(a.pid,aGen),gen:aGen,sea:!!T.sea,vet:G.players[a.pid].vet||0,abonus:(T.sea?(((G.players[a.pid].navy||1)-1)*0.5):(seaA?-SE.land:0))+(T.sea?0:seasonAtk(T))+pin+(JOPS.has(a.pid+':'+tid)?JOP_BON:0)};
       const D={pid:holder.pid,troops:holder.troops,morale:armyMorale(holder.pid,dGen),gen:dGen,sea:!!T.sea,amb:!T.sea&&['forest','mountain'].includes(TDEF[T.id].terrain),vet:holder.pid!=null?(G.players[holder.pid].vet||0):0,bonus:T.sea?(holder.pid!=null?(((G.players[holder.pid].navy||1)-1)*0.5):0):defBonus(T,holder.original),mbonus:T.sea?0:(holder.original?fortMorale(T):0)};
-      {xpGain(a.pid,a.mix);if(holder.pid!=null)xpGain(holder.pid,holder.mix||mixOfT(T));const cb=compBattle(a.mix,holder.mix||mixOfT(T),T,a.pid,holder.pid);A.abonus+=cb.atk;if(!T.sea)D.bonus+=cb.def;}
+      {xpGain(a.pid,a.mix);if(holder.pid!=null)xpGain(holder.pid,holder.mix||mixOfT(T));const cb=compBattle(a.mix,holder.mix||mixOfT(T),T,a.pid,holder.pid);A.abonus+=cb.atk;if(!T.sea)D.bonus+=cb.def;
+        if(G.umod){const um=G.umod,sh=m=>{m=m||{};const c=m.c||0,r=m.a||0;return {i:Math.max(0,1-c-r),c,a:r};},sa=sh(a.mix),sd=sh(holder.mix||mixOfT(T));A.abonus+=['i','c','a'].reduce((x,k)=>x+sa[k]*(((um[k]&&um[k].a)||1)-1),0);if(!T.sea)D.bonus+=['i','c','a'].reduce((x,k)=>x+sd[k]*(((um[k]&&um[k].d)||1)-1),0);}}
       if(!T.sea&&holder.pid!=null){A.form=formOf(a.pid);D.form=formOf(holder.pid);}
       let duel=null;
       if(!T.sea&&aGen&&dGen&&aGen.status==='ok'&&dGen.status==='ok'&&dGen.owner!==a.pid&&(G.players[a.pid].isBot?Math.random()<0.6:dlGet(a.pid,'dlch'))){
@@ -4106,6 +4108,7 @@ function makeView(pid,opts){const omni=!!(opts&&opts.omni);setEra(G.era);const D
       if(p.id===pid){o.fin=Object.assign({},p.fin||{});o.strike=(p.strike||0)>=G.round?p.strike-G.round+1:0;o.facN=facN(pid);o.rs={need:rsNeed(pid),prod:rsProd(pid),short:Object.assign({},p.short||{}),rev:Math.round(shortRev(p)*100)};o.mor=morView(p);o.pendN=pendOf(pid);o.cvmax=convMax(pid);o.ut=[utier(pid,'i'),utier(pid,'c'),utier(pid,'a')];o.tav=[convAvail(pid,'i'),convAvail(pid,'c'),convAvail(pid,'a')];o.tvis=UT.map((t,ix)=>Math.max(o.tav[ix],tierVis(pid,t)));o.nsp=nspOf(pid);o.yr=techYear();o.obj=objView(p);o.amb=ambView(p);o.fcost=fortCostOf(pid);o.tcost=trenchCostOf(pid);o.scost=scoutCostOf(pid);o.goals=(p.goals||[]).map(g=>({k:g.k,enemy:g.enemy,prog:g.prog,done:g.done,need:GOALS[g.k].need,n:GOALS[g.k].n}));o.ww=Math.round(p.ww||0);o.tariff=Object.assign({},p.tariff||{});o.autoSell=p.autoSell||0;o.tbk={route:routeGold(pid),market:marketGold(pid),imp:importGold(pid)};o.deals=(G.deals||[]).filter(d=>d.until>=G.round&&(d.a===pid||d.b===pid)).map(d=>{const mineA=d.a===pid;return {id:d.id,w:mineA?d.b:d.a,give:mineA?d.ga:d.gb,get:mineA?d.gb:d.ga,gold:mineA?d.gold:-d.gold,left:d.until-G.round};});o.convoys=(G.convoys||[]).filter(c=>c.owner===pid).map(c=>({to:c.to,left:Math.max(0,c.due-G.round),v:c.value}));{const gg=goodsOf(pid);o.goods={own:[...gg.own],imp:[...gg.imp]};o.tin=tradeIncome(pid);}o.income=income(pid);o.upkeep=upkeep(pid);o.capacity=capacity(pid);o.under=underdog(pid);o.pol=polView(pid);}
       return o;}),
     terr:G.terr.map(t=>{const full=t.owner==null||sees(t.owner);const o={id:t.id,gv:(t.gvr!=null&&G.round-t.gvr<=10)?(t.gv||0):0,plg:t.plg||0,burn:(t.burn||0)>=G.round?1:0,port:(!t.sea&&isPort(t.id))?(blockaded(t.id,t.owner==null?-1:t.owner)&&t.owner!=null?2:1):0,owner:t.owner,fort:t.fort,trench:t.trench||0,oos:t.oos?1:0,siege:t.siege||0,enc:t.encN||0,unrest:t.unrest,dp:DPT.dp[t.id],cd:DPT.cd[t.id],tier:tierOf(t.troops)};if(t.mark&&t.mark.until>=G.round)o.mk={k:t.mark.k,t:t.mark.t};if(t.post)o.post=t.post.by;if(t.wd)o.wd=t.wd;if(t.wp)o.wp={k:t.wp.k,left:t.wp.left};if(full){if(t.bl)o.bl=t.bl.slice();if(!t.sea&&t.owner!=null)o.pop=Math.round(popIdx(t)*100)/100;o.troops=t.troops;if(t.troops>0){const cu=compOf(t);o.u=[cu.i,cu.c,cu.a];if(t.owner!=null){const vf=vfOf(t),r2=x=>Math.round(x*100)/100;o.uv=[vf.i.map(r2),vf.c.map(r2),vf.a.map(r2)];const ow=t.owner!=null?G.players[t.owner]:null;if(ow){let xl=0;['i','c','a'].forEach(k=>{const j=vf[k].indexOf(Math.max(...vf[k]));xl=Math.max(xl,xlv(ow,k,j));});o.xl=xl;}}}}if(t.inf&&!t.sea){let tk=-1,tv=0;Object.keys(t.inf).forEach(k=>{if(t.inf[k]>tv){tv=t.inf[k];tk=+k;}});const mm=t.inf[pid]||0;if(t.owner===pid&&tv>0)o.inf={m:0,k:tk,tv};else if(mm>0)o.inf={m:mm,k:pid,tv:mm};}if(t.gst&&t.gst[pid]>0){o.mygst=t.gst[pid];{const gu=compOf(t,pid);o.gu=[gu.i,gu.c,gu.a];}}if(t.owner===pid&&!t.sea){if(t.mc&&t.mc.length){o.mcn=t.mc.reduce((q,x)=>q+x.n,0);o.mcl=Math.max(...t.mc.map(x=>x.until))-G.round+1;}o.city=t.city||0;o.mkt=t.mkt||0;o.mcost=(isPort(t.id)&&(t.mkt||0)<2)?MKT_COST[t.mkt||0]:0;o.ccap=conscriptCap(t);o.dr=t.drafted||0;if(t.pend)o.pend=t.pend.reduce((q,x)=>q+x.n,0);o.ccost=(t.city||0)<CITY_MAX?cityCostOf(pid,t.city||0):0;}if(t.owner===pid&&t.gst){const sg=Object.keys(t.gst).reduce((a,k)=>a+(t.gst[k]||0),0);if(sg>0)o.allyg=sg;}return o;}),
+    um:G.umod||null,
     gens:G.gens.filter(g=>g.status!=='dead').map(g=>{const full=g.owner===pid||sees(g.owner)||g.captor===pid;const o={id:g.id,owner:g.owner,name:g.name,xp:g.xp||0,grade:gradeOf(g),loc:g.loc,status:g.status,captor:g.captor,wins:g.wins||0};if(full){o.atk=g.atk;o.def=g.def;o.lead=g.lead;o.trait=g.trait;}return o;}),
     relics:Object.assign({},G.relics||{}),
     fac:omni?null:facView(pid),bonds:omni?[]:((G.players[pid].bonds||[]).map(b=>({id:b.id,amt:b.amt,per:b.per,left:b.left,miss:b.miss||0,pay:Math.round(b.left*b.per*0.9)}))),bondLim:omni?0:bondLimit(pid),band:omni?[]:bandView(pid),
@@ -5382,6 +5385,10 @@ const Ed={
   GMAX:8,
   gensOut(n,oi){const g=(n.gens||[]).slice(0,this.GMAX);if(!g.length)return null;const own=k=>Number.isInteger(k)&&this.tdef[k]&&!this.tdef[k].sea&&this.st.owners[k]===oi;
     return g.map(x=>{const nm=String(x.n||'').replace(/[<>&"]/g,'').trim().slice(0,16);const c=v=>clamp(Math.round(+v)||3,1,8);const o={n:nm||'@',a:c(x.a),d:c(x.d),l:c(x.l),fx:1};if(x.t&&TRAITS[x.t])o.t=x.t;if(own(x.p))o.p=x.p;return o;});},
+  UNITM:[0.5,0.75,1,1.25,1.5,2],
+  unitsOut(){const u=this.st.units||{},o={};let any=false;['i','c','a'].forEach(k=>{const x=u[k]||{};const n=String(x.n||'').replace(/[<>&"]/g,'').trim().slice(0,8);const a=this.UNITM.includes(+x.a)?+x.a:1,d=this.UNITM.includes(+x.d)?+x.d:1;if(n||a!==1||d!==1){o[k]={};if(n)o[k].n=n;if(a!==1)o[k].a=a;if(d!==1)o[k].d=d;any=true;}});return any?o:null;},
+  unitPanel(){const u=this.st.units||{},nm={i:'보병',c:'기병',a:'포병'};const sel=(k,f,v)=>`<select data-edun="${k}:${f}">${this.UNITM.map(q=>`<option value="${q}" ${+(v||1)===q?'selected':''}>×${q}</option>`).join('')}</select>`;
+    return `<h4 style="margin:10px 0 4px">병종 <span class="muted sm" style="font-weight:400">— 이 시나리오에서만 적용돼요</span></h4>`+['i','c','a'].map(k=>{const x=u[k]||{};return `<div class="edgen"><div class="edgn"><input type="text" maxlength="8" placeholder="${nm[k]} 이름 (비우면 그대로)" value="${esc(x.n||'')}" data-edun="${k}:n"></div><div class="edgs"><span>공격</span>${sel(k,'a',x.a)}<span>방어</span>${sel(k,'d',x.d)}</div></div>`;}).join('');},
   genPanel(act,ai){const st=this.st,gs=act.gens||[];const own=st.owners.map((o,k)=>o===ai&&this.tdef[k]&&!this.tdef[k].sea?k:-1).filter(k=>k>=0);
     const num=(f,v,i)=>`<select data-edgf="${f}" data-edgi="${i}" title="${({a:'공격',d:'방어',l:'통솔'})[f]}">${[1,2,3,4,5,6,7,8].map(q=>`<option value="${q}" ${q===v?'selected':''}>${q}</option>`).join('')}</select>`;
     const rows=gs.map((g,i)=>`<div class="edgen"><div class="edgn"><input type="text" maxlength="16" placeholder="이름 (비우면 자동)" value="${esc(g.n)}" data-edgf="n" data-edgi="${i}"><button class="btn sm danger" data-ed="delgen" data-i="${i}" title="이 장군 삭제">🗑</button></div>
@@ -5420,9 +5427,9 @@ const Ed={
   undo(){const cur=this.snapStr();while(this.hist.length&&this.hist[this.hist.length-1]===cur)this.hist.pop();if(!this.hist.length){this.histUI();return;}this.redo.push(cur);this.restore(this.hist.pop());this.histUI();},
   redoIt(){const cur=this.snapStr();while(this.redo.length&&this.redo[this.redo.length-1]===cur)this.redo.pop();if(!this.redo.length){this.histUI();return;}this.hist.push(cur);this.restore(this.redo.pop());this.histUI();},
   histUI(){const u=document.getElementById('edUndo'),r=document.getElementById('edRedo');if(u)u.disabled=!this.hist.length;if(r)r.disabled=!this.redo.length;},
-  fresh(mapId){this.hist=[];this.redo=[];const m=mapBuild(mapId);return {id:null,mapId,name:'',desc:'',owners:m.tdef.map(()=>-1),nations:[this.newNation(0),this.newNation(1)],year:'',month:1,evs:[],evd:this.evDraft(),rel:{},active:0,tool:'paint',defs:{},sel:null,tags:[],win:[],intro:{title:'',text:''},wd:{k:'terr',n:10,b:0}};},
+  fresh(mapId){this.hist=[];this.redo=[];const m=mapBuild(mapId);return {id:null,mapId,name:'',desc:'',owners:m.tdef.map(()=>-1),nations:[this.newNation(0),this.newNation(1)],year:'',month:1,evs:[],evd:this.evDraft(),rel:{},active:0,tool:'paint',defs:{},sel:null,tags:[],win:[],intro:{title:'',text:''},wd:{k:'terr',n:10,b:0},units:{}};},
   /* 저장된 템플릿을 편집 상태로 되돌린다 */
-  fromTpl(t){this.hist=[];this.redo=[];const m=mapBuild(t.map);const st={id:t.id,mapId:t.map,name:t.name||'',desc:t.desc||'',owners:m.tdef.map((_,i)=>t.owner[i]!=null?t.owner[i]:-1),nations:t.nations.map(n=>({name:n.name,color:n.color,neu:!!n.neu,str:n.str||1,cap:n.cap,gov:n.gov||'',fai:n.fai||'',flag:n.flag||'',diff:n.da?null:(n.diff!=null?n.diff:2),gm:n.gm||1,sm:n.sm||1,gens:(n.gens||[]).map(x=>({n:x.n==='@'?'':String(x.n||''),a:x.a|0||3,d:x.d|0||3,l:x.l|0||3,t:x.t||'',p:Number.isInteger(x.p)?x.p:null}))})),year:t.year||'',month:t.month||1,evs:(t.evs||[]).map(e=>Object.assign({},e,{c:e.c?Object.assign({},e.c):null})),evd:this.evDraft(),rel:{},active:0,tool:'paint',defs:this.defsFrom(t),sel:null,tags:(t.tags||[]).filter(k=>UI.TAGS.some(x=>x[0]===k)).slice(0,3),win:(t.win||[]).map(w=>Object.assign({},w)),intro:{title:(t.intro&&t.intro.title)||'',text:(t.intro&&t.intro.text)||''},wd:{k:'terr',n:10,b:0}};
+  fromTpl(t){this.hist=[];this.redo=[];const m=mapBuild(t.map);const st={id:t.id,mapId:t.map,name:t.name||'',desc:t.desc||'',owners:m.tdef.map((_,i)=>t.owner[i]!=null?t.owner[i]:-1),nations:t.nations.map(n=>({name:n.name,color:n.color,neu:!!n.neu,str:n.str||1,cap:n.cap,gov:n.gov||'',fai:n.fai||'',flag:n.flag||'',diff:n.da?null:(n.diff!=null?n.diff:2),gm:n.gm||1,sm:n.sm||1,gens:(n.gens||[]).map(x=>({n:x.n==='@'?'':String(x.n||''),a:x.a|0||3,d:x.d|0||3,l:x.l|0||3,t:x.t||'',p:Number.isInteger(x.p)?x.p:null}))})),year:t.year||'',month:t.month||1,evs:(t.evs||[]).map(e=>Object.assign({},e,{c:e.c?Object.assign({},e.c):null})),evd:this.evDraft(),rel:{},active:0,tool:'paint',defs:this.defsFrom(t),sel:null,tags:(t.tags||[]).filter(k=>UI.TAGS.some(x=>x[0]===k)).slice(0,3),win:(t.win||[]).map(w=>Object.assign({},w)),intro:{title:(t.intro&&t.intro.title)||'',text:(t.intro&&t.intro.text)||''},wd:{k:'terr',n:10,b:0},units:JSON.parse(JSON.stringify(t.units||{}))};
     const put=(l,v)=>(l||[]).forEach(([a,b])=>{st.rel[this.key(a,b)]=v;});put(t.al,'al');put(t.nap,'nap');put(t.war,'war');
     (t.vas||[]).forEach(([o,v])=>{st.rel[this.key(o,v)]=o<v?'vlo':'vhi';});return st;},
   key(a,b){return a<b?a+'-'+b:b+'-'+a;},
@@ -5548,6 +5555,7 @@ const Ed={
         <div class="edrel"><span>정치체제</span><select data-edgov="1"><option value="">자동</option>${Object.keys(GOV).map(k=>`<option value="${k}" ${act.gov===k?'selected':''}>${GOV[k].n}</option>`).join('')}</select></div>
         <div class="edrel"><span>종교</span><select data-edfai="1"><option value="">자동</option>${Object.keys(FAITH).map(k=>`<option value="${k}" ${act.fai===k?'selected':''}>${FAITH[k].n}</option>`).join('')}</select></div>
         ${this.genPanel(act,st.active)}</div>`:''}
+      ${this.unitPanel()}
       <h3>도구</h3><div class="edtools">${[['paint','🖌 칠하기'],['erase','🧽 지우기'],['cap','⭐ 수도 지정'],['build','🏗 도시·요새·건물'],['move','✋ 이동']].map(([k,l])=>`<button class="btn sm ${st.tool===k?'on':''}" data-edtool="${k}">${l}</button>`).join('')}</div>
       <div class="muted sm" style="margin-top:4px">칠하기·지우기는 드래그로 이어서 칠할 수 있어요. 휠로 확대·축소, 오른쪽 버튼(또는 ✋ 이동)으로 움직여요.</div>
       ${st.tool==='build'?this.defPanel():''}
@@ -5592,6 +5600,7 @@ const Ed={
       else if(t.dataset.eddiff){{const an=this.st.nations[this.st.active];if(t.value==='a')delete an.diff;else an.diff=+t.value;this.dirty=true;}}
       else if(t.dataset.edflag){this.st.nations[this.st.active].flag=t.value;this.dirty=true;this.renderSide();}
       else if(t.dataset.edstr){this.st.nations[this.st.active].str=+t.value;this.dirty=true;}
+      else if(t.dataset.edun){const [k,f]=t.dataset.edun.split(':');const u=(this.st.units=this.st.units||{});(u[k]=u[k]||{})[f]=f==='n'?String(t.value||'').trim().slice(0,8):+t.value;this.dirty=true;}
       else if(t.dataset.edrn){const i=this.st.sel;if(i!=null){this.snap();this.setDef(i,{nm:String(t.value||'').trim().slice(0,20)});}}
       else if(t.dataset.edcity){const i=this.st.sel;if(i!=null)this.setDef(i,{city:+t.value});}
       else if(t.dataset.edfort){const i=this.st.sel;if(i!=null)this.setDef(i,{fort:+t.value});}
@@ -5700,7 +5709,7 @@ const Ed={
     const it=st.intro||{},intro=((it.title||'').trim()||(it.text||'').trim())?{title:(it.title||'').trim().slice(0,30),text:(it.text||'').trim().slice(0,400)}:null;
     const yr=Math.round(+st.year)||0;if(yr&&(yr<-3000||yr>2100))return {ok:false,err:'시작 연도는 -3000~2100 사이로 정하세요.'};
     const regionDefs=Object.keys(st.defs||{}).filter(k=>this.tdefOK(st.mapId,+k)).map(k=>{const d=st.defs[k],r={id:+k,fort:d.fort|0,trench:0};if(d.city>=0)r.city=d.city;if(d.bl&&d.bl.length)r.bl=d.bl.slice();if(d.nm)r.nm=String(d.nm).slice(0,20);return r;});
-    return {ok:true,tpl:{mrev:MREV,crev:CITY_REV,id:st.id||('cus_'+Date.now().toString(36)),year:yr,month:yr?(st.month||1):1,label:'내 시나리오',name,desc:(st.desc||'').trim()||'내가 만든 시나리오입니다.',map:st.mapId,civil:[],sites:{},nations,owner,al,nap,war,vas,evs,regionDefs,tags:(st.tags||[]).slice(0,3),win,intro,custom:true}};},
+    return {ok:true,tpl:{mrev:MREV,crev:CITY_REV,id:st.id||('cus_'+Date.now().toString(36)),year:yr,month:yr?(st.month||1):1,label:'내 시나리오',name,desc:(st.desc||'').trim()||'내가 만든 시나리오입니다.',map:st.mapId,civil:[],sites:{},nations,owner,al,nap,war,vas,evs,regionDefs,units:this.unitsOut(),tags:(st.tags||[]).slice(0,3),win,intro,custom:true}};},
   /* ---- AI 시험: AI끼리만 N턴 돌려서 나라별 결과를 보여 준다 (게임 상태는 끝나면 그대로 되돌린다) ---- */
   async aiTest(turns){if(this.testing)return;if(G&&!G.over&&C.started){this.say('진행 중인 게임이 있어서 지금은 시험할 수 없어요.',true);return;}
     const r=this.build();if(!r.ok){this.say(r.err,true);return;}
@@ -6045,7 +6054,7 @@ const UI={
     UI.applyView(v);
   },
   applyView(v){
-    const prev=C.view;C.view=v;setEra(v.era);try{const zx=$('#zMarkX');if(zx)zx.style.display=(v.marks||[]).some(x=>x.pid===v.me)?'':'none';if(v.draft&&UI.markMode){UI.markMode=null;UI.markFrom=null;$('#zMark').classList.remove('on');$('#zMark').textContent='📍';}}catch(_){}const key=v.round+':'+v.phase;if(!v.draft&&(!prev||prev.draft)){try{const kn=localStorage.getItem('ce_kname');if(kn)send({a:'kname',name:kn});}catch(_){}}
+    const prev=C.view;C.view=v;setEra(v.era);try{UI.applyUM(v.um);}catch(_){}try{const zx=$('#zMarkX');if(zx)zx.style.display=(v.marks||[]).some(x=>x.pid===v.me)?'':'none';if(v.draft&&UI.markMode){UI.markMode=null;UI.markFrom=null;$('#zMark').classList.remove('on');$('#zMark').textContent='📍';}}catch(_){}const key=v.round+':'+v.phase;if(!v.draft&&(!prev||prev.draft)){try{const kn=localStorage.getItem('ce_kname');if(kn)send({a:'kname',name:kn});}catch(_){}}
     if(key!==C.phaseKey){C.phaseKey=key;C.pend=null;
       if(v.phase==='plan'&&v.round===1&&(!prev||prev.draft)&&MapView.big)MapView.focusMine();
       if(v.phase==='plan'){const newR=!prev||prev.round!==v.round;if(newR){C.ordSeq=0;C.ordAck=0;}if(newR||(C.ordSeq||0)<=(C.ordAck||0))C.orders=(v.orders||[]).slice();if(newR){C.sel=null;UI.toast(`제 ${v.round}라운드 — 계획을 세우세요`);if(C.orders.length)UI.toast('방어 태세 방침으로 이동 명령이 미리 채워졌습니다.');}}}
@@ -6410,6 +6419,7 @@ const UI={
     else if(t.id==='pendG'){C.pend.gid=t.value?+t.value:null;UI.syncAddBtn();}},
   /* 기병이 두 칸 만에 갈 수 있는 내 영토: 사이에 내 육지 영토 하나를 거쳐 닿는 곳(바로 맞닿은 곳은 제외) */
   /* 선택한 지역에서 그 나라의 가장 가까운 영토까지 몇 칸인지 (맞닿으면 1) */
+  applyUM(um){const base={i:'보병',c:'기병',a:'포병'};['i','c','a'].forEach(k=>{UT_NAME[k]=(um&&um[k]&&um[k].n)||base[k];});},
   natDist(from,owner){if(from==null)return 99;const seen=new Set([from]);let fr=[from],d=0;while(fr.length&&d<6){d++;const nx=[];for(const a of fr)for(const b of GEO.adj[a]){if(seen.has(b))continue;seen.add(b);if(C.view.terr[b]&&C.view.terr[b].owner===owner&&TDEF[b].kind!=='sea')return d;nx.push(b);}fr=nx;}return 99;},
   dipKind(p){const v=C.view,a=[];if(p.hostile)a.push('전쟁 중');if(p.ally)a.push('동맹');(v.treaties||[]).filter(t=>(t.a===v.me&&t.b===p.id)||(t.b===v.me&&t.a===p.id)).forEach(t=>{const n=({nap:'불가침',trade:'무역 협정',passage:'통행 협정',truce:'휴전',vassal:'종속',alliance:''})[t.type];if(n&&!a.includes(n))a.push(n);});if(p.over===v.me)a.push('내 속국');if(p.id===(mePl()||{}).over)a.push('내 종주국');return a.length?a.join(' · '):'맺은 관계 없음';},
   dipSideHTML(pid){const v=C.view,me=mePl(),p=v.players[pid];if(!p)return '';const myDips=v.dips.filter(d=>d.from===v.me);const r=p.rel;const num=r?`<b style="font-size:20px;color:${r.t>=0?'#7be0a0':'#ff9a86'}">${r.t>0?'+':''}${Math.round(r.t)}</b> <span class="muted">${esc(r.l||'')}</span>`:'<span class="muted">연락이 닿지 않아 관계 수치를 알 수 없어요</span>';
