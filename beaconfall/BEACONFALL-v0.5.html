@@ -597,6 +597,7 @@ function shape(x,y,hb,fb,L){
     for(let k=0;k<tf.r.length;k++){
       const q=tf.r[k];if(x<q[0]||x>q[2]||y<q[1]||y>q[3])continue;
       if(q[4]===4){v=v0;bv=bv0;sC=0;continue;}
+      if(q[4]===5){if(v>SEA+0.01){if(q[5]>=0)bv=q[5];sC=(q[6]&&MODBIO.id[q[6]])||0;}continue;}   // 길 칠하기: 높이는 그대로, 땅 색과 바이옴만 바꿔요
       if(q[7]===1){   // 타원 섬 (새 바이옴)
         const ex=(x-(q[0]+q[2])/2)/((q[2]-q[0])/2),ey=(y-(q[1]+q[3])/2)/((q[3]-q[1])/2),ed=Math.sqrt(ex*ex+ey*ey);
         if(ed>=1)continue;
@@ -680,7 +681,7 @@ function ensureTrees(cx,cy){
       ptShape(x,y);
       const hv=sV,bb=sB;
       if(hv<SEA+0.05||hv>0.97||(bb&128))continue;
-      let b=bb&127;{const cu=sC&&MODBIO.by[sC];if(cu&&cu.tr!=null)b=cu.tr;}   // 모드 바이옴은 trees 로 고른 바이옴의 나무가 자라요
+      let b=bb&127;{const cu=sC&&MODBIO.by[sC];if(cu&&cu.tr===-1)continue;if(cu&&cu.tr!=null)b=cu.tr;}   // 모드 바이옴은 trees 로 고른 바이옴의 나무가 자라요
       if(b===0&&Math.hypot(x-camp.x,(y-camp.y)*1.2)<52)continue;
       const m=Math.round(clamp01(sM)*127)/127;
       if(hs(cxx,cyy,23)>(Math.max(0,m-0.38)*2.0+0.03)*BDEN[b]*0.6)continue;   // 나무 밀집도
@@ -10169,7 +10170,7 @@ function modDef(q){   // define mob|item "이름": 기존 것을 바탕(base)으
     MTYPES[key]=T;MODDEF.mob[nm]=key;
     const b=MSPR[q.base];if(b){if(modPic(q)){const c=document.createElement('canvas');c.width=b.w;c.height=b.h;const wc=document.createElement('canvas');wc.width=b.w;wc.height=b.h;MSPR[key]={c,w:b.w,h:b.h,wc};modPic(q,src=>{const g=c.getContext('2d');g.imageSmoothingEnabled=false;g.clearRect(0,0,b.w,b.h);g.drawImage(src,0,0,b.w,b.h);const h=wc.getContext('2d');h.clearRect(0,0,b.w,b.h);h.drawImage(c,0,0);h.globalCompositeOperation='source-atop';h.fillStyle='#fff';h.fillRect(0,0,b.w,b.h);});}else if(T.col&&q.col){const c=document.createElement('canvas');c.width=b.w;c.height=b.h;const g=c.getContext('2d');g.drawImage(b.c,0,0);g.globalCompositeOperation='source-atop';g.globalAlpha=0.55;g.fillStyle=q.col;g.fillRect(0,0,b.w,b.h);MSPR[key]={c,w:b.w,h:b.h,wc:b.wc};}else MSPR[key]=b;}
   }else if(q.k==='world'){MODDEF.world[nm]={sd:q.sd||''};
-  }else if(q.k==='structure'){if(Array.isArray(q.bl))MODDEF.st[nm]=q.bl.slice(0,2000).filter(b=>Array.isArray(b)&&STRUCT[b[0]]&&Math.abs(b[1])<=60&&Math.abs(b[2])<=60);
+  }else if(q.k==='structure'){if(Array.isArray(q.bl))MODDEF.st[nm]=q.bl.slice(0,2000).filter(b=>Array.isArray(b)&&(STRUCT[b[0]]||(typeof b[0]==='string'&&b[0][0]==='@'))&&Math.abs(b[1])<=60&&Math.abs(b[2])<=60);
   }else if(q.k==='item'){const B=ITEMS[q.base];if(!B)return;ITEMS[key]=Object.assign({},B,{name:nm});MODDEF.item[nm]=key;
     if(q.pl===false)ITEMS[key].placeable=false;
     if(q.pl===true&&(q.pimg||q.pii)){const sk='md_'+nm;STRUCT[sk]={layer:'o',block:true,item:key,n:1,need:1.5};ITEMS[key].place=sk;ITEMS[key].placeable=true;
@@ -10337,9 +10338,9 @@ function modVarSet(n,v){
   if(n.startsWith('s__')){const sn=n.slice(3);if(!/^[a-z0-9_]{1,17}$/.test(sn))return;shSet(modShKey(sn),typeof v==='number'?(isFinite(v)?String(Math.round(v*1000)/1000):'0'):String(v).slice(0,40));return;}
   if(!/^[a-z0-9_]{1,20}$/.test(n))return;
   const vs=modIsLoc(n)?MODX.loc:modVars();
-  if(!(n in vs)&&Object.keys(vs).length>=50)return;
+  if(!(n in vs)&&Object.keys(vs).length>=1000)return;
   if(typeof v==='number'){if(!isFinite(v))return;vs[n]=Math.max(-1e9,Math.min(1e9,Math.round(v*1000)/1000));}
-  else if(typeof v==='string')vs[n]=v.slice(0,40);
+  else if(typeof v==='string')vs[n]=v.slice(0,200);
 }
 function modVarCmp(c){
   if(!c||typeof c.n!=='string')return false;
@@ -10579,9 +10580,9 @@ function modRun(acts,depth,box){
       for(let i=0;i<n&&monsters.length<250;i++){const sp=modFreeSpot(an,30,90);if(!sp)continue;monsters.push({id:nextMid++,ty,x:sp.x,y:sp.y,tx:sp.x,ty2:sp.y,f:1,born:0,burn:0,wt:0,wa:0,ws:0,spd:T.wander,hp:T.hp,st:0,wind:0,cd:1,stun:0,hurt:0,kx:0,ky:0});}
     }
     else if(a.travel&&host){const tw=String(a.travel.w||'');setTimeout(()=>{modTravel(tw);},30);}   // 다른 월드로 이동
-    else if(a.build&&host&&MODDEF.st[String(a.build.n)]){   // define structure 로 만든 구조물 짓기
-      const an=modAnchor(a.build.near,box.gen),cx=((an.x/GRID)|0)+3,cy=(an.y/GRID)|0;
-      for(const [k,dx,dy] of MODDEF.st[String(a.build.n)]){const gx=cx+dx,gy=cy+dy;if(canPlaceCell(gx,gy,k,true))addStruct(k,gx,gy,'host',k);}
+    else if(a.build&&host&&MODDEF.st[String(a.build.n)]){
+      if(box.gen)(MOD.bPend=MOD.bPend||[]).push(a.build);   // 월드 만들 때는 지형이 다 정해진 다음에 지어요
+      else modBuild(a.build,false);
     }
     else if(a.place&&host&&ITEMS[a.place.item]&&ITEMS[a.place.item].placeable&&STRUCT[a.place.item]){
       const k=a.place.item,an=modAnchor(a.place.near,box.gen),cx=(an.x/GRID)|0,cy=(an.y/GRID)|0;let done=false;
@@ -10609,7 +10610,7 @@ function cleanTF(t){
   const r=[];if(Array.isArray(t.r))for(const q of t.r.slice(0,200)){
     if(!Array.isArray(q)||q.length<6)continue;
     const n=q.slice(0,6).map(v=>Math.round(+v));if(n.some(v=>!Number.isFinite(v)))continue;
-    const o=[Math.max(0,n[0]),Math.max(0,n[1]),Math.min(W,n[2]),Math.min(H,n[3]),n[4]>=0&&n[4]<=4?n[4]:0,n[5]>=-1&&n[5]<=8?n[5]:-1];
+    const o=[Math.max(0,n[0]),Math.max(0,n[1]),Math.min(W,n[2]),Math.min(H,n[3]),n[4]>=0&&n[4]<=5?n[4]:0,n[5]>=-1&&n[5]<=8?n[5]:-1];
     if(typeof q[6]==='string'&&q[6]&&q[6].length<=20){o.push(q[6].slice(0,20),q[7]===1?1:0);}
     r.push(o);
   }
@@ -10641,12 +10642,31 @@ function modShades(h,fs){return fs.map(f=>{const n=parseInt(h.slice(1),16),c=v=>
 function modBiomeDef(q){   // define biome "이름": 새 바이옴 (generate biome 으로 섬을 만들어요)
   if(!q||typeof q.n!=='string'||!q.n||q.n.length>20||MODBIO.n>=120||MODBIO.id[q.n])return;
   const id=++MODBIO.n,H=v=>typeof v==='string'&&/^#[0-9a-f]{6}$/.test(v)?v:null,gd=H(q.gd),sa=H(q.sa),rk=H(q.rk);
-  const D={id,n:q.n,bs:Number.isInteger(q.bs)&&q.bs>=0&&q.bs<9?q.bs:1,tr:Number.isInteger(q.tr)&&q.tr>=0&&q.tr<9?q.tr:null,mu:(typeof q.mu==='string'&&/^(base|bgm-[a-z]+\.mp3)$/.test(q.mu))?q.mu:'',
+  const D={id,n:q.n,bs:Number.isInteger(q.bs)&&q.bs>=0&&q.bs<9?q.bs:1,tr:Number.isInteger(q.tr)&&q.tr>=-1&&q.tr<9?q.tr:null,mu:(typeof q.mu==='string'&&/^(base|bgm-[a-z]+\.mp3)$/.test(q.mu))?q.mu:'',
     fx:(Array.isArray(q.fx)?q.fx:[]).filter(k=>MODFX[k]).slice(0,7),sr:(Array.isArray(q.sr)?q.sr:[]).slice(0,50).filter(x=>Array.isArray(x)&&typeof x[0]==='string').map(x=>[x[0],Math.max(1,Math.min(50,x[1]|0||1))]),
     mobs:(Array.isArray(q.mobs)?q.mobs:[]).slice(0,40).filter(x=>Array.isArray(x)&&typeof x[0]==='string').map(x=>[x[0],Math.max(1,Math.min(1000,x[1]|0||4)),Math.max(1,Math.min(1000,x[2]|0||6))]),
     sz:Math.max(200,Math.min(3000,q.sz|0||800)),
     gp:gd?modShades(gd,[0.62,0.74,0.88,1,1.12,1.25]):null,sp:sa?modShades(sa,[0.85,1,1.12]):(gd?modShades(gd,[1.3,1.4,1.5]):null),rp:rk?modShades(rk,[1.2,1,0.85,0.7,0.55]):null};
   MODBIO.id[q.n]=id;MODBIO.by[id]=D;
+}
+function modBuild(a,gen){   // define structure 로 만든 구조물 짓기 (at 로 좌표를 주면 나무와 바위를 치우고 지어요)
+      let an=modAnchor(a.near,gen),cx,cy,at=null;
+      if(Array.isArray(a.at)&&a.at.length===2){const sp=modAnchor(null,true);at={x:(a.at[0][0]?sp.x:0)+(+a.at[0][1]||0),y:(a.at[1][0]?sp.y:0)+(+a.at[1][1]||0)};an=at;}
+      cx=((an.x/GRID)|0)+(at?0:3);cy=(an.y/GRID)|0;
+      const bl=MODDEF.st[String(a.n)];
+      if(at){   // 놓을 자리의 나무와 바위를 먼저 치워요
+        let mx=0,my=0;for(const [k,dx,dy] of bl){mx=Math.max(mx,Math.abs(dx));my=Math.max(my,Math.abs(dy));}
+        const R=(Math.max(mx,my)+2)*GRID,R2=R*R;
+        for(let yy=an.y-R;yy<=an.y+R+CHK;yy+=CHK/2)for(let xx=an.x-R;xx<=an.x+R+CHK;xx+=CHK/2)ensureObjs(xx,yy);
+        const cx0=Math.max(0,((an.x-R)>>8)-1),cx1=Math.min(CXN-1,((an.x+R)>>8)+1),cy0=Math.max(0,((an.y-R)>>8)-1),cy1=Math.min(CYN-1,((an.y+R)>>8)+1);
+        for(let yy=cy0;yy<=cy1;yy++)for(let xx=cx0;xx<=cx1;xx++){const ci=yy*CXN+xx;
+          {const T=world.trees,n=TER.tn[ci];if(n>0)for(let j=0;j<n;j++){const kk=ci*TMAX+j;if(world.removed[kk])continue;const dx=T.x[kk]-an.x,dy=T.y[kk]-an.y;if(dx*dx+dy*dy<=R2)world.removed[kk]=1;}}
+          {const B=world.boulders,n=TER.bn[ci];if(n>0)for(let j=0;j<n;j++){const kk=ci*BMAX+j;if(world.brem[kk])continue;const dx=B.x[kk]-an.x,dy=B.y[kk]-an.y;if(dx*dx+dy*dy<=R2)world.brem[kk]=1;}}}
+        try{buildTreeGrid();}catch(e){}
+      }
+      const bulk=window.__bpBulk;window.__bpBulk=1;
+      try{for(const [k0,dx,dy] of bl){const gx=cx+dx,gy=cy+dy;let k=k0,it=k0;if(typeof k0==='string'&&k0[0]==='@'){it=MODDEF.item[k0.slice(1)]||'';k=(it&&ITEMS[it]&&ITEMS[it].place)||'';}if(k&&canPlaceCell(gx,gy,k,true))addStruct(k,gx,gy,'host',it);}}finally{window.__bpBulk=bulk;}
+      if(at)saveWorld(true);
 }
 function modGenBiome(a){   // 빈 바다에 새 바이옴 섬을 만들어요 (새 월드에서만)
   const D=MODBIO.by[MODBIO.id[a.n]];if(!D||!TER)return;
@@ -10665,6 +10685,7 @@ function modGenBiome(a){   // 빈 바다에 새 바이옴 섬을 만들어요 (�
   }
   MOD.tfDirty=1;
 }
+function modBuildPend(){const L=MOD.bPend||[];MOD.bPend=[];for(const b of L){try{if(MODDEF.st[String(b.n)])modBuild(b,true);}catch(e){}}}
 function modBiomeStructs(){   // 섬이 만들어진 뒤에, 바이옴에 적어 둔 구조물을 놓아요
   const L=MOD.stPend||[];MOD.stPend=[];
   for(const e of L)for(const [nm,cnt] of (e.b.sr||[])){
@@ -10684,9 +10705,12 @@ function modTf(kind,a){
   if(kind==='wipe'){const f={trees:'nt',rocks:'nr',ores:'no',structures:'ns'}[a];if(f)tf[f]=1;}
   else{
     const an=modAnchor(null,true),c=a.c.map((p,i)=>{const v=Math.round(+p[1])||0;return p[0]?(i%2?an.y:an.x)+v:v;});
-    const md={land:0,beach:1,ocean:2,mountain:3,load:4}[a.mode],bi=a.b==null?-1:TF_BIO.indexOf(String(a.b));
+    const md={land:0,beach:1,ocean:2,mountain:3,load:4,paint:5}[a.mode];let bi=a.b==null?-1:TF_BIO.indexOf(String(a.b)),cn='';
+    if(typeof a.cb==='string'){const D=MODBIO.by[MODBIO.id[a.cb]];if(D){bi=D.bs;cn=D.n;}}
     if(md===undefined||tf.r.length>=200)return;
-    tf.r.push([Math.min(c[0],c[2]),Math.min(c[1],c[3]),Math.max(c[0],c[2]),Math.max(c[1],c[3]),md,md===0&&bi<0?0:md===4?-1:bi]);
+    const rg=[Math.min(c[0],c[2]),Math.min(c[1],c[3]),Math.max(c[0],c[2]),Math.max(c[1],c[3]),md,md===0&&bi<0?0:md===4?-1:bi];
+    if(cn)rg.push(cn,0);
+    tf.r.push(rg);
   }
   MOD.tfDirty=1;
 }
@@ -10727,7 +10751,8 @@ function modGen(){
     for(const e of evs){try{modRun(e.do,0,{n:100000,gen:1,fresh:(world.pt||0)<1});}catch(x){}}
     done.push(m.id);ran=true;
   }
-  if(MOD.tfDirty){MOD.tfDirty=0;try{const t=cleanTF(world.tf);if(t)applyTF(t,true);}catch(x){}try{modBiomeStructs();}catch(x){}}
+  if(MOD.tfDirty){MOD.tfDirty=0;try{const t=cleanTF(world.tf);if(t)applyTF(t,true);}catch(x){}}
+  try{modBuildPend();}catch(x){}try{modBiomeStructs();}catch(x){}
   if(ran)saveWorld(true);
 }
 function modKey(e,down){
