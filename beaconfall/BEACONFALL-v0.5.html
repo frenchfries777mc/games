@@ -457,7 +457,7 @@ const BGM=(()=>{
   let on=true;try{const v=localStorage.getItem('stranded.bgm');if(v==='0')on=false;}catch(e){}
   const BASE='bgm-summer.mp3',ALT='https://frenchfries777.com/games/beaconfall/';
   const SEASON=['bgm-spring.mp3','base','bgm-autumn.mp3','bgm-winter.mp3'];          // seasonNow 순서
-  const ISLE={2:'bgm-desert.mp3',3:'bgm-volcano.mp3',4:'bgm-jungle.mp3',5:'bgm-desert.mp3',7:'bgm-jungle.mp3',8:'bgm-ice.mp3',9:'bgm-volcano.mp3'};   // BIOME_NAME 번호
+  const ISLE={2:'bgm-desert.mp3',3:'bgm-volcano.mp3',4:'bgm-jungle.mp3',5:'bgm-desert.mp3',7:'bgm-jungle.mp3',8:'bgm-ice.mp3'};   // BIOME_NAME 번호
   const LEVEL={'bgm-battle.mp3':1,'bgm-startagain.mp3':2.1,base:0.4,'bgm-night.mp3':0.9,'bgm-volcano.mp3':1.8,'bgm-storm.mp3':0.9};   // 파일 안의 곡은 원래 소리가 커서 줄여요
   const AMB={'bgm-night.mp3':1,'bgm-rain.mp3':1,'bgm-storm.mp3':1};
   let ctx=null,master=null,isle=0,isleT=0;const ch={};let PACK={};
@@ -550,7 +550,7 @@ function makeOct(cell,amp,rnd){
 }
 const darkPx=c=>((0xFF000000)|((((c>>16)&255)*0.78|0)<<16)|((((c>>8)&255)*0.8|0)<<8)|((c&255)*0.74|0))>>>0;
 
-const BIOME_NAME=['시작섬','숲섬','사막섬','화산섬','정글섬','메사섬','돌섬','맹그로브섬','얼음섬','Deep Void'];
+const BIOME_NAME=['시작섬','숲섬','사막섬','화산섬','정글섬','메사섬','돌섬','맹그로브섬','얼음섬'];
 const islName=o=>flagName(o)||o.vname||BIOME_NAME[o.b];
 const BIO_GROUND=[
   null,
@@ -561,11 +561,10 @@ const BIO_GROUND=[
   ['#7a3a22','#8f4628','#a5532e','#bd6234','#d27a42','#e4944f'],
   ['#4a4d58','#575a66','#656876','#757885','#868996','#9a9dab'],
   ['#2a4a3c','#325a46','#3c6a50','#4a7a5a','#5a8a64','#6a9a70'],
-  ['#9fc4e0','#b4d4ea','#c8e0f2','#dcecf8','#eef6fc','#ffffff'],
-  ['#1a0f33','#221442','#2b1a54','#352066','#412a7a','#52368f']   // 9 Deep Void: 짙은 보라
+  ['#9fc4e0','#b4d4ea','#c8e0f2','#dcecf8','#eef6fc','#ffffff']
 ].map(a=>a&&a.map(rgb));
-const BIO_ROCK=[null,null,['#e0b078','#c99860','#b08050','#8f6640','#6f4c30'],['#4a4856','#3c3a48','#2e2c3a','#222030','#181624'],null,['#d08a5a','#b87048','#9a5a38','#7a4428','#5a321e'],null,null,['#e8f4ff','#c8e0f2','#a0c4e0','#78a0c8','#5878a8'],['#4a3a78','#3c2e64','#2e2250','#22183c','#170f2a']].map(a=>a&&a.map(rgb));
-const BIO_SAND=[null,null,null,['#4a4858','#3a3846','#2e2c3a'],null,['#e4a070','#d08a58','#b87446'],['#9a9dab','#868996','#757885'],['#8a9a6a','#788a5a','#667a4c'],['#dcecf8','#c8e0f2','#a8c8e4'],['#2b1a54','#241546','#1d1038']].map(a=>a&&a.map(rgb));
+const BIO_ROCK=[null,null,['#e0b078','#c99860','#b08050','#8f6640','#6f4c30'],['#4a4856','#3c3a48','#2e2c3a','#222030','#181624'],null,['#d08a5a','#b87048','#9a5a38','#7a4428','#5a321e'],null,null,['#e8f4ff','#c8e0f2','#a0c4e0','#78a0c8','#5878a8']].map(a=>a&&a.map(rgb));
+const BIO_SAND=[null,null,null,['#4a4858','#3a3846','#2e2c3a'],null,['#e4a070','#d08a58','#b87446'],['#9a9dab','#868996','#757885'],['#8a9a6a','#788a5a','#667a4c'],['#dcecf8','#c8e0f2','#a8c8e4']].map(a=>a&&a.map(rgb));
 const LAVA=['#7a1408','#a8200a','#d8420e','#ff6a1e','#ffa030','#ffd060'].map(rgb);
 const TREE_SW=[5,5,5,3,2,3,5,5,3,3];
 
@@ -575,7 +574,6 @@ const CHK=256, CXN=W/CHK, CYN=H/CHK, APR=8, RGN=CHK+2*APR, TMAX=2048, BMAX=1024,
 let TER=null,PTF=null;   // PTF: 모드가 바꾼 지형 설정(방장→손님)
 let sV=0,sB=0,sM=0,sC=0;const MODBIO={id:{},by:[null],n:0};   // sC: 모드로 만든 바이옴 번호 (0=없음)   // shape()의 결과 (높이, 섬 종류(+128 용암), 습도)
 function shape(x,y,hb,fb,L){
-  if(TER.dv){let v=SEA+0.16+(hb-0.5)*0.55;if(v<SEA+0.08)v=SEA+0.08;if(v>0.96)v=0.96;sV=v;sB=9;sM=(fb-0.5)*2.5+0.5;sC=0;return;}   // Deep Void: 온통 땅
   let best=-0.45,bo=null,bd=9;sC=0;
   for(let a=0;a<L.length;a++){
     const o=L[a],dx=(x-o.cx)/o.rx;if(dx>1.3||dx<-1.3)continue;
@@ -658,10 +656,10 @@ function rvSetPt(x,y,val){
 }
 
 const TREE_CELL=6;
-const BDEN=[1,1.8,0.25,0.12,2.2,0.3,0.12,1.2,0.6,0.28];
-const BROCK=[0.35,0.3,0.25,0.26,0.3,0.55,0.6,0.25,0.5,0.45];   // 섬마다 바위 밀도
+const BDEN=[1,1.8,0.25,0.12,2.2,0.3,0.12,1.2,0.6];
+const BROCK=[0.35,0.3,0.25,0.26,0.3,0.55,0.6,0.25,0.5];   // 섬마다 바위 밀도
 const MODORE={t:{},bio:{},n:0};   // define ore: 6~9번 바위 종류
-const ORE=[[.003,.012,.015],[.003,.012,.015],[0,.01,.02],[.01,.016,.022],[.003,.012,.015],[.005,.07,.04],[.01,.04,.06,.06],[.003,.012,.015],[.004,.03,.05],[.004,.012,.02]];   // [금, 구리, 철, (아연)]
+const ORE=[[.003,.012,.015],[.003,.012,.015],[0,.01,.02],[.01,.016,.022],[.003,.012,.015],[.005,.07,.04],[.01,.04,.06,.06],[.003,.012,.015],[.004,.03,.05]];   // [금, 구리, 철, (아연)]
 for(let i=1;i<ORE.length;i++)ORE[i]=ORE[i].map(v=>v*1.5);   // 시작섬(0) 말고 다른 섬은 광물이 더 많이 생겨요
 const FLOWER_OK=[1,1,0,0,1,0,0,1];
 
@@ -701,7 +699,6 @@ function ensureTrees(cx,cy){
         case 5:t=r<0.4?8:r<0.8?5:4;break;
         case 6:t=r<0.6?3:4;break;
         case 7:t=r<0.8?7:4;break;
-        case 9:t=r<0.8?10:4;break;
         default:t=r<0.85?9:4;
       }
       list.push([y,x,t]);
@@ -761,7 +758,6 @@ function ensureBoulders(cx,cy){
       if(th<0.97&&treeNear(bx,by))continue;
       const rr=hr(x,y,4),o=ORE[b];
       let bt0=rr<o[0]?3:rr<o[0]+o[1]?4:rr<o[0]+o[1]+o[2]?2:(o[3]&&rr<o[0]+o[1]+o[2]+o[3])?5:(hr(x,y,5)<0.35?1:0);
-      if(bt0<2&&b===9&&hr(x,y,17)<0.3)bt0=10;   // Deep Void: 공허석
       if(bt0<2&&MODORE.bio[b])for(const mid of MODORE.bio[b])if(hr(x,y,7+mid)<MODORE.t[mid].p){bt0=mid;break;}   // define ore
       list.push([by,bx,bt0]);
       break;
@@ -968,12 +964,11 @@ function layoutIslands(rnd){
   }
   return islands;
 }
-async function generateTerrain(seed,prog,opts){
-  const dv=!!(opts&&opts.dv);
+async function generateTerrain(seed,prog){
   const P=prog||(async()=>{});
   const rnd=mulberry32(hashStr(seed));
   await P(0.02,'바다에 섬들을 띄우는 중…');
-  const islands=dv?[{b:9,cx:W*0.5,cy:H*0.5,rx:W*0.48,ry:H*0.48,bump:0.8}]:layoutIslands(rnd);
+  const islands=layoutIslands(rnd);
   await P(0.1,'바다에 섬들을 띄우는 중…');
   const hoct=[[900,.20],[360,.28],[180,.20],[90,.14],[45,.09],[22,.05],[11,.04]].map(([c,a])=>makeOct(c,a,rnd));
   const foct=[[500,.2],[200,.3],[90,.25],[40,.15],[18,.1]].map(([c,a])=>makeOct(c,a,rnd));
@@ -984,7 +979,7 @@ async function generateTerrain(seed,prog,opts){
     T:{x:new Int16Array(nC*TMAX),y:new Int16Array(nC*TMAX),t:new Uint8Array(nC*TMAX)},
     B:{x:new Int16Array(nC*BMAX),y:new Int16Array(nC*BMAX),t:new Uint8Array(nC*BMAX)},
     removed:new Uint8Array(nC*TMAX),brem:new Uint8Array(nC*BMAX),
-    tkey:new Map(),bkey:new Map(),tgrid:new Map(),bgrid:new Map(),remPend:new Set(),bremPend:new Set(),convPend:new Map(),dv};
+    tkey:new Map(),bkey:new Map(),tgrid:new Map(),bgrid:new Map(),remPend:new Set(),bremPend:new Set(),convPend:new Map()};
   chunkCount=0;
   await P(0.2,'강줄기를 흘려보내는 중…');
   const sources=[],RIV={0:3,1:1,4:2,7:1};
@@ -1027,7 +1022,7 @@ async function generateTerrain(seed,prog,opts){
   }
   await P(0.5,'야영지를 고르는 중…');
   const s0=islands[0];
-  let campX=s0.cx|0, campY=s0.cy|0, found=dv;
+  let campX=s0.cx|0, campY=s0.cy|0, found=false;
   const hvAt=(x,y)=>{ptShape(x,y);return sV;};
   const bioP=(x,y)=>{ptShape(x,y);return sB&127;};
   {
@@ -1145,11 +1140,6 @@ SPR.push(
   })
 );
 SPR.push([0,1].map(fr=>makeSprite(PINE,{d:'#27475a',g:'#4f7f98',h:'#eef8ff',...TR},fr)));   // 9 눈 덮인 소나무
-SPR.push(mkTreeSpr(11,15,(g,fr)=>{   // 10 Deep Void: 마른 보라 나무
-  g.fillStyle='#1a0a3a';g.fillRect(5,6,2,9);g.fillRect(3,8,2,1);g.fillRect(7,10,2,1);
-  g.fillStyle='#3a1a78';g.fillRect(4+fr,1,4,2);g.fillRect(2+fr,3,7,2);g.fillRect(1+fr,5,9,2);g.fillRect(3+fr,7,5,1);
-  g.fillStyle='#7a3cff';g.fillRect(5+fr,2,2,1);g.fillRect(3+fr,4,2,1);g.fillRect(7+fr,6,2,1);
-  g.fillStyle='#d8b8ff';g.fillRect(5+fr,1,1,1);}));
 
 function makeCloud(rnd,w,h){
   const c=document.createElement('canvas'),s=document.createElement('canvas');
@@ -1399,9 +1389,8 @@ async function loadWorld(seed,name,id){
   const progress=async(p,msg)=>{$('#barfill').style.width=(p*100)+'%';$('#loadmsg').textContent=msg;await new Promise(r=>requestAnimationFrame(()=>setTimeout(r,0)));};
   await progress(0,'월드를 준비하는 중…');
   world=null;base=null;    // 이전 월드의 큰 메모리를 먼저 놓아줘요
-  const dvW=(()=>{const q=settings.worlds.find(x=>x.id===id);return !!(q&&q.dim&&q.dim.k==='dv');})();
-  world=await generateTerrain(seed,(p,m)=>progress(p*0.8,m),dvW?{dv:true}:null);
-  world.pt=0;world.pe=0;world.rcIt=null;world.voidWon=0;world.voidBD=0;world.vpt=null;world.rit=null;ritV=null;world.seedStr=String(seed);world.id=id||null;world.dimP=(()=>{const q=settings.worlds.find(x=>x.id===id);return q&&q.dim?q.dim.p:null;})();world.savedPlayer=null;world.clock=DAY_SEC*2/24;monsters=[];world.conv=[];world.pend=new Map();world.trader=null;world.lastTraderDay=0;world.weather={t:'clear',left:120};animals=[];world.expl=new Uint8Array(EW*EH);world.mapBase=null;world.treasureInit=false;world.esc={ph:'idle',t:0};world.escaped=false;world.pilot=false;world.voidShip=null;world.pilE=null;PIL=null;world.introSeen=false;world.disc=world.islands.map((o,i)=>i===0);world.seen=world.islands.map(()=>false);world.lm=[];world.bossDay=world.islands.map(()=>0);oreT=30;
+  world=await generateTerrain(seed,(p,m)=>progress(p*0.8,m));
+  world.pt=0;world.pe=0;world.rcIt=null;world.voidWon=0;world.voidBD=0;world.rit=null;ritV=null;world.seedStr=String(seed);world.id=id||null;world.dimP=(()=>{const q=settings.worlds.find(x=>x.id===id);return q&&q.dim?q.dim.p:null;})();world.savedPlayer=null;world.clock=DAY_SEC*2/24;monsters=[];world.conv=[];world.pend=new Map();world.trader=null;world.lastTraderDay=0;world.weather={t:'clear',left:120};animals=[];world.expl=new Uint8Array(EW*EH);world.mapBase=null;world.treasureInit=false;world.esc={ph:'idle',t:0};world.escaped=false;world.pilot=false;world.voidShip=null;world.pilE=null;PIL=null;world.introSeen=false;world.disc=world.islands.map((o,i)=>i===0);world.seen=world.islands.map(()=>false);world.lm=[];world.bossDay=world.islands.map(()=>0);oreT=30;
   world.structs=[];world.sgrid=new Map();world.fgrid=new Map();world.cgrid=new Map();world.rgrid=new Map();FIRE.clear();
   buildTreeGrid();drops=[];parts=[];
   applySave();
@@ -1498,15 +1487,15 @@ function blockIcon(mat){
 }
 /* 도구: 재료(통나무/돌/철/구리/금) × 종류(곡괭이/도끼/장검/단검) */
 const MATS=['log','stone','rwood','iron','copper','riron','gold','rcopper','rgold'];   // 성능 순서
-const RANK={log:1,stone:2,rwood:3,iron:4,copper:5,riron:6,gold:8,rcopper:7,rgold:9,crystal:9.5,obsidian:10,leather:3.5,frost:9.8,voidstone:11};
+const RANK={log:1,stone:2,rwood:3,iron:4,copper:5,riron:6,gold:8,rcopper:7,rgold:9,crystal:9.5,obsidian:10,leather:3.5,frost:9.8};
 /* 내구도: 도구는 '쓴 횟수'(나무 1그루·바위 1개·공격 1번·땅 1칸이 1회), 갑옷은 '맞은 횟수' */
 const MAT_DUR={log:25,stone:50,rwood:90,iron:150,copper:200,riron:300,gold:600,rcopper:420,rgold:900};
 const TOOL_DUR={pickaxe:1,axe:1,hoe:1,sword:1.1,dagger:0.8};
-const MATNAME={log:'통나무',stone:'돌',rwood:'강화목재',iron:'철',copper:'구리',riron:'강화철',gold:'금',rcopper:'강화구리',rgold:'강화금',crystal:'수정',obsidian:'화산석',leather:'가죽',frost:'서리',voidstone:'공허석'};
+const MATNAME={log:'통나무',stone:'돌',rwood:'강화목재',iron:'철',copper:'구리',riron:'강화철',gold:'금',rcopper:'강화구리',rgold:'강화금',crystal:'수정',obsidian:'화산석',leather:'가죽',frost:'서리'};
 const TOOLNAME={pickaxe:'곡괭이',axe:'도끼',sword:'장검',dagger:'단검',hoe:'괭이'};
 const MATCOL={log:{m:'#9a6a3c',d:'#5a3a1e',l:'#c9904f'},stone:{m:'#9a9cab',d:'#3a3d4a',l:'#c3c5cf'},iron:{m:'#aeb6c6',d:'#4a5262',l:'#eef2f8'},copper:{m:'#e08a4a',d:'#7a3a18',l:'#ffc18a'},gold:{m:'#f2c75a',d:'#8a5a14',l:'#fff0a0'},
   rwood:{m:'#b98a4e',d:'#4a2d18',l:'#ecc489'},riron:{m:'#8896b8',d:'#27304a',l:'#c8d6f4'},rcopper:{m:'#d4622c',d:'#5a1e0c',l:'#ff9a5a'},rgold:{m:'#ecb41e',d:'#6a3c04',l:'#fff6b0'},
-  crystal:{m:'#7ad0e8',d:'#2a6a88',l:'#d8f6ff'},obsidian:{m:'#7a4a3a',d:'#2a1612',l:'#d09070'},leather:{m:'#8a5a2b',d:'#3d2412',l:'#c9904f'},frost:{m:'#9fd4f0',d:'#3a6a90',l:'#f0fbff'},voidstone:{m:'#7a3cff',d:'#1a0a3a',l:'#c8a0ff'}};
+  crystal:{m:'#7ad0e8',d:'#2a6a88',l:'#d8f6ff'},obsidian:{m:'#7a4a3a',d:'#2a1612',l:'#d09070'},leather:{m:'#8a5a2b',d:'#3d2412',l:'#c9904f'},frost:{m:'#9fd4f0',d:'#3a6a90',l:'#f0fbff'}};
 function toolIconFn(tool,mat){
   const c=MATCOL[mat];
   const handle=(x0,y0,n)=>{for(let i=0;i<n;i++){const x=x0+i,y=y0-i;g_.fillStyle='#7a4a22';g_.fillRect(x,y,1,1);g_.fillStyle='#b57d3f';g_.fillRect(x,y-1,1,1);}};
@@ -1660,10 +1649,10 @@ ITEMS.boat={name:'보트',max:1,keep:true,vehicle:true,icon(g){
 /* 갑옷: 신발(재료 3) · 각반(6) · 흉갑(9) · 헬멧(5). 품질(★1~3)은 단조 미니게임이 정해요 */
 const ARMOR_PIECES={helm:{name:'헬멧',n:5,def:2},chest:{name:'흉갑',n:9,def:4},legs:{name:'각반',n:6,def:3},boots:{name:'신발',n:3,def:1.5}};
 const ARMOR_ORDER=['helm','chest','legs','boots'];
-const ARMOR_MATS=['leather','iron','copper','riron','gold','rcopper','rgold','crystal','obsidian','frost','voidstone'];
-const ARMOR_MUL={voidstone:3.9,frost:3.1,leather:0.8,iron:1,copper:1.2,riron:1.45,gold:2.1,rcopper:1.75,rgold:2.5,crystal:2.9,obsidian:3.3};
+const ARMOR_MATS=['leather','iron','copper','riron','gold','rcopper','rgold','crystal','obsidian','frost'];
+const ARMOR_MUL={frost:3.1,leather:0.8,iron:1,copper:1.2,riron:1.45,gold:2.1,rcopper:1.75,rgold:2.5,crystal:2.9,obsidian:3.3};
 const QMUL=[0,0.85,1,1.2];
-const ARMOR_DUR={voidstone:620,frost:360,leather:40,iron:50,copper:70,riron:110,gold:240,rcopper:160,rgold:360,crystal:300,obsidian:480},PIECE_DUR={helm:1,chest:1.4,legs:1.2,boots:0.8},QDUR=[0,0.8,1,1.25];
+const ARMOR_DUR={frost:360,leather:40,iron:50,copper:70,riron:110,gold:240,rcopper:160,rgold:360,crystal:300,obsidian:480},PIECE_DUR={helm:1,chest:1.4,legs:1.2,boots:0.8},QDUR=[0,0.8,1,1.25];
 function armorIcon(piece,mat,q){
   return function(g){
     const c=MATCOL[mat];
@@ -1905,8 +1894,6 @@ function compPlate(c){return g=>{g.fillStyle='#14161c';g.fillRect(0,3,12,7);g.fi
 ITEMS.zinc={name:'아연',icon:oreChunk(MATCOL.zinc)};
 ITEMS.zinc_ingot={name:'아연 주괴',icon:ingotIcon('zinc')};
 ITEMS.obsidian_ingot={name:'화산석 주괴',icon:ingotIcon('obsidian')};
-ITEMS.void_ingot={name:'공허석 주괴',icon:ingotIcon('voidstone')};
-ITEMS.void_ore={name:'공허석',icon(g){g.fillStyle='#1a0a3a';g.fillRect(4,1,4,1);g.fillRect(3,2,6,1);g.fillRect(2,3,8,5);g.fillRect(3,8,6,2);g.fillStyle='#4a22a8';g.fillRect(3,3,6,5);g.fillStyle='#7a3cff';g.fillRect(4,3,2,2);g.fillRect(7,5,2,2);g.fillStyle='#d8b8ff';g.fillRect(4,3,1,1);g.fillRect(7,5,1,1);}};
 ITEMS.rzinc={name:'강화아연',icon:reinfBar(MATCOL.zinc)};
 ITEMS.rzinc_plate={name:'강화아연판',icon:plateIcon('zinc')};
 ITEMS.brass={name:'황동',icon:reinfBar(MATCOL.brass)};
@@ -2082,7 +2069,6 @@ const RECIPES=[
   {grp:'제련 (용광로)',st:'smelt',note:'철 1개 → 철 주괴 1개 (3초)',pat:[{id:'iron',n:1}],out:[{id:'iron_ingot',n:1}]},
   {grp:'제련 (용광로)',st:'smelt',note:'구리 1개 → 구리 주괴 1개 (3초)',pat:[{id:'copper',n:1}],out:[{id:'copper_ingot',n:1}]},
   {grp:'제련 (용광로)',st:'smelt',note:'금 1개 → 금 주괴 1개 (3초)',pat:[{id:'gold',n:1}],out:[{id:'gold_ingot',n:1}]},
-  {grp:'제련 (용광로)',st:'smelt',note:'공허석 1개 → 공허석 주괴 1개 (3초)',pat:[{id:'void_ore',n:1}],out:[{id:'void_ingot',n:1}]},
   {grp:'제련 (용광로)',st:'smelt',note:'화산석 1개 → 화산석 주괴 1개 (3초)',pat:[{id:'obsidian',n:1}],out:[{id:'obsidian_ingot',n:1}]},
   {grp:'제련 (용광로)',st:'smelt',note:'아연 1개 → 아연 주괴 1개 (3초)',pat:[{id:'zinc',n:1}],out:[{id:'zinc_ingot',n:1}]},
   {grp:'탐험',bench:true,name:'아이템 가방',note:'가죽 4 · 실 2 · 강화철판 1 — 가방 칸에 장착하면 인벤토리에서 7칸을 더 써요',pat:[{id:'leather',n:1},{id:'leather',n:1},{id:'leather',n:1},{id:'leather',n:1},{id:'thread',n:1},{id:'thread',n:1},{id:'riron_plate',n:1}],out:[{id:'bag',n:1}]},
@@ -2092,7 +2078,7 @@ const RECIPES=[
   {grp:'탐험',name:'섬 지도',note:'종이 · 나침반 — 들고 Ctrl을 누르면 모든 섬이 표시되는 지도가 열려요',pat:[{id:'paper',n:1},{id:'compass',n:1}],out:[{id:'island_map',n:1}]},
   {grp:'탐험',bench:true,name:'보트',note:'손에 들고 물가에서 Shift로 타요. Shift/F로 내려요.',pat:[{id:'plank',n:1},{id:'plank',n:1},{id:'plank',n:1},{id:'plank',n:1},{id:'plank',n:1},{id:'iron_ingot',n:1},{id:'iron_ingot',n:1}],out:[{id:'boat',n:1}]}
 ];
-const MI=m=>({iron:'iron_ingot',copper:'copper_ingot',gold:'gold_ingot',obsidian:'obsidian_ingot',voidstone:'void_ingot'})[m]||m;   // 철·구리·금은 주괴로 만들어요
+const MI=m=>({iron:'iron_ingot',copper:'copper_ingot',gold:'gold_ingot',obsidian:'obsidian_ingot'})[m]||m;   // 철·구리·금은 주괴로 만들어요
 for(const tool of ['pickaxe','axe','sword','dagger','hoe'])for(const mat of MATS){
   const m={id:MI(mat),n:1};
   const pat=tool==='pickaxe'?[S1,S1,m,m,m]:tool==='axe'?[S1,S1,m,S1,m]:tool==='sword'?[S1,m,m,m]:tool==='hoe'?[S1,S1,m,m]:[S1,m];
@@ -2249,7 +2235,7 @@ const sanitize=(arr,n=7)=>{const o=Array(n).fill(null);if(Array.isArray(arr))arr
 const inv=sanitize(settings.inv), craft=sanitize(settings.craft,7);
 let held=null, outs=[null,null,null], active=null, crafting=false, craftMode='hand';
 let smeltRef=null,smeltLast=0;
-const SMELT_ORE={iron:'iron_ingot',copper:'copper_ingot',gold:'gold_ingot',zinc:'zinc_ingot',obsidian:'obsidian_ingot',void_ore:'void_ingot'};
+const SMELT_ORE={iron:'iron_ingot',copper:'copper_ingot',gold:'gold_ingot',zinc:'zinc_ingot',obsidian:'obsidian_ingot'};
 const slotEls=[],cinEls=[],coutEls=[],chestEls=[],bagEls=[];
 let chestArr=null,chestRef=null,bulk=false,hoverRI=null;
 const CH_N=21;
@@ -4401,7 +4387,7 @@ function saveWorld(force){
     const rem=collectRemoved(),brm=collectBrem();
     if(mode==='play')world.savedPlayer=(P.air&&P.airX!==undefined)?{x:Math.round(P.airX),y:Math.round(P.airY),f:P.f}:{x:Math.round(P.sailing&&P.landX!==undefined?P.landX:P.x),y:Math.round(P.sailing&&P.landY!==undefined?P.landY:P.y),f:P.f};
     localStorage.setItem(SAVE_KEY(world.id),JSON.stringify({
-      v:1,vpt:world.vpt||null,mg:world.mg||[],tf:world.tf||null,vr:world.vars||{},rc:world.rcIt||null,stc:world.stc||{},nt:world.nt|0,pt:Math.round(world.pt||0),pe:Math.round(world.pe||0),clock:Math.round(world.clock),removed:rem,brem:brm,ores:world.conv,trader:world.trader,lastTraderDay:world.lastTraderDay,expl:packBits(world.expl),treasureInit:!!world.treasureInit,lmChestInit:world.lmChestInit|0,pirInit:world.pirInit|0,ruinInit:world.ruinInit|0,trClean:world.trClean|0,dunFl:world.dunFl||{},dunBD:world.dunBD|0,fortBD:world.fortBD|0,skyDay:world.skyDay||{},dby:world.discBy||{},gsDay:world.gsDay|0,trains:[...(world.trains||[]),...((typeof P!=='undefined'&&P&&P.train)?[P.train]:[])].slice(0,40).map(T=>({x:T.gx,y:T.gy,dx:T.dx,dy:T.dy,p:Math.round(T.p*100)/100,run:T.run?1:0,it:(T.it||[]).map(q=>q?Object.assign({},q):null)})),herd:animals.filter(a=>a.tame).map(a=>[ANIM_IDX.indexOf(a.type),Math.round(a.hx),Math.round(a.hy),a.baby?1:0,Math.round(a.gt||0)]),disc:world.disc.map(b=>b?'1':'0').join(''),seen:world.seen.map(b=>b?'1':'0').join(''),escaped:!!world.escaped,pilot:world.pilot?1:0,vship:world.voidShip?world.voidShip.x+','+world.voidShip.y:'',voidWon:world.voidWon|0,voidBD:world.voidBD|0,intro:world.introSeen?1:0,bossDay:world.bossDay.join(','),
+      v:1,mg:world.mg||[],tf:world.tf||null,vr:world.vars||{},rc:world.rcIt||null,stc:world.stc||{},nt:world.nt|0,pt:Math.round(world.pt||0),pe:Math.round(world.pe||0),clock:Math.round(world.clock),removed:rem,brem:brm,ores:world.conv,trader:world.trader,lastTraderDay:world.lastTraderDay,expl:packBits(world.expl),treasureInit:!!world.treasureInit,lmChestInit:world.lmChestInit|0,pirInit:world.pirInit|0,ruinInit:world.ruinInit|0,trClean:world.trClean|0,dunFl:world.dunFl||{},dunBD:world.dunBD|0,fortBD:world.fortBD|0,skyDay:world.skyDay||{},dby:world.discBy||{},gsDay:world.gsDay|0,trains:[...(world.trains||[]),...((typeof P!=='undefined'&&P&&P.train)?[P.train]:[])].slice(0,40).map(T=>({x:T.gx,y:T.gy,dx:T.dx,dy:T.dy,p:Math.round(T.p*100)/100,run:T.run?1:0,it:(T.it||[]).map(q=>q?Object.assign({},q):null)})),herd:animals.filter(a=>a.tame).map(a=>[ANIM_IDX.indexOf(a.type),Math.round(a.hx),Math.round(a.hy),a.baby?1:0,Math.round(a.gt||0)]),disc:world.disc.map(b=>b?'1':'0').join(''),seen:world.seen.map(b=>b?'1':'0').join(''),escaped:!!world.escaped,pilot:world.pilot?1:0,vship:world.voidShip?world.voidShip.x+','+world.voidShip.y:'',voidWon:world.voidWon|0,voidBD:world.voidBD|0,intro:world.introSeen?1:0,bossDay:world.bossDay.join(','),
       beltv:2,
       structs:world.structs.filter(b=>!b.lm).map(b=>Object.assign({id:b.id,gx:b.gx,gy:b.gy},exOf(b))),
       drops:drops.map(d=>({x:Math.round(d.tx),y:Math.round(d.ty),v:d.v,item:d.item||'stick',n:d.n||1,dur:d.dur})),
@@ -4432,7 +4418,7 @@ function applySave(){
   world.rcIt=Array.isArray(d.rc)?d.rc.slice(0,CH_N).map(q=>q&&typeof q.id==='string'&&ITEMS[q.id]&&(q.n|0)>0?q:null):null;
   world.nt=d.nt===1?1:0;ntT=0;world.pt=Math.max(0,+d.pt||0);world.pe=Math.max(0,+d.pe||0);
   world.stc=(d.stc&&typeof d.stc==='object')?{tree:Math.max(0,+d.stc.tree||0),kill:Math.max(0,+d.stc.kill||0)}:{};
-  world.escaped=!!d.escaped;world.pilot=!!d.pilot;world.voidShip=null;if(typeof d.vship==='string'&&d.vship){const vs=d.vship.split(',').map(Number);if(vs.length===2&&vs.every(Number.isFinite))world.voidShip={x:vs[0],y:vs[1]};}world.voidWon=d.voidWon|0;world.vpt=(Array.isArray(d.vpt)&&d.vpt.length===2&&d.vpt.every(Number.isFinite))?d.vpt:null;world.voidBD=d.voidBD|0;world.introSeen=!!d.intro;
+  world.escaped=!!d.escaped;world.pilot=!!d.pilot;world.voidShip=null;if(typeof d.vship==='string'&&d.vship){const vs=d.vship.split(',').map(Number);if(vs.length===2&&vs.every(Number.isFinite))world.voidShip={x:vs[0],y:vs[1]};}world.voidWon=d.voidWon|0;world.voidBD=d.voidBD|0;world.introSeen=!!d.intro;
   if(typeof d.bossDay==='string')d.bossDay.split(',').forEach((v,i)=>{if(i<world.bossDay.length)world.bossDay[i]=+v||0;});
   if(d.trader&&ITEMS[d.trader.item]&&Number.isFinite(d.trader.sx)&&d.trader.day===Math.floor((6+world.clock/DAY_SEC*24)/24)+1)world.trader=d.trader;
   markRemoved(d.removed);markBrem(d.brem);markOres(d.ores,5);
@@ -4517,14 +4503,14 @@ const WDMG_S={log:3,stone:4,rwood:5,iron:6,copper:7,riron:8,gold:11,rcopper:10,r
 const WDMG_D={log:2,stone:2,rwood:3,iron:3,copper:5,riron:6,gold:7,rcopper:7,rgold:7};      // 단검 (도끼도 같은 값)
 const WDMG={sword:WDMG_S,dagger:WDMG_D,axe:WDMG_D};
 const WCD={sword:0.65,dagger:0.3,axe:0.55};
-const ORE_NEED=[3,3,4,5,4,5,0,0,0,0,6];   // 작은 바위 / 큰 바위 / 철광석 / 금광석 / 구리광석 (맨손 기준 시간)
+const ORE_NEED=[3,3,4,5,4,5];   // 작은 바위 / 큰 바위 / 철광석 / 금광석 / 구리광석 (맨손 기준 시간)
 const toolInfo=id=>{const m=/^(pickaxe|axe|sword|dagger|hoe)_(log|stone|rwood|iron|copper|riron|gold|rcopper|rgold)(?:~(fire|ice|venom|life))?$/.exec(id||'');return m?{tool:m[1],mat:m[2],rune:m[3]||''}:null;};
 function bestTool(kind,filter){
   const sel=inv[P.sel],st=sel&&toolInfo(sel.id);
   return (st&&st.tool===kind&&(!filter||filter(st)))?st:null;
 }
 const axeMult=()=>{const a=bestTool('axe');return a?MAT_SPEED[a.mat]:1;};
-const PICK_OK={2:MATS.filter(m=>RANK[m]>=RANK.stone),4:MATS.filter(m=>RANK[m]>=RANK.iron),3:MATS.filter(m=>RANK[m]>=RANK.iron),5:MATS.filter(m=>RANK[m]>=RANK.copper),10:MATS.filter(m=>RANK[m]>=RANK.gold)};
+const PICK_OK={2:MATS.filter(m=>RANK[m]>=RANK.stone),4:MATS.filter(m=>RANK[m]>=RANK.iron),3:MATS.filter(m=>RANK[m]>=RANK.iron),5:MATS.filter(m=>RANK[m]>=RANK.copper)};
 const SLOW_MINE=2;   // 알맞은 곡괭이가 아닐 때의 작업 시간 배수 (맨손 기준 2배)
 const okTool=(t,tm)=>{if(!tm)return false;const ok=PICK_OK[t];return !ok||ok.includes(tm);};
 const pickTool=k=>{
@@ -5401,7 +5387,6 @@ function doInteract(o,code){
     }
   }catch(e){}
   try{MODX.touched=(ITEMS[o.id]&&ITEMS[o.id].name)||String(o.id);modEvent('interaction',String(o.id));}catch(e){}
-  if(o.id==='vport'){dvTravel(o.to==='back');return;}
   if(o.id==='bench'||o.id==='lbench')openCraft('bench');else if(o.id==='chest'||o.id==='rchest')openChest(o);else if(o.id==='trader')tradeWith();else if(o.id==='trash')openTrash(o);else if(o.id==='oven'||o.id==='campfire')openCraft('cook');else if(o.id==='furnace'){smeltRef=o;smeltLast=o.fo?o.fo.n:0;openCraft('smelt');}else if(o.id==='armorbench')openArmor();else if(o.id==='anvil')openAnvil();else if(o.id==='cow')milkCow(o.a);else if(o.id==='chicken'||o.id==='penguin'||o.id==='salamander')feedChicken(o.a);else if(o.id==='bone')startDig(o.q);else if(o.id==='conveyor')rotateConveyor(o);else if(o.id==='sorter'){if(code==='KeyF')rotateConveyor(o);else toggleSorterSide(o);}else if(o.id==='rsd'||o.id==='gauge'||o.id==='relay'||o.id==='tele'||o.id==='port')openSignalUI(o);else if(o.id==='bell')ringBell(o);else if(o.id==='guard')openGuardUI(o);else if(o.id==='vnpc')openShop(o.n);else if(o.id==='controller')toggleControl(o);else if(o.id==='beacon')callShip(o);else if(o.id==='ship')boardShip();else if(o.id==='crafter')openCrafterUI(o);else if(o.id==='feller')openFellerUI(o);else if(o.id==='door')toggleDoor(o);else if(o.id==='tgate')openGate(o);else if(o.id==='aquarium')openAquarium(o);else if(o.id==='cart')openCart();else if(o.id==='train')openTrainCargo(o.T);else if(o.id==='mirror')showLook();else if(o.id==='tradepost')openTradepost(o);else if(o.id==='alchemy')openAlchemy();else if(o.id==='runetable')openRunes();else if(o.id==='trap')openTrap(o);else if(o.id==='hammock')napStart(o);else if(o.id==='fishtrap')openFishTrap(o);else if(o.id==='hut')openHut(o);else if(o.id==='stall')openStall(o);else if(o.id==='mailbox')openMailbox(o);else if(o.id==='monument')openMonument(o);else if(o.id==='flag')openFlag(o);else if(o.id==='station')openStation(o);else if(o.id==='revive')reviveReq(o.peer);else if(o.id==='dunin')dunGo(1,'down');else if(o.id==='dunst')dunGo(o.k,o.dir);else trySleep(o);
 }
 function nearInteract(){
@@ -5419,7 +5404,6 @@ function nearInteract(){
   for(const n of (world.vnpcs||[])){const d=Math.hypot(P.x-n.x,P.y-n.y);if(d<=22&&d<bd){bd=d;best={id:'vnpc',n,x:n.x,y:n.y+7};}}
   if(cartOn){const d=Math.hypot(P.x-cartP.x,P.y-cartP.y);if(d<=24&&d<bd){bd=d;best={id:'cart',x:cartP.x,y:cartP.y};}}
   for(const T of (world.trains||[])){const ps=trainPos(T),d=Math.hypot(P.x-ps.x,P.y-(ps.y-6));if(d<=26&&d<bd){bd=d;best={id:'train',T,x:ps.x,y:ps.y+7};}}   // 선 기차: 화물칸 열기
-  for(const v of (world.vports||[])){const d=Math.hypot(P.x-v.x,P.y-v.y);if(d<=22&&d<bd){bd=d;best={id:'vport',x:v.x,y:v.y,to:v.to};}}   // Deep Void 포탈
   if(world.dunEnt){const e=world.dunEnt,d=Math.hypot(P.x-e.x,P.y-e.y);if(d<=26&&d<bd){bd=d;best={id:'dunin',x:e.x,y:e.y};}}
   if(DUN){const dk=dunFloorAt(P.x,P.y);if(dk){const G=dunGen(dk),r=dunFloorRect(dk);for(const [st,kk] of [[G.up,dk===6?-1:dk===7?-2:dk-1],[G.down,dk+1]]){if(!st)continue;const x=r.x+st[0]*16+8,y=r.y+st[1]*16+8,d=Math.hypot(P.x-x,P.y-y);if(d<=16&&d<bd){bd=d;best={id:'dunst',k:kk,dir:kk>dk?'down':'up',x,y};}}}}
   for(const [pid,r] of remotes){if(r.down&&!r.dead){const d=Math.hypot(P.x-r.x,P.y-r.y);if(d<=24&&d<bd){bd=d;best={id:'revive',peer:pid,x:r.x,y:r.y};}}}
@@ -5624,8 +5608,6 @@ const BOULDER_V=[
   makeSprite(fleck(fleck(BIG_ROWS,FLK,'c'),[[5,5],[2,5]],'v'),Object.assign({c:'#e8742c',v:'#3fb9a0'},BPAL_V),0),
   makeSprite(fleck(fleck(BIG_ROWS,FLK,'z'),[[5,5],[2,5]],'y'),Object.assign({z:'#8ec4ff',y:'#e8f6ff'},BPAL_V),0)
 ];
-BOULDER[10]=makeSprite(fleck(fleck(BIG_ROWS,FLK,'q'),[[5,5],[2,5]],'w'),Object.assign({q:'#7a3cff',w:'#ffffff'},BPAL),0);
-BOULDER_V[10]=makeSprite(fleck(fleck(BIG_ROWS,FLK,'q'),[[5,5],[2,5]],'w'),Object.assign({q:'#7a3cff',w:'#ffffff'},BPAL_V),0);
 const VOLC_B=new Map();
 const isVolcRock=k=>{let v=VOLC_B.get(k);if(v===undefined){if(VOLC_B.size>20000)VOLC_B.clear();v=((bioRaw(world.boulders.x[k],world.boulders.y[k])&127)===3)?1:0;VOLC_B.set(k,v);}return v===1;};
 function drawBoulder(g,k){
@@ -5648,7 +5630,7 @@ function mineBoulderAuth(k,noDrop,respawn,belt){
   if(respawn)world.pend.set(k,3);
   const tt=B.t[k],bid=bioRaw(B.x[k],B.y[k])&127,items=[];
   let item='stone',n=1+((Math.random()*2)|0);
-  if(tt===2){item='iron';n=2+((Math.random()*2)|0);}else if(tt===4){item='copper';n=1+((Math.random()*3)|0);}else if(tt===3){item='gold';n=1+((Math.random()*2)|0);}else if(tt===5){item='zinc';n=1+((Math.random()*3)|0);}else if(tt===10){item='void_ore';n=1+((Math.random()*2)|0);}else if(tt>=6&&MODORE.t[tt]){const o=MODORE.t[tt];item=o.item;n=o.a+((Math.random()*(o.b-o.a+1))|0);}
+  if(tt===2){item='iron';n=2+((Math.random()*2)|0);}else if(tt===4){item='copper';n=1+((Math.random()*3)|0);}else if(tt===3){item='gold';n=1+((Math.random()*2)|0);}else if(tt===5){item='zinc';n=1+((Math.random()*3)|0);}else if(tt>=6&&MODORE.t[tt]){const o=MODORE.t[tt];item=o.item;n=o.a+((Math.random()*(o.b-o.a+1))|0);}
   if(!noDrop){
     for(let j=0;j<n;j++)items.push(item);
     if(bid===5&&Math.random()<0.7)for(let j=0,m=1+((Math.random()*2)|0);j<m;j++)items.push('clay');  // 메사: 점토
@@ -5721,7 +5703,7 @@ function walkable(x,y){
   if(hv<SEA-0.01&&!(rvv>0&&hv>SEA-0.03)&&MOD.col.water!==false)return false;
   if((bioRaw(xi,yi)&128)&&!LAVA_WALK)return false;
   const c=world.camp; if(Math.abs(x-c.x)<4&&Math.abs(y-c.y)<3)return false;
-  {const sb=world.sgrid.get(Math.floor(y/GRID)*GW+Math.floor(x/GRID));if(sb&&modBlk(sb.id)&&!(sb.id==='door'&&sb.op)&&!(sb.id==='tgate'&&gateOpenFor(sb))&&!(sb.id==='ruin'&&(sb.k==='field'||sb.k==='chick'||sb.k==='leaves'||sb.k==='vport')))return false;}
+  {const sb=world.sgrid.get(Math.floor(y/GRID)*GW+Math.floor(x/GRID));if(sb&&modBlk(sb.id)&&!(sb.id==='door'&&sb.op)&&!(sb.id==='tgate'&&gateOpenFor(sb))&&!(sb.id==='ruin'&&(sb.k==='field'||sb.k==='chick'||sb.k==='leaves')))return false;}
   const T=world.trees;
   if(MOD.col.tree!==false)for(let gy=(yi-4)>>4;gy<=(yi+4)>>4;gy++)for(let gx=(xi-4)>>4;gx<=(xi+4)>>4;gx++){
     const cell=tgrid.get(gy*tgw+gx); if(!cell)continue;
@@ -6489,7 +6471,7 @@ function updatePlayer(dt){
         }else if(work.kind==='b'){
           const kk=work.key,pt=pickTool(kk);SFX.done('b',world.boulders.t[kk],world.boulders.x[kk],world.boulders.y[kk]);
           if(isGuest())sendHost({t:'mine',key:world.boulders.y[kk]*W+world.boulders.x[kk],tm:pt?pt.mat:''});else mineBoulderAuth(kk,!pt);
-          let bt='rock';{const tt=world.boulders.t[kk];MODX.destroyed=({2:'철광석',3:'금광석',4:'구리광석',5:'아연광석',10:'공허석'})[tt]||(MODORE.t[tt]&&MODORE.t[tt].name)||'바위';bt=({2:'iron',3:'gold',4:'copper',5:'zinc',10:'voidstone'})[tt]||(MODORE.t[tt]&&MODORE.t[tt].name)||'rock';}stAdd('rock');try{modEvent('break',bt);}catch(e){}
+          let bt='rock';{const tt=world.boulders.t[kk];MODX.destroyed=({2:'철광석',3:'금광석',4:'구리광석',5:'아연광석'})[tt]||(MODORE.t[tt]&&MODORE.t[tt].name)||'바위';bt=({2:'iron',3:'gold',4:'copper',5:'zinc'})[tt]||(MODORE.t[tt]&&MODORE.t[tt].name)||'rock';}stAdd('rock');try{modEvent('break',bt);}catch(e){}
           if(pt)wearSel();
         }else{
           const b=P.starget;SFX.done('s',b.id,b.x,b.y);MODX.destroyed=(ITEMS[b.id]&&ITEMS[b.id].name)||String(b.id);try{modEvent('break',String(b.id));}catch(e){}
@@ -7548,7 +7530,7 @@ const TCHEST=[   // 보상 상자 목록: [아이템, 확률, 최소, 최대]
   ['ar_helm_rgold_1',0.004,1,1],['ar_chest_rgold_1',0.004,1,1],['ar_legs_rgold_1',0.004,1,1],['ar_boots_rgold_1',0.004,1,1],
   ['feller_rgold',0.004,1,1],['miner_rgold',0.004,1,1]
 ];
-const BIO_MON={9:'vslime',0:'slime',1:'wolf',2:'scorpion',3:'spirit',4:'spider',5:'snake',6:'golem',7:'croc',8:'yeti'};
+const BIO_MON={0:'slime',1:'wolf',2:'scorpion',3:'spirit',4:'spider',5:'snake',6:'golem',7:'croc',8:'yeti'};
 function treasureTable(rnd,gx,gy){   // 최대 12종류, 그중 2칸은 확률 50% 이하 아이템
   let bi=0,bd=1e9;
   if(world.islands)world.islands.forEach(o=>{const d=Math.hypot((gx*16-o.cx)/o.rx,(gy*16-o.cy)/o.ry);if(d<bd){bd=d;bi=o.b|0;}});
@@ -9273,8 +9255,7 @@ const RUIN_PAL=[
   {l:'#d08a5a',m:'#a5532e',d:'#6a3018',a:'#f2c75a'},   // 메사: 붉은 바위
   {l:'#c3c5cf',m:'#8a8d9c',d:'#565968',a:'#ffe27a'},   // 돌섬: 거석
   {l:'#a8956a',m:'#6a5a3a',d:'#3a2f20',a:'#9ae07a'},   // 맹그로브: 젖은 나무
-  {l:'#f0fbff',m:'#9fd4f0',d:'#4a7aa0',a:'#ffffff'},   // 얼음섬: 얼음
-  {l:'#b48cff',m:'#6a3cc0',d:'#241040',a:'#e8c0ff'}    // Deep Void: 공허석
+  {l:'#f0fbff',m:'#9fd4f0',d:'#4a7aa0',a:'#ffffff'}    // 얼음섬: 얼음
 ];
 const LM_LAYOUTS=[   // 섬(바이옴)마다 모양이 전혀 다른 유적
   [".WWWW..B","W.....W.","W..A..WP","WS....W.",".WWWW..."],                                   // 0 시작섬: 우주선 잔해
@@ -9382,12 +9363,6 @@ function drawRuin0(g,b){
       g.fillStyle=pl.d;g.fillRect(cx+5,cy+2,6,10);g.fillRect(cx+6,cy-1,4,4);g.fillStyle=pl.l;g.fillRect(cx+6,cy+2,4,9);g.fillRect(cx+7,cy-1,2,3);
       g.fillStyle=pl.a;g.fillRect(cx+7,cy,1,1);g.fillRect(cx+9,cy,1,1);g.fillStyle=pl.m;g.fillRect(cx+3,cy+4,3,2);g.fillRect(cx+10,cy+4,3,2);
     }
-  }else if(k==='vport'){
-    const t=time*2.2;
-    g.globalAlpha=0.35+0.15*Math.sin(time*3);g.fillStyle='#b48cff';g.fillRect(cx-2,cy,20,17);g.globalAlpha=1;
-    g.fillStyle='#2a0f55';g.fillRect(cx+1,cy+2,14,13);g.fillStyle='#4a1fa0';g.fillRect(cx+3,cy+4,10,9);
-    for(let i=0;i<6;i++){const a=t+i*1.0472,r=2+(i%3)*1.5;g.fillStyle=i&1?'#e8c0ff':'#9a5cff';g.fillRect(Math.round(cx+7+Math.cos(a)*r),Math.round(cy+7+Math.sin(a)*r*1.3),2,2);}
-    g.fillStyle='#ffffff';g.fillRect(cx+7,cy+8,2,2);g.fillStyle='#c8a0ff';g.fillRect(cx,cy+1,2,15);g.fillRect(cx+14,cy+1,2,15);g.fillRect(cx+1,cy,14,2);
   }else if(k==='brazier'){
     const f=((time*8+b.gx)|0)%3;
     g.fillStyle=pl.d;g.fillRect(cx+4,cy+9,8,3);g.fillRect(cx+5,cy+12,2,3);g.fillRect(cx+9,cy+12,2,3);g.fillStyle=pl.m;g.fillRect(cx+4,cy+9,8,1);
@@ -9714,75 +9689,7 @@ function lmPlace(lay,ox,oy,bs){
   }});
   return altar;
 }
-function buildLandmarks(){LM_PURE=true;try{buildLandmarks0();dvPortals();}finally{LM_PURE=false;}}
-/* ===== Deep Void 차원 ===== */
-function dvAddPort(gx,gy,to){
-  const b=addStructCell('ruin',gx,gy,null);if(b){b.lm=1;b.k='vport';b.bs=9;}
-  (world.vports=world.vports||[]).push({x:gx*GRID+8,y:gy*GRID+8,to});
-}
-function dvPortals(){
-  if(!world.vports)world.vports=[];
-  if(TER.dv){const c=TER.camp,s0=lmFind([((c.x+60)/GRID)|0,(c.y/GRID)|0],3,3,14,null);if(s0){lmClear(s0.ox-1,s0.oy-1,5,5);dvAddPort(s0.ox+1,s0.oy+1,"back");}}
-  else if(world.vpt&&!sgAt(world.vpt[0],world.vpt[1]))dvAddPort(world.vpt[0],world.vpt[1],'dv');
-}
-function dvMaze(w,h,rnd,gate){   // 공허 던전: 미로 벽(W) · 막다른 길의 상자(e) · 복판 화로(B)
-  const r=Array.from({length:h},()=>Array(w).fill('W'));
-  const cw=(w-1)>>1,ch=(h-1)>>1,seen=new Set(),st=[[0,0]];seen.add(0);r[1][1]='.';
-  const dead=[];
-  while(st.length){
-    const [cx,cy]=st[st.length-1],nb=[];
-    for(const [dx,dy] of [[1,0],[-1,0],[0,1],[0,-1]]){const nx=cx+dx,ny=cy+dy;if(nx>=0&&ny>=0&&nx<cw&&ny<ch&&!seen.has(ny*cw+nx))nb.push([nx,ny,dx,dy]);}
-    if(!nb.length){const n2=(cx>0?1:0)+0;if(st.length>1)dead.push([cx,cy]);st.pop();continue;}
-    const [nx,ny,dx,dy]=nb[(rnd()*nb.length)|0];
-    r[cy*2+1+dy][cx*2+1+dx]='.';r[ny*2+1][nx*2+1]='.';seen.add(ny*cw+nx);st.push([nx,ny]);
-  }
-  for(let i=0,n=0;i<dead.length&&n<6;i++){const [dx,dy]=dead[(i*7+3)%dead.length];if(r[dy*2+1][dx*2+1]==='.'&&(dx||dy)){r[dy*2+1][dx*2+1]='e';n++;}}
-  r[h>>1][w>>1]='B';
-  r[h-1][gate]='.';r[h-2][gate]='.';   // 입구
-  return r.map(a=>a.join(''));
-}
-function dvCastle(){   // 공허성: 성벽 · 네 모서리 탑 · 안뜰 기둥 · 옥좌와 상자
-  const w=33,h=23,r=Array.from({length:h},()=>Array(w).fill('.'));
-  const put=(x,y,c)=>{if(x>=0&&y>=0&&x<w&&y<h)r[y][x]=c;};
-  for(let x=0;x<w;x++){put(x,0,'W');put(x,h-1,'W');}for(let y=0;y<h;y++){put(0,y,'W');put(w-1,y,'W');}
-  for(const [x,y] of [[0,0],[w-1,0],[0,h-1],[w-1,h-1]])put(x,y,'g');
-  for(let x=14;x<=18;x++)put(x,h-1,'.');   // 정문
-  for(let y=3;y<h-3;y+=3)for(const x of [6,10,22,26])put(x,y,'P');
-  for(const x of [12,20])for(const y of [3,7])put(x,y,'B');
-  put(16,2,'Z');put(15,2,'S');put(17,2,'S');
-  for(const [x,y] of [[3,3],[29,3],[3,19],[29,19],[16,10]])put(x,y,'e');
-  for(const x of [13,19])put(x,h-3,'S');
-  return r.map(a=>a.join(''));
-}
-function buildDeepVoid(){
-  world.lm=[null];world.pir=-1;
-  const rnd=mulberry32(hashStr((world.seedStr||shown.seed)+'dv')),c=TER.camp,cx=(c.x/GRID)|0,cy=(c.y/GRID)|0;
-  const place=(lay,ref,rad)=>{const s0=lmFind(ref,lay[0].length,lay.length,rad,null);if(!s0)return null;lmClear(s0.ox,s0.oy,lay[0].length,lay.length);lmPlace(lay,s0.ox,s0.oy,9);return s0;};
-  place(dvCastle(),[cx,cy-34],70);
-  place(dvMaze(27,27,rnd,13),[cx+46,cy+26],70);
-  place(dvMaze(21,21,rnd,9),[cx-52,cy+22],70);
-}
-async function dvTravel(back){   // 공허의 포탈: Deep Void 차원 ↔ 원래 월드
-  if(modTravelBusy||mode!=='play'||P.dead||isGuest()||net.role){if(net.role)toast('포탈은 혼자 할 때만 쓸 수 있어요.');return;}
-  const cur=settings.worlds.find(w=>w.id===settings.current);if(!cur)return;
-  if(back!==!!cur.dim)return;
-  const par=cur.dim?settings.worlds.find(w=>w.id===cur.dim.p):cur;if(!par)return;
-  let tgt=par;
-  if(!back){
-    const id='v'+hashStr(par.id+'|deepvoid').toString(36);
-    tgt=settings.worlds.find(w=>w.id===id);
-    if(!tgt){tgt={id,name:(par.name+' · Deep Void').slice(0,30),seed:String(1+hashStr(String(par.seed)+'|deepvoid')%999999998),created:Date.now(),dim:{p:par.id,n:'Deep Void',k:'dv'}};
-      if(par.diff)tgt.diff=par.diff;if(par.keep)tgt.keep=true;if(par.hard)tgt.hard=true;if(par.sandbox){tgt.sandbox=true;tgt.sbEver=true;}
-      settings.worlds.push(tgt);}
-  }
-  modTravelBusy=true;
-  try{
-    persist();saveWorld(true);
-    settings.current=tgt.id;saveSettings();
-    await loadWorld(tgt.seed,tgt.name,tgt.id);
-    enterPlay();toast(back?'원래 월드로 돌아왔어요.':'Deep Void로 들어왔어요.');
-  }finally{modTravelBusy=false;}
-}
+function buildLandmarks(){LM_PURE=true;try{buildLandmarks0();}finally{LM_PURE=false;}}
 function villageLayout(big){
   const Wd=33,Ht=big?27:15,r=Array.from({length:Ht},()=>Array(Wd).fill('.'));
   const put=(x,y,c)=>{if(x>=0&&y>=0&&x<Wd&&y<Ht)r[y][x]=c;};
@@ -10012,8 +9919,6 @@ function placeRuinChests(){   // 옛 궁전 보물 상자 (방장이 한 번만)
 }
 function buildLandmarks0(){
   world.volc=[];world.lm=[];world.lmc=[];world.ruinc=[];world.ruin=null;world.vnpcs=[];world.vill=-1;world.village=null;world.tmDay=0;world.tm=null;world.vfolk=null;VOLC_B.clear();DUN=null;
-  world.vports=[];
-  if(TER.dv){buildDeepVoid();return;}
   if(TER.tf&&TER.tf.ns)return;
   for(const o of world.islands)delete o.vname;
   buildVillage();buildPirate();
@@ -11592,7 +11497,6 @@ let spawnT=2,nextMid=1;
 /* 섬마다 다른 몬스터. 보스는 섬 한가운데로 다가가면 나타나요 (잡으면 이틀 뒤 다시) */
 const MTYPES={
   slime:{hp:8,dmg:2,wander:9,chase:24,aggro:150,rng:10,wind:0.45,cd:1.4,col:'#8a5ac4',drop:[['slime',1,2]]},
-  vslime:{name:'강화 슬라임',hp:30,dmg:4,wander:11,chase:30,aggro:190,rng:12,wind:0.4,cd:1.2,persist:1,scale:1.45,col:'#5a1aa8',drop:[['slime',2,3],['void_ore',0,1]]},
   wolf:{hp:10,dmg:2,wander:12,chase:34,aggro:200,rng:11,wind:0.35,cd:1.1,persist:1,col:'#8a8d9c',drop:[['bone',1,2]]},
   scorpion:{hp:9,dmg:2,wander:9,chase:22,aggro:130,rng:10,wind:0.5,cd:1.5,persist:1,fx:'poison',col:'#d9a050',drop:[['cactus_fiber',0,1]]},
   spirit:{name:'불의 정령',hp:10,dmg:3,wander:8,chase:22,aggro:150,rng:10,wind:0.5,cd:1.5,persist:1,fx:'burn',col:'#ff6a1e',drop:[['obsidian',1,2],['ash',0,1]]},
@@ -11625,7 +11529,6 @@ function monsterTypeFor(b,night){
     case 1:return night?(r<0.7?'wolf':'slime'):(r<0.35?'wolf':null);
     case 2:return 'scorpion';case 3:return 'spirit';case 4:return 'spider';
     case 5:return 'snake';case 6:return 'golem';case 7:return 'croc';case 8:return 'yeti';
-    case 9:return 'vslime';
   }
   return null;
 }
@@ -11890,7 +11793,6 @@ function voidBanner(k){const m=VOID_MSG[k];if(m)achQ.push({h:m[0],name:m[1]});}
 function relicGot(id){achGrant('relic_1');if(achMark('relic',id)>=RELICS.length)achGrant('relic_all');}
 function useVoidCore(){
   if(P.sleeping||P.dead||P.down)return;
-  if(TER&&TER.dv){toast('이곳에서는 공허의 핵을 쓸 수 없어요.');return;}
   if((DUN&&dunFloorAt(P.x,P.y))||P.sailing||P.air||(world.vill>=0&&isleNear(P.x,P.y)===world.vill)){voidBanner('nope');return;}
   if(isGuest()){sendHost({t:'voidsum'});return;}
   voidSummon(P.x,P.y);
@@ -12005,10 +11907,6 @@ function voidWin(m){
   const pn=1+[...remotes.values()].filter(r=>!r.dead).length;
   spawnWorldDrop('crystal',8,m.x,m.y);spawnWorldDrop('gold_ingot',6,m.x+8,m.y);spawnWorldDrop('pearl',3,m.x-8,m.y);
   for(let rr=0;rr<4*pn;rr++)for(const q of lootTable(Math.random)){if(q)spawnWorldDrop(q.id,q.n,m.x+(Math.random()-0.5)*24,m.y+(Math.random()-0.5)*10);}
-  if(!world.vpt&&!isGuest()&&!(settings.worlds.find(w=>w.id===settings.current)||{}).dim){   // 공허의 포탈: Deep Void로 가는 문
-    const s0=lmFind([(m.x/GRID)|0,(m.y/GRID)|0],3,3,24,null);
-    if(s0){lmClear(s0.ox,s0.oy,3,3);world.vpt=[s0.ox+1,s0.oy+1];dvAddPort(s0.ox+1,s0.oy+1,'dv');toast('공허의 포탈이 열렸어요! F키로 Deep Void에 들어갈 수 있어요.');}
-  }
   saveWorld(true);
   achAll('void_kill');
   if(first)voidShipCall(m.x,m.y);
@@ -12519,7 +12417,6 @@ const BSPR={
   })
 };
 for(const k in BSPR)MSPR[k]=BSPR[k];
-{const b=MSPR.slime,c=document.createElement('canvas');c.width=b.w;c.height=b.h;const g=c.getContext('2d');g.drawImage(b.c,0,0);g.globalCompositeOperation='source-atop';g.fillStyle='rgba(90,20,190,0.62)';g.fillRect(0,0,b.w,b.h);MSPR.vslime={c,w:b.w,h:b.h,wc:b.wc};}   // 강화 슬라임: 짙은 보라
 MODDEF.ready=true;try{modDefsRun();}catch(e){}
 function drawMonster(g,m){
   if(m.ty==='gship'){drawGhostShip(g,m);return;}
