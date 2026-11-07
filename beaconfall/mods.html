@@ -501,7 +501,8 @@ if(nv===''||nv==='-')nv=0;fc.push([rel?1:0,+nv]);}
       else if(m=l.t.match(/^if\s+variable\s+([a-z0-9_]{1,20})\s*(>=|<=|!=|>|<|=|\bis\s+not\b|\bis\b)\s*(?:"([^"]{0,40})"|(-?\d{1,9}(?:\.\d{1,3})?))\s*:$/i)){acts.push({ifv:{n:m[1].toLowerCase(),op:opn(m[2]),v:m[3]!==undefined?m[3]:+m[4]},do:sub(l,depth)});}
       else if(m=l.t.match(/^(disable|enable)\s+collision\s+of\s+(.+)$/i)){acts.push({col:{t:colT(l,m[2].trim()),on:m[1].toLowerCase()==='enable'}});}
       else if(m=l.t.match(/^remove\s+(tree|rock)s?\s+in\s+(\d+)\s+blocks?\s+of\s+(spawn|player)$/i)){var r=+m[2];if(r<1||r>60)throw PE(l.n,'range must be 1 to 60 blocks');acts.push({remove:{what:m[1].toLowerCase(),r:r,of:m[3].toLowerCase()}});}
-      else if(m=l.t.match(/^window\s+"([^"]{1,30})"\s*:$/i)){
+      else if(/^close\s+window$/i.test(l.t)){acts.push({wclose:1});}   // 열려 있는 창 닫기
+      else if(m=l.t.match(/^(?:open\s+)?window\s+"([^"]{1,30})"\s*:$/i)){
         if(!(pos<L.length&&L[pos].ind>l.ind))throw PE(l.n,'nothing is written under this line');
         var wi=L[pos].ind,w={t:m[1],tx:[],inp:[],btn:[]};
         while(pos<L.length&&L[pos].ind>=wi){
@@ -527,7 +528,7 @@ if(nv===''||nv==='-')nv=0;fc.push([rel?1:0,+nv]);}
         while(pos<L.length&&L[pos].ind>=ui){var t2=L[pos++],q=t2.t.match(/^text\s+"([^"]{1,80})"$/i);if(!q)throw PE(t2.n,'inside ui, write  text "..."');lines.push(q[1]);}
         if(lines.length>12)throw PE(l.n,'ui can have 12 lines');acts.push({ui:{title:m[1],lines:lines}});
       }else if(m=l.t.match(/^set\s+(\S+)\s+(damage|speed|name)\s+(.+)$/i)){acts.push({set:setStmt(l,m)});}
-      else throw PE(l.n,"I don't understand '"+l.t.split(' ')[0]+"'. You can use: give, say, chat, title, chance, if, teleport, spawn, build, place, remove, generate, fill, disable, enable, add, subtract, reset, loop, heal, damage, broadcast, play, button, ui, set");
+      else throw PE(l.n,"I don't understand '"+l.t.split(' ')[0]+"'. You can use: give, say, chat, title, chance, if, teleport, open window, close window, spawn, build, place, remove, generate, fill, disable, enable, add, subtract, reset, loop, heal, damage, broadcast, play, button, ui, set");
       if(pe){var na=acts.pop();pe.else=[na];pe.elseIf=true;}
     }
     return acts;

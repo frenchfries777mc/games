@@ -10735,6 +10735,7 @@ function modRun0(acts,depth,box){
     else if(a.title&&typeof a.title.text==='string'){modTitle(modTxt(a.title.text).slice(0,80),+a.title.sec||3);}
     else if(a.button){modButton(a.button);}
     else if(a.window){modWindow(a.window);}
+    else if(a.wclose){modWinClose();}
     else if(a.ui&&Array.isArray(a.ui.lines)){const ls=a.ui.lines.slice(0,12).map(x=>'<p>'+modRich(modTxt(x).slice(0,120))+'</p>').join('');openModal('<h2>'+modRich(modTxt(a.ui.title||'').slice(0,40))+'</h2>'+ls+'<div class="actions"><button class="btn sm" data-close>닫기</button></div>',null,'modui');}
     else if(a.set){modSet(a.set);}
     else if(a.setv&&typeof a.setv.n==='string'){
