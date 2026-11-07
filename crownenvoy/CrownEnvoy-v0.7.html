@@ -511,7 +511,7 @@ try{if(sessionStorage.getItem('ce_noIntro')){sessionStorage.removeItem('ce_noInt
 sting();})();</script>
 <div id="app">
  <div id="lobby" class="screen">
-  <canvas id="lobbyBg"></canvas><canvas id="lobbyWar"></canvas><div id="cpTag">© 2026 Frenchfries777 · <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.ko" target="_blank" rel="noopener">CC BY-NC-ND 4.0</a></div><div id="verTag">v0.7 · build 158</div>
+  <canvas id="lobbyBg"></canvas><canvas id="lobbyWar"></canvas><div id="cpTag">© 2026 Frenchfries777 · <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.ko" target="_blank" rel="noopener">CC BY-NC-ND 4.0</a></div><div id="verTag">v0.7 · build 159</div>
   <header class="brand"><h1>Crown Envoy</h1><div class="sub"><i></i>DIPLOMACY · WAR · EMPIRE<i></i></div></header>
   <div id="lobbyRight">
    <div id="lobbyHome" class="modes">
@@ -7924,6 +7924,249 @@ tabs.addEventListener('click',e=>{const b=e.target.closest('button[data-tab]');i
 const rp=UI.renderPanel;UI.renderPanel=function(){const r=rp.apply(this,arguments);try{sync();}catch(e){console.error(e);}try{if(window.TUT_HLSEL){const el=document.querySelector(window.TUT_HLSEL);if(el&&!el.classList.contains('tuthl'))el.classList.add('tuthl');}}catch(e){}return r;};
 if(mq.addEventListener)mq.addEventListener('change',place);else mq.addListener(place);
 place();
+})();
+</script>
+<script id="ce-b158">
+/* b158 · 악명 · 영향력(세력권) · 속국 단계 · 국가 카드 · 국가 비교 */
+(function(){
+const LV={prot:{n:'보호령',r:0.10,d:'공물 10% · 외교는 자유 · 공격받으면 종주국이 돕는다'},vas:{n:'속국',r:0.20,d:'공물 20%'},pup:{n:'괴뢰국',r:0.35,d:'공물 35% · 종주국의 허락 없이 선전포고·조약 불가 · 종주국의 전쟁에 따라 참전'}};
+const SPH_COST=12,SPH_GAIN=6,SPH_MAX=2,LV_CD=8;
+const tOf=(pid)=>G.treaties.find(x=>x.type==='vassal'&&x.b===pid);
+const lvOf=pid=>{const t=tOf(pid);return t?(t.lv||'vas'):null;};
+
+/* ---------- 악명 ---------- */
+function infAdd(pid,n){const p=G.players[pid];if(!p||!p.alive)return;const o=p.inf||0;p.inf=clamp(o+n,0,100);
+  if(p.inf>=50&&o<50)hooks.toast(pid,'악명이 50을 넘었어요. 주변 나라들이 경계하기 시작해요.');
+  if(p.inf>=70&&o<70)hooks.toast(pid,'악명이 70을 넘었어요! 주변 나라들이 연합해 응징에 나설 수 있어요.');}
+
+const _dw=declareWar;
+declareWar=function(pid,tid,opts){opts=opts||{};
+  const ovp=overlordOf(pid);
+  if(ovp!=null&&lvOf(pid)==='pup'&&!opts.force&&!opts.join&&!opts.coal&&!isHostile(ovp,tid))return fail('괴뢰국은 종주국이 싸우는 나라에만 선전포고할 수 있어요.');
+  const q=G.players[tid];const was=isHostile(pid,tid)||!q;
+  const hadT=G.treaties.some(t=>t.type!=='vassal'&&((t.a===pid&&t.b===tid)||(t.a===tid&&t.b===pid)));
+  const neu=!!(q&&nzOn(q));
+  const r=_dw(pid,tid,opts);
+  if(r&&r.ok&&!was){
+    if(!opts.join&&!opts.coal){let g=opts.goal?6:12;if(opts.ult)g=Math.min(g,5);if(hadT)g+=12;if(neu)g+=15;infAdd(pid,g);}
+    /* 괴뢰국은 종주국의 전쟁에 따라 참전 */
+    G.treaties.filter(z=>z.type==='vassal'&&z.a===pid&&(z.lv||'vas')==='pup').forEach(z=>{const x=z.b;if(x===tid||!G.players[x]||!G.players[x].alive||isHostile(x,tid)||treatyBetween(x,tid,'alliance')||overlordOf(tid)===x)return;_dw(x,tid,{force:true,join:true});});
+    /* 보호령이 공격받으면 종주국이 돕는다 */
+    const ov=overlordOf(tid);
+    if(ov!=null&&lvOf(tid)==='prot'&&ov!==pid&&G.players[ov]&&G.players[ov].alive&&!isHostile(ov,pid)&&!treatyBetween(ov,pid,'alliance')){
+      if(G.players[ov].isBot){if(Math.random()<0.6)_dw(ov,pid,{force:true,join:true});}
+      else hooks.toast(ov,`보호령 ${snm(tid)}이(가) ${snm(pid)}의 공격을 받고 있어요.`);}
+  }
+  return r;};
+
+const _du=doUnion;
+doUnion=function(pr){const r=_du(pr);if(pr&&pr.annex&&pr.from!=null)infAdd(pr.from,8);return r;};
+
+const _os=opnStruct;
+opnStruct=function(a,b){const it=_os(a,b);const B=G.players[b];
+  if(B&&a!==b){if((B.inf||0)>=10)it.push({t:'악명',v:-Math.round(B.inf*0.4)});
+    const pts=(B.sph&&B.sph[a])||0;if(pts>=20)it.push({t:'영향력',v:Math.round(pts/5)});}
+  return it;};
+
+/* ---------- 속국 단계 ---------- */
+const _mvas=makeVassal;
+makeVassal=function(over,vas,lv){const r=_mvas(over,vas);if(r){const t=G.treaties.find(x=>x.type==='vassal'&&x.a===over&&x.b===vas);if(t)t.lv=LV[lv]?lv:'vas';
+    if(lv&&lv!=='vas'&&LV[lv])log(`${pname(vas)}은(는) ${LV[lv].n}이(가) 되어 매달 수입의 ${Math.round(LV[lv].r*100)}%를 공물로 바친다.`,'dip');}
+  return r;};
+tributes=function(){G.treaties.filter(t=>t.type==='vassal').forEach(t=>{const o=G.players[t.a],v=G.players[t.b];if(!o||!v||!o.alive||!v.alive)return;const rate=(LV[t.lv||'vas']||LV.vas).r;
+  const amt=Math.max(0,Math.min(Math.round(Math.max(0,income(v.id))*rate),Math.floor(Math.max(0,v.gold))));if(amt>0){v.gold-=amt;o.gold+=amt;}});};
+
+/* ---------- 행동 ---------- */
+function ext(pid,m){const p=G.players[pid];if(!p||!p.alive)return fail('대상 오류');if(G.over)return fail('게임이 끝났어요.');if(G.phase!=='plan')return fail('계획 단계에서만 가능합니다.');
+  const to=+m.to;
+  if(m.op==='lv'){const t=G.treaties.find(x=>x.type==='vassal'&&x.a===pid&&x.b===to);if(!t)return fail('속국이 아니에요.');
+    const lv=LV[m.lv]?m.lv:null;if(!lv)return fail('알 수 없는 단계예요.');if((t.lv||'vas')===lv)return fail('이미 그 단계예요.');
+    if(t.lvAt!=null&&t.lvAt+LV_CD>G.round)return fail(`단계는 ${LV_CD}턴에 한 번만 바꿀 수 있어요. (${t.lvAt+LV_CD-G.round}턴 뒤)`);
+    const was=t.lv||'vas';t.lv=lv;t.lvAt=G.round;
+    log(`${pname(to)}이(가) ${pname(pid)}의 ${LV[lv].n}이(가) 되었다.`,'dip');
+    const rank={prot:0,vas:1,pup:2};if(rank[lv]>rank[was])opnAdd(to,pid,'lvup','종속을 강화했다',-20,30);else opnAdd(to,pid,'lvdn','종속을 느슨하게 해 주었다',15,30);
+    hooks.toast(to,`${pname(pid)}이(가) 우리를 ${LV[lv].n}으로 바꿨어요.`);
+    return ok(`${snm(to)}을(를) ${LV[lv].n}으로 바꿨습니다. (${LV[lv].d})`);}
+  if(m.op==='sph'){const q=G.players[to];p.sc=p.sc||[];
+    if(p.sc.includes(to)){p.sc=p.sc.filter(x=>x!==to);return ok(`${snm(to)}에 대한 영향력 행사를 멈췄습니다.`);}
+    if(!q||!q.alive||to===pid)return fail('대상 오류');if(!q.isBot)return fail('사람이 맡은 나라에는 쓸 수 없어요.');if(q.landless)return fail('땅이 없는 나라에는 쓸 수 없어요.');
+    if(overlordOf(pid)!=null)return fail('속국은 영향력을 행사할 수 없어요.');if(overlordOf(to)!=null||overlordOf(pid)===to)return fail('이미 종속 관계인 나라예요.');
+    if(isHostile(pid,to))return fail('교전 중인 나라에는 쓸 수 없어요.');
+    if(p.sc.length>=SPH_MAX)return fail(`영향력 행사는 동시에 ${SPH_MAX}개국까지 가능해요.`);if(p.gold<SPH_COST)return fail(`금화가 부족합니다 (매턴 ${SPH_COST}금)`);
+    p.sc.push(to);return ok(`${snm(to)}에 영향력을 행사하기 시작했어요. (매턴 ${SPH_COST}금 · 100이 되면 보호령이 돼요)`);}
+  return fail('알 수 없는 요청');}
+const _act=act;
+act=function(pid,m){
+  if(m&&m.a==='propose'&&G.players[pid]&&overlordOf(pid)!=null&&lvOf(pid)==='pup')return fail('괴뢰국은 종주국의 허락 없이 조약을 맺을 수 없어요.');
+  if(m&&m.a==='b158')return ext(pid,m);
+  return _act(pid,m);};
+
+/* ---------- 매 턴 ---------- */
+function tick(){
+  G.players.forEach(p=>{if(p.alive&&p.inf>0)p.inf=Math.max(0,p.inf-1);});
+  /* 영향력 행사 */
+  const pushed={};
+  G.players.forEach(p=>{if(!p.alive)return;p.sph=p.sph||{};p.sc=(p.sc||[]).filter(t=>{const q=G.players[t];return q&&q.alive&&q.isBot&&!q.landless&&!isHostile(p.id,t)&&overlordOf(t)==null&&overlordOf(p.id)==null;});
+    p.sc=p.sc.filter(t=>{if(p.gold<SPH_COST){hooks.toast(p.id,`금화가 없어 ${snm(t)}에 대한 영향력 행사를 멈췄어요.`);return false;}p.gold-=SPH_COST;const op=opnOf(t,p.id).total;p.sph[t]=Math.min(100,(p.sph[t]||0)+SPH_GAIN+(op>20?2:op<-20?-2:0));(pushed[t]=pushed[t]||[]).push(p.id);return true;});
+    Object.keys(p.sph).forEach(k=>{if(p.sc.includes(+k))return;p.sph[k]-=2;if(p.sph[k]<=0)delete p.sph[k];});});
+  /* 같은 나라를 두고 다투면 서로의 영향력이 깎인다 */
+  Object.keys(pushed).forEach(t=>{pushed[t].forEach(a=>pushed[t].forEach(b=>{if(a!==b&&G.players[b].sph[t]!=null)G.players[b].sph[t]=Math.max(0,G.players[b].sph[t]-3);}));});
+  /* 100이 되면 보호령으로 */
+  G.players.forEach(p=>{if(!p.alive||!p.sph)return;Object.keys(p.sph).forEach(k=>{const t=+k;if(p.sph[t]<100)return;const q=G.players[t];
+    if(q&&q.alive&&overlordOf(t)==null&&overlordOf(p.id)==null&&makeVassal(p.id,t,'prot')){
+      log(`${pname(t)}이(가) ${pname(p.id)}의 영향력 아래 들어가 보호령이 되었다.`,'dip');wlog('vassal',p.id,t,`${snm(t)}이(가) ${snm(p.id)}의 영향력 아래 들어가 보호령이 되었다`);
+      hooks.toast(p.id,`${snm(t)}이(가) 우리의 보호령이 되었어요!`);hooks.toast(t,`${snm(p.id)}의 영향력 아래 들어갔어요.`);
+      G.players.forEach(z=>{if(z.sph)delete z.sph[t];if(z.sc)z.sc=z.sc.filter(x=>x!==t);});
+      if(!G.turnEvents)G.turnEvents=[];G.turnEvents.push({r:G.round,date:ymOf(G.round),head:`${snm(t)}이(가) ${snm(p.id)}의 보호령이 되다`,body:`전쟁 없이 사절과 금화로 마음을 얻은 ${snm(p.id)}의 영향력이 ${snm(t)}의 궁정을 감쌌다. ${snm(t)}은(는) 공물을 바치는 대신 ${snm(p.id)}의 보호를 받게 되었다.`,scene:'treaty',ca:p.color,cb:q.color,pids:[p.id,t]});}});});
+  /* 악명이 높은 나라에는 이웃이 연합해 맞선다 */
+  const bad=G.players.filter(p=>p.alive&&(p.inf||0)>=70).sort((a,b)=>b.inf-a.inf)[0];
+  if(bad&&Math.random()<0.25){const c=G.players.filter(x=>x.alive&&x.isBot&&!x.landless&&!x.neu&&x.id!==bad.id&&touching(x.id,bad.id)&&!isHostile(x.id,bad.id)&&!treatyBetween(x.id,bad.id,'alliance')&&overlordOf(x.id)!==bad.id&&overlordOf(bad.id)!==x.id&&truceLeft(x.id,bad.id)===0&&opnOf(x.id,bad.id).total<5);
+    if(c.length){const x=c[Math.floor(Math.random()*c.length)];const r=declareWar(x.id,bad.id,{coal:true});if(r&&r.ok)log(`악명 높은 ${pname(bad.id)}에 맞서 ${pname(x.id)}이(가) 선전포고했다.`,'war');}}
+}
+const _es=extSettle;
+extSettle=function(){_es();try{tick();}catch(e){console.error('b158 tick',e);}};
+
+/* AI */
+function botSph(pid){const p=G.players[pid];if(!p.alive||p.landless||p.neu||!p.isBot||overlordOf(pid)!=null)return;
+  const ov=overlordOf(pid);
+  p.sc=p.sc||[];if(p.sc.length>=SPH_MAX||p.gold<250||Math.random()>0.06)return;
+  if(!(['dipl','trade','polit'].includes(p.persona)||Math.random()<0.25))return;
+  const c=G.players.filter(q=>q.alive&&q.isBot&&!q.landless&&q.id!==pid&&touching(pid,q.id)&&!isHostile(pid,q.id)&&overlordOf(q.id)==null&&!p.sc.includes(q.id)&&!treatyBetween(pid,q.id,'alliance'));
+  if(c.length)p.sc.push(c.sort((a,b)=>opnOf(b.id,pid).total-opnOf(a.id,pid).total)[0].id);}
+const _eb=extBot;
+extBot=function(pid){_eb(pid);try{botSph(pid);const ov=overlordOf(pid);if(ov!=null&&lvOf(pid)==='pup'&&warBalance(pid,ov)>0.2&&Math.random()<0.05)extAct(pid,{a:'vassal',op:'revolt',to:ov});}catch(e){console.error('b158 bot',e);}};
+
+/* ---------- 화면에 보내는 값 ---------- */
+const _mkv=makeView;
+makeView=function(pid,opts){const v=_mkv(pid,opts);
+  try{const me=pid!=null?G.players[pid]:null;
+    v.players.forEach(o=>{const p=G.players[o.id];o.inf=Math.round(p.inf||0);o.vlv=lvOf(o.id);
+      let top=null;G.players.forEach(z=>{const pt=(z.sph&&z.sph[o.id])||0;if(pt>=20&&(!top||pt>top[1]))top=[z.id,Math.round(pt)];});if(top)o.spo=top;
+      if(me&&o.id!==pid){const mp=(me.sph||{})[o.id];if(mp)o.mysph=Math.round(mp);if((me.sc||[]).includes(o.id))o.mysc=1;}
+      if(me&&o.id===pid)o.scN=(me.sc||[]).length;});
+  }catch(e){console.error('b158 view',e);}
+  return v;};
+
+/* ================= 화면 ================= */
+const NC={on:false,mode:'card',id:null,a:null,b:null};
+const NAMES_A=['아','에','이','오','카','벨','마','세','라','도','알','칼','티','로','레','다'];
+const NAMES_B=['르덴','시안','로스','미르','리크','단','벤','토르','넬','반','디르','마르','센','큐스','렌'];
+function rng(seed){let s=(Math.abs(Math.floor(seed))>>>0)||1;return()=>(s=(Math.imul(s,1664525)+1013904223)>>>0)/4294967296;}
+function rulerOf(v,p){const reign=Math.floor((v.round||0)/40);const r=rng(p.id*131+reign*977+7);
+  const nm=NAMES_A[Math.floor(r()*NAMES_A.length)]+NAMES_B[Math.floor(r()*NAMES_B.length)];const g=GOV[p.gov]||GOV.mon;
+  const num=(p.gov==='mon'||p.gov==='emp')?` ${(reign%5)+1}세`:'';
+  return {title:g.r,name:nm+num,seed:p.id*131+reign*977+7};}
+function portrait(seed,gov,col){const r=rng(seed*7919+3);const pk=a=>a[Math.floor(r()*a.length)];
+  const skin=pk(['#f1cfa8','#e3b88a','#c99468','#a9703f','#f6dcc0']),hair=pk(['#2b2118','#4a3322','#7a5a34','#b9b2a6','#d8c27a','#1c1c1c']);
+  const beard=pk([0,1,2,0,1]),hs=pk([0,1,2,3]),ey=pk([0,1,2]),mo=pk([0,1,2]);
+  let s=`<svg viewBox="0 0 88 104" xmlns="http://www.w3.org/2000/svg" width="100%" height="100%"><rect width="88" height="104" fill="#dbc88f"/><rect y="70" width="88" height="34" fill="#c9b27a"/>`;
+  s+=`<path d="M4 104Q8 76 44 72Q80 76 84 104Z" fill="${col}" stroke="#0005"/>`;
+  if(gov==='mon'||gov==='emp')s+=`<path d="M22 79Q44 96 66 79L61 73Q44 85 27 73Z" fill="#f4efe2"/><circle cx="34" cy="83" r="1.3" fill="#222"/><circle cx="44" cy="87" r="1.3" fill="#222"/><circle cx="54" cy="83" r="1.3" fill="#222"/>`;
+  else if(gov==='rep'||gov==='par')s+=`<path d="M35 72L44 92L53 72Z" fill="#f4efe2"/><path d="M42 80h4l2 16h-8z" fill="#8a1c1c"/>`;
+  else if(gov==='tot')s+=`<rect x="26" y="75" width="10" height="5" fill="#d8b24a"/><rect x="52" y="75" width="10" height="5" fill="#d8b24a"/><circle cx="30" cy="92" r="2.5" fill="#d8b24a"/><circle cx="38" cy="94" r="2.5" fill="#c0392b"/>`;
+  else s+=`<path d="M33 72h22v9H33z" fill="${col}" stroke="#0006"/><circle cx="44" cy="86" r="1.4" fill="#222"/><circle cx="44" cy="93" r="1.4" fill="#222"/>`;
+  s+=`<rect x="38" y="58" width="12" height="16" fill="${skin}"/><ellipse cx="27" cy="46" rx="3" ry="5" fill="${skin}"/><ellipse cx="61" cy="46" rx="3" ry="5" fill="${skin}"/>`;
+  if(hs!==3||(gov!=='mon'&&gov!=='emp'))s+=`<path d="M26 44Q24 20 44 20Q64 20 62 44Q60 30 44 30Q28 30 26 44Z" fill="${hair}"/>`;
+  s+=`<ellipse cx="44" cy="45" rx="17" ry="21" fill="${skin}"/>`;
+  if(hs===0)s+=`<path d="M27 40Q28 24 44 24Q60 24 61 40Q56 31 44 31Q32 31 27 40Z" fill="${hair}"/>`;
+  else if(hs===1)s+=`<path d="M27 38Q30 22 44 22Q58 22 61 38Q50 28 38 34Q32 36 27 38Z" fill="${hair}"/>`;
+  else if(hs===2)s+=`<path d="M27 42Q26 24 44 23Q62 24 61 42Q58 30 44 30Q30 30 27 42Z" fill="${hair}"/><path d="M26 40Q23 52 27 60Q26 48 29 42Z M62 40Q65 52 61 60Q62 48 59 42Z" fill="${hair}"/>`;
+  if(beard===1)s+=`<path d="M29 52Q32 66 44 67Q56 66 59 52Q54 58 44 58Q34 58 29 52Z" fill="${hair}"/>`;
+  else if(beard===2)s+=`<path d="M28 50Q30 74 44 76Q58 74 60 50Q54 60 44 60Q34 60 28 50Z" fill="${hair}"/>`;
+  const ex=ey===0?3:ey===1?2.4:3.4;
+  s+=`<ellipse cx="37" cy="44" rx="${ex}" ry="1.8" fill="#fff"/><ellipse cx="51" cy="44" rx="${ex}" ry="1.8" fill="#fff"/><circle cx="37" cy="44" r="1.3" fill="#222"/><circle cx="51" cy="44" r="1.3" fill="#222"/>`;
+  s+=`<path d="M32 39Q37 36 42 39M46 39Q51 36 56 39" stroke="${hair}" stroke-width="1.8" fill="none"/><path d="M44 46L42 54H46" stroke="#0007" stroke-width="1" fill="none"/>`;
+  s+=mo===0?`<path d="M39 58Q44 61 49 58" stroke="#7a2e2e" stroke-width="1.6" fill="none"/>`:mo===1?`<path d="M39 59H49" stroke="#7a2e2e" stroke-width="1.6"/>`:`<path d="M39 60Q44 57 49 60" stroke="#7a2e2e" stroke-width="1.6" fill="none"/>`;
+  if(gov==='mon')s+=`<path d="M28 24L31 10L37 19L44 7L51 19L57 10L60 24Z" fill="#e2b73c" stroke="#7a5a10"/><circle cx="44" cy="12" r="2" fill="#c0392b"/>`;
+  else if(gov==='emp')s+=`<path d="M26 25L29 11L36 20L44 5L52 20L59 11L62 25Z" fill="#e2b73c" stroke="#7a5a10"/><circle cx="44" cy="10" r="2.4" fill="#2f6fd0"/><path d="M44 0V6M41 3H47" stroke="#7a5a10" stroke-width="1.6"/>`;
+  else if(gov==='tot')s+=`<path d="M25 28Q44 12 63 28L63 33H25Z" fill="#3a3f2c" stroke="#0007"/><circle cx="44" cy="25" r="3" fill="#d8b24a"/><rect x="25" y="29" width="38" height="4" fill="#222"/>`;
+  else if(gov==='com')s+=`<path d="M26 28Q44 14 62 28L62 31H26Z" fill="#4a5a3a" stroke="#0007"/><path d="M42 21l2-3 2 3-2 2z" fill="#c0392b"/>`;
+  s+=`</svg>`;return s;}
+
+const CSS=`#ncard{position:fixed;inset:0;z-index:9000;background:rgba(6,10,18,.88);display:flex;align-items:center;justify-content:center}#ncard.hidden{display:none}
+#ncard .nc-body{overflow:auto;padding:12px 16px}
+#ncard .nc-head{display:flex;gap:14px;align-items:center}
+#ncard .nc-port{flex:none;width:88px;height:104px;border:2px solid #7a6030;border-radius:8px;overflow:hidden;background:#d9c58e}
+#ncard .nc-row{display:flex;align-items:center;gap:8px;padding:4px 0;border-bottom:1px dotted #b89a5a;font-size:13px}
+#ncard .nc-row .l{flex:none;width:64px;color:#6a5424}
+#ncard .nc-bar{flex:1;height:12px;background:#d9c58e;border-radius:3px;overflow:hidden}#ncard .nc-bar i{display:block;height:100%}
+#ncard .nc-row b{flex:none;width:64px;text-align:right}
+#ncard .nc-cmp{display:grid;grid-template-columns:64px 1fr 56px 1fr 64px;gap:6px;align-items:center;padding:4px 0;border-bottom:1px dotted #b89a5a;font-size:13px}
+#ncard .nc-cmp .bl{height:12px;background:#d9c58e;border-radius:3px;overflow:hidden;display:flex;justify-content:flex-end}#ncard .nc-cmp .br{height:12px;background:#d9c58e;border-radius:3px;overflow:hidden}
+#ncard .nc-cmp i{display:block;height:100%}#ncard .nc-cmp .m{text-align:center;color:#6a5424;font-size:12px}
+#ncard .nc-acts{display:flex;gap:6px;flex-wrap:wrap;margin:10px 0 4px}
+#ncard .nc-acts button,#ncard select{border:1px solid #9a7c42;background:#e6d6a8;color:#2a1e0e;border-radius:999px;padding:3px 12px;cursor:pointer;font-size:13px}
+#ncard .nc-acts button.on{background:#7a5a22;color:#fff}#ncard .nc-acts button:disabled{opacity:.45;cursor:default}
+#ncard .nc-sel{display:flex;gap:8px;align-items:center;justify-content:center;padding:8px 0}
+#ncard .nc-pt{width:76px;height:90px;border:2px solid #7a6030;border-radius:6px;overflow:hidden}
+.b158-sec .nrow{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px}`;
+function box(){let b=document.getElementById('ncard');if(!b){const st=document.createElement('style');st.textContent=CSS;document.head.appendChild(st);b=document.createElement('div');b.id='ncard';b.className='hidden';document.body.appendChild(b);
+  b.addEventListener('click',e=>{if(e.target===b)UI.back();});}return b;}
+const cnt=(v,id)=>v.terr.reduce((s,t)=>s+((t.owner===id&&TDEF[t.id].kind!=='sea')?1:0),0);
+const METR=[['영토',(v,p)=>cnt(v,p.id)],['병력',(v,p)=>p.troops],['금화',(v,p)=>p.gold],['사기',(v,p)=>p.morale],['안정',(v,p)=>p.stab],['승점',(v,p)=>p.vp],['신뢰도',(v,p)=>p.trust],['악명',(v,p)=>p.inf]];
+const num=x=>x==null?'?':Math.round(x).toLocaleString();
+function row(v,label,p,get,mx){const x=get(v,p);return `<div class="nc-row"><span class="l">${label}</span><div class="nc-bar"><i style="width:${x==null?0:Math.max(2,Math.round(x/mx*100))}%;background:${label==='악명'?(x>=70?'#b02a2a':x>=40?'#d08a2a':'#8a8f99'):p.color}"></i></div><b>${num(x)}</b></div>`;}
+function renderCard(v){const p=v.players[NC.id];if(!p)return '';const me=v.players[v.me];const R=rulerOf(v,p);const g=GOV[p.gov]||GOV.mon;
+  const al=v.players.filter(z=>z.alive);const mxOf=(get)=>Math.max(1,...al.map(z=>get(v,z)||0));
+  let rel='';
+  if(p.over!=null&&v.players[p.over])rel=`<div class="nc-row"><span class="l">종속</span><span>${esc(v.players[p.over].kingdom)}의 ${LV[p.vlv||'vas'].n}</span></div>`;
+  const isMyVas=p.over===v.me;
+  let acts='';
+  if(isMyVas&&v.phase==='plan'&&!v.spec){const t=(v.treaties||[]).find(x=>x.type==='vassal'&&x.a===v.me&&x.b===p.id)||{};
+    acts+=`<div class="muted" style="font-size:12px;margin-top:6px">${LV[p.vlv||'vas'].d}</div><div class="nc-acts">`+Object.keys(LV).map(k=>`<button data-b158="lv" data-to="${p.id}" data-lv="${k}" class="${(p.vlv||'vas')===k?'on':''}">${LV[k].n}</button>`).join('')+`</div>`;}
+  if(p.id!==v.me&&p.alive){
+    const pts=p.mysph||0;
+    if(pts||p.mysc||p.spo)rel+=`<div class="nc-row"><span class="l">영향력</span><div class="nc-bar"><i style="width:${pts}%;background:#4f9be0"></i></div><b>${pts}/100</b></div>`+(p.spo&&p.spo[0]!==v.me&&v.players[p.spo[0]]?`<div class="muted" style="font-size:12px">가장 큰 영향력: ${esc(v.players[p.spo[0]].kingdom)} (${p.spo[1]})</div>`:'');
+    if(p.isBot&&me.over==null&&p.over==null&&!p.landless&&v.phase==='plan'&&!v.spec)acts+=`<div class="nc-acts"><button data-b158="sph" data-to="${p.id}" class="${p.mysc?'on':''}">${p.mysc?'영향력 행사 중단':'영향력 행사 (매턴 12금)'}</button></div>`;}
+  acts+=`<div class="nc-acts"><button data-b158="cmp" data-to="${p.id}">⚖ 국가 비교</button></div>`;
+  return `<div class="wlbox"><div class="wlhead"><button class="btn sm" data-b158="back">← 뒤로</button><h2>국가 정보</h2></div><div class="nc-body">
+    <div class="nc-head"><div class="nc-port">${portrait(R.seed,p.gov,p.color)}</div><div style="min-width:0"><div style="font-size:18px;font-weight:700">${fl(p)} ${esc(p.kingdom)}</div><div style="margin-top:4px">${g.n} · ${esc(R.title)} <b>${esc(R.name)}</b></div><div class="muted" style="font-size:12px;margin-top:2px">${FAITH[p.fai]?FAITH[p.fai].ic+' '+FAITH[p.fai].n:''}${p.persona?' · '+esc(p.persona):''}</div></div></div>
+    <div style="margin-top:10px">${rel}${METR.map(([l,get])=>row(v,l,p,get,mxOf(get))).join('')}</div>${acts}</div></div>`;}
+function renderCmp(v){const al=v.players.filter(z=>z.alive);const A=v.players[NC.a],B=v.players[NC.b];if(!A||!B)return '';
+  const opt=sel=>al.map(z=>`<option value="${z.id}" ${z.id===sel?'selected':''}>${esc(String(z.kingdom).split('(')[0])}</option>`).join('');
+  const rows=METR.map(([l,get])=>{const a=get(v,A),b=get(v,B);const mx=Math.max(1,a||0,b||0);const cl=(l==='악명');
+    return `<div class="nc-cmp"><b style="text-align:left">${num(a)}</b><div class="bl"><i style="width:${a==null?0:Math.max(2,Math.round(a/mx*100))}%;background:${cl?'#b02a2a':A.color}"></i></div><span class="m">${l}</span><div class="br"><i style="width:${b==null?0:Math.max(2,Math.round(b/mx*100))}%;background:${cl?'#b02a2a':B.color}"></i></div><b style="text-align:right">${num(b)}</b></div>`;}).join('');
+  const RA=rulerOf(v,A),RB=rulerOf(v,B);
+  return `<div class="wlbox"><div class="wlhead"><button class="btn sm" data-b158="back">← 뒤로</button><h2>국가 비교</h2></div><div class="nc-body">
+    <div class="nc-sel"><div class="nc-pt">${portrait(RA.seed,A.gov,A.color)}</div><select data-b158sel="a">${opt(NC.a)}</select><span>vs</span><select data-b158sel="b">${opt(NC.b)}</select><div class="nc-pt">${portrait(RB.seed,B.gov,B.color)}</div></div>${rows}</div></div>`;}
+function render(){const b=box();const v=C.view;if(!v||!v.players){return;}b.innerHTML=NC.mode==='cmp'?renderCmp(v):renderCard(v);}
+function show(){const b=box();UI.navPush('ncard');b.classList.remove('hidden');NC.on=true;render();}
+function openCard(id){NC.mode='card';NC.id=id;show();}
+function openCmp(a,b){const v=C.view;NC.mode='cmp';NC.a=a;NC.b=b;show();}
+
+const _cl=UI.closeLayer;
+UI.closeLayer=function(n){if(n==='ncard'){box().classList.add('hidden');NC.on=false;return true;}return _cl.apply(this,arguments);};
+const _ra=UI.renderAll;
+UI.renderAll=function(){const r=_ra.apply(this,arguments);if(NC.on){try{render();}catch(e){}}return r;};
+
+/* 위 칸: 영토에 마우스를 올렸을 때 보이는 카드에 인구·건물·정부·군주·신앙·악명을 더한다 */
+const _th=UI.tipHTML;
+UI.tipHTML=function(id){const h=_th.apply(this,arguments);
+  try{const v=C.view;if(!v||v.draft||!TDEF[id]||TDEF[id].kind==='sea')return h;const T=v.terr[id];const o=T.owner!=null?v.players[T.owner]:null;let x='';
+    if(T.pop!=null)x+=`<div>👥 인구 지수 ${T.pop.toFixed(2)}</div>`;
+    if(T.bl&&T.bl.length)x+=`<div>${T.bl.map(b=>BLD[b]?BLD[b].ic:'').join(' ')}</div>`;
+    if(o){const g=GOV[o.gov]||GOV.mon;const R=rulerOf(v,o);x+=`<div class="muted">${g.n} · ${esc(R.title)} ${esc(R.name)}${FAITH[o.fai]?' · '+FAITH[o.fai].ic+FAITH[o.fai].n:''}${(o.inf||0)>=10?` · <span style="color:var(--bad)">악명 ${o.inf}</span>`:''}</div>`;}
+    return h+x;}catch(e){return h;}};
+
+/* 지도에서 다른 나라 땅을 고르면 국가 정보 단추, 외교 탭 끝에 나라 목록 */
+const _tm=UI.tabMap;
+UI.tabMap=function(){let h=_tm.apply(this,arguments);
+  try{const v=C.view;const T=C.sel!=null&&v.terr?v.terr[C.sel]:null;const o=T&&T.owner!=null?v.players[T.owner]:null;
+    if(o&&o.id!==v.me&&!v.draft)h+=`<div class="row" style="margin-top:8px"><button class="btn sm" data-b158="card" data-to="${o.id}">🏛 ${esc(String(o.kingdom).split('(')[0])} 정보</button></div>`;}catch(e){}
+  return h;};
+const _tdp=UI.tabDip;
+UI.tabDip=function(){let h=_tdp.apply(this,arguments);
+  try{const v=C.view;if(!v||v.draft)return h;
+    h+=`<div class="b158-sec"><h3>국가 정보</h3><div class="card"><div class="nrow">`+v.players.filter(z=>z.alive).map(z=>`<button class="btn sm" data-b158="card" data-to="${z.id}">${fl(z)} ${esc(String(z.kingdom).split('(')[0])}${(z.inf||0)>=40?' ⚠':''}</button>`).join('')+`</div><div class="nrow"><button class="btn sm" data-b158="cmp" data-to="">⚖ 국가 비교</button></div></div></div>`;}catch(e){}
+  return h;};
+
+document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest('[data-b158]');if(!b)return;const k=b.dataset.b158,v=C.view;if(!v)return;const to=b.dataset.to===''?null:+b.dataset.to;
+  if(k==='card')openCard(to);
+  else if(k==='cmp'){const o=v.players.find(z=>z.alive&&z.id!==v.me&&z.id!==to);openCmp(v.me,(to!=null&&to!==v.me)?to:(o?o.id:v.me));}
+  else if(k==='back')UI.back();
+  else if(k==='lv')send({a:'b158',op:'lv',to,lv:b.dataset.lv});
+  else if(k==='sph')send({a:'b158',op:'sph',to});});
+document.addEventListener('change',e=>{const s=e.target.closest&&e.target.closest('[data-b158sel]');if(!s)return;NC[s.dataset.b158sel]=+s.value;render();});
 })();
 </script>
 <script src="https://frenchfries777.com/games/ff-profile.js"></script>
