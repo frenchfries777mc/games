@@ -41,3 +41,5 @@ patchnotes.json | v734 items[0] | 지형(낙사, 위험지대 등)으로 죽을 
 patchnotes.json | v735 title | 친선과 연습 모드 카드 문구 삭제 | build 735 | 2026-11-07
 patchnotes.json | v735 items[0] | 친선과 연습 모드 선택 카드에서 인원 문구를 없애고, 맵 고르는 화면의 모드 설명도 없앴어요 | build 735 | 2026-11-07
 patchnotes.json | v736 title+items | 토너먼트 다른 경기 효과 숨김 | build 736 | 2026-11-07
+patchnotes.json | v737 title | 탈락 화면에 내 캐릭터와 마스터리 | build 737 | 2026-11-07
+patchnotes.json | v737 items[0] | 토너먼트, 배틀로얄 등에서 탈락하면 패배 포즈를 취한 내 캐릭터와 그 캐릭터의 마스터리 계급이 보여요 | build 737 | 2026-11-07
