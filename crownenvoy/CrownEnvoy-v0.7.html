@@ -557,7 +557,7 @@ try{if(sessionStorage.getItem('ce_noIntro')){sessionStorage.removeItem('ce_noInt
 sting();})();</script>
 <div id="app">
  <div id="lobby" class="screen">
-  <canvas id="lobbyBg"></canvas><canvas id="lobbyWar"></canvas><div id="cpTag">© 2026 Frenchfries777 · <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.ko" target="_blank" rel="noopener">CC BY-NC-ND 4.0</a></div><div id="verTag">v0.7 · build 167</div>
+  <canvas id="lobbyBg"></canvas><canvas id="lobbyWar"></canvas><div id="cpTag">© 2026 Frenchfries777 · <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.ko" target="_blank" rel="noopener">CC BY-NC-ND 4.0</a></div><div id="verTag">v0.7 · build 168</div>
   <header class="brand"><h1>Crown Envoy</h1><div class="sub"><i></i>DIPLOMACY · WAR · EMPIRE<i></i></div><p class="tagline">사절을 보내 동맹을 맺고, 군대를 보내 왕관을 차지하세요.</p></header>
   <div id="lobbyRight">
    <div id="lobbyHome" class="modes">
@@ -6468,7 +6468,6 @@ const UI={
       <div class="pol"><div><b>업적 · 도감</b><small>달성한 업적과, 만난 병종·장군을 모아 봐요. (이 기기에 저장)</small></div><button class="btn sm" data-act="meta">보기</button></div>
       <div class="pol"><div><b>단축키</b><small>키보드로 탭 전환·확대·이동·턴 확정을 해요.</small></div><button class="btn sm" data-act="keys">보기</button></div>
       <div class="pol"><div><b>튜토리얼</b><small>게임 하는 법을 처음부터 안내해 줘요.</small></div><button class="btn sm" data-act="tut">보기</button></div>
-      <div class="pol"><div><b>내 이름</b><small>다음 게임부터 적용돼요.</small></div><div class="row" style="gap:6px;flex:none"><input type="text" id="nameEdit" maxlength="15" value="${esc(UI.myName())}" style="width:120px"><button class="btn sm" data-act="saveName">저장</button></div></div>
       <div class="pol"><div><b>저작권</b><small>© 2026 Frenchfries777 · <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.ko" target="_blank" rel="noopener" style="color:inherit">CC BY-NC-ND 4.0</a></small></div></div>
       <div class="pol"><div><b>나가기</b><small>이 창을 닫아요.</small></div><button class="btn sm danger" data-act="site">나가기</button></div></div>`;
     const wasHidden=m.classList.contains('hidden');m.classList.remove('hidden');if(wasHidden)UI.navPush('menu');},
