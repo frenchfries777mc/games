@@ -10515,6 +10515,7 @@ function modVarSet(n,v){
 function modIsSet(c){
   if(!c||typeof c.n!=='string')return false;
   const v=modVGet(c.n),on=v!==undefined&&v!==null&&!(c.n.startsWith('s__')&&v==='');
+  if(c.not&&typeof c.or==='number'&&on&&+v===c.or)return true;   // is not set or 0
   return c.not?!on:on;
 }
 function modVarCmp(c){
