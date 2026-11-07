@@ -38,3 +38,5 @@ patchnotes.json | v730 items[4] | 로비 스플래시 문구 위치를 아래로
 - 2026-11-07 v733 패치노트 '친선과 연습 모드 설명 삭제': en만 작성, 나머지 11개 언어 번역 필요
 patchnotes.json | v734 title | 지형 사망 처치 인정 | build 734 | 2026-11-07
 patchnotes.json | v734 items[0] | 지형(낙사, 위험지대 등)으로 죽을 때 15초 안에 다른 플레이어에게 공격받았다면 그 플레이어의 처치로 인정 | build 734 | 2026-11-07
+patchnotes.json | v735 title | 친선과 연습 모드 카드 문구 삭제 | build 735 | 2026-11-07
+patchnotes.json | v735 items[0] | 친선과 연습 모드 선택 카드에서 인원 문구를 없애고, 맵 고르는 화면의 모드 설명도 없앴어요 | build 735 | 2026-11-07
