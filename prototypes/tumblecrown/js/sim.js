@@ -136,7 +136,7 @@ export function surVote(G, p) {
   if (c >= need) G.surTeam = p.team;
 }
 export function koPlayer(G, p, src) {
-  p.hp = 0; p.dead = true; p.down = false; p.respT = D.RESP_T + (G.pvp && G.fl && D.pushTime(G.fl.filter(f => f.own === 1 - p.team).length, G.fl.length, G.mode)); p.roll = 0; p.hvT = p.pbT = 0; p.block = p.taunt = 0; p.burn = 0; p.deaths++;
+  p.hp = 0; p.dead = true; p.down = false; p.respT = D.RESP_T + (G.pvp && G.fl && D.pushTime(G.fl.filter(f => f.own === 1 - p.team).length, G.fl.length, G.mode)); p.roll = 0; p.hvT = p.pbT = p.slT = 0; p.pl = null; p.mh = null; p.block = p.taunt = 0; p.burn = 0; p.deaths++;
   const k = src && src.id && src.id !== p.id ? G.players.find(q => q.id === src.id) : null; if (k && k.team !== p.team) { k.kills++; if (G.pvp) { if (k.lastKillT != null && G.t - k.lastKillT <= 8) for (const c of ['s0', 's1', 's2']) k.cd[c] *= 0.5; k.mkN = k.lastKillT != null && G.t - k.lastKillT <= 8 ? (k.mkN || 1) + 1 : 1; if (k.mkN >= 2) ev(G, 'multi', { id: k.id, n: k.mkN }); k.lastKillT = G.t; } }
   if (G.pvp && p.hitBy) { for (const [id, t] of Object.entries(p.hitBy)) { const q = G.players.find(x => x.id === id); if (q && q.team !== p.team && (!k || q.id !== k.id) && G.t - t <= 10) q.assists = (q.assists | 0) + 1; } p.hitBy = null; }   // 쓰러뜨리기 10초 안에 때린 다른 상대에게 도움 1   // 8초 안에 연속으로 쓰러뜨리면 기술 대기가 절반으로 줄어요
   G.stats.downs++; ev(G, 'ko', { id: p.id, by: k ? k.id : null, x: p.x, z: p.z });
@@ -431,7 +431,7 @@ function basicAttack(G, p, inp, nShot = 1) {
   p.cd.atk = A.cd * cdMul(p, 'atk');
   // 기사 3단 베기: 공격, 공격, 강타 뒤 처음부터 (0.5초 안에 다시 치지 않으면 처음부터, 사제는 0.75초). 기사 봇도 써요
   // 사제·종자: 세 번째 공격마다 크게 휘두르는 큰 공격 (피해 1.5배). 봇은 쓰지 않아요
-  const cmb = (!p.bot || p.ai.cmbT > 0 || p.role === 'knight') && p.role !== 'archer' && p.role !== 'crossbow' && p.role !== 'streltsy' && p.role !== 'assassin' && p.role !== 'spearman' && p.role !== 'bard' && p.role !== 'telaris', aid = p.atkN = (p.atkN || 0) + 1;
+  const cmb = (!p.bot || p.ai.cmbT > 0 || p.role === 'knight') && p.role !== 'archer' && p.role !== 'crossbow' && p.role !== 'streltsy' && p.role !== 'assassin' && p.role !== 'spearman' && p.role !== 'bard' && p.role !== 'telaris' && p.role !== 'chainer', aid = p.atkN = (p.atkN || 0) + 1;
   if (cmb) { p.combo = p.comboT > 0 ? ((p.combo || 0) + 1) % 3 : 0; p.comboT = p.role === 'priest' || p.role === 'witch' ? COMBO_PRIEST : COMBO_T; }
   const third = cmb && p.combo === 2, heavy = third && p.role === 'knight', big = third && !heavy, hm = big ? 1.5 : 1;
   p.anim = heavy ? 'hv' : big ? 'big' : 'atk'; p.animT = heavy ? 0.95 : big ? 0.6 : 0.32; p.animN = (p.animN || 0) + 1;
@@ -532,6 +532,13 @@ function swapPos(G, a, b, inv) {
   if (inv) { a.inv = Math.max(a.inv || 0, inv); b.inv = Math.max(b.inv || 0, inv); }
   ev(G, 'skill', { id: a.id, s: 'swapfx', x: ax, z: az, tx: a.x, tz: a.z, a: a.a, n: inv ? 0 : 1 });
 }
+const CHAIN_LEN = 10, MS_DELAY = 0.95;
+// 철퇴 병사 E: 내려친 자리(앞쪽) 둘레 상대에게 피해와 짧은 기절
+function maceLand(G, p) {
+  const cx = p.x + Math.cos(p.a) * 2.2, cz = p.z + Math.sin(p.a) * 2.2;
+  ev(G, 'skill', { id: p.id, s: 'slamfx', x: cx, z: cz, a: p.a });
+  for (const e of G.enemies) if (e.hp > 0 && foeOf(G, p.id, e) && Math.hypot(e.x - cx, e.z - cz) < 3.2 + e.r) { hurtEnemy(G, e, 64, p, { kb: 4, kbA: Math.atan2(e.z - cz, e.x - cx), push: 8 }); if (e.hp > 0) e.stun = Math.max(e.stun || 0, e.k === 'boss' ? 0.3 : 0.6); }
+}
 function useSkill(G, p, si, inp) {
   const R = ROLES[p.role], S = R.skills[si], key = 's' + si;
   if (p.cd[key] > 0) return;
@@ -588,6 +595,17 @@ function useSkill(G, p, si, inp) {
       for (const e of G.enemies) if (e.hp > 0 && foeOf(G, p.id, e) && Math.hypot(e.x - q.x, e.z - q.z) < 3.4 + e.r) { hurtEnemy(G, e, 22, p, {}); if (e.hp > 0) { e.slow = 3; e.slowM = 0.5; e.stun = Math.max(e.stun || 0, 0.6); } }
       break;
     }
+    case 'chainpull': { // 철퇴 병사 Q: 사슬을 던져 맞은 첫 상대 한 명을 내 앞까지 끌어와요 (벽 너머는 못 끌어요)
+      const ca = Math.cos(p.a), sa = Math.sin(p.a); let best = null, bf = 1e9;
+      for (const e of G.enemies) { if (e.hp <= 0 || !foeOf(G, p.id, e)) continue; const fx = (e.x - p.x) * ca + (e.z - p.z) * sa, sx = -(e.x - p.x) * sa + (e.z - p.z) * ca; if (fx > 0.5 && fx < CHAIN_LEN && Math.abs(sx) < 1.2 + e.r && fx < bf && lineClear(p.x, p.z, e.x, e.z)) { bf = fx; best = e; } }
+      ev(G, 'skill', { id: p.id, s: 'chainfx', x: p.x, z: p.z, a: p.a, l: best ? bf : CHAIN_LEN, n: best ? 1 : 0 });
+      if (!best) { p.cd[key] = 3; break; }   // 빗나가면 짧게 쉬고 다시 던질 수 있어요
+      hurtEnemy(G, best, 22, p, {});
+      const tg = best.pid ? G.players.find(q => q.id === best.pid) : best; if (tg) p.pl = { tg, t: 0.45, pl: !!best.pid };
+      break;
+    }
+    case 'maceslam': p.slT = MS_DELAY; p.animT = MS_DELAY + 0.3; break;   // 머리 위에서 돌리다 뛰어올라 내려치는 순간(MS_DELAY 뒤) 맞아요
+    case 'maceswirl': p.mh = { t: 3, tick: 0.25, gap: 0.5, dmg: 22, r: 4.6, fx: 'maceswirlfx', push: 3.5, st: 0.3 }; p.animT = 3; break;   // 3초 동안 몸째 돌며 0.5초마다 둘레를 쳐요 (움직일 수 있어요)
     case 'necrodoom': { // 네트로멘서 R: 넓은 원 안의 상대를 1초 기절시키고 피해를 주고, 3초 동안 이동속도를 반으로 줄여요
       const q = aimPoint(p, inp, 10);
       ev(G, 'skill', { id: p.id, s: 'necrofx', x: q.x, z: q.z, a: p.a, r: 6.5 });
@@ -860,7 +878,7 @@ function stepPlayer(G, p, inp, dt) {
       }
     }
   }
-  if (p.stun > 0) { p.stun -= dt; inp = {}; p.snipeT = 0; }   // 기절하면 잠깐 아무것도 못 해요
+  if (p.stun > 0) { p.stun -= dt; inp = {}; p.snipeT = 0; p.slT = 0; }   // 기절하면 잠깐 아무것도 못 해요
   if (p.px) p.px.hp = 0;
   const wsx = p.x, wsz = p.z;
   stepPlayer0(G, p, inp, dt);
@@ -874,7 +892,7 @@ function stepPlayer(G, p, inp, dt) {
     if (p.leech > 0) p.leech = Math.max(0, p.leech - dt);
     if (p.mh) { // 여러 번 이어서 치는 기술: 틱마다 둘레(또는 앞쪽)를 쳐요
       const m = p.mh; m.t -= dt; m.tick -= dt;
-      if (m.tick <= 0) { m.tick = m.gap; ev(G, 'skill', { id: p.id, s: m.fx, x: p.x, z: p.z, a: p.a, n: m.n = (m.n || 0) + 1 }); for (const e of G.enemies) if (e.hp > 0 && foeOf(G, p.id, e) && dist(p, e) < m.r + e.r && (!m.arc || angDiff(p.a, angTo(p, e)) < m.arc)) hurtEnemy(G, e, m.dmg, p, {}); }
+      if (m.tick <= 0) { m.tick = m.gap; ev(G, 'skill', { id: p.id, s: m.fx, x: p.x, z: p.z, a: p.a, n: m.n = (m.n || 0) + 1 }); for (const e of G.enemies) if (e.hp > 0 && foeOf(G, p.id, e) && dist(p, e) < m.r + e.r && (!m.arc || angDiff(p.a, angTo(p, e)) < m.arc)) { hurtEnemy(G, e, m.dmg, p, m.push ? { kb: m.push * 0.5, kbA: angTo(p, e), push: m.push } : {}); if (m.st && e.hp > 0) e.stun = Math.max(e.stun || 0, e.k === 'boss' ? 0.1 : m.st); } }
       if (m.t <= 0) p.mh = null;
     }
   }
@@ -891,6 +909,8 @@ function stepPlayer0(G, p, inp, dt) {
   if (p.ai && p.ai.cmbT > 0) p.ai.cmbT -= dt;
   if (p.hvT > 0) { p.hvT -= dt; if (p.hvT <= 0) { p.hvT = 0; if (!p.down && !p.dead) heavyLand(G, p); } }
   if (p.covT > 0) p.covT -= dt;
+  if (p.slT > 0) { p.slT -= dt; if (p.slT <= 0) { p.slT = 0; if (!p.down && !p.dead) maceLand(G, p); } }
+  if (p.pl) { const t = p.pl.tg, d = dist(p, t); p.pl.t -= dt; if (p.pl.t <= 0 || !alive(p) || d <= 2.5 || (p.pl.pl ? !alive(t) : t.hp <= 0)) p.pl = null; else { const m = Math.min(d - 2.4, 28 * dt) / d; t.x += (p.x - t.x) * m; t.z += (p.z - t.z) * m; if (p.pl.pl) collide(G, t, 0.6); else mapCollide(t, 0.6); } }   // 사슬에 걸린 상대가 끌려와요
   if (p.axeSw > 0) { p.axeSw -= dt; if (p.axeSw <= 0 && alive(p)) { p.axeSw = 0; for (const e of G.enemies) if (e.hp > 0 && foeOf(G, p.id, e) && dist(p, e) < 4.4 + e.r && angDiff(p.a, angTo(p, e)) < 1.2) hurtEnemy(G, e, 90, p, { kb: 11, kbA: angTo(p, e), push: 40 }); } }
   if (p.kvx || p.kvz) { if (inp.px == null) { p.x += p.kvx * dt; p.z += p.kvz * dt; collide(G, p, 0.6); } const dk = Math.pow(0.02, dt); p.kvx *= dk; p.kvz *= dk; if (Math.hypot(p.kvx, p.kvz) < 0.5) p.kvx = p.kvz = 0; }
   if (p.burst) {   // 연사: 0.14초마다 한 발씩, 그때그때 바라보는 쪽으로 나가요
@@ -1967,6 +1987,9 @@ function botPvp(G, p, dt) {
       case 'lunge': go = d > 4 && d < 8 && r < 0.2; break;
       case 'spearthrow': go = d > 4 && d < 16 && r < 0.12; break;
       case 'sweep': go = d < 4 && r < 0.15; break;
+      case 'chainpull': go = d > 3.5 && d < 9.5 && r < 0.2; break;
+      case 'maceslam': go = d < 4.5 && r < 0.18; break;
+      case 'maceswirl': go = d < 4.5 && r < 0.12; break;
       case 'backstep': go = d < 3 && r < 0.2; break;
       case 'snipe': go = d > 6 && d < 18 && r < 0.1; break;
       case 'bigbomb': go = d > 3 && d < 12 && r < 0.1; break;
