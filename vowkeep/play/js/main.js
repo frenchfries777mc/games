@@ -519,6 +519,23 @@ $('exitBtn').onclick = () => {
   if (b.dataset.arm) { delete b.dataset.arm; b.textContent = T('나가기'); endToLobby(''); return; }
   b.dataset.arm = 1; b.textContent = T('한 번 더 누르면 나가요'); setTimeout(() => { delete b.dataset.arm; b.textContent = T('나가기'); }, 2200);
 };
+/* ---------- 쓰러졌을 때 동료 지켜보기 (화면 버튼으로만 바꿔요) ---------- */
+function specCam(sn, me) {
+  const box = $('spec');
+  if (!me || (!me.dn && !me.dd) || sn.ph === 'intro' || sn.ph === 'over' || sn.ph === 'won') { S.spec = null; if (box) box.classList.remove('on'); return null; }
+  const al = sn.pl.filter(q => q.id !== me.id && !q.dn && !q.dd);
+  if (!al.length) { S.spec = null; if (box) box.classList.remove('on'); return null; }
+  if (!al.some(q => q.id === S.spec)) { al.sort((a, b) => Math.hypot(a.x - me.x, a.z - me.z) - Math.hypot(b.x - me.x, b.z - me.z)); S.spec = al[0].id; }
+  const q = al.find(x => x.id === S.spec);
+  if (box) { box.classList.add('on'); const nm = $('specName'); const txt = T('지켜보는 중') + ' · ' + (q.name || ROLES[q.role].name); if (nm.textContent !== txt) nm.textContent = txt; $('specPrev').style.display = $('specNext').style.display = al.length > 1 ? '' : 'none'; }
+  return S.spec;
+}
+function specStep(d) {
+  const sn = S.snap, me = myP(); if (!sn || !me) return;
+  const al = sn.pl.filter(q => q.id !== me.id && !q.dn && !q.dd); if (al.length < 2) return;
+  const i = Math.max(0, al.findIndex(q => q.id === S.spec)); S.spec = al[(i + d + al.length) % al.length].id;
+}
+$('specPrev').onclick = () => specStep(-1); $('specNext').onclick = () => specStep(1);
 function myP() { return S.snap && S.snap.pl.find(p => p.id === S.me); }
 function awardHonor() {
   if (S.saved || !S.snap || !S.me) return; S.saved = true;
@@ -1095,7 +1112,7 @@ function frame(now) {
     if (ph === 'intro') paintIntro();
     else {
       for (const e of S.evq) onEvent(e); S.evq.length = 0;
-      view.sync(S.snap, S.me, dt, t, !!S.G); paintHud(); paintBless();
+      view.sync(S.snap, S.me, dt, t, !!S.G, specCam(S.snap, me)); paintHud(); paintBless();
       if (ph === 'over') { S.overT += dt; if (S.overT > 3.6 && !S.resultShown) showDeepResult(); }
       if (ph === 'won') { S.wonT += dt; if (S.wonT > 1.5 && S.wonT < 9) bigMsg(CH.outro[Math.min(CH.outro.length - 1, Math.floor((S.wonT - 1.5) / 2.5))], TOUCH ? T('화면을 누르면 건너뛰어요') : T('Space 키로 건너뛰어요'), 0); if (S.wonT >= 9 && !S.resultShown) afterOutro(); }
     }
