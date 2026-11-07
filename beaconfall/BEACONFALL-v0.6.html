@@ -618,11 +618,16 @@ function shape(x,y,hb,fb,L){
         if(lv>v)v=lv;
         bv=q[5]>=0?q[5]:1;sC=(q[6]&&MODBIO.id[q[6]])||0;continue;
       }
-      if(q[4]===0){v=SEA+0.08+Math.max(0,0.55*((hb-0.5)*2.8+0.5)-0.3)*0.6;if(v>0.7)v=0.7;}
-      else if(q[4]===1)v=SEA+0.012+Math.max(0,hb-0.5)*0.05;
-      else if(q[4]===3)v=Math.min(0.95,0.8+Math.max(0,hb-0.3)*0.3);   // 산
-      else v=SEA-0.3-hb*0.1;
-      if(q[5]>=0){bv=q[5];sC=(q[6]&&MODBIO.id[q[6]])||0;}
+      let nv;
+      if(q[4]===0){nv=SEA+0.08+Math.max(0,0.55*((hb-0.5)*2.8+0.5)-0.3)*0.6;if(nv>0.7)nv=0.7;}
+      else if(q[4]===1)nv=SEA+0.012+Math.max(0,hb-0.5)*0.05;
+      else if(q[4]===3)nv=Math.min(0.95,0.8+Math.max(0,hb-0.3)*0.3);   // 산
+      else nv=SEA-0.22-hb*0.1;
+      let ft=1;   // 구역 가장자리는 안쪽으로 조금씩 번지게 (반듯한 네모 + 어두운 테두리선이 안 생기게)
+      if(!(q[9]>0&&q[9]<100)){const F=Math.min(q[4]===2?110:56,(q[2]-q[0])*0.3,(q[3]-q[1])*0.3);
+        if(F>=3){const d=Math.min(x-q[0],q[2]-x,y-q[1],q[3]-y);ft=d/F+(hb-0.5)*0.8;ft=ft<0?0:ft>1?1:ft;ft=ft*ft*(3-2*ft);}}
+      v=v+(nv-v)*ft;
+      if(q[5]>=0&&ft>0.5){bv=q[5];sC=(q[6]&&MODBIO.id[q[6]])||0;}
     }
   }
   const e=Math.min(y,H-1-y,x,W-1-x)/280;
