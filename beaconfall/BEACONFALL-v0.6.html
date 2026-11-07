@@ -671,14 +671,47 @@ const FLOWER_OK=[1,1,0,0,1,0,0,1];
 
 function tfInLoad(x,y){const r=TER.tf&&TER.tf.r;if(!r)return false;for(let k=0;k<r.length;k++){const q=r[k];if(q[4]===4&&x>=q[0]&&x<=q[2]&&y>=q[1]&&y<=q[3])return true;}return false;}   // load 구역 안인가
 function tfLoadChunk(cx,cy){const r=TER.tf&&TER.tf.r;if(!r)return false;const X0=cx*CHK,Y0=cy*CHK;for(let k=0;k<r.length;k++){const q=r[k];if(q[4]===4&&q[2]>=X0&&q[0]<X0+CHK&&q[3]>=Y0&&q[1]<Y0+CHK)return true;}return false;}
+function tfExtra(cx,cy,tree){   // generate tree|rock|iron|...: 구역 안에 심을 것들 (시드로 정해져서 다시 불러도 같아요)
+  const pl=TER.tf&&TER.tf.pl;if(!pl||!pl.length)return [];
+  const X0=cx*CHK,Y0=cy*CHK,out=[];
+  for(let k=0;k<pl.length;k++){
+    const q=pl[k];if((q[4]===-1)!==tree)continue;
+    const ox0=Math.max(X0,q[0]),oy0=Math.max(Y0,q[1]),ox1=Math.min(X0+CHK,q[2]),oy1=Math.min(Y0+CHK,q[3]);
+    if(ox1<=ox0||oy1<=oy0)continue;
+    const area=Math.max(1,(q[2]-q[0])*(q[3]-q[1])),ex=q[5]*((ox1-ox0)*(oy1-oy0))/area;
+    const rnd=mulberry32((q[6]^Math.imul(cx+1,73856093)^Math.imul(cy+1,19349663)^Math.imul(k+1,83492791))>>>0);
+    let n=Math.floor(ex);if(rnd()<ex-n)n++;
+    for(let i=0;i<n;i++){
+      let ok=false,x=0,y=0;
+      for(let t=0;t<8&&!ok;t++){x=Math.floor(ox0+rnd()*(ox1-ox0));y=Math.floor(oy0+rnd()*(oy1-oy0));ptShape(x,y);if(sV>SEA+0.05&&sV<0.97&&!(sB&128)&&rvPt(x,y)<=0)ok=true;}
+      if(ok)out.push([y,x,q[4]===0?(rnd()<0.3?1:0):q[4],sB&127,sV,sM]);
+    }
+  }
+  return out;
+}
+function treeTy(b,hv,m,r,q1,q2){
+  switch(b){
+    case 0:{const pineP=Math.min(0.9,Math.max(0.1,(hv-0.62)*3.5));if(r<pineP)return 3;if(m<0.5&&q1<0.5)return 4;return q2<0.06?2:q2<0.45?1:0;}
+    case 1:return r<0.55?3:r<0.9?(q1<0.5?0:1):2;
+    case 2:return r<0.7?5:r<0.85?8:4;
+    case 3:return r<0.8?8:4;
+    case 4:return r<0.6?6:r<0.85?1:4;
+    case 5:return r<0.4?8:r<0.8?5:4;
+    case 6:return r<0.6?3:4;
+    case 7:return r<0.8?7:4;
+    case 9:return r<0.8?10:4;
+    default:return r<0.85?9:4;
+  }
+}
 /* ----- 구역의 나무 ----- */
 function ensureTrees(cx,cy){
   if(cx<0||cy<0||cx>=CXN||cy>=CYN)return;
   const ci=cy*CXN+cx;if(TER.tn[ci]>=0)return;
-  if(TER.tf&&TER.tf.nt&&!tfLoadChunk(cx,cy)){TER.tn[ci]=0;return;}
+  const skipNat=!!(TER.tf&&TER.tf.nt&&!tfLoadChunk(cx,cy));
+  if(skipNat&&!(TER.tf.pl&&TER.tf.pl.length)){TER.tn[ci]=0;return;}
   const X0=cx*CHK,Y0=cy*CHK,list=[],camp=TER.camp;
   const c0=Math.floor((X0-TREE_CELL)/TREE_CELL),c1=Math.ceil((X0+CHK)/TREE_CELL);
-  const r0=Math.floor((Y0-TREE_CELL)/TREE_CELL),r1=Math.ceil((Y0+CHK)/TREE_CELL);
+  const r0=Math.floor((Y0-TREE_CELL)/TREE_CELL),r1=skipNat?Math.floor((Y0-TREE_CELL)/TREE_CELL):Math.ceil((Y0+CHK)/TREE_CELL);
   for(let cyy=Math.max(2,r0);cyy<Math.min(r1,H/TREE_CELL-1);cyy++){
     for(let cxx=Math.max(1,c0);cxx<Math.min(c1,W/TREE_CELL-1);cxx++){
       const x=cxx*TREE_CELL+((hs(cxx,cyy,21)*TREE_CELL)|0),y=cyy*TREE_CELL+((hs(cxx,cyy,22)*TREE_CELL)|0);
@@ -711,6 +744,7 @@ function ensureTrees(cx,cy){
       list.push([y,x,t]);
     }
   }
+  for(const e of tfExtra(cx,cy,true)){const hx=e[1],hy=e[0],m=Math.round(clamp01(e[5])*127)/127;list.push([hy,hx,treeTy(e[3],e[4],m,hs(hx,hy,24),hs(hx,hy,25),hs(hx,hy,26))]);}
   list.sort((a,b)=>a[0]-b[0]||a[1]-b[1]);
   if(list.length>TMAX)list.length=TMAX;
   const T=TER.T,base=ci*TMAX;
@@ -745,11 +779,12 @@ const hr=(x,y,sl)=>hash2(x+sl*977,y+sl*131);
 function ensureBoulders(cx,cy){
   if(cx<0||cy<0||cx>=CXN||cy>=CYN)return;
   const ci=cy*CXN+cx;if(TER.bn[ci]>=0)return;
-  if(TER.tf&&TER.tf.nr&&!tfLoadChunk(cx,cy)){TER.bn[ci]=0;return;}
+  const skipNat=!!(TER.tf&&TER.tf.nr&&!tfLoadChunk(cx,cy));
+  if(skipNat&&!(TER.tf.pl&&TER.tf.pl.length)){TER.bn[ci]=0;return;}
   for(let dy=-1;dy<=1;dy++)for(let dx=-1;dx<=1;dx++)ensureTrees(cx+dx,cy+dy);
   const X0=cx*CHK,Y0=cy*CHK,camp=TER.camp,list=[];
   const gx0=8+Math.floor((X0-8-7)/7)*7,gy0=8+Math.floor((Y0-8-7)/7)*7;
-  for(let y=Math.max(8,gy0);y<Y0+CHK;y+=7)for(let x=Math.max(8,gx0);x<X0+CHK;x+=7){
+  for(let y=Math.max(8,gy0);y<(skipNat?0:Y0+CHK);y+=7)for(let x=Math.max(8,gx0);x<X0+CHK;x+=7){
     if(x>=W-8||y>=H-8)continue;
     const bx=x+((hr(x,y,1)*6)|0),by=y+((hr(x,y,2)*6)|0);
     if(bx<X0||bx>=X0+CHK||by<Y0||by>=Y0+CHK)continue;
@@ -772,6 +807,7 @@ function ensureBoulders(cx,cy){
     }
   }
   if(TER.tf&&(TER.tf.nr||TER.tf.no))for(let k=list.length-1;k>=0;k--){const e=list[k];if(tfInLoad(e[1],e[0]))continue;if(TER.tf.nr||(TER.tf.no&&e[2]>=2))list.splice(k,1);}
+  for(const e of tfExtra(cx,cy,false))list.push([e[0],e[1],e[2]]);   // generate rock|iron|gold|copper|zinc
   list.sort((a,b)=>a[0]-b[0]||a[1]-b[1]);
   if(list.length>BMAX)list.length=BMAX;
   const B=TER.B,base=ci*BMAX;
@@ -9756,6 +9792,36 @@ function lmPlace(lay,ox,oy,bs){
   }});
   return altar;
 }
+/* ===== generate <게임 속 구조물> : 마을·유적·화석·화산을 원하는 자리에 ===== */
+function TF_BIO0(){return ['start','forest','desert','volcano','jungle','mesa','rock','mangrove','ice'];}
+const GAMEST=['village','small_village','fossil','volcano'].concat(TF_BIO0().map(b=>'ruin_'+b),TF_BIO0().map(b=>'mini_'+b));
+const VILL_NAMES=[['smith','대장장이 보르'],['farmer','농부 미나'],['general','잡화상 토비'],['sailor','뱃사람 하루'],['librarian','사서 리아'],['elder','이장 도윈']];
+function gsLay(id,seed){   // 구조물 id → 그림(문자열 배열)과 바이옴
+  const fx=!!(seed&1),fy=!!(seed&2),B=TF_BIO0();let m;
+  if(id==='village')return {lay:lmFlip(villageLayout(true),fx,fy),bs:1,vil:1};
+  if(id==='small_village')return {lay:lmFlip(villageLayout(false),fx,fy),bs:1,vil:1};
+  if(id==='fossil')return {lay:lmFlip(LM_FOSSIL,fx,fy),bs:2};
+  if(id==='volcano'){const vl=[];for(let y=0;y<13;y++){let row='';for(let x=0;x<19;x++){const d=((x-9)/9.5)**2+((y-6)/6.5)**2+(((x*7+y*13)%5)-2)*0.03;row+=d<=0.2?'L':d<=1?'V':'.';}vl.push(row);}return {lay:vl,bs:3,volc:1};}
+  if((m=/^ruin_(.+)$/.exec(id))&&B.includes(m[1])){const b=B.indexOf(m[1]);return {lay:lmFlip(lmBig(LM_LAYOUTS[b]),fx,fy),bs:b,ruin:1};}
+  if((m=/^mini_(.+)$/.exec(id))&&B.includes(m[1])){const b=B.indexOf(m[1]);return {lay:lmFlip(LM_MINI[b][(seed>>2)%3],fx,fy),bs:b};}
+  return null;
+}
+function lmGame(id,ox,oy,seed){
+  const g=gsLay(id,seed|0);if(!g)return;
+  const lay=g.lay,lw=lay[0].length,lh=lay.length;
+  lmClear(ox,oy,lw,lh);
+  if(g.vil)world.vnpcRaw=[];
+  const altar=lmPlace(lay,ox,oy,g.bs);
+  if(altar&&g.ruin&&!sgAt(altar.gx,altar.gy)){const b=addStructCell('ruin',altar.gx,altar.gy,null);if(b){b.lm=1;b.k='altar';b.bs=g.bs;}}
+  if(g.vil){
+    const cur=world.vnpcs||(world.vnpcs=[]);
+    for(const q of (world.vnpcRaw||[]))cur.push({k:VILL_NAMES[q.n][0],name:VILL_NAMES[q.n][1],suit:[1,2,3,4,5,2][q.n],x:q.gx*GRID+8,y:q.gy*GRID+13});
+    world.vnpcRaw=[];
+    if(!world.village)world.village={isl:-1,cx:(ox+lw/2)*GRID,cy:(oy+lh/2)*GRID,ox,oy};
+  }
+  if(g.volc)(world.volc=world.volc||[]).push({x:(ox+9.5)*GRID,y:(oy+6.5)*GRID});
+}
+function lmGameAll(){const gs=(TER.tf&&TER.tf.gs)||(world.tf&&world.tf.gs);if(!gs)return;for(const q of gs){try{lmGame(q[0],q[1],q[2],q[3]);}catch(e){}}}
 function buildLandmarks(){LM_PURE=true;try{buildLandmarks0();dvPortals();}finally{LM_PURE=false;}}
 /* ===== Deep Void 차원 ===== */
 function dvAddPort(gx,gy,to){
@@ -10056,7 +10122,7 @@ function buildLandmarks0(){
   world.volc=[];world.lm=[];world.lmc=[];world.ruinc=[];world.ruin=null;world.vnpcs=[];world.vill=-1;world.village=null;world.tmDay=0;world.tm=null;world.vfolk=null;VOLC_B.clear();DUN=null;
   world.vports=[];
   if(TER.dv){buildDeepVoid();return;}
-  if(TER.tf&&TER.tf.ns)return;
+  if(TER.tf&&TER.tf.ns){lmGameAll();return;}
   for(const o of world.islands)delete o.vname;
   buildVillage();buildPirate();
   const rnd=mulberry32(hashStr((world.seedStr||shown.seed)+'lm'));
@@ -10094,6 +10160,7 @@ function buildLandmarks0(){
   }
   buildGrand();buildHarbors();buildRuinIsle();
   buildDungeon();
+  lmGameAll();
 }
 
 /* ===== 업적 ===== */
@@ -10655,12 +10722,17 @@ function modHasMod(c){const n=String(c.n||'').toLowerCase().trim();const has=!!n
 function modActCond(a){   // if/chance 줄의 결과 (else 용). if 가 아니면 undefined
   if(typeof a.chance==='number')return Math.random()*100<Math.max(0,Math.min(100,a.chance));
   if(Array.isArray(a.anyof))return a.anyof.slice(0,8).some(modCondOk);
-  if(a.has||a.ifp||a.ifv||a.ifc||a.ifg||a.md)return modCondOk(a);
+  if(a.has||a.hand||a.ifp||a.ifv||a.ifc||a.ifg||a.md)return modCondOk(a);
   return undefined;
+}
+function modHandOk(h){   // if <아이템> in player_hand: 지금 손에 든 아이템인가
+  const st=inv[P.sel],id=st?String(st.id).split('~')[0]:'',want=modIt(h.item),on=!!want&&id===String(want).split('~')[0];
+  return h.not?!on:on;
 }
 function modCondOk(c){   // if A or B: 안의 조건 하나
   if(!c||typeof c!=='object')return false;
   if(c.md)return modHasMod(c.md);
+  if(c.hand)return modHandOk(c.hand);
   if(c.has){const hid=modIt(c.has.item);return !!(ITEMS[hid]&&modInv(hid)>=Math.max(1,c.has.n|0||1));}
   if(c.ifp){if(!MOD.potato)return false;const isp=c.ifp.w==='victim'?MODX.vp:MODX.ap;return isp!==!!c.ifp.not;}
   if(c.ifv)return modVarCmp(c.ifv);
@@ -10681,6 +10753,7 @@ function modRun(acts,depth,box){
     else if(a.ifg&&Array.isArray(a.do)){if(modGCmp(a.ifg))modRun(a.do,depth+1,box);}
     else if(a.md&&typeof a.md.n==='string'&&Array.isArray(a.do)){if(modHasMod(a.md))modRun(a.do,depth+1,box);}
     else if(Array.isArray(a.anyof)&&Array.isArray(a.do)){if(a.anyof.slice(0,8).some(modCondOk))modRun(a.do,depth+1,box);}
+    else if(a.hand&&typeof a.hand==='object'&&Array.isArray(a.do)){if(modHandOk(a.hand))modRun(a.do,depth+1,box);}
     else if(a.has&&typeof a.has==='object'&&Array.isArray(a.do)){const hid=modIt(a.has.item);if(ITEMS[hid]&&modInv(hid)>=Math.max(1,a.has.n|0||1))modRun(a.do,depth+1,box);}
     else if(a.title&&typeof a.title.text==='string'){modTitle(modTxt(a.title.text).slice(0,80),+a.title.sec||3);}
     else if(a.button){modButton(a.button);}
@@ -10735,6 +10808,8 @@ function modRun(acts,depth,box){
     }
     else if(a.genbiome&&host&&box.gen&&box.fresh){modGenBiome(a.genbiome);}
     else if(a.genx&&host&&box.gen&&box.fresh){modGenThing(a.genx);}
+    else if(a.genp&&host&&box.gen&&box.fresh){modGenPlace(a.genp);}
+    else if(a.gens&&host&&box.gen&&box.fresh&&GAMEST.includes(a.gens.id)){modGenGame(a.gens);}
     else if(a.fill&&host&&box.gen&&box.fresh&&Array.isArray(a.fill.c)&&a.fill.c.length===4){modTf('fill',a.fill);}
     else if(typeof a.wipe==='string'&&host&&box.gen&&box.fresh){modTf('wipe',a.wipe);}
     else if(a.remove&&host&&(a.remove.what==='tree'||a.remove.what==='rock')){
@@ -10762,7 +10837,9 @@ function cleanTF(t){
     r.push(o);
   }
   const o={r,nt:t.nt?1:0,nr:t.nr?1:0,no:t.no?1:0,ns:t.ns?1:0};
-  return (r.length||o.nt||o.nr||o.no||o.ns)?o:null;
+  if(Array.isArray(t.pl)){const pl=[];for(const q of t.pl.slice(0,100)){if(!Array.isArray(q)||q.length<7)continue;const n=q.slice(0,7).map(v=>Math.round(+v));if(n.some(v=>!Number.isFinite(v))||![-1,0,2,3,4,5].includes(n[4])||n[5]<1||n[5]>20000)continue;pl.push([Math.max(0,n[0]),Math.max(0,n[1]),Math.min(W,n[2]),Math.min(H,n[3]),n[4],n[5],n[6]]);}if(pl.length)o.pl=pl;}
+  if(Array.isArray(t.gs)){const gs=[];for(const q of t.gs.slice(0,200)){if(!Array.isArray(q)||q.length<4||!GAMEST.includes(q[0]))continue;const n=q.slice(1,4).map(v=>Math.round(+v));if(n.some(v=>!Number.isFinite(v)))continue;gs.push([q[0],n[0],n[1],n[2]]);}if(gs.length)o.gs=gs;}
+  return (r.length||o.nt||o.nr||o.no||o.ns||o.pl||o.gs)?o:null;
 }
 function applyTF(tf,wipe){   // 모드가 바꾼 지형을 적용 (구역·나무·바위 목록을 다시 만들게 비워요)
   TER.tf=tf;world.tf=tf;
@@ -10862,7 +10939,28 @@ function modGenThing(a){   // generate island|mountain|forest|"구조물" [x0 z0
   else tf.r.push([x0,y0,x1,y1,5,1,'',1]);
   MOD.tfDirty=1;
 }
+function modGenGame(a){   // generate village|ruin_forest|fossil|... [x0 z0 x1 z1]: 지형이 정해진 뒤에 자리를 골라 놓아요
+  let box=null;
+  if(Array.isArray(a.c)&&a.c.length===4){const an=modAnchor(null,true),c=a.c.map((p,i)=>{const v=Math.round(+p[1])||0;return p[0]?(i%2?an.y:an.x)+v:v;});box=[Math.min(c[0],c[2]),Math.min(c[1],c[3]),Math.max(c[0],c[2]),Math.max(c[1],c[3])];}
+  (MOD.bPend=MOD.bPend||[]).push({gsid:a.id,gr:box||1});
+}
+function modGenPlace(a){   // generate tree|rock|iron|gold|copper|zinc [x0 z0 x1 z1] [개수]
+  const tf=world.tf||{r:[],nt:0,nr:0,no:0,ns:0};world.tf=tf;tf.pl=tf.pl||[];if(tf.pl.length>=100)return;
+  let box=[0,0,W,H];
+  if(Array.isArray(a.c)&&a.c.length===4){const an=modAnchor(null,true),c=a.c.map((p,i)=>{const v=Math.round(+p[1])||0;return p[0]?(i%2?an.y:an.x)+v:v;});box=[Math.max(0,Math.min(c[0],c[2])),Math.max(0,Math.min(c[1],c[3])),Math.min(W,Math.max(c[0],c[2])),Math.min(H,Math.max(c[1],c[3]))];}
+  const kind={tree:-1,rock:0,iron:2,gold:3,copper:4,zinc:5}[a.k];if(kind===undefined)return;
+  tf.pl.push([box[0],box[1],box[2],box[3],kind,Math.max(1,Math.min(20000,a.n|0||20)),(Math.random()*2147483647)|0]);
+  MOD.tfDirty=1;
+}
 function modBuildPend(){const L=MOD.bPend||[];MOD.bPend=[];for(const b0 of L){try{
+  if(b0.gsid){
+    const seed=(Math.random()*2147483647)|0,g=gsLay(b0.gsid,seed);if(!g)continue;
+    const lw=g.lay[0].length,lh=g.lay.length,gr=b0.gr===1?[400,400,W-400,H-400]:b0.gr;let site=null;
+    for(let t=0;t<40&&!site;t++){const px=gr[0]+Math.random()*(gr[2]-gr[0]),py=gr[1]+Math.random()*(gr[3]-gr[1]);ptShape(px,py);if(!(sV>SEA+0.06&&!(sB&128)))continue;site=lmFind([(px/GRID)|0,(py/GRID)|0],lw,lh,12,null);}
+    if(!site)continue;
+    const tf=world.tf||(world.tf={r:[],nt:0,nr:0,no:0,ns:0});(tf.gs=tf.gs||[]).push([b0.gsid,site.ox,site.oy,seed]);
+    lmGame(b0.gsid,site.ox,site.oy,seed);continue;
+  }
   if(!MODDEF.st[String(b0.n)])continue;
   let b=b0;
   if(b0.gr){   // generate "구조물": 땅인 곳 중에서 랜덤 자리
