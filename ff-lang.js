@@ -52,7 +52,7 @@ try{ var me=document.currentScript, base=(me&&me.src)?me.src.replace(/[^\/]*$/,'
    라이트 색은 각 페이지 CSS 가 html[data-ff-theme=light] 로 정해요. */
 var TK='ff.theme', SK='ff.size', THEMES=['dark','light'], ZOOM={s:0.9,m:1,l:1.12,xl:1.25};
 /* game site pages that get a light look here (their own CSS only has the dark one): 'site' or 'site/page' */
-function sitePage(){ var m=/\/(stickseum|crownenvoy|beaconfall)\/(?:(index|codex|ranking|balance)\.html)?$/i.exec(location.pathname||''); return m?m[1].toLowerCase()+'/'+(m[2]||'index').toLowerCase():''; }
+function sitePage(){ var m=/\/(stickseum|crownenvoy|beaconfall)\/(?:(index|codex|ranking|balance|mods)\.html)?$/i.exec(location.pathname||''); return m?m[1].toLowerCase()+'/'+(m[2]||'index').toLowerCase():''; }
 function isSite(){ var p=location.pathname||''; return !/\.html$/i.test(p) || /\/index\.html$/i.test(p) || !!sitePage(); }
 var L='html[data-ff-theme=light]', LIGHT={
   stickseum: L+'{--bg:#f4f5f9;--bg2:#eceff5;--panel:#fff;--panel-2:#f0f2f7;--line:#d8dde7;--text:#151922;--text-dim:#5b6476;--red:#e23446;--teal:#0e9f88;--gold:#a87b00;color-scheme:light}'+
@@ -65,6 +65,12 @@ var L='html[data-ff-theme=light]', LIGHT={
     L+' .pb{box-shadow:4px 4px 0 rgba(60,45,10,.28)}'+L+' .top .pb{box-shadow:3px 3px 0 rgba(60,45,10,.28)}'+L+' .pb:hover,'+L+' .pb.on,'+L+' .pb.big:hover,'+L+' .tabs .pb.on{color:#fff}'+
     L+' h1,'+L+' h2,'+L+' .hero p,'+L+' .hero .meta,'+L+' .note,'+L+' .ft,'+L+' .vtxt,'+L+' .nl ul,'+L+' details p,'+L+' ol.st,'+L+' footer,'+L+' .sub,'+L+' .cnt,'+L+' .grp{text-shadow:2px 2px 0 rgba(255,255,255,.7)}'+
     L+' .hero h1{text-shadow:4px 4px 0 rgba(255,255,255,.75),0 0 30px rgba(255,255,255,.6)}'+L+' #shot{box-shadow:5px 5px 0 rgba(60,45,10,.28)}'+L+' .err{color:#b4412f}',
+  'beaconfall/mods': L+' body{background:linear-gradient(180deg,rgba(250,246,232,.78),rgba(250,246,232,.94)),url(shot-camp.png) center/cover fixed}'+
+    L+' input.q,'+L+' .cats .pb{box-shadow:2px 2px 0 rgba(60,45,10,.28)}'+L+' .card{border-color:rgba(128,97,26,.4)}'+L+' .mrow{border-color:rgba(128,97,26,.4)}'+
+    L+' .mrow .ic{background:rgba(128,97,26,.12);border-color:rgba(128,97,26,.4)}'+L+' .mrow .ds,'+L+' .mrow .inf,'+L+' .hint{color:#5a5040}'+L+' .mrow .inf .d,'+L+' .mrow .tx{color:#2a2414}'+
+    L+' .mrow .inf{border-top-color:rgba(128,97,26,.35)}'+L+' .ddl{background:#fffbee;box-shadow:4px 4px 0 rgba(60,45,10,.3)}'+L+' .ddl button{color:#2a2414}'+
+    L+' #upl .box,'+L+' #mdl .box{background:#fffbee;box-shadow:6px 6px 0 rgba(60,45,10,.3)}'+L+' #upl,'+L+' #mdl{background:rgba(60,45,10,.45)}'+
+    L+' .pb.off,'+L+' .pb.warn{background:#c0404a;color:#fff;border-color:#7a2020}'+L+' .msg.err{color:#b4412f}'+L+' .tabs .pb.on{color:#fff}'+L+' .topnav .cur{color:#fff}'+L+' .pb:hover,'+L+' .pb.on{color:#fff}',
   'beaconfall/codex': L+' body{background:linear-gradient(180deg,rgba(250,246,232,.78),rgba(250,246,232,.94)),url(shot-camp.png) center/cover fixed}'+
     L+' input.q,'+L+' .cats .pb{box-shadow:2px 2px 0 rgba(60,45,10,.28)}'+L+' .card{border-color:rgba(128,97,26,.4)}'+L+' .rc{border-color:rgba(128,97,26,.3)}'+L+' .sl{background:rgba(128,97,26,.12)}'+
     L+' .rn{color:#5a5040}'+L+' .wh.bk{border-color:#c0407a;color:#c0407a}'+L+' #det .box{background:#fffbee;box-shadow:6px 6px 0 rgba(60,45,10,.3)}'+L+' .dh img{background:rgba(128,97,26,.1)}'+L+' .src{background:rgba(0,0,0,.05)}'
