@@ -210,8 +210,8 @@ async function initAuth(){try{if(!window.supabase)return;sb=window.supabase.crea
   const {data}=await sb.auth.getSession();const u=data&&data.session&&data.session.user;if(!u)return;UID=u.id;
   const q=await sb.from('profiles').select('display_name,username').eq('id',UID).maybeSingle();UNAME=q.data&&(q.data.display_name||q.data.username)||null;
   if(UNAME)$('who').textContent=UNAME+' (Frenchfries777 계정)';}catch(e){}}
-function syncAch(){try{if(window.FFProfile&&FFProfile.setAchievements&&sb&&UID&&!MP.on)FFProfile.setAchievements(sb,'islandtrade',Object.keys(S.ach).length,ACH.length,Object.keys(S.ach));}catch(e){}}
-let marked=false;function markOnce(){try{if(!marked&&window.FFProfile&&sb&&UID){marked=true;FFProfile.markPlayed(sb,'islandtrade');}}catch(e){}}
+function syncAch(){}
+let marked=false;function markOnce(){}
 const myName=()=>UNAME||('상인 '+Math.random().toString(36).slice(2,5).toUpperCase());
 
 /* ================= 멀티플레이 ================= */
