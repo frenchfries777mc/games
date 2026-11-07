@@ -34,6 +34,7 @@ function siteOf(){
   return null;
 }
 function coarse(x){ return /^edu_/.test(x)?'educations':(/^tools_/.test(x)?'tools':x); }
+var game=which(), site=game?null:siteOf(), place=game||site||'hub';
 window.FFPresence={game:game};
 if(!window.fetch) return;
 /* 방 서버(ff-host)의 화면 없는 브라우저는 사람이 아니라서 접속 신호를 보내지 않아요 (주소의 dedicated=1, 자동화 브라우저 표시) */
