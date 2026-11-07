@@ -425,12 +425,12 @@ async function feed(){
   var cats={}; await Promise.all(ev.filter(function(x){ return x.kind==='ach'; }).map(function(x){ return achMap(x.game).then(function(m){ cats[x.game]=m; }); }));
   if(!ev.length){ p.innerHTML='<div class="cm-e">최근 2주 동안 친구 소식이 없어요.</div>'; return; }
   p.innerHTML='<div class="fd-list"></div>'; var L=p.querySelector('.fd-list');
-  ev.forEach(function(x){ var d=document.createElement('div'); d.className='fd'; var ic, body;
-    if(x.kind==='ach'){ var a=(cats[x.game]||{})[x.ids[0]], nm=a?((a.n&&(a.n[LANG]||(NEWL?a.n.en:a.n.ko)))||a.id):x.ids[0]; ic=a&&a.icon||'';
+  ev.forEach(function(x){ var d=document.createElement('div'); d.className='fd'; var ic, body, icImg='';
+    if(x.kind==='ach'){ var a=(cats[x.game]||{})[x.ids[0]], nm=a?((a.n&&(a.n[LANG]||(NEWL?a.n.en:a.n.ko)))||a.id):x.ids[0]; ic=a&&a.icon||''; icImg=a&&a.img?ROOT+a.img:'';
       body=feedTag(x.game)+' <span>도전과제 달성</span> <b data-notr>'+esc(nm)+'</b>'+(x.ids.length>1?' <span class="fd-n">'+esc(F('외 {0}개',x.ids.length-1))+'</span>':''); }
     else if(x.kind==='play'){ ic='🎮'; body=feedTag(x.game)+' <span>처음 시작했어요</span>'; }
     else { ic='📝'; body='<span>새 글</span> '+feedTag(x.post.game)+' <a class="fd-p" href="?post='+x.post.id+'" data-notr>'+esc(x.post.title)+'</a>'; }
-    d.innerHTML='<span class="fd-i">'+(x.kind==='ach'&&!ic?hIco('achievements'):esc(ic))+'</span><div class="fd-m"><div class="cm-meta">'+who(x.uid)+' · <span>'+esc(ago(new Date(x.t).toISOString()))+'</span></div><div class="fd-b">'+body+'</div></div>';
+    d.innerHTML='<span class="fd-i">'+(icImg?'<img src="'+esc(icImg)+'" alt="" width="26" height="26" style="display:block">':(x.kind==='ach'&&!ic?hIco('achievements'):esc(ic)))+'</span><div class="fd-m"><div class="cm-meta">'+who(x.uid)+' · <span>'+esc(ago(new Date(x.t).toISOString()))+'</span></div><div class="fd-b">'+body+'</div></div>';
     var pa=d.querySelector('.fd-p'); if(pa) pa.onclick=function(e){ e.preventDefault(); openPostById(x.post.id); };
     L.appendChild(d); });
 }
