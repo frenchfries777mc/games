@@ -460,7 +460,7 @@ try{if(sessionStorage.getItem('ce_noIntro')){sessionStorage.removeItem('ce_noInt
 sting();})();</script>
 <div id="app">
  <div id="lobby" class="screen">
-  <canvas id="lobbyBg"></canvas><canvas id="lobbyWar"></canvas><div id="cpTag">© 2026 Frenchfries777 · <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.ko" target="_blank" rel="noopener">CC BY-NC-ND 4.0</a></div><div id="verTag">v0.6 · build 152</div>
+  <canvas id="lobbyBg"></canvas><canvas id="lobbyWar"></canvas><div id="cpTag">© 2026 Frenchfries777 · <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.ko" target="_blank" rel="noopener">CC BY-NC-ND 4.0</a></div><div id="verTag">v0.6 · build 153</div>
   <header class="brand"><h1>Crown Envoy</h1><div class="sub"><i></i>DIPLOMACY · WAR · EMPIRE<i></i></div></header>
   <div id="lobbyRight">
    <div id="lobbyHome" class="modes">
@@ -517,6 +517,7 @@ sting();})();</script>
      <div id="mapBox"><div class="maps" id="mapList"></div><p class="mapdesc" id="mapDesc"></p></div>
      <div id="tplBox" class="hidden"><div class="tplbar" id="tplBar"><input type="search" id="tplQ" placeholder="이름·연도·나라로 찾기" autocomplete="off" aria-label="시나리오 검색"><div class="tplcats" id="tplCats"><button data-cat="all">전체</button><button data-cat="base">기본</button><button data-cat="mine">내가 만든 것</button><button data-cat="got">받은 것</button></div><select id="tplSort" aria-label="정렬"><option value="era">연대순</option><option value="name">이름순</option><option value="nat">나라 많은 순</option><option value="star">별 높은 순</option><option value="plays">많이 한 순</option></select><span class="muted-d" id="tplCnt"></span><div class="tplcats" id="tplTags" style="flex:1 1 100%"></div></div><div class="tpls" id="tplList"></div><p class="mapdesc" id="tplDesc"></p><div id="tplInfo" class="tplinfo"></div></div>
      <div id="lenBox" class="lenbox"><span class="muted-d">게임 길이</span><div class="seg" id="lenSeg"></div></div>
+     <div id="sbxBox" class="lenbox hidden"><span class="muted-d">샌드박스</span><div class="seg" id="sbxSeg"></div></div>
      <div id="secBox" class="lenbox"><span class="muted-d">턴 시간</span><div class="seg" id="secSeg"></div></div>
     </div>
     <div class="lobby-actions"><button class="btn" id="btnLeave">← 나가기</button><button class="btn primary" id="btnStart">게임 시작</button></div>
@@ -1142,12 +1143,12 @@ function act_(pid,m){
   switch(m.a){
   case 'conscript':{if(G.phase!=='plan')return fail('계획 단계에서만 가능합니다.');const T=G.terr[m.tid];if(!T||T.owner!==pid||T.sea)return fail('내 영토를 선택하세요.');
     let n=Math.floor(+m.n);let ty=UT.includes(m.type)?m.type:aiType(pid,T);{const why=unitRule(pid,T,ty);if(why){if(UT.includes(m.type))return fail(why);ty='i';}}
-    const room=capacity(pid)-totalTroops(pid)-pendOf(pid);if(!(n>=10))return fail('최소 10명 이상');if(n>room)return fail(`병력 상한 초과 (여유 ${Math.max(0,room)}명)`);
+    const room=G.sbx?1e9:capacity(pid)-totalTroops(pid)-pendOf(pid);if(!(n>=10))return fail('최소 10명 이상');if(n>room)return fail(`병력 상한 초과 (여유 ${Math.max(0,room)}명)`);
     {const lim=G.treaties.find(t=>t.type==='truce'&&t.lim&&t.lim.pid===pid&&t.until>=G.round);if(lim&&totalTroops(pid)+pendOf(pid)+n>lim.lim.cap)return fail(`휴전 조건으로 병력이 ${lim.lim.cap.toLocaleString()}명을 넘을 수 없어요.`);}
-    const cr=conscriptRoom(T);if(n>cr)return fail(`이 지역은 이번 턴에 징집할 수 있는 한도에 걸렸어요 (한도 ${conscriptCap(T).toLocaleString()}명, 남은 ${cr.toLocaleString()}명). 도시를 업그레이드하면 늘어나요.`);
-    let vv=m.v!=null?Math.max(0,Math.min(convAvail(pid,ty),Math.floor(+m.v)||0)):utier(pid,ty);const ind=indOn();p.stock=p.stock||{};if(m.v==null)while(vv>0&&partsNeed(ind,ty,vv,n)>(p.stock.parts||0))vv--;const pn=partsNeed(ind,ty,vv,n);if(pn>(p.stock.parts||0))return fail(`기계 부품이 부족해요 (필요 ${pn}개, 가진 것 ${p.stock.parts||0}개). 공장지대에서 만들거나 시장에서 사 오세요.`);const cost=Math.ceil(conscriptCost(pid,n)*UT_COST[ty]*(1+0.3*vv));if(p.gold<cost)return fail(`금화가 부족합니다 (필요 ${cost})`);
+    const cr=G.sbx?1e9:conscriptRoom(T);if(n>cr)return fail(`이 지역은 이번 턴에 징집할 수 있는 한도에 걸렸어요 (한도 ${conscriptCap(T).toLocaleString()}명, 남은 ${cr.toLocaleString()}명). 도시를 업그레이드하면 늘어나요.`);
+    let vv=m.v!=null?Math.max(0,Math.min(convAvail(pid,ty),Math.floor(+m.v)||0)):utier(pid,ty);const ind=indOn();p.stock=p.stock||{};if(m.v==null)while(vv>0&&partsNeed(ind,ty,vv,n)>(p.stock.parts||0))vv--;const pn=partsNeed(ind,ty,vv,n);if(pn>(p.stock.parts||0)&&!G.sbx)return fail(`기계 부품이 부족해요 (필요 ${pn}개, 가진 것 ${p.stock.parts||0}개). 공장지대에서 만들거나 시장에서 사 오세요.`);const cost=Math.ceil(conscriptCost(pid,n)*UT_COST[ty]*(1+0.3*vv));if(p.gold<cost)return fail(`금화가 부족합니다 (필요 ${cost})`);
     {const after=compOf(T);const tot=T.troops+n;const cf=(after.c+(ty==='c'?n:0))/tot,af=(after.a+(ty==='a'?n:0))/tot;if(cf>0.6&&ty==='c')return fail('이 지역은 기병이 이미 60%예요. 보병도 함께 징집하세요.');if(af>0.4&&ty==='a')return fail('이 지역은 포병이 이미 40%예요. 보병도 함께 징집하세요.');}
-    p.gold-=cost;if(pn)p.stock.parts-=pn;T.pend=(T.pend||[]).concat([{o:pid,ty,n,vv}]);T.drafted=(T.drafted||0)+n;return ok(`${TDEF[T.id].name}에 ${UT_TIER[ty][vv]} ${n}명 징집 (-${cost}금${pn?`, 기계 부품 -${pn}`:''})`);}
+    p.gold-=cost;if(pn)p.stock.parts=Math.max(0,p.stock.parts-pn);T.pend=(T.pend||[]).concat([{o:pid,ty,n,vv}]);T.drafted=(T.drafted||0)+n;return ok(`${TDEF[T.id].name}에 ${UT_TIER[ty][vv]} ${n}명 징집 (-${cost}금${pn?`, 기계 부품 -${pn}`:''})`);}
   case 'city':{if(G.phase!=='plan')return fail('계획 단계에서만 가능합니다.');const T=G.terr[m.tid];if(!T||T.owner!==pid||T.sea)return fail('내 영토를 선택하세요.');const lv=T.city||0;if(lv>=CITY_MAX)return fail(`도시는 최대 ${CITY_MAX}단계입니다.`);const c=cityCostOf(pid,lv);
     if(p.gold<c)return fail(`금화가 부족합니다 (필요 ${c})`);p.gold-=c;T.city=lv+1;return ok(`${TDEF[T.id].name} 도시 ${T.city}단계 (-${c}금) · 한 턴 징집 한도 ${conscriptCap(T).toLocaleString()}명`);}
   case 'hire':{if(G.phase!=='plan')return fail('계획 단계에서만 가능합니다.');if(G.gens.filter(g=>g.owner===pid&&g.status!=='dead').length>=CFG.maxGens)return fail('장군은 최대 ${CFG.maxGens}명입니다.');
@@ -1392,13 +1393,13 @@ function breachCheck(pid,victim){
     {const H=G.hl=G.hl||{};if(!H.t||al||!H.t.al)H.t={r:G.round,d:ymOf(G.round),al,fn:snm(pid),vn:snm(victim)};}
     log(al?`동맹 파기! ${pname(pid)}이(가) 동맹국 ${pname(victim)}을(를) 공격했다. (신뢰도 -60)`:`배신! ${pname(pid)}이(가) ${pname(victim)}과(와)의 조약을 깨고 선전포고했다. (신뢰도 -40)`,'warn');}
 }
-function place(pid,n,prefer,from,mix){
+function place(pid,n,prefer,from,mix,foe){
   if(n<=0)return;const p=G.players[pid];if(!p||!p.alive)return;
   const gh=(prefer||[]).find(t=>{const T=G.terr[t];return T.owner!==pid&&guestOK(pid,T)&&((T.gst&&T.gst[pid]>0)||p.landless);});const mu=(()=>{const mm=mix||{c:0,a:0};const c=Math.round(n*(mm.c||0)/10)*10,a=Math.round(n*(mm.a||0)/10)*10;return {i:Math.max(0,n-c-a),c,a,v:mm.v};})();
   if(gh!=null){const GT=G.terr[gh];addUnits(GT,pid,mu);return;}
   if(p.landless){const any=G.terr.find(t=>!t.sea&&t.gst&&t.gst[pid]>0)||G.terr.find(t=>!t.sea&&t.owner!=null&&guestOK(pid,t));if(any){addUnits(any,pid,mu);}return;}
   let dest=(prefer||[]).find(t=>G.terr[t].owner===pid);
-  if(dest==null&&from!=null){const c=GEO.adj[from].filter(t=>G.terr[t].owner===pid).sort((a,b)=>G.terr[b].troops-G.terr[a].troops);dest=c[0];}
+  if(dest==null&&from!=null){const fo=(foe!=null&&TDEF[foe])?TDEF[foe]:null;const dd=t=>fo?Math.hypot(TDEF[t].x-fo.x,TDEF[t].y-fo.y):0;const c=GEO.adj[from].filter(t=>G.terr[t].owner===pid&&t!==foe).sort((a,b)=>fo?dd(b)-dd(a):G.terr[b].troops-G.terr[a].troops);dest=c[0]!=null?c[0]:GEO.adj[from].filter(t=>G.terr[t].owner===pid).sort((a,b)=>G.terr[b].troops-G.terr[a].troops)[0];}
   if(dest==null&&G.terr[p.cap]&&G.terr[p.cap].owner===pid)dest=p.cap;
   if(dest==null){const o=owned(pid);if(o.length)dest=o[0].id;}
   if(dest==null){log(`${pname(pid)}의 패잔병 ${n}명이 퇴로를 잃고 흩어졌다.`,'war');return;}
@@ -1491,7 +1492,7 @@ function resolveRound(){
       ap.lost+=r.aStart-r.aSurv;if(dp)dp.lost+=r.dStart-r.dSurv;
       const wP=r.winner==='att'?ap:dp,lP=r.winner==='att'?dp:ap;if(ap&&dp&&ap.id!==dp.id){tallyAdd(ap.id,dp.id,'k',Math.max(0,r.dStart-r.dSurv));tallyAdd(dp.id,ap.id,'k',Math.max(0,r.aStart-r.aSurv));tallyAdd(ap.id,dp.id,'l',Math.max(0,r.aStart-r.aSurv));tallyAdd(dp.id,ap.id,'l',Math.max(0,r.dStart-r.dSurv));if(r.winner==='att')tallyAdd(ap.id,dp.id,'pw',0.1*Math.max(0,r.dStart-r.dSurv));else tallyAdd(dp.id,ap.id,'pw',0.1*Math.max(0,r.aStart-r.aSurv));}if(wP)morAdd(wP,8,'전투 승리');if(lP)morAdd(lP,-5,'전투 패배');
       if(r.winner==='att'){
-        if(holder.pid!=null&&r.dSurv>0)retreats.push({pid:holder.pid,n:r.dSurv,prefer:[],from:tid,mix:holder.mix||mixOfT(T)});
+        if(holder.pid!=null&&r.dSurv>0)retreats.push({pid:holder.pid,n:r.dSurv,prefer:[],from:tid,foe:(a.srcs&&a.srcs[0]&&a.srcs[0].from!=null)?a.srcs[0].from:null,mix:holder.mix||mixOfT(T)});
         holder.gens.forEach(g=>{const f=genFate(g,[0.2,0.28],a.pid);rec.fates.push({gid:g.id,f});if(f==='escaped')escapees.push({g,tid});});
         holder={pid:a.pid,troops:r.aSurv,original:false,mix:a.mix,gens:aGen?[aGen]:[]};
       }else{
@@ -1517,7 +1518,7 @@ function resolveRound(){
       else log(`${pname(holder.pid)}이(가) 중립 ${TDEF[tid].name}을(를) 점령했다.`,'war');
     }else{T.troops=holder.troops;if(old!=null)log(`${pname(old)}이(가) ${TDEF[tid].name}을(를) 지켜냈다.`,'war');else log(`중립 ${TDEF[tid].name}의 수비대가 버텼다.`,'war');}
   }
-  retreats.forEach(r=>place(r.pid,r.n,r.prefer,r.from,r.mix));
+  retreats.forEach(r=>place(r.pid,r.n,r.prefer,r.from,r.mix,r.foe));
   escapees.forEach(({g,tid,home})=>{if(g.status!=='ok')return;const o=G.players[g.owner];let dest=GEO.adj[tid].filter(t=>G.terr[t].owner===g.owner)[0];if(home&&(G.terr[tid].owner===g.owner||(G.terr[tid].gst&&G.terr[tid].gst[g.owner]>0)))dest=tid;
     if(dest==null&&G.terr[o.cap].owner===g.owner)dest=o.cap;if(dest==null){const ow=owned(g.owner);if(ow.length)dest=ow[0].id;}if(dest==null){g.status='dead';}else g.loc=dest;});
   G.gens.forEach(g=>{if(g.status==='ok'&&G.terr[g.loc]&&G.terr[g.loc].owner!==g.owner&&!(G.terr[g.loc].gst&&G.terr[g.loc].gst[g.owner]>0)){const o=G.players[g.owner];const ow=owned(g.owner);g.loc=ow.length?(G.terr[o.cap].owner===g.owner?o.cap:ow[0].id):null;if(g.loc==null)g.status='dead';}});
@@ -2453,7 +2454,7 @@ function finish(reason,winIds){if(G.cont)return;
 /* ================= 단계 진행 ================= */
 function startPhase(ph){
   G.phase=ph;G.phaseEnd=Date.now()+((ph==='plan'&&G.sec!=null)?(G.sec||86400):(CFG.dur[ph]||0))*1000;G.players.forEach(p=>{p.ready=!p.alive;});
-  if(ph==='plan'){pendApply();rsInit();indInit();try{tcOpen();}catch(e){console.error('tcOpen',e);}G.draft={};G.orders={};G.terr.forEach(t=>{t.drafted=0;});G.players.forEach(p=>{if(p.alive&&!p.isBot)applyPolicies(p.id);});}
+  if(ph==='plan'){pendApply();rsInit();indInit();try{tcOpen();}catch(e){console.error('tcOpen',e);}G.draft={};G.orders={};G.terr.forEach(t=>{t.drafted=0;});G.players.forEach(p=>{if(p.alive&&!p.isBot)applyPolicies(p.id);});if(G.sbx)G.players.forEach(p=>{if(p.alive&&!p.isBot)p.gold=Math.max(p.gold,99999);});}
   if(ph==='plan'&&typeof Host!=='undefined'&&Host.snap)Host.snap();
   botsAct(ph);
 }
@@ -3816,7 +3817,7 @@ function objGeneric(p,out){const have=t=>out.some(o=>o.t===t);const start=owned(
   if(out.length<3&&!have('holdCap')&&!p.landless)out.push(objMake(p,{t:'holdCap',text:'수도를 끝까지 지켜라',vp:8}));
   if(out.length<3){if(p.landless){out.push(objMake(p,{t:'wins',n:5,text:'전투에서 5번 이겨라',vp:10}));}else{const n=Math.max(1000,Math.round(totalTroops(p.id)*1.5/1000)*1000);out.push(objMake(p,{t:'army',n,text:`병력 ${n.toLocaleString()}명 이상을 갖춰라`,vp:6}));}}
   if(out.length<3){out.push(objMake(p,{t:'wins',n:6,text:'전투에서 6번 이겨라',vp:8}));}}
-function objInit(plan){G.sec=(plan&&plan.sec!=null)?plan.sec:null;G.objOn=true;G.endRound=(plan&&plan.len!=null)?plan.len:defLen(plan&&plan.tpl);G.objWin=null;
+function objInit(plan){G.sbx=(plan&&plan.sbx)?1:0;G.sec=(plan&&plan.sec!=null)?plan.sec:null;G.objOn=true;G.endRound=(plan&&plan.len!=null)?plan.len:defLen(plan&&plan.tpl);G.objWin=null;
   G.terr.forEach(T=>{T.o0=T.owner;});G.players.forEach(p=>{p.cap0=p.cap;});
   const spec=OBJ_SPEC[TK(G.tplId)]||{};
   G.players.forEach(p=>{if(!p.neu&&!p.landless){p.persona=p.fixPers||pickPersona(p);p.aggr=+(p.aggr*(PERSONA[p.persona].aggr)).toFixed(3);}});
@@ -4108,7 +4109,7 @@ function makeView(pid,opts){const omni=!!(opts&&opts.omni);setEra(G.era);const D
       if(p.id===pid){o.fin=Object.assign({},p.fin||{});o.strike=(p.strike||0)>=G.round?p.strike-G.round+1:0;o.facN=facN(pid);o.rs={need:rsNeed(pid),prod:rsProd(pid),short:Object.assign({},p.short||{}),rev:Math.round(shortRev(p)*100)};o.mor=morView(p);o.pendN=pendOf(pid);o.cvmax=convMax(pid);o.ut=[utier(pid,'i'),utier(pid,'c'),utier(pid,'a')];o.tav=[convAvail(pid,'i'),convAvail(pid,'c'),convAvail(pid,'a')];o.tvis=UT.map((t,ix)=>Math.max(o.tav[ix],tierVis(pid,t)));o.nsp=nspOf(pid);o.yr=techYear();o.obj=objView(p);o.amb=ambView(p);o.fcost=fortCostOf(pid);o.tcost=trenchCostOf(pid);o.scost=scoutCostOf(pid);o.goals=(p.goals||[]).map(g=>({k:g.k,enemy:g.enemy,prog:g.prog,done:g.done,need:GOALS[g.k].need,n:GOALS[g.k].n}));o.ww=Math.round(p.ww||0);o.tariff=Object.assign({},p.tariff||{});o.autoSell=p.autoSell||0;o.tbk={route:routeGold(pid),market:marketGold(pid),imp:importGold(pid)};o.deals=(G.deals||[]).filter(d=>d.until>=G.round&&(d.a===pid||d.b===pid)).map(d=>{const mineA=d.a===pid;return {id:d.id,w:mineA?d.b:d.a,give:mineA?d.ga:d.gb,get:mineA?d.gb:d.ga,gold:mineA?d.gold:-d.gold,left:d.until-G.round};});o.convoys=(G.convoys||[]).filter(c=>c.owner===pid).map(c=>({to:c.to,left:Math.max(0,c.due-G.round),v:c.value}));{const gg=goodsOf(pid);o.goods={own:[...gg.own],imp:[...gg.imp]};o.tin=tradeIncome(pid);}o.income=income(pid);o.upkeep=upkeep(pid);o.capacity=capacity(pid);o.under=underdog(pid);o.pol=polView(pid);}
       return o;}),
     terr:G.terr.map(t=>{const full=t.owner==null||sees(t.owner);const o={id:t.id,gv:(t.gvr!=null&&G.round-t.gvr<=10)?(t.gv||0):0,plg:t.plg||0,burn:(t.burn||0)>=G.round?1:0,port:(!t.sea&&isPort(t.id))?(blockaded(t.id,t.owner==null?-1:t.owner)&&t.owner!=null?2:1):0,owner:t.owner,fort:t.fort,trench:t.trench||0,oos:t.oos?1:0,siege:t.siege||0,enc:t.encN||0,unrest:t.unrest,dp:DPT.dp[t.id],cd:DPT.cd[t.id],tier:tierOf(t.troops)};if(t.mark&&t.mark.until>=G.round)o.mk={k:t.mark.k,t:t.mark.t};if(t.post)o.post=t.post.by;if(t.wd)o.wd=t.wd;if(t.wp)o.wp={k:t.wp.k,left:t.wp.left};if(full){if(t.bl)o.bl=t.bl.slice();if(!t.sea&&t.owner!=null)o.pop=Math.round(popIdx(t)*100)/100;o.troops=t.troops;if(t.troops>0){const cu=compOf(t);o.u=[cu.i,cu.c,cu.a];if(t.owner!=null){const vf=vfOf(t),r2=x=>Math.round(x*100)/100;o.uv=[vf.i.map(r2),vf.c.map(r2),vf.a.map(r2)];const ow=t.owner!=null?G.players[t.owner]:null;if(ow){let xl=0;['i','c','a'].forEach(k=>{const j=vf[k].indexOf(Math.max(...vf[k]));xl=Math.max(xl,xlv(ow,k,j));});o.xl=xl;}}}}if(t.inf&&!t.sea){let tk=-1,tv=0;Object.keys(t.inf).forEach(k=>{if(t.inf[k]>tv){tv=t.inf[k];tk=+k;}});const mm=t.inf[pid]||0;if(t.owner===pid&&tv>0)o.inf={m:0,k:tk,tv};else if(mm>0)o.inf={m:mm,k:pid,tv:mm};}if(t.gst&&t.gst[pid]>0){o.mygst=t.gst[pid];{const gu=compOf(t,pid);o.gu=[gu.i,gu.c,gu.a];}}if(t.owner===pid&&!t.sea){if(t.mc&&t.mc.length){o.mcn=t.mc.reduce((q,x)=>q+x.n,0);o.mcl=Math.max(...t.mc.map(x=>x.until))-G.round+1;}o.city=t.city||0;o.mkt=t.mkt||0;o.mcost=(isPort(t.id)&&(t.mkt||0)<2)?MKT_COST[t.mkt||0]:0;o.ccap=conscriptCap(t);o.dr=t.drafted||0;if(t.pend)o.pend=t.pend.reduce((q,x)=>q+x.n,0);o.ccost=(t.city||0)<CITY_MAX?cityCostOf(pid,t.city||0):0;}if(t.owner===pid&&t.gst){const sg=Object.keys(t.gst).reduce((a,k)=>a+(t.gst[k]||0),0);if(sg>0)o.allyg=sg;}return o;}),
-    um:G.umod||null,
+    um:G.umod||null,sbx:G.sbx?1:0,wars:Object.keys(G.hostile||{}).filter(k=>G.hostile[k]),
     gens:G.gens.filter(g=>g.status!=='dead').map(g=>{const full=g.owner===pid||sees(g.owner)||g.captor===pid;const o={id:g.id,owner:g.owner,name:g.name,xp:g.xp||0,grade:gradeOf(g),loc:g.loc,status:g.status,captor:g.captor,wins:g.wins||0};if(full){o.atk=g.atk;o.def=g.def;o.lead=g.lead;o.trait=g.trait;}return o;}),
     relics:Object.assign({},G.relics||{}),
     fac:omni?null:facView(pid),bonds:omni?[]:((G.players[pid].bonds||[]).map(b=>({id:b.id,amt:b.amt,per:b.per,left:b.left,miss:b.miss||0,pay:Math.round(b.left*b.per*0.9)}))),bondLim:omni?0:bondLimit(pid),band:omni?[]:bandView(pid),
@@ -4125,7 +4126,7 @@ const Host={seats:[],started:false,timer:null,mapId:0,snaps:[],
   snap(){try{this.snaps.push(JSON.stringify(G));if(this.snaps.length>4)this.snaps.shift();}catch(e){}},
   continueGame(){if(Net.mode!=='solo'||!G||!G.over||/^trial_/.test(G.tplId||''))return false;G.over=null;G.cont=true;G.endRound=null;G.dom=null;startPhase('plan');hClear(this.timer);this.timer=hEvery(()=>this.tick(),400);this.pushViews(true);return true;},
   canUndo(){return !!G&&!G.over&&G.phase==='plan'&&this.seats.filter(s=>s.kind==='human').length===1&&this.snaps.length>=2;},
-  init(name){this.specs=[];this.lastCaps=null;this.seats=[{kind:'human',name,local:true},{kind:'empty'},{kind:'empty'}];this.started=false;this.mapId=0;this.tplId=null;this.len=null;this.sec=null;this.pub=false;this.listed=false;this.title='';this.cd=null;clearInterval(this.ltimer);clearInterval(this.rtimer);},
+  init(name){this.specs=[];this.lastCaps=null;this.seats=[{kind:'human',name,local:true},{kind:'empty'},{kind:'empty'}];this.started=false;this.mapId=0;this.tplId=null;this.len=null;this.sbx=false;this.sec=null;this.pub=false;this.listed=false;this.title='';this.cd=null;clearInterval(this.ltimer);clearInterval(this.rtimer);},
   /* 공개 방: 방 참여하기 목록에 실을 정보 (방 코드·이름·템플릿·지도·자리) */
   roomMeta(){const tp=this.tplId?TEMPLATES.find(t=>t.id===this.tplId):null,S=this.seats||[];return {v:1,code:Net.code,title:this.title||'',host:(S[0]&&S[0].name)||'',map:tp?(tp.map||0):(this.mapId||0),tpl:tp?tp.id:null,tplName:tp?String(tp.name||'').slice(0,40):'',year:tp?(tp.custom?(tp.year||''):(tp.label||tp.year||'')):'',custom:!!(tp&&tp.custom),h:S.filter(x=>x.kind==='human').length,b:S.filter(x=>x.kind==='bot').length,open:S.filter(x=>x.kind==='empty').length,len:this.len,st:this.started?1:0,r:this.started&&typeof G!=='undefined'&&G?G.round||0:0,specs:(this.specs||[]).length};},
   roomPub(){if(!this.listed||Net.mode!=='host')return;RoomList.publish(this.roomMeta());if(this.started&&!this.rtimer)this.rtimer=setInterval(()=>{if(G&&G.over){clearInterval(this.rtimer);RoomList.unpublish();return;}RoomList.publish(this.roomMeta());},15000);},
@@ -4140,7 +4141,7 @@ const Host={seats:[],started:false,timer:null,mapId:0,snaps:[],
   sendTo(i,msg){const s=this.seats[i];if(!s||s.kind!=='human')return;
     if(s.local){const c=JSON.parse(JSON.stringify(msg));setTimeout(()=>Client.onMsg(c),0);}else if(s.conn&&s.conn.open){try{s.conn.send(msg);}catch(e){}}},
   customTpl(id){const t=id&&TEMPLATES.find(x=>x.id===id);return t&&t.custom?t:null;},
-  lobbyMsg(you,back){return {ver:CE_VER,back:!!back,t:'lobby',code:Net.code,you,seats:this.seats.map(x=>({kind:x.kind,name:x.name||'',away:!!x.away,persona:x.persona||null})),solo:Net.mode==='solo',mode:Net.mode==='solo'?'solo':(this.pub?'online':this.listed?'public':'private'),title:this.title||'',count:this.cd?Math.max(0,Math.ceil((this.cd-Date.now())/1000)):null,map:this.mapId,tpl:this.tplId,len:this.len==null?null:this.len,sec:this.sec==null?null:this.sec,specs:(this.specs||[]).length,tplData:this.customTpl(this.tplId)||undefined};},
+  lobbyMsg(you,back){return {ver:CE_VER,back:!!back,t:'lobby',code:Net.code,you,seats:this.seats.map(x=>({kind:x.kind,name:x.name||'',away:!!x.away,persona:x.persona||null})),solo:Net.mode==='solo',mode:Net.mode==='solo'?'solo':(this.pub?'online':this.listed?'public':'private'),title:this.title||'',count:this.cd?Math.max(0,Math.ceil((this.cd-Date.now())/1000)):null,map:this.mapId,tpl:this.tplId,len:this.len==null?null:this.len,sbx:this.sbx?1:0,sec:this.sec==null?null:this.sec,specs:(this.specs||[]).length,tplData:this.customTpl(this.tplId)||undefined};},
   sendSpec(sp,msg){if(sp&&sp.conn&&sp.conn.open){try{sp.conn.send(msg);}catch(e){}}},
   lobbyPush(back){this.roomPub();if(this.started&&!back)return;this.seats.forEach((s,i)=>this.sendTo(i,this.lobbyMsg(i,back)));(this.specs||[]).forEach(sp=>this.sendSpec(sp,{...this.lobbyMsg(-1,back),spec:true}));},
   /* 관전자: 자리 없이 들어와 전체 시점을 본다 */
@@ -4180,6 +4181,7 @@ const Host={seats:[],started:false,timer:null,mapId:0,snaps:[],
       else if(msg.t==='rembot'&&i===0){if(this.seats[msg.seat]&&this.seats[msg.seat].kind==='bot'){if(msg.seat>=3)this.seats.splice(msg.seat,1);else this.seats[msg.seat]={kind:'empty'};}this.lobbyPush();}
       else if(msg.t==='map'&&i===0){if(MAPS[msg.id]){this.mapId=msg.id;this.tplId=null;}this.lobbyPush();}
       else if(msg.t==='sec'&&i===0){this.sec=(msg.v==null)?null:[0,30,50,90,150].includes(+msg.v)?+msg.v:null;this.lobbyPush();}
+      else if(msg.t==='sbx'&&i===0){this.sbx=Net.mode==='solo'&&!!msg.v;this.lobbyPush();}
       else if(msg.t==='len'&&i===0){this.len=(msg.v==null)?null:Math.max(0,Math.min(400,Math.floor(+msg.v)||0));this.lobbyPush();}
       else if(msg.t==='tpl'&&i===0){if(!msg.id)this.tplId=null;else if(TEMPLATES.some(t=>t.id===msg.id)){this.tplId=msg.id;this.mapId=0;}this.lobbyPush();}
       else if(msg.t==='leave'){}
@@ -4216,7 +4218,7 @@ const Host={seats:[],started:false,timer:null,mapId:0,snaps:[],
     D.picks[pid]=k;D.idx++;this.draftStep();},
   finishDraft(){const D=this.D;const defs=this.seats.map(s=>({name:s.name,isBot:s.kind==='bot',persona:s.persona}));let plan;
     if(D.tpl){plan=tplPlan(this.tplObj(),D.picks);}else plan=completePlan(D.picks);
-    if(this.len!=null)plan.len=this.len;if(this.sec!=null)plan.sec=this.sec;
+    if(this.len!=null)plan.len=this.len;if(this.sec!=null)plan.sec=this.sec;if(this.sbx&&Net.mode==='solo')plan.sbx=1;
     this.D=null;newGame(defs,plan);this.lastCaps=plan.caps;
     this.seats.forEach((s,i)=>this.sendTo(i,{t:'plan',caps:plan.caps}));(this.specs||[]).forEach(sp=>this.sendSpec(sp,{t:'plan',caps:plan.caps}));startPhase('plan');this.pushViews(true);},
   tick(){
@@ -5810,7 +5812,7 @@ const UI={
     $('#codeIn').addEventListener('keydown',e=>{if(e.key==='Enter')$('#btnJoin').click();});
     $('#bSkip').onclick=()=>{if(Battle._skip)Battle._skip();};$('#bSkipAll').onclick=()=>{Battle.skipAll=true;if(Battle._skip)Battle._skip();};
     $('#btnReady').onclick=()=>UI.onReady();$('#btnAuto').onclick=()=>UI.toggleAuto();$('#btnMenu').onclick=()=>UI.openMenu();
-    $('#menu').addEventListener('click',e=>{if(e.target.id==='menu')UI.closeMenu();const b=e.target.closest('[data-act]');if(!b)return;if(b.dataset.act==='closeMenu')UI.closeMenu();if(b.dataset.act==='wl'){UI.closeMenu();UI.openWarlog();}if(b.dataset.act==='sum'){UI.closeMenu();UI.openSummary();}if(b.dataset.act==='savegame'){UI.doSave();}if(b.dataset.act==='site'){UI.ask('게임을 나가고 이 창을 닫을까요?',()=>UI.closeWin(),{yes:'나가기'});}if(b.dataset.act==='leave'){UI.leaveGame();}if(b.dataset.act==='saveName'){const v=($('#nameEdit').value||'').trim().slice(0,15);if(v){try{localStorage.setItem('ce_name',v);}catch(_){}UI.toast('이름을 저장했어요.','ok');}}if(b.dataset.act==='saveK'){const v=($('#kEdit').value||'').trim();if(v){try{localStorage.setItem('ce_kname',v);}catch(_){}if(C.view&&!C.view.draft){send({a:'kname',name:v});UI.toast('나라 이름을 바꿨어요.','ok');}else UI.toast('게임이 시작되면 적용돼요.','ok');}}if(b.dataset.act==='trmode'){TRMODE=b.dataset.val==='1';try{localStorage.setItem('ce_trmode',TRMODE?'1':'0');}catch(_){}UI.openMenu();}if(b.dataset.act==='mapmode'){MAPMODE=b.dataset.val;try{localStorage.setItem('ce_mapmode',MAPMODE);}catch(_){}try{MapView._kv=null;MapView.layerKey='';}catch(_){}UI.openMenu();}if(b.dataset.act==='saveAl'){send({a:'alname',name:(($('#alEdit')||{}).value||'').trim()});UI.toast('동맹 이름을 바꿨어요.','ok');setTimeout(()=>{try{MapView._kv=null;UI.openMenu();}catch(_){}},250);}if(b.dataset.act==='saveFlag'){send({a:'flag',key:($('#flagEdit')||{}).value||''});try{MapView._fi={};MapView.layerKey='';}catch(_){}UI.toast('국기를 바꿨어요.','ok');setTimeout(()=>{try{UI.renderAll();UI.openMenu();}catch(_){}},250);}if(b.dataset.act==='endGame'){UI.ask('지금 승점으로 게임을 끝낼까요?',()=>{Net.send({t:'endgame'});UI.closeMenu();},{yes:'게임 끝내기'});}if(b.dataset.act==='opt'){try{FFPerf.set({low:b.dataset.val==='1'});}catch(_){}try{MapView.resize();}catch(_){}UI.openMenu();}if(b.dataset.act==='fx'&&!UI.isMulti()){C.fx=b.dataset.val;try{localStorage.setItem('ce_fx2',C.fx);}catch(_){}UI.openMenu();}
+    $('#menu').addEventListener('click',e=>{if(e.target.id==='menu')UI.closeMenu();const b=e.target.closest('[data-act]');if(!b)return;if(b.dataset.act==='closeMenu')UI.closeMenu();if(b.dataset.act==='wl'){UI.closeMenu();UI.openWarlog();}if(b.dataset.act==='wd'){UI.closeMenu();UI.openWorld();}if(b.dataset.act==='sum'){UI.closeMenu();UI.openSummary();}if(b.dataset.act==='savegame'){UI.doSave();}if(b.dataset.act==='site'){UI.ask('게임을 나가고 이 창을 닫을까요?',()=>UI.closeWin(),{yes:'나가기'});}if(b.dataset.act==='leave'){UI.leaveGame();}if(b.dataset.act==='saveName'){const v=($('#nameEdit').value||'').trim().slice(0,15);if(v){try{localStorage.setItem('ce_name',v);}catch(_){}UI.toast('이름을 저장했어요.','ok');}}if(b.dataset.act==='saveK'){const v=($('#kEdit').value||'').trim();if(v){try{localStorage.setItem('ce_kname',v);}catch(_){}if(C.view&&!C.view.draft){send({a:'kname',name:v});UI.toast('나라 이름을 바꿨어요.','ok');}else UI.toast('게임이 시작되면 적용돼요.','ok');}}if(b.dataset.act==='trmode'){TRMODE=b.dataset.val==='1';try{localStorage.setItem('ce_trmode',TRMODE?'1':'0');}catch(_){}UI.openMenu();}if(b.dataset.act==='mapmode'){MAPMODE=b.dataset.val;try{localStorage.setItem('ce_mapmode',MAPMODE);}catch(_){}try{MapView._kv=null;MapView.layerKey='';}catch(_){}UI.openMenu();}if(b.dataset.act==='saveAl'){send({a:'alname',name:(($('#alEdit')||{}).value||'').trim()});UI.toast('동맹 이름을 바꿨어요.','ok');setTimeout(()=>{try{MapView._kv=null;UI.openMenu();}catch(_){}},250);}if(b.dataset.act==='saveFlag'){send({a:'flag',key:($('#flagEdit')||{}).value||''});try{MapView._fi={};MapView.layerKey='';}catch(_){}UI.toast('국기를 바꿨어요.','ok');setTimeout(()=>{try{UI.renderAll();UI.openMenu();}catch(_){}},250);}if(b.dataset.act==='endGame'){UI.ask('지금 승점으로 게임을 끝낼까요?',()=>{Net.send({t:'endgame'});UI.closeMenu();},{yes:'게임 끝내기'});}if(b.dataset.act==='opt'){try{FFPerf.set({low:b.dataset.val==='1'});}catch(_){}try{MapView.resize();}catch(_){}UI.openMenu();}if(b.dataset.act==='fx'&&!UI.isMulti()){C.fx=b.dataset.val;try{localStorage.setItem('ce_fx2',C.fx);}catch(_){}UI.openMenu();}
       if(b.dataset.act==='blur'){BLUR_FLAGS=b.dataset.val==='1';try{localStorage.setItem('ce_blurflag',BLUR_FLAGS?'1':'0');}catch(_){}Object.keys(_fc).forEach(k=>delete _fc[k]);MapView._fi={};MapView.layerKey='';try{if(C.view)UI.renderAll();}catch(_){}UI.openMenu();}
       if(b.dataset.act==='bgm'){Music.setOn(b.dataset.val==='1');UI.openMenu();}
       if(b.dataset.act==='snd'){Battle.snd=b.dataset.val==='1';try{localStorage.setItem('ce_snd',Battle.snd?'1':'0');}catch(_){}UI.openMenu();}});
@@ -5945,7 +5947,7 @@ const UI={
   },
   renderKinds(m,host){
     const tpl=!!m.tpl;$('#kindSeg').querySelectorAll('button').forEach(b=>{b.classList.toggle('on',(b.dataset.kind==='tpl')===tpl);b.disabled=!host;b.onclick=()=>{if(!host)return;if(b.dataset.kind==='tpl')Net.send({t:'tpl',id:m.tpl||TEMPLATES[TEMPLATES.length-3].id});else Net.send({t:'map',id:m.map||0});};});
-    $('#mapBox').classList.toggle('hidden',tpl);$('#tplBox').classList.toggle('hidden',!tpl);const rt=document.getElementById('lobbyRight');if(rt)rt.classList.toggle('wide',!!tpl);UI.renderLen(m,host,tpl);UI.renderSec(m,host);
+    $('#mapBox').classList.toggle('hidden',tpl);$('#tplBox').classList.toggle('hidden',!tpl);const rt=document.getElementById('lobbyRight');if(rt)rt.classList.toggle('wide',!!tpl);UI.renderLen(m,host,tpl);UI.renderSec(m,host);UI.renderSbx(m,host);
     const tyr=t=>t.custom?(t.year?(t.year<0?(-t.year)+' BC':String(t.year)):'내 시나리오'):(t.label||t.year);
     UI.tplBarInit(m,host);const tq=UI.tq,plays=UI.tplPlays();const kindOf=t=>!t.custom?'base':((t.src||t.paid||t.trial)?'got':'mine');const yr=t=>(t.custom&&!t.year)?9999:(t.year||0);
     const qs=tq.q.trim().toLowerCase();let L=TEMPLATES.filter(t=>(tq.cat==='all'||kindOf(t)===tq.cat)&&(!tq.tag||UI.tagsOf(t).includes(tq.tag))&&(!qs||(t.name+' '+(t.desc||'')+' '+tyr(t)+' '+(t.year||'')+' '+t.nations.map(n=>n.name).join(' ')+' '+UI.tagsOf(t).map(UI.tagLabel).join(' ')).toLowerCase().includes(qs)));
@@ -6095,8 +6097,19 @@ const UI={
     w.classList.remove('hidden');try{drawEventArt($('#evcv'),e);}catch(_){}},
   /* ----- 전쟁 기록: 선전포고·참전·휴전·동맹·수도 함락·멸망을 연표로 ----- */
   WL_KINDS:{war:['⚔','선전포고'],join:['🛡','참전'],truce:['🕊','휴전'],ally:['🤝','동맹'],break:['💔','동맹 해제'],capital:['🏰','수도 함락'],fall:['☠','멸망'],event:['📰','사건']},
-  openWarlog(){const v=C.view;if(!v)return;C.wlf=C.wlf||'all';UI.navPush('warlog');UI.renderWarlog();$('#warlog').classList.remove('hidden');},
-  renderWarlog(){const v=C.view;const L=(v.wl||[]);const F=C.wlf||'all',mine=!!C.wlMine;
+  openWorld(){const v=C.view;if(!v)return;C.wlMode='world';UI.navPush('warlog');UI.renderWarlog();$('#warlog').classList.remove('hidden');},
+  renderWorld(){const v=C.view;const P=v.players;const nm=p=>esc(p.kingdom||p.name);
+    const cnt={};v.terr.forEach(t=>{if(t.owner!=null&&t.owner>=0&&!TDEF[t.id].sea)cnt[t.owner]=(cnt[t.owner]||0)+1;});
+    const wars=(v.wars||[]).map(k=>k.split('-').map(Number)).filter(([a,b])=>P[a]&&P[b]&&P[a].alive&&P[b].alive);
+    const rk=P.filter(p=>p.alive).sort((a,b)=>(cnt[b.id]||0)-(cnt[a.id]||0)||(b.troops||0)-(a.troops||0));
+    $('#warlog').innerHTML=`<div class="wlbox"><div class="wlhead"><button class="btn sm" id="wlBack">← 뒤로</button><h2>세계 정세</h2></div>
+      <div class="wlsum">전쟁 중 ${wars.length}쌍</div>
+      <div class="wllist">${wars.length?wars.map(([a,b])=>`<div class="wlrow war ${a===v.me||b===v.me?'me':''}"><span class="i">⚔</span><span class="t">${fl(P[a])} ${nm(P[a])} ↔ ${fl(P[b])} ${nm(P[b])}</span></div>`).join(''):'<div class="muted" style="padding:10px 0">전쟁 중인 나라가 없어요.</div>'}
+      <div class="wlsum" style="margin-top:10px">강대국 순위 · 영토 수</div>
+      ${rk.map((p,i)=>`<div class="wlrow ${p.id===v.me?'me':''}"><span class="d">${i+1}위</span><span class="t">${fl(p)} ${nm(p)}</span><span style="margin-left:auto">${cnt[p.id]||0}곳${p.troops!=null?' · '+p.troops.toLocaleString()+'명':''}</span></div>`).join('')}</div></div>`;
+    $('#wlBack').onclick=()=>UI.back();},
+  openWarlog(){const v=C.view;if(!v)return;C.wlMode=null;C.wlf=C.wlf||'all';UI.navPush('warlog');UI.renderWarlog();$('#warlog').classList.remove('hidden');},
+  renderWarlog(){if(C.wlMode==='world')return UI.renderWorld();const v=C.view;const L=(v.wl||[]);const F=C.wlf||'all',mine=!!C.wlMine;
     const grp={all:null,war:['war','join'],peace:['truce','ally','break'],big:['capital','fall'],event:['event']};
     const rows=L.filter(e=>(!grp[F]||grp[F].includes(e.k))&&(!mine||e.a===v.me||e.b===v.me));
     const cnt=k=>L.filter(e=>e.k===k).length;
@@ -6373,6 +6386,7 @@ const UI={
       <div class="pol"><div><b>튜토리얼</b><small>게임 하는 법을 처음부터 다시 안내해 줘요.</small></div><button class="btn sm" data-act="tut">다시 보기</button></div>
       <div class="pol"><div><b>판 요약</b><small>영토·병력 변화 그래프, 나라별 전투 통계, 영토 변화 타임랩스를 봐요.</small></div><button class="btn sm" data-act="sum">보기</button></div>
       ${Net.mode==='solo'&&!v.spec?`<div class="pol"><div><b>게임 저장</b><small>이 판을 이 기기에 저장해 두고 홈 화면의 [저장된 게임]에서 이어서 해요. (계획 단계에서만, 최대 5개)</small></div><div class="row" style="gap:6px;flex:none"><input type="text" id="saveName" maxlength="20" placeholder="저장 이름" style="width:120px"><button class="btn sm" data-act="savegame">저장</button></div></div>`:''}
+      <div class="pol"><div><b>세계 정세</b><small>전쟁 중인 나라와 강대국 순위를 봐요.</small></div><button class="btn sm" data-act="wd">보기</button></div>
       <div class="pol"><div><b>전쟁 기록</b><small>선전포고·참전·휴전·동맹·수도 함락·멸망을 연표로 봐요.</small></div><button class="btn sm" data-act="wl">보기</button></div>
       <div class="pol"><div><b>저작권</b><small>© 2026 Frenchfries777 · <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.ko" target="_blank" rel="noopener" style="color:inherit">CC BY-NC-ND 4.0</a></small></div></div>
       <div class="pol"><div><b>나가기</b><small>이 창을 닫아요. ${Net.mode==='solo'?'AI 대전은 자동 저장돼 있으면 홈 화면의 [저장된 게임]에서 이어 할 수 있어요.':'게임 중이면 나가는 것과 같아요.'}</small></div><button class="btn sm danger" data-act="site">나가기</button></div>
@@ -6457,6 +6471,7 @@ const UI={
   renderSec(m,host){const box=document.getElementById('secSeg');if(!box)return;const cur=m.sec==null?'default':String(m.sec);
     box.innerHTML=[['default','기본 50초'],['30','30초'],['90','90초'],['150','150초'],['0','무제한']].map(([k,l])=>`<button data-sec="${k}" class="${cur===k?'on':''}" ${host?'':'disabled'}>${l}</button>`).join('');
     box.querySelectorAll('button[data-sec]').forEach(b=>b.onclick=()=>Net.send({t:'sec',v:b.dataset.sec==='default'?null:+b.dataset.sec}));},
+  renderSbx(m,host){const bx=document.getElementById('sbxBox'),box=document.getElementById('sbxSeg');if(!bx||!box)return;bx.classList.toggle('hidden',!m.solo);const on=!!m.sbx;box.innerHTML=[[0,'끄기'],[1,'켜기']].map(([k,l])=>`<button data-sbx="${k}" class="${(on?1:0)===k?'on':''}" ${host?'':'disabled'}>${l}</button>`).join('');box.querySelectorAll('button[data-sbx]').forEach(b=>b.onclick=()=>Net.send({t:'sbx',v:+b.dataset.sbx}));},
   renderLen(m,host,tpl){const box=document.getElementById('lenSeg');if(!box)return;const def=(typeof defLen==='function')?defLen(tpl?m.tpl:null):60;const cur=m.len==null?'default':String(m.len);
     const opts=[['default',`기본 ${def}턴`],['36','짧게 36턴'],['72','보통 72턴'],['120','길게 120턴'],['0','끝까지(무제한)']];
     box.innerHTML=opts.map(([k,l])=>`<button data-len="${k}" class="${cur===k?'on':''}" ${host?'':'disabled'}>${l}</button>`).join('');
@@ -7588,7 +7603,7 @@ function draw(){const o=$('#achOv');if(!o)return;const done=ACH.filter(a=>D.u[a.
 let G1={key:null,minT:Infinity,rounds:{},over:false,mode:null,tpl:false,humans:0};
 function gameKey(v){return (v.players||[]).map(p=>p.kingdom).join('|');}
 function onView(v){
-  if(!v||v.spec||v.draft||v.me==null||!v.players)return;const me=v.players[v.me];if(!me)return;
+  if(!v||v.spec||v.draft||v.me==null||!v.players||v.sbx)return;const me=v.players[v.me];if(!me)return;
   const k=gameKey(v);if(k!==G1.key||v.round<(G1.lastRound||0)){G1={key:k,minT:Infinity,rounds:{},over:false,mode:G1.mode,tpl:G1.tpl,humans:0,lastRound:0};}
   if(!G1.began&&!v.over){G1.began=true;try{window.CECoin&&CECoin.begin&&CECoin.begin();}catch(e){}}
   if(G1.paid==null)G1.paid=Math.floor((v.round||0)/15);
@@ -7738,7 +7753,7 @@ const GAME='crownenvoy';
 const seasonKey=d=>{const t=new Date(Date.now()+9*36e5);t.setUTCDate(1);t.setUTCMonth(t.getUTCMonth()-d);return t.toISOString().slice(0,7);};
 function pointsFor(v){const o=v.over,rk=o.ranking||[];const i=rk.findIndex(r=>r.id===v.me);if(i<0)return null;const r=rk[i];const won=(o.winners||[o.winner]).includes(v.me);
   const dn=(r.obj||[]).filter(x=>x.done).length;return {pts:(won?50:0)+(r.alive?10:0)+Math.max(0,20-4*i)+dn*5,won};}
-async function addScore(v){const u=window.CEAuth&&CEAuth.user();if(!u)return;const res=pointsFor(v);if(!res)return;
+async function addScore(v){if(v.sbx)return;const u=window.CEAuth&&CEAuth.user();if(!u)return;const res=pointsFor(v);if(!res)return;
   const key='ce_rk_'+(v.tpl||'')+'|'+v.players.map(p=>p.kingdom).join(',')+'|'+v.me;try{if(sessionStorage.getItem(key))return;sessionStorage.setItem(key,'1');}catch(e){}
   /* 서버가 판 시작 기록과 걸린 시간·하루 한도를 확인해 점수를 더해 준다 (supabase-ce-guard.sql). 아직 이 SQL을 안 돌렸으면 예전 방식으로 올린다 */
   try{const sb=await CEAuth.sb();const r=await sb.rpc('ce_game_finish',{p_points:res.pts,p_win:!!res.won,p_conq:tot.conq,p_bw:tot.bw,p_peace:tot.peace});
