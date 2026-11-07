@@ -12,7 +12,24 @@ var GAMES={}, GLIST=[], NSRC={};
 window.FF_GAMES={list:GLIST,games:GAMES};
 function gOpts(first){ return (first||'')+GLIST.map(function(g){ return '<option value="'+g+'">'+GAMES[g].name+'</option>'; }).join(''); }
 function gBtns(){ return GLIST.map(function(g){ return '<button data-f="'+g+'">'+GAMES[g].name+'</button>'; }).join(''); }
-if(!document.getElementById('ffwVars')){ var wv=document.createElement('style'); wv.id='ffwVars'; wv.textContent=':root{--ffw-bg:#171717;--ffw-in:#0e0e0e;--ffw-tx:#ece6d8;--ffw-dim:#a39c8c;--ffw-ln:#2e2b25;--ffw-hv:#262420;--ffw-ov:rgba(5,6,10,.72);--ffw-err:var(--ffw-err,#ff9b7a);--ffw-ok:var(--ffw-ok,#7ddc8a);--ffw-gold:#d9b45f;--ffw-gold2:#b8923a;--ffw-gt:#1a1206;--ffw-sh:rgba(0,0,0,.5)}html[data-ff-theme=light]{--ffw-bg:#fff;--ffw-in:#f7f5ef;--ffw-tx:#111;--ffw-dim:#444;--ffw-ln:#ddd6c6;--ffw-hv:#f1ede2;--ffw-ov:rgba(255,255,255,.72);--ffw-err:#b3261e;--ffw-ok:#1b6e2e;--ffw-gold:#a67c00;--ffw-gold2:#d4a62a;--ffw-gt:#111;--ffw-sh:rgba(0,0,0,.18)}'; (document.head||document.documentElement).appendChild(wv); }
+if(!document.getElementById('ffwVars')){ var wv=document.createElement('style'); wv.id='ffwVars'; wv.textContent=':root{--ffw-bg:var(--bg,#0e0e0e);--ffw-in:var(--bg,#0e0e0e);--ffw-tx:var(--text,#ece6d8);--ffw-dim:var(--dim,#a39c8c);--ffw-ln:color-mix(in srgb,var(--fry,#d9b45f) 50%,transparent);--ffw-hv:color-mix(in srgb,var(--fry,#d9b45f) 16%,transparent);--ffw-ov:color-mix(in srgb,var(--bg,#0e0e0e) 80%,transparent);--ffw-err:#ff9b7a;--ffw-ok:#7ddc8a;--ffw-gold:var(--fry,#d9b45f);--ffw-gold2:var(--fry2,#b8923a);--ffw-gt:var(--bg,#0e0e0e);--ffw-sh:rgba(0,0,0,.5)}html[data-ff-theme=light]{--ffw-err:#b3261e;--ffw-ok:#1b6e2e;--ffw-sh:rgba(0,0,0,.18)}'; (document.head||document.documentElement).appendChild(wv); }
+if(!document.getElementById('ffRichHub')){ var rh=document.createElement('style'); rh.id='ffRichHub'; var H='html[data-ff-theme] ';
+  rh.textContent=H+'.hn-bg{background:color-mix(in srgb,var(--bg) 80%,transparent);-webkit-backdrop-filter:none;backdrop-filter:none}'+
+  H+'.hn-b,'+H+'.cc-dd,'+H+'.mn-box{background:linear-gradient(var(--fry),var(--fry)) 18px 100%/70px 3px no-repeat,var(--bg);border:1px solid var(--fry);border-left:8px solid var(--fry);border-radius:16px;box-shadow:none;color:var(--text);font-family:"Oswald","Noto Sans KR",sans-serif}'+
+    H+'.hn-h{color:var(--fry);font-weight:600;text-transform:uppercase;letter-spacing:.05em;padding-bottom:8px;border-bottom:0;position:relative}'+
+  H+'.hn-h:after{content:"";position:absolute;left:0;bottom:0;width:60px;height:4px;background:var(--fry)}'+
+  H+'.hn-h b{color:var(--fry)}'+H+'.hn-x{color:var(--fry);background:transparent}'+
+  H+'.hn-n{border-top:1px solid var(--ffw-ln)}'+H+'.hn-n ul,'+H+'.hn-n li{color:var(--text)}'+
+  H+'.hn-b :is(.cm-btn,.cx-go .cm-btn){background:var(--fry);color:var(--bg);border-radius:99px;font-family:"Oswald","Noto Sans KR",sans-serif;font-weight:600}'+
+  H+'.hn-b .cm-btn2,'+H+'.cc-dd .cm-btn2{background:transparent;color:var(--text);border:1px solid var(--fry);border-radius:99px}'+
+  H+'.hn-b :is(input,textarea,select),'+H+'.cc-dd input{background:transparent;color:var(--text);border:1px solid var(--fry);border-radius:12px}'+
+  H+'.hn-b :is(.cx-r,.cx-pend,.coinbar),'+H+'.cc-dd .coinbar{background:transparent;border-color:var(--ffw-ln)}'+
+  H+':is(.cx-games,.cx-tabs) button{background:transparent;color:var(--text);border:1px solid var(--fry);border-radius:99px}'+
+  H+':is(.cx-games,.cx-tabs) button.on{background:var(--fry);color:var(--bg)}'+
+  H+'.cx-tabs{border-bottom:0}'+
+  H+'.mn-box button:hover,'+H+'.mn-box button.on{background:var(--fry);color:var(--bg)}'+
+  H+'.cx-ok{background:transparent;border:1px solid var(--fry);color:var(--text)}';
+  (document.head||document.documentElement).appendChild(rh); }
 function $(s,r){ return (r||document).querySelector(s); }
 /* 허브 첫 페이지와 커뮤니티 페이지(community/)가 같은 파일을 써요. ROOT = 허브 맨 위 경로 */
 var CMP=!!document.getElementById('community'), ROOT=document.body.getAttribute('data-root')||'', HR=document.body.hasAttribute('data-hub')?document.body.getAttribute('data-hub'):'https://frenchfries777.com/', CMURL=CMP?'':HR+'community/';
